@@ -2347,10 +2347,10 @@ detect-newline@^2.1.0:
   resolved "https://registry.yarnpkg.com/detect-newline/-/detect-newline-2.1.0.tgz#f41f1c10be4b00e87b5f13da680759f2c5bfd3e2"
   integrity sha1-9B8cEL5LAOh7XxPaaAdZ8sW/0+I=
 
-detox@12.4.0:
-  version "12.4.0"
-  resolved "https://registry.yarnpkg.com/detox/-/detox-12.4.0.tgz#f5c011af8a3264ea64e1caabfef8d10c35d9129a"
-  integrity sha512-QWITfaX4ra+zjl/VJdnCiiG4F8q6NzLhs2geOACKkgseLc7XJdczGS7qkKhTCoilGWvbgrMGPi4GXcK1kB3Cdw==
+detox@12.4.1:
+  version "12.4.1"
+  resolved "https://registry.yarnpkg.com/detox/-/detox-12.4.1.tgz#93de225fe7ab4d6f5540bd771b2d28db487b443e"
+  integrity sha512-teoNGSmGmTXhrtd3i/DKq+ORGViZ5NZ9olqQc7O53jVQ7Ozfwb9x3rBOdxkdlNtUCQ+PwCVCuU3veBcN/KI64Q==
   dependencies:
     bunyan "^1.8.12"
     bunyan-debug-stream "^1.1.0"
