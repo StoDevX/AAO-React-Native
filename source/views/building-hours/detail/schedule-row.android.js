@@ -1,8 +1,4 @@
-/**
- * @flow
- *
- * <ScheduleRow/> renders a single row of the schedule information.
- */
+// @flow
 
 import * as React from 'react'
 import {View, Text, StyleSheet} from 'react-native'

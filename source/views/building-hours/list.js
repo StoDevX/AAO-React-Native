@@ -2,6 +2,7 @@
 
 import * as React from 'react'
 import {StyleSheet, SectionList} from 'react-native'
+import {Navigation} from 'react-native-navigation'
 import {BuildingRow} from './row'
 
 import type momentT from 'moment'
@@ -28,7 +29,21 @@ type Props = TopLevelViewPropsType & {
 
 export class BuildingHoursList extends React.PureComponent<Props> {
 	onPressRow = (data: BuildingType) => {
-		this.props.navigation.navigate('BuildingHoursDetailView', {building: data})
+		Navigation.push(this.props.componentId, {
+			component: {
+				name: 'app.hours.detail',
+				passProps: {
+					building: JSON.parse(JSON.stringify(data)),
+				},
+				options: {
+					topBar: {
+						title: {
+							text: data.name,
+						},
+					},
+				},
+			},
+		})
 	}
 
 	keyExtractor = (item: BuildingType) => item.name

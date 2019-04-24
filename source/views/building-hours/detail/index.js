@@ -9,40 +9,47 @@ import type {TopLevelViewPropsType} from '../../types'
 import {ConnectedBuildingFavoriteButton as FavoriteButton} from './toolbar-button'
 
 type Props = TopLevelViewPropsType & {
-	navigation: {state: {params: {building: BuildingType}}},
+	building: BuildingType,
 }
 
-export class BuildingHoursDetailView extends React.Component<Props> {
-	static navigationOptions = ({navigation}: any) => {
-		const building = navigation.state.params.building
-		return {
-			title: building.name,
-			headerRight: <FavoriteButton buildingName={building.name} />,
-		}
-	}
+export function BuildingHoursDetailView(props: Props) {
+	// static navigationOptions = ({navigation}: any) => {
+	// 	const building = navigation.state.params.building
+	// 	return {
+	// 		title: building.name,
+	// 		headerRight: <FavoriteButton buildingName={building.name} />,
+	// 	}
+	// }
 
-	reportProblem = () => {
-		this.props.navigation.navigate('BuildingHoursProblemReportView', {
-			initialBuilding: this.props.navigation.state.params.building,
+	let reportProblem = () => {
+		Navigation.push(this.props.componentId, {
+			component: {
+				name: 'app.hours.report',
+				passProps: {
+					initialBuilding: JSON.parse(JSON.stringify(props.building)),
+				},
+				options: {
+					topBar: {
+						title: {
+							text: 'Report an Issue',
+						},
+					},
+				},
+			},
 		})
 	}
 
-	render() {
-		const info = this.props.navigation.state.params.building
+	console.warn(props)
+	const info = props.building
 
-		return (
-			<Timer
-				interval={60000}
-				moment={true}
-				render={({now}) => (
-					<BuildingDetail
-						info={info}
-						now={now}
-						onProblemReport={this.reportProblem}
-					/>
-				)}
-				timezone={timezone()}
-			/>
-		)
-	}
+	return (
+		<Timer
+			interval={60000}
+			moment={true}
+			render={({now}) => (
+				<BuildingDetail info={info} now={now} onProblemReport={reportProblem} />
+			)}
+			timezone={timezone()}
+		/>
+	)
 }

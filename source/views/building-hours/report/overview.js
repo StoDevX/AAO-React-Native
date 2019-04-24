@@ -1,8 +1,4 @@
-/**
- * @flow
- *
- * Building Hours "report a problem" screen.
- */
+// @flow
 
 import * as React from 'react'
 import {ScrollView, View} from 'react-native'

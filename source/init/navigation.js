@@ -67,7 +67,6 @@ import {HomeView, EditHomeView} from '../views/home'
 register('app.home', () => withRedux(HomeView))
 register('app.home.edit', () => withRedux(EditHomeView))
 
-/*
 import {BuildingHoursDetailView} from '../views/building-hours/detail'
 import {
 	BuildingHoursProblemReportView,
@@ -79,6 +78,7 @@ register('app.hours.detail', () => withRedux(BuildingHoursDetailView))
 register('app.hours.report', () => withRedux(BuildingHoursProblemReportView))
 register('app.hours.editor', () => withRedux(BuildingHoursScheduleEditorView))
 
+/*
 import CalendarView from '../views/calendar'
 import {EventDetail} from '@frogpond/event-list'
 register('app.calendar', () => withRedux(CalendarView))
