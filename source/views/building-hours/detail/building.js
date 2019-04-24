@@ -45,6 +45,7 @@ export class BuildingDetail extends React.Component<Props> {
 	}
 
 	render() {
+		console.log('in building render')
 		const {info, now, onProblemReport} = this.props
 
 		const headerImage =

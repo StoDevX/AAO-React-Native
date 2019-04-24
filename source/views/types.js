@@ -1,5 +1,5 @@
 // @flow
 
 export type TopLevelViewPropsType = {
-	componentId: number,
+	componentId: mixed,
 }

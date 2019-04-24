@@ -29,11 +29,12 @@ type Props = TopLevelViewPropsType & {
 
 export class BuildingHoursList extends React.PureComponent<Props> {
 	onPressRow = (data: BuildingType) => {
+		console.info(this.props.componentId)
 		Navigation.push(this.props.componentId, {
 			component: {
 				name: 'app.hours.detail',
 				passProps: {
-					building: JSON.parse(JSON.stringify(data)),
+					building: data,
 				},
 				options: {
 					topBar: {

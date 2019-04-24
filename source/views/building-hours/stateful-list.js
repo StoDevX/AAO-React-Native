@@ -97,9 +97,9 @@ export class BuildingHoursView extends React.PureComponent<Props, State> {
 				moment={true}
 				render={({now}) => (
 					<BuildingHoursList
+						{...this.props}
 						buildings={grouped}
 						loading={this.state.loading}
-						navigation={this.props.navigation}
 						now={now}
 						onRefresh={this.refresh}
 					/>

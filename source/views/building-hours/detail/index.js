@@ -22,7 +22,7 @@ export function BuildingHoursDetailView(props: Props) {
 	// }
 
 	let reportProblem = () => {
-		Navigation.push(this.props.componentId, {
+		Navigation.push(props.componentId, {
 			component: {
 				name: 'app.hours.report',
 				passProps: {

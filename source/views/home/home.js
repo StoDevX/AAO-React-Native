@@ -75,6 +75,7 @@ function HomePage(props: Props) {
 											return Navigation.push(props.componentId, {
 												component: {
 													name: view.view,
+													passProps: {stuff: {a: {b: 2}}},
 													options: {
 														topBar: {
 															title: {
