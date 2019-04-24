@@ -170,7 +170,7 @@
     "mkdirp": "0.5.1",
     "pify": "4.0.1",
     "prettier": "1.17.0",
-    "pretty-bytes": "5.1.0",
+    "pretty-bytes": "5.2.0",
     "pretty-quick": "1.10.0",
     "prop-types": "15.7.2",
     "react-test-renderer": "16.8.3",
