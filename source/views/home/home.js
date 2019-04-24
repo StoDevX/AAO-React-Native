@@ -1,7 +1,13 @@
 // @flow
 
 import * as React from 'react'
-import {ScrollView, View, StyleSheet, StatusBar} from 'react-native'
+import {
+	ScrollView,
+	View,
+	StyleSheet,
+	StatusBar,
+	SafeAreaView,
+} from 'react-native'
 import {Navigation} from 'react-native-navigation'
 
 import {connect} from 'react-redux'
@@ -53,43 +59,47 @@ function HomePage(props: Props) {
 				barStyle={statusBarStyle}
 			/>
 
-			<View style={styles.cells}>
-				{columns.map((contents, i) => (
-					<Column key={i} style={styles.column}>
-						{contents.map(view => (
-							<HomeScreenButton
-								key={view.view}
-								onPress={() => {
-									if (view.type === 'url') {
-										return trackedOpenUrl({url: view.url, id: view.view})
-									} else if (view.type === 'browser-url') {
-										return openUrlInBrowser({url: view.url, id: view.view})
-									} else {
-										return Navigation.push(props.componentId, {
-											component: {
-												name: view.view,
-												options: {
-													topBar: {
-														title: {
-															text: view.title,
-														},
-														backButton: {
-															color: view.tint,
+			<SafeAreaView>
+				<View style={styles.cells}>
+					{columns.map((contents, i) => (
+						<Column key={i} style={styles.column}>
+							{contents.map(view => (
+								<HomeScreenButton
+									key={view.view}
+									onPress={() => {
+										if (view.type === 'url') {
+											return trackedOpenUrl({url: view.url, id: view.view})
+										} else if (view.type === 'browser-url') {
+											return openUrlInBrowser({url: view.url, id: view.view})
+										} else {
+											return Navigation.push(props.componentId, {
+												component: {
+													name: view.view,
+													options: {
+														topBar: {
+															title: {
+																text: view.title,
+															},
+															backButton: {
+																color: view.tint,
+															},
 														},
 													},
 												},
-											},
-										})
-									}
-								}}
-								view={view}
-							/>
-						))}
-					</Column>
-				))}
-			</View>
+											})
+										}
+									}}
+									view={view}
+								/>
+							))}
+						</Column>
+					))}
+				</View>
+			</SafeAreaView>
 
-			<UnofficialAppNotice />
+			<SafeAreaView>
+				<UnofficialAppNotice />
+			</SafeAreaView>
 		</ScrollView>
 	)
 }
