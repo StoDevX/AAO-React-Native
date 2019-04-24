@@ -248,7 +248,6 @@ dependencies {
     implementation project(':react-native-calendar-events')
     implementation project(':react-native-custom-tabs')
     implementation project(':react-native-device-info')
-    implementation project(':react-native-gesture-handler')
     implementation project(':react-native-keychain')
     implementation project(':react-native-linear-gradient')
     implementation project(':react-native-navigation')

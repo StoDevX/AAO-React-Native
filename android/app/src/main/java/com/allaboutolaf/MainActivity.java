@@ -1,25 +1,13 @@
 package com.allaboutolaf;
 
 import com.facebook.react.modules.storage.ReactDatabaseSupplier;
-import com.facebook.react.ReactActivity;
 import com.reactnativenavigation.NavigationActivity;
 import com.calendarevents.CalendarEventsPackage;
-import com.facebook.react.ReactActivityDelegate;
-import com.facebook.react.ReactRootView;
-import com.swmansion.gesturehandler.react.RNGestureHandlerEnabledRootView;
+
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 
 public class MainActivity extends NavigationActivity {
-
-    @Override
-    protected ReactActivityDelegate createReactActivityDelegate() {
-        return new ReactActivityDelegate(this, getMainComponentName()) {
-            @Override
-            protected ReactRootView createRootView() {
-                return new RNGestureHandlerEnabledRootView(MainActivity.this);
-            }
-        };
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -30,7 +18,7 @@ public class MainActivity extends NavigationActivity {
 
     // Required for react-native-calendar-events
     @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         CalendarEventsPackage.onRequestPermissionsResult(requestCode, permissions, grantResults);
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }

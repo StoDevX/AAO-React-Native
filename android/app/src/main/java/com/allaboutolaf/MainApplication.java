@@ -1,6 +1,5 @@
 package com.allaboutolaf;
 
-import android.app.Application;
 import android.net.http.HttpResponseCache;
 import android.util.Log;
 
@@ -12,7 +11,6 @@ import com.reactnativenavigation.react.ReactGateway;
 import com.avishayil.rnrestart.ReactNativeRestartPackage;
 import com.BV.LinearGradient.LinearGradientPackage;
 import com.calendarevents.CalendarEventsPackage;
-import com.facebook.react.ReactApplication;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
@@ -24,7 +22,7 @@ import com.mapbox.rctmgl.RCTMGLPackage;
 import com.oblador.keychain.KeychainPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.pusherman.networkinfo.RNNetworkInfoPackage;
-import com.swmansion.gesturehandler.react.RNGestureHandlerPackage;
+
 import io.sentry.RNSentryPackage;
 
 import java.io.File;
@@ -34,92 +32,65 @@ import java.util.List;
 
 public class MainApplication extends NavigationApplication {
 
-  @Override
-  protected ReactGateway createReactGateway() {
-      ReactNativeHost host = new NavigationReactNativeHost(this, isDebug(), createAdditionalReactPackages()) {
-          @Override
-          protected String getJSMainModuleName() {
-              return "index";
-          }
-      };
-      return new ReactGateway(this, isDebug(), host);
-  }
-
-  @Override
-  public boolean isDebug() {
-      return BuildConfig.DEBUG;
-  }
-
-  protected List<ReactPackage> getPackages() {
-      // Add additional packages you require here
-      // No need to add RnnPackage and MainReactPackage
-      return Arrays.<ReactPackage>asList(
-          // eg. new VectorIconsPackage()
-      );
-  }
-
-  @Override
-  public List<ReactPackage> createAdditionalReactPackages() {
-      return getPackages();
-  }
-
-  private final ReactNativeHost mReactNativeHost = new ReactNativeHost(this) {
     @Override
-    public boolean getUseDeveloperSupport() {
-      return BuildConfig.DEBUG;
+    protected ReactGateway createReactGateway() {
+        ReactNativeHost host = new NavigationReactNativeHost(this, isDebug(), createAdditionalReactPackages()) {
+            @Override
+            protected String getJSMainModuleName() {
+                return "index";
+            }
+        };
+        return new ReactGateway(this, isDebug(), host);
     }
 
     @Override
+    public boolean isDebug() {
+        return BuildConfig.DEBUG;
+    }
+
     protected List<ReactPackage> getPackages() {
-      return Arrays.asList(
-        new MainReactPackage(),
-        // please keep these sorted alphabetically
-        new CalendarEventsPackage(),
-        new CustomTabsPackage(),
-        new KeychainPackage(),
-        new LinearGradientPackage(),
-        new RCTMGLPackage(),
-        new ReactNativeOneSignalPackage(),
-        new ReactNativeRestartPackage(),
-        new RNDeviceInfo(),
-        new RNGestureHandlerPackage(),
-        new RNNetworkInfoPackage(),
-        new RNSentryPackage(),
-        new VectorIconsPackage()
-      );
+        return Arrays.asList(
+                new MainReactPackage(),
+                // please keep these sorted alphabetically
+                new CalendarEventsPackage(),
+                new CustomTabsPackage(),
+                new KeychainPackage(),
+                new LinearGradientPackage(),
+                new RCTMGLPackage(),
+                new ReactNativeOneSignalPackage(),
+                new ReactNativeRestartPackage(),
+                new RNDeviceInfo(),
+                new RNNetworkInfoPackage(),
+                new RNSentryPackage(),
+                new VectorIconsPackage()
+        );
     }
 
     @Override
-    protected String getJSMainModuleName() {
-      return "index";
+    public List<ReactPackage> createAdditionalReactPackages() {
+        return getPackages();
     }
-  };
 
-  @Override
-  public ReactNativeHost getReactNativeHost() {
-    return mReactNativeHost;
-  }
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        SoLoader.init(this, /* native exopackage */ false);
 
-  @Override
-  public void onCreate() {
-    super.onCreate();
-    SoLoader.init(this, /* native exopackage */ false);
-
-    // set up network cache
-    try {
-      File httpCacheDir = new File(getApplicationContext().getCacheDir(), "http");
-      long httpCacheSize = 20 * 1024 * 1024; // 20 MiB
-      HttpResponseCache.install(httpCacheDir, httpCacheSize);
-    } catch (IOException e) {
-      Log.i("allaboutolaf", "HTTP response cache installation failed:", e);
-      //      Log.i(TAG, "HTTP response cache installation failed:", e);
+        // set up network cache
+        try {
+            File httpCacheDir = new File(getApplicationContext().getCacheDir(), "http");
+            long httpCacheSize = 20 * 1024 * 1024; // 20 MiB
+            HttpResponseCache.install(httpCacheDir, httpCacheSize);
+        } catch (IOException e) {
+            Log.i("allaboutolaf", "HTTP response cache installation failed:", e);
+            //      Log.i(TAG, "HTTP response cache installation failed:", e);
+        }
     }
-  }
 
-  public void onStop() {
-    HttpResponseCache cache = HttpResponseCache.getInstalled();
-    if (cache != null) {
-      cache.flush();
+    public void onStop() {
+        HttpResponseCache cache = HttpResponseCache.getInstalled();
+        if (cache != null) {
+            cache.flush();
+        }
     }
-  }
 }
