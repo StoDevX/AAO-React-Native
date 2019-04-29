@@ -84,7 +84,7 @@ HomePage.navigationOptions = ({navigation}) => {
 		title: 'All About Olaf',
 		headerBackTitle: 'Home',
 		headerLeft: <OpenSettingsButton navigation={navigation} />,
-		headerRight: <EditHomeButton navigation={navigation} />,
+		//headerRight: <EditHomeButton navigation={navigation} />,
 	}
 }
 
