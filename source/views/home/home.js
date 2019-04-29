@@ -73,9 +73,9 @@ function HomePage({navigation, order, inactiveViews, views = allViews}: Props) {
 						</Column>
 					))}
 				</View>
-			</SafeAreaView>
 
-			<UnofficialAppNotice />
+				<UnofficialAppNotice />
+			</SafeAreaView>
 		</ScrollView>
 	)
 }
