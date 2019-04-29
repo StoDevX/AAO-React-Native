@@ -6479,10 +6479,10 @@ react-native-device-info@1.5.1:
   resolved "https://registry.yarnpkg.com/react-native-device-info/-/react-native-device-info-1.5.1.tgz#46810a42724089c7d4a0900974a1562bce057e73"
   integrity sha512-AePzRi/2C4LokVYfjV9SjIHv0zHgI0/rMYxVWe5KcXvuSuspUUrx4oq3+jGZMwbsJP1/aqvslMq4TEJG7F8yNA==
 
-react-native-gesture-handler@1.1.0:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/react-native-gesture-handler/-/react-native-gesture-handler-1.1.0.tgz#2a7d545ad2e0ca23adce22b2af441ad360ecccee"
-  integrity sha512-E9IKHpmL+sz/iCYkUriTUjBaQBORWV+oheYPQleADkxjo2sYsQfnlyTz4EQYFONkUwJ6WmfTNkYt2/yc5U4Ziw==
+react-native-gesture-handler@1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/react-native-gesture-handler/-/react-native-gesture-handler-1.2.0.tgz#19009d9102bedd3bea0dd295ded110262b86227a"
+  integrity sha512-PBsqfyUlzAQQXVEy5nDB8HpehSalhN8Vlc00VJ4RT0FDxlkbpl1otT6DxUN/shMEEuOkyS9gz80ZzWTfAmeBOQ==
   dependencies:
     hoist-non-react-statics "^2.3.1"
     invariant "^2.2.2"
