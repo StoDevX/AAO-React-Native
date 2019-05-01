@@ -6488,10 +6488,10 @@ react-native-gesture-handler@1.2.0:
     invariant "^2.2.2"
     prop-types "^15.5.10"
 
-react-native-keychain@3.1.1:
-  version "3.1.1"
-  resolved "https://registry.yarnpkg.com/react-native-keychain/-/react-native-keychain-3.1.1.tgz#119cbf734d8dceaf80de82ee979a4db268fbc380"
-  integrity sha512-+qZn6uRevd/rdyzuh4YBBhjhv/hxj+N408+vD8/otnsZ+c3mcc2FmRw3n+n2g0Z6tfgfT30jVETe6ZhfcER7yQ==
+react-native-keychain@3.1.2:
+  version "3.1.2"
+  resolved "https://registry.yarnpkg.com/react-native-keychain/-/react-native-keychain-3.1.2.tgz#777078f411f33e1c85c946d7fb4c8b91d0790ba1"
+  integrity sha512-+bWR9r5u+RLT211SRoqO3EWplSOl50Hy/EDLCNxgl7nGjDtmj7hH9yoefxCvWb5rV6jByrK3UakIwI7k0Lrcuw==
 
 react-native-linear-gradient@2.5.4:
   version "2.5.4"
