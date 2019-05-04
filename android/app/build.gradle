@@ -221,7 +221,7 @@ android {
         resolutionStrategy.force "com.android.support:support-media-compat:${rootProject.ext.supportLibVersion}"
         resolutionStrategy.force "com.android.support:support-v4:${rootProject.ext.supportLibVersion}"
 
-        resolutionStrategy.force 'org.webkit:android-jsc:r236355'
+        resolutionStrategy.force 'org.webkit:android-jsc:r241213'
     }
 }
 
