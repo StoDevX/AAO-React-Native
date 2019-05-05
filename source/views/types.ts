@@ -1,11 +1,11 @@
-import type {
-	NavigationRoute,
-	NavigationScreenProp,
-	NavigationAction,
-} from 'react-navigation'
+export type TopLevelViewPropsType = TopLevelViewPropsTypeWithParams<any>
 
-export type NavType = NavigationScreenProp<NavigationRoute, NavigationAction>
-
-export type TopLevelViewPropsType = {
-	navigation: NavType
+export type TopLevelViewPropsTypeWithParams<P = {}> = {
+	navigation: {
+		navigate: (string, ?Object) => mixed,
+		push: (string, ?Object) => mixed,
+		goBack: () => mixed,
+		getParam: (string, any) => any,
+		state: {params: P},
+	},
 }

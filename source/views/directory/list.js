@@ -1,59 +1,173 @@
 // @flow
 
 import React from 'react'
-import {StyleSheet, View, Text, Image, Platform} from 'react-native'
-import {SearchableAlphabetListView} from '@frogpond/listview'
-import debounce from 'lodash/debounce'
-import type {TopLevelViewPropsType} from '../types'
-import {Row, Column} from '@frogpond/layout'
-import {
-	ListRow,
-	ListSectionHeader,
-	ListSeparator,
-	Detail,
-	Title,
-} from '@frogpond/lists'
-import size from 'lodash/size'
-import sortBy from 'lodash/sortBy'
-import groupBy from 'lodash/groupBy'
-import head from 'lodash/head'
-import uniq from 'lodash/uniq'
-import words from 'lodash/words'
-import deburr from 'lodash/deburr'
-import filter from 'lodash/filter'
-import isString from 'lodash/isString'
+import {StyleSheet, View, Text, Image, FlatList, Platform} from 'react-native'
+import {SearchBar} from '@frogpond/searchbar'
+import type {TopLevelViewPropsTypeWithParams} from '../types'
+import {Column} from '@frogpond/layout'
+import {ListRow, ListSeparator, Detail, Title} from '@frogpond/lists'
 import {fetch} from '@frogpond/fetch'
 import * as c from '@frogpond/colors'
-import startCase from 'lodash/startCase'
-import type {DirectoryType} from './types'
+import {NoticeView, LoadingView} from '@frogpond/notice'
+import {useAsync} from 'react-async'
+import type {DirectoryItem, SearchResults} from './types'
 import Icon from 'react-native-vector-icons/Ionicons'
-import isEmpty from 'lodash/isEmpty'
+import {useThrottle} from 'use-throttle'
 
-const url = 'https://www.stolaf.edu/directory/index.cfm'
+type Props = TopLevelViewPropsTypeWithParams<{}>
 
-const leftSideSpacing = 20
-const rowHeight = Platform.OS === 'ios' ? 58 : 74
-const headerHeight = Platform.OS === 'ios' ? 33 : 41
+class EmptySearchError extends Error {}
+class TooShortSearchError extends Error {}
 
+function searchDirectory(
+	{query}: {query: string},
+	{signal}: {signal: window.AbortController},
+): Promise<SearchResults> {
+	query = query.trim()
+
+	if (!query) {
+		throw new EmptySearchError()
+	}
+
+	if (query.length < 3) {
+		throw new TooShortSearchError()
+	}
+
+	let url = 'https://www.stolaf.edu/directory/search'
+	return fetch(url, {
+		searchParams: {format: 'json', query: query},
+		cache: 'no-store',
+		signal: signal,
+	}).json()
+}
+
+type ReactAsyncResult<T> = {
+	data: ?T,
+	error: ?Error,
+	isLoading: boolean,
+}
+
+export function DirectoryView(props: Props) {
+	let [typedQuery, setTypedQuery] = React.useState('')
+	let searchQuery = useThrottle(typedQuery, 1000)
+
+	let {data, error, isLoading}: ReactAsyncResult<SearchResults> = useAsync(
+		searchDirectory,
+		{query: searchQuery, watch: searchQuery},
+	)
+
+	let results = data ? data.results : []
+
+	let renderRow = ({item}: {item: DirectoryItem}) => (
+		<DirectoryItemRow
+			item={item}
+			onPress={() => {
+				props.navigation.navigate('DirectoryDetailView', {contact: item})
+			}}
+		/>
+	)
+
+	return (
+		<View style={styles.wrapper}>
+			<SearchBar
+				onChange={setTypedQuery}
+				textFieldBackgroundColor="white"
+				value={typedQuery}
+			/>
+
+			{isLoading ? (
+				<LoadingView />
+			) : error instanceof EmptySearchError ? (
+				<NoSearchPerformed />
+			) : !results.length ? (
+				<NoticeView text={`No results found for "${typedQuery}".`} />
+			) : (
+				<FlatList
+					ItemSeparatorComponent={IndentedListSeparator}
+					data={results.map((r, i) => ({...r, key: String(i)}))}
+					keyboardDismissMode="on-drag"
+					keyboardShouldPersistTaps="never"
+					renderItem={renderRow}
+				/>
+			)}
+		</View>
+	)
+}
+DirectoryView.navigationOptions = {
+	title: 'Directory',
+	headerBackTitle: 'Home',
+}
+
+function IndentedListSeparator() {
+	return (
+		<ListSeparator spacing={{left: leftMargin + imageSize + imageMargin}} />
+	)
+}
+
+function NoSearchPerformed() {
+	return (
+		<View style={styles.emptySearch}>
+			<Icon color={c.black} name="ios-search" size={54} />
+			<Text style={styles.emptySearchText}>Search the Directory</Text>
+		</View>
+	)
+}
+
+type DirectoryItemRowProps = {
+	item: DirectoryItem,
+	onPress: () => mixed,
+}
+
+function IosDirectoryItemRow({item, onPress}: DirectoryItemRowProps) {
+	return (
+		<ListRow fullWidth={true} onPress={onPress} style={styles.row}>
+			<Image source={{uri: item.thumbnail}} style={styles.image} />
+			<Column flex={1}>
+				<Title lines={1}>{item.displayName}</Title>
+				<Detail lines={1}>{item.title}</Detail>
+			</Column>
+		</ListRow>
+	)
+}
+
+function AndroidDirectoryItemRow({item, onPress}: DirectoryItemRowProps) {
+	return (
+		<ListRow fullWidth={true} onPress={onPress} style={styles.row}>
+			<Image source={{uri: item.thumbnail}} style={styles.image} />
+			<Column flex={1}>
+				<Title lines={1}>{item.displayName}</Title>
+				<Detail lines={1}>{item.title}</Detail>
+			</Column>
+		</ListRow>
+	)
+}
+
+const DirectoryItemRow =
+	Platform.OS === 'ios' ? IosDirectoryItemRow : AndroidDirectoryItemRow
+
+const leftMargin = 15
+const imageSize = 35
+const imageMargin = 10
 const styles = StyleSheet.create({
 	wrapper: {
 		flex: 1,
 	},
 	row: {
-		height: rowHeight,
-		marginLeft: 22,
-	},
-	rowSectionHeader: {
-		height: headerHeight,
+		flexDirection: 'row',
+		alignItems: 'center',
 	},
 	image: {
-		width: 35,
-		marginRight: 10,
+		resizeMode: 'cover',
+		width: imageSize,
+		height: imageSize,
+		borderRadius: imageSize / 2,
+		marginRight: imageMargin,
+		marginLeft: leftMargin,
 	},
 	emptySearch: {
 		flex: 1,
-		top: -150,
 		alignItems: 'center',
+		justifyContent: 'center',
 	},
 	emptySearchText: {
 		fontSize: 18,
@@ -63,182 +177,3 @@ const styles = StyleSheet.create({
 		paddingBottom: 10,
 	},
 })
-
-export class DirectoryView extends React.Component {
-	static navigationOptions = {
-		title: 'Directory',
-		headerBackTitle: 'Home',
-	}
-
-	props: TopLevelViewPropsType
-
-	searchBar: any
-
-	state: {
-		results: {[key: string]: Array<DirectoryType>},
-		refreshing: boolean,
-		error: boolean,
-		loaded: boolean,
-	} = {
-		results: {},
-		refreshing: false,
-		error: false,
-		loaded: false,
-	}
-
-	fetchData = async (query: string) => {
-		try {
-			let responseData: Array<DirectoryType> = await fetch(url, {
-				cache: 'no-store',
-				searchParams: {
-					fuseaction: 'SearchResults',
-					format: 'json',
-					query: query,
-				},
-			}).json()
-
-			const results = responseData.results
-
-			const sortableRegex = /^(St\.? Olaf(?: College)?|The) +/iu
-			const withSortableNames = results.map(item => {
-				const sortableName = item.lastName.replace(sortableRegex, '')
-
-				return {
-					...item,
-					$sortableName: sortableName,
-					$groupableName: head(startCase(sortableName)),
-				}
-			})
-
-			const sorted = sortBy(withSortableNames, '$sortableName')
-			const grouped = groupBy(sorted, '$groupableName')
-			this.setState(() => ({
-				results: grouped,
-			}))
-		} catch (err) {
-			this.setState(() => ({
-				error: true,
-			}))
-			console.error(err)
-		}
-
-		this.setState(() => {
-			loaded: true
-		})
-	}
-
-	renderSectionHeader = ({title}: {title: string}) => {
-		return (
-			<ListSectionHeader
-				spacing={{left: leftSideSpacing}}
-				style={styles.rowSectionHeader}
-				title={title}
-			/>
-		)
-	}
-
-	renderRow = ({item}: {item: DirectoryType}) => {
-		return item.displayName ? (
-			<ListRow
-				arrowPosition="none"
-				contentContainerStyle={[styles.row]}
-				fullWidth={true}
-				onPress={() => this.onPressRow(item)}
-			>
-				<Row>
-					<Image source={{uri: item.thumbnail}} style={styles.image} />
-					<Column flex={1}>
-						<Title lines={1}>{item.displayName}</Title>
-						<Detail lines={1}>{item.title}</Detail>
-					</Column>
-				</Row>
-			</ListRow>
-		) : null
-	}
-
-	renderSeparator = (sectionId: string, rowId: string) => {
-		return (
-			<ListSeparator
-				key={`${sectionId}-${rowId}`}
-				spacing={{left: leftSideSpacing}}
-			/>
-		)
-	}
-
-	onPressRow = (data: DirectoryType) => {
-		this.props.navigation.navigate('DirectoryDetailView', {contact: data})
-	}
-
-	// todo: fix str being null causing a promise exception
-	// todo: fix the ternary form of this returning [''] causing "unable to find node on an unmounted component"
-	splitToArray = (str: string) => {
-		return words(deburr(str.toLowerCase()))
-	}
-
-	// todo: add splits for props that exist depending on type of contact
-	//       e.g. student vs faculty vs staff vs
-	directoryToArray = (entry: DirectoryType) => {
-		return uniq([
-			...this.splitToArray(entry.firstName),
-			...this.splitToArray(entry.lastName),
-			...this.splitToArray(entry.email),
-			...this.splitToArray(entry.title),
-			...this.splitToArray(entry.officePhone),
-			...this.splitToArray(entry.extension),
-		])
-	}
-
-	_performSearch = async (text: string) => {
-		// android clear button returns an object...
-		// ...and we need to check if the query exists
-		if (!isString(text) || !text || isEmpty(text)) {
-			this.setState(() => ({results: []}))
-			return
-		}
-
-		const query = text.toLowerCase()
-		await this.fetchData(query)
-
-		const filteredResults = filter(this.state.results, entry =>
-			this.directoryToArray(entry[0]).some(word => word.startsWith(query)),
-		)
-
-		this.setState(() => ({
-			results: groupBy(uniq(filteredResults), '$groupableName'),
-		}))
-	}
-
-	// we need to make the search run slightly behind the UI
-	performSearch = debounce(this._performSearch, 1000)
-
-	render() {
-		const emptyNotice = !size(this.state.results) ? (
-			<View style={styles.emptySearch}>
-				<Icon color={c.black} name="ios-search" size={54} />
-				<Text style={styles.emptySearchText}>Search the Directory</Text>
-			</View>
-		) : null
-
-		return (
-			<View style={styles.wrapper}>
-				<SearchableAlphabetListView
-					cell={this.renderRow}
-					// just setting cellHeight sends the wrong values on iOS.
-					cellHeight={
-						rowHeight +
-						(Platform.OS === 'ios' ? (11 / 12) * StyleSheet.hairlineWidth : 0)
-					}
-					data={this.state.results}
-					keyboardDismissMode="on-drag"
-					keyboardShouldPersistTaps="never"
-					onSearch={this.performSearch}
-					renderSeparator={this.renderSeparator}
-					sectionHeader={this.renderSectionHeader}
-					sectionHeaderHeight={headerHeight}
-					showsVerticalScrollIndicator={false}
-				/>
-				{emptyNotice}
-			</View>
-		)
-	}
-}

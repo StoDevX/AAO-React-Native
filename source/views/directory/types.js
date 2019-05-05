@@ -1,6 +1,6 @@
 // @flow
 
-type CampusLocationsType = {
+type CampusLocation = {
 	display: string,
 	buildingabbr: string,
 	building: string,
@@ -8,12 +8,12 @@ type CampusLocationsType = {
 	room: number,
 }
 
-type DepartmentType = {
+type Department = {
 	href: string,
 	name: string,
 }
 
-type HomeAddressType = {
+type Address = {
 	zip: string,
 	city: string,
 	country: string,
@@ -21,23 +21,31 @@ type HomeAddressType = {
 	street: Array<string>,
 }
 
-type DirectoryType = {
-	displayName: string,
-	classYear: number,
-	suffixName: string,
-	firstName: string,
-	thumbnail: URL,
-	departments: Array<DepartmentType>,
-	email: string,
-	homePhone: string,
-	onLeave: boolean,
-	homeAddress: HomeAddressType,
-	lastName: string,
-	profileUrl: string,
-	username: string,
-	campusLocations: Array<CampusLocationsType>,
-	title: string,
+export type DirectoryItem = {
+	campusLocations: Array<CampusLocation>,
+	classYear: ?number,
+	departments: Array<Department>,
+	displayName: ?string,
+	displayTitle: ?string,
+	email: ?string,
+	firstName: ?string,
+	homeAddress: Address,
+	homePhone: ?string,
+	lastName: ?string,
+	officeHours: ?string,
+	onLeave: ?boolean,
 	photo: string,
-	officeHours: string,
-	displayTitle: string,
+	profileUrl: ?string,
+	suffixName: ?string,
+	thumbnail: string,
+	title: ?string,
+	username: ?string,
+}
+
+export type SearchResults = {
+	meta: {
+		count: number,
+		fullCount: number,
+	},
+	results: Array<DirectoryItem>,
 }
