@@ -11,6 +11,7 @@ import * as c from '@frogpond/colors'
 import {useDebounce} from '@frogpond/use-debounce'
 import {NoticeView, LoadingView} from '@frogpond/notice'
 import {useAsync} from 'react-async'
+import {List, Avatar} from 'react-native-paper'
 import type {DirectoryItem, SearchResults} from './types'
 import Icon from 'react-native-vector-icons/Ionicons'
 
@@ -71,7 +72,7 @@ export function DirectoryView(props: Props) {
 		<View style={styles.wrapper}>
 			<SearchBar
 				onChange={setTypedQuery}
-				textFieldBackgroundColor="white"
+				style={styles.search}
 				value={typedQuery}
 			/>
 
@@ -123,26 +124,38 @@ type DirectoryItemRowProps = {
 }
 
 function IosDirectoryItemRow({item, onPress}: DirectoryItemRowProps) {
+	let shortRoom = item.campusLocations.map(loc => `${loc.buildingabbr} ${loc.room}`.trim()).join(' / ')
+	let description = shortRoom && item.title ? `${shortRoom} • ${item.title}` : shortRoom ? shortRoom : item.title
+
 	return (
 		<ListRow fullWidth={true} onPress={onPress} style={styles.row}>
 			<Image source={{uri: item.thumbnail}} style={styles.image} />
 			<Column flex={1}>
 				<Title lines={1}>{item.displayName}</Title>
-				<Detail lines={1}>{item.title}</Detail>
+				<Detail lines={1}>{description}</Detail>
 			</Column>
 		</ListRow>
 	)
 }
 
 function AndroidDirectoryItemRow({item, onPress}: DirectoryItemRowProps) {
+	let shortRoom = item.campusLocations.map(loc => `${loc.buildingabbr} ${loc.room}`.trim()).join(' / ')
+	let description = shortRoom && item.title ? `${shortRoom} • ${item.title}` : shortRoom ? shortRoom : item.title
+
 	return (
-		<ListRow fullWidth={true} onPress={onPress} style={styles.row}>
-			<Image source={{uri: item.thumbnail}} style={styles.image} />
-			<Column flex={1}>
-				<Title lines={1}>{item.displayName}</Title>
-				<Detail lines={1}>{item.title}</Detail>
-			</Column>
-		</ListRow>
+		<List.Item
+			description={description}
+			left={props => (
+				<Avatar.Image
+					{...props}
+					size={42}
+					source={{uri: item.thumbnail}}
+					style={[props.style, styles.image]}
+				/>
+			)}
+			onPress={onPress}
+			title={item.displayName}
+		/>
 	)
 }
 
@@ -155,19 +168,27 @@ const imageMargin = 10
 const styles = StyleSheet.create({
 	wrapper: {
 		flex: 1,
+		backgroundColor: c.white,
 	},
+	search: Platform.OS === 'ios' ? {} : {margin: 8},
 	row: {
 		flexDirection: 'row',
 		alignItems: 'center',
 	},
-	image: {
-		resizeMode: 'cover',
-		width: imageSize,
-		height: imageSize,
-		borderRadius: imageSize / 2,
-		marginRight: imageMargin,
-		marginLeft: leftMargin,
-	},
+	image:
+		Platform.OS === 'ios'
+			? {
+					resizeMode: 'cover',
+					width: imageSize,
+					height: imageSize,
+					borderRadius: imageSize / 2,
+					marginRight: imageMargin,
+					marginLeft: leftMargin,
+			  }
+			: {
+					alignSelf: 'center',
+					marginHorizontal: 8,
+			  },
 	emptySearch: {
 		flex: 1,
 		alignItems: 'center',
