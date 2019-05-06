@@ -8,11 +8,11 @@ import {Column} from '@frogpond/layout'
 import {ListRow, ListSeparator, Detail, Title} from '@frogpond/lists'
 import {fetch} from '@frogpond/fetch'
 import * as c from '@frogpond/colors'
+import {useDebounce} from '@frogpond/use-debounce'
 import {NoticeView, LoadingView} from '@frogpond/notice'
 import {useAsync} from 'react-async'
 import type {DirectoryItem, SearchResults} from './types'
 import Icon from 'react-native-vector-icons/Ionicons'
-import {useThrottle} from 'use-throttle'
 
 type Props = TopLevelViewPropsTypeWithParams<{}>
 
@@ -49,7 +49,7 @@ type ReactAsyncResult<T> = {
 
 export function DirectoryView(props: Props) {
 	let [typedQuery, setTypedQuery] = React.useState('')
-	let searchQuery = useThrottle(typedQuery, 1000)
+	let searchQuery = useDebounce(typedQuery, 1000)
 
 	let {data, error, isLoading}: ReactAsyncResult<SearchResults> = useAsync(
 		searchDirectory,
