@@ -49,7 +49,7 @@ type ReactAsyncResult<T> = {
 
 export function DirectoryView(props: Props) {
 	let [typedQuery, setTypedQuery] = React.useState('')
-	let searchQuery = useDebounce(typedQuery, 1000)
+	let searchQuery = useDebounce(typedQuery, 500)
 
 	let {data, error, isLoading}: ReactAsyncResult<SearchResults> = useAsync(
 		searchDirectory,
