@@ -124,8 +124,15 @@ type DirectoryItemRowProps = {
 }
 
 function IosDirectoryItemRow({item, onPress}: DirectoryItemRowProps) {
-	let shortRoom = item.campusLocations.map(loc => `${loc.buildingabbr} ${loc.room}`.trim()).join(' / ')
-	let description = shortRoom && item.title ? `${shortRoom} • ${item.title}` : shortRoom ? shortRoom : item.title
+	let shortRoom = item.campusLocations
+		.map(loc => `${loc.buildingabbr} ${loc.room}`.trim())
+		.join(' / ')
+	let description =
+		shortRoom && item.title
+			? `${shortRoom} • ${item.title}`
+			: shortRoom
+			? shortRoom
+			: item.title
 
 	return (
 		<ListRow fullWidth={true} onPress={onPress} style={styles.row}>
@@ -139,8 +146,15 @@ function IosDirectoryItemRow({item, onPress}: DirectoryItemRowProps) {
 }
 
 function AndroidDirectoryItemRow({item, onPress}: DirectoryItemRowProps) {
-	let shortRoom = item.campusLocations.map(loc => `${loc.buildingabbr} ${loc.room}`.trim()).join(' / ')
-	let description = shortRoom && item.title ? `${shortRoom} • ${item.title}` : shortRoom ? shortRoom : item.title
+	let shortRoom = item.campusLocations
+		.map(loc => `${loc.buildingabbr} ${loc.room}`.trim())
+		.join(' / ')
+	let description =
+		shortRoom && item.title
+			? `${shortRoom} • ${item.title}`
+			: shortRoom
+			? shortRoom
+			: item.title
 
 	return (
 		<List.Item

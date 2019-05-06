@@ -112,15 +112,17 @@ export function DirectoryDetailView(props: Props) {
 
 				{campusLocations.map((loc, i) => {
 					let shortRoom = `${loc.buildingabbr} ${loc.room}`.trim()
-					return (<List.Item
-						key={i}
-						description={`${shortRoom ? `${shortRoom} • ` : ''}${loc.phone}`}
-						left={props => <List.Icon {...props} icon="room" />}
-						onPress={() => callPhone(loc.phone)}
-						right={props => <List.Icon {...props} icon="phone" />}
-						title={loc.display}
-					/>
-				)})}
+					return (
+						<List.Item
+							key={i}
+							description={`${shortRoom ? `${shortRoom} • ` : ''}${loc.phone}`}
+							left={props => <List.Icon {...props} icon="room" />}
+							onPress={() => callPhone(loc.phone)}
+							right={props => <List.Icon {...props} icon="phone" />}
+							title={loc.display}
+						/>
+					)
+				})}
 
 				{profileUrl ? (
 					<List.Item
