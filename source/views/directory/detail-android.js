@@ -1,14 +1,21 @@
 // @flow
 
 import React from 'react'
-import {ScrollView, Text, StyleSheet, Image} from 'react-native'
-import {Card} from '@frogpond/silly-card'
+import {ScrollView, View, Text, StyleSheet} from 'react-native'
 import {openUrl} from '@frogpond/open-url'
 import {callPhone} from '../../components/call-phone'
 import {sendEmail} from '../../components/send-email'
-import {Title, Detail} from '@frogpond/lists'
 import * as c from '@frogpond/colors'
 import type {DirectoryItem} from './types'
+import {
+	Avatar,
+	Title,
+	Subheading,
+	Chip,
+	FAB,
+	List,
+	Portal,
+} from 'react-native-paper'
 import type {TopLevelViewPropsTypeWithParams} from '../types'
 
 type Props = TopLevelViewPropsTypeWithParams<{contact: DirectoryItem}>
@@ -23,76 +30,124 @@ export function DirectoryDetailView(props: Props) {
 		profileUrl,
 		email,
 		departments,
+		username,
 	} = props.navigation.state.params.contact
 
+	let [fabOpen, setFabOpen] = React.useState(false)
+
+	let fabActions = [
+		...campusLocations.map(loc => ({
+			icon: 'phone',
+			label:
+				campusLocations.length === 1
+					? 'Call'
+					: `Call ${loc.buildingabbr} ${loc.room}`,
+			onPress: () => callPhone(loc.phone),
+		})),
+		...(email
+			? [
+					{
+						icon: 'email',
+						label: 'Email',
+						onPress: () => sendEmail({to: [email], subject: '', body: ''}),
+					},
+			  ]
+			: []),
+	]
+
+	let showFab = fabActions.length >= 1
+
 	return (
-		<ScrollView>
-			<Image source={{uri: photo}} style={styles.image} />
-			<Title style={[styles.header, styles.headerName]}>{displayName}</Title>
-			<Detail style={[styles.header, styles.headerTitle]}>
-				{displayTitle}
-			</Detail>
-
-			{officeHours ? (
-				<Card header="Office Hours" style={styles.card}>
-					<Text style={styles.cardBody}>{officeHours}</Text>
-				</Card>
+		<>
+			{showFab ? (
+				<Portal>
+					<FAB.Group
+						actions={fabActions}
+						icon={fabOpen ? 'close' : 'more-vert'}
+						onStateChange={({open}) => setFabOpen(open)}
+						open={fabOpen}
+					/>
+				</Portal>
 			) : null}
 
-			{email ? (
-				<Card header="Email" style={styles.card}>
-					<Text
-						onPress={() => sendEmail({to: [email], subject: '', body: ''})}
-						style={styles.cardBody}
-					>
-						{email}
-					</Text>
-				</Card>
-			) : null}
+			<ScrollView contentContainerStyle={showFab ? styles.fabbedContainer : {}}>
+				<Avatar.Image size={96} source={{uri: photo}} style={styles.image} />
 
-			{campusLocations.map((loc, i) => {
-				return (
-					<Card key={i} header="Office" style={styles.card}>
-						<Text style={styles.cardBody}>Room: {loc.display}</Text>
-						<Text
-							onPress={() => callPhone(loc.phone, {prompt: false})}
-							style={styles.cardBody}
-						>
-							Phone: {loc.phone}
-						</Text>
-					</Card>
-				)
-			})}
+				<Title style={[styles.header, styles.headerName]}>{displayName}</Title>
 
-			{profileUrl ? (
-				<Card header="Profile" style={styles.card}>
-					<Text onPress={() => openUrl(profileUrl)} style={styles.cardBody}>
-						{profileUrl}
-					</Text>
-				</Card>
-			) : null}
+				<Subheading style={[styles.header, styles.headerTitle]}>
+					{displayTitle}
+				</Subheading>
 
-			{departments.length ? (
-				<Card
-					header={departments.length > 1 ? 'Departments' : 'Department'}
-					style={styles.card}
-				>
+				<View style={styles.departments}>
 					{departments.map((dept, key) => (
-						<Text
+						<Chip
 							key={key}
+							accessibilityLabel={`Department: ${dept.name}`}
+							icon="group"
 							onPress={() => openUrl(dept.href)}
-							style={styles.cardBody}
+							style={styles.departmentChip}
 						>
 							{dept.name}
-						</Text>
+						</Chip>
 					))}
-				</Card>
-			) : null}
+				</View>
 
-			<Text selectable={true} style={[styles.footer, styles.poweredBy]}>
-				Powered by the St. Olaf Directory
-			</Text>
-		</ScrollView>
+				{officeHours ? (
+					<List.Item
+						description={officeHours}
+						left={props => <List.Icon {...props} icon="sentiment-satisfied" />}
+						title="Office Hours"
+					/>
+				) : null}
+
+				{email ? (
+					<List.Item
+						description={email}
+						left={props => <List.Icon {...props} icon="email" />}
+						onPress={() => sendEmail({to: [email], subject: '', body: ''})}
+						title="Email"
+					/>
+				) : null}
+
+				{campusLocations.map((loc, i) => {
+					let shortRoom = `${loc.buildingabbr} ${loc.room}`.trim()
+					return (<List.Item
+						key={i}
+						description={`${shortRoom ? `${shortRoom} • ` : ''}${loc.phone}`}
+						left={props => <List.Icon {...props} icon="room" />}
+						onPress={() => callPhone(loc.phone)}
+						right={props => <List.Icon {...props} icon="phone" />}
+						title={loc.display}
+					/>
+				)})}
+
+				{profileUrl ? (
+					<List.Item
+						description={profileUrl}
+						left={props => <List.Icon {...props} icon="link" />}
+						onPress={() => openUrl(profileUrl)}
+						title="Professional Profile"
+					/>
+				) : null}
+
+				{username ? (
+					<List.Item
+						left={props => <List.Icon {...props} icon="open-in-new" />}
+						onPress={() =>
+							openUrl(
+								`https://www.stolaf.edu/directory/search?lookup=${username}`,
+							)
+						}
+						title="View on the St. Olaf Directory"
+					/>
+				) : null}
+
+				<Text selectable={true} style={[styles.footer, styles.poweredBy]}>
+					Powered by the St. Olaf Directory
+				</Text>
+			</ScrollView>
+		</>
 	)
 }
 DirectoryDetailView.navigationOptions = {
@@ -101,13 +156,18 @@ DirectoryDetailView.navigationOptions = {
 
 const styles = StyleSheet.create({
 	image: {
-		width: 100,
-		height: 100,
 		alignSelf: 'center',
-		borderRadius: 50,
-		borderWidth: 0.2,
-		borderColor: c.black,
 		marginTop: 10,
+	},
+	departments: {
+		flexDirection: 'row',
+		justifyContent: 'center',
+	},
+	departmentChip: {
+		margin: 2,
+	},
+	fabbedContainer: {
+		paddingBottom: 50,
 	},
 	header: {
 		justifyContent: 'center',
@@ -130,16 +190,5 @@ const styles = StyleSheet.create({
 	},
 	poweredBy: {
 		paddingBottom: 20,
-	},
-	card: {
-		marginBottom: 20,
-	},
-	cardBody: {
-		color: c.black,
-		paddingTop: 13,
-		paddingBottom: 13,
-		paddingLeft: 16,
-		paddingRight: 16,
-		fontSize: 16,
 	},
 })
