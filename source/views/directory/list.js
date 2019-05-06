@@ -84,7 +84,7 @@ export function DirectoryView(props: Props) {
 			) : error ? (
 				<NoticeView text="There was an error. Please try again." />
 			) : !results.length ? (
-				<NoticeView text={`No results found for "${typedQuery}".`} />
+				<NoticeView text={`No results found for "${searchQuery}".`} />
 			) : (
 				<FlatList
 					ItemSeparatorComponent={IndentedListSeparator}
