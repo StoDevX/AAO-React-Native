@@ -29,7 +29,7 @@ function searchDirectory(
 		throw new EmptySearchError()
 	}
 
-	if (query.length < 3) {
+	if (query.length < 2) {
 		throw new TooShortSearchError()
 	}
 
@@ -79,6 +79,10 @@ export function DirectoryView(props: Props) {
 				<LoadingView />
 			) : error instanceof EmptySearchError ? (
 				<NoSearchPerformed />
+			) : error instanceof TooShortSearchError ? (
+				<NoticeView text="Your search is too short." />
+			) : error ? (
+				<NoticeView text="There was an error. Please try again." />
 			) : !results.length ? (
 				<NoticeView text={`No results found for "${typedQuery}".`} />
 			) : (
