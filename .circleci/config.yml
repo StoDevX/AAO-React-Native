@@ -372,7 +372,7 @@ jobs:
       - danger
 
   ios: &ios
-    macos: {xcode: '10.2.0'}
+    macos: {xcode: '10.2.1'}
     environment: &ios-env
       task: IOS
       FASTLANE_SKIP_UPDATE_CHECK: '1'
