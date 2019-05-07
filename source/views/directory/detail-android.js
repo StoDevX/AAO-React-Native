@@ -164,6 +164,7 @@ const styles = StyleSheet.create({
 	departments: {
 		flexDirection: 'row',
 		justifyContent: 'center',
+		flexWrap: 'wrap',
 	},
 	departmentChip: {
 		margin: 2,
