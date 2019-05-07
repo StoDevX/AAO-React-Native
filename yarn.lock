@@ -6563,11 +6563,6 @@ react-native-search-bar@3.4.2:
   dependencies:
     prop-types "^15.5.10"
 
-react-native-searchbar-controlled@2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/react-native-searchbar-controlled/-/react-native-searchbar-controlled-2.0.0.tgz#5f4566e3dd354773aada7887477db11477f54b04"
-  integrity sha512-QQmMcv6b4lKDdRGx3t3tMZXRskzYZEnjBphy9UWB8QELqdgDj8q2BjsrOG2xGvJDpnfZoRa3rXRV+2s50zA2nw==
-
 react-native-sentry@0.42.0:
   version "0.42.0"
   resolved "https://registry.yarnpkg.com/react-native-sentry/-/react-native-sentry-0.42.0.tgz#9cd59659d9b6cd36d6fc4c48f50613cd82cde25f"
