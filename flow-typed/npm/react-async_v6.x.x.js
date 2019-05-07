@@ -2,45 +2,52 @@
 // flow-typed version: <<STUB>>/react-async_v6.2.0/flow_v0.92.1
 
 declare module 'react-async' {
-  declare export type Result<T> = {
-    data: ?T,
-    error: ?Error,
-    value: ?T | Error,
-    initialValue: T | Error,
-    startedAt: Date,
-    finishedAt: Date,
-    isPending: boolean,
-    isInitial: boolean,
-    isFulfilled: boolean,
-    isRejected: boolean,
-    isSettled: boolean,
-    status: 'initial' | 'pending' | 'fulfilled' | 'rejected',
-    counter: number,
-    cancel: () => void,
-    run: (...Array<any>) => void,
-    reload: () => void,
-    setData: (T, cb?: () => void) => T,
-    setError: (Error, cb?: () => void) => Error,
-  }
+  import type {Node} from 'react'
 
-  declare type PromiseFn<T> = (Object, {signal: window.AbortController}) => Promise<T>
+  declare export type PromiseFn<T> = (props: Object, controller: AbortController) => Promise<T>
+  declare export type DeferFn<T> = (args: any[], props: Object, controller: AbortController) => Promise<T>
 
-  declare type KnownArgs<T> = {
+  declare export type AsyncOptions<T> = {
     promise?: Promise<T>,
     promiseFn?: PromiseFn<T>,
-    deferFn?: () => Promise<T>,
+    deferFn?: DeferFn<T>,
     watch?: any,
-    watchFn?: () => any,
+    watchFn?: (props: Object, prevProps: Object) => any,
+    initialValue?: T,
+    onResolve?: (data: T) => void,
+    onReject?: (error: Error) => void,
+    [prop: string]: any,
+  }
+
+  declare type AbstractState<T> = {
     initialValue?: T | Error,
-    onResolve?: () => mixed,
-    onReject?: () => mixed,
+    counter: number,
+    cancel: () => void,
+    run: (...args: any[]) => Promise<T>,
+    reload: () => void,
+    setData: (data: T, callback?: () => void) => T,
+    setError: (error: Error, callback?: () => void) => Error,
   }
 
-  declare type PromiseArgs = {
-    [string]: any,
+  declare export type AsyncState<T> = AbstractState<T> & {
+    initialValue?: ?T,
+    data: ?T,
+    error: ?Error,
+    value: ?(T | Error),
+    startedAt: ?Date,
+    finishedAt: ?Date,
+    status: "initial" | "pending" | "fulfilled" | "rejected",
+    isInitial: boolean,
+    isPending: boolean,
+    isLoading: boolean,
+    isFulfilled: boolean,
+    isResolved: boolean,
+    isRejected: boolean,
+    isSettled: boolean,
   }
 
-  declare type Args<T> = $Rest<KnownArgs<T>, PromiseArgs>
-
-  declare export function useAsync<T>(args: Args<T> | PromiseFn<T>, args2?: Args<T>): Result<T>;
+  declare export function useAsync<T>(
+    arg1: AsyncOptions<T> | PromiseFn<T>,
+    arg2?: AsyncOptions<T>,
+  ): AsyncState<T>
 }

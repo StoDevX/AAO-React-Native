@@ -20,14 +20,13 @@ import * as c from '@frogpond/colors'
 import type {StudentOrgType} from './types'
 import {API} from '@frogpond/api'
 import {fetch} from '@frogpond/fetch'
-import {useAsync, type Result} from 'react-async'
+import {useAsync, type AsyncState} from 'react-async'
 import {useDebounce} from '@frogpond/use-debounce'
 
 const fetchOrgs = (args: {
 	signal: window.AbortController,
 }): Promise<Array<StudentOrgType>> => {
-	return fetch(API('/orgs'), {signal: args.signal})
-		.json()
+	return fetch(API('/orgs'), {signal: args.signal}).json()
 }
 
 const leftSideSpacing = 20
@@ -86,8 +85,8 @@ export function StudentOrgsView(props: Props) {
 		error,
 		reload,
 		isPending,
-	}: Result<Array<StudentOrgType>> = useAsync(fetchOrgs, {
-		onResolve: () => setIsInitial(false)
+	}: AsyncState<?Array<StudentOrgType>> = useAsync(fetchOrgs, {
+		onResolve: () => setIsInitial(false),
 	})
 
 	let results = React.useMemo(() => {
