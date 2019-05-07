@@ -1,0 +1,14 @@
+{
+  "name": "@frogpond/use-debounce",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "author": "",
+  "license": "ISC",
+  "scripts": {
+    "test": "jest"
+  },
+  "peerDependencies": {
+    "react": "^16.0.0"
+  }
+}
