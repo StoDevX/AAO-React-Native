@@ -13,6 +13,7 @@ export const LIST_HEADER_HEIGHT =
 const styles = StyleSheet.create({
 	wrapper: {
 		flex: 1,
+		backgroundColor: white,
 	},
 })
 
@@ -46,11 +47,7 @@ export class SearchableAlphabetListView extends React.Component<Props> {
 
 		return (
 			<View style={styles.wrapper}>
-				<SearchBar
-					onChange={this.props.onSearch}
-					textFieldBackgroundColor={white}
-					value={this.props.query}
-				/>
+				<SearchBar onChange={this.props.onSearch} value={this.props.query} />
 
 				{content}
 			</View>
