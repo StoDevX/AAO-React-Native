@@ -5,14 +5,12 @@ workflow "on-push" {
 
 action "lint" {
   uses = "actions/npm@v2.0.0"
-  runs = "yarn"
-  args = ["lint"]
+  runs = "yarn && yarn lint"
 }
 
 action "formatting" {
   uses = "actions/npm@v2.0.0"
-  runs = "yarn"
-  args = ["pretty -c"]
+  args = "yarn && yarn pretty -c"
 }
 
 action "validate-data" {
@@ -23,10 +21,10 @@ action "validate-data" {
 
 action "data/bus" {
   uses = "actions/npm@v2.0.0"
-  runs = "yarn data && yarn validate-bus-data"
+  runs = "yarn && yarn data && yarn validate-bus-data"
 }
 
 action "data/general" {
   uses = "actions/npm@v2.0.0"
-  runs = "yarn data && yarn validate-data"
+  runs = "yarn && yarn data && yarn validate-data"
 }
