@@ -50,7 +50,9 @@ jobs:
           GIT_COMMIT_DESC: $(Build.SourceVersionMessage)
           FASTLANE_SKIP_UPDATE_CHECK: 1
           FASTLANE_DISABLE_ANIMATION: 1
-          SENTRY_PROPERTIES: '../ios/sentry.properties'
+          SENTRY_PROPERTIES: ../ios/sentry.properties
+          GITHUB_KEYS_REPOSITORY_TOKEN: $(GITHUB_KEYS_REPOSITORY_TOKEN)
+          MATCH_PASSWORD: $(MATCH_PASSWORD)
 
       - bash: |
           set -o pipefail
@@ -122,4 +124,6 @@ jobs:
           GIT_COMMIT_DESC: $(Build.SourceVersionMessage)
           FASTLANE_SKIP_UPDATE_CHECK: 1
           FASTLANE_DISABLE_ANIMATION: 1
-          SENTRY_PROPERTIES: '../android/sentry.properties'
+          SENTRY_PROPERTIES: ../android/sentry.properties
+          GITHUB_KEYS_REPOSITORY_TOKEN: $(GITHUB_KEYS_REPOSITORY_TOKEN)
+          MATCH_PASSWORD: $(MATCH_PASSWORD)
