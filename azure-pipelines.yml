@@ -37,26 +37,36 @@ steps:
   - bash: bundle install --frozen --path ./vendor/bundle
     displayName: 'Install dependencies (bundler)'
 
-  - bash: bundle exec fastlane ios ci-run | tee ./logs/build
+  - bash: |
+      set -o pipefail
+      bundle exec fastlane ios ci-run | tee ./logs/build
     displayName: 'Run Fastlane'
     env:
       GIT_COMMIT_DESC: $(Build.SourceVersionMessage)
 
-  - bash: yarn detox build e2e --configuration ios.sim.release | xcpretty
+  - bash: |
+      set -o pipefail
+      yarn detox build e2e --configuration ios.sim.release | xcpretty
     displayName: 'Detox: build the app'
 
-  - bash: yarn detox test e2e --configuration ios.sim.release --cleanup
+  - bash: |
+      set -o pipefail
+      yarn detox test e2e --configuration ios.sim.release --cleanup
     displayName: 'Detox: test the app'
 
   - task: PublishPipelineArtifact@0
     inputs:
       artifactName: 'app_dSYM'
       targetPath: './ios/build/AllAboutOlaf.app.dSYM.zip'
+    displayName: 'publish app.dsym artifact'
 
   - task: PublishPipelineArtifact@0
     inputs:
       artifactName: 'app_ipa'
       targetPath: './ios/build/AllAboutOlaf.ipa'
+    displayName: 'publish app.ipa artifact'
 
-  - bash: python2 ./scripts/analyze-gym.py -s 20 < ./logs/build | tee ./logs/analysis || true
+  - bash: |
+      set -o pipefail
+      python2 ./scripts/analyze-gym.py -s 20 < ./logs/build | tee ./logs/analysis || true
     displayName: 'Analyze Fastlane Logfile'
