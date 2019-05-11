@@ -40,8 +40,8 @@ steps:
   - bash: gem --version
     displayName: 'rubygems version'
 
-  - bash: bundle --version
-    displayName: 'bundler version'
+  # - bash: bundle --version
+  #   displayName: 'bundler version'
 
   - bash: xcodebuild -version
     displayName: 'xcodebuild version'
