@@ -24,23 +24,12 @@ steps:
       touch logs/build-status
     displayName: 'Set up /logs'
 
-  - bash: node --version
-    displayName: 'node version'
-
-  - bash: yarn --version
-    displayName: 'yarn version'
-
-  - bash: ruby --version
-    displayName: 'ruby version'
-
-  - bash: gem --version
-    displayName: 'rubygems version'
-
-  - bash: bundle --version
-    displayName: 'bundler version'
-
-  - bash: xcodebuild -version
-    displayName: 'xcodebuild version'
+  - {bash: node --version, displayName: 'node version'}
+  - {bash: yarn --version, displayName: 'yarn version'}
+  - {bash: ruby --version, displayName: 'ruby version'}
+  - {bash: gem --version, displayName: 'rubygems version'}
+  - {bash: bundle --version, displayName: 'bundler version'}
+  - {bash: xcodebuild -version, displayName: 'xcodebuild version'}
 
   - bash: yarn install --frozen-lockfile
     displayName: 'Install dependencies (yarn)'
