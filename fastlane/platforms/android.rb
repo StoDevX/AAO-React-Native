@@ -35,7 +35,7 @@ platform :android do
 	private_lane :submit do |options|
 		track = options[:track]
 
-		# matchesque
+		matchesque
 		build(track: track)
 
 		lane_context[SharedValues::GRADLE_ALL_AAB_OUTPUT_PATHS] =
@@ -67,7 +67,7 @@ platform :android do
 	desc 'Run the appropriate action on CI'
 	lane :'ci-run' do
 		# prepare for the bright future with signed android betas
-		# authorize_ci_for_keys
+		authorize_ci_for_keys
 
 		# and run
 		auto_beta

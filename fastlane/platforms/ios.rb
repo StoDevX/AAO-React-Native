@@ -100,7 +100,7 @@ platform :ios do
 	desc 'Run iOS builds or tests, as appropriate'
 	lane :'ci-run' do
 		# set up things so they can run
-		# authorize_ci_for_keys
+		authorize_ci_for_keys
 
 		# and run
 		auto_beta
