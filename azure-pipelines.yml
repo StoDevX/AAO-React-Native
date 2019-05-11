@@ -118,7 +118,7 @@ jobs:
 
       - bash: |
           set -o pipefail
-          bundle exec fastlane ios ci-run
+          bundle exec fastlane android ci-run
         displayName: 'Run Fastlane'
         env:
           GIT_COMMIT_DESC: $(Build.SourceVersionMessage)
