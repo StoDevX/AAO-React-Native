@@ -40,7 +40,7 @@ steps:
   - bash: gem --version
     displayName: 'rubygems version'
 
-  - bash: bundler --version
+  - bash: bundle --version
     displayName: 'bundler version'
 
   - bash: xcodebuild -version
