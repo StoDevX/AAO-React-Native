@@ -73,7 +73,7 @@ jobs:
           targetPath: './ios/build/AllAboutOlaf.ipa'
         displayName: 'publish app.ipa artifact'
 
-  - job: Linux
+  - job: Android
     pool: {vmImage: ubuntu-16.04}
     steps:
       - task: UseNode@1
