@@ -11,17 +11,15 @@ pool:
 
 steps:
   - task: UseNode@1
-    inputs:
-      version: '10.x'
+    inputs: {version: '10.x'}
 
-  - bash: |
-      brew tap wix/brew
-      brew install applesimutils
-    displayName: 'Set up appleSimUtils for detox'
+  - bash: brew tap wix/brew
+    displayName: 'tap wix/brew'
 
-  - bash: |
-      mkdir -p logs/
-      touch logs/build-status
+  - bash: brew install applesimutils
+    displayName: 'install applesimutils for detox'
+
+  - bash: mkdir -p logs/
     displayName: 'Set up /logs'
 
   - {bash: node --version, displayName: 'node version'}
@@ -39,20 +37,22 @@ steps:
 
   - bash: |
       set -o pipefail
-      bundle exec fastlane ios ci-run | tee ./logs/build
+      bundle exec fastlane ios ci-run
     displayName: 'Run Fastlane'
     env:
       GIT_COMMIT_DESC: $(Build.SourceVersionMessage)
 
   - bash: |
       set -o pipefail
-      yarn detox build e2e --configuration ios.sim.release | xcpretty
+      yarn detox build e2e --configuration ios.sim.release
     displayName: 'Detox: build the app'
 
   - bash: |
       set -o pipefail
       yarn detox test e2e --configuration ios.sim.release --cleanup
     displayName: 'Detox: test the app'
+
+  - bash: ls ./*
 
   - task: PublishPipelineArtifact@0
     inputs:
@@ -65,8 +65,3 @@ steps:
       artifactName: 'app_ipa'
       targetPath: './ios/build/AllAboutOlaf.ipa'
     displayName: 'publish app.ipa artifact'
-
-  - bash: |
-      set -o pipefail
-      python2 ./scripts/analyze-gym.py -s 20 < ./logs/build | tee ./logs/analysis || true
-    displayName: 'Analyze Fastlane Logfile'
