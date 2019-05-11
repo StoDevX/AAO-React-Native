@@ -6,62 +6,109 @@ trigger:
     exclude:
       - README.md
 
-pool:
-  vmImage: 'macos-10.14'
+jobs:
+  - job: iOS
+    pool: {vmImage: macos-10.14}
+    steps:
+      - task: UseNode@1
+        inputs: {version: '10.x'}
 
-steps:
-  - task: UseNode@1
-    inputs: {version: '10.x'}
+      - bash: brew tap wix/brew
+        displayName: 'tap wix/brew'
+        env:
+          HOMEBREW_NO_AUTO_UPDATE: 1
 
-  - bash: brew tap wix/brew
-    displayName: 'tap wix/brew'
+      - bash: brew install applesimutils
+        displayName: 'install applesimutils for detox'
+        env:
+          HOMEBREW_NO_AUTO_UPDATE: 1
 
-  - bash: brew install applesimutils
-    displayName: 'install applesimutils for detox'
+      - bash: mkdir -p logs/
+        displayName: 'Set up /logs'
 
-  - bash: mkdir -p logs/
-    displayName: 'Set up /logs'
+      - {bash: node --version, displayName: 'node version'}
+      - {bash: yarn --version, displayName: 'yarn version'}
+      - {bash: ruby --version, displayName: 'ruby version'}
+      - {bash: gem --version, displayName: 'rubygems version'}
+      - {bash: bundle --version, displayName: 'bundler version'}
+      - {bash: xcodebuild -version, displayName: 'xcodebuild version'}
 
-  - {bash: node --version, displayName: 'node version'}
-  - {bash: yarn --version, displayName: 'yarn version'}
-  - {bash: ruby --version, displayName: 'ruby version'}
-  - {bash: gem --version, displayName: 'rubygems version'}
-  - {bash: bundle --version, displayName: 'bundler version'}
-  - {bash: xcodebuild -version, displayName: 'xcodebuild version'}
+      - bash: yarn install --frozen-lockfile
+        displayName: 'Install dependencies (yarn)'
 
-  - bash: yarn install --frozen-lockfile
-    displayName: 'Install dependencies (yarn)'
+      - bash: bundle install --frozen --path ./vendor/bundle
+        displayName: 'Install dependencies (bundler)'
 
-  - bash: bundle install --frozen --path ./vendor/bundle
-    displayName: 'Install dependencies (bundler)'
+      - bash: |
+          set -o pipefail
+          bundle exec fastlane ios ci-run
+        displayName: 'Run Fastlane'
+        env:
+          GIT_COMMIT_DESC: $(Build.SourceVersionMessage)
+          FASTLANE_SKIP_UPDATE_CHECK: 1
+          FASTLANE_DISABLE_ANIMATION: 1
+          SENTRY_PROPERTIES: '../ios/sentry.properties'
 
-  - bash: |
-      set -o pipefail
-      bundle exec fastlane ios ci-run
-    displayName: 'Run Fastlane'
-    env:
-      GIT_COMMIT_DESC: $(Build.SourceVersionMessage)
+      - bash: |
+          set -o pipefail
+          yarn detox build e2e --configuration ios.sim.release
+        displayName: 'Detox: build the app'
 
-  - bash: |
-      set -o pipefail
-      yarn detox build e2e --configuration ios.sim.release
-    displayName: 'Detox: build the app'
+      - bash: |
+          set -o pipefail
+          yarn detox test e2e --configuration ios.sim.release --cleanup
+        displayName: 'Detox: test the app'
 
-  - bash: |
-      set -o pipefail
-      yarn detox test e2e --configuration ios.sim.release --cleanup
-    displayName: 'Detox: test the app'
+      - bash: ls ./*
 
-  - bash: ls ./*
+      - task: PublishPipelineArtifact@0
+        inputs:
+          artifactName: 'app_dSYM'
+          targetPath: './ios/build/AllAboutOlaf.app.dSYM.zip'
+        displayName: 'publish app.dsym artifact'
 
-  - task: PublishPipelineArtifact@0
-    inputs:
-      artifactName: 'app_dSYM'
-      targetPath: './ios/build/AllAboutOlaf.app.dSYM.zip'
-    displayName: 'publish app.dsym artifact'
+      - task: PublishPipelineArtifact@0
+        inputs:
+          artifactName: 'app_ipa'
+          targetPath: './ios/build/AllAboutOlaf.ipa'
+        displayName: 'publish app.ipa artifact'
 
-  - task: PublishPipelineArtifact@0
-    inputs:
-      artifactName: 'app_ipa'
-      targetPath: './ios/build/AllAboutOlaf.ipa'
-    displayName: 'publish app.ipa artifact'
+  - job: Linux
+    pool: {vmImage: ubuntu-16.04}
+    steps:
+      - task: UseNode@1
+        inputs: {version: '10.x'}
+
+      - bash: mkdir -p logs/
+        displayName: 'Set up /logs'
+
+      - {bash: node --version, displayName: 'node version'}
+      - {bash: yarn --version, displayName: 'yarn version'}
+      - {bash: ruby --version, displayName: 'ruby version'}
+      - {bash: gem --version, displayName: 'rubygems version'}
+      - {bash: bundle --version, displayName: 'bundler version'}
+      - {bash: cd android && ./gradlew --version, displayName: 'gradle version'}
+
+      - bash: yarn install --frozen-lockfile
+        displayName: 'Install dependencies (yarn)'
+
+      - bash: bundle install --frozen --path ./vendor/bundle
+        displayName: 'Install dependencies (bundler)'
+
+      - bash: cd android && ./gradlew androidDependencies --console=plain
+        displayName: 'Install dependencies (gradle)'
+        env:
+          TERM: xterm-256color
+
+      # - bash: echo 'org.gradle.workers.max=2' >> ./android/gradle.properties
+      #   displayName:
+
+      - bash: |
+          set -o pipefail
+          bundle exec fastlane ios ci-run
+        displayName: 'Run Fastlane'
+        env:
+          GIT_COMMIT_DESC: $(Build.SourceVersionMessage)
+          FASTLANE_SKIP_UPDATE_CHECK: 1
+          FASTLANE_DISABLE_ANIMATION: 1
+          SENTRY_PROPERTIES: '../android/sentry.properties'
