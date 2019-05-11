@@ -6,6 +6,9 @@ trigger:
     exclude:
       - README.md
 
+variables:
+  - group: github-keys
+
 jobs:
   - job: iOS
     pool: {vmImage: macos-10.14}
