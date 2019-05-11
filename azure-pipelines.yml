@@ -79,6 +79,10 @@ jobs:
       - task: UseNode@1
         inputs: {version: '10.x'}
 
+      - task: UseRubyVersion@0
+        inputs:
+          versionSpec: '>= 2.5'
+
       - bash: mkdir -p logs/
         displayName: 'Set up /logs'
 
