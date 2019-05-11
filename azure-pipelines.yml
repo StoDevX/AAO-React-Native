@@ -10,10 +10,68 @@ pool:
   vmImage: 'macos-10.14'
 
 steps:
-  - script: echo Hello, world!
-    displayName: 'Run a one-line script'
+  - task: UseRubyVersion@0
+    inputs:
+      versionSpec: '>= 2.5'
 
-  - script: |
-      echo Add other tasks to build, test, and deploy your project.
-      echo See https://aka.ms/yaml
-    displayName: 'Run a multi-line script'
+  - task: UseNode@1
+    inputs:
+      version: '10.x'
+
+  - bash: |
+      brew tap wix/brew
+      brew install applesimutils
+    displayName: 'Set up appleSimUtils for detox'
+
+  - bash: |
+      mkdir -p logs/
+      touch logs/build-status
+    displayName: 'Set up /logs'
+
+  - bash: node --version
+    displayName: 'node version'
+
+  - bash: yarn --version
+    displayName: 'yarn version'
+
+  - bash: ruby --version
+    displayName: 'ruby version'
+
+  - bash: gem --version
+    displayName: 'rubygems version'
+
+  - bash: bundler --version
+    displayName: 'bundler version'
+
+  - bash: xcodebuild -version
+    displayName: 'xcodebuild version'
+
+  - bash: yarn install --frozen-lockfile
+    displayName: 'Install dependencies (yarn)'
+
+  - bash: bundle install --frozen --path ./vendor/bundle
+    displayName: 'Install dependencies (bundler)'
+
+  - bash: bundle exec fastlane ios ci-run | tee ./logs/build
+    displayName: 'Run Fastlane'
+    env:
+      GIT_COMMIT_DESC: $(Build.SourceVersionMessage)
+
+  - bash: yarn detox build e2e --configuration ios.sim.release | xcpretty
+    displayName: 'Detox: build the app'
+
+  - bash: yarn detox test e2e --configuration ios.sim.release --cleanup
+    displayName: 'Detox: test the app'
+
+  - task: PublishPipelineArtifact@0
+    inputs:
+      artifactName: 'app_dSYM'
+      targetPath: './ios/build/AllAboutOlaf.app.dSYM.zip'
+
+  - task: PublishPipelineArtifact@0
+    inputs:
+      artifactName: 'app_ipa'
+      targetPath: './ios/build/AllAboutOlaf.ipa'
+
+  - bash: python2 ./scripts/analyze-gym.py -s 20 < ./logs/build | tee ./logs/analysis || true
+    displayName: 'Analyze Fastlane Logfile'
