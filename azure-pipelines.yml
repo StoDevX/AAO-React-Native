@@ -90,8 +90,12 @@ jobs:
       - {bash: yarn --version, displayName: 'yarn version'}
       - {bash: ruby --version, displayName: 'ruby version'}
       - {bash: gem --version, displayName: 'rubygems version'}
-      - {bash: bundle --version, displayName: 'bundler version'}
       - {bash: cd android && ./gradlew --version, displayName: 'gradle version'}
+
+      - bash: gem install bundler
+        displayName: 'install bundler'
+
+      - {bash: bundle --version, displayName: 'bundler version'}
 
       - bash: yarn install --frozen-lockfile
         displayName: 'Install dependencies (yarn)'
