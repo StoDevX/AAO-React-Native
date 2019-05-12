@@ -24,8 +24,10 @@ executors:
       SENTRY_PROPERTIES: '../ios/sentry.properties'
 
 x-environment: &x-environment
+  FL_NO_UPDATE: '1'
   FASTLANE_SKIP_UPDATE_CHECK: '1'
   FASTLANE_DISABLE_ANIMATION: '1'
+  FASTLANE_DISABLE_COLORS: '1'
   HOMEBREW_NO_AUTO_UPDATE: '1'
 
   # The bundle identifier of your app
