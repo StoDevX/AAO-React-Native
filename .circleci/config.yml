@@ -65,16 +65,18 @@ x-environment: &x-environment
   APPLE_PUSH_EXTENSION_ID: 'NFMTHAZVS9.com.drewvolz.stolaf.onesignal-notification-service-extension'
   APPLE_PUSH_EXTENSION_NAME: 'All About Olaf OneSignal Notification Service Extension'
 
+  BUNDLER_PATH: &bundler-path './.bundle'
+
 commands:
   bundler-cache:
     description: 'Save the Bundler cache'
     steps:
       - save_cache:
           key: &bundler-cache-key >-
-            v3-ruby-dependencies
+            v4-ruby-dependencies
             {{ arch }}
             {{ checksum "Gemfile.lock" }}
-          paths: [./vendor/bundle]
+          paths: [*bundler-path]
 
   bundler-restore:
     description: 'Restore the Bundler cache'
@@ -218,7 +220,7 @@ jobs:
       - run: ruby --version
       - run: gem install bundler
       - run: bundle --version
-      - run: bundle install --frozen --path ./.bundle
+      - run: bundle install --frozen --path "$BUNDLER_PATH"
       - bundler-cache
 
       - run: cd android && ./gradlew --version
@@ -345,7 +347,7 @@ jobs:
       - bundler-restore
       - set-ruby-version
       - run: gem install bundler
-      - run: bundle install --frozen --path ./.bundle
+      - run: bundle install --frozen --path "$BUNDLER_PATH"
       - bundler-cache
 
   ios-build: &ios-build
