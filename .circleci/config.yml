@@ -132,16 +132,18 @@ commands:
   reconcile-git-history:
     description: "Fix CircleCI's git history"
     steps:
-      - run: |
-          if [ -z "$CIRCLE_TAG" ];
-          then
-            git checkout master
-            git reset --hard origin/master
-            git checkout "$CIRCLE_BRANCH"
-            git reset --hard "origin/$CIRCLE_BRANCH"
-          else
-            echo "CIRCLE_TAG was set, didn't do anything"
-          fi
+      - run:
+          name: 'Reconcile Git histories'
+          command: |
+            if [ -z "$CIRCLE_TAG" ];
+            then
+              git checkout master
+              git reset --hard origin/master
+              git checkout "$CIRCLE_BRANCH"
+              git reset --hard "origin/$CIRCLE_BRANCH"
+            else
+              echo "CIRCLE_TAG was set, didn't do anything"
+            fi
 
 workflows:
   version: 2
