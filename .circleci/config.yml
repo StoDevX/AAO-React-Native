@@ -185,11 +185,11 @@ commands:
   yarn-install:
     steps:
       - run: yarn --version
-      - run: ls "$YARN_CACHE_DIR"
+      - run: ls "$YARN_CACHE_DIR" || true
       - run:
           name: 'yarn install'
           command: yarn install --frozen-lockfile --prefer-offline --cache-folder "$YARN_CACHE_DIR"
-      - run: ls "$YARN_CACHE_DIR"
+      - run: ls "$YARN_CACHE_DIR" || true
 
   bundler-install:
     steps:
