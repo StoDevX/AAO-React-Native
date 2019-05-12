@@ -173,8 +173,9 @@ commands:
   skip-if-possible:
     description: "Skip the build, if possible"
     steps:
-      - name: Skip build if possible
-        command: ./scripts/should-skip-build && circleci step halt || echo "Build continuing."
+      - run:
+          name: Skip build if possible
+          command: ./scripts/should-skip-build && circleci step halt || echo "Build continuing."
 
   coveralls:
     description: 'Run Coveralls'
