@@ -28,19 +28,17 @@ x-environment: &x-environment
   FASTLANE_DISABLE_ANIMATION: '1'
   HOMEBREW_NO_AUTO_UPDATE: '1'
 
-  IS_BETA: '$(test -n "$CIRCLE_TAG"; echo $?)'
-  IS_SIGNED: '$(test -n $MATCH_PASSWORD && test -n $FASTLANE_PASSWORD; echo $?)'
-
   # The bundle identifier of your app
-  APP_IDENTIFIER: 'NFMTHAZVS9.com.drewvolz.stolaf'
+  APP_IDENTIFIER: &app-id 'NFMTHAZVS9.com.drewvolz.stolaf'
 
   # Your Apple email address
   APPLE_ID: 'aao_bot@fastmail.fm'
   APPLE_DEV_PORTAL_ID: 'hawkrives@gmail.com'
 
   # Your Apple Developer Team ID, if you are in multiple teams
-  TEAM_ID: 'TMK6S7TPX2'
+  TEAM_ID: &team-id 'TMK6S7TPX2'
   ITC_TEAM_ID: '118781268'
+  PILOT_ITC_PROVIDER: *team-id
 
   # This is a private key. It is not included in the repository.
   # Contact allaboutolaf@stolaf.edu or another admin if you need access.
@@ -53,10 +51,7 @@ x-environment: &x-environment
   GYM_SCHEME: 'AllAboutOlaf'
   GYM_OUTPUT_DIRECTORY: './ios/build'
   GYM_OUTPUT_NAME: 'AllAboutOlaf'
-  GYM_ARCHIVE_PATH: '$(echo -n "./ios/archive/$APP_IDENTIFIER.xcarchive")'
-
-  # set the testflight itunesconnect provider ID from Appfile
-  PILOT_ITC_PROVIDER: '$(echo "$TEAM_ID")'
+  GYM_ARCHIVE_PATH: './ios/archive/app.xcarchive'
 
   GRADLE_FILE: './android/app/build.gradle'
   KEYSTORE_FILE: './android/app/upload-keystore.properties'
@@ -65,12 +60,10 @@ x-environment: &x-environment
   PRETTY_APP_NAME: 'All About Olaf'
   ONESIGNAL_APP_NAME: 'All About Olaf'
   ONESIGNAL_APP_ID: 'a46c6f2f-a240-4908-a359-801911e9b9ea'
-  APPLE_APP_ID: '$(echo -n "$APP_IDENTIFIER")'
+  APPLE_APP_ID: *app-id
   APPLE_APP_NAME: 'All About Olaf'
   APPLE_PUSH_EXTENSION_ID: 'NFMTHAZVS9.com.drewvolz.stolaf.onesignal-notification-service-extension'
   APPLE_PUSH_EXTENSION_NAME: 'All About Olaf OneSignal Notification Service Extension'
-
-  global_GIT_COMMIT_DESC: &git $(git log --format=oneline -n 1 $CIRCLE_SHA1)
 
 commands:
   bundler-cache:
@@ -181,7 +174,7 @@ commands:
     steps:
       - run:
           name: Skip build if possible
-          command: ./scripts/should-skip-build && circleci step halt || echo "Build continuing."
+          command: ./scripts/ci/should-skip-build && circleci step halt || echo "Build continuing."
 
   coveralls:
     description: 'Run Coveralls'
@@ -189,69 +182,40 @@ commands:
       - run:
           name: coveralls
           command: |
-            export COVERALLS_SERVICE_NAME=CircleCI
-            export COVERALLS_SERVICE_JOB_ID=$CIRCLE_BUILD_NUM
+            export COVERALLS_SERVICE_NAME="CircleCI"
+            export COVERALLS_SERVICE_JOB_ID="$CIRCLE_BUILD_NUM"
             if ! [[ $CIRCLE_PR_NUMBER ]]; then
               npx coveralls < ./coverage/lcov.info
             fi
+
+x-tag-filters: &filters {tags: {only: /.*/}}
 
 workflows:
   version: 2
   analyze-and-build:
     jobs: &basic-jobs
-      - simple-test
-      # - cache-yarn-linux:
-      #     filters: &filters {tags: {only: /.*/}}
-      # - cache-bundler-linux:
-      #     filters: &filters {tags: {only: /.*/}}
-      # - ios-prepare:
-      #     filters: *filters
-      #     requires: []
-      # - ios-build: {filters: *filters, requires: [ios-prepare]}
-      # - ios-deploy: {filters: *filters, requires: [ios-build]}
-      # - android-prepare:
-      #     filters: *filters
-      #     requires: [cache-yarn-linux, cache-bundler-linux]
-      # - android-build: {filters: *filters, requires: [android-prepare]}
-      # - android-deploy: {filters: *filters, requires: [android-build]}
+      - ios-prepare: {filters: *filters}
+      - ios-build: {filters: *filters, requires: [ios-prepare]}
+      - ios-deploy: {filters: *filters, requires: [ios-build]}
+
+      - android-prepare: {filters: *filters}
+      - android-build: {filters: *filters, requires: [android-prepare]}
+      - android-deploy: {filters: *filters, requires: [android-build]}
 
 jobs:
-  simple-test:
-    executor: node
-    environment:
+  android-prepare: &android-base
+    executor: android
+    environment: &android-env
       <<: *x-environment
-      injob_GIT_COMMIT_DESC: *git
-    steps:
-      - run: env
-      - run: echo $TEAM_ID
-      - run: echo $PILOT_ITC_PROVIDER
-      - run: echo $global_GIT_COMMIT_DESC
-      - run: echo $injob_GIT_COMMIT_DESC
-      - run:
-          command: echo $instep_GIT_COMMIT_DESC
-          environment:
-            instep_GIT_COMMIT_DESC: *git
-      - run:
-          command: |
-            export INSCRIPT="$(git log --format=oneline -n 1 $CIRCLE_SHA1)"
-            echo $INSCRIPT
-      - run:
-          command: |
-            export INSCRIPT="$injob_GIT_COMMIT_DESC"
-            echo $INSCRIPT
-
-  cache-yarn-linux:
-    executor: node
+      task: ANDROID-prepare
     steps:
       - checkout
+      - skip-if-possible
+
       - run: yarn --version
       - run: yarn install --frozen-lockfile
       - workspace-persist-node_modules
 
-  cache-bundler-linux:
-    executor: ruby
-    steps:
-      - checkout
       - set-ruby-version
       - run: gem --version
       - run: ruby --version
@@ -260,15 +224,6 @@ jobs:
       - run: bundle install --frozen --path ./.bundle
       - workspace-persist-bundler
 
-  android-prepare: &android-base
-    executor: android
-    environment: &android-env
-      <<: *x-environment
-      task: ANDROID-prepare
-    steps:
-      - checkout
-      - reconcile-git-history
-      - skip-if-possible
       - run: cd android && ./gradlew --version
       # - gradle-restore
       - run:
@@ -304,10 +259,10 @@ jobs:
           command: ./scripts/ci/propagate-version.rb
       - run:
           name: 'Authorize CI for keys, if allowed'
-          command: if [[ $IS_SIGNED -eq 1 ]]; then ./scripts/ci/authorize-ci-for-keys.rb; fi
+          command: if ./scripts/ci/is-signed.sh; then ./scripts/ci/authorize-ci-for-keys.rb; fi
       - run:
           name: 'Install certificates, if allowed'
-          command: if [[ $IS_SIGNED -eq 1 ]]; then ./scripts/ci/android/certificates.sh; fi
+          command: if ./scripts/ci/is-signed.sh; then ./scripts/ci/android/certificates.sh; fi
 
       - run: mkdir -p logs/
 
@@ -344,9 +299,9 @@ jobs:
       - run:
           name: '[nightly/beta] upload to Play Store'
           command: |
-            if [[ $IS_BETA -eq 1 ]]; then
+            if ./scripts/ci/is-beta.sh; then
               TRACK=beta
-            else if [[ $IS_NIGHTLY -eq 1 ]]; then
+            else if ./scripts/ci/is-nightly.sh; then
               TRACK=alpha
             fi
 
@@ -360,7 +315,7 @@ jobs:
       - run:
           name: '[nightly/beta] generate and upload sourcemaps'
           command: |
-            if [[ $IS_BETA -eq 1 || $IS_NIGHTLY -eq 1 ]]; then
+            if [[ ./scripts/ci/is-nightly.sh || ./scripts/ci/is-beta.sh ]]; then
               ./scripts/ci/sourcemap-create.sh
               ./scripts/ci/sourcemap-upload.sh
             fi
@@ -405,7 +360,7 @@ jobs:
       - run:
           name: 'Show Xcode build settings'
           command: |
-            if [[ $IS_NIGHTLY -eq 1 || $IS_BETA -eq 1 ]]; then
+            if [[ ./scripts/ci/is-nightly.sh || ./scripts/ci/is-beta.sh ]]; then
               xcodebuild -scheme "$GYM_SCHEME" -project "$GYM_PROJECT" -showBuildSettings
             else
               xcodebuild -scheme "$GYM_SCHEME" -project "$GYM_PROJECT" -showBuildSettings -derivedDataPath ./ios/build
@@ -416,10 +371,10 @@ jobs:
           command: ./scripts/ci/propagate-version.rb
       - run:
           name: 'Authorize CI for keys, if allowed'
-          command: if [[ $IS_SIGNED -eq 1 ]]; then ./scripts/ci/authorize-ci-for-keys.rb; fi
+          command: if ./scripts/ci/is-signed.sh; then ./scripts/ci/authorize-ci-for-keys.rb; fi
       - run:
           name: 'Install certificates, if allowed'
-          command: if [[ $IS_SIGNED -eq 1 ]]; then ./scripts/ci/ios/certificates.sh; fi
+          command: if ./scripts/ci/is-signed.sh; then ./scripts/ci/ios/certificates.sh; fi
 
       - run: mkdir -p logs/
 
@@ -448,7 +403,7 @@ jobs:
       - run:
           name: 'Build app for release [nightly/beta]'
           command: |
-            if [[ $IS_BETA -eq 1 || $IS_NIGHTLY -eq 1 ]]; then
+            if [[ ./scripts/ci/is-nightly.sh || ./scripts/ci/is-beta.sh ]]; then
               xcodebuild -scheme "$GYM_SCHEME" -project "$GYM_PROJECT"
                 -destination generic/platform=iOS
                 -archivePath "$GYM_ARCHIVE_PATH"
@@ -479,9 +434,9 @@ jobs:
       - run:
           name: '[nightly/beta] upload to Play Store'
           command: |
-            if [[ $IS_BETA -eq 1 ]]; then
+            if ./scripts/ci/is-beta.sh; then
               EXTERNAL=true
-            else if [[ $IS_NIGHTLY -eq 1 ]]; then
+            else if ./scripts/ci/is-nightly.sh; then
               EXTERNAL=false
             fi
 
@@ -494,7 +449,7 @@ jobs:
       - run:
           name: '[nightly/beta] generate and upload sourcemaps'
           command: |
-            if [[ $IS_BETA -eq 1 || $IS_NIGHTLY -eq 1 ]]; then
+            if [[ ./scripts/ci/is-nightly.sh || ./scripts/ci/is-beta.sh ]]; then
               ./scripts/ci/sourcemap-create.sh
               ./scripts/ci/sourcemap-upload.sh
             fi
