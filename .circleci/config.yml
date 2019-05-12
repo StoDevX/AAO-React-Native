@@ -2,11 +2,26 @@
 version: 2.1
 
 executors:
-  node:
-    docker: [{image: 'circleci/node:10'}]
+  node: {docker: [{image: 'circleci/node:10'}]}
 
-  ruby:
-    docker: [{image: 'circleci/ruby:2.5.5'}]
+  ruby: {docker: [{image: 'circleci/ruby:2.5.5'}]}
+
+  # we pass the `command:` key to solve a weird issue (see GitHub PRs 2170 and
+  # 2173). this overrides the thing and forces the container to run /bin/bash
+  # as the "command" so it doesn't get confused and OOM/exhaust the build
+  # resources (I have no better explanations.)
+  android:
+    docker: [{image: 'circleci/android:api-28-node', command: '/bin/bash'}]
+    environment:
+      GRADLE_USER_HOME: &gradle-home ./.gradle
+      SENTRY_PROPERTIES: ../android/sentry.properties
+
+  ios:
+    macos: {xcode: '10.2.1'}
+    environment:
+      LC_ALL: en_US.UTF-8
+      LANG: en_US.UTF-8
+      SENTRY_PROPERTIES: '../ios/sentry.properties'
 
 x-environment: &x-environment
   FASTLANE_SKIP_UPDATE_CHECK: '1'
@@ -114,6 +129,16 @@ commands:
     steps:
       - attach_workspace: {at: ./node_modules}
 
+  workspace-persist-bundler:
+    description: 'Persist bundler bundle'
+    steps:
+      - persist_to_workspace: {root: ./.bundle, paths: [./*]}
+
+  workspace-attach-bundler:
+    description: 'Attach to bundler bundle'
+    steps:
+      - attach_workspace: {at: ./.bundle}
+
   yarn-cache:
     description: 'Save the Yarn cache'
     steps:
@@ -145,6 +170,24 @@ commands:
               echo "CIRCLE_TAG was set, didn't do anything"
             fi
 
+  skip-if-possible:
+    description: "Skip the build, if possible"
+    steps:
+      - name: Skip build if possible
+        command: ./scripts/should-skip-build && circleci step halt || echo "Build continuing."
+
+  coveralls:
+    description: 'Run Coveralls'
+    steps:
+      - run:
+          name: coveralls
+          command: |
+            export COVERALLS_SERVICE_NAME=CircleCI
+            export COVERALLS_SERVICE_JOB_ID=$CIRCLE_BUILD_NUM
+            if ! [[ $CIRCLE_PR_NUMBER ]]; then
+              npx coveralls < ./coverage/lcov.info
+            fi
+
 workflows:
   version: 2
   analyze-and-build:
@@ -156,35 +199,39 @@ workflows:
     # different CIRCLE_WORKFLOW_ID, which should allow us to only deploy
     # nightlies from that branch.
     jobs: &basic-jobs
-      - cache-yarn-linux:
-          filters: &filters {tags: {only: /.*/}}
-      - cache-bundler-linux:
-          filters: &filters {tags: {only: /.*/}}
-      # - danger:
+      - test
+      # - cache-yarn-linux:
+      #     filters: &filters {tags: {only: /.*/}}
+      # - cache-bundler-linux:
+      #     filters: &filters {tags: {only: /.*/}}
+      # # - danger:
+      # #     filters: *filters
+      # #     requires: [cache-yarn-linux]
+      # # - flow:
+      # #     filters: *filters
+      # #     requires: [cache-yarn-linux]
+      # # - jest:
+      # #     filters: *filters
+      # #     requires: [cache-yarn-linux]
+      # # - prettier:
+      # #     filters: *filters
+      # #     requires: [cache-yarn-linux]
+      # # - eslint:
+      # #     filters: *filters
+      # #     requires: [cache-yarn-linux]
+      # # - data:
+      # #     filters: *filters
+      # #     requires: [cache-yarn-linux]
+      # - ios-prepare:
       #     filters: *filters
-      #     requires: [cache-yarn-linux]
-      # - flow:
+      #     requires: []
+      # - ios-build: {filters: *filters, requires: [ios-prepare]}
+      # - ios-deploy: {filters: *filters, requires: [ios-build]}
+      # - android-prepare:
       #     filters: *filters
-      #     requires: [cache-yarn-linux]
-      # - jest:
-      #     filters: *filters
-      #     requires: [cache-yarn-linux]
-      # - prettier:
-      #     filters: *filters
-      #     requires: [cache-yarn-linux]
-      # - eslint:
-      #     filters: *filters
-      #     requires: [cache-yarn-linux]
-      # - data:
-      #     filters: *filters
-      #     requires: [cache-yarn-linux]
-      - ios:
-          filters: *filters
-          requires: []
-      - android:
-          filters: *filters
-          requires:
-            [cache-yarn-linux, cache-bundler-linux]
+      #     requires: [cache-yarn-linux, cache-bundler-linux]
+      # - android-build: {filters: *filters, requires: [android-prepare]}
+      # - android-deploy: {filters: *filters, requires: [android-build]}
       # - ios-bundle:
       #     filters: *filters
       #     requires: [danger, flow, jest, prettier, eslint, data]
@@ -216,10 +263,8 @@ jobs:
     executor: node
     steps:
       - checkout
-      - yarn-restore
-      - run: yarn install --frozen-lockfile
       - run: yarn --version
-      - yarn-cache
+      - run: yarn install --frozen-lockfile
       - workspace-persist-node_modules
 
   cache-bundler-linux:
@@ -227,13 +272,19 @@ jobs:
     steps:
       - checkout
       - set-ruby-version
-      - bundler-restore
       - run: gem --version
       - run: ruby --version
       - run: gem install bundler
-      - run: bundle check || bundle install --frozen --path ./vendor/bundle
       - run: bundle --version
-      - bundler-cache
+      - run: bundle install --frozen --path ./.bundle
+      - workspace-persist-bundler
+
+  test:
+    executor: node
+    steps:
+      - run: env
+      - run: echo $TEAM_ID
+      - run: echo $PILOT_ITC_PROVIDER
 
   danger:
     executor: node
@@ -268,18 +319,8 @@ jobs:
       - run: yarn run bundle-data
       - run: yarn run --silent test --coverage | tee logs/jest
       - danger
-      - store_test_results:
-          path: ./test-results
-      - run: yarn global add coveralls
-      - run:
-          name: coveralls
-          command: |
-            export PATH=$PATH:$(yarn global bin)
-            export COVERALLS_SERVICE_NAME=CircleCI
-            export COVERALLS_SERVICE_JOB_ID=$CIRCLE_BUILD_NUM
-            if ! [[ $CIRCLE_PR_NUMBER ]]; then
-              coveralls < ./coverage/lcov.info
-            fi
+      - store_test_results: {path: ./test-results}
+      - coveralls
 
   prettier:
     executor: node
@@ -290,10 +331,11 @@ jobs:
       - workspace-attach-node_modules
       - run: mkdir -p logs/
       - run: yarn run pretty
+      # to ensure that the file exists
+      - run: touch logs/prettier
       - run:
           name: git diff
           command: |
-            touch logs/prettier  # to ensure that the file exists
             if ! git diff --quiet --stat; then
               git diff | tee logs/prettier
               exit 1
@@ -312,8 +354,7 @@ jobs:
       - run: yarn run --silent lint | tee logs/eslint
       - run: yarn run --silent lint --format junit > test-results/eslint/junit.xml
       - danger
-      - store_test_results:
-          path: ./test-results
+      - store_test_results: {path: ./test-results}
 
   data:
     executor: node
@@ -327,72 +368,120 @@ jobs:
       - run: yarn run --silent validate-bus-data | tee logs/validate-bus-data
       - run: yarn run bundle-data
       - run: yarn run compress-data
-      - store_artifacts:
-          path: ./docs/
+      - store_artifacts: {path: ./docs/}
       - danger
 
-  android: &android
-    # we pass the `command:` key to solve a weird issue (see GitHub PRs 2170 and 2173).
-    # this overrides the thing and forces the container to run /bin/bash as the "command"
-    # so it doesn't get confused and OOM/exhaust the build resources (don't ask me)
-    docker: [{image: 'circleci/android:api-28-node', command: '/bin/bash'}]
+  android-prepare: &android-base
+    executor: android
     environment: &android-env
       <<: *x-environment
-      task: ANDROID
-      SENTRY_PROPERTIES: '../android/sentry.properties'
+      task: ANDROID-prepare
     steps:
       - checkout
       - reconcile-git-history
-      - run: mkdir -p logs/
-      - run: touch logs/build-status
-      - run:
-          name: Skip build if possible
-          command: ./scripts/should-skip-build && circleci step halt || echo "Build continuing."
-      - run: node --version
-      - run: yarn --version
+      - skip-if-possible
       - run: cd android && ./gradlew --version
-      - set-ruby-version
-      - workspace-attach-node_modules
-      - bundler-restore
-      - run: bundle check || bundle install --frozen --path ./vendor/bundle
-      - gradle-restore
+      # - gradle-restore
       - run:
           name: Download Android dependencies
           command: cd android && ./gradlew androidDependencies --console=plain
           environment:
             TERM: xterm-256color
-      - gradle-cache
-      - run: echo 'org.gradle.workers.max=2' >> ./android/gradle.properties
-      - run: ./scripts/ci/propagate-version.rb
-      - run: if [[ $IS_SIGNED -eq 1 ]]; then ./scripts/ci/authorize-ci-for-keys.rb; fi
-      - run: if [[ $IS_SIGNED -eq 1 ]]; then ./scripts/ci/android/certificates.sh; fi
-      - run: cd ./android && ./gradlew bundleRelease
-      - run: ./scripts/ci/android/discover-products.sh | tee ./logs/products
+      # - gradle-cache
+      - persist_to_workspace: {root: *gradle-home, paths: [./*]}
+
+  android-build: &android-build
+    <<: *android-base
+    environment: &android-build-env
+      <<: *android-env
+      task: ANDROID-build
+    steps:
+      - checkout
+      - reconcile-git-history
+      - skip-if-possible
+
+      - workspace-attach-node_modules
+
+      - set-ruby-version
+      - workspace-attach-bundler
+
+      - attach_workspace: {at: *gradle-home}
+
+      - run:
+          name: 'Restrict Gradle parallelization'
+          command: echo 'org.gradle.workers.max=2' >> ./android/gradle.properties
+      - run:
+          name: 'Propagate app version into build files'
+          command: ./scripts/ci/propagate-version.rb
+      - run:
+          name: 'Authorize CI for keys, if allowed'
+          command: if [[ $IS_SIGNED -eq 1 ]]; then ./scripts/ci/authorize-ci-for-keys.rb; fi
+      - run:
+          name: 'Install certificates, if allowed'
+          command: if [[ $IS_SIGNED -eq 1 ]]; then ./scripts/ci/android/certificates.sh; fi
+
+      - run: mkdir -p logs/
+
+      - run:
+          name: 'Build app'
+          command: |
+            cd ./android && ./gradlew bundleRelease && cd -
+            echo $? > logs/build-status
+
+      - run:
+          name: 'Discover generated products'
+          command: ./scripts/ci/android/discover-products.sh | tee ./logs/products
+
+      # eventually, implement detox for android
+
+      - persist_to_workspace: {root: ./logs, paths: [./*]}
+
+      - danger
+
+  android-deploy:
+    <<: *android-base
+    environment:
+      <<: *android-env
+      task: ANDROID-deploy
+    steps:
+      - checkout
+      - reconcile-git-history
+      - skip-if-possible
+
+      - set-ruby-version
+      - workspace-attach-bundler
+      - attach_workspace: {at: ./logs}
+
       - run:
           name: '[nightly/beta] upload to Play Store'
           command: |
             if [[ $IS_BETA -eq 1 ]]; then
-              bundle exec fastlane run upload_to_play_store
-                --aab $(paste -sd "," < ./logs/products)
-                --check_superseded_tracks true
-                --track beta
+              TRACK=beta
             else if [[ $IS_NIGHTLY -eq 1 ]]; then
-              bundle exec fastlane run upload_to_play_store
-                --aab $(paste -sd "," < ./logs/products)
-                --check_superseded_tracks true
-                --track alpha
+              TRACK=alpha
             fi
-      - run: |
-          if [[ $IS_BETA -eq 1 || $IS_NIGHTLY -eq 1 ]]; then
-            ./scripts/ci/sourcemap-create.sh
-            ./scripts/ci/sourcemap-upload.sh
-          fi
+
+            if [[ -n $TRACK ]]; then
+              bundle exec fastlane run upload_to_play_store
+                --aab "$(paste -sd ',' < ./logs/products)"
+                --check_superseded_tracks true
+                --track "$TRACK"
+            fi
+
+      - run:
+          name: '[nightly/beta] generate and upload sourcemaps'
+          command: |
+            if [[ $IS_BETA -eq 1 || $IS_NIGHTLY -eq 1 ]]; then
+              ./scripts/ci/sourcemap-create.sh
+              ./scripts/ci/sourcemap-upload.sh
+            fi
+
       - danger
 
-  android-nightly:
-    <<: *android
+  android-build-nightly:
+    <<: *android-build
     environment:
-      <<: *android-env
+      <<: *android-build-env
       IS_NIGHTLY: '1'
 
   android-bundle:
@@ -413,44 +502,68 @@ jobs:
           destination: android.jsbundle.map
       - danger
 
-  ios: &ios
-    macos: {xcode: '10.2.1'}
+  ios-prepare: &ios-base
+    executor: ios
     environment: &ios-env
       <<: *x-environment
-      task: IOS
-      LC_ALL: en_US.UTF-8
-      LANG: en_US.UTF-8
-      SENTRY_PROPERTIES: '../ios/sentry.properties'
+      task: IOS-prepare
     shell: /bin/bash --login -o pipefail
     steps:
       - checkout
       - reconcile-git-history
-      - run: mkdir -p logs/
-      - run: touch logs/build-status
-      - run:
-          name: Skip build if possible
-          command: ./scripts/should-skip-build && circleci step halt || echo "Build continuing."
+      - skip-if-possible
+
       - run: yarn --version
-      - set-ruby-version
-      - yarn-restore
       - run: yarn install --frozen-lockfile
-      - yarn-cache
-      - bundler-restore
+      - workspace-persist-node_modules
+
+      - set-ruby-version
       - run: gem install bundler
-      - run: bundle check || bundle install --frozen --path ./vendor/bundle
-      - bundler-cache
-      - run: ./scripts/ci/propagate-version.rb
-      - run: |
-          if [[ $IS_NIGHTLY -eq 1 || $IS_BETA -eq 1 ]]; then
-            xcodebuild -scheme "$GYM_SCHEME" -project "$GYM_PROJECT" -showBuildSettings
-          else
-            xcodebuild -scheme "$GYM_SCHEME" -project "$GYM_PROJECT" -showBuildSettings -derivedDataPath ./ios/build
-          fi
-      - run: if [[ $IS_SIGNED -eq 1 ]]; then ./scripts/ci/authorize-ci-for-keys.rb; fi
-      - run: if [[ $IS_SIGNED -eq 1 ]]; then ./scripts/ci/ios/certificates.sh; fi
-      - run: ./scripts/ci/ios/discover-products.sh | tee ./logs/products
+      - run: bundle install --frozen --path ./.bundle
+      - workspace-persist-bundler
+
+  ios-build: &ios-build
+    <<: *ios-base
+    environment: &ios-build-env
+      <<: *ios-env
+      task: IOS-build
+    steps:
+      - checkout
+      - reconcile-git-history
+      - skip-if-possible
+
+      - workspace-attach-node_modules
+
+      - set-ruby-version
+      - workspace-attach-bundler
+
       - run:
-          name: 'Detox: build app for testing'
+          name: 'Show Xcode build settings'
+          command: |
+            if [[ $IS_NIGHTLY -eq 1 || $IS_BETA -eq 1 ]]; then
+              xcodebuild -scheme "$GYM_SCHEME" -project "$GYM_PROJECT" -showBuildSettings
+            else
+              xcodebuild -scheme "$GYM_SCHEME" -project "$GYM_PROJECT" -showBuildSettings -derivedDataPath ./ios/build
+            fi
+
+      - run:
+          name: 'Propagate app version into build files'
+          command: ./scripts/ci/propagate-version.rb
+      - run:
+          name: 'Authorize CI for keys, if allowed'
+          command: if [[ $IS_SIGNED -eq 1 ]]; then ./scripts/ci/authorize-ci-for-keys.rb; fi
+      - run:
+          name: 'Install certificates, if allowed'
+          command: if [[ $IS_SIGNED -eq 1 ]]; then ./scripts/ci/ios/certificates.sh; fi
+
+      - run: mkdir -p logs/
+
+      - run:
+          name: 'Discover generated products'
+          command: ./scripts/ci/ios/discover-products.sh | tee ./logs/products
+
+      - run:
+          name: 'Build app for simulator testing'
           command: xcodebuild
             -scheme "$GYM_SCHEME" -project "$GYM_PROJECT"
             -configuration Release
@@ -460,39 +573,73 @@ jobs:
             CODE_SIGNING_ALLOWED=NO
             CODE_SIGN_IDENTITY=""
             build | xcpretty
+
       - run: brew tap wix/brew
       - run: brew install applesimutils
-      - run: yarn detox test e2e --configuration ios.sim.release --cleanup
-      - run: |
-          if [[ $IS_BETA -eq 1 || $IS_NIGHTLY -eq 1 ]]; then
-            xcodebuild -scheme "$GYM_SCHEME" -project "$GYM_PROJECT"
-              -destination generic/platform=iOS
-              -archivePath "$GYM_ARCHIVE_PATH"
-              archive | xcpretty
-          fi
+      - run:
+          name: 'Run Detox tests'
+          command: yarn detox test e2e --configuration ios.sim.release --cleanup
+
+      - run:
+          name: 'Build app for release [nightly/beta]'
+          command: |
+            if [[ $IS_BETA -eq 1 || $IS_NIGHTLY -eq 1 ]]; then
+              xcodebuild -scheme "$GYM_SCHEME" -project "$GYM_PROJECT"
+                -destination generic/platform=iOS
+                -archivePath "$GYM_ARCHIVE_PATH"
+                archive | xcpretty
+            fi
+
+      - persist_to_workspace: {root: ./ios/archive, paths: [./*]}
+      - persist_to_workspace: {root: ./logs, paths: [./*]}
+
+  ios-deploy:
+    <<: *ios-base
+    environment:
+      <<: *ios-env
+      task: IOS-deploy
+    steps:
+      - checkout
+      - reconcile-git-history
+      - skip-if-possible
+
+      - workspace-attach-node_modules
+
+      - set-ruby-version
+      - workspace-attach-bundler
+
+      - attach_workspace: {at: ./ios/archive}
+      - attach_workspace: {at: ./logs}
+
       - run:
           name: '[nightly/beta] upload to Play Store'
           command: |
             if [[ $IS_BETA -eq 1 ]]; then
-              bundle exec fastlane run upload_to_testflight
-                --distribute_external=true
-                --ipa $(cat ./logs/products)
+              EXTERNAL=true
             else if [[ $IS_NIGHTLY -eq 1 ]]; then
+              EXTERNAL=false
+            fi
+
+            if [[ -n $EXTERNAL ]]; then
               bundle exec fastlane run upload_to_testflight
-                --distribute_external=false
+                --distribute_external $EXTERNAL
                 --ipa $(cat ./logs/products)
             fi
-      - run: |
-          if [[ $IS_BETA -eq 1 || $IS_NIGHTLY -eq 1 ]]; then
-            ./scripts/ci/sourcemap-create.sh
-            ./scripts/ci/sourcemap-upload.sh
-          fi
+
+      - run:
+          name: '[nightly/beta] generate and upload sourcemaps'
+          command: |
+            if [[ $IS_BETA -eq 1 || $IS_NIGHTLY -eq 1 ]]; then
+              ./scripts/ci/sourcemap-create.sh
+              ./scripts/ci/sourcemap-upload.sh
+            fi
+
       - danger
 
-  ios-nightly:
-    <<: *ios
+  ios-build-nightly:
+    <<: *ios-build
     environment:
-      <<: *ios-env
+      <<: *ios-build-env
       IS_NIGHTLY: '1'
 
   ios-bundle:
