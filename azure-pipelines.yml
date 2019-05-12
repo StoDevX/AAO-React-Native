@@ -1,4 +1,4 @@
-name: $(Date:yyyyMMdd)$(Rev:.rrr)
+name: $(Date:yyyyMMdd)$(Rev:rrr)
 
 trigger:
   branches:
