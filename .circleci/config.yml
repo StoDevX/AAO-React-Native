@@ -13,7 +13,7 @@ executors:
   android:
     docker: [{image: 'circleci/android:api-28-node', command: '/bin/bash'}]
     environment:
-      GRADLE_USER_HOME: &gradle-home ./.gradle
+      GRADLE_USER_HOME: &gradle-home ~/.gradle
       SENTRY_PROPERTIES: ../android/sentry.properties
 
   ios:
@@ -71,7 +71,7 @@ commands:
     steps:
       - save_cache:
           key: &bundler-cache-key >-
-            v2-ruby-dependencies
+            v3-ruby-dependencies
             {{ arch }}
             {{ checksum "Gemfile.lock" }}
           paths: [./vendor/bundle]
@@ -81,25 +81,12 @@ commands:
     steps:
       - restore_cache: {key: *bundler-cache-key}
 
-  danger:
-    description: 'Run Danger'
-    steps:
-      - run:
-          name: "danger"
-          command: |
-            if ! [[ $CIRCLE_PR_NUMBER ]]; then
-              yarn run danger --id $task;
-            fi
-          when: always
-          environment:
-            DANGER_DISABLE_TRANSPILATION: 'true'
-
   gradle-cache:
     description: 'Save the Gradle cache'
     steps:
       - save_cache:
           key: &gradle-cache-key >-
-            v1-gradle-dependencies
+            v2-gradle-dependencies
             {{ arch }}
             {{ checksum "android/gradle/wrapper/gradle-wrapper.properties" }}
             {{ checksum "android/build.gradle" }}
@@ -113,45 +100,53 @@ commands:
     steps:
       - restore_cache: {key: *gradle-cache-key}
 
-  set-ruby-version:
-    description: 'Set the Ruby Version'
-    steps:
-      - run: echo "ruby-2.5.5" > ~/.ruby-version
-
-  workspace-persist-node_modules:
-    description: 'Persist node_modules'
-    steps:
-      - persist_to_workspace: {root: ./node_modules, paths: [./*]}
-
-  workspace-attach-node_modules:
-    description: 'Attach to node_modules'
-    steps:
-      - attach_workspace: {at: ./node_modules}
-
-  workspace-persist-bundler:
-    description: 'Persist bundler bundle'
-    steps:
-      - persist_to_workspace: {root: ./.bundle, paths: [./*]}
-
-  workspace-attach-bundler:
-    description: 'Attach to bundler bundle'
-    steps:
-      - attach_workspace: {at: ./.bundle}
-
   yarn-cache:
     description: 'Save the Yarn cache'
     steps:
       - save_cache:
           key: &yarn-cache-key >-
-            v3-yarn-dependencies
+            v4-yarn-dependencies
             {{ arch }}
             {{ checksum "yarn.lock" }}
-          paths: [~/.cache/yarn, ~/Library/Caches/Yarn]
+          paths: [./node_modules]
 
   yarn-restore:
     description: 'Restore the Yarn cache'
     steps:
       - restore_cache: {key: *yarn-cache-key}
+
+  logs-cache:
+    description: 'cache the ./logs folder'
+    steps:
+      - save_cache:
+          key: &logs-cache-key >-
+            v1-logs
+            {{ arch }}
+            {{ epoch }}
+          paths: [./logs]
+
+  logs-restore:
+    description: 'Restore the logs'
+    steps:
+      - restore_cache: {key: *logs-cache-key}
+
+  set-ruby-version:
+    description: 'Set the Ruby Version'
+    steps:
+      - run: echo "ruby-2.5.5" > ~/.ruby-version
+
+  danger:
+    description: 'Run Danger'
+    steps:
+      - run:
+          name: "danger"
+          command: |
+            if ! [[ $CIRCLE_PR_NUMBER ]]; then
+              yarn run danger --id $task;
+            fi
+          when: always
+          environment:
+            DANGER_DISABLE_TRANSPILATION: 'true'
 
   reconcile-git-history:
     description: "Fix CircleCI's git history"
@@ -212,17 +207,19 @@ jobs:
       - checkout
       - skip-if-possible
 
+      - yarn-restore
       - run: yarn --version
       - run: yarn install --frozen-lockfile
-      - workspace-persist-node_modules
+      - yarn-cache
 
+      - bundler-restore
       - set-ruby-version
       - run: gem --version
       - run: ruby --version
       - run: gem install bundler
       - run: bundle --version
       - run: bundle install --frozen --path ./.bundle
-      - workspace-persist-bundler
+      - bundler-cache
 
       - run: cd android && ./gradlew --version
       # - gradle-restore
@@ -231,8 +228,7 @@ jobs:
           command: cd android && ./gradlew androidDependencies --console=plain
           environment:
             TERM: xterm-256color
-      # - gradle-cache
-      - persist_to_workspace: {root: *gradle-home, paths: [./*]}
+      - gradle-cache
 
   android-build: &android-build
     <<: *android-base
@@ -244,12 +240,10 @@ jobs:
       - reconcile-git-history
       - skip-if-possible
 
-      - workspace-attach-node_modules
-
       - set-ruby-version
-      - workspace-attach-bundler
-
-      - attach_workspace: {at: *gradle-home}
+      - bundler-restore
+      - yarn-restore
+      - gradle-restore
 
       - run:
           name: 'Restrict Gradle parallelization'
@@ -278,7 +272,11 @@ jobs:
 
       # eventually, implement detox for android
 
-      - persist_to_workspace: {root: ./logs, paths: [./*]}
+      - persist_to_workspace:
+          root: ./android/build
+          paths: [./*]
+
+      - logs-cache
 
       - danger
 
@@ -293,8 +291,12 @@ jobs:
       - skip-if-possible
 
       - set-ruby-version
-      - workspace-attach-bundler
-      - attach_workspace: {at: ./logs}
+      - bundler-restore
+
+      - logs-restore
+
+      - attach_workspace:
+          at: ./android/build
 
       - run:
           name: '[nightly/beta] upload to Play Store'
@@ -311,6 +313,8 @@ jobs:
                 --check_superseded_tracks true
                 --track "$TRACK"
             fi
+
+      - yarn-restore
 
       - run:
           name: '[nightly/beta] generate and upload sourcemaps'
@@ -333,14 +337,16 @@ jobs:
       - reconcile-git-history
       - skip-if-possible
 
+      - yarn-restore
       - run: yarn --version
       - run: yarn install --frozen-lockfile
-      - workspace-persist-node_modules
+      - yarn-cache
 
+      - bundler-restore
       - set-ruby-version
       - run: gem install bundler
       - run: bundle install --frozen --path ./.bundle
-      - workspace-persist-bundler
+      - bundler-cache
 
   ios-build: &ios-build
     <<: *ios-base
@@ -352,10 +358,9 @@ jobs:
       - reconcile-git-history
       - skip-if-possible
 
-      - workspace-attach-node_modules
-
       - set-ruby-version
-      - workspace-attach-bundler
+      - bundler-restore
+      - yarn-restore
 
       - run:
           name: 'Show Xcode build settings'
@@ -411,7 +416,8 @@ jobs:
             fi
 
       - persist_to_workspace: {root: ./ios/archive, paths: [./*]}
-      - persist_to_workspace: {root: ./logs, paths: [./*]}
+
+      - logs-cache
 
   ios-deploy:
     <<: *ios-base
@@ -423,13 +429,12 @@ jobs:
       - reconcile-git-history
       - skip-if-possible
 
-      - workspace-attach-node_modules
-
       - set-ruby-version
-      - workspace-attach-bundler
+      - bundler-restore
 
       - attach_workspace: {at: ./ios/archive}
-      - attach_workspace: {at: ./logs}
+
+      - logs-restore
 
       - run:
           name: '[nightly/beta] upload to Play Store'
@@ -445,6 +450,8 @@ jobs:
                 --distribute_external $EXTERNAL
                 --ipa $(cat ./logs/products)
             fi
+
+      - yarn-restore
 
       - run:
           name: '[nightly/beta] generate and upload sourcemaps'
