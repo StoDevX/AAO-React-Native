@@ -8,7 +8,7 @@ def propagate_version()
 	return unless ENV.key? 'CI'
 
 	version = get_package_key('./package.json', :version)
-	build = ENV['Build.BuildNumber']
+	build = (ENV['CIRCLE_BUILD_NUM'].to_i + 3250).to_s
 
 	puts "Propagating version \"#{version}\" into the Info.plist and build.gradle files"
 	puts "Setting build number to #{build}"
