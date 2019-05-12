@@ -94,27 +94,27 @@ jobs:
           is_nightly: '$(IS_NIGHTLY)'
           is_beta: '$(IS_BETA)'
 
-  - job: Android
-    pool: {vmImage: ubuntu-16.04}
-    variables:
-      PLATFORM: 'android'
-    steps:
-      - task: UseNode@1
-        inputs: {version: '$(NODE_VERSION_SPEC)'}
+  # - job: Android
+  #   pool: {vmImage: ubuntu-16.04}
+  #   variables:
+  #     PLATFORM: 'android'
+  #   steps:
+  #     - task: UseNode@1
+  #       inputs: {version: '$(NODE_VERSION_SPEC)'}
 
-      - task: UseRubyVersion@0
-        inputs: {versionSpec: '$(RUBY_VERSION_SPEC)'}
+  #     - task: UseRubyVersion@0
+  #       inputs: {versionSpec: '$(RUBY_VERSION_SPEC)'}
 
-      - {bash: node --version, displayName: 'node version'}
-      - {bash: yarn --version, displayName: 'yarn version'}
-      - {bash: ruby --version, displayName: 'ruby version'}
-      - {bash: gem --version, displayName: 'rubygems version'}
-      - {bash: cd android && ./gradlew --version, displayName: 'gradle version'}
-      - {bash: gem install bundler, displayName: 'install bundler'}
-      - {bash: bundle --version, displayName: 'bundler version'}
+  #     - {bash: node --version, displayName: 'node version'}
+  #     - {bash: yarn --version, displayName: 'yarn version'}
+  #     - {bash: ruby --version, displayName: 'ruby version'}
+  #     - {bash: gem --version, displayName: 'rubygems version'}
+  #     - {bash: cd android && ./gradlew --version, displayName: 'gradle version'}
+  #     - {bash: gem install bundler, displayName: 'install bundler'}
+  #     - {bash: bundle --version, displayName: 'bundler version'}
 
-      - template: .azure/templates/android.yaml
-        parameters:
-          signed: '$(SIGN_BUILD)'
-          is_nightly: '$(IS_NIGHTLY)'
-          is_beta: '$(IS_BETA)'
+  #     - template: .azure/templates/android.yaml
+  #       parameters:
+  #         signed: '$(SIGN_BUILD)'
+  #         is_nightly: '$(IS_NIGHTLY)'
+  #         is_beta: '$(IS_BETA)'
