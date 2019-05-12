@@ -65,7 +65,8 @@ x-environment: &x-environment
   APPLE_PUSH_EXTENSION_ID: 'NFMTHAZVS9.com.drewvolz.stolaf.onesignal-notification-service-extension'
   APPLE_PUSH_EXTENSION_NAME: 'All About Olaf OneSignal Notification Service Extension'
 
-  BUNDLER_PATH: &bundler-path './.bundle'
+  BUNDLER_CACHE_DIR: &bundler-cache-path './.bundle'
+  YARN_CACHE_DIR: &yarn-cache-path '~/.yarn'
 
 commands:
   bundler-cache:
@@ -76,7 +77,7 @@ commands:
             v4-ruby-dependencies
             {{ arch }}
             {{ checksum "Gemfile.lock" }}
-          paths: [*bundler-path]
+          paths: [*bundler-cache-path]
 
   bundler-restore:
     description: 'Restore the Bundler cache'
@@ -110,7 +111,7 @@ commands:
             v4-yarn-dependencies
             {{ arch }}
             {{ checksum "yarn.lock" }}
-          paths: [./node_modules]
+          paths: [*yarn-cache-path, ./node_modules]
 
   yarn-restore:
     description: 'Restore the Yarn cache'
@@ -166,6 +167,21 @@ commands:
               echo "CIRCLE_TAG was set, didn't do anything"
             fi
 
+  yarn-install:
+    steps:
+      - run: yarn --version
+      - run:
+          name: 'yarn install'
+          command: yarn install --frozen-lockfile --prefer-offline --cache-folder "$YARN_CACHE_DIR"
+
+  bundler-install:
+    steps:
+      - run: gem install bundler
+      - run: bundle --version
+      - run:
+          name: 'bundle install'
+          command: bundle install --frozen --path "$BUNDLER_CACHE_DIR"
+
   skip-if-possible:
     description: "Skip the build, if possible"
     steps:
@@ -210,17 +226,14 @@ jobs:
       - skip-if-possible
 
       - yarn-restore
-      - run: yarn --version
-      - run: yarn install --frozen-lockfile
+      - yarn-install
       - yarn-cache
 
-      - bundler-restore
       - set-ruby-version
-      - run: gem --version
       - run: ruby --version
-      - run: gem install bundler
-      - run: bundle --version
-      - run: bundle install --frozen --path "$BUNDLER_PATH"
+      - run: gem --version
+      - bundler-restore
+      - bundler-install
       - bundler-cache
 
       - run: cd android && ./gradlew --version
@@ -340,14 +353,14 @@ jobs:
       - skip-if-possible
 
       - yarn-restore
-      - run: yarn --version
-      - run: yarn install --frozen-lockfile
+      - yarn-install
       - yarn-cache
 
-      - bundler-restore
       - set-ruby-version
-      - run: gem install bundler
-      - run: bundle install --frozen --path "$BUNDLER_PATH"
+      - run: ruby --version
+      - run: gem --version
+      - bundler-restore
+      - bundler-install
       - bundler-cache
 
   ios-build: &ios-build
