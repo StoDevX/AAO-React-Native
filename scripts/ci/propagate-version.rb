@@ -2,6 +2,7 @@
 
 require 'fileutils'
 require 'shellwords'
+require 'json'
 
 def propagate_version()
 	return unless ENV.key? 'CI'
