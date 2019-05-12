@@ -216,6 +216,8 @@ workflows:
 jobs:
   simple-test:
     executor: node
+    environment:
+      <<: *x-environment
     steps:
       - run: env
       - run: echo $TEAM_ID
