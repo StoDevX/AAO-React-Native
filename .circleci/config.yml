@@ -231,6 +231,14 @@ jobs:
           command: echo $instep_GIT_COMMIT_DESC
           environment:
             instep_GIT_COMMIT_DESC: *git
+      - run:
+          command: |
+            export INSCRIPT="$(git log --format=oneline -n 1 $CIRCLE_SHA1)"
+            echo $INSCRIPT
+      - run:
+          command: |
+            export INSCRIPT="$injob_GIT_COMMIT_DESC"
+            echo $INSCRIPT
 
   cache-yarn-linux:
     executor: node
