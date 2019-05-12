@@ -1,5 +1,7 @@
 #!/usr/bin/env ruby
 
+require 'tmpdir'
+
 # Clone the match repo (for Android)
 def clone_match
 	git_url = 'https://github.com/hawkrives/aao-keys'
