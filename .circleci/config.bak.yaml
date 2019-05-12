@@ -90,11 +90,7 @@ commands:
     description: 'Run Danger'
     steps:
       - run:
-          name: "danger"
-          command: |
-            if ! [[ $CIRCLE_PR_NUMBER ]]; then
-              yarn run danger --id $task;
-            fi
+          command: if ! [[ $CIRCLE_PR_NUMBER ]]; then yarn run danger --id $task; fi
           when: always
           environment:
             DANGER_DISABLE_TRANSPILATION: 'true'
@@ -196,12 +192,37 @@ commands:
 workflows:
   version: 2
   analyze-and-build:
+    # The way this works is, Circle runs analyze-and-build on every commit
+    # to every branch.
+    # Fastlane checks the environment to see if it should build or deploy,
+    # and if there's a tag then it deploys (otherwise it just builds.)
+    # These same jobs are run by the "nightly" workflow, which has a
+    # different CIRCLE_WORKFLOW_ID, which should allow us to only deploy
+    # nightlies from that branch.
     jobs: &basic-jobs
       - test
       # - cache-yarn-linux:
       #     filters: &filters {tags: {only: /.*/}}
       # - cache-bundler-linux:
       #     filters: &filters {tags: {only: /.*/}}
+      # # - danger:
+      # #     filters: *filters
+      # #     requires: [cache-yarn-linux]
+      # # - flow:
+      # #     filters: *filters
+      # #     requires: [cache-yarn-linux]
+      # # - jest:
+      # #     filters: *filters
+      # #     requires: [cache-yarn-linux]
+      # # - prettier:
+      # #     filters: *filters
+      # #     requires: [cache-yarn-linux]
+      # # - eslint:
+      # #     filters: *filters
+      # #     requires: [cache-yarn-linux]
+      # # - data:
+      # #     filters: *filters
+      # #     requires: [cache-yarn-linux]
       # - ios-prepare:
       #     filters: *filters
       #     requires: []
@@ -212,6 +233,31 @@ workflows:
       #     requires: [cache-yarn-linux, cache-bundler-linux]
       # - android-build: {filters: *filters, requires: [android-prepare]}
       # - android-deploy: {filters: *filters, requires: [android-build]}
+      # - ios-bundle:
+      #     filters: *filters
+      #     requires: [danger, flow, jest, prettier, eslint, data]
+      # - android-bundle:
+      #     filters: *filters
+      #     requires: [danger, flow, jest, prettier, eslint, data]
+  nightly:
+    triggers:
+      - schedule:
+          cron: 17 8 * * *
+          filters: {branches: {only: [master]}}
+    jobs:
+      - cache-yarn-linux
+      - cache-bundler-linux
+      - danger: {requires: [cache-yarn-linux]}
+      - flow: {requires: [cache-yarn-linux]}
+      - jest: {requires: [cache-yarn-linux]}
+      - prettier: {requires: [cache-yarn-linux]}
+      - eslint: {requires: [cache-yarn-linux]}
+      - data: {requires: [cache-yarn-linux]}
+      - ios-nightly:
+          requires: [danger, flow, jest, prettier, eslint, data]
+      - android-nightly:
+          requires:
+            [danger, flow, jest, prettier, eslint, data, cache-bundler-linux]
 
 jobs:
   cache-yarn-linux:
@@ -233,6 +279,98 @@ jobs:
       - run: bundle --version
       - run: bundle install --frozen --path ./.bundle
       - workspace-persist-bundler
+
+  test:
+    executor: node
+    steps:
+      - run: env
+      - run: echo $TEAM_ID
+      - run: echo $PILOT_ITC_PROVIDER
+
+  danger:
+    executor: node
+    environment:
+      task: JS-general
+    steps:
+      - checkout
+      - workspace-attach-node_modules
+      - danger
+
+  flow:
+    executor: node
+    environment:
+      task: JS-flow
+    steps:
+      - checkout
+      - workspace-attach-node_modules
+      - run: mkdir -p logs/
+      - run: yarn run bundle-data
+      - run: yarn run --silent flow check --quiet | tee logs/flow
+      - danger
+
+  jest:
+    executor: node
+    environment:
+      task: JS-jest
+      JEST_JUNIT_OUTPUT: ./test-results/jest/junit.xml
+    steps:
+      - checkout
+      - workspace-attach-node_modules
+      - run: mkdir -p logs/ test-results/jest/
+      - run: yarn run bundle-data
+      - run: yarn run --silent test --coverage | tee logs/jest
+      - danger
+      - store_test_results: {path: ./test-results}
+      - coveralls
+
+  prettier:
+    executor: node
+    environment:
+      task: JS-prettier
+    steps:
+      - checkout
+      - workspace-attach-node_modules
+      - run: mkdir -p logs/
+      - run: yarn run pretty
+      # to ensure that the file exists
+      - run: touch logs/prettier
+      - run:
+          name: git diff
+          command: |
+            if ! git diff --quiet --stat; then
+              git diff | tee logs/prettier
+              exit 1
+            fi
+      - danger
+
+  eslint:
+    executor: node
+    environment:
+      task: JS-lint
+    steps:
+      - checkout
+      - workspace-attach-node_modules
+      - run: mkdir -p logs/ test-results/eslint/
+      - run: yarn run bundle-data
+      - run: yarn run --silent lint | tee logs/eslint
+      - run: yarn run --silent lint --format junit > test-results/eslint/junit.xml
+      - danger
+      - store_test_results: {path: ./test-results}
+
+  data:
+    executor: node
+    environment:
+      task: JS-data
+    steps:
+      - checkout
+      - workspace-attach-node_modules
+      - run: mkdir -p logs/
+      - run: yarn run --silent validate-data --quiet | tee logs/validate-data
+      - run: yarn run --silent validate-bus-data | tee logs/validate-bus-data
+      - run: yarn run bundle-data
+      - run: yarn run compress-data
+      - store_artifacts: {path: ./docs/}
+      - danger
 
   android-prepare: &android-base
     executor: android
@@ -339,6 +477,30 @@ jobs:
               ./scripts/ci/sourcemap-upload.sh
             fi
 
+      - danger
+
+  android-build-nightly:
+    <<: *android-build
+    environment:
+      <<: *android-build-env
+      IS_NIGHTLY: '1'
+
+  android-bundle:
+    executor: node
+    environment:
+      task: JS-bundle-android
+    steps:
+      - checkout
+      - workspace-attach-node_modules
+      - run: mkdir -p logs/
+      - run: yarn run bundle-data
+      - run: yarn run --silent bundle:android
+      - store_artifacts:
+          path: ./android/app/src/main/assets/index.android.bundle
+          destination: android.jsbundle
+      - store_artifacts:
+          path: ./android/app/src/main/assets/index.android.bundle.map
+          destination: android.jsbundle.map
       - danger
 
   ios-prepare: &ios-base
@@ -475,14 +637,26 @@ jobs:
 
       - danger
 
-  android-build-nightly:
-    <<: *android-build
-    environment:
-      <<: *android-build-env
-      IS_NIGHTLY: '1'
-
   ios-build-nightly:
     <<: *ios-build
     environment:
       <<: *ios-build-env
       IS_NIGHTLY: '1'
+
+  ios-bundle:
+    executor: node
+    environment:
+      task: JS-bundle-ios
+    steps:
+      - checkout
+      - workspace-attach-node_modules
+      - run: mkdir -p logs/
+      - run: yarn run bundle-data
+      - run: yarn run --silent bundle:ios
+      - store_artifacts:
+          path: ./ios/AllAboutOlaf/main.jsbundle
+          destination: ios.jsbundle
+      - store_artifacts:
+          path: ./ios/AllAboutOlaf/main.jsbundle.map
+          destination: ios.jsbundle.map
+      - danger
