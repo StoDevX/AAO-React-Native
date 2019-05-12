@@ -197,7 +197,7 @@ workflows:
   version: 2
   analyze-and-build:
     jobs: &basic-jobs
-      - test
+      - simple-test
       # - cache-yarn-linux:
       #     filters: &filters {tags: {only: /.*/}}
       # - cache-bundler-linux:
@@ -214,6 +214,13 @@ workflows:
       # - android-deploy: {filters: *filters, requires: [android-build]}
 
 jobs:
+  simple-test:
+    executor: node
+    steps:
+      - run: env
+      - run: echo $TEAM_ID
+      - run: echo $PILOT_ITC_PROVIDER
+
   cache-yarn-linux:
     executor: node
     steps:
