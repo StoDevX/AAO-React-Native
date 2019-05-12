@@ -95,7 +95,7 @@ commands:
     steps:
       - save_cache:
           key: &gradle-cache-key >-
-            v2-gradle-dependencies
+            v3-gradle-dependencies
             {{ arch }}
             {{ checksum "android/gradle/wrapper/gradle-wrapper.properties" }}
             {{ checksum "android/build.gradle" }}
@@ -117,7 +117,7 @@ commands:
     steps:
       - save_cache:
           key: &yarn-cache-key >-
-            v5-yarn-dependencies
+            v6-yarn-dependencies
             {{ arch }}
             {{ checksum "yarn.lock" }}
           paths: [*yarn-cache-path, ./node_modules]
