@@ -1,3 +1,5 @@
+name: $(Date:yyyyMMdd)$(Rev:.rrr)
+
 trigger:
   branches:
     include:
@@ -9,25 +11,75 @@ trigger:
 variables:
   - group: github-keys
 
+  # The bundle identifier of your app
+  - {name: APP_IDENTIFIER, value: 'NFMTHAZVS9.com.drewvolz.stolaf'}
+
+  # Your Apple email address
+  - {name: APPLE_ID, value: 'aao_bot@fastmail.fm'}
+  - {name: APPLE_DEV_PORTAL_ID, value: 'hawkrives@gmail.com'}
+
+  # Your Apple Developer Team ID, if you are in multiple teams
+  - {name: TEAM_ID, value: 'TMK6S7TPX2'}
+  - {name: ITC_TEAM_ID, value: '118781268'}
+
+  # This is a private key. It is not included in the repository.
+  # Contact allaboutolaf@stolaf.edu or another admin if you need access.
+  - {name: JSON_KEY_FILE, value: './fastlane/play-private-key.json'}
+  - {name: PACKAGE_NAME, value: 'com.allaboutolaf'}
+
+  # set up global info for `gym`
+  - {name: GYM_PROJECT, value: './ios/AllAboutOlaf.xcodeproj'}
+  - {name: IOS_INFO_PLIST, value: './ios/AllAboutOlaf/Info.plist'}
+  - {name: GYM_SCHEME, value: 'AllAboutOlaf'}
+  - {name: GYM_OUTPUT_DIRECTORY, value: './ios/build'}
+  - {name: GYM_OUTPUT_NAME, value: 'AllAboutOlaf'}
+  - {name: GYM_ARCHIVE_PATH, value: './ios/archive/$(APP_IDENTIFIER).xcarchive'}
+
+  # set the testflight itunesconnect provider ID from Appfile
+  - {name: PILOT_ITC_PROVIDER, value: '$(TEAM_ID)'}
+
+  - {name: GRADLE_FILE, value: './android/app/build.gradle'}
+  - {name: KEYSTORE_FILE, value: './android/app/upload-keystore.properties'}
+
+  # set up other global shared values
+  - {name: PRETTY_APP_NAME, value: 'All About Olaf'}
+  - {name: ONESIGNAL_APP_NAME, value: 'All About Olaf'}
+  - {name: ONESIGNAL_APP_ID, value: 'a46c6f2f-a240-4908-a359-801911e9b9ea'}
+  - {name: APPLE_APP_ID, value: '$(APP_IDENTIFIER)'}
+  - {name: APPLE_APP_NAME, value: 'All About Olaf'}
+  - {name: APPLE_PUSH_EXTENSION_ID, value: 'NFMTHAZVS9.com.drewvolz.stolaf.onesignal-notification-service-extension'}
+  - {name: APPLE_PUSH_EXTENSION_NAME, value: 'All About Olaf OneSignal Notification Service Extension'}
+
+  - {name: NODE_VERSION_SPEC, value: '10.x'}
+  - {name: RUBY_VERSION_SPEC, value: '>= 2.5'}
+
+  - name: SIGN_BUILD
+    # build should be signed if ENV['MATCH_PASSWORD'] && ENV['FASTLANE_PASSWORD'] are both set
+    value: |
+      $[ and (
+        neq( variables.MATCH_PASSWORD, '' ),
+        neq( variables.FASTLANE_PASSWORD, '' )
+      ) ]
+
+  # if triggered by cron nightly job: nightly
+  # else if commit is tagged: beta
+  # else: none
+  - name: IS_NIGHTLY
+    value: eq( Build.Reason, 'Schedule' )
+  - name: IS_BETA
+    value: startsWith( Build.SourceBranch, 'refs/tags/' )
+
+  # set some global environment variables
+  - {name: HOMEBREW_NO_AUTO_UPDATE, value: '1'}
+
 jobs:
   - job: iOS
     pool: {vmImage: macos-10.14}
+    variables:
+      PLATFORM: 'ios'
     steps:
       - task: UseNode@1
-        inputs: {version: '10.x'}
-
-      - bash: brew tap wix/brew
-        displayName: 'tap wix/brew'
-        env:
-          HOMEBREW_NO_AUTO_UPDATE: 1
-
-      - bash: brew install applesimutils
-        displayName: 'install applesimutils for detox'
-        env:
-          HOMEBREW_NO_AUTO_UPDATE: 1
-
-      - bash: mkdir -p logs/
-        displayName: 'Set up /logs'
+        inputs: {version: '$(NODE_VERSION_SPEC)'}
 
       - {bash: node --version, displayName: 'node version'}
       - {bash: yarn --version, displayName: 'yarn version'}
@@ -36,94 +88,33 @@ jobs:
       - {bash: bundle --version, displayName: 'bundler version'}
       - {bash: xcodebuild -version, displayName: 'xcodebuild version'}
 
-      - bash: yarn install --frozen-lockfile
-        displayName: 'Install dependencies (yarn)'
-
-      - bash: bundle install --frozen --path ./vendor/bundle
-        displayName: 'Install dependencies (bundler)'
-
-      - bash: |
-          set -o pipefail
-          bundle exec fastlane ios ci-run
-        displayName: 'Run Fastlane'
-        env:
-          GIT_COMMIT_DESC: $(Build.SourceVersionMessage)
-          FASTLANE_SKIP_UPDATE_CHECK: 1
-          FASTLANE_DISABLE_ANIMATION: 1
-          SENTRY_PROPERTIES: ../ios/sentry.properties
-          GITHUB_KEYS_REPOSITORY_TOKEN: $(GITHUB_KEYS_REPOSITORY_TOKEN)
-          MATCH_PASSWORD: $(MATCH_PASSWORD)
-
-      - bash: |
-          set -o pipefail
-          yarn detox build e2e --configuration ios.sim.release
-        displayName: 'Detox: build the app'
-
-      - bash: |
-          set -o pipefail
-          yarn detox test e2e --configuration ios.sim.release --cleanup
-        displayName: 'Detox: test the app'
-
-      - bash: ls ./*
-
-      - task: PublishPipelineArtifact@0
-        inputs:
-          artifactName: 'app_dSYM'
-          targetPath: './ios/build/AllAboutOlaf.app.dSYM.zip'
-        displayName: 'publish app.dsym artifact'
-
-      - task: PublishPipelineArtifact@0
-        inputs:
-          artifactName: 'app_ipa'
-          targetPath: './ios/build/AllAboutOlaf.ipa'
-        displayName: 'publish app.ipa artifact'
+      - template: .azure/templates/ios.yaml
+        parameters:
+          signed: '$(SIGN_BUILD)'
+          is_nightly: '$(IS_NIGHTLY)'
+          is_beta: '$(IS_BETA)'
 
   - job: Android
     pool: {vmImage: ubuntu-16.04}
+    variables:
+      PLATFORM: 'android'
     steps:
       - task: UseNode@1
-        inputs: {version: '10.x'}
+        inputs: {version: '$(NODE_VERSION_SPEC)'}
 
       - task: UseRubyVersion@0
-        inputs:
-          versionSpec: '>= 2.5'
-
-      - bash: mkdir -p logs/
-        displayName: 'Set up /logs'
+        inputs: {versionSpec: '$(RUBY_VERSION_SPEC)'}
 
       - {bash: node --version, displayName: 'node version'}
       - {bash: yarn --version, displayName: 'yarn version'}
       - {bash: ruby --version, displayName: 'ruby version'}
       - {bash: gem --version, displayName: 'rubygems version'}
       - {bash: cd android && ./gradlew --version, displayName: 'gradle version'}
-
-      - bash: gem install bundler
-        displayName: 'install bundler'
-
+      - {bash: gem install bundler, displayName: 'install bundler'}
       - {bash: bundle --version, displayName: 'bundler version'}
 
-      - bash: yarn install --frozen-lockfile
-        displayName: 'Install dependencies (yarn)'
-
-      - bash: bundle install --frozen --path ./vendor/bundle
-        displayName: 'Install dependencies (bundler)'
-
-      - bash: cd android && ./gradlew androidDependencies --console=plain
-        displayName: 'Install dependencies (gradle)'
-        env:
-          TERM: xterm-256color
-
-      # - bash: echo 'org.gradle.workers.max=2' >> ./android/gradle.properties
-      #   displayName:
-
-      - bash: |
-          set -o pipefail
-          bundle exec fastlane android ci-run
-        displayName: 'Run Fastlane'
-        env:
-          GIT_COMMIT_DESC: $(Build.SourceVersionMessage)
-          FASTLANE_SKIP_UPDATE_CHECK: 1
-          FASTLANE_DISABLE_ANIMATION: 1
-          SENTRY_PROPERTIES: ../android/sentry.properties
-          GITHUB_KEYS_REPOSITORY_TOKEN: $(GITHUB_KEYS_REPOSITORY_TOKEN)
-          MATCH_PASSWORD: $(MATCH_PASSWORD)
+      - template: .azure/templates/android.yaml
+        parameters:
+          signed: '$(SIGN_BUILD)'
+          is_nightly: '$(IS_NIGHTLY)'
+          is_beta: '$(IS_BETA)'
