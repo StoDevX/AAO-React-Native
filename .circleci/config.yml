@@ -70,7 +70,7 @@ x-environment: &x-environment
   APPLE_PUSH_EXTENSION_ID: 'NFMTHAZVS9.com.drewvolz.stolaf.onesignal-notification-service-extension'
   APPLE_PUSH_EXTENSION_NAME: 'All About Olaf OneSignal Notification Service Extension'
 
-  global_GIT_COMMIT_DESC: $(git log --format=oneline -n 1 $CIRCLE_SHA1)
+  global_GIT_COMMIT_DESC: &git $(git log --format=oneline -n 1 $CIRCLE_SHA1)
 
 commands:
   bundler-cache:
@@ -220,13 +220,17 @@ jobs:
     executor: node
     environment:
       <<: *x-environment
-      inline_GIT_COMMIT_DESC: $(git log --format=oneline -n 1 $CIRCLE_SHA1)
+      injob_GIT_COMMIT_DESC: *git
     steps:
       - run: env
       - run: echo $TEAM_ID
       - run: echo $PILOT_ITC_PROVIDER
       - run: echo $global_GIT_COMMIT_DESC
-      - run: echo $inline_GIT_COMMIT_DESC
+      - run: echo $injob_GIT_COMMIT_DESC
+      - run:
+          command: echo $instep_GIT_COMMIT_DESC
+          environment:
+            instep_GIT_COMMIT_DESC: *git
 
   cache-yarn-linux:
     executor: node
