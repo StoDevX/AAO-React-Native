@@ -190,7 +190,10 @@ commands:
       - run: ls ~/Library/Caches/Yarn || true
       - run:
           name: 'yarn install'
-          command: yarn install --frozen-lockfile --prefer-offline --cache-folder "$YARN_CACHE_DIR"
+          command: yarn install --verbose
+            --frozen-lockfile
+            --prefer-offline
+            --cache-folder "$YARN_CACHE_DIR"
       - run: ls ~/.cache/yarn || true
       - run: ls ~/Library/Caches/Yarn || true
       - run: ls "$YARN_CACHE_DIR" || true
