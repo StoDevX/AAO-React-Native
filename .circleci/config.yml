@@ -69,6 +69,7 @@ x-environment: &x-environment
 
   BUNDLER_CACHE_DIR: &bundler-cache-path './.bundle'
   YARN_CACHE_DIR: &yarn-cache-path '~/.yarn'
+  GRADLE_USER_HOME: &gradle-user-home '~/.gradle'
 
 commands:
   bundler-cache:
@@ -101,7 +102,7 @@ commands:
             {{ checksum "android/settings.gradle" }}
             {{ checksum "android/app/build.gradle" }}
             {{ checksum "node_modules/react-native/package.json" }}
-          paths: [~/.gradle]
+          paths: [*gradle-user-home, './android/gradle/wrapper/gradle-wrapper.jar']
           name: 'Cache Gradle'
 
   gradle-restore:
