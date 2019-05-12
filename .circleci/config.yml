@@ -80,11 +80,14 @@ commands:
             {{ arch }}
             {{ checksum "Gemfile.lock" }}
           paths: [*bundler-cache-path]
+          name: 'Cache Bundler'
 
   bundler-restore:
     description: 'Restore the Bundler cache'
     steps:
-      - restore_cache: {key: *bundler-cache-key}
+      - restore_cache:
+          key: *bundler-cache-key
+          name: 'Restore the Bundler cache'
 
   gradle-cache:
     description: 'Save the Gradle cache'
@@ -99,11 +102,14 @@ commands:
             {{ checksum "android/app/build.gradle" }}
             {{ checksum "node_modules/react-native/package.json" }}
           paths: [~/.gradle]
+          name: 'Cache Gradle'
 
   gradle-restore:
     description: 'Restore the Gradle cache'
     steps:
-      - restore_cache: {key: *gradle-cache-key}
+      - restore_cache:
+          key: *gradle-cache-key
+          name: 'Restore the Gradle cache'
 
   yarn-cache:
     description: 'Save the Yarn cache'
@@ -114,11 +120,14 @@ commands:
             {{ arch }}
             {{ checksum "yarn.lock" }}
           paths: [*yarn-cache-path, ./node_modules]
+          name: 'Cache Yarn'
 
   yarn-restore:
     description: 'Restore the Yarn cache'
     steps:
-      - restore_cache: {key: *yarn-cache-key}
+      - restore_cache:
+          key: *yarn-cache-key
+          name: 'Restore the Yarn cache'
 
   logs-cache:
     description: 'cache the ./logs folder'
@@ -129,11 +138,14 @@ commands:
             {{ arch }}
             {{ epoch }}
           paths: [./logs]
+          name: 'cache ./logs'
 
   logs-restore:
     description: 'Restore the logs'
     steps:
-      - restore_cache: {key: *logs-cache-key}
+      - restore_cache:
+          key: *logs-cache-key
+          name: 'restore ./logs'
 
   set-ruby-version:
     description: 'Set the Ruby Version'
