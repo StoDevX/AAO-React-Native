@@ -42,7 +42,7 @@ pairs = [
 ]
 
 pairs.each do |pair|
-	UI.command "cp #{pair[:from]} #{pair[:to]}"
+	puts "cp #{pair[:from]} #{pair[:to]}"
 	FileUtils.cp(pair[:from], pair[:to])
 end
 
