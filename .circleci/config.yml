@@ -265,10 +265,10 @@ jobs:
           command: echo 'org.gradle.workers.max=2' >> ./android/gradle.properties
       - run:
           name: 'Propagate app version into build files'
-          command: ./scripts/ci/propagate-version.rb
+          command: bundle exec ./scripts/ci/propagate-version.rb
       - run:
           name: 'Authorize CI for keys, if allowed'
-          command: if ./scripts/ci/is-signed.sh; then ./scripts/ci/authorize-ci-for-keys.rb; fi
+          command: if ./scripts/ci/is-signed.sh; then bundle exec ./scripts/ci/authorize-ci-for-keys.rb; fi
       - run:
           name: 'Install certificates, if allowed'
           command: if ./scripts/ci/is-signed.sh; then ./scripts/ci/android/certificates.sh; fi
@@ -388,10 +388,10 @@ jobs:
 
       - run:
           name: 'Propagate app version into build files'
-          command: ./scripts/ci/propagate-version.rb
+          command: bundle exec ./scripts/ci/propagate-version.rb
       - run:
           name: 'Authorize CI for keys, if allowed'
-          command: if ./scripts/ci/is-signed.sh; then ./scripts/ci/authorize-ci-for-keys.rb; fi
+          command: if ./scripts/ci/is-signed.sh; then bundle exec ./scripts/ci/authorize-ci-for-keys.rb; fi
       - run:
           name: 'Install certificates, if allowed'
           command: if ./scripts/ci/is-signed.sh; then ./scripts/ci/ios/certificates.sh; fi
