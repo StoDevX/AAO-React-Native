@@ -74,7 +74,7 @@ commands:
     steps:
       - save_cache:
           key: &bundler-cache-key >-
-            v4-ruby-dependencies
+            v5-ruby-dependencies
             {{ arch }}
             {{ checksum "Gemfile.lock" }}
           paths: [*bundler-cache-path]
@@ -108,7 +108,7 @@ commands:
     steps:
       - save_cache:
           key: &yarn-cache-key >-
-            v4-yarn-dependencies
+            v5-yarn-dependencies
             {{ arch }}
             {{ checksum "yarn.lock" }}
           paths: [*yarn-cache-path, ./node_modules]
