@@ -367,7 +367,7 @@ jobs:
       - run: cd ./android && ./gradlew bundleRelease
       - run: ./scripts/ci/android/discover-products.sh | tee ./logs/products
       - run:
-          name: "[nightly/beta] upload to Play Store"
+          name: '[nightly/beta] upload to Play Store'
           command: |
             if [[ $IS_BETA -eq 1 ]]; then
               bundle exec fastlane run upload_to_play_store
@@ -449,16 +449,15 @@ jobs:
       - run: ./scripts/ci/ios/discover-products.sh | tee ./logs/products
       - run:
           name: 'Detox: build app for testing'
-          command:
-            xcodebuild
-              -scheme "$GYM_SCHEME" -project "$GYM_PROJECT"
-              -configuration Release
-              -destination 'platform=iOS Simulator,name=iPhone 7,OS=12.2'
-              -derivedDataPath ./ios/build
-              CODE_SIGNING_REQUIRED=NO
-              CODE_SIGNING_ALLOWED=NO
-              CODE_SIGN_IDENTITY=""
-              build | xcpretty
+          command: xcodebuild
+            -scheme "$GYM_SCHEME" -project "$GYM_PROJECT"
+            -configuration Release
+            -destination 'platform=iOS Simulator,name=iPhone 7,OS=12.2'
+            -derivedDataPath ./ios/build
+            CODE_SIGNING_REQUIRED=NO
+            CODE_SIGNING_ALLOWED=NO
+            CODE_SIGN_IDENTITY=""
+            build | xcpretty
       - run: brew tap wix/brew
       - run: brew install applesimutils
       - run: yarn detox test e2e --configuration ios.sim.release --cleanup
@@ -470,7 +469,7 @@ jobs:
               archive | xcpretty
           fi
       - run:
-          name: "[nightly/beta] upload to Play Store"
+          name: '[nightly/beta] upload to Play Store'
           command: |
             if [[ $IS_BETA -eq 1 ]]; then
               bundle exec fastlane run upload_to_testflight
