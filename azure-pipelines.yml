@@ -65,9 +65,9 @@ variables:
   # else if commit is tagged: beta
   # else: none
   - name: IS_NIGHTLY
-    value: $[ and( variables.SIGN_BUILD, eq( Build.Reason, 'Schedule' ) ) ]
+    value: $[ eq( variables.Build.Reason, 'Schedule' ) ]
   - name: IS_BETA
-    value: $[ and( variables.SIGN_BUILD, startsWith( Build.SourceBranch, 'refs/tags/' ) ) ]
+    value: $[ startsWith( variables.Build.SourceBranch, 'refs/tags/' ) ]
 
   # set some global environment variables
   - {name: HOMEBREW_NO_AUTO_UPDATE, value: '1'}
