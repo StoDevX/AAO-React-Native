@@ -120,7 +120,7 @@ commands:
             v6-yarn-dependencies
             {{ arch }}
             {{ checksum "yarn.lock" }}
-          paths: [*yarn-cache-path, ./node_modules]
+          paths: [./node_modules]
           name: 'Cache Yarn'
 
   yarn-restore:
@@ -189,18 +189,9 @@ commands:
   yarn-install:
     steps:
       - run: yarn --version
-      - run: ls "$YARN_CACHE_DIR" || true
-      - run: ls ~/.cache/yarn || true
-      - run: ls ~/Library/Caches/Yarn || true
       - run:
           name: 'yarn install'
-          command: yarn install --verbose
-            --frozen-lockfile
-            --prefer-offline
-            --cache-folder "$YARN_CACHE_DIR"
-      - run: ls ~/.cache/yarn || true
-      - run: ls ~/Library/Caches/Yarn || true
-      - run: ls "$YARN_CACHE_DIR" || true
+          command: yarn install --verbose --frozen-lockfile
 
   bundler-install:
     steps:
@@ -248,9 +239,9 @@ jobs:
       - checkout
       - skip-if-possible
 
-      - yarn-restore
+      # - yarn-restore
       - yarn-install
-      - yarn-cache
+      # - yarn-cache
 
       - set-ruby-version
       - bundler-restore
@@ -335,9 +326,9 @@ jobs:
       - run: brew tap wix/brew
       - run: brew install applesimutils
 
-      - yarn-restore
+      # - yarn-restore
       - yarn-install
-      - yarn-cache
+      # - yarn-cache
 
       - set-ruby-version
       - bundler-restore
