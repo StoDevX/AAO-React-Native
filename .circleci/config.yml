@@ -332,6 +332,9 @@ jobs:
       - reconcile-git-history
       - skip-if-possible
 
+      - run: brew tap wix/brew
+      - run: brew install applesimutils
+
       - yarn-restore
       - yarn-install
       - yarn-cache
@@ -378,8 +381,6 @@ jobs:
             CODE_SIGN_IDENTITY=""
             build | xcpretty
 
-      - run: brew tap wix/brew
-      - run: brew install applesimutils
       - run:
           name: 'Run Detox tests'
           command: yarn detox test e2e --configuration ios.sim.release --cleanup
