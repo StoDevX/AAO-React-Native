@@ -151,7 +151,11 @@ commands:
   set-ruby-version:
     description: 'Set the Ruby Version'
     steps:
-      - run: echo "ruby-2.5.5" > ~/.ruby-version
+      - run:
+          name: 'Set Ruby version'
+          command: echo "ruby-2.5.5" > ~/.ruby-version
+      - run: ruby --version
+      - run: gem --version
 
   danger:
     description: 'Run Danger'
@@ -232,19 +236,14 @@ workflows:
   analyze-and-build:
     jobs: &basic-jobs
       - ios-prepare: {filters: *filters}
-      - ios-build: {filters: *filters, requires: [ios-prepare]}
-      - ios-deploy: {filters: *filters, requires: [ios-build]}
-
-      - android-prepare: {filters: *filters}
-      - android-build: {filters: *filters, requires: [android-prepare]}
-      - android-deploy: {filters: *filters, requires: [android-build]}
+      - android: {filters: *filters}
 
 jobs:
-  android-prepare: &android-base
+  android: &android
     executor: android
     environment: &android-env
       <<: *x-environment
-      task: ANDROID-prepare
+      task: ANDROID
     steps:
       - checkout
       - skip-if-possible
@@ -254,35 +253,18 @@ jobs:
       - yarn-cache
 
       - set-ruby-version
-      - run: ruby --version
-      - run: gem --version
       - bundler-restore
       - bundler-install
       - bundler-cache
 
+      - gradle-restore
       - run: cd android && ./gradlew --version
-      # - gradle-restore
       - run:
           name: Download Android dependencies
           command: cd android && ./gradlew androidDependencies --console=plain
           environment:
             TERM: xterm-256color
       - gradle-cache
-
-  android-build: &android-build
-    <<: *android-base
-    environment: &android-build-env
-      <<: *android-env
-      task: ANDROID-build
-    steps:
-      - checkout
-      - reconcile-git-history
-      - skip-if-possible
-
-      - set-ruby-version
-      - bundler-restore
-      - yarn-restore
-      - gradle-restore
 
       - run:
           name: 'Restrict Gradle parallelization'
@@ -309,33 +291,9 @@ jobs:
           name: 'Discover generated products'
           command: ./scripts/ci/android/discover-products.sh | tee ./logs/products
 
+      #
       # eventually, implement detox for android
-
-      - persist_to_workspace:
-          root: ./android/build
-          paths: [./*]
-
-      - logs-cache
-
-      - danger
-
-  android-deploy:
-    <<: *android-base
-    environment:
-      <<: *android-env
-      task: ANDROID-deploy
-    steps:
-      - checkout
-      - reconcile-git-history
-      - skip-if-possible
-
-      - set-ruby-version
-      - bundler-restore
-
-      - logs-restore
-
-      - attach_workspace:
-          at: ./android/build
+      #
 
       - run:
           name: '[nightly/beta] upload to Play Store'
@@ -353,8 +311,6 @@ jobs:
                 --track "$TRACK"
             fi
 
-      - yarn-restore
-
       - run:
           name: '[nightly/beta] generate and upload sourcemaps'
           command: |
@@ -365,11 +321,11 @@ jobs:
 
       - danger
 
-  ios-prepare: &ios-base
+  ios-prepare: &ios
     executor: ios
     environment: &ios-env
       <<: *x-environment
-      task: IOS-prepare
+      task: IOS
     shell: /bin/bash --login -o pipefail
     steps:
       - checkout
@@ -381,25 +337,9 @@ jobs:
       - yarn-cache
 
       - set-ruby-version
-      - run: ruby --version
-      - run: gem --version
       - bundler-restore
       - bundler-install
       - bundler-cache
-
-  ios-build: &ios-build
-    <<: *ios-base
-    environment: &ios-build-env
-      <<: *ios-env
-      task: IOS-build
-    steps:
-      - checkout
-      - reconcile-git-history
-      - skip-if-possible
-
-      - set-ruby-version
-      - bundler-restore
-      - yarn-restore
 
       - run:
           name: 'Show Xcode build settings'
@@ -454,27 +394,6 @@ jobs:
                 archive | xcpretty
             fi
 
-      - persist_to_workspace: {root: ./ios/archive, paths: [./*]}
-
-      - logs-cache
-
-  ios-deploy:
-    <<: *ios-base
-    environment:
-      <<: *ios-env
-      task: IOS-deploy
-    steps:
-      - checkout
-      - reconcile-git-history
-      - skip-if-possible
-
-      - set-ruby-version
-      - bundler-restore
-
-      - attach_workspace: {at: ./ios/archive}
-
-      - logs-restore
-
       - run:
           name: '[nightly/beta] upload to Play Store'
           command: |
@@ -490,8 +409,6 @@ jobs:
                 --ipa $(cat ./logs/products)
             fi
 
-      - yarn-restore
-
       - run:
           name: '[nightly/beta] generate and upload sourcemaps'
           command: |
@@ -502,14 +419,14 @@ jobs:
 
       - danger
 
-  android-build-nightly:
-    <<: *android-build
+  android-nightly:
+    <<: *android
     environment:
-      <<: *android-build-env
+      <<: *android-env
       IS_NIGHTLY: '1'
 
-  ios-build-nightly:
-    <<: *ios-build
+  ios-nightly:
+    <<: *ios
     environment:
-      <<: *ios-build-env
+      <<: *ios-env
       IS_NIGHTLY: '1'
