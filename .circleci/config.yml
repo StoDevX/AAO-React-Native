@@ -235,7 +235,7 @@ workflows:
   version: 2
   analyze-and-build:
     jobs: &basic-jobs
-      - ios-prepare: {filters: *filters}
+      - ios: {filters: *filters}
       - android: {filters: *filters}
 
 jobs:
@@ -321,7 +321,7 @@ jobs:
 
       - danger
 
-  ios-prepare: &ios
+  ios: &ios
     executor: ios
     environment: &ios-env
       <<: *x-environment
