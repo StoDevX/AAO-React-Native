@@ -159,7 +159,7 @@ export class PrintJobReleaseView extends React.PureComponent<Props, State> {
 		const {printer, job} = this.props.navigation.state.params
 		const {username} = await loadLoginCredentials()
 		const {heldJob} = this.state
-		if (!heldJob) {
+		if (!heldJob || !username) {
 			showGeneralError(this.returnToJobsView)
 			return
 		}
