@@ -96,7 +96,7 @@ class PrintJobsView extends React.PureComponent<Props, State> {
 
 	fetchData = async () => {
 		await this.logIn()
-		this.props.updatePrintJobs()
+		await this.props.updatePrintJobs()
 	}
 
 	keyExtractor = (item: PrintJob) => item.id.toString()
