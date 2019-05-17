@@ -1,6 +1,6 @@
-name: Convenience Store
-image: convenience
-category: Supplies and Books
+name: Bookstore
+image: bookstore
+category: Mail, Packages, and Books
 
 schedule:
   - title: Hours

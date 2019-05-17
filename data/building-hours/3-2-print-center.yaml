@@ -1,6 +1,6 @@
 name: Print Center
 image: print
-category: Mail and Packages
+category: Mail, Packages, and Books
 
 schedule:
   - title: Hours
