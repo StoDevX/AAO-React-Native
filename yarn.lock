@@ -6574,12 +6574,12 @@ react-native-tab-view@^1.4.1:
   dependencies:
     prop-types "^15.6.1"
 
-react-native-tableview-simple@2.0.1:
-  version "2.0.1"
-  resolved "https://registry.yarnpkg.com/react-native-tableview-simple/-/react-native-tableview-simple-2.0.1.tgz#0b92594668814124be79896c912ca531646f754f"
-  integrity sha512-N1ekpMc62Vg+juIR40Z5LPUJVUQJG2Z//irXHWC24vxmmDGlfBYrq9kA/UXGwWGbS3p0IvqQx7lw5XOxaxrPsw==
+react-native-tableview-simple@2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/react-native-tableview-simple/-/react-native-tableview-simple-2.1.0.tgz#c6b2d612c0a09d0ac567ae6a106474f77e10b00f"
+  integrity sha512-ok9qLkQ/5iNpXkiR94HSX/9ffSrpqGR88cBouuOT6+t8rZsi3hNYbYhA3HmGBDU+KSKachOKlvckxtTvPwviPg==
   dependencies:
-    prop-types "^15.6.2"
+    prop-types "^15.7.2"
 
 react-native-typography@1.4.0, react-native-typography@^1.3.0:
   version "1.4.0"
