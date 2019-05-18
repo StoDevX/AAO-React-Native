@@ -19,7 +19,7 @@ export class DeveloperSection extends React.Component<Props> {
 	}
 	sendSentryException = () => {
 		Sentry.captureException(new Error('Debug Exception'))
-		Alert.alert('Sentry exception sent.')
+		Alert.alert('Sentry exception sent')
 	}
 
 	render() {
