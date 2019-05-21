@@ -6368,10 +6368,10 @@ range-parser@~1.2.1:
   resolved "https://registry.yarnpkg.com/range-parser/-/range-parser-1.2.1.tgz#3cf37023d199e1c24d1a55b84800c2f3e6468031"
   integrity sha512-Hrgsx+orqoygnmhFbKaHE6c296J+HTAQXoxEF6gNupROmmGJRoyzfG3ccAveqCBrwr/2yxQ5BVd/GTl5agOwSg==
 
-raven-js@^3.24.2:
-  version "3.27.0"
-  resolved "https://registry.yarnpkg.com/raven-js/-/raven-js-3.27.0.tgz#9f47c03e17933ce756e189f3669d49c441c1ba6e"
-  integrity sha512-vChdOL+yzecfnGA+B5EhEZkJ3kY3KlMzxEhShKh6Vdtooyl0yZfYNFQfYzgMf2v4pyQa+OTZ5esTxxgOOZDHqw==
+raven-js@^3.27.1:
+  version "3.27.1"
+  resolved "https://registry.yarnpkg.com/raven-js/-/raven-js-3.27.1.tgz#e187a12982061908ccbf935af0640c9043d7d666"
+  integrity sha512-r/9CwSbaGfBFjo4hGR45DAmrukUKkQ4HdMu80PlVLDY1t8f9b4aaZzTsFegaafu7EGhEYougWDJ9/IcTdYdLXQ==
 
 rc@^1.2.7:
   version "1.2.8"
@@ -6545,13 +6545,13 @@ react-native-searchbar-controlled@2.0.0:
   resolved "https://registry.yarnpkg.com/react-native-searchbar-controlled/-/react-native-searchbar-controlled-2.0.0.tgz#5f4566e3dd354773aada7887477db11477f54b04"
   integrity sha512-QQmMcv6b4lKDdRGx3t3tMZXRskzYZEnjBphy9UWB8QELqdgDj8q2BjsrOG2xGvJDpnfZoRa3rXRV+2s50zA2nw==
 
-react-native-sentry@0.43.0:
-  version "0.43.0"
-  resolved "https://registry.yarnpkg.com/react-native-sentry/-/react-native-sentry-0.43.0.tgz#fe2fe542fe5f052d610813f47ecebd9bc2277b3f"
-  integrity sha512-i4ujPcb7HLPgTLNS5SxDnwhTu7x0JoiWTl5f+cQPvbeVQqBKPX9FwpppluF6e8vHN8FYDIezrnDl0/cMwmHdFg==
+react-native-sentry@0.43.1:
+  version "0.43.1"
+  resolved "https://registry.yarnpkg.com/react-native-sentry/-/react-native-sentry-0.43.1.tgz#52029e5244a1667614d961c342f0c82419266d24"
+  integrity sha512-oDWPLlXBbTFOEzqqxGihFO3DoBkEiQCQKgkF4av07aMdW+dKJxagwFjQW4vkoclNdK3w0Nfjc8kd7I7loDAcnA==
   dependencies:
     "@sentry/wizard" "^0.13.0"
-    raven-js "^3.24.2"
+    raven-js "^3.27.1"
 
 react-native-tab-view@^1.0.0, react-native-tab-view@^1.2.0, react-native-tab-view@^1.4.1:
   version "1.4.1"
