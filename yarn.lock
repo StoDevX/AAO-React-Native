@@ -6525,10 +6525,10 @@ react-native-linear-gradient@2.5.4:
   resolved "https://registry.yarnpkg.com/react-native-linear-gradient/-/react-native-linear-gradient-2.5.4.tgz#dce133526f5a5510a639af94544f1ed0c984bd1e"
   integrity sha512-FF1NhlerA4uBiS0gFIHa4FBp8/aftv4vPj14Y47lGNkYjSI94tnI6oYO3EfUxXjEyCUPiOVNKZOB9kScyjc5Ew==
 
-react-native-network-info@4.0.1:
-  version "4.0.1"
-  resolved "https://registry.yarnpkg.com/react-native-network-info/-/react-native-network-info-4.0.1.tgz#e0242cfec0d9c0e1c6c32b8df596bb4c3223a5a3"
-  integrity sha512-ZeSkeBL/fHsFR6sAOVHMd4oMknCwsbEeL+Zewec1/3ielg8k9YcddK3wymXS7kvwV0mTB2ji4X5tI0b7XY0sDA==
+react-native-network-info@5.0.0:
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/react-native-network-info/-/react-native-network-info-5.0.0.tgz#dbdea5dcf2245172e6d3f12d7e668b5c649ea540"
+  integrity sha512-Pkg84XIpg5lE6fmRIhqr0ihUo3uiehFyCZ7A8H1dJsGiO2VXmtJAn6QXay7OI70tXxzbnyS9aLGwaHmjXsE7yA==
 
 react-native-onesignal@3.2.14:
   version "3.2.14"
