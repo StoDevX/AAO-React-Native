@@ -169,7 +169,7 @@
     "minimist": "1.2.0",
     "mkdirp": "0.5.1",
     "pify": "4.0.1",
-    "prettier": "1.17.1",
+    "prettier": "1.18.2",
     "pretty-bytes": "5.2.0",
     "pretty-quick": "1.11.0",
     "prop-types": "15.7.2",
