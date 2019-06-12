@@ -1,19 +1,3 @@
-# Gets the version, be it from Travis, Testflight, or Google Play
-def current_build_number(**args)
-	return build_number if build_number
-
-	begin
-		case lane_context[:PLATFORM_NAME]
-		when :android
-			(google_play_track_version_codes(track: args[:track]) + 1).to_s
-		when :ios
-			(latest_testflight_build_number + 1).to_s
-		end
-	rescue StandardError
-		'1'
-	end
-end
-
 # get the current build number from the environment
 def build_number
 	travis = ENV['TRAVIS_BUILD_NUMBER']
@@ -36,11 +20,11 @@ def current_bundle_version
 end
 
 # Copy the package.json version into the other version locations
-def propagate_version(**args)
+def propagate_version
 	return unless ENV.key? 'CI'
 
 	version = get_package_key(key: :version)
-	build = current_build_number(track: args[:track] || nil)
+	build = build_number
 
 	UI.message "Propagating version: #{version}"
 	UI.message 'into the Info.plist and build.gradle files'
