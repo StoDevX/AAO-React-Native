@@ -962,7 +962,19 @@
     react-native-safe-area-view "^0.14.1"
     react-native-screens "^1.0.0 || ^1.0.0-alpha"
 
-"@sentry/cli@1.44.3", "@sentry/cli@^1.43.0":
+"@sentry/cli@1.44.4":
+  version "1.44.4"
+  resolved "https://registry.yarnpkg.com/@sentry/cli/-/cli-1.44.4.tgz#509835a8946c0851e5bb513ccdecc8aae54eff64"
+  integrity sha512-BgVjCVRdTwGhl0nSj18qhVz+m3oZ3pfijM2kOWTJ9eNTn+1cYLrL0vCITgROczzNADwHrXje3WYHjgPXZm5cJg==
+  dependencies:
+    fs-copy-file-sync "^1.1.1"
+    https-proxy-agent "^2.2.1"
+    mkdirp "^0.5.1"
+    node-fetch "^2.1.2"
+    progress "2.0.0"
+    proxy-from-env "^1.0.0"
+
+"@sentry/cli@^1.43.0":
   version "1.44.3"
   resolved "https://registry.yarnpkg.com/@sentry/cli/-/cli-1.44.3.tgz#69934597a3abae65f5f3082296417a7c4416b4a8"
   integrity sha512-TnQEyV7mM/nM4/2n6QQm7oq486JRT/2kRJkhWlJrzqK/tNtsEoxlwarkZzbfAUJI2OIoHcxn74jhEPD58wwvvg==
