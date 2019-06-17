@@ -6618,10 +6618,10 @@ react-native-searchbar-controlled@2.0.0:
   resolved "https://registry.yarnpkg.com/react-native-searchbar-controlled/-/react-native-searchbar-controlled-2.0.0.tgz#5f4566e3dd354773aada7887477db11477f54b04"
   integrity sha512-QQmMcv6b4lKDdRGx3t3tMZXRskzYZEnjBphy9UWB8QELqdgDj8q2BjsrOG2xGvJDpnfZoRa3rXRV+2s50zA2nw==
 
-react-native-sentry@0.43.1:
-  version "0.43.1"
-  resolved "https://registry.yarnpkg.com/react-native-sentry/-/react-native-sentry-0.43.1.tgz#52029e5244a1667614d961c342f0c82419266d24"
-  integrity sha512-oDWPLlXBbTFOEzqqxGihFO3DoBkEiQCQKgkF4av07aMdW+dKJxagwFjQW4vkoclNdK3w0Nfjc8kd7I7loDAcnA==
+react-native-sentry@0.43.2:
+  version "0.43.2"
+  resolved "https://registry.yarnpkg.com/react-native-sentry/-/react-native-sentry-0.43.2.tgz#1505d16d334656f25f4d515e004d0c5a4ac5a01b"
+  integrity sha512-MDrMkt/ntyQhhn+b3EVUuB/lXvQbSLvCOpkAvioNOzddoyo2R6i3rVZ3aZmPN1oK3O9GFE4tSa0M+eTHni7AaQ==
   dependencies:
     "@sentry/wizard" "^0.13.0"
     raven-js "^3.27.1"
