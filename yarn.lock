@@ -2185,10 +2185,10 @@ danger-plugin-yarn@1.3.2:
     node-fetch "^1.7.1"
     semver "^5.4.1"
 
-danger@8.0.0:
-  version "8.0.0"
-  resolved "https://registry.yarnpkg.com/danger/-/danger-8.0.0.tgz#9809d17e6213c05c3cc2c4e0573f707acc3f5402"
-  integrity sha512-S3Q9ukawJUxA2SRlfzLtP/WzGr2jiKqkRi3pX/Scbfm0nLh/KNQLMsdgYHhJwECCe5Vt69iy7b2zMMga4rFNrQ==
+danger@9.0.1:
+  version "9.0.1"
+  resolved "https://registry.yarnpkg.com/danger/-/danger-9.0.1.tgz#d0a4a9b54d17b38ce4bf924cec2bf398af76acfc"
+  integrity sha512-jrzPpD20BmN5/3ZlgG2K80WFVS2/2+Eq/hmzbr+SJXNv7HKzp5YzKng2f8eGP2ctsUJxJ2lcTRPGUq8Ai3dM9g==
   dependencies:
     "@babel/polyfill" "^7.2.5"
     "@octokit/rest" "^16.14.1"
