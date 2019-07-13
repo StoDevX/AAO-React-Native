@@ -6640,10 +6640,10 @@ react-native-paper@2.16.0:
     react-lifecycles-compat "^3.0.4"
     react-native-safe-area-view "^0.12.0"
 
-react-native-popover-view@1.0.19:
-  version "1.0.19"
-  resolved "https://registry.yarnpkg.com/react-native-popover-view/-/react-native-popover-view-1.0.19.tgz#7b3f430c4c24a96d58e08dcdf90be30e2f92836c"
-  integrity sha512-vyh96EcffKEl6S+NCG30TjMkFRohrOPdvA3tZg2/NdKb4AO6pmjCAlsq1Gntw7fUqhEDlKHAdpQmR216kDpC7Q==
+react-native-popover-view@2.0.1:
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/react-native-popover-view/-/react-native-popover-view-2.0.1.tgz#2c0123fdaa98fba539e3037bec4f035b41d54c16"
+  integrity sha512-Ahq7MhPoa3yJn3x3S95pneJpqF0tMMO8z98h3H7JXU6g9yBQfUkN2haodRt6l/D055LzSGYdv/cpgZKTOOBZKw==
   dependencies:
     react-native-safe-area-view "^0.10.0"
 
