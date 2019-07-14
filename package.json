@@ -149,7 +149,7 @@
     "@babel/core": "7.5.4",
     "@babel/runtime": "7.5.4",
     "@sentry/cli": "1.46.0",
-    "ajv": "6.10.0",
+    "ajv": "6.10.2",
     "babel-core": "7.0.0-bridge.0",
     "babel-eslint": "10.0.2",
     "babel-jest": "24.8.0",
