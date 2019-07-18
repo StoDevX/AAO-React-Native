@@ -16,7 +16,7 @@
     "moment-timezone": "^0.5.21"
   },
   "dependencies": {
-    "@callstack/react-theme-provider": "^1.0.3",
+    "@callstack/react-theme-provider": "^3.0.0",
     "@frogpond/add-to-device-calendar": "^1.0.0",
     "@frogpond/analytics": "^1.0.0",
     "@frogpond/app-theme": "^1.0.0",

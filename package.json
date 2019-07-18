@@ -87,7 +87,7 @@
     ]
   },
   "dependencies": {
-    "@callstack/react-theme-provider": "1.0.7",
+    "@callstack/react-theme-provider": "3.0.3",
     "@frogpond/titlecase": "1.0.0",
     "@hawkrives/react-native-alphabetlistview": "1.0.0",
     "@hawkrives/react-native-alternate-icons": "0.4.7",
