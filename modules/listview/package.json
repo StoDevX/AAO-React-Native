@@ -18,6 +18,6 @@
     "@frogpond/app-theme": "^1.0.0",
     "@frogpond/colors": "^1.0.0",
     "@frogpond/searchbar": "^1.0.0",
-    "lodash": "^4.17.13"
+    "lodash": "^4.17.15"
   }
 }
