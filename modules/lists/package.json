@@ -19,6 +19,6 @@
     "@frogpond/colors": "^1.0.0",
     "@frogpond/touchable": "^1.0.0",
     "@frogpond/separator": "^1.0.0",
-    "lodash": "^4.17.13"
+    "lodash": "^4.17.15"
   }
 }
