@@ -79,6 +79,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Building signed Android APKs was broken after RN 0.59; now it is fixed (#3569)
 - Fixed an issue where StoPrint jobs failed to release properly (#3730)
 - Fixed StoPrint login issue (#3732)
+- Fixed a crash that prevented all Android tab views from loading
 
 ### Removed
 - Removed the `prepare` script patching `ScrollEnabled` inside `RCTMultilineTextInputView` (#3337)
