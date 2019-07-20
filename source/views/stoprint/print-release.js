@@ -70,7 +70,7 @@ function PrinterInformation({printer}: {printer: Printer}) {
 
 type Props = TopLevelViewPropsType & {
 	navigation: {
-		state: {params: {job: PrintJob, printer: ?Printer, username: ?string}},
+		state: {params: {job: PrintJob, printer: ?Printer}},
 	},
 }
 
@@ -156,9 +156,10 @@ export class PrintJobReleaseView extends React.PureComponent<Props, State> {
 
 	releaseJob = async () => {
 		this.setState(() => ({status: 'printing'}))
-		const {printer, username, job} = this.props.navigation.state.params
+		const {printer, job} = this.props.navigation.state.params
+		const {username} = await loadLoginCredentials()
 		const {heldJob} = this.state
-		if (!heldJob) {
+		if (!heldJob || !username) {
 			showGeneralError(this.returnToJobsView)
 			return
 		}

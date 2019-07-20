@@ -53,6 +53,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Migrated our error handling to Sentry.
 - Enabled inline requires in the metro bundler
 - Updated references to ASC to be CAAS in dictionary and hours
+- Show alert after dev sentry send message or exception 
+- Update finals hours notice to be a summer notice
 
 ### Fixed
 - Fixed an issue where Fastlane was reporting build failures despite having skipped the build (#3215)
@@ -75,6 +77,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Fixed the balances view from refreshing if the user has not agreed to the alert (#3509)
 - Fixed course search crash (#3564)
 - Building signed Android APKs was broken after RN 0.59; now it is fixed (#3569)
+- Fixed an issue where StoPrint jobs failed to release properly (#3730)
+- Fixed StoPrint login issue (#3732)
 
 ### Removed
 - Removed the `prepare` script patching `ScrollEnabled` inside `RCTMultilineTextInputView` (#3337)

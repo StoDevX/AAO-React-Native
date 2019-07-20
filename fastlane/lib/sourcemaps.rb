@@ -44,6 +44,16 @@ def generate_sourcemap
 	                                      print_command: true)
 end
 
+def bundle_identifier
+	case lane_context[:PLATFORM_NAME]
+	when :android
+		"com.allaboutolaf"
+	when :ios
+		get_info_plist_value(path: 'ios/AllAboutOlaf/Info.plist',
+		                     key: 'CFBundleIdentifier')
+	end
+end
+
 # Upload sourcemap to sentry
 def upload_sourcemap_to_sentry
 	args = sourcemap_args
@@ -52,9 +62,9 @@ def upload_sourcemap_to_sentry
 	       'npx @sentry/cli',
 	       'releases',
 	       'files',
-	       current_bundle_version,
+	       "#{bundle_identifier}-#{current_bundle_version}",
 	       'upload-sourcemaps',
-	       "--dist #{current_bundle_version}",
+	       "--dist #{current_bundle_code}",
 	       "--strip-prefix #{File.expand_path(File.join(__FILE__, '..', '..', '..'))}",
 	       '--rewrite',
 	       args[:sourcemap_output]

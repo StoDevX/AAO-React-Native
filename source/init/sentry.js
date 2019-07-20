@@ -10,7 +10,9 @@ export function bootSentry() {
 		handlePromiseRejection: true,
 	})
 
-	if (!IS_PRODUCTION) {
+	if (IS_PRODUCTION) {
 		config.install()
 	}
 }
+
+bootSentry()
