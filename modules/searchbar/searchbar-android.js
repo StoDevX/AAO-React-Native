@@ -19,6 +19,7 @@ export class SearchBar extends React.Component<Props> {
 			<NativeSearchBar
 				onChangeText={this.props.onChange}
 				onIconPress={this.props.onCancel}
+				onSubmitEditing={this.props.onSubmit}
 				placeholder={this.props.placeholder}
 				style={this.props.style}
 				value={this.props.value}
