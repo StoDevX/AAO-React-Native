@@ -15,7 +15,7 @@ export function firstReadable(
 	possibilities = possibilities.map(c => tinycolor(c))
 	let readable = possibilities.find(c => tinycolor.isReadable(c, background))
 	if (readable) {
-		return readable.firstReadable
+		return readable.toString()
 	}
-	return tinycolor.mostReadable(background, [black, white])
+	return tinycolor.mostReadable(background, [black, white]).toString()
 }

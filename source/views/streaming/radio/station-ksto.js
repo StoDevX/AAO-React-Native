@@ -13,7 +13,9 @@ import {type PlayerTheme} from './types'
 let tintColor = '#37a287'
 const colors: PlayerTheme = {
 	tintColor,
-	buttonTextColor: tinycolor.mostReadable(tintColor, [sto.white, sto.black]),
+	buttonTextColor: tinycolor
+		.mostReadable(tintColor, [sto.white, sto.black])
+		.toString(),
 	textColor: tintColor,
 	imageBorderColor: 'transparent',
 	imageBackgroundColor: tinycolor(tintColor)
