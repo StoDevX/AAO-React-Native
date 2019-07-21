@@ -17,6 +17,7 @@ import {
 	Portal,
 } from 'react-native-paper'
 import type {TopLevelViewPropsTypeWithParams} from '../types'
+import {officeHoursTitle, officeHoursLabel} from './lib'
 
 type Props = TopLevelViewPropsTypeWithParams<{contact: DirectoryItem}>
 
@@ -27,6 +28,7 @@ export function DirectoryDetailView(props: Props) {
 		displayTitle,
 		photo,
 		officeHours,
+		onLeave,
 		profileUrl,
 		email,
 		departments,
@@ -93,11 +95,11 @@ export function DirectoryDetailView(props: Props) {
 					))}
 				</View>
 
-				{officeHours ? (
+				{officeHours && (officeHours.prefix || officeHours.content) ? (
 					<List.Item
-						description={officeHours}
+						description={officeHoursTitle(officeHours)}
 						left={props => <List.Icon {...props} icon="sentiment-satisfied" />}
-						title="Office Hours"
+						title={officeHoursLabel(officeHours, onLeave)}
 					/>
 				) : null}
 
