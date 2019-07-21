@@ -17,7 +17,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.3.2'
+        classpath 'com.android.tools.build:gradle:3.4.2'
 
         // this plugin warns / fixes google-play depdendency issues caused by onsignal
         classpath 'gradle.plugin.com.onesignal:onesignal-gradle-plugin:0.12.2'
