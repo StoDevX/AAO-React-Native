@@ -13,32 +13,42 @@ import {
 	Detail,
 	Title,
 } from '@frogpond/lists'
-import sortBy from 'lodash/sortBy'
 import groupBy from 'lodash/groupBy'
-import uniq from 'lodash/uniq'
 import words from 'lodash/words'
 import deburr from 'lodash/deburr'
-import startCase from 'lodash/startCase'
 import * as c from '@frogpond/colors'
 import type {StudentOrgType} from './types'
 import {API} from '@frogpond/api'
 import {fetch} from '@frogpond/fetch'
+import {useAsync, type AsyncState} from 'react-async'
+import {useDebounce} from '@frogpond/use-debounce'
 
-const fetchOrgs = (forReload?: boolean): Promise<Array<StudentOrgType>> =>
-	fetch(API('/orgs'), {delay: forReload ? 500 : 0}).json()
+const fetchOrgs = (args: {
+	signal: window.AbortController,
+}): Promise<Array<StudentOrgType>> => {
+	return fetch(API('/orgs'), {signal: args.signal}).json()
+}
 
 const leftSideSpacing = 20
 const ROW_HEIGHT = Platform.OS === 'ios' ? 58 : 74
 const SECTION_HEADER_HEIGHT = Platform.OS === 'ios' ? 33 : 41
+const CELL_HEIGHT =
+	ROW_HEIGHT +
+	(Platform.OS === 'ios' ? (11 / 12) * StyleSheet.hairlineWidth : 0)
 
-const splitToArray = (str: string) => words(deburr(str.toLowerCase()))
+function splitToArray(str: string) {
+	return words(deburr(str.toLowerCase()))
+}
 
-const orgToArray = (term: StudentOrgType) =>
-	uniq([
-		...splitToArray(term.name),
-		...splitToArray(term.category),
-		...splitToArray(term.description),
-	])
+function orgToArray(term: StudentOrgType) {
+	return Array.from(
+		new Set([
+			...splitToArray(term.name),
+			...splitToArray(term.category),
+			...splitToArray(term.description),
+		]),
+	)
+}
 
 const styles = StyleSheet.create({
 	wrapper: {
@@ -65,74 +75,63 @@ const styles = StyleSheet.create({
 
 type Props = TopLevelViewPropsType
 
-type State = {
-	orgs: Array<StudentOrgType>,
-	query: string,
-	refreshing: boolean,
-	error: boolean,
-	loading: boolean,
-}
+export function StudentOrgsView(props: Props) {
+	let [query, setQuery] = React.useState('')
+	let searchQuery = useDebounce(query.toLowerCase(), 200)
+	let [isInitialFetch, setIsInitial] = React.useState(true)
 
-export class StudentOrgsView extends React.PureComponent<Props, State> {
-	static navigationOptions = {
-		title: 'Student Orgs',
-		headerBackTitle: 'Orgs',
+	let {
+		data,
+		error,
+		reload,
+		isPending,
+	}: AsyncState<?Array<StudentOrgType>> = useAsync(fetchOrgs, {
+		onResolve: () => setIsInitial(false),
+	})
+
+	let results = React.useMemo(() => {
+		let dataArr = data || []
+
+		if (!searchQuery) {
+			return dataArr
+		}
+
+		return dataArr.filter(org =>
+			orgToArray(org).some(word => word.startsWith(searchQuery)),
+		)
+	}, [data, searchQuery])
+
+	let grouped = React.useMemo(() => {
+		return groupBy(results, '$groupableName')
+	}, [results])
+
+	// conditionals must come after all hooks
+	if (error) {
+		return (
+			<NoticeView
+				buttonText="Try Again"
+				onPress={reload}
+				text="A problem occured while loading the definitions"
+			/>
+		)
 	}
 
-	searchBar: any
-
-	state = {
-		orgs: [],
-		query: '',
-		refreshing: false,
-		loading: true,
-		error: false,
+	if (isInitialFetch) {
+		return <LoadingView />
 	}
 
-	componentDidMount() {
-		this.fetchData().then(() => {
-			this.setState(() => ({loading: false}))
-		})
+	if (!data || !data.length) {
+		return <NoticeView text="No organizations found." />
 	}
 
-	fetchData = async (refresh?: boolean) => {
-		let orgs = await fetchOrgs(refresh)
-
-		let sortableRegex = /^(St\.? Olaf(?: College)?|The) +/iu
-		let withSortableNames = orgs.map(item => {
-			let sortableName = item.name.replace(sortableRegex, '')
-
-			return {
-				...item,
-				$sortableName: sortableName,
-				$groupableName: startCase(sortableName)[0],
-			}
-		})
-
-		let sorted = sortBy(withSortableNames, '$sortableName')
-		this.setState(() => ({orgs: sorted}))
-	}
-
-	refresh = async () => {
-		this.setState(() => ({refreshing: true}))
-		await this.fetchData(true)
-		this.setState(() => ({refreshing: false}))
-	}
-
-	renderSectionHeader = ({title}: {title: string}) => (
-		<ListSectionHeader
-			spacing={{left: leftSideSpacing}}
-			style={styles.rowSectionHeader}
-			title={title}
-		/>
-	)
-
-	renderRow = ({item}: {item: StudentOrgType}) => (
+	let renderRow = ({item}: {item: StudentOrgType}) => (
 		<ListRow
 			arrowPosition="none"
 			contentContainerStyle={[styles.row]}
 			fullWidth={true}
-			onPress={() => this.onPressRow(item)}
+			onPress={() =>
+				props.navigation.navigate('StudentOrgsDetailView', {org: item})
+			}
 		>
 			<Row alignItems="flex-start">
 				<View style={styles.badgeContainer}>
@@ -147,63 +146,36 @@ export class StudentOrgsView extends React.PureComponent<Props, State> {
 		</ListRow>
 	)
 
-	renderSeparator = (sectionId: string, rowId: string) => (
-		<ListSeparator
-			key={`${sectionId}-${rowId}`}
-			spacing={{left: leftSideSpacing}}
+	return (
+		<SearchableAlphabetListView
+			cell={renderRow}
+			cellHeight={CELL_HEIGHT}
+			data={grouped}
+			onSearch={setQuery}
+			query={query}
+			refreshControl={
+				<RefreshControl onRefresh={reload} refreshing={isPending} />
+			}
+			renderSeparator={(sectionId: string, rowId: string) => (
+				<ListSeparator
+					key={`${sectionId}-${rowId}`}
+					spacing={{left: leftSideSpacing}}
+				/>
+			)}
+			sectionHeader={({title}: {title: string}) => (
+				<ListSectionHeader
+					spacing={{left: leftSideSpacing}}
+					style={styles.rowSectionHeader}
+					title={title}
+				/>
+			)}
+			sectionHeaderHeight={SECTION_HEADER_HEIGHT}
+			style={styles.wrapper}
 		/>
 	)
+}
 
-	onPressRow = (data: StudentOrgType) => {
-		this.props.navigation.navigate('StudentOrgsDetailView', {org: data})
-	}
-
-	performSearch = (text: string) => {
-		this.setState(() => ({query: text}))
-	}
-
-	render() {
-		if (this.state.loading) {
-			return <LoadingView />
-		}
-
-		if (!this.state.orgs.length) {
-			return <NoticeView text="No organizations found." />
-		}
-
-		const refreshControl = (
-			<RefreshControl
-				onRefresh={this.refresh}
-				refreshing={this.state.refreshing}
-			/>
-		)
-
-		let results = this.state.orgs
-		if (this.state.query) {
-			let {query, orgs} = this.state
-			query = query.toLowerCase()
-			results = orgs.filter(org =>
-				orgToArray(org).some(word => word.startsWith(query)),
-			)
-		}
-		let groupedResults = groupBy(results, '$groupableName')
-
-		return (
-			<SearchableAlphabetListView
-				cell={this.renderRow}
-				cellHeight={
-					ROW_HEIGHT +
-					(Platform.OS === 'ios' ? (11 / 12) * StyleSheet.hairlineWidth : 0)
-				}
-				data={groupedResults}
-				onSearch={this.performSearch}
-				query={this.state.query}
-				refreshControl={refreshControl}
-				renderSeparator={this.renderSeparator}
-				sectionHeader={this.renderSectionHeader}
-				sectionHeaderHeight={SECTION_HEADER_HEIGHT}
-				style={styles.wrapper}
-			/>
-		)
-	}
+StudentOrgsView.navigationOptions = {
+	title: 'Student Orgs',
+	headerBackTitle: 'Orgs',
 }

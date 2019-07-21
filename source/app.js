@@ -11,7 +11,8 @@ import './init/data'
 import {ONESIGNAL_APP_ID} from './init/notifications'
 
 import * as React from 'react'
-import {Provider} from 'react-redux'
+import {Provider as ReduxProvider} from 'react-redux'
+import {Provider as PaperProvider} from 'react-native-paper'
 import {makeStore, initRedux} from './redux'
 import * as navigation from './navigation'
 import OneSignal, {
@@ -61,14 +62,16 @@ export default class App extends React.Component<Props> {
 		let theme = getTheme()
 
 		return (
-			<Provider store={store}>
-				<ThemeProvider theme={theme}>
-					<navigation.AppNavigator
-						onNavigationStateChange={navigation.trackScreenChanges}
-						persistenceKey={navigation.persistenceKey}
-					/>
-				</ThemeProvider>
-			</Provider>
+			<ReduxProvider store={store}>
+				<PaperProvider>
+					<ThemeProvider theme={theme}>
+						<navigation.AppNavigator
+							onNavigationStateChange={navigation.trackScreenChanges}
+							persistenceKey={navigation.persistenceKey}
+						/>
+					</ThemeProvider>
+				</PaperProvider>
+			</ReduxProvider>
 		)
 	}
 }
