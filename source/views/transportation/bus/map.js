@@ -102,9 +102,7 @@ class Map extends React.Component<Props, State> {
 
 		if (!entriesWithCoordinates.length) {
 			const today = now.format('dddd')
-			const msg = `No coordinates have been provided for today's (${today}) schedule on the "${
-				lineToDisplay.line
-			}" line`
+			const msg = `No coordinates have been provided for today's (${today}) schedule on the "${lineToDisplay.line}" line`
 			return <NoticeView text={msg} />
 		}
 
