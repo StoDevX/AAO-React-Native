@@ -94,7 +94,7 @@ GEM
     http-cookie (1.0.3)
       domain_name (~> 0.5)
     httpclient (2.8.3)
-    jaro_winkler (1.5.2)
+    jaro_winkler (1.5.3)
     json (2.2.0)
     jwt (2.1.0)
     memoist (0.16.0)
@@ -121,7 +121,7 @@ GEM
       uber (< 0.2.0)
     retriable (3.1.2)
     rouge (2.0.7)
-    rubocop (0.71.0)
+    rubocop (0.73.0)
       jaro_winkler (~> 1.5.1)
       parallel (~> 1.10)
       parser (>= 2.6)
@@ -171,7 +171,7 @@ DEPENDENCIES
   fastlane
   json
   netrc
-  rubocop (~> 0.60)
+  rubocop (~> 0.73)
   xcodeproj
 
 BUNDLED WITH
