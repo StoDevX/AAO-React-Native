@@ -11,13 +11,13 @@ export const officeHoursTitle = (officeHours: OfficeHours) => {
 
 export const officeHoursLabel = (
 	officeHours: OfficeHours,
-	onLeave: OnLeave,
+	onLeave: ?OnLeave,
 ) => {
 	const prefix = officeHours.prefix || ''
 	const content = officeHours.content || ''
 
 	const sabbaticalTitle = () => {
-		const leaveType = onLeave.type || ''
+		const leaveType = (onLeave && onLeave.type) || ''
 		return /sabbatical/u.test(leaveType)
 	}
 
