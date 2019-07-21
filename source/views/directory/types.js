@@ -21,6 +21,20 @@ type Address = {
 	street: Array<string>,
 }
 
+export type OfficeHours = {
+	display: string,
+	prefix: string,
+	hrefLabel: string,
+	href: string,
+	content: string,
+}
+
+export type OnLeave = {
+	start: string,
+	end: string,
+	type: string,
+}
+
 export type DirectoryItem = {
 	campusLocations: Array<CampusLocation>,
 	classYear: ?number,
@@ -32,8 +46,8 @@ export type DirectoryItem = {
 	homeAddress: Address,
 	homePhone: ?string,
 	lastName: ?string,
-	officeHours: ?string,
-	onLeave: ?boolean,
+	officeHours: ?OfficeHours,
+	onLeave: ?OnLeave,
 	photo: string,
 	profileUrl: ?string,
 	suffixName: ?string,
