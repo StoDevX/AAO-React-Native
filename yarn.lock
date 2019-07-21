@@ -6517,10 +6517,10 @@ rc@^1.2.7:
     minimist "^1.2.0"
     strip-json-comments "~2.0.1"
 
-react-async@6.2.0:
-  version "6.2.0"
-  resolved "https://registry.yarnpkg.com/react-async/-/react-async-6.2.0.tgz#6729126910032e3674c7a566f8216b2c76d19be0"
-  integrity sha512-HeAg+atovuxo/mhGVjzI4+2biwgafcAiFJV0KpSKWQOAvfMC/NdUVtTbvlVKCUBCHvY0/+Ju6lLR30QS6/81jg==
+react-async@6.2.2:
+  version "6.2.2"
+  resolved "https://registry.yarnpkg.com/react-async/-/react-async-6.2.2.tgz#164f4cce3cbea97f0169f640a792f273a4b547b9"
+  integrity sha512-yK9nFDFgQedbKkizGV3nHHr/EZCOyQCStjJAPaQx/tpoCAeNlsCIFS5rVO0ag64XMC1bNW7XNp3n1bZw7XYrJw==
   optionalDependencies:
     prop-types ">=15.5.7"
 
