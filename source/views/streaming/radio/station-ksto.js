@@ -15,13 +15,13 @@ const colors: PlayerTheme = {
 	tintColor,
 	buttonTextColor: tinycolor
 		.mostReadable(tintColor, [sto.white, sto.black])
-		.toString(),
+		.toRgbString(),
 	textColor: tintColor,
 	imageBorderColor: 'transparent',
 	imageBackgroundColor: tinycolor(tintColor)
 		.complement()
 		.setAlpha(0.2)
-		.toString(),
+		.toRgbString(),
 }
 
 export class KstoStationView extends React.Component<TopLevelViewPropsType> {

@@ -15,7 +15,7 @@ const colors: PlayerTheme = {
 	tintColor,
 	buttonTextColor: tinycolor
 		.mostReadable(tintColor, [c.white, c.black])
-		.toString(),
+		.toRgbString(),
 	textColor: tintColor,
 	imageBorderColor: tintColor,
 	imageBackgroundColor: 'transparent',
