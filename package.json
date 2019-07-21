@@ -174,7 +174,7 @@
     "pretty-bytes": "5.2.0",
     "pretty-quick": "1.11.1",
     "prop-types": "15.7.2",
-    "react-test-renderer": "16.8.3",
+    "react-test-renderer": "16.8.6",
     "string-natural-compare": "2.0.3",
     "strip-ansi": "5.2.0",
     "yarn-deduplicate": "1.1.1"
