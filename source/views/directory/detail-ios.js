@@ -14,7 +14,7 @@ import {
 import * as c from '@frogpond/colors'
 import type {DirectoryItem} from './types'
 import type {TopLevelViewPropsTypeWithParams} from '../types'
-import {officeHoursTitle, officeHoursLabel} from './lib'
+import {officeHoursTitle, prefixTitle} from './lib'
 
 type Props = TopLevelViewPropsTypeWithParams<{contact: DirectoryItem}>
 
@@ -55,7 +55,7 @@ export function DirectoryDetailView(props: Props) {
 							<MultiLineLeftDetailCell
 								accessory={officeHours.href ? 'DisclosureIndicator' : null}
 								cellStyle="LeftDetail"
-								detail={officeHoursLabel(officeHours, onLeave)}
+								detail={prefixTitle(officeHours.prefix)}
 								onPress={
 									officeHours.href ? () => openUrl(officeHours.href) : null
 								}
