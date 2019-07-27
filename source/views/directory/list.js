@@ -14,6 +14,7 @@ import {useAsync} from 'react-async'
 import {List, Avatar} from 'react-native-paper'
 import type {DirectoryItem, SearchResults} from './types'
 import Icon from 'react-native-vector-icons/Ionicons'
+import {descriptionText, shortRoomText} from './lib'
 
 type Props = TopLevelViewPropsTypeWithParams<{}>
 
@@ -124,15 +125,8 @@ type DirectoryItemRowProps = {
 }
 
 function IosDirectoryItemRow({item, onPress}: DirectoryItemRowProps) {
-	let shortRoom = item.campusLocations
-		.map(loc => `${loc.buildingabbr} ${loc.room}`.trim())
-		.join(' / ')
-	let description =
-		shortRoom && item.title
-			? `${shortRoom} • ${item.title}`
-			: shortRoom
-			? shortRoom
-			: item.title
+	let shortRoom = shortRoomText(item)
+	let description = descriptionText(shortRoom, item)
 
 	return (
 		<ListRow fullWidth={true} onPress={onPress} style={styles.row}>
@@ -146,15 +140,8 @@ function IosDirectoryItemRow({item, onPress}: DirectoryItemRowProps) {
 }
 
 function AndroidDirectoryItemRow({item, onPress}: DirectoryItemRowProps) {
-	let shortRoom = item.campusLocations
-		.map(loc => `${loc.buildingabbr} ${loc.room}`.trim())
-		.join(' / ')
-	let description =
-		shortRoom && item.title
-			? `${shortRoom} • ${item.title}`
-			: shortRoom
-			? shortRoom
-			: item.title
+	let shortRoom = shortRoomText(item)
+	let description = descriptionText(shortRoom, item)
 
 	return (
 		<List.Item
