@@ -28,7 +28,6 @@ export function DirectoryDetailView(props: Props) {
 		displayTitle,
 		photo,
 		officeHours,
-		onLeave,
 		profileUrl,
 		email,
 		departments,
