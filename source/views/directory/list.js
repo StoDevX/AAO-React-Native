@@ -182,7 +182,7 @@ const styles = StyleSheet.create({
 					resizeMode: 'cover',
 					width: imageSize,
 					height: imageSize,
-					borderRadius: imageSize / 2,
+					borderRadius: 4,
 					marginRight: imageMargin,
 					marginLeft: leftMargin,
 			  }
