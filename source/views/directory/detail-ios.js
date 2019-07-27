@@ -12,6 +12,7 @@ import {
 	MultiLineLeftDetailCell,
 } from '@frogpond/tableview'
 import * as c from '@frogpond/colors'
+import {entities} from '@frogpond/html-lib'
 import type {DirectoryItem} from './types'
 import type {TopLevelViewPropsTypeWithParams} from '../types'
 import {officeHoursTitle, prefixTitle} from './lib'
@@ -35,7 +36,7 @@ export function DirectoryDetailView(props: Props) {
 			<Image resizeMode="cover" source={{uri: photo}} style={styles.image} />
 			<Title style={[styles.header, styles.headerName]}>{displayName}</Title>
 			<Detail style={[styles.header, styles.headerTitle]}>
-				{displayTitle}
+				{displayTitle && entities.decode(displayTitle)}
 			</Detail>
 
 			<TableView>

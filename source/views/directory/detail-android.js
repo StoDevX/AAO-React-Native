@@ -6,6 +6,7 @@ import {openUrl} from '@frogpond/open-url'
 import {callPhone} from '../../components/call-phone'
 import {sendEmail} from '../../components/send-email'
 import * as c from '@frogpond/colors'
+import {entities} from '@frogpond/html-lib'
 import type {DirectoryItem} from './types'
 import {
 	Avatar,
@@ -77,7 +78,7 @@ export function DirectoryDetailView(props: Props) {
 				<Title style={[styles.header, styles.headerName]}>{displayName}</Title>
 
 				<Subheading style={[styles.header, styles.headerTitle]}>
-					{displayTitle}
+					{displayTitle && entities.decode(displayTitle)}
 				</Subheading>
 
 				<View style={styles.departments}>
