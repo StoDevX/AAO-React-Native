@@ -29,7 +29,7 @@ export type OfficeHours = {
 	content: string,
 }
 
-export type OnLeave = {
+type OnLeave = {
 	start: string,
 	end: string,
 	type: string,
