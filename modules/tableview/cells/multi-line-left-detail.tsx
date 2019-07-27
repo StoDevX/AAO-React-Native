@@ -27,7 +27,7 @@ export class MultiLineLeftDetailCell extends React.PureComponent<LeftDetailProps
 			<Cell
 				accessory={accessory}
 				cellContentView={cellContent}
-				onPress={onPress ? onPress : null}
+				onPress={onPress}
 			/>
 		)
 	}
