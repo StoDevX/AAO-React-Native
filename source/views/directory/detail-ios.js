@@ -52,7 +52,7 @@ export function DirectoryDetailView(props: Props) {
 							/>
 						) : null}
 
-						{officeHours && (officeHours.prefix || officeHours.content) ? (
+						{officeHours && (
 							<MultiLineLeftDetailCell
 								accessory={officeHours.href ? 'DisclosureIndicator' : null}
 								cellStyle="LeftDetail"
@@ -62,7 +62,7 @@ export function DirectoryDetailView(props: Props) {
 								}
 								title={officeHoursTitle(officeHours)}
 							/>
-						) : null}
+						)}
 
 						{profileUrl ? (
 							<Cell

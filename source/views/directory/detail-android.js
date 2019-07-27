@@ -95,13 +95,13 @@ export function DirectoryDetailView(props: Props) {
 					))}
 				</View>
 
-				{officeHours && (officeHours.prefix || officeHours.content) ? (
+				{officeHours && (
 					<List.Item
 						description={officeHoursTitle(officeHours)}
 						left={props => <List.Icon {...props} icon="sentiment-satisfied" />}
 						title={officeHoursLabel(officeHours, onLeave)}
 					/>
-				) : null}
+				)}
 
 				{email ? (
 					<List.Item
