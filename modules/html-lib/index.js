@@ -1,5 +1,5 @@
 // @flow
-import htmlparser2 from 'htmlparser2'
+import {parseDOM} from 'htmlparser2'
 import cssSelect from 'css-select'
 export {cssSelect}
 
@@ -8,7 +8,7 @@ import {AllHtmlEntities} from 'html-entities'
 export const entities = new AllHtmlEntities()
 
 export function parseHtml(string: string): Object {
-	return htmlparser2.parseDOM(string, {
+	return parseDOM(string, {
 		withDomLvl1: true,
 		normalizeWhitespace: false,
 		xmlMode: false,
