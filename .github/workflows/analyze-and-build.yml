@@ -9,4 +9,7 @@ jobs:
     steps:
     - uses: actions/checkout@master
     - run: yarn install
-    - run: yarn run flow
+    - name: Bundle data, then run flow
+      run: |
+        yarn run bundle-data
+        yarn run flow check
