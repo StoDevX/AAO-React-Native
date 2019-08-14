@@ -17,6 +17,11 @@ jobs:
 
       - run: yarn run bundle-data
         id: bundle_data
+      
+      - name: Dump jobs context
+        env:
+          STEPS_CONTEXT: ${{ toJson(job) }}
+        run: echo "$STEPS_CONTEXT"
 
       - run: yarn run --silent bundle:ios
         if: job.steps.bundle_data.status == 'success'
