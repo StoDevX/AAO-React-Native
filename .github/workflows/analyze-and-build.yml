@@ -52,6 +52,6 @@ jobs:
       - uses: actions/checkout@master
       - run: yarn install --frozen-lockfile
       - run: gem install bundler && bundle check || bundle install --frozen --path vendor/bundle
-      - run: android/gradlew androidDependencies --console=plain
-      - run: echo 'org.gradle.workers.max=2' >> android/gradle.properties
+      - run: cd android && ./gradlew androidDependencies --console=plain
+      - run: echo 'org.gradle.workers.max=2' >> ./android/gradle.properties
       - run: bundle exec fastlane android ci-run
