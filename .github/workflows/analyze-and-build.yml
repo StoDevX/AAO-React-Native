@@ -42,3 +42,14 @@ jobs:
       - run: yarn run bundle-data
       - run: yarn run --silent bundle:ios
 
+  android:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-node@master
+        with: { version: ^12.0 }
+      - uses: actions/checkout@master
+      - run: yarn install --frozen-lockfile
+      - run: bundle check || bundle install --frozen --path vendor/bundle
+      - run: android/gradlew androidDependencies --console=plain
+      - run: echo 'org.gradle.workers.max=2' >> android/gradle.properties
+      - run: bundle exec fastlane android ci-run
