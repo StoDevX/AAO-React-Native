@@ -4,7 +4,7 @@ on: push
 
 jobs:
   js:
-    name: Run JavaScript Checks
+    name: JavaScript Checks
     runs-on: ubuntu-latest
     steps:
       - uses: actions/setup-node@master
