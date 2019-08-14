@@ -47,6 +47,8 @@ jobs:
     steps:
       - uses: actions/setup-node@master
         with: { version: ^12.0 }
+      - uses: actions/setup-ruby@master
+        with: { ruby-version: 2.6.3 }
       - uses: actions/checkout@master
       - run: yarn install --frozen-lockfile
       - run: bundle check || bundle install --frozen --path vendor/bundle
