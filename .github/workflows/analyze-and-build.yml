@@ -7,18 +7,18 @@ jobs:
     name: js
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/setup-node@master
-      with:
-        version: ^12.0
-    - uses: actions/checkout@master
-    - run: yarn install
-    - run: yarn run bundle-data
-    - run: yarn run pretty
-    - run: yarn run flow check
-    - run: yarn run lint
-    - name: Run tests
-      run: yarn run test --coverage
-    - name: Upload coverage
-      env:
-        CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
-      run: bash <(curl -s https://codecov.io/bash)
+      - uses: actions/setup-node@master
+        with:
+          version: ^12.0
+      - uses: actions/checkout@master
+      - run: yarn install
+      - run: yarn run bundle-data
+      - run: yarn run pretty
+      - run: yarn run flow check
+      - run: yarn run lint
+      - name: Run tests
+        run: yarn run test --coverage
+      - name: Upload coverage
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+        run: bash <(curl -s https://codecov.io/bash)
