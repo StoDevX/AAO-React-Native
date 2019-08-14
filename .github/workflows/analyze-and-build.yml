@@ -12,3 +12,4 @@ jobs:
     - run: yarn run bundle-data
     - run: yarn run pretty
     - run: yarn run flow check
+    - run: yarn run lint
