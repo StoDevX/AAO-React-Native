@@ -36,10 +36,6 @@ jobs:
           npm install -g yarn
           yarn --version
 
-      - uses: actions/setup-ruby@v1
-        with:
-          ruby-version: '2.6.3'
-
       - run: yarn install --frozen-lockfile
 
       - run: bundle install --frozen --path ./vendor/bundle
