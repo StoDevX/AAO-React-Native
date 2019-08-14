@@ -21,5 +21,24 @@ jobs:
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
         run: bash <(curl -s https://codecov.io/bash)
+
+  bundle-android:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-node@master
+        with: { version: ^12.0 }
+      - uses: actions/checkout@master
+      - run: yarn install --frozen-lockfile
+      - run: yarn run bundle-data
       - run: yarn run --silent bundle:android
+
+  bundle-ios:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-node@master
+        with: { version: ^12.0 }
+      - uses: actions/checkout@master
+      - run: yarn install --frozen-lockfile
+      - run: yarn run bundle-data
       - run: yarn run --silent bundle:ios
+
