@@ -19,10 +19,10 @@ jobs:
         id: bundle_data
 
       - run: yarn run --silent bundle:ios
-        if: job.steps.bundle_data.status == success
+        if: job.steps.bundle_data.status == 'success'
 
       - run: yarn run --silent bundle:android
-        if: job.steps.bundle_data.status == success
+        if: job.steps.bundle_data.status == success()
 
   build:
     runs-on: macOS-10.14
