@@ -28,11 +28,13 @@ def authorize_ci_for_keys
 
 	# Ensure an entry for github.com exists in ~/.netrc
 	netrc = Netrc.read
+	puts "Before: " + `cat ~/.netrc | wc -c`
 	unless netrc["github.com"]
 		UI.message "An entry for github.com was not found in ~/.netrc; setting..."
 		netrc["github.com"] = token
 		netrc.save
 	end
+	puts " After: " + `cat ~/.netrc | wc -c`
 end
 
 # Clone the match repo (for Android)
