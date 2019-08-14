@@ -7,6 +7,9 @@ jobs:
     name: js
     runs-on: ubuntu-latest
     steps:
+    - uses: actions/setup-node@master
+      with:
+        version: ^12.0
     - uses: actions/checkout@master
     - run: yarn install
     - run: yarn run bundle-data
