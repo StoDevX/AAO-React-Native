@@ -55,3 +55,5 @@ jobs:
       - run: cd android && ./gradlew androidDependencies --console=plain
       - run: echo 'org.gradle.workers.max=2' >> ./android/gradle.properties
       - run: bundle exec fastlane android ci-run
+        env:
+          GITHUB_KEYS_REPOSITORY_TOKEN: ${{ secrets.GITHUB_KEYS_REPOSITORY_TOKEN }}
