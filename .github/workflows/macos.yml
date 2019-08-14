@@ -38,7 +38,7 @@ jobs:
 
       - uses: actions/setup-ruby@v1
         with:
-          ruby-version: 2.5.x
+          ruby-version: '^2.6.0'
 
       - run: yarn install --frozen-lockfile
 
