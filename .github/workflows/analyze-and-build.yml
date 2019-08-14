@@ -1,3 +1,10 @@
 name: Analyze and build the source
 
 on: push
+
+jobs:
+  flow:
+    name: Flow
+    runs-on: ubuntu-latest
+    steps:
+    - run: yarn run flow
