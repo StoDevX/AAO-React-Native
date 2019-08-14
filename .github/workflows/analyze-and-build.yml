@@ -22,3 +22,5 @@ jobs:
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
         run: bash <(curl -s https://codecov.io/bash)
+      - run: yarn run --silent bundle:android
+      - run: yarn run --silent bundle:ios
