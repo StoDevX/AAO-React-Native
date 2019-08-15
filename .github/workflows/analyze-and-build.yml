@@ -78,7 +78,7 @@ jobs:
       - run: gem install bundler && bundle check || bundle install --frozen --path vendor/bundle
       - run: brew tap wix/brew
       - run: brew install applesimutils
-      - run: bundle exec fastlane ios ci-run
+      - run: timeout 90m bundle exec fastlane ios ci-run
         env:
           FASTLANE_PASSWORD: ${{ secrets.FASTLANE_PASSWORD }}
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
