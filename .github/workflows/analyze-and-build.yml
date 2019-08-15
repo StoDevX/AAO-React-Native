@@ -45,6 +45,7 @@ jobs:
       - run: yarn run --silent bundle:ios
 
   android:
+    name: Build for Android
     runs-on: ubuntu-latest
     steps:
       - uses: actions/setup-node@master
@@ -69,6 +70,7 @@ jobs:
           GITHUB_KEYS_REPOSITORY_TOKEN: ${{ secrets.GITHUB_KEYS_REPOSITORY_TOKEN }}
 
   ios:
+    name: Build for iOS
     runs-on: macOS-latest
     steps:
       - uses: actions/setup-node@master
