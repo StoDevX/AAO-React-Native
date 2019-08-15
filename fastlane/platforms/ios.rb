@@ -97,8 +97,37 @@ platform :ios do
 		generate_sourcemap
 	end
 
+	# N.B.: This is sourced primarily from the setup_ci action:
+	#
+	#   https://github.com/fastlane/fastlane/blob/de70231fe13f/fastlane/lib/fastlane/actions/setup_ci.rb#L23-L45,
+	#
+	# which does not support GitHub actions. Hence this setup_keychain lane
+	# is required to get promptless access to the keychain for signing stuff.
+	desc 'Create a temporary fastlane keychain'
+	lane :setup_keychain do
+		keychain_name = "fastlane_tmp_keychain"
+		ENV["MATCH_KEYCHAIN_NAME"] = keychain_name
+		ENV["MATCH_KEYCHAIN_PASSWORD"] = ""
+
+		UI.message("Creating temporary keychain: \"#{keychain_name}\".")
+		Actions::CreateKeychainAction.run(
+			name: keychain_name,
+			default_keychain: true,
+			unlock: true,
+			timeout: 3600,
+			lock_when_sleeps: true,
+			password: ""
+		)
+
+		UI.message("Enabling match readonly mode.")
+		ENV["MATCH_READONLY"] = true.to_s
+	end
+
 	desc 'Run iOS builds or tests, as appropriate'
 	lane :'ci-run' do
+		# set up a temporary keychain for signing
+		setup_keychain
+
 		# set up things so they can run
 		authorize_ci_for_keys
 
