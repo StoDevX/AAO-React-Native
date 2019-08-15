@@ -26,6 +26,7 @@ end
 
 # Generate build number
 def build_number
+	# Should last until ~2080 for Android.
 	DateTime.now.to_time.to_i - DateTime.parse("2014-01-01").to_time.to_i
 end
 
