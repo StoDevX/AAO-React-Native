@@ -166,7 +166,7 @@
     "jest": "24.8.0",
     "js-yaml": "3.13.1",
     "junk": "3.1.0",
-    "metro-react-native-babel-preset": "0.55.0",
+    "metro-react-native-babel-preset": "0.56.0",
     "minimist": "1.2.0",
     "mkdirp": "0.5.1",
     "pify": "4.0.1",
