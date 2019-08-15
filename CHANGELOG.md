@@ -86,6 +86,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Removed Google Analytics tracking (#3517)
 - Removed the `data` prop on other-transport modes and important contacts (#3528)
 - Removed the remaining references to BugSnag
+- Removed coveralls coverage reporting
 
 ## [2.6.3] - 2018-09-17
 ### Fixed

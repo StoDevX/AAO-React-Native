@@ -90,53 +90,6 @@ commands:
 
 workflows:
   version: 2
-  analyze-and-build:
-    # The way this works is, Circle runs analyze-and-build on every commit
-    # to every branch.
-    # Fastlane checks the environment to see if it should build or deploy,
-    # and if there's a tag then it deploys (otherwise it just builds.)
-    # These same jobs are run by the "nightly" workflow, which has a
-    # different CIRCLE_WORKFLOW_ID, which should allow us to only deploy
-    # nightlies from that branch.
-    jobs: &basic-jobs
-      - cache-yarn-linux:
-          filters: &filters {tags: {only: /.*/}}
-      - cache-bundler-linux:
-          filters: &filters {tags: {only: /.*/}}
-      - danger:
-          filters: *filters
-          requires: [cache-yarn-linux]
-      - flow:
-          filters: *filters
-          requires: [cache-yarn-linux]
-      - jest:
-          filters: *filters
-          requires: [cache-yarn-linux]
-      # - yarn-dedupe:
-      #     filters: *filters
-      #     requires: [cache-yarn-linux]
-      - prettier:
-          filters: *filters
-          requires: [cache-yarn-linux]
-      - eslint:
-          filters: *filters
-          requires: [cache-yarn-linux]
-      - data:
-          filters: *filters
-          requires: [cache-yarn-linux]
-      - ios:
-          filters: *filters
-          requires: [danger, flow, jest, prettier, eslint, data]
-      - android:
-          filters: *filters
-          requires:
-            [danger, flow, jest, prettier, eslint, data, cache-bundler-linux]
-      - ios-bundle:
-          filters: *filters
-          requires: [danger, flow, jest, prettier, eslint, data]
-      - android-bundle:
-          filters: *filters
-          requires: [danger, flow, jest, prettier, eslint, data]
   nightly:
     triggers:
       - schedule:
@@ -216,16 +169,6 @@ jobs:
       - danger
       - store_test_results:
           path: ./test-results
-      - run: yarn global add coveralls
-      - run:
-          name: coveralls
-          command: |
-            export PATH=$PATH:$(yarn global bin)
-            export COVERALLS_SERVICE_NAME=CircleCI
-            export COVERALLS_SERVICE_JOB_ID=$CIRCLE_BUILD_NUM
-            if ! [[ $CIRCLE_PR_NUMBER ]]; then
-              coveralls < ./coverage/lcov.info
-            fi
 
   prettier:
     executor: node
