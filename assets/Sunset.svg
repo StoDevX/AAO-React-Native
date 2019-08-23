@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="512px" height="512px" viewBox="0 0 512 512" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 57.1 (83088) - https://sketch.com -->
+    <title>Sunset</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-1">
+            <stop stop-color="#F7C55A" offset="0%"></stop>
+            <stop stop-color="#E4A01B" offset="67.7971917%"></stop>
+            <stop stop-color="#9B5F22" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <rect id="Background" fill="url(#linearGradient-1)" x="0" y="0" width="512" height="512"></rect>
+        <g id="Old-Main" transform="translate(58.000000, 116.000000)">
+            <g id="Group" transform="translate(170.000000, 0.000000)">
+                <rect id="Flag" stroke="#000000" fill="#000000" x="-0.5" y="-0.5" width="29" height="17"></rect>
+                <path d="M28,16 L28,62" id="Flag-Pole" stroke="#000000" stroke-width="2" stroke-linecap="square"></path>
+                <rect id="Rectangle" fill="#000000" x="25" y="53" width="6" height="360"></rect>
+                <rect id="Rectangle" fill="#000000" x="23" y="73" width="10" height="339"></rect>
+                <rect id="Rectangle" fill="#000000" x="11" y="86" width="34" height="326"></rect>
+            </g>
+            <g id="Side" transform="translate(0.000000, 53.000000)" fill="#000000">
+                <polygon id="Path" points="198 0 189.863014 32.5132075 180.369863 32.5132075 166.808219 74.509434 161.383562 74.509434 153.246575 96.1849057 150.534247 96.1849057 150.534247 108.377358 153.246575 108.377358 153.246575 123.279245 147.821918 123.279245 147.821918 149.018868 153.246575 149.018868 153.246575 203.207547 59.6712329 203.207547 46.109589 153.083019 27.1232877 153.083019 12.2054795 203.207547 5.42465753 203.207547 5.42465753 222.173585 0 239.784906 2.71232877 239.784906 2.71232877 359 198 359"></polygon>
+            </g>
+            <g id="Side" transform="translate(297.000000, 232.500000) scale(-1, 1) translate(-297.000000, -232.500000) translate(198.000000, 53.000000)" fill="#000000">
+                <polygon id="Path" points="198 0 189.863014 32.5132075 180.369863 32.5132075 166.808219 74.509434 161.383562 74.509434 153.246575 96.1849057 150.534247 96.1849057 150.534247 108.377358 153.246575 108.377358 153.246575 123.279245 147.821918 123.279245 147.821918 149.018868 153.246575 149.018868 153.246575 203.207547 59.6712329 203.207547 46.109589 153.083019 27.1232877 153.083019 12.2054795 203.207547 5.42465753 203.207547 5.42465753 222.173585 0 239.784906 2.71232877 239.784906 2.71232877 359 198 359"></polygon>
+            </g>
+        </g>
+        <rect id="Inner-Guides" x="64" y="64" width="384" height="384"></rect>
+    </g>
+</svg>
