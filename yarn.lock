@@ -6555,10 +6555,10 @@ rc@^1.2.7:
     minimist "^1.2.0"
     strip-json-comments "~2.0.1"
 
-react-async@7.0.6:
-  version "7.0.6"
-  resolved "https://registry.yarnpkg.com/react-async/-/react-async-7.0.6.tgz#31900ba1e5239738a111a458e63a2603c5e8faea"
-  integrity sha512-+OOuW+1O+2T3592j8XSJ/V74cVCo6XsqytipGimzd5WwqGjOEWoD4SUF5AWdAYU4IHUC3zOqeRw6Pn3ZhefDPQ==
+react-async@8.0.0:
+  version "8.0.0"
+  resolved "https://registry.yarnpkg.com/react-async/-/react-async-8.0.0.tgz#81edd40e641206737a988076f3afcc270c6bbd27"
+  integrity sha512-LokBZLLkT80URrfDWu5Z/42GBOlYYxPGPTfo+uOjDti9RVRXa69AYlJuHZr+TyCJcn61kYQvjQo8StzA2LKULg==
 
 react-clone-referenced-element@^1.0.1:
   version "1.1.0"
