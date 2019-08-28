@@ -6818,14 +6818,14 @@ react-navigation-drawer@~1.4.0:
   dependencies:
     react-native-tab-view "^1.2.0"
 
-react-navigation-material-bottom-tabs@1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/react-navigation-material-bottom-tabs/-/react-navigation-material-bottom-tabs-1.0.0.tgz#4fc3f21c57891e3a5bff88679afd84801d69adb7"
-  integrity sha512-fmPOt82xYpNYWh7gDdk38ce2TDmKuGnVaC7Pd67Ss62bjZ2CwmX9kOXExThtdY039zDGIcABDq9h65c8TQeTUA==
+react-navigation-material-bottom-tabs@1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/react-navigation-material-bottom-tabs/-/react-navigation-material-bottom-tabs-1.1.0.tgz#a257f4fa8ff1d8db050dc7c099968e60e008277d"
+  integrity sha512-jhNXbzfu7oZL+Rds1Yg+YZsxygjqgUU9pqL2Qt1G9XqA4OmWn0OJo65b/G+AY+ixrQuBNH4wJxzliKh2vaL79g==
   dependencies:
     hoist-non-react-statics "^2.5.0"
     prop-types "^15.6.0"
-    react-navigation-tabs "1.0.0"
+    react-navigation-tabs "1.0.0-alpha.4"
 
 react-navigation-stack@~1.5.0:
   version "1.5.0"
@@ -6834,10 +6834,10 @@ react-navigation-stack@~1.5.0:
   dependencies:
     prop-types "^15.7.2"
 
-react-navigation-tabs@1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/react-navigation-tabs/-/react-navigation-tabs-1.0.0.tgz#f9fe3eb8b77787551d017d1279ec049c3bed4950"
-  integrity sha512-2oWPk+XfwHihgdOBhuAuzzU94NPhwdvuzseL30R3VsggunfVB4cUtNiQjRP4rVVpdGgJygQtws1eRbUsQ9cECA==
+react-navigation-tabs@1.0.0-alpha.4:
+  version "1.0.0-alpha.4"
+  resolved "https://registry.yarnpkg.com/react-navigation-tabs/-/react-navigation-tabs-1.0.0-alpha.4.tgz#321c8cc19d14268d343a830689c741bb94c6ba80"
+  integrity sha512-ng8sCJmcQj1ciWaj0eJudQvYng/oL24konNPNudSrMyVKAfKr4+HcRPLY/rol+efLJ8UGjXGv2qdRNkBNeaLew==
   dependencies:
     hoist-non-react-statics "^2.5.0"
     prop-types "^15.6.1"

@@ -132,7 +132,7 @@
     "react-native-typography": "1.4.1",
     "react-native-vector-icons": "6.6.0",
     "react-navigation": "3.12.1",
-    "react-navigation-material-bottom-tabs": "1.0.0",
+    "react-navigation-material-bottom-tabs": "1.1.0",
     "react-redux": "7.1.1",
     "redux": "4.0.4",
     "redux-logger": "3.0.6",
