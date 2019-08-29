@@ -88,9 +88,7 @@ The bare minimum: `npm version <version>`, e.g. `npm version 2.7.0`.
 It is probably a good idea to run a beta before doing a full release, to ensure that all kinks in the uploading pipeline are worked out.
 This also lets you distribute beta builds to beta testers.
 
-#### Release Commit Style
-
-@rye prefers this style _a lot_ to the `npm version` style.
+#### Committing a New Release
 
 First, `git checkout -b release/vX.Y.Z`.
 Change the heading of the `Unreleased` section in `CHANGELOG.md` to `X.Y.Z`, and add a link to where the tag will be.
@@ -98,4 +96,4 @@ Change the heading of the `Unreleased` section in `CHANGELOG.md` to `X.Y.Z`, and
 Update the version in `package.json` to `X.Y.Z`. then `yarn && git commit -av`.
 Then `git tag vX.Y.Z`.
 Then `git push`, and finally `git push --tags`.
-Open a PR with the usual checklist, and enjoy!
+Open a PR with the usual checklist, and congratulations!
