@@ -22,29 +22,29 @@ These issues are ones that the team has identified as simple, small changes that
 We have a lot of labels!
 Even though they may seem unorganized, there's a method to the madness.
 
-- <kbd>bug/*</kbd> — These labels relate to the various types of bugs we get: accessibility, layout, and everything else
-- <kbd>component/*</kbd> — For the "reusable" components in the app: filter, analytics, and markdown
-- <kbd>data/*</kbd> — Regarding our various data sources: bus routes, BonApp menus, building hours, and everything else
-- <kbd>dep/*</kbd> — Used when reporting bugs to blame either a JS or native dependency
-- <kbd>discussion</kbd> — Highlights issues that are in "discussion"
-- <kbd>good first issue</kbd> — Highlights anything we've identified as a good way to get your feet wet
-- <kbd>help wanted</kbd> — We don't really use it. I guess it's used on PRs when someone needs help? But we usually just mention someone by name instead
-- <kbd>platform/*</kbd> — Used to show that a problem/feature request only applies to one platform or the other
-- <kbd>pr/*</kbd> — These originate from before Github had their Review system, but it's still helpful for these to stick around, because they let the author of the PR say "okay, this is ready for someone to review" or "this is broken right now"
-- <kbd>release-note-worthy</kbd> — Not entirely sure why this exists.
+- <kbd>bug/*</kbd> &ndash; These labels relate to the various types of bugs we get: accessibility, layout, and everything else
+- <kbd>component/*</kbd> &ndash; For the "reusable" components in the app: filter, analytics, and markdown
+- <kbd>data/*</kbd> &ndash; Regarding our various data sources: bus routes, BonApp menus, building hours, and everything else
+- <kbd>dep/*</kbd> &ndash; Used when reporting bugs to blame either a JS or native dependency
+- <kbd>discussion</kbd> &ndash; Highlights issues that are in "discussion"
+- <kbd>good first issue</kbd> &ndash; Highlights anything we've identified as a good way to get your feet wet
+- <kbd>help wanted</kbd> &ndash; We don't really use it. I guess it's used on PRs when someone needs help? But we usually just mention someone by name instead
+- <kbd>platform/*</kbd> &ndash; Used to show that a problem/feature request only applies to one platform or the other
+- <kbd>pr/*</kbd> &ndash; These originate from before Github had their Review system, but it's still helpful for these to stick around, because they let the author of the PR say "okay, this is ready for someone to review" or "this is broken right now"
+- <kbd>release-note-worthy</kbd> &ndash; Not entirely sure why this exists.
   I think it's so that we can use it to filter down the PRs that were merged when we write up the release notes?
-- <kbd>status/*</kbd> — The different states that an issue or PR can be in: blocked, dup, in progress, on hold(?), or pending an upstream update
-- <kbd>tool/*</kbd> — Issues/PRs that affect our various tools: fastlane, CircleCI, Danger, ESLint, Flow, Gradle, a custom script, or Testflight
-- <kbd>triage</kbd> — Automatically applied to issues that are filed without any labels
+- <kbd>status/*</kbd> &ndash; The different states that an issue or PR can be in: blocked, dup, in progress, on hold(?), or pending an upstream update
+- <kbd>tool/*</kbd> &ndash; Issues/PRs that affect our various tools: fastlane, CircleCI, Danger, ESLint, Flow, Gradle, a custom script, or Testflight
+- <kbd>triage</kbd> &ndash; Automatically applied to issues that are filed without any labels
 - <kbd>type/*</kbd>
-  - <kbd>type/bugfix</kbd> — used for PRs that fix bugs
-  - <kbd>type/documentation</kbd> — used for PRs/issues about documentation
-  - <kbd>type/enhancement</kbd> — used to create a list of things that we want to add/change about the app, but that aren't bugs
-  - <kbd>type/refactoring</kbd> — identifies issues/PRs about refactoring the app
-  - <kbd>type/shipping hold</kbd> — highlights issues that are considered to block the next release
-  - <kbd>type/tracking</kbd> — high-level issues used to keep track of another set of issues
-- <kbd>view/*</kbd> — Used to scope an issue to a particular component in the app
-- <kbd>wontfix</kbd> — We won't fix anything with this label
+  - <kbd>type/bugfix</kbd> &ndash; used for PRs that fix bugs
+  - <kbd>type/documentation</kbd> &ndash; used for PRs/issues about documentation
+  - <kbd>type/enhancement</kbd> &ndash; used to create a list of things that we want to add/change about the app, but that aren't bugs
+  - <kbd>type/refactoring</kbd> &ndash; identifies issues/PRs about refactoring the app
+  - <kbd>type/shipping hold</kbd> &ndash; highlights issues that are considered to block the next release
+  - <kbd>type/tracking</kbd> &ndash; high-level issues used to keep track of another set of issues
+- <kbd>view/*</kbd> &ndash; Used to scope an issue to a particular component in the app
+- <kbd>wontfix</kbd> &ndash; We won't fix anything with this label
 
 ## Keep It Running
 
