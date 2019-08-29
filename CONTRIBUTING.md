@@ -9,6 +9,9 @@ If you are looking to get started with the project, issues tagged with [`good fi
 These issues are ones that the team has identified as simple, small changes that won't get too deep, and will be easy to approve for merging.
 The rest of the issues need help, too, so if you are more experienced with React-Native and want to dive in, go right ahead!
 
+As always, please keep the [Code of Conduct][cc] in mind.
+
+[cc]: https://github.com/StoDevX/AAO-React-Native/blob/master/CODE_OF_CONDUCT.md
 [rn-gs]: http://facebook.github.io/react-native/docs/getting-started.html
 [gfi]: https://github.com/StoDevX/AAO-React-Native/issues?q=is%3Aissue+label%3A%22good+first+issue%22+is%3Aopen
 
@@ -69,9 +72,6 @@ Whenever commits are pushed, we have some GitHub Actions workflows that will run
 [jest]: https://facebook.github.io/jest/
 [prettier]: https://github.com/prettier/prettier
 
-As always, please keep the [Code of Conduct][cc] in mind.
-
-[cc]: https://github.com/StoDevX/AAO-React-Native/blob/master/CODE_OF_CONDUCT.md
 
 ## Maintainers
 
