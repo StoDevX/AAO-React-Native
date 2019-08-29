@@ -1,10 +1,9 @@
 # Contributing
 
-Would you like to contribute? Great! Have a look at
-[React Native's "getting started" guide][rn-gs] to help you get your
-computer set up, and make a pull request! (If you feel like you
-should have write access to the repo, please make an issue and we can
-discuss it.)
+Would you like to contribute?
+Great!
+Have a look at [React Native's "getting started" guide][rn-gs] to help you get your computer set up.
+Then, fork the repository, and make a pull request!
 
 If you are looking to get started with the project, issues tagged with
 [`good first issue`][gfi] are a great place to start. These issues are
