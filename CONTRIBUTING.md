@@ -61,9 +61,7 @@ We use a set of tools to enforce code style and find common bugs: [ESLint][eslin
 - `npm run test`: Jest runs our unit tests
 - `npm run prettier`: Prettier enforces a common style on the JS code, without us needing to edit anything
 
-We have a special command that runs all four of those for you: `npm run check`.
-So, before you commit and push, you may wish to run `npm run check`.
-If you don't, TravisCI will run them for you and our StoDevX Bot will comment in the PR to let you know exactly what happened.
+Whenever commits are pushed, we have some GitHub Actions workflows that will run these commands (and a few others) to evaluate the changes.
 
 [eslint]: http://eslint.org/
 [flow]: https://flowtype.org/
