@@ -7,6 +7,7 @@ Then, fork the repository, and make a pull request!
 
 If you are looking to get started with the project, issues tagged with [`good first issue`][gfi] are a great place to start.
 These issues are ones that the team has identified as simple, small changes that won't get too deep, and will be easy to approve for merging.
+The rest of the issues need help, too, so if you are more experienced with React-Native and want to dive in, go right ahead!
 
 [rn-gs]: http://facebook.github.io/react-native/docs/getting-started.html
 [gfi]: https://github.com/StoDevX/AAO-React-Native/issues?q=is%3Aissue+label%3A%22good+first+issue%22+is%3Aopen
