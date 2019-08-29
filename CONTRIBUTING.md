@@ -76,10 +76,28 @@ As always, please keep the [Code of Conduct][cc] in mind.
 
 ## Maintainers
 
-This stuff is more of the maintenance material.
+This stuff is more of the documentation for maintainers.
 
 ### Deploying New Versions
 
-The bare minimum: `npm version <version>`, e.g. `npm version 2.7.0`.
-It is probably a good idea to run a beta before doing a full release.
 All tag builds are uploaded as "betas," and must be promoted by hand in the appropriate app store console.
+Generally, we try to "beta" (used as a verb) as much as possible.
+After releasing a new version, the next version we beta is the next minor version, with a beta identifier.
+(`-beta.W` where `W` is a monotonically increasing number.)
+Technically this can be whatever you want.
+
+The bare minimum: `npm version <version>`, e.g. `npm version 2.7.0`.
+It is probably a good idea to run a beta before doing a full release, to ensure that all kinks in the uploading pipeline are worked out.
+This also lets you distribute beta builds to beta testers.
+
+#### Release Commit Style
+
+@rye prefers this style _a lot_ to the `npm version` style.
+
+First, `git checkout -b release/vX.Y.Z`.
+Change the heading of the `Unreleased` section in `CHANGELOG.md` to `X.Y.Z`, and add a link to where the tag will be.
+(These go at the bottom of the file.)
+Update the version in `package.json` to `X.Y.Z`. then `yarn && git commit -av`.
+Then `git tag vX.Y.Z`.
+Then `git push`, and finally `git push --tags`.
+Open a PR with the usual checklist, and enjoy!
