@@ -27,7 +27,7 @@ GEM
       http-cookie (~> 1.0.0)
     faraday_middleware (0.13.1)
       faraday (>= 0.7.4, < 1.0)
-    fastimage (2.1.5)
+    fastimage (2.1.7)
     fastlane (2.130.0)
       CFPropertyList (>= 2.3, < 4.0.0)
       addressable (>= 2.3, < 3.0.0)
