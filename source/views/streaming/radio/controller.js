@@ -1,7 +1,7 @@
 // @flow
 
 import * as React from 'react'
-import {Image, ScrollView, StyleSheet, Text, View, Platform} from 'react-native'
+import {Image, ScrollView, StyleSheet, Text, View} from 'react-native'
 import noop from 'lodash/noop'
 import * as c from '@frogpond/colors'
 import {callPhone} from '../../../components/call-phone'
