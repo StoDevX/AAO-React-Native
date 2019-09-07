@@ -32,7 +32,6 @@ export class SearchBar extends React.Component<Props> {
 
 	handleRef = (ref: NativeSearchBar) => {
 		this._ref = ref
-		this.props.getRef && this.props.getRef(ref)
 	}
 
 	render() {

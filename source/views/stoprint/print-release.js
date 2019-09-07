@@ -70,7 +70,7 @@ function PrinterInformation({printer}: {printer: Printer}) {
 
 type Props = TopLevelViewPropsType & {
 	navigation: {
-		state: {params: {job: PrintJob, printer: ?Printer, username: ?string}},
+		state: {params: {job: PrintJob, printer: ?Printer}},
 	},
 }
 
@@ -134,9 +134,7 @@ export class PrintJobReleaseView extends React.PureComponent<Props, State> {
 
 	requestCancel = () => {
 		const {job} = this.props.navigation.state.params
-		const prompt = `Are you sure you want to cancel printing "${
-			job.documentName
-		}"? This cannot be undone.`
+		const prompt = `Are you sure you want to cancel printing "${job.documentName}"? This cannot be undone.`
 		Alert.alert('Print Job Cancellation Confirmation', prompt, [
 			{text: 'Keep Job', style: 'cancel'},
 			{text: 'Cancel Job', style: 'destructive', onPress: this.cancelJob},
@@ -145,9 +143,7 @@ export class PrintJobReleaseView extends React.PureComponent<Props, State> {
 
 	requestRelease = () => {
 		const {job, printer} = this.props.navigation.state.params
-		const prompt = `Are you sure you want to print "${job.documentName}" to ${
-			printer.printerName
-		}?`
+		const prompt = `Are you sure you want to print "${job.documentName}" to ${printer.printerName}?`
 		Alert.alert('Print Job Release Confirmation', prompt, [
 			{text: 'Nope!', style: 'cancel'},
 			{text: 'Print', style: 'default', onPress: this.releaseJob},
@@ -156,9 +152,10 @@ export class PrintJobReleaseView extends React.PureComponent<Props, State> {
 
 	releaseJob = async () => {
 		this.setState(() => ({status: 'printing'}))
-		const {printer, username, job} = this.props.navigation.state.params
+		const {printer, job} = this.props.navigation.state.params
+		const {username} = await loadLoginCredentials()
 		const {heldJob} = this.state
-		if (!heldJob) {
+		if (!heldJob || !username) {
 			showGeneralError(this.returnToJobsView)
 			return
 		}
@@ -205,9 +202,7 @@ export class PrintJobReleaseView extends React.PureComponent<Props, State> {
 		} else {
 			Alert.alert(
 				'Job Successfully Cancelled',
-				`Document "${
-					job.documentName
-				}" has been removed from your print queue.`,
+				`Document "${job.documentName}" has been removed from your print queue.`,
 				[{text: 'OK', onPress: this.returnToJobsView}],
 			)
 		}

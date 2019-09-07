@@ -21,6 +21,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Added an API explorer for development (#3560)
 
 ### Changed
+- Refreshed our app icon
 - Adjusted and deduplicated logic in API scaffolding
 - Switched time zone definitions from America/Winnipeg to US/Central, and then to America/Chicago
 - Pulled out time zone constants from all over the place into a central constant
@@ -53,6 +54,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Migrated our error handling to Sentry.
 - Enabled inline requires in the metro bundler
 - Updated references to ASC to be CAAS in dictionary and hours
+- Show alert after dev sentry send message or exception 
+- Update finals hours notice to be a summer notice
 
 ### Fixed
 - Fixed an issue where Fastlane was reporting build failures despite having skipped the build (#3215)
@@ -75,12 +78,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Fixed the balances view from refreshing if the user has not agreed to the alert (#3509)
 - Fixed course search crash (#3564)
 - Building signed Android APKs was broken after RN 0.59; now it is fixed (#3569)
+- Fixed an issue where StoPrint jobs failed to release properly (#3730)
+- Fixed StoPrint login issue (#3732)
+- Fixed a crash that prevented all Android tab views from loading
 
 ### Removed
 - Removed the `prepare` script patching `ScrollEnabled` inside `RCTMultilineTextInputView` (#3337)
 - Removed Google Analytics tracking (#3517)
 - Removed the `data` prop on other-transport modes and important contacts (#3528)
 - Removed the remaining references to BugSnag
+- Removed coveralls coverage reporting
 
 ## [2.6.3] - 2018-09-17
 ### Fixed

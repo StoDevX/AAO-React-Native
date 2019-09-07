@@ -1,6 +1,6 @@
 // @flow
 
-export type Props = {
+export type Props = {|
 	getRef?: any,
 	active?: boolean,
 	backButtonAndroid?: 'search' | boolean,
@@ -13,4 +13,4 @@ export type Props = {
 	style?: any,
 	textFieldBackgroundColor?: ?string,
 	value: string,
-}
+|}

@@ -13,13 +13,15 @@ import {type PlayerTheme} from './types'
 let tintColor = '#37a287'
 const colors: PlayerTheme = {
 	tintColor,
-	buttonTextColor: tinycolor.mostReadable(tintColor, [sto.white, sto.black]),
+	buttonTextColor: tinycolor
+		.mostReadable(tintColor, [sto.white, sto.black])
+		.toRgbString(),
 	textColor: tintColor,
 	imageBorderColor: 'transparent',
 	imageBackgroundColor: tinycolor(tintColor)
 		.complement()
 		.setAlpha(0.2)
-		.toString(),
+		.toRgbString(),
 }
 
 export class KstoStationView extends React.Component<TopLevelViewPropsType> {

@@ -8,6 +8,6 @@ token = ENV['GITHUB_KEYS_REPOSITORY_TOKEN']
 netrc = Netrc.read
 unless netrc["github.com"]
 	puts "An entry for github.com was not found in ~/.netrc; setting..."
-	netrc["github.com"] = token
+	netrc["github.com"] = token, ''
 	netrc.save
 end

@@ -4,22 +4,24 @@ require 'fileutils'
 require 'shellwords'
 require 'json'
 
+# Generate build number
+def build_number
+	# Should last until ~2080 for Android.
+	DateTime.now.to_time.to_i - DateTime.parse("2014-01-01").to_time.to_i
+end
+
 def propagate_version()
 	return unless ENV.key? 'CI'
 
 	version = get_package_key('./package.json', :version)
-	build = (ENV['CIRCLE_BUILD_NUM'].to_i + 3250).to_s
+	UI.message "Propagating version: #{version}"
+	UI.message 'into the Info.plist and build.gradle files'
 
-	puts "Propagating version \"#{version}\" into the Info.plist and build.gradle files"
-	puts "Setting build number to #{build}"
+	number = build_number
+	UI.message "Version code is #{number}"
 
-	# store the current number to encode into JS; we avoid storing the jacked-up Android one
-	ci_build_num = build
-
-	if ENV['is_nightly'] == 'true'
-		version = "#{version.split('-')[0]}-pre"
-		puts "Actually putting #{version} into the binaries (because we're doing a nightly)"
-	end
+	version = "#{version.split('-')[0]}-pre" if should_nightly?
+	UI.message "Actually putting #{version} into the binaries (because we're doing a nightly)"
 
 	# encode build number into js-land --- we've already fetched it, so we'll
 	# never set the "+" into the binaries

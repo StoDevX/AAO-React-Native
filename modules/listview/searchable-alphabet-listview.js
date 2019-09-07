@@ -3,47 +3,53 @@
 import * as React from 'react'
 import {StyleSheet, Platform, View} from 'react-native'
 import {StyledAlphabetListView} from './alphabet-listview'
-import debounce from 'lodash/debounce'
 import {SearchBar} from '@frogpond/searchbar'
 import {white} from '@frogpond/colors'
+import {NoticeView} from '@frogpond/notice'
 
-export const LIST_HEADER_HEIGHT = Platform.OS === 'ios' ? 42 : 0
+export const LIST_HEADER_HEIGHT =
+	Platform.OS === 'ios' ? 42 + StyleSheet.hairlineWidth * 12 : 0
 
 const styles = StyleSheet.create({
 	wrapper: {
 		flex: 1,
+		backgroundColor: white,
 	},
 })
 
-type Props = any & {query: string}
+type Props = $PropertyType<StyledAlphabetListView, 'props'> & {
+	data: Object,
+	query: string,
+	onSearch: string => mixed,
+}
 
 export class SearchableAlphabetListView extends React.Component<Props> {
-	_performSearch = (text: string) => this.props.onSearch(text)
-
-	// We don't need to search as-you-type; slightly delayed is more
-	// efficient and nearly as effective
-	performSearch = debounce(this._performSearch, 200)
-
 	render() {
-		return (
-			<View style={styles.wrapper}>
-				<SearchBar
-					onChange={this.performSearch}
-					textFieldBackgroundColor={white}
-					value={this.props.query}
-				/>
+		let {data} = this.props
 
+		let content = null
+
+		if (!Object.keys(data).length) {
+			content = (
+				<NoticeView text={`No results found for "${this.props.query}"`} />
+			)
+		} else {
+			content = (
 				<StyledAlphabetListView
-					headerHeight={
-						Platform.OS === 'ios'
-							? LIST_HEADER_HEIGHT + StyleSheet.hairlineWidth * 12
-							: 0
-					}
+					headerHeight={LIST_HEADER_HEIGHT}
 					keyboardDismissMode="on-drag"
 					keyboardShouldPersistTaps="never"
 					showsVerticalScrollIndicator={false}
 					{...this.props}
 				/>
+			)
+		}
+
+		return (
+			<View style={styles.wrapper}>
+				<SearchBar onChange={this.props.onSearch} value={this.props.query} />
+
+				{content}
 			</View>
 		)
 	}

@@ -6,7 +6,8 @@ import {Platform, SectionList} from 'react-native'
 import {connect} from 'react-redux'
 import {type ReduxState} from '../../redux'
 import {updatePrintJobs} from '../../redux/parts/stoprint'
-import {type LoginStateEnum} from '../../redux/parts/login'
+import {type LoginStateEnum, logInViaCredentials} from '../../redux/parts/login'
+import {loadLoginCredentials} from '../../lib/login'
 import {type PrintJob, STOPRINT_HELP_PAGE} from '../../lib/stoprint'
 import {
 	ListRow,
@@ -35,6 +36,7 @@ type ReduxStateProps = {
 }
 
 type ReduxDispatchProps = {
+	logInViaCredentials: (string, string) => Promise<any>,
 	updatePrintJobs: () => Promise<any>,
 }
 
@@ -80,7 +82,22 @@ class PrintJobsView extends React.PureComponent<Props, State> {
 		this.setState(() => ({loading: false}))
 	}
 
-	fetchData = () => this.props.updatePrintJobs()
+	logIn = async () => {
+		let {status} = this.props
+		if (status === 'logged-in' || status === 'checking') {
+			return
+		}
+
+		let {username = '', password = ''} = await loadLoginCredentials()
+		if (username && password) {
+			await this.props.logInViaCredentials(username, password)
+		}
+	}
+
+	fetchData = async () => {
+		await this.logIn()
+		await this.props.updatePrintJobs()
+	}
 
 	keyExtractor = (item: PrintJob) => item.id.toString()
 
@@ -201,6 +218,8 @@ function mapStateToProps(state: ReduxState): ReduxStateProps {
 
 function mapDispatchToProps(dispatch): ReduxDispatchProps {
 	return {
+		logInViaCredentials: (username, password) =>
+			dispatch(logInViaCredentials(username, password)),
 		updatePrintJobs: () => dispatch(updatePrintJobs()),
 	}
 }
