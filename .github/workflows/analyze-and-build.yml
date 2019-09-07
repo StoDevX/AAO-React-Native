@@ -36,9 +36,6 @@ jobs:
       - run: gem install bundler
       - run: bundle install --frozen --path vendor/bundle
 
-      - run: ./scripts/ci/propagate-version.rb
-        env: *base-android-env
-
       - run: cd android && ./gradlew androidDependencies --console=plain
       - run: echo 'org.gradle.workers.max=2' >> ./android/gradle.properties
       - run: bundle exec fastlane android ci-run
