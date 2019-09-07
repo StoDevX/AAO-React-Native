@@ -36,8 +36,8 @@ export class StreamThumbnail extends React.PureComponent<Props> {
 
 		const img = thumbnailUrl
 			? {uri: thumbnailUrl}
-			: webcamImages.hasOwnProperty(thumbnail)
-			? webcamImages[thumbnail]
+			: webcamImages.has(thumbnail)
+			? webcamImages.get(thumbnail)
 			: transparentPixel
 
 		return (
