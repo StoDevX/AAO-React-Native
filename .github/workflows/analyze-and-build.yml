@@ -85,30 +85,39 @@ jobs:
           ./scripts/ci/ios/discover-products.sh | tee ./logs/products
         env: {platform: IOS}
 
-      - run:
-          source ./scripts/ci/env.sh &&
+      - run: |
+          source ./scripts/ci/env.sh
           ./scripts/ci/authorize-ci-for-keys.rb
-        if: secrets.MATCH_PASSWORD != '' && secrets.FASTLANE_PASSWORD != ''
-        env: {platform: IOS}
-        name: '[signed=true] Authorize CI for GitHub access'
-
-      - run:
-          source ./scripts/ci/env.sh &&
           ./scripts/ci/ios/init-keychain.rb > ./keychain.env.sh
-        if: secrets.MATCH_PASSWORD != '' && secrets.FASTLANE_PASSWORD != ''
-        env: {platform: IOS}
-        name: '[signed=true] Initialize local keychain for signing'
-
-      - run:
-          source ./scripts/ci/env.sh &&
-          source ./keychain.env.sh &&
+          source ./keychain.env.sh
           ./scripts/ci/ios/certificates.sh 'appstore'
-        name: '[signed=true] Initialize signing certificates'
+        name: '[signed=true] Authorize CI for GitHub access; Initialize local keychain for signing; Initialize signing certificates'
         if: secrets.MATCH_PASSWORD != '' && secrets.FASTLANE_PASSWORD != ''
         env:
           platform: IOS
           GITHUB_KEYS_REPOSITORY_TOKEN: ${{ secrets.GITHUB_KEYS_REPOSITORY_TOKEN }}
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+
+      # - run:
+      #     source ./scripts/ci/env.sh &&
+      #     ./scripts/ci/ios/init-keychain.rb > ./keychain.env.sh
+      #   name: '[signed=true] Initialize local keychain for signing'
+      #   if: secrets.MATCH_PASSWORD != '' && secrets.FASTLANE_PASSWORD != ''
+      #   env:
+      #     platform: IOS
+      #     GITHUB_KEYS_REPOSITORY_TOKEN: ${{ secrets.GITHUB_KEYS_REPOSITORY_TOKEN }}
+      #     MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+
+      # - run:
+      #     source ./scripts/ci/env.sh &&
+      #     source ./keychain.env.sh &&
+      #     ./scripts/ci/ios/certificates.sh 'appstore'
+      #   name: '[signed=true] Initialize signing certificates'
+      #   if: secrets.MATCH_PASSWORD != '' && secrets.FASTLANE_PASSWORD != ''
+      #   env:
+      #     platform: IOS
+      #     GITHUB_KEYS_REPOSITORY_TOKEN: ${{ secrets.GITHUB_KEYS_REPOSITORY_TOKEN }}
+      #     MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
 
       - run:
           source ./scripts/ci/env.sh &&
