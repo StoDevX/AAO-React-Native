@@ -82,6 +82,7 @@ jobs:
 
       - run:
           source ./scripts/ci/env.sh &&
+          mkdir -p logs/ &&
           ./scripts/ci/ios/discover-products.sh | tee ./logs/products
         env: {platform: IOS}
 
