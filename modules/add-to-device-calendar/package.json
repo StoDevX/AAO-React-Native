@@ -15,7 +15,6 @@
     "react-native-calendar-events": "^1.6.3"
   },
   "dependencies": {
-    "@frogpond/analytics": "^1.0.0",
     "@frogpond/event-type": "^1.0.0"
   }
 }

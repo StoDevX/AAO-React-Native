@@ -7,7 +7,6 @@ import {Markdown} from '@frogpond/markdown'
 import {Sentry} from 'react-native-sentry'
 import retry from 'p-retry'
 import delay from 'delay'
-import {reportNetworkProblem} from '@frogpond/analytics'
 import {Error, ErrorMessage} from './components'
 import {getPosition, collectData, reportToServer} from './wifi-tools'
 import {styles} from './tool'
@@ -65,7 +64,6 @@ export class ToolView extends React.Component<Props, State> {
 			await delay(1000)
 			this.setState(() => ({status: 'done'}))
 		} catch (err) {
-			reportNetworkProblem(err)
 			this.setState(() => ({
 				error:
 					this.props.config.errorMessage ||
