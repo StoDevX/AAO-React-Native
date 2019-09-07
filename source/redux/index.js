@@ -10,10 +10,6 @@ import {buildings, type State as BuildingsState} from './parts/buildings'
 import {help, type State as HelpState} from './parts/help'
 import {courses, type State as CoursesState} from './parts/courses'
 import {stoprint, type State as StoPrintState} from './parts/stoprint'
-import {
-	notifications,
-	type State as NotificationsState,
-} from './parts/notifications'
 import {login, type State as LoginState} from './parts/login'
 
 export {init as initRedux} from './init'
@@ -24,7 +20,6 @@ export type ReduxState = {
 	buildings?: BuildingsState,
 	help?: HelpState,
 	stoprint?: StoPrintState,
-	notifications?: NotificationsState,
 	login?: LoginState,
 }
 
@@ -35,7 +30,6 @@ export function makeStore(): Store<*, *, *> {
 		buildings,
 		help,
 		stoprint,
-		notifications,
 		login,
 	})
 
