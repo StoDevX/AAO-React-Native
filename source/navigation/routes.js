@@ -1,6 +1,6 @@
 // @flow
 
-import {HomeView, EditHomeView} from '../views/home'
+import {HomeView} from '../views/home'
 import {BuildingHoursDetailView} from '../views/building-hours/detail'
 import {
 	BuildingHoursProblemReportView,
@@ -73,7 +73,6 @@ export const routes = {
 	DictionaryDetailView: {screen: DictionaryDetailView},
 	DictionaryView: {screen: DictionaryView},
 	DictionaryEditorView: {screen: DictionaryEditorView},
-	EditHomeView: {screen: EditHomeView},
 	EventDetailView: {screen: EventDetailView},
 	FaqView: {screen: FaqView},
 	HelpView: {screen: HelpView},
