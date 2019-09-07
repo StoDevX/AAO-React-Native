@@ -6,7 +6,6 @@ import {getEnabledTools} from './parts/help'
 import {loadFavoriteBuildings} from './parts/buildings'
 import {loadAcknowledgement} from './parts/settings'
 import {loadRecentSearches, loadRecentFilters} from './parts/courses'
-import {hydrate} from './parts/notifications'
 
 export async function init(store: {dispatch: any => any}) {
 	// this function runs in two parts: the things that don't care about
@@ -26,6 +25,5 @@ export async function init(store: {dispatch: any => any}) {
 	// then go do the network stuff in parallel
 	await Promise.all([
 		store.dispatch(getEnabledTools()),
-		store.dispatch(hydrate()),
 	])
 }
