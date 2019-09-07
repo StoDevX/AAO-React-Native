@@ -13,6 +13,6 @@
     "delay": "^4.1.0",
     "http-cache-semantics": "^4.0.1",
     "lodash": "^4.17.15",
-    "query-string": "^6.2.0"
+    "query-string": "^6.8.3"
   }
 }
