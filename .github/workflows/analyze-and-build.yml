@@ -76,7 +76,7 @@ jobs:
       - run:
           source ./scripts/ci/env.sh &&
           xcodebuild -scheme "$GYM_SCHEME" -project "$GYM_PROJECT" -showBuildSettings
-        if: ${{ github.event_name == schedule || startsWith(github.ref, 'refs/tags/' }}
+        if: github.event_name == schedule || startsWith(github.ref, 'refs/tags/'
         env: {platform: IOS}
         name: 'Show Xcode build settings (for release)'
 
@@ -88,14 +88,14 @@ jobs:
       - run:
           source ./scripts/ci/env.sh &&
           ./scripts/ci/authorize-ci-for-keys.rb
-        if: ${{ secrets.MATCH_PASSWORD != '' && secrets.FASTLANE_PASSWORD != '' }}
+        if: secrets.MATCH_PASSWORD != '' && secrets.FASTLANE_PASSWORD != ''
         env: {platform: IOS}
         name: '[signed=true] Authorize CI for GitHub access'
 
       - run:
           source ./scripts/ci/env.sh &&
           ./scripts/ci/ios/init-keychain.rb > ./keychain.env.sh
-        if: ${{ secrets.MATCH_PASSWORD != '' && secrets.FASTLANE_PASSWORD != '' }}
+        if: secrets.MATCH_PASSWORD != '' && secrets.FASTLANE_PASSWORD != ''
         env: {platform: IOS}
         name: '[signed=true] Initialize local keychain for signing'
 
@@ -104,7 +104,7 @@ jobs:
           source ./keychain.env.sh &&
           ./scripts/ci/ios/certificates.sh 'appstore'
         name: '[signed=true] Initialize signing certificates'
-        if: ${{ secrets.MATCH_PASSWORD != '' && secrets.FASTLANE_PASSWORD != '' }}
+        if: secrets.MATCH_PASSWORD != '' && secrets.FASTLANE_PASSWORD != ''
         env:
           platform: IOS
           GITHUB_KEYS_REPOSITORY_TOKEN: ${{ secrets.GITHUB_KEYS_REPOSITORY_TOKEN }}
@@ -138,7 +138,7 @@ jobs:
             -destination generic/platform=iOS
             -archivePath "$GYM_ARCHIVE_PATH"
             archive | xcpretty
-        if: ${{ github.event_name == schedule || startsWith(github.ref, 'refs/tags/' }}
+        if: github.event_name == schedule || startsWith(github.ref, 'refs/tags/'
         env: {platform: IOS}
         name: '[nightly || beta] Build app for releasing'
 
@@ -147,7 +147,7 @@ jobs:
           bundle exec fastlane run upload_to_testflight
             --distribute_external=true
             --ipa $(cat ./logs/products)
-        if: ${{ startsWith(github.ref, 'refs/tags/' }}
+        if: startsWith(github.ref, 'refs/tags/'
         env: {platform: IOS}
         name: '[beta=true] Upload to TestFlight'
 
@@ -156,20 +156,20 @@ jobs:
           bundle exec fastlane run upload_to_testflight
             --distribute_external=false
             --ipa $(cat ./logs/products)
-        if: ${{ github.event_name == schedule }}
+        if: github.event_name == schedule
         env: {platform: IOS}
         name: '[nightly=true] Upload to TestFlight'
 
       - run:
           source ./scripts/ci/env.sh &&
           ./scripts/ci/sourcemap-create.sh
-        if: ${{ github.event_name == schedule || startsWith(github.ref, 'refs/tags/' }}
+        if: github.event_name == schedule || startsWith(github.ref, 'refs/tags/'
         env: {platform: IOS}
         name: '[nightly || beta] Generate sourcemap'
 
       - run:
           source ./scripts/ci/env.sh &&
           ./scripts/ci/sourcemap-upload.sh
-        if: ${{ github.event_name == schedule || startsWith(github.ref, 'refs/tags/' }}
+        if: github.event_name == schedule || startsWith(github.ref, 'refs/tags/'
         env: {platform: IOS}
         name: '[nightly || beta] Upload sourcemap to Sentry'
