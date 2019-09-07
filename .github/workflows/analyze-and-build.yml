@@ -2,61 +2,71 @@ name: Analyze and Build
 
 on: push
 
-x-default-env: &base-env
-  # The bundle identifier of your app
-  APP_IDENTIFIER: &app_identifier 'NFMTHAZVS9.com.drewvolz.stolaf'
-
-  # Your Apple email address
-  APPLE_ID: 'aao_bot@fastmail.fm'
-  APPLE_DEV_PORTAL_ID: 'hawkrives@gmail.com'
-
-  # Your Apple Developer Team ID, if you are in multiple teams
-  TEAM_ID: &team_id 'TMK6S7TPX2'
-  ITC_TEAM_ID: '118781268'
-
-  # This is a private key. It is not included in the repository.
-  # Contact allaboutolaf@stolaf.edu or another admin if you need access.
-  JSON_KEY_FILE: './fastlane/play-private-key.json'
-  PACKAGE_NAME: 'com.allaboutolaf'
-
-  # set up global info for `gym`
-  GYM_PROJECT: './ios/AllAboutOlaf.xcodeproj'
-  IOS_INFO_PLIST: './ios/AllAboutOlaf/Info.plist'
-  GYM_SCHEME: 'AllAboutOlaf'
-  GYM_OUTPUT_DIRECTORY: './ios/build'
-  GYM_OUTPUT_NAME: 'AllAboutOlaf'
-  GYM_ARCHIVE_PATH: './ios/archive/app.xcarchive'
-
-  # set the testflight itunesconnect provider ID from Appfile
-  PILOT_ITC_PROVIDER: *team_id
-
-  GRADLE_FILE: './android/app/build.gradle'
-  KEYSTORE_FILE: './android/app/upload-keystore.properties'
-
-  # set up other global shared values
-  PRETTY_APP_NAME: 'All About Olaf'
-  ONESIGNAL_APP_NAME: 'All About Olaf'
-  ONESIGNAL_APP_ID: 'a46c6f2f-a240-4908-a359-801911e9b9ea'
-  APPLE_APP_ID: *app_identifier
-  APPLE_APP_NAME: 'All About Olaf'
-  APPLE_PUSH_EXTENSION_ID: 'NFMTHAZVS9.com.drewvolz.stolaf.onesignal-notification-service-extension'
-  APPLE_PUSH_EXTENSION_NAME: 'All About Olaf OneSignal Notification Service Extension'
-
-x-android-env: &base-android-env
-  <<: *base-env
-  PLATFORM: android
-
-x-ios-env: &base-ios-env
-  <<: *base-env
-  PLATFORM: ios
-
-x-conditionals:
-  - &is-nightly-or-beta ${{ github.event_name == schedule || startsWith(github.ref, 'refs/tags/' }}
-  - &is-nightly ${{ github.event_name == schedule }}
-  - &is-beta ${{ startsWith(github.ref, 'refs/tags/' }}
-  - &signed ${{ secrets.MATCH_PASSWORD != '' && secrets.FASTLANE_PASSWORD != '' }}
-
 jobs:
+  environment:
+    # All of these variables are defined here just so that GitHub doesn't
+    # complain about them existing.
+    name: Environment Setup
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo 'default environment'
+        env: &base-env
+          # The bundle identifier of your app
+          APP_IDENTIFIER: &app_identifier 'NFMTHAZVS9.com.drewvolz.stolaf'
+
+          # Your Apple email address
+          APPLE_ID: 'aao_bot@fastmail.fm'
+          APPLE_DEV_PORTAL_ID: 'hawkrives@gmail.com'
+
+          # Your Apple Developer Team ID, if you are in multiple teams
+          TEAM_ID: &team_id 'TMK6S7TPX2'
+          ITC_TEAM_ID: '118781268'
+
+          # This is a private key. It is not included in the repository.
+          # Contact allaboutolaf@stolaf.edu or another admin if you need access.
+          JSON_KEY_FILE: './fastlane/play-private-key.json'
+          PACKAGE_NAME: 'com.allaboutolaf'
+
+          # set up global info for `gym`
+          GYM_PROJECT: './ios/AllAboutOlaf.xcodeproj'
+          IOS_INFO_PLIST: './ios/AllAboutOlaf/Info.plist'
+          GYM_SCHEME: 'AllAboutOlaf'
+          GYM_OUTPUT_DIRECTORY: './ios/build'
+          GYM_OUTPUT_NAME: 'AllAboutOlaf'
+          GYM_ARCHIVE_PATH: './ios/archive/app.xcarchive'
+
+          # set the testflight itunesconnect provider ID from Appfile
+          PILOT_ITC_PROVIDER: *team_id
+
+          GRADLE_FILE: './android/app/build.gradle'
+          KEYSTORE_FILE: './android/app/upload-keystore.properties'
+
+          # set up other global shared values
+          PRETTY_APP_NAME: 'All About Olaf'
+          ONESIGNAL_APP_NAME: 'All About Olaf'
+          ONESIGNAL_APP_ID: 'a46c6f2f-a240-4908-a359-801911e9b9ea'
+          APPLE_APP_ID: *app_identifier
+          APPLE_APP_NAME: 'All About Olaf'
+          APPLE_PUSH_EXTENSION_ID: 'NFMTHAZVS9.com.drewvolz.stolaf.onesignal-notification-service-extension'
+          APPLE_PUSH_EXTENSION_NAME: 'All About Olaf OneSignal Notification Service Extension'
+
+      - run: echo 'android environment'
+        env: &base-android-env
+          <<: *base-env
+          PLATFORM: android
+
+      - run: echo 'android environment'
+        env: &base-ios-env
+          <<: *base-env
+          PLATFORM: ios
+
+      - run: echo 'conditionals'
+        env:
+          a: &is-nightly-or-beta ${{ github.event_name == schedule || startsWith(github.ref, 'refs/tags/' }}
+          b: &is-nightly ${{ github.event_name == schedule }}
+          c: &is-beta ${{ startsWith(github.ref, 'refs/tags/' }}
+          d: &signed ${{ secrets.MATCH_PASSWORD != '' && secrets.FASTLANE_PASSWORD != '' }}
+
   js:
     name: JavaScript Checks
     runs-on: ubuntu-latest
