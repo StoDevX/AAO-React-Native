@@ -71,9 +71,10 @@ export class ContactsDetailView extends React.PureComponent<Props> {
 	render() {
 		const contact = this.props.navigation.state.params.contact
 		const headerImage =
-			contact.image && contactImages.hasOwnProperty(contact.image)
-				? contactImages[contact.image]
+			contact.image && contactImages.has(contact.image)
+				? contactImages.get(contact.image)
 				: null
+
 		return (
 			<ScrollView>
 				{headerImage ? (

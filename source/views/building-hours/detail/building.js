@@ -48,9 +48,10 @@ export class BuildingDetail extends React.Component<Props> {
 		const {info, now, onProblemReport} = this.props
 
 		const headerImage =
-			info.image && buildingImages.hasOwnProperty(info.image)
-				? buildingImages[info.image]
+			info.image && buildingImages.has(info.image)
+				? buildingImages.get(info.image)
 				: null
+
 		const openStatus = getShortBuildingStatus(info, now)
 		const schedules = info.schedule || []
 
