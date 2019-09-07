@@ -97,7 +97,7 @@ export class BonAppHostedMenu extends React.PureComponent<Props, State> {
 		if (typeof props.cafe === 'string') {
 			menuUrl = API(`/food/named/menu/${cafe}`)
 			cafeUrl = API(`/food/named/cafe/${cafe}`)
-		} else if (props.cafe.hasOwnProperty('id')) {
+		} else if ('id' in props.cafe) {
 			menuUrl = API(`/food/menu/${cafe}`)
 			cafeUrl = API(`/food/cafe/${cafe}`)
 		} else {
