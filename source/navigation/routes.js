@@ -39,7 +39,6 @@ import {
 	DebugView,
 	LegalView,
 	PrivacyView,
-	PushNotificationsSettingsView,
 	APITestView,
 } from '../views/settings'
 import SISView from '../views/sis'
@@ -85,7 +84,6 @@ export const routes = {
 	PrivacyView: {screen: PrivacyView},
 	SettingsView: {screen: SettingsView},
 	IconSettingsView: {screen: IconSettingsView},
-	PushNotificationsSettingsView: {screen: PushNotificationsSettingsView},
 	SISView: {screen: SISView},
 	CourseSearchResultsView: {screen: CourseSearchResultsView},
 	CourseDetailView: {screen: CourseDetailView},

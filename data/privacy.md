@@ -39,15 +39,9 @@ following information is logged:
 3. _What you requested and how long it took_, which is widely considered to be
   fully anonymous.
 
-We also use a couple of tools to track our push notification receipts and
-collect crash reports.  These tools are:
-
-- _OneSignal_, which manages the delivery of our notifications, collects device
-  information to place you into categories.
-
-- _Sentry_, which collects crash reports and cannot be disabled currently.
-  Sentry collects in-depth information about the device and circumstances
-  leading up to a given crash.
+We also use _Sentry_, which collects crash reports and cannot be disabled
+currently. Sentry collects in-depth information about the device and
+circumstances leading up to a given crash.
 
 If you send us suggestions for updates to building hours, we will anonymously add
 them to the app if we determine that they are correct.  We do not currently give
