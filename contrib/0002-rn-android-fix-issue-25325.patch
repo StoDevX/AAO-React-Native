@@ -1,0 +1,7 @@
+--- ./node_modules/metro/src/DeltaBundler/Serializers/getAssets.js
++++ ./node_modules/metro/src/DeltaBundler/Serializers/getAssets.js
+66c66,67
+<         getJsOutput(module).type === "js/module/asset"
+---
+>         getJsOutput(module).type === "js/module/asset" &&
+>         path.relative(options.projectRoot, module.path) !== "package.json"
