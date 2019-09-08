@@ -3,6 +3,7 @@
 import deviceInfo from 'react-native-device-info'
 import networkInfo from 'react-native-network-info'
 import {Platform} from 'react-native'
+import RNLocation from 'react-native-location'
 import pkg from '../../../package.json'
 
 export const getIpAddress = (): Promise<?string> =>
@@ -14,19 +15,31 @@ export const getIpAddress = (): Promise<?string> =>
 		}
 	})
 
-export const getPosition = (args: any = {}): Promise<Object> =>
-	new Promise((resolve, reject) => {
-		if (Platform.OS === 'android') {
-			navigator.geolocation.getCurrentPosition(resolve, reject)
-		} else {
-			navigator.geolocation.getCurrentPosition(resolve, reject, {
-				...args,
-				enableHighAccuracy: true,
-				maximumAge: 1000 /* ms */,
-				timeout: 15000 /* ms */,
-			})
-		}
+export const getPosition = async (): Promise<null|Object> => {
+	RNLocation.configure({distanceFilter: 100})
+
+	let hasPermission = await RNLocation.checkPermission({
+		ios: 'whenInUse',
+		android: {detail: 'fine'},
 	})
+
+	if (!hasPermission) {
+		hasPermission = await RNLocation.requestPermission({
+			ios: 'whenInUse',
+			android: {
+				detail: 'fine',
+				rationale: {
+					title: 'We need to access your location',
+					message: 'We use your location to report your current location for WiFi reporting',
+					buttonPositive: 'OK',
+					buttonNegative: 'Cancel',
+				},
+			},
+		})
+	}
+
+	return RNLocation.getLatestLocation({timeout: 1500})
+}
 
 export const collectData = async () => ({
 	id: deviceInfo.getUniqueID(),
