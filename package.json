@@ -28,6 +28,9 @@
       "modules/*"
     ]
   },
+  "resolutions": {
+    "react-navigation/@react-navigation/native/react-native-screens": "^2.0.0-alpha.1"
+  },
   "jest": {
     "testMatch": [
       "**/__tests__/**/*.(spec|test).(js|ts|tsx)",
