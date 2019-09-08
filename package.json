@@ -96,7 +96,7 @@
     "buffer": "5.4.2",
     "delay": "4.3.0",
     "events": "3.0.0",
-    "glamorous-native": "1.4.2",
+    "glamorous-native": "2.0.0",
     "jsc-android": "241213.1.0",
     "keyword-search": "0.1.2",
     "lodash": "4.17.15",

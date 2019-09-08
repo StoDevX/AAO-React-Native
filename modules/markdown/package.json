@@ -9,7 +9,7 @@
     "test": "jest"
   },
   "peerDependencies": {
-    "glamorous-native": "^1.4.0",
+    "glamorous-native": "^2.0.0",
     "react": "^16.0.0",
     "react-native": "^0.60.0"
   },
