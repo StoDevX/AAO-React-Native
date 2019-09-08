@@ -23,7 +23,5 @@ export async function init(store: {dispatch: any => any}) {
 	await NetInfo.isConnected.fetch()
 
 	// then go do the network stuff in parallel
-	await Promise.all([
-		store.dispatch(getEnabledTools()),
-	])
+	await Promise.all([store.dispatch(getEnabledTools())])
 }
