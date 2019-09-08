@@ -2,7 +2,6 @@
 
 import deviceInfo from 'react-native-device-info'
 import networkInfo from 'react-native-network-info'
-import {Platform} from 'react-native'
 import RNLocation from 'react-native-location'
 import pkg from '../../../package.json'
 
@@ -15,7 +14,7 @@ export const getIpAddress = (): Promise<?string> =>
 		}
 	})
 
-export const getPosition = async (): Promise<null|Object> => {
+export const getPosition = async (): Promise<null | Object> => {
 	RNLocation.configure({distanceFilter: 100})
 
 	let hasPermission = await RNLocation.checkPermission({
@@ -30,7 +29,8 @@ export const getPosition = async (): Promise<null|Object> => {
 				detail: 'fine',
 				rationale: {
 					title: 'We need to access your location',
-					message: 'We use your location to report your current location for WiFi reporting',
+					message:
+						'We use your location to report your current location for WiFi reporting',
 					buttonPositive: 'OK',
 					buttonNegative: 'Cancel',
 				},
