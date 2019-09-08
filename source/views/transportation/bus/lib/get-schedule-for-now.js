@@ -9,9 +9,9 @@ export function getScheduleForNow(
 	now: moment,
 ): BusSchedule {
 	// now.day returns 0-6, Sunday to Saturday
-	const thisWeekday = allDaysOfWeek[now.day()]
+	let thisWeekday = allDaysOfWeek[now.day()]
 
-	const schedule = schedules.find(schedule =>
+	let schedule = schedules.find(schedule =>
 		schedule.days.includes(thisWeekday),
 	)
 

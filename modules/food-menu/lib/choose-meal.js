@@ -10,7 +10,7 @@ export function chooseMeal(
 	filters: FilterType[],
 	now: momentT,
 ): ProcessedMealType {
-	const mealChooserFilter: ?FilterType = filters.find(
+	let mealChooserFilter: ?FilterType = filters.find(
 		f => f.type === 'picker' && f.spec.title === "Today's Menus",
 	)
 

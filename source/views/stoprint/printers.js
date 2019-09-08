@@ -116,25 +116,25 @@ class PrinterListView extends React.PureComponent<Props, State> {
 		if (this.state.loading && !this.state.initialLoadComplete) {
 			return <LoadingView text="Querying Available Printers…" />
 		}
-		const colorJob =
+		let colorJob =
 			this.props.navigation.state.params.job.grayscaleFormatted === 'No'
 
-		const availablePrinters = colorJob
+		let availablePrinters = colorJob
 			? this.props.colorPrinters
 			: this.props.printers
 
-		const allWithLocations = availablePrinters.map(j => ({
+		let allWithLocations = availablePrinters.map(j => ({
 			...j,
 			location: j.location || 'Unknown Building',
 		}))
 
-		const allGrouped = groupBy(allWithLocations, j =>
+		let allGrouped = groupBy(allWithLocations, j =>
 			/^[A-Z]+ \d+/u.test(j.location)
 				? j.location.split(/\s+/u)[0]
 				: j.location,
 		)
 
-		const groupedByBuilding = toPairs(allGrouped).map(([title, data]) => ({
+		let groupedByBuilding = toPairs(allGrouped).map(([title, data]) => ({
 			title,
 			data,
 		}))
@@ -143,7 +143,7 @@ class PrinterListView extends React.PureComponent<Props, State> {
 			a.title === '' && b.title !== '' ? 1 : a.title.localeCompare(b.title),
 		)
 
-		const grouped = this.props.printers.length
+		let grouped = this.props.printers.length
 			? [
 					{title: 'Recent', data: this.props.recentPrinters},
 					{title: 'Popular', data: this.props.popularPrinters},
@@ -151,7 +151,7 @@ class PrinterListView extends React.PureComponent<Props, State> {
 			  ]
 			: []
 
-		const availableGrouped = colorJob ? groupedByBuilding : grouped
+		let availableGrouped = colorJob ? groupedByBuilding : grouped
 
 		return (
 			<SectionList

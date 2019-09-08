@@ -7,16 +7,16 @@ import toPairs from 'lodash/toPairs'
 //example: [20171,20173,20154,20153] -> "17/18: Fall/Spr, "15/16: Spr/Sum1""
 
 export function formatTerms(terms: Array<number>): string {
-	const sortedTerms = sortBy(terms)
-	const formattedTerms = sortedTerms.map(term =>
+	let sortedTerms = sortBy(terms)
+	let formattedTerms = sortedTerms.map(term =>
 		parseTermAbbrev(term.toString()),
 	)
-	const groupedTerms = groupBy(formattedTerms, term => term.year)
-	const groupedDescriptions = mapValues(groupedTerms, terms => {
-		const semesters = terms.map(term => term.semester)
+	let groupedTerms = groupBy(formattedTerms, term => term.year)
+	let groupedDescriptions = mapValues(groupedTerms, terms => {
+		let semesters = terms.map(term => term.semester)
 		return semesters.join('/')
 	})
-	const finalDescription = toPairs(groupedDescriptions)
+	let finalDescription = toPairs(groupedDescriptions)
 		.map(year => year.join(': '))
 		.join(', ')
 	return finalDescription
@@ -28,11 +28,11 @@ type TermAbbrevType = {
 }
 
 function parseTermAbbrev(term: string): TermAbbrevType {
-	const semester = term.slice(-1)
-	const year = term.slice(0, -1)
-	const currentYear = parseInt(year)
-	const currentYearAbbrev = year.slice(-2)
-	const nextYear = (currentYear + 1).toString().slice(-2)
+	let semester = term.slice(-1)
+	let year = term.slice(0, -1)
+	let currentYear = parseInt(year)
+	let currentYearAbbrev = year.slice(-2)
+	let nextYear = (currentYear + 1).toString().slice(-2)
 	switch (semester) {
 		case '0':
 			return {year: `${currentYearAbbrev}/${nextYear}`, semester: 'Abr'}

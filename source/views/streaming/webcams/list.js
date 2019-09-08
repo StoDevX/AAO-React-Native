@@ -45,7 +45,7 @@ export class WebcamsView extends React.PureComponent<Props, State> {
 	}
 
 	render() {
-		const columns = partitionByIndex(this.state.webcams)
+		let columns = partitionByIndex(this.state.webcams)
 
 		return (
 			<Viewport

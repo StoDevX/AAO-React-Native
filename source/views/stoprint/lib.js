@@ -21,6 +21,6 @@ const parseTime = (now: moment, time: string): null | moment => {
 }
 
 export const getTimeRemaining = (now: moment, time: string) => {
-	const releasedTime: moment = parseTime(now, time)
+	let releasedTime: moment = parseTime(now, time)
 	return releasedTime.fromNow()
 }

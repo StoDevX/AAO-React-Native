@@ -4,9 +4,9 @@ const yaml = require('js-yaml')
 
 // run cli
 if (process.mainModule === module) {
-	const args = process.argv.slice(2)
-	const fromFile = args[0]
-	const toFile = args[1] || '-'
+	let args = process.argv.slice(2)
+	let fromFile = args[0]
+	let toFile = args[1] || '-'
 	if (!fromFile || fromFile === '-h' || fromFile === '--help') {
 		console.error(
 			'usage: node convert-data-file.js <from-file.{md,yaml,css}> [to-file]',
@@ -19,10 +19,10 @@ if (process.mainModule === module) {
 // exported module
 module.exports = convertDataFile
 function convertDataFile({fromFile, toFile, toFileType = 'json'}) {
-	const contents = fs.readFileSync(fromFile, 'utf-8')
+	let contents = fs.readFileSync(fromFile, 'utf-8')
 	let output = contents
 
-	const fileType = fromFile.split('.').slice(-1)[0]
+	let fileType = fromFile.split('.').slice(-1)[0]
 	switch (fileType) {
 		case 'md':
 			output = processMarkdown(contents)
@@ -45,7 +45,7 @@ function convertDataFile({fromFile, toFile, toFileType = 'json'}) {
 
 	output = output + '\n'
 
-	const outStream =
+	let outStream =
 		toFile === '-' ? process.stdout : fs.createWriteStream(toFile)
 	outStream.write(output)
 }

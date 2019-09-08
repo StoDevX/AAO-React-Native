@@ -65,8 +65,8 @@ export class DatePicker extends React.PureComponent<Props> {
 			return
 		}
 
-		const {androidMode, date} = this.props
-		const timeMoment = moment(date)
+		let {androidMode, date} = this.props
+		let timeMoment = moment(date)
 
 		TimePickerAndroid.open({
 			hour: timeMoment.hour(),
@@ -90,7 +90,7 @@ export class DatePicker extends React.PureComponent<Props> {
 	}
 
 	showModal = () => {
-		const {mode, androidMode} = this.props
+		let {mode, androidMode} = this.props
 
 		switch (mode) {
 			case 'date': {
@@ -101,7 +101,7 @@ export class DatePicker extends React.PureComponent<Props> {
 			}
 
 			case 'time': {
-				const timeMoment = moment(this.props.date)
+				let timeMoment = moment(this.props.date)
 
 				return TimePickerAndroid.open({
 					hour: timeMoment.hour(),

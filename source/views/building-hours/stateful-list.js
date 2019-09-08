@@ -25,12 +25,12 @@ const groupBuildings = (
 	buildings: Array<BuildingType>,
 	favorites: Array<string>,
 ): Array<{title: string, data: Array<BuildingType>}> => {
-	const favoritesGroup = {
+	let favoritesGroup = {
 		title: 'Favorites',
 		data: buildings.filter(b => favorites.includes(b.name)),
 	}
 
-	const grouped = groupBy(buildings, b => b.category || 'Other')
+	let grouped = groupBy(buildings, b => b.category || 'Other')
 	let groupedBuildings = toPairs(grouped).map(([key, value]) => ({
 		title: key,
 		data: value,

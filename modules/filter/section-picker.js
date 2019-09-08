@@ -11,8 +11,8 @@ type PropsType = {
 }
 
 export function PickerSection({filter, onChange}: PropsType) {
-	const {spec} = filter
-	const {title = '', caption = '', options, selected} = spec
+	let {spec} = filter
+	let {title = '', caption = '', options, selected} = spec
 
 	function pickerPicked(pickedValue: string | number, pickedItemIndex: number) {
 		let pickedItem = spec.options[pickedItemIndex]

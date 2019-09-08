@@ -20,7 +20,7 @@ type Props = TopLevelViewPropsType & {
 }
 
 export default function HomePage({navigation, views = allViews}: Props) {
-	const columns = partitionByIndex(views)
+	let columns = partitionByIndex(views)
 
 	let {androidStatusBarColor, statusBarStyle} = getTheme()
 

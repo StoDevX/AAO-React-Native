@@ -14,11 +14,11 @@ type Props = {building: BuildingType}
 
 export class Header extends React.PureComponent<Props> {
 	render() {
-		const {building} = this.props
+		let {building} = this.props
 
-		const abbr = building.abbreviation ? ` (${building.abbreviation})` : ''
+		let abbr = building.abbreviation ? ` (${building.abbreviation})` : ''
 
-		const subtitle = building.subtitle ? (
+		let subtitle = building.subtitle ? (
 			<View style={styles.subtitle}>
 				<Text selectable={true} style={[styles.name, styles.subtitleText]}>
 					{building.subtitle}

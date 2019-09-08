@@ -130,7 +130,7 @@ class CourseSearchResultsView extends React.Component<Props, State> {
 	}
 
 	resetFilters = async () => {
-		const newFilters = await buildFilters()
+		let newFilters = await buildFilters()
 		this.setState(() => ({filters: newFilters, filtersLoaded: true}))
 	}
 

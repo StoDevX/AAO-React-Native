@@ -22,15 +22,15 @@ type Props = {
 }
 
 function ActiveFilterButton({filter, label, onRemove, style, theme}: Props) {
-	const iconName = Platform.select({
+	let iconName = Platform.select({
 		ios: 'ios-close-circle',
 		android: 'md-close-circle',
 	})
 
-	const foreground = {color: theme.buttonForeground}
-	const background = {backgroundColor: theme.buttonBackground}
+	let foreground = {color: theme.buttonForeground}
+	let background = {backgroundColor: theme.buttonBackground}
 	// TODO: pick an appopriate icon color automatically
-	const iconColor = white
+	let iconColor = white
 
 	return (
 		<TouchableWithoutFeedback onPress={() => onRemove(filter)}>

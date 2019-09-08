@@ -57,7 +57,7 @@ type Props = {|
 
 export class ProgressChunk extends React.PureComponent<Props, void> {
 	render() {
-		const {
+		let {
 			stopStatus,
 			barColor,
 			currentStopColor,
@@ -67,8 +67,8 @@ export class ProgressChunk extends React.PureComponent<Props, void> {
 
 		// To draw the bar, we draw a chunk of the bar, then we draw the dot, then
 		// we draw the last chunk of the bar.
-		const startBarColor = isAndroid && isFirstChunk ? c.transparent : barColor
-		const endBarColor = isAndroid && isLastChunk ? c.transparent : barColor
+		let startBarColor = isAndroid && isFirstChunk ? c.transparent : barColor
+		let endBarColor = isAndroid && isLastChunk ? c.transparent : barColor
 
 		return (
 			<View style={styles.barContainer}>

@@ -33,7 +33,7 @@ type Props = {
 
 export class EventDetail extends React.Component<Props> {
 	static navigationOptions = ({navigation}: {navigation: Navigation}) => {
-		const {event} = navigation.state.params
+		let {event} = navigation.state.params
 
 		return {
 			title: event.title,
@@ -42,7 +42,7 @@ export class EventDetail extends React.Component<Props> {
 	}
 
 	render() {
-		const {event, poweredBy} = this.props.navigation.state.params
+		let {event, poweredBy} = this.props.navigation.state.params
 
 		return (
 			<ScrollView>

@@ -74,7 +74,7 @@ export class DatePicker extends React.Component<Props, State> {
 
 		this.props.onDateChange(moment.tz(date, this.props.timezone))
 
-		const timeoutId = setTimeout(() => {
+		let timeoutId = setTimeout(() => {
 			this.setState(() => ({allowPointerEvents: true}))
 			clearTimeout(timeoutId)
 		}, this.props.duration)
@@ -138,7 +138,7 @@ class DatePickerModal extends React.PureComponent<ModalProps> {
 	]
 
 	render() {
-		const {
+		let {
 			mode,
 			date,
 			minuteInterval,
@@ -154,7 +154,7 @@ class DatePickerModal extends React.PureComponent<ModalProps> {
 		if (date.tz()) {
 			// We need to negate the offset, because moment inverts the offset for
 			// POSIX compatability. So, GMT-5 (CST) is shown to be GMT+5.
-			const dateInUnixMs = date.valueOf()
+			let dateInUnixMs = date.valueOf()
 			tzOffset = -moment.tz.zone(timezone).utcOffset(dateInUnixMs)
 		}
 

@@ -16,7 +16,7 @@ type Props = {
 }
 
 export function HomeScreenButton({view, onPress}: Props) {
-	const foreground =
+	let foreground =
 		view.foreground === 'light' ? styles.lightForeground : styles.darkForeground
 
 	return (
@@ -92,7 +92,7 @@ type TintProps = {
 
 function Tint({tint = 'black', gradient, children}: TintProps) {
 	if (!gradient) {
-		const bg = {backgroundColor: tint}
+		let bg = {backgroundColor: tint}
 		return <View style={[styles.button, bg]}>{children}</View>
 	}
 

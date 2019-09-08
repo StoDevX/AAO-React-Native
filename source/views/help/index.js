@@ -20,7 +20,7 @@ const shouldBeShown = conf =>
 	(!conf.versionRange || semver.satisfies(pkg.version, conf.versionRange))
 
 const getToolView = config => {
-	const customView = CUSTOM_TOOLS.find(tool => tool.toolName === config.key)
+	let customView = CUSTOM_TOOLS.find(tool => tool.toolName === config.key)
 	if (!customView) {
 		return [ToolView, config]
 	}
@@ -52,7 +52,7 @@ export class HelpView extends React.Component<Props> {
 			return <LoadingView text="Loading…" />
 		}
 
-		const views = this.props.tools
+		let views = this.props.tools
 			.filter(shouldBeShown)
 			.map(getToolView)
 			.map(([Tool, conf]) => <Tool key={conf.key} config={conf} />)

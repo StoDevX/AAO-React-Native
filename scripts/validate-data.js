@@ -29,8 +29,8 @@ const args = parseArgs(process.argv.slice(2))
 // allow either --data/--schema or automatic schema loading
 let iterator
 if (args.data) {
-	const dataFile = readYaml(args.data)
-	const schemaFile = readYaml(args.schema)
+	let dataFile = readYaml(args.data)
+	let schemaFile = readYaml(args.schema)
 	iterator = [[[args.schema, schemaFile, dataFile]]]
 } else {
 	iterator = args.schemaNames.map(schemaName => load(schemaName))
@@ -39,7 +39,7 @@ if (args.data) {
 // iterate!
 for (const multitudes of iterator) {
 	for (const [filename, schema, data] of multitudes) {
-		const [result, errors] = validate(schema, data)
+		let [result, errors] = validate(schema, data)
 		if (!result) {
 			console.log(`${filename} is invalid`)
 			console.log(errors.join('\n'))
@@ -55,8 +55,8 @@ for (const multitudes of iterator) {
 /// MARK: helpers
 
 function parseArgs(argv) {
-	const allSchemas = readDir(SCHEMA_BASE).map(f => f.replace('.yaml', ''))
-	const args = minimist(argv, {
+	let allSchemas = readDir(SCHEMA_BASE).map(f => f.replace('.yaml', ''))
+	let args = minimist(argv, {
 		boolean: ['help', 'bail', 'quiet'],
 		string: ['data', 'schema'],
 		alias: {d: 'data', s: 'schema'},
@@ -123,17 +123,17 @@ function* load(schemaName) {
 		}
 	}
 
-	const dirPath = path.join(DATA_BASE, schemaName)
+	let dirPath = path.join(DATA_BASE, schemaName)
 	// check if we need to go over the contents of a folder
 	if (isDir(dirPath)) {
 		for (let file of readDir(dirPath)) {
 			// yield each file in the folder
-			const data = readYaml(path.join(dirPath, file))
+			let data = readYaml(path.join(dirPath, file))
 			yield [schemaName + '/' + file, schema, data]
 		}
 	} else {
 		// or just yield the single file
-		const data = readYaml(dirPath + '.yaml')
+		let data = readYaml(dirPath + '.yaml')
 		yield [schemaName + '.yaml', schema, data]
 	}
 }

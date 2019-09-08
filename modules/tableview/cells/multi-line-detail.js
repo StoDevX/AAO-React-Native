@@ -13,8 +13,8 @@ type Props = {
 
 export class MultiLineDetailCell extends React.PureComponent<Props> {
 	render() {
-		const {title, rightDetail, leftDetail} = this.props
-		const cellContent = (
+		let {title, rightDetail, leftDetail} = this.props
+		let cellContent = (
 			<View style={styles.cellContentView}>
 				<View style={styles.leftContainer}>
 					<Text allowFontScaling={true} style={styles.cellTitle}>
