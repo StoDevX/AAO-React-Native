@@ -43,6 +43,7 @@
 		3AE408501E1E280800F0FD83 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3AE4084F1E1E280800F0FD83 /* LaunchScreen.storyboard */; };
 		67005C1F2324911F00A3FBB8 /* libRNCNetInfo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 67005BB4232490A700A3FBB8 /* libRNCNetInfo.a */; };
 		67005C982324938100A3FBB8 /* libRNCWebView.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 67005C972324934300A3FBB8 /* libRNCWebView.a */; };
+		67005DA82324B90500A3FBB8 /* libRNLocation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 67005D4D2324B8DE00A3FBB8 /* libRNLocation.a */; };
 		670F958521BDC98F000B63AB /* libRNGestureHandler.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 670F958421BDC936000B63AB /* libRNGestureHandler.a */; };
 		679C3A672050B38F00B4D498 /* libRCTMGL.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 679C3A662050B37200B4D498 /* libRCTMGL.a */; };
 		679C3A6E2050B4F100B4D498 /* Mapbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 679C3A6D2050B4F100B4D498 /* Mapbox.framework */; };
@@ -363,6 +364,13 @@
 			remoteGlobalIDString = 134814201AA4EA6300B7C361;
 			remoteInfo = RNCWebView;
 		};
+		67005D4C2324B8DE00A3FBB8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8C9B2B92B7D94E5E90DB4625 /* RNLocation.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 134814201AA4EA6300B7C361;
+			remoteInfo = RNLocation;
+		};
 		670F958321BDC936000B63AB /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = E847E37AA434496AB97586B8 /* RNGestureHandler.xcodeproj */;
@@ -536,6 +544,7 @@
 		832341B01AAA6A8300B99B32 /* RCTText.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTText.xcodeproj; path = "../node_modules/react-native/Libraries/Text/RCTText.xcodeproj"; sourceTree = "<group>"; };
 		89F5263607CF4EB8BB477842 /* RNCWebView.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNCWebView.xcodeproj; path = "../node_modules/react-native-webview/ios/RNCWebView.xcodeproj"; sourceTree = "<group>"; };
 		89FC2AFC0A394CFFAE89242D /* SafariViewManager.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = SafariViewManager.xcodeproj; path = "../node_modules/react-native-safari-view/SafariViewManager.xcodeproj"; sourceTree = "<group>"; };
+		8C9B2B92B7D94E5E90DB4625 /* RNLocation.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNLocation.xcodeproj; path = "../node_modules/react-native-location/ios/RNLocation.xcodeproj"; sourceTree = "<group>"; };
 		953D3EBCD86D447894D1DC0D /* RCTMGL.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RCTMGL.xcodeproj; path = "../node_modules/@mapbox/react-native-mapbox-gl/ios/RCTMGL.xcodeproj"; sourceTree = "<group>"; };
 		A3F076A6A4BE48A89AA0A933 /* RNSentry.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNSentry.xcodeproj; path = "../node_modules/react-native-sentry/ios/RNSentry.xcodeproj"; sourceTree = "<group>"; };
 		A91038679F834707B769D282 /* RNKeychain.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNKeychain.xcodeproj; path = "../node_modules/react-native-keychain/RNKeychain.xcodeproj"; sourceTree = "<group>"; };
@@ -595,6 +604,7 @@
 				67BB2BF62264E1E9009AD866 /* libRNSentry.a in Frameworks */,
 				67005C1F2324911F00A3FBB8 /* libRNCNetInfo.a in Frameworks */,
 				67005C982324938100A3FBB8 /* libRNCWebView.a in Frameworks */,
+				67005DA82324B90500A3FBB8 /* libRNLocation.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -874,6 +884,14 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		67005D492324B8DE00A3FBB8 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				67005D4D2324B8DE00A3FBB8 /* libRNLocation.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		670F958021BDC936000B63AB /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -942,6 +960,7 @@
 				67A1EEA72072C1340059399D /* RNDeviceInfo.xcodeproj */,
 				E847E37AA434496AB97586B8 /* RNGestureHandler.xcodeproj */,
 				2560C43708D64866AA01FCC8 /* RNKeychain.xcodeproj */,
+				8C9B2B92B7D94E5E90DB4625 /* RNLocation.xcodeproj */,
 				7CEE763ECB05435E8CD79870 /* RNNetworkInfo.xcodeproj */,
 				4E4DA38580594A71BEE6DAB5 /* RNSearchBar.xcodeproj */,
 				71D5CCADA66D45008D9A38F2 /* RNVectorIcons.xcodeproj */,
@@ -1157,6 +1176,10 @@
 				{
 					ProductGroup = 0027B0931D5C82AA00C2B4FD /* Products */;
 					ProjectRef = A91038679F834707B769D282 /* RNKeychain.xcodeproj */;
+				},
+				{
+					ProductGroup = 67005D492324B8DE00A3FBB8 /* Products */;
+					ProjectRef = 8C9B2B92B7D94E5E90DB4625 /* RNLocation.xcodeproj */;
 				},
 				{
 					ProductGroup = 00F810831EABD6DB008316EB /* Products */;
@@ -1493,6 +1516,13 @@
 			remoteRef = 67005C962324934300A3FBB8 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
+		67005D4D2324B8DE00A3FBB8 /* libRNLocation.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libRNLocation.a;
+			remoteRef = 67005D4C2324B8DE00A3FBB8 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		670F958421BDC936000B63AB /* libRNGestureHandler.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
@@ -1768,6 +1798,7 @@
 					"$(SRCROOT)/../node_modules/react-native-sentry/ios/**",
 					"$(SRCROOT)/../node_modules/@react-native-community/netinfo/ios",
 					"$(SRCROOT)/../node_modules/react-native-webview/ios",
+					"$(SRCROOT)/../node_modules/react-native-location/ios",
 				);
 				INFOPLIST_FILE = AllAboutOlaf/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -1802,6 +1833,7 @@
 					"$(SRCROOT)/../node_modules/react-native-sentry/ios/**",
 					"$(SRCROOT)/../node_modules/@react-native-community/netinfo/ios",
 					"$(SRCROOT)/../node_modules/react-native-webview/ios",
+					"$(SRCROOT)/../node_modules/react-native-location/ios",
 				);
 				INFOPLIST_FILE = AllAboutOlaf/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";

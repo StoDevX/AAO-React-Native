@@ -13,6 +13,7 @@ import com.avishayil.rnrestart.ReactNativeRestartPackage;
 import com.BV.LinearGradient.LinearGradientPackage;
 import com.calendarevents.CalendarEventsPackage;
 import com.facebook.react.ReactApplication;
+import com.github.reactnativecommunity.location.RNLocationPackage;
 import com.reactnativecommunity.webview.RNCWebViewPackage;
 import com.reactnativecommunity.netinfo.NetInfoPackage;
 import com.facebook.react.ReactNativeHost;
@@ -50,6 +51,7 @@ public class MainApplication extends Application implements ReactApplication {
       return packages;
       // return Arrays.asList(
       //   new MainReactPackage(),
+            new RNLocationPackage(),
             new RNCWebViewPackage(),
             new NetInfoPackage(),
       //   // please keep these sorted alphabetically
