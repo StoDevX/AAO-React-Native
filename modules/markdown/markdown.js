@@ -46,7 +46,7 @@ type Props = {
 
 export class Markdown extends React.PureComponent<Props> {
 	render() {
-		const {styles = {}, source} = this.props
+		let {styles = {}, source} = this.props
 		return (
 			<ReactMarkdown
 				containerTagName={View}

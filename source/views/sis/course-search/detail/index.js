@@ -100,22 +100,20 @@ function Schedule({course}: {course: CourseType}) {
 	if (!course.offerings) {
 		return null
 	}
-	const groupedByDay = groupBy(course.offerings, c => c.day)
-	const schedule = map(groupedByDay, (offerings, day) => {
-		const timesFormatted = offerings.map(offering => {
-			const start = moment
-				.tz(offering.start, 'H:mm', timezone())
-				.format('h:mm A')
-			const end = moment.tz(offering.end, 'H:mm', timezone()).format('h:mm A')
+	let groupedByDay = groupBy(course.offerings, c => c.day)
+	let schedule = map(groupedByDay, (offerings, day) => {
+		let timesFormatted = offerings.map(offering => {
+			let start = moment.tz(offering.start, 'H:mm', timezone()).format('h:mm A')
+			let end = moment.tz(offering.end, 'H:mm', timezone()).format('h:mm A')
 			return `${start} – ${end}`
 		})
-		const locations = offerings.map(offering => offering.location)
+		let locations = offerings.map(offering => offering.location)
 
-		const timelocs = zip(timesFormatted, locations)
+		let timelocs = zip(timesFormatted, locations)
 
-		const timelocsObj = timelocs.map(([time, location]) => ({time, location}))
+		let timelocsObj = timelocs.map(([time, location]) => ({time, location}))
 
-		const rightDetail = timelocsObj.map(timeloc => (
+		let rightDetail = timelocsObj.map(timeloc => (
 			<Text key={timeloc.time} style={styles.rightDetail}>
 				<Text style={styles.time}>{timeloc.time} </Text>
 				<Text style={styles.location}>({timeloc.location})</Text>
@@ -145,7 +143,7 @@ function Notes({course}: {course: CourseType}) {
 
 	let notesText = course.notes.join(' ')
 
-	const notes =
+	let notes =
 		Platform.OS === 'ios' ? (
 			<SelectableCell text={notesText} />
 		) : (
@@ -168,7 +166,7 @@ function Description({course}: {course: CourseType}) {
 
 	let descText = course.description[0]
 
-	const description =
+	let description =
 		Platform.OS === 'ios' ? (
 			<SelectableCell text={descText} />
 		) : (
@@ -195,15 +193,15 @@ const BGCOLORS = {
 
 export class CourseDetailView extends React.PureComponent<Props> {
 	static navigationOptions = ({navigation}: any) => {
-		const course = navigation.state.params.course
+		let course = navigation.state.params.course
 		return {
 			title: course.name,
 		}
 	}
 
 	render() {
-		const course = this.props.navigation.state.params.course
-		const status = course.status === 'O' ? 'Open' : 'Closed'
+		let course = this.props.navigation.state.params.course
+		let status = course.status === 'O' ? 'Open' : 'Closed'
 		return (
 			<Container>
 				<Header>{course.title || course.name}</Header>

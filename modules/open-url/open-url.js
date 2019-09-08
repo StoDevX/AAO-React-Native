@@ -35,7 +35,7 @@ function androidOpen(url: string) {
 }
 
 export function openUrl(url: string) {
-	const protocol = /^(.*?):/u.exec(url)
+	let protocol = /^(.*?):/u.exec(url)
 
 	if (protocol && protocol.length) {
 		switch (protocol[1]) {
@@ -76,9 +76,9 @@ export function openUrlInBrowser({url}: {url: string, id?: string}) {
 }
 
 function promptConfirm(url: string) {
-	const app = appName()
-	const title = `Leaving ${app}`
-	const detail = `A web page will be opened in a browser outside of ${app}.`
+	let app = appName()
+	let title = `Leaving ${app}`
+	let detail = `A web page will be opened in a browser outside of ${app}.`
 	Alert.alert(title, detail, [
 		{text: 'Cancel', onPress: () => {}},
 		{text: 'Open', onPress: () => genericOpen(url)},

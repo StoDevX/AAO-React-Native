@@ -63,11 +63,11 @@ type State = {
 }
 
 function deriveStateFromProps(props: Props) {
-	const openStatus = getShortBuildingStatus(props.info, props.now)
-	const hours = getDetailedBuildingStatus(props.info, props.now)
+	let openStatus = getShortBuildingStatus(props.info, props.now)
+	let hours = getDetailedBuildingStatus(props.info, props.now)
 
-	const accentBg = BG_COLORS[openStatus] || c.goldenrod
-	const accentText = FG_COLORS[openStatus] || 'rgb(130, 82, 45)'
+	let accentBg = BG_COLORS[openStatus] || c.goldenrod
+	let accentText = FG_COLORS[openStatus] || 'rgb(130, 82, 45)'
 
 	return {
 		now: props.now,
@@ -107,8 +107,8 @@ export class BuildingRow extends React.Component<Props, State> {
 	}
 
 	render() {
-		const {info, name} = this.props
-		const {openStatus, hours, accentBg, accentText} = this.state
+		let {info, name} = this.props
+		let {openStatus, hours, accentBg, accentText} = this.state
 
 		return (
 			<ListRow arrowPosition="center" onPress={this.onPress}>
@@ -162,7 +162,7 @@ const BuildingTimeSlot = ({
 	highlight: boolean,
 }) => {
 	// we don't want to show the 'Hours' label, since almost every row has it
-	const showLabel = label && label !== 'Hours'
+	let showLabel = label && label !== 'Hours'
 
 	return (
 		<Text>

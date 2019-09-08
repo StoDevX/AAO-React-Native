@@ -22,8 +22,8 @@ export class NewsRow extends React.PureComponent<Props> {
 	}
 
 	render() {
-		const {story} = this.props
-		const thumb =
+		let {story} = this.props
+		let thumb =
 			this.props.thumbnail !== false
 				? story.featuredImage
 					? {uri: story.featuredImage}

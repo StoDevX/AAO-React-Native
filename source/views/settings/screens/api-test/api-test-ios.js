@@ -75,7 +75,7 @@ export class IOSAPITestView extends React.PureComponent<Props, State> {
 	}
 
 	onChangeSegment = (event: any) => {
-		const selectedSegment = event.nativeEvent.selectedSegmentIndex
+		let selectedSegment = event.nativeEvent.selectedSegmentIndex
 		this.setState(() => ({selectedIndex: selectedSegment}))
 	}
 

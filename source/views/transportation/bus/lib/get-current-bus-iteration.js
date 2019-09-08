@@ -31,8 +31,8 @@ export function getCurrentBusIteration(
 	}
 
 	// Handle "now" being before or after the bus runs for the day
-	const veryFirst = find(schedule.times[0], isTruthy)
-	const veryLast = findLast(schedule.times[schedule.times.length - 1], isTruthy)
+	let veryFirst = find(schedule.times[0], isTruthy)
+	let veryLast = findLast(schedule.times[schedule.times.length - 1], isTruthy)
 
 	// Start off by handling another empty-schedule case
 	if (!veryFirst || !veryLast) {
@@ -51,9 +51,9 @@ export function getCurrentBusIteration(
 	// The meat of this function: find the furthest timeset that now is part of.
 	// Because we operate on sets, instead of on one giant list of stops, we
 	// use isSameOrAfter to account for the gaps between iterations.
-	const index = findLastIndex(schedule.times, stopTimes => {
-		const first = find(stopTimes, isTruthy)
-		const last = findLast(stopTimes, isTruthy)
+	let index = findLastIndex(schedule.times, stopTimes => {
+		let first = find(stopTimes, isTruthy)
+		let last = findLast(stopTimes, isTruthy)
 
 		// Handle the case where stopTimes is empty
 		if (!first || !last) {
@@ -71,11 +71,11 @@ export function getCurrentBusIteration(
 
 	// If we found something, yay!
 	if (index !== -1) {
-		const times = schedule.times[index]
-		const nextTimes = schedule.times[index + 1] || []
+		let times = schedule.times[index]
+		let nextTimes = schedule.times[index + 1] || []
 
-		const lastStopTime = findLast(times, isTruthy)
-		const nextStart = find(nextTimes, isTruthy)
+		let lastStopTime = findLast(times, isTruthy)
+		let nextStart = find(nextTimes, isTruthy)
 
 		// Check if we're between two iterations
 		if (lastStopTime && nextStart && now.isBetween(lastStopTime, nextStart)) {

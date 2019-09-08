@@ -70,7 +70,7 @@ export class FaqView extends React.PureComponent<Props, State> {
 			return <LoadingView />
 		}
 
-		const refreshControl = (
+		let refreshControl = (
 			<RefreshControl
 				onRefresh={this.refresh}
 				refreshing={this.state.refreshing}

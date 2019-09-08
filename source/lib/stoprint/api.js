@@ -30,10 +30,10 @@ export async function logIn(
 	username: string,
 	password: string,
 ): Promise<'success' | string> {
-	const now = new Date().getTime()
-	const url = `${PAPERCUT_API}/webclient/users/${username}/log-in?nocache=${now}`
-	const body = querystring.stringify({password: encode(password)})
-	const result: LoginResponseOrErrorType = await papercut(url, {
+	let now = new Date().getTime()
+	let url = `${PAPERCUT_API}/webclient/users/${username}/log-in?nocache=${now}`
+	let body = querystring.stringify({password: encode(password)})
+	let result: LoginResponseOrErrorType = await papercut(url, {
 		method: 'POST',
 		body: body,
 		headers: PAPERCUT_API_HEADERS,

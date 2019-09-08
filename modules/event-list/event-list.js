@@ -31,7 +31,7 @@ type Props = {
 export class EventList extends React.Component<Props> {
 	groupEvents = (events: EventType[], now: moment): any => {
 		// the proper return type is $ReadOnlyArray<{title: string, data: $ReadOnlyArray<EventType>}>
-		const grouped = groupBy(events, event => {
+		let grouped = groupBy(events, event => {
 			if (event.isOngoing) {
 				return 'Ongoing'
 			}

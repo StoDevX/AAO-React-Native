@@ -45,7 +45,7 @@ type PropsType = {|
 |}
 
 export function ListRow(props: PropsType) {
-	const {
+	let {
 		style,
 		contentContainerStyle,
 		children,
@@ -55,11 +55,11 @@ export function ListRow(props: PropsType) {
 		fullHeight = false,
 	} = props
 
-	const arrowPosition = props.arrowPosition || (onPress ? 'center' : 'none')
-	const arrowPositionStyle = {
+	let arrowPosition = props.arrowPosition || (onPress ? 'center' : 'none')
+	let arrowPositionStyle = {
 		alignSelf: arrowPosition === 'center' ? 'center' : 'flex-start',
 	}
-	const arrow =
+	let arrow =
 		arrowPosition === 'none' || Platform.OS === 'android' ? null : (
 			<DisclosureArrow style={arrowPositionStyle} />
 		)

@@ -14,7 +14,7 @@ export class OtherModesRow extends React.PureComponent<Props> {
 	_onPress = () => this.props.onPress(this.props.mode)
 
 	render() {
-		const {mode} = this.props
+		let {mode} = this.props
 
 		return (
 			<ListRow arrowPosition="top" onPress={this._onPress}>

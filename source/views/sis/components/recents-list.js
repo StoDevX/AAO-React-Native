@@ -40,7 +40,7 @@ class RecentItemsList extends React.PureComponent<Props> {
 	keyExtractor = (item: string) => item
 
 	render() {
-		const {
+		let {
 			items,
 			actionLabel,
 			onAction,

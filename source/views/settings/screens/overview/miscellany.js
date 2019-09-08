@@ -22,7 +22,7 @@ export class MiscellanySection extends React.Component<Props, State> {
 	}
 
 	checkIfCustomIconsSupported = async () => {
-		const canChangeIcon = await Icons.isSupported()
+		let canChangeIcon = await Icons.isSupported()
 		this.setState(() => ({canChangeIcon}))
 	}
 

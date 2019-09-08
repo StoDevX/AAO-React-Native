@@ -22,9 +22,9 @@ export function findMenu(
 
 	// Now that we know they're not empty, we grab the single element out of
 	// the top array for easier use.
-	const daypart = dayparts[0]
+	let daypart = dayparts[0]
 
-	const menuIndex = findMenuIndex(daypart, now)
+	let menuIndex = findMenuIndex(daypart, now)
 	return daypart[menuIndex]
 }
 
@@ -36,7 +36,7 @@ export function findMeal(
 		return
 	}
 
-	const dayparts: DayPartMenuType[] = meals.map(m => ({
+	let dayparts: DayPartMenuType[] = meals.map(m => ({
 		starttime: m.starttime,
 		endtime: m.endtime,
 		label: m.label,
@@ -45,7 +45,7 @@ export function findMeal(
 		abbreviation: m.label,
 	}))
 
-	const mealIndex = findMenuIndex(dayparts, now)
+	let mealIndex = findMenuIndex(dayparts, now)
 	return meals[mealIndex]
 }
 
@@ -59,7 +59,7 @@ function findMenuIndex(dayparts: DayPartMenuType[], now: momentT): number {
 	// Otherwise, we make ourselves a list of {starttime, endtime} pairs so we
 	// can query times relative to `now`. Also make sure to set dayOfYear to
 	// `now`, so that we don't have our days wandering all over the place.
-	const times = dayparts.map(({starttime, endtime}) => ({
+	let times = dayparts.map(({starttime, endtime}) => ({
 		start: moment
 			.tz(starttime, 'H:mm', true, timezone())
 			.dayOfYear(now.dayOfYear()),

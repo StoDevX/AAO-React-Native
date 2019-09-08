@@ -19,19 +19,19 @@ const styles = StyleSheet.create({
 })
 
 function Name({item}: {item: StreamType}) {
-	const title = getTrimmedTextWithSpaces(parseHtml(item.title))
+	let title = getTrimmedTextWithSpaces(parseHtml(item.title))
 	return title ? <Title>{title}</Title> : null
 }
 
 function Info({item}: {item: StreamType}) {
-	const detail = getTrimmedTextWithSpaces(
+	let detail = getTrimmedTextWithSpaces(
 		parseHtml(item.subtitle || item.performer || ''),
 	)
 	return detail ? <Detail>{detail}</Detail> : null
 }
 
 function Time({item}: {item: StreamType}) {
-	const showTime = item.status !== 'archived'
+	let showTime = item.status !== 'archived'
 	return showTime ? (
 		<Detail>{moment(item.date).format('h:mm A – ddd, MMM. Do, YYYY')}</Detail>
 	) : null
@@ -51,12 +51,12 @@ type Props = {stream: StreamType}
 
 export class StreamRow extends React.PureComponent<Props> {
 	onPressStream = () => {
-		const {stream} = this.props
+		let {stream} = this.props
 		trackedOpenUrl({url: stream.player, id: 'StreamingMedia_StreamView'})
 	}
 
 	render() {
-		const {stream} = this.props
+		let {stream} = this.props
 
 		return (
 			<ListRow arrowPosition="center" onPress={this.onPressStream}>

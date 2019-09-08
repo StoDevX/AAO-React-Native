@@ -56,11 +56,11 @@ export class BusView extends React.PureComponent<Props, State> {
 			return <LoadingView />
 		}
 
-		const {activeBusLine} = this.state
+		let {activeBusLine} = this.state
 
 		if (!activeBusLine) {
-			const lines = this.state.busLines.map(({line}) => line).join(', ')
-			const msg = `The line "${this.props.line}" was not found among ${lines}`
+			let lines = this.state.busLines.map(({line}) => line).join(', ')
+			let msg = `The line "${this.props.line}" was not found among ${lines}`
 			return <NoticeView text={msg} />
 		}
 
