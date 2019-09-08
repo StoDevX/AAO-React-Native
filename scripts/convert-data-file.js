@@ -45,8 +45,7 @@ function convertDataFile({fromFile, toFile, toFileType = 'json'}) {
 
 	output = output + '\n'
 
-	let outStream =
-		toFile === '-' ? process.stdout : fs.createWriteStream(toFile)
+	let outStream = toFile === '-' ? process.stdout : fs.createWriteStream(toFile)
 	outStream.write(output)
 }
 

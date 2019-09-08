@@ -103,9 +103,7 @@ function Schedule({course}: {course: CourseType}) {
 	let groupedByDay = groupBy(course.offerings, c => c.day)
 	let schedule = map(groupedByDay, (offerings, day) => {
 		let timesFormatted = offerings.map(offering => {
-			let start = moment
-				.tz(offering.start, 'H:mm', timezone())
-				.format('h:mm A')
+			let start = moment.tz(offering.start, 'H:mm', timezone()).format('h:mm A')
 			let end = moment.tz(offering.end, 'H:mm', timezone()).format('h:mm A')
 			return `${start} – ${end}`
 		})

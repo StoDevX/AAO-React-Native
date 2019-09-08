@@ -40,7 +40,6 @@ function bundleDataDir({fromDir, toFile}) {
 	let dated = {data: loaded}
 	let output = JSON.stringify(dated) + '\n'
 
-	let outStream =
-		toFile === '-' ? process.stdout : fs.createWriteStream(toFile)
+	let outStream = toFile === '-' ? process.stdout : fs.createWriteStream(toFile)
 	outStream.write(output)
 }
