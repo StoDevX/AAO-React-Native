@@ -1,7 +1,7 @@
 // @flow
 
 import * as React from 'react'
-import {Image, ScrollView, StyleSheet, Text, View, Platform} from 'react-native'
+import {Image, ScrollView, StyleSheet, Text, View} from 'react-native'
 import noop from 'lodash/noop'
 import * as c from '@frogpond/colors'
 import {callPhone} from '../../../components/call-phone'
@@ -13,6 +13,9 @@ import {ActionButton, ShowCalendarButton, CallButton} from './buttons'
 import {openUrl} from '@frogpond/open-url'
 import {Viewport} from '@frogpond/viewport'
 import {withTheme} from '@callstack/react-theme-provider'
+
+// If you want to fix the inline player, switch to `true`
+const ALLOW_INLINE_PLAYER = false
 
 type Props = TopLevelViewPropsType & {
 	image: number,
@@ -79,7 +82,7 @@ class RadioControllerView extends React.Component<Props, State> {
 	}
 
 	renderPlayButton = (state: PlayState) => {
-		if (Platform.OS === 'android') {
+		if (!ALLOW_INLINE_PLAYER) {
 			return (
 				<ActionButton
 					icon="ios-planet"
@@ -147,7 +150,7 @@ class RadioControllerView extends React.Component<Props, State> {
 		)
 
 		let playerBlock =
-			Platform.OS !== 'android' ? (
+			ALLOW_INLINE_PLAYER ? (
 				<StreamPlayer
 					embeddedPlayerUrl={source.embeddedPlayerUrl}
 					onEnded={this.handleStreamEnd}
