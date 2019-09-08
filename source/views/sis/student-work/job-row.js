@@ -15,11 +15,11 @@ export class JobRow extends React.PureComponent<Props> {
 	_onPress = () => this.props.onPress(this.props.job)
 
 	render() {
-		const {job} = this.props
-		const title = fastGetTrimmedText(job.title)
-		const office = fastGetTrimmedText(job.office)
-		const hours = fastGetTrimmedText(job.hoursPerWeek)
-		const ending = hours === 'Full-time' ? '' : 'hrs/week'
+		let {job} = this.props
+		let title = fastGetTrimmedText(job.title)
+		let office = fastGetTrimmedText(job.office)
+		let hours = fastGetTrimmedText(job.hoursPerWeek)
+		let ending = hours === 'Full-time' ? '' : 'hrs/week'
 
 		return (
 			<ListRow arrowPosition="top" onPress={this._onPress}>

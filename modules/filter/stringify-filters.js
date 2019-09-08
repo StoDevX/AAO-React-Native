@@ -28,6 +28,6 @@ function stringifyFilter(filter: FilterType): string {
 
 function stringifyListFilter(filter: ListType): string {
 	// Extract the list of "selected" items
-	const filterValue = filter.spec.selected
+	let filterValue = filter.spec.selected
 	return filterValue.map(f => f.title).join(', ')
 }

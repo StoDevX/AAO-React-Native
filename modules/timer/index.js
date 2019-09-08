@@ -67,12 +67,12 @@ export class Timer extends React.Component<Props, State> {
 	}
 
 	refresh = async () => {
-		const start = Date.now()
+		let start = Date.now()
 		this.setState(() => ({loading: true}))
 
 		this.updateTime()
 
-		const elapsed = Date.now() - start
+		let elapsed = Date.now() - start
 		if (elapsed < 500) {
 			await delay(500 - elapsed)
 		}

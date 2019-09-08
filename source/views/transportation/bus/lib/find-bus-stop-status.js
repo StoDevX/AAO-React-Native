@@ -14,7 +14,7 @@ type Args = {|
 |}
 
 export function findBusStopStatus(args: Args): BusStopStatusEnum {
-	const {stop, busStatus, departureIndex, now} = args
+	let {stop, busStatus, departureIndex, now} = args
 
 	let stopStatus: BusStopStatusEnum = 'skip'
 	let arrivalTime: null | moment = null

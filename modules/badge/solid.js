@@ -11,7 +11,7 @@ type Props = {
 }
 
 export function SolidBadge(props: Props) {
-	const {status, accentColor = c.goldenrod, textColor = c.white} = props
+	let {status, accentColor = c.goldenrod, textColor = c.white} = props
 
 	return (
 		<View style={[styles.badge, {backgroundColor: accentColor}]}>

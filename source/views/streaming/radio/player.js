@@ -59,7 +59,7 @@ export class StreamPlayer extends React.PureComponent<Props> {
 	}
 
 	handleMessage = (event: any) => {
-		const data: HtmlAudioEvent = JSON.parse(event.nativeEvent.data)
+		let data: HtmlAudioEvent = JSON.parse(event.nativeEvent.data)
 
 		// console.log('<audio> dispatched event', data.type)
 

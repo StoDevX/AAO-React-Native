@@ -7,7 +7,6 @@ import {Markdown} from '@frogpond/markdown'
 import {Sentry} from 'react-native-sentry'
 import retry from 'p-retry'
 import delay from 'delay'
-import {reportNetworkProblem} from '@frogpond/analytics'
 import {Error, ErrorMessage} from './components'
 import {getPosition, collectData, reportToServer} from './wifi-tools'
 import {styles} from './tool'
@@ -43,14 +42,14 @@ export class ToolView extends React.Component<Props, State> {
 			'https://www.stolaf.edu/apps/all-about-olaf/wifi/index.cfm?fuseaction=Submit'
 
 		if (this.props.config.buttons && this.props.config.buttons.length >= 1) {
-			const btnConfig = this.props.config.buttons[0]
+			let btnConfig = this.props.config.buttons[0]
 			if (btnConfig.action === 'custom') {
 				reportUrl = btnConfig.params.url
 			}
 		}
 
 		this.setState(() => ({status: 'collecting', error: ''}))
-		const [position, device] = await Promise.all([
+		let [position, device] = await Promise.all([
 			getPosition().catch(error => {
 				Sentry.captureException(error)
 				return null
@@ -65,7 +64,6 @@ export class ToolView extends React.Component<Props, State> {
 			await delay(1000)
 			this.setState(() => ({status: 'done'}))
 		} catch (err) {
-			reportNetworkProblem(err)
 			this.setState(() => ({
 				error:
 					this.props.config.errorMessage ||
@@ -76,13 +74,13 @@ export class ToolView extends React.Component<Props, State> {
 	}
 
 	render() {
-		const toolEnabled = this.props.config.enabled
+		let toolEnabled = this.props.config.enabled
 		let buttonMessage = messages[this.state.status] || 'Error'
 		let buttonEnabled =
 			this.state.status === 'init' || this.state.status === 'error'
 
 		if (this.props.config.buttons && this.props.config.buttons.length >= 1) {
-			const btnConfig = this.props.config.buttons[0]
+			let btnConfig = this.props.config.buttons[0]
 			buttonEnabled = buttonEnabled && btnConfig.enabled !== false
 			buttonMessage =
 				this.state.status === 'init' ? btnConfig.title : buttonMessage

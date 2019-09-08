@@ -70,21 +70,21 @@ class CredentialsLoginSection extends React.Component<Props, State> {
 	}
 
 	render() {
-		const {status} = this.props
-		const {
+		let {status} = this.props
+		let {
 			username,
 			password,
 			loadingCredentials,
 			initialCheckComplete,
 		} = this.state
 
-		const loggedIn = status === 'logged-in'
-		const checkingCredentials = status === 'checking'
-		const hasBothCredentials = username && password
+		let loggedIn = status === 'logged-in'
+		let checkingCredentials = status === 'checking'
+		let hasBothCredentials = username && password
 
 		// this becomes TRUE when (a) creds are loaded from AsyncStorage and
 		// (b) the initial check from those credentials has completed
-		const checkingState = loadingCredentials || !initialCheckComplete
+		let checkingState = loadingCredentials || !initialCheckComplete
 
 		return (
 			<Section

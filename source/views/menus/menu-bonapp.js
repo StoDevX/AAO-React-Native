@@ -1,5 +1,6 @@
 // @flow
 import * as React from 'react'
+import delay from 'delay'
 import {timezone} from '@frogpond/constants'
 import {NoticeView, LoadingView} from '@frogpond/notice'
 import type {TopLevelViewPropsType} from '../types'
@@ -22,7 +23,6 @@ import moment from 'moment-timezone'
 import {trimStationName, trimItemLabel} from './lib/trim-names'
 import {getTrimmedTextWithSpaces, parseHtml, entities} from '@frogpond/html-lib'
 import {toLaxTitleCase} from '@frogpond/titlecase'
-import {reportNetworkProblem} from '@frogpond/analytics'
 import {API} from '@frogpond/api'
 import {fetch} from '@frogpond/fetch'
 
@@ -97,7 +97,7 @@ export class BonAppHostedMenu extends React.PureComponent<Props, State> {
 		if (typeof props.cafe === 'string') {
 			menuUrl = API(`/food/named/menu/${cafe}`)
 			cafeUrl = API(`/food/named/cafe/${cafe}`)
-		} else if (props.cafe.hasOwnProperty('id')) {
+		} else if ('id' in props.cafe) {
 			menuUrl = API(`/food/menu/${cafe}`)
 			cafeUrl = API(`/food/cafe/${cafe}`)
 		} else {
@@ -127,23 +127,31 @@ export class BonAppHostedMenu extends React.PureComponent<Props, State> {
 			if (error.message === "JSON Parse error: Unrecognized token '<'") {
 				this.setState(() => ({errormsg: BONAPP_HTML_ERROR_CODE}))
 			} else {
-				reportNetworkProblem(error)
 				this.setState(() => ({errormsg: error.message}))
 			}
 		}
 	}
 
 	refresh = async (): any => {
+		let start = Date.now()
 		this.setState(() => ({refreshing: true}))
+
 		await this.fetchData(this.props, true)
+
+		// wait 0.5 seconds – if we let it go at normal speed, it feels broken.
+		let elapsed = Date.now() - start
+		if (elapsed < 500) {
+			await delay(500 - elapsed)
+		}
+
 		this.setState(() => ({refreshing: false}))
 	}
 
 	findCafeMessage(cafeInfo: CafeInfoType, now: momentT) {
-		const actualCafeInfo = cafeInfo.cafe
+		let actualCafeInfo = cafeInfo.cafe
 
-		const todayDate = now.format('YYYY-MM-DD')
-		const todayMenu = actualCafeInfo.days.find(({date}) => date === todayDate)
+		let todayDate = now.format('YYYY-MM-DD')
+		let todayMenu = actualCafeInfo.days.find(({date}) => date === todayDate)
 
 		if (!todayMenu) {
 			return 'Closed today'
@@ -157,7 +165,7 @@ export class BonAppHostedMenu extends React.PureComponent<Props, State> {
 	buildCustomStationMenu(
 		foodItems: MenuItemContainerType,
 	): Array<StationMenuType> {
-		const groupByStation = (grouped, item: MenuItemType) => {
+		let groupByStation = (grouped, item: MenuItemType) => {
 			if (item.station in grouped) {
 				grouped[item.station].push(item.id)
 			} else {
@@ -168,7 +176,7 @@ export class BonAppHostedMenu extends React.PureComponent<Props, State> {
 
 		// go over the list of all food items, turning it into a mapping
 		// of {StationName: Array<FoodItemId>}
-		const idsGroupedByStation = reduce(foodItems, groupByStation, {})
+		let idsGroupedByStation = reduce(foodItems, groupByStation, {})
 
 		// then we make our own StationMenus list
 		let paired: Array<[string, Array<string>]> = toPairs(idsGroupedByStation)
@@ -196,7 +204,7 @@ export class BonAppHostedMenu extends React.PureComponent<Props, State> {
 		}
 
 		// Make sure to titlecase the station menus list, too, so the sort works
-		const titleCaseLabels = s => ({...s, label: toLaxTitleCase(s.label)})
+		let titleCaseLabels = s => ({...s, label: toLaxTitleCase(s.label)})
 		stationMenus = stationMenus.map(titleCaseLabels)
 
 		return {
@@ -212,18 +220,18 @@ export class BonAppHostedMenu extends React.PureComponent<Props, State> {
 		ignoreProvidedMenus: boolean,
 		foodItems: MenuItemContainerType,
 	}): Array<ProcessedMealType> {
-		const {cafeMenu, ignoreProvidedMenus, foodItems} = args
+		let {cafeMenu, ignoreProvidedMenus, foodItems} = args
 
 		// We hard-code to the first day returned because we're only requesting
 		// one day. `cafes` is a map of cafe ids to cafes, but we only request one
 		// cafe at a time, so we just grab the one we requested.
-		const dayparts = cafeMenu.days[0].cafe.dayparts
+		let dayparts = cafeMenu.days[0].cafe.dayparts
 
 		// either use the meals as provided by bonapp, or make our own
-		const mealInfoItems =
+		let mealInfoItems =
 			dayparts.length !== 0 && dayparts[0].length ? dayparts[0] : DEFAULT_MENU
 
-		const ignoreMenus =
+		let ignoreMenus =
 			dayparts.length !== 0 && dayparts[0].length ? ignoreProvidedMenus : true
 
 		return mealInfoItems.map(mealInfo =>
@@ -254,36 +262,33 @@ export class BonAppHostedMenu extends React.PureComponent<Props, State> {
 			return <NoticeView buttonText="Again!" onPress={this.retry} text={msg} />
 		}
 
-		const cafe =
+		let cafe =
 			typeof this.props.cafe === 'string' ? this.props.cafe : this.props.cafe.id
 
 		if (!this.state.cafeMenu || !this.state.cafeInfo) {
-			const err = new Error(`Something went wrong loading BonApp cafe #${cafe}`)
-			reportNetworkProblem(err)
-
-			const msg =
+			let msg =
 				'Something went wrong. Email allaboutolaf@stolaf.edu to let them know?'
 			return <NoticeView text={msg} />
 		}
 
-		const {ignoreProvidedMenus = false} = this.props
-		const {now, cafeMenu, cafeInfo} = this.state
+		let {ignoreProvidedMenus = false} = this.props
+		let {now, cafeMenu, cafeInfo} = this.state
 
 		// The API returns an empty array for the cafeInfo.cafe value if there is no
 		// matching cafe with the inputted id number, otherwise it returns an non-array object
 		if (Array.isArray(cafeInfo.cafe)) {
-			const msg = `There is no cafe with id #${cafe}`
+			let msg = `There is no cafe with id #${cafe}`
 			return <NoticeView text={msg} />
 		}
 
 		// We grab the "today" info from here because BonApp returns special
 		// messages in this response, like "Closed for Christmas Break"
-		const specialMessage = this.findCafeMessage(cafeInfo, now)
+		let specialMessage = this.findCafeMessage(cafeInfo, now)
 
 		// prepare all food items from bonapp for rendering
-		const foodItems = this.prepareFood(cafeMenu)
+		let foodItems = this.prepareFood(cafeMenu)
 
-		const meals = this.getMeals({
+		let meals = this.getMeals({
 			foodItems,
 			ignoreProvidedMenus,
 			cafeMenu,

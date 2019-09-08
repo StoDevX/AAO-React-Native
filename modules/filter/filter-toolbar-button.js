@@ -63,9 +63,9 @@ class FilterToolbarButton extends React.PureComponent<Props, State> {
 	}
 
 	render() {
-		const {filter, isActive, style, title, theme} = this.props
-		const {popoverVisible} = this.state
-		const icon = Platform.select({
+		let {filter, isActive, style, title, theme} = this.props
+		let {popoverVisible} = this.state
+		let icon = Platform.select({
 			ios: 'ios-arrow-down',
 			android: 'md-arrow-dropdown',
 		})
@@ -95,7 +95,7 @@ class FilterToolbarButton extends React.PureComponent<Props, State> {
 			}
 		}
 
-		const buttonTextStyle = [
+		let buttonTextStyle = [
 			activeContentStyle,
 			textWithIconStyle,
 			activeTextStyle,

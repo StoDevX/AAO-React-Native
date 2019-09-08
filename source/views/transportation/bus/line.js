@@ -50,21 +50,21 @@ function startsIn(now, start: ?moment) {
 		return 'Error'
 	}
 
-	const nowCopy = now.clone()
+	let nowCopy = now.clone()
 	return `Starts ${nowCopy.seconds(0).to(start)}`
 }
 
 function deriveFromProps({line, now}: Props) {
 	// Finds the stuff that's shared between FlatList and renderItem
-	const processedLine = processBusLine(line, now)
+	let processedLine = processBusLine(line, now)
 
-	const scheduleForToday = getScheduleForNow(processedLine.schedules, now)
-	const {times, status, index, nextStart} = getCurrentBusIteration(
+	let scheduleForToday = getScheduleForNow(processedLine.schedules, now)
+	let {times, status, index, nextStart} = getCurrentBusIteration(
 		scheduleForToday,
 		now,
 	)
 
-	const isLastBus = index === scheduleForToday.times.length - 1
+	let isLastBus = index === scheduleForToday.times.length - 1
 
 	let subtitle = 'Error'
 	switch (status) {
@@ -82,8 +82,8 @@ function deriveFromProps({line, now}: Props) {
 			if (isLastBus) {
 				subtitle = 'Last Bus'
 			} else {
-				const first = find(times, isTruthy)
-				const last = findLast(times, isTruthy)
+				let first = find(times, isTruthy)
+				let last = findLast(times, isTruthy)
 				if (!first || !last) {
 					subtitle = 'Not running today'
 				} else if (now.isBefore(first)) {
@@ -141,10 +141,10 @@ export class BusLine extends React.Component<Props, State> {
 	)
 
 	render() {
-		const {line} = this.props
-		const {schedule, subtitle} = this.state
+		let {line} = this.props
+		let {schedule, subtitle} = this.state
 
-		const INFO_EL = (
+		let INFO_EL = (
 			<ListSectionHeader
 				subtitle={subtitle}
 				title={line.line}
@@ -152,12 +152,12 @@ export class BusLine extends React.Component<Props, State> {
 			/>
 		)
 
-		const LINE_MSG = line.notice || ''
-		const FOOTER_MSG =
+		let LINE_MSG = line.notice || ''
+		let FOOTER_MSG =
 			'Bus routes and times subject to change without notice\n\nData collected by the humans of All About Olaf'
-		const FOOTER_EL = <ListFooter title={FOOTER_MSG} />
+		let FOOTER_EL = <ListFooter title={FOOTER_MSG} />
 
-		const HEADER_EL = LINE_MSG ? (
+		let HEADER_EL = LINE_MSG ? (
 			<React.Fragment>
 				<InfoHeader message={LINE_MSG} title={`About ${line.line}`} />
 				{INFO_EL}

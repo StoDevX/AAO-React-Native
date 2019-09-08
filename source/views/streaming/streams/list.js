@@ -60,8 +60,8 @@ export class StreamListView extends React.PureComponent<Props, State> {
 		reload?: boolean,
 		date: moment = moment.tz(timezone()),
 	) => {
-		const dateFrom = date.format('YYYY-MM-DD')
-		const dateTo = date
+		let dateFrom = date.format('YYYY-MM-DD')
+		let dateTo = date
 			.clone()
 			.add(2, 'month')
 			.format('YYYY-MM-DD')
@@ -78,8 +78,8 @@ export class StreamListView extends React.PureComponent<Props, State> {
 		data = data
 			.filter(stream => stream.category !== 'athletics')
 			.map(stream => {
-				const date = moment(stream.starttime)
-				const group =
+				let date = moment(stream.starttime)
+				let group =
 					stream.status.toLowerCase() !== 'live'
 						? date.format('dddd, MMMM Do')
 						: 'Live'
@@ -93,8 +93,8 @@ export class StreamListView extends React.PureComponent<Props, State> {
 				}
 			})
 
-		const grouped = groupBy(data, j => j.$groupBy)
-		const mapped = toPairs(grouped).map(([title, data]) => ({title, data}))
+		let grouped = groupBy(data, j => j.$groupBy)
+		let mapped = toPairs(grouped).map(([title, data]) => ({title, data}))
 
 		this.setState(() => ({streams: mapped}))
 	}

@@ -17,8 +17,6 @@
 
 @implementation AppDelegate
 
-@synthesize oneSignal = _oneSignal;
-
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
   UIStoryboard *loadingViewStoryBoard = [UIStoryboard storyboardWithName:@"LaunchScreen" bundle:nil];

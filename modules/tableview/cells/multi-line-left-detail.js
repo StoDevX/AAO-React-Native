@@ -12,8 +12,8 @@ type LeftDetailProps = {
 
 export class MultiLineLeftDetailCell extends React.PureComponent<LeftDetailProps> {
 	render() {
-		const {detail, title} = this.props
-		const cellContent = (
+		let {detail, title} = this.props
+		let cellContent = (
 			<View style={styles.cellContentView}>
 				<Text allowFontScaling={true} style={styles.cellLeftDetail}>
 					{detail}

@@ -15,7 +15,6 @@
     "delay": "^4.1.0"
   },
   "dependencies": {
-    "@frogpond/analytics": "^1.0.0",
     "@frogpond/api": "^1.0.0",
     "@frogpond/fetch": "^1.0.0",
     "@frogpond/event-list": "^1.0.0",

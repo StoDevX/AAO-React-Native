@@ -20,7 +20,7 @@ type Props = {
 
 export class ListFooter extends React.PureComponent<Props> {
 	render() {
-		const {title} = this.props
+		let {title} = this.props
 		return (
 			<Text selectable={true} style={[styles.footer]}>
 				{title}

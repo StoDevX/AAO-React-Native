@@ -26,7 +26,7 @@ export function FoodItemRow({
 	onPress,
 	...props
 }: FoodItemPropsType) {
-	const {left = 0} = props.spacing
+	let {left = 0} = props.spacing
 	return (
 		<ListRow
 			arrowPosition="center"
