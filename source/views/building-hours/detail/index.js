@@ -14,7 +14,7 @@ type Props = TopLevelViewPropsType & {
 
 export class BuildingHoursDetailView extends React.Component<Props> {
 	static navigationOptions = ({navigation}: any) => {
-		const building = navigation.state.params.building
+		let building = navigation.state.params.building
 		return {
 			title: building.name,
 			headerRight: <FavoriteButton buildingName={building.name} />,
@@ -28,7 +28,7 @@ export class BuildingHoursDetailView extends React.Component<Props> {
 	}
 
 	render() {
-		const info = this.props.navigation.state.params.building
+		let info = this.props.navigation.state.params.building
 
 		return (
 			<Timer

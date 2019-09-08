@@ -85,7 +85,7 @@ type HocProps = {
 type Props = BaseProps & HocProps
 
 function ListSectionHeader(props: Props) {
-	const {
+	let {
 		style,
 		title,
 		bold = true,

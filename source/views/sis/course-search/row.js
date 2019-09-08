@@ -18,7 +18,7 @@ export class CourseRow extends React.PureComponent<Props> {
 	}
 
 	render() {
-		const {course} = this.props
+		let {course} = this.props
 
 		return (
 			<ListRow arrowPosition="center" onPress={this.onPress}>

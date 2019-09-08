@@ -20,7 +20,7 @@ const fetchContacts = (forReload?: boolean): Promise<Array<ContactType>> =>
 		.then(body => body.data)
 
 const groupContacts = (contacts: ContactType[]) => {
-	const grouped = groupBy(contacts, c => c.category)
+	let grouped = groupBy(contacts, c => c.category)
 	return toPairs(grouped).map(([key, value]) => ({title: key, data: value}))
 }
 
@@ -80,7 +80,7 @@ export class ContactsListView extends React.PureComponent<Props, State> {
 	keyExtractor = (item: ContactType) => item.title
 
 	render() {
-		const groupedData = groupContacts(this.state.contacts)
+		let groupedData = groupContacts(this.state.contacts)
 		return (
 			<SectionList
 				ItemSeparatorComponent={ListSeparator}

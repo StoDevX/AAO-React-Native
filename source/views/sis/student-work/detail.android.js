@@ -60,10 +60,10 @@ function Title({job}: {job: JobType}) {
 }
 
 function ContactInformation({job}: {job: JobType}) {
-	const contactName = job.contactName
-	const contactEmail = job.contactEmail
-	const contactNumber = job.contactPhone
-	const contactOffice = job.office
+	let contactName = job.contactName
+	let contactEmail = job.contactEmail
+	let contactNumber = job.contactPhone
+	let contactOffice = job.office
 
 	return contactName || contactEmail || contactNumber || contactOffice ? (
 		<Card header="Contact Information" style={styles.card}>
@@ -99,7 +99,7 @@ function ContactInformation({job}: {job: JobType}) {
 }
 
 function Hours({job}: {job: JobType}) {
-	const ending = job.hoursPerWeek === 'Full-time' ? '' : ' hrs/week'
+	let ending = job.hoursPerWeek === 'Full-time' ? '' : ' hrs/week'
 	return job.timeOfHours && job.hoursPerWeek ? (
 		<Card header="Hours" style={styles.card}>
 			<Text style={styles.cardBody}>
@@ -180,7 +180,7 @@ function OpenWebpage({job}: {job: JobType}) {
 }
 
 function Links({job}: {job: JobType}) {
-	const {links} = job
+	let {links} = job
 	return links.length ? (
 		<Card header="LINKS" style={styles.card}>
 			{links.map(url => (
@@ -208,7 +208,7 @@ type Props = {
 
 export class JobDetailView extends React.PureComponent<Props> {
 	static navigationOptions = ({navigation}: any) => {
-		const {job} = navigation.state.params
+		let {job} = navigation.state.params
 		return {
 			title: job.title,
 			headerRight: <ShareButton onPress={() => shareJob(job)} />,
@@ -216,7 +216,7 @@ export class JobDetailView extends React.PureComponent<Props> {
 	}
 
 	render() {
-		const job = this.props.navigation.state.params.job
+		let job = this.props.navigation.state.params.job
 
 		return (
 			<ScrollView>

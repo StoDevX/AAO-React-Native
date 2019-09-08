@@ -10,7 +10,7 @@ import type {UnprocessedBusSchedule, BusSchedule} from '../../types'
 
 function buildBusSchedules(now): Array<BusSchedule> {
 	// prettier-ignore
-	const schedules: Array<UnprocessedBusSchedule> = [
+	let schedules: Array<UnprocessedBusSchedule> = [
     {
       days: ['Mo', 'Tu'],
       coordinates: {},
@@ -31,111 +31,111 @@ function buildBusSchedules(now): Array<BusSchedule> {
 }
 
 function makeSchedule(now) {
-	const schedule = getScheduleForNow(buildBusSchedules(now), now)
-	const {status, index} = getCurrentBusIteration(schedule, now)
+	let schedule = getScheduleForNow(buildBusSchedules(now), now)
+	let {status, index} = getCurrentBusIteration(schedule, now)
 	return {schedule, busStatus: status, departureIndex: index}
 }
 
 test('handles a time before the bus runs', () => {
-	const now = dayAndTime('Mo 12:00pm')
-	const {schedule, busStatus, departureIndex} = makeSchedule(now)
-	const stop = schedule.timetable[0]
-	const actual = findBusStopStatus({stop, departureIndex, busStatus, now})
+	let now = dayAndTime('Mo 12:00pm')
+	let {schedule, busStatus, departureIndex} = makeSchedule(now)
+	let stop = schedule.timetable[0]
+	let actual = findBusStopStatus({stop, departureIndex, busStatus, now})
 	expect(actual).toBe('before')
 })
 
 test('handles a time right when the bus starts', () => {
-	const now = dayAndTime('Mo 1:00pm')
-	const {schedule, busStatus, departureIndex} = makeSchedule(now)
-	const stop = schedule.timetable[0]
-	const actual = findBusStopStatus({stop, departureIndex, busStatus, now})
+	let now = dayAndTime('Mo 1:00pm')
+	let {schedule, busStatus, departureIndex} = makeSchedule(now)
+	let stop = schedule.timetable[0]
+	let actual = findBusStopStatus({stop, departureIndex, busStatus, now})
 	expect(actual).toBe('at')
 })
 
 test('handles a time between two stops', () => {
-	const now = dayAndTime('Mo 1:01pm')
-	const {schedule, busStatus, departureIndex} = makeSchedule(now)
-	const stop = schedule.timetable[1]
-	const actual = findBusStopStatus({stop, departureIndex, busStatus, now})
+	let now = dayAndTime('Mo 1:01pm')
+	let {schedule, busStatus, departureIndex} = makeSchedule(now)
+	let stop = schedule.timetable[1]
+	let actual = findBusStopStatus({stop, departureIndex, busStatus, now})
 	expect(actual).toBe('before')
 })
 
 test('handles a time at the second stop', () => {
-	const now = dayAndTime('Mo 1:05pm')
-	const {schedule, busStatus, departureIndex} = makeSchedule(now)
-	const stop = schedule.timetable[1]
-	const actual = findBusStopStatus({stop, departureIndex, busStatus, now})
+	let now = dayAndTime('Mo 1:05pm')
+	let {schedule, busStatus, departureIndex} = makeSchedule(now)
+	let stop = schedule.timetable[1]
+	let actual = findBusStopStatus({stop, departureIndex, busStatus, now})
 	expect(actual).toBe('at')
 })
 
 test('handles a time at the last stop', () => {
-	const now = dayAndTime('Mo 1:10pm')
-	const {schedule, busStatus, departureIndex} = makeSchedule(now)
-	const stop = schedule.timetable[schedule.timetable.length - 1]
-	const actual = findBusStopStatus({stop, departureIndex, busStatus, now})
+	let now = dayAndTime('Mo 1:10pm')
+	let {schedule, busStatus, departureIndex} = makeSchedule(now)
+	let stop = schedule.timetable[schedule.timetable.length - 1]
+	let actual = findBusStopStatus({stop, departureIndex, busStatus, now})
 	expect(actual).toBe('at')
 })
 
 test('handles a time between two iterations', () => {
-	const now = dayAndTime('Mo 1:55pm')
-	const {schedule, busStatus, departureIndex} = makeSchedule(now)
-	const stop = schedule.timetable[0]
-	const actual = findBusStopStatus({stop, departureIndex, busStatus, now})
+	let now = dayAndTime('Mo 1:55pm')
+	let {schedule, busStatus, departureIndex} = makeSchedule(now)
+	let stop = schedule.timetable[0]
+	let actual = findBusStopStatus({stop, departureIndex, busStatus, now})
 	expect(actual).toBe('before')
 })
 
 test('handles the first stop of the second iteration', () => {
-	const now = dayAndTime('Mo 2:00pm')
-	const {schedule, busStatus, departureIndex} = makeSchedule(now)
-	const stop = schedule.timetable[0]
-	const actual = findBusStopStatus({stop, departureIndex, busStatus, now})
+	let now = dayAndTime('Mo 2:00pm')
+	let {schedule, busStatus, departureIndex} = makeSchedule(now)
+	let stop = schedule.timetable[0]
+	let actual = findBusStopStatus({stop, departureIndex, busStatus, now})
 	expect(actual).toBe('at')
 })
 
 test('handles the first stop of the last iteration', () => {
-	const now = dayAndTime('Mo 3:00pm')
-	const {schedule, busStatus, departureIndex} = makeSchedule(now)
-	const stop = schedule.timetable[0]
-	const actual = findBusStopStatus({stop, departureIndex, busStatus, now})
+	let now = dayAndTime('Mo 3:00pm')
+	let {schedule, busStatus, departureIndex} = makeSchedule(now)
+	let stop = schedule.timetable[0]
+	let actual = findBusStopStatus({stop, departureIndex, busStatus, now})
 	expect(actual).toBe('at')
 })
 
 test('handles the last stop of the last iteration', () => {
-	const now = dayAndTime('Mo 3:10pm')
-	const {schedule, busStatus, departureIndex} = makeSchedule(now)
-	const stop = schedule.timetable[schedule.timetable.length - 1]
-	const actual = findBusStopStatus({stop, departureIndex, busStatus, now})
+	let now = dayAndTime('Mo 3:10pm')
+	let {schedule, busStatus, departureIndex} = makeSchedule(now)
+	let stop = schedule.timetable[schedule.timetable.length - 1]
+	let actual = findBusStopStatus({stop, departureIndex, busStatus, now})
 	expect(actual).toBe('at')
 })
 
 test('handles a stop that will be skipped', () => {
-	const now = dayAndTime('Mo 2:05pm')
-	const {schedule, busStatus, departureIndex} = makeSchedule(now)
-	const stop = schedule.timetable[1]
-	const actual = findBusStopStatus({stop, departureIndex, busStatus, now})
+	let now = dayAndTime('Mo 2:05pm')
+	let {schedule, busStatus, departureIndex} = makeSchedule(now)
+	let stop = schedule.timetable[1]
+	let actual = findBusStopStatus({stop, departureIndex, busStatus, now})
 	expect(actual).toBe('skip')
 })
 
 test('handles a time after the bus runs', () => {
-	const now = dayAndTime('Mo 11:00pm')
-	const {schedule, busStatus, departureIndex} = makeSchedule(now)
-	const stop = schedule.timetable[0]
-	const actual = findBusStopStatus({stop, departureIndex, busStatus, now})
+	let now = dayAndTime('Mo 11:00pm')
+	let {schedule, busStatus, departureIndex} = makeSchedule(now)
+	let stop = schedule.timetable[0]
+	let actual = findBusStopStatus({stop, departureIndex, busStatus, now})
 	expect(actual).toBe('after')
 })
 
 test('handles a time on another day', () => {
-	const now = dayAndTime('We 12:00pm')
-	const {schedule, busStatus, departureIndex} = makeSchedule(now)
-	const stop = schedule.timetable[0]
-	const actual = findBusStopStatus({stop, departureIndex, busStatus, now})
+	let now = dayAndTime('We 12:00pm')
+	let {schedule, busStatus, departureIndex} = makeSchedule(now)
+	let stop = schedule.timetable[0]
+	let actual = findBusStopStatus({stop, departureIndex, busStatus, now})
 	expect(actual).toBe('at')
 })
 
 test('handles a time when the bus is not running', () => {
-	const now = dayAndTime('Sa 1:00pm')
-	const {schedule, busStatus, departureIndex} = makeSchedule(now)
-	const stop = schedule.timetable[0]
-	const actual = findBusStopStatus({stop, departureIndex, busStatus, now})
+	let now = dayAndTime('Sa 1:00pm')
+	let {schedule, busStatus, departureIndex} = makeSchedule(now)
+	let stop = schedule.timetable[0]
+	let actual = findBusStopStatus({stop, departureIndex, busStatus, now})
 	expect(actual).toBe('skip')
 })

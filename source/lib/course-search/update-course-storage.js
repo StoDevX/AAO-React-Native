@@ -14,26 +14,26 @@ type TermInfoType = {
 }
 
 export async function areAnyTermsCached(): Promise<boolean> {
-	const localTerms = await storage.getTermInfo()
+	let localTerms = await storage.getTermInfo()
 	return localTerms.length === 0 ? false : true
 }
 
 export async function updateStoredCourses(): Promise<boolean> {
-	const outdatedTerms: Array<TermType> = await determineOutdatedTerms()
+	let outdatedTerms: Array<TermType> = await determineOutdatedTerms()
 	await Promise.all(outdatedTerms.map(term => storeTermCoursesFromServer(term)))
 	// returns `true` if any terms were updated
 	return outdatedTerms.length === 0 ? false : true
 }
 
 async function determineOutdatedTerms(): Promise<Array<TermType>> {
-	const remoteTerms: Array<TermType> = await loadCurrentTermsFromServer()
-	const localTerms: Array<TermType> = await storage.getTermInfo()
+	let remoteTerms: Array<TermType> = await loadCurrentTermsFromServer()
+	let localTerms: Array<TermType> = await storage.getTermInfo()
 	if (localTerms.length === 0) {
 		await storage.setTermInfo(remoteTerms)
 		return remoteTerms
 	}
 	let outdatedTerms = localTerms.filter(localTerm => {
-		const match = remoteTerms.find(
+		let match = remoteTerms.find(
 			remoteTerm => remoteTerm.term === localTerm.term,
 		)
 		return match ? match.hash !== localTerm.hash : true
@@ -45,27 +45,27 @@ async function determineOutdatedTerms(): Promise<Array<TermType>> {
 }
 
 async function loadCurrentTermsFromServer(): Promise<Array<TermType>> {
-	const today = new Date()
-	const thisYear = today.getFullYear()
-	const resp: TermInfoType = await fetch(INFO_PAGE, {cache: 'no-store'})
+	let today = new Date()
+	let thisYear = today.getFullYear()
+	let resp: TermInfoType = await fetch(INFO_PAGE, {cache: 'no-store'})
 		.json()
 		.catch(() => ({
 			files: [],
 			type: 'error',
 		}))
-	const terms: Array<TermType> = resp.files.filter(
+	let terms: Array<TermType> = resp.files.filter(
 		file => file.type === 'json' && file.year > thisYear - 5,
 	)
 	return terms
 }
 
 async function storeTermCoursesFromServer(term: TermType) {
-	const url = COURSE_DATA_PAGE + term.path
-	const resp: Array<RawCourseType> = await fetch(url, {cache: 'no-store'})
+	let url = COURSE_DATA_PAGE + term.path
+	let resp: Array<RawCourseType> = await fetch(url, {cache: 'no-store'})
 		.json()
 		.catch(() => [])
 
-	const formattedTermData = formatRawData(resp)
+	let formattedTermData = formatRawData(resp)
 	storage.setTermCourseData(term.term, formattedTermData)
 }
 

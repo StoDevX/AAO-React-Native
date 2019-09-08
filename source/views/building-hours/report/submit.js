@@ -8,10 +8,10 @@ import {GH_NEW_ISSUE_URL} from '../../../lib/constants'
 
 export function submitReport(current: BuildingType, suggestion: BuildingType) {
 	// calling trim() on these to remove the trailing newlines
-	const before = stringifyBuilding(current).trim()
-	const after = stringifyBuilding(suggestion).trim()
+	let before = stringifyBuilding(current).trim()
+	let after = stringifyBuilding(suggestion).trim()
 
-	const body = makeEmailBody(before, after, current.name)
+	let body = makeEmailBody(before, after, current.name)
 
 	return sendEmail({
 		to: ['allaboutolaf@stolaf.edu'],
@@ -58,7 +58,7 @@ const makeHtmlBody = (before, after) => `
 `
 
 function makeIssueLink(before: string, after: string, title: string): string {
-	const q = querystring.stringify({
+	let q = querystring.stringify({
 		'labels[]': 'data/hours',
 		title: `Building hours update for ${title}`,
 		body: makeMarkdownBody(before, after),

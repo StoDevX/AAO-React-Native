@@ -7,7 +7,7 @@ import type {UnprocessedBusSchedule, BusSchedule} from '../../types'
 
 function buildBusSchedules(now): BusSchedule {
 	// prettier-ignore
-	const schedules: UnprocessedBusSchedule = {
+	let schedules: UnprocessedBusSchedule = {
     days: ['Mo', 'Tu'],
     coordinates: {},
     stops: ['St. Olaf', 'Carleton', 'Food Co-op', 'Cub/Target', 'El Tequila', 'Food Co-op', 'Carleton', 'St. Olaf'],

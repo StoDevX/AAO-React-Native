@@ -26,8 +26,8 @@ export class FilterPopover extends React.PureComponent<Props, State> {
 	}
 
 	render() {
-		const {filter} = this.state
-		const {anchor, onClosePopover, visible} = this.props
+		let {filter} = this.state
+		let {anchor, onClosePopover, visible} = this.props
 
 		if (typeof anchor !== 'object') {
 			throw new Error('FilterPopover only supports createRef refs')

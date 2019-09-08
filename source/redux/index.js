@@ -24,7 +24,7 @@ export type ReduxState = {
 }
 
 export function makeStore(): Store<*, *, *> {
-	const aao = combineReducers({
+	let aao = combineReducers({
 		courses,
 		settings,
 		buildings,
@@ -33,10 +33,10 @@ export function makeStore(): Store<*, *, *> {
 		login,
 	})
 
-	const middleware = [reduxPromise, reduxThunk]
+	let middleware = [reduxPromise, reduxThunk]
 
 	if (__DEV__) {
-		const logger = createLogger({
+		let logger = createLogger({
 			collapsed: true,
 			duration: true,
 			// avoid logging the (large) course data state twice per action

@@ -111,10 +111,10 @@ class RadioControllerView extends React.Component<Props, State> {
 	}
 
 	render() {
-		const {source, title, stationName, image, theme} = this.props
-		const {uplinkError, streamError, playState} = this.state
+		let {source, title, stationName, image, theme} = this.props
+		let {uplinkError, streamError, playState} = this.state
 
-		const error = uplinkError ? (
+		let error = uplinkError ? (
 			<Text style={styles.status}>{uplinkError}</Text>
 		) : streamError ? (
 			<Text style={styles.status}>
@@ -123,7 +123,7 @@ class RadioControllerView extends React.Component<Props, State> {
 		) : null
 
 		let textColor = {color: theme.textColor}
-		const titleBlock = (
+		let titleBlock = (
 			<View style={styles.titleWrapper}>
 				<Text selectable={true} style={[styles.heading, textColor]}>
 					{title}
@@ -136,7 +136,7 @@ class RadioControllerView extends React.Component<Props, State> {
 			</View>
 		)
 
-		const controlsBlock = (
+		let controlsBlock = (
 			<Row>
 				{this.renderPlayButton(playState)}
 				<View style={styles.spacer} />
@@ -146,7 +146,7 @@ class RadioControllerView extends React.Component<Props, State> {
 			</Row>
 		)
 
-		const playerBlock =
+		let playerBlock =
 			Platform.OS !== 'android' ? (
 				<StreamPlayer
 					embeddedPlayerUrl={source.embeddedPlayerUrl}
@@ -166,16 +166,16 @@ class RadioControllerView extends React.Component<Props, State> {
 		return (
 			<Viewport
 				render={({width, height}) => {
-					const sideways = width > height
+					let sideways = width > height
 
-					const logoWidth = Math.min(width / 1.5, height / 1.75)
-					const logoSize = {width: logoWidth, height: logoWidth}
+					let logoWidth = Math.min(width / 1.5, height / 1.75)
+					let logoSize = {width: logoWidth, height: logoWidth}
 
-					const root = [styles.root, sideways && landscape.root]
-					const logoBorderColor = {borderColor: theme.imageBorderColor}
-					const logoBg = {backgroundColor: theme.imageBackgroundColor}
-					const logo = [styles.logoBorder, logoSize, logoBorderColor, logoBg]
-					const logoWrapper = [
+					let root = [styles.root, sideways && landscape.root]
+					let logoBorderColor = {borderColor: theme.imageBorderColor}
+					let logoBg = {backgroundColor: theme.imageBackgroundColor}
+					let logo = [styles.logoBorder, logoSize, logoBorderColor, logoBg]
+					let logoWrapper = [
 						styles.logoWrapper,
 						sideways && landscape.logoWrapper,
 					]

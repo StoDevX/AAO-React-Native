@@ -167,11 +167,11 @@ class PrintJobsView extends React.PureComponent<Props, State> {
 		}
 
 		if (this.props.jobs.length === 0) {
-			const instructions =
+			let instructions =
 				Platform.OS === 'android'
 					? 'using the Mobility Print app'
 					: 'using the Print option in the Share Sheet'
-			const descriptionText = `You can print from a computer, or by ${instructions}.`
+			let descriptionText = `You can print from a computer, or by ${instructions}.`
 
 			return (
 				<StoPrintNoticeView

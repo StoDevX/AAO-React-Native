@@ -26,7 +26,7 @@ export class BuildingFavoriteButton extends React.Component<Props> {
 	}
 
 	render() {
-		const favorited = this.props.favorites.includes(this.props.buildingName)
+		let favorited = this.props.favorites.includes(this.props.buildingName)
 		return <FavoriteButton favorited={favorited} onFavorite={this.onFavorite} />
 	}
 }

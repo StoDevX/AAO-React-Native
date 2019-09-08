@@ -18,7 +18,6 @@
   "dependencies": {
     "@callstack/react-theme-provider": "^1.0.3",
     "@frogpond/add-to-device-calendar": "^1.0.0",
-    "@frogpond/analytics": "^1.0.0",
     "@frogpond/app-theme": "^1.0.0",
     "@frogpond/colors": "^1.0.0",
     "@frogpond/event-type": "^1.0.0",

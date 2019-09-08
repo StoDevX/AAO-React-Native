@@ -53,10 +53,10 @@ export default class StudentWorkView extends React.PureComponent<Props, State> {
 	}
 
 	fetchData = async () => {
-		const data: Array<JobType> = await fetch(API('/jobs')).json()
+		let data: Array<JobType> = await fetch(API('/jobs')).json()
 
 		// force title-case on the job types, to prevent not-actually-duplicate headings
-		const processed: Array<JobType> = data.map(job => ({
+		let processed: Array<JobType> = data.map(job => ({
 			...job,
 			type: titleCase(job.type),
 		}))
@@ -71,10 +71,10 @@ export default class StudentWorkView extends React.PureComponent<Props, State> {
 			j => j.lastModified, // sort all jobs by date-last-modified
 		]
 		let ordered: Array<'desc' | 'asc'> = ['desc', 'asc', 'desc']
-		const sorted = orderBy(processed, sorters, ordered)
+		let sorted = orderBy(processed, sorters, ordered)
 
-		const grouped = groupBy(sorted, j => j.type)
-		const mapped = toPairs(grouped).map(([title, data]) => ({
+		let grouped = groupBy(sorted, j => j.type)
+		let mapped = toPairs(grouped).map(([title, data]) => ({
 			title,
 			data,
 		}))
@@ -82,13 +82,13 @@ export default class StudentWorkView extends React.PureComponent<Props, State> {
 	}
 
 	refresh = async (): any => {
-		const start = Date.now()
+		let start = Date.now()
 		this.setState(() => ({refreshing: true}))
 
 		await this.fetchData()
 
 		// wait 0.5 seconds – if we let it go at normal speed, it feels broken.
-		const elapsed = Date.now() - start
+		let elapsed = Date.now() - start
 		if (elapsed < 500) {
 			await delay(500 - elapsed)
 		}

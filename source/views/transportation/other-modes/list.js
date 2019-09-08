@@ -17,7 +17,7 @@ import {fetch} from '@frogpond/fetch'
 const transportationUrl = API('/transit/modes')
 
 const groupModes = (modes: OtherModeType[]) => {
-	const grouped = groupBy(modes, m => m.category)
+	let grouped = groupBy(modes, m => m.category)
 	return toPairs(grouped).map(([key, value]) => ({title: key, data: value}))
 }
 
@@ -54,13 +54,13 @@ export class OtherModesView extends React.PureComponent<Props, State> {
 	}
 
 	refresh = async (): any => {
-		const start = Date.now()
+		let start = Date.now()
 		this.setState(() => ({refreshing: true}))
 
 		await this.fetchData()
 
 		// wait 0.5 seconds – if we let it go at normal speed, it feels broken.
-		const elapsed = Date.now() - start
+		let elapsed = Date.now() - start
 		if (elapsed < 500) {
 			await delay(500 - elapsed)
 		}
@@ -92,7 +92,7 @@ export class OtherModesView extends React.PureComponent<Props, State> {
 	keyExtractor = (item: OtherModeType) => item.name
 
 	render() {
-		const groupedData = groupModes(this.state.modes)
+		let groupedData = groupModes(this.state.modes)
 		return (
 			<SectionList
 				ItemSeparatorComponent={ListSeparator}
