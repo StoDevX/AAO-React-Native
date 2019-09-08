@@ -1,8 +1,4 @@
 rootProject.name = 'AllAboutOlaf'
-include ':react-native-location'
-project(':react-native-location').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-location/android')
-include ':react-native-webview'
-project(':react-native-webview').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-webview/android')
 apply from: file("../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesSettingsGradle(settings)
 include ':app'
 
@@ -28,6 +24,9 @@ project(':react-native-keychain').projectDir = new File(rootProject.projectDir, 
 include ':react-native-linear-gradient'
 project(':react-native-linear-gradient').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-linear-gradient/android')
 
+include ':react-native-location'
+project(':react-native-location').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-location/android')
+
 include ':react-native-network-info'
 project(':react-native-network-info').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-network-info/android')
 
@@ -39,6 +38,9 @@ project(':react-native-sentry').projectDir = new File(rootProject.projectDir, '.
 
 include ':react-native-vector-icons'
 project(':react-native-vector-icons').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-vector-icons/android')
+
+include ':react-native-webview'
+project(':react-native-webview').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-webview/android')
 
 include ':@react-native-community_netinfo'
 project(':@react-native-community_netinfo').projectDir = new File(rootProject.projectDir, '../node_modules/@react-native-community/netinfo/android')
