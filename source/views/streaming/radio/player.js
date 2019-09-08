@@ -1,7 +1,7 @@
 // @flow
 
 import * as React from 'react'
-import {WebView} from 'react-native'
+import {WebView} from 'react-native-webview'
 import type {PlayState, HtmlAudioError} from './types'
 
 type Props = {

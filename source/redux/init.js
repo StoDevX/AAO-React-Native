@@ -1,7 +1,7 @@
 // @flow
 // Functions to initialize bits of the global state, as appropriate
 
-import {NetInfo} from 'react-native'
+import {NetInfo} from 'react-native-netinfo'
 import {getEnabledTools} from './parts/help'
 import {loadFavoriteBuildings} from './parts/buildings'
 import {loadAcknowledgement} from './parts/settings'
