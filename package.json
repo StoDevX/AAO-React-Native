@@ -14,7 +14,7 @@
     "flow": "flow",
     "ios": "react-native run-ios",
     "lint": "eslint --report-unused-disable-directives --max-warnings=0 --cache source/ modules/ scripts/ *.js",
-    "prepare": "patch -p0 -Nfsi contrib/*.patch || true",
+    "prepare": "ls contrib/*.patch | xargs -n1 patch -p0 -Nfsi || true",
     "pretty": "prettier --write '{source,modules,scripts,e2e}/**/*.{js,json}' 'data/**/*.css' '{*,.*}.{yaml,yml,json,js}' '.circleci/*'",
     "p": "pretty-quick",
     "postinstall": "jetify",
