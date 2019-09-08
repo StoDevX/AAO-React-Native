@@ -10,7 +10,7 @@
   },
   "peerDependencies": {
     "react": "^16.0.0",
-    "react-native": "^0.59.0"
+    "react-native": "^0.60.0"
   },
   "dependencies": {
     "@callstack/react-theme-provider": "^1.0.3",
