@@ -4,11 +4,16 @@ import android.app.Application;
 import android.net.http.HttpResponseCache;
 import android.util.Log;
 
+import com.facebook.react.PackageList;
+import com.facebook.hermes.reactexecutor.HermesExecutorFactory;
+import com.facebook.react.bridge.JavaScriptExecutorFactory;
+
 // keep these sorted alphabetically
 import com.avishayil.rnrestart.ReactNativeRestartPackage;
 import com.BV.LinearGradient.LinearGradientPackage;
 import com.calendarevents.CalendarEventsPackage;
 import com.facebook.react.ReactApplication;
+import com.reactnativecommunity.netinfo.NetInfoPackage;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
@@ -37,21 +42,27 @@ public class MainApplication extends Application implements ReactApplication {
 
     @Override
     protected List<ReactPackage> getPackages() {
-      return Arrays.asList(
-        new MainReactPackage(),
-        // please keep these sorted alphabetically
-        new CalendarEventsPackage(),
-        new CustomTabsPackage(),
-        new KeychainPackage(),
-        new LinearGradientPackage(),
-        new RCTMGLPackage(),
-        new ReactNativeRestartPackage(),
-        new RNDeviceInfo(),
-        new RNGestureHandlerPackage(),
-        new RNNetworkInfoPackage(),
-        new RNSentryPackage(),
-        new VectorIconsPackage()
-      );
+      @SuppressWarnings("UnnecessaryLocalVariable")
+       List<ReactPackage> packages = new PackageList(this).getPackages();
+      // Packages that cannot be autolinked yet can be added manually here, for example:
+      // packages.add(new MyReactNativePackage());
+      return packages;
+      // return Arrays.asList(
+      //   new MainReactPackage(),
+            new NetInfoPackage(),
+      //   // please keep these sorted alphabetically
+      //   new CalendarEventsPackage(),
+      //   new CustomTabsPackage(),
+      //   new KeychainPackage(),
+      //   new LinearGradientPackage(),
+      //   new RCTMGLPackage(),
+      //   new ReactNativeRestartPackage(),
+      //   new RNDeviceInfo(),
+      //   new RNGestureHandlerPackage(),
+      //   new RNNetworkInfoPackage(),
+      //   new RNSentryPackage(),
+      //   new VectorIconsPackage()
+      // );
     }
 
     @Override
