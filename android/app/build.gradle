@@ -288,6 +288,10 @@ dependencies {
     }
 }
 
+dependencyLocking {
+    lockAllConfigurations()
+}
+
 // Bundles the app's data for the build process
 task bundleData(type: Exec) {
     workingDir '../../'
