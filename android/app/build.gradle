@@ -268,21 +268,6 @@ android {
 }
 
 dependencies {
-    implementation project(':react-native-location')
-    implementation project(':react-native-webview')
-    implementation project(':@react-native-community_netinfo')
-    // please keep this list sorted
-    implementation project(':mapbox-react-native-mapbox-gl')
-    implementation project(':react-native-calendar-events')
-    implementation project(':react-native-custom-tabs')
-    implementation project(':react-native-device-info')
-    implementation project(':react-native-gesture-handler')
-    implementation project(':react-native-keychain')
-    implementation project(':react-native-linear-gradient')
-    implementation project(':react-native-network-info')
-    implementation project(':react-native-restart')
-    implementation project(':react-native-sentry')
-    implementation project(':react-native-vector-icons')
 
     // this is for react-native itself
     implementation fileTree(dir: "libs", include: ["*.jar"])
