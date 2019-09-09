@@ -17,6 +17,9 @@ apply plugin: 'com.android.application'
  *   // the entry file for bundle generation
  *   entryFile: "index.android.js",
  *
+ *   // https://facebook.github.io/react-native/docs/performance#enable-the-ram-format
+ *   bundleCommand: "ram-bundle",
+ *
  *   // whether to bundle JS and assets in debug mode
  *   bundleInDebug: false,
  *
@@ -76,6 +79,7 @@ project.ext.react = [
     inputExcludes: ["android/**", "ios/**", "vendor/**"],
     // set the input file manually
     entryFile: "index.js",
+    enableHermes: false,  // clean and rebuild if changing
 ]
 
 apply from: "../../node_modules/react-native/react.gradle"
@@ -94,6 +98,28 @@ def enableSeparateBuildPerCPUArchitecture = false
  * Run Proguard to shrink the Java bytecode in release builds.
  */
 def enableProguardInReleaseBuilds = false
+
+/**
+ * The preferred build flavor of JavaScriptCore.
+ *
+ * For example, to use the international variant, you can use:
+ * `def jscFlavor = 'org.webkit:android-jsc-intl:+'`
+ *
+ * The international variant includes ICU i18n library and necessary data
+ * allowing to use e.g. `Date.toLocaleString` and `String.localeCompare` that
+ * give correct results when using with locales other than en-US.  Note that
+ * this variant is about 6MiB larger per architecture than default.
+ */
+def jscFlavor = 'org.webkit:android-jsc:+'
+
+/**
+ * Whether to enable the Hermes VM.
+ *
+ * This should be set on project.ext.react and mirrored here.  If it is not set
+ * on project.ext.react, JavaScript will not be compiled to Hermes Bytecode
+ * and the benefits of using Hermes will therefore be sharply reduced.
+ */
+def enableHermes = project.ext.react.get("enableHermes", false);
 
 /**
  * Fetch the keystore file's path from the environment
@@ -123,6 +149,13 @@ android {
     }
 
     signingConfigs {
+        debug {
+            storeFile file('debug.keystore')
+            storePassword 'android'
+            keyAlias 'androiddebugkey'
+            keyPassword 'android'
+        }
+
         // originally derived from https://gist.github.com/gabrielemariotti/6856974
         if (keystorePath == null) {
             logger.warn "env['KEYSTORE_FILE'] not set"
@@ -162,6 +195,7 @@ android {
     buildTypes {
         debug {
             manifestPlaceholders = [isDebug: true]
+            signingConfig signingConfigs.debug
         }
 
         release {
@@ -171,6 +205,8 @@ android {
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
             if (keystorePath != null) {
                 signingConfig signingConfigs.release
+            } else {
+                signingConfig signingConfigs.debug
             }
         }
     }
@@ -193,6 +229,15 @@ android {
             //             versionCodes.get(abi) * 1048576 + defaultConfig.versionCode
             // }
         }
+    }
+
+    packagingOptions {
+        pickFirst '**/armeabi-v7a/libc++_shared.so'
+        pickFirst '**/x86/libc++_shared.so'
+        pickFirst '**/arm64-v8a/libc++_shared.so'
+        pickFirst '**/x86_64/libc++_shared.so'
+        pickFirst '**/x86/libjsc.so'
+        pickFirst '**/armeabi-v7a/libjsc.so'
     }
 
     bundle {
@@ -223,18 +268,9 @@ android {
 }
 
 dependencies {
-    // please keep this list sorted
-    implementation project(':mapbox-react-native-mapbox-gl')
-    implementation project(':react-native-calendar-events')
-    implementation project(':react-native-custom-tabs')
-    implementation project(':react-native-device-info')
-    implementation project(':react-native-gesture-handler')
-    implementation project(':react-native-keychain')
-    implementation project(':react-native-linear-gradient')
-    implementation project(':react-native-network-info')
-    implementation project(':react-native-restart')
-    implementation project(':react-native-sentry')
-    implementation project(':react-native-vector-icons')
+    // required by react-native-screens
+    implementation 'androidx.appcompat:appcompat:1.1.0'
+    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0-alpha02'
 
     // this is for react-native itself
     implementation fileTree(dir: "libs", include: ["*.jar"])
@@ -242,6 +278,18 @@ dependencies {
 
     //noinspection GradleDynamicVersion
     implementation "com.facebook.react:react-native:+"  // From node_modules
+
+    if (enableHermes) {
+        def hermesPath = "../../node_modules/hermesvm/android/";
+        debugImplementation files(hermesPath + "hermes-debug.aar")
+        releaseImplementation files(hermesPath + "hermes-release.aar")
+    } else {
+        implementation jscFlavor
+    }
+}
+
+dependencyLocking {
+    lockAllConfigurations()
 }
 
 // Bundles the app's data for the build process
@@ -259,3 +307,5 @@ gradle.projectsEvaluated {
         bundleReleaseJsAndAssets.dependsOn bundleData
     }
 }
+
+apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesAppBuildGradle(project)

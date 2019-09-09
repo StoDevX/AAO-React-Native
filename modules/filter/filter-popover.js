@@ -6,7 +6,7 @@ import type {FilterType} from './types'
 import * as c from '@frogpond/colors'
 
 type Props = {
-	anchor: React.Ref<*>,
+	anchor: any,
 	filter: FilterType,
 	onClosePopover: (filter: FilterType) => any,
 	visible: boolean,
