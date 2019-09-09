@@ -12,7 +12,7 @@ import type {PlayState, HtmlAudioError, PlayerTheme} from './types'
 import {ActionButton, ShowCalendarButton, CallButton} from './buttons'
 import {openUrl} from '@frogpond/open-url'
 import {Viewport} from '@frogpond/viewport'
-import {withTheme} from '@callstack/react-theme-provider'
+import {withTheme} from '@frogpond/app-theme'
 
 // If you want to fix the inline player, switch to `true`
 const ALLOW_INLINE_PLAYER = false

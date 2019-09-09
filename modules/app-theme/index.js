@@ -1,5 +1,11 @@
 // @flow
 
+import {createTheming} from '@callstack/react-theme-provider'
+
+let {ThemeProvider, withTheme, useTheme} = createTheming()
+
+export {ThemeProvider, withTheme, useTheme}
+
 export type AppTheme = {
 	accent: string,
 	androidListHeaderBackground: string,
@@ -27,6 +33,8 @@ let theme: AppTheme
 
 export function setTheme(newTheme: AppTheme) {
 	theme = newTheme
+
+	;({ThemeProvider, withTheme, useTheme} = createTheming(newTheme))
 }
 
 export function getTheme(): AppTheme {
