@@ -681,14 +681,6 @@
   resolved "https://registry.yarnpkg.com/@frogpond/titlecase/-/titlecase-1.0.0.tgz#993e5371c31b58a839e76fdc531053c55b1a2736"
   integrity sha512-C1qKm/J+B+cXo+7+ZHbRnt2iApx/IrxMEXwOxe+ZkeTvSC1nZ2XRWf0xzFuAanpBNDhFcgrxdnR8FMKNHo1scQ==
 
-"@hawkrives/react-native-alphabetlistview@1.0.0", "@hawkrives/react-native-alphabetlistview@^1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@hawkrives/react-native-alphabetlistview/-/react-native-alphabetlistview-1.0.0.tgz#0a832b7e55e81002741e623056112fe5d19d03b3"
-  integrity sha512-QO2jAjzF124BpgKpX2HSmTdTcqM87oanItH1qAPbjrYfy0Jj7rRyDv+/6twRwLDIRVp6R0MQ4XOCzOan5jlRmg==
-  dependencies:
-    merge "^1.2.0"
-    prop-types "^15.6.0"
-
 "@hawkrives/react-native-alternate-icons@0.4.7":
   version "0.4.7"
   resolved "https://registry.yarnpkg.com/@hawkrives/react-native-alternate-icons/-/react-native-alternate-icons-0.4.7.tgz#bda816fbb0f748196e5cae7841e4b42201b25399"

@@ -1,11 +1,10 @@
 // @flow
 
 import * as React from 'react'
-import {StyleSheet, View, Text, Platform, RefreshControl} from 'react-native'
-import {SearchableAlphabetListView} from '@frogpond/listview'
+import {StyleSheet, RefreshControl, SectionList, View} from 'react-native'
 import type {TopLevelViewPropsType} from '../types'
 import {NoticeView, LoadingView} from '@frogpond/notice'
-import {Row, Column} from '@frogpond/layout'
+import {Column} from '@frogpond/layout'
 import {
 	ListRow,
 	ListSectionHeader,
@@ -13,10 +12,12 @@ import {
 	Detail,
 	Title,
 } from '@frogpond/lists'
+import {SearchBar} from '@frogpond/searchbar'
+import {white} from '@frogpond/colors'
 import groupBy from 'lodash/groupBy'
+import toPairs from 'lodash/toPairs'
 import words from 'lodash/words'
 import deburr from 'lodash/deburr'
-import * as c from '@frogpond/colors'
 import type {StudentOrgType} from './types'
 import {API} from '@frogpond/api'
 import {fetch} from '@frogpond/fetch'
@@ -28,13 +29,6 @@ const fetchOrgs = (args: {
 }): Promise<Array<StudentOrgType>> => {
 	return fetch(API('/orgs'), {signal: args.signal}).json()
 }
-
-const leftSideSpacing = 20
-const ROW_HEIGHT = Platform.OS === 'ios' ? 58 : 74
-const SECTION_HEADER_HEIGHT = Platform.OS === 'ios' ? 33 : 41
-const CELL_HEIGHT =
-	ROW_HEIGHT +
-	(Platform.OS === 'ios' ? (11 / 12) * StyleSheet.hairlineWidth : 0)
 
 function splitToArray(str: string) {
 	return words(deburr(str.toLowerCase()))
@@ -53,23 +47,7 @@ function orgToArray(term: StudentOrgType) {
 const styles = StyleSheet.create({
 	wrapper: {
 		flex: 1,
-	},
-	row: {
-		height: ROW_HEIGHT,
-		paddingRight: 2,
-	},
-	rowSectionHeader: {
-		height: SECTION_HEADER_HEIGHT,
-	},
-	badgeContainer: {
-		alignItems: 'center',
-		justifyContent: 'center',
-		alignSelf: 'flex-start',
-		width: leftSideSpacing,
-	},
-	badge: {
-		fontSize: Platform.OS === 'ios' ? 24 : 28,
-		color: c.transparent,
+		backgroundColor: white,
 	},
 })
 
@@ -102,7 +80,9 @@ export function StudentOrgsView(props: Props) {
 	}, [data, searchQuery])
 
 	let grouped = React.useMemo(() => {
-		return groupBy(results, '$groupableName')
+		return toPairs(groupBy(results, '$groupableName')).map(([k, v]) => {
+			return {title: k, data: v}
+		})
 	}, [results])
 
 	// conditionals must come after all hooks
@@ -126,52 +106,41 @@ export function StudentOrgsView(props: Props) {
 
 	let renderRow = ({item}: {item: StudentOrgType}) => (
 		<ListRow
-			arrowPosition="none"
-			contentContainerStyle={[styles.row]}
-			fullWidth={true}
+			arrowPosition="top"
 			onPress={() =>
 				props.navigation.navigate('StudentOrgsDetailView', {org: item})
 			}
 		>
-			<Row alignItems="flex-start">
-				<View style={styles.badgeContainer}>
-					<Text style={styles.badge}>•</Text>
-				</View>
-
-				<Column flex={1}>
-					<Title lines={1}>{item.name}</Title>
-					<Detail lines={1}>{item.category}</Detail>
-				</Column>
-			</Row>
+			<Column flex={1}>
+				<Title lines={1}>{item.name}</Title>
+				<Detail lines={1}>{item.category}</Detail>
+			</Column>
 		</ListRow>
 	)
 
 	return (
-		<SearchableAlphabetListView
-			cell={renderRow}
-			cellHeight={CELL_HEIGHT}
-			data={grouped}
-			onSearch={setQuery}
-			query={query}
-			refreshControl={
-				<RefreshControl onRefresh={reload} refreshing={isPending} />
-			}
-			renderSeparator={(sectionId: string, rowId: string) => (
-				<ListSeparator
-					key={`${sectionId}-${rowId}`}
-					spacing={{left: leftSideSpacing}}
-				/>
-			)}
-			sectionHeader={({title}: {title: string}) => (
-				<ListSectionHeader
-					spacing={{left: leftSideSpacing}}
-					style={styles.rowSectionHeader}
-					title={title}
-				/>
-			)}
-			sectionHeaderHeight={SECTION_HEADER_HEIGHT}
-			style={styles.wrapper}
-		/>
+		<View style={styles.wrapper}>
+			<SearchBar onChange={setQuery} value={query} />
+
+			<SectionList
+				ItemSeparatorComponent={ListSeparator}
+				ListEmptyComponent={
+					<NoticeView text={`No results found for "${query}"`} />
+				}
+				keyExtractor={(item, index) => item.name + index}
+				keyboardDismissMode="on-drag"
+				keyboardShouldPersistTaps="never"
+				refreshControl={
+					<RefreshControl onRefresh={reload} refreshing={isPending} />
+				}
+				renderItem={renderRow}
+				renderSectionHeader={({section: {title}}) => (
+					<ListSectionHeader title={title} />
+				)}
+				sections={grouped}
+				style={styles.wrapper}
+			/>
+		</View>
 	)
 }
 
