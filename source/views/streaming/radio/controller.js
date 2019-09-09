@@ -149,22 +149,21 @@ class RadioControllerView extends React.Component<Props, State> {
 			</Row>
 		)
 
-		let playerBlock =
-			ALLOW_INLINE_PLAYER ? (
-				<StreamPlayer
-					embeddedPlayerUrl={source.embeddedPlayerUrl}
-					onEnded={this.handleStreamEnd}
-					// onWaiting={this.handleStreamWait}
-					onError={this.handleStreamError}
-					// onStalled={this.handleStreamStall}
-					onPause={this.handleStreamPause}
-					onPlay={this.handleStreamPlay}
-					playState={playState}
-					streamSourceUrl={source.streamSourceUrl}
-					style={styles.webview}
-					useEmbeddedPlayer={source.useEmbeddedPlayer}
-				/>
-			) : null
+		let playerBlock = ALLOW_INLINE_PLAYER ? (
+			<StreamPlayer
+				embeddedPlayerUrl={source.embeddedPlayerUrl}
+				onEnded={this.handleStreamEnd}
+				// onWaiting={this.handleStreamWait}
+				onError={this.handleStreamError}
+				// onStalled={this.handleStreamStall}
+				onPause={this.handleStreamPause}
+				onPlay={this.handleStreamPlay}
+				playState={playState}
+				streamSourceUrl={source.streamSourceUrl}
+				style={styles.webview}
+				useEmbeddedPlayer={source.useEmbeddedPlayer}
+			/>
+		) : null
 
 		return (
 			<Viewport
