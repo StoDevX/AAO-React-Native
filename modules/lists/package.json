@@ -17,8 +17,8 @@
     "@callstack/react-theme-provider": "^1.0.3",
     "@frogpond/app-theme": "^1.0.0",
     "@frogpond/colors": "^1.0.0",
-    "@frogpond/touchable": "^1.0.0",
     "@frogpond/separator": "^1.0.0",
+    "@frogpond/touchable": "^1.0.0",
     "lodash": "^4.17.15"
   }
 }
