@@ -15,7 +15,7 @@
     "react-native-popover-view": "^1.0.7"
   },
   "dependencies": {
-    "@callstack/react-theme-provider": "^1.0.3",
+    "@callstack/react-theme-provider": "^3.0.3",
     "@frogpond/app-theme": "^1.0.0",
     "@frogpond/colors": "^1.0.0",
     "@frogpond/touchable": "^1.0.0",
