@@ -1,8 +1,7 @@
 // @flow
 
 import * as React from 'react'
-import {StyleSheet, RefreshControl, Platform} from 'react-native'
-import {SearchableAlphabetListView} from '@frogpond/listview'
+import {StyleSheet, RefreshControl, View, SectionList} from 'react-native'
 import {
 	Detail,
 	Title,
@@ -11,9 +10,12 @@ import {
 	ListSeparator,
 } from '@frogpond/lists'
 import {NoticeView} from '@frogpond/notice'
+import {SearchBar} from '@frogpond/searchbar'
 import type {WordType} from './types'
 import type {TopLevelViewPropsType} from '../types'
+import {white} from '@frogpond/colors'
 import groupBy from 'lodash/groupBy'
+import toPairs from 'lodash/toPairs'
 import words from 'lodash/words'
 import deburr from 'lodash/deburr'
 import {fetch} from '@frogpond/fetch'
@@ -29,12 +31,6 @@ const fetchDictionaryTerms = (args: {
 		.then(body => body.data)
 }
 
-const ROW_HEIGHT = Platform.OS === 'ios' ? 76 : 89
-const SECTION_HEADER_HEIGHT = Platform.OS === 'ios' ? 33 : 41
-const CELL_HEIGHT =
-	ROW_HEIGHT +
-	(Platform.OS === 'ios' ? (11 / 12) * StyleSheet.hairlineWidth : 0)
-
 function splitToArray(str: string) {
 	return words(deburr(str.toLowerCase()))
 }
@@ -46,11 +42,9 @@ function termToArray(term: WordType) {
 }
 
 const styles = StyleSheet.create({
-	row: {
-		height: ROW_HEIGHT,
-	},
-	rowSectionHeader: {
-		height: SECTION_HEADER_HEIGHT,
+	wrapper: {
+		flex: 1,
+		backgroundColor: white,
 	},
 	rowDetailText: {
 		fontSize: 14,
@@ -80,7 +74,9 @@ export function DictionaryView(props: Props) {
 	}, [data, searchQuery])
 
 	let grouped = React.useMemo(() => {
-		return groupBy(results, item => item.word[0])
+		return toPairs(groupBy(results, item => item.word[0])).map(([k, v]) => {
+			return {title: k, data: v}
+		})
 	}, [results])
 
 	// conditionals must come after all hooks
@@ -96,8 +92,7 @@ export function DictionaryView(props: Props) {
 
 	let renderRow = ({item}: {item: WordType}) => (
 		<ListRow
-			arrowPosition="none"
-			contentContainerStyle={styles.row}
+			arrowPosition="top"
 			onPress={() => props.navigation.navigate('DictionaryDetailView', {item})}
 		>
 			<Title lines={1}>{item.word}</Title>
@@ -108,23 +103,28 @@ export function DictionaryView(props: Props) {
 	)
 
 	return (
-		<SearchableAlphabetListView
-			cell={renderRow}
-			cellHeight={CELL_HEIGHT}
-			data={grouped}
-			onSearch={setQuery}
-			query={query}
-			refreshControl={
-				<RefreshControl onRefresh={reload} refreshing={isPending} />
-			}
-			renderSeparator={(sectionId: string, rowId: string) => (
-				<ListSeparator key={`${sectionId}-${rowId}`} />
-			)}
-			sectionHeader={({title}: {title: string}) => (
-				<ListSectionHeader style={styles.rowSectionHeader} title={title} />
-			)}
-			sectionHeaderHeight={SECTION_HEADER_HEIGHT}
-		/>
+		<View style={styles.wrapper}>
+			<SearchBar onChange={setQuery} value={query} />
+
+			<SectionList
+				ItemSeparatorComponent={ListSeparator}
+				ListEmptyComponent={
+					<NoticeView text={`No results found for "${query}"`} />
+				}
+				keyExtractor={(item: WordType, index) => item.word + index}
+				keyboardDismissMode="on-drag"
+				keyboardShouldPersistTaps="never"
+				refreshControl={
+					<RefreshControl onRefresh={reload} refreshing={isPending} />
+				}
+				renderItem={renderRow}
+				renderSectionHeader={({section: {title}}) => (
+					<ListSectionHeader title={title} />
+				)}
+				sections={grouped}
+				style={styles.wrapper}
+			/>
+		</View>
 	)
 }
 DictionaryView.navigationOptions = {

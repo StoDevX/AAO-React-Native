@@ -713,7 +713,7 @@
   dependencies:
     "@hapi/hoek" "8.x.x"
 
-"@hawkrives/react-native-alphabetlistview@1.0.0", "@hawkrives/react-native-alphabetlistview@^1.0.0":
+"@hawkrives/react-native-alphabetlistview@^1.0.0":
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/@hawkrives/react-native-alphabetlistview/-/react-native-alphabetlistview-1.0.0.tgz#0a832b7e55e81002741e623056112fe5d19d03b3"
   integrity sha512-QO2jAjzF124BpgKpX2HSmTdTcqM87oanItH1qAPbjrYfy0Jj7rRyDv+/6twRwLDIRVp6R0MQ4XOCzOan5jlRmg==
