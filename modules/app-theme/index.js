@@ -33,7 +33,6 @@ let theme: AppTheme
 
 export function setTheme(newTheme: AppTheme) {
 	theme = newTheme
-
 	;({ThemeProvider, withTheme, useTheme} = createTheming(newTheme))
 }
 
