@@ -7,7 +7,7 @@ import {FilterPopover} from './filter-popover'
 import * as c from '@frogpond/colors'
 import {Touchable} from '@frogpond/touchable'
 import {type AppTheme} from '@frogpond/app-theme'
-import {withTheme} from '@callstack/react-theme-provider'
+import {withTheme} from '@frogpond/app-theme'
 
 const buttonStyles = StyleSheet.create({
 	button: {
