@@ -110,7 +110,7 @@ GEM
     netrc (0.11.0)
     os (1.0.1)
     parallel (1.17.0)
-    parser (2.6.4.0)
+    parser (2.6.4.1)
       ast (~> 2.4.0)
     plist (3.5.0)
     public_suffix (2.0.5)
