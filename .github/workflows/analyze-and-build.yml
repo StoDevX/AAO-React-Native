@@ -12,7 +12,7 @@ jobs:
       - uses: actions/checkout@master
       - run: yarn install --frozen-lockfile
       - run: yarn run bundle-data
-      - run: yarn run pretty
+      - run: yarn run pretty --no-write --list-different
       - run: yarn run flow check
       - run: yarn run lint
       - name: Run tests

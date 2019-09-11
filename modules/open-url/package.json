@@ -13,6 +13,5 @@
     "react-native-custom-tabs": "^0.1.7",
     "react-native-safari-view": "^2.1.0"
   },
-  "dependencies": {
-  }
+  "dependencies": {}
 }

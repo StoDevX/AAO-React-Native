@@ -2750,10 +2750,10 @@ escodegen@^1.9.1:
   optionalDependencies:
     source-map "~0.6.1"
 
-eslint-config-prettier@6.2.0:
-  version "6.2.0"
-  resolved "https://registry.yarnpkg.com/eslint-config-prettier/-/eslint-config-prettier-6.2.0.tgz#80e0b8714e3f6868c4ac2a25fbf39c02e73527a7"
-  integrity sha512-VLsgK/D+S/FEsda7Um1+N8FThec6LqE3vhcMyp8mlmto97y3fGf3DX7byJexGuOb1QY0Z/zz222U5t+xSfcZDQ==
+eslint-config-prettier@6.3.0:
+  version "6.3.0"
+  resolved "https://registry.yarnpkg.com/eslint-config-prettier/-/eslint-config-prettier-6.3.0.tgz#e73b48e59dc49d950843f3eb96d519e2248286a3"
+  integrity sha512-EWaGjlDAZRzVFveh2Jsglcere2KK5CJBhkNSa1xs3KfMUGdRiT7lG089eqPdvlzWHpAqaekubOsOMu8W8Yk71A==
   dependencies:
     get-stdin "^6.0.0"
 
@@ -6596,10 +6596,10 @@ react-native-safe-area-view@^0.14.1:
   dependencies:
     hoist-non-react-statics "^2.3.1"
 
-react-native-screens@2.0.0-alpha.2:
-  version "2.0.0-alpha.2"
-  resolved "https://registry.yarnpkg.com/react-native-screens/-/react-native-screens-2.0.0-alpha.2.tgz#38ec2522a40618139461862cf8e911ced6c89a92"
-  integrity sha512-BxLQOUlXRu+dlYWFZNI1ZjpAiWGLpl/gTCDKDumDdPnu41TdMh4cXDQgN5JFCJNwtXzLJrc3ay5MJ5mzollXLg==
+react-native-screens@2.0.0-alpha.3, "react-native-screens@^1.0.0 || ^1.0.0-alpha", react-native-screens@^2.0.0-alpha.1:
+  version "2.0.0-alpha.3"
+  resolved "https://registry.yarnpkg.com/react-native-screens/-/react-native-screens-2.0.0-alpha.3.tgz#af86f265b2fb4293b626cf4396db7743de5a54af"
+  integrity sha512-SA3uGrc3UM1V9y6gfVU1UPf1a3dMyQCj3p5J7y6g81Of8rV5Pc34s6fWzOKNAWgOiviAktZB1z7Jngdl7+acZg==
   dependencies:
     debounce "^1.2.0"
 
@@ -6653,10 +6653,10 @@ react-native-vector-icons@6.6.0:
     prop-types "^15.6.2"
     yargs "^13.2.2"
 
-react-native-webview@7.0.4:
-  version "7.0.4"
-  resolved "https://registry.yarnpkg.com/react-native-webview/-/react-native-webview-7.0.4.tgz#c077531ab98c89e8d24283f0c77084a82361692c"
-  integrity sha512-Rs2RpbRPTdn7Hr4Sk77iQlbCnX7cGu0LN/AlhU9yyxh5yBqdCNfE7nYxnXZNJqHRQNLZgcp+Fj6NKOpcEq/tuw==
+react-native-webview@7.0.5:
+  version "7.0.5"
+  resolved "https://registry.yarnpkg.com/react-native-webview/-/react-native-webview-7.0.5.tgz#1dd9d4f2856bda86a40222eca3612bf2152bacd3"
+  integrity sha512-FWY3tjbyV3Uhuw1JxJ0zs2HspJ5HAsIfkJaquURsVWQnTdZPnkSQjHWQp0PzGIwJ1PPVOA/gnhRmd7SZU/Br5Q==
   dependencies:
     escape-string-regexp "1.0.5"
     invariant "2.2.4"
