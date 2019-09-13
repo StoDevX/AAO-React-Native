@@ -75,6 +75,7 @@ export class EventList extends React.Component<Props> {
 			<SectionList
 				ItemSeparatorComponent={FullWidthSeparator}
 				ListEmptyComponent={<NoticeView text="No events." />}
+				contentContainerStyle={styles.contentContainer}
 				keyExtractor={this.keyExtractor}
 				onRefresh={this.props.onRefresh}
 				refreshing={this.props.refreshing}
@@ -92,5 +93,8 @@ const styles = StyleSheet.create({
 	container: {
 		flex: 1,
 		backgroundColor: c.white,
+	},
+	contentContainer: {
+		flexGrow: 1,
 	},
 })

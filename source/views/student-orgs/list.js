@@ -49,6 +49,9 @@ const styles = StyleSheet.create({
 		flex: 1,
 		backgroundColor: white,
 	},
+	contentContainer: {
+		flexGrow: 1,
+	},
 })
 
 type Props = TopLevelViewPropsType
@@ -127,6 +130,7 @@ export function StudentOrgsView(props: Props) {
 				ListEmptyComponent={
 					<NoticeView text={`No results found for "${query}"`} />
 				}
+				contentContainerStyle={styles.contentContainer}
 				keyExtractor={(item, index) => item.name + index}
 				keyboardDismissMode="on-drag"
 				keyboardShouldPersistTaps="never"

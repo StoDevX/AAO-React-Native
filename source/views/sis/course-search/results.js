@@ -164,6 +164,7 @@ class CourseSearchResultsView extends React.Component<Props, State> {
 				<CourseResultsList
 					key={searchQuery.toLowerCase()}
 					applyFilters={this.props.applyFilters}
+					contentContainerStyle={styles.contentContainer}
 					courses={this.props.allCourses}
 					filters={filters}
 					filtersLoaded={filtersLoaded}
@@ -205,6 +206,9 @@ let styles = StyleSheet.create({
 	},
 	common: {
 		backgroundColor: c.white,
+	},
+	contentContainer: {
+		flexGrow: 1,
 	},
 	darken: {},
 })

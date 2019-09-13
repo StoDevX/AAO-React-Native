@@ -28,6 +28,9 @@ const styles = StyleSheet.create({
 	listContainer: {
 		backgroundColor: c.white,
 	},
+	contentContainer: {
+		flexGrow: 1,
+	},
 })
 
 type Props = TopLevelViewPropsType
@@ -85,6 +88,7 @@ export class ContactsListView extends React.PureComponent<Props, State> {
 			<SectionList
 				ItemSeparatorComponent={ListSeparator}
 				ListEmptyComponent={<ListEmpty mode="bug" />}
+				contentContainerStyle={styles.contentContainer}
 				keyExtractor={this.keyExtractor}
 				onRefresh={this.refresh}
 				refreshing={this.state.loading}

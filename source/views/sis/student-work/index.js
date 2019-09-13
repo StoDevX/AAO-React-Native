@@ -21,6 +21,9 @@ const styles = StyleSheet.create({
 	listContainer: {
 		backgroundColor: c.white,
 	},
+	contentContainer: {
+		flexGrow: 1,
+	},
 })
 
 type Props = TopLevelViewPropsType
@@ -124,6 +127,7 @@ export default class StudentWorkView extends React.PureComponent<Props, State> {
 				ListEmptyComponent={
 					<NoticeView text="There are no open job postings." />
 				}
+				contentContainerStyle={styles.contentContainer}
 				keyExtractor={this.keyExtractor}
 				onRefresh={this.refresh}
 				refreshing={this.state.refreshing}
