@@ -54,6 +54,9 @@ const styles = StyleSheet.create({
 	message: {
 		paddingVertical: 16,
 	},
+	contentContainer: {
+		flexGrow: 1,
+	},
 })
 
 const LEFT_MARGIN = 28
@@ -204,6 +207,7 @@ export class FancyMenu extends React.Component<Props, State> {
 				ItemSeparatorComponent={Separator}
 				ListEmptyComponent={messageView}
 				ListHeaderComponent={header}
+				contentContainerStyle={styles.contentContainer}
 				extraData={filters}
 				keyExtractor={this.keyExtractor}
 				onRefresh={this.props.onRefresh}

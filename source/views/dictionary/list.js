@@ -49,6 +49,9 @@ const styles = StyleSheet.create({
 	rowDetailText: {
 		fontSize: 14,
 	},
+	contentContainer: {
+		flexGrow: 1,
+	},
 })
 
 type Props = TopLevelViewPropsType
@@ -111,6 +114,7 @@ export function DictionaryView(props: Props) {
 				ListEmptyComponent={
 					<NoticeView text={`No results found for "${query}"`} />
 				}
+				contentContainerStyle={styles.contentContainer}
 				keyExtractor={(item: WordType, index) => item.word + index}
 				keyboardDismissMode="on-drag"
 				keyboardShouldPersistTaps="never"

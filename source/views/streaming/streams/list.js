@@ -20,6 +20,9 @@ const styles = StyleSheet.create({
 	listContainer: {
 		backgroundColor: c.white,
 	},
+	contentContainer: {
+		flexGrow: 1,
+	},
 })
 
 type Props = {}
@@ -120,6 +123,7 @@ export class StreamListView extends React.PureComponent<Props, State> {
 			<SectionList
 				ItemSeparatorComponent={ListSeparator}
 				ListEmptyComponent={<NoticeView text="No Streams" />}
+				contentContainerStyle={styles.contentContainer}
 				keyExtractor={this.keyExtractor}
 				onRefresh={this.refresh}
 				refreshing={this.state.refreshing}

@@ -1,6 +1,6 @@
 // @flow
 import * as React from 'react'
-import {View, Text} from 'react-native'
+import {NoticeView} from '@frogpond/notice'
 
 type Props = {
 	mode: 'bug' | 'normal',
@@ -8,10 +8,6 @@ type Props = {
 
 export class ListEmpty extends React.PureComponent<Props> {
 	render() {
-		return (
-			<View>
-				<Text>List is empty</Text>
-			</View>
-		)
+		return <NoticeView text="List is empty" />
 	}
 }
