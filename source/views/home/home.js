@@ -52,7 +52,7 @@ export default function HomePage({navigation, views = allViews}: Props) {
 											return navigation.navigate(view.view)
 										}
 									}}
-									testID={`homescreen-button-${view.view}`}
+									testID={'homescreen-button-' + view.view}
 									view={view}
 								/>
 							))}
