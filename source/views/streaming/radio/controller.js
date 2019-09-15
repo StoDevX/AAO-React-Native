@@ -29,6 +29,7 @@ type Props = TopLevelViewPropsType & {
 		embeddedPlayerUrl: string,
 		streamSourceUrl: string,
 	},
+	testID: ?string,
 	theme: PlayerTheme,
 }
 
@@ -114,7 +115,7 @@ class RadioControllerView extends React.Component<Props, State> {
 	}
 
 	render() {
-		let {source, title, stationName, image, theme} = this.props
+		let {source, title, stationName, image, testID, theme} = this.props
 		let {uplinkError, streamError, playState} = this.state
 
 		let error = uplinkError ? (
@@ -183,7 +184,7 @@ class RadioControllerView extends React.Component<Props, State> {
 					]
 
 					return (
-						<ScrollView contentContainerStyle={root}>
+						<ScrollView contentContainerStyle={root} testID={testID}>
 							<View style={logoWrapper}>
 								<Image resizeMode="contain" source={image} style={logo} />
 							</View>
