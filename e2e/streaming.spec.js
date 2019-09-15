@@ -8,7 +8,7 @@ describe('Streaming Media View', () => {
 			element(by.id('homescreen-button-StreamingView')),
 		).toBeVisible()
 		await element(by.id('homescreen-button-StreamingView')).tap()
-		await expect(element(by.id('screen-homescreen'))).toNotBeVisible()
+		await expect(element(by.id('screen-homescreen'))).toBeNotVisible()
 		await expect(element(by.id('screen-streaming'))).toBeVisible()
 	})
 
@@ -18,7 +18,7 @@ describe('Streaming Media View', () => {
 			element(by.id('homescreen-button-StreamingView')),
 		).toBeVisible()
 		await element(by.id('homescreen-button-StreamingView')).tap()
-		await expect(element(by.id('screen-homescreen'))).toNotBeVisible()
+		await expect(element(by.id('screen-homescreen'))).toBeNotVisible()
 		await expect(element(by.id('screen-streaming'))).toBeVisible()
 
 		await expect(element(by.id('stream-list'))).toBeVisible()
@@ -32,7 +32,7 @@ describe('KSTO Radio View', () => {
 			element(by.id('homescreen-button-StreamingView')),
 		).toBeVisible()
 		await element(by.id('homescreen-button-StreamingView')).tap()
-		await expect(element(by.id('screen-homescreen'))).toNotBeVisible()
+		await expect(element(by.id('screen-homescreen'))).toBeNotVisible()
 		await expect(element(by.id('screen-streaming'))).toBeVisible()
 
 		await element(by.id('button-ksto')).tap()
