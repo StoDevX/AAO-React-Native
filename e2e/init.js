@@ -14,7 +14,7 @@ beforeAll(async () => {
 
 beforeEach(async () => {
 	await adapter.beforeEach()
-	await device.relaunchApp({delete: true})
+	await device.launchApp({newInstance: true})
 })
 
 afterAll(async () => {
