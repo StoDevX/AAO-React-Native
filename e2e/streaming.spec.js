@@ -35,7 +35,7 @@ describe('KSTO Radio View', () => {
 		await expect(element(by.id('screen-homescreen'))).toNotBeVisible()
 		await expect(element(by.id('screen-streaming'))).toBeVisible()
 
-		await element(by.text('KSTO')).tap()
+		await element(by.id('button-ksto')).tap()
 		await expect(element(by.id('screen-streaming-radio-ksto'))).toBeVisible()
 	})
 })

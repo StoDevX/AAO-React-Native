@@ -28,6 +28,7 @@ export class KstoStationView extends React.Component<TopLevelViewPropsType> {
 	static navigationOptions = {
 		tabBarLabel: 'KSTO',
 		tabBarIcon: TabBarIcon('radio'),
+		tabBarTestID: 'button-ksto',
 	}
 
 	render() {
