@@ -34,7 +34,6 @@ export class KstoStationView extends React.Component<TopLevelViewPropsType> {
 		return (
 			<ThemeProvider theme={colors}>
 				<RadioControllerView
-					testID="screen-streaming-radio-ksto"
 					image={logos.ksto}
 					navigation={this.props.navigation}
 					playerUrl="https://www.stolaf.edu/multimedia/play/embed/ksto.html"
@@ -47,6 +46,7 @@ export class KstoStationView extends React.Component<TopLevelViewPropsType> {
 					}}
 					stationName="KSTO 93.1 FM"
 					stationNumber="+15077863602"
+					testID="screen-streaming-radio-ksto"
 					title="St. Olaf College Radio"
 				/>
 			</ThemeProvider>
