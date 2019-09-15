@@ -10,20 +10,20 @@ import {refreshApp} from '../../../../lib/refresh'
 
 type Props = {navigation: NavigationScreenProp<*>}
 
-const getDeviceInfo = () => `
+const getDeviceInfo = async () => `
 
 ----- Please do not edit below here -----
-${DeviceInfo.getBrand()} ${DeviceInfo.getModel()}
-${DeviceInfo.getDeviceId()}
-${DeviceInfo.getSystemName()} ${appVersion()}+${appBuild() || 'unknown'}
-${DeviceInfo.getReadableVersion()}
+${await DeviceInfo.getBrand()} ${await DeviceInfo.getModel()}
+${await DeviceInfo.getDeviceId()}
+${await DeviceInfo.getSystemName()} ${appVersion()}+${appBuild() || 'unknown'}
+${await DeviceInfo.getReadableVersion()}
 `
 
-const openEmail = () => {
+const openEmail = async () => {
 	sendEmail({
 		to: ['allaboutolaf@stolaf.edu'],
 		subject: 'Support: All About Olaf',
-		body: getDeviceInfo(),
+		body: await getDeviceInfo(),
 	})
 }
 
