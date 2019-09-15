@@ -10,12 +10,17 @@ import {transparent} from '@frogpond/colors'
 import {homescreenForegroundDark, homescreenForegroundLight} from './colors'
 import {iPhoneX} from '@frogpond/device'
 
-type Props = {
+type HomeScreenButtonProps = {
 	view: ViewType,
 	onPress: () => any,
+	testID: ?string,
 }
 
-export function HomeScreenButton({view, onPress}: Props) {
+export function HomeScreenButton({
+	view,
+	onPress,
+	testID,
+}: HomeScreenButtonProps) {
 	let foreground =
 		view.foreground === 'light' ? styles.lightForeground : styles.darkForeground
 
@@ -26,7 +31,7 @@ export function HomeScreenButton({view, onPress}: Props) {
 			onPress={onPress}
 			tint={view.tint}
 		>
-			<View style={styles.contents}>
+			<View style={styles.contents} testID={testID}>
 				<Icon name={view.icon} size={32} style={[foreground, styles.icon]} />
 				<Text style={[foreground, styles.text]}>{view.title}</Text>
 			</View>
