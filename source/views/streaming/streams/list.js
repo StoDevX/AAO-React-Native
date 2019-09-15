@@ -121,6 +121,7 @@ export class StreamListView extends React.PureComponent<Props, State> {
 
 		return (
 			<SectionList
+				testID="stream-list"
 				ItemSeparatorComponent={ListSeparator}
 				ListEmptyComponent={<NoticeView text="No Streams" />}
 				contentContainerStyle={styles.contentContainer}

@@ -42,6 +42,7 @@ export default function HomePage({navigation, views = allViews}: Props) {
 						<Column key={i} style={styles.column}>
 							{contents.map(view => (
 								<HomeScreenButton
+									testID={`homescreen-button-${view.view}`}
 									key={view.view}
 									onPress={() => {
 										if (view.type === 'url') {
