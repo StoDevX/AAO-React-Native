@@ -95,7 +95,7 @@
     "@frogpond/titlecase": "1.0.0",
     "@hawkrives/react-native-alternate-icons": "0.4.7",
     "@mapbox/react-native-mapbox-gl": "6.1.3",
-    "@react-native-community/netinfo": "4.2.1",
+    "@react-native-community/netinfo": "4.2.2",
     "base-64": "0.1.0",
     "buffer": "5.4.3",
     "delay": "4.3.0",
