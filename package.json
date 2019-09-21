@@ -53,13 +53,13 @@
     "configurations": {
       "ios.sim.debug": {
         "binaryPath": "ios/build/Build/Products/Debug-iphonesimulator/AllAboutOlaf.app",
-        "build": "xcodebuild -project ios/AllAboutOlaf.xcodeproj -scheme AllAboutOlaf -configuration Debug -destination 'platform=iOS Simulator,name=iPhone 7,OS=12.2' -derivedDataPath ios/build build",
+        "build": "xcodebuild -project ios/AllAboutOlaf.xcodeproj -scheme AllAboutOlaf -configuration Debug -destination 'platform=iOS Simulator,name=iPhone 7,OS=12.4' -derivedDataPath ios/build build",
         "type": "ios.simulator",
         "name": "iPhone 7"
       },
       "ios.sim.release": {
         "binaryPath": "ios/build/Build/Products/Release-iphonesimulator/AllAboutOlaf.app",
-        "build": "xcodebuild -project ios/AllAboutOlaf.xcodeproj -scheme AllAboutOlaf -configuration Release -destination 'platform=iOS Simulator,name=iPhone 7,OS=12.2' -derivedDataPath ios/build build",
+        "build": "xcodebuild -project ios/AllAboutOlaf.xcodeproj -scheme AllAboutOlaf -configuration Release -destination 'platform=iOS Simulator,name=iPhone 7,OS=12.4' -derivedDataPath ios/build build",
         "type": "ios.simulator",
         "name": "iPhone 7"
       }
