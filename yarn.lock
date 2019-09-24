@@ -6551,10 +6551,10 @@ react-native-location@2.5.0:
   resolved "https://registry.yarnpkg.com/react-native-location/-/react-native-location-2.5.0.tgz#b6d2f7e9c3dbe13fbe87587f9533b8bf943b6a35"
   integrity sha512-myT54tZuFmN6d5RruMVfoa8eY+voJWkSd73xUVhjzJDnQr5uu5MFoH7hMg3trHF1CAkaY/2gIneOspUdGxv59Q==
 
-react-native-network-info@5.1.0:
-  version "5.1.0"
-  resolved "https://registry.yarnpkg.com/react-native-network-info/-/react-native-network-info-5.1.0.tgz#f7e39ca56468eea771e6dc8d7d4c2aaae8a566f0"
-  integrity sha512-MdTEmQ0Q4rKmeQW0P/xLG3igSX8CRuGleISK/kPdgRb2ePdChrmsV0cikiFwLuGGoUMsLEuNDjMVnO18tIm6TA==
+react-native-network-info@5.2.0:
+  version "5.2.0"
+  resolved "https://registry.yarnpkg.com/react-native-network-info/-/react-native-network-info-5.2.0.tgz#02b88a729662bf48a8c2127a3a66a2c6b3db6c1b"
+  integrity sha512-NMtvmiNwJRoz/RpUrFexsdQmC5UWbh2q4LF6EGa5zXtq5AuZhDk7TnelmfaHQYo8Zv7jk+IESDz60IYC8rmEOQ==
 
 react-native-paper@2.16.0:
   version "2.16.0"
