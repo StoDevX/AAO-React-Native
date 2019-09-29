@@ -34,12 +34,17 @@ export class SearchBar extends React.Component<Props> {
 		this._ref = ref
 	}
 
+	onHandleBlur = () => {
+		this._ref && this._ref.unFocus()
+	}
+
 	render() {
 		return (
 			<NativeSearchBar
 				ref={this.handleRef}
 				autoCorrect={false}
 				hideBackground={true}
+				onBlur={this.onHandleBlur}
 				onCancelButtonPress={this.props.onCancel}
 				onChangeText={this.props.onChange}
 				onFocus={this.props.onFocus}
