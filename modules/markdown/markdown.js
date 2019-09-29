@@ -1,27 +1,11 @@
 // @flow
 
 import * as React from 'react'
-import {View} from 'react-native'
-import glamorous from 'glamorous-native'
-import ReactMarkdown from 'react-markdown'
+import {StyleSheet} from 'react-native'
+import HTMLView from 'react-native-htmlview'
+import marked from 'marked'
 
 import propTypes from 'prop-types'
-ReactMarkdown.propTypes.containerTagName = propTypes.func
-
-import {Paragraph, Strong, Emph, BlockQuote} from './formatting'
-import {Code, HighlightedCodeBlock as CodeBlock} from './code'
-import {Heading} from './heading'
-import {Link} from './link'
-import {Image} from './image'
-import {List, ListItem} from './list'
-
-const Softbreak = () => ' '
-const Hardbreak = () => '\n'
-const HorizontalRule = glamorous.view({
-	width: '100%',
-	height: 1,
-	backgroundColor: 'black',
-})
 
 type MarkdownBlockEnum =
 	| 'BlockQuote'
@@ -47,28 +31,8 @@ type Props = {
 export class Markdown extends React.PureComponent<Props> {
 	render() {
 		let {styles = {}, source} = this.props
-		return (
-			<ReactMarkdown
-				containerTagName={View}
-				renderers={{
-					BlockQuote: glamorous(BlockQuote)(styles.BlockQuote),
-					Code: glamorous(Code)(styles.Code),
-					CodeBlock: glamorous(CodeBlock)(styles.CodeBlock),
-					Emph: glamorous(Emph)(styles.Emph),
-					Hardbreak,
-					Heading: glamorous(Heading)(styles.Heading),
-					Image: glamorous(Image)(styles.Image),
-					Item: glamorous(ListItem)(styles.ListItem),
-					Link: glamorous(Link)(styles.Link),
-					List: glamorous(List)(styles.List),
-					Paragraph: glamorous(Paragraph)(styles.Paragraph),
-					Softbreak,
-					Strong: glamorous(Strong)(styles.Strong),
-					ThematicBreak: glamorous(HorizontalRule)(styles.ThematicBreak),
-				}}
-				skipHtml={true}
-				source={source}
-			/>
-		)
+		let html = marked(source, {gfm: true})
+
+		return <HTMLView value={html} stylesheet={styles} />
 	}
 }
