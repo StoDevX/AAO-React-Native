@@ -81,6 +81,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Fixed an issue where StoPrint jobs failed to release properly (#3730)
 - Fixed StoPrint login issue (#3732)
 - Fixed a crash that prevented all Android tab views from loading
+- Fixed the iOS keyboard not dismissing when returning from a detail view of a searchbar
 
 ### Removed
 - Removed the `prepare` script patching `ScrollEnabled` inside `RCTMultilineTextInputView` (#3337)
