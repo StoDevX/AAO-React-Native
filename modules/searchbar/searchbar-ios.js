@@ -44,8 +44,8 @@ export class SearchBar extends React.Component<Props> {
 				ref={this.handleRef}
 				autoCorrect={false}
 				hideBackground={true}
-				onCancelButtonPress={this.props.onCancel}
 				onBlur={this.onHandleBlur}
+				onCancelButtonPress={this.props.onCancel}
 				onChangeText={this.props.onChange}
 				onFocus={this.props.onFocus}
 				onSearchButtonPress={this.handleSearchButtonPress}
