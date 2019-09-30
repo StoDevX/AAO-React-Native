@@ -27,13 +27,19 @@ end
 def tagged?
 	travis = ENV['TRAVIS_TAG'] && !ENV['TRAVIS_TAG'].empty?
 	circle = ENV['CIRCLE_TAG'] && !ENV['CIRCLE_TAG'].empty?
-	travis || circle
+	github = ENV['GITHUB_REF'] && ENV['GITHUB_REF'] =~ /^refs\/tags\//
+	github || travis || circle
 end
 
 # does the commit message tell us to make a new beta?
 def commit_says_deploy?
-	commit = ENV['TRAVIS_COMMIT_MESSAGE'] || ENV['GIT_COMMIT_DESC']
+	commit = ENV['TRAVIS_COMMIT_MESSAGE'] || ENV['GIT_COMMIT_DESC'] || `git show --pretty=format:%B HEAD`
 	commit =~ /\[ci run beta\]/
+end
+
+# are we running on github actions?
+def github_actions?
+	!!ENV['GITHUB_SHA']
 end
 
 # are we running on travis?
