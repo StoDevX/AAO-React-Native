@@ -27,7 +27,7 @@ end
 def tagged?
 	travis = ENV['TRAVIS_TAG'] && !ENV['TRAVIS_TAG'].empty?
 	circle = ENV['CIRCLE_TAG'] && !ENV['CIRCLE_TAG'].empty?
-	github = ENV['GITHUB_REF'] && ENV['GITHUB_REF'] =~ /^refs\/tags\/(.+)$/
+	github = ENV['GITHUB_REF'] && ENV['GITHUB_REF'] =~ /^refs\/tags\//
 	github || travis || circle
 end
 
