@@ -32,8 +32,6 @@ end
 
 # Copy the package.json version into the other version locations
 def propagate_version(**args)
-	return unless ENV.key? 'CI'
-
 	version = get_package_key(key: :version)
 
 	UI.message "Propagating version: #{version}"
