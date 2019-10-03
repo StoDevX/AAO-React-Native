@@ -1016,10 +1016,10 @@
     shell-quote "1.6.1"
     ws "^1.1.0"
 
-"@react-native-community/netinfo@4.3.0":
-  version "4.3.0"
-  resolved "https://registry.yarnpkg.com/@react-native-community/netinfo/-/netinfo-4.3.0.tgz#0fec726ad6e8af381942844f885a2edbbdf05740"
-  integrity sha512-bYlmjb5muMO1ag5Zzk95OjjxPWFVG1Nrr1x/I95/b99llgoFa3JZSSnlxxAMek2W+c/iknT13oyKfFpQbXysFQ==
+"@react-native-community/netinfo@4.3.1":
+  version "4.3.1"
+  resolved "https://registry.yarnpkg.com/@react-native-community/netinfo/-/netinfo-4.3.1.tgz#0601954eae93c1e06647b74600c0b82c65689d22"
+  integrity sha512-djUdmm/RCnKKCNR6w6APDLH1oRhS7EgMHcgghU4cxlgEGJMQ4yVO6jl+99DpI3pY4WElahgU9D8IK1PKTz6rig==
 
 "@react-navigation/core@~3.5.1":
   version "3.5.1"
