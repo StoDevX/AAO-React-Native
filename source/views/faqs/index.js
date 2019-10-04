@@ -1,5 +1,5 @@
 // @flow
-import * as React from 'react'
+import React, {useState, useEffect} from 'react'
 import delay from 'delay'
 import {RefreshControl, StyleSheet} from 'react-native'
 import * as c from '@frogpond/colors'
@@ -15,46 +15,30 @@ const styles = StyleSheet.create({
 	},
 })
 
-type Props = {}
+export function FaqView() {
+	let [text, setText] = useState('')
+	let [loading, setLoading] = useState(true)
+	let [refreshing, setRefreshing] = useState(false)
 
-type State = {
-	text: string,
-	loading: boolean,
-	refreshing: boolean,
-}
+	useEffect(() => {
+		fetchData().then(() => setLoading(false))
+	})
 
-export class FaqView extends React.PureComponent<Props, State> {
-	static navigationOptions = {
-		title: 'FAQs',
-	}
-
-	state = {
-		text: '',
-		loading: true,
-		refreshing: false,
-	}
-
-	componentDidMount() {
-		this.fetchData().then(() => {
-			this.setState(() => ({loading: false}))
-		})
-	}
-
-	fetchData = async (reload?: boolean) => {
+	let fetchData = async (reload?: boolean) => {
 		let {text}: {text: string} = await fetch(API('/faqs'), {
 			forReload: reload ? 500 : 0,
 		})
 			.json()
-			.catch(() => ({text: 'There was a problem loading the FAQs'}))
+			.catch(() => setText('There was a problem loading the FAQs'))
 
-		this.setState(() => ({text}))
+		setText(text)
 	}
 
-	refresh = async (): any => {
+	let refresh = async (): any => {
 		let start = Date.now()
-		this.setState(() => ({refreshing: true}))
+		setRefreshing(true)
 
-		await this.fetchData(true)
+		await fetchData(true)
 
 		// wait 0.5 seconds – if we let it go at normal speed, it feels broken.
 		let elapsed = Date.now() - start
@@ -62,32 +46,31 @@ export class FaqView extends React.PureComponent<Props, State> {
 			await delay(500 - elapsed)
 		}
 
-		this.setState(() => ({refreshing: false}))
+		setRefreshing(false)
 	}
 
-	render() {
-		if (this.state.loading) {
-			return <LoadingView />
-		}
+	let refreshControl = (
+		<RefreshControl onRefresh={refresh} refreshing={refreshing} />
+	)
 
-		let refreshControl = (
-			<RefreshControl
-				onRefresh={this.refresh}
-				refreshing={this.state.refreshing}
-			/>
-		)
+	let loadingView = <LoadingView />
 
-		return (
-			<ScrollView
-				backgroundColor={c.white}
-				contentContainerStyle={styles.container}
-				contentInsetAdjustmentBehavior="automatic"
-				refreshControl={refreshControl}
-			>
-				<View paddingVertical={15}>
-					<Markdown source={this.state.text} />
-				</View>
-			</ScrollView>
-		)
-	}
+	let faqList = (
+		<ScrollView
+			backgroundColor={c.white}
+			contentContainerStyle={styles.container}
+			contentInsetAdjustmentBehavior="automatic"
+			refreshControl={refreshControl}
+		>
+			<View paddingVertical={15}>
+				<Markdown source={text} />
+			</View>
+		</ScrollView>
+	)
+
+	return loading ? loadingView : faqList
+}
+
+FaqView.navigationOptions = {
+	title: 'FAQs',
 }
