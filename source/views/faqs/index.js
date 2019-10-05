@@ -29,7 +29,7 @@ export function FaqView() {
 			forReload: reload ? 500 : 0,
 		})
 			.json()
-			.catch(() => setText('There was a problem loading the FAQs'))
+			.catch(() => ({text: 'There was a problem loading the FAQs'}))
 
 		setText(text)
 	}
