@@ -1,5 +1,5 @@
 // @flow
-import React, {useState, useEffect} from 'react'
+import * as React from 'react'
 import delay from 'delay'
 import {RefreshControl, StyleSheet} from 'react-native'
 import * as c from '@frogpond/colors'
@@ -16,11 +16,11 @@ const styles = StyleSheet.create({
 })
 
 export function FaqView() {
-	let [text, setText] = useState('')
-	let [loading, setLoading] = useState(true)
-	let [refreshing, setRefreshing] = useState(false)
+	let [text, setText] = React.useState('')
+	let [loading, setLoading] = React.useState(true)
+	let [refreshing, setRefreshing] = React.useState(false)
 
-	useEffect(() => {
+	React.useEffect(() => {
 		fetchData().then(() => setLoading(false))
 	})
 
