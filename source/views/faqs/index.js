@@ -1,6 +1,5 @@
 // @flow
 import * as React from 'react'
-import delay from 'delay'
 import {RefreshControl, StyleSheet} from 'react-native'
 import * as c from '@frogpond/colors'
 import {View, ScrollView} from 'glamorous-native'
@@ -15,36 +14,34 @@ const styles = StyleSheet.create({
 	},
 })
 
+let fetchData = async (reload?: boolean) => {
+	let {text}: {text: string} = await fetch(API('/faqs'), {
+		delay: reload ? 500 : 0,
+	})
+		.json()
+		.catch(() => ({text: 'There was a problem loading the FAQs'}))
+
+	return text
+}
+
 export function FaqView() {
 	let [text, setText] = React.useState('')
 	let [loading, setLoading] = React.useState(true)
 	let [refreshing, setRefreshing] = React.useState(false)
 
 	React.useEffect(() => {
-		fetchData().then(() => setLoading(false))
-	})
-
-	let fetchData = async (reload?: boolean) => {
-		let {text}: {text: string} = await fetch(API('/faqs'), {
-			forReload: reload ? 500 : 0,
+		fetchData(true).then(text => {
+			setText(text)
+			setLoading(false)
 		})
-			.json()
-			.catch(() => ({text: 'There was a problem loading the FAQs'}))
-
-		setText(text)
-	}
+	}, [setText, setLoading])
 
 	let refresh = async (): any => {
-		let start = Date.now()
 		setRefreshing(true)
 
-		await fetchData(true)
-
-		// wait 0.5 seconds – if we let it go at normal speed, it feels broken.
-		let elapsed = Date.now() - start
-		if (elapsed < 500) {
-			await delay(500 - elapsed)
-		}
+		await fetchData(true).then(text => {
+			setText(text)
+		})
 
 		setRefreshing(false)
 	}
