@@ -30,7 +30,7 @@ export function FaqView() {
 	let [refreshing, setRefreshing] = React.useState(false)
 
 	React.useEffect(() => {
-		fetchData(true).then(text => {
+		fetchData().then(text => {
 			setText(text)
 			setLoading(false)
 		})
