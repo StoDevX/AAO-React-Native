@@ -1,6 +1,11 @@
 # should we build and release to the nightly channel?
 def should_nightly?
-	travis_cron? || circle_nightly?
+	github_scheduled? || travis_cron? || circle_nightly?
+end
+
+# was this build triggered by a schedule event on GH?
+def github_scheduled?
+	ENV['GITHUB_EVENT_NAME'] == 'schedule'
 end
 
 # was this build initiated by cron?
