@@ -7,7 +7,6 @@ import type {TopLevelViewPropsType} from '../../types'
 import * as c from '@frogpond/colors'
 import {ListSeparator, ListSectionHeader} from '@frogpond/lists'
 import {NoticeView, LoadingView} from '@frogpond/notice'
-import delay from 'delay'
 import toPairs from 'lodash/toPairs'
 import orderBy from 'lodash/orderBy'
 import groupBy from 'lodash/groupBy'
@@ -55,8 +54,10 @@ export default class StudentWorkView extends React.PureComponent<Props, State> {
 		})
 	}
 
-	fetchData = async () => {
-		let data: Array<JobType> = await fetch(API('/jobs')).json()
+	fetchData = async (reload?: boolean) => {
+		let data: Array<JobType> = await fetch(API('/jobs'), {
+			delay: reload ? 500 : 0,
+		}).json()
 
 		// force title-case on the job types, to prevent not-actually-duplicate headings
 		let processed: Array<JobType> = data.map(job => ({
@@ -85,16 +86,8 @@ export default class StudentWorkView extends React.PureComponent<Props, State> {
 	}
 
 	refresh = async (): any => {
-		let start = Date.now()
 		this.setState(() => ({refreshing: true}))
-
-		await this.fetchData()
-
-		// wait 0.5 seconds – if we let it go at normal speed, it feels broken.
-		let elapsed = Date.now() - start
-		if (elapsed < 500) {
-			await delay(500 - elapsed)
-		}
+		await this.fetchData(true)
 		this.setState(() => ({refreshing: false}))
 	}
 

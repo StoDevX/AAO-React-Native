@@ -1016,10 +1016,10 @@
     shell-quote "1.6.1"
     ws "^1.1.0"
 
-"@react-native-community/netinfo@4.3.1":
-  version "4.3.1"
-  resolved "https://registry.yarnpkg.com/@react-native-community/netinfo/-/netinfo-4.3.1.tgz#0601954eae93c1e06647b74600c0b82c65689d22"
-  integrity sha512-djUdmm/RCnKKCNR6w6APDLH1oRhS7EgMHcgghU4cxlgEGJMQ4yVO6jl+99DpI3pY4WElahgU9D8IK1PKTz6rig==
+"@react-native-community/netinfo@4.4.0":
+  version "4.4.0"
+  resolved "https://registry.yarnpkg.com/@react-native-community/netinfo/-/netinfo-4.4.0.tgz#a18eb9ba082b6aca6add004b4a918250ad7d13bc"
+  integrity sha512-qqNWMOsrDjj/daqV21ID2T8mNUjZD4pdx3PuWyE65gzKh2w+oMnzKb+J0NbLyZPn3wwLwU1+Cpf58A0ff5szjQ==
 
 "@react-navigation/core@~3.5.1":
   version "3.5.1"
@@ -2764,10 +2764,10 @@ escodegen@^1.9.1:
   optionalDependencies:
     source-map "~0.6.1"
 
-eslint-config-prettier@6.3.0:
-  version "6.3.0"
-  resolved "https://registry.yarnpkg.com/eslint-config-prettier/-/eslint-config-prettier-6.3.0.tgz#e73b48e59dc49d950843f3eb96d519e2248286a3"
-  integrity sha512-EWaGjlDAZRzVFveh2Jsglcere2KK5CJBhkNSa1xs3KfMUGdRiT7lG089eqPdvlzWHpAqaekubOsOMu8W8Yk71A==
+eslint-config-prettier@6.4.0:
+  version "6.4.0"
+  resolved "https://registry.yarnpkg.com/eslint-config-prettier/-/eslint-config-prettier-6.4.0.tgz#0a04f147e31d33c6c161b2dd0971418ac52d0477"
+  integrity sha512-YrKucoFdc7SEko5Sxe4r6ixqXPDP1tunGw91POeZTTRKItf/AMFYt/YLEQtZMkR2LVpAVhcAcZgcWpm1oGPW7w==
   dependencies:
     get-stdin "^6.0.0"
 
@@ -2785,10 +2785,10 @@ eslint-plugin-flowtype@4.3.0:
   dependencies:
     lodash "^4.17.15"
 
-eslint-plugin-react-hooks@2.1.1:
-  version "2.1.1"
-  resolved "https://registry.yarnpkg.com/eslint-plugin-react-hooks/-/eslint-plugin-react-hooks-2.1.1.tgz#b416390b642113f444ee175b667c3222a045a98e"
-  integrity sha512-AYitPYzwHyKpZKpzMH5sCkld68vP8wn29Lq716h4jk1ll9Gp4BBFoPq/iCjBBT35eXFJvOPjgMlvhIXFB0OhXg==
+eslint-plugin-react-hooks@2.1.2:
+  version "2.1.2"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-react-hooks/-/eslint-plugin-react-hooks-2.1.2.tgz#1358d2acb2c5e02b7e90c37e611ac258a488e3a7"
+  integrity sha512-ZR+AyesAUGxJAyTFlF3MbzeVHAcQTFQt1fFVe5o0dzY/HFoj1dgQDMoIkiM+ltN/HhlHBYX4JpJwYonjxsyQMA==
 
 eslint-plugin-react-native-globals@^0.1.1:
   version "0.1.2"
@@ -6616,10 +6616,10 @@ react-native-screens@2.0.0-alpha.3, "react-native-screens@^1.0.0 || ^1.0.0-alpha
   dependencies:
     debounce "^1.2.0"
 
-react-native-search-bar@3.4.3:
-  version "3.4.3"
-  resolved "https://registry.yarnpkg.com/react-native-search-bar/-/react-native-search-bar-3.4.3.tgz#0a772baba1ee66c54c55b7c1a278ae3fd4b13ab7"
-  integrity sha512-zBUU+atLC0bhc2SrezHuivQndfwKp/iJq3QbLDItI3nl/5AZCvS/7CzPke7gWrH7lhgn6kaBdouPH34lZtfQYQ==
+react-native-search-bar@3.5.0:
+  version "3.5.0"
+  resolved "https://registry.yarnpkg.com/react-native-search-bar/-/react-native-search-bar-3.5.0.tgz#ec4e6b293640cf7ce647ada18a3f15f33ceb5aa8"
+  integrity sha512-syW3NMJL6t7li9kczQKF1ERW4pVSP3ZkvIMCSHmEEfQKEnNxFfAit3KsAdJTaOVCV6NJXnmc3QSj0zBVLd0m2g==
   dependencies:
     prop-types "^15.5.10"
 
