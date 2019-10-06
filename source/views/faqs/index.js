@@ -50,9 +50,11 @@ export function FaqView() {
 		<RefreshControl onRefresh={refresh} refreshing={refreshing} />
 	)
 
-	let loadingView = <LoadingView />
+	if (loading) {
+		return <LoadingView />
+	}
 
-	let faqList = (
+	return (
 		<ScrollView
 			backgroundColor={c.white}
 			contentContainerStyle={styles.container}
@@ -64,8 +66,6 @@ export function FaqView() {
 			</View>
 		</ScrollView>
 	)
-
-	return loading ? loadingView : faqList
 }
 
 FaqView.navigationOptions = {
