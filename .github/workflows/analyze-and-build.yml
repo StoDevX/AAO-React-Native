@@ -1,6 +1,9 @@
 name: Analyze and Build
 
-on: push
+on:
+  push:
+  schedule:
+    - cron: '17 8 * * *'
 
 jobs:
   js:
