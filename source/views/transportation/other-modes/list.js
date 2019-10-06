@@ -1,6 +1,5 @@
 // @flow
 import * as React from 'react'
-import delay from 'delay'
 import {OtherModesRow} from './row'
 import {TabBarIcon} from '@frogpond/navigation-tabs'
 import * as defaultData from '../../../../docs/transportation.json'
@@ -57,23 +56,17 @@ export class OtherModesView extends React.PureComponent<Props, State> {
 	}
 
 	refresh = async (): any => {
-		let start = Date.now()
 		this.setState(() => ({refreshing: true}))
-
-		await this.fetchData()
-
-		// wait 0.5 seconds – if we let it go at normal speed, it feels broken.
-		let elapsed = Date.now() - start
-		if (elapsed < 500) {
-			await delay(500 - elapsed)
-		}
-
+		await this.fetchData(true)
 		this.setState(() => ({refreshing: false}))
 	}
 
-	fetchData = async () => {
+	fetchData = async (reload?: boolean) => {
 		let {data: modes}: {data: Array<OtherModeType>} = await fetch(
 			transportationUrl,
+			{
+				delay: reload ? 500 : 0,
+			},
 		).json()
 		this.setState(() => ({modes}))
 	}

@@ -56,6 +56,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Updated references to ASC to be CAAS in dictionary and hours
 - Show alert after dev sentry send message or exception 
 - Update finals hours notice to be a summer notice
+- Opt to use fetch api's delay in some of the refresh functions
 
 ### Fixed
 - Fixed an issue where Fastlane was reporting build failures despite having skipped the build (#3215)
