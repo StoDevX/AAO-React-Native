@@ -1,6 +1,16 @@
 # should we build and release to the nightly channel?
 def should_nightly?
-	travis_cron? || circle_nightly?
+	github_scheduled? || travis_cron? || circle_nightly?
+end
+
+# was this build triggered by a schedule event on GH?
+def github_scheduled?
+	ENV['GITHUB_EVENT_NAME'] == 'schedule'
+end
+
+# was this build initiated by cron?
+def travis_cron?
+	ENV['TRAVIS_EVENT_TYPE'] == 'cron'
 end
 
 # are we running under the circleci nightly workflow?
@@ -16,11 +26,6 @@ end
 # does the build have the api keys needed for signing?
 def api_keys_available?
 	ENV['MATCH_PASSWORD'] && ENV['FASTLANE_PASSWORD']
-end
-
-# was this build initiated by cron?
-def travis_cron?
-	ENV['TRAVIS_EVENT_TYPE'] == 'cron'
 end
 
 # is this a build of a tagged commit?
