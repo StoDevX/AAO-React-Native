@@ -109,7 +109,7 @@ GEM
     naturally (2.2.0)
     netrc (0.11.0)
     os (1.0.1)
-    parallel (1.17.0)
+    parallel (1.18.0)
     parser (2.6.5.0)
       ast (~> 2.4.0)
     plist (3.5.0)
