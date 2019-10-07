@@ -6465,10 +6465,10 @@ rc@^1.2.7:
     minimist "^1.2.0"
     strip-json-comments "~2.0.1"
 
-react-async@8.0.0:
-  version "8.0.0"
-  resolved "https://registry.yarnpkg.com/react-async/-/react-async-8.0.0.tgz#81edd40e641206737a988076f3afcc270c6bbd27"
-  integrity sha512-LokBZLLkT80URrfDWu5Z/42GBOlYYxPGPTfo+uOjDti9RVRXa69AYlJuHZr+TyCJcn61kYQvjQo8StzA2LKULg==
+react-async@9.0.0:
+  version "9.0.0"
+  resolved "https://registry.yarnpkg.com/react-async/-/react-async-9.0.0.tgz#60e8282278fc642429229a33ce1dbd427d6470e3"
+  integrity sha512-J1o8clttyaQ12+G2GiRTgsvkD+QZJS9A9GTh3nDWX6gvoskmUwMPXFDntOcUvP032xUAf6F75M2sT3FW095HeA==
 
 react-deep-force-update@^1.0.0:
   version "1.1.2"
