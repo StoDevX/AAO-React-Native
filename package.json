@@ -152,7 +152,7 @@
   },
   "devDependencies": {
     "@babel/core": "7.6.2",
-    "@babel/runtime": "7.6.2",
+    "@babel/runtime": "7.6.3",
     "@sentry/cli": "1.48.0",
     "ajv": "6.10.2",
     "babel-core": "7.0.0-bridge.0",
