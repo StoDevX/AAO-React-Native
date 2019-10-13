@@ -178,7 +178,7 @@
     "pify": "4.0.1",
     "prettier": "1.18.2",
     "pretty-bytes": "5.3.0",
-    "pretty-quick": "1.11.1",
+    "pretty-quick": "2.0.0",
     "prop-types": "15.7.2",
     "react-test-renderer": "16.8.6",
     "string-natural-compare": "2.0.3",
