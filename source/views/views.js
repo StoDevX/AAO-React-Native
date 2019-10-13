@@ -73,7 +73,7 @@ export const allViews: Array<ViewType> = [
 	},
 	{
 		type: 'url',
-		url: 'https://www.stolaf.edu/personal/index.cfm',
+		url: 'https://www.stolaf.edu/directory',
 		view: 'DirectoryView',
 		title: 'Directory',
 		icon: 'v-card',

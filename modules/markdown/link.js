@@ -1,9 +1,10 @@
 // @flow
 
 import * as React from 'react'
-import {ActionSheetIOS, Clipboard} from 'react-native'
+import {Clipboard} from 'react-native'
 import glamorous from 'glamorous-native'
 import {openUrl} from '@frogpond/open-url'
+import {connectActionSheet} from '@expo/react-native-action-sheet'
 
 import * as c from '@frogpond/colors'
 
@@ -17,26 +18,19 @@ type Props = {
 	href: string,
 	title?: string,
 	children: React.ChildrenArray<string>,
+	showShareActionSheetWithOptions: any,
+	showActionSheetWithOptions: any,
 }
 
 type Callback = ({title?: string, href: string}) => any
 
-export class Link extends React.PureComponent<Props> {
+class Link extends React.PureComponent<Props> {
 	options: Array<[string, Callback]> = [
 		['Open', ({href}: {href: string}) => openUrl(href)],
 		[
 			'Copy',
 			({title, href}: {href: string, title?: string}) =>
 				Clipboard.setString(`${href}${title ? ' ' + title : ''}`),
-		],
-		[
-			'Share…',
-			({href}: {href: string}) =>
-				ActionSheetIOS.showShareActionSheetWithOptions(
-					{url: href},
-					this.onShareFailure,
-					this.onShareSuccess,
-				),
 		],
 		['Cancel', () => {}],
 	]
@@ -46,7 +40,7 @@ export class Link extends React.PureComponent<Props> {
 	}
 
 	onLongPress = () => {
-		return ActionSheetIOS.showActionSheetWithOptions(
+		return this.props.showActionSheetWithOptions(
 			{
 				options: this.options.map(([name]) => name),
 				title: this.props.title,
@@ -74,3 +68,7 @@ export class Link extends React.PureComponent<Props> {
 		)
 	}
 }
+
+const ConnectedLink = connectActionSheet(Link)
+
+export {ConnectedLink as Link}

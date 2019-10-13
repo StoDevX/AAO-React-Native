@@ -42,7 +42,7 @@ export const getPosition = async (): Promise<null | Object> => {
 }
 
 export const collectData = async () => ({
-	id: deviceInfo.getUniqueID(),
+	id: deviceInfo.getUniqueId(),
 	brand: deviceInfo.getBrand(),
 	model: deviceInfo.getModel(),
 	deviceKind: deviceInfo.getDeviceId(),

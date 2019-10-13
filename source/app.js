@@ -15,6 +15,7 @@ import {Provider as PaperProvider} from 'react-native-paper'
 import {makeStore, initRedux} from './redux'
 import * as navigation from './navigation'
 import {ThemeProvider} from '@frogpond/app-theme'
+import {ActionSheetProvider} from '@expo/react-native-action-sheet'
 
 const store = makeStore()
 initRedux(store)
@@ -27,10 +28,12 @@ export default class App extends React.Component<Props> {
 			<ReduxProvider store={store}>
 				<PaperProvider>
 					<ThemeProvider>
-						<navigation.AppNavigator
-							onNavigationStateChange={navigation.trackScreenChanges}
-							persistenceKey={navigation.persistenceKey}
-						/>
+						<ActionSheetProvider>
+							<navigation.AppNavigator
+								onNavigationStateChange={navigation.trackScreenChanges}
+								persistenceKey={navigation.persistenceKey}
+							/>
+						</ActionSheetProvider>
 					</ThemeProvider>
 				</PaperProvider>
 			</ReduxProvider>

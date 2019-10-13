@@ -8,5 +8,5 @@ gem 'xcodeproj'
 # fastlane plugins
 
 group :development do
-  gem 'rubocop', '~> 0.74'
+  gem 'rubocop', '~> 0.75'
 end
