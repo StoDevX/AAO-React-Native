@@ -67,7 +67,7 @@ export class DownloaderView extends React.Component<Props, State> {
 		this.replaceBundle()
 	}
 
-	fetchCirlceData = async () => {
+	fetchCircleData = async () => {
 		const request = this.props.navigation.state.params.request
 
 		let circleResponse = await fetch(CIRCLE_API_ARTIFACTS_URL, {
