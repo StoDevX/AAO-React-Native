@@ -53,7 +53,7 @@ export class DownloaderView extends React.Component<Props, State> {
 	}
 
 	componentDidMount() {
-		this.fetchCirlceData()
+		this.fetchCircleData()
 			.then(() => {
 				this.setState(() => ({loading: false}))
 			})
