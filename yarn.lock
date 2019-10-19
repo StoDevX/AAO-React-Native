@@ -2303,10 +2303,10 @@ danger-plugin-yarn@1.3.2:
     node-fetch "^1.7.1"
     semver "^5.4.1"
 
-danger@9.2.1:
-  version "9.2.1"
-  resolved "https://registry.yarnpkg.com/danger/-/danger-9.2.1.tgz#54dddf452f85441f82067670c75fbf18b321d248"
-  integrity sha512-kKU/Yo1IZTJ/CrlK6A0VPz7KZnnADFpgDM8557sv61nNN3V44k2fwflpEGpBgzhbHLphKx9R35skObQ7zPS12g==
+danger@9.2.2:
+  version "9.2.2"
+  resolved "https://registry.yarnpkg.com/danger/-/danger-9.2.2.tgz#9a33d635262c2441e91f20bfa92485a29ee9bab6"
+  integrity sha512-tDLIFYa1KzU7HJIvn6FEurFWqn36cFPVBLvKrUqbRxJOCPONWNvpRRbHKj3HmNPEQf5bVls78V/FZz8iRs4Qlg==
   dependencies:
     "@babel/polyfill" "^7.2.5"
     "@octokit/rest" "^16.14.1"
@@ -6070,14 +6070,7 @@ p-limit@^1.1.0:
   dependencies:
     p-try "^1.0.0"
 
-p-limit@^2.0.0, p-limit@^2.1.0:
-  version "2.2.0"
-  resolved "https://registry.yarnpkg.com/p-limit/-/p-limit-2.2.0.tgz#417c9941e6027a9abcba5092dd2904e255b5fbc2"
-  integrity sha512-pZbTJpoUsCzV48Mc9Nh51VbwO0X9cuPFE8gYwx9BTCt9SF8/b7Zljd2fVgOxhIF/HDTKgpVzs+GPhyKfjLLFRQ==
-  dependencies:
-    p-try "^2.0.0"
-
-p-limit@^2.2.0:
+p-limit@^2.0.0, p-limit@^2.1.0, p-limit@^2.2.0:
   version "2.2.1"
   resolved "https://registry.yarnpkg.com/p-limit/-/p-limit-2.2.1.tgz#aa07a788cc3151c939b5131f63570f0dd2009537"
   integrity sha512-85Tk+90UCVWvbDavCLKPOLC9vvY8OwEX/RtKF+/1OADJMVlFfEHOiMTPVyxg7mk/dKa+ipdHm0OUkTvCpMTuwg==
