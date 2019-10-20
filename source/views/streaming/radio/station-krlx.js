@@ -25,6 +25,7 @@ export class KrlxStationView extends React.Component<TopLevelViewPropsType> {
 	static navigationOptions = {
 		tabBarLabel: 'KRLX',
 		tabBarIcon: TabBarIcon('microphone'),
+		tabBarTestID: 'button-krlx',
 	}
 
 	render() {
@@ -42,6 +43,7 @@ export class KrlxStationView extends React.Component<TopLevelViewPropsType> {
 					}}
 					stationName="88.1 KRLX-FM"
 					stationNumber="+15072224127"
+					testID="screen-streaming-radio-krlx"
 					title="Carleton College Radio"
 				/>
 			</ThemeProvider>

@@ -34,4 +34,15 @@ describe('Streaming Media View', () => {
 			await expect(element(by.id('screen-streaming-radio-ksto'))).toBeVisible()
 		})
 	})
+
+	describe('KRLX Radio View', () => {
+		it('is reachable under the home screen', async () => {
+			// Navigate into StreamingView
+			await element(by.id('homescreen-button-StreamingView')).tap()
+
+			// Enter the ksto view
+			await element(by.id('button-krlx')).tap()
+			await expect(element(by.id('screen-streaming-radio-krlx'))).toBeVisible()
+		})
+	})
 })
