@@ -166,7 +166,7 @@
     "eslint-plugin-flowtype": "4.3.0",
     "eslint-plugin-react": "7.14.3",
     "eslint-plugin-react-hooks": "2.2.0",
-    "eslint-plugin-react-native": "3.7.0",
+    "eslint-plugin-react-native": "3.8.0",
     "flow-bin": "0.98.1",
     "jest": "24.9.0",
     "jetifier": "1.6.4",
