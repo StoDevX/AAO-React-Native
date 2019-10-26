@@ -4,7 +4,7 @@ import {Alert} from 'react-native'
 import {Section, PushButtonCell} from '@frogpond/tableview'
 import {type NavigationScreenProp} from 'react-navigation'
 import {sendEmail} from '../../../../components/send-email'
-import DeviceInfo from 'react-native-device-info'
+import deviceInfo from 'react-native-device-info'
 import {appVersion, appBuild} from '@frogpond/constants'
 import {refreshApp} from '../../../../lib/refresh'
 
@@ -13,10 +13,10 @@ type Props = {navigation: NavigationScreenProp<*>}
 const getDeviceInfo = async () => `
 
 ----- Please do not edit below here -----
-${await DeviceInfo.getBrand()} ${await DeviceInfo.getModel()}
-${await DeviceInfo.getDeviceId()}
-${await DeviceInfo.getSystemName()} ${appVersion()}+${appBuild() || 'unknown'}
-${await DeviceInfo.getReadableVersion()}
+${await deviceInfo.getBrand()} ${await deviceInfo.getModel()}
+${await deviceInfo.getDeviceId()}
+${await deviceInfo.getSystemName()} ${appVersion()}+${appBuild() || 'unknown'}
+${await deviceInfo.getReadableVersion()}
 `
 
 const openEmail = async () => {
