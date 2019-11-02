@@ -23,7 +23,7 @@ export class StoPrintErrorView extends React.PureComponent<Props> {
 			android: 'md-bug',
 		})
 
-		return (
+		const errorWithTimer = (
 			<Timer
 				interval={5000}
 				invoke={this.props.refresh}
@@ -49,6 +49,32 @@ export class StoPrintErrorView extends React.PureComponent<Props> {
 				)}
 			/>
 		)
+
+		const errorWithoutTimer = (
+			<ScrollView
+				contentContainerStyle={styles.content}
+				showsVerticalScrollIndicator={false}
+				style={styles.container}
+			>
+				<Icon color={sto.black} name={iconName} size={100} />
+				<NoticeView
+					buttonText="Report"
+					header="Connection Issue"
+					onPress={() => this.props.navigation.navigate('HelpView')}
+					style={styles.notice}
+					text={`${this.props.statusMessage} ${ERROR_MESSAGE}`}
+				/>
+			</ScrollView>
+		)
+
+		switch (this.props.statusMessage) {
+			case 'Your username or password appear to be invalid.':
+				return errorWithoutTimer
+			case 'The print server seems to be having some issues.':
+				return errorWithTimer
+			default:
+				return errorWithoutTimer
+		}
 	}
 }
 
