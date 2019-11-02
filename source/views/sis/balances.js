@@ -126,7 +126,7 @@ class BalancesView extends React.Component<Props, State> {
 				contentContainerStyle={styles.stage}
 				refreshControl={
 					<RefreshControl
-						onRefresh={this.refresh}
+						onRefresh={(this.refresh: any)}
 						refreshing={this.state.loading}
 					/>
 				}
