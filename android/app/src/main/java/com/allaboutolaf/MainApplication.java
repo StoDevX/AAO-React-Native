@@ -77,11 +77,4 @@ public class MainApplication extends Application implements ReactApplication {
             }
         }
     }
-
-    public void onStop() {
-        HttpResponseCache cache = HttpResponseCache.getInstalled();
-        if (cache != null) {
-            cache.flush();
-        }
-    }
 }
