@@ -241,7 +241,7 @@ PODS:
     - React
   - RNKeychain (4.0.1):
     - React
-  - RNScreens (2.0.0-alpha.7):
+  - RNScreens (2.0.0-alpha.5):
     - React
   - RNSearchBar (3.5.1):
     - React
@@ -428,7 +428,7 @@ SPEC CHECKSUMS:
   RNDeviceInfo: 086e9644cc00dbe9bcf26de2fbcb1d9f475c84d0
   RNGestureHandler: a4ddde1ffc6e590c8127b8b7eabfdade45475c74
   RNKeychain: 45dbd50d1ac4bd42c3740f76ffb135abf05746d0
-  RNScreens: 2f53466846305189a0cfd1745f26b6ca141b3a08
+  RNScreens: ca5c144495ebf33cc1f66be04a7fd3fafd3e40ff
   RNSearchBar: 9860431356b7d12a8449d2fddb2b5f3c78d1e99f
   RNSentry: 2803ba8c8129dcf26b79e9b4d8c80168be6e4390
   RNVectorIcons: 0bb4def82230be1333ddaeee9fcba45f0b288ed4
