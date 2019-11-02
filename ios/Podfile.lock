@@ -21,6 +21,8 @@ PODS:
     - DoubleConversion
     - glog
   - glog (0.3.5)
+  - hawkrives_react-native-alternate-icons (0.6.0):
+    - React
   - RCTRequired (0.61.3)
   - RCTRestart (0.0.13):
     - React
@@ -260,6 +262,7 @@ DEPENDENCIES:
   - FBReactNativeSpec (from `../node_modules/react-native/Libraries/FBReactNativeSpec`)
   - Folly (from `../node_modules/react-native/third-party-podspecs/Folly.podspec`)
   - glog (from `../node_modules/react-native/third-party-podspecs/glog.podspec`)
+  - "hawkrives_react-native-alternate-icons (from `../node_modules/@hawkrives/react-native-alternate-icons`)"
   - RCTRequired (from `../node_modules/react-native/Libraries/RCTRequired`)
   - RCTRestart (from `../node_modules/react-native-restart/ios`)
   - RCTTypeSafety (from `../node_modules/react-native/Libraries/TypeSafety`)
@@ -316,6 +319,8 @@ EXTERNAL SOURCES:
     :podspec: "../node_modules/react-native/third-party-podspecs/Folly.podspec"
   glog:
     :podspec: "../node_modules/react-native/third-party-podspecs/glog.podspec"
+  hawkrives_react-native-alternate-icons:
+    :path: "../node_modules/@hawkrives/react-native-alternate-icons"
   RCTRequired:
     :path: "../node_modules/react-native/Libraries/RCTRequired"
   RCTRestart:
@@ -393,6 +398,7 @@ SPEC CHECKSUMS:
   FBReactNativeSpec: f7be9bcc5ce259f7c39509f3f4caf59020d11d4c
   Folly: 30e7936e1c45c08d884aa59369ed951a8e68cf51
   glog: 1f3da668190260b06b429bb211bfbee5cd790c28
+  hawkrives_react-native-alternate-icons: 1c8c2f6ff08096f067c5306b4e7e4f42e5cc06e1
   RCTRequired: a72523286ea3381f97b28d87529c265baad3ad7d
   RCTRestart: dd19aab87fc1118e05b6b5b91b959105647f56b4
   RCTTypeSafety: e3cc0537400222250f0be37bd69f4b339d3c0a0f
@@ -429,6 +435,6 @@ SPEC CHECKSUMS:
   Sentry: 5d312a04e369154aeac616214f4dfc3cbcc8b296
   Yoga: 02036f6383c0008edb7ef0773a0e6beb6ce82bd1
 
-PODFILE CHECKSUM: bb0c0de8dfb6f8477393d851ab733e0317b04827
+PODFILE CHECKSUM: 9316986936c718c636bf2c68f0c1485f4ac440cf
 
 COCOAPODS: 1.8.4

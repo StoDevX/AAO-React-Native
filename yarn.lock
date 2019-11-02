@@ -733,6 +733,11 @@
     merge "^1.2.0"
     prop-types "^15.6.0"
 
+"@hawkrives/react-native-alternate-icons@0.6.0":
+  version "0.6.0"
+  resolved "https://registry.yarnpkg.com/@hawkrives/react-native-alternate-icons/-/react-native-alternate-icons-0.6.0.tgz#009415155a6bcba3d82163cd3e5673ba3cf8dbcb"
+  integrity sha512-S8i5gPMNLXaMa5yOv8HMNZB5xNJrcuH50L9r/1lQXpizw04b3fJw44FXC5hl11UN64qRJ4vdigePnSUu0DVfVg==
+
 "@jest/console@^24.7.1", "@jest/console@^24.9.0":
   version "24.9.0"
   resolved "https://registry.yarnpkg.com/@jest/console/-/console-24.9.0.tgz#79b1bc06fb74a8cfb01cbdedf945584b1b9707f0"
