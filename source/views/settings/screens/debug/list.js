@@ -68,13 +68,13 @@ export class DebugListView extends React.PureComponent<Props> {
 }
 
 export function ConnectedDebugListView(props: TopLevelViewPropsType) {
-	let state = useSelector((state: ReduxState) => state)
-
-	if (!props.navigation.getParam('keyPath', null)) {
-		state = {state}
-	} else {
-		state = {state: get(state, props.navigation.getParam('keyPath'))}
-	}
+	let keyPath = props.navigation.getParam('keyPath', [])
+	let state = useSelector((state: ReduxState) => {
+		if (keyPath.length === 0) {
+			return state
+		}
+		return get(state, keyPath, {})
+	})
 
 	return <DebugListView {...props} state={state} />
 }
