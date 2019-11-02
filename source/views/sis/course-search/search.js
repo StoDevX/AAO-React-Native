@@ -13,7 +13,7 @@ import {
 import {areAnyTermsCached} from '../../../lib/course-search'
 import type {ReduxState} from '../../../redux'
 import type {TopLevelViewPropsType} from '../../types'
-import {connect} from 'react-redux'
+import {useDispatch, useSelector} from 'react-redux'
 import {NoticeView, LoadingView} from '@frogpond/notice'
 import {AnimatedSearchBar} from '@frogpond/searchbar'
 import {type FilterType} from '@frogpond/filter'
@@ -66,7 +66,7 @@ class CourseSearchView extends React.Component<Props, State> {
 		this.loadData({userInitiated: false})
 	}
 
-	loadData = async ({userInitiated = true} = {}) => {
+	loadData = async ({userInitiated = true}: {userInitiated?: boolean} = {}) => {
 		let hasCache = await areAnyTermsCached()
 
 		if (!hasCache && !userInitiated) {
@@ -209,29 +209,49 @@ class CourseSearchView extends React.Component<Props, State> {
 	}
 }
 
-function mapState(state: ReduxState): ReduxStateProps {
-	return {
-		courseDataState: state.courses ? state.courses.readyState : '',
-		recentFilters: state.courses ? state.courses.recentFilters : [],
-		recentSearches: state.courses ? state.courses.recentSearches : [],
-	}
-}
+export function ConnectedCourseSearchView(props: TopLevelViewPropsType) {
+	let dispatch = useDispatch()
 
-function mapDispatch(dispatch): ReduxDispatchProps {
-	return {
-		loadCourseDataIntoMemory: () => dispatch(loadCourseDataIntoMemory()),
-		updateCourseData: () => dispatch(updateCourseData()),
-		updateRecentSearches: (query: string) =>
-			dispatch(updateRecentSearches(query)),
-		updateRecentFilters: (filters: FilterType[]) =>
-			dispatch(updateRecentFilters(filters)),
-	}
-}
+	let courseDataState = useSelector(
+		(state: ReduxState) => state.courses?.readyState || '',
+	)
+	let recentFilters = useSelector(
+		(state: ReduxState) => state.courses?.recentFilters || [],
+	)
+	let recentSearches = useSelector(
+		(state: ReduxState) => state.courses?.recentSearches || [],
+	)
 
-export default connect(
-	mapState,
-	mapDispatch,
-)(CourseSearchView)
+	let _loadCourseDataIntoMemory = React.useCallback(
+		() => dispatch(loadCourseDataIntoMemory()),
+		[dispatch],
+	)
+	let _updateCourseData = React.useCallback(
+		() => dispatch(updateCourseData()),
+		[dispatch],
+	)
+	let _updateRecentSearches = React.useCallback(
+		(query: string) => dispatch(updateRecentSearches(query)),
+		[dispatch],
+	)
+	let _updateRecentFilters = React.useCallback(
+		(filters: FilterType[]) => dispatch(updateRecentFilters(filters)),
+		[dispatch],
+	)
+
+	return (
+		<CourseSearchView
+			{...props}
+			courseDataState={courseDataState}
+			loadCourseDataIntoMemory={_loadCourseDataIntoMemory}
+			recentFilters={recentFilters}
+			recentSearches={recentSearches}
+			updateCourseData={_updateCourseData}
+			updateRecentFilters={_updateRecentFilters}
+			updateRecentSearches={_updateRecentSearches}
+		/>
+	)
+}
 
 let styles = StyleSheet.create({
 	bottomContainer: {

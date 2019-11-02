@@ -10,7 +10,7 @@ import {
 } from '../../../../redux/parts/login'
 import {loadLoginCredentials} from '../../../../lib/login'
 import {type ReduxState} from '../../../../redux'
-import {connect} from 'react-redux'
+import {useSelector, useDispatch} from 'react-redux'
 import noop from 'lodash/noop'
 
 type ReduxStateProps = {
@@ -18,8 +18,8 @@ type ReduxStateProps = {
 }
 
 type ReduxDispatchProps = {
-	logInViaCredentials: (string, string) => Promise<any>,
-	logOutViaCredentials: () => any,
+	logInViaCredentials: (string, string) => void,
+	logOutViaCredentials: () => void,
 }
 
 type Props = ReduxStateProps & ReduxDispatchProps
@@ -136,11 +136,28 @@ class CredentialsLoginSection extends React.Component<Props, State> {
 	}
 }
 
-function mapStateToProps(state: ReduxState): ReduxStateProps {
-	return {status: state.login ? state.login.status : 'initializing'}
-}
+export function ConnectedCredentialsLoginSection() {
+	let dispatch = useDispatch()
+	let status = useSelector(
+		(state: ReduxState) => state.login?.status || 'initializing',
+	)
 
-export const ConnectedCredentialsLoginSection = connect(
-	mapStateToProps,
-	{logOutViaCredentials, logInViaCredentials},
-)(CredentialsLoginSection)
+	let logIn = React.useCallback(
+		(u: string, p: string) => {
+			dispatch(logInViaCredentials(u, p))
+		},
+		[dispatch],
+	)
+
+	let logOut = React.useCallback(() => {
+		dispatch(logOutViaCredentials())
+	}, [dispatch])
+
+	return (
+		<CredentialsLoginSection
+			logInViaCredentials={logIn}
+			logOutViaCredentials={logOut}
+			status={status}
+		/>
+	)
+}

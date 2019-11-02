@@ -11,7 +11,7 @@ import {LoadingView} from '@frogpond/notice'
 import {type CourseType} from '../../../lib/course-search'
 import type {ReduxState} from '../../../redux'
 import type {TopLevelViewPropsType} from '../../types'
-import {connect} from 'react-redux'
+import {useSelector, useDispatch} from 'react-redux'
 import {CourseResultsList} from './list'
 import {AnimatedSearchBar} from '@frogpond/searchbar'
 import {applyFiltersToItem, type FilterType} from '@frogpond/filter'
@@ -179,26 +179,35 @@ class CourseSearchResultsView extends React.Component<Props, State> {
 	}
 }
 
-function mapState(state: ReduxState): ReduxStateProps {
-	return {
-		allCourses: state.courses ? state.courses.allCourses : [],
-		courseDataState: state.courses ? state.courses.readyState : '',
-	}
-}
+export function ConnectedCourseSearchResultsView(props: TopLevelViewPropsType) {
+	let dispatch = useDispatch()
 
-function mapDispatch(dispatch): ReduxDispatchProps {
-	return {
-		updateRecentSearches: (query: string) =>
-			dispatch(updateRecentSearches(query)),
-		updateRecentFilters: (filters: FilterType[]) =>
-			dispatch(updateRecentFilters(filters)),
-	}
-}
+	let allCourses = useSelector(
+		(state: ReduxState) => state.courses?.allCourses || [],
+	)
+	let courseDataState = useSelector(
+		(state: ReduxState) => state.courses?.readyState || '',
+	)
 
-export default connect(
-	mapState,
-	mapDispatch,
-)(CourseSearchResultsView)
+	let searches = React.useCallback(
+		(query: string) => dispatch(updateRecentSearches(query)),
+		[dispatch],
+	)
+	let filters = React.useCallback(
+		(filters: FilterType[]) => dispatch(updateRecentFilters(filters)),
+		[dispatch],
+	)
+
+	return (
+		<CourseSearchResultsView
+			{...props}
+			allCourses={allCourses}
+			courseDataState={courseDataState}
+			updateRecentFilters={filters}
+			updateRecentSearches={searches}
+		/>
+	)
+}
 
 let styles = StyleSheet.create({
 	container: {

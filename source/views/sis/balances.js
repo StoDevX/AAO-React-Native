@@ -2,7 +2,7 @@
 
 import * as React from 'react'
 import {StyleSheet, ScrollView, View, Text, RefreshControl} from 'react-native'
-import {connect} from 'react-redux'
+import {useDispatch, useSelector} from 'react-redux'
 import {Cell, TableView, Section} from '@frogpond/tableview'
 import {logInViaCredentials} from '../../redux/parts/login'
 import {type LoginStateEnum} from '../../redux/parts/login'
@@ -22,7 +22,7 @@ type ReduxStateProps = {
 }
 
 type ReduxDispatchProps = {
-	logInViaCredentials: (string, string) => Promise<any>,
+	logInViaCredentials: (string, string) => void,
 }
 
 type Props = ReactProps & ReduxStateProps & ReduxDispatchProps
@@ -195,16 +195,21 @@ class BalancesView extends React.Component<Props, State> {
 	}
 }
 
-function mapState(state: ReduxState): ReduxStateProps {
-	return {
-		status: state.login ? state.login.status : 'initializing',
-	}
-}
+export function ConnectedBalancesView(props: TopLevelViewPropsType) {
+	let dispatch = useDispatch()
+	let status = useSelector(
+		(state: ReduxState) => state.login?.status || 'initializing',
+	)
 
-export default connect(
-	mapState,
-	{logInViaCredentials},
-)(BalancesView)
+	let logIn = React.useCallback(
+		(u: string, p: string) => {
+			dispatch(logInViaCredentials(u, p))
+		},
+		[dispatch],
+	)
+
+	return <BalancesView {...props} logInViaCredentials={logIn} status={status} />
+}
 
 let styles = StyleSheet.create({
 	stage: {

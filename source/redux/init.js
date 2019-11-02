@@ -20,7 +20,7 @@ export async function init(store: {dispatch: any => any}) {
 	])
 
 	// wait for our first connection check to happen
-	await NetInfo.isConnected.fetch()
+	await NetInfo.fetch()
 
 	// then go do the network stuff in parallel
 	await Promise.all([store.dispatch(getEnabledTools())])
