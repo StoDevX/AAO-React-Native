@@ -7,11 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		0002961D1E270BD1000909F2 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0002961C1E270BD1000909F2 /* CoreData.framework */; };
-		0002961F1E270BD9000909F2 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0002961E1E270BD9000909F2 /* SystemConfiguration.framework */; };
-		000296231E270BF0000909F2 /* libsqlite3.0.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 000296221E270BF0000909F2 /* libsqlite3.0.tbd */; };
-		00273CA21F3806FF00E42F92 /* EventKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 00273CA11F3806FF00E42F92 /* EventKit.framework */; };
-		00273CA41F38070F00E42F92 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 00273CA31F38070F00E42F92 /* CoreFoundation.framework */; };
 		00B0A216202FB153002DBB76 /* windmill@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 00B0A1DD202FB153002DBB76 /* windmill@3x.png */; };
 		00B0A217202FB153002DBB76 /* windmill@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 00B0A215202FB153002DBB76 /* windmill@2x.png */; };
 		00D33BE21DDA58A8001E830E /* AllAboutOlafUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00D33BE11DDA58A8001E830E /* AllAboutOlafUITests.swift */; };
@@ -20,7 +15,6 @@
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		3AE408501E1E280800F0FD83 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3AE4084F1E1E280800F0FD83 /* LaunchScreen.storyboard */; };
-		67B1D3D8223C9BEF00F6A70E /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 67B1D38E223C9BEF00F6A70E /* JavaScriptCore.framework */; };
 		73D9CDBC4508F72E41AEC435 /* libPods-AllAboutOlafUITests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B2E8DB9FB3455FB20CA95B7 /* libPods-AllAboutOlafUITests.a */; };
 		91E0D7C5F14D215A7C718236 /* libPods-AllAboutOlaf.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EB28C76433AECBFEDDD439B /* libPods-AllAboutOlaf.a */; };
 /* End PBXBuildFile section */
@@ -357,12 +351,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				67B1D3D8223C9BEF00F6A70E /* JavaScriptCore.framework in Frameworks */,
-				00273CA41F38070F00E42F92 /* CoreFoundation.framework in Frameworks */,
-				00273CA21F3806FF00E42F92 /* EventKit.framework in Frameworks */,
-				000296231E270BF0000909F2 /* libsqlite3.0.tbd in Frameworks */,
-				0002961F1E270BD9000909F2 /* SystemConfiguration.framework in Frameworks */,
-				0002961D1E270BD1000909F2 /* CoreData.framework in Frameworks */,
 				91E0D7C5F14D215A7C718236 /* libPods-AllAboutOlaf.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
