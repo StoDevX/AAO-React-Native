@@ -235,7 +235,7 @@ PODS:
     - ReactCommon/jscallinvoker (= 0.61.3)
   - RNDeviceInfo (5.2.1):
     - React
-  - RNGestureHandler (1.4.1):
+  - RNGestureHandler (1.5.0):
     - React
   - RNKeychain (4.0.1):
     - React
@@ -420,7 +420,7 @@ SPEC CHECKSUMS:
   React-RCTVibration: 262588c97551b0b1c675468cda857466ba5af18f
   ReactCommon: c2c63d9290b422ca6ad5b3663073a015dd892ae9
   RNDeviceInfo: 086e9644cc00dbe9bcf26de2fbcb1d9f475c84d0
-  RNGestureHandler: 4cb47a93019c1a201df2644413a0a1569a51c8aa
+  RNGestureHandler: a4ddde1ffc6e590c8127b8b7eabfdade45475c74
   RNKeychain: 45dbd50d1ac4bd42c3740f76ffb135abf05746d0
   RNScreens: 2f53466846305189a0cfd1745f26b6ca141b3a08
   RNSearchBar: 9860431356b7d12a8449d2fddb2b5f3c78d1e99f
