@@ -6,12 +6,11 @@
  */
 
 module.exports = {
-	transformer: {
-		getTransformOptions: () => ({
-			transform: {
-				experimentalImportSupport: false,
-				inlineRequires: false,
+	dependencies: {
+		'react-native-custom-tabs': {
+			platforms: {
+				ios: null,
 			},
-		}),
+		},
 	},
 }
