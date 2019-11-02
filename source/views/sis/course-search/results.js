@@ -185,11 +185,11 @@ export function ConnectedCourseSearchResultsView(props: TopLevelViewPropsType) {
 		(state: ReduxState) => state.courses?.readyState || '',
 	)
 
-	let searches = React.useCallback(
+	let updateSearches = React.useCallback(
 		(query: string) => dispatch(updateRecentSearches(query)),
 		[dispatch],
 	)
-	let filters = React.useCallback(
+	let updateFilters = React.useCallback(
 		(filters: FilterType[]) => dispatch(updateRecentFilters(filters)),
 		[dispatch],
 	)
@@ -199,8 +199,8 @@ export function ConnectedCourseSearchResultsView(props: TopLevelViewPropsType) {
 			{...props}
 			allCourses={allCourses}
 			courseDataState={courseDataState}
-			updateRecentFilters={filters}
-			updateRecentSearches={searches}
+			updateRecentFilters={updateFilters}
+			updateRecentSearches={updateSearches}
 		/>
 	)
 }
