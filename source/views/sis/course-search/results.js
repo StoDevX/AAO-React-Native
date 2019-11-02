@@ -60,10 +60,6 @@ type State = {
 }
 
 class CourseSearchResultsView extends React.Component<Props, State> {
-	static navigationOptions = {
-		title: 'Course Search',
-	}
-
 	static defaultProps = {
 		applyFilters: applyFiltersToItem,
 	}
@@ -207,6 +203,9 @@ export function ConnectedCourseSearchResultsView(props: TopLevelViewPropsType) {
 			updateRecentSearches={searches}
 		/>
 	)
+}
+ConnectedCourseSearchResultsView.navigationOptions = {
+	title: 'Course Search',
 }
 
 let styles = StyleSheet.create({

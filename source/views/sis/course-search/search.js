@@ -50,12 +50,6 @@ type State = {
 }
 
 class CourseSearchView extends React.Component<Props, State> {
-	static navigationOptions = {
-		tabBarLabel: 'Course Search',
-		tabBarIcon: TabBarIcon('search'),
-		title: 'SIS',
-	}
-
 	state = {
 		mode: 'pending',
 		isSearchbarActive: false,
@@ -251,6 +245,11 @@ export function ConnectedCourseSearchView(props: TopLevelViewPropsType) {
 			updateRecentSearches={_updateRecentSearches}
 		/>
 	)
+}
+ConnectedCourseSearchView.navigationOptions = {
+	tabBarLabel: 'Course Search',
+	tabBarIcon: TabBarIcon('search'),
+	title: 'SIS',
 }
 
 let styles = StyleSheet.create({
