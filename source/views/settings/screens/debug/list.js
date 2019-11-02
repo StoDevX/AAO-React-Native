@@ -20,9 +20,8 @@ type Props = TopLevelViewPropsType & {
 
 export class DebugListView extends React.PureComponent<Props> {
 	static navigationOptions = ({navigation}: NavigationState) => {
-		let titleParam = navigation.getParam('keyPath', 'Debug')
-		let title =
-			titleParam === 'Debug' ? titleParam : titleParam[titleParam.length - 1]
+		let titleParam = navigation.getParam('keyPath', ['Debug'])
+		let title = titleParam[titleParam.length - 1]
 
 		return {
 			title: toLaxTitleCase(title),
