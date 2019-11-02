@@ -224,14 +224,6 @@ export function ConnectedCourseSearchView(props: TopLevelViewPropsType) {
 		() => dispatch(updateCourseData()),
 		[dispatch],
 	)
-	let _updateRecentSearches = React.useCallback(
-		(query: string) => dispatch(updateRecentSearches(query)),
-		[dispatch],
-	)
-	let _updateRecentFilters = React.useCallback(
-		(filters: FilterType[]) => dispatch(updateRecentFilters(filters)),
-		[dispatch],
-	)
 
 	return (
 		<CourseSearchView
@@ -241,8 +233,6 @@ export function ConnectedCourseSearchView(props: TopLevelViewPropsType) {
 			recentFilters={recentFilters}
 			recentSearches={recentSearches}
 			updateCourseData={_updateCourseData}
-			updateRecentFilters={_updateRecentFilters}
-			updateRecentSearches={_updateRecentSearches}
 		/>
 	)
 }
