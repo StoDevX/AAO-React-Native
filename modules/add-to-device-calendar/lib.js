@@ -1,6 +1,6 @@
 // @flow
 
-import {Sentry} from 'react-native-sentry'
+import * as Sentry from '@sentry/react-native'
 import type {EventType} from '@frogpond/event-type'
 import RNCalendarEvents from 'react-native-calendar-events'
 import {Alert, Linking, Platform} from 'react-native'

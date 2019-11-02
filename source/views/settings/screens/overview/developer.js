@@ -1,5 +1,5 @@
 // @flow
-import {Sentry, SentrySeverity} from 'react-native-sentry'
+import * as Sentry from '@sentry/react-native'
 import * as React from 'react'
 import {Alert} from 'react-native'
 import {Section, PushButtonCell} from '@frogpond/tableview'
@@ -13,9 +13,7 @@ export class DeveloperSection extends React.Component<Props> {
 	onBonAppButton = () => this.props.navigation.navigate('BonAppPickerView')
 	onDebugButton = () => this.props.navigation.navigate('DebugView')
 	sendSentryMessage = () => {
-		Sentry.captureMessage('A Sentry Message', {
-			level: SentrySeverity.Info,
-		})
+		Sentry.captureMessage('A Sentry Message', {level: 'info'})
 		this.showSentryAlert()
 	}
 	sendSentryException = () => {

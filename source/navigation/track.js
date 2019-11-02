@@ -1,6 +1,6 @@
 // @flow
 
-import {Sentry} from 'react-native-sentry'
+import * as Sentry from '@sentry/react-native'
 import {type NavigationState} from 'react-navigation'
 
 // gets the current screen from navigation state
