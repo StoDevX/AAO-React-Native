@@ -28,7 +28,7 @@ export function trackScreenChanges(
 	}
 
 	if (currentScreen !== prevScreen) {
-		Sentry.captureBreadcrumb({
+		Sentry.addBreadcrumb({
 			message: `Navigated to ${currentScreen}`,
 			category: 'navigation',
 			data: {
