@@ -41,12 +41,12 @@ export async function logIn(
 		.then(response => ({error: false, value: response}))
 		.catch(error => ({error: true, value: error}))
 
-	if (result.error) {
-		return 'The print server seems to be having some issues.'
-	}
-
 	if (!result.value.success) {
 		return 'Your username or password appear to be invalid.'
+	}
+
+	if (result.error) {
+		return 'The print server seems to be having some issues.'
 	}
 
 	return 'success'
