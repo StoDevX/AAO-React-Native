@@ -36,7 +36,9 @@ export function HelpView() {
 		dispatch,
 	])
 
-	React.useEffect(() => findEnabledTools(), [findEnabledTools])
+	React.useEffect(() => {
+		findEnabledTools()
+	}, [findEnabledTools])
 
 	if (fetching) {
 		return <LoadingView text="Loading…" />
