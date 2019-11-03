@@ -56,7 +56,7 @@ def propagate_version(**args)
 		set_gradle_version_code(version_code: number, gradle_path: lane_context[:GRADLE_FILE])
 	when :ios
 		# we're splitting here because iTC can't handle versions with dashes in them
-		increment_version_number(version_number: version.split('-')[0], xcodeproj: ENV['GYM_PROJECT'])
-		increment_build_number(build_number: number, xcodeproj: ENV['GYM_PROJECT'])
+		increment_version_number(version_number: version.split('-')[0], xcodeproj: ENV['XCODE_PROJECT'])
+		increment_build_number(build_number: number, xcodeproj: ENV['XCODE_PROJECT'])
 	end
 end

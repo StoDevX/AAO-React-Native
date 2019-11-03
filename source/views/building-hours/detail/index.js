@@ -6,7 +6,7 @@ import {Timer} from '@frogpond/timer'
 import {BuildingDetail} from './building'
 import {timezone} from '@frogpond/constants'
 import type {TopLevelViewPropsType} from '../../types'
-import {ConnectedBuildingFavoriteButton as FavoriteButton} from './toolbar-button'
+import {BuildingFavoriteButton} from './toolbar-button'
 
 type Props = TopLevelViewPropsType & {
 	navigation: {state: {params: {building: BuildingType}}},
@@ -17,7 +17,7 @@ export class BuildingHoursDetailView extends React.Component<Props> {
 		let building = navigation.state.params.building
 		return {
 			title: building.name,
-			headerRight: <FavoriteButton buildingName={building.name} />,
+			headerRight: <BuildingFavoriteButton buildingName={building.name} />,
 		}
 	}
 

@@ -49,8 +49,7 @@ def bundle_identifier
 	when :android
 		"com.allaboutolaf"
 	when :ios
-		get_info_plist_value(path: 'ios/AllAboutOlaf/Info.plist',
-		                     key: 'CFBundleIdentifier')
+		"NFMTHAZVS9.com.drewvolz.stolaf"
 	end
 end
 

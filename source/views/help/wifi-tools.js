@@ -1,18 +1,8 @@
 // @flow
 
 import deviceInfo from 'react-native-device-info'
-import networkInfo from 'react-native-network-info'
 import RNLocation from 'react-native-location'
 import pkg from '../../../package.json'
-
-export const getIpAddress = (): Promise<?string> =>
-	new Promise(resolve => {
-		try {
-			networkInfo.getIPAddress(resolve)
-		} catch (err) {
-			resolve(null)
-		}
-	})
 
 export const getPosition = async (): Promise<null | Object> => {
 	RNLocation.configure({distanceFilter: 100})
@@ -41,19 +31,43 @@ export const getPosition = async (): Promise<null | Object> => {
 	return RNLocation.getLatestLocation({timeout: 1500})
 }
 
-export const collectData = async () => ({
-	id: deviceInfo.getUniqueId(),
-	brand: deviceInfo.getBrand(),
-	model: deviceInfo.getModel(),
-	deviceKind: deviceInfo.getDeviceId(),
-	os: deviceInfo.getSystemName(),
-	osVersion: deviceInfo.getSystemVersion(),
-	appVersion: deviceInfo.getReadableVersion(),
-	jsVersion: pkg.version,
-	ua: deviceInfo.getUserAgent(),
-	ip: await getIpAddress(),
-	dateRecorded: new Date().toJSON(),
-})
+export async function collectData() {
+	let [
+		id,
+		brand,
+		model,
+		deviceKind,
+		os,
+		osVersion,
+		appVersion,
+		ua,
+		ip,
+	] = await Promise.all([
+		deviceInfo.getUniqueId(),
+		deviceInfo.getBrand(),
+		deviceInfo.getModel(),
+		deviceInfo.getDeviceId(),
+		deviceInfo.getSystemName(),
+		deviceInfo.getSystemVersion(),
+		deviceInfo.getReadableVersion(),
+		deviceInfo.getUserAgent(),
+		deviceInfo.getIpAddress(),
+	])
+
+	return {
+		id,
+		brand,
+		model,
+		deviceKind,
+		os,
+		osVersion,
+		appVersion,
+		ua,
+		ip,
+		jsVersion: pkg.version,
+		dateRecorded: new Date().toJSON(),
+	}
+}
 
 export const reportToServer = (url: string, data: Object) =>
 	fetch(url, {method: 'POST', body: JSON.stringify(data)})

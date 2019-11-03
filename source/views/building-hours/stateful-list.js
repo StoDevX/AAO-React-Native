@@ -4,7 +4,7 @@ import * as React from 'react'
 import {NoticeView} from '@frogpond/notice'
 import {BuildingHoursList} from './list'
 import {type ReduxState} from '../../redux'
-import {connect} from 'react-redux'
+import {useSelector} from 'react-redux'
 import type {TopLevelViewPropsType} from '../types'
 import type {BuildingType} from './types'
 import toPairs from 'lodash/toPairs'
@@ -110,12 +110,10 @@ export class BuildingHoursView extends React.PureComponent<Props, State> {
 	}
 }
 
-function mapStateToProps(state: ReduxState): ReduxStateProps {
-	return {
-		favoriteBuildings: state.buildings ? state.buildings.favorites : [],
-	}
-}
+export function ConnectedBuildingHoursView(props: TopLevelViewPropsType) {
+	let favoriteBuildings = useSelector(
+		(state: ReduxState) => state.buildings?.favorites || [],
+	)
 
-export const ConnectedBuildingHoursView = connect(mapStateToProps)(
-	BuildingHoursView,
-)
+	return <BuildingHoursView {...props} favoriteBuildings={favoriteBuildings} />
+}
