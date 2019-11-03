@@ -7,8 +7,6 @@ import * as c from '@frogpond/colors'
 import {
 	updateCourseData,
 	loadCourseDataIntoMemory,
-	updateRecentSearches,
-	updateRecentFilters,
 } from '../../../redux/parts/courses'
 import {areAnyTermsCached} from '../../../lib/course-search'
 import type {ReduxState} from '../../../redux'
@@ -16,7 +14,6 @@ import type {TopLevelViewPropsType} from '../../types'
 import {useDispatch, useSelector} from 'react-redux'
 import {NoticeView, LoadingView} from '@frogpond/notice'
 import {AnimatedSearchBar} from '@frogpond/searchbar'
-import {type FilterType} from '@frogpond/filter'
 import {RecentItemsList} from '../components/recents-list'
 import {Separator} from '@frogpond/separator'
 import {buildFilters} from './lib/build-filters'
