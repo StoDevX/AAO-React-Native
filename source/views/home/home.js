@@ -1,7 +1,13 @@
 // @flow
 
 import * as React from 'react'
-import {ScrollView, View, StyleSheet, StatusBar, SafeAreaView} from 'react-native'
+import {
+	ScrollView,
+	View,
+	StyleSheet,
+	StatusBar,
+	SafeAreaView,
+} from 'react-native'
 
 import {getTheme} from '@frogpond/app-theme'
 import {type TopLevelViewPropsType} from '../types'
