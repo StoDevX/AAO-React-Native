@@ -2,7 +2,7 @@
 
 import React from 'react'
 import {SectionList, StyleSheet} from 'react-native'
-import {connect} from 'react-redux'
+import {useDispatch, useSelector} from 'react-redux'
 import {type ReduxState} from '../../redux'
 import {updatePrinters} from '../../redux/parts/stoprint'
 import type {Printer, PrintJob} from '../../lib/stoprint'
@@ -168,23 +168,39 @@ class PrinterListView extends React.PureComponent<Props, State> {
 	}
 }
 
-function mapStateToProps(state: ReduxState): ReduxStateProps {
-	return {
-		printers: state.stoprint ? state.stoprint.printers : [],
-		recentPrinters: state.stoprint ? state.stoprint.recentPrinters : [],
-		popularPrinters: state.stoprint ? state.stoprint.popularPrinters : [],
-		colorPrinters: state.stoprint ? state.stoprint.colorPrinters : [],
-		error: state.stoprint ? state.stoprint.printersError : null,
-	}
-}
+export function ConnectedPrinterListView(props: TopLevelViewPropsType) {
+	let dispatch = useDispatch()
 
-function mapDispatchToProps(dispatch): ReduxDispatchProps {
-	return {
-		updatePrinters: () => dispatch(updatePrinters()),
-	}
-}
+	let printers = useSelector(
+		(state: ReduxState) => state.stoprint?.printers || [],
+	)
+	let recentPrinters = useSelector(
+		(state: ReduxState) => state.stoprint?.recentPrinters || [],
+	)
+	let popularPrinters = useSelector(
+		(state: ReduxState) => state.stoprint?.popularPrinters || [],
+	)
+	let colorPrinters = useSelector(
+		(state: ReduxState) => state.stoprint?.colorPrinters || [],
+	)
+	let error = useSelector(
+		(state: ReduxState) => state.stoprint?.printersError || null,
+	)
 
-export const ConnectedPrinterListView = connect(
-	mapStateToProps,
-	mapDispatchToProps,
-)(PrinterListView)
+	let _updatePrinters = React.useCallback(
+		() => () => dispatch(updatePrinters()),
+		[dispatch],
+	)
+
+	return (
+		<PrinterListView
+			{...props}
+			colorPrinters={colorPrinters}
+			error={error}
+			popularPrinters={popularPrinters}
+			printers={printers}
+			recentPrinters={recentPrinters}
+			updatePrinters={_updatePrinters}
+		/>
+	)
+}

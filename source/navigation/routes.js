@@ -16,7 +16,7 @@ import {
 	DictionaryView,
 } from '../views/dictionary'
 import {FaqView} from '../views/faqs'
-import HelpView from '../views/help'
+import {HelpView} from '../views/help'
 import {
 	CourseDetailView,
 	CourseSearchResultsView,

@@ -3,7 +3,7 @@
 import React from 'react'
 import {timezone} from '@frogpond/constants'
 import {Platform, SectionList} from 'react-native'
-import {connect} from 'react-redux'
+import {useDispatch, useSelector} from 'react-redux'
 import {type ReduxState} from '../../redux'
 import {updatePrintJobs} from '../../redux/parts/stoprint'
 import {type LoginStateEnum, logInViaCredentials} from '../../redux/parts/login'
@@ -208,23 +208,33 @@ class PrintJobsView extends React.PureComponent<Props, State> {
 	}
 }
 
-function mapStateToProps(state: ReduxState): ReduxStateProps {
-	return {
-		jobs: state.stoprint ? state.stoprint.jobs : [],
-		error: state.stoprint ? state.stoprint.jobsError : null,
-		status: state.login ? state.login.status : 'logged-out',
-	}
-}
+export function ConnectedPrintJobsView(props: TopLevelViewPropsType) {
+	let dispatch = useDispatch()
 
-function mapDispatchToProps(dispatch): ReduxDispatchProps {
-	return {
-		logInViaCredentials: (username, password) =>
-			dispatch(logInViaCredentials(username, password)),
-		updatePrintJobs: () => dispatch(updatePrintJobs()),
-	}
-}
+	let jobs = useSelector((state: ReduxState) => state.stoprint?.jobs || [])
+	let error = useSelector(
+		(state: ReduxState) => state.stoprint?.jobsError || null,
+	)
+	let status = useSelector(
+		(state: ReduxState) => state.login?.status || 'logged-out',
+	)
 
-export const ConnectedPrintJobsView = connect(
-	mapStateToProps,
-	mapDispatchToProps,
-)(PrintJobsView)
+	let _logInViaCredentials = React.useCallback(
+		(username, password) => dispatch(logInViaCredentials(username, password)),
+		[dispatch],
+	)
+	let _updatePrintJobs = React.useCallback(() => dispatch(updatePrintJobs()), [
+		dispatch,
+	])
+
+	return (
+		<PrintJobsView
+			{...props}
+			error={error}
+			jobs={jobs}
+			logInViaCredentials={_logInViaCredentials}
+			status={status}
+			updatePrintJobs={_updatePrintJobs}
+		/>
+	)
+}
