@@ -6,7 +6,7 @@ USE_PODS=${FP_PODS:-yes}
 
 if [[ $USE_PODS = 'yes' ]]; then
 	if [[ $(uname) = 'Darwin' ]]; then
-		bundle install --path .bundle
+		bundle install
 		cd ios && bundle exec pod install
 
 		if [[ $? != 0 ]]; then
