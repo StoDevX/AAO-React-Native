@@ -56,7 +56,8 @@ function doSearch(args: {
 }
 
 let memoizedDoSearch = memoize(doSearch)
-memoizedDoSearch.cache = new WeakMap()
+// lodash supports this; the types do not.
+;(memoizedDoSearch: any).cache = new WeakMap()
 
 export class CourseResultsList extends React.PureComponent<Props> {
 	keyExtractor = (item: CourseType) => item.clbid.toString()

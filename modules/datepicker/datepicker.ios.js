@@ -57,6 +57,7 @@ export class DatePicker extends React.Component<Props, State> {
 		return Animated.timing(this.state.animatedHeight, {
 			toValue: this.props.height,
 			duration: this.props.duration,
+			useNativeDriver: false,
 		}).start()
 	}
 
@@ -64,6 +65,7 @@ export class DatePicker extends React.Component<Props, State> {
 		return Animated.timing(this.state.animatedHeight, {
 			toValue: 0,
 			duration: this.props.duration,
+			useNativeDriver: false,
 		}).start(() => {
 			this.setState(() => ({modalVisible: false}))
 		})

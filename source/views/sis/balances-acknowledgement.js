@@ -4,7 +4,7 @@ import * as React from 'react'
 import {StyleSheet, ScrollView, Platform, View} from 'react-native'
 import Icon from 'react-native-vector-icons/Ionicons'
 import {TabBarIcon} from '@frogpond/navigation-tabs'
-import {connect} from 'react-redux'
+import {useSelector, useDispatch} from 'react-redux'
 import {hasSeenAcknowledgement} from '../../redux/parts/settings'
 import {type ReduxState} from '../../redux'
 import type {TopLevelViewPropsType} from '../types'
@@ -12,23 +12,23 @@ import {Avatar, Button, Card, Paragraph as AndroidP} from 'react-native-paper'
 import {Paragraph as IosP} from '@frogpond/markdown'
 import {Card as IosCard} from '@frogpond/silly-card'
 import {Button as IosButton} from '@frogpond/button'
-import BalancesView from './balances'
-
-type ReduxStateProps = {
-	alertSeen: boolean,
-}
-
-type Props = {
-	...TopLevelViewPropsType,
-	...ReduxStateProps,
-	// from redux mapDispatch
-	hasSeenAcknowledgement: () => any,
-}
+import {ConnectedBalancesView as BalancesView} from './balances'
 
 let Paragraph = Platform.OS === 'android' ? AndroidP : IosP
+let Ack = Platform.OS === 'android' ? AndroidAck : IosAck
 
-function BalancesOrAcknowledgementView(props: Props) {
-	if (props.alertSeen) {
+export function BalancesOrAcknowledgementView(props: TopLevelViewPropsType) {
+	let dispatch = useDispatch()
+	let alertSeen = useSelector(
+		(state: ReduxState) => state.settings?.unofficiallyAcknowledged || false,
+	)
+
+	let acknowledge = React.useCallback(
+		() => dispatch(hasSeenAcknowledgement()),
+		[dispatch],
+	)
+
+	if (alertSeen) {
 		return <BalancesView navigation={props.navigation} />
 	}
 
@@ -56,37 +56,18 @@ function BalancesOrAcknowledgementView(props: Props) {
 	)
 
 	let ackProps = {
-		onPositive: props.hasSeenAcknowledgement,
+		onPositive: acknowledge,
 		subtitle: 'Bon Appétit is always right',
 		title: 'Before you continue…',
 	}
 
-	return (
-		<ScrollView contentContainerStyle={styles.container}>
-			{Platform.OS === 'ios' ? (
-				<IosAck {...ackProps}>{content}</IosAck>
-			) : (
-				<AndroidAck {...ackProps}>{content}</AndroidAck>
-			)}
-		</ScrollView>
-	)
+	return <Ack {...ackProps}>{content}</Ack>
 }
 
 BalancesOrAcknowledgementView.navigationOptions = {
 	tabBarLabel: 'Balances',
 	tabBarIcon: TabBarIcon('card'),
 }
-
-function mapState(state: ReduxState): ReduxStateProps {
-	return {
-		alertSeen: state.settings ? state.settings.unofficiallyAcknowledged : false,
-	}
-}
-
-export default connect(
-	mapState,
-	{hasSeenAcknowledgement},
-)(BalancesOrAcknowledgementView)
 
 type AcknowledgementProps = {|
 	title: string,
@@ -99,26 +80,28 @@ function AndroidAck(props: AcknowledgementProps) {
 	let {title, subtitle, children, onPositive} = props
 
 	return (
-		<Card style={styles.androidCard}>
-			<Card.Title
-				left={props => (
-					<Avatar.Icon
-						{...props}
-						icon={({size, color}) => (
-							<Icon name="md-warning" size={size} style={{color}} />
-						)}
-					/>
-				)}
-				subtitle={subtitle}
-				title={title}
-			/>
-			<Card.Content>{children}</Card.Content>
-			<Card.Actions>
-				<Button mode="contained" onPress={onPositive}>
-					I Agree
-				</Button>
-			</Card.Actions>
-		</Card>
+		<ScrollView contentContainerStyle={styles.container}>
+			<Card style={styles.androidCard}>
+				<Card.Title
+					left={props => (
+						<Avatar.Icon
+							{...props}
+							icon={({size, color}) => (
+								<Icon name="md-warning" size={size} style={{color}} />
+							)}
+						/>
+					)}
+					subtitle={subtitle}
+					title={title}
+				/>
+				<Card.Content>{children}</Card.Content>
+				<Card.Actions>
+					<Button mode="contained" onPress={onPositive}>
+						I Agree
+					</Button>
+				</Card.Actions>
+			</Card>
+		</ScrollView>
 	)
 }
 
@@ -126,13 +109,15 @@ function IosAck(props: AcknowledgementProps) {
 	let {title, children, onPositive} = props
 
 	return (
-		<IosCard header={title}>
-			{children}
+		<ScrollView contentContainerStyle={styles.container}>
+			<IosCard header={title}>
+				{children}
 
-			<View style={styles.iosButtonRow}>
-				<IosButton onPress={onPositive} title="I Agree" />
-			</View>
-		</IosCard>
+				<View style={styles.iosButtonRow}>
+					<IosButton onPress={onPositive} title="I Agree" />
+				</View>
+			</IosCard>
+		</ScrollView>
 	)
 }
 

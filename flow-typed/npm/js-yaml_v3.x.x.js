@@ -1,5 +1,5 @@
-// flow-typed signature: cdd8c6c40f61e60f34afae4890cab4f8
-// flow-typed version: 2c39d1a098/js-yaml_v3.x.x/flow_>=v0.75.x
+// flow-typed signature: 40dae59daa15ca48d8e8115ee4489ac4
+// flow-typed version: c6154227d1/js-yaml_v3.x.x/flow_>=v0.104.x
 
 declare module 'js-yaml' {
 
@@ -9,7 +9,7 @@ declare module 'js-yaml' {
     indent?: number,
     skipInvalid?: boolean,
     flowLevel?: number,
-    styles?: {[string]: any},
+    styles?: { [string]: any, ... },
     schema?: Schema,
     sortKeys?: boolean | ((a: any, b: any) => number),
     lineWidth?: number,
@@ -37,9 +37,9 @@ declare module 'js-yaml' {
     construct?: (data: any) => any,
     instanceOf?: Object,
     predicate?: string,
-    represent?: ((data: Object) => any) | {[string]: (data: Object) => any},
+    represent?: ((data: Object) => any) | { [string]: (data: Object) => any, ... },
     defaultStyle?: string,
-    styleAliases?: {[string]: any},
+    styleAliases?: { [string]: any, ... },
   |};
 
   declare class Schema {  // implements SchemaDefinition
@@ -51,7 +51,7 @@ declare module 'js-yaml' {
 
     compiledImplicit: Array<Type>;
     compiledExplicit: Array<Type>;
-    compiledTypeMap: {[Kind | 'fallback']: {[string]: Type}};
+    compiledTypeMap: { [Kind | 'fallback']: { [string]: Type, ... }, ... };
 
     constructor(definition: SchemaDefinition): this;
 
@@ -64,9 +64,9 @@ declare module 'js-yaml' {
     kind: Kind;
     instanceOf: ?Object;
     predicate: ?string;
-    represent: ((data: Object) => any) | {[string]: (data: Object) => any} | null;
+    represent: ((data: Object) => any) | { [string]: (data: Object) => any, ... } | null;
     defaultStyle: ?string;
-    styleAliases: {[string]: any};
+    styleAliases: { [string]: any, ... };
 
     constructor(tag: string, opts?: TypeConstructorOptions): this;
 

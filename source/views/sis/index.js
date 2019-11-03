@@ -2,7 +2,7 @@
 
 import {TabNavigator} from '../../../modules/navigation-tabs/tabbed-view'
 
-import BalancesOrAcknowledgementView from './balances-acknowledgement'
+import {BalancesOrAcknowledgementView} from './balances-acknowledgement'
 import StudentWorkView from './student-work'
 import {CourseSearchView} from './course-search'
 import TESView from './tes'

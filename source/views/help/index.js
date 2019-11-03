@@ -3,15 +3,13 @@
 import * as React from 'react'
 import semver from 'semver'
 import pkg from '../../../package.json'
-import {connect} from 'react-redux'
+import {useSelector, useDispatch} from 'react-redux'
 import {ScrollView, StyleSheet} from 'react-native'
 import {NoticeView, LoadingView} from '@frogpond/notice'
-import {type TopLevelViewPropsType} from '../types'
 import {type ReduxState} from '../../redux'
 import {getEnabledTools} from '../../redux/parts/help'
 import * as wifi from './wifi'
 import {ToolView} from './tool'
-import {type ToolOptions} from './types'
 
 const CUSTOM_TOOLS = [wifi]
 
@@ -27,61 +25,42 @@ const getToolView = config => {
 	return [customView.ToolView, config]
 }
 
-type ReduxStateProps = {
-	fetching: boolean,
-	tools: Array<ToolOptions>,
-}
+export function HelpView() {
+	let tools = useSelector((state: ReduxState) => state.help?.tools || [])
+	let fetching = useSelector(
+		(state: ReduxState) => state.help?.fetching || false,
+	)
 
-type ReduxDispatchProps = {
-	getEnabledTools: () => mixed,
-}
+	let dispatch = useDispatch()
+	let findEnabledTools = React.useCallback(() => dispatch(getEnabledTools()), [
+		dispatch,
+	])
 
-type Props = TopLevelViewPropsType & ReduxStateProps & ReduxDispatchProps
+	React.useEffect(() => {
+		findEnabledTools()
+	}, [findEnabledTools])
 
-export class HelpView extends React.Component<Props> {
-	static navigationOptions = {
-		title: 'Help',
+	if (fetching) {
+		return <LoadingView text="Loading…" />
 	}
 
-	componentDidMount() {
-		this.props.getEnabledTools()
+	let views = tools
+		.filter(shouldBeShown)
+		.map(getToolView)
+		.map(([Tool, conf]) => <Tool key={conf.key} config={conf} />)
+
+	if (!views.length) {
+		return <NoticeView text="No tools are enabled." />
 	}
 
-	render() {
-		if (this.props.fetching) {
-			return <LoadingView text="Loading…" />
-		}
-
-		let views = this.props.tools
-			.filter(shouldBeShown)
-			.map(getToolView)
-			.map(([Tool, conf]) => <Tool key={conf.key} config={conf} />)
-
-		return views.length ? (
-			<ScrollView contentContainerStyle={styles.container}>{views}</ScrollView>
-		) : (
-			<NoticeView text="No tools are enabled." />
-		)
-	}
+	return (
+		<ScrollView contentContainerStyle={styles.container}>{views}</ScrollView>
+	)
 }
 
-function mapState(state: ReduxState): ReduxStateProps {
-	return {
-		fetching: state.help ? state.help.fetching : false,
-		tools: state.help ? state.help.tools : [],
-	}
+HelpView.navigationOptions = {
+	title: 'Help',
 }
-
-function mapDispatch(dispatch): ReduxDispatchProps {
-	return {
-		getEnabledTools: () => dispatch(getEnabledTools()),
-	}
-}
-
-export default connect(
-	mapState,
-	mapDispatch,
-)(HelpView)
 
 const styles = StyleSheet.create({
 	container: {

@@ -231,15 +231,6 @@ android {
         }
     }
 
-    packagingOptions {
-        pickFirst '**/armeabi-v7a/libc++_shared.so'
-        pickFirst '**/x86/libc++_shared.so'
-        pickFirst '**/arm64-v8a/libc++_shared.so'
-        pickFirst '**/x86_64/libc++_shared.so'
-        pickFirst '**/x86/libjsc.so'
-        pickFirst '**/armeabi-v7a/libjsc.so'
-    }
-
     bundle {
         language {
             enableSplit = true
@@ -258,11 +249,6 @@ android {
     }
 
     configurations.all {
-        resolutionStrategy.force "com.android.support:appcompat-v7:${rootProject.ext.supportLibVersion}"
-        resolutionStrategy.force "com.android.support:customtabs:${rootProject.ext.supportLibVersion}"
-        resolutionStrategy.force "com.android.support:support-media-compat:${rootProject.ext.supportLibVersion}"
-        resolutionStrategy.force "com.android.support:support-v4:${rootProject.ext.supportLibVersion}"
-
         resolutionStrategy.force 'org.webkit:android-jsc:r241213'
     }
 }
@@ -274,13 +260,12 @@ dependencies {
 
     // this is for react-native itself
     implementation fileTree(dir: "libs", include: ["*.jar"])
-    implementation "com.android.support:appcompat-v7:${rootProject.ext.supportLibVersion}"
 
     //noinspection GradleDynamicVersion
     implementation "com.facebook.react:react-native:+"  // From node_modules
 
     if (enableHermes) {
-        def hermesPath = "../../node_modules/hermesvm/android/";
+        def hermesPath = "../../node_modules/hermes-engine/android/";
         debugImplementation files(hermesPath + "hermes-debug.aar")
         releaseImplementation files(hermesPath + "hermes-release.aar")
     } else {
@@ -308,4 +293,17 @@ gradle.projectsEvaluated {
     }
 }
 
-apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesAppBuildGradle(project)
+project.ext.vectoricons = [
+    // Name of the font files you want to copy
+    iconFontNames: [
+        'MaterialIcons.ttf',
+        'Entypo.ttf',
+        'Ionicons.ttf',
+    ],
+]
+
+apply from: file("../../node_modules/react-native-vector-icons/fonts.gradle")
+
+apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle")
+
+applyNativeModulesAppBuildGradle(project)

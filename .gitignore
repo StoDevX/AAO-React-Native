@@ -18,7 +18,9 @@ DerivedData
 *.hmap
 *.ipa
 *.xcuserstate
-project.xcworkspace
+
+# Cocoapods
+ios/Pods
 
 # Android/IntelliJ
 build/
