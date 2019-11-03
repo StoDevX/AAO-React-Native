@@ -57,7 +57,7 @@ platform :ios do
 
 	desc 'Builds and exports the app'
 	lane :build do
-		# certificates(type: 'appstore')
+		certificates(type: 'appstore')
 		propagate_version
 
 		# save it to a log file for later use
