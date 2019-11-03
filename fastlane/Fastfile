@@ -16,6 +16,7 @@ before_all do
 
 	# set up global info for `gym`
 	ENV['GYM_PROJECT'] = './ios/AllAboutOlaf.xcodeproj'
+	ENV['GYM_WORKSPACE'] = './ios/AllAboutOlaf.xcworkspace'
 	ENV['GYM_SCHEME'] = 'AllAboutOlaf'
 	ENV['GYM_OUTPUT_DIRECTORY'] = './ios/build'
 	ENV['GYM_OUTPUT_NAME'] = 'AllAboutOlaf'
@@ -33,6 +34,7 @@ before_all do
 	lane_context[:APPLE_APP_NAME] = 'All About Olaf'
 
 	UI.message "GYM_PROJECT is #{ENV['GYM_PROJECT']}"
+	UI.message "GYM_WORKSPACE is #{ENV['GYM_WORKSPACE']}"
 	UI.message "GYM_SCHEME is #{ENV['GYM_SCHEME']}"
 	UI.message "GYM_OUTPUT_DIRECTORY is #{ENV['GYM_OUTPUT_DIRECTORY']}"
 	UI.message "GYM_OUTPUT_NAME is #{ENV['GYM_OUTPUT_NAME']}"

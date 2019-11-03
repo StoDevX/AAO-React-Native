@@ -3,7 +3,7 @@ require 'json'
 platform :ios do
 	desc 'Runs all the tests'
 	lane :test do
-		scan(scheme: ENV['GYM_SCHEME'], project: ENV['GYM_PROJECT'])
+		scan(scheme: ENV['GYM_SCHEME'], workspace: ENV['GYM_WORKSPACE'])
 	end
 
 	desc 'Take screenshots'
@@ -19,7 +19,7 @@ platform :ios do
 		snapshot(devices: devices,
 		         languages: ['en-US'],
 		         scheme: ENV['GYM_SCHEME'],
-		         project: ENV['GYM_PROJECT'],
+		         workspace: ENV['GYM_WORKSPACE'],
 		         # concurrent_simulators: false,
 		         number_of_retries: 0)
 	end
@@ -27,7 +27,7 @@ platform :ios do
 	desc 'Checks that the app can be built'
 	lane :check_build do
 		# fetch the directory where Xcode will put the .app
-		settings = FastlaneCore::Helper.backticks(%(xcodebuild -showBuildSettings -configuration Debug -scheme "#{ENV['GYM_SCHEME']}" -project "../#{ENV['GYM_PROJECT']}" -destination 'generic/platform=iOS'))
+		settings = FastlaneCore::Helper.backticks(%(xcodebuild -showBuildSettings -configuration Debug -scheme "#{ENV['GYM_SCHEME']}" -workspace "../#{ENV['GYM_WORKSPACE']}" -destination 'generic/platform=iOS'))
 		products_dir = settings.split("\n").select { |line| line =~ /\bBUILT_PRODUCTS_DIR =/ }.uniq
 		products_dir = products_dir.map { |entry| entry.gsub(/.*BUILT_PRODUCTS_DIR = /, '') }
 		products = products_dir.map { |entry| entry + "/#{ENV['GYM_OUTPUT_NAME']}.app/" }
@@ -43,7 +43,7 @@ platform :ios do
 			xcodebuild(
 			           build: true,
 			           scheme: ENV['GYM_SCHEME'],
-			           project: ENV['GYM_PROJECT'],
+			           workspace: ENV['GYM_WORKSPACE'],
 			           destination: 'generic/platform=iOS',
 			           xcargs: %(CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY=""),
 			           )
@@ -57,7 +57,7 @@ platform :ios do
 
 	desc 'Builds and exports the app'
 	lane :build do
-		certificates(type: 'appstore')
+		# certificates(type: 'appstore')
 		propagate_version
 
 		# save it to a log file for later use
