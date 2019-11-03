@@ -1,5 +1,7 @@
 // @flow
 
+import 'react-native-gesture-handler'
+
 // initialization
 import './init/constants'
 import './init/moment'
