@@ -1,5 +1,7 @@
 // @flow
 
+// TODO Check on https://github.com/kmagiera/react-native-gesture-handler/issues/320,
+// and remove this if/when it is no longer necessary
 import 'react-native-gesture-handler'
 
 // initialization
