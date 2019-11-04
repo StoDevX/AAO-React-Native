@@ -4,8 +4,8 @@ import querystring from 'query-string'
 import type {JobType} from './types'
 
 export function createJobFullUrl(job: JobType) {
-	const jobBaseUrl = 'https://www.stolaf.edu/apps/stuwork/index.cfm?'
-	const query = querystring.stringify({
+	let jobBaseUrl = 'https://www.stolaf.edu/apps/stuwork/index.cfm?'
+	let query = querystring.stringify({
 		fuseaction: 'Details',
 		jobID: String(job.id),
 	})
@@ -13,7 +13,7 @@ export function createJobFullUrl(job: JobType) {
 }
 
 export function shareJob(job: JobType) {
-	const url = createJobFullUrl(job)
+	let url = createJobFullUrl(job)
 	if (Platform.OS === 'ios') {
 		Share.share({
 			url: url,

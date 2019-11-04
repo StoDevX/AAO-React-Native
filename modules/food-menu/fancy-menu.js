@@ -54,6 +54,9 @@ const styles = StyleSheet.create({
 	message: {
 		paddingVertical: 16,
 	},
+	contentContainer: {
+		flexGrow: 1,
+	},
 })
 
 const LEFT_MARGIN = 28
@@ -77,7 +80,7 @@ export class FancyMenu extends React.Component<Props, State> {
 			props.foodItems !== prevState.cachedFoodItems
 		) {
 			let {foodItems, menuCorIcons, meals, now} = props
-			const filters =
+			let filters =
 				prevState.filters.length !== 0
 					? prevState.filters
 					: buildFilters(values(foodItems), menuCorIcons, meals, now)
@@ -187,7 +190,7 @@ export class FancyMenu extends React.Component<Props, State> {
 		let messageView = <NoticeView style={styles.message} text={message} />
 
 		// If the requested menu has no food items, that location is closed
-		const isOpen = Object.keys(foodItems).length !== 0
+		let isOpen = Object.keys(foodItems).length !== 0
 
 		let header = (
 			<FilterToolbar
@@ -204,6 +207,7 @@ export class FancyMenu extends React.Component<Props, State> {
 				ItemSeparatorComponent={Separator}
 				ListEmptyComponent={messageView}
 				ListHeaderComponent={header}
+				contentContainerStyle={styles.contentContainer}
 				extraData={filters}
 				keyExtractor={this.keyExtractor}
 				onRefresh={this.props.onRefresh}

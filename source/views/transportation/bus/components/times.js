@@ -13,7 +13,7 @@ type Props = {|
 
 export class ScheduleTimes extends React.PureComponent<Props, void> {
 	render() {
-		const {times} = this.props
+		let {times} = this.props
 
 		return (
 			<Text>

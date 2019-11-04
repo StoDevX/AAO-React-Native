@@ -30,7 +30,7 @@ export function applyFilter(filter: FilterType, item: any): boolean {
 
 export function applyToggleFilter(filter: ToggleType, item: any): boolean {
 	// Dereference the value-to-check
-	const itemValue = item[filter.apply.key]
+	let itemValue = item[filter.apply.key]
 	return filter.apply.trueEquivalent
 		? itemValue === filter.apply.trueEquivalent
 		: Boolean(itemValue)
@@ -38,9 +38,9 @@ export function applyToggleFilter(filter: ToggleType, item: any): boolean {
 
 export function applyListFilter(filter: ListType, item: any): boolean {
 	// Dereference the value-to-check
-	const itemValue = item[filter.apply.key]
+	let itemValue = item[filter.apply.key]
 	// Extract the list of "selected" items
-	const filterValue = filter.spec.selected
+	let filterValue = filter.spec.selected
 
 	switch (filter.spec.mode) {
 		case 'OR':
@@ -61,8 +61,8 @@ export function applyOrListFilter(
 		return filterValue.map(f => f.title).includes(itemValue)
 	}
 
-	const valueToCheckAgainst = filterValue.map(f => f.title.toString())
-	const intersectionValues = intersection(valueToCheckAgainst, itemValue)
+	let valueToCheckAgainst = filterValue.map(f => f.title.toString())
+	let intersectionValues = intersection(valueToCheckAgainst, itemValue)
 	return intersectionValues.length !== 0
 }
 
@@ -82,7 +82,7 @@ export function applyAndListFilter(
 
 	// Check that the number of different items between the two lists is 0, to
 	// ensure that all of the restrictions we're seeking are present.
-	const valueToCheckAgainst = filterValue.map(f => f.title)
-	const differentItems = difference(valueToCheckAgainst, itemValue)
+	let valueToCheckAgainst = filterValue.map(f => f.title)
+	let differentItems = difference(valueToCheckAgainst, itemValue)
 	return differentItems.length === 0
 }

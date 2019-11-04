@@ -37,12 +37,12 @@ export class OtherModesDetailView extends React.PureComponent<Props> {
 	}
 
 	onPress = () => {
-		const {url} = this.props.navigation.state.params.mode
+		let {url} = this.props.navigation.state.params.mode
 		openUrl(url)
 	}
 
 	render() {
-		const mode = this.props.navigation.state.params.mode
+		let mode = this.props.navigation.state.params.mode
 		return (
 			<Container>
 				<Title selectable={true}>{mode.name}</Title>

@@ -11,7 +11,7 @@ xcodebuild \
 	-showBuildSettings \
 	-configuration Debug \
 	-scheme "$GYM_SCHEME" \
-	-project "$GYM_PROJECT" \
+	-workspace "$XCODE_WORKSPACE" \
 	-destination 'generic/platform=iOS' \
 	| egrep '\bBUILT_PRODUCTS_DIR' \
 	| sort \

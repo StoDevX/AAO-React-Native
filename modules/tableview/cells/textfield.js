@@ -72,10 +72,10 @@ export class CellTextField extends React.Component<Props> {
 			moreProps.scrollEnabled = false
 		}
 
-		const labelWidthStyle =
+		let labelWidthStyle =
 			this.props.labelWidth != null ? {width: this.props.labelWidth} : null
 
-		const label = this.props.label ? (
+		let label = this.props.label ? (
 			<Text onPress={this.focusInput} style={[styles.label, labelWidthStyle]}>
 				{this.props.label}
 			</Text>
@@ -83,7 +83,7 @@ export class CellTextField extends React.Component<Props> {
 			<Text style={styles.hiddenLabel} />
 		)
 
-		const input = (
+		let input = (
 			<TextInput
 				ref={this.props._ref}
 				autoCapitalize={this.props.autoCapitalize}
@@ -103,7 +103,7 @@ export class CellTextField extends React.Component<Props> {
 			/>
 		)
 
-		const style = this.props.multiline
+		let style = this.props.multiline
 			? styles.multilineCell
 			: styles.singlelineCell
 

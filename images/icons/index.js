@@ -15,12 +15,12 @@ export const iosToNamedIconsMap: {[key: string]: $Keys<typeof icons>} = {
 // eslint-enable camelcase
 
 export function lookup(iosIconName: $Keys<typeof iosToNamedIconsMap>): number {
-	const iconName = iosToNamedIconsMap[iosIconName]
+	let iconName = iosToNamedIconsMap[iosIconName]
 	if (!iconName) {
 		return defaultIcon
 	}
 
-	const icon = icons[iconName]
+	let icon = icons[iconName]
 	if (!icon) {
 		return defaultIcon
 	}

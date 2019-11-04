@@ -52,14 +52,14 @@ export const setVersionInfo = (versionStr: string) => {
 }
 
 export const userAgent = () => {
-	const platformString =
+	let platformString =
 		Platform.OS === 'ios'
 			? 'iOS'
 			: Platform.OS === 'android'
 			? 'Android'
 			: 'unknown'
 
-	const platformVersion = Platform.Version || 'unknown'
+	let platformVersion = Platform.Version || 'unknown'
 
 	return `${APP_NAME}/${APP_VERSION} (${platformString}/${platformVersion})`
 }

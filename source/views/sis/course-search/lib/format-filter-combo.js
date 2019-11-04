@@ -8,8 +8,8 @@ export type FilterComboType = {
 }
 
 export function formatFilterCombo(filters: FilterType[]): FilterComboType {
-	const filterCombo = filters.filter(f => f.enabled)
-	const comboDescription = filterCombo
+	let filterCombo = filters.filter(f => f.enabled)
+	let comboDescription = filterCombo
 		.map(f => describeFilter(f, filters))
 		.join(', ')
 	return {filters: filterCombo, description: comboDescription}
@@ -18,8 +18,8 @@ export function formatFilterCombo(filters: FilterType[]): FilterComboType {
 function describeFilter(f: FilterType, filters: FilterType[]) {
 	switch (f.key) {
 		case 'level': {
-			const levelFilter = filterListSpecs(filters).find(f => f.key === 'level')
-			const selectedLevels = levelFilter ? levelFilter.spec.selected : []
+			let levelFilter = filterListSpecs(filters).find(f => f.key === 'level')
+			let selectedLevels = levelFilter ? levelFilter.spec.selected : []
 			return selectedLevels.map(level => level.title).join('/') + ' Level'
 		}
 		case 'spaceAvailable': {
@@ -32,21 +32,21 @@ function describeFilter(f: FilterType, filters: FilterType[]) {
 			return 'Labs Only'
 		}
 		case 'term': {
-			const termFilter = filterListSpecs(filters).find(f => f.key === 'term')
-			const selectedTerms = termFilter ? termFilter.spec.selected : []
-			const terms = selectedTerms.map(t => parseInt(t.title))
+			let termFilter = filterListSpecs(filters).find(f => f.key === 'term')
+			let selectedTerms = termFilter ? termFilter.spec.selected : []
+			let terms = selectedTerms.map(t => parseInt(t.title))
 			return formatTerms(terms)
 		}
 		case 'gereqs': {
-			const geFilter = filterListSpecs(filters).find(f => f.key === 'gereqs')
-			const selectedGEs = geFilter ? geFilter.spec.selected : []
+			let geFilter = filterListSpecs(filters).find(f => f.key === 'gereqs')
+			let selectedGEs = geFilter ? geFilter.spec.selected : []
 			return selectedGEs.map(ge => ge.title).join('/')
 		}
 		case 'department': {
-			const deptFilter = filterListSpecs(filters).find(
+			let deptFilter = filterListSpecs(filters).find(
 				f => f.key === 'department',
 			)
-			const selectedDepts = deptFilter ? deptFilter.spec.selected : []
+			let selectedDepts = deptFilter ? deptFilter.spec.selected : []
 			return selectedDepts.map(dept => dept.title).join('/')
 		}
 		default:

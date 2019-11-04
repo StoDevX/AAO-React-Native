@@ -14,10 +14,10 @@ type PropsType = {
 }
 
 export function ListSection({filter, onChange}: PropsType) {
-	const {spec} = filter
-	const {title = '', options, selected, mode} = spec
-	const quantifier = mode === 'AND' ? 'all' : 'any'
-	const {caption = `Show items with ${quantifier} of these options.`} = spec
+	let {spec} = filter
+	let {title = '', options, selected, mode} = spec
+	let quantifier = mode === 'AND' ? 'all' : 'any'
+	let {caption = `Show items with ${quantifier} of these options.`} = spec
 
 	function buttonPushed(tappedValue: ListItemSpecType) {
 		let result
@@ -67,7 +67,7 @@ export function ListSection({filter, onChange}: PropsType) {
 		})
 	}
 
-	const hasImageColumn = options.some(val => Boolean(val.image))
+	let hasImageColumn = options.some(val => Boolean(val.image))
 	let buttons = options.map(val => (
 		<Cell
 			key={val.title}
@@ -94,7 +94,7 @@ export function ListSection({filter, onChange}: PropsType) {
 	))
 
 	if (mode === 'OR') {
-		const showAllButton = (
+		let showAllButton = (
 			<Cell
 				key="__show_all"
 				accessory={selected.length === options.length ? 'Checkmark' : undefined}

@@ -41,8 +41,8 @@ export default class EventRow extends React.PureComponent<Props> {
 	_onPress = () => this.props.onPress(this.props.event)
 
 	render() {
-		const {event} = this.props
-		const title = fastGetTrimmedText(event.title)
+		let {event} = this.props
+		let title = fastGetTrimmedText(event.title)
 
 		let subtitle = event[event.config.subtitle]
 		subtitle = subtitle ? subtitle.trim() : null
@@ -75,7 +75,7 @@ export default class EventRow extends React.PureComponent<Props> {
 }
 
 function CalendarTimes({event, style}: {event: EventType, style: any}) {
-	const {allDay, start, end} = times(event)
+	let {allDay, start, end} = times(event)
 
 	if (allDay) {
 		return (

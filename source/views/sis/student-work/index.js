@@ -7,7 +7,6 @@ import type {TopLevelViewPropsType} from '../../types'
 import * as c from '@frogpond/colors'
 import {ListSeparator, ListSectionHeader} from '@frogpond/lists'
 import {NoticeView, LoadingView} from '@frogpond/notice'
-import delay from 'delay'
 import toPairs from 'lodash/toPairs'
 import orderBy from 'lodash/orderBy'
 import groupBy from 'lodash/groupBy'
@@ -20,6 +19,9 @@ import {fetch} from '@frogpond/fetch'
 const styles = StyleSheet.create({
 	listContainer: {
 		backgroundColor: c.white,
+	},
+	contentContainer: {
+		flexGrow: 1,
 	},
 })
 
@@ -52,11 +54,13 @@ export default class StudentWorkView extends React.PureComponent<Props, State> {
 		})
 	}
 
-	fetchData = async () => {
-		const data: Array<JobType> = await fetch(API('/jobs')).json()
+	fetchData = async (reload?: boolean) => {
+		let data: Array<JobType> = await fetch(API('/jobs'), {
+			delay: reload ? 500 : 0,
+		}).json()
 
 		// force title-case on the job types, to prevent not-actually-duplicate headings
-		const processed: Array<JobType> = data.map(job => ({
+		let processed: Array<JobType> = data.map(job => ({
 			...job,
 			type: titleCase(job.type),
 		}))
@@ -71,10 +75,10 @@ export default class StudentWorkView extends React.PureComponent<Props, State> {
 			j => j.lastModified, // sort all jobs by date-last-modified
 		]
 		let ordered: Array<'desc' | 'asc'> = ['desc', 'asc', 'desc']
-		const sorted = orderBy(processed, sorters, ordered)
+		let sorted = orderBy(processed, sorters, ordered)
 
-		const grouped = groupBy(sorted, j => j.type)
-		const mapped = toPairs(grouped).map(([title, data]) => ({
+		let grouped = groupBy(sorted, j => j.type)
+		let mapped = toPairs(grouped).map(([title, data]) => ({
 			title,
 			data,
 		}))
@@ -82,16 +86,8 @@ export default class StudentWorkView extends React.PureComponent<Props, State> {
 	}
 
 	refresh = async (): any => {
-		const start = Date.now()
 		this.setState(() => ({refreshing: true}))
-
-		await this.fetchData()
-
-		// wait 0.5 seconds – if we let it go at normal speed, it feels broken.
-		const elapsed = Date.now() - start
-		if (elapsed < 500) {
-			await delay(500 - elapsed)
-		}
+		await this.fetchData(true)
 		this.setState(() => ({refreshing: false}))
 	}
 
@@ -124,6 +120,7 @@ export default class StudentWorkView extends React.PureComponent<Props, State> {
 				ListEmptyComponent={
 					<NoticeView text="There are no open job postings." />
 				}
+				contentContainerStyle={styles.contentContainer}
 				keyExtractor={this.keyExtractor}
 				onRefresh={this.refresh}
 				refreshing={this.state.refreshing}

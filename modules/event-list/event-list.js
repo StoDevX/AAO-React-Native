@@ -31,7 +31,7 @@ type Props = {
 export class EventList extends React.Component<Props> {
 	groupEvents = (events: EventType[], now: moment): any => {
 		// the proper return type is $ReadOnlyArray<{title: string, data: $ReadOnlyArray<EventType>}>
-		const grouped = groupBy(events, event => {
+		let grouped = groupBy(events, event => {
 			if (event.isOngoing) {
 				return 'Ongoing'
 			}
@@ -75,6 +75,7 @@ export class EventList extends React.Component<Props> {
 			<SectionList
 				ItemSeparatorComponent={FullWidthSeparator}
 				ListEmptyComponent={<NoticeView text="No events." />}
+				contentContainerStyle={styles.contentContainer}
 				keyExtractor={this.keyExtractor}
 				onRefresh={this.props.onRefresh}
 				refreshing={this.props.refreshing}
@@ -92,5 +93,8 @@ const styles = StyleSheet.create({
 	container: {
 		flex: 1,
 		backgroundColor: c.white,
+	},
+	contentContainer: {
+		flexGrow: 1,
 	},
 })

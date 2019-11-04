@@ -39,7 +39,7 @@ const Touchable = (props: Props, ref) => {
 	} = props
 
 	// The child <View> is required; the Touchable needs a View as its direct child.
-	const content = <View style={style}>{children}</View>
+	let content = <View style={style}>{children}</View>
 
 	switch (Platform.OS) {
 		default:
@@ -70,8 +70,8 @@ const Touchable = (props: Props, ref) => {
 		}
 
 		case 'android': {
-			const canBorderless = Platform.Version >= 21
-			const background =
+			let canBorderless = Platform.Version >= 21
+			let background =
 				borderless && canBorderless
 					? TouchableNativeFeedback.SelectableBackgroundBorderless()
 					: TouchableNativeFeedback.SelectableBackground()

@@ -59,7 +59,7 @@ function updateListFilter(filter: ListType, option?: ListItemSpecType) {
 export function FilterToolbar({filters, onPopoverDismiss}: Props) {
 	let updateFilter = updateAnyFilter(onPopoverDismiss)
 
-	const filterToggles = filters.map(filter => (
+	let filterToggles = filters.map(filter => (
 		<FilterToolbarButton
 			key={filter.spec.title}
 			filter={filter}
@@ -69,7 +69,7 @@ export function FilterToolbar({filters, onPopoverDismiss}: Props) {
 		/>
 	))
 
-	const allButtons = filters
+	let allButtons = filters
 		.filter(f => f.enabled)
 		.map(filter => {
 			if (filter.type === 'toggle') {
@@ -104,8 +104,8 @@ export function FilterToolbar({filters, onPopoverDismiss}: Props) {
 			}
 			return null
 		})
-	const activeFilterButtons = flatten(allButtons)
-	const anyFiltersEnabled = filters.some(f => f.enabled)
+	let activeFilterButtons = flatten(allButtons)
+	let anyFiltersEnabled = filters.some(f => f.enabled)
 
 	return (
 		<React.Fragment>

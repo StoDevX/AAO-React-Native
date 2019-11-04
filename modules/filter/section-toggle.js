@@ -9,8 +9,8 @@ type PropsType = {
 }
 
 export function SingleToggleSection({filter, onChange}: PropsType) {
-	const {spec, enabled} = filter
-	const {title = '', caption, label} = spec
+	let {spec, enabled} = filter
+	let {title = '', caption, label} = spec
 	return (
 		<Section footer={caption} header={title.toUpperCase()}>
 			<CellToggle

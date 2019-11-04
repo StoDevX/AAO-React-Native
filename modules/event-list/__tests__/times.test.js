@@ -5,7 +5,7 @@ import {times, detailTimes} from '../times.js'
 
 describe('allDay', () => {
 	test('should be true for a midnight-to-midnight event', () => {
-		const event = {
+		let event = {
 			startTime: moment('2018-08-07T00:00:00Z'),
 			endTime: moment('2018-08-08T00:00:00Z'),
 		}
@@ -14,7 +14,7 @@ describe('allDay', () => {
 	})
 
 	test('should be true for a noon-to-noon event', () => {
-		const event = {
+		let event = {
 			startTime: moment('2018-08-07T12:00:00Z'),
 			endTime: moment('2018-08-08T12:00:00Z'),
 		}
@@ -23,7 +23,7 @@ describe('allDay', () => {
 	})
 
 	test('should be false for a non-24 hour event', () => {
-		const event = {
+		let event = {
 			startTime: moment('2018-08-07T12:00:00Z'),
 			endTime: moment('2018-08-07T12:30:00Z'),
 		}
@@ -34,7 +34,7 @@ describe('allDay', () => {
 
 xdescribe('ongoing events', () => {
 	test('should be formatted', () => {
-		const event = {
+		let event = {
 			startTime: moment().subtract(1, 'hour'),
 			endTime: moment().add(1, 'hour'),
 		}

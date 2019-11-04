@@ -1,6 +1,6 @@
 // @flow
 
-import {HomeView, EditHomeView} from '../views/home'
+import {HomeView} from '../views/home'
 import {BuildingHoursDetailView} from '../views/building-hours/detail'
 import {
 	BuildingHoursProblemReportView,
@@ -16,7 +16,7 @@ import {
 	DictionaryView,
 } from '../views/dictionary'
 import {FaqView} from '../views/faqs'
-import HelpView from '../views/help'
+import {HelpView} from '../views/help'
 import {
 	CourseDetailView,
 	CourseSearchResultsView,
@@ -39,7 +39,6 @@ import {
 	DebugView,
 	LegalView,
 	PrivacyView,
-	PushNotificationsSettingsView,
 	APITestView,
 } from '../views/settings'
 import SISView from '../views/sis'
@@ -73,7 +72,6 @@ export const routes = {
 	DictionaryDetailView: {screen: DictionaryDetailView},
 	DictionaryView: {screen: DictionaryView},
 	DictionaryEditorView: {screen: DictionaryEditorView},
-	EditHomeView: {screen: EditHomeView},
 	EventDetailView: {screen: EventDetailView},
 	FaqView: {screen: FaqView},
 	HelpView: {screen: HelpView},
@@ -85,7 +83,6 @@ export const routes = {
 	PrivacyView: {screen: PrivacyView},
 	SettingsView: {screen: SettingsView},
 	IconSettingsView: {screen: IconSettingsView},
-	PushNotificationsSettingsView: {screen: PushNotificationsSettingsView},
 	SISView: {screen: SISView},
 	CourseSearchResultsView: {screen: CourseSearchResultsView},
 	CourseDetailView: {screen: CourseDetailView},

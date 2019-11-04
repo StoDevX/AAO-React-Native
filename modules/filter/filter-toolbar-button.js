@@ -7,7 +7,7 @@ import {FilterPopover} from './filter-popover'
 import * as c from '@frogpond/colors'
 import {Touchable} from '@frogpond/touchable'
 import {type AppTheme} from '@frogpond/app-theme'
-import {withTheme} from '@callstack/react-theme-provider'
+import {withTheme} from '@frogpond/app-theme'
 
 const buttonStyles = StyleSheet.create({
 	button: {
@@ -63,9 +63,9 @@ class FilterToolbarButton extends React.PureComponent<Props, State> {
 	}
 
 	render() {
-		const {filter, isActive, style, title, theme} = this.props
-		const {popoverVisible} = this.state
-		const icon = Platform.select({
+		let {filter, isActive, style, title, theme} = this.props
+		let {popoverVisible} = this.state
+		let icon = Platform.select({
 			ios: 'ios-arrow-down',
 			android: 'md-arrow-dropdown',
 		})
@@ -95,7 +95,7 @@ class FilterToolbarButton extends React.PureComponent<Props, State> {
 			}
 		}
 
-		const buttonTextStyle = [
+		let buttonTextStyle = [
 			activeContentStyle,
 			textWithIconStyle,
 			activeTextStyle,

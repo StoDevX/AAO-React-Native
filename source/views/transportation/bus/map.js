@@ -27,7 +27,7 @@ type WrapperProps = {|
 |}
 
 export function BusMap(props: WrapperProps) {
-	const lineToDisplay = props.navigation.state.params.line
+	let lineToDisplay = props.navigation.state.params.line
 
 	return (
 		<Timer
@@ -85,28 +85,28 @@ class Map extends React.Component<Props, State> {
 	}
 
 	render() {
-		const lineToDisplay = this.props.line
-		const now = this.props.now
+		let lineToDisplay = this.props.line
+		let now = this.props.now
 
-		const processedLine = processBusLine(lineToDisplay, now)
-		const scheduleForToday = getScheduleForNow(processedLine.schedules, now)
+		let processedLine = processBusLine(lineToDisplay, now)
+		let scheduleForToday = getScheduleForNow(processedLine.schedules, now)
 
 		if (!scheduleForToday) {
-			const notice = `No schedule was found for today, ${now.format('dddd')}`
+			let notice = `No schedule was found for today, ${now.format('dddd')}`
 			return <NoticeView text={notice} />
 		}
 
-		const entriesWithCoordinates = scheduleForToday.timetable.filter(
+		let entriesWithCoordinates = scheduleForToday.timetable.filter(
 			entry => entry.coordinates,
 		)
 
 		if (!entriesWithCoordinates.length) {
-			const today = now.format('dddd')
-			const msg = `No coordinates have been provided for today's (${today}) schedule on the "${lineToDisplay.line}" line`
+			let today = now.format('dddd')
+			let msg = `No coordinates have been provided for today's (${today}) schedule on the "${lineToDisplay.line}" line`
 			return <NoticeView text={msg} />
 		}
 
-		const markers = uniqBy(entriesWithCoordinates, ({name}) => name)
+		let markers = uniqBy(entriesWithCoordinates, ({name}) => name)
 
 		return (
 			<MapView

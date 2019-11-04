@@ -1,7 +1,7 @@
 // @flow
 
 import * as React from 'react'
-import {Image, ScrollView, StyleSheet, Text, View, Platform} from 'react-native'
+import {Image, ScrollView, StyleSheet, Text, View} from 'react-native'
 import noop from 'lodash/noop'
 import * as c from '@frogpond/colors'
 import {callPhone} from '../../../components/call-phone'
@@ -12,7 +12,10 @@ import type {PlayState, HtmlAudioError, PlayerTheme} from './types'
 import {ActionButton, ShowCalendarButton, CallButton} from './buttons'
 import {openUrl} from '@frogpond/open-url'
 import {Viewport} from '@frogpond/viewport'
-import {withTheme} from '@callstack/react-theme-provider'
+import {withTheme} from '@frogpond/app-theme'
+
+// If you want to fix the inline player, switch to `true`
+const ALLOW_INLINE_PLAYER = false
 
 type Props = TopLevelViewPropsType & {
 	image: number,
@@ -79,7 +82,7 @@ class RadioControllerView extends React.Component<Props, State> {
 	}
 
 	renderPlayButton = (state: PlayState) => {
-		if (Platform.OS === 'android') {
+		if (!ALLOW_INLINE_PLAYER) {
 			return (
 				<ActionButton
 					icon="ios-planet"
@@ -111,10 +114,10 @@ class RadioControllerView extends React.Component<Props, State> {
 	}
 
 	render() {
-		const {source, title, stationName, image, theme} = this.props
-		const {uplinkError, streamError, playState} = this.state
+		let {source, title, stationName, image, theme} = this.props
+		let {uplinkError, streamError, playState} = this.state
 
-		const error = uplinkError ? (
+		let error = uplinkError ? (
 			<Text style={styles.status}>{uplinkError}</Text>
 		) : streamError ? (
 			<Text style={styles.status}>
@@ -123,7 +126,7 @@ class RadioControllerView extends React.Component<Props, State> {
 		) : null
 
 		let textColor = {color: theme.textColor}
-		const titleBlock = (
+		let titleBlock = (
 			<View style={styles.titleWrapper}>
 				<Text selectable={true} style={[styles.heading, textColor]}>
 					{title}
@@ -136,7 +139,7 @@ class RadioControllerView extends React.Component<Props, State> {
 			</View>
 		)
 
-		const controlsBlock = (
+		let controlsBlock = (
 			<Row>
 				{this.renderPlayButton(playState)}
 				<View style={styles.spacer} />
@@ -146,36 +149,35 @@ class RadioControllerView extends React.Component<Props, State> {
 			</Row>
 		)
 
-		const playerBlock =
-			Platform.OS !== 'android' ? (
-				<StreamPlayer
-					embeddedPlayerUrl={source.embeddedPlayerUrl}
-					onEnded={this.handleStreamEnd}
-					// onWaiting={this.handleStreamWait}
-					onError={this.handleStreamError}
-					// onStalled={this.handleStreamStall}
-					onPause={this.handleStreamPause}
-					onPlay={this.handleStreamPlay}
-					playState={playState}
-					streamSourceUrl={source.streamSourceUrl}
-					style={styles.webview}
-					useEmbeddedPlayer={source.useEmbeddedPlayer}
-				/>
-			) : null
+		let playerBlock = ALLOW_INLINE_PLAYER ? (
+			<StreamPlayer
+				embeddedPlayerUrl={source.embeddedPlayerUrl}
+				onEnded={this.handleStreamEnd}
+				// onWaiting={this.handleStreamWait}
+				onError={this.handleStreamError}
+				// onStalled={this.handleStreamStall}
+				onPause={this.handleStreamPause}
+				onPlay={this.handleStreamPlay}
+				playState={playState}
+				streamSourceUrl={source.streamSourceUrl}
+				style={styles.webview}
+				useEmbeddedPlayer={source.useEmbeddedPlayer}
+			/>
+		) : null
 
 		return (
 			<Viewport
 				render={({width, height}) => {
-					const sideways = width > height
+					let sideways = width > height
 
-					const logoWidth = Math.min(width / 1.5, height / 1.75)
-					const logoSize = {width: logoWidth, height: logoWidth}
+					let logoWidth = Math.min(width / 1.5, height / 1.75)
+					let logoSize = {width: logoWidth, height: logoWidth}
 
-					const root = [styles.root, sideways && landscape.root]
-					const logoBorderColor = {borderColor: theme.imageBorderColor}
-					const logoBg = {backgroundColor: theme.imageBackgroundColor}
-					const logo = [styles.logoBorder, logoSize, logoBorderColor, logoBg]
-					const logoWrapper = [
+					let root = [styles.root, sideways && landscape.root]
+					let logoBorderColor = {borderColor: theme.imageBorderColor}
+					let logoBg = {backgroundColor: theme.imageBackgroundColor}
+					let logo = [styles.logoBorder, logoSize, logoBorderColor, logoBg]
+					let logoWrapper = [
 						styles.logoWrapper,
 						sideways && landscape.logoWrapper,
 					]

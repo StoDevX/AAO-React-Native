@@ -3,7 +3,7 @@ import * as React from 'react'
 import {StyleSheet, View, Platform} from 'react-native'
 import * as c from '@frogpond/colors'
 import {type AppTheme} from '@frogpond/app-theme'
-import {withTheme} from '@callstack/react-theme-provider'
+import {useTheme} from '@frogpond/app-theme'
 import type {ViewStyleProp} from 'react-native/Libraries/StyleSheet/StyleSheet'
 
 const dotBarStyles = StyleSheet.create({
@@ -24,17 +24,12 @@ const dotBarStyles = StyleSheet.create({
 	},
 })
 
-type BaseProps = {
+type Props = {
 	style?: ViewStyleProp,
 }
 
-type HocProps = {
-	theme: AppTheme,
-}
-
-type Props = BaseProps & HocProps
-
-function DottedBar({style, theme}: Props) {
+function DottedBar({style}: Props) {
+	let theme: AppTheme = useTheme()
 	let background = {backgroundColor: theme.accent}
 
 	return (
@@ -45,10 +40,6 @@ function DottedBar({style, theme}: Props) {
 		</View>
 	)
 }
-
-const ThemedDottedBar: React.StatelessFunctionalComponent<BaseProps> = (withTheme(
-	DottedBar,
-): any)
 
 const solidBarStyles = StyleSheet.create({
 	border: {
@@ -66,7 +57,7 @@ export function Bar(props: Object) {
 		case 'ios':
 			return <SolidBar {...props} />
 		case 'android':
-			return <ThemedDottedBar {...props} />
+			return <DottedBar {...props} />
 		default:
 			return <SolidBar {...props} />
 	}

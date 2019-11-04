@@ -38,17 +38,17 @@ const Title = glamorous.text({
 })
 
 function ContactInformation({job}: {job: JobType}) {
-	const office = job.office ? (
+	let office = job.office ? (
 		<Cell cellStyle="LeftDetail" detail="Office" title={job.office} />
 	) : null
 
-	const name = job.contactName
-	const contactName = name ? (
+	let name = job.contactName
+	let contactName = name ? (
 		<Cell cellStyle="LeftDetail" detail="Contact" title={name} />
 	) : null
 
-	const email = job.contactEmail
-	const contactEmail = name ? (
+	let email = job.contactEmail
+	let contactEmail = name ? (
 		<Cell
 			accessory={email ? 'DisclosureIndicator' : undefined}
 			cellStyle="LeftDetail"
@@ -60,8 +60,8 @@ function ContactInformation({job}: {job: JobType}) {
 		/>
 	) : null
 
-	const contactNumber = job.contactPhone
-	const contactPhone = contactNumber ? (
+	let contactNumber = job.contactPhone
+	let contactPhone = contactNumber ? (
 		<Cell
 			accessory={contactNumber ? 'DisclosureIndicator' : undefined}
 			cellStyle="LeftDetail"
@@ -82,8 +82,8 @@ function ContactInformation({job}: {job: JobType}) {
 }
 
 function JobInformation({job}: {job: JobType}) {
-	const ending = job.hoursPerWeek === 'Full-time' ? '' : ' hrs/week'
-	const hours = job.hoursPerWeek ? (
+	let ending = job.hoursPerWeek === 'Full-time' ? '' : ' hrs/week'
+	let hours = job.hoursPerWeek ? (
 		<Cell
 			cellStyle="LeftDetail"
 			detail="Hours"
@@ -91,19 +91,19 @@ function JobInformation({job}: {job: JobType}) {
 		/>
 	) : null
 
-	const amount = job.timeOfHours ? (
+	let amount = job.timeOfHours ? (
 		<Cell cellStyle="LeftDetail" detail="Time of Day" title={job.timeOfHours} />
 	) : null
 
-	const category = job.type ? (
+	let category = job.type ? (
 		<Cell cellStyle="LeftDetail" detail="Category" title={job.type} />
 	) : null
 
-	const openPositions = job.openPositions ? (
+	let openPositions = job.openPositions ? (
 		<Cell cellStyle="LeftDetail" detail="Positions" title={job.openPositions} />
 	) : null
 
-	const year = job.year ? (
+	let year = job.year ? (
 		<Cell cellStyle="LeftDetail" detail="Time Period" title={job.year} />
 	) : null
 
@@ -193,7 +193,7 @@ type Props = {
 
 export class JobDetailView extends React.PureComponent<Props> {
 	static navigationOptions = ({navigation}: any) => {
-		const {job} = navigation.state.params
+		let {job} = navigation.state.params
 		return {
 			title: job.title,
 			headerRight: <ShareButton onPress={() => shareJob(job)} />,
@@ -201,7 +201,7 @@ export class JobDetailView extends React.PureComponent<Props> {
 	}
 
 	render() {
-		const job = this.props.navigation.state.params.job
+		let job = this.props.navigation.state.params.job
 
 		return (
 			<ScrollView>

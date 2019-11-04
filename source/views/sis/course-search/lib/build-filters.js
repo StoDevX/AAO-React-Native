@@ -6,19 +6,19 @@ import type {FilterType} from '@frogpond/filter'
 import {loadAllCourseFilterOptions} from '../../../../lib/course-search'
 
 export async function buildFilters(): Promise<FilterType[]> {
-	const terms = await getTermInfo()
-	const allTerms = terms
+	let terms = await getTermInfo()
+	let allTerms = terms
 		.map(term => ({
 			title: term.term,
 			label: parseTerm(term.term.toString()),
 		}))
 		.reverse()
 
-	const {ges, departments} = await loadAllCourseFilterOptions()
+	let {ges, departments} = await loadAllCourseFilterOptions()
 
-	const allGEs = ges.map(ge => ({title: ge}))
-	const allDepartments = departments.map(dep => ({title: dep}))
-	const courseLevelOptions = [{title: 100}, {title: 200}, {title: 300}]
+	let allGEs = ges.map(ge => ({title: ge}))
+	let allDepartments = departments.map(dep => ({title: dep}))
+	let courseLevelOptions = [{title: 100}, {title: 200}, {title: 300}]
 
 	return [
 		{

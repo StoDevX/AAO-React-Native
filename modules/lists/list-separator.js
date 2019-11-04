@@ -21,7 +21,7 @@ export function ListSeparator(props: PropsType) {
 		return null
 	}
 
-	const {
+	let {
 		fullWidth,
 		spacing: {left: leftSpacing = 15, right: rightSpacing} = {},
 	} = props

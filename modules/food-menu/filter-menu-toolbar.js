@@ -36,12 +36,12 @@ export function FilterMenuToolbar({
 	filters,
 	onPopoverDismiss,
 }: PropsType) {
-	const mealFilter = filters.find(f => f.type === 'picker')
-	const multipleMeals =
+	let mealFilter = filters.find(f => f.type === 'picker')
+	let multipleMeals =
 		mealFilter && mealFilter.type === 'picker'
 			? mealFilter.spec.options.length > 1
 			: false
-	const nonPickerFilters = filters.filter(f => f.type !== 'picker')
+	let nonPickerFilters = filters.filter(f => f.type !== 'picker')
 
 	return (
 		<React.Fragment>

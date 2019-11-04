@@ -56,7 +56,8 @@ function doSearch(args: {
 }
 
 let memoizedDoSearch = memoize(doSearch)
-memoizedDoSearch.cache = new WeakMap()
+// lodash supports this; the types do not.
+;(memoizedDoSearch: any).cache = new WeakMap()
 
 export class CourseResultsList extends React.PureComponent<Props> {
 	keyExtractor = (item: CourseType) => item.clbid.toString()
@@ -93,21 +94,21 @@ export class CourseResultsList extends React.PureComponent<Props> {
 		query = query.toLowerCase()
 		let results = memoizedDoSearch({query, filters, courses, applyFilters})
 
-		const header = filtersLoaded ? (
+		let header = filtersLoaded ? (
 			<FilterToolbar filters={filters} onPopoverDismiss={onPopoverDismiss} />
 		) : (
 			<ActivityIndicator style={styles.spinner} />
 		)
 
-		const hasActiveFilter = filters.some(f => f.enabled)
+		let hasActiveFilter = filters.some(f => f.enabled)
 
-		const message = hasActiveFilter
+		let message = hasActiveFilter
 			? 'There were no courses that matched your selected filters. Try a different filter combination.'
 			: query.length
 			? 'There were no courses that matched your query. Please try again.'
 			: "You can search by Professor (e.g. 'Jill Dietz'), Course Name (e.g. 'Abstract Algebra'), Department/Number (e.g. MATH 252), or GE (e.g. WRI)"
 
-		const messageView = <NoticeView style={styles.message} text={message} />
+		let messageView = <NoticeView style={styles.message} text={message} />
 
 		return (
 			<SectionList

@@ -33,7 +33,7 @@ function* validate(data) {
 	for (let schedule of data.schedules) {
 		for (let [i, times] of enumerate(schedule.times)) {
 			// prettier-ignore
-			const thisRowNote = `in row ${i+1} of the ${data.line} schedule for [${schedule.days.join(',')}]`
+			let thisRowNote = `in row ${i+1} of the ${data.line} schedule for [${schedule.days.join(',')}]`
 			if (times.length !== schedule.stops.length) {
 				// prettier-ignore
 				yield `There are ${schedule.stops.length} named stops but ${times.length} arrival times ${thisRowNote}`
@@ -62,7 +62,7 @@ function* validate(data) {
 }
 
 if (require.main === module) {
-	const files = fs
+	let files = fs
 		.readdirSync(path.join(DATA_BASE, 'bus-times'))
 		.filter(junk.not)
 		.map(f => path.join(DATA_BASE, 'bus-times', f))
@@ -71,7 +71,7 @@ if (require.main === module) {
 	for (let filepath of files) {
 		let fileHadError = false
 		process.stdout.write(filepath)
-		const errors = validate(yaml.safeLoad(fs.readFileSync(filepath, 'utf-8')))
+		let errors = validate(yaml.safeLoad(fs.readFileSync(filepath, 'utf-8')))
 		for (let error of errors) {
 			process.stdout.write('\n')
 			fileHadError = true

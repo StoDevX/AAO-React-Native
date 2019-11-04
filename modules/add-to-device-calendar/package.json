@@ -11,11 +11,10 @@
   "peerDependencies": {
     "delay": "^4.1.0",
     "react": "^16.0.0",
-    "react-native": "^0.59.0",
+    "react-native": "^0.61.0",
     "react-native-calendar-events": "^1.6.3"
   },
   "dependencies": {
-    "@frogpond/analytics": "^1.0.0",
     "@frogpond/event-type": "^1.0.0"
   }
 }

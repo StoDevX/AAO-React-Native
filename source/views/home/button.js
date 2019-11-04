@@ -8,7 +8,7 @@ import LinearGradient from 'react-native-linear-gradient'
 import {Touchable} from '@frogpond/touchable'
 import {transparent} from '@frogpond/colors'
 import {homescreenForegroundDark, homescreenForegroundLight} from './colors'
-import {iPhoneX} from '@frogpond/device'
+import {hasNotch} from 'react-native-device-info'
 
 type Props = {
 	view: ViewType,
@@ -16,7 +16,7 @@ type Props = {
 }
 
 export function HomeScreenButton({view, onPress}: Props) {
-	const foreground =
+	let foreground =
 		view.foreground === 'light' ? styles.lightForeground : styles.darkForeground
 
 	return (
@@ -92,7 +92,7 @@ type TintProps = {
 
 function Tint({tint = 'black', gradient, children}: TintProps) {
 	if (!gradient) {
-		const bg = {backgroundColor: tint}
+		let bg = {backgroundColor: tint}
 		return <View style={[styles.button, bg]}>{children}</View>
 	}
 
@@ -115,7 +115,7 @@ const cellHorizontalPadding = 4
 const styles = StyleSheet.create({
 	button: {
 		elevation: 2,
-		borderRadius: Platform.OS === 'ios' ? (iPhoneX ? 17 : 6) : 3,
+		borderRadius: Platform.OS === 'ios' ? (hasNotch() ? 17 : 6) : 3,
 
 		marginBottom: CELL_MARGIN,
 		marginLeft: CELL_MARGIN / 2,

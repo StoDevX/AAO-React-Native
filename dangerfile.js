@@ -10,7 +10,7 @@ const {default: yarn} = require('danger-plugin-yarn')
 const findIndex = require('lodash/findIndex')
 
 async function main() {
-	const taskName = String(process.env.task)
+	let taskName = String(process.env.task)
 
 	switch (taskName) {
 		case 'ANDROID':
@@ -54,8 +54,8 @@ async function main() {
 //
 
 function runAndroid() {
-	const logFile = readLogFile('./logs/build').split('\n')
-	const buildStatus = readLogFile('./logs/build-status')
+	let logFile = readLogFile('./logs/build').split('\n')
+	let buildStatus = readLogFile('./logs/build-status')
 
 	if (buildStatus !== '0') {
 		fastlaneBuildLogTail(logFile, 'Android Build Failed')
@@ -71,8 +71,8 @@ function runAndroid() {
 //
 
 function runiOS() {
-	const logFile = readLogFile('./logs/build').split('\n')
-	const buildStatus = readLogFile('./logs/build-status')
+	let logFile = readLogFile('./logs/build').split('\n')
+	let buildStatus = readLogFile('./logs/build-status')
 
 	if (buildStatus !== '0') {
 		// returning early here because if the build fails, there's nothing to analyze
@@ -82,7 +82,7 @@ function runiOS() {
 
 	// tee the "fastlane" output to a log, and run the analysis script
 	// to report back the longest compilation units
-	const analysisFile = readFile('./logs/analysis')
+	let analysisFile = readFile('./logs/analysis')
 	if (!analysisFile.trim().length) {
 		return
 	}
@@ -106,7 +106,7 @@ async function runJSのData() {
 }
 
 function runJSのDataのData() {
-	const dataValidationLog = readLogFile('./logs/validate-data')
+	let dataValidationLog = readLogFile('./logs/validate-data')
 
 	if (!dataValidationLog) {
 		return
@@ -120,7 +120,7 @@ function runJSのDataのData() {
 }
 
 function runJSのDataのBusData() {
-	const busDataValidationLog = readLogFile('./logs/validate-bus-data')
+	let busDataValidationLog = readLogFile('./logs/validate-bus-data')
 
 	if (!busDataValidationLog) {
 		return
@@ -191,8 +191,8 @@ function exclusionaryTests() {
 
 // Warn when PR size is large (mainly for hawken)
 function bigPr() {
-	const bigPRThreshold = 400 // lines
-	const thisPRSize = danger.github.pr.additions + danger.github.pr.deletions
+	let bigPRThreshold = 400 // lines
+	let thisPRSize = danger.github.pr.additions + danger.github.pr.deletions
 	if (thisPRSize <= bigPRThreshold) {
 		return
 	}
@@ -209,7 +209,7 @@ function bigPr() {
 
 // Remind us to check the xcodeproj, if it's changed
 function xcodeproj() {
-	const pbxprojChanged = danger.git.modified_files.find(filepath =>
+	let pbxprojChanged = danger.git.modified_files.find(filepath =>
 		filepath.endsWith('project.pbxproj'),
 	)
 
@@ -223,8 +223,8 @@ function xcodeproj() {
 }
 
 function changelogSync() {
-	const noteworthyFolder = /^(\.circleci|\.github|android|e2e|fastlane|ios|modules|scripts|source)\//gu
-	const noteworthyFiles = new Set([
+	let noteworthyFolder = /^(\.circleci|\.github|android|e2e|fastlane|ios|modules|scripts|source)\//gu
+	let noteworthyFiles = new Set([
 		'.babelrc',
 		'.eslintignore',
 		'.eslintrc.yaml',
@@ -240,9 +240,9 @@ function changelogSync() {
 		'Gemfile',
 		'index.js',
 	])
-	const definitelyNotNoteworthy = /package\.json|yarn\.lock/gu
+	let definitelyNotNoteworthy = /package\.json|yarn\.lock/gu
 
-	const changedSourceFiles = danger.git.modified_files.filter(file => {
+	let changedSourceFiles = danger.git.modified_files.filter(file => {
 		let noteworthy = noteworthyFolder.test(file) || noteworthyFiles.has(file)
 		let excluded = definitelyNotNoteworthy.test(file)
 
@@ -253,7 +253,7 @@ function changelogSync() {
 		return
 	}
 
-	const changedChangelog = danger.git.modified_files.includes('CHANGELOG.md')
+	let changedChangelog = danger.git.modified_files.includes('CHANGELOG.md')
 
 	if (!changedChangelog) {
 		markdown(
@@ -272,7 +272,7 @@ function changelogSync() {
 //
 
 function runJSのFlow() {
-	const flowLog = readLogFile('./logs/flow')
+	let flowLog = readLogFile('./logs/flow')
 
 	if (!flowLog) {
 		return
@@ -290,7 +290,7 @@ function runJSのFlow() {
 //
 
 function runJSのJest() {
-	const jestLog = readLogFile('./logs/jest')
+	let jestLog = readLogFile('./logs/jest')
 
 	if (!jestLog) {
 		return
@@ -300,19 +300,19 @@ function runJSのJest() {
 		return
 	}
 
-	const lines = getRelevantLinesJest(jestLog)
+	let lines = getRelevantLinesJest(jestLog)
 
 	fileLog('Some Jest tests failed. Take a peek?', lines.join('\n'))
 }
 
 function getRelevantLinesJest(logContents) {
-	const file = logContents.split('\n')
+	let file = logContents.split('\n')
 
-	const startIndex = findIndex(
+	let startIndex = findIndex(
 		file,
 		l => l.trim() === 'Summary of all failing tests',
 	)
-	const endIndex = findIndex(
+	let endIndex = findIndex(
 		file,
 		l => l.trim() === 'Ran all test suites.',
 		startIndex,
@@ -326,7 +326,7 @@ function getRelevantLinesJest(logContents) {
 //
 
 function runJSのLint() {
-	const eslintLog = readLogFile('./logs/eslint')
+	let eslintLog = readLogFile('./logs/eslint')
 
 	if (!eslintLog) {
 		return
@@ -340,7 +340,7 @@ function runJSのLint() {
 //
 
 function runJSのPrettier() {
-	const prettierLog = readLogFile('./logs/prettier')
+	let prettierLog = readLogFile('./logs/prettier')
 
 	if (!prettierLog) {
 		return
@@ -350,7 +350,7 @@ function runJSのPrettier() {
 }
 
 function runJSのYarnDedupe() {
-	const yarnDedupeLog = readLogFile('./logs/yarn-dedupe')
+	let yarnDedupeLog = readLogFile('./logs/yarn-dedupe')
 
 	if (!yarnDedupeLog) {
 		return
@@ -367,8 +367,8 @@ const fs = require('fs')
 const stripAnsi = require('strip-ansi')
 
 function fastlaneBuildLogTail(log /*: Array<string>*/, message /*: string*/) {
-	const n = 150
-	const logToPost = log
+	let n = 150
+	let logToPost = log
 		.slice(-n)
 		.map(stripAnsi)
 		.join('\n')

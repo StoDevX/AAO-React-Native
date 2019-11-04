@@ -38,7 +38,6 @@ rules:
   new-cap: off
   no-await-in-loop: warn
   no-case-declarations: error
-  no-confusing-arrow: off
   no-console: off
   no-div-regex: error
   no-extra-label: error

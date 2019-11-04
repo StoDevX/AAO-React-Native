@@ -9,13 +9,13 @@ type BalancesOrErrorType =
 	| {error: false, value: BalancesShapeType}
 
 export async function getBalances(): Promise<BalancesOrErrorType> {
-	const {username, password} = await loadLoginCredentials()
+	let {username, password} = await loadLoginCredentials()
 
 	if (!username || !password) {
 		return {error: true, value: new Error('Not logged in')}
 	}
 
-	const form = buildFormData({username, password})
+	let form = buildFormData({username, password})
 
 	try {
 		let loginResponse = await fetch(OLECARD_AUTH_URL, {
@@ -53,13 +53,13 @@ const accounts = {
 }
 
 function getBalancesFromData(resp: OleCardBalancesType): BalancesOrErrorType {
-	const flex = resp.data.accounts.find(a => a.account === accounts.flex)
-	const ole = resp.data.accounts.find(a => a.account === accounts.ole)
-	const print = resp.data.accounts.find(a => a.account === accounts.print)
+	let flex = resp.data.accounts.find(a => a.account === accounts.flex)
+	let ole = resp.data.accounts.find(a => a.account === accounts.ole)
+	let print = resp.data.accounts.find(a => a.account === accounts.print)
 
-	const daily = resp.data.meals && resp.data.meals.leftDaily
-	const weekly = resp.data.meals && resp.data.meals.leftWeekly
-	const plan = resp.data.meals && resp.data.meals.plan
+	let daily = resp.data.meals && resp.data.meals.leftDaily
+	let weekly = resp.data.meals && resp.data.meals.leftWeekly
+	let plan = resp.data.meals && resp.data.meals.plan
 
 	return {
 		error: false,

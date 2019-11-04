@@ -4,9 +4,10 @@ gem 'fastlane'
 gem 'netrc'
 gem 'json'
 gem 'xcodeproj'
+gem 'cocoapods'
 
 # fastlane plugins
 
 group :development do
-  gem 'rubocop', '~> 0.74'
+  gem 'rubocop', '~> 0.76'
 end

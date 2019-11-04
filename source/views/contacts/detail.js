@@ -35,7 +35,7 @@ const styles = StyleSheet.create({
 })
 
 function formatNumber(phoneNumber: string) {
-	const re = /(\d{3})-?(\d{3})-?(\d{4})/gu
+	let re = /(\d{3})-?(\d{3})-?(\d{4})/gu
 	return phoneNumber.replace(re, '($1) $2-$3')
 }
 
@@ -56,7 +56,7 @@ export class ContactsDetailView extends React.PureComponent<Props> {
 	}
 
 	onPress = () => {
-		const {
+		let {
 			phoneNumber,
 			buttonText,
 			buttonLink,
@@ -69,11 +69,12 @@ export class ContactsDetailView extends React.PureComponent<Props> {
 	}
 
 	render() {
-		const contact = this.props.navigation.state.params.contact
-		const headerImage =
-			contact.image && contactImages.hasOwnProperty(contact.image)
-				? contactImages[contact.image]
+		let contact = this.props.navigation.state.params.contact
+		let headerImage =
+			contact.image && contactImages.has(contact.image)
+				? contactImages.get(contact.image)
 				: null
+
 		return (
 			<ScrollView>
 				{headerImage ? (

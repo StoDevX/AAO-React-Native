@@ -41,7 +41,7 @@ function LeftDetailCell({detail, title}: {detail: string, title: string}) {
 }
 
 function JobInformation({job}: {job: PrintJob}) {
-	const wasPrintedAlready = job.statusFormatted === 'Sent to Printer'
+	let wasPrintedAlready = job.statusFormatted === 'Sent to Printer'
 	return (
 		<Section header="JOB INFO" sectionTintColor={c.sectionBgColor}>
 			<LeftDetailCell detail="Status" title={job.statusFormatted} />
@@ -110,9 +110,9 @@ export class PrintJobReleaseView extends React.PureComponent<Props, State> {
 			return
 		}
 
-		const {job, printer} = this.props.navigation.state.params
-		const jobId = job.id.toString()
-		const response = await heldJobsAvailableAtPrinterForUser(
+		let {job, printer} = this.props.navigation.state.params
+		let jobId = job.id.toString()
+		let response = await heldJobsAvailableAtPrinterForUser(
 			printer.printerName,
 			username,
 		)
@@ -122,7 +122,7 @@ export class PrintJobReleaseView extends React.PureComponent<Props, State> {
 			return
 		}
 
-		const heldJobMatch = response.value.find(heldJob =>
+		let heldJobMatch = response.value.find(heldJob =>
 			heldJob.id.startsWith(jobId),
 		)
 		if (heldJobMatch) {
@@ -133,8 +133,8 @@ export class PrintJobReleaseView extends React.PureComponent<Props, State> {
 	}
 
 	requestCancel = () => {
-		const {job} = this.props.navigation.state.params
-		const prompt = `Are you sure you want to cancel printing "${job.documentName}"? This cannot be undone.`
+		let {job} = this.props.navigation.state.params
+		let prompt = `Are you sure you want to cancel printing "${job.documentName}"? This cannot be undone.`
 		Alert.alert('Print Job Cancellation Confirmation', prompt, [
 			{text: 'Keep Job', style: 'cancel'},
 			{text: 'Cancel Job', style: 'destructive', onPress: this.cancelJob},
@@ -142,8 +142,8 @@ export class PrintJobReleaseView extends React.PureComponent<Props, State> {
 	}
 
 	requestRelease = () => {
-		const {job, printer} = this.props.navigation.state.params
-		const prompt = `Are you sure you want to print "${job.documentName}" to ${printer.printerName}?`
+		let {job, printer} = this.props.navigation.state.params
+		let prompt = `Are you sure you want to print "${job.documentName}" to ${printer.printerName}?`
 		Alert.alert('Print Job Release Confirmation', prompt, [
 			{text: 'Nope!', style: 'cancel'},
 			{text: 'Print', style: 'default', onPress: this.releaseJob},
@@ -152,14 +152,14 @@ export class PrintJobReleaseView extends React.PureComponent<Props, State> {
 
 	releaseJob = async () => {
 		this.setState(() => ({status: 'printing'}))
-		const {printer, job} = this.props.navigation.state.params
-		const {username} = await loadLoginCredentials()
-		const {heldJob} = this.state
+		let {printer, job} = this.props.navigation.state.params
+		let {username} = await loadLoginCredentials()
+		let {heldJob} = this.state
 		if (!heldJob || !username) {
 			showGeneralError(this.returnToJobsView)
 			return
 		}
-		const response: ReleaseResponseOrErrorType = await releasePrintJobToPrinterForUser(
+		let response: ReleaseResponseOrErrorType = await releasePrintJobToPrinterForUser(
 			{
 				jobId: heldJob.id,
 				printerName: printer.printerName,
@@ -183,13 +183,13 @@ export class PrintJobReleaseView extends React.PureComponent<Props, State> {
 
 	cancelJob = async () => {
 		this.setState(() => ({status: 'cancelling'}))
-		const {username, job} = this.props.navigation.state.params
-		const {heldJob} = this.state
+		let {username, job} = this.props.navigation.state.params
+		let {heldJob} = this.state
 		if (!heldJob) {
 			showGeneralError(this.returnToJobsView)
 			return
 		}
-		const response: CancelResponseOrErrorType = await cancelPrintJobForUser(
+		let response: CancelResponseOrErrorType = await cancelPrintJobForUser(
 			heldJob.id,
 			username,
 		)
@@ -213,9 +213,9 @@ export class PrintJobReleaseView extends React.PureComponent<Props, State> {
 	}
 
 	render() {
-		const {job, printer} = this.props.navigation.state.params
-		const {status} = this.state
-		const actionAvailable = status !== 'complete' && printer
+		let {job, printer} = this.props.navigation.state.params
+		let {status} = this.state
+		let actionAvailable = status !== 'complete' && printer
 		return (
 			<ScrollView>
 				<Header>{job.documentName}</Header>

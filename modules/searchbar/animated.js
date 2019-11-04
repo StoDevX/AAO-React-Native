@@ -49,6 +49,7 @@ export class AnimatedSearchBar extends React.Component<Props> {
 		Animated.timing(thing, {
 			toValue: args[toValue],
 			duration: args.duration,
+			useNativeDriver: false,
 		}).start()
 	}
 

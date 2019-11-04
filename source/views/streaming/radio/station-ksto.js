@@ -7,7 +7,7 @@ import {type TopLevelViewPropsType} from '../../types'
 import * as logos from '../../../../images/streaming'
 import {RadioControllerView} from './index'
 import tinycolor from 'tinycolor2'
-import {ThemeProvider} from '@callstack/react-theme-provider'
+import {ThemeProvider} from '@frogpond/app-theme'
 import {type PlayerTheme} from './types'
 
 let tintColor = '#37a287'

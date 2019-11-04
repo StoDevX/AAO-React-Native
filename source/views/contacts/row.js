@@ -14,7 +14,7 @@ export class ContactRow extends React.PureComponent<Props> {
 	_onPress = () => this.props.onPress(this.props.contact)
 
 	render() {
-		const {contact} = this.props
+		let {contact} = this.props
 
 		return (
 			<ListRow arrowPosition="top" onPress={this._onPress}>

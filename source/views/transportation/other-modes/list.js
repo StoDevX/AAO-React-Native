@@ -1,6 +1,5 @@
 // @flow
 import * as React from 'react'
-import delay from 'delay'
 import {OtherModesRow} from './row'
 import {TabBarIcon} from '@frogpond/navigation-tabs'
 import * as defaultData from '../../../../docs/transportation.json'
@@ -17,13 +16,16 @@ import {fetch} from '@frogpond/fetch'
 const transportationUrl = API('/transit/modes')
 
 const groupModes = (modes: OtherModeType[]) => {
-	const grouped = groupBy(modes, m => m.category)
+	let grouped = groupBy(modes, m => m.category)
 	return toPairs(grouped).map(([key, value]) => ({title: key, data: value}))
 }
 
 const styles = StyleSheet.create({
 	listContainer: {
 		backgroundColor: c.white,
+	},
+	contentContainer: {
+		flexGrow: 1,
 	},
 })
 
@@ -54,23 +56,15 @@ export class OtherModesView extends React.PureComponent<Props, State> {
 	}
 
 	refresh = async (): any => {
-		const start = Date.now()
 		this.setState(() => ({refreshing: true}))
-
-		await this.fetchData()
-
-		// wait 0.5 seconds – if we let it go at normal speed, it feels broken.
-		const elapsed = Date.now() - start
-		if (elapsed < 500) {
-			await delay(500 - elapsed)
-		}
-
+		await this.fetchData(true)
 		this.setState(() => ({refreshing: false}))
 	}
 
-	fetchData = async () => {
+	fetchData = async (reload?: boolean) => {
 		let {data: modes}: {data: Array<OtherModeType>} = await fetch(
 			transportationUrl,
+			{delay: reload ? 500 : 0},
 		).json()
 		this.setState(() => ({modes}))
 	}
@@ -92,11 +86,12 @@ export class OtherModesView extends React.PureComponent<Props, State> {
 	keyExtractor = (item: OtherModeType) => item.name
 
 	render() {
-		const groupedData = groupModes(this.state.modes)
+		let groupedData = groupModes(this.state.modes)
 		return (
 			<SectionList
 				ItemSeparatorComponent={ListSeparator}
 				ListEmptyComponent={<ListEmpty mode="bug" />}
+				contentContainerStyle={styles.contentContainer}
 				keyExtractor={this.keyExtractor}
 				onRefresh={this.refresh}
 				refreshing={this.state.refreshing}

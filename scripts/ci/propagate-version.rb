@@ -36,7 +36,7 @@ def propagate_version()
 		rewrite_gradle_file(ENV['GRADLE_FILE'], 'versionCode ', build)
 	when 'ios'
 		# we're splitting here because iTC can't handle versions with dashes in them
-		xcodeproj_dir = File.join(ENV['GYM_PROJECT'], '..')
+		xcodeproj_dir = File.join(ENV['XCODE_PROJECT'], '..')
 		set_xcode_version_number(xcodeproj_dir, version.split('-')[0])
 		set_xcode_build_number(xcodeproj_dir, build)
 	end

@@ -56,17 +56,17 @@ type UpdatePrintJobsAction =
 
 export function updatePrinters(): ThunkAction<UpdateAllPrintersAction> {
 	return async dispatch => {
-		const {username, password} = await loadLoginCredentials()
+		let {username, password} = await loadLoginCredentials()
 		if (!username || !password) {
 			return false
 		}
 
-		const successMsg = await logIn(username, password)
+		let successMsg = await logIn(username, password)
 		if (successMsg !== 'success') {
 			return dispatch({type: UPDATE_ALL_PRINTERS_FAILURE, payload: successMsg})
 		}
 
-		const [
+		let [
 			allPrintersResponse,
 			recentAndPopularPrintersResponse,
 			colorPrintersResponse,
@@ -97,13 +97,13 @@ export function updatePrinters(): ThunkAction<UpdateAllPrintersAction> {
 			})
 		}
 
-		const {
+		let {
 			recentPrinters,
 			popularPrinters,
 		} = recentAndPopularPrintersResponse.value
-		const allPrinters = allPrintersResponse.value
+		let allPrinters = allPrintersResponse.value
 
-		const colorPrinters = allPrinters.filter(printer =>
+		let colorPrinters = allPrinters.filter(printer =>
 			colorPrintersResponse.value.data.colorPrinters.includes(
 				printer.printerName,
 			),
@@ -118,17 +118,17 @@ export function updatePrinters(): ThunkAction<UpdateAllPrintersAction> {
 
 export function updatePrintJobs(): ThunkAction<UpdatePrintJobsAction> {
 	return async dispatch => {
-		const {username, password} = await loadLoginCredentials()
+		let {username, password} = await loadLoginCredentials()
 		if (!username || !password) {
 			return false
 		}
 
-		const successMsg = await logIn(username, password)
+		let successMsg = await logIn(username, password)
 		if (successMsg !== 'success') {
 			return dispatch({type: UPDATE_PRINT_JOBS_FAILURE, payload: successMsg})
 		}
 
-		const jobsResponse = await fetchJobs(username)
+		let jobsResponse = await fetchJobs(username)
 
 		if (jobsResponse.error) {
 			return dispatch({

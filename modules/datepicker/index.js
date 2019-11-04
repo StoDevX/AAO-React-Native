@@ -45,7 +45,7 @@ export class DatePicker extends React.Component<Props, State> {
 	}
 
 	formatDate = (date: moment) => {
-		const {mode, format = FORMATS[mode]} = this.props
+		let {mode, format = FORMATS[mode]} = this.props
 		return moment(date).format(format)
 	}
 

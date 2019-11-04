@@ -45,7 +45,7 @@ export default class NewsContainer extends React.PureComponent<Props, State> {
 		}
 
 		let entries: Array<StoryType> = await fetch(url, {
-			forReload: reload ? 500 : 0,
+			delay: reload ? 500 : 0,
 		}).json()
 
 		this.setState(() => ({entries}))

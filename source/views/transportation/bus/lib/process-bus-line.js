@@ -13,9 +13,9 @@ import type moment from 'moment'
 export const processBusSchedule = (now: moment) => (
 	scheduleData: UnprocessedBusSchedule,
 ): BusSchedule => {
-	const times = scheduleData.times.map(timeList => timeList.map(parseTime(now)))
+	let times = scheduleData.times.map(timeList => timeList.map(parseTime(now)))
 
-	const timetable = scheduleData.stops.map((stopName, i) => {
+	let timetable = scheduleData.stops.map((stopName, i) => {
 		let stop = {}
 		stop.name = stopName
 

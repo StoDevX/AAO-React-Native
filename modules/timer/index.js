@@ -18,7 +18,7 @@ type Props = {
 			render: ({
 				now: moment,
 				loading: boolean,
-				refresh: () => mixed,
+				refresh: () => void,
 			}) => React.Node,
 	  }
 	| {
@@ -26,7 +26,7 @@ type Props = {
 			render: ({
 				now: Date,
 				loading: boolean,
-				refresh: () => mixed,
+				refresh: () => void,
 			}) => React.Node,
 	  }
 )
@@ -66,18 +66,22 @@ export class Timer extends React.Component<Props, State> {
 		this.setState(() => ({now: new Date()}))
 	}
 
-	refresh = async () => {
-		const start = Date.now()
+	_refresh = async () => {
+		let start = Date.now()
 		this.setState(() => ({loading: true}))
 
 		this.updateTime()
 
-		const elapsed = Date.now() - start
+		let elapsed = Date.now() - start
 		if (elapsed < 500) {
 			await delay(500 - elapsed)
 		}
 
 		this.setState(() => ({loading: false}))
+	}
+
+	refresh = () => {
+		this._refresh()
 	}
 
 	render() {

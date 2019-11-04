@@ -5,8 +5,8 @@ import flatten from 'lodash/flatten'
 import * as storage from '../storage'
 
 export async function loadCachedCourses(): Promise<Array<CourseType>> {
-	const terms: Array<TermType> = await storage.getTermInfo()
-	const promises = terms.map(term => storage.getTermCourseData(term.term))
-	const coursesByTerm = await Promise.all(promises)
+	let terms: Array<TermType> = await storage.getTermInfo()
+	let promises = terms.map(term => storage.getTermCourseData(term.term))
+	let coursesByTerm = await Promise.all(promises)
 	return flatten(coursesByTerm)
 }

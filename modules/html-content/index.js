@@ -1,7 +1,7 @@
 // @flow
 
 import * as React from 'react'
-import {WebView} from 'react-native'
+import {WebView} from 'react-native-webview'
 import {openUrl, canOpenUrl} from '@frogpond/open-url'
 
 type Props = {

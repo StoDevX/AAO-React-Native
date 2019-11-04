@@ -10,12 +10,14 @@ import type {BuildingType} from './types'
 
 import * as c from '@frogpond/colors'
 import {ListSeparator, ListSectionHeader} from '@frogpond/lists'
+import {NoticeView} from '@frogpond/notice'
 
 export {BuildingHoursDetailView} from './detail'
 
 const styles = StyleSheet.create({
 	container: {
 		backgroundColor: c.white,
+		flexGrow: 1,
 	},
 })
 
@@ -50,6 +52,7 @@ export class BuildingHoursList extends React.PureComponent<Props> {
 		return (
 			<SectionList
 				ItemSeparatorComponent={ListSeparator}
+				ListEmptyComponent={<NoticeView text="No hours." />}
 				contentContainerStyle={styles.container}
 				extraData={this.props}
 				keyExtractor={this.keyExtractor}
