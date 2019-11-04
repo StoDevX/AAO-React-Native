@@ -63,7 +63,7 @@ jobs:
         with: {node-version: ^12.0}
       - uses: actions/checkout@master
       - run: gem install bundler:1.17.2 && bundle check || bundle install --frozen --path vendor/bundle
-      - run: xcode-select -s /Applications/Xcode_11.1.app
+      - run: sudo xcode-select -s /Applications/Xcode_11.1.app
       - run: yarn install --frozen-lockfile
       - run: brew tap wix/brew
       - run: brew install applesimutils
