@@ -8,7 +8,7 @@ on:
 jobs:
   js:
     name: JavaScript Checks
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-18.04
     steps:
       - uses: actions/setup-node@master
         with: {node-version: ^12.0}
@@ -27,7 +27,7 @@ jobs:
 
   android:
     name: Build for Android
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-18.04
     steps:
       - uses: actions/setup-node@master
         with: {node-version: ^12.0}
@@ -57,7 +57,7 @@ jobs:
 
   ios:
     name: Build for iOS
-    runs-on: macOS-latest
+    runs-on: macOS-10.14
     steps:
       - uses: actions/setup-node@master
         with: {node-version: ^12.0}
