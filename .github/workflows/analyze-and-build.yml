@@ -45,6 +45,8 @@ jobs:
       - run: gem install bundler
       - run: bundle install --frozen
 
+      - run: ./scripts/ci/propagate-version.rb
+
       - name: Raise the fs.inotify ulimits
         run: |
           echo 524288 | sudo tee -a /proc/sys/fs/inotify/max_user_watches
@@ -54,15 +56,55 @@ jobs:
 
       - run: cd android && ./gradlew androidDependencies --console=plain
       # - run: echo 'org.gradle.workers.max=2' >> ./android/gradle.properties
-      - run: bundle exec fastlane android ci-run
+
+      - run: mkdir -p logs/
+
+      - name: 'Maybe initialize CI for signing'
+        run: |
+          if [[ $MATCH_PASSWORD != '' && $FASTLANE_PASSWORD != '' ]]; then
+            ./scripts/ci/authorize-ci-for-keys.rb
+            ruby ./scripts/ci/android/matchesque.rb
+          else
+            echo 'MATCH_PASSWORD or FASTLANE_PASSWORD was empty; not creating a signing config'
+          fi
         env:
           FASTLANE_PASSWORD: ${{ secrets.FASTLANE_PASSWORD }}
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
-          MAPBOX_KEY: ${{ secrets.MAPBOX_KEY }}
-          ONESIGNAL_KEY: ${{ secrets.ONESIGNAL_KEY }}
-          GIT_COMMIT_DESC: $(git log --format=oneline -n 1 $GITHUB_SHA)
-          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
           GITHUB_KEYS_REPOSITORY_TOKEN: ${{ secrets.GITHUB_KEYS_REPOSITORY_TOKEN }}
+
+      - name: '[nightly || beta] Build app for releasing'
+        run: cd android && ./gradlew bundleRelease
+        if: github.event_name == 'schedule' || startsWith(github.ref, 'refs/tags/')
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+
+      - run: ./scripts/ci/android/discover-products.sh | tee ./logs/products
+
+      - run: |
+          export SUPPLY_AAB_PATHS="$(grep '-release.aab$' < ./logs/products)"
+          bundle exec fastlane run upload_to_play_store
+        if: startsWith(github.ref, 'refs/tags/')
+        name: '[beta] Upload to Google Play'
+        env:
+          SUPPLY_CHECK_SUPERSEDED_TRACKS: '1'
+          SUPPLY_TRACK: 'beta'
+
+      - run: |
+          export SUPPLY_AAB_PATHS="$(grep '-release.aab$' < ./logs/products)"
+          bundle exec fastlane run upload_to_play_store
+        if: startsWith(github.ref, 'refs/tags/')
+        name: '[beta] Upload to Google Play'
+        env:
+          SUPPLY_CHECK_SUPERSEDED_TRACKS: '1'
+          SUPPLY_TRACK: 'alpha'
+
+      - run: ./scripts/ci/sourcemap-create.sh
+        if: github.event_name == 'schedule' || startsWith(github.ref, 'refs/tags/')
+        name: '[nightly || beta] Generate sourcemap'
+
+      - run: ./scripts/ci/sourcemap-upload.sh
+        if: github.event_name == 'schedule' || startsWith(github.ref, 'refs/tags/')
+        name: '[nightly || beta] Upload sourcemap to Sentry'
 
   ios:
     name: Build for iOS

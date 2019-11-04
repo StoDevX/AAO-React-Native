@@ -19,5 +19,5 @@ yarn run sentry-cli \
 	"$VERSION" \
 	upload-sourcemaps \
 	--dist "$VERSION" \
-	--strip-prefix $(pwd) \
+	--strip-prefix "$(pwd)" \
 	--rewrite *.map

@@ -4,7 +4,7 @@ require 'tmpdir'
 
 # Clone the match repo (for Android)
 def clone_match
-	git_url = 'https://github.com/hawkrives/aao-keys'
+	git_url = ENV['MATCH_URL']
 	dir = Dir.mktmpdir
 	command = "git clone --depth 1 '#{git_url}' '#{dir}'"
 
