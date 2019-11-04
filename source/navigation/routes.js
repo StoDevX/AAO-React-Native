@@ -56,6 +56,7 @@ import {
 	PrintJobReleaseView,
 	PrintJobsView,
 } from '../views/stoprint'
+import {MapView, MapReporterView} from '../views/map'
 
 export const routes = {
 	HomeView: {screen: HomeView},
@@ -102,4 +103,6 @@ export const routes = {
 	PrintJobsView: {screen: PrintJobsView},
 	PrinterListView: {screen: PrinterListView},
 	PrintJobReleaseView: {screen: PrintJobReleaseView},
+	MapView: {screen: MapView},
+	MapReporterView: {screen: MapReporterView},
 }

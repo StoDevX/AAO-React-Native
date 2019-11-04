@@ -100,8 +100,7 @@ export const allViews: Array<ViewType> = [
 		gradient: c.purpleToIndigo,
 	},
 	{
-		type: 'url',
-		url: 'https://www.myatlascms.com/map/index.php?id=294',
+		type: 'view',
 		view: 'MapView',
 		title: 'Campus Map',
 		icon: 'map',
