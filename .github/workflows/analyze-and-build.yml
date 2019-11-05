@@ -62,7 +62,7 @@ jobs:
       - name: 'Maybe initialize CI for signing'
         run: |
           if [[ $MATCH_PASSWORD != '' && $FASTLANE_PASSWORD != '' ]]; then
-            ./scripts/ci/authorize-ci-for-keys.rb
+            ruby ./scripts/ci/authorize-ci-for-keys.rb
             ruby ./scripts/ci/android/matchesque.rb
           else
             echo 'MATCH_PASSWORD or FASTLANE_PASSWORD was empty; not creating a signing config'
@@ -78,7 +78,7 @@ jobs:
         env:
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
 
-      - run: ./scripts/ci/android/discover-products.sh | tee ./logs/products
+      - run: bash ./scripts/ci/android/discover-products.sh | tee ./logs/products
 
       - run: |
           export SUPPLY_AAB_PATHS="$(grep '-release.aab$' < ./logs/products)"
@@ -92,17 +92,17 @@ jobs:
       - run: |
           export SUPPLY_AAB_PATHS="$(grep '-release.aab$' < ./logs/products)"
           bundle exec fastlane run upload_to_play_store
-        if: startsWith(github.ref, 'refs/tags/')
-        name: '[beta] Upload to Google Play'
+        if: github.event_name == 'schedule'
+        name: '[nightly] Upload to Google Play'
         env:
           SUPPLY_CHECK_SUPERSEDED_TRACKS: '1'
           SUPPLY_TRACK: 'alpha'
 
-      - run: ./scripts/ci/sourcemap-create.sh
+      - run: bash ./scripts/ci/sourcemap-create.sh
         if: github.event_name == 'schedule' || startsWith(github.ref, 'refs/tags/')
         name: '[nightly || beta] Generate sourcemap'
 
-      - run: ./scripts/ci/sourcemap-upload.sh
+      - run: bash ./scripts/ci/sourcemap-upload.sh
         if: github.event_name == 'schedule' || startsWith(github.ref, 'refs/tags/')
         name: '[nightly || beta] Upload sourcemap to Sentry'
 
@@ -121,7 +121,7 @@ jobs:
       - run: bundle install --frozen
       - run: yarn install --frozen-lockfile
 
-      - run: ./scripts/ci/propagate-version.rb
+      - run: ruby ./scripts/ci/propagate-version.rb
 
       - run: xcodebuild
           -scheme "$XCODE_SCHEME"
@@ -138,15 +138,15 @@ jobs:
         name: 'Show Xcode build settings (for release)'
 
       - run: mkdir -p logs/
-      - run: ./scripts/ci/ios/discover-products.sh | tee ./logs/products
+      - run: bash ./scripts/ci/ios/discover-products.sh | tee ./logs/products
 
       - name: 'Maybe initialize CI for signing'
         run: |
           if [[ $MATCH_PASSWORD != '' && $FASTLANE_PASSWORD != '' ]]; then
-            ./scripts/ci/authorize-ci-for-keys.rb
-            ./scripts/ci/ios/init-keychain.rb > ./keychain.env.sh
+            ruby ./scripts/ci/authorize-ci-for-keys.rb
+            ruby ./scripts/ci/ios/init-keychain.rb > ./keychain.env.sh
             source ./keychain.env.sh
-            ./scripts/ci/ios/certificates.sh 'appstore'
+            bash ./scripts/ci/ios/certificates.sh 'appstore'
           else
             echo 'MATCH_PASSWORD or FASTLANE_PASSWORD was empty; not creating a signing config'
           fi
@@ -195,11 +195,11 @@ jobs:
         if: github.event_name == 'schedule'
         name: '[nightly] Upload to TestFlight'
 
-      - run: ./scripts/ci/sourcemap-create.sh
+      - run: bash ./scripts/ci/sourcemap-create.sh
         if: github.event_name == 'schedule' || startsWith(github.ref, 'refs/tags/')
         name: '[nightly || beta] Generate sourcemap'
 
-      - run: ./scripts/ci/sourcemap-upload.sh
+      - run: bash ./scripts/ci/sourcemap-upload.sh
         if: github.event_name == 'schedule' || startsWith(github.ref, 'refs/tags/')
         name: '[nightly || beta] Upload sourcemap to Sentry'
 
