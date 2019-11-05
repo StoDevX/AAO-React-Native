@@ -1,7 +1,7 @@
 ---
 name: Analyze and Build
 
-'on':
+on:
   push:
   schedule:
     - cron: '17 8 * * *'
