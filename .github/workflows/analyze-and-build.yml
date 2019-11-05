@@ -117,9 +117,9 @@ jobs:
       - run: sudo xcode-select -s $XCODE_PATH
       - uses: actions/checkout@master
 
-      - run: yarn install --frozen-lockfile
       - run: gem install bundler:1.17.2
       - run: bundle install --frozen
+      - run: yarn install --frozen-lockfile
 
       - run: ./scripts/ci/propagate-version.rb
 
