@@ -25,6 +25,7 @@ node_modules/warning/.*
 .*/node_modules/@callstack/react-theme-provider/.*
 .*/node_modules/react-native-paper/.*
 .*/node_modules/@snyk/composer-lockfile-parser/test/.*
+.*/node_modules/license-checker/tests/.*
 
 [include]
 
