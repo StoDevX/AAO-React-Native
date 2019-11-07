@@ -13,7 +13,7 @@
     "react": "^16.0.0",
     "react-native": "^0.61.0",
     "react-native-vector-icons": "^6.0.0",
-    "react-navigation": "^3.0.0"
+    "react-navigation": "^4.0.10"
   },
   "dependencies": {
     "@callstack/react-theme-provider": "^3.0.5",
