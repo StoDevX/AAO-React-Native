@@ -57,7 +57,7 @@ jobs:
 
   ios:
     name: Build for iOS
-    runs-on: macOS-10.14
+    runs-on: macos-latest
     steps:
       - uses: actions/setup-node@master
         with: {node-version: ^12.0}
