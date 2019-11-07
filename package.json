@@ -2,6 +2,7 @@
   "name": "AllAboutOlaf",
   "version": "2.8.0-beta.7",
   "private": true,
+  "license": "MIT",
   "scripts": {
     "android": "react-native run-android",
     "bundle-data": "node scripts/bundle-data.js data/ docs/",
