@@ -40,8 +40,11 @@ export class LicensesView extends React.Component<Props> {
 	render() {
 		const {navigation} = this.props
 
-		let licenses: Array<LicenseType> = Object.keys(licenseData).map(key => {
-			let {licenses, ...license} = licenseData[key]
+		let data = licenseData.data.filter(item => Object.keys(item).length)
+		let nonEmptyData = data[0]
+
+		let licenses: Array<LicenseType> = Object.keys(nonEmptyData).map(key => {
+			let {licenses, ...license} = nonEmptyData[key]
 
 			let cleanKey = key.replace(/^@/u, '')
 			let [name, version] = cleanKey.split('@')
