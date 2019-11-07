@@ -25,7 +25,7 @@ export class LicenseItem extends Component<Props> {
 
 		let displayUsername = ''
 		if (username && key.toLowerCase() !== username.toLowerCase()) {
-			displayUsername = `created by ${username}`
+			displayUsername = `published by ${username}`
 		}
 
 		return (
