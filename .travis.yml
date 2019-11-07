@@ -34,7 +34,6 @@ jobs:
         - npm run validate-bus-data
         - npm run validate-data
         - npm run bundle-data
-        - npm run licenses
       deploy:
         provider: pages
         skip_cleanup: true
