@@ -15,7 +15,7 @@
     "d": "yarn-deduplicate && yarn",
     "flow": "flow",
     "ios": "react-native run-ios",
-    "licenses": "license-checker --production --json --relativeLicensePath --excludePrivatePackages --out ./docs/licenses.json && yarn run licenses-clean",
+    "licenses": "license-checker --production --json --relativeLicensePath --excludePrivatePackages --customPath ./docs/license-format.json --out ./docs/licenses.json && yarn run licenses-clean",
     "licenses-clean": "sed -i '' -e '/\"path\":/d' -e '/\"licenseFile\":/d' -e '/\"copyright\":/d' -e '/\"email\":/d' ./docs/licenses.json",
     "lint": "eslint --report-unused-disable-directives --max-warnings=0 --cache source/ modules/ scripts/ *.js",
     "prepare": "ls contrib/*.patch | xargs -n1 patch -p0 -Nfsi || true",
