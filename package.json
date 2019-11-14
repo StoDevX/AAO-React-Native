@@ -112,7 +112,7 @@
     "moment-timezone": "0.5.27",
     "p-props": "3.1.0",
     "p-retry": "4.2.0",
-    "query-string": "6.8.3",
+    "query-string": "6.9.0",
     "querystring": "0.2.0",
     "react": "16.9.0",
     "react-async": "9.0.0",
