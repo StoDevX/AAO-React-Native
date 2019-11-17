@@ -41,7 +41,7 @@ export class LicensesView extends React.Component<Props> {
 		const {navigation} = this.props
 
 		let data = licenseData.data.filter(item => Object.keys(item).length)
-		let nonEmptyData = data[0]
+		let nonEmptyData = data[1]
 
 		let licenses: Array<LicenseType> = Object.keys(nonEmptyData).map(key => {
 			let {licenses, ...license} = nonEmptyData[key]
