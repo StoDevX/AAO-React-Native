@@ -20,7 +20,7 @@ export class LicensesList extends Component<Props> {
 
 	renderSectionHeader = ({section: {title}}: any) => (
 		// the proper type is ({section: {title}}: {section: {title: string}})
-		<ListSectionHeader spacing={{left: 10}} title={title} />
+		<ListSectionHeader title={title} />
 	)
 
 	keyExtractor = (item: LicenseType, index: number) => index.toString()
