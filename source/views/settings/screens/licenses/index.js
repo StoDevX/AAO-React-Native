@@ -6,6 +6,7 @@ import sortBy from 'lodash/sortBy'
 import groupBy from 'lodash/groupBy'
 import toPairs from 'lodash/toPairs'
 import {type LicenseType} from './types'
+import {type SortedLicenseType} from './types'
 import {type NavigationScreenProp} from 'react-navigation'
 
 import licenseData from '../../../../../docs/licenses.json'
@@ -40,7 +41,9 @@ export class LicensesView extends React.Component<Props> {
 		return data
 	}
 
-	sortAndGroupResults = (licenses: Array<LicenseType>) => {
+	sortAndGroupResults = (
+		licenses: Array<LicenseType>,
+	): Array<SortedLicenseType> => {
 		let sorted: Array<LicenseType> = sortBy(licenses, license =>
 			license.name.toLowerCase(),
 		)

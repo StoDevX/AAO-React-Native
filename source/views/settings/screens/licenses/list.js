@@ -9,13 +9,11 @@ import {type LicenseType} from './types'
 import {type SortedLicenseType} from './types'
 
 type Props = {
-	licenses: SortedLicenseType,
+	licenses: Array<SortedLicenseType>,
 	navigation: NavigationScreenProp<*>,
 }
 
 export class LicensesList extends Component<Props> {
-	renderSeparator = () => <ListSeparator />
-
 	renderItem = ({item}: {item: LicenseType}) => (
 		<LicenseItem item={item} navigation={this.props.navigation} />
 	)
@@ -28,15 +26,17 @@ export class LicensesList extends Component<Props> {
 	keyExtractor = (item: LicenseType, index: number) => index.toString()
 
 	render() {
+		let {licenses} = this.props
+
 		return (
 			<SectionList
-				ItemSeparatorComponent={this.renderSeparator}
+				ItemSeparatorComponent={ListSeparator}
 				ListEmptyComponent={<NoticeView text="No licenses." />}
 				contentContainerStyle={styles.contentContainer}
 				keyExtractor={this.keyExtractor}
 				renderItem={this.renderItem}
 				renderSectionHeader={this.renderSectionHeader}
-				sections={this.props.licenses}
+				sections={licenses}
 				style={styles.list}
 			/>
 		)
