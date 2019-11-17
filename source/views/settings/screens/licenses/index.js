@@ -2,6 +2,9 @@
 import * as React from 'react'
 import {View, StyleSheet} from 'react-native'
 import {LicensesList} from './list'
+import sortBy from 'lodash/sortBy'
+import groupBy from 'lodash/groupBy'
+import toPairs from 'lodash/toPairs'
 import {type LicenseType} from './types'
 import {type NavigationScreenProp} from 'react-navigation'
 
@@ -37,11 +40,30 @@ export class LicensesView extends React.Component<Props> {
 		return data
 	}
 
+	sortAndGroupResults = (licenses: Array<LicenseType>) => {
+		let sorted: Array<LicenseType> = sortBy(licenses, license =>
+			license.name.toLowerCase(),
+		)
+		let byTerm = groupBy(sorted, r => r.username && r.username.toLowerCase())
+
+		let forSectionList = toPairs(byTerm).map(([key, value]) => ({
+			title: key,
+			data: value,
+		}))
+
+		let sortedAgain: Array<{title: string, data: Array<LicenseType>}> = sortBy(
+			forSectionList,
+			license => license.title,
+		)
+
+		return sortedAgain
+	}
+
 	render() {
 		const {navigation} = this.props
 
 		let data = licenseData.data.filter(item => Object.keys(item).length)
-		let nonEmptyData = data[1]
+		let nonEmptyData = data[1] // TODO: don't do this
 
 		let licenses: Array<LicenseType> = Object.keys(nonEmptyData).map(key => {
 			let {licenses, ...license} = nonEmptyData[key]
@@ -61,11 +83,14 @@ export class LicensesView extends React.Component<Props> {
 			}
 		})
 
-		let sortedLicenses = this.sortDataByKey(licenses, 'username')
+		let sortedGroupedLicenses = this.sortAndGroupResults(licenses)
 
 		return (
 			<View style={styles.container}>
-				<LicensesList licenses={sortedLicenses} navigation={navigation} />
+				<LicensesList
+					licenses={sortedGroupedLicenses}
+					navigation={navigation}
+				/>
 			</View>
 		)
 	}

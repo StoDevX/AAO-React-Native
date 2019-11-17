@@ -10,3 +10,8 @@ export type LicenseType = {
 	publisher: string,
 	licenseText: string,
 }
+
+export type SortedLicenseType = {
+	title: string,
+	data: Array<LicenseType>,
+}
