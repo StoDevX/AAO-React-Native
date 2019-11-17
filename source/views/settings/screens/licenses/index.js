@@ -50,13 +50,9 @@ export class LicensesView extends React.Component<Props> {
 			let [name, version] = cleanKey.split('@')
 
 			let username = this.extractNameFromGithubUrl(license.repository)
-			let image = username
-				? `https://github.com/${username}.png`
-				: 'https://github.com/github.png'
 
 			return {
 				key,
-				image,
 				username,
 				licenses,
 				name,

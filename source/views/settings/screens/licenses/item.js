@@ -15,7 +15,6 @@ export class LicenseItem extends Component<Props> {
 	render() {
 		const {
 			key,
-			image,
 			username,
 			licenses,
 			name,
@@ -35,22 +34,13 @@ export class LicenseItem extends Component<Props> {
 					this.props.navigation.navigate('LicenseDetailView', licenseText)
 				}
 			>
-				<Row alignItems="center">
-					{image.length ? (
-						<Image
-							accessibilityIgnoresInvertColors={true}
-							source={{uri: image}}
-							style={styles.image}
-						/>
-					) : null}
-					<Column flex={1}>
-						<Title lines={2}>{name}</Title>
-						<Detail lines={1}>{displayUsername}</Detail>
-						<Detail lines={1}>
-							{licenses}・{`v${version}`}
-						</Detail>
-					</Column>
-				</Row>
+				<Column flex={1}>
+					<Title lines={2}>{name}</Title>
+					<Detail lines={1}>{displayUsername}</Detail>
+					<Detail lines={1}>
+						{licenses}・{`v${version}`}
+					</Detail>
+				</Column>
 			</ListRow>
 		)
 	}
