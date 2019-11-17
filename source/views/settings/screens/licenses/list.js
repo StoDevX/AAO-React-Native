@@ -28,7 +28,9 @@ export class LicensesList extends Component<Props> {
 
 	keyExtractor = (item: LicenseType, index: number) => index.toString()
 
-	sortAndGroupResults = (licenses: Array<LicenseType>) => {
+	sortAndGroupResults = (
+		licenses: Array<LicenseType>,
+	): Array<SortedLicenseType> => {
 		let sorted: Array<LicenseType> = sortBy(licenses, license =>
 			license.name.toLowerCase(),
 		)
@@ -49,9 +51,7 @@ export class LicensesList extends Component<Props> {
 
 	render() {
 		let {licenses} = this.props
-		let sortedGroupedLicenses: Array<SortedLicenseType> = this.sortAndGroupResults(
-			licenses,
-		)
+		let sortedGroupedLicenses = this.sortAndGroupResults(licenses)
 
 		return (
 			<SectionList
