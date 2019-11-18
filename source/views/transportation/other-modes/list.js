@@ -64,7 +64,9 @@ export class OtherModesView extends React.PureComponent<Props, State> {
 	fetchData = async (reload?: boolean) => {
 		let {data: modes}: {data: Array<OtherModeType>} = await fetch(
 			transportationUrl,
-			{delay: reload ? 500 : 0},
+			{
+				delay: reload ? 500 : 0,
+			},
 		).json()
 		this.setState(() => ({modes}))
 	}
