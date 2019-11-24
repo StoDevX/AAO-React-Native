@@ -40,6 +40,8 @@ import {
 	LegalView,
 	PrivacyView,
 	APITestView,
+	LicensesView,
+	LicenseDetailView,
 } from '../views/settings'
 import SISView from '../views/sis'
 import StreamingView, {
@@ -102,4 +104,6 @@ export const routes = {
 	PrintJobsView: {screen: PrintJobsView},
 	PrinterListView: {screen: PrinterListView},
 	PrintJobReleaseView: {screen: PrintJobReleaseView},
+	LicensesView: {screen: LicensesView},
+	LicenseDetailView: {screen: LicenseDetailView},
 }

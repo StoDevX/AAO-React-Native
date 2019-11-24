@@ -35,6 +35,7 @@ export class MiscellanySection extends React.Component<Props, State> {
 	onLegalButton = () => this.onPressButton('LegalView')
 	onSourceButton = () =>
 		trackedOpenUrl({url: GH_BASE_URL, id: 'ContributingView'})
+	onLicensesButton = () => this.onPressButton('LicensesView')
 	onAppIconButton = () => this.onPressButton('IconSettingsView')
 
 	render() {
@@ -50,6 +51,10 @@ export class MiscellanySection extends React.Component<Props, State> {
 				<PushButtonCell onPress={this.onCreditsButton} title="Credits" />
 				<PushButtonCell onPress={this.onPrivacyButton} title="Privacy Policy" />
 				<PushButtonCell onPress={this.onLegalButton} title="Legal" />
+				<PushButtonCell
+					onPress={this.onLicensesButton}
+					title="Open Source Licenses"
+				/>
 				<PushButtonCell onPress={this.onSourceButton} title="Contributing" />
 			</Section>
 		)
