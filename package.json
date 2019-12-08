@@ -99,7 +99,7 @@
     "@hawkrives/react-native-alternate-icons": "0.6.0",
     "@mapbox/react-native-mapbox-gl": "6.1.3",
     "@react-native-community/netinfo": "5.0.0",
-    "@sentry/react-native": "1.1.0",
+    "@sentry/react-native": "1.2.0",
     "base-64": "0.1.0",
     "buffer": "5.4.3",
     "delay": "4.3.0",
