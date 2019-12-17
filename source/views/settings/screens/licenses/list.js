@@ -41,7 +41,7 @@ export class LicensesList extends Component<Props> {
 			data: value,
 		}))
 
-		let sortedAgain: Array<{title: string, data: Array<LicenseType>}> = sortBy(
+		let sortedAgain: Array<{title: string, data: any}> = sortBy(
 			forSectionList,
 			license => license.title,
 		)
@@ -61,7 +61,7 @@ export class LicensesList extends Component<Props> {
 				keyExtractor={this.keyExtractor}
 				renderItem={this.renderItem}
 				renderSectionHeader={this.renderSectionHeader}
-				sections={sortedGroupedLicenses}
+				sections={(sortedGroupedLicenses: any)}
 				style={styles.list}
 			/>
 		)
