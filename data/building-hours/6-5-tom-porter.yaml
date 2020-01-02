@@ -5,7 +5,7 @@ image: tom-porter
 schedule:
   - title: Hours
     hours:
-      - {days: [Mo, Tu, We, Th, Fr], from: '8:00am', to: '7:00pm'}
+      - {days: [Mo, Tu, We, Th, Fr], from: '8:00am', to: '6:30pm'}
 
 breakSchedule:
   fall: []
