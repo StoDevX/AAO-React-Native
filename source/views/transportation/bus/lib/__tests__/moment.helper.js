@@ -18,13 +18,13 @@ export const time = (time: string) => {
 export const dayAndTime = (time: string) => {
 	let parsed = moment.tz(time, 'dd h:mma', true, CENTRAL_TZ)
 
-	let dow = parsed.day()
+	let dayOfWeek = parsed.day()
 
 	parsed
 		.year(baseTime.year())
 		.month(baseTime.month())
 		.date(baseTime.date())
-		.day(dow)
+		.day(dayOfWeek)
 
 	return parsed
 }

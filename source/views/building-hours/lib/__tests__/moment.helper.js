@@ -8,13 +8,13 @@ const baseTime = moment('2019-12-18T18:39:45').tz(CENTRAL_TZ)
 export const dayMoment = (time: string, format: ?string = 'ddd h:mma') => {
 	let parsed = moment.tz(time, format, false, CENTRAL_TZ)
 
-	let dow = parsed.day()
+	let dayOfWeek = parsed.day()
 
 	parsed
 		.year(baseTime.year())
 		.month(baseTime.month())
 		.date(baseTime.date())
-		.day(dow)
+		.day(dayOfWeek)
 
 	return parsed
 }
