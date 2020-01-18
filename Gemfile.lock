@@ -153,7 +153,7 @@ GEM
     memoist (0.16.2)
     mini_magick (4.9.5)
     mini_mime (1.0.2)
-    minitest (5.13.0)
+    minitest (5.14.0)
     molinillo (0.6.6)
     multi_json (1.14.1)
     multi_xml (0.6.0)
