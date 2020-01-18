@@ -21,25 +21,18 @@ export function parseHours(
 	}
 
 	let open = moment.tz(fromTime, TIME_FORMAT, true, timezone())
-	open.dayOfYear(dayOfYear)
-
-	let sixMonthsAgo = moment(m).subtract(6, 'months')
-	let sixMonthsFromNow = moment(m).add(6, 'months')
-
-	if (open.isBefore(sixMonthsAgo)) {
-		open.add(1, 'year')
-	} else if (open.isAfter(sixMonthsFromNow)) {
-		open.subtract(1, 'year')
-	}
+	open
+		.year(m.year())
+		.month(m.month())
+		.date(m.date())
+		.dayOfYear(dayOfYear)
 
 	let close = moment.tz(toTime, TIME_FORMAT, true, timezone())
-	close.dayOfYear(dayOfYear)
-
-	if (close.isBefore(sixMonthsAgo)) {
-		close.add(1, 'year')
-	} else if (close.isAfter(sixMonthsFromNow)) {
-		close.subtract(1, 'year')
-	}
+	close
+		.year(m.year())
+		.month(m.month())
+		.date(m.date())
+		.dayOfYear(dayOfYear)
 
 	if (close.isBefore(open)) {
 		close.add(1, 'day')
