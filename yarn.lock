@@ -2191,20 +2191,15 @@ command-exists@^1.2.8:
   resolved "https://registry.yarnpkg.com/command-exists/-/command-exists-1.2.8.tgz#715acefdd1223b9c9b37110a149c6392c2852291"
   integrity sha512-PM54PkseWbiiD/mMsbvW351/u+dafwTJ0ye2qB60G1aGQP9j3xK2gmMDc+R34L3nDtx4qMCitXT75mkbkGJDLw==
 
-commander@^2.10.0, commander@^2.18.0, commander@^2.19.0:
-  version "2.20.0"
-  resolved "https://registry.yarnpkg.com/commander/-/commander-2.20.0.tgz#d58bb2b5c1ee8f87b0d340027e9e94e222c5a422"
-  integrity sha512-7j2y+40w61zy6YC2iRNpUe/NwhNyoXrYpHMrSunaMG64nRnaf96zO/KMQR4OyN/UnE5KLyEBnKHd4aG3rskjpQ==
+commander@^2.10.0, commander@^2.18.0, commander@^2.19.0, commander@~2.20.3:
+  version "2.20.3"
+  resolved "https://registry.yarnpkg.com/commander/-/commander-2.20.3.tgz#fd485e84c03eb4881c20722ba48035e8531aeb33"
+  integrity sha512-GpVkmM8vF2vQUkj2LvZmD35JxeJOLCwJ9cUkugyk2nuhbv3+mJvpLYYt+0+USMxE+oj+ey/lJEnhZw75x/OMcQ==
 
 commander@~2.13.0:
   version "2.13.0"
   resolved "https://registry.yarnpkg.com/commander/-/commander-2.13.0.tgz#6964bca67685df7c1f1430c584f07d7597885b9c"
   integrity sha512-MVuS359B+YzaWqjCL/c+22gfryv+mCBPHAv3zyVI2GN8EY6IRP8VwtasXn8jyyhvvq84R4ImN1OKRtcbIasjYA==
-
-commander@~2.20.3:
-  version "2.20.3"
-  resolved "https://registry.yarnpkg.com/commander/-/commander-2.20.3.tgz#fd485e84c03eb4881c20722ba48035e8531aeb33"
-  integrity sha512-GpVkmM8vF2vQUkj2LvZmD35JxeJOLCwJ9cUkugyk2nuhbv3+mJvpLYYt+0+USMxE+oj+ey/lJEnhZw75x/OMcQ==
 
 commondir@^1.0.1:
   version "1.0.1"
@@ -2419,10 +2414,10 @@ danger-plugin-yarn@1.3.2:
     node-fetch "^1.7.1"
     semver "^5.4.1"
 
-danger@9.2.9:
-  version "9.2.9"
-  resolved "https://registry.yarnpkg.com/danger/-/danger-9.2.9.tgz#233203f42c6dbae64084b814344d94cced749536"
-  integrity sha512-3Or++mfuX2scwYewf5Ef4t2sq4ncOSprexOyjOoQwr2d21m+InzSDzt/AANqGZFsPIbCt88jggzDPoKO8VSE/Q==
+danger@9.2.10:
+  version "9.2.10"
+  resolved "https://registry.yarnpkg.com/danger/-/danger-9.2.10.tgz#7b4e34ca805dd39bbbc0ca2da9025d63f4d36a85"
+  integrity sha512-COMNt+zVATR+hY9HVDnvmv/PJ0ljkXg19NdlCdwO89HiXN4+ZMeAQtOAYKZoAiwOIYYVEZhfzoSYKOemCnlWCw==
   dependencies:
     "@babel/polyfill" "^7.2.5"
     "@octokit/rest" "^16.14.1"
