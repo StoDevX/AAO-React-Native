@@ -187,6 +187,6 @@
     "yarn-deduplicate": "1.1.1"
   },
   "optionalDependencies": {
-    "detox": "15.1.3"
+    "detox": "15.1.4"
   }
 }
