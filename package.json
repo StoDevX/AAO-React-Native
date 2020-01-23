@@ -182,7 +182,7 @@
     "pretty-quick": "2.0.1",
     "prop-types": "15.7.2",
     "react-test-renderer": "16.9.0",
-    "string-natural-compare": "3.0.0",
+    "string-natural-compare": "3.0.1",
     "strip-ansi": "6.0.0",
     "yarn-deduplicate": "1.1.1"
   },
