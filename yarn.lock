@@ -7079,10 +7079,10 @@ react-native-custom-tabs@0.1.7:
   resolved "https://registry.yarnpkg.com/react-native-custom-tabs/-/react-native-custom-tabs-0.1.7.tgz#2dfb4028b0a443610d94792b2019810f68dde525"
   integrity sha512-Lgxh/KvhRnirnvN9FrS/+FJ8OIKJcWGdceSrZutZt2x02Sc72uQVD1O4rh2kzN8NUw8yU6KQz279ltkicISbaw==
 
-react-native-device-info@5.4.1:
-  version "5.4.1"
-  resolved "https://registry.yarnpkg.com/react-native-device-info/-/react-native-device-info-5.4.1.tgz#507d2cd4be98813fc0421a35731b471b86ca194d"
-  integrity sha512-eb1fadKkaCy0C6p2gozGQ6vHO+rhQBh1FTN+l7pE23McfI7EKtp6Wy7OCexHvmEe6xsxoHK93cMiCsZuyaTnMA==
+react-native-device-info@5.4.3:
+  version "5.4.3"
+  resolved "https://registry.yarnpkg.com/react-native-device-info/-/react-native-device-info-5.4.3.tgz#b3ff063bb4dfe6fab282098a7bce8f8a09fa2a49"
+  integrity sha512-XT5u7WYcAe9isJrfXbqs8ImFvboPG4pjAEqAiEX0t8Uv0CDAs/S3A7S3opzX+c8KzRuFMiiWvIPDZ9nGsIXtgw==
 
 react-native-gesture-handler@1.5.3:
   version "1.5.3"
