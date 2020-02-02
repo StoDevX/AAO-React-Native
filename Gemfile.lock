@@ -200,7 +200,7 @@ GEM
       unicode-display_width (~> 1.1, >= 1.1.1)
     thread_safe (0.3.6)
     tty-cursor (0.7.1)
-    tty-screen (0.7.0)
+    tty-screen (0.7.1)
     tty-spinner (0.9.3)
       tty-cursor (~> 0.7)
     tzinfo (1.2.6)
