@@ -1188,10 +1188,10 @@
     wcwidth "^1.0.1"
     ws "^1.1.0"
 
-"@react-native-community/netinfo@5.3.3":
-  version "5.3.3"
-  resolved "https://registry.yarnpkg.com/@react-native-community/netinfo/-/netinfo-5.3.3.tgz#2e627456d83c1d75d4c43ab6cef70fe125b9691d"
-  integrity sha512-L4BsdIEEuG5rKkVNzjESdJ1wvusn0kflj/FrwctaW+xkLxiFs1+mdBg/mvqqfXvVFuBEphbyXJTFT4aG4Okkow==
+"@react-native-community/netinfo@5.3.4":
+  version "5.3.4"
+  resolved "https://registry.yarnpkg.com/@react-native-community/netinfo/-/netinfo-5.3.4.tgz#9467e865a4ce4adaa272b780eb682d3e169769b6"
+  integrity sha512-2J/BdWL4Vau+WE4GsFhfAvae7eeF/nu2U/JZ42Irlt5MdTW+FIV8bV8mW04umCZFu2iIxko/t662IJzuJHHQaA==
 
 "@react-navigation/core@~3.5.1":
   version "3.5.1"
