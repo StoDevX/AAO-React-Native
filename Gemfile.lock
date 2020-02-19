@@ -174,12 +174,14 @@ GEM
       declarative-option (< 0.2.0)
       uber (< 0.2.0)
     retriable (3.1.2)
+    rexml (3.2.4)
     rouge (2.0.7)
-    rubocop (0.79.0)
+    rubocop (0.80.0)
       jaro_winkler (~> 1.5.1)
       parallel (~> 1.10)
       parser (>= 2.7.0.1)
       rainbow (>= 2.2.2, < 4.0)
+      rexml
       ruby-progressbar (~> 1.7)
       unicode-display_width (>= 1.4.0, < 1.7)
     ruby-macho (1.4.0)
@@ -230,7 +232,7 @@ DEPENDENCIES
   fastlane
   json
   netrc
-  rubocop (~> 0.79)
+  rubocop (~> 0.80)
   xcodeproj
 
 BUNDLED WITH
