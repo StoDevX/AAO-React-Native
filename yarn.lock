@@ -7161,10 +7161,10 @@ react-markdown@2.5.1, react-markdown@^2.5.1:
     commonmark-react-renderer "^4.3.4"
     prop-types "^15.5.1"
 
-react-native-button@2.4.0, react-native-button@^2.3.0:
-  version "2.4.0"
-  resolved "https://registry.yarnpkg.com/react-native-button/-/react-native-button-2.4.0.tgz#42b487073a7ce7c54ab503f77c6ced1ab95742bf"
-  integrity sha512-4siaJlpOLeL9fAhX8VU3cnUfcGLe3E2zABDWSKxkF+NiYOd+AnKeYY29WXlV8hXhCFo+Ry7E+alrJ6zjZLTSfg==
+react-native-button@3.0.0, react-native-button@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/react-native-button/-/react-native-button-3.0.0.tgz#7ca4e9334f3e27aa37b24b87572aff5ece3ff86b"
+  integrity sha512-ykZkG0gMEzlqXHibQ98xWl9Vtl98mzPdqsAtxm/WkPpzSDj4fANGUVvv/TclaVALKkGSZ2gpuUgu4NvGfaVqjw==
   dependencies:
     prop-types "^15.5.10"
 
