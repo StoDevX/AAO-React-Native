@@ -16,7 +16,7 @@
     "ios": "react-native run-ios",
     "lint": "eslint --report-unused-disable-directives --max-warnings=0 --cache source/ modules/ scripts/ *.js",
     "prepare": "ls contrib/*.patch | xargs -n1 patch -p0 -Nfsi || true",
-    "pretty": "prettier --write '{source,modules,scripts,e2e}/**/*.{js,json}' 'data/**/*.css' '{*,.*}.{yaml,yml,json,js}' '.circleci/*'",
+    "pretty": "prettier --write '{source,modules,scripts,e2e}/**/*.{js,json}' 'data/**/*.css' '{*,.*}.{yaml,yml,json,js}'",
     "p": "pretty-quick",
     "pods": "scripts/pods.sh",
     "postinstall": "jetify && yarn run pods",
