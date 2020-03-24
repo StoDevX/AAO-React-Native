@@ -59,13 +59,14 @@ export class GitHubHostedMenu extends React.PureComponent<Props, State> {
 		let corIcons: MasterCorIconMapType = data.corIcons || {}
 
 		let upgradedFoodItems = fromPairs(
-			foodItems.map(upgradeMenuItem).map(item => [item.id, item]),
+			foodItems.map(upgradeMenuItem).map((item) => [item.id, item]),
 		)
 		stationMenus = stationMenus.map((menu, index) => ({
 			...upgradeStation(menu, index),
-			items: filter(upgradedFoodItems, item => item.station === menu.label).map(
-				item => item.id,
-			),
+			items: filter(
+				upgradedFoodItems,
+				(item) => item.station === menu.label,
+			).map((item) => item.id),
 		}))
 
 		this.setState({

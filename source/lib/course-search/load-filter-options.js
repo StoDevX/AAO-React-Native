@@ -22,5 +22,5 @@ export function loadAllCourseFilterOptions(): Promise<AllFilterCategories> {
 		mapValues(filterCategories, (category: FilterCategory) =>
 			fetch(category.url).json(),
 		),
-	).then(result => result)
+	).then((result) => result)
 }

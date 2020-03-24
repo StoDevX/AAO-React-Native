@@ -30,7 +30,7 @@ function buildBusSchedules(now): Array<BusSchedule> {
 	return schedules.map(processBusSchedule(now))
 }
 
-const formatTime = m => (m ? m.format('h:mma') : null)
+const formatTime = (m) => (m ? m.format('h:mma') : null)
 
 function makeSchedule(now) {
 	let schedule = getScheduleForNow(buildBusSchedules(now), now)

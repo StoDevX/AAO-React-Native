@@ -13,7 +13,7 @@ import type moment from 'moment'
 export const processBusSchedule = (now: moment) => (
 	scheduleData: UnprocessedBusSchedule,
 ): BusSchedule => {
-	let times = scheduleData.times.map(timeList => timeList.map(parseTime(now)))
+	let times = scheduleData.times.map((timeList) => timeList.map(parseTime(now)))
 
 	let timetable = scheduleData.stops.map((stopName, i) => {
 		let stop = {}
@@ -23,7 +23,7 @@ export const processBusSchedule = (now: moment) => (
 			stop.coordinates = scheduleData.coordinates[stopName]
 		}
 
-		stop.departures = times.map(timeList => timeList[i])
+		stop.departures = times.map((timeList) => timeList[i])
 
 		return stop
 	})

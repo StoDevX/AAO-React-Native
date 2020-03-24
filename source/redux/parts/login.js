@@ -69,7 +69,7 @@ export function logInViaCredentials(
 	username: string,
 	password: string,
 ): ThunkAction<LogInActions> {
-	return async dispatch => {
+	return async (dispatch) => {
 		dispatch({type: LOGIN_START})
 
 		await saveLoginCredentials({username, password})

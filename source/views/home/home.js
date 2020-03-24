@@ -45,7 +45,7 @@ export default function HomePage({navigation, views = allViews}: Props) {
 				<View style={styles.cells}>
 					{columns.map((contents, i) => (
 						<Column key={i} style={styles.column}>
-							{contents.map(view => (
+							{contents.map((view) => (
 								<HomeScreenButton
 									key={view.view}
 									onPress={() => {

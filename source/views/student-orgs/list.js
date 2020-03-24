@@ -77,8 +77,8 @@ export function StudentOrgsView(props: Props) {
 			return dataArr
 		}
 
-		return dataArr.filter(org =>
-			orgToArray(org).some(word => word.startsWith(searchQuery)),
+		return dataArr.filter((org) =>
+			orgToArray(org).some((word) => word.startsWith(searchQuery)),
 		)
 	}, [data, searchQuery])
 

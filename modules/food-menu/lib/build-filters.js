@@ -21,12 +21,12 @@ export function buildFilters(
 	now: momentT,
 ): FilterType[] {
 	// Format the items for the stations filter
-	let stations = flatten(meals.map(meal => meal.stations))
-	let stationLabels = uniq(stations.map(station => station.label))
-	let allStations = stationLabels.map(label => ({title: label}))
+	let stations = flatten(meals.map((meal) => meal.stations))
+	let stationLabels = uniq(stations.map((station) => station.label))
+	let allStations = stationLabels.map((label) => ({title: label}))
 
 	// Grab the labels of the COR icons
-	let allDietaryRestrictions = map(corIcons, cor => ({
+	let allDietaryRestrictions = map(corIcons, (cor) => ({
 		title: entities.decode(cor.label),
 		image: cor.image ? {uri: cor.image} : null,
 		detail: cor.description
@@ -35,15 +35,15 @@ export function buildFilters(
 	}))
 
 	// Decide which meal will be selected by default
-	let mealOptions = meals.map(m => ({label: m.label}))
+	let mealOptions = meals.map((m) => ({label: m.label}))
 	let selectedMeal = chooseMeal(meals, [], now)
 
 	// Check if there is at least one special in order to show the specials-only filter
-	let stationNames = selectedMeal.stations.map(s => s.label)
+	let stationNames = selectedMeal.stations.map((s) => s.label)
 	let shouldShowSpecials =
 		filter(
 			foodItems,
-			item => item.special && stationNames.includes(item.station),
+			(item) => item.special && stationNames.includes(item.station),
 		).length >= 1
 
 	return [

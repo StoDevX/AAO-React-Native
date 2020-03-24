@@ -185,13 +185,13 @@ class PrintJobsView extends React.PureComponent<Props, State> {
 			)
 		}
 
-		let grouped = groupBy(this.props.jobs, j => j.statusFormatted || 'Other')
+		let grouped = groupBy(this.props.jobs, (j) => j.statusFormatted || 'Other')
 		let groupedJobs = toPairs(grouped).map(([title, data]) => ({
 			title,
 			data,
 		}))
 		let sortedGroupedJobs = sortBy(groupedJobs, [
-			group => group.title !== 'Pending Release', // puts 'Pending Release' jobs at the top
+			(group) => group.title !== 'Pending Release', // puts 'Pending Release' jobs at the top
 		])
 
 		return (

@@ -13,12 +13,12 @@ import {ToolView} from './tool'
 
 const CUSTOM_TOOLS = [wifi]
 
-const shouldBeShown = conf =>
+const shouldBeShown = (conf) =>
 	!conf.hidden &&
 	(!conf.versionRange || semver.satisfies(pkg.version, conf.versionRange))
 
-const getToolView = config => {
-	let customView = CUSTOM_TOOLS.find(tool => tool.toolName === config.key)
+const getToolView = (config) => {
+	let customView = CUSTOM_TOOLS.find((tool) => tool.toolName === config.key)
 	if (!customView) {
 		return [ToolView, config]
 	}

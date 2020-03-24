@@ -26,7 +26,7 @@ type GetEnabledToolsAction =
 	| GetEnabledToolsFailureAction
 
 export function getEnabledTools(): ThunkAction<GetEnabledToolsAction> {
-	return async dispatch => {
+	return async (dispatch) => {
 		dispatch({type: ENABLED_TOOLS_START})
 
 		try {

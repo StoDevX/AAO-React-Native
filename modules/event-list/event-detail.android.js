@@ -51,7 +51,7 @@ function Title({title}: {title: EventType}) {
 function Links({urls}: {urls: Array<string>}) {
 	return urls.length ? (
 		<Card header="Links" style={styles.card}>
-			{urls.map(url => (
+			{urls.map((url) => (
 				<Text key={url} onPress={() => openUrl(url)} style={styles.cardBody}>
 					{url}
 				</Text>

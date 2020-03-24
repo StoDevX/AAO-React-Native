@@ -13,7 +13,7 @@ import {ListSeparator, ListSectionHeader} from '@frogpond/lists'
 import {NoticeView} from '@frogpond/notice'
 import EventRow from './event-row'
 
-const FullWidthSeparator = props => (
+const FullWidthSeparator = (props) => (
 	<ListSeparator fullWidth={true} {...props} />
 )
 
@@ -31,7 +31,7 @@ type Props = {
 export class EventList extends React.Component<Props> {
 	groupEvents = (events: EventType[], now: moment): any => {
 		// the proper return type is $ReadOnlyArray<{title: string, data: $ReadOnlyArray<EventType>}>
-		let grouped = groupBy(events, event => {
+		let grouped = groupBy(events, (event) => {
 			if (event.isOngoing) {
 				return 'Ongoing'
 			}

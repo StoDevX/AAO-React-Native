@@ -17,10 +17,10 @@ export function shareJob(job: JobType) {
 	if (Platform.OS === 'ios') {
 		Share.share({
 			url: url,
-		}).catch(error => console.log(error.message))
+		}).catch((error) => console.log(error.message))
 	} else {
 		Share.share({
 			message: url,
-		}).catch(error => console.log(error.message))
+		}).catch((error) => console.log(error.message))
 	}
 }
