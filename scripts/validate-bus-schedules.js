@@ -65,7 +65,7 @@ if (require.main === module) {
 	let files = fs
 		.readdirSync(path.join(DATA_BASE, 'bus-times'))
 		.filter(junk.not)
-		.map((f) => path.join(DATA_BASE, 'bus-times', f))
+		.map(f => path.join(DATA_BASE, 'bus-times', f))
 
 	let anyHadError = false
 	for (let filepath of files) {

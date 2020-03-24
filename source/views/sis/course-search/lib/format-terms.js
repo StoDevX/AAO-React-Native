@@ -8,16 +8,14 @@ import toPairs from 'lodash/toPairs'
 
 export function formatTerms(terms: Array<number>): string {
 	let sortedTerms = sortBy(terms)
-	let formattedTerms = sortedTerms.map((term) =>
-		parseTermAbbrev(term.toString()),
-	)
-	let groupedTerms = groupBy(formattedTerms, (term) => term.year)
-	let groupedDescriptions = mapValues(groupedTerms, (terms) => {
-		let semesters = terms.map((term) => term.semester)
+	let formattedTerms = sortedTerms.map(term => parseTermAbbrev(term.toString()))
+	let groupedTerms = groupBy(formattedTerms, term => term.year)
+	let groupedDescriptions = mapValues(groupedTerms, terms => {
+		let semesters = terms.map(term => term.semester)
 		return semesters.join('/')
 	})
 	let finalDescription = toPairs(groupedDescriptions)
-		.map((year) => year.join(': '))
+		.map(year => year.join(': '))
 		.join(', ')
 	return finalDescription
 }

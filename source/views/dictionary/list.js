@@ -28,7 +28,7 @@ const fetchDictionaryTerms = (args: {
 }): Promise<Array<WordType>> => {
 	return fetch(API('/dictionary'), {signal: args.signal})
 		.json()
-		.then((body) => body.data)
+		.then(body => body.data)
 }
 
 function splitToArray(str: string) {
@@ -71,13 +71,13 @@ export function DictionaryView(props: Props) {
 			return allTerms
 		}
 
-		return allTerms.filter((term) =>
-			termToArray(term).some((word) => word.startsWith(searchQuery)),
+		return allTerms.filter(term =>
+			termToArray(term).some(word => word.startsWith(searchQuery)),
 		)
 	}, [data, searchQuery])
 
 	let grouped = React.useMemo(() => {
-		return toPairs(groupBy(results, (item) => item.word[0])).map(([k, v]) => {
+		return toPairs(groupBy(results, item => item.word[0])).map(([k, v]) => {
 			return {title: k, data: v}
 		})
 	}, [results])

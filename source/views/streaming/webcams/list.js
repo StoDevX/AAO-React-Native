@@ -14,7 +14,7 @@ import {Viewport} from '@frogpond/viewport'
 const fetchWebcams = (): Promise<Array<Webcam>> =>
 	fetch(API('/webcams'))
 		.json()
-		.then((body) => body.data)
+		.then(body => body.data)
 
 type Props = {}
 
@@ -53,7 +53,7 @@ export class WebcamsView extends React.PureComponent<Props, State> {
 					<ScrollView contentContainerStyle={styles.container}>
 						{columns.map((contents, i) => (
 							<Column key={i} style={styles.column}>
-								{contents.map((webcam) => (
+								{contents.map(webcam => (
 									<StreamThumbnail
 										key={webcam.name}
 										viewportWidth={width}

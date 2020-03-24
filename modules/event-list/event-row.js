@@ -34,7 +34,7 @@ const styles = StyleSheet.create({
 
 type Props = {
 	event: EventType,
-	onPress: (EventType) => any,
+	onPress: EventType => any,
 }
 
 export default class EventRow extends React.PureComponent<Props> {

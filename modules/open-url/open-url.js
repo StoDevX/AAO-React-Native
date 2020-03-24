@@ -8,13 +8,13 @@ import {CustomTabs} from 'react-native-custom-tabs'
 
 function genericOpen(url: string) {
 	return Linking.canOpenURL(url)
-		.then((isSupported) => {
+		.then(isSupported => {
 			if (!isSupported) {
 				console.warn('cannot handle', url)
 			}
 			return Linking.openURL(url)
 		})
-		.catch((err) => {
+		.catch(err => {
 			console.error(err)
 		})
 }

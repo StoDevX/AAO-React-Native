@@ -20,7 +20,7 @@ export function summarizeDays(days: DayOfWeekEnumType[]): string {
 	}
 
 	// Sort the days so we have fewer edge-cases
-	let sortedDays = sortBy(days, (d) => daysOfTheWeek.indexOf(d))
+	let sortedDays = sortBy(days, d => daysOfTheWeek.indexOf(d))
 
 	let startDay = sortedDays[0]
 	let endDay = sortedDays[sortedDays.length - 1]

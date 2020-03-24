@@ -19,7 +19,7 @@ type Props = {
 	date: moment,
 	formattedDate: string,
 	mode: 'date' | 'datetime' | 'time',
-	onDateChange: (moment) => any,
+	onDateChange: moment => any,
 	style?: ViewStyleProp,
 	timezone: string,
 }

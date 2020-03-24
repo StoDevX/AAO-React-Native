@@ -7,7 +7,7 @@ import {fastGetTrimmedText} from '@frogpond/html-lib'
 import type {JobType} from './types'
 
 type Props = {
-	onPress: (JobType) => any,
+	onPress: JobType => any,
 	job: JobType,
 }
 

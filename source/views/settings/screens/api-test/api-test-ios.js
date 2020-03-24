@@ -119,7 +119,7 @@ export class IOSAPITestView extends React.PureComponent<Props, State> {
 						autoCapitalize="none"
 						autoCorrect={false}
 						keyboardType="web-search"
-						onEndEditing={(e) => this.fetchData(e.nativeEvent.text)}
+						onEndEditing={e => this.fetchData(e.nativeEvent.text)}
 						placeholder="path/to/resource"
 						returnKeyType="done"
 						style={styles.default}

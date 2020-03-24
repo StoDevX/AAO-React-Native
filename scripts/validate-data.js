@@ -7,19 +7,19 @@ const minimist = require('minimist')
 const validate = require('./validate')
 const {SCHEMA_BASE, DATA_BASE} = require('./paths')
 
-const isDir = (pth) => tryBoolean(() => fs.statSync(pth).isDirectory())
-const readYaml = (pth) =>
+const isDir = pth => tryBoolean(() => fs.statSync(pth).isDirectory())
+const readYaml = pth =>
 	JSON.parse(
 		JSON.stringify(
 			yaml.safeLoad(fs.readFileSync(pth, 'utf-8'), {filename: pth}),
 		),
 	)
 
-const readDir = (pth) =>
+const readDir = pth =>
 	fs
 		.readdirSync(pth)
 		.filter(junk.not)
-		.filter((entry) => !entry.startsWith('_'))
+		.filter(entry => !entry.startsWith('_'))
 
 /// MARK: program
 
@@ -33,7 +33,7 @@ if (args.data) {
 	let schemaFile = readYaml(args.schema)
 	iterator = [[[args.schema, schemaFile, dataFile]]]
 } else {
-	iterator = args.schemaNames.map((schemaName) => load(schemaName))
+	iterator = args.schemaNames.map(schemaName => load(schemaName))
 }
 
 // iterate!
@@ -55,7 +55,7 @@ for (const multitudes of iterator) {
 /// MARK: helpers
 
 function parseArgs(argv) {
-	let allSchemas = readDir(SCHEMA_BASE).map((f) => f.replace('.yaml', ''))
+	let allSchemas = readDir(SCHEMA_BASE).map(f => f.replace('.yaml', ''))
 	let args = minimist(argv, {
 		boolean: ['help', 'bail', 'quiet'],
 		string: ['data', 'schema'],

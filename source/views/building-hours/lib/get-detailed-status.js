@@ -29,7 +29,7 @@ export function getDetailedBuildingStatus(
 		return [{isActive: false, label: null, status: 'Hours unknown'}]
 	}
 
-	let results = schedules.map((set) => {
+	let results = schedules.map(set => {
 		let label = set.title
 		if (set.closedForChapelTime && isChapelTime(m)) {
 			return [
@@ -41,14 +41,14 @@ export function getDetailedBuildingStatus(
 			]
 		}
 
-		let filteredSchedules = set.hours.filter((sched) =>
+		let filteredSchedules = set.hours.filter(sched =>
 			sched.days.includes(dayOfWeek),
 		)
 		if (!filteredSchedules.length) {
 			return [{isActive: false, label, status: 'Closed today'}]
 		}
 
-		return filteredSchedules.map((schedule) => {
+		return filteredSchedules.map(schedule => {
 			let isActive = isScheduleOpenAtMoment(schedule, m)
 			let status = formatBuildingTimes(schedule, m)
 			if (set.isPhysicallyOpen === false) {

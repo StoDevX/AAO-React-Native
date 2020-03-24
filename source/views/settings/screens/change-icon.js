@@ -76,7 +76,7 @@ export class IconSettingsView extends React.Component<Props, State> {
 		return (
 			<ScrollView>
 				<Section header="CHANGE YOUR APP ICON" separatorInsetLeft={58}>
-					{icons.map((icon) => (
+					{icons.map(icon => (
 						<IconCell
 							key={icon.type}
 							icon={icon}
@@ -93,7 +93,7 @@ export class IconSettingsView extends React.Component<Props, State> {
 type IconCellProps = {|
 	+icon: Icon,
 	+isSelected: boolean,
-	+onPress: (string) => any,
+	+onPress: string => any,
 |}
 
 class IconCell extends React.Component<IconCellProps> {

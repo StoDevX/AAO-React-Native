@@ -31,7 +31,7 @@ export async function getBalances(): Promise<BalancesOrErrorType> {
 		let url = OLECARD_DATA_ENDPOINT
 		let resp: OleCardBalancesType = await fetch(url, {
 			credentials: 'include',
-		}).then((r) => r.json())
+		}).then(r => r.json())
 
 		if (resp.error != null) {
 			return {
@@ -53,9 +53,9 @@ const accounts = {
 }
 
 function getBalancesFromData(resp: OleCardBalancesType): BalancesOrErrorType {
-	let flex = resp.data.accounts.find((a) => a.account === accounts.flex)
-	let ole = resp.data.accounts.find((a) => a.account === accounts.ole)
-	let print = resp.data.accounts.find((a) => a.account === accounts.print)
+	let flex = resp.data.accounts.find(a => a.account === accounts.flex)
+	let ole = resp.data.accounts.find(a => a.account === accounts.ole)
+	let print = resp.data.accounts.find(a => a.account === accounts.print)
 
 	let daily = resp.data.meals && resp.data.meals.leftDaily
 	let weekly = resp.data.meals && resp.data.meals.leftWeekly

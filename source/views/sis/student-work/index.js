@@ -60,7 +60,7 @@ export default class StudentWorkView extends React.PureComponent<Props, State> {
 		}).json()
 
 		// force title-case on the job types, to prevent not-actually-duplicate headings
-		let processed: Array<JobType> = data.map((job) => ({
+		let processed: Array<JobType> = data.map(job => ({
 			...job,
 			type: titleCase(job.type),
 		}))
@@ -70,14 +70,14 @@ export default class StudentWorkView extends React.PureComponent<Props, State> {
 		// Off-Campus Work Study, and the Work Studies should come before the
 		// Summer Employments
 		let sorters: Array<(JobType) => mixed> = [
-			(j) => j.type, // sort any groups with the same sort index alphabetically
-			(j) => j.office, // sort all jobs with the same office
-			(j) => j.lastModified, // sort all jobs by date-last-modified
+			j => j.type, // sort any groups with the same sort index alphabetically
+			j => j.office, // sort all jobs with the same office
+			j => j.lastModified, // sort all jobs by date-last-modified
 		]
 		let ordered: Array<'desc' | 'asc'> = ['desc', 'asc', 'desc']
 		let sorted = orderBy(processed, sorters, ordered)
 
-		let grouped = groupBy(sorted, (j) => j.type)
+		let grouped = groupBy(sorted, j => j.type)
 		let mapped = toPairs(grouped).map(([title, data]) => ({
 			title,
 			data,

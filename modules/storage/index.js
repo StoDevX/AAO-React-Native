@@ -17,7 +17,7 @@ export function setItem(key: string, value: mixed) {
 	return AsyncStorage.setItem(`${prefix}:${key}`, JSON.stringify(value))
 }
 export function getItem(key: string): Promise<?any> {
-	return AsyncStorage.getItem(`${prefix}:${key}`).then((stored) =>
+	return AsyncStorage.getItem(`${prefix}:${key}`).then(stored =>
 		JSON.parse(stored),
 	)
 }

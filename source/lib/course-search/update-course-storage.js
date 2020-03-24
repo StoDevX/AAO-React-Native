@@ -20,9 +20,7 @@ export async function areAnyTermsCached(): Promise<boolean> {
 
 export async function updateStoredCourses(): Promise<boolean> {
 	let outdatedTerms: Array<TermType> = await determineOutdatedTerms()
-	await Promise.all(
-		outdatedTerms.map((term) => storeTermCoursesFromServer(term)),
-	)
+	await Promise.all(outdatedTerms.map(term => storeTermCoursesFromServer(term)))
 	// returns `true` if any terms were updated
 	return outdatedTerms.length === 0 ? false : true
 }
@@ -34,9 +32,9 @@ async function determineOutdatedTerms(): Promise<Array<TermType>> {
 		await storage.setTermInfo(remoteTerms)
 		return remoteTerms
 	}
-	let outdatedTerms = localTerms.filter((localTerm) => {
+	let outdatedTerms = localTerms.filter(localTerm => {
 		let match = remoteTerms.find(
-			(remoteTerm) => remoteTerm.term === localTerm.term,
+			remoteTerm => remoteTerm.term === localTerm.term,
 		)
 		return match ? match.hash !== localTerm.hash : true
 	})
@@ -56,7 +54,7 @@ async function loadCurrentTermsFromServer(): Promise<Array<TermType>> {
 			type: 'error',
 		}))
 	let terms: Array<TermType> = resp.files.filter(
-		(file) => file.type === 'json' && file.year > thisYear - 5,
+		file => file.type === 'json' && file.year > thisYear - 5,
 	)
 	return terms
 }
@@ -72,7 +70,7 @@ async function storeTermCoursesFromServer(term: TermType) {
 }
 
 function formatRawData(rawData: Array<RawCourseType>): Array<CourseType> {
-	return rawData.map((course) => {
+	return rawData.map(course => {
 		let spaceAvailable = course.enrolled < course.max
 		return {spaceAvailable: spaceAvailable, ...course}
 	})

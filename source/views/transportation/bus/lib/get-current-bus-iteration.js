@@ -6,7 +6,7 @@ import findLast from 'lodash/findLast'
 import findLastIndex from 'lodash/findLastIndex'
 import type {BusSchedule, DepartureTimeList} from '../types'
 
-const isTruthy = (x) => Boolean(x)
+const isTruthy = x => Boolean(x)
 
 export type BusStateEnum =
 	| 'none'
@@ -51,7 +51,7 @@ export function getCurrentBusIteration(
 	// The meat of this function: find the furthest timeset that now is part of.
 	// Because we operate on sets, instead of on one giant list of stops, we
 	// use isSameOrAfter to account for the gaps between iterations.
-	let index = findLastIndex(schedule.times, (stopTimes) => {
+	let index = findLastIndex(schedule.times, stopTimes => {
 		let first = find(stopTimes, isTruthy)
 		let last = findLast(stopTimes, isTruthy)
 

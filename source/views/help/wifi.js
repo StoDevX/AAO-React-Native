@@ -50,7 +50,7 @@ export class ToolView extends React.Component<Props, State> {
 
 		this.setState(() => ({status: 'collecting', error: ''}))
 		let [position, device] = await Promise.all([
-			getPosition().catch((error) => {
+			getPosition().catch(error => {
 				Sentry.captureException(error)
 				return null
 			}),

@@ -75,7 +75,7 @@ class Map extends React.Component<Props, State> {
 		longitude: number,
 		longitudeDelta: number,
 	}) => {
-		this.setState((state) => {
+		this.setState(state => {
 			if (isEqual(state.region, newRegion)) {
 				return
 			}
@@ -97,7 +97,7 @@ class Map extends React.Component<Props, State> {
 		}
 
 		let entriesWithCoordinates = scheduleForToday.timetable.filter(
-			(entry) => entry.coordinates,
+			entry => entry.coordinates,
 		)
 
 		if (!entriesWithCoordinates.length) {

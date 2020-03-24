@@ -24,7 +24,7 @@ function bundleDataDir({fromDir, toFile}) {
 	let files = fs
 		.readdirSync(fromDir)
 		.filter(junk.not)
-		.map((f) => path.join(fromDir, f))
+		.map(f => path.join(fromDir, f))
 	if (!files.length) {
 		return
 	}
@@ -32,7 +32,7 @@ function bundleDataDir({fromDir, toFile}) {
 	// sort the files so that 9 comes before 10
 	files.sort(natsort)
 
-	let loaded = files.map((fpath) => {
+	let loaded = files.map(fpath => {
 		console.log(fpath)
 		let contents = fs.readFileSync(fpath, 'utf-8')
 		return yaml.safeLoad(contents)

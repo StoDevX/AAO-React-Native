@@ -19,7 +19,7 @@ export function applySearch(query: string, course: Course): boolean {
 	}
 
 	let {instructors = []} = course
-	if (instructors.some((name) => keywordSearch(query, name.toLowerCase(), 1))) {
+	if (instructors.some(name => keywordSearch(query, name.toLowerCase(), 1))) {
 		return true
 	}
 
@@ -29,7 +29,7 @@ export function applySearch(query: string, course: Course): boolean {
 	}
 
 	let {gereqs = []} = course
-	if (gereqs.some((gereq) => gereq.toLowerCase().startsWith(query))) {
+	if (gereqs.some(gereq => gereq.toLowerCase().startsWith(query))) {
 		return true
 	}
 
@@ -37,8 +37,8 @@ export function applySearch(query: string, course: Course): boolean {
 }
 
 export function sortAndGroupResults(results: Array<Course>) {
-	let sorted: Array<Course> = sortBy(results, (course) => deptNum(course))
-	let byTerm = groupBy(sorted, (r) => r.term)
+	let sorted: Array<Course> = sortBy(results, course => deptNum(course))
+	let byTerm = groupBy(sorted, r => r.term)
 
 	let forSectionList = toPairs(byTerm).map(([key, value]) => ({
 		title: key,
@@ -47,7 +47,7 @@ export function sortAndGroupResults(results: Array<Course>) {
 
 	let sortedAgain: Array<{title: string, data: Array<Course>}> = sortBy(
 		forSectionList,
-		(course) => course.title,
+		course => course.title,
 	)
 
 	sortedAgain.reverse()

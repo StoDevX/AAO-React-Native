@@ -15,7 +15,7 @@ export function isBuildingOpen(info: BuildingType, m: moment): boolean {
 		return false
 	}
 
-	let results = schedules.map((set) => {
+	let results = schedules.map(set => {
 		if (set.isPhysicallyOpen === false) {
 			return false
 		}
@@ -23,17 +23,17 @@ export function isBuildingOpen(info: BuildingType, m: moment): boolean {
 			return false
 		}
 
-		let filteredSchedules = set.hours.filter((sched) =>
+		let filteredSchedules = set.hours.filter(sched =>
 			sched.days.includes(dayOfWeek),
 		)
 		if (!filteredSchedules.length) {
 			return false
 		}
 
-		return filteredSchedules.map((schedule) =>
+		return filteredSchedules.map(schedule =>
 			isScheduleOpenAtMoment(schedule, m),
 		)
 	})
 
-	return flatten(results).find((status) => status !== false) || false
+	return flatten(results).find(status => status !== false) || false
 }

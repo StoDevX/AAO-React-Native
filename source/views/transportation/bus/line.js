@@ -24,7 +24,7 @@ const styles = StyleSheet.create({
 	},
 })
 
-const isTruthy = (x) => Boolean(x)
+const isTruthy = x => Boolean(x)
 const BusLineSeparator = () => <Separator style={styles.separator} />
 const EMPTY_SCHEDULE_MESSAGE = (
 	<ListRow>

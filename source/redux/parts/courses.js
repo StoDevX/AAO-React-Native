@@ -37,9 +37,7 @@ export function updateRecentFilters(
 		let newRecentFilter = formatFilterCombo(filters)
 		let recentFilters = state.courses ? state.courses.recentFilters : []
 		if (
-			!recentFilters.find(
-				(f) => f.description === newRecentFilter.description,
-			) &&
+			!recentFilters.find(f => f.description === newRecentFilter.description) &&
 			newRecentFilter.description.length !== 0
 		) {
 			let newFilters = [newRecentFilter, ...recentFilters].slice(0, 3)
@@ -79,7 +77,7 @@ export type UpdateCourseDataActionType = ThunkAction<
 >
 
 export function loadCourseDataIntoMemory(): LoadCourseDataActionType {
-	return async (dispatch) => {
+	return async dispatch => {
 		let areAnyCached = await areAnyTermsCached()
 
 		if (!areAnyCached) {
@@ -93,7 +91,7 @@ export function loadCourseDataIntoMemory(): LoadCourseDataActionType {
 }
 
 export function updateCourseData(): UpdateCourseDataActionType {
-	return async (dispatch) => {
+	return async dispatch => {
 		let updateNeeded = await updateStoredCourses()
 
 		if (updateNeeded) {
@@ -128,7 +126,7 @@ export function updateRecentSearches(
 		let state = getState()
 
 		let recentSearches = state.courses ? state.courses.recentSearches : []
-		let recentLowerCase = recentSearches.map((query) => query.toLowerCase())
+		let recentLowerCase = recentSearches.map(query => query.toLowerCase())
 		if (recentLowerCase.includes(query.toLowerCase())) {
 			return
 		}

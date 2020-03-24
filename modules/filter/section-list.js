@@ -26,10 +26,10 @@ export function ListSection({filter, onChange}: PropsType) {
 			// if all options of an OR filter are selected and a user selects
 			// an option, make that the only selected option
 			result = [tappedValue]
-		} else if (selected.some((val) => isEqual(val, tappedValue))) {
+		} else if (selected.some(val => isEqual(val, tappedValue))) {
 			// if the user has tapped an item, and it's already in the list of
 			// things they've tapped, we want to _remove_ it from that list.
-			result = reject(selected, (val) => isEqual(val, tappedValue))
+			result = reject(selected, val => isEqual(val, tappedValue))
 		} else {
 			// otherwise, we need to add it to the list
 			result = concat(selected, tappedValue)
@@ -67,13 +67,11 @@ export function ListSection({filter, onChange}: PropsType) {
 		})
 	}
 
-	let hasImageColumn = options.some((val) => Boolean(val.image))
-	let buttons = options.map((val) => (
+	let hasImageColumn = options.some(val => Boolean(val.image))
+	let buttons = options.map(val => (
 		<Cell
 			key={val.title}
-			accessory={
-				selected.some((s) => isEqual(s, val)) ? 'Checkmark' : undefined
-			}
+			accessory={selected.some(s => isEqual(s, val)) ? 'Checkmark' : undefined}
 			cellContentView={
 				<Column style={styles.content}>
 					<Text style={styles.title}>

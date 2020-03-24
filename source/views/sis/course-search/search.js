@@ -119,15 +119,15 @@ class CourseSearchView extends React.Component<Props, State> {
 
 	onRecentFilterPress = async (text: string) => {
 		let {recentFilters} = this.props
-		let selectedFilterCombo = recentFilters.find((f) => f.description === text)
+		let selectedFilterCombo = recentFilters.find(f => f.description === text)
 
 		let freshFilters = await buildFilters()
 		let selectedFilters = freshFilters
 		if (selectedFilterCombo) {
 			let filterLookup = fromPairs(
-				selectedFilterCombo.filters.map((f) => [f.key, f]),
+				selectedFilterCombo.filters.map(f => [f.key, f]),
 			)
-			selectedFilters = freshFilters.map((f) => filterLookup[f.key] || f)
+			selectedFilters = freshFilters.map(f => filterLookup[f.key] || f)
 		}
 
 		this.props.navigation.push('CourseSearchResultsView', {
@@ -156,7 +156,7 @@ class CourseSearchView extends React.Component<Props, State> {
 		}
 
 		let recentFilterDescriptions = this.props.recentFilters.map(
-			(f) => f.description,
+			f => f.description,
 		)
 
 		return (

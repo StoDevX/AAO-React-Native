@@ -100,20 +100,20 @@ function Schedule({course}: {course: CourseType}) {
 	if (!course.offerings) {
 		return null
 	}
-	let groupedByDay = groupBy(course.offerings, (c) => c.day)
+	let groupedByDay = groupBy(course.offerings, c => c.day)
 	let schedule = map(groupedByDay, (offerings, day) => {
-		let timesFormatted = offerings.map((offering) => {
+		let timesFormatted = offerings.map(offering => {
 			let start = moment.tz(offering.start, 'H:mm', timezone()).format('h:mm A')
 			let end = moment.tz(offering.end, 'H:mm', timezone()).format('h:mm A')
 			return `${start} – ${end}`
 		})
-		let locations = offerings.map((offering) => offering.location)
+		let locations = offerings.map(offering => offering.location)
 
 		let timelocs = zip(timesFormatted, locations)
 
 		let timelocsObj = timelocs.map(([time, location]) => ({time, location}))
 
-		let rightDetail = timelocsObj.map((timeloc) => (
+		let rightDetail = timelocsObj.map(timeloc => (
 			<Text key={timeloc.time} style={styles.rightDetail}>
 				<Text style={styles.time}>{timeloc.time} </Text>
 				<Text style={styles.location}>({timeloc.location})</Text>

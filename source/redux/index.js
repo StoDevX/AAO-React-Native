@@ -40,7 +40,7 @@ export function makeStore(): Store<*, *, *> {
 			collapsed: true,
 			duration: true,
 			// avoid logging the (large) course data state twice per action
-			stateTransformer: (state) => ({
+			stateTransformer: state => ({
 				...state,
 				courses: {...state.courses, allCourses: '<omitted>'},
 			}),

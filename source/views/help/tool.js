@@ -66,7 +66,7 @@ export class ToolView extends React.Component<Props> {
 			>
 				<Markdown source={this.props.config.body} />
 
-				{this.props.config.buttons.map((btn) => {
+				{this.props.config.buttons.map(btn => {
 					let {title, enabled = true} = btn
 					return (
 						<Button

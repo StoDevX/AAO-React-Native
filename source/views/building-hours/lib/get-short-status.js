@@ -15,7 +15,7 @@ export function getShortBuildingStatus(info: BuildingType, m: moment): string {
 		return 'Closed'
 	}
 
-	let statuses = schedules.map((set) => {
+	let statuses = schedules.map(set => {
 		if (set.isPhysicallyOpen === false) {
 			return 'Closed'
 		}
@@ -24,17 +24,17 @@ export function getShortBuildingStatus(info: BuildingType, m: moment): string {
 			return 'Chapel'
 		}
 
-		let filteredSchedules = set.hours.filter((sched) =>
+		let filteredSchedules = set.hours.filter(sched =>
 			sched.days.includes(dayOfWeek),
 		)
 		if (!filteredSchedules.length) {
 			return 'Closed'
 		}
 
-		return filteredSchedules.map((schedule) =>
+		return filteredSchedules.map(schedule =>
 			getScheduleStatusAtMoment(schedule, m),
 		)
 	})
 
-	return flatten(statuses).find((status) => status !== 'Closed') || 'Closed'
+	return flatten(statuses).find(status => status !== 'Closed') || 'Closed'
 }

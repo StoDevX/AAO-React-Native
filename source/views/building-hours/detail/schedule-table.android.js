@@ -22,7 +22,7 @@ export class ScheduleTable extends React.PureComponent<Props> {
 
 		return (
 			<View>
-				{schedules.map((schedule) => (
+				{schedules.map(schedule => (
 					<Card
 						key={schedule.title}
 						footer={schedule.notes}

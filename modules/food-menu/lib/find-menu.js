@@ -36,7 +36,7 @@ export function findMeal(
 		return
 	}
 
-	let dayparts: DayPartMenuType[] = meals.map((m) => ({
+	let dayparts: DayPartMenuType[] = meals.map(m => ({
 		starttime: m.starttime,
 		endtime: m.endtime,
 		label: m.label,

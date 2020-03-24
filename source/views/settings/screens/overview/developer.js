@@ -27,7 +27,7 @@ export class DeveloperSection extends React.Component<Props> {
 				'Nothing will appear in the dashboard during development.',
 			)
 		} else {
-			Sentry.setEventSentSuccessfully((event) => {
+			Sentry.setEventSentSuccessfully(event => {
 				Alert.alert(`Sent an event to Sentry: ${event.event_id}`)
 			})
 		}

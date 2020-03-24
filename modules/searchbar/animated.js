@@ -14,7 +14,7 @@ type Props = {
 	onSubmit?: () => mixed,
 	onFocus?: () => mixed,
 	onCancel?: () => mixed,
-	onChange?: (string) => mixed,
+	onChange?: string => mixed,
 	title?: string,
 }
 
@@ -78,7 +78,7 @@ export class AnimatedSearchBar extends React.Component<Props> {
 	render() {
 		return (
 			<Viewport
-				render={(viewport) => {
+				render={viewport => {
 					let searchBarWidth = viewport.width - 20
 
 					let showTitle = Boolean(this.props.title)

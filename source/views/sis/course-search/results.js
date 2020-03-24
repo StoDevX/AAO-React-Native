@@ -79,11 +79,11 @@ class CourseSearchResultsView extends React.Component<Props, State> {
 	}
 
 	handleSearchSubmit = () => {
-		this.setState((state) => ({searchQuery: state.typedQuery}))
+		this.setState(state => ({searchQuery: state.typedQuery}))
 	}
 
 	handleSearchCancel = () => {
-		this.setState((state) => ({
+		this.setState(state => ({
 			typedQuery: state.searchQuery,
 			isSearchbarActive: false,
 		}))
@@ -112,15 +112,15 @@ class CourseSearchResultsView extends React.Component<Props, State> {
 		if (this.state.searchQuery.length) {
 			// if there is text in the search bar, add the text to the Recent Searches list
 			this.props.updateRecentSearches(this.state.searchQuery)
-		} else if (this.state.filters.some((f) => f.enabled)) {
+		} else if (this.state.filters.some(f => f.enabled)) {
 			// if there is at least one active filter, add the filter set to the Recent Filters list
 			this.props.updateRecentFilters(this.state.filters)
 		}
 	}
 
 	updateFilter = (filter: FilterType) => {
-		this.setState((state) => {
-			let edited = state.filters.map((f) => (f.key !== filter.key ? f : filter))
+		this.setState(state => {
+			let edited = state.filters.map(f => (f.key !== filter.key ? f : filter))
 			return {filters: edited}
 		})
 	}

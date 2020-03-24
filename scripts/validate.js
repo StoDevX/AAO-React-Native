@@ -15,7 +15,7 @@ function formatError(err, data) {
 		case 'enum': {
 			let value = get(data, dataPath)
 			let allowed = err.params.allowedValues
-				.map((v) => JSON.stringify(v))
+				.map(v => JSON.stringify(v))
 				.join(', ')
 			contents = `Given value "${JSON.stringify(value)}" ${
 				err.message
@@ -52,7 +52,7 @@ module.exports = function validate(schema, data) {
 	let isValid = validate(data)
 
 	if (!isValid) {
-		return [false, validate.errors.map((e) => formatError(e, data))]
+		return [false, validate.errors.map(e => formatError(e, data))]
 	}
 
 	return [true, []]

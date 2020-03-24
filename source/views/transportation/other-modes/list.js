@@ -16,7 +16,7 @@ import {fetch} from '@frogpond/fetch'
 const transportationUrl = API('/transit/modes')
 
 const groupModes = (modes: OtherModeType[]) => {
-	let grouped = groupBy(modes, (m) => m.category)
+	let grouped = groupBy(modes, m => m.category)
 	return toPairs(grouped).map(([key, value]) => ({title: key, data: value}))
 }
 

@@ -24,7 +24,7 @@ export class ScheduleTable extends React.PureComponent<Props> {
 
 		return (
 			<TableView>
-				{schedules.map((schedule) => (
+				{schedules.map(schedule => (
 					<Section
 						key={schedule.title}
 						footer={schedule.notes}

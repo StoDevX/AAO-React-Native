@@ -55,7 +55,7 @@ type UpdatePrintJobsAction =
 	| UpdatePrintJobsFailureAction
 
 export function updatePrinters(): ThunkAction<UpdateAllPrintersAction> {
-	return async (dispatch) => {
+	return async dispatch => {
 		let {username, password} = await loadLoginCredentials()
 		if (!username || !password) {
 			return false
@@ -103,7 +103,7 @@ export function updatePrinters(): ThunkAction<UpdateAllPrintersAction> {
 		} = recentAndPopularPrintersResponse.value
 		let allPrinters = allPrintersResponse.value
 
-		let colorPrinters = allPrinters.filter((printer) =>
+		let colorPrinters = allPrinters.filter(printer =>
 			colorPrintersResponse.value.data.colorPrinters.includes(
 				printer.printerName,
 			),
@@ -117,7 +117,7 @@ export function updatePrinters(): ThunkAction<UpdateAllPrintersAction> {
 }
 
 export function updatePrintJobs(): ThunkAction<UpdatePrintJobsAction> {
-	return async (dispatch) => {
+	return async dispatch => {
 		let {username, password} = await loadLoginCredentials()
 		if (!username || !password) {
 			return false

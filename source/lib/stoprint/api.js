@@ -38,8 +38,8 @@ export async function logIn(
 		body: body,
 		headers: PAPERCUT_API_HEADERS,
 	})
-		.then((response) => ({error: false, value: response}))
-		.catch((error) => ({error: true, value: error}))
+		.then(response => ({error: false, value: response}))
+		.catch(error => ({error: true, value: error}))
 
 	if (result.error) {
 		return 'The print server seems to be having some issues.'
@@ -56,7 +56,7 @@ export const fetchJobs = (
 	username: string,
 ): Promise<PrintJobsResponseOrErrorType> =>
 	papercut(`${PAPERCUT_API}/webclient/users/${username}/jobs/status`)
-		.then((response) => ({error: false, value: response}))
+		.then(response => ({error: false, value: response}))
 		.catch(() => ({
 			error: true,
 			value: 'Unable to fetch a list of print jobs from stoPrint.',
@@ -66,7 +66,7 @@ export const fetchAllPrinters = (
 	username: string,
 ): Promise<AllPrintersResponseOrErrorType> =>
 	papercut(`${PAPERCUT_MOBILE_RELEASE_API}/all-printers?username=${username}`)
-		.then((response) => ({error: false, value: response}))
+		.then(response => ({error: false, value: response}))
 		.catch(() => ({
 			error: true,
 			value: 'Unable to fetch the list of all printers from stoPrint.',
@@ -78,7 +78,7 @@ export const fetchRecentPrinters = (
 	papercut(
 		`${PAPERCUT_MOBILE_RELEASE_API}/recent-popular-printers?username=${username}`,
 	)
-		.then((response) => ({error: false, value: response}))
+		.then(response => ({error: false, value: response}))
 		.catch(() => ({
 			error: true,
 			value: 'Unable to fetch a list of recent printers from stoPrint.',
@@ -88,7 +88,7 @@ const colorPrintersUrl = API('/printing/color-printers')
 
 export const fetchColorPrinters = (): Promise<ColorPrintersResponseOrErrorType> =>
 	papercut(colorPrintersUrl)
-		.then((response) => ({error: false, value: response}))
+		.then(response => ({error: false, value: response}))
 		.catch(() => ({
 			error: true,
 			value: 'Unable to fetch the list of color printers from stoPrint.',
@@ -102,8 +102,8 @@ export const heldJobsAvailableAtPrinterForUser = (
 	papercut(
 		`${PAPERCUT_MOBILE_RELEASE_API}/held-jobs/?username=${username}&printerName=printers%5C${printerName}`,
 	)
-		.then((response) => ({error: false, value: response}))
-		.catch((error) => ({error: true, value: error}))
+		.then(response => ({error: false, value: response}))
+		.catch(error => ({error: true, value: error}))
 
 export const cancelPrintJobForUser = (
 	jobId: string,
@@ -117,9 +117,9 @@ export const cancelPrintJobForUser = (
 			headers: new Headers(PAPERCUT_API_HEADERS),
 		},
 	)
-		.then((r) => r.json())
-		.then((response) => ({error: false, value: response}))
-		.catch((error) => ({error: true, value: error}))
+		.then(r => r.json())
+		.then(response => ({error: false, value: response}))
+		.catch(error => ({error: true, value: error}))
 
 export const releasePrintJobToPrinterForUser = ({
 	jobId,
@@ -141,7 +141,7 @@ export const releasePrintJobToPrinterForUser = ({
 			headers: PAPERCUT_API_HEADERS,
 		},
 	)
-		.then((response) => {
+		.then(response => {
 			if (response.numJobsReleased === 0) {
 				return {
 					error: true,
@@ -154,7 +154,7 @@ export const releasePrintJobToPrinterForUser = ({
 				}
 			}
 		})
-		.catch((error) => ({
+		.catch(error => ({
 			error: true,
 			value: error,
 		}))
