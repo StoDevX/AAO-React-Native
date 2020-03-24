@@ -83,7 +83,7 @@ function AndroidAck(props: AcknowledgementProps) {
 		<ScrollView contentContainerStyle={styles.container}>
 			<Card style={styles.androidCard}>
 				<Card.Title
-					left={props => (
+					left={(props) => (
 						<Avatar.Icon
 							{...props}
 							icon={({size, color}) => (

@@ -8,7 +8,7 @@ import {loadAllCourseFilterOptions} from '../../../../lib/course-search'
 export async function buildFilters(): Promise<FilterType[]> {
 	let terms = await getTermInfo()
 	let allTerms = terms
-		.map(term => ({
+		.map((term) => ({
 			title: term.term,
 			label: parseTerm(term.term.toString()),
 		}))
@@ -16,8 +16,8 @@ export async function buildFilters(): Promise<FilterType[]> {
 
 	let {ges, departments} = await loadAllCourseFilterOptions()
 
-	let allGEs = ges.map(ge => ({title: ge}))
-	let allDepartments = departments.map(dep => ({title: dep}))
+	let allGEs = ges.map((ge) => ({title: ge}))
+	let allDepartments = departments.map((dep) => ({title: dep}))
 	let courseLevelOptions = [{title: 100}, {title: 200}, {title: 300}]
 
 	return [

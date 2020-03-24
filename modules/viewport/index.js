@@ -6,7 +6,7 @@ import {Dimensions} from 'react-native'
 type WindowDimensions = {width: number, height: number}
 
 type Props = {
-	render: WindowDimensions => React.Node,
+	render: (WindowDimensions) => React.Node,
 }
 
 type State = {

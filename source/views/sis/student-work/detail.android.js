@@ -183,7 +183,7 @@ function Links({job}: {job: JobType}) {
 	let {links} = job
 	return links.length ? (
 		<Card header="LINKS" style={styles.card}>
-			{links.map(url => (
+			{links.map((url) => (
 				<Text key={url} onPress={() => openUrl(url)} style={styles.cardBody}>
 					{url}
 				</Text>

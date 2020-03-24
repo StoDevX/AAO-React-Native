@@ -7,7 +7,7 @@ import intersection from 'lodash/intersection'
 export function applyFiltersToItem(filters: FilterType[], item: any): boolean {
 	// Given a list of filters, return the result of running all of those
 	// filters over the item
-	return filters.every(f => applyFilter(f, item))
+	return filters.every((f) => applyFilter(f, item))
 }
 
 export function applyFilter(filter: FilterType, item: any): boolean {
@@ -58,10 +58,10 @@ export function applyOrListFilter(
 ): boolean {
 	// An item passes, if its value is in the filter's selected items array
 	if (!Array.isArray(itemValue)) {
-		return filterValue.map(f => f.title).includes(itemValue)
+		return filterValue.map((f) => f.title).includes(itemValue)
 	}
 
-	let valueToCheckAgainst = filterValue.map(f => f.title.toString())
+	let valueToCheckAgainst = filterValue.map((f) => f.title.toString())
 	let intersectionValues = intersection(valueToCheckAgainst, itemValue)
 	return intersectionValues.length !== 0
 }
@@ -82,7 +82,7 @@ export function applyAndListFilter(
 
 	// Check that the number of different items between the two lists is 0, to
 	// ensure that all of the restrictions we're seeking are present.
-	let valueToCheckAgainst = filterValue.map(f => f.title)
+	let valueToCheckAgainst = filterValue.map((f) => f.title)
 	let differentItems = difference(valueToCheckAgainst, itemValue)
 	return differentItems.length === 0
 }

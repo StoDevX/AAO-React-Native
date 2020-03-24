@@ -60,7 +60,7 @@ export class BuildingHoursProblemReportView extends React.PureComponent<
 	}
 
 	editSchedule = (idx: number, newSchedule: NamedBuildingScheduleType) => {
-		this.setState(state => {
+		this.setState((state) => {
 			let schedules = [...state.building.schedule]
 			schedules.splice(idx, 1, newSchedule)
 
@@ -75,7 +75,7 @@ export class BuildingHoursProblemReportView extends React.PureComponent<
 	}
 
 	deleteSchedule = (idx: number) => {
-		this.setState(state => {
+		this.setState((state) => {
 			let schedules = [...state.building.schedule]
 			schedules.splice(idx, 1)
 
@@ -90,7 +90,7 @@ export class BuildingHoursProblemReportView extends React.PureComponent<
 	}
 
 	addSchedule = () => {
-		this.setState(state => {
+		this.setState((state) => {
 			return {
 				...state,
 				building: {
@@ -108,7 +108,7 @@ export class BuildingHoursProblemReportView extends React.PureComponent<
 	}
 
 	addHoursRow = (idx: number) => {
-		this.setState(state => {
+		this.setState((state) => {
 			let schedules = [...state.building.schedule]
 
 			schedules[idx] = {
@@ -131,7 +131,7 @@ export class BuildingHoursProblemReportView extends React.PureComponent<
 		setIdx: number,
 		newData: SingleBuildingScheduleType,
 	) => {
-		this.setState(state => {
+		this.setState((state) => {
 			let schedules = [...state.building.schedule]
 
 			let hours = [...schedules[scheduleIdx].hours]
@@ -150,7 +150,7 @@ export class BuildingHoursProblemReportView extends React.PureComponent<
 	}
 
 	deleteHoursRow = (scheduleIdx: number, setIdx: number) => {
-		this.setState(state => {
+		this.setState((state) => {
 			let schedules = [...state.building.schedule]
 
 			let hours = [...schedules[scheduleIdx].hours]
@@ -230,7 +230,7 @@ type EditableScheduleProps = {
 }
 
 class EditableSchedule extends React.PureComponent<EditableScheduleProps> {
-	onEdit = data => {
+	onEdit = (data) => {
 		let idx = this.props.scheduleIndex
 		this.props.onEditSchedule(idx, {
 			...this.props.schedule,
@@ -301,7 +301,7 @@ class EditableSchedule extends React.PureComponent<EditableScheduleProps> {
 	}
 }
 
-type TextFieldProps = {text: string, onChange: string => any}
+type TextFieldProps = {text: string, onChange: (string) => any}
 // "Title" will become a textfield like the login form
 const TitleCell = ({text, onChange = () => {}}: TextFieldProps) => (
 	<CellTextField

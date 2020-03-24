@@ -123,12 +123,12 @@ class PrinterListView extends React.PureComponent<Props, State> {
 			? this.props.colorPrinters
 			: this.props.printers
 
-		let allWithLocations = availablePrinters.map(j => ({
+		let allWithLocations = availablePrinters.map((j) => ({
 			...j,
 			location: j.location || 'Unknown Building',
 		}))
 
-		let allGrouped = groupBy(allWithLocations, j =>
+		let allGrouped = groupBy(allWithLocations, (j) =>
 			/^[A-Z]+ \d+/u.test(j.location)
 				? j.location.split(/\s+/u)[0]
 				: j.location,

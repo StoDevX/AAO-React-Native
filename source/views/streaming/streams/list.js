@@ -76,8 +76,8 @@ export class StreamListView extends React.PureComponent<Props, State> {
 		}).json()
 
 		data = data
-			.filter(stream => stream.category !== 'athletics')
-			.map(stream => {
+			.filter((stream) => stream.category !== 'athletics')
+			.map((stream) => {
 				let date = moment(stream.starttime)
 				let group =
 					stream.status.toLowerCase() !== 'live'
@@ -93,7 +93,7 @@ export class StreamListView extends React.PureComponent<Props, State> {
 				}
 			})
 
-		let grouped = groupBy(data, j => j.$groupBy)
+		let grouped = groupBy(data, (j) => j.$groupBy)
 		let mapped = toPairs(grouped).map(([title, data]) => ({title, data}))
 
 		this.setState(() => ({streams: mapped}))

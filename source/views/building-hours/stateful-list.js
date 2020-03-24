@@ -19,7 +19,7 @@ const fetchHours = (forReload?: boolean): Promise<Array<BuildingType>> =>
 		delay: forReload ? 500 : 0,
 	})
 		.json()
-		.then(body => body.data)
+		.then((body) => body.data)
 
 const groupBuildings = (
 	buildings: Array<BuildingType>,
@@ -27,10 +27,10 @@ const groupBuildings = (
 ): Array<{title: string, data: Array<BuildingType>}> => {
 	let favoritesGroup = {
 		title: 'Favorites',
-		data: buildings.filter(b => favorites.includes(b.name)),
+		data: buildings.filter((b) => favorites.includes(b.name)),
 	}
 
-	let grouped = groupBy(buildings, b => b.category || 'Other')
+	let grouped = groupBy(buildings, (b) => b.category || 'Other')
 	let groupedBuildings = toPairs(grouped).map(([key, value]) => ({
 		title: key,
 		data: value,

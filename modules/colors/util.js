@@ -9,8 +9,8 @@ import {black, white} from './colors'
  * none of the options were readable.
  */
 export function firstReadable(background: string, possibilities: Array<any>) {
-	possibilities = possibilities.map(c => tinycolor(c))
-	let readable = possibilities.find(c => tinycolor.isReadable(c, background))
+	possibilities = possibilities.map((c) => tinycolor(c))
+	let readable = possibilities.find((c) => tinycolor.isReadable(c, background))
 	if (readable) {
 		return readable.toRgbString()
 	}

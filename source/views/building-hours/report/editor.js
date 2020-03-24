@@ -59,21 +59,24 @@ export class BuildingHoursScheduleEditorView extends React.PureComponent<
 
 	onChangeDays = (newDays: DayOfWeekEnumType[]) => {
 		this.setState(
-			state => ({...state, set: {...state.set, days: newDays}}),
+			(state) => ({...state, set: {...state.set, days: newDays}}),
 			() => this.props.navigation.state.params.onEditSet(this.state.set),
 		)
 	}
 
 	onChangeOpen = (newDate: moment) => {
 		this.setState(
-			state => ({...state, set: {...state.set, from: newDate.format('h:mma')}}),
+			(state) => ({
+				...state,
+				set: {...state.set, from: newDate.format('h:mma')},
+			}),
 			() => this.props.navigation.state.params.onEditSet(this.state.set),
 		)
 	}
 
 	onChangeClose = (newDate: moment) => {
 		this.setState(
-			state => ({...state, set: {...state.set, to: newDate.format('h:mma')}}),
+			(state) => ({...state, set: {...state.set, to: newDate.format('h:mma')}}),
 			() => this.props.navigation.state.params.onEditSet(this.state.set),
 		)
 	}
@@ -127,7 +130,7 @@ class WeekTogglesIOS extends React.PureComponent<WeekTogglesProps> {
 
 		return (
 			<Row alignItems="stretch" justifyContent="center">
-				{allDays.map(day => (
+				{allDays.map((day) => (
 					<ToggleButton
 						key={day}
 						active={this.props.days.includes(day)}
@@ -141,7 +144,7 @@ class WeekTogglesIOS extends React.PureComponent<WeekTogglesProps> {
 }
 
 class WeekTogglesAndroid extends React.PureComponent<WeekTogglesProps> {
-	toggleDay = day => {
+	toggleDay = (day) => {
 		this.props.onChangeDays(xor(this.props.days, [day]))
 	}
 

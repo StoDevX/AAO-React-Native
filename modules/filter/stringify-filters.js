@@ -6,7 +6,7 @@
 import type {FilterType, ListType} from './types'
 
 export function stringifyFilters(filters: FilterType[]): string {
-	return filters.map(f => stringifyFilter(f)).join('; ')
+	return filters.map((f) => stringifyFilter(f)).join('; ')
 }
 
 function stringifyFilter(filter: FilterType): string {
@@ -29,5 +29,5 @@ function stringifyFilter(filter: FilterType): string {
 function stringifyListFilter(filter: ListType): string {
 	// Extract the list of "selected" items
 	let filterValue = filter.spec.selected
-	return filterValue.map(f => f.title).join(', ')
+	return filterValue.map((f) => f.title).join(', ')
 }

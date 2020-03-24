@@ -194,7 +194,7 @@ export class BonAppHostedMenu extends React.PureComponent<Props, State> {
 		}
 
 		// Make sure to titlecase the station menus list, too, so the sort works
-		let titleCaseLabels = s => ({...s, label: toLaxTitleCase(s.label)})
+		let titleCaseLabels = (s) => ({...s, label: toLaxTitleCase(s.label)})
 		stationMenus = stationMenus.map(titleCaseLabels)
 
 		return {
@@ -224,13 +224,13 @@ export class BonAppHostedMenu extends React.PureComponent<Props, State> {
 		let ignoreMenus =
 			dayparts.length !== 0 && dayparts[0].length ? ignoreProvidedMenus : true
 
-		return mealInfoItems.map(mealInfo =>
+		return mealInfoItems.map((mealInfo) =>
 			this.prepareSingleMenu(mealInfo, foodItems, ignoreMenus),
 		)
 	}
 
 	prepareFood(cafeMenu: MenuInfoType) {
-		return mapValues(cafeMenu.items, item => ({
+		return mapValues(cafeMenu.items, (item) => ({
 			...item, // we want to edit the item, not replace it
 			station: entities.decode(toLaxTitleCase(trimStationName(item.station))), // <b>@station names</b> are a mess
 			label: entities.decode(trimItemLabel(item.label)), // clean up the titles

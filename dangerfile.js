@@ -148,10 +148,10 @@ async function runJSのGeneral() {
 // New js files should have `@flow` at the top
 function flowAnnotated() {
 	let noFlow = danger.git.created_files
-		.filter(path => path.endsWith('.js'))
+		.filter((path) => path.endsWith('.js'))
 		// except for those in /flow-typed
-		.filter(filepath => !filepath.includes('flow-typed'))
-		.filter(filepath => !readFile(filepath).includes('@flow'))
+		.filter((filepath) => !filepath.includes('flow-typed'))
+		.filter((filepath) => !readFile(filepath).includes('@flow'))
 
 	if (!noFlow.length) {
 		return
@@ -160,7 +160,7 @@ function flowAnnotated() {
 	markdown(
 		h.details(
 			h.summary('There is no <code>@flow</code> annotation in these file(s)'),
-			h.ul(...noFlow.map(file => h.li(h.code(file)))),
+			h.ul(...noFlow.map((file) => h.li(h.code(file)))),
 		),
 	)
 }
@@ -168,8 +168,8 @@ function flowAnnotated() {
 // Warn if tests have been enabled to the exclusion of all others
 function exclusionaryTests() {
 	let exclusionary = danger.git.created_files
-		.filter(filepath => filepath.endsWith('.test.js'))
-		.map(filepath => ({filepath, content: readFile(filepath)}))
+		.filter((filepath) => filepath.endsWith('.test.js'))
+		.map((filepath) => ({filepath, content: readFile(filepath)}))
 		.filter(
 			({content}) =>
 				content.includes('it.only') || content.includes('describe.only'),
@@ -184,7 +184,7 @@ function exclusionaryTests() {
 			h.summary(
 				'An <code>only</code> was left these file(s) – no other tests can run.',
 			),
-			h.ul(...exclusionaryTests.map(file => h.li(h.code(file)))),
+			h.ul(...exclusionaryTests.map((file) => h.li(h.code(file)))),
 		),
 	)
 }
@@ -209,7 +209,7 @@ function bigPr() {
 
 // Remind us to check the xcodeproj, if it's changed
 function xcodeproj() {
-	let pbxprojChanged = danger.git.modified_files.find(filepath =>
+	let pbxprojChanged = danger.git.modified_files.find((filepath) =>
 		filepath.endsWith('project.pbxproj'),
 	)
 
@@ -242,7 +242,7 @@ function changelogSync() {
 	])
 	let definitelyNotNoteworthy = /package\.json|yarn\.lock/gu
 
-	let changedSourceFiles = danger.git.modified_files.filter(file => {
+	let changedSourceFiles = danger.git.modified_files.filter((file) => {
 		let noteworthy = noteworthyFolder.test(file) || noteworthyFiles.has(file)
 		let excluded = definitelyNotNoteworthy.test(file)
 
@@ -261,7 +261,7 @@ function changelogSync() {
 				h.summary(
 					'This PR modified important files but does not have any changes to the CHANGELOG.',
 				),
-				h.ul(...changedSourceFiles.map(file => h.li(h.code(file)))),
+				h.ul(...changedSourceFiles.map((file) => h.li(h.code(file)))),
 			),
 		)
 	}
@@ -310,11 +310,11 @@ function getRelevantLinesJest(logContents) {
 
 	let startIndex = findIndex(
 		file,
-		l => l.trim() === 'Summary of all failing tests',
+		(l) => l.trim() === 'Summary of all failing tests',
 	)
 	let endIndex = findIndex(
 		file,
-		l => l.trim() === 'Ran all test suites.',
+		(l) => l.trim() === 'Ran all test suites.',
 		startIndex,
 	)
 
@@ -430,7 +430,7 @@ function readLogFile(filename /*: string*/) {
 }
 
 function isBadDataValidationLog(log /*: string*/) {
-	return log.split('\n').some(l => !l.endsWith('is valid'))
+	return log.split('\n').some((l) => !l.endsWith('is valid'))
 }
 
 function fileLog(

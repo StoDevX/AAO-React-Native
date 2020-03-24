@@ -15,7 +15,7 @@ export function SingleToggleSection({filter, onChange}: PropsType) {
 		<Section footer={caption} header={title.toUpperCase()}>
 			<CellToggle
 				label={label}
-				onChange={val => onChange({...filter, enabled: val})}
+				onChange={(val) => onChange({...filter, enabled: val})}
 				value={enabled}
 			/>
 		</Section>
