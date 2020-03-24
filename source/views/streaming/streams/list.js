@@ -64,10 +64,7 @@ export class StreamListView extends React.PureComponent<Props, State> {
 		date: moment = moment.tz(timezone()),
 	) => {
 		let dateFrom = date.format('YYYY-MM-DD')
-		let dateTo = date
-			.clone()
-			.add(2, 'month')
-			.format('YYYY-MM-DD')
+		let dateTo = date.clone().add(2, 'month').format('YYYY-MM-DD')
 
 		let data = await fetch(API('/streams/upcoming'), {
 			searchParams: {

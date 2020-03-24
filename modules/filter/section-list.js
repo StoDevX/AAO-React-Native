@@ -85,9 +85,7 @@ export function ListSection({filter, onChange}: PropsType) {
 			image={
 				spec.showImages ? (
 					<Image source={val.image} style={styles.icon} />
-				) : (
-					undefined
-				)
+				) : undefined
 			}
 			onPress={() => buttonPushed(val)}
 		/>
