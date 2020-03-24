@@ -368,10 +368,7 @@ const stripAnsi = require('strip-ansi')
 
 function fastlaneBuildLogTail(log /*: Array<string>*/, message /*: string*/) {
 	let n = 150
-	let logToPost = log
-		.slice(-n)
-		.map(stripAnsi)
-		.join('\n')
+	let logToPost = log.slice(-n).map(stripAnsi).join('\n')
 
 	markdown(
 		h.details(
@@ -386,7 +383,7 @@ const h /*: any*/ = new Proxy(
 	{},
 	{
 		get(_, property) {
-			return function(...children /*: Array<string>*/) {
+			return function (...children /*: Array<string>*/) {
 				if (!children.length) {
 					return `<${property}>`
 				}

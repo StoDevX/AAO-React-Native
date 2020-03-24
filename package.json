@@ -16,7 +16,7 @@
     "ios": "react-native run-ios",
     "lint": "eslint --report-unused-disable-directives --max-warnings=0 --cache source/ modules/ scripts/ *.js",
     "prepare": "ls contrib/*.patch | xargs -n1 patch -p0 -Nfsi || true",
-    "pretty": "prettier --write '{source,modules,scripts,e2e}/**/*.{js,json}' 'data/**/*.css' '{*,.*}.{yaml,yml,json,js}' '.circleci/*'",
+    "pretty": "prettier --write '{source,modules,scripts,e2e}/**/*.{js,json}' 'data/**/*.css' '{*,.*}.{yaml,yml,json,js}'",
     "p": "pretty-quick",
     "pods": "scripts/pods.sh",
     "postinstall": "jetify && yarn run pods",
@@ -74,6 +74,7 @@
     "singleQuote": true,
     "trailingComma": "all",
     "bracketSpacing": false,
+    "arrowParens": "avoid",
     "semi": false,
     "overrides": [
       {
@@ -177,7 +178,7 @@
     "minimist": "1.2.5",
     "mkdirp": "1.0.3",
     "pify": "5.0.0",
-    "prettier": "1.19.1",
+    "prettier": "2.0.2",
     "pretty-bytes": "5.3.0",
     "pretty-quick": "2.0.1",
     "prop-types": "15.7.2",

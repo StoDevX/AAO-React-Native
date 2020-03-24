@@ -16,9 +16,7 @@ const parseTime = (now: moment) => (time: MaybeTime): null | moment => {
 	let m = moment.tz(time, TIME_FORMAT, true, timezone())
 
 	// and set the date to today
-	m.year(now.year())
-		.month(now.month())
-		.date(now.date())
+	m.year(now.year()).month(now.month()).date(now.date())
 
 	return m
 }
