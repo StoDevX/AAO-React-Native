@@ -32,7 +32,7 @@ type Props = TopLevelViewPropsType & {
 	courses: Array<CourseType>,
 	filters: Array<FilterType>,
 	onPopoverDismiss: (filter: FilterType) => any,
-	onListItemPress?: CourseType => any,
+	onListItemPress?: (CourseType) => any,
 	query: string,
 	style?: any,
 	contentContainerStyle?: any,
@@ -47,9 +47,9 @@ function doSearch(args: {
 }) {
 	let {query, filters, courses, applyFilters} = args
 
-	let results = courses.filter(course => applyFilters(filters, course))
+	let results = courses.filter((course) => applyFilters(filters, course))
 	if (query) {
-		results = results.filter(course => applySearch(query, course))
+		results = results.filter((course) => applySearch(query, course))
 	}
 
 	return sortAndGroupResults(results)
@@ -100,7 +100,7 @@ export class CourseResultsList extends React.PureComponent<Props> {
 			<ActivityIndicator style={styles.spinner} />
 		)
 
-		let hasActiveFilter = filters.some(f => f.enabled)
+		let hasActiveFilter = filters.some((f) => f.enabled)
 
 		let message = hasActiveFilter
 			? 'There were no courses that matched your selected filters. Try a different filter combination.'

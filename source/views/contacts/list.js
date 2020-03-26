@@ -17,10 +17,10 @@ const fetchContacts = (forReload?: boolean): Promise<Array<ContactType>> =>
 		delay: forReload ? 500 : 0,
 	})
 		.json()
-		.then(body => body.data)
+		.then((body) => body.data)
 
 const groupContacts = (contacts: ContactType[]) => {
-	let grouped = groupBy(contacts, c => c.category)
+	let grouped = groupBy(contacts, (c) => c.category)
 	return toPairs(grouped).map(([key, value]) => ({title: key, data: value}))
 }
 

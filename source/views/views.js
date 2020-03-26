@@ -185,4 +185,4 @@ export const allViews: Array<ViewType> = [
 	},
 ]
 
-export const allViewNames: Array<string> = allViews.map(v => v.view)
+export const allViewNames: Array<string> = allViews.map((v) => v.view)

@@ -122,7 +122,7 @@ export class PrintJobReleaseView extends React.PureComponent<Props, State> {
 			return
 		}
 
-		let heldJobMatch = response.value.find(heldJob =>
+		let heldJobMatch = response.value.find((heldJob) =>
 			heldJob.id.startsWith(jobId),
 		)
 		if (heldJobMatch) {

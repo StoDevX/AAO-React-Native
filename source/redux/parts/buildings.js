@@ -33,7 +33,7 @@ export function toggleFavoriteBuilding(
 		let currentFavorites = state.buildings ? state.buildings.favorites : []
 
 		let newFavorites = currentFavorites.includes(buildingName)
-			? currentFavorites.filter(name => name !== buildingName)
+			? currentFavorites.filter((name) => name !== buildingName)
 			: [...currentFavorites, buildingName]
 
 		// Sort the building names (localeCompare handles non-ASCII chars better)

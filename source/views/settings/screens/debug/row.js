@@ -6,7 +6,7 @@ import type {TopLevelViewPropsType} from '../../../types'
 
 type Props = TopLevelViewPropsType & {
 	data: {key: string, value: any},
-	onPress: string => any,
+	onPress: (string) => any,
 }
 
 export class DebugRow extends React.PureComponent<Props> {

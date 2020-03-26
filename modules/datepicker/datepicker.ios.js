@@ -26,7 +26,7 @@ type Props = {
 	height: number,
 	minuteInterval?: 1 | 2 | 3 | 4 | 5 | 6 | 10 | 12 | 15 | 20 | 30,
 	mode: 'date' | 'datetime' | 'time',
-	onDateChange: moment => any,
+	onDateChange: (moment) => any,
 	style?: ViewStyleProp,
 	timezone: string,
 }
@@ -125,7 +125,7 @@ type ModalProps = {
 	mode: 'date' | 'datetime' | 'time',
 	allowPointerEvents: boolean,
 	visible: boolean,
-	onDateChange: moment => any,
+	onDateChange: (moment) => any,
 	onHide: () => any,
 	timezone: string,
 }

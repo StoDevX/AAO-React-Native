@@ -96,8 +96,8 @@ export class FancyMenu extends React.Component<Props, State> {
 		f.enabled && f.type === 'toggle' && f.spec.label === 'Only Show Specials'
 
 	updateFilter = (filter: FilterType) => {
-		this.setState(state => {
-			let edited = state.filters.map(f => (f.key !== filter.key ? f : filter))
+		this.setState((state) => {
+			let edited = state.filters.map((f) => (f.key !== filter.key ? f : filter))
 			return {filters: edited}
 		})
 	}
@@ -114,17 +114,17 @@ export class FancyMenu extends React.Component<Props, State> {
 	}) => {
 		let {applyFilters, foodItems, stations, filters} = args
 
-		let derefrenceMenuItems = menu =>
+		let derefrenceMenuItems = (menu) =>
 			menu.items
 				// Dereference each menu item
-				.map(id => foodItems[id])
+				.map((id) => foodItems[id])
 				// Ensure that the referenced menu items exist,
 				// and apply the selected filters to the items in the menu
-				.filter(item => item && applyFilters(filters, item))
+				.filter((item) => item && applyFilters(filters, item))
 
 		let menusWithItems: Array<{title: string, data: Array<MenuItem>}> = stations
 			// We're grouping the menu items in a [label, Array<items>] tuple.
-			.map(menu => [menu.label, derefrenceMenuItems(menu)])
+			.map((menu) => [menu.label, derefrenceMenuItems(menu)])
 			// We only want to show stations with at least one item in them
 			.filter(([_, items]) => items.length)
 			// We need to map the tuples into objects for SectionList
@@ -137,7 +137,7 @@ export class FancyMenu extends React.Component<Props, State> {
 		let {now, meals} = this.props
 		let {filters} = this.state
 		let {stations} = chooseMeal(meals, filters, now)
-		let menu = stations.find(m => m.label === title)
+		let menu = stations.find((m) => m.label === title)
 
 		return (
 			<ListSectionHeader
@@ -168,7 +168,7 @@ export class FancyMenu extends React.Component<Props, State> {
 		let {filters} = this.state
 
 		let {label: mealName, stations} = chooseMeal(meals, filters, now)
-		let anyFiltersEnabled = filters.some(f => f.enabled)
+		let anyFiltersEnabled = filters.some((f) => f.enabled)
 		let specialsFilterEnabled = this.areSpecialsFiltered(filters)
 		let groupedMenuData = this.groupMenuData({
 			stations,

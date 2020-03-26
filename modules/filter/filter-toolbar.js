@@ -13,7 +13,7 @@ type Props = {
 	onPopoverDismiss: (filter: FilterType) => any,
 }
 
-function updateAnyFilter(callback: FilterType => any) {
+function updateAnyFilter(callback: (FilterType) => any) {
 	return (filter: FilterType, option?: ListItemSpecType) => {
 		if (filter.type === 'toggle') {
 			filter = updateToggleFilter(filter)
@@ -42,7 +42,7 @@ function updateListFilter(filter: ListType, option?: ListItemSpecType) {
 	if (option) {
 		let optionTitle = option.title
 		newFilter.spec.selected = filter.spec.selected.filter(
-			item => item.title !== optionTitle,
+			(item) => item.title !== optionTitle,
 		)
 	}
 
@@ -59,7 +59,7 @@ function updateListFilter(filter: ListType, option?: ListItemSpecType) {
 export function FilterToolbar({filters, onPopoverDismiss}: Props) {
 	let updateFilter = updateAnyFilter(onPopoverDismiss)
 
-	let filterToggles = filters.map(filter => (
+	let filterToggles = filters.map((filter) => (
 		<FilterToolbarButton
 			key={filter.spec.title}
 			filter={filter}
@@ -70,15 +70,15 @@ export function FilterToolbar({filters, onPopoverDismiss}: Props) {
 	))
 
 	let allButtons = filters
-		.filter(f => f.enabled)
-		.map(filter => {
+		.filter((f) => f.enabled)
+		.map((filter) => {
 			if (filter.type === 'toggle') {
 				return (
 					<ActiveFilterButton
 						key={filter.spec.title}
 						filter={filter}
 						label={filter.spec.label}
-						onRemove={filter => updateFilter(filter)}
+						onRemove={(filter) => updateFilter(filter)}
 					/>
 				)
 			} else if (filter.type === 'list') {
@@ -88,24 +88,24 @@ export function FilterToolbar({filters, onPopoverDismiss}: Props) {
 							key={filter.spec.title}
 							filter={filter}
 							label={`No ${filter.spec.title}`}
-							onRemove={filter => updateFilter(filter)}
+							onRemove={(filter) => updateFilter(filter)}
 						/>
 					)
 				}
 
-				return filter.spec.selected.map(selected => (
+				return filter.spec.selected.map((selected) => (
 					<ActiveFilterButton
 						key={selected.title}
 						filter={filter}
 						label={selected.label || selected.title.toString()}
-						onRemove={filter => updateFilter(filter, selected)}
+						onRemove={(filter) => updateFilter(filter, selected)}
 					/>
 				))
 			}
 			return null
 		})
 	let activeFilterButtons = flatten(allButtons)
-	let anyFiltersEnabled = filters.some(f => f.enabled)
+	let anyFiltersEnabled = filters.some((f) => f.enabled)
 
 	return (
 		<React.Fragment>

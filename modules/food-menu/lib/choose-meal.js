@@ -11,7 +11,7 @@ export function chooseMeal(
 	now: momentT,
 ): ProcessedMealType {
 	let mealChooserFilter: ?FilterType = filters.find(
-		f => f.type === 'picker' && f.spec.title === "Today's Menus",
+		(f) => f.type === 'picker' && f.spec.title === "Today's Menus",
 	)
 
 	let selectedMeal = meals[0]
@@ -21,7 +21,7 @@ export function chooseMeal(
 		mealChooserFilter.spec.selected.label
 	) {
 		let label = mealChooserFilter.spec.selected.label
-		selectedMeal = meals.find(meal => meal.label === label)
+		selectedMeal = meals.find((meal) => meal.label === label)
 	} else {
 		selectedMeal = findMeal(meals, now)
 	}
