@@ -2949,10 +2949,10 @@ detect-newline@^3.0.0:
   resolved "https://registry.yarnpkg.com/detect-newline/-/detect-newline-3.1.0.tgz#576f5dfc63ae1a192ff192d8ad3af6308991b651"
   integrity sha512-TLz+x/vEXm/Y7P7wn1EJFNLxYpUD4TgMosxY6fAVJUnJMbupHBOncxyWUG9OpTaH9EBD7uFI5LfEgmMOc54DsA==
 
-detox@16.0.1:
-  version "16.0.1"
-  resolved "https://registry.yarnpkg.com/detox/-/detox-16.0.1.tgz#e4aadf5bd0a9b561bcbf81a1573a2d59006b1684"
-  integrity sha512-W5jWU9vtGXA6KTH5Ulkxhw50QEsGqPRvysc+g5nrM+e2ZRh+saWPojlS2GA7YBCbae/SRHY4CNzpK0VrANU/rA==
+detox@16.0.2:
+  version "16.0.2"
+  resolved "https://registry.yarnpkg.com/detox/-/detox-16.0.2.tgz#b355de3533affcadc93d72f691131db683186415"
+  integrity sha512-SJNlHItoylT3FevMta0wsxS4r3wyTCvPuRrV1QYjEWlygpeJupSzhka312hlzGy5a5w6c+a4NeNj7JSEsQ2J1g==
   dependencies:
     "@babel/core" "^7.4.5"
     bunyan "^1.8.12"
@@ -8921,14 +8921,7 @@ which@^1.2.9, which@^1.3.1:
   dependencies:
     isexe "^2.0.0"
 
-which@^2.0.1:
-  version "2.0.1"
-  resolved "https://registry.yarnpkg.com/which/-/which-2.0.1.tgz#f1cf94d07a8e571b6ff006aeb91d0300c47ef0a4"
-  integrity sha512-N7GBZOTswtB9lkQBZA4+zAXrjEIWAUOB93AvzUiudRzRxhUdLURQ7D/gAIMY1gatT/LTbmbcv8SiYazy3eYB7w==
-  dependencies:
-    isexe "^2.0.0"
-
-which@^2.0.2:
+which@^2.0.1, which@^2.0.2:
   version "2.0.2"
   resolved "https://registry.yarnpkg.com/which/-/which-2.0.2.tgz#7c6a8dd0a636a0327e10b59c9286eee93f3f51b1"
   integrity sha512-BLI3Tl1TW3Pvl70l3yq3Y64i+awpwXqsGBYWkkqMtnbXgrMD+yj7rhW0kuEDxzJaYXGjEW5ogapKNMEKNMjibA==
