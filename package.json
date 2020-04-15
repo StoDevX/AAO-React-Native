@@ -101,7 +101,7 @@
     "@react-native-community/netinfo": "5.7.1",
     "@sentry/react-native": "1.3.7",
     "base-64": "0.1.0",
-    "buffer": "5.5.0",
+    "buffer": "5.6.0",
     "delay": "4.3.0",
     "events": "3.1.0",
     "glamorous-native": "2.0.0",
