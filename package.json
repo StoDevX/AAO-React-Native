@@ -154,7 +154,7 @@
   "devDependencies": {
     "@babel/core": "7.9.0",
     "@babel/runtime": "7.9.2",
-    "@sentry/cli": "1.52.1",
+    "@sentry/cli": "1.52.3",
     "ajv": "6.12.2",
     "babel-core": "7.0.0-bridge.0",
     "babel-eslint": "10.1.0",
