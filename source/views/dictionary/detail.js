@@ -38,14 +38,14 @@ export class DictionaryDetailView extends React.PureComponent<Props> {
 	}
 
 	handleEditButtonPress = () => {
-		const item = this.props.navigation.state.params.item
+		let item = this.props.navigation.state.params.item
 		this.props.navigation.navigate('DictionaryEditorView', {
 			word: item,
 		})
 	}
 
 	render() {
-		const item = this.props.navigation.state.params.item
+		let item = this.props.navigation.state.params.item
 		return (
 			<Container>
 				<Term selectable={true}>{item.word}</Term>

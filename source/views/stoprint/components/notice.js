@@ -24,7 +24,7 @@ type Props = {
 
 export class StoPrintNoticeView extends React.PureComponent<Props> {
 	render() {
-		const {buttonText, description, header, onPress, text} = this.props
+		let {buttonText, description, header, onPress, text} = this.props
 
 		return (
 			<Timer

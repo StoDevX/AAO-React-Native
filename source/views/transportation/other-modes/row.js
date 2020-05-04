@@ -6,7 +6,7 @@ import {ListRow, Detail, Title} from '@frogpond/lists'
 import {Column, Row} from '@frogpond/layout'
 
 type Props = {
-	onPress: OtherModeType => any,
+	onPress: (OtherModeType) => any,
 	mode: OtherModeType,
 }
 
@@ -14,7 +14,7 @@ export class OtherModesRow extends React.PureComponent<Props> {
 	_onPress = () => this.props.onPress(this.props.mode)
 
 	render() {
-		const {mode} = this.props
+		let {mode} = this.props
 
 		return (
 			<ListRow arrowPosition="top" onPress={this._onPress}>

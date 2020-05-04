@@ -47,7 +47,7 @@ type Props = {|
 
 export class BusStopRow extends React.PureComponent<Props, void> {
 	render() {
-		const {
+		let {
 			barColor,
 			currentStopColor,
 			departureIndex,
@@ -58,10 +58,10 @@ export class BusStopRow extends React.PureComponent<Props, void> {
 			status: busStatus,
 		} = this.props
 
-		const stopStatus = findStopStatus({stop, busStatus, departureIndex, now})
-		const times = findRemainingDepartures({stop, busStatus, departureIndex})
+		let stopStatus = findStopStatus({stop, busStatus, departureIndex, now})
+		let times = findRemainingDepartures({stop, busStatus, departureIndex})
 
-		const rowTextStyle = [
+		let rowTextStyle = [
 			stopStatus === 'skip' && styles.skippingStopTitle,
 			stopStatus === 'after' && styles.passedStopTitle,
 			stopStatus === 'at' && styles.atStopTitle,

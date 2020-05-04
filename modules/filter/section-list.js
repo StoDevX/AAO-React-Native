@@ -14,10 +14,10 @@ type PropsType = {
 }
 
 export function ListSection({filter, onChange}: PropsType) {
-	const {spec} = filter
-	const {title = '', options, selected, mode} = spec
-	const quantifier = mode === 'AND' ? 'all' : 'any'
-	const {caption = `Show items with ${quantifier} of these options.`} = spec
+	let {spec} = filter
+	let {title = '', options, selected, mode} = spec
+	let quantifier = mode === 'AND' ? 'all' : 'any'
+	let {caption = `Show items with ${quantifier} of these options.`} = spec
 
 	function buttonPushed(tappedValue: ListItemSpecType) {
 		let result
@@ -26,10 +26,10 @@ export function ListSection({filter, onChange}: PropsType) {
 			// if all options of an OR filter are selected and a user selects
 			// an option, make that the only selected option
 			result = [tappedValue]
-		} else if (selected.some(val => isEqual(val, tappedValue))) {
+		} else if (selected.some((val) => isEqual(val, tappedValue))) {
 			// if the user has tapped an item, and it's already in the list of
 			// things they've tapped, we want to _remove_ it from that list.
-			result = reject(selected, val => isEqual(val, tappedValue))
+			result = reject(selected, (val) => isEqual(val, tappedValue))
 		} else {
 			// otherwise, we need to add it to the list
 			result = concat(selected, tappedValue)
@@ -67,11 +67,13 @@ export function ListSection({filter, onChange}: PropsType) {
 		})
 	}
 
-	const hasImageColumn = options.some(val => Boolean(val.image))
-	let buttons = options.map(val => (
+	let hasImageColumn = options.some((val) => Boolean(val.image))
+	let buttons = options.map((val) => (
 		<Cell
 			key={val.title}
-			accessory={selected.some(s => isEqual(s, val)) ? 'Checkmark' : undefined}
+			accessory={
+				selected.some((s) => isEqual(s, val)) ? 'Checkmark' : undefined
+			}
 			cellContentView={
 				<Column style={styles.content}>
 					<Text style={styles.title}>
@@ -85,16 +87,14 @@ export function ListSection({filter, onChange}: PropsType) {
 			image={
 				spec.showImages ? (
 					<Image source={val.image} style={styles.icon} />
-				) : (
-					undefined
-				)
+				) : undefined
 			}
 			onPress={() => buttonPushed(val)}
 		/>
 	))
 
 	if (mode === 'OR') {
-		const showAllButton = (
+		let showAllButton = (
 			<Cell
 				key="__show_all"
 				accessory={selected.length === options.length ? 'Checkmark' : undefined}

@@ -3,48 +3,27 @@
 import * as React from 'react'
 import {FavoriteButton} from '@frogpond/navigation-buttons'
 import {type ReduxState} from '../../../redux'
-import {connect} from 'react-redux'
+import {useSelector, useDispatch} from 'react-redux'
 import {toggleFavoriteBuilding} from '../../../redux/parts/buildings'
 
-type ReactProps = {
+type Props = {
 	buildingName: string,
 }
 
-type ReduxDispatchProps = {
-	onToggleFavorite: string => any,
+export const BuildingFavoriteButton = function (props: Props) {
+	let dispatch = useDispatch()
+	let favorites = useSelector(
+		(state: ReduxState) => state.buildings?.favorites || [],
+	)
+
+	let {buildingName} = props
+
+	let onFavorite = React.useCallback(
+		() => dispatch(toggleFavoriteBuilding(buildingName)),
+		[dispatch, buildingName],
+	)
+
+	let favorited = favorites.includes(buildingName)
+
+	return <FavoriteButton favorited={favorited} onFavorite={onFavorite} />
 }
-
-type ReduxStateProps = {
-	favorites: Array<string>,
-}
-
-type Props = ReactProps & ReduxStateProps & ReduxDispatchProps
-
-export class BuildingFavoriteButton extends React.Component<Props> {
-	onFavorite = () => {
-		this.props.onToggleFavorite(this.props.buildingName)
-	}
-
-	render() {
-		const favorited = this.props.favorites.includes(this.props.buildingName)
-		return <FavoriteButton favorited={favorited} onFavorite={this.onFavorite} />
-	}
-}
-
-function mapState(state: ReduxState): ReduxStateProps {
-	return {
-		favorites: state.buildings ? state.buildings.favorites : [],
-	}
-}
-
-function mapDispatch(dispatch): ReduxDispatchProps {
-	return {
-		onToggleFavorite: buildingName =>
-			dispatch(toggleFavoriteBuilding(buildingName)),
-	}
-}
-
-export const ConnectedBuildingFavoriteButton = connect(
-	mapState,
-	mapDispatch,
-)(BuildingFavoriteButton)

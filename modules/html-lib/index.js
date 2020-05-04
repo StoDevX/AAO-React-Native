@@ -1,5 +1,5 @@
 // @flow
-import htmlparser from 'htmlparser2'
+import {parseDOM} from 'htmlparser2'
 import cssSelect from 'css-select'
 export {cssSelect}
 
@@ -8,7 +8,7 @@ import {AllHtmlEntities} from 'html-entities'
 export const entities = new AllHtmlEntities()
 
 export function parseHtml(string: string): Object {
-	return htmlparser.parseDOM(string, {
+	return parseDOM(string, {
 		withDomLvl1: true,
 		normalizeWhitespace: false,
 		xmlMode: false,
@@ -32,10 +32,7 @@ function getTextWithSpaces(elem: Object | Object[]): string {
 }
 
 export function getTrimmedTextWithSpaces(elem: Object | Object[]): string {
-	return getTextWithSpaces(elem)
-		.split(/\s+/u)
-		.join(' ')
-		.trim()
+	return getTextWithSpaces(elem).split(/\s+/u).join(' ').trim()
 }
 
 export function removeHtmlWithRegex(str: string): string {
@@ -43,7 +40,5 @@ export function removeHtmlWithRegex(str: string): string {
 }
 
 export function fastGetTrimmedText(str: string): string {
-	return removeHtmlWithRegex(str)
-		.replace(/\s+/gu, ' ')
-		.trim()
+	return removeHtmlWithRegex(str).replace(/\s+/gu, ' ').trim()
 }

@@ -7,7 +7,7 @@ import {ListRow, Detail, Title} from '@frogpond/lists'
 import type {StoryType} from './types'
 
 type Props = {
-	onPress: string => any,
+	onPress: (string) => any,
 	story: StoryType,
 	thumbnail: false | number,
 }
@@ -22,8 +22,8 @@ export class NewsRow extends React.PureComponent<Props> {
 	}
 
 	render() {
-		const {story} = this.props
-		const thumb =
+		let {story} = this.props
+		let thumb =
 			this.props.thumbnail !== false
 				? story.featuredImage
 					? {uri: story.featuredImage}

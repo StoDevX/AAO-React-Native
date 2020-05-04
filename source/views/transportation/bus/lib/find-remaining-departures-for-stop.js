@@ -10,7 +10,7 @@ type Args = {|
 |}
 
 export function findRemainingDeparturesForStop(args: Args): DepartureTimeList {
-	const {stop, busStatus, departureIndex} = args
+	let {stop, busStatus, departureIndex} = args
 
 	if (!stop) {
 		return []

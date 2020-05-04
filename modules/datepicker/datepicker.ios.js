@@ -26,7 +26,7 @@ type Props = {
 	height: number,
 	minuteInterval?: 1 | 2 | 3 | 4 | 5 | 6 | 10 | 12 | 15 | 20 | 30,
 	mode: 'date' | 'datetime' | 'time',
-	onDateChange: moment => any,
+	onDateChange: (moment) => any,
 	style?: ViewStyleProp,
 	timezone: string,
 }
@@ -57,6 +57,7 @@ export class DatePicker extends React.Component<Props, State> {
 		return Animated.timing(this.state.animatedHeight, {
 			toValue: this.props.height,
 			duration: this.props.duration,
+			useNativeDriver: false,
 		}).start()
 	}
 
@@ -64,6 +65,7 @@ export class DatePicker extends React.Component<Props, State> {
 		return Animated.timing(this.state.animatedHeight, {
 			toValue: 0,
 			duration: this.props.duration,
+			useNativeDriver: false,
 		}).start(() => {
 			this.setState(() => ({modalVisible: false}))
 		})
@@ -74,7 +76,7 @@ export class DatePicker extends React.Component<Props, State> {
 
 		this.props.onDateChange(moment.tz(date, this.props.timezone))
 
-		const timeoutId = setTimeout(() => {
+		let timeoutId = setTimeout(() => {
 			this.setState(() => ({allowPointerEvents: true}))
 			clearTimeout(timeoutId)
 		}, this.props.duration)
@@ -123,7 +125,7 @@ type ModalProps = {
 	mode: 'date' | 'datetime' | 'time',
 	allowPointerEvents: boolean,
 	visible: boolean,
-	onDateChange: moment => any,
+	onDateChange: (moment) => any,
 	onHide: () => any,
 	timezone: string,
 }
@@ -138,7 +140,7 @@ class DatePickerModal extends React.PureComponent<ModalProps> {
 	]
 
 	render() {
-		const {
+		let {
 			mode,
 			date,
 			minuteInterval,
@@ -154,7 +156,7 @@ class DatePickerModal extends React.PureComponent<ModalProps> {
 		if (date.tz()) {
 			// We need to negate the offset, because moment inverts the offset for
 			// POSIX compatability. So, GMT-5 (CST) is shown to be GMT+5.
-			const dateInUnixMs = date.valueOf()
+			let dateInUnixMs = date.valueOf()
 			tzOffset = -moment.tz.zone(timezone).utcOffset(dateInUnixMs)
 		}
 

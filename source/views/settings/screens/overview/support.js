@@ -4,26 +4,26 @@ import {Alert} from 'react-native'
 import {Section, PushButtonCell} from '@frogpond/tableview'
 import {type NavigationScreenProp} from 'react-navigation'
 import {sendEmail} from '../../../../components/send-email'
-import DeviceInfo from 'react-native-device-info'
+import deviceInfo from 'react-native-device-info'
 import {appVersion, appBuild} from '@frogpond/constants'
 import {refreshApp} from '../../../../lib/refresh'
 
 type Props = {navigation: NavigationScreenProp<*>}
 
-const getDeviceInfo = () => `
+const getDeviceInfo = async () => `
 
 ----- Please do not edit below here -----
-${DeviceInfo.getBrand()} ${DeviceInfo.getModel()}
-${DeviceInfo.getDeviceId()}
-${DeviceInfo.getSystemName()} ${appVersion()}+${appBuild() || 'unknown'}
-${DeviceInfo.getReadableVersion()}
+${await deviceInfo.getBrand()} ${await deviceInfo.getModel()}
+${await deviceInfo.getDeviceId()}
+${await deviceInfo.getSystemName()} ${appVersion()}+${appBuild() || 'unknown'}
+${await deviceInfo.getReadableVersion()}
 `
 
-const openEmail = () => {
+const openEmail = async () => {
 	sendEmail({
 		to: ['allaboutolaf@stolaf.edu'],
 		subject: 'Support: All About Olaf',
-		body: getDeviceInfo(),
+		body: await getDeviceInfo(),
 	})
 }
 

@@ -6,7 +6,7 @@ import {ListRow, Detail, Title} from '@frogpond/lists'
 import {Column, Row} from '@frogpond/layout'
 
 type Props = {
-	onPress: ContactType => any,
+	onPress: (ContactType) => any,
 	contact: ContactType,
 }
 
@@ -14,7 +14,7 @@ export class ContactRow extends React.PureComponent<Props> {
 	_onPress = () => this.props.onPress(this.props.contact)
 
 	render() {
-		const {contact} = this.props
+		let {contact} = this.props
 
 		return (
 			<ListRow arrowPosition="top" onPress={this._onPress}>

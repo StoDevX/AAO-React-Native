@@ -13,6 +13,9 @@ const styles = StyleSheet.create({
 	listContainer: {
 		backgroundColor: c.white,
 	},
+	contentContainer: {
+		flexGrow: 1,
+	},
 })
 
 type Props = TopLevelViewPropsType & {
@@ -47,14 +50,15 @@ export class NewsList extends React.PureComponent<Props> {
 	render() {
 		// remove all entries with blank excerpts
 		// remove all entries with a <form from the list
-		const entries = this.props.entries
-			.filter(entry => entry.excerpt.trim() !== '')
-			.filter(entry => !entry.content.includes('<form'))
+		let entries = this.props.entries
+			.filter((entry) => entry.excerpt.trim() !== '')
+			.filter((entry) => !entry.content.includes('<form'))
 
 		return (
 			<FlatList
 				ItemSeparatorComponent={this.renderSeparator}
 				ListEmptyComponent={<NoticeView text="No news." />}
+				contentContainerStyle={styles.contentContainer}
 				data={entries}
 				keyExtractor={this.keyExtractor}
 				onRefresh={this.props.onRefresh}

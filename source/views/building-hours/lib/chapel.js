@@ -15,7 +15,7 @@ export function isChapelTime(
 	schedules: SingleBuildingScheduleType[] = chapelSchedule,
 ): boolean {
 	let dayOfWeek = getDayOfWeek(m)
-	let sched = schedules.find(sched => sched.days.includes(dayOfWeek))
+	let sched = schedules.find((sched) => sched.days.includes(dayOfWeek))
 
 	if (!sched) {
 		return false
@@ -29,7 +29,7 @@ export function formatChapelTime(
 	schedules: SingleBuildingScheduleType[] = chapelSchedule,
 ): string {
 	let dayOfWeek = getDayOfWeek(m)
-	let sched = schedules.find(sched => sched.days.includes(dayOfWeek))
+	let sched = schedules.find((sched) => sched.days.includes(dayOfWeek))
 
 	if (!sched) {
 		return 'No chapel'
@@ -43,7 +43,7 @@ export function getTimeUntilChapelCloses(
 	schedules: SingleBuildingScheduleType[] = chapelSchedule,
 ): string {
 	let dayOfWeek = getDayOfWeek(m)
-	let sched = schedules.find(sched => sched.days.includes(dayOfWeek))
+	let sched = schedules.find((sched) => sched.days.includes(dayOfWeek))
 
 	if (!sched) {
 		return 'No chapel'
@@ -51,8 +51,5 @@ export function getTimeUntilChapelCloses(
 
 	let {close} = parseHours(sched, m)
 
-	return m
-		.clone()
-		.seconds(0)
-		.to(close)
+	return m.clone().seconds(0).to(close)
 }

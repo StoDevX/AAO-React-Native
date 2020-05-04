@@ -37,7 +37,7 @@ export const isRc = () => IS_RC
 
 // checks if the build should show debugging tools
 export const isDevMode = () =>
-	!IS_PRODUCTION || (IS_ALPHA || IS_BETA || IS_PRE || IS_RC)
+	!IS_PRODUCTION || IS_ALPHA || IS_BETA || IS_PRE || IS_RC
 
 export const setVersionInfo = (versionStr: string) => {
 	let [version, buildNum] = versionStr.split('+')
@@ -52,14 +52,14 @@ export const setVersionInfo = (versionStr: string) => {
 }
 
 export const userAgent = () => {
-	const platformString =
+	let platformString =
 		Platform.OS === 'ios'
 			? 'iOS'
 			: Platform.OS === 'android'
 			? 'Android'
 			: 'unknown'
 
-	const platformVersion = Platform.Version || 'unknown'
+	let platformVersion = Platform.Version || 'unknown'
 
 	return `${APP_NAME}/${APP_VERSION} (${platformString}/${platformVersion})`
 }

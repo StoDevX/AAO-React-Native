@@ -52,7 +52,7 @@ type Props = {
 
 export class ToolView extends React.Component<Props> {
 	render() {
-		const toolEnabled = this.props.config.enabled
+		let toolEnabled = this.props.config.enabled
 
 		return (
 			<Card
@@ -66,8 +66,8 @@ export class ToolView extends React.Component<Props> {
 			>
 				<Markdown source={this.props.config.body} />
 
-				{this.props.config.buttons.map(btn => {
-					const {title, enabled = true} = btn
+				{this.props.config.buttons.map((btn) => {
+					let {title, enabled = true} = btn
 					return (
 						<Button
 							key={title}

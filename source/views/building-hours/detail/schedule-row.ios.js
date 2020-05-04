@@ -19,7 +19,7 @@ type Props = {
 
 export class ScheduleRow extends React.PureComponent<Props> {
 	render() {
-		const {set, isActive, now} = this.props
+		let {set, isActive, now} = this.props
 		return (
 			<Cell
 				cellStyle="RightDetail"

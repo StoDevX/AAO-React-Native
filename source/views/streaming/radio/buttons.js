@@ -5,7 +5,7 @@ import {StyleSheet, Text, View, Platform} from 'react-native'
 import * as c from '@frogpond/colors'
 import {Icon, type Glyphs} from '@frogpond/icon'
 import {Touchable} from '@frogpond/touchable'
-import {withTheme} from '@callstack/react-theme-provider'
+import {withTheme} from '@frogpond/app-theme'
 import type {PlayerTheme} from './types'
 
 type ActionButtonBaseProps = {

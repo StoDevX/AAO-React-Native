@@ -1,10 +1,10 @@
 // @flow
 
 export function parseTerm(term: string) {
-	const semester = term.slice(-1)
-	const year = term.slice(0, -1)
-	const currentYear = parseInt(year)
-	const nextYear = (currentYear + 1).toString().slice(-2)
+	let semester = term.slice(-1)
+	let year = term.slice(0, -1)
+	let currentYear = parseInt(year)
+	let nextYear = (currentYear + 1).toString().slice(-2)
 	switch (semester) {
 		case '0':
 			return `Abroad ${currentYear}/${nextYear}`

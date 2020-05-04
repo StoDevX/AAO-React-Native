@@ -45,14 +45,15 @@ export class BuildingDetail extends React.Component<Props> {
 	}
 
 	render() {
-		const {info, now, onProblemReport} = this.props
+		let {info, now, onProblemReport} = this.props
 
-		const headerImage =
-			info.image && buildingImages.hasOwnProperty(info.image)
-				? buildingImages[info.image]
+		let headerImage =
+			info.image && buildingImages.has(info.image)
+				? buildingImages.get(info.image)
 				: null
-		const openStatus = getShortBuildingStatus(info, now)
-		const schedules = info.schedule || []
+
+		let openStatus = getShortBuildingStatus(info, now)
+		let schedules = info.schedule || []
 
 		return (
 			<ScrollView contentContainerStyle={styles.container}>

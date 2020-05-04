@@ -73,7 +73,7 @@ export const allViews: Array<ViewType> = [
 	},
 	{
 		type: 'url',
-		url: 'https://www.stolaf.edu/personal/index.cfm',
+		url: 'https://www.stolaf.edu/directory',
 		view: 'DirectoryView',
 		title: 'Directory',
 		icon: 'v-card',
@@ -185,4 +185,4 @@ export const allViews: Array<ViewType> = [
 	},
 ]
 
-export const allViewNames: Array<string> = allViews.map(v => v.view)
+export const allViewNames: Array<string> = allViews.map((v) => v.view)

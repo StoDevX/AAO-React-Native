@@ -18,26 +18,26 @@ type Props = {
 
 export class StreamThumbnail extends React.PureComponent<Props> {
 	handlePress = () => {
-		const {name, pageUrl} = this.props.webcam
+		let {name, pageUrl} = this.props.webcam
 		trackedOpenUrl({url: pageUrl, id: `${name}WebcamView`})
 	}
 
 	render() {
-		const {viewportWidth, webcam} = this.props
-		const {name, thumbnail, accentColor, textColor, thumbnailUrl} = webcam
+		let {viewportWidth, webcam} = this.props
+		let {name, thumbnail, accentColor, textColor, thumbnailUrl} = webcam
 
-		const [r, g, b] = accentColor
-		const baseColor = `rgba(${r}, ${g}, ${b}, 1)`
-		const startColor = `rgba(${r}, ${g}, ${b}, 0.1)`
+		let [r, g, b] = accentColor
+		let baseColor = `rgba(${r}, ${g}, ${b}, 1)`
+		let startColor = `rgba(${r}, ${g}, ${b}, 0.1)`
 
-		const width = viewportWidth / 2 - CELL_MARGIN * 1.5
-		const cellRatio = 2.15625
-		const height = width / cellRatio
+		let width = viewportWidth / 2 - CELL_MARGIN * 1.5
+		let cellRatio = 2.15625
+		let height = width / cellRatio
 
-		const img = thumbnailUrl
+		let img = thumbnailUrl
 			? {uri: thumbnailUrl}
-			: webcamImages.hasOwnProperty(thumbnail)
-			? webcamImages[thumbnail]
+			: webcamImages.has(thumbnail)
+			? webcamImages.get(thumbnail)
 			: transparentPixel
 
 		return (

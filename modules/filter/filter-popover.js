@@ -6,7 +6,7 @@ import type {FilterType} from './types'
 import * as c from '@frogpond/colors'
 
 type Props = {
-	anchor: React.Ref<*>,
+	anchor: any,
 	filter: FilterType,
 	onClosePopover: (filter: FilterType) => any,
 	visible: boolean,
@@ -26,8 +26,8 @@ export class FilterPopover extends React.PureComponent<Props, State> {
 	}
 
 	render() {
-		const {filter} = this.state
-		const {anchor, onClosePopover, visible} = this.props
+		let {filter} = this.state
+		let {anchor, onClosePopover, visible} = this.props
 
 		if (typeof anchor !== 'object') {
 			throw new Error('FilterPopover only supports createRef refs')

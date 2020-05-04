@@ -1,6 +1,6 @@
 // @flow
 
-import {HomeView, EditHomeView} from '../views/home'
+import {HomeView} from '../views/home'
 import {BuildingHoursDetailView} from '../views/building-hours/detail'
 import {
 	BuildingHoursProblemReportView,
@@ -16,7 +16,7 @@ import {
 	DictionaryView,
 } from '../views/dictionary'
 import {FaqView} from '../views/faqs'
-import HelpView from '../views/help'
+import {HelpView} from '../views/help'
 import {
 	CourseDetailView,
 	CourseSearchResultsView,
@@ -29,6 +29,7 @@ import {
 	CarletonWeitzMenuScreen,
 	MenusView,
 } from '../views/menus'
+import {BonAppPickerView} from '../views/menus/dev-bonapp-picker'
 import {MenuItemDetailView} from '@frogpond/food-menu/food-item-detail'
 import NewsView from '../views/news'
 import {
@@ -38,7 +39,7 @@ import {
 	DebugView,
 	LegalView,
 	PrivacyView,
-	PushNotificationsSettingsView,
+	APITestView,
 } from '../views/settings'
 import SISView from '../views/sis'
 import StreamingView, {
@@ -67,21 +68,21 @@ export const routes = {
 	ContactsDetailView: {screen: ContactsDetailView},
 	CreditsView: {screen: CreditsView},
 	DebugView: {screen: DebugView},
+	APITestView: {screen: APITestView},
 	DictionaryDetailView: {screen: DictionaryDetailView},
 	DictionaryView: {screen: DictionaryView},
 	DictionaryEditorView: {screen: DictionaryEditorView},
-	EditHomeView: {screen: EditHomeView},
 	EventDetailView: {screen: EventDetailView},
 	FaqView: {screen: FaqView},
 	HelpView: {screen: HelpView},
 	JobDetailView: {screen: JobDetailView},
 	LegalView: {screen: LegalView},
 	MenusView: {screen: MenusView},
+	BonAppPickerView: {screen: BonAppPickerView},
 	NewsView: {screen: NewsView},
 	PrivacyView: {screen: PrivacyView},
 	SettingsView: {screen: SettingsView},
 	IconSettingsView: {screen: IconSettingsView},
-	PushNotificationsSettingsView: {screen: PushNotificationsSettingsView},
 	SISView: {screen: SISView},
 	CourseSearchResultsView: {screen: CourseSearchResultsView},
 	CourseDetailView: {screen: CourseDetailView},

@@ -1,7 +1,7 @@
 // @flow
 
 import * as React from 'react'
-import {WebView} from 'react-native'
+import {WebView} from 'react-native-webview'
 import type {PlayState, HtmlAudioError} from './types'
 
 type Props = {
@@ -11,7 +11,7 @@ type Props = {
 	onStalled?: () => any,
 	onPlay?: () => any,
 	onPause?: () => any,
-	onError?: HtmlAudioError => any,
+	onError?: (HtmlAudioError) => any,
 	style: any,
 	useEmbeddedPlayer: boolean,
 	embeddedPlayerUrl: string,
@@ -59,7 +59,7 @@ export class StreamPlayer extends React.PureComponent<Props> {
 	}
 
 	handleMessage = (event: any) => {
-		const data: HtmlAudioEvent = JSON.parse(event.nativeEvent.data)
+		let data: HtmlAudioEvent = JSON.parse(event.nativeEvent.data)
 
 		// console.log('<audio> dispatched event', data.type)
 

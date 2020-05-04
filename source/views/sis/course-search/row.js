@@ -9,7 +9,7 @@ import {Row} from '@frogpond/layout'
 
 type Props = {
 	course: CourseType,
-	onPress: CourseType => any,
+	onPress: (CourseType) => any,
 }
 
 export class CourseRow extends React.PureComponent<Props> {
@@ -18,7 +18,7 @@ export class CourseRow extends React.PureComponent<Props> {
 	}
 
 	render() {
-		const {course} = this.props
+		let {course} = this.props
 
 		return (
 			<ListRow arrowPosition="center" onPress={this.onPress}>

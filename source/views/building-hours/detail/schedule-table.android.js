@@ -17,12 +17,12 @@ type Props = {
 
 export class ScheduleTable extends React.PureComponent<Props> {
 	render() {
-		const {now, schedules, onProblemReport} = this.props
-		const dayOfWeek = getDayOfWeek(now)
+		let {now, schedules, onProblemReport} = this.props
+		let dayOfWeek = getDayOfWeek(now)
 
 		return (
 			<View>
-				{schedules.map(schedule => (
+				{schedules.map((schedule) => (
 					<Card
 						key={schedule.title}
 						footer={schedule.notes}

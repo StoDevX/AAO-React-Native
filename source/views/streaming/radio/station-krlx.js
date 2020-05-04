@@ -7,13 +7,15 @@ import {type TopLevelViewPropsType} from '../../types'
 import * as logos from '../../../../images/streaming'
 import {RadioControllerView} from './index'
 import tinycolor from 'tinycolor2'
-import {ThemeProvider} from '@callstack/react-theme-provider'
+import {ThemeProvider} from '@frogpond/app-theme'
 import {type PlayerTheme} from './types'
 
 let tintColor = '#33348e'
 const colors: PlayerTheme = {
 	tintColor,
-	buttonTextColor: tinycolor.mostReadable(tintColor, [c.white, c.black]),
+	buttonTextColor: tinycolor
+		.mostReadable(tintColor, [c.white, c.black])
+		.toRgbString(),
 	textColor: tintColor,
 	imageBorderColor: tintColor,
 	imageBackgroundColor: 'transparent',

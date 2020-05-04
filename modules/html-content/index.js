@@ -1,7 +1,7 @@
 // @flow
 
 import * as React from 'react'
-import {WebView} from 'react-native'
+import {WebView} from 'react-native-webview'
 import {openUrl, canOpenUrl} from '@frogpond/open-url'
 
 type Props = {
@@ -35,7 +35,7 @@ export class HtmlContent extends React.Component<Props> {
 	render() {
 		return (
 			<WebView
-				ref={ref => (this._webview = ref)}
+				ref={(ref) => (this._webview = ref)}
 				onNavigationStateChange={this.onNavigationStateChange}
 				source={{html: this.props.html, baseUrl: this.props.baseUrl}}
 				style={this.props.style}

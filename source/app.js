@@ -1,5 +1,9 @@
 // @flow
 
+// TODO Check on https://github.com/kmagiera/react-native-gesture-handler/issues/320,
+// and remove this if/when it is no longer necessary
+import 'react-native-gesture-handler'
+
 // initialization
 import './init/constants'
 import './init/moment'
@@ -8,19 +12,14 @@ import './init/api'
 import './init/theme'
 import './init/data'
 // import './init/navigation'
-import {ONESIGNAL_APP_ID} from './init/notifications'
 
 import * as React from 'react'
-import {Provider} from 'react-redux'
+import {Provider as ReduxProvider} from 'react-redux'
+import {Provider as PaperProvider} from 'react-native-paper'
 import {makeStore, initRedux} from './redux'
 import * as navigation from './navigation'
-import OneSignal, {
-	type OneSignalOpenResult,
-	type OneSignalNotification,
-	type OneSignalIdsResult,
-} from 'react-native-onesignal'
-import {ThemeProvider} from '@callstack/react-theme-provider'
-import {getTheme} from '@frogpond/app-theme'
+import {ThemeProvider} from '@frogpond/app-theme'
+import {ActionSheetProvider} from '@expo/react-native-action-sheet'
 
 const store = makeStore()
 initRedux(store)
@@ -28,47 +27,20 @@ initRedux(store)
 type Props = {}
 
 export default class App extends React.Component<Props> {
-	componentDidMount() {
-		OneSignal.init(ONESIGNAL_APP_ID, {kOSSettingsKeyAutoPrompt: false})
-
-		OneSignal.addEventListener('received', this.onReceived)
-		OneSignal.addEventListener('opened', this.onOpened)
-		OneSignal.addEventListener('ids', this.onIds)
-	}
-
-	componentWillUnmount() {
-		OneSignal.removeEventListener('received', this.onReceived)
-		OneSignal.removeEventListener('opened', this.onOpened)
-		OneSignal.removeEventListener('ids', this.onIds)
-	}
-
-	onReceived(notification: OneSignalNotification) {
-		console.log('Notification received: ', notification)
-	}
-
-	onOpened(openResult: OneSignalOpenResult) {
-		console.log('Message:', openResult.notification.payload.body)
-		console.log('Data:', openResult.notification.payload.additionalData)
-		console.log('isActive:', openResult.notification.isAppInFocus)
-		console.log('openResult:', openResult)
-	}
-
-	onIds(device: OneSignalIdsResult) {
-		console.log('Device info:', device)
-	}
-
 	render() {
-		let theme = getTheme()
-
 		return (
-			<Provider store={store}>
-				<ThemeProvider theme={theme}>
-					<navigation.AppNavigator
-						onNavigationStateChange={navigation.trackScreenChanges}
-						persistenceKey={navigation.persistenceKey}
-					/>
-				</ThemeProvider>
-			</Provider>
+			<ReduxProvider store={store}>
+				<PaperProvider>
+					<ThemeProvider>
+						<ActionSheetProvider>
+							<navigation.AppNavigator
+								onNavigationStateChange={navigation.trackScreenChanges}
+								persistenceKey={navigation.persistenceKey}
+							/>
+						</ActionSheetProvider>
+					</ThemeProvider>
+				</PaperProvider>
+			</ReduxProvider>
 		)
 	}
 }

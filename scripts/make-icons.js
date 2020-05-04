@@ -10,7 +10,15 @@ const resize = (img, width, toFile) =>
 	spawn('convert', img, '-resize', `${width}x${width}`, toFile)
 
 // iOS app icons
-const iosSizes = [[29, 1], [29, 2], [29, 3], [40, 2], [40, 3], [60, 2], [60, 3]]
+const iosSizes = [
+	[29, 1],
+	[29, 2],
+	[29, 3],
+	[40, 2],
+	[40, 3],
+	[60, 2],
+	[60, 3],
+]
 for (const [width, density] of iosSizes) {
 	resize(
 		source,
@@ -20,7 +28,11 @@ for (const [width, density] of iosSizes) {
 }
 
 // iTunes icons
-const itunes = [[512, 1], [1024, 2], [1536, 3]]
+const itunes = [
+	[512, 1],
+	[1024, 2],
+	[1536, 3],
+]
 for (const [width, density] of itunes) {
 	resize(source, width, `icons/ios/iTunesArtwork@${density}x.png`)
 }

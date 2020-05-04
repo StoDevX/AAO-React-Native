@@ -7,16 +7,13 @@ import * as c from '@frogpond/colors'
 import {
 	updateCourseData,
 	loadCourseDataIntoMemory,
-	updateRecentSearches,
-	updateRecentFilters,
 } from '../../../redux/parts/courses'
 import {areAnyTermsCached} from '../../../lib/course-search'
 import type {ReduxState} from '../../../redux'
 import type {TopLevelViewPropsType} from '../../types'
-import {connect} from 'react-redux'
+import {useDispatch, useSelector} from 'react-redux'
 import {NoticeView, LoadingView} from '@frogpond/notice'
 import {AnimatedSearchBar} from '@frogpond/searchbar'
-import {type FilterType} from '@frogpond/filter'
 import {RecentItemsList} from '../components/recents-list'
 import {Separator} from '@frogpond/separator'
 import {buildFilters} from './lib/build-filters'
@@ -50,12 +47,6 @@ type State = {
 }
 
 class CourseSearchView extends React.Component<Props, State> {
-	static navigationOptions = {
-		tabBarLabel: 'Course Search',
-		tabBarIcon: TabBarIcon('search'),
-		title: 'SIS',
-	}
-
 	state = {
 		mode: 'pending',
 		isSearchbarActive: false,
@@ -66,7 +57,7 @@ class CourseSearchView extends React.Component<Props, State> {
 		this.loadData({userInitiated: false})
 	}
 
-	loadData = async ({userInitiated = true} = {}) => {
+	loadData = async ({userInitiated = true}: {userInitiated?: boolean} = {}) => {
 		let hasCache = await areAnyTermsCached()
 
 		if (!hasCache && !userInitiated) {
@@ -128,15 +119,15 @@ class CourseSearchView extends React.Component<Props, State> {
 
 	onRecentFilterPress = async (text: string) => {
 		let {recentFilters} = this.props
-		let selectedFilterCombo = recentFilters.find(f => f.description === text)
+		let selectedFilterCombo = recentFilters.find((f) => f.description === text)
 
 		let freshFilters = await buildFilters()
 		let selectedFilters = freshFilters
 		if (selectedFilterCombo) {
 			let filterLookup = fromPairs(
-				selectedFilterCombo.filters.map(f => [f.key, f]),
+				selectedFilterCombo.filters.map((f) => [f.key, f]),
 			)
-			selectedFilters = freshFilters.map(f => filterLookup[f.key] || f)
+			selectedFilters = freshFilters.map((f) => filterLookup[f.key] || f)
 		}
 
 		this.props.navigation.push('CourseSearchResultsView', {
@@ -165,7 +156,7 @@ class CourseSearchView extends React.Component<Props, State> {
 		}
 
 		let recentFilterDescriptions = this.props.recentFilters.map(
-			f => f.description,
+			(f) => f.description,
 		)
 
 		return (
@@ -209,29 +200,44 @@ class CourseSearchView extends React.Component<Props, State> {
 	}
 }
 
-function mapState(state: ReduxState): ReduxStateProps {
-	return {
-		courseDataState: state.courses ? state.courses.readyState : '',
-		recentFilters: state.courses ? state.courses.recentFilters : [],
-		recentSearches: state.courses ? state.courses.recentSearches : [],
-	}
-}
+export function ConnectedCourseSearchView(props: TopLevelViewPropsType) {
+	let dispatch = useDispatch()
 
-function mapDispatch(dispatch): ReduxDispatchProps {
-	return {
-		loadCourseDataIntoMemory: () => dispatch(loadCourseDataIntoMemory()),
-		updateCourseData: () => dispatch(updateCourseData()),
-		updateRecentSearches: (query: string) =>
-			dispatch(updateRecentSearches(query)),
-		updateRecentFilters: (filters: FilterType[]) =>
-			dispatch(updateRecentFilters(filters)),
-	}
-}
+	let courseDataState = useSelector(
+		(state: ReduxState) => state.courses?.readyState || '',
+	)
+	let recentFilters = useSelector(
+		(state: ReduxState) => state.courses?.recentFilters || [],
+	)
+	let recentSearches = useSelector(
+		(state: ReduxState) => state.courses?.recentSearches || [],
+	)
 
-export default connect(
-	mapState,
-	mapDispatch,
-)(CourseSearchView)
+	let _loadCourseDataIntoMemory = React.useCallback(
+		() => dispatch(loadCourseDataIntoMemory()),
+		[dispatch],
+	)
+	let _updateCourseData = React.useCallback(
+		() => dispatch(updateCourseData()),
+		[dispatch],
+	)
+
+	return (
+		<CourseSearchView
+			{...props}
+			courseDataState={courseDataState}
+			loadCourseDataIntoMemory={_loadCourseDataIntoMemory}
+			recentFilters={recentFilters}
+			recentSearches={recentSearches}
+			updateCourseData={_updateCourseData}
+		/>
+	)
+}
+ConnectedCourseSearchView.navigationOptions = {
+	tabBarLabel: 'Course Search',
+	tabBarIcon: TabBarIcon('search'),
+	title: 'SIS',
+}
 
 let styles = StyleSheet.create({
 	bottomContainer: {

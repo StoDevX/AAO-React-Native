@@ -13,13 +13,13 @@ type Props = {|
 
 export class ScheduleTimes extends React.PureComponent<Props, void> {
 	render() {
-		const {times} = this.props
+		let {times} = this.props
 
 		return (
 			<Text>
 				{times
 					// and format the times
-					.map(time => (!time ? 'None' : time.format(TIME_FORMAT)))
+					.map((time) => (!time ? 'None' : time.format(TIME_FORMAT)))
 					.join(' • ')}
 			</Text>
 		)

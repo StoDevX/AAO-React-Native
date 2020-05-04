@@ -31,7 +31,7 @@ def generate_sourcemap
 	args = sourcemap_args
 
 	cmd = [
-	       'npx react-native bundle',
+	       'yarn react-native bundle',
 	       '--dev false',
 	       "--platform '#{args[:platform]}'",
 	       "--entry-file '#{args[:entry_file]}'",
@@ -44,17 +44,26 @@ def generate_sourcemap
 	                                      print_command: true)
 end
 
+def bundle_identifier
+	case lane_context[:PLATFORM_NAME]
+	when :android
+		"com.allaboutolaf"
+	when :ios
+		"NFMTHAZVS9.com.drewvolz.stolaf"
+	end
+end
+
 # Upload sourcemap to sentry
 def upload_sourcemap_to_sentry
 	args = sourcemap_args
 
 	cmd = [
-	       'npx @sentry/cli',
+	       'yarn sentry-cli',
 	       'releases',
 	       'files',
-	       current_bundle_version,
+	       "#{bundle_identifier}-#{current_bundle_version}",
 	       'upload-sourcemaps',
-	       "--dist #{current_bundle_version}",
+	       "--dist #{current_bundle_code}",
 	       "--strip-prefix #{File.expand_path(File.join(__FILE__, '..', '..', '..'))}",
 	       '--rewrite',
 	       args[:sourcemap_output]

@@ -1,5 +1,5 @@
 // @flow
 
-export {default as CourseSearchView} from './search'
-export {default as CourseSearchResultsView} from './results'
+export {ConnectedCourseSearchView as CourseSearchView} from './search'
+export {ConnectedCourseSearchResultsView as CourseSearchResultsView} from './results'
 export {CourseDetailView} from './detail'

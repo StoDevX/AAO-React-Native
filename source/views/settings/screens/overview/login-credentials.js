@@ -10,7 +10,7 @@ import {
 } from '../../../../redux/parts/login'
 import {loadLoginCredentials} from '../../../../lib/login'
 import {type ReduxState} from '../../../../redux'
-import {connect} from 'react-redux'
+import {useSelector, useDispatch} from 'react-redux'
 import noop from 'lodash/noop'
 
 type ReduxStateProps = {
@@ -18,8 +18,8 @@ type ReduxStateProps = {
 }
 
 type ReduxDispatchProps = {
-	logInViaCredentials: (string, string) => Promise<any>,
-	logOutViaCredentials: () => any,
+	logInViaCredentials: (string, string) => void,
+	logOutViaCredentials: () => void,
 }
 
 type Props = ReduxStateProps & ReduxDispatchProps
@@ -70,21 +70,21 @@ class CredentialsLoginSection extends React.Component<Props, State> {
 	}
 
 	render() {
-		const {status} = this.props
-		const {
+		let {status} = this.props
+		let {
 			username,
 			password,
 			loadingCredentials,
 			initialCheckComplete,
 		} = this.state
 
-		const loggedIn = status === 'logged-in'
-		const checkingCredentials = status === 'checking'
-		const hasBothCredentials = username && password
+		let loggedIn = status === 'logged-in'
+		let checkingCredentials = status === 'checking'
+		let hasBothCredentials = username && password
 
 		// this becomes TRUE when (a) creds are loaded from AsyncStorage and
 		// (b) the initial check from those credentials has completed
-		const checkingState = loadingCredentials || !initialCheckComplete
+		let checkingState = loadingCredentials || !initialCheckComplete
 
 		return (
 			<Section
@@ -102,7 +102,7 @@ class CredentialsLoginSection extends React.Component<Props, State> {
 							_ref={this._usernameInput}
 							disabled={checkingCredentials}
 							label="Username"
-							onChangeText={text => this.setState(() => ({username: text}))}
+							onChangeText={(text) => this.setState(() => ({username: text}))}
 							onSubmitEditing={this.focusPassword}
 							placeholder="username"
 							returnKeyType="next"
@@ -114,7 +114,7 @@ class CredentialsLoginSection extends React.Component<Props, State> {
 							_ref={this._passwordInput}
 							disabled={checkingCredentials}
 							label="Password"
-							onChangeText={text => this.setState(() => ({password: text}))}
+							onChangeText={(text) => this.setState(() => ({password: text}))}
 							onSubmitEditing={loggedIn ? noop : this.logIn}
 							placeholder="password"
 							returnKeyType="done"
@@ -136,11 +136,28 @@ class CredentialsLoginSection extends React.Component<Props, State> {
 	}
 }
 
-function mapStateToProps(state: ReduxState): ReduxStateProps {
-	return {status: state.login ? state.login.status : 'initializing'}
-}
+export function ConnectedCredentialsLoginSection() {
+	let dispatch = useDispatch()
+	let status = useSelector(
+		(state: ReduxState) => state.login?.status || 'initializing',
+	)
 
-export const ConnectedCredentialsLoginSection = connect(
-	mapStateToProps,
-	{logOutViaCredentials, logInViaCredentials},
-)(CredentialsLoginSection)
+	let logIn = React.useCallback(
+		(u: string, p: string) => {
+			dispatch(logInViaCredentials(u, p))
+		},
+		[dispatch],
+	)
+
+	let logOut = React.useCallback(() => {
+		dispatch(logOutViaCredentials())
+	}, [dispatch])
+
+	return (
+		<CredentialsLoginSection
+			logInViaCredentials={logIn}
+			logOutViaCredentials={logOut}
+			status={status}
+		/>
+	)
+}

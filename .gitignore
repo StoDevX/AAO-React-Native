@@ -18,7 +18,9 @@ DerivedData
 *.hmap
 *.ipa
 *.xcuserstate
-project.xcworkspace
+
+# Cocoapods
+ios/Pods
 
 # Android/IntelliJ
 build/
@@ -51,6 +53,7 @@ fastlane/test_output
 
 # Deployment keys
 android/app/signing.properties
+android/app/upload-keystore.properties
 fastlane/play-private-key.json
 *.keystore
 

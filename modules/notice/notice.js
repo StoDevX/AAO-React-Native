@@ -36,9 +36,9 @@ type Props = {
 }
 
 export function NoticeView(props: Props) {
-	const {header, text, style, textStyle} = props
-	const {buttonDisabled, buttonText, onPress} = props
-	const {spinner} = props
+	let {header, text, style, textStyle} = props
+	let {buttonDisabled, buttonText, onPress} = props
+	let {spinner} = props
 
 	return (
 		<Viewport

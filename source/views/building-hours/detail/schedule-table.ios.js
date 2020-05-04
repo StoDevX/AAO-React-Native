@@ -19,12 +19,12 @@ type Props = {
 
 export class ScheduleTable extends React.PureComponent<Props> {
 	render() {
-		const {now, schedules, onProblemReport} = this.props
-		const dayOfWeek = getDayOfWeek(now)
+		let {now, schedules, onProblemReport} = this.props
+		let dayOfWeek = getDayOfWeek(now)
 
 		return (
 			<TableView>
-				{schedules.map(schedule => (
+				{schedules.map((schedule) => (
 					<Section
 						key={schedule.title}
 						footer={schedule.notes}

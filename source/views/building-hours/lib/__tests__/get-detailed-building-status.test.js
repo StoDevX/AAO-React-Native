@@ -20,7 +20,7 @@ it('returns a list of [isOpen, scheduleName, verboseStatus] tuples', () => {
 		],
 	}
 
-	const actual = getDetailedBuildingStatus(building, m)
+	let actual = getDetailedBuildingStatus(building, m)
 
 	expect(actual).toBeInstanceOf(Array)
 	expect(actual.length).toEqual(1)
@@ -49,7 +49,7 @@ it('checks a list of schedules to see if any are open', () => {
 		],
 	}
 
-	const actual = getDetailedBuildingStatus(building, m)
+	let actual = getDetailedBuildingStatus(building, m)
 	expect(actual).toMatchSnapshot()
 
 	expect(actual[0].isActive).toBe(true)
@@ -72,7 +72,7 @@ it('handles multiple internal schedules for the same timeframe', () => {
 		],
 	}
 
-	const actual = getDetailedBuildingStatus(building, m)
+	let actual = getDetailedBuildingStatus(building, m)
 	expect(actual).toMatchSnapshot()
 
 	expect(actual[0].isActive).toBe(false)
@@ -100,7 +100,7 @@ it('handles multiple named schedules for the same timeframe', () => {
 		],
 	}
 
-	const actual = getDetailedBuildingStatus(building, m)
+	let actual = getDetailedBuildingStatus(building, m)
 	expect(actual).toMatchSnapshot()
 
 	expect(actual[0].isActive).toBe(false)
@@ -125,7 +125,7 @@ it('returns false if none are available for this day', () => {
 		],
 	}
 
-	const actual = getDetailedBuildingStatus(building, m)
+	let actual = getDetailedBuildingStatus(building, m)
 	expect(actual).toMatchSnapshot()
 
 	expect(actual[0].isActive).toBe(false)
@@ -148,7 +148,7 @@ it('returns false if none are open', () => {
 		],
 	}
 
-	const actual = getDetailedBuildingStatus(building, m)
+	let actual = getDetailedBuildingStatus(building, m)
 	expect(actual).toMatchSnapshot()
 
 	expect(actual[0].isActive).toBe(false)

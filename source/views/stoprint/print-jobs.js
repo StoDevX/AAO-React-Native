@@ -3,10 +3,11 @@
 import React from 'react'
 import {timezone} from '@frogpond/constants'
 import {Platform, SectionList} from 'react-native'
-import {connect} from 'react-redux'
+import {useDispatch, useSelector} from 'react-redux'
 import {type ReduxState} from '../../redux'
 import {updatePrintJobs} from '../../redux/parts/stoprint'
-import {type LoginStateEnum} from '../../redux/parts/login'
+import {type LoginStateEnum, logInViaCredentials} from '../../redux/parts/login'
+import {loadLoginCredentials} from '../../lib/login'
 import {type PrintJob, STOPRINT_HELP_PAGE} from '../../lib/stoprint'
 import {
 	ListRow,
@@ -35,6 +36,7 @@ type ReduxStateProps = {
 }
 
 type ReduxDispatchProps = {
+	logInViaCredentials: (string, string) => Promise<any>,
 	updatePrintJobs: () => Promise<any>,
 }
 
@@ -80,7 +82,22 @@ class PrintJobsView extends React.PureComponent<Props, State> {
 		this.setState(() => ({loading: false}))
 	}
 
-	fetchData = () => this.props.updatePrintJobs()
+	logIn = async () => {
+		let {status} = this.props
+		if (status === 'logged-in' || status === 'checking') {
+			return
+		}
+
+		let {username = '', password = ''} = await loadLoginCredentials()
+		if (username && password) {
+			await this.props.logInViaCredentials(username, password)
+		}
+	}
+
+	fetchData = async () => {
+		await this.logIn()
+		await this.props.updatePrintJobs()
+	}
 
 	keyExtractor = (item: PrintJob) => item.id.toString()
 
@@ -150,11 +167,11 @@ class PrintJobsView extends React.PureComponent<Props, State> {
 		}
 
 		if (this.props.jobs.length === 0) {
-			const instructions =
+			let instructions =
 				Platform.OS === 'android'
 					? 'using the Mobility Print app'
 					: 'using the Print option in the Share Sheet'
-			const descriptionText = `You can print from a computer, or by ${instructions}.`
+			let descriptionText = `You can print from a computer, or by ${instructions}.`
 
 			return (
 				<StoPrintNoticeView
@@ -168,13 +185,13 @@ class PrintJobsView extends React.PureComponent<Props, State> {
 			)
 		}
 
-		let grouped = groupBy(this.props.jobs, j => j.statusFormatted || 'Other')
+		let grouped = groupBy(this.props.jobs, (j) => j.statusFormatted || 'Other')
 		let groupedJobs = toPairs(grouped).map(([title, data]) => ({
 			title,
 			data,
 		}))
 		let sortedGroupedJobs = sortBy(groupedJobs, [
-			group => group.title !== 'Pending Release', // puts 'Pending Release' jobs at the top
+			(group) => group.title !== 'Pending Release', // puts 'Pending Release' jobs at the top
 		])
 
 		return (
@@ -191,21 +208,33 @@ class PrintJobsView extends React.PureComponent<Props, State> {
 	}
 }
 
-function mapStateToProps(state: ReduxState): ReduxStateProps {
-	return {
-		jobs: state.stoprint ? state.stoprint.jobs : [],
-		error: state.stoprint ? state.stoprint.jobsError : null,
-		status: state.login ? state.login.status : 'logged-out',
-	}
-}
+export function ConnectedPrintJobsView(props: TopLevelViewPropsType) {
+	let dispatch = useDispatch()
 
-function mapDispatchToProps(dispatch): ReduxDispatchProps {
-	return {
-		updatePrintJobs: () => dispatch(updatePrintJobs()),
-	}
-}
+	let jobs = useSelector((state: ReduxState) => state.stoprint?.jobs || [])
+	let error = useSelector(
+		(state: ReduxState) => state.stoprint?.jobsError || null,
+	)
+	let status = useSelector(
+		(state: ReduxState) => state.login?.status || 'logged-out',
+	)
 
-export const ConnectedPrintJobsView = connect(
-	mapStateToProps,
-	mapDispatchToProps,
-)(PrintJobsView)
+	let _logInViaCredentials = React.useCallback(
+		(username, password) => dispatch(logInViaCredentials(username, password)),
+		[dispatch],
+	)
+	let _updatePrintJobs = React.useCallback(() => dispatch(updatePrintJobs()), [
+		dispatch,
+	])
+
+	return (
+		<PrintJobsView
+			{...props}
+			error={error}
+			jobs={jobs}
+			logInViaCredentials={_logInViaCredentials}
+			status={status}
+			updatePrintJobs={_updatePrintJobs}
+		/>
+	)
+}

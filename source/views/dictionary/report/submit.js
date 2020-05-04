@@ -8,10 +8,10 @@ import {GH_NEW_ISSUE_URL} from '../../../lib/constants'
 import wrap from 'wordwrap'
 
 export function submitReport(current: WordType, suggestion: WordType) {
-	const before = stringifyDictionaryEntry(current)
-	const after = stringifyDictionaryEntry(suggestion)
+	let before = stringifyDictionaryEntry(current)
+	let after = stringifyDictionaryEntry(suggestion)
 
-	const body = makeEmailBody(before, after, current.word)
+	let body = makeEmailBody(before, after, current.word)
 
 	return sendEmail({
 		to: ['allaboutolaf@stolaf.edu'],
@@ -58,7 +58,7 @@ const makeHtmlBody = (before, after) => `
 `
 
 function makeIssueLink(before: string, after: string, title: string): string {
-	const q = querystring.stringify({
+	let q = querystring.stringify({
 		'labels[]': 'data/dictionary',
 		title: `Dictionary update for ${title}`,
 		body: makeMarkdownBody(before, after),

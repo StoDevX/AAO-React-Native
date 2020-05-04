@@ -20,6 +20,9 @@ const styles = StyleSheet.create({
 	listContainer: {
 		backgroundColor: c.white,
 	},
+	contentContainer: {
+		flexGrow: 1,
+	},
 })
 
 type Props = {}
@@ -60,11 +63,8 @@ export class StreamListView extends React.PureComponent<Props, State> {
 		reload?: boolean,
 		date: moment = moment.tz(timezone()),
 	) => {
-		const dateFrom = date.format('YYYY-MM-DD')
-		const dateTo = date
-			.clone()
-			.add(2, 'month')
-			.format('YYYY-MM-DD')
+		let dateFrom = date.format('YYYY-MM-DD')
+		let dateTo = date.clone().add(2, 'month').format('YYYY-MM-DD')
 
 		let data = await fetch(API('/streams/upcoming'), {
 			searchParams: {
@@ -76,10 +76,10 @@ export class StreamListView extends React.PureComponent<Props, State> {
 		}).json()
 
 		data = data
-			.filter(stream => stream.category !== 'athletics')
-			.map(stream => {
-				const date = moment(stream.starttime)
-				const group =
+			.filter((stream) => stream.category !== 'athletics')
+			.map((stream) => {
+				let date = moment(stream.starttime)
+				let group =
 					stream.status.toLowerCase() !== 'live'
 						? date.format('dddd, MMMM Do')
 						: 'Live'
@@ -93,8 +93,8 @@ export class StreamListView extends React.PureComponent<Props, State> {
 				}
 			})
 
-		const grouped = groupBy(data, j => j.$groupBy)
-		const mapped = toPairs(grouped).map(([title, data]) => ({title, data}))
+		let grouped = groupBy(data, (j) => j.$groupBy)
+		let mapped = toPairs(grouped).map(([title, data]) => ({title, data}))
 
 		this.setState(() => ({streams: mapped}))
 	}
@@ -120,6 +120,7 @@ export class StreamListView extends React.PureComponent<Props, State> {
 			<SectionList
 				ItemSeparatorComponent={ListSeparator}
 				ListEmptyComponent={<NoticeView text="No Streams" />}
+				contentContainerStyle={styles.contentContainer}
 				keyExtractor={this.keyExtractor}
 				onRefresh={this.refresh}
 				refreshing={this.state.refreshing}

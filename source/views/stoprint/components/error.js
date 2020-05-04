@@ -18,7 +18,7 @@ type Props = TopLevelViewPropsType & {
 
 export class StoPrintErrorView extends React.PureComponent<Props> {
 	render() {
-		const iconName = Platform.select({
+		let iconName = Platform.select({
 			ios: 'ios-bug',
 			android: 'md-bug',
 		})

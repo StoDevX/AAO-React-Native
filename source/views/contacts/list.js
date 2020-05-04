@@ -17,16 +17,19 @@ const fetchContacts = (forReload?: boolean): Promise<Array<ContactType>> =>
 		delay: forReload ? 500 : 0,
 	})
 		.json()
-		.then(body => body.data)
+		.then((body) => body.data)
 
 const groupContacts = (contacts: ContactType[]) => {
-	const grouped = groupBy(contacts, c => c.category)
+	let grouped = groupBy(contacts, (c) => c.category)
 	return toPairs(grouped).map(([key, value]) => ({title: key, data: value}))
 }
 
 const styles = StyleSheet.create({
 	listContainer: {
 		backgroundColor: c.white,
+	},
+	contentContainer: {
+		flexGrow: 1,
 	},
 })
 
@@ -80,11 +83,12 @@ export class ContactsListView extends React.PureComponent<Props, State> {
 	keyExtractor = (item: ContactType) => item.title
 
 	render() {
-		const groupedData = groupContacts(this.state.contacts)
+		let groupedData = groupContacts(this.state.contacts)
 		return (
 			<SectionList
 				ItemSeparatorComponent={ListSeparator}
 				ListEmptyComponent={<ListEmpty mode="bug" />}
+				contentContainerStyle={styles.contentContainer}
 				keyExtractor={this.keyExtractor}
 				onRefresh={this.refresh}
 				refreshing={this.state.loading}

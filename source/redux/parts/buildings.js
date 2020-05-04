@@ -16,7 +16,7 @@ type LoadFavoritesAction = {
 	payload: Array<string>,
 }
 export async function loadFavoriteBuildings(): Promise<LoadFavoritesAction> {
-	const favoriteBuildings = await storage.getFavoriteBuildings()
+	let favoriteBuildings = await storage.getFavoriteBuildings()
 	return {type: LOAD_FAVORITE_BUILDINGS, payload: favoriteBuildings}
 }
 
@@ -28,12 +28,12 @@ export function toggleFavoriteBuilding(
 	buildingName: string,
 ): ThunkAction<ToggleFavoriteAction> {
 	return (dispatch, getState) => {
-		const state = getState()
+		let state = getState()
 
-		const currentFavorites = state.buildings ? state.buildings.favorites : []
+		let currentFavorites = state.buildings ? state.buildings.favorites : []
 
-		const newFavorites = currentFavorites.includes(buildingName)
-			? currentFavorites.filter(name => name !== buildingName)
+		let newFavorites = currentFavorites.includes(buildingName)
+			? currentFavorites.filter((name) => name !== buildingName)
 			: [...currentFavorites, buildingName]
 
 		// Sort the building names (localeCompare handles non-ASCII chars better)

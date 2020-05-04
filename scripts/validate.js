@@ -10,12 +10,12 @@ const {SCHEMA_BASE} = require('./paths')
 function formatError(err, data) {
 	// format some of the errors from ajv
 	let contents = ''
-	const dataPath = err.dataPath.replace(/^\./u, '')
+	let dataPath = err.dataPath.replace(/^\./u, '')
 	switch (err.keyword) {
 		case 'enum': {
-			const value = get(data, dataPath)
-			const allowed = err.params.allowedValues
-				.map(v => JSON.stringify(v))
+			let value = get(data, dataPath)
+			let allowed = err.params.allowedValues
+				.map((v) => JSON.stringify(v))
 				.join(', ')
 			contents = `Given value "${JSON.stringify(value)}" ${
 				err.message
@@ -35,24 +35,24 @@ function formatError(err, data) {
 
 const init = memoize(() => {
 	// load the common definitions
-	const defsPath = path.join(SCHEMA_BASE, '_defs.yaml')
-	const defs = yaml.safeLoad(fs.readFileSync(defsPath, 'utf-8'))
+	let defsPath = path.join(SCHEMA_BASE, '_defs.yaml')
+	let defs = yaml.safeLoad(fs.readFileSync(defsPath, 'utf-8'))
 
 	// set up the validator
-	const validator = new AJV()
+	let validator = new AJV()
 	validator.addSchema(defs)
 
 	return validator
 })
 
 module.exports = function validate(schema, data) {
-	const validator = init()
+	let validator = init()
 
-	const validate = validator.compile(schema)
-	const isValid = validate(data)
+	let validate = validator.compile(schema)
+	let isValid = validate(data)
 
 	if (!isValid) {
-		return [false, validate.errors.map(e => formatError(e, data))]
+		return [false, validate.errors.map((e) => formatError(e, data))]
 	}
 
 	return [true, []]

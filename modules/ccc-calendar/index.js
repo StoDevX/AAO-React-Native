@@ -17,7 +17,7 @@ type Props = {
 		| {type: 'reason', url: string}
 		| {type: 'ics', url: string},
 	detailView?: string,
-	eventMapper?: EventType => EventType,
+	eventMapper?: (EventType) => EventType,
 	navigation: NavigationScreenProp<*>,
 	poweredBy: ?PoweredBy,
 }
@@ -46,9 +46,9 @@ export class CccCalendarView extends React.Component<Props, State> {
 	}
 
 	convertEvents(data: EventType[]): EventType[] {
-		let events = data.map(event => {
-			const startTime = moment(event.startTime)
-			const endTime = moment(event.endTime)
+		let events = data.map((event) => {
+			let startTime = moment(event.startTime)
+			let endTime = moment(event.endTime)
 
 			return {
 				...event,

@@ -74,7 +74,7 @@ export const iosTabBarActiveColor = sto.purple
 
 export const androidStatusBarColor = tinycolor(navigationBackground)
 	.darken(20)
-	.toString()
+	.toRgbString()
 
 export const statusBarStyle = Platform.select({
 	ios: tinycolor.isReadable('#000', navigationBackground)

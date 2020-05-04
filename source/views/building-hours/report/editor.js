@@ -59,29 +59,32 @@ export class BuildingHoursScheduleEditorView extends React.PureComponent<
 
 	onChangeDays = (newDays: DayOfWeekEnumType[]) => {
 		this.setState(
-			state => ({...state, set: {...state.set, days: newDays}}),
+			(state) => ({...state, set: {...state.set, days: newDays}}),
 			() => this.props.navigation.state.params.onEditSet(this.state.set),
 		)
 	}
 
 	onChangeOpen = (newDate: moment) => {
 		this.setState(
-			state => ({...state, set: {...state.set, from: newDate.format('h:mma')}}),
+			(state) => ({
+				...state,
+				set: {...state.set, from: newDate.format('h:mma')},
+			}),
 			() => this.props.navigation.state.params.onEditSet(this.state.set),
 		)
 	}
 
 	onChangeClose = (newDate: moment) => {
 		this.setState(
-			state => ({...state, set: {...state.set, to: newDate.format('h:mma')}}),
+			(state) => ({...state, set: {...state.set, to: newDate.format('h:mma')}}),
 			() => this.props.navigation.state.params.onEditSet(this.state.set),
 		)
 	}
 
 	render() {
-		const set = this.state.set || blankSchedule()
+		let set = this.state.set || blankSchedule()
 
-		const {open, close} = parseHours(set, moment())
+		let {open, close} = parseHours(set, moment())
 
 		return (
 			<ScrollView>
@@ -123,11 +126,11 @@ class WeekTogglesIOS extends React.PureComponent<WeekTogglesProps> {
 	}
 
 	render() {
-		const allDays = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su']
+		let allDays = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su']
 
 		return (
 			<Row alignItems="stretch" justifyContent="center">
-				{allDays.map(day => (
+				{allDays.map((day) => (
 					<ToggleButton
 						key={day}
 						active={this.props.days.includes(day)}
@@ -141,12 +144,12 @@ class WeekTogglesIOS extends React.PureComponent<WeekTogglesProps> {
 }
 
 class WeekTogglesAndroid extends React.PureComponent<WeekTogglesProps> {
-	toggleDay = day => {
+	toggleDay = (day) => {
 		this.props.onChangeDays(xor(this.props.days, [day]))
 	}
 
 	render() {
-		const allDays = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su']
+		let allDays = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su']
 
 		return (
 			<View>
@@ -176,7 +179,7 @@ class ToggleButton extends React.PureComponent<ToggleButtonProps> {
 	onPress = () => this.props.onPress(this.props.text)
 
 	render() {
-		const {text, active} = this.props
+		let {text, active} = this.props
 		return (
 			<Touchable
 				containerStyle={[styles.dayWrapper, active && styles.activeDay]}
@@ -206,7 +209,7 @@ class DatePickerCell extends React.PureComponent<DatePickerCellProps> {
 	getRef = (ref: any) => (this._picker = ref)
 
 	onChange = (newDate: moment) => {
-		const oldMoment = moment()
+		let oldMoment = moment()
 
 		oldMoment.hours(newDate.hours())
 		oldMoment.minutes(newDate.minutes())
@@ -215,9 +218,9 @@ class DatePickerCell extends React.PureComponent<DatePickerCellProps> {
 	}
 
 	render() {
-		const format = 'h:mm A'
+		let format = 'h:mm A'
 
-		const accessory = (
+		let accessory = (
 			<DatePicker
 				ref={this.getRef}
 				format={format}

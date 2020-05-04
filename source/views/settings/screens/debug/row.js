@@ -6,12 +6,12 @@ import type {TopLevelViewPropsType} from '../../../types'
 
 type Props = TopLevelViewPropsType & {
 	data: {key: string, value: any},
-	onPress: string => any,
+	onPress: (string) => any,
 }
 
 export class DebugRow extends React.PureComponent<Props> {
 	render() {
-		const {data} = this.props
+		let {data} = this.props
 
 		let rowDetail = '<unknown>'
 		let arrowPosition = 'none'
@@ -34,8 +34,8 @@ export class DebugRow extends React.PureComponent<Props> {
 			rowDetail = JSON.stringify(data.value)
 		}
 
-		const arrowStyle = arrowPosition === 'none' ? false : 'DisclosureIndicator'
-		const onPress = arrowPosition === 'none' ? null : this.props.onPress
+		let arrowStyle = arrowPosition === 'none' ? false : 'DisclosureIndicator'
+		let onPress = arrowPosition === 'none' ? null : this.props.onPress
 
 		return (
 			<Cell

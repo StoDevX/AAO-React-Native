@@ -29,7 +29,6 @@ public class MainActivity extends ReactActivity {
         };
     }
 
-    // Set up Bugsnag
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

@@ -1,9 +1,7 @@
 // @flow
 
 import * as React from 'react'
-import {StyleSheet, RefreshControl, Platform} from 'react-native'
-import {SearchableAlphabetListView} from '@frogpond/listview'
-import {Column} from '@frogpond/layout'
+import {StyleSheet, RefreshControl, View, SectionList} from 'react-native'
 import {
 	Detail,
 	Title,
@@ -11,138 +9,129 @@ import {
 	ListSectionHeader,
 	ListSeparator,
 } from '@frogpond/lists'
+import {NoticeView} from '@frogpond/notice'
+import {SearchBar} from '@frogpond/searchbar'
 import type {WordType} from './types'
 import type {TopLevelViewPropsType} from '../types'
+import {white} from '@frogpond/colors'
 import groupBy from 'lodash/groupBy'
-import uniq from 'lodash/uniq'
+import toPairs from 'lodash/toPairs'
 import words from 'lodash/words'
 import deburr from 'lodash/deburr'
 import {fetch} from '@frogpond/fetch'
 import {API} from '@frogpond/api'
+import {useAsync, type AsyncState} from 'react-async'
+import {useDebounce} from '@frogpond/use-debounce'
 
-const fetchDictionaryTerms = (forReload?: boolean): Promise<Array<WordType>> =>
-	fetch(API('/dictionary'), {delay: forReload ? 500 : 0})
+const fetchDictionaryTerms = (args: {
+	signal: window.AbortController,
+}): Promise<Array<WordType>> => {
+	return fetch(API('/dictionary'), {signal: args.signal})
 		.json()
-		.then(body => body.data)
+		.then((body) => body.data)
+}
 
-const ROW_HEIGHT = Platform.OS === 'ios' ? 76 : 89
-const SECTION_HEADER_HEIGHT = Platform.OS === 'ios' ? 33 : 41
+function splitToArray(str: string) {
+	return words(deburr(str.toLowerCase()))
+}
 
-const splitToArray = (str: string) => words(deburr(str.toLowerCase()))
-
-const termToArray = (term: WordType) =>
-	uniq([...splitToArray(term.word), ...splitToArray(term.definition)])
+function termToArray(term: WordType) {
+	return Array.from(
+		new Set([...splitToArray(term.word), ...splitToArray(term.definition)]),
+	)
+}
 
 const styles = StyleSheet.create({
-	row: {
-		height: ROW_HEIGHT,
-	},
-	rowSectionHeader: {
-		height: SECTION_HEADER_HEIGHT,
+	wrapper: {
+		flex: 1,
+		backgroundColor: white,
 	},
 	rowDetailText: {
 		fontSize: 14,
+	},
+	contentContainer: {
+		flexGrow: 1,
 	},
 })
 
 type Props = TopLevelViewPropsType
 
-type State = {
-	query: string,
-	allTerms: Array<WordType>,
-	loading: boolean,
-}
+export function DictionaryView(props: Props) {
+	let [query, setQuery] = React.useState('')
+	let searchQuery = useDebounce(query.toLowerCase(), 200)
 
-export class DictionaryView extends React.PureComponent<Props, State> {
-	static navigationOptions = {
-		title: 'Campus Dictionary',
-		headerBackTitle: 'Dictionary',
+	let {data, error, reload, isPending}: AsyncState<?Array<WordType>> = useAsync(
+		fetchDictionaryTerms,
+	)
+
+	let results = React.useMemo(() => {
+		let allTerms = data || []
+
+		if (!searchQuery) {
+			return allTerms
+		}
+
+		return allTerms.filter((term) =>
+			termToArray(term).some((word) => word.startsWith(searchQuery)),
+		)
+	}, [data, searchQuery])
+
+	let grouped = React.useMemo(() => {
+		return toPairs(groupBy(results, (item) => item.word[0])).map(([k, v]) => {
+			return {title: k, data: v}
+		})
+	}, [results])
+
+	// conditionals must come after all hooks
+	if (error) {
+		return (
+			<NoticeView
+				buttonText="Try Again"
+				onPress={reload}
+				text="A problem occured while loading the definitions"
+			/>
+		)
 	}
 
-	state = {
-		query: '',
-		allTerms: [],
-		loading: false,
-	}
-
-	componentDidMount() {
-		this.fetchData()
-	}
-
-	refresh = async () => {
-		this.setState(() => ({loading: true}))
-		let allTerms = await fetchDictionaryTerms(true)
-		this.setState(() => ({loading: false, allTerms}))
-	}
-
-	fetchData = async () => {
-		let allTerms = await fetchDictionaryTerms()
-		this.setState(() => ({allTerms}))
-	}
-
-	onPressRow = (data: WordType) => {
-		this.props.navigation.navigate('DictionaryDetailView', {item: data})
-	}
-
-	renderRow = ({item}: {item: WordType}) => (
+	let renderRow = ({item}: {item: WordType}) => (
 		<ListRow
-			arrowPosition="none"
-			contentContainerStyle={styles.row}
-			onPress={() => this.onPressRow(item)}
+			arrowPosition="top"
+			onPress={() => props.navigation.navigate('DictionaryDetailView', {item})}
 		>
-			<Column>
-				<Title lines={1}>{item.word}</Title>
-				<Detail lines={2} style={styles.rowDetailText}>
-					{item.definition}
-				</Detail>
-			</Column>
+			<Title lines={1}>{item.word}</Title>
+			<Detail lines={2} style={styles.rowDetailText}>
+				{item.definition}
+			</Detail>
 		</ListRow>
 	)
 
-	renderSectionHeader = ({title}: {title: string}) => (
-		<ListSectionHeader style={styles.rowSectionHeader} title={title} />
-	)
+	return (
+		<View style={styles.wrapper}>
+			<SearchBar onChange={setQuery} value={query} />
 
-	renderSeparator = (sectionId: string, rowId: string) => (
-		<ListSeparator key={`${sectionId}-${rowId}`} />
-	)
-
-	performSearch = (text: string) => {
-		this.setState(() => ({query: text}))
-	}
-
-	render() {
-		const refreshControl = (
-			<RefreshControl
-				onRefresh={this.refresh}
-				refreshing={this.state.loading}
-			/>
-		)
-
-		let results = this.state.allTerms
-		if (this.state.query) {
-			let {query, allTerms} = this.state
-			query = query.toLowerCase()
-			results = allTerms.filter(term =>
-				termToArray(term).some(word => word.startsWith(query)),
-			)
-		}
-
-		return (
-			<SearchableAlphabetListView
-				cell={this.renderRow}
-				cellHeight={
-					ROW_HEIGHT +
-					(Platform.OS === 'ios' ? (11 / 12) * StyleSheet.hairlineWidth : 0)
+			<SectionList
+				ItemSeparatorComponent={ListSeparator}
+				ListEmptyComponent={
+					<NoticeView text={`No results found for "${query}"`} />
 				}
-				data={groupBy(results, item => item.word[0])}
-				onSearch={this.performSearch}
-				query={this.state.query}
-				refreshControl={refreshControl}
-				renderSeparator={this.renderSeparator}
-				sectionHeader={this.renderSectionHeader}
-				sectionHeaderHeight={SECTION_HEADER_HEIGHT}
+				contentContainerStyle={styles.contentContainer}
+				keyExtractor={(item: WordType, index) => item.word + index}
+				keyboardDismissMode="on-drag"
+				keyboardShouldPersistTaps="never"
+				refreshControl={
+					<RefreshControl onRefresh={reload} refreshing={isPending} />
+				}
+				renderItem={renderRow}
+				renderSectionHeader={({section: {title}}) => (
+					<ListSectionHeader title={title} />
+				)}
+				sections={grouped}
+				style={styles.wrapper}
 			/>
-		)
-	}
+		</View>
+	)
+}
+DictionaryView.navigationOptions = {
+	title: 'Campus Dictionary',
+	headerBackTitle: 'Dictionary',
 }

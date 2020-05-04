@@ -69,7 +69,7 @@ type Props = TopLevelViewPropsType
 
 export class CarletonCafeIndex extends React.Component<Props> {
 	render() {
-		const carletonCafes = [
+		let carletonCafes = [
 			{id: 'CarletonBurtonMenuView', title: 'Burton'},
 			{id: 'CarletonLDCMenuView', title: 'LDC'},
 			{id: 'CarletonWeitzMenuView', title: 'Weitz Center'},

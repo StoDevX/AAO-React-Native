@@ -3,7 +3,7 @@ require 'json'
 platform :ios do
 	desc 'Runs all the tests'
 	lane :test do
-		scan(scheme: ENV['GYM_SCHEME'], project: ENV['GYM_PROJECT'])
+		scan(scheme: ENV['GYM_SCHEME'], workspace: ENV['GYM_WORKSPACE'])
 	end
 
 	desc 'Take screenshots'
@@ -19,7 +19,7 @@ platform :ios do
 		snapshot(devices: devices,
 		         languages: ['en-US'],
 		         scheme: ENV['GYM_SCHEME'],
-		         project: ENV['GYM_PROJECT'],
+		         workspace: ENV['GYM_WORKSPACE'],
 		         # concurrent_simulators: false,
 		         number_of_retries: 0)
 	end
@@ -27,7 +27,7 @@ platform :ios do
 	desc 'Checks that the app can be built'
 	lane :check_build do
 		# fetch the directory where Xcode will put the .app
-		settings = FastlaneCore::Helper.backticks(%(xcodebuild -showBuildSettings -configuration Debug -scheme "#{ENV['GYM_SCHEME']}" -project "../#{ENV['GYM_PROJECT']}" -destination 'generic/platform=iOS'))
+		settings = FastlaneCore::Helper.backticks(%(xcodebuild -showBuildSettings -configuration Debug -scheme "#{ENV['GYM_SCHEME']}" -workspace "../#{ENV['GYM_WORKSPACE']}" -destination 'generic/platform=iOS'))
 		products_dir = settings.split("\n").select { |line| line =~ /\bBUILT_PRODUCTS_DIR =/ }.uniq
 		products_dir = products_dir.map { |entry| entry.gsub(/.*BUILT_PRODUCTS_DIR = /, '') }
 		products = products_dir.map { |entry| entry + "/#{ENV['GYM_OUTPUT_NAME']}.app/" }
@@ -43,7 +43,7 @@ platform :ios do
 			xcodebuild(
 			           build: true,
 			           scheme: ENV['GYM_SCHEME'],
-			           project: ENV['GYM_PROJECT'],
+			           workspace: ENV['GYM_WORKSPACE'],
 			           destination: 'generic/platform=iOS',
 			           xcargs: %(CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY=""),
 			           )
@@ -97,8 +97,37 @@ platform :ios do
 		generate_sourcemap
 	end
 
+	# N.B.: This is sourced primarily from the setup_ci action:
+	#
+	#   https://github.com/fastlane/fastlane/blob/de70231fe13f/fastlane/lib/fastlane/actions/setup_ci.rb#L23-L45,
+	#
+	# which does not support GitHub actions. Hence this setup_keychain lane
+	# is required to get promptless access to the keychain for signing stuff.
+	desc 'Create a temporary fastlane keychain'
+	lane :setup_keychain do
+		keychain_name = "fastlane_tmp_keychain"
+		ENV["MATCH_KEYCHAIN_NAME"] = keychain_name
+		ENV["MATCH_KEYCHAIN_PASSWORD"] = ""
+
+		UI.message("Creating temporary keychain: \"#{keychain_name}\".")
+		Actions::CreateKeychainAction.run(
+			name: keychain_name,
+			default_keychain: true,
+			unlock: true,
+			timeout: 3600,
+			lock_when_sleeps: true,
+			password: ""
+		)
+
+		UI.message("Enabling match readonly mode.")
+		ENV["MATCH_READONLY"] = true.to_s
+	end
+
 	desc 'Run iOS builds or tests, as appropriate'
 	lane :'ci-run' do
+		# set up a temporary keychain for signing
+		setup_keychain
+
 		# set up things so they can run
 		authorize_ci_for_keys
 
@@ -109,9 +138,8 @@ platform :ios do
 	desc 'Fetch certs for both the app and any extensions'
 	lane :certificates do |options|
 		app = lane_context[:APPLE_APP_ID]
-		push_extension = lane_context[:APPLE_PUSH_EXTENSION_ID]
 
-		match(app_identifier: [app, push_extension],
+		match(app_identifier: [app],
 		      type: options[:type],
 		      readonly: true)
 	end
@@ -130,18 +158,6 @@ platform :ios do
 		        app_name: lane_context[:APPLE_APP_NAME],
 		        language: 'English',
 		        enable_services: {
-			        push_notification: 'on',
-			        app_group: 'on',
-		        },
-		        )
-
-		produce(
-		        app_identifier: lane_context[:APPLE_PUSH_EXTENSION_ID],
-		        app_name: lane_context[:APPLE_PUSH_EXTENSION_NAME],
-		        language: 'English',
-		        skip_itc: 'on',
-		        enable_services: {
-			        push_notification: 'off',
 			        app_group: 'on',
 		        },
 		        )
@@ -150,38 +166,8 @@ platform :ios do
 	desc 'Generate certs for the app and for any extensions'
 	lane :generate_certificates do
 		app = lane_context[:APPLE_APP_ID]
-		push_extension = lane_context[:APPLE_PUSH_EXTENSION_ID]
 
-		match(app_identifier: [app, push_extension], type: 'adhoc', readonly: false, force: true)
-		match(app_identifier: [app, push_extension], type: 'appstore', readonly: false, force: true)
-	end
-
-	desc 'Generate the push notification cert and upload it to OneSignal'
-	lane :generate_pem do
-		password = 'password'
-		env_key = 'ONESIGNAL_KEY'
-
-		unless ENV.key?(env_key)
-			raise "You do not have the #{env_key} environment variable configured. Not generating push certificate nor uploading to OneSignal."
-		end
-
-		get_push_certificate(
-		                     app_identifier: lane_context[:APPLE_APP_ID],
-		                     pem_name: 'push_cert',
-		                     generate_p12: true,
-		                     p12_password: password,
-		                     new_profile: proc do |profile_path|
-			                     p12 = profile_path.sub('.pem', '.p12')
-
-			                     onesignal(
-			                               auth_token: ENV[env_key],
-			                               app_name: lane_context[:ONESIGNAL_APP_NAME],
-			                               app_id: lane_context[:ONESIGNAL_APP_ID],
-			                               apns_p12: p12,
-			                               apns_p12_password: password,
-			                               apns_env: 'production',
-			                               )
-		                     end,
-		                     )
+		match(app_identifier: [app], type: 'adhoc', readonly: false, force: true)
+		match(app_identifier: [app], type: 'appstore', readonly: false, force: true)
 	end
 end

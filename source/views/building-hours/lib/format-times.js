@@ -19,6 +19,6 @@ export function formatBuildingTimes(
 	schedule: SingleBuildingScheduleType,
 	m: moment,
 ): string {
-	const {open, close} = parseHours(schedule, m)
+	let {open, close} = parseHours(schedule, m)
 	return `${formatSingleTime(open)} — ${formatSingleTime(close)}`
 }

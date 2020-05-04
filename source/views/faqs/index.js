@@ -14,70 +14,60 @@ const styles = StyleSheet.create({
 	},
 })
 
-type Props = {}
+let fetchData = async (reload?: boolean) => {
+	let {text}: {text: string} = await fetch(API('/faqs'), {
+		delay: reload ? 500 : 0,
+	})
+		.json()
+		.catch(() => ({text: 'There was a problem loading the FAQs'}))
 
-type State = {
-	text: string,
-	loading: boolean,
-	refreshing: boolean,
+	return text
 }
 
-export class FaqView extends React.PureComponent<Props, State> {
-	static navigationOptions = {
-		title: 'FAQs',
-	}
+export function FaqView() {
+	let [text, setText] = React.useState('')
+	let [loading, setLoading] = React.useState(true)
+	let [refreshing, setRefreshing] = React.useState(false)
 
-	state = {
-		text: '',
-		loading: true,
-		refreshing: false,
-	}
-
-	componentDidMount() {
-		this.fetchData().then(() => {
-			this.setState(() => ({loading: false}))
+	React.useEffect(() => {
+		fetchData().then((text) => {
+			setText(text)
+			setLoading(false)
 		})
-	}
+	}, [setText, setLoading])
 
-	fetchData = async (reload?: boolean) => {
-		let {text}: {text: string} = await fetch(API('/faqs'), {
-			forReload: reload ? 500 : 0,
+	let refresh = async (): any => {
+		setRefreshing(true)
+
+		await fetchData(true).then((text) => {
+			setText(text)
 		})
-			.json()
-			.catch(() => ({text: 'There was a problem loading the FAQs'}))
 
-		this.setState(() => ({text}))
+		setRefreshing(false)
 	}
 
-	refresh = async (): any => {
-		this.setState(() => ({refreshing: true}))
-		await this.fetchData(true)
-		this.setState(() => ({refreshing: false}))
+	let refreshControl = (
+		<RefreshControl onRefresh={refresh} refreshing={refreshing} />
+	)
+
+	if (loading) {
+		return <LoadingView />
 	}
 
-	render() {
-		if (this.state.loading) {
-			return <LoadingView />
-		}
+	return (
+		<ScrollView
+			backgroundColor={c.white}
+			contentContainerStyle={styles.container}
+			contentInsetAdjustmentBehavior="automatic"
+			refreshControl={refreshControl}
+		>
+			<View paddingVertical={15}>
+				<Markdown source={text} />
+			</View>
+		</ScrollView>
+	)
+}
 
-		const refreshControl = (
-			<RefreshControl
-				onRefresh={this.refresh}
-				refreshing={this.state.refreshing}
-			/>
-		)
-
-		return (
-			<ScrollView
-				backgroundColor={c.white}
-				contentContainerStyle={styles.container}
-				contentInsetAdjustmentBehavior="automatic"
-				refreshControl={refreshControl}
-			>
-				<View paddingVertical={15}>
-					<Markdown source={this.state.text} />
-				</View>
-			</ScrollView>
-		)
-	}
+FaqView.navigationOptions = {
+	title: 'FAQs',
 }
