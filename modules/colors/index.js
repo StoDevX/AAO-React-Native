@@ -3,6 +3,7 @@
 export {firstReadable} from './util'
 
 export * from './colors'
+export * from './candy'
 export * from './gradients'
 
 export {
