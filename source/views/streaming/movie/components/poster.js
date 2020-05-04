@@ -26,7 +26,7 @@ const PosterImage = (props: PosterProps) => {
 	const ratio = 1.481 // from ebay.com/gds/Movie-Poster-Size-Guide-/10000000005754120/g.html
 
 	// TODO: find the largest size beneath `ideal`
-	const poster = sizes.find(p => p.width === ideal)
+	const poster = sizes.find((p) => p.width === ideal)
 
 	// TODO: provide a fallback image
 	const uri = poster ? poster.url : ''

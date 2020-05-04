@@ -19,10 +19,10 @@ export const IosTrailers = (props: {
 }) => {
 	const {viewport, trailers: allTrailers} = props
 
-	const trailers = allTrailers.filter(t => t.type === 'Trailer')
-	const teasers = allTrailers.filter(t => t.type === 'Teaser')
-	const featurettes = allTrailers.filter(t => t.type === 'Featurette')
-	const clips = allTrailers.filter(t => t.type === 'Clip')
+	const trailers = allTrailers.filter((t) => t.type === 'Trailer')
+	const teasers = allTrailers.filter((t) => t.type === 'Teaser')
+	const featurettes = allTrailers.filter((t) => t.type === 'Featurette')
+	const clips = allTrailers.filter((t) => t.type === 'Clip')
 
 	return (
 		<>
@@ -53,7 +53,7 @@ const Clips = (props: {
 				horizontal={true}
 				overflow="visible"
 			>
-				{clips.map(t => (
+				{clips.map((t) => (
 					<ClipTile key={t.url} clip={t} viewport={viewport} />
 				))}
 			</glamorous.ScrollView>
@@ -92,7 +92,7 @@ const ClipTile = (props: {clip: MovieTrailer, viewport: Viewport}) => {
 	const {clip, viewport} = props
 
 	// TODO: pick appropriate thumbnail
-	const thumbnailUrl = maxBy(clip.thumbnails, t => t.width).url
+	const thumbnailUrl = maxBy(clip.thumbnails, (t) => t.width).url
 
 	return (
 		<ShrinkWhenTouched onPress={() => openUrl(clip.url)}>

@@ -27,7 +27,7 @@ const EmptyStar = () => (
 )
 
 export const ImdbRating = ({ratings}: RatingsProps) => {
-	const rating = ratings.find(r => r.Source === 'Internet Movie Database')
+	const rating = ratings.find((r) => r.Source === 'Internet Movie Database')
 
 	if (!rating) {
 		return <glamorous.Text>Unrated</glamorous.Text>
@@ -58,7 +58,7 @@ export const ImdbRating = ({ratings}: RatingsProps) => {
 }
 
 export const RottenTomatoesRating = ({ratings}: RatingsProps) => {
-	const rating = ratings.find(r => r.Source === 'Rotten Tomatoes')
+	const rating = ratings.find((r) => r.Source === 'Rotten Tomatoes')
 
 	if (!rating) {
 		return <glamorous.Text>Unrated</glamorous.Text>
