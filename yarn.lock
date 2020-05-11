@@ -7316,10 +7316,10 @@ react-native-popover-view@1.0.19:
   dependencies:
     react-native-safe-area-view "^0.10.0"
 
-react-native-restart@0.0.15:
-  version "0.0.15"
-  resolved "https://registry.yarnpkg.com/react-native-restart/-/react-native-restart-0.0.15.tgz#a2dcb26d0a8b14d1ed796b49e27da6d75bba3bba"
-  integrity sha512-HkypkbHhcO5rylmMEil7eMwJubaZ4UDE4o3+IWAls9oASnGmal/0s2WATRIHDKtGcMoeJUUfbbbqAzlpOfqiAw==
+react-native-restart@0.0.17:
+  version "0.0.17"
+  resolved "https://registry.yarnpkg.com/react-native-restart/-/react-native-restart-0.0.17.tgz#c1f38e019d1a2114248d496698e7951e9435ba91"
+  integrity sha512-UwFPDssMFoyDbF2aLARIHWt5g/o0TtxCXK9WIY+0iNpkgG9qWd+n80XBwXioNCdgy39ZQ5yfJBJRwtMLDgABag==
 
 react-native-safari-view@2.1.0:
   version "2.1.0"
