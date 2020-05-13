@@ -1,0 +1,38 @@
+name: Validate/Deploy Data
+
+on:
+  push: { branches: [master] }
+
+jobs:
+  validate-then-deploy:
+    name: Validate, then deploy data
+    runs-on: ubuntu-latest
+    env: task=GH_PAGES
+    steps:
+      - uses: actions/set-up-node@master
+        with: {node-version: ^12.0}
+      - name: Check out the code
+        uses: actions/checkout@master
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+      - name: Validate the data
+        run: |
+          npm run validate-bus-data
+          npm run validate-data
+      # Having validated the data, we now prepare a bundle.  This script creates
+      # files in a docs/ directory.
+      - name: Bundle the data
+        run: npm run bundle-data
+      # Notes: actions/checkout@v2 no longer fetches entire history nor enters
+      # detached HEAD state.  We really just need to check out an (orphaned)
+      # branch and then add, commit, and push the appropriate directory.
+      - name: Commit the data
+        run: |
+          git checkout --orphan "gh-pages-$GITHUB_SHA"
+          git --work-tree=docs add .
+          git commit -m "Automated data deployment at $(date -Is)"
+          git show --stat HEAD
+      # If the previous commit successfully happened
+      - name: Deploy the data
+        run:
+          git push --force-with-lease "gh-pages-$GITHUB_SHA:gh-pages"
