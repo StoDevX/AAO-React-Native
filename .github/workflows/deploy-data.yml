@@ -30,7 +30,7 @@ jobs:
         run: |
           git checkout --orphan "gh-pages-$GITHUB_SHA"
           git --work-tree=docs add .
-          git commit -m "Automated data deployment at $(date -Is)"
+          git commit --author="Data Deployment Bot <>" -m "Automated data deployment at $(date -Is)"
           git show --stat HEAD
       # If the previous commit successfully happened
       - name: Deploy the data
