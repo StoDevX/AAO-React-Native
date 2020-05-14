@@ -35,4 +35,4 @@ jobs:
       # If the previous commit successfully happened
       - name: Deploy the data
         run:
-          git push --force-with-lease "gh-pages-$GITHUB_SHA:gh-pages"
+          git push --force-with-lease origin "gh-pages-$GITHUB_SHA:gh-pages"
