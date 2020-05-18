@@ -34,11 +34,11 @@ jobs:
         - npm run validate-bus-data
         - npm run validate-data
         - npm run bundle-data
-      deploy:
-        provider: pages
-        skip_cleanup: true
-        github_token: $GITHUB_PAGES_TOKEN
-        local_dir: docs/
+      #deploy:
+      #  provider: pages
+      #  skip_cleanup: true
+      #  github_token: $GITHUB_PAGES_TOKEN
+      #  local_dir: docs/
 
 cache:
   yarn: true
