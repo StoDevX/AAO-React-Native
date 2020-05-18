@@ -169,7 +169,6 @@ GEM
     httpclient (2.8.3)
     i18n (0.9.5)
       concurrent-ruby (~> 1.0)
-    jaro_winkler (1.5.4)
     jmespath (1.4.0)
     json (2.3.0)
     jwt (2.1.0)
@@ -187,7 +186,7 @@ GEM
     netrc (0.11.0)
     os (1.1.0)
     parallel (1.19.1)
-    parser (2.7.1.1)
+    parser (2.7.1.2)
       ast (~> 2.4.0)
     plist (3.5.0)
     public_suffix (2.0.5)
@@ -199,8 +198,7 @@ GEM
     retriable (3.1.2)
     rexml (3.2.4)
     rouge (2.0.7)
-    rubocop (0.82.0)
-      jaro_winkler (~> 1.5.1)
+    rubocop (0.83.0)
       parallel (~> 1.10)
       parser (>= 2.7.0.1)
       rainbow (>= 2.2.2, < 4.0)
@@ -257,7 +255,7 @@ DEPENDENCIES
   fastlane
   json
   netrc
-  rubocop (~> 0.82)
+  rubocop (~> 0.83)
   xcodeproj
 
 BUNDLED WITH
