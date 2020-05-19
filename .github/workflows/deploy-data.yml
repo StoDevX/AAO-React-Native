@@ -29,6 +29,8 @@ jobs:
       # branch and then add, commit, and push the appropriate directory.
       - name: Commit the data
         run: |
+          git config --global user.name "Data Deployment Bot"
+          git config --global user.email ""
           git checkout --orphan "gh-pages-$GITHUB_SHA"
           git --work-tree=docs add .
           git commit --author="Data Deployment Bot <>" -m "Automated data deployment at $(date -Is)"
