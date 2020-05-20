@@ -35,7 +35,9 @@ jobs:
           git --work-tree=docs add .
           git commit --author="Data Deployment Bot <>" -m "Automated data deployment at $(date -Is)"
           git show --stat HEAD
-      # If the previous commit successfully happened
+      # If the previous commit successfully happened, download the latest state
+      # of the remote branch gh-pages.
       - name: Deploy the data
-        run:
+        run: |
+          git fetch --prune --unshallow origin gh-pages
           git push --force-with-lease origin "gh-pages-$GITHUB_SHA:gh-pages"
