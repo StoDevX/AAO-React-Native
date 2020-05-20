@@ -109,7 +109,7 @@
     "keyword-search": "0.1.2",
     "lodash": "4.17.15",
     "moment": "2.25.3",
-    "moment-timezone": "0.5.28",
+    "moment-timezone": "0.5.31",
     "p-props": "4.0.0",
     "p-retry": "4.2.0",
     "query-string": "6.12.1",
