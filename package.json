@@ -171,7 +171,7 @@
     "flow-bin": "0.105.2",
     "jest": "26.0.1",
     "jetifier": "1.6.5",
-    "js-yaml": "3.13.1",
+    "js-yaml": "3.14.0",
     "junk": "3.1.0",
     "metro-react-native-babel-preset": "0.59.0",
     "minimist": "1.2.5",
