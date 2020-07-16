@@ -29,11 +29,11 @@ jobs:
       # branch and then add, commit, and push the appropriate directory.
       - name: Commit the data
         run: |
-          git config --global user.name "Data Deployment Bot"
-          git config --global user.email ""
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git checkout --orphan "gh-pages-$GITHUB_SHA"
           git --work-tree=docs add .
-          git commit --author="Data Deployment Bot <>" -m "Automated data deployment at $(date -Is)"
+          git commit -m "Automated data deployment at $(date -Is)"
           git show --stat HEAD
       # If the previous commit successfully happened, download the latest state
       # of the remote branch gh-pages.
