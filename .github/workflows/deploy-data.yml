@@ -33,7 +33,7 @@ jobs:
           git config --global user.email ""
           git checkout --orphan "gh-pages-$GITHUB_SHA"
           git --work-tree=docs add .
-          git commit --author="Data Deployment Bot <>" -m "Automated data deployment at $(date -Is)"
+          git commit -m "Automated data deployment at $(date -Is)"
           git show --stat HEAD
       # If the previous commit successfully happened, download the latest state
       # of the remote branch gh-pages.
