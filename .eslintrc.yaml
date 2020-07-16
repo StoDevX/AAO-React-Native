@@ -95,6 +95,7 @@ rules:
   react/sort-comp:
     - warn
     - order:
+        - static-variables
         - static-methods
         - type-annotations
         - lifecycle
