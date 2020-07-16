@@ -24,8 +24,6 @@ PODS:
   - hawkrives_react-native-alternate-icons (0.6.0):
     - React
   - RCTRequired (0.61.5)
-  - RCTRestart (0.0.14):
-    - React
   - RCTTypeSafety (0.61.5):
     - FBLazyVector (= 0.61.5)
     - Folly (= 2018.10.22.00)
@@ -194,7 +192,9 @@ PODS:
     - React
   - react-native-mapbox-gl (6.1.3):
     - React
-  - react-native-netinfo (5.7.1):
+  - react-native-netinfo (5.9.4):
+    - React
+  - react-native-restart (0.0.17):
     - React
   - react-native-safari-view (1.0.0):
     - React
@@ -235,17 +235,17 @@ PODS:
     - React-cxxreact (= 0.61.5)
     - React-jsi (= 0.61.5)
     - ReactCommon/jscallinvoker (= 0.61.5)
-  - RNDeviceInfo (5.5.5):
+  - RNDeviceInfo (5.6.1):
     - React
   - RNGestureHandler (1.6.1):
     - React
   - RNKeychain (6.0.0):
     - React
-  - RNScreens (2.5.0):
+  - RNScreens (2.9.0):
     - React
   - RNSearchBar (3.5.1):
     - React
-  - RNSentry (1.3.7):
+  - RNSentry (1.3.9):
     - React
     - Sentry (~> 4.4.0)
   - RNVectorIcons (6.6.0):
@@ -264,7 +264,6 @@ DEPENDENCIES:
   - glog (from `../node_modules/react-native/third-party-podspecs/glog.podspec`)
   - "hawkrives_react-native-alternate-icons (from `../node_modules/@hawkrives/react-native-alternate-icons`)"
   - RCTRequired (from `../node_modules/react-native/Libraries/RCTRequired`)
-  - RCTRestart (from `../node_modules/react-native-restart`)
   - RCTTypeSafety (from `../node_modules/react-native/Libraries/TypeSafety`)
   - React (from `../node_modules/react-native/`)
   - React-Core (from `../node_modules/react-native/`)
@@ -279,6 +278,7 @@ DEPENDENCIES:
   - react-native-location (from `../node_modules/react-native-location`)
   - "react-native-mapbox-gl (from `../node_modules/@mapbox/react-native-mapbox-gl`)"
   - "react-native-netinfo (from `../node_modules/@react-native-community/netinfo`)"
+  - react-native-restart (from `../node_modules/react-native-restart`)
   - react-native-safari-view (from `../node_modules/react-native-safari-view`)
   - react-native-webview (from `../node_modules/react-native-webview`)
   - React-RCTActionSheet (from `../node_modules/react-native/Libraries/ActionSheetIOS`)
@@ -323,8 +323,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@hawkrives/react-native-alternate-icons"
   RCTRequired:
     :path: "../node_modules/react-native/Libraries/RCTRequired"
-  RCTRestart:
-    :path: "../node_modules/react-native-restart"
   RCTTypeSafety:
     :path: "../node_modules/react-native/Libraries/TypeSafety"
   React:
@@ -349,6 +347,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@mapbox/react-native-mapbox-gl"
   react-native-netinfo:
     :path: "../node_modules/@react-native-community/netinfo"
+  react-native-restart:
+    :path: "../node_modules/react-native-restart"
   react-native-safari-view:
     :path: "../node_modules/react-native-safari-view"
   react-native-webview:
@@ -400,7 +400,6 @@ SPEC CHECKSUMS:
   glog: 1f3da668190260b06b429bb211bfbee5cd790c28
   hawkrives_react-native-alternate-icons: 1c8c2f6ff08096f067c5306b4e7e4f42e5cc06e1
   RCTRequired: b153add4da6e7dbc44aebf93f3cf4fcae392ddf1
-  RCTRestart: 3915cac548a37703970941ca33de79a304b8b247
   RCTTypeSafety: 9aa1b91d7f9310fc6eadc3cf95126ffe818af320
   React: b6a59ef847b2b40bb6e0180a97d0ca716969ac78
   React-Core: 688b451f7d616cc1134ac95295b593d1b5158a04
@@ -412,7 +411,8 @@ SPEC CHECKSUMS:
   react-native-calendar-events: eaa63134881d97488feb21ea114158f712894018
   react-native-location: 5a40ec1cc6abf2f6d94df979f98ec76c3a415681
   react-native-mapbox-gl: d0ac3b81a6cadbd7cadc80891da72e3e85379350
-  react-native-netinfo: 4fa023c153d582aeae8435df95c9a975c5986449
+  react-native-netinfo: cd479ab1b67cdd1cb1403a99ecdb24190a6dd7ef
+  react-native-restart: d19a0f8d053d065fe64cd2baebb6487111c77149
   react-native-safari-view: 955d7160d159241b8e9395d12d10ea0ef863dcdd
   react-native-webview: fcb5f377aadc216273300f452ee0d321fb85809b
   React-RCTActionSheet: 600b4d10e3aea0913b5a92256d2719c0cdd26d76
@@ -425,16 +425,16 @@ SPEC CHECKSUMS:
   React-RCTText: 9ccc88273e9a3aacff5094d2175a605efa854dbe
   React-RCTVibration: a49a1f42bf8f5acf1c3e297097517c6b3af377ad
   ReactCommon: 198c7c8d3591f975e5431bec1b0b3b581aa1c5dd
-  RNDeviceInfo: d2ca97023bb1c2a49cd7adb3f956e14c048ea028
+  RNDeviceInfo: b6e650fbd234732c759544218657d549b4339038
   RNGestureHandler: 8f09cd560f8d533eb36da5a6c5a843af9f056b38
   RNKeychain: bf2d7e9a0ae7a073c07770dd2aa6d11c67581733
-  RNScreens: ac02d0e4529f08ced69f5580d416f968a6ec3a1d
+  RNScreens: c526239bbe0e957b988dacc8d75ac94ec9cb19da
   RNSearchBar: 9860431356b7d12a8449d2fddb2b5f3c78d1e99f
-  RNSentry: 370623102247ebea20191b5fb549ecc7a275b324
+  RNSentry: 9c9783b13fb5cba387fff55f085cc1da3854ce71
   RNVectorIcons: 0bb4def82230be1333ddaeee9fcba45f0b288ed4
   Sentry: 5d312a04e369154aeac616214f4dfc3cbcc8b296
   Yoga: f2a7cd4280bfe2cca5a7aed98ba0eb3d1310f18b
 
 PODFILE CHECKSUM: 923547688c3ddb5453999c188c32986c217176b5
 
-COCOAPODS: 1.9.1
+COCOAPODS: 1.9.3
