@@ -1,3 +1,5 @@
 *.pbxproj -text
 flow-typed/npm/* linguist-vendored
 CHANGELOG.md merge=union
+# specific for windows script files
+*.bat text eol=crlf
