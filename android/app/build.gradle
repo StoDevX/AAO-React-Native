@@ -129,6 +129,10 @@ String keystorePath = System.getenv("KEYSTORE_FILE")
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
 
+    // when we upgrade to tools.build:gradle:4.1.0, remove this, as gradle will download the
+    // appropriate version automatically (see https://stackoverflow.com/a/62320616/2347774)
+    ndkVersion '21.3.6528147'
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -256,7 +260,7 @@ android {
 dependencies {
     // required by react-native-screens
     implementation 'androidx.appcompat:appcompat:1.1.0'
-    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0-rc01'
+    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
 
     // this is for react-native itself
     implementation fileTree(dir: "libs", include: ["*.jar"])
