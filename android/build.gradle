@@ -41,7 +41,7 @@ allprojects {
         google()
         jcenter()
         // react-native-custom-tabs (and react-native) require this maven repository
-        maven { url "https://jitpack.io" }
+        maven { url "https://www.jitpack.io" }
     }
 }
 
