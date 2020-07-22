@@ -256,7 +256,7 @@ android {
 dependencies {
     // required by react-native-screens
     implementation 'androidx.appcompat:appcompat:1.1.0'
-    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0-rc01'
+    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
 
     // this is for react-native itself
     implementation fileTree(dir: "libs", include: ["*.jar"])
