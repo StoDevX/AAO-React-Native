@@ -8,7 +8,7 @@ target 'AllAboutOlaf' do
 
 	use_react_native!(:path => config["reactNativePath"])
 
-	target 'AllAboutOlafTests' do
+	target 'AllAboutOlafUITests' do
 		inherit! :complete
 		# Pods for testing
 	end
