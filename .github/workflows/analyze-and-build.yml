@@ -43,8 +43,8 @@ jobs:
           echo 524288 | sudo tee -a /proc/sys/fs/inotify/max_queued_events
           echo 524288 | sudo tee -a /proc/sys/fs/inotify/max_user_instances
           sudo sysctl -p
-      - run: cd android && ./gradlew androidDependencies --console=plain
       - run: echo 'org.gradle.workers.max=2' >> ./android/gradle.properties
+      - run: cd android && ./gradlew androidDependencies --console=plain
       - run: bundle exec fastlane android ci-run
         env:
           FASTLANE_PASSWORD: ${{ secrets.FASTLANE_PASSWORD }}
