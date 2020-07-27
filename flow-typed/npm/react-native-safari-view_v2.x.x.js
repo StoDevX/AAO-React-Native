@@ -1,5 +1,5 @@
-// flow-typed signature: 447cf92efc1ec2e56045080ca2c19d60
-// flow-typed version: <<STUB>>/react-native-safari-view_v2.1.0/flow_v0.56.0
+// flow-typed signature: a84c8b1c2f130061d1aaeade8462198a
+// flow-typed version: <<STUB>>/react-native-safari-view_v2.1.0/flow_v0.122.0
 
 declare module 'react-native-safari-view' {
   declare type SafariOptions = {

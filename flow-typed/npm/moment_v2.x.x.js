@@ -1,5 +1,5 @@
-// flow-typed signature: d27e8d860d7f10896908c023574a6bd4
-// flow-typed version: e56c0337dc/moment_v2.x.x/flow_>=v0.104.x
+// flow-typed signature: 9f5d01a796646c50e75afd71bd0a2941
+// flow-typed version: e7ad2464da/moment_v2.x.x/flow_>=v0.104.x
 
 type moment$MomentOptions = {
   y?: number | string,
@@ -144,6 +144,12 @@ declare class moment$Moment {
   static (string: ?string, format: string | Array<string>): moment$Moment;
   static (
     string: ?string,
+    // Support for strict string parsing without format works since moment v2.25.0
+    // https://github.com/moment/moment/issues/2469
+    strict: boolean
+  ): moment$Moment;
+  static (
+    string: ?string,
     format: string | Array<string>,
     strict: boolean
   ): moment$Moment;
@@ -172,6 +178,12 @@ declare class moment$Moment {
       | void
   ): moment$Moment;
   static utc(string: string, format: string | Array<string>): moment$Moment;
+  static utc(
+    string: string,
+    // Support for strict string parsing without format works since moment v2.25.0
+    // https://github.com/moment/moment/issues/2469
+    strict: boolean
+  ): moment$Moment;
   static utc(
     string: string,
     format: string | Array<string>,
@@ -375,6 +387,13 @@ declare class moment$Moment {
   static isDuration(obj: any): boolean;
   static normalizeUnits(unit: string): string;
   static invalid(object: any): moment$Moment;
+  static relativeTimeRounding(): (value: number) => number;
+  static relativeTimeRounding(fn: (value: number) => number): void;
+  static relativeTimeThreshold(unit: "ss" | "s" | "m" | "h" | "d" | "M"): number;
+  static relativeTimeThreshold(
+    unit: "ss" | "s" | "m" | "h" | "d" | "M",
+    limit: number,
+  ): void;
 }
 
 declare module "moment" {

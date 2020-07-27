@@ -1,10 +1,14 @@
-// flow-typed signature: dbf37e71299044169ddb7eb639c53be3
-// flow-typed version: c6154227d1/query-string_v6.x.x/flow_>=v0.104.x
+// flow-typed signature: 4a4ede4f7f12b874598b0b727b9a1c4c
+// flow-typed version: f898dad1b0/query-string_v6.x.x/flow_>=v0.104.x
 
 declare module 'query-string' {
-  declare type ArrayFormat = 'none' | 'bracket' | 'index'
+  declare type ArrayFormat = 'none' | 'bracket' | 'index' | 'comma'
   declare type ParseOptions = {|
     arrayFormat?: ArrayFormat,
+    decode?: boolean,
+    sort?: false | <A, B>(A, B) => number,
+    parseNumbers?: boolean,
+    parseBooleans?: boolean,
   |}
 
   declare type StringifyOptions = {|
@@ -12,13 +16,16 @@ declare module 'query-string' {
     encode?: boolean,
     strict?: boolean,
     sort?: false | <A, B>(A, B) => number,
+    skipNull?: boolean,
   |}
 
   declare type ObjectParameter = string | number | boolean | null | void;
 
   declare type ObjectParameters = $ReadOnly<{ [string]: ObjectParameter | $ReadOnlyArray<ObjectParameter>, ... }>
 
-  declare type QueryParameters = { [string]: string | Array<string> | null, ... }
+  declare type QueryParameters = { [string]: string | Array<string | number> | null, ... }
+
+  declare type StringifyObjectParameter = {| url: string, query?: QueryParameters |}
 
   declare module.exports: {
     extract(str: string): string,
@@ -29,6 +36,7 @@ declare module 'query-string' {
       ...
     },
     stringify(obj: ObjectParameters, opts?: StringifyOptions): string,
+    stringifyUrl(obj: StringifyObjectParameter, opts?: StringifyOptions): string,
     ...
   }
 }

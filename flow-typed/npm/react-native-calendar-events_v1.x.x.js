@@ -1,5 +1,5 @@
-// flow-typed signature: 0c83aa5e46a756086bcc60bfd20abf29
-// flow-typed version: <<STUB>>/react-native-calendar-events_v1.4.3/flow_v0.56.0
+// flow-typed signature: 188d6dd950a05fab25fef3d64a3676fe
+// flow-typed version: <<STUB>>/react-native-calendar-events_v1.7.3/flow_v0.122.0
 
 declare module 'react-native-calendar-events' {
   declare type CalendarIdentifier = string;

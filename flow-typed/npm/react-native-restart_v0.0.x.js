@@ -1,5 +1,5 @@
-// flow-typed signature: 02099eed260ec5696f3c1e720a91b231
-// flow-typed version: <<STUB>>/react-native-restart_v0.0.4/flow_v0.56.0
+// flow-typed signature: 7d368ab6157a3b00773a94ffcbf397b0
+// flow-typed version: <<STUB>>/react-native-restart_v0.0.17/flow_v0.122.0
 
 declare module 'react-native-restart' {
   declare module.exports: {
