@@ -12,7 +12,7 @@
     "@expo/react-native-action-sheet": "3.0.3",
     "glamorous-native": "^2.0.0",
     "react": "^16.0.0",
-    "react-native": "^0.61.0"
+    "react-native": "^0.63.0"
   },
   "dependencies": {
     "@callstack/react-theme-provider": "^3.0.5",
