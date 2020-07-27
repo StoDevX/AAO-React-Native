@@ -94,22 +94,18 @@ class RadioControllerView extends React.Component<Props, State> {
 
 		switch (state) {
 			case 'paused':
-				return (
-					<ActionButton icon="ios-play" onPress={this.play} text="Listen" />
-				)
+				return <ActionButton icon="play" onPress={this.play} text="Listen" />
 
 			case 'checking':
 				return (
-					<ActionButton icon="ios-more" onPress={this.pause} text="Starting" />
+					<ActionButton icon="infinite" onPress={this.pause} text="Starting" />
 				)
 
 			case 'playing':
-				return (
-					<ActionButton icon="ios-pause" onPress={this.pause} text="Pause" />
-				)
+				return <ActionButton icon="pause" onPress={this.pause} text="Pause" />
 
 			default:
-				return <ActionButton icon="ios-bug" onPress={noop} text="Error" />
+				return <ActionButton icon="bug" onPress={noop} text="Error" />
 		}
 	}
 

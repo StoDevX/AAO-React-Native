@@ -1,6 +1,9 @@
 // @flow
 
-import * as Ionicons from 'react-native-vector-icons/Ionicons'
+import {
+	default as Icon,
+	type IoniconsGlyphs as Glyphs,
+} from 'react-native-vector-icons/Ionicons'
 
-export const Icon = Ionicons.default
-export type Glyphs = Ionicons.IoniconsGlyphs
+export {Icon}
+export type {Glyphs}

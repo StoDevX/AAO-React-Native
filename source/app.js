@@ -4,6 +4,10 @@
 // and remove this if/when it is no longer necessary
 import 'react-native-gesture-handler'
 
+// Before rendering any navigation stack
+import {enableScreens} from 'react-native-screens'
+enableScreens()
+
 // initialization
 import './init/constants'
 import './init/moment'
@@ -20,6 +24,7 @@ import {makeStore, initRedux} from './redux'
 import * as navigation from './navigation'
 import {ThemeProvider} from '@frogpond/app-theme'
 import {ActionSheetProvider} from '@expo/react-native-action-sheet'
+import {NavigationContainer} from '@react-navigation/native'
 
 const store = makeStore()
 initRedux(store)
@@ -33,10 +38,12 @@ export default class App extends React.Component<Props> {
 				<PaperProvider>
 					<ThemeProvider>
 						<ActionSheetProvider>
-							<navigation.AppNavigator
-								onNavigationStateChange={navigation.trackScreenChanges}
-								persistenceKey={navigation.persistenceKey}
-							/>
+							<NavigationContainer>
+								<navigation.AppNavigator
+									onNavigationStateChange={navigation.trackScreenChanges}
+									persistenceKey={navigation.persistenceKey}
+								/>
+							</NavigationContainer>
 						</ActionSheetProvider>
 					</ThemeProvider>
 				</PaperProvider>

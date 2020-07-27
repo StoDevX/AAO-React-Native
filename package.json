@@ -30,9 +30,6 @@
       "modules/*"
     ]
   },
-  "resolutions": {
-    "react-navigation/@react-navigation/native/react-native-screens": "^2.0.0-alpha.1"
-  },
   "jest": {
     "testMatch": [
       "**/__tests__/**/*.(spec|test).(js|ts|tsx)",
@@ -47,7 +44,7 @@
       "./scripts/jest-setup.js"
     ],
     "transformIgnorePatterns": [
-      "node_modules/(?!(jest-)?react-native|glamorous-native|react-navigation)"
+      "node_modules/(?!(jest-)?react-native|glamorous-native)"
     ],
     "preset": "react-native"
   },
@@ -100,6 +97,10 @@
     "@react-native-community/masked-view": "0.1.10",
     "@react-native-community/netinfo": "5.9.5",
     "@react-native-mapbox-gl/maps": "8.1.0-rc.2",
+    "@react-navigation/bottom-tabs": "5.7.2",
+    "@react-navigation/material-bottom-tabs": "5.2.14",
+    "@react-navigation/native": "5.7.1",
+    "@react-navigation/stack": "5.7.1",
     "@sentry/react-native": "1.6.3",
     "base-64": "0.1.0",
     "buffer": "5.6.0",
@@ -128,7 +129,7 @@
     "react-native-keychain": "6.0.0",
     "react-native-linear-gradient": "2.5.6",
     "react-native-location": "2.5.0",
-    "react-native-paper": "2.16.0",
+    "react-native-paper": "4.0.1",
     "react-native-popover-view": "1.0.19",
     "react-native-reanimated": "1.10.1",
     "react-native-restart": "0.0.17",
@@ -136,15 +137,10 @@
     "react-native-safe-area-context": "3.1.1",
     "react-native-screens": "2.9.0",
     "react-native-search-bar": "3.5.1",
-    "react-native-tableview-simple": "3.2.0",
+    "react-native-tableview-simple": "4.1.0",
     "react-native-typography": "1.4.1",
-    "react-native-vector-icons": "6.6.0",
-    "react-native-webview": "8.1.2",
-    "react-navigation": "4.4.0",
-    "react-navigation-drawer": "^1.4.0",
-    "react-navigation-material-bottom-tabs": "1.1.1",
-    "react-navigation-stack": "^1.7.3",
-    "react-navigation-tabs": "^1.2.0",
+    "react-native-vector-icons": "7.0.0",
+    "react-native-webview": "10.3.2",
     "react-redux": "7.2.1",
     "redux": "4.0.5",
     "redux-logger": "3.0.6",
