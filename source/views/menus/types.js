@@ -22,24 +22,24 @@ export type {
 
 export type NumericStringType = string
 
-export type CafeMenuType = {
+export type CafeMenuType = {|
 	name: string,
 	menu_id: NumericStringType,
 	dayparts: DayPartsCollectionType,
-}
+|}
 
-export type EditedMenuForDayType = {
+export type EditedMenuForDayType = {|
 	date: string,
 	cafe: CafeMenuType,
-}
+|}
 
-export type EditedBonAppMenuInfoType = {
+export type EditedBonAppMenuInfoType = {|
 	cor_icons: {[key: string]: Object},
 	days: EditedMenuForDayType[],
 	items: MenuItemContainerType,
-}
+|}
 
-type BonAppSingleCafeInfo = {
+type BonAppSingleCafeInfo = {|
 	name: string,
 	address: string,
 	city: string,
@@ -70,8 +70,8 @@ type BonAppSingleCafeInfo = {
 			message: false | string,
 		},
 	],
-}
+|}
 
-export type EditedBonAppCafeInfoType = {
+export type EditedBonAppCafeInfoType = {|
 	cafe: BonAppSingleCafeInfo,
-}
+|}
