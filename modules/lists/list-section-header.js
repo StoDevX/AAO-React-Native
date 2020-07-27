@@ -100,8 +100,8 @@ export function ListSectionHeader(props: Props) {
 			...containerTheme,
 			backgroundColor: theme.androidListHeaderBackground,
 		}
+		// we can't spread titleTheme here because it … might be an array?
 		titleTheme = {
-			...titleTheme,
 			color: theme.androidListHeaderForeground,
 		}
 	}
