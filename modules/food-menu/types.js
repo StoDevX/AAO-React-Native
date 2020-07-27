@@ -6,7 +6,7 @@ export type ItemIdReferenceStringType = string
 export type MilitaryTimeStringType = string // H:mm
 export type NumericStringType = string
 
-export type MenuItemType = {
+export type MenuItemType = {|
 	connector: string,
 	cor_icon: ItemCorIconMapType,
 	description: string,
@@ -39,7 +39,7 @@ export type MenuItemType = {
 	sub_station_order: NumericStringType,
 	tier3: boolean,
 	zero_entree: NumericStringType,
-}
+|}
 
 export type NutritionDetailContainer = {
 	calories: NutritionDetailType,
@@ -61,7 +61,7 @@ export type NutritionDetailType = {
 	unit: string,
 }
 
-export type StationMenuType = {
+export type StationMenuType = {|
 	order_id: string, // sort on order_id instead of sorting on id
 	id: NumericStringType,
 	label: string,
@@ -69,7 +69,7 @@ export type StationMenuType = {
 	note: string,
 	soup: boolean,
 	items: ItemIdReferenceStringType[],
-}
+|}
 
 export type CorIconType = {
 	sort: string,
