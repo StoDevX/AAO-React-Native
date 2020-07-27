@@ -7,7 +7,7 @@ type CourseOffering = {
 	start: string,
 }
 
-export type RawCourseType = {
+export type RawCourseType = {|
 	clbid: number,
 	credits: number,
 	crsid: number,
@@ -31,7 +31,7 @@ export type RawCourseType = {
 	title?: string,
 	type: string,
 	year: number,
-}
+|}
 
 export type CourseType = {
 	clbid: number,
