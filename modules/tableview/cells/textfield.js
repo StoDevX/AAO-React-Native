@@ -67,9 +67,9 @@ export class CellTextField extends React.Component<Props> {
 	}
 
 	render() {
-		let moreProps = {}
+		let isScrollEnabled = false;
 		if (this.props.multiline) {
-			moreProps.scrollEnabled = false
+			isScrollEnabled = false
 		}
 
 		let labelWidthStyle =
@@ -96,10 +96,10 @@ export class CellTextField extends React.Component<Props> {
 				placeholder={this.props.placeholder}
 				placeholderTextColor={c.iosPlaceholderText}
 				returnKeyType={this.props.returnKeyType}
+				scrollEnabled={isScrollEnabled}
 				secureTextEntry={this.props.secureTextEntry}
 				style={styles.customTextInput}
 				value={this.props.value}
-				{...moreProps}
 			/>
 		)
 
