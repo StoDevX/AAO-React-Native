@@ -8,15 +8,16 @@ import {
 	Platform,
 	View,
 } from 'react-native'
-import type {ViewStyleProp} from 'react-native/Libraries/StyleSheet/StyleSheet'
-import type {Props as TouchableWithoutFeedbackProps} from 'react-native/Libraries/Components/Touchable/TouchableWithoutFeedback'
+// import type {ViewStyleProp} from 'react-native/Libraries/StyleSheet/StyleSheet'
+// import type {Props as TouchableWithoutFeedbackProps} from 'react-native/Libraries/Components/Touchable/TouchableWithoutFeedback'
 
 export type TouchableUnion =
 	| typeof TouchableHighlight
 	| typeof TouchableOpacity
 	| typeof TouchableNativeFeedback
 
-type Props = {|
+type Props = any
+/*type Props = {|
 	borderless?: boolean,
 	containerStyle?: ViewStyleProp,
 	style?: ViewStyleProp,
@@ -24,7 +25,7 @@ type Props = {|
 	activeOpacity?: number,
 	underlayColor?: string,
 	...$Exact<TouchableWithoutFeedbackProps>,
-|}
+|}*/
 
 const Touchable = (props: Props, ref) => {
 	let {
