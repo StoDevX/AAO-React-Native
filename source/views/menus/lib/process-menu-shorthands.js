@@ -2,19 +2,19 @@
 // @flow
 import type {MenuItemType, StationMenuType} from '../types'
 
-type BasicMenuItemType = {
+type BasicMenuItemType = {|
 	label: string,
 	station: string,
 	special: boolean,
 	description: string,
-}
+|}
 
-type BasicStationMenuType = {
+type BasicStationMenuType = {|
 	label: string,
-}
+|}
 
 export function upgradeMenuItem(
-	item: BasicMenuItemType,
+	item: BasicMenuItemType | MenuItemType,
 	index: number,
 ): MenuItemType {
 	return {
@@ -22,7 +22,6 @@ export function upgradeMenuItem(
 		cor_icon: {},
 		description: '',
 		options: [],
-		ordered_cor_icon: {},
 		monotony: {},
 		nutrition: {
 			kcal: '',
@@ -45,7 +44,7 @@ export function upgradeMenuItem(
 }
 
 export function upgradeStation(
-	station: BasicStationMenuType,
+	station: BasicStationMenuType | StationMenuType,
 	index: number,
 ): StationMenuType {
 	return {
