@@ -1,5 +1,5 @@
-// flow-typed signature: 43ebef9724d6353c509b34d53104aa78
-// flow-typed version: <<STUB>>/@frogpond/titlecase_v1.0.0/flow_v0.105.2
+// flow-typed signature: afc52ee9eeb54ee2d26b3a2c0b81f448
+// flow-typed version: <<STUB>>/@frogpond/titlecase_v1.0.0/flow_v0.122.0
 
 declare module '@frogpond/titlecase' {
   declare export function toLaxTitleCase(str: string): string;
