@@ -67,7 +67,7 @@ export class CellTextField extends React.Component<Props> {
 	}
 
 	render() {
-		let isScrollEnabled = false;
+		let isScrollEnabled = false
 		if (this.props.multiline) {
 			isScrollEnabled = false
 		}
