@@ -1,7 +1,7 @@
 // @flow
 import * as React from 'react'
 import {View} from 'react-native'
-import type {ViewStyleProp} from 'react-native/Libraries/StyleSheet/StyleSheet'
+//import type {ViewStyleProp} from 'react-native/Libraries/StyleSheet/StyleSheet'
 
 export type PropsType = any
 // export type PropsType = {
