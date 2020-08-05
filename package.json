@@ -152,7 +152,7 @@
     "wordwrap": "1.0.0"
   },
   "devDependencies": {
-    "@babel/core": "7.10.5",
+    "@babel/core": "7.11.1",
     "@babel/runtime": "7.10.5",
     "@sentry/cli": "1.55.0",
     "ajv": "6.12.3",
