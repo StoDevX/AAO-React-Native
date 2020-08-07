@@ -1,25 +1,27 @@
 // @flow
 
 import {Platform} from 'react-native'
-import {NavigationScreenRouteConfig} from 'react-navigation'
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs'
+import {
+	createBottomTabNavigator,
+	NavigationScreenRouteConfig,
+} from 'react-navigation'
 import {getTheme} from '@frogpond/app-theme'
-import {createMaterialBottomTabNavigator} from '@react-navigation/material-bottom-tabs'
+import {createMaterialBottomTabNavigator} from 'react-navigation-material-bottom-tabs'
 
-// type ComponentType = (
-// 	screens: {[key: string]: NavigationScreenRouteConfig},
-// 	options: any, // I don't know how to type this better…
-// 	// the package provides a bunch of types… but it doesn't even use some
-// 	// of them??? and none seem to be the combination of args to the second
-// 	// arg of TabNavigator.
-// ) => typeof createTabNavigator
+type ComponentType = (
+	screens: {[key: string]: NavigationScreenRouteConfig},
+	options: any, // I don't know how to type this better…
+	// the package provides a bunch of types… but it doesn't even use some
+	// of them??? and none seem to be the combination of args to the second
+	// arg of TabNavigator.
+) => typeof createTabNavigator
 
 const createTabNavigator =
 	Platform.OS === 'android'
 		? createMaterialBottomTabNavigator
 		: createBottomTabNavigator
 
-export const TabNavigator = (screens: any, options: any = {}) => {
+export const TabNavigator: ComponentType = (screens, options = {}) => {
 	let theme = getTheme()
 
 	return createTabNavigator(screens, {
