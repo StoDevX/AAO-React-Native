@@ -94,3 +94,9 @@ for table in tables:
 
 			t_open = timeparse(times[0], date=date)
 			t_close = timeparse(times[1], date=date)
+
+			# Lunch always occurs after 6am.  If we have something else, we're
+			# probably 12 hours off.
+			if meal == "Lunch" and (t_open.hour < 6 or t_close.hour < 6):
+				t_open += datetime.timedelta(hours=12)
+				t_close += datetime.timedelta(hours=12)
