@@ -17,6 +17,13 @@ tables = output.find_all("table")
 # A regex to match strings like "Sunday, August 23"
 date_re = re.compile('\w+, \w+ \d{1,2}')
 
+# If the given tag only has one set of contents, just grab the contents.
+def meal_name_from(th):
+	if len(th.contents) == 1:
+		return th.get_text()
+	else:
+		return None
+
 # Start with an empty schedule set
 schedules = {}
 
@@ -46,3 +53,8 @@ for table in tables:
 	date = date.date()
 
 	print("Inferred date of {}; processing table now.".format(date))
+
+	body = table.find("tbody")
+
+	# NOTE(rye): Should only have one thead
+	meals = [meal_name_from(th) for th in table.find("thead").find("tr").find_all("th")]
