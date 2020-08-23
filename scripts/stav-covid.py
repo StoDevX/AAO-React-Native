@@ -143,8 +143,8 @@ for table in tables:
 
 			entry = {}
 			entry["days"] = [date.strftime("%a")[0:2]]
-			entry["from"] = t_open.strftime("%I:%M%p").lower()
-			entry["to"] = t_close.strftime("%I:%M%p").lower()
+			entry["from"] = t_open.strftime("%-I:%M%p").lower()
+			entry["to"] = t_close.strftime("%-I:%M%p").lower()
 
 			schedules[key]["hours"].append(entry)
 
