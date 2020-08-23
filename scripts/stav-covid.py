@@ -119,7 +119,8 @@ for table in tables:
 				t_close += datetime.timedelta(hours=12)
 
 			# The open time should not be the same or even close to the close
-			# time, so we should wrap it around.  (We do this by bumping up the )
+			# time, so we should wrap it around.  (We do this by bumping up the 
+			# close time)
 			if t_open >= t_close:
 				t_close = t_close + datetime.timedelta(hours=12)
 
