@@ -83,7 +83,7 @@ for table in tables:
 			# meal = meal
 			timespec = cols[idx]
 
-			print("Inferred: Dorm {} gets {} at {}".format(dorm, meal, timespec))
+			print("Processing table entry: {} gets {} at {} on {}".format(dorm, meal, timespec, date))
 
 			# Split the timespec on the timespec_re matches
 			times = [time.strip() for time in timespec_re.split(timespec)]
