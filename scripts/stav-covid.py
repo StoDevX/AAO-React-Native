@@ -60,6 +60,8 @@ for table in tables:
 	meals = [meal_name_from(th) for th in table.find("thead").find("tr").find_all("th")]
 
 	for idx, meal in enumerate(meals):
+		if idx == 0:
+			continue
 		for row in body.find_all("tr"):
 			cols = [col.get_text() for col in row.find_all("td")]
 			dorm = cols[0]
