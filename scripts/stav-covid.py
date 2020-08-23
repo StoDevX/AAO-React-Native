@@ -119,3 +119,20 @@ for table in tables:
 			# Warn if the close dt is more than 12 hours after the open dt
 			if t_close >= t_open + datetime.timedelta(hours=12):
 				warnings.warn("t_close ({}) is >= 12 hours after t_open ({})".format(t_open, t_close))
+
+			key = "{},{}".format(dorm, meal)
+
+			if not key in schedules:
+				schedule = {}
+				schedule["hours"] = []
+
+				schedules[key] = schedule
+
+			schedules[key]["title"] =  "{} – {}".format(dorm, meal)
+
+			entry = {}
+			entry["days"] = [date.strftime("%a")]
+			entry["from"] = t_open.strftime("%I:%M%p").lower()
+			entry["to"] = t_close.strftime("%I:%M%p").lower()
+
+			schedules[key]["hours"].append(entry)
