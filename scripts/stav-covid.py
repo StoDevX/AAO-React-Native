@@ -142,7 +142,7 @@ for table in tables:
 			schedules[key]["title"] =  "{} – {}".format(dorm, meal)
 
 			entry = {}
-			entry["days"] = [date.strftime("%a")]
+			entry["days"] = [date.strftime("%a")[0:2]]
 			entry["from"] = t_open.strftime("%I:%M%p").lower()
 			entry["to"] = t_close.strftime("%I:%M%p").lower()
 
