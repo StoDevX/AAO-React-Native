@@ -106,3 +106,8 @@ for table in tables:
 			if meal == "Dinner" and (t_open.hour < 12 or t_close.hour < 12):
 				t_open += datetime.timedelta(hours=12)
 				t_close += datetime.timedelta(hours=12)
+
+			# The open time should not be the same or even close to the close
+			# time, so we should wrap it around.  (We do this by bumping up the )
+			if t_open >= t_close:
+				t_close = t_close + datetime.timedelta(hours=12)
