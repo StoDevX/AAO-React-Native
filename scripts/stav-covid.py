@@ -16,7 +16,7 @@ url = "https://wp.stolaf.edu/reslife/dining-hours/"
 output = requests.get(url).text
 
 # Now, parse it.
-output = BeautifulSoup(output)
+output = BeautifulSoup(output, features="html.parser")
 
 # NOTE(rye): There is no filtering to prevent loading tables that aren't valid,
 # so please double-check the output of this script.
