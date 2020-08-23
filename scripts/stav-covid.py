@@ -140,3 +140,5 @@ for table in tables:
 			entry["to"] = t_close.strftime("%I:%M%p").lower()
 
 			schedules[key]["hours"].append(entry)
+
+document = { "name": "Stav Hall", "image": "stav", "category": "Food", "schedule": list(schedules.values()) }
