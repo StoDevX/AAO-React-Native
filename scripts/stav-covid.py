@@ -1,8 +1,14 @@
+import argparse
 import requests
 from bs4 import BeautifulSoup
 import datetime
 import re
 import warnings
+
+parser = argparse.ArgumentParser(description="Load hours from St. Olaf's COVID dining hours site")
+parser.add_argument('-o', '--output', type=argparse.FileType('w'), required=True,
+                    help='the file to write the schedule into')
+options = parser.parse_args()
 
 # Fetch the output to a string, `output`.
 url = "https://wp.stolaf.edu/reslife/dining-hours/"
