@@ -79,6 +79,10 @@ for table in tables:
 			continue
 		for row in body.find_all("tr"):
 			cols = [col.get_text() for col in row.find_all("td")]
+			if len(cols) != len(meals):
+				continue
+			if len("".join(cols)) == 0:
+				continue
 			dorm = cols[0]
 			# meal = meal
 			timespec = cols[idx]
