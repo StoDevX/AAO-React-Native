@@ -111,3 +111,11 @@ for table in tables:
 			# time, so we should wrap it around.  (We do this by bumping up the )
 			if t_open >= t_close:
 				t_close = t_close + datetime.timedelta(hours=12)
+
+			# Warn if the open dt is before the close dt somehow
+			if t_open >= t_close:
+				warnings.warn("t_open ({}) is before t_close ({})".format(t_open, t_close))
+
+			# Warn if the close dt is more than 12 hours after the open dt
+			if t_close >= t_open + datetime.timedelta(hours=12):
+				warnings.warn("t_close ({}) is >= 12 hours after t_open ({})".format(t_open, t_close))
