@@ -4,6 +4,7 @@ from bs4 import BeautifulSoup
 import datetime
 import re
 import warnings
+import yaml
 
 parser = argparse.ArgumentParser(description="Load hours from St. Olaf's COVID dining hours site")
 parser.add_argument('-o', '--output', type=argparse.FileType('w'), required=True,
@@ -148,3 +149,5 @@ for table in tables:
 			schedules[key]["hours"].append(entry)
 
 document = { "name": "Stav Hall", "image": "stav", "category": "Food", "schedule": list(schedules.values()) }
+
+yaml.dump(document, options.output, default_flow_style=None)
