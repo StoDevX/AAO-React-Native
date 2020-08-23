@@ -14,6 +14,7 @@ jobs:
         with: {node-version: ^12.0}
       - uses: actions/checkout@master
       - run: yarn install --frozen-lockfile
+      - run: yarn run validate-data
       - run: yarn run bundle-data
       - run: yarn run pretty --no-write --list-different
       - run: yarn run flow check
