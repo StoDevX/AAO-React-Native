@@ -28,6 +28,17 @@ def meal_name_from(th):
 	else:
 		return None
 
+# Attempt to parse a lazy timestring (either hh or hh:mm) to a datetime.  Note
+# that this datetime is context-free, and needs to be adjusted to make sense.
+def timeparse(string, date=None):
+	parts = string.split(":")
+	if len(parts) == 1:
+		return datetime.datetime.combine(date, datetime.time(hour=int(parts[0])))
+	elif len(parts) == 2:
+		return datetime.datetime.combine(date, datetime.time(hour=int(parts[0]), minute=int(parts[1])))
+	else:
+		return None
+
 # Start with an empty schedule set
 schedules = {}
 
@@ -80,3 +91,6 @@ for table in tables:
 			if len(times) != 2:
 				warnings.warn("timespec {} did not split nicely".format(timespec))
 				continue
+
+			t_open = timeparse(times[0], date=date)
+			t_close = timeparse(times[1], date=date)
