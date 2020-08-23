@@ -2,6 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 import datetime
 import re
+import warnings
 
 # Fetch the output to a string, `output`.
 url = "https://wp.stolaf.edu/reslife/dining-hours/"
@@ -16,6 +17,9 @@ tables = output.find_all("table")
 
 # A regex to match strings like "Sunday, August 23"
 date_re = re.compile('\w+, \w+ \d{1,2}')
+
+# A regex used to match timespec delimiters (e.g. the "-"" in "9-10:45")
+timespec_re = re.compile('\s*-\s*|\s*–\s*')
 
 # If the given tag only has one set of contents, just grab the contents.
 def meal_name_from(th):
@@ -69,3 +73,10 @@ for table in tables:
 			timespec = cols[idx]
 
 			print("Inferred: Dorm {} gets {} at {}".format(dorm, meal, timespec))
+
+			# Split the timespec on the timespec_re matches
+			times = [time.strip() for time in timespec_re.split(timespec)]
+
+			if len(times) != 2:
+				warnings.warn("timespec {} did not split nicely".format(timespec))
+				continue
