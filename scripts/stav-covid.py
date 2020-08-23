@@ -100,3 +100,9 @@ for table in tables:
 			if meal == "Lunch" and (t_open.hour < 6 or t_close.hour < 6):
 				t_open += datetime.timedelta(hours=12)
 				t_close += datetime.timedelta(hours=12)
+
+			# Dinner always occurs in the evening.  If we have something else,
+			# we're probably 12 hours off.
+			if meal == "Dinner" and (t_open.hour < 12 or t_close.hour < 12):
+				t_open += datetime.timedelta(hours=12)
+				t_close += datetime.timedelta(hours=12)
