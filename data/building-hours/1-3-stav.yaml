@@ -1,27 +1,337 @@
-name: Stav Hall
-image: stav
 category: Food
-
+image: stav
+name: Stav Hall
 schedule:
-  - title: Breakfast
-    hours:
-      - {days: [Mo, Tu, We, Th, Fr, Sa], from: '7:00am', to: '9:45am'}
-      - {days: [Su], from: '8:30am', to: '10:15am'}
-
-  - title: Lunch
-    hours:
-      - {days: [Mo, Tu, We, Th, Fr], from: '10:45am', to: '1:30pm'}
-      - {days: [Sa, Su], from: '11:00am', to: '1:30pm'}
-
-  - title: Dinner
-    hours:
-      - {days: [Mo, Tu, We, Th, Fr, Sa, Su], from: '4:30pm', to: '7:00pm'}
-
-breakSchedule:
-  fall: []
-  thanksgiving: []
-  winter: []
-  interim: []
-  spring: []
-  easter: []
-  summer: []
+- hours:
+  - days: [Sun]
+    from: 09:00am
+    to: 09:45am
+  - days: [Mon]
+    from: 07:15am
+    to: 07:45am
+  title: "Ellingson \u2013 Breakfast"
+- hours:
+  - days: [Sun]
+    from: 09:30am
+    to: 10:15am
+  - days: [Mon]
+    from: 09:15am
+    to: 09:45am
+  title: "Hilleboe \u2013 Breakfast"
+- hours:
+  - days: [Sun]
+    from: 09:00am
+    to: 09:45am
+  - days: [Mon]
+    from: 07:45am
+    to: 08:15am
+  title: "Hoyme \u2013 Breakfast"
+- hours:
+  - days: [Sun]
+    from: 09:00am
+    to: 09:45am
+  - days: [Mon]
+    from: 08:15am
+    to: 08:45am
+  title: "Kildahl \u2013 Breakfast"
+- hours:
+  - days: [Sun]
+    from: 09:00am
+    to: 09:45am
+  - days: [Mon]
+    from: 06:45am
+    to: 07:15am
+  title: "Kittelsby \u2013 Breakfast"
+- hours:
+  - days: [Sun]
+    from: 09:30am
+    to: 10:15am
+  - days: [Mon]
+    from: 09:15am
+    to: 09:45am
+  title: "Larson \u2013 Breakfast"
+- hours:
+  - days: [Sun]
+    from: 09:00am
+    to: 09:45am
+  - days: [Mon]
+    from: 07:15am
+    to: 07:45am
+  title: "Mellby \u2013 Breakfast"
+- hours:
+  - days: [Sun]
+    from: 09:30am
+    to: 10:15am
+  - days: [Mon]
+    from: 06:45am
+    to: 07:15am
+  title: "Mohn \u2013 Breakfast"
+- hours:
+  - days: [Sun]
+    from: 09:30am
+    to: 10:15am
+  - days: [Mon]
+    from: 08:15am
+    to: 08:45am
+  title: "Rand \u2013 Breakfast"
+- hours:
+  - days: [Sun]
+    from: 09:00am
+    to: 09:45am
+  - days: [Mon]
+    from: 07:45am
+    to: 08:15am
+  title: "Thorson \u2013 Breakfast"
+- hours:
+  - days: [Sun]
+    from: 09:30am
+    to: 10:15am
+  - days: [Mon]
+    from: 08:45am
+    to: 09:15am
+  title: "Ytterboe \u2013 Breakfast"
+- hours:
+  - days: [Sun]
+    from: 09:30am
+    to: 10:15am
+  - days: [Mon]
+    from: 08:45am
+    to: 09:15am
+  title: "Honor Houses \u2013 Breakfast"
+- hours:
+  - days: [Sun]
+    from: 09:00am
+    to: 10:15am
+  - days: [Mon]
+    from: 07:15am
+    to: 07:45am
+  title: "Hotel \u2013 Breakfast"
+- hours:
+  - days: [Sun]
+    from: 09:00am
+    to: 10:15am
+  - days: [Mon]
+    from: 06:45am
+    to: 09:45am
+  title: "Off Campus \u2013 Breakfast"
+- hours:
+  - days: [Sun]
+    from: 10:45am
+    to: 11:15am
+  - days: [Mon]
+    from: 11:15am
+    to: 11:45am
+  title: "Ellingson \u2013 Lunch"
+- hours:
+  - days: [Sun]
+    from: 01:45pm
+    to: 02:15pm
+  - days: [Mon]
+    from: 10:45am
+    to: 11:15am
+  title: "Hilleboe \u2013 Lunch"
+- hours:
+  - days: [Sun]
+    from: 11:15am
+    to: 11:45am
+  - days: [Mon]
+    from: 11:45am
+    to: 12:15pm
+  title: "Hoyme \u2013 Lunch"
+- hours:
+  - days: [Sun]
+    from: 11:45am
+    to: 12:15pm
+  - days: [Mon]
+    from: 12:15pm
+    to: 12:45pm
+  title: "Kildahl \u2013 Lunch"
+- hours:
+  - days: [Sun]
+    from: 11:15am
+    to: 11:45am
+  - days: [Mon]
+    from: 11:45am
+    to: 12:15pm
+  title: "Kittelsby \u2013 Lunch"
+- hours:
+  - days: [Sun]
+    from: 01:15pm
+    to: 01:45pm
+  - days: [Mon]
+    from: 01:45pm
+    to: 02:15pm
+  title: "Larson \u2013 Lunch"
+- hours:
+  - days: [Sun]
+    from: 10:45am
+    to: 11:15am
+  - days: [Mon]
+    from: 11:15am
+    to: 11:45am
+  title: "Mellby \u2013 Lunch"
+- hours:
+  - days: [Sun]
+    from: 01:45pm
+    to: 02:15pm
+  - days: [Mon]
+    from: 10:45am
+    to: 11:15am
+  title: "Mohn \u2013 Lunch"
+- hours:
+  - days: [Sun]
+    from: 12:45am
+    to: 01:15am
+  - days: [Mon]
+    from: 01:15pm
+    to: 01:45pm
+  title: "Rand \u2013 Lunch"
+- hours:
+  - days: [Sun]
+    from: 11:45am
+    to: 12:15pm
+  - days: [Mon]
+    from: 12:15pm
+    to: 12:45pm
+  title: "Thorson \u2013 Lunch"
+- hours:
+  - days: [Sun]
+    from: 12:15pm
+    to: 12:45pm
+  - days: [Mon]
+    from: 12:45am
+    to: 01:15am
+  title: "Ytterboe \u2013 Lunch"
+- hours:
+  - days: [Sun]
+    from: 12:45am
+    to: 01:15am
+  - days: [Mon]
+    from: 01:15pm
+    to: 01:45pm
+  title: "Honor Houses \u2013 Lunch"
+- hours:
+  - days: [Sun]
+    from: 01:15pm
+    to: 01:45pm
+  - days: [Mon]
+    from: 01:45pm
+    to: 02:15pm
+  title: "Hotel \u2013 Lunch"
+- hours:
+  - days: [Sun]
+    from: 10:15am
+    to: 10:45am
+  title: "Off Campus \u2013 Lunch"
+- hours:
+  - days: [Sun]
+    from: 04:15pm
+    to: 04:45pm
+  - days: [Mon]
+    from: 04:45pm
+    to: 05:15pm
+  title: "Ellingson \u2013 Dinner"
+- hours:
+  - days: [Sun]
+    from: 07:15pm
+    to: 07:45pm
+  - days: [Mon]
+    from: 04:15pm
+    to: 04:45pm
+  title: "Hilleboe \u2013 Dinner"
+- hours:
+  - days: [Sun]
+    from: 04:45pm
+    to: 05:15pm
+  - days: [Mon]
+    from: 05:15pm
+    to: 05:45pm
+  title: "Hoyme \u2013 Dinner"
+- hours:
+  - days: [Sun]
+    from: 05:15pm
+    to: 05:45pm
+  - days: [Mon]
+    from: 05:45pm
+    to: 06:15pm
+  title: "Kildahl \u2013 Dinner"
+- hours:
+  - days: [Sun]
+    from: 04:45pm
+    to: 05:15pm
+  - days: [Mon]
+    from: 05:15pm
+    to: 05:45pm
+  title: "Kittelsby \u2013 Dinner"
+- hours:
+  - days: [Sun]
+    from: 06:45pm
+    to: 07:15pm
+  - days: [Mon]
+    from: 07:15pm
+    to: 07:45pm
+  title: "Larson \u2013 Dinner"
+- hours:
+  - days: [Sun]
+    from: 04:15pm
+    to: 04:45pm
+  - days: [Mon]
+    from: 04:45pm
+    to: 05:15pm
+  title: "Mellby \u2013 Dinner"
+- hours:
+  - days: [Sun]
+    from: 07:15pm
+    to: 07:45pm
+  - days: [Mon]
+    from: 04:15pm
+    to: 04:45pm
+  title: "Mohn \u2013 Dinner"
+- hours:
+  - days: [Sun]
+    from: 06:15pm
+    to: 06:45pm
+  - days: [Mon]
+    from: 06:45pm
+    to: 07:15pm
+  title: "Rand \u2013 Dinner"
+- hours:
+  - days: [Sun]
+    from: 05:15pm
+    to: 05:45pm
+  - days: [Mon]
+    from: 05:45pm
+    to: 06:15pm
+  title: "Thorson \u2013 Dinner"
+- hours:
+  - days: [Sun]
+    from: 05:45pm
+    to: 06:15pm
+  - days: [Mon]
+    from: 06:15pm
+    to: 06:45pm
+  title: "Ytterboe \u2013 Dinner"
+- hours:
+  - days: [Sun]
+    from: 06:15pm
+    to: 06:45pm
+  - days: [Mon]
+    from: 06:45pm
+    to: 07:15pm
+  title: "Honor Houses \u2013 Dinner"
+- hours:
+  - days: [Sun]
+    from: 06:45pm
+    to: 07:15pm
+  - days: [Mon]
+    from: 07:15pm
+    to: 07:45pm
+  title: "Hotel \u2013 Dinner"
+- hours:
+  - days: [Sun]
+    from: 04:45pm
+    to: 07:45pm
+  - days: [Mon]
+    from: 04:15pm
+    to: 05:15pm
+  title: "Off Campus \u2013 Dinner"
