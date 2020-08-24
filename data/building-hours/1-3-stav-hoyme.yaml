@@ -9,7 +9,8 @@ schedule:
   - days: [Mo]
     from: 7:45am
     to: 8:15am
-  title: "Hoyme \u2014 Breakfast"
+  notes: Data scraped from stolaf.edu/reslife/dining-hours on 08/23
+  title: Breakfast
 - hours:
   - days: [Su]
     from: 11:15am
@@ -17,7 +18,8 @@ schedule:
   - days: [Mo]
     from: 11:45am
     to: 12:15pm
-  title: "Hoyme \u2014 Lunch"
+  notes: Data scraped from stolaf.edu/reslife/dining-hours on 08/23
+  title: Lunch
 - hours:
   - days: [Su]
     from: 4:45pm
@@ -25,4 +27,5 @@ schedule:
   - days: [Mo]
     from: 5:15pm
     to: 5:45pm
-  title: "Hoyme \u2014 Dinner"
+  notes: Data scraped from stolaf.edu/reslife/dining-hours on 08/23
+  title: Dinner

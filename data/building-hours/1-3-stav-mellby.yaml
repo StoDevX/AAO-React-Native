@@ -9,7 +9,8 @@ schedule:
   - days: [Mo]
     from: 7:15am
     to: 7:45am
-  title: "Mellby \u2014 Breakfast"
+  notes: Data scraped from stolaf.edu/reslife/dining-hours on 08/23
+  title: Breakfast
 - hours:
   - days: [Su]
     from: 10:45am
@@ -17,7 +18,8 @@ schedule:
   - days: [Mo]
     from: 11:15am
     to: 11:45am
-  title: "Mellby \u2014 Lunch"
+  notes: Data scraped from stolaf.edu/reslife/dining-hours on 08/23
+  title: Lunch
 - hours:
   - days: [Su]
     from: 4:15pm
@@ -25,4 +27,5 @@ schedule:
   - days: [Mo]
     from: 4:45pm
     to: 5:15pm
-  title: "Mellby \u2014 Dinner"
+  notes: Data scraped from stolaf.edu/reslife/dining-hours on 08/23
+  title: Dinner
