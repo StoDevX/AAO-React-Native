@@ -122,15 +122,19 @@ for table in tables:
 
 			# Lunch always occurs after 6am.  If we have something else, we're
 			# probably 12 hours off.
-			if meal == "Lunch" and (t_open.hour < 6 or t_close.hour < 6):
-				t_open += datetime.timedelta(hours=12)
-				t_close += datetime.timedelta(hours=12)
+			if meal == "Lunch":
+				if t_open.hour < 6:
+					t_open = t_open + datetime.timedelta(hours=12)
+				if t_close.hour < 6:
+					t_close = t_close + datetime.timedelta(hours=12)
 
 			# Dinner always occurs in the evening.  If we have something else,
 			# we're probably 12 hours off.
-			if meal == "Dinner" and (t_open.hour < 12 or t_close.hour < 12):
-				t_open += datetime.timedelta(hours=12)
-				t_close += datetime.timedelta(hours=12)
+			if meal == "Dinner":
+				if t_open.hour < 12:
+					t_open = t_open + datetime.timedelta(hours=12)
+				if t_close.hour < 12:
+					t_close = t_close + datetime.timedelta(hours=12)
 
 			# The open time should not be the same or even close to the close
 			# time, so we should wrap it around.  (We do this by bumping up the
