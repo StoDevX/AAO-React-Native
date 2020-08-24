@@ -16,8 +16,8 @@ schedule:
     from: 12:15pm
     to: 12:45pm
   - days: [Mo]
-    from: 12:45am
-    to: 1:15am
+    from: 12:45pm
+    to: 1:15pm
   notes: Data scraped from stolaf.edu/reslife/dining-hours on 08/23
   title: Lunch
 - hours:

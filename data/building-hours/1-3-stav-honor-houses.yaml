@@ -13,8 +13,8 @@ schedule:
   title: Breakfast
 - hours:
   - days: [Su]
-    from: 12:45am
-    to: 1:15am
+    from: 12:45pm
+    to: 1:15pm
   - days: [Mo]
     from: 1:15pm
     to: 1:45pm
