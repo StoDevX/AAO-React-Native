@@ -3,26 +3,26 @@ image: stav
 name: "Stav Hall \u2014 Off Campus"
 schedule:
 - hours:
-  - days: [Su]
-    from: 9:00am
-    to: 10:15am
   - days: [Mo]
     from: 6:45am
     to: 9:45am
-  notes: From stolaf.edu/reslife/dining-hours on 08/23 @ 8pm
+  - days: [Tu]
+    from: 6:45am
+    to: 9:45am
+  notes: From stolaf.edu/reslife/dining-hours on 08/24 @ 8am
   title: Breakfast
 - hours:
-  - days: [Su]
-    from: 10:15am
-    to: 10:45am
-  notes: From stolaf.edu/reslife/dining-hours on 08/23 @ 8pm
-  title: Lunch
-- hours:
-  - days: [Su]
-    from: 4:45pm
-    to: 7:45pm
   - days: [Mo]
     from: 4:15pm
     to: 5:15pm
-  notes: From stolaf.edu/reslife/dining-hours on 08/23 @ 8pm
+  - days: [Tu]
+    from: 4:15pm
+    to: 4:45pm
+  notes: From stolaf.edu/reslife/dining-hours on 08/24 @ 8am
   title: Dinner
+- hours:
+  - days: [Tu]
+    from: 10:15am
+    to: 10:45am
+  notes: From stolaf.edu/reslife/dining-hours on 08/24 @ 8am
+  title: Lunch

@@ -3,29 +3,29 @@ image: stav
 name: "Stav Hall \u2014 Thorson"
 schedule:
 - hours:
-  - days: [Su]
-    from: 9:00am
-    to: 9:45am
   - days: [Mo]
     from: 7:45am
     to: 8:15am
-  notes: From stolaf.edu/reslife/dining-hours on 08/23 @ 8pm
+  - days: [Tu]
+    from: 8:15am
+    to: 8:45am
+  notes: From stolaf.edu/reslife/dining-hours on 08/24 @ 8am
   title: Breakfast
 - hours:
-  - days: [Su]
-    from: 11:45am
-    to: 12:15pm
   - days: [Mo]
     from: 12:15pm
     to: 12:45pm
-  notes: From stolaf.edu/reslife/dining-hours on 08/23 @ 8pm
+  - days: [Tu]
+    from: 12:45pm
+    to: 1:15pm
+  notes: From stolaf.edu/reslife/dining-hours on 08/24 @ 8am
   title: Lunch
 - hours:
-  - days: [Su]
-    from: 5:15pm
-    to: 5:45pm
   - days: [Mo]
     from: 5:45pm
     to: 6:15pm
-  notes: From stolaf.edu/reslife/dining-hours on 08/23 @ 8pm
+  - days: [Tu]
+    from: 6:15pm
+    to: 6:45pm
+  notes: From stolaf.edu/reslife/dining-hours on 08/24 @ 8am
   title: Dinner
