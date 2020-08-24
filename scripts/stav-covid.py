@@ -155,6 +155,7 @@ for table in tables:
 			if not "title" in schedules[dorm][meal] or not "hours" in schedules[dorm][meal]:
 				schedules[dorm][meal]["title"] = meal
 				schedules[dorm][meal]["hours"] = []
+				schedules[dorm][meal]["notes"] = "Data scraped from {} on {}".format("stolaf.edu/reslife/dining-hours", datetime.datetime.now().strftime("%m/%d"))
 
 			entry = {}
 			entry["days"] = [date.strftime("%a")[0:2]]
