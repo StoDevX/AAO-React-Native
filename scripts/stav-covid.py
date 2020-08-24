@@ -153,7 +153,7 @@ for table in tables:
 				schedules[dorm][meal] = {}
 
 			if not "title" in schedules[dorm][meal] or not "hours" in schedules[dorm][meal]:
-				schedules[dorm][meal]["title"] = "{} — {}".format(dorm, meal)
+				schedules[dorm][meal]["title"] = meal
 				schedules[dorm][meal]["hours"] = []
 
 			entry = {}
