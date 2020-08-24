@@ -146,22 +146,22 @@ for table in tables:
 			if t_close >= t_open + datetime.timedelta(hours=12):
 				warnings.warn("t_close ({}) is >= 12 hours after t_open ({})".format(t_open, t_close))
 
-			key = "{},{}".format(dorm, meal)
+			if not dorm in schedules:
+				schedules[dorm] = {}
 
-			if not key in schedules:
-				schedule = {}
-				schedule["hours"] = []
+			if not meal in schedules[dorm]:
+				schedules[dorm][meal] = {}
 
-				schedules[key] = schedule
-
-			schedules[key]["title"] =  "{} – {}".format(dorm, meal)
+			if not "title" in schedules[dorm][meal] or not "hours" in schedules[dorm][meal]:
+				schedules[dorm][meal]["title"] = "{} — {}".format(dorm, meal)
+				schedules[dorm][meal]["hours"] = []
 
 			entry = {}
 			entry["days"] = [date.strftime("%a")[0:2]]
 			entry["from"] = t_open.strftime("%-I:%M%p").lower()
 			entry["to"] = t_close.strftime("%-I:%M%p").lower()
 
-			schedules[key]["hours"].append(entry)
+			schedules[dorm][meal]["hours"].append(entry)
 
 for dorm in schedules:
 	render_schedule_to_file(schedules[dorm], options.output_fmt, dorm)
