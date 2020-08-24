@@ -9,7 +9,7 @@ schedule:
   - days: [Mo]
     from: 9:15am
     to: 9:45am
-  notes: Data scraped from stolaf.edu/reslife/dining-hours on 08/23
+  notes: From stolaf.edu/reslife/dining-hours on 08/23 @ 8pm
   title: Breakfast
 - hours:
   - days: [Su]
@@ -18,7 +18,7 @@ schedule:
   - days: [Mo]
     from: 1:45pm
     to: 2:15pm
-  notes: Data scraped from stolaf.edu/reslife/dining-hours on 08/23
+  notes: From stolaf.edu/reslife/dining-hours on 08/23 @ 8pm
   title: Lunch
 - hours:
   - days: [Su]
@@ -27,5 +27,5 @@ schedule:
   - days: [Mo]
     from: 7:15pm
     to: 7:45pm
-  notes: Data scraped from stolaf.edu/reslife/dining-hours on 08/23
+  notes: From stolaf.edu/reslife/dining-hours on 08/23 @ 8pm
   title: Dinner
