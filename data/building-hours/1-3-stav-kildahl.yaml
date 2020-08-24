@@ -1,0 +1,28 @@
+category: Food
+image: stav
+name: "Stav Hall \u2014 Kildahl"
+schedule:
+- hours:
+  - days: [Su]
+    from: 9:00am
+    to: 9:45am
+  - days: [Mo]
+    from: 8:15am
+    to: 8:45am
+  title: "Kildahl \u2014 Breakfast"
+- hours:
+  - days: [Su]
+    from: 11:45am
+    to: 12:15pm
+  - days: [Mo]
+    from: 12:15pm
+    to: 12:45pm
+  title: "Kildahl \u2014 Lunch"
+- hours:
+  - days: [Su]
+    from: 5:15pm
+    to: 5:45pm
+  - days: [Mo]
+    from: 5:45pm
+    to: 6:15pm
+  title: "Kildahl \u2014 Dinner"

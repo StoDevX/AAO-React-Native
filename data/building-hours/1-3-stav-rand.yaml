@@ -1,0 +1,28 @@
+category: Food
+image: stav
+name: "Stav Hall \u2014 Rand"
+schedule:
+- hours:
+  - days: [Su]
+    from: 9:30am
+    to: 10:15am
+  - days: [Mo]
+    from: 8:15am
+    to: 8:45am
+  title: "Rand \u2014 Breakfast"
+- hours:
+  - days: [Su]
+    from: 12:45am
+    to: 1:15am
+  - days: [Mo]
+    from: 1:15pm
+    to: 1:45pm
+  title: "Rand \u2014 Lunch"
+- hours:
+  - days: [Su]
+    from: 6:15pm
+    to: 6:45pm
+  - days: [Mo]
+    from: 6:45pm
+    to: 7:15pm
+  title: "Rand \u2014 Dinner"

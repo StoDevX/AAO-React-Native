@@ -1,0 +1,28 @@
+category: Food
+image: stav
+name: "Stav Hall \u2014 Ellingson"
+schedule:
+- hours:
+  - days: [Su]
+    from: 9:00am
+    to: 9:45am
+  - days: [Mo]
+    from: 7:15am
+    to: 7:45am
+  title: "Ellingson \u2014 Breakfast"
+- hours:
+  - days: [Su]
+    from: 10:45am
+    to: 11:15am
+  - days: [Mo]
+    from: 11:15am
+    to: 11:45am
+  title: "Ellingson \u2014 Lunch"
+- hours:
+  - days: [Su]
+    from: 4:15pm
+    to: 4:45pm
+  - days: [Mo]
+    from: 4:45pm
+    to: 5:15pm
+  title: "Ellingson \u2014 Dinner"

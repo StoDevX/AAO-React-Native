@@ -1,0 +1,28 @@
+category: Food
+image: stav
+name: "Stav Hall \u2014 Hilleboe"
+schedule:
+- hours:
+  - days: [Su]
+    from: 9:30am
+    to: 10:15am
+  - days: [Mo]
+    from: 9:15am
+    to: 9:45am
+  title: "Hilleboe \u2014 Breakfast"
+- hours:
+  - days: [Su]
+    from: 1:45pm
+    to: 2:15pm
+  - days: [Mo]
+    from: 10:45am
+    to: 11:15am
+  title: "Hilleboe \u2014 Lunch"
+- hours:
+  - days: [Su]
+    from: 7:15pm
+    to: 7:45pm
+  - days: [Mo]
+    from: 4:15pm
+    to: 4:45pm
+  title: "Hilleboe \u2014 Dinner"
