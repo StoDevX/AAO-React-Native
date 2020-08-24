@@ -1,0 +1,31 @@
+category: Food
+image: stav
+name: "Stav Hall \u2014 Kittelsby"
+schedule:
+- hours:
+  - days: [Su]
+    from: 9:00am
+    to: 9:45am
+  - days: [Mo]
+    from: 6:45am
+    to: 7:15am
+  notes: From stolaf.edu/reslife/dining-hours on 08/23 @ 8pm
+  title: Breakfast
+- hours:
+  - days: [Su]
+    from: 11:15am
+    to: 11:45am
+  - days: [Mo]
+    from: 11:45am
+    to: 12:15pm
+  notes: From stolaf.edu/reslife/dining-hours on 08/23 @ 8pm
+  title: Lunch
+- hours:
+  - days: [Su]
+    from: 4:45pm
+    to: 5:15pm
+  - days: [Mo]
+    from: 5:15pm
+    to: 5:45pm
+  notes: From stolaf.edu/reslife/dining-hours on 08/23 @ 8pm
+  title: Dinner

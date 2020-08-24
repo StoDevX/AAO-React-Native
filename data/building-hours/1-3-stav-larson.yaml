@@ -1,0 +1,31 @@
+category: Food
+image: stav
+name: "Stav Hall \u2014 Larson"
+schedule:
+- hours:
+  - days: [Su]
+    from: 9:30am
+    to: 10:15am
+  - days: [Mo]
+    from: 9:15am
+    to: 9:45am
+  notes: From stolaf.edu/reslife/dining-hours on 08/23 @ 8pm
+  title: Breakfast
+- hours:
+  - days: [Su]
+    from: 1:15pm
+    to: 1:45pm
+  - days: [Mo]
+    from: 1:45pm
+    to: 2:15pm
+  notes: From stolaf.edu/reslife/dining-hours on 08/23 @ 8pm
+  title: Lunch
+- hours:
+  - days: [Su]
+    from: 6:45pm
+    to: 7:15pm
+  - days: [Mo]
+    from: 7:15pm
+    to: 7:45pm
+  notes: From stolaf.edu/reslife/dining-hours on 08/23 @ 8pm
+  title: Dinner
