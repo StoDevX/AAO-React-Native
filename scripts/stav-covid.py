@@ -8,7 +8,7 @@ import yaml
 
 parser = argparse.ArgumentParser(description="Load hours from St. Olaf's COVID dining hours site")
 parser.add_argument('-o', '--output-fmt', type=str, required=True,
-                    help='the format specifier for the dorm schedule file')
+                    help='the format specifier for the dorm schedule file (e.g. "{}.yaml")')
 options = parser.parse_args()
 
 # Fetch the output to a string, `output`.
