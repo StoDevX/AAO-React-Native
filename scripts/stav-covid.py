@@ -7,8 +7,8 @@ import warnings
 import yaml
 
 parser = argparse.ArgumentParser(description="Load hours from St. Olaf's COVID dining hours site")
-parser.add_argument('-o', '--output', type=argparse.FileType('w'), required=True,
-                    help='the file to write the schedule into')
+parser.add_argument('-o', '--output-fmt', type=str, required=True,
+                    help='the format specifier for the dorm schedule file')
 options = parser.parse_args()
 
 # Fetch the output to a string, `output`.
@@ -45,6 +45,20 @@ def timeparse(string, date=None):
 		return datetime.datetime.combine(date, datetime.time(hour=int(parts[0]), minute=int(parts[1])))
 	else:
 		return None
+
+def schedules_to_document(schedules):
+	name = "Stav Hall — {}".format(dorm)
+	document = { "name": name, "image": "stav", "category": "Food", "schedule": list(schedules.values()) }
+	return document
+
+def render_schedule_to_file(schedules, fmt, dorm="Unknown"):
+	# TODO something something globals
+	file = fmt.format(re.sub("\s", "-", dorm.lower().strip()))
+
+	print("Rendering schedule for dorm {} to file {}".format(dorm, file))
+
+	with open(file, "w") as file:
+		yaml.dump(schedules_to_document(schedules), file, default_flow_style=None)
 
 # Start with an empty schedule set
 schedules = {}
@@ -119,7 +133,7 @@ for table in tables:
 				t_close += datetime.timedelta(hours=12)
 
 			# The open time should not be the same or even close to the close
-			# time, so we should wrap it around.  (We do this by bumping up the 
+			# time, so we should wrap it around.  (We do this by bumping up the
 			# close time)
 			if t_open >= t_close:
 				t_close = t_close + datetime.timedelta(hours=12)
@@ -149,6 +163,5 @@ for table in tables:
 
 			schedules[key]["hours"].append(entry)
 
-document = { "name": "Stav Hall", "image": "stav", "category": "Food", "schedule": list(schedules.values()) }
-
-yaml.dump(document, options.output, default_flow_style=None)
+for dorm in schedules:
+	render_schedule_to_file(schedules[dorm], options.output_fmt, dorm)
