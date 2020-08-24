@@ -5,3 +5,5 @@ authors = ["Kristofer Rye <kristofer.rye@gmail.com>"]
 edition = "2018"
 
 [dependencies]
+reqwest = { version = "0.10.0", features = ["blocking"] }
+scraper = "0.12.0"
