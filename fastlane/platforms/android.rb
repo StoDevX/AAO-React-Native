@@ -43,7 +43,7 @@ platform :android do
 				apk.end_with? '-release.aab'
 			end
 
-		supply(track: track, check_superseded_tracks: true)
+		supply(track: track)
 
 		generate_sourcemap
 		upload_sourcemap_to_sentry
