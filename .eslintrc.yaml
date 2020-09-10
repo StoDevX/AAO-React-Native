@@ -6,21 +6,17 @@ plugins:
   - babel
   - react
   - react-native
-  - flowtype
   - react-hooks
 
 extends:
   - eslint:recommended
-  - plugin:flowtype/recommended
   - plugin:react/recommended
   - prettier
-  - prettier/flowtype
   - prettier/react
 
 settings:
   react:
     version: '16.6'
-    flowVersion: '0.78'
 
 env:
   es6: true
@@ -104,10 +100,6 @@ rules:
   react/sort-prop-types: warn
   react/wrap-multilines: off
   react/jsx-boolean-value: [error, always]
-
-  # flow rules
-  flowtype/no-dupe-keys: error
-  flowtype/use-flow-type: error
 
   # react-native rules
   react-native/no-unused-styles: warn
