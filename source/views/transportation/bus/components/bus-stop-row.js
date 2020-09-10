@@ -12,8 +12,8 @@ import {ScheduleTimes} from './times'
 import {
 	findRemainingDeparturesForStop as findRemainingDepartures,
 	findBusStopStatus as findStopStatus,
-	type BusStateEnum,
 } from '../lib'
+import type {BusStateEnum} from '../lib'
 
 const styles = StyleSheet.create({
 	row: {
@@ -35,14 +35,14 @@ const styles = StyleSheet.create({
 })
 
 type Props = {
-	+stop: BusTimetableEntry,
-	+departureIndex: null | number,
-	+now: moment,
-	+barColor: string,
-	+currentStopColor: string,
-	+isFirstRow: boolean,
-	+isLastRow: boolean,
-	+status: BusStateEnum,
+	stop: BusTimetableEntry,
+	departureIndex: null | number,
+	now: moment,
+	barColor: string,
+	currentStopColor: string,
+	isFirstRow: boolean,
+	isLastRow: boolean,
+	status: BusStateEnum,
 }
 
 export class BusStopRow extends React.PureComponent<Props, void> {

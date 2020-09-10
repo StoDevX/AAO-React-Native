@@ -16,7 +16,7 @@ const fetchBusTimes = (): Promise<Array<UnprocessedBusLine>> =>
 		.then((body) => body.data)
 
 type Props = TopLevelViewPropsType & {
-	+line: string,
+	line: string,
 }
 
 type State = {

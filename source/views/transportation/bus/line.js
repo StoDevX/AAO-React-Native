@@ -2,12 +2,8 @@
 import * as React from 'react'
 import {Text, StyleSheet, Platform, FlatList} from 'react-native'
 import type {BusTimetableEntry, UnprocessedBusLine, BusSchedule} from './types'
-import {
-	processBusLine,
-	getScheduleForNow,
-	getCurrentBusIteration,
-	type BusStateEnum,
-} from './lib'
+import {processBusLine, getScheduleForNow, getCurrentBusIteration} from './lib'
+import type {BusStateEnum} from './lib'
 import moment from 'moment-timezone'
 import find from 'lodash/find'
 import findLast from 'lodash/findLast'
@@ -33,9 +29,9 @@ const EMPTY_SCHEDULE_MESSAGE = (
 )
 
 type Props = {
-	+line: UnprocessedBusLine,
-	+now: moment,
-	+openMap: () => any,
+	line: UnprocessedBusLine,
+	now: moment,
+	openMap: () => any,
 }
 
 type State = {
@@ -97,7 +93,8 @@ function deriveFromProps({line, now}: Props) {
 			break
 		}
 		default: {
-			;(status: empty)
+			// TODO(rye): Find a replacement for this.
+			// ;(status: empty)
 		}
 	}
 
