@@ -86,20 +86,20 @@ export type ItemCorIconMapType =
 	| Array<void>
 export type MasterCorIconMapType = {[key: NumericStringType]: CorIconType}
 
-export type ProcessedMealType = {|
+export type ProcessedMealType = {
 	starttime: MilitaryTimeStringType,
 	endtime: MilitaryTimeStringType,
 	label: string,
 	stations: StationMenuType[],
-|}
+}
 
 export type DayPartsCollectionType = Array<Array<DayPartMenuType>>
 
-export type DayPartMenuType = {|
+export type DayPartMenuType = {
 	starttime: MilitaryTimeStringType,
 	endtime: MilitaryTimeStringType,
 	id: NumericStringType,
 	label: string,
 	abbreviation: string,
 	stations: StationMenuType[],
-|}
+}

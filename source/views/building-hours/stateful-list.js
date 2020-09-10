@@ -49,11 +49,11 @@ type ReduxStateProps = {
 
 type Props = TopLevelViewPropsType & ReduxStateProps
 
-type State = {|
+type State = {
 	error: ?Error,
 	loading: boolean,
 	buildings: Array<BuildingType>,
-|}
+}
 
 export class BuildingHoursView extends React.PureComponent<Props, State> {
 	static navigationOptions = {

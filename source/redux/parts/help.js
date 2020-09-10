@@ -43,11 +43,11 @@ export function getEnabledTools(): ThunkAction<GetEnabledToolsAction> {
 	}
 }
 
-export type State = {|
+export type State = {
 	+fetching: boolean,
 	+tools: Array<ToolOptions>,
 	+lastFetchError: ?boolean,
-|}
+}
 
 const initialState = {
 	fetching: false,

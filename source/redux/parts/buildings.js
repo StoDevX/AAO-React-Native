@@ -46,9 +46,9 @@ export function toggleFavoriteBuilding(
 	}
 }
 
-export type State = {|
+export type State = {
 	favorites: Array<string>,
-|}
+}
 
 const initialState: State = {
 	favorites: [],

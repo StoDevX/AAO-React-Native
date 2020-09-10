@@ -6,10 +6,10 @@ import type {DepartureTimeList} from '../types'
 
 const TIME_FORMAT = 'h:mma'
 
-type Props = {|
-	+times: DepartureTimeList,
-	+style?: any,
-|}
+type Props = {
+	times: DepartureTimeList,
+	style?: any,
+}
 
 export class ScheduleTimes extends React.PureComponent<Props, void> {
 	render() {

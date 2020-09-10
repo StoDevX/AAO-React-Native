@@ -19,11 +19,11 @@ type Props = TopLevelViewPropsType & {
 	+line: string,
 }
 
-type State = {|
+type State = {
 	busLines: Array<UnprocessedBusLine>,
 	activeBusLine: ?UnprocessedBusLine,
 	loading: boolean,
-|}
+}
 
 export class BusView extends React.PureComponent<Props, State> {
 	state = {

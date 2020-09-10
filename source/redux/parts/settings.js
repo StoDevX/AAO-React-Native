@@ -14,9 +14,9 @@ type ThunkAction<A: Action> = (dispatch: Dispatch<A>, getState: GetState) => any
 const CHANGE_THEME = 'settings/CHANGE_THEME'
 const SIS_ALERT_SEEN = 'settings/SIS_ALERT_SEEN'
 
-type ChangeThemeAction = {|type: 'settings/CHANGE_THEME', payload: string|}
+type ChangeThemeAction = {type: 'settings/CHANGE_THEME', payload: string}
 
-type SisAlertSeenAction = {|type: 'settings/SIS_ALERT_SEEN', payload: boolean|}
+type SisAlertSeenAction = {type: 'settings/SIS_ALERT_SEEN', payload: boolean}
 export async function loadAcknowledgement(): Promise<SisAlertSeenAction> {
 	return {type: SIS_ALERT_SEEN, payload: await getAcknowledgementStatus()}
 }

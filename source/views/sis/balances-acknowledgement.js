@@ -69,12 +69,12 @@ BalancesOrAcknowledgementView.navigationOptions = {
 	tabBarIcon: TabBarIcon('card'),
 }
 
-type AcknowledgementProps = {|
+type AcknowledgementProps = {
 	title: string,
 	subtitle: string,
 	children: React.Node,
 	onPositive: () => any,
-|}
+}
 
 function AndroidAck(props: AcknowledgementProps) {
 	let {title, subtitle, children, onPositive} = props

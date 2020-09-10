@@ -5,12 +5,12 @@ export type ToggleSpecType = {
 	caption?: string,
 }
 
-export type ListItemSpecType = {|
+export type ListItemSpecType = {
 	title: string | number,
 	label?: string,
 	detail?: string,
 	image?: ?any,
-|}
+}
 
 export type ListSpecType = {
 	title: string,
@@ -22,9 +22,9 @@ export type ListSpecType = {
 	displayTitle: boolean,
 }
 
-export type PickerItemSpecType = {|
+export type PickerItemSpecType = {
 	label: string,
-|}
+}
 
 export type PickerSpecType = {
 	title: string,

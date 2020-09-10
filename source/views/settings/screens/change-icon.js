@@ -90,11 +90,11 @@ export class IconSettingsView extends React.Component<Props, State> {
 	}
 }
 
-type IconCellProps = {|
+type IconCellProps = {
 	+icon: Icon,
 	+isSelected: boolean,
 	+onPress: (string) => any,
-|}
+}
 
 class IconCell extends React.Component<IconCellProps> {
 	setIcon = () => {

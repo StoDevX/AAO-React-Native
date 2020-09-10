@@ -144,7 +144,7 @@ export function updatePrintJobs(): ThunkAction<UpdatePrintJobsAction> {
 	}
 }
 
-export type State = {|
+export type State = {
 	jobs: Array<PrintJob>,
 	printers: Array<Printer>,
 	recentPrinters: Array<Printer>, // printer names
@@ -152,7 +152,7 @@ export type State = {|
 	colorPrinters: Array<Printer>,
 	jobsError: ?string,
 	printersError: ?string,
-|}
+}
 
 const initialState: State = {
 	jobsError: null,

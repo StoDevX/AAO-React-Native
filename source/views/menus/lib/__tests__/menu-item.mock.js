@@ -2,11 +2,11 @@
 // @flow
 import type {MenuItemType} from '../../types'
 
-export const item: ({|
+export const item: ({
 	cor_icon?: Object,
 	station?: string,
 	special?: boolean,
-|}) => MenuItemType = ({
+}) => MenuItemType = ({
 	cor_icon: corIcon = {},
 	station = '',
 	special = false,

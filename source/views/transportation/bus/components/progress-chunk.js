@@ -47,13 +47,13 @@ const styles = StyleSheet.create({
 	},
 })
 
-type Props = {|
+type Props = {
 	+barColor: string,
 	+currentStopColor: string,
 	+isFirstChunk: boolean,
 	+isLastChunk: boolean,
 	+stopStatus: BusStopStatusEnum,
-|}
+}
 
 export class ProgressChunk extends React.PureComponent<Props, void> {
 	render() {

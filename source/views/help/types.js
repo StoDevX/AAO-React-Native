@@ -52,7 +52,7 @@ export type ButtonDef =
 	| CallPhoneButtonDef
 	| CustomButtonDef
 
-export type ToolOptions = {|
+export type ToolOptions = {
 	key: string,
 	enabled?: boolean,
 	hidden?: boolean,
@@ -62,4 +62,4 @@ export type ToolOptions = {|
 	title: string,
 	body: string,
 	buttons: Array<ButtonDef>,
-|}
+}

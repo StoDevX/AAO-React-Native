@@ -23,10 +23,10 @@ type ThunkAction<A: Action> = (dispatch: Dispatch<A>, getState: GetState) => any
 
 const UPDATE_RECENT_FILTERS = 'courses/UPDATE_RECENT_FILTERS'
 
-type UpdateRecentFiltersAction = {|
+type UpdateRecentFiltersAction = {
 	type: 'courses/UPDATE_RECENT_FILTERS',
 	payload: FilterComboType[],
-|}
+}
 
 export function updateRecentFilters(
 	filters: FilterType[],
@@ -54,22 +54,22 @@ export function updateRecentFilters(
 
 const LOAD_RECENT_FILTERS = 'courses/LOAD_RECENT_FILTERS'
 
-type LoadRecentFiltersAction = {|
+type LoadRecentFiltersAction = {
 	type: 'courses/LOAD_RECENT_FILTERS',
 	payload: FilterComboType[],
-|}
+}
 export async function loadRecentFilters(): Promise<LoadRecentFiltersAction> {
 	let recentFilters = await storage.getRecentFilters()
 	return {type: LOAD_RECENT_FILTERS, payload: recentFilters}
 }
 
-type LoadCachedCoursesAction = {|
+type LoadCachedCoursesAction = {
 	type: 'courses/LOAD_CACHED_COURSES',
 	payload: Array<CourseType>,
-|}
-type CoursesLoadedAction = {|
+}
+type CoursesLoadedAction = {
 	type: 'courses/COURSES_LOADED',
-|}
+}
 
 export type LoadCourseDataActionType = ThunkAction<
 	LoadCachedCoursesAction | CoursesLoadedAction,
@@ -106,10 +106,10 @@ export function updateCourseData(): UpdateCourseDataActionType {
 
 const LOAD_RECENT_SEARCHES = 'courses/LOAD_RECENT_SEARCHES'
 
-type LoadRecentSearchesAction = {|
+type LoadRecentSearchesAction = {
 	type: 'courses/LOAD_RECENT_SEARCHES',
 	payload: string[],
-|}
+}
 export async function loadRecentSearches(): Promise<LoadRecentSearchesAction> {
 	let recentSearches = await storage.getRecentSearches()
 	return {type: LOAD_RECENT_SEARCHES, payload: recentSearches}
@@ -117,10 +117,10 @@ export async function loadRecentSearches(): Promise<LoadRecentSearchesAction> {
 
 const UPDATE_RECENT_SEARCHES = 'courses/UPDATE_RECENT_SEARCHES'
 
-type UpdateRecentSearchesAction = {|
+type UpdateRecentSearchesAction = {
 	type: 'courses/UPDATE_RECENT_SEARCHES',
 	payload: string[],
-|}
+}
 export function updateRecentSearches(
 	query: string,
 ): ThunkAction<UpdateRecentSearchesAction> {
@@ -149,13 +149,13 @@ type Action =
 	| UpdateRecentFiltersAction
 	| LoadRecentFiltersAction
 
-export type State = {|
+export type State = {
 	allCourses: Array<CourseType>,
 	readyState: 'not-loaded' | 'ready',
 	validGEs: string[],
 	recentFilters: FilterComboType[],
 	recentSearches: string[],
-|}
+}
 
 const initialState = {
 	allCourses: [],

@@ -25,9 +25,9 @@ const LOGIN_SUCCESS = 'settings/CREDENTIALS_LOGIN_SUCCESS'
 const LOGIN_FAILURE = 'settings/CREDENTIALS_LOGIN_FAILURE'
 const LOGOUT = 'settings/CREDENTIALS_LOGOUT'
 
-type LoginStartAction = {|type: 'settings/CREDENTIALS_LOGIN_START'|}
-type LoginSuccessAction = {|type: 'settings/CREDENTIALS_LOGIN_SUCCESS'|}
-type LoginFailureAction = {|type: 'settings/CREDENTIALS_LOGIN_FAILURE'|}
+type LoginStartAction = {type: 'settings/CREDENTIALS_LOGIN_START'}
+type LoginSuccessAction = {type: 'settings/CREDENTIALS_LOGIN_SUCCESS'}
+type LoginFailureAction = {type: 'settings/CREDENTIALS_LOGIN_FAILURE'}
 type LogInActions = LoginStartAction | LoginSuccessAction | LoginFailureAction
 
 const showNetworkFailureMessage = () =>
@@ -99,7 +99,7 @@ export function logInViaCredentials(
 	}
 }
 
-type LogOutAction = {|type: 'settings/CREDENTIALS_LOGOUT'|}
+type LogOutAction = {type: 'settings/CREDENTIALS_LOGOUT'}
 export async function logOutViaCredentials(): Promise<LogOutAction> {
 	await clearLoginCredentials()
 	return {type: LOGOUT}

@@ -33,7 +33,7 @@ const styles = StyleSheet.create({
 	},
 })
 
-type PropsType = {|
+type PropsType = {
 	style?: ViewStyleProp,
 	contentContainerStyle?: ViewStyleProp,
 	arrowPosition?: 'center' | 'top' | 'none',
@@ -42,7 +42,7 @@ type PropsType = {|
 	spacing?: {left?: number, right?: number},
 	onPress?: () => any,
 	children?: React.Node,
-|}
+}
 
 export function ListRow(props: PropsType) {
 	let {

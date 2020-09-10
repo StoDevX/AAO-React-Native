@@ -16,7 +16,7 @@ const styles = StyleSheet.create({
 	map: {...StyleSheet.absoluteFillObject},
 })
 
-type WrapperProps = {|
+type WrapperProps = {
 	navigation: {
 		state: {
 			params: {
@@ -24,7 +24,7 @@ type WrapperProps = {|
 			},
 		},
 	},
-|}
+}
 
 export function BusMap(props: WrapperProps) {
 	let lineToDisplay = props.navigation.state.params.line
@@ -39,19 +39,19 @@ export function BusMap(props: WrapperProps) {
 	)
 }
 
-type Props = {|
+type Props = {
 	line: UnprocessedBusLine,
 	now: moment,
-|}
+}
 
-type State = {|
+type State = {
 	region: {
 		latitude: number,
 		latitudeDelta: number,
 		longitude: number,
 		longitudeDelta: number,
 	},
-|}
+}
 
 class Map extends React.Component<Props, State> {
 	static navigationOptions = (args: {

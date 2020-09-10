@@ -3,13 +3,13 @@
 import {Alert, Clipboard} from 'react-native'
 import {email} from 'react-native-communications'
 
-type Args = {|
+type Args = {
 	to?: Array<string>,
 	cc?: Array<string>,
 	bcc?: Array<string>,
 	subject?: string,
 	body?: string,
-|}
+}
 
 export function sendEmail(args: Args) {
 	let {to = [], cc = [], bcc = [], subject = '', body = ''} = args

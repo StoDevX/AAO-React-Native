@@ -38,12 +38,12 @@ type Props = {
 	+openMap: () => any,
 }
 
-type State = {|
+type State = {
 	subtitle: string,
 	schedule: ?BusSchedule,
 	currentBusIteration: null | number,
 	status: BusStateEnum,
-|}
+}
 
 function startsIn(now, start: ?moment) {
 	if (!start) {
