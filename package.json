@@ -12,7 +12,6 @@
     "danger": "danger ci",
     "data": "node scripts/bundle-data.js data/ docs/",
     "d": "yarn-deduplicate && yarn",
-    "flow": "flow",
     "ios": "react-native run-ios",
     "lint": "eslint --report-unused-disable-directives --max-warnings=0 --cache source/ modules/ scripts/ *.js",
     "prepare": "ls contrib/*.patch | xargs -n1 patch -p0 -Nfsi || true",
