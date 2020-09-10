@@ -21,7 +21,8 @@ import deburr from 'lodash/deburr'
 import type {StudentOrgType} from './types'
 import {API} from '@frogpond/api'
 import {fetch} from '@frogpond/fetch'
-import {useAsync, type AsyncState} from 'react-async'
+import {useAsync} from 'react-async'
+import type {AsyncState} from 'react-async'
 import {useDebounce} from '@frogpond/use-debounce'
 
 const fetchOrgs = (args: {
