@@ -1,38 +1,17 @@
 // @flow
 
 import * as c from '@frogpond/colors'
-import {type EntypoGlyphs} from 'react-native-vector-icons/Entypo'
+import type {EntypoGlyphs} from 'react-native-vector-icons/Entypo'
 
-export type ViewType =
-	| {
-			type: 'view',
-			view: string,
-			title: string,
-			icon: EntypoGlyphs,
-			foreground: 'light' | 'dark',
-			tint: string,
-			gradient?: [string, string],
-	  }
-	| {
-			type: 'url',
-			view: string,
-			url: string,
-			title: string,
-			icon: EntypoGlyphs,
-			foreground: 'light' | 'dark',
-			tint: string,
-			gradient?: [string, string],
-	  }
-	| {
-			type: 'browser-url',
-			view: string,
-			url: string,
-			title: string,
-			icon: EntypoGlyphs,
-			foreground: 'light' | 'dark',
-			tint: string,
-			gradient?: [string, string],
-	  }
+export type ViewType = {
+	type: 'view' | 'url' | 'browser-url',
+	view: string,
+	title: string,
+	icon: EntypoGlyphs,
+	foreground: 'light' | 'dark',
+	tint: string,
+	gradient?: [string, string],
+}
 
 export const allViews: Array<ViewType> = [
 	{
