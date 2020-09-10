@@ -1,8 +1,9 @@
-parser: '@babel/eslint-parser'
+parser: '@typescript-eslint/parser'
 parserOptions:
-  sourceType: module
+  project: './tsconfig.json'
 
 plugins:
+  - '@typescript-eslint'
   - babel
   - react
   - react-native
@@ -11,6 +12,7 @@ plugins:
 extends:
   - eslint:recommended
   - plugin:react/recommended
+  - 'plugin:@typescript-eslint/recommended'
   - prettier
   - prettier/react
 
