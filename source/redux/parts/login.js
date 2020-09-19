@@ -6,7 +6,7 @@ import {
 	clearLoginCredentials,
 } from '../../lib/login'
 
-import {type ReduxState} from '../index'
+import type {ReduxState} from '../index'
 import {Alert} from 'react-native'
 
 export type LoginStateEnum =

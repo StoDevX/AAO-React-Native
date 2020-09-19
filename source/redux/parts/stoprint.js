@@ -1,7 +1,7 @@
 // @flow
 
 import {loadLoginCredentials} from '../../lib/login'
-import {type ReduxState} from '../index'
+import type {ReduxState} from '../index'
 import type {PrintJob, Printer} from '../../lib/stoprint'
 import {
 	fetchAllPrinters,

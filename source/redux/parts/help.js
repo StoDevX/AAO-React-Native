@@ -1,7 +1,7 @@
 // @flow
 
-import {type ReduxState} from '../index'
-import {type ToolOptions} from '../../views/help/types'
+import type {ReduxState} from '../index'
+import type {ToolOptions} from '../../views/help/types'
 import {fetch} from '@frogpond/fetch'
 import {API} from '@frogpond/api'
 

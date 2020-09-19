@@ -1,7 +1,7 @@
 // @flow
 
 import * as storage from '../../lib/storage'
-import {type ReduxState} from '../index'
+import type {ReduxState} from '../index'
 
 type Dispatch<A: Action> = (action: A | Promise<A> | ThunkAction<A>) => any
 type GetState = () => ReduxState
