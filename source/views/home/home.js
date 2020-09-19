@@ -10,8 +10,8 @@ import {
 } from 'react-native'
 
 import {getTheme} from '@frogpond/app-theme'
-import {type TopLevelViewPropsType} from '../types'
-import {type ViewType} from '../views'
+import type {TopLevelViewPropsType} from '../types'
+import type {ViewType} from '../views'
 import {allViews} from '../views'
 import {Column} from '@frogpond/layout'
 import {partitionByIndex} from '../../lib/partition-by-index'
