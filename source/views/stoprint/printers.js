@@ -3,7 +3,7 @@
 import React from 'react'
 import {SectionList, StyleSheet} from 'react-native'
 import {useDispatch, useSelector} from 'react-redux'
-import {type ReduxState} from '../../redux'
+import type {ReduxState} from '../../redux'
 import {updatePrinters} from '../../redux/parts/stoprint'
 import type {Printer, PrintJob} from '../../lib/stoprint'
 import {
