@@ -8,11 +8,11 @@ import delay from 'delay'
 type Props = {
 	event: EventType,
 	compactMessages?: boolean,
-	render: ({
+	render: (
 		message: string,
 		disabled: boolean,
 		onPress: () => any,
-	}) => React.Node,
+	) => React.Node,
 }
 
 type State = {
@@ -26,7 +26,7 @@ const VERBOSE_MESSAGES = {
 	error: 'Error. Try again?',
 }
 
-const COMPACT_MESSAGES: $Shape<typeof VERBOSE_MESSAGES> = {
+const COMPACT_MESSAGES = {
 	active: 'Saving…',
 	success: 'Saved',
 	error: 'Error. Try again?',
