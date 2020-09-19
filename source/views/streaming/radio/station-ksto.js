@@ -3,12 +3,12 @@
 import * as React from 'react'
 import {sto} from '../../../lib/colors'
 import {TabBarIcon} from '@frogpond/navigation-tabs'
-import {type TopLevelViewPropsType} from '../../types'
+import type {TopLevelViewPropsType} from '../../types'
 import * as logos from '../../../../images/streaming'
 import {RadioControllerView} from './index'
 import tinycolor from 'tinycolor2'
 import {ThemeProvider} from '@frogpond/app-theme'
-import {type PlayerTheme} from './types'
+import type {PlayerTheme} from './types'
 
 let tintColor = '#37a287'
 const colors: PlayerTheme = {
