@@ -20,6 +20,8 @@ class HTTPError extends Error {
 	}
 }
 
+type RequestOptions = any
+
 type ExpandedFetchArgs = RequestOptions & {
 	// Search parameters to include in the request URL. Setting this will
 	// override all existing search parameters in the input URL.
@@ -47,7 +49,8 @@ class Fetch {
 	request: Request
 	response: Response
 
-	retryCount: number = 0
+	// type number; trivially inferrable from literal
+	retryCount = 0
 
 	options: ExpandedFetchArgs
 
@@ -112,6 +115,8 @@ class Fetch {
 const doFetch = (
 	input: RequestInfo = '',
 	init?: RequestOptions & ExpandedFetchArgs = {},
-): ResponsePromise => (new Fetch(input, init): any)
+) => {
+	new Fetch(input, init)
+}
 
 export {doFetch as fetch}
