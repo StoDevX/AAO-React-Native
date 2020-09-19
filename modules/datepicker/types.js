@@ -1,3 +1,3 @@
 // @flow
 
-export type StyleSheetRules = Object | number | false | Array<StyleSheetRules>
+export type StyleSheetRules = any | number | false | Array<StyleSheetRules>
