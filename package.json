@@ -13,7 +13,7 @@
     "data": "node scripts/bundle-data.js data/ docs/",
     "d": "yarn-deduplicate && yarn",
     "ios": "react-native run-ios",
-    "lint": "eslint --report-unused-disable-directives --cache source/ modules/ scripts/ *.js",
+    "lint": "eslint --report-unused-disable-directives --cache source/ modules/ scripts/",
     "prepare": "ls contrib/*.patch | xargs -n1 patch -p0 -Nfsi || true",
     "pretty": "prettier --write '{source,modules,scripts,e2e}/**/*.{js,ts,tsx,json}' 'data/**/*.css' '{*,.*}.{yaml,yml,json,js,ts,tsx}'",
     "p": "pretty-quick",
