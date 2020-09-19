@@ -2,7 +2,7 @@
 import * as React from 'react'
 import {Cell, Section} from '@frogpond/tableview'
 import {appVersion, appBuild} from '@frogpond/constants'
-import {type NavigationScreenProp} from 'react-navigation'
+import type {NavigationScreenProp} from 'react-navigation'
 
 type Props = {
 	navigation: NavigationScreenProp<*>,

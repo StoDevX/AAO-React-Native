@@ -2,7 +2,7 @@
 import * as React from 'react'
 import {Alert} from 'react-native'
 import {Section, PushButtonCell} from '@frogpond/tableview'
-import {type NavigationScreenProp} from 'react-navigation'
+import type {NavigationScreenProp} from 'react-navigation'
 import {sendEmail} from '../../../../components/send-email'
 import deviceInfo from 'react-native-device-info'
 import {appVersion, appBuild} from '@frogpond/constants'

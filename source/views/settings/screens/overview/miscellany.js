@@ -1,7 +1,7 @@
 // @flow
 import * as React from 'react'
 import {Section, PushButtonCell} from '@frogpond/tableview'
-import {type NavigationScreenProp} from 'react-navigation'
+import type {NavigationScreenProp} from 'react-navigation'
 import {trackedOpenUrl} from '@frogpond/open-url'
 import * as Icons from '@hawkrives/react-native-alternate-icons'
 import {GH_BASE_URL} from '../../../../lib/constants'

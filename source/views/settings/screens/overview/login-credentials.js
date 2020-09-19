@@ -9,7 +9,7 @@ import {
 	type LoginStateEnum,
 } from '../../../../redux/parts/login'
 import {loadLoginCredentials} from '../../../../lib/login'
-import {type ReduxState} from '../../../../redux'
+import type {ReduxState} from '../../../../redux'
 import {useSelector, useDispatch} from 'react-redux'
 import noop from 'lodash/noop'
 

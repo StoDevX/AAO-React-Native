@@ -10,7 +10,7 @@ import toPairs from 'lodash/toPairs'
 import {toLaxTitleCase} from '@frogpond/titlecase'
 import get from 'lodash/get'
 import type {NavigationState} from 'react-navigation'
-import {type ReduxState} from '../../../../redux'
+import type {ReduxState} from '../../../../redux'
 import type {TopLevelViewPropsType} from '../../../types'
 
 type Props = TopLevelViewPropsType & {

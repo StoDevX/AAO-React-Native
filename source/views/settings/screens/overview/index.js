@@ -3,7 +3,7 @@
 import * as React from 'react'
 import {StyleSheet, ScrollView} from 'react-native'
 import {TableView} from '@frogpond/tableview'
-import {type NavigationScreenProp} from 'react-navigation'
+import type {NavigationScreenProp} from 'react-navigation'
 import {isDevMode} from '@frogpond/constants'
 
 import {ConnectedCredentialsLoginSection} from './login-credentials'
