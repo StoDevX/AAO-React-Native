@@ -15,7 +15,8 @@ import type {NavigationScreenProp} from 'react-navigation'
 import size from 'lodash/size'
 import values from 'lodash/values'
 import {ListSeparator, ListSectionHeader} from '@frogpond/lists'
-import {applyFiltersToItem, type FilterType} from '@frogpond/filter'
+import {applyFiltersToItem} from '@frogpond/filter'
+import type {FilterType} from '@frogpond/filter'
 import {NoticeView} from '@frogpond/notice'
 import {FilterMenuToolbar as FilterToolbar} from './filter-menu-toolbar'
 import {FoodItemRow} from './food-item-row'
@@ -214,7 +215,7 @@ export class FancyMenu extends React.Component<Props, State> {
 				refreshing={this.props.refreshing}
 				renderItem={this.renderItem}
 				renderSectionHeader={this.renderSectionHeader}
-				sections={(groupedMenuData: any)}
+				sections={groupedMenuData}
 				style={styles.inner}
 				windowSize={5}
 			/>
