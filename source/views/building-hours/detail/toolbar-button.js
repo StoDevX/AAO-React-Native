@@ -2,7 +2,7 @@
 
 import * as React from 'react'
 import {FavoriteButton} from '@frogpond/navigation-buttons'
-import {type ReduxState} from '../../../redux'
+import type {ReduxState} from '../../../redux'
 import {useSelector, useDispatch} from 'react-redux'
 import {toggleFavoriteBuilding} from '../../../redux/parts/buildings'
 

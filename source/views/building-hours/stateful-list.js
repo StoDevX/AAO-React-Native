@@ -3,7 +3,7 @@
 import * as React from 'react'
 import {NoticeView} from '@frogpond/notice'
 import {BuildingHoursList} from './list'
-import {type ReduxState} from '../../redux'
+import type {ReduxState} from '../../redux'
 import {useSelector} from 'react-redux'
 import type {TopLevelViewPropsType} from '../types'
 import type {BuildingType} from './types'
