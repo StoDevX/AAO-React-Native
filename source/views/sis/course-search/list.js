@@ -10,7 +10,8 @@ import {CourseRow} from './row'
 import memoize from 'lodash/memoize'
 import {parseTerm} from '../../../lib/course-search'
 import {NoticeView} from '@frogpond/notice'
-import {FilterToolbar, type FilterType} from '@frogpond/filter'
+import {FilterToolbar} from '@frogpond/filter'
+import type FilterType from '@frogpond/filter'
 import {applySearch, sortAndGroupResults} from './lib/execute-search'
 
 const styles = StyleSheet.create({

@@ -1,5 +1,6 @@
 // @flow
-import {filterListSpecs, type FilterType} from '@frogpond/filter'
+import {filterListSpecs} from '@frogpond/filter'
+import type {FilterType} from '@frogpond/filter'
 import {formatTerms} from './format-terms'
 
 export type FilterComboType = {
