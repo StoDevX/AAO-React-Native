@@ -2,7 +2,7 @@
 
 import * as React from 'react'
 import {Searchbar as NativeSearchBar} from 'react-native-paper'
-import {type Props} from './types'
+import type {Props} from './types'
 
 export class SearchBar extends React.Component<Props> {
 	static defaultProps = {
