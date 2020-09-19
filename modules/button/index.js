@@ -5,7 +5,7 @@ import BasicButton from 'react-native-button'
 import noop from 'lodash/noop'
 import {material, iOSUIKit} from 'react-native-typography'
 import * as c from '@frogpond/colors'
-import {type AppTheme} from '@frogpond/app-theme'
+import type {AppTheme} from '@frogpond/app-theme'
 import {useTheme} from '@frogpond/app-theme'
 
 const styles = StyleSheet.create({
