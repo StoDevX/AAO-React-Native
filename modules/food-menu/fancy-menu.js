@@ -11,7 +11,7 @@ import type {
 	MenuItemContainerType,
 	StationMenuType,
 } from './types'
-import {type NavigationScreenProp} from 'react-navigation'
+import type {NavigationScreenProp} from 'react-navigation'
 import size from 'lodash/size'
 import values from 'lodash/values'
 import {ListSeparator, ListSectionHeader} from '@frogpond/lists'
