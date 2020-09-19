@@ -3,7 +3,7 @@ import * as React from 'react'
 import {StyleSheet, View, Text, Platform} from 'react-native'
 import {Icon, type Glyphs} from '@frogpond/icon'
 import * as c from '@frogpond/colors'
-import {type AppTheme} from '@frogpond/app-theme'
+import type {AppTheme} from '@frogpond/app-theme'
 import {useTheme} from '@frogpond/app-theme'
 
 const buttonStyles = StyleSheet.create({
