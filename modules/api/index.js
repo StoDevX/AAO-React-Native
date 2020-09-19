@@ -10,7 +10,7 @@ export function setApiRoot(url: string) {
 	root = url
 }
 
-export const API = (path: string, query: ?Object = null) => {
+export const API = (path: string, query: ?unknown = null) => {
 	if (!IS_PRODUCTION) {
 		if (!path.startsWith('/')) {
 			throw new Error('invalid path requested from the api!')
