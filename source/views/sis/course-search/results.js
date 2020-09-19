@@ -8,7 +8,7 @@ import {
 	updateRecentFilters,
 } from '../../../redux/parts/courses'
 import {LoadingView} from '@frogpond/notice'
-import {type CourseType} from '../../../lib/course-search'
+import type {CourseType} from '../../../lib/course-search'
 import type {ReduxState} from '../../../redux'
 import type {TopLevelViewPropsType} from '../../types'
 import {useSelector, useDispatch} from 'react-redux'

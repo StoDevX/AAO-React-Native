@@ -4,7 +4,7 @@ import {StyleSheet, Text, View, Platform} from 'react-native'
 import {ListSeparator, ListRow} from '@frogpond/lists'
 import {NoticeView} from '@frogpond/notice'
 import * as c from '@frogpond/colors'
-import {type AppTheme} from '@frogpond/app-theme'
+import type {AppTheme} from '@frogpond/app-theme'
 import {withTheme} from '@frogpond/app-theme'
 
 type Props = {

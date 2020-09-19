@@ -1,6 +1,6 @@
 // @flow
 
-import {type CourseType as Course} from '../../../../lib/course-search'
+import type {CourseType as Course} from '../../../../lib/course-search'
 import keywordSearch from 'keyword-search'
 import {deptNum} from './format-dept-num'
 import groupBy from 'lodash/groupBy'
