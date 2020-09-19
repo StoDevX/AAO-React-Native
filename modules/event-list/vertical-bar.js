@@ -2,7 +2,7 @@
 import * as React from 'react'
 import {StyleSheet, View, Platform} from 'react-native'
 import * as c from '@frogpond/colors'
-import {type AppTheme} from '@frogpond/app-theme'
+import type {AppTheme} from '@frogpond/app-theme'
 import {useTheme} from '@frogpond/app-theme'
 import type {ViewStyleProp} from 'react-native/Libraries/StyleSheet/StyleSheet'
 
@@ -52,7 +52,7 @@ function SolidBar({style}: {style?: any}) {
 	return <View style={[solidBarStyles.border, style]} />
 }
 
-export function Bar(props: Object) {
+export function Bar(props: any) {
 	switch (Platform.OS) {
 		case 'ios':
 			return <SolidBar {...props} />

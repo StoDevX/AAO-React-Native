@@ -5,7 +5,7 @@ import {Share} from 'react-native'
 import type {EventType} from '@frogpond/event-type'
 import {detailTimes} from './times'
 
-export function shareEvent(event: EventType): Promise<mixed> {
+export function shareEvent(event: EventType): Promise<any> {
 	let title = event.title
 	let times = getTimes(event)
 	let location = event.location
