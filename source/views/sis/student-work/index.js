@@ -126,7 +126,7 @@ export default class StudentWorkView extends React.PureComponent<Props, State> {
 				refreshing={this.state.refreshing}
 				renderItem={this.renderItem}
 				renderSectionHeader={this.renderSectionHeader}
-				sections={(this.state.jobs: any)}
+				sections={this.state.jobs}
 				style={styles.listContainer}
 			/>
 		)
