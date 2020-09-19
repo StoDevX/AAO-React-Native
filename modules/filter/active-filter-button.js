@@ -10,7 +10,7 @@ import {
 } from 'react-native'
 import Icon from 'react-native-vector-icons/Ionicons'
 import {white} from '@frogpond/colors'
-import {type AppTheme} from '@frogpond/app-theme'
+import type {AppTheme} from '@frogpond/app-theme'
 import {useTheme} from '@frogpond/app-theme'
 
 type Props = {

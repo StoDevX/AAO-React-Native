@@ -21,9 +21,6 @@ function updateAnyFilter(callback: (FilterType) => any) {
 			filter = updateListFilter(filter, option)
 		} else if (filter.type === 'picker') {
 			// we don't need to do anything for pickers?
-		} else {
-			// assert to flow that we have handled every case
-			;(filter.type: empty)
 		}
 		callback(filter)
 	}
