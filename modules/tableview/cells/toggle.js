@@ -2,7 +2,7 @@
 import * as React from 'react'
 import {Switch} from 'react-native'
 import {Cell} from 'react-native-tableview-simple'
-import {type AppTheme} from '@frogpond/app-theme'
+import type {AppTheme} from '@frogpond/app-theme'
 import {useTheme} from '@frogpond/app-theme'
 
 type PropsType = {
