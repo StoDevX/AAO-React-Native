@@ -70,7 +70,6 @@ export const routes = {
 	DictionaryEditorView: {screen: DictionaryEditorView},
 	DirectoryView: {screen: DirectoryView},
 	DirectoryDetailView: {screen: DirectoryDetailView},
-	EditHomeView: {screen: EditHomeView},
 	EventDetailView: {screen: EventDetailView},
 	FaqView: {screen: FaqView},
 	HelpView: {screen: HelpView},
