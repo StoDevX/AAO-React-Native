@@ -1,5 +1,3 @@
-// @flow
-
 import {HomeView} from '../views/home'
 import {BuildingHoursDetailView} from '../views/building-hours/detail'
 import {

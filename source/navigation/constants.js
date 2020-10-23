@@ -1,5 +1,3 @@
-// @flow
-
 export const persistenceKey = null
 
 // disabling navigation persistence until we finish an audit of the app
