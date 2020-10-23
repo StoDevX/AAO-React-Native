@@ -1,5 +1,3 @@
-// @flow
-
 /* globals Headers */
 
 import {fetch as fpFetch} from '@frogpond/fetch'

@@ -1,5 +1,3 @@
-// @flow
-
 export type PrintJob = {
 	copies: number,
 	documentName: string,

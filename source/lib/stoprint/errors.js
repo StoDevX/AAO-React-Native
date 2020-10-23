@@ -1,5 +1,3 @@
-// @flow
-
 import {Alert} from 'react-native'
 
 export const showGeneralError = (onDismiss: () => any) => {
