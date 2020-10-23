@@ -1,8 +1,7 @@
-// @flow
-
 import {createTheming} from '@callstack/react-theme-provider'
+import type {ThemingType} from '@callstack/react-theme-provider'
 
-let {ThemeProvider, withTheme, useTheme} = createTheming()
+let {ThemeProvider, withTheme, useTheme} = createTheming() as ThemingType<AppTheme | undefined>
 
 export {ThemeProvider, withTheme, useTheme}
 
@@ -22,18 +21,23 @@ export type AppTheme = {
 	navigationBackground: string,
 	navigationForeground: string,
 	statusBarStyle: 'dark-content' | 'light-content',
-	switchThumbTint: ?string,
-	switchTintOff: ?string,
-	switchTintOn: ?string,
+	switchThumbTint?: string,
+	switchTintOff?: string,
+	switchTintOn?: string,
 	toolbarButtonBackground: string,
 	toolbarButtonForeground: string,
 }
 
 let theme: AppTheme
 
-export function setTheme(newTheme: AppTheme) {
+export function setTheme(newTheme: AppTheme): void {
 	theme = newTheme
-	;({ThemeProvider, withTheme, useTheme} = createTheming(newTheme))
+
+	const result: ThemingType<AppTheme> = createTheming(newTheme)
+
+	ThemeProvider = result.ThemeProvider
+	withTheme = result.withTheme
+	useTheme = result.useTheme
 }
 
 export function getTheme(): AppTheme {
