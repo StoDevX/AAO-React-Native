@@ -2,7 +2,7 @@ import {Alert, Clipboard} from 'react-native'
 import {phonecall} from 'react-native-communications'
 
 type Options = {
-	prompt?: boolean,
+	prompt?: boolean
 }
 
 export function callPhone(phoneNumber: string, opts?: Options): void {
