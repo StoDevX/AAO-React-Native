@@ -28,7 +28,7 @@ export type ReduxState = {
 	login?: LoginState,
 }
 
-export function makeStore(): Store<*, *, *> {
+export function makeStore(): Store {
 	const aao = combineReducers({
 		courses,
 		settings,
