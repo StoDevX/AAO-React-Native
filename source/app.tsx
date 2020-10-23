@@ -1,5 +1,3 @@
-// @flow
-
 // TODO Check on https://github.com/kmagiera/react-native-gesture-handler/issues/320,
 // and remove this if/when it is no longer necessary
 import 'react-native-gesture-handler'
@@ -24,10 +22,8 @@ import {ActionSheetProvider} from '@expo/react-native-action-sheet'
 const store = makeStore()
 initRedux(store)
 
-type Props = {}
-
-export default class App extends React.Component<Props> {
-	render() {
+export default class App extends React.Component {
+	render(): JSX.Element {
 		return (
 			<ReduxProvider store={store}>
 				<PaperProvider>
