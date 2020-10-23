@@ -17,7 +17,7 @@ function getCurrentRouteName(navigationState: NavigationState): ?string {
 export function trackScreenChanges(
 	prevState: NavigationState,
 	currentState: NavigationState,
-) {
+): void {
 	const currentScreen = getCurrentRouteName(currentState)
 	const prevScreen = getCurrentRouteName(prevState)
 
