@@ -8,16 +8,16 @@ type BalancesOrErrorType =
 	| {error: false, value: BalancesShapeType}
 
 export async function getBalances(): Promise<BalancesOrErrorType> {
-	let {username, password} = await loadLoginCredentials()
+	const {username, password} = await loadLoginCredentials()
 
 	if (!username || !password) {
 		return {error: true, value: new Error('Not logged in')}
 	}
 
-	let form = buildFormData({username, password})
+	const form = buildFormData({username, password})
 
 	try {
-		let loginResponse = await fetch(OLECARD_AUTH_URL, {
+		const loginResponse = await fetch(OLECARD_AUTH_URL, {
 			method: 'POST',
 			body: form,
 			credentials: 'include',
@@ -27,8 +27,8 @@ export async function getBalances(): Promise<BalancesOrErrorType> {
 			return {error: true, value: new Error('Login failed')}
 		}
 
-		let url = OLECARD_DATA_ENDPOINT
-		let resp: OleCardBalancesType = await fetch(url, {
+		const url = OLECARD_DATA_ENDPOINT
+		const resp: OleCardBalancesType = await fetch(url, {
 			credentials: 'include',
 		}).then((r) => r.json())
 
@@ -52,13 +52,13 @@ const accounts = {
 }
 
 function getBalancesFromData(resp: OleCardBalancesType): BalancesOrErrorType {
-	let flex = resp.data.accounts.find((a) => a.account === accounts.flex)
-	let ole = resp.data.accounts.find((a) => a.account === accounts.ole)
-	let print = resp.data.accounts.find((a) => a.account === accounts.print)
+	const flex = resp.data.accounts.find((a) => a.account === accounts.flex)
+	const ole = resp.data.accounts.find((a) => a.account === accounts.ole)
+	const print = resp.data.accounts.find((a) => a.account === accounts.print)
 
-	let daily = resp.data.meals && resp.data.meals.leftDaily
-	let weekly = resp.data.meals && resp.data.meals.leftWeekly
-	let plan = resp.data.meals && resp.data.meals.plan
+	const daily = resp.data.meals && resp.data.meals.leftDaily
+	const weekly = resp.data.meals && resp.data.meals.leftWeekly
+	const plan = resp.data.meals && resp.data.meals.plan
 
 	return {
 		error: false,
