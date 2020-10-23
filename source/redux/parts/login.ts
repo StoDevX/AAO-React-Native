@@ -14,9 +14,14 @@ export type LoginStateEnum =
 	| 'invalid'
 	| 'initializing'
 
-type Dispatch<A extends Action> = (action: A | Promise<A> | ThunkAction<A>) => void
+type Dispatch<A extends Action> = (
+	action: A | Promise<A> | ThunkAction<A>,
+) => void
 type GetState = () => ReduxState
-type ThunkAction<A extends Action> = (dispatch: Dispatch<A>, getState: GetState) => void
+type ThunkAction<A extends Action> = (
+	dispatch: Dispatch<A>,
+	getState: GetState,
+) => void
 
 const LOGIN_START = 'settings/CREDENTIALS_LOGIN_START'
 const LOGIN_SUCCESS = 'settings/CREDENTIALS_LOGIN_SUCCESS'
@@ -107,7 +112,7 @@ type Action = CredentialsActions
 type CredentialsActions = LogInActions | LogOutAction
 
 export type State = {
-	readonly status: LoginStateEnum,
+	readonly status: LoginStateEnum
 }
 
 const initialState = {

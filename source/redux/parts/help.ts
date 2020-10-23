@@ -3,9 +3,14 @@ import type {ToolOptions} from '../../views/help/types'
 import {fetch} from '@frogpond/fetch'
 import {API} from '@frogpond/api'
 
-type Dispatch<A extends Action> = (action: A | Promise<A> | ThunkAction<A>) => void
+type Dispatch<A extends Action> = (
+	action: A | Promise<A> | ThunkAction<A>,
+) => void
 type GetState = () => ReduxState
-type ThunkAction<A extends Action> = (dispatch: Dispatch<A>, getState: GetState) => void
+type ThunkAction<A extends Action> = (
+	dispatch: Dispatch<A>,
+	getState: GetState,
+) => void
 type Action = GetEnabledToolsAction
 
 const ENABLED_TOOLS_START = 'help/ENABLED_TOOLS/start'
@@ -14,8 +19,8 @@ const ENABLED_TOOLS_SUCCESS = 'help/ENABLED_TOOLS/success'
 
 type GetEnabledToolsStartAction = {type: 'help/ENABLED_TOOLS/start'}
 type GetEnabledToolsSuccessAction = {
-	type: 'help/ENABLED_TOOLS/success',
-	payload: Array<ToolOptions>,
+	type: 'help/ENABLED_TOOLS/success'
+	payload: Array<ToolOptions>
 }
 type GetEnabledToolsFailureAction = {type: 'help/ENABLED_TOOLS/failure'}
 type GetEnabledToolsAction =
@@ -42,9 +47,9 @@ export function getEnabledTools(): ThunkAction<GetEnabledToolsAction> {
 }
 
 export type State = {
-	readonly fetching: boolean,
-	readonly tools: Array<ToolOptions>,
-	readonly lastFetchError?: boolean,
+	readonly fetching: boolean
+	readonly tools: Array<ToolOptions>
+	readonly lastFetchError?: boolean
 }
 
 const initialState = {

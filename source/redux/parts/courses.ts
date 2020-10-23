@@ -8,22 +8,25 @@ import {
 import type {CourseType} from '../../lib/course-search'
 import * as storage from '../../lib/storage'
 import type {FilterComboType} from '../../views/sis/course-search/lib/format-filter-combo'
-import {
-	formatFilterCombo,
-} from '../../views/sis/course-search/lib/format-filter-combo'
+import {formatFilterCombo} from '../../views/sis/course-search/lib/format-filter-combo'
 
 const LOAD_CACHED_COURSES = 'courses/LOAD_CACHED_COURSES'
 const COURSES_LOADED = 'courses/COURSES_LOADED'
 
-type Dispatch<A extends Action> = (action: A | Promise<A> | ThunkAction<A>) => void
+type Dispatch<A extends Action> = (
+	action: A | Promise<A> | ThunkAction<A>,
+) => void
 type GetState = () => ReduxState
-type ThunkAction<A extends Action> = (dispatch: Dispatch<A>, getState: GetState) => void
+type ThunkAction<A extends Action> = (
+	dispatch: Dispatch<A>,
+	getState: GetState,
+) => void
 
 const UPDATE_RECENT_FILTERS = 'courses/UPDATE_RECENT_FILTERS'
 
 type UpdateRecentFiltersAction = {
-	type: 'courses/UPDATE_RECENT_FILTERS',
-	payload: FilterComboType[],
+	type: 'courses/UPDATE_RECENT_FILTERS'
+	payload: FilterComboType[]
 }
 
 export function updateRecentFilters(
@@ -53,8 +56,8 @@ export function updateRecentFilters(
 const LOAD_RECENT_FILTERS = 'courses/LOAD_RECENT_FILTERS'
 
 type LoadRecentFiltersAction = {
-	type: 'courses/LOAD_RECENT_FILTERS',
-	payload: FilterComboType[],
+	type: 'courses/LOAD_RECENT_FILTERS'
+	payload: FilterComboType[]
 }
 export async function loadRecentFilters(): Promise<LoadRecentFiltersAction> {
 	const recentFilters = await storage.getRecentFilters()
@@ -62,18 +65,18 @@ export async function loadRecentFilters(): Promise<LoadRecentFiltersAction> {
 }
 
 type LoadCachedCoursesAction = {
-	type: 'courses/LOAD_CACHED_COURSES',
-	payload: Array<CourseType>,
+	type: 'courses/LOAD_CACHED_COURSES'
+	payload: Array<CourseType>
 }
 type CoursesLoadedAction = {
-	type: 'courses/COURSES_LOADED',
+	type: 'courses/COURSES_LOADED'
 }
 
 export type LoadCourseDataActionType = ThunkAction<
-	LoadCachedCoursesAction | CoursesLoadedAction,
+	LoadCachedCoursesAction | CoursesLoadedAction
 >
 export type UpdateCourseDataActionType = ThunkAction<
-	LoadCachedCoursesAction | CoursesLoadedAction,
+	LoadCachedCoursesAction | CoursesLoadedAction
 >
 
 export function loadCourseDataIntoMemory(): LoadCourseDataActionType {
@@ -105,8 +108,8 @@ export function updateCourseData(): UpdateCourseDataActionType {
 const LOAD_RECENT_SEARCHES = 'courses/LOAD_RECENT_SEARCHES'
 
 type LoadRecentSearchesAction = {
-	type: 'courses/LOAD_RECENT_SEARCHES',
-	payload: string[],
+	type: 'courses/LOAD_RECENT_SEARCHES'
+	payload: string[]
 }
 export async function loadRecentSearches(): Promise<LoadRecentSearchesAction> {
 	const recentSearches = await storage.getRecentSearches()
@@ -116,8 +119,8 @@ export async function loadRecentSearches(): Promise<LoadRecentSearchesAction> {
 const UPDATE_RECENT_SEARCHES = 'courses/UPDATE_RECENT_SEARCHES'
 
 type UpdateRecentSearchesAction = {
-	type: 'courses/UPDATE_RECENT_SEARCHES',
-	payload: string[],
+	type: 'courses/UPDATE_RECENT_SEARCHES'
+	payload: string[]
 }
 export function updateRecentSearches(
 	query: string,
@@ -148,11 +151,11 @@ type Action =
 	| LoadRecentFiltersAction
 
 export type State = {
-	allCourses: Array<CourseType>,
-	readyState: 'not-loaded' | 'ready',
-	validGEs: string[],
-	recentFilters: FilterComboType[],
-	recentSearches: string[],
+	allCourses: Array<CourseType>
+	readyState: 'not-loaded' | 'ready'
+	validGEs: string[]
+	recentFilters: FilterComboType[]
+	recentSearches: string[]
 }
 
 const initialState = {

@@ -1,17 +1,22 @@
 import * as storage from '../../lib/storage'
 import type {ReduxState} from '../index'
 
-type Dispatch<A extends Action> = (action: A | Promise<A> | ThunkAction<A>) => void
+type Dispatch<A extends Action> = (
+	action: A | Promise<A> | ThunkAction<A>,
+) => void
 type GetState = () => ReduxState
-type ThunkAction<A extends Action> = (dispatch: Dispatch<A>, getState: GetState) => void
+type ThunkAction<A extends Action> = (
+	dispatch: Dispatch<A>,
+	getState: GetState,
+) => void
 type Action = ToggleFavoriteAction | LoadFavoritesAction
 
 const LOAD_FAVORITE_BUILDINGS = 'buildings/LOAD_FAVORITE_BUILDINGS'
 const TOGGLE_FAVORITE_BUILDING = 'buildings/TOGGLE_FAVORITE_BUILDING'
 
 type LoadFavoritesAction = {
-	type: 'buildings/LOAD_FAVORITE_BUILDINGS',
-	payload: Array<string>,
+	type: 'buildings/LOAD_FAVORITE_BUILDINGS'
+	payload: Array<string>
 }
 export async function loadFavoriteBuildings(): Promise<LoadFavoritesAction> {
 	const favoriteBuildings = await storage.getFavoriteBuildings()
@@ -19,8 +24,8 @@ export async function loadFavoriteBuildings(): Promise<LoadFavoritesAction> {
 }
 
 type ToggleFavoriteAction = {
-	type: 'buildings/TOGGLE_FAVORITE_BUILDING',
-	payload: Array<string>,
+	type: 'buildings/TOGGLE_FAVORITE_BUILDING'
+	payload: Array<string>
 }
 export function toggleFavoriteBuilding(
 	buildingName: string,
@@ -45,7 +50,7 @@ export function toggleFavoriteBuilding(
 }
 
 export type State = {
-	favorites: Array<string>,
+	favorites: Array<string>
 }
 
 const initialState: State = {

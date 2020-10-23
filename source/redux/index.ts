@@ -20,12 +20,12 @@ import type {State as LoginState} from './parts/login'
 export {init as initRedux} from './init'
 
 export type ReduxState = {
-	courses?: CoursesState,
-	settings?: SettingsState,
-	buildings?: BuildingsState,
-	help?: HelpState,
-	stoprint?: StoPrintState,
-	login?: LoginState,
+	courses?: CoursesState
+	settings?: SettingsState
+	buildings?: BuildingsState
+	help?: HelpState
+	stoprint?: StoPrintState
+	login?: LoginState
 }
 
 export function makeStore(): Store {

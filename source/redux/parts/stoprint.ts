@@ -9,9 +9,14 @@ import {
 	logIn,
 } from '../../lib/stoprint'
 
-type Dispatch<A extends Action> = (action: A | Promise<A> | ThunkAction<A>) => void
+type Dispatch<A extends Action> = (
+	action: A | Promise<A> | ThunkAction<A>,
+) => void
 type GetState = () => ReduxState
-type ThunkAction<A extends Action> = (dispatch: Dispatch<A>, getState: GetState) => void
+type ThunkAction<A extends Action> = (
+	dispatch: Dispatch<A>,
+	getState: GetState,
+) => void
 type Action = UpdateAllPrintersAction | UpdatePrintJobsAction
 
 const UPDATE_ALL_PRINTERS_FAILURE = 'stoprint/UPDATE_ALL_PRINTERS/FAILURE'
@@ -20,18 +25,18 @@ const UPDATE_PRINT_JOBS_FAILURE = 'stoprint/UPDATE_PRINT_JOBS/FAILURE'
 const UPDATE_PRINT_JOBS_SUCCESS = 'stoprint/UPDATE_PRINT_JOBS/SUCCESS'
 
 type UpdateAllPrintersFailureAction = {
-	type: 'stoprint/UPDATE_ALL_PRINTERS/FAILURE',
-	payload: string,
+	type: 'stoprint/UPDATE_ALL_PRINTERS/FAILURE'
+	payload: string
 }
 
 type UpdateAllPrintersSuccessAction = {
-	type: 'stoprint/UPDATE_ALL_PRINTERS/SUCCESS',
+	type: 'stoprint/UPDATE_ALL_PRINTERS/SUCCESS'
 	payload: {
-		allPrinters: Array<Printer>,
-		popularPrinters: Array<Printer>,
-		recentPrinters: Array<Printer>,
-		colorPrinters: Array<Printer>,
-	},
+		allPrinters: Array<Printer>
+		popularPrinters: Array<Printer>
+		recentPrinters: Array<Printer>
+		colorPrinters: Array<Printer>
+	}
 }
 
 type UpdateAllPrintersAction =
@@ -39,13 +44,13 @@ type UpdateAllPrintersAction =
 	| UpdateAllPrintersFailureAction
 
 type UpdatePrintJobsFailureAction = {
-	type: 'stoprint/UPDATE_PRINT_JOBS/FAILURE',
-	payload: string,
+	type: 'stoprint/UPDATE_PRINT_JOBS/FAILURE'
+	payload: string
 }
 
 type UpdatePrintJobsSuccessAction = {
-	type: 'stoprint/UPDATE_PRINT_JOBS/SUCCESS',
-	payload: Array<PrintJob>,
+	type: 'stoprint/UPDATE_PRINT_JOBS/SUCCESS'
+	payload: Array<PrintJob>
 }
 
 type UpdatePrintJobsAction =
@@ -143,13 +148,13 @@ export function updatePrintJobs(): ThunkAction<UpdatePrintJobsAction> {
 }
 
 export type State = {
-	jobs: Array<PrintJob>,
-	printers: Array<Printer>,
-	recentPrinters: Array<Printer>, // printer names
-	popularPrinters: Array<Printer>, // printer names
-	colorPrinters: Array<Printer>,
-	jobsError?: string,
-	printersError?: string,
+	jobs: Array<PrintJob>
+	printers: Array<Printer>
+	recentPrinters: Array<Printer> // printer names
+	popularPrinters: Array<Printer> // printer names
+	colorPrinters: Array<Printer>
+	jobsError?: string
+	printersError?: string
 }
 
 const initialState: State = {
