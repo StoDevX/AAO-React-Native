@@ -14,9 +14,9 @@ export type LoginStateEnum =
 	| 'invalid'
 	| 'initializing'
 
-type Dispatch<A: Action> = (action: A | Promise<A> | ThunkAction<A>) => any
+type Dispatch<A extends Action> = (action: A | Promise<A> | ThunkAction<A>) => any
 type GetState = () => ReduxState
-type ThunkAction<A: Action> = (dispatch: Dispatch<A>, getState: GetState) => any
+type ThunkAction<A extends Action> = (dispatch: Dispatch<A>, getState: GetState) => any
 
 const LOGIN_START = 'settings/CREDENTIALS_LOGIN_START'
 const LOGIN_SUCCESS = 'settings/CREDENTIALS_LOGIN_SUCCESS'
@@ -92,7 +92,6 @@ export function logInViaCredentials(
 			showUnknownFailureMessage()
 		} else {
 			showUnknownFailureMessage()
-			;(result: empty)
 		}
 	}
 }
@@ -108,7 +107,7 @@ type Action = CredentialsActions
 type CredentialsActions = LogInActions | LogOutAction
 
 export type State = {
-	+status: LoginStateEnum,
+	readonly status: LoginStateEnum,
 }
 
 const initialState = {

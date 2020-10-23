@@ -5,9 +5,9 @@ import {
 
 import type {ReduxState} from '../index'
 
-type Dispatch<A: Action> = (action: A | Promise<A> | ThunkAction<A>) => any
+type Dispatch<A extends Action> = (action: A | Promise<A> | ThunkAction<A>) => any
 type GetState = () => ReduxState
-type ThunkAction<A: Action> = (dispatch: Dispatch<A>, getState: GetState) => any
+type ThunkAction<A extends Action> = (dispatch: Dispatch<A>, getState: GetState) => any
 
 const CHANGE_THEME = 'settings/CHANGE_THEME'
 const SIS_ALERT_SEEN = 'settings/SIS_ALERT_SEEN'
@@ -27,9 +27,9 @@ export async function hasSeenAcknowledgement(): Promise<SisAlertSeenAction> {
 type Action = SisAlertSeenAction | ChangeThemeAction
 
 export type State = {
-	+theme: string,
-	+dietaryPreferences: [],
-	+unofficiallyAcknowledged: boolean,
+	readonly theme: string,
+	readonly dietaryPreferences: [],
+	readonly unofficiallyAcknowledged: boolean,
 }
 
 const initialState = {

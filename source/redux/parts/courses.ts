@@ -7,17 +7,17 @@ import {
 } from '../../lib/course-search'
 import type {CourseType} from '../../lib/course-search'
 import * as storage from '../../lib/storage'
+import type {FilterComboType} from '../../views/sis/course-search/lib/format-filter-combo'
 import {
-	type FilterComboType,
 	formatFilterCombo,
 } from '../../views/sis/course-search/lib/format-filter-combo'
 
 const LOAD_CACHED_COURSES = 'courses/LOAD_CACHED_COURSES'
 const COURSES_LOADED = 'courses/COURSES_LOADED'
 
-type Dispatch<A: Action> = (action: A | Promise<A> | ThunkAction<A>) => any
+type Dispatch<A extends Action> = (action: A | Promise<A> | ThunkAction<A>) => any
 type GetState = () => ReduxState
-type ThunkAction<A: Action> = (dispatch: Dispatch<A>, getState: GetState) => any
+type ThunkAction<A extends Action> = (dispatch: Dispatch<A>, getState: GetState) => any
 
 const UPDATE_RECENT_FILTERS = 'courses/UPDATE_RECENT_FILTERS'
 

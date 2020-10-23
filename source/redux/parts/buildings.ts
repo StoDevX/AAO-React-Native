@@ -1,9 +1,9 @@
 import * as storage from '../../lib/storage'
 import type {ReduxState} from '../index'
 
-type Dispatch<A: Action> = (action: A | Promise<A> | ThunkAction<A>) => any
+type Dispatch<A extends Action> = (action: A | Promise<A> | ThunkAction<A>) => any
 type GetState = () => ReduxState
-type ThunkAction<A: Action> = (dispatch: Dispatch<A>, getState: GetState) => any
+type ThunkAction<A extends Action> = (dispatch: Dispatch<A>, getState: GetState) => any
 type Action = ToggleFavoriteAction | LoadFavoritesAction
 
 const LOAD_FAVORITE_BUILDINGS = 'buildings/LOAD_FAVORITE_BUILDINGS'
