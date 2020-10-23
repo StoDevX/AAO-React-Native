@@ -4,8 +4,8 @@ import {COURSE_DATA_PAGE, INFO_PAGE} from './urls'
 import * as storage from '../storage'
 
 type TermInfoType = {
-	files: Array<TermType>,
-	type: string,
+	files: Array<TermType>
+	type: string
 }
 
 export async function areAnyTermsCached(): Promise<boolean> {

@@ -8,11 +8,11 @@ const filterCategories = {
 	departments: {name: 'departments', url: DEPT_DATA},
 }
 
-type FilterCategory = {name: string, url: string}
+type FilterCategory = {name: string; url: string}
 
 type AllFilterCategories = {
-	ges: string[],
-	departments: string[],
+	ges: string[]
+	departments: string[]
 }
 
 export function loadAllCourseFilterOptions(): Promise<AllFilterCategories> {
