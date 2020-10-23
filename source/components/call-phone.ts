@@ -6,7 +6,7 @@ type Options = {
 }
 
 export function callPhone(phoneNumber: string, opts?: Options): void {
-	let {prompt = true} = opts || {}
+	const {prompt = true} = opts || {}
 	try {
 		phonecall(phoneNumber, prompt)
 	} catch (err) {

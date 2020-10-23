@@ -10,11 +10,11 @@ type Args = {
 }
 
 export function sendEmail(args: Args): void {
-	let {to = [], cc = [], bcc = [], subject = '', body = ''} = args
+	const {to = [], cc = [], bcc = [], subject = '', body = ''} = args
 	try {
 		email(to, cc, bcc, subject, body)
 	} catch (err) {
-		let toString = to.join(', ')
+		const toString = to.join(', ')
 
 		Alert.alert(
 			"Apologies, we couldn't open an email client",
