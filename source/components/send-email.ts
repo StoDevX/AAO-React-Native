@@ -22,7 +22,9 @@ export function sendEmail(args: Args): void {
 			[
 				{
 					text: 'Darn',
-					onPress: () => {},
+					onPress: () => {
+						// do nothing
+					},
 				},
 				{
 					text: 'Copy addresses',

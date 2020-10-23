@@ -16,7 +16,9 @@ export function callPhone(phoneNumber: string, opts?: Options): void {
 			[
 				{
 					text: 'Darn',
-					onPress: () => {},
+					onPress: () => {
+						// do nothing.
+					},
 				},
 				{
 					text: 'Copy number',
