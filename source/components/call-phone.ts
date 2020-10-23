@@ -5,7 +5,7 @@ type Options = {
 	prompt?: boolean,
 }
 
-export function callPhone(phoneNumber: string, opts?: Options) {
+export function callPhone(phoneNumber: string, opts?: Options): void {
 	let {prompt = true} = opts || {}
 	try {
 		phonecall(phoneNumber, prompt)

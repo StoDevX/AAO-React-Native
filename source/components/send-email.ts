@@ -9,7 +9,7 @@ type Args = {
 	body?: string,
 }
 
-export function sendEmail(args: Args) {
+export function sendEmail(args: Args): void {
 	let {to = [], cc = [], bcc = [], subject = '', body = ''} = args
 	try {
 		email(to, cc, bcc, subject, body)
