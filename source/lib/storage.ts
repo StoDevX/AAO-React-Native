@@ -51,7 +51,10 @@ import type {FilterComboType} from '../views/sis/course-search/lib/format-filter
 import type {CourseType, TermType} from './course-search/types'
 
 const courseDataKey = 'sis:course-data'
-export function setTermCourseData(term: number, courseData: Array<CourseType>): Promise<void> {
+export function setTermCourseData(
+	term: number,
+	courseData: Array<CourseType>,
+): Promise<void> {
 	const key = courseDataKey + `:${term}:courses`
 	return setItem(key, courseData)
 }
@@ -67,7 +70,10 @@ export function getTermInfo(): Promise<Array<TermType>> {
 	return getItemAsArray(termInfoKey)
 }
 const filterDataKey = courseDataKey + ':filter-data'
-export function setCourseFilterOption(name: string, data: string[]): Promise<void> {
+export function setCourseFilterOption(
+	name: string,
+	data: string[],
+): Promise<void> {
 	const key = filterDataKey + `:${name}`
 	return setItem(key, data)
 }
@@ -85,7 +91,9 @@ export function getRecentSearches(): Promise<Array<string>> {
 }
 
 const recentFiltersKey = 'courses:recent-filters'
-export function setRecentFilters(combos: Array<FilterComboType>): Promise<void> {
+export function setRecentFilters(
+	combos: Array<FilterComboType>,
+): Promise<void> {
 	return setItem(recentFiltersKey, combos)
 }
 export function getRecentFilters(): Promise<Array<FilterComboType>> {

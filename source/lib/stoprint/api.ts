@@ -84,7 +84,9 @@ export const fetchRecentPrinters = (
 
 const colorPrintersUrl = API('/printing/color-printers')
 
-export const fetchColorPrinters = (): Promise<ColorPrintersResponseOrErrorType> =>
+export const fetchColorPrinters = (): Promise<
+	ColorPrintersResponseOrErrorType
+> =>
 	papercut(colorPrintersUrl)
 		.then((response) => ({error: false, value: response}))
 		.catch(() => ({
@@ -124,9 +126,9 @@ export const releasePrintJobToPrinterForUser = ({
 	printerName,
 	username,
 }: {
-	jobId: string,
-	printerName: string,
-	username: string,
+	jobId: string
+	printerName: string
+	username: string
 }): Promise<ReleaseResponseOrErrorType> =>
 	papercut(
 		`${PAPERCUT_MOBILE_RELEASE_API}/held-jobs/release?username=${username}`,

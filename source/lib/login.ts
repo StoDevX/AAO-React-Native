@@ -3,7 +3,7 @@ import {
 	getInternetCredentials,
 	resetInternetCredentials,
 } from 'react-native-keychain'
-import type { Result as RNKeychainResult } from 'react-native-keychain'
+import type {Result as RNKeychainResult} from 'react-native-keychain'
 
 import buildFormData from './formdata'
 import {OLECARD_AUTH_URL} from './financials/urls'
@@ -12,10 +12,13 @@ const SIS_LOGIN_KEY = 'stolaf.edu'
 
 const empty = () => ({})
 
-export type Credentials = {username: string, password: string}
-export type MaybeCredentials = {username?: string, password?: string}
+export type Credentials = {username: string; password: string}
+export type MaybeCredentials = {username?: string; password?: string}
 
-export function saveLoginCredentials({username, password}: Credentials): Promise<false | RNKeychainResult> {
+export function saveLoginCredentials({
+	username,
+	password,
+}: Credentials): Promise<false | RNKeychainResult> {
 	return setInternetCredentials(SIS_LOGIN_KEY, username, password).catch(empty)
 }
 export function loadLoginCredentials(): Promise<MaybeCredentials> {
@@ -35,9 +38,9 @@ export type LoginResultEnum =
 
 type Args = {attempts?: number}
 
-export async function performLogin({
-	attempts = 0,
-}: Args = {}): Promise<LoginResultEnum> {
+export async function performLogin({attempts = 0}: Args = {}): Promise<
+	LoginResultEnum
+> {
 	const {username, password} = await loadLoginCredentials()
 	if (!username || !password) {
 		return 'no-credentials'
