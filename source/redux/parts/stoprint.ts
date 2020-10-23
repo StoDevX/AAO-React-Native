@@ -9,9 +9,9 @@ import {
 	logIn,
 } from '../../lib/stoprint'
 
-type Dispatch<A extends Action> = (action: A | Promise<A> | ThunkAction<A>) => any
+type Dispatch<A extends Action> = (action: A | Promise<A> | ThunkAction<A>) => void
 type GetState = () => ReduxState
-type ThunkAction<A extends Action> = (dispatch: Dispatch<A>, getState: GetState) => any
+type ThunkAction<A extends Action> = (dispatch: Dispatch<A>, getState: GetState) => void
 type Action = UpdateAllPrintersAction | UpdatePrintJobsAction
 
 const UPDATE_ALL_PRINTERS_FAILURE = 'stoprint/UPDATE_ALL_PRINTERS/FAILURE'

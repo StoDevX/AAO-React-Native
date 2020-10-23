@@ -3,9 +3,9 @@ import type {ToolOptions} from '../../views/help/types'
 import {fetch} from '@frogpond/fetch'
 import {API} from '@frogpond/api'
 
-type Dispatch<A extends Action> = (action: A | Promise<A> | ThunkAction<A>) => any
+type Dispatch<A extends Action> = (action: A | Promise<A> | ThunkAction<A>) => void
 type GetState = () => ReduxState
-type ThunkAction<A extends Action> = (dispatch: Dispatch<A>, getState: GetState) => any
+type ThunkAction<A extends Action> = (dispatch: Dispatch<A>, getState: GetState) => void
 type Action = GetEnabledToolsAction
 
 const ENABLED_TOOLS_START = 'help/ENABLED_TOOLS/start'

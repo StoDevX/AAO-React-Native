@@ -6,7 +6,8 @@ import {loadFavoriteBuildings} from './parts/buildings'
 import {loadAcknowledgement} from './parts/settings'
 import {loadRecentSearches, loadRecentFilters} from './parts/courses'
 
-export async function init(store: {dispatch: (any) => any}) {
+// TODO: Fix the type parameter on store.dispatch
+export async function init(store: {dispatch: (any: unknown) => void}): void {
 	// this function runs in two parts: the things that don't care about
 	// network, and those that do.
 

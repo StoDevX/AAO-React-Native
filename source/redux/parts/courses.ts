@@ -15,9 +15,9 @@ import {
 const LOAD_CACHED_COURSES = 'courses/LOAD_CACHED_COURSES'
 const COURSES_LOADED = 'courses/COURSES_LOADED'
 
-type Dispatch<A extends Action> = (action: A | Promise<A> | ThunkAction<A>) => any
+type Dispatch<A extends Action> = (action: A | Promise<A> | ThunkAction<A>) => void
 type GetState = () => ReduxState
-type ThunkAction<A extends Action> = (dispatch: Dispatch<A>, getState: GetState) => any
+type ThunkAction<A extends Action> = (dispatch: Dispatch<A>, getState: GetState) => void
 
 const UPDATE_RECENT_FILTERS = 'courses/UPDATE_RECENT_FILTERS'
 
