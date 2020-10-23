@@ -1,5 +1,3 @@
-// @flow
-
 import * as Sentry from '@sentry/react-native'
 import type {EventType} from '@frogpond/event-type'
 import RNCalendarEvents from 'react-native-calendar-events'
