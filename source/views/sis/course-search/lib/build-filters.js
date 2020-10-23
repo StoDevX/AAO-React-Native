@@ -1,5 +1,3 @@
-// @flow
-
 import {getTermInfo} from '../../../../lib/storage'
 import {parseTerm} from '../../../../lib/course-search/parse-term'
 import type {FilterType} from '@frogpond/filter'

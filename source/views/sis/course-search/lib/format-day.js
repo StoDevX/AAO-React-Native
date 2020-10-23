@@ -1,5 +1,3 @@
-// @flow
-
 export function formatDay(day: string) {
 	switch (day) {
 		case 'Mo':
