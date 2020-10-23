@@ -1,5 +1,3 @@
-// @flow
-
 import type {ReduxState} from '../index'
 import type {FilterType} from '@frogpond/filter'
 import {

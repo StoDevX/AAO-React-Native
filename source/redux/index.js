@@ -1,5 +1,3 @@
-// @flow
-
 import {createStore, applyMiddleware, combineReducers, type Store} from 'redux'
 import {createLogger} from 'redux-logger'
 import reduxPromise from 'redux-promise'

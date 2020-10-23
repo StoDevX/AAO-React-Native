@@ -1,5 +1,3 @@
-// @flow
-
 import * as storage from '../../lib/storage'
 import type {ReduxState} from '../index'
 
