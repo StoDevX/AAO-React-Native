@@ -1,5 +1,3 @@
-// @flow
-
 import {Alert, Clipboard} from 'react-native'
 import {email} from 'react-native-communications'
 

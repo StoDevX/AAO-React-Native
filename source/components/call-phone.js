@@ -1,5 +1,3 @@
-// @flow
-
 import {Alert, Clipboard} from 'react-native'
 import {phonecall} from 'react-native-communications'
 
