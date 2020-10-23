@@ -124,7 +124,7 @@ export const releasePrintJobToPrinterForUser = ({
 	printerName,
 	username,
 }: {
-	jobId: any,
+	jobId: string,
 	printerName: string,
 	username: string,
 }): Promise<ReleaseResponseOrErrorType> =>
