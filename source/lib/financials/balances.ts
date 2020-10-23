@@ -4,8 +4,8 @@ import {OLECARD_AUTH_URL, OLECARD_DATA_ENDPOINT} from './urls'
 import type {BalancesShapeType, OleCardBalancesType} from './types'
 
 type BalancesOrErrorType =
-	| {error: true, value: Error}
-	| {error: false, value: BalancesShapeType}
+	| {error: true; value: Error}
+	| {error: false; value: BalancesShapeType}
 
 export async function getBalances(): Promise<BalancesOrErrorType> {
 	const {username, password} = await loadLoginCredentials()
