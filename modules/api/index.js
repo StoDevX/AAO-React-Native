@@ -1,5 +1,3 @@
-// @flow
-
 import qs from 'query-string'
 
 import {IS_PRODUCTION} from '@frogpond/constants'
