@@ -6,7 +6,7 @@ function getCurrentRouteName(navigationState: NavigationState): ?string {
 	if (!navigationState) {
 		return null
 	}
-	let route = navigationState.routes[navigationState.index]
+	const route = navigationState.routes[navigationState.index]
 	// dive into nested navigators
 	if (route.routes) {
 		return getCurrentRouteName(route)
@@ -18,8 +18,8 @@ export function trackScreenChanges(
 	prevState: NavigationState,
 	currentState: NavigationState,
 ) {
-	let currentScreen = getCurrentRouteName(currentState)
-	let prevScreen = getCurrentRouteName(prevState)
+	const currentScreen = getCurrentRouteName(currentState)
+	const prevScreen = getCurrentRouteName(prevState)
 
 	if (!currentScreen) {
 		return

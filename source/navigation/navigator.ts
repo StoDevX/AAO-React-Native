@@ -4,7 +4,7 @@ import * as c from '@frogpond/colors'
 import {getTheme} from '@frogpond/app-theme'
 import {routes} from './routes'
 
-let theme = getTheme()
+const theme = getTheme()
 
 const styles = StyleSheet.create({
 	header: {
