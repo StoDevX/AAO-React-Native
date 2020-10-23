@@ -13,7 +13,7 @@ setStoragePrefix('aao:')
 /// MARK: Settings
 
 const homescreenOrderKey = 'homescreen:view-order'
-export function setHomescreenOrder(order: string[]) {
+export function setHomescreenOrder(order: string[]): Promise<void> {
 	return setItem(homescreenOrderKey, order)
 }
 export function getHomescreenOrder(): Promise<Array<string>> {
@@ -21,7 +21,7 @@ export function getHomescreenOrder(): Promise<Array<string>> {
 }
 
 const homescreenViewsKey = 'homescreen:disabled-views'
-export function setDisabledViews(disabledViews: string[]) {
+export function setDisabledViews(disabledViews: string[]): Promise<void> {
 	return setItem(homescreenViewsKey, disabledViews)
 }
 export function getDisabledViews(): Promise<Array<string>> {
@@ -29,7 +29,7 @@ export function getDisabledViews(): Promise<Array<string>> {
 }
 
 const acknowledgementStatusKey = 'settings:ackd'
-export function setAcknowledgementStatus(status: boolean) {
+export function setAcknowledgementStatus(status: boolean): Promise<void> {
 	return setItem(acknowledgementStatusKey, status)
 }
 export function getAcknowledgementStatus(): Promise<boolean> {
@@ -39,7 +39,7 @@ export function getAcknowledgementStatus(): Promise<boolean> {
 /// MARK: Favorite Buildings
 
 const favoriteBuildingsKey = 'buildings:favorited'
-export function setFavoriteBuildings(buildings: string[]) {
+export function setFavoriteBuildings(buildings: string[]): Promise<void> {
 	return setItem(favoriteBuildingsKey, buildings)
 }
 export function getFavoriteBuildings(): Promise<Array<string>> {
@@ -51,7 +51,7 @@ import type {FilterComboType} from '../views/sis/course-search/lib/format-filter
 import type {CourseType, TermType} from './course-search/types'
 
 const courseDataKey = 'sis:course-data'
-export function setTermCourseData(term: number, courseData: Array<CourseType>) {
+export function setTermCourseData(term: number, courseData: Array<CourseType>): Promise<void> {
 	const key = courseDataKey + `:${term}:courses`
 	return setItem(key, courseData)
 }
@@ -60,14 +60,14 @@ export function getTermCourseData(term: number): Promise<Array<CourseType>> {
 	return getItemAsArray(key)
 }
 const termInfoKey = courseDataKey + ':term-info'
-export function setTermInfo(termData: Array<TermType>) {
+export function setTermInfo(termData: Array<TermType>): Promise<void> {
 	return setItem(termInfoKey, termData)
 }
 export function getTermInfo(): Promise<Array<TermType>> {
 	return getItemAsArray(termInfoKey)
 }
 const filterDataKey = courseDataKey + ':filter-data'
-export function setCourseFilterOption(name: string, data: string[]) {
+export function setCourseFilterOption(name: string, data: string[]): Promise<void> {
 	const key = filterDataKey + `:${name}`
 	return setItem(key, data)
 }
@@ -77,7 +77,7 @@ export function getCourseFilterOption(name: string): Promise<Array<string>> {
 }
 
 const recentSearchesKey = 'courses:recent-searches'
-export function setRecentSearches(searches: string[]) {
+export function setRecentSearches(searches: string[]): Promise<void> {
 	return setItem(recentSearchesKey, searches)
 }
 export function getRecentSearches(): Promise<Array<string>> {
@@ -85,7 +85,7 @@ export function getRecentSearches(): Promise<Array<string>> {
 }
 
 const recentFiltersKey = 'courses:recent-filters'
-export function setRecentFilters(combos: Array<FilterComboType>) {
+export function setRecentFilters(combos: Array<FilterComboType>): Promise<void> {
 	return setItem(recentFiltersKey, combos)
 }
 export function getRecentFilters(): Promise<Array<FilterComboType>> {

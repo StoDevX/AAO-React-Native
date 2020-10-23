@@ -3,6 +3,7 @@ import {
 	getInternetCredentials,
 	resetInternetCredentials,
 } from 'react-native-keychain'
+import type { Result as RNKeychainResult } from 'react-native-keychain'
 
 import buildFormData from './formdata'
 import {OLECARD_AUTH_URL} from './financials/urls'
@@ -14,13 +15,13 @@ const empty = () => ({})
 export type Credentials = {username: string, password: string}
 export type MaybeCredentials = {username?: string, password?: string}
 
-export function saveLoginCredentials({username, password}: Credentials) {
+export function saveLoginCredentials({username, password}: Credentials): Promise<false | RNKeychainResult> {
 	return setInternetCredentials(SIS_LOGIN_KEY, username, password).catch(empty)
 }
 export function loadLoginCredentials(): Promise<MaybeCredentials> {
 	return getInternetCredentials(SIS_LOGIN_KEY).catch(empty)
 }
-export function clearLoginCredentials() {
+export function clearLoginCredentials(): Promise<void> {
 	return resetInternetCredentials(SIS_LOGIN_KEY).catch(empty)
 }
 

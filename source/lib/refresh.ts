@@ -3,7 +3,7 @@ import restart from 'react-native-restart'
 import {clearLoginCredentials} from './login'
 import * as icons from '@hawkrives/react-native-alternate-icons'
 
-export async function refreshApp() {
+export async function refreshApp(): void {
 	// Clear AsyncStorage
 	await clearAsyncStorage()
 
