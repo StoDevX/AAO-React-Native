@@ -36,6 +36,6 @@ const dataSets = [
 	},
 ]
 
-for (let {url, data} of dataSets) {
+for (const {url, data} of dataSets) {
 	insertForUrl(url, data)
 }
