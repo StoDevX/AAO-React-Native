@@ -1,4 +1,4 @@
-export function parseTerm(term: string) {
+export function parseTerm(term: string): string {
 	const semester = term.slice(-1)
 	const year = term.slice(0, -1)
 	const currentYear = parseInt(year)
