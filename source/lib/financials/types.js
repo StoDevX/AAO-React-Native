@@ -1,4 +1,3 @@
-// @flow
 export type BalancesShapeType = {
 	flex: ?string,
 	ole: ?string,
