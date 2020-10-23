@@ -4,18 +4,18 @@ import {addToCalendar} from './lib'
 import delay from 'delay'
 
 type Props = {
-	event: EventType,
-	compactMessages?: boolean,
+	event: EventType
+	compactMessages?: boolean
 	render: (
 		message: string,
 		disabled: boolean,
 		onPress: () => void,
-	) => React.Node,
+	) => React.Node
 }
 
 type State = {
-	message: string,
-	disabled: boolean,
+	message: string
+	disabled: boolean
 }
 
 const VERBOSE_MESSAGES = {
