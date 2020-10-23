@@ -9,7 +9,7 @@ type Props = {
 	render: (
 		message: string,
 		disabled: boolean,
-		onPress: () => any,
+		onPress: () => void,
 	) => React.Node,
 }
 
@@ -36,22 +36,22 @@ export class AddToCalendar extends React.Component<Props, State> {
 		disabled: false,
 	}
 
-	addEvent = async () => {
-		let MESSAGES = this.props.compactMessages
+	addEvent = async (): void => {
+		const MESSAGES = this.props.compactMessages
 			? COMPACT_MESSAGES
 			: VERBOSE_MESSAGES
-		let {event} = this.props
+		const {event} = this.props
 
-		let start = Date.now()
+		const start = Date.now()
 		this.setState(() => ({message: MESSAGES.active}))
 
 		// wait 0.5 seconds – if we let it go at normal speed, it feels broken.
-		let elapsed = Date.now() - start
+		const elapsed = Date.now() - start
 		if (elapsed < 500) {
 			await delay(500 - elapsed)
 		}
 
-		let result = await addToCalendar(event)
+		const result = await addToCalendar(event)
 
 		if (result) {
 			this.setState(() => ({message: MESSAGES.success, disabled: true}))
@@ -60,11 +60,11 @@ export class AddToCalendar extends React.Component<Props, State> {
 		}
 	}
 
-	render() {
-		return this.props.render({
-			message: this.state.message,
-			disabled: this.state.disabled,
-			onPress: this.addEvent,
-		})
+	render(): JSX.Element {
+		return this.props.render(
+			this.state.message,
+			this.state.disabled,
+			this.addEvent,
+		)
 	}
 }

@@ -5,9 +5,9 @@ import {Alert, Linking, Platform} from 'react-native'
 
 export async function addToCalendar(event: EventType): Promise<boolean> {
 	try {
-		let authCode = await RNCalendarEvents.authorizationStatus()
+		const authCode = await RNCalendarEvents.authorizationStatus()
 
-		let authStatus =
+		const authStatus =
 			authCode === 'authorized' ? true : await requestCalendarAccess()
 
 		if (!authStatus) {
@@ -40,7 +40,7 @@ async function saveEventToCalendar(event: EventType): Promise<boolean> {
 	}
 }
 
-function promptSettings(): any {
+function promptSettings(): Alert | void {
 	if (Platform.OS === 'ios') {
 		// Note: remember to change this text in the iOS plist, too.
 		return Alert.alert(
