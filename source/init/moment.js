@@ -1,4 +1,3 @@
-// @flow
 import moment from 'moment-timezone'
 
 // These next values made possible by

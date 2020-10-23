@@ -1,5 +1,3 @@
-// @flow
-
 import {setVersionInfo, setAppName, setTimezone} from '@frogpond/constants'
 
 export const SENTRY_DSN =

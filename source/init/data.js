@@ -1,5 +1,3 @@
-// @flow
-
 import {API} from '@frogpond/api'
 import {insertForUrl} from '@frogpond/fetch'
 
