@@ -1,5 +1,3 @@
-// @flow
-
 type CourseOffering = {
 	day: string,
 	end: string,

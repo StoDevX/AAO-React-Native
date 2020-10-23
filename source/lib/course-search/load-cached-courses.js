@@ -1,5 +1,3 @@
-// @flow
-
 import type {CourseType, TermType} from './types'
 import flatten from 'lodash/flatten'
 import * as storage from '../storage'

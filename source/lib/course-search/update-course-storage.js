@@ -1,8 +1,3 @@
-/**
- * @flow
- * updateStoredCourses() handles updating the cached course data from the server
- */
-
 import {fetch} from '@frogpond/fetch'
 import type {RawCourseType, CourseType, TermType} from './types'
 import {COURSE_DATA_PAGE, INFO_PAGE} from './urls'

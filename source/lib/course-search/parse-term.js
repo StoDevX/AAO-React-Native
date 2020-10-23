@@ -1,5 +1,3 @@
-// @flow
-
 export function parseTerm(term: string) {
 	let semester = term.slice(-1)
 	let year = term.slice(0, -1)

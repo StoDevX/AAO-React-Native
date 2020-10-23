@@ -1,5 +1,3 @@
-// @flow
-
 import {fetch} from '@frogpond/fetch'
 import {GE_DATA, DEPT_DATA} from './urls'
 import mapValues from 'lodash/mapValues'
