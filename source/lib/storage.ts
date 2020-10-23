@@ -52,11 +52,11 @@ import type {CourseType, TermType} from './course-search/types'
 
 const courseDataKey = 'sis:course-data'
 export function setTermCourseData(term: number, courseData: Array<CourseType>) {
-	let key = courseDataKey + `:${term}:courses`
+	const key = courseDataKey + `:${term}:courses`
 	return setItem(key, courseData)
 }
 export function getTermCourseData(term: number): Promise<Array<CourseType>> {
-	let key = courseDataKey + `:${term}:courses`
+	const key = courseDataKey + `:${term}:courses`
 	return getItemAsArray(key)
 }
 const termInfoKey = courseDataKey + ':term-info'
@@ -68,11 +68,11 @@ export function getTermInfo(): Promise<Array<TermType>> {
 }
 const filterDataKey = courseDataKey + ':filter-data'
 export function setCourseFilterOption(name: string, data: string[]) {
-	let key = filterDataKey + `:${name}`
+	const key = filterDataKey + `:${name}`
 	return setItem(key, data)
 }
 export function getCourseFilterOption(name: string): Promise<Array<string>> {
-	let key = filterDataKey + `:${name}`
+	const key = filterDataKey + `:${name}`
 	return getItemAsArray(key)
 }
 

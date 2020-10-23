@@ -37,15 +37,15 @@ type Args = {attempts?: number}
 export async function performLogin({
 	attempts = 0,
 }: Args = {}): Promise<LoginResultEnum> {
-	let {username, password} = await loadLoginCredentials()
+	const {username, password} = await loadLoginCredentials()
 	if (!username || !password) {
 		return 'no-credentials'
 	}
 
-	let form = buildFormData({username, password})
+	const form = buildFormData({username, password})
 
 	try {
-		let {status: statusCode} = await fetch(OLECARD_AUTH_URL, {
+		const {status: statusCode} = await fetch(OLECARD_AUTH_URL, {
 			method: 'POST',
 			body: form,
 			credentials: 'include',
@@ -67,7 +67,7 @@ export async function performLogin({
 
 		return 'success'
 	} catch (err) {
-		let wasNetworkFailure = err.message === 'Network request failed'
+		const wasNetworkFailure = err.message === 'Network request failed'
 		if (wasNetworkFailure) {
 			if (attempts > 0) {
 				// console.log(`login failed; trying ${attempts - 1} more time(s)`)
