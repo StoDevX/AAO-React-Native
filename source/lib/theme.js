@@ -1,5 +1,3 @@
-// @flow
-
 import {Platform} from 'react-native'
 import tinycolor from 'tinycolor2'
 import {sto} from './colors'

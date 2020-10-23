@@ -1,5 +1,3 @@
-// @flow
-
 export default function buildFormData(obj: {[key: string]: string}): FormData {
 	let formData = new FormData()
 

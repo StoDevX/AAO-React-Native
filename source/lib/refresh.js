@@ -1,4 +1,3 @@
-// @flow
 import {clearAsyncStorage} from './storage'
 import restart from 'react-native-restart'
 import {clearLoginCredentials} from './login'

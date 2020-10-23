@@ -1,5 +1,3 @@
-// @flow
-
 // MARK: St. Olaf colors
 export const sto = {
 	black: '#242121',

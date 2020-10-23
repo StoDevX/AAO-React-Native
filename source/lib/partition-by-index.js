@@ -1,5 +1,3 @@
-// @flow
-
 export function partitionByIndex<T>(arr: T[]): [T[], T[]] {
 	return arr.reduce(
 		(acc, val, idx) => {
