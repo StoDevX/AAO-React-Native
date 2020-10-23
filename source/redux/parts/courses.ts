@@ -30,17 +30,17 @@ export function updateRecentFilters(
 	filters: FilterType[],
 ): ThunkAction<UpdateRecentFiltersAction> {
 	return (dispatch, getState) => {
-		let state = getState()
+		const state = getState()
 
-		let newRecentFilter = formatFilterCombo(filters)
-		let recentFilters = state.courses ? state.courses.recentFilters : []
+		const newRecentFilter = formatFilterCombo(filters)
+		const recentFilters = state.courses ? state.courses.recentFilters : []
 		if (
 			!recentFilters.find(
 				(f) => f.description === newRecentFilter.description,
 			) &&
 			newRecentFilter.description.length !== 0
 		) {
-			let newFilters = [newRecentFilter, ...recentFilters].slice(0, 3)
+			const newFilters = [newRecentFilter, ...recentFilters].slice(0, 3)
 
 			// TODO: remove saving logic from reducers
 			storage.setRecentFilters(newFilters)
@@ -57,7 +57,7 @@ type LoadRecentFiltersAction = {
 	payload: FilterComboType[],
 }
 export async function loadRecentFilters(): Promise<LoadRecentFiltersAction> {
-	let recentFilters = await storage.getRecentFilters()
+	const recentFilters = await storage.getRecentFilters()
 	return {type: LOAD_RECENT_FILTERS, payload: recentFilters}
 }
 
@@ -78,13 +78,13 @@ export type UpdateCourseDataActionType = ThunkAction<
 
 export function loadCourseDataIntoMemory(): LoadCourseDataActionType {
 	return async (dispatch) => {
-		let areAnyCached = await areAnyTermsCached()
+		const areAnyCached = await areAnyTermsCached()
 
 		if (!areAnyCached) {
 			return
 		}
 
-		let cachedCourses = await loadCachedCourses()
+		const cachedCourses = await loadCachedCourses()
 		dispatch({type: LOAD_CACHED_COURSES, payload: cachedCourses})
 		dispatch({type: COURSES_LOADED})
 	}
@@ -92,10 +92,10 @@ export function loadCourseDataIntoMemory(): LoadCourseDataActionType {
 
 export function updateCourseData(): UpdateCourseDataActionType {
 	return async (dispatch) => {
-		let updateNeeded = await updateStoredCourses()
+		const updateNeeded = await updateStoredCourses()
 
 		if (updateNeeded) {
-			let cachedCourses = await loadCachedCourses()
+			const cachedCourses = await loadCachedCourses()
 			dispatch({type: LOAD_CACHED_COURSES, payload: cachedCourses})
 			dispatch({type: COURSES_LOADED})
 		}
@@ -109,7 +109,7 @@ type LoadRecentSearchesAction = {
 	payload: string[],
 }
 export async function loadRecentSearches(): Promise<LoadRecentSearchesAction> {
-	let recentSearches = await storage.getRecentSearches()
+	const recentSearches = await storage.getRecentSearches()
 	return {type: LOAD_RECENT_SEARCHES, payload: recentSearches}
 }
 
@@ -123,10 +123,10 @@ export function updateRecentSearches(
 	query: string,
 ): ThunkAction<UpdateRecentSearchesAction> {
 	return (dispatch, getState) => {
-		let state = getState()
+		const state = getState()
 
-		let recentSearches = state.courses ? state.courses.recentSearches : []
-		let recentLowerCase = recentSearches.map((query) => query.toLowerCase())
+		const recentSearches = state.courses ? state.courses.recentSearches : []
+		const recentLowerCase = recentSearches.map((query) => query.toLowerCase())
 		if (recentLowerCase.includes(query.toLowerCase())) {
 			return
 		}

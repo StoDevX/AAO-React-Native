@@ -72,7 +72,7 @@ export function logInViaCredentials(
 
 		await saveLoginCredentials({username, password})
 
-		let result = await performLogin()
+		const result = await performLogin()
 		if (result === 'success') {
 			dispatch({type: LOGIN_SUCCESS})
 		} else if (result === 'bad-credentials') {

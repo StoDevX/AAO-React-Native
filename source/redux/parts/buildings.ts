@@ -14,7 +14,7 @@ type LoadFavoritesAction = {
 	payload: Array<string>,
 }
 export async function loadFavoriteBuildings(): Promise<LoadFavoritesAction> {
-	let favoriteBuildings = await storage.getFavoriteBuildings()
+	const favoriteBuildings = await storage.getFavoriteBuildings()
 	return {type: LOAD_FAVORITE_BUILDINGS, payload: favoriteBuildings}
 }
 
@@ -26,11 +26,11 @@ export function toggleFavoriteBuilding(
 	buildingName: string,
 ): ThunkAction<ToggleFavoriteAction> {
 	return (dispatch, getState) => {
-		let state = getState()
+		const state = getState()
 
-		let currentFavorites = state.buildings ? state.buildings.favorites : []
+		const currentFavorites = state.buildings ? state.buildings.favorites : []
 
-		let newFavorites = currentFavorites.includes(buildingName)
+		const newFavorites = currentFavorites.includes(buildingName)
 			? currentFavorites.filter((name) => name !== buildingName)
 			: [...currentFavorites, buildingName]
 

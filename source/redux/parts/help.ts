@@ -28,8 +28,8 @@ export function getEnabledTools(): ThunkAction<GetEnabledToolsAction> {
 		dispatch({type: ENABLED_TOOLS_START})
 
 		try {
-			let url = API('/tools/help')
-			let body: {data: Array<ToolOptions>} = await fetch(url).json()
+			const url = API('/tools/help')
+			const body: {data: Array<ToolOptions>} = await fetch(url).json()
 
 			dispatch({
 				type: ENABLED_TOOLS_SUCCESS,
