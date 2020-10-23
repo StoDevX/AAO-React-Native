@@ -44,7 +44,7 @@ export function getEnabledTools(): ThunkAction<GetEnabledToolsAction> {
 export type State = {
 	readonly fetching: boolean,
 	readonly tools: Array<ToolOptions>,
-	readonly lastFetchError: ?boolean,
+	readonly lastFetchError?: boolean,
 }
 
 const initialState = {

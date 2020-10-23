@@ -148,8 +148,8 @@ export type State = {
 	recentPrinters: Array<Printer>, // printer names
 	popularPrinters: Array<Printer>, // printer names
 	colorPrinters: Array<Printer>,
-	jobsError: ?string,
-	printersError: ?string,
+	jobsError?: string,
+	printersError?: string,
 }
 
 const initialState: State = {
