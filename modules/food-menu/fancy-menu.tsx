@@ -96,7 +96,9 @@ export class FancyMenu extends React.Component<Props, State> {
 
 	updateFilter = (filter: FilterType) => {
 		this.setState((state) => {
-			const edited = state.filters.map((f) => (f.key !== filter.key ? f : filter))
+			const edited = state.filters.map((f) =>
+				f.key !== filter.key ? f : filter,
+			)
 			return {filters: edited}
 		})
 	}
@@ -121,7 +123,10 @@ export class FancyMenu extends React.Component<Props, State> {
 				// and apply the selected filters to the items in the menu
 				.filter((item) => item && applyFilters(filters, item))
 
-		const menusWithItems: Array<{title: string; data: Array<MenuItem>}> = stations
+		const menusWithItems: Array<{
+			title: string
+			data: Array<MenuItem>
+		}> = stations
 			// We're grouping the menu items in a [label, Array<items>] tuple.
 			.map((menu) => [menu.label, derefrenceMenuItems(menu)])
 			// We only want to show stations with at least one item in them
