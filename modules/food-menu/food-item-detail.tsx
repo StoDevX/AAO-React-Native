@@ -1,5 +1,3 @@
-// @flow
-
 import * as React from 'react'
 import {Text, ScrollView, StyleSheet} from 'react-native'
 import {Column, Row} from '@frogpond/layout'
@@ -12,9 +10,9 @@ import type {NavigationScreenProp} from 'react-navigation'
 import type {MenuItemType as MenuItem, MasterCorIconMapType} from './types'
 
 type Props = {
-	navigation: NavigationScreenProp<*> & {
-		state: {params: {icons: MasterCorIconMapType, item: MenuItem}},
-	},
+	navigation: NavigationScreenProp & {
+		state: {params: {icons: MasterCorIconMapType; item: MenuItem}}
+	}
 }
 
 export class MenuItemDetailView extends React.Component<Props> {
@@ -23,7 +21,7 @@ export class MenuItemDetailView extends React.Component<Props> {
 	}
 
 	render() {
-		let {item, icons} = this.props.navigation.state.params
+		const {item, icons} = this.props.navigation.state.params
 
 		return (
 			<ScrollView style={styles.container}>

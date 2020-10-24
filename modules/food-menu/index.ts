@@ -1,5 +1,3 @@
-// @flow
-
 export {FancyMenu as FoodMenu} from './fancy-menu'
 
 export type {

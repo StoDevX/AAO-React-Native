@@ -1,5 +1,3 @@
-// @flow
-
 import type momentT from 'moment'
 import type {ProcessedMealType} from '../types'
 import type {FilterType} from '@frogpond/filter'
@@ -10,17 +8,17 @@ export function chooseMeal(
 	filters: FilterType[],
 	now: momentT,
 ): ProcessedMealType {
-	let mealChooserFilter: ?FilterType = filters.find(
+	const mealChooserFilter: FilterType | undefined = filters.find(
 		(f) => f.type === 'picker' && f.spec.title === "Today's Menus",
 	)
 
-	let selectedMeal = meals[0]
+	const selectedMeal = meals[0]
 	if (
 		mealChooserFilter &&
 		mealChooserFilter.spec.selected &&
 		mealChooserFilter.spec.selected.label
 	) {
-		let label = mealChooserFilter.spec.selected.label
+		const label = mealChooserFilter.spec.selected.label
 		selectedMeal = meals.find((meal) => meal.label === label)
 	} else {
 		selectedMeal = findMeal(meals, now)

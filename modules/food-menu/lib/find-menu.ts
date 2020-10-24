@@ -1,4 +1,3 @@
-// @flow
 import type momentT from 'moment'
 import moment from 'moment-timezone'
 import findIndex from 'lodash/findIndex'
@@ -22,9 +21,9 @@ export function findMenu(
 
 	// Now that we know they're not empty, we grab the single element out of
 	// the top array for easier use.
-	let daypart = dayparts[0]
+	const daypart = dayparts[0]
 
-	let menuIndex = findMenuIndex(daypart, now)
+	const menuIndex = findMenuIndex(daypart, now)
 	return daypart[menuIndex]
 }
 
@@ -36,7 +35,7 @@ export function findMeal(
 		return
 	}
 
-	let dayparts: DayPartMenuType[] = meals.map((m) => ({
+	const dayparts: DayPartMenuType[] = meals.map((m) => ({
 		starttime: m.starttime,
 		endtime: m.endtime,
 		label: m.label,
@@ -45,7 +44,7 @@ export function findMeal(
 		abbreviation: m.label,
 	}))
 
-	let mealIndex = findMenuIndex(dayparts, now)
+	const mealIndex = findMenuIndex(dayparts, now)
 	return meals[mealIndex]
 }
 
@@ -59,7 +58,7 @@ function findMenuIndex(dayparts: DayPartMenuType[], now: momentT): number {
 	// Otherwise, we make ourselves a list of {starttime, endtime} pairs so we
 	// can query times relative to `now`. Also make sure to set dayOfYear to
 	// `now`, so that we don't have our days wandering all over the place.
-	let times = dayparts.map(({starttime, endtime}) => ({
+	const times = dayparts.map(({starttime, endtime}) => ({
 		start: moment
 			.tz(starttime, 'H:mm', true, timezone())
 			.dayOfYear(now.dayOfYear()),
@@ -71,7 +70,7 @@ function findMenuIndex(dayparts: DayPartMenuType[], now: momentT): number {
 	// We grab the first meal that ends sometime after `now`. The only time
 	// this really fails is in the early morning, if it's like 1am and you're
 	// wondering what there was at dinner.
-	let mealIndex = findIndex(times, ({end}) => now.isSameOrBefore(end))
+	const mealIndex = findIndex(times, ({end}) => now.isSameOrBefore(end))
 
 	// If we didn't find a meal, we must be after the last meal, so we want to
 	// return the last meal of the day.

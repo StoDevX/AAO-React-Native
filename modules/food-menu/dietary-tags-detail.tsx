@@ -1,4 +1,3 @@
-// @flow
 import * as React from 'react'
 import {View, Text, StyleSheet, Image} from 'react-native'
 import {Row} from '@frogpond/layout'
@@ -26,20 +25,20 @@ const styles = StyleSheet.create({
 })
 
 type Args = {
-	corIcons: MasterCorIconMapType,
-	dietary: ItemCorIconMapType,
-	style?: any,
+	corIcons: MasterCorIconMapType
+	dietary: ItemCorIconMapType
+	style?: any
 }
 
 export function DietaryTagsDetail({corIcons, dietary, style}: Args) {
 	// filter the mapping of all icons by just the icons provided by this item
-	let dietaryKeys = new Set(keys(dietary))
-	let filteredAny: Array<any> = Object.entries(corIcons).filter(([k]) =>
+	const dietaryKeys = new Set(keys(dietary))
+	const filteredAny: Array<any> = Object.entries(corIcons).filter(([k]) =>
 		dietaryKeys.has(k),
 	)
-	let filtered: Array<[string, CorIconType]> = filteredAny
+	const filtered: Array<[string, CorIconType]> = filteredAny
 
-	let tags = filtered.map(([key, dietaryIcon]) => (
+	const tags = filtered.map(([key, dietaryIcon]) => (
 		<Row key={key} alignItems="center" style={styles.wrapper}>
 			<Row flex={1}>
 				<Image

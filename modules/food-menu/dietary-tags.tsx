@@ -1,4 +1,3 @@
-// @flow
 import * as React from 'react'
 import {View, StyleSheet, Image} from 'react-native'
 
@@ -22,21 +21,21 @@ const styles = StyleSheet.create({
 })
 
 type Args = {
-	corIcons: MasterCorIconMapType,
-	dietary: ItemCorIconMapType,
-	style?: any,
+	corIcons: MasterCorIconMapType
+	dietary: ItemCorIconMapType
+	style?: any
 }
 
 export function DietaryTags({corIcons, dietary, style}: Args) {
 	// filter the mapping of all icons by just the icons provided by this item
-	let dietaryKeys = new Set(keys(dietary))
-	let filteredAny: Array<any> = Object.entries(corIcons).filter(([k]) =>
+	const dietaryKeys = new Set(keys(dietary))
+	const filteredAny: Array<any> = Object.entries(corIcons).filter(([k]) =>
 		dietaryKeys.has(k),
 	)
-	let filtered: Array<[string, CorIconType]> = filteredAny
+	const filtered: Array<[string, CorIconType]> = filteredAny
 
 	// turn the remaining items into images
-	let tags = filtered.map(([key, dietaryIcon]) => (
+	const tags = filtered.map(([key, dietaryIcon]) => (
 		<Image
 			key={key}
 			accessibilityIgnoresInvertColors={true}

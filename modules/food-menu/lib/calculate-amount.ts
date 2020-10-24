@@ -1,5 +1,3 @@
-// @flow
-
 import type {NutritionDetailType} from '../types'
 
 export function calculateAmount(nutrition: NutritionDetailType) {

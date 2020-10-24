@@ -1,4 +1,3 @@
-// @flow
 import * as React from 'react'
 import {View, StyleSheet, Platform} from 'react-native'
 import {DietaryTags} from './dietary-tags'
@@ -11,12 +10,12 @@ import Icon from 'react-native-vector-icons/Ionicons'
 const specialsIcon = Platform.OS === 'ios' ? 'ios-star' : 'md-star'
 
 type FoodItemPropsType = {
-	corIcons: MasterCorIconMapType,
-	data: MenuItemType,
-	style?: any,
-	badgeSpecials?: boolean,
-	spacing: {left: number},
-	onPress: () => any,
+	corIcons: MasterCorIconMapType
+	data: MenuItemType
+	style?: any
+	badgeSpecials?: boolean
+	spacing: {left: number}
+	onPress: () => any
 }
 
 export function FoodItemRow({
@@ -26,7 +25,7 @@ export function FoodItemRow({
 	onPress,
 	...props
 }: FoodItemPropsType) {
-	let {left = 0} = props.spacing
+	const {left = 0} = props.spacing
 	return (
 		<ListRow
 			arrowPosition="center"

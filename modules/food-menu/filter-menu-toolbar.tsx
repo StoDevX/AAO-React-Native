@@ -1,4 +1,3 @@
-// @flow
 import * as React from 'react'
 import {StyleSheet, View, Text} from 'react-native'
 import type momentT from 'moment'
@@ -19,11 +18,11 @@ const styles = StyleSheet.create({
 })
 
 type PropsType = {
-	date: momentT,
-	isOpen: boolean,
-	title?: string,
-	onPopoverDismiss: (filter: FilterType) => any,
-	filters: FilterType[],
+	date: momentT
+	isOpen: boolean
+	title?: string
+	onPopoverDismiss: (filter: FilterType) => any
+	filters: FilterType[]
 }
 
 export function FilterMenuToolbar({
@@ -33,12 +32,12 @@ export function FilterMenuToolbar({
 	filters,
 	onPopoverDismiss,
 }: PropsType) {
-	let mealFilter = filters.find((f) => f.type === 'picker')
-	let multipleMeals =
+	const mealFilter = filters.find((f) => f.type === 'picker')
+	const multipleMeals =
 		mealFilter && mealFilter.type === 'picker'
 			? mealFilter.spec.options.length > 1
 			: false
-	let nonPickerFilters = filters.filter((f) => f.type !== 'picker')
+	const nonPickerFilters = filters.filter((f) => f.type !== 'picker')
 
 	return (
 		<React.Fragment>
