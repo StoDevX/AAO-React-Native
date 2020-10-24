@@ -1,5 +1,3 @@
-// @flow
-
 import * as React from 'react'
 import {timezone} from '@frogpond/constants'
 import type {NavigationScreenProp} from 'react-navigation'
@@ -14,21 +12,21 @@ import {API} from '@frogpond/api'
 type Props = {
 	calendar:
 		| string
-		| {type: 'google', id: string}
-		| {type: 'reason', url: string}
-		| {type: 'ics', url: string},
-	detailView?: string,
-	eventMapper?: (EventType) => EventType,
-	navigation: NavigationScreenProp<*>,
-	poweredBy: ?PoweredBy,
+		| {type: 'google'; id: string}
+		| {type: 'reason'; url: string}
+		| {type: 'ics'; url: string}
+	detailView?: string
+	eventMapper?: (EventType) => EventType
+	navigation: NavigationScreenProp
+	poweredBy?: PoweredBy
 }
 
 type State = {
-	events: EventType[],
-	initialLoadComplete: boolean,
-	refreshing: boolean,
-	error: ?Error,
-	now: moment,
+	events: EventType[]
+	initialLoadComplete: boolean
+	refreshing: boolean
+	error?: Error
+	now: moment
 }
 
 export class CccCalendarView extends React.Component<Props, State> {
@@ -48,8 +46,8 @@ export class CccCalendarView extends React.Component<Props, State> {
 
 	convertEvents(data: EventType[]): EventType[] {
 		let events = data.map((event) => {
-			let startTime = moment(event.startTime)
-			let endTime = moment(event.endTime)
+			const startTime = moment(event.startTime)
+			const endTime = moment(event.endTime)
 
 			return {
 				...event,
@@ -79,7 +77,7 @@ export class CccCalendarView extends React.Component<Props, State> {
 			throw new Error('invalid calendar type!')
 		}
 
-		let events: Array<EventType> = await fetch(url, {
+		const events: Array<EventType> = await fetch(url, {
 			delay: reload ? 500 : 0,
 		}).json()
 
