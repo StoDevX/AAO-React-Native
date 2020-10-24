@@ -1,4 +1,3 @@
-// @flow
 import * as React from 'react'
 import {StyleSheet, Platform} from 'react-native'
 import BasicButton from 'react-native-button'
@@ -41,12 +40,12 @@ const inverted = StyleSheet.create({
 })
 
 type Props = {
-	title?: string,
-	onPress?: () => any,
-	disabled?: boolean,
-	buttonStyle?: any,
-	textStyle?: any,
-	mode?: 'default' | 'inverted',
+	title?: string
+	onPress?: () => any
+	disabled?: boolean
+	buttonStyle?: any
+	textStyle?: any
+	mode?: 'default' | 'inverted'
 }
 
 export function Button({
@@ -57,20 +56,20 @@ export function Button({
 	textStyle = null,
 	mode = 'default',
 }: Props) {
-	let theme: AppTheme = useTheme()
+	const theme: AppTheme = useTheme()
 
-	let background =
+	const background =
 		mode === 'default'
 			? {backgroundColor: theme.buttonBackground}
 			: {backgroundColor: theme.buttonForeground}
-	let foreground =
+	const foreground =
 		mode === 'default'
 			? {color: theme.buttonForeground}
 			: {color: theme.buttonBackground}
 
-	let textStyleThing = mode === 'default' ? styles.text : inverted.text
-	let containerStyle = [styles.button, background, buttonStyle]
-	let style = [textStyleThing, foreground, textStyle]
+	const textStyleThing = mode === 'default' ? styles.text : inverted.text
+	const containerStyle = [styles.button, background, buttonStyle]
+	const style = [textStyleThing, foreground, textStyle]
 
 	return (
 		<BasicButton
