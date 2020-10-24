@@ -1,5 +1,3 @@
-// @flow
-
 import tinycolor from 'tinycolor2'
 import {black, white} from './colors'
 
@@ -10,7 +8,9 @@ import {black, white} from './colors'
  */
 export function firstReadable(background: string, possibilities: Array<any>) {
 	possibilities = possibilities.map((c) => tinycolor(c))
-	let readable = possibilities.find((c) => tinycolor.isReadable(c, background))
+	const readable = possibilities.find((c) =>
+		tinycolor.isReadable(c, background),
+	)
 	if (readable) {
 		return readable.toRgbString()
 	}

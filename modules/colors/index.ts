@@ -1,5 +1,3 @@
-// @flow
-
 export {firstReadable} from './util'
 
 export * from './colors'

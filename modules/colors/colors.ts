@@ -1,5 +1,3 @@
-// @flow
-
 export const aqua = '#7FDBFF'
 export const black = '#111111'
 export const blue = '#0074D9'

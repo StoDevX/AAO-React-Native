@@ -1,5 +1,3 @@
-// @flow
-
 // MARK: gradients
 export const redToPurple = ['rgb(249,64,77)', 'rgb(217,37,111)']
 export const orangeToRed = ['rgb(250,120,37)', 'rgb(242,38,83)']
