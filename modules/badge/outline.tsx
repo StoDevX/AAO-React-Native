@@ -1,18 +1,17 @@
-// @flow
 import * as React from 'react'
 import {View, Text, StyleSheet} from 'react-native'
 import * as c from '@frogpond/colors'
 import tinycolor from 'tinycolor2'
 
 type Props = {
-	text: string,
-	accentColor?: string,
-	textColor?: string,
-	style?: any,
-	textStyle?: any,
+	text: string
+	accentColor?: string
+	textColor?: string
+	style?: any
+	textStyle?: any
 }
 
-let styles = StyleSheet.create({
+const styles = StyleSheet.create({
 	accessoryBadge: {
 		paddingHorizontal: 8,
 		paddingVertical: 2,
@@ -32,7 +31,7 @@ export function OutlineBadge({
 	accentColor = c.goldenrod,
 	textColor = 'hsl(26, 49%, 34%)',
 }: Props) {
-	let bgaccent = tinycolor(accentColor).setAlpha(0.1).toRgbString()
+	const bgaccent = tinycolor(accentColor).setAlpha(0.1).toRgbString()
 
 	return (
 		<View

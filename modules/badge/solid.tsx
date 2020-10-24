@@ -1,17 +1,15 @@
-// @flow
-
 import * as React from 'react'
 import {View, Text, StyleSheet, Platform} from 'react-native'
 import * as c from '@frogpond/colors'
 
 type Props = {
-	status: string,
-	accentColor?: string,
-	textColor?: string,
+	status: string
+	accentColor?: string
+	textColor?: string
 }
 
 export function SolidBadge(props: Props) {
-	let {status, accentColor = c.goldenrod, textColor = c.white} = props
+	const {status, accentColor = c.goldenrod, textColor = c.white} = props
 
 	return (
 		<View style={[styles.badge, {backgroundColor: accentColor}]}>
