@@ -1,5 +1,3 @@
-// @flow
-
 import {Platform} from 'react-native'
 
 let TZ: string
@@ -15,7 +13,7 @@ export const timezone = () => {
 export const IS_PRODUCTION = process.env.NODE_ENV === 'production'
 
 let APP_VERSION: string
-let APP_BUILD: ?string
+let APP_BUILD: string | undefined
 export const appVersion = () => APP_VERSION
 export const appBuild = () => APP_BUILD
 
@@ -40,7 +38,7 @@ export const isDevMode = () =>
 	!IS_PRODUCTION || IS_ALPHA || IS_BETA || IS_PRE || IS_RC
 
 export const setVersionInfo = (versionStr: string) => {
-	let [version, buildNum] = versionStr.split('+')
+	const [version, buildNum] = versionStr.split('+')
 
 	APP_VERSION = version
 	APP_BUILD = buildNum
@@ -52,14 +50,14 @@ export const setVersionInfo = (versionStr: string) => {
 }
 
 export const userAgent = () => {
-	let platformString =
+	const platformString =
 		Platform.OS === 'ios'
 			? 'iOS'
 			: Platform.OS === 'android'
 			? 'Android'
 			: 'unknown'
 
-	let platformVersion = Platform.Version || 'unknown'
+	const platformVersion = Platform.Version || 'unknown'
 
 	return `${APP_NAME}/${APP_VERSION} (${platformString}/${platformVersion})`
 }
