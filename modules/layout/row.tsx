@@ -1,6 +1,6 @@
-// @flow
 import * as React from 'react'
-import {StyledComponent, type PropsType} from './styled-component'
+import {StyledComponent} from './styled-component'
+import type {PropsType} from './styled-component'
 
 export const Row = ({children, ...props}: PropsType) => {
 	return (
