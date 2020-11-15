@@ -1,4 +1,3 @@
-// @flow
 // Copied from https://github.com/xgfe/react-native-datepicker
 
 import * as React from 'react'
@@ -45,7 +44,7 @@ export class DatePicker extends React.Component<Props, State> {
 	}
 
 	formatDate = (date: moment) => {
-		let {mode, format = FORMATS[mode]} = this.props
+		const {mode, format = FORMATS[mode]} = this.props
 		return moment(date).format(format)
 	}
 

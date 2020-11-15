@@ -1,5 +1,3 @@
-// @flow
-
 import * as React from 'react'
 import {
 	View,
@@ -65,8 +63,8 @@ export class DatePicker extends React.PureComponent<Props> {
 			return
 		}
 
-		let {androidMode, date} = this.props
-		let timeMoment = moment(date)
+		const {androidMode, date} = this.props
+		const timeMoment = moment(date)
 
 		TimePickerAndroid.open({
 			hour: timeMoment.hour(),
@@ -90,7 +88,7 @@ export class DatePicker extends React.PureComponent<Props> {
 	}
 
 	showModal = () => {
-		let {mode, androidMode} = this.props
+		const {mode, androidMode} = this.props
 
 		switch (mode) {
 			case 'date': {
@@ -101,7 +99,7 @@ export class DatePicker extends React.PureComponent<Props> {
 			}
 
 			case 'time': {
-				let timeMoment = moment(this.props.date)
+				const timeMoment = moment(this.props.date)
 
 				return TimePickerAndroid.open({
 					hour: timeMoment.hour(),

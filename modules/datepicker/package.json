@@ -2,7 +2,7 @@
   "name": "@frogpond/datepicker",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "index.tsx",
   "author": "鲜果FE",
   "license": "MIT",
   "scripts": {

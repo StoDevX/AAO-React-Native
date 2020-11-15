@@ -1,5 +1,3 @@
-// @flow
-
 import * as React from 'react'
 import {
 	View,
@@ -76,7 +74,7 @@ export class DatePicker extends React.Component<Props, State> {
 
 		this.props.onDateChange(moment.tz(date, this.props.timezone))
 
-		let timeoutId = setTimeout(() => {
+		const timeoutId = setTimeout(() => {
 			this.setState(() => ({allowPointerEvents: true}))
 			clearTimeout(timeoutId)
 		}, this.props.duration)
@@ -140,7 +138,7 @@ class DatePickerModal extends React.PureComponent<ModalProps> {
 	]
 
 	render() {
-		let {
+		const {
 			mode,
 			date,
 			minuteInterval,
@@ -152,11 +150,11 @@ class DatePickerModal extends React.PureComponent<ModalProps> {
 			timezone,
 		} = this.props
 
-		let tzOffset = 0
+		const tzOffset = 0
 		if (date.tz()) {
 			// We need to negate the offset, because moment inverts the offset for
 			// POSIX compatability. So, GMT-5 (CST) is shown to be GMT+5.
-			let dateInUnixMs = date.valueOf()
+			const dateInUnixMs = date.valueOf()
 			tzOffset = -moment.tz.zone(timezone).utcOffset(dateInUnixMs)
 		}
 
