@@ -39,7 +39,11 @@
     ],
     "collectCoverageFrom": [
       "modules/**/*.js",
+      "modules/**/*.ts",
+      "modules/**/*.tsx",
       "source/**/*.js",
+      "source/**/*.ts",
+      "source/**/*.tsx",
       "!**/node_modules/**"
     ],
     "setupFiles": [
