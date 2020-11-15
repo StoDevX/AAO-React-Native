@@ -1,4 +1,3 @@
-// @flow
 import * as React from 'react'
 import {View, Text, StyleSheet} from 'react-native'
 import * as c from '@frogpond/colors'
@@ -27,8 +26,8 @@ const styles = StyleSheet.create({
 })
 
 type Props = {
-	message: string,
-	title: string,
+	message: string
+	title: string
 }
 
 export class InfoHeader extends React.PureComponent<Props> {
