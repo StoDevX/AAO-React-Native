@@ -2,6 +2,8 @@ parser: '@typescript-eslint/parser'
 parserOptions:
   project: './tsconfig.json'
 
+root: true
+
 plugins:
   - '@typescript-eslint'
   - babel
