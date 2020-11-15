@@ -1,5 +1,3 @@
-// @flow
-
 import * as React from 'react'
 import {Text, Platform, StyleSheet} from 'react-native'
 import {Touchable} from '@frogpond/touchable'
@@ -7,8 +5,8 @@ import type {NavigationScreenProp} from 'react-navigation'
 import {commonStyles} from './styles'
 
 type Props = {
-	navigation: NavigationScreenProp<*>,
-	buttonStyle?: any,
+	navigation: NavigationScreenProp
+	buttonStyle?: any
 }
 
 export function CloseScreenButton({navigation, buttonStyle}: Props) {

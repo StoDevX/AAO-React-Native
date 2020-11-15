@@ -1,9 +1,7 @@
-// @flow
-
 import {StyleSheet, Platform} from 'react-native'
 import {getTheme} from '@frogpond/app-theme'
 
-let theme = getTheme()
+const theme = getTheme()
 
 export const commonStyles = StyleSheet.create({
 	button: {

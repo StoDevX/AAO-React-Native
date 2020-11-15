@@ -1,5 +1,3 @@
-// @flow
-
 import * as React from 'react'
 import {Touchable} from '@frogpond/touchable'
 import {Icon, platformPrefixIconName} from '@frogpond/icon'
@@ -7,8 +5,8 @@ import {commonStyles, leftButtonStyles} from './styles'
 import type {NavigationScreenProp} from 'react-navigation'
 
 type Props = {
-	navigation: NavigationScreenProp<*>,
-	buttonStyle?: any,
+	navigation: NavigationScreenProp
+	buttonStyle?: any
 }
 
 export function OpenSettingsButton({navigation, buttonStyle}: Props) {
