@@ -1,12 +1,12 @@
 import * as React from 'react'
 import {WebView} from 'react-native-webview'
 import {openUrl, canOpenUrl} from '@frogpond/open-url'
-import type {StyleProp, ViewStyle} from 'react-native';
+import type {StyleProp, ViewStyle} from 'react-native'
 
 type Props = {
-	html: string,
-	baseUrl?: string,
-	style?: StyleProp<ViewStyle>,
+	html: string
+	baseUrl?: string
+	style?: StyleProp<ViewStyle>
 }
 
 export class HtmlContent extends React.Component<Props> {
