@@ -1,5 +1,3 @@
-// @flow
-
 import {Platform} from 'react-native'
 import {
 	createBottomTabNavigator,
@@ -22,7 +20,7 @@ const createTabNavigator =
 		: createBottomTabNavigator
 
 export const TabNavigator: ComponentType = (screens, options = {}) => {
-	let theme = getTheme()
+	const theme = getTheme()
 
 	return createTabNavigator(screens, {
 		// for react-native-material-bottom-tabs

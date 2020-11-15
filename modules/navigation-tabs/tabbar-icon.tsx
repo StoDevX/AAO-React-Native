@@ -1,4 +1,3 @@
-// @flow
 import * as React from 'react'
 import {StyleSheet, Platform} from 'react-native'
 import {Icon, platformPrefixIconName} from '@frogpond/icon'
@@ -13,8 +12,8 @@ const styles = StyleSheet.create({
 })
 
 type Props = {
-	tintColor: string,
-	focused: boolean,
+	tintColor: string
+	focused: boolean
 }
 
 export const TabBarIcon = (icon: string) => ({tintColor}: Props) => (
