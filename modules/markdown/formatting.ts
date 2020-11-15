@@ -1,5 +1,3 @@
-// @flow
-
 import glamorous from 'glamorous-native'
 import {SelectableText} from './selectable'
 import {Platform, Text} from 'react-native'

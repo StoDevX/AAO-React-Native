@@ -1,5 +1,3 @@
-// @flow
-
 import * as React from 'react'
 import {Platform} from 'react-native'
 import glamorous from 'glamorous-native'

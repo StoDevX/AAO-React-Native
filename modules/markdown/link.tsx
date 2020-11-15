@@ -1,5 +1,3 @@
-// @flow
-
 import * as React from 'react'
 import {Clipboard} from 'react-native'
 import glamorous from 'glamorous-native'
@@ -15,24 +13,29 @@ export const LinkText = glamorous.text({
 })
 
 type Props = {
-	href: string,
-	title?: string,
-	children: React.ChildrenArray<string>,
-	showShareActionSheetWithOptions: any,
-	showActionSheetWithOptions: any,
+	href: string
+	title?: string
+	children: React.ChildrenArray<string>
+	showShareActionSheetWithOptions: any
+	showActionSheetWithOptions: any
 }
 
-type Callback = ({title?: string, href: string}) => any
+type Callback = ({title, href}: {title?: string; href: string}) => any
 
 class Link extends React.PureComponent<Props> {
 	options: Array<[string, Callback]> = [
 		['Open', ({href}: {href: string}) => openUrl(href)],
 		[
 			'Copy',
-			({title, href}: {href: string, title?: string}) =>
+			({title, href}: {href: string; title?: string}) =>
 				Clipboard.setString(`${href}${title ? ' ' + title : ''}`),
 		],
-		['Cancel', () => {}],
+		[
+			'Cancel',
+			() => {
+				/* do nothing */
+			},
+		],
 	]
 
 	onPress = () => {
@@ -53,12 +56,16 @@ class Link extends React.PureComponent<Props> {
 
 	onLongPressEnd = (pressedOptionIndex: number) => {
 		// eslint-disable-next-line no-unused-vars
-		let [name, action] = this.options[pressedOptionIndex]
+		const [name, action] = this.options[pressedOptionIndex]
 		return action(this.props)
 	}
 
-	onShareFailure = () => {}
-	onShareSuccess = () => {}
+	onShareFailure = () => {
+		/* do nothing */
+	}
+	onShareSuccess = () => {
+		/* do nothing */
+	}
 
 	render() {
 		return (

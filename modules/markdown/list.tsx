@@ -1,5 +1,3 @@
-// @flow
-
 import * as React from 'react'
 import glamorous, {View} from 'glamorous-native'
 import {BaseText, Paragraph} from './formatting'
@@ -14,7 +12,7 @@ export const ListText = glamorous(Paragraph)({
 
 // the list item's container box thing
 type Props = {
-	children?: React.Node,
+	children?: React.Node
 }
 
 export class ListItem extends React.PureComponent<Props> {

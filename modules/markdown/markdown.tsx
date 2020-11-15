@@ -1,5 +1,3 @@
-// @flow
-
 import * as React from 'react'
 import {View} from 'react-native'
 import glamorous from 'glamorous-native'
@@ -37,16 +35,16 @@ type MarkdownBlockEnum =
 	| 'Strong'
 	| 'ThematicBreak'
 
-type StyleSheetRule = number | Object | Array<StyleSheetRule>
+type StyleSheetRule = number | any | Array<StyleSheetRule>
 
 type Props = {
-	styles?: {[key: MarkdownBlockEnum]: ?StyleSheetRule},
-	source: string,
+	styles?: {[key: MarkdownBlockEnum]: StyleSheetRule}
+	source: string
 }
 
 export class Markdown extends React.PureComponent<Props> {
 	render() {
-		let {styles = {}, source} = this.props
+		const {styles = {}, source} = this.props
 		return (
 			<ReactMarkdown
 				containerTagName={View}
