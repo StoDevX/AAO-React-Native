@@ -1,4 +1,3 @@
-// @flow
 import * as React from 'react'
 import {Text, StyleSheet} from 'react-native'
 import * as c from '@frogpond/colors'
@@ -14,13 +13,13 @@ const styles = StyleSheet.create({
 })
 
 type Props = {
-	title: string,
-	href?: string,
+	title: string
+	href?: string
 }
 
 export class ListFooter extends React.PureComponent<Props> {
 	render() {
-		let {title} = this.props
+		const {title} = this.props
 		return (
 			<Text selectable={true} style={[styles.footer]}>
 				{title}

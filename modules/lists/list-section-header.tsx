@@ -1,4 +1,3 @@
-// @flow
 import * as React from 'react'
 import {Platform, StyleSheet, Text, View} from 'react-native'
 import * as c from '@frogpond/colors'
@@ -68,18 +67,18 @@ const styles = StyleSheet.create({
 })
 
 type Props = {
-	title: string,
-	bold?: boolean,
-	titleStyle?: TextStyleProp,
-	subtitle?: string,
-	subtitleStyle?: TextStyleProp,
-	separator?: string,
-	style?: ViewStyleProp,
-	spacing?: {left?: number, right?: number},
+	title: string
+	bold?: boolean
+	titleStyle?: TextStyleProp
+	subtitle?: string
+	subtitleStyle?: TextStyleProp
+	separator?: string
+	style?: ViewStyleProp
+	spacing?: {left?: number; right?: number}
 }
 
 export function ListSectionHeader(props: Props) {
-	let {
+	const {
 		style,
 		title,
 		bold = true,
@@ -90,10 +89,10 @@ export function ListSectionHeader(props: Props) {
 		spacing: {left: leftSpacing = 15} = {},
 	} = props
 
-	let theme: AppTheme = useTheme()
+	const theme: AppTheme = useTheme()
 
-	let containerTheme = {paddingLeft: leftSpacing}
-	let titleTheme = {}
+	const containerTheme = {paddingLeft: leftSpacing}
+	const titleTheme = {}
 
 	if (Platform.OS === 'android') {
 		containerTheme = {
@@ -106,7 +105,7 @@ export function ListSectionHeader(props: Props) {
 		}
 	}
 
-	let finalTitleStyle = [
+	const finalTitleStyle = [
 		styles.title,
 		titleTheme,
 		titleStyle,

@@ -1,4 +1,3 @@
-// @flow
 import * as React from 'react'
 import {Platform, StyleSheet, View} from 'react-native'
 import * as c from '@frogpond/colors'
@@ -34,18 +33,18 @@ const styles = StyleSheet.create({
 })
 
 type PropsType = {
-	style?: ViewStyleProp,
-	contentContainerStyle?: ViewStyleProp,
-	arrowPosition?: 'center' | 'top' | 'none',
-	fullWidth?: boolean,
-	fullHeight?: boolean,
-	spacing?: {left?: number, right?: number},
-	onPress?: () => any,
-	children?: React.Node,
+	style?: ViewStyleProp
+	contentContainerStyle?: ViewStyleProp
+	arrowPosition?: 'center' | 'top' | 'none'
+	fullWidth?: boolean
+	fullHeight?: boolean
+	spacing?: {left?: number; right?: number}
+	onPress?: () => any
+	children?: React.Node
 }
 
 export function ListRow(props: PropsType) {
-	let {
+	const {
 		style,
 		contentContainerStyle,
 		children,
@@ -55,16 +54,16 @@ export function ListRow(props: PropsType) {
 		fullHeight = false,
 	} = props
 
-	let arrowPosition = props.arrowPosition || (onPress ? 'center' : 'none')
-	let arrowPositionStyle = {
+	const arrowPosition = props.arrowPosition || (onPress ? 'center' : 'none')
+	const arrowPositionStyle = {
 		alignSelf: arrowPosition === 'center' ? 'center' : 'flex-start',
 	}
-	let arrow =
+	const arrow =
 		arrowPosition === 'none' || Platform.OS === 'android' ? null : (
 			<DisclosureArrow style={arrowPositionStyle} />
 		)
 
-	let wrapperStyle = [
+	const wrapperStyle = [
 		styles.container,
 		leftSpacing != null && {paddingLeft: leftSpacing},
 		rightSpacing != null && {paddingRight: rightSpacing},
@@ -73,7 +72,7 @@ export function ListRow(props: PropsType) {
 		contentContainerStyle,
 	]
 
-	let content = (
+	const content = (
 		<React.Fragment>
 			<View style={[styles.childWrapper, style]}>{children}</View>
 			{arrow}

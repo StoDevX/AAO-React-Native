@@ -1,4 +1,3 @@
-// @flow
 import * as React from 'react'
 import {Platform, StyleSheet} from 'react-native'
 import {Separator} from '@frogpond/separator'
@@ -10,10 +9,10 @@ const styles = StyleSheet.create({
 })
 
 type PropsType = {
-	styles?: any,
-	fullWidth?: boolean,
-	spacing?: {left?: number, right?: number},
-	force?: boolean,
+	styles?: any
+	fullWidth?: boolean
+	spacing?: {left?: number; right?: number}
+	force?: boolean
 }
 
 export function ListSeparator(props: PropsType) {
@@ -21,12 +20,12 @@ export function ListSeparator(props: PropsType) {
 		return null
 	}
 
-	let {
+	const {
 		fullWidth,
 		spacing: {left: leftSpacing = 15, right: rightSpacing} = {},
 	} = props
 
-	let spacing = {marginLeft: leftSpacing, marginRight: rightSpacing}
+	const spacing = {marginLeft: leftSpacing, marginRight: rightSpacing}
 	if (fullWidth) {
 		spacing = {marginLeft: 0, marginRight: 0}
 	}

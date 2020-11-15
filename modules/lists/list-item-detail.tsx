@@ -1,4 +1,3 @@
-// @flow
 import * as React from 'react'
 import {StyleSheet, Platform, Text} from 'react-native'
 import * as c from '@frogpond/colors'
@@ -23,9 +22,9 @@ const styles = StyleSheet.create({
 })
 
 type PropsType = {
-	children?: any,
-	style?: any,
-	lines?: number,
+	children?: any
+	style?: any
+	lines?: number
 }
 export function Detail(props: PropsType) {
 	return (
