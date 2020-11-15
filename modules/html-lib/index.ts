@@ -1,5 +1,5 @@
-// @flow
 import {parseDOM} from 'htmlparser2'
+import type {Element} from 'domhandler'
 import cssSelect from 'css-select'
 export {cssSelect}
 
@@ -7,9 +7,8 @@ import {AllHtmlEntities} from 'html-entities'
 
 export const entities = new AllHtmlEntities()
 
-export function parseHtml(string: string): Object {
+export function parseHtml(string: string): Node[] {
 	return parseDOM(string, {
-		withDomLvl1: true,
 		normalizeWhitespace: false,
 		xmlMode: false,
 		decodeEntities: true,
@@ -17,21 +16,21 @@ export function parseHtml(string: string): Object {
 }
 
 // from https://github.com/fb55/domutils/blob/master/lib/stringify.js
-export function getText(elem: Object | Object[]): string {
+export function getText(elem: Element | Element[]): string {
 	if (Array.isArray(elem)) return elem.map(getText).join('')
 	if (elem.type === 'tag') return getText(elem.children)
 	if (elem.type === 'text') return elem.data
 	return ''
 }
 
-function getTextWithSpaces(elem: Object | Object[]): string {
+function getTextWithSpaces(elem: Element | Element[]): string {
 	if (Array.isArray(elem)) return elem.map(getTextWithSpaces).join(' ')
 	if (elem.type === 'tag') return getTextWithSpaces(elem.children)
 	if (elem.type === 'text') return elem.data
 	return ''
 }
 
-export function getTrimmedTextWithSpaces(elem: Object | Object[]): string {
+export function getTrimmedTextWithSpaces(elem: Element | Element[]): string {
 	return getTextWithSpaces(elem).split(/\s+/u).join(' ').trim()
 }
 
