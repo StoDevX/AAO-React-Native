@@ -13,26 +13,26 @@ import * as c from '@frogpond/colors'
 import type {ViewStyleProp} from 'react-native/Libraries/StyleSheet/StyleSheet'
 
 type Props = {
-	androidMode: 'calendar' | 'spinner' | 'default',
-	date: moment,
-	formattedDate: string,
-	mode: 'date' | 'datetime' | 'time',
-	onDateChange: (moment) => any,
-	style?: ViewStyleProp,
-	timezone: string,
+	androidMode: 'calendar' | 'spinner' | 'default'
+	date: moment
+	formattedDate: string
+	mode: 'date' | 'datetime' | 'time'
+	onDateChange: (moment) => any
+	style?: ViewStyleProp
+	timezone: string
 }
 
 type DatePickerResponse = {
-	action: string,
-	year: number,
-	month: number,
-	day: number,
+	action: string
+	year: number
+	month: number
+	day: number
 }
 
 type TimePickerResponse = {
-	action: string,
-	hour: number,
-	minute: number,
+	action: string
+	hour: number
+	minute: number
 }
 
 export class DatePicker extends React.PureComponent<Props> {

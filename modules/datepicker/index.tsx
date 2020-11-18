@@ -13,20 +13,20 @@ const FORMATS = {
 }
 
 type Props = {
-	androidMode: 'calendar' | 'spinner' | 'default',
-	initialDate: moment,
-	duration?: number,
-	format?: string,
-	height?: number,
-	minuteInterval?: 1 | 2 | 3 | 4 | 5 | 6 | 10 | 12 | 15 | 20 | 30,
-	mode: 'date' | 'datetime' | 'time',
-	onDateChange: (moment) => any,
-	style?: ViewStyleProp,
+	androidMode: 'calendar' | 'spinner' | 'default'
+	initialDate: moment
+	duration?: number
+	format?: string
+	height?: number
+	minuteInterval?: 1 | 2 | 3 | 4 | 5 | 6 | 10 | 12 | 15 | 20 | 30
+	mode: 'date' | 'datetime' | 'time'
+	onDateChange: (moment) => any
+	style?: ViewStyleProp
 }
 
 type State = {
-	date: moment,
-	timezone: string,
+	date: moment
+	timezone: string
 }
 
 export class DatePicker extends React.Component<Props, State> {

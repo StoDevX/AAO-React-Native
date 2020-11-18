@@ -17,22 +17,22 @@ import moment from 'moment-timezone'
 import * as c from '@frogpond/colors'
 
 type Props = {
-	date: moment,
-	formattedDate: string,
-	duration: number,
-	format?: string,
-	height: number,
-	minuteInterval?: 1 | 2 | 3 | 4 | 5 | 6 | 10 | 12 | 15 | 20 | 30,
-	mode: 'date' | 'datetime' | 'time',
-	onDateChange: (moment) => any,
-	style?: ViewStyleProp,
-	timezone: string,
+	date: moment
+	formattedDate: string
+	duration: number
+	format?: string
+	height: number
+	minuteInterval?: 1 | 2 | 3 | 4 | 5 | 6 | 10 | 12 | 15 | 20 | 30
+	mode: 'date' | 'datetime' | 'time'
+	onDateChange: (moment) => any
+	style?: ViewStyleProp
+	timezone: string
 }
 
 type State = {
-	modalVisible: boolean,
-	animatedHeight: Animated.Value,
-	allowPointerEvents: boolean,
+	modalVisible: boolean
+	animatedHeight: Animated.Value
+	allowPointerEvents: boolean
 }
 
 export class DatePicker extends React.Component<Props, State> {
@@ -117,15 +117,15 @@ export class DatePicker extends React.Component<Props, State> {
 }
 
 type ModalProps = {
-	date: moment,
-	height: any, // actually AnimatedValue
-	minuteInterval?: 1 | 2 | 3 | 4 | 5 | 6 | 10 | 12 | 15 | 20 | 30,
-	mode: 'date' | 'datetime' | 'time',
-	allowPointerEvents: boolean,
-	visible: boolean,
-	onDateChange: (moment) => any,
-	onHide: () => any,
-	timezone: string,
+	date: moment
+	height: any // actually AnimatedValue
+	minuteInterval?: 1 | 2 | 3 | 4 | 5 | 6 | 10 | 12 | 15 | 20 | 30
+	mode: 'date' | 'datetime' | 'time'
+	allowPointerEvents: boolean
+	visible: boolean
+	onDateChange: (moment) => any
+	onHide: () => any
+	timezone: string
 }
 
 class DatePickerModal extends React.PureComponent<ModalProps> {
@@ -208,10 +208,10 @@ class DatePickerModal extends React.PureComponent<ModalProps> {
 type StyleSheetRule = number | any | Array<StyleSheetRule>
 
 type ButtonProps = {
-	style?: ViewStyleProp,
-	textStyle?: TextStyleProp,
-	onPress: () => any,
-	text: string,
+	style?: ViewStyleProp
+	textStyle?: TextStyleProp
+	onPress: () => any
+	text: string
 }
 
 const Button = ({style, textStyle, onPress, text}: ButtonProps) => (
