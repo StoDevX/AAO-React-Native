@@ -15,6 +15,7 @@
         android:icon="@mipmap/ic_launcher"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="${isDebug}"
+        android:allowNativeHeapPointerTagging="false"
     >
       <activity
           android:launchMode="singleTop"
