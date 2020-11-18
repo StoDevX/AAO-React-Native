@@ -62,11 +62,11 @@ jobs:
 
   ios:
     name: Build for iOS
-    runs-on: macos-latest
+    runs-on: macos-10.15
     steps:
       - uses: actions/setup-node@master
         with: {node-version: ^12.0}
-      - run: sudo xcode-select -s /Applications/Xcode_11.1.app
+      - run: sudo xcode-select -s /Applications/Xcode_11.7.app
       - uses: actions/checkout@master
       - run: git fetch --prune --unshallow
       - run: gem install bundler:1.17.2
