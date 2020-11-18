@@ -16,6 +16,7 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="${isDebug}"
         android:allowNativeHeapPointerTagging="false"
+        android:extractNativeLibs="true"
     >
       <activity
           android:launchMode="singleTop"
