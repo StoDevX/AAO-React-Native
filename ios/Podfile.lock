@@ -245,14 +245,14 @@ PODS:
     - React
   - RNSearchBar (3.5.1):
     - React
-  - RNSentry (2.0.0):
+  - RNSentry (2.0.1):
     - React-Core
-    - Sentry (~> 6.0.3)
+    - Sentry (= 6.0.8)
   - RNVectorIcons (6.6.0):
     - React
-  - Sentry (6.0.9):
-    - Sentry/Core (= 6.0.9)
-  - Sentry/Core (6.0.9)
+  - Sentry (6.0.8):
+    - Sentry/Core (= 6.0.8)
+  - Sentry/Core (6.0.8)
   - Yoga (1.14.0)
 
 DEPENDENCIES:
@@ -430,9 +430,9 @@ SPEC CHECKSUMS:
   RNKeychain: bf2d7e9a0ae7a073c07770dd2aa6d11c67581733
   RNScreens: c526239bbe0e957b988dacc8d75ac94ec9cb19da
   RNSearchBar: 9860431356b7d12a8449d2fddb2b5f3c78d1e99f
-  RNSentry: cb4ef23400fb6690f6ac8f6acef0c023a8a4f37d
+  RNSentry: 5408304a9fc37053c5589cfa4123a7ad2dce2456
   RNVectorIcons: 0bb4def82230be1333ddaeee9fcba45f0b288ed4
-  Sentry: 388c9dc093b2fd3a264466a5c5b21e25959610a9
+  Sentry: 6ab9f44a413dec7ebf5e82b166048afb5f60b895
   Yoga: f2a7cd4280bfe2cca5a7aed98ba0eb3d1310f18b
 
 PODFILE CHECKSUM: 923547688c3ddb5453999c188c32986c217176b5
