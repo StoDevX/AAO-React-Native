@@ -5,8 +5,6 @@
 >
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <!-- FINE_LOCATION is used for wifi reporting -->
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <application
         android:name=".MainApplication"
@@ -15,6 +13,8 @@
         android:icon="@mipmap/ic_launcher"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="${isDebug}"
+        android:allowNativeHeapPointerTagging="false"
+        android:extractNativeLibs="true"
     >
       <activity
           android:launchMode="singleTop"
