@@ -47,10 +47,7 @@ import StreamingView, {
 	KSTOScheduleView,
 } from '../views/streaming'
 import {StudentOrgsDetailView, StudentOrgsView} from '../views/student-orgs'
-import TransportationView, {
-	BusMap as BusMapView,
-	OtherModesDetailView,
-} from '../views/transportation'
+import TransportationView, {OtherModesDetailView} from '../views/transportation'
 import {
 	PrinterListView,
 	PrintJobReleaseView,
@@ -93,7 +90,6 @@ export const routes = {
 	StudentOrgsView: {screen: StudentOrgsView},
 	TransportationView: {screen: TransportationView},
 	OtherModesDetailView: {screen: OtherModesDetailView},
-	BusMapView: {screen: BusMapView},
 	CarletonBurtonMenuView: {screen: CarletonBurtonMenuScreen},
 	CarletonLDCMenuView: {screen: CarletonLDCMenuScreen},
 	CarletonWeitzMenuView: {screen: CarletonWeitzMenuScreen},
