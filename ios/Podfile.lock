@@ -188,8 +188,6 @@ PODS:
   - React-jsinspector (0.61.5)
   - react-native-calendar-events (1.7.3):
     - React
-  - react-native-mapbox-gl (6.1.3):
-    - React
   - react-native-netinfo (5.9.7):
     - React-Core
   - react-native-restart (0.0.17):
@@ -273,7 +271,6 @@ DEPENDENCIES:
   - React-jsiexecutor (from `../node_modules/react-native/ReactCommon/jsiexecutor`)
   - React-jsinspector (from `../node_modules/react-native/ReactCommon/jsinspector`)
   - react-native-calendar-events (from `../node_modules/react-native-calendar-events`)
-  - "react-native-mapbox-gl (from `../node_modules/@mapbox/react-native-mapbox-gl`)"
   - "react-native-netinfo (from `../node_modules/@react-native-community/netinfo`)"
   - react-native-restart (from `../node_modules/react-native-restart`)
   - react-native-safari-view (from `../node_modules/react-native-safari-view`)
@@ -338,8 +335,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/jsinspector"
   react-native-calendar-events:
     :path: "../node_modules/react-native-calendar-events"
-  react-native-mapbox-gl:
-    :path: "../node_modules/@mapbox/react-native-mapbox-gl"
   react-native-netinfo:
     :path: "../node_modules/@react-native-community/netinfo"
   react-native-restart:
@@ -404,7 +399,6 @@ SPEC CHECKSUMS:
   React-jsiexecutor: d5525f9ed5f782fdbacb64b9b01a43a9323d2386
   React-jsinspector: fa0ecc501688c3c4c34f28834a76302233e29dc0
   react-native-calendar-events: eaa63134881d97488feb21ea114158f712894018
-  react-native-mapbox-gl: d0ac3b81a6cadbd7cadc80891da72e3e85379350
   react-native-netinfo: 250dc0ca126512f618a8a2ca6a936577e1f66586
   react-native-restart: d19a0f8d053d065fe64cd2baebb6487111c77149
   react-native-safari-view: 955d7160d159241b8e9395d12d10ea0ef863dcdd

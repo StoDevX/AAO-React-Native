@@ -616,7 +616,6 @@
 				6776346D1ECC93FA00C6F018 /* Bundle Data Files */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
 				878A020C8F21FDAF804AB318 /* [CP] Copy Pods Resources */,
-				6E4F5A9ADDA1A4C954AC4782 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -1034,24 +1033,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "if [ ! -e package.json ]; then\n    cd ..\nfi\n\nnpm run bundle-data\n";
-		};
-		6E4F5A9ADDA1A4C954AC4782 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-AllAboutOlaf/Pods-AllAboutOlaf-frameworks.sh",
-				"${PODS_ROOT}/../../node_modules/@mapbox/react-native-mapbox-gl/ios/Mapbox.framework",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Mapbox.framework",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-AllAboutOlaf/Pods-AllAboutOlaf-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
 		};
 		878A020C8F21FDAF804AB318 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
