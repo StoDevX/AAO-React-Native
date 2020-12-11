@@ -2817,10 +2817,10 @@ cross-spawn@^7.0.0, cross-spawn@^7.0.2:
     shebang-command "^2.0.0"
     which "^2.0.1"
 
-css-select@3.1.1:
-  version "3.1.1"
-  resolved "https://registry.yarnpkg.com/css-select/-/css-select-3.1.1.tgz#38aef130c85a803e5a2c2cf25a59edecb4e6130d"
-  integrity sha512-6h3ECMuVhTcISNgmavw2YqWiuPY0jurQYWdob5au8z0H84xkFE23Sv6ML+Y42fMNqXsaUB69+3MTpX4uFEMY+g==
+css-select@3.1.2:
+  version "3.1.2"
+  resolved "https://registry.yarnpkg.com/css-select/-/css-select-3.1.2.tgz#d52cbdc6fee379fba97fb0d3925abbd18af2d9d8"
+  integrity sha512-qmss1EihSuBNWNNhHjxzxSfJoFBM/lERB/Q4EnsJQQC62R2evJDW481091oAdOr9uh46/0n4nrg0It5cAnj1RA==
   dependencies:
     boolbase "^1.0.0"
     css-what "^4.0.0"
