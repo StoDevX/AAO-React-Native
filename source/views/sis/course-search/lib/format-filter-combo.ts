@@ -3,8 +3,8 @@ import type {FilterType} from '@frogpond/filter'
 import {formatTerms} from './format-terms'
 
 export type FilterComboType = {
-	filters: FilterType[],
-	description: string,
+	filters: FilterType[]
+	description: string
 }
 
 export function formatFilterCombo(filters: FilterType[]): FilterComboType {

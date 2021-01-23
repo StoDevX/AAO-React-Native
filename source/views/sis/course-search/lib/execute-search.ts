@@ -43,7 +43,7 @@ export function sortAndGroupResults(results: Array<Course>) {
 		data: value,
 	}))
 
-	let sortedAgain: Array<{title: string, data: Array<Course>}> = sortBy(
+	let sortedAgain: Array<{title: string; data: Array<Course>}> = sortBy(
 		forSectionList,
 		(course) => course.title,
 	)

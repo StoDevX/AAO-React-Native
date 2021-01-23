@@ -22,8 +22,8 @@ export function formatTerms(terms: Array<number>): string {
 }
 
 type TermAbbrevType = {
-	year: string,
-	semester: string,
+	year: string
+	semester: string
 }
 
 function parseTermAbbrev(term: string): TermAbbrevType {
