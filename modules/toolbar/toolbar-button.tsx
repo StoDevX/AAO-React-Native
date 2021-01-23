@@ -1,6 +1,7 @@
 import * as React from 'react'
 import {StyleSheet, View, Text, Platform} from 'react-native'
-import {Icon, type Glyphs} from '@frogpond/icon'
+import {Icon} from '@frogpond/icon'
+import type {Glyphs} from '@frogpond/icon'
 import * as c from '@frogpond/colors'
 import type {AppTheme} from '@frogpond/app-theme'
 import {useTheme} from '@frogpond/app-theme'
@@ -28,9 +29,9 @@ const buttonStyles = StyleSheet.create({
 })
 
 type ButtonPropsType = {
-	iconName?: Glyphs,
-	title: string,
-	isActive: boolean,
+	iconName?: Glyphs
+	title: string
+	isActive: boolean
 }
 
 export function ToolbarButton({title, iconName, isActive}: ButtonPropsType) {
