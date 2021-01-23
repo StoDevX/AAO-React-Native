@@ -41,13 +41,13 @@ const Output = glamorous(TextInput)({
 const Segment = glamorous(SegmentedControlIOS)({})
 
 type Props = {
-	navigation: NavigationScreenProp<*>,
+	navigation: NavigationScreenProp<any>
 }
 
 type State = {
-	results: ?string,
-	error: ?string,
-	selectedIndex: number,
+	results?: string
+	error?: string
+	selectedIndex: number
 }
 
 export class IOSAPITestView extends React.PureComponent<Props, State> {

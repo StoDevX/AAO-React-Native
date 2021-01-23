@@ -31,12 +31,12 @@ const Output = glamorous(ScrollView)({
 })
 
 type Props = {
-	navigation: NavigationScreenProp<*>,
+	navigation: NavigationScreenProp<any>
 }
 
 type State = {
-	results: ?string,
-	error: ?string,
+	results?: string
+	error?: string
 }
 
 export class AndroidAPITestView extends React.PureComponent<Props, State> {
