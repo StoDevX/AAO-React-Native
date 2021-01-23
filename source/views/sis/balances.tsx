@@ -16,24 +16,24 @@ const DISCLAIMER = 'This data may be outdated or otherwise inaccurate.'
 type ReactProps = TopLevelViewPropsType
 
 type ReduxStateProps = {
-	status: LoginStateEnum,
+	status: LoginStateEnum
 }
 
 type ReduxDispatchProps = {
-	logInViaCredentials: (string, string) => void,
+	logInViaCredentials: (string, string) => void
 }
 
 type Props = ReactProps & ReduxStateProps & ReduxDispatchProps
 
 type State = {
-	loading: boolean,
-	flex: ?string,
-	ole: ?string,
-	print: ?string,
-	weeklyMeals: ?string,
-	dailyMeals: ?string,
-	mealPlan: ?string,
-	message: ?string,
+	loading: boolean
+	flex?: string
+	ole?: string
+	print?: string
+	weeklyMeals?: string
+	dailyMeals?: string
+	mealPlan?: string
+	message?: string
 }
 
 class BalancesView extends React.Component<Props, State> {
@@ -259,7 +259,7 @@ let styles = StyleSheet.create({
 	},
 })
 
-function getValueOrNa(value: ?string): string {
+function getValueOrNa(value?: string): string {
 	if (value == null) {
 		return 'N/A'
 	}
@@ -267,11 +267,11 @@ function getValueOrNa(value: ?string): string {
 }
 
 function FormattedValueCell(props: {
-	indeterminate: boolean,
-	label: string,
-	value: ?string,
-	style?: any,
-	formatter?: (?string) => string,
+	indeterminate: boolean
+	label: string
+	value?: string
+	style?: any
+	formatter?: (str?: string) => string
 }) {
 	let {indeterminate, label, value, style, formatter = getValueOrNa} = props
 

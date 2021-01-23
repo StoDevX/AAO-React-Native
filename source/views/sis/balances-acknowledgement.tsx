@@ -68,10 +68,10 @@ BalancesOrAcknowledgementView.navigationOptions = {
 }
 
 type AcknowledgementProps = {
-	title: string,
-	subtitle: string,
-	children: React.Node,
-	onPositive: () => any,
+	title: string
+	subtitle: string
+	children: React.Node
+	onPositive: () => any
 }
 
 function AndroidAck(props: AcknowledgementProps) {
