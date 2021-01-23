@@ -26,7 +26,7 @@ const styles = StyleSheet.create({
 })
 
 type Props = TopLevelViewPropsType & {
-	navigation: {state: {params: {item: WordType}}},
+	navigation: {state: {params: {item: WordType}}}
 }
 
 export class DictionaryDetailView extends React.PureComponent<Props> {

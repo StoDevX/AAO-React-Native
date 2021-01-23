@@ -18,11 +18,12 @@ import words from 'lodash/words'
 import deburr from 'lodash/deburr'
 import {fetch} from '@frogpond/fetch'
 import {API} from '@frogpond/api'
-import {useAsync, type AsyncState} from 'react-async'
+import {useAsync} from 'react-async'
+import type {AsyncState} from 'react-async'
 import {useDebounce} from '@frogpond/use-debounce'
 
 const fetchDictionaryTerms = (args: {
-	signal: window.AbortController,
+	signal: window.AbortController
 }): Promise<Array<WordType>> => {
 	return fetch(API('/dictionary'), {signal: args.signal})
 		.json()
@@ -58,7 +59,7 @@ export function DictionaryView(props: Props) {
 	let [query, setQuery] = React.useState('')
 	let searchQuery = useDebounce(query.toLowerCase(), 200)
 
-	let {data, error, reload, isPending}: AsyncState<?Array<WordType>> = useAsync(
+	let {data, error, reload, isPending}: AsyncState<Array<WordType>> = useAsync(
 		fetchDictionaryTerms,
 	)
 

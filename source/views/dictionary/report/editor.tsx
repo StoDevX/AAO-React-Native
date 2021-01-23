@@ -12,12 +12,12 @@ import type {WordType} from '../types'
 import type {TopLevelViewPropsType} from '../../types'
 
 type Props = TopLevelViewPropsType & {
-	navigation: {state: {params: {item: WordType}}},
+	navigation: {state: {params: {item: WordType}}}
 }
 
 type State = {
-	term: string,
-	definition: string,
+	term: string
+	definition: string
 }
 
 export class DictionaryEditorView extends React.PureComponent<Props, State> {
@@ -81,7 +81,7 @@ export class DictionaryEditorView extends React.PureComponent<Props, State> {
 	}
 }
 
-type TextFieldProps = {text: string, onChange: (string) => any}
+type TextFieldProps = {text: string; onChange: (string) => any}
 
 const TitleCell = ({text, onChange = () => {}}: TextFieldProps) => (
 	<CellTextField
