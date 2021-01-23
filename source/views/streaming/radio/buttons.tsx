@@ -1,19 +1,20 @@
 import * as React from 'react'
 import {StyleSheet, Text, View, Platform} from 'react-native'
 import * as c from '@frogpond/colors'
-import {Icon, type Glyphs} from '@frogpond/icon'
+import {Icon} from '@frogpond/icon'
+import type {Glyphs} from '@frogpond/icon'
 import {Touchable} from '@frogpond/touchable'
 import {withTheme} from '@frogpond/app-theme'
 import type {PlayerTheme} from './types'
 
 type ActionButtonBaseProps = {
-	icon: Glyphs,
-	text: string,
-	onPress: () => mixed,
+	icon: Glyphs
+	text: string
+	onPress: () => mixed
 }
 
 type HocProps = {
-	theme: PlayerTheme,
+	theme: PlayerTheme
 }
 
 type ActionButtonProps = ActionButtonBaseProps & HocProps
@@ -34,9 +35,9 @@ const ActionButton = (props: ActionButtonProps) => {
 	)
 }
 
-const ThemedActionButton: React.StatelessFunctionalComponent<ActionButtonBaseProps> = (withTheme(
+const ThemedActionButton: React.StatelessFunctionalComponent<ActionButtonBaseProps> = withTheme(
 	ActionButton,
-): any)
+)
 
 export {ThemedActionButton as ActionButton}
 
@@ -55,8 +56,8 @@ export const ShowCalendarButton = ({onPress}: {onPress: () => mixed}) => (
 )
 
 type SmallActionButtonBaseProps = {
-	icon: Glyphs,
-	onPress: () => mixed,
+	icon: Glyphs
+	onPress: () => mixed
 }
 
 type SmallActionButtonProps = ActionButtonBaseProps & HocProps
@@ -74,9 +75,9 @@ const SmallActionButton = (props: SmallActionButtonProps) => {
 	)
 }
 
-const ThemedSmallActionButton: React.StatelessFunctionalComponent<SmallActionButtonBaseProps> = (withTheme(
+const ThemedSmallActionButton: React.StatelessFunctionalComponent<SmallActionButtonBaseProps> = withTheme(
 	SmallActionButton,
-): any)
+)
 
 const styles = StyleSheet.create({
 	button: {

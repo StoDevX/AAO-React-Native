@@ -16,24 +16,24 @@ import {withTheme} from '@frogpond/app-theme'
 const ALLOW_INLINE_PLAYER = false
 
 type Props = TopLevelViewPropsType & {
-	image: number,
-	playerUrl: string,
-	stationNumber: string,
-	title: string,
-	scheduleViewName: string,
-	stationName: string,
+	image: number
+	playerUrl: string
+	stationNumber: string
+	title: string
+	scheduleViewName: string
+	stationName: string
 	source: {
-		useEmbeddedPlayer: boolean,
-		embeddedPlayerUrl: string,
-		streamSourceUrl: string,
-	},
-	theme: PlayerTheme,
+		useEmbeddedPlayer: boolean
+		embeddedPlayerUrl: string
+		streamSourceUrl: string
+	}
+	theme: PlayerTheme
 }
 
 type State = {
-	playState: PlayState,
-	streamError: ?HtmlAudioError,
-	uplinkError: ?string,
+	playState: PlayState
+	streamError?: HtmlAudioError
+	uplinkError?: string
 }
 
 class RadioControllerView extends React.Component<Props, State> {
@@ -63,7 +63,7 @@ class RadioControllerView extends React.Component<Props, State> {
 		this.setState(() => ({playState: 'paused'}))
 	}
 
-	handleStreamError = (e: {code: number, message: string}) => {
+	handleStreamError = (e: {code: number; message: string}) => {
 		this.setState(() => ({streamError: e, playState: 'paused'}))
 	}
 

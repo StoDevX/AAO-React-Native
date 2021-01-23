@@ -3,17 +3,17 @@ import {WebView} from 'react-native-webview'
 import type {PlayState, HtmlAudioError} from './types'
 
 type Props = {
-	playState: PlayState,
-	onWaiting?: () => any,
-	onEnded?: () => any,
-	onStalled?: () => any,
-	onPlay?: () => any,
-	onPause?: () => any,
-	onError?: (HtmlAudioError) => any,
-	style: any,
-	useEmbeddedPlayer: boolean,
-	embeddedPlayerUrl: string,
-	streamSourceUrl: string,
+	playState: PlayState
+	onWaiting?: () => any
+	onEnded?: () => any
+	onStalled?: () => any
+	onPlay?: () => any
+	onPause?: () => any
+	onError?: (HtmlAudioError) => any
+	style: any
+	useEmbeddedPlayer: boolean
+	embeddedPlayerUrl: string
+	streamSourceUrl: string
 }
 
 type HtmlAudioState =
@@ -26,7 +26,7 @@ type HtmlAudioState =
 
 type HtmlAudioEvent =
 	| {type: HtmlAudioState}
-	| {type: 'error', error: HtmlAudioError}
+	| {type: 'error'; error: HtmlAudioError}
 
 export class StreamPlayer extends React.PureComponent<Props> {
 	componentDidUpdate() {
@@ -37,7 +37,7 @@ export class StreamPlayer extends React.PureComponent<Props> {
 		this.pause()
 	}
 
-	_webview: ?WebView = null
+	_webview?: WebView = undefined
 
 	dispatchEvent = (nextPlayState: PlayState) => {
 		// console.log('<StreamPlayer> state changed to', nextPlayState)
@@ -107,7 +107,7 @@ export class StreamPlayer extends React.PureComponent<Props> {
 		</audio>
 	`
 
-	js = (selector: string = 'audio') => `
+	js = (selector = 'audio') => `
 	    function ready(fn) {
 	      if (document.readyState !== 'loading') {
 	        fn();
