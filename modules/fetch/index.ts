@@ -23,7 +23,7 @@ type RequestOptions = any
 type ExpandedFetchArgs = RequestOptions & {
 	// Search parameters to include in the request URL. Setting this will
 	// override all existing search parameters in the input URL.
-	searchParams?: {[key: string]: string | number},
+	searchParams?: {[key: string]: string | number}
 
 	// Number of times to retry failed requests.
 	// retry?: number;
@@ -32,15 +32,15 @@ type ExpandedFetchArgs = RequestOptions & {
 	// timeout?: number;
 
 	// Throw a `HTTPError` for error responses (non-2xx status codes).
-	throwHttpErrors?: boolean,
+	throwHttpErrors?: boolean
 
 	// Amount of time to delay the request, in milliseconds.
-	delay?: number,
+	delay?: number
 }
 
 interface ResponsePromise extends Promise<Response> {
-	json(): Promise<any>;
-	text(): Promise<string>;
+	json(): Promise<any>
+	text(): Promise<string>
 }
 
 class Fetch {

@@ -59,10 +59,10 @@ export async function insertForUrl(url: string, data: any) {
 
 // Does the magic: stores a Request into AsyncStorage
 type CacheItemArgs = {
-	key: string,
-	response: Response,
-	policy: CachePolicy,
-	bundled?: boolean,
+	key: string
+	response: Response
+	policy: CachePolicy
+	bundled?: boolean
 }
 async function cacheItem({key, response, policy, bundled}: CacheItemArgs) {
 	response = await serializeResponse(response)
@@ -80,7 +80,7 @@ async function cacheItem({key, response, policy, bundled}: CacheItemArgs) {
 }
 
 // Does more magic: gets a Request from AsyncStorage
-type GetItemResult = {response: Response, policy: ?CachePolicy}
+type GetItemResult = {response: Response; policy: ?CachePolicy}
 async function getItem(key: string): Promise<GetItemResult> {
 	let [[, response], [, policy]] = await AsyncStorage.multiGet([
 		`${ROOT}:${key}:response`,
@@ -100,7 +100,7 @@ async function getItem(key: string): Promise<GetItemResult> {
 }
 
 // Handles the case of no-data-yet-cached
-async function handleInitialFetch(args: {request: Request, key: string}) {
+async function handleInitialFetch(args: {request: Request; key: string}) {
 	let {request, key} = args
 
 	debug && console.log(`fetch(${request.url}): no policy cached; fetching`)
@@ -127,10 +127,10 @@ async function handleInitialFetch(args: {request: Request, key: string}) {
 }
 
 type HandlePartialFetchArgs = {
-	request: Request,
-	oldResponse: Response,
-	oldPolicy: CachePolicy,
-	key: string,
+	request: Request
+	oldResponse: Response
+	oldPolicy: CachePolicy
+	key: string
 }
 
 // Handles the case of cached-and-fresh data
