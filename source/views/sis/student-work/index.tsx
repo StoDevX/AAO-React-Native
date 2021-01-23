@@ -26,10 +26,10 @@ const styles = StyleSheet.create({
 type Props = TopLevelViewPropsType
 
 type State = {
-	jobs: Array<{title: string, data: Array<JobType>}>,
-	loading: boolean,
-	refreshing: boolean,
-	error: boolean,
+	jobs: Array<{title: string; data: Array<JobType>}>
+	loading: boolean
+	refreshing: boolean
+	error: boolean
 }
 
 export default class StudentWorkView extends React.PureComponent<Props, State> {

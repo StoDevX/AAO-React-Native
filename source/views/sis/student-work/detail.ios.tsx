@@ -187,7 +187,7 @@ function LastUpdated({when}: {when: string}) {
 }
 
 type Props = {
-	navigation: {state: {params: {job: JobType}}},
+	navigation: {state: {params: {job: JobType}}}
 }
 
 export class JobDetailView extends React.PureComponent<Props> {

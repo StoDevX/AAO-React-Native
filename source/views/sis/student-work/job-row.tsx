@@ -5,8 +5,8 @@ import {fastGetTrimmedText} from '@frogpond/html-lib'
 import type {JobType} from './types'
 
 type Props = {
-	onPress: (JobType) => any,
-	job: JobType,
+	onPress: (JobType) => any
+	job: JobType
 }
 
 export class JobRow extends React.PureComponent<Props> {
