@@ -22,7 +22,7 @@ const fetchHours = (forReload?: boolean): Promise<Array<BuildingType>> =>
 const groupBuildings = (
 	buildings: Array<BuildingType>,
 	favorites: Array<string>,
-): Array<{title: string, data: Array<BuildingType>}> => {
+): Array<{title: string; data: Array<BuildingType>}> => {
 	let favoritesGroup = {
 		title: 'Favorites',
 		data: buildings.filter((b) => favorites.includes(b.name)),
@@ -42,15 +42,15 @@ const groupBuildings = (
 }
 
 type ReduxStateProps = {
-	favoriteBuildings: Array<string>,
+	favoriteBuildings: Array<string>
 }
 
 type Props = TopLevelViewPropsType & ReduxStateProps
 
 type State = {
-	error: ?Error,
-	loading: boolean,
-	buildings: Array<BuildingType>,
+	error?: Error
+	loading: boolean
+	buildings: Array<BuildingType>
 }
 
 export class BuildingHoursView extends React.PureComponent<Props, State> {

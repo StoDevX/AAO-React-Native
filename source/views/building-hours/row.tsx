@@ -46,18 +46,18 @@ const FG_COLORS = {
 }
 
 type Props = {
-	info: BuildingType,
-	name: string,
-	now: momentT,
-	onPress: (BuildingType) => any,
+	info: BuildingType
+	name: string
+	now: momentT
+	onPress: (BuildingType) => any
 }
 
 type State = {
-	now: momentT,
-	openStatus: string,
-	hours: Array<any>,
-	accentBg: string,
-	accentText: string,
+	now: momentT
+	openStatus: string
+	hours: Array<any>
+	accentBg: string
+	accentText: string
 }
 
 function deriveStateFromProps(props: Props) {
@@ -155,9 +155,9 @@ const BuildingTimeSlot = ({
 	status,
 	highlight,
 }: {
-	label: ?string,
-	status: string,
-	highlight: boolean,
+	label?: string
+	status: string
+	highlight: boolean
 }) => {
 	// we don't want to show the 'Hours' label, since almost every row has it
 	let showLabel = label && label !== 'Hours'

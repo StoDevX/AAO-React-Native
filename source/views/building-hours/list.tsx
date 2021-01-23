@@ -20,10 +20,10 @@ const styles = StyleSheet.create({
 })
 
 type Props = TopLevelViewPropsType & {
-	now: momentT,
-	loading: boolean,
-	onRefresh: () => any,
-	buildings: Array<{title: string, data: BuildingType[]}>,
+	now: momentT
+	loading: boolean
+	onRefresh: () => any
+	buildings: Array<{title: string; data: BuildingType[]}>
 }
 
 export class BuildingHoursList extends React.PureComponent<Props> {
@@ -58,7 +58,7 @@ export class BuildingHoursList extends React.PureComponent<Props> {
 				refreshing={this.props.loading}
 				renderItem={this.renderItem}
 				renderSectionHeader={this.renderSectionHeader}
-				sections={(this.props.buildings: any)}
+				sections={this.props.buildings}
 			/>
 		)
 	}
