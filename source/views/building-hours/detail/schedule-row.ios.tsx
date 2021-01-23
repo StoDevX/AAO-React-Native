@@ -12,9 +12,9 @@ import {Cell} from '@frogpond/tableview'
 import {formatBuildingTimes, summarizeDays} from '../lib'
 
 type Props = {
-	set: SingleBuildingScheduleType,
-	isActive: boolean,
-	now: moment,
+	set: SingleBuildingScheduleType
+	isActive: boolean
+	now: moment
 }
 
 export class ScheduleRow extends React.PureComponent<Props> {

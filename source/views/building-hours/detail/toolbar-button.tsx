@@ -5,7 +5,7 @@ import {useSelector, useDispatch} from 'react-redux'
 import {toggleFavoriteBuilding} from '../../../redux/parts/buildings'
 
 type Props = {
-	buildingName: string,
+	buildingName: string
 }
 
 export const BuildingFavoriteButton = function (props: Props) {

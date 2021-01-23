@@ -8,9 +8,9 @@ import {ScheduleRow} from './schedule-row'
 import {ButtonCell} from '@frogpond/tableview'
 
 type Props = {
-	now: moment,
-	schedules: NamedBuildingScheduleType[],
-	onProblemReport: () => any,
+	now: moment
+	schedules: NamedBuildingScheduleType[]
+	onProblemReport: () => any
 }
 
 export class ScheduleTable extends React.PureComponent<Props> {

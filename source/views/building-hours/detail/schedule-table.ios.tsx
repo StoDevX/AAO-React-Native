@@ -12,9 +12,9 @@ import {isScheduleOpenAtMoment, getDayOfWeek} from '../lib'
 import {ScheduleRow} from './schedule-row'
 
 type Props = {
-	now: moment,
-	schedules: NamedBuildingScheduleType[],
-	onProblemReport: () => any,
+	now: moment
+	schedules: NamedBuildingScheduleType[]
+	onProblemReport: () => any
 }
 
 export class ScheduleTable extends React.PureComponent<Props> {

@@ -7,7 +7,7 @@ import type {TopLevelViewPropsType} from '../../types'
 import {BuildingFavoriteButton} from './toolbar-button'
 
 type Props = TopLevelViewPropsType & {
-	navigation: {state: {params: {building: BuildingType}}},
+	navigation: {state: {params: {building: BuildingType}}}
 }
 
 export class BuildingHoursDetailView extends React.Component<Props> {
