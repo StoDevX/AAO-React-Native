@@ -12,8 +12,8 @@ import type {ReduxState} from '../../../../redux'
 import type {TopLevelViewPropsType} from '../../../types'
 
 type Props = TopLevelViewPropsType & {
-	apiTest?: boolean,
-	state: any,
+	apiTest?: boolean
+	state: any
 }
 
 export class DebugListView extends React.PureComponent<Props> {
