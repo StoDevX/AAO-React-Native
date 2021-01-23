@@ -1,4 +1,3 @@
-// @flow
 import {getScheduleStatusAtMoment} from '../get-schedule-status'
 import {dayMoment} from './moment.helper'
 

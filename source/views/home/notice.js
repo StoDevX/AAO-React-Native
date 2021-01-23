@@ -1,5 +1,3 @@
-// @flow
-
 import * as React from 'react'
 import * as glamorous from 'glamorous-native'
 import * as c from '@frogpond/colors'

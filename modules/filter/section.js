@@ -1,4 +1,3 @@
-// @flow
 import * as React from 'react'
 import {ScrollView} from 'react-native'
 import type {FilterType} from './types'

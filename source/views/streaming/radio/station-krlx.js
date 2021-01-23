@@ -1,5 +1,3 @@
-// @flow
-
 import * as React from 'react'
 import * as c from '@frogpond/colors'
 import {TabBarIcon} from '@frogpond/navigation-tabs'

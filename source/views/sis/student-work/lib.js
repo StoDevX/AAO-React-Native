@@ -1,4 +1,3 @@
-// @flow
 import {Platform, Share} from 'react-native'
 import querystring from 'query-string'
 import type {JobType} from './types'

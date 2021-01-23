@@ -1,4 +1,3 @@
-// @flow
 import type {DayOfWeekEnumType} from '../types'
 
 export const TIME_FORMAT = 'h:mma'

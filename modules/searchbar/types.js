@@ -1,5 +1,3 @@
-// @flow
-
 export type Props = {
 	getRef?: any,
 	active?: boolean,

@@ -1,5 +1,3 @@
-// @flow
-
 export {getScheduleForNow} from './get-schedule-for-now'
 export {parseTime} from './parse-time'
 export {processBusLine} from './process-bus-line'

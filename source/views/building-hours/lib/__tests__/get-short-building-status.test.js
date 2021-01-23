@@ -1,4 +1,3 @@
-// @flow
 import {getShortBuildingStatus} from '../get-short-status'
 import {dayMoment} from './moment.helper'
 

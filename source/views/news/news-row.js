@@ -1,5 +1,3 @@
-// @flow
-
 import * as React from 'react'
 import {StyleSheet, Image, Alert} from 'react-native'
 import {Column, Row} from '@frogpond/layout'

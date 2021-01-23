@@ -1,5 +1,3 @@
-// @flow
-
 import * as React from 'react'
 import {Card} from '@frogpond/silly-card'
 import {Button} from '@frogpond/button'

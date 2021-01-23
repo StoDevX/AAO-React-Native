@@ -1,4 +1,3 @@
-// @flow
 import {isChapelTime} from '../chapel'
 import {dayMoment} from './moment.helper'
 

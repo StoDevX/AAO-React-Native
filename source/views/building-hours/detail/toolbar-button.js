@@ -1,5 +1,3 @@
-// @flow
-
 import * as React from 'react'
 import {FavoriteButton} from '@frogpond/navigation-buttons'
 import type {ReduxState} from '../../../redux'

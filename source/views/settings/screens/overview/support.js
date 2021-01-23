@@ -1,4 +1,3 @@
-// @flow
 import * as React from 'react'
 import {Alert} from 'react-native'
 import {Section, PushButtonCell} from '@frogpond/tableview'

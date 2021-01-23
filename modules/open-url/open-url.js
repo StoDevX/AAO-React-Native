@@ -1,5 +1,3 @@
-// @flow
-
 import {Platform, Linking, Alert} from 'react-native'
 
 import {appName} from '@frogpond/constants'

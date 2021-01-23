@@ -1,4 +1,3 @@
-// @flow
 import * as React from 'react'
 import type {StoryType} from './types'
 import {LoadingView} from '@frogpond/notice'

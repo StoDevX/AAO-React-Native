@@ -1,4 +1,3 @@
-// @flow
 import {findRemainingDeparturesForStop} from '../find-remaining-departures-for-stop'
 
 import {getScheduleForNow} from '../get-schedule-for-now'

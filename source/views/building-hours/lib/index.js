@@ -1,5 +1,3 @@
-// @flow
-
 export {getDetailedBuildingStatus} from './get-detailed-status'
 export {getShortBuildingStatus} from './get-short-status'
 export {formatBuildingTimes} from './format-times'

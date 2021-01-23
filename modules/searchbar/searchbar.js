@@ -1,5 +1,3 @@
-// @flow
-
 import {Platform} from 'react-native'
 
 import {SearchBar as AndroidSearchBar} from './searchbar-android'

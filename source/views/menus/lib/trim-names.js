@@ -1,4 +1,3 @@
-// @flow
 import {toLaxTitleCase} from '@frogpond/titlecase'
 
 export function trimStationName(stationName: string) {

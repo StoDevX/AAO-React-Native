@@ -1,5 +1,3 @@
-// @flow
-
 const TIME_FORMAT = 'h:mm:ss A'
 import {timezone} from '@frogpond/constants'
 import moment from 'moment-timezone'

@@ -1,5 +1,4 @@
 /* eslint-env jest */
-// @flow
 import {applyAndListFilter} from '../apply-filters'
 import {filterValue} from './filter-value.helper'
 

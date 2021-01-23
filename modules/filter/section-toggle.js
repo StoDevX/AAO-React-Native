@@ -1,4 +1,3 @@
-// @flow
 import * as React from 'react'
 import type {ToggleType} from './types'
 import {Section, CellToggle} from '@frogpond/tableview'

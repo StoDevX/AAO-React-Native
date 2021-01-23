@@ -1,4 +1,3 @@
-// @flow
 import {getDetailedBuildingStatus} from '../get-detailed-status'
 import {plainMoment} from './moment.helper'
 

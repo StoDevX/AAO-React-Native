@@ -1,5 +1,3 @@
-// @flow
-
 import glamorous from 'glamorous-native'
 import * as c from '@frogpond/colors'
 

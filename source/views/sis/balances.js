@@ -1,5 +1,3 @@
-// @flow
-
 import * as React from 'react'
 import {StyleSheet, ScrollView, View, Text, RefreshControl} from 'react-native'
 import {useDispatch, useSelector} from 'react-redux'

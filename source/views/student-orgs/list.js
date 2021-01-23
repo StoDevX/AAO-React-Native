@@ -1,5 +1,3 @@
-// @flow
-
 import * as React from 'react'
 import {StyleSheet, RefreshControl, SectionList, View} from 'react-native'
 import type {TopLevelViewPropsType} from '../types'

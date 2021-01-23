@@ -1,5 +1,3 @@
-// @flow
-
 import * as React from 'react'
 import * as Icons from '@hawkrives/react-native-alternate-icons'
 import glamorous from 'glamorous-native'

@@ -1,4 +1,3 @@
-// @flow
 import * as React from 'react'
 import {Cell, Section} from '@frogpond/tableview'
 import {appVersion, appBuild} from '@frogpond/constants'

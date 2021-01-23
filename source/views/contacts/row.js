@@ -1,5 +1,3 @@
-// @flow
-
 import * as React from 'react'
 import type {ContactType} from './types'
 import {ListRow, Detail, Title} from '@frogpond/lists'

@@ -1,4 +1,3 @@
-// @flow
 import {findBusStopStatus} from '../find-bus-stop-status'
 
 import {getScheduleForNow} from '../get-schedule-for-now'

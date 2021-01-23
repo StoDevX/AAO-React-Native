@@ -1,5 +1,3 @@
-// @flow
-
 export type Webcam = {
 	streamUrl: string,
 	pageUrl: string,

@@ -1,4 +1,3 @@
-// @flow
 export type ContactType = {
 	title: string,
 	phoneNumber?: string,

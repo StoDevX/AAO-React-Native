@@ -1,4 +1,3 @@
-// @flow
 import {formatBuildingTimes} from '../format-times'
 import {dayMoment} from './moment.helper'
 

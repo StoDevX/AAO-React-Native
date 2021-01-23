@@ -1,5 +1,3 @@
-// @flow
-
 export {SettingsView} from './screens/overview'
 export {IconSettingsView} from './screens/change-icon'
 export {CreditsView} from './screens/credits'

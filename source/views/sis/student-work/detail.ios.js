@@ -1,4 +1,3 @@
-// @flow
 import * as React from 'react'
 import {Text, ScrollView, StyleSheet} from 'react-native'
 import {sendEmail} from '../../../components/send-email'

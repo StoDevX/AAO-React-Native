@@ -1,5 +1,3 @@
-// @flow
-
 import type moment from 'moment'
 import find from 'lodash/find'
 import findLast from 'lodash/findLast'

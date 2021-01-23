@@ -1,5 +1,3 @@
-// @flow
-
 import * as c from '@frogpond/colors'
 import type {EntypoGlyphs} from 'react-native-vector-icons/Entypo'
 

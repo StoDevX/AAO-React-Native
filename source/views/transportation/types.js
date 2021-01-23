@@ -1,4 +1,3 @@
-// @flow
 export type OtherModeType = {
 	name: string,
 	description: string,

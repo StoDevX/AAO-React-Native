@@ -1,4 +1,3 @@
-// @flow
 import moment from 'moment-timezone'
 
 const CENTRAL_TZ = 'America/Chicago'

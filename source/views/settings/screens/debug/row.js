@@ -1,5 +1,3 @@
-// @flow
-
 import * as React from 'react'
 import {Cell} from 'react-native-tableview-simple'
 import type {TopLevelViewPropsType} from '../../../types'

@@ -1,4 +1,3 @@
-// @flow
 import {isBuildingOpen} from '../is-building-open'
 import {dayMoment} from './moment.helper'
 

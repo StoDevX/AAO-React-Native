@@ -1,5 +1,4 @@
 /* eslint-disable camelcase */
-// @flow
 import type {MenuItemType} from '../../types'
 
 export const item: ({

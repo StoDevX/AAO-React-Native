@@ -1,5 +1,3 @@
-// @flow
-
 export type BuildingStatusType =
 	| 'Open'
 	| 'Closed'

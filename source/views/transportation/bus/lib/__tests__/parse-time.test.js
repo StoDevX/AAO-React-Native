@@ -1,4 +1,3 @@
-// @flow
 import {parseTime} from '../parse-time'
 import moment from 'moment'
 

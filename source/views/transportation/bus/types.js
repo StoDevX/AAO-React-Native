@@ -1,4 +1,3 @@
-// @flow
 import type moment from 'moment'
 
 export type DayOfWeek = 'Su' | 'Mo' | 'Tu' | 'We' | 'Th' | 'Fr' | 'Sa'

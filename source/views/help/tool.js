@@ -1,5 +1,3 @@
-// @flow
-
 import * as React from 'react'
 import {StyleSheet} from 'react-native'
 import {Card} from '@frogpond/silly-card'

@@ -1,5 +1,4 @@
 /* eslint-disable camelcase */
-// @flow
 import type {MenuItemType, StationMenuType} from '../types'
 
 type BasicMenuItemType = {

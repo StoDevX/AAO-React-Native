@@ -1,5 +1,3 @@
-// @flow
-
 import React from 'react'
 import type {TopLevelViewPropsType} from '../../types'
 import {ScrollView, RefreshControl, StyleSheet, Platform} from 'react-native'

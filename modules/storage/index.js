@@ -1,4 +1,3 @@
-// @flow
 import {AsyncStorage} from 'react-native'
 
 let prefix: string

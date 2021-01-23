@@ -1,5 +1,3 @@
-// @flow
-
 import * as React from 'react'
 import {StyleSheet, Text} from 'react-native'
 import {Cell} from 'react-native-tableview-simple'

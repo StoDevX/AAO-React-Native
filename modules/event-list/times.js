@@ -1,5 +1,3 @@
-// @flow
-
 import moment from 'moment-timezone'
 import type {EventType} from '@frogpond/event-type'
 

@@ -1,4 +1,3 @@
-// @flow
 import moment from 'moment-timezone'
 import sortBy from 'lodash/sortBy'
 import type {DayOfWeekEnumType} from '../types'

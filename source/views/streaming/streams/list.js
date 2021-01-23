@@ -1,5 +1,3 @@
-// @flow
-
 import * as React from 'react'
 import {StyleSheet, SectionList} from 'react-native'
 import {timezone} from '@frogpond/constants'

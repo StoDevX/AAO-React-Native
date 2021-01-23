@@ -1,5 +1,4 @@
 /* eslint-env jest */
-// @flow
 import {applyToggleFilter} from '../apply-filters'
 
 it('should return `true` if the item has a truthy value', () => {

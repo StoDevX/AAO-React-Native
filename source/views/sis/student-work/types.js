@@ -1,5 +1,3 @@
-// @flow
-
 export type JobType = {
 	comments: string,
 	contactEmail: string,

@@ -1,5 +1,3 @@
-// @flow
-
 import deviceInfo from 'react-native-device-info'
 import RNLocation from 'react-native-location'
 import pkg from '../../../package.json'

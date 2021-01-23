@@ -1,5 +1,3 @@
-// @flow
-
 import {Platform} from 'react-native'
 
 import {StudentOrgsDetailView as IosDetail} from './detail-ios'

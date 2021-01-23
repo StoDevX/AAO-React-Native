@@ -1,4 +1,3 @@
-// @flow
 import * as React from 'react'
 import {View, TextInput, StyleSheet} from 'react-native'
 import {NoticeView} from '@frogpond/notice'

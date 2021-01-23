@@ -1,5 +1,3 @@
-// @flow
-
 import * as React from 'react'
 import {StyleSheet, RefreshControl, View, SectionList} from 'react-native'
 import {

@@ -1,5 +1,3 @@
-// @flow
-
 export type StoryType = {
 	authors: string[],
 	categories: string[],

@@ -1,4 +1,3 @@
-// @flow
 import moment from 'moment-timezone'
 import flatten from 'lodash/flatten'
 import type {BuildingType} from '../types'

@@ -1,5 +1,3 @@
-// @flow
-
 import {Share} from 'react-native'
 
 import type {EventType} from '@frogpond/event-type'

@@ -1,5 +1,3 @@
-// @flow
-
 import * as React from 'react'
 import type {OtherModeType} from '../types'
 import {ListRow, Detail, Title} from '@frogpond/lists'

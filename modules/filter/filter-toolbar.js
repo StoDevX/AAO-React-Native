@@ -1,4 +1,3 @@
-// @flow
 import * as React from 'react'
 import type {FilterType, ListType, ToggleType, ListItemSpecType} from './types'
 import {StyleSheet, ScrollView} from 'react-native'

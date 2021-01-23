@@ -1,5 +1,3 @@
-// @flow
-
 import * as React from 'react'
 import type {BuildingType} from '../types'
 import {Timer} from '@frogpond/timer'

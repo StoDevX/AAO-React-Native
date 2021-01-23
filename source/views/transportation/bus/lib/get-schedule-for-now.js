@@ -1,4 +1,3 @@
-// @flow
 import type {BusSchedule, DayOfWeek} from '../types'
 import moment from 'moment-timezone'
 

@@ -1,5 +1,3 @@
-// @flow
-
 import {processBusSchedule} from '../process-bus-line'
 import {time} from './moment.helper'
 

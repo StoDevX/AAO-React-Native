@@ -1,5 +1,3 @@
-// @flow
-
 import * as React from 'react'
 import {ScrollView, StyleSheet, Image} from 'react-native'
 import {images as buildingImages} from '../../../../images/spaces'

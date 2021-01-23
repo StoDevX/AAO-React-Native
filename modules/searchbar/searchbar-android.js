@@ -1,5 +1,3 @@
-// @flow
-
 import * as React from 'react'
 import {Searchbar as NativeSearchBar} from 'react-native-paper'
 import type {Props} from './types'

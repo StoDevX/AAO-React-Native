@@ -1,5 +1,3 @@
-// @flow
-
 import * as React from 'react'
 import {SectionList, StyleSheet} from 'react-native'
 import {ListSeparator, ListSectionHeader, ListEmpty} from '@frogpond/lists'

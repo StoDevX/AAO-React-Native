@@ -1,4 +1,3 @@
-// @flow
 import * as React from 'react'
 import * as c from '@frogpond/colors'
 import {View, ScrollView} from 'glamorous-native'

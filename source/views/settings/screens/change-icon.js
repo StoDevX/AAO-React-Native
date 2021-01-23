@@ -1,4 +1,3 @@
-// @flow
 import React from 'react'
 import {ScrollView, Image, StyleSheet} from 'react-native'
 import * as Icons from '@hawkrives/react-native-alternate-icons'

@@ -1,5 +1,3 @@
-// @flow
-
 import {Platform} from 'react-native'
 import {IOSAPITestView} from './api-test-ios'
 import {AndroidAPITestView} from './api-test-android'

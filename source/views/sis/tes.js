@@ -1,5 +1,3 @@
-// @flow
-
 import * as React from 'react'
 import {TabBarIcon} from '@frogpond/navigation-tabs'
 import {openUrl} from '@frogpond/open-url'

@@ -1,5 +1,4 @@
 /* eslint-env jest */
-// @flow
 
 import {stringifyDictionaryEntry} from '../submit'
 

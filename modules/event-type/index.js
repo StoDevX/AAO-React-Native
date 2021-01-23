@@ -1,4 +1,3 @@
-// @flow
 import type moment from 'moment'
 
 export type EventType = {

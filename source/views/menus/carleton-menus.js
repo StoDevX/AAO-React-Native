@@ -1,4 +1,3 @@
-// @flow
 import * as React from 'react'
 import {TabBarIcon} from '@frogpond/navigation-tabs'
 import {View, Platform, ScrollView, StyleSheet} from 'react-native'

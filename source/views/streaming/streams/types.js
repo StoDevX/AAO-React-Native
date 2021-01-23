@@ -1,4 +1,3 @@
-// @flow
 export type StreamType = {
 	category: string,
 	eid: string,

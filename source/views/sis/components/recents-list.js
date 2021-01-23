@@ -1,4 +1,3 @@
-// @flow
 import * as React from 'react'
 import {StyleSheet, Text, View, Platform} from 'react-native'
 import {ListSeparator, ListRow} from '@frogpond/lists'

@@ -1,5 +1,3 @@
-// @flow
-
 import * as React from 'react'
 import moment from 'moment-timezone'
 import delay from 'delay'

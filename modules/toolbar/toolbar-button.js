@@ -1,4 +1,3 @@
-// @flow
 import * as React from 'react'
 import {StyleSheet, View, Text, Platform} from 'react-native'
 import {Icon, type Glyphs} from '@frogpond/icon'

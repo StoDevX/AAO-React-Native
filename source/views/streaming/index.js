@@ -1,5 +1,3 @@
-// @flow
-
 import {TabNavigator} from '../../../modules/navigation-tabs/tabbed-view'
 
 // import WeeklyMovieView from './movie'

@@ -1,5 +1,3 @@
-// @flow
-
 import * as React from 'react'
 import {Text} from 'react-native'
 import type {DepartureTimeList} from '../types'

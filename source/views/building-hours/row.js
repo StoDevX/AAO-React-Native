@@ -1,5 +1,3 @@
-// @flow
-
 import * as React from 'react'
 import {View, Text, StyleSheet} from 'react-native'
 import {OutlineBadge as Badge} from '@frogpond/badge'

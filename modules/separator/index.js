@@ -1,4 +1,3 @@
-// @flow
 import * as React from 'react'
 import {View, StyleSheet, Platform} from 'react-native'
 import * as c from '@frogpond/colors'

@@ -1,5 +1,3 @@
-// @flow
-
 import * as React from 'react'
 import semver from 'semver'
 import pkg from '../../../package.json'

@@ -1,4 +1,3 @@
-// @flow
 /* globals Request, Response, Headers */
 
 import {AsyncStorage} from 'react-native'

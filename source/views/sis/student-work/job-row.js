@@ -1,5 +1,3 @@
-// @flow
-
 import * as React from 'react'
 import {Column, Row} from '@frogpond/layout'
 import {ListRow, Detail, Title} from '@frogpond/lists'

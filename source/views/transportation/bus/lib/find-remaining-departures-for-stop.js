@@ -1,5 +1,3 @@
-// @flow
-
 import type {BusTimetableEntry, DepartureTimeList} from '../types'
 import type {BusStateEnum} from './get-current-bus-iteration'
 

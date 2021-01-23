@@ -1,5 +1,3 @@
-// @flow
-
 export type ContactPersonType = {
 	lastName: string,
 	title: string,

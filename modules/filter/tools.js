@@ -1,5 +1,3 @@
-// @flow
-
 import type {FilterType, ListType, PickerType, ToggleType} from './types'
 
 export function filterListSpecs(specs: Array<FilterType>): Array<ListType> {

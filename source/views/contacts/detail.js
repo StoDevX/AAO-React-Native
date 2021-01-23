@@ -1,5 +1,3 @@
-// @flow
-
 import * as React from 'react'
 import {Alert, StyleSheet, ScrollView, Image} from 'react-native'
 import {images as contactImages} from '../../../images/contacts'

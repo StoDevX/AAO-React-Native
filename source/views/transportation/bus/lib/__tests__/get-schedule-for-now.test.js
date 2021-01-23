@@ -1,4 +1,3 @@
-// @flow
 import {getScheduleForNow} from '../get-schedule-for-now'
 import {processBusSchedule} from '../process-bus-line'
 import moment from 'moment'

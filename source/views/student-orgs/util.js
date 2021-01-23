@@ -1,4 +1,3 @@
-// @flow
 import type {ContactPersonType} from './types'
 
 export function showNameOrEmail(c: ContactPersonType) {

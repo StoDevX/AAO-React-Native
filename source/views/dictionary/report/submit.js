@@ -1,5 +1,3 @@
-// @flow
-
 import jsYaml from 'js-yaml'
 import type {WordType} from '../types'
 import {sendEmail} from '../../../components/send-email'

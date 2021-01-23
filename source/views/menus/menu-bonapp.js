@@ -1,4 +1,3 @@
-// @flow
 import * as React from 'react'
 import {timezone} from '@frogpond/constants'
 import {NoticeView, LoadingView} from '@frogpond/notice'

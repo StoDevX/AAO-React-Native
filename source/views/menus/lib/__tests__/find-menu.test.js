@@ -1,5 +1,4 @@
 /* eslint-env jest */
-// @flow
 import {findMenu} from '../../../../../modules/food-menu/lib/find-menu'
 import moment from 'moment-timezone'
 import type {DayPartsCollectionType} from '../../types'

@@ -1,5 +1,3 @@
-// @flow
-
 import * as React from 'react'
 import type {UnprocessedBusLine} from './types'
 import {BusLine} from './line'

@@ -1,5 +1,3 @@
-// @flow
-
 /* globals Request */
 
 // import {cachedFetch} from './cached'

@@ -1,5 +1,3 @@
-// @flow
-
 import React from 'react'
 import {SectionList, StyleSheet} from 'react-native'
 import {useDispatch, useSelector} from 'react-redux'

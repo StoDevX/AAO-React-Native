@@ -1,5 +1,4 @@
 /* eslint-env jest */
-// @flow
 import {trimStationName, trimItemLabel} from '../trim-names'
 
 describe('trimStationName', () => {

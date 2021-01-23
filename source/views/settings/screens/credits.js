@@ -1,4 +1,3 @@
-// @flow
 import * as React from 'react'
 import * as c from '@frogpond/colors'
 import {data as credits} from '../../../../docs/credits.json'

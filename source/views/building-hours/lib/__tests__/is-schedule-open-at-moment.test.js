@@ -1,4 +1,3 @@
-// @flow
 import {isScheduleOpenAtMoment} from '../is-schedule-open'
 import {dayMoment} from './moment.helper'
 

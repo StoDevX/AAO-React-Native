@@ -1,5 +1,3 @@
-// @flow
-
 import * as React from 'react'
 import {Cell, Section, CellTextField} from '@frogpond/tableview'
 import {LoginButton} from './login-button'

@@ -1,5 +1,3 @@
-// @flow
-
 type EmailRecipient = string | Array<string>
 
 export type SendEmailButtonParams = {

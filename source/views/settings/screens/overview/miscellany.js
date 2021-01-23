@@ -1,4 +1,3 @@
-// @flow
 import * as React from 'react'
 import {Section, PushButtonCell} from '@frogpond/tableview'
 import type {NavigationScreenProp} from 'react-navigation'

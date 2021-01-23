@@ -1,5 +1,3 @@
-// @flow
-
 import {TabNavigator} from '../../../modules/navigation-tabs/tabbed-view'
 
 import {BalancesOrAcknowledgementView} from './balances-acknowledgement'

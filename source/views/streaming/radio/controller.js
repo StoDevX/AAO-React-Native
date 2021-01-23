@@ -1,5 +1,3 @@
-// @flow
-
 import * as React from 'react'
 import {Image, ScrollView, StyleSheet, Text, View} from 'react-native'
 import noop from 'lodash/noop'
