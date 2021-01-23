@@ -2,7 +2,10 @@ import deviceInfo from 'react-native-device-info'
 import RNLocation from 'react-native-location'
 import pkg from '../../../package.json'
 
-export const getPosition = async (): Promise<null | Object> => {
+import type {Location} from 'react-native-location'
+import type {Report} from './wifi'
+
+export const getPosition = async (): Promise<Location | null> => {
 	RNLocation.configure({distanceFilter: 100})
 
 	let hasPermission = await RNLocation.checkPermission({
@@ -29,7 +32,24 @@ export const getPosition = async (): Promise<null | Object> => {
 	return RNLocation.getLatestLocation({timeout: 1500})
 }
 
-export async function collectData() {
+export type DeviceReport = {
+	id: string
+	brand: string
+	model: string
+	deviceKind: string
+	os: string
+	osVersion: string
+	appVersion: string
+	ua: string
+	ip: string
+	jsVersion: string
+	dateRecorded: string
+}
+
+export async function collectData(): DeviceReport {
+	let dateRecorded = new Date().toJSON()
+	let jsVersion = pkg.version
+
 	let [
 		id,
 		brand,
@@ -62,10 +82,10 @@ export async function collectData() {
 		appVersion,
 		ua,
 		ip,
-		jsVersion: pkg.version,
-		dateRecorded: new Date().toJSON(),
+		jsVersion,
+		dateRecorded,
 	}
 }
 
-export const reportToServer = (url: string, data: Object) =>
+export const reportToServer = (url: string, data: Report) =>
 	fetch(url, {method: 'POST', body: JSON.stringify(data)})

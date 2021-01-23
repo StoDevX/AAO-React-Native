@@ -40,12 +40,12 @@ function handleButtonPress(btn) {
 		case 'custom':
 			return
 		default:
-			;(btn.action: empty)
+			btn.action as never
 	}
 }
 
 type Props = {
-	config: ToolOptions,
+	config: ToolOptions
 }
 
 export class ToolView extends React.Component<Props> {

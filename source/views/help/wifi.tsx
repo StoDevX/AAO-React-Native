@@ -21,12 +21,21 @@ const messages = {
 }
 
 type Props = {
-	config: ToolOptions,
+	config: ToolOptions
 }
 
 type State = {
-	error: ?string,
-	status: $Keys<typeof messages>,
+	error?: string
+	status: 'init' | 'collecting' | 'reporting' | 'done' | 'error'
+}
+
+import type {DeviceReport} from './wifi-tools'
+import type {Location} from 'react-native-location'
+
+type Report = {
+	position: Location | null
+	device: DeviceReport
+	version: string
 }
 
 export class ToolView extends React.Component<Props, State> {
@@ -47,13 +56,15 @@ export class ToolView extends React.Component<Props, State> {
 		}
 
 		this.setState(() => ({status: 'collecting', error: ''}))
-		let [position, device] = await Promise.all([
-			getPosition().catch((error) => {
-				Sentry.captureException(error)
-				return null
-			}),
-			collectData(),
-		])
+		let [position, device]: [Location | null, DeviceReport] = await Promise.all(
+			[
+				getPosition().catch((error) => {
+					Sentry.captureException(error)
+					return null
+				}),
+				collectData(),
+			],
+		)
 		this.setState(() => ({status: 'reporting'}))
 
 		try {
