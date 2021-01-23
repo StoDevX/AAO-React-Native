@@ -62,6 +62,8 @@ rules:
       varsIgnorePattern: '^_'
   no-useless-constructor: error
   no-var: error
+  # TODO(rye): Follow-up item: DENY this
+  prefer-const: warn
   prefer-promise-reject-errors: error
   prefer-spread: error
   quotes: [warn, single, avoid-escape]
