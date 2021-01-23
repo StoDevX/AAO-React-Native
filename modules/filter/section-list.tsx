@@ -8,8 +8,8 @@ import isEqual from 'lodash/isEqual'
 import reject from 'lodash/reject'
 
 type PropsType = {
-	filter: ListType,
-	onChange: (filter: ListType) => any,
+	filter: ListType
+	onChange: (filter: ListType) => any
 }
 
 export function ListSection({filter, onChange}: PropsType) {

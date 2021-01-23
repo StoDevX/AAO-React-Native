@@ -5,8 +5,8 @@ import type {PickerType} from './types'
 import {Section} from '@frogpond/tableview'
 
 type PropsType = {
-	filter: PickerType,
-	onChange: (filter: PickerType) => any,
+	filter: PickerType
+	onChange: (filter: PickerType) => any
 }
 
 export function PickerSection({filter, onChange}: PropsType) {

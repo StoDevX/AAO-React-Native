@@ -8,8 +8,8 @@ import flatten from 'lodash/flatten'
 import cloneDeep from 'lodash/cloneDeep'
 
 type Props = {
-	filters: Array<FilterType>,
-	onPopoverDismiss: (filter: FilterType) => any,
+	filters: Array<FilterType>
+	onPopoverDismiss: (filter: FilterType) => any
 }
 
 function updateAnyFilter(callback: (FilterType) => any) {

@@ -13,10 +13,10 @@ import type {AppTheme} from '@frogpond/app-theme'
 import {useTheme} from '@frogpond/app-theme'
 
 type Props = {
-	filter: FilterType,
-	label: string,
-	onRemove: (filter: FilterType) => any,
-	style?: any,
+	filter: FilterType
+	label: string
+	onRemove: (filter: FilterType) => any
+	style?: any
 }
 
 export function ActiveFilterButton({filter, label, onRemove, style}: Props) {

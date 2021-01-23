@@ -3,8 +3,8 @@ import type {ToggleType} from './types'
 import {Section, CellToggle} from '@frogpond/tableview'
 
 type PropsType = {
-	filter: ToggleType,
-	onChange: (filterSpec: ToggleType) => any,
+	filter: ToggleType
+	onChange: (filterSpec: ToggleType) => any
 }
 
 export function SingleToggleSection({filter, onChange}: PropsType) {

@@ -33,16 +33,16 @@ const buttonStyles = StyleSheet.create({
 })
 
 type Props = {
-	filter: FilterType,
-	isActive: boolean,
-	onPopoverDismiss: (filter: FilterType) => any,
-	style?: any,
-	title: string,
-	theme: AppTheme,
+	filter: FilterType
+	isActive: boolean
+	onPopoverDismiss: (filter: FilterType) => any
+	style?: any
+	title: string
+	theme: AppTheme
 }
 
 type State = {
-	popoverVisible: boolean,
+	popoverVisible: boolean
 }
 
 class FilterToolbarButton extends React.PureComponent<Props, State> {

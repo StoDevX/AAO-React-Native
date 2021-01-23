@@ -5,14 +5,14 @@ import type {FilterType} from './types'
 import * as c from '@frogpond/colors'
 
 type Props = {
-	anchor: any,
-	filter: FilterType,
-	onClosePopover: (filter: FilterType) => any,
-	visible: boolean,
+	anchor: any
+	filter: FilterType
+	onClosePopover: (filter: FilterType) => any
+	visible: boolean
 }
 
 type State = {
-	filter: FilterType,
+	filter: FilterType
 }
 
 export class FilterPopover extends React.PureComponent<Props, State> {

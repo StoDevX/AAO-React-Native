@@ -6,8 +6,8 @@ import {ListSection} from './section-list'
 import {PickerSection} from './section-picker'
 
 type FilterSectionPropsType = {
-	filter: FilterType,
-	onChange: (filter: FilterType) => any,
+	filter: FilterType
+	onChange: (filter: FilterType) => any
 }
 
 export function FilterSection({filter, onChange}: FilterSectionPropsType) {
