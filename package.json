@@ -13,8 +13,8 @@
     "data": "node scripts/bundle-data.js data/ docs/",
     "d": "yarn-deduplicate && yarn",
     "ios": "react-native run-ios",
-    "lint": "eslint --report-unused-disable-directives --cache source/ modules/ scripts/",
-    "pretty": "prettier --write '{source,modules,scripts,e2e}/**/*.{js,ts,tsx,json}' 'data/**/*.css' '{*,.*}.{yaml,yml,json,js,ts,tsx}'",
+    "lint": "eslint --report-unused-disable-directives --cache source/ modules/ scripts/ images/",
+    "pretty": "prettier --write '{source,modules,scripts,images,e2e}/**/*.{js,ts,tsx,json}' 'data/**/*.css' '{*,.*}.{yaml,yml,json,js,ts,tsx}'",
     "p": "pretty-quick",
     "pods": "scripts/pods.sh",
     "postinstall": "jetify && yarn run pods",
@@ -78,12 +78,6 @@
     "bracketSpacing": false,
     "semi": false,
     "overrides": [
-      {
-        "files": "images/**",
-        "options": {
-          "requirePragma": true
-        }
-      },
       {
         "files": "**/{*,.*}.json",
         "options": {
