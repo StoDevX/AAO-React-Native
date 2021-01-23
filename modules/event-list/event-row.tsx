@@ -32,8 +32,8 @@ const styles = StyleSheet.create({
 })
 
 type Props = {
-	event: EventType,
-	onPress: (EventType) => any,
+	event: EventType
+	onPress: (EventType) => any
 }
 
 export default class EventRow extends React.PureComponent<Props> {
@@ -73,7 +73,7 @@ export default class EventRow extends React.PureComponent<Props> {
 	}
 }
 
-function CalendarTimes({event, style}: {event: EventType, style: any}) {
+function CalendarTimes({event, style}: {event: EventType; style: any}) {
 	let {allDay, start, end} = times(event)
 
 	if (allDay) {

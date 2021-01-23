@@ -14,7 +14,7 @@ import {ListFooter} from '@frogpond/lists'
 import {shareEvent, getTimes} from './calendar-util'
 import {AddToCalendar} from '@frogpond/add-to-device-calendar'
 
-function MaybeSection({header, content}: {header: string, content: string}) {
+function MaybeSection({header, content}: {header: string; content: string}) {
 	return content.trim() ? (
 		<Section header={header}>
 			<SelectableCell text={content} />
@@ -23,11 +23,11 @@ function MaybeSection({header, content}: {header: string, content: string}) {
 }
 
 type Navigation = NavigationScreenProp<{
-	params: {event: EventType, poweredBy: ?PoweredBy},
+	params: {event: EventType; poweredBy: ?PoweredBy}
 }>
 
 type Props = {
-	navigation: Navigation,
+	navigation: Navigation
 }
 
 export class EventDetail extends React.Component<Props> {

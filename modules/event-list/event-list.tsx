@@ -16,14 +16,14 @@ const FullWidthSeparator = (props) => (
 )
 
 type Props = {
-	detailView?: string,
-	events: EventType[],
-	message: ?string,
-	refreshing: boolean,
-	onRefresh: () => any,
-	navigation: NavigationScreenProp,
-	now: moment,
-	poweredBy: ?PoweredBy,
+	detailView?: string
+	events: EventType[]
+	message: ?string
+	refreshing: boolean
+	onRefresh: () => any
+	navigation: NavigationScreenProp
+	now: moment
+	poweredBy: ?PoweredBy
 }
 
 export class EventList extends React.Component<Props> {

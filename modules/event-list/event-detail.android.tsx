@@ -35,7 +35,7 @@ const styles = StyleSheet.create({
 	},
 })
 
-function MaybeCard({header, content}: {header: string, content: string}) {
+function MaybeCard({header, content}: {header: string; content: string}) {
 	return content.trim() ? (
 		<Card header={header} style={styles.card}>
 			<Text style={styles.cardBody}>{content}</Text>
@@ -60,11 +60,11 @@ function Links({urls}: {urls: Array<string>}) {
 }
 
 type Navigation = NavigationScreenProp<{
-	params: {event: EventType, poweredBy: ?PoweredBy},
+	params: {event: EventType; poweredBy: ?PoweredBy}
 }>
 
 type Props = {
-	navigation: Navigation,
+	navigation: Navigation
 }
 
 export class EventDetail extends React.PureComponent<Props> {

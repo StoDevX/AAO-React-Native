@@ -24,7 +24,7 @@ const dotBarStyles = StyleSheet.create({
 })
 
 type Props = {
-	style?: ViewStyleProp,
+	style?: ViewStyleProp
 }
 
 function DottedBar({style}: Props) {
