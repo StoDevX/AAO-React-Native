@@ -23,13 +23,13 @@ const styles = StyleSheet.create({
 	},
 })
 
-type Props = {}
+type Props = unknown
 
 type State = {
-	error: ?string,
-	loading: boolean,
-	refreshing: boolean,
-	streams: Array<{title: string, data: Array<StreamType>}>,
+	error?: string
+	loading: boolean
+	refreshing: boolean
+	streams: Array<{title: string; data: Array<StreamType>}>
 }
 
 export class StreamListView extends React.PureComponent<Props, State> {
@@ -124,7 +124,7 @@ export class StreamListView extends React.PureComponent<Props, State> {
 				refreshing={this.state.refreshing}
 				renderItem={this.renderItem}
 				renderSectionHeader={this.renderSectionHeader}
-				sections={(this.state.streams: any)}
+				sections={this.state.streams}
 				style={styles.listContainer}
 			/>
 		)
