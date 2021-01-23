@@ -1,7 +1,7 @@
 /* eslint-env jest */
 
 import moment from 'moment'
-import {times, detailTimes} from '../times.js'
+import {times, detailTimes} from '../times'
 
 describe('allDay', () => {
 	test('should be true for a midnight-to-midnight event', () => {
