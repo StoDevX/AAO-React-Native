@@ -22,11 +22,11 @@ export function ButtonCell({
 	textStyle,
 	title,
 }: {
-	indeterminate?: boolean,
-	disabled?: boolean,
-	onPress: () => any,
-	textStyle?: any,
-	title: string,
+	indeterminate?: boolean
+	disabled?: boolean
+	onPress: () => any
+	textStyle?: any
+	title: string
 }) {
 	return (
 		<Cell

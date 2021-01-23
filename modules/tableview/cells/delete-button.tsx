@@ -12,9 +12,9 @@ export const DeleteButtonCell = ({
 	skipConfirm = false,
 	onPress,
 }: {
-	title: string,
-	skipConfirm?: boolean,
-	onPress?: () => any,
+	title: string
+	skipConfirm?: boolean
+	onPress?: () => any
 }) => {
 	let onPressCallback = onPress ? onPress : () => {}
 

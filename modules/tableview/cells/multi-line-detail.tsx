@@ -4,9 +4,9 @@ import {StyleSheet, Text, View} from 'react-native'
 import * as c from '@frogpond/colors'
 
 type Props = {
-	title: string,
-	leftDetail?: string,
-	rightDetail: any,
+	title: string
+	leftDetail?: string
+	rightDetail: any
 }
 
 export class MultiLineDetailCell extends React.PureComponent<Props> {

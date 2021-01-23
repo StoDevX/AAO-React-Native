@@ -5,11 +5,11 @@ import type {AppTheme} from '@frogpond/app-theme'
 import {useTheme} from '@frogpond/app-theme'
 
 type PropsType = {
-	label: string,
-	value: boolean,
-	onChange: (val: boolean) => any,
-	detail?: string,
-	disabled?: boolean,
+	label: string
+	value: boolean
+	onChange: (val: boolean) => any
+	detail?: string
+	disabled?: boolean
 }
 
 export function CellToggle(props: PropsType) {

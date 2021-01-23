@@ -32,18 +32,18 @@ const styles = StyleSheet.create({
 })
 
 type Props = {
-	label?: string,
-	_ref?: {current: null | React.ElementRef<typeof TextInput>},
-	disabled: boolean,
-	multiline?: boolean,
-	onChangeText: (string) => any,
-	onSubmitEditing: (string) => any,
-	placeholder: string,
-	returnKeyType: 'done' | 'next' | 'default',
-	secureTextEntry: boolean,
-	autoCapitalize: 'characters' | 'words' | 'sentences' | 'none',
-	value: string,
-	labelWidth?: number,
+	label?: string
+	_ref?: {current: null | React.ElementRef<typeof TextInput>}
+	disabled: boolean
+	multiline?: boolean
+	onChangeText: (string) => any
+	onSubmitEditing: (string) => any
+	placeholder: string
+	returnKeyType: 'done' | 'next' | 'default'
+	secureTextEntry: boolean
+	autoCapitalize: 'characters' | 'words' | 'sentences' | 'none'
+	value: string
+	labelWidth?: number
 }
 
 export class CellTextField extends React.Component<Props> {

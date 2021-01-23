@@ -4,11 +4,13 @@ import {StyleSheet, Text, View} from 'react-native'
 import * as c from '@frogpond/colors'
 
 type LeftDetailProps = {
-	detail: string,
-	title: string,
+	detail: string
+	title: string
 }
 
-export class MultiLineLeftDetailCell extends React.PureComponent<LeftDetailProps> {
+export class MultiLineLeftDetailCell extends React.PureComponent<
+	LeftDetailProps
+> {
 	render() {
 		let {detail, title} = this.props
 		let cellContent = (
