@@ -36,7 +36,7 @@ export const icons: Array<Icon> = [
 	},
 ]
 
-type Props = {}
+type Props = unknown
 
 type State = {
 	iconType?: string

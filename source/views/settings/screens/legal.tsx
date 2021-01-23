@@ -4,7 +4,7 @@ import {View, ScrollView} from 'glamorous-native'
 import {Markdown} from '@frogpond/markdown'
 import {text} from '../../../../docs/legal.json'
 
-type Props = {}
+type Props = unknown
 
 export class LegalView extends React.Component<Props> {
 	static navigationOptions = {
