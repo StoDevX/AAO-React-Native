@@ -23,26 +23,26 @@ const styles = StyleSheet.create({
 })
 
 type ReactProps = TopLevelViewPropsType & {
-	navigation: {state: {params: {job: PrintJob}}},
+	navigation: {state: {params: {job: PrintJob}}}
 }
 
 type ReduxStateProps = {
-	+printers: Array<Printer>,
-	+recentPrinters: Array<Printer>,
-	+popularPrinters: Array<Printer>,
-	+colorPrinters: Array<Printer>,
-	+error: ?string,
+	readonly printers: Array<Printer>
+	readonly recentPrinters: Array<Printer>
+	readonly popularPrinters: Array<Printer>
+	readonly colorPrinters: Array<Printer>
+	readonly error?: string
 }
 
 type ReduxDispatchProps = {
-	updatePrinters: () => any,
+	updatePrinters: () => any
 }
 
 type Props = ReactProps & ReduxDispatchProps & ReduxStateProps
 
 type State = {
-	initialLoadComplete: boolean,
-	loading: boolean,
+	initialLoadComplete: boolean
+	loading: boolean
 }
 
 class PrinterListView extends React.PureComponent<Props, State> {
@@ -155,7 +155,7 @@ class PrinterListView extends React.PureComponent<Props, State> {
 			<SectionList
 				ItemSeparatorComponent={ListSeparator}
 				keyExtractor={this.keyExtractor}
-				onRefresh={(this.refresh: any)}
+				onRefresh={this.refresh}
 				refreshing={this.state.loading}
 				renderItem={this.renderItem}
 				renderSectionHeader={this.renderSectionHeader}

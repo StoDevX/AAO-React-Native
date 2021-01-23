@@ -28,21 +28,21 @@ import {Timer} from '@frogpond/timer'
 type ReactProps = TopLevelViewPropsType
 
 type ReduxStateProps = {
-	jobs: Array<PrintJob>,
-	error: ?string,
-	status: LoginStateEnum,
+	jobs: Array<PrintJob>
+	error?: string
+	status: LoginStateEnum
 }
 
 type ReduxDispatchProps = {
-	logInViaCredentials: (string, string) => Promise<any>,
-	updatePrintJobs: () => Promise<any>,
+	logInViaCredentials: (string, string) => Promise<any>
+	updatePrintJobs: () => Promise<any>
 }
 
 type Props = ReactProps & ReduxDispatchProps & ReduxStateProps
 
 type State = {
-	initialLoadComplete: boolean,
-	loading: boolean,
+	initialLoadComplete: boolean
+	loading: boolean
 }
 
 class PrintJobsView extends React.PureComponent<Props, State> {
@@ -196,7 +196,7 @@ class PrintJobsView extends React.PureComponent<Props, State> {
 			<SectionList
 				ItemSeparatorComponent={ListSeparator}
 				keyExtractor={this.keyExtractor}
-				onRefresh={(this.refresh: any)}
+				onRefresh={this.refresh}
 				refreshing={this.state.loading}
 				renderItem={this.renderItem}
 				renderSectionHeader={this.renderSectionHeader}

@@ -5,15 +5,17 @@ import glamorous from 'glamorous-native'
 import {TableView, Section, Cell, ButtonCell} from '@frogpond/tableview'
 import * as c from '@frogpond/colors'
 import {
-	type Printer,
-	type PrintJob,
-	type HeldJob,
-	type ReleaseResponseOrErrorType,
-	type CancelResponseOrErrorType,
 	cancelPrintJobForUser,
 	heldJobsAvailableAtPrinterForUser,
 	releasePrintJobToPrinterForUser,
 	showGeneralError,
+} from '../../lib/stoprint'
+import type {
+	Printer,
+	PrintJob,
+	HeldJob,
+	ReleaseResponseOrErrorType,
+	CancelResponseOrErrorType,
 } from '../../lib/stoprint'
 import {loadLoginCredentials} from '../../lib/login'
 
@@ -34,7 +36,7 @@ const Header = glamorous.text({
 	color: c.black,
 })
 
-function LeftDetailCell({detail, title}: {detail: string, title: string}) {
+function LeftDetailCell({detail, title}: {detail: string; title: string}) {
 	return <Cell cellStyle="LeftDetail" detail={detail} title={title} />
 }
 
@@ -68,13 +70,13 @@ function PrinterInformation({printer}: {printer: Printer}) {
 
 type Props = TopLevelViewPropsType & {
 	navigation: {
-		state: {params: {job: PrintJob, printer: ?Printer}},
-	},
+		state: {params: {job: PrintJob; printer?: Printer}}
+	}
 }
 
 type State = {
-	heldJob: ?HeldJob,
-	status: 'complete' | 'pending' | 'printing' | 'cancelling',
+	heldJob?: HeldJob
+	status: 'complete' | 'pending' | 'printing' | 'cancelling'
 }
 
 export class PrintJobReleaseView extends React.PureComponent<Props, State> {
