@@ -5,7 +5,7 @@ import {Section, PushButtonCell} from '@frogpond/tableview'
 import type {NavigationScreenProp} from 'react-navigation'
 import {isDevMode} from '@frogpond/constants'
 
-type Props = {navigation: NavigationScreenProp<*>}
+type Props = {navigation: NavigationScreenProp<any>}
 
 export class DeveloperSection extends React.Component<Props> {
 	onAPIButton = () => this.props.navigation.navigate('APITestView')

@@ -4,29 +4,29 @@ import {LoginButton} from './login-button'
 import {
 	logInViaCredentials,
 	logOutViaCredentials,
-	type LoginStateEnum,
 } from '../../../../redux/parts/login'
+import type {LoginStateEnum} from '../../../../redux/parts/login'
 import {loadLoginCredentials} from '../../../../lib/login'
 import type {ReduxState} from '../../../../redux'
 import {useSelector, useDispatch} from 'react-redux'
 import noop from 'lodash/noop'
 
 type ReduxStateProps = {
-	status: LoginStateEnum,
+	status: LoginStateEnum
 }
 
 type ReduxDispatchProps = {
-	logInViaCredentials: (string, string) => void,
-	logOutViaCredentials: () => void,
+	logInViaCredentials: (string, string) => void
+	logOutViaCredentials: () => void
 }
 
 type Props = ReduxStateProps & ReduxDispatchProps
 
 type State = {
-	username: string,
-	password: string,
-	loadingCredentials: boolean,
-	initialCheckComplete: boolean,
+	username: string
+	password: string
+	loadingCredentials: boolean
+	initialCheckComplete: boolean
 }
 
 class CredentialsLoginSection extends React.Component<Props, State> {

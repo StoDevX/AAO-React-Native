@@ -7,7 +7,7 @@ import deviceInfo from 'react-native-device-info'
 import {appVersion, appBuild} from '@frogpond/constants'
 import {refreshApp} from '../../../../lib/refresh'
 
-type Props = {navigation: NavigationScreenProp<*>}
+type Props = {navigation: NavigationScreenProp<any>}
 
 const getDeviceInfo = async () => `
 

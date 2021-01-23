@@ -2,11 +2,11 @@ import * as React from 'react'
 import {ButtonCell} from '@frogpond/tableview'
 
 type Props = {
-	loading: boolean,
-	disabled?: boolean,
-	loggedIn: boolean,
-	onPress: () => any,
-	label: string,
+	loading: boolean
+	disabled?: boolean
+	loggedIn: boolean
+	onPress: () => any
+	label: string
 }
 
 export function LoginButton(props: Props) {

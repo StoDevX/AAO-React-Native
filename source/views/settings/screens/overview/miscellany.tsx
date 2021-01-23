@@ -5,10 +5,10 @@ import {trackedOpenUrl} from '@frogpond/open-url'
 import * as Icons from '@hawkrives/react-native-alternate-icons'
 import {GH_BASE_URL} from '../../../../lib/constants'
 
-type Props = {navigation: NavigationScreenProp<*>}
+type Props = {navigation: NavigationScreenProp<any>}
 
 type State = {
-	canChangeIcon: boolean,
+	canChangeIcon: boolean
 }
 
 export class MiscellanySection extends React.Component<Props, State> {

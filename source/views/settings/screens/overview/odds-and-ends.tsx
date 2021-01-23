@@ -4,7 +4,7 @@ import {appVersion, appBuild} from '@frogpond/constants'
 import type {NavigationScreenProp} from 'react-navigation'
 
 type Props = {
-	navigation: NavigationScreenProp<*>,
+	navigation: NavigationScreenProp<any>
 }
 
 export class OddsAndEndsSection extends React.Component<Props> {

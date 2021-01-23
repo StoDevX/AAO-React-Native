@@ -16,7 +16,7 @@ const styles = StyleSheet.create({
 	},
 })
 
-export function SettingsView(props: {navigation: NavigationScreenProp<*>}) {
+export function SettingsView(props: {navigation: NavigationScreenProp<any>}) {
 	return (
 		<ScrollView
 			contentContainerStyle={styles.container}
