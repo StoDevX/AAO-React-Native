@@ -19,7 +19,7 @@ import {OpenSettingsButton} from '@frogpond/navigation-buttons'
 import {UnofficialAppNotice} from './notice'
 
 type Props = TopLevelViewPropsType & {
-	views: Array<ViewType>,
+	views: Array<ViewType>
 }
 
 export default function HomePage({navigation, views = allViews}: Props) {

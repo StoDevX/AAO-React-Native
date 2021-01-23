@@ -9,8 +9,8 @@ import {homescreenForegroundDark, homescreenForegroundLight} from './colors'
 import {hasNotch} from 'react-native-device-info'
 
 type Props = {
-	view: ViewType,
-	onPress: () => any,
+	view: ViewType
+	onPress: () => any
 }
 
 export function HomeScreenButton({view, onPress}: Props) {
@@ -33,11 +33,11 @@ export function HomeScreenButton({view, onPress}: Props) {
 }
 
 type TouchableButtonProps = {
-	onPress: () => void,
-	label: string,
-	children: React.Node,
-	tint: string,
-	gradient: ?[string, string],
+	onPress: () => void
+	label: string
+	children: React.Node
+	tint: string
+	gradient?: [string, string]
 }
 
 function TouchableButton(props: TouchableButtonProps) {
@@ -63,9 +63,9 @@ function TouchableButton(props: TouchableButtonProps) {
 }
 
 type TouchableWrapperProps = {
-	onPress: () => void,
-	label: string,
-	children: React.Node,
+	onPress: () => void
+	label: string
+	children: React.Node
 }
 
 function TouchableWrapper({onPress, children, label}: TouchableWrapperProps) {
@@ -83,9 +83,9 @@ function TouchableWrapper({onPress, children, label}: TouchableWrapperProps) {
 }
 
 type TintProps = {
-	children: React.Node,
-	tint: string,
-	gradient: ?[string, string],
+	children: React.Node
+	tint: string
+	gradient?: [string, string]
 }
 
 function Tint({tint = 'black', gradient, children}: TintProps) {
