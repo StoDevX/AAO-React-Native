@@ -78,7 +78,7 @@ export class CarletonCafeIndex extends React.Component<Props> {
 		return (
 			<ScrollView style={styles.container}>
 				{carletonCafes.map(
-					(loc: {id: string, title: string}, i, collection) => (
+					(loc: {id: string; title: string}, i, collection) => (
 						<View key={i}>
 							<ListRow
 								arrowPosition="center"

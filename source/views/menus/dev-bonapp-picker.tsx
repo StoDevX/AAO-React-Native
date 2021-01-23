@@ -24,7 +24,7 @@ const styles = StyleSheet.create({
 type Props = TopLevelViewPropsType
 
 type State = {
-	cafeId: string,
+	cafeId: string
 }
 
 export class BonAppPickerView extends React.PureComponent<Props, State> {

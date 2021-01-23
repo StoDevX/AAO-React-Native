@@ -20,17 +20,17 @@ import {API} from '@frogpond/api'
 import {fetch} from '@frogpond/fetch'
 
 type Props = TopLevelViewPropsType & {
-	name: string,
-	loadingMessage: string[],
+	name: string
+	loadingMessage: string[]
 }
 
 type State = {
-	error: ?Error,
-	loading: boolean,
-	now: momentT,
-	foodItems: MenuItemContainerType,
-	corIcons: MasterCorIconMapType,
-	meals: ProcessedMealType[],
+	error?: Error
+	loading: boolean
+	now: momentT
+	foodItems: MenuItemContainerType
+	corIcons: MasterCorIconMapType
+	meals: ProcessedMealType[]
 }
 
 export class GitHubHostedMenu extends React.PureComponent<Props, State> {
