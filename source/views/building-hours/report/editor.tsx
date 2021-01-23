@@ -28,21 +28,21 @@ type Props = TopLevelViewPropsType & {
 	navigation: {
 		state: {
 			params: {
-				set: SingleBuildingScheduleType,
-				onEditSet: (set: SingleBuildingScheduleType) => any,
-				onDeleteSet: () => any,
-			},
-		},
-	},
+				set: SingleBuildingScheduleType
+				onEditSet: (set: SingleBuildingScheduleType) => any
+				onDeleteSet: () => any
+			}
+		}
+	}
 }
 
 type State = {
-	set: ?SingleBuildingScheduleType,
+	set?: SingleBuildingScheduleType
 }
 
 export class BuildingHoursScheduleEditorView extends React.PureComponent<
 	Props,
-	State,
+	State
 > {
 	static navigationOptions = {
 		title: 'Edit Schedule',
@@ -116,8 +116,8 @@ export class BuildingHoursScheduleEditorView extends React.PureComponent<
 }
 
 type WeekTogglesProps = {
-	days: DayOfWeekEnumType[],
-	onChangeDays: (DayOfWeekEnumType[]) => any,
+	days: DayOfWeekEnumType[]
+	onChangeDays: (days: DayOfWeekEnumType[]) => any
 }
 
 class WeekTogglesIOS extends React.PureComponent<WeekTogglesProps> {
@@ -170,9 +170,9 @@ class WeekTogglesAndroid extends React.PureComponent<WeekTogglesProps> {
 }
 
 type ToggleButtonProps = {
-	active: boolean,
-	text: DayOfWeekEnumType,
-	onPress: (newState: DayOfWeekEnumType) => any,
+	active: boolean
+	text: DayOfWeekEnumType
+	onPress: (newState: DayOfWeekEnumType) => any
 }
 
 class ToggleButton extends React.PureComponent<ToggleButtonProps> {
@@ -197,9 +197,9 @@ class ToggleButton extends React.PureComponent<ToggleButtonProps> {
 const WeekToggles = Platform.OS === 'ios' ? WeekTogglesIOS : WeekTogglesAndroid
 
 type DatePickerCellProps = {
-	date: moment,
-	title: string,
-	onChange: (date: moment) => any,
+	date: moment
+	title: string
+	onChange: (date: moment) => any
 }
 
 class DatePickerCell extends React.PureComponent<DatePickerCellProps> {

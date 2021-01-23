@@ -27,16 +27,16 @@ import {summarizeDays, formatBuildingTimes, blankSchedule} from '../lib'
 import {submitReport} from './submit'
 
 type Props = TopLevelViewPropsType & {
-	navigation: {state: {params: {initialBuilding: BuildingType}}},
+	navigation: {state: {params: {initialBuilding: BuildingType}}}
 }
 
 type State = {
-	building: BuildingType,
+	building: BuildingType
 }
 
 export class BuildingHoursProblemReportView extends React.PureComponent<
 	Props,
-	State,
+	State
 > {
 	static navigationOptions = {
 		title: 'Report a Problem',
@@ -49,7 +49,7 @@ export class BuildingHoursProblemReportView extends React.PureComponent<
 	openEditor = (
 		scheduleIdx: number,
 		setIdx: number,
-		set: ?SingleBuildingScheduleType = null,
+		set?: SingleBuildingScheduleType = undefined,
 	) => {
 		this.props.navigation.navigate('BuildingHoursScheduleEditorView', {
 			initialSet: set,
@@ -217,16 +217,16 @@ export class BuildingHoursProblemReportView extends React.PureComponent<
 }
 
 type EditableScheduleProps = {
-	schedule: NamedBuildingScheduleType,
-	scheduleIndex: number,
-	addRow: (idx: number) => any,
+	schedule: NamedBuildingScheduleType
+	scheduleIndex: number
+	addRow: (idx: number) => any
 	editRow: (
 		schedIdx: number,
 		setIdx: number,
 		set: SingleBuildingScheduleType,
-	) => any,
-	onEditSchedule: (idx: number, set: NamedBuildingScheduleType) => any,
-	onDelete: (idx: number) => any,
+	) => any
+	onEditSchedule: (idx: number, set: NamedBuildingScheduleType) => any
+	onDelete: (idx: number) => any
 }
 
 class EditableSchedule extends React.PureComponent<EditableScheduleProps> {
@@ -301,7 +301,7 @@ class EditableSchedule extends React.PureComponent<EditableScheduleProps> {
 	}
 }
 
-type TextFieldProps = {text: string, onChange: (string) => any}
+type TextFieldProps = {text: string; onChange: (string) => any}
 // "Title" will become a textfield like the login form
 const TitleCell = ({text, onChange = () => {}}: TextFieldProps) => (
 	<CellTextField
@@ -327,10 +327,10 @@ const NotesCell = ({text, onChange}: TextFieldProps) => (
 )
 
 type TimesCellProps = {
-	set: SingleBuildingScheduleType,
-	setIndex: number,
-	onPress: (setIdx: number, set: SingleBuildingScheduleType) => any,
-	now: moment,
+	set: SingleBuildingScheduleType
+	setIndex: number
+	onPress: (setIdx: number, set: SingleBuildingScheduleType) => any
+	now: moment
 }
 
 class TimesCell extends React.PureComponent<TimesCellProps> {
