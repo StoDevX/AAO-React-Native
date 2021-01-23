@@ -18,9 +18,9 @@ const styles = StyleSheet.create({
 type IconTypeEnum = 'default' | 'icon_type_windmill'
 
 type Icon = {
-	src: any,
-	title: string,
-	type: IconTypeEnum,
+	src: any
+	title: string
+	type: IconTypeEnum
 }
 
 export const icons: Array<Icon> = [
@@ -39,7 +39,7 @@ export const icons: Array<Icon> = [
 type Props = {}
 
 type State = {
-	iconType: ?string,
+	iconType?: string
 }
 
 export class IconSettingsView extends React.Component<Props, State> {
@@ -90,9 +90,9 @@ export class IconSettingsView extends React.Component<Props, State> {
 }
 
 type IconCellProps = {
-	+icon: Icon,
-	+isSelected: boolean,
-	+onPress: (string) => any,
+	readonly icon: Icon
+	readonly isSelected: boolean
+	readonly onPress: (string) => any
 }
 
 class IconCell extends React.Component<IconCellProps> {
