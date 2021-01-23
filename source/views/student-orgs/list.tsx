@@ -24,7 +24,7 @@ import type {AsyncState} from 'react-async'
 import {useDebounce} from '@frogpond/use-debounce'
 
 const fetchOrgs = (args: {
-	signal: window.AbortController,
+	signal: window.AbortController
 }): Promise<Array<StudentOrgType>> => {
 	return fetch(API('/orgs'), {signal: args.signal}).json()
 }
@@ -65,7 +65,7 @@ export function StudentOrgsView(props: Props) {
 		error,
 		reload,
 		isPending,
-	}: AsyncState<?Array<StudentOrgType>> = useAsync(fetchOrgs, {
+	}: AsyncState<Array<StudentOrgType>> = useAsync(fetchOrgs, {
 		onResolve: () => setIsInitial(false),
 	})
 

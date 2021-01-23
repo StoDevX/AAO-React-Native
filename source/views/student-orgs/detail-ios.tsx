@@ -34,7 +34,7 @@ const styles = StyleSheet.create({
 })
 
 type Props = TopLevelViewPropsType & {
-	navigation: {state: {params: {org: StudentOrgType}}},
+	navigation: {state: {params: {org: StudentOrgType}}}
 }
 
 export class StudentOrgsDetailView extends React.PureComponent<Props> {
