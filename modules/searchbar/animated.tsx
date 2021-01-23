@@ -6,14 +6,14 @@ import {SearchBar} from './searchbar'
 import {Viewport} from '@frogpond/viewport'
 
 type Props = {
-	value: string,
-	active: boolean,
-	placeholder?: string,
-	onSubmit?: () => mixed,
-	onFocus?: () => mixed,
-	onCancel?: () => mixed,
-	onChange?: (string) => mixed,
-	title?: string,
+	value: string
+	active: boolean
+	placeholder?: string
+	onSubmit?: () => mixed
+	onFocus?: () => mixed
+	onCancel?: () => mixed
+	onChange?: (string) => mixed
+	title?: string
 }
 
 export class AnimatedSearchBar extends React.Component<Props> {
@@ -41,7 +41,7 @@ export class AnimatedSearchBar extends React.Component<Props> {
 
 	animate = (
 		thing: Animated.Value,
-		args: {start: number, end: number, duration: number},
+		args: {start: number; end: number; duration: number},
 		toValue: 'start' | 'end',
 	) => {
 		Animated.timing(thing, {
