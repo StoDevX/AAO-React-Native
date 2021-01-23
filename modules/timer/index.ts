@@ -7,31 +7,31 @@ export function msUntilIntervalRepeat(now: number, interval: number) {
 }
 
 type Props = {
-	interval: number, // ms
-	timezone?: string,
-	invoke?: () => mixed,
+	interval: number // ms
+	timezone?: string
+	invoke?: () => mixed
 } & (
 	| {
-			moment: true,
-			render: ({
-				now: moment,
-				loading: boolean,
-				refresh: () => void,
-			}) => React.Node,
+			moment: true
+			render: (state: {
+				now: moment
+				loading: boolean
+				refresh: () => void
+			}) => React.Node
 	  }
 	| {
-			moment: false,
-			render: ({
-				now: Date,
-				loading: boolean,
-				refresh: () => void,
-			}) => React.Node,
+			moment: false
+			render: (state: {
+				now: Date
+				loading: boolean
+				refresh: () => void
+			}) => React.Node
 	  }
 )
 
 type State = {
-	now: Date,
-	loading: boolean,
+	now: Date
+	loading: boolean
 }
 
 export class Timer extends React.Component<Props, State> {
