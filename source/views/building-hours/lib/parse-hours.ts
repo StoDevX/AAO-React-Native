@@ -4,7 +4,7 @@ import {timezone} from '@frogpond/constants'
 
 import {TIME_FORMAT} from './constants'
 
-type HourPairType = {open: moment, close: moment}
+type HourPairType = {open: moment; close: moment}
 
 // TODO: Do "dayOfYear" handling better so that we don't need to handle wrapping at
 // the 6 month mark. (See #3375 for why this function changed.)

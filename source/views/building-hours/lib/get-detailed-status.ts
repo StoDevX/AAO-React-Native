@@ -10,7 +10,7 @@ import {formatBuildingTimes} from './format-times'
 export function getDetailedBuildingStatus(
 	info: BuildingType,
 	m: moment,
-): Array<{isActive: boolean, label: string | null, status: string}> {
+): Array<{isActive: boolean; label: string | null; status: string}> {
 	// Friday: 9:00am – Midnight
 	// -- or --
 	// Friday Breakfast: 7:00am – 9:45am
