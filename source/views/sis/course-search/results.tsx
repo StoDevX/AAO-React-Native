@@ -20,28 +20,28 @@ import {buildFilters} from './lib/build-filters'
 type ReactProps = TopLevelViewPropsType
 
 type ReduxStateProps = {
-	allCourses: Array<CourseType>,
-	courseDataState: string,
+	allCourses: Array<CourseType>
+	courseDataState: string
 }
 
 type ReduxDispatchProps = {
-	updateRecentFilters: (filters: FilterType[]) => any,
-	updateRecentSearches: (query: string) => any,
+	updateRecentFilters: (filters: FilterType[]) => any
+	updateRecentSearches: (query: string) => any
 }
 
 type DefaultProps = {
-	applyFilters: (filters: FilterType[], item: CourseType) => boolean,
+	applyFilters: (filters: FilterType[], item: CourseType) => boolean
 }
 
 type NavigationProps = {
 	navigation: {
 		state: {
 			params: {
-				initialQuery?: string,
-				initialFilters?: Array<FilterType>,
-			},
-		},
-	},
+				initialQuery?: string
+				initialFilters?: Array<FilterType>
+			}
+		}
+	}
 }
 
 type Props = ReactProps &
@@ -51,11 +51,11 @@ type Props = ReactProps &
 	NavigationProps
 
 type State = {
-	filters: Array<FilterType>,
-	typedQuery: string,
-	searchQuery: string,
-	isSearchbarActive: boolean,
-	filtersLoaded: boolean,
+	filters: Array<FilterType>
+	typedQuery: string
+	searchQuery: string
+	isSearchbarActive: boolean
+	filtersLoaded: boolean
 }
 
 class CourseSearchResultsView extends React.Component<Props, State> {

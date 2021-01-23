@@ -26,22 +26,22 @@ const NETWORK_WARNING =
 type ReactProps = TopLevelViewPropsType
 
 type ReduxStateProps = {
-	courseDataState: string,
-	recentFilters: FilterComboType[],
-	recentSearches: string[],
+	courseDataState: string
+	recentFilters: FilterComboType[]
+	recentSearches: string[]
 }
 
 type ReduxDispatchProps = {
-	updateCourseData: () => Promise<any>,
-	loadCourseDataIntoMemory: () => Promise<any>,
+	updateCourseData: () => Promise<any>
+	loadCourseDataIntoMemory: () => Promise<any>
 }
 
 type Props = ReactProps & ReduxStateProps & ReduxDispatchProps
 
 type State = {
-	mode: 'loading' | 'pending' | 'ready',
-	isSearchbarActive: boolean,
-	typedQuery: string,
+	mode: 'loading' | 'pending' | 'ready'
+	isSearchbarActive: boolean
+	typedQuery: string
 }
 
 class CourseSearchView extends React.Component<Props, State> {

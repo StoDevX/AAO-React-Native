@@ -27,22 +27,22 @@ const styles = StyleSheet.create({
 })
 
 type Props = TopLevelViewPropsType & {
-	applyFilters: (filters: FilterType[], item: CourseType) => boolean,
-	courses: Array<CourseType>,
-	filters: Array<FilterType>,
-	onPopoverDismiss: (filter: FilterType) => any,
-	onListItemPress?: (CourseType) => any,
-	query: string,
-	style?: any,
-	contentContainerStyle?: any,
-	filtersLoaded: boolean,
+	applyFilters: (filters: FilterType[], item: CourseType) => boolean
+	courses: Array<CourseType>
+	filters: Array<FilterType>
+	onPopoverDismiss: (filter: FilterType) => any
+	onListItemPress?: (CourseType) => any
+	query: string
+	style?: any
+	contentContainerStyle?: any
+	filtersLoaded: boolean
 }
 
 function doSearch(args: {
-	query: string,
-	filters: Array<FilterType>,
-	courses: Array<CourseType>,
-	applyFilters: (filters: FilterType[], item: CourseType) => boolean,
+	query: string
+	filters: Array<FilterType>
+	courses: Array<CourseType>
+	applyFilters: (filters: FilterType[], item: CourseType) => boolean
 }) {
 	let {query, filters, courses, applyFilters} = args
 
@@ -55,8 +55,9 @@ function doSearch(args: {
 }
 
 let memoizedDoSearch = memoize(doSearch)
+
 // lodash supports this; the types do not.
-;(memoizedDoSearch: any).cache = new WeakMap()
+memoizedDoSearch.cache = new WeakMap()
 
 export class CourseResultsList extends React.PureComponent<Props> {
 	keyExtractor = (item: CourseType) => item.clbid.toString()
@@ -120,7 +121,7 @@ export class CourseResultsList extends React.PureComponent<Props> {
 				keyboardDismissMode="interactive"
 				renderItem={this.renderItem}
 				renderSectionHeader={this.renderSectionHeader}
-				sections={(results: any)}
+				sections={results}
 				style={style}
 				windowSize={10}
 			/>

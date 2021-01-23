@@ -6,8 +6,8 @@ import {deptNum} from './lib/format-dept-num'
 import {Row} from '@frogpond/layout'
 
 type Props = {
-	course: CourseType,
-	onPress: (CourseType) => any,
+	course: CourseType
+	onPress: (CourseType) => any
 }
 
 export class CourseRow extends React.PureComponent<Props> {
