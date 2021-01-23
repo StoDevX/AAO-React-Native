@@ -14,14 +14,13 @@ export type TouchableUnion =
 	| typeof TouchableOpacity
 	| typeof TouchableNativeFeedback
 
-type Props = {
-	borderless?: boolean,
-	containerStyle?: ViewStyleProp,
-	style?: ViewStyleProp,
-	highlight?: boolean,
-	activeOpacity?: number,
-	underlayColor?: string,
-	...$Exact<TouchableWithoutFeedbackProps>,
+type Props = $Exact<TouchableWithoutFeedbackProps> & {
+	borderless?: boolean
+	containerStyle?: ViewStyleProp
+	style?: ViewStyleProp
+	highlight?: boolean
+	activeOpacity?: number
+	underlayColor?: string
 }
 
 const Touchable = (props: Props, ref) => {
