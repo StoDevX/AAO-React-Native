@@ -37,10 +37,10 @@ const cardStyles = StyleSheet.create({
 })
 
 type Props = {
-	header?: false | string,
-	footer?: false | string,
-	children?: any,
-	style?: any,
+	header?: false | string
+	footer?: false | string
+	children?: any
+	style?: any
 }
 
 export function Card({header, footer, children, style}: Props) {
