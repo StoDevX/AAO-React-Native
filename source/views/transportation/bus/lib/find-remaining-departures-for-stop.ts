@@ -2,9 +2,9 @@ import type {BusTimetableEntry, DepartureTimeList} from '../types'
 import type {BusStateEnum} from './get-current-bus-iteration'
 
 type Args = {
-	stop: BusTimetableEntry,
-	busStatus: BusStateEnum,
-	departureIndex: null | number,
+	stop: BusTimetableEntry
+	busStatus: BusStateEnum
+	departureIndex: null | number
 }
 
 export function findRemainingDeparturesForStop(args: Args): DepartureTimeList {

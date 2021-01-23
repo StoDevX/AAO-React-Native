@@ -5,10 +5,10 @@ import type {BusStateEnum} from './get-current-bus-iteration'
 export type BusStopStatusEnum = 'at' | 'before' | 'after' | 'skip'
 
 type Args = {
-	stop: BusTimetableEntry,
-	busStatus: BusStateEnum,
-	departureIndex: null | number,
-	now: moment,
+	stop: BusTimetableEntry
+	busStatus: BusStateEnum
+	departureIndex: null | number
+	now: moment
 }
 
 export function findBusStopStatus(args: Args): BusStopStatusEnum {

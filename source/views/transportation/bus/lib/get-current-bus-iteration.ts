@@ -13,10 +13,10 @@ export type BusStateEnum =
 	| 'running'
 	| 'between-rounds'
 type ReturnVal = {
-	status: BusStateEnum,
-	times: DepartureTimeList,
-	index: null | number,
-	nextStart: ?moment,
+	status: BusStateEnum
+	times: DepartureTimeList
+	index: null | number
+	nextStart?: moment
 }
 
 export function getCurrentBusIteration(

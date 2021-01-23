@@ -18,10 +18,10 @@ type WrapperProps = {
 	navigation: {
 		state: {
 			params: {
-				line: UnprocessedBusLine,
-			},
-		},
-	},
+				line: UnprocessedBusLine
+			}
+		}
+	}
 }
 
 export function BusMap(props: WrapperProps) {
@@ -38,22 +38,22 @@ export function BusMap(props: WrapperProps) {
 }
 
 type Props = {
-	line: UnprocessedBusLine,
-	now: moment,
+	line: UnprocessedBusLine
+	now: moment
 }
 
 type State = {
 	region: {
-		latitude: number,
-		latitudeDelta: number,
-		longitude: number,
-		longitudeDelta: number,
-	},
+		latitude: number
+		latitudeDelta: number
+		longitude: number
+		longitudeDelta: number
+	}
 }
 
 class Map extends React.Component<Props, State> {
 	static navigationOptions = (args: {
-		navigation: {state: {params: {line: UnprocessedBusLine}}},
+		navigation: {state: {params: {line: UnprocessedBusLine}}}
 	}) => ({
 		title: `${args.navigation.state.params.line.line} Map`,
 	})
@@ -68,10 +68,10 @@ class Map extends React.Component<Props, State> {
 	}
 
 	onRegionChangeComplete = (newRegion: {
-		latitude: number,
-		latitudeDelta: number,
-		longitude: number,
-		longitudeDelta: number,
+		latitude: number
+		latitudeDelta: number
+		longitude: number
+		longitudeDelta: number
 	}) => {
 		this.setState((state) => {
 			if (isEqual(state.region, newRegion)) {

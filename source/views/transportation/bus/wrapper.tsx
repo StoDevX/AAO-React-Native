@@ -14,13 +14,13 @@ const fetchBusTimes = (): Promise<Array<UnprocessedBusLine>> =>
 		.then((body) => body.data)
 
 type Props = TopLevelViewPropsType & {
-	line: string,
+	line: string
 }
 
 type State = {
-	busLines: Array<UnprocessedBusLine>,
-	activeBusLine: ?UnprocessedBusLine,
-	loading: boolean,
+	busLines: Array<UnprocessedBusLine>
+	activeBusLine?: UnprocessedBusLine
+	loading: boolean
 }
 
 export class BusView extends React.PureComponent<Props, State> {

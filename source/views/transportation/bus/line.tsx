@@ -28,19 +28,19 @@ const EMPTY_SCHEDULE_MESSAGE = (
 )
 
 type Props = {
-	line: UnprocessedBusLine,
-	now: moment,
-	openMap: () => any,
+	line: UnprocessedBusLine
+	now: moment
+	openMap: () => any
 }
 
 type State = {
-	subtitle: string,
-	schedule: ?BusSchedule,
-	currentBusIteration: null | number,
-	status: BusStateEnum,
+	subtitle: string
+	schedule?: BusSchedule
+	currentBusIteration: null | number
+	status: BusStateEnum
 }
 
-function startsIn(now, start: ?moment) {
+function startsIn(now, start?: moment) {
 	if (!start) {
 		return 'Error'
 	}
@@ -119,7 +119,7 @@ export class BusLine extends React.Component<Props, State> {
 
 	keyExtractor = (item: BusTimetableEntry, index: number) => index.toString()
 
-	renderItem = ({item, index}: {index: number, item: BusTimetableEntry}) => (
+	renderItem = ({item, index}: {index: number; item: BusTimetableEntry}) => (
 		<BusStopRow
 			barColor={this.props.line.colors.bar}
 			currentStopColor={this.props.line.colors.dot}
