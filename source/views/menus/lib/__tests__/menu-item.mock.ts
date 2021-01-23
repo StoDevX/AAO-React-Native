@@ -1,10 +1,12 @@
 /* eslint-disable camelcase */
 import type {MenuItemType} from '../../types'
 
-export const item: ({
-	cor_icon?: Object,
-	station?: string,
-	special?: boolean,
+import type {ItemCorIconMapType} from '@frogpond/food-menu/types'
+
+export const item: (params: {
+	cor_icon?: ItemCorIconMapType
+	station?: string
+	special?: boolean
 }) => MenuItemType = ({
 	cor_icon: corIcon = {},
 	station = '',

@@ -2,14 +2,14 @@
 import type {MenuItemType, StationMenuType} from '../types'
 
 type BasicMenuItemType = {
-	label: string,
-	station: string,
-	special: boolean,
-	description: string,
+	label: string
+	station: string
+	special: boolean
+	description: string
 }
 
 type BasicStationMenuType = {
-	label: string,
+	label: string
 }
 
 export function upgradeMenuItem(

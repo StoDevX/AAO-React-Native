@@ -7,7 +7,7 @@ import uniqueId from 'lodash/uniqueId'
 const CENTRAL_TZ = 'America/Chicago'
 
 const generateDayparts: (
-	...{start: string, end: string}[]
+	...parts: {start: string; end: string}[]
 ) => DayPartsCollectionType = (...times) => {
 	let dayparts = times.map(({start, end}) => ({
 		starttime: start,
