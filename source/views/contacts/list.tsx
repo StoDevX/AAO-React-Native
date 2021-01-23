@@ -34,8 +34,8 @@ const styles = StyleSheet.create({
 type Props = TopLevelViewPropsType
 
 type State = {
-	contacts: Array<ContactType>,
-	loading: boolean,
+	contacts: Array<ContactType>
+	loading: boolean
 }
 
 export class ContactsListView extends React.PureComponent<Props, State> {
