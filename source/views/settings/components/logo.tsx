@@ -11,11 +11,11 @@ const LogoImage = glamorous.image({
 })
 
 type Props = {
-	style?: StyleSheet,
+	style?: StyleSheet
 }
 
 type State = {
-	icon: number,
+	icon: number
 }
 
 export class AppLogo extends React.Component<Props, State> {
