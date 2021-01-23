@@ -18,11 +18,11 @@ const styles = StyleSheet.create({
 })
 
 type Props = TopLevelViewPropsType & {
-	name: string,
-	onRefresh: () => any,
-	entries: StoryType[],
-	loading: boolean,
-	thumbnail: false | number,
+	name: string
+	onRefresh: () => any
+	entries: StoryType[]
+	loading: boolean
+	thumbnail: false | number
 }
 
 export class NewsList extends React.PureComponent<Props> {

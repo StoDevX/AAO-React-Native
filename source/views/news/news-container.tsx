@@ -7,15 +7,15 @@ import {fetch} from '@frogpond/fetch'
 import {API} from '@frogpond/api'
 
 type Props = TopLevelViewPropsType & {
-	source: string | {url: string, type: 'rss' | 'wp-json'},
-	thumbnail: false | number,
-	title: string,
+	source: string | {url: string; type: 'rss' | 'wp-json'}
+	thumbnail: false | number
+	title: string
 }
 
 type State = {
-	entries: StoryType[],
-	initialLoadComplete: boolean,
-	refreshing: boolean,
+	entries: StoryType[]
+	initialLoadComplete: boolean
+	refreshing: boolean
 }
 
 export default class NewsContainer extends React.PureComponent<Props, State> {

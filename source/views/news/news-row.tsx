@@ -5,9 +5,9 @@ import {ListRow, Detail, Title} from '@frogpond/lists'
 import type {StoryType} from './types'
 
 type Props = {
-	onPress: (string) => any,
-	story: StoryType,
-	thumbnail: false | number,
+	onPress: (string) => any
+	story: StoryType
+	thumbnail: false | number
 }
 
 export class NewsRow extends React.PureComponent<Props> {
