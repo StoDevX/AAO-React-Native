@@ -7,14 +7,14 @@ import type {AppTheme} from '@frogpond/app-theme'
 import {withTheme} from '@frogpond/app-theme'
 
 type Props = {
-	actionLabel?: string,
-	emptyHeader: string,
-	emptyText: string,
-	onAction?: () => any,
-	onItemPress: (item: string) => any,
-	items: string[],
-	title: string,
-	theme: AppTheme,
+	actionLabel?: string
+	emptyHeader: string
+	emptyText: string
+	onAction?: () => any
+	onItemPress: (item: string) => any
+	items: string[]
+	title: string
+	theme: AppTheme
 }
 
 function RecentItemsList(props: Props) {
