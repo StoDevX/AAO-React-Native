@@ -31,9 +31,9 @@ const styles = StyleSheet.create({
 type Props = TopLevelViewPropsType
 
 type State = {
-	modes: Array<OtherModeType>,
-	loading: boolean,
-	refreshing: boolean,
+	modes: Array<OtherModeType>
+	loading: boolean
+	refreshing: boolean
 }
 
 export class OtherModesView extends React.PureComponent<Props, State> {

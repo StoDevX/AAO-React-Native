@@ -4,8 +4,8 @@ import {ListRow, Detail, Title} from '@frogpond/lists'
 import {Column, Row} from '@frogpond/layout'
 
 type Props = {
-	onPress: (OtherModeType) => any,
-	mode: OtherModeType,
+	onPress: (OtherModeType) => any
+	mode: OtherModeType
 }
 
 export class OtherModesRow extends React.PureComponent<Props> {
