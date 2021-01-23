@@ -80,7 +80,7 @@ async function cacheItem({key, response, policy, bundled}: CacheItemArgs) {
 }
 
 // Does more magic: gets a Request from AsyncStorage
-type GetItemResult = {response: Response; policy: ?CachePolicy}
+type GetItemResult = {response: Response; policy?: CachePolicy}
 async function getItem(key: string): Promise<GetItemResult> {
 	let [[, response], [, policy]] = await AsyncStorage.multiGet([
 		`${ROOT}:${key}:response`,

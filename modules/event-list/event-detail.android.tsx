@@ -60,7 +60,7 @@ function Links({urls}: {urls: Array<string>}) {
 }
 
 type Navigation = NavigationScreenProp<{
-	params: {event: EventType; poweredBy: ?PoweredBy}
+	params: {event: EventType; poweredBy?: PoweredBy}
 }>
 
 type Props = {

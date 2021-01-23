@@ -1,16 +1,16 @@
 export type BalancesShapeType = {
-	flex: ?string
-	ole: ?string
-	print: ?string
-	weekly: ?string
-	daily: ?string
-	plan: ?string
+	flex?: string
+	ole?: string
+	print?: string
+	weekly?: string
+	daily?: string
+	plan?: string
 }
 
 export type MealPlanInfoType = {
-	plan: ?string
-	leftDaily: ?string
-	leftWeekly: ?string
+	plan?: string
+	leftDaily?: string
+	leftWeekly?: string
 }
 
 export type AccountBalanceType = {
@@ -22,7 +22,7 @@ export type AccountBalanceType = {
 export type OleCardBalancesType = {
 	data: {
 		accounts: Array<AccountBalanceType>
-		meals: ?MealPlanInfoType
+		meals?: MealPlanInfoType
 	}
-	error: ?string
+	error?: string
 }

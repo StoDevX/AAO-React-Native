@@ -35,8 +35,8 @@ type State = {
 }
 
 export class Timer extends React.Component<Props, State> {
-	_timeoutId: ?TimeoutID
-	_intervalId: ?IntervalID
+	_timeoutId?: TimeoutID
+	_intervalId?: IntervalID
 
 	state = {
 		now: new Date(),

@@ -21,7 +21,7 @@ export class SearchBar extends React.Component<Props> {
 		value: '',
 	}
 
-	_ref: ?NativeSearchBar = null
+	_ref?: NativeSearchBar = undefined
 
 	handleSearchButtonPress = () => {
 		this._ref && this._ref.blur()

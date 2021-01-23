@@ -8,7 +8,7 @@ export type ListItemSpecType = {
 	title: string | number
 	label?: string
 	detail?: string
-	image?: ?any
+	image?: any
 }
 
 export type ListSpecType = {
@@ -29,7 +29,7 @@ export type PickerSpecType = {
 	title: string
 	caption?: string
 	options: PickerItemSpecType[]
-	selected: ?PickerItemSpecType
+	selected?: PickerItemSpecType
 }
 
 export type ToggleFilterFunctionType = {

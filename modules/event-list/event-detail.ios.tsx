@@ -23,7 +23,7 @@ function MaybeSection({header, content}: {header: string; content: string}) {
 }
 
 type Navigation = NavigationScreenProp<{
-	params: {event: EventType; poweredBy: ?PoweredBy}
+	params: {event: EventType; poweredBy?: PoweredBy}
 }>
 
 type Props = {

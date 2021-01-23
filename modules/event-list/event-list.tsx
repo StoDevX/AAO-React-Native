@@ -18,12 +18,12 @@ const FullWidthSeparator = (props) => (
 type Props = {
 	detailView?: string
 	events: EventType[]
-	message: ?string
+	message?: string
 	refreshing: boolean
 	onRefresh: () => any
 	navigation: NavigationScreenProp
 	now: moment
-	poweredBy: ?PoweredBy
+	poweredBy?: PoweredBy
 }
 
 export class EventList extends React.Component<Props> {

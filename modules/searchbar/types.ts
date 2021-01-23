@@ -4,11 +4,11 @@ export type Props = {
 	backButtonAndroid?: 'search' | boolean
 	backgroundColor?: string
 	onCancel: () => any
-	onChange: (string) => any
+	onChange: (data?: string) => any
 	onFocus: () => any
 	onSubmit: () => any
 	placeholder?: string
 	style?: any
-	textFieldBackgroundColor?: ?string
+	textFieldBackgroundColor?: string
 	value: string
 }

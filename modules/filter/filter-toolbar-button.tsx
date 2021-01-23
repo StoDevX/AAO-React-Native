@@ -50,7 +50,7 @@ class FilterToolbarButton extends React.PureComponent<Props, State> {
 		popoverVisible: false,
 	}
 
-	touchable: React.Ref<*> = React.createRef()
+	touchable: React.Ref<any> = React.createRef()
 
 	openPopover = () => {
 		this.setState(() => ({popoverVisible: true}))
