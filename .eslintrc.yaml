@@ -115,3 +115,7 @@ rules:
   # react hooks rules
   react-hooks/rules-of-hooks: error
   react-hooks/exhaustive-deps: warn
+
+  # TODO(rye): Follow-up: DENY these
+  '@typescript-eslint/explicit-module-boundary-types': warn
+  '@typescript-eslint/no-empty-function': warn
