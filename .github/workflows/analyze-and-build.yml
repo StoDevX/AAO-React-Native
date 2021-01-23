@@ -49,7 +49,6 @@ jobs:
         env:
           FASTLANE_PASSWORD: ${{ secrets.FASTLANE_PASSWORD }}
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
-          MAPBOX_KEY: ${{ secrets.MAPBOX_KEY }}
           ONESIGNAL_KEY: ${{ secrets.ONESIGNAL_KEY }}
           GIT_COMMIT_DESC: $(git log --format=oneline -n 1 $GITHUB_SHA)
           FASTLANE_SKIP_UPDATE_CHECK: '1'
@@ -78,7 +77,6 @@ jobs:
         env:
           FASTLANE_PASSWORD: ${{ secrets.FASTLANE_PASSWORD }}
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
-          MAPBOX_KEY: ${{ secrets.MAPBOX_KEY }}
           ONESIGNAL_KEY: ${{ secrets.ONESIGNAL_KEY }}
           GIT_COMMIT_DESC: $(git log --format=oneline -n 1 $GITHUB_SHA)
           FASTLANE_SKIP_UPDATE_CHECK: '1'

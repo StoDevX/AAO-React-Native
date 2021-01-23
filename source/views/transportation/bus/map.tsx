@@ -1,18 +1,19 @@
 import * as React from 'react'
-import {StyleSheet} from 'react-native'
+// import {StyleSheet} from 'react-native'
+import {Text} from 'react-native'
 import type moment from 'moment'
 import type {UnprocessedBusLine} from './types'
-import MapView from '@mapbox/react-native-mapbox-gl'
+// import MapView from '@mapbox/react-native-mapbox-gl'
 import {NoticeView} from '@frogpond/notice'
 import {getScheduleForNow, processBusLine} from './lib'
-import uniqBy from 'lodash/uniqBy'
+// import uniqBy from 'lodash/uniqBy'
 import isEqual from 'lodash/isEqual'
 import {Timer} from '@frogpond/timer'
 import {timezone} from '@frogpond/constants'
 
-const styles = StyleSheet.create({
-	map: {...StyleSheet.absoluteFillObject},
-})
+// const styles = StyleSheet.create({
+// 	map: {...StyleSheet.absoluteFillObject},
+// })
 
 type WrapperProps = {
 	navigation: {
@@ -104,9 +105,13 @@ class Map extends React.Component<Props, State> {
 			return <NoticeView text={msg} />
 		}
 
+		return <Text>Mapbox has been removed.</Text>
+
+		/*
 		let markers = uniqBy(entriesWithCoordinates, ({name}) => name)
 
 		return (
+			<Text>Mapbox has been removed.</Text>
 			<MapView
 				loadingEnabled={true}
 				onRegionChangeComplete={this.onRegionChangeComplete}
@@ -126,5 +131,6 @@ class Map extends React.Component<Props, State> {
 				))}
 			</MapView>
 		)
+		*/
 	}
 }

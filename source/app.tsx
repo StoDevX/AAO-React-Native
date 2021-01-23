@@ -9,7 +9,7 @@ import './init/sentry'
 import './init/api'
 import './init/theme'
 import './init/data'
-// import './init/navigation'
+import './init/navigation'
 
 import * as React from 'react'
 import {Provider as ReduxProvider} from 'react-redux'

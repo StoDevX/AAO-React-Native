@@ -8,9 +8,7 @@ type LeftDetailProps = {
 	title: string
 }
 
-export class MultiLineLeftDetailCell extends React.PureComponent<
-	LeftDetailProps
-> {
+export class MultiLineLeftDetailCell extends React.PureComponent<LeftDetailProps> {
 	render() {
 		let {detail, title} = this.props
 		let cellContent = (

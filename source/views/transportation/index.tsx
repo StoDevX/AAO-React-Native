@@ -6,7 +6,6 @@ import {OtherModesView} from './other-modes'
 import {BusView} from './bus'
 
 export {OtherModesDetailView} from './other-modes'
-export {BusMap} from './bus'
 
 const TransportationView = TabNavigator({
 	ExpressLineBusView: {

@@ -1,13 +1,6 @@
 # should we build and release to the nightly channel?
 def should_nightly?
-	# FIXME(rye): Android builds are taking forever to get through review,
-	# and every deploy after an unreviewed build causes the review process
-	# to restart.  This is less than ideal.
-	#
-	# (TODO(rye): Uncomment this once we can get our builds thru review
-	# more safely.)
-	# github_scheduled? || travis_cron? || circle_nightly?
-	(github_scheduled? || travis_cron? || circle_nightly?) && ENV['FASTLANE_PLATFORM_NAME'] != 'android'
+	github_scheduled? || travis_cron? || circle_nightly?
 end
 
 # was this build triggered by a schedule event on GH?

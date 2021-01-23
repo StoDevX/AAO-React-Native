@@ -6,10 +6,9 @@ import {ScrollView, StyleSheet} from 'react-native'
 import {NoticeView, LoadingView} from '@frogpond/notice'
 import type {ReduxState} from '../../redux'
 import {getEnabledTools} from '../../redux/parts/help'
-import * as wifi from './wifi'
 import {ToolView} from './tool'
 
-const CUSTOM_TOOLS = [wifi]
+const CUSTOM_TOOLS = []
 
 const shouldBeShown = (conf) =>
 	!conf.hidden &&
