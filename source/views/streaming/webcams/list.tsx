@@ -14,11 +14,11 @@ const fetchWebcams = (): Promise<Array<Webcam>> =>
 		.json()
 		.then((body) => body.data)
 
-type Props = {}
+type Props = unknown
 
 type State = {
-	webcams: Array<Webcam>,
-	loading: boolean,
+	webcams: Array<Webcam>
+	loading: boolean
 }
 
 export class WebcamsView extends React.PureComponent<Props, State> {

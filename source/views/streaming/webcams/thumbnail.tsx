@@ -7,11 +7,11 @@ import {trackedOpenUrl} from '@frogpond/open-url'
 import LinearGradient from 'react-native-linear-gradient'
 import type {Webcam} from './types'
 
-const transparentPixel = require('../../../../images/transparent.png')
+import transparentPixel from '../../../../images/transparent.png'
 
 type Props = {
-	webcam: Webcam,
-	viewportWidth: number,
+	webcam: Webcam
+	viewportWidth: number
 }
 
 export class StreamThumbnail extends React.PureComponent<Props> {
