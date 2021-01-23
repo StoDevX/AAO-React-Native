@@ -1,14 +1,14 @@
 import * as React from 'react'
 import {Dimensions} from 'react-native'
 
-type WindowDimensions = {width: number, height: number}
+type WindowDimensions = {width: number; height: number}
 
 type Props = {
-	render: (WindowDimensions) => React.Node,
+	render: (WindowDimensions) => React.Node
 }
 
 type State = {
-	viewport: WindowDimensions,
+	viewport: WindowDimensions
 }
 
 export class Viewport extends React.PureComponent<Props, State> {
