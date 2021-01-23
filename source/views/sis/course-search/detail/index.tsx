@@ -181,7 +181,7 @@ function Description({course}: {course: CourseType}) {
 }
 
 type Props = TopLevelViewPropsType & {
-	navigation: {state: {params: {course: CourseType}}},
+	navigation: {state: {params: {course: CourseType}}}
 }
 
 const BGCOLORS = {
