@@ -24,14 +24,14 @@ const styles = StyleSheet.create({
 })
 
 type Props = {
-	buttonDisabled?: boolean,
-	header?: string,
-	text?: string,
-	style?: any,
-	spinner?: boolean,
-	buttonText?: string,
-	onPress?: () => any,
-	textStyle?: any,
+	buttonDisabled?: boolean
+	header?: string
+	text?: string
+	style?: any
+	spinner?: boolean
+	buttonText?: string
+	onPress?: () => any
+	textStyle?: any
 }
 
 export function NoticeView(props: Props) {
