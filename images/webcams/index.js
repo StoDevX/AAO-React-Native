@@ -5,4 +5,5 @@ export const images = new Map<string, number>([
   ['eastquad', require('./eastquad.jpg')],
   ['tomsoneast', require('./tomsoneast.jpg')],
   ['tomsonwest', require('./tomsonwest.jpg')],
+  ['oleave', require('./oleave.jpg')],
 ])
