@@ -110,11 +110,11 @@ class Fetch {
 	}
 }
 
-const doFetch = (
+type FetchImpl = (input?: RequestInfo, init?: ExpandedFetchArgs) => Fetch
+
+const doFetch: FetchImpl = (
 	input: RequestInfo = '',
-	init?: RequestOptions & ExpandedFetchArgs = {},
-) => {
-	new Fetch(input, init)
-}
+	init: RequestOptions & ExpandedFetchArgs = {},
+) => new Fetch(input, init)
 
 export {doFetch as fetch}
