@@ -12,7 +12,7 @@ export function chooseMeal(
 		(f) => f.type === 'picker' && f.spec.title === "Today's Menus",
 	)
 
-	const selectedMeal = meals[0]
+	let selectedMeal = meals[0]
 	if (
 		mealChooserFilter &&
 		mealChooserFilter.spec.selected &&
