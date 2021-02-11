@@ -3,7 +3,7 @@ import {StyleSheet, View, Platform} from 'react-native'
 import * as c from '@frogpond/colors'
 import type {AppTheme} from '@frogpond/app-theme'
 import {useTheme} from '@frogpond/app-theme'
-import type {ViewStyleProp} from 'react-native/Libraries/StyleSheet/StyleSheet'
+import type {ViewStyle} from 'react-native'
 
 const dotBarStyles = StyleSheet.create({
 	diagram: {
@@ -24,7 +24,7 @@ const dotBarStyles = StyleSheet.create({
 })
 
 type Props = {
-	style?: ViewStyleProp
+	style?: ViewStyle
 }
 
 function DottedBar({style}: Props) {
