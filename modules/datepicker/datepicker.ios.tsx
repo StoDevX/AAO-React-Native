@@ -10,9 +10,9 @@ import {
 	StyleSheet,
 } from 'react-native'
 import type {
-	ViewStyleProp,
-	TextStyleProp,
-} from 'react-native/Libraries/StyleSheet/StyleSheet'
+	ViewStyle,
+	TextStyle,
+} from 'react-native'
 import moment from 'moment-timezone'
 import * as c from '@frogpond/colors'
 
@@ -25,7 +25,7 @@ type Props = {
 	minuteInterval?: 1 | 2 | 3 | 4 | 5 | 6 | 10 | 12 | 15 | 20 | 30
 	mode: 'date' | 'datetime' | 'time'
 	onDateChange: (moment) => any
-	style?: ViewStyleProp
+	style?: ViewStyle
 	timezone: string
 }
 

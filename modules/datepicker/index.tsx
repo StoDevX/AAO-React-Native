@@ -3,7 +3,7 @@
 import * as React from 'react'
 import {Keyboard} from 'react-native'
 import moment from 'moment-timezone'
-import type {ViewStyleProp} from 'react-native/Libraries/StyleSheet/StyleSheet'
+import type {ViewStyle} from 'react-native'
 import {DatePicker as ActualDatePicker} from './datepicker'
 
 const FORMATS = {
@@ -21,7 +21,7 @@ type Props = {
 	minuteInterval?: 1 | 2 | 3 | 4 | 5 | 6 | 10 | 12 | 15 | 20 | 30
 	mode: 'date' | 'datetime' | 'time'
 	onDateChange: (moment) => any
-	style?: ViewStyleProp
+	style?: ViewStyle
 }
 
 type State = {

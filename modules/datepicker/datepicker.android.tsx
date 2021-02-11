@@ -10,7 +10,7 @@ import {
 } from 'react-native'
 import moment from 'moment-timezone'
 import * as c from '@frogpond/colors'
-import type {ViewStyleProp} from 'react-native/Libraries/StyleSheet/StyleSheet'
+import type {ViewStyle} from 'react-native'
 
 type Props = {
 	androidMode: 'calendar' | 'spinner' | 'default'
@@ -18,7 +18,7 @@ type Props = {
 	formattedDate: string
 	mode: 'date' | 'datetime' | 'time'
 	onDateChange: (moment) => any
-	style?: ViewStyleProp
+	style?: ViewStyle
 	timezone: string
 }
 
