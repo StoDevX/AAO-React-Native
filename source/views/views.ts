@@ -1,12 +1,11 @@
 import * as c from '@frogpond/colors'
-import type {EntypoGlyphs} from 'react-native-vector-icons/Entypo'
 import type {Gradient} from '@frogpond/colors'
 
 export type ViewType = {
 	type: 'view' | 'url' | 'browser-url'
 	view: string
 	title: string
-	icon: EntypoGlyphs
+	icon: string
 	foreground: 'light' | 'dark'
 	tint: string
 	gradient?: Gradient
