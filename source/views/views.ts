@@ -10,6 +10,7 @@ export type ViewType = {
 	foreground: 'light' | 'dark'
 	tint: string
 	gradient?: Gradient
+	url?: string
 }
 
 export const allViews: Array<ViewType> = [
