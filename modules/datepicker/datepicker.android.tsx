@@ -17,7 +17,7 @@ type Props = {
 	androidMode: 'calendar' | 'spinner' | 'default'
 	date: Moment
 	formattedDate: string
-	mode: 'date' | 'datetime' | 'time'
+	mode: 'date' | 'datetime' | 'time' | 'calendar' | 'spinner' | 'default'
 	onDateChange: (moment: Moment) => any
 	style?: ViewStyle
 	timezone: string
@@ -148,7 +148,7 @@ export class DatePicker extends React.PureComponent<Props> {
 const defaultStyle = StyleSheet.create({
 	dateTouch: {
 		flexDirection: 'row',
-		width: null,
+		width: 0,
 	},
 	dateTouchBody: {
 		flexDirection: 'row',
