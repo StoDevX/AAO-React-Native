@@ -4,9 +4,9 @@ import * as c from '@frogpond/colors'
 import type {AppTheme} from '@frogpond/app-theme'
 import {useTheme} from '@frogpond/app-theme'
 import type {
-	ViewStyleProp,
-	TextStyleProp,
-} from 'react-native/Libraries/StyleSheet/StyleSheet'
+	ViewStyle,
+	TextStyle,
+} from 'react-native'
 
 const styles = StyleSheet.create({
 	container: {
@@ -69,11 +69,11 @@ const styles = StyleSheet.create({
 type Props = {
 	title: string
 	bold?: boolean
-	titleStyle?: TextStyleProp
+	titleStyle?: TextStyle
 	subtitle?: string
-	subtitleStyle?: TextStyleProp
+	subtitleStyle?: TextStyle
 	separator?: string
-	style?: ViewStyleProp
+	style?: ViewStyle
 	spacing?: {left?: number; right?: number}
 }
 

@@ -6,24 +6,25 @@ import {
 	Platform,
 	View,
 } from 'react-native'
-import type {ViewStyleProp} from 'react-native/Libraries/StyleSheet/StyleSheet'
-import type {Props as TouchableWithoutFeedbackProps} from 'react-native/Libraries/Components/Touchable/TouchableWithoutFeedback'
+import type {ViewStyle} from 'react-native'
+import type {TouchableWithoutFeedbackProps} from 'react-native'
 
 export type TouchableUnion =
 	| typeof TouchableHighlight
 	| typeof TouchableOpacity
 	| typeof TouchableNativeFeedback
 
-type Props = $Exact<TouchableWithoutFeedbackProps> & {
+type Props = TouchableWithoutFeedbackProps & {
 	borderless?: boolean
-	containerStyle?: ViewStyleProp
-	style?: ViewStyleProp
+	containerStyle?: ViewStyle
+	children?: [View]
+	style?: ViewStyle
 	highlight?: boolean
 	activeOpacity?: number
 	underlayColor?: string
 }
 
-const Touchable = (props: Props, ref) => {
+const Touchable = (props: Props, ref: any) => {
 	let {
 		borderless = false,
 		children,

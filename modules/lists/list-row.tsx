@@ -3,7 +3,7 @@ import {Platform, StyleSheet, View} from 'react-native'
 import * as c from '@frogpond/colors'
 import {Touchable} from '@frogpond/touchable'
 import {DisclosureArrow} from './disclosure-arrow'
-import type {ViewStyleProp} from 'react-native/Libraries/StyleSheet/StyleSheet'
+import type {ViewStyle} from 'react-native'
 
 const styles = StyleSheet.create({
 	childWrapper: {
@@ -33,8 +33,8 @@ const styles = StyleSheet.create({
 })
 
 type PropsType = {
-	style?: ViewStyleProp
-	contentContainerStyle?: ViewStyleProp
+	style?: ViewStyle
+	contentContainerStyle?: ViewStyle
 	arrowPosition?: 'center' | 'top' | 'none'
 	fullWidth?: boolean
 	fullHeight?: boolean
