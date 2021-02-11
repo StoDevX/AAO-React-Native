@@ -14,17 +14,18 @@ import type {
 	TextStyle,
 } from 'react-native'
 import moment from 'moment-timezone'
+import type {Moment} from 'moment-timezone'
 import * as c from '@frogpond/colors'
 
 type Props = {
-	date: moment
+	date: Moment
 	formattedDate: string
 	duration: number
 	format?: string
 	height: number
 	minuteInterval?: 1 | 2 | 3 | 4 | 5 | 6 | 10 | 12 | 15 | 20 | 30
 	mode: 'date' | 'datetime' | 'time'
-	onDateChange: (moment) => any
+	onDateChange: (moment: Moment) => any
 	style?: ViewStyle
 	timezone: string
 }

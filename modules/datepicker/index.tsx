@@ -3,6 +3,7 @@
 import * as React from 'react'
 import {Keyboard} from 'react-native'
 import moment from 'moment-timezone'
+import type {Moment} from 'moment-timezone'
 import type {ViewStyle} from 'react-native'
 import {DatePicker as ActualDatePicker} from './datepicker'
 
@@ -14,18 +15,18 @@ const FORMATS = {
 
 type Props = {
 	androidMode: 'calendar' | 'spinner' | 'default'
-	initialDate: moment
+	initialDate: Moment
 	duration?: number
 	format?: string
 	height?: number
 	minuteInterval?: 1 | 2 | 3 | 4 | 5 | 6 | 10 | 12 | 15 | 20 | 30
 	mode: 'date' | 'datetime' | 'time'
-	onDateChange: (moment) => any
+	onDateChange: (moment: Moment) => any
 	style?: ViewStyle
 }
 
 type State = {
-	date: moment
+	date: Moment
 	timezone: string
 }
 
@@ -43,12 +44,12 @@ export class DatePicker extends React.Component<Props, State> {
 		timezone: this.props.initialDate.tz(),
 	}
 
-	formatDate = (date: moment) => {
+	formatDate = (date: Moment) => {
 		const {mode, format = FORMATS[mode]} = this.props
 		return moment(date).format(format)
 	}
 
-	onDateChange = (newDate: moment) => {
+	onDateChange = (newDate: Moment) => {
 		this.setState(
 			() => ({date: newDate}),
 			() => this.props.onDateChange(this.state.date),
