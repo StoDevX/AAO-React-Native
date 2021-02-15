@@ -56,7 +56,7 @@ export function Button({
 	textStyle = null,
 	mode = 'default',
 }: Props) {
-	const theme: AppTheme = useTheme()
+	const theme = useTheme()
 
 	const background =
 		mode === 'default'
