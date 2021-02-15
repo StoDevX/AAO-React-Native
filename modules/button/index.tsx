@@ -60,12 +60,12 @@ export function Button({
 
 	const background =
 		mode === 'default'
-			? {backgroundColor: theme.buttonBackground}
-			: {backgroundColor: theme.buttonForeground}
+			? {backgroundColor: theme?.buttonBackground}
+			: {backgroundColor: theme?.buttonForeground}
 	const foreground =
 		mode === 'default'
-			? {color: theme.buttonForeground}
-			: {color: theme.buttonBackground}
+			? {color: theme?.buttonForeground}
+			: {color: theme?.buttonBackground}
 
 	const textStyleThing = mode === 'default' ? styles.text : inverted.text
 	const containerStyle = [styles.button, background, buttonStyle]
