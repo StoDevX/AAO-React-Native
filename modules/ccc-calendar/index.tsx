@@ -6,6 +6,7 @@ import {EventList} from '@frogpond/event-list'
 import type {PoweredBy} from '@frogpond/event-list'
 import type {EventType} from '@frogpond/event-type'
 import moment from 'moment-timezone'
+import type {Moment} from 'moment-timezone'
 import {LoadingView} from '@frogpond/notice'
 import {API} from '@frogpond/api'
 
@@ -16,8 +17,8 @@ type Props = {
 		| {type: 'reason'; url: string}
 		| {type: 'ics'; url: string}
 	detailView?: string
-	eventMapper?: (EventType) => EventType
-	navigation: NavigationScreenProp
+	eventMapper?: (event: EventType) => EventType
+	navigation: NavigationScreenProp<undefined>
 	poweredBy?: PoweredBy
 }
 
@@ -26,15 +27,14 @@ type State = {
 	initialLoadComplete: boolean
 	refreshing: boolean
 	error?: Error
-	now: moment
+	now: Moment
 }
 
 export class CccCalendarView extends React.Component<Props, State> {
-	state = {
+	state: State = {
 		events: [],
 		initialLoadComplete: false,
 		refreshing: false,
-		error: null,
 		now: moment.tz(timezone()),
 	}
 
@@ -63,7 +63,7 @@ export class CccCalendarView extends React.Component<Props, State> {
 		return events
 	}
 
-	getEvents = async (reload?: boolean, now: moment = moment.tz(timezone())) => {
+	getEvents = async (reload?: boolean, now: Moment = moment.tz(timezone())) => {
 		let url
 		if (typeof this.props.calendar === 'string') {
 			url = API(`/calendar/named/${this.props.calendar}`)
@@ -74,7 +74,7 @@ export class CccCalendarView extends React.Component<Props, State> {
 		} else if (this.props.calendar.type === 'ics') {
 			url = API('/calendar/ics', {url: this.props.calendar.url})
 		} else {
-			throw new Error('invalid calendar type!')
+			this.state.error = new Error('invalid calendar type!')
 		}
 
 		const events: Array<EventType> = await fetch(url, {
@@ -99,7 +99,7 @@ export class CccCalendarView extends React.Component<Props, State> {
 			<EventList
 				detailView={this.props.detailView}
 				events={this.state.events}
-				message={this.state.error ? this.state.error.message : null}
+				message={this.state.error?.message}
 				navigation={this.props.navigation}
 				now={this.state.now}
 				onRefresh={this.refresh}
