@@ -1,0 +1,1 @@
+export {DictionaryEditorView} from './editor'

@@ -1,26 +1,26 @@
-parser: babel-eslint
+parser: '@typescript-eslint/parser'
 parserOptions:
-  sourceType: module
+  project: './tsconfig.json'
+
+root: true
 
 plugins:
+  - '@typescript-eslint'
   - babel
   - react
   - react-native
-  - flowtype
   - react-hooks
 
 extends:
   - eslint:recommended
-  - plugin:flowtype/recommended
   - plugin:react/recommended
+  - 'plugin:@typescript-eslint/recommended'
   - prettier
-  - prettier/flowtype
   - prettier/react
 
 settings:
   react:
     version: '16.6'
-    flowVersion: '0.78'
 
 env:
   es6: true
@@ -62,6 +62,8 @@ rules:
       varsIgnorePattern: '^_'
   no-useless-constructor: error
   no-var: error
+  # TODO(rye): Follow-up item: DENY this
+  prefer-const: warn
   prefer-promise-reject-errors: error
   prefer-spread: error
   quotes: [warn, single, avoid-escape]
@@ -105,10 +107,6 @@ rules:
   react/wrap-multilines: off
   react/jsx-boolean-value: [error, always]
 
-  # flow rules
-  flowtype/no-dupe-keys: error
-  flowtype/use-flow-type: error
-
   # react-native rules
   react-native/no-unused-styles: warn
   react-native/no-inline-styles: warn
@@ -117,3 +115,7 @@ rules:
   # react hooks rules
   react-hooks/rules-of-hooks: error
   react-hooks/exhaustive-deps: warn
+
+  # TODO(rye): Follow-up: DENY these
+  '@typescript-eslint/explicit-module-boundary-types': warn
+  '@typescript-eslint/no-empty-function': warn

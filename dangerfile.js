@@ -26,9 +26,6 @@ async function main() {
 		case 'JS-data':
 			await runJSのData()
 			break
-		case 'JS-flow':
-			await runJSのFlow()
-			break
 		case 'JS-jest':
 			await runJSのJest()
 			break
@@ -138,31 +135,10 @@ function runJSのDataのBusData() {
 //
 
 async function runJSのGeneral() {
-	await flowAnnotated()
 	await bigPr()
 	await exclusionaryTests()
 	await xcodeproj()
 	await changelogSync()
-}
-
-// New js files should have `@flow` at the top
-function flowAnnotated() {
-	let noFlow = danger.git.created_files
-		.filter((path) => path.endsWith('.js'))
-		// except for those in /flow-typed
-		.filter((filepath) => !filepath.includes('flow-typed'))
-		.filter((filepath) => !readFile(filepath).includes('@flow'))
-
-	if (!noFlow.length) {
-		return
-	}
-
-	markdown(
-		h.details(
-			h.summary('There is no <code>@flow</code> annotation in these file(s)'),
-			h.ul(...noFlow.map((file) => h.li(h.code(file)))),
-		),
-	)
 }
 
 // Warn if tests have been enabled to the exclusion of all others
@@ -265,24 +241,6 @@ function changelogSync() {
 			),
 		)
 	}
-}
-
-//
-// task=JS-flow
-//
-
-function runJSのFlow() {
-	let flowLog = readLogFile('./logs/flow')
-
-	if (!flowLog) {
-		return
-	}
-
-	if (flowLog === 'Found 0 errors') {
-		return
-	}
-
-	fileLog('Flow would like to interject about types…', flowLog)
 }
 
 //

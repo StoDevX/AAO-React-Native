@@ -1,0 +1,54 @@
+import * as React from 'react'
+import Popover from 'react-native-popover-view'
+import {PopoverPlacement} from 'react-native-popover-view'
+import {FilterSection} from './section'
+import type {FilterType} from './types'
+import * as c from '@frogpond/colors'
+
+type Props = {
+	anchor: any
+	filter: FilterType
+	onClosePopover: (filter: FilterType) => any
+	visible: boolean
+}
+
+type State = {
+	filter: FilterType
+}
+
+export class FilterPopover extends React.PureComponent<Props, State> {
+	state = {
+		filter: this.props.filter,
+	}
+
+	onFilterChanged = (filter: FilterType) => {
+		this.setState(() => ({filter: filter}))
+	}
+
+	render() {
+		let {filter} = this.state
+		let {anchor, onClosePopover, visible} = this.props
+
+		if (typeof anchor !== 'object') {
+			throw new Error('FilterPopover only supports createRef refs')
+		}
+
+		return (
+			<Popover
+				from={anchor.current}
+				isVisible={visible}
+				onRequestClose={() => onClosePopover(filter)}
+				placement={PopoverPlacement.BOTTOM}
+				popoverStyle={popoverContainer}
+			>
+				<FilterSection filter={filter} onChange={this.onFilterChanged} />
+			</Popover>
+		)
+	}
+}
+
+const popoverContainer = {
+	minWidth: 200,
+	maxWidth: 300,
+	backgroundColor: c.sectionBgColor,
+}

@@ -17,7 +17,7 @@ jobs:
       - run: yarn run validate-data
       - run: yarn run bundle-data
       - run: yarn run pretty --no-write --list-different
-      - run: yarn run flow check
+      - run: yarn tsc || true
       - run: yarn run lint
       - name: Run tests
         run: yarn run test --coverage
