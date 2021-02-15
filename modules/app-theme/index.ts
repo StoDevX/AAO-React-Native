@@ -1,9 +1,9 @@
 import {createTheming} from '@callstack/react-theme-provider'
 import type {ThemingType} from '@callstack/react-theme-provider'
 
-let {ThemeProvider, withTheme, useTheme} = createTheming(undefined) as ThemingType<
-	AppTheme | undefined
->
+let {ThemeProvider, withTheme, useTheme} = createTheming(
+	undefined,
+) as ThemingType<AppTheme | undefined>
 
 export {ThemeProvider, withTheme, useTheme}
 
