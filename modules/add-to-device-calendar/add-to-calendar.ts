@@ -10,7 +10,7 @@ type Props = {
 		message: string,
 		disabled: boolean,
 		onPress: () => void,
-	) => React.Node
+	) => JSX.Element
 }
 
 type State = {
@@ -36,7 +36,7 @@ export class AddToCalendar extends React.Component<Props, State> {
 		disabled: false,
 	}
 
-	addEvent = async (): void => {
+	addEvent = async (): Promise<void> => {
 		const MESSAGES = this.props.compactMessages
 			? COMPACT_MESSAGES
 			: VERBOSE_MESSAGES
