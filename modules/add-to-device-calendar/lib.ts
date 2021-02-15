@@ -68,7 +68,7 @@ async function requestCalendarAccess(): Promise<boolean> {
 	}
 
 	if (status !== 'authorized') {
-		return promptSettings()
+		return promptSettings() === undefined
 	}
 
 	return true
