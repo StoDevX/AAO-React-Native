@@ -33,8 +33,8 @@ const styles = StyleSheet.create({
 const inverted = StyleSheet.create({
 	text: {
 		...Platform.select({
-			ios: iOSUIKit.calloutBlackObject,
-			android: material.buttonBlackObject,
+			ios: iOSUIKit.calloutObject,
+			android: material.buttonObject,
 		}),
 	},
 })
