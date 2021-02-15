@@ -9,10 +9,7 @@ import {
 	Keyboard,
 	StyleSheet,
 } from 'react-native'
-import type {
-	ViewStyle,
-	TextStyle,
-} from 'react-native'
+import type {ViewStyle, TextStyle} from 'react-native'
 import moment from 'moment-timezone'
 import type {Moment} from 'moment-timezone'
 import * as c from '@frogpond/colors'
