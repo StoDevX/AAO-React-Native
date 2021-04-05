@@ -1,5 +1,6 @@
 import {Platform, StyleSheet} from 'react-native'
-import {createStackNavigator, createAppContainer} from 'react-navigation'
+import {createAppContainer} from 'react-navigation'
+import {createStackNavigator} from 'react-navigation-stack'
 import * as c from '@frogpond/colors'
 import {getTheme} from '@frogpond/app-theme'
 import {routes} from './routes'

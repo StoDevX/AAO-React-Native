@@ -237,6 +237,8 @@ PODS:
     - React
   - RNKeychain (6.2.0):
     - React
+  - RNReanimated (1.4.0):
+    - React
   - RNScreens (2.15.0):
     - React-Core
   - RNSearchBar (3.5.1):
@@ -289,6 +291,7 @@ DEPENDENCIES:
   - RNDeviceInfo (from `../node_modules/react-native-device-info`)
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
   - RNKeychain (from `../node_modules/react-native-keychain`)
+  - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNScreens (from `../node_modules/react-native-screens`)
   - RNSearchBar (from `../node_modules/react-native-search-bar`)
   - "RNSentry (from `../node_modules/@sentry/react-native`)"
@@ -369,6 +372,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-gesture-handler"
   RNKeychain:
     :path: "../node_modules/react-native-keychain"
+  RNReanimated:
+    :path: "../node_modules/react-native-reanimated"
   RNScreens:
     :path: "../node_modules/react-native-screens"
   RNSearchBar:
@@ -416,7 +421,8 @@ SPEC CHECKSUMS:
   RNDeviceInfo: c5f8f3a456adcbba405ace475254b08febc4c095
   RNGestureHandler: 7a5833d0f788dbd107fbb913e09aa0c1ff333c39
   RNKeychain: b8e0711b959a19c5b057d1e970d3c83d159b6da5
-  RNScreens: 2ad555d4d9fa10b91bb765ca07fe9b29d59573f0
+  RNReanimated: b2ab0b693dddd2339bd2f300e770f6302d2e960c
+  RNScreens: ca5c144495ebf33cc1f66be04a7fd3fafd3e40ff
   RNSearchBar: 9860431356b7d12a8449d2fddb2b5f3c78d1e99f
   RNSentry: 5408304a9fc37053c5589cfa4123a7ad2dce2456
   RNVectorIcons: 0bb4def82230be1333ddaeee9fcba45f0b288ed4
