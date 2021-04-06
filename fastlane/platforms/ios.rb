@@ -32,6 +32,8 @@ platform :ios do
 		products_dir = products_dir.map { |entry| entry.gsub(/.*BUILT_PRODUCTS_DIR = /, '') }
 		products = products_dir.map { |entry| entry + "/#{ENV['GYM_OUTPUT_NAME']}.app/" }
 
+		propagate_version
+
 		# save it to a log file for later use
 		FileUtils.mkdir_p('../logs')
 		File.open('../logs/products', 'w') { |file| file.write(products.to_json) }
@@ -39,14 +41,12 @@ platform :ios do
 		# build the .app
 		build_status = 0
 		begin
-			propagate_version
-			xcodebuild(
-			           build: true,
-			           scheme: ENV['GYM_SCHEME'],
-			           workspace: ENV['GYM_WORKSPACE'],
-			           destination: 'generic/platform=iOS',
-			           xcargs: %(CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY=""),
-			           )
+			gym(include_bitcode: true,
+			    include_symbols: true,
+			    skip_codesigning: true,
+			    skip_package_ipa: true,
+			    skip_package_pkg: true,
+			    skip_archive: true)
 		rescue IOError => e
 			build_status = 1
 			raise e
