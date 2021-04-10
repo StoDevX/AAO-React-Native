@@ -6,14 +6,14 @@ def sourcemap_args
 	when :android
 		platform = 'android'
 		entry_file = 'index.js'
-		bundle_output = '../android-release.bundle'
-		sourcemap_output = '../android-release.bundle.map'
+		bundle_output = 'index.android.bundle'
+		sourcemap_output = 'index.android.bundle.map'
 		bundle_url = 'index.android.bundle'
 	when :ios
 		platform = 'ios'
 		entry_file = 'index.js'
-		bundle_output = '../ios-release.bundle'
-		sourcemap_output = '../ios-release.bundle.map'
+		bundle_output = 'main.jsbundle'
+		sourcemap_output = 'main.jsbundle.map'
 		bundle_url = 'main.jsbundle'
 	end
 
