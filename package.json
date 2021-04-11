@@ -1,6 +1,6 @@
 {
   "name": "AllAboutOlaf",
-  "version": "2.8.0-beta.7",
+  "version": "2.8.0-beta.8",
   "private": true,
   "scripts": {
     "android": "react-native run-android",
@@ -175,7 +175,7 @@
     "@types/wordwrap": "1.0.0",
     "@typescript-eslint/eslint-plugin": "4.1.0",
     "@typescript-eslint/parser": "4.1.0",
-    "ajv": "6.12.6",
+    "ajv": "8.1.0",
     "babel-core": "7.0.0-bridge.0",
     "babel-eslint": "10.1.0",
     "babel-jest": "26.6.3",
