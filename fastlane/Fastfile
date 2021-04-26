@@ -27,6 +27,9 @@ before_all do
 	# set up global info for `gradle`
 	ENV['FL_GRADLE_PROJECT_DIR'] = './android'
 
+	# skip 2fa upgrade
+	ENV['SPACESHIP_SKIP_2FA_UPGRADE'] = '1'
+
 	# set up other global shared values
 	lane_context[:PRETTY_APP_NAME] = 'All About Olaf'
 	lane_context[:GRADLE_FILE] = "#{ENV['FL_GRADLE_PROJECT_DIR']}/app/build.gradle"
