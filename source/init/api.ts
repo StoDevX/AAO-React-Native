@@ -1,3 +1,15 @@
 import {setApiRoot} from '@frogpond/api'
+import * as storage from '../lib/storage'
+import {PRODUCTION_SERVER_URL} from '../lib/constants'
 
-setApiRoot('https://stolaf.api.frogpond.tech/v1')
+const configureApiRoot = async () => {
+	let address = await storage.getServerAddress()
+
+	if (!address) {
+		address = PRODUCTION_SERVER_URL
+	}
+
+	setApiRoot(address)
+}
+
+configureApiRoot()
