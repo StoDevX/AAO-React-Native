@@ -1,6 +1,6 @@
 import * as React from 'react'
 import {StyleSheet} from 'react-native'
-import { Section, CellTextField, ButtonCell } from '@frogpond/tableview'
+import {Section, CellTextField, ButtonCell} from '@frogpond/tableview'
 import restart from 'react-native-restart'
 import * as storage from '../../../../lib/storage'
 import {DEFAULT_URL} from '../../../../lib/constants'
@@ -37,26 +37,24 @@ export const ServerUrlSection = (): React.ReactElement => {
 	}, [serverAddress])
 
 	return (
-        <Section
-            footer={
-                serverAddress ? '' : 'Empty means we will use the default URL.'
-            }
-            header="SERVER URL"
-        >
-            <CellTextField
-                key={0}
-                _ref={serverAddressRef}
-                onChangeText={handleOnChange}
-                placeholder={DEFAULT_URL}
-                value={serverAddress}
-            />
-            <ButtonCell
-                disabled={errorMessage.length > 0}
-                onPress={refreshApp}
-                textStyle={styles.buttonCell}
-                title={errorMessage ? errorMessage : 'Save'}
-            />
-        </Section>
+		<Section
+			footer={serverAddress ? '' : 'Empty means we will use the default URL.'}
+			header="SERVER URL"
+		>
+			<CellTextField
+				key={0}
+				_ref={serverAddressRef}
+				onChangeText={handleOnChange}
+				placeholder={DEFAULT_URL}
+				value={serverAddress}
+			/>
+			<ButtonCell
+				disabled={errorMessage.length > 0}
+				onPress={refreshApp}
+				textStyle={styles.buttonCell}
+				title={errorMessage ? errorMessage : 'Save'}
+			/>
+		</Section>
 	)
 }
 

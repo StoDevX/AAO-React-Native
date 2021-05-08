@@ -1,10 +1,10 @@
 import * as Sentry from '@sentry/react-native'
 import * as React from 'react'
 import {Alert} from 'react-native'
-import { Section, PushButtonCell } from '@frogpond/tableview'
+import {Section, PushButtonCell} from '@frogpond/tableview'
 import type {NavigationScreenProp} from 'react-navigation'
 import {isDevMode} from '@frogpond/constants'
-import { ServerUrlSection } from './server-url'
+import {ServerUrlSection} from './server-url'
 
 type Props = {
 	navigation: NavigationScreenProp<any>
