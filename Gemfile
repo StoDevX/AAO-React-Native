@@ -9,5 +9,5 @@ gem 'cocoapods'
 # fastlane plugins
 
 group :development do
-  gem 'rubocop', '~> 1.12'
+  gem 'rubocop', '~> 1.13'
 end
