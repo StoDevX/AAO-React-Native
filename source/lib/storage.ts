@@ -1,4 +1,5 @@
 import {
+	getItem,
 	setItem,
 	clearAsyncStorage,
 	getItemAsBoolean,
@@ -34,6 +35,14 @@ export function setAcknowledgementStatus(status: boolean): Promise<void> {
 }
 export function getAcknowledgementStatus(): Promise<boolean> {
 	return getItemAsBoolean(acknowledgementStatusKey)
+}
+
+const serverAddressKey = 'settings:server-address'
+export function setServerAddress(address: string): Promise<void> {
+	return setItem(serverAddressKey, address)
+}
+export function getServerAddress(): Promise<string> {
+	return getItem(serverAddressKey)
 }
 
 /// MARK: Favorite Buildings

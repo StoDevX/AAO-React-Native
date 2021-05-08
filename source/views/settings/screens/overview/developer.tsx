@@ -4,22 +4,25 @@ import {Alert} from 'react-native'
 import {Section, PushButtonCell} from '@frogpond/tableview'
 import type {NavigationScreenProp} from 'react-navigation'
 import {isDevMode} from '@frogpond/constants'
+import {ServerUrlSection} from './server-url'
 
-type Props = {navigation: NavigationScreenProp<any>}
+type Props = {
+	navigation: NavigationScreenProp<any>
+}
 
-export class DeveloperSection extends React.Component<Props> {
-	onAPIButton = () => this.props.navigation.navigate('APITestView')
-	onBonAppButton = () => this.props.navigation.navigate('BonAppPickerView')
-	onDebugButton = () => this.props.navigation.navigate('DebugView')
-	sendSentryMessage = () => {
+export const DeveloperSection = ({navigation}: Props): React.ReactElement => {
+	const onAPIButton = () => navigation.navigate('APITestView')
+	const onBonAppButton = () => navigation.navigate('BonAppPickerView')
+	const onDebugButton = () => navigation.navigate('DebugView')
+	const sendSentryMessage = () => {
 		Sentry.captureMessage('A Sentry Message', {level: 'info'})
-		this.showSentryAlert()
+		showSentryAlert()
 	}
-	sendSentryException = () => {
+	const sendSentryException = () => {
 		Sentry.captureException(new Error('Debug Exception'))
-		this.showSentryAlert()
+		showSentryAlert()
 	}
-	showSentryAlert = () => {
+	const showSentryAlert = () => {
 		if (isDevMode()) {
 			Alert.alert(
 				'Sentry button pressed',
@@ -32,24 +35,23 @@ export class DeveloperSection extends React.Component<Props> {
 		}
 	}
 
-	render() {
-		return (
+	return (
+		<>
 			<Section header="DEVELOPER">
-				<PushButtonCell onPress={this.onAPIButton} title="API Tester" />
+				<PushButtonCell onPress={onAPIButton} title="API Tester" />
+				<PushButtonCell onPress={onBonAppButton} title="Bon Appetit Picker" />
+				<PushButtonCell onPress={onDebugButton} title="Debug" />
 				<PushButtonCell
-					onPress={this.onBonAppButton}
-					title="Bon Appetit Picker"
-				/>
-				<PushButtonCell onPress={this.onDebugButton} title="Debug" />
-				<PushButtonCell
-					onPress={this.sendSentryMessage}
+					onPress={sendSentryMessage}
 					title="Send a Sentry Message"
 				/>
 				<PushButtonCell
-					onPress={this.sendSentryException}
+					onPress={sendSentryException}
 					title="Send a Sentry Exception"
 				/>
 			</Section>
-		)
-	}
+
+			<ServerUrlSection />
+		</>
+	)
 }

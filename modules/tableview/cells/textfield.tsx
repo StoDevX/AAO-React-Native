@@ -37,7 +37,7 @@ type Props = {
 	disabled: boolean
 	multiline?: boolean
 	onChangeText: (string) => any
-	onSubmitEditing: (string) => any
+	onSubmitEditing?: (string) => any
 	placeholder: string
 	returnKeyType: 'done' | 'next' | 'default'
 	secureTextEntry: boolean
@@ -62,7 +62,7 @@ export class CellTextField extends React.Component<Props> {
 	}
 
 	onSubmit = () => {
-		this.props.onSubmitEditing(this.props.value)
+		this.props.onSubmitEditing?.(this.props.value)
 	}
 
 	render() {
