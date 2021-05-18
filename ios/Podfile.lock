@@ -243,14 +243,14 @@ PODS:
     - React-Core
   - RNSearchBar (3.5.1):
     - React
-  - RNSentry (2.0.1):
+  - RNSentry (2.4.3):
     - React-Core
-    - Sentry (= 6.0.8)
+    - Sentry (= 6.1.4)
   - RNVectorIcons (6.6.0):
     - React
-  - Sentry (6.0.8):
-    - Sentry/Core (= 6.0.8)
-  - Sentry/Core (6.0.8)
+  - Sentry (6.1.4):
+    - Sentry/Core (= 6.1.4)
+  - Sentry/Core (6.1.4)
   - Yoga (1.14.0)
 
 DEPENDENCIES:
