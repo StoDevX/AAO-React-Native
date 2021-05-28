@@ -188,10 +188,10 @@ PODS:
   - React-jsinspector (0.61.5)
   - react-native-calendar-events (1.7.3):
     - React
-  - react-native-netinfo (5.9.7):
+  - react-native-netinfo (6.0.0):
     - React-Core
-  - react-native-restart (0.0.17):
-    - React
+  - react-native-restart (0.0.18):
+    - React-Core
   - react-native-safari-view (1.0.0):
     - React
   - react-native-webview (8.1.2):
@@ -233,13 +233,13 @@ PODS:
     - ReactCommon/jscallinvoker (= 0.61.5)
   - RNDeviceInfo (5.6.5):
     - React
-  - RNGestureHandler (1.8.0):
-    - React
+  - RNGestureHandler (1.9.0):
+    - React-Core
   - RNKeychain (6.2.0):
     - React
   - RNReanimated (1.4.0):
     - React
-  - RNScreens (2.15.0):
+  - RNScreens (2.16.1):
     - React-Core
   - RNSearchBar (3.5.1):
     - React
@@ -404,8 +404,8 @@ SPEC CHECKSUMS:
   React-jsiexecutor: d5525f9ed5f782fdbacb64b9b01a43a9323d2386
   React-jsinspector: fa0ecc501688c3c4c34f28834a76302233e29dc0
   react-native-calendar-events: eaa63134881d97488feb21ea114158f712894018
-  react-native-netinfo: 250dc0ca126512f618a8a2ca6a936577e1f66586
-  react-native-restart: d19a0f8d053d065fe64cd2baebb6487111c77149
+  react-native-netinfo: e849fc21ca2f4128a5726c801a82fc6f4a6db50d
+  react-native-restart: e0abe1ceec03e6d0956853c91fa2dc55e8becfa4
   react-native-safari-view: 955d7160d159241b8e9395d12d10ea0ef863dcdd
   react-native-webview: fcb5f377aadc216273300f452ee0d321fb85809b
   React-RCTActionSheet: 600b4d10e3aea0913b5a92256d2719c0cdd26d76
@@ -419,16 +419,16 @@ SPEC CHECKSUMS:
   React-RCTVibration: a49a1f42bf8f5acf1c3e297097517c6b3af377ad
   ReactCommon: 198c7c8d3591f975e5431bec1b0b3b581aa1c5dd
   RNDeviceInfo: c5f8f3a456adcbba405ace475254b08febc4c095
-  RNGestureHandler: 7a5833d0f788dbd107fbb913e09aa0c1ff333c39
+  RNGestureHandler: 9b7e605a741412e20e13c512738a31bd1611759b
   RNKeychain: b8e0711b959a19c5b057d1e970d3c83d159b6da5
   RNReanimated: b2ab0b693dddd2339bd2f300e770f6302d2e960c
-  RNScreens: ca5c144495ebf33cc1f66be04a7fd3fafd3e40ff
+  RNScreens: 45c457af3d2ee9e08fc01e70da87e653d46b1198
   RNSearchBar: 9860431356b7d12a8449d2fddb2b5f3c78d1e99f
-  RNSentry: 5408304a9fc37053c5589cfa4123a7ad2dce2456
+  RNSentry: 6f8f9ee7e4c939dcd35e5633b94d0e3782888e46
   RNVectorIcons: 0bb4def82230be1333ddaeee9fcba45f0b288ed4
-  Sentry: 6ab9f44a413dec7ebf5e82b166048afb5f60b895
+  Sentry: 9d055e2de30a77685e86b219acf02e59b82091fc
   Yoga: f2a7cd4280bfe2cca5a7aed98ba0eb3d1310f18b
 
 PODFILE CHECKSUM: 923547688c3ddb5453999c188c32986c217176b5
 
-COCOAPODS: 1.9.3
+COCOAPODS: 1.10.1
