@@ -1796,10 +1796,10 @@
   resolved "https://registry.yarnpkg.com/@types/react-native-custom-tabs/-/react-native-custom-tabs-0.1.2.tgz#725e2f01721f304890c54cd1814e8d8f4ccaf129"
   integrity sha512-GWPd/r6voEIZb7va+3rsLxeT8j9GpUUM8FPBcBJ5RXM+kmJneFz05GANQiD+si+E4MztWmeUemCUxMeEsaYktQ==
 
-"@types/react-native-safari-view@2.0.4":
-  version "2.0.4"
-  resolved "https://registry.yarnpkg.com/@types/react-native-safari-view/-/react-native-safari-view-2.0.4.tgz#e63f63f2076706c55239549a6f37a248826531f1"
-  integrity sha512-3JudJX4RSO2ibf1SJ1nQzlNa/fErxQ5M6HTQwYMnmMl7agxEbO2z7ahuECkDiZZIHPd0BP+HnWHzJ2PQNe10yg==
+"@types/react-native-safari-view@2.0.5":
+  version "2.0.5"
+  resolved "https://registry.yarnpkg.com/@types/react-native-safari-view/-/react-native-safari-view-2.0.5.tgz#447cf6b48dc9431d71f6b758479ca87df3fa2ab7"
+  integrity sha512-Tzkh23ZGG0hLmS4uRyPrj/WxroIfegxBQVHxiRE0EK5wnhXEwmX8jpjj3WQJiSl1xPyFozXfmpjpKeRM4Aapmg==
   dependencies:
     "@types/react-native" "*"
 
