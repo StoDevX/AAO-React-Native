@@ -196,7 +196,7 @@
     "mkdirp": "1.0.4",
     "pify": "5.0.0",
     "prettier": "2.2.1",
-    "pretty-bytes": "5.5.0",
+    "pretty-bytes": "5.6.0",
     "pretty-quick": "3.1.1",
     "prop-types": "15.7.2",
     "react-test-renderer": "16.9.0",
