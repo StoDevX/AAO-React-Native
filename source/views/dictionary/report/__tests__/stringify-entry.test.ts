@@ -22,8 +22,7 @@ test('handles long definitions', () => {
 
 test('handles long words', () => {
 	let def = {
-		word:
-			'Academic Civic Engagement. These are courses that include a component of learning in the community with non-profit or governmental partners.',
+		word: 'Academic Civic Engagement. These are courses that include a component of learning in the community with non-profit or governmental partners.',
 		definition: 'foo',
 	}
 	expect(stringifyDictionaryEntry(def)).toMatchSnapshot()

@@ -16,9 +16,12 @@ type Props = {
 	focused: boolean
 }
 
-export const TabBarIcon = (icon: string) => ({tintColor}: Props) => (
-	<Icon
-		name={platformPrefixIconName(icon)}
-		style={[styles.icon, {color: tintColor}]}
-	/>
-)
+export const TabBarIcon =
+	(icon: string) =>
+	({tintColor}: Props) =>
+		(
+			<Icon
+				name={platformPrefixIconName(icon)}
+				style={[styles.icon, {color: tintColor}]}
+			/>
+		)

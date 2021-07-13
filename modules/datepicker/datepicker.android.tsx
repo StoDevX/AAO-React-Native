@@ -74,19 +74,17 @@ export class DatePicker extends React.PureComponent<Props> {
 		}).then(this.onDatetimeTimePicked(year, month, day))
 	}
 
-	onDatetimeTimePicked = (year: number, month: number, day: number) => ({
-		action,
-		hour,
-		minute,
-	}: TimePickerResponse) => {
-		if (action === DatePickerAndroid.dismissedAction) {
-			return
-		}
+	onDatetimeTimePicked =
+		(year: number, month: number, day: number) =>
+		({action, hour, minute}: TimePickerResponse) => {
+			if (action === DatePickerAndroid.dismissedAction) {
+				return
+			}
 
-		this.props.onDateChange(
-			moment.tz({year, month, day, hour, minute}, this.props.timezone),
-		)
-	}
+			this.props.onDateChange(
+				moment.tz({year, month, day, hour, minute}, this.props.timezone),
+			)
+		}
 
 	showModal = () => {
 		const {mode, androidMode} = this.props

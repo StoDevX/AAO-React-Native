@@ -60,14 +60,10 @@ export function StudentOrgsView(props: Props) {
 	let searchQuery = useDebounce(query.toLowerCase(), 200)
 	let [isInitialFetch, setIsInitial] = React.useState(true)
 
-	let {
-		data,
-		error,
-		reload,
-		isPending,
-	}: AsyncState<Array<StudentOrgType>> = useAsync(fetchOrgs, {
-		onResolve: () => setIsInitial(false),
-	})
+	let {data, error, reload, isPending}: AsyncState<Array<StudentOrgType>> =
+		useAsync(fetchOrgs, {
+			onResolve: () => setIsInitial(false),
+		})
 
 	let results = React.useMemo(() => {
 		let dataArr = data || []

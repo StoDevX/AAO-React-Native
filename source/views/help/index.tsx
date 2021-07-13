@@ -29,9 +29,10 @@ export function HelpView() {
 	)
 
 	let dispatch = useDispatch()
-	let findEnabledTools = React.useCallback(() => dispatch(getEnabledTools()), [
-		dispatch,
-	])
+	let findEnabledTools = React.useCallback(
+		() => dispatch(getEnabledTools()),
+		[dispatch],
+	)
 
 	React.useEffect(() => {
 		findEnabledTools()

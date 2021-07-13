@@ -199,7 +199,8 @@ function xcodeproj() {
 }
 
 function changelogSync() {
-	let noteworthyFolder = /^(\.circleci|\.github|android|e2e|fastlane|ios|modules|scripts|source)\//gu
+	let noteworthyFolder =
+		/^(\.circleci|\.github|android|e2e|fastlane|ios|modules|scripts|source)\//gu
 	let noteworthyFiles = new Set([
 		'.babelrc',
 		'.eslintignore',
