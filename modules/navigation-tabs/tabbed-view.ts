@@ -33,7 +33,7 @@ export const TabNavigator: ComponentType = (screens, options = {}) => {
 			...(options.defaultNavigationOptions || {}),
 		},
 		tabBarOptions: {
-			activeTintColor: theme.iosTabBarActiveColor,
+			activeColor: theme.iosTabBarActiveColor,
 			...(options.tabBarOptions || {}),
 			labelStyle: {
 				fontFamily: 'System',
