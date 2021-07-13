@@ -171,7 +171,7 @@
     "@types/redux-logger": "3.0.8",
     "@types/redux-promise": "0.5.29",
     "@types/semver": "7.3.7",
-    "@types/tinycolor2": "1.4.2",
+    "@types/tinycolor2": "1.4.3",
     "@types/wordwrap": "1.0.1",
     "@typescript-eslint/eslint-plugin": "4.1.0",
     "@typescript-eslint/parser": "4.25.0",
