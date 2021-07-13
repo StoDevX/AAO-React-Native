@@ -233,12 +233,12 @@ PODS:
     - ReactCommon/jscallinvoker (= 0.61.5)
   - RNDeviceInfo (5.6.5):
     - React
-  - RNGestureHandler (1.9.0):
+  - RNGestureHandler (1.10.3):
     - React-Core
-  - RNKeychain (6.2.0):
-    - React
-  - RNReanimated (1.4.0):
-    - React
+  - RNKeychain (7.0.0):
+    - React-Core
+  - RNReanimated (1.13.3):
+    - React-Core
   - RNScreens (2.16.1):
     - React-Core
   - RNSearchBar (3.5.1):
@@ -419,9 +419,9 @@ SPEC CHECKSUMS:
   React-RCTVibration: a49a1f42bf8f5acf1c3e297097517c6b3af377ad
   ReactCommon: 198c7c8d3591f975e5431bec1b0b3b581aa1c5dd
   RNDeviceInfo: c5f8f3a456adcbba405ace475254b08febc4c095
-  RNGestureHandler: 9b7e605a741412e20e13c512738a31bd1611759b
-  RNKeychain: b8e0711b959a19c5b057d1e970d3c83d159b6da5
-  RNReanimated: b2ab0b693dddd2339bd2f300e770f6302d2e960c
+  RNGestureHandler: a479ebd5ed4221a810967000735517df0d2db211
+  RNKeychain: f75b8c8b2f17d3b2aa1f25b4a0ac5b83d947ff8f
+  RNReanimated: 514a11da3a2bcc6c3dfd9de32b38e2b9bf101926
   RNScreens: 45c457af3d2ee9e08fc01e70da87e653d46b1198
   RNSearchBar: 9860431356b7d12a8449d2fddb2b5f3c78d1e99f
   RNSentry: 6f8f9ee7e4c939dcd35e5633b94d0e3782888e46
