@@ -84,13 +84,14 @@ export const fetchRecentPrinters = (
 
 const colorPrintersUrl = API('/printing/color-printers')
 
-export const fetchColorPrinters = (): Promise<ColorPrintersResponseOrErrorType> =>
-	papercut(colorPrintersUrl)
-		.then((response) => ({error: false, value: response}))
-		.catch(() => ({
-			error: true,
-			value: 'Unable to fetch the list of color printers from stoPrint.',
-		}))
+export const fetchColorPrinters =
+	(): Promise<ColorPrintersResponseOrErrorType> =>
+		papercut(colorPrintersUrl)
+			.then((response) => ({error: false, value: response}))
+			.catch(() => ({
+				error: true,
+				value: 'Unable to fetch the list of color printers from stoPrint.',
+			}))
 
 export const heldJobsAvailableAtPrinterForUser = (
 	printerName: string,

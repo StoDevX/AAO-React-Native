@@ -18,15 +18,8 @@ type Props = {
 }
 
 function RecentItemsList(props: Props) {
-	let {
-		items,
-		actionLabel,
-		onAction,
-		title,
-		emptyHeader,
-		emptyText,
-		theme,
-	} = props
+	let {items, actionLabel, onAction, title, emptyHeader, emptyText, theme} =
+		props
 
 	let foreground = {color: theme.iosPushButtonCellForeground}
 

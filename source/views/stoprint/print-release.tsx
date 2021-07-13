@@ -159,13 +159,12 @@ export class PrintJobReleaseView extends React.PureComponent<Props, State> {
 			showGeneralError(this.returnToJobsView)
 			return
 		}
-		let response: ReleaseResponseOrErrorType = await releasePrintJobToPrinterForUser(
-			{
+		let response: ReleaseResponseOrErrorType =
+			await releasePrintJobToPrinterForUser({
 				jobId: heldJob.id,
 				printerName: printer.printerName,
 				username: username,
-			},
-		)
+			})
 		if (response.error) {
 			Alert.alert(
 				'Error Releasing Job',

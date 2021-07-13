@@ -69,12 +69,8 @@ class CredentialsLoginSection extends React.Component<Props, State> {
 
 	render() {
 		let {status} = this.props
-		let {
-			username,
-			password,
-			loadingCredentials,
-			initialCheckComplete,
-		} = this.state
+		let {username, password, loadingCredentials, initialCheckComplete} =
+			this.state
 
 		let loggedIn = status === 'logged-in'
 		let checkingCredentials = status === 'checking'

@@ -100,10 +100,8 @@ export function updatePrinters(): ThunkAction<UpdateAllPrintersAction> {
 			})
 		}
 
-		const {
-			recentPrinters,
-			popularPrinters,
-		} = recentAndPopularPrintersResponse.value
+		const {recentPrinters, popularPrinters} =
+			recentAndPopularPrintersResponse.value
 		const allPrinters = allPrintersResponse.value
 
 		const colorPrinters = allPrinters.filter((printer) =>

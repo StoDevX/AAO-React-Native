@@ -59,9 +59,8 @@ export function DictionaryView(props: Props) {
 	let [query, setQuery] = React.useState('')
 	let searchQuery = useDebounce(query.toLowerCase(), 200)
 
-	let {data, error, reload, isPending}: AsyncState<Array<WordType>> = useAsync(
-		fetchDictionaryTerms,
-	)
+	let {data, error, reload, isPending}: AsyncState<Array<WordType>> =
+		useAsync(fetchDictionaryTerms)
 
 	let results = React.useMemo(() => {
 		let allTerms = data || []

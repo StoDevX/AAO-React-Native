@@ -54,11 +54,8 @@ export class ContactsDetailView extends React.PureComponent<Props> {
 	}
 
 	onPress = () => {
-		let {
-			phoneNumber,
-			buttonText,
-			buttonLink,
-		} = this.props.navigation.state.params.contact
+		let {phoneNumber, buttonText, buttonLink} =
+			this.props.navigation.state.params.contact
 		if (buttonLink) {
 			openUrl(buttonLink)
 		} else if (phoneNumber) {

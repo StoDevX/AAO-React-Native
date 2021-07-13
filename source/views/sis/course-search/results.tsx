@@ -130,13 +130,8 @@ class CourseSearchResultsView extends React.Component<Props, State> {
 	}
 
 	render() {
-		let {
-			typedQuery,
-			searchQuery,
-			filters,
-			isSearchbarActive,
-			filtersLoaded,
-		} = this.state
+		let {typedQuery, searchQuery, filters, isSearchbarActive, filtersLoaded} =
+			this.state
 
 		if (this.props.courseDataState !== 'ready') {
 			return <LoadingView text="Loading Course Data…" />

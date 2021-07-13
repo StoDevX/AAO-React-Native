@@ -221,9 +221,10 @@ export function ConnectedPrintJobsView(props: TopLevelViewPropsType) {
 		(username, password) => dispatch(logInViaCredentials(username, password)),
 		[dispatch],
 	)
-	let _updatePrintJobs = React.useCallback(() => dispatch(updatePrintJobs()), [
-		dispatch,
-	])
+	let _updatePrintJobs = React.useCallback(
+		() => dispatch(updatePrintJobs()),
+		[dispatch],
+	)
 
 	return (
 		<PrintJobsView
