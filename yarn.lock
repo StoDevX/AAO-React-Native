@@ -1821,20 +1821,12 @@
   dependencies:
     "@types/react" "*"
 
-"@types/react-navigation-material-bottom-tabs@0.3.2":
-  version "0.3.2"
-  resolved "https://registry.yarnpkg.com/@types/react-navigation-material-bottom-tabs/-/react-navigation-material-bottom-tabs-0.3.2.tgz#fc37682a3ca89f9ea0311141236b565ef97c2fd4"
-  integrity sha512-dAQGZFDgeMXaYcAZmDqmY+u8nwg9pvDzTcZdlkS9y7sKssx+ZKjKpNQngldHMP/qBDVDiWvhu8u1pHDHODMo6g==
+"@types/react-navigation-material-bottom-tabs@2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@types/react-navigation-material-bottom-tabs/-/react-navigation-material-bottom-tabs-2.0.0.tgz#43cd9a38e7454f54bded8502941837cf8576ac8f"
+  integrity sha512-9Xt1xYFEkaV6TztS5plD8Qjdf9FHS5ZzaRxIJpPUyn1DE5tLkMVsi3x+XDigKF/ttsLrGui8Aa1kvzqbmJGmDg==
   dependencies:
-    "@types/react-native" "*"
-    "@types/react-navigation" "*"
-
-"@types/react-navigation@*":
-  version "3.4.0"
-  resolved "https://registry.yarnpkg.com/@types/react-navigation/-/react-navigation-3.4.0.tgz#d610d13c9162312079a8ca102660143f07432cbf"
-  integrity sha512-Y7F5zU8BTBK8tEOvUqgvwvPZ7+9vnc2UI1vHwJ/9ZJG98TntNv04GWa6lrn4MA4149pqw6cyNw/V49Yd2osAFQ==
-  dependencies:
-    react-navigation "*"
+    react-navigation-material-bottom-tabs "*"
 
 "@types/react-redux@7.1.18", "@types/react-redux@^7.1.16":
   version "7.1.18"
@@ -8304,6 +8296,11 @@ react-native@0.61.5:
     stacktrace-parser "^0.1.3"
     whatwg-fetch "^3.0.0"
 
+react-navigation-material-bottom-tabs@*:
+  version "2.3.4"
+  resolved "https://registry.yarnpkg.com/react-navigation-material-bottom-tabs/-/react-navigation-material-bottom-tabs-2.3.4.tgz#fddcd1c3de9355e6c527a612b23dfb4319f6380b"
+  integrity sha512-NHHFsDg8AJupfPJ2ybIjCzT8VifBFd0LXxAO+RBermtHF2wrHVyFIcpTnYDr1WHgwwRAOrKKg1Hd2TG7TjX6Bg==
+
 react-navigation-material-bottom-tabs@1.1.1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/react-navigation-material-bottom-tabs/-/react-navigation-material-bottom-tabs-1.1.1.tgz#17e12719958c1d6770b3138789608f54d5cb7f57"
@@ -8339,7 +8336,7 @@ react-navigation-tabs@~1.2.0:
     prop-types "^15.6.1"
     react-native-tab-view "^1.4.1"
 
-react-navigation@*, react-navigation@4.4.4:
+react-navigation@4.4.4:
   version "4.4.4"
   resolved "https://registry.yarnpkg.com/react-navigation/-/react-navigation-4.4.4.tgz#8cda2219196311db440e54998bc724523359949f"
   integrity sha512-08Nzy1aKEd73496CsuzN49vLFmxPKYF5WpKGgGvkQ10clB79IRM2BtAfVl6NgPKuUM8FXq1wCsrjo/c5ftl5og==
