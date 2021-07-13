@@ -36,7 +36,7 @@ function formatError(err, data) {
 const init = memoize(() => {
 	// load the common definitions
 	let defsPath = path.join(SCHEMA_BASE, '_defs.yaml')
-	let defs = yaml.safeLoad(fs.readFileSync(defsPath, 'utf-8'))
+	let defs = yaml.load(fs.readFileSync(defsPath, 'utf-8'))
 
 	// set up the validator
 	let validator = new AJV()

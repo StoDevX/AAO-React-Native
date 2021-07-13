@@ -10,9 +10,7 @@ const {SCHEMA_BASE, DATA_BASE} = require('./paths')
 const isDir = (pth) => tryBoolean(() => fs.statSync(pth).isDirectory())
 const readYaml = (pth) =>
 	JSON.parse(
-		JSON.stringify(
-			yaml.safeLoad(fs.readFileSync(pth, 'utf-8'), {filename: pth}),
-		),
+		JSON.stringify(yaml.load(fs.readFileSync(pth, 'utf-8'), {filename: pth})),
 	)
 
 const readDir = (pth) =>

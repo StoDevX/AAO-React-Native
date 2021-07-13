@@ -67,7 +67,7 @@ function makeIssueLink(before: string, after: string, title: string): string {
 function stringifyBuilding(building: BuildingType): string {
 	let res = ''
 	let prev = null
-	let data = jsYaml.safeDump(building, {flowLevel: 4}).split('\n')
+	let data = jsYaml.dump(building, {flowLevel: 4}).split('\n')
 	for (let line of data) {
 		if (['schedule:', 'breakSchedule:'].includes(line)) {
 			res += `\n\n${line}`
