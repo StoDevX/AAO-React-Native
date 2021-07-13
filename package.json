@@ -160,7 +160,7 @@
     "@types/lodash": "4.14.168",
     "@types/react": "17.0.14",
     "@types/react-native": "0.61.5",
-    "@types/react-native-button": "3.0.0",
+    "@types/react-native-button": "3.0.1",
     "@types/react-native-communications": "2.2.1",
     "@types/react-native-custom-tabs": "0.1.1",
     "@types/react-native-safari-view": "2.0.4",

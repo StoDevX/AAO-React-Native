@@ -1591,10 +1591,10 @@
   resolved "https://registry.yarnpkg.com/@types/prop-types/-/prop-types-15.7.3.tgz#2ab0d5da2e5815f94b0b9d4b95d1e5f243ab2ca7"
   integrity sha512-KfRL3PuHmqQLOG+2tGpRO26Ctg+Cq1E01D2DMriKEATHgWLfeNDmq9e29Q9WIky0dQ3NPkd1mzYH8Lm936Z9qw==
 
-"@types/react-native-button@3.0.0":
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/@types/react-native-button/-/react-native-button-3.0.0.tgz#4adf0fda682a8c864d96922561d0353dd4467cac"
-  integrity sha512-mMZnJn3sf1STf5B5b/dGIaK0fFI9RosRuaRhVlOcAJwCSf2OBLfpZ75gD/ORytfh+EKRDoR//P0vH+RtOjGvlA==
+"@types/react-native-button@3.0.1":
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/@types/react-native-button/-/react-native-button-3.0.1.tgz#079cb4ddb6d69b310d6aa539ada4bae8aaa0cccc"
+  integrity sha512-USLDAsa0Ytlrj1k/vSVBhIQC5pW/Ka/xSqyu281G0T0oWtPKKxviN4coLj3sjtlplkN4IHRWC+Y57CCgXeV70A==
   dependencies:
     "@types/react" "*"
     "@types/react-native" "*"
