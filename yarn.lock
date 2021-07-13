@@ -1435,7 +1435,7 @@
   resolved "https://registry.yarnpkg.com/@react-native-community/netinfo/-/netinfo-6.0.0.tgz#2a4d7190b508dd0c2293656c9c1aa068f6f60a71"
   integrity sha512-Z9M8VGcF2IZVOo2x+oUStvpCW/8HjIRi4+iQCu5n+PhC7OqCQX58KYAzdBr///alIfRXiu6oMb+lK+rXQH1FvQ==
 
-"@react-navigation/core@^3.7.9":
+"@react-navigation/core@^3.5.1", "@react-navigation/core@^3.7.9":
   version "3.7.9"
   resolved "https://registry.yarnpkg.com/@react-navigation/core/-/core-3.7.9.tgz#3f7ba0fcb6c8d74a77a057382af198d84c7c4e3b"
   integrity sha512-EknbzM8OI9A5alRxXtQRV5Awle68B+z1QAxNty5DxmlS3BNfmduWNGnim159ROyqxkuDffK9L/U/Tbd45mx+Jg==
@@ -1444,6 +1444,14 @@
     path-to-regexp "^1.8.0"
     query-string "^6.13.6"
     react-is "^16.13.0"
+
+"@react-navigation/native@^3.6.2":
+  version "3.8.4"
+  resolved "https://registry.yarnpkg.com/@react-navigation/native/-/native-3.8.4.tgz#4d77f86506364ecf18b33c7f8740afb6763d0b37"
+  integrity sha512-gXSVcL7bfFDyVkvyg1FiAqTCIgZub5K1X/TZqURBs2CPqDpfX1OsCtB9D33eTF14SpbfgHW866btqrrxoCACfg==
+  dependencies:
+    hoist-non-react-statics "^3.3.2"
+    react-native-safe-area-view "^0.14.9"
 
 "@react-navigation/native@^3.8.3":
   version "3.8.3"
@@ -1750,10 +1758,10 @@
   resolved "https://registry.yarnpkg.com/@types/react-native-communications/-/react-native-communications-2.2.1.tgz#fe067d9d226090cea34a62de8c6ac71f92caeeb9"
   integrity sha512-eTgJlMjrx825VuO+3y5rT4Xu3it6oH3i7Zck/QhJO3c8RM61nBp9lJ7BBI3Coc8nxweYkS6i1lkrPPmZOnNzNA==
 
-"@types/react-native-custom-tabs@0.1.1":
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/@types/react-native-custom-tabs/-/react-native-custom-tabs-0.1.1.tgz#5a8fda21380dc119748f23ce9d724a6922ab2734"
-  integrity sha512-tFDXq0zR5Zk45E/BcKDDkQt1wTC++uVVmdBqcAUF3TEIZbzqOn5liulZRfwldCTQuCwicBVtSf1J5iwkqJZE1g==
+"@types/react-native-custom-tabs@0.1.2":
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/@types/react-native-custom-tabs/-/react-native-custom-tabs-0.1.2.tgz#725e2f01721f304890c54cd1814e8d8f4ccaf129"
+  integrity sha512-GWPd/r6voEIZb7va+3rsLxeT8j9GpUUM8FPBcBJ5RXM+kmJneFz05GANQiD+si+E4MztWmeUemCUxMeEsaYktQ==
 
 "@types/react-native-safari-view@2.0.4":
   version "2.0.4"
