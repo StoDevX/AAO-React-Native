@@ -5,14 +5,14 @@ updates:
   schedule:
     interval: weekly
     time: '11:00'
-  open-pull-requests-limit: 10
+  open-pull-requests-limit: 100
   commit-message: { prefix: "" }
 - package-ecosystem: npm
   directory: "/"
   schedule:
     interval: daily
     time: '11:00'
-  open-pull-requests-limit: 10
+  open-pull-requests-limit: 100
   commit-message: { prefix: "" }
   ignore:
   - dependency-name: react-markdown
