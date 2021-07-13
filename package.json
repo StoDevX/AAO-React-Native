@@ -105,7 +105,7 @@
     "lodash": "4.17.21",
     "moment": "2.29.1",
     "moment-timezone": "0.5.33",
-    "p-props": "4.0.0",
+    "p-props": "5.0.0",
     "query-string": "6.13.8",
     "querystring": "0.2.1",
     "react": "16.9.0",
