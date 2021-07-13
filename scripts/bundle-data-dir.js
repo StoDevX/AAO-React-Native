@@ -35,7 +35,7 @@ function bundleDataDir({fromDir, toFile}) {
 	let loaded = files.map((fpath) => {
 		console.log(fpath)
 		let contents = fs.readFileSync(fpath, 'utf-8')
-		return yaml.safeLoad(contents)
+		return yaml.load(contents)
 	})
 	let dated = {data: loaded}
 	let output = JSON.stringify(dated) + '\n'

@@ -50,7 +50,7 @@ function convertDataFile({fromFile, toFile, toFileType = 'json'}) {
 }
 
 function processYaml(fileContents) {
-	let loaded = yaml.safeLoad(fileContents)
+	let loaded = yaml.load(fileContents)
 	return JSON.stringify({data: loaded})
 }
 

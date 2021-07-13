@@ -71,7 +71,7 @@ if (require.main === module) {
 	for (let filepath of files) {
 		let fileHadError = false
 		process.stdout.write(filepath)
-		let errors = validate(yaml.safeLoad(fs.readFileSync(filepath, 'utf-8')))
+		let errors = validate(yaml.load(fs.readFileSync(filepath, 'utf-8')))
 		for (let error of errors) {
 			process.stdout.write('\n')
 			fileHadError = true
