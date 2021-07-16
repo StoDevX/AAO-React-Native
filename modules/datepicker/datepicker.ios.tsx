@@ -226,7 +226,7 @@ const Button = ({style, textStyle, onPress, text}: ButtonProps) => (
 const defaultStyle = StyleSheet.create({
 	dateTouch: {
 		flexDirection: 'row',
-		width: null,
+		width: undefined,
 	},
 	flex: {
 		flex: 1,

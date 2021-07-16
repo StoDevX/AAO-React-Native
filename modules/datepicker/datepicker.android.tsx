@@ -13,8 +13,11 @@ import type {Moment} from 'moment-timezone'
 import * as c from '@frogpond/colors'
 import type {ViewStyle} from 'react-native'
 
+type AndroidTimeMode = 'clock' | 'spinner' | 'default' | undefined
+type AndroidDateMode = 'calendar' | 'spinner' | 'default' | undefined
+
 type Props = {
-	androidMode: 'calendar' | 'spinner' | 'default'
+	androidMode: AndroidTimeMode | AndroidDateMode
 	date: Moment
 	formattedDate: string
 	mode: 'date' | 'datetime' | 'time' | 'calendar' | 'spinner' | 'default'
@@ -67,10 +70,12 @@ export class DatePicker extends React.PureComponent<Props> {
 		const {androidMode, date} = this.props
 		const timeMoment = moment(date)
 
+		const mode: AndroidTimeMode = androidMode as AndroidTimeMode
+
 		TimePickerAndroid.open({
 			hour: timeMoment.hour(),
 			minute: timeMoment.minutes(),
-			mode: androidMode,
+			mode,
 		}).then(this.onDatetimeTimePicked(year, month, day))
 	}
 
@@ -91,25 +96,32 @@ export class DatePicker extends React.PureComponent<Props> {
 
 		switch (mode) {
 			case 'date': {
+				const mode: AndroidDateMode = androidMode as AndroidDateMode
+
 				return DatePickerAndroid.open({
 					date: this.props.date.toDate(),
-					mode: androidMode,
+					mode,
 				}).then(this.onDatePicked)
 			}
 
 			case 'time': {
 				const timeMoment = moment(this.props.date)
 
+				const mode: AndroidTimeMode = androidMode as AndroidTimeMode
+
 				return TimePickerAndroid.open({
 					hour: timeMoment.hour(),
 					minute: timeMoment.minutes(),
+					mode,
 				}).then(this.onTimePicked)
 			}
 
 			case 'datetime': {
+				const mode: AndroidDateMode = androidMode as AndroidDateMode
+
 				return DatePickerAndroid.open({
 					date: this.props.date.toDate(),
-					mode: androidMode,
+					mode,
 				}).then(this.onDatetimeDatePicked)
 			}
 
