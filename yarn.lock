@@ -8186,10 +8186,10 @@ react-native-reanimated@1.13.3:
   dependencies:
     fbjs "^1.0.0"
 
-react-native-restart@0.0.18:
-  version "0.0.18"
-  resolved "https://registry.yarnpkg.com/react-native-restart/-/react-native-restart-0.0.18.tgz#f3eeb90cfde7834ad91bd3ede25c8e992965db39"
-  integrity sha512-AoEINeKuvj0yJY9I4GEbY27ifiVTo/2KhW2MnGeFgtjInfAvA9hgbGXjQO8xT2wQA9ZIzTgUQyyWC6yFiQeREA==
+react-native-restart@0.0.22:
+  version "0.0.22"
+  resolved "https://registry.yarnpkg.com/react-native-restart/-/react-native-restart-0.0.22.tgz#81fcb7f31e35951d85410c68b9556acf3ab88705"
+  integrity sha512-XwCqAMAKsO8yCM3xACPFKvkDQZe41lcavOuO0gUEu803IuTLtciualCq/qs83ryRDCDh1jkXYRqFjsGjLMCN3Q==
 
 react-native-safari-view@2.1.0:
   version "2.1.0"
