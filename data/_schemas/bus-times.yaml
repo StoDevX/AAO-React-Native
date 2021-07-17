@@ -1,5 +1,6 @@
 $schema: http://json-schema.org/draft-07/schema#
 
+type: object
 additionalProperties: false
 required: [line, schedules, colors]
 properties:
@@ -13,6 +14,7 @@ properties:
 
 definitions:
   schedule:
+    type: object
     additionalProperties: false
     required: [days, stops, times]
     properties:
@@ -41,11 +43,13 @@ definitions:
       - {const: false}
 
   coord-pair:
-    additionalProperties: false
     type: array
     items: [{type: number}, {type: number}]
+    minItems: 2
+    maxItems: 2
 
   colors:
+    type: object
     additionalProperties: false
     required: [bar, dot]
     properties:

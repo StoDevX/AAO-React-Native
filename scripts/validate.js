@@ -2,6 +2,8 @@
 const fs = require('fs')
 const path = require('path')
 const AJV = require('ajv')
+const addFormats = require('ajv-formats')
+const addKeywords = require('ajv-keywords')
 const yaml = require('js-yaml')
 const get = require('lodash/get')
 const memoize = require('lodash/memoize')
@@ -40,6 +42,8 @@ const init = memoize(() => {
 
 	// set up the validator
 	let validator = new AJV()
+	addFormats(validator)
+	addKeywords(validator)
 	validator.addSchema(defs)
 
 	return validator

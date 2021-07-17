@@ -1,15 +1,16 @@
 $schema: http://json-schema.org/draft-07/schema#
 
+type: object
 additionalProperties: false
 required: [stationMenus, foodItems, corIcons]
 properties:
   stationMenus:
     type: array
-    item: {$ref: '#/definitions/menu'}
+    items: {$ref: '#/definitions/menu'}
 
   foodItems:
     type: array
-    item: {$ref: '#/definitions/food-item'}
+    items: {$ref: '#/definitions/food-item'}
 
   corIcons:
     type: object
@@ -18,6 +19,7 @@ properties:
 
 definitions:
   menu:
+    type: object
     additionalProperties: false
     required: [label]
     properties:
@@ -25,6 +27,7 @@ definitions:
       note: {type: string}
 
   food-item:
+    type: object
     additionalProperties: false
     required: [label, station]
     properties:
