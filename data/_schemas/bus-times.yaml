@@ -46,6 +46,8 @@ definitions:
     additionalProperties: false
     type: array
     items: [{type: number}, {type: number}]
+    minItems: 2
+    maxItems: 2
 
   colors:
     type: object
