@@ -5,11 +5,11 @@ required: [stationMenus, foodItems, corIcons]
 properties:
   stationMenus:
     type: array
-    item: {$ref: '#/definitions/menu'}
+    items: {$ref: '#/definitions/menu'}
 
   foodItems:
     type: array
-    item: {$ref: '#/definitions/food-item'}
+    items: {$ref: '#/definitions/food-item'}
 
   corIcons:
     type: object
