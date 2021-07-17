@@ -1,5 +1,6 @@
 $schema: http://json-schema.org/draft-07/schema#
 
+type: object
 additionalProperties: false
 required:
   - weekZero
@@ -34,6 +35,7 @@ definitions:
       - {type: string, format: date-time}
 
   break:
+    type: object
     additionalProperties: false
     required: [description, start, end]
     properties:
@@ -44,6 +46,7 @@ definitions:
       end: {$ref: '#/definitions/date-or-time'}
 
   school-year:
+    type: object
     additionalProperties: false
     required: [start, end, endForSeniors]
     properties:
@@ -52,6 +55,7 @@ definitions:
       endForSeniors: {$ref: '#/definitions/date-or-time'}
 
   applicable-to:
+    type: object
     additionalProperties: false
     required: [from, to]
     properties:
