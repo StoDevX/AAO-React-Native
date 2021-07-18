@@ -1,7 +1,8 @@
 /* eslint-env jest */
-/* global jasmine, device */
+/* global device */
 
 const detox = require('detox')
+const jasmine = require('jest-jasmine2')
 const config = require('../package.json').detox
 const adapter = require('detox/runners/jest/adapter')
 
