@@ -176,7 +176,7 @@
     "@typescript-eslint/eslint-plugin": "4.28.5",
     "@typescript-eslint/parser": "4.29.1",
     "ajv": "8.6.2",
-    "ajv-formats": "2.1.0",
+    "ajv-formats": "2.1.1",
     "ajv-keywords": "5.0.0",
     "babel-core": "7.0.0-bridge.0",
     "babel-eslint": "10.1.0",
