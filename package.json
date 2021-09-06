@@ -148,7 +148,7 @@
     "wordwrap": "1.0.0"
   },
   "devDependencies": {
-    "@babel/core": "7.12.10",
+    "@babel/core": "7.15.5",
     "@babel/eslint-parser": "7.15.0",
     "@babel/preset-typescript": "7.15.0",
     "@babel/runtime": "7.15.3",
