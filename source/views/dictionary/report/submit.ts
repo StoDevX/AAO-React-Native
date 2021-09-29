@@ -12,7 +12,7 @@ export function submitReport(current: WordType, suggestion: WordType) {
 	let body = makeEmailBody(before, after, current.word)
 
 	return sendEmail({
-		to: ['allaboutolaf@stolaf.edu'],
+		to: ['allaboutolaf@frogpond.tech'],
 		subject: `[dictionary] Suggestion for ${current.word}`,
 		body,
 	})
