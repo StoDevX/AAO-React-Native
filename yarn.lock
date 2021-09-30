@@ -1517,10 +1517,10 @@
     "@sentry/utils" "6.2.1"
     tslib "^1.9.3"
 
-"@sentry/cli@1.68.0", "@sentry/cli@^1.52.4":
-  version "1.68.0"
-  resolved "https://registry.yarnpkg.com/@sentry/cli/-/cli-1.68.0.tgz#2ced8fac67ee01e746a45e8ee45a518d4526937e"
-  integrity sha512-zc7+cxKDqpHLREGJKRH6KwE8fZW8bnczg3OLibJ0czleXoWPdAuOK1Xm1BTMcOnaXfg3VKAh0rI7S1PTdj+SrQ==
+"@sentry/cli@1.69.0", "@sentry/cli@^1.52.4":
+  version "1.69.0"
+  resolved "https://registry.yarnpkg.com/@sentry/cli/-/cli-1.69.0.tgz#0974c462ca176c5106fa6fce8afb3cbab10c6662"
+  integrity sha512-GBWXNzPLUVarmWH0dUgyptUY/5QMrozwUrWIxxZyQgw2SIvT1K3z8Ql33PdaZXMnZ2FFHkZEMbOWNtPXbs4/7w==
   dependencies:
     https-proxy-agent "^5.0.0"
     mkdirp "^0.5.5"
