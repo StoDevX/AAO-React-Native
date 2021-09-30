@@ -49,36 +49,6 @@ const NewsView = TabNavigator({
 			tabBarIcon: TabBarIcon('paper'),
 		},
 	},
-
-	PoliticOleNewsView: {
-		screen: ({navigation}) => (
-			<NewsContainer
-				navigation={navigation}
-				source="politicole"
-				thumbnail={newsImages.politicole}
-				title="PoliticOle"
-			/>
-		),
-		navigationOptions: {
-			tabBarLabel: 'PoliticOle',
-			tabBarIcon: TabBarIcon('megaphone'),
-		},
-	},
-
-	KstoNewsView: {
-		screen: ({navigation}) => (
-			<NewsContainer
-				navigation={navigation}
-				source="ksto"
-				thumbnail={newsImages.ksto}
-				title="KSTO"
-			/>
-		),
-		navigationOptions: {
-			tabBarLabel: 'KSTO',
-			tabBarIcon: TabBarIcon('radio'),
-		},
-	},
 })
 NewsView.navigationOptions = {
 	title: 'News',
