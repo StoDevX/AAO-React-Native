@@ -20,7 +20,7 @@ ${await deviceInfo.getReadableVersion()}
 
 const openEmail = async () => {
 	sendEmail({
-		to: ['allaboutolaf@stolaf.edu'],
+		to: ['allaboutolaf@frogpond.tech'],
 		subject: 'Support: All About Olaf',
 		body: await getDeviceInfo(),
 	})

@@ -15,7 +15,7 @@ describe('canOpenUrl', () => {
 		expect(canOpenUrl('tel:18001234567')).toBe(true)
 	})
 	test('opens mailto: links', () => {
-		expect(canOpenUrl('mailto:aao@stolaf.edu')).toBe(true)
+		expect(canOpenUrl('mailto:allaboutolaf@frogpond.tech')).toBe(true)
 	})
 	test('does not open about: links', () => {
 		expect(canOpenUrl('about:blank')).toBe(false)

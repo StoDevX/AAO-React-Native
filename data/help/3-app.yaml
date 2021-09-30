@@ -11,7 +11,7 @@ buttons:
   - title: Email Us
     action: send-email
     params:
-      to: allaboutolaf@stolaf.edu
+      to: allaboutolaf@frogpond.tech
       subject: A Thing
       body: |
         Idea? Question? Comment? Concern?
