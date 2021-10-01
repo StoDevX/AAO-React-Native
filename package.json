@@ -14,6 +14,7 @@
     "d": "yarn-deduplicate && yarn",
     "ios": "react-native run-ios",
     "lint": "eslint --report-unused-disable-directives --cache source/ modules/ scripts/ images/",
+    "prepare": "patch -p0 -Nfsi contrib/rn-fixes.patch || true",
     "pretty": "prettier --write '{source,modules,scripts,images,e2e}/**/*.{js,ts,tsx,json}' 'data/**/*.css' '{*,.*}.{yaml,yml,json,js,ts,tsx}'",
     "p": "pretty-quick",
     "pods": "scripts/pods.sh",
