@@ -4,14 +4,20 @@ import {StyleSheet, Text, View} from 'react-native'
 import * as c from '@frogpond/colors'
 
 type LeftDetailProps = {
-	detail: string,
-	title: string,
-	onPress?: (() => any) | null,
-	accessory?: string | null,
+	detail: string
+	title: string
+	onPress?: (() => any) | undefined
+	accessory?:
+		| false
+		| 'DisclosureIndicator'
+		| 'Detail'
+		| 'DetailDisclosure'
+		| 'Checkmark'
+		| undefined
 }
 
 export class MultiLineLeftDetailCell extends React.PureComponent<LeftDetailProps> {
-	render() {
+	render(): JSX.Element {
 		const {detail, title, onPress, accessory} = this.props
 		const cellContent = (
 			<View style={styles.cellContentView}>

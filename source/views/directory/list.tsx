@@ -1,22 +1,28 @@
-// @flow
-
 import React from 'react'
-import {StyleSheet, View, Text, Image, FlatList, Platform} from 'react-native'
+import {
+	StyleSheet,
+	View,
+	Text,
+	Image,
+	FlatList,
+	Platform,
+	SafeAreaView,
+} from 'react-native'
 import {SearchBar} from '@frogpond/searchbar'
-import type {TopLevelViewPropsTypeWithParams} from '../types'
 import {Column} from '@frogpond/layout'
 import {ListRow, ListSeparator, Detail, Title} from '@frogpond/lists'
 import {fetch} from '@frogpond/fetch'
 import * as c from '@frogpond/colors'
 import {useDebounce} from '@frogpond/use-debounce'
 import {NoticeView, LoadingView} from '@frogpond/notice'
-import {useAsync} from 'react-async'
+import {AsyncState, useAsync} from 'react-async'
+import {API} from '@frogpond/api'
 import {List, Avatar} from 'react-native-paper'
 import type {DirectoryItem, SearchResults} from './types'
+import type {TopLevelViewPropsTypeWithParams} from '../types'
 import Icon from 'react-native-vector-icons/Ionicons'
-import {descriptionText, shortRoomText} from './lib'
 
-type Props = TopLevelViewPropsTypeWithParams<{}>
+type Props = TopLevelViewPropsTypeWithParams<Record<string, never>>
 
 class EmptySearchError extends Error {}
 class TooShortSearchError extends Error {}
@@ -35,32 +41,21 @@ function searchDirectory(
 		throw new TooShortSearchError()
 	}
 
-	let url = 'https://www.stolaf.edu/directory/search'
-	return fetch(url, {
-		searchParams: {format: 'json', query: query},
-		cache: 'no-store',
-		signal: signal,
-	}).json()
+	return fetch(API(`/directory/search?q=${query}`), {signal}).json()
 }
 
-type ReactAsyncResult<T> = {
-	data: ?T,
-	error: ?Error,
-	isLoading: boolean,
-}
+export function DirectoryView(props: Props): JSX.Element {
+	const [typedQuery, setTypedQuery] = React.useState('')
+	const searchQuery = useDebounce(typedQuery, 500)
 
-export function DirectoryView(props: Props) {
-	let [typedQuery, setTypedQuery] = React.useState('')
-	let searchQuery = useDebounce(typedQuery, 500)
-
-	let {data, error, isLoading}: ReactAsyncResult<SearchResults> = useAsync(
+	const {data, error, isLoading}: AsyncState<SearchResults> = useAsync(
 		searchDirectory,
 		{query: searchQuery, watch: searchQuery},
 	)
 
-	let results = data ? data.results : []
+	const results = data ? data : []
 
-	let renderRow = ({item}: {item: DirectoryItem}) => (
+	const renderRow = ({item}: {item: DirectoryItem}) => (
 		<DirectoryItemRow
 			item={item}
 			onPress={() => {
@@ -90,7 +85,10 @@ export function DirectoryView(props: Props) {
 			) : (
 				<FlatList
 					ItemSeparatorComponent={IndentedListSeparator}
-					data={results.map((r, i) => ({...r, key: String(i)}))}
+					data={results.map((r: DirectoryItem, i: number) => ({
+						...r,
+						key: String(i),
+					}))}
 					keyboardDismissMode="on-drag"
 					keyboardShouldPersistTaps="never"
 					renderItem={renderRow}
@@ -113,40 +111,36 @@ function IndentedListSeparator() {
 function NoSearchPerformed() {
 	return (
 		<View style={styles.emptySearch}>
-			<Icon color={c.black} name="ios-search" size={54} />
+			<Icon color={c.semitransparentGray} name="ios-search" size={54} />
 			<Text style={styles.emptySearchText}>Search the Directory</Text>
 		</View>
 	)
 }
 
 type DirectoryItemRowProps = {
-	item: DirectoryItem,
-	onPress: () => mixed,
+	item: DirectoryItem
+	onPress: () => mixed
 }
 
 function IosDirectoryItemRow({item, onPress}: DirectoryItemRowProps) {
-	let shortRoom = shortRoomText(item)
-	let description = descriptionText(shortRoom, item)
-
 	return (
-		<ListRow fullWidth={true} onPress={onPress} style={styles.row}>
-			<Image source={{uri: item.thumbnail}} style={styles.image} />
-			<Column flex={1}>
-				<Title lines={1}>{item.displayName}</Title>
-				<Detail lines={1}>{description}</Detail>
-			</Column>
-		</ListRow>
+		<SafeAreaView>
+			<ListRow fullWidth={true} onPress={onPress} style={styles.row}>
+				<Image source={{uri: item.thumbnail}} style={styles.image} />
+				<Column flex={1}>
+					<Title lines={1}>{item.displayName}</Title>
+					<Detail lines={1}>{item.description}</Detail>
+				</Column>
+			</ListRow>
+		</SafeAreaView>
 	)
 }
 
 function AndroidDirectoryItemRow({item, onPress}: DirectoryItemRowProps) {
-	let shortRoom = shortRoomText(item)
-	let description = descriptionText(shortRoom, item)
-
 	return (
 		<List.Item
-			description={description}
-			left={props => (
+			description={item.description}
+			left={(props) => (
 				<Avatar.Image
 					{...props}
 					size={42}
@@ -197,7 +191,7 @@ const styles = StyleSheet.create({
 	},
 	emptySearchText: {
 		fontSize: 18,
-		color: c.black,
+		color: c.semitransparentGray,
 		textAlign: 'center',
 		paddingTop: 20,
 		paddingBottom: 10,

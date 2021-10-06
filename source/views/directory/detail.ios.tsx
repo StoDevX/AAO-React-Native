@@ -1,4 +1,3 @@
-// @flow
 import React from 'react'
 import {ScrollView, Text, StyleSheet, Image} from 'react-native'
 import {openUrl} from '@frogpond/open-url'
@@ -13,13 +12,12 @@ import {
 } from '@frogpond/tableview'
 import * as c from '@frogpond/colors'
 import {entities} from '@frogpond/html-lib'
-import type {DirectoryItem} from './types'
+import type {DirectoryItem, Department, CampusLocation} from './types'
 import type {TopLevelViewPropsTypeWithParams} from '../types'
-import {officeHoursTitle, prefixTitle} from './lib'
 
 type Props = TopLevelViewPropsTypeWithParams<{contact: DirectoryItem}>
 
-export function DirectoryDetailView(props: Props) {
+export function DirectoryDetailView(props: Props): JSX.Element {
 	const {
 		displayName,
 		campusLocations,
@@ -33,7 +31,12 @@ export function DirectoryDetailView(props: Props) {
 
 	return (
 		<ScrollView>
-			<Image resizeMode="cover" source={{uri: photo}} style={styles.image} />
+			<Image
+				accessibilityIgnoresInvertColors={true}
+				resizeMode="cover"
+				source={{uri: photo}}
+				style={styles.image}
+			/>
 			<Title style={[styles.header, styles.headerName]}>{displayName}</Title>
 			<Detail style={[styles.header, styles.headerTitle]}>
 				{displayTitle && entities.decode(displayTitle)}
@@ -54,13 +57,12 @@ export function DirectoryDetailView(props: Props) {
 
 						{officeHours && (
 							<MultiLineLeftDetailCell
-								accessory={officeHours.href ? 'DisclosureIndicator' : null}
-								cellStyle="LeftDetail"
-								detail={prefixTitle(officeHours.prefix)}
+								accessory={officeHours.href ? 'DisclosureIndicator' : undefined}
+								detail={officeHours.title}
 								onPress={
 									officeHours.href ? () => openUrl(officeHours.href) : null
 								}
-								title={officeHoursTitle(officeHours)}
+								title={officeHours.description}
 							/>
 						)}
 
@@ -76,7 +78,7 @@ export function DirectoryDetailView(props: Props) {
 					</Section>
 				) : null}
 
-				{campusLocations.map((loc, i) => (
+				{campusLocations.map((loc: CampusLocation, i: number) => (
 					<Section key={i} header="OFFICE">
 						<Cell
 							cellStyle="LeftDetail"
@@ -97,11 +99,11 @@ export function DirectoryDetailView(props: Props) {
 					<Section
 						header={departments.length !== 1 ? 'DEPARTMENTS' : 'DEPARTMENT'}
 					>
-						{departments.map((dept, key) => (
+						{departments.map((dept: Department, key: number) => (
 							<Cell
 								key={key}
 								accessory="DisclosureIndicator"
-								cellStyle="Detail"
+								cellStyle="Basic"
 								detail="Department"
 								onPress={() => openUrl(dept.href)}
 								title={dept.name}

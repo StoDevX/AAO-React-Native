@@ -1,5 +1,3 @@
-// @flow
-
 import React from 'react'
 import {ScrollView, View, Text, StyleSheet} from 'react-native'
 import {openUrl} from '@frogpond/open-url'
@@ -7,7 +5,7 @@ import {callPhone} from '../../components/call-phone'
 import {sendEmail} from '../../components/send-email'
 import * as c from '@frogpond/colors'
 import {entities} from '@frogpond/html-lib'
-import type {DirectoryItem} from './types'
+import type {CampusLocation, Department, DirectoryItem} from './types'
 import {
 	Avatar,
 	Title,
@@ -18,11 +16,10 @@ import {
 	Portal,
 } from 'react-native-paper'
 import type {TopLevelViewPropsTypeWithParams} from '../types'
-import {officeHoursTitle, prefixTitle} from './lib'
 
 type Props = TopLevelViewPropsTypeWithParams<{contact: DirectoryItem}>
 
-export function DirectoryDetailView(props: Props) {
+export function DirectoryDetailView(props: Props): React.ReactFragment {
 	const {
 		displayName,
 		campusLocations,
@@ -35,10 +32,10 @@ export function DirectoryDetailView(props: Props) {
 		username,
 	} = props.navigation.state.params.contact
 
-	let [fabOpen, setFabOpen] = React.useState(false)
+	const [fabOpen, setFabOpen] = React.useState(false)
 
-	let fabActions = [
-		...campusLocations.map(loc => ({
+	const fabActions = [
+		...campusLocations.map((loc: CampusLocation) => ({
 			icon: 'phone',
 			label:
 				campusLocations.length === 1
@@ -57,7 +54,7 @@ export function DirectoryDetailView(props: Props) {
 			: []),
 	]
 
-	let showFab = fabActions.length >= 1
+	const showFab = fabActions.length >= 1
 
 	return (
 		<>
@@ -82,7 +79,7 @@ export function DirectoryDetailView(props: Props) {
 				</Subheading>
 
 				<View style={styles.departments}>
-					{departments.map((dept, key) => (
+					{departments.map((dept: Department, key: number) => (
 						<Chip
 							key={key}
 							accessibilityLabel={`Department: ${dept.name}`}
@@ -97,30 +94,32 @@ export function DirectoryDetailView(props: Props) {
 
 				{officeHours && (
 					<List.Item
-						description={officeHoursTitle(officeHours)}
-						left={props => <List.Icon {...props} icon="sentiment-satisfied" />}
-						title={prefixTitle(officeHours.prefix)}
+						description={officeHours.description}
+						left={(props) => (
+							<List.Icon {...props} icon="sentiment-satisfied" />
+						)}
+						title={officeHours.title}
 					/>
 				)}
 
 				{email ? (
 					<List.Item
 						description={email}
-						left={props => <List.Icon {...props} icon="email" />}
+						left={(props) => <List.Icon {...props} icon="email" />}
 						onPress={() => sendEmail({to: [email], subject: '', body: ''})}
 						title="Email"
 					/>
 				) : null}
 
-				{campusLocations.map((loc, i) => {
-					let shortRoom = `${loc.buildingabbr} ${loc.room}`.trim()
+				{campusLocations.map((loc: CampusLocation, i: number) => {
+					const shortRoom = `${loc.buildingabbr} ${loc.room}`.trim()
 					return (
 						<List.Item
 							key={i}
 							description={`${shortRoom ? `${shortRoom} • ` : ''}${loc.phone}`}
-							left={props => <List.Icon {...props} icon="room" />}
+							left={(props) => <List.Icon {...props} icon="room" />}
 							onPress={() => callPhone(loc.phone)}
-							right={props => <List.Icon {...props} icon="phone" />}
+							right={(props) => <List.Icon {...props} icon="phone" />}
 							title={loc.display}
 						/>
 					)
@@ -129,7 +128,7 @@ export function DirectoryDetailView(props: Props) {
 				{profileUrl ? (
 					<List.Item
 						description={profileUrl}
-						left={props => <List.Icon {...props} icon="link" />}
+						left={(props) => <List.Icon {...props} icon="link" />}
 						onPress={() => openUrl(profileUrl)}
 						title="Professional Profile"
 					/>
@@ -137,7 +136,7 @@ export function DirectoryDetailView(props: Props) {
 
 				{username ? (
 					<List.Item
-						left={props => <List.Icon {...props} icon="open-in-new" />}
+						left={(props) => <List.Icon {...props} icon="open-in-new" />}
 						onPress={() =>
 							openUrl(
 								`https://www.stolaf.edu/directory/search?lookup=${username}`,
