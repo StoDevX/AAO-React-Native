@@ -6,12 +6,20 @@ import * as c from '@frogpond/colors'
 type LeftDetailProps = {
 	detail: string
 	title: string
+	onPress?: (() => any) | undefined
+	accessory?:
+		| false
+		| 'DisclosureIndicator'
+		| 'Detail'
+		| 'DetailDisclosure'
+		| 'Checkmark'
+		| undefined
 }
 
 export class MultiLineLeftDetailCell extends React.PureComponent<LeftDetailProps> {
-	render() {
-		let {detail, title} = this.props
-		let cellContent = (
+	render(): JSX.Element {
+		const {detail, title, onPress, accessory} = this.props
+		const cellContent = (
 			<View style={styles.cellContentView}>
 				<Text allowFontScaling={true} style={styles.cellLeftDetail}>
 					{detail}
@@ -21,7 +29,13 @@ export class MultiLineLeftDetailCell extends React.PureComponent<LeftDetailProps
 				</Text>
 			</View>
 		)
-		return <Cell cellContentView={cellContent} />
+		return (
+			<Cell
+				accessory={accessory}
+				cellContentView={cellContent}
+				onPress={onPress}
+			/>
+		)
 	}
 }
 
