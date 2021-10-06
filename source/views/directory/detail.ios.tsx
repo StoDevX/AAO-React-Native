@@ -11,7 +11,6 @@ import {
 	MultiLineLeftDetailCell,
 } from '@frogpond/tableview'
 import * as c from '@frogpond/colors'
-import {entities} from '@frogpond/html-lib'
 import type {DirectoryItem, Department, CampusLocation} from './types'
 import type {TopLevelViewPropsTypeWithParams} from '../types'
 
@@ -39,7 +38,7 @@ export function DirectoryDetailView(props: Props): JSX.Element {
 			/>
 			<Title style={[styles.header, styles.headerName]}>{displayName}</Title>
 			<Detail style={[styles.header, styles.headerTitle]}>
-				{displayTitle && entities.decode(displayTitle)}
+				{displayTitle}
 			</Detail>
 
 			<TableView>

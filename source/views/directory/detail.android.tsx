@@ -4,7 +4,6 @@ import {openUrl} from '@frogpond/open-url'
 import {callPhone} from '../../components/call-phone'
 import {sendEmail} from '../../components/send-email'
 import * as c from '@frogpond/colors'
-import {entities} from '@frogpond/html-lib'
 import type {CampusLocation, Department, DirectoryItem} from './types'
 import {
 	Avatar,
@@ -75,7 +74,7 @@ export function DirectoryDetailView(props: Props): React.ReactFragment {
 				<Title style={[styles.header, styles.headerName]}>{displayName}</Title>
 
 				<Subheading style={[styles.header, styles.headerTitle]}>
-					{displayTitle && entities.decode(displayTitle)}
+					{displayTitle}
 				</Subheading>
 
 				<View style={styles.departments}>
