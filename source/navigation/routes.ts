@@ -51,6 +51,7 @@ import {
 	PrintJobReleaseView,
 	PrintJobsView,
 } from '../views/stoprint'
+import {DirectoryView, DirectoryDetailView} from '../views/directory'
 
 export const routes = {
 	HomeView: {screen: HomeView},
@@ -67,6 +68,8 @@ export const routes = {
 	DictionaryDetailView: {screen: DictionaryDetailView},
 	DictionaryView: {screen: DictionaryView},
 	DictionaryEditorView: {screen: DictionaryEditorView},
+	DirectoryView: {screen: DirectoryView},
+	DirectoryDetailView: {screen: DirectoryDetailView},
 	EventDetailView: {screen: EventDetailView},
 	FaqView: {screen: FaqView},
 	HelpView: {screen: HelpView},
