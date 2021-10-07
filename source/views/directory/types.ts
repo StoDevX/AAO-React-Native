@@ -4,6 +4,8 @@ export type CampusLocation = {
 	building: string
 	phone: string
 	room: number
+	// added from ccc-server
+	shortLocation: string
 }
 
 export type Department = {

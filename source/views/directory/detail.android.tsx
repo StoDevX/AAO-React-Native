@@ -110,19 +110,16 @@ export function DirectoryDetailView(props: Props): React.ReactFragment {
 					/>
 				) : null}
 
-				{campusLocations.map((loc: CampusLocation, i: number) => {
-					const shortRoom = `${loc.buildingabbr} ${loc.room}`.trim()
-					return (
-						<List.Item
-							key={i}
-							description={`${shortRoom ? `${shortRoom} • ` : ''}${loc.phone}`}
-							left={(props) => <List.Icon {...props} icon="room" />}
-							onPress={() => callPhone(loc.phone)}
-							right={(props) => <List.Icon {...props} icon="phone" />}
-							title={loc.display}
-						/>
-					)
-				})}
+				{campusLocations.map((loc: CampusLocation, i: number) => (
+					<List.Item
+						key={i}
+						description={loc.shortLocation}
+						left={(props) => <List.Icon {...props} icon="room" />}
+						onPress={() => callPhone(loc.phone)}
+						right={(props) => <List.Icon {...props} icon="phone" />}
+						title={loc.display}
+					/>
+				))}
 
 				{profileUrl ? (
 					<List.Item
