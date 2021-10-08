@@ -20,7 +20,7 @@ import {API} from '@frogpond/api'
 import {List, Avatar} from 'react-native-paper'
 import type {DirectoryItem, SearchResults} from './types'
 import type {TopLevelViewPropsTypeWithParams} from '../types'
-import { AnyObject } from '../../views/types'
+import {AnyObject} from '../../views/types'
 import Icon from 'react-native-vector-icons/Ionicons'
 
 type Props = TopLevelViewPropsTypeWithParams<AnyObject>
