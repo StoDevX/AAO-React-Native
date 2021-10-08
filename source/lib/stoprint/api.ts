@@ -15,13 +15,14 @@ import type {
 	HeldJobsResponseOrErrorType,
 	LoginResponseOrErrorType,
 } from './types'
+import { AnyObject } from '../../views/types'
 
 const PAPERCUT_API_HEADERS = {
 	'Content-Type': 'application/x-www-form-urlencoded',
 	Origin: PAPERCUT,
 }
 
-const papercut = (url, opts: Record<string, unknown> = {}) =>
+const papercut = (url, opts: AnyObject = {}) =>
 	fpFetch(url, {cache: 'no-store', ...opts}).json()
 
 export async function logIn(
