@@ -59,7 +59,7 @@ export function DirectoryDetailView(props: Props): JSX.Element {
 								accessory={officeHours.href ? 'DisclosureIndicator' : undefined}
 								detail={officeHours.title}
 								onPress={
-									officeHours.href ? () => openUrl(officeHours.href) : null
+									officeHours.href ? () => openUrl(officeHours.href) : undefined
 								}
 								title={officeHours.description}
 							/>
