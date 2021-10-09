@@ -3,6 +3,7 @@ import {ScrollView, View, Text, StyleSheet} from 'react-native'
 import {openUrl} from '@frogpond/open-url'
 import {callPhone} from '../../components/call-phone'
 import {sendEmail} from '../../components/send-email'
+import {buildEmailAction, buildPhoneActions} from './helpers'
 import * as c from '@frogpond/colors'
 import type {CampusLocation, Department, DirectoryItem} from './types'
 import {
@@ -34,23 +35,10 @@ export function DirectoryDetailView(props: Props): React.ReactFragment {
 	const [isFabOpen, setIsFabOpen] = React.useState(false)
 
 	const fabActions = [
-		...campusLocations.map((loc: CampusLocation) => ({
-			icon: 'phone',
-			label:
-				campusLocations.length === 1
-					? 'Call'
-					: `Call ${loc.buildingabbr} ${loc.room}`,
-			onPress: () => callPhone(loc.phone),
-		})),
-		...(email
-			? [
-					{
-						icon: 'email',
-						label: 'Email',
-						onPress: () => sendEmail({to: [email], subject: '', body: ''}),
-					},
-			  ]
-			: []),
+		...campusLocations.map((loc: CampusLocation) =>
+			buildPhoneActions(loc, campusLocations.length),
+		),
+		...buildEmailAction(email),
 	]
 
 	const showFab = fabActions.length >= 1
