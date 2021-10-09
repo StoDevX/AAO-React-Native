@@ -31,7 +31,7 @@ export function DirectoryDetailView(props: Props): React.ReactFragment {
 		username,
 	} = props.navigation.state.params.contact
 
-	const [fabOpen, setFabOpen] = React.useState(false)
+	const [isFabOpen, setIsFabOpen] = React.useState(false)
 
 	const fabActions = [
 		...campusLocations.map((loc: CampusLocation) => ({
@@ -61,9 +61,9 @@ export function DirectoryDetailView(props: Props): React.ReactFragment {
 				<Portal>
 					<FAB.Group
 						actions={fabActions}
-						icon={fabOpen ? 'close' : 'more-vert'}
-						onStateChange={({open}) => setFabOpen(open)}
-						open={fabOpen}
+						icon={isFabOpen ? 'close' : 'more-vert'}
+						onStateChange={({open}) => setIsFabOpen(open)}
+						open={isFabOpen}
 					/>
 				</Portal>
 			) : null}
