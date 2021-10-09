@@ -16,7 +16,7 @@ type ReduxStateProps = {
 }
 
 type ReduxDispatchProps = {
-	logInViaCredentials: (string, string) => void
+	logInViaCredentials: (username: string, password: string) => void
 	logOutViaCredentials: () => void
 }
 

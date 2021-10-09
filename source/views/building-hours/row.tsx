@@ -49,7 +49,7 @@ type Props = {
 	info: BuildingType
 	name: string
 	now: momentT
-	onPress: (BuildingType) => any
+	onPress: (info: BuildingType) => any
 }
 
 type State = {

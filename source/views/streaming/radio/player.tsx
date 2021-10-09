@@ -9,7 +9,7 @@ type Props = {
 	onStalled?: () => any
 	onPlay?: () => any
 	onPause?: () => any
-	onError?: (HtmlAudioError) => any
+	onError?: (error: HtmlAudioError) => any
 	style: any
 	useEmbeddedPlayer: boolean
 	embeddedPlayerUrl: string

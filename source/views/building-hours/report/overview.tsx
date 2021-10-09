@@ -301,7 +301,7 @@ class EditableSchedule extends React.PureComponent<EditableScheduleProps> {
 	}
 }
 
-type TextFieldProps = {text: string; onChange: (string) => any}
+type TextFieldProps = {text: string; onChange: (text: string) => any}
 // "Title" will become a textfield like the login form
 const TitleCell = ({text, onChange = () => {}}: TextFieldProps) => (
 	<CellTextField
