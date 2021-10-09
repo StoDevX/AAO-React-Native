@@ -3,12 +3,10 @@ import {sendEmail} from '../../components/send-email'
 import type {FABGroupAction} from 'react-native-paper'
 import type {CampusLocation, DirectoryItem} from './types'
 
-type FABActionType = Pick<FABGroupAction, 'icon' | 'label' | 'onPress'>
-
 export const buildPhoneActions = (
 	loc: CampusLocation,
 	locationsCount: number,
-): FABActionType => {
+): FABGroupAction => {
 	return {
 		icon: 'phone',
 		label:
@@ -19,7 +17,7 @@ export const buildPhoneActions = (
 
 export const buildEmailAction = (
 	email: DirectoryItem['email'],
-): FABActionType[] => {
+): FABGroupAction[] => {
 	if (!email) return []
 
 	return [
