@@ -7,7 +7,7 @@
 import * as React from 'react'
 import {StyleSheet} from 'react-native'
 import type {SingleBuildingScheduleType} from '../types'
-import moment, {Moment} from 'moment-timezone'
+import type {Moment} from 'moment-timezone'
 import {Cell} from '@frogpond/tableview'
 import {formatBuildingTimes, summarizeDays} from '../lib'
 

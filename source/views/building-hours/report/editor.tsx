@@ -7,7 +7,8 @@
 import * as React from 'react'
 import xor from 'lodash/xor'
 import {View, ScrollView, Platform, Text, StyleSheet} from 'react-native'
-import moment, {Moment} from 'moment-timezone'
+import moment from 'moment-timezone'
+import type {Moment} from 'moment-timezone'
 import {
 	TableView,
 	Section,

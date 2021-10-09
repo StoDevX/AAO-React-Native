@@ -1,4 +1,4 @@
-import {Moment} from 'moment'
+import type {Moment} from 'moment'
 import type {BusTimetableEntry} from '../types'
 import type {BusStateEnum} from './get-current-bus-iteration'
 

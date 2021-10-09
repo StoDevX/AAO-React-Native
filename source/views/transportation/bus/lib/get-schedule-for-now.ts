@@ -1,5 +1,5 @@
 import type {BusSchedule, DayOfWeek} from '../types'
-import {Moment} from 'moment-timezone'
+import type {Moment} from 'moment-timezone'
 
 const allDaysOfWeek: DayOfWeek[] = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa']
 

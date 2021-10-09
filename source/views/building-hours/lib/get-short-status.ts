@@ -1,4 +1,4 @@
-import moment, {Moment} from 'moment-timezone'
+import type {Moment} from 'moment-timezone'
 import flatten from 'lodash/flatten'
 import type {BuildingType} from '../types'
 

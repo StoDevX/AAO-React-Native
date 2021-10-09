@@ -1,4 +1,4 @@
-import moment, {Moment} from 'moment-timezone'
+import type {Moment} from 'moment-timezone'
 import type {SingleBuildingScheduleType} from '../types'
 
 import {isChapelTime} from './chapel'

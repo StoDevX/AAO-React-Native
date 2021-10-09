@@ -6,7 +6,8 @@
 
 import * as React from 'react'
 import {ScrollView, View} from 'react-native'
-import moment, {Moment} from 'moment-timezone'
+import moment from 'moment-timezone'
+import type {Moment} from 'moment-timezone'
 import {InfoHeader} from '@frogpond/info-header'
 import {
 	TableView,

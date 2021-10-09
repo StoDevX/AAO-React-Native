@@ -2,7 +2,7 @@ import * as React from 'react'
 import {ScrollView, StyleSheet, Image} from 'react-native'
 import {images as buildingImages} from '../../../../images/spaces'
 import type {BuildingType} from '../types'
-import moment, {Moment} from 'moment-timezone'
+import type {Moment} from 'moment-timezone'
 import * as c from '@frogpond/colors'
 import {getShortBuildingStatus} from '../lib'
 

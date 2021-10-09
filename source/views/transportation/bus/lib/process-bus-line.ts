@@ -6,7 +6,7 @@ import type {
 } from '../types'
 
 import {parseTime} from './parse-time'
-import {Moment} from 'moment'
+import type {Moment} from 'moment'
 
 export const processBusSchedule =
 	(now: Moment) =>
