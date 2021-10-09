@@ -7,14 +7,14 @@
 import * as React from 'react'
 import {StyleSheet} from 'react-native'
 import type {SingleBuildingScheduleType} from '../types'
-import moment from 'moment-timezone'
+import moment, {Moment} from 'moment-timezone'
 import {Cell} from '@frogpond/tableview'
 import {formatBuildingTimes, summarizeDays} from '../lib'
 
 type Props = {
 	set: SingleBuildingScheduleType
 	isActive: boolean
-	now: moment
+	now: Moment
 }
 
 export class ScheduleRow extends React.PureComponent<Props> {

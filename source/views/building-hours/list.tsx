@@ -2,7 +2,7 @@ import * as React from 'react'
 import {StyleSheet, SectionList} from 'react-native'
 import {BuildingRow} from './row'
 
-import type momentT from 'moment'
+import type {Moment} from 'moment'
 import type {TopLevelViewPropsType} from '../types'
 import type {BuildingType} from './types'
 
@@ -20,7 +20,7 @@ const styles = StyleSheet.create({
 })
 
 type Props = TopLevelViewPropsType & {
-	now: momentT
+	now: Moment
 	loading: boolean
 	onRefresh: () => any
 	buildings: Array<{title: string; data: BuildingType[]}>

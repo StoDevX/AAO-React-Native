@@ -6,13 +6,13 @@
 
 import * as React from 'react'
 import {TableView, Section, Cell} from '@frogpond/tableview'
-import moment from 'moment-timezone'
+import moment, {Moment} from 'moment-timezone'
 import type {NamedBuildingScheduleType} from '../types'
 import {isScheduleOpenAtMoment, getDayOfWeek} from '../lib'
 import {ScheduleRow} from './schedule-row'
 
 type Props = {
-	now: moment
+	now: Moment
 	schedules: NamedBuildingScheduleType[]
 	onProblemReport: () => any
 }

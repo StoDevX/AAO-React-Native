@@ -6,7 +6,7 @@ import type {NavigationScreenProp} from 'react-navigation'
 import type {EventType} from '@frogpond/event-type'
 import type {PoweredBy} from './types'
 import groupBy from 'lodash/groupBy'
-import moment from 'moment-timezone'
+import moment, {Moment} from 'moment-timezone'
 import {ListSeparator, ListSectionHeader} from '@frogpond/lists'
 import {NoticeView} from '@frogpond/notice'
 import EventRow from './event-row'
@@ -22,12 +22,12 @@ type Props = {
 	refreshing: boolean
 	onRefresh: () => any
 	navigation: NavigationScreenProp
-	now: moment
+	now: Moment
 	poweredBy?: PoweredBy
 }
 
 export class EventList extends React.Component<Props> {
-	groupEvents = (events: EventType[], now: moment): any => {
+	groupEvents = (events: EventType[], now: Moment): any => {
 		// the proper return type is $ReadOnlyArray<{title: string, data: $ReadOnlyArray<EventType>}>
 		let grouped = groupBy(events, (event) => {
 			if (event.isOngoing) {

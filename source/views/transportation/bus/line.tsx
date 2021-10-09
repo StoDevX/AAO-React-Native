@@ -3,7 +3,7 @@ import {Text, StyleSheet, Platform, FlatList} from 'react-native'
 import type {BusTimetableEntry, UnprocessedBusLine, BusSchedule} from './types'
 import {processBusLine, getScheduleForNow, getCurrentBusIteration} from './lib'
 import type {BusStateEnum} from './lib'
-import moment from 'moment-timezone'
+import {Moment} from 'moment-timezone'
 import find from 'lodash/find'
 import findLast from 'lodash/findLast'
 import {Separator} from '@frogpond/separator'
@@ -29,7 +29,7 @@ const EMPTY_SCHEDULE_MESSAGE = (
 
 type Props = {
 	line: UnprocessedBusLine
-	now: moment
+	now: Moment
 	openMap: () => any
 }
 
@@ -40,7 +40,7 @@ type State = {
 	status: BusStateEnum
 }
 
-function startsIn(now, start?: moment) {
+function startsIn(now, start?: Moment) {
 	if (!start) {
 		return 'Error'
 	}

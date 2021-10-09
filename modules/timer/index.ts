@@ -14,7 +14,7 @@ type Props = {
 	| {
 			moment: true
 			render: (state: {
-				now: moment
+				now: Moment
 				loading: boolean
 				refresh: () => void
 			}) => React.Node

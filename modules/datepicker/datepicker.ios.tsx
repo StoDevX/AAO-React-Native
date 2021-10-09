@@ -115,13 +115,13 @@ export class DatePicker extends React.Component<Props, State> {
 }
 
 type ModalProps = {
-	date: moment
+	date: Moment
 	height: any // actually AnimatedValue
 	minuteInterval?: 1 | 2 | 3 | 4 | 5 | 6 | 10 | 12 | 15 | 20 | 30
 	mode: 'date' | 'datetime' | 'time'
 	allowPointerEvents: boolean
 	visible: boolean
-	onDateChange: (moment) => any
+	onDateChange: (moment: Date) => any
 	onHide: () => any
 	timezone: string
 }

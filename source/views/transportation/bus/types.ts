@@ -1,4 +1,4 @@
-import type moment from 'moment'
+import type {Moment} from 'moment'
 
 export type DayOfWeek = 'Su' | 'Mo' | 'Tu' | 'We' | 'Th' | 'Fr' | 'Sa'
 export type Coordinates = [number, number]
@@ -9,7 +9,7 @@ export type BusLineColors = {
 }
 
 export type UnprocessedDepartureTimeList = Array<string | false>
-export type DepartureTimeList = Array<null | moment>
+export type DepartureTimeList = Array<null | Moment>
 
 export type BusTimetableEntry = {
 	name: string

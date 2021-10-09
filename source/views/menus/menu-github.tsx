@@ -3,7 +3,6 @@ import {timezone} from '@frogpond/constants'
 import {NoticeView, LoadingView} from '@frogpond/notice'
 import {FoodMenu} from '@frogpond/food-menu'
 import type {TopLevelViewPropsType} from '../types'
-import type momentT from 'moment'
 import moment from 'moment-timezone'
 import sample from 'lodash/sample'
 import fromPairs from 'lodash/fromPairs'
@@ -27,7 +26,7 @@ type Props = TopLevelViewPropsType & {
 type State = {
 	error?: Error
 	loading: boolean
-	now: momentT
+	now: Moment
 	foodItems: MenuItemContainerType
 	corIcons: MasterCorIconMapType
 	meals: ProcessedMealType[]

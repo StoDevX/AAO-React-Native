@@ -16,7 +16,6 @@ import sample from 'lodash/sample'
 import mapValues from 'lodash/mapValues'
 import reduce from 'lodash/reduce'
 import toPairs from 'lodash/toPairs'
-import type momentT from 'moment'
 import moment from 'moment-timezone'
 import {trimStationName, trimItemLabel} from './lib/trim-names'
 import {getTrimmedTextWithSpaces, parseHtml, entities} from '@frogpond/html-lib'
@@ -49,7 +48,7 @@ type State = {
 	errormsg?: string
 	loading: boolean
 	refreshing: boolean
-	now: momentT
+	now: Moment
 	cafeInfo?: CafeInfoType
 	cafeMenu?: MenuInfoType
 }
@@ -137,7 +136,7 @@ export class BonAppHostedMenu extends React.PureComponent<Props, State> {
 		this.setState(() => ({refreshing: false}))
 	}
 
-	findCafeMessage(cafeInfo: CafeInfoType, now: momentT) {
+	findCafeMessage(cafeInfo: CafeInfoType, now: Moment) {
 		let actualCafeInfo = cafeInfo.cafe
 
 		let todayDate = now.format('YYYY-MM-DD')

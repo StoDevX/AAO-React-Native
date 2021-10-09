@@ -12,6 +12,7 @@ import {
 	findBusStopStatus as findStopStatus,
 } from '../lib'
 import type {BusStateEnum} from '../lib'
+import {Moment} from 'moment'
 
 const styles = StyleSheet.create({
 	row: {
@@ -35,7 +36,7 @@ const styles = StyleSheet.create({
 type Props = {
 	stop: BusTimetableEntry
 	departureIndex: null | number
-	now: moment
+	now: Moment
 	barColor: string
 	currentStopColor: string
 	isFirstRow: boolean

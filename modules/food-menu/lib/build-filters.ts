@@ -1,4 +1,4 @@
-import type momentT from 'moment'
+import type {Moment} from 'moment'
 import type {
 	MenuItemType,
 	MasterCorIconMapType,
@@ -16,7 +16,7 @@ export function buildFilters(
 	foodItems: MenuItemType[],
 	corIcons: MasterCorIconMapType,
 	meals: ProcessedMealType[],
-	now: momentT,
+	now: Moment,
 ): FilterType[] {
 	// Format the items for the stations filter
 	const stations = flatten(meals.map((meal) => meal.stations))
