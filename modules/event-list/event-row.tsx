@@ -43,8 +43,7 @@ export default class EventRow extends React.PureComponent<Props> {
 		let {event} = this.props
 		let title = fastGetTrimmedText(event.title)
 
-		let subtitle = event[event.config.subtitle]
-		subtitle = subtitle ? subtitle.trim() : null
+		let subtitle = event[event.config.subtitle]?.trim()
 
 		return (
 			<ListRow
