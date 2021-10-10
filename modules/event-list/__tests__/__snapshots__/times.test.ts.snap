@@ -1,0 +1,17 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ongoing events should be formatted 1`] = `
+Object {
+  "allDay": false,
+  "end": "Aug. 7",
+  "start": "Aug. 7",
+}
+`;
+
+exports[`ongoing events should be formatted 2`] = `
+Object {
+  "allDay": false,
+  "end": "Aug. 7",
+  "start": "Aug. 7",
+}
+`;
