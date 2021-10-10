@@ -2,7 +2,7 @@ import * as React from 'react'
 import {View, Text, StyleSheet} from 'react-native'
 import {OutlineBadge as Badge} from '@frogpond/badge'
 import isEqual from 'lodash/isEqual'
-import type momentT from 'moment'
+import type {Moment} from 'moment'
 import type {BuildingType} from './types'
 import * as c from '@frogpond/colors'
 import {Row} from '@frogpond/layout'
@@ -48,12 +48,12 @@ const FG_COLORS = {
 type Props = {
 	info: BuildingType
 	name: string
-	now: momentT
+	now: Moment
 	onPress: (info: BuildingType) => any
 }
 
 type State = {
-	now: momentT
+	now: Moment
 	openStatus: string
 	hours: Array<any>
 	accentBg: string

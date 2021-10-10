@@ -9,6 +9,7 @@ import {StreamRow} from './row'
 import toPairs from 'lodash/toPairs'
 import groupBy from 'lodash/groupBy'
 import moment from 'moment-timezone'
+import type {Moment} from 'moment-timezone'
 import {toLaxTitleCase as titleCase} from '@frogpond/titlecase'
 import type {StreamType} from './types'
 import {API} from '@frogpond/api'
@@ -59,7 +60,7 @@ export class StreamListView extends React.PureComponent<Props, State> {
 
 	getStreams = async (
 		reload?: boolean,
-		date: moment = moment.tz(timezone()),
+		date: Moment = moment.tz(timezone()),
 	) => {
 		let dateFrom = date.format('YYYY-MM-DD')
 		let dateTo = date.clone().add(2, 'month').format('YYYY-MM-DD')

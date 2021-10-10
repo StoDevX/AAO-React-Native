@@ -1,5 +1,6 @@
 import * as React from 'react'
 import moment from 'moment-timezone'
+import type {Moment} from 'moment-timezone'
 import delay from 'delay'
 
 export function msUntilIntervalRepeat(now: number, interval: number) {
@@ -14,7 +15,7 @@ type Props = {
 	| {
 			moment: true
 			render: (state: {
-				now: moment
+				now: Moment
 				loading: boolean
 				refresh: () => void
 			}) => React.Node

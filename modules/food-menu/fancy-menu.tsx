@@ -1,7 +1,6 @@
 import * as React from 'react'
 import {StyleSheet, SectionList} from 'react-native'
 import * as c from '@frogpond/colors'
-import type momentT from 'moment'
 import type {
 	MenuItemType as MenuItem,
 	MasterCorIconMapType,
@@ -20,6 +19,7 @@ import {FilterMenuToolbar as FilterToolbar} from './filter-menu-toolbar'
 import {FoodItemRow} from './food-item-row'
 import {chooseMeal} from './lib/choose-meal'
 import {buildFilters} from './lib/build-filters'
+import type {Moment} from 'moment'
 
 type ReactProps = {
 	cafeMessage?: string
@@ -27,7 +27,7 @@ type ReactProps = {
 	meals: ProcessedMealType[]
 	menuCorIcons: MasterCorIconMapType
 	name: string
-	now: momentT
+	now: Moment
 	onRefresh?: () => any
 	refreshing?: boolean
 }

@@ -6,7 +6,7 @@
 
 import * as React from 'react'
 import {View, Text, StyleSheet} from 'react-native'
-import moment from 'moment-timezone'
+import type {Moment} from 'moment-timezone'
 import type {SingleBuildingScheduleType} from '../types'
 
 import {formatBuildingTimes, summarizeDays} from '../lib'
@@ -14,7 +14,7 @@ import {formatBuildingTimes, summarizeDays} from '../lib'
 type Props = {
 	set: SingleBuildingScheduleType
 	isActive: boolean
-	now: moment
+	now: Moment
 }
 
 export class ScheduleRow extends React.PureComponent<Props> {

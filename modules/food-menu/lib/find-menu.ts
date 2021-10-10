@@ -1,4 +1,4 @@
-import type momentT from 'moment'
+import type {Moment} from 'moment'
 import moment from 'moment-timezone'
 import findIndex from 'lodash/findIndex'
 import {timezone} from '@frogpond/constants'
@@ -10,7 +10,7 @@ import type {
 
 export function findMenu(
 	dayparts: DayPartsCollectionType,
-	now: momentT,
+	now: Moment,
 ): void | DayPartMenuType {
 	// `dayparts` is, conceptually, a collection of bonapp menus for a
 	// location. It's a single-element array of arrays, so we first check
@@ -29,7 +29,7 @@ export function findMenu(
 
 export function findMeal(
 	meals: ProcessedMealType[],
-	now: momentT,
+	now: Moment,
 ): void | ProcessedMealType {
 	if (!meals.length) {
 		return
@@ -48,7 +48,7 @@ export function findMeal(
 	return meals[mealIndex]
 }
 
-function findMenuIndex(dayparts: DayPartMenuType[], now: momentT): number {
+function findMenuIndex(dayparts: DayPartMenuType[], now: Moment): number {
 	// If there's only a single bonapp menu for this location (think the Cage,
 	// instead of the Caf), we just return that item.
 	if (dayparts.length === 1) {

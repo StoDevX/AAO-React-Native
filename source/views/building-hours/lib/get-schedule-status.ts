@@ -1,4 +1,4 @@
-import moment from 'moment-timezone'
+import type {Moment} from 'moment-timezone'
 import type {SingleBuildingScheduleType} from '../types'
 
 import {parseHours} from './parse-hours'
@@ -9,7 +9,7 @@ const timeBetween = (start, end) => start.clone().seconds(0).to(end)
 
 export function getScheduleStatusAtMoment(
 	schedule: SingleBuildingScheduleType,
-	m: moment,
+	m: Moment,
 ): string {
 	let {open, close} = parseHours(schedule, m)
 
