@@ -24,8 +24,8 @@ type Address = {
 export type OfficeHours = {
 	display: string
 	prefix: string
-	hrefLabel: string
-	href: string
+	hrefLabel: string | null
+	href: string | null
 	content: string
 	// added from ccc-server
 	description: string
@@ -40,25 +40,25 @@ type OnLeave = {
 
 export type DirectoryItem = {
 	campusLocations: Array<CampusLocation>
-	classYear: ?number
+	classYear: string | null
 	departments: Array<Department>
-	displayName: ?string
-	displayTitle: ?string
-	email: ?string
-	firstName: ?string
+	displayName: string
+	displayTitle: string | null
+	email: string | null
+	firstName: string
 	homeAddress: Address
-	homePhone: ?string
-	lastName: ?string
-	officeHours: ?OfficeHours
-	onLeave: ?OnLeave
+	homePhone: string | null
+	lastName: string
+	officeHours: OfficeHours | null
+	onLeave: OnLeave | null
 	photo: string
-	profileUrl: ?string
-	suffixName: ?string
+	profileUrl: string | null
+	suffixName: string | null
 	thumbnail: string
-	title: ?string
-	username: ?string
+	title: string | null
+	username: string | null
 	// added from ccc-server
-	description: string
+	description: string | null
 }
 
 export type SearchResults = {
