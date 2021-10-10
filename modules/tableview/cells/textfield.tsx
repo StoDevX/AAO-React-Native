@@ -36,8 +36,8 @@ type Props = {
 	_ref?: {current: null | React.ElementRef<typeof TextInput>}
 	disabled: boolean
 	multiline?: boolean
-	onChangeText: (string) => any
-	onSubmitEditing?: (string) => any
+	onChangeText: (value: string) => any
+	onSubmitEditing?: (value: string) => any
 	placeholder: string
 	returnKeyType: 'done' | 'next' | 'default'
 	secureTextEntry: boolean

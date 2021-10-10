@@ -31,7 +31,7 @@ type Props = TopLevelViewPropsType & {
 	courses: Array<CourseType>
 	filters: Array<FilterType>
 	onPopoverDismiss: (filter: FilterType) => any
-	onListItemPress?: (CourseType) => any
+	onListItemPress?: (course: CourseType) => any
 	query: string
 	style?: any
 	contentContainerStyle?: any

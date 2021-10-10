@@ -34,7 +34,7 @@ type ReduxStateProps = {
 }
 
 type ReduxDispatchProps = {
-	logInViaCredentials: (string, string) => Promise<any>
+	logInViaCredentials: (username: string, password: string) => Promise<any>
 	updatePrintJobs: () => Promise<any>
 }
 
