@@ -15,8 +15,8 @@ import {fetch} from '@frogpond/fetch'
 import * as c from '@frogpond/colors'
 import {useDebounce} from '@frogpond/use-debounce'
 import {NoticeView, LoadingView} from '@frogpond/notice'
+import {formatResults} from './helpers'
 import {AsyncState, useAsync} from 'react-async'
-import {API} from '@frogpond/api'
 import {List, Avatar} from 'react-native-paper'
 import type {DirectoryItem, SearchResults} from './types'
 import type {TopLevelViewPropsTypeWithParams} from '../types'
@@ -42,7 +42,12 @@ function searchDirectory(
 		throw new TooShortSearchError()
 	}
 
-	return fetch(API(`/directory/search?q=${query}`), {signal}).json()
+	const url = 'https://www.stolaf.edu/directory/search'
+	return fetch(url, {
+		searchParams: {format: 'json', query: query},
+		cache: 'no-store',
+		signal: signal,
+	}).json()
 }
 
 export function DirectoryView(props: Props): JSX.Element {
@@ -54,7 +59,7 @@ export function DirectoryView(props: Props): JSX.Element {
 		{query: searchQuery, watch: searchQuery},
 	)
 
-	const results = data ? data : []
+	const results = data ? formatResults(data) : []
 
 	const renderRow = ({item}: {item: DirectoryItem}) => (
 		<DirectoryItemRow
