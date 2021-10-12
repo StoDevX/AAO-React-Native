@@ -85,6 +85,11 @@ export function DirectoryDetailView(props: Props): React.ReactFragment {
 						left={(props) => (
 							<List.Icon {...props} icon="sentiment-satisfied" />
 						)}
+						onPress={
+							officeHours.href
+								? () => officeHours.href && openUrl(officeHours.href)
+								: undefined
+						}
 						title={officeHours.title}
 					/>
 				)}
