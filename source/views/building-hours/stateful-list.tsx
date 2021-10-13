@@ -69,7 +69,7 @@ export class BuildingHoursView extends React.PureComponent<Props, State> {
 		this.fetchData()
 	}
 
-	refresh = async (): any => {
+	refresh = async (): Promise<void> => {
 		this.setState(() => ({loading: true}))
 		let buildings = await fetchHours(true)
 		this.setState(() => ({loading: false, buildings}))
