@@ -50,7 +50,7 @@ export class BuildingHoursProblemReportView extends React.PureComponent<
 	openEditor = (
 		scheduleIdx: number,
 		setIdx: number,
-		set?: SingleBuildingScheduleType = undefined,
+		set?: SingleBuildingScheduleType,
 	) => {
 		this.props.navigation.navigate('BuildingHoursScheduleEditorView', {
 			initialSet: set,
