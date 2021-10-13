@@ -35,7 +35,7 @@ export function FaqView() {
 		})
 	}, [setText, setLoading])
 
-	let refresh = async (): any => {
+	let refresh = async (): Promise<void> => {
 		setRefreshing(true)
 
 		await fetchData(true).then((text) => {

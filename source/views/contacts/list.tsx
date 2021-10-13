@@ -53,7 +53,7 @@ export class ContactsListView extends React.PureComponent<Props, State> {
 		this.fetchData()
 	}
 
-	refresh = async (): any => {
+	refresh = async (): Promise<void> => {
 		this.setState(() => ({loading: true}))
 		let contacts = await fetchContacts(true)
 		this.setState(() => ({loading: false, contacts: contacts}))

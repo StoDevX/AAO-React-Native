@@ -131,7 +131,7 @@ export class BonAppHostedMenu extends React.PureComponent<Props, State> {
 		}
 	}
 
-	refresh = async (): any => {
+	refresh = async (): Promise<void> => {
 		this.setState(() => ({refreshing: true}))
 		await this.fetchData(this.props, true)
 		this.setState(() => ({refreshing: false}))
