@@ -4,7 +4,7 @@ export {moment}
 const CENTRAL_TZ = 'America/Chicago'
 const baseTime = moment('2019-12-18T18:39:45').tz(CENTRAL_TZ)
 
-export const dayMoment = (time: string, format? = 'ddd h:mma') => {
+export const dayMoment = (time: string, format = 'ddd h:mma') => {
 	let parsed = moment.tz(time, format, false, CENTRAL_TZ)
 
 	let dayOfWeek = parsed.day()

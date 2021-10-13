@@ -54,7 +54,7 @@ class Fetch {
 
 	startMs: number
 
-	constructor(input: RequestInfo = '', init?: ExpandedFetchArgs = {}) {
+	constructor(input: RequestInfo = '', init: ExpandedFetchArgs = {}) {
 		let {searchParams = null} = init
 
 		this.options = {
