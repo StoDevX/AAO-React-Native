@@ -1,0 +1,17 @@
+name: Admissions
+category: Offices
+
+schedule:
+  - title: Hours
+    hours:
+      - {days: [Mo, Tu, We, Th, Fr], from: '8:00am', to: '5:00pm'}
+      - {days: [Sa], from: '8:00am', to: '12:00pm'}
+
+breakSchedule:
+  fall: []
+  thanksgiving: []
+  winter: []
+  interim: []
+  spring: []
+  easter: []
+  summer: []

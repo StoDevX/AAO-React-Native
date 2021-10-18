@@ -1,0 +1,18 @@
+name: RNS
+subtitle: Regents Hall of Natural Sciences
+category: Academia
+image: regents-hall
+
+schedule:
+  - title: Hours
+    hours:
+      - {days: [Mo, Tu, We, Th, Fr, Sa, Su], from: '8:00am', to: '12:00am'}
+
+breakSchedule:
+  fall: []
+  thanksgiving: []
+  winter: []
+  interim: []
+  spring: []
+  easter: []
+  summer: []

@@ -1,0 +1,20 @@
+name: Halvorson Music Library
+image: halvorson
+category: Libraries
+
+schedule:
+  - title: Hours
+    hours:
+      - {days: [Mo, Tu, We, Th], from: '8:00am', to: '10:00pm'}
+      - {days: [Fr], from: '8:00am', to: '8:00pm'}
+      - {days: [Sa], from: '11:00am', to: '5:00pm'}
+      - {days: [Su], from: '1:00pm', to: '10:00pm'}
+
+breakSchedule:
+  fall: []
+  thanksgiving: []
+  winter: []
+  interim: []
+  spring: []
+  easter: []
+  summer: []
