@@ -8,9 +8,9 @@ notice: >
   
   Call 507-301-4818 to schedule a ride!
 schedules:
-  - days: [Mo, Tu, We, Th, Fr]
-    coordinates: {}
-    stops:
-      - Schedule
-    times:
-      - ['9:30am', '5:00pm']
+  - days: [Mo, Tu, We, Th, Fr]
+    coordinates: {}
+    stops:
+      - Schedule
+    times:
+      - ['9:30am', '5:00pm']
