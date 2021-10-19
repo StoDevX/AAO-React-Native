@@ -27,9 +27,7 @@ export function buildFilters(
 	const allDietaryRestrictions = map(corIcons, (cor) => ({
 		title: decode(cor.label),
 		image: cor.image ? {uri: cor.image} : null,
-		detail: cor.description
-			? decode(fastGetTrimmedText(cor.description))
-			: '',
+		detail: cor.description ? decode(fastGetTrimmedText(cor.description)) : '',
 	}))
 
 	// Decide which meal will be selected by default
