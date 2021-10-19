@@ -1,10 +1,10 @@
 #!/usr/bin/env node
-const fs = require('fs')
-const junk = require('junk')
-const path = require('path')
-const mkdirp = require('mkdirp')
-const bundleDataDir = require('./bundle-data-dir')
-const convertDataFile = require('./convert-data-file')
+import fs from 'node:fs'
+import {isNotJunk} from 'junk'
+import path from 'node:path'
+import mkdirp from 'mkdirp'
+import {bundleDataDir} from './bundle-data-dir.mjs'
+import {convertDataFile} from './convert-data-file.mjs'
 
 const isDir = (pth) => fs.statSync(pth).isDirectory()
 const isFile = (pth) => fs.statSync(pth).isFile()
@@ -12,7 +12,7 @@ const isFile = (pth) => fs.statSync(pth).isFile()
 const readDir = (pth) =>
 	fs
 		.readdirSync(pth)
-		.filter(junk.not)
+		.filter(isNotJunk)
 		.filter((entry) => !entry.startsWith('_'))
 
 const findDirsIn = (pth) =>

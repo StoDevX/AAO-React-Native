@@ -1,24 +1,23 @@
 #!/usr/bin/env node
-const fs = require('fs')
-const yaml = require('js-yaml')
+import fs from 'node:fs'
+import yaml from 'js-yaml'
 
 // run cli
-if (process.mainModule === module) {
-	let args = process.argv.slice(2)
-	let fromFile = args[0]
-	let toFile = args[1] || '-'
-	if (!fromFile || fromFile === '-h' || fromFile === '--help') {
-		console.error(
-			'usage: node convert-data-file.js <from-file.{md,yaml,css}> [to-file]',
-		)
-		process.exit(1)
-	}
-	convertDataFile({fromFile, toFile})
-}
+// if (process.mainModule === module) {
+// 	let args = process.argv.slice(2)
+// 	let fromFile = args[0]
+// 	let toFile = args[1] || '-'
+// 	if (!fromFile || fromFile === '-h' || fromFile === '--help') {
+// 		console.error(
+// 			'usage: node convert-data-file.js <from-file.{md,yaml,css}> [to-file]',
+// 		)
+// 		process.exit(1)
+// 	}
+// 	convertDataFile({fromFile, toFile})
+// }
 
 // exported module
-module.exports = convertDataFile
-function convertDataFile({fromFile, toFile, toFileType = 'json'}) {
+export function convertDataFile({fromFile, toFile, toFileType = 'json'}) {
 	let contents = fs.readFileSync(fromFile, 'utf-8')
 	let output = contents
 
