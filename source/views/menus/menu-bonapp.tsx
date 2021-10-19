@@ -19,7 +19,7 @@ import toPairs from 'lodash/toPairs'
 import moment from 'moment-timezone'
 import type {Moment} from 'moment-timezone'
 import {trimStationName, trimItemLabel} from './lib/trim-names'
-import {getTrimmedTextWithSpaces, parseHtml, decode} from '@frogpond/html-lib'
+import {innerTextWithSpaces, parseHtml, decode} from '@frogpond/html-lib'
 import {toLaxTitleCase} from '@frogpond/titlecase'
 import {API} from '@frogpond/api'
 import {fetch} from '@frogpond/fetch'
@@ -236,7 +236,7 @@ export class BonAppHostedMenu extends React.PureComponent<Props, State> {
 			...item, // we want to edit the item, not replace it
 			station: decode(toLaxTitleCase(trimStationName(item.station))), // <b>@station names</b> are a mess
 			label: decode(trimItemLabel(item.label)), // clean up the titles
-			description: getTrimmedTextWithSpaces(parseHtml(item.description || '')), // clean up the descriptions
+			description: innerTextWithSpaces(parseHtml(item.description || '')), // clean up the descriptions
 		}))
 	}
 
