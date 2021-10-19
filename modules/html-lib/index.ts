@@ -3,9 +3,7 @@ import type {Element} from 'domhandler'
 import cssSelect from 'css-select'
 export {cssSelect}
 
-import {AllHtmlEntities} from 'html-entities'
-
-export const entities = new AllHtmlEntities()
+export {encode, decode} from 'html-entities'
 
 export function parseHtml(string: string): Node[] {
 	return parseDOM(string, {
