@@ -72,16 +72,15 @@ export class StreamListView extends React.PureComponent<Props, State> {
 				dateTo,
 			},
 			delay: reload ? 500 : 0,
-		}).json()
+		}).json<Array<StreamType>>()
 
 		data = data
 			.filter((stream) => stream.category !== 'athletics')
 			.map((stream) => {
-				let date = moment(stream.starttime)
-				let group =
-					stream.status.toLowerCase() !== 'live'
-						? date.format('dddd, MMMM Do')
-						: 'Live'
+				let date: Moment = moment(stream.starttime)
+				let dateGroup = date.format('dddd, MMMM Do')
+
+				let group = stream.status.toLowerCase() !== 'live' ? dateGroup : 'Live'
 
 				return {
 					...stream,
