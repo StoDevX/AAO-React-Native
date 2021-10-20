@@ -74,7 +74,7 @@ export class CccCalendarView extends React.Component<Props, State> {
 		} else if (this.props.calendar.type === 'ics') {
 			url = API('/calendar/ics', {url: this.props.calendar.url})
 		} else {
-			this.state.error = new Error('invalid calendar type!')
+			this.setState({now, error: new Error('invalid calendar type!')})
 		}
 
 		if (url) {
