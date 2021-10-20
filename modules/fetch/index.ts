@@ -16,7 +16,7 @@ class HTTPError extends Error {
 	}
 }
 
-type ExpandedFetchArgs = RequestInit & {
+export interface ExpandedFetchArgs extends RequestInit {
 	// Search parameters to include in the request URL. Setting this will
 	// override all existing search parameters in the input URL.
 	searchParams?: {[key: string]: string | number}
@@ -43,7 +43,7 @@ class Fetch {
 	// Essentially, the constructor *creates* the Request, but does not actually do
 	// anything with it. The provided `json` and `data` methods (which themselves
 	// return promises) *must* be awaited, and doing so will trigger the response.
-	constructor(input: RequestInfo, init: RequestInit & ExpandedFetchArgs = {}) {
+	constructor(input: RequestInfo, init: ExpandedFetchArgs = {}) {
 		this.startMs = Date.now()
 
 		let {searchParams = null} = init
@@ -116,7 +116,7 @@ class Fetch {
 
 const buildFetch = (
 	input: RequestInfo,
-	init?: RequestInit & ExpandedFetchArgs,
+	init?: ExpandedFetchArgs,
 ): Fetch => new Fetch(input, init)
 
 export {buildFetch as fetch}
