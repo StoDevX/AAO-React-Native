@@ -17,7 +17,7 @@ let fetchData = async (reload?: boolean) => {
 	let {text}: {text: string} = await fetch(API('/faqs'), {
 		delay: reload ? 500 : 0,
 	})
-		.json()
+		.json<{text: string}>()
 		.catch(() => ({text: 'There was a problem loading the FAQs'}))
 
 	return text
