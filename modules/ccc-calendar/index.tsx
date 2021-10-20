@@ -77,11 +77,13 @@ export class CccCalendarView extends React.Component<Props, State> {
 			this.state.error = new Error('invalid calendar type!')
 		}
 
-		const events: Array<EventType> = await fetch(url, {
-			delay: reload ? 500 : 0,
-		}).json()
+		if (url) {
+			const events: Array<EventType> = await fetch(url, {
+				delay: reload ? 500 : 0,
+			}).json()
 
-		this.setState({now, events: this.convertEvents(events)})
+			this.setState({now, events: this.convertEvents(events)})
+		}
 	}
 
 	refresh = async () => {
