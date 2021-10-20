@@ -16,7 +16,7 @@ const fetchHours = (forReload?: boolean): Promise<Array<BuildingType>> =>
 	fetch(API('/spaces/hours'), {
 		delay: forReload ? 500 : 0,
 	})
-		.json()
+		.json<{data: Array<BuildingType>}>()
 		.then((body) => body.data)
 
 const groupBuildings = (
