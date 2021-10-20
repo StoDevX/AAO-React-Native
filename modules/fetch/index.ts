@@ -103,6 +103,9 @@ class Fetch {
 
 		let elapsed = Date.now() - this.startMs
 
+		// Optionally, if a delay was specified, withhold the promised
+		// response value until (roughly) the specified delay time has
+		// elapsed.  This can actually make the interface feel less "broken."
 		if (this.options.delay && elapsed < this.options.delay) {
 			await delay(this.options.delay - elapsed)
 		}
