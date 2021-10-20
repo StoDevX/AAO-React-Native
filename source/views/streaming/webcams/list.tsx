@@ -11,7 +11,7 @@ import {Viewport} from '@frogpond/viewport'
 
 const fetchWebcams = (): Promise<Array<Webcam>> =>
 	fetch(API('/webcams'))
-		.json()
+		.json<{data: Array<Webcam>}>()
 		.then((body) => body.data)
 
 type Props = unknown
