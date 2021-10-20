@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "css-select": "4.1.3",
-    "html-entities": "1.4.0",
+    "html-entities": "2.3.2",
     "htmlparser2": "7.1.2"
   }
 }
