@@ -34,16 +34,21 @@ type ExpandedFetchArgs = RequestInit & {
 	delay?: number
 }
 
-class Fetch implements GlobalFetch {
-	async fetch(
-		input: RequestInfo,
-		init: RequestInit & ExpandedFetchArgs = {},
-	): Promise<Response> {
-		let startMs = Date.now()
+class Fetch {
+	private readonly startMs: number
+	private readonly request: Request
+	private response?: Response
+	private readonly options: ExpandedFetchArgs
+
+	// Essentially, the constructor *creates* the Request, but does not actually do
+	// anything with it. The provided `json` and `data` methods (which themselves
+	// return promises) *must* be awaited, and doing so will trigger the response.
+	constructor(input: RequestInfo, init: RequestInit & ExpandedFetchArgs = {}) {
+		this.startMs = Date.now()
 
 		let {searchParams = null} = init
 
-		let options: ExpandedFetchArgs = {
+		this.options = {
 			throwHttpErrors: true,
 			delay: 0,
 			...init,
@@ -69,25 +74,46 @@ class Fetch implements GlobalFetch {
 			request.headers.set('User-Agent', USER_AGENT)
 		}
 
-		let response: Response = await fetch(request)
+		this.request = request
+	}
 
-		if (options.throwHttpErrors && !response.ok) {
+	async json<T>(): Promise<T> {
+		if (!this.response) {
+			this.response = await this.doFetch()
+		}
+
+		return this.response.clone().json()
+	}
+
+	async text(): Promise<string> {
+		if (!this.response) {
+			this.response = await this.doFetch()
+		}
+
+		return this.response.clone().text()
+	}
+
+	// Actually makes the request.
+	async doFetch(): Promise<Response> {
+		let response: Response = await fetch(this.request)
+
+		if (this.options.throwHttpErrors && !response.ok) {
 			throw new HTTPError(response)
 		}
 
-		let elapsed = Date.now() - startMs
+		let elapsed = Date.now() - this.startMs
 
-		if (options.delay && elapsed < options.delay) {
-			await delay(options.delay - elapsed)
+		if (this.options.delay && elapsed < this.options.delay) {
+			await delay(this.options.delay - elapsed)
 		}
 
 		return response
 	}
 }
 
-const doFetch = async (
+const buildFetch = (
 	input: RequestInfo,
 	init?: RequestInit & ExpandedFetchArgs,
-) => await new Fetch().fetch(input, init)
+): Fetch => new Fetch(input, init)
 
-export {doFetch as fetch}
+export {buildFetch as fetch}
