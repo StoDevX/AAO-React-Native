@@ -1,13 +1,13 @@
 #!/usr/bin/env node
-const fs = require('fs')
-const path = require('path')
-const AJV = require('ajv')
-const addFormats = require('ajv-formats')
-const addKeywords = require('ajv-keywords')
-const yaml = require('js-yaml')
-const get = require('lodash/get')
-const memoize = require('lodash/memoize')
-const {SCHEMA_BASE} = require('./paths')
+import fs from 'node:fs'
+import path from 'node:path'
+import AJV from 'ajv'
+import addFormats from 'ajv-formats'
+import addKeywords from 'ajv-keywords'
+import yaml from 'js-yaml'
+import lodash from 'lodash'
+import {SCHEMA_BASE} from './paths.mjs'
+const {get, memoize} = lodash
 
 function formatError(err, data) {
 	// format some of the errors from ajv
@@ -49,7 +49,7 @@ const init = memoize(() => {
 	return validator
 })
 
-module.exports = function validate(schema, data) {
+export function validate(schema, data) {
 	let validator = init()
 
 	let validate = validator.compile(schema)
