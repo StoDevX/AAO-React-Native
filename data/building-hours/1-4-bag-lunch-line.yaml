@@ -2,8 +2,9 @@ name: Bag Lunch Line
 category: Food
 
 schedule:
-  - title:
-    hours: CLOSED
+  - title: Hours
+    notes: Closed until further notice
+    hours: []
 
 breakSchedule:
   fall: []
