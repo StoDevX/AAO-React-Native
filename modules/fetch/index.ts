@@ -1,5 +1,3 @@
-/* globals Request */
-
 // import {cachedFetch} from './cached'
 import {userAgent} from '@frogpond/constants'
 import delay from 'delay'
@@ -11,16 +9,14 @@ const USER_AGENT = userAgent()
 
 class HTTPError extends Error {
 	response: Response
-	constructor(response) {
+	constructor(response: Response) {
 		super(response.statusText)
 		this.name = 'HTTPError'
 		this.response = response
 	}
 }
 
-type RequestOptions = any
-
-type ExpandedFetchArgs = RequestOptions & {
+type ExpandedFetchArgs = RequestInit & {
 	// Search parameters to include in the request URL. Setting this will
 	// override all existing search parameters in the input URL.
 	searchParams?: {[key: string]: string | number}
@@ -38,83 +34,60 @@ type ExpandedFetchArgs = RequestOptions & {
 	delay?: number
 }
 
-interface ResponsePromise extends Promise<Response> {
-	json(): Promise<any>
-	text(): Promise<string>
-}
+class Fetch implements GlobalFetch {
+	async fetch(
+		input: RequestInfo,
+		init: RequestInit & ExpandedFetchArgs = {},
+	): Promise<Response> {
+		let startMs = Date.now()
 
-class Fetch {
-	request: Request
-	response: Response
-
-	// type number; trivially inferrable from literal
-	retryCount = 0
-
-	options: ExpandedFetchArgs
-
-	startMs: number
-
-	constructor(input: RequestInfo = '', init: ExpandedFetchArgs = {}) {
 		let {searchParams = null} = init
 
-		this.options = {
+		let options: ExpandedFetchArgs = {
 			throwHttpErrors: true,
 			delay: 0,
 			...init,
 		}
 
-		this.request = new Request(input, init)
+		let url = undefined
+
+		if (input instanceof Request) {
+			url = input.url
+		} else {
+			url = input.split('?')[0]
+		}
 
 		if (searchParams) {
-			let url = this.request.url.split('?')[0]
-			// $FlowExpectedError
+			url = url.split('?')[0]
 			let queryParams = queryString.stringify(searchParams)
-			this.request.url = `${url}?${queryParams}`
+			url = `${url}?${queryParams}`
 		}
 
-		if (!this.request.headers.has('User-Agent')) {
-			this.request.headers.set('User-Agent', USER_AGENT)
+		let request = new Request(input, init)
+
+		if (!request.headers.has('User-Agent')) {
+			request.headers.set('User-Agent', USER_AGENT)
 		}
 
-		this.startMs = Date.now()
+		let response: Response = await fetch(request)
 
-		this.response = this.fetch()
-
-		// $FlowExpectedError: we're purposefully attaching these properties to a promise
-		this.response.text = async () => {
-			return (await this.response).clone().text()
-		}
-
-		// $FlowExpectedError: we're purposefully attaching these properties to a promise
-		this.response.json = async () => {
-			return (await this.response).clone().json()
-		}
-
-		return this.response
-	}
-
-	async fetch() {
-		let response = await global.fetch(this.request)
-
-		if (this.options.throwHttpErrors && !response.ok) {
+		if (options.throwHttpErrors && !response.ok) {
 			throw new HTTPError(response)
 		}
 
-		let elapsed = Date.now() - this.startMs
-		if (this.options.delay && elapsed < this.options.delay) {
-			// 0.5s delay for ListViews – if we let them go at full speed, it feels broken
-			await delay(this.options.delay - elapsed)
+		let elapsed = Date.now() - startMs
+
+		if (options.delay && elapsed < options.delay) {
+			await delay(options.delay - elapsed)
 		}
 
 		return response
 	}
 }
 
-type FetchImpl = (input?: RequestInfo, init?: ExpandedFetchArgs) => Fetch
-
-const doFetch: FetchImpl = (
-	input: RequestInfo = '',
-	init: RequestOptions & ExpandedFetchArgs = {},
-) => new Fetch(input, init)
+const doFetch = async (
+	input: RequestInfo,
+	init?: RequestInit & ExpandedFetchArgs,
+) => await new Fetch().fetch(input, init)
 
 export {doFetch as fetch}
