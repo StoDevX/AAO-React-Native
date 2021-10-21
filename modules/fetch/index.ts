@@ -114,9 +114,7 @@ class Fetch {
 	}
 }
 
-const buildFetch = (
-	input: RequestInfo,
-	init?: ExpandedFetchArgs,
-): Fetch => new Fetch(input, init)
+const buildFetch = (input: RequestInfo, init?: ExpandedFetchArgs): Fetch =>
+	new Fetch(input, init)
 
 export {buildFetch as fetch}
