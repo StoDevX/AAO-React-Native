@@ -2,11 +2,10 @@ name: CAAS – Speaking Space
 category: Help and Support
 
 schedule:
-  - title: Hours
-    hours:
-      - {days: [Mo, Tu, We, Th], from: '7:00pm', to: '9:00pm'}
-      - {days: [Sa], from: '2:00pm', to: '5:00pm'}
-      - {days: [Su], from: '6:00pm', to: '9:00pm'}
+  - title: Appointment Only
+    hours: []
+    notes: By Appointment Only
+
 
 breakSchedule:
   fall: []
