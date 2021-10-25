@@ -95,7 +95,7 @@
     "@frogpond/titlecase": "1.0.0",
     "@hawkrives/react-native-alternate-icons": "0.6.0",
     "@react-native-community/netinfo": "6.0.4",
-    "@sentry/react-native": "2.4.3",
+    "@sentry/react-native": "3.1.1",
     "base-64": "1.0.0",
     "buffer": "6.0.3",
     "delay": "4.4.1",
