@@ -159,7 +159,7 @@
     "@types/jest": "27.0.2",
     "@types/js-yaml": "4.0.4",
     "@types/lodash": "4.14.176",
-    "@types/react": "17.0.31",
+    "@types/react": "17.0.32",
     "@types/react-native": "0.61.5",
     "@types/react-native-button": "3.0.1",
     "@types/react-native-communications": "2.2.1",
