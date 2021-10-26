@@ -13,6 +13,7 @@ import type {
 	ReleaseResponseOrErrorType,
 	CancelResponseOrErrorType,
 	HeldJobsResponseOrErrorType,
+	LoginResponse,
 	LoginResponseOrErrorType,
 } from './types'
 
@@ -32,13 +33,23 @@ export async function logIn(
 	const now = new Date().getTime()
 	const url = `${PAPERCUT_API}/webclient/users/${username}/log-in?nocache=${now}`
 	const body = querystring.stringify({password: encode(password)})
-	const result: LoginResponseOrErrorType = await papercut(url, {
+	const result: LoginResponseOrErrorType = await papercut<LoginResponse>(url, {
 		method: 'POST',
 		body: body,
 		headers: PAPERCUT_API_HEADERS,
 	})
-		.then((response) => ({error: false, value: response}))
-		.catch((error) => ({error: true, value: error}))
+		.then(
+			(response: LoginResponse): LoginResponseOrErrorType => ({
+				error: false,
+				value: response,
+			}),
+		)
+		.catch(
+			(error: Error): LoginResponseOrErrorType => ({
+				error: true,
+				value: error,
+			}),
+		)
 
 	if (result.error) {
 		return 'The print server seems to be having some issues.'
