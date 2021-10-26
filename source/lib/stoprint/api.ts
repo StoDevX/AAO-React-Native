@@ -20,6 +20,7 @@ import type {
 	RecentPopularPrintersResponse,
 	ColorPrintersReponse,
 	HeldJobsResponse,
+	ReleaseResponse,
 } from './types'
 
 const PAPERCUT_API_HEADERS = {
@@ -189,7 +190,7 @@ export const releasePrintJobToPrinterForUser = ({
 	printerName: string
 	username: string
 }): Promise<ReleaseResponseOrErrorType> =>
-	papercut(
+	papercut<ReleaseResponse>(
 		`${PAPERCUT_MOBILE_RELEASE_API}/held-jobs/release?username=${username}`,
 		{
 			method: 'POST',
@@ -200,7 +201,7 @@ export const releasePrintJobToPrinterForUser = ({
 			headers: PAPERCUT_API_HEADERS,
 		},
 	)
-		.then((response) => {
+		.then((response: ReleaseResponse): ReleaseResponseOrErrorType => {
 			if (response.numJobsReleased === 0) {
 				return {
 					error: true,
@@ -213,7 +214,9 @@ export const releasePrintJobToPrinterForUser = ({
 				}
 			}
 		})
-		.catch((error) => ({
-			error: true,
-			value: error,
-		}))
+		.catch(
+			(error): ReleaseResponseOrErrorType => ({
+				error: true,
+				value: error,
+			}),
+		)
