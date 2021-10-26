@@ -38,7 +38,6 @@ export class HtmlContent extends React.Component<Props> {
 				onNavigationStateChange={this.onNavigationStateChange}
 				source={{html: this.props.html, baseUrl: this.props.baseUrl}}
 				style={this.props.style}
-				useWebKit={true}
 			/>
 		)
 	}
