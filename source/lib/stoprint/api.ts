@@ -21,8 +21,9 @@ const PAPERCUT_API_HEADERS = {
 	Origin: PAPERCUT,
 }
 
-const papercut = (url: string, opts: Record<string, unknown> = {}) =>
-	fpFetch(url, {cache: 'no-store', ...opts}).json()
+async function papercut<T>(url: string, opts: Record<string, unknown> = {}) {
+	return fpFetch(url, {cache: 'no-store', ...opts}).json<T>()
+}
 
 export async function logIn(
 	username: string,
