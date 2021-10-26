@@ -19,6 +19,7 @@ import type {
 	AllPrintersResponse,
 	RecentPopularPrintersResponse,
 	ColorPrintersReponse,
+	HeldJobsResponse,
 } from './types'
 
 const PAPERCUT_API_HEADERS = {
@@ -146,11 +147,18 @@ export const heldJobsAvailableAtPrinterForUser = (
 	username: string,
 ): Promise<HeldJobsResponseOrErrorType> =>
 	// https://PAPERCUT_API.stolaf.edu/rpc/api/rest/internal/mobilerelease/api/held-jobs/?username=rives&printerName=printers%5Cmfc-it
-	papercut(
+	papercut<HeldJobsResponse>(
 		`${PAPERCUT_MOBILE_RELEASE_API}/held-jobs/?username=${username}&printerName=printers%5C${printerName}`,
 	)
-		.then((response) => ({error: false, value: response}))
-		.catch((error) => ({error: true, value: error}))
+		.then(
+			(response: HeldJobsResponse): HeldJobsResponseOrErrorType => ({
+				error: false,
+				value: response,
+			}),
+		)
+		.catch(
+			(error): HeldJobsResponseOrErrorType => ({error: true, value: error}),
+		)
 
 export const cancelPrintJobForUser = (
 	jobId: string,
