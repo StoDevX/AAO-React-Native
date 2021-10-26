@@ -10,7 +10,7 @@ type Props = {
 }
 
 export class HtmlContent extends React.Component<Props> {
-	_webview: WebView
+	_webview: WebView | null = null
 
 	onNavigationStateChange = ({url}: {url: string}) => {
 		// iOS navigates to about:blank when you provide raw HTML to a webview.
