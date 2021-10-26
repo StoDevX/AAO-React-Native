@@ -1,6 +1,6 @@
 /* globals Headers */
 
-import {fetch as fpFetch} from '@frogpond/fetch'
+import {ExpandedFetchArgs, fetch as fpFetch} from '@frogpond/fetch'
 import {PAPERCUT_MOBILE_RELEASE_API, PAPERCUT_API, PAPERCUT} from './urls'
 import querystring from 'query-string'
 import {encode} from 'base-64'
@@ -21,7 +21,7 @@ const PAPERCUT_API_HEADERS = {
 	Origin: PAPERCUT,
 }
 
-async function papercut<T>(url: string, opts: Record<string, unknown> = {}) {
+async function papercut<T>(url: string, opts?: ExpandedFetchArgs) {
 	return fpFetch(url, {cache: 'no-store', ...opts}).json<T>()
 }
 
