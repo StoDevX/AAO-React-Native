@@ -34,8 +34,8 @@ type State = {
 }
 
 export class GitHubHostedMenu extends React.PureComponent<Props, State> {
-	state = {
-		error: null,
+	state: State = {
+		error: undefined,
 		loading: true,
 		now: moment.tz(timezone()),
 		foodItems: {},
