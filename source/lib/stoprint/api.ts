@@ -17,6 +17,7 @@ import type {
 	LoginResponseOrErrorType,
 	PrintJobsResponse,
 	AllPrintersResponse,
+	RecentPopularPrintersResponse,
 } from './types'
 
 const PAPERCUT_API_HEADERS = {
@@ -105,14 +106,23 @@ export const fetchAllPrinters = (
 export const fetchRecentPrinters = (
 	username: string,
 ): Promise<RecentPopularPrintersResponseOrErrorType> =>
-	papercut(
+	papercut<RecentPopularPrintersResponse>(
 		`${PAPERCUT_MOBILE_RELEASE_API}/recent-popular-printers?username=${username}`,
 	)
-		.then((response) => ({error: false, value: response}))
-		.catch(() => ({
-			error: true,
-			value: 'Unable to fetch a list of recent printers from stoPrint.',
-		}))
+		.then(
+			(
+				response: RecentPopularPrintersResponse,
+			): RecentPopularPrintersResponseOrErrorType => ({
+				error: false,
+				value: response,
+			}),
+		)
+		.catch(
+			(): RecentPopularPrintersResponseOrErrorType => ({
+				error: true,
+				value: 'Unable to fetch a list of recent printers from stoPrint.',
+			}),
+		)
 
 const colorPrintersUrl = API('/printing/color-printers')
 
