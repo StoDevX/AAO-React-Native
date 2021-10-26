@@ -9,7 +9,7 @@ import filter from 'lodash/filter'
 import map from 'lodash/map'
 import uniq from 'lodash/uniq'
 import type {FilterType} from '@frogpond/filter'
-import {fastGetTrimmedText, entities} from '@frogpond/html-lib'
+import {fastGetTrimmedText, decode} from '@frogpond/html-lib'
 import {chooseMeal} from './choose-meal'
 
 export function buildFilters(
@@ -25,11 +25,9 @@ export function buildFilters(
 
 	// Grab the labels of the COR icons
 	const allDietaryRestrictions = map(corIcons, (cor) => ({
-		title: entities.decode(cor.label),
+		title: decode(cor.label),
 		image: cor.image ? {uri: cor.image} : null,
-		detail: cor.description
-			? entities.decode(fastGetTrimmedText(cor.description))
-			: '',
+		detail: cor.description ? decode(fastGetTrimmedText(cor.description)) : '',
 	}))
 
 	// Decide which meal will be selected by default

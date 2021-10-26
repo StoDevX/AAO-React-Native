@@ -1,11 +1,9 @@
-'use strict'
-
-const fs = require('fs')
-const path = require('path')
-const junk = require('junk')
-const yaml = require('js-yaml')
-const moment = require('moment')
-const {DATA_BASE} = require('./paths')
+import fs from 'node:fs'
+import path from 'node:path'
+import {isNotJunk} from 'junk'
+import yaml from 'js-yaml'
+import moment from 'moment'
+import {DATA_BASE} from './paths.mjs'
 
 const NO_VALUE_SEEN = Symbol()
 const TIME_FORMAT = 'h:mma'
@@ -61,10 +59,10 @@ function* validate(data) {
 	}
 }
 
-if (require.main === module) {
+function main() {
 	let files = fs
 		.readdirSync(path.join(DATA_BASE, 'bus-times'))
-		.filter(junk.not)
+		.filter(isNotJunk)
 		.map((f) => path.join(DATA_BASE, 'bus-times', f))
 
 	let anyHadError = false
@@ -87,3 +85,5 @@ if (require.main === module) {
 		process.exit(1)
 	}
 }
+
+main()

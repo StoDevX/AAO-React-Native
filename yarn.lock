@@ -1891,10 +1891,10 @@
   resolved "https://registry.yarnpkg.com/@types/scheduler/-/scheduler-0.16.2.tgz#1a62f89525723dde24ba1b01b092bf5df8ad4d39"
   integrity sha512-hppQEBDmlwhFAXKJX2KnWLYu5yMfi91yazPb2l+lbJiwW+wdo1gNeRA+3RgNSO39WYX2euey41KEwnqesU2Jew==
 
-"@types/semver@7.3.8":
-  version "7.3.8"
-  resolved "https://registry.yarnpkg.com/@types/semver/-/semver-7.3.8.tgz#508a27995498d7586dcecd77c25e289bfaf90c59"
-  integrity sha512-D/2EJvAlCEtYFEYmmlGwbGXuK886HzyCc3nZX/tkFTQdEU8jZDAgiv08P162yB17y4ZXZoq7yFAnW4GDBb9Now==
+"@types/semver@7.3.9":
+  version "7.3.9"
+  resolved "https://registry.yarnpkg.com/@types/semver/-/semver-7.3.9.tgz#152c6c20a7688c30b967ec1841d31ace569863fc"
+  integrity sha512-L/TMpyURfBkf+o/526Zb6kd/tchUP3iBDEPjqjb+U2MAJhVRxxrmr2fwpe08E7QsV7YLcpq0tUaQ9O9x97ZIxQ==
 
 "@types/stack-utils@^1.0.1":
   version "1.0.1"
@@ -4981,10 +4981,10 @@ html-encoding-sniffer@^2.0.1:
   dependencies:
     whatwg-encoding "^1.0.5"
 
-html-entities@1.4.0:
-  version "1.4.0"
-  resolved "https://registry.yarnpkg.com/html-entities/-/html-entities-1.4.0.tgz#cfbd1b01d2afaf9adca1b10ae7dffab98c71d2dc"
-  integrity sha512-8nxjcBcd8wovbeKx7h3wTji4e6+rhaVuPNpMqwWgnHh+N9ToqsCs6XztWRBPQ+UtzsoMAdKZtUENoVzU/EMtZA==
+html-entities@2.3.2:
+  version "2.3.2"
+  resolved "https://registry.yarnpkg.com/html-entities/-/html-entities-2.3.2.tgz#760b404685cb1d794e4f4b744332e3b00dcfe488"
+  integrity sha512-c3Ab/url5ksaT0WyleslpBEthOzWhrjQbg75y7XUsfSzi3Dgzt0l8w5e7DylRn15MTlMMD58dTfzddNS2kcAjQ==
 
 html-escaper@^2.0.0:
   version "2.0.0"
@@ -6340,10 +6340,10 @@ jsprim@^1.2.2:
     array-includes "^3.1.1"
     object.assign "^4.1.1"
 
-junk@3.1.0:
-  version "3.1.0"
-  resolved "https://registry.yarnpkg.com/junk/-/junk-3.1.0.tgz#31499098d902b7e98c5d9b9c80f43457a88abfa1"
-  integrity sha512-pBxcB3LFc8QVgdggvZWyeys+hnrNWg4OcZIU/1X59k5jQdLBlCsYGRQaz234SqoRLTCgMH00fY0xRJH+F9METQ==
+junk@4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/junk/-/junk-4.0.0.tgz#9b1104ddf5281cd24ffa3c8a7443d19ce192b37f"
+  integrity sha512-ojtSU++zLJ3jQG9bAYjg94w+/DOJtRyD7nPaerMFrBhmdVmiV5/exYH5t4uHga4G/95nT6hr1OJoKIFbYbrW5w==
 
 jwa@^1.4.1:
   version "1.4.1"

@@ -1,11 +1,12 @@
 #!/usr/bin/env node
-const fs = require('fs')
-const path = require('path')
-const yaml = require('js-yaml')
-const junk = require('junk')
-const minimist = require('minimist')
-const validate = require('./validate')
-const {SCHEMA_BASE, DATA_BASE} = require('./paths')
+
+import fs from 'node:fs'
+import path from 'node:path'
+import yaml from 'js-yaml'
+import {isNotJunk} from 'junk'
+import minimist from 'minimist'
+import {validate} from './validate.mjs'
+import {SCHEMA_BASE, DATA_BASE} from './paths.mjs'
 
 const isDir = (pth) => tryBoolean(() => fs.statSync(pth).isDirectory())
 const readYaml = (pth) =>
@@ -13,10 +14,18 @@ const readYaml = (pth) =>
 		JSON.stringify(yaml.load(fs.readFileSync(pth, 'utf-8'), {filename: pth})),
 	)
 
+/*
+const readYamlPipe = (pth) =>
+	fs.readFileSync(pth, 'utf-8')
+		|> yaml.load(%, {filename: pth})
+		|> JSON.stringify(%)
+		|> JSON.parse(%)
+*/
+
 const readDir = (pth) =>
 	fs
 		.readdirSync(pth)
-		.filter(junk.not)
+		.filter(isNotJunk)
 		.filter((entry) => !entry.startsWith('_'))
 
 /// MARK: program
