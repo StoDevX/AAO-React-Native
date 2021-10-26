@@ -16,6 +16,7 @@ import type {
 	LoginResponse,
 	LoginResponseOrErrorType,
 	PrintJobsResponse,
+	AllPrintersResponse,
 } from './types'
 
 const PAPERCUT_API_HEADERS = {
@@ -85,12 +86,21 @@ export const fetchJobs = (
 export const fetchAllPrinters = (
 	username: string,
 ): Promise<AllPrintersResponseOrErrorType> =>
-	papercut(`${PAPERCUT_MOBILE_RELEASE_API}/all-printers?username=${username}`)
-		.then((response) => ({error: false, value: response}))
-		.catch(() => ({
-			error: true,
-			value: 'Unable to fetch the list of all printers from stoPrint.',
-		}))
+	papercut<AllPrintersResponse>(
+		`${PAPERCUT_MOBILE_RELEASE_API}/all-printers?username=${username}`,
+	)
+		.then(
+			(response: AllPrintersResponse): AllPrintersResponseOrErrorType => ({
+				error: false,
+				value: response,
+			}),
+		)
+		.catch(
+			(): AllPrintersResponseOrErrorType => ({
+				error: true,
+				value: 'Unable to fetch the list of all printers from stoPrint.',
+			}),
+		)
 
 export const fetchRecentPrinters = (
 	username: string,
