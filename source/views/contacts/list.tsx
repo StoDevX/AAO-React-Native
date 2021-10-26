@@ -14,7 +14,7 @@ const fetchContacts = (forReload?: boolean): Promise<Array<ContactType>> =>
 	fetch(API('/contacts'), {
 		delay: forReload ? 500 : 0,
 	})
-		.json()
+		.json<{data: Array<ContactType>}>()
 		.then((body) => body.data)
 
 const groupContacts = (contacts: ContactType[]) => {

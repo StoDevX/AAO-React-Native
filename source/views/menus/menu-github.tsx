@@ -34,8 +34,8 @@ type State = {
 }
 
 export class GitHubHostedMenu extends React.PureComponent<Props, State> {
-	state = {
-		error: null,
+	state: State = {
+		error: undefined,
 		loading: true,
 		now: moment.tz(timezone()),
 		foodItems: {},
@@ -50,7 +50,13 @@ export class GitHubHostedMenu extends React.PureComponent<Props, State> {
 	fetchData = async () => {
 		this.setState({loading: true})
 
-		let container = await fetch(API('/food/named/menu/the-pause')).json()
+		let container = await fetch(API('/food/named/menu/the-pause')).json<{
+			data: {
+				foodItems: MenuItemType[]
+				stationMenus: StationMenuType[]
+				corIcons: MasterCorIconMapType
+			}
+		}>()
 
 		let data = container.data
 		let foodItems: MenuItemType[] = data.foodItems || []
