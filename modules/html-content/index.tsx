@@ -25,8 +25,8 @@ export class HtmlContent extends React.Component<Props> {
 			return
 		}
 
-		this._webview.stopLoading()
-		this._webview.goBack()
+		this._webview?.stopLoading()
+		this._webview?.goBack()
 
 		return openUrl(url)
 	}
