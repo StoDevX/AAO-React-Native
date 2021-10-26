@@ -163,7 +163,7 @@ export const heldJobsAvailableAtPrinterForUser = (
 export const cancelPrintJobForUser = (
 	jobId: string,
 	username: string,
-): CancelResponseOrErrorType =>
+): Promise<CancelResponseOrErrorType> =>
 	fetch(
 		`${PAPERCUT_MOBILE_RELEASE_API}/held-jobs/cancel?username=${username}`,
 		{
@@ -172,9 +172,13 @@ export const cancelPrintJobForUser = (
 			headers: new Headers(PAPERCUT_API_HEADERS),
 		},
 	)
-		.then((r) => r.json())
-		.then((response) => ({error: false, value: response}))
-		.catch((error) => ({error: true, value: error}))
+		.then(
+			(response: Response): CancelResponseOrErrorType => ({
+				error: false,
+				value: response,
+			}),
+		)
+		.catch((error): CancelResponseOrErrorType => ({error: true, value: error}))
 
 export const releasePrintJobToPrinterForUser = ({
 	jobId,
