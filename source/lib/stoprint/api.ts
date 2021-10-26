@@ -15,6 +15,7 @@ import type {
 	HeldJobsResponseOrErrorType,
 	LoginResponse,
 	LoginResponseOrErrorType,
+	PrintJobsResponse,
 } from './types'
 
 const PAPERCUT_API_HEADERS = {
@@ -65,12 +66,21 @@ export async function logIn(
 export const fetchJobs = (
 	username: string,
 ): Promise<PrintJobsResponseOrErrorType> =>
-	papercut(`${PAPERCUT_API}/webclient/users/${username}/jobs/status`)
-		.then((response) => ({error: false, value: response}))
-		.catch(() => ({
-			error: true,
-			value: 'Unable to fetch a list of print jobs from stoPrint.',
-		}))
+	papercut<PrintJobsResponse>(
+		`${PAPERCUT_API}/webclient/users/${username}/jobs/status`,
+	)
+		.then(
+			(response: PrintJobsResponse): PrintJobsResponseOrErrorType => ({
+				error: false,
+				value: response,
+			}),
+		)
+		.catch(
+			(): PrintJobsResponseOrErrorType => ({
+				error: true,
+				value: 'Unable to fetch a list of print jobs from stoPrint.',
+			}),
+		)
 
 export const fetchAllPrinters = (
 	username: string,
