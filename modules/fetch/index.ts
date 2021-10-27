@@ -46,29 +46,25 @@ class Fetch {
 	constructor(input: RequestInfo, init: ExpandedFetchArgs = {}) {
 		this.startMs = Date.now()
 
-		let {searchParams = null} = init
-
 		this.options = {
 			throwHttpErrors: true,
 			delay: 0,
 			...init,
 		}
 
-		let url = undefined
+		let url = input instanceof Request ? input.url : input
 
-		if (input instanceof Request) {
-			url = input.url
-		} else {
-			url = input.split('?')[0]
-		}
-
-		if (searchParams) {
+		if (init.searchParams) {
 			url = url.split('?')[0]
-			let queryParams = queryString.stringify(searchParams)
-			url = `${url}?${queryParams}`
+			url = `${url}?${queryString.stringify(init.searchParams)}`
 		}
 
-		let request = new Request(input, init)
+		let request: Request
+		if (typeof input === 'string') {
+			request = new Request(url, init)
+		} else {
+			request = new Request({...input, url: url}, init)
+		}
 
 		if (!request.headers.has('User-Agent')) {
 			request.headers.set('User-Agent', USER_AGENT)
