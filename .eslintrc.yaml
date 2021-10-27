@@ -55,7 +55,8 @@ rules:
   no-undef-init: off
   no-underscore-dangle: off
   no-unmodified-loop-condition: error
-  no-unused-vars:
+  no-unused-vars: off
+  '@typescript-eslint/no-unused-vars':
     - warn
     - args: 'after-used'
       argsIgnorePattern: '^_'

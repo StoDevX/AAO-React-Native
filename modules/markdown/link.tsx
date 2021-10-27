@@ -55,7 +55,7 @@ class Link extends React.PureComponent<Props> {
 	}
 
 	onLongPressEnd = (pressedOptionIndex: number) => {
-		// eslint-disable-next-line no-unused-vars
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		const [name, action] = this.options[pressedOptionIndex]
 		return action(this.props)
 	}
