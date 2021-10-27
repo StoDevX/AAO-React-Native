@@ -205,8 +205,8 @@ class DatePickerModal extends React.PureComponent<ModalProps> {
 }
 
 type ButtonProps = {
-	style?: ViewStyleProp
-	textStyle?: TextStyleProp
+	style?: ViewStyle
+	textStyle?: TextStyle
 	onPress: () => any
 	text: string
 }
