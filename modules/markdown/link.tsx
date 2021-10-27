@@ -15,7 +15,7 @@ export const LinkText = glamorous.text({
 type Props = {
 	href: string
 	title?: string
-	children: React.ChildrenArray<string>
+	children: React.ReactChildren
 	showShareActionSheetWithOptions: any
 	showActionSheetWithOptions: any
 }
@@ -55,8 +55,7 @@ class Link extends React.PureComponent<Props> {
 	}
 
 	onLongPressEnd = (pressedOptionIndex: number) => {
-		// eslint-disable-next-line @typescript-eslint/no-unused-vars
-		const [name, action] = this.options[pressedOptionIndex]
+		const [_name, action] = this.options[pressedOptionIndex]
 		return action(this.props)
 	}
 
