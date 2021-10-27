@@ -204,8 +204,6 @@ class DatePickerModal extends React.PureComponent<ModalProps> {
 	}
 }
 
-type StyleSheetRule = number | any | Array<StyleSheetRule>
-
 type ButtonProps = {
 	style?: ViewStyleProp
 	textStyle?: TextStyleProp
