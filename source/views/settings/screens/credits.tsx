@@ -53,7 +53,7 @@ const Contributors = glamorous(About)({
 const formatPeopleList = (arr: Array<string>) =>
 	arr.map((w) => w.replace(' ', ' ')).join(' • ')
 
-export function CreditsView() {
+export function CreditsView(): JSX.Element {
 	return (
 		<ScrollView
 			contentContainerStyle={styles.contentContainer}
