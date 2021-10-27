@@ -9,6 +9,9 @@ extends:
   - eslint:recommended
   - prettier
 
+overrides:
+  - files: '*.mjs'
+
 env:
   es6: true
   node: true
