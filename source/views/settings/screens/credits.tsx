@@ -50,7 +50,7 @@ const Contributors = glamorous(About)({
 	textAlign: 'center',
 })
 
-const formatPeopleList = (arr) =>
+const formatPeopleList = (arr: Array<string>) =>
 	arr.map((w) => w.replace(' ', ' ')).join(' • ')
 
 export function CreditsView() {
