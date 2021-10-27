@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@frogpond/constants": "^1.0.0",
-    "delay": "^4.4.1",
+    "delay": "^5.0.0",
     "http-cache-semantics": "^4.1.0",
     "lodash": "^4.17.21",
     "query-string": "^7.0.1"

@@ -98,7 +98,7 @@
     "@sentry/react-native": "2.4.3",
     "base-64": "1.0.0",
     "buffer": "6.0.3",
-    "delay": "4.4.1",
+    "delay": "5.0.0",
     "events": "3.3.0",
     "glamorous-native": "2.0.0",
     "jsc-android": "250230.2.1",
