@@ -4,7 +4,7 @@
 import { init, cleanup } from 'detox'
 import { getEnv } from 'jest-jasmine2'
 import { detox as config } from '../package.json'
-import adapter, { beforeEach as _beforeEach, afterAll as _afterAll } from 'detox/runners/jest/adapter'
+import adapter, { beforeEach as beforeEachDetox, afterAll as afterAllDetox } from 'detox/runners/jest/adapter'
 
 jest.setTimeout(120000)
 
@@ -14,11 +14,11 @@ beforeAll(async () => {
 })
 
 beforeEach(async () => {
-	await _beforeEach()
+	await beforeEachDetox()
 	await device.relaunchApp({delete: true})
 })
 
 afterAll(async () => {
-	await _afterAll()
+	await afterAllDetox()
 	await cleanup()
 })
