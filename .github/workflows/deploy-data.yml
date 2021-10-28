@@ -15,7 +15,7 @@ jobs:
       - name: Check out the code
         uses: actions/checkout@master
       - name: Install dependencies
-        run: yarn install --frozen-lockfile
+        run: npm ci
       - name: Validate the data
         run: |
           npm run validate-bus-data
