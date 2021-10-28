@@ -1,5 +1,5 @@
 {
-  "name": "AllAboutOlaf",
+  "name": "all-about-olaf",
   "version": "2.8.0-beta.8",
   "private": true,
   "scripts": {
@@ -91,14 +91,14 @@
   },
   "dependencies": {
     "@callstack/react-theme-provider": "3.0.7",
-    "@expo/react-native-action-sheet": "3.0.3",
+    "@expo/react-native-action-sheet": "3.12.0",
     "@frogpond/titlecase": "1.0.0",
     "@hawkrives/react-native-alternate-icons": "0.6.0",
     "@react-native-community/netinfo": "6.0.4",
     "@sentry/react-native": "2.4.3",
     "base-64": "1.0.0",
     "buffer": "6.0.3",
-    "delay": "4.4.1",
+    "delay": "5.0.0",
     "events": "3.3.0",
     "glamorous-native": "2.0.0",
     "jsc-android": "250230.2.1",
