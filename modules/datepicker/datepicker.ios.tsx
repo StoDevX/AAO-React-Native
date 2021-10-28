@@ -9,7 +9,7 @@ import {
 	Keyboard,
 	StyleSheet,
 } from 'react-native'
-import type {ViewStyle, TextStyle} from 'react-native'
+import type {ViewStyle, TextStyle, StyleProp} from 'react-native'
 import moment from 'moment-timezone'
 import type {Moment} from 'moment-timezone'
 import * as c from '@frogpond/colors'
@@ -23,7 +23,7 @@ type Props = {
 	minuteInterval?: 1 | 2 | 3 | 4 | 5 | 6 | 10 | 12 | 15 | 20 | 30
 	mode: 'date' | 'datetime' | 'time'
 	onDateChange: (moment: Moment) => any
-	style?: ViewStyle
+	style?: StyleProp<ViewStyle>
 	timezone: string
 }
 
@@ -204,11 +204,9 @@ class DatePickerModal extends React.PureComponent<ModalProps> {
 	}
 }
 
-type StyleSheetRule = number | any | Array<StyleSheetRule>
-
 type ButtonProps = {
-	style?: ViewStyleProp
-	textStyle?: TextStyleProp
+	style?: StyleProp<ViewStyle>
+	textStyle?: StyleProp<TextStyle>
 	onPress: () => any
 	text: string
 }
@@ -227,7 +225,6 @@ const Button = ({style, textStyle, onPress, text}: ButtonProps) => (
 const defaultStyle = StyleSheet.create({
 	dateTouch: {
 		flexDirection: 'row',
-		width: null,
 	},
 	flex: {
 		flex: 1,

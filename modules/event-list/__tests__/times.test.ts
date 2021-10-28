@@ -1,7 +1,6 @@
 /* eslint-env jest */
 
 import type {EventType} from '@frogpond/event-type'
-import type {Moment} from 'moment'
 import moment from 'moment'
 import {times, detailTimes} from '../times'
 
