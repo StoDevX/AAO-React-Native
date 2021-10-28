@@ -37,7 +37,6 @@ jobs:
       - uses: actions/checkout@master
       - run: npm ci
       - run: gem install bundler:2.2.22
-      - run: yarn install --frozen-lockfile
       - run: bundle check || bundle install
       - name: Raise the fs.inotify ulimits to 524288 watches/queued events/user instances
         run: |
