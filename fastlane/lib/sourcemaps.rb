@@ -28,7 +28,7 @@ def generate_sourcemap
 	args = sourcemap_args
 
 	cmd = [
-	       'yarn react-native bundle',
+	       'npx react-native bundle',
 	       '--dev false',
 	       "--platform '#{args[:platform]}'",
 	       "--entry-file '#{args[:entry_file]}'",
@@ -55,7 +55,7 @@ def upload_sourcemap_to_sentry
 	args = sourcemap_args
 
 	cmd = [
-	       'yarn sentry-cli',
+	       'npx sentry-cli',
 	       'releases',
 	       'files',
 	       "#{bundle_identifier}-#{current_bundle_version}",
