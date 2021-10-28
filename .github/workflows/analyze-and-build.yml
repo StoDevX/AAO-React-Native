@@ -36,8 +36,9 @@ jobs:
         with: {ruby-version: ^2.6}
       - uses: actions/checkout@master
       - run: npm ci
-      - run: gem install bundler:1.17.2
-      - run: bundle check || bundle install --frozen --path vendor/bundle
+      - run: gem install bundler:2.2.22
+      - run: yarn install --frozen-lockfile
+      - run: bundle check || bundle install
       - name: Raise the fs.inotify ulimits to 524288 watches/queued events/user instances
         run: |
           echo 524288 | sudo tee -a /proc/sys/fs/inotify/max_user_watches
@@ -67,8 +68,8 @@ jobs:
       - run: sudo xcode-select -s /Applications/Xcode_11.7.app
       - uses: actions/checkout@master
       - run: git fetch --prune --unshallow
-      - run: gem install bundler:1.17.2
-      - run: bundle check || bundle install --frozen --path vendor/bundle
+      - run: gem install bundler:2.2.22
+      - run: bundle check || bundle install
       # try installing node_modules twice
       - run: npm ci
       - run: brew tap wix/brew
