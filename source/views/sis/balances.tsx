@@ -20,7 +20,7 @@ type ReduxStateProps = {
 }
 
 type ReduxDispatchProps = {
-	logInViaCredentials: (string, string) => void
+	logInViaCredentials: (username: string, password: string) => void
 }
 
 type Props = ReactProps & ReduxStateProps & ReduxDispatchProps

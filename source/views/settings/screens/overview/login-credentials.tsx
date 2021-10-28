@@ -10,13 +10,14 @@ import {loadLoginCredentials} from '../../../../lib/login'
 import type {ReduxState} from '../../../../redux'
 import {useSelector, useDispatch} from 'react-redux'
 import noop from 'lodash/noop'
+import type {TextInput} from 'react-native'
 
 type ReduxStateProps = {
 	status: LoginStateEnum
 }
 
 type ReduxDispatchProps = {
-	logInViaCredentials: (string, string) => void
+	logInViaCredentials: (username: string, password: string) => void
 	logOutViaCredentials: () => void
 }
 
@@ -41,11 +42,10 @@ class CredentialsLoginSection extends React.Component<Props, State> {
 		this.loadCredentialsFromKeychain()
 	}
 
-	_usernameInput = React.createRef()
-	_passwordInput = React.createRef()
+	_usernameInput = React.createRef<TextInput>()
+	_passwordInput = React.createRef<TextInput>()
 
-	focusPassword = () =>
-		this._passwordInput.current && this._passwordInput.current.focus()
+	focusPassword = () => this._passwordInput.current?.focus()
 
 	loadCredentialsFromKeychain = async () => {
 		let {username = '', password = ''} = await loadLoginCredentials()

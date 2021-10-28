@@ -16,7 +16,7 @@ const fetchHours = (forReload?: boolean): Promise<Array<BuildingType>> =>
 	fetch(API('/spaces/hours'), {
 		delay: forReload ? 500 : 0,
 	})
-		.json()
+		.json<{data: Array<BuildingType>}>()
 		.then((body) => body.data)
 
 const groupBuildings = (
@@ -69,7 +69,7 @@ export class BuildingHoursView extends React.PureComponent<Props, State> {
 		this.fetchData()
 	}
 
-	refresh = async (): any => {
+	refresh = async (): Promise<void> => {
 		this.setState(() => ({loading: true}))
 		let buildings = await fetchHours(true)
 		this.setState(() => ({loading: false, buildings}))

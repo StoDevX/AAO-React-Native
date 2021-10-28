@@ -10,6 +10,6 @@ team_id 'TMK6S7TPX2'
 itc_team_id '118781268'
 
 # This is a private key. It is not included in the repository.
-# Contact allaboutolaf@stolaf.edu or another admin if you need access.
+# Contact allaboutolaf@frogpond.tech or another admin if you need access.
 json_key_file 'fastlane/play-private-key.json'
 package_name 'com.allaboutolaf'

@@ -12,7 +12,7 @@ export function submitReport(current: BuildingType, suggestion: BuildingType) {
 	let body = makeEmailBody(before, after, current.name)
 
 	return sendEmail({
-		to: ['allaboutolaf@stolaf.edu'],
+		to: ['allaboutolaf@frogpond.tech'],
 		subject: `[building] Suggestion for ${current.name}`,
 		body,
 	})

@@ -1,0 +1,18 @@
+name: CAAS – Writing Desk
+category: Help and Support
+
+schedule:
+  - title: Hours
+    hours:
+      - {days: [Mo, Tu, We, Th, Fr], from: '9:00am', to: '9:45pm'}
+      - {days: [Sa], from: '9:00am', to: '4:30pm'}
+      - {days: [Su], from: '12:00pm', to: '9:45pm'}
+
+breakSchedule:
+  fall: []
+  thanksgiving: []
+  winter: []
+  interim: []
+  spring: []
+  easter: []
+  summer: []

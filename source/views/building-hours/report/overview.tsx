@@ -7,6 +7,7 @@
 import * as React from 'react'
 import {ScrollView, View} from 'react-native'
 import moment from 'moment-timezone'
+import type {Moment} from 'moment-timezone'
 import {InfoHeader} from '@frogpond/info-header'
 import {
 	TableView,
@@ -49,7 +50,7 @@ export class BuildingHoursProblemReportView extends React.PureComponent<
 	openEditor = (
 		scheduleIdx: number,
 		setIdx: number,
-		set?: SingleBuildingScheduleType = undefined,
+		set?: SingleBuildingScheduleType,
 	) => {
 		this.props.navigation.navigate('BuildingHoursScheduleEditorView', {
 			initialSet: set,
@@ -301,7 +302,7 @@ class EditableSchedule extends React.PureComponent<EditableScheduleProps> {
 	}
 }
 
-type TextFieldProps = {text: string; onChange: (string) => any}
+type TextFieldProps = {text: string; onChange: (text: string) => any}
 // "Title" will become a textfield like the login form
 const TitleCell = ({text, onChange = () => {}}: TextFieldProps) => (
 	<CellTextField
@@ -330,7 +331,7 @@ type TimesCellProps = {
 	set: SingleBuildingScheduleType
 	setIndex: number
 	onPress: (setIdx: number, set: SingleBuildingScheduleType) => any
-	now: moment
+	now: Moment
 }
 
 class TimesCell extends React.PureComponent<TimesCellProps> {

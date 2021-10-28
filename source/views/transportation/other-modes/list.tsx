@@ -54,7 +54,7 @@ export class OtherModesView extends React.PureComponent<Props, State> {
 		})
 	}
 
-	refresh = async (): any => {
+	refresh = async (): Promise<void> => {
 		this.setState(() => ({refreshing: true}))
 		await this.fetchData(true)
 		this.setState(() => ({refreshing: false}))

@@ -1,5 +1,3 @@
-/* globals Request */
-
 // import {cachedFetch} from './cached'
 import {userAgent} from '@frogpond/constants'
 import delay from 'delay'
@@ -11,16 +9,14 @@ const USER_AGENT = userAgent()
 
 class HTTPError extends Error {
 	response: Response
-	constructor(response) {
+	constructor(response: Response) {
 		super(response.statusText)
 		this.name = 'HTTPError'
 		this.response = response
 	}
 }
 
-type RequestOptions = any
-
-type ExpandedFetchArgs = RequestOptions & {
+export interface ExpandedFetchArgs extends RequestInit {
 	// Search parameters to include in the request URL. Setting this will
 	// override all existing search parameters in the input URL.
 	searchParams?: {[key: string]: string | number}
@@ -38,24 +34,17 @@ type ExpandedFetchArgs = RequestOptions & {
 	delay?: number
 }
 
-interface ResponsePromise extends Promise<Response> {
-	json(): Promise<any>
-	text(): Promise<string>
-}
-
 class Fetch {
-	request: Request
-	response: Response
+	private readonly startMs: number
+	private readonly request: Request
+	private response?: Response
+	private readonly options: ExpandedFetchArgs
 
-	// type number; trivially inferrable from literal
-	retryCount = 0
-
-	options: ExpandedFetchArgs
-
-	startMs: number
-
-	constructor(input: RequestInfo = '', init?: ExpandedFetchArgs = {}) {
-		let {searchParams = null} = init
+	// Essentially, the constructor *creates* the Request, but does not actually do
+	// anything with it. The provided `json` and `data` methods (which themselves
+	// return promises) *must* be awaited, and doing so will trigger the response.
+	constructor(input: RequestInfo, init: ExpandedFetchArgs = {}) {
+		this.startMs = Date.now()
 
 		this.options = {
 			throwHttpErrors: true,
@@ -63,46 +52,57 @@ class Fetch {
 			...init,
 		}
 
-		this.request = new Request(input, init)
+		let url = input instanceof Request ? input.url : input
 
-		if (searchParams) {
-			let url = this.request.url.split('?')[0]
-			// $FlowExpectedError
-			let queryParams = queryString.stringify(searchParams)
-			this.request.url = `${url}?${queryParams}`
+		if (init.searchParams) {
+			url = url.split('?')[0]
+			url = `${url}?${queryString.stringify(init.searchParams)}`
 		}
 
-		if (!this.request.headers.has('User-Agent')) {
-			this.request.headers.set('User-Agent', USER_AGENT)
+		let request: Request
+		if (typeof input === 'string') {
+			request = new Request(url, init)
+		} else {
+			request = new Request({...input, url: url}, init)
 		}
 
-		this.startMs = Date.now()
-
-		this.response = this.fetch()
-
-		// $FlowExpectedError: we're purposefully attaching these properties to a promise
-		this.response.text = async () => {
-			return (await this.response).clone().text()
+		if (!request.headers.has('User-Agent')) {
+			request.headers.set('User-Agent', USER_AGENT)
 		}
 
-		// $FlowExpectedError: we're purposefully attaching these properties to a promise
-		this.response.json = async () => {
-			return (await this.response).clone().json()
-		}
-
-		return this.response
+		this.request = request
 	}
 
-	async fetch() {
-		let response = await global.fetch(this.request)
+	async json<T>(): Promise<T> {
+		if (!this.response) {
+			this.response = await this.doFetch()
+		}
+
+		return this.response.clone().json()
+	}
+
+	async text(): Promise<string> {
+		if (!this.response) {
+			this.response = await this.doFetch()
+		}
+
+		return this.response.clone().text()
+	}
+
+	// Actually makes the request.
+	async doFetch(): Promise<Response> {
+		let response: Response = await fetch(this.request)
 
 		if (this.options.throwHttpErrors && !response.ok) {
 			throw new HTTPError(response)
 		}
 
 		let elapsed = Date.now() - this.startMs
+
+		// Optionally, if a delay was specified, withhold the promised
+		// response value until (roughly) the specified delay time has
+		// elapsed.  This can actually make the interface feel less "broken."
 		if (this.options.delay && elapsed < this.options.delay) {
-			// 0.5s delay for ListViews – if we let them go at full speed, it feels broken
 			await delay(this.options.delay - elapsed)
 		}
 
@@ -110,11 +110,7 @@ class Fetch {
 	}
 }
 
-type FetchImpl = (input?: RequestInfo, init?: ExpandedFetchArgs) => Fetch
+const buildFetch = (input: RequestInfo, init?: ExpandedFetchArgs): Fetch =>
+	new Fetch(input, init)
 
-const doFetch: FetchImpl = (
-	input: RequestInfo = '',
-	init: RequestOptions & ExpandedFetchArgs = {},
-) => new Fetch(input, init)
-
-export {doFetch as fetch}
+export {buildFetch as fetch}

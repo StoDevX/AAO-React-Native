@@ -4,7 +4,7 @@ import {ListRow, Detail, Title} from '@frogpond/lists'
 import {Column, Row} from '@frogpond/layout'
 
 type Props = {
-	onPress: (ContactType) => any
+	onPress: (contact: ContactType) => any
 	contact: ContactType
 }
 

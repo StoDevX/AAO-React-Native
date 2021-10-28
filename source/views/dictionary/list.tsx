@@ -26,7 +26,7 @@ const fetchDictionaryTerms = (args: {
 	signal: window.AbortController
 }): Promise<Array<WordType>> => {
 	return fetch(API('/dictionary'), {signal: args.signal})
-		.json()
+		.json<{data: Array<WordType>}>()
 		.then((body) => body.data)
 }
 

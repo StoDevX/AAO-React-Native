@@ -16,10 +16,10 @@ import sample from 'lodash/sample'
 import mapValues from 'lodash/mapValues'
 import reduce from 'lodash/reduce'
 import toPairs from 'lodash/toPairs'
-import type momentT from 'moment'
 import moment from 'moment-timezone'
+import type {Moment} from 'moment-timezone'
 import {trimStationName, trimItemLabel} from './lib/trim-names'
-import {getTrimmedTextWithSpaces, parseHtml, entities} from '@frogpond/html-lib'
+import {innerTextWithSpaces, parseHtml, decode} from '@frogpond/html-lib'
 import {toLaxTitleCase} from '@frogpond/titlecase'
 import {API} from '@frogpond/api'
 import {fetch} from '@frogpond/fetch'
@@ -49,7 +49,7 @@ type State = {
 	errormsg?: string
 	loading: boolean
 	refreshing: boolean
-	now: momentT
+	now: Moment
 	cafeInfo?: CafeInfoType
 	cafeMenu?: MenuInfoType
 }
@@ -131,13 +131,13 @@ export class BonAppHostedMenu extends React.PureComponent<Props, State> {
 		}
 	}
 
-	refresh = async (): any => {
+	refresh = async (): Promise<void> => {
 		this.setState(() => ({refreshing: true}))
 		await this.fetchData(this.props, true)
 		this.setState(() => ({refreshing: false}))
 	}
 
-	findCafeMessage(cafeInfo: CafeInfoType, now: momentT) {
+	findCafeMessage(cafeInfo: CafeInfoType, now: Moment) {
 		let actualCafeInfo = cafeInfo.cafe
 
 		let todayDate = now.format('YYYY-MM-DD')
@@ -234,9 +234,9 @@ export class BonAppHostedMenu extends React.PureComponent<Props, State> {
 	prepareFood(cafeMenu: MenuInfoType) {
 		return mapValues(cafeMenu.items, (item) => ({
 			...item, // we want to edit the item, not replace it
-			station: entities.decode(toLaxTitleCase(trimStationName(item.station))), // <b>@station names</b> are a mess
-			label: entities.decode(trimItemLabel(item.label)), // clean up the titles
-			description: getTrimmedTextWithSpaces(parseHtml(item.description || '')), // clean up the descriptions
+			station: decode(toLaxTitleCase(trimStationName(item.station))), // <b>@station names</b> are a mess
+			label: decode(trimItemLabel(item.label)), // clean up the titles
+			description: innerTextWithSpaces(parseHtml(item.description || '')), // clean up the descriptions
 		}))
 	}
 
@@ -259,7 +259,7 @@ export class BonAppHostedMenu extends React.PureComponent<Props, State> {
 
 		if (!this.state.cafeMenu || !this.state.cafeInfo) {
 			let msg =
-				'Something went wrong. Email allaboutolaf@stolaf.edu to let them know?'
+				'Something went wrong. Email allaboutolaf@frogpond.tech to let them know?'
 			return <NoticeView text={msg} />
 		}
 

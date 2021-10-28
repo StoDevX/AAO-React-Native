@@ -50,7 +50,6 @@ jobs:
         env:
           FASTLANE_PASSWORD: ${{ secrets.FASTLANE_PASSWORD }}
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
-          ONESIGNAL_KEY: ${{ secrets.ONESIGNAL_KEY }}
           GIT_COMMIT_DESC: $(git log --format=oneline -n 1 $GITHUB_SHA)
           FASTLANE_SKIP_UPDATE_CHECK: '1'
           FASTLANE_DISABLE_ANIMATION: '1'
@@ -70,14 +69,14 @@ jobs:
       - run: git fetch --prune --unshallow
       - run: gem install bundler:1.17.2
       - run: bundle check || bundle install --frozen --path vendor/bundle
-      - run: yarn install --frozen-lockfile
+      # try installing node_modules twice
+      - run: yarn install --frozen-lockfile --network-timeout 60000
       - run: brew tap wix/brew
       - run: brew install applesimutils
       - run: bundle exec fastlane ios ci-run
         env:
           FASTLANE_PASSWORD: ${{ secrets.FASTLANE_PASSWORD }}
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
-          ONESIGNAL_KEY: ${{ secrets.ONESIGNAL_KEY }}
           GIT_COMMIT_DESC: $(git log --format=oneline -n 1 $GITHUB_SHA)
           FASTLANE_SKIP_UPDATE_CHECK: '1'
           FASTLANE_DISABLE_ANIMATION: '1'

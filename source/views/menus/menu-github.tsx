@@ -3,8 +3,8 @@ import {timezone} from '@frogpond/constants'
 import {NoticeView, LoadingView} from '@frogpond/notice'
 import {FoodMenu} from '@frogpond/food-menu'
 import type {TopLevelViewPropsType} from '../types'
-import type momentT from 'moment'
 import moment from 'moment-timezone'
+import type {Moment} from 'moment-timezone'
 import sample from 'lodash/sample'
 import fromPairs from 'lodash/fromPairs'
 import filter from 'lodash/filter'
@@ -27,15 +27,15 @@ type Props = TopLevelViewPropsType & {
 type State = {
 	error?: Error
 	loading: boolean
-	now: momentT
+	now: Moment
 	foodItems: MenuItemContainerType
 	corIcons: MasterCorIconMapType
 	meals: ProcessedMealType[]
 }
 
 export class GitHubHostedMenu extends React.PureComponent<Props, State> {
-	state = {
-		error: null,
+	state: State = {
+		error: undefined,
 		loading: true,
 		now: moment.tz(timezone()),
 		foodItems: {},
@@ -50,7 +50,13 @@ export class GitHubHostedMenu extends React.PureComponent<Props, State> {
 	fetchData = async () => {
 		this.setState({loading: true})
 
-		let container = await fetch(API('/food/named/menu/the-pause')).json()
+		let container = await fetch(API('/food/named/menu/the-pause')).json<{
+			data: {
+				foodItems: MenuItemType[]
+				stationMenus: StationMenuType[]
+				corIcons: MasterCorIconMapType
+			}
+		}>()
 
 		let data = container.data
 		let foodItems: MenuItemType[] = data.foodItems || []

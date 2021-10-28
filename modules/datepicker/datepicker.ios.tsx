@@ -9,7 +9,7 @@ import {
 	Keyboard,
 	StyleSheet,
 } from 'react-native'
-import type {ViewStyle, TextStyle} from 'react-native'
+import type {ViewStyle, TextStyle, StyleProp} from 'react-native'
 import moment from 'moment-timezone'
 import type {Moment} from 'moment-timezone'
 import * as c from '@frogpond/colors'
@@ -23,7 +23,7 @@ type Props = {
 	minuteInterval?: 1 | 2 | 3 | 4 | 5 | 6 | 10 | 12 | 15 | 20 | 30
 	mode: 'date' | 'datetime' | 'time'
 	onDateChange: (moment: Moment) => any
-	style?: ViewStyle
+	style?: StyleProp<ViewStyle>
 	timezone: string
 }
 
@@ -115,13 +115,13 @@ export class DatePicker extends React.Component<Props, State> {
 }
 
 type ModalProps = {
-	date: moment
+	date: Moment
 	height: any // actually AnimatedValue
 	minuteInterval?: 1 | 2 | 3 | 4 | 5 | 6 | 10 | 12 | 15 | 20 | 30
 	mode: 'date' | 'datetime' | 'time'
 	allowPointerEvents: boolean
 	visible: boolean
-	onDateChange: (moment) => any
+	onDateChange: (moment: Date) => any
 	onHide: () => any
 	timezone: string
 }
@@ -148,7 +148,8 @@ class DatePickerModal extends React.PureComponent<ModalProps> {
 			timezone,
 		} = this.props
 
-		const tzOffset = 0
+		let tzOffset = 0
+
 		if (date.tz()) {
 			// We need to negate the offset, because moment inverts the offset for
 			// POSIX compatability. So, GMT-5 (CST) is shown to be GMT+5.
@@ -203,11 +204,9 @@ class DatePickerModal extends React.PureComponent<ModalProps> {
 	}
 }
 
-type StyleSheetRule = number | any | Array<StyleSheetRule>
-
 type ButtonProps = {
-	style?: ViewStyleProp
-	textStyle?: TextStyleProp
+	style?: StyleProp<ViewStyle>
+	textStyle?: StyleProp<TextStyle>
 	onPress: () => any
 	text: string
 }
@@ -226,7 +225,6 @@ const Button = ({style, textStyle, onPress, text}: ButtonProps) => (
 const defaultStyle = StyleSheet.create({
 	dateTouch: {
 		flexDirection: 'row',
-		width: null,
 	},
 	flex: {
 		flex: 1,

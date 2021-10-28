@@ -9,6 +9,7 @@ import {StreamRow} from './row'
 import toPairs from 'lodash/toPairs'
 import groupBy from 'lodash/groupBy'
 import moment from 'moment-timezone'
+import type {Moment} from 'moment-timezone'
 import {toLaxTitleCase as titleCase} from '@frogpond/titlecase'
 import type {StreamType} from './types'
 import {API} from '@frogpond/api'
@@ -51,7 +52,7 @@ export class StreamListView extends React.PureComponent<Props, State> {
 		})
 	}
 
-	refresh = async (): any => {
+	refresh = async (): Promise<void> => {
 		this.setState(() => ({refreshing: true}))
 		await this.getStreams(true)
 		this.setState(() => ({refreshing: false}))
@@ -59,7 +60,7 @@ export class StreamListView extends React.PureComponent<Props, State> {
 
 	getStreams = async (
 		reload?: boolean,
-		date: moment = moment.tz(timezone()),
+		date: Moment = moment.tz(timezone()),
 	) => {
 		let dateFrom = date.format('YYYY-MM-DD')
 		let dateTo = date.clone().add(2, 'month').format('YYYY-MM-DD')
@@ -71,16 +72,15 @@ export class StreamListView extends React.PureComponent<Props, State> {
 				dateTo,
 			},
 			delay: reload ? 500 : 0,
-		}).json()
+		}).json<Array<StreamType>>()
 
 		data = data
 			.filter((stream) => stream.category !== 'athletics')
 			.map((stream) => {
-				let date = moment(stream.starttime)
-				let group =
-					stream.status.toLowerCase() !== 'live'
-						? date.format('dddd, MMMM Do')
-						: 'Live'
+				let date: Moment = moment(stream.starttime)
+				let dateGroup = date.format('dddd, MMMM Do')
+
+				let group = stream.status.toLowerCase() !== 'live' ? dateGroup : 'Live'
 
 				return {
 					...stream,

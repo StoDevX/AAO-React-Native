@@ -12,7 +12,7 @@ type Props = {
 	onSubmit?: () => mixed
 	onFocus?: () => mixed
 	onCancel?: () => mixed
-	onChange?: (string) => mixed
+	onChange?: (value: string) => mixed
 	title?: string
 }
 

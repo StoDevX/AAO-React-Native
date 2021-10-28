@@ -14,7 +14,7 @@ const fetchContacts = (forReload?: boolean): Promise<Array<ContactType>> =>
 	fetch(API('/contacts'), {
 		delay: forReload ? 500 : 0,
 	})
-		.json()
+		.json<{data: Array<ContactType>}>()
 		.then((body) => body.data)
 
 const groupContacts = (contacts: ContactType[]) => {
@@ -53,7 +53,7 @@ export class ContactsListView extends React.PureComponent<Props, State> {
 		this.fetchData()
 	}
 
-	refresh = async (): any => {
+	refresh = async (): Promise<void> => {
 		this.setState(() => ({loading: true}))
 		let contacts = await fetchContacts(true)
 		this.setState(() => ({loading: false, contacts: contacts}))

@@ -1,11 +1,11 @@
-import type moment from 'moment'
+import type {Moment} from 'moment'
 
 export type EventType = {
 	title: string
 	description: string
 	location: string
-	startTime: moment
-	endTime: moment
+	startTime: Moment
+	endTime: Moment
 	isOngoing: boolean
 	links: Array<string>
 	config: {

@@ -7,7 +7,9 @@ import {loadAcknowledgement} from './parts/settings'
 import {loadRecentSearches, loadRecentFilters} from './parts/courses'
 
 // TODO: Fix the type parameter on store.dispatch
-export async function init(store: {dispatch: (any: unknown) => void}): void {
+export async function init(store: {
+	dispatch: (any: unknown) => void
+}): Promise<void> {
 	// this function runs in two parts: the things that don't care about
 	// network, and those that do.
 

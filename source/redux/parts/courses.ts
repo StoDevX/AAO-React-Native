@@ -128,7 +128,7 @@ export function updateRecentSearches(
 	return (dispatch, getState) => {
 		const state = getState()
 
-		const recentSearches = state.courses ? state.courses.recentSearches : []
+		let recentSearches = state.courses ? state.courses.recentSearches : []
 		const recentLowerCase = recentSearches.map((query) => query.toLowerCase())
 		if (recentLowerCase.includes(query.toLowerCase())) {
 			return

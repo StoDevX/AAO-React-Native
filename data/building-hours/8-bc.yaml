@@ -1,0 +1,18 @@
+name: Buntrock Commons
+image: buntrock
+category: Academia
+
+schedule:
+  - title: Hours
+    hours:
+      - {days: [Su, Mo, Tu, We, Th], from: '7:00am', to: '12:00am'}
+      - {days: [Fr, Sa], from: '7:00am', to: '1:00am'}
+
+breakSchedule:
+  fall: []
+  thanksgiving: []
+  winter: []
+  interim: []
+  spring: []
+  easter: []
+  summer: []

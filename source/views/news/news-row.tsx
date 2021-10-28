@@ -5,7 +5,7 @@ import {ListRow, Detail, Title} from '@frogpond/lists'
 import type {StoryType} from './types'
 
 type Props = {
-	onPress: (string) => any
+	onPress: (link: string) => void
 	story: StoryType
 	thumbnail: false | number
 }

@@ -1,0 +1,17 @@
+name: Counseling Center
+category: Health and Wellness
+
+schedule:
+  - title: Hours
+    hours:
+      - {days: [Mo, Tu, We, Th, Fr], from: '8:00am', to: '12:00pm'}
+      - {days: [Mo, Tu, We, Th, Fr], from: '1:00pm', to: '5:00pm'}
+
+breakSchedule:
+  fall: []
+  thanksgiving: []
+  winter: []
+  interim: []
+  spring: []
+  easter: []
+  summer: []
