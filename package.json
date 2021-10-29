@@ -9,9 +9,7 @@
     "bundle:ios": "react-native bundle --entry-file index.js --dev false --platform ios --bundle-output ./ios/AllAboutOlaf/main.jsbundle --assets-dest ./ios --sourcemap-output ./ios/AllAboutOlaf/main.jsbundle.map",
     "fastlane": "bundle exec fastlane",
     "compress-data": "gzip --keep docs/*.json",
-    "danger": "danger ci",
     "data": "echo 'use the `bundle-data` script instead' && exit 1",
-    "d": "yarn-deduplicate && yarn",
     "ios": "react-native run-ios",
     "lint": "eslint --report-unused-disable-directives --cache source/ modules/ scripts/ images/",
     "prepare": "patch -p0 -Nfsi contrib/rn-fixes.patch || true",
@@ -180,8 +178,6 @@
     "ajv-keywords": "5.0.0",
     "babel-core": "7.0.0-bridge.0",
     "babel-jest": "27.3.1",
-    "danger": "10.7.0",
-    "danger-plugin-yarn": "1.3.2",
     "eslint": "8.1.0",
     "eslint-config-prettier": "8.3.0",
     "eslint-plugin-babel": "5.3.1",
@@ -203,8 +199,7 @@
     "react-test-renderer": "16.9.0",
     "string-natural-compare": "3.0.1",
     "strip-ansi": "7.0.1",
-    "typescript": "4.4.4",
-    "yarn-deduplicate": "3.1.0"
+    "typescript": "4.4.4"
   },
   "optionalDependencies": {
     "detox": "17.4.6"

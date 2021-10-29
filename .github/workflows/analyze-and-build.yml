@@ -11,16 +11,16 @@ jobs:
     runs-on: ubuntu-18.04
     steps:
       - uses: actions/setup-node@master
-        with: {node-version: ^12.0}
+        with: {node-version: ^16.0}
       - uses: actions/checkout@master
-      - run: yarn install --frozen-lockfile
-      - run: yarn run validate-data
-      - run: yarn run bundle-data
-      - run: yarn run pretty --no-write --list-different
-      - run: yarn tsc || true
-      - run: yarn run lint
+      - run: npm ci
+      - run: npm run validate-data
+      - run: npm run bundle-data
+      - run: npm run pretty --no-write --list-different
+      - run: npx tsc || true
+      - run: npm run lint
       - name: Run tests
-        run: yarn run test --coverage
+        run: npm run test -- --coverage
       - name: Upload coverage
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
@@ -31,11 +31,11 @@ jobs:
     runs-on: ubuntu-18.04
     steps:
       - uses: actions/setup-node@master
-        with: {node-version: ^12.0}
+        with: {node-version: ^16.0}
       - uses: actions/setup-ruby@master
         with: {ruby-version: ^2.6}
       - uses: actions/checkout@master
-      - run: yarn install --frozen-lockfile
+      - run: npm ci
       - run: gem install bundler:2.2.22
       - run: bundle check || bundle install
       - name: Raise the fs.inotify ulimits to 524288 watches/queued events/user instances
@@ -63,14 +63,14 @@ jobs:
     runs-on: macos-10.15
     steps:
       - uses: actions/setup-node@master
-        with: {node-version: ^12.0}
+        with: {node-version: ^16.0}
       - run: sudo xcode-select -s /Applications/Xcode_11.7.app
       - uses: actions/checkout@master
       - run: git fetch --prune --unshallow
       - run: gem install bundler:2.2.22
       - run: bundle check || bundle install
       # try installing node_modules twice
-      - run: yarn install --frozen-lockfile --network-timeout 60000
+      - run: npm ci
       - run: brew tap wix/brew
       - run: brew install applesimutils
       - run: bundle exec fastlane ios ci-run
@@ -84,5 +84,5 @@ jobs:
           SENTRY_PROJECT: all-about-olaf
           SENTRY_AUTH_TOKEN: ${{ secrets.HOSTED_SENTRY_AUTH_TOKEN }}
           GITHUB_KEYS_REPOSITORY_TOKEN: ${{ secrets.GITHUB_KEYS_REPOSITORY_TOKEN }}
-      - run: yarn detox build e2e --configuration ios.sim.release | xcpretty
-      - run: yarn detox test e2e --configuration ios.sim.release --cleanup
+      - run: npx detox build e2e --configuration ios.sim.release | xcpretty
+      - run: npx detox test e2e --configuration ios.sim.release --cleanup
