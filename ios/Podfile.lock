@@ -243,14 +243,14 @@ PODS:
     - React-Core
   - RNSearchBar (3.5.1):
     - React
-  - RNSentry (2.4.3):
+  - RNSentry (3.2.1):
     - React-Core
-    - Sentry (= 6.1.4)
+    - Sentry (= 7.4.8)
   - RNVectorIcons (6.6.0):
     - React
-  - Sentry (6.1.4):
-    - Sentry/Core (= 6.1.4)
-  - Sentry/Core (6.1.4)
+  - Sentry (7.4.8):
+    - Sentry/Core (= 7.4.8)
+  - Sentry/Core (7.4.8)
   - Yoga (1.14.0)
 
 DEPENDENCIES:
@@ -424,11 +424,11 @@ SPEC CHECKSUMS:
   RNReanimated: 514a11da3a2bcc6c3dfd9de32b38e2b9bf101926
   RNScreens: 45c457af3d2ee9e08fc01e70da87e653d46b1198
   RNSearchBar: 9860431356b7d12a8449d2fddb2b5f3c78d1e99f
-  RNSentry: 6f8f9ee7e4c939dcd35e5633b94d0e3782888e46
+  RNSentry: 791f73292501ed1b2e95e62e9388b68fcc13261d
   RNVectorIcons: 0bb4def82230be1333ddaeee9fcba45f0b288ed4
-  Sentry: 9d055e2de30a77685e86b219acf02e59b82091fc
+  Sentry: df92b78ba4ab86cf2a47ff4cdc07758a5ce18f03
   Yoga: f2a7cd4280bfe2cca5a7aed98ba0eb3d1310f18b
 
 PODFILE CHECKSUM: e32e6d321bf0213963c2ad3da0c73104373ccba6
 
-COCOAPODS: 1.10.0
+COCOAPODS: 1.11.2
