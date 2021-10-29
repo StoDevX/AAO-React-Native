@@ -1,7 +1,12 @@
 /* eslint-env jest */
-/* global element, by */
+
+const { device, element, by } = require('detox')
 
 describe('Basic smoke tests', () => {
+	beforeEach(async () => {
+		await device.reloadReactNative()
+	})
+
 	it('should have homescreen', async () => {
 		await expect(element(by.id('screen-homescreen'))).toBeVisible()
 	})
