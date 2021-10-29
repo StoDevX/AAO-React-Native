@@ -40,4 +40,5 @@ target 'AllAboutOlaf' do
 	end
 
 	use_native_modules!
+	inhibit_all_warnings!
 end
