@@ -9,8 +9,8 @@
     "test": "jest"
   },
   "peerDependencies": {
-    "react": "^16.0.0",
-    "react-native": "^0.61.0"
+    "react": "^17.0.0",
+    "react-native": "^0.66.0"
   },
   "dependencies": {
     "@callstack/react-theme-provider": "^3.0.7",
