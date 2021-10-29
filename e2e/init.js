@@ -1,6 +1,6 @@
 /* eslint-env jest */
 
-const { device } = require('detox')
+import { device } from 'detox'
 
 beforeAll(async () => {
 	await device.launchApp()
