@@ -1,6 +1,6 @@
-const fs = require('node:fs')
-const process = require('node:process')
-const path = require('node:path')
+const fs = require('fs')
+const process = require('process')
+const path = require('path')
 
 const currentDeploymentTarget = fs
   .readFileSync(
