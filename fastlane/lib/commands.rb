@@ -1,6 +1,6 @@
 require 'netrc'
 
-# Pick what to do - build + deploy, build + sign, or just plain build.
+# Pick what to do - build + deploy, build + sign, skip, or just plain build.
 def auto_beta
 	if should_nightly?
 		UI.message 'building nightly'
@@ -12,14 +12,21 @@ def auto_beta
 		return
 	end
 
-	if api_keys_available?
-		UI.message 'signing and building, but not deploying'
-		build
+	case lane_context[:PLATFORM_NAME]
+	when :ios
+		UI.message 'skipping non-simulator build on CI'
 		return
-	end
 
-	UI.message 'just building (not signing)'
-	check_build
+	when :android
+		if api_keys_available?
+			UI.message 'signing and building, but not deploying'
+			build
+			return
+		end
+
+		UI.message 'just building (not signing)'
+		check_build
+	end
 end
 
 # Adds the github token for stodevx-bot to the CI machine
