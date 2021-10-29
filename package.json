@@ -27,14 +27,6 @@
       "modules/*"
     ]
   },
-  "resolutions": {
-    "react-navigation/@react-navigation/native/react-native-screens": "^2.0.0-alpha.1"
-  },
-  "overrides": {
-    "react-native-tableview-simple@4.3.0": {
-      "react-native": ">=0.64"
-    }
-  },
   "jest": {
     "testMatch": [
       "**/__tests__/**/*.(spec|test).(js|ts|tsx)",
