@@ -230,6 +230,13 @@
 			remoteGlobalIDString = 5DBEB1501B18CEA900B34395;
 			remoteInfo = RNVectorIcons;
 		};
+		678555C9272C3D6E00219C69 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A91038679F834707B769D282 /* RNKeychain.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 4F9F3CBB26B8FD1000F34E8C;
+			remoteInfo = "RNKeychain-macOS";
+		};
 		67B1D3B8223C9BEF00F6A70E /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 146833FF1AC3E56700842450 /* React.xcodeproj */;
@@ -363,6 +370,7 @@
 			children = (
 				67266484236E078B007F9F83 /* libRNKeychain.a */,
 				67266486236E078B007F9F83 /* libRNKeychain.a */,
+				678555CA272C3D6E00219C69 /* libRNKeychain-macOS.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -931,6 +939,13 @@
 			fileType = archive.ar;
 			path = libRNVectorIcons.a;
 			remoteRef = 67266489236E078B007F9F83 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		678555CA272C3D6E00219C69 /* libRNKeychain-macOS.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = "libRNKeychain-macOS.a";
+			remoteRef = 678555C9272C3D6E00219C69 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		67B1D3B9223C9BEF00F6A70E /* libjsi.a */ = {
