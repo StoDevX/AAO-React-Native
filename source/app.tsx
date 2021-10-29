@@ -17,6 +17,7 @@ import {makeStore, initRedux} from './redux'
 import * as navigation from './navigation'
 import {ThemeProvider} from '@frogpond/app-theme'
 import {ActionSheetProvider} from '@expo/react-native-action-sheet'
+import { NavigationContainer } from '@react-navigation/native'
 
 const store = makeStore()
 initRedux(store)
@@ -28,8 +29,8 @@ export default class App extends React.Component {
 				<PaperProvider>
 					<ThemeProvider>
 						<ActionSheetProvider>
-							<navigation.AppNavigator
-								onNavigationStateChange={navigation.trackScreenChanges}
+							<NavigationContainer
+								onStateChange={navigation.trackScreenChanges}
 								persistenceKey={navigation.persistenceKey}
 							/>
 						</ActionSheetProvider>

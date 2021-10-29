@@ -1,63 +1,82 @@
 import * as React from 'react'
-import {TabNavigator, TabBarIcon} from '@frogpond/navigation-tabs'
+import {TabBarIcon} from '@frogpond/navigation-tabs'
 import {CccCalendarView} from '@frogpond/ccc-calendar'
+import {
+	createBottomTabNavigator,
+	BottomTabScreenProps,
+} from '@react-navigation/bottom-tabs'
 
-const CalendarView = TabNavigator({
-	StOlafCalendarView: {
-		screen: ({navigation}) => (
-			<CccCalendarView
-				calendar="stolaf"
-				navigation={navigation}
-				poweredBy={{
-					title: 'Powered by the St. Olaf calendar',
-					href: 'https://wp.stolaf.edu/calendar/',
-				}}
-			/>
-		),
-		navigationOptions: {
-			tabBarLabel: 'St. Olaf',
-			tabBarIcon: TabBarIcon('school'),
-		},
-	},
-
-	OlevilleCalendarView: {
-		screen: ({navigation}) => (
-			<CccCalendarView
-				calendar="oleville"
-				navigation={navigation}
-				poweredBy={{
-					title: 'Powered by the Oleville calendar',
-					href: 'https://oleville.com/events/',
-				}}
-			/>
-		),
-		navigationOptions: {
-			tabBarLabel: 'Oleville',
-			tabBarIcon: TabBarIcon('happy'),
-		},
-	},
-
-	NorthfieldCalendarView: {
-		screen: ({navigation}) => (
-			<CccCalendarView
-				calendar="northfield"
-				navigation={navigation}
-				poweredBy={{
-					title: 'Powered by VisitingNorthfield.com',
-					href: 'http://visitingnorthfield.com/events/calendar/',
-				}}
-			/>
-		),
-		navigationOptions: {
-			tabBarLabel: 'Northfield',
-			tabBarIcon: TabBarIcon('pin'),
-		},
-	},
-})
-
-CalendarView.navigationOptions = {
-	title: 'Calendar',
-	headerBackTitle: 'Back',
+type Params = {
+	StOlafCalendarView: undefined
+	OlevilleCalendarView: undefined
+	NorthfieldCalendarView: undefined
 }
 
-export default CalendarView
+const Tabs = createBottomTabNavigator<Params>()
+
+function StOlafCalendarView(
+	props: BottomTabScreenProps<Params, 'StOlafCalendarView'>,
+) {
+	return (
+		<CccCalendarView
+			calendar="stolaf"
+			navigation={props.navigation}
+			poweredBy={{
+				title: 'Powered by the St. Olaf calendar',
+				href: 'https://wp.stolaf.edu/calendar/',
+			}}
+		/>
+	)
+}
+
+function OlevilleCalendarView(
+	props: BottomTabScreenProps<Params, 'OlevilleCalendarView'>,
+) {
+	return (
+		<CccCalendarView
+			calendar="oleville"
+			navigation={props.navigation}
+			poweredBy={{
+				title: 'Powered by the Oleville calendar',
+				href: 'https://oleville.com/events/',
+			}}
+		/>
+	)
+}
+
+function NorthfieldCalendarView(
+	props: BottomTabScreenProps<Params, 'NorthfieldCalendarView'>,
+) {
+	return (
+		<CccCalendarView
+			calendar="northfield"
+			navigation={props.navigation}
+			poweredBy={{
+				title: 'Powered by VisitingNorthfield.com',
+				href: 'https://visitingnorthfield.com/events/calendar/',
+			}}
+		/>
+	)
+}
+
+export default function CalendarView() {
+	return (
+		<Tabs.Navigator>
+			<Tabs.Screen
+				name="StOlafCalendarView"
+				component={StOlafCalendarView}
+				options={{tabBarLabel: 'St. Olaf', tabBarIcon: TabBarIcon('school')}}
+			/>
+			<Tabs.Screen
+				name="OlevilleCalendarView"
+				component={OlevilleCalendarView}
+				options={{tabBarLabel: 'Oleville', tabBarIcon: TabBarIcon('happy')}}
+			/>
+			<Tabs.Screen
+				name="NorthfieldCalendarView"
+				component={NorthfieldCalendarView}
+				options={{tabBarLabel: 'Northfield', tabBarIcon: TabBarIcon('happy')}}
+			/>
+		</Tabs.Navigator>
+	)
+}
