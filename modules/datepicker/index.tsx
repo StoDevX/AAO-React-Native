@@ -1,11 +1,26 @@
-// Copied from https://github.com/xgfe/react-native-datepicker
-
 import * as React from 'react'
-import {Keyboard} from 'react-native'
+import {Button, Platform, StyleSheet} from 'react-native'
 import moment from 'moment-timezone'
 import type {Moment} from 'moment-timezone'
-import type {ViewStyle} from 'react-native'
-import {DatePicker as ActualDatePicker} from './datepicker'
+import DateTimePicker, {Event} from '@react-native-community/datetimepicker'
+import type {
+	AndroidNativeProps,
+	IOSNativeProps,
+} from '@react-native-community/datetimepicker'
+import type {AppTheme} from '@frogpond/app-theme'
+import {withTheme} from '@frogpond/app-theme'
+
+// TODO: move iOS and Android bits into separate files
+
+type Props = {
+	initialDate: Moment
+	minuteInterval?: 1 | 2 | 3 | 4 | 5 | 6 | 10 | 12 | 15 | 20 | 30
+	mode: IOSNativeProps['mode'] | AndroidNativeProps['mode']
+	format?: string
+	theme: AppTheme
+
+	onDateChange: (moment: Moment) => any
+}
 
 const FORMATS = {
 	date: 'YYYY-MM-DD',
@@ -13,71 +28,77 @@ const FORMATS = {
 	time: 'HH:mm',
 }
 
-type Props = {
-	androidMode: 'calendar' | 'spinner' | 'default'
-	initialDate: Moment
-	duration?: number
-	format?: string
-	height?: number
-	minuteInterval?: 1 | 2 | 3 | 4 | 5 | 6 | 10 | 12 | 15 | 20 | 30
-	mode: 'date' | 'datetime' | 'time'
-	onDateChange: (moment: Moment) => any
-	style?: ViewStyle
-}
+const DatePicker = (props: Props): JSX.Element => {
+	let [date, setDate] = React.useState(props.initialDate)
+	let [timezone] = React.useState(props.initialDate.tz() || '')
 
-type State = {
-	date: Moment
-	timezone: string
-}
+	let [showAndroidPicker, setShowAndroidPicker] = React.useState(false)
 
-export class DatePicker extends React.Component<Props, State> {
-	_ref: any
+	const onChange = (event: Event, selectedDate?: Date | undefined) => {
+		if (Platform.OS === 'android') {
+			false
+		}
 
-	static defaultProps = {
-		mode: 'date',
-		androidMode: 'default',
-		onDateChange: () => null,
+		if (!selectedDate) {
+			return
+		}
+
+		setDate(moment(selectedDate))
+		props.onDateChange(moment.tz(selectedDate, timezone))
 	}
 
-	state = {
-		date: this.props.initialDate,
-		timezone: this.props.initialDate.tz(),
+	const formatDate = (date: Moment): string => {
+		const {mode, format = FORMATS[mode]} = props
+		return moment.tz(date, timezone).format(format)
 	}
 
-	formatDate = (date: Moment) => {
-		const {mode, format = FORMATS[mode]} = this.props
-		return moment(date).format(format)
+	const getTimezoneOffsetInMinutes = (): number => {
+		// We need to negate the offset because moment inverts the offset
+		// for POSIX compatability. So, GMT-5 (CST) is shown to be GMT+5.
+		//
+		// We also need to make the types happy when we negate a negative
+		// MomentZone which is possibly null.
+		let dateInUnixMs = date.valueOf()
+		let momentZone = moment.tz.zone(timezone)
+
+		let offset = momentZone ? -momentZone.utcOffset(dateInUnixMs) : 0
+		return offset
 	}
 
-	onDateChange = (newDate: Moment) => {
-		this.setState(
-			() => ({date: newDate}),
-			() => this.props.onDateChange(this.state.date),
-		)
-	}
+	const BasePicker = () => (
+		<DateTimePicker
+			minuteInterval={props.minuteInterval}
+			mode={props.mode}
+			onChange={onChange}
+			style={defaultStyle.datePicker}
+			testID="buildingHoursTimePicker"
+			timeZoneOffsetInMinutes={getTimezoneOffsetInMinutes()}
+			value={moment.tz(date, timezone).toDate()}
+		/>
+	)
 
-	setRef = (ref: any) => (this._ref = ref)
-
-	onPressDate = () => {
-		Keyboard.dismiss()
-		this._ref.showModal()
-	}
-
-	render() {
-		return (
-			<ActualDatePicker
-				ref={this.setRef}
-				androidMode={this.props.androidMode}
-				date={this.state.date}
-				duration={this.props.duration}
-				formattedDate={this.formatDate(this.state.date)}
-				height={this.props.height}
-				minuteInterval={this.props.minuteInterval}
-				mode={this.props.mode}
-				onDateChange={this.onDateChange}
-				style={this.props.style}
-				timezone={this.state.timezone}
+	const AndroidDatePicker = (
+		<>
+			<Button
+				color={props.theme.buttonBackground}
+				onPress={() => setShowAndroidPicker(true)}
+				title={formatDate(date)}
 			/>
-		)
-	}
+			{showAndroidPicker && <BasePicker />}
+		</>
+	)
+
+	return Platform.OS === 'ios' ? <BasePicker /> : AndroidDatePicker
 }
+
+const ThemedDatePicker = withTheme(DatePicker)
+
+export {ThemedDatePicker as DatePicker}
+
+const defaultStyle = StyleSheet.create({
+	datePicker: {
+		// Fixes the row-styled iOS picker's button's width
+		// which initializes to zero
+		minWidth: 120,
+	},
+})
