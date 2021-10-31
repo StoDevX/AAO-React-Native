@@ -36,7 +36,7 @@ const DatePicker = (props: Props): JSX.Element => {
 
 	const onChange = (event: Event, selectedDate?: Date | undefined) => {
 		if (Platform.OS === 'android') {
-			false
+			setShowAndroidPicker(false)
 		}
 
 		if (!selectedDate) {
