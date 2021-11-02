@@ -38,7 +38,7 @@ export class CccCalendarView extends React.Component<Props, State> {
 		now: moment.tz(timezone()),
 	}
 
-	componentDidMount() {
+	componentDidMount(): void {
 		this.getEvents().then(() => {
 			this.setState(() => ({initialLoadComplete: true}))
 		})
@@ -63,7 +63,7 @@ export class CccCalendarView extends React.Component<Props, State> {
 		return events
 	}
 
-	getEvents = async (reload?: boolean, now: Moment = moment.tz(timezone())) => {
+	getEvents = async (reload?: boolean, now: Moment = moment.tz(timezone())): Promise<void> => {
 		let url
 		if (typeof this.props.calendar === 'string') {
 			url = API(`/calendar/named/${this.props.calendar}`)
@@ -86,13 +86,13 @@ export class CccCalendarView extends React.Component<Props, State> {
 		}
 	}
 
-	refresh = async () => {
+	refresh = async (): Promise<void> => {
 		this.setState(() => ({refreshing: true}))
 		await this.getEvents(true)
 		this.setState(() => ({refreshing: false}))
 	}
 
-	render() {
+	render(): React.ReactNode {
 		if (!this.state.initialLoadComplete) {
 			return <LoadingView />
 		}
