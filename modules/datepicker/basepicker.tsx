@@ -63,7 +63,7 @@ export const BaseDateTimePicker = (
 				<Button
 					color={theme.buttonBackground}
 					onPress={() => props.setShowPickerAndroid?.(true)}
-					testID='datepicker-button-android'
+					testID="datepicker-button-android"
 					title={formatDate(date)}
 				/>
 			)}
@@ -74,7 +74,7 @@ export const BaseDateTimePicker = (
 					mode={props.mode}
 					onChange={onChange}
 					style={props.style}
-					testID='datepicker'
+					testID="datepicker"
 					timeZoneOffsetInMinutes={getTimezoneOffsetInMinutes()}
 					value={moment.tz(date, timezone).toDate()}
 				/>
