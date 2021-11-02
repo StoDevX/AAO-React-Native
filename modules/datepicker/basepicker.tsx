@@ -1,7 +1,7 @@
 import * as React from 'react'
 import {Button} from 'react-native'
 
-import {useTheme} from '@frogpond/app-theme'
+import {getTheme} from '@frogpond/app-theme'
 import type {AppTheme} from '@frogpond/app-theme'
 
 import moment from 'moment-timezone'
@@ -54,7 +54,7 @@ export const BaseDateTimePicker = (
 		return offset
 	}
 
-	let theme: AppTheme = useTheme()
+	let theme: AppTheme = getTheme()
 
 	return (
 		<>
