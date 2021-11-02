@@ -1,62 +1,61 @@
 import React from 'react'
 import {createNativeStackNavigator} from '@react-navigation/native-stack'
 
-import {HomeView} from '../views/home'
-import {BuildingHoursDetailView} from '../views/building-hours/detail'
-import {
-	BuildingHoursProblemReportView,
-	BuildingHoursScheduleEditorView,
-	BuildingHoursView,
-} from '../views/building-hours'
-import CalendarView from '../views/calendar'
-import {EventDetail as EventDetailView} from '@frogpond/event-list'
-import {ContactsDetailView, ContactsView} from '../views/contacts'
-import {
-	DictionaryDetailView,
-	DictionaryEditorView,
-	DictionaryView,
-} from '../views/dictionary'
-import {FaqView} from '../views/faqs'
-import {HelpView} from '../views/help'
-import {
-	CourseDetailView,
-	CourseSearchResultsView,
-	JobDetailView,
-} from '../views/sis'
-import {
-	CarletonBurtonMenuScreen,
-	CarletonLDCMenuScreen,
-	CarletonSaylesMenuScreen,
-	CarletonWeitzMenuScreen,
-	MenusView,
-} from '../views/menus'
-import {BonAppPickerView} from '../views/menus/dev-bonapp-picker'
-import {MenuItemDetailView} from '@frogpond/food-menu/food-item-detail'
-import NewsView from '../views/news'
-import {
-	SettingsView,
-	IconSettingsView,
-	CreditsView,
-	DebugView,
-	LegalView,
-	PrivacyView,
-	APITestView,
-} from '../views/settings'
-import SISView from '../views/sis'
-import StreamingView, {
-	KRLXScheduleView,
-	KSTOScheduleView,
-} from '../views/streaming'
-import {StudentOrgsDetailView, StudentOrgsView} from '../views/student-orgs'
-import TransportationView, {OtherModesDetailView} from '../views/transportation'
-import {
-	PrinterListView,
-	PrintJobReleaseView,
-	PrintJobsView,
-} from '../views/stoprint'
+import * as home from '../views/home'
+// import {BuildingHoursDetailView} from '../views/building-hours/detail'
+// import {
+// 	BuildingHoursProblemReport,
+// 	BuildingHoursScheduleEditor,
+// 	BuildingHours,
+// } from '../views/building-hours'
+import * as calendar from '../views/calendar'
+import {EventDetail as eventDetail} from '@frogpond/event-list'
+// import {ContactsDetail, Contacts} from '../views/contacts'
+// import {
+// 	DictionaryDetail,
+// 	DictionaryEditor,
+// 	Dictionary,
+// } from '../views/dictionary'
+// import {Faq} from '../views/faqs'
+// import {Help} from '../views/help'
+// import {
+// 	CourseDetail,
+// 	CourseSearchResults,
+// 	JobDetail,
+// } from '../views/sis'
+// import {
+// 	CarletonBurtonMenuScreen,
+// 	CarletonLDCMenuScreen,
+// 	CarletonSaylesMenuScreen,
+// 	CarletonWeitzMenuScreen,
+// 	Menus,
+// } from '../views/menus'
+// import {BonAppPicker} from '../views/menus/dev-bonapp-picker'
+// import {MenuItemDetail} from '@frogpond/food-menu/food-item-detail'
+// import NewsView from '../views/news'
+// import {
+// 	Settings,
+// 	IconSettings,
+// 	Credits,
+// 	Debug,
+// 	Legal,
+// 	Privacy,
+// 	APITest,
+// } from '../views/settings'
+// import SISView from '../views/sis'
+// import Streaming, {
+// 	KRLXSchedule,
+// 	KSTOSchedule,
+// } from '../views/streaming'
+// import {StudentOrgsDetail, StudentOrgs} from '../views/student-orgs'
+// import Transportation, {OtherModesDetail} from '../views/transportation'
+// import {
+// 	PrinterList,
+// 	PrintJobRelease,
+// 	PrintJobs,
+// } from '../views/stoprint'
 
-import {Platform, StyleSheet} from 'react-native'
-import * as c from '@frogpond/colors'
+import {StyleSheet} from 'react-native'
 import {getTheme} from '@frogpond/app-theme'
 
 const theme = getTheme()
@@ -65,62 +64,13 @@ const styles = StyleSheet.create({
 	header: {
 		backgroundColor: theme.navigationBackground,
 	},
-	card: {
-		backgroundColor: c.sectionBgColor,
-	},
 })
 
-type RootStackParamList = {
-	Home: undefined
-	Profile: {userId: string}
-	Feed: {sort: 'latest' | 'top'} | undefined
-	BuildingHoursDetailView: undefined
-	BuildingHoursView: undefined
-	BuildingHoursProblemReportView: undefined
-	BuildingHoursScheduleEditorView: undefined
-	CalendarView: undefined
-	ContactsView: undefined
-	ContactsDetailView: undefined
-	CreditsView: undefined
-	DebugView: undefined
-	APITestView: undefined
-	DictionaryDetailView: undefined
-	DictionaryView: undefined
-	DictionaryEditorView: undefined
-	EventDetailView: undefined
-	FaqView: undefined
-	HelpView: undefined
-	JobDetailView: undefined
-	LegalView: undefined
-	MenusView: undefined
-	BonAppPickerView: undefined
-	NewsView: undefined
-	PrivacyView: undefined
-	SettingsView: undefined
-	IconSettingsView: undefined
-	SISView: undefined
-	CourseSearchResultsView: undefined
-	CourseDetailView: undefined
-	StreamingView: undefined
-	KSTOScheduleView: undefined
-	KRLXScheduleView: undefined
-	StudentOrgsDetailView: undefined
-	StudentOrgsView: undefined
-	TransportationView: undefined
-	OtherModesDetailView: undefined
-	CarletonBurtonMenuView: undefined
-	CarletonLDCMenuView: undefined
-	CarletonWeitzMenuView: undefined
-	CarletonSaylesMenuView: undefined
-	MenuItemDetailView: undefined
-	PrintJobsView: undefined
-	PrinterListView: undefined
-	PrintJobReleaseView: undefined
-}
+import {RootStackParamList} from './types'
 
-const Stack = createNativeStackNavigator<RootStackParamList>()
+const Stack = createNativeStackNavigator<RootStackParamList>();
 
-export function RootStack() {
+export function RootStack(): JSX.Element {
 	return (
 		<Stack.Navigator
 			initialRouteName="Home"
@@ -130,88 +80,76 @@ export function RootStack() {
 				headerTintColor: theme.navigationForeground,
 			}}
 		>
-			<Stack.Screen name="Home" component={HomeView} />
+			<Stack.Screen component={home.View} name="Home" />
 			<Stack.Screen
-				name="BuildingHoursDetailView"
-				component={BuildingHoursDetailView}
+				component={calendar.View}
+				name={calendar.NavigationKey}
+				options={calendar.NavigationOptions}
 			/>
-			<Stack.Screen name="BuildingHoursView" component={BuildingHoursView} />
-			<Stack.Screen
-				name="BuildingHoursProblemReportView"
-				component={BuildingHoursProblemReportView}
+			<Stack.Screen component={eventDetail.View} name="EventDetail" options={eventDetail.NavigationOptions} />
+			{/* <Stack.Screen
+				component={BuildingHoursDetail}
+				name="BuildingHoursDetail"
 			/>
+			<Stack.Screen component={BuildingHours} name="BuildingHours" />
 			<Stack.Screen
-				name="BuildingHoursScheduleEditorView"
-				component={BuildingHoursScheduleEditorView}
-			/>
-			<Stack.Screen name="CalendarView" component={CalendarView} options={{title: 'Calendar', headerBackTitle: 'Back'}} />
-			<Stack.Screen name="ContactsView" component={ContactsView} />
-			<Stack.Screen name="ContactsDetailView" component={ContactsDetailView} />
-			<Stack.Screen name="CreditsView" component={CreditsView} />
-			<Stack.Screen name="DebugView" component={DebugView} />
-			<Stack.Screen name="APITestView" component={APITestView} />
-			<Stack.Screen
-				name="DictionaryDetailView"
-				component={DictionaryDetailView}
-			/>
-			<Stack.Screen name="DictionaryView" component={DictionaryView} />
-			<Stack.Screen
-				name="DictionaryEditorView"
-				component={DictionaryEditorView}
-			/>
-			<Stack.Screen name="EventDetailView" component={EventDetailView} />
-			<Stack.Screen name="FaqView" component={FaqView} />
-			<Stack.Screen name="HelpView" component={HelpView} />
-			<Stack.Screen name="JobDetailView" component={JobDetailView} />
-			<Stack.Screen name="LegalView" component={LegalView} />
-			<Stack.Screen name="MenusView" component={MenusView} />
-			<Stack.Screen name="BonAppPickerView" component={BonAppPickerView} />
-			<Stack.Screen name="NewsView" component={NewsView} />
-			<Stack.Screen name="PrivacyView" component={PrivacyView} />
-			<Stack.Screen name="SettingsView" component={SettingsView} />
-			<Stack.Screen name="IconSettingsView" component={IconSettingsView} />
-			<Stack.Screen name="SISView" component={SISView} />
-			<Stack.Screen
-				name="CourseSearchResultsView"
-				component={CourseSearchResultsView}
-			/>
-			<Stack.Screen name="CourseDetailView" component={CourseDetailView} />
-			<Stack.Screen name="StreamingView" component={StreamingView} />
-			<Stack.Screen name="KSTOScheduleView" component={KSTOScheduleView} />
-			<Stack.Screen name="KRLXScheduleView" component={KRLXScheduleView} />
-			<Stack.Screen
-				name="StudentOrgsDetailView"
-				component={StudentOrgsDetailView}
-			/>
-			<Stack.Screen name="StudentOrgsView" component={StudentOrgsView} />
-			<Stack.Screen name="TransportationView" component={TransportationView} />
-			<Stack.Screen
-				name="OtherModesDetailView"
-				component={OtherModesDetailView}
+				component={BuildingHoursProblemReport}
+				name="BuildingHoursProblemReport"
 			/>
 			<Stack.Screen
-				name="CarletonBurtonMenuView"
+				component={BuildingHoursScheduleEditor}
+				name="BuildingHoursScheduleEditor"
+			/>
+			
+			<Stack.Screen component={Contacts} name="Contacts" />
+			<Stack.Screen component={ContactsDetail} name="ContactsDetail" />
+			<Stack.Screen component={Credits} name="Credits" />
+			<Stack.Screen component={Debug} name="Debug" />
+			<Stack.Screen component={APITest} name="APITest" />
+			<Stack.Screen component={DictionaryDetail} name="DictionaryDetail" />
+			<Stack.Screen component={Dictionary} name="Dictionary" />
+			<Stack.Screen component={DictionaryEditor} name="DictionaryEditor" />
+			<Stack.Screen component={EventDetail} name="EventDetail" />
+			<Stack.Screen component={Faq} name="Faq" />
+			<Stack.Screen component={Help} name="Help" />
+			<Stack.Screen component={JobDetail} name="JobDetail" />
+			<Stack.Screen component={Legal} name="Legal" />
+			<Stack.Screen component={Menus} name="Menus" />
+			<Stack.Screen component={BonAppPicker} name="BonAppPicker" />
+			<Stack.Screen component={News} name="News" />
+			<Stack.Screen component={Privacy} name="Privacy" />
+			<Stack.Screen component={Settings} name="Settings" />
+			<Stack.Screen component={IconSettings} name="IconSettings" />
+			<Stack.Screen component={SIS} name="SIS" />
+			<Stack.Screen
+				component={CourseSearchResults}
+				name="CourseSearchResults"
+			/>
+			<Stack.Screen component={CourseDetail} name="CourseDetail" />
+			<Stack.Screen component={Streaming} name="Streaming" />
+			<Stack.Screen component={KSTOSchedule} name="KSTOSchedule" />
+			<Stack.Screen component={KRLXSchedule} name="KRLXSchedule" />
+			<Stack.Screen component={StudentOrgsDetail} name="StudentOrgsDetail" />
+			<Stack.Screen component={StudentOrgs} name="StudentOrgs" />
+			<Stack.Screen component={Transportation} name="Transportation" />
+			<Stack.Screen component={OtherModesDetail} name="OtherModesDetail" />
+			<Stack.Screen
 				component={CarletonBurtonMenuScreen}
+				name="CarletonBurtonMenu"
 			/>
+			<Stack.Screen component={CarletonLDCMenuScreen} name="CarletonLDCMenu" />
 			<Stack.Screen
-				name="CarletonLDCMenuView"
-				component={CarletonLDCMenuScreen}
-			/>
-			<Stack.Screen
-				name="CarletonWeitzMenuView"
 				component={CarletonWeitzMenuScreen}
+				name="CarletonWeitzMenu"
 			/>
 			<Stack.Screen
-				name="CarletonSaylesMenuView"
 				component={CarletonSaylesMenuScreen}
+				name="CarletonSaylesMenu"
 			/>
-			<Stack.Screen name="MenuItemDetailView" component={MenuItemDetailView} />
-			<Stack.Screen name="PrintJobsView" component={PrintJobsView} />
-			<Stack.Screen name="PrinterListView" component={PrinterListView} />
-			<Stack.Screen
-				name="PrintJobReleaseView"
-				component={PrintJobReleaseView}
-			/>
+			<Stack.Screen component={MenuItemDetail} name="MenuItemDetail" />
+			<Stack.Screen component={PrintJobs} name="PrintJobs" />
+			<Stack.Screen component={PrinterList} name="PrinterList" />
+			<Stack.Screen component={PrintJobRelease} name="PrintJobRelease" /> */}
 		</Stack.Navigator>
 	)
 }

@@ -1,21 +1,32 @@
 import * as c from '@frogpond/colors'
 import type {Gradient} from '@frogpond/colors'
+import { RootStackParamList } from '../navigation/types'
 
-export type ViewType = {
-	type: 'view' | 'url' | 'browser-url'
-	view: string
+type CommonView = {
 	title: string
 	icon: string
 	foreground: 'light' | 'dark'
 	tint: string
 	gradient?: Gradient
-	url?: string
 }
+
+type NativeView = {
+	type: 'view'
+	view: keyof RootStackParamList
+}
+
+type WebLinkView = {
+	type: 'url' | 'browser-url'
+	url: string
+	view: string
+}
+
+export type ViewType = CommonView & (NativeView | WebLinkView)
 
 export const allViews: Array<ViewType> = [
 	{
 		type: 'view',
-		view: 'MenusView',
+		view: 'Menus',
 		title: 'Menus',
 		icon: 'bowl',
 		foreground: 'light',
@@ -24,7 +35,7 @@ export const allViews: Array<ViewType> = [
 	},
 	{
 		type: 'view',
-		view: 'SISView',
+		view: 'SIS',
 		title: 'SIS',
 		icon: 'fingerprint',
 		foreground: 'light',
@@ -33,7 +44,7 @@ export const allViews: Array<ViewType> = [
 	},
 	{
 		type: 'view',
-		view: 'BuildingHoursView',
+		view: 'BuildingHours',
 		title: 'Building Hours',
 		icon: 'clock',
 		foreground: 'light',
@@ -42,7 +53,7 @@ export const allViews: Array<ViewType> = [
 	},
 	{
 		type: 'view',
-		view: 'CalendarView',
+		view: 'Calendar',
 		title: 'Calendar',
 		icon: 'calendar',
 		foreground: 'light',
@@ -52,7 +63,7 @@ export const allViews: Array<ViewType> = [
 	{
 		type: 'url',
 		url: 'https://www.stolaf.edu/directory',
-		view: 'DirectoryView',
+		view: 'Directory',
 		title: 'Directory',
 		icon: 'v-card',
 		foreground: 'light',
@@ -61,7 +72,7 @@ export const allViews: Array<ViewType> = [
 	},
 	{
 		type: 'view',
-		view: 'StreamingView',
+		view: 'Streaming',
 		title: 'Streaming Media',
 		icon: 'video',
 		foreground: 'light',
@@ -70,7 +81,7 @@ export const allViews: Array<ViewType> = [
 	},
 	{
 		type: 'view',
-		view: 'NewsView',
+		view: 'News',
 		title: 'News',
 		icon: 'news',
 		foreground: 'light',
@@ -80,7 +91,7 @@ export const allViews: Array<ViewType> = [
 	{
 		type: 'url',
 		url: 'https://www.myatlascms.com/map/index.php?id=294',
-		view: 'MapView',
+		view: 'Map',
 		title: 'Campus Map',
 		icon: 'map',
 		foreground: 'light',
@@ -89,7 +100,7 @@ export const allViews: Array<ViewType> = [
 	},
 	{
 		type: 'view',
-		view: 'ContactsView',
+		view: 'Contacts',
 		title: 'Important Contacts',
 		icon: 'phone',
 		foreground: 'light',
@@ -98,7 +109,7 @@ export const allViews: Array<ViewType> = [
 	},
 	{
 		type: 'view',
-		view: 'TransportationView',
+		view: 'Transportation',
 		title: 'Transportation',
 		icon: 'address',
 		foreground: 'light',
@@ -107,7 +118,7 @@ export const allViews: Array<ViewType> = [
 	},
 	{
 		type: 'view',
-		view: 'DictionaryView',
+		view: 'Dictionary',
 		title: 'Campus Dictionary',
 		icon: 'open-book',
 		foreground: 'light',
@@ -116,7 +127,7 @@ export const allViews: Array<ViewType> = [
 	},
 	{
 		type: 'view',
-		view: 'StudentOrgsView',
+		view: 'StudentOrgs',
 		title: 'Student Orgs',
 		icon: 'globe',
 		foreground: 'light',
@@ -126,7 +137,7 @@ export const allViews: Array<ViewType> = [
 	{
 		type: 'url',
 		url: 'https://moodle.stolaf.edu/',
-		view: 'MoodleView',
+		view: 'Moodle',
 		title: 'Moodle',
 		icon: 'graduation-cap',
 		foreground: 'light',
@@ -135,7 +146,7 @@ export const allViews: Array<ViewType> = [
 	},
 	{
 		type: 'view',
-		view: 'HelpView',
+		view: 'Help',
 		title: 'Report A Problem',
 		icon: 'help',
 		foreground: 'light',
@@ -144,7 +155,7 @@ export const allViews: Array<ViewType> = [
 	},
 	{
 		type: 'view',
-		view: 'PrintJobsView',
+		view: 'PrintJobs',
 		title: 'stoPrint',
 		icon: 'print',
 		foreground: 'light',
@@ -154,7 +165,7 @@ export const allViews: Array<ViewType> = [
 	{
 		type: 'browser-url',
 		url: 'https://wp.stolaf.edu/safety-committee/report/',
-		view: 'SafetyView',
+		view: 'Safety',
 		title: 'Safety Concerns',
 		icon: 'warning',
 		foreground: 'dark',

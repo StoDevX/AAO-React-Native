@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {Platform, StyleSheet} from 'react-native'
+import {Platform, StyleProp, StyleSheet, ViewStyle} from 'react-native'
 import {Separator} from '@frogpond/separator'
 
 const styles = StyleSheet.create({
@@ -9,13 +9,13 @@ const styles = StyleSheet.create({
 })
 
 type PropsType = {
-	styles?: any
+	styles?: StyleProp<ViewStyle>
 	fullWidth?: boolean
 	spacing?: {left?: number; right?: number}
 	force?: boolean
 }
 
-export function ListSeparator(props: PropsType) {
+export function ListSeparator(props: PropsType): JSX.Element | null {
 	if (Platform.OS === 'android' && !props.force) {
 		return null
 	}
@@ -33,4 +33,10 @@ export function ListSeparator(props: PropsType) {
 	}
 
 	return <Separator style={[styles.separator, spacing, props.styles]} />
+}
+
+export function FullWidthSeparator<T extends Record<string, unknown>>(
+	props: T,
+): JSX.Element {
+	return <ListSeparator fullWidth={true} {...props} />
 }

@@ -17,7 +17,7 @@ import {makeStore, initRedux} from './redux'
 import * as navigation from './navigation'
 import {ThemeProvider} from '@frogpond/app-theme'
 import {ActionSheetProvider} from '@expo/react-native-action-sheet'
-import { NavigationContainer } from '@react-navigation/native'
+import {NavigationContainer} from '@react-navigation/native'
 
 const store = makeStore()
 initRedux(store)

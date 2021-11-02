@@ -1,6 +1,5 @@
 import * as React from 'react'
 import {timezone} from '@frogpond/constants'
-import type {NavigationScreenProp} from 'react-navigation'
 import {fetch} from '@frogpond/fetch'
 import {EventList} from '@frogpond/event-list'
 import type {PoweredBy} from '@frogpond/event-list'
@@ -18,8 +17,7 @@ type Props = {
 		| {type: 'ics'; url: string}
 	detailView?: string
 	eventMapper?: (event: EventType) => EventType
-	navigation: NavigationScreenProp<undefined>
-	poweredBy?: PoweredBy
+	poweredBy: PoweredBy
 }
 
 type State = {
@@ -98,11 +96,10 @@ export class CccCalendarView extends React.Component<Props, State> {
 		}
 
 		return (
-			<EventList
+			<EventList.EventList
 				detailView={this.props.detailView}
 				events={this.state.events}
 				message={this.state.error?.message}
-				navigation={this.props.navigation}
 				now={this.state.now}
 				onRefresh={this.refresh}
 				poweredBy={this.props.poweredBy}

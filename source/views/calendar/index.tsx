@@ -1,10 +1,8 @@
 import * as React from 'react'
 import {TabBarIcon} from '@frogpond/navigation-tabs'
 import {CccCalendarView} from '@frogpond/ccc-calendar'
-import {
-	createBottomTabNavigator,
-	BottomTabScreenProps,
-} from '@react-navigation/bottom-tabs'
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs'
+import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 
 type Params = {
 	StOlafCalendarView: undefined
@@ -14,13 +12,10 @@ type Params = {
 
 const Tabs = createBottomTabNavigator<Params>()
 
-function StOlafCalendarView(
-	props: BottomTabScreenProps<Params, 'StOlafCalendarView'>,
-) {
+function StOlafCalendarView() {
 	return (
 		<CccCalendarView
 			calendar="stolaf"
-			navigation={props.navigation}
 			poweredBy={{
 				title: 'Powered by the St. Olaf calendar',
 				href: 'https://wp.stolaf.edu/calendar/',
@@ -29,13 +24,10 @@ function StOlafCalendarView(
 	)
 }
 
-function OlevilleCalendarView(
-	props: BottomTabScreenProps<Params, 'OlevilleCalendarView'>,
-) {
+function OlevilleCalendarView() {
 	return (
 		<CccCalendarView
 			calendar="oleville"
-			navigation={props.navigation}
 			poweredBy={{
 				title: 'Powered by the Oleville calendar',
 				href: 'https://oleville.com/events/',
@@ -44,13 +36,10 @@ function OlevilleCalendarView(
 	)
 }
 
-function NorthfieldCalendarView(
-	props: BottomTabScreenProps<Params, 'NorthfieldCalendarView'>,
-) {
+function NorthfieldCalendarView() {
 	return (
 		<CccCalendarView
 			calendar="northfield"
-			navigation={props.navigation}
 			poweredBy={{
 				title: 'Powered by VisitingNorthfield.com',
 				href: 'https://visitingnorthfield.com/events/calendar/',
@@ -59,24 +48,35 @@ function NorthfieldCalendarView(
 	)
 }
 
-export default function CalendarView() {
+function CalendarView(): JSX.Element {
 	return (
 		<Tabs.Navigator>
 			<Tabs.Screen
-				name="StOlafCalendarView"
 				component={StOlafCalendarView}
+				name="StOlafCalendarView"
 				options={{tabBarLabel: 'St. Olaf', tabBarIcon: TabBarIcon('school')}}
 			/>
 			<Tabs.Screen
-				name="OlevilleCalendarView"
 				component={OlevilleCalendarView}
+				name="OlevilleCalendarView"
 				options={{tabBarLabel: 'Oleville', tabBarIcon: TabBarIcon('happy')}}
 			/>
 			<Tabs.Screen
-				name="NorthfieldCalendarView"
 				component={NorthfieldCalendarView}
+				name="NorthfieldCalendarView"
 				options={{tabBarLabel: 'Northfield', tabBarIcon: TabBarIcon('happy')}}
 			/>
 		</Tabs.Navigator>
 	)
 }
+
+export {CalendarView as View}
+
+export const NavigationKey = 'Calendar'
+
+export const NavigationOptions: NativeStackNavigationOptions = {
+	title: 'Calendar',
+	headerBackTitle: 'Back',
+}
+
+export type NavigationParams = undefined
