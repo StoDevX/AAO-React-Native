@@ -1,3 +1,4 @@
+import { ViewStyle } from 'react-native'
 import type {Moment} from 'moment-timezone'
 import type {
 	AndroidNativeProps,
@@ -16,7 +17,7 @@ export interface BaseDatetimePickerProps {
 	showPickeriOS?: boolean
 	showPickerAndroid?: boolean
 	showPickerButtonAndroid?: boolean
-	style?: React.CSSProperties
+	style?: ViewStyle
 	setShowPickerAndroid?: React.Dispatch<React.SetStateAction<boolean>>
 	onChange?: () => void
 }
