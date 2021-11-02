@@ -16,7 +16,7 @@ export interface BaseDatetimePickerProps {
 	showPickeriOS?: boolean
 	showPickerAndroid?: boolean
 	showPickerButtonAndroid?: boolean
-	style?: any
+	style?: React.CSSProperties
 	setShowPickerAndroid?: React.Dispatch<React.SetStateAction<boolean>>
 	onChange?: () => void
 }
