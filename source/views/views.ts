@@ -1,6 +1,6 @@
 import * as c from '@frogpond/colors'
 import type {Gradient} from '@frogpond/colors'
-import { RootStackParamList } from '../navigation/types'
+import {RootStackParamList} from '../navigation/types'
 
 type CommonView = {
 	title: string

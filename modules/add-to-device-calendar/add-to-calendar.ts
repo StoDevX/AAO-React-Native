@@ -8,9 +8,9 @@ type Props = {
 	event: EventType
 	compactMessages?: boolean
 	render: (args: {
-		message: string,
-		disabled: boolean,
-		onPress: () => void,
+		message: string
+		disabled: boolean
+		onPress: () => void
 	}) => JSX.Element
 }
 

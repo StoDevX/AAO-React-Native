@@ -10,10 +10,10 @@ import {ShareButton} from '@frogpond/navigation-buttons'
 import {ListFooter} from '@frogpond/lists'
 import {shareEvent, getTimes} from './calendar-util'
 import {AddToCalendar} from '@frogpond/add-to-device-calendar'
-import { RouteProp, useRoute } from '@react-navigation/native'
-import { RootStackParamList } from '../../source/navigation/types'
-import { NativeStackNavigationOptions } from '@react-navigation/native-stack'
-import { NavigationKey } from './event-detail-base'
+import {RouteProp, useRoute} from '@react-navigation/native'
+import {RootStackParamList} from '../../source/navigation/types'
+import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+import {NavigationKey} from './event-detail-base'
 
 function MaybeSection({header, content}: {header: string; content: string}) {
 	return content ? (
@@ -26,16 +26,18 @@ function MaybeSection({header, content}: {header: string; content: string}) {
 export const NavigationOptions = (props: {
 	route: RouteProp<RootStackParamList, typeof NavigationKey>
 }): NativeStackNavigationOptions => {
-	let {event} = props.route.params;
+	let {event} = props.route.params
 	return {
-		title: event.title, 
-		headerRight: (p) => <ShareButton {...p} onPress={() => shareEvent(event)} />,
+		title: event.title,
+		headerRight: (p) => (
+			<ShareButton {...p} onPress={() => shareEvent(event)} />
+		),
 	}
 }
 
 export function EventDetail(): JSX.Element {
-	let route = useRoute<RouteProp<RootStackParamList, typeof NavigationKey>>();
-	let {event, poweredBy} = route.params;
+	let route = useRoute<RouteProp<RootStackParamList, typeof NavigationKey>>()
+	let {event, poweredBy} = route.params
 
 	return (
 		<ScrollView>

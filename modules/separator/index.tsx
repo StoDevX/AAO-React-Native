@@ -18,6 +18,10 @@ const styles = StyleSheet.create({
 	},
 })
 
-export function Separator({style}: {style?: StyleProp<ViewStyle>}): JSX.Element {
+export function Separator({
+	style,
+}: {
+	style?: StyleProp<ViewStyle>
+}): JSX.Element {
 	return <View style={[styles.separator, style]} />
 }

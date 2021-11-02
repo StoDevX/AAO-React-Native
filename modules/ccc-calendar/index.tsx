@@ -61,7 +61,10 @@ export class CccCalendarView extends React.Component<Props, State> {
 		return events
 	}
 
-	getEvents = async (reload?: boolean, now: Moment = moment.tz(timezone())): Promise<void> => {
+	getEvents = async (
+		reload?: boolean,
+		now: Moment = moment.tz(timezone()),
+	): Promise<void> => {
 		let url
 		if (typeof this.props.calendar === 'string') {
 			url = API(`/calendar/named/${this.props.calendar}`)

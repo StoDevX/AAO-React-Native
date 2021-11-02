@@ -2,8 +2,8 @@
 
 // import {HomeView} from '../views/home'
 // import * as Calendar from '../views/calendar'
-import { EventType } from '@frogpond/event-type'
-import { PoweredBy } from '@frogpond/event-list'
+import {EventType} from '@frogpond/event-type'
+import {PoweredBy} from '@frogpond/event-list'
 
 import * as calendar from '../views/calendar'
 
@@ -11,7 +11,7 @@ export type RootStackParamList = {
 	Home: undefined
 	Profile: {userId: string}
 	Feed: {sort: 'latest' | 'top'} | undefined
-	EventDetail: {event: EventType, poweredBy: PoweredBy}
+	EventDetail: {event: EventType; poweredBy: PoweredBy}
 	BuildingHoursDetail: undefined
 	BuildingHours: undefined
 	BuildingHoursProblemReport: undefined

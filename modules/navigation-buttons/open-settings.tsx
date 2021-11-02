@@ -3,7 +3,7 @@ import {Touchable} from '@frogpond/touchable'
 import {Icon, platformPrefixIconName} from '@frogpond/icon'
 import {commonStyles, leftButtonStyles} from './styles'
 import {useNavigation} from '@react-navigation/native'
-import { HeaderBackButtonProps } from '@react-navigation/native-stack/lib/typescript/src/types'
+import {HeaderBackButtonProps} from '@react-navigation/native-stack/lib/typescript/src/types'
 
 export function OpenSettingsButton(_props: HeaderBackButtonProps): JSX.Element {
 	let navigation = useNavigation()

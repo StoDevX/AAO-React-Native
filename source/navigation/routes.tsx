@@ -68,7 +68,7 @@ const styles = StyleSheet.create({
 
 import {RootStackParamList} from './types'
 
-const Stack = createNativeStackNavigator<RootStackParamList>();
+const Stack = createNativeStackNavigator<RootStackParamList>()
 
 export function RootStack(): JSX.Element {
 	return (
@@ -86,7 +86,11 @@ export function RootStack(): JSX.Element {
 				name={calendar.NavigationKey}
 				options={calendar.NavigationOptions}
 			/>
-			<Stack.Screen component={eventDetail.View} name="EventDetail" options={eventDetail.NavigationOptions} />
+			<Stack.Screen
+				component={eventDetail.View}
+				name="EventDetail"
+				options={eventDetail.NavigationOptions}
+			/>
 			{/* <Stack.Screen
 				component={BuildingHoursDetail}
 				name="BuildingHoursDetail"
