@@ -8,7 +8,6 @@ import {
 } from 'react-native'
 
 import {getTheme} from '@frogpond/app-theme'
-import type {TopLevelViewPropsType} from '../types'
 import type {ViewType} from '../views'
 import {allViews} from '../views'
 import {Column} from '@frogpond/layout'
@@ -17,9 +16,8 @@ import {HomeScreenButton, CELL_MARGIN} from './button'
 import {trackedOpenUrl, openUrlInBrowser} from '@frogpond/open-url'
 import {OpenSettingsButton} from '@frogpond/navigation-buttons'
 import {UnofficialAppNotice} from './notice'
-import { RouteProp, useNavigation } from '@react-navigation/native'
-import { RootStackParamList } from '../../navigation/types'
-import { NativeStackNavigationOptions } from '@react-navigation/native-stack'
+import {useNavigation} from '@react-navigation/native'
+import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 
 const styles = StyleSheet.create({
 	cells: {
@@ -38,7 +36,7 @@ type Props = {
 }
 
 function HomePage({views = allViews}: Props): JSX.Element {
-	let navigation = useNavigation();
+	let navigation = useNavigation()
 	let columns = partitionByIndex(views)
 
 	let {androidStatusBarColor, statusBarStyle} = getTheme()
@@ -67,8 +65,10 @@ function HomePage({views = allViews}: Props): JSX.Element {
 											return trackedOpenUrl({url: view.url, id: view.view})
 										} else if (view.type === 'browser-url') {
 											return openUrlInBrowser({url: view.url, id: view.view})
-										} else {
+										} else if (view.type === 'view') {
 											return navigation.navigate(view.view)
+										} else {
+											throw new Error(`unexpected view type ${view.type}`)
 										}
 									}}
 									view={view}
@@ -91,7 +91,7 @@ export const NavigationKey = 'Home'
 export const NavigationOptions: NativeStackNavigationOptions = {
 	title: 'All About Olaf',
 	headerBackTitle: 'Home',
-	headerLeft: (props) =>  <OpenSettingsButton {...props} />,
+	headerLeft: (props) => <OpenSettingsButton {...props} />,
 }
 
 export type NavigationParams = undefined
