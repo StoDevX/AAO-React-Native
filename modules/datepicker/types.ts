@@ -8,7 +8,7 @@ export interface BaseDatetimePickerProps {
 	// dep-specific
 	initialDate: Moment
 	minuteInterval?: 1 | 2 | 3 | 4 | 5 | 6 | 10 | 12 | 15 | 20 | 30
-	mode: IOSNativeProps['mode'] | AndroidNativeProps['mode']
+	mode: IOSProps['mode'] | AndroidProps['mode']
 	format?: string
 	onDateChange: (moment: Moment) => void
 
@@ -22,11 +22,11 @@ export interface BaseDatetimePickerProps {
 }
 
 interface IOSProps {
-	mode: IOSNativeProps['mode']
+	mode: NonNullable<IOSNativeProps['mode']>
 }
 
 interface AndroidProps {
-	mode: AndroidNativeProps['mode']
+	mode: NonNullable<AndroidNativeProps['mode']>
 }
 
 export type IosDatetimePickerProps = BaseDatetimePickerProps & IOSProps

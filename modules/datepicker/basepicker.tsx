@@ -16,6 +16,7 @@ const FORMATS = {
 	date: 'YYYY-MM-DD',
 	datetime: 'YYYY-MM-DD HH:mm',
 	time: 'HH:mm',
+	countdown: 'HH:mm',
 }
 
 export const BaseDateTimePicker = (
