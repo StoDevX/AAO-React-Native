@@ -62,8 +62,8 @@ export const BaseDateTimePicker = (
 				<Button
 					color={theme.buttonBackground}
 					onPress={() => props.setShowPickerAndroid?.(true)}
-					title={formatDate(date)}
 					testID='datepicker-button-android'
+					title={formatDate(date)}
 				/>
 			)}
 
