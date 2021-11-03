@@ -14,6 +14,8 @@
 		13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
+		3ACC8B85273335930069E931 /* windmill@2x~iPad.png in Resources */ = {isa = PBXBuildFile; fileRef = 3ACC8B83273335930069E931 /* windmill@2x~iPad.png */; };
+		3ACC8B86273335930069E931 /* windmill@3x~iPad.png in Resources */ = {isa = PBXBuildFile; fileRef = 3ACC8B84273335930069E931 /* windmill@3x~iPad.png */; };
 		3AE408501E1E280800F0FD83 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3AE4084F1E1E280800F0FD83 /* LaunchScreen.storyboard */; };
 		73D9CDBC4508F72E41AEC435 /* libPods-AllAboutOlafUITests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B2E8DB9FB3455FB20CA95B7 /* libPods-AllAboutOlafUITests.a */; };
 		91E0D7C5F14D215A7C718236 /* libPods-AllAboutOlaf.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EB28C76433AECBFEDDD439B /* libPods-AllAboutOlaf.a */; };
@@ -328,6 +330,8 @@
 		146833FF1AC3E56700842450 /* React.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = React.xcodeproj; path = "../node_modules/react-native/React/React.xcodeproj"; sourceTree = "<group>"; };
 		363F0F7690215720438C6ABC /* Pods-AllAboutOlaf.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AllAboutOlaf.debug.xcconfig"; path = "Target Support Files/Pods-AllAboutOlaf/Pods-AllAboutOlaf.debug.xcconfig"; sourceTree = "<group>"; };
 		3A0CEA711DEA20340036E739 /* RCTAnimation.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTAnimation.xcodeproj; path = "../node_modules/react-native/Libraries/NativeAnimation/RCTAnimation.xcodeproj"; sourceTree = "<group>"; };
+		3ACC8B83273335930069E931 /* windmill@2x~iPad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "windmill@2x~iPad.png"; path = "../images/icons/windmill@2x~iPad.png"; sourceTree = "<group>"; };
+		3ACC8B84273335930069E931 /* windmill@3x~iPad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "windmill@3x~iPad.png"; path = "../images/icons/windmill@3x~iPad.png"; sourceTree = "<group>"; };
 		3AE4084F1E1E280800F0FD83 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = AllAboutOlaf/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		4B2E8DB9FB3455FB20CA95B7 /* libPods-AllAboutOlafUITests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-AllAboutOlafUITests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		67354E87236E0E5900B1E8E8 /* AllAboutOlaf.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AllAboutOlaf.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -389,6 +393,8 @@
 			children = (
 				00B0A215202FB153002DBB76 /* windmill@2x.png */,
 				00B0A1DD202FB153002DBB76 /* windmill@3x.png */,
+				3ACC8B83273335930069E931 /* windmill@2x~iPad.png */,
+				3ACC8B84273335930069E931 /* windmill@3x~iPad.png */,
 			);
 			name = "Alternate Icons";
 			sourceTree = "<group>";
@@ -1011,7 +1017,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3ACC8B86273335930069E931 /* windmill@3x~iPad.png in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
+				3ACC8B85273335930069E931 /* windmill@2x~iPad.png in Resources */,
 				00B0A216202FB153002DBB76 /* windmill@3x.png in Resources */,
 				00B0A217202FB153002DBB76 /* windmill@2x.png in Resources */,
 				3AE408501E1E280800F0FD83 /* LaunchScreen.storyboard in Resources */,
