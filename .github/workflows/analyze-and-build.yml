@@ -10,11 +10,11 @@ jobs:
     name: JavaScript Checks
     runs-on: ubuntu-18.04
     steps:
+      - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
         with: 
           node-version: ^16.0
           cache: npm
-      - uses: actions/checkout@v2
       - run: npm ci
       - run: npm run validate-data
       - run: npm run bundle-data
@@ -32,6 +32,7 @@ jobs:
     name: Build for Android
     runs-on: ubuntu-18.04
     steps:
+      - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
         with: 
           node-version: ^16.0
@@ -39,7 +40,6 @@ jobs:
       - uses: ruby/setup-ruby@v1
         with: 
           ruby-version: ^2.6
-      - uses: actions/checkout@v2
       - run: npm ci
       - run: gem install bundler:2.2.22
       - run: bundle check || bundle install
@@ -67,12 +67,12 @@ jobs:
     name: Build for iOS
     runs-on: macos-11
     steps:
+      - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
         with: 
           node-version: ^16.0
           cache: npm
       - run: sudo xcode-select -s /Applications/Xcode_13.1.app
-      - uses: actions/checkout@v2
       - run: git fetch --prune --unshallow
       - run: gem install bundler:2.2.22
       - run: bundle check || bundle install
