@@ -43,3 +43,15 @@ target 'AllAboutOlaf' do
 	use_native_modules!
 	inhibit_all_warnings!
 end
+
+post_install do |installer|
+	# this looks redundant, but it should help xcode use the buildcache wrappers in CI
+	installer.pods_project.targets.each do |target|
+		target.build_configurations.each do |config|
+			config.build_settings["CC"] = "clang"
+			config.build_settings["LD"] = "clang"
+			config.build_settings["CXX"] = "clang++"
+			config.build_settings["LDPLUSPLUS"] = "clang++"
+		end
+	end
+end
