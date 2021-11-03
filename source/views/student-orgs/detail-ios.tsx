@@ -8,7 +8,7 @@ import type {TopLevelViewPropsType} from '../types'
 import {openUrl} from '@frogpond/open-url'
 import {sendEmail} from '../../components/send-email'
 import {showNameOrEmail} from './util'
-import {entities} from '@frogpond/html-lib'
+import {decode} from '@frogpond/html-lib'
 
 const styles = StyleSheet.create({
 	name: {
@@ -72,7 +72,7 @@ export class StudentOrgsDetailView extends React.PureComponent<Props> {
 
 					{meetings ? (
 						<Section header="MEETINGS">
-							<SelectableCell text={entities.decode(meetings)} />
+							<SelectableCell text={decode(meetings)} />
 						</Section>
 					) : null}
 
@@ -118,7 +118,7 @@ export class StudentOrgsDetailView extends React.PureComponent<Props> {
 
 					{description ? (
 						<Section header="DESCRIPTION">
-							<SelectableCell text={entities.decode(description)} />
+							<SelectableCell text={decode(description)} />
 						</Section>
 					) : null}
 
