@@ -12,7 +12,7 @@ def auto_beta
 		return
 	end
 
-	if lane_context[:PLATFORM_NAME] == :ios
+	if simulator_also?
 		UI.message 'skipping non-simulator build on CI'
 		return
 	end
