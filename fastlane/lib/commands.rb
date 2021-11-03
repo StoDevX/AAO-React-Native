@@ -12,21 +12,19 @@ def auto_beta
 		return
 	end
 
-	case lane_context[:PLATFORM_NAME]
-	when :ios
+	if lane_context[:PLATFORM_NAME] == :ios
 		UI.message 'skipping non-simulator build on CI'
 		return
-
-	when :android
-		if api_keys_available?
-			UI.message 'signing and building, but not deploying'
-			build
-			return
-		end
-
-		UI.message 'just building (not signing)'
-		check_build
 	end
+
+	if api_keys_available?
+		UI.message 'signing and building, but not deploying'
+		build
+		return
+	end
+
+	UI.message 'just building (not signing)'
+	check_build
 end
 
 # Adds the github token for stodevx-bot to the CI machine
