@@ -41,6 +41,15 @@ jobs:
         with: 
           ruby-version: '2.6'
           bundler-cache: true
+      - name: Restore Gradle cache
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
       - run: npm ci
       - name: Raise the fs.inotify ulimits to 524288 watches/queued events/user instances
         run: |
