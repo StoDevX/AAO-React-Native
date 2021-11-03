@@ -14,7 +14,7 @@ function install() {
 
 		integrations: [
 			new Sentry.ReactNativeTracing({
-				tracingOrigins: ['localhost', 'my-site-url.com', /^\//u],
+				tracingOrigins: ['localhost', 'frogpond.tech', /^\//u],
 			}),
 		],
 	})
