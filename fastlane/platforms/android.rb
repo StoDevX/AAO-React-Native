@@ -66,8 +66,10 @@ platform :android do
 
 	desc 'Run the appropriate action on CI'
 	lane :'ci-run' do
-		# prepare for the bright future with signed android betas
-		authorize_ci_for_keys
+		if api_keys_available?
+			# prepare for the bright future with signed android betas
+			authorize_ci_for_keys
+		end
 
 		# and run
 		auto_beta
