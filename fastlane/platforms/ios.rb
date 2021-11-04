@@ -125,14 +125,16 @@ platform :ios do
 
 	desc 'Run iOS builds or tests, as appropriate'
 	lane :'ci-run' do
-		# set up a temporary keychain for signing
-		setup_keychain
+		if api_keys_available?
+			# set up a temporary keychain for signing
+			setup_keychain
 
-		# set up things so they can run
-		authorize_ci_for_keys
+			# set up things so they can run
+			authorize_ci_for_keys
 
-		# hook up the app store connect api token
-		load_app_store_connect_api_token
+			# hook up the app store connect api token
+			load_app_store_connect_api_token
+		end
 
 		# and run
 		auto_beta
