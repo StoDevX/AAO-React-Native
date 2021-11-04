@@ -3,7 +3,7 @@ image: pause-kitchen
 category: Food
 
 schedule:
-  - title: General Hours
+  - title: Hours
     hours:
       - {days: [Mo, Tu, We, Th, Fr], from: '4:00pm', to: '12:00am'}
       - {days: [Sa, Su], from: '12:00pm', to: '12:00am'}
