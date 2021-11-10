@@ -103,7 +103,7 @@ jobs:
       - run: npm ci
         env:
           SKIP_POSTINSTALL: '1'
-      - run: bundle exec pod install
+      - run: bundle exec pod install --deployment --repo-update
         working-directory: ./ios
       - run: brew tap wix/brew
       - run: brew install applesimutils

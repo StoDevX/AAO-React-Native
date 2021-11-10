@@ -188,7 +188,7 @@ PODS:
   - React-jsinspector (0.61.5)
   - react-native-calendar-events (1.7.3):
     - React
-  - react-native-netinfo (6.0.4):
+  - react-native-netinfo (6.1.0):
     - React-Core
   - react-native-restart (0.0.18):
     - React-Core
@@ -245,14 +245,14 @@ PODS:
     - React-Core
   - RNSearchBar (3.5.1):
     - React
-  - RNSentry (3.2.1):
+  - RNSentry (3.2.3):
     - React-Core
-    - Sentry (= 7.4.8)
+    - Sentry (= 7.5.1)
   - RNVectorIcons (6.6.0):
     - React
-  - Sentry (7.4.8):
-    - Sentry/Core (= 7.4.8)
-  - Sentry/Core (7.4.8)
+  - Sentry (7.5.1):
+    - Sentry/Core (= 7.5.1)
+  - Sentry/Core (7.5.1)
   - Yoga (1.14.0)
 
 DEPENDENCIES:
@@ -393,11 +393,11 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   boost-for-react-native: 39c7adb57c4e60d6c5479dd8623128eb5b3f0f2c
   BVLinearGradient: e3aad03778a456d77928f594a649e96995f1c872
-  DoubleConversion: 831926d9b8bf8166fd87886c4abab286c2422662
+  DoubleConversion: 5805e889d232975c086db112ece9ed034df7a0b2
   FBLazyVector: aaeaf388755e4f29cd74acbc9e3b8da6d807c37f
   FBReactNativeSpec: 118d0d177724c2d67f08a59136eb29ef5943ec75
   Folly: 30e7936e1c45c08d884aa59369ed951a8e68cf51
-  glog: 5337263514dd6f09803962437687240c5dc39aa4
+  glog: 1f3da668190260b06b429bb211bfbee5cd790c28
   hawkrives_react-native-alternate-icons: 1c8c2f6ff08096f067c5306b4e7e4f42e5cc06e1
   RCTRequired: b153add4da6e7dbc44aebf93f3cf4fcae392ddf1
   RCTTypeSafety: 9aa1b91d7f9310fc6eadc3cf95126ffe818af320
@@ -409,7 +409,7 @@ SPEC CHECKSUMS:
   React-jsiexecutor: d5525f9ed5f782fdbacb64b9b01a43a9323d2386
   React-jsinspector: fa0ecc501688c3c4c34f28834a76302233e29dc0
   react-native-calendar-events: eaa63134881d97488feb21ea114158f712894018
-  react-native-netinfo: 1c7676413ab265759c7b3da205efab163f5366ef
+  react-native-netinfo: 5a001e406317eaaf1e4846906650e107dadcaa72
   react-native-restart: e0abe1ceec03e6d0956853c91fa2dc55e8becfa4
   react-native-safari-view: 955d7160d159241b8e9395d12d10ea0ef863dcdd
   react-native-webview: fcb5f377aadc216273300f452ee0d321fb85809b
@@ -430,11 +430,11 @@ SPEC CHECKSUMS:
   RNReanimated: 514a11da3a2bcc6c3dfd9de32b38e2b9bf101926
   RNScreens: 45c457af3d2ee9e08fc01e70da87e653d46b1198
   RNSearchBar: 9860431356b7d12a8449d2fddb2b5f3c78d1e99f
-  RNSentry: 791f73292501ed1b2e95e62e9388b68fcc13261d
+  RNSentry: 97bc62fa65b7d663daee16fbf9771470852217cf
   RNVectorIcons: 0bb4def82230be1333ddaeee9fcba45f0b288ed4
-  Sentry: df92b78ba4ab86cf2a47ff4cdc07758a5ce18f03
+  Sentry: 0718c3ad7a08e1107599610795adaf08864102f3
   Yoga: f2a7cd4280bfe2cca5a7aed98ba0eb3d1310f18b
 
-PODFILE CHECKSUM: e7fdf5eacb5cefe87fd01d871022382326071708
+PODFILE CHECKSUM: 15485fba8f75be731bb1d31dc1719c937a339f51
 
 COCOAPODS: 1.11.2
