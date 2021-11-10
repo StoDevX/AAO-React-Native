@@ -94,6 +94,7 @@ jobs:
           key: ${{ runner.os }}-pods-${{ hashFiles('**/Podfile.lock') }}
           restore-keys: |
             ${{ runner.os }}-pods-
+      - run: cat ios/Podfile.lock
       - uses: mikehardy/buildcache-action@v1
         continue-on-error: true
         with:
