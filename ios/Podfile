@@ -23,6 +23,8 @@ target 'AllAboutOlaf' do
 	pod 'React-Core/RCTWebSocket', :path => '../node_modules/react-native/'
 	pod 'RNDateTimePicker', :path => '../node_modules/@react-native-community/datetimepicker'
 
+	pod 'RNSentry', :path => '../node_modules/@sentry/react-native'
+
 	pod 'React-cxxreact', :path => '../node_modules/react-native/ReactCommon/cxxreact'
 	pod 'React-jsi', :path => '../node_modules/react-native/ReactCommon/jsi'
 	pod 'React-jsiexecutor', :path => '../node_modules/react-native/ReactCommon/jsiexecutor'
