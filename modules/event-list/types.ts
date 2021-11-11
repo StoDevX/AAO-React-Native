@@ -1,7 +1,7 @@
 import type {NavigationScreenProp} from 'react-navigation'
 import type {EventType} from '@frogpond/event-type'
 
-type PoweredBy = {
+export type PoweredBy = {
 	title: string
 	href: string
 }
