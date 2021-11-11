@@ -82,7 +82,7 @@ export class EventDetail extends React.PureComponent<Props> {
 
 		return (
 			<ScrollView>
-				<Title title={event.title} />
+				<Title title={event} />
 				<MaybeCard content={getTimes(event)} header="When" />
 				<MaybeCard content={event.location} header="Location" />
 				<MaybeCard content={event.description} header="Description" />
@@ -91,7 +91,7 @@ export class EventDetail extends React.PureComponent<Props> {
 
 				<AddToCalendar
 					event={event}
-					render={({message, disabled, onPress}) => (
+					render={(message, disabled, onPress) => (
 						<Card footer={message} style={styles.card}>
 							<ButtonCell
 								disabled={disabled}

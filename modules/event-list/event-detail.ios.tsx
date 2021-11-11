@@ -53,7 +53,7 @@ export class EventDetail extends React.Component<Props> {
 
 					<AddToCalendar
 						event={event}
-						render={({message, disabled, onPress}) => (
+						render={(message, disabled, onPress) => (
 							<Section footer={message}>
 								<ButtonCell
 									disabled={disabled}
