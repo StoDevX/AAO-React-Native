@@ -1,8 +1,8 @@
 import * as React from 'react'
 import {Text, ScrollView, StyleSheet} from 'react-native'
 import type {EventType} from '@frogpond/event-type'
-import type {PoweredBy} from './types'
-import {NavigationScreenProp} from 'react-navigation'
+import type {NavigationHeaderProps, NullableElement} from './types'
+import type {Props as EventDetailProps} from './types'
 import {ShareButton} from '@frogpond/navigation-buttons'
 import {openUrl} from '@frogpond/open-url'
 import {Card} from '@frogpond/silly-card'
@@ -35,7 +35,13 @@ const styles = StyleSheet.create({
 	},
 })
 
-function MaybeCard({header, content}: {header: string; content: string}) {
+function MaybeCard({
+	header,
+	content,
+}: {
+	header: string
+	content: string
+}): NullableElement {
 	return content.trim() ? (
 		<Card header={header} style={styles.card}>
 			<Text style={styles.cardBody}>{content}</Text>
@@ -43,11 +49,11 @@ function MaybeCard({header, content}: {header: string; content: string}) {
 	) : null
 }
 
-function Title({title}: {title: EventType}) {
+function Title({title}: {title: EventType['title']}): NullableElement {
 	return title ? <Text style={styles.name}>{title}</Text> : null
 }
 
-function Links({urls}: {urls: Array<string>}) {
+function Links({urls}: {urls: Array<string>}): NullableElement {
 	return urls.length ? (
 		<Card header="Links" style={styles.card}>
 			{urls.map((url) => (
@@ -59,16 +65,12 @@ function Links({urls}: {urls: Array<string>}) {
 	) : null
 }
 
-type Navigation = NavigationScreenProp<{
-	params: {event: EventType; poweredBy?: PoweredBy}
-}>
-
-type Props = {
-	navigation: Navigation
-}
-
-export class EventDetail extends React.PureComponent<Props> {
-	static navigationOptions = ({navigation}: {navigation: Navigation}) => {
+export class EventDetail extends React.PureComponent<EventDetailProps> {
+	static navigationOptions = ({
+		navigation,
+	}: {
+		navigation: EventDetailProps['navigation']
+	}): NavigationHeaderProps => {
 		let {event} = navigation.state.params
 
 		return {
@@ -77,12 +79,12 @@ export class EventDetail extends React.PureComponent<Props> {
 		}
 	}
 
-	render() {
+	render(): React.ReactElement {
 		let {event, poweredBy} = this.props.navigation.state.params
 
 		return (
 			<ScrollView>
-				<Title title={event} />
+				<Title title={event.title} />
 				<MaybeCard content={getTimes(event)} header="When" />
 				<MaybeCard content={event.location} header="Location" />
 				<MaybeCard content={event.description} header="Description" />
@@ -102,7 +104,7 @@ export class EventDetail extends React.PureComponent<Props> {
 					)}
 				/>
 
-				{poweredBy.title ? (
+				{poweredBy?.title ? (
 					<ListFooter href={poweredBy.href} title={poweredBy.title} />
 				) : null}
 			</ScrollView>
