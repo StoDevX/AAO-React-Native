@@ -1,10 +1,10 @@
 import * as React from 'react'
 import {StyleSheet, Text} from 'react-native'
 import type {EventType} from '@frogpond/event-type'
+import type {NullableString} from './types'
 import * as c from '@frogpond/colors'
 import {Row, Column} from '@frogpond/layout'
 import {ListRow, Detail, Title} from '@frogpond/lists'
-import {fastGetTrimmedText} from '@frogpond/html-lib'
 import {Bar} from './vertical-bar'
 import {times} from './times'
 
@@ -37,13 +37,13 @@ type Props = {
 }
 
 export default class EventRow extends React.PureComponent<Props> {
-	_onPress = () => this.props.onPress(this.props.event)
+	_onPress = (): void => this.props.onPress(this.props.event)
 
-	render() {
+	render(): React.ReactElement {
 		let {event} = this.props
-		let title = fastGetTrimmedText(event.title)
+		let title = event.title
 
-		let subtitle = event[event.config.subtitle]
+		let subtitle: NullableString = event[event.config.subtitle]
 		subtitle = subtitle ? subtitle.trim() : null
 
 		return (
