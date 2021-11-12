@@ -1,7 +1,6 @@
 import * as React from 'react'
 import {StyleSheet, Text} from 'react-native'
 import type {EventType} from '@frogpond/event-type'
-import type {NullableString} from './types'
 import * as c from '@frogpond/colors'
 import {Row, Column} from '@frogpond/layout'
 import {ListRow, Detail, Title} from '@frogpond/lists'
@@ -43,7 +42,7 @@ export default class EventRow extends React.PureComponent<Props> {
 		let {event} = this.props
 		let title = event.title
 
-		let subtitle: NullableString = event[event.config.subtitle]
+		let subtitle: string | null = event[event.config.subtitle]
 		subtitle = subtitle ? subtitle.trim() : null
 
 		return (

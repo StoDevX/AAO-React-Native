@@ -41,7 +41,3 @@ export type NavigationHeaderProps = {
 	title: string
 	headerRight: JSX.Element
 }
-
-// TODO: Move these into a separate file for convenience types
-export type NullableElement = JSX.Element | null
-export type NullableString = string | null

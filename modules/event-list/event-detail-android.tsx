@@ -1,7 +1,7 @@
 import * as React from 'react'
 import {Text, ScrollView, StyleSheet} from 'react-native'
 import type {EventType} from '@frogpond/event-type'
-import type {NavigationHeaderProps, NullableElement} from './types'
+import type {NavigationHeaderProps} from './types'
 import type {Props as EventDetailProps} from './types'
 import {ShareButton} from '@frogpond/navigation-buttons'
 import {openUrl} from '@frogpond/open-url'
@@ -41,7 +41,7 @@ function MaybeCard({
 }: {
 	header: string
 	content: string
-}): NullableElement {
+}): JSX.Element | null {
 	return content.trim() ? (
 		<Card header={header} style={styles.card}>
 			<Text style={styles.cardBody}>{content}</Text>
@@ -49,11 +49,11 @@ function MaybeCard({
 	) : null
 }
 
-function Title({title}: {title: EventType['title']}): NullableElement {
+function Title({title}: {title: EventType['title']}): JSX.Element | null {
 	return title ? <Text style={styles.name}>{title}</Text> : null
 }
 
-function Links({urls}: {urls: Array<string>}): NullableElement {
+function Links({urls}: {urls: Array<string>}): JSX.Element | null {
 	return urls.length ? (
 		<Card header="Links" style={styles.card}>
 			{urls.map((url) => (

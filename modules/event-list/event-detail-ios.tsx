@@ -6,7 +6,7 @@ import {
 	ButtonCell,
 	SelectableCell,
 } from '@frogpond/tableview'
-import type {NavigationHeaderProps, NullableElement} from './types'
+import type {NavigationHeaderProps} from './types'
 import type {Props as EventDetailProps} from './types'
 import {ShareButton} from '@frogpond/navigation-buttons'
 import {ListFooter} from '@frogpond/lists'
@@ -19,7 +19,7 @@ function MaybeSection({
 }: {
 	header: string
 	content: string
-}): NullableElement {
+}): JSX.Element | null {
 	return content.trim() ? (
 		<Section header={header}>
 			<SelectableCell text={content} />
