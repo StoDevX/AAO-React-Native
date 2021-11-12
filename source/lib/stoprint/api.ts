@@ -28,7 +28,7 @@ const PAPERCUT_API_HEADERS = {
 	Origin: PAPERCUT,
 }
 
-async function papercut<T>(url: string, opts?: ExpandedFetchArgs) {
+function papercut<T>(url: string, opts?: ExpandedFetchArgs): Promise<T> {
 	return fpFetch(url, {cache: 'no-store', ...opts}).json<T>()
 }
 

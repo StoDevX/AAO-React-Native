@@ -13,6 +13,6 @@
     "react-native-vector-icons": "^6.0.0"
   },
   "devDependencies": {
-    "@types/react-native-vector-icons": "^6.4.9"
+    "@types/react-native-vector-icons": "^6.4.10"
   }
 }

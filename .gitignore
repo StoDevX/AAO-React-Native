@@ -32,7 +32,6 @@ local.properties
 # node.js
 node_modules/
 npm-debug.log
-yarn-error.log
 .eslintcache
 
 # Tests and code coverage
@@ -62,7 +61,6 @@ fastlane/play-private-key.json
 
 # rubygems bundle
 /vendor/bundle/
-/.bundle/
 
 # detox artifacts folder
 /artifacts

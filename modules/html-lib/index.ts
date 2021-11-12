@@ -1,7 +1,7 @@
 import {parseDocument} from 'htmlparser2'
 
-import {innerText} from 'domutils'
-export {innerText}
+import {textContent} from 'domutils'
+export {textContent}
 
 import type {Node, Document} from 'domhandler'
 
@@ -19,7 +19,7 @@ export function parseHtml(string: string): Document {
 }
 
 export function innerTextWithSpaces(elem: Node | Node[]): string {
-	return innerText(elem).split(/\s+/u).join(' ').trim()
+	return textContent(elem).split(/\s+/u).join(' ').trim()
 }
 
 export function removeHtmlWithRegex(str: string): string {
