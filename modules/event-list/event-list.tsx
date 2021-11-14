@@ -2,32 +2,20 @@ import * as React from 'react'
 import {StyleSheet, SectionList} from 'react-native'
 import * as c from '@frogpond/colors'
 import toPairs from 'lodash/toPairs'
-import type {NavigationScreenProp} from 'react-navigation'
+import type {EventListProps, EventGroup} from './types'
 import type {EventType} from '@frogpond/event-type'
-import type {PoweredBy} from './types'
 import groupBy from 'lodash/groupBy'
 import type {Moment} from 'moment-timezone'
 import {ListSeparator, ListSectionHeader} from '@frogpond/lists'
 import {NoticeView} from '@frogpond/notice'
 import EventRow from './event-row'
 
-const FullWidthSeparator = (props) => (
+const FullWidthSeparator = (props: React.ReactElement) => (
 	<ListSeparator fullWidth={true} {...props} />
 )
 
-type Props = {
-	detailView?: string
-	events: EventType[]
-	message?: string
-	refreshing: boolean
-	onRefresh: () => any
-	navigation: NavigationScreenProp
-	now: Moment
-	poweredBy?: PoweredBy
-}
-
-export class EventList extends React.Component<Props> {
-	groupEvents = (events: EventType[], now: Moment): any => {
+export class EventList extends React.Component<EventListProps> {
+	groupEvents = (events: EventType[], now: Moment): EventGroup[] => {
 		// the proper return type is $ReadOnlyArray<{title: string, data: $ReadOnlyArray<EventType>}>
 		let grouped = groupBy(events, (event) => {
 			if (event.isOngoing) {
@@ -45,7 +33,7 @@ export class EventList extends React.Component<Props> {
 		}))
 	}
 
-	onPressEvent = (event: EventType) => {
+	onPressEvent = (event: EventType): void => {
 		let detailView = this.props.detailView || 'EventDetailView'
 		this.props.navigation.navigate(detailView, {
 			event,
@@ -58,13 +46,13 @@ export class EventList extends React.Component<Props> {
 		<ListSectionHeader spacing={{left: 10}} title={title} />
 	)
 
-	renderItem = ({item}: {item: EventType}) => (
+	renderItem = ({item}: {item: EventType}): JSX.Element => (
 		<EventRow event={item} onPress={this.onPressEvent} />
 	)
 
-	keyExtractor = (item: EventType, index: number) => index.toString()
+	keyExtractor = (_item: EventType, index: number): string => index.toString()
 
-	render() {
+	render(): React.ReactElement {
 		if (this.props.message) {
 			return <NoticeView text={this.props.message} />
 		}
