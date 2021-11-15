@@ -6,15 +6,20 @@ import {
 	ButtonCell,
 	SelectableCell,
 } from '@frogpond/tableview'
-import type {EventType} from '@frogpond/event-type'
-import type {PoweredBy} from './types'
-import type {NavigationScreenProp} from 'react-navigation'
+import type {NavigationHeaderProps} from './types'
+import type {Props as EventDetailProps} from './types'
 import {ShareButton} from '@frogpond/navigation-buttons'
 import {ListFooter} from '@frogpond/lists'
 import {shareEvent, getTimes} from './calendar-util'
 import {AddToCalendar} from '@frogpond/add-to-device-calendar'
 
-function MaybeSection({header, content}: {header: string; content: string}) {
+function MaybeSection({
+	header,
+	content,
+}: {
+	header: string
+	content: string
+}): JSX.Element | null {
 	return content.trim() ? (
 		<Section header={header}>
 			<SelectableCell text={content} />
@@ -22,16 +27,12 @@ function MaybeSection({header, content}: {header: string; content: string}) {
 	) : null
 }
 
-type Navigation = NavigationScreenProp<{
-	params: {event: EventType; poweredBy?: PoweredBy}
-}>
-
-type Props = {
-	navigation: Navigation
-}
-
-export class EventDetail extends React.Component<Props> {
-	static navigationOptions = ({navigation}: {navigation: Navigation}) => {
+export class EventDetail extends React.Component<EventDetailProps> {
+	static navigationOptions = ({
+		navigation,
+	}: {
+		navigation: EventDetailProps['navigation']
+	}): NavigationHeaderProps => {
 		let {event} = navigation.state.params
 
 		return {
@@ -40,7 +41,7 @@ export class EventDetail extends React.Component<Props> {
 		}
 	}
 
-	render() {
+	render(): React.ReactElement {
 		let {event, poweredBy} = this.props.navigation.state.params
 
 		return (
@@ -53,7 +54,7 @@ export class EventDetail extends React.Component<Props> {
 
 					<AddToCalendar
 						event={event}
-						render={({message, disabled, onPress}) => (
+						render={(message, disabled, onPress) => (
 							<Section footer={message}>
 								<ButtonCell
 									disabled={disabled}
@@ -64,7 +65,7 @@ export class EventDetail extends React.Component<Props> {
 						)}
 					/>
 
-					{poweredBy && poweredBy.title ? (
+					{poweredBy?.title ? (
 						<ListFooter href={poweredBy.href} title={poweredBy.title} />
 					) : null}
 				</TableView>
