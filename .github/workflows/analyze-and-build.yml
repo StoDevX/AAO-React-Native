@@ -19,7 +19,7 @@ jobs:
       - run: npm run validate-data
       - run: npm run bundle-data
       - run: npm run pretty --no-write --list-different
-      - run: npx tsc || true
+      - run: npx tsc
       - run: npm run lint
       - name: Run tests
         run: npm run test -- --coverage
