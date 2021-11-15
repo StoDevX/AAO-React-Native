@@ -89,7 +89,7 @@ export function StudentOrgsView(props: Props) {
 			<NoticeView
 				buttonText="Try Again"
 				onPress={reload}
-				text="A problem occured while loading the definitions"
+				text="A problem occured while loading the orgs"
 			/>
 		)
 	}
