@@ -194,8 +194,8 @@ PODS:
     - React-Core
   - react-native-safari-view (1.0.0):
     - React
-  - react-native-webview (8.1.2):
-    - React
+  - react-native-webview (11.14.3):
+    - React-Core
   - React-RCTActionSheet (0.61.5):
     - React-Core/RCTActionSheetHeaders (= 0.61.5)
   - React-RCTAnimation (0.61.5):
@@ -412,7 +412,7 @@ SPEC CHECKSUMS:
   react-native-netinfo: 5a001e406317eaaf1e4846906650e107dadcaa72
   react-native-restart: e0abe1ceec03e6d0956853c91fa2dc55e8becfa4
   react-native-safari-view: 955d7160d159241b8e9395d12d10ea0ef863dcdd
-  react-native-webview: fcb5f377aadc216273300f452ee0d321fb85809b
+  react-native-webview: b83cf1aa6b4453fe53ffcc5896c36cdf37f0383f
   React-RCTActionSheet: 600b4d10e3aea0913b5a92256d2719c0cdd26d76
   React-RCTAnimation: 791a87558389c80908ed06cc5dfc5e7920dfa360
   React-RCTBlob: d89293cc0236d9cb0933d85e430b0bbe81ad1d72
