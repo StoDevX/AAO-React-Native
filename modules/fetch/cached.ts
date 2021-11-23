@@ -86,7 +86,10 @@ async function getItem(key: string): Promise<GetItemResult> {
 	])
 
 	if (!response) {
-		return {response, policy: null}
+		// TODO: This line used to just return the `response`, which has a type of `string`.
+		// We return a promise, so can't we just reject? :-)  Regardless, make TypeScript
+		// treat this like the type error it was supposed to be.
+		return {response: undefined as unknown as Response, policy: undefined}
 	}
 
 	let {body, ...init} = JSON.parse(response)
