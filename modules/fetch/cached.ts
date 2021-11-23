@@ -25,17 +25,24 @@ function headersInstanceToObject(headers: Headers): CachePolicy.Headers {
 	return fromPairs([...Object.entries(headers)])
 }
 
-// Converts a whatwg Response into a plain object for http-cache-semantics
-function responseForCachePolicy({url, method, headers}: Response) {
-	// Response must have a headers property with all header names in lower
+// Convert a react-native Request into a CachePolicy.Request for http-cache-semantics.
+function requestForCachePolicy({
+	url,
+	method,
+	headers,
+}: Request): CachePolicy.Request {
+	// CachePolicy.Request must have a headers property with all header names in lower
 	// case. `url` and `method` are optional.
 
 	return {url, method, headers: headersInstanceToObject(headers)}
 }
 
-// Converts a whatwg Request into a plain object for http-cache-semantics
-function requestForCachePolicy({status, headers}: Request) {
-	// Request must have a headers property with all header names in lower
+// Convert a react-native Response into a CachePolicy.Response for http-cache-semantics.
+function responseForCachePolicy({
+	status,
+	headers,
+}: Response): CachePolicy.Response {
+	// CachePolicy.Response must have a headers property with all header names in lower
 	// case. `url` and `status` are optional.
 
 	return {status, headers: headersInstanceToObject(headers)}
@@ -67,10 +74,15 @@ type CacheItemArgs = {
 	policy: CachePolicy
 	bundled?: boolean
 }
-async function cacheItem({key, response, policy, bundled}: CacheItemArgs) {
-	response = await serializeResponse(response)
+async function cacheItem({
+	key,
+	response,
+	policy,
+	bundled,
+}: CacheItemArgs): Promise<void> {
+	let storableResponse = await serializeResponse(response)
 
-	let strResponse = JSON.stringify(response)
+	let strResponse = JSON.stringify(storableResponse)
 	await AsyncStorage.multiSet([
 		[`${ROOT}:${key}:response`, strResponse],
 		[`${ROOT}:${key}:policy`, JSON.stringify(policy.toObject())],
