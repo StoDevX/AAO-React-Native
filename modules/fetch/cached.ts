@@ -20,8 +20,8 @@ async function serializeResponse(r: Response): Promise<StorableResponse> {
 	return {headers, status, statusText, body}
 }
 
-// Converts a whatwg Headers instance into a plain object for http-cache-semantics
-function headersInstanceToObject(headers: Headers): Dictionary<any> {
+// Converts a react-native Headers instance into a plain object for http-cache-semantics
+function headersInstanceToObject(headers: Headers): CachePolicy.Headers {
 	return fromPairs([...Object.entries(headers)])
 }
 
