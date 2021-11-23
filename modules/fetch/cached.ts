@@ -48,7 +48,7 @@ function responseForCachePolicy({
 	return {status, headers: headersInstanceToObject(headers)}
 }
 
-export async function insertForUrl(url: string, data: any) {
+export async function insertForUrl(url: string, data: any): Promise<void> {
 	let key = `urlcache:${url}`
 
 	let {policy: oldPolicy} = await getItem(key)
