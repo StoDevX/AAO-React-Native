@@ -1,6 +1,7 @@
 import {AsyncStorage} from 'react-native'
 import CachePolicy from 'http-cache-semantics'
 import fromPairs from 'lodash/fromPairs'
+import type {Dictionary} from 'lodash'
 
 const ROOT = 'fp'
 const debug = false
@@ -20,7 +21,7 @@ async function serializeResponse(r: Response): Promise<StorableResponse> {
 }
 
 // Converts a whatwg Headers instance into a plain object for http-cache-semantics
-function headersInstanceToObject(headers: Headers) {
+function headersInstanceToObject(headers: Headers): Dictionary<any> {
 	return fromPairs([...Object.entries(headers)])
 }
 
