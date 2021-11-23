@@ -5,13 +5,10 @@ import fromPairs from 'lodash/fromPairs'
 const ROOT = 'fp'
 const debug = false
 
-// Pulls out the important bits from a Request for storage
+// Pulls out the important bits from a Response for storage
 async function serializeResponse(r: Request) {
 	let {headers, status, statusText} = r
 	let body = await r.clone().text()
-	if ('entries' in headers) {
-		headers = [...headers.entries()]
-	}
 	return {headers, status, statusText, body}
 }
 
