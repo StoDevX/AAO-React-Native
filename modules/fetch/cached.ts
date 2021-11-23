@@ -5,8 +5,15 @@ import fromPairs from 'lodash/fromPairs'
 const ROOT = 'fp'
 const debug = false
 
+interface StorableResponse {
+	readonly headers: Headers
+	readonly status: number
+	readonly statusText: string
+	readonly body: string
+}
+
 // Pulls out the important bits from a Response for storage
-async function serializeResponse(r: Request) {
+async function serializeResponse(r: Response): Promise<StorableResponse> {
 	let {headers, status, statusText} = r
 	let body = await r.clone().text()
 	return {headers, status, statusText, body}
