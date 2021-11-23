@@ -1,5 +1,3 @@
-/* globals Request, Response, Headers */
-
 import {AsyncStorage} from 'react-native'
 import CachePolicy from 'http-cache-semantics'
 import fromPairs from 'lodash/fromPairs'
