@@ -188,7 +188,7 @@ PODS:
   - React-jsinspector (0.61.5)
   - react-native-calendar-events (1.7.3):
     - React
-  - react-native-netinfo (6.1.0):
+  - react-native-netinfo (6.2.0):
     - React-Core
   - react-native-restart (0.0.18):
     - React-Core
@@ -409,7 +409,7 @@ SPEC CHECKSUMS:
   React-jsiexecutor: d5525f9ed5f782fdbacb64b9b01a43a9323d2386
   React-jsinspector: fa0ecc501688c3c4c34f28834a76302233e29dc0
   react-native-calendar-events: eaa63134881d97488feb21ea114158f712894018
-  react-native-netinfo: 5a001e406317eaaf1e4846906650e107dadcaa72
+  react-native-netinfo: de0d4343f8d5ec9b92653b17a0ef47091317986a
   react-native-restart: e0abe1ceec03e6d0956853c91fa2dc55e8becfa4
   react-native-safari-view: 955d7160d159241b8e9395d12d10ea0ef863dcdd
   react-native-webview: fcb5f377aadc216273300f452ee0d321fb85809b
