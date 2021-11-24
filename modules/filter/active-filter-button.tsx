@@ -25,6 +25,7 @@ export function ActiveFilterButton({filter, label, onRemove, style}: Props) {
 	let iconName = Platform.select({
 		ios: 'ios-close-circle',
 		android: 'md-close-circle',
+		default: '',
 	})
 
 	let foreground = {color: theme.buttonForeground}

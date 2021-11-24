@@ -67,6 +67,7 @@ class FilterToolbarButton extends React.PureComponent<Props, State> {
 		let icon = Platform.select({
 			ios: 'ios-arrow-down',
 			android: 'md-arrow-dropdown',
+			default: '',
 		})
 
 		let activeButton = {
