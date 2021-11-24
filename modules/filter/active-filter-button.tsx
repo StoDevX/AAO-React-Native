@@ -10,7 +10,7 @@ import {
 import Icon from 'react-native-vector-icons/Ionicons'
 import {white} from '@frogpond/colors'
 import type {AppTheme} from '@frogpond/app-theme'
-import {useTheme} from '@frogpond/app-theme'
+import {getTheme} from '@frogpond/app-theme'
 
 type Props = {
 	filter: FilterType
@@ -20,7 +20,7 @@ type Props = {
 }
 
 export function ActiveFilterButton({filter, label, onRemove, style}: Props) {
-	let theme: AppTheme = useTheme()
+	let theme: AppTheme = getTheme()
 
 	let iconName = Platform.select({
 		ios: 'ios-close-circle',
