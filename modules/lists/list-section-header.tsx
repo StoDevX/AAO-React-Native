@@ -88,7 +88,7 @@ export function ListSectionHeader(props: Props) {
 
 	const theme: AppTheme = getTheme()
 
-	let containerTheme = {paddingLeft: leftSpacing}
+	let containerTheme: ViewStyle = {paddingLeft: leftSpacing}
 	let titleTheme = {}
 
 	if (Platform.OS === 'android') {
