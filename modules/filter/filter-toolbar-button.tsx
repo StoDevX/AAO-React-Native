@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {StyleSheet, Text, Platform} from 'react-native'
+import {StyleSheet, Text, Platform, TextStyle} from 'react-native'
 import Icon from 'react-native-vector-icons/Ionicons'
 import type {FilterType} from './types'
 import {FilterPopover} from './filter-popover'
@@ -85,7 +85,7 @@ class FilterToolbarButton extends React.PureComponent<Props, State> {
 		let activeContentStyle = isActive ? inactiveText : buttonStyles.inactiveText
 
 		let textWithIconStyle = icon ? buttonStyles.textWithIcon : null
-		let activeTextStyle = {
+		let activeTextStyle: TextStyle = {
 			fontWeight: isActive && Platform.OS === 'android' ? 'bold' : 'normal',
 		}
 
