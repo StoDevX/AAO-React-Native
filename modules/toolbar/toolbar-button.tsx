@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {StyleSheet, View, Text, Platform} from 'react-native'
+import {StyleSheet, View, Text, Platform, TextStyle} from 'react-native'
 import {Icon} from '@frogpond/icon'
 import type {Glyphs} from '@frogpond/icon'
 import * as c from '@frogpond/colors'
@@ -50,7 +50,7 @@ export function ToolbarButton({title, iconName, isActive}: ButtonPropsType) {
 	let activeContentStyle = isActive ? activeText : buttonStyles.inactiveText
 
 	let textWithIconStyle = iconName ? buttonStyles.textWithIcon : null
-	let activeTextStyle = {
+	let activeTextStyle: TextStyle = {
 		fontWeight: isActive && Platform.OS === 'android' ? 'bold' : 'normal',
 	}
 
