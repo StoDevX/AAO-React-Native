@@ -12,7 +12,7 @@ export function platformPrefixIconName(name: string): Glyphs {
 	}
 
 	const resolvedName: Glyphs =
-		Platform.OS === 'ios' ? `ios-${name}` : `md-${name}`
+		Platform.OS === 'ios' ? (`ios-${name}` as Glyphs) : (`md-${name}` as Glyphs)
 
 	return resolvedName
 }
