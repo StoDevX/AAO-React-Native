@@ -49,7 +49,7 @@ export function ListSection({filter, onChange}: PropsType) {
 	}
 
 	function showAll() {
-		let result
+		let result: ListItemSpecType[]
 
 		if (selected.length === options.length) {
 			// when all items are selected: uncheck them all
