@@ -17,7 +17,7 @@ export type TouchableUnion =
 type Props = TouchableWithoutFeedbackProps & {
 	borderless?: boolean
 	containerStyle?: ViewStyle
-	children?: Array<React.ReactNode>
+	children?: Array<React.ReactNode> | React.ReactNode
 	style?: ViewStyle
 	highlight?: boolean
 	activeOpacity?: number
