@@ -4,7 +4,7 @@ import {Icon} from '@frogpond/icon'
 import type {Glyphs} from '@frogpond/icon'
 import * as c from '@frogpond/colors'
 import type {AppTheme} from '@frogpond/app-theme'
-import {useTheme} from '@frogpond/app-theme'
+import {getTheme} from '@frogpond/app-theme'
 
 const buttonStyles = StyleSheet.create({
 	button: {
@@ -35,7 +35,7 @@ type ButtonPropsType = {
 }
 
 export function ToolbarButton({title, iconName, isActive}: ButtonPropsType) {
-	let theme: AppTheme = useTheme()
+	let theme: AppTheme = getTheme()
 
 	let activeButton = {
 		backgroundColor: theme.toolbarButtonBackground,
