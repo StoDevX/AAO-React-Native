@@ -66,9 +66,9 @@ export class FancyMenu extends React.Component<Props, State> {
 		applyFilters: applyFiltersToItem,
 	}
 
-	state = {
+	state: State = {
 		filters: [],
-		cachedFoodItems: null,
+		cachedFoodItems: undefined,
 	}
 
 	static getDerivedStateFromProps(props: Props, prevState: State) {
