@@ -8,7 +8,11 @@ import type {
 	MenuItemContainerType,
 	StationMenuType,
 } from './types'
-import type {NavigationScreenProp} from 'react-navigation'
+import type {
+	NavigationAction,
+	NavigationRoute,
+	NavigationScreenProp,
+} from 'react-navigation'
 import size from 'lodash/size'
 import values from 'lodash/values'
 import {ListSeparator, ListSectionHeader} from '@frogpond/lists'
@@ -36,7 +40,7 @@ type FilterFunc = (filters: Array<FilterType>, item: MenuItem) => boolean
 
 type DefaultProps = {
 	applyFilters: FilterFunc
-	navigation: NavigationScreenProp
+	navigation: NavigationScreenProp<NavigationRoute, NavigationAction>
 }
 
 type Props = ReactProps & DefaultProps
