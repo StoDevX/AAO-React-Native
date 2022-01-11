@@ -71,7 +71,7 @@
   },
   "dependencies": {
     "@callstack/react-theme-provider": "3.0.7",
-    "@expo/react-native-action-sheet": "3.12.0",
+    "@expo/react-native-action-sheet": "3.13.0",
     "@frogpond/titlecase": "1.0.0",
     "@hawkrives/react-native-alternate-icons": "0.6.0",
     "@react-native-community/netinfo": "6.2.0",
