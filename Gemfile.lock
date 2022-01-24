@@ -225,7 +225,7 @@ GEM
       ast (~> 2.4.1)
     plist (3.6.0)
     public_suffix (4.0.6)
-    rainbow (3.0.0)
+    rainbow (3.1.1)
     rake (13.0.6)
     regexp_parser (2.2.0)
     representable (3.1.1)
@@ -235,9 +235,9 @@ GEM
     retriable (3.1.2)
     rexml (3.2.5)
     rouge (2.0.7)
-    rubocop (1.24.1)
+    rubocop (1.25.0)
       parallel (~> 1.10)
-      parser (>= 3.0.0.0)
+      parser (>= 3.1.0.0)
       rainbow (>= 2.2.2, < 4.0)
       regexp_parser (>= 1.8, < 3.0)
       rexml
@@ -299,7 +299,7 @@ DEPENDENCIES
   fastlane
   json
   netrc
-  rubocop (~> 1.24)
+  rubocop (~> 1.25)
   xcodeproj
 
 BUNDLED WITH
