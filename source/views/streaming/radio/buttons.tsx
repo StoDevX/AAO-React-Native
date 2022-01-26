@@ -10,7 +10,7 @@ import type {PlayerTheme} from './types'
 type ActionButtonBaseProps = {
 	icon: Glyphs
 	text: string
-	onPress: () => mixed
+	onPress: () => unknown
 }
 
 type HocProps = {
@@ -19,7 +19,9 @@ type HocProps = {
 
 type ActionButtonProps = ActionButtonBaseProps & HocProps
 
-const ActionButton = (props: ActionButtonProps) => {
+const ActionButton: React.FunctionComponent<ActionButtonProps> = (
+	props: ActionButtonProps,
+) => {
 	let {icon, text, onPress, theme} = props
 	let bg = {backgroundColor: theme.tintColor}
 	let fg = {color: theme.buttonTextColor}
@@ -35,19 +37,19 @@ const ActionButton = (props: ActionButtonProps) => {
 	)
 }
 
-const ThemedActionButton: React.StatelessFunctionalComponent<ActionButtonBaseProps> =
+const ThemedActionButton: React.FunctionComponent<ActionButtonBaseProps> =
 	withTheme(ActionButton)
 
 export {ThemedActionButton as ActionButton}
 
-export const CallButton = ({onPress}: {onPress: () => mixed}) => (
+export const CallButton = ({onPress}: {onPress: () => unknown}) => (
 	<ThemedSmallActionButton
 		icon={Platform.OS === 'ios' ? 'ios-call' : 'md-call'}
 		onPress={onPress}
 	/>
 )
 
-export const ShowCalendarButton = ({onPress}: {onPress: () => mixed}) => (
+export const ShowCalendarButton = ({onPress}: {onPress: () => unknown}) => (
 	<ThemedSmallActionButton
 		icon={Platform.OS === 'ios' ? 'ios-calendar' : 'md-calendar'}
 		onPress={onPress}
@@ -56,7 +58,7 @@ export const ShowCalendarButton = ({onPress}: {onPress: () => mixed}) => (
 
 type SmallActionButtonBaseProps = {
 	icon: Glyphs
-	onPress: () => mixed
+	onPress: () => unknown
 }
 
 type SmallActionButtonProps = ActionButtonBaseProps & HocProps
@@ -74,7 +76,7 @@ const SmallActionButton = (props: SmallActionButtonProps) => {
 	)
 }
 
-const ThemedSmallActionButton: React.StatelessFunctionalComponent<SmallActionButtonBaseProps> =
+const ThemedSmallActionButton: React.FunctionComponent<SmallActionButtonBaseProps> =
 	withTheme(SmallActionButton)
 
 const styles = StyleSheet.create({
