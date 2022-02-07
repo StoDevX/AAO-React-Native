@@ -115,7 +115,7 @@
     "react-navigation": "4.4.4",
     "react-navigation-material-bottom-tabs": "1.1.1",
     "react-navigation-stack": "1.10.3",
-    "react-navigation-tabs": "2.11.1",
+    "react-navigation-tabs": "2.11.2",
     "react-redux": "7.2.6",
     "redux": "4.1.2",
     "redux-logger": "3.0.6",
