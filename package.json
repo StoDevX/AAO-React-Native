@@ -129,9 +129,9 @@
     "wordwrap": "1.0.0"
   },
   "devDependencies": {
-    "@babel/core": "7.17.4",
+    "@babel/core": "7.17.5",
     "@babel/preset-typescript": "7.16.7",
-    "@babel/runtime": "7.17.0",
+    "@babel/runtime": "7.17.2",
     "@sentry/cli": "1.72.1",
     "@types/base-64": "1.0.0",
     "@types/http-cache-semantics": "4.0.1",
@@ -160,7 +160,7 @@
     "ajv-keywords": "5.1.0",
     "babel-core": "7.0.0-bridge.0",
     "babel-jest": "27.4.6",
-    "eslint": "8.7.0",
+    "eslint": "8.9.0",
     "eslint-config-prettier": "8.3.0",
     "eslint-plugin-babel": "5.3.1",
     "eslint-plugin-react": "7.28.0",
