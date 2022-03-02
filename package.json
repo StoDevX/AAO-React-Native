@@ -146,7 +146,7 @@
     "@types/react-native-safari-view": "2.0.5",
     "@types/react-native-vector-icons": "6.4.10",
     "@types/react-navigation-material-bottom-tabs": "2.0.0",
-    "@types/react-redux": "7.1.22",
+    "@types/react-redux": "7.1.23",
     "@types/react-test-renderer": "16.9.3",
     "@types/redux-logger": "3.0.9",
     "@types/redux-promise": "0.5.29",
