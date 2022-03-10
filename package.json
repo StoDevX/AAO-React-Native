@@ -138,7 +138,7 @@
     "@types/jest": "27.4.0",
     "@types/js-yaml": "4.0.5",
     "@types/lodash": "4.14.178",
-    "@types/react": "17.0.39",
+    "@types/react": "17.0.40",
     "@types/react-native": "0.61.5",
     "@types/react-native-button": "3.0.1",
     "@types/react-native-communications": "2.2.1",
