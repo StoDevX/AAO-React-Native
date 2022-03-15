@@ -74,7 +74,7 @@
     "@expo/react-native-action-sheet": "3.13.0",
     "@frogpond/titlecase": "1.0.0",
     "@hawkrives/react-native-alternate-icons": "0.6.0",
-    "@react-native-community/netinfo": "6.2.0",
+    "@react-native-community/netinfo": "8.1.0",
     "@sentry/react-native": "3.3.2",
     "base-64": "1.0.0",
     "buffer": "6.0.3",
