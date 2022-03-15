@@ -131,7 +131,7 @@
   "devDependencies": {
     "@babel/core": "7.17.5",
     "@babel/preset-typescript": "7.16.7",
-    "@babel/runtime": "7.17.2",
+    "@babel/runtime": "7.17.7",
     "@sentry/cli": "1.72.2",
     "@types/base-64": "1.0.0",
     "@types/http-cache-semantics": "4.0.1",
