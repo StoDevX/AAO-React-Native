@@ -75,7 +75,7 @@
     "@frogpond/titlecase": "1.0.0",
     "@hawkrives/react-native-alternate-icons": "0.6.0",
     "@react-native-community/netinfo": "6.2.0",
-    "@sentry/react-native": "3.3.2",
+    "@sentry/react-native": "3.3.3",
     "base-64": "1.0.0",
     "buffer": "6.0.3",
     "delay": "5.0.0",
@@ -131,7 +131,7 @@
   "devDependencies": {
     "@babel/core": "7.17.5",
     "@babel/preset-typescript": "7.16.7",
-    "@babel/runtime": "7.17.7",
+    "@babel/runtime": "7.17.8",
     "@sentry/cli": "1.73.2",
     "@types/base-64": "1.0.0",
     "@types/http-cache-semantics": "4.0.1",
