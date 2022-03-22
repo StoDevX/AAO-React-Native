@@ -171,7 +171,7 @@
     "js-yaml": "4.1.0",
     "junk": "4.0.0",
     "metro-react-native-babel-preset": "0.64.0",
-    "minimist": "1.2.5",
+    "minimist": "1.2.6",
     "mkdirp": "1.0.4",
     "pify": "5.0.0",
     "prettier": "2.5.1",
