@@ -2,10 +2,14 @@ import * as React from 'react'
 import {Touchable} from '@frogpond/touchable'
 import {Icon, platformPrefixIconName} from '@frogpond/icon'
 import {commonStyles, leftButtonStyles} from './styles'
-import type {NavigationScreenProp} from 'react-navigation'
+import type {
+	NavigationAction,
+	NavigationRoute,
+	NavigationScreenProp,
+} from 'react-navigation'
 
 type Props = {
-	navigation: NavigationScreenProp
+	navigation: NavigationScreenProp<NavigationRoute, NavigationAction>
 	buttonStyle?: any
 }
 

@@ -10,7 +10,7 @@ type Props = {
 }
 
 export class HtmlContent extends React.Component<Props> {
-	_webview: WebView
+	_webview: WebView | null = null
 
 	onNavigationStateChange = ({url}: {url: string}) => {
 		// iOS navigates to about:blank when you provide raw HTML to a webview.
@@ -25,8 +25,8 @@ export class HtmlContent extends React.Component<Props> {
 			return
 		}
 
-		this._webview.stopLoading()
-		this._webview.goBack()
+		this._webview?.stopLoading()
+		this._webview?.goBack()
 
 		return openUrl(url)
 	}
@@ -38,7 +38,6 @@ export class HtmlContent extends React.Component<Props> {
 				onNavigationStateChange={this.onNavigationStateChange}
 				source={{html: this.props.html, baseUrl: this.props.baseUrl}}
 				style={this.props.style}
-				useWebKit={true}
 			/>
 		)
 	}
