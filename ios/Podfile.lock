@@ -16,7 +16,7 @@ PODS:
     - Flipper-Folly (~> 2.6)
     - Flipper-RSocket (~> 1.4)
   - Flipper-Boost-iOSX (1.76.0.1.11)
-  - Flipper-DoubleConversion (3.1.7)
+  - Flipper-DoubleConversion (1.1.7)
   - Flipper-Fmt (7.1.7)
   - Flipper-Folly (2.6.7):
     - Flipper-Boost-iOSX
@@ -384,7 +384,7 @@ DEPENDENCIES:
   - FBReactNativeSpec (from `../node_modules/react-native/React/FBReactNativeSpec`)
   - Flipper (= 0.99.0)
   - Flipper-Boost-iOSX (= 1.76.0.1.11)
-  - Flipper-DoubleConversion (= 3.1.7)
+  - Flipper-DoubleConversion (= 1.1.7)
   - Flipper-Fmt (= 7.1.7)
   - Flipper-Folly (= 2.6.7)
   - Flipper-Glog (= 0.3.6)
@@ -565,7 +565,7 @@ SPEC CHECKSUMS:
   FBReactNativeSpec: 74c869e2cffa2ffec685cd1bac6788c021da6005
   Flipper: 30e8eeeed6abdc98edaf32af0cda2f198be4b733
   Flipper-Boost-iOSX: fd1e2b8cbef7e662a122412d7ac5f5bea715403c
-  Flipper-DoubleConversion: 57ffbe81ef95306cc9e69c4aa3aeeeeb58a6a28c
+  Flipper-DoubleConversion: 38631e41ef4f9b12861c67d17cb5518d06badc41
   Flipper-Fmt: 60cbdd92fc254826e61d669a5d87ef7015396a9b
   Flipper-Folly: 83af37379faa69497529e414bd43fbfc7cae259a
   Flipper-Glog: 1dfd6abf1e922806c52ceb8701a3599a79a200a6
@@ -618,6 +618,6 @@ SPEC CHECKSUMS:
   Yoga: 2b4a01651f42a32f82e6cef3830a3ba48088237f
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
-PODFILE CHECKSUM: 19892ff888a4bb053bbb36526659ef9c4445f2a9
+PODFILE CHECKSUM: 56c857b980b5040a384ad7ebd57ee3c8ff2d3809
 
 COCOAPODS: 1.11.2
