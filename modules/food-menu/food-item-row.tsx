@@ -31,7 +31,7 @@ export function FoodItemRow({
 			arrowPosition="center"
 			fullWidth={true}
 			onPress={onPress}
-			style={[styles.container, props.style]}
+			style={{...styles.container, ...props.style}}
 		>
 			<Row alignItems="center">
 				<View style={[styles.badge, {width: left}]}>
