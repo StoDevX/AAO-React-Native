@@ -41,6 +41,14 @@ def generate_sourcemap
 	                                      print_command: true)
 end
 
+def sentry_project_name
+	ENV['SENTRY_PROJECT'] || "all-about-olaf"
+end
+
+def sentry_release
+	"#{sentry_project_name}@#{current_bundle_version}"
+end
+
 def bundle_identifier
 	case lane_context[:PLATFORM_NAME]
 	when :android
@@ -58,7 +66,7 @@ def upload_sourcemap_to_sentry
 	       'npx sentry-cli',
 	       'releases',
 	       'files',
-	       "#{bundle_identifier}-#{current_bundle_version}",
+	       sentry_release,
 	       'upload-sourcemaps',
 	       "--dist #{current_bundle_code}",
 	       "--strip-prefix #{File.expand_path(File.join(__FILE__, '..', '..', '..'))}",
