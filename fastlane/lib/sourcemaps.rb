@@ -41,12 +41,8 @@ def generate_sourcemap
 	                                      print_command: true)
 end
 
-def sentry_project_name
-	ENV['SENTRY_PROJECT'] || "all-about-olaf"
-end
-
 def sentry_release
-	"#{sentry_project_name}@#{current_bundle_version}"
+	"#{bundle_identifier}@#{current_bundle_version}"
 end
 
 def sentry_dist
