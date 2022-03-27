@@ -10,6 +10,7 @@ import {SolidBadge as Badge} from '@frogpond/badge'
 import {Header} from './header'
 import {ScheduleTable} from './schedule-table'
 import {ListFooter} from '@frogpond/lists'
+import {LinkTable} from './link-table'
 
 const styles = StyleSheet.create({
 	container: {
@@ -52,6 +53,7 @@ export class BuildingDetail extends React.Component<Props> {
 
 		let openStatus = getShortBuildingStatus(info, now)
 		let schedules = info.schedule || []
+		let links = info.links || []
 
 		return (
 			<ScrollView contentContainerStyle={styles.container}>
@@ -71,6 +73,8 @@ export class BuildingDetail extends React.Component<Props> {
 					onProblemReport={onProblemReport}
 					schedules={schedules}
 				/>
+
+				{links.length ? <LinkTable links={links} /> : null}
 
 				<ListFooter
 					title={
