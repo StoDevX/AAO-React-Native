@@ -49,6 +49,10 @@ def sentry_release
 	"#{sentry_project_name}@#{current_bundle_version}"
 end
 
+def sentry_dist
+	current_bundle_code
+end
+
 def bundle_identifier
 	case lane_context[:PLATFORM_NAME]
 	when :android
@@ -68,7 +72,7 @@ def upload_sourcemap_to_sentry
 	       'files',
 	       sentry_release,
 	       'upload-sourcemaps',
-	       "--dist #{current_bundle_code}",
+	       "--dist #{sentry_dist}",
 	       "--strip-prefix #{File.expand_path(File.join(__FILE__, '..', '..', '..'))}",
 	       '--rewrite',
 	       args[:bundle_output],
