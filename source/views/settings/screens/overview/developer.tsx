@@ -29,9 +29,10 @@ export const DeveloperSection = ({navigation}: Props): React.ReactElement => {
 				'Nothing will appear in the dashboard during development.',
 			)
 		} else {
-			Sentry.setEventSentSuccessfully((event) => {
-				Alert.alert(`Sent an event to Sentry: ${event.event_id}`)
-			})
+			Alert.alert(
+				'Sent an event to Sentry.',
+				'The dashboard should show a new event since this is not development.',
+			)
 		}
 	}
 
