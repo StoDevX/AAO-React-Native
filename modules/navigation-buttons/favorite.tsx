@@ -5,7 +5,7 @@ import {Touchable} from '@frogpond/touchable'
 import {rightButtonStyles as styles} from './styles'
 
 type Props = {
-	onFavorite: () => mixed
+	onFavorite: () => unknown
 	favorited: boolean
 }
 
