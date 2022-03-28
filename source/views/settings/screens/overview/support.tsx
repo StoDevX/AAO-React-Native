@@ -31,7 +31,7 @@ export class SupportSection extends React.Component<Props> {
 		this.props.navigation.navigate(id)
 	}
 
-	onFaqButton = () => this.onPressButton('FaqView')
+	onFaqButton = () => this.onPressButton('Faq')
 
 	onResetButton = () => {
 		Alert.alert(

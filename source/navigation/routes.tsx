@@ -16,7 +16,7 @@ import {EventDetail as eventDetail} from '@frogpond/event-list'
 // 	DictionaryEditor,
 // 	Dictionary,
 // } from '../views/dictionary'
-// import {Faq} from '../views/faqs'
+import * as faqs from '../views/faqs'
 // import {Help} from '../views/help'
 // import {
 // 	CourseDetail,
@@ -33,6 +33,7 @@ import {EventDetail as eventDetail} from '@frogpond/event-list'
 // import {BonAppPicker} from '../views/menus/dev-bonapp-picker'
 // import {MenuItemDetail} from '@frogpond/food-menu/food-item-detail'
 // import NewsView from '../views/news'
+import * as settings from '../views/settings/'
 // import {
 // 	Settings,
 // 	IconSettings,
@@ -57,6 +58,7 @@ import {EventDetail as eventDetail} from '@frogpond/event-list'
 
 import {StyleSheet} from 'react-native'
 import {getTheme} from '@frogpond/app-theme'
+import { CloseScreenButton } from '@frogpond/navigation-buttons'
 
 const theme = getTheme()
 
@@ -85,16 +87,30 @@ export function RootStack(): JSX.Element {
 				name="Home"
 				options={home.NavigationOptions}
 			/>
-			<Stack.Screen
-				component={calendar.View}
-				name={calendar.NavigationKey}
-				options={calendar.NavigationOptions}
-			/>
-			<Stack.Screen
-				component={eventDetail.View}
-				name="EventDetail"
-				options={eventDetail.NavigationOptions}
-			/>
+			<Stack.Group>
+				<Stack.Screen
+					component={calendar.View}
+					name={calendar.NavigationKey}
+					options={calendar.NavigationOptions}
+				/>
+				<Stack.Screen
+					component={eventDetail.View}
+					name="EventDetail"
+					options={eventDetail.NavigationOptions}
+				/>
+			</Stack.Group>
+			<Stack.Group>
+				<Stack.Screen
+					component={settings.SettingsView}
+					name="Settings"
+					options={settings.SettingsNavigationOptions}
+				/>
+				<Stack.Screen
+					component={faqs.View}
+					name="Faq"
+					options={faqs.NavigationOptions}
+				/>
+			</Stack.Group>
 			{/* <Stack.Screen
 				component={BuildingHoursDetail}
 				name="BuildingHoursDetail"
@@ -118,7 +134,6 @@ export function RootStack(): JSX.Element {
 			<Stack.Screen component={Dictionary} name="Dictionary" />
 			<Stack.Screen component={DictionaryEditor} name="DictionaryEditor" />
 			<Stack.Screen component={EventDetail} name="EventDetail" />
-			<Stack.Screen component={Faq} name="Faq" />
 			<Stack.Screen component={Help} name="Help" />
 			<Stack.Screen component={JobDetail} name="JobDetail" />
 			<Stack.Screen component={Legal} name="Legal" />
@@ -126,7 +141,6 @@ export function RootStack(): JSX.Element {
 			<Stack.Screen component={BonAppPicker} name="BonAppPicker" />
 			<Stack.Screen component={News} name="News" />
 			<Stack.Screen component={Privacy} name="Privacy" />
-			<Stack.Screen component={Settings} name="Settings" />
 			<Stack.Screen component={IconSettings} name="IconSettings" />
 			<Stack.Screen component={SIS} name="SIS" />
 			<Stack.Screen
