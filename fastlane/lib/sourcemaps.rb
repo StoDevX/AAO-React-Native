@@ -42,7 +42,7 @@ def generate_sourcemap
 end
 
 def sentry_release
-	"#{bundle_identifier}@#{current_bundle_version}"
+	"#{bundle_identifier}@#{current_bundle_version}+#{current_bundle_code}"
 end
 
 def sentry_dist
