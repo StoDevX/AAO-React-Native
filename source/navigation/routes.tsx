@@ -58,7 +58,6 @@ import * as settings from '../views/settings/'
 
 import {StyleSheet} from 'react-native'
 import {getTheme} from '@frogpond/app-theme'
-import { CloseScreenButton } from '@frogpond/navigation-buttons'
 
 const theme = getTheme()
 
