@@ -109,7 +109,7 @@ class CredentialsLoginSection extends React.Component<Props, State> {
 							disabled={checkingCredentials}
 							label="Password"
 							onChangeText={(text) => this.setState(() => ({password: text}))}
-							onSubmitEditing={loggedIn ? noop : this.logIn}
+							onSubmitEditing={this.logIn}
 							placeholder="password"
 							returnKeyType="done"
 							secureTextEntry={true}

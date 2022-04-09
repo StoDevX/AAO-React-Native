@@ -40,7 +40,7 @@ type PropsType = {
 	fullHeight?: boolean
 	spacing?: {left?: number; right?: number}
 	onPress?: () => any
-	children?: React.Node
+	children?: React.ReactNode
 }
 
 export function ListRow(props: PropsType) {

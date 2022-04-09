@@ -1,8 +1,9 @@
 /* eslint-env jest */
 import {applyToggleFilter} from '../apply-filters'
+import type {FilterType} from '../types'
 
 it('should return `true` if the item has a truthy value', () => {
-	let filter = {
+	let filter: FilterType = {
 		type: 'toggle',
 		key: 'key',
 		enabled: true,
@@ -14,7 +15,7 @@ it('should return `true` if the item has a truthy value', () => {
 })
 
 it('should return `false` if the item has a falsy value', () => {
-	let filter = {
+	let filter: FilterType = {
 		type: 'toggle',
 		key: 'key',
 		enabled: true,
@@ -26,7 +27,7 @@ it('should return `false` if the item has a falsy value', () => {
 })
 
 it('should ignore the `enabled` status of the filter', () => {
-	let filter = {
+	let filter: FilterType = {
 		type: 'toggle',
 		key: 'key',
 		enabled: false,

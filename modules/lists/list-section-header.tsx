@@ -2,7 +2,7 @@ import * as React from 'react'
 import {Platform, StyleSheet, Text, View} from 'react-native'
 import * as c from '@frogpond/colors'
 import type {AppTheme} from '@frogpond/app-theme'
-import {useTheme} from '@frogpond/app-theme'
+import {getTheme} from '@frogpond/app-theme'
 import type {ViewStyle, TextStyle} from 'react-native'
 
 const styles = StyleSheet.create({
@@ -86,9 +86,9 @@ export function ListSectionHeader(props: Props) {
 		spacing: {left: leftSpacing = 15} = {},
 	} = props
 
-	const theme: AppTheme = useTheme()
+	const theme: AppTheme = getTheme()
 
-	let containerTheme = {paddingLeft: leftSpacing}
+	let containerTheme: ViewStyle = {paddingLeft: leftSpacing}
 	let titleTheme = {}
 
 	if (Platform.OS === 'android') {
