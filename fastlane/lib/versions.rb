@@ -27,7 +27,26 @@ end
 # Generate build number
 def build_number
 	# Should last until ~2080 for Android.
-	DateTime.now.to_time.to_i - DateTime.parse("2014-01-01").to_time.to_i
+	old_version_number = DateTime.now.to_time.to_i - DateTime.parse("2014-01-01").to_time.to_i
+
+	# With the old version number scheme, we'll pass this version number at 2022-03-29T06:13:20Z.
+	changeover = 260000000
+
+	# Instead of using up a version number every second, now compute the number of hours since
+	# the changeover point and add that to the changeover.
+	#
+	# This means that as long as the iOS and Android builds start within an hour of each other,
+	# they will use the same distribution code.
+	new_version_number = ((old_version_number - changeover) / 3600) + changeover
+
+	if old_version_number > changeover
+		new_version_number
+	else
+		old_version_number
+	end
+
+	# After the changeover point, we could adjust the logic to just
+	# (DateTime.now.to_time.to_i - DateTime.parse("2022-03-29T06:13:20Z").to_time.to_i) / 3600 + 260000000
 end
 
 # Copy the package.json version into the other version locations
