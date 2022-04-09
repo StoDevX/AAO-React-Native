@@ -15,7 +15,9 @@ function stringifyFilter(filter: FilterType): string {
 	if (filter.type === 'list') {
 		spec = stringifyListFilter(filter)
 	} else if (filter.type === 'picker') {
-		spec = filter.spec.selected
+		if (filter.spec.selected) {
+			spec = filter.spec.selected.label
+		}
 	}
 
 	return JSON.stringify({
