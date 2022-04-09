@@ -75,7 +75,7 @@
     "@frogpond/titlecase": "1.0.0",
     "@hawkrives/react-native-alternate-icons": "0.6.0",
     "@react-native-community/netinfo": "6.2.0",
-    "@sentry/react-native": "3.2.6",
+    "@sentry/react-native": "3.3.3",
     "base-64": "1.0.0",
     "buffer": "6.0.3",
     "delay": "5.0.0",
@@ -121,7 +121,7 @@
     "redux-logger": "3.0.6",
     "redux-promise": "0.6.0",
     "redux-thunk": "2.4.1",
-    "semver": "7.3.5",
+    "semver": "7.3.6",
     "stream": "0.0.2",
     "timers": "0.1.1",
     "tinycolor2": "1.4.2",
@@ -184,6 +184,6 @@
     "typescript": "4.5.5"
   },
   "optionalDependencies": {
-    "detox": "19.4.5"
+    "detox": "19.6.2"
   }
 }

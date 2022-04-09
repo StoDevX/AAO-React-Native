@@ -30,7 +30,7 @@ export function findMenu(
 export function findMeal(
 	meals: ProcessedMealType[],
 	now: Moment,
-): void | ProcessedMealType {
+): ProcessedMealType | undefined {
 	if (!meals.length) {
 		return
 	}

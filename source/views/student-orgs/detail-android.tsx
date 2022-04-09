@@ -65,7 +65,7 @@ export class StudentOrgsDetailView extends React.PureComponent<Props> {
 		}
 	}
 
-	render() {
+	render(): React.ReactElement {
 		let {
 			name: orgName,
 			category,
