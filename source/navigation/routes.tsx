@@ -8,6 +8,7 @@ import * as home from '../views/home'
 // 	BuildingHoursScheduleEditor,
 // 	BuildingHours,
 // } from '../views/building-hours'
+import * as buildingHours from '../views/building-hours'
 import * as calendar from '../views/calendar'
 import {EventDetail as eventDetail} from '@frogpond/event-list'
 // import {ContactsDetail, Contacts} from '../views/contacts'
@@ -110,20 +111,29 @@ export function RootStack(): JSX.Element {
 					options={faqs.NavigationOptions}
 				/>
 			</Stack.Group>
-			{/* <Stack.Screen
-				component={BuildingHoursDetail}
-				name="BuildingHoursDetail"
-			/>
-			<Stack.Screen component={BuildingHours} name="BuildingHours" />
-			<Stack.Screen
-				component={BuildingHoursProblemReport}
-				name="BuildingHoursProblemReport"
-			/>
-			<Stack.Screen
-				component={BuildingHoursScheduleEditor}
-				name="BuildingHoursScheduleEditor"
-			/>
-			
+			<Stack.Group>
+				<Stack.Screen
+					component={buildingHours.BuildingHoursDetailView}
+					name="BuildingHoursDetail"
+					options={buildingHours.DetailNavigationOptions}
+				/>
+				<Stack.Screen
+					component={buildingHours.BuildingHoursView}
+					name="BuildingHours"
+					options={buildingHours.NavigationOptions}
+				/>
+				<Stack.Screen
+					component={buildingHours.BuildingHoursProblemReportView}
+					name="BuildingHoursProblemReport"
+					options={buildingHours.ReportNavigationOptions}
+				/>
+				<Stack.Screen
+					component={buildingHours.BuildingHoursScheduleEditorView}
+					name="BuildingHoursScheduleEditor"
+					options={buildingHours.EditorNavigationOptions}
+				/>
+			</Stack.Group>
+			{/*
 			<Stack.Screen component={Contacts} name="Contacts" />
 			<Stack.Screen component={ContactsDetail} name="ContactsDetail" />
 			<Stack.Screen component={Credits} name="Credits" />

@@ -4,6 +4,7 @@
 // import * as Calendar from '../views/calendar'
 import {EventType} from '@frogpond/event-type'
 import {PoweredBy} from '@frogpond/event-list'
+import { BuildingType } from '../views/building-hours/types'
 
 import * as calendar from '../views/calendar'
 
@@ -12,9 +13,9 @@ export type RootStackParamList = {
 	Profile: {userId: string}
 	Feed: {sort: 'latest' | 'top'} | undefined
 	EventDetail: {event: EventType; poweredBy: PoweredBy}
-	BuildingHoursDetail: undefined
+	BuildingHoursDetail: {building: BuildingType}
 	BuildingHours: undefined
-	BuildingHoursProblemReport: undefined
+	BuildingHoursProblemReport: {initialBuilding: BuildingType}
 	BuildingHoursScheduleEditor: undefined
 	[calendar.NavigationKey]: calendar.NavigationParams
 	Contacts: undefined
