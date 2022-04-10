@@ -11,7 +11,7 @@ import * as home from '../views/home'
 import * as buildingHours from '../views/building-hours'
 import * as calendar from '../views/calendar'
 import {EventDetail as eventDetail} from '@frogpond/event-list'
-// import {ContactsDetail, Contacts} from '../views/contacts'
+import * as contacts from '../views/contacts'
 // import {
 // 	DictionaryDetail,
 // 	DictionaryEditor,
@@ -133,9 +133,19 @@ export function RootStack(): JSX.Element {
 					options={buildingHours.EditorNavigationOptions}
 				/>
 			</Stack.Group>
+			<Stack.Group>
+				<Stack.Screen
+					component={contacts.ContactsView}
+					name="Contacts"
+					options={contacts.NavigationOptions}
+				/>
+				<Stack.Screen
+					component={contacts.ContactsDetailView}
+					name="ContactsDetail"
+					options={contacts.DetailNavigationOptions}
+				/>
+			</Stack.Group>
 			{/*
-			<Stack.Screen component={Contacts} name="Contacts" />
-			<Stack.Screen component={ContactsDetail} name="ContactsDetail" />
 			<Stack.Screen component={Credits} name="Credits" />
 			<Stack.Screen component={Debug} name="Debug" />
 			<Stack.Screen component={APITest} name="APITest" />

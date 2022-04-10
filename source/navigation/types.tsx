@@ -7,6 +7,7 @@ import {PoweredBy} from '@frogpond/event-list'
 import { BuildingType } from '../views/building-hours/types'
 
 import * as calendar from '../views/calendar'
+import { ContactType } from '../views/contacts/types'
 
 export type RootStackParamList = {
 	Home: undefined
@@ -19,7 +20,7 @@ export type RootStackParamList = {
 	BuildingHoursScheduleEditor: undefined
 	[calendar.NavigationKey]: calendar.NavigationParams
 	Contacts: undefined
-	ContactsDetail: undefined
+	ContactsDetail: {contact: ContactType}
 	Credits: undefined
 	Debug: undefined
 	APITest: undefined
