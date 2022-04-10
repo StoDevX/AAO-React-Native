@@ -10,7 +10,8 @@ type Props = {
 }
 
 const filled = Platform.OS === 'ios' ? 'ios-heart' : 'md-heart'
-const outlined = Platform.OS === 'ios' ? 'ios-heart-outline' : 'md-heart-outline'
+const outlined =
+	Platform.OS === 'ios' ? 'ios-heart-outline' : 'md-heart-outline'
 
 export function FavoriteButton(props: Props): JSX.Element {
 	const icon = props.favorited ? filled : outlined

@@ -2,7 +2,7 @@ import * as React from 'react'
 import {StyleSheet, ScrollView} from 'react-native'
 import {TableView} from '@frogpond/tableview'
 import type {NavigationScreenProp} from 'react-navigation'
-import { NativeStackNavigationOptions } from '@react-navigation/native-stack'
+import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 
 import {isDevMode} from '@frogpond/constants'
 
@@ -18,7 +18,9 @@ const styles = StyleSheet.create({
 	},
 })
 
-function SettingsView(props: {navigation: NavigationScreenProp<any>}): JSX.Element {
+function SettingsView(props: {
+	navigation: NavigationScreenProp<any>
+}): JSX.Element {
 	return (
 		<ScrollView
 			contentContainerStyle={styles.container}

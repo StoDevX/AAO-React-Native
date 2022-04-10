@@ -9,7 +9,7 @@ import type {BuildingType} from './types'
 import * as c from '@frogpond/colors'
 import {ListSeparator, ListSectionHeader} from '@frogpond/lists'
 import {NoticeView} from '@frogpond/notice'
-import { useNavigation } from '@react-navigation/native'
+import {useNavigation} from '@react-navigation/native'
 
 export {BuildingHoursDetailView} from './detail'
 
@@ -31,10 +31,12 @@ export function BuildingHoursList(props: Props) {
 	let navigation = useNavigation()
 
 	let onPressRow = React.useCallback(
-		(data: BuildingType) => navigation.navigate('BuildingHoursDetail', {
-			building: data
-		})
-	, [])
+		(data: BuildingType) =>
+			navigation.navigate('BuildingHoursDetail', {
+				building: data,
+			}),
+		[],
+	)
 
 	let keyExtractor = (item: BuildingType) => item.name
 

@@ -11,7 +11,7 @@ import {timezone} from '@frogpond/constants'
 import {Timer} from '@frogpond/timer'
 import {fetch} from '@frogpond/fetch'
 import {API} from '@frogpond/api'
-import { NativeStackNavigationOptions } from '@react-navigation/native-stack'
+import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 
 const fetchHours = (forReload?: boolean): Promise<Array<BuildingType>> =>
 	fetch(API('/spaces/hours'), {

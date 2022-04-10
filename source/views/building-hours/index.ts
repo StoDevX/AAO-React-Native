@@ -1,16 +1,16 @@
 export {
 	ConnectedBuildingHoursView as BuildingHoursView,
-	NavigationOptions
+	NavigationOptions,
 } from './stateful-list'
 
 export {
 	BuildingHoursDetailView,
-	NavigationOptions as DetailNavigationOptions
+	NavigationOptions as DetailNavigationOptions,
 } from './detail'
 
 export {
 	BuildingHoursProblemReportView,
 	BuildingHoursScheduleEditorView,
 	ReportNavigationOptions,
-	EditorNavigationOptions
+	EditorNavigationOptions,
 } from './report'

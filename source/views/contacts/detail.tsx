@@ -9,9 +9,9 @@ import {Button} from '@frogpond/button'
 import {openUrl} from '@frogpond/open-url'
 import type {ContactType} from './types'
 import {GH_NEW_ISSUE_URL} from '../../lib/constants'
-import { NativeStackNavigationOptions } from '@react-navigation/native-stack'
-import { RootStackParamList } from '../../navigation/types'
-import { RouteProp } from '@react-navigation/native'
+import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+import {RootStackParamList} from '../../navigation/types'
+import {RouteProp} from '@react-navigation/native'
 
 const Title = glamorous.text({
 	fontSize: 36,
@@ -51,8 +51,7 @@ type Props = {navigation: {state: {params: {contact: ContactType}}}}
 
 export class ContactsDetailView extends React.PureComponent<Props> {
 	onPress = () => {
-		let {phoneNumber, buttonText, buttonLink} =
-			this.props.route.params.contact
+		let {phoneNumber, buttonText, buttonLink} = this.props.route.params.contact
 		if (buttonLink) {
 			openUrl(buttonLink)
 		} else if (phoneNumber) {
@@ -91,7 +90,6 @@ export class ContactsDetailView extends React.PureComponent<Props> {
 		)
 	}
 }
-
 
 export const NavigationKey = 'ContactsDetail'
 

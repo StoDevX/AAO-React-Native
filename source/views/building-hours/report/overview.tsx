@@ -26,9 +26,9 @@ import type {
 import type {TopLevelViewPropsType} from '../../types'
 import {summarizeDays, formatBuildingTimes, blankSchedule} from '../lib'
 import {submitReport} from './submit'
-import { NativeStackNavigationOptions } from '@react-navigation/native-stack'
-import { RouteProp } from '@react-navigation/native'
-import { RootStackParamList } from '../../../navigation/types'
+import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+import {RouteProp} from '@react-navigation/native'
+import {RootStackParamList} from '../../../navigation/types'
 
 type Props = TopLevelViewPropsType & {
 	navigation: {state: {params: {initialBuilding: BuildingType}}}
@@ -172,10 +172,7 @@ export class BuildingHoursProblemReportView extends React.PureComponent<
 
 	submit = () => {
 		console.log(JSON.stringify(this.state.building))
-		submitReport(
-			this.props.route.params.initialBuilding,
-			this.state.building,
-		)
+		submitReport(this.props.route.params.initialBuilding, this.state.building)
 	}
 
 	render() {
@@ -363,6 +360,6 @@ export const NavigationOptions = (props: {
 	let {initialBuilding} = props.route.params
 	return {
 		title: 'Report a Problem',
-		headerBackTitle: initialBuilding.name
+		headerBackTitle: initialBuilding.name,
 	}
 }

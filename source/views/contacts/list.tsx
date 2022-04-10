@@ -9,8 +9,8 @@ import type {ContactType} from './types'
 import type {TopLevelViewPropsType} from '../types'
 import {fetch} from '@frogpond/fetch'
 import {API} from '@frogpond/api'
-import { NativeStackNavigationOptions } from '@react-navigation/native-stack'
-import { useNavigation } from '@react-navigation/native'
+import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+import {useNavigation} from '@react-navigation/native'
 import delay from 'delay'
 
 const fetchContacts = (forReload?: boolean): Promise<Array<ContactType>> =>
@@ -50,7 +50,7 @@ export let ContactsListView = (props: Props): JSX.Element => {
 		const start = Date.now()
 		setLoading(true)
 		setContacts(await fetchContacts())
-		
+
 		// wait 0.5 seconds – if we let it go at normal speed, it feels broken.
 		const elapsed = Date.now() - start
 		if (elapsed < 500) {
@@ -65,9 +65,12 @@ export let ContactsListView = (props: Props): JSX.Element => {
 	}
 
 	let onPressContact = React.useCallback(
-		(data: ContactType) => navigation.navigate('ContactsDetail', {
-			contact: data
-	}), [])
+		(data: ContactType) =>
+			navigation.navigate('ContactsDetail', {
+				contact: data,
+			}),
+		[],
+	)
 
 	let renderSectionHeader = ({section: {title}}: any) => (
 		<ListSectionHeader title={title} />

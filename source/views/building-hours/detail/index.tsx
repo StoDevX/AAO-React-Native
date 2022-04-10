@@ -5,9 +5,9 @@ import {BuildingDetail} from './building'
 import {timezone} from '@frogpond/constants'
 import type {TopLevelViewPropsType} from '../../types'
 import {BuildingFavoriteButton} from './toolbar-button'
-import { NativeStackNavigationOptions } from '@react-navigation/native-stack'
-import { RouteProp, useNavigation } from '@react-navigation/native'
-import { RootStackParamList } from '../../../navigation/types'
+import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+import {RouteProp, useNavigation} from '@react-navigation/native'
+import {RootStackParamList} from '../../../navigation/types'
 
 type Props = TopLevelViewPropsType & {
 	navigation: {state: {params: {building: BuildingType}}}
@@ -19,21 +19,19 @@ export function BuildingHoursDetailView(props: Props) {
 	let info = props.route.params.building
 
 	let reportProblem = React.useCallback(
-		() => navigation.navigate('BuildingHoursProblemReport', {
-			initialBuilding: info
-		})
-	, [])
+		() =>
+			navigation.navigate('BuildingHoursProblemReport', {
+				initialBuilding: info,
+			}),
+		[],
+	)
 
 	return (
 		<Timer
 			interval={60000}
 			moment={true}
 			render={({now}) => (
-				<BuildingDetail
-					info={info}
-					now={now}
-					onProblemReport={reportProblem}
-				/>
+				<BuildingDetail info={info} now={now} onProblemReport={reportProblem} />
 			)}
 			timezone={timezone()}
 		/>

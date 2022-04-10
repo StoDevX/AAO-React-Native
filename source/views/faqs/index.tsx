@@ -6,7 +6,7 @@ import {Markdown} from '@frogpond/markdown'
 import {LoadingView} from '@frogpond/notice'
 import {API} from '@frogpond/api'
 import {fetch} from '@frogpond/fetch'
-import { NativeStackNavigationOptions } from '@react-navigation/native-stack'
+import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 
 const styles = StyleSheet.create({
 	container: {

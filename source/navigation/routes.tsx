@@ -82,7 +82,7 @@ export function RootStack(): JSX.Element {
 				headerTintColor: theme.navigationForeground,
 			}}
 		>
-			<Stack.Screen 
+			<Stack.Screen
 				component={home.View}
 				name="Home"
 				options={home.NavigationOptions}

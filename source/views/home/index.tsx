@@ -91,7 +91,7 @@ export const NavigationKey = 'Home'
 export const NavigationOptions: NativeStackNavigationOptions = {
 	title: 'All About Olaf',
 	headerBackTitle: 'Home',
-	headerRight:  (props) => <OpenSettingsButton canGoBack={true} {...props} />,
+	headerRight: (props) => <OpenSettingsButton canGoBack={true} {...props} />,
 }
 
 export type NavigationParams = undefined

@@ -54,17 +54,29 @@ function CalendarView(): JSX.Element {
 			<Tabs.Screen
 				component={StOlafCalendarView}
 				name="StOlafCalendarView"
-				options={{tabBarLabel: 'St. Olaf', tabBarIcon: TabBarIcon('school'), headerShown: false}}
+				options={{
+					tabBarLabel: 'St. Olaf',
+					tabBarIcon: TabBarIcon('school'),
+					headerShown: false,
+				}}
 			/>
 			<Tabs.Screen
 				component={OlevilleCalendarView}
 				name="OlevilleCalendarView"
-				options={{tabBarLabel: 'Oleville', tabBarIcon: TabBarIcon('happy'), headerShown: false}}
+				options={{
+					tabBarLabel: 'Oleville',
+					tabBarIcon: TabBarIcon('happy'),
+					headerShown: false,
+				}}
 			/>
 			<Tabs.Screen
 				component={NorthfieldCalendarView}
 				name="NorthfieldCalendarView"
-				options={{tabBarLabel: 'Northfield', tabBarIcon: TabBarIcon('happy'), headerShown: false}}
+				options={{
+					tabBarLabel: 'Northfield',
+					tabBarIcon: TabBarIcon('happy'),
+					headerShown: false,
+				}}
 			/>
 		</Tabs.Navigator>
 	)

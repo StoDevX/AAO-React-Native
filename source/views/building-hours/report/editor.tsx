@@ -24,7 +24,7 @@ import * as c from '@frogpond/colors'
 import {DatePicker} from '@frogpond/datepicker'
 import {Touchable} from '@frogpond/touchable'
 import {ListSeparator} from '@frogpond/lists'
-import { NativeStackNavigationOptions } from '@react-navigation/native-stack'
+import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 
 type Props = TopLevelViewPropsType & {
 	navigation: {

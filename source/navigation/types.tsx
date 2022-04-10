@@ -4,10 +4,10 @@
 // import * as Calendar from '../views/calendar'
 import {EventType} from '@frogpond/event-type'
 import {PoweredBy} from '@frogpond/event-list'
-import { BuildingType } from '../views/building-hours/types'
+import {BuildingType} from '../views/building-hours/types'
 
 import * as calendar from '../views/calendar'
-import { ContactType } from '../views/contacts/types'
+import {ContactType} from '../views/contacts/types'
 
 export type RootStackParamList = {
 	Home: undefined

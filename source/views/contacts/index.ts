@@ -1,8 +1,5 @@
-export {
-	ContactsListView as ContactsView,
-	NavigationOptions,
-} from './list'
+export {ContactsListView as ContactsView, NavigationOptions} from './list'
 export {
 	ContactsDetailView,
-	NavigationOptions as DetailNavigationOptions
+	NavigationOptions as DetailNavigationOptions,
 } from './detail'
