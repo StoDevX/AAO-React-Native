@@ -173,7 +173,7 @@ export class BuildingHoursProblemReportView extends React.PureComponent<
 	submit = () => {
 		console.log(JSON.stringify(this.state.building))
 		submitReport(
-			this.props.navigation.state.params.initialBuilding,
+			this.props.route.params.initialBuilding,
 			this.state.building,
 		)
 	}
