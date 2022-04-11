@@ -227,7 +227,7 @@ GEM
     public_suffix (4.0.6)
     rainbow (3.1.1)
     rake (13.0.6)
-    regexp_parser (2.2.1)
+    regexp_parser (2.3.0)
     representable (3.1.1)
       declarative (< 0.1.0)
       trailblazer-option (>= 0.1.1, < 0.2.0)
@@ -235,7 +235,7 @@ GEM
     retriable (3.1.2)
     rexml (3.2.5)
     rouge (2.0.7)
-    rubocop (1.26.1)
+    rubocop (1.27.0)
       parallel (~> 1.10)
       parser (>= 3.1.0.0)
       rainbow (>= 2.2.2, < 4.0)
@@ -244,7 +244,7 @@ GEM
       rubocop-ast (>= 1.16.0, < 2.0)
       ruby-progressbar (~> 1.7)
       unicode-display_width (>= 1.4.0, < 3.0)
-    rubocop-ast (1.16.0)
+    rubocop-ast (1.17.0)
       parser (>= 3.1.1.0)
     ruby-macho (2.5.1)
     ruby-progressbar (1.11.0)
@@ -299,7 +299,7 @@ DEPENDENCIES
   fastlane
   json
   netrc
-  rubocop (~> 1.26)
+  rubocop (~> 1.27)
   xcodeproj
 
 BUNDLED WITH
