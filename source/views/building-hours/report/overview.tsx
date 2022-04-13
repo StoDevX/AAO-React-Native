@@ -60,6 +60,18 @@ export class BuildingHoursProblemReportView extends React.PureComponent<
 		})
 	}
 
+	editName = (newName: BuildingType['name']) => {
+		this.setState((state) => {
+			return {
+				...state,
+				building: {
+					...state.building,
+					name: newName,
+				},
+			}
+		})
+	}
+
 	editSchedule = (idx: number, newSchedule: NamedBuildingScheduleType) => {
 		this.setState((state) => {
 			let schedules = [...state.building.schedule]
@@ -178,7 +190,7 @@ export class BuildingHoursProblemReportView extends React.PureComponent<
 	}
 
 	render() {
-		let {schedule: schedules = []} = this.state.building
+		let {schedule: schedules = [], name} = this.state.building
 
 		return (
 			<ScrollView>
@@ -188,6 +200,10 @@ export class BuildingHoursProblemReportView extends React.PureComponent<
 				/>
 
 				<TableView>
+					<Section header="NAME">
+						<TitleCell onChange={this.editName} text={name || ''} />
+					</Section>
+
 					{schedules.map((s, i) => (
 						<EditableSchedule
 							key={i}
