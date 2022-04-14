@@ -71,7 +71,7 @@
     "@expo/react-native-action-sheet": "3.13.0",
     "@frogpond/titlecase": "1.0.0",
     "@hawkrives/react-native-alternate-icons": "0.6.0",
-    "@react-native-community/netinfo": "6.2.0",
+    "@react-native-community/netinfo": "8.2.0",
     "@react-navigation/bottom-tabs": "6.0.9",
     "@react-navigation/material-bottom-tabs": "6.0.9",
     "@react-navigation/material-top-tabs": "6.0.6",
