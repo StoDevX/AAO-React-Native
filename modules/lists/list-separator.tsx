@@ -25,14 +25,19 @@ export function ListSeparator(props: PropsType): JSX.Element | null {
 		spacing: {left: leftSpacing = 15, right: rightSpacing} = {},
 	} = props
 
-	const spacing = {marginLeft: leftSpacing, marginRight: rightSpacing}
+	const spacing = {
+		marginLeft: leftSpacing,
+		marginRight: rightSpacing,
+	}
 
 	if (fullWidth) {
 		spacing.marginLeft = 0
 		spacing.marginRight = 0
 	}
 
-	return <Separator style={[styles.separator, spacing, props.styles]} />
+	return (
+		<Separator style={{...styles.separator, ...spacing, ...props.styles}} />
+	)
 }
 
 export function FullWidthSeparator<T extends Record<string, unknown>>(

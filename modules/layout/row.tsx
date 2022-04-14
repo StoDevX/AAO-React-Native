@@ -3,6 +3,7 @@ import {StyleSheet, View, ViewProps} from 'react-native'
 
 type PropsType = {
 	flex?: number
+	children: React.ReactChildren | JSX.Element
 } & ViewProps
 
 const styles = StyleSheet.create({

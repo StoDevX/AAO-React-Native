@@ -7,7 +7,17 @@ function install() {
 		return
 	}
 
-	Sentry.init({dsn: SENTRY_DSN})
+	Sentry.init({
+		dsn: SENTRY_DSN,
+
+		tracesSampleRate: 0.2,
+
+		integrations: [
+			new Sentry.ReactNativeTracing({
+				tracingOrigins: ['localhost', 'frogpond.tech', /^\//u],
+			}),
+		],
+	})
 }
 
 install()

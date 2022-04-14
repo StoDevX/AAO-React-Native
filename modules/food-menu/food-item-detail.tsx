@@ -6,11 +6,15 @@ import * as c from '@frogpond/colors'
 import map from 'lodash/map'
 import {DietaryTagsDetail} from './dietary-tags-detail'
 import {calculateAmount} from './lib/calculate-amount'
-import type {NavigationScreenProp} from 'react-navigation'
 import type {MenuItemType as MenuItem, MasterCorIconMapType} from './types'
+import {
+	NavigationAction,
+	NavigationRoute,
+	NavigationScreenProp,
+} from 'react-navigation'
 
 type Props = {
-	navigation: NavigationScreenProp & {
+	navigation: NavigationScreenProp<NavigationRoute, NavigationAction> & {
 		state: {params: {icons: MasterCorIconMapType; item: MenuItem}}
 	}
 }

@@ -1,5 +1,6 @@
 import * as React from 'react'
 import {timezone} from '@frogpond/constants'
+import {SUPPORT_EMAIL} from '../../lib/constants'
 import {NoticeView, LoadingView} from '@frogpond/notice'
 import type {TopLevelViewPropsType} from '../types'
 import {FoodMenu} from '@frogpond/food-menu'
@@ -258,8 +259,7 @@ export class BonAppHostedMenu extends React.PureComponent<Props, State> {
 			typeof this.props.cafe === 'string' ? this.props.cafe : this.props.cafe.id
 
 		if (!this.state.cafeMenu || !this.state.cafeInfo) {
-			let msg =
-				'Something went wrong. Email allaboutolaf@frogpond.tech to let them know?'
+			let msg = `Something went wrong. Email ${SUPPORT_EMAIL} to let them know?`
 			return <NoticeView text={msg} />
 		}
 
