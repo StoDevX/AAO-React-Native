@@ -49,8 +49,8 @@ function MaybeCard({
 	) : null
 }
 
-function Title({title}: {title: EventType['title']}): JSX.Element | null {
-	return title ? <Text style={styles.name}>{title}</Text> : null
+function Title({event}: {event: EventType}) {
+	return event.title ? <Text style={styles.name}>{event.title}</Text> : null
 }
 
 function Links({urls}: {urls: Array<string>}): JSX.Element | null {
@@ -84,7 +84,7 @@ export class EventDetail extends React.PureComponent<EventDetailProps> {
 
 		return (
 			<ScrollView>
-				<Title title={event.title} />
+				<Title event={event} />
 				<MaybeCard content={getTimes(event)} header="When" />
 				<MaybeCard content={event.location} header="Location" />
 				<MaybeCard content={event.description} header="Description" />
