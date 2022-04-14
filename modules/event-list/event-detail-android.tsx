@@ -42,8 +42,8 @@ function MaybeCard({header, content}: {header: string; content: string}) {
 	) : null
 }
 
-function Title({title}: {title: string}) {
-	return title ? <Text style={styles.name}>{title}</Text> : null
+function Title({event}: {event: EventType}) {
+	return event.title ? <Text style={styles.name}>{event.title}</Text> : null
 }
 
 function Links({urls}: {urls: Array<string>}) {

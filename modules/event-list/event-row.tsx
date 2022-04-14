@@ -41,9 +41,7 @@ export default class EventRow extends React.PureComponent<Props> {
 	render(): React.ReactElement {
 		let {event} = this.props
 		let title = event.title
-
-		let subtitle: string | null = event[event.config.subtitle]
-		subtitle = subtitle ? subtitle.trim() : null
+		let subtitle = event[event.config.subtitle]?.trim()
 
 		return (
 			<ListRow
