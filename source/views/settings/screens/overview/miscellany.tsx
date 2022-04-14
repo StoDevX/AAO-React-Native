@@ -36,7 +36,7 @@ export class MiscellanySection extends React.Component<Props, State> {
 		trackedOpenUrl({url: GH_BASE_URL, id: 'ContributingView'})
 	onAppIconButton = () => this.onPressButton('IconSettingsView')
 
-	render() {
+	render(): JSX.Element {
 		return (
 			<Section header="MISCELLANY">
 				{this.state.canChangeIcon ? (

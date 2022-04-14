@@ -24,6 +24,7 @@ import * as c from '@frogpond/colors'
 import {DatePicker} from '@frogpond/datepicker'
 import {Touchable} from '@frogpond/touchable'
 import {ListSeparator} from '@frogpond/lists'
+import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 
 type Props = TopLevelViewPropsType & {
 	navigation: {
@@ -45,23 +46,19 @@ export class BuildingHoursScheduleEditorView extends React.PureComponent<
 	Props,
 	State
 > {
-	static navigationOptions = {
-		title: 'Edit Schedule',
-	}
-
 	state = {
-		set: this.props.navigation.state.params.initialSet,
+		set: this.props.route.params.initialSet,
 	}
 
 	delete = () => {
-		this.props.navigation.state.params.onDeleteSet()
+		this.props.route.params.onDeleteSet()
 		this.props.navigation.goBack()
 	}
 
 	onChangeDays = (newDays: DayOfWeekEnumType[]) => {
 		this.setState(
 			(state) => ({...state, set: {...state.set, days: newDays}}),
-			() => this.props.navigation.state.params.onEditSet(this.state.set),
+			() => this.props.route.params.onEditSet(this.state.set),
 		)
 	}
 
@@ -71,14 +68,14 @@ export class BuildingHoursScheduleEditorView extends React.PureComponent<
 				...state,
 				set: {...state.set, from: newDate.format('h:mma')},
 			}),
-			() => this.props.navigation.state.params.onEditSet(this.state.set),
+			() => this.props.route.params.onEditSet(this.state.set),
 		)
 	}
 
 	onChangeClose = (newDate: Moment) => {
 		this.setState(
 			(state) => ({...state, set: {...state.set, to: newDate.format('h:mma')}}),
-			() => this.props.navigation.state.params.onEditSet(this.state.set),
+			() => this.props.route.params.onEditSet(this.state.set),
 		)
 	}
 
@@ -254,3 +251,9 @@ const styles = StyleSheet.create({
 		color: c.white,
 	},
 })
+
+export const NavigationKey = 'BuildingHoursProblemReportEditor'
+
+export const NavigationOptions: NativeStackNavigationOptions = {
+	title: 'Edit Schedule',
+}

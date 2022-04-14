@@ -2,6 +2,8 @@ import * as React from 'react'
 import {StyleSheet, ScrollView} from 'react-native'
 import {TableView} from '@frogpond/tableview'
 import type {NavigationScreenProp} from 'react-navigation'
+import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+
 import {isDevMode} from '@frogpond/constants'
 
 import {ConnectedCredentialsLoginSection} from './login-credentials'
@@ -16,7 +18,9 @@ const styles = StyleSheet.create({
 	},
 })
 
-export function SettingsView(props: {navigation: NavigationScreenProp<any>}) {
+function SettingsView(props: {
+	navigation: NavigationScreenProp<any>
+}): JSX.Element {
 	return (
 		<ScrollView
 			contentContainerStyle={styles.container}
@@ -37,6 +41,10 @@ export function SettingsView(props: {navigation: NavigationScreenProp<any>}) {
 		</ScrollView>
 	)
 }
-SettingsView.navigationOptions = {
+
+export {SettingsView as View}
+
+export const NavigationOptions: NativeStackNavigationOptions = {
 	title: 'Settings',
+	headerBackTitle: 'Back',
 }

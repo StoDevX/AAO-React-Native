@@ -1,6 +1,6 @@
 /* eslint-env jest */
 
-import { device, element, by } from 'detox'
+import {device, element, by} from 'detox'
 
 describe('Basic smoke tests', () => {
 	beforeEach(async () => {

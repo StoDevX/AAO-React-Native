@@ -6,6 +6,7 @@ import {Markdown} from '@frogpond/markdown'
 import {LoadingView} from '@frogpond/notice'
 import {API} from '@frogpond/api'
 import {fetch} from '@frogpond/fetch'
+import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 
 const styles = StyleSheet.create({
 	container: {
@@ -23,7 +24,7 @@ let fetchData = async (reload?: boolean) => {
 	return text
 }
 
-export function FaqView() {
+function FaqView(): JSX.Element {
 	let [text, setText] = React.useState('')
 	let [loading, setLoading] = React.useState(true)
 	let [refreshing, setRefreshing] = React.useState(false)
@@ -67,6 +68,8 @@ export function FaqView() {
 	)
 }
 
-FaqView.navigationOptions = {
+export {FaqView as View}
+
+export const NavigationOptions: NativeStackNavigationOptions = {
 	title: 'FAQs',
 }

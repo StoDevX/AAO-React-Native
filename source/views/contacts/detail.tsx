@@ -9,6 +9,9 @@ import {Button} from '@frogpond/button'
 import {openUrl} from '@frogpond/open-url'
 import type {ContactType} from './types'
 import {GH_NEW_ISSUE_URL} from '../../lib/constants'
+import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+import {RootStackParamList} from '../../navigation/types'
+import {RouteProp} from '@react-navigation/native'
 
 const Title = glamorous.text({
 	fontSize: 36,
@@ -47,15 +50,8 @@ function promptCall(buttonText: string, phoneNumber: string) {
 type Props = {navigation: {state: {params: {contact: ContactType}}}}
 
 export class ContactsDetailView extends React.PureComponent<Props> {
-	static navigationOptions = ({navigation}: any) => {
-		return {
-			title: navigation.state.params.contact.title,
-		}
-	}
-
 	onPress = () => {
-		let {phoneNumber, buttonText, buttonLink} =
-			this.props.navigation.state.params.contact
+		let {phoneNumber, buttonText, buttonLink} = this.props.route.params.contact
 		if (buttonLink) {
 			openUrl(buttonLink)
 		} else if (phoneNumber) {
@@ -64,7 +60,7 @@ export class ContactsDetailView extends React.PureComponent<Props> {
 	}
 
 	render() {
-		let contact = this.props.navigation.state.params.contact
+		let contact = this.props.route.params.contact
 		let headerImage =
 			contact.image && contactImages.has(contact.image)
 				? contactImages.get(contact.image)
@@ -92,5 +88,16 @@ export class ContactsDetailView extends React.PureComponent<Props> {
 				</Container>
 			</ScrollView>
 		)
+	}
+}
+
+export const NavigationKey = 'ContactsDetail'
+
+export const NavigationOptions = (props: {
+	route: RouteProp<RootStackParamList, typeof NavigationKey>
+}): NativeStackNavigationOptions => {
+	let {contact} = props.route.params
+	return {
+		title: contact.title,
 	}
 }

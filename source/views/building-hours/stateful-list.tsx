@@ -11,6 +11,7 @@ import {timezone} from '@frogpond/constants'
 import {Timer} from '@frogpond/timer'
 import {fetch} from '@frogpond/fetch'
 import {API} from '@frogpond/api'
+import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 
 const fetchHours = (forReload?: boolean): Promise<Array<BuildingType>> =>
 	fetch(API('/spaces/hours'), {
@@ -54,11 +55,6 @@ type State = {
 }
 
 export class BuildingHoursView extends React.PureComponent<Props, State> {
-	static navigationOptions = {
-		title: 'Building Hours',
-		headerBackTitle: 'Hours',
-	}
-
 	state = {
 		error: null,
 		loading: false,
@@ -114,4 +110,9 @@ export function ConnectedBuildingHoursView(props: TopLevelViewPropsType) {
 	)
 
 	return <BuildingHoursView {...props} favoriteBuildings={favoriteBuildings} />
+}
+
+export const NavigationOptions: NativeStackNavigationOptions = {
+	title: 'Building Hours',
+	headerBackTitle: 'Back',
 }

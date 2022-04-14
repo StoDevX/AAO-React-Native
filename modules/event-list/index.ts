@@ -1,3 +1,4 @@
-export {EventList} from './event-list'
-export {EventDetail} from './event-detail'
 export type {PoweredBy} from './types'
+
+export * as EventList from './event-list'
+export * as EventDetail from './event-detail'

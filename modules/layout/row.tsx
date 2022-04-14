@@ -1,11 +1,27 @@
 import * as React from 'react'
-import {StyledComponent} from './styled-component'
-import type {PropsType} from './styled-component'
+import {StyleSheet, View, ViewProps} from 'react-native'
 
-export const Row = ({children, ...props}: PropsType): JSX.Element => {
+type PropsType = {
+	flex?: number
+	children: React.ReactChildren | JSX.Element
+} & ViewProps
+
+const styles = StyleSheet.create({
+	column: {
+		flexDirection: 'row',
+	},
+})
+
+export const Row = ({
+	children,
+	style,
+	flex,
+	...props
+}: PropsType): JSX.Element => {
+	let flexStyle = flex !== undefined && flex !== null ? {flex: flex} : null
 	return (
-		<StyledComponent flexDirection="row" {...props}>
+		<View style={[styles.column, style, flexStyle]} {...props}>
 			{children}
-		</StyledComponent>
+		</View>
 	)
 }

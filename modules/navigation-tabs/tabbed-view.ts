@@ -1,8 +1,9 @@
 import {Platform} from 'react-native'
 import {NavigationScreenRouteConfig} from 'react-navigation'
-import {createBottomTabNavigator} from 'react-navigation-tabs'
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs'
+
 import {getTheme} from '@frogpond/app-theme'
-import {createMaterialBottomTabNavigator} from 'react-navigation-material-bottom-tabs'
+import {createMaterialBottomTabNavigator} from '@react-navigation/material-bottom-tabs'
 
 type ComponentType = (
 	screens: {[key: string]: NavigationScreenRouteConfig},

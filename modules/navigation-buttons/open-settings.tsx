@@ -2,18 +2,11 @@ import * as React from 'react'
 import {Touchable} from '@frogpond/touchable'
 import {Icon, platformPrefixIconName} from '@frogpond/icon'
 import {commonStyles, leftButtonStyles} from './styles'
-import type {
-	NavigationAction,
-	NavigationRoute,
-	NavigationScreenProp,
-} from 'react-navigation'
+import {useNavigation} from '@react-navigation/native'
+import {HeaderBackButtonProps} from '@react-navigation/native-stack/lib/typescript/src/types'
 
-type Props = {
-	navigation: NavigationScreenProp<NavigationRoute, NavigationAction>
-	buttonStyle?: any
-}
-
-export function OpenSettingsButton({navigation, buttonStyle}: Props) {
+export function OpenSettingsButton(_props: HeaderBackButtonProps): JSX.Element {
+	let navigation = useNavigation()
 	return (
 		<Touchable
 			accessibilityLabel="Open Settings"
@@ -21,8 +14,8 @@ export function OpenSettingsButton({navigation, buttonStyle}: Props) {
 			accessible={true}
 			borderless={true}
 			highlight={false}
-			onPress={() => navigation.navigate('SettingsView')}
-			style={[commonStyles.button, buttonStyle]}
+			onPress={() => navigation.navigate('Settings')}
+			style={commonStyles.button}
 			testID="button-open-settings"
 		>
 			<Icon

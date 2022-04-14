@@ -9,6 +9,7 @@ import type {BuildingType} from './types'
 import * as c from '@frogpond/colors'
 import {ListSeparator, ListSectionHeader} from '@frogpond/lists'
 import {NoticeView} from '@frogpond/notice'
+import {useNavigation} from '@react-navigation/native'
 
 export {BuildingHoursDetailView} from './detail'
 
@@ -26,40 +27,44 @@ type Props = TopLevelViewPropsType & {
 	buildings: Array<{title: string; data: BuildingType[]}>
 }
 
-export class BuildingHoursList extends React.PureComponent<Props> {
-	onPressRow = (data: BuildingType) => {
-		this.props.navigation.navigate('BuildingHoursDetailView', {building: data})
-	}
+export function BuildingHoursList(props: Props) {
+	let navigation = useNavigation()
 
-	keyExtractor = (item: BuildingType) => item.name
+	let onPressRow = React.useCallback(
+		(data: BuildingType) =>
+			navigation.navigate('BuildingHoursDetail', {
+				building: data,
+			}),
+		[],
+	)
 
-	renderSectionHeader = ({section: {title}}: any) => (
+	let keyExtractor = (item: BuildingType) => item.name
+
+	let renderSectionHeader = ({section: {title}}: any) => (
 		<ListSectionHeader title={title} />
 	)
 
-	renderItem = ({item}: {item: BuildingType}) => (
+	let renderItem = ({item}: {item: BuildingType}) => (
 		<BuildingRow
 			info={item}
 			name={item.name}
-			now={this.props.now}
-			onPress={this.onPressRow}
+			now={props.now}
+			onPress={onPressRow}
 		/>
 	)
 
-	render() {
-		return (
-			<SectionList
-				ItemSeparatorComponent={ListSeparator}
-				ListEmptyComponent={<NoticeView text="No hours." />}
-				contentContainerStyle={styles.container}
-				extraData={this.props}
-				keyExtractor={this.keyExtractor}
-				onRefresh={this.props.onRefresh}
-				refreshing={this.props.loading}
-				renderItem={this.renderItem}
-				renderSectionHeader={this.renderSectionHeader}
-				sections={this.props.buildings}
-			/>
-		)
-	}
+	return (
+		<SectionList
+			ItemSeparatorComponent={ListSeparator}
+			ListEmptyComponent={<NoticeView text="No hours." />}
+			contentContainerStyle={styles.container}
+			extraData={props}
+			keyExtractor={keyExtractor}
+			onRefresh={props.onRefresh}
+			refreshing={props.loading}
+			renderItem={renderItem}
+			renderSectionHeader={renderSectionHeader}
+			sections={props.buildings}
+		/>
+	)
 }

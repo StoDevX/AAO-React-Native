@@ -26,6 +26,9 @@ import type {
 import type {TopLevelViewPropsType} from '../../types'
 import {summarizeDays, formatBuildingTimes, blankSchedule} from '../lib'
 import {submitReport} from './submit'
+import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+import {RouteProp} from '@react-navigation/native'
+import {RootStackParamList} from '../../../navigation/types'
 
 type Props = TopLevelViewPropsType & {
 	navigation: {state: {params: {initialBuilding: BuildingType}}}
@@ -35,16 +38,13 @@ type State = {
 	building: BuildingType
 }
 
+// TODO: convert this class to a functional component (useState, useNavigation)
 export class BuildingHoursProblemReportView extends React.PureComponent<
 	Props,
 	State
 > {
-	static navigationOptions = {
-		title: 'Report a Problem',
-	}
-
 	state = {
-		building: this.props.navigation.state.params.initialBuilding,
+		building: this.props.route.params.initialBuilding,
 	}
 
 	openEditor = (
@@ -52,7 +52,8 @@ export class BuildingHoursProblemReportView extends React.PureComponent<
 		setIdx: number,
 		set?: SingleBuildingScheduleType,
 	) => {
-		this.props.navigation.navigate('BuildingHoursScheduleEditorView', {
+		// TODO: refactor this to useNavigation
+		this.props.navigation.navigate('BuildingHoursScheduleEditor', {
 			initialSet: set,
 			onEditSet: (editedData: SingleBuildingScheduleType) =>
 				this.editHoursRow(scheduleIdx, setIdx, editedData),
@@ -183,10 +184,7 @@ export class BuildingHoursProblemReportView extends React.PureComponent<
 
 	submit = () => {
 		console.log(JSON.stringify(this.state.building))
-		submitReport(
-			this.props.navigation.state.params.initialBuilding,
-			this.state.building,
-		)
+		submitReport(this.props.route.params.initialBuilding, this.state.building)
 	}
 
 	render() {
@@ -367,5 +365,17 @@ class TimesCell extends React.PureComponent<TimesCellProps> {
 				title={set.days.length ? summarizeDays(set.days) : 'Days'}
 			/>
 		)
+	}
+}
+
+export const NavigationKey = 'BuildingHoursProblemReport'
+
+export const NavigationOptions = (props: {
+	route: RouteProp<RootStackParamList, typeof NavigationKey>
+}): NativeStackNavigationOptions => {
+	let {initialBuilding} = props.route.params
+	return {
+		title: 'Report a Problem',
+		headerBackTitle: initialBuilding.name,
 	}
 }
