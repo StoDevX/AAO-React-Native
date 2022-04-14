@@ -1,0 +1,20 @@
+name: DiSCO
+subtitle: Digital Scholarship Center at St. Olaf
+image: disco
+category: Libraries
+
+schedule:
+  - title: Hours
+    hours:
+      - {days: [Mo, Tu, We, Th], from: '8:00am', to: '9:00pm'}
+      - {days: [Fr], from: '8:00am', to: '5:00pm'}
+      - {days: [Sa, Su], from: '12:00pm', to: '9:00pm'}
+
+breakSchedule:
+  fall: []
+  thanksgiving: []
+  winter: []
+  interim: []
+  spring: []
+  easter: []
+  summer: []

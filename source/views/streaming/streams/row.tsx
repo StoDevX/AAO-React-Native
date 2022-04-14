@@ -3,7 +3,7 @@ import {StyleSheet, Image} from 'react-native'
 
 import {ListRow, Detail, Title} from '@frogpond/lists'
 import {Column, Row} from '@frogpond/layout'
-import {getTrimmedTextWithSpaces, parseHtml} from '@frogpond/html-lib'
+import {innerTextWithSpaces, parseHtml} from '@frogpond/html-lib'
 import {trackedOpenUrl} from '@frogpond/open-url'
 import moment from 'moment'
 import type {StreamType} from './types'
@@ -17,12 +17,12 @@ const styles = StyleSheet.create({
 })
 
 function Name({item}: {item: StreamType}) {
-	let title = getTrimmedTextWithSpaces(parseHtml(item.title))
+	let title = innerTextWithSpaces(parseHtml(item.title))
 	return title ? <Title>{title}</Title> : null
 }
 
 function Info({item}: {item: StreamType}) {
-	let detail = getTrimmedTextWithSpaces(
+	let detail = innerTextWithSpaces(
 		parseHtml(item.subtitle || item.performer || ''),
 	)
 	return detail ? <Detail>{detail}</Detail> : null

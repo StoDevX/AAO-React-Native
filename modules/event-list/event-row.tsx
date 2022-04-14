@@ -4,7 +4,6 @@ import type {EventType} from '@frogpond/event-type'
 import * as c from '@frogpond/colors'
 import {Row, Column} from '@frogpond/layout'
 import {ListRow, Detail, Title} from '@frogpond/lists'
-import {fastGetTrimmedText} from '@frogpond/html-lib'
 import {Bar} from './vertical-bar'
 import {times} from './times'
 
@@ -33,16 +32,15 @@ const styles = StyleSheet.create({
 
 type Props = {
 	event: EventType
-	onPress: (EventType) => any
+	onPress: (event: EventType) => void
 }
 
 export default class EventRow extends React.PureComponent<Props> {
-	_onPress = () => this.props.onPress(this.props.event)
+	_onPress = (): void => this.props.onPress(this.props.event)
 
-	render() {
+	render(): React.ReactElement {
 		let {event} = this.props
-		let title = fastGetTrimmedText(event.title)
-
+		let title = event.title
 		let subtitle = event[event.config.subtitle]?.trim()
 
 		return (

@@ -92,7 +92,7 @@ export class IconSettingsView extends React.Component<Props, State> {
 type IconCellProps = {
 	readonly icon: Icon
 	readonly isSelected: boolean
-	readonly onPress: (string) => any
+	readonly onPress: (iconType: string) => any
 }
 
 class IconCell extends React.Component<IconCellProps> {

@@ -2,7 +2,7 @@ import * as React from 'react'
 import {ScrollView, StyleSheet, Image} from 'react-native'
 import {images as buildingImages} from '../../../../images/spaces'
 import type {BuildingType} from '../types'
-import moment from 'moment-timezone'
+import type {Moment} from 'moment-timezone'
 import * as c from '@frogpond/colors'
 import {getShortBuildingStatus} from '../lib'
 
@@ -10,6 +10,7 @@ import {SolidBadge as Badge} from '@frogpond/badge'
 import {Header} from './header'
 import {ScheduleTable} from './schedule-table'
 import {ListFooter} from '@frogpond/lists'
+import {LinkTable} from './link-table'
 
 const styles = StyleSheet.create({
 	container: {
@@ -24,7 +25,7 @@ const styles = StyleSheet.create({
 
 type Props = {
 	info: BuildingType
-	now: moment
+	now: Moment
 	onProblemReport: () => any
 }
 
@@ -52,6 +53,7 @@ export class BuildingDetail extends React.Component<Props> {
 
 		let openStatus = getShortBuildingStatus(info, now)
 		let schedules = info.schedule || []
+		let links = info.links || []
 
 		return (
 			<ScrollView contentContainerStyle={styles.container}>
@@ -71,6 +73,8 @@ export class BuildingDetail extends React.Component<Props> {
 					onProblemReport={onProblemReport}
 					schedules={schedules}
 				/>
+
+				{links.length ? <LinkTable links={links} /> : null}
 
 				<ListFooter
 					title={

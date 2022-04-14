@@ -1,5 +1,6 @@
 import * as React from 'react'
 import moment from 'moment-timezone'
+import type {Moment} from 'moment-timezone'
 import delay from 'delay'
 
 export function msUntilIntervalRepeat(now: number, interval: number) {
@@ -9,15 +10,15 @@ export function msUntilIntervalRepeat(now: number, interval: number) {
 type Props = {
 	interval: number // ms
 	timezone?: string
-	invoke?: () => mixed
+	invoke?: () => unknown
 } & (
 	| {
 			moment: true
 			render: (state: {
-				now: moment
+				now: Moment
 				loading: boolean
 				refresh: () => void
-			}) => React.Node
+			}) => React.ReactNode
 	  }
 	| {
 			moment: false
@@ -25,7 +26,7 @@ type Props = {
 				now: Date
 				loading: boolean
 				refresh: () => void
-			}) => React.Node
+			}) => React.ReactNode
 	  }
 )
 
@@ -35,10 +36,10 @@ type State = {
 }
 
 export class Timer extends React.Component<Props, State> {
-	_timeoutId?: TimeoutID
-	_intervalId?: IntervalID
+	_timeoutId?: NodeJS.Timeout
+	_intervalId?: NodeJS.Timer
 
-	state = {
+	state: State = {
 		now: new Date(),
 		loading: false,
 	}
@@ -85,18 +86,24 @@ export class Timer extends React.Component<Props, State> {
 	render() {
 		let {now, loading} = this.state
 
-		if (this.props.moment) {
-			now = moment(now)
-
-			if (this.props.timezone) {
-				now = now.tz(this.props.timezone)
-			}
-		}
-
 		if (this.props.invoke) {
 			this.props.invoke()
 		}
 
-		return this.props.render({now, loading, refresh: this.refresh})
+		if (this.props.moment) {
+			let nowMoment: Moment = moment(now)
+
+			if (this.props.timezone) {
+				nowMoment = nowMoment.tz(this.props.timezone)
+			}
+
+			return this.props.render({now: nowMoment, loading, refresh: this.refresh})
+		} else {
+			return this.props.render({
+				now,
+				loading,
+				refresh: this.refresh,
+			})
+		}
 	}
 }

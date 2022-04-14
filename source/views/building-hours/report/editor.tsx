@@ -8,6 +8,7 @@ import * as React from 'react'
 import xor from 'lodash/xor'
 import {View, ScrollView, Platform, Text, StyleSheet} from 'react-native'
 import moment from 'moment-timezone'
+import type {Moment} from 'moment-timezone'
 import {
 	TableView,
 	Section,
@@ -64,7 +65,7 @@ export class BuildingHoursScheduleEditorView extends React.PureComponent<
 		)
 	}
 
-	onChangeOpen = (newDate: moment) => {
+	onChangeOpen = (newDate: Moment) => {
 		this.setState(
 			(state) => ({
 				...state,
@@ -74,7 +75,7 @@ export class BuildingHoursScheduleEditorView extends React.PureComponent<
 		)
 	}
 
-	onChangeClose = (newDate: moment) => {
+	onChangeClose = (newDate: Moment) => {
 		this.setState(
 			(state) => ({...state, set: {...state.set, to: newDate.format('h:mma')}}),
 			() => this.props.navigation.state.params.onEditSet(this.state.set),
@@ -197,18 +198,13 @@ class ToggleButton extends React.PureComponent<ToggleButtonProps> {
 const WeekToggles = Platform.OS === 'ios' ? WeekTogglesIOS : WeekTogglesAndroid
 
 type DatePickerCellProps = {
-	date: moment
+	date: Moment
 	title: string
-	onChange: (date: moment) => any
+	onChange: (date: Moment) => any
 }
 
 class DatePickerCell extends React.PureComponent<DatePickerCellProps> {
-	_picker: any
-	openPicker = () => this._picker.onPressDate()
-
-	getRef = (ref: any) => (this._picker = ref)
-
-	onChange = (newDate: moment) => {
+	onChange = (newDate: Moment) => {
 		let oldMoment = moment()
 
 		oldMoment.hours(newDate.hours())
@@ -222,7 +218,6 @@ class DatePickerCell extends React.PureComponent<DatePickerCellProps> {
 
 		let accessory = (
 			<DatePicker
-				ref={this.getRef}
 				format={format}
 				initialDate={this.props.date}
 				minuteInterval={5}
@@ -235,7 +230,6 @@ class DatePickerCell extends React.PureComponent<DatePickerCellProps> {
 			<Cell
 				cellAccessoryView={accessory}
 				cellStyle="RightDetail"
-				onPress={this.openPicker}
 				title={this.props.title}
 			/>
 		)

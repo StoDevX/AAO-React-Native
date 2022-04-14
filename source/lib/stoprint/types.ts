@@ -31,7 +31,7 @@ export type HeldJob = {
 	usageTimeFormatted: string
 }
 
-type PrintJobsResponse = {
+export type PrintJobsResponse = {
 	jobs: Array<PrintJob>
 }
 
@@ -54,7 +54,7 @@ export type Printer = {
 
 // https://papercut.stolaf.edu:9192/rpc/api/rest/internal/mobilerelease/api/recent-popular-printers
 // ?username=rives
-type RecentPopularPrintersResponse = {
+export type RecentPopularPrintersResponse = {
 	popularPrinters: Array<Printer>
 	recentPrinters: Array<Printer>
 }
@@ -63,7 +63,7 @@ export type RecentPopularPrintersResponseOrErrorType =
 	| {error: true; value: string}
 	| {error: false; value: RecentPopularPrintersResponse}
 
-type ColorPrintersReponse = {
+export type ColorPrintersReponse = {
 	data: {colorPrinters: Array<string>}
 }
 
@@ -71,7 +71,7 @@ export type ColorPrintersResponseOrErrorType =
 	| {error: true; value: string}
 	| {error: false; value: ColorPrintersReponse}
 
-type ReleaseResponse = {
+export type ReleaseResponse = {
 	numJobsReleased: number
 	statusMessage: string
 }
@@ -86,7 +86,7 @@ export type CancelResponseOrErrorType =
 
 // https://papercut.stolaf.edu:9192/rpc/api/rest/internal/mobilerelease/api/all-printers
 // ?username=rives
-type AllPrintersResponse = Array<Printer>
+export type AllPrintersResponse = Array<Printer>
 
 export type AllPrintersResponseOrErrorType =
 	| {error: true; value: string}
@@ -100,7 +100,7 @@ export type HeldJobsResponseOrErrorType =
 	| {error: true; value: Error}
 	| {error: false; value: HeldJobsResponse}
 
-type LoginResponse = {
+export type LoginResponse = {
 	authCookie: string
 	isMobileReleaseEnabled: boolean
 	realName: string

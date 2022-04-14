@@ -81,7 +81,7 @@ export class DictionaryEditorView extends React.PureComponent<Props, State> {
 	}
 }
 
-type TextFieldProps = {text: string; onChange: (string) => any}
+type TextFieldProps = {text: string; onChange: (text: string) => any}
 
 const TitleCell = ({text, onChange = () => {}}: TextFieldProps) => (
 	<CellTextField

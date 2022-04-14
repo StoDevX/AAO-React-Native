@@ -6,10 +6,11 @@ import {
 	Section as ActualSection,
 	Cell,
 } from 'react-native-tableview-simple'
+import type {SectionInterface} from 'react-native-tableview-simple/src/components/Section'
 
 export * from './cells'
 
-let Section = (props: $PropertyType<ActualSection, 'props'>) => (
+let Section = (props: SectionInterface) => (
 	<ActualSection sectionTintColor={sectionBgColor} {...props} />
 )
 

@@ -1,0 +1,16 @@
+name: Ice Arena
+category: Gym
+
+schedule:
+  - title: Open Skate
+    hours:
+      - {days: [Su], from: '3:00pm', to: '6:00pm'}
+
+breakSchedule:
+  fall: []
+  thanksgiving: []
+  winter: []
+  interim: []
+  spring: []
+  easter: []
+  summer: []

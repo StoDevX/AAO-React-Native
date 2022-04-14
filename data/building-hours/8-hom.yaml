@@ -1,0 +1,19 @@
+name: HOM
+subtitle: Hall of Music
+image: hall-of-music
+category: Academia
+
+schedule:
+  - title: Hours
+    hours:
+      - {days: [Mo, Tu, We, Th, Fr], from: '7:00am', to: '11:00am'}
+      - {days: [Sa, Su], from: '8:00am', to: '11:00am'}
+
+breakSchedule:
+  fall: []
+  thanksgiving: []
+  winter: []
+  interim: []
+  spring: []
+  easter: []
+  summer: []

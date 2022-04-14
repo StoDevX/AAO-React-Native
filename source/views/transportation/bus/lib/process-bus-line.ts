@@ -6,10 +6,10 @@ import type {
 } from '../types'
 
 import {parseTime} from './parse-time'
-import type moment from 'moment'
+import type {Moment} from 'moment'
 
 export const processBusSchedule =
-	(now: moment) =>
+	(now: Moment) =>
 	(scheduleData: UnprocessedBusSchedule): BusSchedule => {
 		let times = scheduleData.times.map((timeList) =>
 			timeList.map(parseTime(now)),
@@ -39,7 +39,7 @@ export const processBusSchedule =
 
 export function processBusLine(
 	lineData: UnprocessedBusLine,
-	now: moment,
+	now: Moment,
 ): BusLine {
 	return {
 		line: lineData.line,

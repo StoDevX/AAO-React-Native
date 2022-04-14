@@ -1,0 +1,17 @@
+name: CAAS – Speaking Space
+category: Help and Support
+
+schedule:
+  - title: Appointment Only
+    hours: []
+    notes: By Appointment Only
+
+
+breakSchedule:
+  fall: []
+  thanksgiving: []
+  winter: []
+  interim: []
+  spring: []
+  easter: []
+  summer: []

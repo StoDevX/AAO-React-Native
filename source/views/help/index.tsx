@@ -7,14 +7,15 @@ import {NoticeView, LoadingView} from '@frogpond/notice'
 import type {ReduxState} from '../../redux'
 import {getEnabledTools} from '../../redux/parts/help'
 import {ToolView} from './tool'
+import type {ToolOptions} from './types'
 
-const CUSTOM_TOOLS = []
+const CUSTOM_TOOLS: any[] = []
 
-const shouldBeShown = (conf) =>
+const shouldBeShown = (conf: ToolOptions) =>
 	!conf.hidden &&
 	(!conf.versionRange || semver.satisfies(pkg.version, conf.versionRange))
 
-const getToolView = (config) => {
+const getToolView = (config: ToolOptions) => {
 	let customView = CUSTOM_TOOLS.find((tool) => tool.toolName === config.key)
 	if (!customView) {
 		return [ToolView, config]

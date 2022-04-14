@@ -1,4 +1,4 @@
-platform :ios, '9.3'
+platform :ios, '15.0'
 require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
 
 target 'AllAboutOlaf' do
@@ -21,6 +21,9 @@ target 'AllAboutOlaf' do
 	pod 'React-RCTText', :path => '../node_modules/react-native/Libraries/Text'
 	pod 'React-RCTVibration', :path => '../node_modules/react-native/Libraries/Vibration'
 	pod 'React-Core/RCTWebSocket', :path => '../node_modules/react-native/'
+	pod 'RNDateTimePicker', :path => '../node_modules/@react-native-community/datetimepicker'
+
+	pod 'RNSentry', :path => '../node_modules/@sentry/react-native'
 
 	pod 'React-cxxreact', :path => '../node_modules/react-native/ReactCommon/cxxreact'
 	pod 'React-jsi', :path => '../node_modules/react-native/ReactCommon/jsi'
@@ -40,4 +43,17 @@ target 'AllAboutOlaf' do
 	end
 
 	use_native_modules!
+	inhibit_all_warnings!
+end
+
+post_install do |installer|
+	# this looks redundant, but it should help xcode use the buildcache wrappers in CI
+	installer.pods_project.targets.each do |target|
+		target.build_configurations.each do |config|
+			config.build_settings["CC"] = "clang"
+			config.build_settings["LD"] = "clang"
+			config.build_settings["CXX"] = "clang++"
+			config.build_settings["LDPLUSPLUS"] = "clang++"
+		end
+	end
 end

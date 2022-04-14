@@ -1,7 +1,7 @@
 import * as React from 'react'
 // import {StyleSheet} from 'react-native'
 import {Text} from 'react-native'
-import type moment from 'moment'
+import type {Moment} from 'moment'
 import type {UnprocessedBusLine} from './types'
 // import MapView from '@mapbox/react-native-mapbox-gl'
 import {NoticeView} from '@frogpond/notice'
@@ -40,7 +40,7 @@ export function BusMap(props: WrapperProps) {
 
 type Props = {
 	line: UnprocessedBusLine
-	now: moment
+	now: Moment
 }
 
 type State = {

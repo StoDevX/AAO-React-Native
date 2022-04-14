@@ -1,0 +1,18 @@
+name: IT Helpdesk
+category: Help and Support
+
+schedule:
+  - title: Hours
+    hours:
+      - {days: [Mo, Tu, We, Th], from: '7:45am', to: '11:00pm'}
+      - {days: [Fr], from: '7:45am', to: '5:00pm'}
+      - {days: [Su], from: '1:30pm', to: '11:00pm'}
+
+breakSchedule:
+  fall: []
+  thanksgiving: []
+  winter: []
+  interim: []
+  spring: []
+  easter: []
+  summer: []

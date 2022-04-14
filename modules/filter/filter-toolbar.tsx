@@ -12,7 +12,7 @@ type Props = {
 	onPopoverDismiss: (filter: FilterType) => any
 }
 
-function updateAnyFilter(callback: (FilterType) => any) {
+function updateAnyFilter(callback: (filter: FilterType) => any) {
 	return (filter: FilterType, option?: ListItemSpecType) => {
 		if (filter.type === 'toggle') {
 			filter = updateToggleFilter(filter)

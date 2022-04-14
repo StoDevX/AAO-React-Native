@@ -7,6 +7,7 @@
 import * as React from 'react'
 import {ScrollView, View} from 'react-native'
 import moment from 'moment-timezone'
+import type {Moment} from 'moment-timezone'
 import {InfoHeader} from '@frogpond/info-header'
 import {
 	TableView,
@@ -49,13 +50,25 @@ export class BuildingHoursProblemReportView extends React.PureComponent<
 	openEditor = (
 		scheduleIdx: number,
 		setIdx: number,
-		set?: SingleBuildingScheduleType = undefined,
+		set?: SingleBuildingScheduleType,
 	) => {
 		this.props.navigation.navigate('BuildingHoursScheduleEditorView', {
 			initialSet: set,
 			onEditSet: (editedData: SingleBuildingScheduleType) =>
 				this.editHoursRow(scheduleIdx, setIdx, editedData),
 			onDeleteSet: () => this.deleteHoursRow(scheduleIdx, setIdx),
+		})
+	}
+
+	editName = (newName: BuildingType['name']) => {
+		this.setState((state) => {
+			return {
+				...state,
+				building: {
+					...state.building,
+					name: newName,
+				},
+			}
 		})
 	}
 
@@ -177,7 +190,7 @@ export class BuildingHoursProblemReportView extends React.PureComponent<
 	}
 
 	render() {
-		let {schedule: schedules = []} = this.state.building
+		let {schedule: schedules = [], name} = this.state.building
 
 		return (
 			<ScrollView>
@@ -187,6 +200,10 @@ export class BuildingHoursProblemReportView extends React.PureComponent<
 				/>
 
 				<TableView>
+					<Section header="NAME">
+						<TitleCell onChange={this.editName} text={name || ''} />
+					</Section>
+
 					{schedules.map((s, i) => (
 						<EditableSchedule
 							key={i}
@@ -301,7 +318,7 @@ class EditableSchedule extends React.PureComponent<EditableScheduleProps> {
 	}
 }
 
-type TextFieldProps = {text: string; onChange: (string) => any}
+type TextFieldProps = {text: string; onChange: (text: string) => any}
 // "Title" will become a textfield like the login form
 const TitleCell = ({text, onChange = () => {}}: TextFieldProps) => (
 	<CellTextField
@@ -330,7 +347,7 @@ type TimesCellProps = {
 	set: SingleBuildingScheduleType
 	setIndex: number
 	onPress: (setIdx: number, set: SingleBuildingScheduleType) => any
-	now: moment
+	now: Moment
 }
 
 class TimesCell extends React.PureComponent<TimesCellProps> {

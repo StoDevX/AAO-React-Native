@@ -21,3 +21,16 @@
      }
    }
  
+
+--- ./node_modules/react-native/Libraries/Image/RCTUIImageViewAnimated.m
++++ ./node_modules/react-native/Libraries/Image/RCTUIImageViewAnimated.m
+@@ -270,6 +270,9 @@
+     layer.contentsScale = self.animatedImageScale;
+     layer.contents = (__bridge id)_currentFrame.CGImage;
+   }
++  else {
++    [super displayLayer:layer];
++  }
+ }
+ 
+ #pragma mark - Util

@@ -1,4 +1,4 @@
-import type moment from 'moment'
+import type {Moment} from 'moment'
 import type {BusTimetableEntry} from '../types'
 import type {BusStateEnum} from './get-current-bus-iteration'
 
@@ -8,14 +8,14 @@ type Args = {
 	stop: BusTimetableEntry
 	busStatus: BusStateEnum
 	departureIndex: null | number
-	now: moment
+	now: Moment
 }
 
 export function findBusStopStatus(args: Args): BusStopStatusEnum {
 	let {stop, busStatus, departureIndex, now} = args
 
 	let stopStatus: BusStopStatusEnum = 'skip'
-	let arrivalTime: null | moment = null
+	let arrivalTime: null | Moment = null
 
 	switch (busStatus) {
 		case 'before-start': {

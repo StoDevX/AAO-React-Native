@@ -1,0 +1,26 @@
+name: SARN
+subtitle: Sexual Assault Resource Network
+category: Health and Wellness
+
+schedule:
+  - title: Office
+    hours:
+      - {days: [Mo, We, Fr], from: '10:10am', to: '10:30am'}
+      - {days: [Tu], from: '11:10am', to: '11:30am'}
+      - {days: [Th], from: '11:00am', to: '12:35pm'}
+      - {days: [Tu, Su], from: '7:00pm', to: '8:00pm'}
+
+  - title: Phone
+    isPhysicallyOpen: false
+    hours:
+      - {days: [Mo, Tu, We, Th, Fr, Sa, Su], from: '8:00pm', to: '8:00am'}
+    notes: Call 507-786-3777 to connect with a SARN Advocate
+
+breakSchedule:
+  fall: []
+  thanksgiving: []
+  winter: []
+  interim: []
+  spring: []
+  easter: []
+  summer: []

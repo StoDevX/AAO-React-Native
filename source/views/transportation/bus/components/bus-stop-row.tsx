@@ -3,7 +3,6 @@ import {Platform, StyleSheet} from 'react-native'
 import {Column} from '@frogpond/layout'
 import {ListRow, Detail, Title} from '@frogpond/lists'
 import type {BusTimetableEntry} from '../types'
-import type moment from 'moment'
 import * as c from '@frogpond/colors'
 import {ProgressChunk} from './progress-chunk'
 import {ScheduleTimes} from './times'
@@ -12,6 +11,7 @@ import {
 	findBusStopStatus as findStopStatus,
 } from '../lib'
 import type {BusStateEnum} from '../lib'
+import type {Moment} from 'moment'
 
 const styles = StyleSheet.create({
 	row: {
@@ -35,7 +35,7 @@ const styles = StyleSheet.create({
 type Props = {
 	stop: BusTimetableEntry
 	departureIndex: null | number
-	now: moment
+	now: Moment
 	barColor: string
 	currentStopColor: string
 	isFirstRow: boolean

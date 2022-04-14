@@ -1,0 +1,18 @@
+name: Print Center
+image: print
+category: Mail and Packages
+
+schedule:
+  - title: Hours
+    closedForChapelTime: true
+    hours:
+      - {days: [Mo, Tu, We, Th, Fr], from: '8:00am', to: '5:00pm'}
+
+breakSchedule:
+  fall: []
+  thanksgiving: []
+  winter: []
+  interim: []
+  spring: []
+  easter: []
+  summer: []

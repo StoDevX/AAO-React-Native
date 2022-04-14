@@ -37,10 +37,10 @@ type State = {
 }
 
 class RadioControllerView extends React.Component<Props, State> {
-	state = {
+	state: State = {
 		playState: 'paused',
-		streamError: null,
-		uplinkError: null,
+		streamError: undefined,
+		uplinkError: undefined,
 	}
 
 	play = () => {

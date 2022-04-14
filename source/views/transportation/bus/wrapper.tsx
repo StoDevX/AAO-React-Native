@@ -10,7 +10,7 @@ import {timezone} from '@frogpond/constants'
 
 const fetchBusTimes = (): Promise<Array<UnprocessedBusLine>> =>
 	fetch(API('/transit/bus'))
-		.json()
+		.json<{data: Array<UnprocessedBusLine>}>()
 		.then((body) => body.data)
 
 type Props = TopLevelViewPropsType & {

@@ -1,8 +1,9 @@
+---
+root: true
+
 parser: '@typescript-eslint/parser'
 parserOptions:
   project: './tsconfig.json'
-
-root: true
 
 plugins:
   - '@typescript-eslint'
@@ -54,15 +55,15 @@ rules:
   no-undef-init: off
   no-underscore-dangle: off
   no-unmodified-loop-condition: error
-  no-unused-vars:
+  no-unused-vars: off
+  '@typescript-eslint/no-unused-vars':
     - warn
     - args: 'after-used'
       argsIgnorePattern: '^_'
       varsIgnorePattern: '^_'
   no-useless-constructor: error
   no-var: error
-  # TODO(rye): Follow-up item: DENY this
-  prefer-const: warn
+  prefer-const: off
   prefer-promise-reject-errors: error
   prefer-spread: error
   quotes: [warn, single, avoid-escape]
