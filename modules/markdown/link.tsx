@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {Clipboard} from 'react-native'
+import Clipboard from '@react-native-community/clipboard'
 import glamorous from 'glamorous-native'
 import {openUrl} from '@frogpond/open-url'
 import {connectActionSheet} from '@expo/react-native-action-sheet'
@@ -15,29 +15,32 @@ export const LinkText = glamorous.text({
 type Props = {
 	href: string
 	title?: string
-	children: React.ReactChildren
+	children: React.ReactChildren | JSX.Element
 	showShareActionSheetWithOptions: any
 	showActionSheetWithOptions: any
 }
 
 type Callback = ({title, href}: {title?: string; href: string}) => any
 
-class Link extends React.PureComponent<Props> {
-	options: Array<[string, Callback]> = [
-		['Open', ({href}: {href: string}) => openUrl(href)],
-		[
-			'Copy',
-			({title, href}: {href: string; title?: string}) =>
-				Clipboard.setString(`${href}${title ? ' ' + title : ''}`),
-		],
-		[
-			'Cancel',
-			() => {
-				/* do nothing */
-			},
-		],
-	]
+const LINK_OPTIONS: Array<{name: string; action: Callback}> = [
+	{
+		name: 'Open',
+		action: ({href}: {href: string}) => openUrl(href),
+	},
+	{
+		name: 'Copy',
+		action: ({title, href}: {href: string; title?: string}) =>
+			Clipboard.setString(`${href}${title ? ' ' + title : ''}`),
+	},
+	{
+		name: 'Cancel',
+		action: () => {
+			/* do nothing */
+		},
+	},
+]
 
+class Link extends React.PureComponent<Props> {
 	onPress = () => {
 		return openUrl(this.props.href)
 	}
@@ -45,18 +48,17 @@ class Link extends React.PureComponent<Props> {
 	onLongPress = () => {
 		return this.props.showActionSheetWithOptions(
 			{
-				options: this.options.map(([name]) => name),
+				options: LINK_OPTIONS.map(({name}) => name),
 				title: this.props.title,
 				message: this.props.href,
-				cancelButtonIndex: this.options.length - 1,
+				cancelButtonIndex: LINK_OPTIONS.length - 1,
 			},
 			this.onLongPressEnd,
 		)
 	}
 
 	onLongPressEnd = (pressedOptionIndex: number) => {
-		const [_name, action] = this.options[pressedOptionIndex]
-		return action(this.props)
+		return LINK_OPTIONS[pressedOptionIndex].action(this.props)
 	}
 
 	onShareFailure = () => {

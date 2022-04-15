@@ -23,7 +23,7 @@ const toolbarStyles = StyleSheet.create({
 })
 
 type ToolbarPropsType = {
-	children?: any
+	children: React.ReactChildren | JSX.Element
 }
 
 export function Toolbar({children}: ToolbarPropsType) {

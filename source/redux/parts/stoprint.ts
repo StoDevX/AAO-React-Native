@@ -1,6 +1,6 @@
 import {loadLoginCredentials} from '../../lib/login'
 import type {ReduxState} from '../index'
-import type {PrintJob, Printer} from '../../lib/stoprint'
+import type {Printer, PrintJob} from '../../lib/stoprint'
 import {
 	fetchAllPrinters,
 	fetchColorPrinters,
@@ -151,8 +151,8 @@ export type State = {
 	recentPrinters: Array<Printer> // printer names
 	popularPrinters: Array<Printer> // printer names
 	colorPrinters: Array<Printer>
-	jobsError?: string
-	printersError?: string
+	jobsError: string | null
+	printersError: string | null
 }
 
 const initialState: State = {

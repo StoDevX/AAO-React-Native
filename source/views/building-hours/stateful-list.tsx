@@ -1,5 +1,4 @@
 import * as React from 'react'
-import {NoticeView} from '@frogpond/notice'
 import {BuildingHoursList} from './list'
 import type {ReduxState} from '../../redux'
 import {useSelector} from 'react-redux'
@@ -49,19 +48,17 @@ type ReduxStateProps = {
 type Props = TopLevelViewPropsType & ReduxStateProps
 
 type State = {
-	error?: Error
 	loading: boolean
 	buildings: Array<BuildingType>
 }
 
 export class BuildingHoursView extends React.PureComponent<Props, State> {
 	state = {
-		error: null,
 		loading: false,
 		buildings: [],
 	}
 
-	componentDidMount() {
+	componentDidMount(): void {
 		this.fetchData()
 	}
 
@@ -71,16 +68,12 @@ export class BuildingHoursView extends React.PureComponent<Props, State> {
 		this.setState(() => ({loading: false, buildings}))
 	}
 
-	fetchData = async () => {
+	fetchData = async (): Promise<void> => {
 		let buildings = await fetchHours()
 		this.setState(() => ({buildings}))
 	}
 
-	render() {
-		if (this.state.error) {
-			return <NoticeView text={`Error: ${this.state.error.message}`} />
-		}
-
+	render(): JSX.Element {
 		let {buildings} = this.state
 		let {favoriteBuildings} = this.props
 		let grouped = groupBuildings(buildings, favoriteBuildings)
@@ -104,7 +97,9 @@ export class BuildingHoursView extends React.PureComponent<Props, State> {
 	}
 }
 
-export function ConnectedBuildingHoursView(props: TopLevelViewPropsType) {
+export function ConnectedBuildingHoursView(
+	props: TopLevelViewPropsType,
+): JSX.Element {
 	let favoriteBuildings = useSelector(
 		(state: ReduxState) => state.buildings?.favorites || [],
 	)

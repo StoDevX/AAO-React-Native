@@ -16,6 +16,7 @@ const styles = StyleSheet.create({
 	},
 	wrapper: {
 		marginVertical: 5,
+		alignItems: 'center',
 	},
 	iconsDetail: {
 		marginRight: 5,
@@ -39,7 +40,7 @@ export function DietaryTagsDetail({corIcons, dietary, style}: Args) {
 	const filtered: Array<[string, CorIconType]> = filteredAny
 
 	const tags = filtered.map(([key, dietaryIcon]) => (
-		<Row key={key} alignItems="center" style={styles.wrapper}>
+		<Row key={key} style={styles.wrapper}>
 			<Row flex={1}>
 				<Image
 					accessibilityIgnoresInvertColors={true}

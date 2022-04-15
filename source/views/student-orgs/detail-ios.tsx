@@ -81,7 +81,9 @@ export class StudentOrgsDetailView extends React.PureComponent<Props> {
 							<Cell
 								accessory="DisclosureIndicator"
 								cellStyle="Basic"
-								onPress={() => openUrl(website)}
+								onPress={() => {
+									openUrl(website)
+								}}
 								title={website}
 							/>
 						</Section>

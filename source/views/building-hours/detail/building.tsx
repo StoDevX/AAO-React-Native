@@ -18,7 +18,7 @@ const styles = StyleSheet.create({
 		backgroundColor: c.sectionBgColor,
 	},
 	image: {
-		width: null,
+		width: undefined,
 		height: 100,
 	},
 })
@@ -29,7 +29,7 @@ type Props = {
 	onProblemReport: () => any
 }
 
-const BGCOLORS = {
+const BG_COLORS: Record<string, string> = {
 	Open: c.moneyGreen,
 	Closed: c.salmon,
 }
@@ -67,7 +67,7 @@ export class BuildingDetail extends React.Component<Props> {
 				) : null}
 
 				<Header building={info} />
-				<Badge accentColor={BGCOLORS[openStatus]} status={openStatus} />
+				<Badge accentColor={BG_COLORS[openStatus]} status={openStatus} />
 				<ScheduleTable
 					now={now}
 					onProblemReport={onProblemReport}

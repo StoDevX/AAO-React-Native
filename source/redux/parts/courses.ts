@@ -160,7 +160,7 @@ export type State = {
 
 const initialState = {
 	allCourses: [],
-	readyState: 'not-loaded',
+	readyState: 'not-loaded' as 'not-loaded',
 	validGEs: [],
 	recentFilters: [],
 	recentSearches: [],

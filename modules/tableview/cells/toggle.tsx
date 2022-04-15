@@ -12,7 +12,7 @@ type PropsType = {
 	disabled?: boolean
 }
 
-export function CellToggle(props: PropsType) {
+export function CellToggle(props: PropsType): JSX.Element {
 	let theme: AppTheme = useTheme()
 
 	let {value, onChange, label, detail, disabled} = props

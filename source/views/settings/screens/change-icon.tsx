@@ -39,7 +39,7 @@ export const icons: Array<Icon> = [
 type Props = unknown
 
 type State = {
-	iconType?: string
+	iconType: string | null
 }
 
 export class IconSettingsView extends React.Component<Props, State> {
