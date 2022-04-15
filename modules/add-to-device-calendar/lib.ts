@@ -5,7 +5,7 @@ import {Alert, Linking, Platform} from 'react-native'
 
 export async function addToCalendar(event: EventType): Promise<boolean> {
 	try {
-		const authCode = await RNCalendarEvents.authorizationStatus()
+		const authCode = await RNCalendarEvents.checkPermissions(false)
 
 		const authStatus =
 			authCode === 'authorized' ? true : await requestCalendarAccess()
@@ -62,7 +62,7 @@ function promptSettings(): Alert | void {
 async function requestCalendarAccess(): Promise<boolean> {
 	let status = null
 	try {
-		status = await RNCalendarEvents.authorizeEventStore()
+		status = await RNCalendarEvents.requestPermissions(false)
 	} catch (err) {
 		return false
 	}
