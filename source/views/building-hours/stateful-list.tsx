@@ -1,5 +1,4 @@
 import * as React from 'react'
-import {NoticeView} from '@frogpond/notice'
 import {BuildingHoursList} from './list'
 import type {ReduxState} from '../../redux'
 import {useSelector} from 'react-redux'
@@ -49,14 +48,12 @@ type ReduxStateProps = {
 type Props = TopLevelViewPropsType & ReduxStateProps
 
 type State = {
-	error?: Error
 	loading: boolean
 	buildings: Array<BuildingType>
 }
 
 export class BuildingHoursView extends React.PureComponent<Props, State> {
 	state = {
-		error: null,
 		loading: false,
 		buildings: [],
 	}
@@ -77,10 +74,6 @@ export class BuildingHoursView extends React.PureComponent<Props, State> {
 	}
 
 	render(): JSX.Element {
-		if (this.state.error) {
-			return <NoticeView text={`Error: ${this.state.error.message}`} />
-		}
-
 		let {buildings} = this.state
 		let {favoriteBuildings} = this.props
 		let grouped = groupBuildings(buildings, favoriteBuildings)
