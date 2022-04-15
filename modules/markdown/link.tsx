@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {Clipboard} from 'react-native'
+import Clipboard from '@react-native-community/clipboard'
 import glamorous from 'glamorous-native'
 import {openUrl} from '@frogpond/open-url'
 import {connectActionSheet} from '@expo/react-native-action-sheet'
