@@ -276,15 +276,15 @@ PODS:
   - React-jsinspector (0.66.1)
   - React-logger (0.66.1):
     - glog
-  - react-native-netinfo (6.2.0):
+  - react-native-netinfo (8.2.0):
     - React-Core
-  - react-native-restart (0.0.22):
+  - react-native-restart (0.0.24):
     - React-Core
   - react-native-safari-view (1.0.0):
     - React
   - react-native-safe-area-context (3.3.2):
     - React-Core
-  - react-native-webview (11.14.2):
+  - react-native-webview (11.18.1):
     - React-Core
   - React-perflogger (0.66.1)
   - React-RCTActionSheet (0.66.1):
@@ -353,7 +353,7 @@ PODS:
     - React-perflogger (= 0.66.1)
   - RNCalendarEvents (2.2.0):
     - React
-  - RNDeviceInfo (8.4.3):
+  - RNDeviceInfo (8.7.0):
     - React-Core
   - RNGestureHandler (1.10.3):
     - React-Core
@@ -361,19 +361,19 @@ PODS:
     - React-Core
   - RNReanimated (1.13.4):
     - React-Core
-  - RNScreens (3.9.0):
+  - RNScreens (3.13.1):
     - React-Core
     - React-RCTImage
   - RNSearchBar (3.5.1):
     - React
-  - RNSentry (3.3.3):
+  - RNSentry (3.4.1):
     - React-Core
-    - Sentry (= 7.10.2)
+    - Sentry (= 7.11.0)
   - RNVectorIcons (9.0.0):
     - React-Core
-  - Sentry (7.10.2):
-    - Sentry/Core (= 7.10.2)
-  - Sentry/Core (7.10.2)
+  - Sentry (7.11.0):
+    - Sentry/Core (= 7.11.0)
+  - Sentry/Core (7.11.0)
   - Yoga (1.14.0)
   - YogaKit (1.18.1):
     - Yoga (~> 1.14)
@@ -594,11 +594,11 @@ SPEC CHECKSUMS:
   React-jsiexecutor: db2f6e22a534d466fc0e34e622df47d9d20bab2f
   React-jsinspector: 8c0517dee5e8c70cd6c3066f20213ff7ce54f176
   React-logger: bfddd3418dc1d45b77b822958f3e31422e2c179b
-  react-native-netinfo: de0d4343f8d5ec9b92653b17a0ef47091317986a
-  react-native-restart: 733a51ad137f15b0f8dc34c4082e55af7da00979
+  react-native-netinfo: e922cb2e3eaf9ccdf16b8d4744a89657377aa4a1
+  react-native-restart: 45c8dca02491980f2958595333cbccd6877cb57e
   react-native-safari-view: 955d7160d159241b8e9395d12d10ea0ef863dcdd
   react-native-safe-area-context: 584dc04881deb49474363f3be89e4ca0e854c057
-  react-native-webview: cc4ac8f021a832dce2979e1f48c5595341dd2fb5
+  react-native-webview: 0b7bd2bffced115aefd393e1841babd9b9a557b1
   React-perflogger: fcac6090a80e3d967791b4c7f1b1a017f9d4a398
   React-RCTActionSheet: caf5913d9f9e605f5467206cf9d1caa6d47d7ad6
   React-RCTAnimation: 6539e3bf594f6a529cd861985ba6548286ae1ead
@@ -612,18 +612,18 @@ SPEC CHECKSUMS:
   React-runtimeexecutor: 33a949a51bec5f8a3c9e8d8092deb259600d761e
   ReactCommon: 620442811dc6f707b4bf5e3b27d4f19c12d5a821
   RNCalendarEvents: 7e65eb4a94f53c1744d1e275f7fafcfaa619f7a3
-  RNDeviceInfo: 25a16a2a03049e88e800f3f41ca540e645b8a95a
+  RNDeviceInfo: 36286df381fcaf1933ff9d2d3c34ba2abeb2d8d8
   RNGestureHandler: a479ebd5ed4221a810967000735517df0d2db211
   RNKeychain: 4f63aada75ebafd26f4bc2c670199461eab85d94
   RNReanimated: c1b56d030d1616239861534d9adb531f8cffab68
-  RNScreens: 4d79118be80f79fa1f4aa131909a1d6e86280af3
+  RNScreens: 40a2cb40a02a609938137a1e0acfbf8fc9eebf19
   RNSearchBar: 9860431356b7d12a8449d2fddb2b5f3c78d1e99f
-  RNSentry: e18c74a900defb174302793c5bedbbe8bcb1120e
+  RNSentry: fbbdcd7213058e3de5fbaa452b25a06a16b4b382
   RNVectorIcons: 4143ba35feebab8fdbe6bc43d1e776b393d47ac8
-  Sentry: 7bf9bfe713692cf87812e55f0999260494ba7982
+  Sentry: 0c5cd63d714187b4a39c331c1f0eb04ba7868341
   Yoga: 2b4a01651f42a32f82e6cef3830a3ba48088237f
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
 PODFILE CHECKSUM: 46dc6d7d467d7bee8dcf07508c1ccd91adddd0c7
 
-COCOAPODS: 1.11.2
+COCOAPODS: 1.11.3
