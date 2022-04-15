@@ -15,7 +15,7 @@ export const LinkText = glamorous.text({
 type Props = {
 	href: string
 	title?: string
-	children: React.ReactChildren
+	children: React.ReactChildren | JSX.Element
 	showShareActionSheetWithOptions: any
 	showActionSheetWithOptions: any
 }
