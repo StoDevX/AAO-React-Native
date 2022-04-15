@@ -46,7 +46,7 @@ export class BonAppPickerView extends React.PureComponent<Props, State> {
 	render() {
 		return (
 			<View style={styles.container}>
-				<Toolbar onPress={() => {}}>
+				<Toolbar>
 					<TextInput
 						keyboardType="numeric"
 						onEndEditing={(e) => this.chooseCafe(e.nativeEvent.text)}
