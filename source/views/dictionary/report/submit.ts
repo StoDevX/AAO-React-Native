@@ -5,7 +5,7 @@ import querystring from 'query-string'
 import {GH_NEW_ISSUE_URL, SUPPORT_EMAIL} from '../../../lib/constants'
 import wrap from 'wordwrap'
 
-export function submitReport(current: WordType, suggestion: WordType) {
+export function submitReport(current: WordType, suggestion: WordType): void {
 	let before = stringifyDictionaryEntry(current)
 	let after = stringifyDictionaryEntry(suggestion)
 
@@ -32,7 +32,7 @@ ${makeHtmlBody(before, after)}
 `
 }
 
-const makeMarkdownBody = (before, after) =>
+const makeMarkdownBody = (before: string, after: string) =>
 	`
 ## Before:
 
@@ -47,7 +47,7 @@ ${after}
 \`\`\`
 `
 
-const makeHtmlBody = (before, after) => `
+const makeHtmlBody = (before: string, after: string) => `
 <p>Before:</p>
 <pre><code>${before}</code></pre>
 

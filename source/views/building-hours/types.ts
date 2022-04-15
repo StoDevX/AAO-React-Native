@@ -31,9 +31,10 @@ export type NamedBuildingScheduleType = {
 	hours: SingleBuildingScheduleType[]
 }
 
-export type BreakScheduleContainerType = {
-	[key: BreakNameEnumType]: NamedBuildingScheduleType[]
-}
+export type BreakScheduleContainerType = Record<
+	BreakNameEnumType,
+	NamedBuildingScheduleType[]
+>
 
 export type BuildingLinkType = {
 	title: string

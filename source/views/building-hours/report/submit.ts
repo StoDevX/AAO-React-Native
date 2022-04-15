@@ -4,7 +4,10 @@ import {sendEmail} from '../../../components/send-email'
 import querystring from 'query-string'
 import {GH_NEW_ISSUE_URL, SUPPORT_EMAIL} from '../../../lib/constants'
 
-export function submitReport(current: BuildingType, suggestion: BuildingType) {
+export function submitReport(
+	current: BuildingType,
+	suggestion: BuildingType,
+): void {
 	// calling trim() on these to remove the trailing newlines
 	let before = stringifyBuilding(current).trim()
 	let after = stringifyBuilding(suggestion).trim()
@@ -32,7 +35,7 @@ ${makeHtmlBody(before, after)}
 `
 }
 
-const makeMarkdownBody = (before, after) =>
+const makeMarkdownBody = (before: string, after: string) =>
 	`
 ## Before:
 
@@ -47,7 +50,7 @@ ${after}
 \`\`\`
 `
 
-const makeHtmlBody = (before, after) => `
+const makeHtmlBody = (before: string, after: string) => `
 <p>Before:</p>
 <pre><code>${before}</code></pre>
 

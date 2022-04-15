@@ -1,18 +1,17 @@
 import * as React from 'react'
 import {
 	Platform,
-	View,
 	Pressable,
-	ViewStyle,
-	StyleProp,
-	PressableStateCallbackType,
 	PressableProps,
+	PressableStateCallbackType,
+	StyleProp,
+	View,
+	ViewStyle,
 } from 'react-native'
 
 type Props = PressableProps & {
 	borderless?: boolean
 	containerStyle?: StyleProp<ViewStyle>
-	children: React.ReactChildren | JSX.Element
 	style?: StyleProp<ViewStyle>
 	highlight?: boolean
 	activeOpacity?: number

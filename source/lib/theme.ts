@@ -16,7 +16,7 @@ export const accent = sto.gold
 export const navigationBackground = Platform.select({
 	ios: accent,
 	android: accent,
-})
+}) as string
 export const navigationForeground = firstReadable(navigationBackground, [
 	sto.black,
 	sto.white,
@@ -81,7 +81,7 @@ export const statusBarStyle = Platform.select({
 	android: tinycolor.isReadable('#000', androidStatusBarColor)
 		? 'dark-content'
 		: 'light-content',
-})
+}) as 'dark-content' | 'light-content'
 
 export const themeObject: AppTheme = {
 	accent,

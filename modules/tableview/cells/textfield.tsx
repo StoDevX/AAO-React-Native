@@ -1,5 +1,11 @@
 import * as React from 'react'
-import {StyleSheet, Text, Platform, TextInput} from 'react-native'
+import {
+	Platform,
+	StyleSheet,
+	Text,
+	TextInput,
+	TextInputProps,
+} from 'react-native'
 import {Cell} from 'react-native-tableview-simple'
 import * as c from '@frogpond/colors'
 
@@ -65,8 +71,8 @@ export class CellTextField extends React.Component<Props> {
 		this.props.onSubmitEditing?.(this.props.value)
 	}
 
-	render() {
-		let moreProps = {}
+	render(): JSX.Element {
+		let moreProps: TextInputProps = {}
 		if (this.props.multiline) {
 			moreProps.scrollEnabled = false
 		}

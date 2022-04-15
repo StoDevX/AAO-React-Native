@@ -23,7 +23,7 @@ export type FeedResponseType = {
 	rss: {
 		channel: Array<{
 			title: string[]
-			'atom:link': mixed[]
+			'atom:link': unknown[]
 			link: string[]
 			description: string[]
 			item: RssFeedItemType[]
