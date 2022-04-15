@@ -53,7 +53,7 @@ function ContactInformation({job}: {job: JobType}) {
 			cellStyle="LeftDetail"
 			detail="Email"
 			onPress={() =>
-				email ? sendEmail({to: [email], subject: job.title, body: ''}) : null
+				email ? sendEmail({to: [email], subject: job.title, body: ''}) : false
 			}
 			title={email}
 		/>
@@ -65,7 +65,7 @@ function ContactInformation({job}: {job: JobType}) {
 			accessory={contactNumber ? 'DisclosureIndicator' : undefined}
 			cellStyle="LeftDetail"
 			detail="Phone"
-			onPress={() => (contactNumber ? callPhone(contactNumber) : null)}
+			onPress={() => (contactNumber ? callPhone(contactNumber) : false)}
 			title={contactNumber}
 		/>
 	) : null
