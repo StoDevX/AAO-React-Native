@@ -94,9 +94,9 @@ export function RootStack(): JSX.Element {
 					options={calendar.NavigationOptions}
 				/>
 				<Stack.Screen
-					component={eventDetail.View}
+					component={eventDetail.EventDetail}
 					name="EventDetail"
-					options={eventDetail.NavigationOptions}
+					// options={eventDetail.NavigationOptions}
 				/>
 			</Stack.Group>
 			<Stack.Group>
