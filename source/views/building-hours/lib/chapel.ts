@@ -8,7 +8,8 @@ import {parseHours} from './parse-hours'
 
 import {data as chapelData} from '../../../../docs/chapel.json'
 
-const chapelSchedule = chapelData.chapelSchedule as unknown as SingleBuildingScheduleType[]
+const chapelSchedule =
+	chapelData.chapelSchedule as unknown as SingleBuildingScheduleType[]
 
 export function isChapelTime(
 	m: Moment,
