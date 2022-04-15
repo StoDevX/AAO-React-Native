@@ -1,4 +1,4 @@
-import { ViewStyle } from 'react-native'
+import {ViewStyle} from 'react-native'
 import type {Moment} from 'moment-timezone'
 import type {
 	AndroidNativeProps,
