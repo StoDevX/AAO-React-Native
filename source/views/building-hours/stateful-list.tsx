@@ -61,7 +61,7 @@ export class BuildingHoursView extends React.PureComponent<Props, State> {
 		buildings: [],
 	}
 
-	componentDidMount() {
+	componentDidMount(): void {
 		this.fetchData()
 	}
 
@@ -71,12 +71,12 @@ export class BuildingHoursView extends React.PureComponent<Props, State> {
 		this.setState(() => ({loading: false, buildings}))
 	}
 
-	fetchData = async () => {
+	fetchData = async (): Promise<void> => {
 		let buildings = await fetchHours()
 		this.setState(() => ({buildings}))
 	}
 
-	render() {
+	render(): JSX.Element {
 		if (this.state.error) {
 			return <NoticeView text={`Error: ${this.state.error.message}`} />
 		}
@@ -104,7 +104,9 @@ export class BuildingHoursView extends React.PureComponent<Props, State> {
 	}
 }
 
-export function ConnectedBuildingHoursView(props: TopLevelViewPropsType) {
+export function ConnectedBuildingHoursView(
+	props: TopLevelViewPropsType,
+): JSX.Element {
 	let favoriteBuildings = useSelector(
 		(state: ReduxState) => state.buildings?.favorites || [],
 	)
