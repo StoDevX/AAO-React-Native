@@ -7,10 +7,10 @@ USE_PODS=${FP_PODS:-yes}
 if [[ $USE_PODS = 'yes' ]]; then
 	if [[ $(uname) = 'Darwin' ]]; then
 		bundle install
-		cd ios && bundle exec pod install
+		cd ios || exit 1
 
-		if [[ $? != 0 ]]; then
-			echo 'try running `bundle exec pod repo update`' 1>&2
+		if ! bundle exec pod install --deployment; then
+			echo 'try running "bundle exec pod install --repo-update"' 1>&2
 		fi
 	else
 		echo 'not on macos; not installing cocoapods'
