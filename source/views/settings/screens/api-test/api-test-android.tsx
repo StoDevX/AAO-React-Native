@@ -35,8 +35,8 @@ type Props = {
 }
 
 type State = {
-	results?: string
-	error?: string
+	results: string | null
+	error: string | null
 }
 
 export class AndroidAPITestView extends React.PureComponent<Props, State> {
@@ -66,7 +66,7 @@ export class AndroidAPITestView extends React.PureComponent<Props, State> {
 
 		return (
 			<View style={styles.container}>
-				<Toolbar onPress={() => {}}>
+				<Toolbar>
 					<TextInput
 						autoCapitalize="none"
 						autoCorrect={false}
