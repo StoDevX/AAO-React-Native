@@ -70,7 +70,7 @@ BalancesOrAcknowledgementView.navigationOptions = {
 type AcknowledgementProps = {
 	title: string
 	subtitle: string
-	children: React.Node
+	children: React.ReactChildren | JSX.Element
 	onPositive: () => any
 }
 
