@@ -9,6 +9,7 @@ import {FullWidthSeparator, ListSectionHeader} from '@frogpond/lists'
 import {NoticeView} from '@frogpond/notice'
 import EventRow from './event-row'
 import {useNavigation} from '@react-navigation/native'
+import {PoweredBy} from './types'
 
 type Props = {
 	detailView?: string
@@ -42,18 +43,17 @@ function groupEvents(
 	}))
 }
 
-export function EventList(props: Props) {
+export function EventList(props: Props): JSX.Element {
 	let navigation = useNavigation()
 
 	let onPressEvent = React.useCallback(
 		(event: EventType) => {
-			// let detailView = props.detailView || 'EventDetail'
 			navigation.navigate('EventDetail', {
 				event,
 				poweredBy: props.poweredBy,
 			})
 		},
-		[props.poweredBy, props.detailView],
+		[navigation, props.poweredBy],
 	)
 
 	if (props.message) {
