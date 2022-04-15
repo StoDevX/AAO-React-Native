@@ -1,9 +1,8 @@
 import * as React from 'react'
-import {StyleSheet, View, ViewProps} from 'react-native'
+import {FlexStyle, StyleSheet, View, ViewProps} from 'react-native'
 
 type PropsType = {
-	flex?: number
-	children: React.ReactChildren | JSX.Element
+	flex?: FlexStyle['flex']
 } & ViewProps
 
 const styles = StyleSheet.create({
@@ -18,7 +17,7 @@ export const Row = ({
 	flex,
 	...props
 }: PropsType): JSX.Element => {
-	let flexStyle = flex !== undefined && flex !== null ? {flex: flex} : null
+	let flexStyle = flex != null ? {flex: flex} : null
 	return (
 		<View style={[styles.column, style, flexStyle]} {...props}>
 			{children}
