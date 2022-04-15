@@ -29,7 +29,7 @@ type Props = {
 	onProblemReport: () => any
 }
 
-const BG_COLORS = {
+const BG_COLORS: Record<string, string> = {
 	Open: c.moneyGreen,
 	Closed: c.salmon,
 }
