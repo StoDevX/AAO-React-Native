@@ -10,6 +10,7 @@ import {ListFooter} from '@frogpond/lists'
 import {RouteProp, useRoute} from '@react-navigation/native'
 import {RootStackParamList} from '../../source/navigation/types'
 import {NavigationKey} from './event-detail-base'
+import {EventType} from '@frogpond/event-type'
 
 const styles = StyleSheet.create({
 	name: {
@@ -64,7 +65,7 @@ export function EventDetail(): JSX.Element {
 
 	return (
 		<ScrollView>
-			<Title title={event.title} />
+			<Title event={event} />
 			<MaybeCard content={getTimes(event)} header="When" />
 			<MaybeCard content={event.location} header="Location" />
 			<MaybeCard content={event.description} header="Description" />
