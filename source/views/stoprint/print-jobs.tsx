@@ -31,7 +31,7 @@ type ReactProps = TopLevelViewPropsType
 
 type ReduxStateProps = {
 	jobs: Array<PrintJob>
-	error?: string
+	error: string | null
 	status: LoginStateEnum
 }
 
@@ -53,7 +53,7 @@ class PrintJobsView extends React.PureComponent<Props, State> {
 		headerBackTitle: 'Jobs',
 	}
 
-	state = {
+	state: State = {
 		initialLoadComplete: false,
 		loading: true,
 	}
