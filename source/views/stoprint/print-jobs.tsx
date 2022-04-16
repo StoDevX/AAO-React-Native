@@ -4,7 +4,7 @@ import {Platform, SectionList} from 'react-native'
 import {useDispatch, useSelector} from 'react-redux'
 import type {ReduxState} from '../../redux'
 import {updatePrintJobs} from '../../redux/parts/stoprint'
-import {logInViaCredentials} from '../../redux/parts/login'
+import {LoginAction, logInViaCredentials} from '../../redux/parts/login'
 import type {LoginStateEnum} from '../../redux/parts/login'
 import {loadLoginCredentials} from '../../lib/login'
 import {STOPRINT_HELP_PAGE} from '../../lib/stoprint'
@@ -26,6 +26,7 @@ import toPairs from 'lodash/toPairs'
 import sortBy from 'lodash/sortBy'
 import {getTimeRemaining} from './lib'
 import {Timer} from '@frogpond/timer'
+import {ThunkAction} from 'redux-thunk'
 
 type ReactProps = TopLevelViewPropsType
 
@@ -36,8 +37,11 @@ type ReduxStateProps = {
 }
 
 type ReduxDispatchProps = {
-	logInViaCredentials: (username: string, password: string) => Promise<any>
-	updatePrintJobs: () => Promise<any>
+	logInViaCredentials: (
+		username: string,
+		password: string,
+	) => ThunkAction<void, ReduxState, void, LoginAction>
+	updatePrintJobs: () => ThunkAction<void, ReduxState, void, LoginAction>
 }
 
 type Props = ReactProps & ReduxDispatchProps & ReduxStateProps
