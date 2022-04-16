@@ -1,10 +1,11 @@
 package com.allaboutolaf;
 
-import com.facebook.react.modules.storage.ReactDatabaseSupplier;
+import android.os.Bundle;
+
 import com.facebook.react.ReactActivity;
 import com.facebook.react.ReactActivityDelegate;
 import com.facebook.react.ReactRootView;
-import android.os.Bundle;
+import com.facebook.react.modules.storage.ReactDatabaseSupplier;
 
 public class MainActivity extends ReactActivity {
 
