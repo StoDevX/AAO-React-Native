@@ -17,7 +17,11 @@ import type {State as SettingsState, SettingsAction} from './parts/settings'
 import {stoprint} from './parts/stoprint'
 import type {State as StoPrintState, StoPrintAction} from './parts/stoprint'
 
-export {init as initRedux} from './init'
+import NetInfo from '@react-native-community/netinfo'
+import {getEnabledTools} from './parts/help'
+import {loadFavoriteBuildings} from './parts/buildings'
+import {loadAcknowledgement} from './parts/settings'
+import {loadRecentSearches, loadRecentFilters} from './parts/courses'
 
 export type ReduxState = {
 	courses?: CoursesState
@@ -62,4 +66,27 @@ export function makeStore(): Store<ReduxState, AppAction> {
 	}
 
 	return createStore(aao, applyMiddleware(...middleware))
+}
+
+export async function initRedux(
+	store: Store<ReduxState, AppAction>,
+): Promise<void> {
+	// this function runs in two parts: the things that don't care about
+	// network, and those that do.
+
+	// kick off the parts that don't care about network in parallel
+	await Promise.all([
+		loadAcknowledgement().then(store.dispatch),
+		loadFavoriteBuildings().then(store.dispatch),
+		loadRecentSearches().then(store.dispatch),
+		loadRecentFilters().then(store.dispatch),
+	])
+
+	// wait for our first connection check to happen
+	await NetInfo.fetch()
+
+	// then go do the network stuff in parallel
+	// NOTE(rye): This use of `any` is okay. getEnabledTools returns a
+	// ThunkAction, and because we use the ThunkMiddleware, this should be fine.
+	await Promise.all([store.dispatch<any>(getEnabledTools())])
 }
