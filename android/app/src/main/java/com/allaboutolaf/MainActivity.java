@@ -4,8 +4,6 @@ import com.facebook.react.modules.storage.ReactDatabaseSupplier;
 import com.facebook.react.ReactActivity;
 import com.facebook.react.ReactActivityDelegate;
 import com.facebook.react.ReactRootView;
-import com.calendarevents.CalendarEventsPackage;
-import com.swmansion.gesturehandler.react.RNGestureHandlerEnabledRootView;
 import android.os.Bundle;
 
 public class MainActivity extends ReactActivity {
@@ -33,13 +31,6 @@ public class MainActivity extends ReactActivity {
         super.onCreate(savedInstanceState);
         long size = 50L * 1024L * 1024L; // 50 MB
         ReactDatabaseSupplier.getInstance(getApplicationContext()).setMaximumSize(size);
-    }
-
-    // Required for react-native-calendar-events
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        CalendarEventsPackage.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
     public static class MainActivityDelegate extends ReactActivityDelegate {
