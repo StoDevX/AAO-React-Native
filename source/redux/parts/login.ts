@@ -115,7 +115,7 @@ export type State = {
 	readonly status: LoginStateEnum
 }
 
-const initialState = {
+const initialState: State = {
 	status: 'initializing',
 }
 
