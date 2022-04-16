@@ -6,6 +6,7 @@ import {
 
 import type {ReduxState} from '../index'
 import {Alert} from 'react-native'
+import {ThunkAction} from 'redux-thunk'
 
 export type LoginStateEnum =
 	| 'logged-out'
@@ -13,15 +14,6 @@ export type LoginStateEnum =
 	| 'checking'
 	| 'invalid'
 	| 'initializing'
-
-type Dispatch<A extends Action> = (
-	action: A | Promise<A> | ThunkAction<A>,
-) => void
-type GetState = () => ReduxState
-type ThunkAction<A extends Action> = (
-	dispatch: Dispatch<A>,
-	getState: GetState,
-) => void
 
 const LOGIN_START = 'settings/CREDENTIALS_LOGIN_START'
 const LOGIN_SUCCESS = 'settings/CREDENTIALS_LOGIN_SUCCESS'
@@ -71,7 +63,7 @@ const showUnknownFailureMessage = () =>
 export function logInViaCredentials(
 	username: string,
 	password: string,
-): ThunkAction<LogInActions> {
+): ThunkAction<void, ReduxState, void, LogInActions> {
 	return async (dispatch) => {
 		dispatch({type: LOGIN_START})
 
@@ -107,10 +99,9 @@ export async function logOutViaCredentials(): Promise<LogOutAction> {
 	return {type: LOGOUT}
 }
 
-type Action = CredentialsActions
-export type LoginAction = CredentialsActions
-
 type CredentialsActions = LogInActions | LogOutAction
+
+export type LoginAction = CredentialsActions
 
 export type State = {
 	readonly status: LoginStateEnum
@@ -120,7 +111,10 @@ const initialState: State = {
 	status: 'initializing',
 }
 
-export function login(state: State = initialState, action: Action): State {
+export function login(
+	state: State = initialState,
+	action: CredentialsActions,
+): State {
 	switch (action.type) {
 		case LOGIN_START:
 			return {...state, status: 'checking'}
