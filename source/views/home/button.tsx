@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {View, Text, StyleSheet, Platform} from 'react-native'
+import {View, Text, StyleSheet, Platform, Image} from 'react-native'
 import Icon from 'react-native-vector-icons/Entypo'
 import type {ViewType} from '../views'
 import LinearGradient from 'react-native-linear-gradient'
@@ -13,7 +13,39 @@ type Props = {
 	onPress: () => any
 }
 
-export function HomeScreenButton({view, onPress}: Props) {
+type HomeIconProps = {
+	view: ViewType
+	foreground: {color: string}
+}
+
+let HomeIcon = (props: HomeIconProps): JSX.Element => {
+	let {view, foreground} = props
+
+	switch (view.icon.type) {
+		case 'icon':
+			return (
+				<Icon
+					name={view.icon.name}
+					size={32}
+					style={[foreground, styles.icon]}
+				/>
+			)
+		case 'image':
+			return (
+				<Image
+					accessibilityIgnoresInvertColors={true}
+					source={
+						view.icon.path !== undefined ? view.icon.path : {uri: undefined}
+					}
+					style={styles.imageIcon}
+				/>
+			)
+		default:
+			return <Icon name="question" size={32} style={styles.icon} />
+	}
+}
+
+export function HomeScreenButton({view, onPress}: Props): JSX.Element {
 	let foreground =
 		view.foreground === 'light' ? styles.lightForeground : styles.darkForeground
 
@@ -25,7 +57,7 @@ export function HomeScreenButton({view, onPress}: Props) {
 			tint={view.tint}
 		>
 			<View style={styles.contents}>
-				<Icon name={view.icon} size={32} style={[foreground, styles.icon]} />
+				<HomeIcon foreground={foreground} view={view} />
 				<Text style={[foreground, styles.text]}>{view.title}</Text>
 			</View>
 		</TouchableButton>
@@ -129,6 +161,10 @@ const styles = StyleSheet.create({
 	},
 	icon: {
 		backgroundColor: transparent,
+	},
+	imageIcon: {
+		height: 32,
+		width: 32,
 	},
 	text: {
 		backgroundColor: transparent,
