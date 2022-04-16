@@ -5,10 +5,9 @@ import {getEnabledTools} from './parts/help'
 import {loadFavoriteBuildings} from './parts/buildings'
 import {loadAcknowledgement} from './parts/settings'
 import {loadRecentSearches, loadRecentFilters} from './parts/courses'
-import {AnyAction, Store} from 'redux'
+import {ReduxState, AppAction} from '.'
 
-// TODO: Perhaps restrict the any and AnyAction types a bit further?
-export async function init(store: Store<any, AnyAction>): Promise<void> {
+export async function init(store: Store<ReduxState, AppAction>): Promise<void> {
 	// this function runs in two parts: the things that don't care about
 	// network, and those that do.
 

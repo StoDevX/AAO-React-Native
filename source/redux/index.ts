@@ -28,7 +28,7 @@ export type ReduxState = {
 	login?: LoginState
 }
 
-type AppAction =
+export type AppAction =
 	| BuildingsAction
 	| CoursesAction
 	| HelpAction
