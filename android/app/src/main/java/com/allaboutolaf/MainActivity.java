@@ -1,12 +1,11 @@
 package com.allaboutolaf;
 
-import com.facebook.react.modules.storage.ReactDatabaseSupplier;
+import android.os.Bundle;
+
 import com.facebook.react.ReactActivity;
-import com.calendarevents.CalendarEventsPackage;
 import com.facebook.react.ReactActivityDelegate;
 import com.facebook.react.ReactRootView;
-import com.swmansion.gesturehandler.react.RNGestureHandlerEnabledRootView;
-import android.os.Bundle;
+import com.facebook.react.modules.storage.ReactDatabaseSupplier;
 
 public class MainActivity extends ReactActivity {
 
@@ -19,14 +18,13 @@ public class MainActivity extends ReactActivity {
         return "AllAboutOlaf";
     }
 
+    /**
+     * Returns the instance of the {@link ReactActivityDelegate}. There the RootView is created and
+     * you can specify the renderer you wish to use (Fabric or the older renderer).
+     */
     @Override
     protected ReactActivityDelegate createReactActivityDelegate() {
-        return new ReactActivityDelegate(this, getMainComponentName()) {
-            @Override
-            protected ReactRootView createRootView() {
-                return new RNGestureHandlerEnabledRootView(MainActivity.this);
-            }
-        };
+        return new MainActivityDelegate(this, getMainComponentName());
     }
 
     @Override
@@ -36,10 +34,17 @@ public class MainActivity extends ReactActivity {
         ReactDatabaseSupplier.getInstance(getApplicationContext()).setMaximumSize(size);
     }
 
-    // Required for react-native-calendar-events
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        CalendarEventsPackage.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    public static class MainActivityDelegate extends ReactActivityDelegate {
+        public MainActivityDelegate(ReactActivity activity, String mainComponentName) {
+            super(activity, mainComponentName);
+        }
+        
+        @Override
+        protected ReactRootView createRootView() {
+            ReactRootView reactRootView = new ReactRootView(getContext());
+            // If you opted-in for the New Architecture, we enable the Fabric Renderer.
+            reactRootView.setIsFabric(BuildConfig.IS_NEW_ARCHITECTURE_ENABLED);
+            return reactRootView;
+        }
     }
 }

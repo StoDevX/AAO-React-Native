@@ -295,7 +295,7 @@ PLATFORMS
   universal-darwin-20
 
 DEPENDENCIES
-  cocoapods
+  cocoapods (~> 1.11, >= 1.11.2)
   fastlane
   json
   netrc
