@@ -22,8 +22,17 @@ run:ios:
 lint:
 	npx eslint --report-unused-disable-directives --cache source/ modules/ scripts/ images/
 
-bootstrap:android:
-	npx jetifier
+bootstrap: bootstrap:android bootstrap:ios
+
+bootstrap:ios: pods bootstrap:js
+
+bootstrap:android: jetify bootstrap:js
+
+bootstrap:js:
+	npm ci
+
+jetify:
+	npx jetify
 
 bootstrap:patch:
 	patch -p0 -Nfsi contrib/*.patch || true
