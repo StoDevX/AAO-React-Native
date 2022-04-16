@@ -1,17 +1,6 @@
 import * as storage from '../../lib/storage'
 import type {ReduxState} from '../index'
-
-type Dispatch<A extends Action> = (
-	action: A | Promise<A> | ThunkAction<A>,
-) => void
-type GetState = () => ReduxState
-type ThunkAction<A extends Action> = (
-	dispatch: Dispatch<A>,
-	getState: GetState,
-) => void
-type Action = ToggleFavoriteAction | LoadFavoritesAction
-
-export type BuildingsAction = Action
+import {ThunkAction} from 'redux-thunk'
 
 const LOAD_FAVORITE_BUILDINGS = 'buildings/LOAD_FAVORITE_BUILDINGS'
 const TOGGLE_FAVORITE_BUILDING = 'buildings/TOGGLE_FAVORITE_BUILDING'
@@ -31,7 +20,7 @@ type ToggleFavoriteAction = {
 }
 export function toggleFavoriteBuilding(
 	buildingName: string,
-): ThunkAction<ToggleFavoriteAction> {
+): ThunkAction<void, ReduxState, unknown, ToggleFavoriteAction> {
 	return (dispatch, getState) => {
 		const state = getState()
 
@@ -51,6 +40,8 @@ export function toggleFavoriteBuilding(
 	}
 }
 
+export type BuildingsAction = ToggleFavoriteAction | LoadFavoritesAction
+
 export type State = {
 	favorites: Array<string>
 }
@@ -59,7 +50,10 @@ const initialState: State = {
 	favorites: [],
 }
 
-export function buildings(state: State = initialState, action: Action): State {
+export function buildings(
+	state: State = initialState,
+	action: BuildingsAction,
+): State {
 	switch (action.type) {
 		case LOAD_FAVORITE_BUILDINGS:
 		case TOGGLE_FAVORITE_BUILDING: {
