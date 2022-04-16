@@ -2,26 +2,6 @@
   "name": "all-about-olaf",
   "version": "2.8.0-beta.8",
   "private": true,
-  "scripts": {
-    "android": "react-native run-android",
-    "bundle-data": "node scripts/bundle-data.mjs data/ docs/",
-    "bundle:android": "react-native bundle --entry-file index.js --dev true --platform android --bundle-output ./android/app/src/main/assets/index.android.bundle --assets-dest ./android/app/src/main/res/ --sourcemap-output ./android/app/src/main/assets/index.android.bundle.map",
-    "bundle:ios": "react-native bundle --entry-file index.js --dev false --platform ios --bundle-output ./ios/AllAboutOlaf/main.jsbundle --assets-dest ./ios --sourcemap-output ./ios/AllAboutOlaf/main.jsbundle.map",
-    "fastlane": "bundle exec fastlane",
-    "compress-data": "gzip --keep docs/*.json",
-    "data": "echo 'use the `bundle-data` script instead' && exit 1",
-    "ios": "react-native run-ios",
-    "lint": "eslint --report-unused-disable-directives --cache source/ modules/ scripts/ images/",
-    "prepare": "patch -p0 -Nfsi contrib/*.patch || true",
-    "pretty": "prettier --write '{source,modules,scripts,images,e2e}/**/*.{js,ts,tsx,json}' 'data/**/*.css' '{*,.*}.{yaml,yml,json,js,ts,tsx}'",
-    "p": "pretty-quick",
-    "pods": "scripts/pods.sh",
-    "postinstall": "if [ -z \"$SKIP_POSTINSTALL\" ]; then jetify; fi",
-    "start": "react-native start",
-    "test": "jest",
-    "validate-bus-data": "node scripts/validate-bus-schedules.mjs",
-    "validate-data": "node scripts/validate-data.mjs"
-  },
   "workspaces": {
     "packages": [
       "modules/*"
