@@ -9,18 +9,10 @@ import type {CourseType} from '../../lib/course-search'
 import * as storage from '../../lib/storage'
 import type {FilterComboType} from '../../views/sis/course-search/lib/format-filter-combo'
 import {formatFilterCombo} from '../../views/sis/course-search/lib/format-filter-combo'
+import {ThunkAction} from 'redux-thunk'
 
 const LOAD_CACHED_COURSES = 'courses/LOAD_CACHED_COURSES'
 const COURSES_LOADED = 'courses/COURSES_LOADED'
-
-type Dispatch<A extends Action> = (
-	action: A | Promise<A> | ThunkAction<A>,
-) => void
-type GetState = () => ReduxState
-type ThunkAction<A extends Action> = (
-	dispatch: Dispatch<A>,
-	getState: GetState,
-) => void
 
 const UPDATE_RECENT_FILTERS = 'courses/UPDATE_RECENT_FILTERS'
 
@@ -31,7 +23,7 @@ type UpdateRecentFiltersAction = {
 
 export function updateRecentFilters(
 	filters: FilterType[],
-): ThunkAction<UpdateRecentFiltersAction> {
+): ThunkAction<void, ReduxState, void, UpdateRecentFiltersAction> {
 	return (dispatch, getState) => {
 		const state = getState()
 
@@ -73,9 +65,15 @@ type CoursesLoadedAction = {
 }
 
 export type LoadCourseDataActionType = ThunkAction<
+	void,
+	ReduxState,
+	void,
 	LoadCachedCoursesAction | CoursesLoadedAction
 >
 export type UpdateCourseDataActionType = ThunkAction<
+	void,
+	ReduxState,
+	void,
 	LoadCachedCoursesAction | CoursesLoadedAction
 >
 
@@ -124,7 +122,7 @@ type UpdateRecentSearchesAction = {
 }
 export function updateRecentSearches(
 	query: string,
-): ThunkAction<UpdateRecentSearchesAction> {
+): ThunkAction<void, ReduxState, void, UpdateRecentSearchesAction> {
 	return (dispatch, getState) => {
 		const state = getState()
 
@@ -142,15 +140,13 @@ export function updateRecentSearches(
 	}
 }
 
-type Action =
+export type CoursesAction =
 	| LoadCachedCoursesAction
 	| CoursesLoadedAction
 	| UpdateRecentSearchesAction
 	| LoadRecentSearchesAction
 	| UpdateRecentFiltersAction
 	| LoadRecentFiltersAction
-
-export type CoursesAction = Action
 
 export type State = {
 	allCourses: Array<CourseType>
@@ -160,15 +156,18 @@ export type State = {
 	recentSearches: string[]
 }
 
-const initialState = {
+const initialState: State = {
 	allCourses: [],
-	readyState: 'not-loaded' as 'not-loaded',
+	readyState: 'not-loaded',
 	validGEs: [],
 	recentFilters: [],
 	recentSearches: [],
 }
 
-export function courses(state: State = initialState, action: Action): State {
+export function courses(
+	state: State = initialState,
+	action: CoursesAction,
+): State {
 	switch (action.type) {
 		case LOAD_RECENT_FILTERS:
 			return {...state, recentFilters: action.payload}
