@@ -150,6 +150,8 @@ type Action =
 	| UpdateRecentFiltersAction
 	| LoadRecentFiltersAction
 
+export type CoursesAction = Action
+
 export type State = {
 	allCourses: Array<CourseType>
 	readyState: 'not-loaded' | 'ready'

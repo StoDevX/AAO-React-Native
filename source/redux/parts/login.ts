@@ -108,6 +108,7 @@ export async function logOutViaCredentials(): Promise<LogOutAction> {
 }
 
 type Action = CredentialsActions
+export type LoginAction = CredentialsActions
 
 type CredentialsActions = LogInActions | LogOutAction
 

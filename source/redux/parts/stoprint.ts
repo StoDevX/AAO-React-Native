@@ -19,6 +19,8 @@ type ThunkAction<A extends Action> = (
 ) => void
 type Action = UpdateAllPrintersAction | UpdatePrintJobsAction
 
+export type StoPrintAction = Action
+
 const UPDATE_ALL_PRINTERS_FAILURE = 'stoprint/UPDATE_ALL_PRINTERS/FAILURE'
 const UPDATE_ALL_PRINTERS_SUCCESS = 'stoprint/UPDATE_ALL_PRINTERS/SUCCESS'
 const UPDATE_PRINT_JOBS_FAILURE = 'stoprint/UPDATE_PRINT_JOBS/FAILURE'

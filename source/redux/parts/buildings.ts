@@ -11,6 +11,8 @@ type ThunkAction<A extends Action> = (
 ) => void
 type Action = ToggleFavoriteAction | LoadFavoritesAction
 
+export type BuildingsAction = Action
+
 const LOAD_FAVORITE_BUILDINGS = 'buildings/LOAD_FAVORITE_BUILDINGS'
 const TOGGLE_FAVORITE_BUILDING = 'buildings/TOGGLE_FAVORITE_BUILDING'
 

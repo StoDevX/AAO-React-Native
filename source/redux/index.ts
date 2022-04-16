@@ -5,17 +5,17 @@ import reduxPromise from 'redux-promise'
 import reduxThunk from 'redux-thunk'
 
 import {settings} from './parts/settings'
-import type {State as SettingsState} from './parts/settings'
+import type {State as SettingsState, SettingsAction} from './parts/settings'
 import {buildings} from './parts/buildings'
-import type {State as BuildingsState} from './parts/buildings'
+import type {State as BuildingsState, BuildingsAction} from './parts/buildings'
 import {help} from './parts/help'
-import type {State as HelpState} from './parts/help'
+import type {State as HelpState, HelpAction} from './parts/help'
 import {courses} from './parts/courses'
-import type {State as CoursesState} from './parts/courses'
+import type {State as CoursesState, CoursesAction} from './parts/courses'
 import {stoprint} from './parts/stoprint'
-import type {State as StoPrintState} from './parts/stoprint'
+import type {State as StoPrintState, StoPrintAction} from './parts/stoprint'
 import {login} from './parts/login'
-import type {State as LoginState} from './parts/login'
+import type {State as LoginState, LoginAction} from './parts/login'
 
 export {init as initRedux} from './init'
 
@@ -28,7 +28,15 @@ export type ReduxState = {
 	login?: LoginState
 }
 
-export function makeStore(): Store {
+type AppAction =
+	| BuildingsAction
+	| CoursesAction
+	| HelpAction
+	| LoginAction
+	| SettingsAction
+	| StoPrintAction
+
+export function makeStore(): Store<ReduxState, AppAction> {
 	const aao = combineReducers({
 		courses,
 		settings,

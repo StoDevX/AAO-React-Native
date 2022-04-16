@@ -29,7 +29,7 @@ export async function hasSeenAcknowledgement(): Promise<SisAlertSeenAction> {
 	return {type: SIS_ALERT_SEEN, payload: true}
 }
 
-type Action = SisAlertSeenAction | ChangeThemeAction
+export type SettingsAction = SisAlertSeenAction | ChangeThemeAction
 
 export type State = {
 	readonly theme: string
@@ -37,13 +37,16 @@ export type State = {
 	readonly unofficiallyAcknowledged: boolean
 }
 
-const initialState = {
+const initialState: State = {
 	theme: 'All About Olaf',
 	dietaryPreferences: [],
 	unofficiallyAcknowledged: false,
 }
 
-export function settings(state: State = initialState, action: Action): State {
+export function settings(
+	state: State = initialState,
+	action: SettingsAction,
+): State {
 	switch (action.type) {
 		case CHANGE_THEME:
 			return {...state, theme: action.payload}

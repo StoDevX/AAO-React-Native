@@ -28,6 +28,8 @@ type GetEnabledToolsAction =
 	| GetEnabledToolsSuccessAction
 	| GetEnabledToolsFailureAction
 
+export type HelpAction = Action
+
 export function getEnabledTools(): ThunkAction<GetEnabledToolsAction> {
 	return async (dispatch) => {
 		dispatch({type: ENABLED_TOOLS_START})
@@ -49,10 +51,10 @@ export function getEnabledTools(): ThunkAction<GetEnabledToolsAction> {
 export type State = {
 	readonly fetching: boolean
 	readonly tools: Array<ToolOptions>
-	readonly lastFetchError?: boolean
+	readonly lastFetchError: boolean | null
 }
 
-const initialState = {
+const initialState: State = {
 	fetching: false,
 	tools: [],
 	lastFetchError: null,
