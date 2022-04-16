@@ -3,17 +3,6 @@ import {
 	setAcknowledgementStatus,
 } from '../../lib/storage'
 
-import type {ReduxState} from '../index'
-
-type Dispatch<A extends Action> = (
-	action: A | Promise<A> | ThunkAction<A>,
-) => void
-type GetState = () => ReduxState
-type ThunkAction<A extends Action> = (
-	dispatch: Dispatch<A>,
-	getState: GetState,
-) => void
-
 const CHANGE_THEME = 'settings/CHANGE_THEME'
 const SIS_ALERT_SEEN = 'settings/SIS_ALERT_SEEN'
 
