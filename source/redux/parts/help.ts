@@ -2,16 +2,7 @@ import type {ReduxState} from '../index'
 import type {ToolOptions} from '../../views/help/types'
 import {fetch} from '@frogpond/fetch'
 import {API} from '@frogpond/api'
-
-type Dispatch<A extends Action> = (
-	action: A | Promise<A> | ThunkAction<A>,
-) => void
-type GetState = () => ReduxState
-type ThunkAction<A extends Action> = (
-	dispatch: Dispatch<A>,
-	getState: GetState,
-) => void
-type Action = GetEnabledToolsAction
+import {ThunkAction} from 'redux-thunk'
 
 const ENABLED_TOOLS_START = 'help/ENABLED_TOOLS/start'
 const ENABLED_TOOLS_FAILURE = 'help/ENABLED_TOOLS/failure'
@@ -28,9 +19,14 @@ type GetEnabledToolsAction =
 	| GetEnabledToolsSuccessAction
 	| GetEnabledToolsFailureAction
 
-export type HelpAction = Action
+export type HelpAction = GetEnabledToolsAction
 
-export function getEnabledTools(): ThunkAction<GetEnabledToolsAction> {
+export function getEnabledTools(): ThunkAction<
+	void,
+	ReduxState,
+	void,
+	GetEnabledToolsAction
+> {
 	return async (dispatch) => {
 		dispatch({type: ENABLED_TOOLS_START})
 
@@ -60,7 +56,7 @@ const initialState: State = {
 	lastFetchError: null,
 }
 
-export function help(state: State = initialState, action: Action): State {
+export function help(state: State = initialState, action: HelpAction): State {
 	switch (action.type) {
 		case ENABLED_TOOLS_START:
 			return {...state, fetching: true}
