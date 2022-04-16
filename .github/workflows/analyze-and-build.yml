@@ -16,13 +16,12 @@ jobs:
           node-version: ^16.0
           cache: npm
       - run: npm ci
-      - run: npm run validate-data
-      - run: npm run bundle-data
-      - run: npm run pretty --no-write --list-different
-      - run: npx tsc
-      - run: npm run lint
-      - name: Run tests
-        run: npm run test -- --coverage
+      - run: make data-validate
+      - run: make data-bundle
+      - run: make format-check
+      - run: make typecheck
+      - run: make lint
+      - run: make test-js-coverage
       - name: Upload coverage
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
@@ -50,7 +49,7 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
-      - run: npm ci
+      - run: make bootstrap-js
       - name: Raise the fs.inotify ulimits to 524288 watches/queued events/user instances
         run: |
           echo 524288 | sudo tee -a /proc/sys/fs/inotify/max_user_watches
@@ -58,7 +57,7 @@ jobs:
           echo 524288 | sudo tee -a /proc/sys/fs/inotify/max_user_instances
           sudo sysctl -p
       - run: echo 'org.gradle.workers.max=2' >> ./android/gradle.properties
-      - run: cd android && ./gradlew androidDependencies --console=plain
+      - run: make android-dependencies
       - run: bundle exec fastlane android ci-run
         env:
           FASTLANE_PASSWORD: ${{ secrets.FASTLANE_PASSWORD }}
@@ -100,13 +99,9 @@ jobs:
       #     cache_key: ${{ matrix.os }}
       - run: sudo xcode-select -s /Applications/Xcode_13.1.app
       - run: git fetch --prune --unshallow
-      - run: npm ci
-        env:
-          SKIP_POSTINSTALL: '1'
-      - run: bundle exec pod install --deployment
-        working-directory: ./ios
-      - run: brew tap wix/brew
-      - run: brew install applesimutils
+      - run: make bootstrap-js
+      - run: make pods
+      - run: make bootstrap-ios-detox
       - run: bundle exec fastlane ios ci-run
         env:
           FASTLANE_PASSWORD: ${{ secrets.FASTLANE_PASSWORD }}
@@ -118,5 +113,5 @@ jobs:
           SENTRY_PROJECT: all-about-olaf
           SENTRY_AUTH_TOKEN: ${{ secrets.HOSTED_SENTRY_AUTH_TOKEN }}
           GITHUB_KEYS_REPOSITORY_TOKEN: ${{ secrets.GITHUB_KEYS_REPOSITORY_TOKEN }}
-      - run: npx detox build e2e --configuration ios.sim.release
-      - run: npx detox test e2e --configuration ios.sim.release --cleanup
+      - run: make detox-ios-build
+      - run: make detox-ios-test
