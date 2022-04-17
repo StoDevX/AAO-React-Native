@@ -72,7 +72,7 @@ export const BaseDateTimePicker = (
 				/>
 			)}
 
-			{(props.showPickerAndroid || props.showPickeriOS) && (
+			{(props.showPickerAndroid || props.showPickerIos) && (
 				<DateTimePicker
 					minuteInterval={props.minuteInterval}
 					mode={props.mode}

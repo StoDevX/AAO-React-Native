@@ -14,7 +14,7 @@ export interface BaseDatetimePickerProps {
 	onDateChange: (moment: Moment) => void
 
 	// platform/wrapper components
-	showPickeriOS?: boolean
+	showPickerIos?: boolean
 	showPickerAndroid?: boolean
 	showPickerButtonAndroid?: boolean
 	style?: ViewStyle
