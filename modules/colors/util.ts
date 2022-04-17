@@ -10,10 +10,11 @@ export function firstReadable(
 	background: string,
 	possibilities: Array<string>,
 ): string {
-	let colors = possibilities.map((c) => tinycolor(c))
-	let readable = colors.find((c) => tinycolor.isReadable(c, background))
-	if (readable) {
-		return readable.toRgbString()
+	for (let colorString of possibilities) {
+		let color = tinycolor(colorString)
+		if (tinycolor.isReadable(color, background)) {
+			return color.toRgbString()
+		}
 	}
 	return tinycolor.mostReadable(background, [black, white]).toRgbString()
 }
