@@ -76,7 +76,6 @@ export function RadioControllerView(props: Props): JSX.Element {
 
 	let [playState, setPlayState] = useState<PlayState>('paused')
 	let [streamError, setStreamError] = useState<HtmlAudioError | null>(null)
-	let [uplinkError, setUplinkError] = useState<string | null>(null)
 
 	let play = () => {
 		setPlayState('checking')
@@ -115,9 +114,7 @@ export function RadioControllerView(props: Props): JSX.Element {
 		openUrl(playerUrl)
 	}, [playerUrl])
 
-	let error = uplinkError ? (
-		<Text style={styles.status}>{uplinkError}</Text>
-	) : streamError ? (
+	let error = streamError ? (
 		<Text style={styles.status}>
 			Error Code {streamError.code}: {streamError.message}
 		</Text>
