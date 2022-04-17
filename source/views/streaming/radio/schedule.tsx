@@ -9,7 +9,7 @@ export class KSTOScheduleView extends React.PureComponent<Props> {
 		title: 'Show Schedule',
 	}
 
-	render() {
+	render(): JSX.Element {
 		return (
 			<CccCalendarView
 				calendar="ksto-schedule"
@@ -35,7 +35,7 @@ export class KRLXScheduleView extends React.PureComponent<Props> {
 		title: 'Show Schedule',
 	}
 
-	render() {
+	render(): JSX.Element {
 		return (
 			<CccCalendarView
 				calendar="krlx-schedule"
@@ -49,7 +49,7 @@ export class KRLXScheduleView extends React.PureComponent<Props> {
 				navigation={this.props.navigation}
 				poweredBy={{
 					title: 'Powered by the KRLX team',
-					href: 'http://www.krlx.org/schedule/',
+					href: 'https://www.krlx.org/schedule/',
 				}}
 			/>
 		)
