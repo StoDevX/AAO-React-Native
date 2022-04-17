@@ -1,5 +1,12 @@
 import * as React from 'react'
-import {StyleSheet, Text, Platform, TextStyle} from 'react-native'
+import {
+	Platform,
+	StyleProp,
+	StyleSheet,
+	Text,
+	TextStyle,
+	ViewStyle,
+} from 'react-native'
 import Icon from 'react-native-vector-icons/Ionicons'
 import type {FilterType} from './types'
 import {FilterPopover} from './filter-popover'
@@ -35,8 +42,8 @@ const buttonStyles = StyleSheet.create({
 type Props = {
 	filter: FilterType
 	isActive: boolean
-	onPopoverDismiss: (filter: FilterType) => any
-	style?: any
+	onPopoverDismiss: (filter: FilterType) => unknown
+	style?: StyleProp<ViewStyle>
 	title: string
 	theme: AppTheme
 }
@@ -52,11 +59,11 @@ class FilterToolbarButton extends React.PureComponent<Props, State> {
 
 	touchable: React.Ref<any> = React.createRef()
 
-	openPopover = () => {
+	openPopover = (): void => {
 		this.setState(() => ({popoverVisible: true}))
 	}
 
-	onClosePopover = (filter: FilterType) => {
+	onClosePopover = (filter: FilterType): void => {
 		this.props.onPopoverDismiss(filter)
 		this.setState(() => ({popoverVisible: false}))
 	}
