@@ -1,6 +1,6 @@
 import * as React from 'react'
 import * as c from '@frogpond/colors'
-import {StyleSheet, TextInput, ScrollView, Text, View} from 'react-native'
+import {ScrollView, StyleSheet, Text, TextInput, View} from 'react-native'
 import {Toolbar} from '@frogpond/toolbar'
 import {fetch} from '@frogpond/fetch'
 import {API} from '@frogpond/api'
@@ -51,7 +51,9 @@ export class AndroidAPITestView extends React.PureComponent<Props, State> {
 
 	fetchData = async (path: string) => {
 		try {
-			let correctedPath = path.startsWith('/') ? path : `/${path}`
+			let correctedPath: `/${string}` = path.startsWith('/')
+				? (path as `/${string}`)
+				: `/${path}`
 			let responseData: string = await fetch(API(correctedPath), {
 				cache: 'no-store',
 			}).text()
@@ -61,7 +63,7 @@ export class AndroidAPITestView extends React.PureComponent<Props, State> {
 		}
 	}
 
-	render() {
+	render(): JSX.Element {
 		let {error, results} = this.state
 
 		return (
@@ -72,7 +74,7 @@ export class AndroidAPITestView extends React.PureComponent<Props, State> {
 						autoCorrect={false}
 						keyboardType="web-search"
 						onEndEditing={(e) => this.fetchData(e.nativeEvent.text)}
-						placeholder="path/to/resource"
+						placeholder="/path/to/resource"
 						returnKeyType="done"
 						style={styles.default}
 					/>
