@@ -19,7 +19,7 @@ const styles = StyleSheet.create({
 	},
 })
 
-const isTruthy = (x) => Boolean(x)
+const isTruthy = (x: unknown) => Boolean(x)
 const BusLineSeparator = () => <Separator style={styles.separator} />
 const EMPTY_SCHEDULE_MESSAGE = (
 	<ListRow>
@@ -40,7 +40,7 @@ type State = {
 	status: BusStateEnum
 }
 
-function startsIn(now, start?: Moment) {
+function startsIn(now: Moment, start?: Moment | null) {
 	if (!start) {
 		return 'Error'
 	}
@@ -136,7 +136,7 @@ export class BusLine extends React.Component<Props, State> {
 		/>
 	)
 
-	render() {
+	render(): JSX.Element {
 		let {line} = this.props
 		let {schedule, subtitle} = this.state
 

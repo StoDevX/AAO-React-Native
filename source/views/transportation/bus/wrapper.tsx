@@ -2,7 +2,7 @@ import * as React from 'react'
 import type {UnprocessedBusLine} from './types'
 import {BusLine} from './line'
 import {Timer} from '@frogpond/timer'
-import {NoticeView, LoadingView} from '@frogpond/notice'
+import {LoadingView, NoticeView} from '@frogpond/notice'
 import type {TopLevelViewPropsType} from '../../types'
 import {API} from '@frogpond/api'
 import {fetch} from '@frogpond/fetch'
@@ -19,7 +19,7 @@ type Props = TopLevelViewPropsType & {
 
 type State = {
 	busLines: Array<UnprocessedBusLine>
-	activeBusLine?: UnprocessedBusLine
+	activeBusLine?: UnprocessedBusLine | null
 	loading: boolean
 }
 
@@ -49,26 +49,27 @@ export class BusView extends React.PureComponent<Props, State> {
 		})
 	}
 
-	render() {
+	render(): JSX.Element {
 		if (this.state.loading) {
 			return <LoadingView />
 		}
 
 		let {activeBusLine} = this.state
 
-		if (!activeBusLine) {
-			let lines = this.state.busLines.map(({line}) => line).join(', ')
-			let msg = `The line "${this.props.line}" was not found among ${lines}`
-			return <NoticeView text={msg} />
-		}
-
 		return (
 			<Timer
 				interval={60000}
 				moment={true}
-				render={({now}) => (
-					<BusLine line={activeBusLine} now={now} openMap={this.openMap} />
-				)}
+				render={({now}) => {
+					if (!activeBusLine) {
+						let lines = this.state.busLines.map(({line}) => line).join(', ')
+						let msg = `The line "${this.props.line}" was not found among ${lines}`
+						return <NoticeView text={msg} />
+					}
+					return (
+						<BusLine line={activeBusLine} now={now} openMap={this.openMap} />
+					)
+				}}
 				timezone={timezone()}
 			/>
 		)
