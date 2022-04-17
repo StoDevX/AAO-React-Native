@@ -1,5 +1,4 @@
 import * as storage from '../../lib/storage'
-import type {ReduxState} from '../index'
 import {ThunkAction} from 'redux-thunk'
 
 const LOAD_FAVORITE_BUILDINGS = 'buildings/LOAD_FAVORITE_BUILDINGS'
@@ -18,9 +17,14 @@ type ToggleFavoriteAction = {
 	type: 'buildings/TOGGLE_FAVORITE_BUILDING'
 	payload: Array<string>
 }
+
+export type BuildingsSlice = {
+	buildings?: State
+}
+
 export function toggleFavoriteBuilding(
 	buildingName: string,
-): ThunkAction<void, ReduxState, unknown, ToggleFavoriteAction> {
+): ThunkAction<void, BuildingsSlice, unknown, ToggleFavoriteAction> {
 	return (dispatch, getState) => {
 		const state = getState()
 

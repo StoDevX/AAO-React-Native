@@ -1,4 +1,3 @@
-import type {ReduxState} from '../index'
 import type {FilterType} from '@frogpond/filter'
 import {
 	loadCachedCourses,
@@ -23,7 +22,7 @@ type UpdateRecentFiltersAction = {
 
 export function updateRecentFilters(
 	filters: FilterType[],
-): ThunkAction<void, ReduxState, void, UpdateRecentFiltersAction> {
+): ThunkAction<void, StateSlice, void, UpdateRecentFiltersAction> {
 	return (dispatch, getState) => {
 		const state = getState()
 
@@ -64,15 +63,19 @@ type CoursesLoadedAction = {
 	type: 'courses/COURSES_LOADED'
 }
 
+type StateSlice = {
+	courses?: State
+}
+
 export type LoadCourseDataActionType = ThunkAction<
 	void,
-	ReduxState,
+	StateSlice,
 	void,
 	LoadCachedCoursesAction | CoursesLoadedAction
 >
 export type UpdateCourseDataActionType = ThunkAction<
 	void,
-	ReduxState,
+	StateSlice,
 	void,
 	LoadCachedCoursesAction | CoursesLoadedAction
 >
@@ -122,7 +125,7 @@ type UpdateRecentSearchesAction = {
 }
 export function updateRecentSearches(
 	query: string,
-): ThunkAction<void, ReduxState, void, UpdateRecentSearchesAction> {
+): ThunkAction<void, StateSlice, void, UpdateRecentSearchesAction> {
 	return (dispatch, getState) => {
 		const state = getState()
 

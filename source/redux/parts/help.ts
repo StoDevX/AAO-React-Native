@@ -1,4 +1,3 @@
-import type {ReduxState} from '../index'
 import type {ToolOptions} from '../../views/help/types'
 import {fetch} from '@frogpond/fetch'
 import {API} from '@frogpond/api'
@@ -21,9 +20,13 @@ type GetEnabledToolsAction =
 
 export type HelpAction = GetEnabledToolsAction
 
+type GlobalStateSlice = {
+	help?: State
+}
+
 export function getEnabledTools(): ThunkAction<
 	void,
-	ReduxState,
+	GlobalStateSlice,
 	void,
 	GetEnabledToolsAction
 > {

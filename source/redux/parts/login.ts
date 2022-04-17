@@ -4,7 +4,6 @@ import {
 	clearLoginCredentials,
 } from '../../lib/login'
 
-import type {ReduxState} from '../index'
 import {Alert} from 'react-native'
 import {ThunkAction} from 'redux-thunk'
 
@@ -60,10 +59,14 @@ const showUnknownFailureMessage = () =>
 		[{text: 'OK'}],
 	)
 
+type GlobalStateSlice = {
+	login?: State
+}
+
 export function logInViaCredentials(
 	username: string,
 	password: string,
-): ThunkAction<void, ReduxState, void, LogInActions> {
+): ThunkAction<void, GlobalStateSlice, void, LogInActions> {
 	return async (dispatch) => {
 		dispatch({type: LOGIN_START})
 

@@ -1,5 +1,4 @@
 import {loadLoginCredentials} from '../../lib/login'
-import type {ReduxState} from '../index'
 import type {Printer, PrintJob} from '../../lib/stoprint'
 import {
 	fetchAllPrinters,
@@ -8,18 +7,9 @@ import {
 	fetchRecentPrinters,
 	logIn,
 } from '../../lib/stoprint'
+import {ThunkAction} from 'redux-thunk'
 
-type Dispatch<A extends Action> = (
-	action: A | Promise<A> | ThunkAction<A>,
-) => void
-type GetState = () => ReduxState
-type ThunkAction<A extends Action> = (
-	dispatch: Dispatch<A>,
-	getState: GetState,
-) => void
-type Action = UpdateAllPrintersAction | UpdatePrintJobsAction
-
-export type StoPrintAction = Action
+export type StoPrintAction = UpdateAllPrintersAction | UpdatePrintJobsAction
 
 const UPDATE_ALL_PRINTERS_FAILURE = 'stoprint/UPDATE_ALL_PRINTERS/FAILURE'
 const UPDATE_ALL_PRINTERS_SUCCESS = 'stoprint/UPDATE_ALL_PRINTERS/SUCCESS'
@@ -59,7 +49,16 @@ type UpdatePrintJobsAction =
 	| UpdatePrintJobsSuccessAction
 	| UpdatePrintJobsFailureAction
 
-export function updatePrinters(): ThunkAction<UpdateAllPrintersAction> {
+type StateSlice = {
+	stoprint?: State
+}
+
+export function updatePrinters(): ThunkAction<
+	void,
+	StateSlice,
+	void,
+	UpdateAllPrintersAction
+> {
 	return async (dispatch) => {
 		const {username, password} = await loadLoginCredentials()
 		if (!username || !password) {
@@ -119,7 +118,12 @@ export function updatePrinters(): ThunkAction<UpdateAllPrintersAction> {
 	}
 }
 
-export function updatePrintJobs(): ThunkAction<UpdatePrintJobsAction> {
+export function updatePrintJobs(): ThunkAction<
+	void,
+	StateSlice,
+	void,
+	UpdatePrintJobsAction
+> {
 	return async (dispatch) => {
 		const {username, password} = await loadLoginCredentials()
 		if (!username || !password) {
@@ -167,7 +171,10 @@ const initialState: State = {
 	colorPrinters: [],
 }
 
-export function stoprint(state: State = initialState, action: Action): State {
+export function stoprint(
+	state: State = initialState,
+	action: StoPrintAction,
+): State {
 	switch (action.type) {
 		case UPDATE_PRINT_JOBS_FAILURE:
 			return {...state, jobsError: action.payload}
