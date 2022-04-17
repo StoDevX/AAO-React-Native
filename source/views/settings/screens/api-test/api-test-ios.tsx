@@ -1,6 +1,6 @@
 import * as React from 'react'
 import * as c from '@frogpond/colors'
-import {StyleSheet, TextInput, View, SegmentedControlIOS} from 'react-native'
+import {SegmentedControlIOS, StyleSheet, TextInput, View} from 'react-native'
 import {Toolbar} from '@frogpond/toolbar'
 import {fetch} from '@frogpond/fetch'
 import {API} from '@frogpond/api'
@@ -45,8 +45,8 @@ type Props = {
 }
 
 type State = {
-	results?: string
-	error?: string
+	results: string | null
+	error: string | null
 	selectedIndex: number
 }
 
@@ -63,7 +63,9 @@ export class IOSAPITestView extends React.PureComponent<Props, State> {
 
 	fetchData = async (path: string) => {
 		try {
-			let correctedPath = path.startsWith('/') ? path : `/${path}`
+			let correctedPath: `/${string}` = path.startsWith('/')
+				? (path as `/${string}`)
+				: `/${path}`
 			let responseData: string = await fetch(API(correctedPath), {
 				cache: 'no-store',
 			}).text()
@@ -101,7 +103,7 @@ export class IOSAPITestView extends React.PureComponent<Props, State> {
 				style={styles.data}
 				// use multiline with textAlignVertical="top" for the same behavior in both platforms
 				textAlignVertical="top"
-				value={results}
+				value={results ?? ''}
 			/>
 		) : (
 			<DebugListView
@@ -113,7 +115,7 @@ export class IOSAPITestView extends React.PureComponent<Props, State> {
 
 		return (
 			<View style={styles.container}>
-				<Toolbar onPress={() => {}}>
+				<Toolbar>
 					<TextInput
 						autoCapitalize="none"
 						autoCorrect={false}

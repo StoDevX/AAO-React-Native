@@ -5,8 +5,7 @@ import type {TopLevelViewPropsType} from '../../types'
 import * as logos from '../../../../images/streaming'
 import {RadioControllerView} from './index'
 import tinycolor from 'tinycolor2'
-import {ThemeProvider} from '@frogpond/app-theme'
-import type {PlayerTheme} from './types'
+import {PlayerTheme, ThemeProvider} from './theme'
 
 let tintColor = '#33348e'
 const colors: PlayerTheme = {
@@ -25,17 +24,17 @@ export class KrlxStationView extends React.Component<TopLevelViewPropsType> {
 		tabBarIcon: TabBarIcon('microphone'),
 	}
 
-	render() {
+	render(): JSX.Element {
 		return (
 			<ThemeProvider theme={colors}>
 				<RadioControllerView
 					image={logos.krlx}
 					navigation={this.props.navigation}
-					playerUrl="http://live.krlx.org"
+					playerUrl="https://live.krlx.org"
 					scheduleViewName="KRLXScheduleView"
 					source={{
 						useEmbeddedPlayer: false,
-						embeddedPlayerUrl: 'http://live.krlx.org',
+						embeddedPlayerUrl: 'https://live.krlx.org',
 						streamSourceUrl: 'http://radio.krlx.org/mp3/high_quality',
 					}}
 					stationName="88.1 KRLX-FM"

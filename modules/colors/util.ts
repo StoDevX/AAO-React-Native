@@ -6,13 +6,15 @@ import {black, white} from './colors'
  * foreground color that is readable (at WCAG AA-Small), or black/white if
  * none of the options were readable.
  */
-export function firstReadable(background: string, possibilities: Array<any>) {
-	possibilities = possibilities.map((c) => tinycolor(c))
-	const readable = possibilities.find((c) =>
-		tinycolor.isReadable(c, background),
-	)
-	if (readable) {
-		return readable.toRgbString()
+export function firstReadable(
+	background: string,
+	possibilities: Array<string>,
+): string {
+	for (let colorString of possibilities) {
+		let color = tinycolor(colorString)
+		if (tinycolor.isReadable(color, background)) {
+			return color.toRgbString()
+		}
 	}
 	return tinycolor.mostReadable(background, [black, white]).toRgbString()
 }
