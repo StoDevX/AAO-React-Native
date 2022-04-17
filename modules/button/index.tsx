@@ -1,8 +1,14 @@
 import * as React from 'react'
-import {StyleSheet, Platform} from 'react-native'
+import {
+	Platform,
+	StyleProp,
+	StyleSheet,
+	TextStyle,
+	ViewStyle,
+} from 'react-native'
 import BasicButton from 'react-native-button'
 import noop from 'lodash/noop'
-import {material, iOSUIKit} from 'react-native-typography'
+import {iOSUIKit, material} from 'react-native-typography'
 import * as c from '@frogpond/colors'
 import {useTheme} from '@frogpond/app-theme'
 
@@ -40,10 +46,10 @@ const inverted = StyleSheet.create({
 
 type Props = {
 	title?: string
-	onPress?: () => any
+	onPress?: () => unknown
 	disabled?: boolean
-	buttonStyle?: any
-	textStyle?: any
+	buttonStyle?: StyleProp<ViewStyle>
+	textStyle?: StyleProp<TextStyle>
 	mode?: 'default' | 'inverted'
 }
 
@@ -54,7 +60,7 @@ export function Button({
 	buttonStyle = null,
 	textStyle = null,
 	mode = 'default',
-}: Props) {
+}: Props): JSX.Element {
 	const theme = useTheme()
 
 	const background =
