@@ -35,7 +35,9 @@ function PlayButton(props: PlayButtonProps): JSX.Element {
 			return <ActionButton icon="ios-play" onPress={onPlay} text="Listen" />
 
 		case 'checking':
-			return <ActionButton icon="ios-more" onPress={onPause} text="Starting" />
+			return (
+				<ActionButton icon="code-working" onPress={onPause} text="Starting" />
+			)
 
 		case 'playing':
 			return <ActionButton icon="ios-pause" onPress={onPlay} text="Pause" />
