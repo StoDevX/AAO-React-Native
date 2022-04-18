@@ -93,7 +93,7 @@ type WeekTogglesProps = {
 	onChangeDays: (days: DayOfWeekEnumType[]) => unknown
 }
 
-function WeekTogglesIOS(props: WeekTogglesProps) {
+function WeekToggles(props: WeekTogglesProps) {
 	let {onChangeDays, days} = props
 
 	let toggleDay = useCallback(
@@ -105,7 +105,7 @@ function WeekTogglesIOS(props: WeekTogglesProps) {
 
 	let allDays: DayOfWeekEnumType[] = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su']
 
-	return (
+	let WeekTogglesIOS = (
 		<Row style={styles.weekToggles}>
 			{allDays.map((day) => (
 				<ToggleButton
@@ -117,21 +117,8 @@ function WeekTogglesIOS(props: WeekTogglesProps) {
 			))}
 		</Row>
 	)
-}
 
-function WeekTogglesAndroid(props: WeekTogglesProps) {
-	let {onChangeDays, days} = props
-
-	let toggleDay = useCallback(
-		(day) => {
-			onChangeDays(xor(days, [day]))
-		},
-		[onChangeDays, days],
-	)
-
-	let allDays: DayOfWeekEnumType[] = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su']
-
-	return (
+	let WeekTogglesAndroid = (
 		<View>
 			{allDays.map((day, i) => (
 				<View key={day}>
@@ -146,6 +133,8 @@ function WeekTogglesAndroid(props: WeekTogglesProps) {
 			))}
 		</View>
 	)
+
+	return Platform.OS === 'ios' ? WeekTogglesIOS : WeekTogglesAndroid
 }
 
 type ToggleButtonProps = {
@@ -172,8 +161,6 @@ class ToggleButton extends React.PureComponent<ToggleButtonProps> {
 		)
 	}
 }
-
-const WeekToggles = Platform.OS === 'ios' ? WeekTogglesIOS : WeekTogglesAndroid
 
 type DatePickerCellProps = {
 	date: Moment
