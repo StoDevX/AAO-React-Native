@@ -28,13 +28,12 @@ import {ListSeparator} from '@frogpond/lists'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 
 type Props = TopLevelViewPropsType & {
-	navigation: {
-		state: {
-			params: {
-				set: SingleBuildingScheduleType
-				onEditSet: (set: SingleBuildingScheduleType) => unknown
-				onDeleteSet: () => unknown
-			}
+	route: {
+		params: {
+			initialSet: SingleBuildingScheduleType
+			set: SingleBuildingScheduleType
+			onEditSet: (set: SingleBuildingScheduleType) => unknown
+			onDeleteSet: () => unknown
 		}
 	}
 }
@@ -94,7 +93,7 @@ type WeekTogglesProps = {
 	onChangeDays: (days: DayOfWeekEnumType[]) => unknown
 }
 
-function WeekTogglesIOS(props: WeekTogglesProps) {
+function WeekToggles(props: WeekTogglesProps) {
 	let {onChangeDays, days} = props
 
 	let toggleDay = useCallback(
@@ -106,47 +105,35 @@ function WeekTogglesIOS(props: WeekTogglesProps) {
 
 	let allDays: DayOfWeekEnumType[] = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su']
 
-	return (
-		<Row style={styles.weekToggles}>
-			{allDays.map((day) => (
-				<ToggleButton
-					key={day}
-					active={props.days.includes(day)}
-					onPress={toggleDay}
-					text={day}
-				/>
-			))}
-		</Row>
-	)
-}
-
-function WeekTogglesAndroid(props: WeekTogglesProps) {
-	let {onChangeDays, days} = props
-
-	let toggleDay = useCallback(
-		(day) => {
-			onChangeDays(xor(days, [day]))
-		},
-		[onChangeDays, days],
-	)
-
-	let allDays: DayOfWeekEnumType[] = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su']
-
-	return (
-		<View>
-			{allDays.map((day, i) => (
-				<View key={day}>
-					<CellToggle
+	return Platform.select({
+		ios: (
+			<Row style={styles.weekToggles}>
+				{allDays.map((day) => (
+					<ToggleButton
 						key={day}
-						label={day}
-						onChange={() => toggleDay(day)}
-						value={days.includes(day)}
+						active={props.days.includes(day)}
+						onPress={toggleDay}
+						text={day}
 					/>
-					{i === allDays.length - 1 ? null : <ListSeparator force={true} />}
-				</View>
-			))}
-		</View>
-	)
+				))}
+			</Row>
+		),
+		android: (
+			<View>
+				{allDays.map((day, i) => (
+					<View key={day}>
+						<CellToggle
+							key={day}
+							label={day}
+							onChange={() => toggleDay(day)}
+							value={days.includes(day)}
+						/>
+						{i === allDays.length - 1 ? null : <ListSeparator force={true} />}
+					</View>
+				))}
+			</View>
+		),
+	})
 }
 
 type ToggleButtonProps = {
@@ -173,8 +160,6 @@ class ToggleButton extends React.PureComponent<ToggleButtonProps> {
 		)
 	}
 }
-
-const WeekToggles = Platform.OS === 'ios' ? WeekTogglesIOS : WeekTogglesAndroid
 
 type DatePickerCellProps = {
 	date: Moment
