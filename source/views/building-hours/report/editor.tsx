@@ -27,7 +27,7 @@ import {Touchable} from '@frogpond/touchable'
 import {ListSeparator} from '@frogpond/lists'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 
-type Props = TopLevelViewPropsType & {
+export type Props = TopLevelViewPropsType & {
 	navigation: {
 		state: {
 			params: {
