@@ -105,36 +105,35 @@ function WeekToggles(props: WeekTogglesProps) {
 
 	let allDays: DayOfWeekEnumType[] = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su']
 
-	let WeekTogglesIOS = (
-		<Row style={styles.weekToggles}>
-			{allDays.map((day) => (
-				<ToggleButton
-					key={day}
-					active={props.days.includes(day)}
-					onPress={toggleDay}
-					text={day}
-				/>
-			))}
-		</Row>
-	)
-
-	let WeekTogglesAndroid = (
-		<View>
-			{allDays.map((day, i) => (
-				<View key={day}>
-					<CellToggle
+	return Platform.select({
+		ios: (
+			<Row style={styles.weekToggles}>
+				{allDays.map((day) => (
+					<ToggleButton
 						key={day}
-						label={day}
-						onChange={() => toggleDay(day)}
-						value={days.includes(day)}
+						active={props.days.includes(day)}
+						onPress={toggleDay}
+						text={day}
 					/>
-					{i === allDays.length - 1 ? null : <ListSeparator force={true} />}
-				</View>
-			))}
-		</View>
-	)
-
-	return Platform.OS === 'ios' ? WeekTogglesIOS : WeekTogglesAndroid
+				))}
+			</Row>
+		),
+		android: (
+			<View>
+				{allDays.map((day, i) => (
+					<View key={day}>
+						<CellToggle
+							key={day}
+							label={day}
+							onChange={() => toggleDay(day)}
+							value={days.includes(day)}
+						/>
+						{i === allDays.length - 1 ? null : <ListSeparator force={true} />}
+					</View>
+				))}
+			</View>
+		),
+	})
 }
 
 type ToggleButtonProps = {
