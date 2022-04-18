@@ -28,13 +28,12 @@ import {ListSeparator} from '@frogpond/lists'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 
 type Props = TopLevelViewPropsType & {
-	navigation: {
-		state: {
-			params: {
-				set: SingleBuildingScheduleType
-				onEditSet: (set: SingleBuildingScheduleType) => unknown
-				onDeleteSet: () => unknown
-			}
+	route: {
+		params: {
+			initialSet: SingleBuildingScheduleType
+			set: SingleBuildingScheduleType
+			onEditSet: (set: SingleBuildingScheduleType) => unknown
+			onDeleteSet: () => unknown
 		}
 	}
 }
