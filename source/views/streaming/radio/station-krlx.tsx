@@ -18,30 +18,28 @@ const colors: PlayerTheme = {
 	imageBackgroundColor: 'transparent',
 }
 
-export class KrlxStationView extends React.Component<TopLevelViewPropsType> {
-	static navigationOptions = {
-		tabBarLabel: 'KRLX',
-		tabBarIcon: TabBarIcon('microphone'),
-	}
+export function KrlxStationView(props: TopLevelViewPropsType): JSX.Element {
+	return (
+		<ThemeProvider theme={colors}>
+			<RadioControllerView
+				image={logos.krlx}
+				navigation={props.navigation}
+				playerUrl="https://live.krlx.org"
+				scheduleViewName="KRLXScheduleView"
+				source={{
+					useEmbeddedPlayer: false,
+					embeddedPlayerUrl: 'https://live.krlx.org',
+					streamSourceUrl: 'http://radio.krlx.org/mp3/high_quality',
+				}}
+				stationName="88.1 KRLX-FM"
+				stationNumber="+15072224127"
+				title="Carleton College Radio"
+			/>
+		</ThemeProvider>
+	)
+}
 
-	render(): JSX.Element {
-		return (
-			<ThemeProvider theme={colors}>
-				<RadioControllerView
-					image={logos.krlx}
-					navigation={this.props.navigation}
-					playerUrl="https://live.krlx.org"
-					scheduleViewName="KRLXScheduleView"
-					source={{
-						useEmbeddedPlayer: false,
-						embeddedPlayerUrl: 'https://live.krlx.org',
-						streamSourceUrl: 'http://radio.krlx.org/mp3/high_quality',
-					}}
-					stationName="88.1 KRLX-FM"
-					stationNumber="+15072224127"
-					title="Carleton College Radio"
-				/>
-			</ThemeProvider>
-		)
-	}
+KrlxStationView.navigationOptions = {
+	tabBarLabel: 'KRLX',
+	tabBarIcon: TabBarIcon('microphone'),
 }

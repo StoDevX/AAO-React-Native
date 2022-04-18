@@ -1,6 +1,6 @@
 import * as React from 'react'
-import type {FilterType, ListType, ToggleType, ListItemSpecType} from './types'
-import {StyleSheet, ScrollView} from 'react-native'
+import type {FilterType, ListItemSpecType, ListType, ToggleType} from './types'
+import {ScrollView, StyleSheet} from 'react-native'
 import {Toolbar} from '@frogpond/toolbar'
 import {FilterToolbarButton} from './filter-toolbar-button'
 import {ActiveFilterButton} from './active-filter-button'
@@ -9,10 +9,10 @@ import cloneDeep from 'lodash/cloneDeep'
 
 type Props = {
 	filters: Array<FilterType>
-	onPopoverDismiss: (filter: FilterType) => any
+	onPopoverDismiss: (filter: FilterType) => unknown
 }
 
-function updateAnyFilter(callback: (filter: FilterType) => any) {
+function updateAnyFilter(callback: (filter: FilterType) => unknown) {
 	return (filter: FilterType, option?: ListItemSpecType) => {
 		if (filter.type === 'toggle') {
 			filter = updateToggleFilter(filter)
@@ -25,12 +25,14 @@ function updateAnyFilter(callback: (filter: FilterType) => any) {
 	}
 }
 
-function updateToggleFilter(filter: ToggleType) {
-	let newFilter: ToggleType = {...filter, enabled: false}
-	return newFilter
+function updateToggleFilter(filter: ToggleType): ToggleType {
+	return {...filter, enabled: false}
 }
 
-function updateListFilter(filter: ListType, option?: ListItemSpecType) {
+function updateListFilter(
+	filter: ListType,
+	option?: ListItemSpecType,
+): ListType {
 	// easier to just clone the filter and mutate than avoid mutations
 	let newFilter = cloneDeep(filter)
 
@@ -52,7 +54,7 @@ function updateListFilter(filter: ListType, option?: ListItemSpecType) {
 	return newFilter
 }
 
-export function FilterToolbar({filters, onPopoverDismiss}: Props) {
+export function FilterToolbar({filters, onPopoverDismiss}: Props): JSX.Element {
 	let updateFilter = updateAnyFilter(onPopoverDismiss)
 
 	let filterToggles = filters.map((filter) => (

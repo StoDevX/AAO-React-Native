@@ -3,6 +3,7 @@ import {FlexStyle, StyleSheet, View, ViewProps} from 'react-native'
 
 type PropsType = {
 	flex?: FlexStyle['flex']
+	alignItems?: FlexStyle['alignItems']
 } & ViewProps
 
 const styles = StyleSheet.create({
@@ -15,11 +16,13 @@ export const Row = ({
 	children,
 	style,
 	flex,
+	alignItems,
 	...props
 }: PropsType): JSX.Element => {
 	let flexStyle = flex != null ? {flex: flex} : null
+	let alignItemsStyle = alignItems != null ? {alignItems: alignItems} : null
 	return (
-		<View style={[styles.column, style, flexStyle]} {...props}>
+		<View style={[styles.column, style, flexStyle, alignItemsStyle]} {...props}>
 			{children}
 		</View>
 	)
