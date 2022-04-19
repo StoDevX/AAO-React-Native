@@ -1,15 +1,11 @@
 import type {Moment} from 'moment'
 import type {
-	MenuItemType,
 	MasterCorIconMapType,
+	MenuItemType,
 	ProcessedMealType,
 } from '../types'
-import flatten from 'lodash/flatten'
-import filter from 'lodash/filter'
-import map from 'lodash/map'
-import uniq from 'lodash/uniq'
 import type {FilterType} from '@frogpond/filter'
-import {fastGetTrimmedText, decode} from '@frogpond/html-lib'
+import {decode, fastGetTrimmedText} from '@frogpond/html-lib'
 import {chooseMeal} from './choose-meal'
 
 export function buildFilters(
@@ -19,12 +15,12 @@ export function buildFilters(
 	now: Moment,
 ): FilterType[] {
 	// Format the items for the stations filter
-	const stations = flatten(meals.map((meal) => meal.stations))
-	const stationLabels = uniq(stations.map((station) => station.label))
-	const allStations = stationLabels.map((label) => ({title: label}))
+	const stations = meals.flatMap((meal) => meal.stations)
+	const stationLabels = new Set(stations.map((station) => station.label))
+	const allStations = Array.from(stationLabels).map((label) => ({title: label}))
 
 	// Grab the labels of the COR icons
-	const allDietaryRestrictions = map(corIcons, (cor) => ({
+	const allDietaryRestrictions = Object.values(corIcons).map((cor) => ({
 		title: decode(cor.label),
 		image: cor.image ? {uri: cor.image} : null,
 		detail: cor.description ? decode(fastGetTrimmedText(cor.description)) : '',
@@ -37,8 +33,7 @@ export function buildFilters(
 	// Check if there is at least one special in order to show the specials-only filter
 	const stationNames = selectedMeal.stations.map((s) => s.label)
 	const shouldShowSpecials =
-		filter(
-			foodItems,
+		foodItems.filter(
 			(item) => item.special && stationNames.includes(item.station),
 		).length >= 1
 
