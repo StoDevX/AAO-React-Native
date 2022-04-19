@@ -1,26 +1,26 @@
 import * as React from 'react'
 import {timezone} from '@frogpond/constants'
 import {SUPPORT_EMAIL} from '../../lib/constants'
-import {NoticeView, LoadingView} from '@frogpond/notice'
+import {LoadingView, NoticeView} from '@frogpond/notice'
 import type {TopLevelViewPropsType} from '../types'
 import {FoodMenu} from '@frogpond/food-menu'
 import type {
-	EditedBonAppMenuInfoType as MenuInfoType,
-	EditedBonAppCafeInfoType as CafeInfoType,
-	StationMenuType,
-	ProcessedMealType,
 	DayPartMenuType,
+	EditedBonAppCafeInfoType as CafeInfoType,
+	EditedBonAppMenuInfoType as MenuInfoType,
 	MenuItemContainerType,
 	MenuItemType,
+	ProcessedMealType,
+	StationMenuType,
 } from './types'
 import sample from 'lodash/sample'
 import mapValues from 'lodash/mapValues'
 import reduce from 'lodash/reduce'
 import toPairs from 'lodash/toPairs'
-import moment from 'moment-timezone'
 import type {Moment} from 'moment-timezone'
-import {trimStationName, trimItemLabel} from './lib/trim-names'
-import {innerTextWithSpaces, parseHtml, decode} from '@frogpond/html-lib'
+import moment from 'moment-timezone'
+import {trimItemLabel, trimStationName} from './lib/trim-names'
+import {decode, innerTextWithSpaces, parseHtml} from '@frogpond/html-lib'
 import {toLaxTitleCase} from '@frogpond/titlecase'
 import {API} from '@frogpond/api'
 import {fetch} from '@frogpond/fetch'
@@ -47,18 +47,33 @@ type Props = TopLevelViewPropsType & {
 
 type State = {
 	cachedCafe: string | {id: string}
-	errormsg?: string
+	errorMessage: string | null
 	loading: boolean
 	refreshing: boolean
 	now: Moment
-	cafeInfo?: CafeInfoType
-	cafeMenu?: MenuInfoType
+	cafeInfo: CafeInfoType | null
+	cafeMenu: MenuInfoType | null
+}
+
+function findCafeMessage(cafeInfo: CafeInfoType, now: Moment): string | null {
+	let actualCafeInfo = cafeInfo.cafe
+
+	let todayDate = now.format('YYYY-MM-DD')
+	let todayMenu = actualCafeInfo.days.find(({date}) => date === todayDate)
+
+	if (!todayMenu) {
+		return 'Closed today'
+	} else if (todayMenu.status === 'closed') {
+		return todayMenu.message || 'Closed today'
+	}
+
+	return null
 }
 
 export class BonAppHostedMenu extends React.PureComponent<Props, State> {
 	state = {
 		cachedCafe: this.props.cafe,
-		errormsg: null,
+		errorMessage: null,
 		loading: true,
 		refreshing: false,
 		now: moment.tz(timezone()),
@@ -86,7 +101,7 @@ export class BonAppHostedMenu extends React.PureComponent<Props, State> {
 
 	retry = () => {
 		this.fetchData(this.props).then(() => {
-			this.setState(() => ({loading: false, errormsg: ''}))
+			this.setState(() => ({loading: false, errorMessage: ''}))
 		})
 	}
 
@@ -125,9 +140,9 @@ export class BonAppHostedMenu extends React.PureComponent<Props, State> {
 			}))
 		} catch (error) {
 			if (error.message === "JSON Parse error: Unrecognized token '<'") {
-				this.setState(() => ({errormsg: BONAPP_HTML_ERROR_CODE}))
+				this.setState(() => ({errorMessage: BONAPP_HTML_ERROR_CODE}))
 			} else {
-				this.setState(() => ({errormsg: error.message}))
+				this.setState(() => ({errorMessage: error.message}))
 			}
 		}
 	}
@@ -136,21 +151,6 @@ export class BonAppHostedMenu extends React.PureComponent<Props, State> {
 		this.setState(() => ({refreshing: true}))
 		await this.fetchData(this.props, true)
 		this.setState(() => ({refreshing: false}))
-	}
-
-	findCafeMessage(cafeInfo: CafeInfoType, now: Moment) {
-		let actualCafeInfo = cafeInfo.cafe
-
-		let todayDate = now.format('YYYY-MM-DD')
-		let todayMenu = actualCafeInfo.days.find(({date}) => date === todayDate)
-
-		if (!todayMenu) {
-			return 'Closed today'
-		} else if (todayMenu.status === 'closed') {
-			return todayMenu.message || 'Closed today'
-		}
-
-		return null
 	}
 
 	buildCustomStationMenu(
@@ -246,9 +246,9 @@ export class BonAppHostedMenu extends React.PureComponent<Props, State> {
 			return <LoadingView text={sample(this.props.loadingMessage)} />
 		}
 
-		if (this.state.errormsg) {
-			let msg = `Error: ${this.state.errormsg}`
-			if (this.state.errormsg === BONAPP_HTML_ERROR_CODE) {
+		if (this.state.errorMessage) {
+			let msg = `Error: ${this.state.errorMessage}`
+			if (this.state.errorMessage === BONAPP_HTML_ERROR_CODE) {
 				msg =
 					'Something between you and BonApp is having problems. Try again in a minute or two?'
 			}
@@ -275,7 +275,7 @@ export class BonAppHostedMenu extends React.PureComponent<Props, State> {
 
 		// We grab the "today" info from here because BonApp returns special
 		// messages in this response, like "Closed for Christmas Break"
-		let specialMessage = this.findCafeMessage(cafeInfo, now)
+		let specialMessage = findCafeMessage(cafeInfo, now)
 
 		// prepare all food items from bonapp for rendering
 		let foodItems = this.prepareFood(cafeMenu)
