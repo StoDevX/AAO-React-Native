@@ -77,7 +77,7 @@ export function RootStack(): JSX.Element {
 		<Stack.Navigator
 			initialRouteName="Home"
 			screenOptions={{
-				gestureEnabled: false,
+				gestureEnabled: true,
 				headerStyle: styles.header,
 				headerTintColor: theme.navigationForeground,
 			}}
