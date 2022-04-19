@@ -133,6 +133,7 @@ function WeekToggles(props: WeekTogglesProps) {
 				))}
 			</View>
 		),
+		default: <></>,
 	})
 }
 
