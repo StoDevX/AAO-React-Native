@@ -23,11 +23,11 @@ const styles = StyleSheet.create({
 type Props = TopLevelViewPropsType & {
 	now: Moment
 	loading: boolean
-	onRefresh: () => any
+	onRefresh: () => unknown
 	buildings: Array<{title: string; data: BuildingType[]}>
 }
 
-export function BuildingHoursList(props: Props) {
+export function BuildingHoursList(props: Props): JSX.Element {
 	let navigation = useNavigation()
 
 	let onPressRow = React.useCallback(
@@ -35,7 +35,7 @@ export function BuildingHoursList(props: Props) {
 			navigation.navigate('BuildingHoursDetail', {
 				building: data,
 			}),
-		[],
+		[navigation],
 	)
 
 	let keyExtractor = (item: BuildingType) => item.name
