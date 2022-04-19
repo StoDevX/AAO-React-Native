@@ -6,13 +6,13 @@ import type {
 } from '../types'
 import type {FilterType} from '@frogpond/filter'
 import {decode, fastGetTrimmedText} from '@frogpond/html-lib'
-import {chooseMeal} from './choose-meal'
+import {chooseMeal, EMPTY_MEAL} from './choose-meal'
 
 export function buildFilters(
 	foodItems: MenuItemType[],
 	corIcons: MasterCorIconMapType,
 	meals: ProcessedMealType[],
-	now: Moment,
+	now?: Moment,
 ): FilterType[] {
 	// Format the items for the stations filter
 	const stations = meals.flatMap((meal) => meal.stations)
@@ -28,7 +28,8 @@ export function buildFilters(
 
 	// Decide which meal will be selected by default
 	const mealOptions = meals.map((m) => ({label: m.label}))
-	const selectedMeal = chooseMeal(meals, [], now)
+	const selectedMeal =
+		(now == null ? meals[0] : chooseMeal(meals, [], now)) ?? EMPTY_MEAL
 
 	// Check if there is at least one special in order to show the specials-only filter
 	const stationNames = selectedMeal.stations.map((s) => s.label)
