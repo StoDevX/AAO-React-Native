@@ -1,12 +1,7 @@
 import * as React from 'react'
-import {View, StyleSheet, Image} from 'react-native'
+import {Image, StyleProp, StyleSheet, View, ViewStyle} from 'react-native'
 
-import keys from 'lodash/keys'
-import type {
-	ItemCorIconMapType,
-	MasterCorIconMapType,
-	CorIconType,
-} from './types'
+import type {ItemCorIconMapType, MasterCorIconMapType} from './types'
 
 const styles = StyleSheet.create({
 	container: {
@@ -23,16 +18,13 @@ const styles = StyleSheet.create({
 type Args = {
 	corIcons: MasterCorIconMapType
 	dietary: ItemCorIconMapType
-	style?: any
+	style?: StyleProp<ViewStyle>
 }
 
-export function DietaryTags({corIcons, dietary, style}: Args) {
+export function DietaryTags({corIcons, dietary, style}: Args): JSX.Element {
 	// filter the mapping of all icons by just the icons provided by this item
-	const dietaryKeys = new Set(keys(dietary))
-	const filteredAny: Array<any> = Object.entries(corIcons).filter(([k]) =>
-		dietaryKeys.has(k),
-	)
-	const filtered: Array<[string, CorIconType]> = filteredAny
+	const dietaryKeys = new Set(Object.keys(dietary))
+	const filtered = Object.entries(corIcons).filter(([k]) => dietaryKeys.has(k))
 
 	// turn the remaining items into images
 	const tags = filtered.map(([key, dietaryIcon]) => (
