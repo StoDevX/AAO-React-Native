@@ -12,7 +12,7 @@ export function chooseMeal(
 		(f) => f.type === 'picker' && f.spec.title === "Today's Menus",
 	) as PickerType | undefined
 
-	let selectedMeal: ProcessedMealType | undefined = meals[0]
+	let selectedMeal: ProcessedMealType | undefined
 	if (
 		mealChooserFilter &&
 		mealChooserFilter.spec.selected &&
