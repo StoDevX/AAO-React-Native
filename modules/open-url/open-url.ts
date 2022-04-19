@@ -2,7 +2,7 @@ import {Platform, Linking, Alert} from 'react-native'
 
 import {appName} from '@frogpond/constants'
 import SafariView from 'react-native-safari-view'
-import {CustomTabs} from 'react-native-custom-tabs'
+import {openURL} from '@frogpond/react-native-chrome-custom-tabs'
 
 function genericOpen(url: string) {
 	return Linking.canOpenURL(url)
@@ -25,7 +25,7 @@ function iosOpen(url: string) {
 }
 
 function androidOpen(url: string) {
-	return CustomTabs.openURL(url, {
+	return openURL(url, {
 		showPageTitle: true,
 		enableUrlBarHiding: true,
 		enableDefaultShare: true,
