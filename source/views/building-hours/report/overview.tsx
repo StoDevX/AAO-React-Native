@@ -164,7 +164,7 @@ export let BuildingHoursProblemReportView = (props: Props): JSX.Element => {
 				</Section>
 
 				{schedules.map(
-					(s: NamedBuildingScheduleType, i: React.Key | null | undefined) => (
+					(s: NamedBuildingScheduleType, i) => (
 						<EditableSchedule
 							key={i}
 							addRow={addHoursRow}
