@@ -1,11 +1,11 @@
 import * as React from 'react'
-import {StyleSheet, SectionList} from 'react-native'
+import {SectionList, StyleSheet} from 'react-native'
 import * as c from '@frogpond/colors'
 import type {
-	MenuItemType as MenuItem,
 	MasterCorIconMapType,
-	ProcessedMealType,
 	MenuItemContainerType,
+	MenuItemType,
+	ProcessedMealType,
 	StationMenuType,
 } from './types'
 import type {
@@ -14,10 +14,9 @@ import type {
 	NavigationScreenProp,
 } from 'react-navigation'
 import size from 'lodash/size'
-import values from 'lodash/values'
-import {ListSeparator, ListSectionHeader} from '@frogpond/lists'
-import {applyFiltersToItem} from '@frogpond/filter'
+import {ListSectionHeader, ListSeparator} from '@frogpond/lists'
 import type {FilterType} from '@frogpond/filter'
+import {applyFiltersToItem} from '@frogpond/filter'
 import {NoticeView} from '@frogpond/notice'
 import {FilterMenuToolbar as FilterToolbar} from './filter-menu-toolbar'
 import {FoodItemRow} from './food-item-row'
@@ -32,11 +31,11 @@ type ReactProps = {
 	menuCorIcons: MasterCorIconMapType
 	name: string
 	now: Moment
-	onRefresh?: () => any
+	onRefresh?: () => void
 	refreshing?: boolean
 }
 
-type FilterFunc = (filters: Array<FilterType>, item: MenuItem) => boolean
+type FilterFunc = (filters: Array<FilterType>, item: MenuItemType) => boolean
 
 type DefaultProps = {
 	applyFilters: FilterFunc
@@ -75,7 +74,10 @@ export class FancyMenu extends React.Component<Props, State> {
 		cachedFoodItems: undefined,
 	}
 
-	static getDerivedStateFromProps(props: Props, prevState: State) {
+	static getDerivedStateFromProps(
+		props: Props,
+		prevState: State,
+	): State | null {
 		// we only need to do this when the menu has changed; this avoids
 		// us overriding our changes from FilterView.onDismiss
 		if (
@@ -86,19 +88,19 @@ export class FancyMenu extends React.Component<Props, State> {
 			const filters =
 				prevState.filters.length !== 0
 					? prevState.filters
-					: buildFilters(values(foodItems), menuCorIcons, meals, now)
+					: buildFilters(Object.values(foodItems), menuCorIcons, meals, now)
 			return {filters, cachedFoodItems: props.foodItems}
 		}
 		return null
 	}
 
-	areSpecialsFiltered = (filters: Array<FilterType>) =>
+	areSpecialsFiltered = (filters: Array<FilterType>): boolean =>
 		Boolean(filters.find(this.isSpecialsFilter))
 
-	isSpecialsFilter = (f: FilterType) =>
+	isSpecialsFilter = (f: FilterType): boolean =>
 		f.enabled && f.type === 'toggle' && f.spec.label === 'Only Show Specials'
 
-	updateFilter = (filter: FilterType) => {
+	updateFilter = (filter: FilterType): void => {
 		this.setState((state) => {
 			const edited = state.filters.map((f) =>
 				f.key !== filter.key ? f : filter,
@@ -107,19 +109,15 @@ export class FancyMenu extends React.Component<Props, State> {
 		})
 	}
 
-	onPressRow(item: MenuItem, icons: MasterCorIconMapType) {
-		this.props.navigation.navigate('MenuItemDetailView', {item, icons})
-	}
-
 	groupMenuData = (args: {
 		filters: Array<FilterType>
 		stations: Array<StationMenuType>
 		foodItems: MenuItemContainerType
 		applyFilters: FilterFunc
-	}) => {
+	}): {title: string; data: Array<MenuItemType>}[] => {
 		const {applyFilters, foodItems, stations, filters} = args
 
-		const derefrenceMenuItems = (menu: StationMenuType) =>
+		const dereferenceMenuItems = (menu: StationMenuType) =>
 			menu.items
 				// Dereference each menu item
 				.map((id) => foodItems[id])
@@ -127,65 +125,16 @@ export class FancyMenu extends React.Component<Props, State> {
 				// and apply the selected filters to the items in the menu
 				.filter((item) => item && applyFilters(filters, item))
 
-		const filterStationMenus = (
-			stations: Array<StationMenuType>,
-		): Array<{title: string; data: Array<MenuItem>}> => {
-			return stations
-				.map((menu: StationMenuType): [string, MenuItem[]] => [
-					menu.label,
-					derefrenceMenuItems(menu),
-				])
-				.filter(([_, items]) => items.length)
-				.map(
-					([title, data]: [string, MenuItem[]]): {
-						title: string
-						data: MenuItem[]
-					} => ({
-						title,
-						data,
-					}),
-				)
-		}
-
-		const menusWithItems: Array<{
-			title: string
-			data: Array<MenuItem>
-		}> = filterStationMenus(stations)
-
-		return menusWithItems
-	}
-
-	renderSectionHeader = ({section: {title}}: any) => {
-		const {now, meals} = this.props
-		const {filters} = this.state
-		const {stations} = chooseMeal(meals, filters, now)
-		const menu = stations.find((m) => m.label === title)
-
-		return (
-			<ListSectionHeader
-				spacing={{left: LEFT_MARGIN}}
-				subtitle={menu ? menu.note : ''}
-				title={title}
-			/>
+		const stationMenusByLabel: [string, MenuItemType[]][] = stations.map(
+			(menu: StationMenuType) => [menu.label, dereferenceMenuItems(menu)],
 		)
+
+		return stationMenusByLabel
+			.filter(([_, items]) => items.length)
+			.map(([title, data]) => ({title, data}))
 	}
 
-	renderItem = ({item}: {item: MenuItem}) => {
-		const specialsFilterEnabled = this.areSpecialsFiltered(this.state.filters)
-		return (
-			<FoodItemRow
-				badgeSpecials={!specialsFilterEnabled}
-				corIcons={this.props.menuCorIcons}
-				data={item}
-				onPress={() => this.onPressRow(item, this.props.menuCorIcons)}
-				spacing={{left: LEFT_MARGIN}}
-			/>
-		)
-	}
-
-	keyExtractor = (item: MenuItem, index: number) => index.toString()
-
-	render() {
+	render(): JSX.Element {
 		const {now, meals, cafeMessage, applyFilters, foodItems} = this.props
 		const {filters} = this.state
 
@@ -224,6 +173,8 @@ export class FancyMenu extends React.Component<Props, State> {
 			/>
 		)
 
+		const navigate = this.props.navigation.navigate
+
 		return (
 			<SectionList
 				ItemSeparatorComponent={Separator}
@@ -231,11 +182,39 @@ export class FancyMenu extends React.Component<Props, State> {
 				ListHeaderComponent={header}
 				contentContainerStyle={styles.contentContainer}
 				extraData={filters}
-				keyExtractor={this.keyExtractor}
+				keyExtractor={(_item, index) => index.toString()}
 				onRefresh={this.props.onRefresh}
 				refreshing={this.props.refreshing}
-				renderItem={this.renderItem}
-				renderSectionHeader={this.renderSectionHeader}
+				renderItem={({item}) => {
+					const specialsFilterEnabled = this.areSpecialsFiltered(
+						this.state.filters,
+					)
+					const icons = this.props.menuCorIcons
+					return (
+						<FoodItemRow
+							badgeSpecials={!specialsFilterEnabled}
+							corIcons={icons}
+							data={item}
+							onPress={() => navigate('MenuItemDetailView', {item, icons})}
+							spacing={{left: LEFT_MARGIN}}
+						/>
+					)
+				}}
+				renderSectionHeader={(info): JSX.Element => {
+					const title = info.section.title
+					const {now, meals} = this.props
+					const {filters} = this.state
+					const {stations} = chooseMeal(meals, filters, now)
+					const menu = stations.find((m) => m.label === title)
+
+					return (
+						<ListSectionHeader
+							spacing={{left: LEFT_MARGIN}}
+							subtitle={menu ? menu.note : ''}
+							title={title}
+						/>
+					)
+				}}
 				sections={groupedMenuData}
 				style={styles.inner}
 				windowSize={5}
