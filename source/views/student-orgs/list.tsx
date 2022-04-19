@@ -55,7 +55,7 @@ const styles = StyleSheet.create({
 
 type Props = TopLevelViewPropsType
 
-export function StudentOrgsView(props: Props) {
+export function StudentOrgsView(props: Props): JSX.Element {
 	let [query, setQuery] = React.useState('')
 	let searchQuery = useDebounce(query.toLowerCase(), 200)
 	let [isInitialFetch, setIsInitial] = React.useState(true)
