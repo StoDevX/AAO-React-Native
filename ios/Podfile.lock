@@ -300,6 +300,8 @@ PODS:
     - RCTTypeSafety
     - React
     - ReactCommon/turbomodule/core
+  - react-native-sfsymbols (1.2.1):
+    - React
   - react-native-webview (11.18.1):
     - React-Core
   - React-perflogger (0.68.1)
@@ -474,6 +476,7 @@ DEPENDENCIES:
   - react-native-restart (from `../node_modules/react-native-restart`)
   - react-native-safari-view (from `../node_modules/react-native-safari-view`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
+  - react-native-sfsymbols (from `../node_modules/react-native-sfsymbols`)
   - react-native-webview (from `../node_modules/react-native-webview`)
   - React-perflogger (from `../node_modules/react-native/ReactCommon/reactperflogger`)
   - React-RCTActionSheet (from `../node_modules/react-native/Libraries/ActionSheetIOS`)
@@ -570,6 +573,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-safari-view"
   react-native-safe-area-context:
     :path: "../node_modules/react-native-safe-area-context"
+  react-native-sfsymbols:
+    :path: "../node_modules/react-native-sfsymbols"
   react-native-webview:
     :path: "../node_modules/react-native-webview"
   React-perflogger:
@@ -660,6 +665,7 @@ SPEC CHECKSUMS:
   react-native-restart: 45c8dca02491980f2958595333cbccd6877cb57e
   react-native-safari-view: 955d7160d159241b8e9395d12d10ea0ef863dcdd
   react-native-safe-area-context: f98b0b16d1546d208fc293b4661e3f81a895afd9
+  react-native-sfsymbols: bd3a0d3eab185e80b571bae60753dcf5a0d57967
   react-native-webview: 0b7bd2bffced115aefd393e1841babd9b9a557b1
   React-perflogger: 30ab8d6db10e175626069e742eead3ebe8f24fd5
   React-RCTActionSheet: 4b45da334a175b24dabe75f856b98fed3dfd6201
