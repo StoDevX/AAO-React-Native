@@ -10,8 +10,8 @@ import type {SectionInterface} from 'react-native-tableview-simple/src/component
 
 export * from './cells'
 
-let Section = (props: SectionInterface) => (
-	<ActualSection sectionTintColor={sectionBgColor} {...props} />
+let Section = (props: SectionInterface): JSX.Element => (
+	<ActualSection sectionTintColor={sectionBgColor} withSafeAreaView={false} {...props} />
 )
 
 export {TableView, Section, Cell}
