@@ -44,7 +44,11 @@ export function GitHubHostedMenu(props: Props): JSX.Element {
 					}
 				}>()
 			} catch (error) {
-				seterror(error.message)
+				if (error instanceof Error) {
+					seterror(error)
+				} else {
+					seterror(new Error('unknown error - not an Error'))
+				}
 				return
 			}
 
