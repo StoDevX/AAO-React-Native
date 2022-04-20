@@ -3,6 +3,13 @@ import type {ProcessedMealType} from '../types'
 import type {FilterType, PickerType} from '@frogpond/filter'
 import {findMeal} from './find-menu'
 
+export const EMPTY_MEAL: ProcessedMealType = {
+	label: '',
+	stations: [],
+	starttime: '0:00',
+	endtime: '0:00',
+}
+
 export function chooseMeal(
 	meals: ProcessedMealType[],
 	filters: FilterType[],
@@ -12,7 +19,7 @@ export function chooseMeal(
 		(f) => f.type === 'picker' && f.spec.title === "Today's Menus",
 	) as PickerType | undefined
 
-	let selectedMeal: ProcessedMealType | undefined = meals[0]
+	let selectedMeal: ProcessedMealType | undefined
 	if (
 		mealChooserFilter &&
 		mealChooserFilter.spec.selected &&
@@ -25,12 +32,7 @@ export function chooseMeal(
 	}
 
 	if (!selectedMeal) {
-		selectedMeal = {
-			label: '',
-			stations: [],
-			starttime: '0:00',
-			endtime: '0:00',
-		}
+		selectedMeal = EMPTY_MEAL
 	}
 
 	return selectedMeal
