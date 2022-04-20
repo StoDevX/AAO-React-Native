@@ -27,7 +27,7 @@ import type {Moment} from 'moment'
 type FilterFunc = (filters: Array<FilterType>, item: MenuItemType) => boolean
 
 type ReactProps = {
-	cafeMessage: string | null
+	cafeMessage?: string | null
 	foodItems: MenuItemContainerType
 	meals: ProcessedMealType[]
 	menuCorIcons: MasterCorIconMapType
