@@ -71,17 +71,14 @@ export function BuildingHoursScheduleEditorView(props: Props): JSX.Element {
 	return (
 		<ScrollView>
 			<TableView>
-				<Section header="DAYS">
+				<Section>
 					<WeekToggles days={set.days} onChangeDays={onChangeDays} />
-				</Section>
-
-				<Section header="TIMES">
 					<DatePickerCell date={open} onChange={onChangeOpen} title="Open" />
 					<DatePickerCell date={close} onChange={onChangeClose} title="Close" />
 				</Section>
 
 				<Section>
-					<DeleteButtonCell onPress={deleteSet} title="Delete Hours" />
+					<DeleteButtonCell onPress={deleteSet} title="Remove" />
 				</Section>
 			</TableView>
 		</ScrollView>
@@ -201,16 +198,18 @@ const styles = StyleSheet.create({
 	weekToggles: {
 		alignItems: 'stretch',
 		justifyContent: 'center',
+		backgroundColor: c.white,
 	},
 	dayWrapper: {
 		flex: 1,
 		alignItems: 'center',
 		paddingVertical: 10,
-		paddingHorizontal: 2,
-		backgroundColor: c.white,
+		borderRadius: 200,
+		margin: 5,
+		backgroundColor: c.iosGray,
 	},
 	activeDay: {
-		backgroundColor: c.brickRed,
+		backgroundColor: c.infoBlue,
 	},
 	dayText: {
 		fontSize: 16,
