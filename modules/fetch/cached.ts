@@ -1,4 +1,4 @@
-import {AsyncStorage} from 'react-native'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 import CachePolicy from 'http-cache-semantics'
 import fromPairs from 'lodash/fromPairs'
 import type {Dictionary} from 'lodash'
