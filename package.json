@@ -70,7 +70,7 @@
     "@callstack/react-theme-provider": "3.0.7",
     "@expo/react-native-action-sheet": "3.13.0",
     "@frogpond/react-native-chrome-custom-tabs": "1.0.3",
-    "@frogpond/titlecase": "2.0.3",
+    "@frogpond/titlecase": "2.0.4",
     "@hawkrives/react-native-alternate-icons": "0.6.0",
     "@react-native-community/clipboard": "1.5.1",
     "@react-native-community/netinfo": "8.2.0",
