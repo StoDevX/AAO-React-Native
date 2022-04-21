@@ -14,6 +14,7 @@ jobs:
           node-version: ^16.0
           cache: npm
       - run: npm ci
+      - run: npm run bundle-data
       - run: |
           echo "::remove-matcher owner=tsc::"
       - run: make tsc-errors
@@ -30,6 +31,7 @@ jobs:
           node-version: ^16.0
           cache: npm
       - run: npm ci
+      - run: npm run bundle-data
       - run: |
           echo "::remove-matcher owner=tsc::"
       - run: make tsc-counts
