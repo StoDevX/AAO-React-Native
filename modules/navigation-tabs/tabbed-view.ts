@@ -18,8 +18,12 @@ const createTabNavigator =
 		? createMaterialBottomTabNavigator
 		: createBottomTabNavigator
 
-export const TabNavigator: ComponentType = (screens, options = {}) => {
+export const TabNavigator: ComponentType = (
+	screens,
+	options?: Record<string, unknown>,
+) => {
 	const theme = getTheme()
+	options = options ?? {}
 
 	return createTabNavigator(screens, {
 		// for react-native-material-bottom-tabs
