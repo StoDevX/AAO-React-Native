@@ -10,7 +10,7 @@ export type ListItemSpecType = {
 	title: string | number
 	label?: string
 	detail?: string
-	image?: ImageSourcePropType
+	image?: ImageSourcePropType | null
 }
 
 export type ListSpecType = {
