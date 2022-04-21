@@ -11,16 +11,27 @@ type ComponentType = (
 	// the package provides a bunch of types… but it doesn't even use some
 	// of them??? and none seem to be the combination of args to the second
 	// arg of TabNavigator.
-) => typeof createTabNavigator
+) => unknown
 
-const createTabNavigator =
+type ScreenOptions = {
+	defaultNavigationOptions?: Record<string, unknown>
+	tabBarOptions?: Record<string, unknown>
+	backBehavior?: string
+	activeColor?: string
+	theme?: Record<string, unknown>
+}
+
+const createTabNavigator: (
+	screens: Record<string, NavigationScreenRouteConfig>,
+	options: ScreenOptions,
+) => ComponentType =
 	Platform.OS === 'android'
 		? createMaterialBottomTabNavigator
 		: createBottomTabNavigator
 
 export const TabNavigator: ComponentType = (
 	screens,
-	options?: Record<string, unknown>,
+	options?: ScreenOptions,
 ) => {
 	const theme = getTheme()
 	options = options ?? {}
@@ -35,11 +46,11 @@ export const TabNavigator: ComponentType = (
 		},
 		...options,
 		defaultNavigationOptions: {
-			...(options.defaultNavigationOptions || {}),
+			...(options?.defaultNavigationOptions ?? {}),
 		},
 		tabBarOptions: {
 			activeColor: theme.iosTabBarActiveColor,
-			...(options.tabBarOptions || {}),
+			...(options?.tabBarOptions ?? {}),
 			labelStyle: {
 				fontFamily: 'System',
 			},
