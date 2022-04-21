@@ -48,6 +48,7 @@ jobs:
           SKIP_POSTINSTALL: '1'
 #      - run: bundle exec pod install --deployment
 #        working-directory: ./ios
+      - run: npm run bundle-data
       - run: npm run bundle:ios
 
   android:
