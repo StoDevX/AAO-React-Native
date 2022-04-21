@@ -1,5 +1,8 @@
 files: tsc-errors tsc-counts eslint-problems
 
+verify: files
+	git diff --exit-code
+
 tsc-errors:
 	-npx tsc | tee ${@}
 
