@@ -1,8 +1,4 @@
 modules/event-list/types.ts(2,41): error TS2307: Cannot find module 'react-navigation' or its corresponding type declarations.
-modules/fetch/cached.ts(1,26): error TS2307: Cannot find module '@react-native-async-storage/async-storage' or its corresponding type declarations.
-modules/filter/section-picker.tsx(5,22): error TS2307: Cannot find module '@react-native-picker/picker' or its corresponding type declarations.
-modules/filter/section-picker.tsx(19,21): error TS7006: Parameter 'itemValue' implicitly has an 'any' type.
-modules/filter/section-picker.tsx(19,32): error TS7006: Parameter 'itemIndex' implicitly has an 'any' type.
 modules/food-menu/fancy-menu.tsx(15,8): error TS2307: Cannot find module 'react-navigation' or its corresponding type declarations.
 modules/food-menu/food-item-detail.tsx(14,8): error TS2307: Cannot find module 'react-navigation' or its corresponding type declarations.
 modules/lists/list-separator.tsx(39,55): error TS2698: Spread types may only be created from object types.
@@ -51,7 +47,6 @@ modules/navigation-tabs/tabbed-view.ts(21,14): error TS2322: Type '(screens: { [
   Type 'TypedNavigator<ParamListBase, TabNavigationState<ParamListBase>, MaterialBottomTabNavigationOptions, MaterialBottomTabNavigationEventMap, ({ id, initialRouteName, backBehavior, children, screenListeners, screenOptions, ...rest }: Props) => Element> | TypedNavigator<...>' is not assignable to type '(<ParamList extends ParamListBase>() => TypedNavigator<ParamList, TabNavigationState<ParamListBase>, MaterialBottomTabNavigationOptions, MaterialBottomTabNavigationEventMap, ({ id, initialRouteName, backBehavior, children, screenListeners, screenOptions, ...rest }: Props) => Element>) | (<ParamList extends ParamList...'.
     Type 'TypedNavigator<ParamListBase, TabNavigationState<ParamListBase>, MaterialBottomTabNavigationOptions, MaterialBottomTabNavigationEventMap, ({ id, initialRouteName, backBehavior, children, screenListeners, screenOptions, ...rest }: Props) => Element>' is not assignable to type '(<ParamList extends ParamListBase>() => TypedNavigator<ParamList, TabNavigationState<ParamListBase>, MaterialBottomTabNavigationOptions, MaterialBottomTabNavigationEventMap, ({ id, initialRouteName, backBehavior, children, screenListeners, screenOptions, ...rest }: Props) => Element>) | (<ParamList extends ParamList...'.
 modules/navigation-tabs/tabbed-view.ts(24,28): error TS2554: Expected 0 arguments, but got 2.
-modules/storage/index.ts(1,26): error TS2307: Cannot find module '@react-native-async-storage/async-storage' or its corresponding type declarations.
 source/app.tsx(35,9): error TS2322: Type '(prevState: Readonly<{ key: string; index: number; routeNames: string[]; history?: unknown[] | undefined; routes: NavigationRoute<ParamListBase, string>[]; type: string; stale: false; }>, currentState: Readonly<...>) => void' is not assignable to type '(state: Readonly<{ key: string; index: number; routeNames: string[]; history?: unknown[] | undefined; routes: NavigationRoute<ParamListBase, string>[]; type: string; stale: false; }> | undefined) => void'.
 source/lib/login.ts(22,2): error TS2322: Type 'Promise<false | Result | {}>' is not assignable to type 'Promise<false | Result>'.
   Type 'false | Result | {}' is not assignable to type 'false | Result'.
@@ -103,6 +98,8 @@ source/redux/parts/settings.ts(46,26): error TS2322: Type '{ theme: string; diet
 source/views/building-hours/detail/index.tsx(19,19): error TS2339: Property 'route' does not exist on type 'Props'.
 source/views/building-hours/detail/schedule-row-android.tsx(37,22): error TS7031: Binding element 'children' implicitly has an 'any' type.
 source/views/building-hours/detail/schedule-row-android.tsx(37,32): error TS7031: Binding element 'style' implicitly has an 'any' type.
+source/views/building-hours/detail/toolbar-button.tsx(20,18): error TS2345: Argument of type 'ThunkAction<ToggleFavoriteAction>' is not assignable to parameter of type 'AnyAction'.
+  Property 'type' is missing in type 'ThunkAction<ToggleFavoriteAction>' but required in type 'AnyAction'.
 source/views/building-hours/lib/__tests__/get-detailed-building-status.test.ts(10,3): error TS2740: Type '{}' is missing the following properties from type 'BreakScheduleContainerType': fall, thanksgiving, christmasfest, winter, and 4 more.
 source/views/building-hours/lib/__tests__/get-detailed-building-status.test.ts(39,3): error TS2740: Type '{}' is missing the following properties from type 'BreakScheduleContainerType': fall, thanksgiving, christmasfest, winter, and 4 more.
 source/views/building-hours/lib/__tests__/get-detailed-building-status.test.ts(63,3): error TS2740: Type '{}' is missing the following properties from type 'BreakScheduleContainerType': fall, thanksgiving, christmasfest, winter, and 4 more.
@@ -141,6 +138,7 @@ source/views/contacts/detail.tsx(72,53): error TS2769: No overload matches this 
 source/views/dictionary/list.tsx(26,10): error TS2503: Cannot find namespace 'window'.
 source/views/faqs/index.tsx(4,9): error TS2614: Module '"glamorous-native"' has no exported member 'View'. Did you mean to use 'import View from "glamorous-native"' instead?
 source/views/faqs/index.tsx(4,15): error TS2614: Module '"glamorous-native"' has no exported member 'ScrollView'. Did you mean to use 'import ScrollView from "glamorous-native"' instead?
+source/views/help/index.tsx(34,18): error TS2345: Argument of type 'ThunkAction<GetEnabledToolsAction>' is not assignable to parameter of type 'AnyAction'.
 source/views/home/index.tsx(94,46): error TS2783: 'canGoBack' is specified more than once, so this usage will be overwritten.
 source/views/home/notice.tsx(31,14): error TS2339: Property 'View' does not exist on type 'typeof import("/Users/rives/Projects/allaboutolaf/node_modules/glamorous-native/typings/glamorous")'.
 source/views/home/notice.tsx(36,15): error TS2339: Property 'View' does not exist on type 'typeof import("/Users/rives/Projects/allaboutolaf/node_modules/glamorous-native/typings/glamorous")'.
@@ -195,6 +193,10 @@ source/views/settings/screens/legal.tsx(3,9): error TS2614: Module '"glamorous-n
 source/views/settings/screens/legal.tsx(3,15): error TS2614: Module '"glamorous-native"' has no exported member 'ScrollView'. Did you mean to use 'import ScrollView from "glamorous-native"' instead?
 source/views/settings/screens/overview/developer.tsx(5,41): error TS2307: Cannot find module 'react-navigation' or its corresponding type declarations.
 source/views/settings/screens/overview/index.tsx(4,41): error TS2307: Cannot find module 'react-navigation' or its corresponding type declarations.
+source/views/settings/screens/overview/login-credentials.tsx(141,13): error TS2345: Argument of type 'ThunkAction<LogInActions>' is not assignable to parameter of type 'AnyAction'.
+  Property 'type' is missing in type 'ThunkAction<LogInActions>' but required in type 'AnyAction'.
+source/views/settings/screens/overview/login-credentials.tsx(147,12): error TS2345: Argument of type 'Promise<LogOutAction>' is not assignable to parameter of type 'AnyAction'.
+  Property 'type' is missing in type 'Promise<LogOutAction>' but required in type 'AnyAction'.
 source/views/settings/screens/overview/miscellany.tsx(3,41): error TS2307: Cannot find module 'react-navigation' or its corresponding type declarations.
 source/views/settings/screens/overview/miscellany.tsx(5,24): error TS7016: Could not find a declaration file for module '@hawkrives/react-native-alternate-icons'. '/Users/rives/Projects/allaboutolaf/node_modules/@hawkrives/react-native-alternate-icons/index.js' implicitly has an 'any' type.
   Try `npm i --save-dev @types/hawkrives__react-native-alternate-icons` if it exists or add a new declaration (.d.ts) file containing `declare module '@hawkrives/react-native-alternate-icons';`
@@ -210,6 +212,9 @@ source/views/settings/screens/overview/server-url.tsx(46,5): error TS2769: No ov
 source/views/settings/screens/overview/support.tsx(4,41): error TS2307: Cannot find module 'react-navigation' or its corresponding type declarations.
 source/views/settings/screens/privacy.tsx(3,9): error TS2614: Module '"glamorous-native"' has no exported member 'View'. Did you mean to use 'import View from "glamorous-native"' instead?
 source/views/settings/screens/privacy.tsx(3,15): error TS2614: Module '"glamorous-native"' has no exported member 'ScrollView'. Did you mean to use 'import ScrollView from "glamorous-native"' instead?
+source/views/sis/balances-acknowledgement.tsx(25,18): error TS2345: Argument of type 'Promise<SisAlertSeenAction>' is not assignable to parameter of type 'AnyAction'.
+  Property 'type' is missing in type 'Promise<SisAlertSeenAction>' but required in type 'AnyAction'.
+source/views/sis/balances.tsx(212,13): error TS2345: Argument of type 'ThunkAction<LogInActions>' is not assignable to parameter of type 'AnyAction'.
 source/views/sis/course-search/detail/index.tsx(207,25): error TS7053: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{ Open: string; Closed: string; }'.
   No index signature with a parameter of type 'string' was found on type '{ Open: string; Closed: string; }'.
 source/views/sis/course-search/lib/execute-search.ts(2,27): error TS7016: Could not find a declaration file for module 'keyword-search'. '/Users/rives/Projects/allaboutolaf/node_modules/keyword-search/index.js' implicitly has an 'any' type.
@@ -219,15 +224,23 @@ source/views/sis/course-search/lib/format-filter-combo.ts(37,50): error TS2345: 
 source/views/sis/course-search/list.tsx(12,13): error TS2613: Module '"/Users/rives/Projects/allaboutolaf/modules/filter/index"' has no default export. Did you mean to use 'import { FilterType } from "/Users/rives/Projects/allaboutolaf/modules/filter/index"' instead?
 source/views/sis/course-search/results.tsx(16,13): error TS2613: Module '"/Users/rives/Projects/allaboutolaf/modules/filter/index"' has no default export. Did you mean to use 'import { FilterType } from "/Users/rives/Projects/allaboutolaf/modules/filter/index"' instead?
 source/views/sis/course-search/results.tsx(114,39): error TS7006: Parameter 'f' implicitly has an 'any' type.
+source/views/sis/course-search/results.tsx(183,31): error TS2345: Argument of type 'ThunkAction<UpdateRecentSearchesAction>' is not assignable to parameter of type 'AnyAction'.
+  Property 'type' is missing in type 'ThunkAction<UpdateRecentSearchesAction>' but required in type 'AnyAction'.
+source/views/sis/course-search/results.tsx(187,39): error TS2345: Argument of type 'ThunkAction<UpdateRecentFiltersAction>' is not assignable to parameter of type 'AnyAction'.
+  Property 'type' is missing in type 'ThunkAction<UpdateRecentFiltersAction>' but required in type 'AnyAction'.
 source/views/sis/course-search/search.tsx(48,2): error TS2416: Property 'state' in type 'CourseSearchView' is not assignable to the same property in base type 'Component<Props, State, any>'.
   Type '{ mode: string; isSearchbarActive: boolean; typedQuery: string; }' is not assignable to type 'Readonly<State>'.
     Types of property 'mode' are incompatible.
       Type 'string' is not assignable to type '"ready" | "loading" | "pending"'.
+source/views/sis/course-search/search.tsx(215,18): error TS2345: Argument of type 'LoadCourseDataActionType' is not assignable to parameter of type 'AnyAction'.
+  Property 'type' is missing in type 'LoadCourseDataActionType' but required in type 'AnyAction'.
+source/views/sis/course-search/search.tsx(219,18): error TS2345: Argument of type 'UpdateCourseDataActionType' is not assignable to parameter of type 'AnyAction'.
+  Property 'type' is missing in type 'UpdateCourseDataActionType' but required in type 'AnyAction'.
 source/views/sis/course-search/search.tsx(224,3): error TS2769: No overload matches this call.
   Overload 2 of 2, '(props: Props, context: any): CourseSearchView', gave the following error.
-    Type '() => LoadCourseDataActionType' is not assignable to type '() => Promise<any>'.
+    Type '() => AnyAction' is not assignable to type '() => Promise<any>'.
   Overload 2 of 2, '(props: Props, context: any): CourseSearchView', gave the following error.
-    Type '() => UpdateCourseDataActionType' is not assignable to type '() => Promise<any>'.
+    Type '() => AnyAction' is not assignable to type '() => Promise<any>'.
 source/views/sis/index.ts(8,29): error TS2307: Cannot find module './student-work/detail' or its corresponding type declarations.
 source/views/sis/index.ts(11,17): error TS2554: Expected 2 arguments, but got 1.
 source/views/sis/index.ts(18,9): error TS2339: Property 'navigationOptions' does not exist on type '(<ParamList extends ParamListBase>() => TypedNavigator<ParamList, TabNavigationState<ParamListBase>, MaterialBottomTabNavigationOptions, MaterialBottomTabNavigationEventMap, ({ id, initialRouteName, backBehavior, children, screenListeners, screenOptions, ...rest }: Props) => Element>) | (<ParamList extends ParamList...'.
@@ -240,19 +253,24 @@ source/views/stoprint/components/error.tsx(38,31): error TS2769: No overload mat
   Overload 2 of 2, '(props: IconProps, context: any): Icon', gave the following error.
     Type 'string | undefined' is not assignable to type 'string'.
       Type 'undefined' is not assignable to type 'string'.
+source/views/stoprint/print-jobs.tsx(223,36): error TS2345: Argument of type 'ThunkAction<LogInActions>' is not assignable to parameter of type 'AnyAction'.
+source/views/stoprint/print-jobs.tsx(227,18): error TS2345: Argument of type 'ThunkAction<UpdatePrintJobsAction>' is not assignable to parameter of type 'AnyAction'.
+  Property 'type' is missing in type 'ThunkAction<UpdatePrintJobsAction>' but required in type 'AnyAction'.
 source/views/stoprint/print-jobs.tsx(232,3): error TS2769: No overload matches this call.
   Overload 2 of 2, '(props: Props, context: any): PrintJobsView', gave the following error.
     Type 'string | null' is not assignable to type 'string | undefined'.
   Overload 2 of 2, '(props: Props, context: any): PrintJobsView', gave the following error.
-    Type '(username: any, password: any) => ThunkAction<LogInActions>' is not assignable to type '(username: string, password: string) => Promise<any>'.
+    Type '(username: any, password: any) => AnyAction' is not assignable to type '(username: string, password: string) => Promise<any>'.
   Overload 2 of 2, '(props: Props, context: any): PrintJobsView', gave the following error.
-    Type '() => ThunkAction<UpdatePrintJobsAction>' is not assignable to type '() => Promise<any>'.
+    Type '() => AnyAction' is not assignable to type '() => Promise<any>'.
 source/views/stoprint/print-release.tsx(87,2): error TS2416: Property 'state' in type 'PrintJobReleaseView' is not assignable to the same property in base type 'PureComponent<Props, State, any>'.
   Type '{ heldJob: null; status: string; }' is not assignable to type 'Readonly<State>'.
     Types of property 'heldJob' are incompatible.
       Type 'null' is not assignable to type 'HeldJob | undefined'.
 source/views/stoprint/print-release.tsx(164,20): error TS2339: Property 'id' does not exist on type 'never'.
 source/views/stoprint/print-release.tsx(192,12): error TS2339: Property 'id' does not exist on type 'never'.
+source/views/stoprint/printers.tsx(189,24): error TS2345: Argument of type 'ThunkAction<UpdateAllPrintersAction>' is not assignable to parameter of type 'AnyAction'.
+  Property 'type' is missing in type 'ThunkAction<UpdateAllPrintersAction>' but required in type 'AnyAction'.
 source/views/stoprint/printers.tsx(197,4): error TS2769: No overload matches this call.
   Overload 1 of 2, '(props: Props | Readonly<Props>): PrinterListView', gave the following error.
     Type 'string | null' is not assignable to type 'string | undefined'.
