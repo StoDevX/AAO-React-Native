@@ -1,113 +1,108 @@
-import * as React from 'react'
+import {useEffect, useState} from 'react'
 import {timezone} from '@frogpond/constants'
-import {NoticeView, LoadingView} from '@frogpond/notice'
+import {LoadingView, NoticeView} from '@frogpond/notice'
 import {FoodMenu} from '@frogpond/food-menu'
 import type {TopLevelViewPropsType} from '../types'
 import moment from 'moment-timezone'
-import type {Moment} from 'moment-timezone'
 import sample from 'lodash/sample'
-import fromPairs from 'lodash/fromPairs'
-import filter from 'lodash/filter'
 import type {
-	MenuItemType,
 	MasterCorIconMapType,
-	StationMenuType,
 	MenuItemContainerType,
+	MenuItemType,
 	ProcessedMealType,
+	StationMenuType,
 } from './types'
 import {upgradeMenuItem, upgradeStation} from './lib/process-menu-shorthands'
 import {API} from '@frogpond/api'
 import {fetch} from '@frogpond/fetch'
+import groupBy from 'lodash/groupBy'
 
 type Props = TopLevelViewPropsType & {
 	name: string
 	loadingMessage: string[]
 }
 
-type State = {
-	error?: Error
-	loading: boolean
-	now: Moment
-	foodItems: MenuItemContainerType
-	corIcons: MasterCorIconMapType
-	meals: ProcessedMealType[]
-}
+export function GitHubHostedMenu(props: Props): JSX.Element {
+	let [error, setError] = useState<Error | null>(null)
+	let [loading, setLoading] = useState(true)
+	let [now, setNow] = useState(moment.tz(timezone()))
+	let [foodItems, setFoodItems] = useState<MenuItemContainerType>({})
+	let [corIcons, setCorIcons] = useState<MasterCorIconMapType>({})
+	let [meals, setMeals] = useState<ProcessedMealType[]>([])
 
-export class GitHubHostedMenu extends React.PureComponent<Props, State> {
-	state: State = {
-		error: undefined,
-		loading: true,
-		now: moment.tz(timezone()),
-		foodItems: {},
-		corIcons: {},
-		meals: [],
-	}
+	useEffect(() => {
+		;(async () => {
+			setLoading(true)
 
-	componentDidMount() {
-		this.fetchData()
-	}
-
-	fetchData = async () => {
-		this.setState({loading: true})
-
-		let container = await fetch(API('/food/named/menu/the-pause')).json<{
-			data: {
-				foodItems: MenuItemType[]
-				stationMenus: StationMenuType[]
-				corIcons: MasterCorIconMapType
+			let container: {
+				data: {
+					foodItems: MenuItemType[]
+					stationMenus: StationMenuType[]
+					corIcons: MasterCorIconMapType
+				}
 			}
-		}>()
 
-		let data = container.data
-		let foodItems: MenuItemType[] = data.foodItems || []
-		let stationMenus: StationMenuType[] = data.stationMenus || []
-		let corIcons: MasterCorIconMapType = data.corIcons || {}
+			try {
+				container = await fetch(API('/food/named/menu/the-pause')).json()
+			} catch (error) {
+				if (error instanceof Error) {
+					setError(error)
+				} else {
+					setError(new Error('unknown error - not an Error'))
+				}
+				return
+			}
 
-		let upgradedFoodItems = fromPairs(
-			foodItems.map(upgradeMenuItem).map((item) => [item.id, item]),
-		)
-		stationMenus = stationMenus.map((menu, index) => ({
-			...upgradeStation(menu, index),
-			items: filter(
+			let data = container.data
+			let foodItems: MenuItemType[] = data.foodItems || []
+			let stationMenus: StationMenuType[] = data.stationMenus || []
+			let corIcons: MasterCorIconMapType = data.corIcons || {}
+
+			let upgradedFoodItems = foodItems.map(upgradeMenuItem)
+			let upgradedFoodItemsMap = Object.fromEntries(
+				upgradedFoodItems.map((item) => [item.id, item]),
+			)
+			let foodItemsByStation = groupBy(
 				upgradedFoodItems,
-				(item) => item.station === menu.label,
-			).map((item) => item.id),
-		}))
+				(item) => item.station,
+			)
 
-		this.setState({
-			loading: false,
-			corIcons,
-			foodItems: upgradedFoodItems,
-			meals: [
+			stationMenus = stationMenus.map((menu, index) => ({
+				...upgradeStation(menu, index),
+				items: foodItemsByStation[menu.label]?.map((item) => item.id) ?? [],
+			}))
+
+			setCorIcons(corIcons)
+			setFoodItems(upgradedFoodItemsMap)
+			setMeals([
 				{
 					label: 'Menu',
 					stations: stationMenus,
 					starttime: '0:00',
 					endtime: '23:59',
 				},
-			],
-			now: moment.tz(timezone()),
-		})
+			])
+			setNow(moment.tz(timezone()))
+			setLoading(false)
+		})()
+	})
+
+	if (loading) {
+		return <LoadingView text={sample(props.loadingMessage)} />
 	}
 
-	render() {
-		if (this.state.loading) {
-			return <LoadingView text={sample(this.props.loadingMessage)} />
-		}
-
-		if (this.state.error) {
-			return <NoticeView text={`Error: ${this.state.error.message}`} />
-		}
-
-		return (
-			<FoodMenu
-				foodItems={this.state.foodItems}
-				meals={this.state.meals}
-				menuCorIcons={this.state.corIcons}
-				name={this.props.name}
-				navigation={this.props.navigation}
-				now={this.state.now}
-			/>
-		)
+	if (error) {
+		return <NoticeView text={`Error: ${error.message}`} />
 	}
+
+	return (
+		<FoodMenu
+			foodItems={foodItems}
+			meals={meals}
+			menuCorIcons={corIcons}
+			name={props.name}
+			navigation={props.navigation}
+			now={now}
+		/>
+	)
 }

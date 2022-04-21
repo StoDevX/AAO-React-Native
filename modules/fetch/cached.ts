@@ -1,10 +1,8 @@
-import {AsyncStorage} from 'react-native'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 import CachePolicy from 'http-cache-semantics'
 import fromPairs from 'lodash/fromPairs'
-import type {Dictionary} from 'lodash'
 
 const ROOT = 'fp'
-const debug = false
 
 interface StorableResponse {
 	readonly headers: Headers
@@ -48,7 +46,7 @@ function responseForCachePolicy({
 	return {status, headers: headersInstanceToObject(headers)}
 }
 
-export async function insertForUrl(url: string, data: any): Promise<void> {
+export async function insertForUrl(url: string, data: unknown): Promise<void> {
 	let key = `urlcache:${url}`
 
 	let {policy: oldPolicy} = await getItem(key)
@@ -113,6 +111,6 @@ async function getItem(key: string): Promise<GetItemResult> {
 
 	return {
 		response: new Response(body, init),
-		policy: CachePolicy.fromObject(JSON.parse(policy)),
+		policy: CachePolicy.fromObject(JSON.parse(policy ?? '{}')),
 	}
 }
