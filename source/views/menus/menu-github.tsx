@@ -23,31 +23,32 @@ type Props = TopLevelViewPropsType & {
 }
 
 export function GitHubHostedMenu(props: Props): JSX.Element {
-	let [error, seterror] = useState<Error | null>(null)
-	let [loading, setloading] = useState(true)
-	let [now, setnow] = useState(moment.tz(timezone()))
-	let [foodItems, setfoodItems] = useState<MenuItemContainerType>({})
-	let [corIcons, setcorIcons] = useState<MasterCorIconMapType>({})
-	let [meals, setmeals] = useState<ProcessedMealType[]>([])
+	let [error, setError] = useState<Error | null>(null)
+	let [loading, setLoading] = useState(true)
+	let [now, setNow] = useState(moment.tz(timezone()))
+	let [foodItems, setFoodItems] = useState<MenuItemContainerType>({})
+	let [corIcons, setCorIcons] = useState<MasterCorIconMapType>({})
+	let [meals, setMeals] = useState<ProcessedMealType[]>([])
 
 	useEffect(() => {
 		;(async () => {
-			setloading(true)
+			setLoading(true)
 
-			let container
+			let container: {
+				data: {
+					foodItems: MenuItemType[]
+					stationMenus: StationMenuType[]
+					corIcons: MasterCorIconMapType
+				}
+			}
+
 			try {
-				container = await fetch(API('/food/named/menu/the-pause')).json<{
-					data: {
-						foodItems: MenuItemType[]
-						stationMenus: StationMenuType[]
-						corIcons: MasterCorIconMapType
-					}
-				}>()
+				container = await fetch(API('/food/named/menu/the-pause')).json()
 			} catch (error) {
 				if (error instanceof Error) {
-					seterror(error)
+					setError(error)
 				} else {
-					seterror(new Error('unknown error - not an Error'))
+					setError(new Error('unknown error - not an Error'))
 				}
 				return
 			}
@@ -71,9 +72,9 @@ export function GitHubHostedMenu(props: Props): JSX.Element {
 				items: foodItemsByStation[menu.label]?.map((item) => item.id) ?? [],
 			}))
 
-			setcorIcons(corIcons)
-			setfoodItems(upgradedFoodItemsMap)
-			setmeals([
+			setCorIcons(corIcons)
+			setFoodItems(upgradedFoodItemsMap)
+			setMeals([
 				{
 					label: 'Menu',
 					stations: stationMenus,
@@ -81,8 +82,8 @@ export function GitHubHostedMenu(props: Props): JSX.Element {
 					endtime: '23:59',
 				},
 			])
-			setnow(moment.tz(timezone()))
-			setloading(false)
+			setNow(moment.tz(timezone()))
+			setLoading(false)
 		})()
 	})
 
