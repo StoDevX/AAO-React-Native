@@ -1,2 +1,2 @@
 tsc-errors: **/*.ts **/*.tsx
-	npx tsc > ./tsc-errors || true
+	npx tsc > ${@}
