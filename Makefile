@@ -1,3 +1,5 @@
+files: tsc-errors tsc-counts
+
 tsc-errors:
 	npx tsc | tee ${@}
 
