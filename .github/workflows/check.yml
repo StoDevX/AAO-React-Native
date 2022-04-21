@@ -4,8 +4,8 @@ on:
   push:
 
 jobs:
-  errors:
-    name: New TSC Errors
+  tsc-errors:
+    name: No New TSC Errors
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2
@@ -14,7 +14,34 @@ jobs:
           node-version: ^16.0
           cache: npm
       - run: npm ci
-      - run: make verify
+      - run: make tsc-errors
+      - run: git diff --exit-code
+
+  tsc-counts:
+    name: No New TSC Error Counts
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v3
+        with:
+          node-version: ^16.0
+          cache: npm
+      - run: npm ci
+      - run: make tsc-counts
+      - run: git diff --exit-code
+
+  eslint-problems:
+    name: No New ESLint Problems
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v3
+        with:
+          node-version: ^16.0
+          cache: npm
+      - run: npm ci
+      - run: make eslint-problems
+      - run: git diff --exit-code
 
   format:
     name: Prettier
