@@ -7,16 +7,6 @@
   2:17  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
   7:17  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
 
-./modules/api/index.ts
-   3:9   warning  'IS_PRODUCTION' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
-  13:25  warning  Unexpected any. Specify a different type                                         @typescript-eslint/no-explicit-any
-
-./modules/badge/outline.tsx
-  1:13  warning  'React' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
-
-./modules/badge/solid.tsx
-  1:13  warning  'React' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
-
 ./modules/button/index.tsx
   1:13  warning  'React' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
 
@@ -188,9 +178,6 @@
    1:13  warning  'React' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
   22:2   warning  Missing return type on function                                          @typescript-eslint/explicit-module-boundary-types
 
-./modules/navigation-tabs/tabbed-view.ts
-  10:11  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
-
 ./modules/notice/loading.tsx
   1:13  warning  'React' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
   4:8   warning  Missing return type on function                                          @typescript-eslint/explicit-module-boundary-types
@@ -333,9 +320,6 @@
 ./source/redux/init.ts
   11:41  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
 
-./source/redux/parts/courses.ts
-  163:30  error  Expected a `const` instead of a literal type assertion  @typescript-eslint/prefer-as-const
-
 ./source/views/building-hours/detail/building.tsx
   29:25  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
   38:2   warning  Missing return type on function           @typescript-eslint/explicit-module-boundary-types
@@ -463,9 +447,6 @@
 ./source/views/menus/dev-bonapp-picker.tsx
   39:15  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
   46:2   warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
-
-./source/views/menus/index.tsx
-  1:13  warning  'React' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
 
 ./source/views/menus/lib/trim-names.ts
    3:8  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
@@ -770,24 +751,6 @@
 ./source/views/student-orgs/util.ts
   3:8  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
 
-./source/views/transportation/bus/components/bus-stop-row.tsx
-  47:2  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
-
-./source/views/transportation/bus/components/progress-chunk.tsx
-  1:13  warning  'React' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
-
-./source/views/transportation/bus/components/times.tsx
-  1:13  warning  'React' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
-
-./source/views/transportation/bus/lib/__tests__/moment.helper.ts
-   7:21  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
-  17:27  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
-
-./source/views/transportation/bus/line.tsx
-  116:2   warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
-  120:17  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
-  122:15  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
-
 ./source/views/transportation/bus/map.tsx
   28:8  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
 
@@ -800,28 +763,7 @@
   1:13  warning  'React' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
 
 ./source/views/transportation/other-modes/detail.tsx
-  32:29  warning  Missing return type on function                              @typescript-eslint/explicit-module-boundary-types
-  32:30  warning  Object pattern argument should be typed with a non-any type  @typescript-eslint/explicit-module-boundary-types
-  32:44  warning  Unexpected any. Specify a different type                     @typescript-eslint/no-explicit-any
-  38:12  warning  Missing return type on function                              @typescript-eslint/explicit-module-boundary-types
-  43:2   warning  Missing return type on function                              @typescript-eslint/explicit-module-boundary-types
+  51:57  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
 
-./source/views/transportation/other-modes/list.tsx
-  51:2   warning  Missing return type on function                              @typescript-eslint/explicit-module-boundary-types
-  63:14  warning  Missing return type on function                              @typescript-eslint/explicit-module-boundary-types
-  73:12  warning  Missing return type on function                              @typescript-eslint/explicit-module-boundary-types
-  79:24  warning  Missing return type on function                              @typescript-eslint/explicit-module-boundary-types
-  79:25  warning  Object pattern argument should be typed with a non-any type  @typescript-eslint/explicit-module-boundary-types
-  79:45  warning  Unexpected any. Specify a different type                     @typescript-eslint/no-explicit-any
-  83:15  warning  Missing return type on function                              @typescript-eslint/explicit-module-boundary-types
-  87:17  warning  Missing return type on function                              @typescript-eslint/explicit-module-boundary-types
-  89:2   warning  Missing return type on function                              @typescript-eslint/explicit-module-boundary-types
-
-./source/views/transportation/other-modes/row.tsx
-   7:36  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
-  12:13  warning  Missing return type on function           @typescript-eslint/explicit-module-boundary-types
-  14:2   warning  Missing return type on function           @typescript-eslint/explicit-module-boundary-types
-
-✖ 477 problems (1 error, 476 warnings)
-  1 error and 0 warnings potentially fixable with the `--fix` option.
+✖ 446 problems (0 errors, 446 warnings)
 
