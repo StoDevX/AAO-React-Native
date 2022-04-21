@@ -21,6 +21,7 @@ jobs:
     name: No New TSC Error Counts
     runs-on: ubuntu-20.04
     steps:
+      - run: sudo apt-get install -y ripgrep
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v3
         with:
