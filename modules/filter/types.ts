@@ -8,7 +8,7 @@ export type ListItemSpecType = {
 	title: string | number
 	label?: string
 	detail?: string
-	image?: any
+	image?: unknown
 }
 
 export type ListSpecType = {
