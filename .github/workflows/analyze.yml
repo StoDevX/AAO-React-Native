@@ -1,0 +1,86 @@
+name: Just analyze, no build
+
+on:
+  push:
+
+jobs:
+  format:
+    name: Code Formatting Check
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v3
+        with:
+          node-version: ^16.0
+          cache: npm
+      - run: npm ci
+      - run: npm run pretty --no-write --list-different
+
+  eslint:
+    name: ESLint Check
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v3
+        with:
+          node-version: ^16.0
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+
+  jest:
+    name: Jest Check
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v3
+        with:
+          node-version: ^16.0
+          cache: npm
+      - run: npm ci
+      - run: npm run validate-data
+      - run: npm run bundle-data
+      - name: Run tests
+        run: npm run test -- --coverage
+      - name: Upload coverage
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+        run: bash <(curl -s https://codecov.io/bash)
+
+  tsc:
+    name: TypeScript Error Check
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v3
+        with:
+          node-version: ^16.0
+          cache: npm
+      - run: npm ci
+      - run: npx tsc
+
+  data:
+    name: Data Validity Check
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v3
+        with:
+          node-version: ^16.0
+          cache: npm
+      - run: npm ci
+      - run: npm run validate-data
+      - run: npm run bundle-data
+
+  ios-bundle:
+    name: iOS Bundle Check
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v3
+        with:
+          node-version: ^16.0
+          cache: npm
+      - run: npm ci
+      - run: npm run bundle-data
+      - run: npm run bundle:ios
