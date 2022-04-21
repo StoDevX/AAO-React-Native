@@ -1,21 +1,22 @@
 import * as React from 'react'
 import type {OtherModeType} from '../types'
-import {ListRow, Detail, Title} from '@frogpond/lists'
+import {Detail, ListRow, Title} from '@frogpond/lists'
 import {Column, Row} from '@frogpond/layout'
 
 type Props = {
-	onPress: (mode: OtherModeType) => any
+	onPress: (mode: OtherModeType) => void
 	mode: OtherModeType
 }
 
 export class OtherModesRow extends React.PureComponent<Props> {
-	_onPress = () => this.props.onPress(this.props.mode)
-
-	render() {
+	render(): JSX.Element {
 		let {mode} = this.props
 
 		return (
-			<ListRow arrowPosition="top" onPress={this._onPress}>
+			<ListRow
+				arrowPosition="top"
+				onPress={() => this.props.onPress(this.props.mode)}
+			>
 				<Row alignItems="center">
 					<Column flex={1}>
 						<Title lines={1}>{mode.name}</Title>
