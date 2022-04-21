@@ -37,13 +37,13 @@ export function OutlineBadge({
 	accentColor = c.goldenrod,
 	textColor = 'hsl(26, 49%, 34%)',
 }: Props): JSX.Element {
-	const bgaccent = tinycolor(accentColor).setAlpha(0.1).toRgbString()
+	const backgroundColor = tinycolor(accentColor).setAlpha(0.1).toRgbString()
 
 	return (
 		<View
 			style={[
 				styles.accessoryBadge,
-				{backgroundColor: bgaccent, borderColor: accentColor},
+				{backgroundColor, borderColor: accentColor},
 				style,
 			]}
 		>
