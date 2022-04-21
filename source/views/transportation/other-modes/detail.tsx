@@ -35,12 +35,7 @@ export class OtherModesDetailView extends React.PureComponent<Props> {
 		}
 	}
 
-	onPress = () => {
-		let {url} = this.props.navigation.state.params.mode
-		openUrl(url)
-	}
-
-	render() {
+	render(): JSX.Element {
 		let mode = this.props.navigation.state.params.mode
 		return (
 			<Container>
@@ -51,7 +46,7 @@ export class OtherModesDetailView extends React.PureComponent<Props> {
 					styles={{Paragraph: styles.paragraph}}
 				/>
 
-				<Button onPress={this.onPress} title="More Info" />
+				<Button onPress={() => openUrl(mode.url)} title="More Info" />
 
 				<ListFooter
 					href={GH_NEW_ISSUE_URL}
