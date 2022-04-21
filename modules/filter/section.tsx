@@ -1,4 +1,3 @@
-import * as React from 'react'
 import {ScrollView} from 'react-native'
 import type {FilterType} from './types'
 import {SingleToggleSection} from './section-toggle'
