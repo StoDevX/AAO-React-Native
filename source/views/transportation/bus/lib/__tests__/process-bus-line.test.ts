@@ -1,8 +1,9 @@
 import {processBusSchedule} from '../process-bus-line'
 import {time} from './moment.helper'
+import {UnprocessedBusLine} from '../../types'
 
 // prettier-ignore
-const line = {
+const line: UnprocessedBusLine = {
   line: 'Blue Line',
   colors: {bar: 'rgb(103, 153, 170)', dot: 'rgb(13, 26, 35)'},
   schedules: [

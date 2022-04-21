@@ -1,5 +1,4 @@
-import * as React from 'react'
-import {TabNavigator, TabBarIcon} from '@frogpond/navigation-tabs'
+import {TabBarIcon, TabNavigator} from '@frogpond/navigation-tabs'
 
 import {BonAppHostedMenu} from './menu-bonapp'
 import {GitHubHostedMenu} from './menu-github'
@@ -85,6 +84,7 @@ export const MenusView = TabNavigator({
 		},
 	},
 })
+
 MenusView.navigationOptions = {
 	title: 'Menus',
 }

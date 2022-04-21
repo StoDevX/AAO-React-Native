@@ -1,6 +1,4 @@
-import * as React from 'react'
-
-import {TabNavigator, TabBarIcon} from '@frogpond/navigation-tabs'
+import {TabBarIcon, TabNavigator} from '@frogpond/navigation-tabs'
 
 import {OtherModesView} from './other-modes'
 import {BusView} from './bus'

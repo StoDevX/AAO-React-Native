@@ -1,4 +1,3 @@
-import * as React from 'react'
 import {StyleSheet} from 'react-native'
 import {Markdown} from '@frogpond/markdown'
 import {ListFooter} from '@frogpond/lists'
@@ -28,36 +27,29 @@ const styles = StyleSheet.create({
 
 type Props = {navigation: {state: {params: {mode: OtherModeType}}}}
 
-export class OtherModesDetailView extends React.PureComponent<Props> {
-	static navigationOptions = ({navigation}: any) => {
-		return {
-			title: navigation.state.params.mode.name,
-		}
-	}
+export function OtherModesDetailView(props: Props): JSX.Element {
+	let mode = props.navigation.state.params.mode
+	return (
+		<Container>
+			<Title selectable={true}>{mode.name}</Title>
 
-	onPress = () => {
-		let {url} = this.props.navigation.state.params.mode
-		openUrl(url)
-	}
+			<Markdown
+				source={mode.description}
+				styles={{Paragraph: styles.paragraph}}
+			/>
 
-	render() {
-		let mode = this.props.navigation.state.params.mode
-		return (
-			<Container>
-				<Title selectable={true}>{mode.name}</Title>
+			<Button onPress={() => openUrl(mode.url)} title="More Info" />
 
-				<Markdown
-					source={mode.description}
-					styles={{Paragraph: styles.paragraph}}
-				/>
+			<ListFooter
+				href={GH_NEW_ISSUE_URL}
+				title="Collected by the humans of All About Olaf"
+			/>
+		</Container>
+	)
+}
 
-				<Button onPress={this.onPress} title="More Info" />
-
-				<ListFooter
-					href={GH_NEW_ISSUE_URL}
-					title="Collected by the humans of All About Olaf"
-				/>
-			</Container>
-		)
+OtherModesDetailView.navigationOptions = ({navigation}: any) => {
+	return {
+		title: navigation.state.params.mode.name,
 	}
 }

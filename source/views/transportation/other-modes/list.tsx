@@ -4,7 +4,7 @@ import {TabBarIcon} from '@frogpond/navigation-tabs'
 import * as defaultData from '../../../../docs/transportation.json'
 import * as c from '@frogpond/colors'
 import {SectionList, StyleSheet} from 'react-native'
-import {ListSeparator, ListSectionHeader, ListEmpty} from '@frogpond/lists'
+import {ListEmpty, ListSectionHeader, ListSeparator} from '@frogpond/lists'
 import groupBy from 'lodash/groupBy'
 import toPairs from 'lodash/toPairs'
 import type {TopLevelViewPropsType} from '../../types'
@@ -48,7 +48,7 @@ export class OtherModesView extends React.PureComponent<Props, State> {
 		refreshing: false,
 	}
 
-	componentDidMount() {
+	componentDidMount(): void {
 		this.fetchData().then(() => {
 			this.setState(() => ({loading: false}))
 		})
@@ -60,7 +60,7 @@ export class OtherModesView extends React.PureComponent<Props, State> {
 		this.setState(() => ({refreshing: false}))
 	}
 
-	fetchData = async (reload?: boolean) => {
+	fetchData = async (reload?: boolean): Promise<void> => {
 		let {data: modes}: {data: Array<OtherModeType>} = await fetch(
 			transportationUrl,
 			{
@@ -70,34 +70,26 @@ export class OtherModesView extends React.PureComponent<Props, State> {
 		this.setState(() => ({modes}))
 	}
 
-	onPress = (mode: OtherModeType) => {
-		this.props.navigation.navigate('OtherModesDetailView', {
-			mode,
-		})
-	}
-
-	renderSectionHeader = ({section: {title}}: any) => (
-		<ListSectionHeader title={title} />
-	)
-
-	renderItem = ({item}: {item: OtherModeType}) => (
-		<OtherModesRow mode={item} onPress={this.onPress} />
-	)
-
-	keyExtractor = (item: OtherModeType) => item.name
-
-	render() {
+	render(): JSX.Element {
+		let navigate = this.props.navigation.navigate
 		let groupedData = groupModes(this.state.modes)
 		return (
 			<SectionList
 				ItemSeparatorComponent={ListSeparator}
 				ListEmptyComponent={<ListEmpty mode="bug" />}
 				contentContainerStyle={styles.contentContainer}
-				keyExtractor={this.keyExtractor}
+				keyExtractor={(item) => item.name}
 				onRefresh={this.refresh}
 				refreshing={this.state.refreshing}
-				renderItem={this.renderItem}
-				renderSectionHeader={this.renderSectionHeader}
+				renderItem={({item}) => (
+					<OtherModesRow
+						mode={item}
+						onPress={(mode) => navigate('OtherModesDetailView', {mode})}
+					/>
+				)}
+				renderSectionHeader={({section: {title}}) => (
+					<ListSectionHeader title={title} />
+				)}
 				sections={groupedData}
 				style={styles.listContainer}
 			/>
