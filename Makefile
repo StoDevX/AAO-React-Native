@@ -1,6 +1,7 @@
-diff-errors:
-	npx tsc > "tsc-errors.branch" || true
-	git checkout master
-	npx tsc > "tsc-errors.main" || true
-	git checkout -
-	diff -wu tsc-errors.main tsc-errors.branch
+tsc-errors:
+	npx tsc > ${@}
+
+tsc-counts:
+	npx tsc | rg -or '$$1' 'error (TS\d{4})' | sort | uniq -c | sort -nr > ${@}
+
+.PHONY: tsc-counts tsc-errors
