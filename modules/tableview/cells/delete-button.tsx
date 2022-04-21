@@ -15,12 +15,12 @@ export const DeleteButtonCell = ({
 	title: string
 	skipConfirm?: boolean
 	onPress?: () => any
-}) => {
+}): JSX.Element => {
 	let onPressCallback = onPress ? onPress : () => {}
 
 	let callback = !skipConfirm
 		? () =>
-				Alert.alert(title, 'Are you sure you want to delete this?', [
+				Alert.alert(title, 'Are you sure you want to remove this?', [
 					{text: 'Cancel', onPress: () => {}, style: 'cancel'},
 					{text: 'Delete', onPress: onPressCallback, style: 'destructive'},
 				])

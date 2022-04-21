@@ -7,24 +7,18 @@
 import * as React from 'react'
 import {useCallback, useState} from 'react'
 import xor from 'lodash/xor'
-import {Platform, ScrollView, StyleSheet, Text, View} from 'react-native'
+import {Platform, ScrollView, StyleSheet, Text} from 'react-native'
 import type {Moment} from 'moment-timezone'
 import moment from 'moment-timezone'
-import {
-	Cell,
-	CellToggle,
-	DeleteButtonCell,
-	Section,
-	TableView,
-} from '@frogpond/tableview'
+import {Cell, DeleteButtonCell, Section, TableView} from '@frogpond/tableview'
 import type {DayOfWeekEnumType, SingleBuildingScheduleType} from '../types'
 import {Row} from '@frogpond/layout'
 import type {TopLevelViewPropsType} from '../../types'
 import {blankSchedule, parseHours} from '../lib'
 import * as c from '@frogpond/colors'
+import {sto} from '../../../lib/colors'
 import {DatePicker} from '@frogpond/datepicker'
 import {Touchable} from '@frogpond/touchable'
-import {ListSeparator} from '@frogpond/lists'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 
 type Props = TopLevelViewPropsType & {
@@ -71,17 +65,14 @@ export function BuildingHoursScheduleEditorView(props: Props): JSX.Element {
 	return (
 		<ScrollView>
 			<TableView>
-				<Section header="DAYS">
+				<Section>
 					<WeekToggles days={set.days} onChangeDays={onChangeDays} />
-				</Section>
-
-				<Section header="TIMES">
 					<DatePickerCell date={open} onChange={onChangeOpen} title="Open" />
 					<DatePickerCell date={close} onChange={onChangeClose} title="Close" />
 				</Section>
 
 				<Section>
-					<DeleteButtonCell onPress={deleteSet} title="Delete Hours" />
+					<DeleteButtonCell onPress={deleteSet} title="Remove" />
 				</Section>
 			</TableView>
 		</ScrollView>
@@ -105,36 +96,24 @@ function WeekToggles(props: WeekTogglesProps) {
 
 	let allDays: DayOfWeekEnumType[] = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su']
 
-	return Platform.select({
-		ios: (
-			<Row style={styles.weekToggles}>
-				{allDays.map((day) => (
-					<ToggleButton
-						key={day}
-						active={props.days.includes(day)}
-						onPress={toggleDay}
-						text={day}
-					/>
-				))}
-			</Row>
-		),
-		android: (
-			<View>
-				{allDays.map((day, i) => (
-					<View key={day}>
-						<CellToggle
-							key={day}
-							label={day}
-							onChange={() => toggleDay(day)}
-							value={days.includes(day)}
-						/>
-						{i === allDays.length - 1 ? null : <ListSeparator force={true} />}
-					</View>
-				))}
-			</View>
-		),
-		default: <></>,
-	})
+	return (
+		<Row
+			style={
+				Platform.OS === 'ios'
+					? styles.iOSweekToggles
+					: styles.androidWeekToggles
+			}
+		>
+			{allDays.map((day) => (
+				<ToggleButton
+					key={day}
+					active={props.days.includes(day)}
+					onPress={toggleDay}
+					text={day}
+				/>
+			))}
+		</Row>
+	)
 }
 
 type ToggleButtonProps = {
@@ -146,11 +125,24 @@ type ToggleButtonProps = {
 class ToggleButton extends React.PureComponent<ToggleButtonProps> {
 	onPress = () => this.props.onPress(this.props.text)
 
+	platformStyle = Platform.select({
+		ios: styles.iOSDayWrapper,
+		android: styles.androidDayWrapper,
+	})
+
+	platformActiveStyle = Platform.select({
+		ios: styles.iOSDayActive,
+		android: styles.androidDayActive,
+	})
+
 	render() {
 		let {text, active} = this.props
 		return (
 			<Touchable
-				containerStyle={[styles.dayWrapper, active && styles.activeDay]}
+				containerStyle={[
+					this.platformStyle,
+					active && this.platformActiveStyle,
+				]}
 				highlight={false}
 				onPress={this.onPress}
 			>
@@ -198,19 +190,44 @@ function DatePickerCell(props: DatePickerCellProps) {
 }
 
 const styles = StyleSheet.create({
-	weekToggles: {
+	iOSweekToggles: {
 		alignItems: 'stretch',
 		justifyContent: 'center',
+		backgroundColor: c.white,
+		paddingHorizontal: 10,
+		paddingVertical: 20,
 	},
-	dayWrapper: {
+	androidWeekToggles: {
+		alignItems: 'stretch',
+		justifyContent: 'center',
+		backgroundColor: c.white,
+		paddingHorizontal: 10,
+		paddingVertical: 20,
+	},
+	iOSDayWrapper: {
 		flex: 1,
 		alignItems: 'center',
 		paddingVertical: 10,
-		paddingHorizontal: 2,
+		borderRadius: 20,
+		margin: 5,
+		backgroundColor: c.iosGray,
+	},
+	androidDayWrapper: {
+		flex: 1,
+		alignItems: 'center',
+		paddingVertical: 10,
+		borderColor: c.androidSeparator,
+		borderRadius: 20,
+		borderWidth: 1,
+		margin: 5,
 		backgroundColor: c.white,
 	},
-	activeDay: {
-		backgroundColor: c.brickRed,
+	androidDayActive: {
+		backgroundColor: sto.purple,
+		borderColor: c.transparent,
+	},
+	iOSDayActive: {
+		backgroundColor: c.infoBlue,
 	},
 	dayText: {
 		fontSize: 16,
