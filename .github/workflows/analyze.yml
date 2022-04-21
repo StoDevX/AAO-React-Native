@@ -5,7 +5,7 @@ on:
 
 jobs:
   format:
-    name: Code Formatting Check
+    name: Prettier
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2
@@ -17,7 +17,7 @@ jobs:
       - run: npm run pretty --no-write --list-different
 
   eslint:
-    name: ESLint Check
+    name: ESLint
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2
@@ -29,7 +29,7 @@ jobs:
       - run: npm run lint
 
   jest:
-    name: Jest Check
+    name: Jest
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2
@@ -48,7 +48,7 @@ jobs:
         run: bash <(curl -s https://codecov.io/bash)
 
   tsc:
-    name: TypeScript Error Check
+    name: TypeScript
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2
@@ -60,7 +60,7 @@ jobs:
       - run: npx tsc
 
   data:
-    name: Data Validity Check
+    name: Data
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2
@@ -73,7 +73,7 @@ jobs:
       - run: npm run bundle-data
 
   ios-bundle:
-    name: iOS Bundle Check
+    name: iOS Bundle
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2
