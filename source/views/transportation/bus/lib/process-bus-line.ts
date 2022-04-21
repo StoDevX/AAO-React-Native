@@ -1,9 +1,10 @@
 import type {
-	UnprocessedBusLine,
 	BusLine,
-	UnprocessedBusSchedule,
 	BusSchedule,
+	UnprocessedBusLine,
+	UnprocessedBusSchedule,
 } from '../types'
+import {BusTimetableEntry} from '../types'
 
 import {parseTime} from './parse-time'
 import type {Moment} from 'moment'
@@ -16,15 +17,17 @@ export const processBusSchedule =
 		)
 
 		let timetable = scheduleData.stops.map((stopName, i) => {
-			let stop = {}
-			stop.name = stopName
-
-			if (stopName in scheduleData.coordinates) {
-				stop.coordinates = scheduleData.coordinates[stopName]
+			let coordinates = undefined
+			if (Object.hasOwn(scheduleData.coordinates, stopName)) {
+				coordinates = scheduleData.coordinates[stopName]
 			}
 
-			stop.departures = times.map((timeList) => timeList[i])
+			let departures = times.map((timeList) => timeList[i])
 
+			let stop: BusTimetableEntry = {name: stopName, departures}
+			if (coordinates) {
+				stop.coordinates = coordinates
+			}
 			return stop
 		})
 
