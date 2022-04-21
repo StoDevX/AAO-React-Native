@@ -96,33 +96,24 @@ function WeekToggles(props: WeekTogglesProps) {
 
 	let allDays: DayOfWeekEnumType[] = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su']
 
-	return Platform.select({
-		ios: (
-			<Row style={styles.iOSweekToggles}>
-				{allDays.map((day) => (
-					<ToggleButton
-						key={day}
-						active={props.days.includes(day)}
-						onPress={toggleDay}
-						text={day}
-					/>
-				))}
-			</Row>
-		),
-		android: (
-			<Row style={styles.androidWeekToggles}>
-				{allDays.map((day) => (
-					<ToggleButton
-						key={day}
-						active={props.days.includes(day)}
-						onPress={toggleDay}
-						text={day}
-					/>
-				))}
-			</Row>
-		),
-		default: <></>,
-	})
+	return (
+		<Row
+			style={
+				Platform.OS === 'ios'
+					? styles.iOSweekToggles
+					: styles.androidWeekToggles
+			}
+		>
+			{allDays.map((day) => (
+				<ToggleButton
+					key={day}
+					active={props.days.includes(day)}
+					onPress={toggleDay}
+					text={day}
+				/>
+			))}
+		</Row>
+	)
 }
 
 type ToggleButtonProps = {
