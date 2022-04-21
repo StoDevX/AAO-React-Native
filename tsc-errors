@@ -75,7 +75,7 @@ source/lib/partition-by-index.ts(6,30): error TS2769: No overload matches this c
     Argument of type 'T' is not assignable to parameter of type 'ConcatArray<never>'.
   Overload 2 of 2, '(...items: ConcatArray<never>[]): never[]', gave the following error.
     Argument of type 'T' is not assignable to parameter of type 'ConcatArray<never>'.
-source/lib/refresh.ts(4,24): error TS7016: Could not find a declaration file for module '@hawkrives/react-native-alternate-icons'. '/Users/rives/Projects/allaboutolaf/node_modules/@hawkrives/react-native-alternate-icons/index.js' implicitly has an 'any' type.
+source/lib/refresh.ts(4,24): error TS7016: Could not find a declaration file for module '@hawkrives/react-native-alternate-icons'. './node_modules/@hawkrives/react-native-alternate-icons/index.js' implicitly has an 'any' type.
   Try `npm i --save-dev @types/hawkrives__react-native-alternate-icons` if it exists or add a new declaration (.d.ts) file containing `declare module '@hawkrives/react-native-alternate-icons';`
 source/navigation/navigator.ts(1,1): error TS1208: 'navigator.ts' cannot be compiled under '--isolatedModules' because it is considered a global script file. Add an import, export, or an empty 'export {}' statement to make it a module.
 source/navigation/track.ts(11,12): error TS2339: Property 'routes' does not exist on type 'NavigationRoute<ParamListBase, string>'.
@@ -140,12 +140,12 @@ source/views/faqs/index.tsx(4,9): error TS2614: Module '"glamorous-native"' has 
 source/views/faqs/index.tsx(4,15): error TS2614: Module '"glamorous-native"' has no exported member 'ScrollView'. Did you mean to use 'import ScrollView from "glamorous-native"' instead?
 source/views/help/index.tsx(34,18): error TS2345: Argument of type 'ThunkAction<GetEnabledToolsAction>' is not assignable to parameter of type 'AnyAction'.
 source/views/home/index.tsx(94,46): error TS2783: 'canGoBack' is specified more than once, so this usage will be overwritten.
-source/views/home/notice.tsx(31,14): error TS2339: Property 'View' does not exist on type 'typeof import("/Users/rives/Projects/allaboutolaf/node_modules/glamorous-native/typings/glamorous")'.
-source/views/home/notice.tsx(36,15): error TS2339: Property 'View' does not exist on type 'typeof import("/Users/rives/Projects/allaboutolaf/node_modules/glamorous-native/typings/glamorous")'.
-source/views/home/notice.tsx(37,16): error TS2339: Property 'Text' does not exist on type 'typeof import("/Users/rives/Projects/allaboutolaf/node_modules/glamorous-native/typings/glamorous")'.
-source/views/home/notice.tsx(39,17): error TS2339: Property 'Text' does not exist on type 'typeof import("/Users/rives/Projects/allaboutolaf/node_modules/glamorous-native/typings/glamorous")'.
-source/views/home/notice.tsx(40,16): error TS2339: Property 'View' does not exist on type 'typeof import("/Users/rives/Projects/allaboutolaf/node_modules/glamorous-native/typings/glamorous")'.
-source/views/home/notice.tsx(41,15): error TS2339: Property 'View' does not exist on type 'typeof import("/Users/rives/Projects/allaboutolaf/node_modules/glamorous-native/typings/glamorous")'.
+source/views/home/notice.tsx(31,14): error TS2339: Property 'View' does not exist on type 'typeof import("./node_modules/glamorous-native/typings/glamorous")'.
+source/views/home/notice.tsx(36,15): error TS2339: Property 'View' does not exist on type 'typeof import("./node_modules/glamorous-native/typings/glamorous")'.
+source/views/home/notice.tsx(37,16): error TS2339: Property 'Text' does not exist on type 'typeof import("./node_modules/glamorous-native/typings/glamorous")'.
+source/views/home/notice.tsx(39,17): error TS2339: Property 'Text' does not exist on type 'typeof import("./node_modules/glamorous-native/typings/glamorous")'.
+source/views/home/notice.tsx(40,16): error TS2339: Property 'View' does not exist on type 'typeof import("./node_modules/glamorous-native/typings/glamorous")'.
+source/views/home/notice.tsx(41,15): error TS2339: Property 'View' does not exist on type 'typeof import("./node_modules/glamorous-native/typings/glamorous")'.
 source/views/menus/index.tsx(15,26): error TS2554: Expected 2 arguments, but got 1.
 source/views/menus/index.tsx(17,13): error TS7031: Binding element 'navigation' implicitly has an 'any' type.
 source/views/menus/index.tsx(39,13): error TS7031: Binding element 'navigation' implicitly has an 'any' type.
@@ -161,21 +161,21 @@ source/views/menus/lib/process-menu-shorthands.ts(31,3): error TS2740: Type '{}'
 source/views/menus/lib/process-menu-shorthands.ts(35,3): error TS2783: 'special' is specified more than once, so this usage will be overwritten.
 source/views/news/index.tsx(7,18): error TS2554: Expected 2 arguments, but got 1.
 source/views/news/index.tsx(9,13): error TS7031: Binding element 'navigation' implicitly has an 'any' type.
-source/views/news/index.tsx(13,27): error TS2339: Property 'stolaf' does not exist on type 'typeof import("/Users/rives/Projects/allaboutolaf/images/news-sources/index")'.
+source/views/news/index.tsx(13,27): error TS2339: Property 'stolaf' does not exist on type 'typeof import("./images/news-sources/index")'.
 source/views/news/index.tsx(24,13): error TS7031: Binding element 'navigation' implicitly has an 'any' type.
-source/views/news/index.tsx(28,27): error TS2339: Property 'oleville' does not exist on type 'typeof import("/Users/rives/Projects/allaboutolaf/images/news-sources/index")'.
+source/views/news/index.tsx(28,27): error TS2339: Property 'oleville' does not exist on type 'typeof import("./images/news-sources/index")'.
 source/views/news/index.tsx(39,13): error TS7031: Binding element 'navigation' implicitly has an 'any' type.
-source/views/news/index.tsx(43,27): error TS2339: Property 'mess' does not exist on type 'typeof import("/Users/rives/Projects/allaboutolaf/images/news-sources/index")'.
+source/views/news/index.tsx(43,27): error TS2339: Property 'mess' does not exist on type 'typeof import("./images/news-sources/index")'.
 source/views/news/index.tsx(53,10): error TS2339: Property 'navigationOptions' does not exist on type '(<ParamList extends ParamListBase>() => TypedNavigator<ParamList, TabNavigationState<ParamListBase>, MaterialBottomTabNavigationOptions, MaterialBottomTabNavigationEventMap, ({ id, initialRouteName, backBehavior, children, screenListeners, screenOptions, ...rest }: Props) => Element>) | (<ParamList extends ParamList...'.
   Property 'navigationOptions' does not exist on type '<ParamList extends ParamListBase>() => TypedNavigator<ParamList, TabNavigationState<ParamListBase>, MaterialBottomTabNavigationOptions, MaterialBottomTabNavigationEventMap, ({ id, initialRouteName, backBehavior, children, screenListeners, screenOptions, ...rest }: Props) => Element>'.
-source/views/settings/components/logo.tsx(2,24): error TS7016: Could not find a declaration file for module '@hawkrives/react-native-alternate-icons'. '/Users/rives/Projects/allaboutolaf/node_modules/@hawkrives/react-native-alternate-icons/index.js' implicitly has an 'any' type.
+source/views/settings/components/logo.tsx(2,24): error TS7016: Could not find a declaration file for module '@hawkrives/react-native-alternate-icons'. './node_modules/@hawkrives/react-native-alternate-icons/index.js' implicitly has an 'any' type.
   Try `npm i --save-dev @types/hawkrives__react-native-alternate-icons` if it exists or add a new declaration (.d.ts) file containing `declare module '@hawkrives/react-native-alternate-icons';`
 source/views/settings/components/logo.tsx(27,29): error TS7006: Parameter 'name' implicitly has an 'any' type.
 source/views/settings/components/logo.tsx(37,5): error TS2322: Type 'StyleSheet | undefined' is not assignable to type 'StyleProp<ImageStyle>'.
   Type 'StyleSheet' is not assignable to type 'StyleProp<ImageStyle>'.
 source/views/settings/screens/api-test/api-test-android.tsx(9,41): error TS2307: Cannot find module 'react-navigation' or its corresponding type declarations.
 source/views/settings/screens/api-test/api-test-ios.tsx(9,41): error TS2307: Cannot find module 'react-navigation' or its corresponding type declarations.
-source/views/settings/screens/change-icon.tsx(3,24): error TS7016: Could not find a declaration file for module '@hawkrives/react-native-alternate-icons'. '/Users/rives/Projects/allaboutolaf/node_modules/@hawkrives/react-native-alternate-icons/index.js' implicitly has an 'any' type.
+source/views/settings/screens/change-icon.tsx(3,24): error TS7016: Could not find a declaration file for module '@hawkrives/react-native-alternate-icons'. './node_modules/@hawkrives/react-native-alternate-icons/index.js' implicitly has an 'any' type.
   Try `npm i --save-dev @types/hawkrives__react-native-alternate-icons` if it exists or add a new declaration (.d.ts) file containing `declare module '@hawkrives/react-native-alternate-icons';`
 source/views/settings/screens/debug/list.tsx(10,36): error TS2307: Cannot find module 'react-navigation' or its corresponding type declarations.
 source/views/settings/screens/debug/row.tsx(40,5): error TS2322: Type 'string | false' is not assignable to type 'false | "DisclosureIndicator" | "Detail" | "DetailDisclosure" | "Checkmark" | undefined'.
@@ -191,7 +191,7 @@ source/views/settings/screens/overview/login-credentials.tsx(141,13): error TS23
 source/views/settings/screens/overview/login-credentials.tsx(147,12): error TS2345: Argument of type 'Promise<LogOutAction>' is not assignable to parameter of type 'AnyAction'.
   Property 'type' is missing in type 'Promise<LogOutAction>' but required in type 'AnyAction'.
 source/views/settings/screens/overview/miscellany.tsx(3,41): error TS2307: Cannot find module 'react-navigation' or its corresponding type declarations.
-source/views/settings/screens/overview/miscellany.tsx(5,24): error TS7016: Could not find a declaration file for module '@hawkrives/react-native-alternate-icons'. '/Users/rives/Projects/allaboutolaf/node_modules/@hawkrives/react-native-alternate-icons/index.js' implicitly has an 'any' type.
+source/views/settings/screens/overview/miscellany.tsx(5,24): error TS7016: Could not find a declaration file for module '@hawkrives/react-native-alternate-icons'. './node_modules/@hawkrives/react-native-alternate-icons/index.js' implicitly has an 'any' type.
   Try `npm i --save-dev @types/hawkrives__react-native-alternate-icons` if it exists or add a new declaration (.d.ts) file containing `declare module '@hawkrives/react-native-alternate-icons';`
 source/views/settings/screens/overview/odds-and-ends.tsx(4,41): error TS2307: Cannot find module 'react-navigation' or its corresponding type declarations.
 source/views/settings/screens/overview/server-url.tsx(46,5): error TS2769: No overload matches this call.
@@ -210,12 +210,12 @@ source/views/sis/balances-acknowledgement.tsx(25,18): error TS2345: Argument of 
 source/views/sis/balances.tsx(212,13): error TS2345: Argument of type 'ThunkAction<LogInActions>' is not assignable to parameter of type 'AnyAction'.
 source/views/sis/course-search/detail/index.tsx(207,25): error TS7053: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{ Open: string; Closed: string; }'.
   No index signature with a parameter of type 'string' was found on type '{ Open: string; Closed: string; }'.
-source/views/sis/course-search/lib/execute-search.ts(2,27): error TS7016: Could not find a declaration file for module 'keyword-search'. '/Users/rives/Projects/allaboutolaf/node_modules/keyword-search/index.js' implicitly has an 'any' type.
+source/views/sis/course-search/lib/execute-search.ts(2,27): error TS7016: Could not find a declaration file for module 'keyword-search'. './node_modules/keyword-search/index.js' implicitly has an 'any' type.
   Try `npm i --save-dev @types/keyword-search` if it exists or add a new declaration (.d.ts) file containing `declare module 'keyword-search';`
 source/views/sis/course-search/lib/format-filter-combo.ts(37,50): error TS2345: Argument of type 'string | number' is not assignable to parameter of type 'string'.
   Type 'number' is not assignable to type 'string'.
-source/views/sis/course-search/list.tsx(12,13): error TS2613: Module '"/Users/rives/Projects/allaboutolaf/modules/filter/index"' has no default export. Did you mean to use 'import { FilterType } from "/Users/rives/Projects/allaboutolaf/modules/filter/index"' instead?
-source/views/sis/course-search/results.tsx(16,13): error TS2613: Module '"/Users/rives/Projects/allaboutolaf/modules/filter/index"' has no default export. Did you mean to use 'import { FilterType } from "/Users/rives/Projects/allaboutolaf/modules/filter/index"' instead?
+source/views/sis/course-search/list.tsx(12,13): error TS2613: Module '"./modules/filter/index"' has no default export. Did you mean to use 'import { FilterType } from "./modules/filter/index"' instead?
+source/views/sis/course-search/results.tsx(16,13): error TS2613: Module '"./modules/filter/index"' has no default export. Did you mean to use 'import { FilterType } from "./modules/filter/index"' instead?
 source/views/sis/course-search/results.tsx(114,39): error TS7006: Parameter 'f' implicitly has an 'any' type.
 source/views/sis/course-search/results.tsx(183,31): error TS2345: Argument of type 'ThunkAction<UpdateRecentSearchesAction>' is not assignable to parameter of type 'AnyAction'.
   Property 'type' is missing in type 'ThunkAction<UpdateRecentSearchesAction>' but required in type 'AnyAction'.
