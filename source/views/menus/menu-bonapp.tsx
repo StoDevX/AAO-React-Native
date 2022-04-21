@@ -99,13 +99,10 @@ export function BonAppHostedMenu(props: Props): JSX.Element {
 		}
 
 		try {
-			let cafeMenuPromise: Promise<MenuInfoType> = fetch(menuUrl, {
-				delay: reload ? 500 : 0,
-			}).json()
+			let delay = delay: reload ? 500 : 0;
 
-			let cafeInfoPromise: Promise<CafeInfoType> = fetch(cafeUrl, {
-				delay: reload ? 500 : 0,
-			}).json()
+			let cafeMenuPromise = fetch(menuUrl, {delay}).json<MenuInfoType>()
+			let cafeInfoPromise = fetch(cafeUrl, {delay}).json<CafeInfoType>()
 
 			let [cafeMenu, cafeInfo] = await Promise.all([
 				cafeMenuPromise,
