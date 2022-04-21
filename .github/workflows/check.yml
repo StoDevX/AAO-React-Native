@@ -4,6 +4,18 @@ on:
   push:
 
 jobs:
+  errors:
+    name: New TSC Errors
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v3
+        with:
+          node-version: ^16.0
+          cache: npm
+      - run: npm ci
+      - run: make verify
+
   format:
     name: Prettier
     runs-on: ubuntu-20.04
