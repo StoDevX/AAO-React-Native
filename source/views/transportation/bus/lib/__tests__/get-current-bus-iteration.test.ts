@@ -2,9 +2,10 @@ import {getCurrentBusIteration} from '../get-current-bus-iteration'
 import {processBusSchedule} from '../process-bus-line'
 import {dayAndTime, time} from './moment.helper'
 
-import type {UnprocessedBusSchedule, BusSchedule} from '../../types'
+import type {BusSchedule, UnprocessedBusSchedule} from '../../types'
+import moment from 'moment'
 
-function buildBusSchedules(now): BusSchedule {
+function buildBusSchedules(now: moment.Moment): BusSchedule {
 	// prettier-ignore
 	let schedules: UnprocessedBusSchedule = {
     days: ['Mo', 'Tu'],
@@ -60,7 +61,7 @@ test('ignores day-of-week', () => {
 
 test('handles a schedule with no times', () => {
 	let now = time('1:00pm')
-	let schedule = {
+	let schedule: UnprocessedBusSchedule = {
 		days: ['Su'],
 		coordinates: {},
 		stops: [],

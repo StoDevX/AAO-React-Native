@@ -2,10 +2,10 @@ import {getScheduleForNow} from '../get-schedule-for-now'
 import {processBusSchedule} from '../process-bus-line'
 import moment from 'moment'
 
-import type {UnprocessedBusSchedule, BusSchedule} from '../../types'
+import type {BusSchedule, UnprocessedBusSchedule} from '../../types'
 
 // prettier-ignore
-function buildBusSchedules(now): Array<BusSchedule> {
+function buildBusSchedules(now: moment.Moment): Array<BusSchedule> {
   const schedules: Array<UnprocessedBusSchedule> = [
     {
       days: ['Fr', 'Sa'],
