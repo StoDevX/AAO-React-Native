@@ -87,7 +87,7 @@ export function ListSection({filter, onChange}: PropsType): JSX.Element {
 			cellStyle="RightDetail"
 			disableImageResize={true}
 			image={
-				spec.showImages ? (
+				spec.showImages && val.image ? (
 					<Image source={val.image} style={styles.icon} />
 				) : undefined
 			}

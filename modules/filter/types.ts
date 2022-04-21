@@ -1,3 +1,5 @@
+import {ImageSourcePropType} from 'react-native'
+
 export type ToggleSpecType = {
 	label: string
 	title: string
@@ -8,7 +10,7 @@ export type ListItemSpecType = {
 	title: string | number
 	label?: string
 	detail?: string
-	image?: unknown
+	image?: ImageSourcePropType
 }
 
 export type ListSpecType = {
