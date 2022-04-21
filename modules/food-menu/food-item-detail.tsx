@@ -1,12 +1,12 @@
 import * as React from 'react'
-import {Text, ScrollView, StyleSheet} from 'react-native'
+import {ScrollView, StyleSheet, Text} from 'react-native'
 import {Column, Row} from '@frogpond/layout'
-import {ListRow, ListSeparator, Detail, Title} from '@frogpond/lists'
+import {Detail, ListRow, ListSeparator, Title} from '@frogpond/lists'
 import * as c from '@frogpond/colors'
 import map from 'lodash/map'
 import {DietaryTagsDetail} from './dietary-tags-detail'
 import {calculateAmount} from './lib/calculate-amount'
-import type {MenuItemType as MenuItem, MasterCorIconMapType} from './types'
+import type {MasterCorIconMapType, MenuItemType as MenuItem} from './types'
 import {
 	NavigationAction,
 	NavigationRoute,
@@ -24,7 +24,7 @@ export class MenuItemDetailView extends React.Component<Props> {
 		title: 'Nutrition',
 	}
 
-	render() {
+	render(): JSX.Element {
 		const {item, icons} = this.props.navigation.state.params
 
 		return (
@@ -53,8 +53,7 @@ export class MenuItemDetailView extends React.Component<Props> {
 					</React.Fragment>
 				) : null}
 
-				{item.nutrition_details &&
-				Object.keys(item.nutrition_details).length > 1 ? (
+				{Object.keys(item.nutrition_details ?? {}).length > 1 ? (
 					map(item.nutrition_details, (nutrition, key: number) => {
 						return (
 							<React.Fragment key={`${nutrition}-${key}`}>
