@@ -1,7 +1,5 @@
 import qs from 'query-string'
 
-import {IS_PRODUCTION} from '@frogpond/constants'
-
 let root: string
 
 export function setApiRoot(url: string): void {
