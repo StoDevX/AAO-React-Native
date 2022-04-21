@@ -96,6 +96,7 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run bundle-data
+      - run: mkdir -p ./android/app/src/main/assets/
       - run: npm run bundle:android
 
   android:
