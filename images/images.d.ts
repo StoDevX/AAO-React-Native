@@ -1,11 +1,9 @@
-import {ImageRequireSource} from 'react-native'
-
 declare module '*.jpg' {
-	const content: ImageRequireSource
+	const content: any
 	export default content
 }
 
 declare module '*.png' {
-	const content: ImageRequireSource
+	const content: any
 	export default content
 }
