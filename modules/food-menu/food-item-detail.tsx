@@ -12,6 +12,7 @@ import {
 	NavigationRoute,
 	NavigationScreenProp,
 } from 'react-navigation'
+import size from 'lodash/size'
 
 type Props = {
 	navigation: NavigationScreenProp<NavigationRoute, NavigationAction> & {
@@ -53,7 +54,7 @@ export class MenuItemDetailView extends React.Component<Props> {
 					</React.Fragment>
 				) : null}
 
-				{Object.keys(item.nutrition_details ?? {}).length > 1 ? (
+				{size(item.nutrition_details) > 1 ? (
 					map(item.nutrition_details, (nutrition, key: number) => {
 						return (
 							<React.Fragment key={`${nutrition}-${key}`}>
