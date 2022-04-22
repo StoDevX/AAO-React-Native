@@ -1,4 +1,3 @@
-import * as React from 'react'
 import {StyleSheet, View, ViewProps} from 'react-native'
 
 type PropsType = {
