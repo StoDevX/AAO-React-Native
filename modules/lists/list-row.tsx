@@ -54,7 +54,7 @@ export function ListRow(props: PropsType): JSX.Element {
 	} = props
 
 	const arrowPosition = props.arrowPosition || (onPress ? 'center' : 'none')
-	const arrowPositionStyle = {
+	const arrowPositionStyle: ViewStyle = {
 		alignSelf: arrowPosition === 'center' ? 'center' : 'flex-start',
 	}
 	const arrow =
