@@ -1,4 +1,3 @@
-import * as React from 'react'
 import type {StyleProp, TextStyle, ViewStyle} from 'react-native'
 import {Platform, StyleSheet, Text, View} from 'react-native'
 import * as c from '@frogpond/colors'
@@ -74,7 +73,7 @@ type Props = {
 	spacing?: {left?: number; right?: number}
 }
 
-export function ListSectionHeader(props: Props) {
+export function ListSectionHeader(props: Props): JSX.Element {
 	const {
 		style,
 		title,

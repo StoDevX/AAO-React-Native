@@ -1,12 +1,12 @@
-import * as React from 'react'
-import {useState} from 'react'
+import {RefObject, useState} from 'react'
 import Popover, {PopoverPlacement} from 'react-native-popover-view'
 import {FilterSection} from './section'
 import type {FilterType} from './types'
 import * as c from '@frogpond/colors'
+import {View} from 'react-native'
 
 type Props = {
-	anchor: any
+	anchor: RefObject<View>
 	filter: FilterType
 	onClosePopover: (filter: FilterType) => unknown
 	visible: boolean

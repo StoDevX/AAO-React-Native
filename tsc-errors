@@ -1,7 +1,6 @@
 modules/event-list/types.ts(2,41): error TS2307: Cannot find module 'react-navigation' or its corresponding type declarations.
 modules/food-menu/fancy-menu.tsx(15,8): error TS2307: Cannot find module 'react-navigation' or its corresponding type declarations.
 modules/food-menu/food-item-detail.tsx(14,8): error TS2307: Cannot find module 'react-navigation' or its corresponding type declarations.
-modules/lists/list-separator.tsx(39,55): error TS2698: Spread types may only be created from object types.
 modules/markdown/code.tsx(14,29): error TS2322: Type '{ children: Element; key: any; language: string | undefined; }' is not assignable to type 'IntrinsicAttributes & IntrinsicClassAttributes<Component<ExtraGlamorousProps & TextProps, any, any>> & Readonly<...> & Readonly<...>'.
   Property 'language' does not exist on type 'IntrinsicAttributes & IntrinsicClassAttributes<Component<ExtraGlamorousProps & TextProps, any, any>> & Readonly<...> & Readonly<...>'.
 modules/markdown/list.tsx(2,20): error TS2614: Module '"glamorous-native"' has no exported member 'View'. Did you mean to use 'import View from "glamorous-native"' instead?

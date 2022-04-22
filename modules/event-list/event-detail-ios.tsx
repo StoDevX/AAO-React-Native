@@ -1,14 +1,13 @@
-import * as React from 'react'
 import {ScrollView} from 'react-native'
 import {
-	Section,
-	TableView,
 	ButtonCell,
+	Section,
 	SelectableCell,
+	TableView,
 } from '@frogpond/tableview'
 import {ShareButton} from '@frogpond/navigation-buttons'
 import {ListFooter} from '@frogpond/lists'
-import {shareEvent, getTimes} from './calendar-util'
+import {getTimes, shareEvent} from './calendar-util'
 import {AddToCalendar} from '@frogpond/add-to-device-calendar'
 import {RouteProp, useRoute} from '@react-navigation/native'
 import {RootStackParamList} from '../../source/navigation/types'

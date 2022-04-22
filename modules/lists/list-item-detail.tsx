@@ -1,6 +1,6 @@
-import * as React from 'react'
-import {StyleSheet, Platform, Text} from 'react-native'
+import {Platform, StyleProp, StyleSheet, Text, TextStyle} from 'react-native'
 import * as c from '@frogpond/colors'
+import {PropsWithChildren} from 'react'
 
 const FONT_SIZE = 14
 const styles = StyleSheet.create({
@@ -21,12 +21,11 @@ const styles = StyleSheet.create({
 	},
 })
 
-type PropsType = {
-	children?: any
-	style?: any
+type Props = PropsWithChildren<{
+	style?: StyleProp<TextStyle>
 	lines?: number
-}
-export function Detail(props: PropsType) {
+}>
+export function Detail(props: Props): JSX.Element {
 	return (
 		<Text numberOfLines={props.lines} style={[styles.detail, props.style]}>
 			{props.children}

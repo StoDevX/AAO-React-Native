@@ -1,4 +1,3 @@
-import * as React from 'react'
 import {Image, StyleProp, StyleSheet, View, ViewStyle} from 'react-native'
 
 import type {ItemCorIconMapType, MasterCorIconMapType} from './types'
