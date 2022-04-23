@@ -10,7 +10,7 @@ import {RouteProp, useNavigation} from '@react-navigation/native'
 import {RootStackParamList} from '../../../navigation/types'
 
 type Props = TopLevelViewPropsType & {
-	navigation: {state: {params: {building: BuildingType}}}
+	route: {params: {building: BuildingType}}
 }
 
 export function BuildingHoursDetailView(props: Props): JSX.Element {
