@@ -1,6 +1,5 @@
 import * as React from 'react'
 import {StyleSheet, RefreshControl, SectionList, View} from 'react-native'
-import type {TopLevelViewPropsType} from '../types'
 import {NoticeView, LoadingView} from '@frogpond/notice'
 import {Column} from '@frogpond/layout'
 import {
@@ -55,9 +54,7 @@ const styles = StyleSheet.create({
 	},
 })
 
-type Props = TopLevelViewPropsType
-
-function StudentOrgsView(props: Props): JSX.Element {
+function StudentOrgsView(): JSX.Element {
 	let [query, setQuery] = React.useState('')
 	let searchQuery = useDebounce(query.toLowerCase(), 200)
 	let [isInitialFetch, setIsInitial] = React.useState(true)
