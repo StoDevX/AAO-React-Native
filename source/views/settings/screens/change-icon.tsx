@@ -1,7 +1,7 @@
-import React from 'react'
-import {ScrollView, Image, StyleSheet} from 'react-native'
+import * as React from 'react'
+import {Image, ScrollView, StyleSheet} from 'react-native'
 import * as Icons from '@hawkrives/react-native-alternate-icons'
-import {Section, Cell} from '@frogpond/tableview'
+import {Cell, Section} from '@frogpond/tableview'
 import {icons as appIcons} from '../../../../images/icons'
 import * as c from '@frogpond/colors'
 

@@ -5,6 +5,7 @@ import {Column} from '@frogpond/layout'
 import concat from 'lodash/concat'
 import isEqual from 'lodash/isEqual'
 import reject from 'lodash/reject'
+import * as React from 'react'
 import {useCallback} from 'react'
 
 type PropsType = {

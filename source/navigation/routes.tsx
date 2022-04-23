@@ -1,4 +1,4 @@
-import React from 'react'
+import * as React from 'react'
 import {createNativeStackNavigator} from '@react-navigation/native-stack'
 
 import * as home from '../views/home'
@@ -56,9 +56,9 @@ import * as settings from '../views/settings/'
 // 	PrintJobRelease,
 // 	PrintJobs,
 // } from '../views/stoprint'
-
 import {StyleSheet} from 'react-native'
 import {getTheme} from '@frogpond/app-theme'
+import {RootStackParamList} from './types'
 
 const theme = getTheme()
 
@@ -67,8 +67,6 @@ const styles = StyleSheet.create({
 		backgroundColor: theme.navigationBackground,
 	},
 })
-
-import {RootStackParamList} from './types'
 
 const Stack = createNativeStackNavigator<RootStackParamList>()
 

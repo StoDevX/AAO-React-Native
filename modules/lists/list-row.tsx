@@ -1,6 +1,6 @@
+import * as React from 'react'
 import {PropsWithChildren} from 'react'
-import type {ViewStyle} from 'react-native'
-import {Platform, StyleProp, StyleSheet, View} from 'react-native'
+import {Platform, StyleProp, StyleSheet, View, ViewStyle} from 'react-native'
 import * as c from '@frogpond/colors'
 import {Touchable} from '@frogpond/touchable'
 import {DisclosureArrow} from './disclosure-arrow'

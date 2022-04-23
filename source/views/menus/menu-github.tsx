@@ -1,3 +1,4 @@
+import * as React from 'react'
 import {useEffect, useState} from 'react'
 import {timezone} from '@frogpond/constants'
 import {LoadingView, NoticeView} from '@frogpond/notice'

@@ -1,3 +1,4 @@
+import * as React from 'react'
 import {Platform, StyleProp, StyleSheet, View, ViewStyle} from 'react-native'
 import * as c from '@frogpond/colors'
 import Icon from 'react-native-vector-icons/Ionicons'
