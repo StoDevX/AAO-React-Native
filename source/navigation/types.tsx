@@ -16,7 +16,7 @@ export type RootStackParamList = {
 	BuildingHoursDetail: {building: BuildingType}
 	BuildingHours: undefined
 	BuildingHoursProblemReport: {initialBuilding: BuildingType}
-	BuildingHoursScheduleEditor: HoursEditorProps
+	BuildingHoursScheduleEditor: HoursEditorProps['route']['params']
 	[calendar.NavigationKey]: calendar.NavigationParams
 	Contacts: undefined
 	ContactsDetail: {contact: ContactType}
