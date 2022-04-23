@@ -2,11 +2,11 @@ import {Platform} from 'react-native'
 
 import {
 	View as IosDetail,
-	NavigationOptions as ListNavigationOptions,
+	NavigationOptions as IosDetailNavigationOptions,
 } from './detail-ios'
 import {
 	View as AndroidDetail,
-	NavigationOptions as DetailNavigationOptions,
+	NavigationOptions as AndroidDetailNavigationOptions,
 } from './detail-android'
 
 const StudentOrgsDetailView = Platform.OS === 'ios' ? IosDetail : AndroidDetail
@@ -14,4 +14,6 @@ const StudentOrgsDetailView = Platform.OS === 'ios' ? IosDetail : AndroidDetail
 export {StudentOrgsDetailView as View}
 
 export const NavigationOptions =
-	Platform.OS === 'ios' ? ListNavigationOptions : DetailNavigationOptions
+	Platform.OS === 'ios'
+		? IosDetailNavigationOptions
+		: AndroidDetailNavigationOptions
