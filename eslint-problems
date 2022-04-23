@@ -615,14 +615,10 @@
   23:2   warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
 
 ./source/views/student-orgs/detail-android.tsx
-  61:29  warning  Missing return type on function                              @typescript-eslint/explicit-module-boundary-types
-  61:30  warning  Object pattern argument should be typed with a non-any type  @typescript-eslint/explicit-module-boundary-types
-  61:44  warning  Unexpected any. Specify a different type                     @typescript-eslint/no-explicit-any
+  1:13  warning  'React' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
 
 ./source/views/student-orgs/detail-ios.tsx
-  41:29  warning  Missing return type on function                              @typescript-eslint/explicit-module-boundary-types
-  41:30  warning  Object pattern argument should be typed with a non-any type  @typescript-eslint/explicit-module-boundary-types
-  41:44  warning  Unexpected any. Specify a different type                     @typescript-eslint/no-explicit-any
+  1:13  warning  'React' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
 
 ./source/views/student-orgs/util.ts
   3:8  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
@@ -638,5 +634,5 @@
 ./source/views/transportation/other-modes/detail.tsx
   51:57  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
 
-✖ 381 problems (0 errors, 381 warnings)
+✖ 377 problems (0 errors, 377 warnings)
 
