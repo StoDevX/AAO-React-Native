@@ -1,3 +1,4 @@
+import * as React from 'react'
 import {Platform, StyleProp, StyleSheet, ViewStyle} from 'react-native'
 import {Separator} from '@frogpond/separator'
 

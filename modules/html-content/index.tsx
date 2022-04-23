@@ -1,3 +1,4 @@
+import * as React from 'react'
 import {useCallback, useRef} from 'react'
 import {WebView, WebViewNavigation} from 'react-native-webview'
 import type {StyleProp, ViewStyle} from 'react-native'

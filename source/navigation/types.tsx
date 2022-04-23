@@ -1,5 +1,3 @@
-// import React from 'react'
-
 // import {HomeView} from '../views/home'
 // import * as Calendar from '../views/calendar'
 import {EventType} from '@frogpond/event-type'
