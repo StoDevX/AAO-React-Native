@@ -92,7 +92,6 @@ source/redux/parts/settings.ts(46,26): error TS2322: Type '{ theme: string; diet
   Types of property 'dietaryPreferences' are incompatible.
     Type 'never[]' is not assignable to type '[]'.
       Target allows only 0 element(s) but source may have more.
-source/views/building-hours/detail/index.tsx(19,19): error TS2339: Property 'route' does not exist on type 'Props'.
 source/views/building-hours/detail/schedule-row-android.tsx(37,22): error TS7031: Binding element 'children' implicitly has an 'any' type.
 source/views/building-hours/detail/schedule-row-android.tsx(37,32): error TS7031: Binding element 'style' implicitly has an 'any' type.
 source/views/building-hours/detail/toolbar-button.tsx(20,18): error TS2345: Argument of type 'ThunkAction<ToggleFavoriteAction>' is not assignable to parameter of type 'AnyAction'.
