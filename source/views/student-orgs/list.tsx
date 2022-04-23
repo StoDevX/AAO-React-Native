@@ -22,6 +22,7 @@ import {fetch} from '@frogpond/fetch'
 import {useAsync} from 'react-async'
 import type {AsyncState} from 'react-async'
 import {useDebounce} from '@frogpond/use-debounce'
+import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 
 const fetchOrgs = (args: {
 	signal: window.AbortController
@@ -55,7 +56,7 @@ const styles = StyleSheet.create({
 
 type Props = TopLevelViewPropsType
 
-export function StudentOrgsView(props: Props): JSX.Element {
+function StudentOrgsView(props: Props): JSX.Element {
 	let [query, setQuery] = React.useState('')
 	let searchQuery = useDebounce(query.toLowerCase(), 200)
 	let [isInitialFetch, setIsInitial] = React.useState(true)
@@ -106,7 +107,7 @@ export function StudentOrgsView(props: Props): JSX.Element {
 		<ListRow
 			arrowPosition="top"
 			onPress={() =>
-				props.navigation.navigate('StudentOrgsDetailView', {org: item})
+				props.navigation.navigate('StudentOrgsDetail', {org: item})
 			}
 		>
 			<Column flex={1}>
@@ -143,7 +144,9 @@ export function StudentOrgsView(props: Props): JSX.Element {
 	)
 }
 
-StudentOrgsView.navigationOptions = {
+export {StudentOrgsView as View}
+
+export const NavigationOptions: NativeStackNavigationOptions = {
 	title: 'Student Orgs',
-	headerBackTitle: 'Orgs',
+	headerBackTitle: 'Back',
 }

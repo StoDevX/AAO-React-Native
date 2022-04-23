@@ -9,6 +9,7 @@ import {BuildingType} from '../views/building-hours/types'
 import * as calendar from '../views/calendar'
 import {ContactType} from '../views/contacts/types'
 import {Props as HoursEditorProps} from '../views/building-hours/report/editor'
+import {StudentOrgType} from '../views/student-orgs/types'
 
 export type RootStackParamList = {
 	Home: undefined
@@ -44,7 +45,7 @@ export type RootStackParamList = {
 	Streaming: undefined
 	KSTOSchedule: undefined
 	KRLXSchedule: undefined
-	StudentOrgsDetail: undefined
+	StudentOrgsDetail: {org: StudentOrgType}
 	StudentOrgs: undefined
 	Transportation: undefined
 	OtherModesDetail: undefined
