@@ -27,7 +27,7 @@ import type {TopLevelViewPropsType} from '../../types'
 import {summarizeDays, formatBuildingTimes, blankSchedule} from '../lib'
 import {submitReport} from './submit'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
-import {RouteProp, useNavigation} from '@react-navigation/native'
+import {RouteProp} from '@react-navigation/native'
 import {RootStackParamList} from '../../../navigation/types'
 
 type Props = TopLevelViewPropsType & {
@@ -38,8 +38,6 @@ export let BuildingHoursProblemReportView = (props: Props): JSX.Element => {
 	let [building, setBuilding] = React.useState<BuildingType>(
 		props.route.params.initialBuilding,
 	)
-
-	let navigation = useNavigation()
 
 	let editName = (newName: BuildingType['name']) => {
 		setBuilding({
@@ -133,16 +131,18 @@ export let BuildingHoursProblemReportView = (props: Props): JSX.Element => {
 		[building],
 	)
 
-	let openEditor = React.useCallback(
-		(scheduleIdx: number, setIdx: number, set?: SingleBuildingScheduleType) =>
-			navigation.navigate('BuildingHoursScheduleEditor', {
-				initialSet: set,
-				onEditSet: (editedData: SingleBuildingScheduleType) =>
-					editHoursRow(scheduleIdx, setIdx, editedData),
-				onDeleteSet: () => deleteHoursRow(scheduleIdx, setIdx),
-			}),
-		[deleteHoursRow, editHoursRow, navigation],
-	)
+	let openEditor = (
+		scheduleIdx: number,
+		setIdx: number,
+		set?: SingleBuildingScheduleType,
+	) => {
+		props.navigation.navigate('BuildingHoursScheduleEditor', {
+			initialSet: set,
+			onEditSet: (editedData: SingleBuildingScheduleType) =>
+				editHoursRow(scheduleIdx, setIdx, editedData),
+			onDeleteSet: () => deleteHoursRow(scheduleIdx, setIdx),
+		})
+	}
 
 	let submit = (): void => {
 		console.log(JSON.stringify(building))
