@@ -1,5 +1,5 @@
 modules/event-list/types.ts(2,41): error TS2307: Cannot find module 'react-navigation' or its corresponding type declarations.
-modules/food-menu/fancy-menu.tsx(15,8): error TS2307: Cannot find module 'react-navigation' or its corresponding type declarations.
+modules/food-menu/fancy-menu.tsx(16,8): error TS2307: Cannot find module 'react-navigation' or its corresponding type declarations.
 modules/food-menu/food-item-detail.tsx(14,8): error TS2307: Cannot find module 'react-navigation' or its corresponding type declarations.
 modules/markdown/code.tsx(14,29): error TS2322: Type '{ children: Element; key: any; language: string | undefined; }' is not assignable to type 'IntrinsicAttributes & IntrinsicClassAttributes<Component<ExtraGlamorousProps & TextProps, any, any>> & Readonly<...> & Readonly<...>'.
   Property 'language' does not exist on type 'IntrinsicAttributes & IntrinsicClassAttributes<Component<ExtraGlamorousProps & TextProps, any, any>> & Readonly<...> & Readonly<...>'.
@@ -81,7 +81,7 @@ source/navigation/track.ts(11,12): error TS2339: Property 'routes' does not exis
 source/navigation/track.ts(12,30): error TS2345: Argument of type 'NavigationRoute<ParamListBase, string>' is not assignable to parameter of type 'Readonly<{ key: string; index: number; routeNames: string[]; history?: unknown[] | undefined; routes: NavigationRoute<ParamListBase, string>[]; type: string; stale: false; }>'.
   Type 'NavigationRoute<ParamListBase, string>' is missing the following properties from type 'Readonly<{ key: string; index: number; routeNames: string[]; history?: unknown[] | undefined; routes: NavigationRoute<ParamListBase, string>[]; type: string; stale: false; }>': index, routeNames, routes, type, stale
 source/navigation/track.ts(14,15): error TS2339: Property 'routeName' does not exist on type 'NavigationRoute<ParamListBase, string>'.
-source/navigation/types.tsx(11,9): error TS2459: Module '"../views/building-hours/report/editor"' declares 'Props' locally, but it is not exported.
+source/navigation/types.tsx(9,9): error TS2459: Module '"../views/building-hours/report/editor"' declares 'Props' locally, but it is not exported.
 source/redux/init.ts(27,36): error TS2345: Argument of type 'ThunkAction<GetEnabledToolsAction>' is not assignable to parameter of type 'AnyAction'.
   Property 'type' is missing in type 'ThunkAction<GetEnabledToolsAction>' but required in type 'AnyAction'.
 source/redux/parts/help.ts(61,22): error TS2322: Type '{ fetching: boolean; tools: never[]; lastFetchError: null; }' is not assignable to type 'State'.
@@ -145,10 +145,10 @@ source/views/home/notice.tsx(37,16): error TS2339: Property 'Text' does not exis
 source/views/home/notice.tsx(39,17): error TS2339: Property 'Text' does not exist on type 'typeof import("./node_modules/glamorous-native/typings/glamorous")'.
 source/views/home/notice.tsx(40,16): error TS2339: Property 'View' does not exist on type 'typeof import("./node_modules/glamorous-native/typings/glamorous")'.
 source/views/home/notice.tsx(41,15): error TS2339: Property 'View' does not exist on type 'typeof import("./node_modules/glamorous-native/typings/glamorous")'.
-source/views/menus/index.tsx(16,13): error TS7031: Binding element 'navigation' implicitly has an 'any' type.
-source/views/menus/index.tsx(38,13): error TS7031: Binding element 'navigation' implicitly has an 'any' type.
-source/views/menus/index.tsx(60,13): error TS7031: Binding element 'navigation' implicitly has an 'any' type.
-source/views/menus/index.tsx(88,1): error TS2571: Object is of type 'unknown'.
+source/views/menus/index.tsx(18,13): error TS7031: Binding element 'navigation' implicitly has an 'any' type.
+source/views/menus/index.tsx(40,13): error TS7031: Binding element 'navigation' implicitly has an 'any' type.
+source/views/menus/index.tsx(62,13): error TS7031: Binding element 'navigation' implicitly has an 'any' type.
+source/views/menus/index.tsx(90,1): error TS2571: Object is of type 'unknown'.
 source/views/menus/lib/__tests__/menu-item.mock.ts(20,2): error TS2739: Type '{}' is missing the following properties from type 'MonotonyContainer': id, name, image
 source/views/menus/lib/__tests__/menu-item.mock.ts(22,2): error TS2739: Type '{}' is missing the following properties from type 'NutritionContainer': kcal, well_being, well_being_image
 source/views/menus/lib/__tests__/menu-item.mock.ts(23,2): error TS2740: Type '{}' is missing the following properties from type 'NutritionDetailContainer': calories, servingSize, fatContent, saturatedFatContent, and 7 more.
@@ -295,9 +295,9 @@ source/views/student-orgs/list.tsx(27,10): error TS2503: Cannot find namespace '
 source/views/student-orgs/list.tsx(64,12): error TS2345: Argument of type '(args: {    signal: window.AbortController;}) => Promise<Array<StudentOrgType>>' is not assignable to parameter of type 'PromiseFn<StudentOrgType[]>'.
   Types of parameters 'args' and 'props' are incompatible.
     Property 'signal' is missing in type 'AsyncProps<StudentOrgType[]>' but required in type '{ signal: window.AbortController; }'.
-source/views/transportation/index.tsx(10,13): error TS7031: Binding element 'navigation' implicitly has an 'any' type.
-source/views/transportation/index.tsx(20,13): error TS7031: Binding element 'navigation' implicitly has an 'any' type.
-source/views/transportation/index.tsx(30,13): error TS7031: Binding element 'navigation' implicitly has an 'any' type.
-source/views/transportation/index.tsx(40,13): error TS7031: Binding element 'navigation' implicitly has an 'any' type.
-source/views/transportation/index.tsx(54,1): error TS2571: Object is of type 'unknown'.
+source/views/transportation/index.tsx(12,13): error TS7031: Binding element 'navigation' implicitly has an 'any' type.
+source/views/transportation/index.tsx(22,13): error TS7031: Binding element 'navigation' implicitly has an 'any' type.
+source/views/transportation/index.tsx(32,13): error TS7031: Binding element 'navigation' implicitly has an 'any' type.
+source/views/transportation/index.tsx(42,13): error TS7031: Binding element 'navigation' implicitly has an 'any' type.
+source/views/transportation/index.tsx(56,1): error TS2571: Object is of type 'unknown'.
 source/views/types.ts(5,8): error TS2307: Cannot find module 'react-navigation' or its corresponding type declarations.
