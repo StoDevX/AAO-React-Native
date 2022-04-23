@@ -1,19 +1,19 @@
-import React from 'react'
+import * as React from 'react'
 import {timezone} from '@frogpond/constants'
 import {Platform, SectionList} from 'react-native'
 import {useDispatch, useSelector} from 'react-redux'
 import type {ReduxState} from '../../redux'
 import {updatePrintJobs} from '../../redux/parts/stoprint'
-import {logInViaCredentials} from '../../redux/parts/login'
 import type {LoginStateEnum} from '../../redux/parts/login'
+import {logInViaCredentials} from '../../redux/parts/login'
 import {loadLoginCredentials} from '../../lib/login'
-import {STOPRINT_HELP_PAGE} from '../../lib/stoprint'
 import type {PrintJob} from '../../lib/stoprint'
+import {STOPRINT_HELP_PAGE} from '../../lib/stoprint'
 import {
-	ListRow,
-	ListSeparator,
-	ListSectionHeader,
 	Detail,
+	ListRow,
+	ListSectionHeader,
+	ListSeparator,
 	Title,
 } from '@frogpond/lists'
 import {LoadingView} from '@frogpond/notice'

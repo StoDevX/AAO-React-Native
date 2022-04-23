@@ -1,5 +1,6 @@
 import {Platform, StyleProp, StyleSheet, Text, TextStyle} from 'react-native'
 import * as c from '@frogpond/colors'
+import * as React from 'react'
 import {PropsWithChildren} from 'react'
 
 const FONT_SIZE = 14

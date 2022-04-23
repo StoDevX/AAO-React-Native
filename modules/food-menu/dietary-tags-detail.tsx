@@ -1,3 +1,4 @@
+import * as React from 'react'
 import {Image, StyleProp, StyleSheet, Text, View, ViewStyle} from 'react-native'
 import {Row} from '@frogpond/layout'
 import type {ItemCorIconMapType, MasterCorIconMapType} from './types'

@@ -1,7 +1,13 @@
+import * as React from 'react'
+import {useEffect, useState} from 'react'
 import {FlatList, Platform, StyleSheet, Text} from 'react-native'
 import type {BusSchedule, UnprocessedBusLine} from './types'
-import type {BusStateEnum} from './lib'
-import {getCurrentBusIteration, getScheduleForNow, processBusLine} from './lib'
+import {
+	BusStateEnum,
+	getCurrentBusIteration,
+	getScheduleForNow,
+	processBusLine,
+} from './lib'
 import type {Moment} from 'moment-timezone'
 import find from 'lodash/find'
 import findLast from 'lodash/findLast'
@@ -9,7 +15,6 @@ import {Separator} from '@frogpond/separator'
 import {BusStopRow} from './components/bus-stop-row'
 import {ListFooter, ListRow, ListSectionHeader} from '@frogpond/lists'
 import {InfoHeader} from '@frogpond/info-header'
-import {useEffect, useState} from 'react'
 
 const styles = StyleSheet.create({
 	separator: {

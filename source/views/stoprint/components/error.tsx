@@ -1,6 +1,6 @@
-import React from 'react'
+import * as React from 'react'
 import type {TopLevelViewPropsType} from '../../types'
-import {ScrollView, RefreshControl, StyleSheet, Platform} from 'react-native'
+import {Platform, RefreshControl, ScrollView, StyleSheet} from 'react-native'
 import Icon from 'react-native-vector-icons/Ionicons'
 import {NoticeView} from '@frogpond/notice'
 import {sto} from '../../../lib/colors'

@@ -1,5 +1,13 @@
-import type {StyleProp, TextStyle, ViewStyle} from 'react-native'
-import {Platform, StyleSheet, Text, View} from 'react-native'
+import * as React from 'react'
+import {
+	Platform,
+	StyleProp,
+	StyleSheet,
+	Text,
+	TextStyle,
+	View,
+	ViewStyle,
+} from 'react-native'
 import * as c from '@frogpond/colors'
 import type {AppTheme} from '@frogpond/app-theme'
 import {getTheme} from '@frogpond/app-theme'
