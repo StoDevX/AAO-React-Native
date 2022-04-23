@@ -283,16 +283,8 @@ source/views/streaming/streams/list.tsx(42,2): error TS2416: Property 'state' in
     Types of property 'error' are incompatible.
       Type 'null' is not assignable to type 'string | undefined'.
 source/views/streaming/webcams/list.tsx(56,23): error TS2339: Property 'name' does not exist on type 'never'.
-source/views/student-orgs/detail-android.tsx(106,22): error TS7006: Parameter 'c' implicitly has an 'any' type.
-source/views/student-orgs/detail-android.tsx(106,25): error TS7006: Parameter 'i' implicitly has an 'any' type.
-source/views/student-orgs/detail-android.tsx(125,22): error TS7006: Parameter 'c' implicitly has an 'any' type.
-source/views/student-orgs/detail-android.tsx(125,25): error TS7006: Parameter 'i' implicitly has an 'any' type.
-source/views/student-orgs/detail-ios.tsx(94,23): error TS7006: Parameter 'c' implicitly has an 'any' type.
-source/views/student-orgs/detail-ios.tsx(94,26): error TS7006: Parameter 'i' implicitly has an 'any' type.
-source/views/student-orgs/detail-ios.tsx(109,23): error TS7006: Parameter 'c' implicitly has an 'any' type.
-source/views/student-orgs/detail-ios.tsx(109,26): error TS7006: Parameter 'i' implicitly has an 'any' type.
-source/views/student-orgs/list.tsx(27,10): error TS2503: Cannot find namespace 'window'.
-source/views/student-orgs/list.tsx(64,12): error TS2345: Argument of type '(args: {    signal: window.AbortController;}) => Promise<Array<StudentOrgType>>' is not assignable to parameter of type 'PromiseFn<StudentOrgType[]>'.
+source/views/student-orgs/list.tsx(28,10): error TS2503: Cannot find namespace 'window'.
+source/views/student-orgs/list.tsx(65,12): error TS2345: Argument of type '(args: {    signal: window.AbortController;}) => Promise<Array<StudentOrgType>>' is not assignable to parameter of type 'PromiseFn<StudentOrgType[]>'.
   Types of parameters 'args' and 'props' are incompatible.
     Property 'signal' is missing in type 'AsyncProps<StudentOrgType[]>' but required in type '{ signal: window.AbortController; }'.
 source/views/transportation/index.tsx(10,13): error TS7031: Binding element 'navigation' implicitly has an 'any' type.
