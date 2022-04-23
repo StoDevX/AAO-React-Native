@@ -1,3 +1,4 @@
+import * as React from 'react'
 import {RefObject, useState} from 'react'
 import Popover, {PopoverPlacement} from 'react-native-popover-view'
 import {FilterSection} from './section'

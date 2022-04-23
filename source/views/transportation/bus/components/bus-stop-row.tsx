@@ -1,3 +1,4 @@
+import * as React from 'react'
 import {Platform, StyleSheet} from 'react-native'
 import {Column} from '@frogpond/layout'
 import {Detail, ListRow, Title} from '@frogpond/lists'
@@ -5,8 +6,8 @@ import type {BusTimetableEntry} from '../types'
 import * as c from '@frogpond/colors'
 import {ProgressChunk} from './progress-chunk'
 import {ScheduleTimes} from './times'
-import type {BusStateEnum} from '../lib'
 import {
+	BusStateEnum,
 	findBusStopStatus as findStopStatus,
 	findRemainingDeparturesForStop as findRemainingDepartures,
 } from '../lib'

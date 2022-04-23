@@ -1,3 +1,4 @@
+import * as React from 'react'
 import type {ToggleType} from './types'
 import {CellToggle, Section} from '@frogpond/tableview'
 

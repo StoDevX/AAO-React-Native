@@ -1,3 +1,4 @@
+import * as React from 'react'
 import {StyleSheet} from 'react-native'
 import {BaseDateTimePicker} from './basepicker'
 import {IosDatetimePickerProps} from './types'

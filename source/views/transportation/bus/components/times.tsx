@@ -1,3 +1,5 @@
+import * as React from 'react'
+
 import {StyleProp, Text, TextStyle} from 'react-native'
 import type {DepartureTimeList} from '../types'
 

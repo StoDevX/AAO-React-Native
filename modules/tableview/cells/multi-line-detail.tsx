@@ -1,4 +1,4 @@
-import React from 'react'
+import * as React from 'react'
 import {Cell} from 'react-native-tableview-simple'
 import {StyleSheet, Text, View} from 'react-native'
 import * as c from '@frogpond/colors'

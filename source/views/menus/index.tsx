@@ -1,3 +1,5 @@
+import * as React from 'react'
+
 import {TabBarIcon, TabNavigator} from '@frogpond/navigation-tabs'
 
 import {BonAppHostedMenu} from './menu-bonapp'

@@ -1,3 +1,4 @@
+import * as React from 'react'
 import type {FilterType} from './types'
 import {
 	Platform,

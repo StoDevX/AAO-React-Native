@@ -1,3 +1,5 @@
+import * as React from 'react'
+import {useEffect, useState} from 'react'
 import {timezone} from '@frogpond/constants'
 import {SUPPORT_EMAIL} from '../../lib/constants'
 import {LoadingView, NoticeView} from '@frogpond/notice'
@@ -15,14 +17,12 @@ import type {
 import sample from 'lodash/sample'
 import mapValues from 'lodash/mapValues'
 import reduce from 'lodash/reduce'
-import type {Moment} from 'moment-timezone'
-import moment from 'moment-timezone'
+import moment, {type Moment} from 'moment-timezone'
 import {trimItemLabel, trimStationName} from './lib/trim-names'
 import {decode, innerTextWithSpaces, parseHtml} from '@frogpond/html-lib'
 import {toLaxTitleCase} from '@frogpond/titlecase'
 import {API} from '@frogpond/api'
 import {fetch} from '@frogpond/fetch'
-import {useEffect, useState} from 'react'
 
 const BONAPP_HTML_ERROR_CODE = 'bonapp-html'
 

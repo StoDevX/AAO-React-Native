@@ -1,4 +1,4 @@
-import React from 'react'
+import * as React from 'react'
 import {ViewStyle} from 'react-native'
 import type {Moment} from 'moment-timezone'
 import type {

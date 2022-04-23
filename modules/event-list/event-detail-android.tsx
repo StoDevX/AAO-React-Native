@@ -1,3 +1,4 @@
+import * as React from 'react'
 import {ScrollView, StyleSheet, Text} from 'react-native'
 import {openUrl} from '@frogpond/open-url'
 import {Card} from '@frogpond/silly-card'

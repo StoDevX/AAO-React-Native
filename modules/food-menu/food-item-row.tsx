@@ -1,3 +1,4 @@
+import * as React from 'react'
 import {Platform, StyleProp, StyleSheet, View, ViewStyle} from 'react-native'
 import {DietaryTags} from './dietary-tags'
 import {Column, Row} from '@frogpond/layout'

@@ -1,4 +1,4 @@
-import React from 'react'
+import * as React from 'react'
 import {CccCalendarView} from '@frogpond/ccc-calendar'
 import type {TopLevelViewPropsType} from '../../types'
 
