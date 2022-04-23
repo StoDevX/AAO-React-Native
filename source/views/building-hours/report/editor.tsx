@@ -24,8 +24,7 @@ import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 export type Props = TopLevelViewPropsType & {
 	route: {
 		params: {
-			initialSet: SingleBuildingScheduleType
-			set: SingleBuildingScheduleType
+			set: SingleBuildingScheduleType | undefined
 			onEditSet: (set: SingleBuildingScheduleType) => unknown
 			onDeleteSet: () => unknown
 		}
@@ -34,7 +33,7 @@ export type Props = TopLevelViewPropsType & {
 
 export function BuildingHoursScheduleEditorView(props: Props): JSX.Element {
 	let [set, setSet] = useState<SingleBuildingScheduleType>(
-		props.route.params.initialSet || blankSchedule(),
+		props.route.params.set ?? blankSchedule(),
 	)
 
 	let deleteSet = () => {
