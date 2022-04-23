@@ -50,7 +50,7 @@ export const NavigationOptions = (props: {
 	}
 }
 
-let StudentOrgsDetailView = (props: Props) => {
+let StudentOrgsDetailView = (props: Props): JSX.Element => {
 	let {
 		name: orgName,
 		category,
