@@ -23,6 +23,7 @@ import {useAsync} from 'react-async'
 import type {AsyncState} from 'react-async'
 import {useDebounce} from '@frogpond/use-debounce'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+import {useNavigation} from '@react-navigation/native'
 
 const fetchOrgs = (args: {
 	signal: window.AbortController
@@ -61,6 +62,8 @@ function StudentOrgsView(props: Props): JSX.Element {
 	let searchQuery = useDebounce(query.toLowerCase(), 200)
 	let [isInitialFetch, setIsInitial] = React.useState(true)
 
+	let navigation = useNavigation()
+
 	let {data, error, reload, isPending}: AsyncState<Array<StudentOrgType>> =
 		useAsync(fetchOrgs, {
 			onResolve: () => setIsInitial(false),
@@ -84,6 +87,14 @@ function StudentOrgsView(props: Props): JSX.Element {
 		})
 	}, [results])
 
+	let onPressOrg = React.useCallback(
+		(data: StudentOrgType) =>
+			navigation.navigate('StudentOrgsDetail', {
+				org: data,
+			}),
+		[navigation],
+	)
+
 	// conditionals must come after all hooks
 	if (error) {
 		return (
@@ -104,12 +115,7 @@ function StudentOrgsView(props: Props): JSX.Element {
 	}
 
 	let renderRow = ({item}: {item: StudentOrgType}) => (
-		<ListRow
-			arrowPosition="top"
-			onPress={() =>
-				props.navigation.navigate('StudentOrgsDetail', {org: item})
-			}
-		>
+		<ListRow arrowPosition="top" onPress={() => onPressOrg(item)}>
 			<Column flex={1}>
 				<Title lines={1}>{item.name}</Title>
 				<Detail lines={1}>{item.category}</Detail>
