@@ -237,13 +237,13 @@
   43:49  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
 
 ./source/views/building-hours/report/overview.tsx
-  199:27  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
-  204:7   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
-  205:67  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
-  206:29  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
-  281:66  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
-  283:44  warning  Unexpected empty arrow function           @typescript-eslint/no-empty-function
-  309:64  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  197:27  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  202:7   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  203:67  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  204:29  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  279:66  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  281:44  warning  Unexpected empty arrow function           @typescript-eslint/no-empty-function
+  307:64  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
 
 ./source/views/building-hours/row.tsx
    52:35  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
@@ -262,9 +262,8 @@
   62:2   warning  Missing return type on function    @typescript-eslint/explicit-module-boundary-types
 
 ./source/views/contacts/list.tsx
-  39:32  warning  'props' is defined but never used. Allowed unused args must match /^_/u                                                @typescript-eslint/no-unused-vars
-  72:3   warning  React Hook React.useCallback has a missing dependency: 'navigation'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
-  75:49  warning  Unexpected any. Specify a different type                                                                               @typescript-eslint/no-explicit-any
+  39:32  warning  'props' is defined but never used. Allowed unused args must match /^_/u  @typescript-eslint/no-unused-vars
+  75:49  warning  Unexpected any. Specify a different type                                 @typescript-eslint/no-explicit-any
 
 ./source/views/contacts/row.tsx
    7:37  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
@@ -638,5 +637,5 @@
 ./source/views/transportation/other-modes/detail.tsx
   51:57  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
 
-✖ 381 problems (0 errors, 381 warnings)
+✖ 380 problems (0 errors, 380 warnings)
 
