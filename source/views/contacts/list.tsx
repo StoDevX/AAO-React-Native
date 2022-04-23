@@ -69,7 +69,7 @@ export let ContactsListView = (props: Props): JSX.Element => {
 			navigation.navigate('ContactsDetail', {
 				contact: data,
 			}),
-		[],
+		[navigation],
 	)
 
 	let renderSectionHeader = ({section: {title}}: any) => (
