@@ -13,7 +13,7 @@ type Props = TopLevelViewPropsType & {
 	navigation: {state: {params: {building: BuildingType}}}
 }
 
-export function BuildingHoursDetailView(props: Props) {
+export function BuildingHoursDetailView(props: Props): JSX.Element {
 	let navigation = useNavigation()
 
 	let info = props.route.params.building
@@ -23,7 +23,7 @@ export function BuildingHoursDetailView(props: Props) {
 			navigation.navigate('BuildingHoursProblemReport', {
 				initialBuilding: info,
 			}),
-		[],
+		[info, navigation],
 	)
 
 	return (
