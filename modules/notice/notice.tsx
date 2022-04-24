@@ -34,7 +34,7 @@ type Props = {
 	textStyle?: any
 }
 
-export function NoticeView(props: Props) {
+export function NoticeView(props: Props): JSX.Element {
 	let {header, text, style, textStyle} = props
 	let {buttonDisabled, buttonText, onPress} = props
 	let {spinner} = props
