@@ -55,7 +55,6 @@
   30:10  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
   33:18  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
   34:14  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
-  37:8   warning  Missing return type on function           @typescript-eslint/explicit-module-boundary-types
 
 ./modules/searchbar/animated.tsx
   20:2   warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
@@ -149,12 +148,6 @@
 
 ./modules/toolbar/toolbar-button.tsx
   37:8  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
-
-./modules/viewport/index.ts
-  19:2   warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
-  23:2   warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
-  27:22  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
-  31:2   warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
 
 ./source/redux/init.ts
   11:41  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
@@ -555,5 +548,5 @@
 ./source/views/transportation/other-modes/detail.tsx
   52:57  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
 
-✖ 336 problems (0 errors, 336 warnings)
+✖ 331 problems (0 errors, 331 warnings)
 
