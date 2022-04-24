@@ -1,7 +1,19 @@
 import {Platform} from 'react-native'
 
-import {StudentOrgsDetailView as IosDetail} from './detail-ios'
-import {StudentOrgsDetailView as AndroidDetail} from './detail-android'
+import {
+	View as IosDetail,
+	NavigationOptions as IosDetailNavigationOptions,
+} from './detail-ios'
+import {
+	View as AndroidDetail,
+	NavigationOptions as AndroidDetailNavigationOptions,
+} from './detail-android'
 
-export const StudentOrgsDetailView =
-	Platform.OS === 'ios' ? IosDetail : AndroidDetail
+const StudentOrgsDetailView = Platform.OS === 'ios' ? IosDetail : AndroidDetail
+
+export {StudentOrgsDetailView as View}
+
+export const NavigationOptions =
+	Platform.OS === 'ios'
+		? IosDetailNavigationOptions
+		: AndroidDetailNavigationOptions
