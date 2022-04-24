@@ -6,7 +6,7 @@ import {BuildingType} from '../views/building-hours/types'
 
 import * as calendar from '../views/calendar'
 import {ContactType} from '../views/contacts/types'
-import {Props as HoursEditorProps} from '../views/building-hours/report/editor'
+import {RouteParams as HoursEditorType} from '../views/building-hours/report/editor'
 
 export type RootStackParamList = {
 	Home: undefined
@@ -16,7 +16,7 @@ export type RootStackParamList = {
 	BuildingHoursDetail: {building: BuildingType}
 	BuildingHours: undefined
 	BuildingHoursProblemReport: {initialBuilding: BuildingType}
-	BuildingHoursScheduleEditor: HoursEditorProps['route']['params']
+	BuildingHoursScheduleEditor: HoursEditorType
 	[calendar.NavigationKey]: calendar.NavigationParams
 	Contacts: undefined
 	ContactsDetail: {contact: ContactType}

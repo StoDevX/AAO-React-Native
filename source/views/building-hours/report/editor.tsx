@@ -21,14 +21,14 @@ import {DatePicker} from '@frogpond/datepicker'
 import {Touchable} from '@frogpond/touchable'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 
-export type Props = TopLevelViewPropsType & {
-	route: {
-		params: {
-			set: SingleBuildingScheduleType | undefined
-			onEditSet: (set: SingleBuildingScheduleType) => unknown
-			onDeleteSet: () => unknown
-		}
-	}
+export type RouteParams = {
+	set: SingleBuildingScheduleType | undefined
+	onEditSet: (set: SingleBuildingScheduleType) => unknown
+	onDeleteSet: () => unknown
+}
+
+type Props = TopLevelViewPropsType & {
+	route: {params: RouteParams}
 }
 
 export function BuildingHoursScheduleEditorView(props: Props): JSX.Element {
