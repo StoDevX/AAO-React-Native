@@ -76,12 +76,10 @@ source/lib/partition-by-index.ts(6,30): error TS2769: No overload matches this c
     Argument of type 'T' is not assignable to parameter of type 'ConcatArray<never>'.
 source/lib/refresh.ts(4,24): error TS7016: Could not find a declaration file for module '@hawkrives/react-native-alternate-icons'. './node_modules/@hawkrives/react-native-alternate-icons/index.js' implicitly has an 'any' type.
   Try `npm i --save-dev @types/hawkrives__react-native-alternate-icons` if it exists or add a new declaration (.d.ts) file containing `declare module '@hawkrives/react-native-alternate-icons';`
-source/navigation/navigator.ts(1,1): error TS1208: 'navigator.ts' cannot be compiled under '--isolatedModules' because it is considered a global script file. Add an import, export, or an empty 'export {}' statement to make it a module.
 source/navigation/track.ts(11,12): error TS2339: Property 'routes' does not exist on type 'NavigationRoute<ParamListBase, string>'.
 source/navigation/track.ts(12,30): error TS2345: Argument of type 'NavigationRoute<ParamListBase, string>' is not assignable to parameter of type 'Readonly<{ key: string; index: number; routeNames: string[]; history?: unknown[] | undefined; routes: NavigationRoute<ParamListBase, string>[]; type: string; stale: false; }>'.
   Type 'NavigationRoute<ParamListBase, string>' is missing the following properties from type 'Readonly<{ key: string; index: number; routeNames: string[]; history?: unknown[] | undefined; routes: NavigationRoute<ParamListBase, string>[]; type: string; stale: false; }>': index, routeNames, routes, type, stale
 source/navigation/track.ts(14,15): error TS2339: Property 'routeName' does not exist on type 'NavigationRoute<ParamListBase, string>'.
-source/navigation/types.tsx(9,9): error TS2459: Module '"../views/building-hours/report/editor"' declares 'Props' locally, but it is not exported.
 source/redux/init.ts(27,36): error TS2345: Argument of type 'ThunkAction<GetEnabledToolsAction>' is not assignable to parameter of type 'AnyAction'.
   Property 'type' is missing in type 'ThunkAction<GetEnabledToolsAction>' but required in type 'AnyAction'.
 source/redux/parts/help.ts(61,22): error TS2322: Type '{ fetching: boolean; tools: never[]; lastFetchError: null; }' is not assignable to type 'State'.
@@ -115,6 +113,8 @@ source/views/building-hours/lib/__tests__/is-building-open.test.ts(31,3): error 
 source/views/building-hours/lib/__tests__/is-building-open.test.ts(51,3): error TS2740: Type '{}' is missing the following properties from type 'BreakScheduleContainerType': fall, thanksgiving, christmasfest, winter, and 4 more.
 source/views/building-hours/lib/__tests__/is-building-open.test.ts(75,3): error TS2740: Type '{}' is missing the following properties from type 'BreakScheduleContainerType': fall, thanksgiving, christmasfest, winter, and 4 more.
 source/views/building-hours/lib/__tests__/is-building-open.test.ts(95,3): error TS2740: Type '{}' is missing the following properties from type 'BreakScheduleContainerType': fall, thanksgiving, christmasfest, winter, and 4 more.
+source/views/building-hours/report/overview.tsx(139,5): error TS2345: Argument of type '{ initialSet: SingleBuildingScheduleType | undefined; onEditSet: (editedData: SingleBuildingScheduleType) => void; onDeleteSet: () => void; }' is not assignable to parameter of type 'Props'.
+  Object literal may only specify known properties, and 'initialSet' does not exist in type 'Props'.
 source/views/building-hours/row.tsx(67,17): error TS7053: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{ Open: string; Closed: string; }'.
   No index signature with a parameter of type 'string' was found on type '{ Open: string; Closed: string; }'.
 source/views/building-hours/row.tsx(68,19): error TS7053: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{ Open: string; Closed: string; }'.
@@ -138,7 +138,6 @@ source/views/dictionary/list.tsx(26,10): error TS2503: Cannot find namespace 'wi
 source/views/faqs/index.tsx(4,9): error TS2614: Module '"glamorous-native"' has no exported member 'View'. Did you mean to use 'import View from "glamorous-native"' instead?
 source/views/faqs/index.tsx(4,15): error TS2614: Module '"glamorous-native"' has no exported member 'ScrollView'. Did you mean to use 'import ScrollView from "glamorous-native"' instead?
 source/views/help/index.tsx(34,18): error TS2345: Argument of type 'ThunkAction<GetEnabledToolsAction>' is not assignable to parameter of type 'AnyAction'.
-source/views/home/index.tsx(94,46): error TS2783: 'canGoBack' is specified more than once, so this usage will be overwritten.
 source/views/home/notice.tsx(31,14): error TS2339: Property 'View' does not exist on type 'typeof import("./node_modules/glamorous-native/typings/glamorous")'.
 source/views/home/notice.tsx(36,15): error TS2339: Property 'View' does not exist on type 'typeof import("./node_modules/glamorous-native/typings/glamorous")'.
 source/views/home/notice.tsx(37,16): error TS2339: Property 'Text' does not exist on type 'typeof import("./node_modules/glamorous-native/typings/glamorous")'.

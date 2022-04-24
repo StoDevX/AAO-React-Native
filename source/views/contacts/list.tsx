@@ -6,7 +6,6 @@ import groupBy from 'lodash/groupBy'
 import toPairs from 'lodash/toPairs'
 import * as c from '@frogpond/colors'
 import type {ContactType} from './types'
-import type {TopLevelViewPropsType} from '../types'
 import {fetch} from '@frogpond/fetch'
 import {API} from '@frogpond/api'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
@@ -34,9 +33,7 @@ const styles = StyleSheet.create({
 	},
 })
 
-type Props = TopLevelViewPropsType
-
-export let ContactsListView = (props: Props): JSX.Element => {
+export let ContactsListView = (): JSX.Element => {
 	let navigation = useNavigation()
 
 	let [contacts, setContacts] = React.useState<Array<ContactType>>([])
@@ -69,7 +66,7 @@ export let ContactsListView = (props: Props): JSX.Element => {
 			navigation.navigate('ContactsDetail', {
 				contact: data,
 			}),
-		[],
+		[navigation],
 	)
 
 	let renderSectionHeader = ({section: {title}}: any) => (

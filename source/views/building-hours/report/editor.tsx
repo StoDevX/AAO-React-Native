@@ -21,7 +21,7 @@ import {DatePicker} from '@frogpond/datepicker'
 import {Touchable} from '@frogpond/touchable'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 
-type Props = TopLevelViewPropsType & {
+export type Props = TopLevelViewPropsType & {
 	route: {
 		params: {
 			initialSet: SingleBuildingScheduleType

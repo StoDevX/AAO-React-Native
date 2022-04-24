@@ -163,19 +163,17 @@ export let BuildingHoursProblemReportView = (props: Props): JSX.Element => {
 					<TitleCell onChange={editName} text={name || ''} />
 				</Section>
 
-				{schedules.map(
-					(s: NamedBuildingScheduleType, i) => (
-						<EditableSchedule
-							key={i}
-							addRow={addHoursRow}
-							editRow={openEditor}
-							onDelete={deleteSchedule}
-							onEditSchedule={editSchedule}
-							schedule={s}
-							scheduleIndex={i}
-						/>
-					),
-				)}
+				{schedules.map((s: NamedBuildingScheduleType, i) => (
+					<EditableSchedule
+						key={i}
+						addRow={addHoursRow}
+						editRow={openEditor}
+						onDelete={deleteSchedule}
+						onEditSchedule={editSchedule}
+						schedule={s}
+						scheduleIndex={i}
+					/>
+				))}
 
 				<Section>
 					<Cell
