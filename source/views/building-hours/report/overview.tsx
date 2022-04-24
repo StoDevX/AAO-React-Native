@@ -136,7 +136,7 @@ export let BuildingHoursProblemReportView = (props: Props): JSX.Element => {
 	let openEditor = React.useCallback(
 		(scheduleIdx: number, setIdx: number, set?: SingleBuildingScheduleType) =>
 			navigation.navigate('BuildingHoursScheduleEditor', {
-				initialSet: set,
+				set: set,
 				onEditSet: (editedData: SingleBuildingScheduleType) =>
 					editHoursRow(scheduleIdx, setIdx, editedData),
 				onDeleteSet: () => deleteHoursRow(scheduleIdx, setIdx),

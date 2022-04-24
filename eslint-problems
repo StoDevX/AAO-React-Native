@@ -167,10 +167,6 @@
 ./source/views/building-hours/detail/header.tsx
   16:2  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
 
-./source/views/building-hours/detail/index.tsx
-  16:8  warning  Missing return type on function                                                                                                     @typescript-eslint/explicit-module-boundary-types
-  26:3  warning  React Hook React.useCallback has missing dependencies: 'info' and 'navigation'. Either include them or remove the dependency array  react-hooks/exhaustive-deps
-
 ./source/views/building-hours/detail/schedule-row-android.tsx
   21:2  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
 
@@ -189,9 +185,6 @@
    7:26  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
   21:27  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
   28:28  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
-
-./source/views/building-hours/lib/blank-schedule.ts
-  1:30  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
 
 ./source/views/building-hours/lib/get-day-of-week.ts
   5:20  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
@@ -555,5 +548,5 @@
 ./source/views/transportation/other-modes/detail.tsx
   52:57  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
 
-✖ 336 problems (0 errors, 336 warnings)
+✖ 333 problems (0 errors, 333 warnings)
 
