@@ -49,7 +49,7 @@ import * as settings from '../views/settings/'
 // 	KRLXSchedule,
 // 	KSTOSchedule,
 // } from '../views/streaming'
-// import {StudentOrgsDetail, StudentOrgs} from '../views/student-orgs'
+import * as orgs from '../views/student-orgs'
 // import Transportation, {OtherModesDetail} from '../views/transportation'
 // import {
 // 	PrinterList,
@@ -168,8 +168,21 @@ export function RootStack(): JSX.Element {
 			<Stack.Screen component={Streaming} name="Streaming" />
 			<Stack.Screen component={KSTOSchedule} name="KSTOSchedule" />
 			<Stack.Screen component={KRLXSchedule} name="KRLXSchedule" />
-			<Stack.Screen component={StudentOrgsDetail} name="StudentOrgsDetail" />
-			<Stack.Screen component={StudentOrgs} name="StudentOrgs" />
+			*/}
+			<Stack.Group>
+				<Stack.Screen
+					component={orgs.StudentOrgsView}
+					name="StudentOrgs"
+					options={orgs.NavigationOptions}
+				/>
+				<Stack.Screen
+					component={orgs.StudentOrgsDetailView}
+					name="StudentOrgsDetail"
+					options={orgs.DetailNavigationOptions}
+				/>
+			</Stack.Group>
+			{/*
+			</Stack.Group>
 			<Stack.Screen component={Transportation} name="Transportation" />
 			<Stack.Screen component={OtherModesDetail} name="OtherModesDetail" />
 			<Stack.Screen

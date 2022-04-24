@@ -1,6 +1,5 @@
 import * as React from 'react'
 import {StyleSheet, RefreshControl, SectionList, View} from 'react-native'
-import type {TopLevelViewPropsType} from '../types'
 import {NoticeView, LoadingView} from '@frogpond/notice'
 import {Column} from '@frogpond/layout'
 import {
@@ -22,6 +21,8 @@ import {fetch} from '@frogpond/fetch'
 import {useAsync} from 'react-async'
 import type {AsyncState} from 'react-async'
 import {useDebounce} from '@frogpond/use-debounce'
+import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+import {useNavigation} from '@react-navigation/native'
 
 const fetchOrgs = (args: {
 	signal: window.AbortController
@@ -53,12 +54,12 @@ const styles = StyleSheet.create({
 	},
 })
 
-type Props = TopLevelViewPropsType
-
-export function StudentOrgsView(props: Props): JSX.Element {
+function StudentOrgsView(): JSX.Element {
 	let [query, setQuery] = React.useState('')
 	let searchQuery = useDebounce(query.toLowerCase(), 200)
 	let [isInitialFetch, setIsInitial] = React.useState(true)
+
+	let navigation = useNavigation()
 
 	let {data, error, reload, isPending}: AsyncState<Array<StudentOrgType>> =
 		useAsync(fetchOrgs, {
@@ -83,6 +84,14 @@ export function StudentOrgsView(props: Props): JSX.Element {
 		})
 	}, [results])
 
+	let onPressOrg = React.useCallback(
+		(data: StudentOrgType) =>
+			navigation.navigate('StudentOrgsDetail', {
+				org: data,
+			}),
+		[navigation],
+	)
+
 	// conditionals must come after all hooks
 	if (error) {
 		return (
@@ -103,12 +112,7 @@ export function StudentOrgsView(props: Props): JSX.Element {
 	}
 
 	let renderRow = ({item}: {item: StudentOrgType}) => (
-		<ListRow
-			arrowPosition="top"
-			onPress={() =>
-				props.navigation.navigate('StudentOrgsDetailView', {org: item})
-			}
-		>
+		<ListRow arrowPosition="top" onPress={() => onPressOrg(item)}>
 			<Column flex={1}>
 				<Title lines={1}>{item.name}</Title>
 				<Detail lines={1}>{item.category}</Detail>
@@ -143,7 +147,9 @@ export function StudentOrgsView(props: Props): JSX.Element {
 	)
 }
 
-StudentOrgsView.navigationOptions = {
+export {StudentOrgsView as View}
+
+export const NavigationOptions: NativeStackNavigationOptions = {
 	title: 'Student Orgs',
-	headerBackTitle: 'Orgs',
+	headerBackTitle: 'Back',
 }
