@@ -92,7 +92,6 @@ source/redux/parts/settings.ts(46,26): error TS2322: Type '{ theme: string; diet
   Types of property 'dietaryPreferences' are incompatible.
     Type 'never[]' is not assignable to type '[]'.
       Target allows only 0 element(s) but source may have more.
-source/views/building-hours/detail/index.tsx(19,19): error TS2339: Property 'route' does not exist on type 'Props'.
 source/views/building-hours/detail/schedule-row-android.tsx(37,22): error TS7031: Binding element 'children' implicitly has an 'any' type.
 source/views/building-hours/detail/schedule-row-android.tsx(37,32): error TS7031: Binding element 'style' implicitly has an 'any' type.
 source/views/building-hours/detail/toolbar-button.tsx(20,18): error TS2345: Argument of type 'ThunkAction<ToggleFavoriteAction>' is not assignable to parameter of type 'AnyAction'.
@@ -113,8 +112,6 @@ source/views/building-hours/lib/__tests__/is-building-open.test.ts(31,3): error 
 source/views/building-hours/lib/__tests__/is-building-open.test.ts(51,3): error TS2740: Type '{}' is missing the following properties from type 'BreakScheduleContainerType': fall, thanksgiving, christmasfest, winter, and 4 more.
 source/views/building-hours/lib/__tests__/is-building-open.test.ts(75,3): error TS2740: Type '{}' is missing the following properties from type 'BreakScheduleContainerType': fall, thanksgiving, christmasfest, winter, and 4 more.
 source/views/building-hours/lib/__tests__/is-building-open.test.ts(95,3): error TS2740: Type '{}' is missing the following properties from type 'BreakScheduleContainerType': fall, thanksgiving, christmasfest, winter, and 4 more.
-source/views/building-hours/report/overview.tsx(139,5): error TS2345: Argument of type '{ initialSet: SingleBuildingScheduleType | undefined; onEditSet: (editedData: SingleBuildingScheduleType) => void; onDeleteSet: () => void; }' is not assignable to parameter of type 'Props'.
-  Object literal may only specify known properties, and 'initialSet' does not exist in type 'Props'.
 source/views/building-hours/row.tsx(67,17): error TS7053: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{ Open: string; Closed: string; }'.
   No index signature with a parameter of type 'string' was found on type '{ Open: string; Closed: string; }'.
 source/views/building-hours/row.tsx(68,19): error TS7053: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{ Open: string; Closed: string; }'.
