@@ -1,3 +1,5 @@
+import {StyleProp, ViewStyle} from 'react-native'
+
 export type Props = {
 	getRef?: any
 	active?: boolean
@@ -8,7 +10,7 @@ export type Props = {
 	onFocus: () => unknown
 	onSubmit: () => unknown
 	placeholder?: string
-	style?: unknown
+	style?: StyleProp<ViewStyle>
 	textFieldBackgroundColor?: string
 	value: string
 }
