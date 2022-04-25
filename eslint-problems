@@ -51,11 +51,6 @@
 ./modules/notice/loading.tsx
   4:8  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
 
-./modules/notice/notice.tsx
-  30:10  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
-  33:18  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
-  34:14  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
-
 ./modules/searchbar/animated.tsx
   20:2   warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
   38:24  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
@@ -541,5 +536,5 @@
 ./source/views/transportation/other-modes/detail.tsx
   52:57  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
 
-✖ 328 problems (0 errors, 328 warnings)
+✖ 325 problems (0 errors, 325 warnings)
 
