@@ -1,9 +1,9 @@
 import * as React from 'react'
 
-import {StyleSheet, Animated} from 'react-native'
+import {StyleSheet, Animated, useWindowDimensions} from 'react-native'
 import {white} from '@frogpond/colors'
 import {SearchBar} from './searchbar'
-import {Viewport} from '@frogpond/viewport'
+import {AnimatedValueType} from './types'
 
 type Props = {
 	value: string
@@ -16,30 +16,34 @@ type Props = {
 	title?: string
 }
 
-export class AnimatedSearchBar extends React.Component<Props> {
-	componentDidUpdate(prevProps: Props) {
-		if (this.props.active !== prevProps.active) {
-			if (this.props.active) {
-				this.activateSearch()
-			} else {
-				this.deactivateSearch()
-			}
-		}
-	}
+export let AnimatedSearchBar = (props: Props): JSX.Element => {
+	let viewport = useWindowDimensions()
 
-	headerOpacitySpec = {start: 1, end: 0, duration: 200}
-	searchBarTopSpec = {start: 71, end: 10, duration: 200}
-	containerHeightSpec = {start: 125, end: 64, duration: 200}
+	let headerOpacitySpec: AnimatedValueType = React.useMemo(() => {
+		return {start: 1, end: 0, duration: 200}
+	}, [])
 
-	headerOpacity = new Animated.Value(this.headerOpacitySpec.start)
-	searchBarTop = new Animated.Value(this.searchBarTopSpec.start)
-	containerHeight = new Animated.Value(this.containerHeightSpec.start)
+	let searchBarTopSpec: AnimatedValueType = React.useMemo(() => {
+		return {start: 71, end: 10, duration: 200}
+	}, [])
 
-	onSearchButtonPress = () => {
-		this.props.onSubmit && this.props.onSubmit()
-	}
+	let containerHeightSpec: AnimatedValueType = React.useMemo(() => {
+		return {start: 125, end: 64, duration: 200}
+	}, [])
 
-	animate = (
+	let headerOpacity = React.useMemo(() => {
+		return new Animated.Value(headerOpacitySpec.start)
+	}, [headerOpacitySpec.start])
+
+	let searchBarTop = React.useMemo(() => {
+		return new Animated.Value(searchBarTopSpec.start)
+	}, [searchBarTopSpec.start])
+
+	let containerHeight = React.useMemo(() => {
+		return new Animated.Value(containerHeightSpec.start)
+	}, [containerHeightSpec.start])
+
+	let animate = (
 		thing: Animated.Value,
 		args: {start: number; end: number; duration: number},
 		toValue: 'start' | 'end',
@@ -51,87 +55,91 @@ export class AnimatedSearchBar extends React.Component<Props> {
 		}).start()
 	}
 
-	activateSearch = () => {
-		this.animate(this.headerOpacity, this.headerOpacitySpec, 'end')
-		this.animate(this.searchBarTop, this.searchBarTopSpec, 'end')
-		this.animate(this.containerHeight, this.containerHeightSpec, 'end')
+	let activateSearch = React.useCallback(() => {
+		animate(headerOpacity, headerOpacitySpec, 'end')
+		animate(searchBarTop, searchBarTopSpec, 'end')
+		animate(containerHeight, containerHeightSpec, 'end')
+	}, [
+		containerHeight,
+		containerHeightSpec,
+		headerOpacity,
+		headerOpacitySpec,
+		searchBarTop,
+		searchBarTopSpec,
+	])
+
+	let deactivateSearch = React.useCallback(() => {
+		animate(headerOpacity, headerOpacitySpec, 'start')
+		animate(searchBarTop, searchBarTopSpec, 'start')
+		animate(containerHeight, containerHeightSpec, 'start')
+	}, [
+		containerHeight,
+		containerHeightSpec,
+		headerOpacity,
+		headerOpacitySpec,
+		searchBarTop,
+		searchBarTopSpec,
+	])
+
+	React.useEffect(() => {
+		props.active ? activateSearch() : deactivateSearch()
+	}, [activateSearch, deactivateSearch, props.active])
+
+	let handleFocus = () => {
+		activateSearch()
+		props.onFocus && props.onFocus()
 	}
 
-	deactivateSearch = () => {
-		this.animate(this.headerOpacity, this.headerOpacitySpec, 'start')
-		this.animate(this.searchBarTop, this.searchBarTopSpec, 'start')
-		this.animate(this.containerHeight, this.containerHeightSpec, 'start')
+	let handleCancel = () => {
+		deactivateSearch()
+		props.onCancel && props.onCancel()
 	}
 
-	handleFocus = () => {
-		this.activateSearch()
-		this.props.onFocus && this.props.onFocus()
-	}
+	let searchBarWidth = viewport.width - 20
 
-	handleCancel = () => {
-		this.deactivateSearch()
-		this.props.onCancel && this.props.onCancel()
-	}
+	let showTitle = Boolean(props.title)
 
-	render() {
-		return (
-			<Viewport
-				render={(viewport) => {
-					let searchBarWidth = viewport.width - 20
+	let containerStyle = [
+		styles.searchContainer,
+		styles.common,
+		{
+			height: showTitle ? containerHeight : containerHeightSpec.end,
+		},
+	]
 
-					let showTitle = Boolean(this.props.title)
+	let searchStyle = [
+		styles.searchBarWrapper,
+		{width: searchBarWidth},
+		{top: showTitle ? searchBarTop : searchBarTopSpec.end},
+	]
 
-					let containerStyle = [
-						styles.searchContainer,
-						styles.common,
-						{
-							height: showTitle
-								? this.containerHeight
-								: this.containerHeightSpec.end,
-						},
-					]
+	let headerStyle = [
+		styles.header,
+		{
+			opacity: showTitle ? headerOpacity : headerOpacitySpec.end,
+		},
+	]
 
-					let searchStyle = [
-						styles.searchBarWrapper,
-						{width: searchBarWidth},
-						{top: showTitle ? this.searchBarTop : this.searchBarTopSpec.end},
-					]
+	return (
+		<Animated.View style={containerStyle}>
+			{showTitle ? (
+				<Animated.Text style={headerStyle}>{props.title}</Animated.Text>
+			) : null}
 
-					let headerStyle = [
-						styles.header,
-						{
-							opacity: showTitle
-								? this.headerOpacity
-								: this.headerOpacitySpec.end,
-						},
-					]
-
-					return (
-						<Animated.View style={containerStyle}>
-							{showTitle ? (
-								<Animated.Text style={headerStyle}>
-									{this.props.title}
-								</Animated.Text>
-							) : null}
-
-							<Animated.View style={searchStyle}>
-								<SearchBar
-									active={this.props.active}
-									backButtonAndroid="search"
-									onCancel={this.handleCancel}
-									onChange={this.props.onChange}
-									onFocus={this.handleFocus}
-									onSubmit={this.props.onSubmit}
-									placeholder={this.props.placeholder}
-									value={this.props.value}
-								/>
-							</Animated.View>
-						</Animated.View>
-					)
-				}}
-			/>
-		)
-	}
+			<Animated.View style={searchStyle}>
+				<SearchBar
+					active={props.active}
+					backButtonAndroid="search"
+					onCancel={handleCancel}
+					onChange={props.onChange}
+					onFocus={handleFocus}
+					onSubmit={props.onSubmit}
+					placeholder={props.placeholder}
+					value={props.value}
+				/>
+			</Animated.View>
+		</Animated.View>
+	)
 }
 
 let styles = StyleSheet.create({

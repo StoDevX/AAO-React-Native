@@ -15,7 +15,6 @@
     "react-native-vector-icons": "^9.0.0"
   },
   "dependencies": {
-    "@frogpond/colors": "^1.0.0",
-    "@frogpond/viewport": "^1.0.0"
+    "@frogpond/colors": "^1.0.0"
   }
 }

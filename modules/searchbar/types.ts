@@ -3,12 +3,18 @@ export type Props = {
 	active?: boolean
 	backButtonAndroid?: 'search' | boolean
 	backgroundColor?: string
-	onCancel: () => any
-	onChange: (data: string) => any
-	onFocus: () => any
-	onSubmit: () => any
+	onCancel: () => unknown
+	onChange: (data: string) => unknown
+	onFocus: () => unknown
+	onSubmit: () => unknown
 	placeholder?: string
-	style?: any
+	style?: unknown
 	textFieldBackgroundColor?: string
 	value: string
+}
+
+export type AnimatedValueType = {
+	start: number
+	end: number
+	duration: number
 }
