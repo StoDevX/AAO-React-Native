@@ -37,7 +37,7 @@ type Props = {
 	style?: StyleProp<ViewStyle>
 	spinner?: boolean
 	buttonText?: string
-	onPress?: () => unknown
+	onPress?: () => void
 	textStyle?: StyleProp<TextStyle>
 }
 
