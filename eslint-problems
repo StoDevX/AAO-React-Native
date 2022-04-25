@@ -515,11 +515,6 @@
   51:18  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
   56:2   warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
 
-./source/views/streaming/webcams/list.tsx
-  35:2   warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
-  39:14  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
-  45:2   warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
-
 ./source/views/streaming/webcams/thumbnail.tsx
   18:16  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
   23:2   warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
@@ -538,5 +533,5 @@
 ./source/views/transportation/other-modes/detail.tsx
   52:57  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
 
-✖ 327 problems (0 errors, 327 warnings)
+✖ 324 problems (0 errors, 324 warnings)
 
