@@ -8,7 +8,6 @@ export {encode, decode} from 'html-entities'
 
 export function parseHtml(string: string): Document {
 	return parseDocument(string, {
-		normalizeWhitespace: false,
 		xmlMode: false,
 		decodeEntities: true,
 	})
