@@ -1,6 +1,6 @@
 import {parseDocument} from 'htmlparser2'
 import {textContent} from 'domutils'
-import {Document, Node} from 'domhandler'
+import {AnyNode, Document} from 'domhandler'
 import cssSelect from 'css-select'
 
 export {textContent, cssSelect}
@@ -13,7 +13,7 @@ export function parseHtml(string: string): Document {
 	})
 }
 
-export function innerTextWithSpaces(elem: Node | Node[]): string {
+export function innerTextWithSpaces(elem: AnyNode | AnyNode[]): string {
 	return textContent(elem).split(/\s+/u).join(' ').trim()
 }
 
