@@ -18,18 +18,14 @@ type Props = {
 
 export let AnimatedSearchBar = (props: Props): JSX.Element => {
 	let viewport = useWindowDimensions()
+let headerOpacitySpec: AnimatedValueType = {start: 1, end: 0, duration: 200}
+let searchBarTopSpec: AnimatedValueType = {start: 71, end: 10, duration: 200}
+let containerHeightSpec: AnimatedValueType = {
+	start: 125,
+	end: 64,
+	duration: 200,
+}
 
-	let headerOpacitySpec: AnimatedValueType = React.useMemo(() => {
-		return {start: 1, end: 0, duration: 200}
-	}, [])
-
-	let searchBarTopSpec: AnimatedValueType = React.useMemo(() => {
-		return {start: 71, end: 10, duration: 200}
-	}, [])
-
-	let containerHeightSpec: AnimatedValueType = React.useMemo(() => {
-		return {start: 125, end: 64, duration: 200}
-	}, [])
 
 	let headerOpacity = React.useMemo(() => {
 		return new Animated.Value(headerOpacitySpec.start)
