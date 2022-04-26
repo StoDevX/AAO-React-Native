@@ -3,18 +3,7 @@ import * as React from 'react'
 import {StyleSheet, Animated, useWindowDimensions} from 'react-native'
 import {white} from '@frogpond/colors'
 import {SearchBar} from './searchbar'
-import {AnimatedValueType} from './types'
-
-type Props = {
-	value: string
-	active: boolean
-	placeholder?: string
-	onSubmit?: () => void
-	onFocus?: () => void
-	onCancel?: () => void
-	onChange?: (value: string) => void
-	title?: string
-}
+import {Props, AnimatedValueType} from './types'
 
 let headerOpacitySpec: AnimatedValueType = {start: 1, end: 0, duration: 200}
 let searchBarTopSpec: AnimatedValueType = {start: 71, end: 10, duration: 200}

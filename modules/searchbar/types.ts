@@ -11,6 +11,7 @@ export type Props = {
 	onSubmit: () => unknown
 	placeholder?: string
 	style?: StyleProp<ViewStyle>
+	title?: string
 	textFieldBackgroundColor?: string
 	value: string
 }
