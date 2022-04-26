@@ -76,9 +76,7 @@ export let AnimatedSearchBar = (props: Props): JSX.Element => {
 	let containerStyle = [
 		styles.searchContainer,
 		styles.common,
-		{
-			height: showTitle ? containerHeight : containerHeightSpec.end,
-		},
+		{height: showTitle ? containerHeight : containerHeightSpec.end},
 	]
 
 	let searchStyle = [
@@ -89,9 +87,7 @@ export let AnimatedSearchBar = (props: Props): JSX.Element => {
 
 	let headerStyle = [
 		styles.header,
-		{
-			opacity: showTitle ? headerOpacity : headerOpacitySpec.end,
-		},
+		{opacity: showTitle ? headerOpacity : headerOpacitySpec.end},
 	]
 
 	return (
