@@ -47,27 +47,13 @@ export let AnimatedSearchBar = (props: Props): JSX.Element => {
 		animate(headerOpacity, headerOpacitySpec, 'end')
 		animate(searchBarTop, searchBarTopSpec, 'end')
 		animate(containerHeight, containerHeightSpec, 'end')
-	}, [
-		containerHeight,
-		containerHeightSpec,
-		headerOpacity,
-		headerOpacitySpec,
-		searchBarTop,
-		searchBarTopSpec,
-	])
+	}, [])
 
 	let deactivateSearch = React.useCallback(() => {
 		animate(headerOpacity, headerOpacitySpec, 'start')
 		animate(searchBarTop, searchBarTopSpec, 'start')
 		animate(containerHeight, containerHeightSpec, 'start')
-	}, [
-		containerHeight,
-		containerHeightSpec,
-		headerOpacity,
-		headerOpacitySpec,
-		searchBarTop,
-		searchBarTopSpec,
-	])
+	}, [])
 
 	React.useEffect(() => {
 		props.active ? activateSearch() : deactivateSearch()
