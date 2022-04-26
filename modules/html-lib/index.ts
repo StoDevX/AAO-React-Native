@@ -13,7 +13,7 @@ export function parseHtml(string: string): Document {
 	})
 }
 
-export function innerTextWithSpaces(elem: AnyNode | AnyNode[]): string {
+export function innerTextWithSpaces(elem: AnyNode): string {
 	return textContent(elem).split(/\s+/u).join(' ').trim()
 }
 
