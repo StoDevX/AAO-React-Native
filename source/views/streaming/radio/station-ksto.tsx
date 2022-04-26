@@ -22,7 +22,7 @@ const colors: PlayerTheme = {
 		.toRgbString(),
 }
 
-export function KstoStationView(props: TopLevelViewPropsType) {
+export function KstoStationView(props: TopLevelViewPropsType): JSX.Element {
 	return (
 		<ThemeProvider theme={colors}>
 			<RadioControllerView
