@@ -30,18 +30,18 @@ const headerOpacity = new Animated.Value(headerOpacitySpec.start)
 const searchBarTop = new Animated.Value(searchBarTopSpec.start)
 const containerHeight = new Animated.Value(containerHeightSpec.start)
 
+let animate = (
+	thing: Animated.Value,
+	args: {start: number; end: number; duration: number},
+	toValue: 'start' | 'end',
+) => {
+	Animated.timing(thing, {
+		toValue: args[toValue],
+		duration: args.duration,
+		useNativeDriver: false,
+	}).start()
+}
 
-	let animate = (
-		thing: Animated.Value,
-		args: {start: number; end: number; duration: number},
-		toValue: 'start' | 'end',
-	) => {
-		Animated.timing(thing, {
-			toValue: args[toValue],
-			duration: args.duration,
-			useNativeDriver: false,
-		}).start()
-	}
 
 	let activateSearch = React.useCallback(() => {
 		animate(headerOpacity, headerOpacitySpec, 'end')
