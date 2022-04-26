@@ -16,8 +16,6 @@ type Props = {
 	title?: string
 }
 
-export let AnimatedSearchBar = (props: Props): JSX.Element => {
-	let viewport = useWindowDimensions()
 let headerOpacitySpec: AnimatedValueType = {start: 1, end: 0, duration: 200}
 let searchBarTopSpec: AnimatedValueType = {start: 71, end: 10, duration: 200}
 let containerHeightSpec: AnimatedValueType = {
@@ -42,6 +40,8 @@ let animate = (
 	}).start()
 }
 
+export let AnimatedSearchBar = (props: Props): JSX.Element => {
+	let viewport = useWindowDimensions()
 
 	let activateSearch = React.useCallback(() => {
 		animate(headerOpacity, headerOpacitySpec, 'end')
