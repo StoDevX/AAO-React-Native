@@ -10,6 +10,8 @@
   },
   "dependencies": {
     "css-select": "5.0.1",
+    "domhandler": "5.0.2",
+    "domutils": "3.0.1",
     "html-entities": "2.3.3",
     "htmlparser2": "8.0.0"
   }
