@@ -26,18 +26,10 @@ let containerHeightSpec: AnimatedValueType = {
 	duration: 200,
 }
 
+const headerOpacity = new Animated.Value(headerOpacitySpec.start)
+const searchBarTop = new Animated.Value(searchBarTopSpec.start)
+const containerHeight = new Animated.Value(containerHeightSpec.start)
 
-	let headerOpacity = React.useMemo(() => {
-		return new Animated.Value(headerOpacitySpec.start)
-	}, [headerOpacitySpec.start])
-
-	let searchBarTop = React.useMemo(() => {
-		return new Animated.Value(searchBarTopSpec.start)
-	}, [searchBarTopSpec.start])
-
-	let containerHeight = React.useMemo(() => {
-		return new Animated.Value(containerHeightSpec.start)
-	}, [containerHeightSpec.start])
 
 	let animate = (
 		thing: Animated.Value,
