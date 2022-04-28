@@ -9,7 +9,7 @@
     "test": "jest"
   },
   "dependencies": {
-    "css-select": "5.0.1",
+    "css-select": "5.1.0",
     "domhandler": "5.0.2",
     "domutils": "3.0.1",
     "html-entities": "2.3.3",
