@@ -223,16 +223,16 @@ jobs:
         with:
           ruby-version: '2.6'
           bundler-cache: true
-      # - name: Restore Pods cache
-      #   uses: actions/cache@v2
-      #   with:
-      #     path: |
-      #       ios/Pods
-      #       ~/Library/Caches/CocoaPods
-      #       ~/.cocoapods
-      #     key: ${{ runner.os }}-pods-${{ hashFiles('**/Podfile.lock') }}
-      #     restore-keys: |
-      #       ${{ runner.os }}-pods-
+      - name: Restore Pods cache
+        uses: actions/cache@v2
+        with:
+          path: |
+            ios/Pods
+            ~/Library/Caches/CocoaPods
+            ~/.cocoapods
+          key: ${{ runner.os }}-pods-${{ hashFiles('**/Podfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-pods-
       - uses: mikehardy/buildcache-action@v1
         continue-on-error: true
         with:
