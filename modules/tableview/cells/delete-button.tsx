@@ -2,13 +2,11 @@ import * as React from 'react'
 import {StyleSheet, Alert} from 'react-native'
 import {Cell} from 'react-native-tableview-simple'
 import * as c from '@frogpond/colors'
+import noop from 'lodash/noop'
 
 const deleteStyles = StyleSheet.create({
 	text: {textAlign: 'center', color: c.red},
 })
-
-// eslint-disable-next-line @typescript-eslint/no-empty-function
-const noop = () => {}
 
 export const DeleteButtonCell = ({
 	title,
