@@ -1,13 +1,9 @@
-import React, {useCallback, useEffect, useRef, useState} from 'react'
-
+import {useState} from 'react'
 import {default as moment, unitOfTime, type Moment} from 'moment-timezone'
-import {msUntilIntervalRepeat} from './index'
-import {memoize} from 'lodash'
-import {timezone} from '@frogpond/constants'
+import {useInterval} from './use-interval'
 
 type BasicProps = {
 	intervalMs: number // ms
-	timezone?: string
 }
 
 type MomentProps = BasicProps & {
@@ -17,42 +13,20 @@ type MomentProps = BasicProps & {
 
 export function useDateTimer(props: BasicProps): {now: Date} {
 	let {intervalMs} = props
-
 	let [now, setNow] = useState(() => new Date())
-	let timeoutRef = useRef<null | ReturnType<typeof setTimeout>>(null)
-	let intervalRef = useRef<null | ReturnType<typeof setInterval>>(null)
 
-	let updateTime = useCallback(() => {
+	useInterval(() => {
 		setNow(new Date())
-	}, [])
-
-	useEffect(() => {
-		// get the time remaining until the next $interval
-		let nowMs = now.getTime()
-		let untilNextInterval = msUntilIntervalRepeat(nowMs, intervalMs)
-
-		timeoutRef.current = setTimeout(() => {
-			updateTime()
-			intervalRef.current = setInterval(updateTime, intervalMs)
-		}, untilNextInterval)
-
-		return () => {
-			intervalRef.current !== null && clearInterval(intervalRef.current)
-			timeoutRef.current !== null && clearTimeout(timeoutRef.current)
-		}
-	})
+	}, intervalMs)
 
 	return {now}
 }
 
 export function useMomentTimer(props: MomentProps): {now: Moment} {
 	let {intervalMs, timezone, startOf} = props
-
 	let [now, setNow] = useState(() => moment())
-	let timeoutRef = useRef<null | ReturnType<typeof setTimeout>>(null)
-	let intervalRef = useRef<null | ReturnType<typeof setInterval>>(null)
 
-	let updateTime = useCallback(() => {
+	useInterval(() => {
 		let newNow = moment()
 		if (timezone) {
 			newNow = newNow.tz(timezone)
@@ -60,22 +34,11 @@ export function useMomentTimer(props: MomentProps): {now: Moment} {
 		if (startOf) {
 			newNow = newNow.startOf(startOf)
 		}
-		// if (newNow.isSame(now)) {
-		// 	return;
-		// }
+		if (now.isSame(newNow)) {
+			return
+		}
 		setNow(newNow)
-	}, [timezone, startOf])
-
-	useEffect(() => {
-		// get the time remaining until the next $interval
-		let nowMs = now.milliseconds()
-		let untilNextInterval = msUntilIntervalRepeat(nowMs, intervalMs)
-
-		timeoutRef.current = setTimeout(() => {
-			updateTime()
-			intervalRef.current = setInterval(updateTime, intervalMs)
-		}, untilNextInterval)
-	})
+	}, intervalMs)
 
 	return {now}
 }
