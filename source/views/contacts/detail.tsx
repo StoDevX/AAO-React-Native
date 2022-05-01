@@ -12,6 +12,7 @@ import {GH_NEW_ISSUE_URL} from '../../lib/constants'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 import {RootStackParamList} from '../../navigation/types'
 import {RouteProp} from '@react-navigation/native'
+import noop from 'lodash/noop'
 
 const Title = glamorous.text({
 	fontSize: 36,
@@ -30,7 +31,7 @@ const styles = StyleSheet.create({
 		fontSize: 16,
 	},
 	image: {
-		width: null,
+		width: undefined,
 		height: 100,
 	},
 })
@@ -42,7 +43,7 @@ function formatNumber(phoneNumber: string) {
 
 function promptCall(buttonText: string, phoneNumber: string) {
 	Alert.alert(buttonText, formatNumber(phoneNumber), [
-		{text: 'Cancel', onPress: () => {}},
+		{text: 'Cancel', onPress: noop},
 		{text: 'Call', onPress: () => callPhone(phoneNumber, {prompt: false})},
 	])
 }
@@ -50,7 +51,7 @@ function promptCall(buttonText: string, phoneNumber: string) {
 type Props = {navigation: {state: {params: {contact: ContactType}}}}
 
 export class ContactsDetailView extends React.PureComponent<Props> {
-	onPress = () => {
+	onPress = (): void => {
 		let {phoneNumber, buttonText, buttonLink} = this.props.route.params.contact
 		if (buttonLink) {
 			openUrl(buttonLink)
@@ -59,7 +60,7 @@ export class ContactsDetailView extends React.PureComponent<Props> {
 		}
 	}
 
-	render() {
+	render(): JSX.Element {
 		let contact = this.props.route.params.contact
 		let headerImage =
 			contact.image && contactImages.has(contact.image)

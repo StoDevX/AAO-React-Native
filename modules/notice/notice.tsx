@@ -1,5 +1,13 @@
 import * as React from 'react'
-import {ActivityIndicator, StyleSheet, Text, View} from 'react-native'
+import {
+	ActivityIndicator,
+	StyleProp,
+	StyleSheet,
+	Text,
+	TextStyle,
+	View,
+	ViewStyle,
+} from 'react-native'
 import * as c from '@frogpond/colors'
 import {Button} from '@frogpond/button'
 import {Heading} from '@frogpond/markdown'
@@ -27,14 +35,14 @@ type Props = {
 	buttonDisabled?: boolean
 	header?: string
 	text?: string
-	style?: any
+	style?: StyleProp<ViewStyle>
 	spinner?: boolean
 	buttonText?: string
-	onPress?: () => any
-	textStyle?: any
+	onPress?: () => void
+	textStyle?: StyleProp<TextStyle>
 }
 
-export function NoticeView(props: Props) {
+export function NoticeView(props: Props): JSX.Element {
 	let {header, text, style, textStyle} = props
 	let {buttonDisabled, buttonText, onPress} = props
 	let {spinner} = props
