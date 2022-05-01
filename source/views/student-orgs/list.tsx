@@ -30,19 +30,17 @@ const fetchOrgs = (args: {
 	return fetch(API('/orgs'), {signal: args.signal}).json()
 }
 
-function splitToArray(str: string) {
-	return words(deburr(str.toLowerCase()))
-}
+const splitToArray = memoize((str: string) => words(deburr(str.toLowerCase())))
 
-function orgToArray(term: StudentOrgType) {
-	return Array.from(
+const orgToArray = memoize((term: StudentOrgType) =>
+	Array.from(
 		new Set([
 			...splitToArray(term.name),
 			...splitToArray(term.category),
 			...splitToArray(term.description),
 		]),
-	)
-}
+	),
+)
 
 const styles = StyleSheet.create({
 	wrapper: {
