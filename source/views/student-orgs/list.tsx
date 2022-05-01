@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {StyleSheet, RefreshControl, SectionList, View} from 'react-native'
+import {StyleSheet, SectionList, View} from 'react-native'
 import {NoticeView, LoadingView} from '@frogpond/notice'
 import {Column} from '@frogpond/layout'
 import {
@@ -17,17 +17,16 @@ import words from 'lodash/words'
 import deburr from 'lodash/deburr'
 import type {StudentOrgType} from './types'
 import {API} from '@frogpond/api'
-import {fetch} from '@frogpond/fetch'
-import {useAsync} from 'react-async'
-import type {AsyncState} from 'react-async'
+import {useFetch} from 'react-async'
 import {useDebounce} from '@frogpond/use-debounce'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 import {useNavigation} from '@react-navigation/native'
+import memoize from 'lodash/memoize'
 
-const fetchOrgs = (args: {
-	signal: window.AbortController
-}): Promise<Array<StudentOrgType>> => {
-	return fetch(API('/orgs'), {signal: args.signal}).json()
+const useStudentOrgs = () => {
+	return useFetch<StudentOrgType[]>(API('/orgs'), {
+		headers: {accept: 'application/json'},
+	})
 }
 
 const splitToArray = memoize((str: string) => words(deburr(str.toLowerCase())))
@@ -53,25 +52,23 @@ const styles = StyleSheet.create({
 })
 
 function StudentOrgsView(): JSX.Element {
-	let [query, setQuery] = React.useState('')
-	let searchQuery = useDebounce(query.toLowerCase(), 200)
-	let [isInitialFetch, setIsInitial] = React.useState(true)
-
 	let navigation = useNavigation()
 
-	let {data, error, reload, isPending}: AsyncState<Array<StudentOrgType>> =
-		useAsync(fetchOrgs, {
-			onResolve: () => setIsInitial(false),
-		})
+	let [query, setQuery] = React.useState('')
+	let searchQuery = useDebounce(query.toLowerCase(), 200)
+
+	let {data, error, reload, isPending, isInitial} = useStudentOrgs()
 
 	let results = React.useMemo(() => {
-		let dataArr = data || []
-
-		if (!searchQuery) {
-			return dataArr
+		if (!data) {
+			return []
 		}
 
-		return dataArr.filter((org) =>
+		if (!searchQuery) {
+			return data
+		}
+
+		return data.filter((org) =>
 			orgToArray(org).some((word) => word.startsWith(searchQuery)),
 		)
 	}, [data, searchQuery])
@@ -83,10 +80,7 @@ function StudentOrgsView(): JSX.Element {
 	}, [results])
 
 	let onPressOrg = React.useCallback(
-		(data: StudentOrgType) =>
-			navigation.navigate('StudentOrgsDetail', {
-				org: data,
-			}),
+		(org: StudentOrgType) => navigation.navigate('StudentOrgsDetail', {org}),
 		[navigation],
 	)
 
@@ -101,22 +95,9 @@ function StudentOrgsView(): JSX.Element {
 		)
 	}
 
-	if (isInitialFetch) {
+	if (isInitial) {
 		return <LoadingView />
 	}
-
-	if (!data || !data.length) {
-		return <NoticeView text="No organizations found." />
-	}
-
-	let renderRow = ({item}: {item: StudentOrgType}) => (
-		<ListRow arrowPosition="top" onPress={() => onPressOrg(item)}>
-			<Column flex={1}>
-				<Title lines={1}>{item.name}</Title>
-				<Detail lines={1}>{item.category}</Detail>
-			</Column>
-		</ListRow>
-	)
 
 	return (
 		<View style={styles.wrapper}>
@@ -125,16 +106,26 @@ function StudentOrgsView(): JSX.Element {
 			<SectionList
 				ItemSeparatorComponent={ListSeparator}
 				ListEmptyComponent={
-					<NoticeView text={`No results found for "${query}"`} />
+					searchQuery ? (
+						<NoticeView text={`No results found for "${searchQuery}"`} />
+					) : (
+						<NoticeView text="No organizations found." />
+					)
 				}
 				contentContainerStyle={styles.contentContainer}
 				keyExtractor={(item) => item.name + item.category}
 				keyboardDismissMode="on-drag"
 				keyboardShouldPersistTaps="never"
-				refreshControl={
-					<RefreshControl onRefresh={reload} refreshing={isPending} />
-				}
-				renderItem={renderRow}
+				onRefresh={reload}
+				refreshing={isPending && !isInitial}
+				renderItem={({item}) => (
+					<ListRow arrowPosition="top" onPress={() => onPressOrg(item)}>
+						<Column flex={1}>
+							<Title lines={1}>{item.name}</Title>
+							<Detail lines={1}>{item.category}</Detail>
+						</Column>
+					</ListRow>
+				)}
 				renderSectionHeader={({section: {title}}) => (
 					<ListSectionHeader title={title} />
 				)}
