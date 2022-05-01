@@ -2,9 +2,9 @@ import * as React from 'react'
 import Clipboard from '@react-native-community/clipboard'
 import glamorous from 'glamorous-native'
 import {openUrl} from '@frogpond/open-url'
-import {ActionSheetProps, useActionSheet} from '@expo/react-native-action-sheet'
-
+import {useActionSheet} from '@expo/react-native-action-sheet'
 import * as c from '@frogpond/colors'
+import {TextProps} from 'react-native'
 
 export const LinkText = glamorous.text({
 	textDecorationLine: 'underline',
@@ -12,11 +12,10 @@ export const LinkText = glamorous.text({
 	color: c.infoBlue,
 })
 
-type Props = React.PropsWithChildren<{
+type Props = TextProps & {
 	href: string
 	title?: string
-	showActionSheetWithOptions: ActionSheetProps['showActionSheetWithOptions']
-}>
+}
 
 type Callback = ({title, href}: {title?: string; href: string}) => void
 
