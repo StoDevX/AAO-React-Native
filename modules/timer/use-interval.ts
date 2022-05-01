@@ -51,12 +51,10 @@ export function useInterval(
 			// Set new timeout
 			expected.current = expectedTimestamp + interval * ticks
 			// Save timeout id
-			// eslint-disable-next-line @typescript-eslint/no-use-before-define
 			set(Math.max(interval - delay, 1))
 			// Call callback function with amount of ticks passed
 			savedCallback.current(ticks)
 		} else {
-			// eslint-disable-next-line @typescript-eslint/no-use-before-define
 			set(interval)
 			// Without self correction ticks are undefined (or equivalently equal to 1)
 			savedCallback.current()
@@ -75,7 +73,6 @@ export function useInterval(
 			if (active.current) {
 				timer.current = setTimeout(tick, ms)
 			} else {
-				// eslint-disable-next-line no-console
 				console.debug(
 					'Trying to set interval timeout on inactive timer, this is no-op and probably indicates bug in your code.',
 				)
