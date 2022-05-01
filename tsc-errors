@@ -46,7 +46,7 @@ modules/navigation-tabs/tabbed-view.ts(24,7): error TS2322: Type '(<ParamList ex
   Type '<ParamList extends ParamListBase>() => TypedNavigator<ParamList, TabNavigationState<ParamListBase>, MaterialBottomTabNavigationOptions, MaterialBottomTabNavigationEventMap, ({ id, initialRouteName, backBehavior, children, screenListeners, screenOptions, ...rest }: Props) => Element>' is not assignable to type '(screens: Record<string, NavigationScreenRouteConfig>, options?: ScreenOptions | undefined) => ComponentType'.
     Type 'TypedNavigator<ParamListBase, TabNavigationState<ParamListBase>, MaterialBottomTabNavigationOptions, MaterialBottomTabNavigationEventMap, ({ id, initialRouteName, backBehavior, children, screenListeners, screenOptions, ...rest }: Props) => Element>' is not assignable to type 'ComponentType'.
       Type 'TypedNavigator<ParamListBase, TabNavigationState<ParamListBase>, MaterialBottomTabNavigationOptions, MaterialBottomTabNavigationEventMap, ({ id, initialRouteName, backBehavior, children, screenListeners, screenOptions, ...rest }: Props) => Element>' provides no match for the signature '(screens: { [key: string]: NavigationScreenRouteConfig; }, options?: ScreenOptions | undefined): unknown'.
-source/app.tsx(35,9): error TS2322: Type '(prevState: Readonly<{ key: string; index: number; routeNames: string[]; history?: unknown[] | undefined; routes: NavigationRoute<ParamListBase, string>[]; type: string; stale: false; }>, currentState: Readonly<...>) => void' is not assignable to type '(state: Readonly<{ key: string; index: number; routeNames: string[]; history?: unknown[] | undefined; routes: NavigationRoute<ParamListBase, string>[]; type: string; stale: false; }> | undefined) => void'.
+source/app.tsx(36,9): error TS2322: Type '(prevState: Readonly<{ key: string; index: number; routeNames: string[]; history?: unknown[] | undefined; routes: NavigationRoute<ParamListBase, string>[]; type: string; stale: false; }>, currentState: Readonly<...>) => void' is not assignable to type '(state: Readonly<{ key: string; index: number; routeNames: string[]; history?: unknown[] | undefined; routes: NavigationRoute<ParamListBase, string>[]; type: string; stale: false; }> | undefined) => void'.
 source/lib/login.ts(22,2): error TS2322: Type 'Promise<false | Result | {}>' is not assignable to type 'Promise<false | Result>'.
   Type 'false | Result | {}' is not assignable to type 'false | Result'.
     Type '{}' is not assignable to type 'false | Result'.
@@ -112,12 +112,6 @@ source/views/building-hours/lib/__tests__/is-building-open.test.ts(31,3): error 
 source/views/building-hours/lib/__tests__/is-building-open.test.ts(51,3): error TS2740: Type '{}' is missing the following properties from type 'BreakScheduleContainerType': fall, thanksgiving, christmasfest, winter, and 4 more.
 source/views/building-hours/lib/__tests__/is-building-open.test.ts(75,3): error TS2740: Type '{}' is missing the following properties from type 'BreakScheduleContainerType': fall, thanksgiving, christmasfest, winter, and 4 more.
 source/views/building-hours/lib/__tests__/is-building-open.test.ts(95,3): error TS2740: Type '{}' is missing the following properties from type 'BreakScheduleContainerType': fall, thanksgiving, christmasfest, winter, and 4 more.
-source/views/building-hours/row.tsx(67,17): error TS7053: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{ Open: string; Closed: string; }'.
-  No index signature with a parameter of type 'string' was found on type '{ Open: string; Closed: string; }'.
-source/views/building-hours/row.tsx(68,19): error TS7053: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{ Open: string; Closed: string; }'.
-  No index signature with a parameter of type 'string' was found on type '{ Open: string; Closed: string; }'.
-source/views/building-hours/row.tsx(141,11): error TS2322: Type 'string | null' is not assignable to type 'string | undefined'.
-  Type 'null' is not assignable to type 'string | undefined'.
 source/views/contacts/detail.tsx(33,3): error TS2322: Type 'null' is not assignable to type 'string | number | undefined'.
 source/views/contacts/detail.tsx(54,58): error TS2339: Property 'route' does not exist on type 'Readonly<Props> & Readonly<{ children?: ReactNode; }>'.
 source/views/contacts/detail.tsx(63,28): error TS2339: Property 'route' does not exist on type 'Readonly<Props> & Readonly<{ children?: ReactNode; }>'.
@@ -228,13 +222,6 @@ source/views/sis/course-search/search.tsx(224,3): error TS2769: No overload matc
 source/views/sis/index.ts(8,29): error TS2307: Cannot find module './student-work/detail' or its corresponding type declarations.
 source/views/sis/index.ts(18,1): error TS2571: Object is of type 'unknown'.
 source/views/sis/student-work/index.tsx(70,40): error TS2304: Cannot find name 'mixed'.
-source/views/stoprint/components/error.tsx(38,31): error TS2769: No overload matches this call.
-  Overload 1 of 2, '(props: IconProps | Readonly<IconProps>): Icon', gave the following error.
-    Type 'string | undefined' is not assignable to type 'string'.
-      Type 'undefined' is not assignable to type 'string'.
-  Overload 2 of 2, '(props: IconProps, context: any): Icon', gave the following error.
-    Type 'string | undefined' is not assignable to type 'string'.
-      Type 'undefined' is not assignable to type 'string'.
 source/views/stoprint/print-jobs.tsx(223,36): error TS2345: Argument of type 'ThunkAction<LogInActions>' is not assignable to parameter of type 'AnyAction'.
 source/views/stoprint/print-jobs.tsx(227,18): error TS2345: Argument of type 'ThunkAction<UpdatePrintJobsAction>' is not assignable to parameter of type 'AnyAction'.
   Property 'type' is missing in type 'ThunkAction<UpdatePrintJobsAction>' but required in type 'AnyAction'.
@@ -279,10 +266,6 @@ source/views/streaming/streams/list.tsx(42,2): error TS2416: Property 'state' in
     Types of property 'error' are incompatible.
       Type 'null' is not assignable to type 'string | undefined'.
 source/views/streaming/webcams/list.tsx(56,23): error TS2339: Property 'name' does not exist on type 'never'.
-source/views/student-orgs/list.tsx(28,10): error TS2503: Cannot find namespace 'window'.
-source/views/student-orgs/list.tsx(65,12): error TS2345: Argument of type '(args: {    signal: window.AbortController;}) => Promise<Array<StudentOrgType>>' is not assignable to parameter of type 'PromiseFn<StudentOrgType[]>'.
-  Types of parameters 'args' and 'props' are incompatible.
-    Property 'signal' is missing in type 'AsyncProps<StudentOrgType[]>' but required in type '{ signal: window.AbortController; }'.
 source/views/transportation/index.tsx(12,13): error TS7031: Binding element 'navigation' implicitly has an 'any' type.
 source/views/transportation/index.tsx(22,13): error TS7031: Binding element 'navigation' implicitly has an 'any' type.
 source/views/transportation/index.tsx(32,13): error TS7031: Binding element 'navigation' implicitly has an 'any' type.
