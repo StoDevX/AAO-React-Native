@@ -1,7 +1,7 @@
 import * as React from 'react'
 import {RefreshControl, StyleSheet} from 'react-native'
 import * as c from '@frogpond/colors'
-import {View, ScrollView} from 'glamorous-native'
+import glamorous from 'glamorous-native'
 import {Markdown} from '@frogpond/markdown'
 import {LoadingView} from '@frogpond/notice'
 import {API} from '@frogpond/api'
@@ -55,16 +55,16 @@ function FaqView(): JSX.Element {
 	}
 
 	return (
-		<ScrollView
+		<glamorous.ScrollView
 			backgroundColor={c.white}
 			contentContainerStyle={styles.container}
 			contentInsetAdjustmentBehavior="automatic"
 			refreshControl={refreshControl}
 		>
-			<View paddingVertical={15}>
+			<glamorous.View paddingVertical={15}>
 				<Markdown source={text} />
-			</View>
-		</ScrollView>
+			</glamorous.View>
+		</glamorous.ScrollView>
 	)
 }
 
