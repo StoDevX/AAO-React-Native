@@ -138,11 +138,6 @@
 ./modules/tableview/cells/toggle.tsx
   10:30  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
 
-./modules/timer/hook.ts
-  1:8  warning  'React' is defined but never used. Allowed unused vars must match /^_/u     @typescript-eslint/no-unused-vars
-  5:9  warning  'memoize' is defined but never used. Allowed unused vars must match /^_/u   @typescript-eslint/no-unused-vars
-  6:9  warning  'timezone' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
-
 ./modules/toolbar/toolbar-button.tsx
   37:8  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
 
@@ -526,5 +521,5 @@
 ./source/views/transportation/other-modes/detail.tsx
   52:57  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
 
-✖ 319 problems (0 errors, 319 warnings)
+✖ 316 problems (0 errors, 316 warnings)
 
