@@ -11,12 +11,10 @@ export const ListText = glamorous(Paragraph)({
 })
 
 // the list item's container box thing
-type Props = {
-	children?: React.Node
-}
+type Props = React.PropsWithChildren<void>
 
 export class ListItem extends React.PureComponent<Props> {
-	render() {
+	render(): JSX.Element {
 		return (
 			<View alignItems="center" flexDirection="row">
 				<BaseText paddingRight={4}>• </BaseText>

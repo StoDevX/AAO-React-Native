@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {View} from 'react-native'
+import {StyleProp, TextStyle, View, ViewStyle} from 'react-native'
 import glamorous from 'glamorous-native'
 import ReactMarkdown from 'react-markdown'
 
@@ -21,29 +21,28 @@ const HorizontalRule = glamorous.view({
 	backgroundColor: 'black',
 })
 
-type MarkdownBlockEnum =
-	| 'BlockQuote'
-	| 'Code'
-	| 'CodeBlock'
-	| 'Emph'
-	| 'Heading'
-	| 'Image'
-	| 'ListItem'
-	| 'Link'
-	| 'List'
-	| 'Paragraph'
-	| 'Strong'
-	| 'ThematicBreak'
-
-type StyleSheetRule = number | any | Array<StyleSheetRule>
-
 type Props = {
-	styles?: {[key: MarkdownBlockEnum]: StyleSheetRule}
+	styles?: {
+		BlockQuote: StyleProp<TextStyle>
+		Code: StyleProp<TextStyle>
+		CodeBlock: StyleProp<TextStyle>
+		Emph: StyleProp<TextStyle>
+		Heading: StyleProp<TextStyle>
+		Image: StyleProp<ViewStyle>
+		ListItem: StyleProp<TextStyle>
+		Link: StyleProp<TextStyle>
+		List: StyleProp<ViewStyle>
+		Paragraph: StyleProp<TextStyle>
+		Strong: StyleProp<TextStyle>
+		ThematicBreak: StyleProp<TextStyle>
+	}
 	source: string
 }
 
+type MarkdownBlockEnum = keyof Props['styles']
+
 export class Markdown extends React.PureComponent<Props> {
-	render() {
+	render(): JSX.Element {
 		const {styles = {}, source} = this.props
 		return (
 			<ReactMarkdown
