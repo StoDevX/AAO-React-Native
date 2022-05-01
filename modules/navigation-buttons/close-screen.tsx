@@ -13,7 +13,10 @@ type Props = {
 	buttonStyle?: any
 }
 
-export function CloseScreenButton({navigation, buttonStyle}: Props) {
+export function CloseScreenButton({
+	navigation,
+	buttonStyle,
+}: Props): JSX.Element {
 	return (
 		<Touchable
 			accessibilityLabel="Close the screen"
