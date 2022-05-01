@@ -128,7 +128,7 @@ function StudentOrgsView(): JSX.Element {
 					<NoticeView text={`No results found for "${query}"`} />
 				}
 				contentContainerStyle={styles.contentContainer}
-				keyExtractor={(item, index) => item.name + index}
+				keyExtractor={(item) => item.name + item.category}
 				keyboardDismissMode="on-drag"
 				keyboardShouldPersistTaps="never"
 				refreshControl={
