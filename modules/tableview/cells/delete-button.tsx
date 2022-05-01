@@ -7,6 +7,9 @@ const deleteStyles = StyleSheet.create({
 	text: {textAlign: 'center', color: c.red},
 })
 
+// eslint-disable-next-line @typescript-eslint/no-empty-function
+const noop = () => {}
+
 export const DeleteButtonCell = ({
 	title,
 	skipConfirm = false,
@@ -14,14 +17,14 @@ export const DeleteButtonCell = ({
 }: {
 	title: string
 	skipConfirm?: boolean
-	onPress?: () => any
+	onPress?: () => void
 }): JSX.Element => {
-	let onPressCallback = onPress ? onPress : () => {}
+	let onPressCallback = onPress ?? noop
 
 	let callback = !skipConfirm
 		? () =>
 				Alert.alert(title, 'Are you sure you want to remove this?', [
-					{text: 'Cancel', onPress: () => {}, style: 'cancel'},
+					{text: 'Cancel', onPress: noop, style: 'cancel'},
 					{text: 'Delete', onPress: onPressCallback, style: 'destructive'},
 				])
 		: onPressCallback
