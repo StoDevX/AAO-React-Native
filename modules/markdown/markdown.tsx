@@ -23,23 +23,21 @@ const HorizontalRule = glamorous.view({
 
 type Props = {
 	styles?: {
-		BlockQuote: StyleProp<TextStyle>
-		Code: StyleProp<TextStyle>
-		CodeBlock: StyleProp<TextStyle>
-		Emph: StyleProp<TextStyle>
-		Heading: StyleProp<TextStyle>
-		Image: StyleProp<ViewStyle>
-		ListItem: StyleProp<TextStyle>
-		Link: StyleProp<TextStyle>
-		List: StyleProp<ViewStyle>
-		Paragraph: StyleProp<TextStyle>
-		Strong: StyleProp<TextStyle>
-		ThematicBreak: StyleProp<TextStyle>
+		BlockQuote?: StyleProp<TextStyle>
+		Code?: StyleProp<TextStyle>
+		CodeBlock?: StyleProp<TextStyle>
+		Emph?: StyleProp<TextStyle>
+		Heading?: StyleProp<TextStyle>
+		Image?: StyleProp<ViewStyle>
+		ListItem?: StyleProp<TextStyle>
+		Link?: StyleProp<TextStyle>
+		List?: StyleProp<ViewStyle>
+		Paragraph?: StyleProp<TextStyle>
+		Strong?: StyleProp<TextStyle>
+		ThematicBreak?: StyleProp<TextStyle>
 	}
 	source: string
 }
-
-type MarkdownBlockEnum = keyof Props['styles']
 
 export class Markdown extends React.PureComponent<Props> {
 	render(): JSX.Element {
