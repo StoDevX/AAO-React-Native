@@ -75,12 +75,6 @@
 ./modules/toolbar/toolbar-button.tsx
   37:8  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
 
-./modules/viewport/index.ts
-  19:2   warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
-  23:2   warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
-  27:22  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
-  31:2   warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
-
 ./source/redux/init.ts
   11:41  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
 
@@ -421,9 +415,6 @@
 ./source/views/streaming/movie.tsx
   5:16  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
 
-./source/views/streaming/radio/station-ksto.tsx
-  25:8  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
-
 ./source/views/streaming/streams/list.tsx
    49:2   warning  Missing return type on function                              @typescript-eslint/explicit-module-boundary-types
    61:15  warning  Missing return type on function                              @typescript-eslint/explicit-module-boundary-types
@@ -437,11 +428,6 @@
 ./source/views/streaming/streams/row.tsx
   51:18  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
   56:2   warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
-
-./source/views/streaming/webcams/list.tsx
-  35:2   warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
-  39:14  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
-  45:2   warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
 
 ./source/views/streaming/webcams/thumbnail.tsx
   18:16  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
@@ -461,5 +447,5 @@
 ./source/views/transportation/other-modes/detail.tsx
   52:57  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
 
-✖ 288 problems (0 errors, 288 warnings)
+✖ 280 problems (0 errors, 280 warnings)
 
