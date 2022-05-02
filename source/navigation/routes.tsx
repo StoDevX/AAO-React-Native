@@ -112,6 +112,7 @@ export function RootStack(): JSX.Element {
 					component={settings.IconSettingsView}
 					name="IconSettings"
 				/>
+				<Stack.Screen component={settings.CreditsView} name="Credits" />
 			</Stack.Group>
 			<Stack.Group>
 				<Stack.Screen
@@ -148,7 +149,6 @@ export function RootStack(): JSX.Element {
 				/>
 			</Stack.Group>
 			{/*
-			<Stack.Screen component={Credits} name="Credits" />
 			<Stack.Screen component={Debug} name="Debug" />
 			<Stack.Screen component={APITest} name="APITest" />
 			<Stack.Screen component={DictionaryDetail} name="DictionaryDetail" />
