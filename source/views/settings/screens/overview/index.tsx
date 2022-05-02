@@ -32,7 +32,7 @@ function SettingsView(props: {
 
 				<SupportSection navigation={props.navigation} />
 
-				<MiscellanySection navigation={props.navigation} />
+				<MiscellanySection />
 
 				<OddsAndEndsSection navigation={props.navigation} />
 
