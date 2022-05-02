@@ -1,3 +1,4 @@
+import React from 'react'
 // import {HomeView} from '../views/home'
 // import * as Calendar from '../views/calendar'
 import {EventType} from '@frogpond/event-type'
@@ -55,6 +56,10 @@ export type RootStackParamList = {
 	PrintJobs: undefined
 	PrinterList: undefined
 	PrintJobRelease: undefined
+}
+
+export type OnChangeTextType = {
+	nativeEvent: {text: React.SetStateAction<string>}
 }
 
 // this block sourced from https://reactnavigation.org/docs/typescript/#specifying-default-types-for-usenavigation-link-ref-etc
