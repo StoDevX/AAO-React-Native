@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {Image, ScrollView, StyleSheet} from 'react-native'
+import {Image, ImageSourcePropType, ScrollView, StyleSheet} from 'react-native'
 import * as Icons from '@hawkrives/react-native-alternate-icons'
 import {Cell, Section, TableView} from '@frogpond/tableview'
 import {icons as appIcons} from '../../../../images/icons'
@@ -19,7 +19,7 @@ const styles = StyleSheet.create({
 type IconTypeEnum = 'default' | 'icon_type_windmill'
 
 type Icon = {
-	src: any
+	src: ImageSourcePropType
 	title: string
 	type: IconTypeEnum
 }
