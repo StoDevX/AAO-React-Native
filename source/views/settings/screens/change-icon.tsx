@@ -113,5 +113,5 @@ let IconCell = (props: IconCellProps) => {
 }
 
 export const NavigationOptions: NativeStackNavigationOptions = {
-	title: 'Icon Settings',
+	title: 'App Icon',
 }
