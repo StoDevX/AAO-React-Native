@@ -7,7 +7,7 @@ import {useTheme} from '@frogpond/app-theme'
 type PropsType = {
 	label: string
 	value: boolean
-	onChange: (val: boolean) => any
+	onChange: (val: boolean) => void
 	detail?: string
 	disabled?: boolean
 }

@@ -1,8 +1,6 @@
 import * as React from 'react'
-import {Text} from 'react-native'
+import {Text, TextProps} from 'react-native'
 
-type Props = unknown
-
-export function SelectableText(props: Props) {
-	return <Text selectable={true} {...props} />
+export function SelectableText(props: TextProps): JSX.Element {
+	return <Text {...props} selectable={true} />
 }
