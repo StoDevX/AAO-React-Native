@@ -81,7 +81,7 @@ source/views/building-hours/row.tsx(141,11): error TS2322: Type 'string | null' 
   Type 'null' is not assignable to type 'string | undefined'.
 source/views/contacts/detail.tsx(55,58): error TS2339: Property 'route' does not exist on type 'Readonly<Props> & Readonly<{ children?: ReactNode; }>'.
 source/views/contacts/detail.tsx(64,28): error TS2339: Property 'route' does not exist on type 'Readonly<Props> & Readonly<{ children?: ReactNode; }>'.
-source/views/dictionary/list.tsx(26,10): error TS2503: Cannot find namespace 'window'.
+source/views/dictionary/list.tsx(27,10): error TS2503: Cannot find namespace 'window'.
 source/views/help/index.tsx(34,18): error TS2345: Argument of type 'ThunkAction<GetEnabledToolsAction>' is not assignable to parameter of type 'AnyAction'.
 source/views/menus/index.tsx(18,13): error TS7031: Binding element 'navigation' implicitly has an 'any' type.
 source/views/menus/index.tsx(40,13): error TS7031: Binding element 'navigation' implicitly has an 'any' type.
