@@ -17,6 +17,7 @@ import * as contacts from '../views/contacts'
 // 	DictionaryEditor,
 // 	Dictionary,
 // } from '../views/dictionary'
+import * as dictionary from '../views/dictionary'
 import * as faqs from '../views/faqs'
 // import {Help} from '../views/help'
 // import {
@@ -143,13 +144,27 @@ export function RootStack(): JSX.Element {
 					options={contacts.DetailNavigationOptions}
 				/>
 			</Stack.Group>
+			<Stack.Group>
+				<Stack.Screen
+					component={dictionary.DictionaryView}
+					name="Dictionary"
+					options={dictionary.NavigationOptions}
+				/>
+				<Stack.Screen
+					component={dictionary.DictionaryDetailView}
+					name="DictionaryDetail"
+					options={dictionary.DetailNavigationOptions}
+				/>
+				<Stack.Screen
+					component={dictionary.DictionaryEditorView}
+					name="DictionaryEditor"
+					options={dictionary.EditorNavigationOptions}
+				/>
+			</Stack.Group>
 			{/*
 			<Stack.Screen component={Credits} name="Credits" />
 			<Stack.Screen component={Debug} name="Debug" />
 			<Stack.Screen component={APITest} name="APITest" />
-			<Stack.Screen component={DictionaryDetail} name="DictionaryDetail" />
-			<Stack.Screen component={Dictionary} name="Dictionary" />
-			<Stack.Screen component={DictionaryEditor} name="DictionaryEditor" />
 			<Stack.Screen component={EventDetail} name="EventDetail" />
 			<Stack.Screen component={Help} name="Help" />
 			<Stack.Screen component={JobDetail} name="JobDetail" />

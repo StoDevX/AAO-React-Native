@@ -9,6 +9,7 @@ import * as calendar from '../views/calendar'
 import {ContactType} from '../views/contacts/types'
 import {StudentOrgType} from '../views/student-orgs/types'
 import {RouteParams as HoursEditorType} from '../views/building-hours/report/editor'
+import {WordType} from '../views/dictionary/types'
 
 export type RootStackParamList = {
 	Home: undefined
@@ -25,9 +26,9 @@ export type RootStackParamList = {
 	Credits: undefined
 	Debug: undefined
 	APITest: undefined
-	DictionaryDetail: undefined
+	DictionaryDetail: {item: WordType}
 	Dictionary: undefined
-	DictionaryEditor: undefined
+	DictionaryEditor: {item: WordType}
 	Faq: undefined
 	Help: undefined
 	JobDetail: undefined
