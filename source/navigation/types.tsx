@@ -58,8 +58,12 @@ export type RootStackParamList = {
 	PrintJobRelease: undefined
 }
 
-export type OnChangeTextType = {
+export interface ChangeTextEvent {
 	nativeEvent: {text: React.SetStateAction<string>}
+}
+
+export interface OnChangeTextHandler {
+	onChange: (event: ChangeTextEvent) => void
 }
 
 // this block sourced from https://reactnavigation.org/docs/typescript/#specifying-default-types-for-usenavigation-link-ref-etc
