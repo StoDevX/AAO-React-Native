@@ -9,11 +9,10 @@ import {
 } from '@frogpond/tableview'
 import {submitReport} from './submit'
 import type {WordType} from '../types'
-import type {TopLevelViewPropsType} from '../../types'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 import noop from 'lodash/noop'
 
-type Props = TopLevelViewPropsType & {
+type Props = {
 	route: {params: {item: WordType}}
 }
 
@@ -47,14 +46,11 @@ let DictionaryEditorView = (props: Props): JSX.Element => {
 
 			<TableView>
 				<Section header="WORD">
-					<TitleCell onChange={(newTitle) => setTerm(newTitle)} text={term} />
+					<TitleCell onChange={setTerm} text={term} />
 				</Section>
 
 				<Section header="DEFINITION">
-					<DefinitionCell
-						onChange={(newDefinition) => setDefinition(newDefinition)}
-						text={definition}
-					/>
+					<DefinitionCell onChange={setDefinition} text={definition} />
 				</Section>
 
 				<Section footer="Thanks for reporting!">
@@ -69,7 +65,7 @@ export {DictionaryEditorView as View}
 
 type TextFieldProps = {text: string; onChange: (text: string) => void}
 
-const TitleCell = ({text, onChange = () => noop}: TextFieldProps) => (
+const TitleCell = ({text, onChange = noop}: TextFieldProps) => (
 	<CellTextField
 		autoCapitalize="words"
 		onChangeText={onChange}
@@ -80,7 +76,7 @@ const TitleCell = ({text, onChange = () => noop}: TextFieldProps) => (
 	/>
 )
 
-const DefinitionCell = ({text, onChange = () => noop}: TextFieldProps) => (
+const DefinitionCell = ({text, onChange = noop}: TextFieldProps) => (
 	<CellTextField
 		autoCapitalize="sentences"
 		multiline={true}
