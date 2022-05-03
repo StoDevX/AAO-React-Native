@@ -43,16 +43,13 @@ export const DetailNavigationOptions = (props: {
 }
 
 export let DictionaryDetailView = (props: Props): JSX.Element => {
-	let [item] = React.useState<WordType>(props.route.params.item)
+	let {item} = props.route.params
 
 	let navigation = useNavigation()
 
 	let handleEditButtonPress = React.useCallback(
-		(item: WordType) =>
-			navigation.navigate('DictionaryEditor', {
-				item: item,
-			}),
-		[navigation],
+		() => navigation.navigate('DictionaryEditor', {item}),
+		[item, navigation],
 	)
 
 	return (
@@ -63,10 +60,7 @@ export let DictionaryDetailView = (props: Props): JSX.Element => {
 				styles={{Paragraph: styles.paragraph}}
 			/>
 
-			<Button
-				onPress={() => handleEditButtonPress(item)}
-				title="Suggest an Edit"
-			/>
+			<Button onPress={handleEditButtonPress} title="Suggest an Edit" />
 
 			<ListFooter title="Collected by the humans of All About Olaf" />
 		</Container>
