@@ -101,18 +101,6 @@ function DictionaryView(): JSX.Element {
 		)
 	}
 
-	let renderRow = ({item}: {item: WordType}) => (
-		<ListRow
-			arrowPosition="top"
-			onPress={() => navigation.navigate('DictionaryDetail', {item})}
-		>
-			<Title lines={1}>{item.word}</Title>
-			<Detail lines={2} style={styles.rowDetailText}>
-				{item.definition}
-			</Detail>
-		</ListRow>
-	)
-
 	return (
 		<SectionList
 			ItemSeparatorComponent={ListSeparator}
@@ -127,7 +115,19 @@ function DictionaryView(): JSX.Element {
 			refreshControl={
 				<RefreshControl onRefresh={reload} refreshing={isPending} />
 			}
-			renderItem={renderRow}
+			renderItem={({item}) => {
+				return (
+					<ListRow
+						arrowPosition="top"
+						onPress={() => navigation.navigate('DictionaryDetail', {item})}
+					>
+						<Title lines={1}>{item.word}</Title>
+						<Detail lines={2} style={styles.rowDetailText}>
+							{item.definition}
+						</Detail>
+					</ListRow>
+				)
+			}}
 			renderSectionHeader={({section: {title}}) => (
 				<ListSectionHeader title={title} />
 			)}
