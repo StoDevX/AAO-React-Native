@@ -39,7 +39,7 @@ let BusView = (props: Props): JSX.Element => {
 	}, [fetchData])
 
 	let openMap = () => {
-		// navigation.navigate('BusMapView', {line: activeBusLine})
+		activeBusLine && navigation.navigate('BusMapView', {line: activeBusLine})
 	}
 
 	if (loading) {
