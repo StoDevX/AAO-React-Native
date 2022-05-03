@@ -51,6 +51,8 @@ import * as settings from '../views/settings/'
 // } from '../views/streaming'
 import * as orgs from '../views/student-orgs'
 // import Transportation, {OtherModesDetail} from '../views/transportation'
+import * as othermodes from '../views/transportation/other-modes'
+
 // import {
 // 	PrinterList,
 // 	PrintJobRelease,
@@ -149,6 +151,13 @@ export function RootStack(): JSX.Element {
 					component={contacts.ContactsDetailView}
 					name="ContactsDetail"
 					options={contacts.DetailNavigationOptions}
+				/>
+			</Stack.Group>
+			<Stack.Group>
+				<Stack.Screen
+					component={transportation.OtherModesDetailView}
+					name="OtherModesDetail"
+					options={othermodes.OtherModesNavigationOptions}
 				/>
 			</Stack.Group>
 			{/*
