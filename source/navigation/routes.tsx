@@ -50,7 +50,7 @@ import * as settings from '../views/settings/'
 // 	KSTOSchedule,
 // } from '../views/streaming'
 import * as orgs from '../views/student-orgs'
-// import Transportation, {OtherModesDetail} from '../views/transportation'
+import * as transportation from '../views/transportation'
 import * as othermodes from '../views/transportation/other-modes'
 
 // import {
@@ -155,6 +155,11 @@ export function RootStack(): JSX.Element {
 			</Stack.Group>
 			<Stack.Group>
 				<Stack.Screen
+					component={transportation.View}
+					name="Transportation"
+					options={transportation.NavigationOptions}
+				/>
+				<Stack.Screen
 					component={transportation.OtherModesDetailView}
 					name="OtherModesDetail"
 					options={othermodes.OtherModesNavigationOptions}
@@ -196,8 +201,6 @@ export function RootStack(): JSX.Element {
 			</Stack.Group>
 			{/*
 			</Stack.Group>
-			<Stack.Screen component={Transportation} name="Transportation" />
-			<Stack.Screen component={OtherModesDetail} name="OtherModesDetail" />
 			<Stack.Screen
 				component={CarletonBurtonMenuScreen}
 				name="CarletonBurtonMenu"

@@ -1,1 +1,1 @@
-export {BusView} from './wrapper'
+export {View as BusView} from './wrapper'
