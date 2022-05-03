@@ -21,7 +21,7 @@ import type {AsyncState} from 'react-async'
 import {useDebounce} from '@frogpond/use-debounce'
 import {useNavigation} from '@react-navigation/native'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
-import {OnChangeTextType} from '../../navigation/types'
+import {ChangeTextEvent} from '../../navigation/types'
 
 const fetchDictionaryTerms = (args: {
 	signal: window.AbortController
@@ -63,7 +63,7 @@ function DictionaryView(): JSX.Element {
 		navigation.setOptions({
 			headerSearchBarOptions: {
 				barTintColor: white,
-				onChangeText: (event: OnChangeTextType) =>
+				onChangeText: (event: ChangeTextEvent) =>
 					setQuery(event.nativeEvent.text),
 			},
 		})

@@ -22,7 +22,7 @@ import type {AsyncState} from 'react-async'
 import {useDebounce} from '@frogpond/use-debounce'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 import {useNavigation} from '@react-navigation/native'
-import {OnChangeTextType} from '../../navigation/types'
+import {ChangeTextEvent} from '../../navigation/types'
 
 const fetchOrgs = (args: {
 	signal: window.AbortController
@@ -65,7 +65,7 @@ function StudentOrgsView(): JSX.Element {
 		navigation.setOptions({
 			headerSearchBarOptions: {
 				barTintColor: white,
-				onChangeText: (event: OnChangeTextType) =>
+				onChangeText: (event: ChangeTextEvent) =>
 					setQuery(event.nativeEvent.text),
 			},
 		})

@@ -109,6 +109,14 @@ export function RootStack(): JSX.Element {
 					name="Faq"
 					options={faqs.NavigationOptions}
 				/>
+				<Stack.Screen
+					component={settings.IconSettingsView}
+					name="IconSettings"
+					options={settings.IconNavigationOptions}
+				/>
+				<Stack.Screen component={settings.CreditsView} name="Credits" />
+				<Stack.Screen component={settings.PrivacyView} name="Privacy" />
+				<Stack.Screen component={settings.LegalView} name="Legal" />
 			</Stack.Group>
 			<Stack.Group>
 				<Stack.Screen
@@ -162,18 +170,14 @@ export function RootStack(): JSX.Element {
 				/>
 			</Stack.Group>
 			{/*
-			<Stack.Screen component={Credits} name="Credits" />
 			<Stack.Screen component={Debug} name="Debug" />
 			<Stack.Screen component={APITest} name="APITest" />
 			<Stack.Screen component={EventDetail} name="EventDetail" />
 			<Stack.Screen component={Help} name="Help" />
 			<Stack.Screen component={JobDetail} name="JobDetail" />
-			<Stack.Screen component={Legal} name="Legal" />
 			<Stack.Screen component={Menus} name="Menus" />
 			<Stack.Screen component={BonAppPicker} name="BonAppPicker" />
 			<Stack.Screen component={News} name="News" />
-			<Stack.Screen component={Privacy} name="Privacy" />
-			<Stack.Screen component={IconSettings} name="IconSettings" />
 			<Stack.Screen component={SIS} name="SIS" />
 			<Stack.Screen
 				component={CourseSearchResults}
