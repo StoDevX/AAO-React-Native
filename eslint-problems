@@ -221,14 +221,6 @@
   78:28  warning  Unexpected any. Specify a different type              @typescript-eslint/no-explicit-any
   83:2   warning  Missing return type on function                       @typescript-eslint/explicit-module-boundary-types
 
-./source/views/settings/screens/change-icon.tsx
-  21:7   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
-  54:2   warning  Missing return type on function           @typescript-eslint/explicit-module-boundary-types
-  58:12  warning  Missing return type on function           @typescript-eslint/explicit-module-boundary-types
-  68:12  warning  Missing return type on function           @typescript-eslint/explicit-module-boundary-types
-  73:2   warning  Missing return type on function           @typescript-eslint/explicit-module-boundary-types
-  95:42  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
-
 ./source/views/settings/screens/debug/list.tsx
   16:9   warning  Unexpected any. Specify a different type             @typescript-eslint/no-explicit-any
   20:29  warning  Missing return type on function                      @typescript-eslint/explicit-module-boundary-types
@@ -248,9 +240,6 @@
    7:28  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
   11:2   warning  Missing return type on function           @typescript-eslint/explicit-module-boundary-types
 
-./source/views/settings/screens/legal.tsx
-  14:2  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
-
 ./source/views/settings/screens/overview/developer.tsx
   10:35  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
 
@@ -260,17 +249,6 @@
 ./source/views/settings/screens/overview/login-button.tsx
    8:17  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
   12:8   warning  Missing return type on function           @typescript-eslint/explicit-module-boundary-types
-
-./source/views/settings/screens/overview/miscellany.tsx
-   8:48  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
-  19:2   warning  Missing return type on function           @typescript-eslint/explicit-module-boundary-types
-  23:32  warning  Missing return type on function           @typescript-eslint/explicit-module-boundary-types
-  28:18  warning  Missing return type on function           @typescript-eslint/explicit-module-boundary-types
-  32:20  warning  Missing return type on function           @typescript-eslint/explicit-module-boundary-types
-  33:20  warning  Missing return type on function           @typescript-eslint/explicit-module-boundary-types
-  34:18  warning  Missing return type on function           @typescript-eslint/explicit-module-boundary-types
-  35:19  warning  Missing return type on function           @typescript-eslint/explicit-module-boundary-types
-  37:20  warning  Missing return type on function           @typescript-eslint/explicit-module-boundary-types
 
 ./source/views/settings/screens/overview/odds-and-ends.tsx
    7:35  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
@@ -283,9 +261,6 @@
   34:16  warning  Missing return type on function           @typescript-eslint/explicit-module-boundary-types
   36:18  warning  Missing return type on function           @typescript-eslint/explicit-module-boundary-types
   51:2   warning  Missing return type on function           @typescript-eslint/explicit-module-boundary-types
-
-./source/views/settings/screens/privacy.tsx
-  14:2  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
 
 ./source/views/sis/balances-acknowledgement.tsx
   18:8   warning  Missing return type on function           @typescript-eslint/explicit-module-boundary-types
@@ -447,5 +422,5 @@
 ./source/views/transportation/other-modes/detail.tsx
   52:57  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
 
-✖ 280 problems (0 errors, 280 warnings)
+✖ 263 problems (0 errors, 263 warnings)
 
