@@ -115,16 +115,13 @@ source/views/settings/screens/debug/row.tsx(40,5): error TS2322: Type 'string | 
   Type 'string' is not assignable to type 'false | "DisclosureIndicator" | "Detail" | "DetailDisclosure" | "Checkmark" | undefined'.
 source/views/settings/screens/debug/row.tsx(43,5): error TS2322: Type '((key: string) => any) | null' is not assignable to type '(() => false | void) | undefined'.
   Type 'null' is not assignable to type '(() => false | void) | undefined'.
-source/views/settings/screens/legal.tsx(3,9): error TS2614: Module '"glamorous-native"' has no exported member 'View'. Did you mean to use 'import View from "glamorous-native"' instead?
-source/views/settings/screens/legal.tsx(3,15): error TS2614: Module '"glamorous-native"' has no exported member 'ScrollView'. Did you mean to use 'import ScrollView from "glamorous-native"' instead?
 source/views/settings/screens/overview/developer.tsx(5,41): error TS2307: Cannot find module 'react-navigation' or its corresponding type declarations.
 source/views/settings/screens/overview/index.tsx(4,41): error TS2307: Cannot find module 'react-navigation' or its corresponding type declarations.
 source/views/settings/screens/overview/login-credentials.tsx(140,13): error TS2345: Argument of type 'ThunkAction<LogInActions>' is not assignable to parameter of type 'AnyAction'.
   Property 'type' is missing in type 'ThunkAction<LogInActions>' but required in type 'AnyAction'.
 source/views/settings/screens/overview/login-credentials.tsx(146,12): error TS2345: Argument of type 'Promise<LogOutAction>' is not assignable to parameter of type 'AnyAction'.
   Property 'type' is missing in type 'Promise<LogOutAction>' but required in type 'AnyAction'.
-source/views/settings/screens/overview/miscellany.tsx(3,41): error TS2307: Cannot find module 'react-navigation' or its corresponding type declarations.
-source/views/settings/screens/overview/miscellany.tsx(5,24): error TS7016: Could not find a declaration file for module '@hawkrives/react-native-alternate-icons'. './node_modules/@hawkrives/react-native-alternate-icons/index.js' implicitly has an 'any' type.
+source/views/settings/screens/overview/miscellany.tsx(4,24): error TS7016: Could not find a declaration file for module '@hawkrives/react-native-alternate-icons'. './node_modules/@hawkrives/react-native-alternate-icons/index.js' implicitly has an 'any' type.
   Try `npm i --save-dev @types/hawkrives__react-native-alternate-icons` if it exists or add a new declaration (.d.ts) file containing `declare module '@hawkrives/react-native-alternate-icons';`
 source/views/settings/screens/overview/odds-and-ends.tsx(4,41): error TS2307: Cannot find module 'react-navigation' or its corresponding type declarations.
 source/views/settings/screens/overview/server-url.tsx(46,5): error TS2769: No overload matches this call.
@@ -136,8 +133,6 @@ source/views/settings/screens/overview/server-url.tsx(46,5): error TS2769: No ov
   Overload 2 of 2, '(props: Props, context: any): CellTextField', gave the following error.
     Type 'RefObject<CellTextField>' is not assignable to type '{ current: TextInput | null; }'.
 source/views/settings/screens/overview/support.tsx(4,41): error TS2307: Cannot find module 'react-navigation' or its corresponding type declarations.
-source/views/settings/screens/privacy.tsx(3,9): error TS2614: Module '"glamorous-native"' has no exported member 'View'. Did you mean to use 'import View from "glamorous-native"' instead?
-source/views/settings/screens/privacy.tsx(3,15): error TS2614: Module '"glamorous-native"' has no exported member 'ScrollView'. Did you mean to use 'import ScrollView from "glamorous-native"' instead?
 source/views/sis/balances-acknowledgement.tsx(25,18): error TS2345: Argument of type 'Promise<SisAlertSeenAction>' is not assignable to parameter of type 'AnyAction'.
   Property 'type' is missing in type 'Promise<SisAlertSeenAction>' but required in type 'AnyAction'.
 source/views/sis/balances.tsx(212,13): error TS2345: Argument of type 'ThunkAction<LogInActions>' is not assignable to parameter of type 'AnyAction'.
