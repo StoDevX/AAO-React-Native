@@ -220,9 +220,4 @@ source/views/student-orgs/list.tsx(28,10): error TS2503: Cannot find namespace '
 source/views/student-orgs/list.tsx(65,12): error TS2345: Argument of type '(args: {    signal: window.AbortController;}) => Promise<Array<StudentOrgType>>' is not assignable to parameter of type 'PromiseFn<StudentOrgType[]>'.
   Types of parameters 'args' and 'props' are incompatible.
     Property 'signal' is missing in type 'AsyncProps<StudentOrgType[]>' but required in type '{ signal: window.AbortController; }'.
-source/views/transportation/index.tsx(12,13): error TS7031: Binding element 'navigation' implicitly has an 'any' type.
-source/views/transportation/index.tsx(22,13): error TS7031: Binding element 'navigation' implicitly has an 'any' type.
-source/views/transportation/index.tsx(32,13): error TS7031: Binding element 'navigation' implicitly has an 'any' type.
-source/views/transportation/index.tsx(42,13): error TS7031: Binding element 'navigation' implicitly has an 'any' type.
-source/views/transportation/index.tsx(56,1): error TS2571: Object is of type 'unknown'.
 source/views/types.ts(5,8): error TS2307: Cannot find module 'react-navigation' or its corresponding type declarations.
