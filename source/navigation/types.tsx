@@ -8,6 +8,8 @@ import * as calendar from '../views/calendar'
 import {ContactType} from '../views/contacts/types'
 import {StudentOrgType} from '../views/student-orgs/types'
 import {RouteParams as HoursEditorType} from '../views/building-hours/report/editor'
+import {OtherModeType} from '../views/transportation/types'
+import {UnprocessedBusLine} from '../views/transportation/bus/types'
 
 export type RootStackParamList = {
 	Home: undefined
@@ -46,7 +48,8 @@ export type RootStackParamList = {
 	StudentOrgsDetail: {org: StudentOrgType}
 	StudentOrgs: undefined
 	Transportation: undefined
-	OtherModesDetail: undefined
+	BusMapView: {line: UnprocessedBusLine}
+	OtherModesDetail: {mode: OtherModeType}
 	CarletonBurtonMenu: undefined
 	CarletonLDCMenu: undefined
 	CarletonWeitzMenu: undefined
