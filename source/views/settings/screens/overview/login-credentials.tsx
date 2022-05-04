@@ -9,7 +9,6 @@ import type {LoginStateEnum} from '../../../../redux/parts/login'
 import {loadLoginCredentials} from '../../../../lib/login'
 import type {ReduxState} from '../../../../redux'
 import {useSelector, useDispatch} from 'react-redux'
-import noop from 'lodash/noop'
 import type {TextInput} from 'react-native'
 
 type ReduxStateProps = {
@@ -67,7 +66,7 @@ class CredentialsLoginSection extends React.Component<Props, State> {
 		this.props.logOutViaCredentials()
 	}
 
-	render() {
+	render(): JSX.Element {
 		let {status} = this.props
 		let {username, password, loadingCredentials, initialCheckComplete} =
 			this.state
@@ -130,7 +129,7 @@ class CredentialsLoginSection extends React.Component<Props, State> {
 	}
 }
 
-export function ConnectedCredentialsLoginSection() {
+export function ConnectedCredentialsLoginSection(): JSX.Element {
 	let dispatch = useDispatch()
 	let status = useSelector(
 		(state: ReduxState) => state.login?.status || 'initializing',

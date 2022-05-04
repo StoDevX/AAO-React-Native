@@ -1,5 +1,12 @@
 import * as React from 'react'
-import {View, Text, StyleSheet, Platform} from 'react-native'
+import {
+	View,
+	Text,
+	StyleSheet,
+	Platform,
+	StyleProp,
+	ViewStyle,
+} from 'react-native'
 import {material, iOSUIKit} from 'react-native-typography'
 import * as c from '@frogpond/colors'
 
@@ -36,14 +43,13 @@ const cardStyles = StyleSheet.create({
 	},
 })
 
-type Props = {
+type Props = React.PropsWithChildren<{
 	header?: false | string
 	footer?: false | string
-	children?: any
-	style?: any
-}
+	style?: StyleProp<ViewStyle>
+}>
 
-export function Card({header, footer, children, style}: Props) {
+export function Card({header, footer, children, style}: Props): JSX.Element {
 	return (
 		<View style={[cardStyles.card, style]}>
 			{header ? (

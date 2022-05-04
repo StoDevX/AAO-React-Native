@@ -42,8 +42,8 @@ type Props = {
 	_ref?: {current: null | React.ElementRef<typeof TextInput>}
 	disabled: boolean
 	multiline?: boolean
-	onChangeText: (value: string) => any
-	onSubmitEditing?: (value: string) => any
+	onChangeText: (value: string) => void
+	onSubmitEditing?: (value: string) => void
 	placeholder: string
 	returnKeyType: 'done' | 'next' | 'default'
 	secureTextEntry: boolean
@@ -63,11 +63,11 @@ export class CellTextField extends React.Component<Props> {
 
 	_ref = this.props._ref || React.createRef()
 
-	focusInput = () => {
+	focusInput = (): void => {
 		this._ref.current && this._ref.current.focus()
 	}
 
-	onSubmit = () => {
+	onSubmit = (): void => {
 		this.props.onSubmitEditing?.(this.props.value)
 	}
 

@@ -17,6 +17,7 @@ import * as contacts from '../views/contacts'
 // 	DictionaryEditor,
 // 	Dictionary,
 // } from '../views/dictionary'
+import * as dictionary from '../views/dictionary'
 import * as faqs from '../views/faqs'
 // import {Help} from '../views/help'
 // import {
@@ -50,7 +51,9 @@ import * as settings from '../views/settings/'
 // 	KSTOSchedule,
 // } from '../views/streaming'
 import * as orgs from '../views/student-orgs'
-// import Transportation, {OtherModesDetail} from '../views/transportation'
+import * as transportation from '../views/transportation'
+import * as othermodes from '../views/transportation/other-modes'
+
 // import {
 // 	PrinterList,
 // 	PrintJobRelease,
@@ -108,6 +111,14 @@ export function RootStack(): JSX.Element {
 					name="Faq"
 					options={faqs.NavigationOptions}
 				/>
+				<Stack.Screen
+					component={settings.IconSettingsView}
+					name="IconSettings"
+					options={settings.IconNavigationOptions}
+				/>
+				<Stack.Screen component={settings.CreditsView} name="Credits" />
+				<Stack.Screen component={settings.PrivacyView} name="Privacy" />
+				<Stack.Screen component={settings.LegalView} name="Legal" />
 			</Stack.Group>
 			<Stack.Group>
 				<Stack.Screen
@@ -143,22 +154,44 @@ export function RootStack(): JSX.Element {
 					options={contacts.DetailNavigationOptions}
 				/>
 			</Stack.Group>
+			<Stack.Group>
+				<Stack.Screen
+					component={dictionary.DictionaryView}
+					name="Dictionary"
+					options={dictionary.NavigationOptions}
+				/>
+				<Stack.Screen
+					component={dictionary.DictionaryDetailView}
+					name="DictionaryDetail"
+					options={dictionary.DetailNavigationOptions}
+				/>
+				<Stack.Screen
+					component={dictionary.DictionaryEditorView}
+					name="DictionaryEditor"
+					options={dictionary.EditorNavigationOptions}
+				/>
+			</Stack.Group>
+			<Stack.Group>
+				<Stack.Screen
+					component={transportation.View}
+					name="Transportation"
+					options={transportation.NavigationOptions}
+				/>
+				<Stack.Screen
+					component={transportation.OtherModesDetailView}
+					name="OtherModesDetail"
+					options={othermodes.OtherModesNavigationOptions}
+				/>
+			</Stack.Group>
 			{/*
-			<Stack.Screen component={Credits} name="Credits" />
 			<Stack.Screen component={Debug} name="Debug" />
 			<Stack.Screen component={APITest} name="APITest" />
-			<Stack.Screen component={DictionaryDetail} name="DictionaryDetail" />
-			<Stack.Screen component={Dictionary} name="Dictionary" />
-			<Stack.Screen component={DictionaryEditor} name="DictionaryEditor" />
 			<Stack.Screen component={EventDetail} name="EventDetail" />
 			<Stack.Screen component={Help} name="Help" />
 			<Stack.Screen component={JobDetail} name="JobDetail" />
-			<Stack.Screen component={Legal} name="Legal" />
 			<Stack.Screen component={Menus} name="Menus" />
 			<Stack.Screen component={BonAppPicker} name="BonAppPicker" />
 			<Stack.Screen component={News} name="News" />
-			<Stack.Screen component={Privacy} name="Privacy" />
-			<Stack.Screen component={IconSettings} name="IconSettings" />
 			<Stack.Screen component={SIS} name="SIS" />
 			<Stack.Screen
 				component={CourseSearchResults}
@@ -183,8 +216,6 @@ export function RootStack(): JSX.Element {
 			</Stack.Group>
 			{/*
 			</Stack.Group>
-			<Stack.Screen component={Transportation} name="Transportation" />
-			<Stack.Screen component={OtherModesDetail} name="OtherModesDetail" />
 			<Stack.Screen
 				component={CarletonBurtonMenuScreen}
 				name="CarletonBurtonMenu"

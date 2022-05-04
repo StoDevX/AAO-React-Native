@@ -1,45 +1,6 @@
 modules/event-list/types.ts(2,41): error TS2307: Cannot find module 'react-navigation' or its corresponding type declarations.
 modules/food-menu/fancy-menu.tsx(16,8): error TS2307: Cannot find module 'react-navigation' or its corresponding type declarations.
 modules/food-menu/food-item-detail.tsx(14,8): error TS2307: Cannot find module 'react-navigation' or its corresponding type declarations.
-modules/markdown/code.tsx(14,29): error TS2322: Type '{ children: Element; key: any; language: string | undefined; }' is not assignable to type 'IntrinsicAttributes & IntrinsicClassAttributes<Component<ExtraGlamorousProps & TextProps, any, any>> & Readonly<...> & Readonly<...>'.
-  Property 'language' does not exist on type 'IntrinsicAttributes & IntrinsicClassAttributes<Component<ExtraGlamorousProps & TextProps, any, any>> & Readonly<...> & Readonly<...>'.
-modules/markdown/list.tsx(2,20): error TS2614: Module '"glamorous-native"' has no exported member 'View'. Did you mean to use 'import View from "glamorous-native"' instead?
-modules/markdown/list.tsx(15,19): error TS2694: Namespace 'React' has no exported member 'Node'.
-modules/markdown/list.tsx(22,15): error TS2322: Type '{ children: string; paddingRight: number; }' is not assignable to type 'IntrinsicAttributes & IntrinsicClassAttributes<Component<ExtraGlamorousProps & TextProps & object, any, any>> & Readonly<...> & Readonly<...>'.
-  Property 'paddingRight' does not exist on type 'IntrinsicAttributes & IntrinsicClassAttributes<Component<ExtraGlamorousProps & TextProps & object, any, any>> & Readonly<...> & Readonly<...>'.
-modules/markdown/markdown.tsx(7,15): error TS2339: Property 'propTypes' does not exist on type 'typeof ReactMarkdown'.
-modules/markdown/markdown.tsx(41,13): error TS1337: An index signature parameter type cannot be a literal type or generic type. Consider using a mapped object type instead.
-modules/markdown/markdown.tsx(49,4): error TS2769: No overload matches this call.
-  Overload 2 of 2, '(props: ReactMarkdownProps, context: any): ReactMarkdown', gave the following error.
-    Type 'typeof View' is not assignable to type 'string'.
-  Overload 2 of 2, '(props: ReactMarkdownProps, context: any): ReactMarkdown', gave the following error.
-    Type '() => string' is not assignable to type 'ReactType<any>'.
-  Overload 2 of 2, '(props: ReactMarkdownProps, context: any): ReactMarkdown', gave the following error.
-    Type '() => string' is not assignable to type 'ReactType<any>'.
-modules/markdown/markdown.tsx(52,47): error TS2339: Property 'BlockQuote' does not exist on type '{}'.
-modules/markdown/markdown.tsx(53,35): error TS2339: Property 'Code' does not exist on type '{}'.
-modules/markdown/markdown.tsx(54,27): error TS2345: Argument of type 'typeof HighlightedCodeBlock' is not assignable to parameter of type 'Component<{ style?: StyleProp<AllStyles>; } & GlamorousProps & { style?: StyleProp<AllStyles>; }, AllStyles>'.
-  Type 'typeof HighlightedCodeBlock' is not assignable to type 'ComponentClass<{ style?: StyleProp<AllStyles>; } & GlamorousProps & { style?: StyleProp<AllStyles>; }, any>'.
-    Types of parameters 'props' and 'props' are incompatible.
-      Type '{ style?: StyleProp<AllStyles>; } & GlamorousProps & { style?: StyleProp<AllStyles>; }' is not assignable to type 'Props | Readonly<Props>'.
-modules/markdown/markdown.tsx(54,45): error TS2339: Property 'CodeBlock' does not exist on type '{}'.
-modules/markdown/markdown.tsx(55,35): error TS2339: Property 'Emph' does not exist on type '{}'.
-modules/markdown/markdown.tsx(57,41): error TS2339: Property 'Heading' does not exist on type '{}'.
-modules/markdown/markdown.tsx(58,37): error TS2339: Property 'Image' does not exist on type '{}'.
-modules/markdown/markdown.tsx(59,22): error TS2345: Argument of type 'typeof ListItem' is not assignable to parameter of type 'Component<{ style?: StyleProp<AllStyles>; } & GlamorousProps & { style?: StyleProp<AllStyles>; }, AllStyles>'.
-  Type 'typeof ListItem' is not assignable to type 'ComponentClass<{ style?: StyleProp<AllStyles>; } & GlamorousProps & { style?: StyleProp<AllStyles>; }, any>'.
-    Types of parameters 'props' and 'props' are incompatible.
-      Type '{ style?: StyleProp<AllStyles>; } & GlamorousProps & { style?: StyleProp<AllStyles>; }' is not assignable to type 'Props | Readonly<Props>'.
-modules/markdown/markdown.tsx(59,39): error TS2339: Property 'ListItem' does not exist on type '{}'.
-modules/markdown/markdown.tsx(60,22): error TS2345: Argument of type '((props: Props) => Element) & NonReactStatics<ComponentType<Props & ActionSheetProps>, {}>' is not assignable to parameter of type 'Component<{ style?: StyleProp<AllStyles>; } & GlamorousProps & { style?: StyleProp<AllStyles>; }, AllStyles>'.
-  Type '((props: Props) => Element) & NonReactStatics<ComponentType<Props & ActionSheetProps>, {}>' is not assignable to type 'StatelessComponent<{ style?: StyleProp<AllStyles>; } & GlamorousProps & { style?: StyleProp<AllStyles>; }>'.
-    Types of parameters 'props' and 'props' are incompatible.
-      Type 'PropsWithChildren<{ style?: StyleProp<AllStyles>; } & GlamorousProps & { style?: StyleProp<AllStyles>; }>' is missing the following properties from type 'Props': href, showShareActionSheetWithOptions, showActionSheetWithOptions
-modules/markdown/markdown.tsx(60,35): error TS2339: Property 'Link' does not exist on type '{}'.
-modules/markdown/markdown.tsx(61,35): error TS2339: Property 'List' does not exist on type '{}'.
-modules/markdown/markdown.tsx(62,45): error TS2339: Property 'Paragraph' does not exist on type '{}'.
-modules/markdown/markdown.tsx(64,39): error TS2339: Property 'Strong' does not exist on type '{}'.
-modules/markdown/markdown.tsx(65,54): error TS2339: Property 'ThematicBreak' does not exist on type '{}'.
 modules/navigation-buttons/close-screen.tsx(8,8): error TS2307: Cannot find module 'react-navigation' or its corresponding type declarations.
 modules/navigation-tabs/tabbed-view.ts(2,43): error TS2307: Cannot find module 'react-navigation' or its corresponding type declarations.
 modules/navigation-tabs/tabbed-view.ts(24,7): error TS2322: Type '(<ParamList extends ParamListBase>() => TypedNavigator<ParamList, TabNavigationState<ParamListBase>, MaterialBottomTabNavigationOptions, MaterialBottomTabNavigationEventMap, ({ id, initialRouteName, backBehavior, children, screenListeners, screenOptions, ...rest }: Props) => Element>) | (<ParamList extends ParamList...' is not assignable to type '(screens: Record<string, NavigationScreenRouteConfig>, options?: ScreenOptions | undefined) => ComponentType'.
@@ -112,29 +73,10 @@ source/views/building-hours/lib/__tests__/is-building-open.test.ts(31,3): error 
 source/views/building-hours/lib/__tests__/is-building-open.test.ts(51,3): error TS2740: Type '{}' is missing the following properties from type 'BreakScheduleContainerType': fall, thanksgiving, christmasfest, winter, and 4 more.
 source/views/building-hours/lib/__tests__/is-building-open.test.ts(75,3): error TS2740: Type '{}' is missing the following properties from type 'BreakScheduleContainerType': fall, thanksgiving, christmasfest, winter, and 4 more.
 source/views/building-hours/lib/__tests__/is-building-open.test.ts(95,3): error TS2740: Type '{}' is missing the following properties from type 'BreakScheduleContainerType': fall, thanksgiving, christmasfest, winter, and 4 more.
-source/views/contacts/detail.tsx(33,3): error TS2322: Type 'null' is not assignable to type 'string | number | undefined'.
-source/views/contacts/detail.tsx(54,58): error TS2339: Property 'route' does not exist on type 'Readonly<Props> & Readonly<{ children?: ReactNode; }>'.
-source/views/contacts/detail.tsx(63,28): error TS2339: Property 'route' does not exist on type 'Readonly<Props> & Readonly<{ children?: ReactNode; }>'.
-source/views/contacts/detail.tsx(72,53): error TS2769: No overload matches this call.
-  Overload 1 of 2, '(props: ImageProps | Readonly<ImageProps>): Image', gave the following error.
-    Type 'ViewStyle | TextStyle | ImageStyle' is not assignable to type 'StyleProp<ImageStyle>'.
-      Type 'ViewStyle' is not assignable to type 'StyleProp<ImageStyle>'.
-        Type 'ViewStyle' is not assignable to type 'ImageStyle'.
-          Types of property 'overflow' are incompatible.
-            Type '"visible" | "hidden" | "scroll" | undefined' is not assignable to type '"visible" | "hidden" | undefined'.
-              Type '"scroll"' is not assignable to type '"visible" | "hidden" | undefined'.
-  Overload 2 of 2, '(props: ImageProps, context: any): Image', gave the following error.
-    Type 'ViewStyle | TextStyle | ImageStyle' is not assignable to type 'StyleProp<ImageStyle>'.
-source/views/dictionary/list.tsx(26,10): error TS2503: Cannot find namespace 'window'.
-source/views/faqs/index.tsx(4,9): error TS2614: Module '"glamorous-native"' has no exported member 'View'. Did you mean to use 'import View from "glamorous-native"' instead?
-source/views/faqs/index.tsx(4,15): error TS2614: Module '"glamorous-native"' has no exported member 'ScrollView'. Did you mean to use 'import ScrollView from "glamorous-native"' instead?
+source/views/contacts/detail.tsx(55,58): error TS2339: Property 'route' does not exist on type 'Readonly<Props> & Readonly<{ children?: ReactNode; }>'.
+source/views/contacts/detail.tsx(64,28): error TS2339: Property 'route' does not exist on type 'Readonly<Props> & Readonly<{ children?: ReactNode; }>'.
+source/views/dictionary/list.tsx(27,10): error TS2503: Cannot find namespace 'window'.
 source/views/help/index.tsx(34,18): error TS2345: Argument of type 'ThunkAction<GetEnabledToolsAction>' is not assignable to parameter of type 'AnyAction'.
-source/views/home/notice.tsx(31,14): error TS2339: Property 'View' does not exist on type 'typeof import("./node_modules/glamorous-native/typings/glamorous")'.
-source/views/home/notice.tsx(36,15): error TS2339: Property 'View' does not exist on type 'typeof import("./node_modules/glamorous-native/typings/glamorous")'.
-source/views/home/notice.tsx(37,16): error TS2339: Property 'Text' does not exist on type 'typeof import("./node_modules/glamorous-native/typings/glamorous")'.
-source/views/home/notice.tsx(39,17): error TS2339: Property 'Text' does not exist on type 'typeof import("./node_modules/glamorous-native/typings/glamorous")'.
-source/views/home/notice.tsx(40,16): error TS2339: Property 'View' does not exist on type 'typeof import("./node_modules/glamorous-native/typings/glamorous")'.
-source/views/home/notice.tsx(41,15): error TS2339: Property 'View' does not exist on type 'typeof import("./node_modules/glamorous-native/typings/glamorous")'.
 source/views/menus/index.tsx(18,13): error TS7031: Binding element 'navigation' implicitly has an 'any' type.
 source/views/menus/index.tsx(40,13): error TS7031: Binding element 'navigation' implicitly has an 'any' type.
 source/views/menus/index.tsx(62,13): error TS7031: Binding element 'navigation' implicitly has an 'any' type.
@@ -167,16 +109,13 @@ source/views/settings/screens/debug/row.tsx(40,5): error TS2322: Type 'string | 
   Type 'string' is not assignable to type 'false | "DisclosureIndicator" | "Detail" | "DetailDisclosure" | "Checkmark" | undefined'.
 source/views/settings/screens/debug/row.tsx(43,5): error TS2322: Type '((key: string) => any) | null' is not assignable to type '(() => false | void) | undefined'.
   Type 'null' is not assignable to type '(() => false | void) | undefined'.
-source/views/settings/screens/legal.tsx(3,9): error TS2614: Module '"glamorous-native"' has no exported member 'View'. Did you mean to use 'import View from "glamorous-native"' instead?
-source/views/settings/screens/legal.tsx(3,15): error TS2614: Module '"glamorous-native"' has no exported member 'ScrollView'. Did you mean to use 'import ScrollView from "glamorous-native"' instead?
 source/views/settings/screens/overview/developer.tsx(5,41): error TS2307: Cannot find module 'react-navigation' or its corresponding type declarations.
 source/views/settings/screens/overview/index.tsx(4,41): error TS2307: Cannot find module 'react-navigation' or its corresponding type declarations.
-source/views/settings/screens/overview/login-credentials.tsx(141,13): error TS2345: Argument of type 'ThunkAction<LogInActions>' is not assignable to parameter of type 'AnyAction'.
+source/views/settings/screens/overview/login-credentials.tsx(140,13): error TS2345: Argument of type 'ThunkAction<LogInActions>' is not assignable to parameter of type 'AnyAction'.
   Property 'type' is missing in type 'ThunkAction<LogInActions>' but required in type 'AnyAction'.
-source/views/settings/screens/overview/login-credentials.tsx(147,12): error TS2345: Argument of type 'Promise<LogOutAction>' is not assignable to parameter of type 'AnyAction'.
+source/views/settings/screens/overview/login-credentials.tsx(146,12): error TS2345: Argument of type 'Promise<LogOutAction>' is not assignable to parameter of type 'AnyAction'.
   Property 'type' is missing in type 'Promise<LogOutAction>' but required in type 'AnyAction'.
-source/views/settings/screens/overview/miscellany.tsx(3,41): error TS2307: Cannot find module 'react-navigation' or its corresponding type declarations.
-source/views/settings/screens/overview/miscellany.tsx(5,24): error TS7016: Could not find a declaration file for module '@hawkrives/react-native-alternate-icons'. './node_modules/@hawkrives/react-native-alternate-icons/index.js' implicitly has an 'any' type.
+source/views/settings/screens/overview/miscellany.tsx(4,24): error TS7016: Could not find a declaration file for module '@hawkrives/react-native-alternate-icons'. './node_modules/@hawkrives/react-native-alternate-icons/index.js' implicitly has an 'any' type.
   Try `npm i --save-dev @types/hawkrives__react-native-alternate-icons` if it exists or add a new declaration (.d.ts) file containing `declare module '@hawkrives/react-native-alternate-icons';`
 source/views/settings/screens/overview/odds-and-ends.tsx(4,41): error TS2307: Cannot find module 'react-navigation' or its corresponding type declarations.
 source/views/settings/screens/overview/server-url.tsx(46,5): error TS2769: No overload matches this call.
@@ -188,11 +127,10 @@ source/views/settings/screens/overview/server-url.tsx(46,5): error TS2769: No ov
   Overload 2 of 2, '(props: Props, context: any): CellTextField', gave the following error.
     Type 'RefObject<CellTextField>' is not assignable to type '{ current: TextInput | null; }'.
 source/views/settings/screens/overview/support.tsx(4,41): error TS2307: Cannot find module 'react-navigation' or its corresponding type declarations.
-source/views/settings/screens/privacy.tsx(3,9): error TS2614: Module '"glamorous-native"' has no exported member 'View'. Did you mean to use 'import View from "glamorous-native"' instead?
-source/views/settings/screens/privacy.tsx(3,15): error TS2614: Module '"glamorous-native"' has no exported member 'ScrollView'. Did you mean to use 'import ScrollView from "glamorous-native"' instead?
 source/views/sis/balances-acknowledgement.tsx(25,18): error TS2345: Argument of type 'Promise<SisAlertSeenAction>' is not assignable to parameter of type 'AnyAction'.
   Property 'type' is missing in type 'Promise<SisAlertSeenAction>' but required in type 'AnyAction'.
 source/views/sis/balances.tsx(212,13): error TS2345: Argument of type 'ThunkAction<LogInActions>' is not assignable to parameter of type 'AnyAction'.
+source/views/sis/course-search/detail/index.tsx(124,5): error TS2322: Type 'Element[]' is not assignable to type 'string'.
 source/views/sis/course-search/detail/index.tsx(207,25): error TS7053: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{ Open: string; Closed: string; }'.
   No index signature with a parameter of type 'string' was found on type '{ Open: string; Closed: string; }'.
 source/views/sis/course-search/lib/execute-search.ts(2,27): error TS7016: Could not find a declaration file for module 'keyword-search'. './node_modules/keyword-search/index.js' implicitly has an 'any' type.
@@ -265,10 +203,4 @@ source/views/streaming/streams/list.tsx(42,2): error TS2416: Property 'state' in
   Type '{ error: null; loading: boolean; refreshing: boolean; streams: never[]; }' is not assignable to type 'Readonly<State>'.
     Types of property 'error' are incompatible.
       Type 'null' is not assignable to type 'string | undefined'.
-source/views/streaming/webcams/list.tsx(56,23): error TS2339: Property 'name' does not exist on type 'never'.
-source/views/transportation/index.tsx(12,13): error TS7031: Binding element 'navigation' implicitly has an 'any' type.
-source/views/transportation/index.tsx(22,13): error TS7031: Binding element 'navigation' implicitly has an 'any' type.
-source/views/transportation/index.tsx(32,13): error TS7031: Binding element 'navigation' implicitly has an 'any' type.
-source/views/transportation/index.tsx(42,13): error TS7031: Binding element 'navigation' implicitly has an 'any' type.
-source/views/transportation/index.tsx(56,1): error TS2571: Object is of type 'unknown'.
 source/views/types.ts(5,8): error TS2307: Cannot find module 'react-navigation' or its corresponding type declarations.
