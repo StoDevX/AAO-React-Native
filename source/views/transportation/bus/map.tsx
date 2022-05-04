@@ -10,29 +10,22 @@ import {getScheduleForNow, processBusLine} from './lib'
 import isEqual from 'lodash/isEqual'
 import {Timer} from '@frogpond/timer'
 import {timezone} from '@frogpond/constants'
+import {RouteProp, useRoute} from '@react-navigation/native'
+import {RootStackParamList} from '../../../navigation/types'
 
 // const styles = StyleSheet.create({
 // 	map: {...StyleSheet.absoluteFillObject},
 // })
 
-type WrapperProps = {
-	navigation: {
-		state: {
-			params: {
-				line: UnprocessedBusLine
-			}
-		}
-	}
-}
-
-export function BusMap(props: WrapperProps) {
-	let lineToDisplay = props.navigation.state.params.line
+export function BusMap(): JSX.Element {
+	let route = useRoute<RouteProp<RootStackParamList, 'BusMapView'>>()
+	let {line} = route.params
 
 	return (
 		<Timer
 			interval={60000}
 			moment={true}
-			render={({now}) => <Map line={lineToDisplay} now={now} />}
+			render={({now}) => <Map line={line} now={now} />}
 			timezone={timezone()}
 		/>
 	)

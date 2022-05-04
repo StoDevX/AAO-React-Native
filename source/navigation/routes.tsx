@@ -51,7 +51,9 @@ import * as settings from '../views/settings/'
 // 	KSTOSchedule,
 // } from '../views/streaming'
 import * as orgs from '../views/student-orgs'
-// import Transportation, {OtherModesDetail} from '../views/transportation'
+import * as transportation from '../views/transportation'
+import * as othermodes from '../views/transportation/other-modes'
+
 // import {
 // 	PrinterList,
 // 	PrintJobRelease,
@@ -169,6 +171,18 @@ export function RootStack(): JSX.Element {
 					options={dictionary.EditorNavigationOptions}
 				/>
 			</Stack.Group>
+			<Stack.Group>
+				<Stack.Screen
+					component={transportation.View}
+					name="Transportation"
+					options={transportation.NavigationOptions}
+				/>
+				<Stack.Screen
+					component={transportation.OtherModesDetailView}
+					name="OtherModesDetail"
+					options={othermodes.OtherModesNavigationOptions}
+				/>
+			</Stack.Group>
 			{/*
 			<Stack.Screen component={Debug} name="Debug" />
 			<Stack.Screen component={APITest} name="APITest" />
@@ -202,8 +216,6 @@ export function RootStack(): JSX.Element {
 			</Stack.Group>
 			{/*
 			</Stack.Group>
-			<Stack.Screen component={Transportation} name="Transportation" />
-			<Stack.Screen component={OtherModesDetail} name="OtherModesDetail" />
 			<Stack.Screen
 				component={CarletonBurtonMenuScreen}
 				name="CarletonBurtonMenu"

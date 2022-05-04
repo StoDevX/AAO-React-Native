@@ -391,16 +391,5 @@
 ./source/views/student-orgs/util.ts
   3:8  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
 
-./source/views/transportation/bus/map.tsx
-  28:8  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
-
-./source/views/transportation/bus/wrapper.tsx
-  33:2   warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
-  39:14  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
-  46:12  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
-
-./source/views/transportation/other-modes/detail.tsx
-  52:57  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
-
-✖ 249 problems (0 errors, 249 warnings)
+✖ 244 problems (0 errors, 244 warnings)
 
