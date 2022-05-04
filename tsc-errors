@@ -73,6 +73,7 @@ source/views/building-hours/lib/__tests__/is-building-open.test.ts(31,3): error 
 source/views/building-hours/lib/__tests__/is-building-open.test.ts(51,3): error TS2740: Type '{}' is missing the following properties from type 'BreakScheduleContainerType': fall, thanksgiving, christmasfest, winter, and 4 more.
 source/views/building-hours/lib/__tests__/is-building-open.test.ts(75,3): error TS2740: Type '{}' is missing the following properties from type 'BreakScheduleContainerType': fall, thanksgiving, christmasfest, winter, and 4 more.
 source/views/building-hours/lib/__tests__/is-building-open.test.ts(95,3): error TS2740: Type '{}' is missing the following properties from type 'BreakScheduleContainerType': fall, thanksgiving, christmasfest, winter, and 4 more.
+source/views/building-hours/list.tsx(66,10): error TS2339: Property 'data' does not exist on type 'BuildingType[]'.
 source/views/contacts/detail.tsx(55,58): error TS2339: Property 'route' does not exist on type 'Readonly<Props> & Readonly<{ children?: ReactNode; }>'.
 source/views/contacts/detail.tsx(64,28): error TS2339: Property 'route' does not exist on type 'Readonly<Props> & Readonly<{ children?: ReactNode; }>'.
 source/views/dictionary/list.tsx(27,10): error TS2503: Cannot find namespace 'window'.
