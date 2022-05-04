@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {StyleSheet, RefreshControl, SectionList, View} from 'react-native'
+import {StyleSheet, RefreshControl, SectionList} from 'react-native'
 import {NoticeView, LoadingView} from '@frogpond/notice'
 import {Column} from '@frogpond/layout'
 import {
@@ -9,7 +9,6 @@ import {
 	Detail,
 	Title,
 } from '@frogpond/lists'
-import {SearchBar} from '@frogpond/searchbar'
 import {white} from '@frogpond/colors'
 import groupBy from 'lodash/groupBy'
 import toPairs from 'lodash/toPairs'
@@ -23,6 +22,7 @@ import type {AsyncState} from 'react-async'
 import {useDebounce} from '@frogpond/use-debounce'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 import {useNavigation} from '@react-navigation/native'
+import {ChangeTextEvent} from '../../navigation/types'
 
 const fetchOrgs = (args: {
 	signal: window.AbortController
@@ -60,6 +60,16 @@ function StudentOrgsView(): JSX.Element {
 	let [isInitialFetch, setIsInitial] = React.useState(true)
 
 	let navigation = useNavigation()
+
+	React.useLayoutEffect(() => {
+		navigation.setOptions({
+			headerSearchBarOptions: {
+				barTintColor: white,
+				onChangeText: (event: ChangeTextEvent) =>
+					setQuery(event.nativeEvent.text),
+			},
+		})
+	}, [navigation])
 
 	let {data, error, reload, isPending}: AsyncState<Array<StudentOrgType>> =
 		useAsync(fetchOrgs, {
@@ -121,29 +131,26 @@ function StudentOrgsView(): JSX.Element {
 	)
 
 	return (
-		<View style={styles.wrapper}>
-			<SearchBar onChange={setQuery} value={query} />
-
-			<SectionList
-				ItemSeparatorComponent={ListSeparator}
-				ListEmptyComponent={
-					<NoticeView text={`No results found for "${query}"`} />
-				}
-				contentContainerStyle={styles.contentContainer}
-				keyExtractor={(item, index) => item.name + index}
-				keyboardDismissMode="on-drag"
-				keyboardShouldPersistTaps="never"
-				refreshControl={
-					<RefreshControl onRefresh={reload} refreshing={isPending} />
-				}
-				renderItem={renderRow}
-				renderSectionHeader={({section: {title}}) => (
-					<ListSectionHeader title={title} />
-				)}
-				sections={grouped}
-				style={styles.wrapper}
-			/>
-		</View>
+		<SectionList
+			ItemSeparatorComponent={ListSeparator}
+			ListEmptyComponent={
+				<NoticeView text={`No results found for "${query}"`} />
+			}
+			contentContainerStyle={styles.contentContainer}
+			contentInsetAdjustmentBehavior="automatic"
+			keyExtractor={(item, index) => item.name + index}
+			keyboardDismissMode="on-drag"
+			keyboardShouldPersistTaps="never"
+			refreshControl={
+				<RefreshControl onRefresh={reload} refreshing={isPending} />
+			}
+			renderItem={renderRow}
+			renderSectionHeader={({section: {title}}) => (
+				<ListSectionHeader title={title} />
+			)}
+			sections={grouped}
+			style={styles.wrapper}
+		/>
 	)
 }
 
