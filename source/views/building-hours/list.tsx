@@ -34,7 +34,7 @@ function useBuildingHours() {
 const emptyList: ReadonlyArray<never> = []
 
 function groupBuildings(
-	buildings: Array<BuildingType> | void,
+	buildings: Array<BuildingType>,
 	favorites: Array<string>,
 ) {
 	if (!buildings) {
