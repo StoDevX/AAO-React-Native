@@ -12,8 +12,14 @@ type RenderState<T> = {
 	refresh: () => void
 }
 
-type MomentRender = {moment: true; render: (state: RenderState<Moment>) => JSX.Element }
-type DateRender = {moment: false; render: (state: RenderState<Date>) => JSX.Element }
+type MomentRender = {
+	moment: true
+	render: (state: RenderState<Moment>) => JSX.Element
+}
+type DateRender = {
+	moment: false
+	render: (state: RenderState<Date>) => JSX.Element
+}
 
 type Props = {
 	interval: number // ms
