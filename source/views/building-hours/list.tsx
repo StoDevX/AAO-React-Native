@@ -62,7 +62,13 @@ function groupBuildings(
 export function BuildingHoursView(): JSX.Element {
 	let navigation = useNavigation()
 
-	let {data: buildings, isPending, isInitial, reload} = useBuildingHours()
+	let {
+		data: {data: buildings} = [],
+		isPending,
+		isInitial,
+		reload,
+	} = useBuildingHours()
+
 	let favoriteBuildings = useSelector(
 		(state: ReduxState) => state.buildings?.favorites ?? [],
 	)
