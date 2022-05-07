@@ -151,7 +151,7 @@ function StudentOrgsView(): JSX.Element {
 			)}
 			sections={grouped}
 			style={styles.wrapper}
-			// {...largeListProps}
+			{...largeListProps}
 		/>
 	)
 }
