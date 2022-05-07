@@ -8,6 +8,7 @@ import {
 	ListSeparator,
 	Detail,
 	Title,
+	largeListProps,
 } from '@frogpond/lists'
 import {white} from '@frogpond/colors'
 import groupBy from 'lodash/groupBy'
@@ -150,6 +151,7 @@ function StudentOrgsView(): JSX.Element {
 			)}
 			sections={grouped}
 			style={styles.wrapper}
+			{...largeListProps}
 		/>
 	)
 }
