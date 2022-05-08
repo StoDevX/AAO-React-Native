@@ -367,29 +367,11 @@
   100:45  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
   169:8   warning  Missing return type on function           @typescript-eslint/explicit-module-boundary-types
 
-./source/views/streaming/movie.tsx
-  5:16  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
-
 ./source/views/streaming/streams/list.tsx
-   49:2   warning  Missing return type on function                              @typescript-eslint/explicit-module-boundary-types
-   61:15  warning  Missing return type on function                              @typescript-eslint/explicit-module-boundary-types
-  100:17  warning  Missing return type on function                              @typescript-eslint/explicit-module-boundary-types
-  102:24  warning  Missing return type on function                              @typescript-eslint/explicit-module-boundary-types
-  102:25  warning  Object pattern argument should be typed with a non-any type  @typescript-eslint/explicit-module-boundary-types
-  102:45  warning  Unexpected any. Specify a different type                     @typescript-eslint/no-explicit-any
-  106:15  warning  Missing return type on function                              @typescript-eslint/explicit-module-boundary-types
-  108:2   warning  Missing return type on function                              @typescript-eslint/explicit-module-boundary-types
-
-./source/views/streaming/streams/row.tsx
-  51:18  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
-  56:2   warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
-
-./source/views/streaming/webcams/thumbnail.tsx
-  18:16  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
-  23:2   warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
+  96:49  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
 
 ./source/views/student-orgs/util.ts
   3:8  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
 
-✖ 244 problems (0 errors, 244 warnings)
+✖ 232 problems (0 errors, 232 warnings)
 
