@@ -6,82 +6,67 @@ import * as c from '@frogpond/colors'
 import map from 'lodash/map'
 import {DietaryTagsDetail} from './dietary-tags-detail'
 import {calculateAmount} from './lib/calculate-amount'
-import type {MasterCorIconMapType, MenuItemType as MenuItem} from './types'
-import {
-	NavigationAction,
-	NavigationRoute,
-	NavigationScreenProp,
-} from 'react-navigation'
 import size from 'lodash/size'
+import {RouteProp, useRoute} from '@react-navigation/native'
+import {RootStackParamList} from '../../source/navigation/types'
 
-type Props = {
-	navigation: NavigationScreenProp<NavigationRoute, NavigationAction> & {
-		state: {params: {icons: MasterCorIconMapType; item: MenuItem}}
-	}
-}
+export const MenuItemDetailView = (): JSX.Element => {
+	let route = useRoute<RouteProp<RootStackParamList, 'MenuItemDetail'>>()
+	const {item, icons} = route.params
 
-export class MenuItemDetailView extends React.Component<Props> {
-	static navigationOptions = {
-		title: 'Nutrition',
-	}
+	return (
+		<ScrollView style={styles.container}>
+			<Text selectable={true} style={styles.title}>
+				{item.label}
+			</Text>
 
-	render(): JSX.Element {
-		const {item, icons} = this.props.navigation.state.params
+			<DietaryTagsDetail
+				corIcons={icons}
+				dietary={item.cor_icon}
+				style={styles.iconContainer}
+			/>
 
-		return (
-			<ScrollView style={styles.container}>
-				<Text selectable={true} style={styles.title}>
-					{item.label}
-				</Text>
+			{item.description ? (
+				<React.Fragment>
+					<ListRow
+						arrowPosition="none"
+						contentContainerStyle={styles.container}
+						fullWidth={false}
+					>
+						<Title>Description</Title>
+						<Detail>{item.description}</Detail>
+					</ListRow>
+					<ListSeparator />
+				</React.Fragment>
+			) : null}
 
-				<DietaryTagsDetail
-					corIcons={icons}
-					dietary={item.cor_icon}
-					style={styles.iconContainer}
-				/>
+			{size(item.nutrition_details) > 1 ? (
+				map(item.nutrition_details, (nutrition, key: number) => {
+					return (
+						<React.Fragment key={`${nutrition}-${key}`}>
+							<ListRow
+								arrowPosition="none"
+								fullWidth={false}
+								style={styles.container}
+							>
+								<Row>
+									<Column flex={1}>
+										<Title>{nutrition.label}</Title>
+									</Column>
 
-				{item.description ? (
-					<React.Fragment>
-						<ListRow
-							arrowPosition="none"
-							contentContainerStyle={styles.container}
-							fullWidth={false}
-						>
-							<Title>Description</Title>
-							<Detail>{item.description}</Detail>
-						</ListRow>
-						<ListSeparator />
-					</React.Fragment>
-				) : null}
+									<Detail>{calculateAmount(nutrition)}</Detail>
+								</Row>
+							</ListRow>
 
-				{size(item.nutrition_details) > 1 ? (
-					map(item.nutrition_details, (nutrition, key: number) => {
-						return (
-							<React.Fragment key={`${nutrition}-${key}`}>
-								<ListRow
-									arrowPosition="none"
-									fullWidth={false}
-									style={styles.container}
-								>
-									<Row>
-										<Column flex={1}>
-											<Title>{nutrition.label}</Title>
-										</Column>
-
-										<Detail>{calculateAmount(nutrition)}</Detail>
-									</Row>
-								</ListRow>
-
-								<ListSeparator />
-							</React.Fragment>
-						)
-					})
-				) : (
-					<Detail style={styles.noInfo}>No nutritional information</Detail>
-				)}
-			</ScrollView>
-		)
-	}
+							<ListSeparator />
+						</React.Fragment>
+					)
+				})
+			) : (
+				<Detail style={styles.noInfo}>No nutritional information</Detail>
+			)}
+		</ScrollView>
+	)
 }
 
 const styles = StyleSheet.create({
