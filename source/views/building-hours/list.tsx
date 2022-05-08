@@ -26,7 +26,7 @@ const styles = StyleSheet.create({
 })
 
 function useBuildingHours() {
-	return useFetch<BuildingType[]>(API('/spaces/hours'), {
+	return useFetch<{data: BuildingType[]}>(API('/spaces/hours'), {
 		headers: {accept: 'application/json'},
 	})
 }
@@ -63,7 +63,7 @@ export function BuildingHoursView(): JSX.Element {
 	let navigation = useNavigation()
 
 	let {
-		data: {data: buildings} = [],
+		data: {data: buildings = []} = {},
 		isPending,
 		isInitial,
 		reload,
