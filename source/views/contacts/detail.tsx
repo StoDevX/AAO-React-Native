@@ -97,8 +97,8 @@ export const NavigationKey = 'ContactsDetail'
 export const NavigationOptions = (props: {
 	route: RouteProp<RootStackParamList, typeof NavigationKey>
 }): NativeStackNavigationOptions => {
-	let {contact} = props.route.params
+	let {title} = props.route.params.contact
 	return {
-		title: contact.title,
+		title: title,
 	}
 }

@@ -88,7 +88,6 @@ export const NavigationKey = 'Calendar'
 
 export const NavigationOptions: NativeStackNavigationOptions = {
 	title: 'Calendar',
-	headerBackTitle: 'Back',
 }
 
 export type NavigationParams = undefined

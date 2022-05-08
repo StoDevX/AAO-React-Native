@@ -43,11 +43,9 @@ export const NavigationKey = 'BuildingHoursDetail'
 export const NavigationOptions = (props: {
 	route: RouteProp<RootStackParamList, typeof NavigationKey>
 }): NativeStackNavigationOptions => {
-	let {building} = props.route.params
+	let {name} = props.route.params.building
 	return {
-		title: building.name,
-		headerRight: (p) => (
-			<BuildingFavoriteButton {...p} buildingName={building.name} />
-		),
+		title: name,
+		headerRight: (p) => <BuildingFavoriteButton {...p} buildingName={name} />,
 	}
 }

@@ -18,7 +18,6 @@ type Props = {
 
 export const NavigationOptions: NativeStackNavigationOptions = {
 	title: 'Suggest an edit',
-	headerBackTitle: 'Back',
 }
 
 let DictionaryEditorView = (props: Props): JSX.Element => {

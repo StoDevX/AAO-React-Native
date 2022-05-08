@@ -66,5 +66,4 @@ const styles = StyleSheet.create({
 
 export const NavigationOptions: NativeStackNavigationOptions = {
 	title: 'Report a problem',
-	headerBackTitle: 'Back',
 }

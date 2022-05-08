@@ -34,7 +34,6 @@ type State = {
 
 export default class StudentWorkView extends React.PureComponent<Props, State> {
 	static navigationOptions = {
-		headerBackTitle: 'Open Jobs',
 		tabBarLabel: 'Open Jobs',
 		tabBarIcon: TabBarIcon('briefcase'),
 	}

@@ -35,10 +35,9 @@ type Props = TopLevelViewPropsType & {
 export const DetailNavigationOptions = (props: {
 	route: RouteProp<RootStackParamList, 'DictionaryDetail'>
 }): NativeStackNavigationOptions => {
-	let {item} = props.route.params
+	let {word} = props.route.params.item
 	return {
-		title: item.word,
-		headerBackTitle: 'Dictionary',
+		title: word,
 	}
 }
 

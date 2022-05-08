@@ -143,5 +143,4 @@ export {DictionaryView as View}
 
 export const NavigationOptions: NativeStackNavigationOptions = {
 	title: 'Campus Dictionary',
-	headerBackTitle: 'Back',
 }

@@ -83,7 +83,6 @@ export {StreamingMediaView as View}
 
 export const NavigationOptions: NativeStackNavigationOptions = {
 	title: 'Streaming Media',
-	headerBackTitle: 'Back',
 }
 
 export const KSTOScheduleNavigationOptions: NativeStackNavigationOptions = {

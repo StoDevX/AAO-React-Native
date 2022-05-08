@@ -99,5 +99,4 @@ export let ContactsListView = (): JSX.Element => {
 
 export const NavigationOptions: NativeStackNavigationOptions = {
 	title: 'Important Contacts',
-	headerBackTitle: 'Back',
 }

@@ -31,10 +31,9 @@ const styles = StyleSheet.create({
 export const NavigationOptions = (props: {
 	route: RouteProp<RootStackParamList, 'OtherModesDetail'>
 }): NativeStackNavigationOptions => {
-	let {mode} = props.route.params
+	let {name} = props.route.params.mode
 	return {
-		title: mode.name,
-		headerBackTitle: 'Transportation',
+		title: name,
 	}
 }
 

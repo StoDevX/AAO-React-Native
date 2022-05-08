@@ -63,10 +63,9 @@ type Props = TopLevelViewPropsType & {
 export const NavigationOptions = (props: {
 	route: RouteProp<RootStackParamList, 'StudentOrgsDetail'>
 }): NativeStackNavigationOptions => {
-	let {org} = props.route.params
+	let {name} = props.route.params.org
 	return {
-		title: org.name,
-		headerBackTitle: 'Orgs',
+		title: name,
 	}
 }
 

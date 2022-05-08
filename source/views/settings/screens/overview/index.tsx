@@ -41,5 +41,4 @@ export {SettingsView as View}
 
 export const NavigationOptions: NativeStackNavigationOptions = {
 	title: 'Settings',
-	headerBackTitle: 'Back',
 }

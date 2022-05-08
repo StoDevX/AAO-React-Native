@@ -154,5 +154,4 @@ export {StudentOrgsView as View}
 
 export const NavigationOptions: NativeStackNavigationOptions = {
 	title: 'Student Orgs',
-	headerBackTitle: 'Back',
 }

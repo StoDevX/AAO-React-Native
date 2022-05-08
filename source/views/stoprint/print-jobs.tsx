@@ -50,7 +50,6 @@ type State = {
 class PrintJobsView extends React.PureComponent<Props, State> {
 	static navigationOptions = {
 		title: 'Print Jobs',
-		headerBackTitle: 'Jobs',
 	}
 
 	state = {
