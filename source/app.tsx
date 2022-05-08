@@ -3,7 +3,6 @@
 import 'react-native-gesture-handler'
 
 // initialization
-import './init/lodash-memoize'
 import './init/constants'
 import './init/moment'
 import './init/sentry'
