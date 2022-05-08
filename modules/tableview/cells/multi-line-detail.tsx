@@ -17,7 +17,7 @@ export function MultiLineDetailCell(props: Props): JSX.Element {
 				<Text allowFontScaling={true} style={styles.cellTitle}>
 					{title}
 				</Text>
-				{leftDetail && (
+				{Boolean(leftDetail) && (
 					<Text allowFontScaling={true} style={styles.cellLeftDetail}>
 						{leftDetail}
 					</Text>
