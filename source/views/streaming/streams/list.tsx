@@ -24,7 +24,7 @@ const styles = StyleSheet.create({
 })
 
 export const StreamListView = (): JSX.Element => {
-	let [error, setError] = React.useState(null)
+	let [error, setError] = React.useState<Error | null>(null)
 	let [loading, setLoading] = React.useState(true)
 	let [refreshing, setRefreshing] = React.useState(false)
 	let [streams, setStreams] = React.useState<
@@ -32,9 +32,18 @@ export const StreamListView = (): JSX.Element => {
 	>([])
 
 	React.useEffect(() => {
-		getStreams().then(() => {
-			setLoading(false)
-		})
+		try {
+			getStreams().then(() => {
+				setLoading(false)
+			})
+		} catch (error) {
+			if (error instanceof Error) {
+				setError(error)
+			} else {
+				setError(new Error('unknown error - not an Error'))
+			}
+			return
+		}
 	}, [])
 
 	let refresh = async (): Promise<void> => {
@@ -95,7 +104,7 @@ export const StreamListView = (): JSX.Element => {
 	}
 
 	if (error) {
-		return <NoticeView text={`Error: ${error}`} />
+		return <NoticeView text={`Error: ${error.message}`} />
 	}
 
 	return (
