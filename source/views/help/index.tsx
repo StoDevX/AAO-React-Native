@@ -8,6 +8,7 @@ import type {ReduxState} from '../../redux'
 import {getEnabledTools} from '../../redux/parts/help'
 import {ToolView} from './tool'
 import type {ToolOptions} from './types'
+import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 
 const CUSTOM_TOOLS: any[] = []
 
@@ -23,7 +24,7 @@ const getToolView = (config: ToolOptions) => {
 	return [customView.ToolView, config]
 }
 
-export function HelpView() {
+export function HelpView(): JSX.Element {
 	let tools = useSelector((state: ReduxState) => state.help?.tools || [])
 	let fetching = useSelector(
 		(state: ReduxState) => state.help?.fetching || false,
@@ -57,12 +58,13 @@ export function HelpView() {
 	)
 }
 
-HelpView.navigationOptions = {
-	title: 'Help',
-}
-
 const styles = StyleSheet.create({
 	container: {
 		paddingTop: 10,
 	},
 })
+
+export const NavigationOptions: NativeStackNavigationOptions = {
+	title: 'Report a problem',
+	headerBackTitle: 'Back',
+}
