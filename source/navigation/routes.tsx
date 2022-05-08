@@ -32,7 +32,7 @@ import * as faqs from '../views/faqs'
 // 	CarletonWeitzMenuScreen,
 // 	Menus,
 // } from '../views/menus'
-// import {BonAppPicker} from '../views/menus/dev-bonapp-picker'
+import {BonAppPickerView} from '../views/menus/dev-bonapp-picker'
 // import {MenuItemDetail} from '@frogpond/food-menu/food-item-detail'
 // import NewsView from '../views/news'
 import * as settings from '../views/settings/'
@@ -119,6 +119,9 @@ export function RootStack(): JSX.Element {
 				<Stack.Screen component={settings.CreditsView} name="Credits" />
 				<Stack.Screen component={settings.PrivacyView} name="Privacy" />
 				<Stack.Screen component={settings.LegalView} name="Legal" />
+				<Stack.Screen component={settings.APITestView} name="APITest" />
+				<Stack.Screen component={BonAppPickerView} name="BonAppPicker" />
+				<Stack.Screen component={settings.DebugView} name="Debug" />
 			</Stack.Group>
 			<Stack.Group>
 				<Stack.Screen
@@ -184,13 +187,10 @@ export function RootStack(): JSX.Element {
 				/>
 			</Stack.Group>
 			{/*
-			<Stack.Screen component={Debug} name="Debug" />
-			<Stack.Screen component={APITest} name="APITest" />
 			<Stack.Screen component={EventDetail} name="EventDetail" />
 			<Stack.Screen component={Help} name="Help" />
 			<Stack.Screen component={JobDetail} name="JobDetail" />
 			<Stack.Screen component={Menus} name="Menus" />
-			<Stack.Screen component={BonAppPicker} name="BonAppPicker" />
 			<Stack.Screen component={News} name="News" />
 			<Stack.Screen component={SIS} name="SIS" />
 			<Stack.Screen
