@@ -4,7 +4,6 @@ import {timezone} from '@frogpond/constants'
 import * as c from '@frogpond/colors'
 import {ListSeparator, ListSectionHeader} from '@frogpond/lists'
 import {NoticeView, LoadingView} from '@frogpond/notice'
-import {TabBarIcon} from '@frogpond/navigation-tabs'
 import {StreamRow} from './row'
 import toPairs from 'lodash/toPairs'
 import groupBy from 'lodash/groupBy'
@@ -24,41 +23,27 @@ const styles = StyleSheet.create({
 	},
 })
 
-type Props = unknown
+export const StreamListView = (): JSX.Element => {
+	let [error, setError] = React.useState(null)
+	let [loading, setLoading] = React.useState(true)
+	let [refreshing, setRefreshing] = React.useState(false)
+	let [streams, setStreams] = React.useState<
+		Array<{title: string; data: StreamType[]}>
+	>([])
 
-type State = {
-	error?: string
-	loading: boolean
-	refreshing: boolean
-	streams: Array<{title: string; data: Array<StreamType>}>
-}
-
-export class StreamListView extends React.PureComponent<Props, State> {
-	static navigationOptions = {
-		tabBarLabel: 'Streaming',
-		tabBarIcon: TabBarIcon('recording'),
-	}
-
-	state = {
-		error: null,
-		loading: true,
-		refreshing: false,
-		streams: [],
-	}
-
-	componentDidMount() {
-		this.getStreams().then(() => {
-			this.setState(() => ({loading: false}))
+	React.useEffect(() => {
+		getStreams().then(() => {
+			setLoading(false)
 		})
+	}, [])
+
+	let refresh = async (): Promise<void> => {
+		setRefreshing(true)
+		await getStreams(true)
+		setRefreshing(false)
 	}
 
-	refresh = async (): Promise<void> => {
-		this.setState(() => ({refreshing: true}))
-		await this.getStreams(true)
-		this.setState(() => ({refreshing: false}))
-	}
-
-	getStreams = async (
+	let getStreams = async (
 		reload?: boolean,
 		date: Moment = moment.tz(timezone()),
 	) => {
@@ -94,39 +79,37 @@ export class StreamListView extends React.PureComponent<Props, State> {
 		let grouped = groupBy(data, (j) => j.$groupBy)
 		let mapped = toPairs(grouped).map(([title, data]) => ({title, data}))
 
-		this.setState(() => ({streams: mapped}))
+		setStreams(mapped)
 	}
 
-	keyExtractor = (item: StreamType) => item.eid
+	let keyExtractor = (item: StreamType) => item.eid
 
-	renderSectionHeader = ({section: {title}}: any) => (
+	let renderSectionHeader = ({section: {title}}: any) => (
 		<ListSectionHeader title={title} />
 	)
 
-	renderItem = ({item}: {item: StreamType}) => <StreamRow stream={item} />
+	let renderItem = ({item}: {item: StreamType}) => <StreamRow stream={item} />
 
-	render() {
-		if (this.state.loading) {
-			return <LoadingView />
-		}
-
-		if (this.state.error) {
-			return <NoticeView text={`Error: ${this.state.error}`} />
-		}
-
-		return (
-			<SectionList
-				ItemSeparatorComponent={ListSeparator}
-				ListEmptyComponent={<NoticeView text="No Streams" />}
-				contentContainerStyle={styles.contentContainer}
-				keyExtractor={this.keyExtractor}
-				onRefresh={this.refresh}
-				refreshing={this.state.refreshing}
-				renderItem={this.renderItem}
-				renderSectionHeader={this.renderSectionHeader}
-				sections={this.state.streams}
-				style={styles.listContainer}
-			/>
-		)
+	if (loading) {
+		return <LoadingView />
 	}
+
+	if (error) {
+		return <NoticeView text={`Error: ${error}`} />
+	}
+
+	return (
+		<SectionList
+			ItemSeparatorComponent={ListSeparator}
+			ListEmptyComponent={<NoticeView text="No Streams" />}
+			contentContainerStyle={styles.contentContainer}
+			keyExtractor={keyExtractor}
+			onRefresh={refresh}
+			refreshing={refreshing}
+			renderItem={renderItem}
+			renderSectionHeader={renderSectionHeader}
+			sections={streams}
+			style={styles.listContainer}
+		/>
+	)
 }
