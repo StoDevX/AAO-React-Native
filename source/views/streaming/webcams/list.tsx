@@ -1,13 +1,11 @@
 import * as React from 'react'
 import {StyleSheet, ScrollView, useWindowDimensions} from 'react-native'
-import {TabBarIcon} from '@frogpond/navigation-tabs'
 import {Column} from '@frogpond/layout'
 import {partitionByIndex} from '../../../lib/partition-by-index'
 import type {Webcam} from './types'
 import {StreamThumbnail} from './thumbnail'
 import {API} from '@frogpond/api'
 import {fetch} from '@frogpond/fetch'
-import {BottomTabNavigationOptions} from '@react-navigation/bottom-tabs'
 
 const fetchWebcams = (): Promise<Array<Webcam>> =>
 	fetch(API('/webcams'))
