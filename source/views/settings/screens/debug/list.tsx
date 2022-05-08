@@ -68,7 +68,9 @@ export class DebugListView extends React.PureComponent<Props> {
 	}
 }
 
-export function ConnectedDebugListView(props: TopLevelViewPropsType) {
+export function ConnectedDebugListView(
+	props: TopLevelViewPropsType,
+): JSX.Element {
 	let keyPath = props.navigation.getParam('keyPath', [])
 	let state = useSelector((state: ReduxState) => {
 		if (keyPath.length === 0) {
