@@ -46,10 +46,7 @@ import * as settings from '../views/settings/'
 // 	APITest,
 // } from '../views/settings'
 // import SISView from '../views/sis'
-// import Streaming, {
-// 	KRLXSchedule,
-// 	KSTOSchedule,
-// } from '../views/streaming'
+import * as streaming from '../views/streaming'
 import * as orgs from '../views/student-orgs'
 import * as transportation from '../views/transportation'
 import * as othermodes from '../views/transportation/other-modes'
@@ -183,6 +180,23 @@ export function RootStack(): JSX.Element {
 					options={othermodes.OtherModesNavigationOptions}
 				/>
 			</Stack.Group>
+			<Stack.Group>
+				<Stack.Screen
+					component={streaming.View}
+					name="Streaming"
+					options={streaming.NavigationOptions}
+				/>
+				<Stack.Screen
+					component={streaming.KSTOScheduleView}
+					name="KSTOSchedule"
+					options={streaming.KSTOScheduleNavigationOptions}
+				/>
+				<Stack.Screen
+					component={streaming.KRLXScheduleView}
+					name="KRLXSchedule"
+					options={streaming.KRLXScheduleNavigationOptions}
+				/>
+			</Stack.Group>
 			{/*
 			<Stack.Screen component={Debug} name="Debug" />
 			<Stack.Screen component={APITest} name="APITest" />
@@ -198,7 +212,6 @@ export function RootStack(): JSX.Element {
 				name="CourseSearchResults"
 			/>
 			<Stack.Screen component={CourseDetail} name="CourseDetail" />
-			<Stack.Screen component={Streaming} name="Streaming" />
 			<Stack.Screen component={KSTOSchedule} name="KSTOSchedule" />
 			<Stack.Screen component={KRLXSchedule} name="KRLXSchedule" />
 			*/}
