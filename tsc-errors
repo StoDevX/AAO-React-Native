@@ -80,7 +80,7 @@ source/views/building-hours/row.tsx(141,11): error TS2322: Type 'string | null' 
 source/views/contacts/detail.tsx(55,58): error TS2339: Property 'route' does not exist on type 'Readonly<Props> & Readonly<{ children?: ReactNode; }>'.
 source/views/contacts/detail.tsx(64,28): error TS2339: Property 'route' does not exist on type 'Readonly<Props> & Readonly<{ children?: ReactNode; }>'.
 source/views/dictionary/list.tsx(28,10): error TS2503: Cannot find namespace 'window'.
-source/views/help/index.tsx(34,18): error TS2345: Argument of type 'ThunkAction<GetEnabledToolsAction>' is not assignable to parameter of type 'AnyAction'.
+source/views/help/index.tsx(35,18): error TS2345: Argument of type 'ThunkAction<GetEnabledToolsAction>' is not assignable to parameter of type 'AnyAction'.
 source/views/menus/dev-bonapp-picker.tsx(45,6): error TS2741: Property 'navigation' is missing in type '{ key: string; cafe: { id: string; }; loadingMessage: string[]; name: string; }' but required in type 'TopLevelViewPropsType'.
 source/views/menus/index.tsx(18,13): error TS7031: Binding element 'navigation' implicitly has an 'any' type.
 source/views/menus/index.tsx(40,13): error TS7031: Binding element 'navigation' implicitly has an 'any' type.
@@ -191,7 +191,6 @@ source/views/stoprint/printers.tsx(197,4): error TS2769: No overload matches thi
     Type 'string | null' is not assignable to type 'string | undefined'.
   Overload 2 of 2, '(props: Props, context: any): PrinterListView', gave the following error.
     Type 'string | null' is not assignable to type 'string | undefined'.
-source/views/streaming/index.ts(19,1): error TS2571: Object is of type 'unknown'.
 source/views/streaming/radio/schedule.tsx(18,4): error TS2769: No overload matches this call.
   Overload 1 of 2, '(props: Props | Readonly<Props>): CccCalendarView', gave the following error.
     Type '{ calendar: string; eventMapper: (event: EventType) => { config: { subtitle: "description"; startTime: boolean; endTime: boolean; }; title: string; description: string; location: string; startTime: Moment; endTime: Moment; isOngoing: boolean; links: string[]; }; navigation: NavigationScreenProp<...>; poweredBy: { .....' is not assignable to type 'IntrinsicAttributes & IntrinsicClassAttributes<CccCalendarView> & Readonly<Props> & Readonly<...>'.
@@ -206,11 +205,6 @@ source/views/streaming/radio/schedule.tsx(42,4): error TS2769: No overload match
   Overload 2 of 2, '(props: Props, context: any): CccCalendarView', gave the following error.
     Type '{ calendar: string; eventMapper: (event: EventType) => { config: { subtitle: "description"; startTime: boolean; endTime: boolean; }; title: string; description: string; location: string; startTime: Moment; endTime: Moment; isOngoing: boolean; links: string[]; }; navigation: NavigationScreenProp<...>; poweredBy: { .....' is not assignable to type 'IntrinsicAttributes & IntrinsicClassAttributes<CccCalendarView> & Readonly<Props> & Readonly<...>'.
       Property 'navigation' does not exist on type 'IntrinsicAttributes & IntrinsicClassAttributes<CccCalendarView> & Readonly<Props> & Readonly<...>'.
-source/views/streaming/radio/station-ksto.tsx(9,14): error TS2305: Module '"./types"' has no exported member 'PlayerTheme'.
-source/views/streaming/streams/list.tsx(42,2): error TS2416: Property 'state' in type 'StreamListView' is not assignable to the same property in base type 'PureComponent<unknown, State, any>'.
-  Type '{ error: null; loading: boolean; refreshing: boolean; streams: never[]; }' is not assignable to type 'Readonly<State>'.
-    Types of property 'error' are incompatible.
-      Type 'null' is not assignable to type 'string | undefined'.
 source/views/student-orgs/list.tsx(29,10): error TS2503: Cannot find namespace 'window'.
 source/views/student-orgs/list.tsx(76,12): error TS2345: Argument of type '(args: {    signal: window.AbortController;}) => Promise<Array<StudentOrgType>>' is not assignable to parameter of type 'PromiseFn<StudentOrgType[]>'.
   Types of parameters 'args' and 'props' are incompatible.
