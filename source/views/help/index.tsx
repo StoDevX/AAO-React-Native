@@ -8,6 +8,7 @@ import type {ReduxState} from '../../redux'
 import {getEnabledTools} from '../../redux/parts/help'
 import {ToolView} from './tool'
 import type {ToolOptions} from './types'
+import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 
 const CUSTOM_TOOLS: any[] = []
 
@@ -62,3 +63,8 @@ const styles = StyleSheet.create({
 		paddingTop: 10,
 	},
 })
+
+export const NavigationOptions: NativeStackNavigationOptions = {
+	title: 'Report a problem',
+	headerBackTitle: 'Back',
+}
