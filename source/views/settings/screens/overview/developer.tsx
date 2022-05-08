@@ -2,18 +2,16 @@ import * as Sentry from '@sentry/react-native'
 import * as React from 'react'
 import {Alert} from 'react-native'
 import {Section, PushButtonCell} from '@frogpond/tableview'
-import type {NavigationScreenProp} from 'react-navigation'
 import {isDevMode} from '@frogpond/constants'
 import {ServerUrlSection} from './server-url'
+import {useNavigation} from '@react-navigation/native'
 
-type Props = {
-	navigation: NavigationScreenProp<any>
-}
+export const DeveloperSection = (): React.ReactElement => {
+	let navigation = useNavigation()
 
-export const DeveloperSection = ({navigation}: Props): React.ReactElement => {
-	const onAPIButton = () => navigation.navigate('APITestView')
-	const onBonAppButton = () => navigation.navigate('BonAppPickerView')
-	const onDebugButton = () => navigation.navigate('DebugView')
+	const onAPIButton = () => navigation.navigate('APITest')
+	const onBonAppButton = () => navigation.navigate('BonAppPicker')
+	const onDebugButton = () => navigation.navigate('Debug')
 	const sendSentryMessage = () => {
 		Sentry.captureMessage('A Sentry Message', {level: Sentry.Severity.Info})
 		showSentryAlert()
