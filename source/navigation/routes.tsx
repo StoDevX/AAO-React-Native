@@ -19,6 +19,7 @@ import * as contacts from '../views/contacts'
 // } from '../views/dictionary'
 import * as dictionary from '../views/dictionary'
 import * as faqs from '../views/faqs'
+import * as help from '../views/help'
 // import {Help} from '../views/help'
 // import {
 // 	CourseDetail,
@@ -183,11 +184,11 @@ export function RootStack(): JSX.Element {
 					options={othermodes.OtherModesNavigationOptions}
 				/>
 			</Stack.Group>
+			<Stack.Screen component={help.HelpView} name="Help" />
 			{/*
 			<Stack.Screen component={Debug} name="Debug" />
 			<Stack.Screen component={APITest} name="APITest" />
 			<Stack.Screen component={EventDetail} name="EventDetail" />
-			<Stack.Screen component={Help} name="Help" />
 			<Stack.Screen component={JobDetail} name="JobDetail" />
 			<Stack.Screen component={Menus} name="Menus" />
 			<Stack.Screen component={BonAppPicker} name="BonAppPicker" />

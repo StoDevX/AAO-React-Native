@@ -23,7 +23,7 @@ const getToolView = (config: ToolOptions) => {
 	return [customView.ToolView, config]
 }
 
-export function HelpView() {
+export function HelpView(): JSX.Element {
 	let tools = useSelector((state: ReduxState) => state.help?.tools || [])
 	let fetching = useSelector(
 		(state: ReduxState) => state.help?.fetching || false,
@@ -55,10 +55,6 @@ export function HelpView() {
 	return (
 		<ScrollView contentContainerStyle={styles.container}>{views}</ScrollView>
 	)
-}
-
-HelpView.navigationOptions = {
-	title: 'Help',
 }
 
 const styles = StyleSheet.create({
