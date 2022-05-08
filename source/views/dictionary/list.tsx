@@ -8,7 +8,7 @@ import {
 	ListSeparator,
 	largeListProps,
 } from '@frogpond/lists'
-import {NoticeView} from '@frogpond/notice'
+import {LoadingView, NoticeView} from '@frogpond/notice'
 import type {WordType} from './types'
 import {white} from '@frogpond/colors'
 import groupBy from 'lodash/groupBy'
@@ -57,6 +57,7 @@ const styles = StyleSheet.create({
 function DictionaryView(): JSX.Element {
 	let [query, setQuery] = React.useState('')
 	let searchQuery = useDebounce(query.toLowerCase(), 200)
+	let [isInitialFetch, setIsInitial] = React.useState(true)
 
 	let navigation = useNavigation()
 
@@ -70,8 +71,10 @@ function DictionaryView(): JSX.Element {
 		})
 	}, [navigation])
 
-	let {data, error, reload, isPending}: AsyncState<Array<WordType>> =
-		useAsync(fetchDictionaryTerms)
+	let {data, error, reload, isPending}: AsyncState<Array<WordType>> = useAsync(
+		fetchDictionaryTerms,
+		{onResolve: () => setIsInitial(false)},
+	)
 
 	let results = React.useMemo(() => {
 		let allTerms = data || []
@@ -100,6 +103,10 @@ function DictionaryView(): JSX.Element {
 				text="A problem occured while loading the definitions"
 			/>
 		)
+	}
+
+	if (isInitialFetch) {
+		return <LoadingView />
 	}
 
 	return (
