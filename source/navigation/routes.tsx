@@ -33,7 +33,7 @@ import * as faqs from '../views/faqs'
 // 	Menus,
 // } from '../views/menus'
 import {BonAppPickerView} from '../views/menus/dev-bonapp-picker'
-// import {MenuItemDetail} from '@frogpond/food-menu/food-item-detail'
+import {MenuItemDetailView} from '@frogpond/food-menu/food-item-detail'
 // import NewsView from '../views/news'
 import * as settings from '../views/settings/'
 // import {
@@ -120,7 +120,6 @@ export function RootStack(): JSX.Element {
 				<Stack.Screen component={settings.PrivacyView} name="Privacy" />
 				<Stack.Screen component={settings.LegalView} name="Legal" />
 				<Stack.Screen component={settings.APITestView} name="APITest" />
-				<Stack.Screen component={BonAppPickerView} name="BonAppPicker" />
 				<Stack.Screen component={settings.DebugView} name="Debug" />
 			</Stack.Group>
 			<Stack.Group>
@@ -186,6 +185,10 @@ export function RootStack(): JSX.Element {
 					options={othermodes.OtherModesNavigationOptions}
 				/>
 			</Stack.Group>
+			<Stack.Group>
+				<Stack.Screen component={BonAppPickerView} name="BonAppPicker" />
+				<Stack.Screen component={MenuItemDetailView} name="MenuItemDetail" />
+			</Stack.Group>
 			{/*
 			<Stack.Screen component={EventDetail} name="EventDetail" />
 			<Stack.Screen component={Help} name="Help" />
@@ -229,7 +232,6 @@ export function RootStack(): JSX.Element {
 				component={CarletonSaylesMenuScreen}
 				name="CarletonSaylesMenu"
 			/>
-			<Stack.Screen component={MenuItemDetail} name="MenuItemDetail" />
 			<Stack.Screen component={PrintJobs} name="PrintJobs" />
 			<Stack.Screen component={PrinterList} name="PrinterList" />
 			<Stack.Screen component={PrintJobRelease} name="PrintJobRelease" /> */}
