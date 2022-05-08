@@ -19,16 +19,6 @@ export let WebcamsView = (): JSX.Element => {
 
 	let viewport = useWindowDimensions()
 
-	// TODO: This will be inlined into a new streaming index
-	// that calls createBottomTabNavigator. Leaving it typed
-	// but unused until streaming is plugged-in to the navigator.
-	//
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	let navigationOptions: BottomTabNavigationOptions = {
-		tabBarLabel: 'Webcams',
-		tabBarIcon: TabBarIcon('videocam'),
-	}
-
 	React.useEffect(() => {
 		let fetchData = async () => {
 			let webcams = await fetchWebcams()

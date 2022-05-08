@@ -35,8 +35,3 @@ export function KrlxStationView(): JSX.Element {
 		</ThemeProvider>
 	)
 }
-
-KrlxStationView.navigationOptions = {
-	tabBarLabel: 'KRLX',
-	tabBarIcon: TabBarIcon('microphone'),
-}

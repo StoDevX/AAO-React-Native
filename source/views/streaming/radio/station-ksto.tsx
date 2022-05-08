@@ -40,8 +40,3 @@ export function KstoStationView(): JSX.Element {
 		</ThemeProvider>
 	)
 }
-
-KstoStationView.navigationOptions = {
-	tabBarLabel: 'KSTO',
-	tabBarIcon: TabBarIcon('radio'),
-}
