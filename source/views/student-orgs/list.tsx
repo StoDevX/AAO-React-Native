@@ -58,7 +58,14 @@ function StudentOrgsView(): JSX.Element {
 	let [query, setQuery] = React.useState('')
 	let searchQuery = useDebounce(query.toLowerCase(), 200)
 
-	let {data: orgs = [], error, reload, isPending, isInitial} = useStudentOrgs()
+	let {
+		data: orgs = [],
+		error,
+		reload,
+		isPending,
+		isInitial,
+		isLoading,
+	} = useStudentOrgs()
 
 	React.useLayoutEffect(() => {
 		navigation.setOptions({
@@ -106,16 +113,14 @@ function StudentOrgsView(): JSX.Element {
 		)
 	}
 
-	if (isInitial) {
-		return <LoadingView />
-	}
-
 	return (
 		<SectionList
 			ItemSeparatorComponent={ListSeparator}
 			ListEmptyComponent={
 				searchQuery ? (
 					<NoticeView text={`No results found for "${searchQuery}"`} />
+				) : isLoading ? (
+					<LoadingView />
 				) : (
 					<NoticeView text="No organizations found." />
 				)
