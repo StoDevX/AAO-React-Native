@@ -121,6 +121,7 @@ function StudentOrgsView(): JSX.Element {
 				)
 			}
 			contentContainerStyle={styles.contentContainer}
+			contentInsetAdjustmentBehavior="automatic"
 			keyExtractor={(item) => item.name + item.category}
 			keyboardDismissMode="on-drag"
 			keyboardShouldPersistTaps="never"
