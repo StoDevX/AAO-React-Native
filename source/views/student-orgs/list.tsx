@@ -25,7 +25,7 @@ import memoize from 'lodash/memoize'
 import {ChangeTextEvent} from '../../navigation/types'
 
 const useStudentOrgs = () => {
-	return useFetch<StudentOrgType[]>(API('/orgs'), {
+	return useFetch<{data: StudentOrgType[]}>(API('/orgs'), {
 		headers: {accept: 'application/json'},
 	})
 }
@@ -58,7 +58,13 @@ function StudentOrgsView(): JSX.Element {
 	let [query, setQuery] = React.useState('')
 	let searchQuery = useDebounce(query.toLowerCase(), 200)
 
-	let {data, error, reload, isPending, isInitial} = useStudentOrgs()
+	let {
+		data: {data: orgs = []} = {},
+		error,
+		reload,
+		isPending,
+		isInitial,
+	} = useStudentOrgs()
 
 	React.useLayoutEffect(() => {
 		navigation.setOptions({
@@ -71,18 +77,18 @@ function StudentOrgsView(): JSX.Element {
 	}, [navigation])
 
 	let results = React.useMemo(() => {
-		if (!data) {
+		if (!orgs) {
 			return []
 		}
 
 		if (!searchQuery) {
-			return data
+			return orgs
 		}
 
-		return data.filter((org) =>
+		return orgs.filter((org) =>
 			orgToArray(org).some((word) => word.startsWith(searchQuery)),
 		)
-	}, [data, searchQuery])
+	}, [orgs, searchQuery])
 
 	let grouped = React.useMemo(() => {
 		return toPairs(groupBy(results, '$groupableName')).map(([k, v]) => {
