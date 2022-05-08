@@ -1,5 +1,4 @@
 modules/event-list/types.ts(2,41): error TS2307: Cannot find module 'react-navigation' or its corresponding type declarations.
-modules/food-menu/food-item-detail.tsx(14,8): error TS2307: Cannot find module 'react-navigation' or its corresponding type declarations.
 modules/navigation-buttons/close-screen.tsx(8,8): error TS2307: Cannot find module 'react-navigation' or its corresponding type declarations.
 modules/navigation-tabs/tabbed-view.ts(2,43): error TS2307: Cannot find module 'react-navigation' or its corresponding type declarations.
 modules/navigation-tabs/tabbed-view.ts(24,7): error TS2322: Type '(<ParamList extends ParamListBase>() => TypedNavigator<ParamList, TabNavigationState<ParamListBase>, MaterialBottomTabNavigationOptions, MaterialBottomTabNavigationEventMap, ({ id, initialRouteName, backBehavior, children, screenListeners, screenOptions, ...rest }: Props) => Element>) | (<ParamList extends ParamList...' is not assignable to type '(screens: Record<string, NavigationScreenRouteConfig>, options?: ScreenOptions | undefined) => ComponentType'.
