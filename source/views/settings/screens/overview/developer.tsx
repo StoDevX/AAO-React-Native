@@ -41,7 +41,7 @@ export const DeveloperSection = ({navigation}: Props): React.ReactElement => {
 			<Section header="DEVELOPER">
 				<PushButtonCell onPress={onAPIButton} title="API Tester" />
 				<PushButtonCell onPress={onBonAppButton} title="Bon Appetit Picker" />
-				<PushButtonCell onPress={onDebugButton} title="Debug" />
+				<PushButtonCell disabled={true} onPress={onDebugButton} title="Debug" />
 				<PushButtonCell
 					onPress={sendSentryMessage}
 					title="Send a Sentry Message"

@@ -39,7 +39,11 @@ export class DebugListView extends React.PureComponent<Props> {
 		<DebugRow
 			data={item}
 			navigation={this.props.navigation}
-			onPress={() => this.onPressRow(item)}
+			onPress={
+				() => undefined
+				// TODO: fix navigation in DebugListView
+				// this.onPressRow(item)
+			}
 		/>
 	)
 
