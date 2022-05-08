@@ -2,24 +2,13 @@ import * as React from 'react'
 import {createNativeStackNavigator} from '@react-navigation/native-stack'
 
 import * as home from '../views/home'
-// import {BuildingHoursDetailView} from '../views/building-hours/detail'
-// import {
-// 	BuildingHoursProblemReport,
-// 	BuildingHoursScheduleEditor,
-// 	BuildingHours,
-// } from '../views/building-hours'
 import * as buildingHours from '../views/building-hours'
 import * as calendar from '../views/calendar'
 import {EventDetail as eventDetail} from '@frogpond/event-list'
 import * as contacts from '../views/contacts'
-// import {
-// 	DictionaryDetail,
-// 	DictionaryEditor,
-// 	Dictionary,
-// } from '../views/dictionary'
 import * as dictionary from '../views/dictionary'
 import * as faqs from '../views/faqs'
-// import {Help} from '../views/help'
+import * as help from '../views/help'
 // import {
 // 	CourseDetail,
 // 	CourseSearchResults,
@@ -32,24 +21,12 @@ import * as faqs from '../views/faqs'
 // 	CarletonWeitzMenuScreen,
 // 	Menus,
 // } from '../views/menus'
-// import {BonAppPicker} from '../views/menus/dev-bonapp-picker'
-// import {MenuItemDetail} from '@frogpond/food-menu/food-item-detail'
+import {BonAppPickerView} from '../views/menus/dev-bonapp-picker'
+import {MenuItemDetailView} from '@frogpond/food-menu/food-item-detail'
 // import NewsView from '../views/news'
 import * as settings from '../views/settings/'
-// import {
-// 	Settings,
-// 	IconSettings,
-// 	Credits,
-// 	Debug,
-// 	Legal,
-// 	Privacy,
-// 	APITest,
-// } from '../views/settings'
 // import SISView from '../views/sis'
-// import Streaming, {
-// 	KRLXSchedule,
-// 	KSTOSchedule,
-// } from '../views/streaming'
+import * as streaming from '../views/streaming'
 import * as orgs from '../views/student-orgs'
 import * as transportation from '../views/transportation'
 import * as othermodes from '../views/transportation/other-modes'
@@ -119,6 +96,8 @@ export function RootStack(): JSX.Element {
 				<Stack.Screen component={settings.CreditsView} name="Credits" />
 				<Stack.Screen component={settings.PrivacyView} name="Privacy" />
 				<Stack.Screen component={settings.LegalView} name="Legal" />
+				<Stack.Screen component={settings.APITestView} name="APITest" />
+				<Stack.Screen component={settings.DebugView} name="Debug" />
 			</Stack.Group>
 			<Stack.Group>
 				<Stack.Screen
@@ -183,25 +162,32 @@ export function RootStack(): JSX.Element {
 					options={othermodes.OtherModesNavigationOptions}
 				/>
 			</Stack.Group>
-			{/*
-			<Stack.Screen component={Debug} name="Debug" />
-			<Stack.Screen component={APITest} name="APITest" />
-			<Stack.Screen component={EventDetail} name="EventDetail" />
-			<Stack.Screen component={Help} name="Help" />
-			<Stack.Screen component={JobDetail} name="JobDetail" />
-			<Stack.Screen component={Menus} name="Menus" />
-			<Stack.Screen component={BonAppPicker} name="BonAppPicker" />
-			<Stack.Screen component={News} name="News" />
-			<Stack.Screen component={SIS} name="SIS" />
+			<Stack.Group>
+				<Stack.Screen component={BonAppPickerView} name="BonAppPicker" />
+				<Stack.Screen component={MenuItemDetailView} name="MenuItemDetail" />
+			</Stack.Group>
+			<Stack.Group>
+				<Stack.Screen
+					component={streaming.View}
+					name="Streaming"
+					options={streaming.NavigationOptions}
+				/>
+				<Stack.Screen
+					component={streaming.KSTOScheduleView}
+					name="KSTOSchedule"
+					options={streaming.KSTOScheduleNavigationOptions}
+				/>
+				<Stack.Screen
+					component={streaming.KRLXScheduleView}
+					name="KRLXSchedule"
+					options={streaming.KRLXScheduleNavigationOptions}
+				/>
+			</Stack.Group>
 			<Stack.Screen
-				component={CourseSearchResults}
-				name="CourseSearchResults"
+				component={help.HelpView}
+				name="Help"
+				options={help.NavigationOptions}
 			/>
-			<Stack.Screen component={CourseDetail} name="CourseDetail" />
-			<Stack.Screen component={Streaming} name="Streaming" />
-			<Stack.Screen component={KSTOSchedule} name="KSTOSchedule" />
-			<Stack.Screen component={KRLXSchedule} name="KRLXSchedule" />
-			*/}
 			<Stack.Group>
 				<Stack.Screen
 					component={orgs.StudentOrgsView}
@@ -215,6 +201,15 @@ export function RootStack(): JSX.Element {
 				/>
 			</Stack.Group>
 			{/*
+			<Stack.Screen component={JobDetail} name="JobDetail" />
+			<Stack.Screen component={Menus} name="Menus" />
+			<Stack.Screen component={News} name="News" />
+			<Stack.Screen component={SIS} name="SIS" />
+			<Stack.Screen
+				component={CourseSearchResults}
+				name="CourseSearchResults"
+			/>
+			<Stack.Screen component={CourseDetail} name="CourseDetail" />
 			</Stack.Group>
 			<Stack.Screen
 				component={CarletonBurtonMenuScreen}
@@ -229,7 +224,6 @@ export function RootStack(): JSX.Element {
 				component={CarletonSaylesMenuScreen}
 				name="CarletonSaylesMenu"
 			/>
-			<Stack.Screen component={MenuItemDetail} name="MenuItemDetail" />
 			<Stack.Screen component={PrintJobs} name="PrintJobs" />
 			<Stack.Screen component={PrinterList} name="PrinterList" />
 			<Stack.Screen component={PrintJobRelease} name="PrintJobRelease" /> */}

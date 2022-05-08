@@ -114,11 +114,7 @@
   14:2   warning  Missing return type on function           @typescript-eslint/explicit-module-boundary-types
 
 ./source/views/help/index.tsx
-  12:21  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
-  26:8   warning  Missing return type on function           @typescript-eslint/explicit-module-boundary-types
-
-./source/views/help/tool.tsx
-  53:2  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
+  13:21  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
 
 ./source/views/help/types.ts
   44:26  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
@@ -133,10 +129,6 @@
   37:40  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
   52:41  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
   69:8   warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
-
-./source/views/menus/dev-bonapp-picker.tsx
-  39:15  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
-  46:2   warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
 
 ./source/views/menus/lib/trim-names.ts
    3:8  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
@@ -166,17 +158,8 @@
   26:2  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
   32:2  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
 
-./source/views/settings/screens/api-test/api-test-android.tsx
-  34:35  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
-  52:14  warning  Missing return type on function           @typescript-eslint/explicit-module-boundary-types
-
 ./source/views/settings/screens/api-test/api-test-ios.tsx
-  44:35  warning  Unexpected any. Specify a different type              @typescript-eslint/no-explicit-any
-  64:14  warning  Missing return type on function                       @typescript-eslint/explicit-module-boundary-types
-  78:20  warning  Missing return type on function                       @typescript-eslint/explicit-module-boundary-types
-  78:21  warning  Argument 'event' should be typed with a non-any type  @typescript-eslint/explicit-module-boundary-types
-  78:28  warning  Unexpected any. Specify a different type              @typescript-eslint/no-explicit-any
-  83:2   warning  Missing return type on function                       @typescript-eslint/explicit-module-boundary-types
+  66:32  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
 
 ./source/views/settings/screens/debug/list.tsx
   16:9   warning  Unexpected any. Specify a different type             @typescript-eslint/no-explicit-any
@@ -189,35 +172,16 @@
   36:24  warning  Unexpected any. Specify a different type             @typescript-eslint/no-explicit-any
   38:15  warning  Missing return type on function                      @typescript-eslint/explicit-module-boundary-types
   38:31  warning  Unexpected any. Specify a different type             @typescript-eslint/no-explicit-any
-  46:2   warning  Missing return type on function                      @typescript-eslint/explicit-module-boundary-types
-  67:8   warning  Missing return type on function                      @typescript-eslint/explicit-module-boundary-types
+  50:2   warning  Missing return type on function                      @typescript-eslint/explicit-module-boundary-types
 
 ./source/views/settings/screens/debug/row.tsx
    6:29  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
    7:28  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
   11:2   warning  Missing return type on function           @typescript-eslint/explicit-module-boundary-types
 
-./source/views/settings/screens/overview/developer.tsx
-  10:35  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
-
-./source/views/settings/screens/overview/index.tsx
-  22:35  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
-
 ./source/views/settings/screens/overview/login-button.tsx
    8:17  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
   12:8   warning  Missing return type on function           @typescript-eslint/explicit-module-boundary-types
-
-./source/views/settings/screens/overview/odds-and-ends.tsx
-   7:35  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
-  11:26  warning  Missing return type on function           @typescript-eslint/explicit-module-boundary-types
-  15:2   warning  Missing return type on function           @typescript-eslint/explicit-module-boundary-types
-
-./source/views/settings/screens/overview/support.tsx
-  10:48  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
-  30:18  warning  Missing return type on function           @typescript-eslint/explicit-module-boundary-types
-  34:16  warning  Missing return type on function           @typescript-eslint/explicit-module-boundary-types
-  36:18  warning  Missing return type on function           @typescript-eslint/explicit-module-boundary-types
-  51:2   warning  Missing return type on function           @typescript-eslint/explicit-module-boundary-types
 
 ./source/views/sis/balances-acknowledgement.tsx
   18:8   warning  Missing return type on function           @typescript-eslint/explicit-module-boundary-types
@@ -340,29 +304,11 @@
   100:45  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
   169:8   warning  Missing return type on function           @typescript-eslint/explicit-module-boundary-types
 
-./source/views/streaming/movie.tsx
-  5:16  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
-
 ./source/views/streaming/streams/list.tsx
-   49:2   warning  Missing return type on function                              @typescript-eslint/explicit-module-boundary-types
-   61:15  warning  Missing return type on function                              @typescript-eslint/explicit-module-boundary-types
-  100:17  warning  Missing return type on function                              @typescript-eslint/explicit-module-boundary-types
-  102:24  warning  Missing return type on function                              @typescript-eslint/explicit-module-boundary-types
-  102:25  warning  Object pattern argument should be typed with a non-any type  @typescript-eslint/explicit-module-boundary-types
-  102:45  warning  Unexpected any. Specify a different type                     @typescript-eslint/no-explicit-any
-  106:15  warning  Missing return type on function                              @typescript-eslint/explicit-module-boundary-types
-  108:2   warning  Missing return type on function                              @typescript-eslint/explicit-module-boundary-types
-
-./source/views/streaming/streams/row.tsx
-  51:18  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
-  56:2   warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
-
-./source/views/streaming/webcams/thumbnail.tsx
-  18:16  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
-  23:2   warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
+  96:49  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
 
 ./source/views/student-orgs/util.ts
   3:8  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
 
-✖ 227 problems (0 errors, 227 warnings)
+✖ 193 problems (0 errors, 193 warnings)
 

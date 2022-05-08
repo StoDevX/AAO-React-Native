@@ -50,7 +50,7 @@ type Props = {
 }
 
 export class ToolView extends React.Component<Props> {
-	render() {
+	render(): JSX.Element {
 		let toolEnabled = this.props.config.enabled
 
 		return (

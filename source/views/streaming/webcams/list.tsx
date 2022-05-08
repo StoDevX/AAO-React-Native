@@ -1,13 +1,11 @@
 import * as React from 'react'
 import {StyleSheet, ScrollView, useWindowDimensions} from 'react-native'
-import {TabBarIcon} from '@frogpond/navigation-tabs'
 import {Column} from '@frogpond/layout'
 import {partitionByIndex} from '../../../lib/partition-by-index'
 import type {Webcam} from './types'
 import {StreamThumbnail} from './thumbnail'
 import {API} from '@frogpond/api'
 import {fetch} from '@frogpond/fetch'
-import {BottomTabNavigationOptions} from '@react-navigation/bottom-tabs'
 
 const fetchWebcams = (): Promise<Array<Webcam>> =>
 	fetch(API('/webcams'))
@@ -18,16 +16,6 @@ export let WebcamsView = (): JSX.Element => {
 	let [webcams, setWebcams] = React.useState<Webcam[]>([])
 
 	let viewport = useWindowDimensions()
-
-	// TODO: This will be inlined into a new streaming index
-	// that calls createBottomTabNavigator. Leaving it typed
-	// but unused until streaming is plugged-in to the navigator.
-	//
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	let navigationOptions: BottomTabNavigationOptions = {
-		tabBarLabel: 'Webcams',
-		tabBarIcon: TabBarIcon('videocam'),
-	}
 
 	React.useEffect(() => {
 		let fetchData = async () => {

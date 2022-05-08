@@ -1,7 +1,5 @@
 import * as React from 'react'
 import * as c from '@frogpond/colors'
-import {TabBarIcon} from '@frogpond/navigation-tabs'
-import type {TopLevelViewPropsType} from '../../types'
 import * as logos from '../../../../images/streaming'
 import {RadioControllerView} from './index'
 import tinycolor from 'tinycolor2'
@@ -18,14 +16,13 @@ const colors: PlayerTheme = {
 	imageBackgroundColor: 'transparent',
 }
 
-export function KrlxStationView(props: TopLevelViewPropsType): JSX.Element {
+export function KrlxStationView(): JSX.Element {
 	return (
 		<ThemeProvider theme={colors}>
 			<RadioControllerView
 				image={logos.krlx}
-				navigation={props.navigation}
 				playerUrl="https://live.krlx.org"
-				scheduleViewName="KRLXScheduleView"
+				scheduleViewName="KRLXSchedule"
 				source={{
 					useEmbeddedPlayer: false,
 					embeddedPlayerUrl: 'https://live.krlx.org',
@@ -37,9 +34,4 @@ export function KrlxStationView(props: TopLevelViewPropsType): JSX.Element {
 			/>
 		</ThemeProvider>
 	)
-}
-
-KrlxStationView.navigationOptions = {
-	tabBarLabel: 'KRLX',
-	tabBarIcon: TabBarIcon('microphone'),
 }

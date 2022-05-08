@@ -1,7 +1,6 @@
 import * as React from 'react'
 import {StyleSheet, ScrollView} from 'react-native'
 import {TableView} from '@frogpond/tableview'
-import type {NavigationScreenProp} from 'react-navigation'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 
 import {isDevMode} from '@frogpond/constants'
@@ -18,29 +17,25 @@ const styles = StyleSheet.create({
 	},
 })
 
-function SettingsView(props: {
-	navigation: NavigationScreenProp<any>
-}): JSX.Element {
-	return (
-		<ScrollView
-			contentContainerStyle={styles.container}
-			keyboardDismissMode="on-drag"
-			keyboardShouldPersistTaps="always"
-		>
-			<TableView>
-				<ConnectedCredentialsLoginSection />
+const SettingsView = (): JSX.Element => (
+	<ScrollView
+		contentContainerStyle={styles.container}
+		keyboardDismissMode="on-drag"
+		keyboardShouldPersistTaps="always"
+	>
+		<TableView>
+			<ConnectedCredentialsLoginSection />
 
-				<SupportSection navigation={props.navigation} />
+			<SupportSection />
 
-				<MiscellanySection />
+			<MiscellanySection />
 
-				<OddsAndEndsSection navigation={props.navigation} />
+			<OddsAndEndsSection />
 
-				{isDevMode() && <DeveloperSection navigation={props.navigation} />}
-			</TableView>
-		</ScrollView>
-	)
-}
+			{isDevMode() && <DeveloperSection />}
+		</TableView>
+	</ScrollView>
+)
 
 export {SettingsView as View}
 

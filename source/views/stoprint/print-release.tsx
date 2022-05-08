@@ -61,8 +61,8 @@ function PrinterInformation({printer}: {printer: Printer}) {
 	return (
 		<Section header="PRINTER INFO" sectionTintColor={c.sectionBgColor}>
 			<LeftDetailCell detail="Name" title={printer.printerName} />
-			{printer.location && (
-				<LeftDetailCell detail="Location" title={printer.location} />
+			{Boolean(printer.location) && (
+				<LeftDetailCell detail="Location" title={printer.location ?? ''} />
 			)}
 		</Section>
 	)

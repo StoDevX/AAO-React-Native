@@ -6,6 +6,7 @@ import {
 	ListRow,
 	ListSectionHeader,
 	ListSeparator,
+	largeListProps,
 } from '@frogpond/lists'
 import {NoticeView} from '@frogpond/notice'
 import type {WordType} from './types'
@@ -133,6 +134,7 @@ function DictionaryView(): JSX.Element {
 			)}
 			sections={grouped}
 			style={styles.wrapper}
+			{...largeListProps}
 		/>
 	)
 }
