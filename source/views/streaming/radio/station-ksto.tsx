@@ -3,8 +3,7 @@ import {sto} from '../../../lib/colors'
 import * as logos from '../../../../images/streaming'
 import {RadioControllerView} from './index'
 import tinycolor from 'tinycolor2'
-import {ThemeProvider} from '@frogpond/app-theme'
-import type {PlayerTheme} from './types'
+import {PlayerTheme, ThemeProvider} from './theme'
 
 let tintColor = '#37a287'
 const colors: PlayerTheme = {
