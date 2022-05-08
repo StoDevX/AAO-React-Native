@@ -268,7 +268,6 @@ export function BonAppHostedMenu(props: Props): JSX.Element {
 			meals={meals}
 			menuCorIcons={cafeMenu.cor_icons}
 			name={props.name}
-			navigation={props.navigation}
 			now={now}
 			onRefresh={refresh}
 			refreshing={refreshing}
