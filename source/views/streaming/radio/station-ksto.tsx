@@ -1,7 +1,5 @@
 import * as React from 'react'
 import {sto} from '../../../lib/colors'
-import {TabBarIcon} from '@frogpond/navigation-tabs'
-import type {TopLevelViewPropsType} from '../../types'
 import * as logos from '../../../../images/streaming'
 import {RadioControllerView} from './index'
 import tinycolor from 'tinycolor2'
@@ -22,14 +20,13 @@ const colors: PlayerTheme = {
 		.toRgbString(),
 }
 
-export function KstoStationView(props: TopLevelViewPropsType): JSX.Element {
+export function KstoStationView(): JSX.Element {
 	return (
 		<ThemeProvider theme={colors}>
 			<RadioControllerView
 				image={logos.ksto}
-				navigation={props.navigation}
 				playerUrl="https://www.stolaf.edu/multimedia/play/embed/ksto.html"
-				scheduleViewName="KSTOScheduleView"
+				scheduleViewName="KSTOSchedule"
 				source={{
 					useEmbeddedPlayer: true,
 					embeddedPlayerUrl:
