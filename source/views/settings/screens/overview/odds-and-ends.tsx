@@ -9,7 +9,7 @@ export const OddsAndEndsSection = (): JSX.Element => {
 	return (
 		<Section header="ODDS &amp; ENDS">
 			<Cell cellStyle="RightDetail" detail={version} title="Version" />
-			{build && (
+			{Boolean(build) && (
 				<Cell cellStyle="RightDetail" detail={build} title="Build Number" />
 			)}
 		</Section>
