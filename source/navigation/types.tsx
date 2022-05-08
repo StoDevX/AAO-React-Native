@@ -12,6 +12,10 @@ import {RouteParams as HoursEditorType} from '../views/building-hours/report/edi
 import {WordType} from '../views/dictionary/types'
 import {OtherModeType} from '../views/transportation/types'
 import {UnprocessedBusLine} from '../views/transportation/bus/types'
+import type {
+	MasterCorIconMapType,
+	MenuItemType as MenuItem,
+} from '../views/menus/types'
 
 export type RootStackParamList = {
 	Home: undefined
@@ -56,7 +60,7 @@ export type RootStackParamList = {
 	CarletonLDCMenu: undefined
 	CarletonWeitzMenu: undefined
 	CarletonSaylesMenu: undefined
-	MenuItemDetail: undefined
+	MenuItemDetail: {item: MenuItem; icons: MasterCorIconMapType}
 	PrintJobs: undefined
 	PrinterList: undefined
 	PrintJobRelease: undefined

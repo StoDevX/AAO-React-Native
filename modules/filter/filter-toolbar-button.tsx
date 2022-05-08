@@ -65,8 +65,8 @@ export function FilterToolbarButton(props: Props): JSX.Element | null {
 	}
 
 	let icon = Platform.select({
-		ios: 'ios-arrow-down',
-		android: 'md-arrow-dropdown',
+		ios: 'ios-chevron-down',
+		android: 'md-chevron-down',
 		default: '',
 	})
 
