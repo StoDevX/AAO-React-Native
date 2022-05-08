@@ -71,8 +71,6 @@ source/views/building-hours/lib/__tests__/is-building-open.test.ts(31,3): error 
 source/views/building-hours/lib/__tests__/is-building-open.test.ts(51,3): error TS2740: Type '{}' is missing the following properties from type 'BreakScheduleContainerType': fall, thanksgiving, christmasfest, winter, and 4 more.
 source/views/building-hours/lib/__tests__/is-building-open.test.ts(75,3): error TS2740: Type '{}' is missing the following properties from type 'BreakScheduleContainerType': fall, thanksgiving, christmasfest, winter, and 4 more.
 source/views/building-hours/lib/__tests__/is-building-open.test.ts(95,3): error TS2740: Type '{}' is missing the following properties from type 'BreakScheduleContainerType': fall, thanksgiving, christmasfest, winter, and 4 more.
-source/views/contacts/detail.tsx(55,58): error TS2339: Property 'route' does not exist on type 'Readonly<Props> & Readonly<{ children?: ReactNode; }>'.
-source/views/contacts/detail.tsx(64,28): error TS2339: Property 'route' does not exist on type 'Readonly<Props> & Readonly<{ children?: ReactNode; }>'.
 source/views/dictionary/list.tsx(28,10): error TS2503: Cannot find namespace 'window'.
 source/views/help/index.tsx(35,18): error TS2345: Argument of type 'ThunkAction<GetEnabledToolsAction>' is not assignable to parameter of type 'AnyAction'.
 source/views/menus/dev-bonapp-picker.tsx(45,6): error TS2741: Property 'navigation' is missing in type '{ key: string; cafe: { id: string; }; loadingMessage: string[]; name: string; }' but required in type 'TopLevelViewPropsType'.
@@ -154,11 +152,11 @@ source/views/sis/course-search/search.tsx(224,3): error TS2769: No overload matc
     Type '() => AnyAction' is not assignable to type '() => Promise<any>'.
 source/views/sis/index.ts(8,29): error TS2307: Cannot find module './student-work/detail' or its corresponding type declarations.
 source/views/sis/index.ts(18,1): error TS2571: Object is of type 'unknown'.
-source/views/sis/student-work/index.tsx(70,40): error TS2304: Cannot find name 'mixed'.
-source/views/stoprint/print-jobs.tsx(223,36): error TS2345: Argument of type 'ThunkAction<LogInActions>' is not assignable to parameter of type 'AnyAction'.
-source/views/stoprint/print-jobs.tsx(227,18): error TS2345: Argument of type 'ThunkAction<UpdatePrintJobsAction>' is not assignable to parameter of type 'AnyAction'.
+source/views/sis/student-work/index.tsx(69,40): error TS2304: Cannot find name 'mixed'.
+source/views/stoprint/print-jobs.tsx(222,36): error TS2345: Argument of type 'ThunkAction<LogInActions>' is not assignable to parameter of type 'AnyAction'.
+source/views/stoprint/print-jobs.tsx(226,18): error TS2345: Argument of type 'ThunkAction<UpdatePrintJobsAction>' is not assignable to parameter of type 'AnyAction'.
   Property 'type' is missing in type 'ThunkAction<UpdatePrintJobsAction>' but required in type 'AnyAction'.
-source/views/stoprint/print-jobs.tsx(232,3): error TS2769: No overload matches this call.
+source/views/stoprint/print-jobs.tsx(231,3): error TS2769: No overload matches this call.
   Overload 2 of 2, '(props: Props, context: any): PrintJobsView', gave the following error.
     Type 'string | null' is not assignable to type 'string | undefined'.
   Overload 2 of 2, '(props: Props, context: any): PrintJobsView', gave the following error.
@@ -171,9 +169,9 @@ source/views/stoprint/print-release.tsx(87,2): error TS2416: Property 'state' in
       Type 'null' is not assignable to type 'HeldJob | undefined'.
 source/views/stoprint/print-release.tsx(164,20): error TS2339: Property 'id' does not exist on type 'never'.
 source/views/stoprint/print-release.tsx(192,12): error TS2339: Property 'id' does not exist on type 'never'.
-source/views/stoprint/printers.tsx(189,24): error TS2345: Argument of type 'ThunkAction<UpdateAllPrintersAction>' is not assignable to parameter of type 'AnyAction'.
+source/views/stoprint/printers.tsx(188,24): error TS2345: Argument of type 'ThunkAction<UpdateAllPrintersAction>' is not assignable to parameter of type 'AnyAction'.
   Property 'type' is missing in type 'ThunkAction<UpdateAllPrintersAction>' but required in type 'AnyAction'.
-source/views/stoprint/printers.tsx(197,4): error TS2769: No overload matches this call.
+source/views/stoprint/printers.tsx(196,4): error TS2769: No overload matches this call.
   Overload 1 of 2, '(props: Props | Readonly<Props>): PrinterListView', gave the following error.
     Type 'string | null' is not assignable to type 'string | undefined'.
   Overload 2 of 2, '(props: Props, context: any): PrinterListView', gave the following error.
