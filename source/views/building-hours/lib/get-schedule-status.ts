@@ -3,11 +3,13 @@ import type {SingleBuildingScheduleType} from '../types'
 
 import {parseHours} from './parse-hours'
 
-const in30 = (start: Moment, end: Moment) =>
-	start.clone().add(30, 'minutes').isSameOrAfter(end)
+function in30(start: Moment, end: Moment) {
+	return start.clone().add(30, 'minutes').isSameOrAfter(end)
+}
 
-const timeBetween = (start: Moment, end: Moment) =>
-	start.clone().seconds(0).to(end)
+function timeBetween(start: Moment, end: Moment) {
+	return start.clone().seconds(0).to(end)
+}
 
 export function getScheduleStatusAtMoment(
 	schedule: SingleBuildingScheduleType,
