@@ -2,11 +2,11 @@ import {useState} from 'react'
 import {default as moment, unitOfTime, type Moment} from 'moment-timezone'
 import {useInterval} from './use-interval'
 
-type BasicProps = {
+interface BasicProps {
 	intervalMs: number // ms
 }
 
-type MomentProps = BasicProps & {
+interface MomentProps extends BasicProps {
 	timezone?: string
 	startOf?: unitOfTime.StartOf
 }
