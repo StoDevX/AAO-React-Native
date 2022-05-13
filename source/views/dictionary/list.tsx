@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {StyleSheet, RefreshControl, SectionList} from 'react-native'
+import {StyleSheet, SectionList} from 'react-native'
 import {
 	Detail,
 	Title,
@@ -7,29 +7,25 @@ import {
 	ListSectionHeader,
 	ListSeparator,
 	largeListProps,
+	emptyList,
 } from '@frogpond/lists'
 import {LoadingView, NoticeView} from '@frogpond/notice'
-import type {WordType} from './types'
+import type {DiciontaryGroup, WordType} from './types'
 import {white} from '@frogpond/colors'
-import groupBy from 'lodash/groupBy'
-import toPairs from 'lodash/toPairs'
 import words from 'lodash/words'
 import deburr from 'lodash/deburr'
-import {fetch} from '@frogpond/fetch'
+import groupBy from 'lodash/groupBy'
+import {useFetch} from 'react-async'
 import {API} from '@frogpond/api'
-import {useAsync} from 'react-async'
-import type {AsyncState} from 'react-async'
 import {useDebounce} from '@frogpond/use-debounce'
 import {useNavigation} from '@react-navigation/native'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 import {ChangeTextEvent} from '../../navigation/types'
 
-const fetchDictionaryTerms = (args: {
-	signal: window.AbortController
-}): Promise<Array<WordType>> => {
-	return fetch(API('/dictionary'), {signal: args.signal})
-		.json<{data: Array<WordType>}>()
-		.then((body) => body.data)
+const useDictionary = () => {
+	return useFetch<{data: WordType[]}>(API('/dictionary'), {
+		headers: {accept: 'application/json'},
+	})
 }
 
 function splitToArray(str: string) {
@@ -40,6 +36,34 @@ function termToArray(term: WordType) {
 	return Array.from(
 		new Set([...splitToArray(term.word), ...splitToArray(term.definition)]),
 	)
+}
+
+function createGrouping(words: WordType[]) {
+	let grouped = groupBy(words, (w) => w.word[0] || '?')
+	return Object.entries(grouped).map(([k, v]) => ({
+		title: k,
+		data: v,
+	}))
+}
+
+let groupTerms = (
+	searchQuery: string,
+	data: DiciontaryGroup[],
+	words: WordType[],
+) => {
+	if (!data) {
+		return emptyList
+	}
+
+	if (!searchQuery) {
+		return data
+	}
+
+	let filtered = words.filter((term: WordType) =>
+		termToArray(term).some((word) => word.startsWith(searchQuery)),
+	)
+
+	return createGrouping(filtered)
 }
 
 const styles = StyleSheet.create({
@@ -55,11 +79,19 @@ const styles = StyleSheet.create({
 })
 
 function DictionaryView(): JSX.Element {
+	let navigation = useNavigation()
+
 	let [query, setQuery] = React.useState('')
 	let searchQuery = useDebounce(query.toLowerCase(), 200)
-	let [isInitialFetch, setIsInitial] = React.useState(true)
 
-	let navigation = useNavigation()
+	let {
+		data: {data: words = []} = {},
+		error,
+		reload,
+		isPending,
+		isInitial,
+		isLoading,
+	} = useDictionary()
 
 	React.useLayoutEffect(() => {
 		navigation.setOptions({
@@ -71,28 +103,14 @@ function DictionaryView(): JSX.Element {
 		})
 	}, [navigation])
 
-	let {data, error, reload, isPending}: AsyncState<Array<WordType>> = useAsync(
-		fetchDictionaryTerms,
-		{onResolve: () => setIsInitial(false)},
+	let groupedOriginal = React.useMemo(() => {
+		return createGrouping(words)
+	}, [words])
+
+	let grouped = React.useMemo(
+		() => groupTerms(searchQuery, groupedOriginal, words),
+		[searchQuery, groupedOriginal, words],
 	)
-
-	let results = React.useMemo(() => {
-		let allTerms = data || []
-
-		if (!searchQuery) {
-			return allTerms
-		}
-
-		return allTerms.filter((term) =>
-			termToArray(term).some((word) => word.startsWith(searchQuery)),
-		)
-	}, [data, searchQuery])
-
-	let grouped = React.useMemo(() => {
-		return toPairs(groupBy(results, (item) => item.word[0])).map(([k, v]) => {
-			return {title: k, data: v}
-		})
-	}, [results])
 
 	// conditionals must come after all hooks
 	if (error) {
@@ -105,24 +123,25 @@ function DictionaryView(): JSX.Element {
 		)
 	}
 
-	if (isInitialFetch) {
-		return <LoadingView />
-	}
-
 	return (
 		<SectionList
 			ItemSeparatorComponent={ListSeparator}
 			ListEmptyComponent={
-				<NoticeView text={`No results found for "${query}"`} />
+				searchQuery ? (
+					<NoticeView text={`No results found for "${searchQuery}"`} />
+				) : isLoading ? (
+					<LoadingView />
+				) : (
+					<NoticeView text="No results found." />
+				)
 			}
 			contentContainerStyle={styles.contentContainer}
 			contentInsetAdjustmentBehavior="automatic"
 			keyExtractor={(item: WordType, index) => item.word + index}
 			keyboardDismissMode="on-drag"
 			keyboardShouldPersistTaps="never"
-			refreshControl={
-				<RefreshControl onRefresh={reload} refreshing={isPending} />
-			}
+			onRefresh={reload}
+			refreshing={isPending && !isInitial}
 			renderItem={({item}) => {
 				return (
 					<ListRow
