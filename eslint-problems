@@ -134,23 +134,6 @@
 ./source/views/menus/types.ts
   35:29  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
 
-./source/views/news/news-container.tsx
-  28:2   warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
-  34:14  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
-  59:2   warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
-
-./source/views/news/news-list.tsx
-  22:19  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
-  29:16  warning  Missing return type on function           @typescript-eslint/explicit-module-boundary-types
-  33:20  warning  Missing return type on function           @typescript-eslint/explicit-module-boundary-types
-  39:15  warning  Missing return type on function           @typescript-eslint/explicit-module-boundary-types
-  47:17  warning  Missing return type on function           @typescript-eslint/explicit-module-boundary-types
-  49:2   warning  Missing return type on function           @typescript-eslint/explicit-module-boundary-types
-
-./source/views/news/news-row.tsx
-  14:13  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
-  22:2   warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
-
 ./source/views/settings/components/logo.tsx
   26:2  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
   32:2  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
@@ -307,5 +290,5 @@
 ./source/views/student-orgs/util.ts
   3:8  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
 
-✖ 192 problems (0 errors, 192 warnings)
+✖ 181 problems (0 errors, 181 warnings)
 
