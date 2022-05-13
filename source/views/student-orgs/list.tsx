@@ -9,6 +9,7 @@ import {
 	Detail,
 	Title,
 	largeListProps,
+	emptyList,
 } from '@frogpond/lists'
 import {white} from '@frogpond/colors'
 import groupBy from 'lodash/groupBy'
@@ -79,7 +80,7 @@ function StudentOrgsView(): JSX.Element {
 
 	let results = React.useMemo(() => {
 		if (!orgs) {
-			return []
+			return emptyList
 		}
 
 		if (!searchQuery) {

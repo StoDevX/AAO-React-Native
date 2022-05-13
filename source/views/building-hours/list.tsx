@@ -6,7 +6,7 @@ import {useFetch} from 'react-async'
 import {BuildingType} from './types'
 
 import * as c from '@frogpond/colors'
-import {ListSeparator, ListSectionHeader} from '@frogpond/lists'
+import {ListSeparator, ListSectionHeader, emptyList} from '@frogpond/lists'
 import {LoadingView, NoticeView} from '@frogpond/notice'
 import {useNavigation} from '@react-navigation/native'
 import {API} from '@frogpond/api'
@@ -30,8 +30,6 @@ function useBuildingHours() {
 		headers: {accept: 'application/json'},
 	})
 }
-
-const emptyList: ReadonlyArray<never> = []
 
 function groupBuildings(
 	buildings: Array<BuildingType>,
@@ -66,6 +64,7 @@ export function BuildingHoursView(): JSX.Element {
 		data: {data: buildings = []} = {},
 		isPending,
 		isInitial,
+		isLoading,
 		reload,
 	} = useBuildingHours()
 
@@ -86,14 +85,12 @@ export function BuildingHoursView(): JSX.Element {
 		[navigation],
 	)
 
-	if (isInitial) {
-		return <LoadingView />
-	}
-
 	return (
 		<SectionList
 			ItemSeparatorComponent={ListSeparator}
-			ListEmptyComponent={<NoticeView text="No hours." />}
+			ListEmptyComponent={
+				isLoading ? <LoadingView /> : <NoticeView text="No hours." />
+			}
 			contentContainerStyle={styles.container}
 			keyExtractor={(item) => item.name}
 			onRefresh={reload}
