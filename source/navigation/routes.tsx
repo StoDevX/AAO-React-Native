@@ -21,6 +21,7 @@ import * as help from '../views/help'
 // 	CarletonWeitzMenuScreen,
 // 	Menus,
 // } from '../views/menus'
+import * as menus from '../views/menus'
 import {
 	BonAppPickerView as DevBonAppPickerView,
 	DevBonAppNavigationOptions,
@@ -173,6 +174,11 @@ export function RootStack(): JSX.Element {
 					component={DevBonAppPickerView}
 					name="BonAppPicker"
 					options={DevBonAppNavigationOptions}
+				/>
+				<Stack.Screen
+					component={menus.View}
+					name="Menus"
+					options={menus.NavigationOptions}
 				/>
 				<Stack.Screen
 					component={MenuItemDetailView}

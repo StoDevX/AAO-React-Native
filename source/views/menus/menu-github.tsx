@@ -3,7 +3,6 @@ import {useEffect, useState} from 'react'
 import {timezone} from '@frogpond/constants'
 import {LoadingView, NoticeView} from '@frogpond/notice'
 import {FoodMenu} from '@frogpond/food-menu'
-import type {TopLevelViewPropsType} from '../types'
 import moment from 'moment-timezone'
 import sample from 'lodash/sample'
 import type {
@@ -18,7 +17,7 @@ import {API} from '@frogpond/api'
 import {fetch} from '@frogpond/fetch'
 import groupBy from 'lodash/groupBy'
 
-type Props = TopLevelViewPropsType & {
+type Props = {
 	name: string
 	loadingMessage: string[]
 }
