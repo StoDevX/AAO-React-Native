@@ -1,10 +1,10 @@
 import * as React from 'react'
-import {TabBarIcon} from '@frogpond/navigation-tabs'
 import {Platform, ScrollView, StyleSheet, View} from 'react-native'
 import {Row} from '@frogpond/layout'
 import {ListRow, ListSeparator, Title} from '@frogpond/lists'
 import {BonAppHostedMenu} from './menu-bonapp'
 import {useNavigation} from '@react-navigation/native'
+import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 import {RootStackParamList} from '../../navigation/types'
 
 export const CarletonBurtonMenuScreen = (): JSX.Element => (
@@ -14,10 +14,6 @@ export const CarletonBurtonMenuScreen = (): JSX.Element => (
 		name="Burton"
 	/>
 )
-CarletonBurtonMenuScreen.navigationOptions = {
-	title: 'Burton',
-	tabBarIcon: TabBarIcon('menu'),
-}
 
 export const CarletonLDCMenuScreen = (): JSX.Element => (
 	<BonAppHostedMenu
@@ -26,10 +22,6 @@ export const CarletonLDCMenuScreen = (): JSX.Element => (
 		name="LDC"
 	/>
 )
-CarletonLDCMenuScreen.navigationOptions = {
-	title: 'LDC',
-	tabBarIcon: TabBarIcon('menu'),
-}
 
 export const CarletonWeitzMenuScreen = (): JSX.Element => (
 	<BonAppHostedMenu
@@ -38,10 +30,6 @@ export const CarletonWeitzMenuScreen = (): JSX.Element => (
 		name="Weitz Center"
 	/>
 )
-CarletonWeitzMenuScreen.navigationOptions = {
-	title: 'Weitz Center',
-	tabBarIcon: TabBarIcon('menu'),
-}
 
 export const CarletonSaylesMenuScreen = (): JSX.Element => (
 	<BonAppHostedMenu
@@ -50,10 +38,6 @@ export const CarletonSaylesMenuScreen = (): JSX.Element => (
 		name="Sayles Hill"
 	/>
 )
-CarletonSaylesMenuScreen.navigationOptions = {
-	title: 'Sayles Hill',
-	tabBarIcon: TabBarIcon('menu'),
-}
 
 export function CarletonCafeIndex(): JSX.Element {
 	let navigation = useNavigation()
@@ -96,3 +80,19 @@ const styles = StyleSheet.create({
 		paddingTop: Platform.OS === 'ios' ? 20 : 0,
 	},
 })
+
+export const BurtonNavigationOptions: NativeStackNavigationOptions = {
+	title: 'Burton',
+}
+
+export const LDCNavigationOptions: NativeStackNavigationOptions = {
+	title: 'LDC',
+}
+
+export const WeitzNavigationOptions: NativeStackNavigationOptions = {
+	title: 'Weitz Center',
+}
+
+export const SaylesNavigationOptions: NativeStackNavigationOptions = {
+	title: 'Sayles Hill',
+}
