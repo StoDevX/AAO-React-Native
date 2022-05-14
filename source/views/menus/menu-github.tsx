@@ -14,80 +14,64 @@ import type {
 } from './types'
 import {upgradeMenuItem, upgradeStation} from './lib/process-menu-shorthands'
 import {API} from '@frogpond/api'
-import {fetch} from '@frogpond/fetch'
 import groupBy from 'lodash/groupBy'
+import {useFetch} from 'react-async'
 
 type Props = {
 	name: string
 	loadingMessage: string[]
 }
 
+interface GithubMenuType {
+	foodItems: MenuItemType[]
+	stationMenus: StationMenuType[]
+	corIcons: MasterCorIconMapType
+}
+
+function useGithubMenu() {
+	return useFetch<{data: GithubMenuType}>(API('/food/named/menu/the-pause'), {
+		headers: {accept: 'application/json'},
+	})
+}
+
 export function GitHubHostedMenu(props: Props): JSX.Element {
-	let [error, setError] = useState<Error | null>(null)
-	let [loading, setLoading] = useState(true)
 	let [now, setNow] = useState(moment.tz(timezone()))
 	let [foodItems, setFoodItems] = useState<MenuItemContainerType>({})
 	let [corIcons, setCorIcons] = useState<MasterCorIconMapType>({})
 	let [meals, setMeals] = useState<ProcessedMealType[]>([])
 
+	let {data: {data} = {}, error, isLoading} = useGithubMenu()
+
 	useEffect(() => {
-		;(async () => {
-			setLoading(true)
+		let foodItems: MenuItemType[] = data?.foodItems || []
+		let stationMenus: StationMenuType[] = data?.stationMenus || []
+		let corIcons: MasterCorIconMapType = data?.corIcons || {}
 
-			let container: {
-				data: {
-					foodItems: MenuItemType[]
-					stationMenus: StationMenuType[]
-					corIcons: MasterCorIconMapType
-				}
-			}
+		let upgradedFoodItems = foodItems.map(upgradeMenuItem)
+		let upgradedFoodItemsMap = Object.fromEntries(
+			upgradedFoodItems.map((item) => [item.id, item]),
+		)
+		let foodItemsByStation = groupBy(upgradedFoodItems, (item) => item.station)
 
-			try {
-				container = await fetch(API('/food/named/menu/the-pause')).json()
-			} catch (error) {
-				if (error instanceof Error) {
-					setError(error)
-				} else {
-					setError(new Error('unknown error - not an Error'))
-				}
-				return
-			}
+		stationMenus = stationMenus.map((menu, index) => ({
+			...upgradeStation(menu, index),
+			items: foodItemsByStation[menu.label]?.map((item) => item.id) ?? [],
+		}))
 
-			let data = container.data
-			let foodItems: MenuItemType[] = data.foodItems || []
-			let stationMenus: StationMenuType[] = data.stationMenus || []
-			let corIcons: MasterCorIconMapType = data.corIcons || {}
+		setCorIcons(corIcons)
+		setFoodItems(upgradedFoodItemsMap)
+		setMeals([
+			{
+				label: 'Menu',
+				stations: stationMenus,
+				starttime: '0:00',
+				endtime: '23:59',
+			},
+		])
+		setNow(moment.tz(timezone()))
+	}, [data?.corIcons, data?.foodItems, data?.stationMenus])
 
-			let upgradedFoodItems = foodItems.map(upgradeMenuItem)
-			let upgradedFoodItemsMap = Object.fromEntries(
-				upgradedFoodItems.map((item) => [item.id, item]),
-			)
-			let foodItemsByStation = groupBy(
-				upgradedFoodItems,
-				(item) => item.station,
-			)
-
-			stationMenus = stationMenus.map((menu, index) => ({
-				...upgradeStation(menu, index),
-				items: foodItemsByStation[menu.label]?.map((item) => item.id) ?? [],
-			}))
-
-			setCorIcons(corIcons)
-			setFoodItems(upgradedFoodItemsMap)
-			setMeals([
-				{
-					label: 'Menu',
-					stations: stationMenus,
-					starttime: '0:00',
-					endtime: '23:59',
-				},
-			])
-			setNow(moment.tz(timezone()))
-			setLoading(false)
-		})()
-	})
-
-	if (loading) {
+	if (isLoading) {
 		return <LoadingView text={sample(props.loadingMessage)} />
 	}
 
@@ -101,7 +85,6 @@ export function GitHubHostedMenu(props: Props): JSX.Element {
 			meals={meals}
 			menuCorIcons={corIcons}
 			name={props.name}
-			navigation={props.navigation}
 			now={now}
 		/>
 	)
