@@ -4,8 +4,8 @@ import {Platform, ScrollView, StyleSheet, View} from 'react-native'
 import {Row} from '@frogpond/layout'
 import {ListRow, ListSeparator, Title} from '@frogpond/lists'
 import {BonAppHostedMenu} from './menu-bonapp'
-import { useNavigation } from '@react-navigation/native'
-import { RootStackParamList } from '../../navigation/types'
+import {useNavigation} from '@react-navigation/native'
+import {RootStackParamList} from '../../navigation/types'
 
 export const CarletonBurtonMenuScreen = (): JSX.Element => (
 	<BonAppHostedMenu
@@ -58,7 +58,7 @@ CarletonSaylesMenuScreen.navigationOptions = {
 export function CarletonCafeIndex(): JSX.Element {
 	let navigation = useNavigation()
 
-	let carletonCafes: Array<{id: keyof RootStackParamList, title: string}> = [
+	let carletonCafes: Array<{id: keyof RootStackParamList; title: string}> = [
 		{id: 'CarletonBurtonMenu', title: 'Burton'},
 		{id: 'CarletonLDCMenu', title: 'LDC'},
 		{id: 'CarletonWeitzMenu', title: 'Weitz Center'},
@@ -67,21 +67,23 @@ export function CarletonCafeIndex(): JSX.Element {
 
 	return (
 		<ScrollView style={styles.container}>
-			{carletonCafes.map((loc: {id: keyof RootStackParamList, title: string}, i, collection) => (
-				<View key={i}>
-					<ListRow
-						arrowPosition="center"
-						onPress={() => navigation.navigate(loc.id)}
-					>
-						<Row alignItems="center">
-							<Title style={styles.rowText}>{loc.title}</Title>
-						</Row>
-					</ListRow>
-					{i < collection.length - 1 ? (
-						<ListSeparator spacing={{left: 15}} />
-					) : null}
-				</View>
-			))}
+			{carletonCafes.map(
+				(loc: {id: keyof RootStackParamList; title: string}, i, collection) => (
+					<View key={i}>
+						<ListRow
+							arrowPosition="center"
+							onPress={() => navigation.navigate(loc.id)}
+						>
+							<Row alignItems="center">
+								<Title style={styles.rowText}>{loc.title}</Title>
+							</Row>
+						</ListRow>
+						{i < collection.length - 1 ? (
+							<ListSeparator spacing={{left: 15}} />
+						) : null}
+					</View>
+				),
+			)}
 		</ScrollView>
 	)
 }
