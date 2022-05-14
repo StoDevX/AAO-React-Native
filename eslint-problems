@@ -120,13 +120,6 @@
   13:17  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
   16:8   warning  Missing return type on function           @typescript-eslint/explicit-module-boundary-types
 
-./source/views/menus/carleton-menus.tsx
-   9:41  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
-  24:38  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
-  37:40  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
-  52:41  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
-  69:8   warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
-
 ./source/views/menus/lib/trim-names.ts
    3:8  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
   15:8  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
@@ -290,5 +283,5 @@
 ./source/views/student-orgs/util.ts
   3:8  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
 
-✖ 181 problems (0 errors, 181 warnings)
+✖ 176 problems (0 errors, 176 warnings)
 
