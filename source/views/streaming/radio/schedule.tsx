@@ -1,10 +1,6 @@
 import * as React from 'react'
 import {CccCalendarView} from '@frogpond/ccc-calendar'
-import type {TopLevelViewPropsType} from '../../types'
-
-type Props = TopLevelViewPropsType
-
-export function KSTOScheduleView(props: Props): JSX.Element {
+export function KSTOScheduleView(): JSX.Element {
 	return (
 		<CccCalendarView
 			calendar="ksto-schedule"
@@ -15,7 +11,6 @@ export function KSTOScheduleView(props: Props): JSX.Element {
 					subtitle: 'description',
 				},
 			})}
-			navigation={props.navigation}
 			poweredBy={{
 				title: 'Powered by the KSTO team',
 				href: 'https://pages.stolaf.edu/ksto/',
@@ -24,11 +19,7 @@ export function KSTOScheduleView(props: Props): JSX.Element {
 	)
 }
 
-KSTOScheduleView.navigationOptions = {
-	title: 'Show Schedule',
-}
-
-export function KRLXScheduleView(props: Props): JSX.Element {
+export function KRLXScheduleView(): JSX.Element {
 	return (
 		<CccCalendarView
 			calendar="krlx-schedule"
@@ -39,15 +30,10 @@ export function KRLXScheduleView(props: Props): JSX.Element {
 					subtitle: 'description',
 				},
 			})}
-			navigation={props.navigation}
 			poweredBy={{
 				title: 'Powered by the KRLX team',
 				href: 'https://www.krlx.org/schedule/',
 			}}
 		/>
 	)
-}
-
-KRLXScheduleView.navigationOptions = {
-	title: 'Show Schedule',
 }
