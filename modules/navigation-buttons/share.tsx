@@ -8,7 +8,10 @@ export function ShareButton(
 ): JSX.Element {
 	return (
 		<Touchable highlight={false} onPress={props.onPress} style={styles.button}>
-			<Icon name={platformPrefixIconName('share')} style={styles.icon} />
+			<Icon
+				name={platformPrefixIconName('share-outline')}
+				style={styles.icon}
+			/>
 		</Touchable>
 	)
 }
