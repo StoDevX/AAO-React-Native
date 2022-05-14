@@ -181,6 +181,26 @@ export function RootStack(): JSX.Element {
 					options={menus.NavigationOptions}
 				/>
 				<Stack.Screen
+					component={menus.CarletonBurtonMenuScreen}
+					name="CarletonBurtonMenu"
+					// options={menus.NavigationOptions}
+				/>
+				<Stack.Screen
+					component={menus.CarletonLDCMenuScreen}
+					name="CarletonLDCMenu"
+					// options={menus.NavigationOptions}
+				/>
+				<Stack.Screen
+					component={menus.CarletonSaylesMenuScreen}
+					name="CarletonSaylesMenu"
+					// options={menus.NavigationOptions}
+				/>
+				<Stack.Screen
+					component={menus.CarletonWeitzMenuScreen}
+					name="CarletonWeitzMenu"
+					// options={menus.NavigationOptions}
+				/>																		
+				<Stack.Screen
 					component={MenuItemDetailView}
 					name="MenuItemDetail"
 					options={DetailNavigationOptions}
