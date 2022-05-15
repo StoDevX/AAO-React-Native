@@ -51,23 +51,21 @@ export function CarletonCafeIndex(): JSX.Element {
 
 	return (
 		<ScrollView style={styles.container}>
-			{carletonCafes.map(
-				(loc: {id: keyof RootStackParamList; title: string}, i, collection) => (
-					<View key={i}>
-						<ListRow
-							arrowPosition="center"
-							onPress={() => navigation.navigate(loc.id)}
-						>
-							<Row alignItems="center">
-								<Title style={styles.rowText}>{loc.title}</Title>
-							</Row>
-						</ListRow>
-						{i < collection.length - 1 ? (
-							<ListSeparator spacing={{left: 15}} />
-						) : null}
-					</View>
-				),
-			)}
+			{carletonCafes.map((loc, i, collection) => (
+				<View key={i}>
+					<ListRow
+						arrowPosition="center"
+						onPress={() => navigation.navigate(loc.id)}
+					>
+						<Row alignItems="center">
+							<Title style={styles.rowText}>{loc.title}</Title>
+						</Row>
+					</ListRow>
+					{i < collection.length - 1 ? (
+						<ListSeparator spacing={{left: 15}} />
+					) : null}
+				</View>
+			))}
 		</ScrollView>
 	)
 }
