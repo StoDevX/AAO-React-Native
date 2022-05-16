@@ -71,10 +71,6 @@ source/views/building-hours/lib/__tests__/is-building-open.test.ts(31,3): error 
 source/views/building-hours/lib/__tests__/is-building-open.test.ts(51,3): error TS2740: Type '{}' is missing the following properties from type 'BreakScheduleContainerType': fall, thanksgiving, christmasfest, winter, and 4 more.
 source/views/building-hours/lib/__tests__/is-building-open.test.ts(75,3): error TS2740: Type '{}' is missing the following properties from type 'BreakScheduleContainerType': fall, thanksgiving, christmasfest, winter, and 4 more.
 source/views/building-hours/lib/__tests__/is-building-open.test.ts(95,3): error TS2740: Type '{}' is missing the following properties from type 'BreakScheduleContainerType': fall, thanksgiving, christmasfest, winter, and 4 more.
-source/views/dictionary/list.tsx(28,10): error TS2503: Cannot find namespace 'window'.
-source/views/dictionary/list.tsx(75,3): error TS2345: Argument of type '(args: {    signal: window.AbortController;}) => Promise<Array<WordType>>' is not assignable to parameter of type 'PromiseFn<WordType[]>'.
-  Types of parameters 'args' and 'props' are incompatible.
-    Property 'signal' is missing in type 'AsyncProps<WordType[]>' but required in type '{ signal: window.AbortController; }'.
 source/views/help/index.tsx(35,18): error TS2345: Argument of type 'ThunkAction<GetEnabledToolsAction>' is not assignable to parameter of type 'AnyAction'.
 source/views/menus/dev-bonapp-picker.tsx(50,6): error TS2741: Property 'navigation' is missing in type '{ key: string; cafe: { id: string; }; loadingMessage: string[]; name: string; }' but required in type 'TopLevelViewPropsType'.
 source/views/menus/index.tsx(18,13): error TS7031: Binding element 'navigation' implicitly has an 'any' type.
