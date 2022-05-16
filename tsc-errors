@@ -161,18 +161,4 @@ source/views/stoprint/printers.tsx(196,4): error TS2769: No overload matches thi
     Type 'string | null' is not assignable to type 'string | undefined'.
   Overload 2 of 2, '(props: Props, context: any): PrinterListView', gave the following error.
     Type 'string | null' is not assignable to type 'string | undefined'.
-source/views/streaming/radio/schedule.tsx(18,4): error TS2769: No overload matches this call.
-  Overload 1 of 2, '(props: Props | Readonly<Props>): CccCalendarView', gave the following error.
-    Type '{ calendar: string; eventMapper: (event: EventType) => { config: { subtitle: "description"; startTime: boolean; endTime: boolean; }; title: string; description: string; location: string; startTime: Moment; endTime: Moment; isOngoing: boolean; links: string[]; }; navigation: NavigationScreenProp<...>; poweredBy: { .....' is not assignable to type 'IntrinsicAttributes & IntrinsicClassAttributes<CccCalendarView> & Readonly<Props> & Readonly<...>'.
-      Property 'navigation' does not exist on type 'IntrinsicAttributes & IntrinsicClassAttributes<CccCalendarView> & Readonly<Props> & Readonly<...>'.
-  Overload 2 of 2, '(props: Props, context: any): CccCalendarView', gave the following error.
-    Type '{ calendar: string; eventMapper: (event: EventType) => { config: { subtitle: "description"; startTime: boolean; endTime: boolean; }; title: string; description: string; location: string; startTime: Moment; endTime: Moment; isOngoing: boolean; links: string[]; }; navigation: NavigationScreenProp<...>; poweredBy: { .....' is not assignable to type 'IntrinsicAttributes & IntrinsicClassAttributes<CccCalendarView> & Readonly<Props> & Readonly<...>'.
-      Property 'navigation' does not exist on type 'IntrinsicAttributes & IntrinsicClassAttributes<CccCalendarView> & Readonly<Props> & Readonly<...>'.
-source/views/streaming/radio/schedule.tsx(42,4): error TS2769: No overload matches this call.
-  Overload 1 of 2, '(props: Props | Readonly<Props>): CccCalendarView', gave the following error.
-    Type '{ calendar: string; eventMapper: (event: EventType) => { config: { subtitle: "description"; startTime: boolean; endTime: boolean; }; title: string; description: string; location: string; startTime: Moment; endTime: Moment; isOngoing: boolean; links: string[]; }; navigation: NavigationScreenProp<...>; poweredBy: { .....' is not assignable to type 'IntrinsicAttributes & IntrinsicClassAttributes<CccCalendarView> & Readonly<Props> & Readonly<...>'.
-      Property 'navigation' does not exist on type 'IntrinsicAttributes & IntrinsicClassAttributes<CccCalendarView> & Readonly<Props> & Readonly<...>'.
-  Overload 2 of 2, '(props: Props, context: any): CccCalendarView', gave the following error.
-    Type '{ calendar: string; eventMapper: (event: EventType) => { config: { subtitle: "description"; startTime: boolean; endTime: boolean; }; title: string; description: string; location: string; startTime: Moment; endTime: Moment; isOngoing: boolean; links: string[]; }; navigation: NavigationScreenProp<...>; poweredBy: { .....' is not assignable to type 'IntrinsicAttributes & IntrinsicClassAttributes<CccCalendarView> & Readonly<Props> & Readonly<...>'.
-      Property 'navigation' does not exist on type 'IntrinsicAttributes & IntrinsicClassAttributes<CccCalendarView> & Readonly<Props> & Readonly<...>'.
 source/views/types.ts(5,8): error TS2307: Cannot find module 'react-navigation' or its corresponding type declarations.

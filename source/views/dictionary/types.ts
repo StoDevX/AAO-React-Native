@@ -3,7 +3,7 @@ export type WordType = {
 	definition: string
 }
 
-export interface DiciontaryGroup {
+export interface DictionaryGroup {
 	title: string
 	data: WordType[]
 }
