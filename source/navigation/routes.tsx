@@ -29,7 +29,7 @@ import {
 	MenuItemDetailView,
 	DetailNavigationOptions,
 } from '@frogpond/food-menu/food-item-detail'
-// import NewsView from '../views/news'
+import * as news from '../views/news'
 import * as settings from '../views/settings/'
 // import SISView from '../views/sis'
 import * as streaming from '../views/streaming'
@@ -214,10 +214,16 @@ export function RootStack(): JSX.Element {
 					options={orgs.DetailNavigationOptions}
 				/>
 			</Stack.Group>
+			<Stack.Group>
+				<Stack.Screen
+					component={news.View}
+					name="News"
+					options={news.NavigationOptions}
+				/>
+			</Stack.Group>
 			{/*
 			<Stack.Screen component={JobDetail} name="JobDetail" />
 			<Stack.Screen component={Menus} name="Menus" />
-			<Stack.Screen component={News} name="News" />
 			<Stack.Screen component={SIS} name="SIS" />
 			<Stack.Screen
 				component={CourseSearchResults}

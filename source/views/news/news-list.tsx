@@ -1,12 +1,18 @@
 import * as React from 'react'
-import {StyleSheet, FlatList} from 'react-native'
-import * as c from '@frogpond/colors'
+import {FlatList, StyleSheet} from 'react-native'
 import type {StoryType} from './types'
+import {API} from '@frogpond/api'
+import * as c from '@frogpond/colors'
+import {useFetch} from 'react-async'
 import {ListSeparator} from '@frogpond/lists'
-import {NoticeView} from '@frogpond/notice'
-import type {TopLevelViewPropsType} from '../types'
-import {NewsRow} from './news-row'
+import {LoadingView, NoticeView} from '@frogpond/notice'
 import {openUrl} from '@frogpond/open-url'
+import {NewsRow} from './news-row'
+
+type Props = {
+	source: string | {url: string; type: 'rss' | 'wp-json'}
+	thumbnail: false | number
+}
 
 const styles = StyleSheet.create({
 	listContainer: {
@@ -17,54 +23,72 @@ const styles = StyleSheet.create({
 	},
 })
 
-type Props = TopLevelViewPropsType & {
-	name: string
-	onRefresh: () => any
-	entries: StoryType[]
-	loading: boolean
-	thumbnail: false | number
-}
-
-export class NewsList extends React.PureComponent<Props> {
-	onPressNews = (url: string) => {
-		return openUrl(url)
+const useNews = (source: Props['source']) => {
+	let url
+	if (typeof source === 'string') {
+		url = API(`/news/named/${source}`)
+	} else if (source.type === 'rss') {
+		url = API('/news/rss', {url: source.url})
+	} else if (source.type === 'wp-json') {
+		url = API('/news/wpjson', {url: source.url})
+	} else {
+		throw new Error('invalid news source type!')
 	}
 
-	renderSeparator = () => (
-		<ListSeparator
-			spacing={{left: this.props.thumbnail === false ? undefined : 101}}
-		/>
-	)
+	return useFetch<StoryType[]>(url, {
+		headers: {accept: 'application/json'},
+	})
+}
 
-	renderItem = ({item}: {item: StoryType}) => (
-		<NewsRow
-			onPress={this.onPressNews}
-			story={item}
-			thumbnail={this.props.thumbnail}
-		/>
-	)
+export const NewsList = (props: Props): JSX.Element => {
+	let {
+		data = [],
+		error,
+		reload,
+		isPending,
+		isInitial,
+		isLoading,
+	} = useNews(props.source)
 
-	keyExtractor = (item: StoryType) => item.title
+	// remove all entries with blank excerpts
+	// remove all entries with a <form from the list
+	let entries = data
+		.filter((entry) => entry.excerpt.trim() !== '')
+		.filter((entry) => !entry.content.includes('<form'))
 
-	render() {
-		// remove all entries with blank excerpts
-		// remove all entries with a <form from the list
-		let entries = this.props.entries
-			.filter((entry) => entry.excerpt.trim() !== '')
-			.filter((entry) => !entry.content.includes('<form'))
-
+	if (error) {
 		return (
-			<FlatList
-				ItemSeparatorComponent={this.renderSeparator}
-				ListEmptyComponent={<NoticeView text="No news." />}
-				contentContainerStyle={styles.contentContainer}
-				data={entries}
-				keyExtractor={this.keyExtractor}
-				onRefresh={this.props.onRefresh}
-				refreshing={this.props.loading}
-				renderItem={this.renderItem}
-				style={styles.listContainer}
+			<NoticeView
+				buttonText="Try Again"
+				onPress={reload}
+				text="A problem occured while loading the news stories"
 			/>
 		)
 	}
+
+	return (
+		<FlatList
+			ItemSeparatorComponent={() => (
+				<ListSeparator
+					spacing={{left: props.thumbnail === false ? undefined : 101}}
+				/>
+			)}
+			ListEmptyComponent={
+				isLoading ? <LoadingView /> : <NoticeView text="No news." />
+			}
+			contentContainerStyle={styles.contentContainer}
+			data={entries}
+			keyExtractor={(item: StoryType) => item.title}
+			onRefresh={reload}
+			refreshing={isPending && !isInitial}
+			renderItem={({item}: {item: StoryType}) => (
+				<NewsRow
+					onPress={(url: string) => openUrl(url)}
+					story={item}
+					thumbnail={props.thumbnail}
+				/>
+			)}
+			style={styles.listContainer}
+		/>
+	)
 }
