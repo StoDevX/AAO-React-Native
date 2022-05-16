@@ -48,7 +48,6 @@ type State = {
 class PrinterListView extends React.PureComponent<Props, State> {
 	static navigationOptions = {
 		title: 'Select Printer',
-		headerBackTitle: 'Printers',
 	}
 
 	state = {

@@ -81,7 +81,6 @@ export {TransportationView as View}
 
 export const NavigationOptions: NativeStackNavigationOptions = {
 	title: 'Transportation',
-	headerBackTitle: 'Back',
 }
 
 export type NavigationParams = undefined

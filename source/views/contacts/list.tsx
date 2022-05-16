@@ -10,6 +10,7 @@ import {fetch} from '@frogpond/fetch'
 import {API} from '@frogpond/api'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 import {useNavigation} from '@react-navigation/native'
+import {DetailNavigationKey} from './detail'
 import delay from 'delay'
 
 const fetchContacts = (forReload?: boolean): Promise<Array<ContactType>> =>
@@ -63,7 +64,7 @@ export let ContactsListView = (): JSX.Element => {
 
 	let onPressContact = React.useCallback(
 		(data: ContactType) =>
-			navigation.navigate('ContactsDetail', {
+			navigation.navigate(DetailNavigationKey, {
 				contact: data,
 			}),
 		[navigation],
@@ -99,5 +100,4 @@ export let ContactsListView = (): JSX.Element => {
 
 export const NavigationOptions: NativeStackNavigationOptions = {
 	title: 'Important Contacts',
-	headerBackTitle: 'Back',
 }

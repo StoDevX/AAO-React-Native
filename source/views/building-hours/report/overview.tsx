@@ -330,12 +330,6 @@ class TimesCell extends React.PureComponent<TimesCellProps> {
 
 export const NavigationKey = 'BuildingHoursProblemReport'
 
-export const NavigationOptions = (props: {
-	route: RouteProp<RootStackParamList, typeof NavigationKey>
-}): NativeStackNavigationOptions => {
-	let {initialBuilding} = props.route.params
-	return {
-		title: 'Report a Problem',
-		headerBackTitle: initialBuilding.name,
-	}
+export const NavigationOptions: NativeStackNavigationOptions = {
+	title: 'Report a Problem',
 }

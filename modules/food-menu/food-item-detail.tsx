@@ -9,6 +9,11 @@ import {calculateAmount} from './lib/calculate-amount'
 import size from 'lodash/size'
 import {RouteProp, useRoute} from '@react-navigation/native'
 import {RootStackParamList} from '../../source/navigation/types'
+import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+
+export const DetailNavigationOptions: NativeStackNavigationOptions = {
+	title: 'Nutrition',
+}
 
 export const MenuItemDetailView = (): JSX.Element => {
 	let route = useRoute<RouteProp<RootStackParamList, 'MenuItemDetail'>>()

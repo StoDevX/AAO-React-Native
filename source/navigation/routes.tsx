@@ -21,8 +21,14 @@ import * as help from '../views/help'
 // 	CarletonWeitzMenuScreen,
 // 	Menus,
 // } from '../views/menus'
-import {BonAppPickerView} from '../views/menus/dev-bonapp-picker'
-import {MenuItemDetailView} from '@frogpond/food-menu/food-item-detail'
+import {
+	BonAppPickerView as DevBonAppPickerView,
+	DevBonAppNavigationOptions,
+} from '../views/menus/dev-bonapp-picker'
+import {
+	MenuItemDetailView,
+	DetailNavigationOptions,
+} from '@frogpond/food-menu/food-item-detail'
 // import NewsView from '../views/news'
 import * as settings from '../views/settings/'
 // import SISView from '../views/sis'
@@ -74,7 +80,7 @@ export function RootStack(): JSX.Element {
 				<Stack.Screen
 					component={eventDetail.EventDetail}
 					name="EventDetail"
-					// options={eventDetail.NavigationOptions}
+					options={eventDetail.EventDetailNavigationOptions}
 				/>
 			</Stack.Group>
 			<Stack.Group>
@@ -163,8 +169,16 @@ export function RootStack(): JSX.Element {
 				/>
 			</Stack.Group>
 			<Stack.Group>
-				<Stack.Screen component={BonAppPickerView} name="BonAppPicker" />
-				<Stack.Screen component={MenuItemDetailView} name="MenuItemDetail" />
+				<Stack.Screen
+					component={DevBonAppPickerView}
+					name="BonAppPicker"
+					options={DevBonAppNavigationOptions}
+				/>
+				<Stack.Screen
+					component={MenuItemDetailView}
+					name="MenuItemDetail"
+					options={DetailNavigationOptions}
+				/>
 			</Stack.Group>
 			<Stack.Group>
 				<Stack.Screen

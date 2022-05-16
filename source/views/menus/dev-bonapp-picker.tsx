@@ -4,6 +4,11 @@ import {NoticeView} from '@frogpond/notice'
 import * as c from '@frogpond/colors'
 import {Toolbar} from '@frogpond/toolbar'
 import {BonAppHostedMenu} from './menu-bonapp'
+import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+
+export const DevBonAppNavigationOptions: NativeStackNavigationOptions = {
+	title: 'Dev BonApp Picker',
+}
 
 const styles = StyleSheet.create({
 	container: {
