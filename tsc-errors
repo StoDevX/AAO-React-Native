@@ -72,11 +72,6 @@ source/views/building-hours/lib/__tests__/is-building-open.test.ts(51,3): error 
 source/views/building-hours/lib/__tests__/is-building-open.test.ts(75,3): error TS2740: Type '{}' is missing the following properties from type 'BreakScheduleContainerType': fall, thanksgiving, christmasfest, winter, and 4 more.
 source/views/building-hours/lib/__tests__/is-building-open.test.ts(95,3): error TS2740: Type '{}' is missing the following properties from type 'BreakScheduleContainerType': fall, thanksgiving, christmasfest, winter, and 4 more.
 source/views/help/index.tsx(35,18): error TS2345: Argument of type 'ThunkAction<GetEnabledToolsAction>' is not assignable to parameter of type 'AnyAction'.
-source/views/menus/dev-bonapp-picker.tsx(50,6): error TS2741: Property 'navigation' is missing in type '{ key: string; cafe: { id: string; }; loadingMessage: string[]; name: string; }' but required in type 'TopLevelViewPropsType'.
-source/views/menus/index.tsx(18,13): error TS7031: Binding element 'navigation' implicitly has an 'any' type.
-source/views/menus/index.tsx(40,13): error TS7031: Binding element 'navigation' implicitly has an 'any' type.
-source/views/menus/index.tsx(62,13): error TS7031: Binding element 'navigation' implicitly has an 'any' type.
-source/views/menus/index.tsx(90,1): error TS2571: Object is of type 'unknown'.
 source/views/menus/lib/__tests__/menu-item.mock.ts(20,2): error TS2739: Type '{}' is missing the following properties from type 'MonotonyContainer': id, name, image
 source/views/menus/lib/__tests__/menu-item.mock.ts(22,2): error TS2739: Type '{}' is missing the following properties from type 'NutritionContainer': kcal, well_being, well_being_image
 source/views/menus/lib/__tests__/menu-item.mock.ts(23,2): error TS2740: Type '{}' is missing the following properties from type 'NutritionDetailContainer': calories, servingSize, fatContent, saturatedFatContent, and 7 more.
@@ -84,8 +79,6 @@ source/views/menus/lib/process-menu-shorthands.ts(22,3): error TS2783: 'descript
 source/views/menus/lib/process-menu-shorthands.ts(25,3): error TS2739: Type '{}' is missing the following properties from type 'MonotonyContainer': id, name, image
 source/views/menus/lib/process-menu-shorthands.ts(31,3): error TS2740: Type '{}' is missing the following properties from type 'NutritionDetailContainer': calories, servingSize, fatContent, saturatedFatContent, and 7 more.
 source/views/menus/lib/process-menu-shorthands.ts(35,3): error TS2783: 'special' is specified more than once, so this usage will be overwritten.
-source/views/menus/menu-github.tsx(105,4): error TS2322: Type '{ foodItems: MenuItemContainerType; meals: ProcessedMealType[]; menuCorIcons: MasterCorIconMapType; name: string; navigation: NavigationScreenProp<...>; now: Moment; }' is not assignable to type 'IntrinsicAttributes & ReactProps'.
-  Property 'navigation' does not exist on type 'IntrinsicAttributes & ReactProps'.
 source/views/settings/components/logo.tsx(2,24): error TS7016: Could not find a declaration file for module '@hawkrives/react-native-alternate-icons'. './node_modules/@hawkrives/react-native-alternate-icons/index.js' implicitly has an 'any' type.
   Try `npm i --save-dev @types/hawkrives__react-native-alternate-icons` if it exists or add a new declaration (.d.ts) file containing `declare module '@hawkrives/react-native-alternate-icons';`
 source/views/settings/components/logo.tsx(27,29): error TS7006: Parameter 'name' implicitly has an 'any' type.

@@ -14,13 +14,8 @@ import * as help from '../views/help'
 // 	CourseSearchResults,
 // 	JobDetail,
 // } from '../views/sis'
-// import {
-// 	CarletonBurtonMenuScreen,
-// 	CarletonLDCMenuScreen,
-// 	CarletonSaylesMenuScreen,
-// 	CarletonWeitzMenuScreen,
-// 	Menus,
-// } from '../views/menus'
+import * as menus from '../views/menus'
+import * as carletonmenus from '../views/menus/carleton-menus'
 import {
 	BonAppPickerView as DevBonAppPickerView,
 	DevBonAppNavigationOptions,
@@ -175,6 +170,31 @@ export function RootStack(): JSX.Element {
 					options={DevBonAppNavigationOptions}
 				/>
 				<Stack.Screen
+					component={menus.View}
+					name="Menus"
+					options={menus.NavigationOptions}
+				/>
+				<Stack.Screen
+					component={menus.CarletonBurtonMenuScreen}
+					name="CarletonBurtonMenu"
+					options={carletonmenus.BurtonNavigationOptions}
+				/>
+				<Stack.Screen
+					component={menus.CarletonLDCMenuScreen}
+					name="CarletonLDCMenu"
+					options={carletonmenus.LDCNavigationOptions}
+				/>
+				<Stack.Screen
+					component={menus.CarletonSaylesMenuScreen}
+					name="CarletonSaylesMenu"
+					options={carletonmenus.SaylesNavigationOptions}
+				/>
+				<Stack.Screen
+					component={menus.CarletonWeitzMenuScreen}
+					name="CarletonWeitzMenu"
+					options={carletonmenus.WeitzNavigationOptions}
+				/>
+				<Stack.Screen
 					component={MenuItemDetailView}
 					name="MenuItemDetail"
 					options={DetailNavigationOptions}
@@ -231,19 +251,6 @@ export function RootStack(): JSX.Element {
 			/>
 			<Stack.Screen component={CourseDetail} name="CourseDetail" />
 			</Stack.Group>
-			<Stack.Screen
-				component={CarletonBurtonMenuScreen}
-				name="CarletonBurtonMenu"
-			/>
-			<Stack.Screen component={CarletonLDCMenuScreen} name="CarletonLDCMenu" />
-			<Stack.Screen
-				component={CarletonWeitzMenuScreen}
-				name="CarletonWeitzMenu"
-			/>
-			<Stack.Screen
-				component={CarletonSaylesMenuScreen}
-				name="CarletonSaylesMenu"
-			/>
 			<Stack.Screen component={PrintJobs} name="PrintJobs" />
 			<Stack.Screen component={PrinterList} name="PrinterList" />
 			<Stack.Screen component={PrintJobRelease} name="PrintJobRelease" /> */}

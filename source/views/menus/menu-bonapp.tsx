@@ -3,7 +3,6 @@ import {useEffect, useState} from 'react'
 import {timezone} from '@frogpond/constants'
 import {SUPPORT_EMAIL} from '../../lib/constants'
 import {LoadingView, NoticeView} from '@frogpond/notice'
-import type {TopLevelViewPropsType} from '../types'
 import {FoodMenu} from '@frogpond/food-menu'
 import type {
 	DayPartMenuType,
@@ -37,7 +36,7 @@ const DEFAULT_MENU = [
 	},
 ]
 
-type Props = TopLevelViewPropsType & {
+type Props = {
 	cafe: string | {id: string}
 	ignoreProvidedMenus?: boolean
 	loadingMessage: string[]
