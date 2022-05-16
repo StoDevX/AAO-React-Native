@@ -80,7 +80,7 @@ export function RootStack(): JSX.Element {
 				<Stack.Screen
 					component={eventDetail.EventDetail}
 					name="EventDetail"
-					// options={eventDetail.NavigationOptions}
+					options={eventDetail.EventDetailNavigationOptions}
 				/>
 			</Stack.Group>
 			<Stack.Group>

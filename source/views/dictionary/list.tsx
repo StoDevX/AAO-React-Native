@@ -10,7 +10,7 @@ import {
 	emptyList,
 } from '@frogpond/lists'
 import {LoadingView, NoticeView} from '@frogpond/notice'
-import type {DiciontaryGroup, WordType} from './types'
+import type {DictionaryGroup, WordType} from './types'
 import {white} from '@frogpond/colors'
 import words from 'lodash/words'
 import deburr from 'lodash/deburr'
@@ -48,7 +48,7 @@ function createGrouping(words: WordType[]) {
 
 let groupTerms = (
 	searchQuery: string,
-	data: DiciontaryGroup[],
+	data: DictionaryGroup[],
 	words: WordType[],
 ) => {
 	if (!data) {
