@@ -16,7 +16,6 @@ import type {JobType} from './types'
 import glamorous from 'glamorous-native'
 import {ShareButton} from '@frogpond/navigation-buttons'
 import {shareJob, createJobFullUrl} from './lib'
-import {decode} from '@frogpond/html-lib'
 
 const styles = StyleSheet.create({
 	lastUpdated: {
@@ -120,7 +119,7 @@ function JobInformation({job}: {job: JobType}) {
 function Description({job}: {job: JobType}) {
 	return job.description ? (
 		<Section header="DESCRIPTION">
-			<SelectableCell text={decode(job.description)} />
+			<SelectableCell text={job.description} />
 		</Section>
 	) : null
 }
@@ -128,7 +127,7 @@ function Description({job}: {job: JobType}) {
 function Skills({job}: {job: JobType}) {
 	return job.skills ? (
 		<Section header="SKILLS">
-			<SelectableCell text={decode(job.skills)} />
+			<SelectableCell text={job.skills} />
 		</Section>
 	) : null
 }
@@ -136,7 +135,7 @@ function Skills({job}: {job: JobType}) {
 function Comments({job}: {job: JobType}) {
 	return job.comments ? (
 		<Section header="COMMENTS">
-			<SelectableCell text={decode(job.comments)} />
+			<SelectableCell text={job.comments} />
 		</Section>
 	) : null
 }
@@ -152,7 +151,7 @@ function FirstYearAppropriate({job}: {job: JobType}) {
 function Timeline({job}: {job: JobType}) {
 	return job.timeline ? (
 		<Section header="TIMELINE">
-			<SelectableCell text={decode(job.timeline)} />
+			<SelectableCell text={job.timeline} />
 		</Section>
 	) : null
 }
@@ -171,7 +170,7 @@ function OpenWebpage({job}: {job: JobType}) {
 function HowToApply({job}: {job: JobType}) {
 	return job.howToApply ? (
 		<Section header="HOW TO APPLY">
-			<SelectableCell text={decode(job.howToApply)} />
+			<SelectableCell text={job.howToApply} />
 		</Section>
 	) : null
 }
