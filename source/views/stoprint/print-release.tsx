@@ -1,6 +1,5 @@
 import * as React from 'react'
 import {Alert, StyleSheet, ScrollView} from 'react-native'
-import type {TopLevelViewPropsType} from '../types'
 import glamorous from 'glamorous-native'
 import {TableView, Section, Cell, ButtonCell} from '@frogpond/tableview'
 import * as c from '@frogpond/colors'
@@ -69,7 +68,7 @@ function PrinterInformation({printer}: {printer: Printer}) {
 	)
 }
 
-type Props = TopLevelViewPropsType & {
+type Props = {
 	navigation: {
 		state: {params: {job: PrintJob; printer?: Printer}}
 	}

@@ -17,7 +17,6 @@ import {
 	Title,
 } from '@frogpond/lists'
 import {LoadingView} from '@frogpond/notice'
-import type {TopLevelViewPropsType} from '../types'
 import delay from 'delay'
 import {openUrl} from '@frogpond/open-url'
 import {StoPrintErrorView, StoPrintNoticeView} from './components'
@@ -26,8 +25,7 @@ import toPairs from 'lodash/toPairs'
 import sortBy from 'lodash/sortBy'
 import {getTimeRemaining} from './lib'
 import {Timer} from '@frogpond/timer'
-
-type ReactProps = TopLevelViewPropsType
+import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 
 type ReduxStateProps = {
 	jobs: Array<PrintJob>
@@ -40,7 +38,7 @@ type ReduxDispatchProps = {
 	updatePrintJobs: () => Promise<any>
 }
 
-type Props = ReactProps & ReduxDispatchProps & ReduxStateProps
+type Props = ReduxDispatchProps & ReduxStateProps
 
 type State = {
 	initialLoadComplete: boolean
@@ -96,13 +94,13 @@ class PrintJobsView extends React.PureComponent<Props, State> {
 
 	keyExtractor = (item: PrintJob) => item.id.toString()
 
-	openSettings = () => this.props.navigation.navigate('SettingsView')
+	openSettings = () => navigation.navigate('SettingsView')
 
 	handleJobPress = (job: PrintJob) => {
 		if (job.statusFormatted === 'Pending Release') {
-			this.props.navigation.navigate('PrinterListView', {job: job})
+			navigation.navigate('PrinterListView', {job: job})
 		} else {
-			this.props.navigation.navigate('PrintJobReleaseView', {job: job})
+			navigation.navigate('PrintJobReleaseView', {job: job})
 		}
 	}
 
@@ -138,7 +136,6 @@ class PrintJobsView extends React.PureComponent<Props, State> {
 		if (this.props.error) {
 			return (
 				<StoPrintErrorView
-					navigation={this.props.navigation}
 					refresh={this.fetchData}
 					statusMessage={this.props.error}
 				/>
@@ -203,7 +200,7 @@ class PrintJobsView extends React.PureComponent<Props, State> {
 	}
 }
 
-export function ConnectedPrintJobsView(props: TopLevelViewPropsType) {
+export function ConnectedPrintJobsView() {
 	let dispatch = useDispatch()
 
 	let jobs = useSelector((state: ReduxState) => state.stoprint?.jobs || [])
@@ -225,7 +222,6 @@ export function ConnectedPrintJobsView(props: TopLevelViewPropsType) {
 
 	return (
 		<PrintJobsView
-			{...props}
 			error={error}
 			jobs={jobs}
 			logInViaCredentials={_logInViaCredentials}

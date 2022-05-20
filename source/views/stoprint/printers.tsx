@@ -101,7 +101,6 @@ class PrinterListView extends React.PureComponent<Props, State> {
 		if (this.props.error) {
 			return (
 				<StoPrintErrorView
-					navigation={this.props.navigation}
 					refresh={this.fetchData}
 					statusMessage={this.props.error}
 				/>
@@ -162,7 +161,7 @@ class PrinterListView extends React.PureComponent<Props, State> {
 	}
 }
 
-export function ConnectedPrinterListView(props: TopLevelViewPropsType) {
+export function ConnectedPrinterListView() {
 	let dispatch = useDispatch()
 
 	let printers = useSelector(
@@ -188,7 +187,6 @@ export function ConnectedPrinterListView(props: TopLevelViewPropsType) {
 
 	return (
 		<PrinterListView
-			{...props}
 			colorPrinters={colorPrinters}
 			error={error}
 			popularPrinters={popularPrinters}
