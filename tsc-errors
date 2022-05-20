@@ -138,25 +138,36 @@ source/views/sis/course-search/search.tsx(224,3): error TS2769: No overload matc
 source/views/sis/index.ts(8,29): error TS2307: Cannot find module './student-work/detail' or its corresponding type declarations.
 source/views/sis/index.ts(18,1): error TS2571: Object is of type 'unknown'.
 source/views/sis/student-work/index.tsx(69,40): error TS2304: Cannot find name 'mixed'.
-source/views/stoprint/print-jobs.tsx(222,36): error TS2345: Argument of type 'ThunkAction<LogInActions>' is not assignable to parameter of type 'AnyAction'.
-source/views/stoprint/print-jobs.tsx(226,18): error TS2345: Argument of type 'ThunkAction<UpdatePrintJobsAction>' is not assignable to parameter of type 'AnyAction'.
+source/views/stoprint/print-jobs.tsx(97,23): error TS2552: Cannot find name 'navigation'. Did you mean 'navigator'?
+source/views/stoprint/print-jobs.tsx(101,4): error TS2552: Cannot find name 'navigation'. Did you mean 'navigator'?
+source/views/stoprint/print-jobs.tsx(103,4): error TS2552: Cannot find name 'navigation'. Did you mean 'navigator'?
+source/views/stoprint/print-jobs.tsx(215,36): error TS2345: Argument of type 'ThunkAction<LogInActions>' is not assignable to parameter of type 'AnyAction'.
+source/views/stoprint/print-jobs.tsx(219,18): error TS2345: Argument of type 'ThunkAction<UpdatePrintJobsAction>' is not assignable to parameter of type 'AnyAction'.
   Property 'type' is missing in type 'ThunkAction<UpdatePrintJobsAction>' but required in type 'AnyAction'.
-source/views/stoprint/print-jobs.tsx(231,3): error TS2769: No overload matches this call.
+source/views/stoprint/print-jobs.tsx(224,3): error TS2769: No overload matches this call.
   Overload 2 of 2, '(props: Props, context: any): PrintJobsView', gave the following error.
     Type 'string | null' is not assignable to type 'string | undefined'.
   Overload 2 of 2, '(props: Props, context: any): PrintJobsView', gave the following error.
     Type '(username: any, password: any) => AnyAction' is not assignable to type '(username: string, password: string) => Promise<any>'.
   Overload 2 of 2, '(props: Props, context: any): PrintJobsView', gave the following error.
     Type '() => AnyAction' is not assignable to type '() => Promise<any>'.
-source/views/stoprint/print-release.tsx(87,2): error TS2416: Property 'state' in type 'PrintJobReleaseView' is not assignable to the same property in base type 'PureComponent<Props, State, any>'.
+source/views/stoprint/print-release.tsx(83,2): error TS2416: Property 'state' in type 'PrintJobReleaseView' is not assignable to the same property in base type 'PureComponent<Props, State, any>'.
   Type '{ heldJob: null; status: string; }' is not assignable to type 'Readonly<State>'.
     Types of property 'heldJob' are incompatible.
       Type 'null' is not assignable to type 'HeldJob | undefined'.
-source/views/stoprint/print-release.tsx(164,20): error TS2339: Property 'id' does not exist on type 'never'.
-source/views/stoprint/print-release.tsx(192,12): error TS2339: Property 'id' does not exist on type 'never'.
-source/views/stoprint/printers.tsx(188,24): error TS2345: Argument of type 'ThunkAction<UpdateAllPrintersAction>' is not assignable to parameter of type 'AnyAction'.
+source/views/stoprint/print-release.tsx(112,4): error TS2532: Object is possibly 'undefined'.
+source/views/stoprint/print-release.tsx(142,75): error TS2532: Object is possibly 'undefined'.
+source/views/stoprint/print-release.tsx(160,20): error TS2339: Property 'id' does not exist on type 'never'.
+source/views/stoprint/print-release.tsx(161,18): error TS2532: Object is possibly 'undefined'.
+source/views/stoprint/print-release.tsx(173,54): error TS2532: Object is possibly 'undefined'.
+source/views/stoprint/print-release.tsx(181,8): error TS2339: Property 'username' does not exist on type '{ job: PrintJob; printer?: Printer | undefined; }'.
+source/views/stoprint/print-release.tsx(188,12): error TS2339: Property 'id' does not exist on type 'never'.
+source/views/stoprint/print-release.tsx(207,25): error TS2339: Property 'navigate' does not exist on type '{ state: { params: { job: PrintJob; printer?: Printer | undefined; }; }; }'.
+source/views/stoprint/print-release.tsx(221,28): error TS2322: Type 'Printer | undefined' is not assignable to type 'Printer'.
+  Type 'undefined' is not assignable to type 'Printer'.
+source/views/stoprint/printers.tsx(184,24): error TS2345: Argument of type 'ThunkAction<UpdateAllPrintersAction>' is not assignable to parameter of type 'AnyAction'.
   Property 'type' is missing in type 'ThunkAction<UpdateAllPrintersAction>' but required in type 'AnyAction'.
-source/views/stoprint/printers.tsx(196,4): error TS2769: No overload matches this call.
+source/views/stoprint/printers.tsx(191,4): error TS2769: No overload matches this call.
   Overload 1 of 2, '(props: Props | Readonly<Props>): PrinterListView', gave the following error.
     Type 'string | null' is not assignable to type 'string | undefined'.
   Overload 2 of 2, '(props: Props, context: any): PrinterListView', gave the following error.
