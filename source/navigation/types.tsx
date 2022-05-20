@@ -16,6 +16,7 @@ import type {
 	MasterCorIconMapType,
 	MenuItemType as MenuItem,
 } from '../views/menus/types'
+import {Printer, PrintJob} from '../lib/stoprint/types'
 
 export type RootStackParamList = {
 	Home: undefined
@@ -62,8 +63,8 @@ export type RootStackParamList = {
 	CarletonSaylesMenu: undefined
 	MenuItemDetail: {item: MenuItem; icons: MasterCorIconMapType}
 	PrintJobs: undefined
-	PrinterList: undefined
-	PrintJobRelease: undefined
+	PrinterList: {job: PrintJob}
+	PrintJobRelease: {job: PrintJob; printer?: Printer}
 }
 
 export interface ChangeTextEvent {
