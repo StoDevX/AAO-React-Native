@@ -200,7 +200,7 @@ class PrintJobsView extends React.PureComponent<Props, State> {
 	}
 }
 
-export function ConnectedPrintJobsView() {
+export function ConnectedPrintJobsView(): JSX.Element {
 	let dispatch = useDispatch()
 
 	let jobs = useSelector((state: ReduxState) => state.stoprint?.jobs || [])

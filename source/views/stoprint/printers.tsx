@@ -161,7 +161,7 @@ class PrinterListView extends React.PureComponent<Props, State> {
 	}
 }
 
-export function ConnectedPrinterListView() {
+export function ConnectedPrinterListView(): JSX.Element {
 	let dispatch = useDispatch()
 
 	let printers = useSelector(
