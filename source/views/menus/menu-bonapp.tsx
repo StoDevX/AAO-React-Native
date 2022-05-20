@@ -151,13 +151,13 @@ function prepareFood(cafeMenu: MenuInfoType) {
 }
 
 function useCafeMenu(menuUrl: string) {
-	return useFetch<{data: MenuInfoType}>(menuUrl, {
+	return useFetch<MenuInfoType>(menuUrl, {
 		headers: {accept: 'application/json'},
 	})
 }
 
 function useCafeInfo(cafeUrl: string) {
-	return useFetch<{data: CafeInfoType}>(cafeUrl, {
+	return useFetch<CafeInfoType>(cafeUrl, {
 		headers: {accept: 'application/json'},
 	})
 }
@@ -202,16 +202,7 @@ export function BonAppHostedMenu(props: Props): JSX.Element {
 	let {cafeUrl, menuUrl} = buildUrls(props.cafe)
 	let [errorMessage, setErrorMessage] = useState<string | null>(null)
 
-	// TODO: fix the destructuring type for cafeMenu and cafeInfo.
-	//
-	// If replaced with the commented-out version, we render the
-	// "Something went wrong" path at line 266. If we wrap the grouping
-	// variables in a useEffect (specialMessage, foodItems, and meals)
-	// and capture their outputs via useState at the top of the page, 
-	// we end up with undefined data...
-
 	let {
-		// data: {data: cafeMenu} = {},
 		data: cafeMenu,
 		error: menuError,
 		reload: menuReload,
@@ -221,7 +212,6 @@ export function BonAppHostedMenu(props: Props): JSX.Element {
 	} = useCafeMenu(menuUrl)
 
 	let {
-		// data: {data: cafeInfo} = {},
 		data: cafeInfo,
 		error: cafeError,
 		reload: cafeReload,
