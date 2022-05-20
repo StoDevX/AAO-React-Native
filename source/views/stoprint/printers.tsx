@@ -17,6 +17,7 @@ import delay from 'delay'
 import toPairs from 'lodash/toPairs'
 import groupBy from 'lodash/groupBy'
 import {StoPrintErrorView} from './components'
+import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 
 const styles = StyleSheet.create({
 	list: {},
@@ -46,10 +47,6 @@ type State = {
 }
 
 class PrinterListView extends React.PureComponent<Props, State> {
-	static navigationOptions = {
-		title: 'Select Printer',
-	}
-
 	state = {
 		initialLoadComplete: false,
 		loading: true,
@@ -200,4 +197,8 @@ export function ConnectedPrinterListView(props: TopLevelViewPropsType) {
 			updatePrinters={_updatePrinters}
 		/>
 	)
+}
+
+export const NavigationOptions: NativeStackNavigationOptions = {
+	title: 'Select Printer',
 }

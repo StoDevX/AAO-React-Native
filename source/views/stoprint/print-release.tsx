@@ -18,6 +18,7 @@ import type {
 	CancelResponseOrErrorType,
 } from '../../lib/stoprint'
 import {loadLoginCredentials} from '../../lib/login'
+import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 
 const styles = StyleSheet.create({
 	cancelButton: {
@@ -80,10 +81,6 @@ type State = {
 }
 
 export class PrintJobReleaseView extends React.PureComponent<Props, State> {
-	static navigationOptions = {
-		title: 'Release Job',
-	}
-
 	state = {
 		heldJob: null,
 		status:
@@ -243,4 +240,8 @@ export class PrintJobReleaseView extends React.PureComponent<Props, State> {
 			</ScrollView>
 		)
 	}
+}
+
+export const NavigationOptions: NativeStackNavigationOptions = {
+	title: 'Release job',
 }

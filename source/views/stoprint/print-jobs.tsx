@@ -48,10 +48,6 @@ type State = {
 }
 
 class PrintJobsView extends React.PureComponent<Props, State> {
-	static navigationOptions = {
-		title: 'Print Jobs',
-	}
-
 	state = {
 		initialLoadComplete: false,
 		loading: true,
@@ -237,4 +233,8 @@ export function ConnectedPrintJobsView(props: TopLevelViewPropsType) {
 			updatePrintJobs={_updatePrintJobs}
 		/>
 	)
+}
+
+export const NavigationOptions: NativeStackNavigationOptions = {
+	title: 'Print Jobs',
 }
