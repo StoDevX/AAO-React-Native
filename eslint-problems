@@ -257,25 +257,13 @@
   22:33  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
 
 ./source/views/stoprint/print-jobs.tsx
-   39:71  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
-   40:33  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
-  133:45  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
-  210:8   warning  Missing return type on function           @typescript-eslint/explicit-module-boundary-types
-
-./source/views/stoprint/print-release.tsx
-   96:2   warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
-  102:15  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
-  135:18  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
-  144:19  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
-  153:15  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
-  183:14  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
-  210:21  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
-  214:2   warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
+   38:71  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   39:33  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  178:46  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
 
 ./source/views/stoprint/printers.tsx
-   38:24  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
-   99:45  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
-  168:8   warning  Missing return type on function           @typescript-eslint/explicit-module-boundary-types
+   36:24  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  132:46  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
 
 ./source/views/streaming/streams/list.tsx
   96:49  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
@@ -283,5 +271,5 @@
 ./source/views/student-orgs/util.ts
   3:8  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
 
-✖ 176 problems (0 errors, 176 warnings)
+✖ 166 problems (0 errors, 166 warnings)
 
