@@ -221,10 +221,13 @@ export function BonAppHostedMenu(props: Props): JSX.Element {
 	} = useCafeInfo(cafeUrl)
 
 	useEffect(() => {
-		;[cafeError, menuError]
-			.filter((error) => error)
-			.map(getErrorMessage)
-			.forEach(setErrorMessage)
+		if (cafeError) {
+			setErrorMessage(getErrorMessage(cafeError))
+		}
+
+		if (menuError) {
+			setErrorMessage(getErrorMessage(menuError))
+		}
 	}, [cafeError, menuError])
 
 	let refreshing =
