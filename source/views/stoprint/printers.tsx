@@ -33,7 +33,7 @@ type ReduxStateProps = {
 }
 
 type ReduxDispatchProps = {
-	updatePrinters: () => any
+	updatePrinters: () => void
 }
 
 type Props = ReduxDispatchProps & ReduxStateProps
