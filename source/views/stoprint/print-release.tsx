@@ -152,7 +152,7 @@ export const PrintJobReleaseView = (): JSX.Element => {
 	}
 
 	const requestRelease = () => {
-		let prompt = `Are you sure you want to print "${job.documentName}" to ${printer.printerName}?`
+		let prompt = `Are you sure you want to print "${job.documentName}" to ${printer?.printerName}?`
 		Alert.alert('Print Job Release Confirmation', prompt, [
 			{text: 'Nope!', style: 'cancel'},
 			{text: 'Print', style: 'default', onPress: releaseJob},
@@ -160,6 +160,10 @@ export const PrintJobReleaseView = (): JSX.Element => {
 	}
 
 	const releaseJob = async () => {
+		if (!printer) {
+			return
+		}
+
 		setStatus('printing')
 		let {username} = await loadLoginCredentials()
 		if (!heldJob || !username) {
@@ -226,7 +230,7 @@ export const PrintJobReleaseView = (): JSX.Element => {
 				<JobInformation job={job} />
 				{actionAvailable && (
 					<React.Fragment>
-						<PrinterInformation printer={printer} />
+						{printer && <PrinterInformation printer={printer} />}
 						<Section sectionPaddingBottom={0}>
 							<ButtonCell
 								onPress={requestRelease}
