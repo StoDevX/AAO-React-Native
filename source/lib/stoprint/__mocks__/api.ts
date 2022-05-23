@@ -109,13 +109,6 @@ export const fetchRecentPrinters = (
 			}),
 		)
 
-/*
-export const fetchColorPrinters =
-	(): Promise<ColorPrintersResponseOrErrorType> => {
-		return
-	}
-*/
-
 export const heldJobsAvailableAtPrinterForUser = (
 	printerName: string,
 	username: string,
@@ -130,22 +123,6 @@ export const heldJobsAvailableAtPrinterForUser = (
 		.catch(
 			(error): HeldJobsResponseOrErrorType => ({error: true, value: error}),
 		)
-
-/*
-export const cancelPrintJobForUser = (
-	_jobId: string,
-	_username: string,
-): Promise<CancelResponseOrErrorType> => {
-	stoprint(mockCancel)
-		.then(
-			(response: Response): CancelResponseOrErrorType => ({
-				error: false,
-				value: response,
-			}),
-		)
-		.catch((error): CancelResponseOrErrorType => ({error: true, value: error}))
-}
-*/
 
 export const releasePrintJobToPrinterForUser = ({
 	jobId,
