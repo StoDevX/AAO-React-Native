@@ -178,10 +178,9 @@ export const PrintJobReleaseView = (): JSX.Element => {
 	const cancelJob = async () => {
 		setStatus('cancelling')
 
-		// TODO: where did username come from?
-		// let {username, job} = this.props.navigation.state.params
+		const {username} = await loadLoginCredentials()
 
-		if (!heldJob) {
+		if (!heldJob || !username) {
 			showGeneralError(returnToJobsView)
 
 			return
