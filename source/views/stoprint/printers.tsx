@@ -158,7 +158,7 @@ export function ConnectedPrinterListView(): JSX.Element {
 	)
 
 	let _updatePrinters = React.useCallback(
-		() => () => dispatch(updatePrinters()),
+		() => dispatch(updatePrinters()),
 		[dispatch],
 	)
 
