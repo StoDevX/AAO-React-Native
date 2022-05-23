@@ -8,7 +8,7 @@ import type {LoginStateEnum} from '../../redux/parts/login'
 import {logInViaCredentials} from '../../redux/parts/login'
 import {loadLoginCredentials} from '../../lib/login'
 import type {PrintJob} from '../../lib/stoprint'
-import {STOPRINT_HELP_PAGE} from '../../lib/stoprint'
+import {STOPRINT_HELP_PAGE, isStoprintMocked} from '../../lib/stoprint'
 import {
 	Detail,
 	ListRow,
@@ -27,6 +27,7 @@ import {getTimeRemaining} from './lib'
 import {Timer} from '@frogpond/timer'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 import {useNavigation} from '@react-navigation/native'
+import {DebugNoticeButton} from '@frogpond/navigation-buttons'
 
 type ReduxStateProps = {
 	jobs: Array<PrintJob>
@@ -216,4 +217,5 @@ export function ConnectedPrintJobsView(): JSX.Element {
 
 export const NavigationOptions: NativeStackNavigationOptions = {
 	title: 'Print Jobs',
+	headerRight: () => <DebugNoticeButton shouldShow={isStoprintMocked} />,
 }

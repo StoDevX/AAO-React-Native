@@ -6,6 +6,7 @@ import * as c from '@frogpond/colors'
 import {
 	cancelPrintJobForUser,
 	heldJobsAvailableAtPrinterForUser,
+	isStoprintMocked,
 	releasePrintJobToPrinterForUser,
 	showGeneralError,
 } from '../../lib/stoprint'
@@ -20,6 +21,7 @@ import {loadLoginCredentials} from '../../lib/login'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 import {RouteProp, useNavigation, useRoute} from '@react-navigation/native'
 import {RootStackParamList} from '../../navigation/types'
+import {DebugNoticeButton} from '@frogpond/navigation-buttons'
 
 const styles = StyleSheet.create({
 	cancelButton: {
@@ -236,4 +238,5 @@ export const PrintJobReleaseView = (): JSX.Element => {
 
 export const NavigationOptions: NativeStackNavigationOptions = {
 	title: 'Release job',
+	headerRight: () => <DebugNoticeButton shouldShow={isStoprintMocked} />,
 }
