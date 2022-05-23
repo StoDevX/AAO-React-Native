@@ -193,7 +193,7 @@ export function ConnectedPrintJobsView(): JSX.Element {
 
 	let jobs = useSelector((state: ReduxState) => state.stoprint?.jobs || [])
 	let error = useSelector(
-		(state: ReduxState) => state.stoprint?.jobsError || null,
+		(state: ReduxState) => state.stoprint?.jobsError || undefined,
 	)
 	let status = useSelector(
 		(state: ReduxState) => state.login?.status || 'logged-out',
