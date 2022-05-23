@@ -29,7 +29,7 @@ type ReduxStateProps = {
 	readonly recentPrinters: Array<Printer>
 	readonly popularPrinters: Array<Printer>
 	readonly colorPrinters: Array<Printer>
-	readonly error?: string
+	readonly error: string | null
 }
 
 type ReduxDispatchProps = {
