@@ -6,6 +6,7 @@ import {
 	fetchColorPrinters,
 	fetchJobs,
 	fetchRecentPrinters,
+	isStoprintMocked,
 	logIn,
 } from '../../lib/stoprint'
 
@@ -60,7 +61,7 @@ type UpdatePrintJobsAction =
 export function updatePrinters(): ThunkAction<UpdateAllPrintersAction> {
 	return async (dispatch) => {
 		const {username, password} = await loadLoginCredentials()
-		if (!username || !password) {
+		if ((!username || !password) && !isStoprintMocked) {
 			return false
 		}
 
@@ -120,7 +121,7 @@ export function updatePrinters(): ThunkAction<UpdateAllPrintersAction> {
 export function updatePrintJobs(): ThunkAction<UpdatePrintJobsAction> {
 	return async (dispatch) => {
 		const {username, password} = await loadLoginCredentials()
-		if (!username || !password) {
+		if ((!username || !password) && !isStoprintMocked) {
 			return false
 		}
 
