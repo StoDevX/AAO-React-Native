@@ -137,7 +137,12 @@ class CourseSearchView extends React.Component<Props, State> {
 		let {typedQuery, mode, isSearchbarActive} = this.state
 
 		if (mode === 'loading') {
-			return <LoadingView text="Loading Course Data…" />
+			return (
+				<LoadingView
+					icon="cloud-download-outline"
+					text="Loading Course Data…"
+				/>
+			)
 		}
 
 		if (this.props.courseDataState === 'not-loaded') {
