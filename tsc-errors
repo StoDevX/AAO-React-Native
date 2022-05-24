@@ -148,14 +148,13 @@ source/views/sis/course-search/search.tsx(224,3): error TS2769: No overload matc
 source/views/sis/index.ts(8,29): error TS2307: Cannot find module './student-work/detail' or its corresponding type declarations.
 source/views/sis/index.ts(18,1): error TS2571: Object is of type 'unknown'.
 source/views/sis/student-work/index.tsx(69,40): error TS2304: Cannot find name 'mixed'.
-source/views/stoprint/print-jobs.tsx(204,36): error TS2345: Argument of type 'ThunkAction<LogInActions>' is not assignable to parameter of type 'AnyAction'.
-source/views/stoprint/print-jobs.tsx(208,18): error TS2345: Argument of type 'ThunkAction<UpdatePrintJobsAction>' is not assignable to parameter of type 'AnyAction'.
+source/views/stoprint/print-jobs.tsx(203,36): error TS2345: Argument of type 'ThunkAction<LogInActions>' is not assignable to parameter of type 'AnyAction'.
+source/views/stoprint/print-jobs.tsx(207,18): error TS2345: Argument of type 'ThunkAction<UpdatePrintJobsAction>' is not assignable to parameter of type 'AnyAction'.
   Property 'type' is missing in type 'ThunkAction<UpdatePrintJobsAction>' but required in type 'AnyAction'.
-source/views/stoprint/print-jobs.tsx(216,4): error TS2322: Type '(username: any, password: any) => AnyAction' is not assignable to type '(username: string, password: string) => Promise<any>'.
+source/views/stoprint/print-jobs.tsx(215,4): error TS2322: Type '(username: any, password: any) => AnyAction' is not assignable to type '(username: string, password: string) => Promise<any>'.
   Type 'AnyAction' is missing the following properties from type 'Promise<any>': then, catch, finally, [Symbol.toStringTag]
-source/views/stoprint/print-jobs.tsx(218,4): error TS2322: Type '() => AnyAction' is not assignable to type '() => Promise<any>'.
+source/views/stoprint/print-jobs.tsx(217,4): error TS2322: Type '() => AnyAction' is not assignable to type '() => Promise<any>'.
   Type 'AnyAction' is not assignable to type 'Promise<any>'.
-source/views/stoprint/print-release.tsx(155,75): error TS2532: Object is possibly 'undefined'.
-source/views/stoprint/printers.tsx(161,18): error TS2345: Argument of type 'ThunkAction<UpdateAllPrintersAction>' is not assignable to parameter of type 'AnyAction'.
+source/views/stoprint/printers.tsx(163,18): error TS2345: Argument of type 'ThunkAction<UpdateAllPrintersAction>' is not assignable to parameter of type 'AnyAction'.
   Property 'type' is missing in type 'ThunkAction<UpdateAllPrintersAction>' but required in type 'AnyAction'.
 source/views/types.ts(5,8): error TS2307: Cannot find module 'react-navigation' or its corresponding type declarations.
