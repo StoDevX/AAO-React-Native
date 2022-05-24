@@ -37,6 +37,7 @@ type Props = {
 	buttonDisabled?: boolean
 	header?: string
 	icon?: string
+	iconColor?: string
 	text?: string
 	style?: StyleProp<ViewStyle>
 	spinner?: boolean
@@ -46,19 +47,20 @@ type Props = {
 }
 
 export function NoticeView(props: Props): JSX.Element {
-	let {header, icon, text, style, textStyle} = props
+	let {header, text, style, textStyle} = props
 	let {buttonDisabled, buttonText, onPress} = props
 	let {spinner} = props
+	let {icon, iconColor} = props
 
 	let theme: AppTheme = getTheme()
 
-	let iconColor = {
-		color: theme.accent,
+	let iconStyles = {
+		color: iconColor ? iconColor : theme.accent,
 	}
 
 	return (
 		<ScrollView contentContainerStyle={[styles.container, style]}>
-			{icon ? <Icon name={icon} size={89} style={iconColor} /> : null}
+			{icon ? <Icon name={icon} size={89} style={iconStyles} /> : null}
 
 			{spinner ? <ActivityIndicator style={styles.spinner} /> : null}
 
