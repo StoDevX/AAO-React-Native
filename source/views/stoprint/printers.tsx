@@ -4,6 +4,7 @@ import {useDispatch, useSelector} from 'react-redux'
 import type {ReduxState} from '../../redux'
 import {updatePrinters} from '../../redux/parts/stoprint'
 import type {Printer} from '../../lib/stoprint'
+import {isStoprintMocked} from '../../lib/stoprint'
 import {
 	Detail,
 	ListRow,
@@ -12,6 +13,7 @@ import {
 	Title,
 } from '@frogpond/lists'
 import {LoadingView} from '@frogpond/notice'
+import {DebugNoticeButton} from '@frogpond/navigation-buttons'
 import delay from 'delay'
 import toPairs from 'lodash/toPairs'
 import groupBy from 'lodash/groupBy'
@@ -176,4 +178,5 @@ export function ConnectedPrinterListView(): JSX.Element {
 
 export const NavigationOptions: NativeStackNavigationOptions = {
 	title: 'Select Printer',
+	headerRight: () => <DebugNoticeButton shouldShow={isStoprintMocked} />,
 }
