@@ -1,11 +1,11 @@
 import * as React from 'react'
 import {
 	ActivityIndicator,
+	ScrollView,
 	StyleProp,
 	StyleSheet,
 	Text,
 	TextStyle,
-	View,
 	ViewStyle,
 } from 'react-native'
 import * as c from '@frogpond/colors'
@@ -47,7 +47,7 @@ export function NoticeView(props: Props): JSX.Element {
 	let {spinner} = props
 
 	return (
-		<View style={[styles.container, style]}>
+		<ScrollView contentContainerStyle={[styles.container, style]}>
 			{spinner ? <ActivityIndicator style={styles.spinner} /> : null}
 
 			{header ? (
@@ -67,6 +67,6 @@ export function NoticeView(props: Props): JSX.Element {
 					title={buttonText}
 				/>
 			) : null}
-		</View>
+		</ScrollView>
 	)
 }
