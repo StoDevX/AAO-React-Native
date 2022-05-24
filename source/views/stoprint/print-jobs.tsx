@@ -31,7 +31,7 @@ import {DebugNoticeButton} from '@frogpond/navigation-buttons'
 
 type ReduxStateProps = {
 	jobs: Array<PrintJob>
-	error?: string
+	error: string | null
 	status: LoginStateEnum
 }
 
@@ -193,7 +193,7 @@ export function ConnectedPrintJobsView(): JSX.Element {
 
 	let jobs = useSelector((state: ReduxState) => state.stoprint?.jobs || [])
 	let error = useSelector(
-		(state: ReduxState) => state.stoprint?.jobsError || undefined,
+		(state: ReduxState) => state.stoprint?.jobsError || null,
 	)
 	let status = useSelector(
 		(state: ReduxState) => state.login?.status || 'logged-out',
