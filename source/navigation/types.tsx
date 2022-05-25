@@ -2,6 +2,7 @@ import React from 'react'
 // import {HomeView} from '../views/home'
 // import * as Calendar from '../views/calendar'
 import {EventType} from '@frogpond/event-type'
+import {FilterType} from '@frogpond/filter/types'
 import {PoweredBy} from '@frogpond/event-list'
 import {BuildingType} from '../views/building-hours/types'
 
@@ -17,6 +18,8 @@ import type {
 	MenuItemType as MenuItem,
 } from '../views/menus/types'
 import {Printer, PrintJob} from '../lib/stoprint/types'
+import {JobType} from '../views/sis/student-work/types'
+import {CourseType} from '../lib/course-search/types'
 
 export type RootStackParamList = {
 	Home: undefined
@@ -38,7 +41,8 @@ export type RootStackParamList = {
 	DictionaryEditor: {item: WordType}
 	Faq: undefined
 	Help: undefined
-	JobDetail: undefined
+	Job: undefined
+	JobDetail: {job: JobType}
 	Legal: undefined
 	Menus: undefined
 	BonAppPicker: undefined
@@ -47,8 +51,8 @@ export type RootStackParamList = {
 	Settings: undefined
 	IconSettings: undefined
 	SIS: undefined
-	CourseSearchResults: undefined
-	CourseDetail: undefined
+	CourseSearchResults: {initialQuery?: string; initialFilters?: FilterType[]}
+	CourseDetail: {course: CourseType}
 	Streaming: undefined
 	KSTOSchedule: undefined
 	KRLXSchedule: undefined
