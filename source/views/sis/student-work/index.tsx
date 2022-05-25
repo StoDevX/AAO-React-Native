@@ -1,18 +1,19 @@
 import * as React from 'react'
 import {StyleSheet, SectionList} from 'react-native'
-import {TabBarIcon} from '@frogpond/navigation-tabs'
-import type {TopLevelViewPropsType} from '../../types'
 import * as c from '@frogpond/colors'
 import {ListSeparator, ListSectionHeader} from '@frogpond/lists'
 import {NoticeView, LoadingView} from '@frogpond/notice'
+import {toLaxTitleCase as titleCase} from '@frogpond/titlecase'
 import toPairs from 'lodash/toPairs'
 import orderBy from 'lodash/orderBy'
 import groupBy from 'lodash/groupBy'
-import {toLaxTitleCase as titleCase} from '@frogpond/titlecase'
+
 import {JobRow} from './job-row'
 import {API} from '@frogpond/api'
 import type {JobType} from './types'
 import {fetch} from '@frogpond/fetch'
+import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+import {useNavigation} from '@react-navigation/native'
 
 const styles = StyleSheet.create({
 	listContainer: {
@@ -23,35 +24,26 @@ const styles = StyleSheet.create({
 	},
 })
 
-type Props = TopLevelViewPropsType
-
-type State = {
-	jobs: Array<{title: string; data: Array<JobType>}>
-	loading: boolean
-	refreshing: boolean
-	error: boolean
+interface Jobs {
+	title: string
+	data: JobType[]
 }
 
-export default class StudentWorkView extends React.PureComponent<Props, State> {
-	static navigationOptions = {
-		tabBarLabel: 'Open Jobs',
-		tabBarIcon: TabBarIcon('briefcase'),
-	}
+const StudentWorkView = (): JSX.Element => {
+	let [jobs, setJobs] = React.useState<Jobs[]>([])
+	let [loading, setLoading] = React.useState(true)
+	let [refreshing, setRefreshing] = React.useState(false)
+	let [error, setError] = React.useState(false)
 
-	state = {
-		jobs: [],
-		loading: true,
-		refreshing: false,
-		error: false,
-	}
+	let navigation = useNavigation()
 
-	componentDidMount() {
-		this.fetchData().then(() => {
-			this.setState(() => ({loading: false}))
+	React.useEffect(() => {
+		fetchData().then(() => {
+			setLoading(false)
 		})
-	}
+	}, [])
 
-	fetchData = async (reload?: boolean) => {
+	let fetchData = async (reload?: boolean) => {
 		let data: Array<JobType> = await fetch(API('/jobs'), {
 			delay: reload ? 500 : 0,
 		}).json()
@@ -79,53 +71,48 @@ export default class StudentWorkView extends React.PureComponent<Props, State> {
 			title,
 			data,
 		}))
-		this.setState(() => ({jobs: mapped}))
+		setJobs(mapped)
 	}
 
-	refresh = async (): Promise<void> => {
-		this.setState(() => ({refreshing: true}))
-		await this.fetchData(true)
-		this.setState(() => ({refreshing: false}))
+	if (error) {
+		return <NoticeView text="Could not get open jobs." />
 	}
 
-	onPressJob = (job: JobType) => {
-		this.props.navigation.navigate('JobDetailView', {job})
+	if (loading) {
+		return <LoadingView />
 	}
 
-	keyExtractor = (item: JobType, index: number) => index.toString()
-
-	renderSectionHeader = ({section: {title}}: any) => (
-		<ListSectionHeader title={title} />
+	return (
+		<SectionList
+			ItemSeparatorComponent={ListSeparator}
+			ListEmptyComponent={<NoticeView text="There are no open job postings." />}
+			contentContainerStyle={styles.contentContainer}
+			keyExtractor={(_item: JobType, index: number) => index.toString()}
+			onRefresh={async () => {
+				setRefreshing(true)
+				await fetchData(true)
+				setRefreshing(false)
+			}}
+			refreshing={refreshing}
+			renderItem={({item}: {item: JobType}) => (
+				<JobRow
+					job={item}
+					onPress={(job: JobType) => {
+						navigation.navigate('JobDetail', {job})
+					}}
+				/>
+			)}
+			renderSectionHeader={({section: {title}}: any) => (
+				<ListSectionHeader title={title} />
+			)}
+			sections={jobs}
+			style={styles.listContainer}
+		/>
 	)
+}
 
-	renderItem = ({item}: {item: JobType}) => (
-		<JobRow job={item} onPress={this.onPressJob} />
-	)
+export {StudentWorkView as View}
 
-	render() {
-		if (this.state.error) {
-			return <NoticeView text="Could not get open jobs." />
-		}
-
-		if (this.state.loading) {
-			return <LoadingView />
-		}
-
-		return (
-			<SectionList
-				ItemSeparatorComponent={ListSeparator}
-				ListEmptyComponent={
-					<NoticeView text="There are no open job postings." />
-				}
-				contentContainerStyle={styles.contentContainer}
-				keyExtractor={this.keyExtractor}
-				onRefresh={this.refresh}
-				refreshing={this.state.refreshing}
-				renderItem={this.renderItem}
-				renderSectionHeader={this.renderSectionHeader}
-				sections={this.state.jobs}
-				style={styles.listContainer}
-			/>
-		)
-	}
+export const NavigationOptions: NativeStackNavigationOptions = {
+	title: 'Open Jobs',
 }
