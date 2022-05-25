@@ -137,7 +137,7 @@
     "@babel/core": "7.18.0",
     "@babel/preset-typescript": "7.17.12",
     "@babel/runtime": "7.18.0",
-    "@sentry/cli": "2.0.4",
+    "@sentry/cli": "2.1.0",
     "@types/base-64": "1.0.0",
     "@types/http-cache-semantics": "4.0.1",
     "@types/jest": "27.5.1",
