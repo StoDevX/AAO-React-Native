@@ -10,14 +10,14 @@ type Props = {
 	actionLabel?: string
 	emptyHeader: string
 	emptyText: string
-	onAction?: () => any
-	onItemPress: (item: string) => any
+	onAction?: () => void
+	onItemPress: (item: string) => void
 	items: string[]
 	title: string
 	theme: AppTheme
 }
 
-function RecentItemsList(props: Props) {
+function RecentItemsList(props: Props): JSX.Element {
 	let {items, actionLabel, onAction, title, emptyHeader, emptyText, theme} =
 		props
 
