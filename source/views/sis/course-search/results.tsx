@@ -1,6 +1,5 @@
 import * as React from 'react'
-import {StyleSheet, View} from 'react-native'
-import * as c from '@frogpond/colors'
+import {StyleSheet} from 'react-native'
 import {
 	updateRecentSearches,
 	updateRecentFilters,
