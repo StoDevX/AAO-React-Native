@@ -102,7 +102,6 @@ source/views/settings/screens/debug/row.tsx(40,5): error TS2322: Type 'string | 
 source/views/settings/screens/debug/row.tsx(43,5): error TS2322: Type '((key: string) => any) | null' is not assignable to type '(() => false | void) | undefined'.
   Type 'null' is not assignable to type '(() => false | void) | undefined'.
 source/views/settings/screens/overview/login-credentials.tsx(140,13): error TS2345: Argument of type 'ThunkAction<LogInActions>' is not assignable to parameter of type 'AnyAction'.
-  Property 'type' is missing in type 'ThunkAction<LogInActions>' but required in type 'AnyAction'.
 source/views/settings/screens/overview/login-credentials.tsx(146,12): error TS2345: Argument of type 'Promise<LogOutAction>' is not assignable to parameter of type 'AnyAction'.
   Property 'type' is missing in type 'Promise<LogOutAction>' but required in type 'AnyAction'.
 source/views/settings/screens/overview/miscellany.tsx(4,24): error TS7016: Could not find a declaration file for module '@hawkrives/react-native-alternate-icons'. './node_modules/@hawkrives/react-native-alternate-icons/index.js' implicitly has an 'any' type.
@@ -115,44 +114,49 @@ source/views/settings/screens/overview/server-url.tsx(46,5): error TS2769: No ov
           Type 'CellTextField' is missing the following properties from type 'TextInput': isFocused, clear, measure, measureInWindow, and 12 more.
   Overload 2 of 2, '(props: Props, context: any): CellTextField', gave the following error.
     Type 'RefObject<CellTextField>' is not assignable to type '{ current: TextInput | null; }'.
-source/views/sis/balances-acknowledgement.tsx(25,18): error TS2345: Argument of type 'Promise<SisAlertSeenAction>' is not assignable to parameter of type 'AnyAction'.
+source/views/sis/balances-acknowledgement.tsx(23,18): error TS2345: Argument of type 'Promise<SisAlertSeenAction>' is not assignable to parameter of type 'AnyAction'.
   Property 'type' is missing in type 'Promise<SisAlertSeenAction>' but required in type 'AnyAction'.
-source/views/sis/balances.tsx(212,13): error TS2345: Argument of type 'ThunkAction<LogInActions>' is not assignable to parameter of type 'AnyAction'.
-source/views/sis/course-search/detail/index.tsx(124,5): error TS2322: Type 'Element[]' is not assignable to type 'string'.
-source/views/sis/course-search/detail/index.tsx(207,25): error TS7053: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{ Open: string; Closed: string; }'.
+source/views/sis/balances.tsx(151,34): error TS2322: Type 'string | null' is not assignable to type 'string | number | undefined'.
+  Type 'null' is not assignable to type 'string | number | undefined'.
+source/views/sis/balances.tsx(182,13): error TS2345: Argument of type 'ThunkAction<LogInActions>' is not assignable to parameter of type 'AnyAction'.
+  Property 'type' is missing in type 'ThunkAction<LogInActions>' but required in type 'AnyAction'.
+source/views/sis/course-search/detail/index.tsx(126,5): error TS2322: Type 'Element[]' is not assignable to type 'string'.
+source/views/sis/course-search/detail/index.tsx(209,24): error TS7053: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{ Open: string; Closed: string; }'.
   No index signature with a parameter of type 'string' was found on type '{ Open: string; Closed: string; }'.
 source/views/sis/course-search/lib/execute-search.ts(2,27): error TS7016: Could not find a declaration file for module 'keyword-search'. './node_modules/keyword-search/index.js' implicitly has an 'any' type.
   Try `npm i --save-dev @types/keyword-search` if it exists or add a new declaration (.d.ts) file containing `declare module 'keyword-search';`
 source/views/sis/course-search/lib/format-filter-combo.ts(37,50): error TS2345: Argument of type 'string | number' is not assignable to parameter of type 'string'.
   Type 'number' is not assignable to type 'string'.
-source/views/sis/course-search/list.tsx(12,13): error TS2613: Module '"./modules/filter/index"' has no default export. Did you mean to use 'import { FilterType } from "./modules/filter/index"' instead?
-source/views/sis/course-search/results.tsx(16,13): error TS2613: Module '"./modules/filter/index"' has no default export. Did you mean to use 'import { FilterType } from "./modules/filter/index"' instead?
-source/views/sis/course-search/results.tsx(114,39): error TS7006: Parameter 'f' implicitly has an 'any' type.
-source/views/sis/course-search/results.tsx(183,31): error TS2345: Argument of type 'ThunkAction<UpdateRecentSearchesAction>' is not assignable to parameter of type 'AnyAction'.
+source/views/sis/course-search/results.tsx(55,21): error TS2345: Argument of type 'SetStateAction<string>' is not assignable to parameter of type 'SetStateAction<string | undefined>'.
+  Type '(prevState: string) => string' is not assignable to type 'SetStateAction<string | undefined>'.
+    Type '(prevState: string) => string' is not assignable to type '(prevState: string | undefined) => string | undefined'.
+      Types of parameters 'prevState' and 'prevState' are incompatible.
+        Type 'string | undefined' is not assignable to type 'string'.
+          Type 'undefined' is not assignable to type 'string'.
+source/views/sis/course-search/results.tsx(99,4): error TS2322: Type 'boolean | FilterType[]' is not assignable to type 'boolean'.
+  Type 'FilterType[]' is not assignable to type 'boolean'.
+source/views/sis/course-search/results.tsx(102,4): error TS2322: Type 'string | undefined' is not assignable to type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+source/views/sis/course-search/results.tsx(103,4): error TS2322: Type '{} | null' is not assignable to type 'ViewStyle | undefined'.
+  Type 'null' is not assignable to type 'ViewStyle | undefined'.
+source/views/sis/course-search/results.tsx(119,31): error TS2345: Argument of type 'ThunkAction<UpdateRecentSearchesAction>' is not assignable to parameter of type 'AnyAction'.
   Property 'type' is missing in type 'ThunkAction<UpdateRecentSearchesAction>' but required in type 'AnyAction'.
-source/views/sis/course-search/results.tsx(187,39): error TS2345: Argument of type 'ThunkAction<UpdateRecentFiltersAction>' is not assignable to parameter of type 'AnyAction'.
+source/views/sis/course-search/results.tsx(123,39): error TS2345: Argument of type 'ThunkAction<UpdateRecentFiltersAction>' is not assignable to parameter of type 'AnyAction'.
   Property 'type' is missing in type 'ThunkAction<UpdateRecentFiltersAction>' but required in type 'AnyAction'.
-source/views/sis/course-search/search.tsx(48,2): error TS2416: Property 'state' in type 'CourseSearchView' is not assignable to the same property in base type 'Component<Props, State, any>'.
-  Type '{ mode: string; isSearchbarActive: boolean; typedQuery: string; }' is not assignable to type 'Readonly<State>'.
-    Types of property 'mode' are incompatible.
-      Type 'string' is not assignable to type '"ready" | "loading" | "pending"'.
-source/views/sis/course-search/search.tsx(215,18): error TS2345: Argument of type 'LoadCourseDataActionType' is not assignable to parameter of type 'AnyAction'.
+source/views/sis/course-search/search.tsx(207,18): error TS2345: Argument of type 'LoadCourseDataActionType' is not assignable to parameter of type 'AnyAction'.
   Property 'type' is missing in type 'LoadCourseDataActionType' but required in type 'AnyAction'.
-source/views/sis/course-search/search.tsx(219,18): error TS2345: Argument of type 'UpdateCourseDataActionType' is not assignable to parameter of type 'AnyAction'.
+source/views/sis/course-search/search.tsx(211,18): error TS2345: Argument of type 'UpdateCourseDataActionType' is not assignable to parameter of type 'AnyAction'.
   Property 'type' is missing in type 'UpdateCourseDataActionType' but required in type 'AnyAction'.
-source/views/sis/course-search/search.tsx(224,3): error TS2769: No overload matches this call.
-  Overload 2 of 2, '(props: Props, context: any): CourseSearchView', gave the following error.
-    Type '() => AnyAction' is not assignable to type '() => Promise<any>'.
-  Overload 2 of 2, '(props: Props, context: any): CourseSearchView', gave the following error.
-    Type '() => AnyAction' is not assignable to type '() => Promise<any>'.
-source/views/sis/index.ts(8,29): error TS2307: Cannot find module './student-work/detail' or its corresponding type declarations.
-source/views/sis/index.ts(18,1): error TS2571: Object is of type 'unknown'.
-source/views/sis/student-work/index.tsx(69,40): error TS2304: Cannot find name 'mixed'.
+source/views/sis/course-search/search.tsx(218,4): error TS2322: Type '() => AnyAction' is not assignable to type '() => Promise<any>'.
+  Type 'AnyAction' is missing the following properties from type 'Promise<any>': then, catch, finally, [Symbol.toStringTag]
+source/views/sis/course-search/search.tsx(221,4): error TS2322: Type '() => AnyAction' is not assignable to type '() => Promise<any>'.
+  Type 'AnyAction' is not assignable to type 'Promise<any>'.
+source/views/sis/student-work/index.tsx(61,40): error TS2304: Cannot find name 'mixed'.
 source/views/stoprint/print-jobs.tsx(203,36): error TS2345: Argument of type 'ThunkAction<LogInActions>' is not assignable to parameter of type 'AnyAction'.
 source/views/stoprint/print-jobs.tsx(207,18): error TS2345: Argument of type 'ThunkAction<UpdatePrintJobsAction>' is not assignable to parameter of type 'AnyAction'.
   Property 'type' is missing in type 'ThunkAction<UpdatePrintJobsAction>' but required in type 'AnyAction'.
 source/views/stoprint/print-jobs.tsx(215,4): error TS2322: Type '(username: any, password: any) => AnyAction' is not assignable to type '(username: string, password: string) => Promise<any>'.
-  Type 'AnyAction' is missing the following properties from type 'Promise<any>': then, catch, finally, [Symbol.toStringTag]
+  Type 'AnyAction' is not assignable to type 'Promise<any>'.
 source/views/stoprint/print-jobs.tsx(217,4): error TS2322: Type '() => AnyAction' is not assignable to type '() => Promise<any>'.
   Type 'AnyAction' is not assignable to type 'Promise<any>'.
 source/views/stoprint/printers.tsx(163,18): error TS2345: Argument of type 'ThunkAction<UpdateAllPrintersAction>' is not assignable to parameter of type 'AnyAction'.
