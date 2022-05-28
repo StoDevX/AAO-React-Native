@@ -16,6 +16,7 @@ import type {
 	MasterCorIconMapType,
 	MenuItemType as MenuItem,
 } from '../views/menus/types'
+import {DirectoryItem} from '../views/directory/types'
 
 export type RootStackParamList = {
 	Home: undefined
@@ -35,6 +36,8 @@ export type RootStackParamList = {
 	DictionaryDetail: {item: WordType}
 	Dictionary: undefined
 	DictionaryEditor: {item: WordType}
+	Directory: undefined
+	DirectoryDetail: {contact: DirectoryItem}
 	Faq: undefined
 	Help: undefined
 	JobDetail: undefined

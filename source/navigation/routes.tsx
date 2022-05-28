@@ -31,6 +31,7 @@ import * as streaming from '../views/streaming'
 import * as orgs from '../views/student-orgs'
 import * as transportation from '../views/transportation'
 import * as othermodes from '../views/transportation/other-modes'
+import * as directory from '../views/directory'
 
 // import {
 // 	PrinterList,
@@ -239,6 +240,18 @@ export function RootStack(): JSX.Element {
 					component={news.View}
 					name="News"
 					options={news.NavigationOptions}
+				/>
+			</Stack.Group>
+			<Stack.Group>
+				<Stack.Screen
+					component={directory.DirectoryView}
+					name="Directory"
+					options={directory.NavigationOptions}
+				/>
+				<Stack.Screen
+					component={directory.DirectoryDetailView}
+					name="DirectoryDetail"
+					options={directory.DetailNavigationOptions}
 				/>
 			</Stack.Group>
 			{/*

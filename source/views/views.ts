@@ -62,7 +62,7 @@ export const allViews: Array<ViewType> = [
 	},
 	{
 		type: 'view',
-		view: 'DirectoryView',
+		view: 'Directory',
 		title: 'Directory',
 		icon: 'v-card',
 		foreground: 'light',
