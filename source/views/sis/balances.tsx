@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/react-native'
 import * as React from 'react'
 import {
 	StyleSheet,
@@ -17,6 +18,7 @@ import {loadLoginCredentials} from '../../lib/login'
 import type {ReduxState} from '../../redux'
 import delay from 'delay'
 import * as c from '@frogpond/colors'
+import {sto} from '../../lib/colors'
 import {useNavigation} from '@react-navigation/native'
 
 const DISCLAIMER = 'This data may be outdated or otherwise inaccurate.'
@@ -56,26 +58,33 @@ const BalancesView = (props: Props) => {
 	}, [props])
 
 	let fetchData = React.useCallback(async () => {
-		// trigger the login so that the banner at the bottom hides itself
-		await logIn()
+		try {
+			// trigger the login so that the banner at the bottom hides itself
+			await logIn()
 
-		let balances = await getBalances()
+			let balances = await getBalances()
 
-		if (balances.error) {
-			return
+			if (balances.error) {
+				return
+			}
+
+			let {value} = balances
+
+			let {flex, ole, print} = value
+			let {weekly: weeklyMeals, daily: dailyMeals, plan: mealPlan} = value
+
+			setMessage('')
+			setFlex(flex)
+			setOle(ole)
+			setPrint(print)
+			setWeeklyMeals(weeklyMeals)
+			setDailyMeals(dailyMeals)
+			setMealPlan(mealPlan)
+		} catch (error) {
+			setMessage('An unexpected error occured while updating.')
+			console.error(error)
+			Sentry.captureException(error)
 		}
-
-		let {value} = balances
-
-		let {flex, ole, print} = value
-		let {weekly: weeklyMeals, daily: dailyMeals, plan: mealPlan} = value
-
-		setFlex(flex)
-		setOle(ole)
-		setPrint(print)
-		setWeeklyMeals(weeklyMeals)
-		setDailyMeals(dailyMeals)
-		setMealPlan(mealPlan)
 	}, [logIn])
 
 	let refresh = React.useCallback(async () => {
@@ -147,7 +156,7 @@ const BalancesView = (props: Props) => {
 							value={weeklyMeals}
 						/>
 					</View>
-					{Boolean(mealPlan) && (
+					{Boolean(mealPlan) && mealPlan !== null && (
 						<Cell cellStyle="Subtitle" detail={mealPlan} title="Meal Plan" />
 					)}
 				</Section>
@@ -163,7 +172,13 @@ const BalancesView = (props: Props) => {
 							/>
 						) : null}
 
-						{message ? <Cell cellStyle="Basic" title={message} /> : null}
+						{message ? (
+							<Cell
+								cellStyle="Basic"
+								title={message}
+								titleTextColor={sto.red}
+							/>
+						) : null}
 					</Section>
 				)}
 			</TableView>
