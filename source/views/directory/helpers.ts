@@ -1,7 +1,7 @@
 import {callPhone} from '../../components/call-phone'
 import {sendEmail} from '../../components/send-email'
-import {entities} from '@frogpond/html-lib'
 import type {FABGroupAction} from 'react-native-paper'
+import {decode} from '@frogpond/html-lib'
 import type {
 	CampusLocation,
 	DirectoryItem,
@@ -57,7 +57,7 @@ const descriptionText = (
 			? shortRoom
 			: item.title
 
-	return description && entities.decode(description)
+	return description && decode(description)
 }
 
 const shortRoomText = (
@@ -83,7 +83,7 @@ export const formatResults = (
 		const result = {
 			...item,
 			description: descriptionText(shortRoom, item),
-			displayTitle: displayTitle && entities.decode(displayTitle),
+			displayTitle: displayTitle && decode(displayTitle),
 		}
 
 		if (officeHours) {
