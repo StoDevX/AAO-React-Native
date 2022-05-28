@@ -83,9 +83,9 @@ const shortRoomDetail = (loc: CampusLocation): string => {
 }
 
 export const formatResults = (
-	data: SearchResults,
+	results: SearchResults['results'],
 ): SearchResults['results'] => {
-	return data.results.map((item: DirectoryItem) => {
+	return results.map((item: DirectoryItem) => {
 		const {campusLocations, displayTitle, officeHours} = item
 		const shortRoom = shortRoomText(campusLocations)
 

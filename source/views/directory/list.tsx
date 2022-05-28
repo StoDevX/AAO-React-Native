@@ -8,99 +8,102 @@ import {
 	Platform,
 	SafeAreaView,
 } from 'react-native'
-import {SearchBar} from '@frogpond/searchbar'
 import {Column} from '@frogpond/layout'
 import {ListRow, ListSeparator, Detail, Title} from '@frogpond/lists'
-import {fetch} from '@frogpond/fetch'
 import * as c from '@frogpond/colors'
 import {useDebounce} from '@frogpond/use-debounce'
 import {NoticeView, LoadingView} from '@frogpond/notice'
 import {formatResults} from './helpers'
-import {AsyncState, useAsync} from 'react-async'
+import {useFetch} from 'react-async'
 import {List, Avatar} from 'react-native-paper'
 import type {DirectoryItem, SearchResults} from './types'
-import type {TopLevelViewPropsTypeWithParams} from '../types'
-import {AnyObject} from '../../views/types'
 import Icon from 'react-native-vector-icons/Ionicons'
+import {useNavigation} from '@react-navigation/native'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+import {ChangeTextEvent} from '../../navigation/types'
 
-type Props = TopLevelViewPropsTypeWithParams<AnyObject>
+const useDirectory = (query: string) => {
+	const url = `https://www.stolaf.edu/directory/search?format=json&query=${query.trim()}`
+	return useFetch<SearchResults>(url, {
+		headers: {accept: 'application/json'},
+	})
+}
 
-class EmptySearchError extends Error {}
-class TooShortSearchError extends Error {}
-
-function searchDirectory(
-	{query}: {query: string},
-	{signal}: {signal: window.AbortController},
-): Promise<SearchResults> {
-	query = query.trim()
 export const NavigationOptions: NativeStackNavigationOptions = {
 	title: 'Directory',
 }
 
-	if (!query) {
-		throw new EmptySearchError()
+export function DirectoryView(): JSX.Element {
+	let [errorMessage, setErrorMessage] = React.useState<string | null>(null)
+	let [typedQuery, setTypedQuery] = React.useState('')
+	let searchQuery = useDebounce(typedQuery, 500)
+
+	let navigation = useNavigation()
+
+	let {
+		data: {results = []} = {},
+		error,
+		reload,
+		isPending,
+		isInitial,
+		isLoading,
+	} = useDirectory(searchQuery)
+
+	React.useLayoutEffect(() => {
+		navigation.setOptions({
+			headerSearchBarOptions: {
+				barTintColor: c.white,
+				onChangeText: (event: ChangeTextEvent) =>
+					setTypedQuery(event.nativeEvent.text),
+			},
+		})
+	}, [navigation])
+
+	React.useEffect(() => {
+		if (error) {
+			setErrorMessage(getErrorMessage(error))
+		}
+	}, [error])
+
+	if (!searchQuery) {
+		return <NoSearchPerformed />
 	}
 
-	if (query.length < 2) {
-		throw new TooShortSearchError()
+	if (searchQuery.length < 2) {
+		return <NoticeView text="Your search is too short." />
 	}
 
-	const url = 'https://www.stolaf.edu/directory/search'
-	return fetch(url, {
-		searchParams: {format: 'json', query: query},
-		cache: 'no-store',
-		signal: signal,
-	}).json()
-}
-
-export function DirectoryView(props: Props): JSX.Element {
-	const [typedQuery, setTypedQuery] = React.useState('')
-	const searchQuery = useDebounce(typedQuery, 500)
-
-	const {data, error, isLoading}: AsyncState<SearchResults> = useAsync(
-		searchDirectory,
-		{query: searchQuery, watch: searchQuery},
-	)
-
-	const results = data ? formatResults(data) : []
+	const items = results ? formatResults(results) : []
 
 	const renderRow = ({item}: {item: DirectoryItem}) => (
 		<DirectoryItemRow
 			item={item}
 			onPress={() => {
-				props.navigation.navigate('DirectoryDetailView', {contact: item})
+				navigation.navigate('DirectoryDetail', {contact: item})
 			}}
 		/>
 	)
 
 	return (
 		<View style={styles.wrapper}>
-			<SearchBar
-				onChange={setTypedQuery}
-				style={styles.search}
-				value={typedQuery}
-			/>
-
 			{isLoading ? (
 				<LoadingView />
-			) : error instanceof EmptySearchError ? (
-				<NoSearchPerformed />
-			) : error instanceof TooShortSearchError ? (
-				<NoticeView text="Your search is too short." />
-			) : error ? (
-				<NoticeView text="There was an error. Please try again." />
-			) : !results.length ? (
+			) : errorMessage ? (
+				<NoticeView text={parseErrorMessage(errorMessage)} />
+			) : !items.length ? (
 				<NoticeView text={`No results found for "${searchQuery}".`} />
 			) : (
 				<FlatList
 					ItemSeparatorComponent={IndentedListSeparator}
-					data={results.map((r: DirectoryItem, i: number) => ({
+					contentInsetAdjustmentBehavior="automatic"
+					data={items.map((r: DirectoryItem, i: number) => ({
 						...r,
 						key: String(i),
 					}))}
 					keyboardDismissMode="on-drag"
 					keyboardShouldPersistTaps="never"
+					onRefresh={reload}
+					refreshing={isPending && !isInitial}
 					renderItem={renderRow}
 				/>
 			)}
@@ -117,7 +120,11 @@ function IndentedListSeparator() {
 function NoSearchPerformed() {
 	return (
 		<View style={styles.emptySearch}>
-			<Icon color={c.semitransparentGray} name="ios-search" size={54} />
+			<Icon
+				color={c.semitransparentGray}
+				name="people-circle-outline"
+				size={64}
+			/>
 			<Text style={styles.emptySearchText}>Search the Directory</Text>
 		</View>
 	)
@@ -125,7 +132,7 @@ function NoSearchPerformed() {
 
 type DirectoryItemRowProps = {
 	item: DirectoryItem
-	onPress: () => mixed
+	onPress: () => void
 }
 
 function IosDirectoryItemRow({item, onPress}: DirectoryItemRowProps) {
@@ -160,6 +167,29 @@ function AndroidDirectoryItemRow({item, onPress}: DirectoryItemRowProps) {
 	)
 }
 
+const DIRECTORY_HTML_ERROR_CODE = 'directory-html'
+
+const getErrorMessage = (error: Error | undefined) => {
+	if (!(error instanceof Error)) {
+		return 'Unknown Error: Not an Error'
+	}
+
+	if (error.message === "JSON Parse error: Unrecognized token '<'") {
+		return DIRECTORY_HTML_ERROR_CODE
+	} else {
+		return error.message
+	}
+}
+
+const parseErrorMessage = (errorMessage: string) => {
+	let message = `Error: ${errorMessage}`
+	if (errorMessage === DIRECTORY_HTML_ERROR_CODE) {
+		message =
+			'Something between you and the directory is having problems. Try again in a minute or two?'
+	}
+	return message
+}
+
 const DirectoryItemRow =
 	Platform.OS === 'ios' ? IosDirectoryItemRow : AndroidDirectoryItemRow
 
@@ -171,7 +201,6 @@ const styles = StyleSheet.create({
 		flex: 1,
 		backgroundColor: c.white,
 	},
-	search: Platform.OS === 'ios' ? {} : {margin: 8},
 	row: {
 		flexDirection: 'row',
 		alignItems: 'center',
