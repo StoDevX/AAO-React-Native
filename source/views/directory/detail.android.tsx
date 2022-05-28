@@ -57,6 +57,7 @@ export function DirectoryDetailView(): JSX.Element {
 						icon={isFabOpen ? 'close' : 'more-vert'}
 						onStateChange={({open}) => setIsFabOpen(open)}
 						open={isFabOpen}
+						visible={true}
 					/>
 				</Portal>
 			) : null}
