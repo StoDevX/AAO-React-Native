@@ -116,9 +116,7 @@ source/views/settings/screens/overview/server-url.tsx(46,5): error TS2769: No ov
     Type 'RefObject<CellTextField>' is not assignable to type '{ current: TextInput | null; }'.
 source/views/sis/balances-acknowledgement.tsx(23,18): error TS2345: Argument of type 'Promise<SisAlertSeenAction>' is not assignable to parameter of type 'AnyAction'.
   Property 'type' is missing in type 'Promise<SisAlertSeenAction>' but required in type 'AnyAction'.
-source/views/sis/balances.tsx(151,34): error TS2322: Type 'string | null' is not assignable to type 'string | number | undefined'.
-  Type 'null' is not assignable to type 'string | number | undefined'.
-source/views/sis/balances.tsx(182,13): error TS2345: Argument of type 'ThunkAction<LogInActions>' is not assignable to parameter of type 'AnyAction'.
+source/views/sis/balances.tsx(193,13): error TS2345: Argument of type 'ThunkAction<LogInActions>' is not assignable to parameter of type 'AnyAction'.
   Property 'type' is missing in type 'ThunkAction<LogInActions>' but required in type 'AnyAction'.
 source/views/sis/course-search/detail/index.tsx(126,5): error TS2322: Type 'Element[]' is not assignable to type 'string'.
 source/views/sis/course-search/detail/index.tsx(209,24): error TS7053: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{ Open: string; Closed: string; }'.
@@ -151,7 +149,7 @@ source/views/sis/course-search/search.tsx(218,4): error TS2322: Type '() => AnyA
   Type 'AnyAction' is missing the following properties from type 'Promise<any>': then, catch, finally, [Symbol.toStringTag]
 source/views/sis/course-search/search.tsx(221,4): error TS2322: Type '() => AnyAction' is not assignable to type '() => Promise<any>'.
   Type 'AnyAction' is not assignable to type 'Promise<any>'.
-source/views/sis/student-work/index.tsx(61,40): error TS2304: Cannot find name 'mixed'.
+source/views/sis/student-work/index.tsx(62,41): error TS2304: Cannot find name 'mixed'.
 source/views/stoprint/print-jobs.tsx(203,36): error TS2345: Argument of type 'ThunkAction<LogInActions>' is not assignable to parameter of type 'AnyAction'.
 source/views/stoprint/print-jobs.tsx(207,18): error TS2345: Argument of type 'ThunkAction<UpdatePrintJobsAction>' is not assignable to parameter of type 'AnyAction'.
   Property 'type' is missing in type 'ThunkAction<UpdatePrintJobsAction>' but required in type 'AnyAction'.
