@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {Text, StyleSheet} from 'react-native'
+import {StyleSheet, Text} from 'react-native'
 import * as c from '@frogpond/colors'
 
 const styles = StyleSheet.create({
@@ -17,13 +17,11 @@ type Props = {
 	href?: string
 }
 
-export class ListFooter extends React.PureComponent<Props> {
-	render() {
-		const {title} = this.props
-		return (
-			<Text selectable={true} style={[styles.footer]}>
-				{title}
-			</Text>
-		)
-	}
+export function ListFooter(props: Props): JSX.Element {
+	const {title} = props
+	return (
+		<Text selectable={true} style={[styles.footer]}>
+			{title}
+		</Text>
+	)
 }

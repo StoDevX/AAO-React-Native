@@ -5,47 +5,46 @@ import {ListRow, Detail, Title} from '@frogpond/lists'
 import type {StoryType} from './types'
 
 type Props = {
-	onPress: (string) => any
+	onPress: (link: string) => void
 	story: StoryType
 	thumbnail: false | number
 }
 
-export class NewsRow extends React.PureComponent<Props> {
-	_onPress = () => {
-		if (!this.props.story.link) {
+export const NewsRow = (props: Props): JSX.Element => {
+	let _onPress = () => {
+		if (!props.story.link) {
 			Alert.alert('There is nowhere to go for this story')
 			return
 		}
-		this.props.onPress(this.props.story.link)
+		props.onPress(props.story.link)
 	}
 
-	render() {
-		let {story} = this.props
-		let thumb =
-			this.props.thumbnail !== false
-				? story.featuredImage
-					? {uri: story.featuredImage}
-					: this.props.thumbnail
-				: null
+	let {story} = props
 
-		return (
-			<ListRow arrowPosition="top" onPress={this._onPress}>
-				<Row alignItems="center">
-					{thumb !== null ? (
-						<Image
-							accessibilityIgnoresInvertColors={true}
-							source={thumb}
-							style={styles.image}
-						/>
-					) : null}
-					<Column flex={1}>
-						<Title lines={2}>{story.title}</Title>
-						<Detail lines={3}>{story.excerpt}</Detail>
-					</Column>
-				</Row>
-			</ListRow>
-		)
-	}
+	let thumb =
+		props.thumbnail !== false
+			? story.featuredImage
+				? {uri: story.featuredImage}
+				: props.thumbnail
+			: null
+
+	return (
+		<ListRow arrowPosition="top" onPress={_onPress}>
+			<Row alignItems="center">
+				{thumb !== null ? (
+					<Image
+						accessibilityIgnoresInvertColors={true}
+						source={thumb}
+						style={styles.image}
+					/>
+				) : null}
+				<Column flex={1}>
+					<Title lines={2}>{story.title}</Title>
+					<Detail lines={3}>{story.excerpt}</Detail>
+				</Column>
+			</Row>
+		</ListRow>
+	)
 }
 
 const styles = StyleSheet.create({

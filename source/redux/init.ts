@@ -5,18 +5,19 @@ import {getEnabledTools} from './parts/help'
 import {loadFavoriteBuildings} from './parts/buildings'
 import {loadAcknowledgement} from './parts/settings'
 import {loadRecentSearches, loadRecentFilters} from './parts/courses'
+import {AnyAction, Store} from 'redux'
 
-// TODO: Fix the type parameter on store.dispatch
-export async function init(store: {dispatch: (any: unknown) => void}): void {
+// TODO: Perhaps restrict the any and AnyAction types a bit further?
+export async function init(store: Store<any, AnyAction>): Promise<void> {
 	// this function runs in two parts: the things that don't care about
 	// network, and those that do.
 
 	// kick off the parts that don't care about network in parallel
 	await Promise.all([
-		store.dispatch(loadAcknowledgement()),
-		store.dispatch(loadFavoriteBuildings()),
-		store.dispatch(loadRecentSearches()),
-		store.dispatch(loadRecentFilters()),
+		loadAcknowledgement().then(store.dispatch),
+		loadFavoriteBuildings().then(store.dispatch),
+		loadRecentSearches().then(store.dispatch),
+		loadRecentFilters().then(store.dispatch),
 	])
 
 	// wait for our first connection check to happen

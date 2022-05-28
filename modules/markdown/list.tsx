@@ -1,9 +1,10 @@
 import * as React from 'react'
-import glamorous, {View} from 'glamorous-native'
+import glamorous from 'glamorous-native'
 import {BaseText, Paragraph} from './formatting'
+import {StyleProp, TextStyle} from 'react-native'
 
 // the list itself
-export const List = glamorous(View)({})
+export const List = glamorous.view({})
 
 // the list item's text
 export const ListText = glamorous(Paragraph)({
@@ -11,17 +12,15 @@ export const ListText = glamorous(Paragraph)({
 })
 
 // the list item's container box thing
-type Props = {
-	children?: React.Node
-}
+type Props = React.PropsWithChildren<{style: StyleProp<TextStyle>}>
 
 export class ListItem extends React.PureComponent<Props> {
-	render() {
+	render(): JSX.Element {
 		return (
-			<View alignItems="center" flexDirection="row">
-				<BaseText paddingRight={4}>• </BaseText>
+			<glamorous.View alignItems="center" flexDirection="row">
+				<BaseText>• </BaseText>
 				<ListText {...this.props} />
-			</View>
+			</glamorous.View>
 		)
 	}
 }

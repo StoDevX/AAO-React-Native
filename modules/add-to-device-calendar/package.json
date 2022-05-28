@@ -9,10 +9,10 @@
     "test": "jest"
   },
   "peerDependencies": {
-    "delay": "^4.1.0",
-    "react": "^16.0.0",
-    "react-native": "^0.61.0",
-    "react-native-calendar-events": "^1.6.3"
+    "delay": "^5.0.0",
+    "react": "^17.0.0",
+    "react-native": "^0.68.0",
+    "react-native-calendar-events": "^2.0.0"
   },
   "dependencies": {
     "@frogpond/event-type": "^1.0.0"

@@ -45,7 +45,7 @@ async function loadCurrentTermsFromServer(): Promise<Array<TermType>> {
 	const today = new Date()
 	const thisYear = today.getFullYear()
 	const resp: TermInfoType = await fetch(INFO_PAGE, {cache: 'no-store'})
-		.json()
+		.json<TermInfoType>()
 		.catch(() => ({
 			files: [],
 			type: 'error',
@@ -59,7 +59,7 @@ async function loadCurrentTermsFromServer(): Promise<Array<TermType>> {
 async function storeTermCoursesFromServer(term: TermType) {
 	const url = COURSE_DATA_PAGE + term.path
 	const resp: Array<RawCourseType> = await fetch(url, {cache: 'no-store'})
-		.json()
+		.json<Array<RawCourseType>>()
 		.catch(() => [])
 
 	const formattedTermData = formatRawData(resp)

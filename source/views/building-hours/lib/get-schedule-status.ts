@@ -1,15 +1,19 @@
-import moment from 'moment-timezone'
+import type {Moment} from 'moment-timezone'
 import type {SingleBuildingScheduleType} from '../types'
 
 import {parseHours} from './parse-hours'
 
-const in30 = (start, end) => start.clone().add(30, 'minutes').isSameOrAfter(end)
+function in30(start: Moment, end: Moment) {
+	return start.clone().add(30, 'minutes').isSameOrAfter(end)
+}
 
-const timeBetween = (start, end) => start.clone().seconds(0).to(end)
+function timeBetween(start: Moment, end: Moment) {
+	return start.clone().seconds(0).to(end)
+}
 
 export function getScheduleStatusAtMoment(
 	schedule: SingleBuildingScheduleType,
-	m: moment,
+	m: Moment,
 ): string {
 	let {open, close} = parseHours(schedule, m)
 

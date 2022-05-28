@@ -6,6 +6,9 @@ import {Button} from '@frogpond/button'
 import glamorous from 'glamorous-native'
 import type {WordType} from './types'
 import type {TopLevelViewPropsType} from '../types'
+import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+import {RouteProp, useNavigation} from '@react-navigation/native'
+import {RootStackParamList} from '../../navigation/types'
 
 const Term = glamorous.text({
 	fontSize: 36,
@@ -26,37 +29,39 @@ const styles = StyleSheet.create({
 })
 
 type Props = TopLevelViewPropsType & {
-	navigation: {state: {params: {item: WordType}}}
+	route: {params: {item: WordType}}
 }
 
-export class DictionaryDetailView extends React.PureComponent<Props> {
-	static navigationOptions = ({navigation}: any) => {
-		return {
-			title: navigation.state.params.item.word,
-		}
+export const DetailNavigationOptions = (props: {
+	route: RouteProp<RootStackParamList, 'DictionaryDetail'>
+}): NativeStackNavigationOptions => {
+	let {word} = props.route.params.item
+	return {
+		title: word,
 	}
+}
 
-	handleEditButtonPress = () => {
-		let item = this.props.navigation.state.params.item
-		this.props.navigation.navigate('DictionaryEditorView', {
-			word: item,
-		})
-	}
+export let DictionaryDetailView = (props: Props): JSX.Element => {
+	let {item} = props.route.params
 
-	render() {
-		let item = this.props.navigation.state.params.item
-		return (
-			<Container>
-				<Term selectable={true}>{item.word}</Term>
-				<Markdown
-					source={item.definition}
-					styles={{Paragraph: styles.paragraph}}
-				/>
+	let navigation = useNavigation()
 
-				<Button onPress={this.handleEditButtonPress} title="Suggest an Edit" />
+	let handleEditButtonPress = React.useCallback(
+		() => navigation.navigate('DictionaryEditor', {item}),
+		[item, navigation],
+	)
 
-				<ListFooter title="Collected by the humans of All About Olaf" />
-			</Container>
-		)
-	}
+	return (
+		<Container>
+			<Term selectable={true}>{item.word}</Term>
+			<Markdown
+				source={item.definition}
+				styles={{Paragraph: styles.paragraph}}
+			/>
+
+			<Button onPress={handleEditButtonPress} title="Suggest an Edit" />
+
+			<ListFooter title="Collected by the humans of All About Olaf" />
+		</Container>
+	)
 }

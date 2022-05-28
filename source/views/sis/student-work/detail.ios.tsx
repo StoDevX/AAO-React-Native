@@ -16,7 +16,7 @@ import type {JobType} from './types'
 import glamorous from 'glamorous-native'
 import {ShareButton} from '@frogpond/navigation-buttons'
 import {shareJob, createJobFullUrl} from './lib'
-import {entities} from '@frogpond/html-lib'
+import {decode} from '@frogpond/html-lib'
 
 const styles = StyleSheet.create({
 	lastUpdated: {
@@ -53,7 +53,7 @@ function ContactInformation({job}: {job: JobType}) {
 			cellStyle="LeftDetail"
 			detail="Email"
 			onPress={() =>
-				email ? sendEmail({to: [email], subject: job.title, body: ''}) : null
+				email ? sendEmail({to: [email], subject: job.title, body: ''}) : false
 			}
 			title={email}
 		/>
@@ -65,7 +65,7 @@ function ContactInformation({job}: {job: JobType}) {
 			accessory={contactNumber ? 'DisclosureIndicator' : undefined}
 			cellStyle="LeftDetail"
 			detail="Phone"
-			onPress={() => (contactNumber ? callPhone(contactNumber) : null)}
+			onPress={() => (contactNumber ? callPhone(contactNumber) : false)}
 			title={contactNumber}
 		/>
 	) : null
@@ -120,7 +120,7 @@ function JobInformation({job}: {job: JobType}) {
 function Description({job}: {job: JobType}) {
 	return job.description ? (
 		<Section header="DESCRIPTION">
-			<SelectableCell text={entities.decode(job.description)} />
+			<SelectableCell text={decode(job.description)} />
 		</Section>
 	) : null
 }
@@ -128,7 +128,7 @@ function Description({job}: {job: JobType}) {
 function Skills({job}: {job: JobType}) {
 	return job.skills ? (
 		<Section header="SKILLS">
-			<SelectableCell text={entities.decode(job.skills)} />
+			<SelectableCell text={decode(job.skills)} />
 		</Section>
 	) : null
 }
@@ -136,7 +136,7 @@ function Skills({job}: {job: JobType}) {
 function Comments({job}: {job: JobType}) {
 	return job.comments ? (
 		<Section header="COMMENTS">
-			<SelectableCell text={entities.decode(job.comments)} />
+			<SelectableCell text={decode(job.comments)} />
 		</Section>
 	) : null
 }
@@ -152,7 +152,7 @@ function FirstYearAppropriate({job}: {job: JobType}) {
 function Timeline({job}: {job: JobType}) {
 	return job.timeline ? (
 		<Section header="TIMELINE">
-			<SelectableCell text={entities.decode(job.timeline)} />
+			<SelectableCell text={decode(job.timeline)} />
 		</Section>
 	) : null
 }
@@ -171,7 +171,7 @@ function OpenWebpage({job}: {job: JobType}) {
 function HowToApply({job}: {job: JobType}) {
 	return job.howToApply ? (
 		<Section header="HOW TO APPLY">
-			<SelectableCell text={entities.decode(job.howToApply)} />
+			<SelectableCell text={decode(job.howToApply)} />
 		</Section>
 	) : null
 }

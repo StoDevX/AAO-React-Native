@@ -2,13 +2,22 @@ name: Stav Hall
 image: stav
 category: Food
 
-isNotice: true
-noticeMessage: Reservations required
+schedule:
+  - title: Breakfast
+    hours:
+      - {days: [Mo, Tu, We, Th, Fr], from: '7:15am', to: '9:45am'}
+      - {days: [Sa], from: '8:00am', to: '9:30am'}
+      - {days: [Su], from: '8:00am', to: '9:00am'}
 
-schedule: 
-  - title: Reservations
-    hours: []
-    notes: By reservation only
+  - title: Lunch
+    hours:
+      - {days: [Mo, Tu, We, Th, Fr], from: '10:30am', to: '2:00pm'}
+      - {days: [Sa], from: '11:00am', to: '1:30pm'}
+      - {days: [Su], from: '10:30am', to: '1:30pm'}
+
+  - title: Dinner
+    hours:
+      - {days: [Mo, Tu, We, Th, Fr, Sa, Su], from: '4:30pm', to: '7:30pm'}
 
 breakSchedule:
   fall: []

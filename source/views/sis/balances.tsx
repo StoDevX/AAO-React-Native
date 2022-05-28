@@ -1,5 +1,13 @@
 import * as React from 'react'
-import {StyleSheet, ScrollView, View, Text, RefreshControl} from 'react-native'
+import {
+	StyleSheet,
+	ScrollView,
+	View,
+	Text,
+	RefreshControl,
+	StyleProp,
+	ViewStyle,
+} from 'react-native'
 import {useDispatch, useSelector} from 'react-redux'
 import {Cell, TableView, Section} from '@frogpond/tableview'
 import {logInViaCredentials} from '../../redux/parts/login'
@@ -20,20 +28,20 @@ type ReduxStateProps = {
 }
 
 type ReduxDispatchProps = {
-	logInViaCredentials: (string, string) => void
+	logInViaCredentials: (username: string, password: string) => void
 }
 
 type Props = ReactProps & ReduxStateProps & ReduxDispatchProps
 
 type State = {
 	loading: boolean
-	flex?: string
-	ole?: string
-	print?: string
-	weeklyMeals?: string
-	dailyMeals?: string
-	mealPlan?: string
-	message?: string
+	flex: string | null
+	ole: string | null
+	print: string | null
+	weeklyMeals: string | null
+	dailyMeals: string | null
+	mealPlan: string | null
+	message: string | null
 }
 
 class BalancesView extends React.Component<Props, State> {
@@ -85,7 +93,7 @@ class BalancesView extends React.Component<Props, State> {
 
 		let balances = await getBalances()
 
-		if (balances.error === true) {
+		if (balances.error) {
 			return
 		}
 
@@ -259,7 +267,7 @@ let styles = StyleSheet.create({
 	},
 })
 
-function getValueOrNa(value?: string): string {
+function getValueOrNa(value: string | null): string {
 	if (value == null) {
 		return 'N/A'
 	}
@@ -269,9 +277,9 @@ function getValueOrNa(value?: string): string {
 function FormattedValueCell(props: {
 	indeterminate: boolean
 	label: string
-	value?: string
-	style?: any
-	formatter?: (str?: string) => string
+	value: string | null
+	style?: StyleProp<ViewStyle>
+	formatter?: (str: string | null) => string
 }) {
 	let {indeterminate, label, value, style, formatter = getValueOrNa} = props
 

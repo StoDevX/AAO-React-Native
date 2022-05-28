@@ -1,7 +1,12 @@
 /* eslint-env jest */
-/* global element, by */
+
+import {device, element, by} from 'detox'
 
 describe('Basic smoke tests', () => {
+	beforeEach(async () => {
+		await device.reloadReactNative()
+	})
+
 	it('should have homescreen', async () => {
 		await expect(element(by.id('screen-homescreen'))).toBeVisible()
 	})
@@ -14,7 +19,7 @@ describe('Basic smoke tests', () => {
 	it('should show home screen after tap to exit settings screen', async () => {
 		await element(by.id('button-open-settings')).tap()
 		await expect(element(by.id('screen-homescreen'))).toBeNotVisible()
-		await element(by.id('header-back')).tap()
+		await element(by.text('All About Olaf')).tap()
 		await expect(element(by.id('screen-homescreen'))).toBeVisible()
 	})
 })

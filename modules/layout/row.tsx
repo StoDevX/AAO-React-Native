@@ -1,11 +1,29 @@
 import * as React from 'react'
-import {StyledComponent} from './styled-component'
-import type {PropsType} from './styled-component'
+import {FlexStyle, StyleSheet, View, ViewProps} from 'react-native'
 
-export const Row = ({children, ...props}: PropsType) => {
+type PropsType = {
+	flex?: FlexStyle['flex']
+	alignItems?: FlexStyle['alignItems']
+} & ViewProps
+
+const styles = StyleSheet.create({
+	column: {
+		flexDirection: 'row',
+	},
+})
+
+export const Row = ({
+	children,
+	style,
+	flex,
+	alignItems,
+	...props
+}: PropsType): JSX.Element => {
+	let flexStyle = flex != null ? {flex: flex} : null
+	let alignItemsStyle = alignItems != null ? {alignItems: alignItems} : null
 	return (
-		<StyledComponent flexDirection="row" {...props}>
+		<View style={[styles.column, style, flexStyle, alignItemsStyle]} {...props}>
 			{children}
-		</StyledComponent>
+		</View>
 	)
 }

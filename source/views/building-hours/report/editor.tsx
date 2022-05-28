@@ -5,184 +5,143 @@
  */
 
 import * as React from 'react'
+import {useCallback, useState} from 'react'
 import xor from 'lodash/xor'
-import {View, ScrollView, Platform, Text, StyleSheet} from 'react-native'
+import {Platform, ScrollView, StyleSheet, Text} from 'react-native'
+import type {Moment} from 'moment-timezone'
 import moment from 'moment-timezone'
-import {
-	TableView,
-	Section,
-	Cell,
-	DeleteButtonCell,
-	CellToggle,
-} from '@frogpond/tableview'
-import type {SingleBuildingScheduleType, DayOfWeekEnumType} from '../types'
+import {Cell, DeleteButtonCell, Section, TableView} from '@frogpond/tableview'
+import type {DayOfWeekEnumType, SingleBuildingScheduleType} from '../types'
 import {Row} from '@frogpond/layout'
 import type {TopLevelViewPropsType} from '../../types'
-import {parseHours, blankSchedule} from '../lib'
+import {blankSchedule, parseHours} from '../lib'
 import * as c from '@frogpond/colors'
+import {sto} from '../../../lib/colors'
 import {DatePicker} from '@frogpond/datepicker'
 import {Touchable} from '@frogpond/touchable'
-import {ListSeparator} from '@frogpond/lists'
+import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+
+export type RouteParams = {
+	set: SingleBuildingScheduleType | undefined
+	onEditSet: (set: SingleBuildingScheduleType) => unknown
+	onDeleteSet: () => unknown
+}
 
 type Props = TopLevelViewPropsType & {
-	navigation: {
-		state: {
-			params: {
-				set: SingleBuildingScheduleType
-				onEditSet: (set: SingleBuildingScheduleType) => any
-				onDeleteSet: () => any
-			}
-		}
-	}
+	route: {params: RouteParams}
 }
 
-type State = {
-	set?: SingleBuildingScheduleType
-}
+export function BuildingHoursScheduleEditorView(props: Props): JSX.Element {
+	let [set, setSet] = useState<SingleBuildingScheduleType>(
+		props.route.params.set ?? blankSchedule(),
+	)
 
-export class BuildingHoursScheduleEditorView extends React.PureComponent<
-	Props,
-	State
-> {
-	static navigationOptions = {
-		title: 'Edit Schedule',
+	let deleteSet = () => {
+		props.route.params.onDeleteSet()
+		props.navigation.goBack()
 	}
 
-	state = {
-		set: this.props.navigation.state.params.initialSet,
+	let onChangeDays = (newDays: DayOfWeekEnumType[]) => {
+		let newSet = {...set, days: newDays}
+		setSet(newSet)
+		props.route.params.onEditSet(newSet)
 	}
 
-	delete = () => {
-		this.props.navigation.state.params.onDeleteSet()
-		this.props.navigation.goBack()
+	let onChangeOpen = (newDate: Moment) => {
+		let newSet = {...set, from: newDate.format('h:mma')}
+		setSet(newSet)
+		props.route.params.onEditSet(newSet)
 	}
 
-	onChangeDays = (newDays: DayOfWeekEnumType[]) => {
-		this.setState(
-			(state) => ({...state, set: {...state.set, days: newDays}}),
-			() => this.props.navigation.state.params.onEditSet(this.state.set),
-		)
+	let onChangeClose = (newDate: Moment) => {
+		let newSet = {...set, to: newDate.format('h:mma')}
+		setSet(newSet)
+		props.route.params.onEditSet(newSet)
 	}
 
-	onChangeOpen = (newDate: moment) => {
-		this.setState(
-			(state) => ({
-				...state,
-				set: {...state.set, from: newDate.format('h:mma')},
-			}),
-			() => this.props.navigation.state.params.onEditSet(this.state.set),
-		)
-	}
+	let {open, close} = parseHours(set, moment())
 
-	onChangeClose = (newDate: moment) => {
-		this.setState(
-			(state) => ({...state, set: {...state.set, to: newDate.format('h:mma')}}),
-			() => this.props.navigation.state.params.onEditSet(this.state.set),
-		)
-	}
+	return (
+		<ScrollView>
+			<TableView>
+				<Section>
+					<WeekToggles days={set.days} onChangeDays={onChangeDays} />
+					<DatePickerCell date={open} onChange={onChangeOpen} title="Open" />
+					<DatePickerCell date={close} onChange={onChangeClose} title="Close" />
+				</Section>
 
-	render() {
-		let set = this.state.set || blankSchedule()
-
-		let {open, close} = parseHours(set, moment())
-
-		return (
-			<ScrollView>
-				<TableView>
-					<Section header="DAYS">
-						<WeekToggles days={set.days} onChangeDays={this.onChangeDays} />
-					</Section>
-
-					<Section header="TIMES">
-						<DatePickerCell
-							date={open}
-							onChange={this.onChangeOpen}
-							title="Open"
-						/>
-						<DatePickerCell
-							date={close}
-							onChange={this.onChangeClose}
-							title="Close"
-						/>
-					</Section>
-
-					<Section>
-						<DeleteButtonCell onPress={this.delete} title="Delete Hours" />
-					</Section>
-				</TableView>
-			</ScrollView>
-		)
-	}
+				<Section>
+					<DeleteButtonCell onPress={deleteSet} title="Remove" />
+				</Section>
+			</TableView>
+		</ScrollView>
+	)
 }
 
 type WeekTogglesProps = {
 	days: DayOfWeekEnumType[]
-	onChangeDays: (days: DayOfWeekEnumType[]) => any
+	onChangeDays: (days: DayOfWeekEnumType[]) => unknown
 }
 
-class WeekTogglesIOS extends React.PureComponent<WeekTogglesProps> {
-	toggleDay = (day: DayOfWeekEnumType) => {
-		this.props.onChangeDays(xor(this.props.days, [day]))
-	}
+function WeekToggles(props: WeekTogglesProps) {
+	let {onChangeDays, days} = props
 
-	render() {
-		let allDays = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su']
+	let toggleDay = useCallback(
+		(day) => {
+			onChangeDays(xor(days, [day]))
+		},
+		[onChangeDays, days],
+	)
 
-		return (
-			<Row alignItems="stretch" justifyContent="center">
-				{allDays.map((day) => (
-					<ToggleButton
-						key={day}
-						active={this.props.days.includes(day)}
-						onPress={this.toggleDay}
-						text={day}
-					/>
-				))}
-			</Row>
-		)
-	}
-}
+	let allDays: DayOfWeekEnumType[] = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su']
 
-class WeekTogglesAndroid extends React.PureComponent<WeekTogglesProps> {
-	toggleDay = (day) => {
-		this.props.onChangeDays(xor(this.props.days, [day]))
-	}
-
-	render() {
-		let allDays = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su']
-
-		return (
-			<View>
-				{allDays.map((day, i) => (
-					<View key={day}>
-						<CellToggle
-							key={day}
-							label={day}
-							onChange={() => this.toggleDay(day)}
-							value={this.props.days.includes(day)}
-						/>
-						{i === allDays.length - 1 ? null : <ListSeparator force={true} />}
-					</View>
-				))}
-			</View>
-		)
-	}
+	return (
+		<Row
+			style={
+				Platform.OS === 'ios'
+					? styles.iOSweekToggles
+					: styles.androidWeekToggles
+			}
+		>
+			{allDays.map((day) => (
+				<ToggleButton
+					key={day}
+					active={props.days.includes(day)}
+					onPress={toggleDay}
+					text={day}
+				/>
+			))}
+		</Row>
+	)
 }
 
 type ToggleButtonProps = {
 	active: boolean
 	text: DayOfWeekEnumType
-	onPress: (newState: DayOfWeekEnumType) => any
+	onPress: (newState: DayOfWeekEnumType) => unknown
 }
 
 class ToggleButton extends React.PureComponent<ToggleButtonProps> {
 	onPress = () => this.props.onPress(this.props.text)
 
+	platformStyle = Platform.select({
+		ios: styles.iOSDayWrapper,
+		android: styles.androidDayWrapper,
+	})
+
+	platformActiveStyle = Platform.select({
+		ios: styles.iOSDayActive,
+		android: styles.androidDayActive,
+	})
+
 	render() {
 		let {text, active} = this.props
 		return (
 			<Touchable
-				containerStyle={[styles.dayWrapper, active && styles.activeDay]}
+				containerStyle={[
+					this.platformStyle,
+					active && this.platformActiveStyle,
+				]}
 				highlight={false}
 				onPress={this.onPress}
 			>
@@ -194,64 +153,80 @@ class ToggleButton extends React.PureComponent<ToggleButtonProps> {
 	}
 }
 
-const WeekToggles = Platform.OS === 'ios' ? WeekTogglesIOS : WeekTogglesAndroid
-
 type DatePickerCellProps = {
-	date: moment
+	date: Moment
 	title: string
-	onChange: (date: moment) => any
+	onChange: (date: Moment) => unknown
 }
 
-class DatePickerCell extends React.PureComponent<DatePickerCellProps> {
-	_picker: any
-	openPicker = () => this._picker.onPressDate()
+function DatePickerCell(props: DatePickerCellProps) {
+	let format = 'h:mm A'
 
-	getRef = (ref: any) => (this._picker = ref)
+	let accessory = (
+		<DatePicker
+			format={format}
+			initialDate={props.date}
+			minuteInterval={5}
+			mode="time"
+			onDateChange={(newDate: Moment) => {
+				let oldMoment = moment()
 
-	onChange = (newDate: moment) => {
-		let oldMoment = moment()
+				oldMoment.hours(newDate.hours())
+				oldMoment.minutes(newDate.minutes())
 
-		oldMoment.hours(newDate.hours())
-		oldMoment.minutes(newDate.minutes())
+				props.onChange(oldMoment)
+			}}
+		/>
+	)
 
-		this.props.onChange(oldMoment)
-	}
-
-	render() {
-		let format = 'h:mm A'
-
-		let accessory = (
-			<DatePicker
-				ref={this.getRef}
-				format={format}
-				initialDate={this.props.date}
-				minuteInterval={5}
-				mode="time"
-				onDateChange={this.onChange}
-			/>
-		)
-
-		return (
-			<Cell
-				cellAccessoryView={accessory}
-				cellStyle="RightDetail"
-				onPress={this.openPicker}
-				title={this.props.title}
-			/>
-		)
-	}
+	return (
+		<Cell
+			cellAccessoryView={accessory}
+			cellStyle="RightDetail"
+			title={props.title}
+		/>
+	)
 }
 
 const styles = StyleSheet.create({
-	dayWrapper: {
+	iOSweekToggles: {
+		alignItems: 'stretch',
+		justifyContent: 'center',
+		backgroundColor: c.white,
+		paddingHorizontal: 10,
+		paddingVertical: 20,
+	},
+	androidWeekToggles: {
+		alignItems: 'stretch',
+		justifyContent: 'center',
+		backgroundColor: c.white,
+		paddingHorizontal: 10,
+		paddingVertical: 20,
+	},
+	iOSDayWrapper: {
 		flex: 1,
 		alignItems: 'center',
 		paddingVertical: 10,
-		paddingHorizontal: 2,
+		borderRadius: 20,
+		margin: 5,
+		backgroundColor: c.iosGray,
+	},
+	androidDayWrapper: {
+		flex: 1,
+		alignItems: 'center',
+		paddingVertical: 10,
+		borderColor: c.androidSeparator,
+		borderRadius: 20,
+		borderWidth: 1,
+		margin: 5,
 		backgroundColor: c.white,
 	},
-	activeDay: {
-		backgroundColor: c.brickRed,
+	androidDayActive: {
+		backgroundColor: sto.purple,
+		borderColor: c.transparent,
+	},
+	iOSDayActive: {
+		backgroundColor: c.infoBlue,
 	},
 	dayText: {
 		fontSize: 16,
@@ -260,3 +235,9 @@ const styles = StyleSheet.create({
 		color: c.white,
 	},
 })
+
+export const NavigationKey = 'BuildingHoursProblemReportEditor'
+
+export const NavigationOptions: NativeStackNavigationOptions = {
+	title: 'Edit Schedule',
+}

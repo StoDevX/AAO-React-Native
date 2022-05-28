@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {View, Text, StyleSheet} from 'react-native'
+import {StyleSheet, Text, View} from 'react-native'
 import * as c from '@frogpond/colors'
 
 const styles = StyleSheet.create({
@@ -30,13 +30,11 @@ type Props = {
 	title: string
 }
 
-export class InfoHeader extends React.PureComponent<Props> {
-	render() {
-		return (
-			<View style={styles.content}>
-				<Text style={styles.title}>{this.props.title}</Text>
-				<Text style={styles.message}>{this.props.message}</Text>
-			</View>
-		)
-	}
+export function InfoHeader(props: Props): JSX.Element {
+	return (
+		<View style={styles.content}>
+			<Text style={styles.title}>{props.title}</Text>
+			<Text style={styles.message}>{props.message}</Text>
+		</View>
+	)
 }

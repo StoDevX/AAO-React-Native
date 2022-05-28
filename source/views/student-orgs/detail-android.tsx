@@ -8,6 +8,9 @@ import type {TopLevelViewPropsType} from '../types'
 import {sendEmail} from '../../components/send-email'
 import {openUrl} from '@frogpond/open-url'
 import {showNameOrEmail} from './util'
+import {RouteProp} from '@react-navigation/native'
+import {RootStackParamList} from '../../navigation/types'
+import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 
 const styles = StyleSheet.create({
 	name: {
@@ -54,104 +57,106 @@ const styles = StyleSheet.create({
 })
 
 type Props = TopLevelViewPropsType & {
-	navigation: {state: {params: {org: StudentOrgType}}}
+	route: {params: {org: StudentOrgType}}
 }
 
-export class StudentOrgsDetailView extends React.PureComponent<Props> {
-	static navigationOptions = ({navigation}: any) => {
-		let {org} = navigation.state.params
-		return {
-			title: org.name,
-		}
+export const NavigationOptions = (props: {
+	route: RouteProp<RootStackParamList, 'StudentOrgsDetail'>
+}): NativeStackNavigationOptions => {
+	let {name} = props.route.params.org
+	return {
+		title: name,
 	}
+}
 
-	render() {
-		let {
-			name: orgName,
-			category,
-			meetings,
-			website,
-			contacts,
-			advisors,
-			description,
-			lastUpdated: orgLastUpdated,
-		} = this.props.navigation.state.params.org
+let StudentOrgsDetailView = (props: Props): JSX.Element => {
+	let {
+		name: orgName,
+		category,
+		meetings,
+		website,
+		contacts,
+		advisors,
+		description,
+		lastUpdated: orgLastUpdated,
+	} = props.route.params.org
 
-		return (
-			<ScrollView>
-				<Text style={styles.name}>{orgName}</Text>
+	return (
+		<ScrollView>
+			<Text style={styles.name}>{orgName}</Text>
 
-				{category ? (
-					<Card header="Category" style={styles.card}>
-						<Text style={styles.cardBody}>{category}</Text>
-					</Card>
-				) : null}
+			{category ? (
+				<Card header="Category" style={styles.card}>
+					<Text style={styles.cardBody}>{category}</Text>
+				</Card>
+			) : null}
 
-				{meetings ? (
-					<Card header="Meetings" style={styles.card}>
-						<Text style={styles.cardBody}>{meetings}</Text>
-					</Card>
-				) : null}
+			{meetings ? (
+				<Card header="Meetings" style={styles.card}>
+					<Text style={styles.cardBody}>{meetings}</Text>
+				</Card>
+			) : null}
 
-				{website ? (
-					<Card header="Website" style={styles.card}>
-						<Text onPress={() => openUrl(website)} style={styles.cardBody}>
-							{website}
+			{website ? (
+				<Card header="Website" style={styles.card}>
+					<Text onPress={() => openUrl(website)} style={styles.cardBody}>
+						{website}
+					</Text>
+				</Card>
+			) : null}
+
+			{contacts.length ? (
+				<Card header="Contact" style={styles.card}>
+					{contacts.map((c, i) => (
+						<Text
+							key={i}
+							onPress={() => sendEmail({to: [c.email], subject: orgName})}
+							selectable={true}
+							style={styles.cardBody}
+						>
+							{c.title ? c.title + ': ' : ''}
+							{showNameOrEmail(c)}
 						</Text>
-					</Card>
-				) : null}
+					))}
+				</Card>
+			) : null}
 
-				{contacts.length ? (
-					<Card header="Contact" style={styles.card}>
-						{contacts.map((c, i) => (
-							<Text
-								key={i}
-								onPress={() => sendEmail({to: [c.email], subject: orgName})}
-								selectable={true}
-								style={styles.cardBody}
-							>
-								{c.title ? c.title + ': ' : ''}
-								{showNameOrEmail(c)}
-							</Text>
-						))}
-					</Card>
-				) : null}
+			{advisors.length ? (
+				<Card
+					header={advisors.length === 1 ? 'Advisor' : 'Advisors'}
+					style={styles.card}
+				>
+					{advisors.map((c, i) => (
+						<Text
+							key={i}
+							onPress={() => sendEmail({to: [c.email], subject: orgName})}
+							selectable={true}
+							style={styles.cardBody}
+						>
+							{c.name} ({c.email})
+						</Text>
+					))}
+				</Card>
+			) : null}
 
-				{advisors.length ? (
-					<Card
-						header={advisors.length === 1 ? 'Advisor' : 'Advisors'}
-						style={styles.card}
-					>
-						{advisors.map((c, i) => (
-							<Text
-								key={i}
-								onPress={() => sendEmail({to: [c.email], subject: orgName})}
-								selectable={true}
-								style={styles.cardBody}
-							>
-								{c.name} ({c.email})
-							</Text>
-						))}
-					</Card>
-				) : null}
+			{description ? (
+				<Card header="Description" style={styles.card}>
+					<View style={styles.description}>
+						<Text style={styles.descriptionText}>{description}</Text>
+					</View>
+				</Card>
+			) : null}
 
-				{description ? (
-					<Card header="Description" style={styles.card}>
-						<View style={styles.description}>
-							<Text style={styles.descriptionText}>{description}</Text>
-						</View>
-					</Card>
-				) : null}
+			<Text selectable={true} style={[styles.footer, styles.lastUpdated]}>
+				Last updated:{' '}
+				{moment(orgLastUpdated, 'MMMM, DD YYYY HH:mm:ss').calendar()}
+			</Text>
 
-				<Text selectable={true} style={[styles.footer, styles.lastUpdated]}>
-					Last updated:{' '}
-					{moment(orgLastUpdated, 'MMMM, DD YYYY HH:mm:ss').calendar()}
-				</Text>
-
-				<Text selectable={true} style={[styles.footer, styles.poweredBy]}>
-					Powered by the St. Olaf Student Orgs Database
-				</Text>
-			</ScrollView>
-		)
-	}
+			<Text selectable={true} style={[styles.footer, styles.poweredBy]}>
+				Powered by the St. Olaf Student Orgs Database
+			</Text>
+		</ScrollView>
+	)
 }
+
+export {StudentOrgsDetailView as View}

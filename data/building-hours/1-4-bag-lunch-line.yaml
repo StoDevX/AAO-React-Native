@@ -1,0 +1,16 @@
+name: Bag Lunch Line
+category: Food
+
+schedule:
+  - title: Hours
+    notes: Closed until further notice
+    hours: []
+
+breakSchedule:
+  fall: []
+  thanksgiving: []
+  winter: []
+  interim: []
+  spring: []
+  easter: []
+  summer: []

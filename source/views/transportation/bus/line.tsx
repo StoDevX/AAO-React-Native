@@ -1,14 +1,19 @@
 import * as React from 'react'
-import {Text, StyleSheet, Platform, FlatList} from 'react-native'
-import type {BusTimetableEntry, UnprocessedBusLine, BusSchedule} from './types'
-import {processBusLine, getScheduleForNow, getCurrentBusIteration} from './lib'
-import type {BusStateEnum} from './lib'
-import moment from 'moment-timezone'
+import {useEffect, useState} from 'react'
+import {FlatList, Platform, StyleSheet, Text} from 'react-native'
+import type {BusSchedule, UnprocessedBusLine} from './types'
+import {
+	BusStateEnum,
+	getCurrentBusIteration,
+	getScheduleForNow,
+	processBusLine,
+} from './lib'
+import type {Moment} from 'moment-timezone'
 import find from 'lodash/find'
 import findLast from 'lodash/findLast'
 import {Separator} from '@frogpond/separator'
 import {BusStopRow} from './components/bus-stop-row'
-import {ListSectionHeader, ListFooter, ListRow} from '@frogpond/lists'
+import {ListFooter, ListRow, ListSectionHeader} from '@frogpond/lists'
 import {InfoHeader} from '@frogpond/info-header'
 
 const styles = StyleSheet.create({
@@ -19,7 +24,7 @@ const styles = StyleSheet.create({
 	},
 })
 
-const isTruthy = (x) => Boolean(x)
+const isTruthy = (x: unknown) => Boolean(x)
 const BusLineSeparator = () => <Separator style={styles.separator} />
 const EMPTY_SCHEDULE_MESSAGE = (
 	<ListRow>
@@ -29,18 +34,11 @@ const EMPTY_SCHEDULE_MESSAGE = (
 
 type Props = {
 	line: UnprocessedBusLine
-	now: moment
-	openMap: () => any
+	now: Moment
+	openMap: () => unknown
 }
 
-type State = {
-	subtitle: string
-	schedule?: BusSchedule
-	currentBusIteration: null | number
-	status: BusStateEnum
-}
-
-function startsIn(now, start?: moment) {
+function startsIn(now: Moment, start?: Moment | null) {
 	if (!start) {
 		return 'Error'
 	}
@@ -49,7 +47,7 @@ function startsIn(now, start?: moment) {
 	return `Starts ${nowCopy.seconds(0).to(start)}`
 }
 
-function deriveFromProps({line, now}: Props) {
+function deriveFromProps({line, now}: {line: UnprocessedBusLine; now: Moment}) {
 	// Finds the stuff that's shared between FlatList and renderItem
 	let processedLine = processBusLine(line, now)
 
@@ -110,69 +108,71 @@ function deriveFromProps({line, now}: Props) {
 	}
 }
 
-export class BusLine extends React.Component<Props, State> {
-	state = deriveFromProps(this.props)
+export function BusLine(props: Props): JSX.Element {
+	let {line, now} = props
 
-	static getDerivedStateFromProps(nextProps: Props) {
-		return deriveFromProps(nextProps)
-	}
+	let [schedule, setSchedule] = useState<BusSchedule | null>(null)
+	let [subtitle, setSubtitle] = useState<string>()
+	let [currentBusIteration, setCurrentBusIteration] = useState<number | null>(
+		null,
+	)
+	let [status, setStatus] = useState<BusStateEnum>('none')
 
-	keyExtractor = (item: BusTimetableEntry, index: number) => index.toString()
+	useEffect(() => {
+		let {schedule, subtitle, currentBusIteration, status} = deriveFromProps({
+			line,
+			now,
+		})
+		setSchedule(schedule)
+		setSubtitle(subtitle)
+		setStatus(status)
+		setCurrentBusIteration(currentBusIteration)
+	}, [line, now])
 
-	renderItem = ({item, index}: {index: number; item: BusTimetableEntry}) => (
-		<BusStopRow
-			barColor={this.props.line.colors.bar}
-			currentStopColor={this.props.line.colors.dot}
-			departureIndex={this.state.currentBusIteration}
-			isFirstRow={index === 0}
-			isLastRow={
-				this.state.schedule
-					? index === this.state.schedule.timetable.length - 1
-					: true
-			}
-			now={this.props.now}
-			status={this.state.status}
-			stop={item}
+	let INFO_EL = (
+		<ListSectionHeader
+			subtitle={subtitle}
+			title={line.line}
+			titleStyle={Platform.OS === 'android' ? {color: line.colors.bar} : null}
 		/>
 	)
 
-	render() {
-		let {line} = this.props
-		let {schedule, subtitle} = this.state
+	let lineMessage = line.notice || ''
+	let footerMessage =
+		'Bus routes and times subject to change without notice\n\nData collected by the humans of All About Olaf'
 
-		let INFO_EL = (
-			<ListSectionHeader
-				subtitle={subtitle}
-				title={line.line}
-				titleStyle={Platform.OS === 'android' ? {color: line.colors.bar} : null}
-			/>
-		)
+	let footerElement = <ListFooter title={footerMessage} />
+	let headerElement = lineMessage ? (
+		<>
+			<InfoHeader message={lineMessage} title={`About ${line.line}`} />
+			{INFO_EL}
+		</>
+	) : (
+		INFO_EL
+	)
 
-		let LINE_MSG = line.notice || ''
-		let FOOTER_MSG =
-			'Bus routes and times subject to change without notice\n\nData collected by the humans of All About Olaf'
-		let FOOTER_EL = <ListFooter title={FOOTER_MSG} />
+	let timetable = schedule?.timetable ?? []
 
-		let HEADER_EL = LINE_MSG ? (
-			<React.Fragment>
-				<InfoHeader message={LINE_MSG} title={`About ${line.line}`} />
-				{INFO_EL}
-			</React.Fragment>
-		) : (
-			INFO_EL
-		)
-
-		return (
-			<FlatList
-				ItemSeparatorComponent={BusLineSeparator}
-				ListEmptyComponent={EMPTY_SCHEDULE_MESSAGE}
-				ListFooterComponent={FOOTER_EL}
-				ListHeaderComponent={HEADER_EL}
-				data={schedule ? schedule.timetable : []}
-				extraData={this.state}
-				keyExtractor={this.keyExtractor}
-				renderItem={this.renderItem}
-			/>
-		)
-	}
+	return (
+		<FlatList
+			ItemSeparatorComponent={BusLineSeparator}
+			ListEmptyComponent={EMPTY_SCHEDULE_MESSAGE}
+			ListFooterComponent={footerElement}
+			ListHeaderComponent={headerElement}
+			data={timetable}
+			keyExtractor={(item, index) => index.toString()}
+			renderItem={({item, index}) => (
+				<BusStopRow
+					barColor={line.colors.bar}
+					currentStopColor={line.colors.dot}
+					departureIndex={currentBusIteration}
+					isFirstRow={index === 0}
+					isLastRow={timetable.length === 0 || index === timetable.length - 1}
+					now={now}
+					status={status}
+					stop={item}
+				/>
+			)}
+		/>
+	)
 }

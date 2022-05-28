@@ -1,10 +1,10 @@
-import moment from 'moment-timezone'
+import type {Moment} from 'moment-timezone'
 import type {SingleBuildingScheduleType} from '../types'
 
 import {RESULT_FORMAT} from './constants'
 import {parseHours} from './parse-hours'
 
-function formatSingleTime(time: moment): string {
+function formatSingleTime(time: Moment): string {
 	if (time.hour() === 0 && time.minute() === 0) {
 		return 'Midnight'
 	}
@@ -16,7 +16,7 @@ function formatSingleTime(time: moment): string {
 
 export function formatBuildingTimes(
 	schedule: SingleBuildingScheduleType,
-	m: moment,
+	m: Moment,
 ): string {
 	let {open, close} = parseHours(schedule, m)
 	return `${formatSingleTime(open)} — ${formatSingleTime(close)}`

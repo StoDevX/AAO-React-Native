@@ -1,2 +1,8 @@
-export {BuildingHoursScheduleEditorView} from './editor'
-export {BuildingHoursProblemReportView} from './overview'
+export {
+	BuildingHoursScheduleEditorView,
+	NavigationOptions as EditorNavigationOptions,
+} from './editor'
+export {
+	BuildingHoursProblemReportView,
+	NavigationOptions as ReportNavigationOptions,
+} from './overview'

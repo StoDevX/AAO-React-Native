@@ -1,11 +1,5 @@
-import {createTheming} from '@callstack/react-theme-provider'
 import type {ThemingType} from '@callstack/react-theme-provider'
-
-let {ThemeProvider, withTheme, useTheme} = createTheming(
-	undefined,
-) as ThemingType<AppTheme | undefined>
-
-export {ThemeProvider, withTheme, useTheme}
+import {createTheming} from '@callstack/react-theme-provider'
 
 export type AppTheme = {
 	accent: string
@@ -29,6 +23,32 @@ export type AppTheme = {
 	toolbarButtonBackground: string
 	toolbarButtonForeground: string
 }
+
+let defaultTheme: AppTheme = {
+	accent: '#000',
+	androidListHeaderBackground: '#fff',
+	androidListHeaderForeground: '#000',
+	androidStatusBarColor: '#000',
+	androidTabBarBackground: '#fff',
+	androidTabBarForeground: '#000',
+	buttonBackground: '#000',
+	buttonForeground: '#fff',
+	iosPushButtonCellBackground: '#000',
+	iosPushButtonCellForeground: '#fff',
+	iosTabBarActiveColor: '#0f0',
+	iosTabBarBackground: '#000',
+	navigationBackground: '#000',
+	navigationForeground: '#fff',
+	statusBarStyle: 'light-content',
+	toolbarButtonBackground: '#000',
+	toolbarButtonForeground: '#fff',
+}
+
+let {ThemeProvider, withTheme, useTheme} = createTheming(
+	defaultTheme,
+) as ThemingType<AppTheme>
+
+export {ThemeProvider, withTheme, useTheme}
 
 let theme: AppTheme
 

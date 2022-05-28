@@ -1,10 +1,10 @@
-import type moment from 'moment'
 import find from 'lodash/find'
 import findLast from 'lodash/findLast'
 import findLastIndex from 'lodash/findLastIndex'
+import type {Moment} from 'moment-timezone'
 import type {BusSchedule, DepartureTimeList} from '../types'
 
-const isTruthy = (x) => Boolean(x)
+const isTruthy = (x: unknown) => Boolean(x)
 
 export type BusStateEnum =
 	| 'none'
@@ -16,12 +16,12 @@ type ReturnVal = {
 	status: BusStateEnum
 	times: DepartureTimeList
 	index: null | number
-	nextStart?: moment
+	nextStart?: Moment | null
 }
 
 export function getCurrentBusIteration(
 	schedule: BusSchedule,
-	now: moment,
+	now: Moment,
 ): ReturnVal {
 	// If the schedule is empty
 	if (schedule.times.length === 0) {

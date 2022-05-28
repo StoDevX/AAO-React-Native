@@ -30,6 +30,11 @@ def api_keys_available?
 		ENV['GITHUB_KEYS_REPOSITORY_TOKEN'] && !ENV['GITHUB_KEYS_REPOSITORY_TOKEN'].empty?
 end
 
+# is the build happening for a platform where we also run a simulator build?
+def simulator_also?
+	lane_context[:PLATFORM_NAME] == :ios
+end
+
 # is this a build of a tagged commit?
 def tagged?
 	travis = ENV['TRAVIS_TAG'] && !ENV['TRAVIS_TAG'].empty?

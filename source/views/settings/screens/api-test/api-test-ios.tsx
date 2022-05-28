@@ -1,13 +1,13 @@
 import * as React from 'react'
 import * as c from '@frogpond/colors'
-import {StyleSheet, TextInput, View, SegmentedControlIOS} from 'react-native'
+import {SegmentedControlIOS, StyleSheet, TextInput, View} from 'react-native'
 import {Toolbar} from '@frogpond/toolbar'
 import {fetch} from '@frogpond/fetch'
 import {API} from '@frogpond/api'
 import glamorous from 'glamorous-native'
 import {iOSUIKit} from 'react-native-typography'
-import type {NavigationScreenProp} from 'react-navigation'
 import {DebugListView} from '../../screens/debug'
+import {useNavigation} from '@react-navigation/native'
 
 const styles = StyleSheet.create({
 	container: {
@@ -40,99 +40,81 @@ const Output = glamorous(TextInput)({
 
 const Segment = glamorous(SegmentedControlIOS)({})
 
-type Props = {
-	navigation: NavigationScreenProp<any>
-}
+export const IOSAPITestView = (): JSX.Element => {
+	let [results, setResults] = React.useState<string | null>(null)
+	let [error, setError] = React.useState<string | null>(null)
+	let [selectedIndex, setSelectedIndex] = React.useState(0)
 
-type State = {
-	results?: string
-	error?: string
-	selectedIndex: number
-}
+	let navigation = useNavigation()
 
-export class IOSAPITestView extends React.PureComponent<Props, State> {
-	static navigationOptions = {
-		title: 'API Tester',
-	}
-
-	state = {
-		results: null,
-		error: null,
-		selectedIndex: 0,
-	}
-
-	fetchData = async (path: string) => {
+	let fetchData = async (path: string) => {
 		try {
-			let correctedPath = path.startsWith('/') ? path : `/${path}`
+			let correctedPath: `/${string}` = path.startsWith('/')
+				? (path as `/${string}`)
+				: `/${path}`
 			let responseData: string = await fetch(API(correctedPath), {
 				cache: 'no-store',
 			}).text()
-			this.setState(() => ({results: responseData, error: null}))
+			setResults(responseData)
+			setError(null)
 		} catch (err) {
-			this.setState(() => ({results: null, error: JSON.stringify(err)}))
+			setResults(null)
+			setError(JSON.stringify(err))
 		}
 	}
 
-	onChangeSegment = (event: any) => {
+	let onChangeSegment = (event: any) => {
 		let selectedSegment = event.nativeEvent.selectedSegmentIndex
-		this.setState(() => ({selectedIndex: selectedSegment}))
+		setSelectedIndex(selectedSegment)
 	}
 
-	render() {
-		let {error, results, selectedIndex} = this.state
+	let APIResponse = error ? (
+		<Output
+			editable={false}
+			// this aligns the text to the top on iOS, and centers it on Android
+			multiline={true}
+			scrollEnabled={true}
+			style={styles.error}
+			// use multiline with textAlignVertical="top" for the same behavior in both platforms
+			textAlignVertical="top"
+			value={error}
+		/>
+	) : selectedIndex === 0 ? (
+		<Output
+			editable={false}
+			// this aligns the text to the top on iOS, and centers it on Android
+			multiline={true}
+			scrollEnabled={true}
+			style={styles.data}
+			// use multiline with textAlignVertical="top" for the same behavior in both platforms
+			textAlignVertical="top"
+			value={results ?? ''}
+		/>
+	) : (
+		<DebugListView apiTest={true} navigation={navigation} state={results} />
+	)
 
-		let APIResponse = error ? (
-			<Output
-				editable={false}
-				// this aligns the text to the top on iOS, and centers it on Android
-				multiline={true}
-				scrollEnabled={true}
-				style={styles.error}
-				// use multiline with textAlignVertical="top" for the same behavior in both platforms
-				textAlignVertical="top"
-				value={error}
-			/>
-		) : selectedIndex === 0 ? (
-			<Output
-				editable={false}
-				// this aligns the text to the top on iOS, and centers it on Android
-				multiline={true}
-				scrollEnabled={true}
-				style={styles.data}
-				// use multiline with textAlignVertical="top" for the same behavior in both platforms
-				textAlignVertical="top"
-				value={results}
-			/>
-		) : (
-			<DebugListView
-				apiTest={true}
-				navigation={this.props.navigation}
-				state={results}
-			/>
-		)
-
-		return (
-			<View style={styles.container}>
-				<Toolbar onPress={() => {}}>
-					<TextInput
-						autoCapitalize="none"
-						autoCorrect={false}
-						keyboardType="web-search"
-						onEndEditing={(e) => this.fetchData(e.nativeEvent.text)}
-						placeholder="path/to/resource"
-						returnKeyType="done"
-						style={styles.default}
-					/>
-				</Toolbar>
-
-				<Segment
-					onChange={this.onChangeSegment}
-					selectedIndex={selectedIndex}
-					values={['Text', 'Parsed']}
+	return (
+		<View style={styles.container}>
+			<Toolbar>
+				<TextInput
+					autoCapitalize="none"
+					autoCorrect={false}
+					keyboardType="web-search"
+					onEndEditing={(e) => fetchData(e.nativeEvent.text)}
+					placeholder="path/to/resource"
+					returnKeyType="done"
+					style={styles.default}
 				/>
+			</Toolbar>
 
-				{APIResponse}
-			</View>
-		)
-	}
+			<Segment
+				onChange={onChangeSegment}
+				selectedIndex={selectedIndex}
+				values={['Text', 'Parsed']}
+			/>
+
+			{APIResponse}
+		</View>
+	)
 }

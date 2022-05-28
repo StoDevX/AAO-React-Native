@@ -9,14 +9,14 @@ import type {LoginStateEnum} from '../../../../redux/parts/login'
 import {loadLoginCredentials} from '../../../../lib/login'
 import type {ReduxState} from '../../../../redux'
 import {useSelector, useDispatch} from 'react-redux'
-import noop from 'lodash/noop'
+import type {TextInput} from 'react-native'
 
 type ReduxStateProps = {
 	status: LoginStateEnum
 }
 
 type ReduxDispatchProps = {
-	logInViaCredentials: (string, string) => void
+	logInViaCredentials: (username: string, password: string) => void
 	logOutViaCredentials: () => void
 }
 
@@ -41,11 +41,10 @@ class CredentialsLoginSection extends React.Component<Props, State> {
 		this.loadCredentialsFromKeychain()
 	}
 
-	_usernameInput = React.createRef()
-	_passwordInput = React.createRef()
+	_usernameInput = React.createRef<TextInput>()
+	_passwordInput = React.createRef<TextInput>()
 
-	focusPassword = () =>
-		this._passwordInput.current && this._passwordInput.current.focus()
+	focusPassword = () => this._passwordInput.current?.focus()
 
 	loadCredentialsFromKeychain = async () => {
 		let {username = '', password = ''} = await loadLoginCredentials()
@@ -67,7 +66,7 @@ class CredentialsLoginSection extends React.Component<Props, State> {
 		this.props.logOutViaCredentials()
 	}
 
-	render() {
+	render(): JSX.Element {
 		let {status} = this.props
 		let {username, password, loadingCredentials, initialCheckComplete} =
 			this.state
@@ -109,7 +108,7 @@ class CredentialsLoginSection extends React.Component<Props, State> {
 							disabled={checkingCredentials}
 							label="Password"
 							onChangeText={(text) => this.setState(() => ({password: text}))}
-							onSubmitEditing={loggedIn ? noop : this.logIn}
+							onSubmitEditing={this.logIn}
 							placeholder="password"
 							returnKeyType="done"
 							secureTextEntry={true}
@@ -130,7 +129,7 @@ class CredentialsLoginSection extends React.Component<Props, State> {
 	}
 }
 
-export function ConnectedCredentialsLoginSection() {
+export function ConnectedCredentialsLoginSection(): JSX.Element {
 	let dispatch = useDispatch()
 	let status = useSelector(
 		(state: ReduxState) => state.login?.status || 'initializing',

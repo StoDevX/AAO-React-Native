@@ -14,7 +14,7 @@ export type MenuItemType = {
 	nutrition: NutritionContainer
 	nutrition_details: NutritionDetailContainer
 	nutrition_link: string
-	options: any[]
+	options: unknown[]
 	price: CurrencyStringType
 	rating: NumericStringType
 	special: boolean

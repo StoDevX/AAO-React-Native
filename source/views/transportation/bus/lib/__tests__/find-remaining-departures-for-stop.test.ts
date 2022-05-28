@@ -5,9 +5,10 @@ import {getCurrentBusIteration} from '../get-current-bus-iteration'
 import {processBusSchedule} from '../process-bus-line'
 import {dayAndTime} from './moment.helper'
 
-import type {UnprocessedBusSchedule, BusSchedule} from '../../types'
+import type {BusSchedule, UnprocessedBusSchedule} from '../../types'
+import moment from 'moment'
 
-function buildBusSchedules(now): Array<BusSchedule> {
+function buildBusSchedules(now: moment.Moment): Array<BusSchedule> {
 	// prettier-ignore
 	let schedules: Array<UnprocessedBusSchedule> = [
     {
@@ -29,9 +30,9 @@ function buildBusSchedules(now): Array<BusSchedule> {
 	return schedules.map(processBusSchedule(now))
 }
 
-const formatTime = (m) => (m ? m.format('h:mma') : null)
+const formatTime = (m: moment.Moment | null) => m?.format('h:mma')
 
-function makeSchedule(now) {
+function makeSchedule(now: moment.Moment) {
 	let schedule = getScheduleForNow(buildBusSchedules(now), now)
 	let {status, index} = getCurrentBusIteration(schedule, now)
 	return {schedule, busStatus: status, departureIndex: index}

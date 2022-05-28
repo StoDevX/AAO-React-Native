@@ -14,58 +14,53 @@ type Props = {
 	viewportWidth: number
 }
 
-export class StreamThumbnail extends React.PureComponent<Props> {
-	handlePress = () => {
-		let {name, pageUrl} = this.props.webcam
+export const StreamThumbnail = (props: Props): JSX.Element => {
+	let handlePress = () => {
+		let {name, pageUrl} = props.webcam
 		trackedOpenUrl({url: pageUrl, id: `${name}WebcamView`})
 	}
 
-	render() {
-		let {viewportWidth, webcam} = this.props
-		let {name, thumbnail, accentColor, textColor, thumbnailUrl} = webcam
+	let {viewportWidth, webcam} = props
+	let {name, thumbnail, accentColor, textColor, thumbnailUrl} = webcam
 
-		let [r, g, b] = accentColor
-		let baseColor = `rgba(${r}, ${g}, ${b}, 1)`
-		let startColor = `rgba(${r}, ${g}, ${b}, 0.1)`
+	let [r, g, b] = accentColor
+	let baseColor = `rgba(${r}, ${g}, ${b}, 1)`
+	let startColor = `rgba(${r}, ${g}, ${b}, 0.1)`
 
-		let width = viewportWidth / 2 - CELL_MARGIN * 1.5
-		let cellRatio = 2.15625
-		let height = width / cellRatio
+	let width = viewportWidth / 2 - CELL_MARGIN * 1.5
+	let cellRatio = 2.15625
+	let height = width / cellRatio
 
-		let img = thumbnailUrl
-			? {uri: thumbnailUrl}
-			: webcamImages.has(thumbnail)
-			? webcamImages.get(thumbnail)
-			: transparentPixel
+	let img = thumbnailUrl
+		? {uri: thumbnailUrl}
+		: webcamImages.has(thumbnail)
+		? webcamImages.get(thumbnail)
+		: transparentPixel
 
-		return (
-			// do not remove this View; it is needed to prevent extra highlighting
-			<View style={styles.cell}>
-				<Touchable
-					highlight={true}
-					onPress={this.handlePress}
-					style={{width, height}}
-					underlayColor={baseColor}
-				>
-					<Image
-						accessibilityIgnoresInvertColors={true}
-						resizeMode="cover"
-						source={img}
-						style={[StyleSheet.absoluteFill, {width, height}]}
-					/>
+	return (
+		// do not remove this View; it is needed to prevent extra highlighting
+		<View style={styles.cell}>
+			<Touchable
+				highlight={true}
+				onPress={handlePress}
+				style={{width, height}}
+				underlayColor={baseColor}
+			>
+				<Image
+					accessibilityIgnoresInvertColors={true}
+					resizeMode="cover"
+					source={img}
+					style={[StyleSheet.absoluteFill, {width, height}]}
+				/>
 
-					<View style={styles.titleWrapper}>
-						<LinearGradient
-							colors={[startColor, baseColor]}
-							locations={[0, 0.8]}
-						>
-							<Text style={[styles.titleText, {color: textColor}]}>{name}</Text>
-						</LinearGradient>
-					</View>
-				</Touchable>
-			</View>
-		)
-	}
+				<View style={styles.titleWrapper}>
+					<LinearGradient colors={[startColor, baseColor]} locations={[0, 0.8]}>
+						<Text style={[styles.titleText, {color: textColor}]}>{name}</Text>
+					</LinearGradient>
+				</View>
+			</Touchable>
+		</View>
+	)
 }
 
 const CELL_MARGIN = 10

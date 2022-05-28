@@ -1,10 +1,10 @@
 export type BalancesShapeType = {
-	flex?: string
-	ole?: string
-	print?: string
-	weekly?: string
-	daily?: string
-	plan?: string
+	flex: string | null
+	ole: string | null
+	print: string | null
+	weekly: string | null
+	daily: string | null
+	plan: string | null
 }
 
 export type MealPlanInfoType = {

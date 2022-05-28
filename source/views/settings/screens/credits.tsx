@@ -50,29 +50,24 @@ const Contributors = glamorous(About)({
 	textAlign: 'center',
 })
 
-const formatPeopleList = (arr) =>
+const formatPeopleList = (arr: Array<string>) =>
 	arr.map((w) => w.replace(' ', ' ')).join(' • ')
 
-export function CreditsView() {
-	return (
-		<ScrollView
-			contentContainerStyle={styles.contentContainer}
-			contentInsetAdjustmentBehavior="automatic"
-			style={styles.container}
-		>
-			<AppLogo />
+export let CreditsView = (): JSX.Element => (
+	<ScrollView
+		contentContainerStyle={styles.contentContainer}
+		contentInsetAdjustmentBehavior="automatic"
+		style={styles.container}
+	>
+		<AppLogo />
 
-			<Title>{credits.name}</Title>
-			<About>{credits.content}</About>
+		<Title>{credits.name}</Title>
+		<About>{credits.content}</About>
 
-			<Heading>Contributors</Heading>
-			<Contributors>{formatPeopleList(credits.contributors)}</Contributors>
+		<Heading>Contributors</Heading>
+		<Contributors>{formatPeopleList(credits.contributors)}</Contributors>
 
-			<Heading>Acknowledgements</Heading>
-			<Contributors>{formatPeopleList(credits.acknowledgements)}</Contributors>
-		</ScrollView>
-	)
-}
-CreditsView.navigationOptions = {
-	title: 'Credits',
-}
+		<Heading>Acknowledgements</Heading>
+		<Contributors>{formatPeopleList(credits.acknowledgements)}</Contributors>
+	</ScrollView>
+)

@@ -1,63 +1,93 @@
 import * as React from 'react'
-import {TabNavigator, TabBarIcon} from '@frogpond/navigation-tabs'
+import {TabBarIcon} from '@frogpond/navigation-tabs'
 import {CccCalendarView} from '@frogpond/ccc-calendar'
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs'
+import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 
-const CalendarView = TabNavigator({
-	StOlafCalendarView: {
-		screen: ({navigation}) => (
-			<CccCalendarView
-				calendar="stolaf"
-				navigation={navigation}
-				poweredBy={{
-					title: 'Powered by the St. Olaf calendar',
-					href: 'https://wp.stolaf.edu/calendar/',
-				}}
-			/>
-		),
-		navigationOptions: {
-			tabBarLabel: 'St. Olaf',
-			tabBarIcon: TabBarIcon('school'),
-		},
-	},
-
-	OlevilleCalendarView: {
-		screen: ({navigation}) => (
-			<CccCalendarView
-				calendar="oleville"
-				navigation={navigation}
-				poweredBy={{
-					title: 'Powered by the Oleville calendar',
-					href: 'https://oleville.com/events/',
-				}}
-			/>
-		),
-		navigationOptions: {
-			tabBarLabel: 'Oleville',
-			tabBarIcon: TabBarIcon('happy'),
-		},
-	},
-
-	NorthfieldCalendarView: {
-		screen: ({navigation}) => (
-			<CccCalendarView
-				calendar="northfield"
-				navigation={navigation}
-				poweredBy={{
-					title: 'Powered by VisitingNorthfield.com',
-					href: 'http://visitingnorthfield.com/events/calendar/',
-				}}
-			/>
-		),
-		navigationOptions: {
-			tabBarLabel: 'Northfield',
-			tabBarIcon: TabBarIcon('pin'),
-		},
-	},
-})
-
-CalendarView.navigationOptions = {
-	title: 'Calendar',
-	headerBackTitle: 'Back',
+type Params = {
+	StOlafCalendarView: undefined
+	OlevilleCalendarView: undefined
+	NorthfieldCalendarView: undefined
 }
 
-export default CalendarView
+const Tabs = createBottomTabNavigator<Params>()
+
+function StOlafCalendarView() {
+	return (
+		<CccCalendarView
+			calendar="stolaf"
+			poweredBy={{
+				title: 'Powered by the St. Olaf calendar',
+				href: 'https://wp.stolaf.edu/calendar/',
+			}}
+		/>
+	)
+}
+
+function OlevilleCalendarView() {
+	return (
+		<CccCalendarView
+			calendar="oleville"
+			poweredBy={{
+				title: 'Powered by the Oleville calendar',
+				href: 'https://oleville.com/events/',
+			}}
+		/>
+	)
+}
+
+function NorthfieldCalendarView() {
+	return (
+		<CccCalendarView
+			calendar="northfield"
+			poweredBy={{
+				title: 'Powered by VisitingNorthfield.com',
+				href: 'https://visitingnorthfield.com/events/calendar/',
+			}}
+		/>
+	)
+}
+
+function CalendarView(): JSX.Element {
+	return (
+		<Tabs.Navigator>
+			<Tabs.Screen
+				component={StOlafCalendarView}
+				name="StOlafCalendarView"
+				options={{
+					tabBarLabel: 'St. Olaf',
+					tabBarIcon: TabBarIcon('school'),
+					headerShown: false,
+				}}
+			/>
+			<Tabs.Screen
+				component={OlevilleCalendarView}
+				name="OlevilleCalendarView"
+				options={{
+					tabBarLabel: 'Oleville',
+					tabBarIcon: TabBarIcon('happy'),
+					headerShown: false,
+				}}
+			/>
+			<Tabs.Screen
+				component={NorthfieldCalendarView}
+				name="NorthfieldCalendarView"
+				options={{
+					tabBarLabel: 'Northfield',
+					tabBarIcon: TabBarIcon('happy'),
+					headerShown: false,
+				}}
+			/>
+		</Tabs.Navigator>
+	)
+}
+
+export {CalendarView as View}
+
+export const NavigationKey = 'Calendar'
+
+export const NavigationOptions: NativeStackNavigationOptions = {
+	title: 'Calendar',
+}
+
+export type NavigationParams = undefined

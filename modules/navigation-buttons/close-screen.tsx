@@ -1,15 +1,22 @@
 import * as React from 'react'
 import {Text, Platform, StyleSheet} from 'react-native'
 import {Touchable} from '@frogpond/touchable'
-import type {NavigationScreenProp} from 'react-navigation'
+import type {
+	NavigationAction,
+	NavigationRoute,
+	NavigationScreenProp,
+} from 'react-navigation'
 import {commonStyles} from './styles'
 
 type Props = {
-	navigation: NavigationScreenProp
+	navigation: NavigationScreenProp<NavigationRoute, NavigationAction>
 	buttonStyle?: any
 }
 
-export function CloseScreenButton({navigation, buttonStyle}: Props) {
+export function CloseScreenButton({
+	navigation,
+	buttonStyle,
+}: Props): JSX.Element {
 	return (
 		<Touchable
 			accessibilityLabel="Close the screen"

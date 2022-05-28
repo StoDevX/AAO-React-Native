@@ -1,57 +1,66 @@
 import * as React from 'react'
-import {TabNavigator, TabBarIcon} from '@frogpond/navigation-tabs'
 
-import * as newsImages from '../../../images/news-sources'
-import NewsContainer from './news-container'
+import {TabBarIcon} from '@frogpond/navigation-tabs'
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs'
+import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 
-const NewsView = TabNavigator({
-	StOlafNewsView: {
-		screen: ({navigation}) => (
-			<NewsContainer
-				navigation={navigation}
-				source="stolaf"
-				thumbnail={newsImages.stolaf}
-				title="St. Olaf"
-			/>
-		),
-		navigationOptions: {
-			tabBarLabel: 'St. Olaf',
-			tabBarIcon: TabBarIcon('school'),
-		},
-	},
+import * as newsImages from '../../../images/news-sources/index'
+import {NewsList} from './news-list'
 
-	OlevilleNewsView: {
-		screen: ({navigation}) => (
-			<NewsContainer
-				navigation={navigation}
-				source="oleville"
-				thumbnail={newsImages.oleville}
-				title="Oleville"
-			/>
-		),
-		navigationOptions: {
-			tabBarLabel: 'Oleville',
-			tabBarIcon: TabBarIcon('happy'),
-		},
-	},
-
-	MessNewsView: {
-		screen: ({navigation}) => (
-			<NewsContainer
-				navigation={navigation}
-				source="mess"
-				thumbnail={newsImages.mess}
-				title="The Mess"
-			/>
-		),
-		navigationOptions: {
-			tabBarLabel: 'The Mess',
-			tabBarIcon: TabBarIcon('paper'),
-		},
-	},
-})
-NewsView.navigationOptions = {
-	title: 'News',
+type Params = {
+	StOlafNewsView: undefined
+	MessNewsView: undefined
+	OlevilleNewsView: undefined
 }
 
-export default NewsView
+const Tabs = createBottomTabNavigator<Params>()
+
+const StOlafNewsView = () => (
+	<NewsList source="stolaf" thumbnail={newsImages.stolaf.default} />
+)
+const MessNewsView = () => (
+	<NewsList source="mess" thumbnail={newsImages.mess.default} />
+)
+const OlevilleNewsView = () => (
+	<NewsList source="oleville" thumbnail={newsImages.oleville.default} />
+)
+
+const NewsView = (): JSX.Element => {
+	return (
+		<Tabs.Navigator>
+			<Tabs.Screen
+				component={StOlafNewsView}
+				name="StOlafNewsView"
+				options={{
+					tabBarLabel: 'St. Olaf',
+					tabBarIcon: TabBarIcon('school'),
+					headerShown: false,
+				}}
+			/>
+			<Tabs.Screen
+				component={MessNewsView}
+				name="MessNewsView"
+				options={{
+					tabBarLabel: 'The Mess',
+					tabBarIcon: TabBarIcon('newspaper'),
+					headerShown: false,
+				}}
+			/>
+			<Tabs.Screen
+				component={OlevilleNewsView}
+				name="OlevilleNewsView"
+				options={{
+					tabBarLabel: 'Oleville',
+					tabBarIcon: TabBarIcon('happy'),
+					headerShown: false,
+				}}
+			/>
+		</Tabs.Navigator>
+	)
+}
+
+export {NewsView as View}
+
+export const NavigationOptions: NativeStackNavigationOptions = {
+	title: 'News',
+}

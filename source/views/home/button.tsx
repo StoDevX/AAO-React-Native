@@ -35,7 +35,7 @@ export function HomeScreenButton({view, onPress}: Props) {
 type TouchableButtonProps = {
 	onPress: () => void
 	label: string
-	children: React.Node
+	children: React.ReactChildren | JSX.Element
 	tint: string
 	gradient?: [string, string]
 }
@@ -65,7 +65,7 @@ function TouchableButton(props: TouchableButtonProps) {
 type TouchableWrapperProps = {
 	onPress: () => void
 	label: string
-	children: React.Node
+	children: React.ReactChildren | JSX.Element
 }
 
 function TouchableWrapper({onPress, children, label}: TouchableWrapperProps) {
@@ -83,7 +83,7 @@ function TouchableWrapper({onPress, children, label}: TouchableWrapperProps) {
 }
 
 type TintProps = {
-	children: React.Node
+	children: React.ReactChildren | JSX.Element
 	tint: string
 	gradient?: [string, string]
 }

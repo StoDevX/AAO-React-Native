@@ -18,7 +18,7 @@ type AllFilterCategories = {
 export function loadAllCourseFilterOptions(): Promise<AllFilterCategories> {
 	return pProps(
 		mapValues(filterCategories, (category: FilterCategory) =>
-			fetch(category.url).json(),
+			fetch(category.url).json<string[]>(),
 		),
-	).then((result) => result)
+	)
 }

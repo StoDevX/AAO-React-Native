@@ -7,12 +7,12 @@ import {useTheme} from '@frogpond/app-theme'
 type PropsType = {
 	label: string
 	value: boolean
-	onChange: (val: boolean) => any
+	onChange: (val: boolean) => void
 	detail?: string
 	disabled?: boolean
 }
 
-export function CellToggle(props: PropsType) {
+export function CellToggle(props: PropsType): JSX.Element {
 	let theme: AppTheme = useTheme()
 
 	let {value, onChange, label, detail, disabled} = props

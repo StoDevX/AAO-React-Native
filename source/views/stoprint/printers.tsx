@@ -1,14 +1,14 @@
-import React from 'react'
+import * as React from 'react'
 import {SectionList, StyleSheet} from 'react-native'
 import {useDispatch, useSelector} from 'react-redux'
 import type {ReduxState} from '../../redux'
 import {updatePrinters} from '../../redux/parts/stoprint'
 import type {Printer, PrintJob} from '../../lib/stoprint'
 import {
-	ListRow,
-	ListSeparator,
-	ListSectionHeader,
 	Detail,
+	ListRow,
+	ListSectionHeader,
+	ListSeparator,
 	Title,
 } from '@frogpond/lists'
 import {LoadingView} from '@frogpond/notice'
@@ -48,7 +48,6 @@ type State = {
 class PrinterListView extends React.PureComponent<Props, State> {
 	static navigationOptions = {
 		title: 'Select Printer',
-		headerBackTitle: 'Printers',
 	}
 
 	state = {

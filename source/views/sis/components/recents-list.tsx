@@ -26,7 +26,7 @@ function RecentItemsList(props: Props) {
 	return (
 		<>
 			<View style={styles.rowFlex}>
-				{title && <Text style={styles.subHeader}>{title}</Text>}
+				{Boolean(title) && <Text style={styles.subHeader}>{title}</Text>}
 				{onAction && (
 					<Text onPress={onAction} style={[foreground, styles.sideButton]}>
 						{actionLabel}

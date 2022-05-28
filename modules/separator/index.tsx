@@ -1,7 +1,7 @@
 import * as React from 'react'
 import {View, StyleSheet, Platform} from 'react-native'
 import * as c from '@frogpond/colors'
-import type {ViewStyle} from 'react-native'
+import type {ViewStyle, StyleProp} from 'react-native'
 
 const styles = StyleSheet.create({
 	separator: {
@@ -18,6 +18,10 @@ const styles = StyleSheet.create({
 	},
 })
 
-export function Separator({style}: {style?: ViewStyle}) {
+export function Separator({
+	style,
+}: {
+	style?: StyleProp<ViewStyle>
+}): JSX.Element {
 	return <View style={[styles.separator, style]} />
 }

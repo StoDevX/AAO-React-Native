@@ -1,35 +1,43 @@
 import * as React from 'react'
 import type {FilterType} from './types'
 import {
-	StyleSheet,
-	View,
-	Text,
 	Platform,
+	StyleProp,
+	StyleSheet,
+	Text,
 	TouchableWithoutFeedback,
+	View,
+	ViewStyle,
 } from 'react-native'
 import Icon from 'react-native-vector-icons/Ionicons'
 import {white} from '@frogpond/colors'
 import type {AppTheme} from '@frogpond/app-theme'
-import {useTheme} from '@frogpond/app-theme'
+import {getTheme} from '@frogpond/app-theme'
 
 type Props = {
 	filter: FilterType
 	label: string
-	onRemove: (filter: FilterType) => any
-	style?: any
+	onRemove: (filter: FilterType) => void
+	style?: StyleProp<ViewStyle>
 }
 
-export function ActiveFilterButton({filter, label, onRemove, style}: Props) {
-	let theme: AppTheme = useTheme()
+export function ActiveFilterButton({
+	filter,
+	label,
+	onRemove,
+	style,
+}: Props): JSX.Element {
+	let theme: AppTheme = getTheme()
 
 	let iconName = Platform.select({
 		ios: 'ios-close-circle',
 		android: 'md-close-circle',
+		default: '',
 	})
 
 	let foreground = {color: theme.buttonForeground}
 	let background = {backgroundColor: theme.buttonBackground}
-	// TODO: pick an appopriate icon color automatically
+	// TODO: pick an appropriate icon color automatically
 	let iconColor = white
 
 	return (

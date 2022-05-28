@@ -2,89 +2,81 @@ import * as React from 'react'
 import {StyleSheet, SectionList} from 'react-native'
 import * as c from '@frogpond/colors'
 import toPairs from 'lodash/toPairs'
-import type {NavigationScreenProp} from 'react-navigation'
 import type {EventType} from '@frogpond/event-type'
-import type {PoweredBy} from './types'
 import groupBy from 'lodash/groupBy'
-import moment from 'moment-timezone'
-import {ListSeparator, ListSectionHeader} from '@frogpond/lists'
+import type {Moment} from 'moment-timezone'
+import {FullWidthSeparator, ListSectionHeader} from '@frogpond/lists'
 import {NoticeView} from '@frogpond/notice'
 import EventRow from './event-row'
-
-const FullWidthSeparator = (props) => (
-	<ListSeparator fullWidth={true} {...props} />
-)
+import {useNavigation} from '@react-navigation/native'
+import {PoweredBy} from './types'
 
 type Props = {
 	detailView?: string
 	events: EventType[]
 	message?: string
 	refreshing: boolean
-	onRefresh: () => any
-	navigation: NavigationScreenProp
-	now: moment
-	poweredBy?: PoweredBy
+	onRefresh: () => unknown
+	now: Moment
+	poweredBy: PoweredBy
 }
 
-export class EventList extends React.Component<Props> {
-	groupEvents = (events: EventType[], now: moment): any => {
-		// the proper return type is $ReadOnlyArray<{title: string, data: $ReadOnlyArray<EventType>}>
-		let grouped = groupBy(events, (event) => {
-			if (event.isOngoing) {
-				return 'Ongoing'
-			}
-			if (event.startTime.isSame(now, 'day')) {
-				return 'Today'
-			}
-			return event.startTime.format('ddd  MMM Do') // google returns events in CST
-		})
+type EventSection = {readonly title: string; readonly data: EventType[]}
 
-		return toPairs(grouped).map(([key, value]) => ({
-			title: key,
-			data: value,
-		}))
-	}
-
-	onPressEvent = (event: EventType) => {
-		let detailView = this.props.detailView || 'EventDetailView'
-		this.props.navigation.navigate(detailView, {
-			event,
-			poweredBy: this.props.poweredBy,
-		})
-	}
-
-	renderSectionHeader = ({section: {title}}: any) => (
-		// the proper type is ({section: {title}}: {section: {title: string}})
-		<ListSectionHeader spacing={{left: 10}} title={title} />
-	)
-
-	renderItem = ({item}: {item: EventType}) => (
-		<EventRow event={item} onPress={this.onPressEvent} />
-	)
-
-	keyExtractor = (item: EventType, index: number) => index.toString()
-
-	render() {
-		if (this.props.message) {
-			return <NoticeView text={this.props.message} />
+function groupEvents(
+	events: readonly EventType[],
+	now: Moment,
+): Array<EventSection> {
+	let grouped = groupBy(events, (event) => {
+		if (event.isOngoing) {
+			return 'Ongoing'
 		}
+		if (event.startTime.isSame(now, 'day')) {
+			return 'Today'
+		}
+		return event.startTime.format('ddd  MMM Do') // google returns events in CST
+	})
 
-		return (
-			<SectionList
-				ItemSeparatorComponent={FullWidthSeparator}
-				ListEmptyComponent={<NoticeView text="No events." />}
-				contentContainerStyle={styles.contentContainer}
-				keyExtractor={this.keyExtractor}
-				onRefresh={this.props.onRefresh}
-				refreshing={this.props.refreshing}
-				renderItem={this.renderItem}
-				renderSectionHeader={this.renderSectionHeader}
-				sections={this.groupEvents(this.props.events, this.props.now)}
-				showsVerticalScrollIndicator={false}
-				style={styles.container}
-			/>
-		)
+	return toPairs(grouped).map(([key, value]) => ({
+		title: key,
+		data: value,
+	}))
+}
+
+export function EventList(props: Props): JSX.Element {
+	let navigation = useNavigation()
+
+	let onPressEvent = React.useCallback(
+		(event: EventType) => {
+			navigation.navigate('EventDetail', {
+				event,
+				poweredBy: props.poweredBy,
+			})
+		},
+		[navigation, props.poweredBy],
+	)
+
+	if (props.message) {
+		return <NoticeView text={props.message} />
 	}
+
+	return (
+		<SectionList<EventType, EventSection>
+			ItemSeparatorComponent={FullWidthSeparator}
+			ListEmptyComponent={<NoticeView text="No events." />}
+			contentContainerStyle={styles.contentContainer}
+			keyExtractor={(item: EventType, index: number) => index.toString()}
+			onRefresh={props.onRefresh}
+			refreshing={props.refreshing}
+			renderItem={({item}) => <EventRow event={item} onPress={onPressEvent} />}
+			renderSectionHeader={({section}) => (
+				<ListSectionHeader spacing={{left: 10}} title={section.title} />
+			)}
+			sections={groupEvents(props.events, props.now)}
+			showsVerticalScrollIndicator={false}
+			style={styles.container}
+		/>
+	)
 }
 
 const styles = StyleSheet.create({

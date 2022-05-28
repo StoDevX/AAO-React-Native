@@ -1,5 +1,11 @@
 import * as React from 'react'
-import {StyleSheet, Text, Platform, TextInput} from 'react-native'
+import {
+	Platform,
+	StyleSheet,
+	Text,
+	TextInput,
+	TextInputProps,
+} from 'react-native'
 import {Cell} from 'react-native-tableview-simple'
 import * as c from '@frogpond/colors'
 
@@ -36,8 +42,8 @@ type Props = {
 	_ref?: {current: null | React.ElementRef<typeof TextInput>}
 	disabled: boolean
 	multiline?: boolean
-	onChangeText: (string) => any
-	onSubmitEditing?: (string) => any
+	onChangeText: (value: string) => void
+	onSubmitEditing?: (value: string) => void
 	placeholder: string
 	returnKeyType: 'done' | 'next' | 'default'
 	secureTextEntry: boolean
@@ -57,16 +63,16 @@ export class CellTextField extends React.Component<Props> {
 
 	_ref = this.props._ref || React.createRef()
 
-	focusInput = () => {
+	focusInput = (): void => {
 		this._ref.current && this._ref.current.focus()
 	}
 
-	onSubmit = () => {
+	onSubmit = (): void => {
 		this.props.onSubmitEditing?.(this.props.value)
 	}
 
-	render() {
-		let moreProps = {}
+	render(): JSX.Element {
+		let moreProps: TextInputProps = {}
 		if (this.props.multiline) {
 			moreProps.scrollEnabled = false
 		}

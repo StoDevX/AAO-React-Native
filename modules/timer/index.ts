@@ -1,33 +1,31 @@
 import * as React from 'react'
-import moment from 'moment-timezone'
+import {default as moment, type Moment} from 'moment-timezone'
 import delay from 'delay'
 
-export function msUntilIntervalRepeat(now: number, interval: number) {
+export function msUntilIntervalRepeat(now: number, interval: number): number {
 	return interval - (now % interval)
+}
+
+type RenderState<T> = {
+	now: T
+	loading: boolean
+	refresh: () => void
+}
+
+type MomentRender = {
+	moment: true
+	render: (state: RenderState<Moment>) => JSX.Element
+}
+type DateRender = {
+	moment: false
+	render: (state: RenderState<Date>) => JSX.Element
 }
 
 type Props = {
 	interval: number // ms
 	timezone?: string
-	invoke?: () => mixed
-} & (
-	| {
-			moment: true
-			render: (state: {
-				now: moment
-				loading: boolean
-				refresh: () => void
-			}) => React.Node
-	  }
-	| {
-			moment: false
-			render: (state: {
-				now: Date
-				loading: boolean
-				refresh: () => void
-			}) => React.Node
-	  }
-)
+	invoke?: () => void
+} & (MomentRender | DateRender)
 
 type State = {
 	now: Date
@@ -35,15 +33,15 @@ type State = {
 }
 
 export class Timer extends React.Component<Props, State> {
-	_timeoutId?: TimeoutID
-	_intervalId?: IntervalID
+	_timeoutId?: NodeJS.Timeout
+	_intervalId?: NodeJS.Timer
 
-	state = {
+	state: State = {
 		now: new Date(),
 		loading: false,
 	}
 
-	componentDidMount() {
+	componentDidMount(): void {
 		// get the time remaining until the next $interval
 		let {interval} = this.props
 		let nowMs = this.state.now.getTime()
@@ -55,16 +53,16 @@ export class Timer extends React.Component<Props, State> {
 		}, untilNextInterval)
 	}
 
-	componentWillUnmount() {
+	componentWillUnmount(): void {
 		this._timeoutId != null && clearTimeout(this._timeoutId)
 		this._intervalId != null && clearInterval(this._intervalId)
 	}
 
-	updateTime = () => {
+	updateTime = (): void => {
 		this.setState(() => ({now: new Date()}))
 	}
 
-	_refresh = async () => {
+	_refresh = async (): Promise<void> => {
 		let start = Date.now()
 		this.setState(() => ({loading: true}))
 
@@ -78,25 +76,31 @@ export class Timer extends React.Component<Props, State> {
 		this.setState(() => ({loading: false}))
 	}
 
-	refresh = () => {
+	refresh = (): void => {
 		this._refresh()
 	}
 
-	render() {
+	render(): JSX.Element {
 		let {now, loading} = this.state
-
-		if (this.props.moment) {
-			now = moment(now)
-
-			if (this.props.timezone) {
-				now = now.tz(this.props.timezone)
-			}
-		}
 
 		if (this.props.invoke) {
 			this.props.invoke()
 		}
 
-		return this.props.render({now, loading, refresh: this.refresh})
+		if (this.props.moment) {
+			let nowMoment: Moment = moment(now)
+
+			if (this.props.timezone) {
+				nowMoment = nowMoment.tz(this.props.timezone)
+			}
+
+			return this.props.render({now: nowMoment, loading, refresh: this.refresh})
+		} else {
+			return this.props.render({
+				now,
+				loading,
+				refresh: this.refresh,
+			})
+		}
 	}
 }

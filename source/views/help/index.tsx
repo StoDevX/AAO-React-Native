@@ -7,14 +7,16 @@ import {NoticeView, LoadingView} from '@frogpond/notice'
 import type {ReduxState} from '../../redux'
 import {getEnabledTools} from '../../redux/parts/help'
 import {ToolView} from './tool'
+import type {ToolOptions} from './types'
+import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 
-const CUSTOM_TOOLS = []
+const CUSTOM_TOOLS: any[] = []
 
-const shouldBeShown = (conf) =>
+const shouldBeShown = (conf: ToolOptions) =>
 	!conf.hidden &&
 	(!conf.versionRange || semver.satisfies(pkg.version, conf.versionRange))
 
-const getToolView = (config) => {
+const getToolView = (config: ToolOptions) => {
 	let customView = CUSTOM_TOOLS.find((tool) => tool.toolName === config.key)
 	if (!customView) {
 		return [ToolView, config]
@@ -22,7 +24,7 @@ const getToolView = (config) => {
 	return [customView.ToolView, config]
 }
 
-export function HelpView() {
+export function HelpView(): JSX.Element {
 	let tools = useSelector((state: ReduxState) => state.help?.tools || [])
 	let fetching = useSelector(
 		(state: ReduxState) => state.help?.fetching || false,
@@ -56,12 +58,12 @@ export function HelpView() {
 	)
 }
 
-HelpView.navigationOptions = {
-	title: 'Help',
-}
-
 const styles = StyleSheet.create({
 	container: {
 		paddingTop: 10,
 	},
 })
+
+export const NavigationOptions: NativeStackNavigationOptions = {
+	title: 'Report a problem',
+}

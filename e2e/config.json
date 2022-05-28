@@ -1,6 +1,13 @@
 {
+  "maxWorkers": 1,
   "setupFilesAfterEnv": [
     "./init.js"
   ],
-  "testEnvironment": "node"
+  "testEnvironment": "./environment",
+  "testTimeout": 120000,
+  "testRunner": "jest-circus/runner",
+  "reporters": [
+    "detox/runners/jest/streamlineReporter"
+  ],
+  "verbose": true
 }

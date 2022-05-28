@@ -1,18 +1,25 @@
-import type momentT from 'moment'
+import type {Moment} from 'moment'
 import type {ProcessedMealType} from '../types'
-import type {FilterType} from '@frogpond/filter'
+import type {FilterType, PickerType} from '@frogpond/filter'
 import {findMeal} from './find-menu'
+
+export const EMPTY_MEAL: ProcessedMealType = {
+	label: '',
+	stations: [],
+	starttime: '0:00',
+	endtime: '0:00',
+}
 
 export function chooseMeal(
 	meals: ProcessedMealType[],
 	filters: FilterType[],
-	now: momentT,
+	now: Moment,
 ): ProcessedMealType {
-	const mealChooserFilter: FilterType | undefined = filters.find(
+	let mealChooserFilter: FilterType | undefined = filters.find(
 		(f) => f.type === 'picker' && f.spec.title === "Today's Menus",
-	)
+	) as PickerType | undefined
 
-	let selectedMeal = meals[0]
+	let selectedMeal: ProcessedMealType | undefined
 	if (
 		mealChooserFilter &&
 		mealChooserFilter.spec.selected &&
@@ -25,12 +32,7 @@ export function chooseMeal(
 	}
 
 	if (!selectedMeal) {
-		selectedMeal = {
-			label: '',
-			stations: [],
-			starttime: '0:00',
-			endtime: '0:00',
-		}
+		selectedMeal = EMPTY_MEAL
 	}
 
 	return selectedMeal

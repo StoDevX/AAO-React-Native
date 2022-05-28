@@ -1,0 +1,19 @@
+name: Skoglund Pool
+category: Gym
+
+schedule:
+  - title: Lap Swim
+    hours:
+      - {days: [Mo, Tu, We, Th, Fr], from: '12:00pm', to: '2:00pm'}
+      - {days: [Mo, Tu, We, Th], from: '6:30pm', to: '8:30pm'}
+      - {days: [Fr], from: '6:30pm', to: '8:00pm'}
+      - {days: [Sa, Su], from: '2:00pm', to: '4:30pm'}
+
+breakSchedule:
+  fall: []
+  thanksgiving: []
+  winter: []
+  interim: []
+  spring: []
+  easter: []
+  summer: []

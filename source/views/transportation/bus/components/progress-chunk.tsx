@@ -1,6 +1,6 @@
 import * as React from 'react'
 import * as c from '@frogpond/colors'
-import {View, StyleSheet, Platform} from 'react-native'
+import {Platform, StyleSheet, View} from 'react-native'
 import type {BusStopStatusEnum} from '../lib'
 
 const isAndroid = Platform.OS === 'android'
@@ -54,39 +54,37 @@ type Props = {
 	stopStatus: BusStopStatusEnum
 }
 
-export class ProgressChunk extends React.PureComponent<Props, void> {
-	render() {
-		let {stopStatus, barColor, currentStopColor, isFirstChunk, isLastChunk} =
-			this.props
+export function ProgressChunk(props: Props): JSX.Element {
+	let {stopStatus, barColor, currentStopColor, isFirstChunk, isLastChunk} =
+		props
 
-		// To draw the bar, we draw a chunk of the bar, then we draw the dot, then
-		// we draw the last chunk of the bar.
-		let startBarColor = isAndroid && isFirstChunk ? c.transparent : barColor
-		let endBarColor = isAndroid && isLastChunk ? c.transparent : barColor
+	// To draw the bar, we draw a chunk of the bar, then we draw the dot, then
+	// we draw the last chunk of the bar.
+	let startBarColor = isAndroid && isFirstChunk ? c.transparent : barColor
+	let endBarColor = isAndroid && isLastChunk ? c.transparent : barColor
 
-		return (
-			<View style={styles.barContainer}>
-				<View style={[styles.bar, {backgroundColor: startBarColor}]} />
-				<View
-					style={[
-						styles.dot,
-						stopStatus === 'after' && [
-							styles.passedStop,
-							{borderColor: barColor, backgroundColor: barColor},
-						],
-						stopStatus === 'before' && [
-							styles.beforeStop,
-							{borderColor: barColor},
-						],
-						stopStatus === 'at' && [
-							styles.atStop,
-							{borderColor: currentStopColor},
-						],
-						stopStatus === 'skip' && styles.skippingStop,
-					]}
-				/>
-				<View style={[styles.bar, {backgroundColor: endBarColor}]} />
-			</View>
-		)
-	}
+	return (
+		<View style={styles.barContainer}>
+			<View style={[styles.bar, {backgroundColor: startBarColor}]} />
+			<View
+				style={[
+					styles.dot,
+					stopStatus === 'after' && [
+						styles.passedStop,
+						{borderColor: barColor, backgroundColor: barColor},
+					],
+					stopStatus === 'before' && [
+						styles.beforeStop,
+						{borderColor: barColor},
+					],
+					stopStatus === 'at' && [
+						styles.atStop,
+						{borderColor: currentStopColor},
+					],
+					stopStatus === 'skip' && styles.skippingStop,
+				]}
+			/>
+			<View style={[styles.bar, {backgroundColor: endBarColor}]} />
+		</View>
+	)
 }

@@ -1,3 +1,3 @@
-export {DictionaryView} from './list'
-export {DictionaryDetailView} from './detail'
-export {DictionaryEditorView} from './report'
+export {View as DictionaryView, NavigationOptions} from './list'
+export {DictionaryDetailView, DetailNavigationOptions} from './detail'
+export {DictionaryEditorView, EditorNavigationOptions} from './report'

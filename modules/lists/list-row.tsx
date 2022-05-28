@@ -1,9 +1,9 @@
 import * as React from 'react'
-import {Platform, StyleSheet, View} from 'react-native'
+import {PropsWithChildren} from 'react'
+import {Platform, StyleProp, StyleSheet, View, ViewStyle} from 'react-native'
 import * as c from '@frogpond/colors'
 import {Touchable} from '@frogpond/touchable'
 import {DisclosureArrow} from './disclosure-arrow'
-import type {ViewStyle} from 'react-native'
 
 const styles = StyleSheet.create({
 	childWrapper: {
@@ -32,18 +32,17 @@ const styles = StyleSheet.create({
 	},
 })
 
-type PropsType = {
-	style?: ViewStyle
-	contentContainerStyle?: ViewStyle
+type PropsType = PropsWithChildren<{
+	style?: StyleProp<ViewStyle>
+	contentContainerStyle?: StyleProp<ViewStyle>
 	arrowPosition?: 'center' | 'top' | 'none'
 	fullWidth?: boolean
 	fullHeight?: boolean
 	spacing?: {left?: number; right?: number}
-	onPress?: () => any
-	children?: React.Node
-}
+	onPress?: () => void
+}>
 
-export function ListRow(props: PropsType) {
+export function ListRow(props: PropsType): JSX.Element {
 	const {
 		style,
 		contentContainerStyle,
@@ -55,7 +54,7 @@ export function ListRow(props: PropsType) {
 	} = props
 
 	const arrowPosition = props.arrowPosition || (onPress ? 'center' : 'none')
-	const arrowPositionStyle = {
+	const arrowPositionStyle: ViewStyle = {
 		alignSelf: arrowPosition === 'center' ? 'center' : 'flex-start',
 	}
 	const arrow =
@@ -73,10 +72,10 @@ export function ListRow(props: PropsType) {
 	]
 
 	const content = (
-		<React.Fragment>
+		<>
 			<View style={[styles.childWrapper, style]}>{children}</View>
 			{arrow}
-		</React.Fragment>
+		</>
 	)
 
 	if (onPress) {

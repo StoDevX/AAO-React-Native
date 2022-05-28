@@ -2,75 +2,65 @@ import * as React from 'react'
 import type {UnprocessedBusLine} from './types'
 import {BusLine} from './line'
 import {Timer} from '@frogpond/timer'
-import {NoticeView, LoadingView} from '@frogpond/notice'
-import type {TopLevelViewPropsType} from '../../types'
+import {LoadingView, NoticeView} from '@frogpond/notice'
 import {API} from '@frogpond/api'
 import {fetch} from '@frogpond/fetch'
 import {timezone} from '@frogpond/constants'
+import {useNavigation} from '@react-navigation/native'
 
 const fetchBusTimes = (): Promise<Array<UnprocessedBusLine>> =>
 	fetch(API('/transit/bus'))
-		.json()
+		.json<{data: Array<UnprocessedBusLine>}>()
 		.then((body) => body.data)
 
-type Props = TopLevelViewPropsType & {
+type Props = {
 	line: string
 }
 
-type State = {
-	busLines: Array<UnprocessedBusLine>
-	activeBusLine?: UnprocessedBusLine
-	loading: boolean
-}
+let BusView = (props: Props): JSX.Element => {
+	let [busLines, setBusLines] = React.useState<Array<UnprocessedBusLine>>([])
+	let [activeBusLine, setActiveBusLine] =
+		React.useState<UnprocessedBusLine | null>()
+	let [loading, setLoading] = React.useState(true)
 
-export class BusView extends React.PureComponent<Props, State> {
-	state = {
-		busLines: [],
-		activeBusLine: null,
-		loading: true,
-	}
+	let navigation = useNavigation()
 
-	componentDidMount() {
-		this.fetchData().then(() => {
-			this.setState(() => ({loading: false}))
-		})
-	}
-
-	fetchData = async () => {
+	let fetchData = React.useCallback(async () => {
 		let busLines = await fetchBusTimes()
-		let activeBusLine = busLines.find(({line}) => line === this.props.line)
+		let activeBusLine = busLines.find(({line}) => line === props.line)
 
-		this.setState(() => ({busLines, activeBusLine}))
+		setBusLines(busLines)
+		setActiveBusLine(activeBusLine)
+	}, [props.line])
+
+	React.useEffect(() => {
+		fetchData()
+		setLoading(false)
+	}, [fetchData])
+
+	let openMap = () => {
+		activeBusLine && navigation.navigate('BusMapView', {line: activeBusLine})
 	}
 
-	openMap = () => {
-		this.props.navigation.navigate('BusMapView', {
-			line: this.state.activeBusLine,
-		})
+	if (loading) {
+		return <LoadingView />
 	}
 
-	render() {
-		if (this.state.loading) {
-			return <LoadingView />
-		}
-
-		let {activeBusLine} = this.state
-
-		if (!activeBusLine) {
-			let lines = this.state.busLines.map(({line}) => line).join(', ')
-			let msg = `The line "${this.props.line}" was not found among ${lines}`
-			return <NoticeView text={msg} />
-		}
-
-		return (
-			<Timer
-				interval={60000}
-				moment={true}
-				render={({now}) => (
-					<BusLine line={activeBusLine} now={now} openMap={this.openMap} />
-				)}
-				timezone={timezone()}
-			/>
-		)
-	}
+	return (
+		<Timer
+			interval={60000}
+			moment={true}
+			render={({now}) => {
+				if (!activeBusLine) {
+					let lines = busLines.map(({line}) => line).join(', ')
+					let msg = `The line "${props.line}" was not found among ${lines}`
+					return <NoticeView text={msg} />
+				}
+				return <BusLine line={activeBusLine} now={now} openMap={openMap} />
+			}}
+			timezone={timezone()}
+		/>
+	)
 }
+
+export {BusView as View}

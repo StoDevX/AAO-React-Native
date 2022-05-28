@@ -34,7 +34,6 @@ type State = {
 
 export default class StudentWorkView extends React.PureComponent<Props, State> {
 	static navigationOptions = {
-		headerBackTitle: 'Open Jobs',
 		tabBarLabel: 'Open Jobs',
 		tabBarIcon: TabBarIcon('briefcase'),
 	}
@@ -67,7 +66,7 @@ export default class StudentWorkView extends React.PureComponent<Props, State> {
 		// _backwards_ - that is, On-Campus Work Study should come before
 		// Off-Campus Work Study, and the Work Studies should come before the
 		// Summer Employments
-		let sorters: Array<(JobType) => mixed> = [
+		let sorters: Array<(job: JobType) => mixed> = [
 			(j) => j.type, // sort any groups with the same sort index alphabetically
 			(j) => j.office, // sort all jobs with the same office
 			(j) => j.lastModified, // sort all jobs by date-last-modified
@@ -83,7 +82,7 @@ export default class StudentWorkView extends React.PureComponent<Props, State> {
 		this.setState(() => ({jobs: mapped}))
 	}
 
-	refresh = async (): any => {
+	refresh = async (): Promise<void> => {
 		this.setState(() => ({refreshing: true}))
 		await this.fetchData(true)
 		this.setState(() => ({refreshing: false}))

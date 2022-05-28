@@ -7,6 +7,7 @@
 import * as React from 'react'
 import {ScrollView, View} from 'react-native'
 import moment from 'moment-timezone'
+import type {Moment} from 'moment-timezone'
 import {InfoHeader} from '@frogpond/info-header'
 import {
 	TableView,
@@ -25,195 +26,169 @@ import type {
 import type {TopLevelViewPropsType} from '../../types'
 import {summarizeDays, formatBuildingTimes, blankSchedule} from '../lib'
 import {submitReport} from './submit'
+import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+import {RouteProp, useNavigation} from '@react-navigation/native'
+import {RootStackParamList} from '../../../navigation/types'
 
 type Props = TopLevelViewPropsType & {
-	navigation: {state: {params: {initialBuilding: BuildingType}}}
+	route: {params: {initialBuilding: BuildingType}}
 }
 
-type State = {
-	building: BuildingType
-}
+export let BuildingHoursProblemReportView = (props: Props): JSX.Element => {
+	let [building, setBuilding] = React.useState<BuildingType>(
+		props.route.params.initialBuilding,
+	)
 
-export class BuildingHoursProblemReportView extends React.PureComponent<
-	Props,
-	State
-> {
-	static navigationOptions = {
-		title: 'Report a Problem',
-	}
+	let navigation = useNavigation()
 
-	state = {
-		building: this.props.navigation.state.params.initialBuilding,
-	}
-
-	openEditor = (
-		scheduleIdx: number,
-		setIdx: number,
-		set?: SingleBuildingScheduleType = undefined,
-	) => {
-		this.props.navigation.navigate('BuildingHoursScheduleEditorView', {
-			initialSet: set,
-			onEditSet: (editedData: SingleBuildingScheduleType) =>
-				this.editHoursRow(scheduleIdx, setIdx, editedData),
-			onDeleteSet: () => this.deleteHoursRow(scheduleIdx, setIdx),
+	let editName = (newName: BuildingType['name']) => {
+		setBuilding({
+			...building,
+			name: newName,
 		})
 	}
 
-	editSchedule = (idx: number, newSchedule: NamedBuildingScheduleType) => {
-		this.setState((state) => {
-			let schedules = [...state.building.schedule]
-			schedules.splice(idx, 1, newSchedule)
+	let editSchedule = (idx: number, newSchedule: NamedBuildingScheduleType) => {
+		let schedules = [...building.schedule]
+		schedules.splice(idx, 1, newSchedule)
 
-			return {
-				...state,
-				building: {
-					...state.building,
-					schedule: schedules,
+		setBuilding({
+			...building,
+			schedule: schedules,
+		})
+	}
+
+	let deleteSchedule = (idx: number) => {
+		let schedules = [...building.schedule]
+		schedules.splice(idx, 1)
+
+		setBuilding({
+			...building,
+			schedule: schedules,
+		})
+	}
+
+	let addSchedule = () => {
+		setBuilding({
+			...building,
+			schedule: [
+				...building.schedule,
+				{
+					title: 'Hours',
+					hours: [blankSchedule()],
 				},
-			}
+			],
 		})
 	}
 
-	deleteSchedule = (idx: number) => {
-		this.setState((state) => {
-			let schedules = [...state.building.schedule]
-			schedules.splice(idx, 1)
+	let addHoursRow = (idx: number) => {
+		let schedules = [...building.schedule]
 
-			return {
-				...state,
-				building: {
-					...state.building,
-					schedule: schedules,
-				},
-			}
+		schedules[idx] = {
+			...schedules[idx],
+			hours: [...schedules[idx].hours, blankSchedule()],
+		}
+
+		setBuilding({
+			...building,
+			schedule: schedules,
 		})
 	}
 
-	addSchedule = () => {
-		this.setState((state) => {
-			return {
-				...state,
-				building: {
-					...state.building,
-					schedule: [
-						...state.building.schedule,
-						{
-							title: 'Hours',
-							hours: [blankSchedule()],
-						},
-					],
-				},
-			}
-		})
-	}
-
-	addHoursRow = (idx: number) => {
-		this.setState((state) => {
-			let schedules = [...state.building.schedule]
-
-			schedules[idx] = {
-				...schedules[idx],
-				hours: [...schedules[idx].hours, blankSchedule()],
-			}
-
-			return {
-				...state,
-				building: {
-					...state.building,
-					schedule: schedules,
-				},
-			}
-		})
-	}
-
-	editHoursRow = (
-		scheduleIdx: number,
-		setIdx: number,
-		newData: SingleBuildingScheduleType,
-	) => {
-		this.setState((state) => {
-			let schedules = [...state.building.schedule]
+	let editHoursRow = React.useCallback(
+		(
+			scheduleIdx: number,
+			setIdx: number,
+			newData: SingleBuildingScheduleType,
+		) => {
+			let schedules = [...building.schedule]
 
 			let hours = [...schedules[scheduleIdx].hours]
 			hours.splice(setIdx, 1, newData)
 
 			schedules[scheduleIdx] = {...schedules[scheduleIdx], hours}
 
-			return {
-				...state,
-				building: {
-					...state.building,
-					schedule: schedules,
-				},
-			}
-		})
-	}
+			setBuilding({
+				...building,
+				schedule: schedules,
+			})
+		},
+		[building],
+	)
 
-	deleteHoursRow = (scheduleIdx: number, setIdx: number) => {
-		this.setState((state) => {
-			let schedules = [...state.building.schedule]
+	let deleteHoursRow = React.useCallback(
+		(scheduleIdx: number, setIdx: number) => {
+			let schedules = [...building.schedule]
 
 			let hours = [...schedules[scheduleIdx].hours]
 			hours.splice(setIdx, 1)
 
 			schedules[scheduleIdx] = {...schedules[scheduleIdx], hours}
 
-			return {
-				...state,
-				building: {
-					...state.building,
-					schedule: schedules,
-				},
-			}
-		})
+			setBuilding({
+				...building,
+				schedule: schedules,
+			})
+		},
+		[building],
+	)
+
+	let openEditor = React.useCallback(
+		(scheduleIdx: number, setIdx: number, set?: SingleBuildingScheduleType) =>
+			navigation.navigate('BuildingHoursScheduleEditor', {
+				set: set,
+				onEditSet: (editedData: SingleBuildingScheduleType) =>
+					editHoursRow(scheduleIdx, setIdx, editedData),
+				onDeleteSet: () => deleteHoursRow(scheduleIdx, setIdx),
+			}),
+		[deleteHoursRow, editHoursRow, navigation],
+	)
+
+	let submit = (): void => {
+		console.log(JSON.stringify(building))
+		submitReport(props.route.params.initialBuilding, building)
 	}
 
-	submit = () => {
-		console.log(JSON.stringify(this.state.building))
-		submitReport(
-			this.props.navigation.state.params.initialBuilding,
-			this.state.building,
-		)
-	}
+	let {schedule: schedules = [], name} = building
 
-	render() {
-		let {schedule: schedules = []} = this.state.building
+	return (
+		<ScrollView>
+			<InfoHeader
+				message="If you could tell us what the new times are, we&rsquo;d greatly appreciate it."
+				title="Thanks for spotting a problem!"
+			/>
 
-		return (
-			<ScrollView>
-				<InfoHeader
-					message="If you could tell us what the new times are, we&rsquo;d greatly appreciate it."
-					title="Thanks for spotting a problem!"
-				/>
+			<TableView>
+				<Section header="NAME">
+					<TitleCell onChange={editName} text={name || ''} />
+				</Section>
 
-				<TableView>
-					{schedules.map((s, i) => (
-						<EditableSchedule
-							key={i}
-							addRow={this.addHoursRow}
-							editRow={this.openEditor}
-							onDelete={this.deleteSchedule}
-							onEditSchedule={this.editSchedule}
-							schedule={s}
-							scheduleIndex={i}
-						/>
-					))}
+				{schedules.map((s: NamedBuildingScheduleType, i) => (
+					<EditableSchedule
+						key={i}
+						addRow={addHoursRow}
+						editRow={openEditor}
+						onDelete={deleteSchedule}
+						onEditSchedule={editSchedule}
+						schedule={s}
+						scheduleIndex={i}
+					/>
+				))}
 
-					<Section>
-						<Cell
-							accessory="DisclosureIndicator"
-							onPress={this.addSchedule}
-							title="Add New Schedule"
-						/>
-					</Section>
+				<Section>
+					<Cell
+						accessory="DisclosureIndicator"
+						onPress={addSchedule}
+						title="Add New Schedule"
+					/>
+				</Section>
 
-					<Section footer="Thanks for reporting!">
-						<ButtonCell onPress={this.submit} title="Submit Report" />
-					</Section>
-				</TableView>
-			</ScrollView>
-		)
-	}
+				<Section footer="Thanks for reporting!">
+					<ButtonCell onPress={submit} title="Submit Report" />
+				</Section>
+			</TableView>
+		</ScrollView>
+	)
 }
 
 type EditableScheduleProps = {
@@ -230,7 +205,7 @@ type EditableScheduleProps = {
 }
 
 class EditableSchedule extends React.PureComponent<EditableScheduleProps> {
-	onEdit = (data) => {
+	onEdit = (data: Partial<NamedBuildingScheduleType>) => {
 		let idx = this.props.scheduleIndex
 		this.props.onEditSchedule(idx, {
 			...this.props.schedule,
@@ -301,7 +276,7 @@ class EditableSchedule extends React.PureComponent<EditableScheduleProps> {
 	}
 }
 
-type TextFieldProps = {text: string; onChange: (string) => any}
+type TextFieldProps = {text: string; onChange: (text: string) => any}
 // "Title" will become a textfield like the login form
 const TitleCell = ({text, onChange = () => {}}: TextFieldProps) => (
 	<CellTextField
@@ -330,7 +305,7 @@ type TimesCellProps = {
 	set: SingleBuildingScheduleType
 	setIndex: number
 	onPress: (setIdx: number, set: SingleBuildingScheduleType) => any
-	now: moment
+	now: Moment
 }
 
 class TimesCell extends React.PureComponent<TimesCellProps> {
@@ -351,4 +326,10 @@ class TimesCell extends React.PureComponent<TimesCellProps> {
 			/>
 		)
 	}
+}
+
+export const NavigationKey = 'BuildingHoursProblemReport'
+
+export const NavigationOptions: NativeStackNavigationOptions = {
+	title: 'Report a Problem',
 }

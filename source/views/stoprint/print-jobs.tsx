@@ -1,17 +1,19 @@
-import React from 'react'
+import * as React from 'react'
 import {timezone} from '@frogpond/constants'
 import {Platform, SectionList} from 'react-native'
 import {useDispatch, useSelector} from 'react-redux'
 import type {ReduxState} from '../../redux'
 import {updatePrintJobs} from '../../redux/parts/stoprint'
-import type {LoginStateEnum, logInViaCredentials} from '../../redux/parts/login'
+import type {LoginStateEnum} from '../../redux/parts/login'
+import {logInViaCredentials} from '../../redux/parts/login'
 import {loadLoginCredentials} from '../../lib/login'
-import type {PrintJob, STOPRINT_HELP_PAGE} from '../../lib/stoprint'
+import type {PrintJob} from '../../lib/stoprint'
+import {STOPRINT_HELP_PAGE} from '../../lib/stoprint'
 import {
-	ListRow,
-	ListSeparator,
-	ListSectionHeader,
 	Detail,
+	ListRow,
+	ListSectionHeader,
+	ListSeparator,
 	Title,
 } from '@frogpond/lists'
 import {LoadingView} from '@frogpond/notice'
@@ -34,7 +36,7 @@ type ReduxStateProps = {
 }
 
 type ReduxDispatchProps = {
-	logInViaCredentials: (string, string) => Promise<any>
+	logInViaCredentials: (username: string, password: string) => Promise<any>
 	updatePrintJobs: () => Promise<any>
 }
 
@@ -48,7 +50,6 @@ type State = {
 class PrintJobsView extends React.PureComponent<Props, State> {
 	static navigationOptions = {
 		title: 'Print Jobs',
-		headerBackTitle: 'Jobs',
 	}
 
 	state = {

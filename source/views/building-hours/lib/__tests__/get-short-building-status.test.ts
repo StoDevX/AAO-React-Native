@@ -1,9 +1,10 @@
 import {getShortBuildingStatus} from '../get-short-status'
 import {dayMoment} from './moment.helper'
+import {BuildingType} from '../../types'
 
 it('checks a list of schedules to see if any are open', () => {
 	let m = dayMoment('Fri 1:00pm')
-	let building = {
+	let building: BuildingType = {
 		name: 'building',
 		category: '???',
 		breakSchedule: {},
@@ -24,7 +25,7 @@ it('checks a list of schedules to see if any are open', () => {
 
 it('handles multiple internal schedules for the same timeframe', () => {
 	let m = dayMoment('Mon 1:00pm')
-	let building = {
+	let building: BuildingType = {
 		name: 'building',
 		category: '???',
 		breakSchedule: {},
@@ -44,7 +45,7 @@ it('handles multiple internal schedules for the same timeframe', () => {
 
 it('handles multiple named schedules for the same timeframe', () => {
 	let m = dayMoment('Mon 1:00pm')
-	let building = {
+	let building: BuildingType = {
 		name: 'building',
 		category: '???',
 		breakSchedule: {},
@@ -68,7 +69,7 @@ it('handles multiple named schedules for the same timeframe', () => {
 
 it('returns false if none are available for this day', () => {
 	let m = dayMoment('Sun 1:00pm')
-	let building = {
+	let building: BuildingType = {
 		name: 'building',
 		category: '???',
 		breakSchedule: {},
@@ -88,7 +89,7 @@ it('returns false if none are available for this day', () => {
 
 it('returns false if none are open', () => {
 	let m = dayMoment('Mon 3:00pm')
-	let building = {
+	let building: BuildingType = {
 		name: 'building',
 		category: '???',
 		breakSchedule: {},

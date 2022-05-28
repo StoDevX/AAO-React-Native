@@ -1,11 +1,13 @@
 import {
-	getItem,
-	setItem,
 	clearAsyncStorage,
-	getItemAsBoolean,
 	getItemAsArray,
+	getItemAsBoolean,
+	getItemAsString,
+	setItem,
 	setStoragePrefix,
 } from '@frogpond/storage'
+import type {FilterComboType} from '../views/sis/course-search/lib/format-filter-combo'
+import type {CourseType, TermType} from './course-search/types'
 
 export {clearAsyncStorage}
 
@@ -14,97 +16,109 @@ setStoragePrefix('aao:')
 /// MARK: Settings
 
 const homescreenOrderKey = 'homescreen:view-order'
-export function setHomescreenOrder(order: string[]): Promise<void> {
+type homescreenOrderType = string[]
+export function setHomescreenOrder(order: homescreenOrderType): Promise<void> {
 	return setItem(homescreenOrderKey, order)
 }
-export function getHomescreenOrder(): Promise<Array<string>> {
+export function getHomescreenOrder(): Promise<homescreenOrderType> {
 	return getItemAsArray(homescreenOrderKey)
 }
 
 const homescreenViewsKey = 'homescreen:disabled-views'
-export function setDisabledViews(disabledViews: string[]): Promise<void> {
+type homescreenViewsType = string[]
+export function setDisabledViews(
+	disabledViews: homescreenViewsType,
+): Promise<void> {
 	return setItem(homescreenViewsKey, disabledViews)
 }
-export function getDisabledViews(): Promise<Array<string>> {
+export function getDisabledViews(): Promise<homescreenViewsType> {
 	return getItemAsArray(homescreenViewsKey)
 }
 
 const acknowledgementStatusKey = 'settings:ackd'
-export function setAcknowledgementStatus(status: boolean): Promise<void> {
+type acknowledgementStatusType = boolean
+export function setAcknowledgementStatus(
+	status: acknowledgementStatusType,
+): Promise<void> {
 	return setItem(acknowledgementStatusKey, status)
 }
-export function getAcknowledgementStatus(): Promise<boolean> {
+export function getAcknowledgementStatus(): Promise<acknowledgementStatusType> {
 	return getItemAsBoolean(acknowledgementStatusKey)
 }
 
 const serverAddressKey = 'settings:server-address'
-export function setServerAddress(address: string): Promise<void> {
+type serverAddressType = string
+export function setServerAddress(address: serverAddressType): Promise<void> {
 	return setItem(serverAddressKey, address)
 }
-export function getServerAddress(): Promise<string> {
-	return getItem(serverAddressKey)
+export function getServerAddress(): Promise<serverAddressType> {
+	return getItemAsString(serverAddressKey)
 }
 
 /// MARK: Favorite Buildings
 
 const favoriteBuildingsKey = 'buildings:favorited'
-export function setFavoriteBuildings(buildings: string[]): Promise<void> {
+type favoriteBuildingsType = string[]
+export function setFavoriteBuildings(
+	buildings: favoriteBuildingsType,
+): Promise<void> {
 	return setItem(favoriteBuildingsKey, buildings)
 }
-export function getFavoriteBuildings(): Promise<Array<string>> {
+export function getFavoriteBuildings(): Promise<favoriteBuildingsType> {
 	return getItemAsArray(favoriteBuildingsKey)
 }
 
-/// MARK: SIS
-import type {FilterComboType} from '../views/sis/course-search/lib/format-filter-combo'
-import type {CourseType, TermType} from './course-search/types'
-
 const courseDataKey = 'sis:course-data'
+type courseDataType = Array<CourseType>
 export function setTermCourseData(
 	term: number,
-	courseData: Array<CourseType>,
+	courseData: courseDataType,
 ): Promise<void> {
 	const key = courseDataKey + `:${term}:courses`
 	return setItem(key, courseData)
 }
-export function getTermCourseData(term: number): Promise<Array<CourseType>> {
+export function getTermCourseData(term: number): Promise<courseDataType> {
 	const key = courseDataKey + `:${term}:courses`
 	return getItemAsArray(key)
 }
+
 const termInfoKey = courseDataKey + ':term-info'
-export function setTermInfo(termData: Array<TermType>): Promise<void> {
+type termInfoType = Array<TermType>
+export function setTermInfo(termData: termInfoType): Promise<void> {
 	return setItem(termInfoKey, termData)
 }
-export function getTermInfo(): Promise<Array<TermType>> {
+export function getTermInfo(): Promise<termInfoType> {
 	return getItemAsArray(termInfoKey)
 }
+
 const filterDataKey = courseDataKey + ':filter-data'
+type filterDataType = string[]
 export function setCourseFilterOption(
 	name: string,
-	data: string[],
+	data: filterDataType,
 ): Promise<void> {
 	const key = filterDataKey + `:${name}`
 	return setItem(key, data)
 }
-export function getCourseFilterOption(name: string): Promise<Array<string>> {
+export function getCourseFilterOption(name: string): Promise<string[]> {
 	const key = filterDataKey + `:${name}`
 	return getItemAsArray(key)
 }
 
 const recentSearchesKey = 'courses:recent-searches'
-export function setRecentSearches(searches: string[]): Promise<void> {
+type recentSearchesType = string[]
+export function setRecentSearches(searches: recentSearchesType): Promise<void> {
 	return setItem(recentSearchesKey, searches)
 }
-export function getRecentSearches(): Promise<Array<string>> {
+export function getRecentSearches(): Promise<recentSearchesType> {
 	return getItemAsArray(recentSearchesKey)
 }
 
 const recentFiltersKey = 'courses:recent-filters'
-export function setRecentFilters(
-	combos: Array<FilterComboType>,
-): Promise<void> {
+type recentFiltersType = Array<FilterComboType>
+export function setRecentFilters(combos: recentFiltersType): Promise<void> {
 	return setItem(recentFiltersKey, combos)
 }
-export function getRecentFilters(): Promise<Array<FilterComboType>> {
+export function getRecentFilters(): Promise<recentFiltersType> {
 	return getItemAsArray(recentFiltersKey)
 }

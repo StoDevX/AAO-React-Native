@@ -1,11 +1,11 @@
 import type {BusSchedule, DayOfWeek} from '../types'
-import moment from 'moment-timezone'
+import type {Moment} from 'moment-timezone'
 
 const allDaysOfWeek: DayOfWeek[] = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa']
 
 export function getScheduleForNow(
 	schedules: BusSchedule[],
-	now: moment,
+	now: Moment,
 ): BusSchedule {
 	// now.day returns 0-6, Sunday to Saturday
 	let thisWeekday = allDaysOfWeek[now.day()]

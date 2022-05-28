@@ -8,7 +8,7 @@ type Props = {
 	buildingName: string
 }
 
-export const BuildingFavoriteButton = function (props: Props) {
+export const BuildingFavoriteButton = function (props: Props): JSX.Element {
 	let dispatch = useDispatch()
 	let favorites = useSelector(
 		(state: ReduxState) => state.buildings?.favorites || [],

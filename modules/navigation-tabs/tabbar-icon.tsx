@@ -12,16 +12,17 @@ const styles = StyleSheet.create({
 })
 
 type Props = {
-	tintColor: string
+	color: string
 	focused: boolean
+	size: number
 }
 
 export const TabBarIcon =
 	(icon: string) =>
-	({tintColor}: Props) =>
+	({color}: Props): JSX.Element =>
 		(
 			<Icon
 				name={platformPrefixIconName(icon)}
-				style={[styles.icon, {color: tintColor}]}
+				style={[styles.icon, {color: color}]}
 			/>
 		)

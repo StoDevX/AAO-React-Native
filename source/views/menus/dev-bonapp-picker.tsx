@@ -3,8 +3,12 @@ import {View, TextInput, StyleSheet} from 'react-native'
 import {NoticeView} from '@frogpond/notice'
 import * as c from '@frogpond/colors'
 import {Toolbar} from '@frogpond/toolbar'
-import type {TopLevelViewPropsType} from '../types'
 import {BonAppHostedMenu} from './menu-bonapp'
+import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+
+export const DevBonAppNavigationOptions: NativeStackNavigationOptions = {
+	title: 'Dev BonApp Picker',
+}
 
 const styles = StyleSheet.create({
 	container: {
@@ -21,52 +25,37 @@ const styles = StyleSheet.create({
 	},
 })
 
-type Props = TopLevelViewPropsType
+export const BonAppPickerView = (): JSX.Element => {
+	let [cafeId, setCafeId] = React.useState('')
 
-type State = {
-	cafeId: string
-}
-
-export class BonAppPickerView extends React.PureComponent<Props, State> {
-	static navigationOptions = {
-		title: 'BonApp',
-	}
-
-	state = {
-		cafeId: '',
-	}
-
-	chooseCafe = (cafeId: string) => {
+	let chooseCafe = (cafeId: string) => {
 		if (!/^\d*$/u.test(cafeId)) {
 			return
 		}
-		this.setState(() => ({cafeId}))
+		setCafeId(cafeId)
 	}
 
-	render() {
-		return (
-			<View style={styles.container}>
-				<Toolbar onPress={() => {}}>
-					<TextInput
-						keyboardType="numeric"
-						onEndEditing={(e) => this.chooseCafe(e.nativeEvent.text)}
-						placeholder="id"
-						returnKeyType="done"
-						style={styles.default}
-					/>
-				</Toolbar>
-				{this.state.cafeId ? (
-					<BonAppHostedMenu
-						key={this.state.cafeId}
-						cafe={{id: this.state.cafeId}}
-						loadingMessage={['Loading…']}
-						name="BonApp"
-						navigation={this.props.navigation}
-					/>
-				) : (
-					<NoticeView text="Please enter a Cafe ID." />
-				)}
-			</View>
-		)
-	}
+	return (
+		<View style={styles.container}>
+			<Toolbar>
+				<TextInput
+					keyboardType="numeric"
+					onEndEditing={(e) => chooseCafe(e.nativeEvent.text)}
+					placeholder="id"
+					returnKeyType="done"
+					style={styles.default}
+				/>
+			</Toolbar>
+			{cafeId ? (
+				<BonAppHostedMenu
+					key={cafeId}
+					cafe={{id: cafeId}}
+					loadingMessage={['Loading…']}
+					name="BonApp"
+				/>
+			) : (
+				<NoticeView text="Please enter a Cafe ID." />
+			)}
+		</View>
+	)
 }

@@ -2,10 +2,10 @@ export type StoryType = {
 	authors: string[]
 	categories: string[]
 	content: string
-	datePublished: ?string
+	datePublished?: string
 	excerpt: string
-	featuredImage: ?string
-	link: ?string
+	featuredImage?: string
+	link?: string
 	title: string
 }
 
@@ -23,7 +23,7 @@ export type FeedResponseType = {
 	rss: {
 		channel: Array<{
 			title: string[]
-			'atom:link': mixed[]
+			'atom:link': unknown[]
 			link: string[]
 			description: string[]
 			item: RssFeedItemType[]

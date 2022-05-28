@@ -1,9 +1,16 @@
 import * as React from 'react'
-import {Platform, StyleSheet, Text, View} from 'react-native'
+import {
+	Platform,
+	StyleProp,
+	StyleSheet,
+	Text,
+	TextStyle,
+	View,
+	ViewStyle,
+} from 'react-native'
 import * as c from '@frogpond/colors'
 import type {AppTheme} from '@frogpond/app-theme'
-import {useTheme} from '@frogpond/app-theme'
-import type {ViewStyle, TextStyle} from 'react-native'
+import {getTheme} from '@frogpond/app-theme'
 
 const styles = StyleSheet.create({
 	container: {
@@ -66,15 +73,15 @@ const styles = StyleSheet.create({
 type Props = {
 	title: string
 	bold?: boolean
-	titleStyle?: TextStyle
+	titleStyle?: StyleProp<TextStyle> | null
 	subtitle?: string
-	subtitleStyle?: TextStyle
+	subtitleStyle?: StyleProp<TextStyle> | null
 	separator?: string
-	style?: ViewStyle
+	style?: StyleProp<ViewStyle>
 	spacing?: {left?: number; right?: number}
 }
 
-export function ListSectionHeader(props: Props) {
+export function ListSectionHeader(props: Props): JSX.Element {
 	const {
 		style,
 		title,
@@ -86,9 +93,9 @@ export function ListSectionHeader(props: Props) {
 		spacing: {left: leftSpacing = 15} = {},
 	} = props
 
-	const theme: AppTheme = useTheme()
+	const theme: AppTheme = getTheme()
 
-	let containerTheme = {paddingLeft: leftSpacing}
+	let containerTheme: ViewStyle = {paddingLeft: leftSpacing}
 	let titleTheme = {}
 
 	if (Platform.OS === 'android') {

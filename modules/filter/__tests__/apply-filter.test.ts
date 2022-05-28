@@ -1,9 +1,10 @@
 /* eslint-env jest */
 import {applyFilter} from '../apply-filters'
 import {filterValue} from './filter-value.helper'
+import type {FilterType} from '../types'
 
 it('should return `true` if the filter is disabled', () => {
-	let filter = {
+	let filter: FilterType = {
 		type: 'list',
 		key: 'key',
 		enabled: false,

@@ -1,7 +1,8 @@
 import moment from 'moment-timezone'
 import type {EventType} from '@frogpond/event-type'
+import type {EventDetailTime} from '@frogpond/event-list/types'
 
-export function times(event: EventType) {
+export function times(event: EventType): EventDetailTime {
 	let eventLength = moment
 		.duration(event.endTime.diff(event.startTime))
 		.asHours()
@@ -39,7 +40,7 @@ export function times(event: EventType) {
 	return {start, end, allDay}
 }
 
-export function detailTimes(event: EventType) {
+export function detailTimes(event: EventType): EventDetailTime {
 	let eventLength = moment
 		.duration(event.endTime.diff(event.startTime))
 		.asHours()

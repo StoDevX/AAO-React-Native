@@ -9,8 +9,8 @@
     "test": "jest"
   },
   "peerDependencies": {
-    "react-native": "^0.61.0",
-    "react-native-custom-tabs": "^0.1.7",
+    "@frogpond/react-native-chrome-custom-tabs": "^1.0.3",
+    "react-native": "^0.68.0",
     "react-native-safari-view": "^2.1.0"
   },
   "dependencies": {}

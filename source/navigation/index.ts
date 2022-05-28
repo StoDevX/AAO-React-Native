@@ -1,3 +1,3 @@
 export {trackScreenChanges} from './track'
-export {AppNavigator} from './navigator'
+export {RootStack} from './routes'
 export {persistenceKey} from './constants'

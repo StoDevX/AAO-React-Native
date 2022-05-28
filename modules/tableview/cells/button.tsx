@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {StyleSheet, Text} from 'react-native'
+import {StyleProp, StyleSheet, Text, TextStyle} from 'react-native'
 import {Cell} from 'react-native-tableview-simple'
 import * as c from '@frogpond/colors'
 
@@ -24,10 +24,10 @@ export function ButtonCell({
 }: {
 	indeterminate?: boolean
 	disabled?: boolean
-	onPress: () => any
-	textStyle?: any
+	onPress: () => void
+	textStyle?: StyleProp<TextStyle>
 	title: string
-}) {
+}): JSX.Element {
 	return (
 		<Cell
 			isDisabled={indeterminate || disabled}

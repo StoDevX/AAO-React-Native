@@ -9,13 +9,13 @@
     "test": "jest"
   },
   "peerDependencies": {
-    "@expo/react-native-action-sheet": "3.0.3",
+    "@expo/react-native-action-sheet": "^3.0.0",
     "glamorous-native": "^2.0.0",
-    "react": "^16.0.0",
-    "react-native": "^0.61.0"
+    "react": "^17.0.0",
+    "react-native": "^0.68.0"
   },
   "dependencies": {
-    "@callstack/react-theme-provider": "^3.0.6",
+    "@callstack/react-theme-provider": "^3.0.7",
     "@frogpond/app-theme": "^1.0.0",
     "@frogpond/colors": "^1.0.0",
     "@frogpond/open-url": "^1.0.0",
@@ -24,6 +24,6 @@
     "react-native-typography": "^1.3.0"
   },
   "devDependencies": {
-    "prop-types": "15.7.2"
+    "prop-types": "15.8.1"
   }
 }

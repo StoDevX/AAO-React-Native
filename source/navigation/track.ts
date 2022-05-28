@@ -1,5 +1,5 @@
 import * as Sentry from '@sentry/react-native'
-import type {NavigationState} from 'react-navigation'
+import type {NavigationState} from '@react-navigation/native'
 
 // gets the current screen from navigation state
 function getCurrentRouteName(navigationState: NavigationState): string | null {

@@ -3,14 +3,15 @@ import type {EventType} from '@frogpond/event-type'
 import {addToCalendar} from './lib'
 import delay from 'delay'
 
+// in add-to-calendar
 type Props = {
 	event: EventType
 	compactMessages?: boolean
-	render: (
-		message: string,
-		disabled: boolean,
-		onPress: () => void,
-	) => JSX.Element
+	render: (args: {
+		message: string
+		disabled: boolean
+		onPress: () => void
+	}) => JSX.Element
 }
 
 type State = {
@@ -61,10 +62,10 @@ export class AddToCalendar extends React.Component<Props, State> {
 	}
 
 	render(): JSX.Element {
-		return this.props.render(
-			this.state.message,
-			this.state.disabled,
-			this.addEvent,
-		)
+		return this.props.render({
+			message: this.state.message,
+			disabled: this.state.disabled,
+			onPress: this.addEvent,
+		})
 	}
 }

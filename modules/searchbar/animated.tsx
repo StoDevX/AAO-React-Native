@@ -9,10 +9,10 @@ type Props = {
 	value: string
 	active: boolean
 	placeholder?: string
-	onSubmit?: () => mixed
-	onFocus?: () => mixed
-	onCancel?: () => mixed
-	onChange?: (string) => mixed
+	onSubmit?: () => unknown
+	onFocus?: () => unknown
+	onCancel?: () => unknown
+	onChange?: (value: string) => unknown
 	title?: string
 }
 

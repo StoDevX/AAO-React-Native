@@ -9,7 +9,6 @@ import './init/sentry'
 import './init/api'
 import './init/theme'
 import './init/data'
-import './init/navigation'
 
 import * as React from 'react'
 import {Provider as ReduxProvider} from 'react-redux'
@@ -18,6 +17,9 @@ import {makeStore, initRedux} from './redux'
 import * as navigation from './navigation'
 import {ThemeProvider} from '@frogpond/app-theme'
 import {ActionSheetProvider} from '@expo/react-native-action-sheet'
+import {NavigationContainer} from '@react-navigation/native'
+
+import {RootStack} from './navigation'
 
 const store = makeStore()
 initRedux(store)
@@ -29,10 +31,12 @@ export default class App extends React.Component {
 				<PaperProvider>
 					<ThemeProvider>
 						<ActionSheetProvider>
-							<navigation.AppNavigator
-								onNavigationStateChange={navigation.trackScreenChanges}
+							<NavigationContainer
+								onStateChange={navigation.trackScreenChanges}
 								persistenceKey={navigation.persistenceKey}
-							/>
+							>
+								<RootStack />
+							</NavigationContainer>
 						</ActionSheetProvider>
 					</ThemeProvider>
 				</PaperProvider>

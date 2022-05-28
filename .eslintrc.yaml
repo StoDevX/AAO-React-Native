@@ -1,12 +1,14 @@
+---
+root: true
+
 parser: '@typescript-eslint/parser'
 parserOptions:
   project: './tsconfig.json'
 
-root: true
-
 plugins:
   - '@typescript-eslint'
   - babel
+  - jsx-expressions
   - react
   - react-native
   - react-hooks
@@ -54,15 +56,15 @@ rules:
   no-undef-init: off
   no-underscore-dangle: off
   no-unmodified-loop-condition: error
-  no-unused-vars:
+  no-unused-vars: off
+  '@typescript-eslint/no-unused-vars':
     - warn
     - args: 'after-used'
       argsIgnorePattern: '^_'
       varsIgnorePattern: '^_'
   no-useless-constructor: error
   no-var: error
-  # TODO(rye): Follow-up item: DENY this
-  prefer-const: warn
+  prefer-const: off
   prefer-promise-reject-errors: error
   prefer-spread: error
   quotes: [warn, single, avoid-escape]
@@ -118,3 +120,6 @@ rules:
   # TODO(rye): Follow-up: DENY these
   '@typescript-eslint/explicit-module-boundary-types': warn
   '@typescript-eslint/no-empty-function': warn
+
+  # eslint-plugin-jsx-expressions – https://github.com/hpersson/eslint-plugin-jsx-expressions/
+  jsx-expressions/strict-logical-expressions: warn

@@ -1,5 +1,12 @@
 import * as React from 'react'
-import {View, Text, StyleSheet} from 'react-native'
+import {
+	StyleProp,
+	StyleSheet,
+	Text,
+	TextStyle,
+	View,
+	ViewStyle,
+} from 'react-native'
 import * as c from '@frogpond/colors'
 import tinycolor from 'tinycolor2'
 
@@ -7,8 +14,8 @@ type Props = {
 	text: string
 	accentColor?: string
 	textColor?: string
-	style?: any
-	textStyle?: any
+	style?: StyleProp<ViewStyle>
+	textStyle?: StyleProp<TextStyle>
 }
 
 const styles = StyleSheet.create({
@@ -30,14 +37,14 @@ export function OutlineBadge({
 	textStyle,
 	accentColor = c.goldenrod,
 	textColor = 'hsl(26, 49%, 34%)',
-}: Props) {
-	const bgaccent = tinycolor(accentColor).setAlpha(0.1).toRgbString()
+}: Props): JSX.Element {
+	const backgroundColor = tinycolor(accentColor).setAlpha(0.1).toRgbString()
 
 	return (
 		<View
 			style={[
 				styles.accessoryBadge,
-				{backgroundColor: bgaccent, borderColor: accentColor},
+				{backgroundColor, borderColor: accentColor},
 				style,
 			]}
 		>

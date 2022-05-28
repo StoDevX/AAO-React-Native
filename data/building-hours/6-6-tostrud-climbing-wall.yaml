@@ -1,0 +1,18 @@
+name: Tostrud Climbing Wall
+category: Gym
+
+schedule:
+  - title: Hours
+    hours:
+      - {days: [Su, Mo, Tu, We, Th], from: '4:00pm', to: '9:00pm'}
+      - {days: [Fr], from: '4:00pm', to: '8:00pm'}
+      - {days: [Sa], from: '1:00pm', to: '5:00pm'}
+
+breakSchedule:
+  fall: []
+  thanksgiving: []
+  winter: []
+  interim: []
+  spring: []
+  easter: []
+  summer: []

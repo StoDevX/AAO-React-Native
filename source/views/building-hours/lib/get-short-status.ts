@@ -1,12 +1,11 @@
-import moment from 'moment-timezone'
-import flatten from 'lodash/flatten'
+import type {Moment} from 'moment-timezone'
 import type {BuildingType} from '../types'
 
 import {isChapelTime} from './chapel'
 import {getDayOfWeek} from './get-day-of-week'
 import {getScheduleStatusAtMoment} from './get-schedule-status'
 
-export function getShortBuildingStatus(info: BuildingType, m: moment): string {
+export function getShortBuildingStatus(info: BuildingType, m: Moment): string {
 	let dayOfWeek = getDayOfWeek(m)
 
 	let schedules = info.schedule || []
@@ -14,7 +13,7 @@ export function getShortBuildingStatus(info: BuildingType, m: moment): string {
 		return 'Closed'
 	}
 
-	let statuses = schedules.map((set) => {
+	let statuses = schedules.flatMap((set) => {
 		if (set.isPhysicallyOpen === false) {
 			return 'Closed'
 		}
@@ -35,5 +34,5 @@ export function getShortBuildingStatus(info: BuildingType, m: moment): string {
 		)
 	})
 
-	return flatten(statuses).find((status) => status !== 'Closed') || 'Closed'
+	return statuses.find((status) => status !== 'Closed') ?? 'Closed'
 }

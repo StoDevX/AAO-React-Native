@@ -6,15 +6,18 @@ import groupBy from 'lodash/groupBy'
 import toPairs from 'lodash/toPairs'
 import * as c from '@frogpond/colors'
 import type {ContactType} from './types'
-import type {TopLevelViewPropsType} from '../types'
 import {fetch} from '@frogpond/fetch'
 import {API} from '@frogpond/api'
+import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+import {useNavigation} from '@react-navigation/native'
+import {DetailNavigationKey} from './detail'
+import delay from 'delay'
 
 const fetchContacts = (forReload?: boolean): Promise<Array<ContactType>> =>
 	fetch(API('/contacts'), {
 		delay: forReload ? 500 : 0,
 	})
-		.json()
+		.json<{data: Array<ContactType>}>()
 		.then((body) => body.data)
 
 const groupContacts = (contacts: ContactType[]) => {
@@ -31,70 +34,70 @@ const styles = StyleSheet.create({
 	},
 })
 
-type Props = TopLevelViewPropsType
+export let ContactsListView = (): JSX.Element => {
+	let navigation = useNavigation()
 
-type State = {
-	contacts: Array<ContactType>
-	loading: boolean
-}
+	let [contacts, setContacts] = React.useState<Array<ContactType>>([])
+	let [loading, setLoading] = React.useState(false)
 
-export class ContactsListView extends React.PureComponent<Props, State> {
-	static navigationOptions = {
-		title: 'Important Contacts',
-		headerBackTitle: 'Contacts',
+	React.useEffect(() => {
+		fetchData()
+	}, [])
+
+	let refresh = async (): Promise<void> => {
+		const start = Date.now()
+		setLoading(true)
+		setContacts(await fetchContacts())
+
+		// wait 0.5 seconds – if we let it go at normal speed, it feels broken.
+		const elapsed = Date.now() - start
+		if (elapsed < 500) {
+			await delay(500 - elapsed)
+		}
+
+		setLoading(false)
 	}
 
-	state = {
-		contacts: [],
-		loading: false,
+	let fetchData = async () => {
+		setContacts(await fetchContacts())
 	}
 
-	componentDidMount() {
-		this.fetchData()
-	}
+	let onPressContact = React.useCallback(
+		(data: ContactType) =>
+			navigation.navigate(DetailNavigationKey, {
+				contact: data,
+			}),
+		[navigation],
+	)
 
-	refresh = async (): any => {
-		this.setState(() => ({loading: true}))
-		let contacts = await fetchContacts(true)
-		this.setState(() => ({loading: false, contacts: contacts}))
-	}
-
-	fetchData = async () => {
-		let contacts = await fetchContacts()
-		this.setState(() => ({contacts: contacts}))
-	}
-
-	onPressContact = (contact: ContactType) => {
-		this.props.navigation.navigate('ContactsDetailView', {
-			contact,
-		})
-	}
-
-	renderSectionHeader = ({section: {title}}: any) => (
+	let renderSectionHeader = ({section: {title}}: any) => (
 		<ListSectionHeader title={title} />
 	)
 
-	renderItem = ({item}: {item: ContactType}) => (
-		<ContactRow contact={item} onPress={this.onPressContact} />
+	let renderItem = ({item}: {item: ContactType}) => (
+		<ContactRow contact={item} onPress={onPressContact} />
 	)
 
-	keyExtractor = (item: ContactType) => item.title
+	let keyExtractor = (item: ContactType) => item.title
 
-	render() {
-		let groupedData = groupContacts(this.state.contacts)
-		return (
-			<SectionList
-				ItemSeparatorComponent={ListSeparator}
-				ListEmptyComponent={<ListEmpty mode="bug" />}
-				contentContainerStyle={styles.contentContainer}
-				keyExtractor={this.keyExtractor}
-				onRefresh={this.refresh}
-				refreshing={this.state.loading}
-				renderItem={this.renderItem}
-				renderSectionHeader={this.renderSectionHeader}
-				sections={groupedData}
-				style={styles.listContainer}
-			/>
-		)
-	}
+	let groupedData = groupContacts(contacts)
+
+	return (
+		<SectionList
+			ItemSeparatorComponent={ListSeparator}
+			ListEmptyComponent={<ListEmpty mode="bug" />}
+			contentContainerStyle={styles.contentContainer}
+			keyExtractor={keyExtractor}
+			onRefresh={refresh}
+			refreshing={loading}
+			renderItem={renderItem}
+			renderSectionHeader={renderSectionHeader}
+			sections={groupedData}
+			style={styles.listContainer}
+		/>
+	)
+}
+
+export const NavigationOptions: NativeStackNavigationOptions = {
+	title: 'Important Contacts',
 }

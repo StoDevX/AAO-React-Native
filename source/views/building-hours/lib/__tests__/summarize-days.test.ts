@@ -1,7 +1,8 @@
 import {summarizeDays} from '../summarize-days'
+import {DayOfWeekEnumType} from '../../types'
 
 describe('returns a single day if only a single day is given', () => {
-	let allDays = [
+	let allDays: [DayOfWeekEnumType, string][] = [
 		['Su', 'Sunday'],
 		['Mo', 'Monday'],
 		['Tu', 'Tuesday'],

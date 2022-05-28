@@ -9,81 +9,62 @@ import {
 } from '@frogpond/tableview'
 import {submitReport} from './submit'
 import type {WordType} from '../types'
-import type {TopLevelViewPropsType} from '../../types'
+import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+import noop from 'lodash/noop'
 
-type Props = TopLevelViewPropsType & {
-	navigation: {state: {params: {item: WordType}}}
+type Props = {
+	route: {params: {item: WordType}}
 }
 
-type State = {
-	term: string
-	definition: string
+export const NavigationOptions: NativeStackNavigationOptions = {
+	title: 'Suggest an edit',
 }
 
-export class DictionaryEditorView extends React.PureComponent<Props, State> {
-	static navigationOptions = () => {
-		return {
-			title: 'Suggest an Edit',
-		}
-	}
+let DictionaryEditorView = (props: Props): JSX.Element => {
+	let [term, setTerm] = React.useState(props.route.params.item.word)
+	let [definition, setDefinition] = React.useState(
+		props.route.params.item.definition,
+	)
 
-	state = {
-		term: this.props.navigation.state.params.word.word,
-		definition: this.props.navigation.state.params.word.definition,
-	}
-
-	submit = () => {
-		submitReport(this.props.navigation.state.params.word, {
-			word: this.state.term.trim(),
-			definition: this.state.definition.trim(),
+	let submit = () => {
+		submitReport(props.route.params.item, {
+			word: term.trim(),
+			definition: definition.trim(),
 		})
 	}
 
-	onChangeTitle = (newTitle: string) => {
-		this.setState(() => ({term: newTitle}))
-	}
+	return (
+		<ScrollView
+			keyboardDismissMode="on-drag"
+			keyboardShouldPersistTaps="always"
+		>
+			<InfoHeader
+				message="If you could tell us what the word and definition should be, we&rsquo;d greatly appreciate it."
+				title="Thanks for spotting a problem!"
+			/>
 
-	onChangeDefinition = (newDefinition: string) => {
-		this.setState(() => ({definition: newDefinition}))
-	}
+			<TableView>
+				<Section header="WORD">
+					<TitleCell onChange={setTerm} text={term} />
+				</Section>
 
-	render() {
-		let {term, definition} = this.state
+				<Section header="DEFINITION">
+					<DefinitionCell onChange={setDefinition} text={definition} />
+				</Section>
 
-		return (
-			<ScrollView
-				keyboardDismissMode="on-drag"
-				keyboardShouldPersistTaps="always"
-			>
-				<InfoHeader
-					message="If you could tell us what the word and definition should be, we&rsquo;d greatly appreciate it."
-					title="Thanks for spotting a problem!"
-				/>
-
-				<TableView>
-					<Section header="WORD">
-						<TitleCell onChange={this.onChangeTitle} text={term} />
-					</Section>
-
-					<Section header="DEFINITION">
-						<DefinitionCell
-							onChange={this.onChangeDefinition}
-							text={definition}
-						/>
-					</Section>
-
-					<Section footer="Thanks for reporting!">
-						<ButtonCell onPress={this.submit} title="Submit Report" />
-					</Section>
-				</TableView>
-			</ScrollView>
-		)
-	}
+				<Section footer="Thanks for reporting!">
+					<ButtonCell onPress={submit} title="Submit Report" />
+				</Section>
+			</TableView>
+		</ScrollView>
+	)
 }
 
-type TextFieldProps = {text: string; onChange: (string) => any}
+export {DictionaryEditorView as View}
 
-const TitleCell = ({text, onChange = () => {}}: TextFieldProps) => (
+type TextFieldProps = {text: string; onChange: (text: string) => void}
+
+const TitleCell = ({text, onChange = noop}: TextFieldProps) => (
 	<CellTextField
 		autoCapitalize="words"
 		onChangeText={onChange}
@@ -94,7 +75,7 @@ const TitleCell = ({text, onChange = () => {}}: TextFieldProps) => (
 	/>
 )
 
-const DefinitionCell = ({text, onChange = () => {}}: TextFieldProps) => (
+const DefinitionCell = ({text, onChange = noop}: TextFieldProps) => (
 	<CellTextField
 		autoCapitalize="sentences"
 		multiline={true}

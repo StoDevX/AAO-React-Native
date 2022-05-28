@@ -14,12 +14,11 @@ The St. Olaf community, now in pocket size… rewritten in React Native.
 
 ## Getting Started
 
-- If you're on a system with the `brew` command, run `brew bundle install` to install the system dependencies. (Node, Ruby, Yarn, Watchman, etc.)
+- If you're on a system with the `brew` command, run `brew bundle install` to install the system dependencies. (Node, Ruby, Watchman, etc.)
 - [Install React Native](http://facebook.github.io/react-native/docs/getting-started.html#content)
-- [Install Yarn](https://yarnpkg.com/en/docs/install)
 - Clone the repository
 - `cd` into your clone
-- Run `yarn`
+- Run `npm ci`
 - For iOS: `npm run ios`
 - For Android: launch your favorite Android emulator first, then run `npm run android`
 

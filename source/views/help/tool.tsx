@@ -11,6 +11,7 @@ import type {
 	CallPhoneButtonParams,
 	SendEmailButtonParams,
 	OpenUrlButtonParams,
+	ButtonDef,
 } from './types'
 
 function handleCallPhone(params: CallPhoneButtonParams) {
@@ -29,7 +30,7 @@ function handleOpenUrl(params: OpenUrlButtonParams) {
 	return openUrl(params.url)
 }
 
-function handleButtonPress(btn) {
+function handleButtonPress(btn: ButtonDef) {
 	switch (btn.action) {
 		case 'open-url':
 			return handleOpenUrl(btn.params)
@@ -40,7 +41,7 @@ function handleButtonPress(btn) {
 		case 'custom':
 			return
 		default:
-			btn.action as never
+			btn as never
 	}
 }
 
@@ -49,7 +50,7 @@ type Props = {
 }
 
 export class ToolView extends React.Component<Props> {
-	render() {
+	render(): JSX.Element {
 		let toolEnabled = this.props.config.enabled
 
 		return (

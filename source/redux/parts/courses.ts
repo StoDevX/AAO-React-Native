@@ -1,11 +1,11 @@
 import type {ReduxState} from '../index'
 import type {FilterType} from '@frogpond/filter'
+import type {CourseType} from '../../lib/course-search'
 import {
+	areAnyTermsCached,
 	loadCachedCourses,
 	updateStoredCourses,
-	areAnyTermsCached,
 } from '../../lib/course-search'
-import type {CourseType} from '../../lib/course-search'
 import * as storage from '../../lib/storage'
 import type {FilterComboType} from '../../views/sis/course-search/lib/format-filter-combo'
 import {formatFilterCombo} from '../../views/sis/course-search/lib/format-filter-combo'
@@ -150,9 +150,11 @@ type Action =
 	| UpdateRecentFiltersAction
 	| LoadRecentFiltersAction
 
+export type ReadyState = 'not-loaded' | 'ready'
+
 export type State = {
 	allCourses: Array<CourseType>
-	readyState: 'not-loaded' | 'ready'
+	readyState: ReadyState
 	validGEs: string[]
 	recentFilters: FilterComboType[]
 	recentSearches: string[]
@@ -160,7 +162,7 @@ export type State = {
 
 const initialState = {
 	allCourses: [],
-	readyState: 'not-loaded',
+	readyState: 'not-loaded' as ReadyState,
 	validGEs: [],
 	recentFilters: [],
 	recentSearches: [],

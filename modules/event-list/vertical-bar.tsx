@@ -1,9 +1,8 @@
 import * as React from 'react'
-import {StyleSheet, View, Platform} from 'react-native'
+import {Platform, StyleProp, StyleSheet, View, ViewStyle} from 'react-native'
 import * as c from '@frogpond/colors'
 import type {AppTheme} from '@frogpond/app-theme'
-import {useTheme} from '@frogpond/app-theme'
-import type {ViewStyle} from 'react-native'
+import {getTheme} from '@frogpond/app-theme'
 
 const dotBarStyles = StyleSheet.create({
 	diagram: {
@@ -24,11 +23,11 @@ const dotBarStyles = StyleSheet.create({
 })
 
 type Props = {
-	style?: ViewStyle
+	style?: StyleProp<ViewStyle>
 }
 
 function DottedBar({style}: Props) {
-	let theme: AppTheme = useTheme()
+	let theme: AppTheme = getTheme()
 	let background = {backgroundColor: theme.accent}
 
 	return (
@@ -47,11 +46,11 @@ const solidBarStyles = StyleSheet.create({
 	},
 })
 
-function SolidBar({style}: {style?: any}) {
+function SolidBar({style}: Props) {
 	return <View style={[solidBarStyles.border, style]} />
 }
 
-export function Bar(props: any) {
+export function Bar(props: Props): JSX.Element {
 	switch (Platform.OS) {
 		case 'ios':
 			return <SolidBar {...props} />

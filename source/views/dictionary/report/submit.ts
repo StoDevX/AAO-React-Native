@@ -2,17 +2,17 @@ import jsYaml from 'js-yaml'
 import type {WordType} from '../types'
 import {sendEmail} from '../../../components/send-email'
 import querystring from 'query-string'
-import {GH_NEW_ISSUE_URL} from '../../../lib/constants'
+import {GH_NEW_ISSUE_URL, SUPPORT_EMAIL} from '../../../lib/constants'
 import wrap from 'wordwrap'
 
-export function submitReport(current: WordType, suggestion: WordType) {
+export function submitReport(current: WordType, suggestion: WordType): void {
 	let before = stringifyDictionaryEntry(current)
 	let after = stringifyDictionaryEntry(suggestion)
 
 	let body = makeEmailBody(before, after, current.word)
 
 	return sendEmail({
-		to: ['allaboutolaf@frogpond.tech'],
+		to: [SUPPORT_EMAIL],
 		subject: `[dictionary] Suggestion for ${current.word}`,
 		body,
 	})
@@ -32,7 +32,7 @@ ${makeHtmlBody(before, after)}
 `
 }
 
-const makeMarkdownBody = (before, after) =>
+const makeMarkdownBody = (before: string, after: string) =>
 	`
 ## Before:
 
@@ -47,7 +47,7 @@ ${after}
 \`\`\`
 `
 
-const makeHtmlBody = (before, after) => `
+const makeHtmlBody = (before: string, after: string) => `
 <p>Before:</p>
 <pre><code>${before}</code></pre>
 
