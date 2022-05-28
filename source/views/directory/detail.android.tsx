@@ -16,8 +16,12 @@ import {
 	Portal,
 } from 'react-native-paper'
 import type {TopLevelViewPropsTypeWithParams} from '../types'
+import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 
 type Props = TopLevelViewPropsTypeWithParams<{contact: DirectoryItem}>
+export const DetailNavigationOptions: NativeStackNavigationOptions = {
+	title: 'Contact',
+}
 
 export function DirectoryDetailView(props: Props): React.ReactFragment {
 	const {
@@ -141,9 +145,6 @@ export function DirectoryDetailView(props: Props): React.ReactFragment {
 			</ScrollView>
 		</>
 	)
-}
-DirectoryDetailView.navigationOptions = {
-	title: 'Contact',
 }
 
 const styles = StyleSheet.create({

@@ -22,6 +22,7 @@ import type {DirectoryItem, SearchResults} from './types'
 import type {TopLevelViewPropsTypeWithParams} from '../types'
 import {AnyObject} from '../../views/types'
 import Icon from 'react-native-vector-icons/Ionicons'
+import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 
 type Props = TopLevelViewPropsTypeWithParams<AnyObject>
 
@@ -33,6 +34,9 @@ function searchDirectory(
 	{signal}: {signal: window.AbortController},
 ): Promise<SearchResults> {
 	query = query.trim()
+export const NavigationOptions: NativeStackNavigationOptions = {
+	title: 'Directory',
+}
 
 	if (!query) {
 		throw new EmptySearchError()
@@ -102,10 +106,6 @@ export function DirectoryView(props: Props): JSX.Element {
 			)}
 		</View>
 	)
-}
-DirectoryView.navigationOptions = {
-	title: 'Directory',
-	headerBackTitle: 'Home',
 }
 
 function IndentedListSeparator() {

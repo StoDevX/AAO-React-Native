@@ -13,8 +13,12 @@ import {
 import * as c from '@frogpond/colors'
 import type {DirectoryItem, Department, CampusLocation} from './types'
 import type {TopLevelViewPropsTypeWithParams} from '../types'
+import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 
 type Props = TopLevelViewPropsTypeWithParams<{contact: DirectoryItem}>
+export const DetailNavigationOptions: NativeStackNavigationOptions = {
+	title: 'Contact',
+}
 
 export function DirectoryDetailView(props: Props): JSX.Element {
 	const {
@@ -119,9 +123,6 @@ export function DirectoryDetailView(props: Props): JSX.Element {
 			</Text>
 		</ScrollView>
 	)
-}
-DirectoryDetailView.navigationOptions = {
-	title: 'Contact',
 }
 
 const styles = StyleSheet.create({

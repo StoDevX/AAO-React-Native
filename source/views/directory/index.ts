@@ -1,2 +1,2 @@
-export {DirectoryView} from './list'
-export {DirectoryDetailView} from './detail'
+export {DirectoryView, NavigationOptions} from './list'
+export {DirectoryDetailView, DetailNavigationOptions} from './detail'
