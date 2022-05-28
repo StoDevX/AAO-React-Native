@@ -44,34 +44,38 @@ const StudentWorkView = (): JSX.Element => {
 	}, [])
 
 	let fetchData = async (reload?: boolean) => {
-		let data: Array<JobType> = await fetch(API('/jobs'), {
-			delay: reload ? 500 : 0,
-		}).json()
+		try {
+			let data: Array<JobType> = await fetch(API('/jobs'), {
+				delay: reload ? 500 : 0,
+			}).json()
 
-		// force title-case on the job types, to prevent not-actually-duplicate headings
-		let processed: Array<JobType> = data.map((job) => ({
-			...job,
-			type: titleCase(job.type),
-		}))
+			// force title-case on the job types, to prevent not-actually-duplicate headings
+			let processed: Array<JobType> = data.map((job) => ({
+				...job,
+				type: titleCase(job.type),
+			}))
 
-		// Turns out that, for our data, we really just want to sort the categories
-		// _backwards_ - that is, On-Campus Work Study should come before
-		// Off-Campus Work Study, and the Work Studies should come before the
-		// Summer Employments
-		let sorters: Array<(job: JobType) => mixed> = [
-			(j) => j.type, // sort any groups with the same sort index alphabetically
-			(j) => j.office, // sort all jobs with the same office
-			(j) => j.lastModified, // sort all jobs by date-last-modified
-		]
-		let ordered: Array<'desc' | 'asc'> = ['desc', 'asc', 'desc']
-		let sorted = orderBy(processed, sorters, ordered)
+			// Turns out that, for our data, we really just want to sort the categories
+			// _backwards_ - that is, On-Campus Work Study should come before
+			// Off-Campus Work Study, and the Work Studies should come before the
+			// Summer Employments
+			let sorters: Array<(job: JobType) => mixed> = [
+				(j) => j.type, // sort any groups with the same sort index alphabetically
+				(j) => j.office, // sort all jobs with the same office
+				(j) => j.lastModified, // sort all jobs by date-last-modified
+			]
+			let ordered: Array<'desc' | 'asc'> = ['desc', 'asc', 'desc']
+			let sorted = orderBy(processed, sorters, ordered)
 
-		let grouped = groupBy(sorted, (j) => j.type)
-		let mapped = toPairs(grouped).map(([title, data]) => ({
-			title,
-			data,
-		}))
-		setJobs(mapped)
+			let grouped = groupBy(sorted, (j) => j.type)
+			let mapped = toPairs(grouped).map(([title, data]) => ({
+				title,
+				data,
+			}))
+			setJobs(mapped)
+		} catch (error) {
+			setError(true)
+		}
 	}
 
 	if (error) {
