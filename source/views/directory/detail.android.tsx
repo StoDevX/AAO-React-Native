@@ -5,7 +5,7 @@ import {callPhone} from '../../components/call-phone'
 import {sendEmail} from '../../components/send-email'
 import {buildEmailAction, buildPhoneActions} from './helpers'
 import * as c from '@frogpond/colors'
-import type {CampusLocation, Department, DirectoryItem} from './types'
+import type {CampusLocation, Department} from './types'
 import {
 	Avatar,
 	Title,
@@ -15,15 +15,16 @@ import {
 	List,
 	Portal,
 } from 'react-native-paper'
-import type {TopLevelViewPropsTypeWithParams} from '../types'
+import {RouteProp, useRoute} from '@react-navigation/native'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+import {RootStackParamList} from '../../../source/navigation/types'
 
-type Props = TopLevelViewPropsTypeWithParams<{contact: DirectoryItem}>
 export const DetailNavigationOptions: NativeStackNavigationOptions = {
 	title: 'Contact',
 }
 
-export function DirectoryDetailView(props: Props): React.ReactFragment {
+export function DirectoryDetailView(): JSX.Element {
+	let route = useRoute<RouteProp<RootStackParamList, 'DirectoryDetail'>>()
 	const {
 		displayName,
 		campusLocations,
@@ -34,7 +35,7 @@ export function DirectoryDetailView(props: Props): React.ReactFragment {
 		email,
 		departments,
 		username,
-	} = props.navigation.state.params.contact
+	} = route.params.contact
 
 	const [isFabOpen, setIsFabOpen] = React.useState(false)
 

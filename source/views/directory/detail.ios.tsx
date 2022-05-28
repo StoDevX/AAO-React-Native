@@ -11,16 +11,17 @@ import {
 	MultiLineLeftDetailCell,
 } from '@frogpond/tableview'
 import * as c from '@frogpond/colors'
-import type {DirectoryItem, Department, CampusLocation} from './types'
-import type {TopLevelViewPropsTypeWithParams} from '../types'
+import type {Department, CampusLocation} from './types'
+import {RouteProp, useRoute} from '@react-navigation/native'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+import {RootStackParamList} from '../../../source/navigation/types'
 
-type Props = TopLevelViewPropsTypeWithParams<{contact: DirectoryItem}>
 export const DetailNavigationOptions: NativeStackNavigationOptions = {
 	title: 'Contact',
 }
 
-export function DirectoryDetailView(props: Props): JSX.Element {
+export function DirectoryDetailView(): JSX.Element {
+	let route = useRoute<RouteProp<RootStackParamList, 'DirectoryDetail'>>()
 	const {
 		displayName,
 		campusLocations,
@@ -30,7 +31,7 @@ export function DirectoryDetailView(props: Props): JSX.Element {
 		profileUrl,
 		email,
 		departments,
-	} = props.navigation.state.params.contact
+	} = route.params.contact
 
 	return (
 		<ScrollView>
