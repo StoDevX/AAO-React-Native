@@ -116,7 +116,7 @@ source/views/settings/screens/overview/server-url.tsx(46,5): error TS2769: No ov
     Type 'RefObject<CellTextField>' is not assignable to type '{ current: TextInput | null; }'.
 source/views/sis/balances-acknowledgement.tsx(23,18): error TS2345: Argument of type 'Promise<SisAlertSeenAction>' is not assignable to parameter of type 'AnyAction'.
   Property 'type' is missing in type 'Promise<SisAlertSeenAction>' but required in type 'AnyAction'.
-source/views/sis/balances.tsx(193,13): error TS2345: Argument of type 'ThunkAction<LogInActions>' is not assignable to parameter of type 'AnyAction'.
+source/views/sis/balances.tsx(197,13): error TS2345: Argument of type 'ThunkAction<LogInActions>' is not assignable to parameter of type 'AnyAction'.
   Property 'type' is missing in type 'ThunkAction<LogInActions>' but required in type 'AnyAction'.
 source/views/sis/course-search/detail/index.tsx(126,5): error TS2322: Type 'Element[]' is not assignable to type 'string'.
 source/views/sis/course-search/detail/index.tsx(209,24): error TS7053: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{ Open: string; Closed: string; }'.
