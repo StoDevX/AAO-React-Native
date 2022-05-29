@@ -27,11 +27,7 @@ const OlesGoView = () => <BusView line="Oles Go" />
 
 const TransportationView = (): JSX.Element => {
 	return (
-		<Tabs.Navigator
-			screenOptions={{
-				headerShown: false,
-			}}
-		>
+		<Tabs.Navigator screenOptions={{headerShown: false}}>
 			<Tabs.Screen
 				component={ExpressLineBusView}
 				name="ExpressLineBusView"

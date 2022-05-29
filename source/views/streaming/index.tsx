@@ -29,11 +29,7 @@ const KRLXView = () => <KrlxStationView />
 
 const StreamingMediaView = (): JSX.Element => {
 	return (
-		<Tabs.Navigator
-			screenOptions={{
-				headerShown: false,
-			}}
-		>
+		<Tabs.Navigator screenOptions={{headerShown: false}}>
 			<Tabs.Screen
 				component={StreamingView}
 				name="StreamingView"

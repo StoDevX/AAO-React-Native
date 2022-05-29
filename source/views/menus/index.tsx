@@ -71,11 +71,7 @@ const CarletonMenuListView = () => CarletonCafeIndex
 
 const MenusView = (): JSX.Element => {
 	return (
-		<Tabs.Navigator
-			screenOptions={{
-				headerShown: false,
-			}}
-		>
+		<Tabs.Navigator screenOptions={{headerShown: false}}>
 			<Tabs.Screen
 				component={StavHallMenuView}
 				name="StavHallMenuView"

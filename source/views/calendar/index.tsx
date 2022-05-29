@@ -50,11 +50,7 @@ function NorthfieldCalendarView() {
 
 function CalendarView(): JSX.Element {
 	return (
-		<Tabs.Navigator
-			screenOptions={{
-				headerShown: false,
-			}}
-		>
+		<Tabs.Navigator screenOptions={{headerShown: false}}>
 			<Tabs.Screen
 				component={StOlafCalendarView}
 				name="StOlafCalendarView"
