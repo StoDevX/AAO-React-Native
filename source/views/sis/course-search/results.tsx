@@ -16,6 +16,7 @@ import {RouteProp, useNavigation, useRoute} from '@react-navigation/native'
 import {ChangeTextEvent, RootStackParamList} from '../../../navigation/types'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 import {white} from '@frogpond/colors'
+import {useDebounce} from '@frogpond/use-debounce'
 
 type ReduxStateProps = {
 	allCourses: Array<CourseType>
@@ -42,7 +43,9 @@ const CourseSearchResultsView = (props: Props) => {
 	let [filtersLoaded, setFiltersLoaded] = React.useState(
 		initialFilters ?? false,
 	)
-	let [searchQuery, setSearchQuery] = React.useState(initialQuery)
+
+	let [searchQuery, setSearchQuery] = React.useState(initialQuery ?? '')
+	let delayedQuery = useDebounce(searchQuery, 500)
 
 	let navigation = useNavigation()
 
@@ -55,7 +58,7 @@ const CourseSearchResultsView = (props: Props) => {
 					setSearchQuery(event.nativeEvent.text),
 			},
 		})
-	}, [navigation])
+	}, [initialQuery, navigation, searchQuery])
 
 	React.useEffect(() => {
 		if (!filters.length) {
@@ -64,9 +67,9 @@ const CourseSearchResultsView = (props: Props) => {
 	}, [filters.length])
 
 	let handleListItemPress = () => {
-		if (searchQuery?.length) {
+		if (delayedQuery?.length) {
 			// if there is text in the search bar, add the text to the Recent Searches list
-			props.updateRecentSearches(searchQuery)
+			props.updateRecentSearches(delayedQuery)
 		} else if (filters.some((f) => f.enabled)) {
 			// if there is at least one active filter, add the filter set to the Recent Filters list
 			props.updateRecentFilters(filters)
@@ -90,7 +93,7 @@ const CourseSearchResultsView = (props: Props) => {
 
 	return (
 		<CourseResultsList
-			key={searchQuery?.toLowerCase()}
+			key={delayedQuery?.toLowerCase()}
 			// applyFilters={props.applyFilters}
 			applyFilters={applyFiltersToItem}
 			contentContainerStyle={styles.contentContainer}
@@ -99,8 +102,8 @@ const CourseSearchResultsView = (props: Props) => {
 			filtersLoaded={filtersLoaded}
 			onListItemPress={handleListItemPress}
 			onPopoverDismiss={updateFilter}
-			query={searchQuery}
 			style={searchbarActive ? styles.darken : null}
+			query={delayedQuery}
 		/>
 	)
 }
