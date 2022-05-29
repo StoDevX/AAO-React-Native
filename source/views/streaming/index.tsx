@@ -29,14 +29,17 @@ const KRLXView = () => <KrlxStationView />
 
 const StreamingMediaView = (): JSX.Element => {
 	return (
-		<Tabs.Navigator>
+		<Tabs.Navigator
+			screenOptions={{
+				headerShown: false,
+			}}
+		>
 			<Tabs.Screen
 				component={StreamingView}
 				name="StreamingView"
 				options={{
 					tabBarLabel: 'Streaming',
 					tabBarIcon: TabBarIcon('recording'),
-					headerShown: false,
 				}}
 			/>
 			<Tabs.Screen
@@ -45,7 +48,6 @@ const StreamingMediaView = (): JSX.Element => {
 				options={{
 					tabBarLabel: 'Webcams',
 					tabBarIcon: TabBarIcon('videocam'),
-					headerShown: false,
 				}}
 			/>
 			<Tabs.Screen
@@ -54,7 +56,6 @@ const StreamingMediaView = (): JSX.Element => {
 				options={{
 					tabBarLabel: 'KSTO',
 					tabBarIcon: TabBarIcon('radio'),
-					headerShown: false,
 				}}
 			/>
 			<Tabs.Screen
@@ -63,7 +64,6 @@ const StreamingMediaView = (): JSX.Element => {
 				options={{
 					tabBarLabel: 'KRLX',
 					tabBarIcon: TabBarIcon('mic'),
-					headerShown: false,
 				}}
 			/>
 			{/* <Tabs.Screen
@@ -72,7 +72,6 @@ const StreamingMediaView = (): JSX.Element => {
 				options={{
 					tabBarLabel: 'Weekly Movie',
 					tabBarIcon: TabBarIcon('film'),
-					headerShown: false,
 				}}
 			/> */}
 		</Tabs.Navigator>

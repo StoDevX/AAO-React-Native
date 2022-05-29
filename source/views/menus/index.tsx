@@ -71,14 +71,17 @@ const CarletonMenuListView = () => CarletonCafeIndex
 
 const MenusView = (): JSX.Element => {
 	return (
-		<Tabs.Navigator>
+		<Tabs.Navigator
+			screenOptions={{
+				headerShown: false,
+			}}
+		>
 			<Tabs.Screen
 				component={StavHallMenuView}
 				name="StavHallMenuView"
 				options={{
 					tabBarLabel: 'Stav Hall',
 					tabBarIcon: TabBarIcon('nutrition'),
-					headerShown: false,
 				}}
 			/>
 			<Tabs.Screen
@@ -87,7 +90,6 @@ const MenusView = (): JSX.Element => {
 				options={{
 					tabBarLabel: 'The Cage',
 					tabBarIcon: TabBarIcon('cafe'),
-					headerShown: false,
 				}}
 			/>
 			<Tabs.Screen
@@ -96,7 +98,6 @@ const MenusView = (): JSX.Element => {
 				options={{
 					tabBarLabel: 'The Pause',
 					tabBarIcon: TabBarIcon('paw'),
-					headerShown: false,
 				}}
 			/>
 			<Tabs.Screen
@@ -105,7 +106,6 @@ const MenusView = (): JSX.Element => {
 				options={{
 					tabBarLabel: 'Carleton',
 					tabBarIcon: TabBarIcon('menu'),
-					headerShown: false,
 				}}
 			/>
 		</Tabs.Navigator>
