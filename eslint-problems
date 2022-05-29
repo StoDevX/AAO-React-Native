@@ -17,9 +17,6 @@
   38:51  warning  Argument 'item' should be typed with a non-any type  @typescript-eslint/explicit-module-boundary-types
   38:57  warning  Unexpected any. Specify a different type             @typescript-eslint/no-explicit-any
 
-./modules/navigation-buttons/close-screen.tsx
-  13:16  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
-
 ./modules/searchbar/animated.tsx
   20:2   warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
   38:24  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
@@ -216,5 +213,5 @@
 ./source/views/student-orgs/util.ts
   3:8  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
 
-✖ 125 problems (0 errors, 125 warnings)
+✖ 124 problems (0 errors, 124 warnings)
 
