@@ -9,13 +9,13 @@ import {areAnyTermsCached} from '../../../lib/course-search'
 import type {ReduxState} from '../../../redux'
 import {useDispatch, useSelector} from 'react-redux'
 import {NoticeView, LoadingView} from '@frogpond/notice'
-import {AnimatedSearchBar} from '@frogpond/searchbar'
 import {RecentItemsList} from '../components/recents-list'
-import {Separator} from '@frogpond/separator'
 import {buildFilters} from './lib/build-filters'
 import type {FilterComboType} from './lib/format-filter-combo'
 import fromPairs from 'lodash/fromPairs'
 import {useNavigation} from '@react-navigation/native'
+import {ChangeTextEvent} from '../../../navigation/types'
+import {debounce} from 'lodash'
 
 const PROMPT_TEXT =
 	'We need to download the courses from the server. This will take a few seconds.'
@@ -37,12 +37,59 @@ type Props = ReduxStateProps & ReduxDispatchProps
 
 type Mode = 'loading' | 'pending' | 'ready'
 
+let _debounce = debounce((query: string, callback: () => void) => {
+	if (query.length >= 2) {
+		callback()
+	}
+}, 1500)
+
 const CourseSearchView = (props: Props): JSX.Element => {
 	let [mode, setMode] = React.useState<Mode>('pending')
-	let [isSearchbarActive, setIsSearchbarActive] = React.useState(false)
 	let [typedQuery, setTypedQuery] = React.useState('')
 
 	let navigation = useNavigation()
+
+	React.useLayoutEffect(() => {
+		/**
+		 * SIS top-level recent searches tab has this setup.
+		 *
+		 * When we are one-level deep in a tab navigator, attaching a search bar to the
+		 * view will work fine. See: Recent course search --> Search results
+		 *
+		 * When we are top-level inside a tab navigator, attaching a search bar to the
+		 * view will not work. See: Tab.Navigator > Tab.Screen --> Course search
+		 *
+		 * The `getParent` workaround is provided in the react navigation docs.
+		 * https://reactnavigation.org/docs/navigation-prop#getparent
+		 *
+		 * getParent returns the navigation prop from the parent navigator that the
+		 * current navigator is nested in. If you have a stack navigator and a tab
+		 * navigator nested inside the stack, then you can use getParent inside a screen
+		 * of the tab navigator to get the navigation prop passed from the stack
+		 * navigator.
+		 */
+		navigation.getParent()?.setOptions({
+			headerSearchBarOptions: {
+				barTintColor: c.white,
+				onChangeText: (event: ChangeTextEvent) => {
+					setTypedQuery(event.nativeEvent.text)
+				},
+			},
+		})
+	}, [navigation, typedQuery])
+
+	let showSearchResult = React.useCallback(
+		(query: string) => {
+			navigation.navigate('CourseSearchResults', {initialQuery: query})
+		},
+		[navigation],
+	)
+
+	React.useEffect(() => {
+		_debounce(typedQuery, () => {
+			showSearchResult(typedQuery)
+		})
+	}, [showSearchResult, typedQuery])
 
 	let loadData = React.useCallback(
 		async ({userInitiated = true}: {userInitiated?: boolean} = {}) => {
@@ -84,33 +131,8 @@ const CourseSearchView = (props: Props): JSX.Element => {
 		loadData({userInitiated: false})
 	}, [loadData])
 
-	let handleSearchSubmit = () => {
-		navigation.navigate('CourseSearchResults', {
-			initialQuery: typedQuery,
-		})
-		setIsSearchbarActive(false)
-		setTypedQuery('')
-	}
-
-	let handleSearchCancel = () => {
-		setIsSearchbarActive(false)
-		setTypedQuery('')
-	}
-
-	let handleSearchChange = (value: string) => {
-		setTypedQuery(value)
-	}
-
-	let handleSearchFocus = () => {
-		setIsSearchbarActive(true)
-	}
-
 	let browseAll = () => {
 		navigation.navigate('CourseSearchResults', {initialQuery: ''})
-	}
-
-	let onRecentSearchPress = (text: string) => {
-		navigation.navigate('CourseSearchResults', {initialQuery: text})
 	}
 
 	let onRecentFilterPress = async (text: string) => {
@@ -152,20 +174,9 @@ const CourseSearchView = (props: Props): JSX.Element => {
 
 	return (
 		<View style={[styles.container, styles.common]}>
-			<AnimatedSearchBar
-				active={isSearchbarActive}
-				onCancel={handleSearchCancel}
-				onChange={handleSearchChange}
-				onFocus={handleSearchFocus}
-				onSubmit={handleSearchSubmit}
-				placeholder="Search Class & Lab"
-				title="Search Courses"
-				value={typedQuery}
-			/>
-
-			<Separator />
-
 			<ScrollView
+				// needed for handling native searchbar alignment
+				contentInsetAdjustmentBehavior="automatic"
 				keyboardDismissMode="interactive"
 				style={[styles.common, styles.bottomContainer]}
 			>
@@ -173,7 +184,7 @@ const CourseSearchView = (props: Props): JSX.Element => {
 					emptyHeader="No recent searches"
 					emptyText="Your recent searches will appear here."
 					items={props.recentSearches}
-					onItemPress={onRecentSearchPress}
+					onItemPress={showSearchResult}
 					title="Recent"
 				/>
 				<RecentItemsList
