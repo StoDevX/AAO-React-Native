@@ -102,8 +102,8 @@ const CourseSearchResultsView = (props: Props) => {
 			filtersLoaded={filtersLoaded}
 			onListItemPress={handleListItemPress}
 			onPopoverDismiss={updateFilter}
-			style={searchbarActive ? styles.darken : null}
 			query={delayedQuery}
+			style={searchbarActive ? styles.darken : {}}
 		/>
 	)
 }
