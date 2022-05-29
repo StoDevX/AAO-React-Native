@@ -125,29 +125,19 @@ source/views/sis/course-search/lib/execute-search.ts(2,27): error TS7016: Could 
   Try `npm i --save-dev @types/keyword-search` if it exists or add a new declaration (.d.ts) file containing `declare module 'keyword-search';`
 source/views/sis/course-search/lib/format-filter-combo.ts(37,50): error TS2345: Argument of type 'string | number' is not assignable to parameter of type 'string'.
   Type 'number' is not assignable to type 'string'.
-source/views/sis/course-search/results.tsx(55,21): error TS2345: Argument of type 'SetStateAction<string>' is not assignable to parameter of type 'SetStateAction<string | undefined>'.
-  Type '(prevState: string) => string' is not assignable to type 'SetStateAction<string | undefined>'.
-    Type '(prevState: string) => string' is not assignable to type '(prevState: string | undefined) => string | undefined'.
-      Types of parameters 'prevState' and 'prevState' are incompatible.
-        Type 'string | undefined' is not assignable to type 'string'.
-          Type 'undefined' is not assignable to type 'string'.
-source/views/sis/course-search/results.tsx(99,4): error TS2322: Type 'boolean | FilterType[]' is not assignable to type 'boolean'.
+source/views/sis/course-search/results.tsx(102,4): error TS2322: Type 'boolean | FilterType[]' is not assignable to type 'boolean'.
   Type 'FilterType[]' is not assignable to type 'boolean'.
-source/views/sis/course-search/results.tsx(102,4): error TS2322: Type 'string | undefined' is not assignable to type 'string'.
-  Type 'undefined' is not assignable to type 'string'.
-source/views/sis/course-search/results.tsx(103,4): error TS2322: Type '{} | null' is not assignable to type 'ViewStyle | undefined'.
-  Type 'null' is not assignable to type 'ViewStyle | undefined'.
-source/views/sis/course-search/results.tsx(119,31): error TS2345: Argument of type 'ThunkAction<UpdateRecentSearchesAction>' is not assignable to parameter of type 'AnyAction'.
+source/views/sis/course-search/results.tsx(122,31): error TS2345: Argument of type 'ThunkAction<UpdateRecentSearchesAction>' is not assignable to parameter of type 'AnyAction'.
   Property 'type' is missing in type 'ThunkAction<UpdateRecentSearchesAction>' but required in type 'AnyAction'.
-source/views/sis/course-search/results.tsx(123,39): error TS2345: Argument of type 'ThunkAction<UpdateRecentFiltersAction>' is not assignable to parameter of type 'AnyAction'.
+source/views/sis/course-search/results.tsx(126,39): error TS2345: Argument of type 'ThunkAction<UpdateRecentFiltersAction>' is not assignable to parameter of type 'AnyAction'.
   Property 'type' is missing in type 'ThunkAction<UpdateRecentFiltersAction>' but required in type 'AnyAction'.
-source/views/sis/course-search/search.tsx(207,18): error TS2345: Argument of type 'LoadCourseDataActionType' is not assignable to parameter of type 'AnyAction'.
+source/views/sis/course-search/search.tsx(218,18): error TS2345: Argument of type 'LoadCourseDataActionType' is not assignable to parameter of type 'AnyAction'.
   Property 'type' is missing in type 'LoadCourseDataActionType' but required in type 'AnyAction'.
-source/views/sis/course-search/search.tsx(211,18): error TS2345: Argument of type 'UpdateCourseDataActionType' is not assignable to parameter of type 'AnyAction'.
+source/views/sis/course-search/search.tsx(222,18): error TS2345: Argument of type 'UpdateCourseDataActionType' is not assignable to parameter of type 'AnyAction'.
   Property 'type' is missing in type 'UpdateCourseDataActionType' but required in type 'AnyAction'.
-source/views/sis/course-search/search.tsx(218,4): error TS2322: Type '() => AnyAction' is not assignable to type '() => Promise<any>'.
+source/views/sis/course-search/search.tsx(229,4): error TS2322: Type '() => AnyAction' is not assignable to type '() => Promise<any>'.
   Type 'AnyAction' is missing the following properties from type 'Promise<any>': then, catch, finally, [Symbol.toStringTag]
-source/views/sis/course-search/search.tsx(221,4): error TS2322: Type '() => AnyAction' is not assignable to type '() => Promise<any>'.
+source/views/sis/course-search/search.tsx(232,4): error TS2322: Type '() => AnyAction' is not assignable to type '() => Promise<any>'.
   Type 'AnyAction' is not assignable to type 'Promise<any>'.
 source/views/sis/student-work/index.tsx(62,41): error TS2304: Cannot find name 'mixed'.
 source/views/stoprint/print-jobs.tsx(203,36): error TS2345: Argument of type 'ThunkAction<LogInActions>' is not assignable to parameter of type 'AnyAction'.
