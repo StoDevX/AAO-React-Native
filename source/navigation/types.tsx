@@ -33,23 +33,15 @@ export type RootStackParamList = {
 	[calendar.NavigationKey]: calendar.NavigationParams
 	Contacts: undefined
 	ContactsDetail: {contact: ContactType}
-	Credits: undefined
-	Debug: undefined
-	APITest: undefined
 	DictionaryDetail: {item: WordType}
 	Dictionary: undefined
 	DictionaryEditor: {item: WordType}
-	Faq: undefined
 	Help: undefined
 	Job: undefined
 	JobDetail: {job: JobType}
-	Legal: undefined
 	Menus: undefined
 	BonAppPicker: undefined
 	News: undefined
-	Privacy: undefined
-	Settings: undefined
-	IconSettings: undefined
 	SIS: undefined
 	CourseSearchResults: {initialQuery?: string; initialFilters?: FilterType[]}
 	CourseDetail: {course: CourseType}
@@ -71,6 +63,17 @@ export type RootStackParamList = {
 	PrintJobRelease: {job: PrintJob; printer?: Printer}
 }
 
+export type SettingsStackParamList = {
+	APITest: undefined
+	Credits: undefined
+	Debug: undefined
+	Faq: undefined
+	IconSettings: undefined
+	Legal: undefined
+	Privacy: undefined
+	Settings: undefined
+}
+
 export interface ChangeTextEvent {
 	nativeEvent: {text: React.SetStateAction<string>}
 }
@@ -83,7 +86,8 @@ export interface OnChangeTextHandler {
 declare global {
 	// eslint-disable-next-line @typescript-eslint/no-namespace
 	namespace ReactNavigation {
-		// eslint-disable-next-line @typescript-eslint/no-empty-interface
-		interface RootParamList extends RootStackParamList {}
+		interface RootParamList
+			extends RootStackParamList,
+				SettingsStackParamList {}
 	}
 }
