@@ -1,4 +1,5 @@
 import * as React from 'react'
+import {StyleProp, ImageStyle} from 'react-native'
 import * as Icons from '@hawkrives/react-native-alternate-icons'
 import glamorous from 'glamorous-native'
 
@@ -11,31 +12,23 @@ const LogoImage = glamorous.image({
 })
 
 type Props = {
-	style?: StyleSheet
+	style?: StyleProp<ImageStyle>
 }
 
-type State = {
-	icon: number
-}
+export let AppLogo = (props: Props): JSX.Element => {
+	let [icon, setIcon] = React.useState(getAppIcon('default'))
 
-export class AppLogo extends React.Component<Props, State> {
-	state = {
-		icon: getAppIcon('default'),
-	}
-
-	componentDidMount() {
-		Icons.getIconName().then((name) => {
-			this.setState(() => ({icon: getAppIcon(name)}))
+	React.useEffect(() => {
+		Icons.getIconName().then((name: string) => {
+			setIcon(getAppIcon(name))
 		})
-	}
+	}, [])
 
-	render() {
-		return (
-			<LogoImage
-				accessibilityIgnoresInvertColors={true}
-				source={this.state.icon}
-				style={this.props.style}
-			/>
-		)
-	}
+	return (
+		<LogoImage
+			accessibilityIgnoresInvertColors={true}
+			source={icon}
+			style={props.style}
+		/>
+	)
 }
