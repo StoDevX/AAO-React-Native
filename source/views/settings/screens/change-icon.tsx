@@ -32,7 +32,7 @@ export const icons: Array<Icon> = [
 	},
 	{
 		src: appIcons.windmill,
-		title: 'Wind Turbine (Big Ole)',
+		title: 'Big Ole',
 		type: 'icon_type_windmill',
 	},
 ]
