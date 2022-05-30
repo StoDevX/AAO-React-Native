@@ -7,7 +7,6 @@ import {isDevMode} from '@frogpond/constants'
 
 import {ConnectedCredentialsLoginSection} from './login-credentials'
 import {MiscellanySection} from './miscellany'
-import {OddsAndEndsSection} from './odds-and-ends'
 import {SupportSection} from './support'
 import {DeveloperSection} from './developer'
 
@@ -29,8 +28,6 @@ const SettingsView = (): JSX.Element => (
 			<SupportSection />
 
 			<MiscellanySection />
-
-			<OddsAndEndsSection />
 
 			{isDevMode() && <DeveloperSection />}
 		</TableView>
