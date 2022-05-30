@@ -4,7 +4,6 @@ import * as Icons from '@hawkrives/react-native-alternate-icons'
 import {Cell, Section} from '@frogpond/tableview'
 import {icons as appIcons} from '../../../../images/icons'
 import * as c from '@frogpond/colors'
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 
 const styles = StyleSheet.create({
 	icon: {
@@ -106,8 +105,4 @@ let IconCell = (props: IconCellProps) => {
 			title={icon.title}
 		/>
 	)
-}
-
-export const NavigationOptions: NativeStackNavigationOptions = {
-	title: 'App Icon',
 }
