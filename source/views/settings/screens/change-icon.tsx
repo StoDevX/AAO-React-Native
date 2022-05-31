@@ -1,10 +1,9 @@
 import * as React from 'react'
-import {Image, ImageSourcePropType, ScrollView, StyleSheet} from 'react-native'
+import {Image, ImageSourcePropType, StyleSheet} from 'react-native'
 import * as Icons from '@hawkrives/react-native-alternate-icons'
-import {Cell, Section, TableView} from '@frogpond/tableview'
+import {Cell, Section} from '@frogpond/tableview'
 import {icons as appIcons} from '../../../../images/icons'
 import * as c from '@frogpond/colors'
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 
 const styles = StyleSheet.create({
 	icon: {
@@ -32,7 +31,7 @@ export const icons: Array<Icon> = [
 	},
 	{
 		src: appIcons.windmill,
-		title: 'Wind Turbine (Big Ole)',
+		title: 'Big Ole',
 		type: 'icon_type_windmill',
 	},
 ]
@@ -60,20 +59,16 @@ export let IconSettingsView = (): JSX.Element => {
 	}
 
 	return (
-		<ScrollView>
-			<TableView>
-				<Section header="CHANGE YOUR APP ICON" separatorInsetLeft={58}>
-					{icons.map((icon) => (
-						<IconCell
-							key={icon.type}
-							icon={icon}
-							isSelected={iconType === icon.type}
-							onPress={setIcon}
-						/>
-					))}
-				</Section>
-			</TableView>
-		</ScrollView>
+		<Section header="APP ICON" separatorInsetLeft={58}>
+			{icons.map((icon) => (
+				<IconCell
+					key={icon.type}
+					icon={icon}
+					isSelected={iconType === icon.type}
+					onPress={setIcon}
+				/>
+			))}
+		</Section>
 	)
 }
 
@@ -110,8 +105,4 @@ let IconCell = (props: IconCellProps) => {
 			title={icon.title}
 		/>
 	)
-}
-
-export const NavigationOptions: NativeStackNavigationOptions = {
-	title: 'App Icon',
 }
