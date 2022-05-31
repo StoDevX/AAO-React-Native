@@ -9,6 +9,7 @@ import {ConnectedCredentialsLoginSection} from './login-credentials'
 import {MiscellanySection} from './miscellany'
 import {SupportSection} from './support'
 import {DeveloperSection} from './developer'
+import {AppIconSection} from './app-icon'
 
 const styles = StyleSheet.create({
 	container: {
@@ -26,6 +27,8 @@ const SettingsView = (): JSX.Element => (
 			<ConnectedCredentialsLoginSection />
 
 			<SupportSection />
+
+			<AppIconSection />
 
 			<MiscellanySection />
 
