@@ -29,7 +29,7 @@ const getVersion = () => {
 	let build = appBuild()
 
 	if (build) {
-		return `${version}-${build}`
+		return `${version}+${build}`
 	} else {
 		return version
 	}
