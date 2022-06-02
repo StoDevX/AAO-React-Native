@@ -1,19 +1,16 @@
 import * as React from 'react'
 import {
 	ActivityIndicator,
-	ScrollView,
 	StyleProp,
 	StyleSheet,
 	Text,
 	TextStyle,
+	View,
 	ViewStyle,
 } from 'react-native'
 import * as c from '@frogpond/colors'
 import {Button} from '@frogpond/button'
 import {Heading} from '@frogpond/markdown'
-import {Icon} from '@frogpond/icon'
-import {getTheme} from '@frogpond/app-theme'
-import type {AppTheme} from '@frogpond/app-theme'
 
 const styles = StyleSheet.create({
 	container: {
@@ -36,8 +33,6 @@ const styles = StyleSheet.create({
 type Props = {
 	buttonDisabled?: boolean
 	header?: string
-	icon?: string
-	iconColor?: string
 	text?: string
 	style?: StyleProp<ViewStyle>
 	spinner?: boolean
@@ -50,18 +45,9 @@ export function NoticeView(props: Props): JSX.Element {
 	let {header, text, style, textStyle} = props
 	let {buttonDisabled, buttonText, onPress} = props
 	let {spinner} = props
-	let {icon, iconColor} = props
-
-	let theme: AppTheme = getTheme()
-
-	let iconStyles = {
-		color: iconColor ? iconColor : theme.accent,
-	}
 
 	return (
-		<ScrollView contentContainerStyle={[styles.container, style]}>
-			{icon ? <Icon name={icon} size={89} style={iconStyles} /> : null}
-
+		<View style={[styles.container, style]}>
 			{spinner ? <ActivityIndicator style={styles.spinner} /> : null}
 
 			{header ? (
@@ -81,6 +67,6 @@ export function NoticeView(props: Props): JSX.Element {
 					title={buttonText}
 				/>
 			) : null}
-		</ScrollView>
+		</View>
 	)
 }

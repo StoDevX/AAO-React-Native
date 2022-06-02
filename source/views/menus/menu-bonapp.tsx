@@ -239,7 +239,7 @@ export function BonAppHostedMenu(props: Props): JSX.Element {
 
 	if (!cafeMenu || !cafeInfo) {
 		let msg = `Something went wrong. Email ${SUPPORT_EMAIL} to let them know?`
-		return <NoticeView icon="warning-outline" text={msg} />
+		return <NoticeView text={msg} />
 	}
 
 	let {ignoreProvidedMenus = false} = props
