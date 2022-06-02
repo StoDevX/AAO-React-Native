@@ -272,7 +272,7 @@ const SettingsStackScreens = () => (
 		<SettingsStack.Screen component={settings.PrivacyView} name="Privacy" />
 		<SettingsStack.Screen component={settings.LegalView} name="Legal" />
 		<SettingsStack.Screen component={settings.APITestView} name="APITest" />
-		<Stack.Screen
+		<SettingsStack.Screen
 			component={DevBonAppPickerView}
 			name="BonAppPicker"
 			options={DevBonAppNavigationOptions}
