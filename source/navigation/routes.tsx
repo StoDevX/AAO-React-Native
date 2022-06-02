@@ -31,12 +31,7 @@ import * as streaming from '../views/streaming'
 import * as orgs from '../views/student-orgs'
 import * as transportation from '../views/transportation'
 import * as othermodes from '../views/transportation/other-modes'
-
-// import {
-// 	PrinterList,
-// 	PrintJobRelease,
-// 	PrintJobs,
-// } from '../views/stoprint'
+import * as stoprint from '../views/stoprint'
 import {StyleSheet} from 'react-native'
 import {getTheme} from '@frogpond/app-theme'
 import {RootStackParamList} from './types'
@@ -245,10 +240,24 @@ export function RootStack(): JSX.Element {
 				name="CourseSearchResults"
 			/>
 			<Stack.Screen component={CourseDetail} name="CourseDetail" />
+			</Stack.Group>*/}
+			<Stack.Group>
+				<Stack.Screen
+					component={stoprint.PrintJobsView}
+					name="PrintJobs"
+					options={stoprint.PrintJobsNavigationOptions}
+				/>
+				<Stack.Screen
+					component={stoprint.PrinterListView}
+					name="PrinterList"
+					options={stoprint.PrinterListNavigationOptions}
+				/>
+				<Stack.Screen
+					component={stoprint.PrintJobReleaseView}
+					name="PrintJobRelease"
+					options={stoprint.PrintJobReleaseNavigationOptions}
+				/>
 			</Stack.Group>
-			<Stack.Screen component={PrintJobs} name="PrintJobs" />
-			<Stack.Screen component={PrinterList} name="PrinterList" />
-			<Stack.Screen component={PrintJobRelease} name="PrintJobRelease" /> */}
 		</Stack.Navigator>
 	)
 }
