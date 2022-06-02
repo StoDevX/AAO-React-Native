@@ -8,7 +8,7 @@ import type {LoginStateEnum} from '../../redux/parts/login'
 import {logInViaCredentials} from '../../redux/parts/login'
 import {loadLoginCredentials} from '../../lib/login'
 import type {PrintJob} from '../../lib/stoprint'
-import {STOPRINT_HELP_PAGE} from '../../lib/stoprint'
+import {STOPRINT_HELP_PAGE, isStoprintMocked} from '../../lib/stoprint'
 import {
 	Detail,
 	ListRow,
@@ -27,10 +27,11 @@ import {getTimeRemaining} from './lib'
 import {Timer} from '@frogpond/timer'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 import {useNavigation} from '@react-navigation/native'
+import {DebugNoticeButton} from '@frogpond/navigation-buttons'
 
 type ReduxStateProps = {
 	jobs: Array<PrintJob>
-	error?: string
+	error: string | null
 	status: LoginStateEnum
 }
 
@@ -49,7 +50,11 @@ const PrintJobsView = (props: Props) => {
 
 	let logIn = React.useCallback(async () => {
 		let {status} = props
-		if (status === 'logged-in' || status === 'checking') {
+		if (
+			status === 'logged-in' ||
+			status === 'checking' ||
+			isStoprintMocked === true
+		) {
 			return
 		}
 
@@ -110,7 +115,7 @@ const PrintJobsView = (props: Props) => {
 		return <LoadingView text="Fetching a list of stoPrint Jobs…" />
 	}
 
-	if (props.status !== 'logged-in') {
+	if (props.status !== 'logged-in' && !isStoprintMocked) {
 		return (
 			<StoPrintNoticeView
 				buttonText="Open Settings"
@@ -216,4 +221,5 @@ export function ConnectedPrintJobsView(): JSX.Element {
 
 export const NavigationOptions: NativeStackNavigationOptions = {
 	title: 'Print Jobs',
+	headerRight: () => <DebugNoticeButton shouldShow={isStoprintMocked} />,
 }
