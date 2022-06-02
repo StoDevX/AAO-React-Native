@@ -21,7 +21,7 @@ import {trimItemLabel, trimStationName} from './lib/trim-names'
 import {decode, innerTextWithSpaces, parseHtml} from '@frogpond/html-lib'
 import {toLaxTitleCase} from '@frogpond/titlecase'
 import {API} from '@frogpond/api'
-import {fetch} from '@frogpond/fetch'
+import {useFetch} from 'react-async'
 
 const BONAPP_HTML_ERROR_CODE = 'bonapp-html'
 
@@ -150,96 +150,114 @@ function prepareFood(cafeMenu: MenuInfoType) {
 	}))
 }
 
+function useCafeMenu(menuUrl: string) {
+	return useFetch<MenuInfoType>(menuUrl, {
+		headers: {accept: 'application/json'},
+	})
+}
+
+function useCafeInfo(cafeUrl: string) {
+	return useFetch<CafeInfoType>(cafeUrl, {
+		headers: {accept: 'application/json'},
+	})
+}
+
+function getCafeThing(cafe: Props['cafe']) {
+	return typeof cafe === 'string' ? cafe : cafe.id
+}
+
+function buildUrls(cafeThing: Props['cafe']) {
+	let cafe = getCafeThing(cafeThing)
+
+	let cafeUrl = undefined
+	let menuUrl = undefined
+
+	if (typeof cafeThing === 'string') {
+		cafeUrl = API(`/food/named/cafe/${cafe}`)
+		menuUrl = API(`/food/named/menu/${cafe}`)
+	} else if ('id' in cafeThing) {
+		cafeUrl = API(`/food/cafe/${cafe}`)
+		menuUrl = API(`/food/menu/${cafe}`)
+	} else {
+		throw new Error('invalid cafe passed to BonappMenu!')
+	}
+
+	return {cafeUrl, menuUrl}
+}
+
+function getErrorMessage(error: Error | undefined) {
+	if (!(error instanceof Error)) {
+		return 'Unknown Error: Not an Error'
+	}
+
+	if (error.message === "JSON Parse error: Unrecognized token '<'") {
+		return BONAPP_HTML_ERROR_CODE
+	} else {
+		return error.message
+	}
+}
+
 export function BonAppHostedMenu(props: Props): JSX.Element {
+	let now = moment.tz(timezone())
+	let {cafeUrl, menuUrl} = buildUrls(props.cafe)
 	let [errorMessage, setErrorMessage] = useState<string | null>(null)
-	let [loading, setLoading] = useState<boolean>(true)
-	let [refreshing, setRefreshing] = useState<boolean>(false)
-	let [now, setNow] = useState<Moment>(moment.tz(timezone()))
-	let [cafeInfo, setCafeInfo] = useState<CafeInfoType | null>(null)
-	let [cafeMenu, setCafeMenu] = useState<MenuInfoType | null>(null)
+
+	let {
+		data: cafeMenu,
+		error: menuError,
+		reload: menuReload,
+		isPending: isMenuPending,
+		isInitial: isMenuInitial,
+		isLoading: isMenuLoading,
+	} = useCafeMenu(menuUrl)
+
+	let {
+		data: cafeInfo,
+		error: cafeError,
+		reload: cafeReload,
+		isPending: isCafePending,
+		isInitial: isCafeInitial,
+		isLoading: isCafeLoading,
+	} = useCafeInfo(cafeUrl)
 
 	useEffect(() => {
-		;(async () => {
-			setLoading(true)
-			await fetchData(props.cafe)
-			setLoading(false)
-		})()
-	}, [props.cafe])
-
-	let retry = () => {
-		;(async () => {
-			setLoading(true)
-			await fetchData(props.cafe)
-			setLoading(false)
-			setErrorMessage(null)
-		})()
-	}
-
-	let fetchData = async (cafeThing: Props['cafe'], reload?: boolean) => {
-		let menuUrl
-		let cafeUrl
-		let cafe = typeof cafeThing === 'string' ? cafeThing : cafeThing.id
-		if (typeof cafeThing === 'string') {
-			menuUrl = API(`/food/named/menu/${cafe}`)
-			cafeUrl = API(`/food/named/cafe/${cafe}`)
-		} else if ('id' in cafeThing) {
-			menuUrl = API(`/food/menu/${cafe}`)
-			cafeUrl = API(`/food/cafe/${cafe}`)
-		} else {
-			throw new Error('invalid cafe passed to BonappMenu!')
+		if (cafeError) {
+			setErrorMessage(getErrorMessage(cafeError))
 		}
 
-		try {
-			let delay = reload ? 500 : 0
-
-			let cafeMenuPromise = fetch(menuUrl, {delay}).json<MenuInfoType>()
-			let cafeInfoPromise = fetch(cafeUrl, {delay}).json<CafeInfoType>()
-
-			let [cafeMenu, cafeInfo] = await Promise.all([
-				cafeMenuPromise,
-				cafeInfoPromise,
-			])
-
-			setCafeMenu(cafeMenu ?? null)
-			setCafeInfo(cafeInfo ?? null)
-			setNow(moment.tz(timezone()))
-		} catch (error) {
-			if (!(error instanceof Error)) {
-				setErrorMessage('Unknown Error: Not an Error')
-				return
-			}
-			if (error.message === "JSON Parse error: Unrecognized token '<'") {
-				setErrorMessage(BONAPP_HTML_ERROR_CODE)
-			} else {
-				setErrorMessage(error.message)
-			}
+		if (menuError) {
+			setErrorMessage(getErrorMessage(menuError))
 		}
-	}
+	}, [cafeError, menuError])
 
-	let refresh = async (): Promise<void> => {
-		setRefreshing(true)
-		await fetchData(props.cafe, true)
-		setRefreshing(false)
-	}
+	let refreshing =
+		(isCafePending && !isCafeInitial) || (isMenuPending && !isMenuInitial)
 
-	if (loading) {
+	if (isMenuLoading || isCafeLoading) {
 		return <LoadingView text={sample(props.loadingMessage)} />
 	}
 
-	if (errorMessage) {
+	if (errorMessage?.length) {
 		let msg = `Error: ${errorMessage}`
 		if (errorMessage === BONAPP_HTML_ERROR_CODE) {
 			msg =
 				'Something between you and BonApp is having problems. Try again in a minute or two?'
 		}
-		return <NoticeView buttonText="Again!" onPress={retry} text={msg} />
+		return (
+			<NoticeView
+				buttonText="Again!"
+				onPress={() => {
+					cafeReload()
+					menuReload()
+				}}
+				text={msg}
+			/>
+		)
 	}
-
-	let cafe = typeof props.cafe === 'string' ? props.cafe : props.cafe.id
 
 	if (!cafeMenu || !cafeInfo) {
 		let msg = `Something went wrong. Email ${SUPPORT_EMAIL} to let them know?`
-		return <NoticeView icon="warning-outline" text={msg} />
+		return <NoticeView text={msg} />
 	}
 
 	let {ignoreProvidedMenus = false} = props
@@ -247,6 +265,7 @@ export function BonAppHostedMenu(props: Props): JSX.Element {
 	// The API returns an empty array for the cafeInfo.cafe value if there is no
 	// matching cafe with the inputted id number, otherwise it returns an non-array object
 	if (Array.isArray(cafeInfo.cafe)) {
+		let cafe = getCafeThing(props.cafe)
 		let msg = `There is no cafe with id #${cafe}`
 		return <NoticeView text={msg} />
 	}
@@ -268,7 +287,10 @@ export function BonAppHostedMenu(props: Props): JSX.Element {
 			menuCorIcons={cafeMenu.cor_icons}
 			name={props.name}
 			now={now}
-			onRefresh={refresh}
+			onRefresh={() => {
+				cafeReload()
+				menuReload()
+			}}
 			refreshing={refreshing}
 		/>
 	)

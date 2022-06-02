@@ -9,6 +9,7 @@ import {
 	View,
 	ViewStyle,
 } from 'react-native'
+import {white} from '@frogpond/colors'
 
 type Props = PressableProps & {
 	borderless?: boolean
@@ -42,7 +43,7 @@ const CustomPressable = forwardRef<View, Props>((props, ref): JSX.Element => {
 			containerAdjustmentStyle = (state) =>
 				state.pressed
 					? [{backgroundColor: underlayColor}, containerStyle]
-					: [containerStyle]
+					: [{backgroundColor: white}, containerStyle]
 		} else {
 			containerAdjustmentStyle = (state) =>
 				state.pressed

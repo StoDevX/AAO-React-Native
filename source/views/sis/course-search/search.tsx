@@ -50,25 +50,12 @@ const CourseSearchView = (props: Props): JSX.Element => {
 	let navigation = useNavigation()
 
 	React.useLayoutEffect(() => {
-		/**
-		 * SIS top-level recent searches tab has this setup.
-		 *
-		 * When we are one-level deep in a tab navigator, attaching a search bar to the
-		 * view will work fine. See: Recent course search --> Search results
-		 *
-		 * When we are top-level inside a tab navigator, attaching a search bar to the
-		 * view will not work. See: Tab.Navigator > Tab.Screen --> Course search
-		 *
-		 * The `getParent` workaround is provided in the react navigation docs.
-		 * https://reactnavigation.org/docs/navigation-prop#getparent
-		 *
-		 * getParent returns the navigation prop from the parent navigator that the
-		 * current navigator is nested in. If you have a stack navigator and a tab
-		 * navigator nested inside the stack, then you can use getParent inside a screen
-		 * of the tab navigator to get the navigation prop passed from the stack
-		 * navigator.
-		 */
-		navigation.getParent()?.setOptions({
+		// TODO: refactor the SIS tabview to not be tabview in order to support search.
+		// search will not be injected properly embedded inside of a tab navigator and
+		// calling navigation.getParent() is not a solution because the parent is a tab
+		// navigator so all top-level tabs here would receive a searchbar. For now we
+		// can at least rely on the "browse all" button to let us view search.
+		navigation.setOptions({
 			headerSearchBarOptions: {
 				barTintColor: c.white,
 				onChangeText: (event: ChangeTextEvent) => {

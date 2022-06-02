@@ -50,11 +50,7 @@ const PrintJobsView = (props: Props) => {
 
 	let logIn = React.useCallback(async () => {
 		let {status} = props
-		if (
-			status === 'logged-in' ||
-			status === 'checking' ||
-			isStoprintMocked === true
-		) {
+		if (status === 'logged-in' || status === 'checking' || isStoprintMocked) {
 			return
 		}
 

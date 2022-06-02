@@ -8,9 +8,9 @@ import {isDevMode} from '@frogpond/constants'
 
 import {ConnectedCredentialsLoginSection} from './login-credentials'
 import {MiscellanySection} from './miscellany'
-import {OddsAndEndsSection} from './odds-and-ends'
 import {SupportSection} from './support'
 import {DeveloperSection} from './developer'
+import {AppIconSection} from './app-icon'
 
 const styles = StyleSheet.create({
 	container: {
@@ -29,9 +29,9 @@ const SettingsView = (): JSX.Element => (
 
 			<SupportSection />
 
-			<MiscellanySection />
+			<AppIconSection />
 
-			<OddsAndEndsSection />
+			<MiscellanySection />
 
 			{isDevMode() && <DeveloperSection />}
 		</TableView>

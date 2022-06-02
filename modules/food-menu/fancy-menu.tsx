@@ -126,8 +126,6 @@ export function FancyMenu(props: Props): JSX.Element {
 		message = 'No items to show. Try changing the filters.'
 	}
 
-	const messageView = <NoticeView style={styles.message} text={message} />
-
 	// If the requested menu has no food items, that location is closed
 	const isOpen = Object.keys(foodItems).length !== 0
 
@@ -149,7 +147,7 @@ export function FancyMenu(props: Props): JSX.Element {
 	return (
 		<SectionList
 			ItemSeparatorComponent={Separator}
-			ListEmptyComponent={messageView}
+			ListEmptyComponent={<NoticeView style={styles.message} text={message} />}
 			ListHeaderComponent={header}
 			contentContainerStyle={styles.contentContainer}
 			extraData={filters}

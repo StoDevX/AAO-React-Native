@@ -265,18 +265,13 @@ const SettingsStackScreens = () => (
 	<SettingsStack.Navigator screenOptions={styledScreenOptions}>
 		<SettingsStack.Screen
 			component={settings.SettingsView}
-			name="Settings"
+			name="SettingsRoot"
 			options={settings.SettingsNavigationOptions}
 		/>
 		<SettingsStack.Screen
 			component={faqs.View}
 			name="Faq"
 			options={faqs.NavigationOptions}
-		/>
-		<SettingsStack.Screen
-			component={settings.IconSettingsView}
-			name="IconSettings"
-			options={settings.IconNavigationOptions}
 		/>
 		<SettingsStack.Screen component={settings.CreditsView} name="Credits" />
 		<SettingsStack.Screen component={settings.PrivacyView} name="Privacy" />
@@ -293,13 +288,11 @@ export const RootStack = (): JSX.Element => (
 			headerShown: false,
 		}}
 	>
-		<Stack.Screen component={HomeStackScreens} name="Home" />
+		<Stack.Screen component={HomeStackScreens} name="HomeRoot" />
 		<SettingsStack.Screen
 			component={SettingsStackScreens}
 			name="Settings"
-			options={{
-				presentation: 'modal',
-			}}
+			options={{presentation: 'modal'}}
 		/>
 	</Stack.Navigator>
 )

@@ -23,6 +23,7 @@ import {CourseType} from '../lib/course-search/types'
 
 export type RootStackParamList = {
 	Home: undefined
+	HomeRoot: undefined
 	Profile: {userId: string}
 	Feed: {sort: 'latest' | 'top'} | undefined
 	EventDetail: {event: EventType; poweredBy: PoweredBy}
@@ -72,6 +73,7 @@ export type SettingsStackParamList = {
 	Legal: undefined
 	Privacy: undefined
 	Settings: undefined
+	SettingsRoot: undefined
 }
 
 export interface ChangeTextEvent {
