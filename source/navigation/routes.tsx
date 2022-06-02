@@ -138,11 +138,6 @@ const HomeStackScreens = () => (
 		</Stack.Group>
 		<Stack.Group>
 			<Stack.Screen
-				component={DevBonAppPickerView}
-				name="BonAppPicker"
-				options={DevBonAppNavigationOptions}
-			/>
-			<Stack.Screen
 				component={menus.View}
 				name="Menus"
 				options={menus.NavigationOptions}
@@ -277,6 +272,11 @@ const SettingsStackScreens = () => (
 		<SettingsStack.Screen component={settings.PrivacyView} name="Privacy" />
 		<SettingsStack.Screen component={settings.LegalView} name="Legal" />
 		<SettingsStack.Screen component={settings.APITestView} name="APITest" />
+		<Stack.Screen
+			component={DevBonAppPickerView}
+			name="BonAppPicker"
+			options={DevBonAppNavigationOptions}
+		/>
 		<SettingsStack.Screen component={settings.DebugView} name="Debug" />
 	</SettingsStack.Navigator>
 )
