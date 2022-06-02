@@ -1,6 +1,6 @@
 import * as React from 'react'
 import {Alert} from 'react-native'
-import {Section, PushButtonCell} from '@frogpond/tableview'
+import {Section, PushButtonCell, Cell} from '@frogpond/tableview'
 import {sendEmail} from '../../../../components/send-email'
 import deviceInfo from 'react-native-device-info'
 import {appVersion, appBuild} from '@frogpond/constants'
@@ -12,7 +12,7 @@ const getDeviceInfo = () => `
 ----- Please do not edit below here -----
 ${deviceInfo.getBrand()} ${deviceInfo.getModel()}
 ${deviceInfo.getDeviceId()}
-${deviceInfo.getSystemName()} ${appVersion()}+${appBuild() || 'unknown'}
+${deviceInfo.getSystemName()} ${getVersion()}
 ${deviceInfo.getReadableVersion()}
 `
 
@@ -22,6 +22,17 @@ const openEmail = () => {
 		subject: 'Support: All About Olaf',
 		body: getDeviceInfo(),
 	})
+}
+
+const getVersion = () => {
+	let version = appVersion()
+	let build = appBuild()
+
+	if (build) {
+		return `${version}+${build}`
+	} else {
+		return version
+	}
 }
 
 export const SupportSection = (): JSX.Element => {
@@ -47,6 +58,7 @@ export const SupportSection = (): JSX.Element => {
 			<PushButtonCell onPress={openEmail} title="Contact Us" />
 			<PushButtonCell onPress={() => navigation.navigate('Faq')} title="FAQs" />
 			<PushButtonCell onPress={onResetButton} title="Reset Everything" />
+			<Cell cellStyle="RightDetail" detail={getVersion()} title="Version" />
 		</Section>
 	)
 }

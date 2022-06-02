@@ -82,11 +82,6 @@ export function RootStack(): JSX.Element {
 					name="Faq"
 					options={faqs.NavigationOptions}
 				/>
-				<Stack.Screen
-					component={settings.IconSettingsView}
-					name="IconSettings"
-					options={settings.IconNavigationOptions}
-				/>
 				<Stack.Screen component={settings.CreditsView} name="Credits" />
 				<Stack.Screen component={settings.PrivacyView} name="Privacy" />
 				<Stack.Screen component={settings.LegalView} name="Legal" />

@@ -89,11 +89,8 @@ source/views/menus/lib/process-menu-shorthands.ts(22,3): error TS2783: 'descript
 source/views/menus/lib/process-menu-shorthands.ts(25,3): error TS2739: Type '{}' is missing the following properties from type 'MonotonyContainer': id, name, image
 source/views/menus/lib/process-menu-shorthands.ts(31,3): error TS2740: Type '{}' is missing the following properties from type 'NutritionDetailContainer': calories, servingSize, fatContent, saturatedFatContent, and 7 more.
 source/views/menus/lib/process-menu-shorthands.ts(35,3): error TS2783: 'special' is specified more than once, so this usage will be overwritten.
-source/views/settings/components/logo.tsx(2,24): error TS7016: Could not find a declaration file for module '@hawkrives/react-native-alternate-icons'. './node_modules/@hawkrives/react-native-alternate-icons/index.js' implicitly has an 'any' type.
+source/views/settings/components/logo.tsx(3,24): error TS7016: Could not find a declaration file for module '@hawkrives/react-native-alternate-icons'. './node_modules/@hawkrives/react-native-alternate-icons/index.js' implicitly has an 'any' type.
   Try `npm i --save-dev @types/hawkrives__react-native-alternate-icons` if it exists or add a new declaration (.d.ts) file containing `declare module '@hawkrives/react-native-alternate-icons';`
-source/views/settings/components/logo.tsx(27,29): error TS7006: Parameter 'name' implicitly has an 'any' type.
-source/views/settings/components/logo.tsx(37,5): error TS2322: Type 'StyleSheet | undefined' is not assignable to type 'StyleProp<ImageStyle>'.
-  Type 'StyleSheet' is not assignable to type 'StyleProp<ImageStyle>'.
 source/views/settings/screens/change-icon.tsx(3,24): error TS7016: Could not find a declaration file for module '@hawkrives/react-native-alternate-icons'. './node_modules/@hawkrives/react-native-alternate-icons/index.js' implicitly has an 'any' type.
   Try `npm i --save-dev @types/hawkrives__react-native-alternate-icons` if it exists or add a new declaration (.d.ts) file containing `declare module '@hawkrives/react-native-alternate-icons';`
 source/views/settings/screens/debug/list.tsx(10,36): error TS2307: Cannot find module 'react-navigation' or its corresponding type declarations.
@@ -101,11 +98,11 @@ source/views/settings/screens/debug/row.tsx(40,5): error TS2322: Type 'string | 
   Type 'string' is not assignable to type 'false | "DisclosureIndicator" | "Detail" | "DetailDisclosure" | "Checkmark" | undefined'.
 source/views/settings/screens/debug/row.tsx(43,5): error TS2322: Type '((key: string) => any) | null' is not assignable to type '(() => false | void) | undefined'.
   Type 'null' is not assignable to type '(() => false | void) | undefined'.
+source/views/settings/screens/overview/app-icon.tsx(2,24): error TS7016: Could not find a declaration file for module '@hawkrives/react-native-alternate-icons'. './node_modules/@hawkrives/react-native-alternate-icons/index.js' implicitly has an 'any' type.
+  Try `npm i --save-dev @types/hawkrives__react-native-alternate-icons` if it exists or add a new declaration (.d.ts) file containing `declare module '@hawkrives/react-native-alternate-icons';`
 source/views/settings/screens/overview/login-credentials.tsx(140,13): error TS2345: Argument of type 'ThunkAction<LogInActions>' is not assignable to parameter of type 'AnyAction'.
 source/views/settings/screens/overview/login-credentials.tsx(146,12): error TS2345: Argument of type 'Promise<LogOutAction>' is not assignable to parameter of type 'AnyAction'.
   Property 'type' is missing in type 'Promise<LogOutAction>' but required in type 'AnyAction'.
-source/views/settings/screens/overview/miscellany.tsx(4,24): error TS7016: Could not find a declaration file for module '@hawkrives/react-native-alternate-icons'. './node_modules/@hawkrives/react-native-alternate-icons/index.js' implicitly has an 'any' type.
-  Try `npm i --save-dev @types/hawkrives__react-native-alternate-icons` if it exists or add a new declaration (.d.ts) file containing `declare module '@hawkrives/react-native-alternate-icons';`
 source/views/settings/screens/overview/server-url.tsx(46,5): error TS2769: No overload matches this call.
   Overload 1 of 2, '(props: Props | Readonly<Props>): CellTextField', gave the following error.
     Type 'RefObject<CellTextField>' is not assignable to type '{ current: TextInput | null; }'.
@@ -125,6 +122,8 @@ source/views/sis/course-search/lib/execute-search.ts(2,27): error TS7016: Could 
   Try `npm i --save-dev @types/keyword-search` if it exists or add a new declaration (.d.ts) file containing `declare module 'keyword-search';`
 source/views/sis/course-search/lib/format-filter-combo.ts(37,50): error TS2345: Argument of type 'string | number' is not assignable to parameter of type 'string'.
   Type 'number' is not assignable to type 'string'.
+source/views/sis/course-search/list.tsx(104,4): error TS2322: Type '{ icon: string; iconColor: string; style: { paddingVertical: number; }; text: string; }' is not assignable to type 'IntrinsicAttributes & Props'.
+  Property 'icon' does not exist on type 'IntrinsicAttributes & Props'.
 source/views/sis/course-search/results.tsx(102,4): error TS2322: Type 'boolean | FilterType[]' is not assignable to type 'boolean'.
   Type 'FilterType[]' is not assignable to type 'boolean'.
 source/views/sis/course-search/results.tsx(122,31): error TS2345: Argument of type 'ThunkAction<UpdateRecentSearchesAction>' is not assignable to parameter of type 'AnyAction'.
@@ -140,12 +139,14 @@ source/views/sis/course-search/search.tsx(229,4): error TS2322: Type '() => AnyA
 source/views/sis/course-search/search.tsx(232,4): error TS2322: Type '() => AnyAction' is not assignable to type '() => Promise<any>'.
   Type 'AnyAction' is not assignable to type 'Promise<any>'.
 source/views/sis/student-work/index.tsx(62,41): error TS2304: Cannot find name 'mixed'.
-source/views/stoprint/print-jobs.tsx(203,36): error TS2345: Argument of type 'ThunkAction<LogInActions>' is not assignable to parameter of type 'AnyAction'.
-source/views/stoprint/print-jobs.tsx(207,18): error TS2345: Argument of type 'ThunkAction<UpdatePrintJobsAction>' is not assignable to parameter of type 'AnyAction'.
+source/views/sis/tes.tsx(10,3): error TS2322: Type '{ buttonText: string; header: string; icon: string; iconColor: string; onPress: () => Promise<boolean>; text: string; }' is not assignable to type 'IntrinsicAttributes & Props'.
+  Property 'icon' does not exist on type 'IntrinsicAttributes & Props'.
+source/views/stoprint/print-jobs.tsx(199,36): error TS2345: Argument of type 'ThunkAction<LogInActions>' is not assignable to parameter of type 'AnyAction'.
+source/views/stoprint/print-jobs.tsx(203,18): error TS2345: Argument of type 'ThunkAction<UpdatePrintJobsAction>' is not assignable to parameter of type 'AnyAction'.
   Property 'type' is missing in type 'ThunkAction<UpdatePrintJobsAction>' but required in type 'AnyAction'.
-source/views/stoprint/print-jobs.tsx(215,4): error TS2322: Type '(username: any, password: any) => AnyAction' is not assignable to type '(username: string, password: string) => Promise<any>'.
+source/views/stoprint/print-jobs.tsx(211,4): error TS2322: Type '(username: any, password: any) => AnyAction' is not assignable to type '(username: string, password: string) => Promise<any>'.
   Type 'AnyAction' is not assignable to type 'Promise<any>'.
-source/views/stoprint/print-jobs.tsx(217,4): error TS2322: Type '() => AnyAction' is not assignable to type '() => Promise<any>'.
+source/views/stoprint/print-jobs.tsx(213,4): error TS2322: Type '() => AnyAction' is not assignable to type '() => Promise<any>'.
   Type 'AnyAction' is not assignable to type 'Promise<any>'.
 source/views/stoprint/printers.tsx(163,18): error TS2345: Argument of type 'ThunkAction<UpdateAllPrintersAction>' is not assignable to parameter of type 'AnyAction'.
   Property 'type' is missing in type 'ThunkAction<UpdateAllPrintersAction>' but required in type 'AnyAction'.
