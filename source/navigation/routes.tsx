@@ -9,11 +9,9 @@ import * as contacts from '../views/contacts'
 import * as dictionary from '../views/dictionary'
 import * as faqs from '../views/faqs'
 import * as help from '../views/help'
-// import {
-// 	CourseDetail,
-// 	CourseSearchResults,
-// 	JobDetail,
-// } from '../views/sis'
+import * as sis from '../views/sis'
+import * as studentwork from '../views/sis/student-work'
+import * as studentworkdetail from '../views/sis/student-work/detail'
 import * as menus from '../views/menus'
 import * as carletonmenus from '../views/menus/carleton-menus'
 import {
@@ -231,16 +229,33 @@ export function RootStack(): JSX.Element {
 					options={news.NavigationOptions}
 				/>
 			</Stack.Group>
-			{/*
-			<Stack.Screen component={JobDetail} name="JobDetail" />
-			<Stack.Screen component={Menus} name="Menus" />
-			<Stack.Screen component={SIS} name="SIS" />
-			<Stack.Screen
-				component={CourseSearchResults}
-				name="CourseSearchResults"
-			/>
-			<Stack.Screen component={CourseDetail} name="CourseDetail" />
-			</Stack.Group>*/}
+			<Stack.Group>
+				<Stack.Screen
+					component={studentwork.View}
+					name="Job"
+					options={studentwork.NavigationOptions}
+				/>
+				<Stack.Screen
+					component={studentworkdetail.View}
+					name="JobDetail"
+					options={studentworkdetail.NavigationOptions}
+				/>
+				<Stack.Screen
+					component={sis.View}
+					name="SIS"
+					options={sis.NavigationOptions}
+				/>
+				<Stack.Screen
+					component={sis.CourseSearchResultsView}
+					name="CourseSearchResults"
+					options={sis.CourseSearchNavigationOptions}
+				/>
+				<Stack.Screen
+					component={sis.CourseDetailView}
+					name="CourseDetail"
+					options={sis.CourseSearchDetailNavigationOptions}
+				/>
+			</Stack.Group>
 			<Stack.Group>
 				<Stack.Screen
 					component={stoprint.PrintJobsView}

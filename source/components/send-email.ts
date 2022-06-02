@@ -1,4 +1,5 @@
-import {Alert, Clipboard} from 'react-native'
+import {Alert} from 'react-native'
+import Clipboard from '@react-native-community/clipboard'
 import {email} from 'react-native-communications'
 
 type Args = {
