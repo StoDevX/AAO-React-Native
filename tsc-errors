@@ -130,17 +130,15 @@ source/views/sis/course-search/results.tsx(122,31): error TS2345: Argument of ty
   Property 'type' is missing in type 'ThunkAction<UpdateRecentSearchesAction>' but required in type 'AnyAction'.
 source/views/sis/course-search/results.tsx(126,39): error TS2345: Argument of type 'ThunkAction<UpdateRecentFiltersAction>' is not assignable to parameter of type 'AnyAction'.
   Property 'type' is missing in type 'ThunkAction<UpdateRecentFiltersAction>' but required in type 'AnyAction'.
-source/views/sis/course-search/search.tsx(218,18): error TS2345: Argument of type 'LoadCourseDataActionType' is not assignable to parameter of type 'AnyAction'.
+source/views/sis/course-search/search.tsx(205,18): error TS2345: Argument of type 'LoadCourseDataActionType' is not assignable to parameter of type 'AnyAction'.
   Property 'type' is missing in type 'LoadCourseDataActionType' but required in type 'AnyAction'.
-source/views/sis/course-search/search.tsx(222,18): error TS2345: Argument of type 'UpdateCourseDataActionType' is not assignable to parameter of type 'AnyAction'.
+source/views/sis/course-search/search.tsx(209,18): error TS2345: Argument of type 'UpdateCourseDataActionType' is not assignable to parameter of type 'AnyAction'.
   Property 'type' is missing in type 'UpdateCourseDataActionType' but required in type 'AnyAction'.
-source/views/sis/course-search/search.tsx(229,4): error TS2322: Type '() => AnyAction' is not assignable to type '() => Promise<any>'.
+source/views/sis/course-search/search.tsx(216,4): error TS2322: Type '() => AnyAction' is not assignable to type '() => Promise<any>'.
   Type 'AnyAction' is missing the following properties from type 'Promise<any>': then, catch, finally, [Symbol.toStringTag]
-source/views/sis/course-search/search.tsx(232,4): error TS2322: Type '() => AnyAction' is not assignable to type '() => Promise<any>'.
+source/views/sis/course-search/search.tsx(219,4): error TS2322: Type '() => AnyAction' is not assignable to type '() => Promise<any>'.
   Type 'AnyAction' is not assignable to type 'Promise<any>'.
 source/views/sis/student-work/index.tsx(62,41): error TS2304: Cannot find name 'mixed'.
-source/views/sis/tes.tsx(10,3): error TS2322: Type '{ buttonText: string; header: string; icon: string; iconColor: string; onPress: () => Promise<boolean>; text: string; }' is not assignable to type 'IntrinsicAttributes & Props'.
-  Property 'icon' does not exist on type 'IntrinsicAttributes & Props'.
 source/views/stoprint/print-jobs.tsx(199,36): error TS2345: Argument of type 'ThunkAction<LogInActions>' is not assignable to parameter of type 'AnyAction'.
 source/views/stoprint/print-jobs.tsx(203,18): error TS2345: Argument of type 'ThunkAction<UpdatePrintJobsAction>' is not assignable to parameter of type 'AnyAction'.
   Property 'type' is missing in type 'ThunkAction<UpdatePrintJobsAction>' but required in type 'AnyAction'.
