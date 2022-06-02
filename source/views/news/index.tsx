@@ -27,14 +27,13 @@ const OlevilleNewsView = () => (
 
 const NewsView = (): JSX.Element => {
 	return (
-		<Tabs.Navigator>
+		<Tabs.Navigator screenOptions={{headerShown: false}}>
 			<Tabs.Screen
 				component={StOlafNewsView}
 				name="StOlafNewsView"
 				options={{
 					tabBarLabel: 'St. Olaf',
 					tabBarIcon: TabBarIcon('school'),
-					headerShown: false,
 				}}
 			/>
 			<Tabs.Screen
@@ -43,7 +42,6 @@ const NewsView = (): JSX.Element => {
 				options={{
 					tabBarLabel: 'The Mess',
 					tabBarIcon: TabBarIcon('newspaper'),
-					headerShown: false,
 				}}
 			/>
 			<Tabs.Screen
@@ -52,7 +50,6 @@ const NewsView = (): JSX.Element => {
 				options={{
 					tabBarLabel: 'Oleville',
 					tabBarIcon: TabBarIcon('happy'),
-					headerShown: false,
 				}}
 			/>
 		</Tabs.Navigator>

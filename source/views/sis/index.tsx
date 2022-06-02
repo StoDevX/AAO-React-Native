@@ -33,14 +33,13 @@ const StudentWork = () => <StudentWorkView />
 
 const SisView = (): JSX.Element => {
 	return (
-		<Tabs.Navigator>
+		<Tabs.Navigator screenOptions={{headerShown: false}}>
 			<Tabs.Screen
 				component={Balances}
 				name="BalancesView"
 				options={{
 					tabBarLabel: 'Balances',
 					tabBarIcon: TabBarIcon('card'),
-					headerShown: false,
 				}}
 			/>
 			<Tabs.Screen
@@ -49,7 +48,6 @@ const SisView = (): JSX.Element => {
 				options={{
 					tabBarLabel: 'Course Search',
 					tabBarIcon: TabBarIcon('search'),
-					headerShown: false,
 				}}
 			/>
 			<Tabs.Screen
@@ -58,7 +56,6 @@ const SisView = (): JSX.Element => {
 				options={{
 					tabBarLabel: 'TES',
 					tabBarIcon: TabBarIcon('cash'),
-					headerShown: false,
 				}}
 			/>
 			<Tabs.Screen
@@ -67,7 +64,6 @@ const SisView = (): JSX.Element => {
 				options={{
 					tabBarLabel: 'Open Jobs',
 					tabBarIcon: TabBarIcon('briefcase'),
-					headerShown: false,
 				}}
 			/>
 		</Tabs.Navigator>
