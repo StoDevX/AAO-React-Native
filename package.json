@@ -103,7 +103,7 @@
     "react-native-button": "3.0.1",
     "react-native-calendar-events": "2.2.0",
     "react-native-communications": "2.2.1",
-    "react-native-device-info": "8.7.0",
+    "react-native-device-info": "9.0.0",
     "react-native-gesture-handler": "2.4.1",
     "react-native-ios-context-menu": "1.7.4",
     "react-native-keychain": "8.0.0",
