@@ -1,6 +1,7 @@
 import * as React from 'react'
 import {StyleSheet, ScrollView} from 'react-native'
 import {TableView} from '@frogpond/tableview'
+import {CloseScreenButton} from '@frogpond/navigation-buttons'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 
 import {isDevMode} from '@frogpond/constants'
@@ -41,4 +42,5 @@ export {SettingsView as View}
 
 export const NavigationOptions: NativeStackNavigationOptions = {
 	title: 'Settings',
+	headerRight: () => <CloseScreenButton />,
 }

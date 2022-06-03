@@ -27,14 +27,13 @@ const OlesGoView = () => <BusView line="Oles Go" />
 
 const TransportationView = (): JSX.Element => {
 	return (
-		<Tabs.Navigator>
+		<Tabs.Navigator screenOptions={{headerShown: false}}>
 			<Tabs.Screen
 				component={ExpressLineBusView}
 				name="ExpressLineBusView"
 				options={{
 					tabBarLabel: 'Express Bus',
 					tabBarIcon: TabBarIcon('bus'),
-					headerShown: false,
 				}}
 			/>
 			<Tabs.Screen
@@ -43,7 +42,6 @@ const TransportationView = (): JSX.Element => {
 				options={{
 					tabBarLabel: 'Red Line',
 					tabBarIcon: TabBarIcon('bus'),
-					headerShown: false,
 				}}
 			/>
 			<Tabs.Screen
@@ -52,7 +50,6 @@ const TransportationView = (): JSX.Element => {
 				options={{
 					tabBarLabel: 'Blue Line',
 					tabBarIcon: TabBarIcon('bus'),
-					headerShown: false,
 				}}
 			/>
 			<Tabs.Screen
@@ -61,7 +58,6 @@ const TransportationView = (): JSX.Element => {
 				options={{
 					tabBarLabel: 'Oles Go',
 					tabBarIcon: TabBarIcon('car'),
-					headerShown: false,
 				}}
 			/>
 			<Tabs.Screen
@@ -70,7 +66,6 @@ const TransportationView = (): JSX.Element => {
 				options={{
 					tabBarLabel: 'Other Modes',
 					tabBarIcon: TabBarIcon('boat'),
-					headerShown: false,
 				}}
 			/>
 		</Tabs.Navigator>
