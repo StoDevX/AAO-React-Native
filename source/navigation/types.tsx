@@ -41,7 +41,6 @@ export type RootStackParamList = {
 	Job: undefined
 	JobDetail: {job: JobType}
 	Menus: undefined
-	BonAppPicker: undefined
 	News: undefined
 	SIS: undefined
 	CourseSearchResults: {initialQuery?: string; initialFilters?: FilterType[]}
@@ -66,6 +65,7 @@ export type RootStackParamList = {
 
 export type SettingsStackParamList = {
 	APITest: undefined
+	BonAppPicker: undefined
 	Credits: undefined
 	Debug: undefined
 	Faq: undefined
