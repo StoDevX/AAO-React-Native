@@ -263,21 +263,28 @@ const HomeStackScreens = () => (
 
 const SettingsStackScreens = () => (
 	<SettingsStack.Navigator screenOptions={styledScreenOptions}>
-		<SettingsStack.Screen
-			component={settings.SettingsView}
-			name="SettingsRoot"
-			options={settings.SettingsNavigationOptions}
-		/>
-		<SettingsStack.Screen
-			component={faqs.View}
-			name="Faq"
-			options={faqs.NavigationOptions}
-		/>
-		<SettingsStack.Screen component={settings.CreditsView} name="Credits" />
-		<SettingsStack.Screen component={settings.PrivacyView} name="Privacy" />
-		<SettingsStack.Screen component={settings.LegalView} name="Legal" />
-		<SettingsStack.Screen component={settings.APITestView} name="APITest" />
-		<SettingsStack.Screen component={settings.DebugView} name="Debug" />
+		{/* user */}
+		<SettingsStack.Group>
+			<SettingsStack.Screen
+				component={settings.SettingsView}
+				name="SettingsRoot"
+				options={settings.SettingsNavigationOptions}
+			/>
+			<SettingsStack.Screen
+				component={faqs.View}
+				name="Faq"
+				options={faqs.NavigationOptions}
+			/>
+			<SettingsStack.Screen component={settings.CreditsView} name="Credits" />
+			<SettingsStack.Screen component={settings.PrivacyView} name="Privacy" />
+			<SettingsStack.Screen component={settings.LegalView} name="Legal" />
+		</SettingsStack.Group>
+
+		{/* developer */}
+		<SettingsStack.Group>
+			<SettingsStack.Screen component={settings.APITestView} name="APITest" />
+			<SettingsStack.Screen component={settings.DebugView} name="Debug" />
+		</SettingsStack.Group>
 	</SettingsStack.Navigator>
 )
 
