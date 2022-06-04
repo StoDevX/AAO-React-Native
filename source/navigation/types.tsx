@@ -69,6 +69,8 @@ export type SettingsStackParamList = {
 	Credits: undefined
 	Debug: undefined
 	Faq: undefined
+	FeatureFlags: undefined
+	FeatureFlagsDetail: {flags: FeatureFlagSectionType}
 	IconSettings: undefined
 	Legal: undefined
 	Privacy: undefined
