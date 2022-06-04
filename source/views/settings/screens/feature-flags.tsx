@@ -24,7 +24,13 @@ export const FeatureFlagsView = (): JSX.Element => {
 
 	let navigation = useNavigation()
 
-	React.useEffect(() => setSections(AppConfig), [])
+	React.useEffect(() => {
+		async function fetchData() {
+			let config = await AppConfig()
+			setSections(config)
+		}
+		fetchData()
+	}, [])
 
 	return (
 		<FlatList
