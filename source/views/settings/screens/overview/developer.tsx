@@ -12,6 +12,7 @@ export const DeveloperSection = (): React.ReactElement => {
 	const onAPIButton = () => navigation.navigate('APITest')
 	const onBonAppButton = () => navigation.navigate('BonAppPicker')
 	const onDebugButton = () => navigation.navigate('Debug')
+	const onFeatureFlagsButton = () => navigation.navigate('FeatureFlags')
 	const sendSentryMessage = () => {
 		Sentry.captureMessage('A Sentry Message', {level: Sentry.Severity.Info})
 		showSentryAlert()
@@ -37,6 +38,7 @@ export const DeveloperSection = (): React.ReactElement => {
 	return (
 		<>
 			<Section header="DEVELOPER">
+				<PushButtonCell onPress={onFeatureFlagsButton} title="Feature Flags" />
 				<PushButtonCell onPress={onAPIButton} title="API Tester" />
 				<PushButtonCell onPress={onBonAppButton} title="Bon Appetit Picker" />
 				<PushButtonCell disabled={true} onPress={onDebugButton} title="Debug" />
