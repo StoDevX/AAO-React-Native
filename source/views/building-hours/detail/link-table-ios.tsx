@@ -22,6 +22,7 @@ export function LinkTable(props: Props): React.ReactElement {
 					<PushButtonCell
 						key={i}
 						onPress={() => openUrl(link.url.toString())}
+						showLinkStyle={true}
 						title={link.title}
 					/>
 				))}
