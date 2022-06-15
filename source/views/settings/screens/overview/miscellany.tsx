@@ -18,7 +18,11 @@ export let MiscellanySection = (): JSX.Element => {
 			<PushButtonCell onPress={onCreditsButton} title="Credits" />
 			<PushButtonCell onPress={onPrivacyButton} title="Privacy Policy" />
 			<PushButtonCell onPress={onLegalButton} title="Legal" />
-			<PushButtonCell onPress={onSourceButton} title="Contributing" />
+			<PushButtonCell
+				onPress={onSourceButton}
+				showLinkStyle={true}
+				title="Contributing"
+			/>
 		</Section>
 	)
 }

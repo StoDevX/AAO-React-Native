@@ -55,9 +55,17 @@ export const SupportSection = (): JSX.Element => {
 
 	return (
 		<Section header="SUPPORT">
-			<PushButtonCell onPress={openEmail} title="Contact Us" />
 			<PushButtonCell onPress={() => navigation.navigate('Faq')} title="FAQs" />
-			<PushButtonCell onPress={onResetButton} title="Reset Everything" />
+			<PushButtonCell
+				onPress={openEmail}
+				showLinkStyle={true}
+				title="Contact Us"
+			/>
+			<PushButtonCell
+				onPress={onResetButton}
+				showLinkStyle={true}
+				title="Reset Everything"
+			/>
 			<Cell cellStyle="RightDetail" detail={getVersion()} title="Version" />
 		</Section>
 	)
