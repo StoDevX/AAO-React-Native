@@ -1,6 +1,5 @@
-import {Alert, Linking, Platform} from 'react-native'
+import {Linking, Platform} from 'react-native'
 
-import {appName} from '@frogpond/constants'
 import SafariView from 'react-native-safari-view'
 import {openURL} from '@frogpond/react-native-chrome-custom-tabs'
 
@@ -72,18 +71,4 @@ export function canOpenUrl(url: string): boolean {
 		return false
 	}
 	return true
-}
-
-export function openUrlInBrowser({url}: {url: string; id?: string}): void {
-	return promptConfirm(url)
-}
-
-function promptConfirm(url: string): void {
-	let app = appName()
-	let title = `Leaving ${app}`
-	let detail = `A web page will be opened in a browser outside of ${app}.`
-	Alert.alert(title, detail, [
-		{text: 'Cancel', onPress: () => null},
-		{text: 'Open', onPress: () => genericOpen(url)},
-	])
 }
