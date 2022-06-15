@@ -5,7 +5,7 @@
  */
 
 import * as React from 'react'
-import {TableView, Section} from 'react-native-tableview-simple'
+import {TableView, Section} from '@frogpond/tableview'
 import {PushButtonCell} from '@frogpond/tableview/cells'
 import {openUrl} from '@frogpond/open-url'
 import type {BuildingLinkType} from '../types'

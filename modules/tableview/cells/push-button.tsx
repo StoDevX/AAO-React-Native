@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {Cell} from 'react-native-tableview-simple'
+import {Cell} from '@frogpond/tableview'
 
 type Props = {
 	title: string
