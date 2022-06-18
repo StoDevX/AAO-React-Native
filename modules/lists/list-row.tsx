@@ -1,7 +1,6 @@
 import * as React from 'react'
 import {PropsWithChildren} from 'react'
 import {Platform, StyleProp, StyleSheet, View, ViewStyle} from 'react-native'
-import * as c from '@frogpond/colors'
 import {Touchable} from '@frogpond/touchable'
 import {DisclosureArrow} from './disclosure-arrow'
 
@@ -12,7 +11,6 @@ const styles = StyleSheet.create({
 	container: {
 		flexDirection: 'row',
 		paddingLeft: 15,
-		backgroundColor: c.white,
 		...Platform.select({
 			ios: {
 				paddingVertical: 8,

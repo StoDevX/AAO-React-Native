@@ -17,6 +17,9 @@ import glamorous from 'glamorous-native'
 import {ShareButton} from '@frogpond/navigation-buttons'
 import {shareJob, createJobFullUrl} from './lib'
 import {decode} from '@frogpond/html-lib'
+import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+import {RouteProp, useRoute} from '@react-navigation/native'
+import {RootStackParamList} from '../../../navigation/types'
 
 const styles = StyleSheet.create({
 	lastUpdated: {
@@ -186,38 +189,37 @@ function LastUpdated({when}: {when: string}) {
 	) : null
 }
 
-type Props = {
-	navigation: {state: {params: {job: JobType}}}
-}
-
-export class JobDetailView extends React.PureComponent<Props> {
-	static navigationOptions = ({navigation}: any) => {
-		let {job} = navigation.state.params
-		return {
-			title: job.title,
-			headerRight: <ShareButton onPress={() => shareJob(job)} />,
-		}
-	}
-
-	render() {
-		let job = this.props.navigation.state.params.job
-
-		return (
-			<ScrollView>
-				<Title selectable={true}>{job.title}</Title>
-				<TableView>
-					<ContactInformation job={job} />
-					<JobInformation job={job} />
-					<FirstYearAppropriate job={job} />
-					<Description job={job} />
-					<Skills job={job} />
-					<Comments job={job} />
-					<HowToApply job={job} />
-					<Timeline job={job} />
-					<OpenWebpage job={job} />
-				</TableView>
-				<LastUpdated when={job.lastModified} />
-			</ScrollView>
-		)
+export const NavigationOptions = (props: {
+	route: RouteProp<RootStackParamList, 'JobDetail'>
+}): NativeStackNavigationOptions => {
+	let {job} = props.route.params
+	return {
+		title: job.title,
+		headerRight: () => <ShareButton onPress={() => shareJob(job)} />,
 	}
 }
+
+export const JobDetailView = (): JSX.Element => {
+	let route = useRoute<RouteProp<RootStackParamList, 'JobDetail'>>()
+	let {job} = route.params
+
+	return (
+		<ScrollView>
+			<Title selectable={true}>{job.title}</Title>
+			<TableView>
+				<ContactInformation job={job} />
+				<JobInformation job={job} />
+				<FirstYearAppropriate job={job} />
+				<Description job={job} />
+				<Skills job={job} />
+				<Comments job={job} />
+				<HowToApply job={job} />
+				<Timeline job={job} />
+				<OpenWebpage job={job} />
+			</TableView>
+			<LastUpdated when={job.lastModified} />
+		</ScrollView>
+	)
+}
+
+export {JobDetailView as View}

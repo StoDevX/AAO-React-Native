@@ -14,12 +14,14 @@ import {
 	MultiLineDetailCell,
 	MultiLineLeftDetailCell,
 } from '@frogpond/tableview'
-import type {TopLevelViewPropsType} from '../../../types'
 import * as c from '@frogpond/colors'
 import {deptNum} from '../lib/format-dept-num'
 import groupBy from 'lodash/groupBy'
 import map from 'lodash/map'
 import zip from 'lodash/zip'
+import {RouteProp, useRoute} from '@react-navigation/native'
+import {RootStackParamList} from '../../../../navigation/types'
+import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 
 const Container = glamorous.scrollView({
 	paddingVertical: 6,
@@ -180,38 +182,37 @@ function Description({course}: {course: CourseType}) {
 	return <Section header="DESCRIPTION">{description}</Section>
 }
 
-type Props = TopLevelViewPropsType & {
-	navigation: {state: {params: {course: CourseType}}}
-}
-
 const BGCOLORS = {
 	Open: c.moneyGreen,
 	Closed: c.salmon,
 }
 
-export class CourseDetailView extends React.PureComponent<Props> {
-	static navigationOptions = ({navigation}: any) => {
-		let course = navigation.state.params.course
-		return {
-			title: course.name,
-		}
+export const NavigationOptions = (props: {
+	route: RouteProp<RootStackParamList, 'CourseDetail'>
+}): NativeStackNavigationOptions => {
+	let {name} = props.route.params.course
+	return {
+		title: name,
 	}
+}
 
-	render() {
-		let course = this.props.navigation.state.params.course
-		let status = course.status === 'O' ? 'Open' : 'Closed'
-		return (
-			<Container>
-				<Header>{course.title || course.name}</Header>
-				<SubHeader>{deptNum(course)}</SubHeader>
-				<Badge accentColor={BGCOLORS[status]} status={status} />
-				<TableView>
-					<Information course={course} />
-					<Schedule course={course} />
-					<Notes course={course} />
-					<Description course={course} />
-				</TableView>
-			</Container>
-		)
-	}
+export const CourseDetailView = (): JSX.Element => {
+	let route = useRoute<RouteProp<RootStackParamList, 'CourseDetail'>>()
+	let {course} = route.params
+
+	let status = course.status === 'O' ? 'Open' : 'Closed'
+
+	return (
+		<Container>
+			<Header>{course.title || course.name}</Header>
+			<SubHeader>{deptNum(course)}</SubHeader>
+			<Badge accentColor={BGCOLORS[status]} status={status} />
+			<TableView>
+				<Information course={course} />
+				<Schedule course={course} />
+				<Notes course={course} />
+				<Description course={course} />
+			</TableView>
+		</Container>
+	)
 }

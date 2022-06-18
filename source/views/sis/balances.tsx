@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/react-native'
 import * as React from 'react'
 import {
 	StyleSheet,
@@ -17,11 +18,10 @@ import {loadLoginCredentials} from '../../lib/login'
 import type {ReduxState} from '../../redux'
 import delay from 'delay'
 import * as c from '@frogpond/colors'
-import type {TopLevelViewPropsType} from '../types'
+import {sto} from '../../lib/colors'
+import {useNavigation} from '@react-navigation/native'
 
 const DISCLAIMER = 'This data may be outdated or otherwise inaccurate.'
-
-type ReactProps = TopLevelViewPropsType
 
 type ReduxStateProps = {
 	status: LoginStateEnum
@@ -31,177 +31,162 @@ type ReduxDispatchProps = {
 	logInViaCredentials: (username: string, password: string) => void
 }
 
-type Props = ReactProps & ReduxStateProps & ReduxDispatchProps
+type Props = ReduxStateProps & ReduxDispatchProps
 
-type State = {
-	loading: boolean
-	flex: string | null
-	ole: string | null
-	print: string | null
-	weeklyMeals: string | null
-	dailyMeals: string | null
-	mealPlan: string | null
-	message: string | null
-}
+const BalancesView = (props: Props) => {
+	let [loading, setLoading] = React.useState(false)
+	let [flex, setFlex] = React.useState<string | null>(null)
+	let [ole, setOle] = React.useState<string | null>(null)
+	let [print, setPrint] = React.useState<string | null>(null)
+	let [weeklyMeals, setWeeklyMeals] = React.useState<string | null>(null)
+	let [dailyMeals, setDailyMeals] = React.useState<string | null>(null)
+	let [mealPlan, setMealPlan] = React.useState<string | null>(null)
+	let [message, setMessage] = React.useState<string | null>(null)
 
-class BalancesView extends React.Component<Props, State> {
-	state = {
-		loading: false,
-		flex: null,
-		ole: null,
-		print: null,
-		weeklyMeals: null,
-		dailyMeals: null,
-		mealPlan: null,
-		message: null,
-	}
+	let navigation = useNavigation()
 
-	componentDidMount() {
-		// calling "refresh" here, to make clear to the user
-		// that the data is being updated
-		this.refresh()
-	}
-
-	refresh = async () => {
-		let start = Date.now()
-		this.setState(() => ({loading: true}))
-
-		await this.fetchData()
-
-		// wait 0.5 seconds – if we let it go at normal speed, it feels broken.
-		let elapsed = Date.now() - start
-		await delay(500 - elapsed)
-
-		this.setState(() => ({loading: false}))
-	}
-
-	logIn = async () => {
-		let {status} = this.props
+	let logIn = React.useCallback(async () => {
+		let {status} = props
 		if (status === 'logged-in' || status === 'checking') {
 			return
 		}
 
 		let {username = '', password = ''} = await loadLoginCredentials()
 		if (username && password) {
-			await this.props.logInViaCredentials(username, password)
+			await props.logInViaCredentials(username, password)
 		}
-	}
+	}, [props])
 
-	fetchData = async () => {
-		// trigger the login so that the banner at the bottom hides itself
-		await this.logIn()
+	let fetchData = React.useCallback(async () => {
+		try {
+			// trigger the login so that the banner at the bottom hides itself
+			await logIn()
 
-		let balances = await getBalances()
+			let balances = await getBalances()
 
-		if (balances.error) {
-			return
+			if (balances.error) {
+				return
+			}
+
+			let {value} = balances
+
+			let {flex, ole, print} = value
+			let {weekly: weeklyMeals, daily: dailyMeals, plan: mealPlan} = value
+
+			setMessage('')
+			setFlex(flex)
+			setOle(ole)
+			setPrint(print)
+			setWeeklyMeals(weeklyMeals)
+			setDailyMeals(dailyMeals)
+			setMealPlan(mealPlan)
+		} catch (error) {
+			setMessage('An unexpected error occured while updating.')
+			console.error(error)
+			Sentry.captureException(error)
 		}
+	}, [logIn])
 
-		let {value} = balances
+	let refresh = React.useCallback(async () => {
+		let start = Date.now()
+		setLoading(true)
 
-		let {flex, ole, print} = value
-		let {weekly: weeklyMeals, daily: dailyMeals, plan: mealPlan} = value
+		await fetchData()
 
-		this.setState(() => ({
-			flex,
-			ole,
-			print,
-			weeklyMeals,
-			dailyMeals,
-			mealPlan,
-		}))
-	}
+		// wait 0.5 seconds – if we let it go at normal speed, it feels broken.
+		let elapsed = Date.now() - start
+		await delay(500 - elapsed)
 
-	openSettings = () => this.props.navigation.navigate('SettingsView')
+		setLoading(false)
+	}, [fetchData])
 
-	render() {
-		let {
-			flex,
-			ole,
-			print,
-			dailyMeals,
-			weeklyMeals,
-			mealPlan,
-			message,
-			loading,
-		} = this.state
-		let {status} = this.props
+	React.useEffect(() => {
+		// calling "refresh" here, to make clear to the user
+		// that the data is being updated
+		refresh()
+	}, [refresh])
 
-		return (
-			<ScrollView
-				contentContainerStyle={styles.stage}
-				refreshControl={
-					<RefreshControl
-						onRefresh={this.refresh}
-						refreshing={this.state.loading}
-					/>
-				}
-			>
-				<TableView>
-					<Section footer={DISCLAIMER} header="BALANCES">
-						<View style={styles.balancesRow}>
-							<FormattedValueCell
-								indeterminate={loading}
-								label="Flex"
-								value={flex}
-							/>
+	let openSettings = () => navigation.navigate('Settings')
 
-							<FormattedValueCell
-								indeterminate={loading}
-								label="Ole"
-								value={ole}
-							/>
+	let {status} = props
 
-							<FormattedValueCell
-								indeterminate={loading}
-								label="Copy/Print"
-								style={styles.finalCell}
-								value={print}
-							/>
-						</View>
-					</Section>
+	return (
+		<ScrollView
+			contentContainerStyle={styles.stage}
+			refreshControl={
+				<RefreshControl onRefresh={refresh} refreshing={loading} />
+			}
+		>
+			<TableView>
+				<Section footer={DISCLAIMER} header="BALANCES">
+					<View style={styles.balancesRow}>
+						<FormattedValueCell
+							indeterminate={loading}
+							label="Flex"
+							value={flex}
+						/>
 
-					<Section footer={DISCLAIMER} header="MEAL PLAN">
-						<View style={styles.balancesRow}>
-							<FormattedValueCell
-								indeterminate={loading}
-								label="Daily Meals Left"
-								value={dailyMeals}
-							/>
+						<FormattedValueCell
+							indeterminate={loading}
+							label="Ole"
+							value={ole}
+						/>
 
-							<FormattedValueCell
-								indeterminate={loading}
-								label="Weekly Meals Left"
-								style={styles.finalCell}
-								value={weeklyMeals}
-							/>
-						</View>
-						{mealPlan && (
-							<Cell cellStyle="Subtitle" detail={mealPlan} title="Meal Plan" />
-						)}
-					</Section>
-				</TableView>
+						<FormattedValueCell
+							indeterminate={loading}
+							label="Copy/Print"
+							style={styles.finalCell}
+							value={print}
+						/>
+					</View>
+				</Section>
 
-				{(status !== 'logged-in' || message) && (
+				<Section footer={DISCLAIMER} header="MEAL PLAN">
+					<View style={styles.balancesRow}>
+						<FormattedValueCell
+							indeterminate={loading}
+							label="Daily Meals Left"
+							value={dailyMeals}
+						/>
+
+						<FormattedValueCell
+							indeterminate={loading}
+							label="Weekly Meals Left"
+							style={styles.finalCell}
+							value={weeklyMeals}
+						/>
+					</View>
+					{Boolean(mealPlan) && mealPlan !== null && (
+						<Cell cellStyle="Subtitle" detail={mealPlan} title="Meal Plan" />
+					)}
+				</Section>
+
+				{(status !== 'logged-in' || Boolean(message)) && (
 					<Section footer="You'll need to log in in order to see this data.">
 						{status !== 'logged-in' ? (
 							<Cell
 								accessory="DisclosureIndicator"
 								cellStyle="Basic"
-								onPress={this.openSettings}
+								onPress={openSettings}
 								title="Log in with St. Olaf"
 							/>
 						) : null}
 
-						{message ? <Cell cellStyle="Basic" title={message} /> : null}
+						{message ? (
+							<Cell
+								cellStyle="Basic"
+								title={message}
+								titleTextColor={sto.red}
+							/>
+						) : null}
 					</Section>
 				)}
-			</ScrollView>
-		)
-	}
+			</TableView>
+		</ScrollView>
+	)
 }
 
-export function ConnectedBalancesView(props: TopLevelViewPropsType) {
+export function ConnectedBalancesView(): JSX.Element {
 	let dispatch = useDispatch()
 	let status = useSelector(
 		(state: ReduxState) => state.login?.status || 'initializing',
@@ -214,7 +199,7 @@ export function ConnectedBalancesView(props: TopLevelViewPropsType) {
 		[dispatch],
 	)
 
-	return <BalancesView {...props} logInViaCredentials={logIn} status={status} />
+	return <BalancesView logInViaCredentials={logIn} status={status} />
 }
 
 let styles = StyleSheet.create({

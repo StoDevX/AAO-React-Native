@@ -2,6 +2,7 @@ import React from 'react'
 // import {HomeView} from '../views/home'
 // import * as Calendar from '../views/calendar'
 import {EventType} from '@frogpond/event-type'
+import {FilterType} from '@frogpond/filter/types'
 import {PoweredBy} from '@frogpond/event-list'
 import {BuildingType} from '../views/building-hours/types'
 
@@ -16,10 +17,18 @@ import type {
 	MasterCorIconMapType,
 	MenuItemType as MenuItem,
 } from '../views/menus/types'
+<<<<<<< HEAD
 import {DirectoryItem} from '../views/directory/types'
+||||||| fe7026171
+=======
+import {Printer, PrintJob} from '../lib/stoprint/types'
+import {JobType} from '../views/sis/student-work/types'
+import {CourseType} from '../lib/course-search/types'
+>>>>>>> master
 
 export type RootStackParamList = {
 	Home: undefined
+	HomeRoot: undefined
 	Profile: {userId: string}
 	Feed: {sort: 'latest' | 'top'} | undefined
 	EventDetail: {event: EventType; poweredBy: PoweredBy}
@@ -30,27 +39,25 @@ export type RootStackParamList = {
 	[calendar.NavigationKey]: calendar.NavigationParams
 	Contacts: undefined
 	ContactsDetail: {contact: ContactType}
-	Credits: undefined
-	Debug: undefined
-	APITest: undefined
 	DictionaryDetail: {item: WordType}
 	Dictionary: undefined
 	DictionaryEditor: {item: WordType}
+<<<<<<< HEAD
 	Directory: undefined
 	DirectoryDetail: {contact: DirectoryItem}
 	Faq: undefined
+||||||| fe7026171
+	Faq: undefined
+=======
+>>>>>>> master
 	Help: undefined
-	JobDetail: undefined
-	Legal: undefined
+	Job: undefined
+	JobDetail: {job: JobType}
 	Menus: undefined
-	BonAppPicker: undefined
 	News: undefined
-	Privacy: undefined
-	Settings: undefined
-	IconSettings: undefined
 	SIS: undefined
-	CourseSearchResults: undefined
-	CourseDetail: undefined
+	CourseSearchResults: {initialQuery?: string; initialFilters?: FilterType[]}
+	CourseDetail: {course: CourseType}
 	Streaming: undefined
 	KSTOSchedule: undefined
 	KRLXSchedule: undefined
@@ -65,8 +72,21 @@ export type RootStackParamList = {
 	CarletonSaylesMenu: undefined
 	MenuItemDetail: {item: MenuItem; icons: MasterCorIconMapType}
 	PrintJobs: undefined
-	PrinterList: undefined
-	PrintJobRelease: undefined
+	PrinterList: {job: PrintJob}
+	PrintJobRelease: {job: PrintJob; printer?: Printer}
+}
+
+export type SettingsStackParamList = {
+	APITest: undefined
+	BonAppPicker: undefined
+	Credits: undefined
+	Debug: undefined
+	Faq: undefined
+	IconSettings: undefined
+	Legal: undefined
+	Privacy: undefined
+	Settings: undefined
+	SettingsRoot: undefined
 }
 
 export interface ChangeTextEvent {
@@ -81,7 +101,8 @@ export interface OnChangeTextHandler {
 declare global {
 	// eslint-disable-next-line @typescript-eslint/no-namespace
 	namespace ReactNavigation {
-		// eslint-disable-next-line @typescript-eslint/no-empty-interface
-		interface RootParamList extends RootStackParamList {}
+		interface RootParamList
+			extends RootStackParamList,
+				SettingsStackParamList {}
 	}
 }

@@ -42,10 +42,12 @@ export const DeveloperSection = (): React.ReactElement => {
 				<PushButtonCell disabled={true} onPress={onDebugButton} title="Debug" />
 				<PushButtonCell
 					onPress={sendSentryMessage}
+					showLinkStyle={true}
 					title="Send a Sentry Message"
 				/>
 				<PushButtonCell
 					onPress={sendSentryException}
+					showLinkStyle={true}
 					title="Send a Sentry Exception"
 				/>
 			</Section>

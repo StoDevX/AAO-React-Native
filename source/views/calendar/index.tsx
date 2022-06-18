@@ -50,14 +50,13 @@ function NorthfieldCalendarView() {
 
 function CalendarView(): JSX.Element {
 	return (
-		<Tabs.Navigator>
+		<Tabs.Navigator screenOptions={{headerShown: false}}>
 			<Tabs.Screen
 				component={StOlafCalendarView}
 				name="StOlafCalendarView"
 				options={{
 					tabBarLabel: 'St. Olaf',
 					tabBarIcon: TabBarIcon('school'),
-					headerShown: false,
 				}}
 			/>
 			<Tabs.Screen
@@ -66,7 +65,6 @@ function CalendarView(): JSX.Element {
 				options={{
 					tabBarLabel: 'Oleville',
 					tabBarIcon: TabBarIcon('happy'),
-					headerShown: false,
 				}}
 			/>
 			<Tabs.Screen
@@ -75,7 +73,6 @@ function CalendarView(): JSX.Element {
 				options={{
 					tabBarLabel: 'Northfield',
 					tabBarIcon: TabBarIcon('happy'),
-					headerShown: false,
 				}}
 			/>
 		</Tabs.Navigator>

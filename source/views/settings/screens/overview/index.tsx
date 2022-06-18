@@ -1,15 +1,16 @@
 import * as React from 'react'
 import {StyleSheet, ScrollView} from 'react-native'
 import {TableView} from '@frogpond/tableview'
+import {CloseScreenButton} from '@frogpond/navigation-buttons'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 
 import {isDevMode} from '@frogpond/constants'
 
 import {ConnectedCredentialsLoginSection} from './login-credentials'
 import {MiscellanySection} from './miscellany'
-import {OddsAndEndsSection} from './odds-and-ends'
 import {SupportSection} from './support'
 import {DeveloperSection} from './developer'
+import {AppIconSection} from './app-icon'
 
 const styles = StyleSheet.create({
 	container: {
@@ -28,9 +29,9 @@ const SettingsView = (): JSX.Element => (
 
 			<SupportSection />
 
-			<MiscellanySection />
+			<AppIconSection />
 
-			<OddsAndEndsSection />
+			<MiscellanySection />
 
 			{isDevMode() && <DeveloperSection />}
 		</TableView>
@@ -41,4 +42,5 @@ export {SettingsView as View}
 
 export const NavigationOptions: NativeStackNavigationOptions = {
 	title: 'Settings',
+	headerRight: () => <CloseScreenButton />,
 }
