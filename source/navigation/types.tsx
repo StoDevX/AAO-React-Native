@@ -17,14 +17,10 @@ import type {
 	MasterCorIconMapType,
 	MenuItemType as MenuItem,
 } from '../views/menus/types'
-<<<<<<< HEAD
-import {DirectoryItem} from '../views/directory/types'
-||||||| fe7026171
-=======
 import {Printer, PrintJob} from '../lib/stoprint/types'
 import {JobType} from '../views/sis/student-work/types'
 import {CourseType} from '../lib/course-search/types'
->>>>>>> master
+import {DirectoryItem} from '../views/directory/types'
 
 export type RootStackParamList = {
 	Home: undefined
@@ -42,14 +38,9 @@ export type RootStackParamList = {
 	DictionaryDetail: {item: WordType}
 	Dictionary: undefined
 	DictionaryEditor: {item: WordType}
-<<<<<<< HEAD
 	Directory: undefined
 	DirectoryDetail: {contact: DirectoryItem}
 	Faq: undefined
-||||||| fe7026171
-	Faq: undefined
-=======
->>>>>>> master
 	Help: undefined
 	Job: undefined
 	JobDetail: {job: JobType}
