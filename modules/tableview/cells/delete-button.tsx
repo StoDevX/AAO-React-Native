@@ -1,6 +1,6 @@
 import * as React from 'react'
 import {StyleSheet, Alert} from 'react-native'
-import {Cell} from 'react-native-tableview-simple'
+import {Cell} from '@frogpond/tableview'
 import * as c from '@frogpond/colors'
 import noop from 'lodash/noop'
 

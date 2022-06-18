@@ -6,7 +6,7 @@ import {
 	TextInput,
 	TextInputProps,
 } from 'react-native'
-import {Cell} from 'react-native-tableview-simple'
+import {Cell} from '@frogpond/tableview'
 import * as c from '@frogpond/colors'
 
 const styles = StyleSheet.create({
