@@ -86,18 +86,22 @@ export function DirectoryDetailView(): JSX.Element {
 
 				{campusLocations.map((loc: CampusLocation, i: number) => (
 					<Section key={i} header="OFFICE">
-						<Cell
-							cellStyle="LeftDetail"
-							detail="Location"
-							title={loc.display}
-						/>
-						<Cell
-							accessory="DisclosureIndicator"
-							cellStyle="LeftDetail"
-							detail="Phone"
-							onPress={() => callPhone(loc.phone, {prompt: false})}
-							title={loc.phone}
-						/>
+						{Boolean(loc.display) &&
+							<Cell
+								cellStyle="LeftDetail"
+								detail="Location"
+								title={loc.display}
+							/>
+						}
+						{Boolean(loc.phone) &&
+							<Cell
+								accessory="DisclosureIndicator"
+								cellStyle="LeftDetail"
+								detail="Phone"
+								onPress={() => callPhone(loc.phone, {prompt: false})}
+								title={loc.phone}
+							/>
+						}
 					</Section>
 				))}
 
