@@ -86,14 +86,14 @@ export function DirectoryDetailView(): JSX.Element {
 
 				{campusLocations.map((loc: CampusLocation, i: number) => (
 					<Section key={i} header="OFFICE">
-						{Boolean(loc.display) &&
+						{Boolean(loc.display) && (
 							<Cell
 								cellStyle="LeftDetail"
 								detail="Location"
 								title={loc.display}
 							/>
-						}
-						{Boolean(loc.phone) &&
+						)}
+						{Boolean(loc.phone) && (
 							<Cell
 								accessory="DisclosureIndicator"
 								cellStyle="LeftDetail"
@@ -101,7 +101,7 @@ export function DirectoryDetailView(): JSX.Element {
 								onPress={() => callPhone(loc.phone, {prompt: false})}
 								title={loc.phone}
 							/>
-						}
+						)}
 					</Section>
 				))}
 
