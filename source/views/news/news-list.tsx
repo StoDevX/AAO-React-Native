@@ -9,7 +9,7 @@ import {LoadingView, NoticeView} from '@frogpond/notice'
 import {openUrl} from '@frogpond/open-url'
 import {NewsRow} from './news-row'
 import {cleanEntries, trimStoryCateogry} from './lib/util'
-import {FilterToolbar, FilterType, ListType} from '@frogpond/filter'
+import {FilterToolbar, ListType} from '@frogpond/filter'
 
 type Props = {
 	source: string | {url: string; type: 'rss' | 'wp-json'}
@@ -124,7 +124,7 @@ export const NewsList = (props: Props): JSX.Element => {
 				let edited = filters.map((f) =>
 					f.key === newFilter.key ? newFilter : f,
 				)
-				setFilters(edited)
+				setFilters(edited as ListType[])
 			}}
 		/>
 	)
