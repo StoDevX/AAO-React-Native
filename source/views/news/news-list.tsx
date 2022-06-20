@@ -9,6 +9,7 @@ import {LoadingView, NoticeView} from '@frogpond/notice'
 import {openUrl} from '@frogpond/open-url'
 import {NewsRow} from './news-row'
 import {cleanEntries, trimStoryCateogry} from './lib/util'
+import {FilterToolbar, FilterType, ListType} from '@frogpond/filter'
 
 type Props = {
 	source: string | {url: string; type: 'rss' | 'wp-json'}
@@ -53,6 +54,71 @@ export const NewsList = (props: Props): JSX.Element => {
 
 	let entries = cleanEntries(data)
 
+	let [filters, setFilters] = React.useState<FilterType[]>([])
+	let getStoryCategories = React.useCallback((story: StoryType) => {
+		return story.categories.map((c) => trimStoryCateogry(c))
+	}, [])
+
+	let buildFilters = React.useCallback(() => {
+		let allCategories = entries.flatMap((story) => getStoryCategories(story))
+
+		if (allCategories.length === 0) {
+			setFilters([])
+			return
+		}
+
+		let categories = [...new Set(allCategories)].sort()
+		let filterCategories = categories.map((c) => {
+			return {title: c}
+		})
+
+		let newsFilters: ListType[] = [
+			{
+				type: 'list',
+				key: 'category', // TODO: figure if this is referencing anything or is simply unique
+				enabled: true,
+				spec: {
+					title: 'Categories',
+					options: filterCategories,
+					selected: filterCategories,
+					mode: 'OR',
+					displayTitle: true,
+				},
+				apply: {key: 'category'}, // TODO: figure out what this should reference
+			},
+		]
+		setFilters(newsFilters)
+
+		// Note:
+		// We have infinite re-rendering issues if we add 'entries' and 'getStoryCategories'
+		// to the dependency array. To reliably get this to re-render we need something to retrigger
+		// this callback.
+		//
+		// I recognize that:
+		// 1. disabling the linter for hooks is not great,
+		// 2. excluding two hook dependencies is less than ideal,
+		// 3. including an extraneous dependency is bad practice.
+		//
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [isPending])
+
+	React.useEffect(() => buildFilters(), [buildFilters])
+
+	let filterStories = React.useCallback(() => {
+		return entries.filter((story) => {
+			let enabledCategories = filters.flatMap((f: ListType) =>
+				f.spec.selected.flatMap((s) => s.title),
+			)
+
+			if (enabledCategories.length === 0) {
+				return entries
+			}
+
+			return getStoryCategories(story).some((category) =>
+				enabledCategories.includes(category),
+			)
+		})
+	}, [entries, filters, getStoryCategories])
 
 	if (error) {
 		return (
@@ -64,6 +130,18 @@ export const NewsList = (props: Props): JSX.Element => {
 		)
 	}
 
+	const header = (
+		<FilterToolbar
+			filters={filters}
+			onPopoverDismiss={(newFilter) => {
+				let edited = filters.map((f) =>
+					f.key === newFilter.key ? newFilter : f,
+				)
+				setFilters(edited)
+			}}
+		/>
+	)
+
 	return (
 		<FlatList
 			ItemSeparatorComponent={() => (
@@ -72,10 +150,17 @@ export const NewsList = (props: Props): JSX.Element => {
 				/>
 			)}
 			ListEmptyComponent={
-				isLoading ? <LoadingView /> : <NoticeView text="No news." />
+				isLoading ? (
+					<LoadingView />
+				) : filters.some((f: ListType) => f.spec.selected.length) ? (
+					<NoticeView text="No stories to show. Try changing the filters." />
+				) : (
+					<NoticeView text="No news stories." />
+				)
 			}
+			ListHeaderComponent={header}
 			contentContainerStyle={styles.contentContainer}
-			data={entries}
+			data={filterStories()}
 			keyExtractor={(item: StoryType) => item.title}
 			onRefresh={reload}
 			refreshing={isPending && !isInitial}
