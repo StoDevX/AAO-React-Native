@@ -76,7 +76,7 @@ export const NewsList = (props: Props): JSX.Element => {
 		let newsFilters: ListType[] = [
 			{
 				type: 'list',
-				key: 'category', // TODO: figure if this is referencing anything or is simply unique
+				key: 'category',
 				enabled: true,
 				spec: {
 					title: 'Categories',
@@ -85,7 +85,7 @@ export const NewsList = (props: Props): JSX.Element => {
 					mode: 'OR',
 					displayTitle: true,
 				},
-				apply: {key: 'category'}, // TODO: figure out what this should reference
+				apply: {key: 'category'},
 			},
 		]
 		setFilters(newsFilters)
