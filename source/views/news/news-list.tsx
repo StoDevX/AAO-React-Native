@@ -8,6 +8,7 @@ import {ListSeparator} from '@frogpond/lists'
 import {LoadingView, NoticeView} from '@frogpond/notice'
 import {openUrl} from '@frogpond/open-url'
 import {NewsRow} from './news-row'
+import {cleanEntries} from './lib/util'
 
 type Props = {
 	source: string | {url: string; type: 'rss' | 'wp-json'}
@@ -50,11 +51,8 @@ export const NewsList = (props: Props): JSX.Element => {
 		isLoading,
 	} = useNews(props.source)
 
-	// remove all entries with blank excerpts
-	// remove all entries with a <form from the list
-	let entries = data
-		.filter((entry) => entry.excerpt.trim() !== '')
-		.filter((entry) => !entry.content.includes('<form'))
+	let entries = cleanEntries(data)
+
 
 	if (error) {
 		return (
