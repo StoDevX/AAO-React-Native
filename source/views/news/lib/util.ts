@@ -1,3 +1,5 @@
+import {decode} from '@frogpond/html-lib'
+import {toLaxTitleCase} from '@frogpond/titlecase'
 import {StoryType} from '../types'
 
 // remove all entries with blank excerpts
@@ -8,3 +10,10 @@ export const cleanEntries = (data: StoryType[]): StoryType[] => {
 		.filter((entry) => !entry.content.includes('<form'))
 }
 
+// remove extraneous whitspace
+// decode entities
+// titlecase words
+export const trimStoryCateogry = (label: string): string => {
+	let evenedWhitespace = label.replace(/\s+/gu, ' ')
+	return toLaxTitleCase(decode(evenedWhitespace))
+}

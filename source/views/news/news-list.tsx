@@ -8,7 +8,7 @@ import {ListSeparator} from '@frogpond/lists'
 import {LoadingView, NoticeView} from '@frogpond/notice'
 import {openUrl} from '@frogpond/open-url'
 import {NewsRow} from './news-row'
-import {cleanEntries} from './lib/util'
+import {cleanEntries, trimStoryCateogry} from './lib/util'
 
 type Props = {
 	source: string | {url: string; type: 'rss' | 'wp-json'}
