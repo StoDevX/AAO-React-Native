@@ -54,7 +54,8 @@ export const NewsList = (props: Props): JSX.Element => {
 
 	let entries = cleanEntries(data)
 
-	let [filters, setFilters] = React.useState<FilterType[]>([])
+	let [filters, setFilters] = React.useState<ListType[]>([])
+
 	let getStoryCategories = React.useCallback((story: StoryType) => {
 		return story.categories.map((c) => trimStoryCateogry(c))
 	}, [])
@@ -88,7 +89,6 @@ export const NewsList = (props: Props): JSX.Element => {
 			},
 		]
 		setFilters(newsFilters)
-
 	}, [entries, getStoryCategories])
 
 	let filterStories = React.useCallback(() => {
