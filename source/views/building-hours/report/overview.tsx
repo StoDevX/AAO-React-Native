@@ -27,8 +27,7 @@ import type {TopLevelViewPropsType} from '../../types'
 import {summarizeDays, formatBuildingTimes, blankSchedule} from '../lib'
 import {submitReport} from './submit'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
-import {RouteProp, useNavigation} from '@react-navigation/native'
-import {RootStackParamList} from '../../../navigation/types'
+import {useNavigation} from '@react-navigation/native'
 import {CloseScreenButton} from '@frogpond/navigation-buttons'
 
 type Props = TopLevelViewPropsType & {
@@ -283,7 +282,7 @@ class EditableSchedule extends React.PureComponent<EditableScheduleProps> {
 
 type TextFieldProps = {text: string; onChange: (text: string) => any}
 // "Title" will become a textfield like the login form
-const TitleCell = ({text, onChange = () => {}}: TextFieldProps) => (
+const TitleCell = ({text, onChange}: TextFieldProps) => (
 	<CellTextField
 		autoCapitalize="words"
 		onChangeText={onChange}
