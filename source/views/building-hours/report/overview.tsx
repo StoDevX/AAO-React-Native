@@ -29,6 +29,7 @@ import {submitReport} from './submit'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 import {RouteProp, useNavigation} from '@react-navigation/native'
 import {RootStackParamList} from '../../../navigation/types'
+import {CloseScreenButton} from '@frogpond/navigation-buttons'
 
 type Props = TopLevelViewPropsType & {
 	route: {params: {initialBuilding: BuildingType}}
@@ -332,4 +333,6 @@ export const NavigationKey = 'BuildingHoursProblemReport'
 
 export const NavigationOptions: NativeStackNavigationOptions = {
 	title: 'Report a Problem',
+	presentation: 'modal',
+	headerRight: () => <CloseScreenButton title="Close" />,
 }

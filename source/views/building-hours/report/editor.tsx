@@ -20,6 +20,7 @@ import {sto} from '../../../lib/colors'
 import {DatePicker} from '@frogpond/datepicker'
 import {Touchable} from '@frogpond/touchable'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+import {CloseScreenButton} from '@frogpond/navigation-buttons'
 
 export type RouteParams = {
 	set: SingleBuildingScheduleType | undefined
@@ -240,4 +241,6 @@ export const NavigationKey = 'BuildingHoursProblemReportEditor'
 
 export const NavigationOptions: NativeStackNavigationOptions = {
 	title: 'Edit Schedule',
+	presentation: 'modal',
+	headerRight: () => <CloseScreenButton />,
 }
