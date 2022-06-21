@@ -185,7 +185,11 @@ export let BuildingHoursProblemReportView = (props: Props): JSX.Element => {
 				</Section>
 
 				<Section footer="Thanks for reporting!">
-					<ButtonCell onPress={submit} title="Submit Report" />
+					<ButtonCell
+						accessoryIcon="send"
+						onPress={submit}
+						title="Submit Report"
+					/>
 				</Section>
 			</TableView>
 		</ScrollView>
