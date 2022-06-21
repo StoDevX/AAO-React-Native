@@ -155,7 +155,7 @@ export let BuildingHoursProblemReportView = (props: Props): JSX.Element => {
 	return (
 		<ScrollView>
 			<InfoHeader
-				message="If you could tell us what the new times are, we&rsquo;d greatly appreciate it."
+				message="If you could change what is incorrect and share it with us we&rsquo;d greatly appreciate it."
 				title="Thanks for spotting a problem!"
 			/>
 
