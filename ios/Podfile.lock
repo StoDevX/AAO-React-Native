@@ -296,7 +296,7 @@ PODS:
     - React-Core
   - react-native-safari-view (1.0.0):
     - React
-  - react-native-safe-area-context (4.2.5):
+  - react-native-safe-area-context (4.3.1):
     - RCT-Folly
     - RCTRequired
     - RCTTypeSafety
@@ -680,7 +680,7 @@ SPEC CHECKSUMS:
   react-native-netinfo: 3671b091c4843fda5e153612866ef4024b8f5d62
   react-native-restart: 45c8dca02491980f2958595333cbccd6877cb57e
   react-native-safari-view: 955d7160d159241b8e9395d12d10ea0ef863dcdd
-  react-native-safe-area-context: ebf8c413eb8b5f7c392a036a315eb7b46b96845f
+  react-native-safe-area-context: 6c12e3859b6f27b25de4fee8201cfb858432d8de
   react-native-sfsymbols: bd3a0d3eab185e80b571bae60753dcf5a0d57967
   react-native-webview: ea6fc965e74d6a8335026c913343fafc0463b6ab
   React-perflogger: 30ab8d6db10e175626069e742eead3ebe8f24fd5
