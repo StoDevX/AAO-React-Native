@@ -197,14 +197,14 @@ export let BuildingHoursProblemReportView = (): JSX.Element => {
 type EditableScheduleProps = {
 	schedule: NamedBuildingScheduleType
 	scheduleIndex: number
-	addRow: (idx: number) => any
+	addRow: (idx: number) => void
 	editRow: (
 		schedIdx: number,
 		setIdx: number,
 		set: SingleBuildingScheduleType,
-	) => any
-	onEditSchedule: (idx: number, set: NamedBuildingScheduleType) => any
-	onDelete: (idx: number) => any
+	) => void
+	onEditSchedule: (idx: number, set: NamedBuildingScheduleType) => void
+	onDelete: (idx: number) => void
 }
 
 const EditableSchedule = (props: EditableScheduleProps) => {
@@ -277,7 +277,7 @@ const EditableSchedule = (props: EditableScheduleProps) => {
 	)
 }
 
-type TextFieldProps = {text: string; onChange: (text: string) => any}
+type TextFieldProps = {text: string; onChange: (text: string) => void}
 // "Title" will become a textfield like the login form
 const TitleCell = ({text, onChange}: TextFieldProps) => (
 	<CellTextField
@@ -305,7 +305,7 @@ const NotesCell = ({text, onChange}: TextFieldProps) => (
 type TimesCellProps = {
 	set: SingleBuildingScheduleType
 	setIndex: number
-	onPress: (setIdx: number, set: SingleBuildingScheduleType) => any
+	onPress: (setIdx: number, set: SingleBuildingScheduleType) => void
 	now: Moment
 }
 
