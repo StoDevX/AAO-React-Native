@@ -50,14 +50,6 @@
   21:27  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
   28:28  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
 
-./source/views/building-hours/report/overview.tsx
-  201:27  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
-  206:7   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
-  207:67  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
-  208:29  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
-  283:66  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
-  311:64  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
-
 ./source/views/contacts/list.tsx
   73:49  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
 
@@ -163,5 +155,5 @@
 ./source/views/student-orgs/util.ts
   3:8  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
 
-✖ 84 problems (0 errors, 84 warnings)
+✖ 78 problems (0 errors, 78 warnings)
 
