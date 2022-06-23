@@ -23,20 +23,19 @@ import type {
 	NamedBuildingScheduleType,
 	SingleBuildingScheduleType,
 } from '../types'
-import type {TopLevelViewPropsType} from '../../types'
 import {summarizeDays, formatBuildingTimes, blankSchedule} from '../lib'
 import {submitReport} from './submit'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
-import {useNavigation} from '@react-navigation/native'
+import {RouteProp, useNavigation, useRoute} from '@react-navigation/native'
 import {CloseScreenButton} from '@frogpond/navigation-buttons'
+import {RootStackParamList} from '../../../navigation/types'
 
-type Props = TopLevelViewPropsType & {
-	route: {params: {initialBuilding: BuildingType}}
-}
+export let BuildingHoursProblemReportView = (): JSX.Element => {
+	let route = useRoute<RouteProp<RootStackParamList, typeof NavigationKey>>()
+	let {initialBuilding} = route.params
 
-export let BuildingHoursProblemReportView = (props: Props): JSX.Element => {
-	let [building, setBuilding] = React.useState<BuildingType>(
-		props.route.params.initialBuilding,
+	let [building, setBuilding] = React.useState(initialBuilding)
+
 	)
 
 	let navigation = useNavigation()
@@ -146,7 +145,7 @@ export let BuildingHoursProblemReportView = (props: Props): JSX.Element => {
 
 	let submit = (): void => {
 		console.log(JSON.stringify(building))
-		submitReport(props.route.params.initialBuilding, building)
+		submitReport(initialBuilding, building)
 	}
 
 	let {schedule: schedules = [], name} = building
