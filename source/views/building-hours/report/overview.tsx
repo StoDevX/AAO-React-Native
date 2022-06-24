@@ -5,9 +5,11 @@
  */
 
 import * as React from 'react'
-import {ScrollView, View} from 'react-native'
+import {Alert, ScrollView, View} from 'react-native'
 import moment from 'moment-timezone'
 import type {Moment} from 'moment-timezone'
+import noop from 'lodash/noop'
+import jsYaml from 'js-yaml'
 import {InfoHeader} from '@frogpond/info-header'
 import {
 	TableView,
@@ -31,14 +33,54 @@ import {CloseScreenButton} from '@frogpond/navigation-buttons'
 import {RootStackParamList} from '../../../navigation/types'
 
 export let BuildingHoursProblemReportView = (): JSX.Element => {
+	let navigation = useNavigation()
 	let route = useRoute<RouteProp<RootStackParamList, typeof NavigationKey>>()
 	let {initialBuilding} = route.params
 
 	let [building, setBuilding] = React.useState(initialBuilding)
 
+	// used for checking against unsaved edits
+	let [hasUnsavedChanges, setHasUnsavedChanges] = React.useState(false)
+	let initialBuildingYaml = React.useMemo(
+		() => jsYaml.dump(initialBuilding),
+		[initialBuilding],
 	)
 
-	let navigation = useNavigation()
+	/**
+	 * checking for unsaved edits
+	 *
+	 * noting that we also have `gestureEnabled` set to false in the navigation options
+	 * (ios only) to prevent dismissing the modal without prompting.
+	 * https://reactnavigation.org/docs/preventing-going-back
+	 */
+	React.useEffect(
+		() =>
+			navigation.addListener('beforeRemove', (event) => {
+				if (!hasUnsavedChanges) {
+					return
+				}
+
+				event.preventDefault()
+
+				Alert.alert(
+					'Discard changes?',
+					'You have made unsaved changes. Are you sure you want to discard them?',
+					[
+						{text: 'Edit', style: 'cancel', onPress: noop},
+						{
+							text: 'Discard',
+							style: 'destructive',
+							onPress: () => navigation.dispatch(event.data.action),
+						},
+					],
+				)
+			}),
+		[navigation, hasUnsavedChanges],
+	)
+
+	React.useEffect(() => {
+		setHasUnsavedChanges(jsYaml.dump(building) !== initialBuildingYaml)
+	}, [building, initialBuildingYaml])
 
 	let editName = (newName: BuildingType['name']) => {
 		setBuilding({
@@ -145,6 +187,7 @@ export let BuildingHoursProblemReportView = (): JSX.Element => {
 
 	let submit = (): void => {
 		console.log(JSON.stringify(building))
+		setHasUnsavedChanges(false)
 		submitReport(initialBuilding, building)
 	}
 
@@ -332,5 +375,14 @@ export const NavigationKey = 'BuildingHoursProblemReport'
 export const NavigationOptions: NativeStackNavigationOptions = {
 	title: 'Report a Problem',
 	presentation: 'modal',
-	headerRight: () => <CloseScreenButton title="Close" />,
+	headerRight: () => <CloseScreenButton title="Discard" />,
+	/**
+	 * Explicility setting `gestureEnabled` to false otherwise we can end up with a
+	 * a screen that gets removed natively but did not get removed from JS state.
+	 *
+	 * This happens if the action was prevented in a `beforeRemove` listener which:
+	 * (1) we are currently doing, and
+	 * (2) is not fully supported in native-stack.
+	 */
+	gestureEnabled: false,
 }
