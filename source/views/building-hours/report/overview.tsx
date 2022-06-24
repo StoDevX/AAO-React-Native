@@ -23,20 +23,19 @@ import type {
 	NamedBuildingScheduleType,
 	SingleBuildingScheduleType,
 } from '../types'
-import type {TopLevelViewPropsType} from '../../types'
 import {summarizeDays, formatBuildingTimes, blankSchedule} from '../lib'
 import {submitReport} from './submit'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
-import {useNavigation} from '@react-navigation/native'
+import {RouteProp, useNavigation, useRoute} from '@react-navigation/native'
 import {CloseScreenButton} from '@frogpond/navigation-buttons'
+import {RootStackParamList} from '../../../navigation/types'
 
-type Props = TopLevelViewPropsType & {
-	route: {params: {initialBuilding: BuildingType}}
-}
+export let BuildingHoursProblemReportView = (): JSX.Element => {
+	let route = useRoute<RouteProp<RootStackParamList, typeof NavigationKey>>()
+	let {initialBuilding} = route.params
 
-export let BuildingHoursProblemReportView = (props: Props): JSX.Element => {
-	let [building, setBuilding] = React.useState<BuildingType>(
-		props.route.params.initialBuilding,
+	let [building, setBuilding] = React.useState(initialBuilding)
+
 	)
 
 	let navigation = useNavigation()
@@ -146,7 +145,7 @@ export let BuildingHoursProblemReportView = (props: Props): JSX.Element => {
 
 	let submit = (): void => {
 		console.log(JSON.stringify(building))
-		submitReport(props.route.params.initialBuilding, building)
+		submitReport(initialBuilding, building)
 	}
 
 	let {schedule: schedules = [], name} = building
@@ -198,89 +197,87 @@ export let BuildingHoursProblemReportView = (props: Props): JSX.Element => {
 type EditableScheduleProps = {
 	schedule: NamedBuildingScheduleType
 	scheduleIndex: number
-	addRow: (idx: number) => any
+	addRow: (idx: number) => void
 	editRow: (
 		schedIdx: number,
 		setIdx: number,
 		set: SingleBuildingScheduleType,
-	) => any
-	onEditSchedule: (idx: number, set: NamedBuildingScheduleType) => any
-	onDelete: (idx: number) => any
+	) => void
+	onEditSchedule: (idx: number, set: NamedBuildingScheduleType) => void
+	onDelete: (idx: number) => void
 }
 
-class EditableSchedule extends React.PureComponent<EditableScheduleProps> {
-	onEdit = (data: Partial<NamedBuildingScheduleType>) => {
-		let idx = this.props.scheduleIndex
-		this.props.onEditSchedule(idx, {
-			...this.props.schedule,
+const EditableSchedule = (props: EditableScheduleProps) => {
+	let onEdit = (data: Partial<NamedBuildingScheduleType>) => {
+		let idx = props.scheduleIndex
+		props.onEditSchedule(idx, {
+			...props.schedule,
 			...data,
 		})
 	}
 
-	editTitle = (newValue: string) => {
-		this.onEdit({title: newValue})
+	let editTitle = (newValue: string) => {
+		onEdit({title: newValue})
 	}
 
-	editNotes = (newValue: string) => {
-		this.onEdit({notes: newValue})
+	let editNotes = (newValue: string) => {
+		onEdit({notes: newValue})
 	}
 
-	toggleChapel = (newValue: boolean) => {
-		this.onEdit({closedForChapelTime: newValue})
+	let toggleChapel = (newValue: boolean) => {
+		onEdit({closedForChapelTime: newValue})
 	}
 
-	addHoursRow = () => {
-		this.props.addRow(this.props.scheduleIndex)
+	let addHoursRow = () => {
+		props.addRow(props.scheduleIndex)
 	}
 
-	delete = () => {
-		this.props.onDelete(this.props.scheduleIndex)
+	let deleteSchedule = () => {
+		props.onDelete(props.scheduleIndex)
 	}
 
-	openEditor = (setIndex: number, hoursSet: SingleBuildingScheduleType) => {
-		this.props.editRow(this.props.scheduleIndex, setIndex, hoursSet)
+	let openEditor = (setIndex: number, hoursSet: SingleBuildingScheduleType) => {
+		props.editRow(props.scheduleIndex, setIndex, hoursSet)
 	}
 
-	render() {
-		let {schedule} = this.props
-		let now = moment()
+	let {schedule} = props
+	let now = moment()
 
-		return (
-			<View>
-				<Section header="INFORMATION">
-					<TitleCell onChange={this.editTitle} text={schedule.title || ''} />
-					<NotesCell onChange={this.editNotes} text={schedule.notes || ''} />
+	return (
+		<View>
+			<Section header="INFORMATION">
+				<TitleCell onChange={editTitle} text={schedule.title || ''} />
+				<NotesCell onChange={editNotes} text={schedule.notes || ''} />
 
-					<CellToggle
-						label="Closes for Chapel"
-						onChange={this.toggleChapel}
-						value={Boolean(schedule.closedForChapelTime)}
+				<CellToggle
+					label="Closes for Chapel"
+					onChange={toggleChapel}
+					value={Boolean(schedule.closedForChapelTime)}
+				/>
+
+				{schedule.hours.map((set, i) => (
+					<TimesCell
+						key={i}
+						now={now}
+						onPress={openEditor}
+						set={set}
+						setIndex={i}
 					/>
+				))}
 
-					{schedule.hours.map((set, i) => (
-						<TimesCell
-							key={i}
-							now={now}
-							onPress={this.openEditor}
-							set={set}
-							setIndex={i}
-						/>
-					))}
+				<Cell
+					accessory="DisclosureIndicator"
+					onPress={addHoursRow}
+					title="Add More Hours"
+				/>
 
-					<Cell
-						accessory="DisclosureIndicator"
-						onPress={this.addHoursRow}
-						title="Add More Hours"
-					/>
-
-					<DeleteButtonCell onPress={this.delete} title="Delete Schedule" />
-				</Section>
-			</View>
-		)
-	}
+				<DeleteButtonCell onPress={deleteSchedule} title="Delete Schedule" />
+			</Section>
+		</View>
+	)
 }
 
-type TextFieldProps = {text: string; onChange: (text: string) => any}
+type TextFieldProps = {text: string; onChange: (text: string) => void}
 // "Title" will become a textfield like the login form
 const TitleCell = ({text, onChange}: TextFieldProps) => (
 	<CellTextField
@@ -308,28 +305,26 @@ const NotesCell = ({text, onChange}: TextFieldProps) => (
 type TimesCellProps = {
 	set: SingleBuildingScheduleType
 	setIndex: number
-	onPress: (setIdx: number, set: SingleBuildingScheduleType) => any
+	onPress: (setIdx: number, set: SingleBuildingScheduleType) => void
 	now: Moment
 }
 
-class TimesCell extends React.PureComponent<TimesCellProps> {
-	onPress = () => {
-		this.props.onPress(this.props.setIndex, this.props.set)
+const TimesCell = (props: TimesCellProps) => {
+	let onPress = () => {
+		props.onPress(props.setIndex, props.set)
 	}
 
-	render() {
-		let {set, now} = this.props
+	let {set, now} = props
 
-		return (
-			<Cell
-				accessory="DisclosureIndicator"
-				cellStyle="RightDetail"
-				detail={formatBuildingTimes(set, now)}
-				onPress={this.onPress}
-				title={set.days.length ? summarizeDays(set.days) : 'Days'}
-			/>
-		)
-	}
+	return (
+		<Cell
+			accessory="DisclosureIndicator"
+			cellStyle="RightDetail"
+			detail={formatBuildingTimes(set, now)}
+			onPress={onPress}
+			title={set.days.length ? summarizeDays(set.days) : 'Days'}
+		/>
+	)
 }
 
 export const NavigationKey = 'BuildingHoursProblemReport'
