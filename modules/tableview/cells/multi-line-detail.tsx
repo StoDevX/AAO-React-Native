@@ -6,7 +6,7 @@ import * as c from '@frogpond/colors'
 type Props = {
 	title: string
 	leftDetail?: string
-	rightDetail: string
+	rightDetail?: JSX.Element[]
 }
 
 export function MultiLineDetailCell(props: Props): JSX.Element {
