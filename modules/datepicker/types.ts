@@ -15,6 +15,8 @@ export interface BaseDatetimePickerProps {
 	onDateChange: (moment: Moment) => void
 
 	// platform/wrapper components
+	displayIos?: IOSProps['display']
+	displayAndroid?: AndroidProps['display']
 	showPickerIos?: boolean
 	showPickerAndroid?: boolean
 	showPickerButtonAndroid?: boolean
@@ -25,10 +27,12 @@ export interface BaseDatetimePickerProps {
 
 interface IOSProps {
 	mode: NonNullable<IOSNativeProps['mode']>
+	display?: NonNullable<IOSNativeProps['display']>
 }
 
 interface AndroidProps {
 	mode: NonNullable<AndroidNativeProps['mode']>
+	display?: NonNullable<AndroidNativeProps['display']>
 }
 
 export type IosDatetimePickerProps = BaseDatetimePickerProps & IOSProps

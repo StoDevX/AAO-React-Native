@@ -164,6 +164,8 @@ function DatePickerCell(props: DatePickerCellProps) {
 
 	let accessory = (
 		<DatePicker
+			displayAndroid="clock"
+			displayIos="compact"
 			format={format}
 			initialDate={props.date}
 			minuteInterval={5}
