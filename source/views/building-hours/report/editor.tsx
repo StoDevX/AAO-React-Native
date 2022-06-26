@@ -91,7 +91,7 @@ export function BuildingHoursScheduleEditorView(): JSX.Element {
 						cellAccessoryView={
 							<Row style={styles.datePickerGroup}>
 								<DatePickerAccessory date={open} onChange={onChangeOpen} />
-								<Text style={styles.datePickerDash}> — </Text>
+								<Text style={styles.datePickerDash}>—</Text>
 								<DatePickerAccessory date={close} onChange={onChangeClose} />
 							</Row>
 						}
@@ -261,6 +261,7 @@ const styles = StyleSheet.create({
 	datePickerDash: {
 		color: c.iosDisabledText,
 		fontWeight: 'bold',
+		marginHorizontal: 2,
 	},
 })
 
