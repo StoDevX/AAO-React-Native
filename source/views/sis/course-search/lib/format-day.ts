@@ -10,6 +10,10 @@ export function formatDay(day: string) {
 			return 'Thursday'
 		case 'Fr':
 			return 'Friday'
+		case 'Sa':
+			return 'Saturday'
+		case 'Su':
+			return 'Sunday'
 		default:
 			return day
 	}
