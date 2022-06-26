@@ -7,13 +7,19 @@
 import * as React from 'react'
 import {useCallback, useState} from 'react'
 import xor from 'lodash/xor'
-import {Platform, ScrollView, StyleSheet, Text} from 'react-native'
+import {Platform, ScrollView, StyleSheet, Text, View} from 'react-native'
 import type {Moment} from 'moment-timezone'
 import moment from 'moment-timezone'
-import {Cell, DeleteButtonCell, Section, TableView} from '@frogpond/tableview'
+import {
+	Cell,
+	MultiLineDetailCell,
+	DeleteButtonCell,
+	Section,
+	TableView,
+} from '@frogpond/tableview'
 import type {DayOfWeekEnumType, SingleBuildingScheduleType} from '../types'
 import {Row} from '@frogpond/layout'
-import {blankSchedule, parseHours} from '../lib'
+import {blankSchedule, parseHours, summarizeDaysAndHours} from '../lib'
 import * as c from '@frogpond/colors'
 import {sto} from '../../../lib/colors'
 import {DatePicker} from '@frogpond/datepicker'
@@ -65,6 +71,34 @@ export function BuildingHoursScheduleEditorView(): JSX.Element {
 
 	let {open, close} = parseHours(set, moment())
 
+	let [originalSummary, setOriginalSummary] = React.useState('')
+	let [summary, setSummary] = React.useState('')
+
+	let buildSummary = React.useCallback(
+		(
+			schedule: SingleBuildingScheduleType,
+			buildForOriginalSummary = false,
+		): string => {
+			if (!buildForOriginalSummary && !schedule.days.length) {
+				return 'Select a day to get started.'
+			}
+
+			return summarizeDaysAndHours(schedule)
+		},
+		[],
+	)
+
+	React.useMemo(() => {
+		if (params.set) {
+			let original = buildSummary(params.set, true)
+			setOriginalSummary(original)
+		}
+	}, [buildSummary, params.set])
+
+	React.useEffect(() => {
+		setSummary(buildSummary(set))
+	}, [buildSummary, originalSummary, set, summary])
+
 	return (
 		<ScrollView>
 			<TableView>
@@ -79,6 +113,22 @@ export function BuildingHoursScheduleEditorView(): JSX.Element {
 							</Row>
 						}
 						title="Hours"
+					/>
+
+					{Boolean(params.set?.days.length) && (
+						<MultiLineDetailCell
+							leftDetail={originalSummary}
+							title="Old summary"
+						/>
+					)}
+
+					<MultiLineDetailCell
+						leftDetail={
+							originalSummary !== summary
+								? summary
+								: 'No changes made. Try changing the days or hours.'
+						}
+						title={params.set?.days.length ? 'New summary' : 'Summary'}
 					/>
 				</Section>
 
