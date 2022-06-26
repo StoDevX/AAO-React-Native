@@ -16,7 +16,7 @@ export const DatePicker = (props: IosDatetimePickerProps): JSX.Element => {
 
 	return (
 		<BaseDateTimePicker
-			displayIos={props.display}
+			displayIos={props.displayIos}
 			initialDate={props.initialDate}
 			minuteInterval={props.minuteInterval}
 			mode={props.mode}

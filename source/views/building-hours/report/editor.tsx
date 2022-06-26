@@ -188,7 +188,7 @@ function DatePickerAccessory(props: DatePickerAccessoryProps) {
 	return (
 		<DatePicker
 			displayAndroid="clock"
-			displayIos="compact"
+			displayIos='inline'
 			format={format}
 			initialDate={props.date}
 			minuteInterval={5}
