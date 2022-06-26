@@ -23,7 +23,9 @@ export function MultiLineDetailCell(props: Props): JSX.Element {
 					</Text>
 				)}
 			</View>
-			<View style={styles.cellRightDetail}>{rightDetail}</View>
+			{Boolean(rightDetail) && (
+				<View style={styles.cellRightDetail}>{rightDetail}</View>
+			)}
 		</View>
 	)
 	return <Cell cellContentView={cellContent} />
