@@ -71,6 +71,19 @@ function formatFullDay(sortedDays: DayOfWeekEnumType[]) {
 		return formattedDay
 	})
 
+	/**
+	 * This targets timespans like [We, Fr] which are formatted as
+	 * "Wednesday, and Friday" so we can change those here to read
+	 * as "Wendesday and Friday".
+	 *
+	 * Consecutive timespans such as [We, Th] are formatted as
+	 * "Wednesday – Thursday", and while they meet the length
+	 * criteria to be returned below they should come out unmodified.
+	 */
+	if (formatted.length === 2) {
+		return formatted.join(' ')
+	}
+
 	return formatted.join(', ')
 }
 
