@@ -22,9 +22,7 @@ export function CloseScreenButton({title, buttonStyle}: Props): JSX.Element {
 			style={[commonStyles.button, buttonStyle]}
 			testID="button-close-screen"
 		>
-			<Text style={[commonStyles.text, styles.text]}>
-				{title ? title : 'Done'}
-			</Text>
+			<Text style={[commonStyles.text, styles.text]}>{title ?? 'Done'}</Text>
 		</Touchable>
 	)
 }
