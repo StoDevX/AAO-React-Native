@@ -38,7 +38,7 @@ export function summarizeDays(days: DayOfWeekEnumType[]): string {
 	if (startDay === 'Mo' && endDay === 'Fr') {
 		return 'Weekdays'
 	} else if (startDay === 'Sa' && endDay === 'Su') {
-		return 'Weekend'
+		return 'Weekends'
 	} else if (startDay === 'Mo' && endDay === 'Su') {
 		return 'Every day'
 	}

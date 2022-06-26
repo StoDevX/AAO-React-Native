@@ -79,7 +79,7 @@ describe('returns common shorthands for common day spans', () => {
 
 	test('handles "weekends"', () => {
 		let actual = summarizeDays(['Sa', 'Su'])
-		expect(actual).toEqual('Weekend')
+		expect(actual).toEqual('Weekends')
 	})
 
 	test('handles "every day"', () => {
