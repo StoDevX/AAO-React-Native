@@ -70,8 +70,16 @@ export function BuildingHoursScheduleEditorView(): JSX.Element {
 			<TableView>
 				<Section>
 					<WeekToggles days={set.days} onChangeDays={onChangeDays} />
-					<DatePickerCell date={open} onChange={onChangeOpen} title="Open" />
-					<DatePickerCell date={close} onChange={onChangeClose} title="Close" />
+					<Cell
+						cellAccessoryView={
+							<Row style={styles.datePickerGroup}>
+								<DatePickerAccessory date={open} onChange={onChangeOpen} />
+								<Text style={styles.datePickerDash}> — </Text>
+								<DatePickerAccessory date={close} onChange={onChangeClose} />
+							</Row>
+						}
+						title="Hours"
+					/>
 				</Section>
 
 				<Section>
@@ -153,16 +161,14 @@ const ToggleButton = (props: ToggleButtonProps) => {
 	)
 }
 
-type DatePickerCellProps = {
+type DatePickerAccessoryProps = {
 	date: Moment
-	title: string
 	onChange: (date: Moment) => unknown
 }
 
-function DatePickerCell(props: DatePickerCellProps) {
+function DatePickerAccessory(props: DatePickerAccessoryProps) {
 	let format = 'h:mm A'
-
-	let accessory = (
+	return (
 		<DatePicker
 			displayAndroid="clock"
 			displayIos="compact"
@@ -178,14 +184,7 @@ function DatePickerCell(props: DatePickerCellProps) {
 
 				props.onChange(oldMoment)
 			}}
-		/>
-	)
-
-	return (
-		<Cell
-			cellAccessoryView={accessory}
-			cellStyle="RightDetail"
-			title={props.title}
+			style={styles.datePicker}
 		/>
 	)
 }
@@ -235,6 +234,16 @@ const styles = StyleSheet.create({
 	},
 	activeDayText: {
 		color: c.white,
+	},
+	datePickerGroup: {
+		alignItems: 'center',
+	},
+	datePicker: {
+		minWidth: 110,
+	},
+	datePickerDash: {
+		color: c.iosDisabledText,
+		fontWeight: 'bold',
 	},
 })
 
