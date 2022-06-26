@@ -7,16 +7,10 @@
 import * as React from 'react'
 import {useCallback, useState} from 'react'
 import xor from 'lodash/xor'
-import {Platform, ScrollView, StyleSheet, Text, View} from 'react-native'
+import {Platform, ScrollView, StyleSheet, Text} from 'react-native'
 import type {Moment} from 'moment-timezone'
 import moment from 'moment-timezone'
-import {
-	Cell,
-	MultiLineDetailCell,
-	DeleteButtonCell,
-	Section,
-	TableView,
-} from '@frogpond/tableview'
+import {Cell, DeleteButtonCell, Section, TableView} from '@frogpond/tableview'
 import type {DayOfWeekEnumType, SingleBuildingScheduleType} from '../types'
 import {Row} from '@frogpond/layout'
 import {blankSchedule, parseHours, summarizeDaysAndHours} from '../lib'
@@ -71,15 +65,11 @@ export function BuildingHoursScheduleEditorView(): JSX.Element {
 
 	let {open, close} = parseHours(set, moment())
 
-	let [originalSummary, setOriginalSummary] = React.useState('')
 	let [summary, setSummary] = React.useState('')
 
 	let buildSummary = React.useCallback(
-		(
-			schedule: SingleBuildingScheduleType,
-			buildForOriginalSummary = false,
-		): string => {
-			if (!buildForOriginalSummary && !schedule.days.length) {
+		(schedule: SingleBuildingScheduleType): string => {
+			if (!schedule.days.length) {
 				return 'Select a day to get started.'
 			}
 
@@ -88,21 +78,14 @@ export function BuildingHoursScheduleEditorView(): JSX.Element {
 		[],
 	)
 
-	React.useMemo(() => {
-		if (params.set) {
-			let original = buildSummary(params.set, true)
-			setOriginalSummary(original)
-		}
-	}, [buildSummary, params.set])
-
 	React.useEffect(() => {
 		setSummary(buildSummary(set))
-	}, [buildSummary, originalSummary, set, summary])
+	}, [buildSummary, set])
 
 	return (
 		<ScrollView>
 			<TableView>
-				<Section>
+				<Section footer={summary}>
 					<WeekToggles days={set.days} onChangeDays={onChangeDays} />
 					<Cell
 						cellAccessoryView={
@@ -113,22 +96,6 @@ export function BuildingHoursScheduleEditorView(): JSX.Element {
 							</Row>
 						}
 						title="Hours"
-					/>
-
-					{Boolean(params.set?.days.length) && (
-						<MultiLineDetailCell
-							leftDetail={originalSummary}
-							title="Old summary"
-						/>
-					)}
-
-					<MultiLineDetailCell
-						leftDetail={
-							originalSummary !== summary
-								? summary
-								: 'No changes made. Try changing the days or hours.'
-						}
-						title={params.set?.days.length ? 'New summary' : 'Summary'}
 					/>
 				</Section>
 
