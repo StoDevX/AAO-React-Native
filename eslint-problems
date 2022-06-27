@@ -31,12 +31,6 @@
 ./source/views/building-hours/detail/header.tsx
   16:2  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
 
-./source/views/building-hours/detail/schedule-row-android.tsx
-  21:2  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
-
-./source/views/building-hours/detail/schedule-row-ios.tsx
-  21:2  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
-
 ./source/views/building-hours/detail/schedule-table-android.tsx
   13:25  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
   17:2   warning  Missing return type on function           @typescript-eslint/explicit-module-boundary-types
@@ -98,10 +92,6 @@
 ./source/views/sis/course-search/lib/execute-search.ts
   37:8  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
 
-./source/views/sis/course-search/lib/format-day.ts
-   1:8  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
-  18:8  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
-
 ./source/views/sis/course-search/lib/format-dept-num.ts
   2:24  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
 
@@ -155,5 +145,5 @@
 ./source/views/student-orgs/util.ts
   3:8  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
 
-✖ 78 problems (0 errors, 78 warnings)
+✖ 74 problems (0 errors, 74 warnings)
 

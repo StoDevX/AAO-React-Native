@@ -60,8 +60,6 @@ source/redux/parts/stoprint.ts(128,34): error TS2345: Argument of type 'string |
   Type 'undefined' is not assignable to type 'string'.
 source/redux/parts/stoprint.ts(133,40): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
   Type 'undefined' is not assignable to type 'string'.
-source/views/building-hours/detail/schedule-row-android.tsx(37,22): error TS7031: Binding element 'children' implicitly has an 'any' type.
-source/views/building-hours/detail/schedule-row-android.tsx(37,32): error TS7031: Binding element 'style' implicitly has an 'any' type.
 source/views/building-hours/detail/toolbar-button.tsx(20,18): error TS2345: Argument of type 'ThunkAction<ToggleFavoriteAction>' is not assignable to parameter of type 'AnyAction'.
   Property 'type' is missing in type 'ThunkAction<ToggleFavoriteAction>' but required in type 'AnyAction'.
 source/views/building-hours/lib/__tests__/get-detailed-building-status.test.ts(10,3): error TS2740: Type '{}' is missing the following properties from type 'BreakScheduleContainerType': fall, thanksgiving, christmasfest, winter, and 4 more.
@@ -114,7 +112,6 @@ source/views/sis/balances-acknowledgement.tsx(23,18): error TS2345: Argument of 
   Property 'type' is missing in type 'Promise<SisAlertSeenAction>' but required in type 'AnyAction'.
 source/views/sis/balances.tsx(197,13): error TS2345: Argument of type 'ThunkAction<LogInActions>' is not assignable to parameter of type 'AnyAction'.
   Property 'type' is missing in type 'ThunkAction<LogInActions>' but required in type 'AnyAction'.
-source/views/sis/course-search/detail/index.tsx(126,5): error TS2322: Type 'Element[]' is not assignable to type 'string'.
 source/views/sis/course-search/detail/index.tsx(209,24): error TS7053: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{ Open: string; Closed: string; }'.
   No index signature with a parameter of type 'string' was found on type '{ Open: string; Closed: string; }'.
 source/views/sis/course-search/lib/execute-search.ts(2,27): error TS7016: Could not find a declaration file for module 'keyword-search'. './node_modules/keyword-search/index.js' implicitly has an 'any' type.
