@@ -13,7 +13,7 @@ export const DeveloperSection = (): React.ReactElement => {
 	const onBonAppButton = () => navigation.navigate('BonAppPicker')
 	const onDebugButton = () => navigation.navigate('Debug')
 	const sendSentryMessage = () => {
-		Sentry.captureMessage('A Sentry Message', {level: Sentry.Severity.Info})
+		Sentry.captureMessage('A Sentry Message', {level: 'info'})
 		showSentryAlert()
 	}
 	const sendSentryException = () => {
