@@ -112,9 +112,9 @@ export const StreamListView = (): JSX.Element => {
 			onRefresh={refresh}
 			refreshing={refreshing}
 			renderItem={renderItem}
-			renderSectionHeader={(({section: {title}}) => (
+			renderSectionHeader={({section: {title}}) => (
 				<ListSectionHeader title={title} />
-			))}
+			)}
 			sections={streams}
 			style={styles.listContainer}
 		/>
