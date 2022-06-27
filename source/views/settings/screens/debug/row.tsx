@@ -1,3 +1,13 @@
+/**
+ * TODO(volz):
+ * - Fix the typings of this view
+ * - Undo disabling of eslint
+ * See https://github.com/StoDevX/AAO-React-Native/issues/6007
+ */
+
+/* Disabling eslint as the view is not usable in the build */
+/* eslint-disable */
+
 import * as React from 'react'
 import {Cell} from '@frogpond/tableview'
 import type {TopLevelViewPropsType} from '../../../types'
