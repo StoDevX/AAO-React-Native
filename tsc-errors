@@ -90,11 +90,7 @@ source/views/settings/components/logo.tsx(3,24): error TS7016: Could not find a 
   Try `npm i --save-dev @types/hawkrives__react-native-alternate-icons` if it exists or add a new declaration (.d.ts) file containing `declare module '@hawkrives/react-native-alternate-icons';`
 source/views/settings/screens/change-icon.tsx(3,24): error TS7016: Could not find a declaration file for module '@hawkrives/react-native-alternate-icons'. './node_modules/@hawkrives/react-native-alternate-icons/index.js' implicitly has an 'any' type.
   Try `npm i --save-dev @types/hawkrives__react-native-alternate-icons` if it exists or add a new declaration (.d.ts) file containing `declare module '@hawkrives/react-native-alternate-icons';`
-source/views/settings/screens/debug/list.tsx(10,36): error TS2307: Cannot find module 'react-navigation' or its corresponding type declarations.
-source/views/settings/screens/debug/row.tsx(40,5): error TS2322: Type 'string | false' is not assignable to type 'false | "DisclosureIndicator" | "Detail" | "DetailDisclosure" | "Checkmark" | undefined'.
-  Type 'string' is not assignable to type 'false | "DisclosureIndicator" | "Detail" | "DetailDisclosure" | "Checkmark" | undefined'.
-source/views/settings/screens/debug/row.tsx(43,5): error TS2322: Type '((key: string) => any) | null' is not assignable to type '(() => false | void) | undefined'.
-  Type 'null' is not assignable to type '(() => false | void) | undefined'.
+source/views/settings/screens/debug/list.tsx(20,36): error TS2307: Cannot find module 'react-navigation' or its corresponding type declarations.
 source/views/settings/screens/overview/app-icon.tsx(2,24): error TS7016: Could not find a declaration file for module '@hawkrives/react-native-alternate-icons'. './node_modules/@hawkrives/react-native-alternate-icons/index.js' implicitly has an 'any' type.
   Try `npm i --save-dev @types/hawkrives__react-native-alternate-icons` if it exists or add a new declaration (.d.ts) file containing `declare module '@hawkrives/react-native-alternate-icons';`
 source/views/settings/screens/overview/login-credentials.tsx(140,13): error TS2345: Argument of type 'ThunkAction<LogInActions>' is not assignable to parameter of type 'AnyAction'.
@@ -118,10 +114,6 @@ source/views/sis/course-search/lib/execute-search.ts(2,27): error TS7016: Could 
   Try `npm i --save-dev @types/keyword-search` if it exists or add a new declaration (.d.ts) file containing `declare module 'keyword-search';`
 source/views/sis/course-search/lib/format-filter-combo.ts(37,50): error TS2345: Argument of type 'string | number' is not assignable to parameter of type 'string'.
   Type 'number' is not assignable to type 'string'.
-source/views/sis/course-search/list.tsx(104,4): error TS2322: Type '{ icon: string; iconColor: string; style: { paddingVertical: number; }; text: string; }' is not assignable to type 'IntrinsicAttributes & Props'.
-  Property 'icon' does not exist on type 'IntrinsicAttributes & Props'.
-source/views/sis/course-search/results.tsx(102,4): error TS2322: Type 'boolean | FilterType[]' is not assignable to type 'boolean'.
-  Type 'FilterType[]' is not assignable to type 'boolean'.
 source/views/sis/course-search/results.tsx(122,31): error TS2345: Argument of type 'ThunkAction<UpdateRecentSearchesAction>' is not assignable to parameter of type 'AnyAction'.
   Property 'type' is missing in type 'ThunkAction<UpdateRecentSearchesAction>' but required in type 'AnyAction'.
 source/views/sis/course-search/results.tsx(126,39): error TS2345: Argument of type 'ThunkAction<UpdateRecentFiltersAction>' is not assignable to parameter of type 'AnyAction'.

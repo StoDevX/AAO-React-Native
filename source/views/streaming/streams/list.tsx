@@ -93,10 +93,6 @@ export const StreamListView = (): JSX.Element => {
 
 	let keyExtractor = (item: StreamType) => item.eid
 
-	let renderSectionHeader = ({section: {title}}: any) => (
-		<ListSectionHeader title={title} />
-	)
-
 	let renderItem = ({item}: {item: StreamType}) => <StreamRow stream={item} />
 
 	if (loading) {
@@ -116,7 +112,9 @@ export const StreamListView = (): JSX.Element => {
 			onRefresh={refresh}
 			refreshing={refreshing}
 			renderItem={renderItem}
-			renderSectionHeader={renderSectionHeader}
+			renderSectionHeader={({section: {title}}) => (
+				<ListSectionHeader title={title} />
+			)}
 			sections={streams}
 			style={styles.listContainer}
 		/>
