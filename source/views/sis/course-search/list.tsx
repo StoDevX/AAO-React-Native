@@ -9,7 +9,6 @@ import {
 import type {CourseType} from '../../../lib/course-search/types'
 import {ListSeparator, ListSectionHeader} from '@frogpond/lists'
 import * as c from '@frogpond/colors'
-import {sto} from '../../../lib/colors'
 import {CourseRow} from './row'
 import memoize from 'lodash/memoize'
 import {parseTerm} from '../../../lib/course-search'
@@ -101,8 +100,6 @@ export const CourseResultsList = (props: Props): JSX.Element => {
 
 	let messageView = (
 		<NoticeView
-			icon="leaf-outline"
-			iconColor={sto.lime}
 			style={styles.message}
 			text={message}
 		/>
