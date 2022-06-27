@@ -126,7 +126,7 @@ export const CourseResultsList = (props: Props): JSX.Element => {
 					}}
 				/>
 			)}
-			renderSectionHeader={({section: {title}}: any) => (
+			renderSectionHeader={({section: {title}}) => (
 				<ListSectionHeader title={parseTerm(title)} />
 			)}
 			sections={results}
