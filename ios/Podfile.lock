@@ -288,7 +288,7 @@ PODS:
     - glog
   - react-native-custom-tabs (1.0.3):
     - React
-  - react-native-ios-context-menu (1.9.0):
+  - react-native-ios-context-menu (1.10.0):
     - React-Core
   - react-native-netinfo (9.1.0):
     - React-Core
@@ -676,7 +676,7 @@ SPEC CHECKSUMS:
   React-jsinspector: 218a2503198ff28a085f8e16622a8d8f507c8019
   React-logger: f79dd3cc0f9b44f5611c6c7862badd891a862cf8
   react-native-custom-tabs: d6fc066e0d0dc2b725d9a96d7ed389d071383a62
-  react-native-ios-context-menu: 960ce660ea79522241a05bd931564355fa3ca03f
+  react-native-ios-context-menu: 15404215393518b823a0156f7fe5a07ecab34c04
   react-native-netinfo: 994c55f16653b46e044018c3624478e5b79eb917
   react-native-restart: 45c8dca02491980f2958595333cbccd6877cb57e
   react-native-safari-view: 955d7160d159241b8e9395d12d10ea0ef863dcdd
