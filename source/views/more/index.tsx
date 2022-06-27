@@ -16,10 +16,14 @@ import {
 import {useFetch} from 'react-async'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 import {SearchData, LinkGroup, LinkResults, LinkValue} from './types'
+import {Row} from '@frogpond/layout'
 
 const styles = StyleSheet.create({
 	wrapper: {
 		flex: 1,
+	},
+	row: {
+		marginVertical: 5,
 	},
 	titleText: {
 		color: c.infoBlue,
@@ -100,9 +104,11 @@ function MoreView(): JSX.Element {
 			renderItem={({item}) => {
 				return (
 					<ListRow arrowPosition="none" onPress={() => openUrl(item.url)}>
-						<Title lines={2} style={styles.titleText}>
-							{item.label}
-						</Title>
+						<Row alignItems="center" style={styles.row}>
+							<Title lines={2} style={styles.titleText}>
+								{item.label}
+							</Title>
+						</Row>
 					</ListRow>
 				)
 			}}
