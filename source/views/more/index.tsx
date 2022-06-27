@@ -71,7 +71,7 @@ function MoreView(): JSX.Element {
 
 	let grouped = React.useMemo(
 		() => groupResults(groupedOriginal, menu_items.menu_items),
-		[groupedOriginal],
+		[groupedOriginal, menu_items.menu_items],
 	)
 
 	if (error) {
