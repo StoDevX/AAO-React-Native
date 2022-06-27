@@ -4,16 +4,6 @@ import {BaseDateTimePicker} from './basepicker'
 import {IosDatetimePickerProps} from './types'
 
 export const DatePicker = (props: IosDatetimePickerProps): JSX.Element => {
-	/**
-	 * Allows us to override the iOS picker's button's minwidth
-	 * which is set below to 120 to accomodate the hours report
-	 * editor which changes minwidth to create a compact look.
-	 */
-	let baseStyle = {
-		...defaultStyle.datePicker,
-		...props.style,
-	}
-
 	return (
 		<BaseDateTimePicker
 			displayIos={props.displayIos}
@@ -22,7 +12,7 @@ export const DatePicker = (props: IosDatetimePickerProps): JSX.Element => {
 			mode={props.mode}
 			onDateChange={props.onDateChange}
 			showPickerIos={true}
-			style={baseStyle}
+			style={[defaultStyle.datePicker, props.style]}
 		/>
 	)
 }
