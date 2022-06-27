@@ -61,6 +61,7 @@ export type RootStackParamList = {
 	PrintJobs: undefined
 	PrinterList: {job: PrintJob}
 	PrintJobRelease: {job: PrintJob; printer?: Printer}
+	More: undefined
 }
 
 export type SettingsStackParamList = {
