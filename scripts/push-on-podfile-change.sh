@@ -2,15 +2,15 @@
 
 set -e -v -u -o pipefail
 
-if [ -z "${!branch}" ]; then
+if [[ -z ${branch+x} ]]; then
     echo 'Need to set environment variable "branch"' && exit 1;
 fi
 
-if [ -z "${!actor}" ]; then
+if [[ -z ${actor+x} ]]; then
     echo 'Need to set environment variable "actor"' && exit 1;
 fi
 
-if [ -z "${!head_ref}" ]; then
+if [[ -z ${head_ref+x} ]]; then
     echo 'Need to set environment variable "head_ref"' && exit 1;
 fi
 
