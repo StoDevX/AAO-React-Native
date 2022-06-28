@@ -62,8 +62,6 @@ export function BuildingHoursView(): JSX.Element {
 
 	let {
 		data: {data: buildings = []} = {},
-		isPending,
-		isInitial,
 		isLoading,
 		reload,
 	} = useBuildingHours()
@@ -94,7 +92,7 @@ export function BuildingHoursView(): JSX.Element {
 			contentContainerStyle={styles.container}
 			keyExtractor={(item) => item.name}
 			onRefresh={reload}
-			refreshing={isPending && !isInitial}
+			refreshing={false}
 			renderItem={({item}) => (
 				<BuildingRow info={item} now={now} onPress={() => onPressRow(item)} />
 			)}

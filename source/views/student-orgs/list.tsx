@@ -63,8 +63,6 @@ function StudentOrgsView(): JSX.Element {
 		data: orgs = [],
 		error,
 		reload,
-		isPending,
-		isInitial,
 		isLoading,
 	} = useStudentOrgs()
 
@@ -132,7 +130,7 @@ function StudentOrgsView(): JSX.Element {
 			keyboardDismissMode="on-drag"
 			keyboardShouldPersistTaps="never"
 			onRefresh={reload}
-			refreshing={isPending && !isInitial}
+			refreshing={false}
 			renderItem={({item}) => (
 				<ListRow arrowPosition="top" onPress={() => onPressOrg(item)}>
 					<Column flex={1}>

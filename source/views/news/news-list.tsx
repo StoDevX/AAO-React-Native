@@ -45,8 +45,6 @@ export const NewsList = (props: Props): JSX.Element => {
 		data = [],
 		error,
 		reload,
-		isPending,
-		isInitial,
 		isLoading,
 	} = useNews(props.source)
 
@@ -80,7 +78,7 @@ export const NewsList = (props: Props): JSX.Element => {
 			data={entries}
 			keyExtractor={(item: StoryType) => item.title}
 			onRefresh={reload}
-			refreshing={isPending && !isInitial}
+			refreshing={false}
 			renderItem={({item}: {item: StoryType}) => (
 				<NewsRow
 					onPress={(url: string) => openUrl(url)}

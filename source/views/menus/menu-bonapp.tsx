@@ -206,8 +206,6 @@ export function BonAppHostedMenu(props: Props): JSX.Element {
 		data: cafeMenu,
 		error: menuError,
 		reload: menuReload,
-		isPending: isMenuPending,
-		isInitial: isMenuInitial,
 		isLoading: isMenuLoading,
 	} = useCafeMenu(menuUrl)
 
@@ -215,8 +213,6 @@ export function BonAppHostedMenu(props: Props): JSX.Element {
 		data: cafeInfo,
 		error: cafeError,
 		reload: cafeReload,
-		isPending: isCafePending,
-		isInitial: isCafeInitial,
 		isLoading: isCafeLoading,
 	} = useCafeInfo(cafeUrl)
 
@@ -229,9 +225,6 @@ export function BonAppHostedMenu(props: Props): JSX.Element {
 			setErrorMessage(getErrorMessage(menuError))
 		}
 	}, [cafeError, menuError])
-
-	let refreshing =
-		(isCafePending && !isCafeInitial) || (isMenuPending && !isMenuInitial)
 
 	if (isMenuLoading || isCafeLoading) {
 		return <LoadingView text={sample(props.loadingMessage)} />
@@ -291,7 +284,7 @@ export function BonAppHostedMenu(props: Props): JSX.Element {
 				cafeReload()
 				menuReload()
 			}}
-			refreshing={refreshing}
+			refreshing={false}
 		/>
 	)
 }

@@ -88,8 +88,6 @@ function DictionaryView(): JSX.Element {
 		data: {data: words = []} = {},
 		error,
 		reload,
-		isPending,
-		isInitial,
 		isLoading,
 	} = useDictionary()
 
@@ -141,7 +139,7 @@ function DictionaryView(): JSX.Element {
 			keyboardDismissMode="on-drag"
 			keyboardShouldPersistTaps="never"
 			onRefresh={reload}
-			refreshing={isPending && !isInitial}
+			refreshing={false}
 			renderItem={({item}) => {
 				return (
 					<ListRow
