@@ -2,8 +2,10 @@ import * as React from 'react'
 import {SectionList, StyleSheet} from 'react-native'
 
 import * as c from '@frogpond/colors'
+import {useDebounce} from '@frogpond/use-debounce'
 import {LoadingView, NoticeView} from '@frogpond/notice'
 import {openUrl} from '@frogpond/open-url'
+import {Row} from '@frogpond/layout'
 import {
 	ListSeparator,
 	ListSectionHeader,
@@ -12,11 +14,15 @@ import {
 	ListRow,
 	emptyList,
 } from '@frogpond/lists'
+import {SearchData, LinkGroup, LinkResults, LinkValue} from './types'
 
 import {useFetch} from 'react-async'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
-import {SearchData, LinkGroup, LinkResults, LinkValue} from './types'
-import {Row} from '@frogpond/layout'
+import {useNavigation} from '@react-navigation/native'
+import {ChangeTextEvent} from '../../navigation/types'
+import deburr from 'lodash/deburr'
+import words from 'lodash/words'
+import groupBy from 'lodash/groupBy'
 
 const styles = StyleSheet.create({
 	wrapper: {
@@ -33,26 +39,44 @@ const styles = StyleSheet.create({
 	},
 })
 
-function createGrouping(results: LinkResults[]) {
-	if (!results) {
-		return []
-	}
-
-	return results.map(({letter, values}) => ({
-		title: letter,
-		data: values,
-	}))
+function splitToArray(str: string) {
+	return words(deburr(str.toLowerCase()))
 }
 
-let groupResults = (data: LinkGroup[]) => {
-	if (!data) {
+function linkToArray(data: LinkValue) {
+	return Array.from(new Set([...splitToArray(data.label)]))
+}
+
+let groupResults = (
+	searchQuery: string,
+	rawData: LinkResults[],
+	groupedOriginal: LinkGroup[],
+) => {
+	if (!rawData) {
 		return emptyList
 	}
 
-	return data
+	if (searchQuery.length < 3) {
+		return groupedOriginal
+	}
+
+	let filtered = rawData.flatMap((data) =>
+		data.values.filter((value) =>
+			linkToArray(value).some((value) => value.includes(searchQuery)),
+		),
+	)
+
+	let groupedResults = groupBy(filtered, (result) => result.label[0] || '?')
+
+	let groupedLinks = Object.entries(groupedResults).map(([key, value]) => ({
+		title: key,
+		data: value,
+	}))
+
+	return groupedLinks
 }
 
-const useMoreLinks = () => {
+const useSearchLinks = () => {
 	const url = 'https://wp.stolaf.edu/wp-json/site-data/sidebar/a-z'
 	return useFetch<SearchData>(url, {
 		headers: {accept: 'application/json'},
@@ -60,23 +84,41 @@ const useMoreLinks = () => {
 }
 
 function MoreView(): JSX.Element {
+	let navigation = useNavigation()
+
+	let [query, setQuery] = React.useState('')
+	let searchQuery = useDebounce(query.toLowerCase(), 200)
+
 	let {
-		data: {az_nav: menu_items = []} = {},
+		data: {az_nav: {menu_items: menuItems = []} = {}} = {},
 		error,
 		reload,
-		isPending,
-		isInitial,
 		isLoading,
-	} = useMoreLinks()
+	} = useSearchLinks()
 
-	let groupedOriginal = React.useMemo(() => {
-		return createGrouping(menu_items.menu_items)
-	}, [menu_items.menu_items])
+	let groupedOriginal = React.useMemo(
+		() =>
+			menuItems.map(({letter, values}) => ({
+				title: letter[0],
+				data: values,
+			})),
+		[menuItems],
+	)
 
 	let grouped = React.useMemo(
-		() => groupResults(groupedOriginal, menu_items.menu_items),
-		[groupedOriginal, menu_items.menu_items],
+		() => groupResults(searchQuery, menuItems, groupedOriginal),
+		[searchQuery, menuItems, groupedOriginal],
 	)
+
+	React.useLayoutEffect(() => {
+		navigation.setOptions({
+			headerSearchBarOptions: {
+				barTintColor: c.white,
+				onChangeText: (event: ChangeTextEvent) =>
+					setQuery(event.nativeEvent.text),
+			},
+		})
+	}, [navigation])
 
 	if (error) {
 		return (
@@ -92,7 +134,13 @@ function MoreView(): JSX.Element {
 		<SectionList
 			ItemSeparatorComponent={ListSeparator}
 			ListEmptyComponent={
-				isLoading ? <LoadingView /> : <NoticeView text="No results found." />
+				searchQuery ? (
+					<NoticeView text={`No results found for "${searchQuery}"`} />
+				) : isLoading ? (
+					<LoadingView />
+				) : (
+					<NoticeView text="No results found." />
+				)
 			}
 			contentContainerStyle={styles.contentContainer}
 			contentInsetAdjustmentBehavior="automatic"
@@ -100,7 +148,7 @@ function MoreView(): JSX.Element {
 			keyboardDismissMode="on-drag"
 			keyboardShouldPersistTaps="never"
 			onRefresh={reload}
-			refreshing={isPending && !isInitial}
+			refreshing={false}
 			renderItem={({item}) => {
 				return (
 					<ListRow arrowPosition="none" onPress={() => openUrl(item.url)}>
