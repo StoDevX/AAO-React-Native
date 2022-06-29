@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e -u -o pipefail
+set -e -x -v -u -o pipefail
 
 if [[ -z ${branch+x} ]]; then
     echo 'Need to set environment variable "branch"' && exit 1;
