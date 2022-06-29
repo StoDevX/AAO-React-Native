@@ -158,7 +158,7 @@ jobs:
         env: {SKIP_POSTINSTALL: '1'}
       - run: bundle exec -- pod install --verbose
         working-directory: ./ios
-      - name: push-if-podfile-changes
+      - name: push-on-podfile-change
         run: bash scripts/push-on-podfile-change.sh
         env:
           branch: ${{ github.ref_name }}
