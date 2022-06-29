@@ -20,7 +20,10 @@ echo "head_ref: $head_ref"
 
 FILE=ios/Podfile.lock
 
-if [[ -n "$(git status -s -- $FILE)" ]]; then
+git diff
+git status -s -- "$FILE"
+
+if [[ -n $(git status -s -- "$FILE") ]]; then
     exit 0
 fi
 
