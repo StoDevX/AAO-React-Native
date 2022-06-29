@@ -31,9 +31,6 @@ const styles = StyleSheet.create({
 	row: {
 		marginVertical: 5,
 	},
-	titleText: {
-		color: c.infoBlue,
-	},
 	contentContainer: {
 		flexGrow: 1,
 	},
@@ -151,11 +148,9 @@ function MoreView(): JSX.Element {
 			refreshing={false}
 			renderItem={({item}) => {
 				return (
-					<ListRow arrowPosition="none" onPress={() => openUrl(item.url)}>
+					<ListRow arrowPosition="center" onPress={() => openUrl(item.url)}>
 						<Row alignItems="center" style={styles.row}>
-							<Title lines={2} style={styles.titleText}>
-								{item.label}
-							</Title>
+							<Title lines={2}>{item.label}</Title>
 						</Row>
 					</ListRow>
 				)
