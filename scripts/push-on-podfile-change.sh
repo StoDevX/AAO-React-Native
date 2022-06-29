@@ -21,9 +21,8 @@ echo "head_ref: $head_ref"
 FILE=ios/Podfile.lock
 
 git diff
-git status -s -- "$FILE"
 
-if [[ -n $(git status -s -- "$FILE") ]]; then
+if [[ -z $(git status -s -- "$FILE") ]]; then
     exit 0
 fi
 
