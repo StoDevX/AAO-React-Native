@@ -89,6 +89,8 @@ function MoreView(): JSX.Element {
 	let {
 		data: {az_nav: {menu_items: menuItems = []} = {}} = {},
 		error,
+		isPending,
+		isInitial,
 		reload,
 		isLoading,
 	} = useSearchLinks()
@@ -145,7 +147,7 @@ function MoreView(): JSX.Element {
 			keyboardDismissMode="on-drag"
 			keyboardShouldPersistTaps="never"
 			onRefresh={reload}
-			refreshing={false}
+			refreshing={isPending && !isInitial}
 			renderItem={({item}) => {
 				return (
 					<ListRow arrowPosition="center" onPress={() => openUrl(item.url)}>
