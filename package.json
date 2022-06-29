@@ -170,7 +170,7 @@
     "eslint-plugin-react": "7.30.1",
     "eslint-plugin-react-hooks": "4.6.0",
     "eslint-plugin-react-native": "4.0.0",
-    "jest": "28.1.1",
+    "jest": "28.1.2",
     "jetifier": "2.0.0",
     "js-yaml": "4.1.0",
     "junk": "4.0.0",
