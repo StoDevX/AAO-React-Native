@@ -1,7 +1,4 @@
-export {
-	ConnectedBuildingHoursView as BuildingHoursView,
-	NavigationOptions,
-} from './stateful-list'
+export {BuildingHoursView, NavigationOptions} from './list'
 
 export {
 	BuildingHoursDetailView,

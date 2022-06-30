@@ -5,8 +5,10 @@ import {ListFooter} from '@frogpond/lists'
 import glamorous from 'glamorous-native'
 import {Button} from '@frogpond/button'
 import {openUrl} from '@frogpond/open-url'
-import type {OtherModeType} from '../types'
 import {GH_NEW_ISSUE_URL} from '../../../lib/constants'
+import {RouteProp, useRoute} from '@react-navigation/native'
+import {RootStackParamList} from '../../../navigation/types'
+import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 
 const Title = glamorous.text({
 	fontSize: 36,
@@ -26,10 +28,19 @@ const styles = StyleSheet.create({
 	},
 })
 
-type Props = {navigation: {state: {params: {mode: OtherModeType}}}}
+export const NavigationOptions = (props: {
+	route: RouteProp<RootStackParamList, 'OtherModesDetail'>
+}): NativeStackNavigationOptions => {
+	let {name} = props.route.params.mode
+	return {
+		title: name,
+	}
+}
 
-export function OtherModesDetailView(props: Props): JSX.Element {
-	let mode = props.navigation.state.params.mode
+export function OtherModesDetailView(): JSX.Element {
+	let route = useRoute<RouteProp<RootStackParamList, 'OtherModesDetail'>>()
+	let {mode} = route.params
+
 	return (
 		<Container>
 			<Title selectable={true}>{mode.name}</Title>
@@ -47,10 +58,4 @@ export function OtherModesDetailView(props: Props): JSX.Element {
 			/>
 		</Container>
 	)
-}
-
-OtherModesDetailView.navigationOptions = ({navigation}: any) => {
-	return {
-		title: navigation.state.params.mode.name,
-	}
 }

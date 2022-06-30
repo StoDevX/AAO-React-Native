@@ -1,34 +1,31 @@
 import * as React from 'react'
-import moment from 'moment-timezone'
-import type {Moment} from 'moment-timezone'
+import {default as moment, type Moment} from 'moment-timezone'
 import delay from 'delay'
 
-export function msUntilIntervalRepeat(now: number, interval: number) {
+export function msUntilIntervalRepeat(now: number, interval: number): number {
 	return interval - (now % interval)
+}
+
+type RenderState<T> = {
+	now: T
+	loading: boolean
+	refresh: () => void
+}
+
+type MomentRender = {
+	moment: true
+	render: (state: RenderState<Moment>) => JSX.Element
+}
+type DateRender = {
+	moment: false
+	render: (state: RenderState<Date>) => JSX.Element
 }
 
 type Props = {
 	interval: number // ms
 	timezone?: string
-	invoke?: () => unknown
-} & (
-	| {
-			moment: true
-			render: (state: {
-				now: Moment
-				loading: boolean
-				refresh: () => void
-			}) => React.ReactNode
-	  }
-	| {
-			moment: false
-			render: (state: {
-				now: Date
-				loading: boolean
-				refresh: () => void
-			}) => React.ReactNode
-	  }
-)
+	invoke?: () => void
+} & (MomentRender | DateRender)
 
 type State = {
 	now: Date
@@ -44,7 +41,7 @@ export class Timer extends React.Component<Props, State> {
 		loading: false,
 	}
 
-	componentDidMount() {
+	componentDidMount(): void {
 		// get the time remaining until the next $interval
 		let {interval} = this.props
 		let nowMs = this.state.now.getTime()
@@ -56,16 +53,16 @@ export class Timer extends React.Component<Props, State> {
 		}, untilNextInterval)
 	}
 
-	componentWillUnmount() {
+	componentWillUnmount(): void {
 		this._timeoutId != null && clearTimeout(this._timeoutId)
 		this._intervalId != null && clearInterval(this._intervalId)
 	}
 
-	updateTime = () => {
+	updateTime = (): void => {
 		this.setState(() => ({now: new Date()}))
 	}
 
-	_refresh = async () => {
+	_refresh = async (): Promise<void> => {
 		let start = Date.now()
 		this.setState(() => ({loading: true}))
 
@@ -79,11 +76,11 @@ export class Timer extends React.Component<Props, State> {
 		this.setState(() => ({loading: false}))
 	}
 
-	refresh = () => {
+	refresh = (): void => {
 		this._refresh()
 	}
 
-	render() {
+	render(): JSX.Element {
 		let {now, loading} = this.state
 
 		if (this.props.invoke) {

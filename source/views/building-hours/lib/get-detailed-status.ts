@@ -7,10 +7,16 @@ import {isChapelTime, formatChapelTime} from './chapel'
 import {isScheduleOpenAtMoment} from './is-schedule-open'
 import {formatBuildingTimes} from './format-times'
 
+export type BuildingStatus = {
+	isActive: boolean
+	label: string | null
+	status: string
+}
+
 export function getDetailedBuildingStatus(
 	info: BuildingType,
 	m: Moment,
-): Array<{isActive: boolean; label: string | null; status: string}> {
+): BuildingStatus[] {
 	// Friday: 9:00am – Midnight
 	// -- or --
 	// Friday Breakfast: 7:00am – 9:45am

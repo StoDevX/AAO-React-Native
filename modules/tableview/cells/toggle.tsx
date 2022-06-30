@@ -1,13 +1,13 @@
 import * as React from 'react'
 import {Switch} from 'react-native'
-import {Cell} from 'react-native-tableview-simple'
+import {Cell} from '@frogpond/tableview'
 import type {AppTheme} from '@frogpond/app-theme'
 import {useTheme} from '@frogpond/app-theme'
 
 type PropsType = {
 	label: string
 	value: boolean
-	onChange: (val: boolean) => any
+	onChange: (val: boolean) => void
 	detail?: string
 	disabled?: boolean
 }

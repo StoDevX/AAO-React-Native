@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {Cell} from 'react-native-tableview-simple'
+import {Cell} from '@frogpond/tableview'
 import {StyleSheet, Text, View} from 'react-native'
 import * as c from '@frogpond/colors'
 
@@ -8,21 +8,19 @@ type LeftDetailProps = {
 	title: string
 }
 
-export class MultiLineLeftDetailCell extends React.PureComponent<LeftDetailProps> {
-	render() {
-		let {detail, title} = this.props
-		let cellContent = (
-			<View style={styles.cellContentView}>
-				<Text allowFontScaling={true} style={styles.cellLeftDetail}>
-					{detail}
-				</Text>
-				<Text allowFontScaling={true} style={styles.cellLeftDetailTitle}>
-					{title}
-				</Text>
-			</View>
-		)
-		return <Cell cellContentView={cellContent} />
-	}
+export function MultiLineLeftDetailCell(props: LeftDetailProps): JSX.Element {
+	let {detail, title} = props
+	let cellContent = (
+		<View style={styles.cellContentView}>
+			<Text allowFontScaling={true} style={styles.cellLeftDetail}>
+				{detail}
+			</Text>
+			<Text allowFontScaling={true} style={styles.cellLeftDetailTitle}>
+				{title}
+			</Text>
+		</View>
+	)
+	return <Cell cellContentView={cellContent} />
 }
 
 const styles = StyleSheet.create({

@@ -2,9 +2,9 @@ import * as React from 'react'
 import Clipboard from '@react-native-community/clipboard'
 import glamorous from 'glamorous-native'
 import {openUrl} from '@frogpond/open-url'
-import {connectActionSheet} from '@expo/react-native-action-sheet'
-
+import {useActionSheet} from '@expo/react-native-action-sheet'
 import * as c from '@frogpond/colors'
+import {TextProps} from 'react-native'
 
 export const LinkText = glamorous.text({
 	textDecorationLine: 'underline',
@@ -12,15 +12,12 @@ export const LinkText = glamorous.text({
 	color: c.infoBlue,
 })
 
-type Props = {
+type Props = TextProps & {
 	href: string
 	title?: string
-	children: React.ReactChildren | JSX.Element
-	showShareActionSheetWithOptions: any
-	showActionSheetWithOptions: any
 }
 
-type Callback = ({title, href}: {title?: string; href: string}) => any
+type Callback = ({title, href}: {title?: string; href: string}) => void
 
 const LINK_OPTIONS: Array<{name: string; action: Callback}> = [
 	{
@@ -40,43 +37,41 @@ const LINK_OPTIONS: Array<{name: string; action: Callback}> = [
 	},
 ]
 
-class Link extends React.PureComponent<Props> {
-	onPress = () => {
-		return openUrl(this.props.href)
-	}
+export function Link(props: Props): JSX.Element {
+	let {showActionSheetWithOptions} = useActionSheet()
 
-	onLongPress = () => {
-		return this.props.showActionSheetWithOptions(
+	const onPress = React.useCallback(() => {
+		return openUrl(props.href)
+	}, [props.href])
+
+	const onLongPressEnd = React.useCallback(
+		(pressedOptionIndex?: number) => {
+			if (pressedOptionIndex === undefined) {
+				return
+			}
+			LINK_OPTIONS[pressedOptionIndex].action({
+				title: props.title,
+				href: props.href,
+			})
+		},
+		[props.title, props.href],
+	)
+
+	const onLongPress = React.useCallback(() => {
+		return showActionSheetWithOptions(
 			{
 				options: LINK_OPTIONS.map(({name}) => name),
-				title: this.props.title,
-				message: this.props.href,
+				title: props.title,
+				message: props.href,
 				cancelButtonIndex: LINK_OPTIONS.length - 1,
 			},
-			this.onLongPressEnd,
+			onLongPressEnd,
 		)
-	}
+	}, [showActionSheetWithOptions, props.title, props.href, onLongPressEnd])
 
-	onLongPressEnd = (pressedOptionIndex: number) => {
-		return LINK_OPTIONS[pressedOptionIndex].action(this.props)
-	}
-
-	onShareFailure = () => {
-		/* do nothing */
-	}
-	onShareSuccess = () => {
-		/* do nothing */
-	}
-
-	render() {
-		return (
-			<LinkText onLongPress={this.onLongPress} onPress={this.onPress}>
-				{this.props.children}
-			</LinkText>
-		)
-	}
+	return (
+		<LinkText onLongPress={onLongPress} onPress={onPress}>
+			{props.children}
+		</LinkText>
+	)
 }
-
-const ConnectedLink = connectActionSheet(Link)
-
-export {ConnectedLink as Link}

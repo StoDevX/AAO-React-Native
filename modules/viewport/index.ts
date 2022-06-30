@@ -1,34 +1,10 @@
-import * as React from 'react'
-import {Dimensions} from 'react-native'
-
-type WindowDimensions = {width: number; height: number}
+import {ScaledSize, useWindowDimensions} from 'react-native'
 
 type Props = {
-	render: (dimensions: WindowDimensions) => React.ReactNode
+	render: (dimensions: ScaledSize) => JSX.Element
 }
 
-type State = {
-	viewport: WindowDimensions
-}
-
-export class Viewport extends React.PureComponent<Props, State> {
-	state = {
-		viewport: Dimensions.get('window'),
-	}
-
-	componentDidMount() {
-		Dimensions.addEventListener('change', this.handleResizeEvent)
-	}
-
-	componentWillUnmount() {
-		Dimensions.removeEventListener('change', this.handleResizeEvent)
-	}
-
-	handleResizeEvent = (event: {window: WindowDimensions}) => {
-		this.setState(() => ({viewport: event.window}))
-	}
-
-	render() {
-		return this.props.render(this.state.viewport)
-	}
+export let Viewport = (props: Props): JSX.Element => {
+	let viewport = useWindowDimensions()
+	return props.render(viewport)
 }

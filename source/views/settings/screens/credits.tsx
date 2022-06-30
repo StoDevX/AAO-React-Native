@@ -1,8 +1,9 @@
 import * as React from 'react'
 import * as c from '@frogpond/colors'
+import {Markdown} from '@frogpond/markdown'
 import {data as credits} from '../../../../docs/credits.json'
 import glamorous from 'glamorous-native'
-import {Platform, StyleSheet, ScrollView} from 'react-native'
+import {Platform, StyleSheet} from 'react-native'
 import {iOSUIKit, material} from 'react-native-typography'
 import {AppLogo} from '../components/logo'
 
@@ -42,6 +43,14 @@ const About = glamorous.text({
 	paddingTop: 10,
 })
 
+const Timeline = glamorous.text({
+	...Platform.select({
+		ios: iOSUIKit.bodyObject,
+		android: material.body1Object,
+	}),
+	marginHorizontal: 25,
+})
+
 const Contributors = glamorous(About)({
 	...Platform.select({
 		ios: iOSUIKit.footnoteEmphasizedObject,
@@ -53,26 +62,25 @@ const Contributors = glamorous(About)({
 const formatPeopleList = (arr: Array<string>) =>
 	arr.map((w) => w.replace(' ', ' ')).join(' • ')
 
-export function CreditsView(): JSX.Element {
-	return (
-		<ScrollView
-			contentContainerStyle={styles.contentContainer}
-			contentInsetAdjustmentBehavior="automatic"
-			style={styles.container}
-		>
-			<AppLogo />
+export let CreditsView = (): JSX.Element => (
+	<glamorous.ScrollView
+		contentContainerStyle={styles.contentContainer}
+		contentInsetAdjustmentBehavior="automatic"
+		style={styles.container}
+	>
+		<AppLogo />
 
-			<Title>{credits.name}</Title>
-			<About>{credits.content}</About>
+		<Title>{credits.name}</Title>
+		<About>{credits.content}</About>
 
-			<Heading>Contributors</Heading>
-			<Contributors>{formatPeopleList(credits.contributors)}</Contributors>
+		<Timeline>
+			<Markdown source={credits.timeline} />
+		</Timeline>
 
-			<Heading>Acknowledgements</Heading>
-			<Contributors>{formatPeopleList(credits.acknowledgements)}</Contributors>
-		</ScrollView>
-	)
-}
-CreditsView.navigationOptions = {
-	title: 'Credits',
-}
+		<Heading>Contributors</Heading>
+		<Contributors>{formatPeopleList(credits.contributors)}</Contributors>
+
+		<Heading>Acknowledgements</Heading>
+		<Contributors>{formatPeopleList(credits.acknowledgements)}</Contributors>
+	</glamorous.ScrollView>
+)

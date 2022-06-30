@@ -19,7 +19,7 @@ export function FilterPopover(props: Props): JSX.Element {
 
 	return (
 		<Popover
-			from={anchor.current}
+			from={anchor}
 			isVisible={visible}
 			onRequestClose={() => onClosePopover(filter)}
 			placement={PopoverPlacement.BOTTOM}

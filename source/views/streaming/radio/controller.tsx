@@ -1,17 +1,24 @@
 import * as React from 'react'
 import {useCallback, useState} from 'react'
-import {Image, ScrollView, StyleSheet, Text, View} from 'react-native'
+import {
+	Image,
+	ScrollView,
+	StyleSheet,
+	Text,
+	View,
+	useWindowDimensions,
+} from 'react-native'
 import noop from 'lodash/noop'
 import * as c from '@frogpond/colors'
 import {callPhone} from '../../../components/call-phone'
 import {Row} from '@frogpond/layout'
-import type {TopLevelViewPropsType} from '../../types'
 import {StreamPlayer} from './player'
 import type {HtmlAudioError, PlayState} from './types'
 import {useTheme} from './theme'
 import {ActionButton, CallButton, ShowCalendarButton} from './buttons'
 import {openUrl} from '@frogpond/open-url'
-import {Viewport} from '@frogpond/viewport'
+import {useNavigation} from '@react-navigation/native'
+import {RootStackParamList} from '../../../navigation/types'
 
 // If you want to fix the inline player, switch to `true`
 const ALLOW_INLINE_PLAYER = false
@@ -47,12 +54,12 @@ function PlayButton(props: PlayButtonProps): JSX.Element {
 	}
 }
 
-type Props = TopLevelViewPropsType & {
+type Props = {
 	image: number
 	playerUrl: string
 	stationNumber: string
 	title: string
-	scheduleViewName: string
+	scheduleViewName: keyof RootStackParamList
 	stationName: string
 	source: {
 		useEmbeddedPlayer: boolean
@@ -68,11 +75,12 @@ export function RadioControllerView(props: Props): JSX.Element {
 		title,
 		stationName,
 		image,
-		navigation,
 		scheduleViewName,
 		stationNumber,
 		playerUrl,
 	} = props
+
+	let navigation = useNavigation()
 
 	let [playState, setPlayState] = useState<PlayState>('paused')
 	let [streamError, setStreamError] = useState<HtmlAudioError | null>(null)
@@ -165,41 +173,34 @@ export function RadioControllerView(props: Props): JSX.Element {
 		/>
 	) : null
 
+	let {width, height} = useWindowDimensions()
+
+	let sideways = width > height
+
+	let logoSmallestDimension = Math.min(width / 1.5, height / 1.75)
+	let logoSize = {
+		width: logoSmallestDimension,
+		height: logoSmallestDimension,
+	}
+
+	let root = [styles.root, sideways && landscape.root]
+	let logoBorderColor = {borderColor: theme.imageBorderColor}
+	let logoBg = {backgroundColor: theme.imageBackgroundColor}
+	let logo = [styles.logoBorder, logoSize, logoBorderColor, logoBg]
+	let logoWrapper = [styles.logoWrapper, sideways && landscape.logoWrapper]
+
 	return (
-		<Viewport
-			render={({width, height}) => {
-				let sideways = width > height
+		<ScrollView contentContainerStyle={root}>
+			<View style={logoWrapper}>
+				<Image resizeMode="contain" source={image} style={logo} />
+			</View>
 
-				let logoSmallestDimension = Math.min(width / 1.5, height / 1.75)
-				let logoSize = {
-					width: logoSmallestDimension,
-					height: logoSmallestDimension,
-				}
-
-				let root = [styles.root, sideways && landscape.root]
-				let logoBorderColor = {borderColor: theme.imageBorderColor}
-				let logoBg = {backgroundColor: theme.imageBackgroundColor}
-				let logo = [styles.logoBorder, logoSize, logoBorderColor, logoBg]
-				let logoWrapper = [
-					styles.logoWrapper,
-					sideways && landscape.logoWrapper,
-				]
-
-				return (
-					<ScrollView contentContainerStyle={root}>
-						<View style={logoWrapper}>
-							<Image resizeMode="contain" source={image} style={logo} />
-						</View>
-
-						<View style={styles.container}>
-							{titleBlock}
-							{controlsBlock}
-							{playerBlock}
-						</View>
-					</ScrollView>
-				)
-			}}
-		/>
+			<View style={styles.container}>
+				{titleBlock}
+				{controlsBlock}
+				{playerBlock}
+			</View>
+		</ScrollView>
 	)
 }
 

@@ -9,11 +9,6 @@ import type {
 	ProcessedMealType,
 	StationMenuType,
 } from './types'
-import type {
-	NavigationAction,
-	NavigationRoute,
-	NavigationScreenProp,
-} from 'react-navigation'
 import size from 'lodash/size'
 import {ListSectionHeader, ListSeparator} from '@frogpond/lists'
 import type {FilterType} from '@frogpond/filter'
@@ -23,6 +18,7 @@ import {FilterMenuToolbar as FilterToolbar} from './filter-menu-toolbar'
 import {FoodItemRow} from './food-item-row'
 import {chooseMeal} from './lib/choose-meal'
 import {buildFilters} from './lib/build-filters'
+import {useNavigation} from '@react-navigation/native'
 import type {Moment} from 'moment'
 
 type FilterFunc = (filters: Array<FilterType>, item: MenuItemType) => boolean
@@ -39,11 +35,7 @@ type ReactProps = {
 	applyFilters?: FilterFunc
 }
 
-type DefaultProps = {
-	navigation: NavigationScreenProp<NavigationRoute, NavigationAction>
-}
-
-type Props = ReactProps & DefaultProps
+type Props = ReactProps
 
 const styles = StyleSheet.create({
 	inner: {
@@ -93,8 +85,9 @@ const groupMenuData = (args: {
 
 export function FancyMenu(props: Props): JSX.Element {
 	const {now, meals, cafeMessage, foodItems, menuCorIcons} = props
-	const navigate = props.navigation.navigate
 	const applyFilters = props.applyFilters ?? applyFiltersToItem
+
+	let navigation = useNavigation()
 
 	const [filters, setFilters] = useState<FilterType[]>([])
 
@@ -133,8 +126,6 @@ export function FancyMenu(props: Props): JSX.Element {
 		message = 'No items to show. Try changing the filters.'
 	}
 
-	const messageView = <NoticeView style={styles.message} text={message} />
-
 	// If the requested menu has no food items, that location is closed
 	const isOpen = Object.keys(foodItems).length !== 0
 
@@ -156,7 +147,7 @@ export function FancyMenu(props: Props): JSX.Element {
 	return (
 		<SectionList
 			ItemSeparatorComponent={Separator}
-			ListEmptyComponent={messageView}
+			ListEmptyComponent={<NoticeView style={styles.message} text={message} />}
 			ListHeaderComponent={header}
 			contentContainerStyle={styles.contentContainer}
 			extraData={filters}
@@ -170,7 +161,7 @@ export function FancyMenu(props: Props): JSX.Element {
 						corIcons={menuCorIcons}
 						data={item}
 						onPress={() =>
-							navigate('MenuItemDetailView', {item, icons: menuCorIcons})
+							navigation.navigate('MenuItemDetail', {item, icons: menuCorIcons})
 						}
 						spacing={{left: LEFT_MARGIN}}
 					/>

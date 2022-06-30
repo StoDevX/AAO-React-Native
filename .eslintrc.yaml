@@ -8,6 +8,7 @@ parserOptions:
 plugins:
   - '@typescript-eslint'
   - babel
+  - jsx-expressions
   - react
   - react-native
   - react-hooks
@@ -119,3 +120,6 @@ rules:
   # TODO(rye): Follow-up: DENY these
   '@typescript-eslint/explicit-module-boundary-types': warn
   '@typescript-eslint/no-empty-function': warn
+
+  # eslint-plugin-jsx-expressions – https://github.com/hpersson/eslint-plugin-jsx-expressions/
+  jsx-expressions/strict-logical-expressions: warn

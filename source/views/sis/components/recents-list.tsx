@@ -1,23 +1,24 @@
 import * as React from 'react'
-import {StyleSheet, Text, View, Platform} from 'react-native'
+import {StyleSheet, Text, View, Platform, Pressable} from 'react-native'
 import {ListSeparator, ListRow} from '@frogpond/lists'
 import {NoticeView} from '@frogpond/notice'
 import * as c from '@frogpond/colors'
 import type {AppTheme} from '@frogpond/app-theme'
 import {withTheme} from '@frogpond/app-theme'
+import {noop} from 'lodash'
 
 type Props = {
 	actionLabel?: string
 	emptyHeader: string
 	emptyText: string
-	onAction?: () => any
-	onItemPress: (item: string) => any
+	onAction?: () => void
+	onItemPress: (item: string) => void
 	items: string[]
 	title: string
 	theme: AppTheme
 }
 
-function RecentItemsList(props: Props) {
+function RecentItemsList(props: Props): JSX.Element {
 	let {items, actionLabel, onAction, title, emptyHeader, emptyText, theme} =
 		props
 
@@ -26,7 +27,7 @@ function RecentItemsList(props: Props) {
 	return (
 		<>
 			<View style={styles.rowFlex}>
-				{title && <Text style={styles.subHeader}>{title}</Text>}
+				{Boolean(title) && <Text style={styles.subHeader}>{title}</Text>}
 				{onAction && (
 					<Text onPress={onAction} style={[foreground, styles.sideButton]}>
 						{actionLabel}
@@ -44,21 +45,22 @@ function RecentItemsList(props: Props) {
 			) : (
 				items.map((item, i) => (
 					<>
-						<ListRow
+						<Pressable
 							key={item}
-							arrowPosition="none"
+							// adding long press allows for copy text when selectable is true
+							onLongPress={noop}
 							onPress={() => props.onItemPress(item)}
 						>
-							<Text
-								numberOfLines={1}
-								style={[
-									{color: props.theme.iosPushButtonCellForeground},
-									styles.listItem,
-								]}
-							>
-								{item}
-							</Text>
-						</ListRow>
+							<ListRow arrowPosition="none">
+								<Text
+									numberOfLines={1}
+									selectable={true}
+									style={[foreground, styles.listItem]}
+								>
+									{item}
+								</Text>
+							</ListRow>
+						</Pressable>
 
 						{i < items.length - 1 ? (
 							<ListSeparator spacing={{left: 17, right: 17}} />
