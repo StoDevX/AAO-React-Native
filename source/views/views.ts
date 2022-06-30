@@ -163,7 +163,7 @@ export const allViews: Array<ViewType> = [
 		gradient: c.tealToSeafoam,
 	},
 	{
-		type: 'browser-url',
+		type: 'url',
 		url: 'https://oleville.com/',
 		view: 'Oleville',
 		title: 'Oleville',
