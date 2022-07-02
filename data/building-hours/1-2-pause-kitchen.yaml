@@ -1,6 +1,8 @@
 name: The Pause Kitchen
 image: pause-kitchen
 category: Food
+links:
+  - {title: 'Pause website', url: 'https://www.oleville.com/pause'}
 
 schedule:
   - title: Hours
