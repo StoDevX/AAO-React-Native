@@ -163,6 +163,15 @@ export const allViews: Array<ViewType> = [
 		gradient: c.tealToSeafoam,
 	},
 	{
+		type: 'view',
+		view: 'CourseSearch',
+		title: 'Course Catalog',
+		icon: 'graduation-cap',
+		foreground: 'light',
+		tint: c.lavender,
+		gradient: c.seafoamToGrass,
+	},
+	{
 		type: 'url',
 		url: 'https://oleville.com/',
 		view: 'Oleville',

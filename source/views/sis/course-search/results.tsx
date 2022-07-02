@@ -138,7 +138,7 @@ export function ConnectedCourseSearchResultsView(): JSX.Element {
 }
 
 export const NavigationOptions: NativeStackNavigationOptions = {
-	title: 'Course Search',
+	title: 'Course Catalog',
 }
 
 let styles = StyleSheet.create({

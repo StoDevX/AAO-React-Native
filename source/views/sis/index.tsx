@@ -5,11 +5,12 @@ import {TabBarIcon} from '@frogpond/navigation-tabs'
 import {BalancesOrAcknowledgementView} from './balances-acknowledgement'
 import {View as StudentWorkView} from './student-work'
 export * as studentwork from './student-work'
-import {CourseSearchView} from './course-search'
 export {
+	CourseSearchView,
 	CourseSearchResultsView,
 	CourseDetailView,
 	CourseSearchNavigationOptions,
+	CourseSearchViewNavigationOptions,
 	CourseSearchDetailNavigationOptions,
 } from './course-search'
 import {TESView} from './tes'
@@ -27,7 +28,6 @@ type Params = {
 const Tabs = createBottomTabNavigator<Params>()
 
 const Balances = () => <BalancesOrAcknowledgementView />
-const CourseSearch = () => <CourseSearchView />
 const TES = () => <TESView />
 const StudentWork = () => <StudentWorkView />
 
@@ -43,13 +43,6 @@ const SisView = (): JSX.Element => {
 				}}
 			/>
 			<Tabs.Screen
-				component={CourseSearch}
-				name="CourseSearchView"
-				options={{
-					tabBarLabel: 'Course Search',
-					tabBarIcon: TabBarIcon('search'),
-				}}
-			/>
 			<Tabs.Screen
 				component={TES}
 				name="TESView"
