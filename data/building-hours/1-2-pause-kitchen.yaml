@@ -5,6 +5,10 @@ links:
   - {title: 'Pause website', url: 'https://www.oleville.com/pause'}
 
 schedule:
+  - title: On Campus Pizza Delivery
+    hours:
+    - {days: [Mo, Tu, We, Th, Fr, Sa, Su], from: '7:00pm', to: '12:00am'}
+
   - title: Hours
     hours:
       - {days: [Mo, Tu, We, Th, Fr], from: '4:00pm', to: '12:00am'}
