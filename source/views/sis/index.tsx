@@ -13,7 +13,6 @@ export {
 	CourseSearchViewNavigationOptions,
 	CourseSearchDetailNavigationOptions,
 } from './course-search'
-import {TESView} from './tes'
 
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
@@ -21,14 +20,12 @@ import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 type Params = {
 	BalancesView: undefined
 	CourseSearchView: undefined
-	TESView: undefined
 	StudentWorkView: undefined
 }
 
 const Tabs = createBottomTabNavigator<Params>()
 
 const Balances = () => <BalancesOrAcknowledgementView />
-const TES = () => <TESView />
 const StudentWork = () => <StudentWorkView />
 
 const SisView = (): JSX.Element => {
@@ -40,15 +37,6 @@ const SisView = (): JSX.Element => {
 				options={{
 					tabBarLabel: 'Balances',
 					tabBarIcon: TabBarIcon('card'),
-				}}
-			/>
-			<Tabs.Screen
-			<Tabs.Screen
-				component={TES}
-				name="TESView"
-				options={{
-					tabBarLabel: 'TES',
-					tabBarIcon: TabBarIcon('cash'),
 				}}
 			/>
 			<Tabs.Screen
