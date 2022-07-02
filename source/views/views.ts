@@ -135,16 +135,6 @@ export const allViews: Array<ViewType> = [
 		gradient: c.darkBlueToIndigo,
 	},
 	{
-	{
-		type: 'view',
-		view: 'Help',
-		title: 'Report A Problem',
-		icon: 'help',
-		foreground: 'light',
-		tint: c.lavender,
-		gradient: c.seafoamToGrass,
-	},
-	{
 		type: 'view',
 		view: 'PrintJobs',
 		title: 'stoPrint',
