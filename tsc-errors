@@ -124,11 +124,11 @@ source/views/sis/course-search/results.tsx(102,4): error TS2322: Type 'boolean |
   Type 'FilterType[]' is not assignable to type 'boolean'.
 source/views/sis/course-search/results.tsx(122,31): error TS2345: Argument of type 'ThunkAction<UpdateRecentSearchesAction>' is not assignable to parameter of type 'AnyAction'.
 source/views/sis/course-search/results.tsx(126,39): error TS2345: Argument of type 'ThunkAction<UpdateRecentFiltersAction>' is not assignable to parameter of type 'AnyAction'.
-source/views/sis/course-search/search.tsx(205,18): error TS2345: Argument of type 'LoadCourseDataActionType' is not assignable to parameter of type 'AnyAction'.
-source/views/sis/course-search/search.tsx(209,18): error TS2345: Argument of type 'UpdateCourseDataActionType' is not assignable to parameter of type 'AnyAction'.
-source/views/sis/course-search/search.tsx(216,4): error TS2322: Type '() => AnyAction' is not assignable to type '() => Promise<any>'.
+source/views/sis/course-search/search.tsx(210,18): error TS2345: Argument of type 'LoadCourseDataActionType' is not assignable to parameter of type 'AnyAction'.
+source/views/sis/course-search/search.tsx(214,18): error TS2345: Argument of type 'UpdateCourseDataActionType' is not assignable to parameter of type 'AnyAction'.
+source/views/sis/course-search/search.tsx(221,4): error TS2322: Type '() => AnyAction' is not assignable to type '() => Promise<any>'.
   Type 'AnyAction' is missing the following properties from type 'Promise<any>': then, catch, finally, [Symbol.toStringTag]
-source/views/sis/course-search/search.tsx(219,4): error TS2322: Type '() => AnyAction' is not assignable to type '() => Promise<any>'.
+source/views/sis/course-search/search.tsx(224,4): error TS2322: Type '() => AnyAction' is not assignable to type '() => Promise<any>'.
   Type 'AnyAction' is not assignable to type 'Promise<any>'.
 source/views/sis/student-work/index.tsx(62,41): error TS2304: Cannot find name 'mixed'.
 source/views/stoprint/print-jobs.tsx(199,36): error TS2345: Argument of type 'ThunkAction<LogInActions>' is not assignable to parameter of type 'AnyAction'.
