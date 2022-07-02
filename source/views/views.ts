@@ -135,15 +135,6 @@ export const allViews: Array<ViewType> = [
 		gradient: c.darkBlueToIndigo,
 	},
 	{
-		type: 'url',
-		url: 'https://moodle.stolaf.edu/',
-		view: 'Moodle',
-		title: 'Moodle',
-		icon: 'graduation-cap',
-		foreground: 'light',
-		tint: c.cantaloupe,
-		gradient: c.yellowToGoldLight,
-	},
 	{
 		type: 'view',
 		view: 'Help',
