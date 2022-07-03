@@ -5,14 +5,14 @@ import {TabBarIcon} from '@frogpond/navigation-tabs'
 import {BalancesOrAcknowledgementView} from './balances-acknowledgement'
 import {View as StudentWorkView} from './student-work'
 export * as studentwork from './student-work'
-import {CourseSearchView} from './course-search'
 export {
+	CourseSearchView,
 	CourseSearchResultsView,
 	CourseDetailView,
 	CourseSearchNavigationOptions,
+	CourseSearchViewNavigationOptions,
 	CourseSearchDetailNavigationOptions,
 } from './course-search'
-import {TESView} from './tes'
 
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
@@ -20,15 +20,12 @@ import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 type Params = {
 	BalancesView: undefined
 	CourseSearchView: undefined
-	TESView: undefined
 	StudentWorkView: undefined
 }
 
 const Tabs = createBottomTabNavigator<Params>()
 
 const Balances = () => <BalancesOrAcknowledgementView />
-const CourseSearch = () => <CourseSearchView />
-const TES = () => <TESView />
 const StudentWork = () => <StudentWorkView />
 
 const SisView = (): JSX.Element => {
@@ -40,22 +37,6 @@ const SisView = (): JSX.Element => {
 				options={{
 					tabBarLabel: 'Balances',
 					tabBarIcon: TabBarIcon('card'),
-				}}
-			/>
-			<Tabs.Screen
-				component={CourseSearch}
-				name="CourseSearchView"
-				options={{
-					tabBarLabel: 'Course Search',
-					tabBarIcon: TabBarIcon('search'),
-				}}
-			/>
-			<Tabs.Screen
-				component={TES}
-				name="TESView"
-				options={{
-					tabBarLabel: 'TES',
-					tabBarIcon: TabBarIcon('cash'),
 				}}
 			/>
 			<Tabs.Screen
