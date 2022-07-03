@@ -3,6 +3,10 @@ import {insertForUrl} from '@frogpond/fetch'
 
 const dataSets = [
 	{
+		url: '/a-to-z',
+		data: require('../../docs/a-to-z.json'),
+	},
+	{
 		url: API('/spaces/hours'),
 		data: require('../../docs/building-hours.json'),
 	},
