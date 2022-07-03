@@ -21,7 +21,7 @@
   37:8  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
 
 ./source/redux/init.ts
-  11:41  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  10:41  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
 
 ./source/views/building-hours/detail/building.tsx
   29:25  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
@@ -63,12 +63,6 @@
 
 ./source/views/contacts/list.tsx
   73:49  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
-
-./source/views/help/index.tsx
-  13:21  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
-
-./source/views/help/types.ts
-  44:26  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
 
 ./source/views/home/button.tsx
   13:17  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
@@ -166,5 +160,5 @@
 ./source/views/student-orgs/util.ts
   3:8  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
 
-✖ 87 problems (0 errors, 87 warnings)
+✖ 85 problems (0 errors, 85 warnings)
 
