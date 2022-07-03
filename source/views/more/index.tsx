@@ -1,6 +1,7 @@
 import * as React from 'react'
 import {SectionList, StyleSheet} from 'react-native'
 
+import {API} from '@frogpond/api'
 import * as c from '@frogpond/colors'
 import {useDebounce} from '@frogpond/use-debounce'
 import {LoadingView, NoticeView} from '@frogpond/notice'
@@ -14,7 +15,7 @@ import {
 	ListRow,
 	emptyList,
 } from '@frogpond/lists'
-import {SearchData, LinkGroup, LinkResults, LinkValue} from './types'
+import {LinkGroup, LinkValue} from './types'
 
 import {useFetch} from 'react-async'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
@@ -46,7 +47,7 @@ function linkToArray(data: LinkValue) {
 
 let groupResults = (
 	searchQuery: string,
-	rawData: LinkResults[],
+	rawData: LinkGroup[],
 	groupedOriginal: LinkGroup[],
 ) => {
 	if (!rawData) {
@@ -57,8 +58,8 @@ let groupResults = (
 		return groupedOriginal
 	}
 
-	let filtered = rawData.flatMap((data) =>
-		data.values.filter((value) =>
+	let filtered = rawData.flatMap(({data}) =>
+		data.filter((value) =>
 			linkToArray(value).some((value) => value.includes(searchQuery)),
 		),
 	)
@@ -74,8 +75,7 @@ let groupResults = (
 }
 
 const useSearchLinks = () => {
-	const url = 'https://wp.stolaf.edu/wp-json/site-data/sidebar/a-z'
-	return useFetch<SearchData>(url, {
+	return useFetch<LinkGroup[]>(API('/a-to-z'), {
 		headers: {accept: 'application/json'},
 	})
 }
@@ -87,7 +87,7 @@ function MoreView(): JSX.Element {
 	let searchQuery = useDebounce(query.toLowerCase(), 200)
 
 	let {
-		data: {az_nav: {menu_items: menuItems = []} = {}} = {},
+		data = [],
 		error,
 		isPending,
 		isInitial,
@@ -95,18 +95,11 @@ function MoreView(): JSX.Element {
 		isLoading,
 	} = useSearchLinks()
 
-	let groupedOriginal = React.useMemo(
-		() =>
-			menuItems.map(({letter, values}) => ({
-				title: letter[0],
-				data: values,
-			})),
-		[menuItems],
-	)
+	let groupedOriginal = React.useMemo(() => data, [data])
 
 	let grouped = React.useMemo(
-		() => groupResults(searchQuery, menuItems, groupedOriginal),
-		[searchQuery, menuItems, groupedOriginal],
+		() => groupResults(searchQuery, data, groupedOriginal),
+		[searchQuery, data, groupedOriginal],
 	)
 
 	React.useLayoutEffect(() => {
