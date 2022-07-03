@@ -1,4 +1,4 @@
-export function formatDay(day: string) {
+export function formatDay(day: string): string {
 	switch (day) {
 		case 'Mo':
 			return 'Monday'
@@ -10,12 +10,16 @@ export function formatDay(day: string) {
 			return 'Thursday'
 		case 'Fr':
 			return 'Friday'
+		case 'Sa':
+			return 'Saturday'
+		case 'Su':
+			return 'Sunday'
 		default:
 			return day
 	}
 }
 
-export function formatDayAbbrev(day: string) {
+export function formatDayAbbrev(day: string): string {
 	switch (day) {
 		case 'Mo':
 			return 'M'
