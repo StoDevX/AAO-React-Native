@@ -2,10 +2,6 @@
 
 set -e -v -u -o pipefail
 
-if [ -z "${!branch}" ]; then
-    echo 'Need to set environment variable "branch"' && exit 1;
-fi
-
 if [ -z "${!actor}" ]; then
     echo 'Need to set environment variable "actor"' && exit 1;
 fi

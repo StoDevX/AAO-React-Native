@@ -20,7 +20,6 @@ jobs:
       - name: update-tsc-and-lint-files
         run: bash scripts/update-tsc-and-lint-files.sh
         env:
-          branch: ${{ github.ref_name }}
           actor: ${{ github.actor }}
           head_ref: ${{ github.head_ref }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
