@@ -119,6 +119,25 @@ jobs:
       - run: npm run validate-data
       - run: npm run bundle-data
 
+  tsc-and-lint-updates:
+    name: Update tsc and eslint files
+    runs-on: ubuntu-20.04
+    if: github.event.issue.pull_request && github.event.comment.body == 'update tsc and lint files'
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '^16.0'
+          cache: npm
+      - run: make files
+      - name: update-tsc-and-lint-files
+        run: bash scripts/update-tsc-and-lint-files.sh
+        env:
+          branch: ${{ github.ref_name }}
+          actor: ${{ github.actor }}
+          head_ref: ${{ github.head_ref }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
   ios-pods:
     name: iOS Cocoapods
     runs-on: macos-11
