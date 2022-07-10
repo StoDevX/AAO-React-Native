@@ -45,17 +45,13 @@ function linkToArray(data: LinkValue) {
 	return Array.from(new Set([...splitToArray(data.label)]))
 }
 
-let groupResults = (
-	searchQuery: string,
-	rawData: LinkGroup[],
-	groupedOriginal: LinkGroup[],
-) => {
+let groupResults = (searchQuery: string, rawData: LinkGroup[]) => {
 	if (!rawData) {
 		return emptyList
 	}
 
 	if (searchQuery.length < 3) {
-		return groupedOriginal
+		return rawData
 	}
 
 	let filtered = rawData.flatMap(({data}) =>
@@ -95,11 +91,9 @@ function MoreView(): JSX.Element {
 		isLoading,
 	} = useSearchLinks()
 
-	let groupedOriginal = React.useMemo(() => data, [data])
-
 	let grouped = React.useMemo(
-		() => groupResults(searchQuery, data, groupedOriginal),
-		[searchQuery, data, groupedOriginal],
+		() => groupResults(searchQuery, data),
+		[searchQuery, data],
 	)
 
 	React.useLayoutEffect(() => {
