@@ -3,7 +3,7 @@ import {insertForUrl} from '@frogpond/fetch'
 
 const dataSets = [
 	{
-		url: '/a-to-z',
+		url: API('/a-to-z'),
 		data: require('../../docs/a-to-z.json'),
 	},
 	{
