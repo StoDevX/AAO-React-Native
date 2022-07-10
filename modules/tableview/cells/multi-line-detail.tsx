@@ -6,7 +6,7 @@ import * as c from '@frogpond/colors'
 type Props = {
 	title: string
 	leftDetail?: string
-	rightDetail: string
+	rightDetail?: JSX.Element[]
 }
 
 export function MultiLineDetailCell(props: Props): JSX.Element {
@@ -23,7 +23,9 @@ export function MultiLineDetailCell(props: Props): JSX.Element {
 					</Text>
 				)}
 			</View>
-			<View style={styles.cellRightDetail}>{rightDetail}</View>
+			{Boolean(rightDetail) && (
+				<View style={styles.cellRightDetail}>{rightDetail}</View>
+			)}
 		</View>
 	)
 	return <Cell cellContentView={cellContent} />

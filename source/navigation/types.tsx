@@ -34,6 +34,7 @@ export type RootStackParamList = {
 	[calendar.NavigationKey]: calendar.NavigationParams
 	Contacts: undefined
 	ContactsDetail: {contact: ContactType}
+	CourseSearch: undefined
 	DictionaryDetail: {item: WordType}
 	Dictionary: undefined
 	DictionaryEditor: {item: WordType}

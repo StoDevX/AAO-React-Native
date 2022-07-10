@@ -1,22 +1,28 @@
 #!/bin/bash
 
-set -e -v -u -o pipefail
+set -e -x -v -u -o pipefail
 
-if [ -z "${!branch}" ]; then
+if [[ -z ${branch+x} ]]; then
     echo 'Need to set environment variable "branch"' && exit 1;
 fi
 
-if [ -z "${!actor}" ]; then
+if [[ -z ${actor+x} ]]; then
     echo 'Need to set environment variable "actor"' && exit 1;
 fi
 
-if [ -z "${!head_ref}" ]; then
+if [[ -z ${head_ref+x} ]]; then
     echo 'Need to set environment variable "head_ref"' && exit 1;
 fi
 
+echo "branch: $branch"
+echo "actor: $actor"
+echo "head_ref: $head_ref"
+
 FILE=ios/Podfile.lock
 
-if [[ -n "$(git status -s -- $FILE)" ]]; then
+git diff
+
+if [[ -z $(git status -s -- "$FILE") ]]; then
     exit 0
 fi
 
@@ -28,8 +34,8 @@ message="Bump ""${branch//dependabot\/npm_and_yarn\// }"" cocoapods packages
 
 git add "$FILE"
 
-git commit user.name 'github-actions[bot]'
-git commit user.email 'github-actions[bot]@users.noreply.github.com'
+git config user.name 'github-actions[bot]'
+git config user.email 'github-actions[bot]@users.noreply.github.com'
 
 author="""${actor}"" <${actor}@users.noreply.github.com>"
 git commit --author="$author" -m "$message"

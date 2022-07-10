@@ -228,6 +228,11 @@ const HomeStackScreens = () => (
 				options={sis.NavigationOptions}
 			/>
 			<Stack.Screen
+				component={sis.CourseSearchView}
+				name="CourseSearch"
+				options={sis.CourseSearchViewNavigationOptions}
+			/>
+			<Stack.Screen
 				component={sis.CourseSearchResultsView}
 				name="CourseSearchResults"
 				options={sis.CourseSearchNavigationOptions}
