@@ -385,7 +385,7 @@ PODS:
     - React-Core
   - RNGestureHandler (2.5.0):
     - React-Core
-  - RNKeychain (8.1.0):
+  - RNKeychain (8.1.1):
     - React-Core
   - RNReanimated (2.9.1):
     - DoubleConversion
@@ -702,7 +702,7 @@ SPEC CHECKSUMS:
   RNDateTimePicker: 30e6733efc179d1e49d6008ea5fce42cdc9aeeca
   RNDeviceInfo: 1e3f62b9ec32f7754fac60bd06b8f8a27124e7f0
   RNGestureHandler: bad495418bcbd3ab47017a38d93d290ebd406f50
-  RNKeychain: c442b8512802a20cab4db3e3a1cf53e4731615bc
+  RNKeychain: ff836453cba46938e0e9e4c22e43d43fa2c90333
   RNReanimated: 5c8c17e26787fd8984cd5accdc70fef2ca70aafd
   RNScreens: aa9a97835afbbdc18a4757870b2b59b7d9fae16a
   RNSearchBar: 9860431356b7d12a8449d2fddb2b5f3c78d1e99f
