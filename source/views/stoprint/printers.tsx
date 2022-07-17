@@ -131,7 +131,7 @@ const PrinterListView = (props: Props) => {
 					<Detail>{item.location}</Detail>
 				</ListRow>
 			)}
-			renderSectionHeader={({section: {title}}: any) => (
+			renderSectionHeader={({section: {title}}) => (
 				<ListSectionHeader title={title} />
 			)}
 			sections={availableGrouped}

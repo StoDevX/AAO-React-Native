@@ -1,4 +1,7 @@
-export {ConnectedCourseSearchView as CourseSearchView} from './search'
+export {
+	ConnectedCourseSearchView as CourseSearchView,
+	NavigationOptions as CourseSearchViewNavigationOptions,
+} from './search'
 export {
 	ConnectedCourseSearchResultsView as CourseSearchResultsView,
 	NavigationOptions as CourseSearchNavigationOptions,
