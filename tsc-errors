@@ -55,8 +55,6 @@ source/redux/parts/stoprint.ts(128,34): error TS2345: Argument of type 'string |
   Type 'undefined' is not assignable to type 'string'.
 source/redux/parts/stoprint.ts(133,40): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
   Type 'undefined' is not assignable to type 'string'.
-source/views/building-hours/detail/schedule-row-android.tsx(37,22): error TS7031: Binding element 'children' implicitly has an 'any' type.
-source/views/building-hours/detail/schedule-row-android.tsx(37,32): error TS7031: Binding element 'style' implicitly has an 'any' type.
 source/views/building-hours/detail/toolbar-button.tsx(20,18): error TS2345: Argument of type 'ThunkAction<ToggleFavoriteAction>' is not assignable to parameter of type 'AnyAction'.
 source/views/building-hours/lib/__tests__/get-detailed-building-status.test.ts(10,3): error TS2740: Type '{}' is missing the following properties from type 'BreakScheduleContainerType': fall, thanksgiving, christmasfest, winter, and 4 more.
 source/views/building-hours/lib/__tests__/get-detailed-building-status.test.ts(39,3): error TS2740: Type '{}' is missing the following properties from type 'BreakScheduleContainerType': fall, thanksgiving, christmasfest, winter, and 4 more.
@@ -85,11 +83,7 @@ source/views/settings/components/logo.tsx(3,24): error TS7016: Could not find a 
   Try `npm i --save-dev @types/hawkrives__react-native-alternate-icons` if it exists or add a new declaration (.d.ts) file containing `declare module '@hawkrives/react-native-alternate-icons';`
 source/views/settings/screens/change-icon.tsx(3,24): error TS7016: Could not find a declaration file for module '@hawkrives/react-native-alternate-icons'. './node_modules/@hawkrives/react-native-alternate-icons/index.js' implicitly has an 'any' type.
   Try `npm i --save-dev @types/hawkrives__react-native-alternate-icons` if it exists or add a new declaration (.d.ts) file containing `declare module '@hawkrives/react-native-alternate-icons';`
-source/views/settings/screens/debug/list.tsx(10,36): error TS2307: Cannot find module 'react-navigation' or its corresponding type declarations.
-source/views/settings/screens/debug/row.tsx(40,5): error TS2322: Type 'string | false' is not assignable to type 'false | "DisclosureIndicator" | "Detail" | "DetailDisclosure" | "Checkmark" | undefined'.
-  Type 'string' is not assignable to type 'false | "DisclosureIndicator" | "Detail" | "DetailDisclosure" | "Checkmark" | undefined'.
-source/views/settings/screens/debug/row.tsx(43,5): error TS2322: Type '((key: string) => any) | null' is not assignable to type '(() => false | void) | undefined'.
-  Type 'null' is not assignable to type '(() => false | void) | undefined'.
+source/views/settings/screens/debug/list.tsx(20,36): error TS2307: Cannot find module 'react-navigation' or its corresponding type declarations.
 source/views/settings/screens/overview/app-icon.tsx(2,24): error TS7016: Could not find a declaration file for module '@hawkrives/react-native-alternate-icons'. './node_modules/@hawkrives/react-native-alternate-icons/index.js' implicitly has an 'any' type.
   Try `npm i --save-dev @types/hawkrives__react-native-alternate-icons` if it exists or add a new declaration (.d.ts) file containing `declare module '@hawkrives/react-native-alternate-icons';`
 source/views/settings/screens/overview/login-credentials.tsx(140,13): error TS2345: Argument of type 'ThunkAction<LogInActions>' is not assignable to parameter of type 'AnyAction'.
@@ -106,17 +100,12 @@ source/views/settings/screens/overview/server-url.tsx(46,5): error TS2769: No ov
 source/views/sis/balances-acknowledgement.tsx(23,18): error TS2345: Argument of type 'Promise<SisAlertSeenAction>' is not assignable to parameter of type 'AnyAction'.
   Property 'type' is missing in type 'Promise<SisAlertSeenAction>' but required in type 'AnyAction'.
 source/views/sis/balances.tsx(197,13): error TS2345: Argument of type 'ThunkAction<LogInActions>' is not assignable to parameter of type 'AnyAction'.
-source/views/sis/course-search/detail/index.tsx(126,5): error TS2322: Type 'Element[]' is not assignable to type 'string'.
 source/views/sis/course-search/detail/index.tsx(209,24): error TS7053: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{ Open: string; Closed: string; }'.
   No index signature with a parameter of type 'string' was found on type '{ Open: string; Closed: string; }'.
 source/views/sis/course-search/lib/execute-search.ts(2,27): error TS7016: Could not find a declaration file for module 'keyword-search'. './node_modules/keyword-search/index.js' implicitly has an 'any' type.
   Try `npm i --save-dev @types/keyword-search` if it exists or add a new declaration (.d.ts) file containing `declare module 'keyword-search';`
 source/views/sis/course-search/lib/format-filter-combo.ts(37,50): error TS2345: Argument of type 'string | number' is not assignable to parameter of type 'string'.
   Type 'number' is not assignable to type 'string'.
-source/views/sis/course-search/list.tsx(104,4): error TS2322: Type '{ icon: string; iconColor: string; style: { paddingVertical: number; }; text: string; }' is not assignable to type 'IntrinsicAttributes & Props'.
-  Property 'icon' does not exist on type 'IntrinsicAttributes & Props'.
-source/views/sis/course-search/results.tsx(102,4): error TS2322: Type 'boolean | FilterType[]' is not assignable to type 'boolean'.
-  Type 'FilterType[]' is not assignable to type 'boolean'.
 source/views/sis/course-search/results.tsx(122,31): error TS2345: Argument of type 'ThunkAction<UpdateRecentSearchesAction>' is not assignable to parameter of type 'AnyAction'.
 source/views/sis/course-search/results.tsx(126,39): error TS2345: Argument of type 'ThunkAction<UpdateRecentFiltersAction>' is not assignable to parameter of type 'AnyAction'.
 source/views/sis/course-search/search.tsx(210,18): error TS2345: Argument of type 'LoadCourseDataActionType' is not assignable to parameter of type 'AnyAction'.

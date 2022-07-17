@@ -5,7 +5,7 @@
  */
 
 import * as React from 'react'
-import {View, Text, StyleSheet} from 'react-native'
+import {View, Text, StyleSheet, StyleProp, TextStyle} from 'react-native'
 import type {Moment} from 'moment-timezone'
 import type {SingleBuildingScheduleType} from '../types'
 
@@ -17,24 +17,27 @@ type Props = {
 	now: Moment
 }
 
-export class ScheduleRow extends React.PureComponent<Props> {
-	render() {
-		let {set, isActive, now} = this.props
-		return (
-			<View style={styles.scheduleRow}>
-				<StyledText style={[styles.scheduleDays, isActive && styles.bold]}>
-					{summarizeDays(set.days)}
-				</StyledText>
+export const ScheduleRow = (props: Props): JSX.Element => {
+	let {set, isActive, now} = props
+	return (
+		<View style={styles.scheduleRow}>
+			<StyledText style={[styles.scheduleDays, isActive && styles.bold]}>
+				{summarizeDays(set.days)}
+			</StyledText>
 
-				<StyledText style={[styles.scheduleHours, isActive && styles.bold]}>
-					{formatBuildingTimes(set, now)}
-				</StyledText>
-			</View>
-		)
-	}
+			<StyledText style={[styles.scheduleHours, isActive && styles.bold]}>
+				{formatBuildingTimes(set, now)}
+			</StyledText>
+		</View>
+	)
 }
 
-const StyledText = ({children, style}) => (
+interface StyledTextProps {
+	children: Text['props']['children']
+	style: StyleProp<TextStyle>
+}
+
+const StyledText = ({children, style}: StyledTextProps) => (
 	<Text numberOfLines={1} selectable={true} style={style}>
 		{children}
 	</Text>

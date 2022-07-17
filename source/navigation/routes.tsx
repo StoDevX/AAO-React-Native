@@ -32,6 +32,8 @@ import * as orgs from '../views/student-orgs'
 import * as transportation from '../views/transportation'
 import * as othermodes from '../views/transportation/other-modes'
 import * as stoprint from '../views/stoprint'
+import * as more from '../views/more'
+
 import {StyleSheet} from 'react-native'
 import {getTheme} from '@frogpond/app-theme'
 import {RootStackParamList, SettingsStackParamList} from './types'
@@ -250,6 +252,13 @@ const HomeStackScreens = () => (
 				component={stoprint.PrintJobReleaseView}
 				name="PrintJobRelease"
 				options={stoprint.PrintJobReleaseNavigationOptions}
+			/>
+		</Stack.Group>
+		<Stack.Group>
+			<Stack.Screen
+				component={more.View}
+				name="More"
+				options={more.NavigationOptions}
 			/>
 		</Stack.Group>
 	</Stack.Navigator>

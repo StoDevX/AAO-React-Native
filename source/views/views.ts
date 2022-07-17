@@ -136,6 +136,15 @@ export const allViews: Array<ViewType> = [
 	},
 	{
 		type: 'view',
+		view: 'More',
+		title: 'More',
+		icon: 'link',
+		foreground: 'light',
+		tint: c.lavender,
+		gradient: c.seafoamToGrass,
+	},
+	{
+		type: 'view',
 		view: 'PrintJobs',
 		title: 'stoPrint',
 		icon: 'print',

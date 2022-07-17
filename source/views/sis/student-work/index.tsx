@@ -106,7 +106,7 @@ const StudentWorkView = (): JSX.Element => {
 					}}
 				/>
 			)}
-			renderSectionHeader={({section: {title}}: any) => (
+			renderSectionHeader={({section: {title}}) => (
 				<ListSectionHeader title={title} />
 			)}
 			sections={jobs}
