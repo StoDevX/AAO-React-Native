@@ -15,6 +15,7 @@ export const DatePicker = (props: AndroidDatetimePickerProps): JSX.Element => {
 
 	return (
 		<BaseDateTimePicker
+			displayAndroid={props.displayAndroid}
 			format={props.format}
 			initialDate={props.initialDate}
 			minuteInterval={props.minuteInterval}

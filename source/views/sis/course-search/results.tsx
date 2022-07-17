@@ -41,7 +41,7 @@ const CourseSearchResultsView = (props: Props) => {
 	let [searchbarActive, setSearchbarActive] = React.useState(false)
 	let [filters, setFilters] = React.useState<FilterType[]>(initialFilters ?? [])
 	let [filtersLoaded, setFiltersLoaded] = React.useState(
-		initialFilters ?? false,
+		Boolean(initialFilters),
 	)
 
 	let [searchQuery, setSearchQuery] = React.useState(initialQuery ?? '')
@@ -138,7 +138,7 @@ export function ConnectedCourseSearchResultsView(): JSX.Element {
 }
 
 export const NavigationOptions: NativeStackNavigationOptions = {
-	title: 'Course Search',
+	title: 'Course Catalog',
 }
 
 let styles = StyleSheet.create({

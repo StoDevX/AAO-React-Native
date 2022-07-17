@@ -16,7 +16,7 @@ ${deviceInfo.getSystemName()} ${getVersion()}
 ${deviceInfo.getReadableVersion()}
 `
 
-const openEmail = () => {
+export const openEmail = (): void => {
 	sendEmail({
 		to: ['allaboutolaf@frogpond.tech'],
 		subject: 'Support: All About Olaf',
