@@ -38,10 +38,6 @@ source/navigation/track.ts(11,12): error TS2339: Property 'routes' does not exis
 source/navigation/track.ts(12,30): error TS2345: Argument of type 'NavigationRoute<ParamListBase, string>' is not assignable to parameter of type 'Readonly<{ key: string; index: number; routeNames: string[]; history?: unknown[] | undefined; routes: NavigationRoute<ParamListBase, string>[]; type: string; stale: false; }>'.
   Type 'NavigationRoute<ParamListBase, string>' is missing the following properties from type 'Readonly<{ key: string; index: number; routeNames: string[]; history?: unknown[] | undefined; routes: NavigationRoute<ParamListBase, string>[]; type: string; stale: false; }>': index, routeNames, routes, type, stale
 source/navigation/track.ts(14,15): error TS2339: Property 'routeName' does not exist on type 'NavigationRoute<ParamListBase, string>'.
-source/redux/init.ts(27,36): error TS2345: Argument of type 'ThunkAction<GetEnabledToolsAction>' is not assignable to parameter of type 'AnyAction'.
-source/redux/parts/help.ts(61,22): error TS2322: Type '{ fetching: boolean; tools: never[]; lastFetchError: null; }' is not assignable to type 'State'.
-  Types of property 'lastFetchError' are incompatible.
-    Type 'null' is not assignable to type 'boolean | undefined'.
 source/redux/parts/login.ts(122,23): error TS2322: Type '{ status: string; }' is not assignable to type 'State'.
   Types of property 'status' are incompatible.
     Type 'string' is not assignable to type 'LoginStateEnum'.
@@ -76,7 +72,6 @@ source/views/building-hours/lib/__tests__/is-building-open.test.ts(31,3): error 
 source/views/building-hours/lib/__tests__/is-building-open.test.ts(51,3): error TS2740: Type '{}' is missing the following properties from type 'BreakScheduleContainerType': fall, thanksgiving, christmasfest, winter, and 4 more.
 source/views/building-hours/lib/__tests__/is-building-open.test.ts(75,3): error TS2740: Type '{}' is missing the following properties from type 'BreakScheduleContainerType': fall, thanksgiving, christmasfest, winter, and 4 more.
 source/views/building-hours/lib/__tests__/is-building-open.test.ts(95,3): error TS2740: Type '{}' is missing the following properties from type 'BreakScheduleContainerType': fall, thanksgiving, christmasfest, winter, and 4 more.
-source/views/help/index.tsx(35,18): error TS2345: Argument of type 'ThunkAction<GetEnabledToolsAction>' is not assignable to parameter of type 'AnyAction'.
 source/views/menus/lib/__tests__/menu-item.mock.ts(20,2): error TS2739: Type '{}' is missing the following properties from type 'MonotonyContainer': id, name, image
 source/views/menus/lib/__tests__/menu-item.mock.ts(22,2): error TS2739: Type '{}' is missing the following properties from type 'NutritionContainer': kcal, well_being, well_being_image
 source/views/menus/lib/__tests__/menu-item.mock.ts(23,2): error TS2740: Type '{}' is missing the following properties from type 'NutritionDetailContainer': calories, servingSize, fatContent, saturatedFatContent, and 7 more.

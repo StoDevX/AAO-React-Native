@@ -11,7 +11,6 @@ import {EventDetail as eventDetail} from '@frogpond/event-list'
 import * as contacts from '../views/contacts'
 import * as dictionary from '../views/dictionary'
 import * as faqs from '../views/faqs'
-import * as help from '../views/help'
 import * as sis from '../views/sis'
 import * as studentwork from '../views/sis/student-work'
 import * as studentworkdetail from '../views/sis/student-work/detail'
@@ -187,11 +186,6 @@ const HomeStackScreens = () => (
 				options={streaming.KRLXScheduleNavigationOptions}
 			/>
 		</Stack.Group>
-		<Stack.Screen
-			component={help.HelpView}
-			name="Help"
-			options={help.NavigationOptions}
-		/>
 		<Stack.Group>
 			<Stack.Screen
 				component={orgs.StudentOrgsView}
