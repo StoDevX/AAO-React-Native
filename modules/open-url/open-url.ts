@@ -1,7 +1,7 @@
 import {Linking, Platform} from 'react-native'
 
 import SafariView from 'react-native-safari-view'
-import {openURL} from '@frogpond/react-native-chrome-custom-tabs'
+import { BrowserResult, InAppBrowser } from 'react-native-inappbrowser-reborn'
 
 function genericOpen(url: string): Promise<boolean> {
 	return Linking.canOpenURL(url)
@@ -23,9 +23,9 @@ function iosOpen(url: string): Promise<boolean> {
 		.catch(() => genericOpen(url))
 }
 
-function androidOpen(url: string): Promise<boolean> {
-	return openURL(url, {
-		showPageTitle: true,
+function androidOpen(url: string): Promise<BrowserResult|boolean> {
+	return InAppBrowser.open(url, {
+		showTitle: true,
 		enableUrlBarHiding: true,
 		enableDefaultShare: true,
 	}).catch(() => genericOpen(url)) // fall back to opening in Chrome / Browser / platform default
