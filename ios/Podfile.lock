@@ -286,8 +286,6 @@ PODS:
   - React-jsinspector (0.68.1)
   - React-logger (0.68.1):
     - glog
-  - react-native-custom-tabs (1.0.3):
-    - React
   - react-native-ios-context-menu (1.12.0):
     - React-Core
   - react-native-netinfo (9.3.0):
@@ -385,6 +383,8 @@ PODS:
     - React-Core
   - RNGestureHandler (2.5.0):
     - React-Core
+  - RNInAppBrowser (3.7.0):
+    - React-Core
   - RNKeychain (8.1.1):
     - React-Core
   - RNReanimated (2.9.1):
@@ -477,7 +477,6 @@ DEPENDENCIES:
   - React-jsiexecutor (from `../node_modules/react-native/ReactCommon/jsiexecutor`)
   - React-jsinspector (from `../node_modules/react-native/ReactCommon/jsinspector`)
   - React-logger (from `../node_modules/react-native/ReactCommon/logger`)
-  - "react-native-custom-tabs (from `../node_modules/@frogpond/react-native-chrome-custom-tabs/ios`)"
   - react-native-ios-context-menu (from `../node_modules/react-native-ios-context-menu`)
   - "react-native-netinfo (from `../node_modules/@react-native-community/netinfo`)"
   - react-native-restart (from `../node_modules/react-native-restart`)
@@ -504,6 +503,7 @@ DEPENDENCIES:
   - "RNDateTimePicker (from `../node_modules/@react-native-community/datetimepicker`)"
   - RNDeviceInfo (from `../node_modules/react-native-device-info`)
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
+  - RNInAppBrowser (from `../node_modules/react-native-inappbrowser-reborn`)
   - RNKeychain (from `../node_modules/react-native-keychain`)
   - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNScreens (from `../node_modules/react-native-screens`)
@@ -572,8 +572,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/jsinspector"
   React-logger:
     :path: "../node_modules/react-native/ReactCommon/logger"
-  react-native-custom-tabs:
-    :path: "../node_modules/@frogpond/react-native-chrome-custom-tabs/ios"
   react-native-ios-context-menu:
     :path: "../node_modules/react-native-ios-context-menu"
   react-native-netinfo:
@@ -626,6 +624,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-device-info"
   RNGestureHandler:
     :path: "../node_modules/react-native-gesture-handler"
+  RNInAppBrowser:
+    :path: "../node_modules/react-native-inappbrowser-reborn"
   RNKeychain:
     :path: "../node_modules/react-native-keychain"
   RNReanimated:
@@ -675,7 +675,6 @@ SPEC CHECKSUMS:
   React-jsiexecutor: 4a4bae5671b064a2248a690cf75957669489d08c
   React-jsinspector: 218a2503198ff28a085f8e16622a8d8f507c8019
   React-logger: f79dd3cc0f9b44f5611c6c7862badd891a862cf8
-  react-native-custom-tabs: d6fc066e0d0dc2b725d9a96d7ed389d071383a62
   react-native-ios-context-menu: b954146619d60610a2abf5899164e33818f3403d
   react-native-netinfo: 129bd99f607a2dc5bb096168f3e5c150fd1f1c95
   react-native-restart: 45c8dca02491980f2958595333cbccd6877cb57e
@@ -702,6 +701,7 @@ SPEC CHECKSUMS:
   RNDateTimePicker: 30e6733efc179d1e49d6008ea5fce42cdc9aeeca
   RNDeviceInfo: 0a7c1d2532aa7691f9b9925a27e43af006db4dae
   RNGestureHandler: bad495418bcbd3ab47017a38d93d290ebd406f50
+  RNInAppBrowser: e36d6935517101ccba0e875bac8ad7b0cb655364
   RNKeychain: ff836453cba46938e0e9e4c22e43d43fa2c90333
   RNReanimated: 5c8c17e26787fd8984cd5accdc70fef2ca70aafd
   RNScreens: 4a1af06327774490d97342c00aee0c2bafb497b7
