@@ -1,7 +1,7 @@
 import {Linking, Platform} from 'react-native'
 
 import SafariView from 'react-native-safari-view'
-import {BrowserResult, InAppBrowser} from 'react-native-inappbrowser-reborn'
+import {InAppBrowser} from 'react-native-inappbrowser-reborn'
 
 function genericOpen(url: string): Promise<boolean> {
 	return Linking.canOpenURL(url)
@@ -23,12 +23,23 @@ function iosOpen(url: string): Promise<boolean> {
 		.catch(() => genericOpen(url))
 }
 
-function androidOpen(url: string): Promise<BrowserResult | boolean> {
-	return InAppBrowser.open(url, {
-		showTitle: true,
-		enableUrlBarHiding: true,
-		enableDefaultShare: true,
-	}).catch(() => genericOpen(url)) // fall back to opening in Chrome / Browser / platform default
+async function androidOpen(url: string): Promise<boolean> {
+	try {
+		if (await InAppBrowser.isAvailable()) {
+			await InAppBrowser.open(url, {
+				showTitle: true,
+				enableUrlBarHiding: true,
+				enableDefaultShare: true,
+			})
+		} else {
+			genericOpen(url) // fall back to opening in Chrome / Browser / platform default
+		}
+	} catch (error) {
+		console.warn(`Error when trying to call androidOpen: ${error}`)
+		return false
+	}
+
+	return true
 }
 
 export function openUrl(url: string): Promise<boolean> {
