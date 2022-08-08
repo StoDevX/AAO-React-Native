@@ -45,24 +45,24 @@ describe('returns the provided days if non-contiguous', () => {
 
 	test('handles a two-day set (full)', () => {
 		let actual = summarizeDays(['Mo', 'We'], true)
-		expect(actual).toEqual('Monday, Wednesday')
+		expect(actual).toEqual('Monday and Wednesday')
 	})
 	test('handles a three-day set (full)', () => {
 		let actual = summarizeDays(['Mo', 'Tu', 'Th'], true)
-		expect(actual).toEqual('Monday, Tuesday, Thursday')
+		expect(actual).toEqual('Monday, Tuesday, and Thursday')
 	})
 	test('handles a four-day set (full)', () => {
 		let actual = summarizeDays(['Mo', 'Tu', 'Th', 'Fr'], true)
-		expect(actual).toEqual('Monday, Tuesday, Thursday, Friday')
+		expect(actual).toEqual('Monday, Tuesday, Thursday, and Friday')
 	})
 	test('handles a five-day set (full)', () => {
 		let actual = summarizeDays(['Mo', 'Tu', 'We', 'Fr', 'Su'], true)
-		expect(actual).toEqual('Monday, Tuesday, Wednesday, Friday, Sunday')
+		expect(actual).toEqual('Monday, Tuesday, Wednesday, Friday, and Sunday')
 	})
 	test('handles a six-day set (full)', () => {
 		let actual = summarizeDays(['Mo', 'We', 'Th', 'Fr', 'Sa', 'Su'], true)
 		expect(actual).toEqual(
-			'Monday, Wednesday, Thursday, Friday, Saturday, Sunday',
+			'Monday, Wednesday, Thursday, Friday, Saturday, and Sunday',
 		)
 	})
 })
@@ -148,11 +148,11 @@ describe('returns summary for combination days and hours', () => {
 
 	test('handles "weekends"', () => {
 		let actual = summarizeDaysAndHours({
-			days: ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'],
+			days: ['Sa', 'Su'],
 			from: '9:00am',
 			to: '5:00pm',
 		})
-		expect(actual).toEqual('Opens at 9:00am and closes at 5:00pm on weekends.')
+		expect(actual).toEqual('Opens at 9:00am and closes at 5:00pm on Weekends.')
 	})
 
 	test('handles "single day"', () => {
@@ -171,7 +171,7 @@ describe('returns summary for combination days and hours', () => {
 			to: '5:00pm',
 		})
 		expect(actual).toEqual(
-			'Opens at 9:00am and closes at 5:00pm on Monday - Thursday.',
+			'Opens at 9:00am and closes at 5:00pm every Monday — Thursday.',
 		)
 	})
 
@@ -182,7 +182,7 @@ describe('returns summary for combination days and hours', () => {
 			to: '5:00pm',
 		})
 		expect(actual).toEqual(
-			'Opens at 9:00am and closes at 5:00pm on Monday, Wednesday, and Saturday.',
+			'Opens at 9:00am and closes at 5:00pm every Monday, Wednesday, and Saturday.',
 		)
 	})
 })
