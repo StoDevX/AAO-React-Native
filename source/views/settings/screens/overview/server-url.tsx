@@ -1,6 +1,7 @@
 import * as React from 'react'
 import {StyleSheet} from 'react-native'
-import {Section, CellTextField, ButtonCell} from '@frogpond/tableview'
+import {Section} from '@frogpond/tableview'
+import {CellTextField, ButtonCell} from '@frogpond/tableview/cells'
 import restart from 'react-native-restart'
 import * as storage from '../../../../lib/storage'
 import {DEFAULT_URL} from '../../../../lib/constants'

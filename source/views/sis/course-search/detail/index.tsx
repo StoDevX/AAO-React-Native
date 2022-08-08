@@ -6,14 +6,12 @@ import glamorous from 'glamorous-native'
 import {SolidBadge as Badge} from '@frogpond/badge'
 import moment from 'moment-timezone'
 import {formatDay} from '../lib/format-day'
+import {TableView, Section, Cell} from '@frogpond/tableview'
 import {
-	TableView,
-	Section,
-	Cell,
 	SelectableCell,
 	MultiLineDetailCell,
 	MultiLineLeftDetailCell,
-} from '@frogpond/tableview'
+} from '@frogpond/tableview/cells'
 import * as c from '@frogpond/colors'
 import {deptNum} from '../lib/format-dept-num'
 import groupBy from 'lodash/groupBy'

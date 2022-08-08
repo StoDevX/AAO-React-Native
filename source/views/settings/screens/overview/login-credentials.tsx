@@ -1,5 +1,6 @@
 import * as React from 'react'
-import {Cell, Section, CellTextField} from '@frogpond/tableview'
+import {Cell, Section} from '@frogpond/tableview'
+import {CellTextField} from '@frogpond/tableview/cells'
 import {LoginButton} from './login-button'
 import {
 	logInViaCredentials,
