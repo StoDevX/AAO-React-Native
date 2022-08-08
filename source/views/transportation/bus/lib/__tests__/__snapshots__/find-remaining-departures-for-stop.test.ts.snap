@@ -2,7 +2,7 @@
 
 exports[`handles a stop that will be skipped 1`] = `
 Array [
-  null,
+  undefined,
   "3:05pm",
 ]
 `;
@@ -24,7 +24,7 @@ Array [
 exports[`handles a time at the second stop 1`] = `
 Array [
   "1:05pm",
-  null,
+  undefined,
   "3:05pm",
 ]
 `;
@@ -47,7 +47,7 @@ Array [
 exports[`handles a time between two stops 1`] = `
 Array [
   "1:05pm",
-  null,
+  undefined,
   "3:05pm",
 ]
 `;
