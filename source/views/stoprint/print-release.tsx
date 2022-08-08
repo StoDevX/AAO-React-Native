@@ -7,9 +7,11 @@ import * as c from '@frogpond/colors'
 import {
 	cancelPrintJobForUser,
 	heldJobsAvailableAtPrinterForUser,
+	releasePrintJobToPrinterForUser,
+} from '../../lib/stoprint/api'
+import {
 	HeldJobsResponseOrErrorType,
 	isStoprintMocked,
-	releasePrintJobToPrinterForUser,
 	showGeneralError,
 } from '../../lib/stoprint'
 import type {
