@@ -45,7 +45,7 @@
       "./scripts/jest-setup.js"
     ],
     "transformIgnorePatterns": [
-      "node_modules/(?!(jest-)?react-native|glamorous-native|react-navigation)"
+      "node_modules/(?!(jest-)?react-native|@react-native|glamorous-native|react-navigation)"
     ],
     "preset": "react-native"
   },
