@@ -45,7 +45,7 @@
       "./scripts/jest-setup.js"
     ],
     "transformIgnorePatterns": [
-      "node_modules/(?!(jest-)?react-native|glamorous-native|react-navigation)"
+      "node_modules/(?!(jest-)?react-native|@react-native|glamorous-native|react-navigation)"
     ],
     "preset": "react-native"
   },
@@ -74,14 +74,14 @@
     "@react-native-async-storage/async-storage": "1.17.7",
     "@react-native-community/clipboard": "1.5.1",
     "@react-native-community/netinfo": "9.3.0",
-    "@react-native-picker/picker": "2.4.2",
+    "@react-native-picker/picker": "2.4.3",
     "@react-navigation/bottom-tabs": "6.3.2",
     "@react-navigation/material-bottom-tabs": "6.2.2",
     "@react-navigation/material-top-tabs": "6.2.2",
     "@react-navigation/native": "6.0.11",
     "@react-navigation/native-stack": "6.7.0",
     "@react-navigation/stack": "6.2.2",
-    "@sentry/react-native": "4.2.0",
+    "@sentry/react-native": "4.2.2",
     "base-64": "1.0.0",
     "buffer": "6.0.3",
     "delay": "5.0.0",
@@ -98,7 +98,7 @@
     "react": "17.0.2",
     "react-async": "10.0.1",
     "react-markdown": "2.5.1",
-    "react-native": "0.68.1",
+    "react-native": "0.68.3",
     "react-native-button": "3.0.1",
     "react-native-calendar-events": "2.2.0",
     "react-native-communications": "2.2.1",
