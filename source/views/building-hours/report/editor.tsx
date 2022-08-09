@@ -271,5 +271,5 @@ export const NavigationKey = 'BuildingHoursProblemReportEditor'
 export const NavigationOptions: NativeStackNavigationOptions = {
 	title: 'Edit Schedule',
 	presentation: 'modal',
-	headerRight: () => <CloseScreenButton />,
+	headerRight: () => Platform.OS === 'ios' && <CloseScreenButton />,
 }
