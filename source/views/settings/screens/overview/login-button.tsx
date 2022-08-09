@@ -5,11 +5,11 @@ type Props = {
 	loading: boolean
 	disabled?: boolean
 	loggedIn: boolean
-	onPress: () => any
+	onPress: () => void
 	label: string
 }
 
-export function LoginButton(props: Props) {
+export function LoginButton(props: Props): JSX.Element {
 	let {loading, disabled, loggedIn, onPress, label} = props
 
 	let message = loading
