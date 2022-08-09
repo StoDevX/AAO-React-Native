@@ -10,10 +10,10 @@ import {hasNotch} from 'react-native-device-info'
 
 type Props = {
 	view: ViewType
-	onPress: () => any
+	onPress: () => void
 }
 
-export function HomeScreenButton({view, onPress}: Props) {
+export function HomeScreenButton({view, onPress}: Props): JSX.Element {
 	let foreground =
 		view.foreground === 'light' ? styles.lightForeground : styles.darkForeground
 
