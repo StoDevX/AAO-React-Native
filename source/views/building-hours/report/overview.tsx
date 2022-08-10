@@ -11,15 +11,13 @@ import type {Moment} from 'moment-timezone'
 import noop from 'lodash/noop'
 import jsYaml from 'js-yaml'
 import {InfoHeader} from '@frogpond/info-header'
+import {TableView, Section, Cell} from '@frogpond/tableview'
 import {
-	TableView,
-	Section,
-	Cell,
 	CellTextField,
 	CellToggle,
 	DeleteButtonCell,
 	ButtonCell,
-} from '@frogpond/tableview'
+} from '@frogpond/tableview/cells'
 import type {
 	BuildingType,
 	NamedBuildingScheduleType,

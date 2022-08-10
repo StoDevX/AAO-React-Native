@@ -1,14 +1,17 @@
 import * as React from 'react'
 import {Alert, StyleSheet, ScrollView} from 'react-native'
 import glamorous from 'glamorous-native'
-import {TableView, Section, Cell, ButtonCell} from '@frogpond/tableview'
+import {TableView, Section, Cell} from '@frogpond/tableview'
+import {ButtonCell} from '@frogpond/tableview/cells'
 import * as c from '@frogpond/colors'
 import {
 	cancelPrintJobForUser,
 	heldJobsAvailableAtPrinterForUser,
+	releasePrintJobToPrinterForUser,
+} from '../../lib/stoprint/api'
+import {
 	HeldJobsResponseOrErrorType,
 	isStoprintMocked,
-	releasePrintJobToPrinterForUser,
 	showGeneralError,
 } from '../../lib/stoprint'
 import type {
