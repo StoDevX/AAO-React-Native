@@ -1,6 +1,6 @@
 import * as React from 'react'
 import * as c from '@frogpond/colors'
-import {Markdown} from '@frogpond/markdown'
+import {Markdown, MarkdownProps} from '@frogpond/markdown'
 import {data as credits} from '../../../../docs/credits.json'
 import glamorous from 'glamorous-native'
 import {Platform, StyleSheet} from 'react-native'
@@ -16,6 +16,16 @@ const styles = StyleSheet.create({
 		paddingVertical: 10,
 	},
 })
+
+const markdownStyles: MarkdownProps['styles'] = {
+	Heading: {
+		paddingHorizontal: 25,
+	},
+	Paragraph: {
+		paddingHorizontal: 25,
+		paddingVertical: 10,
+	},
+}
 
 const Title = glamorous.text({
 	textAlign: 'center',
@@ -43,14 +53,6 @@ const About = glamorous.text({
 	paddingTop: 10,
 })
 
-const Timeline = glamorous.text({
-	...Platform.select({
-		ios: iOSUIKit.bodyObject,
-		android: material.body1Object,
-	}),
-	marginHorizontal: 25,
-})
-
 const Contributors = glamorous(About)({
 	...Platform.select({
 		ios: iOSUIKit.footnoteEmphasizedObject,
@@ -73,9 +75,7 @@ export let CreditsView = (): JSX.Element => (
 		<Title>{credits.name}</Title>
 		<About>{credits.content}</About>
 
-		<Timeline>
-			<Markdown source={credits.timeline} />
-		</Timeline>
+		<Markdown source={credits.timeline} styles={markdownStyles} />
 
 		<Heading>Contributors</Heading>
 		<Contributors>{formatPeopleList(credits.contributors)}</Contributors>

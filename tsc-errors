@@ -56,13 +56,13 @@ source/views/settings/screens/change-icon.tsx(3,24): error TS7016: Could not fin
 source/views/settings/screens/debug/list.tsx(20,36): error TS2307: Cannot find module 'react-navigation' or its corresponding type declarations.
 source/views/settings/screens/overview/app-icon.tsx(2,24): error TS7016: Could not find a declaration file for module '@hawkrives/react-native-alternate-icons'. './node_modules/@hawkrives/react-native-alternate-icons/index.js' implicitly has an 'any' type.
   Try `npm i --save-dev @types/hawkrives__react-native-alternate-icons` if it exists or add a new declaration (.d.ts) file containing `declare module '@hawkrives/react-native-alternate-icons';`
-source/views/settings/screens/overview/login-credentials.tsx(140,13): error TS2345: Argument of type 'ThunkAction<LogInActions>' is not assignable to parameter of type 'AnyAction'.
-source/views/settings/screens/overview/login-credentials.tsx(146,12): error TS2345: Argument of type 'Promise<LogOutAction>' is not assignable to parameter of type 'AnyAction'.
+source/views/settings/screens/overview/login-credentials.tsx(141,13): error TS2345: Argument of type 'ThunkAction<LogInActions>' is not assignable to parameter of type 'AnyAction'.
+source/views/settings/screens/overview/login-credentials.tsx(147,12): error TS2345: Argument of type 'Promise<LogOutAction>' is not assignable to parameter of type 'AnyAction'.
   Property 'type' is missing in type 'Promise<LogOutAction>' but required in type 'AnyAction'.
 source/views/sis/balances-acknowledgement.tsx(23,18): error TS2345: Argument of type 'Promise<SisAlertSeenAction>' is not assignable to parameter of type 'AnyAction'.
   Property 'type' is missing in type 'Promise<SisAlertSeenAction>' but required in type 'AnyAction'.
 source/views/sis/balances.tsx(197,13): error TS2345: Argument of type 'ThunkAction<LogInActions>' is not assignable to parameter of type 'AnyAction'.
-source/views/sis/course-search/detail/index.tsx(209,24): error TS7053: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{ Open: string; Closed: string; }'.
+source/views/sis/course-search/detail/index.tsx(207,24): error TS7053: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{ Open: string; Closed: string; }'.
   No index signature with a parameter of type 'string' was found on type '{ Open: string; Closed: string; }'.
 source/views/sis/course-search/lib/execute-search.ts(2,27): error TS7016: Could not find a declaration file for module 'keyword-search'. './node_modules/keyword-search/index.js' implicitly has an 'any' type.
   Try `npm i --save-dev @types/keyword-search` if it exists or add a new declaration (.d.ts) file containing `declare module 'keyword-search';`

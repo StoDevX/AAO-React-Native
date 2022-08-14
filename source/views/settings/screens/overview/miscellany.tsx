@@ -1,5 +1,6 @@
 import * as React from 'react'
-import {Section, PushButtonCell} from '@frogpond/tableview'
+import {Section} from '@frogpond/tableview'
+import {PushButtonCell} from '@frogpond/tableview/cells'
 import {trackedOpenUrl} from '@frogpond/open-url'
 import {GH_BASE_URL} from '../../../../lib/constants'
 import {useNavigation} from '@react-navigation/native'
