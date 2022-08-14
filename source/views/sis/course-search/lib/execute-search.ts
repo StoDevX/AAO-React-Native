@@ -34,7 +34,12 @@ export function applySearch(query: string, course: Course): boolean {
 	return false
 }
 
-export function sortAndGroupResults(results: Array<Course>) {
+interface SortedAgainType {
+	title: string
+	data: Array<Course>
+}
+
+export function sortAndGroupResults(results: Array<Course>): SortedAgainType[] {
 	let sorted: Array<Course> = sortBy(results, (course) => deptNum(course))
 	let byTerm = groupBy(sorted, (r) => r.term)
 
@@ -43,7 +48,7 @@ export function sortAndGroupResults(results: Array<Course>) {
 		data: value,
 	}))
 
-	let sortedAgain: Array<{title: string; data: Array<Course>}> = sortBy(
+	let sortedAgain: SortedAgainType[] = sortBy(
 		forSectionList,
 		(course) => course.title,
 	)

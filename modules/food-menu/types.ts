@@ -12,7 +12,7 @@ export type MenuItemType = {
 	label: string
 	monotony: MonotonyContainer
 	nutrition: NutritionContainer
-	nutrition_details: NutritionDetailContainer
+	nutrition_details?: NutritionDetailContainer
 	nutrition_link: string
 	options: unknown[]
 	price: CurrencyStringType

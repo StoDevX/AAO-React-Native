@@ -7,7 +7,7 @@ it('returns a list of [isOpen, scheduleName, verboseStatus] tuples', () => {
 	let building: BuildingType = {
 		name: 'building',
 		category: '???',
-		breakSchedule: {},
+		breakSchedule: undefined,
 		schedule: [
 			{
 				title: 'Hours',
@@ -36,7 +36,7 @@ it('checks a list of schedules to see if any are open', () => {
 	let building: BuildingType = {
 		name: 'building',
 		category: '???',
-		breakSchedule: {},
+		breakSchedule: undefined,
 		schedule: [
 			{
 				title: 'Hours',
@@ -60,7 +60,7 @@ it('handles multiple internal schedules for the same timeframe', () => {
 	let building: BuildingType = {
 		name: 'building',
 		category: '???',
-		breakSchedule: {},
+		breakSchedule: undefined,
 		schedule: [
 			{
 				title: 'Hours',
@@ -84,7 +84,7 @@ it('handles multiple named schedules for the same timeframe', () => {
 	let building: BuildingType = {
 		name: 'building',
 		category: '???',
-		breakSchedule: {},
+		breakSchedule: undefined,
 		schedule: [
 			{
 				title: 'Hours',
@@ -113,7 +113,7 @@ it('returns false if none are available for this day', () => {
 	let building: BuildingType = {
 		name: 'building',
 		category: '???',
-		breakSchedule: {},
+		breakSchedule: undefined,
 		schedule: [
 			{
 				title: 'Hours',
@@ -136,7 +136,7 @@ it('returns false if none are open', () => {
 	let building: BuildingType = {
 		name: 'building',
 		category: '???',
-		breakSchedule: {},
+		breakSchedule: undefined,
 		schedule: [
 			{
 				title: 'Hours',

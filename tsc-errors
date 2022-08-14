@@ -5,23 +5,16 @@ modules/navigation-tabs/tabbed-view.ts(24,7): error TS2322: Type '(<ParamList ex
     Type 'TypedNavigator<ParamListBase, TabNavigationState<ParamListBase>, MaterialBottomTabNavigationOptions, MaterialBottomTabNavigationEventMap, ({ id, initialRouteName, backBehavior, children, screenListeners, screenOptions, ...rest }: Props) => Element>' is not assignable to type 'ComponentType'.
       Type 'TypedNavigator<ParamListBase, TabNavigationState<ParamListBase>, MaterialBottomTabNavigationOptions, MaterialBottomTabNavigationEventMap, ({ id, initialRouteName, backBehavior, children, screenListeners, screenOptions, ...rest }: Props) => Element>' provides no match for the signature '(screens: { [key: string]: NavigationScreenRouteConfig; }, options?: ScreenOptions | undefined): unknown'.
 source/app.tsx(35,9): error TS2322: Type '(prevState: Readonly<{ key: string; index: number; routeNames: string[]; history?: unknown[] | undefined; routes: NavigationRoute<ParamListBase, string>[]; type: string; stale: false; }>, currentState: Readonly<...>) => void' is not assignable to type '(state: Readonly<{ key: string; index: number; routeNames: string[]; history?: unknown[] | undefined; routes: NavigationRoute<ParamListBase, string>[]; type: string; stale: false; }> | undefined) => void'.
-source/lib/login.ts(22,2): error TS2322: Type 'Promise<false | Result | {}>' is not assignable to type 'Promise<false | Result>'.
+source/lib/login.ts(23,2): error TS2322: Type 'Promise<false | Result | {}>' is not assignable to type 'Promise<false | Result>'.
   Type 'false | Result | {}' is not assignable to type 'false | Result'.
     Type '{}' is not assignable to type 'false | Result'.
-source/lib/login.ts(25,2): error TS2322: Type 'Promise<false | {} | SharedWebCredentials>' is not assignable to type 'Promise<MaybeCredentials>'.
+source/lib/login.ts(26,2): error TS2322: Type 'Promise<false | {} | SharedWebCredentials>' is not assignable to type 'Promise<MaybeCredentials>'.
   Type 'false | {} | SharedWebCredentials' is not assignable to type 'MaybeCredentials'.
     Type 'false' has no properties in common with type 'MaybeCredentials'.
-source/lib/login.ts(28,2): error TS2322: Type 'Promise<void | {}>' is not assignable to type 'Promise<void>'.
+source/lib/login.ts(29,2): error TS2322: Type 'Promise<void | {}>' is not assignable to type 'Promise<void>'.
   Type 'void | {}' is not assignable to type 'void'.
     Type '{}' is not assignable to type 'void'.
-source/lib/login.ts(57,4): error TS2769: No overload matches this call.
-  Overload 1 of 2, '(input: RequestInfo, init?: RequestInit | undefined): Promise<Response>', gave the following error.
-    Argument of type '{ method: string; body: FormData; credentials: "include"; cache: "no-store"; throwHttpErrors: boolean; }' is not assignable to parameter of type 'RequestInit'.
-      Object literal may only specify known properties, and 'throwHttpErrors' does not exist in type 'RequestInit'.
-  Overload 2 of 2, '(input: RequestInfo | URL, init?: RequestInit | undefined): Promise<Response>', gave the following error.
-    Argument of type '{ method: string; body: FormData; credentials: "include"; cache: "no-store"; throwHttpErrors: boolean; }' is not assignable to parameter of type 'RequestInit'.
-      Object literal may only specify known properties, and 'throwHttpErrors' does not exist in type 'RequestInit'.
-source/lib/login.ts(74,29): error TS2571: Object is of type 'unknown'.
+source/lib/login.ts(77,29): error TS2571: Object is of type 'unknown'.
 source/lib/partition-by-index.ts(5,22): error TS2769: No overload matches this call.
   Overload 1 of 2, '(...items: ConcatArray<never>[]): never[]', gave the following error.
     Argument of type 'T' is not assignable to parameter of type 'ConcatArray<never>'.
@@ -56,29 +49,6 @@ source/redux/parts/stoprint.ts(128,34): error TS2345: Argument of type 'string |
 source/redux/parts/stoprint.ts(133,40): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
   Type 'undefined' is not assignable to type 'string'.
 source/views/building-hours/detail/toolbar-button.tsx(20,18): error TS2345: Argument of type 'ThunkAction<ToggleFavoriteAction>' is not assignable to parameter of type 'AnyAction'.
-source/views/building-hours/lib/__tests__/get-detailed-building-status.test.ts(10,3): error TS2740: Type '{}' is missing the following properties from type 'BreakScheduleContainerType': fall, thanksgiving, christmasfest, winter, and 4 more.
-source/views/building-hours/lib/__tests__/get-detailed-building-status.test.ts(39,3): error TS2740: Type '{}' is missing the following properties from type 'BreakScheduleContainerType': fall, thanksgiving, christmasfest, winter, and 4 more.
-source/views/building-hours/lib/__tests__/get-detailed-building-status.test.ts(63,3): error TS2740: Type '{}' is missing the following properties from type 'BreakScheduleContainerType': fall, thanksgiving, christmasfest, winter, and 4 more.
-source/views/building-hours/lib/__tests__/get-detailed-building-status.test.ts(87,3): error TS2740: Type '{}' is missing the following properties from type 'BreakScheduleContainerType': fall, thanksgiving, christmasfest, winter, and 4 more.
-source/views/building-hours/lib/__tests__/get-detailed-building-status.test.ts(116,3): error TS2740: Type '{}' is missing the following properties from type 'BreakScheduleContainerType': fall, thanksgiving, christmasfest, winter, and 4 more.
-source/views/building-hours/lib/__tests__/get-detailed-building-status.test.ts(139,3): error TS2740: Type '{}' is missing the following properties from type 'BreakScheduleContainerType': fall, thanksgiving, christmasfest, winter, and 4 more.
-source/views/building-hours/lib/__tests__/get-short-building-status.test.ts(10,3): error TS2740: Type '{}' is missing the following properties from type 'BreakScheduleContainerType': fall, thanksgiving, christmasfest, winter, and 4 more.
-source/views/building-hours/lib/__tests__/get-short-building-status.test.ts(31,3): error TS2740: Type '{}' is missing the following properties from type 'BreakScheduleContainerType': fall, thanksgiving, christmasfest, winter, and 4 more.
-source/views/building-hours/lib/__tests__/get-short-building-status.test.ts(51,3): error TS2740: Type '{}' is missing the following properties from type 'BreakScheduleContainerType': fall, thanksgiving, christmasfest, winter, and 4 more.
-source/views/building-hours/lib/__tests__/get-short-building-status.test.ts(75,3): error TS2740: Type '{}' is missing the following properties from type 'BreakScheduleContainerType': fall, thanksgiving, christmasfest, winter, and 4 more.
-source/views/building-hours/lib/__tests__/get-short-building-status.test.ts(95,3): error TS2740: Type '{}' is missing the following properties from type 'BreakScheduleContainerType': fall, thanksgiving, christmasfest, winter, and 4 more.
-source/views/building-hours/lib/__tests__/is-building-open.test.ts(10,3): error TS2740: Type '{}' is missing the following properties from type 'BreakScheduleContainerType': fall, thanksgiving, christmasfest, winter, and 4 more.
-source/views/building-hours/lib/__tests__/is-building-open.test.ts(31,3): error TS2740: Type '{}' is missing the following properties from type 'BreakScheduleContainerType': fall, thanksgiving, christmasfest, winter, and 4 more.
-source/views/building-hours/lib/__tests__/is-building-open.test.ts(51,3): error TS2740: Type '{}' is missing the following properties from type 'BreakScheduleContainerType': fall, thanksgiving, christmasfest, winter, and 4 more.
-source/views/building-hours/lib/__tests__/is-building-open.test.ts(75,3): error TS2740: Type '{}' is missing the following properties from type 'BreakScheduleContainerType': fall, thanksgiving, christmasfest, winter, and 4 more.
-source/views/building-hours/lib/__tests__/is-building-open.test.ts(95,3): error TS2740: Type '{}' is missing the following properties from type 'BreakScheduleContainerType': fall, thanksgiving, christmasfest, winter, and 4 more.
-source/views/menus/lib/__tests__/menu-item.mock.ts(20,2): error TS2739: Type '{}' is missing the following properties from type 'MonotonyContainer': id, name, image
-source/views/menus/lib/__tests__/menu-item.mock.ts(22,2): error TS2739: Type '{}' is missing the following properties from type 'NutritionContainer': kcal, well_being, well_being_image
-source/views/menus/lib/__tests__/menu-item.mock.ts(23,2): error TS2740: Type '{}' is missing the following properties from type 'NutritionDetailContainer': calories, servingSize, fatContent, saturatedFatContent, and 7 more.
-source/views/menus/lib/process-menu-shorthands.ts(22,3): error TS2783: 'description' is specified more than once, so this usage will be overwritten.
-source/views/menus/lib/process-menu-shorthands.ts(25,3): error TS2739: Type '{}' is missing the following properties from type 'MonotonyContainer': id, name, image
-source/views/menus/lib/process-menu-shorthands.ts(31,3): error TS2740: Type '{}' is missing the following properties from type 'NutritionDetailContainer': calories, servingSize, fatContent, saturatedFatContent, and 7 more.
-source/views/menus/lib/process-menu-shorthands.ts(35,3): error TS2783: 'special' is specified more than once, so this usage will be overwritten.
 source/views/settings/components/logo.tsx(3,24): error TS7016: Could not find a declaration file for module '@hawkrives/react-native-alternate-icons'. './node_modules/@hawkrives/react-native-alternate-icons/index.js' implicitly has an 'any' type.
   Try `npm i --save-dev @types/hawkrives__react-native-alternate-icons` if it exists or add a new declaration (.d.ts) file containing `declare module '@hawkrives/react-native-alternate-icons';`
 source/views/settings/screens/change-icon.tsx(3,24): error TS7016: Could not find a declaration file for module '@hawkrives/react-native-alternate-icons'. './node_modules/@hawkrives/react-native-alternate-icons/index.js' implicitly has an 'any' type.
@@ -89,14 +59,6 @@ source/views/settings/screens/overview/app-icon.tsx(2,24): error TS7016: Could n
 source/views/settings/screens/overview/login-credentials.tsx(141,13): error TS2345: Argument of type 'ThunkAction<LogInActions>' is not assignable to parameter of type 'AnyAction'.
 source/views/settings/screens/overview/login-credentials.tsx(147,12): error TS2345: Argument of type 'Promise<LogOutAction>' is not assignable to parameter of type 'AnyAction'.
   Property 'type' is missing in type 'Promise<LogOutAction>' but required in type 'AnyAction'.
-source/views/settings/screens/overview/server-url.tsx(47,5): error TS2769: No overload matches this call.
-  Overload 1 of 2, '(props: Props | Readonly<Props>): CellTextField', gave the following error.
-    Type 'RefObject<CellTextField>' is not assignable to type '{ current: TextInput | null; }'.
-      Types of property 'current' are incompatible.
-        Type 'CellTextField | null' is not assignable to type 'TextInput | null'.
-          Type 'CellTextField' is missing the following properties from type 'TextInput': isFocused, clear, measure, measureInWindow, and 12 more.
-  Overload 2 of 2, '(props: Props, context: any): CellTextField', gave the following error.
-    Type 'RefObject<CellTextField>' is not assignable to type '{ current: TextInput | null; }'.
 source/views/sis/balances-acknowledgement.tsx(23,18): error TS2345: Argument of type 'Promise<SisAlertSeenAction>' is not assignable to parameter of type 'AnyAction'.
   Property 'type' is missing in type 'Promise<SisAlertSeenAction>' but required in type 'AnyAction'.
 source/views/sis/balances.tsx(197,13): error TS2345: Argument of type 'ThunkAction<LogInActions>' is not assignable to parameter of type 'AnyAction'.
