@@ -1,0 +1,19 @@
+$schema: http://json-schema.org/draft-07/schema#
+
+type: object
+additionalProperties: false
+required: [letter, values]
+properties:
+  letter: {type: string}
+  values:
+    type: array
+    items: {$ref: '#/definitions/item'}
+
+definitions:
+  item:
+    type: object
+    additionalProperties: false
+    required: [label, url]
+    properties:
+      label: {type: string}
+      url: {type: string}

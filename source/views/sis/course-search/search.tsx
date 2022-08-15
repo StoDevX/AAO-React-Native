@@ -16,6 +16,7 @@ import fromPairs from 'lodash/fromPairs'
 import {useNavigation} from '@react-navigation/native'
 import {ChangeTextEvent} from '../../../navigation/types'
 import {debounce} from 'lodash'
+import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 
 const PROMPT_TEXT =
 	'We need to download the courses from the server. This will take a few seconds.'
@@ -42,6 +43,10 @@ let _debounce = debounce((query: string, callback: () => void) => {
 		callback()
 	}
 }, 1500)
+
+export const NavigationOptions: NativeStackNavigationOptions = {
+	title: 'Course Catalog',
+}
 
 const CourseSearchView = (props: Props): JSX.Element => {
 	let [mode, setMode] = React.useState<Mode>('pending')

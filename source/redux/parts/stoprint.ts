@@ -6,9 +6,9 @@ import {
 	fetchColorPrinters,
 	fetchJobs,
 	fetchRecentPrinters,
-	isStoprintMocked,
 	logIn,
-} from '../../lib/stoprint'
+} from '../../lib/stoprint/api'
+import {isStoprintMocked} from '../../lib/stoprint'
 
 type Dispatch<A extends Action> = (
 	action: A | Promise<A> | ThunkAction<A>,

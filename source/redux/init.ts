@@ -1,7 +1,6 @@
 // Functions to initialize bits of the global state, as appropriate
 
 import NetInfo from '@react-native-community/netinfo'
-import {getEnabledTools} from './parts/help'
 import {loadFavoriteBuildings} from './parts/buildings'
 import {loadAcknowledgement} from './parts/settings'
 import {loadRecentSearches, loadRecentFilters} from './parts/courses'
@@ -22,7 +21,4 @@ export async function init(store: Store<any, AnyAction>): Promise<void> {
 
 	// wait for our first connection check to happen
 	await NetInfo.fetch()
-
-	// then go do the network stuff in parallel
-	await Promise.all([store.dispatch(getEnabledTools())])
 }

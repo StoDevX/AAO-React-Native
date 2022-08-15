@@ -61,6 +61,16 @@ export const BaseDateTimePicker = (
 
 	let theme: AppTheme = getTheme()
 
+	let sharedPlatformProps = {
+		minuteInterval: props.minuteInterval,
+		mode: props.mode,
+		onChange: onChange,
+		style: props.style,
+		testID: 'datepicker',
+		timeZoneOffsetInMinutes: getTimezoneOffsetInMinutes(date, timezone),
+		value: moment.tz(date, timezone).toDate(),
+	}
+
 	return (
 		<>
 			{props.showPickerButtonAndroid && (
@@ -72,16 +82,15 @@ export const BaseDateTimePicker = (
 				/>
 			)}
 
-			{(props.showPickerAndroid || props.showPickerIos) && (
+			{props.showPickerAndroid && (
 				<DateTimePicker
-					minuteInterval={props.minuteInterval}
-					mode={props.mode}
-					onChange={onChange}
-					style={props.style}
-					testID="datepicker"
-					timeZoneOffsetInMinutes={getTimezoneOffsetInMinutes(date, timezone)}
-					value={moment.tz(date, timezone).toDate()}
+					display={props.displayAndroid}
+					{...sharedPlatformProps}
 				/>
+			)}
+
+			{props.showPickerIos && (
+				<DateTimePicker display={props.displayIos} {...sharedPlatformProps} />
 			)}
 		</>
 	)
