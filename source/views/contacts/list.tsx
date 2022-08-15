@@ -70,10 +70,6 @@ export let ContactsListView = (): JSX.Element => {
 		[navigation],
 	)
 
-	let renderSectionHeader = ({section: {title}}: any) => (
-		<ListSectionHeader title={title} />
-	)
-
 	let renderItem = ({item}: {item: ContactType}) => (
 		<ContactRow contact={item} onPress={onPressContact} />
 	)
@@ -91,7 +87,9 @@ export let ContactsListView = (): JSX.Element => {
 			onRefresh={refresh}
 			refreshing={loading}
 			renderItem={renderItem}
-			renderSectionHeader={renderSectionHeader}
+			renderSectionHeader={({section: {title}}) => (
+				<ListSectionHeader title={title} />
+			)}
 			sections={groupedData}
 			style={styles.listContainer}
 		/>

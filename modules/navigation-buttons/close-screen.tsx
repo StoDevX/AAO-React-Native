@@ -5,10 +5,11 @@ import {commonStyles} from './styles'
 import {useNavigation} from '@react-navigation/native'
 
 type Props = {
+	title?: string
 	buttonStyle?: StyleProp<ViewStyle>
 }
 
-export function CloseScreenButton({buttonStyle}: Props): JSX.Element {
+export function CloseScreenButton({title, buttonStyle}: Props): JSX.Element {
 	let navigation = useNavigation()
 	return (
 		<Touchable
@@ -21,7 +22,7 @@ export function CloseScreenButton({buttonStyle}: Props): JSX.Element {
 			style={[commonStyles.button, buttonStyle]}
 			testID="button-close-screen"
 		>
-			<Text style={[commonStyles.text, styles.text]}>Done</Text>
+			<Text style={[commonStyles.text, styles.text]}>{title ?? 'Done'}</Text>
 		</Touchable>
 	)
 }

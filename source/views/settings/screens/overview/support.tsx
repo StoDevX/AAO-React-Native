@@ -1,6 +1,7 @@
 import * as React from 'react'
 import {Alert} from 'react-native'
-import {Section, PushButtonCell, Cell} from '@frogpond/tableview'
+import {Section, Cell} from '@frogpond/tableview'
+import {PushButtonCell} from '@frogpond/tableview/cells'
 import {sendEmail} from '../../../../components/send-email'
 import deviceInfo from 'react-native-device-info'
 import {appVersion, appBuild} from '@frogpond/constants'
@@ -16,7 +17,7 @@ ${deviceInfo.getSystemName()} ${getVersion()}
 ${deviceInfo.getReadableVersion()}
 `
 
-const openEmail = () => {
+export const openEmail = (): void => {
 	sendEmail({
 		to: ['allaboutolaf@frogpond.tech'],
 		subject: 'Support: All About Olaf',

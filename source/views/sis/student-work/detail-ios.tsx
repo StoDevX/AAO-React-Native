@@ -2,13 +2,8 @@ import * as React from 'react'
 import {Text, ScrollView, StyleSheet} from 'react-native'
 import {sendEmail} from '../../../components/send-email'
 import {callPhone} from '../../../components/call-phone'
-import {
-	Cell,
-	Section,
-	TableView,
-	SelectableCell,
-	PushButtonCell,
-} from '@frogpond/tableview'
+import {Cell, Section, TableView} from '@frogpond/tableview'
+import {SelectableCell, PushButtonCell} from '@frogpond/tableview/cells'
 import {openUrl} from '@frogpond/open-url'
 import moment from 'moment'
 import * as c from '@frogpond/colors'

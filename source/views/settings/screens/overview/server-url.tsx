@@ -1,13 +1,14 @@
 import * as React from 'react'
-import {StyleSheet} from 'react-native'
-import {Section, CellTextField, ButtonCell} from '@frogpond/tableview'
+import {StyleSheet, TextInput} from 'react-native'
+import {Section} from '@frogpond/tableview'
+import {CellTextField, ButtonCell} from '@frogpond/tableview/cells'
 import restart from 'react-native-restart'
 import * as storage from '../../../../lib/storage'
 import {DEFAULT_URL} from '../../../../lib/constants'
 
 export const ServerUrlSection = (): React.ReactElement => {
 	const [serverAddress, setServerAddress] = React.useState('')
-	const serverAddressRef = React.useRef<CellTextField>(null)
+	const serverAddressRef = React.useRef<TextInput>(null)
 
 	const [errorMessage, setErrorMessage] = React.useState('')
 
