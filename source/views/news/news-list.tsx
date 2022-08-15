@@ -91,16 +91,16 @@ export const NewsList = (props: Props): JSX.Element => {
 		setFilters(newsFilters)
 
 		// Note:
- 		// We have infinite re-rendering issues if we add 'entries' and 'getStoryCategories'
- 		// to the dependency array. To reliably get this to re-render we need something to retrigger
- 		// this callback.
- 		//
- 		// I recognize that:
- 		// 1. disabling the linter for hooks is not great,
- 		// 2. excluding two hook dependencies is less than ideal,
- 		// 3. including an extraneous dependency is bad practice.
- 		//
- 		// eslint-disable-next-line react-hooks/exhaustive-deps
+		// We have infinite re-rendering issues if we add 'entries' and 'getStoryCategories'
+		// to the dependency array. To reliably get this to re-render we need something to retrigger
+		// this callback.
+		//
+		// I recognize that:
+		// 1. disabling the linter for hooks is not great,
+		// 2. excluding two hook dependencies is less than ideal,
+		// 3. including an extraneous dependency is bad practice.
+		//
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [isPending])
 
 	let filterStories = React.useCallback(() => {
