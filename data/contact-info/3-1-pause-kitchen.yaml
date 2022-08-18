@@ -1,5 +1,5 @@
 title: The Pause Kitchen
-phoneNumber: '5077866969'
+phoneNumber: '5077863869'
 buttonText: Call The Pause
 category: Food
 image: pause-kitchen
@@ -9,8 +9,4 @@ text: |
 
   For orders of 4 or more pizzas, please [order on Oleville][online-order] at least 24 hours in advance.
 
-  ## Pizza Delivery Hours
-  **Sunday – Thursday:** 6:00PM – 11:30PM
-  **Friday – Saturday:** 8:00PM – 1:30AM
-
-  [online-order]: http://oleville.com/pause/large-order-form/ "Order on Oleville"
+  [online-order]: https://www.oleville.com/pause-large-order-form "Order on Oleville"
