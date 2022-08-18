@@ -42,6 +42,26 @@ const useNews = (source: Props['source']) => {
 	})
 }
 
+let getStoryCategories = (story: StoryType) => {
+	return story.categories.map((c) => trimStoryCateogry(c))
+}
+
+let filterStories = (entries: StoryType[], filters: ListType[]) => {
+	return entries.filter((story) => {
+		let enabledCategories = filters.flatMap((f: ListType) =>
+			f.spec.selected.flatMap((s) => s.title),
+		)
+
+		if (enabledCategories.length === 0) {
+			return entries
+		}
+
+		return getStoryCategories(story).some((category) =>
+			enabledCategories.includes(category),
+		)
+	})
+}
+
 export const NewsList = (props: Props): JSX.Element => {
 	let {
 		data = [],
@@ -55,10 +75,6 @@ export const NewsList = (props: Props): JSX.Element => {
 	let entries = React.useMemo(() => cleanEntries(data), [data])
 
 	let [filters, setFilters] = React.useState<ListType[]>([])
-
-	let getStoryCategories = React.useCallback((story: StoryType) => {
-		return story.categories.map((c) => trimStoryCateogry(c))
-	}, [])
 
 	React.useEffect(() => {
 		let allCategories = entries.flatMap((story) => getStoryCategories(story))
@@ -88,23 +104,7 @@ export const NewsList = (props: Props): JSX.Element => {
 			},
 		]
 		setFilters(newsFilters)
-	}, [entries, getStoryCategories])
-
-	let filterStories = React.useCallback(() => {
-		return entries.filter((story) => {
-			let enabledCategories = filters.flatMap((f: ListType) =>
-				f.spec.selected.flatMap((s) => s.title),
-			)
-
-			if (enabledCategories.length === 0) {
-				return entries
-			}
-
-			return getStoryCategories(story).some((category) =>
-				enabledCategories.includes(category),
-			)
-		})
-	}, [entries, filters, getStoryCategories])
+	}, [entries])
 
 	if (error) {
 		return (
@@ -146,7 +146,7 @@ export const NewsList = (props: Props): JSX.Element => {
 			}
 			ListHeaderComponent={header}
 			contentContainerStyle={styles.contentContainer}
-			data={filterStories()}
+			data={filterStories(entries, filters)}
 			keyExtractor={(item: StoryType) => item.title}
 			onRefresh={reload}
 			refreshing={isPending && !isInitial}
