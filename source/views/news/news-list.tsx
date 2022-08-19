@@ -10,6 +10,7 @@ import {openUrl} from '@frogpond/open-url'
 import {NewsRow} from './news-row'
 import {cleanEntries, trimStoryCateogry} from './lib/util'
 import {FilterToolbar, ListType} from '@frogpond/filter'
+import memoize from 'lodash/memoize'
 
 type Props = {
 	source: string | {url: string; type: 'rss' | 'wp-json'}
@@ -61,6 +62,9 @@ let filterStories = (entries: StoryType[], filters: ListType[]) => {
 		)
 	})
 }
+
+let memoizedFilterStories = memoize(filterStories)
+memoizedFilterStories.cache = new WeakMap()
 
 export const NewsList = (props: Props): JSX.Element => {
 	let {
@@ -146,7 +150,7 @@ export const NewsList = (props: Props): JSX.Element => {
 			}
 			ListHeaderComponent={header}
 			contentContainerStyle={styles.contentContainer}
-			data={filterStories(entries, filters)}
+			data={memoizedFilterStories(entries, filters)}
 			keyExtractor={(item: StoryType) => item.title}
 			onRefresh={reload}
 			refreshing={isPending && !isInitial}
