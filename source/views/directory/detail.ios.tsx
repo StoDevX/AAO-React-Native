@@ -8,8 +8,8 @@ import {
 	TableView,
 	Section,
 	Cell,
-	MultiLineLeftDetailCell,
 } from '@frogpond/tableview'
+import {MultiLineLeftDetailCell} from '@frogpond/tableview/cells'
 import * as c from '@frogpond/colors'
 import type {Department, CampusLocation} from './types'
 import {RouteProp, useRoute} from '@react-navigation/native'
