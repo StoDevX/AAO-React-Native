@@ -176,7 +176,7 @@ const PrintJobsView = (props: Props) => {
 					timezone={timezone()}
 				/>
 			)}
-			renderSectionHeader={({section: {title}}: any) => (
+			renderSectionHeader={({section: {title}}) => (
 				<ListSectionHeader title={title} />
 			)}
 			sections={sortedGroupedJobs}

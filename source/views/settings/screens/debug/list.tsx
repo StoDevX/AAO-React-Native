@@ -1,3 +1,13 @@
+/**
+ * TODO(volz):
+ * - Fix the typings of this view
+ * - Undo disabling of eslint
+ * See https://github.com/StoDevX/AAO-React-Native/issues/6007
+ */
+
+/* Disabling eslint as the view is not usable in the build */
+/* eslint-disable */
+
 import * as React from 'react'
 import {FlatList} from 'react-native'
 import {DebugRow} from './row'
@@ -16,8 +26,8 @@ type Props = TopLevelViewPropsType & {
 	state: any
 }
 
-export class DebugListView extends React.PureComponent<Props> {
-	static navigationOptions = ({navigation}: NavigationState) => {
+export const DebugListView = (props: Props): JSX.Element => {
+	let navigationOptions = ({navigation}: NavigationState) => {
 		let titleParam = navigation.getParam('keyPath', ['Debug'])
 		let title = titleParam[titleParam.length - 1]
 
@@ -26,19 +36,19 @@ export class DebugListView extends React.PureComponent<Props> {
 		}
 	}
 
-	onPressRow = (row: any) => {
-		let apiTest = this.props.apiTest
-		let keyPath = this.props.navigation.getParam('keyPath', [])
+	let onPressRow = (row: any) => {
+		let apiTest = props.apiTest
+		let keyPath = props.navigation.getParam('keyPath', [])
 		keyPath = [...keyPath, row.key]
-		this.props.navigation.push('DebugView', {keyPath, apiTest})
+		props.navigation.push('DebugView', {keyPath, apiTest})
 	}
 
-	keyExtractor = (item: any) => item.key
+	let keyExtractor = (item: any) => item.key
 
-	renderItem = ({item}: {item: any}) => (
+	let renderItem = ({item}: {item: any}) => (
 		<DebugRow
 			data={item}
-			navigation={this.props.navigation}
+			navigation={props.navigation}
 			onPress={
 				() => undefined
 				// TODO: fix navigation in DebugListView
@@ -47,25 +57,21 @@ export class DebugListView extends React.PureComponent<Props> {
 		/>
 	)
 
-	render() {
-		let parsedData = this.props.apiTest
-			? JSON.parse(this.props.state)
-			: this.props.state
+	let parsedData = props.apiTest ? JSON.parse(props.state) : props.state
 
-		let keyed = toPairs(parsedData).map(([key, value]) => {
-			return {key, value}
-		})
+	let keyed = toPairs(parsedData).map(([key, value]) => {
+		return {key, value}
+	})
 
-		return (
-			<FlatList
-				ItemSeparatorComponent={ListSeparator}
-				ListEmptyComponent={<NoticeView text="Nothing found." />}
-				data={keyed}
-				keyExtractor={this.keyExtractor}
-				renderItem={this.renderItem}
-			/>
-		)
-	}
+	return (
+		<FlatList
+			ItemSeparatorComponent={ListSeparator}
+			ListEmptyComponent={<NoticeView text="Nothing found." />}
+			data={keyed}
+			keyExtractor={keyExtractor}
+			renderItem={renderItem}
+		/>
+	)
 }
 
 export function ConnectedDebugListView(

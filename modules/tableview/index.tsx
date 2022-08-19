@@ -6,7 +6,6 @@ import * as RNTableView from 'react-native-tableview-simple'
 import type {SectionInterface} from 'react-native-tableview-simple/lib/typescript/components/Section'
 import type {TableViewInterface} from 'react-native-tableview-simple/lib/typescript/components/TableView'
 import {CellInterface} from 'react-native-tableview-simple/lib/typescript/components/Cell'
-export * from './cells'
 
 /*
  * Replacing onPress type with a less restricted type of our own

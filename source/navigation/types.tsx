@@ -35,6 +35,7 @@ export type RootStackParamList = {
 	[calendar.NavigationKey]: calendar.NavigationParams
 	Contacts: undefined
 	ContactsDetail: {contact: ContactType}
+	CourseSearch: undefined
 	DictionaryDetail: {item: WordType}
 	Dictionary: undefined
 	DictionaryEditor: {item: WordType}
@@ -65,6 +66,7 @@ export type RootStackParamList = {
 	PrintJobs: undefined
 	PrinterList: {job: PrintJob}
 	PrintJobRelease: {job: PrintJob; printer?: Printer}
+	More: undefined
 }
 
 export type SettingsStackParamList = {

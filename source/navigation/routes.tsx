@@ -11,7 +11,6 @@ import {EventDetail as eventDetail} from '@frogpond/event-list'
 import * as contacts from '../views/contacts'
 import * as dictionary from '../views/dictionary'
 import * as faqs from '../views/faqs'
-import * as help from '../views/help'
 import * as sis from '../views/sis'
 import * as studentwork from '../views/sis/student-work'
 import * as studentworkdetail from '../views/sis/student-work/detail'
@@ -32,6 +31,7 @@ import * as orgs from '../views/student-orgs'
 import * as transportation from '../views/transportation'
 import * as othermodes from '../views/transportation/other-modes'
 import * as stoprint from '../views/stoprint'
+import * as more from '../views/more'
 import * as directory from '../views/directory'
 
 import {StyleSheet} from 'react-native'
@@ -186,11 +186,6 @@ const HomeStackScreens = () => (
 				options={streaming.KRLXScheduleNavigationOptions}
 			/>
 		</Stack.Group>
-		<Stack.Screen
-			component={help.HelpView}
-			name="Help"
-			options={help.NavigationOptions}
-		/>
 		<Stack.Group>
 			<Stack.Screen
 				component={orgs.StudentOrgsView}
@@ -227,6 +222,11 @@ const HomeStackScreens = () => (
 				options={sis.NavigationOptions}
 			/>
 			<Stack.Screen
+				component={sis.CourseSearchView}
+				name="CourseSearch"
+				options={sis.CourseSearchViewNavigationOptions}
+			/>
+			<Stack.Screen
 				component={sis.CourseSearchResultsView}
 				name="CourseSearchResults"
 				options={sis.CourseSearchNavigationOptions}
@@ -256,6 +256,13 @@ const HomeStackScreens = () => (
 		</Stack.Group>
 		<Stack.Group>
 			<Stack.Screen
+				component={more.View}
+				name="More"
+				options={more.NavigationOptions}
+			/>
+		</Stack.Group>
+		<Stack.Group>
+			<Stack.Screen
 				component={directory.DirectoryView}
 				name="Directory"
 				options={directory.NavigationOptions}
@@ -265,7 +272,7 @@ const HomeStackScreens = () => (
 				name="DirectoryDetail"
 				options={directory.DetailNavigationOptions}
 			/>
-		</Stack.Group>
+		</Stack.Group>		
 	</Stack.Navigator>
 )
 

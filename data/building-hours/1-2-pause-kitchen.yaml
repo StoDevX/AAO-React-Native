@@ -1,12 +1,20 @@
 name: The Pause Kitchen
 image: pause-kitchen
 category: Food
+links:
+  - {title: 'Pause website', url: 'https://www.oleville.com/pause'}
 
 schedule:
+  - title: On Campus Pizza Delivery
+    hours:
+    - {days: [Mo, Tu, We, Th, Fr, Sa, Su], from: '7:00pm', to: '12:00am'}
+
   - title: Hours
     hours:
-      - {days: [Mo, Tu, We, Th, Fr], from: '4:00pm', to: '12:00am'}
-      - {days: [Sa, Su], from: '12:00pm', to: '12:00am'}
+      - {days: [Mo, Tu, We, Th, Fr], from: '11:00am', to: '2:00pm'}
+      - {days: [Mo, Tu, We, Th, Fr], from: '5:00pm', to: '12:00am'}
+      - {days: [Sa, Su], from: '12:00pm', to: '3:00pm'}
+      - {days: [Sa, Su], from: '5:00pm', to: '12:00am'}
 
 breakSchedule:
   fall: []

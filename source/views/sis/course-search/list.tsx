@@ -9,7 +9,6 @@ import {
 import type {CourseType} from '../../../lib/course-search/types'
 import {ListSeparator, ListSectionHeader} from '@frogpond/lists'
 import * as c from '@frogpond/colors'
-import {sto} from '../../../lib/colors'
 import {CourseRow} from './row'
 import memoize from 'lodash/memoize'
 import {parseTerm} from '../../../lib/course-search'
@@ -99,14 +98,7 @@ export const CourseResultsList = (props: Props): JSX.Element => {
 		? 'There were no courses that matched your query. Please try again.'
 		: "You can search by Professor (e.g. 'Jill Dietz'), Course Name (e.g. 'Abstract Algebra'), Department/Number (e.g. MATH 252), or GE (e.g. WRI)"
 
-	let messageView = (
-		<NoticeView
-			icon="leaf-outline"
-			iconColor={sto.lime}
-			style={styles.message}
-			text={message}
-		/>
-	)
+	let messageView = <NoticeView style={styles.message} text={message} />
 
 	return (
 		<SectionList
@@ -129,7 +121,7 @@ export const CourseResultsList = (props: Props): JSX.Element => {
 					}}
 				/>
 			)}
-			renderSectionHeader={({section: {title}}: any) => (
+			renderSectionHeader={({section: {title}}) => (
 				<ListSectionHeader title={parseTerm(title)} />
 			)}
 			sections={results}

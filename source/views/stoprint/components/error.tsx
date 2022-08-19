@@ -4,7 +4,7 @@ import Icon from 'react-native-vector-icons/Ionicons'
 import {NoticeView} from '@frogpond/notice'
 import {sto} from '../../../lib/colors'
 import {Timer} from '@frogpond/timer'
-import {useNavigation} from '@react-navigation/native'
+import {openEmail} from '../../settings/screens/overview/support'
 
 const ERROR_MESSAGE =
 	"Make sure you are connected to the St. Olaf Network via eduroam or the VPN. If you are, please report this so we can make sure it doesn't happen again."
@@ -15,8 +15,6 @@ type Props = {
 }
 
 export function StoPrintErrorView(props: Props): JSX.Element {
-	let navigation = useNavigation()
-
 	let iconName: string =
 		Platform.select({
 			ios: 'ios-bug',
@@ -41,7 +39,7 @@ export function StoPrintErrorView(props: Props): JSX.Element {
 					<NoticeView
 						buttonText="Report"
 						header="Connection Issue"
-						onPress={() => navigation.navigate('Help')}
+						onPress={openEmail}
 						style={styles.notice}
 						text={`${props.statusMessage} ${ERROR_MESSAGE}`}
 					/>

@@ -1,7 +1,8 @@
 import * as Sentry from '@sentry/react-native'
 import * as React from 'react'
 import {Alert} from 'react-native'
-import {Section, PushButtonCell} from '@frogpond/tableview'
+import {Section} from '@frogpond/tableview'
+import {PushButtonCell} from '@frogpond/tableview/cells'
 import {isDevMode} from '@frogpond/constants'
 import {ServerUrlSection} from './server-url'
 import {useNavigation} from '@react-navigation/native'
@@ -13,7 +14,7 @@ export const DeveloperSection = (): React.ReactElement => {
 	const onBonAppButton = () => navigation.navigate('BonAppPicker')
 	const onDebugButton = () => navigation.navigate('Debug')
 	const sendSentryMessage = () => {
-		Sentry.captureMessage('A Sentry Message', {level: Sentry.Severity.Info})
+		Sentry.captureMessage('A Sentry Message', {level: 'info'})
 		showSentryAlert()
 	}
 	const sendSentryException = () => {

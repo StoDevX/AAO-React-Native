@@ -7,41 +7,39 @@ import {Row} from '@frogpond/layout'
 
 type Props = {
 	course: CourseType
-	onPress: (course: CourseType) => any
+	onPress: (course: CourseType) => void
 }
 
-export class CourseRow extends React.PureComponent<Props> {
-	onPress = () => {
-		this.props.onPress(this.props.course)
+export const CourseRow = (props: Props): JSX.Element => {
+	let {course} = props
+
+	let onPress = (): void => {
+		props.onPress(course)
 	}
 
-	render() {
-		let {course} = this.props
+	return (
+		<ListRow arrowPosition="center" onPress={onPress}>
+			<Title lines={1}>{course.name}</Title>
 
-		return (
-			<ListRow arrowPosition="center" onPress={this.onPress}>
-				<Title lines={1}>{course.name}</Title>
+			<Row>
+				<Detail style={styles.bold}>{deptNum(course)}</Detail>
 
-				<Row>
-					<Detail style={styles.bold}>{deptNum(course)}</Detail>
-
-					{course.gereqs && (
-						<Detail style={styles.ges}>({course.gereqs.join(', ')})</Detail>
-					)}
-				</Row>
-
-				{course.instructors && (
-					<Detail style={styles.row}>{course.instructors.join(', ')}</Detail>
+				{course.gereqs && (
+					<Detail style={styles.ges}>({course.gereqs.join(', ')})</Detail>
 				)}
+			</Row>
 
-				{course.notes && (
-					<Detail lines={1} style={[styles.italics, styles.row]}>
-						{course.notes.join(' ')}
-					</Detail>
-				)}
-			</ListRow>
-		)
-	}
+			{course.instructors && (
+				<Detail style={styles.row}>{course.instructors.join(', ')}</Detail>
+			)}
+
+			{course.notes && (
+				<Detail lines={1} style={[styles.italics, styles.row]}>
+					{course.notes.join(' ')}
+				</Detail>
+			)}
+		</ListRow>
+	)
 }
 
 const styles = StyleSheet.create({
