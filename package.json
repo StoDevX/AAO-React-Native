@@ -45,7 +45,7 @@
       "./scripts/jest-setup.js"
     ],
     "transformIgnorePatterns": [
-      "node_modules/(?!(jest-)?react-native|@react-native|glamorous-native|react-navigation)"
+      "node_modules/(?!(jest-)?react-native|@react-native|@frogpond|glamorous-native|react-navigation)"
     ],
     "preset": "react-native"
   },
@@ -132,7 +132,7 @@
     "wordwrap": "1.0.0"
   },
   "devDependencies": {
-    "@babel/core": "7.18.10",
+    "@babel/core": "7.18.13",
     "@babel/preset-typescript": "7.18.6",
     "@babel/runtime": "7.18.9",
     "@sentry/cli": "2.5.0",
