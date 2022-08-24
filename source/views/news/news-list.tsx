@@ -8,6 +8,9 @@ import {ListSeparator} from '@frogpond/lists'
 import {LoadingView, NoticeView} from '@frogpond/notice'
 import {openUrl} from '@frogpond/open-url'
 import {NewsRow} from './news-row'
+import {cleanEntries, trimStoryCateogry} from './lib/util'
+import {FilterToolbar, ListType} from '@frogpond/filter'
+import memoize from 'lodash/memoize'
 
 type Props = {
 	source: string | {url: string; type: 'rss' | 'wp-json'}
@@ -40,6 +43,29 @@ const useNews = (source: Props['source']) => {
 	})
 }
 
+let getStoryCategories = (story: StoryType) => {
+	return story.categories.map((c) => trimStoryCateogry(c))
+}
+
+let filterStories = (entries: StoryType[], filters: ListType[]) => {
+	return entries.filter((story) => {
+		let enabledCategories = filters.flatMap((f: ListType) =>
+			f.spec.selected.flatMap((s) => s.title),
+		)
+
+		if (enabledCategories.length === 0) {
+			return entries
+		}
+
+		return getStoryCategories(story).some((category) =>
+			enabledCategories.includes(category),
+		)
+	})
+}
+
+let memoizedFilterStories = memoize(filterStories)
+memoizedFilterStories.cache = new WeakMap()
+
 export const NewsList = (props: Props): JSX.Element => {
 	let {
 		data = [],
@@ -50,11 +76,39 @@ export const NewsList = (props: Props): JSX.Element => {
 		isLoading,
 	} = useNews(props.source)
 
-	// remove all entries with blank excerpts
-	// remove all entries with a <form from the list
-	let entries = data
-		.filter((entry) => entry.excerpt.trim() !== '')
-		.filter((entry) => !entry.content.includes('<form'))
+	let entries = React.useMemo(() => cleanEntries(data), [data])
+
+	let [filters, setFilters] = React.useState<ListType[]>([])
+
+	React.useEffect(() => {
+		let allCategories = entries.flatMap((story) => getStoryCategories(story))
+
+		if (allCategories.length === 0) {
+			return
+		}
+
+		let categories = [...new Set(allCategories)].sort()
+		let filterCategories = categories.map((c) => {
+			return {title: c}
+		})
+
+		let newsFilters: ListType[] = [
+			{
+				type: 'list',
+				key: 'category',
+				enabled: true,
+				spec: {
+					title: 'Categories',
+					options: filterCategories,
+					selected: filterCategories,
+					mode: 'OR',
+					displayTitle: true,
+				},
+				apply: {key: 'category'},
+			},
+		]
+		setFilters(newsFilters)
+	}, [entries])
 
 	if (error) {
 		return (
@@ -66,6 +120,18 @@ export const NewsList = (props: Props): JSX.Element => {
 		)
 	}
 
+	const header = (
+		<FilterToolbar
+			filters={filters}
+			onPopoverDismiss={(newFilter) => {
+				let edited = filters.map((f) =>
+					f.key === newFilter.key ? newFilter : f,
+				)
+				setFilters(edited as ListType[])
+			}}
+		/>
+	)
+
 	return (
 		<FlatList
 			ItemSeparatorComponent={() => (
@@ -74,10 +140,17 @@ export const NewsList = (props: Props): JSX.Element => {
 				/>
 			)}
 			ListEmptyComponent={
-				isLoading ? <LoadingView /> : <NoticeView text="No news." />
+				isLoading ? (
+					<LoadingView />
+				) : filters.some((f: ListType) => f.spec.selected.length) ? (
+					<NoticeView text="No stories to show. Try changing the filters." />
+				) : (
+					<NoticeView text="No news stories." />
+				)
 			}
+			ListHeaderComponent={header}
 			contentContainerStyle={styles.contentContainer}
-			data={entries}
+			data={memoizedFilterStories(entries, filters)}
 			keyExtractor={(item: StoryType) => item.title}
 			onRefresh={reload}
 			refreshing={isPending && !isInitial}
