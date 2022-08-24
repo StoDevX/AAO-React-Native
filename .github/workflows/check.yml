@@ -87,6 +87,7 @@ jobs:
           node-version: ^16.0
           cache: npm
       - run: npm ci
+      - run: npm run bundle-data
       - name: Run tests
         run: npm run test -- --coverage
       - name: Upload coverage
