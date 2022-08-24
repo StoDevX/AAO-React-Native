@@ -138,7 +138,7 @@
     "@sentry/cli": "2.5.0",
     "@types/base-64": "1.0.0",
     "@types/http-cache-semantics": "4.0.1",
-    "@types/jest": "28.1.7",
+    "@types/jest": "28.1.8",
     "@types/js-yaml": "4.0.5",
     "@types/lodash": "4.14.184",
     "@types/react": "17.0.39",
