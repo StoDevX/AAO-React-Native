@@ -159,7 +159,7 @@
     "ajv-formats": "2.1.1",
     "ajv-keywords": "5.1.0",
     "babel-core": "7.0.0-bridge.0",
-    "babel-jest": "28.1.3",
+    "babel-jest": "29.0.1",
     "eslint": "8.22.0",
     "eslint-config-prettier": "8.5.0",
     "eslint-plugin-babel": "5.3.1",
@@ -180,7 +180,7 @@
     "pretty-quick": "3.1.3",
     "string-natural-compare": "3.0.1",
     "strip-ansi": "7.0.1",
-    "typescript": "4.7.4"
+    "typescript": "4.8.2"
   },
   "optionalDependencies": {
     "detox": "19.9.1"
