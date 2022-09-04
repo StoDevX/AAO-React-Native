@@ -1,5 +1,8 @@
 import type {ThemingType} from '@callstack/react-theme-provider'
 import {createTheming} from '@callstack/react-theme-provider'
+import {CombinedDefaultTheme, CombinedDarkTheme} from './paper'
+
+export {CombinedDefaultTheme, CombinedDarkTheme}
 
 export type AppTheme = {
 	accent: string
