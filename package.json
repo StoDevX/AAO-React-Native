@@ -132,7 +132,7 @@
     "wordwrap": "1.0.0"
   },
   "devDependencies": {
-    "@babel/core": "7.18.10",
+    "@babel/core": "7.19.0",
     "@babel/preset-typescript": "7.18.6",
     "@babel/runtime": "7.18.9",
     "@sentry/cli": "2.5.0",
