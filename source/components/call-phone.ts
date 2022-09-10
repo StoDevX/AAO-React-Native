@@ -35,9 +35,18 @@ export function callPhone(phoneNumber: string, opts?: Options): void {
 	}
 }
 
-const formatNumber = (phoneNumber: string) => {
-	let re = /(\d{3})-?(\d{3})-?(\d{4})/gu
-	return phoneNumber.replace(re, '($1) $2-$3')
+export const formatNumber = (phoneNumber: string): string => {
+	let re = /^(1|)?(\d{3})(\d{3})(\d{4})$/u
+
+	let cleaned = String(phoneNumber).replace(/\D/gu, '')
+	let match = cleaned.match(re)
+
+	if (match) {
+		let intlCode = match[1] ? '+1 ' : ''
+		return `${intlCode}(${match[2]}) ${match[3]}-${match[4]}`
+	}
+
+	return phoneNumber
 }
 
 const promptCall = (
