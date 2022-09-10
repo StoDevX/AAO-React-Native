@@ -12,13 +12,10 @@ type Args = {
 }
 
 export function sendEmail(args: Args): void {
-	const {to = [], cc = [], bcc = [], subject = '', body = ''} = args
 	try {
-		let encodedTo = encodeURIComponent(to.join(','))
-		let query = querystring.stringify({cc, bcc, subject, body})
-
-		openUrl(`mailto:${encodedTo}?${query}`)
+		openUrl(formatEmailParts(args))
 	} catch (err) {
+		const {to = []} = args
 		const toString = to.join(', ')
 
 		Alert.alert(
@@ -38,4 +35,13 @@ export function sendEmail(args: Args): void {
 			],
 		)
 	}
+}
+
+export function formatEmailParts(args: Args): string {
+	const {to = [], cc = [], bcc = [], subject = '', body = ''} = args
+
+	let encodedTo = encodeURIComponent(to.join(','))
+	let query = querystring.stringify({cc, bcc, subject, body})
+
+	return `mailto:${encodedTo}?${query}`
 }
