@@ -1,6 +1,6 @@
 import {Alert} from 'react-native'
 import Clipboard from '@react-native-community/clipboard'
-import {email} from 'react-native-communications'
+import {openUrl} from '@frogpond/open-url'
 
 type Args = {
 	to?: Array<string>
@@ -13,7 +13,7 @@ type Args = {
 export function sendEmail(args: Args): void {
 	const {to = [], cc = [], bcc = [], subject = '', body = ''} = args
 	try {
-		email(to, cc, bcc, subject, body)
+		openUrl(`mailto:${to}?cc=${cc}&bcc=${bcc}&subject=${subject}&body=${body}`)
 	} catch (err) {
 		const toString = to.join(', ')
 
