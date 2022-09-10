@@ -1,15 +1,18 @@
 import {Alert} from 'react-native'
 import Clipboard from '@react-native-community/clipboard'
-import {phonecall} from 'react-native-communications'
+import {openUrl} from '@frogpond/open-url'
+import {noop} from 'lodash'
 
 type Options = {
 	prompt?: boolean
+	title?: string
 }
 
 export function callPhone(phoneNumber: string, opts?: Options): void {
-	const {prompt = true} = opts || {}
+	const {prompt = true, title = ''} = opts || {}
 	try {
-		phonecall(phoneNumber, prompt)
+		let phoneNumberAsUrl = `tel:${phoneNumber}`
+		prompt ? promptCall(title, phoneNumberAsUrl) : openUrl(phoneNumberAsUrl)
 	} catch (err) {
 		Alert.alert(
 			"Apologies, we couldn't call that number",
@@ -28,4 +31,16 @@ export function callPhone(phoneNumber: string, opts?: Options): void {
 			],
 		)
 	}
+}
+
+const formatNumber = (phoneNumber: string) => {
+	let re = /(\d{3})-?(\d{3})-?(\d{4})/gu
+	return phoneNumber.replace(re, '($1) $2-$3')
+}
+
+const promptCall = (buttonText: string, phoneNumber: string) => {
+	Alert.alert(buttonText, formatNumber(phoneNumber), [
+		{text: 'Cancel', onPress: noop},
+		{text: 'Call', onPress: () => openUrl(phoneNumber)},
+	])
 }

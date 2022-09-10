@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {Alert, StyleSheet, ScrollView, Image} from 'react-native'
+import {StyleSheet, ScrollView, Image} from 'react-native'
 import {images as contactImages} from '../../../images/contacts'
 import {Markdown} from '@frogpond/markdown'
 import {ListFooter} from '@frogpond/lists'
@@ -11,7 +11,6 @@ import {GH_NEW_ISSUE_URL} from '../../lib/constants'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 import {RootStackParamList} from '../../navigation/types'
 import {RouteProp, useRoute} from '@react-navigation/native'
-import noop from 'lodash/noop'
 
 const Title = glamorous.text({
 	fontSize: 36,
@@ -35,18 +34,6 @@ const styles = StyleSheet.create({
 	},
 })
 
-function formatNumber(phoneNumber: string) {
-	let re = /(\d{3})-?(\d{3})-?(\d{4})/gu
-	return phoneNumber.replace(re, '($1) $2-$3')
-}
-
-function promptCall(buttonText: string, phoneNumber: string) {
-	Alert.alert(buttonText, formatNumber(phoneNumber), [
-		{text: 'Cancel', onPress: noop},
-		{text: 'Call', onPress: () => callPhone(phoneNumber, {prompt: false})},
-	])
-}
-
 export const ContactsDetailView = (): JSX.Element => {
 	let route =
 		useRoute<RouteProp<RootStackParamList, typeof DetailNavigationKey>>()
@@ -57,7 +44,7 @@ export const ContactsDetailView = (): JSX.Element => {
 		if (buttonLink) {
 			openUrl(buttonLink)
 		} else if (phoneNumber) {
-			promptCall(buttonText, phoneNumber)
+			callPhone(phoneNumber, {title: buttonText})
 		}
 	}
 
