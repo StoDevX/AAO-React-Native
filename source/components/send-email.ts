@@ -1,5 +1,6 @@
 import {Alert} from 'react-native'
 import Clipboard from '@react-native-community/clipboard'
+import querystring from 'query-string'
 import {openUrl} from '@frogpond/open-url'
 
 type Args = {
@@ -13,7 +14,10 @@ type Args = {
 export function sendEmail(args: Args): void {
 	const {to = [], cc = [], bcc = [], subject = '', body = ''} = args
 	try {
-		openUrl(`mailto:${to}?cc=${cc}&bcc=${bcc}&subject=${subject}&body=${body}`)
+		let encodedTo = encodeURIComponent(to.join(','))
+		let query = querystring.stringify({cc, bcc, subject, body})
+
+		openUrl(`mailto:${encodedTo}?${query}`)
 	} catch (err) {
 		const toString = to.join(', ')
 
