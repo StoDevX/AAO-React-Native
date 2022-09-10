@@ -12,7 +12,9 @@ export function callPhone(phoneNumber: string, opts?: Options): void {
 	const {prompt = true, title = ''} = opts || {}
 	try {
 		let phoneNumberAsUrl = `tel:${phoneNumber}`
-		prompt ? promptCall(title, phoneNumberAsUrl) : openUrl(phoneNumberAsUrl)
+		prompt
+			? promptCall(title, phoneNumberAsUrl, phoneNumber)
+			: openUrl(phoneNumberAsUrl)
 	} catch (err) {
 		Alert.alert(
 			"Apologies, we couldn't call that number",
@@ -38,9 +40,13 @@ const formatNumber = (phoneNumber: string) => {
 	return phoneNumber.replace(re, '($1) $2-$3')
 }
 
-const promptCall = (buttonText: string, phoneNumber: string) => {
+const promptCall = (
+	buttonText: string,
+	phoneNumberAsUrl: string,
+	phoneNumber: string,
+) => {
 	Alert.alert(buttonText, formatNumber(phoneNumber), [
 		{text: 'Cancel', onPress: noop},
-		{text: 'Call', onPress: () => openUrl(phoneNumber)},
+		{text: 'Call', onPress: () => openUrl(phoneNumberAsUrl)},
 	])
 }
