@@ -1,5 +1,6 @@
 import {Linking} from 'react-native'
 import {InAppBrowser} from 'react-native-inappbrowser-reborn'
+import * as storage from '../../source/lib/storage'
 
 function genericOpen(url: string): Promise<boolean> {
 	return Linking.canOpenURL(url)
@@ -36,7 +37,7 @@ async function launchBrowser(url: string): Promise<boolean> {
 	return true
 }
 
-export function openUrl(url: string): Promise<boolean> {
+export async function openUrl(url: string): Promise<boolean> {
 	let protocol = /^(.*?):/u.exec(url)
 
 	if (protocol && protocol.length) {
@@ -50,7 +51,11 @@ export function openUrl(url: string): Promise<boolean> {
 		}
 	}
 
-	return launchBrowser(url)
+	if (await storage.getInAppLinkPreference()) {
+		return launchBrowser(url)
+	}
+
+	return genericOpen(url)
 }
 
 export function trackedOpenUrl({
