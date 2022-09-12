@@ -1,7 +1,5 @@
-import {Linking, Platform} from 'react-native'
-
-import SafariView from 'react-native-safari-view'
-import {openURL} from '@frogpond/react-native-chrome-custom-tabs'
+import {Linking} from 'react-native'
+import {InAppBrowser} from 'react-native-inappbrowser-reborn'
 
 function genericOpen(url: string): Promise<boolean> {
 	return Linking.canOpenURL(url)
@@ -16,19 +14,26 @@ function genericOpen(url: string): Promise<boolean> {
 		})
 }
 
-function iosOpen(url: string): Promise<boolean> {
-	// SafariView.isAvailable throws if it's not available
-	return SafariView.isAvailable()
-		.then(() => SafariView.show({url}))
-		.catch(() => genericOpen(url))
-}
+async function launchBrowser(url: string): Promise<boolean> {
+	try {
+		if (await InAppBrowser.isAvailable()) {
+			await InAppBrowser.open(url, {
+				animated: true,
+				showTitle: true,
+				enableUrlBarHiding: true,
+				enableDefaultShare: true,
+				modalPresentationStyle: 'currentContext',
+			})
+		} else {
+			// fall back to opening in Chrome / Browser / platform default
+			genericOpen(url)
+		}
+	} catch (error) {
+		console.warn(`Error when trying to call launchBrowser: ${error}`)
+		return false
+	}
 
-function androidOpen(url: string): Promise<boolean> {
-	return openURL(url, {
-		showPageTitle: true,
-		enableUrlBarHiding: true,
-		enableDefaultShare: true,
-	}).catch(() => genericOpen(url)) // fall back to opening in Chrome / Browser / platform default
+	return true
 }
 
 export function openUrl(url: string): Promise<boolean> {
@@ -45,14 +50,7 @@ export function openUrl(url: string): Promise<boolean> {
 		}
 	}
 
-	switch (Platform.OS) {
-		case 'android':
-			return androidOpen(url)
-		case 'ios':
-			return iosOpen(url)
-		default:
-			return genericOpen(url)
-	}
+	return launchBrowser(url)
 }
 
 export function trackedOpenUrl({
