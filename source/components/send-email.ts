@@ -40,8 +40,20 @@ export function sendEmail(args: Args): void {
 export function formatEmailParts(args: Args): string {
 	const {to = [], cc = [], bcc = [], subject = '', body = ''} = args
 
+	let paramsToSend = {
+		cc: cc.join(','),
+		bcc: bcc.join(','),
+		subject,
+		body,
+	}
+
+	// removing empty values from the key:value pairs
+	let filtered = Object.fromEntries(
+		Object.entries(paramsToSend).filter((entry) => entry[1]),
+	)
+
 	let encodedTo = encodeURIComponent(to.join(','))
-	let query = querystring.stringify({cc, bcc, subject, body})
+	let query = querystring.stringify(filtered)
 
 	return `mailto:${encodedTo}?${query}`
 }

@@ -3,46 +3,46 @@ import {formatEmailParts} from '../send-email'
 
 describe('formatEmailParts', () => {
 	it('should format empty inputs', () => {
-		expect(formatEmailParts({to: ['']})).toBe('mailto:?body=&subject=')
+		expect(formatEmailParts({to: ['']})).toBe('mailto:?')
 	})
 
 	it('should encode the "to" addressees', () => {
 		expect(formatEmailParts({to: ['test@domain.com']})).toBe(
-			'mailto:test%40domain.com?body=&subject=',
+			'mailto:test%40domain.com?',
 		)
 		expect(formatEmailParts({to: ['test@domain.com', 'help@domain.com']})).toBe(
-			'mailto:test%40domain.com%2Chelp%40domain.com?body=&subject=',
+			'mailto:test%40domain.com%2Chelp%40domain.com?',
 		)
 	})
 
 	it('should encode the "cc" addressees', () => {
 		expect(formatEmailParts({cc: ['test@domain.com']})).toBe(
-			'mailto:?body=&cc=test%40domain.com&subject=',
+			'mailto:?cc=test%40domain.com',
 		)
 		expect(formatEmailParts({cc: ['test@domain.com', 'help@domain.com']})).toBe(
-			'mailto:?body=&cc=test%40domain.com&cc=help%40domain.com&subject=',
+			'mailto:?cc=test%40domain.com%2Chelp%40domain.com',
 		)
 	})
 
 	it('should encode the "bcc" addressees', () => {
 		expect(formatEmailParts({bcc: ['test@domain.com']})).toBe(
-			'mailto:?bcc=test%40domain.com&body=&subject=',
+			'mailto:?bcc=test%40domain.com',
 		)
 		expect(
 			formatEmailParts({bcc: ['test@domain.com', 'help@domain.com']}),
-		).toBe('mailto:?bcc=test%40domain.com&bcc=help%40domain.com&body=&subject=')
+		).toBe('mailto:?bcc=test%40domain.com%2Chelp%40domain.com')
 	})
 
 	it('should encode the subject', () => {
 		expect(formatEmailParts({subject: 'a thing'})).toBe(
-			'mailto:?body=&subject=a%20thing',
+			'mailto:?subject=a%20thing',
 		)
 	})
 
 	it('should encode to and subject', () => {
 		expect(
 			formatEmailParts({to: ['test@domain.com'], subject: 'a thing'}),
-		).toBe('mailto:test%40domain.com?body=&subject=a%20thing')
+		).toBe('mailto:test%40domain.com?subject=a%20thing')
 	})
 
 	it('should encode to, subject, and body', () => {
@@ -50,17 +50,17 @@ describe('formatEmailParts', () => {
 			formatEmailParts({
 				to: ['test@domain.com'],
 				subject: 'a thing',
-				body: 'hello',
+				body: 'hey there',
 			}),
-		).toBe('mailto:test%40domain.com?body=hello&subject=a%20thing')
+		).toBe('mailto:test%40domain.com?body=hey%20there&subject=a%20thing')
 		expect(
 			formatEmailParts({
 				to: ['test@domain.com', 'test2@domain.com'],
 				subject: 'a thing',
-				body: 'hello',
+				body: 'hey there',
 			}),
 		).toBe(
-			'mailto:test%40domain.com%2Ctest2%40domain.com?body=hello&subject=a%20thing',
+			'mailto:test%40domain.com%2Ctest2%40domain.com?body=hey%20there&subject=a%20thing',
 		)
 	})
 
@@ -71,10 +71,10 @@ describe('formatEmailParts', () => {
 				cc: ['test2@domain.com'],
 				bcc: ['test3@domain.com'],
 				subject: 'a thing',
-				body: 'hello',
+				body: 'hey there',
 			}),
 		).toBe(
-			'mailto:test%40domain.com?bcc=test3%40domain.com&body=hello&cc=test2%40domain.com&subject=a%20thing',
+			'mailto:test%40domain.com?bcc=test3%40domain.com&body=hey%20there&cc=test2%40domain.com&subject=a%20thing',
 		)
 	})
 })
