@@ -174,7 +174,7 @@
     "jetifier": "2.0.0",
     "js-yaml": "4.1.0",
     "junk": "4.0.0",
-    "metro-react-native-babel-preset": "0.67.0",
+    "metro-react-native-babel-preset": "0.72.3",
     "minimist": "1.2.6",
     "mkdirp": "1.0.4",
     "pify": "6.1.0",
