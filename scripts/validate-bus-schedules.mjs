@@ -32,7 +32,7 @@ function* validate(data) {
 		for (let [i, times] of enumerate(schedule.times)) {
 			// prettier-ignore
 			let thisRowNote = `in row ${i+1} of the ${data.line} schedule for [${schedule.days.join(',')}]`
-			if (times.length !== schedule.stops.length) {
+			if (times.length !== schedule.stops.length && schedule.stops.length > 1) {
 				// prettier-ignore
 				yield `There are ${schedule.stops.length} named stops but ${times.length} arrival times ${thisRowNote}`
 			}
