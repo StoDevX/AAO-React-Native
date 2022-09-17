@@ -63,7 +63,9 @@ function ContactInformation({job}: {job: JobType}) {
 			accessory={contactNumber ? 'DisclosureIndicator' : undefined}
 			cellStyle="LeftDetail"
 			detail="Phone"
-			onPress={() => (contactNumber ? callPhone(contactNumber) : false)}
+			onPress={() =>
+				contactNumber ? callPhone(contactNumber, {title: name}) : false
+			}
 			title={contactNumber}
 		/>
 	) : null

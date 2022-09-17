@@ -31,7 +31,11 @@ let Section = (props: SectionInterface): JSX.Element => (
 )
 
 let TableView = (props: TableViewInterface): JSX.Element => (
-	<RNTableView.TableView style={styles.tableview} {...props} />
+	<RNTableView.TableView
+		appearance="light"
+		style={styles.tableview}
+		{...props}
+	/>
 )
 
 let Cell = (props: CellInterfaceModifiedType): JSX.Element => (

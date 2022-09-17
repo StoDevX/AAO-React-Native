@@ -86,7 +86,11 @@ function ContactInformation({job}: {job: JobType}) {
 
 			{contactNumber ? (
 				<Text
-					onPress={() => (job.contactPhone ? callPhone(contactNumber) : null)}
+					onPress={() =>
+						job.contactPhone
+							? callPhone(contactNumber, {title: contactName})
+							: null
+					}
 					style={styles.cardBody}
 				>
 					{contactNumber}

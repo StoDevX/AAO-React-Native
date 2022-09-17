@@ -12,9 +12,9 @@ schedules:
       - NCRC (Outbound)
       - Allina Clinic
       - Culvers
+      - Dollar Tree
       - Target/Cub
-      - Allina Clinic
-      - Senior Center
+      - YMCA
       - Koester Court (Inbound)
       - NCRC (Inbound)
       - Senior Center
@@ -34,6 +34,6 @@ schedules:
       - [ '1:30pm',  '1:34pm',  '1:35pm',  '1:38pm',  '1:41pm',  '1:46pm',  '1:49pm',  '1:51pm',  '1:55pm',  '1:56pm',      false,   '2:04pm',   '2:10pm']
       - [ '2:15pm',  '2:19pm',  '2:20pm',  '2:23pm',  '2:26pm',  '2:31pm',  '2:34pm',  '2:36pm',  '2:40pm',  '2:41pm',      false,   '2:49pm',   '2:55pm']
       - [ '3:00pm',  '3:04pm',  '3:05pm',  '3:08pm',  '3:11pm',  '3:16pm',  '3:19pm',  '3:21pm',  '3:25pm',  '3:26pm',      false,   '3:34pm',   '3:40pm']
-      - ['3:45pm',   '3:49pm',  '3:50pm',  '3:53pm',  '3:56pm',  '4:01pm',  '4:04pm',  '4:06pm',  '4:10pm',  '4:11pm',      false,   '4:19pm',   '4:25pm']
+      - [ '3:45pm',  '3:49pm',  '3:50pm',  '3:53pm',  '3:56pm',  '4:01pm',  '4:04pm',  '4:06pm',  '4:10pm',  '4:11pm',      false,   '4:19pm',   '4:25pm']
       - [ '4:30pm',  '4:34pm',  '4:35pm',  '4:38pm',  '4:41pm',  '4:46pm',  '4:49pm',  '4:51pm',  '4:55pm',  '4:56pm',      false,   '5:04pm',   '5:10pm']
       - [ '5:15pm',  '5:19pm',  '5:20pm',  '5:23pm',  '5:26pm',  '5:31pm',  '5:34pm',  '5:36pm',  '5:40pm',  '5:41pm',      false,   '5:49pm',   '5:55pm']
