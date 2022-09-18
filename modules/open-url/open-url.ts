@@ -27,7 +27,7 @@ async function launchBrowser(url: string): Promise<boolean> {
 			})
 		} else {
 			// fall back to opening in Chrome / Browser / platform default
-			genericOpen(url)
+			await genericOpen(url)
 		}
 	} catch (error) {
 		console.warn(`Error when trying to call launchBrowser: ${error}`)
