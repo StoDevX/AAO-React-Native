@@ -6,6 +6,7 @@ import type {
 	ProcessedMealType,
 	DayPartsCollectionType,
 	DayPartMenuType,
+	CorIconType,
 } from '@frogpond/food-menu'
 
 export type {
@@ -32,7 +33,7 @@ export type EditedMenuForDayType = {
 }
 
 export type EditedBonAppMenuInfoType = {
-	cor_icons: {[key: string]: any}
+	cor_icons: {[key: string]: CorIconType}
 	days: EditedMenuForDayType[]
 	items: MenuItemContainerType
 }
