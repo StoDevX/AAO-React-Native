@@ -49,7 +49,6 @@ export const StreamListView = (): JSX.Element => {
 
 	let entries = React.useMemo(() => {
 		return data
-			.filter((stream) => stream.category !== 'athletics')
 			.map((stream) => {
 				let date: Moment = moment(stream.starttime)
 				let dateGroup = date.format('dddd, MMMM Do')
