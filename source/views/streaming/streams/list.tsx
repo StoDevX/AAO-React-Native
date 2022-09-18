@@ -12,7 +12,7 @@ import type {Moment} from 'moment-timezone'
 import {toLaxTitleCase as titleCase} from '@frogpond/titlecase'
 import type {StreamType} from './types'
 import {API} from '@frogpond/api'
-import {fetch} from '@frogpond/fetch'
+import {useFetch} from 'react-async'
 
 const styles = StyleSheet.create({
 	listContainer: {
@@ -23,52 +23,32 @@ const styles = StyleSheet.create({
 	},
 })
 
+const groupStreams = (entries: StreamType[]) => {
+	let grouped = groupBy(entries, (j) => j.$groupBy)
+	return toPairs(grouped).map(([title, data]) => ({title, data}))
+}
+
+const useStreams = (date: Moment = moment.tz(timezone())) => {
+	let dateFrom = date.format('YYYY-MM-DD')
+	let dateTo = date.clone().add(2, 'month').format('YYYY-MM-DD')
+
+	return useFetch<StreamType[]>(
+		API('/streams/upcoming', {
+			sort: 'ascending',
+			dateFrom,
+			dateTo,
+		}),
+		{
+			headers: {accept: 'application/json'},
+		},
+	)
+}
+
 export const StreamListView = (): JSX.Element => {
-	let [error, setError] = React.useState<Error | null>(null)
-	let [loading, setLoading] = React.useState(true)
-	let [refreshing, setRefreshing] = React.useState(false)
-	let [streams, setStreams] = React.useState<
-		Array<{title: string; data: StreamType[]}>
-	>([])
+	let {data = [], error, reload, isPending, isInitial, isLoading} = useStreams()
 
-	React.useEffect(() => {
-		try {
-			getStreams().then(() => {
-				setLoading(false)
-			})
-		} catch (error) {
-			if (error instanceof Error) {
-				setError(error)
-			} else {
-				setError(new Error('unknown error - not an Error'))
-			}
-			return
-		}
-	}, [])
-
-	let refresh = async (): Promise<void> => {
-		setRefreshing(true)
-		await getStreams(true)
-		setRefreshing(false)
-	}
-
-	let getStreams = async (
-		reload?: boolean,
-		date: Moment = moment.tz(timezone()),
-	) => {
-		let dateFrom = date.format('YYYY-MM-DD')
-		let dateTo = date.clone().add(2, 'month').format('YYYY-MM-DD')
-
-		let data = await fetch(API('/streams/upcoming'), {
-			searchParams: {
-				sort: 'ascending',
-				dateFrom,
-				dateTo,
-			},
-			delay: reload ? 500 : 0,
-		}).json<Array<StreamType>>()
-
-		data = data
+	let entries = React.useMemo(() => {
+		return data
 			.filter((stream) => stream.category !== 'athletics')
 			.map((stream) => {
 				let date: Moment = moment(stream.starttime)
@@ -84,38 +64,33 @@ export const StreamListView = (): JSX.Element => {
 					$groupBy: group,
 				}
 			})
-
-		let grouped = groupBy(data, (j) => j.$groupBy)
-		let mapped = toPairs(grouped).map(([title, data]) => ({title, data}))
-
-		setStreams(mapped)
-	}
-
-	let keyExtractor = (item: StreamType) => item.eid
-
-	let renderItem = ({item}: {item: StreamType}) => <StreamRow stream={item} />
-
-	if (loading) {
-		return <LoadingView />
-	}
+	}, [data])
 
 	if (error) {
-		return <NoticeView text={`Error: ${error.message}`} />
+		return (
+			<NoticeView
+				buttonText="Try Again"
+				onPress={reload}
+				text={`A problem occured while loading the streams. ${error.message}`}
+			/>
+		)
 	}
 
 	return (
 		<SectionList
 			ItemSeparatorComponent={ListSeparator}
-			ListEmptyComponent={<NoticeView text="No Streams" />}
+			ListEmptyComponent={
+				isLoading ? <LoadingView /> : <NoticeView text="No streams." />
+			}
 			contentContainerStyle={styles.contentContainer}
-			keyExtractor={keyExtractor}
-			onRefresh={refresh}
-			refreshing={refreshing}
-			renderItem={renderItem}
+			keyExtractor={(item: StreamType) => item.eid}
+			onRefresh={reload}
+			refreshing={isPending && !isInitial}
+			renderItem={({item}: {item: StreamType}) => <StreamRow stream={item} />}
 			renderSectionHeader={({section: {title}}) => (
 				<ListSectionHeader title={title} />
 			)}
-			sections={streams}
+			sections={groupStreams(entries)}
 			style={styles.listContainer}
 		/>
 	)
