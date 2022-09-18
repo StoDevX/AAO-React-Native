@@ -115,8 +115,8 @@ export function RadioControllerView(props: Props): JSX.Element {
 	}, [navigation, scheduleViewName])
 
 	let callStation = useCallback(() => {
-		callPhone(stationNumber)
-	}, [stationNumber])
+		callPhone(stationNumber, {title: stationName})
+	}, [stationName, stationNumber])
 
 	let openStreamWebsite = useCallback(() => {
 		openUrl(playerUrl)

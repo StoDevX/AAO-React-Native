@@ -11,11 +11,11 @@ const line: UnprocessedBusLine = {
       days: ['Mo', 'Tu', 'We', 'Th', 'Fr'],
       coordinates: {
         'City Hall on Washington': [44.451472, -93.158529],
-        'Econo Foods': [44.453983, -93.159477],
+        'Family Fare': [44.453983, -93.159477],
       },
       stops: [
         'City Hall on Washington',
-        'Econo Foods',
+        'Family Fare',
       ],
       times: [
         ['6:00am', '6:01am'],
