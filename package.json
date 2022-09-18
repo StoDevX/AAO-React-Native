@@ -136,7 +136,7 @@
     "wordwrap": "1.0.0"
   },
   "devDependencies": {
-    "@babel/core": "7.19.0",
+    "@babel/core": "7.19.1",
     "@babel/preset-typescript": "7.18.6",
     "@babel/runtime": "7.19.0",
     "@sentry/cli": "2.5.2",
@@ -144,7 +144,7 @@
     "@types/http-cache-semantics": "4.0.1",
     "@types/jest": "29.0.0",
     "@types/js-yaml": "4.0.5",
-    "@types/lodash": "4.14.184",
+    "@types/lodash": "4.14.185",
     "@types/react": "17.0.39",
     "@types/react-native": "0.67.4",
     "@types/react-native-button": "3.0.1",
@@ -157,7 +157,7 @@
     "@types/tinycolor2": "1.4.3",
     "@types/wordwrap": "1.0.1",
     "@typescript-eslint/eslint-plugin": "5.36.2",
-    "@typescript-eslint/parser": "5.36.2",
+    "@typescript-eslint/parser": "5.37.0",
     "ajv": "8.11.0",
     "ajv-formats": "2.1.1",
     "ajv-keywords": "5.1.0",
