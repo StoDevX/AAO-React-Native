@@ -36,15 +36,13 @@ const getEnabledCategories = (filters: ListType[]) => {
 }
 
 const filterStreams = (streams: StreamType[], filters: ListType[]) => {
-	return streams.filter((stream) => {
-		let enabledCategories = getEnabledCategories(filters)
+	let enabledCategories = getEnabledCategories(filters)
 
-		if (enabledCategories.length === 0) {
-			return stream
-		}
+	if (enabledCategories.length === 0) {
+		return streams
+	}
 
-		return enabledCategories.includes(stream.category)
-	})
+	return streams.filter((stream) => enabledCategories.includes(stream.category))
 }
 
 const useStreams = (date: Moment = moment.tz(timezone())) => {
