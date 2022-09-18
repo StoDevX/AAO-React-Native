@@ -54,7 +54,7 @@ export function DirectoryDetailView(): JSX.Element {
 				<Portal>
 					<FAB.Group
 						actions={fabActions}
-						icon={isFabOpen ? 'close' : 'more-vert'}
+						icon={isFabOpen ? 'close' : 'dots-horizontal'}
 						onStateChange={({open}) => setIsFabOpen(open)}
 						open={isFabOpen}
 						visible={true}
@@ -76,7 +76,7 @@ export function DirectoryDetailView(): JSX.Element {
 						<Chip
 							key={key}
 							accessibilityLabel={`Department: ${dept.name}`}
-							icon="group"
+							icon="account-multiple-outline"
 							onPress={() => openUrl(dept.href)}
 							style={styles.departmentChip}
 						>
@@ -89,7 +89,7 @@ export function DirectoryDetailView(): JSX.Element {
 					<List.Item
 						description={officeHours.description}
 						left={(props) => (
-							<List.Icon {...props} icon="sentiment-satisfied" />
+							<List.Icon {...props} icon="calendar-clock-outline" />
 						)}
 						onPress={
 							officeHours.href
@@ -103,7 +103,7 @@ export function DirectoryDetailView(): JSX.Element {
 				{email ? (
 					<List.Item
 						description={email}
-						left={(props) => <List.Icon {...props} icon="email" />}
+						left={(props) => <List.Icon {...props} icon="email-outline" />}
 						onPress={() => sendEmail({to: [email], subject: '', body: ''})}
 						title="Email"
 					/>
@@ -113,7 +113,7 @@ export function DirectoryDetailView(): JSX.Element {
 					<List.Item
 						key={i}
 						description={loc.shortLocation}
-						left={(props) => <List.Icon {...props} icon="room" />}
+						left={(props) => <List.Icon {...props} icon="map-marker-outline" />}
 						onPress={() => callPhone(loc.phone)}
 						right={(props) => <List.Icon {...props} icon="phone" />}
 						title={loc.display}
