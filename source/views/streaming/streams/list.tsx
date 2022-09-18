@@ -84,7 +84,7 @@ export const StreamListView = (): JSX.Element => {
 	}, [data])
 
 	React.useEffect(() => {
-		let allCategories = data.flatMap((stream) => titleCase(stream.category))
+		let allCategories = data.map((stream) => titleCase(stream.category))
 
 		if (allCategories.length === 0) {
 			return
