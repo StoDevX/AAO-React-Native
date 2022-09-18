@@ -144,7 +144,7 @@
     "@types/http-cache-semantics": "4.0.1",
     "@types/jest": "29.0.0",
     "@types/js-yaml": "4.0.5",
-    "@types/lodash": "4.14.184",
+    "@types/lodash": "4.14.185",
     "@types/react": "17.0.39",
     "@types/react-native": "0.67.4",
     "@types/react-native-button": "3.0.1",
