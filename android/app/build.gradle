@@ -369,7 +369,7 @@ gradle.projectsEvaluated {
 project.ext.vectoricons = [
     // Name of the font files you want to copy
     iconFontNames: [
-        'MaterialIcons.ttf',
+        'MaterialCommunityIcons.ttf',
         'Entypo.ttf',
         'Ionicons.ttf',
     ],
