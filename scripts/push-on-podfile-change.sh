@@ -34,10 +34,10 @@ message="Bump ""${branch//dependabot\/npm_and_yarn\// }"" cocoapods packages
 
 git add "$FILE"
 
-# git config user.name 'github-actions[bot]'
-# git config user.email 'github-actions[bot]@users.noreply.github.com'
+git config user.name 'github-actions[bot]'
+git config user.email 'github-actions[bot]@users.noreply.github.com'
 
 author="""${actor}"" <${actor}@users.noreply.github.com>"
 git commit --author="$author" -m "$message"
 
-git push "https://$COCOAPODS_LOCKFILE_GH_PUSH_TOKEN@github.com/StoDevX/AAO-React-Native.git" "$head_ref"
+git push origin "$head_ref"
