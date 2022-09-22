@@ -34,8 +34,8 @@ message="Bump ""${branch//dependabot\/npm_and_yarn\// }"" cocoapods packages
 
 git add "$FILE"
 
-git config user.name 'github-actions[bot]'
-git config user.email 'github-actions[bot]@users.noreply.github.com'
+# git config user.name 'github-actions[bot]'
+# git config user.email 'github-actions[bot]@users.noreply.github.com'
 
 author="""${actor}"" <${actor}@users.noreply.github.com>"
 git commit --author="$author" -m "$message"
