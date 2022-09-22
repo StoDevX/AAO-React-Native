@@ -415,14 +415,14 @@ PODS:
     - React-RCTImage
   - RNSearchBar (3.5.1):
     - React
-  - RNSentry (4.3.0):
+  - RNSentry (4.4.0):
     - React-Core
-    - Sentry (= 7.24.1)
+    - Sentry (= 7.25.1)
   - RNVectorIcons (9.2.0):
     - React-Core
-  - Sentry (7.24.1):
-    - Sentry/Core (= 7.24.1)
-  - Sentry/Core (7.24.1)
+  - Sentry (7.25.1):
+    - Sentry/Core (= 7.25.1)
+  - Sentry/Core (7.25.1)
   - SocketRocket (0.6.0)
   - Yoga (1.14.0)
   - YogaKit (1.18.1):
@@ -694,9 +694,9 @@ SPEC CHECKSUMS:
   RNReanimated: 5c8c17e26787fd8984cd5accdc70fef2ca70aafd
   RNScreens: 0df01424e9e0ed7827200d6ed1087ddd06c493f9
   RNSearchBar: 9860431356b7d12a8449d2fddb2b5f3c78d1e99f
-  RNSentry: 771e3a33d720752dd963a97c3a3447223e92214f
+  RNSentry: 6386245031a4dc3091523b941de8241c03e7f214
   RNVectorIcons: fcc2f6cb32f5735b586e66d14103a74ce6ad61f8
-  Sentry: 1ed2d3f2973658bf6ab7ed43857c8e321a1625dd
+  Sentry: dd29c18c32b0af9269949f079cf631d581ca76ca
   SocketRocket: fccef3f9c5cedea1353a9ef6ada904fde10d6608
   Yoga: 2f6a78c58dcc2963bd8e34d96a4246d9dff2e3a7
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
