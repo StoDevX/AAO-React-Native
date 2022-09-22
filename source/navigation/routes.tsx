@@ -26,13 +26,13 @@ import {
 } from '@frogpond/food-menu/food-item-detail'
 import * as news from '../views/news'
 import * as settings from '../views/settings/'
-// import SISView from '../views/sis'
 import * as streaming from '../views/streaming'
 import * as orgs from '../views/student-orgs'
 import * as transportation from '../views/transportation'
 import * as othermodes from '../views/transportation/other-modes'
 import * as stoprint from '../views/stoprint'
 import * as more from '../views/more'
+import * as directory from '../views/directory'
 
 import {StyleSheet} from 'react-native'
 import {getTheme} from '@frogpond/app-theme'
@@ -261,6 +261,18 @@ const HomeStackScreens = () => (
 				options={more.NavigationOptions}
 			/>
 		</Stack.Group>
+		<Stack.Group>
+			<Stack.Screen
+				component={directory.DirectoryView}
+				name="Directory"
+				options={directory.NavigationOptions}
+			/>
+			<Stack.Screen
+				component={directory.DirectoryDetailView}
+				name="DirectoryDetail"
+				options={directory.DetailNavigationOptions}
+			/>
+		</Stack.Group>		
 	</Stack.Navigator>
 )
 

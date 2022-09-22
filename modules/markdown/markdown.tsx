@@ -30,7 +30,7 @@ const HorizontalRule = glamorous.view({
 	backgroundColor: 'black',
 })
 
-type Props = {
+export type MarkdownProps = {
 	styles?: {
 		BlockQuote?: StyleProp<TextStyle>
 		Code?: StyleProp<TextStyle>
@@ -48,7 +48,7 @@ type Props = {
 	source: string
 }
 
-export class Markdown extends React.PureComponent<Props> {
+export class Markdown extends React.PureComponent<MarkdownProps> {
 	render(): JSX.Element {
 		const {styles = {}, source} = this.props
 		return (

@@ -7,6 +7,7 @@ import type {Result as RNKeychainResult} from 'react-native-keychain'
 
 import buildFormData from './formdata'
 import {OLECARD_AUTH_URL} from './financials/urls'
+import {ExpandedFetchArgs} from '@frogpond/fetch'
 
 const SIS_LOGIN_KEY = 'stolaf.edu'
 
@@ -49,13 +50,15 @@ export async function performLogin({
 	const form = buildFormData({username, password})
 
 	try {
-		const {status: statusCode} = await fetch(OLECARD_AUTH_URL, {
+		const fetchParams: ExpandedFetchArgs = {
 			method: 'POST',
 			body: form,
 			credentials: 'include',
 			cache: 'no-store',
 			throwHttpErrors: false,
-		})
+		}
+
+		const {status: statusCode} = await fetch(OLECARD_AUTH_URL, fetchParams)
 
 		if (statusCode >= 400 && statusCode < 500) {
 			return 'bad-credentials'

@@ -10,7 +10,8 @@ import xor from 'lodash/xor'
 import {Platform, ScrollView, StyleSheet, Text} from 'react-native'
 import type {Moment} from 'moment-timezone'
 import moment from 'moment-timezone'
-import {Cell, DeleteButtonCell, Section, TableView} from '@frogpond/tableview'
+import {Cell, Section, TableView} from '@frogpond/tableview'
+import {DeleteButtonCell} from '@frogpond/tableview/cells'
 import type {DayOfWeekEnumType, SingleBuildingScheduleType} from '../types'
 import {Row} from '@frogpond/layout'
 import {blankSchedule, parseHours, summarizeDaysAndHours} from '../lib'
@@ -270,5 +271,5 @@ export const NavigationKey = 'BuildingHoursProblemReportEditor'
 export const NavigationOptions: NativeStackNavigationOptions = {
 	title: 'Edit Schedule',
 	presentation: 'modal',
-	headerRight: () => <CloseScreenButton />,
+	headerRight: () => Platform.OS === 'ios' && <CloseScreenButton />,
 }

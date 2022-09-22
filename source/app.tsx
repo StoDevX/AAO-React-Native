@@ -15,7 +15,7 @@ import {Provider as ReduxProvider} from 'react-redux'
 import {Provider as PaperProvider} from 'react-native-paper'
 import {makeStore, initRedux} from './redux'
 import * as navigation from './navigation'
-import {ThemeProvider} from '@frogpond/app-theme'
+import {ThemeProvider, CombinedDefaultTheme} from '@frogpond/app-theme'
 import {ActionSheetProvider} from '@expo/react-native-action-sheet'
 import {NavigationContainer} from '@react-navigation/native'
 
@@ -28,7 +28,7 @@ export default class App extends React.Component {
 	render(): JSX.Element {
 		return (
 			<ReduxProvider store={store}>
-				<PaperProvider>
+				<PaperProvider theme={CombinedDefaultTheme}>
 					<ThemeProvider>
 						<ActionSheetProvider>
 							<NavigationContainer

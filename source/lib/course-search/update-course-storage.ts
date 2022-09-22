@@ -1,4 +1,5 @@
 import {fetch} from '@frogpond/fetch'
+import * as Sentry from '@sentry/react-native'
 import type {RawCourseType, CourseType, TermType} from './types'
 import {COURSE_DATA_PAGE, INFO_PAGE} from './urls'
 import * as storage from '../storage'
@@ -46,10 +47,14 @@ async function loadCurrentTermsFromServer(): Promise<Array<TermType>> {
 	const thisYear = today.getFullYear()
 	const resp: TermInfoType = await fetch(INFO_PAGE, {cache: 'no-store'})
 		.json<TermInfoType>()
-		.catch(() => ({
-			files: [],
-			type: 'error',
-		}))
+		.catch((error) => {
+			console.warn(`Error from loadCurrentTermsFromServer: ${error}`)
+			Sentry.captureException(error)
+			return {
+				files: [],
+				type: 'error',
+			}
+		})
 	const terms: Array<TermType> = resp.files.filter(
 		(file) => file.type === 'json' && file.year > thisYear - 5,
 	)

@@ -5,21 +5,19 @@
  */
 
 import * as React from 'react'
-import {Alert, ScrollView, View} from 'react-native'
+import {Alert, ScrollView, Platform, View} from 'react-native'
 import moment from 'moment-timezone'
 import type {Moment} from 'moment-timezone'
 import noop from 'lodash/noop'
 import jsYaml from 'js-yaml'
 import {InfoHeader} from '@frogpond/info-header'
+import {TableView, Section, Cell} from '@frogpond/tableview'
 import {
-	TableView,
-	Section,
-	Cell,
 	CellTextField,
 	CellToggle,
 	DeleteButtonCell,
 	ButtonCell,
-} from '@frogpond/tableview'
+} from '@frogpond/tableview/cells'
 import type {
 	BuildingType,
 	NamedBuildingScheduleType,
@@ -56,7 +54,7 @@ export let BuildingHoursProblemReportView = (): JSX.Element => {
 	React.useEffect(
 		() =>
 			navigation.addListener('beforeRemove', (event) => {
-				if (!hasUnsavedChanges) {
+				if (!hasUnsavedChanges || Platform.OS === 'android') {
 					return
 				}
 
@@ -375,7 +373,8 @@ export const NavigationKey = 'BuildingHoursProblemReport'
 export const NavigationOptions: NativeStackNavigationOptions = {
 	title: 'Report a Problem',
 	presentation: 'modal',
-	headerRight: () => <CloseScreenButton title="Discard" />,
+	headerRight: () =>
+		Platform.OS === 'ios' && <CloseScreenButton title="Discard" />,
 	/**
 	 * Explicility setting `gestureEnabled` to false otherwise we can end up with a
 	 * a screen that gets removed natively but did not get removed from JS state.

@@ -63,11 +63,6 @@ export const IOSAPITestView = (): JSX.Element => {
 		}
 	}
 
-	let onChangeSegment = (event: any) => {
-		let selectedSegment = event.nativeEvent.selectedSegmentIndex
-		setSelectedIndex(selectedSegment)
-	}
-
 	let APIResponse = error ? (
 		<Output
 			editable={false}
@@ -109,7 +104,10 @@ export const IOSAPITestView = (): JSX.Element => {
 			</Toolbar>
 
 			<Segment
-				onChange={onChangeSegment}
+				onChange={(event) => {
+					let selectedSegment = event.nativeEvent.selectedSegmentIndex
+					setSelectedIndex(selectedSegment)
+				}}
 				selectedIndex={selectedIndex}
 				values={['Text', 'Parsed']}
 			/>

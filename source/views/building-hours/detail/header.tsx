@@ -12,32 +12,30 @@ import * as c from '@frogpond/colors'
 
 type Props = {building: BuildingType}
 
-export class Header extends React.PureComponent<Props> {
-	render() {
-		let {building} = this.props
+export const Header = (props: Props): JSX.Element => {
+	let {building} = props
 
-		let abbr = building.abbreviation ? ` (${building.abbreviation})` : ''
+	let abbr = building.abbreviation ? ` (${building.abbreviation})` : ''
 
-		let subtitle = building.subtitle ? (
-			<View style={styles.subtitle}>
-				<Text selectable={true} style={[styles.name, styles.subtitleText]}>
-					{building.subtitle}
+	let subtitle = building.subtitle ? (
+		<View style={styles.subtitle}>
+			<Text selectable={true} style={[styles.name, styles.subtitleText]}>
+				{building.subtitle}
+			</Text>
+		</View>
+	) : null
+
+	return (
+		<View>
+			<View style={styles.title}>
+				<Text selectable={true} style={styles.name}>
+					{building.name}
+					{abbr}
 				</Text>
 			</View>
-		) : null
-
-		return (
-			<View>
-				<View style={styles.title}>
-					<Text selectable={true} style={styles.name}>
-						{building.name}
-						{abbr}
-					</Text>
-				</View>
-				{subtitle}
-			</View>
-		)
-	}
+			{subtitle}
+		</View>
+	)
 }
 
 const styles = StyleSheet.create({
