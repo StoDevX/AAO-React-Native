@@ -40,4 +40,4 @@ git add "$FILE"
 author="""${actor}"" <${actor}@users.noreply.github.com>"
 git commit --author="$author" -m "$message"
 
-git push "https://$GITHUB_TOKEN@github.com/StoDevX/AAO-React-Native.git" "$head_ref"
+git push "https://$COCOAPODS_LOCKFILE_GH_PUSH_TOKEN@github.com/StoDevX/AAO-React-Native.git" "$head_ref"

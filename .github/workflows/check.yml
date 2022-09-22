@@ -165,7 +165,7 @@ jobs:
           branch: ${{ github.ref_name }}
           actor: ${{ github.actor }}
           head_ref: ${{ github.ref }}
-          GITHUB_TOKEN: ${{ secrets.COCOAPODS_LOCKFILE_GH_PUSH_TOKEN }}
+          COCOAPODS_LOCKFILE_GH_PUSH_TOKEN: ${{ secrets.COCOAPODS_LOCKFILE_GH_PUSH_TOKEN }}
 
   ios-bundle:
     name: iOS Bundle
