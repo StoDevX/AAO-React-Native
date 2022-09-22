@@ -40,4 +40,4 @@ git config user.email 'github-actions[bot]@users.noreply.github.com'
 author="""${actor}"" <${actor}@users.noreply.github.com>"
 git commit --author="$author" -m "$message"
 
-git push "https://$GITHUB_TOKEN@github.com/StoDevX/AAO-React-Native.git" "$head_ref"
+git push origin "$head_ref"
