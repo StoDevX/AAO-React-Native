@@ -29,6 +29,21 @@ const groupStreams = (entries: StreamType[]) => {
 	return toPairs(grouped).map(([title, data]) => ({title, data}))
 }
 
+const groupStreamsByCategoryAndDate = (stream: StreamType) => {
+	let date: Moment = moment(stream.starttime)
+	let dateGroup = date.format('dddd, MMMM Do')
+
+	let group = stream.status.toLowerCase() !== 'live' ? dateGroup : 'Live'
+
+	return {
+		...stream,
+		// force title-case on the stream types, to prevent not-actually-duplicate headings
+		category: titleCase(stream.category),
+		date: date,
+		$groupBy: group,
+	}
+}
+
 const getEnabledCategories = (filters: ListType[]) => {
 	return filters.flatMap((filter: ListType) =>
 		filter.spec.selected.flatMap((spec) => spec.title),
@@ -67,20 +82,7 @@ export const StreamListView = (): JSX.Element => {
 	let [filters, setFilters] = React.useState<ListType[]>([])
 
 	let entries = React.useMemo(() => {
-		return data.map((stream) => {
-			let date: Moment = moment(stream.starttime)
-			let dateGroup = date.format('dddd, MMMM Do')
-
-			let group = stream.status.toLowerCase() !== 'live' ? dateGroup : 'Live'
-
-			return {
-				...stream,
-				// force title-case on the stream types, to prevent not-actually-duplicate headings
-				category: titleCase(stream.category),
-				date: date,
-				$groupBy: group,
-			}
-		})
+		return data.map((stream) => groupStreamsByCategoryAndDate(stream))
 	}, [data])
 
 	React.useEffect(() => {
