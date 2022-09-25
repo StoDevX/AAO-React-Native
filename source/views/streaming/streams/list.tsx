@@ -45,9 +45,10 @@ const groupStreamsByCategoryAndDate = (stream: StreamType) => {
 }
 
 const getEnabledCategories = (filters: ListType[]) => {
-	return filters.flatMap((filter: ListType) =>
-		filter.spec.selected.flatMap((spec) => spec.title),
-	)
+	return filters.flatMap((filter: ListType) => {
+		let filterSelections: ListType['spec']['selected'] = filter.spec.selected
+		return filterSelections.flatMap((spec) => spec.title)
+	})
 }
 
 const filterStreams = (streams: StreamType[], filters: ListType[]) => {
