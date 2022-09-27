@@ -19,3 +19,11 @@ updates:
     - dependency-name: react-markdown
       versions:
       - "> 2.5.1"
+
+- package-ecosystem: github-actions
+  directory: "/"
+  schedule:
+    interval: daily
+    time: '11:00'
+  open-pull-requests-limit: 100
+  commit-message: { prefix: "" }
