@@ -75,7 +75,7 @@
     "@callstack/react-theme-provider": "3.0.8",
     "@expo/react-native-action-sheet": "3.13.0",
     "@frogpond/titlecase": "2.0.4",
-    "@hawkrives/react-native-alternate-icons": "0.6.1",
+    "@hawkrives/react-native-alternate-icons": "0.6.2",
     "@react-native-async-storage/async-storage": "1.17.10",
     "@react-native-community/clipboard": "1.5.1",
     "@react-native-community/netinfo": "9.3.1",

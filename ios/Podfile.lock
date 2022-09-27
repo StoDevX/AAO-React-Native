@@ -75,7 +75,7 @@ PODS:
     - FlipperKit/FlipperKitNetworkPlugin
   - fmt (6.2.1)
   - glog (0.3.5)
-  - hawkrives_react-native-alternate-icons (0.6.1):
+  - hawkrives_react-native-alternate-icons (0.6.2):
     - React
   - libevent (2.1.12)
   - OpenSSL-Universal (1.1.1100)
@@ -654,7 +654,7 @@ SPEC CHECKSUMS:
   FlipperKit: cbdee19bdd4e7f05472a66ce290f1b729ba3cb86
   fmt: ff9d55029c625d3757ed641535fd4a75fedc7ce9
   glog: 476ee3e89abb49e07f822b48323c51c57124b572
-  hawkrives_react-native-alternate-icons: 9dfa2ee583bfce1dceaef59b4e9ee683b571df65
+  hawkrives_react-native-alternate-icons: 4560d4a054bf591f3dc5fce15a06df2830fd50a4
   libevent: 4049cae6c81cdb3654a443be001fb9bdceff7913
   OpenSSL-Universal: ebc357f1e6bc71fa463ccb2fe676756aff50e88c
   RCT-Folly: 4d8508a426467c48885f1151029bc15fa5d7b3b8
