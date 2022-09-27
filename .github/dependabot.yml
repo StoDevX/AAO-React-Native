@@ -7,6 +7,7 @@ updates:
     time: '11:00'
   open-pull-requests-limit: 100
   commit-message: { prefix: "" }
+
 - package-ecosystem: npm
   directory: "/"
   schedule:
@@ -15,6 +16,6 @@ updates:
   open-pull-requests-limit: 100
   commit-message: { prefix: "" }
   ignore:
-  - dependency-name: react-markdown
-    versions:
-    - "> 2.5.1"
+    - dependency-name: react-markdown
+      versions:
+      - "> 2.5.1"
