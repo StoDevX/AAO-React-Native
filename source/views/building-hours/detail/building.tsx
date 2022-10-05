@@ -26,7 +26,7 @@ const styles = StyleSheet.create({
 type Props = {
 	info: BuildingType
 	now: Moment
-	onProblemReport: () => any
+	onProblemReport: () => void
 }
 
 const BG_COLORS: Record<string, string> = {

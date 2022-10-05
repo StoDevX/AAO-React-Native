@@ -6,11 +6,19 @@ import * as c from '@frogpond/colors'
 type LeftDetailProps = {
 	detail: string
 	title: string
+	onPress?: (() => void) | undefined
+	accessory?:
+		| false
+		| 'DisclosureIndicator'
+		| 'Detail'
+		| 'DetailDisclosure'
+		| 'Checkmark'
+		| undefined
 }
 
 export function MultiLineLeftDetailCell(props: LeftDetailProps): JSX.Element {
-	let {detail, title} = props
-	let cellContent = (
+	const {detail, title, onPress, accessory} = props
+	const cellContent = (
 		<View style={styles.cellContentView}>
 			<Text allowFontScaling={true} style={styles.cellLeftDetail}>
 				{detail}
@@ -20,7 +28,13 @@ export function MultiLineLeftDetailCell(props: LeftDetailProps): JSX.Element {
 			</Text>
 		</View>
 	)
-	return <Cell cellContentView={cellContent} />
+	return (
+		<Cell
+			accessory={accessory}
+			cellContentView={cellContent}
+			onPress={onPress}
+		/>
+	)
 }
 
 const styles = StyleSheet.create({

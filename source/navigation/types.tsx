@@ -20,6 +20,7 @@ import type {
 import {Printer, PrintJob} from '../lib/stoprint/types'
 import {JobType} from '../views/sis/student-work/types'
 import {CourseType} from '../lib/course-search/types'
+import {DirectoryItem} from '../views/directory/types'
 
 export type RootStackParamList = {
 	Home: undefined
@@ -38,6 +39,9 @@ export type RootStackParamList = {
 	DictionaryDetail: {item: WordType}
 	Dictionary: undefined
 	DictionaryEditor: {item: WordType}
+	Directory: undefined
+	DirectoryDetail: {contact: DirectoryItem}
+	Faq: undefined
 	Help: undefined
 	Job: undefined
 	JobDetail: {job: JobType}

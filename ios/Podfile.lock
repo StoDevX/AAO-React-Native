@@ -75,7 +75,7 @@ PODS:
     - FlipperKit/FlipperKitNetworkPlugin
   - fmt (6.2.1)
   - glog (0.3.5)
-  - hawkrives_react-native-alternate-icons (0.6.0):
+  - hawkrives_react-native-alternate-icons (0.6.2):
     - React
   - libevent (2.1.12)
   - OpenSSL-Universal (1.1.1100)
@@ -286,9 +286,9 @@ PODS:
   - React-jsinspector (0.68.3)
   - React-logger (0.68.3):
     - glog
-  - react-native-ios-context-menu (1.12.0):
+  - react-native-ios-context-menu (1.12.1):
     - React-Core
-  - react-native-netinfo (9.3.0):
+  - react-native-netinfo (9.3.1):
     - React-Core
   - react-native-restart (0.0.24):
     - React-Core
@@ -377,9 +377,11 @@ PODS:
     - React-Core
   - RNDateTimePicker (6.2.0):
     - React-Core
-  - RNDeviceInfo (10.0.2):
+  - RNDeviceInfo (10.2.0):
     - React-Core
-  - RNGestureHandler (2.6.0):
+  - RNGestureHandler (2.6.1):
+    - React-Core
+  - RNInAppBrowser (3.7.0):
     - React-Core
   - RNKeychain (8.1.1):
     - React-Core
@@ -415,14 +417,14 @@ PODS:
     - React-RCTImage
   - RNSearchBar (3.5.1):
     - React
-  - RNSentry (4.3.0):
+  - RNSentry (4.4.0):
     - React-Core
-    - Sentry (= 7.24.1)
+    - Sentry (= 7.25.1)
   - RNVectorIcons (9.2.0):
     - React-Core
-  - Sentry (7.24.1):
-    - Sentry/Core (= 7.24.1)
-  - Sentry/Core (7.24.1)
+  - Sentry (7.25.1):
+    - Sentry/Core (= 7.25.1)
+  - Sentry/Core (7.25.1)
   - SocketRocket (0.6.0)
   - Yoga (1.14.0)
   - YogaKit (1.18.1):
@@ -498,6 +500,7 @@ DEPENDENCIES:
   - "RNDateTimePicker (from `../node_modules/@react-native-community/datetimepicker`)"
   - RNDeviceInfo (from `../node_modules/react-native-device-info`)
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
+  - RNInAppBrowser (from `../node_modules/react-native-inappbrowser-reborn`)
   - RNKeychain (from `../node_modules/react-native-keychain`)
   - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNScreens (from `../node_modules/react-native-screens`)
@@ -616,6 +619,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-device-info"
   RNGestureHandler:
     :path: "../node_modules/react-native-gesture-handler"
+  RNInAppBrowser:
+    :path: "../node_modules/react-native-inappbrowser-reborn"
   RNKeychain:
     :path: "../node_modules/react-native-keychain"
   RNReanimated:
@@ -649,7 +654,7 @@ SPEC CHECKSUMS:
   FlipperKit: cbdee19bdd4e7f05472a66ce290f1b729ba3cb86
   fmt: ff9d55029c625d3757ed641535fd4a75fedc7ce9
   glog: 476ee3e89abb49e07f822b48323c51c57124b572
-  hawkrives_react-native-alternate-icons: 1c8c2f6ff08096f067c5306b4e7e4f42e5cc06e1
+  hawkrives_react-native-alternate-icons: 4560d4a054bf591f3dc5fce15a06df2830fd50a4
   libevent: 4049cae6c81cdb3654a443be001fb9bdceff7913
   OpenSSL-Universal: ebc357f1e6bc71fa463ccb2fe676756aff50e88c
   RCT-Folly: 4d8508a426467c48885f1151029bc15fa5d7b3b8
@@ -665,8 +670,8 @@ SPEC CHECKSUMS:
   React-jsiexecutor: a5043e9e1e1bd13b80b58b228c6901b3721a4f54
   React-jsinspector: 86e89b9f135787a2e8eb74b3fc00ec61e9a80ae1
   React-logger: f790bd10f86b38012e108fb4b564023602702270
-  react-native-ios-context-menu: b954146619d60610a2abf5899164e33818f3403d
-  react-native-netinfo: 129bd99f607a2dc5bb096168f3e5c150fd1f1c95
+  react-native-ios-context-menu: ca642c1a1e4b115d05d9f800606705b6ba28cd38
+  react-native-netinfo: c8d02a805706024f8de3a339a028f7e64f63b4b6
   react-native-restart: 45c8dca02491980f2958595333cbccd6877cb57e
   react-native-safe-area-context: 6c12e3859b6f27b25de4fee8201cfb858432d8de
   react-native-sfsymbols: bd3a0d3eab185e80b571bae60753dcf5a0d57967
@@ -688,15 +693,16 @@ SPEC CHECKSUMS:
   RNCClipboard: 41d8d918092ae8e676f18adada19104fa3e68495
   RNCPicker: 0b65be85fe7954fbb2062ef079e3d1cde252d888
   RNDateTimePicker: 30e6733efc179d1e49d6008ea5fce42cdc9aeeca
-  RNDeviceInfo: 0a7c1d2532aa7691f9b9925a27e43af006db4dae
-  RNGestureHandler: 920eb17f5b1e15dae6e5ed1904045f8f90e0b11e
+  RNDeviceInfo: 8b83e99e290deaf1bab71673cc636776ef647b6f
+  RNGestureHandler: 28ad20bf02257791f7f137b31beef34b9549f54b
+  RNInAppBrowser: e36d6935517101ccba0e875bac8ad7b0cb655364
   RNKeychain: ff836453cba46938e0e9e4c22e43d43fa2c90333
   RNReanimated: 5c8c17e26787fd8984cd5accdc70fef2ca70aafd
   RNScreens: 0df01424e9e0ed7827200d6ed1087ddd06c493f9
   RNSearchBar: 9860431356b7d12a8449d2fddb2b5f3c78d1e99f
-  RNSentry: 771e3a33d720752dd963a97c3a3447223e92214f
+  RNSentry: 6386245031a4dc3091523b941de8241c03e7f214
   RNVectorIcons: fcc2f6cb32f5735b586e66d14103a74ce6ad61f8
-  Sentry: 1ed2d3f2973658bf6ab7ed43857c8e321a1625dd
+  Sentry: dd29c18c32b0af9269949f079cf631d581ca76ca
   SocketRocket: fccef3f9c5cedea1353a9ef6ada904fde10d6608
   Yoga: 2f6a78c58dcc2963bd8e34d96a4246d9dff2e3a7
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a

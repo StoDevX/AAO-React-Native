@@ -13,17 +13,8 @@
   38:51  warning  Argument 'item' should be typed with a non-any type  @typescript-eslint/explicit-module-boundary-types
   38:57  warning  Unexpected any. Specify a different type             @typescript-eslint/no-explicit-any
 
-./modules/toolbar/toolbar-button.tsx
-  37:8  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
-
 ./source/redux/init.ts
   10:41  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
-
-./source/views/building-hours/detail/building.tsx
-  29:25  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
-
-./source/views/menus/types.ts
-  35:29  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
 
 ./source/views/settings/screens/debug/row.tsx
   6:29  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
@@ -36,17 +27,9 @@
   33:34  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
   34:42  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
 
-./source/views/stoprint/components/notice.tsx
-  18:17  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
-  19:17  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
-  24:2   warning  Missing return type on function           @typescript-eslint/explicit-module-boundary-types
-
-./source/views/stoprint/lib.ts
-  22:33  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
-
 ./source/views/stoprint/print-jobs.tsx
   39:71  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
   40:33  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
 
-✖ 23 problems (0 errors, 23 warnings)
+✖ 16 problems (0 errors, 16 warnings)
 

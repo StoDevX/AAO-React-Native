@@ -61,8 +61,7 @@ export const allViews: Array<ViewType> = [
 		gradient: c.magentaToPurple,
 	},
 	{
-		type: 'url',
-		url: 'https://www.stolaf.edu/directory',
+		type: 'view',
 		view: 'Directory',
 		title: 'Directory',
 		icon: 'v-card',
