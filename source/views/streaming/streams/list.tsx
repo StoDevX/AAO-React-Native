@@ -155,7 +155,7 @@ export const StreamListView = (): JSX.Element => {
 			keyExtractor={(item: StreamType) => item.eid}
 			onRefresh={reload}
 			refreshing={isPending && !isInitial}
-			renderItem={({item}: {item: StreamType}) => <StreamRow stream={item} />}
+			renderItem={({item}) => <StreamRow stream={item} />}
 			renderSectionHeader={({section: {title}}) => (
 				<ListSectionHeader title={title} />
 			)}

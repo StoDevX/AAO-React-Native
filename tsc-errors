@@ -25,8 +25,6 @@ source/lib/partition-by-index.ts(6,30): error TS2769: No overload matches this c
     Argument of type 'T' is not assignable to parameter of type 'ConcatArray<never>'.
   Overload 2 of 2, '(...items: ConcatArray<never>[]): never[]', gave the following error.
     Argument of type 'T' is not assignable to parameter of type 'ConcatArray<never>'.
-source/lib/refresh.ts(4,24): error TS7016: Could not find a declaration file for module '@hawkrives/react-native-alternate-icons'. './node_modules/@hawkrives/react-native-alternate-icons/index.js' implicitly has an 'any' type.
-  Try `npm i --save-dev @types/hawkrives__react-native-alternate-icons` if it exists or add a new declaration (.d.ts) file containing `declare module '@hawkrives/react-native-alternate-icons';`
 source/navigation/track.ts(11,12): error TS2339: Property 'routes' does not exist on type 'NavigationRoute<ParamListBase, string>'.
 source/navigation/track.ts(12,30): error TS2345: Argument of type 'NavigationRoute<ParamListBase, string>' is not assignable to parameter of type 'Readonly<{ key: string; index: number; routeNames: string[]; history?: unknown[] | undefined; routes: NavigationRoute<ParamListBase, string>[]; type: string; stale: false; }>'.
   Type 'NavigationRoute<ParamListBase, string>' is missing the following properties from type 'Readonly<{ key: string; index: number; routeNames: string[]; history?: unknown[] | undefined; routes: NavigationRoute<ParamListBase, string>[]; type: string; stale: false; }>': index, routeNames, routes, type, stale
@@ -49,13 +47,8 @@ source/redux/parts/stoprint.ts(128,34): error TS2345: Argument of type 'string |
 source/redux/parts/stoprint.ts(133,40): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
   Type 'undefined' is not assignable to type 'string'.
 source/views/building-hours/detail/toolbar-button.tsx(20,18): error TS2345: Argument of type 'ThunkAction<ToggleFavoriteAction>' is not assignable to parameter of type 'AnyAction'.
-source/views/settings/components/logo.tsx(3,24): error TS7016: Could not find a declaration file for module '@hawkrives/react-native-alternate-icons'. './node_modules/@hawkrives/react-native-alternate-icons/index.js' implicitly has an 'any' type.
-  Try `npm i --save-dev @types/hawkrives__react-native-alternate-icons` if it exists or add a new declaration (.d.ts) file containing `declare module '@hawkrives/react-native-alternate-icons';`
-source/views/settings/screens/change-icon.tsx(3,24): error TS7016: Could not find a declaration file for module '@hawkrives/react-native-alternate-icons'. './node_modules/@hawkrives/react-native-alternate-icons/index.js' implicitly has an 'any' type.
-  Try `npm i --save-dev @types/hawkrives__react-native-alternate-icons` if it exists or add a new declaration (.d.ts) file containing `declare module '@hawkrives/react-native-alternate-icons';`
+source/views/settings/screens/change-icon.tsx(58,15): error TS2345: Argument of type 'string' is not assignable to parameter of type 'SetStateAction<IconTypeEnum>'.
 source/views/settings/screens/debug/list.tsx(20,36): error TS2307: Cannot find module 'react-navigation' or its corresponding type declarations.
-source/views/settings/screens/overview/app-icon.tsx(2,24): error TS7016: Could not find a declaration file for module '@hawkrives/react-native-alternate-icons'. './node_modules/@hawkrives/react-native-alternate-icons/index.js' implicitly has an 'any' type.
-  Try `npm i --save-dev @types/hawkrives__react-native-alternate-icons` if it exists or add a new declaration (.d.ts) file containing `declare module '@hawkrives/react-native-alternate-icons';`
 source/views/settings/screens/overview/login-credentials.tsx(141,13): error TS2345: Argument of type 'ThunkAction<LogInActions>' is not assignable to parameter of type 'AnyAction'.
 source/views/settings/screens/overview/login-credentials.tsx(147,12): error TS2345: Argument of type 'Promise<LogOutAction>' is not assignable to parameter of type 'AnyAction'.
   Property 'type' is missing in type 'Promise<LogOutAction>' but required in type 'AnyAction'.

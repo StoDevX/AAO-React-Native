@@ -139,34 +139,6 @@ jobs:
       - run: bundle exec pod install --deployment
         working-directory: ./ios
 
-  ios-podfile-update:
-    # Adapted from https://gist.github.com/A-Tokyo/0d811e818513fc4d3272335d2847d748
-    name: iOS Update Cocoapods
-    runs-on: macos-11
-    if: startsWith(github.ref_name, 'dependabot/npm_and_yarn/') && contains(github.ref_name, 'react-native')
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
-        with:
-          node-version: '^16.0'
-          cache: npm
-      - uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: '2.6'
-          bundler-cache: true
-      - run: sudo xcode-select -s /Applications/Xcode_13.1.app
-      - run: npm ci
-        env: {SKIP_POSTINSTALL: '1'}
-      - run: bundle exec -- pod install --verbose
-        working-directory: ./ios
-      - name: push-on-podfile-change
-        run: bash scripts/push-on-podfile-change.sh
-        env:
-          branch: ${{ github.ref_name }}
-          actor: ${{ github.actor }}
-          head_ref: ${{ github.ref }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
   ios-bundle:
     name: iOS Bundle
     runs-on: ubuntu-20.04
@@ -209,7 +181,7 @@ jobs:
           ruby-version: '2.6'
           bundler-cache: true
       - name: Restore Gradle cache
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: |
             ~/.gradle/caches
@@ -252,20 +224,20 @@ jobs:
         with:
           ruby-version: '2.6'
           bundler-cache: true
-      # - name: Restore Pods cache
-      #   uses: actions/cache@v2
-      #   with:
-      #     path: |
-      #       ios/Pods
-      #       ~/Library/Caches/CocoaPods
-      #       ~/.cocoapods
-      #     key: ${{ runner.os }}-pods-${{ hashFiles('**/Podfile.lock') }}
-      #     restore-keys: |
-      #       ${{ runner.os }}-pods-
-      # - uses: mikehardy/buildcache-action@v1
-      #   continue-on-error: true
-      #   with:
-      #     cache_key: ${{ matrix.os }}
+      - name: Restore Pods cache
+        uses: actions/cache@v3
+        with:
+          path: |
+            ios/Pods
+            ~/Library/Caches/CocoaPods
+            ~/.cocoapods
+          key: ${{ runner.os }}-pods-${{ hashFiles('**/Podfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-pods-
+      - uses: mikehardy/buildcache-action@v1
+        continue-on-error: true
+        with:
+          cache_key: ${{ matrix.os }}
       - run: sudo xcode-select -s /Applications/Xcode_13.1.app
       - run: git fetch --prune --unshallow
       - run: npm ci

@@ -7,6 +7,19 @@ import type {SectionInterface} from 'react-native-tableview-simple/lib/typescrip
 import type {TableViewInterface} from 'react-native-tableview-simple/lib/typescript/components/TableView'
 import {CellInterface} from 'react-native-tableview-simple/lib/typescript/components/Cell'
 
+/*
+ * Replacing onPress type with a less restricted type of our own
+ * otherwise we have to deal with issues around passing in anonymous
+ * functions and promises that (i) cannot pass in parameters and
+ * (ii) must return void or false.
+ *
+ * Otherwise we deal with type issues being flagged for perfectly
+ * valid callbacks.
+ */
+type CellInterfaceModifiedType = Omit<CellInterface, 'onPress'> & {
+	onPress?: () => void
+}
+
 let Section = (props: SectionInterface): JSX.Element => (
 	<RNTableView.Section
 		hideSurroundingSeparators={Platform.OS === 'ios'}
@@ -25,7 +38,7 @@ let TableView = (props: TableViewInterface): JSX.Element => (
 	/>
 )
 
-let Cell = (props: CellInterface): JSX.Element => (
+let Cell = (props: CellInterfaceModifiedType): JSX.Element => (
 	<RNTableView.Cell {...props} />
 )
 

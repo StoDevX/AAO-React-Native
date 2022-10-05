@@ -1,4 +1,6 @@
 import {Linking} from 'react-native'
+import {InAppBrowser} from 'react-native-inappbrowser-reborn'
+import * as storage from '../../source/lib/storage'
 
 function genericOpen(url: string): Promise<boolean> {
 	return Linking.canOpenURL(url)
@@ -13,7 +15,29 @@ function genericOpen(url: string): Promise<boolean> {
 		})
 }
 
-export function openUrl(url: string): Promise<boolean> {
+async function launchBrowser(url: string): Promise<boolean> {
+	try {
+		if (await InAppBrowser.isAvailable()) {
+			await InAppBrowser.open(url, {
+				animated: true,
+				showTitle: true,
+				enableUrlBarHiding: true,
+				enableDefaultShare: true,
+				modalPresentationStyle: 'currentContext',
+			})
+		} else {
+			// fall back to opening in Chrome / Browser / platform default
+			await genericOpen(url)
+		}
+	} catch (error) {
+		console.warn(`Error when trying to call launchBrowser: ${error}`)
+		return false
+	}
+
+	return true
+}
+
+export async function openUrl(url: string): Promise<boolean> {
 	let protocol = /^(.*?):/u.exec(url)
 
 	if (protocol && protocol.length) {
@@ -27,7 +51,10 @@ export function openUrl(url: string): Promise<boolean> {
 		}
 	}
 
-	// open platform respective browser (Safari / Chrome / etc)
+	if (await storage.getInAppLinkPreference()) {
+		return launchBrowser(url)
+	}
+
 	return genericOpen(url)
 }
 
