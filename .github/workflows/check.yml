@@ -181,7 +181,7 @@ jobs:
           ruby-version: '2.6'
           bundler-cache: true
       - name: Restore Gradle cache
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: |
             ~/.gradle/caches
@@ -225,7 +225,7 @@ jobs:
           ruby-version: '2.6'
           bundler-cache: true
       - name: Restore Pods cache
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: |
             ios/Pods
