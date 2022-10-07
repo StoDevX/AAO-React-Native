@@ -10,7 +10,7 @@ jobs:
     env:
       task: GH_PAGES
     steps:
-      - uses: actions/setup-node@master
+      - uses: actions/setup-node@v3
         with: {node-version: ^16.0}
       - name: Check out the code
         uses: actions/checkout@v3.1.0
