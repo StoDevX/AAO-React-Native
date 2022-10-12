@@ -234,7 +234,7 @@ jobs:
           key: ${{ runner.os }}-pods-${{ hashFiles('**/Podfile.lock') }}
           restore-keys: |
             ${{ runner.os }}-pods-
-      - uses: mikehardy/buildcache-action@v1
+      - uses: mikehardy/buildcache-action@v2
         continue-on-error: true
         with:
           cache_key: ${{ matrix.os }}
