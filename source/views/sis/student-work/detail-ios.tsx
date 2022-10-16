@@ -10,7 +10,7 @@ import * as c from '@frogpond/colors'
 import type {JobType} from './types'
 import glamorous from 'glamorous-native'
 import {ShareButton} from '@frogpond/navigation-buttons'
-import {shareJob, createJobFullUrl} from './lib'
+import {shareJob} from './lib'
 import {decode} from '@frogpond/html-lib'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 import {RouteProp, useRoute} from '@react-navigation/native'
@@ -158,12 +158,9 @@ function Timeline({job}: {job: JobType}) {
 }
 
 function OpenWebpage({job}: {job: JobType}) {
-	return job.id ? (
+	return job.url ? (
 		<Section header="">
-			<PushButtonCell
-				onPress={() => openUrl(createJobFullUrl(job))}
-				title="Open Posting"
-			/>
+			<PushButtonCell onPress={() => openUrl(job.url)} title="Open Posting" />
 		</Section>
 	) : null
 }
@@ -179,7 +176,7 @@ function HowToApply({job}: {job: JobType}) {
 function LastUpdated({when}: {when: string}) {
 	return when ? (
 		<Text selectable={true} style={[styles.footer, styles.lastUpdated]}>
-			Last updated: {moment(when, 'YYYY/MM/DD').calendar()}
+			Last updated: {moment(when, 'MMMM D, YYYY').calendar()}
 			{'\n'}
 			Powered by St. Olaf Student Employment job postings
 		</Text>
