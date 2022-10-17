@@ -78,7 +78,7 @@
     "@hawkrives/react-native-alternate-icons": "0.6.2",
     "@react-native-async-storage/async-storage": "1.17.10",
     "@react-native-community/clipboard": "1.5.1",
-    "@react-native-community/netinfo": "9.3.1",
+    "@react-native-community/netinfo": "9.3.5",
     "@react-native-picker/picker": "2.4.4",
     "@react-navigation/bottom-tabs": "6.4.0",
     "@react-navigation/material-bottom-tabs": "6.2.4",
