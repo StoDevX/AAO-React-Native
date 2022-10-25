@@ -86,7 +86,7 @@
     "@react-navigation/native": "6.0.11",
     "@react-navigation/native-stack": "6.7.0",
     "@react-navigation/stack": "6.3.1",
-    "@sentry/react-native": "4.4.0",
+    "@sentry/react-native": "4.7.0",
     "base-64": "1.0.0",
     "buffer": "6.0.3",
     "delay": "5.0.0",
