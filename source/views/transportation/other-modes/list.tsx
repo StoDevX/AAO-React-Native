@@ -10,6 +10,7 @@ import type {OtherModeType} from '../types'
 import {API} from '@frogpond/api'
 import {fetch} from '@frogpond/fetch'
 import {useNavigation} from '@react-navigation/native'
+import { openUrl } from '@frogpond/open-url'
 
 const transportationUrl = API('/transit/modes')
 
@@ -65,7 +66,7 @@ let OtherModesView = (): JSX.Element => {
 			renderItem={({item}) => (
 				<OtherModesRow
 					mode={item}
-					onPress={(mode) => navigation.navigate('OtherModesDetail', {mode})}
+					onPress={(mode) => openUrl(mode.url)}
 				/>
 			)}
 			renderSectionHeader={({section: {title}}) => (

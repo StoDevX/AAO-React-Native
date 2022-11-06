@@ -131,11 +131,6 @@ const HomeStackScreens = () => (
 				name="Transportation"
 				options={transportation.NavigationOptions}
 			/>
-			<Stack.Screen
-				component={transportation.OtherModesDetailView}
-				name="OtherModesDetail"
-				options={othermodes.OtherModesNavigationOptions}
-			/>
 		</Stack.Group>
 		<Stack.Group>
 			<Stack.Screen
