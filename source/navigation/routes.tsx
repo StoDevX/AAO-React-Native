@@ -267,7 +267,7 @@ const HomeStackScreens = () => (
 				name="DirectoryDetail"
 				options={directory.DetailNavigationOptions}
 			/>
-		</Stack.Group>		
+		</Stack.Group>
 	</Stack.Navigator>
 )
 
