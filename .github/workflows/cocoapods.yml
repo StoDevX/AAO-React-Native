@@ -1,19 +1,25 @@
 name: Check & Update Cocoapods
 
 on:
-  pull_request_target: ~
+  pull_request_target:
+    branches:
+      - dependabot/npm_and_yarn/**
+
+permissions:
+  contents: write
+  pull-requests: write
 
 jobs:
   ios-podfile-update:
     # Adapted from https://gist.github.com/A-Tokyo/0d811e818513fc4d3272335d2847d748
     name: iOS Update Cocoapods
     runs-on: macos-11
-    if: startsWith(github.ref_name, 'dependabot/npm_and_yarn/') && contains(github.ref_name, 'react-native') && github.actor == 'dependabot[bot]'
+    if: ${{ github.actor == 'dependabot[bot]' }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3.1.0
         with:
           token: ${{ secrets.COCOAPODS_LOCKFILE_GH_PUSH_TOKEN }}
-      - uses: actions/setup-node@v2
+      - uses: actions/setup-node@v3
         with:
           node-version: '^16.0'
           cache: npm

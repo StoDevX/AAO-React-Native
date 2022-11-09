@@ -10,8 +10,8 @@ jobs:
     name: JavaScript Checks
     runs-on: ubuntu-20.04
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
+      - uses: actions/checkout@v3.1.0
+      - uses: actions/setup-node@v3
         with:
           node-version: ^16.0
           cache: npm
@@ -32,8 +32,8 @@ jobs:
     name: Build for Android
     runs-on: ubuntu-20.04
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
+      - uses: actions/checkout@v3.1.0
+      - uses: actions/setup-node@v3
         with:
           node-version: ^16.0
           cache: npm
@@ -75,8 +75,8 @@ jobs:
     name: Build for iOS
     runs-on: macos-11
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
+      - uses: actions/checkout@v3.1.0
+      - uses: actions/setup-node@v3
         with:
           node-version: ^16.0
           cache: npm
@@ -114,6 +114,7 @@ jobs:
           GIT_COMMIT_DESC: $(git log --format=oneline -n 1 $GITHUB_SHA)
           FASTLANE_SKIP_UPDATE_CHECK: '1'
           FASTLANE_DISABLE_ANIMATION: '1'
+          ITMSTRANSPORTER_FORCE_ITMS_PACKAGE_UPLOAD: true
           SENTRY_ORG: frog-pond-labs
           SENTRY_PROJECT: all-about-olaf
           SENTRY_AUTH_TOKEN: ${{ secrets.HOSTED_SENTRY_AUTH_TOKEN }}
