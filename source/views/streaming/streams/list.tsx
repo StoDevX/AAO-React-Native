@@ -4,6 +4,7 @@ import {timezone} from '@frogpond/constants'
 import * as c from '@frogpond/colors'
 import {ListSeparator, ListSectionHeader} from '@frogpond/lists'
 import {NoticeView, LoadingView} from '@frogpond/notice'
+import {FilterToolbar, ListType} from '@frogpond/filter'
 import {StreamRow} from './row'
 import toPairs from 'lodash/toPairs'
 import groupBy from 'lodash/groupBy'
@@ -28,6 +29,38 @@ const groupStreams = (entries: StreamType[]) => {
 	return toPairs(grouped).map(([title, data]) => ({title, data}))
 }
 
+const groupStreamsByCategoryAndDate = (stream: StreamType) => {
+	let date: Moment = moment(stream.starttime)
+	let dateGroup = date.format('dddd, MMMM Do')
+
+	let group = stream.status.toLowerCase() !== 'live' ? dateGroup : 'Live'
+
+	return {
+		...stream,
+		// force title-case on the stream types, to prevent not-actually-duplicate headings
+		category: titleCase(stream.category),
+		date: date,
+		$groupBy: group,
+	}
+}
+
+const getEnabledCategories = (filters: ListType[]) => {
+	return filters.flatMap((filter: ListType) => {
+		let filterSelections: ListType['spec']['selected'] = filter.spec.selected
+		return filterSelections.flatMap((spec) => spec.title)
+	})
+}
+
+const filterStreams = (streams: StreamType[], filters: ListType[]) => {
+	let enabledCategories = getEnabledCategories(filters)
+
+	if (enabledCategories.length === 0) {
+		return streams
+	}
+
+	return streams.filter((stream) => enabledCategories.includes(stream.category))
+}
+
 const useStreams = (date: Moment = moment.tz(timezone())) => {
 	let dateFrom = date.format('YYYY-MM-DD')
 	let dateTo = date.clone().add(2, 'month').format('YYYY-MM-DD')
@@ -47,23 +80,40 @@ const useStreams = (date: Moment = moment.tz(timezone())) => {
 export const StreamListView = (): JSX.Element => {
 	let {data = [], error, reload, isPending, isInitial, isLoading} = useStreams()
 
+	let [filters, setFilters] = React.useState<ListType[]>([])
+
 	let entries = React.useMemo(() => {
-		return data
-			.filter((stream) => stream.category !== 'athletics')
-			.map((stream) => {
-				let date: Moment = moment(stream.starttime)
-				let dateGroup = date.format('dddd, MMMM Do')
+		return data.map((stream) => groupStreamsByCategoryAndDate(stream))
+	}, [data])
 
-				let group = stream.status.toLowerCase() !== 'live' ? dateGroup : 'Live'
+	React.useEffect(() => {
+		let allCategories = data.map((stream) => titleCase(stream.category))
 
-				return {
-					...stream,
-					// force title-case on the stream types, to prevent not-actually-duplicate headings
-					category: titleCase(stream.category),
-					date: date,
-					$groupBy: group,
-				}
-			})
+		if (allCategories.length === 0) {
+			return
+		}
+
+		let categories = [...new Set(allCategories)].sort()
+		let filterCategories = categories.map((c) => {
+			return {title: c}
+		})
+
+		let streamFilters: ListType[] = [
+			{
+				type: 'list',
+				key: 'category',
+				enabled: true,
+				spec: {
+					title: 'Categories',
+					options: filterCategories,
+					selected: filterCategories,
+					mode: 'OR',
+					displayTitle: true,
+				},
+				apply: {key: 'category'},
+			},
+		]
+		setFilters(streamFilters)
 	}, [data])
 
 	if (error) {
@@ -76,12 +126,31 @@ export const StreamListView = (): JSX.Element => {
 		)
 	}
 
+	const header = (
+		<FilterToolbar
+			filters={filters}
+			onPopoverDismiss={(newFilter) => {
+				let edited = filters.map((f) =>
+					f.key === newFilter.key ? newFilter : f,
+				)
+				setFilters(edited as ListType[])
+			}}
+		/>
+	)
+
 	return (
 		<SectionList
 			ItemSeparatorComponent={ListSeparator}
 			ListEmptyComponent={
-				isLoading ? <LoadingView /> : <NoticeView text="No streams." />
+				isLoading ? (
+					<LoadingView />
+				) : filters.some((f: ListType) => f.spec.selected.length) ? (
+					<NoticeView text="No streams to show. Try changing the filters." />
+				) : (
+					<NoticeView text="No streams." />
+				)
 			}
+			ListHeaderComponent={header}
 			contentContainerStyle={styles.contentContainer}
 			keyExtractor={(item: StreamType) => item.eid}
 			onRefresh={reload}
@@ -90,7 +159,7 @@ export const StreamListView = (): JSX.Element => {
 			renderSectionHeader={({section: {title}}) => (
 				<ListSectionHeader title={title} />
 			)}
-			sections={groupStreams(entries)}
+			sections={groupStreams(filterStreams(entries, filters))}
 			style={styles.listContainer}
 		/>
 	)
