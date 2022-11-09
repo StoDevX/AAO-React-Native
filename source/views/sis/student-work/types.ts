@@ -17,5 +17,6 @@ export type JobType = {
 	timeOfHours: string | number
 	title: string
 	type: string
+	url: string
 	year: string
 }
