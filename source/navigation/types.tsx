@@ -39,7 +39,7 @@ export type RootStackParamList = {
 	DictionaryDetail: {item: WordType}
 	Dictionary: undefined
 	DictionaryEditor: {item: WordType}
-	Directory: {queryType: DirectorySearchTypeEnum, queryParam?: string}
+	Directory: {queryType: DirectorySearchTypeEnum; queryParam?: string}
 	DirectoryDetail: {contact: DirectoryItem}
 	Faq: undefined
 	Help: undefined

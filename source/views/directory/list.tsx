@@ -16,7 +16,11 @@ import {NoticeView, LoadingView} from '@frogpond/notice'
 import {formatResults} from './helpers'
 import {useFetch} from 'react-async'
 import {List, Avatar} from 'react-native-paper'
-import type {DirectorySearchTypeEnum, DirectoryItem, SearchResults} from './types'
+import type {
+	DirectorySearchTypeEnum,
+	DirectoryItem,
+	SearchResults,
+} from './types'
 import Icon from 'react-native-vector-icons/Ionicons'
 import {RouteProp, useNavigation, useRoute} from '@react-navigation/native'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
@@ -33,7 +37,9 @@ const getDirectoryUrl = (query: string, type: DirectorySearchTypeEnum) => {
 			return `${baseUrl}&department=${formattedDepartment}`
 		}
 		default:
-			console.error('Unknown directory search type found when constructing directory url.')
+			console.warn(
+				'Unknown directory search type found when constructing directory url.',
+			)
 			return `${baseUrl}&query=${query.trim()}`
 	}
 }
@@ -57,8 +63,7 @@ export function DirectoryView(): JSX.Element {
 
 	let navigation = useNavigation()
 
-	let route =
-	useRoute<RouteProp<RootStackParamList, 'Directory'>>()
+	let route = useRoute<RouteProp<RootStackParamList, typeof NavigationKey>>()
 	let {params} = route
 
 	console.warn(params)

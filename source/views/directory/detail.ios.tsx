@@ -4,11 +4,7 @@ import {openUrl} from '@frogpond/open-url'
 import {callPhone} from '../../components/call-phone'
 import {sendEmail} from '../../components/send-email'
 import {Title, Detail} from '@frogpond/lists'
-import {
-	TableView,
-	Section,
-	Cell,
-} from '@frogpond/tableview'
+import {TableView, Section, Cell} from '@frogpond/tableview'
 import {MultiLineLeftDetailCell} from '@frogpond/tableview/cells'
 import * as c from '@frogpond/colors'
 import type {Department, CampusLocation} from './types'

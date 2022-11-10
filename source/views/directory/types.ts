@@ -68,4 +68,4 @@ export type SearchResults = {
 	results: Array<DirectoryItem>
 }
 
-export type DirectorySearchTypeEnum = 'Query'|'Department'
+export type DirectorySearchTypeEnum = 'Query' | 'Department'
