@@ -108,7 +108,7 @@ export function DirectoryView(): JSX.Element {
 		<DirectoryItemRow
 			item={item}
 			onPress={() => {
-				navigation.navigate('DirectoryDetail', {contact: item})
+				navigation.push('DirectoryDetail', {contact: item})
 			}}
 		/>
 	)

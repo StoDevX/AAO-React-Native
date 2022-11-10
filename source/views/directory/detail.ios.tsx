@@ -118,7 +118,7 @@ export function DirectoryDetailView(): JSX.Element {
 								cellStyle="Basic"
 								detail="Department"
 								onPress={() => {
-									navigation.navigate('Directory', {
+									navigation.push('Directory', {
 										queryType: 'Department',
 										queryParam: dept.name,
 									})
