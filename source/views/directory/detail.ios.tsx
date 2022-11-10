@@ -12,7 +12,7 @@ import {
 import {MultiLineLeftDetailCell} from '@frogpond/tableview/cells'
 import * as c from '@frogpond/colors'
 import type {Department, CampusLocation} from './types'
-import {RouteProp, useRoute} from '@react-navigation/native'
+import {RouteProp, useRoute, useNavigation} from '@react-navigation/native'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 import {RootStackParamList} from '../../../source/navigation/types'
 
@@ -21,6 +21,8 @@ export const DetailNavigationOptions: NativeStackNavigationOptions = {
 }
 
 export function DirectoryDetailView(): JSX.Element {
+	let navigation = useNavigation()
+
 	let route = useRoute<RouteProp<RootStackParamList, 'DirectoryDetail'>>()
 	const {
 		displayName,
@@ -115,7 +117,12 @@ export function DirectoryDetailView(): JSX.Element {
 								accessory="DisclosureIndicator"
 								cellStyle="Basic"
 								detail="Department"
-								onPress={() => openUrl(dept.href)}
+								onPress={() => {
+									navigation.navigate('Directory', {
+										queryType: 'Department',
+										queryParam: dept.name,
+									})
+								}}
 								title={dept.name}
 							/>
 						))}

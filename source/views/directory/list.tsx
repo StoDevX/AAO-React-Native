@@ -16,14 +16,31 @@ import {NoticeView, LoadingView} from '@frogpond/notice'
 import {formatResults} from './helpers'
 import {useFetch} from 'react-async'
 import {List, Avatar} from 'react-native-paper'
-import type {DirectoryItem, SearchResults} from './types'
+import type {DirectorySearchTypeEnum, DirectoryItem, SearchResults} from './types'
 import Icon from 'react-native-vector-icons/Ionicons'
-import {useNavigation} from '@react-navigation/native'
+import {RouteProp, useNavigation, useRoute} from '@react-navigation/native'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
-import {ChangeTextEvent} from '../../navigation/types'
+import {ChangeTextEvent, RootStackParamList} from '../../navigation/types'
 
-const useDirectory = (query: string) => {
-	const url = `https://www.stolaf.edu/directory/search?format=json&query=${query.trim()}`
+const getDirectoryUrl = (query: string, type: DirectorySearchTypeEnum) => {
+	let baseUrl = 'https://www.stolaf.edu/directory/search?format=json'
+
+	switch (type) {
+		case 'Query':
+			return `${baseUrl}&query=${query.trim()}`
+		case 'Department': {
+			let formattedDepartment = query.split(' ').join('+')
+			return `${baseUrl}&department=${formattedDepartment}`
+		}
+		default:
+			console.error('Unknown directory search type found when constructing directory url.')
+			return `${baseUrl}&query=${query.trim()}`
+	}
+}
+
+const useDirectory = (query: string, type: DirectorySearchTypeEnum) => {
+	const url = getDirectoryUrl(query, type)
+
 	return useFetch<SearchResults>(url, {
 		headers: {accept: 'application/json'},
 	})
@@ -40,6 +57,12 @@ export function DirectoryView(): JSX.Element {
 
 	let navigation = useNavigation()
 
+	let route =
+	useRoute<RouteProp<RootStackParamList, 'Directory'>>()
+	let {params} = route
+
+	console.warn(params)
+
 	let {
 		data: {results = []} = {},
 		error,
@@ -47,7 +70,7 @@ export function DirectoryView(): JSX.Element {
 		isPending,
 		isInitial,
 		isLoading,
-	} = useDirectory(searchQuery)
+	} = useDirectory(searchQuery, params ? params.queryType : 'Query')
 
 	React.useLayoutEffect(() => {
 		navigation.setOptions({
@@ -64,6 +87,12 @@ export function DirectoryView(): JSX.Element {
 			setErrorMessage(getErrorMessage(error))
 		}
 	}, [error])
+
+	React.useEffect(() => {
+		if (params && params.queryType === 'Department' && params.queryParam) {
+			setTypedQuery(params.queryParam)
+		}
+	}, [params])
 
 	if (!searchQuery) {
 		return <NoSearchPerformed />
