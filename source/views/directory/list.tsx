@@ -73,7 +73,7 @@ export function DirectoryView(): JSX.Element {
 		isPending,
 		isInitial,
 		isLoading,
-	} = useDirectory(searchQuery, params ? params.queryType : 'Query')
+	} = useDirectory(searchQuery, params?.queryType ?? 'Query')
 
 	React.useLayoutEffect(() => {
 		navigation.setOptions({
@@ -92,7 +92,7 @@ export function DirectoryView(): JSX.Element {
 	}, [error])
 
 	React.useEffect(() => {
-		if (params && params.queryType === 'Department' && params.queryParam) {
+		if (params?.queryType === 'Department' && params?.queryParam) {
 			setTypedQuery(params.queryParam)
 		}
 	}, [params])
