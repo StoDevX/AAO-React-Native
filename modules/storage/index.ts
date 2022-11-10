@@ -40,7 +40,13 @@ export async function getItemAsBoolean(
 	key: string,
 	defaultValue = false,
 ): Promise<boolean> {
-	return (await getItem(key)) || defaultValue
+	const savedValue: boolean | null = await getItem(key)
+
+	if (savedValue === null) {
+		return defaultValue
+	}
+
+	return savedValue
 }
 export async function getItemAsArray<T>(
 	key: string,
