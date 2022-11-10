@@ -66,8 +66,6 @@ export function DirectoryView(): JSX.Element {
 	let route = useRoute<RouteProp<RootStackParamList, typeof NavigationKey>>()
 	let {params} = route
 
-	console.warn(params)
-
 	let {
 		data: {results = []} = {},
 		error,
