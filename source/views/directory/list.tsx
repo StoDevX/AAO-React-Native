@@ -52,8 +52,15 @@ const useDirectory = (query: string, type: DirectorySearchTypeEnum) => {
 	})
 }
 
-export const NavigationOptions: NativeStackNavigationOptions = {
-	title: 'Directory',
+export const NavigationKey = 'Directory'
+
+export const NavigationOptions = (props: {
+	route: RouteProp<RootStackParamList, typeof NavigationKey>
+}): NativeStackNavigationOptions => {
+	let {params} = props.route
+	return {
+		title: params?.queryParam ?? 'Directory',
+	}
 }
 
 export function DirectoryView(): JSX.Element {
