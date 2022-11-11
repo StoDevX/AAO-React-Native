@@ -16,6 +16,6 @@
   "dependencies": {
     "@frogpond/app-theme": "^1.0.0",
     "@frogpond/colors": "^1.0.0",
-    "@react-native-community/datetimepicker": "6.2.0"
+    "@react-native-community/datetimepicker": "6.5.5"
   }
 }
