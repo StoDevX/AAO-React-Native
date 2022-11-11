@@ -15,7 +15,7 @@ import {
 	List,
 	Portal,
 } from 'react-native-paper'
-import {RouteProp, useRoute} from '@react-navigation/native'
+import {RouteProp, useRoute, useNavigation} from '@react-navigation/native'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 import {RootStackParamList} from '../../../source/navigation/types'
 
@@ -24,6 +24,8 @@ export const DetailNavigationOptions: NativeStackNavigationOptions = {
 }
 
 export function DirectoryDetailView(): JSX.Element {
+	let navigation = useNavigation()
+
 	let route = useRoute<RouteProp<RootStackParamList, 'DirectoryDetail'>>()
 	const {
 		displayName,
@@ -77,7 +79,12 @@ export function DirectoryDetailView(): JSX.Element {
 							key={key}
 							accessibilityLabel={`Department: ${dept.name}`}
 							icon="account-multiple-outline"
-							onPress={() => openUrl(dept.href)}
+							onPress={() => {
+								navigation.push('Directory', {
+									queryType: 'Department',
+									queryParam: dept.name,
+								})
+							}}
 							style={styles.departmentChip}
 						>
 							{dept.name}
