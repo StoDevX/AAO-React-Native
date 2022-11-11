@@ -54,7 +54,7 @@ export function setLinkPreference(
 	return setItem(openLinksInAppKey, preference)
 }
 export function getInAppLinkPreference(): Promise<openLinksInAppType> {
-	return getItemAsBoolean(openLinksInAppKey)
+	return getItemAsBoolean(openLinksInAppKey, true)
 }
 
 const serverAddressKey = 'settings:server-address'
