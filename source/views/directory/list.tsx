@@ -23,7 +23,10 @@ import type {
 } from './types'
 import Icon from 'react-native-vector-icons/Ionicons'
 import {RouteProp, useNavigation, useRoute} from '@react-navigation/native'
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+import {
+	NativeStackNavigationOptions,
+	NativeStackNavigationProp,
+} from '@react-navigation/native-stack'
 import {ChangeTextEvent, RootStackParamList} from '../../navigation/types'
 
 const getDirectoryUrl = (query: string, type: DirectorySearchTypeEnum) => {
@@ -70,7 +73,9 @@ export function DirectoryView(): JSX.Element {
 	let [typedQuery, setTypedQuery] = React.useState('')
 	let searchQuery = useDebounce(typedQuery, 500)
 
-	let navigation = useNavigation()
+	// typing useNavigation's props to inform typescript about `push`
+	let navigation =
+		useNavigation<NativeStackNavigationProp<RootStackParamList>>()
 
 	let route = useRoute<RouteProp<RootStackParamList, typeof NavigationKey>>()
 	let {params} = route

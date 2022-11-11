@@ -9,7 +9,10 @@ import {MultiLineLeftDetailCell} from '@frogpond/tableview/cells'
 import * as c from '@frogpond/colors'
 import type {Department, CampusLocation} from './types'
 import {RouteProp, useRoute, useNavigation} from '@react-navigation/native'
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+import {
+	NativeStackNavigationOptions,
+	NativeStackNavigationProp,
+} from '@react-navigation/native-stack'
 import {RootStackParamList} from '../../../source/navigation/types'
 
 export const DetailNavigationOptions: NativeStackNavigationOptions = {
@@ -17,7 +20,9 @@ export const DetailNavigationOptions: NativeStackNavigationOptions = {
 }
 
 export function DirectoryDetailView(): JSX.Element {
-	let navigation = useNavigation()
+	// typing useNavigation's props to inform typescript about `push`
+	let navigation =
+		useNavigation<NativeStackNavigationProp<RootStackParamList>>()
 
 	let route = useRoute<RouteProp<RootStackParamList, 'DirectoryDetail'>>()
 	const {
