@@ -65,6 +65,8 @@ export const NavigationOptions = (props: {
 
 export function DirectoryView(): JSX.Element {
 	let [errorMessage, setErrorMessage] = React.useState<string | null>(null)
+	let [searchQueryType, setSearchQueryType] =
+		React.useState<DirectorySearchTypeEnum>('Query')
 	let [typedQuery, setTypedQuery] = React.useState('')
 	let searchQuery = useDebounce(typedQuery, 500)
 
@@ -80,14 +82,16 @@ export function DirectoryView(): JSX.Element {
 		isPending,
 		isInitial,
 		isLoading,
-	} = useDirectory(searchQuery, params?.queryType ?? 'Query')
+	} = useDirectory(searchQuery, searchQueryType)
 
 	React.useLayoutEffect(() => {
 		navigation.setOptions({
 			headerSearchBarOptions: {
 				barTintColor: c.white,
-				onChangeText: (event: ChangeTextEvent) =>
-					setTypedQuery(event.nativeEvent.text),
+				onChangeText: (event: ChangeTextEvent) => {
+					setSearchQueryType('Query')
+					setTypedQuery(event.nativeEvent.text)
+				},
 			},
 		})
 	}, [navigation])
@@ -100,6 +104,7 @@ export function DirectoryView(): JSX.Element {
 
 	React.useEffect(() => {
 		if (params?.queryType === 'Department' && params?.queryParam) {
+			setSearchQueryType('Department')
 			setTypedQuery(params.queryParam)
 		}
 	}, [params])
