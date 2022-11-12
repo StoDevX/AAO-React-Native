@@ -27,9 +27,5 @@
   33:34  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
   34:42  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
 
-./source/views/stoprint/print-jobs.tsx
-  39:71  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
-  40:33  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
-
-✖ 16 problems (0 errors, 16 warnings)
+✖ 14 problems (0 errors, 14 warnings)
 
