@@ -298,6 +298,8 @@ PODS:
     - RCTTypeSafety
     - React
     - ReactCommon/turbomodule/core
+  - react-native-segmented-control (2.2.2):
+    - React-Core
   - react-native-sfsymbols (1.2.1):
     - React
   - react-native-webview (11.23.1):
@@ -479,6 +481,7 @@ DEPENDENCIES:
   - "react-native-netinfo (from `../node_modules/@react-native-community/netinfo`)"
   - react-native-restart (from `../node_modules/react-native-restart`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
+  - "react-native-segmented-control (from `../node_modules/@react-native-community/segmented-control`)"
   - react-native-sfsymbols (from `../node_modules/react-native-sfsymbols`)
   - react-native-webview (from `../node_modules/react-native-webview`)
   - React-perflogger (from `../node_modules/react-native/ReactCommon/reactperflogger`)
@@ -577,6 +580,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-restart"
   react-native-safe-area-context:
     :path: "../node_modules/react-native-safe-area-context"
+  react-native-segmented-control:
+    :path: "../node_modules/@react-native-community/segmented-control"
   react-native-sfsymbols:
     :path: "../node_modules/react-native-sfsymbols"
   react-native-webview:
@@ -674,6 +679,7 @@ SPEC CHECKSUMS:
   react-native-netinfo: c8d02a805706024f8de3a339a028f7e64f63b4b6
   react-native-restart: 45c8dca02491980f2958595333cbccd6877cb57e
   react-native-safe-area-context: 6c12e3859b6f27b25de4fee8201cfb858432d8de
+  react-native-segmented-control: 65df6cd0619b780b3843d574a72d4c7cec396097
   react-native-sfsymbols: bd3a0d3eab185e80b571bae60753dcf5a0d57967
   react-native-webview: d33e2db8925d090871ffeb232dfa50cb3a727581
   React-perflogger: fa15d1d29ff7557ee25ea48f7f59e65896fb3215
