@@ -1,14 +1,16 @@
 import * as React from 'react'
 import {Button} from 'react-native'
 
-import {getTheme} from '@frogpond/app-theme'
 import type {AppTheme} from '@frogpond/app-theme'
+import {getTheme} from '@frogpond/app-theme'
 
-import moment from 'moment-timezone'
 import type {Moment} from 'moment-timezone'
+import moment from 'moment-timezone'
 
-import DateTimePicker from '@react-native-community/datetimepicker'
-import type {Event} from '@react-native-community/datetimepicker'
+import {
+	DateTimePickerEvent,
+	default as DateTimePicker,
+} from '@react-native-community/datetimepicker'
 
 import {BaseDatetimePickerProps} from './types'
 
@@ -25,7 +27,10 @@ export const BaseDateTimePicker = (
 	let [date, setDate] = React.useState(props.initialDate)
 	let [timezone] = React.useState(props.initialDate.tz() || '')
 
-	const onChange = (_event: Event, selectedDate?: Date | undefined) => {
+	const onChange = (
+		_event: DateTimePickerEvent,
+		selectedDate?: Date | undefined,
+	) => {
 		// Reset Android's modal's presenting state
 		props.onChange?.()
 
@@ -37,25 +42,34 @@ export const BaseDateTimePicker = (
 		props.onDateChange(moment.tz(selectedDate, timezone))
 	}
 
-	const formatDate = (date: Moment): string => {
+	const formatDate = (d: Moment, tz: string): string => {
 		const {mode, format = FORMATS[mode]} = props
-		return moment.tz(date, timezone).format(format)
+		return moment.tz(d, tz).format(format)
 	}
 
-	const getTimezoneOffsetInMinutes = (): number => {
+	const getTimezoneOffsetInMinutes = (d: Moment, tz: string): number => {
 		// We need to negate the offset because moment inverts the offset
 		// for POSIX compatability. So, GMT-5 (CST) is shown to be GMT+5.
 		//
 		// We also need to make the types happy when we negate a negative
 		// MomentZone which is possibly null.
-		let dateInUnixMs = date.valueOf()
-		let momentZone = moment.tz.zone(timezone)
+		let dateInUnixMs = d.valueOf()
+		let momentZone = moment.tz.zone(tz)
 
-		let offset = momentZone ? -momentZone.utcOffset(dateInUnixMs) : 0
-		return offset
+		return momentZone ? -momentZone.utcOffset(dateInUnixMs) : 0
 	}
 
 	let theme: AppTheme = getTheme()
+
+	let sharedPlatformProps = {
+		minuteInterval: props.minuteInterval,
+		mode: props.mode,
+		onChange: onChange,
+		style: props.style,
+		testID: 'datepicker',
+		timeZoneOffsetInMinutes: getTimezoneOffsetInMinutes(date, timezone),
+		value: moment.tz(date, timezone).toDate(),
+	}
 
 	return (
 		<>
@@ -64,20 +78,19 @@ export const BaseDateTimePicker = (
 					color={theme.buttonBackground}
 					onPress={() => props.setShowPickerAndroid?.(true)}
 					testID="datepicker-button-android"
-					title={formatDate(date)}
+					title={formatDate(date, timezone)}
 				/>
 			)}
 
-			{(props.showPickerAndroid || props.showPickeriOS) && (
+			{props.showPickerAndroid && (
 				<DateTimePicker
-					minuteInterval={props.minuteInterval}
-					mode={props.mode}
-					onChange={onChange}
-					style={props.style}
-					testID="datepicker"
-					timeZoneOffsetInMinutes={getTimezoneOffsetInMinutes()}
-					value={moment.tz(date, timezone).toDate()}
+					display={props.displayAndroid}
+					{...sharedPlatformProps}
 				/>
+			)}
+
+			{props.showPickerIos && (
+				<DateTimePicker display={props.displayIos} {...sharedPlatformProps} />
 			)}
 		</>
 	)

@@ -1,113 +1,91 @@
 import * as React from 'react'
+import {useEffect, useState} from 'react'
 import {timezone} from '@frogpond/constants'
-import {NoticeView, LoadingView} from '@frogpond/notice'
+import {LoadingView, NoticeView} from '@frogpond/notice'
 import {FoodMenu} from '@frogpond/food-menu'
-import type {TopLevelViewPropsType} from '../types'
 import moment from 'moment-timezone'
-import type {Moment} from 'moment-timezone'
 import sample from 'lodash/sample'
-import fromPairs from 'lodash/fromPairs'
-import filter from 'lodash/filter'
 import type {
-	MenuItemType,
 	MasterCorIconMapType,
-	StationMenuType,
 	MenuItemContainerType,
+	MenuItemType,
 	ProcessedMealType,
+	StationMenuType,
 } from './types'
 import {upgradeMenuItem, upgradeStation} from './lib/process-menu-shorthands'
 import {API} from '@frogpond/api'
-import {fetch} from '@frogpond/fetch'
+import groupBy from 'lodash/groupBy'
+import {useFetch} from 'react-async'
 
-type Props = TopLevelViewPropsType & {
+type Props = {
 	name: string
 	loadingMessage: string[]
 }
 
-type State = {
-	error?: Error
-	loading: boolean
-	now: Moment
-	foodItems: MenuItemContainerType
+interface GithubMenuType {
+	foodItems: MenuItemType[]
+	stationMenus: StationMenuType[]
 	corIcons: MasterCorIconMapType
-	meals: ProcessedMealType[]
 }
 
-export class GitHubHostedMenu extends React.PureComponent<Props, State> {
-	state: State = {
-		error: undefined,
-		loading: true,
-		now: moment.tz(timezone()),
-		foodItems: {},
-		corIcons: {},
-		meals: [],
-	}
+function useGithubMenu() {
+	return useFetch<{data: GithubMenuType}>(API('/food/named/menu/the-pause'), {
+		headers: {accept: 'application/json'},
+	})
+}
 
-	componentDidMount() {
-		this.fetchData()
-	}
+export function GitHubHostedMenu(props: Props): JSX.Element {
+	let [now, setNow] = useState(moment.tz(timezone()))
+	let [foodItems, setFoodItems] = useState<MenuItemContainerType>({})
+	let [corIcons, setCorIcons] = useState<MasterCorIconMapType>({})
+	let [meals, setMeals] = useState<ProcessedMealType[]>([])
 
-	fetchData = async () => {
-		this.setState({loading: true})
+	let {data: {data} = {}, error, isLoading} = useGithubMenu()
 
-		let container = await fetch(API('/food/named/menu/the-pause')).json<{
-			data: {
-				foodItems: MenuItemType[]
-				stationMenus: StationMenuType[]
-				corIcons: MasterCorIconMapType
-			}
-		}>()
+	useEffect(() => {
+		let foodItems: MenuItemType[] = data?.foodItems || []
+		let stationMenus: StationMenuType[] = data?.stationMenus || []
+		let corIcons: MasterCorIconMapType = data?.corIcons || {}
 
-		let data = container.data
-		let foodItems: MenuItemType[] = data.foodItems || []
-		let stationMenus: StationMenuType[] = data.stationMenus || []
-		let corIcons: MasterCorIconMapType = data.corIcons || {}
-
-		let upgradedFoodItems = fromPairs(
-			foodItems.map(upgradeMenuItem).map((item) => [item.id, item]),
+		let upgradedFoodItems = foodItems.map(upgradeMenuItem)
+		let upgradedFoodItemsMap = Object.fromEntries(
+			upgradedFoodItems.map((item) => [item.id, item]),
 		)
+		let foodItemsByStation = groupBy(upgradedFoodItems, (item) => item.station)
+
 		stationMenus = stationMenus.map((menu, index) => ({
 			...upgradeStation(menu, index),
-			items: filter(
-				upgradedFoodItems,
-				(item) => item.station === menu.label,
-			).map((item) => item.id),
+			items: foodItemsByStation[menu.label]?.map((item) => item.id) ?? [],
 		}))
 
-		this.setState({
-			loading: false,
-			corIcons,
-			foodItems: upgradedFoodItems,
-			meals: [
-				{
-					label: 'Menu',
-					stations: stationMenus,
-					starttime: '0:00',
-					endtime: '23:59',
-				},
-			],
-			now: moment.tz(timezone()),
-		})
+		setCorIcons(corIcons)
+		setFoodItems(upgradedFoodItemsMap)
+		setMeals([
+			{
+				label: 'Menu',
+				stations: stationMenus,
+				starttime: '0:00',
+				endtime: '23:59',
+			},
+		])
+		setNow(moment.tz(timezone()))
+	}, [data?.corIcons, data?.foodItems, data?.stationMenus])
+
+	if (isLoading) {
+		return <LoadingView text={sample(props.loadingMessage)} />
 	}
 
-	render() {
-		if (this.state.loading) {
-			return <LoadingView text={sample(this.props.loadingMessage)} />
-		}
-
-		if (this.state.error) {
-			return <NoticeView text={`Error: ${this.state.error.message}`} />
-		}
-
-		return (
-			<FoodMenu
-				foodItems={this.state.foodItems}
-				meals={this.state.meals}
-				menuCorIcons={this.state.corIcons}
-				name={this.props.name}
-				navigation={this.props.navigation}
-				now={this.state.now}
-			/>
-		)
+	if (error) {
+		return <NoticeView text={`Error: ${error.message}`} />
 	}
+
+	return (
+		<FoodMenu
+			foodItems={foodItems}
+			meals={meals}
+			menuCorIcons={corIcons}
+			name={props.name}
+			now={now}
+		/>
+	)
 }

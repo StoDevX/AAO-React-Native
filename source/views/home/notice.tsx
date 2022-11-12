@@ -1,5 +1,5 @@
 import * as React from 'react'
-import * as glamorous from 'glamorous-native'
+import glamorous from 'glamorous-native'
 import * as c from '@frogpond/colors'
 import sample from 'lodash/sample'
 import {CELL_MARGIN} from './button'
@@ -26,7 +26,7 @@ if (isDevMode()) {
 	]
 }
 
-export function UnofficialAppNotice() {
+export function UnofficialAppNotice(): JSX.Element {
 	return (
 		<glamorous.View
 			justifyContent="center"

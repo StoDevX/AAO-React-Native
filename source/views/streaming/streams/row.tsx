@@ -47,26 +47,24 @@ function Thumbnail({item}: {item: StreamType}) {
 
 type Props = {stream: StreamType}
 
-export class StreamRow extends React.PureComponent<Props> {
-	onPressStream = () => {
-		let {stream} = this.props
+export const StreamRow = (props: Props): JSX.Element => {
+	let onPressStream = () => {
+		let {stream} = props
 		trackedOpenUrl({url: stream.player, id: 'StreamingMedia_StreamView'})
 	}
 
-	render() {
-		let {stream} = this.props
+	let {stream} = props
 
-		return (
-			<ListRow arrowPosition="center" onPress={this.onPressStream}>
-				<Row alignItems="center">
-					<Thumbnail item={stream} />
-					<Column flex={1}>
-						<Name item={stream} />
-						<Info item={stream} />
-						<Time item={stream} />
-					</Column>
-				</Row>
-			</ListRow>
-		)
-	}
+	return (
+		<ListRow arrowPosition="center" onPress={onPressStream}>
+			<Row alignItems="center">
+				<Thumbnail item={stream} />
+				<Column flex={1}>
+					<Name item={stream} />
+					<Info item={stream} />
+					<Time item={stream} />
+				</Column>
+			</Row>
+		</ListRow>
+	)
 }

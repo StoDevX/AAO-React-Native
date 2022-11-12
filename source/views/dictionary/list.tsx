@@ -1,33 +1,31 @@
 import * as React from 'react'
-import {StyleSheet, RefreshControl, View, SectionList} from 'react-native'
+import {StyleSheet, SectionList} from 'react-native'
 import {
 	Detail,
 	Title,
 	ListRow,
 	ListSectionHeader,
 	ListSeparator,
+	largeListProps,
+	emptyList,
 } from '@frogpond/lists'
-import {NoticeView} from '@frogpond/notice'
-import {SearchBar} from '@frogpond/searchbar'
-import type {WordType} from './types'
-import type {TopLevelViewPropsType} from '../types'
+import {LoadingView, NoticeView} from '@frogpond/notice'
+import type {DictionaryGroup, WordType} from './types'
 import {white} from '@frogpond/colors'
-import groupBy from 'lodash/groupBy'
-import toPairs from 'lodash/toPairs'
 import words from 'lodash/words'
 import deburr from 'lodash/deburr'
-import {fetch} from '@frogpond/fetch'
+import groupBy from 'lodash/groupBy'
+import {useFetch} from 'react-async'
 import {API} from '@frogpond/api'
-import {useAsync} from 'react-async'
-import type {AsyncState} from 'react-async'
 import {useDebounce} from '@frogpond/use-debounce'
+import {useNavigation} from '@react-navigation/native'
+import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+import {ChangeTextEvent} from '../../navigation/types'
 
-const fetchDictionaryTerms = (args: {
-	signal: window.AbortController
-}): Promise<Array<WordType>> => {
-	return fetch(API('/dictionary'), {signal: args.signal})
-		.json<{data: Array<WordType>}>()
-		.then((body) => body.data)
+const useDictionary = () => {
+	return useFetch<{data: WordType[]}>(API('/dictionary'), {
+		headers: {accept: 'application/json'},
+	})
 }
 
 function splitToArray(str: string) {
@@ -40,10 +38,37 @@ function termToArray(term: WordType) {
 	)
 }
 
+function createGrouping(words: WordType[]) {
+	let grouped = groupBy(words, (w) => w.word[0] || '?')
+	return Object.entries(grouped).map(([k, v]) => ({
+		title: k,
+		data: v,
+	}))
+}
+
+let groupTerms = (
+	searchQuery: string,
+	data: DictionaryGroup[],
+	words: WordType[],
+) => {
+	if (!data) {
+		return emptyList
+	}
+
+	if (!searchQuery) {
+		return data
+	}
+
+	let filtered = words.filter((term: WordType) =>
+		termToArray(term).some((word) => word.startsWith(searchQuery)),
+	)
+
+	return createGrouping(filtered)
+}
+
 const styles = StyleSheet.create({
 	wrapper: {
 		flex: 1,
-		backgroundColor: white,
 	},
 	rowDetailText: {
 		fontSize: 14,
@@ -53,32 +78,39 @@ const styles = StyleSheet.create({
 	},
 })
 
-type Props = TopLevelViewPropsType
+function DictionaryView(): JSX.Element {
+	let navigation = useNavigation()
 
-export function DictionaryView(props: Props) {
 	let [query, setQuery] = React.useState('')
 	let searchQuery = useDebounce(query.toLowerCase(), 200)
 
-	let {data, error, reload, isPending}: AsyncState<Array<WordType>> =
-		useAsync(fetchDictionaryTerms)
+	let {
+		data: {data: words = []} = {},
+		error,
+		reload,
+		isPending,
+		isInitial,
+		isLoading,
+	} = useDictionary()
 
-	let results = React.useMemo(() => {
-		let allTerms = data || []
-
-		if (!searchQuery) {
-			return allTerms
-		}
-
-		return allTerms.filter((term) =>
-			termToArray(term).some((word) => word.startsWith(searchQuery)),
-		)
-	}, [data, searchQuery])
-
-	let grouped = React.useMemo(() => {
-		return toPairs(groupBy(results, (item) => item.word[0])).map(([k, v]) => {
-			return {title: k, data: v}
+	React.useLayoutEffect(() => {
+		navigation.setOptions({
+			headerSearchBarOptions: {
+				barTintColor: white,
+				onChangeText: (event: ChangeTextEvent) =>
+					setQuery(event.nativeEvent.text),
+			},
 		})
-	}, [results])
+	}, [navigation])
+
+	let groupedOriginal = React.useMemo(() => {
+		return createGrouping(words)
+	}, [words])
+
+	let grouped = React.useMemo(
+		() => groupTerms(searchQuery, groupedOriginal, words),
+		[searchQuery, groupedOriginal, words],
+	)
 
 	// conditionals must come after all hooks
 	if (error) {
@@ -91,45 +123,50 @@ export function DictionaryView(props: Props) {
 		)
 	}
 
-	let renderRow = ({item}: {item: WordType}) => (
-		<ListRow
-			arrowPosition="top"
-			onPress={() => props.navigation.navigate('DictionaryDetailView', {item})}
-		>
-			<Title lines={1}>{item.word}</Title>
-			<Detail lines={2} style={styles.rowDetailText}>
-				{item.definition}
-			</Detail>
-		</ListRow>
-	)
-
 	return (
-		<View style={styles.wrapper}>
-			<SearchBar onChange={setQuery} value={query} />
-
-			<SectionList
-				ItemSeparatorComponent={ListSeparator}
-				ListEmptyComponent={
-					<NoticeView text={`No results found for "${query}"`} />
-				}
-				contentContainerStyle={styles.contentContainer}
-				keyExtractor={(item: WordType, index) => item.word + index}
-				keyboardDismissMode="on-drag"
-				keyboardShouldPersistTaps="never"
-				refreshControl={
-					<RefreshControl onRefresh={reload} refreshing={isPending} />
-				}
-				renderItem={renderRow}
-				renderSectionHeader={({section: {title}}) => (
-					<ListSectionHeader title={title} />
-				)}
-				sections={grouped}
-				style={styles.wrapper}
-			/>
-		</View>
+		<SectionList
+			ItemSeparatorComponent={ListSeparator}
+			ListEmptyComponent={
+				searchQuery ? (
+					<NoticeView text={`No results found for "${searchQuery}"`} />
+				) : isLoading ? (
+					<LoadingView />
+				) : (
+					<NoticeView text="No results found." />
+				)
+			}
+			contentContainerStyle={styles.contentContainer}
+			contentInsetAdjustmentBehavior="automatic"
+			keyExtractor={(item: WordType, index) => item.word + index}
+			keyboardDismissMode="on-drag"
+			keyboardShouldPersistTaps="never"
+			onRefresh={reload}
+			refreshing={isPending && !isInitial}
+			renderItem={({item}) => {
+				return (
+					<ListRow
+						arrowPosition="top"
+						onPress={() => navigation.navigate('DictionaryDetail', {item})}
+					>
+						<Title lines={1}>{item.word}</Title>
+						<Detail lines={2} style={styles.rowDetailText}>
+							{item.definition}
+						</Detail>
+					</ListRow>
+				)
+			}}
+			renderSectionHeader={({section: {title}}) => (
+				<ListSectionHeader title={title} />
+			)}
+			sections={grouped}
+			style={styles.wrapper}
+			{...largeListProps}
+		/>
 	)
 }
-DictionaryView.navigationOptions = {
+
+export {DictionaryView as View}
+
+export const NavigationOptions: NativeStackNavigationOptions = {
 	title: 'Campus Dictionary',
-	headerBackTitle: 'Dictionary',
 }

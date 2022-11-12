@@ -4,25 +4,23 @@ import {ListRow, Detail, Title} from '@frogpond/lists'
 import {Column, Row} from '@frogpond/layout'
 
 type Props = {
-	onPress: (contact: ContactType) => any
+	onPress: (contact: ContactType) => void
 	contact: ContactType
 }
 
-export class ContactRow extends React.PureComponent<Props> {
-	_onPress = () => this.props.onPress(this.props.contact)
+export const ContactRow = (props: Props): JSX.Element => {
+	let {contact, onPress} = props
 
-	render() {
-		let {contact} = this.props
+	let _onPress = () => onPress(contact)
 
-		return (
-			<ListRow arrowPosition="top" onPress={this._onPress}>
-				<Row alignItems="center">
-					<Column flex={1}>
-						<Title lines={1}>{contact.title}</Title>
-						<Detail lines={1}>{contact.synopsis}</Detail>
-					</Column>
-				</Row>
-			</ListRow>
-		)
-	}
+	return (
+		<ListRow arrowPosition="top" onPress={_onPress}>
+			<Row alignItems="center">
+				<Column flex={1}>
+					<Title lines={1}>{contact.title}</Title>
+					<Detail lines={1}>{contact.synopsis}</Detail>
+				</Column>
+			</Row>
+		</ListRow>
+	)
 }

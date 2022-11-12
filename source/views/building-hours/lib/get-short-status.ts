@@ -1,5 +1,4 @@
 import type {Moment} from 'moment-timezone'
-import flatten from 'lodash/flatten'
 import type {BuildingType} from '../types'
 
 import {isChapelTime} from './chapel'
@@ -14,7 +13,7 @@ export function getShortBuildingStatus(info: BuildingType, m: Moment): string {
 		return 'Closed'
 	}
 
-	let statuses = schedules.map((set) => {
+	let statuses = schedules.flatMap((set) => {
 		if (set.isPhysicallyOpen === false) {
 			return 'Closed'
 		}
@@ -35,5 +34,5 @@ export function getShortBuildingStatus(info: BuildingType, m: Moment): string {
 		)
 	})
 
-	return flatten(statuses).find((status) => status !== 'Closed') || 'Closed'
+	return statuses.find((status) => status !== 'Closed') ?? 'Closed'
 }

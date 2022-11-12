@@ -1,5 +1,6 @@
 import * as React from 'react'
-import {StyleSheet, Platform, View} from 'react-native'
+import {PropsWithChildren} from 'react'
+import {Platform, StyleSheet, View} from 'react-native'
 import * as c from '@frogpond/colors'
 
 const toolbarStyles = StyleSheet.create({
@@ -22,11 +23,9 @@ const toolbarStyles = StyleSheet.create({
 	},
 })
 
-type ToolbarPropsType = {
-	children: React.ReactChildren | JSX.Element
-}
+type ToolbarPropsType = PropsWithChildren<unknown>
 
-export function Toolbar({children}: ToolbarPropsType) {
+export function Toolbar({children}: ToolbarPropsType): JSX.Element {
 	return (
 		<View style={[toolbarStyles.shadow, toolbarStyles.container]}>
 			{children}

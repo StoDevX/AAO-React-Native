@@ -6,7 +6,8 @@ import {
 	fetchJobs,
 	fetchRecentPrinters,
 	logIn,
-} from '../../lib/stoprint'
+} from '../../lib/stoprint/api'
+import {isStoprintMocked} from '../../lib/stoprint'
 import {ThunkAction} from 'redux-thunk'
 
 export type StoPrintAction = UpdateAllPrintersAction | UpdatePrintJobsAction
@@ -61,7 +62,7 @@ export function updatePrinters(): ThunkAction<
 > {
 	return async (dispatch) => {
 		const {username, password} = await loadLoginCredentials()
-		if (!username || !password) {
+		if ((!username || !password) && !isStoprintMocked) {
 			return false
 		}
 
@@ -126,7 +127,7 @@ export function updatePrintJobs(): ThunkAction<
 > {
 	return async (dispatch) => {
 		const {username, password} = await loadLoginCredentials()
-		if (!username || !password) {
+		if ((!username || !password) && !isStoprintMocked) {
 			return false
 		}
 

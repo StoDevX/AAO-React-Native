@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {Platform} from 'react-native'
+import {Platform, StyleProp, TextStyle} from 'react-native'
 import glamorous from 'glamorous-native'
 import {SelectableText} from './selectable'
 import {iOSUIKit, material} from 'react-native-typography'
@@ -37,7 +37,9 @@ const h4 = {
 	}),
 }
 
-export const Heading = (props: any) => {
+export const Heading = (
+	props: React.PropsWithChildren<{level: number; style: StyleProp<TextStyle>}>,
+): JSX.Element => {
 	switch (props.level) {
 		case 1:
 			return <Header style={[h1, props.style]}>{props.children}</Header>

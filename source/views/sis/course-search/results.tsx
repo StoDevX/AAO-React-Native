@@ -1,6 +1,5 @@
 import * as React from 'react'
-import {StyleSheet, View} from 'react-native'
-import * as c from '@frogpond/colors'
+import {StyleSheet} from 'react-native'
 import {
 	updateRecentSearches,
 	updateRecentFilters,
@@ -8,16 +7,16 @@ import {
 import {LoadingView} from '@frogpond/notice'
 import type {CourseType} from '../../../lib/course-search'
 import type {ReduxState} from '../../../redux'
-import type {TopLevelViewPropsType} from '../../types'
 import {useSelector, useDispatch} from 'react-redux'
 import {CourseResultsList} from './list'
-import {AnimatedSearchBar} from '@frogpond/searchbar'
 import {applyFiltersToItem} from '@frogpond/filter'
-import type FilterType from '@frogpond/filter'
-import {Separator} from '@frogpond/separator'
+import {FilterType} from '@frogpond/filter'
 import {buildFilters} from './lib/build-filters'
-
-type ReactProps = TopLevelViewPropsType
+import {RouteProp, useNavigation, useRoute} from '@react-navigation/native'
+import {ChangeTextEvent, RootStackParamList} from '../../../navigation/types'
+import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+import {white} from '@frogpond/colors'
+import {useDebounce} from '@frogpond/use-debounce'
 
 type ReduxStateProps = {
 	allCourses: Array<CourseType>
@@ -29,147 +28,87 @@ type ReduxDispatchProps = {
 	updateRecentSearches: (query: string) => any
 }
 
-type DefaultProps = {
-	applyFilters: (filters: FilterType[], item: CourseType) => boolean
-}
+// type DefaultProps = {
+// 	applyFilters: (filters: FilterType[], item: CourseType) => boolean
+// }
 
-type NavigationProps = {
-	navigation: {
-		state: {
-			params: {
-				initialQuery?: string
-				initialFilters?: Array<FilterType>
-			}
-		}
-	}
-}
+type Props = ReduxStateProps & ReduxDispatchProps //& DefaultProps
 
-type Props = ReactProps &
-	ReduxStateProps &
-	ReduxDispatchProps &
-	DefaultProps &
-	NavigationProps
+const CourseSearchResultsView = (props: Props) => {
+	let route = useRoute<RouteProp<RootStackParamList, 'CourseSearchResults'>>()
+	let {initialFilters, initialQuery} = route.params
 
-type State = {
-	filters: Array<FilterType>
-	typedQuery: string
-	searchQuery: string
-	isSearchbarActive: boolean
-	filtersLoaded: boolean
-}
+	let [searchbarActive, setSearchbarActive] = React.useState(false)
+	let [filters, setFilters] = React.useState<FilterType[]>(initialFilters ?? [])
+	let [filtersLoaded, setFiltersLoaded] = React.useState(
+		Boolean(initialFilters),
+	)
 
-class CourseSearchResultsView extends React.Component<Props, State> {
-	static defaultProps = {
-		applyFilters: applyFiltersToItem,
-	}
+	let [searchQuery, setSearchQuery] = React.useState(initialQuery ?? '')
+	let delayedQuery = useDebounce(searchQuery, 500)
 
-	state = {
-		isSearchbarActive: false,
-		filtersLoaded: Boolean(this.props.navigation.state.params.initialFilters),
-		filters: this.props.navigation.state.params.initialFilters || [],
-		typedQuery: this.props.navigation.state.params.initialQuery || '',
-		searchQuery: this.props.navigation.state.params.initialQuery || '',
-	}
+	let navigation = useNavigation()
 
-	componentDidMount() {
-		if (!this.state.filters.length) {
-			this.resetFilters()
-		}
-	}
-
-	handleSearchSubmit = () => {
-		this.setState((state) => ({searchQuery: state.typedQuery}))
-	}
-
-	handleSearchCancel = () => {
-		this.setState((state) => ({
-			typedQuery: state.searchQuery,
-			isSearchbarActive: false,
-		}))
-	}
-
-	handleSearchChange = (value: string) => {
-		this.setState(() => ({typedQuery: value}))
-
-		if (value === '') {
-			this.setState(() => ({searchQuery: value}))
-		}
-	}
-
-	handleSearchFocus = () => {
-		this.setState(() => ({isSearchbarActive: true}))
-	}
-
-	onRecentSearchPress = (text: string) => {
-		this.setState(() => ({
-			typedQuery: text,
-			searchQuery: text,
-		}))
-	}
-
-	handleListItemPress = () => {
-		if (this.state.searchQuery.length) {
-			// if there is text in the search bar, add the text to the Recent Searches list
-			this.props.updateRecentSearches(this.state.searchQuery)
-		} else if (this.state.filters.some((f) => f.enabled)) {
-			// if there is at least one active filter, add the filter set to the Recent Filters list
-			this.props.updateRecentFilters(this.state.filters)
-		}
-	}
-
-	updateFilter = (filter: FilterType) => {
-		this.setState((state) => {
-			let edited = state.filters.map((f) => (f.key !== filter.key ? f : filter))
-			return {filters: edited}
+	React.useLayoutEffect(() => {
+		navigation.setOptions({
+			headerSearchBarOptions: {
+				barTintColor: white,
+				onBlur: () => setSearchbarActive(false),
+				onChangeText: (event: ChangeTextEvent) =>
+					setSearchQuery(event.nativeEvent.text),
+			},
 		})
-	}
+	}, [initialQuery, navigation, searchQuery])
 
-	resetFilters = async () => {
-		let newFilters = await buildFilters()
-		this.setState(() => ({filters: newFilters, filtersLoaded: true}))
-	}
-
-	render() {
-		let {typedQuery, searchQuery, filters, isSearchbarActive, filtersLoaded} =
-			this.state
-
-		if (this.props.courseDataState !== 'ready') {
-			return <LoadingView text="Loading Course Data…" />
+	React.useEffect(() => {
+		if (!filters.length) {
+			resetFilters()
 		}
+	}, [filters.length])
 
-		return (
-			<View style={[styles.container, styles.common]}>
-				<AnimatedSearchBar
-					active={true}
-					onCancel={this.handleSearchCancel}
-					onChange={this.handleSearchChange}
-					onFocus={this.handleSearchFocus}
-					onSubmit={this.handleSearchSubmit}
-					placeholder="Search Class & Lab"
-					value={typedQuery}
-				/>
-
-				<Separator />
-
-				<CourseResultsList
-					key={searchQuery.toLowerCase()}
-					applyFilters={this.props.applyFilters}
-					contentContainerStyle={styles.contentContainer}
-					courses={this.props.allCourses}
-					filters={filters}
-					filtersLoaded={filtersLoaded}
-					navigation={this.props.navigation}
-					onListItemPress={this.handleListItemPress}
-					onPopoverDismiss={this.updateFilter}
-					query={searchQuery}
-					style={isSearchbarActive ? styles.darken : null}
-				/>
-			</View>
-		)
+	let handleListItemPress = () => {
+		if (delayedQuery?.length) {
+			// if there is text in the search bar, add the text to the Recent Searches list
+			props.updateRecentSearches(delayedQuery)
+		} else if (filters.some((f) => f.enabled)) {
+			// if there is at least one active filter, add the filter set to the Recent Filters list
+			props.updateRecentFilters(filters)
+		}
 	}
+
+	let updateFilter = (filter: FilterType) => {
+		let edited = filters.map((f) => (f.key !== filter.key ? f : filter))
+		setFilters(edited)
+	}
+
+	let resetFilters = async () => {
+		let newFilters = await buildFilters()
+		setFilters(newFilters)
+		setFiltersLoaded(true)
+	}
+
+	if (props.courseDataState !== 'ready') {
+		return <LoadingView text="Loading Course Data…" />
+	}
+
+	return (
+		<CourseResultsList
+			key={delayedQuery?.toLowerCase()}
+			// applyFilters={props.applyFilters}
+			applyFilters={applyFiltersToItem}
+			contentContainerStyle={styles.contentContainer}
+			courses={props.allCourses}
+			filters={filters}
+			filtersLoaded={filtersLoaded}
+			onListItemPress={handleListItemPress}
+			onPopoverDismiss={updateFilter}
+			query={delayedQuery}
+			style={searchbarActive ? styles.darken : {}}
+		/>
+	)
 }
 
-export function ConnectedCourseSearchResultsView(props: TopLevelViewPropsType) {
+export function ConnectedCourseSearchResultsView(): JSX.Element {
 	let dispatch = useDispatch()
 
 	let allCourses = useSelector(
@@ -190,7 +129,6 @@ export function ConnectedCourseSearchResultsView(props: TopLevelViewPropsType) {
 
 	return (
 		<CourseSearchResultsView
-			{...props}
 			allCourses={allCourses}
 			courseDataState={courseDataState}
 			updateRecentFilters={updateFilters}
@@ -198,17 +136,12 @@ export function ConnectedCourseSearchResultsView(props: TopLevelViewPropsType) {
 		/>
 	)
 }
-ConnectedCourseSearchResultsView.navigationOptions = {
-	title: 'Course Search',
+
+export const NavigationOptions: NativeStackNavigationOptions = {
+	title: 'Course Catalog',
 }
 
 let styles = StyleSheet.create({
-	container: {
-		flex: 1,
-	},
-	common: {
-		backgroundColor: c.white,
-	},
 	contentContainer: {
 		flexGrow: 1,
 	},

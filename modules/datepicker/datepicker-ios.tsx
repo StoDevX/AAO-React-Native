@@ -3,21 +3,17 @@ import {StyleSheet} from 'react-native'
 import {BaseDateTimePicker} from './basepicker'
 import {IosDatetimePickerProps} from './types'
 
-export const DatePicker = (props: IosDatetimePickerProps): JSX.Element => {
-	// Picker + Button needs to always show on iOS
-	let showPickeriOS = true
-
-	return (
-		<BaseDateTimePicker
-			initialDate={props.initialDate}
-			minuteInterval={props.minuteInterval}
-			mode={props.mode}
-			onDateChange={props.onDateChange}
-			showPickeriOS={showPickeriOS}
-			style={defaultStyle.datePicker}
-		/>
-	)
-}
+export const DatePicker = (props: IosDatetimePickerProps): JSX.Element => (
+	<BaseDateTimePicker
+		displayIos={props.displayIos}
+		initialDate={props.initialDate}
+		minuteInterval={props.minuteInterval}
+		mode={props.mode}
+		onDateChange={props.onDateChange}
+		showPickerIos={true}
+		style={[defaultStyle.datePicker, props.style]}
+	/>
+)
 
 const defaultStyle = StyleSheet.create({
 	datePicker: {

@@ -1,13 +1,17 @@
 import * as React from 'react'
 import {Alert, StyleSheet, ScrollView} from 'react-native'
-import type {TopLevelViewPropsType} from '../types'
 import glamorous from 'glamorous-native'
-import {TableView, Section, Cell, ButtonCell} from '@frogpond/tableview'
+import {TableView, Section, Cell} from '@frogpond/tableview'
+import {ButtonCell} from '@frogpond/tableview/cells'
 import * as c from '@frogpond/colors'
 import {
 	cancelPrintJobForUser,
 	heldJobsAvailableAtPrinterForUser,
 	releasePrintJobToPrinterForUser,
+} from '../../lib/stoprint/api'
+import {
+	HeldJobsResponseOrErrorType,
+	isStoprintMocked,
 	showGeneralError,
 } from '../../lib/stoprint'
 import type {
@@ -18,6 +22,10 @@ import type {
 	CancelResponseOrErrorType,
 } from '../../lib/stoprint'
 import {loadLoginCredentials} from '../../lib/login'
+import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+import {RouteProp, useNavigation, useRoute} from '@react-navigation/native'
+import {RootStackParamList} from '../../navigation/types'
+import {DebugNoticeButton} from '@frogpond/navigation-buttons'
 
 const styles = StyleSheet.create({
 	cancelButton: {
@@ -61,64 +69,59 @@ function PrinterInformation({printer}: {printer: Printer}) {
 	return (
 		<Section header="PRINTER INFO" sectionTintColor={c.sectionBgColor}>
 			<LeftDetailCell detail="Name" title={printer.printerName} />
-			{printer.location && (
-				<LeftDetailCell detail="Location" title={printer.location} />
+			{Boolean(printer.location) && (
+				<LeftDetailCell detail="Location" title={printer.location ?? ''} />
 			)}
 		</Section>
 	)
 }
 
-type Props = TopLevelViewPropsType & {
-	navigation: {
-		state: {params: {job: PrintJob; printer?: Printer}}
-	}
-}
+export const PrintJobReleaseView = (): JSX.Element => {
+	let [heldJob, setHeldJob] = React.useState<HeldJob | null>(null)
+	let [status, setStatus] = React.useState<string>('')
 
-type State = {
-	heldJob?: HeldJob
-	status: 'complete' | 'pending' | 'printing' | 'cancelling'
-}
+	let route = useRoute<RouteProp<RootStackParamList, 'PrintJobRelease'>>()
+	let {job, printer} = route.params
 
-export class PrintJobReleaseView extends React.PureComponent<Props, State> {
-	static navigationOptions = {
-		title: 'Release Job',
-	}
+	let navigation = useNavigation()
 
-	state = {
-		heldJob: null,
-		status:
-			this.props.navigation.state.params.job.statusFormatted ===
-			'Pending Release'
-				? 'pending'
-				: 'complete',
-	}
+	const returnToJobsView = React.useCallback(() => {
+		navigation.navigate('PrintJobs')
+	}, [navigation])
 
-	componentDidMount() {
-		if (this.state.status === 'pending') {
-			this.getHeldJob()
-		}
-	}
-
-	getHeldJob = async () => {
-		let {username = null} = await loadLoginCredentials()
-		if (!username) {
-			Alert.alert(
-				'Not Logged In',
-				'You are not logged in. Please open the app settings and log in.',
-				[{text: 'OK'}],
-			)
+	const getHeldJob = React.useCallback(async () => {
+		if (!printer) {
 			return
 		}
 
-		let {job, printer} = this.props.navigation.state.params
-		let jobId = job.id.toString()
-		let response = await heldJobsAvailableAtPrinterForUser(
-			printer.printerName,
-			username,
-		)
+		let response: HeldJobsResponseOrErrorType
 
+		if (isStoprintMocked) {
+			response = await heldJobsAvailableAtPrinterForUser(
+				printer.printerName,
+				'mockUsername',
+			)
+		} else {
+			let {username = null} = await loadLoginCredentials()
+			if (!username) {
+				Alert.alert(
+					'Not Logged In',
+					'You are not logged in. Please open the app settings and log in.',
+					[{text: 'OK'}],
+				)
+				return
+			}
+
+			response = await heldJobsAvailableAtPrinterForUser(
+				printer.printerName,
+				username,
+			)
+		}
+
+		let jobId = job.id.toString()
 		if (response.error) {
-			showGeneralError(this.returnToJobsView)
+			showGeneralError(returnToJobsView)
+
 			return
 		}
 
@@ -126,37 +129,49 @@ export class PrintJobReleaseView extends React.PureComponent<Props, State> {
 			heldJob.id.startsWith(jobId),
 		)
 		if (heldJobMatch) {
-			this.setState(() => ({heldJob: heldJobMatch}))
+			setHeldJob(heldJobMatch)
 		} else {
-			showGeneralError(this.returnToJobsView)
+			showGeneralError(returnToJobsView)
 		}
-	}
+	}, [job.id, printer, returnToJobsView])
 
-	requestCancel = () => {
-		let {job} = this.props.navigation.state.params
+	React.useEffect(() => {
+		let formatted =
+			job.statusFormatted === 'Pending Release' ? 'pending' : 'complete'
+
+		setStatus(formatted)
+
+		if (status === 'pending') {
+			getHeldJob()
+		}
+	}, [getHeldJob, job.statusFormatted, status])
+
+	const requestCancel = () => {
 		let prompt = `Are you sure you want to cancel printing "${job.documentName}"? This cannot be undone.`
 		Alert.alert('Print Job Cancellation Confirmation', prompt, [
 			{text: 'Keep Job', style: 'cancel'},
-			{text: 'Cancel Job', style: 'destructive', onPress: this.cancelJob},
+			{text: 'Cancel Job', style: 'destructive', onPress: cancelJob},
 		])
 	}
 
-	requestRelease = () => {
-		let {job, printer} = this.props.navigation.state.params
-		let prompt = `Are you sure you want to print "${job.documentName}" to ${printer.printerName}?`
+	const requestRelease = () => {
+		let prompt = `Are you sure you want to print "${job.documentName}" to ${printer?.printerName}?`
 		Alert.alert('Print Job Release Confirmation', prompt, [
 			{text: 'Nope!', style: 'cancel'},
-			{text: 'Print', style: 'default', onPress: this.releaseJob},
+			{text: 'Print', style: 'default', onPress: releaseJob},
 		])
 	}
 
-	releaseJob = async () => {
-		this.setState(() => ({status: 'printing'}))
-		let {printer, job} = this.props.navigation.state.params
+	const releaseJob = async () => {
+		if (!printer) {
+			return
+		}
+
+		setStatus('printing')
 		let {username} = await loadLoginCredentials()
-		let {heldJob} = this.state
 		if (!heldJob || !username) {
-			showGeneralError(this.returnToJobsView)
+			showGeneralError(returnToJobsView)
+
 			return
 		}
 		let response: ReleaseResponseOrErrorType =
@@ -169,23 +184,25 @@ export class PrintJobReleaseView extends React.PureComponent<Props, State> {
 			Alert.alert(
 				'Error Releasing Job',
 				'We encountered a problem while trying to release your job to the printer. Please try again or release your job at the printer itself.',
-				[{text: 'OK', onPress: this.returnToJobsView}],
+				[{text: 'OK', onPress: returnToJobsView}],
 			)
 		} else {
 			Alert.alert(
 				'Job Successfully Released',
 				`Document "${job.documentName}" is printing at ${printer.printerName}.`,
-				[{text: 'OK', onPress: this.returnToJobsView}],
+				[{text: 'OK', onPress: returnToJobsView}],
 			)
 		}
 	}
 
-	cancelJob = async () => {
-		this.setState(() => ({status: 'cancelling'}))
-		let {username, job} = this.props.navigation.state.params
-		let {heldJob} = this.state
-		if (!heldJob) {
-			showGeneralError(this.returnToJobsView)
+	const cancelJob = async () => {
+		setStatus('cancelling')
+
+		const {username} = await loadLoginCredentials()
+
+		if (!heldJob || !username) {
+			showGeneralError(returnToJobsView)
+
 			return
 		}
 		let response: CancelResponseOrErrorType = await cancelPrintJobForUser(
@@ -196,51 +213,49 @@ export class PrintJobReleaseView extends React.PureComponent<Props, State> {
 			Alert.alert(
 				'Error Cancelling Job',
 				'We encountered a problem while trying to cancel your job. Please try again or cancel your job at the printer itself.',
-				[{text: 'OK', onPress: this.returnToJobsView}],
+				[{text: 'OK', onPress: returnToJobsView}],
 			)
 		} else {
 			Alert.alert(
 				'Job Successfully Cancelled',
 				`Document "${job.documentName}" has been removed from your print queue.`,
-				[{text: 'OK', onPress: this.returnToJobsView}],
+				[{text: 'OK', onPress: returnToJobsView}],
 			)
 		}
 	}
 
-	returnToJobsView = () => {
-		this.props.navigation.navigate('PrintJobsView')
-	}
+	let actionAvailable = status !== 'complete' && printer
 
-	render() {
-		let {job, printer} = this.props.navigation.state.params
-		let {status} = this.state
-		let actionAvailable = status !== 'complete' && printer
-		return (
-			<ScrollView>
-				<Header>{job.documentName}</Header>
-				<TableView>
-					<JobInformation job={job} />
-					{actionAvailable && (
-						<React.Fragment>
-							<PrinterInformation printer={printer} />
-							<Section sectionPaddingBottom={0}>
-								<ButtonCell
-									onPress={this.requestRelease}
-									textStyle={styles.buttonCell}
-									title={status === 'printing' ? 'Printing…' : 'Print'}
-								/>
-							</Section>
-							<Section>
-								<ButtonCell
-									onPress={this.requestCancel}
-									textStyle={[styles.buttonCell, styles.cancelButton]}
-									title={status === 'cancelling' ? 'Cancelling…' : 'Cancel'}
-								/>
-							</Section>
-						</React.Fragment>
-					)}
-				</TableView>
-			</ScrollView>
-		)
-	}
+	return (
+		<ScrollView>
+			<Header>{job.documentName}</Header>
+			<TableView>
+				<JobInformation job={job} />
+				{actionAvailable && (
+					<React.Fragment>
+						{printer && <PrinterInformation printer={printer} />}
+						<Section sectionPaddingBottom={0}>
+							<ButtonCell
+								onPress={requestRelease}
+								textStyle={styles.buttonCell}
+								title={status === 'printing' ? 'Printing…' : 'Print'}
+							/>
+						</Section>
+						<Section>
+							<ButtonCell
+								onPress={requestCancel}
+								textStyle={[styles.buttonCell, styles.cancelButton]}
+								title={status === 'cancelling' ? 'Cancelling…' : 'Cancel'}
+							/>
+						</Section>
+					</React.Fragment>
+				)}
+			</TableView>
+		</ScrollView>
+	)
+}
+
+export const NavigationOptions: NativeStackNavigationOptions = {
+	title: 'Release job',
+	headerRight: () => <DebugNoticeButton shouldShow={isStoprintMocked} />,
 }

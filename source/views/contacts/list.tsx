@@ -6,11 +6,11 @@ import groupBy from 'lodash/groupBy'
 import toPairs from 'lodash/toPairs'
 import * as c from '@frogpond/colors'
 import type {ContactType} from './types'
-import type {TopLevelViewPropsType} from '../types'
 import {fetch} from '@frogpond/fetch'
 import {API} from '@frogpond/api'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 import {useNavigation} from '@react-navigation/native'
+import {DetailNavigationKey} from './detail'
 import delay from 'delay'
 
 const fetchContacts = (forReload?: boolean): Promise<Array<ContactType>> =>
@@ -34,9 +34,7 @@ const styles = StyleSheet.create({
 	},
 })
 
-type Props = TopLevelViewPropsType
-
-export let ContactsListView = (props: Props): JSX.Element => {
+export let ContactsListView = (): JSX.Element => {
 	let navigation = useNavigation()
 
 	let [contacts, setContacts] = React.useState<Array<ContactType>>([])
@@ -66,14 +64,10 @@ export let ContactsListView = (props: Props): JSX.Element => {
 
 	let onPressContact = React.useCallback(
 		(data: ContactType) =>
-			navigation.navigate('ContactsDetail', {
+			navigation.navigate(DetailNavigationKey, {
 				contact: data,
 			}),
-		[],
-	)
-
-	let renderSectionHeader = ({section: {title}}: any) => (
-		<ListSectionHeader title={title} />
+		[navigation],
 	)
 
 	let renderItem = ({item}: {item: ContactType}) => (
@@ -93,7 +87,9 @@ export let ContactsListView = (props: Props): JSX.Element => {
 			onRefresh={refresh}
 			refreshing={loading}
 			renderItem={renderItem}
-			renderSectionHeader={renderSectionHeader}
+			renderSectionHeader={({section: {title}}) => (
+				<ListSectionHeader title={title} />
+			)}
 			sections={groupedData}
 			style={styles.listContainer}
 		/>
@@ -102,5 +98,4 @@ export let ContactsListView = (props: Props): JSX.Element => {
 
 export const NavigationOptions: NativeStackNavigationOptions = {
 	title: 'Important Contacts',
-	headerBackTitle: 'Back',
 }

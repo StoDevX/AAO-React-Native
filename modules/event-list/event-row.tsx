@@ -1,15 +1,18 @@
 import * as React from 'react'
-import {StyleSheet, Text} from 'react-native'
+import {StyleProp, StyleSheet, Text, ViewStyle} from 'react-native'
 import type {EventType} from '@frogpond/event-type'
 import * as c from '@frogpond/colors'
-import {Row, Column} from '@frogpond/layout'
-import {ListRow, Detail, Title} from '@frogpond/lists'
+import {Column, Row} from '@frogpond/layout'
+import {Detail, ListRow, Title} from '@frogpond/lists'
 import {Bar} from './vertical-bar'
 import {times} from './times'
 
 const styles = StyleSheet.create({
 	row: {
 		paddingVertical: 2,
+	},
+	rowInside: {
+		minHeight: 46,
 	},
 	timeContainer: {
 		width: 70,
@@ -27,6 +30,12 @@ const styles = StyleSheet.create({
 	},
 	end: {
 		color: c.iosDisabledText,
+	},
+	titleArea: {
+		flex: 1,
+		justifyContent: 'space-between',
+		paddingBottom: 3,
+		paddingTop: 2,
 	},
 })
 
@@ -50,17 +59,12 @@ export default class EventRow extends React.PureComponent<Props> {
 				fullWidth={true}
 				onPress={this._onPress}
 			>
-				<Row minHeight={46}>
+				<Row style={styles.rowInside}>
 					<CalendarTimes event={event} style={styles.timeContainer} />
 
 					<Bar style={styles.bar} />
 
-					<Column
-						flex={1}
-						justifyContent="space-between"
-						paddingBottom={3}
-						paddingTop={2}
-					>
+					<Column style={styles.titleArea}>
 						<Title>{title}</Title>
 						{subtitle ? <Detail>{subtitle}</Detail> : null}
 					</Column>
@@ -70,7 +74,13 @@ export default class EventRow extends React.PureComponent<Props> {
 	}
 }
 
-function CalendarTimes({event, style}: {event: EventType; style: any}) {
+function CalendarTimes({
+	event,
+	style,
+}: {
+	event: EventType
+	style: StyleProp<ViewStyle>
+}) {
 	let {allDay, start, end} = times(event)
 
 	if (allDay) {

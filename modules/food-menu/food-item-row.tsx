@@ -1,21 +1,21 @@
 import * as React from 'react'
-import {View, StyleSheet, Platform} from 'react-native'
+import {Platform, StyleProp, StyleSheet, View, ViewStyle} from 'react-native'
 import {DietaryTags} from './dietary-tags'
-import {Row, Column} from '@frogpond/layout'
-import {ListRow, Detail, Title} from '@frogpond/lists'
-import type {MenuItemType, MasterCorIconMapType} from './types'
+import {Column, Row} from '@frogpond/layout'
+import {Detail, ListRow, Title} from '@frogpond/lists'
+import type {MasterCorIconMapType, MenuItemType} from './types'
 import * as c from '@frogpond/colors'
 import Icon from 'react-native-vector-icons/Ionicons'
 
 const specialsIcon = Platform.OS === 'ios' ? 'ios-star' : 'md-star'
 
-type FoodItemPropsType = {
+type Props = {
 	corIcons: MasterCorIconMapType
 	data: MenuItemType
-	style?: any
+	style?: StyleProp<ViewStyle>
 	badgeSpecials?: boolean
 	spacing: {left: number}
-	onPress: () => any
+	onPress: () => void
 }
 
 export function FoodItemRow({
@@ -24,14 +24,14 @@ export function FoodItemRow({
 	badgeSpecials = true,
 	onPress,
 	...props
-}: FoodItemPropsType) {
+}: Props): JSX.Element {
 	const {left = 0} = props.spacing
 	return (
 		<ListRow
 			arrowPosition="center"
 			fullWidth={true}
 			onPress={onPress}
-			style={{...styles.container, ...props.style}}
+			style={[styles.container, props.style]}
 		>
 			<Row alignItems="center">
 				<View style={[styles.badge, {width: left}]}>

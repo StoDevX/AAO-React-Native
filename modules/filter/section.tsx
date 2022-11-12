@@ -7,10 +7,13 @@ import {PickerSection} from './section-picker'
 
 type FilterSectionPropsType = {
 	filter: FilterType
-	onChange: (filter: FilterType) => any
+	onChange: (filter: FilterType) => unknown
 }
 
-export function FilterSection({filter, onChange}: FilterSectionPropsType) {
+export function FilterSection({
+	filter,
+	onChange,
+}: FilterSectionPropsType): JSX.Element | null {
 	if (filter.type === 'toggle') {
 		return <SingleToggleSection filter={filter} onChange={onChange} />
 	}

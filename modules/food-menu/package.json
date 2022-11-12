@@ -17,7 +17,7 @@
     "@react-navigation/native": "^6.0.0"
   },
   "dependencies": {
-    "@callstack/react-theme-provider": "^3.0.7",
+    "@callstack/react-theme-provider": "^3.0.8",
     "@frogpond/app-theme": "^1.0.0",
     "@frogpond/colors": "^1.0.0",
     "@frogpond/filter": "^1.0.0",

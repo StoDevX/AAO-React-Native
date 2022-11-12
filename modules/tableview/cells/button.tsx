@@ -1,7 +1,8 @@
 import * as React from 'react'
-import {StyleSheet, Text} from 'react-native'
-import {Cell} from 'react-native-tableview-simple'
+import {StyleProp, StyleSheet, Text, TextStyle} from 'react-native'
+import {Cell} from '@frogpond/tableview'
 import * as c from '@frogpond/colors'
+import {Icon} from '@frogpond/icon'
 
 const styles = StyleSheet.create({
 	title: {
@@ -21,15 +22,27 @@ export function ButtonCell({
 	onPress,
 	textStyle,
 	title,
+	accessoryIcon,
 }: {
 	indeterminate?: boolean
 	disabled?: boolean
-	onPress: () => any
-	textStyle?: any
+	onPress: () => void
+	textStyle?: StyleProp<TextStyle>
 	title: string
-}) {
+	accessoryIcon?: string
+}): JSX.Element {
 	return (
 		<Cell
+			cellAccessoryView={
+				accessoryIcon ? (
+					<Icon
+						color={disabled ? styles.disabled.color : styles.active.color}
+						name={accessoryIcon}
+						size={26}
+					/>
+				) : null
+			}
+			cellStyle="RightDetail"
 			isDisabled={indeterminate || disabled}
 			onPress={onPress}
 			title={

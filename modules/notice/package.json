@@ -15,7 +15,6 @@
   "dependencies": {
     "@frogpond/colors": "^1.0.0",
     "@frogpond/button": "^1.0.0",
-    "@frogpond/markdown": "^1.0.0",
-    "@frogpond/viewport": "^1.0.0"
+    "@frogpond/markdown": "^1.0.0"
   }
 }

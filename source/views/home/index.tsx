@@ -13,7 +13,7 @@ import {allViews} from '../views'
 import {Column} from '@frogpond/layout'
 import {partitionByIndex} from '../../lib/partition-by-index'
 import {HomeScreenButton, CELL_MARGIN} from './button'
-import {trackedOpenUrl, openUrlInBrowser} from '@frogpond/open-url'
+import {trackedOpenUrl} from '@frogpond/open-url'
 import {OpenSettingsButton} from '@frogpond/navigation-buttons'
 import {UnofficialAppNotice} from './notice'
 import {useNavigation} from '@react-navigation/native'
@@ -63,8 +63,6 @@ function HomePage({views = allViews}: Props): JSX.Element {
 									onPress={() => {
 										if (view.type === 'url') {
 											return trackedOpenUrl({url: view.url, id: view.view})
-										} else if (view.type === 'browser-url') {
-											return openUrlInBrowser({url: view.url, id: view.view})
 										} else if (view.type === 'view') {
 											return navigation.navigate(view.view)
 										} else {
@@ -91,7 +89,7 @@ export const NavigationKey = 'Home'
 export const NavigationOptions: NativeStackNavigationOptions = {
 	title: 'All About Olaf',
 	headerBackTitle: 'Home',
-	headerRight: (props) => <OpenSettingsButton canGoBack={true} {...props} />,
+	headerRight: (props) => <OpenSettingsButton {...props} />,
 }
 
 export type NavigationParams = undefined

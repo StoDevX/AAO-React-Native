@@ -1,4 +1,5 @@
 import * as React from 'react'
+import {forwardRef} from 'react'
 import {
 	Platform,
 	Pressable,
@@ -8,6 +9,7 @@ import {
 	View,
 	ViewStyle,
 } from 'react-native'
+import {white} from '@frogpond/colors'
 
 type Props = PressableProps & {
 	borderless?: boolean
@@ -18,7 +20,7 @@ type Props = PressableProps & {
 	underlayColor?: string
 }
 
-const CustomPressable = (props: Props): JSX.Element => {
+const CustomPressable = forwardRef<View, Props>((props, ref): JSX.Element => {
 	let {
 		borderless = false,
 		children,
@@ -41,7 +43,7 @@ const CustomPressable = (props: Props): JSX.Element => {
 			containerAdjustmentStyle = (state) =>
 				state.pressed
 					? [{backgroundColor: underlayColor}, containerStyle]
-					: [containerStyle]
+					: [{backgroundColor: white}, containerStyle]
 		} else {
 			containerAdjustmentStyle = (state) =>
 				state.pressed
@@ -54,6 +56,7 @@ const CustomPressable = (props: Props): JSX.Element => {
 
 	return (
 		<Pressable
+			ref={ref}
 			android_ripple={{borderless: borderless}}
 			style={containerAdjustmentStyle}
 			{...passthrough}
@@ -62,7 +65,7 @@ const CustomPressable = (props: Props): JSX.Element => {
 			<View style={style}>{children}</View>
 		</Pressable>
 	)
-}
+})
 
 export {CustomPressable as Touchable}
 export type {Props as TouchableProps}

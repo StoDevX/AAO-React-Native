@@ -1,7 +1,8 @@
 import * as React from 'react'
 import {StyleSheet, Alert} from 'react-native'
-import {Cell} from 'react-native-tableview-simple'
+import {Cell} from '@frogpond/tableview'
 import * as c from '@frogpond/colors'
+import noop from 'lodash/noop'
 
 const deleteStyles = StyleSheet.create({
 	text: {textAlign: 'center', color: c.red},
@@ -14,14 +15,14 @@ export const DeleteButtonCell = ({
 }: {
 	title: string
 	skipConfirm?: boolean
-	onPress?: () => any
-}) => {
-	let onPressCallback = onPress ? onPress : () => {}
+	onPress?: () => void
+}): JSX.Element => {
+	let onPressCallback = onPress ?? noop
 
 	let callback = !skipConfirm
 		? () =>
-				Alert.alert(title, 'Are you sure you want to delete this?', [
-					{text: 'Cancel', onPress: () => {}, style: 'cancel'},
+				Alert.alert(title, 'Are you sure you want to remove this?', [
+					{text: 'Cancel', onPress: noop, style: 'cancel'},
 					{text: 'Delete', onPress: onPressCallback, style: 'destructive'},
 				])
 		: onPressCallback

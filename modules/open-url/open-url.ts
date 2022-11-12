@@ -1,10 +1,8 @@
-import {Platform, Linking, Alert} from 'react-native'
+import {Linking} from 'react-native'
+import {InAppBrowser} from 'react-native-inappbrowser-reborn'
+import * as storage from '../../source/lib/storage'
 
-import {appName} from '@frogpond/constants'
-import SafariView from 'react-native-safari-view'
-import {CustomTabs} from 'react-native-custom-tabs'
-
-function genericOpen(url: string) {
+function genericOpen(url: string): Promise<boolean> {
 	return Linking.canOpenURL(url)
 		.then((isSupported) => {
 			if (!isSupported) {
@@ -17,22 +15,29 @@ function genericOpen(url: string) {
 		})
 }
 
-function iosOpen(url: string) {
-	// SafariView.isAvailable throws if it's not available
-	return SafariView.isAvailable()
-		.then(() => SafariView.show({url}))
-		.catch(() => genericOpen(url))
+async function launchBrowser(url: string): Promise<boolean> {
+	try {
+		if (await InAppBrowser.isAvailable()) {
+			await InAppBrowser.open(url, {
+				animated: true,
+				showTitle: true,
+				enableUrlBarHiding: true,
+				enableDefaultShare: true,
+				modalPresentationStyle: 'currentContext',
+			})
+		} else {
+			// fall back to opening in Chrome / Browser / platform default
+			await genericOpen(url)
+		}
+	} catch (error) {
+		console.warn(`Error when trying to call launchBrowser: ${error}`)
+		return false
+	}
+
+	return true
 }
 
-function androidOpen(url: string) {
-	return CustomTabs.openURL(url, {
-		showPageTitle: true,
-		enableUrlBarHiding: true,
-		enableDefaultShare: true,
-	}).catch(() => genericOpen(url)) // fall back to opening in Chrome / Browser / platform default
-}
-
-export function openUrl(url: string) {
+export async function openUrl(url: string): Promise<boolean> {
 	let protocol = /^(.*?):/u.exec(url)
 
 	if (protocol && protocol.length) {
@@ -46,39 +51,27 @@ export function openUrl(url: string) {
 		}
 	}
 
-	switch (Platform.OS) {
-		case 'android':
-			return androidOpen(url)
-		case 'ios':
-			return iosOpen(url)
-		default:
-			return genericOpen(url)
+	if (await storage.getInAppLinkPreference()) {
+		return launchBrowser(url)
 	}
+
+	return genericOpen(url)
 }
 
-export function trackedOpenUrl({url}: {url: string; id?: string}) {
+export function trackedOpenUrl({
+	url,
+}: {
+	url: string
+	id?: string
+}): Promise<boolean> {
 	return openUrl(url)
 }
 
-export function canOpenUrl(url: string) {
+export function canOpenUrl(url: string): boolean {
 	// iOS navigates to about:blank when you provide raw HTML to a webview.
 	// Android navigates to data:text/html;$stuff (that is, the document you passed) instead.
 	if (/^(?:about|data):/u.test(url)) {
 		return false
 	}
 	return true
-}
-
-export function openUrlInBrowser({url}: {url: string; id?: string}) {
-	return promptConfirm(url)
-}
-
-function promptConfirm(url: string) {
-	let app = appName()
-	let title = `Leaving ${app}`
-	let detail = `A web page will be opened in a browser outside of ${app}.`
-	Alert.alert(title, detail, [
-		{text: 'Cancel', onPress: () => {}},
-		{text: 'Open', onPress: () => genericOpen(url)},
-	])
 }

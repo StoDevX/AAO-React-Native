@@ -1,12 +1,11 @@
-export const COURSE_DATA_PAGE = 'https://stodevx.github.io/course-data/'
+const BASE_URL = 'https://stolaf.dev'
 
-export const INFO_PAGE = 'https://stodevx.github.io/course-data/info.json'
+export const COURSE_DATA_PAGE = `${BASE_URL}/course-data/`
 
-export const GE_DATA =
-	'https://stodevx.github.io/course-data/data-lists/valid_gereqs.json'
+export const INFO_PAGE = `${BASE_URL}/course-data/info.json`
 
-export const DEPT_DATA =
-	'https://stodevx.github.io/course-data/data-lists/valid_departments.json'
+export const GE_DATA = `${BASE_URL}/course-data/data-lists/valid_gereqs.json`
 
-export const TIMES_DATA =
-	'https://stodevx.github.io/course-data/data-lists/valid_times.json'
+export const DEPT_DATA = `${BASE_URL}/course-data/data-lists/valid_departments.json`
+
+export const TIMES_DATA = `${BASE_URL}/course-data/data-lists/valid_times.json`

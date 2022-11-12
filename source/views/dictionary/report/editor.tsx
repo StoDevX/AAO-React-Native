@@ -1,89 +1,64 @@
 import * as React from 'react'
 import {ScrollView} from 'react-native'
 import {InfoHeader} from '@frogpond/info-header'
-import {
-	TableView,
-	Section,
-	CellTextField,
-	ButtonCell,
-} from '@frogpond/tableview'
+import {TableView, Section} from '@frogpond/tableview'
+import {CellTextField, ButtonCell} from '@frogpond/tableview/cells'
 import {submitReport} from './submit'
-import type {WordType} from '../types'
-import type {TopLevelViewPropsType} from '../../types'
+import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+import {RouteProp, useRoute} from '@react-navigation/native'
+import {RootStackParamList} from '../../../navigation/types'
+import noop from 'lodash/noop'
 
-type Props = TopLevelViewPropsType & {
-	navigation: {state: {params: {item: WordType}}}
+export const NavigationOptions: NativeStackNavigationOptions = {
+	title: 'Suggest an edit',
 }
 
-type State = {
-	term: string
-	definition: string
-}
+let DictionaryEditorView = (): JSX.Element => {
+	let route = useRoute<RouteProp<RootStackParamList, 'DictionaryEditor'>>()
+	let {item} = route.params
 
-export class DictionaryEditorView extends React.PureComponent<Props, State> {
-	static navigationOptions = () => {
-		return {
-			title: 'Suggest an Edit',
-		}
-	}
+	let [term, setTerm] = React.useState(item.word)
+	let [definition, setDefinition] = React.useState(item.definition)
 
-	state = {
-		term: this.props.navigation.state.params.word.word,
-		definition: this.props.navigation.state.params.word.definition,
-	}
-
-	submit = () => {
-		submitReport(this.props.navigation.state.params.word, {
-			word: this.state.term.trim(),
-			definition: this.state.definition.trim(),
+	let submit = () => {
+		submitReport(item, {
+			word: term.trim(),
+			definition: definition.trim(),
 		})
 	}
 
-	onChangeTitle = (newTitle: string) => {
-		this.setState(() => ({term: newTitle}))
-	}
+	return (
+		<ScrollView
+			keyboardDismissMode="on-drag"
+			keyboardShouldPersistTaps="always"
+		>
+			<InfoHeader
+				message="If you could tell us what the word and definition should be, we&rsquo;d greatly appreciate it."
+				title="Thanks for spotting a problem!"
+			/>
 
-	onChangeDefinition = (newDefinition: string) => {
-		this.setState(() => ({definition: newDefinition}))
-	}
+			<TableView>
+				<Section header="WORD">
+					<TitleCell onChange={setTerm} text={term} />
+				</Section>
 
-	render() {
-		let {term, definition} = this.state
+				<Section header="DEFINITION">
+					<DefinitionCell onChange={setDefinition} text={definition} />
+				</Section>
 
-		return (
-			<ScrollView
-				keyboardDismissMode="on-drag"
-				keyboardShouldPersistTaps="always"
-			>
-				<InfoHeader
-					message="If you could tell us what the word and definition should be, we&rsquo;d greatly appreciate it."
-					title="Thanks for spotting a problem!"
-				/>
-
-				<TableView>
-					<Section header="WORD">
-						<TitleCell onChange={this.onChangeTitle} text={term} />
-					</Section>
-
-					<Section header="DEFINITION">
-						<DefinitionCell
-							onChange={this.onChangeDefinition}
-							text={definition}
-						/>
-					</Section>
-
-					<Section footer="Thanks for reporting!">
-						<ButtonCell onPress={this.submit} title="Submit Report" />
-					</Section>
-				</TableView>
-			</ScrollView>
-		)
-	}
+				<Section footer="Thanks for reporting!">
+					<ButtonCell onPress={submit} title="Submit Report" />
+				</Section>
+			</TableView>
+		</ScrollView>
+	)
 }
 
-type TextFieldProps = {text: string; onChange: (text: string) => any}
+export {DictionaryEditorView as View}
 
-const TitleCell = ({text, onChange = () => {}}: TextFieldProps) => (
+type TextFieldProps = {text: string; onChange: (text: string) => void}
+
+const TitleCell = ({text, onChange = noop}: TextFieldProps) => (
 	<CellTextField
 		autoCapitalize="words"
 		onChangeText={onChange}
@@ -94,7 +69,7 @@ const TitleCell = ({text, onChange = () => {}}: TextFieldProps) => (
 	/>
 )
 
-const DefinitionCell = ({text, onChange = () => {}}: TextFieldProps) => (
+const DefinitionCell = ({text, onChange = noop}: TextFieldProps) => (
 	<CellTextField
 		autoCapitalize="sentences"
 		multiline={true}

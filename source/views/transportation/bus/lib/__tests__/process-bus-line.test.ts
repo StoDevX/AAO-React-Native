@@ -1,8 +1,9 @@
 import {processBusSchedule} from '../process-bus-line'
 import {time} from './moment.helper'
+import {UnprocessedBusLine} from '../../types'
 
 // prettier-ignore
-const line = {
+const line: UnprocessedBusLine = {
   line: 'Blue Line',
   colors: {bar: 'rgb(103, 153, 170)', dot: 'rgb(13, 26, 35)'},
   schedules: [
@@ -10,11 +11,11 @@ const line = {
       days: ['Mo', 'Tu', 'We', 'Th', 'Fr'],
       coordinates: {
         'City Hall on Washington': [44.451472, -93.158529],
-        'Econo Foods': [44.453983, -93.159477],
+        'Family Fare': [44.453983, -93.159477],
       },
       stops: [
         'City Hall on Washington',
-        'Econo Foods',
+        'Family Fare',
       ],
       times: [
         ['6:00am', '6:01am'],

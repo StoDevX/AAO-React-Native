@@ -10,10 +10,10 @@ import {RouteProp, useNavigation} from '@react-navigation/native'
 import {RootStackParamList} from '../../../navigation/types'
 
 type Props = TopLevelViewPropsType & {
-	navigation: {state: {params: {building: BuildingType}}}
+	route: {params: {building: BuildingType}}
 }
 
-export function BuildingHoursDetailView(props: Props) {
+export function BuildingHoursDetailView(props: Props): JSX.Element {
 	let navigation = useNavigation()
 
 	let info = props.route.params.building
@@ -23,7 +23,7 @@ export function BuildingHoursDetailView(props: Props) {
 			navigation.navigate('BuildingHoursProblemReport', {
 				initialBuilding: info,
 			}),
-		[],
+		[info, navigation],
 	)
 
 	return (
@@ -43,11 +43,9 @@ export const NavigationKey = 'BuildingHoursDetail'
 export const NavigationOptions = (props: {
 	route: RouteProp<RootStackParamList, typeof NavigationKey>
 }): NativeStackNavigationOptions => {
-	let {building} = props.route.params
+	let {name} = props.route.params.building
 	return {
-		title: building.name,
-		headerRight: (p) => (
-			<BuildingFavoriteButton {...p} buildingName={building.name} />
-		),
+		title: name,
+		headerRight: (p) => <BuildingFavoriteButton {...p} buildingName={name} />,
 	}
 }

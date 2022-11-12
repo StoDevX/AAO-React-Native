@@ -5,6 +5,16 @@ import {PAPERCUT_MOBILE_RELEASE_API, PAPERCUT_API, PAPERCUT} from './urls'
 import querystring from 'query-string'
 import {encode} from 'base-64'
 import {API} from '@frogpond/api'
+import {
+	fetchAllPrinters as mockFetchAllPrinters,
+	fetchRecentPrinters as mockFetchRecentPrinters,
+	fetchJobs as mockFetchJobs,
+	heldJobsAvailableAtPrinterForUser as mockHeldJobsAvailableAtPrinterForUser,
+	logIn as mockLogIn,
+	releasePrintJobToPrinterForUser as mockReleasePrintJobToPrinterForUser,
+} from './__mocks__/api'
+import {isStoprintMocked} from '../../lib/stoprint'
+
 import type {
 	PrintJobsResponseOrErrorType,
 	AllPrintersResponseOrErrorType,
@@ -36,6 +46,10 @@ export async function logIn(
 	username: string,
 	password: string,
 ): Promise<'success' | string> {
+	if (isStoprintMocked) {
+		return mockLogIn(username, password)
+	}
+
 	const now = new Date().getTime()
 	const url = `${PAPERCUT_API}/webclient/users/${username}/log-in?nocache=${now}`
 	const body = querystring.stringify({password: encode(password)})
@@ -70,8 +84,12 @@ export async function logIn(
 
 export const fetchJobs = (
 	username: string,
-): Promise<PrintJobsResponseOrErrorType> =>
-	papercut<PrintJobsResponse>(
+): Promise<PrintJobsResponseOrErrorType> => {
+	if (isStoprintMocked) {
+		return mockFetchJobs(username)
+	}
+
+	return papercut<PrintJobsResponse>(
 		`${PAPERCUT_API}/webclient/users/${username}/jobs/status`,
 	)
 		.then(
@@ -86,11 +104,16 @@ export const fetchJobs = (
 				value: 'Unable to fetch a list of print jobs from stoPrint.',
 			}),
 		)
+}
 
 export const fetchAllPrinters = (
 	username: string,
-): Promise<AllPrintersResponseOrErrorType> =>
-	papercut<AllPrintersResponse>(
+): Promise<AllPrintersResponseOrErrorType> => {
+	if (isStoprintMocked) {
+		return mockFetchAllPrinters(username)
+	}
+
+	return papercut<AllPrintersResponse>(
 		`${PAPERCUT_MOBILE_RELEASE_API}/all-printers?username=${username}`,
 	)
 		.then(
@@ -105,11 +128,16 @@ export const fetchAllPrinters = (
 				value: 'Unable to fetch the list of all printers from stoPrint.',
 			}),
 		)
+}
 
 export const fetchRecentPrinters = (
 	username: string,
-): Promise<RecentPopularPrintersResponseOrErrorType> =>
-	papercut<RecentPopularPrintersResponse>(
+): Promise<RecentPopularPrintersResponseOrErrorType> => {
+	if (isStoprintMocked) {
+		return mockFetchRecentPrinters(username)
+	}
+
+	return papercut<RecentPopularPrintersResponse>(
 		`${PAPERCUT_MOBILE_RELEASE_API}/recent-popular-printers?username=${username}`,
 	)
 		.then(
@@ -126,6 +154,7 @@ export const fetchRecentPrinters = (
 				value: 'Unable to fetch a list of recent printers from stoPrint.',
 			}),
 		)
+}
 
 const colorPrintersUrl = API('/printing/color-printers')
 
@@ -146,9 +175,13 @@ export const fetchColorPrinters =
 export const heldJobsAvailableAtPrinterForUser = (
 	printerName: string,
 	username: string,
-): Promise<HeldJobsResponseOrErrorType> =>
+): Promise<HeldJobsResponseOrErrorType> => {
 	// https://PAPERCUT_API.stolaf.edu/rpc/api/rest/internal/mobilerelease/api/held-jobs/?username=rives&printerName=printers%5Cmfc-it
-	papercut<HeldJobsResponse>(
+	if (isStoprintMocked) {
+		return mockHeldJobsAvailableAtPrinterForUser(printerName, username)
+	}
+
+	return papercut<HeldJobsResponse>(
 		`${PAPERCUT_MOBILE_RELEASE_API}/held-jobs/?username=${username}&printerName=printers%5C${printerName}`,
 	)
 		.then(
@@ -160,6 +193,7 @@ export const heldJobsAvailableAtPrinterForUser = (
 		.catch(
 			(error): HeldJobsResponseOrErrorType => ({error: true, value: error}),
 		)
+}
 
 export const cancelPrintJobForUser = (
 	jobId: string,
@@ -189,8 +223,12 @@ export const releasePrintJobToPrinterForUser = ({
 	jobId: string
 	printerName: string
 	username: string
-}): Promise<ReleaseResponseOrErrorType> =>
-	papercut<ReleaseResponse>(
+}): Promise<ReleaseResponseOrErrorType> => {
+	if (isStoprintMocked) {
+		return mockReleasePrintJobToPrinterForUser({jobId, printerName, username})
+	}
+
+	return papercut<ReleaseResponse>(
 		`${PAPERCUT_MOBILE_RELEASE_API}/held-jobs/release?username=${username}`,
 		{
 			method: 'POST',
@@ -220,3 +258,4 @@ export const releasePrintJobToPrinterForUser = ({
 				value: error,
 			}),
 		)
+}

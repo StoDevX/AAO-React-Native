@@ -1,23 +1,22 @@
-import React from 'react'
+import * as React from 'react'
 import {timezone} from '@frogpond/constants'
 import {Platform, SectionList} from 'react-native'
 import {useDispatch, useSelector} from 'react-redux'
 import type {ReduxState} from '../../redux'
 import {updatePrintJobs} from '../../redux/parts/stoprint'
-import {LoginAction, logInViaCredentials} from '../../redux/parts/login'
 import type {LoginStateEnum} from '../../redux/parts/login'
+import {LoginAction, logInViaCredentials} from '../../redux/parts/login'
 import {loadLoginCredentials} from '../../lib/login'
-import {STOPRINT_HELP_PAGE} from '../../lib/stoprint'
 import type {PrintJob} from '../../lib/stoprint'
+import {STOPRINT_HELP_PAGE, isStoprintMocked} from '../../lib/stoprint'
 import {
-	ListRow,
-	ListSeparator,
-	ListSectionHeader,
 	Detail,
+	ListRow,
+	ListSectionHeader,
+	ListSeparator,
 	Title,
 } from '@frogpond/lists'
 import {LoadingView} from '@frogpond/notice'
-import type {TopLevelViewPropsType} from '../types'
 import delay from 'delay'
 import {openUrl} from '@frogpond/open-url'
 import {StoPrintErrorView, StoPrintNoticeView} from './components'
@@ -27,8 +26,9 @@ import sortBy from 'lodash/sortBy'
 import {getTimeRemaining} from './lib'
 import {Timer} from '@frogpond/timer'
 import {ThunkAction} from 'redux-thunk'
-
-type ReactProps = TopLevelViewPropsType
+import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+import {useNavigation} from '@react-navigation/native'
+import {DebugNoticeButton} from '@frogpond/navigation-buttons'
 
 type ReduxStateProps = {
 	jobs: Array<PrintJob>
@@ -44,175 +44,151 @@ type ReduxDispatchProps = {
 	updatePrintJobs: () => ThunkAction<void, ReduxState, void, LoginAction>
 }
 
-type Props = ReactProps & ReduxDispatchProps & ReduxStateProps
+type Props = ReduxDispatchProps & ReduxStateProps
 
-type State = {
-	initialLoadComplete: boolean
-	loading: boolean
-}
+const PrintJobsView = (props: Props) => {
+	let [initialLoadComplete, setInitialLoadComplete] = React.useState(false)
+	let [loading, setLoading] = React.useState(true)
 
-class PrintJobsView extends React.PureComponent<Props, State> {
-	static navigationOptions = {
-		title: 'Print Jobs',
-		headerBackTitle: 'Jobs',
-	}
+	let navigation = useNavigation()
 
-	state: State = {
-		initialLoadComplete: false,
-		loading: true,
-	}
+	let logIn = React.useCallback(async () => {
+		let {status} = props
+		if (status === 'logged-in' || status === 'checking' || isStoprintMocked) {
+			return
+		}
 
-	componentDidMount() {
-		this.initialLoad()
-	}
+		let {username = '', password = ''} = await loadLoginCredentials()
+		if (username && password) {
+			await props.logInViaCredentials(username, password)
+		}
+	}, [props])
 
-	initialLoad = async () => {
-		await this.fetchData()
-		this.setState(() => ({loading: false, initialLoadComplete: true}))
-	}
+	let fetchData = React.useCallback(async () => {
+		await logIn()
+		await props.updatePrintJobs()
+	}, [logIn, props])
 
-	refresh = async () => {
+	React.useEffect(() => {
+		async function getData() {
+			await fetchData()
+			setLoading(false)
+			setInitialLoadComplete(true)
+		}
+		getData()
+	}, [fetchData])
+
+	let refresh = async () => {
 		let start = Date.now()
 
-		this.setState(() => ({loading: true}))
+		setLoading(true)
 
-		await this.fetchData()
+		await fetchData()
 
 		// wait 0.5 seconds – if we let it go at normal speed, it feels broken.
 		let elapsed = start - Date.now()
 		if (elapsed < 500) {
 			await delay(500 - elapsed)
 		}
-		this.setState(() => ({loading: false}))
+		setLoading(false)
 	}
 
-	logIn = async () => {
-		let {status} = this.props
-		if (status === 'logged-in' || status === 'checking') {
-			return
-		}
+	let openSettings = () => navigation.navigate('Settings')
 
-		let {username = '', password = ''} = await loadLoginCredentials()
-		if (username && password) {
-			await this.props.logInViaCredentials(username, password)
-		}
-	}
-
-	fetchData = async () => {
-		await this.logIn()
-		await this.props.updatePrintJobs()
-	}
-
-	keyExtractor = (item: PrintJob) => item.id.toString()
-
-	openSettings = () => this.props.navigation.navigate('SettingsView')
-
-	handleJobPress = (job: PrintJob) => {
+	let handleJobPress = (job: PrintJob) => {
 		if (job.statusFormatted === 'Pending Release') {
-			this.props.navigation.navigate('PrinterListView', {job: job})
+			navigation.navigate('PrinterList', {job: job})
 		} else {
-			this.props.navigation.navigate('PrintJobReleaseView', {job: job})
+			navigation.navigate('PrintJobRelease', {job: job})
 		}
 	}
 
-	renderItem = ({item}: {item: PrintJob}) => (
-		<Timer
-			interval={60000}
-			moment={true}
-			render={({now}) => (
-				<ListRow onPress={() => this.handleJobPress(item)}>
-					<Title>{item.documentName}</Title>
-					<Detail>
-						Expires {getTimeRemaining(now, item.usageTimeFormatted)}
-						{' • '}
-						{item.usageCostFormatted}
-						{' • '}
-						{item.totalPages} {item.totalPages === 1 ? 'page' : 'pages'}
-					</Detail>
-				</ListRow>
-			)}
-			timezone={timezone()}
-		/>
-	)
+	if (props.status === 'checking') {
+		return <LoadingView text="Logging in…" />
+	}
 
-	renderSectionHeader = ({section: {title}}: any) => (
-		<ListSectionHeader title={title} />
-	)
+	if (props.error) {
+		return <StoPrintErrorView refresh={fetchData} statusMessage={props.error} />
+	}
 
-	render() {
-		if (this.props.status === 'checking') {
-			return <LoadingView text="Logging in…" />
-		}
+	if (loading && !initialLoadComplete) {
+		return <LoadingView text="Fetching a list of stoPrint Jobs…" />
+	}
 
-		if (this.props.error) {
-			return (
-				<StoPrintErrorView
-					navigation={this.props.navigation}
-					refresh={this.fetchData}
-					statusMessage={this.props.error}
-				/>
-			)
-		}
-
-		if (this.state.loading && !this.state.initialLoadComplete) {
-			return <LoadingView text="Fetching a list of stoPrint Jobs…" />
-		}
-
-		if (this.props.status !== 'logged-in') {
-			return (
-				<StoPrintNoticeView
-					buttonText="Open Settings"
-					header="You are not logged in"
-					onPress={this.openSettings}
-					refresh={this.fetchData}
-					text="You must be logged in to your St. Olaf account to access this feature"
-				/>
-			)
-		}
-
-		if (this.props.jobs.length === 0) {
-			let instructions =
-				Platform.OS === 'android'
-					? 'using the Mobility Print app'
-					: 'using the Print option in the Share Sheet'
-			let descriptionText = `You can print from a computer, or by ${instructions}.`
-
-			return (
-				<StoPrintNoticeView
-					buttonText="Learn how to use stoPrint"
-					description={descriptionText}
-					header="Nothing to Print!"
-					onPress={() => openUrl(STOPRINT_HELP_PAGE)}
-					refresh={this.fetchData}
-					text="Need help getting started?"
-				/>
-			)
-		}
-
-		let grouped = groupBy(this.props.jobs, (j) => j.statusFormatted || 'Other')
-		let groupedJobs = toPairs(grouped).map(([title, data]) => ({
-			title,
-			data,
-		}))
-		let sortedGroupedJobs = sortBy(groupedJobs, [
-			(group) => group.title !== 'Pending Release', // puts 'Pending Release' jobs at the top
-		])
-
+	if (props.status !== 'logged-in' && !isStoprintMocked) {
 		return (
-			<SectionList
-				ItemSeparatorComponent={ListSeparator}
-				keyExtractor={this.keyExtractor}
-				onRefresh={this.refresh}
-				refreshing={this.state.loading}
-				renderItem={this.renderItem}
-				renderSectionHeader={this.renderSectionHeader}
-				sections={sortedGroupedJobs}
+			<StoPrintNoticeView
+				buttonText="Open Settings"
+				header="You are not logged in"
+				onPress={openSettings}
+				refresh={fetchData}
+				text="You must be logged in to your St. Olaf account to access this feature"
 			/>
 		)
 	}
+
+	if (props.jobs.length === 0) {
+		let instructions =
+			Platform.OS === 'android'
+				? 'using the Mobility Print app'
+				: 'using the Print option in the Share Sheet'
+		let descriptionText = `You can print from a computer, or by ${instructions}.`
+
+		return (
+			<StoPrintNoticeView
+				buttonText="Learn how to use stoPrint"
+				description={descriptionText}
+				header="Nothing to Print!"
+				onPress={() => openUrl(STOPRINT_HELP_PAGE)}
+				refresh={fetchData}
+				text="Need help getting started?"
+			/>
+		)
+	}
+
+	let grouped = groupBy(props.jobs, (j) => j.statusFormatted || 'Other')
+	let groupedJobs = toPairs(grouped).map(([title, data]) => ({
+		title,
+		data,
+	}))
+	let sortedGroupedJobs = sortBy(groupedJobs, [
+		(group) => group.title !== 'Pending Release', // puts 'Pending Release' jobs at the top
+	])
+
+	return (
+		<SectionList
+			ItemSeparatorComponent={ListSeparator}
+			keyExtractor={(item: PrintJob) => item.id.toString()}
+			onRefresh={refresh}
+			refreshing={loading}
+			renderItem={({item}: {item: PrintJob}) => (
+				<Timer
+					interval={60000}
+					moment={true}
+					render={({now}) => (
+						<ListRow onPress={() => handleJobPress(item)}>
+							<Title>{item.documentName}</Title>
+							<Detail>
+								Expires {getTimeRemaining(now, item.usageTimeFormatted)}
+								{' • '}
+								{item.usageCostFormatted}
+								{' • '}
+								{item.totalPages} {item.totalPages === 1 ? 'page' : 'pages'}
+							</Detail>
+						</ListRow>
+					)}
+					timezone={timezone()}
+				/>
+			)}
+			renderSectionHeader={({section: {title}}) => (
+				<ListSectionHeader title={title} />
+			)}
+			sections={sortedGroupedJobs}
+		/>
+	)
 }
 
-export function ConnectedPrintJobsView(props: TopLevelViewPropsType) {
+export function ConnectedPrintJobsView(): JSX.Element {
 	let dispatch = useDispatch()
 
 	let jobs = useSelector((state: ReduxState) => state.stoprint?.jobs || [])
@@ -234,7 +210,6 @@ export function ConnectedPrintJobsView(props: TopLevelViewPropsType) {
 
 	return (
 		<PrintJobsView
-			{...props}
 			error={error}
 			jobs={jobs}
 			logInViaCredentials={_logInViaCredentials}
@@ -242,4 +217,9 @@ export function ConnectedPrintJobsView(props: TopLevelViewPropsType) {
 			updatePrintJobs={_updatePrintJobs}
 		/>
 	)
+}
+
+export const NavigationOptions: NativeStackNavigationOptions = {
+	title: 'Print Jobs',
+	headerRight: () => <DebugNoticeButton shouldShow={isStoprintMocked} />,
 }

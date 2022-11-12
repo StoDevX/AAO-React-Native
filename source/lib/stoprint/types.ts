@@ -105,7 +105,7 @@ export type LoginResponse = {
 	isMobileReleaseEnabled: boolean
 	realName: string
 	rememberMeEnabled: boolean
-	success: true
+	success: boolean
 }
 
 export type LoginResponseOrErrorType =

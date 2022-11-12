@@ -1,34 +1,34 @@
-import React from 'react'
-import {Cell} from 'react-native-tableview-simple'
+import * as React from 'react'
+import {Cell} from '@frogpond/tableview'
 import {StyleSheet, Text, View} from 'react-native'
 import * as c from '@frogpond/colors'
 
 type Props = {
 	title: string
 	leftDetail?: string
-	rightDetail: any
+	rightDetail?: JSX.Element[]
 }
 
-export class MultiLineDetailCell extends React.PureComponent<Props> {
-	render() {
-		let {title, rightDetail, leftDetail} = this.props
-		let cellContent = (
-			<View style={styles.cellContentView}>
-				<View style={styles.leftContainer}>
-					<Text allowFontScaling={true} style={styles.cellTitle}>
-						{title}
+export function MultiLineDetailCell(props: Props): JSX.Element {
+	let {title, rightDetail, leftDetail} = props
+	let cellContent = (
+		<View style={styles.cellContentView}>
+			<View style={styles.leftContainer}>
+				<Text allowFontScaling={true} style={styles.cellTitle}>
+					{title}
+				</Text>
+				{Boolean(leftDetail) && (
+					<Text allowFontScaling={true} style={styles.cellLeftDetail}>
+						{leftDetail}
 					</Text>
-					{this.props.leftDetail && (
-						<Text allowFontScaling={true} style={styles.cellLeftDetail}>
-							{leftDetail}
-						</Text>
-					)}
-				</View>
-				<View style={styles.cellRightDetail}>{rightDetail}</View>
+				)}
 			</View>
-		)
-		return <Cell cellContentView={cellContent} />
-	}
+			{Boolean(rightDetail) && (
+				<View style={styles.cellRightDetail}>{rightDetail}</View>
+			)}
+		</View>
+	)
+	return <Cell cellContentView={cellContent} />
 }
 
 const styles = StyleSheet.create({

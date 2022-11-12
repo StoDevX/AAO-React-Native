@@ -1,7 +1,8 @@
 import * as React from 'react'
-import {WebView} from 'react-native-webview'
-import {openUrl, canOpenUrl} from '@frogpond/open-url'
+import {useCallback, useRef} from 'react'
+import {WebView, WebViewNavigation} from 'react-native-webview'
 import type {StyleProp, ViewStyle} from 'react-native'
+import {canOpenUrl, openUrl} from '@frogpond/open-url'
 
 type Props = {
 	html: string
@@ -9,36 +10,39 @@ type Props = {
 	style?: StyleProp<ViewStyle>
 }
 
-export class HtmlContent extends React.Component<Props> {
-	_webview: WebView | null = null
+export function HtmlContent(props: Props): JSX.Element {
+	let webview = useRef<WebView | null>(null)
 
-	onNavigationStateChange = ({url}: {url: string}) => {
-		// iOS navigates to about:blank when you provide raw HTML to a webview.
-		// Android navigates to data:text/html;$stuff (that is, the document you passed) instead.
-		if (!canOpenUrl(url)) {
-			return
-		}
+	const onNavigationStateChange = useCallback(
+		(event: WebViewNavigation) => {
+			const {url} = event
 
-		// We don't want to open the web browser unless the user actually clicked
-		// on a link.
-		if (url === this.props.baseUrl) {
-			return
-		}
+			// iOS navigates to about:blank when you provide raw HTML to a webview.
+			// Android navigates to data:text/html;$stuff (that is, the document you passed) instead.
+			if (!canOpenUrl(url)) {
+				return
+			}
 
-		this._webview?.stopLoading()
-		this._webview?.goBack()
+			// We don't want to open the web browser unless the user actually clicked
+			// on a link.
+			if (url === props.baseUrl) {
+				return
+			}
 
-		return openUrl(url)
-	}
+			webview.current?.stopLoading()
+			webview.current?.goBack()
 
-	render() {
-		return (
-			<WebView
-				ref={(ref) => (this._webview = ref)}
-				onNavigationStateChange={this.onNavigationStateChange}
-				source={{html: this.props.html, baseUrl: this.props.baseUrl}}
-				style={this.props.style}
-			/>
-		)
-	}
+			return openUrl(url)
+		},
+		[props.baseUrl],
+	)
+
+	return (
+		<WebView
+			ref={webview}
+			onNavigationStateChange={onNavigationStateChange}
+			source={{html: props.html, baseUrl: props.baseUrl}}
+			style={props.style}
+		/>
+	)
 }

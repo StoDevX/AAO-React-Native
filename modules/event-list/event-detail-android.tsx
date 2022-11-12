@@ -1,13 +1,14 @@
 import * as React from 'react'
-import {Text, ScrollView, StyleSheet} from 'react-native'
+import {ScrollView, StyleSheet, Text} from 'react-native'
 import {openUrl} from '@frogpond/open-url'
 import {Card} from '@frogpond/silly-card'
 import * as c from '@frogpond/colors'
-import {ButtonCell} from '@frogpond/tableview'
+import {ButtonCell} from '@frogpond/tableview/cells'
 import {getTimes} from './calendar-util'
 import {AddToCalendar} from '@frogpond/add-to-device-calendar'
 import {ListFooter} from '@frogpond/lists'
 import {RouteProp, useRoute} from '@react-navigation/native'
+import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 import {RootStackParamList} from '../../source/navigation/types'
 import {NavigationKey} from './event-detail-base'
 import {EventType} from '@frogpond/event-type'
@@ -57,6 +58,15 @@ function Links({urls}: {urls: Array<string>}) {
 			))}
 		</Card>
 	) : null
+}
+
+export const NavigationOptions = (props: {
+	route: RouteProp<RootStackParamList, typeof NavigationKey>
+}): NativeStackNavigationOptions => {
+	let {event} = props.route.params
+	return {
+		title: event.title,
+	}
 }
 
 export function EventDetail(): JSX.Element {

@@ -1,12 +1,20 @@
 import * as React from 'react'
-import {StyleSheet, FlatList} from 'react-native'
-import * as c from '@frogpond/colors'
+import {FlatList, StyleSheet} from 'react-native'
 import type {StoryType} from './types'
+import {API} from '@frogpond/api'
+import * as c from '@frogpond/colors'
+import {useFetch} from 'react-async'
 import {ListSeparator} from '@frogpond/lists'
-import {NoticeView} from '@frogpond/notice'
-import type {TopLevelViewPropsType} from '../types'
-import {NewsRow} from './news-row'
+import {LoadingView, NoticeView} from '@frogpond/notice'
 import {openUrl} from '@frogpond/open-url'
+import {NewsRow} from './news-row'
+import {cleanEntries, trimStoryCateogry} from './lib/util'
+import {FilterToolbar, ListType} from '@frogpond/filter'
+
+type Props = {
+	source: string | {url: string; type: 'rss' | 'wp-json'}
+	thumbnail: false | number
+}
 
 const styles = StyleSheet.create({
 	listContainer: {
@@ -17,54 +25,139 @@ const styles = StyleSheet.create({
 	},
 })
 
-type Props = TopLevelViewPropsType & {
-	name: string
-	onRefresh: () => any
-	entries: StoryType[]
-	loading: boolean
-	thumbnail: false | number
-}
-
-export class NewsList extends React.PureComponent<Props> {
-	onPressNews = (url: string) => {
-		return openUrl(url)
+const useNews = (source: Props['source']) => {
+	let url
+	if (typeof source === 'string') {
+		url = API(`/news/named/${source}`)
+	} else if (source.type === 'rss') {
+		url = API('/news/rss', {url: source.url})
+	} else if (source.type === 'wp-json') {
+		url = API('/news/wpjson', {url: source.url})
+	} else {
+		throw new Error('invalid news source type!')
 	}
 
-	renderSeparator = () => (
-		<ListSeparator
-			spacing={{left: this.props.thumbnail === false ? undefined : 101}}
-		/>
-	)
+	return useFetch<StoryType[]>(url, {
+		headers: {accept: 'application/json'},
+	})
+}
 
-	renderItem = ({item}: {item: StoryType}) => (
-		<NewsRow
-			onPress={this.onPressNews}
-			story={item}
-			thumbnail={this.props.thumbnail}
-		/>
-	)
+let getStoryCategories = (story: StoryType) => {
+	return story.categories.map((c) => trimStoryCateogry(c))
+}
 
-	keyExtractor = (item: StoryType) => item.title
+let filterStories = (entries: StoryType[], filters: ListType[]) => {
+	return entries.filter((story) => {
+		let enabledCategories = filters.flatMap((f: ListType) =>
+			f.spec.selected.flatMap((s) => s.title),
+		)
 
-	render() {
-		// remove all entries with blank excerpts
-		// remove all entries with a <form from the list
-		let entries = this.props.entries
-			.filter((entry) => entry.excerpt.trim() !== '')
-			.filter((entry) => !entry.content.includes('<form'))
+		if (enabledCategories.length === 0) {
+			return entries
+		}
 
+		return getStoryCategories(story).some((category) =>
+			enabledCategories.includes(category),
+		)
+	})
+}
+
+export const NewsList = (props: Props): JSX.Element => {
+	let {
+		data = [],
+		error,
+		reload,
+		isPending,
+		isInitial,
+		isLoading,
+	} = useNews(props.source)
+
+	let entries = React.useMemo(() => cleanEntries(data), [data])
+
+	let [filters, setFilters] = React.useState<ListType[]>([])
+
+	React.useEffect(() => {
+		let allCategories = entries.flatMap((story) => getStoryCategories(story))
+
+		if (allCategories.length === 0) {
+			return
+		}
+
+		let categories = [...new Set(allCategories)].sort()
+		let filterCategories = categories.map((c) => {
+			return {title: c}
+		})
+
+		let newsFilters: ListType[] = [
+			{
+				type: 'list',
+				key: 'category',
+				enabled: true,
+				spec: {
+					title: 'Categories',
+					options: filterCategories,
+					selected: filterCategories,
+					mode: 'OR',
+					displayTitle: true,
+				},
+				apply: {key: 'category'},
+			},
+		]
+		setFilters(newsFilters)
+	}, [entries])
+
+	if (error) {
 		return (
-			<FlatList
-				ItemSeparatorComponent={this.renderSeparator}
-				ListEmptyComponent={<NoticeView text="No news." />}
-				contentContainerStyle={styles.contentContainer}
-				data={entries}
-				keyExtractor={this.keyExtractor}
-				onRefresh={this.props.onRefresh}
-				refreshing={this.props.loading}
-				renderItem={this.renderItem}
-				style={styles.listContainer}
+			<NoticeView
+				buttonText="Try Again"
+				onPress={reload}
+				text="A problem occured while loading the news stories"
 			/>
 		)
 	}
+
+	const header = (
+		<FilterToolbar
+			filters={filters}
+			onPopoverDismiss={(newFilter) => {
+				let edited = filters.map((f) =>
+					f.key === newFilter.key ? newFilter : f,
+				)
+				setFilters(edited as ListType[])
+			}}
+		/>
+	)
+
+	return (
+		<FlatList
+			ItemSeparatorComponent={() => (
+				<ListSeparator
+					spacing={{left: props.thumbnail === false ? undefined : 101}}
+				/>
+			)}
+			ListEmptyComponent={
+				isLoading ? (
+					<LoadingView />
+				) : filters.some((f: ListType) => f.spec.selected.length) ? (
+					<NoticeView text="No stories to show. Try changing the filters." />
+				) : (
+					<NoticeView text="No news stories." />
+				)
+			}
+			ListHeaderComponent={header}
+			contentContainerStyle={styles.contentContainer}
+			data={filterStories(entries, filters)}
+			keyExtractor={(item: StoryType) => item.title}
+			onRefresh={reload}
+			refreshing={isPending && !isInitial}
+			renderItem={({item}: {item: StoryType}) => (
+				<NewsRow
+					onPress={(url: string) => openUrl(url)}
+					story={item}
+					thumbnail={props.thumbnail}
+				/>
+			)}
+			style={styles.listContainer}
+		/>
+	)
 }

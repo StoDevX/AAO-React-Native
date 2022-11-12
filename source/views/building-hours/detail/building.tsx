@@ -26,7 +26,7 @@ const styles = StyleSheet.create({
 type Props = {
 	info: BuildingType
 	now: Moment
-	onProblemReport: () => any
+	onProblemReport: () => void
 }
 
 const BG_COLORS: Record<string, string> = {
@@ -34,54 +34,44 @@ const BG_COLORS: Record<string, string> = {
 	Closed: c.salmon,
 }
 
-export class BuildingDetail extends React.Component<Props> {
-	shouldComponentUpdate(nextProps: Props) {
-		return (
-			!this.props.now.isSame(nextProps.now, 'minute') ||
-			this.props.info !== nextProps.info ||
-			this.props.onProblemReport !== nextProps.onProblemReport
-		)
-	}
+export const BuildingDetail = React.memo((props: Props): JSX.Element => {
+	let {info, now, onProblemReport} = props
 
-	render() {
-		let {info, now, onProblemReport} = this.props
+	let headerImage =
+		info.image && buildingImages.has(info.image)
+			? buildingImages.get(info.image)
+			: null
 
-		let headerImage =
-			info.image && buildingImages.has(info.image)
-				? buildingImages.get(info.image)
-				: null
+	let openStatus = getShortBuildingStatus(info, now)
+	let schedules = info.schedule || []
+	let links = info.links || []
 
-		let openStatus = getShortBuildingStatus(info, now)
-		let schedules = info.schedule || []
-		let links = info.links || []
-
-		return (
-			<ScrollView contentContainerStyle={styles.container}>
-				{headerImage ? (
-					<Image
-						accessibilityIgnoresInvertColors={true}
-						resizeMode="cover"
-						source={headerImage}
-						style={styles.image}
-					/>
-				) : null}
-
-				<Header building={info} />
-				<Badge accentColor={BG_COLORS[openStatus]} status={openStatus} />
-				<ScheduleTable
-					now={now}
-					onProblemReport={onProblemReport}
-					schedules={schedules}
+	return (
+		<ScrollView contentContainerStyle={styles.container}>
+			{headerImage ? (
+				<Image
+					accessibilityIgnoresInvertColors={true}
+					resizeMode="cover"
+					source={headerImage}
+					style={styles.image}
 				/>
+			) : null}
 
-				{links.length ? <LinkTable links={links} /> : null}
+			<Header building={info} />
+			<Badge accentColor={BG_COLORS[openStatus]} status={openStatus} />
+			<ScheduleTable
+				now={now}
+				onProblemReport={onProblemReport}
+				schedules={schedules}
+			/>
 
-				<ListFooter
-					title={
-						'Building hours subject to change without notice\n\nData collected by the humans of All About Olaf'
-					}
-				/>
-			</ScrollView>
-		)
-	}
-}
+			{links.length ? <LinkTable links={links} /> : null}
+
+			<ListFooter
+				title={
+					'Building hours subject to change without notice\n\nData collected by the humans of All About Olaf'
+				}
+			/>
+		</ScrollView>
+	)
+})

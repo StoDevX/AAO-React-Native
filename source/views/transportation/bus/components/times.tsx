@@ -1,25 +1,22 @@
 import * as React from 'react'
-import {Text} from 'react-native'
+
+import {StyleProp, Text, TextStyle} from 'react-native'
 import type {DepartureTimeList} from '../types'
 
 const TIME_FORMAT = 'h:mma'
 
 type Props = {
 	times: DepartureTimeList
-	style?: any
+	style: StyleProp<TextStyle>
 }
 
-export class ScheduleTimes extends React.PureComponent<Props, void> {
-	render() {
-		let {times} = this.props
-
-		return (
-			<Text>
-				{times
-					// and format the times
-					.map((time) => (!time ? 'None' : time.format(TIME_FORMAT)))
-					.join(' • ')}
-			</Text>
-		)
-	}
+export function ScheduleTimes({times, style}: Props): JSX.Element {
+	return (
+		<Text style={style}>
+			{times
+				// and format the times
+				.map((time) => time?.format(TIME_FORMAT) ?? 'None')
+				.join(' • ')}
+		</Text>
+	)
 }

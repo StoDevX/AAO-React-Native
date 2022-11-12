@@ -1,28 +1,40 @@
-import React from 'react'
-import {Cell} from 'react-native-tableview-simple'
+import * as React from 'react'
+import {Cell} from '@frogpond/tableview'
 import {StyleSheet, Text, View} from 'react-native'
 import * as c from '@frogpond/colors'
 
 type LeftDetailProps = {
 	detail: string
 	title: string
+	onPress?: (() => void) | undefined
+	accessory?:
+		| false
+		| 'DisclosureIndicator'
+		| 'Detail'
+		| 'DetailDisclosure'
+		| 'Checkmark'
+		| undefined
 }
 
-export class MultiLineLeftDetailCell extends React.PureComponent<LeftDetailProps> {
-	render() {
-		let {detail, title} = this.props
-		let cellContent = (
-			<View style={styles.cellContentView}>
-				<Text allowFontScaling={true} style={styles.cellLeftDetail}>
-					{detail}
-				</Text>
-				<Text allowFontScaling={true} style={styles.cellLeftDetailTitle}>
-					{title}
-				</Text>
-			</View>
-		)
-		return <Cell cellContentView={cellContent} />
-	}
+export function MultiLineLeftDetailCell(props: LeftDetailProps): JSX.Element {
+	const {detail, title, onPress, accessory} = props
+	const cellContent = (
+		<View style={styles.cellContentView}>
+			<Text allowFontScaling={true} style={styles.cellLeftDetail}>
+				{detail}
+			</Text>
+			<Text allowFontScaling={true} style={styles.cellLeftDetailTitle}>
+				{title}
+			</Text>
+		</View>
+	)
+	return (
+		<Cell
+			accessory={accessory}
+			cellContentView={cellContent}
+			onPress={onPress}
+		/>
+	)
 }
 
 const styles = StyleSheet.create({

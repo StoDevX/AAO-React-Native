@@ -1,8 +1,8 @@
 package com.allaboutolaf;
 
 import android.app.Application;
-import android.net.http.HttpResponseCache;
 import android.content.Context;
+import android.net.http.HttpResponseCache;
 import android.util.Log;
 
 import com.allaboutolaf.newarchitecture.MainApplicationReactNativeHost;
@@ -13,6 +13,7 @@ import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.config.ReactFeatureFlags;
 import com.facebook.soloader.SoLoader;
+import com.reactcommunity.rndatetimepicker.RNDateTimePickerPackage;
 
 import java.io.File;
 import java.io.IOException;
@@ -33,6 +34,7 @@ public class MainApplication extends Application implements ReactApplication {
             List<ReactPackage> packages = new PackageList(this).getPackages();
             // Packages that cannot be autolinked yet can be added manually here, for example:
             // packages.add(new MyReactNativePackage());
+            packages.add(new RNDateTimePickerPackage());
             return packages;
         }
 

@@ -1,6 +1,10 @@
 # OSX
 .DS_Store
 
+# React Native generated assets
+/ios/*/main.jsbundle*
+/ios/assets/images
+
 # Xcode
 build/
 *.pbxuser

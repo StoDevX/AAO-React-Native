@@ -8,7 +8,7 @@ schedules:
     coordinates:
       'Carleton College':                [44.460753, -93.155708]
       'City Hall on Washington':         [44.451472, -93.158529]
-      'Econo Foods':                     [44.453983, -93.159477]
+      'Family Fare':                     [44.453983, -93.159477]
       'Ensley Apartments':               [44.470640, -93.174975]
       'Greenvale Apartments':            [44.463705, -93.163021]
       'Library':                         [44.457857, -93.158634]
@@ -18,7 +18,7 @@ schedules:
       'Viking Terrace':                  [44.469744, -93.163290]
     stops:
       - City Hall on Washington
-      - Econo Foods
+      - Family Fare
       - Carleton College
       - Northfield Estates
       - Viking Terrace

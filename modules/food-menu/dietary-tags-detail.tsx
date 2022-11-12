@@ -1,13 +1,7 @@
 import * as React from 'react'
-import {View, Text, StyleSheet, Image} from 'react-native'
+import {Image, StyleProp, StyleSheet, Text, View, ViewStyle} from 'react-native'
 import {Row} from '@frogpond/layout'
-
-import keys from 'lodash/keys'
-import type {
-	ItemCorIconMapType,
-	MasterCorIconMapType,
-	CorIconType,
-} from './types'
+import type {ItemCorIconMapType, MasterCorIconMapType} from './types'
 
 const styles = StyleSheet.create({
 	container: {
@@ -25,19 +19,20 @@ const styles = StyleSheet.create({
 	},
 })
 
-type Args = {
+type Props = {
 	corIcons: MasterCorIconMapType
 	dietary: ItemCorIconMapType
-	style?: any
+	style?: StyleProp<ViewStyle>
 }
 
-export function DietaryTagsDetail({corIcons, dietary, style}: Args) {
+export function DietaryTagsDetail({
+	corIcons,
+	dietary,
+	style,
+}: Props): JSX.Element {
 	// filter the mapping of all icons by just the icons provided by this item
-	const dietaryKeys = new Set(keys(dietary))
-	const filteredAny: Array<any> = Object.entries(corIcons).filter(([k]) =>
-		dietaryKeys.has(k),
-	)
-	const filtered: Array<[string, CorIconType]> = filteredAny
+	const dietaryKeys = new Set(Object.keys(dietary))
+	const filtered = Object.entries(corIcons).filter(([k]) => dietaryKeys.has(k))
 
 	const tags = filtered.map(([key, dietaryIcon]) => (
 		<Row key={key} style={styles.wrapper}>

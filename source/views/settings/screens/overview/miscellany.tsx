@@ -1,56 +1,51 @@
 import * as React from 'react'
-import {Section, PushButtonCell} from '@frogpond/tableview'
-import type {NavigationScreenProp} from 'react-navigation'
+import {Section} from '@frogpond/tableview'
+import {CellToggle, PushButtonCell} from '@frogpond/tableview/cells'
 import {trackedOpenUrl} from '@frogpond/open-url'
-import * as Icons from '@hawkrives/react-native-alternate-icons'
 import {GH_BASE_URL} from '../../../../lib/constants'
+import * as storage from '../../../../lib/storage'
+import {useNavigation} from '@react-navigation/native'
 
-type Props = {navigation: NavigationScreenProp<any>}
+export let MiscellanySection = (): JSX.Element => {
+	let navigation = useNavigation()
 
-type State = {
-	canChangeIcon: boolean
-}
-
-export class MiscellanySection extends React.Component<Props, State> {
-	state = {
-		canChangeIcon: false,
-	}
-
-	componentDidMount() {
-		this.checkIfCustomIconsSupported()
-	}
-
-	checkIfCustomIconsSupported = async () => {
-		let canChangeIcon = await Icons.isSupported()
-		this.setState(() => ({canChangeIcon}))
-	}
-
-	onPressButton = (id: string) => {
-		this.props.navigation.navigate(id)
-	}
-
-	onCreditsButton = () => this.onPressButton('CreditsView')
-	onPrivacyButton = () => this.onPressButton('PrivacyView')
-	onLegalButton = () => this.onPressButton('LegalView')
-	onSourceButton = () =>
+	let onCreditsButton = () => navigation.navigate('Credits')
+	let onPrivacyButton = () => navigation.navigate('Privacy')
+	let onLegalButton = () => navigation.navigate('Legal')
+	let onSourceButton = () =>
 		trackedOpenUrl({url: GH_BASE_URL, id: 'ContributingView'})
-	onAppIconButton = () => this.onPressButton('IconSettingsView')
 
-	render(): JSX.Element {
-		return (
-			<Section header="MISCELLANY">
-				{this.state.canChangeIcon ? (
-					<PushButtonCell
-						onPress={this.onAppIconButton}
-						title="Change App Icon"
-					/>
-				) : null}
+	let [openInApplinkPreference, setOpenInAppLinkPreference] =
+		React.useState(true)
 
-				<PushButtonCell onPress={this.onCreditsButton} title="Credits" />
-				<PushButtonCell onPress={this.onPrivacyButton} title="Privacy Policy" />
-				<PushButtonCell onPress={this.onLegalButton} title="Legal" />
-				<PushButtonCell onPress={this.onSourceButton} title="Contributing" />
-			</Section>
-		)
+	const handleOpenLinkOnChange = async (preference: boolean) => {
+		await storage.setLinkPreference(preference)
+		setOpenInAppLinkPreference(preference)
 	}
+
+	React.useEffect(() => {
+		async function loadPreference() {
+			setOpenInAppLinkPreference(await storage.getInAppLinkPreference())
+		}
+
+		loadPreference()
+	}, [])
+
+	return (
+		<Section header="MISCELLANY">
+			<CellToggle
+				label="Open links in-app"
+				onChange={handleOpenLinkOnChange}
+				value={openInApplinkPreference}
+			/>
+			<PushButtonCell onPress={onCreditsButton} title="Credits" />
+			<PushButtonCell onPress={onPrivacyButton} title="Privacy Policy" />
+			<PushButtonCell onPress={onLegalButton} title="Legal" />
+			<PushButtonCell
+				onPress={onSourceButton}
+				showLinkStyle={true}
+				title="Contributing"
+			/>
+		</Section>
+	)
 }

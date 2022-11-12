@@ -1,11 +1,9 @@
 import * as React from 'react'
 import {StyleSheet, ScrollView, Platform, View} from 'react-native'
 import Icon from 'react-native-vector-icons/Ionicons'
-import {TabBarIcon} from '@frogpond/navigation-tabs'
 import {useSelector, useDispatch} from 'react-redux'
 import {hasSeenAcknowledgement} from '../../redux/parts/settings'
 import type {ReduxState} from '../../redux'
-import type {TopLevelViewPropsType} from '../types'
 import {Avatar, Button, Card, Paragraph as AndroidP} from 'react-native-paper'
 import {Paragraph as IosP} from '@frogpond/markdown'
 import {Card as IosCard} from '@frogpond/silly-card'
@@ -15,7 +13,7 @@ import {ConnectedBalancesView as BalancesView} from './balances'
 let Paragraph = Platform.OS === 'android' ? AndroidP : IosP
 let Ack = Platform.OS === 'android' ? AndroidAck : IosAck
 
-export function BalancesOrAcknowledgementView(props: TopLevelViewPropsType) {
+export function BalancesOrAcknowledgementView(): JSX.Element {
 	let dispatch = useDispatch()
 	let alertSeen = useSelector(
 		(state: ReduxState) => state.settings?.unofficiallyAcknowledged || false,
@@ -27,7 +25,7 @@ export function BalancesOrAcknowledgementView(props: TopLevelViewPropsType) {
 	)
 
 	if (alertSeen) {
-		return <BalancesView navigation={props.navigation} />
+		return <BalancesView />
 	}
 
 	let content = (
@@ -62,16 +60,11 @@ export function BalancesOrAcknowledgementView(props: TopLevelViewPropsType) {
 	return <Ack {...ackProps}>{content}</Ack>
 }
 
-BalancesOrAcknowledgementView.navigationOptions = {
-	tabBarLabel: 'Balances',
-	tabBarIcon: TabBarIcon('card'),
-}
-
 type AcknowledgementProps = {
 	title: string
 	subtitle: string
 	children: React.ReactChildren | JSX.Element
-	onPositive: () => any
+	onPositive: () => void
 }
 
 function AndroidAck(props: AcknowledgementProps) {

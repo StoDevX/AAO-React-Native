@@ -1,7 +1,6 @@
 import * as React from 'react'
 import {View, Text, StyleSheet} from 'react-native'
 import {OutlineBadge as Badge} from '@frogpond/badge'
-import isEqual from 'lodash/isEqual'
 import type {Moment} from 'moment'
 import type {BuildingType} from './types'
 import * as c from '@frogpond/colors'
@@ -35,139 +34,94 @@ const styles = StyleSheet.create({
 	},
 })
 
-const BG_COLORS = {
+const BG_COLORS: Record<string, string> = {
 	Open: c.moneyGreen,
 	Closed: c.salmon,
 }
 
-const FG_COLORS = {
+const FG_COLORS: Record<string, string> = {
 	Open: c.hollyGreen,
 	Closed: c.brickRed,
 }
 
 type Props = {
 	info: BuildingType
-	name: string
 	now: Moment
-	onPress: (info: BuildingType) => any
+	onPress: () => void
 }
 
-type State = {
-	now: Moment
-	openStatus: string
-	hours: Array<any>
-	accentBg: string
-	accentText: string
-}
+export function BuildingRow(props: Props): JSX.Element {
+	let {info, now, onPress} = props
 
-function deriveStateFromProps(props: Props) {
-	let openStatus = getShortBuildingStatus(props.info, props.now)
-	let hours = getDetailedBuildingStatus(props.info, props.now)
+	let openStatus = React.useMemo(
+		() => getShortBuildingStatus(info, now),
+		[now, info],
+	)
+	let hours = React.useMemo(
+		() => getDetailedBuildingStatus(info, now),
+		[now, info],
+	)
 
-	let accentBg = BG_COLORS[openStatus] || c.goldenrod
-	let accentText = FG_COLORS[openStatus] || 'rgb(130, 82, 45)'
+	let accentBg = BG_COLORS[openStatus] ?? c.goldenrod
+	let accentText = FG_COLORS[openStatus] ?? 'rgb(130, 82, 45)'
 
-	return {
-		now: props.now,
-		openStatus,
-		hours,
-		accentBg,
-		accentText,
-	}
-}
-
-export class BuildingRow extends React.Component<Props, State> {
-	state = deriveStateFromProps(this.props)
-
-	static getDerivedStateFromProps(nextProps: Props, prevState: State) {
-		if (prevState.now.isSame(nextProps.now, 'minute')) {
-			return null
-		}
-
-		return deriveStateFromProps(nextProps)
-	}
-
-	shouldComponentUpdate(nextProps: Props, nextState: State) {
-		// We won't check the time in shouldComponentUpdate, because we really
-		// only care if the building status has changed, and this is called after
-		// setStateFromProps runs.
-		return (
-			this.props.name !== nextProps.name ||
-			this.props.info !== nextProps.info ||
-			this.props.onPress !== nextProps.onPress ||
-			this.state.openStatus !== nextState.openStatus ||
-			!isEqual(this.state.hours, nextState.hours)
-		)
-	}
-
-	onPress = () => {
-		this.props.onPress(this.props.info)
-	}
-
-	render() {
-		let {info, name} = this.props
-		let {openStatus, hours, accentBg, accentText} = this.state
-
-		return (
-			<ListRow arrowPosition="center" onPress={this.onPress}>
-				<Row style={styles.title}>
-					<Title lines={1} style={styles.titleText}>
-						<Text>{name}</Text>
-						{info.abbreviation ? <Text> ({info.abbreviation})</Text> : null}
-						{info.subtitle ? (
-							<Text style={styles.subtitleText}> {info.subtitle}</Text>
-						) : null}
-					</Title>
-
-					{!info.isNotice ? (
-						<Badge
-							accentColor={accentBg}
-							style={styles.accessoryBadge}
-							text={openStatus}
-							textColor={accentText}
-						/>
+	return (
+		<ListRow arrowPosition="center" onPress={onPress}>
+			<Row style={styles.title}>
+				<Title lines={1} style={styles.titleText}>
+					<Text>{info.name}</Text>
+					{info.abbreviation ? <Text> ({info.abbreviation})</Text> : null}
+					{info.subtitle ? (
+						<Text style={styles.subtitleText}> {info.subtitle}</Text>
 					) : null}
-				</Row>
+				</Title>
 
-				<View style={styles.detailWrapper}>
-					{info.noticeMessage ? (
-						<Detail style={styles.detailRow}>{info.noticeMessage}</Detail>
-					) : null}
-					{!(info.noticeMessage && info.isNotice)
-						? hours.map(({isActive, label, status}, i) => (
-								<Detail key={i} style={styles.detailRow}>
-									<BuildingTimeSlot
-										highlight={hours.length > 1 && isActive}
-										label={label}
-										status={status}
-									/>
-								</Detail>
-						  ))
-						: null}
-				</View>
-			</ListRow>
-		)
-	}
+				{!info.isNotice ? (
+					<Badge
+						accentColor={accentBg}
+						style={styles.accessoryBadge}
+						text={openStatus}
+						textColor={accentText}
+					/>
+				) : null}
+			</Row>
+
+			<View style={styles.detailWrapper}>
+				{info.noticeMessage ? (
+					<Detail style={styles.detailRow}>{info.noticeMessage}</Detail>
+				) : null}
+				{!(info.noticeMessage && info.isNotice)
+					? hours.map(({isActive, label, status}, i) => (
+							<Detail key={i} style={styles.detailRow}>
+								<BuildingTimeSlot
+									highlight={hours.length > 1 && isActive}
+									label={label}
+									status={status}
+								/>
+							</Detail>
+					  ))
+					: null}
+			</View>
+		</ListRow>
+	)
 }
 
-const BuildingTimeSlot = ({
-	label,
-	status,
-	highlight,
-}: {
-	label?: string
+type BuildingTimeSlotProps = {
+	label: string | null
 	status: string
 	highlight: boolean
-}) => {
+}
+
+const BuildingTimeSlot = (props: BuildingTimeSlotProps) => {
 	// we don't want to show the 'Hours' label, since almost every row has it
-	let showLabel = label && label !== 'Hours'
+	let showLabel = props.label !== 'Hours'
 
 	return (
 		<Text>
 			{showLabel ? (
-				<Text style={highlight && styles.bold}>{label}: </Text>
+				<Text style={props.highlight && styles.bold}>{props.label}: </Text>
 			) : null}
-			<Text style={highlight && styles.bold}>{status}</Text>
+			<Text style={props.highlight && styles.bold}>{props.status}</Text>
 		</Text>
 	)
 }

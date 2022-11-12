@@ -1,54 +1,58 @@
-import * as React from 'react'
-import {Text, Image, StyleSheet} from 'react-native'
-import type {ListType, ListItemSpecType} from './types'
-import {Section, Cell} from '@frogpond/tableview'
+import {Image, StyleSheet, Text} from 'react-native'
+import type {ListItemSpecType, ListType} from './types'
+import {Cell, Section} from '@frogpond/tableview'
 import {Column} from '@frogpond/layout'
 import concat from 'lodash/concat'
 import isEqual from 'lodash/isEqual'
 import reject from 'lodash/reject'
+import * as React from 'react'
+import {useCallback} from 'react'
 
 type PropsType = {
 	filter: ListType
-	onChange: (filter: ListType) => any
+	onChange: (filter: ListType) => void
 }
 
-export function ListSection({filter, onChange}: PropsType) {
+export function ListSection({filter, onChange}: PropsType): JSX.Element {
 	let {spec} = filter
 	let {title = '', options, selected, mode} = spec
 	let quantifier = mode === 'AND' ? 'all' : 'any'
 	let {caption = `Show items with ${quantifier} of these options.`} = spec
 
-	function buttonPushed(tappedValue: ListItemSpecType) {
-		let result
+	let buttonPushed = useCallback(
+		(tappedValue: ListItemSpecType) => {
+			let result
 
-		if (mode === 'OR' && selected.length === options.length) {
-			// if all options of an OR filter are selected and a user selects
-			// an option, make that the only selected option
-			result = [tappedValue]
-		} else if (selected.some((val) => isEqual(val, tappedValue))) {
-			// if the user has tapped an item, and it's already in the list of
-			// things they've tapped, we want to _remove_ it from that list.
-			result = reject(selected, (val) => isEqual(val, tappedValue))
-		} else {
-			// otherwise, we need to add it to the list
-			result = concat(selected, tappedValue)
-		}
+			if (mode === 'OR' && selected.length === options.length) {
+				// if all options of an OR filter are selected and a user selects
+				// an option, make that the only selected option
+				result = [tappedValue]
+			} else if (selected.some((val) => isEqual(val, tappedValue))) {
+				// if the user has tapped an item, and it's already in the list of
+				// things they've tapped, we want to _remove_ it from that list.
+				result = reject(selected, (val) => isEqual(val, tappedValue))
+			} else {
+				// otherwise, we need to add it to the list
+				result = concat(selected, tappedValue)
+			}
 
-		let enabled = false
-		if (mode === 'OR') {
-			enabled = result.length !== options.length
-		} else if (mode === 'AND') {
-			enabled = result.length > 0
-		}
+			let enabled = false
+			if (mode === 'OR') {
+				enabled = result.length !== options.length
+			} else if (mode === 'AND') {
+				enabled = result.length > 0
+			}
 
-		onChange({
-			...filter,
-			enabled: enabled,
-			spec: {...spec, selected: result},
-		})
-	}
+			onChange({
+				...filter,
+				enabled: enabled,
+				spec: {...spec, selected: result},
+			})
+		},
+		[filter, mode, onChange, options.length, selected, spec],
+	)
 
-	function showAll() {
+	let showAll = useCallback(() => {
 		let result: ListItemSpecType[]
 
 		if (selected.length === options.length) {
@@ -64,7 +68,7 @@ export function ListSection({filter, onChange}: PropsType) {
 			enabled: result.length !== options.length,
 			spec: {...spec, selected: result},
 		})
-	}
+	}, [filter, onChange, options, selected.length, spec])
 
 	let hasImageColumn = options.some((val) => Boolean(val.image))
 	let buttons = options.map((val) => (
@@ -84,7 +88,7 @@ export function ListSection({filter, onChange}: PropsType) {
 			cellStyle="RightDetail"
 			disableImageResize={true}
 			image={
-				spec.showImages ? (
+				spec.showImages && val.image ? (
 					<Image source={val.image} style={styles.icon} />
 				) : undefined
 			}

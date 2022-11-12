@@ -1,5 +1,7 @@
-import {Alert, Clipboard} from 'react-native'
-import {email} from 'react-native-communications'
+import {Alert} from 'react-native'
+import Clipboard from '@react-native-community/clipboard'
+import querystring from 'query-string'
+import {openUrl} from '@frogpond/open-url'
 
 type Args = {
 	to?: Array<string>
@@ -10,10 +12,10 @@ type Args = {
 }
 
 export function sendEmail(args: Args): void {
-	const {to = [], cc = [], bcc = [], subject = '', body = ''} = args
 	try {
-		email(to, cc, bcc, subject, body)
+		openUrl(formatEmailParts(args))
 	} catch (err) {
+		const {to = []} = args
 		const toString = to.join(', ')
 
 		Alert.alert(
@@ -33,4 +35,25 @@ export function sendEmail(args: Args): void {
 			],
 		)
 	}
+}
+
+export function formatEmailParts(args: Args): string {
+	const {to = [], cc = [], bcc = [], subject = '', body = ''} = args
+
+	let paramsToSend = {
+		cc: cc.join(','),
+		bcc: bcc.join(','),
+		subject,
+		body,
+	}
+
+	// removing empty values from the key:value pairs
+	let filtered = Object.fromEntries(
+		Object.entries(paramsToSend).filter((entry) => entry[1]),
+	)
+
+	let encodedTo = encodeURIComponent(to.join(','))
+	let query = querystring.stringify(filtered)
+
+	return `mailto:${encodedTo}?${query}`
 }

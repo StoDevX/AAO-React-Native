@@ -1,0 +1,35 @@
+
+> all-about-olaf@2.8.0-beta.8 lint
+> eslint --report-unused-disable-directives --cache source/ modules/ scripts/ images/
+
+
+./modules/filter/apply-filters.ts
+   6:59  warning  Argument 'item' should be typed with a non-any type  @typescript-eslint/explicit-module-boundary-types
+   6:65  warning  Unexpected any. Specify a different type             @typescript-eslint/no-explicit-any
+  12:49  warning  Argument 'item' should be typed with a non-any type  @typescript-eslint/explicit-module-boundary-types
+  12:55  warning  Unexpected any. Specify a different type             @typescript-eslint/no-explicit-any
+  30:55  warning  Argument 'item' should be typed with a non-any type  @typescript-eslint/explicit-module-boundary-types
+  30:61  warning  Unexpected any. Specify a different type             @typescript-eslint/no-explicit-any
+  38:51  warning  Argument 'item' should be typed with a non-any type  @typescript-eslint/explicit-module-boundary-types
+  38:57  warning  Unexpected any. Specify a different type             @typescript-eslint/no-explicit-any
+
+./source/redux/init.ts
+  10:41  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+./source/views/settings/screens/debug/row.tsx
+  6:29  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+./source/views/sis/course-search/results.tsx
+  27:50  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  28:43  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+./source/views/sis/course-search/search.tsx
+  33:34  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  34:42  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+./source/views/stoprint/print-jobs.tsx
+  39:71  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  40:33  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+✖ 16 problems (0 errors, 16 warnings)
+

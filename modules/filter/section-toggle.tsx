@@ -1,13 +1,17 @@
 import * as React from 'react'
 import type {ToggleType} from './types'
-import {Section, CellToggle} from '@frogpond/tableview'
+import {Section} from '@frogpond/tableview'
+import {CellToggle} from '@frogpond/tableview/cells'
 
 type PropsType = {
 	filter: ToggleType
-	onChange: (filterSpec: ToggleType) => any
+	onChange: (filterSpec: ToggleType) => void
 }
 
-export function SingleToggleSection({filter, onChange}: PropsType) {
+export function SingleToggleSection({
+	filter,
+	onChange,
+}: PropsType): JSX.Element {
 	let {spec, enabled} = filter
 	let {title = '', caption, label} = spec
 	return (

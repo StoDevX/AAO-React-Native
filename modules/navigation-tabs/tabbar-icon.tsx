@@ -19,7 +19,7 @@ type Props = {
 
 export const TabBarIcon =
 	(icon: string) =>
-	({color}: Props) =>
+	({color}: Props): JSX.Element =>
 		(
 			<Icon
 				name={platformPrefixIconName(icon)}

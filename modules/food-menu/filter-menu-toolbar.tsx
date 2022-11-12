@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {StyleSheet, View, Text} from 'react-native'
+import {StyleSheet, Text, View} from 'react-native'
 import type {Moment} from 'moment'
 import type {FilterType} from '@frogpond/filter'
 import {FilterToolbar, FilterToolbarButton} from '@frogpond/filter'
@@ -17,11 +17,11 @@ const styles = StyleSheet.create({
 	},
 })
 
-type PropsType = {
+type Props = {
 	date: Moment
 	isOpen: boolean
 	title?: string
-	onPopoverDismiss: (filter: FilterType) => any
+	onPopoverDismiss: (filter: FilterType) => void
 	filters: FilterType[]
 }
 
@@ -31,7 +31,7 @@ export function FilterMenuToolbar({
 	title,
 	filters,
 	onPopoverDismiss,
-}: PropsType) {
+}: Props): JSX.Element {
 	const mealFilter = filters.find((f) => f.type === 'picker')
 	const multipleMeals =
 		mealFilter && mealFilter.type === 'picker'
@@ -40,7 +40,7 @@ export function FilterMenuToolbar({
 	const nonPickerFilters = filters.filter((f) => f.type !== 'picker')
 
 	return (
-		<React.Fragment>
+		<>
 			<Toolbar>
 				<View style={[styles.toolbarSection, styles.today]}>
 					<Text>{date.format('MMM. Do')}</Text>
@@ -61,6 +61,6 @@ export function FilterMenuToolbar({
 					onPopoverDismiss={onPopoverDismiss}
 				/>
 			)}
-		</React.Fragment>
+		</>
 	)
 }

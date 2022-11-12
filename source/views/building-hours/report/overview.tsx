@@ -5,320 +5,322 @@
  */
 
 import * as React from 'react'
-import {ScrollView, View} from 'react-native'
+import {Alert, ScrollView, Platform, View} from 'react-native'
 import moment from 'moment-timezone'
 import type {Moment} from 'moment-timezone'
+import noop from 'lodash/noop'
+import jsYaml from 'js-yaml'
 import {InfoHeader} from '@frogpond/info-header'
+import {TableView, Section, Cell} from '@frogpond/tableview'
 import {
-	TableView,
-	Section,
-	Cell,
 	CellTextField,
 	CellToggle,
 	DeleteButtonCell,
 	ButtonCell,
-} from '@frogpond/tableview'
+} from '@frogpond/tableview/cells'
 import type {
 	BuildingType,
 	NamedBuildingScheduleType,
 	SingleBuildingScheduleType,
 } from '../types'
-import type {TopLevelViewPropsType} from '../../types'
 import {summarizeDays, formatBuildingTimes, blankSchedule} from '../lib'
 import {submitReport} from './submit'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
-import {RouteProp} from '@react-navigation/native'
+import {RouteProp, useNavigation, useRoute} from '@react-navigation/native'
+import {CloseScreenButton} from '@frogpond/navigation-buttons'
 import {RootStackParamList} from '../../../navigation/types'
 
-type Props = TopLevelViewPropsType & {
-	navigation: {state: {params: {initialBuilding: BuildingType}}}
-}
+export let BuildingHoursProblemReportView = (): JSX.Element => {
+	let navigation = useNavigation()
+	let route = useRoute<RouteProp<RootStackParamList, typeof NavigationKey>>()
+	let {initialBuilding} = route.params
 
-type State = {
-	building: BuildingType
-}
+	let [building, setBuilding] = React.useState(initialBuilding)
 
-// TODO: convert this class to a functional component (useState, useNavigation)
-export class BuildingHoursProblemReportView extends React.PureComponent<
-	Props,
-	State
-> {
-	state = {
-		building: this.props.route.params.initialBuilding,
-	}
+	// used for checking against unsaved edits
+	let [hasUnsavedChanges, setHasUnsavedChanges] = React.useState(false)
+	let initialBuildingYaml = React.useMemo(
+		() => jsYaml.dump(initialBuilding),
+		[initialBuilding],
+	)
 
-	openEditor = (
-		scheduleIdx: number,
-		setIdx: number,
-		set?: SingleBuildingScheduleType,
-	) => {
-		// TODO: refactor this to useNavigation
-		this.props.navigation.navigate('BuildingHoursScheduleEditor', {
-			initialSet: set,
-			onEditSet: (editedData: SingleBuildingScheduleType) =>
-				this.editHoursRow(scheduleIdx, setIdx, editedData),
-			onDeleteSet: () => this.deleteHoursRow(scheduleIdx, setIdx),
-		})
-	}
+	/**
+	 * checking for unsaved edits
+	 *
+	 * noting that we also have `gestureEnabled` set to false in the navigation options
+	 * (ios only) to prevent dismissing the modal without prompting.
+	 * https://reactnavigation.org/docs/preventing-going-back
+	 */
+	React.useEffect(
+		() =>
+			navigation.addListener('beforeRemove', (event) => {
+				if (!hasUnsavedChanges || Platform.OS === 'android') {
+					return
+				}
 
-	editName = (newName: BuildingType['name']) => {
-		this.setState((state) => {
-			return {
-				...state,
-				building: {
-					...state.building,
-					name: newName,
-				},
-			}
-		})
-	}
+				event.preventDefault()
 
-	editSchedule = (idx: number, newSchedule: NamedBuildingScheduleType) => {
-		this.setState((state) => {
-			let schedules = [...state.building.schedule]
-			schedules.splice(idx, 1, newSchedule)
-
-			return {
-				...state,
-				building: {
-					...state.building,
-					schedule: schedules,
-				},
-			}
-		})
-	}
-
-	deleteSchedule = (idx: number) => {
-		this.setState((state) => {
-			let schedules = [...state.building.schedule]
-			schedules.splice(idx, 1)
-
-			return {
-				...state,
-				building: {
-					...state.building,
-					schedule: schedules,
-				},
-			}
-		})
-	}
-
-	addSchedule = () => {
-		this.setState((state) => {
-			return {
-				...state,
-				building: {
-					...state.building,
-					schedule: [
-						...state.building.schedule,
+				Alert.alert(
+					'Discard changes?',
+					'You have made unsaved changes. Are you sure you want to discard them?',
+					[
+						{text: 'Edit', style: 'cancel', onPress: noop},
 						{
-							title: 'Hours',
-							hours: [blankSchedule()],
+							text: 'Discard',
+							style: 'destructive',
+							onPress: () => navigation.dispatch(event.data.action),
 						},
 					],
-				},
-			}
+				)
+			}),
+		[navigation, hasUnsavedChanges],
+	)
+
+	React.useEffect(() => {
+		setHasUnsavedChanges(jsYaml.dump(building) !== initialBuildingYaml)
+	}, [building, initialBuildingYaml])
+
+	let editName = (newName: BuildingType['name']) => {
+		setBuilding({
+			...building,
+			name: newName,
 		})
 	}
 
-	addHoursRow = (idx: number) => {
-		this.setState((state) => {
-			let schedules = [...state.building.schedule]
+	let editSchedule = (idx: number, newSchedule: NamedBuildingScheduleType) => {
+		let schedules = [...building.schedule]
+		schedules.splice(idx, 1, newSchedule)
 
-			schedules[idx] = {
-				...schedules[idx],
-				hours: [...schedules[idx].hours, blankSchedule()],
-			}
-
-			return {
-				...state,
-				building: {
-					...state.building,
-					schedule: schedules,
-				},
-			}
+		setBuilding({
+			...building,
+			schedule: schedules,
 		})
 	}
 
-	editHoursRow = (
-		scheduleIdx: number,
-		setIdx: number,
-		newData: SingleBuildingScheduleType,
-	) => {
-		this.setState((state) => {
-			let schedules = [...state.building.schedule]
+	let deleteSchedule = (idx: number) => {
+		let schedules = [...building.schedule]
+		schedules.splice(idx, 1)
+
+		setBuilding({
+			...building,
+			schedule: schedules,
+		})
+	}
+
+	let addSchedule = () => {
+		setBuilding({
+			...building,
+			schedule: [
+				...building.schedule,
+				{
+					title: 'Hours',
+					hours: [blankSchedule()],
+				},
+			],
+		})
+	}
+
+	let addHoursRow = (idx: number) => {
+		let schedules = [...building.schedule]
+
+		schedules[idx] = {
+			...schedules[idx],
+			hours: [...schedules[idx].hours, blankSchedule()],
+		}
+
+		setBuilding({
+			...building,
+			schedule: schedules,
+		})
+	}
+
+	let editHoursRow = React.useCallback(
+		(
+			scheduleIdx: number,
+			setIdx: number,
+			newData: SingleBuildingScheduleType,
+		) => {
+			let schedules = [...building.schedule]
 
 			let hours = [...schedules[scheduleIdx].hours]
 			hours.splice(setIdx, 1, newData)
 
 			schedules[scheduleIdx] = {...schedules[scheduleIdx], hours}
 
-			return {
-				...state,
-				building: {
-					...state.building,
-					schedule: schedules,
-				},
-			}
-		})
-	}
+			setBuilding({
+				...building,
+				schedule: schedules,
+			})
+		},
+		[building],
+	)
 
-	deleteHoursRow = (scheduleIdx: number, setIdx: number) => {
-		this.setState((state) => {
-			let schedules = [...state.building.schedule]
+	let deleteHoursRow = React.useCallback(
+		(scheduleIdx: number, setIdx: number) => {
+			let schedules = [...building.schedule]
 
 			let hours = [...schedules[scheduleIdx].hours]
 			hours.splice(setIdx, 1)
 
 			schedules[scheduleIdx] = {...schedules[scheduleIdx], hours}
 
-			return {
-				...state,
-				building: {
-					...state.building,
-					schedule: schedules,
-				},
-			}
-		})
+			setBuilding({
+				...building,
+				schedule: schedules,
+			})
+		},
+		[building],
+	)
+
+	let openEditor = React.useCallback(
+		(scheduleIdx: number, setIdx: number, set?: SingleBuildingScheduleType) =>
+			navigation.navigate('BuildingHoursScheduleEditor', {
+				set: set,
+				onEditSet: (editedData: SingleBuildingScheduleType) =>
+					editHoursRow(scheduleIdx, setIdx, editedData),
+				onDeleteSet: () => deleteHoursRow(scheduleIdx, setIdx),
+			}),
+		[deleteHoursRow, editHoursRow, navigation],
+	)
+
+	let submit = (): void => {
+		console.log(JSON.stringify(building))
+		setHasUnsavedChanges(false)
+		submitReport(initialBuilding, building)
 	}
 
-	submit = () => {
-		console.log(JSON.stringify(this.state.building))
-		submitReport(this.props.route.params.initialBuilding, this.state.building)
-	}
+	let {schedule: schedules = [], name} = building
 
-	render() {
-		let {schedule: schedules = [], name} = this.state.building
+	return (
+		<ScrollView>
+			<InfoHeader
+				message="If you could change what is incorrect and share it with us we&rsquo;d greatly appreciate it."
+				title="Thanks for spotting a problem!"
+			/>
 
-		return (
-			<ScrollView>
-				<InfoHeader
-					message="If you could tell us what the new times are, we&rsquo;d greatly appreciate it."
-					title="Thanks for spotting a problem!"
-				/>
+			<TableView>
+				<Section header="NAME">
+					<TitleCell onChange={editName} text={name || ''} />
+				</Section>
 
-				<TableView>
-					<Section header="NAME">
-						<TitleCell onChange={this.editName} text={name || ''} />
-					</Section>
+				{schedules.map((s: NamedBuildingScheduleType, i) => (
+					<EditableSchedule
+						key={i}
+						addRow={addHoursRow}
+						editRow={openEditor}
+						onDelete={deleteSchedule}
+						onEditSchedule={editSchedule}
+						schedule={s}
+						scheduleIndex={i}
+					/>
+				))}
 
-					{schedules.map((s, i) => (
-						<EditableSchedule
-							key={i}
-							addRow={this.addHoursRow}
-							editRow={this.openEditor}
-							onDelete={this.deleteSchedule}
-							onEditSchedule={this.editSchedule}
-							schedule={s}
-							scheduleIndex={i}
-						/>
-					))}
+				<Section>
+					<Cell
+						accessory="DisclosureIndicator"
+						onPress={addSchedule}
+						title="Add New Schedule"
+					/>
+				</Section>
 
-					<Section>
-						<Cell
-							accessory="DisclosureIndicator"
-							onPress={this.addSchedule}
-							title="Add New Schedule"
-						/>
-					</Section>
-
-					<Section footer="Thanks for reporting!">
-						<ButtonCell onPress={this.submit} title="Submit Report" />
-					</Section>
-				</TableView>
-			</ScrollView>
-		)
-	}
+				<Section footer="Thanks for reporting!">
+					<ButtonCell
+						accessoryIcon="send"
+						onPress={submit}
+						title="Submit Report"
+					/>
+				</Section>
+			</TableView>
+		</ScrollView>
+	)
 }
 
 type EditableScheduleProps = {
 	schedule: NamedBuildingScheduleType
 	scheduleIndex: number
-	addRow: (idx: number) => any
+	addRow: (idx: number) => void
 	editRow: (
 		schedIdx: number,
 		setIdx: number,
 		set: SingleBuildingScheduleType,
-	) => any
-	onEditSchedule: (idx: number, set: NamedBuildingScheduleType) => any
-	onDelete: (idx: number) => any
+	) => void
+	onEditSchedule: (idx: number, set: NamedBuildingScheduleType) => void
+	onDelete: (idx: number) => void
 }
 
-class EditableSchedule extends React.PureComponent<EditableScheduleProps> {
-	onEdit = (data) => {
-		let idx = this.props.scheduleIndex
-		this.props.onEditSchedule(idx, {
-			...this.props.schedule,
+const EditableSchedule = (props: EditableScheduleProps) => {
+	let onEdit = (data: Partial<NamedBuildingScheduleType>) => {
+		let idx = props.scheduleIndex
+		props.onEditSchedule(idx, {
+			...props.schedule,
 			...data,
 		})
 	}
 
-	editTitle = (newValue: string) => {
-		this.onEdit({title: newValue})
+	let editTitle = (newValue: string) => {
+		onEdit({title: newValue})
 	}
 
-	editNotes = (newValue: string) => {
-		this.onEdit({notes: newValue})
+	let editNotes = (newValue: string) => {
+		onEdit({notes: newValue})
 	}
 
-	toggleChapel = (newValue: boolean) => {
-		this.onEdit({closedForChapelTime: newValue})
+	let toggleChapel = (newValue: boolean) => {
+		onEdit({closedForChapelTime: newValue})
 	}
 
-	addHoursRow = () => {
-		this.props.addRow(this.props.scheduleIndex)
+	let addHoursRow = () => {
+		props.addRow(props.scheduleIndex)
 	}
 
-	delete = () => {
-		this.props.onDelete(this.props.scheduleIndex)
+	let deleteSchedule = () => {
+		props.onDelete(props.scheduleIndex)
 	}
 
-	openEditor = (setIndex: number, hoursSet: SingleBuildingScheduleType) => {
-		this.props.editRow(this.props.scheduleIndex, setIndex, hoursSet)
+	let openEditor = (setIndex: number, hoursSet: SingleBuildingScheduleType) => {
+		props.editRow(props.scheduleIndex, setIndex, hoursSet)
 	}
 
-	render() {
-		let {schedule} = this.props
-		let now = moment()
+	let {schedule} = props
+	let now = moment()
 
-		return (
-			<View>
-				<Section header="INFORMATION">
-					<TitleCell onChange={this.editTitle} text={schedule.title || ''} />
-					<NotesCell onChange={this.editNotes} text={schedule.notes || ''} />
+	return (
+		<View>
+			<Section header="INFORMATION">
+				<TitleCell onChange={editTitle} text={schedule.title || ''} />
+				<NotesCell onChange={editNotes} text={schedule.notes || ''} />
 
-					<CellToggle
-						label="Closes for Chapel"
-						onChange={this.toggleChapel}
-						value={Boolean(schedule.closedForChapelTime)}
+				<CellToggle
+					label="Closes for Chapel"
+					onChange={toggleChapel}
+					value={Boolean(schedule.closedForChapelTime)}
+				/>
+
+				{schedule.hours.map((set, i) => (
+					<TimesCell
+						key={i}
+						now={now}
+						onPress={openEditor}
+						set={set}
+						setIndex={i}
 					/>
+				))}
 
-					{schedule.hours.map((set, i) => (
-						<TimesCell
-							key={i}
-							now={now}
-							onPress={this.openEditor}
-							set={set}
-							setIndex={i}
-						/>
-					))}
+				<Cell
+					accessory="DisclosureIndicator"
+					onPress={addHoursRow}
+					title="Add More Hours"
+				/>
 
-					<Cell
-						accessory="DisclosureIndicator"
-						onPress={this.addHoursRow}
-						title="Add More Hours"
-					/>
-
-					<DeleteButtonCell onPress={this.delete} title="Delete Schedule" />
-				</Section>
-			</View>
-		)
-	}
+				<DeleteButtonCell onPress={deleteSchedule} title="Delete Schedule" />
+			</Section>
+		</View>
+	)
 }
 
-type TextFieldProps = {text: string; onChange: (text: string) => any}
+type TextFieldProps = {text: string; onChange: (text: string) => void}
 // "Title" will become a textfield like the login form
-const TitleCell = ({text, onChange = () => {}}: TextFieldProps) => (
+const TitleCell = ({text, onChange}: TextFieldProps) => (
 	<CellTextField
 		autoCapitalize="words"
 		onChangeText={onChange}
@@ -344,38 +346,42 @@ const NotesCell = ({text, onChange}: TextFieldProps) => (
 type TimesCellProps = {
 	set: SingleBuildingScheduleType
 	setIndex: number
-	onPress: (setIdx: number, set: SingleBuildingScheduleType) => any
+	onPress: (setIdx: number, set: SingleBuildingScheduleType) => void
 	now: Moment
 }
 
-class TimesCell extends React.PureComponent<TimesCellProps> {
-	onPress = () => {
-		this.props.onPress(this.props.setIndex, this.props.set)
+const TimesCell = (props: TimesCellProps) => {
+	let onPress = () => {
+		props.onPress(props.setIndex, props.set)
 	}
 
-	render() {
-		let {set, now} = this.props
+	let {set, now} = props
 
-		return (
-			<Cell
-				accessory="DisclosureIndicator"
-				cellStyle="RightDetail"
-				detail={formatBuildingTimes(set, now)}
-				onPress={this.onPress}
-				title={set.days.length ? summarizeDays(set.days) : 'Days'}
-			/>
-		)
-	}
+	return (
+		<Cell
+			accessory="DisclosureIndicator"
+			cellStyle="RightDetail"
+			detail={formatBuildingTimes(set, now)}
+			onPress={onPress}
+			title={set.days.length ? summarizeDays(set.days) : 'Days'}
+		/>
+	)
 }
 
 export const NavigationKey = 'BuildingHoursProblemReport'
 
-export const NavigationOptions = (props: {
-	route: RouteProp<RootStackParamList, typeof NavigationKey>
-}): NativeStackNavigationOptions => {
-	let {initialBuilding} = props.route.params
-	return {
-		title: 'Report a Problem',
-		headerBackTitle: initialBuilding.name,
-	}
+export const NavigationOptions: NativeStackNavigationOptions = {
+	title: 'Report a Problem',
+	presentation: 'modal',
+	headerRight: () =>
+		Platform.OS === 'ios' && <CloseScreenButton title="Discard" />,
+	/**
+	 * Explicility setting `gestureEnabled` to false otherwise we can end up with a
+	 * a screen that gets removed natively but did not get removed from JS state.
+	 *
+	 * This happens if the action was prevented in a `beforeRemove` listener which:
+	 * (1) we are currently doing, and
+	 * (2) is not fully supported in native-stack.
+	 */
+	gestureEnabled: false,
 }

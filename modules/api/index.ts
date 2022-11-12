@@ -1,7 +1,5 @@
 import qs from 'query-string'
 
-import {IS_PRODUCTION} from '@frogpond/constants'
-
 let root: string
 
 export function setApiRoot(url: string): void {
@@ -10,7 +8,7 @@ export function setApiRoot(url: string): void {
 
 export const API = (
 	path: `/${string}`,
-	query?: Record<string, any>,
+	query?: Record<string, unknown>,
 ): string => {
 	let url = root + path
 

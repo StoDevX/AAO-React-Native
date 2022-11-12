@@ -27,7 +27,6 @@ export type ReduxState = {
 	courses?: CoursesState
 	settings?: SettingsState
 	buildings?: BuildingsState
-	help?: HelpState
 	stoprint?: StoPrintState
 	login?: LoginState
 }
@@ -45,7 +44,6 @@ export function makeStore(): Store<ReduxState, AppAction> {
 		courses,
 		settings,
 		buildings,
-		help,
 		stoprint,
 		login,
 	})

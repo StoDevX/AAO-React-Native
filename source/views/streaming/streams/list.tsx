@@ -4,7 +4,7 @@ import {timezone} from '@frogpond/constants'
 import * as c from '@frogpond/colors'
 import {ListSeparator, ListSectionHeader} from '@frogpond/lists'
 import {NoticeView, LoadingView} from '@frogpond/notice'
-import {TabBarIcon} from '@frogpond/navigation-tabs'
+import {FilterToolbar, ListType} from '@frogpond/filter'
 import {StreamRow} from './row'
 import toPairs from 'lodash/toPairs'
 import groupBy from 'lodash/groupBy'
@@ -13,7 +13,7 @@ import type {Moment} from 'moment-timezone'
 import {toLaxTitleCase as titleCase} from '@frogpond/titlecase'
 import type {StreamType} from './types'
 import {API} from '@frogpond/api'
-import {fetch} from '@frogpond/fetch'
+import {useFetch} from 'react-async'
 
 const styles = StyleSheet.create({
 	listContainer: {
@@ -24,109 +24,143 @@ const styles = StyleSheet.create({
 	},
 })
 
-type Props = unknown
-
-type State = {
-	error?: string
-	loading: boolean
-	refreshing: boolean
-	streams: Array<{title: string; data: Array<StreamType>}>
+const groupStreams = (entries: StreamType[]) => {
+	let grouped = groupBy(entries, (j) => j.$groupBy)
+	return toPairs(grouped).map(([title, data]) => ({title, data}))
 }
 
-export class StreamListView extends React.PureComponent<Props, State> {
-	static navigationOptions = {
-		tabBarLabel: 'Streaming',
-		tabBarIcon: TabBarIcon('recording'),
+const groupStreamsByCategoryAndDate = (stream: StreamType) => {
+	let date: Moment = moment(stream.starttime)
+	let dateGroup = date.format('dddd, MMMM Do')
+
+	let group = stream.status.toLowerCase() !== 'live' ? dateGroup : 'Live'
+
+	return {
+		...stream,
+		// force title-case on the stream types, to prevent not-actually-duplicate headings
+		category: titleCase(stream.category),
+		date: date,
+		$groupBy: group,
+	}
+}
+
+const getEnabledCategories = (filters: ListType[]) => {
+	return filters.flatMap((filter: ListType) => {
+		let filterSelections: ListType['spec']['selected'] = filter.spec.selected
+		return filterSelections.flatMap((spec) => spec.title)
+	})
+}
+
+const filterStreams = (streams: StreamType[], filters: ListType[]) => {
+	let enabledCategories = getEnabledCategories(filters)
+
+	if (enabledCategories.length === 0) {
+		return streams
 	}
 
-	state = {
-		error: null,
-		loading: true,
-		refreshing: false,
-		streams: [],
-	}
+	return streams.filter((stream) => enabledCategories.includes(stream.category))
+}
 
-	componentDidMount() {
-		this.getStreams().then(() => {
-			this.setState(() => ({loading: false}))
-		})
-	}
+const useStreams = (date: Moment = moment.tz(timezone())) => {
+	let dateFrom = date.format('YYYY-MM-DD')
+	let dateTo = date.clone().add(2, 'month').format('YYYY-MM-DD')
 
-	refresh = async (): Promise<void> => {
-		this.setState(() => ({refreshing: true}))
-		await this.getStreams(true)
-		this.setState(() => ({refreshing: false}))
-	}
-
-	getStreams = async (
-		reload?: boolean,
-		date: Moment = moment.tz(timezone()),
-	) => {
-		let dateFrom = date.format('YYYY-MM-DD')
-		let dateTo = date.clone().add(2, 'month').format('YYYY-MM-DD')
-
-		let data = await fetch(API('/streams/upcoming'), {
-			searchParams: {
-				sort: 'ascending',
-				dateFrom,
-				dateTo,
-			},
-			delay: reload ? 500 : 0,
-		}).json<Array<StreamType>>()
-
-		data = data
-			.filter((stream) => stream.category !== 'athletics')
-			.map((stream) => {
-				let date: Moment = moment(stream.starttime)
-				let dateGroup = date.format('dddd, MMMM Do')
-
-				let group = stream.status.toLowerCase() !== 'live' ? dateGroup : 'Live'
-
-				return {
-					...stream,
-					// force title-case on the stream types, to prevent not-actually-duplicate headings
-					category: titleCase(stream.category),
-					date: date,
-					$groupBy: group,
-				}
-			})
-
-		let grouped = groupBy(data, (j) => j.$groupBy)
-		let mapped = toPairs(grouped).map(([title, data]) => ({title, data}))
-
-		this.setState(() => ({streams: mapped}))
-	}
-
-	keyExtractor = (item: StreamType) => item.eid
-
-	renderSectionHeader = ({section: {title}}: any) => (
-		<ListSectionHeader title={title} />
+	return useFetch<StreamType[]>(
+		API('/streams/upcoming', {
+			sort: 'ascending',
+			dateFrom,
+			dateTo,
+		}),
+		{
+			headers: {accept: 'application/json'},
+		},
 	)
+}
 
-	renderItem = ({item}: {item: StreamType}) => <StreamRow stream={item} />
+export const StreamListView = (): JSX.Element => {
+	let {data = [], error, reload, isPending, isInitial, isLoading} = useStreams()
 
-	render() {
-		if (this.state.loading) {
-			return <LoadingView />
+	let [filters, setFilters] = React.useState<ListType[]>([])
+
+	let entries = React.useMemo(() => {
+		return data.map((stream) => groupStreamsByCategoryAndDate(stream))
+	}, [data])
+
+	React.useEffect(() => {
+		let allCategories = data.map((stream) => titleCase(stream.category))
+
+		if (allCategories.length === 0) {
+			return
 		}
 
-		if (this.state.error) {
-			return <NoticeView text={`Error: ${this.state.error}`} />
-		}
+		let categories = [...new Set(allCategories)].sort()
+		let filterCategories = categories.map((c) => {
+			return {title: c}
+		})
 
+		let streamFilters: ListType[] = [
+			{
+				type: 'list',
+				key: 'category',
+				enabled: true,
+				spec: {
+					title: 'Categories',
+					options: filterCategories,
+					selected: filterCategories,
+					mode: 'OR',
+					displayTitle: true,
+				},
+				apply: {key: 'category'},
+			},
+		]
+		setFilters(streamFilters)
+	}, [data])
+
+	if (error) {
 		return (
-			<SectionList
-				ItemSeparatorComponent={ListSeparator}
-				ListEmptyComponent={<NoticeView text="No Streams" />}
-				contentContainerStyle={styles.contentContainer}
-				keyExtractor={this.keyExtractor}
-				onRefresh={this.refresh}
-				refreshing={this.state.refreshing}
-				renderItem={this.renderItem}
-				renderSectionHeader={this.renderSectionHeader}
-				sections={this.state.streams}
-				style={styles.listContainer}
+			<NoticeView
+				buttonText="Try Again"
+				onPress={reload}
+				text={`A problem occured while loading the streams. ${error.message}`}
 			/>
 		)
 	}
+
+	const header = (
+		<FilterToolbar
+			filters={filters}
+			onPopoverDismiss={(newFilter) => {
+				let edited = filters.map((f) =>
+					f.key === newFilter.key ? newFilter : f,
+				)
+				setFilters(edited as ListType[])
+			}}
+		/>
+	)
+
+	return (
+		<SectionList
+			ItemSeparatorComponent={ListSeparator}
+			ListEmptyComponent={
+				isLoading ? (
+					<LoadingView />
+				) : filters.some((f: ListType) => f.spec.selected.length) ? (
+					<NoticeView text="No streams to show. Try changing the filters." />
+				) : (
+					<NoticeView text="No streams." />
+				)
+			}
+			ListHeaderComponent={header}
+			contentContainerStyle={styles.contentContainer}
+			keyExtractor={(item: StreamType) => item.eid}
+			onRefresh={reload}
+			refreshing={isPending && !isInitial}
+			renderItem={({item}) => <StreamRow stream={item} />}
+			renderSectionHeader={({section: {title}}) => (
+				<ListSectionHeader title={title} />
+			)}
+			sections={groupStreams(filterStreams(entries, filters))}
+			style={styles.listContainer}
+		/>
+	)
 }

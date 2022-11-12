@@ -8,14 +8,14 @@ const styles = StyleSheet.create({
 	},
 })
 
-type PropsType = {
+type Props = {
 	styles?: StyleProp<ViewStyle>
 	fullWidth?: boolean
 	spacing?: {left?: number; right?: number}
 	force?: boolean
 }
 
-export function ListSeparator(props: PropsType): JSX.Element | null {
+export function ListSeparator(props: Props): JSX.Element | null {
 	if (Platform.OS === 'android' && !props.force) {
 		return null
 	}
@@ -35,9 +35,7 @@ export function ListSeparator(props: PropsType): JSX.Element | null {
 		spacing.marginRight = 0
 	}
 
-	return (
-		<Separator style={{...styles.separator, ...spacing, ...props.styles}} />
-	)
+	return <Separator style={[styles.separator, spacing, props.styles]} />
 }
 
 export function FullWidthSeparator<T extends Record<string, unknown>>(
