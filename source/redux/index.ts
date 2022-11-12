@@ -8,8 +8,6 @@ import {buildings} from './parts/buildings'
 import type {State as BuildingsState, BuildingsAction} from './parts/buildings'
 import {courses} from './parts/courses'
 import type {State as CoursesState, CoursesAction} from './parts/courses'
-import {help} from './parts/help'
-import type {State as HelpState, HelpAction} from './parts/help'
 import {login} from './parts/login'
 import type {State as LoginState, LoginAction} from './parts/login'
 import {settings} from './parts/settings'
@@ -18,7 +16,6 @@ import {stoprint} from './parts/stoprint'
 import type {State as StoPrintState, StoPrintAction} from './parts/stoprint'
 
 import NetInfo from '@react-native-community/netinfo'
-import {getEnabledTools} from './parts/help'
 import {loadFavoriteBuildings} from './parts/buildings'
 import {loadAcknowledgement} from './parts/settings'
 import {loadRecentSearches, loadRecentFilters} from './parts/courses'
@@ -34,7 +31,6 @@ export type ReduxState = {
 export type AppAction =
 	| BuildingsAction
 	| CoursesAction
-	| HelpAction
 	| LoginAction
 	| SettingsAction
 	| StoPrintAction
@@ -84,7 +80,5 @@ export async function initRedux(
 	await NetInfo.fetch()
 
 	// then go do the network stuff in parallel
-	// NOTE(rye): This use of `any` is okay. getEnabledTools returns a
-	// ThunkAction, and because we use the ThunkMiddleware, this should be fine.
-	await Promise.all([store.dispatch<any>(getEnabledTools())])
+	// ... when there is stuff to do ...
 }
