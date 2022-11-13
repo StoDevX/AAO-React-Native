@@ -41,8 +41,7 @@ platform :ios do
 		# build the .app
 		build_status = 0
 		begin
-			gym(include_bitcode: true,
-			    include_symbols: true,
+			gym(include_symbols: true,
 			    skip_codesigning: true,
 			    skip_package_ipa: true,
 			    skip_package_pkg: true,
@@ -65,8 +64,7 @@ platform :ios do
 		File.open('../logs/products', 'w') { |file| file.write('[]') }
 		build_status = 0
 		begin
-			gym(include_bitcode: true,
-			    include_symbols: true)
+			gym(include_symbols: true)
 		rescue IOError => e
 			build_status = 1
 			raise e
