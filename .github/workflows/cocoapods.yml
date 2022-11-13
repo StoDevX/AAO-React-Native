@@ -13,7 +13,7 @@ jobs:
   ios-podfile-update:
     # Adapted from https://gist.github.com/A-Tokyo/0d811e818513fc4d3272335d2847d748
     name: iOS Update Cocoapods
-    runs-on: macos-11
+    runs-on: macos-12
     if: ${{ github.actor == 'dependabot[bot]' }}
     steps:
       - uses: actions/checkout@v3.1.0
