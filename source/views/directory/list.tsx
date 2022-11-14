@@ -33,12 +33,22 @@ const getDirectoryUrl = (query: string, type: DirectorySearchTypeEnum) => {
 	let baseUrl = 'https://www.stolaf.edu/directory/search?format=json'
 
 	switch (type) {
-		case 'Query':
-			return `${baseUrl}&query=${query.trim()}`
 		case 'Department': {
 			let formattedDepartment = query.split(' ').join('+')
 			return `${baseUrl}&department=${formattedDepartment}`
 		}
+		case 'FirstName':
+			return `${baseUrl}&firstname=${query.trim()}`
+		case 'LastName':
+			return `${baseUrl}&lastname=${query.trim()}`
+		case 'Major':
+			return `${baseUrl}&major=${query.trim()}`	
+		case 'Query':
+			return `${baseUrl}&query=${query.trim()}`
+		case 'Title':
+			return `${baseUrl}&title=${query.trim()}`
+		case 'Username':
+			return `${baseUrl}&email=${query.trim()}`
 		default:
 			console.warn(
 				'Unknown directory search type found when constructing directory url.',
