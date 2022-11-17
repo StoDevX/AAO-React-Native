@@ -42,7 +42,7 @@ const getDirectoryUrl = (query: string, type: DirectorySearchTypeEnum) => {
 		case 'LastName':
 			return `${baseUrl}&lastname=${query.trim()}`
 		case 'Major':
-			return `${baseUrl}&major=${query.trim()}`	
+			return `${baseUrl}&major=${query.trim()}`
 		case 'Query':
 			return `${baseUrl}&query=${query.trim()}`
 		case 'Title':
