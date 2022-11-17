@@ -31,6 +31,7 @@ export function DirectoryDetailView(): JSX.Element {
 		profileUrl,
 		email,
 		departments,
+		pronouns,
 	} = route.params.contact
 
 	return (
@@ -47,8 +48,16 @@ export function DirectoryDetailView(): JSX.Element {
 			</Detail>
 
 			<TableView>
-				{officeHours || email || profileUrl ? (
+				{officeHours || email || profileUrl || pronouns ? (
 					<Section header="ABOUT">
+						{pronouns?.length ? (
+							<Cell
+								cellStyle="LeftDetail"
+								detail="Pronouns"
+								title={pronouns.join(', ').concat('')}
+							/>
+						) : null}
+
 						{email ? (
 							<Cell
 								accessory="DisclosureIndicator"

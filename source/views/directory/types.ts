@@ -52,6 +52,7 @@ export type DirectoryItem = {
 	onLeave: OnLeave | null
 	photo: string
 	profileUrl: string | null
+	pronouns: Array<string> | null
 	suffixName: string | null
 	thumbnail: string
 	title: string | null
