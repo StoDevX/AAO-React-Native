@@ -9,7 +9,7 @@ import toPairs from 'lodash/toPairs'
 import type {OtherModeType} from '../types'
 import {API} from '@frogpond/api'
 import {fetch} from '@frogpond/fetch'
-import {useNavigation} from '@react-navigation/native'
+import {openUrl} from '@frogpond/open-url'
 
 const transportationUrl = API('/transit/modes')
 
@@ -30,8 +30,6 @@ const styles = StyleSheet.create({
 let OtherModesView = (): JSX.Element => {
 	let [modes, setModes] = React.useState<OtherModeType[]>(defaultData.data)
 	let [refreshing, setRefreshing] = React.useState(false)
-
-	let navigation = useNavigation()
 
 	let fetchData = React.useCallback(async (reload?: boolean): Promise<void> => {
 		let {data: modes}: {data: Array<OtherModeType>} = await fetch(
@@ -63,10 +61,7 @@ let OtherModesView = (): JSX.Element => {
 			onRefresh={refresh}
 			refreshing={refreshing}
 			renderItem={({item}) => (
-				<OtherModesRow
-					mode={item}
-					onPress={(mode) => navigation.navigate('OtherModesDetail', {mode})}
-				/>
+				<OtherModesRow mode={item} onPress={(mode) => openUrl(mode.url)} />
 			)}
 			renderSectionHeader={({section: {title}}) => (
 				<ListSectionHeader title={title} />

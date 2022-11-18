@@ -29,7 +29,6 @@ import * as settings from '../views/settings/'
 import * as streaming from '../views/streaming'
 import * as orgs from '../views/student-orgs'
 import * as transportation from '../views/transportation'
-import * as othermodes from '../views/transportation/other-modes'
 import * as stoprint from '../views/stoprint'
 import * as more from '../views/more'
 import * as directory from '../views/directory'
@@ -130,11 +129,6 @@ const HomeStackScreens = () => (
 				component={transportation.View}
 				name="Transportation"
 				options={transportation.NavigationOptions}
-			/>
-			<Stack.Screen
-				component={transportation.OtherModesDetailView}
-				name="OtherModesDetail"
-				options={othermodes.OtherModesNavigationOptions}
 			/>
 		</Stack.Group>
 		<Stack.Group>
@@ -272,7 +266,7 @@ const HomeStackScreens = () => (
 				name="DirectoryDetail"
 				options={directory.DetailNavigationOptions}
 			/>
-		</Stack.Group>		
+		</Stack.Group>
 	</Stack.Navigator>
 )
 
