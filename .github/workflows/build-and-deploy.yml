@@ -73,7 +73,7 @@ jobs:
 
   ios:
     name: Build for iOS
-    runs-on: macos-12
+    runs-on: macos-11
     steps:
       - uses: actions/checkout@v3.1.0
       - uses: actions/setup-node@v3
@@ -98,7 +98,7 @@ jobs:
       #   continue-on-error: true
       #   with:
       #     cache_key: ${{ matrix.os }}
-      - run: sudo xcode-select -s /Applications/Xcode_14.1.app
+      - run: sudo xcode-select -s /Applications/Xcode_13.1.app
       - run: git fetch --prune --unshallow
       - run: npm ci
         env:

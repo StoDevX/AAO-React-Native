@@ -50,16 +50,6 @@ target 'AllAboutOlaf' do
 				config.build_settings["CXX"] = "clang++"
 				config.build_settings["LDPLUSPLUS"] = "clang++"
 			end
-
-			# Workaround for cli builds failing on Xcode 14
-			# We should be able to remove this once CocoaPods catches up to it
-			# react-native issue: https://github.com/facebook/react-native/issues/34673
-			# cocoapods issue: https://github.com/CocoaPods/CocoaPods/issues/11402
-			if target.respond_to?(:product_type) and target.product_type == "com.apple.product-type.bundle"
-				target.build_configurations.each do |config|
-					config.build_settings['CODE_SIGNING_ALLOWED'] = 'NO'
-				end
-			end
 		end
 	end
 end
