@@ -14,7 +14,7 @@ source/lib/login.ts(26,2): error TS2322: Type 'Promise<false | {} | SharedWebCre
 source/lib/login.ts(29,2): error TS2322: Type 'Promise<void | {}>' is not assignable to type 'Promise<void>'.
   Type 'void | {}' is not assignable to type 'void'.
     Type '{}' is not assignable to type 'void'.
-source/lib/login.ts(77,29): error TS2571: Object is of type 'unknown'.
+source/lib/login.ts(77,29): error TS18046: 'err' is of type 'unknown'.
 source/lib/partition-by-index.ts(5,22): error TS2769: No overload matches this call.
   Overload 1 of 2, '(...items: ConcatArray<never>[]): never[]', gave the following error.
     Argument of type 'T' is not assignable to parameter of type 'ConcatArray<never>'.
