@@ -119,7 +119,10 @@ const initialState: State = {
 	status: 'initializing',
 }
 
-export function login(state: State = initialState, action: Action): State {
+export function loginReducer(
+	state: State = initialState,
+	action: Action,
+): State {
 	switch (action.type) {
 		case LOGIN_START:
 			return {...state, status: 'checking'}

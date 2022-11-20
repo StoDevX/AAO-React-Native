@@ -166,7 +166,10 @@ const initialState: State = {
 	colorPrinters: [],
 }
 
-export function stoprint(state: State = initialState, action: Action): State {
+export function stoprintReducer(
+	state: State = initialState,
+	action: Action,
+): State {
 	switch (action.type) {
 		case UPDATE_PRINT_JOBS_FAILURE:
 			return {...state, jobsError: action.payload}

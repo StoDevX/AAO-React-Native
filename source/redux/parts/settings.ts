@@ -43,7 +43,10 @@ const initialState: State = {
 	unofficiallyAcknowledged: false,
 }
 
-export function settings(state: State = initialState, action: Action): State {
+export function settingsReducer(
+	state: State = initialState,
+	action: Action,
+): State {
 	switch (action.type) {
 		case CHANGE_THEME:
 			return {...state, theme: action.payload}

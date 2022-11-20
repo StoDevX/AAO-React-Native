@@ -168,7 +168,10 @@ const initialState: State = {
 	recentSearches: [],
 }
 
-export function courses(state: State = initialState, action: Action): State {
+export function coursesReducer(
+	state: State = initialState,
+	action: Action,
+): State {
 	switch (action.type) {
 		case LOAD_RECENT_FILTERS:
 			return {...state, recentFilters: action.payload}
