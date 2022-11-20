@@ -39,6 +39,7 @@ export function DirectoryDetailView(): JSX.Element {
 		photo,
 		officeHours,
 		profileUrl,
+		pronouns,
 		email,
 		departments,
 		username,
@@ -96,6 +97,14 @@ export function DirectoryDetailView(): JSX.Element {
 						</Chip>
 					))}
 				</View>
+
+				{pronouns?.length ? (
+					<List.Item
+						description={pronouns.join(', ').concat('')}
+						left={(props) => <List.Icon {...props} icon="handshake-outline" />}
+						title="Pronouns"
+					/>
+				) : null}
 
 				{officeHours && (
 					<List.Item
