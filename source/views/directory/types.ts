@@ -67,3 +67,12 @@ export type SearchResults = {
 	}
 	results: Array<DirectoryItem>
 }
+
+export type DirectorySearchTypeEnum =
+	| 'Department'
+	| 'FirstName'
+	| 'LastName'
+	| 'Major'
+	| 'Query'
+	| 'Title'
+	| 'Username'

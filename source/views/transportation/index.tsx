@@ -5,8 +5,6 @@ import {TabBarIcon} from '@frogpond/navigation-tabs'
 import {OtherModesView} from './other-modes'
 import {BusView} from './bus'
 
-export {OtherModesDetailView} from './other-modes'
-
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 

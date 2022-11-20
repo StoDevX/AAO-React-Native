@@ -11,7 +11,6 @@ import {ContactType} from '../views/contacts/types'
 import {StudentOrgType} from '../views/student-orgs/types'
 import {RouteParams as HoursEditorType} from '../views/building-hours/report/editor'
 import {WordType} from '../views/dictionary/types'
-import {OtherModeType} from '../views/transportation/types'
 import {UnprocessedBusLine} from '../views/transportation/bus/types'
 import type {
 	MasterCorIconMapType,
@@ -20,7 +19,7 @@ import type {
 import {Printer, PrintJob} from '../lib/stoprint/types'
 import {JobType} from '../views/sis/student-work/types'
 import {CourseType} from '../lib/course-search/types'
-import {DirectoryItem} from '../views/directory/types'
+import {DirectoryItem, DirectorySearchTypeEnum} from '../views/directory/types'
 
 export type RootStackParamList = {
 	Home: undefined
@@ -39,7 +38,7 @@ export type RootStackParamList = {
 	DictionaryDetail: {item: WordType}
 	Dictionary: undefined
 	DictionaryEditor: {item: WordType}
-	Directory: undefined
+	Directory: {queryType?: DirectorySearchTypeEnum; queryParam?: string}
 	DirectoryDetail: {contact: DirectoryItem}
 	Faq: undefined
 	Help: undefined
@@ -57,7 +56,6 @@ export type RootStackParamList = {
 	StudentOrgs: undefined
 	Transportation: undefined
 	BusMapView: {line: UnprocessedBusLine}
-	OtherModesDetail: {mode: OtherModeType}
 	CarletonBurtonMenu: undefined
 	CarletonLDCMenu: undefined
 	CarletonWeitzMenu: undefined
