@@ -19,13 +19,6 @@ source/navigation/track.ts(11,12): error TS2339: Property 'routes' does not exis
 source/navigation/track.ts(12,30): error TS2345: Argument of type 'NavigationRoute<ParamListBase, string>' is not assignable to parameter of type 'Readonly<{ key: string; index: number; routeNames: string[]; history?: unknown[] | undefined; routes: NavigationRoute<ParamListBase, string>[]; type: string; stale: false; }>'.
   Type 'NavigationRoute<ParamListBase, string>' is missing the following properties from type 'Readonly<{ key: string; index: number; routeNames: string[]; history?: unknown[] | undefined; routes: NavigationRoute<ParamListBase, string>[]; type: string; stale: false; }>': index, routeNames, routes, type, stale
 source/navigation/track.ts(14,15): error TS2339: Property 'routeName' does not exist on type 'NavigationRoute<ParamListBase, string>'.
-source/redux/parts/login.ts(122,23): error TS2322: Type '{ status: string; }' is not assignable to type 'State'.
-  Types of property 'status' are incompatible.
-    Type 'string' is not assignable to type 'LoginStateEnum'.
-source/redux/parts/settings.ts(46,26): error TS2322: Type '{ theme: string; dietaryPreferences: never[]; unofficiallyAcknowledged: boolean; }' is not assignable to type 'State'.
-  Types of property 'dietaryPreferences' are incompatible.
-    Type 'never[]' is not assignable to type '[]'.
-      Target allows only 0 element(s) but source may have more.
 source/redux/parts/stoprint.ts(68,34): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
   Type 'undefined' is not assignable to type 'string'.
 source/redux/parts/stoprint.ts(78,21): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.

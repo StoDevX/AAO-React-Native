@@ -160,7 +160,7 @@ export type State = {
 	recentSearches: string[]
 }
 
-const initialState = {
+const initialState: State = {
 	allCourses: [],
 	readyState: 'not-loaded' as ReadyState,
 	validGEs: [],

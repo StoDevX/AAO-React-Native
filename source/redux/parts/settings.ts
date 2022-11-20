@@ -37,7 +37,7 @@ export type State = {
 	readonly unofficiallyAcknowledged: boolean
 }
 
-const initialState = {
+const initialState: State = {
 	theme: 'All About Olaf',
 	dietaryPreferences: [],
 	unofficiallyAcknowledged: false,
