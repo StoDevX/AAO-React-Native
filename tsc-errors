@@ -29,35 +29,35 @@ source/redux/parts/stoprint.ts(128,34): error TS2345: Argument of type 'string |
   Type 'undefined' is not assignable to type 'string'.
 source/redux/parts/stoprint.ts(133,40): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
   Type 'undefined' is not assignable to type 'string'.
-source/views/building-hours/detail/toolbar-button.tsx(20,18): error TS2345: Argument of type 'ThunkAction<ToggleFavoriteAction>' is not assignable to parameter of type 'AnyAction'.
 source/views/settings/screens/change-icon.tsx(58,15): error TS2345: Argument of type 'string' is not assignable to parameter of type 'SetStateAction<IconTypeEnum>'.
 source/views/settings/screens/debug/list.tsx(20,36): error TS2307: Cannot find module 'react-navigation' or its corresponding type declarations.
-source/views/settings/screens/overview/login-credentials.tsx(141,13): error TS2345: Argument of type 'ThunkAction<LogInActions>' is not assignable to parameter of type 'AnyAction'.
-source/views/settings/screens/overview/login-credentials.tsx(147,12): error TS2345: Argument of type 'Promise<LogOutAction>' is not assignable to parameter of type 'AnyAction'.
-  Property 'type' is missing in type 'Promise<LogOutAction>' but required in type 'AnyAction'.
-source/views/sis/balances-acknowledgement.tsx(23,18): error TS2345: Argument of type 'Promise<SisAlertSeenAction>' is not assignable to parameter of type 'AnyAction'.
-  Property 'type' is missing in type 'Promise<SisAlertSeenAction>' but required in type 'AnyAction'.
-source/views/sis/balances.tsx(197,13): error TS2345: Argument of type 'ThunkAction<LogInActions>' is not assignable to parameter of type 'AnyAction'.
+source/views/settings/screens/overview/login-credentials.tsx(147,12): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(thunkAction: ThunkAction<any, any, any, AnyAction>): any', gave the following error.
+    Argument of type 'Promise<LogOutAction>' is not assignable to parameter of type 'ThunkAction<any, any, any, AnyAction>'.
+      Type 'Promise<LogOutAction>' provides no match for the signature '(dispatch: ThunkDispatch<any, any, AnyAction>, getState: () => any, extraArgument: any): any'.
+  Overload 2 of 2, '(action: AnyAction): AnyAction', gave the following error.
+    Argument of type 'Promise<LogOutAction>' is not assignable to parameter of type 'AnyAction'.
+      Property 'type' is missing in type 'Promise<LogOutAction>' but required in type 'AnyAction'.
+source/views/sis/balances-acknowledgement.tsx(23,18): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(thunkAction: ThunkAction<any, any, any, AnyAction>): any', gave the following error.
+    Argument of type 'Promise<SisAlertSeenAction>' is not assignable to parameter of type 'ThunkAction<any, any, any, AnyAction>'.
+      Type 'Promise<SisAlertSeenAction>' provides no match for the signature '(dispatch: ThunkDispatch<any, any, AnyAction>, getState: () => any, extraArgument: any): any'.
+  Overload 2 of 2, '(action: AnyAction): AnyAction', gave the following error.
+    Argument of type 'Promise<SisAlertSeenAction>' is not assignable to parameter of type 'AnyAction'.
+      Property 'type' is missing in type 'Promise<SisAlertSeenAction>' but required in type 'AnyAction'.
 source/views/sis/course-search/detail/index.tsx(207,24): error TS7053: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{ Open: string; Closed: string; }'.
   No index signature with a parameter of type 'string' was found on type '{ Open: string; Closed: string; }'.
 source/views/sis/course-search/lib/execute-search.ts(2,27): error TS7016: Could not find a declaration file for module 'keyword-search'. './node_modules/keyword-search/index.js' implicitly has an 'any' type.
   Try `npm i --save-dev @types/keyword-search` if it exists or add a new declaration (.d.ts) file containing `declare module 'keyword-search';`
 source/views/sis/course-search/lib/format-filter-combo.ts(37,50): error TS2345: Argument of type 'string | number' is not assignable to parameter of type 'string'.
   Type 'number' is not assignable to type 'string'.
-source/views/sis/course-search/results.tsx(122,31): error TS2345: Argument of type 'ThunkAction<UpdateRecentSearchesAction>' is not assignable to parameter of type 'AnyAction'.
-source/views/sis/course-search/results.tsx(126,39): error TS2345: Argument of type 'ThunkAction<UpdateRecentFiltersAction>' is not assignable to parameter of type 'AnyAction'.
-source/views/sis/course-search/search.tsx(210,18): error TS2345: Argument of type 'LoadCourseDataActionType' is not assignable to parameter of type 'AnyAction'.
-source/views/sis/course-search/search.tsx(214,18): error TS2345: Argument of type 'UpdateCourseDataActionType' is not assignable to parameter of type 'AnyAction'.
-source/views/sis/course-search/search.tsx(221,4): error TS2322: Type '() => AnyAction' is not assignable to type '() => Promise<any>'.
-  Type 'AnyAction' is missing the following properties from type 'Promise<any>': then, catch, finally, [Symbol.toStringTag]
-source/views/sis/course-search/search.tsx(224,4): error TS2322: Type '() => AnyAction' is not assignable to type '() => Promise<any>'.
-  Type 'AnyAction' is not assignable to type 'Promise<any>'.
+source/views/sis/course-search/search.tsx(221,4): error TS2322: Type '() => void' is not assignable to type '() => Promise<any>'.
+  Type 'void' is not assignable to type 'Promise<any>'.
+source/views/sis/course-search/search.tsx(224,4): error TS2322: Type '() => void' is not assignable to type '() => Promise<any>'.
+  Type 'void' is not assignable to type 'Promise<any>'.
 source/views/sis/student-work/index.tsx(62,41): error TS2304: Cannot find name 'mixed'.
-source/views/stoprint/print-jobs.tsx(199,36): error TS2345: Argument of type 'ThunkAction<LogInActions>' is not assignable to parameter of type 'AnyAction'.
-source/views/stoprint/print-jobs.tsx(203,18): error TS2345: Argument of type 'ThunkAction<UpdatePrintJobsAction>' is not assignable to parameter of type 'AnyAction'.
-source/views/stoprint/print-jobs.tsx(211,4): error TS2322: Type '(username: any, password: any) => AnyAction' is not assignable to type '(username: string, password: string) => Promise<any>'.
-  Type 'AnyAction' is not assignable to type 'Promise<any>'.
-source/views/stoprint/print-jobs.tsx(213,4): error TS2322: Type '() => AnyAction' is not assignable to type '() => Promise<any>'.
-  Type 'AnyAction' is not assignable to type 'Promise<any>'.
-source/views/stoprint/printers.tsx(163,18): error TS2345: Argument of type 'ThunkAction<UpdateAllPrintersAction>' is not assignable to parameter of type 'AnyAction'.
+source/views/stoprint/print-jobs.tsx(211,4): error TS2322: Type '(username: any, password: any) => void' is not assignable to type '(username: string, password: string) => Promise<any>'.
+  Type 'void' is not assignable to type 'Promise<any>'.
+source/views/stoprint/print-jobs.tsx(213,4): error TS2322: Type '() => void' is not assignable to type '() => Promise<any>'.
+  Type 'void' is not assignable to type 'Promise<any>'.
 source/views/types.ts(5,8): error TS2307: Cannot find module 'react-navigation' or its corresponding type declarations.
