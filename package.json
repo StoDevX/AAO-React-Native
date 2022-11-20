@@ -29,9 +29,11 @@
   },
   "jest": {
     "testMatch": [
-      "**/__tests__/**/*.(spec|test).(js|ts|tsx)",
-      "!**/node_modules/**",
-      "!**/e2e/**"
+      "**/__tests__/**/*.(spec|test).(js|ts|tsx)"
+    ],
+    "testPathIgnorePatterns": [
+      "/node_modules/",
+      "/e2e/"
     ],
     "collectCoverageFrom": [
       "modules/**/*.js",
