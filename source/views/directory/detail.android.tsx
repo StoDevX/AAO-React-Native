@@ -15,8 +15,11 @@ import {
 	List,
 	Portal,
 } from 'react-native-paper'
-import {RouteProp, useRoute} from '@react-navigation/native'
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+import {RouteProp, useRoute, useNavigation} from '@react-navigation/native'
+import {
+	NativeStackNavigationOptions,
+	NativeStackNavigationProp,
+} from '@react-navigation/native-stack'
 import {RootStackParamList} from '../../../source/navigation/types'
 
 export const DetailNavigationOptions: NativeStackNavigationOptions = {
@@ -24,6 +27,10 @@ export const DetailNavigationOptions: NativeStackNavigationOptions = {
 }
 
 export function DirectoryDetailView(): JSX.Element {
+	// typing useNavigation's props to inform typescript about `push`
+	let navigation =
+		useNavigation<NativeStackNavigationProp<RootStackParamList>>()
+
 	let route = useRoute<RouteProp<RootStackParamList, 'DirectoryDetail'>>()
 	const {
 		displayName,
@@ -32,6 +39,7 @@ export function DirectoryDetailView(): JSX.Element {
 		photo,
 		officeHours,
 		profileUrl,
+		pronouns,
 		email,
 		departments,
 		username,
@@ -77,13 +85,26 @@ export function DirectoryDetailView(): JSX.Element {
 							key={key}
 							accessibilityLabel={`Department: ${dept.name}`}
 							icon="account-multiple-outline"
-							onPress={() => openUrl(dept.href)}
+							onPress={() => {
+								navigation.push('Directory', {
+									queryType: 'Department',
+									queryParam: dept.name,
+								})
+							}}
 							style={styles.departmentChip}
 						>
 							{dept.name}
 						</Chip>
 					))}
 				</View>
+
+				{pronouns?.length ? (
+					<List.Item
+						description={pronouns.join(', ').concat('')}
+						left={(props) => <List.Icon {...props} icon="handshake-outline" />}
+						title="Pronouns"
+					/>
+				) : null}
 
 				{officeHours && (
 					<List.Item

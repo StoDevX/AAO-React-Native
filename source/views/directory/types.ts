@@ -52,6 +52,7 @@ export type DirectoryItem = {
 	onLeave: OnLeave | null
 	photo: string
 	profileUrl: string | null
+	pronouns: Array<string> | null
 	suffixName: string | null
 	thumbnail: string
 	title: string | null
@@ -67,3 +68,12 @@ export type SearchResults = {
 	}
 	results: Array<DirectoryItem>
 }
+
+export type DirectorySearchTypeEnum =
+	| 'Department'
+	| 'FirstName'
+	| 'LastName'
+	| 'Major'
+	| 'Query'
+	| 'Title'
+	| 'Username'

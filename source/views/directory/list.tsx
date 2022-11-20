@@ -16,29 +16,79 @@ import {NoticeView, LoadingView} from '@frogpond/notice'
 import {formatResults} from './helpers'
 import {useFetch} from 'react-async'
 import {List, Avatar} from 'react-native-paper'
-import type {DirectoryItem, SearchResults} from './types'
+import type {
+	DirectorySearchTypeEnum,
+	DirectoryItem,
+	SearchResults,
+} from './types'
 import Icon from 'react-native-vector-icons/Ionicons'
-import {useNavigation} from '@react-navigation/native'
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
-import {ChangeTextEvent} from '../../navigation/types'
+import {RouteProp, useNavigation, useRoute} from '@react-navigation/native'
+import {
+	NativeStackNavigationOptions,
+	NativeStackNavigationProp,
+} from '@react-navigation/native-stack'
+import {ChangeTextEvent, RootStackParamList} from '../../navigation/types'
 
-const useDirectory = (query: string) => {
-	const url = `https://www.stolaf.edu/directory/search?format=json&query=${query.trim()}`
+const getDirectoryUrl = (query: string, type: DirectorySearchTypeEnum) => {
+	let baseUrl = 'https://www.stolaf.edu/directory/search?format=json'
+
+	switch (type) {
+		case 'Department': {
+			let formattedDepartment = query.split(' ').join('+')
+			return `${baseUrl}&department=${formattedDepartment}`
+		}
+		case 'FirstName':
+			return `${baseUrl}&firstname=${query.trim()}`
+		case 'LastName':
+			return `${baseUrl}&lastname=${query.trim()}`
+		case 'Major':
+			return `${baseUrl}&major=${query.trim()}`
+		case 'Query':
+			return `${baseUrl}&query=${query.trim()}`
+		case 'Title':
+			return `${baseUrl}&title=${query.trim()}`
+		case 'Username':
+			return `${baseUrl}&email=${query.trim()}`
+		default:
+			console.warn(
+				'Unknown directory search type found when constructing directory url.',
+			)
+			return `${baseUrl}&query=${query.trim()}`
+	}
+}
+
+const useDirectory = (query: string, type: DirectorySearchTypeEnum) => {
+	const url = getDirectoryUrl(query, type)
+
 	return useFetch<SearchResults>(url, {
 		headers: {accept: 'application/json'},
 	})
 }
 
-export const NavigationOptions: NativeStackNavigationOptions = {
-	title: 'Directory',
+export const NavigationKey = 'Directory'
+
+export const NavigationOptions = (props: {
+	route: RouteProp<RootStackParamList, typeof NavigationKey>
+}): NativeStackNavigationOptions => {
+	let {params} = props.route
+	return {
+		title: params?.queryParam ?? 'Directory',
+	}
 }
 
 export function DirectoryView(): JSX.Element {
 	let [errorMessage, setErrorMessage] = React.useState<string | null>(null)
+	let [searchQueryType, setSearchQueryType] =
+		React.useState<DirectorySearchTypeEnum>('Query')
 	let [typedQuery, setTypedQuery] = React.useState('')
 	let searchQuery = useDebounce(typedQuery, 500)
 
-	let navigation = useNavigation()
+	// typing useNavigation's props to inform typescript about `push`
+	let navigation =
+		useNavigation<NativeStackNavigationProp<RootStackParamList>>()
+
+	let route = useRoute<RouteProp<RootStackParamList, typeof NavigationKey>>()
+	let {params} = route
 
 	let {
 		data: {results = []} = {},
@@ -47,14 +97,16 @@ export function DirectoryView(): JSX.Element {
 		isPending,
 		isInitial,
 		isLoading,
-	} = useDirectory(searchQuery)
+	} = useDirectory(searchQuery, searchQueryType)
 
 	React.useLayoutEffect(() => {
 		navigation.setOptions({
 			headerSearchBarOptions: {
 				barTintColor: c.white,
-				onChangeText: (event: ChangeTextEvent) =>
-					setTypedQuery(event.nativeEvent.text),
+				onChangeText: (event: ChangeTextEvent) => {
+					setSearchQueryType('Query')
+					setTypedQuery(event.nativeEvent.text)
+				},
 			},
 		})
 	}, [navigation])
@@ -64,6 +116,13 @@ export function DirectoryView(): JSX.Element {
 			setErrorMessage(getErrorMessage(error))
 		}
 	}, [error])
+
+	React.useEffect(() => {
+		if (params?.queryType === 'Department' && params?.queryParam) {
+			setSearchQueryType('Department')
+			setTypedQuery(params.queryParam)
+		}
+	}, [params])
 
 	if (!searchQuery) {
 		return <NoSearchPerformed />
@@ -79,7 +138,7 @@ export function DirectoryView(): JSX.Element {
 		<DirectoryItemRow
 			item={item}
 			onPress={() => {
-				navigation.navigate('DirectoryDetail', {contact: item})
+				navigation.push('DirectoryDetail', {contact: item})
 			}}
 		/>
 	)

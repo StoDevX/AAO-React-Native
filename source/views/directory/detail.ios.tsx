@@ -4,16 +4,15 @@ import {openUrl} from '@frogpond/open-url'
 import {callPhone} from '../../components/call-phone'
 import {sendEmail} from '../../components/send-email'
 import {Title, Detail} from '@frogpond/lists'
-import {
-	TableView,
-	Section,
-	Cell,
-} from '@frogpond/tableview'
+import {TableView, Section, Cell} from '@frogpond/tableview'
 import {MultiLineLeftDetailCell} from '@frogpond/tableview/cells'
 import * as c from '@frogpond/colors'
 import type {Department, CampusLocation} from './types'
-import {RouteProp, useRoute} from '@react-navigation/native'
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+import {RouteProp, useRoute, useNavigation} from '@react-navigation/native'
+import {
+	NativeStackNavigationOptions,
+	NativeStackNavigationProp,
+} from '@react-navigation/native-stack'
 import {RootStackParamList} from '../../../source/navigation/types'
 
 export const DetailNavigationOptions: NativeStackNavigationOptions = {
@@ -21,6 +20,10 @@ export const DetailNavigationOptions: NativeStackNavigationOptions = {
 }
 
 export function DirectoryDetailView(): JSX.Element {
+	// typing useNavigation's props to inform typescript about `push`
+	let navigation =
+		useNavigation<NativeStackNavigationProp<RootStackParamList>>()
+
 	let route = useRoute<RouteProp<RootStackParamList, 'DirectoryDetail'>>()
 	const {
 		displayName,
@@ -31,6 +34,7 @@ export function DirectoryDetailView(): JSX.Element {
 		profileUrl,
 		email,
 		departments,
+		pronouns,
 	} = route.params.contact
 
 	return (
@@ -47,8 +51,16 @@ export function DirectoryDetailView(): JSX.Element {
 			</Detail>
 
 			<TableView>
-				{officeHours || email || profileUrl ? (
+				{officeHours || email || profileUrl || pronouns ? (
 					<Section header="ABOUT">
+						{pronouns?.length ? (
+							<Cell
+								cellStyle="LeftDetail"
+								detail="Pronouns"
+								title={pronouns.join(', ').concat('')}
+							/>
+						) : null}
+
 						{email ? (
 							<Cell
 								accessory="DisclosureIndicator"
@@ -115,7 +127,12 @@ export function DirectoryDetailView(): JSX.Element {
 								accessory="DisclosureIndicator"
 								cellStyle="Basic"
 								detail="Department"
-								onPress={() => openUrl(dept.href)}
+								onPress={() => {
+									navigation.push('Directory', {
+										queryType: 'Department',
+										queryParam: dept.name,
+									})
+								}}
 								title={dept.name}
 							/>
 						))}

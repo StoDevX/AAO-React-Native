@@ -5,16 +5,6 @@ modules/navigation-tabs/tabbed-view.ts(24,7): error TS2322: Type '(<ParamList ex
     Type 'TypedNavigator<ParamListBase, TabNavigationState<ParamListBase>, MaterialBottomTabNavigationOptions, MaterialBottomTabNavigationEventMap, ({ id, initialRouteName, backBehavior, children, screenListeners, screenOptions, ...rest }: Props) => Element>' is not assignable to type 'ComponentType'.
       Type 'TypedNavigator<ParamListBase, TabNavigationState<ParamListBase>, MaterialBottomTabNavigationOptions, MaterialBottomTabNavigationEventMap, ({ id, initialRouteName, backBehavior, children, screenListeners, screenOptions, ...rest }: Props) => Element>' provides no match for the signature '(screens: { [key: string]: NavigationScreenRouteConfig; }, options?: ScreenOptions | undefined): unknown'.
 source/app.tsx(35,9): error TS2322: Type '(prevState: Readonly<{ key: string; index: number; routeNames: string[]; history?: unknown[] | undefined; routes: NavigationRoute<ParamListBase, string>[]; type: string; stale: false; }>, currentState: Readonly<...>) => void' is not assignable to type '(state: Readonly<{ key: string; index: number; routeNames: string[]; history?: unknown[] | undefined; routes: NavigationRoute<ParamListBase, string>[]; type: string; stale: false; }> | undefined) => void'.
-source/lib/login.ts(23,2): error TS2322: Type 'Promise<false | Result | {}>' is not assignable to type 'Promise<false | Result>'.
-  Type 'false | Result | {}' is not assignable to type 'false | Result'.
-    Type '{}' is not assignable to type 'false | Result'.
-source/lib/login.ts(26,2): error TS2322: Type 'Promise<false | {} | SharedWebCredentials>' is not assignable to type 'Promise<MaybeCredentials>'.
-  Type 'false | {} | SharedWebCredentials' is not assignable to type 'MaybeCredentials'.
-    Type 'false' has no properties in common with type 'MaybeCredentials'.
-source/lib/login.ts(29,2): error TS2322: Type 'Promise<void | {}>' is not assignable to type 'Promise<void>'.
-  Type 'void | {}' is not assignable to type 'void'.
-    Type '{}' is not assignable to type 'void'.
-source/lib/login.ts(77,29): error TS2571: Object is of type 'unknown'.
 source/lib/partition-by-index.ts(5,22): error TS2769: No overload matches this call.
   Overload 1 of 2, '(...items: ConcatArray<never>[]): never[]', gave the following error.
     Argument of type 'T' is not assignable to parameter of type 'ConcatArray<never>'.
