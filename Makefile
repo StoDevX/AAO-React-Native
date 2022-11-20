@@ -7,7 +7,7 @@ tsc-errors:
 	-npx tsc | sed "s:$$(git rev-parse --show-toplevel):.:g" | tee ${@}
 
 tsc-counts: tsc-errors
-	-cat ${<} | rg -or '$$1' 'error (TS\d{4})' | sort | uniq -c | sort -nr | sed 's/^ *//' | tee ${@}
+	-cat ${<} | rg -or '$$1' 'error (TS\d+)' | sort | uniq -c | sort -nr | sed 's/^ *//' | tee ${@}
 
 eslint-problems:
 	-npm run lint | sed "s:$$(git rev-parse --show-toplevel):.:g" | tee ${@}
