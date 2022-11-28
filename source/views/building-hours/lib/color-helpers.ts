@@ -10,8 +10,8 @@ export const FG_COLORS: Record<string, string> = {
 	Closed: c.brickRed,
 }
 
-export let getAccentBackgroundColor = (openStatus: string): string =>
+export const getAccentBackgroundColor = (openStatus: string): string =>
 	BG_COLORS[openStatus] ?? c.goldenrod
 
-export let getAccentTextColor = (openStatus: string): string =>
+export const getAccentTextColor = (openStatus: string): string =>
 	FG_COLORS[openStatus] ?? 'rgb(130, 82, 45)'
