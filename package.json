@@ -123,7 +123,7 @@
     "react-native-tableview-simple": "4.3.1",
     "react-native-typography": "1.4.1",
     "react-native-vector-icons": "9.2.0",
-    "react-native-webview": "11.23.1",
+    "react-native-webview": "11.25.0",
     "react-redux": "8.0.2",
     "redux": "4.2.0",
     "redux-logger": "3.0.6",
