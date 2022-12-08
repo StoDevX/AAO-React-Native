@@ -80,7 +80,7 @@
     "@react-native-community/clipboard": "1.5.1",
     "@react-native-community/netinfo": "9.3.1",
     "@react-native-picker/picker": "2.4.4",
-    "@react-navigation/bottom-tabs": "6.4.0",
+    "@react-navigation/bottom-tabs": "6.5.0",
     "@react-navigation/material-bottom-tabs": "6.2.4",
     "@react-navigation/material-top-tabs": "6.2.4",
     "@react-navigation/native": "6.0.11",
