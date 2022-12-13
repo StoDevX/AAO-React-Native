@@ -158,7 +158,7 @@
     "@types/tinycolor2": "1.4.3",
     "@types/wordwrap": "1.0.1",
     "@typescript-eslint/eslint-plugin": "5.38.0",
-    "@typescript-eslint/parser": "5.38.0",
+    "@typescript-eslint/parser": "5.46.1",
     "ajv": "8.11.0",
     "ajv-formats": "2.1.1",
     "ajv-keywords": "5.1.0",
