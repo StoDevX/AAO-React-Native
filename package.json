@@ -82,7 +82,7 @@
     "@react-native-picker/picker": "2.4.4",
     "@react-navigation/bottom-tabs": "6.4.0",
     "@react-navigation/material-bottom-tabs": "6.2.4",
-    "@react-navigation/material-top-tabs": "6.2.4",
+    "@react-navigation/material-top-tabs": "6.5.1",
     "@react-navigation/native": "6.0.11",
     "@react-navigation/native-stack": "6.7.0",
     "@react-navigation/stack": "6.3.1",
