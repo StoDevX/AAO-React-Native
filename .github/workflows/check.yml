@@ -8,7 +8,7 @@ jobs:
     name: No New TSC Errors
     runs-on: ubuntu-20.04
     steps:
-      - uses: actions/checkout@v3.1.0
+      - uses: actions/checkout@v3.2.0
       - uses: actions/setup-node@v3
         with:
           node-version: ^16.0
@@ -25,7 +25,7 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - run: sudo apt-get install -y ripgrep
-      - uses: actions/checkout@v3.1.0
+      - uses: actions/checkout@v3.2.0
       - uses: actions/setup-node@v3
         with:
           node-version: ^16.0
@@ -41,7 +41,7 @@ jobs:
     name: No New ESLint Problems
     runs-on: ubuntu-20.04
     steps:
-      - uses: actions/checkout@v3.1.0
+      - uses: actions/checkout@v3.2.0
       - uses: actions/setup-node@v3
         with:
           node-version: ^16.0
@@ -57,7 +57,7 @@ jobs:
     name: Prettier
     runs-on: ubuntu-20.04
     steps:
-      - uses: actions/checkout@v3.1.0
+      - uses: actions/checkout@v3.2.0
       - uses: actions/setup-node@v3
         with:
           node-version: ^16.0
@@ -69,7 +69,7 @@ jobs:
     name: ESLint
     runs-on: ubuntu-20.04
     steps:
-      - uses: actions/checkout@v3.1.0
+      - uses: actions/checkout@v3.2.0
       - uses: actions/setup-node@v3
         with:
           node-version: ^16.0
@@ -81,7 +81,7 @@ jobs:
     name: Jest
     runs-on: ubuntu-20.04
     steps:
-      - uses: actions/checkout@v3.1.0
+      - uses: actions/checkout@v3.2.0
       - uses: actions/setup-node@v3
         with:
           node-version: ^16.0
@@ -99,7 +99,7 @@ jobs:
     name: TypeScript
     runs-on: ubuntu-20.04
     steps:
-      - uses: actions/checkout@v3.1.0
+      - uses: actions/checkout@v3.2.0
       - uses: actions/setup-node@v3
         with:
           node-version: ^16.0
@@ -111,7 +111,7 @@ jobs:
     name: Data
     runs-on: ubuntu-20.04
     steps:
-      - uses: actions/checkout@v3.1.0
+      - uses: actions/checkout@v3.2.0
       - uses: actions/setup-node@v3
         with:
           node-version: ^16.0
@@ -124,7 +124,7 @@ jobs:
     name: iOS Cocoapods
     runs-on: macos-11
     steps:
-      - uses: actions/checkout@v3.1.0
+      - uses: actions/checkout@v3.2.0
       - uses: actions/setup-node@v3
         with:
           node-version: '^16.0'
@@ -143,7 +143,7 @@ jobs:
     name: iOS Bundle
     runs-on: ubuntu-20.04
     steps:
-      - uses: actions/checkout@v3.1.0
+      - uses: actions/checkout@v3.2.0
       - uses: actions/setup-node@v3
         with:
           node-version: ^16.0
@@ -156,7 +156,7 @@ jobs:
     name: Android Bundle
     runs-on: ubuntu-20.04
     steps:
-      - uses: actions/checkout@v3.1.0
+      - uses: actions/checkout@v3.2.0
       - uses: actions/setup-node@v3
         with:
           node-version: ^16.0
@@ -171,7 +171,7 @@ jobs:
     runs-on: ubuntu-20.04
     needs: [jest, eslint, android-bundle]
     steps:
-      - uses: actions/checkout@v3.1.0
+      - uses: actions/checkout@v3.2.0
       - uses: actions/setup-node@v3
         with:
           node-version: ^16.0
@@ -215,7 +215,7 @@ jobs:
     runs-on: macos-11
     needs: [jest, eslint, ios-bundle, ios-pods]
     steps:
-      - uses: actions/checkout@v3.1.0
+      - uses: actions/checkout@v3.2.0
       - uses: actions/setup-node@v3
         with:
           node-version: ^16.0
