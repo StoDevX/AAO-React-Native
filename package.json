@@ -124,7 +124,7 @@
     "react-native-typography": "1.4.1",
     "react-native-vector-icons": "9.2.0",
     "react-native-webview": "11.23.1",
-    "react-redux": "8.0.2",
+    "react-redux": "8.0.5",
     "redux": "4.2.0",
     "redux-logger": "3.0.6",
     "redux-promise": "0.6.0",
