@@ -34,6 +34,9 @@ build/
 local.properties
 *.iml
 *.hprof
+.cxx/
+*.keystore
+!debug.keystore
 
 # node.js
 node_modules/
@@ -60,7 +63,6 @@ fastlane/test_output
 android/app/signing.properties
 android/app/upload-keystore.properties
 fastlane/play-private-key.json
-*.keystore
 
 # vim temp files
 *.swp
