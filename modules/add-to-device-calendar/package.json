@@ -10,8 +10,8 @@
   },
   "peerDependencies": {
     "delay": "^5.0.0",
-    "react": "^17.0.0",
-    "react-native": "^0.68.0",
+    "react": "^18.0.0",
+    "react-native": "^0.71.0",
     "react-native-calendar-events": "^2.0.0"
   },
   "dependencies": {

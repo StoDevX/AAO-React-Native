@@ -4,7 +4,7 @@ import {images as buildingImages} from '../../../../images/spaces'
 import type {BuildingType} from '../types'
 import type {Moment} from 'moment-timezone'
 import * as c from '@frogpond/colors'
-import {getShortBuildingStatus} from '../lib'
+import {getShortBuildingStatus, hoursBackgroundColors} from '../lib'
 
 import {SolidBadge as Badge} from '@frogpond/badge'
 import {Header} from './header'
@@ -27,11 +27,6 @@ type Props = {
 	info: BuildingType
 	now: Moment
 	onProblemReport: () => void
-}
-
-const BG_COLORS: Record<string, string> = {
-	Open: c.moneyGreen,
-	Closed: c.salmon,
 }
 
 export const BuildingDetail = React.memo((props: Props): JSX.Element => {
@@ -58,7 +53,10 @@ export const BuildingDetail = React.memo((props: Props): JSX.Element => {
 			) : null}
 
 			<Header building={info} />
-			<Badge accentColor={BG_COLORS[openStatus]} status={openStatus} />
+			<Badge
+				accentColor={hoursBackgroundColors[openStatus]}
+				status={openStatus}
+			/>
 			<ScheduleTable
 				now={now}
 				onProblemReport={onProblemReport}

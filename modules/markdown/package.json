@@ -11,8 +11,8 @@
   "peerDependencies": {
     "@expo/react-native-action-sheet": "^3.0.0",
     "glamorous-native": "^2.0.0",
-    "react": "^17.0.0",
-    "react-native": "^0.68.0"
+    "react": "^18.0.0",
+    "react-native": "^0.71.0"
   },
   "dependencies": {
     "@callstack/react-theme-provider": "^3.0.8",

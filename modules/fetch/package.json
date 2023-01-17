@@ -6,7 +6,7 @@
   "author": "",
   "license": "ISC",
   "peerDependencies": {
-    "react-native": "^0.68.0"
+    "react-native": "^0.71.0"
   },
   "dependencies": {
     "@frogpond/constants": "^1.0.0",
