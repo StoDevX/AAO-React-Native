@@ -32,5 +32,5 @@ const slice = createSlice({
 export const {toggleFavoriteBuilding} = slice.actions
 export const reducer = slice.reducer
 
-export const selectFavoriteBuildings = (state: RootState) =>
+export const selectFavoriteBuildings = (state: RootState): State['favorites'] =>
 	state.buildings.favorites
