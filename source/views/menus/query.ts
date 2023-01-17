@@ -5,6 +5,7 @@ import {upgradeMenuItem, upgradeStation} from './lib/process-menu-shorthands'
 import type {
 	EditedBonAppCafeInfoType,
 	EditedBonAppMenuInfoType,
+	GithubMenuResponse,
 	GithubMenuType,
 	MasterCorIconMapType,
 	MenuItemType,
@@ -52,6 +53,7 @@ export function useBonAppCafe(cafeParam: string | {id: string}): UseQueryResult<
 			let response = await client.get(cafePath, {signal}).json()
 			return response as EditedBonAppCafeInfoType
 		},
+		staleTime: 1000 * 60 * 60, // 1 hour
 	})
 }
 
@@ -62,6 +64,7 @@ export function useBonAppMenu(cafeParam: string | {id: string}): UseQueryResult<
 			let response = await client.get(cafePath, {signal}).json()
 			return response as EditedBonAppMenuInfoType
 		},
+		staleTime: 1000 * 60 * 60, // 1 hour
 	})
 }
 
@@ -74,7 +77,7 @@ export function usePauseMenu(): UseQueryResult<GithubMenuType, unknown> {
 		queryKey: menuKeys.hosted('/food/named/menu/the-pause'),
 		queryFn: async ({queryKey: [_menu, _hosted, url], signal}) => {
 			let response = await client.get(url, {signal}).json()
-			return response as GithubMenuType
+			return response as GithubMenuResponse
 		},
 		select(data) {
 			let foodItems: MenuItemType[] = data?.foodItems || []
@@ -105,11 +108,9 @@ export function usePauseMenu(): UseQueryResult<GithubMenuType, unknown> {
 			]
 
 			return {
-				foodItems: upgradedFoodItems,
+				foodItems: upgradedFoodItemsMap,
 				corIcons: corIcons,
 				meals,
-				foodItemsMap: upgradedFoodItemsMap,
-				stationMenus,
 			} as GithubMenuType
 		},
 	})

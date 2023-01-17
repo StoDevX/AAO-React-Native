@@ -1,5 +1,4 @@
 import * as React from 'react'
-import {useState} from 'react'
 import {timezone} from '@frogpond/constants'
 import {LoadingView, NoticeView} from '@frogpond/notice'
 import {FoodMenu} from '@frogpond/food-menu'
@@ -14,12 +13,7 @@ type Props = {
 
 export function GitHubHostedMenu(props: Props): JSX.Element {
 	let {
-		data = {
-			foodItemsMap: {},
-			meals: [],
-			corIcons: {},
-			now: moment.tz(timezone()),
-		},
+		data = {foodItems: {}, meals: [], corIcons: {}},
 		error,
 		isError,
 		isLoading,
@@ -44,7 +38,7 @@ export function GitHubHostedMenu(props: Props): JSX.Element {
 
 	return (
 		<FoodMenu
-			foodItems={data.foodItemsMap}
+			foodItems={data.foodItems}
 			meals={data.meals}
 			menuCorIcons={data.corIcons}
 			name={props.name}
