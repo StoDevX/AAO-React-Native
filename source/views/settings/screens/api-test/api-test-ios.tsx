@@ -2,12 +2,12 @@ import * as React from 'react'
 import * as c from '@frogpond/colors'
 import {SegmentedControlIOS, StyleSheet, TextInput, View} from 'react-native'
 import {Toolbar} from '@frogpond/toolbar'
-import {fetch} from '@frogpond/fetch'
-import {API} from '@frogpond/api'
+import {client} from '@frogpond/api'
 import glamorous from 'glamorous-native'
 import {iOSUIKit} from 'react-native-typography'
 import {DebugListView} from '../../screens/debug'
 import {useNavigation} from '@react-navigation/native'
+import { useQuery } from '@tanstack/react-query'
 
 const styles = StyleSheet.create({
 	container: {
@@ -41,29 +41,19 @@ const Output = glamorous(TextInput)({
 const Segment = glamorous(SegmentedControlIOS)({})
 
 export const IOSAPITestView = (): JSX.Element => {
-	let [results, setResults] = React.useState<string | null>(null)
-	let [error, setError] = React.useState<string | null>(null)
+	let [path, setPath] = React.useState<string>('');
 	let [selectedIndex, setSelectedIndex] = React.useState(0)
 
 	let navigation = useNavigation()
 
-	let fetchData = async (path: string) => {
-		try {
-			let correctedPath: `/${string}` = path.startsWith('/')
-				? (path as `/${string}`)
-				: `/${path}`
-			let responseData: string = await fetch(API(correctedPath), {
-				cache: 'no-store',
-			}).text()
-			setResults(responseData)
-			setError(null)
-		} catch (err) {
-			setResults(null)
-			setError(JSON.stringify(err))
-		}
-	}
+	let {data, error} = useQuery({
+		queryKey: ['api-test', path],
+		queryFn: ({signal, queryKey: [_group, path]}) => {
+			return client.get(path, {signal, cache: 'no-store'}).text()
+		},
+	})
 
-	let APIResponse = error ? (
+	let APIResponse = error instanceof Error ? (
 		<Output
 			editable={false}
 			// this aligns the text to the top on iOS, and centers it on Android
@@ -72,7 +62,7 @@ export const IOSAPITestView = (): JSX.Element => {
 			style={styles.error}
 			// use multiline with textAlignVertical="top" for the same behavior in both platforms
 			textAlignVertical="top"
-			value={error}
+			value={error.toString()}
 		/>
 	) : selectedIndex === 0 ? (
 		<Output
@@ -83,10 +73,10 @@ export const IOSAPITestView = (): JSX.Element => {
 			style={styles.data}
 			// use multiline with textAlignVertical="top" for the same behavior in both platforms
 			textAlignVertical="top"
-			value={results ?? ''}
+			value={data ?? ''}
 		/>
 	) : (
-		<DebugListView apiTest={true} navigation={navigation} state={results} />
+		<DebugListView apiTest={true} navigation={navigation} state={data} />
 	)
 
 	return (
@@ -96,7 +86,7 @@ export const IOSAPITestView = (): JSX.Element => {
 					autoCapitalize="none"
 					autoCorrect={false}
 					keyboardType="web-search"
-					onEndEditing={(e) => fetchData(e.nativeEvent.text)}
+					onEndEditing={(e) => setPath(e.nativeEvent.text)}
 					placeholder="path/to/resource"
 					returnKeyType="done"
 					style={styles.default}
