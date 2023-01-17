@@ -1,5 +1,5 @@
 import * as c from '@frogpond/colors'
-import {ListEmpty, ListSectionHeader, ListSeparator} from '@frogpond/lists'
+import {ListSectionHeader, ListSeparator} from '@frogpond/lists'
 import {LoadingView, NoticeView} from '@frogpond/notice'
 import {useNavigation} from '@react-navigation/native'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'

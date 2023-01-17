@@ -186,7 +186,7 @@ export function BonAppHostedMenu(props: Props): JSX.Element {
 		return <LoadingView text={sample(props.loadingMessage)} />
 	}
 
-	if (menuError instanceof Error) {
+	if (isMenuError && menuError instanceof Error) {
 		let errorMessage = getErrorMessage(menuError)
 		let msg = `Error: ${errorMessage}`
 		if (errorMessage === BONAPP_HTML_ERROR_CODE) {
@@ -196,7 +196,7 @@ export function BonAppHostedMenu(props: Props): JSX.Element {
 		return <NoticeView buttonText="Again!" onPress={menuReload} text={msg} />
 	}
 
-	if (cafeError instanceof Error) {
+	if (isCafeError && cafeError instanceof Error) {
 		let errorMessage = getErrorMessage(cafeError)
 		let msg = `Error: ${errorMessage}`
 		if (errorMessage === BONAPP_HTML_ERROR_CODE) {

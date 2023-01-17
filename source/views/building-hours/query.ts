@@ -1,8 +1,7 @@
 import {client} from '@frogpond/api'
-import {useQuery} from '@tanstack/react-query'
+import {useQuery, UseQueryResult} from '@tanstack/react-query'
 import {groupBy} from 'lodash'
 import {useSelector} from 'react-redux'
-import {queryClient} from '../../init/tanstack-query'
 import {selectFavoriteBuildings} from '../../redux'
 import {BuildingType} from './types'
 
@@ -10,9 +9,7 @@ export const keys = {
 	all: ['buildings'] as const,
 }
 
-queryClient.setQueryData(keys.all, require('../../docs/building-hours.json'))
-
-export function useGroupedBuildings() {
+export function useGroupedBuildings(): UseQueryResult<Array<{title: string, data: BuildingType[]}>, unknown> {
 	let favoriteBuildings = useSelector(selectFavoriteBuildings)
 
 	return useQuery({

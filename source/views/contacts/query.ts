@@ -1,16 +1,13 @@
 import {client} from '@frogpond/api'
-import {useQuery} from '@tanstack/react-query'
+import {useQuery, UseQueryResult} from '@tanstack/react-query'
 import {groupBy, toPairs} from 'lodash'
-import {queryClient} from '../../init/tanstack-query'
 import {ContactType} from './types'
 
 export const keys = {
 	all: ['contacts'] as const,
 }
 
-queryClient.setQueryData(keys.all, require('../../docs/contact-info.json'))
-
-export function useGroupedContacts() {
+export function useGroupedContacts(): UseQueryResult<Array<{title: string, data: ContactType[]}>, unknown> {
 	return useQuery({
 		queryKey: keys.all,
 		queryFn: async ({signal}) => {

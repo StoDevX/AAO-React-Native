@@ -1,5 +1,5 @@
 import ky from 'ky'
-import {useQuery} from '@tanstack/react-query'
+import {useQuery, UseQueryResult} from '@tanstack/react-query'
 import {DirectorySearchTypeEnum, SearchResults} from './types'
 
 let directory = ky.create({prefixUrl: 'https://www.stolaf.edu/directory'})
@@ -30,8 +30,9 @@ const getDirectoryParams = (query: string, type: DirectorySearchTypeEnum) => {
 		case 'username':
 			p.set('email', query.trim())
 			break
-		default:
+		default: {
 			let _neverHitMe: never = type
+		}
 	}
 
 	return p
@@ -45,7 +46,7 @@ export const keys = {
 export function useDirectoryEntries(
 	query: string,
 	type: DirectorySearchTypeEnum,
-) {
+): UseQueryResult<SearchResults, unknown> {
 	return useQuery({
 		queryKey: keys.all(query, type),
 		queryFn: async ({queryKey: [_, type, query], signal}) => {

@@ -5,7 +5,7 @@ import {useGroupedBuildings} from './query'
 import {BuildingType} from './types'
 
 import * as c from '@frogpond/colors'
-import {ListSeparator, ListSectionHeader, emptyList} from '@frogpond/lists'
+import {ListSeparator, ListSectionHeader} from '@frogpond/lists'
 import {LoadingView, NoticeView} from '@frogpond/notice'
 import {useNavigation} from '@react-navigation/native'
 import {useMomentTimer} from '@frogpond/timer/hook'

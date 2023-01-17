@@ -37,7 +37,6 @@ export const NavigationOptions = (props: {
 }
 
 export function DirectoryView(): JSX.Element {
-	let [errorMessage, setErrorMessage] = React.useState<string | null>(null)
 	let [searchQueryType, setSearchQueryType] =
 		React.useState<DirectorySearchTypeEnum>('query')
 	let [typedQuery, setTypedQuery] = React.useState('')
@@ -71,17 +70,11 @@ export function DirectoryView(): JSX.Element {
 	}, [navigation])
 
 	React.useEffect(() => {
-		if (isError && error instanceof Error) {
-			setErrorMessage(getErrorMessage(error))
-		}
-	}, [error])
-
-	React.useEffect(() => {
 		if (params?.queryType === 'department' && params?.queryParam) {
 			setSearchQueryType('department')
 			setTypedQuery(params.queryParam)
 		}
-	}, [params])
+	}, [params?.queryType, params?.queryParam])
 
 	if (!searchQuery) {
 		return <NoSearchPerformed />
@@ -97,8 +90,8 @@ export function DirectoryView(): JSX.Element {
 		<View style={styles.wrapper}>
 			{isLoading ? (
 				<LoadingView />
-			) : errorMessage ? (
-				<NoticeView text={parseErrorMessage(errorMessage)} />
+			) : isError && error instanceof Error ? (
+				<NoticeView text={parseErrorMessage(getErrorMessage(error))} />
 			) : !items.length ? (
 				<NoticeView text={`No results found for "${searchQuery}".`} />
 			) : (
