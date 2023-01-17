@@ -1,6 +1,7 @@
 import * as React from 'react'
 import * as c from '@frogpond/colors'
-import {SegmentedControlIOS, StyleSheet, TextInput, View} from 'react-native'
+import {StyleSheet, TextInput, View} from 'react-native'
+import SegmentedControl from '@react-native-community/segmented-control'
 import {Toolbar} from '@frogpond/toolbar'
 import {fetch} from '@frogpond/fetch'
 import {API} from '@frogpond/api'
@@ -38,7 +39,7 @@ const Output = glamorous(TextInput)({
 	...iOSUIKit.bodyObject,
 })
 
-const Segment = glamorous(SegmentedControlIOS)({})
+const Segment = glamorous(SegmentedControl)({})
 
 export const IOSAPITestView = (): JSX.Element => {
 	let [results, setResults] = React.useState<string | null>(null)

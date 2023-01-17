@@ -313,6 +313,8 @@ PODS:
     - RCTTypeSafety
     - React-Core
     - ReactCommon/turbomodule/core
+  - react-native-segmented-control (2.2.2):
+    - React-Core
   - react-native-sfsymbols (1.2.1):
     - React
   - react-native-webview (11.23.1):
@@ -416,7 +418,7 @@ PODS:
     - React-Core
   - RNKeychain (8.1.1):
     - React-Core
-  - RNReanimated (2.9.1):
+  - RNReanimated (2.14.1):
     - DoubleConversion
     - FBLazyVector
     - FBReactNativeSpec
@@ -511,6 +513,7 @@ DEPENDENCIES:
   - "react-native-netinfo (from `../node_modules/@react-native-community/netinfo`)"
   - react-native-restart (from `../node_modules/react-native-restart`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
+  - "react-native-segmented-control (from `../node_modules/@react-native-community/segmented-control`)"
   - react-native-sfsymbols (from `../node_modules/react-native-sfsymbols`)
   - react-native-webview (from `../node_modules/react-native-webview`)
   - React-perflogger (from `../node_modules/react-native/ReactCommon/reactperflogger`)
@@ -614,6 +617,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-restart"
   react-native-safe-area-context:
     :path: "../node_modules/react-native-safe-area-context"
+  react-native-segmented-control:
+    :path: "../node_modules/@react-native-community/segmented-control"
   react-native-sfsymbols:
     :path: "../node_modules/react-native-sfsymbols"
   react-native-webview:
@@ -676,10 +681,10 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
 SPEC CHECKSUMS:
-  boost: a7c83b31436843459a1961bfd74b96033dc77234
+  boost: 57d2868c099736d80fcd648bf211b4431e51a558
   BVLinearGradient: 34a999fda29036898a09c6a6b728b0b4189e1a44
   CocoaAsyncSocket: 065fd1e645c7abab64f7a6a2007a48038fdc6a99
-  DoubleConversion: 831926d9b8bf8166fd87886c4abab286c2422662
+  DoubleConversion: 5189b271737e1565bdce30deb4a08d647e3f5f54
   FBLazyVector: 61839cba7a48c570b7ac3e1cd8a4d0948382202f
   FBReactNativeSpec: 5a14398ccf5e27c1ca2d7109eb920594ce93c10d
   Flipper: 26fc4b7382499f1281eb8cb921e5c3ad6de91fe0
@@ -692,7 +697,7 @@ SPEC CHECKSUMS:
   Flipper-RSocket: d9d9ade67cbecf6ac10730304bf5607266dd2541
   FlipperKit: cbdee19bdd4e7f05472a66ce290f1b729ba3cb86
   fmt: ff9d55029c625d3757ed641535fd4a75fedc7ce9
-  glog: 476ee3e89abb49e07f822b48323c51c57124b572
+  glog: 04b94705f318337d7ead9e6d17c019bd9b1f6b1b
   hawkrives_react-native-alternate-icons: 4560d4a054bf591f3dc5fce15a06df2830fd50a4
   hermes-engine: f6e715aa6c8bd38de6c13bc85e07b0a337edaa89
   libevent: 4049cae6c81cdb3654a443be001fb9bdceff7913
@@ -715,6 +720,7 @@ SPEC CHECKSUMS:
   react-native-netinfo: 2517ad504b3d303e90d7a431b0fcaef76d207983
   react-native-restart: 45c8dca02491980f2958595333cbccd6877cb57e
   react-native-safe-area-context: 99b24a0c5acd0d5dcac2b1a7f18c49ea317be99a
+  react-native-segmented-control: 65df6cd0619b780b3843d574a72d4c7cec396097
   react-native-sfsymbols: bd3a0d3eab185e80b571bae60753dcf5a0d57967
   react-native-webview: d33e2db8925d090871ffeb232dfa50cb3a727581
   React-perflogger: e5fc4149e9bbb972b8520277f3b23141faa47a36
@@ -739,7 +745,7 @@ SPEC CHECKSUMS:
   RNGestureHandler: 28ad20bf02257791f7f137b31beef34b9549f54b
   RNInAppBrowser: e36d6935517101ccba0e875bac8ad7b0cb655364
   RNKeychain: ff836453cba46938e0e9e4c22e43d43fa2c90333
-  RNReanimated: 857623451c6f8a547eb07a04e836c86a6f42a6f5
+  RNReanimated: 2c1a20521293333aa28b6bb33bc6cd89c7c11066
   RNScreens: 0df01424e9e0ed7827200d6ed1087ddd06c493f9
   RNSearchBar: 9860431356b7d12a8449d2fddb2b5f3c78d1e99f
   RNSentry: 4c09f4dd9740cb9b33e94303de5b6d0dbeb0737d
