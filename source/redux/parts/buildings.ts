@@ -1,70 +1,35 @@
-import * as storage from '../../lib/storage'
-import type {ReduxState} from '../index'
+import {createSlice} from '@reduxjs/toolkit'
+import type {PayloadAction} from '@reduxjs/toolkit'
+import type {RootState} from '../store'
 
-type Dispatch<A extends Action> = (
-	action: A | Promise<A> | ThunkAction<A>,
-) => void
-type GetState = () => ReduxState
-type ThunkAction<A extends Action> = (
-	dispatch: Dispatch<A>,
-	getState: GetState,
-) => void
-type Action = ToggleFavoriteAction | LoadFavoritesAction
-
-const LOAD_FAVORITE_BUILDINGS = 'buildings/LOAD_FAVORITE_BUILDINGS'
-const TOGGLE_FAVORITE_BUILDING = 'buildings/TOGGLE_FAVORITE_BUILDING'
-
-type LoadFavoritesAction = {
-	type: 'buildings/LOAD_FAVORITE_BUILDINGS'
-	payload: Array<string>
-}
-export async function loadFavoriteBuildings(): Promise<LoadFavoritesAction> {
-	const favoriteBuildings = await storage.getFavoriteBuildings()
-	return {type: LOAD_FAVORITE_BUILDINGS, payload: favoriteBuildings}
-}
-
-type ToggleFavoriteAction = {
-	type: 'buildings/TOGGLE_FAVORITE_BUILDING'
-	payload: Array<string>
-}
-export function toggleFavoriteBuilding(
-	buildingName: string,
-): ThunkAction<ToggleFavoriteAction> {
-	return (dispatch, getState) => {
-		const state = getState()
-
-		const currentFavorites = state.buildings ? state.buildings.favorites : []
-
-		const newFavorites = currentFavorites.includes(buildingName)
-			? currentFavorites.filter((name) => name !== buildingName)
-			: [...currentFavorites, buildingName]
-
-		// Sort the building names (localeCompare handles non-ASCII chars better)
-		newFavorites.sort((a, b) => a.localeCompare(b))
-
-		// TODO: remove saving logic from reducers
-		storage.setFavoriteBuildings(newFavorites)
-
-		dispatch({type: TOGGLE_FAVORITE_BUILDING, payload: newFavorites})
-	}
-}
-
-export type State = {
+type State = {
 	favorites: Array<string>
 }
 
-const initialState: State = {
+// why `as`? see https://redux-toolkit.js.org/tutorials/typescript#:~:text=In%20some%20cases%2C%20TypeScript
+const initialState = {
 	favorites: [],
-}
+} as State
 
-export function buildings(state: State = initialState, action: Action): State {
-	switch (action.type) {
-		case LOAD_FAVORITE_BUILDINGS:
-		case TOGGLE_FAVORITE_BUILDING: {
-			return {...state, favorites: action.payload}
-		}
-		default: {
-			return state
-		}
-	}
-}
+const slice = createSlice({
+	name: 'buildings',
+	initialState,
+	reducers: {
+		toggleFavoriteBuilding(state, action: PayloadAction<string>) {
+			let favoritesSet = new Set(state.favorites)
+			favoritesSet.delete(action.payload)
+
+			let newFavorites = Array.from(favoritesSet)
+
+			// Sort the building names (localeCompare handles non-ASCII chars better)
+			newFavorites.sort((a, b) => a.localeCompare(b))
+
+			state.favorites = newFavorites
+		},
+	},
+})
+
+export const {toggleFavoriteBuilding} = slice.actions
+export const reducer = slice.reducer
+
+export const selectFavorites = (state: RootState) => state.buildings.favorites
