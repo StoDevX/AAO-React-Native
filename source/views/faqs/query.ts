@@ -1,14 +1,11 @@
 import {client} from '@frogpond/api'
-import {useQuery} from '@tanstack/react-query'
-import {queryClient} from '../../init/tanstack-query'
+import {useQuery, UseQueryResult} from '@tanstack/react-query'
 
 export const keys = {
 	all: ['faqs'] as const,
 }
 
-queryClient.setQueryData(keys.all, require('../../docs/faqs.json'))
-
-export function useFaqs() {
+export function useFaqs(): UseQueryResult<{text: string}, unknown> {
 	return useQuery({
 		queryKey: keys.all,
 		queryFn: async ({signal}) => {

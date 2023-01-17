@@ -15,11 +15,11 @@ function eventMapper(event: EventType): EventType {
 export function KSTOScheduleView(): JSX.Element {
 	return (
 		<CccCalendarView
-			query={useNamedCalendar('ksto-schedule', {eventMapper})}
 			poweredBy={{
 				title: 'Powered by the KSTO team',
 				href: 'https://pages.stolaf.edu/ksto/',
 			}}
+			query={useNamedCalendar('ksto-schedule', {eventMapper})}
 		/>
 	)
 }
@@ -27,11 +27,11 @@ export function KSTOScheduleView(): JSX.Element {
 export function KRLXScheduleView(): JSX.Element {
 	return (
 		<CccCalendarView
-			query={useNamedCalendar('krlx-schedule', {eventMapper})}
 			poweredBy={{
 				title: 'Powered by the KRLX team',
 				href: 'https://www.krlx.org/schedule/',
 			}}
+			query={useNamedCalendar('krlx-schedule', {eventMapper})}
 		/>
 	)
 }

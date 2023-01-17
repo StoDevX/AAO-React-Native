@@ -93,7 +93,7 @@ export const NewsList = (props: Props): JSX.Element => {
 			<NoticeView
 				buttonText="Try Again"
 				onPress={refetch}
-				text={`A problem occured while loading: ${props.query.error}`}
+				text={`A problem occured while loading: ${error}`}
 			/>
 		)
 	}

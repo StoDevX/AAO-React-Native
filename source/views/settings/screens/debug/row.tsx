@@ -3,7 +3,7 @@ import {Cell} from '@frogpond/tableview'
 import type {TopLevelViewPropsType} from '../../../types'
 
 type Props = TopLevelViewPropsType & {
-	data: {key: string; value: any}
+	data: {key: string; value: unknown}
 	onPress: (key: string) => void
 }
 

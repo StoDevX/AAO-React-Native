@@ -1,12 +1,8 @@
 import {client} from '@frogpond/api'
-import {decode, innerTextWithSpaces, parseHtml} from '@frogpond/html-lib'
-import {toLaxTitleCase} from '@frogpond/titlecase'
-import {useQuery} from '@tanstack/react-query'
-import {groupBy, mapValues, toPairs} from 'lodash'
-import {queryClient} from '../../init/tanstack-query'
+import {useQuery, UseQueryResult} from '@tanstack/react-query'
+import {groupBy} from 'lodash'
 import {upgradeMenuItem, upgradeStation} from './lib/process-menu-shorthands'
-import {trimItemLabel, trimStationName} from './lib/trim-names'
-import {
+import type {
 	EditedBonAppCafeInfoType,
 	EditedBonAppMenuInfoType,
 	GithubMenuType,
@@ -49,7 +45,7 @@ function buildCafePath(cafeParam: string | {id: string}) {
 	}
 }
 
-export function useBonAppCafe(cafeParam: string | {id: string}) {
+export function useBonAppCafe(cafeParam: string | {id: string}): UseQueryResult<EditedBonAppCafeInfoType, unknown> {
 	return useQuery({
 		queryKey: cafeKeys.bonAppCcc(buildCafePath(cafeParam)),
 		queryFn: async ({queryKey: [_group, _bonapp, cafePath], signal}) => {
@@ -59,7 +55,7 @@ export function useBonAppCafe(cafeParam: string | {id: string}) {
 	})
 }
 
-export function useBonAppMenu(cafeParam: string | {id: string}) {
+export function useBonAppMenu(cafeParam: string | {id: string}): UseQueryResult<EditedBonAppMenuInfoType, unknown> {
 	return useQuery({
 		queryKey: menuKeys.bonAppCcc(buildMenuPath(cafeParam)),
 		queryFn: async ({queryKey: [_group, _bonapp, cafePath], signal}) => {
@@ -73,12 +69,7 @@ export function useBonAppMenu(cafeParam: string | {id: string}) {
 // The Pause
 //
 
-queryClient.setQueryData(
-	menuKeys.hosted('/food/named/menu/the-pause'),
-	require('../../docs/contact-info.json'),
-)
-
-export function usePauseMenu() {
+export function usePauseMenu(): UseQueryResult<GithubMenuType, unknown> {
 	return useQuery({
 		queryKey: menuKeys.hosted('/food/named/menu/the-pause'),
 		queryFn: async ({queryKey: [_menu, _hosted, url], signal}) => {
@@ -118,7 +109,8 @@ export function usePauseMenu() {
 				corIcons: corIcons,
 				meals,
 				foodItemsMap: upgradedFoodItemsMap,
-			}
+				stationMenus,
+			} as GithubMenuType
 		},
 	})
 }
