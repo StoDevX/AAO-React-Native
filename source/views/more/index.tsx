@@ -47,7 +47,14 @@ function MoreView(): JSX.Element {
 	let [query, setQuery] = React.useState('')
 	let searchQuery = useDebounce(query.toLowerCase(), 200)
 
-	let {data = [], error, status, refetch, isInitialLoading} = useSearchLinks()
+	let {
+		data = [],
+		error,
+		refetch,
+		isLoading,
+		isError,
+		isInitialLoading,
+	} = useSearchLinks()
 
 	React.useLayoutEffect(() => {
 		navigation.setOptions({
@@ -72,7 +79,7 @@ function MoreView(): JSX.Element {
 		return filteredData
 	}, [data, searchQuery])
 
-	if (status === 'error') {
+	if (isError) {
 		return (
 			<NoticeView
 				buttonText="Try Again"
@@ -88,7 +95,7 @@ function MoreView(): JSX.Element {
 			ListEmptyComponent={
 				searchQuery ? (
 					<NoticeView text={`No results found for "${searchQuery}"`} />
-				) : status === 'loading' ? (
+				) : isLoading ? (
 					<LoadingView />
 				) : (
 					<NoticeView text="No results found." />
@@ -100,7 +107,7 @@ function MoreView(): JSX.Element {
 			keyboardDismissMode="on-drag"
 			keyboardShouldPersistTaps="never"
 			onRefresh={refetch}
-			refreshing={status === 'loading' && !isInitialLoading}
+			refreshing={isLoading && !isInitialLoading}
 			renderItem={({item}) => {
 				return (
 					<ListRow arrowPosition="center" onPress={() => openUrl(item.url)}>
