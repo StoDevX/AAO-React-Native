@@ -8,12 +8,12 @@ import reject from 'lodash/reject'
 import * as React from 'react'
 import {useCallback} from 'react'
 
-type PropsType = {
-	filter: ListType
-	onChange: (filter: ListType) => void
+type Props<T extends object> = {
+	filter: ListType<T>
+	onChange: (filter: ListType<T>) => void
 }
 
-export function ListSection({filter, onChange}: PropsType): JSX.Element {
+export function ListSection<T extends object>({filter, onChange}: Props<T>): JSX.Element {
 	let {spec} = filter
 	let {title = '', options, selected, mode} = spec
 	let quantifier = mode === 'AND' ? 'all' : 'any'

@@ -5,11 +5,11 @@
  */
 import type {FilterType, ListType} from './types'
 
-export function stringifyFilters(filters: FilterType[]): string {
+export function stringifyFilters<T extends object>(filters: FilterType<T>[]): string {
 	return filters.map((f) => stringifyFilter(f)).join('; ')
 }
 
-function stringifyFilter(filter: FilterType): string {
+function stringifyFilter<T extends object>(filter: FilterType<T>): string {
 	let spec = 'n/a'
 
 	if (filter.type === 'list') {
@@ -28,7 +28,7 @@ function stringifyFilter(filter: FilterType): string {
 	})
 }
 
-function stringifyListFilter(filter: ListType): string {
+function stringifyListFilter<T extends object>(filter: ListType<T>): string {
 	// Extract the list of "selected" items
 	let filterValue = filter.spec.selected
 	return filterValue.map((f) => f.title).join(', ')

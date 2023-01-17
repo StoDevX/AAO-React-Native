@@ -34,41 +34,41 @@ export type PickerSpecType = {
 	selected?: PickerItemSpecType
 }
 
-export type ToggleFilterFunctionType = {
-	key: string
+export type ToggleFilterFunctionType<T extends object> = {
+	key: keyof T
 	trueEquivalent?: string
 }
 
-export type PickerFilterFunctionType = {
-	key: string
+export type PickerFilterFunctionType<T extends object> = {
+	key: keyof T
 }
 
-export type ListFilterFunctionType = {
-	key: string
+export type ListFilterFunctionType<T extends object> = {
+	key: keyof T
 }
 
-export type ToggleType = {
+export type ToggleType<T extends object> = {
 	type: 'toggle'
 	key: string
 	enabled: boolean
 	spec: ToggleSpecType
-	apply: ToggleFilterFunctionType
+	apply: ToggleFilterFunctionType<T>
 }
 
-export type PickerType = {
+export type PickerType<T extends object> = {
 	type: 'picker'
 	key: string
 	enabled: true
 	spec: PickerSpecType
-	apply: PickerFilterFunctionType
+	apply: PickerFilterFunctionType<T>
 }
 
-export type ListType = {
+export type ListType<T extends object> = {
 	type: 'list'
 	key: string
 	enabled: boolean
 	spec: ListSpecType
-	apply: ListFilterFunctionType
+	apply: ListFilterFunctionType<T>
 }
 
-export type FilterType = ToggleType | PickerType | ListType
+export type FilterType<T extends object> = ToggleType<T> | PickerType<T> | ListType<T>

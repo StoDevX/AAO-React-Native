@@ -40,15 +40,15 @@ const buttonStyles = StyleSheet.create({
 	},
 })
 
-type Props = {
-	filter: FilterType
+type Props<T extends object> = {
+	filter: FilterType<T>
 	isActive: boolean
-	onPopoverDismiss: (filter: FilterType) => unknown
+	onPopoverDismiss: (filter: FilterType<T>) => unknown
 	style?: StyleProp<ViewStyle>
 	title: string
 }
 
-export function FilterToolbarButton(props: Props): JSX.Element | null {
+export function FilterToolbarButton<T extends object>(props: Props<T>): JSX.Element | null {
 	let {onPopoverDismiss, filter, isActive, style, title} = props
 
 	let theme = useTheme()
@@ -59,7 +59,7 @@ export function FilterToolbarButton(props: Props): JSX.Element | null {
 		setPopoverVisible(true)
 	}
 
-	let onClosePopover = (filter: FilterType): void => {
+	let onClosePopover = (filter: FilterType<T>): void => {
 		onPopoverDismiss(filter)
 		setPopoverVisible(false)
 	}
@@ -112,7 +112,7 @@ export function FilterToolbarButton(props: Props): JSX.Element | null {
 				<Icon name={icon} size={18} style={activeContentStyle} />
 			</Touchable>
 			{popoverVisible && (
-				<FilterPopover
+				<FilterPopover<T>
 					anchor={touchable}
 					filter={filter}
 					onClosePopover={onClosePopover}

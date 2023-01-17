@@ -6,16 +6,16 @@ import type {FilterType} from './types'
 import * as c from '@frogpond/colors'
 import {View} from 'react-native'
 
-type Props = {
+type Props<T extends object> = {
 	anchor: RefObject<View>
-	filter: FilterType
-	onClosePopover: (filter: FilterType) => unknown
+	filter: FilterType<T>
+	onClosePopover: (filter: FilterType<T>) => unknown
 	visible: boolean
 }
 
-export function FilterPopover(props: Props): JSX.Element {
+export function FilterPopover<T extends object>(props: Props<T>): JSX.Element {
 	let {anchor, onClosePopover, visible} = props
-	let [filter, setFilter] = useState<FilterType>(props.filter)
+	let [filter, setFilter] = useState<FilterType<T>>(props.filter)
 
 	return (
 		<Popover
@@ -25,7 +25,7 @@ export function FilterPopover(props: Props): JSX.Element {
 			placement={PopoverPlacement.BOTTOM}
 			popoverStyle={popoverContainer}
 		>
-			<FilterSection filter={filter} onChange={(filter) => setFilter(filter)} />
+			<FilterSection<T> filter={filter} onChange={(filter) => setFilter(filter)} />
 		</Popover>
 	)
 }

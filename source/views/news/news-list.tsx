@@ -28,9 +28,9 @@ let getStoryCategories = (story: StoryType) => {
 	return story.categories.map((c) => trimStoryCateogry(c))
 }
 
-let filterStories = (entries: StoryType[], filters: ListType[]) => {
+let filterStories = (entries: StoryType[], filters: ListType<StoryType>[]) => {
 	return entries.filter((story) => {
-		let enabledCategories = filters.flatMap((f: ListType) =>
+		let enabledCategories = filters.flatMap((f: ListType<StoryType>) =>
 			f.spec.selected.flatMap((s) => s.title),
 		)
 
@@ -56,7 +56,7 @@ export const NewsList = (props: Props): JSX.Element => {
 
 	let entries = React.useMemo(() => cleanEntries(data), [data])
 
-	let [filters, setFilters] = React.useState<ListType[]>([])
+	let [filters, setFilters] = React.useState<ListType<StoryType>[]>([])
 
 	React.useEffect(() => {
 		let allCategories = entries.flatMap((story) => getStoryCategories(story))
@@ -70,7 +70,7 @@ export const NewsList = (props: Props): JSX.Element => {
 			return {title: c}
 		})
 
-		let newsFilters: ListType[] = [
+		let newsFilters: ListType<StoryType>[] = [
 			{
 				type: 'list',
 				key: 'category',
@@ -82,7 +82,7 @@ export const NewsList = (props: Props): JSX.Element => {
 					mode: 'OR',
 					displayTitle: true,
 				},
-				apply: {key: 'category'},
+				apply: {key: 'categories'},
 			},
 		]
 		setFilters(newsFilters)
@@ -105,7 +105,7 @@ export const NewsList = (props: Props): JSX.Element => {
 				let edited = filters.map((f) =>
 					f.key === newFilter.key ? newFilter : f,
 				)
-				setFilters(edited as ListType[])
+				setFilters(edited as ListType<StoryType>[])
 			}}
 		/>
 	)
@@ -120,7 +120,7 @@ export const NewsList = (props: Props): JSX.Element => {
 			ListEmptyComponent={
 				isLoading ? (
 					<LoadingView />
-				) : filters.some((f: ListType) => f.spec.selected.length) ? (
+				) : filters.some((f) => f.spec.selected.length) ? (
 					<NoticeView text="No stories to show. Try changing the filters." />
 				) : (
 					<NoticeView text="No news stories." />
