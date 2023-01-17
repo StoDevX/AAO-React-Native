@@ -2,8 +2,15 @@ import {client} from '@frogpond/api'
 import {useQuery} from '@tanstack/react-query'
 import {groupBy} from 'lodash'
 import {useSelector} from 'react-redux'
+import {queryClient} from '../../init/tanstack-query'
 import {selectFavoriteBuildings} from '../../redux'
 import {BuildingType} from './types'
+
+export const keys = {
+	all: ['buildings'] as const,
+}
+
+queryClient.setQueryData(keys.all, require('../../docs/building-hours.json'))
 
 export async function fetchBuildingHours() {
 	let response = await client.get('/spaces/hours').json()
@@ -12,7 +19,7 @@ export async function fetchBuildingHours() {
 
 export function useBuildings() {
 	return useQuery({
-		queryKey: ['buildings'],
+		queryKey: keys.all,
 		queryFn: fetchBuildingHours,
 	})
 }
@@ -21,7 +28,7 @@ export function useGroupedBuildings() {
 	let favoriteBuildings = useSelector(selectFavoriteBuildings)
 
 	return useQuery({
-		queryKey: ['buildings'],
+		queryKey: keys.all,
 		queryFn: fetchBuildingHours,
 		select: (buildings) => {
 			let favoritesGroup = {

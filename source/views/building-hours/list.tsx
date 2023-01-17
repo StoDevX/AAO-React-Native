@@ -23,8 +23,15 @@ const styles = StyleSheet.create({
 export function BuildingHoursView(): JSX.Element {
 	let navigation = useNavigation()
 
-	let {status, data, error, refetch, isInitialLoading} = useGroupedBuildings()
 	let {now} = useMomentTimer({intervalMs: 60000, startOf: 'minute'})
+
+	let {
+		status,
+		data = [],
+		error,
+		refetch,
+		isInitialLoading,
+	} = useGroupedBuildings()
 
 	let onPressRow = React.useCallback(
 		(building: BuildingType) =>
@@ -32,17 +39,21 @@ export function BuildingHoursView(): JSX.Element {
 		[navigation],
 	)
 
+	if (status === 'error') {
+		return (
+			<NoticeView
+				buttonText="Try Again"
+				onPress={refetch}
+				text={`A problem occured while loading: ${error}`}
+			/>
+		)
+	}
+
 	return (
 		<SectionList
 			ItemSeparatorComponent={ListSeparator}
 			ListEmptyComponent={
-				status === 'loading' ? (
-					<LoadingView />
-				) : status === 'error' ? (
-					<NoticeView text={String(error)} />
-				) : (
-					<NoticeView text="No hours." />
-				)
+				status === 'loading' ? <LoadingView /> : <NoticeView text="No hours." />
 			}
 			contentContainerStyle={styles.container}
 			keyExtractor={(item) => item.name}
@@ -54,7 +65,7 @@ export function BuildingHoursView(): JSX.Element {
 			renderSectionHeader={({section: {title}}) => (
 				<ListSectionHeader title={title} />
 			)}
-			sections={data || emptyList}
+			sections={data}
 		/>
 	)
 }
