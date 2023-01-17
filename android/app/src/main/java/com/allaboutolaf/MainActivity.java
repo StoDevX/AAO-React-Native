@@ -4,9 +4,9 @@ import android.os.Bundle;
 
 import com.facebook.react.ReactActivity;
 import com.facebook.react.ReactActivityDelegate;
-import com.facebook.react.modules.storage.ReactDatabaseSupplier;
 import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint;
 import com.facebook.react.defaults.DefaultReactActivityDelegate;
+import com.reactnativecommunity.asyncstorage.ReactDatabaseSupplier;
 
 public class MainActivity extends ReactActivity {
 
