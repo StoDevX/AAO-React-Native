@@ -11,35 +11,39 @@ import './init/theme'
 import './init/data'
 
 import * as React from 'react'
+import {PersistGate} from 'redux-persist/integration/react'
 import {Provider as ReduxProvider} from 'react-redux'
 import {Provider as PaperProvider} from 'react-native-paper'
-import {makeStore, initRedux} from './redux'
+import {store, persistor} from './redux'
 import * as navigation from './navigation'
 import {ThemeProvider, CombinedDefaultTheme} from '@frogpond/app-theme'
 import {ActionSheetProvider} from '@expo/react-native-action-sheet'
 import {NavigationContainer} from '@react-navigation/native'
 
 import {RootStack} from './navigation'
-
-const store = makeStore()
-initRedux(store)
+import {LoadingView} from '@frogpond/notice'
 
 export default class App extends React.Component {
 	render(): JSX.Element {
 		return (
 			<ReduxProvider store={store}>
-				<PaperProvider theme={CombinedDefaultTheme}>
-					<ThemeProvider>
-						<ActionSheetProvider>
-							<NavigationContainer
-								onStateChange={navigation.trackScreenChanges}
-								persistenceKey={navigation.persistenceKey}
-							>
-								<RootStack />
-							</NavigationContainer>
-						</ActionSheetProvider>
-					</ThemeProvider>
-				</PaperProvider>
+				<PersistGate
+					loading={<LoadingView text="Loading App..." />}
+					persistor={persistor}
+				>
+					<PaperProvider theme={CombinedDefaultTheme}>
+						<ThemeProvider>
+							<ActionSheetProvider>
+								<NavigationContainer
+									onStateChange={navigation.trackScreenChanges}
+									persistenceKey={navigation.persistenceKey}
+								>
+									<RootStack />
+								</NavigationContainer>
+							</ActionSheetProvider>
+						</ThemeProvider>
+					</PaperProvider>
+				</PersistGate>
 			</ReduxProvider>
 		)
 	}
