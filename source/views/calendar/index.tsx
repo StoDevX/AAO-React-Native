@@ -1,6 +1,6 @@
 import * as React from 'react'
 import {TabBarIcon} from '@frogpond/navigation-tabs'
-import {CccCalendarView} from '@frogpond/ccc-calendar'
+import {CccCalendarView, useNamedCalendar} from '@frogpond/ccc-calendar'
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 
@@ -15,7 +15,7 @@ const Tabs = createBottomTabNavigator<Params>()
 function StOlafCalendarView() {
 	return (
 		<CccCalendarView
-			calendar="stolaf"
+			query={useNamedCalendar("stolaf")}
 			poweredBy={{
 				title: 'Powered by the St. Olaf calendar',
 				href: 'https://wp.stolaf.edu/calendar/',
@@ -27,7 +27,7 @@ function StOlafCalendarView() {
 function OlevilleCalendarView() {
 	return (
 		<CccCalendarView
-			calendar="oleville"
+			query={useNamedCalendar("oleville")}
 			poweredBy={{
 				title: 'Powered by the Oleville calendar',
 				href: 'https://oleville.com/events/',
@@ -39,7 +39,7 @@ function OlevilleCalendarView() {
 function NorthfieldCalendarView() {
 	return (
 		<CccCalendarView
-			calendar="northfield"
+		query={useNamedCalendar("northfield")}
 			poweredBy={{
 				title: 'Powered by VisitingNorthfield.com',
 				href: 'https://visitingnorthfield.com/events/calendar/',
