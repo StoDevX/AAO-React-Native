@@ -9,11 +9,13 @@ import './init/sentry'
 import './init/api'
 import './init/theme'
 import './init/data'
+import {queryClient, persister} from './init/tanstack-query'
 
 import * as React from 'react'
 import {PersistGate} from 'redux-persist/integration/react'
 import {Provider as ReduxProvider} from 'react-redux'
 import {Provider as PaperProvider} from 'react-native-paper'
+import {PersistQueryClientProvider} from '@tanstack/react-query-persist-client'
 import {store, persistor} from './redux'
 import * as navigation from './navigation'
 import {ThemeProvider, CombinedDefaultTheme} from '@frogpond/app-theme'
@@ -31,18 +33,23 @@ export default class App extends React.Component {
 					loading={<LoadingView text="Loading App..." />}
 					persistor={persistor}
 				>
-					<PaperProvider theme={CombinedDefaultTheme}>
-						<ThemeProvider>
-							<ActionSheetProvider>
-								<NavigationContainer
-									onStateChange={navigation.trackScreenChanges}
-									persistenceKey={navigation.persistenceKey}
-								>
-									<RootStack />
-								</NavigationContainer>
-							</ActionSheetProvider>
-						</ThemeProvider>
-					</PaperProvider>
+					<PersistQueryClientProvider
+						client={queryClient}
+						persistOptions={{persister}}
+					>
+						<PaperProvider theme={CombinedDefaultTheme}>
+							<ThemeProvider>
+								<ActionSheetProvider>
+									<NavigationContainer
+										onStateChange={navigation.trackScreenChanges}
+										persistenceKey={navigation.persistenceKey}
+									>
+										<RootStack />
+									</NavigationContainer>
+								</ActionSheetProvider>
+							</ThemeProvider>
+						</PaperProvider>
+					</PersistQueryClientProvider>
 				</PersistGate>
 			</ReduxProvider>
 		)
