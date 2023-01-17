@@ -18,7 +18,7 @@ type Props = {
 	query: UseQueryResult<EventType[]>
 }
 
-export function CccCalendarView(props: Props) {
+export function CccCalendarView(props: Props): JSX.Element {
 	let {now} = useMomentTimer({intervalMs: 60000})
 	let {isError, refetch, data = [], isRefetching} = props.query
 

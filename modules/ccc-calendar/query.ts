@@ -1,13 +1,12 @@
 import {client} from '@frogpond/api'
 import {EventType} from '@frogpond/event-type'
-import {useQuery} from '@tanstack/react-query'
+import {useQuery, type UseQueryResult} from '@tanstack/react-query'
 import moment from 'moment'
 import {
 	GoogleCalendar,
 	IcsCalendar,
 	NamedCalendar,
 	ReasonCalendar,
-	type Calendar,
 } from './types'
 
 export const keys = {
@@ -44,7 +43,7 @@ function convertEvents(
 export function useNamedCalendar(
 	calendar: NamedCalendar,
 	options: {eventMapper?: EventMapper} = {},
-) {
+): UseQueryResult<EventType[], unknown> {
 	return useQuery({
 		queryKey: keys.named(calendar),
 		queryFn: async ({queryKey, signal}) => {
@@ -60,12 +59,12 @@ export function useNamedCalendar(
 export function useGoogleCalendar(
 	calendar: GoogleCalendar,
 	options: {eventMapper?: EventMapper} = {},
-) {
+): UseQueryResult<EventType[], unknown> {
 	return useQuery({
 		queryKey: keys.google(calendar.id),
 		queryFn: async ({queryKey, signal}) => {
 			let response = await client
-				.get(`/calendar/google`, {signal, searchParams: {id: queryKey[2]}})
+				.get('/calendar/google', {signal, searchParams: {id: queryKey[2]}})
 				.json()
 			return (response as {data: EventType[]}).data
 		},
@@ -76,12 +75,12 @@ export function useGoogleCalendar(
 export function useReasonCalendar(
 	calendar: ReasonCalendar,
 	options: {eventMapper?: EventMapper} = {},
-) {
+): UseQueryResult<EventType[], unknown> {
 	return useQuery({
 		queryKey: keys.reason(calendar.url),
 		queryFn: async ({queryKey, signal}) => {
 			let response = await client
-				.get(`/calendar/reason`, {signal, searchParams: {url: queryKey[2]}})
+				.get('/calendar/reason', {signal, searchParams: {url: queryKey[2]}})
 				.json()
 			return (response as {data: EventType[]}).data
 		},
@@ -92,12 +91,12 @@ export function useReasonCalendar(
 export function useIcsCalendar(
 	calendar: IcsCalendar,
 	options: {eventMapper?: EventMapper} = {},
-) {
+): UseQueryResult<EventType[], unknown> {
 	return useQuery({
 		queryKey: keys.ics(calendar.url),
 		queryFn: async ({queryKey, signal}) => {
 			let response = await client
-				.get(`/calendar/ics`, {signal, searchParams: {url: queryKey[2]}})
+				.get('/calendar/ics', {signal, searchParams: {url: queryKey[2]}})
 				.json()
 			return (response as {data: EventType[]}).data
 		},
