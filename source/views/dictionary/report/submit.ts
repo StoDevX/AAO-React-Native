@@ -1,7 +1,6 @@
 import jsYaml from 'js-yaml'
 import type {WordType} from '../types'
 import {sendEmail} from '../../../components/send-email'
-import querystring from 'query-string'
 import {GH_NEW_ISSUE_URL, SUPPORT_EMAIL} from '../../../lib/constants'
 import wrap from 'wordwrap'
 
@@ -56,12 +55,11 @@ const makeHtmlBody = (before: string, after: string) => `
 `
 
 function makeIssueLink(before: string, after: string, title: string): string {
-	let q = querystring.stringify({
-		'labels[]': 'data/dictionary',
-		title: `Dictionary update for ${title}`,
-		body: makeMarkdownBody(before, after),
-	})
-	return `${GH_NEW_ISSUE_URL}?${q}`
+	let url = new URL(GH_NEW_ISSUE_URL)
+	url.searchParams.set('labels[]', 'data/dictionary')
+	url.searchParams.set('title', `Dictionary update for ${title}`)
+	url.searchParams.set('body', makeMarkdownBody(before, after))
+	return url.toString()
 }
 
 export function stringifyDictionaryEntry(entry: WordType): string {
