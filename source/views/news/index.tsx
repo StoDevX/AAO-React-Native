@@ -6,6 +6,7 @@ import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 
 import * as newsImages from '../../../images/news-sources/index'
 import {NewsList} from './news-list'
+import {useNamedNewsSource} from './query'
 
 type Params = {
 	StOlafNewsView: undefined
@@ -16,13 +17,22 @@ type Params = {
 const Tabs = createBottomTabNavigator<Params>()
 
 const StOlafNewsView = () => (
-	<NewsList source="stolaf" thumbnail={newsImages.stolaf.default} />
+	<NewsList
+		query={useNamedNewsSource('stolaf')}
+		thumbnail={newsImages.stolaf.default}
+	/>
 )
 const MessNewsView = () => (
-	<NewsList source="mess" thumbnail={newsImages.mess.default} />
+	<NewsList
+		query={useNamedNewsSource('mess')}
+		thumbnail={newsImages.mess.default}
+	/>
 )
 const OlevilleNewsView = () => (
-	<NewsList source="oleville" thumbnail={newsImages.oleville.default} />
+	<NewsList
+		query={useNamedNewsSource('oleville')}
+		thumbnail={newsImages.oleville.default}
+	/>
 )
 
 const NewsView = (): JSX.Element => {
