@@ -74,3 +74,9 @@ type BonAppSingleCafeInfo = {
 export type EditedBonAppCafeInfoType = {
 	cafe: BonAppSingleCafeInfo
 }
+
+export type GithubMenuType = {
+	foodItems: MenuItemType[]
+	stationMenus: StationMenuType[]
+	corIcons: MasterCorIconMapType
+}
