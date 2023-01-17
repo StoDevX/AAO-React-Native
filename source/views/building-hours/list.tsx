@@ -26,10 +26,11 @@ export function BuildingHoursView(): JSX.Element {
 	let {now} = useMomentTimer({intervalMs: 60000, startOf: 'minute'})
 
 	let {
-		status,
 		data = [],
 		error,
 		refetch,
+		isLoading,
+		isError,
 		isInitialLoading,
 	} = useGroupedBuildings()
 
@@ -39,7 +40,7 @@ export function BuildingHoursView(): JSX.Element {
 		[navigation],
 	)
 
-	if (status === 'error') {
+	if (isError) {
 		return (
 			<NoticeView
 				buttonText="Try Again"
@@ -53,12 +54,12 @@ export function BuildingHoursView(): JSX.Element {
 		<SectionList
 			ItemSeparatorComponent={ListSeparator}
 			ListEmptyComponent={
-				status === 'loading' ? <LoadingView /> : <NoticeView text="No hours." />
+				isLoading ? <LoadingView /> : <NoticeView text="No hours." />
 			}
 			contentContainerStyle={styles.container}
 			keyExtractor={(item) => item.name}
 			onRefresh={refetch}
-			refreshing={status === 'loading' && !isInitialLoading}
+			refreshing={isLoading && !isInitialLoading}
 			renderItem={({item}) => (
 				<BuildingRow info={item} now={now} onPress={() => onPressRow(item)} />
 			)}
