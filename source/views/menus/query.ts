@@ -1,13 +1,13 @@
 import {client} from '@frogpond/api'
-import { decode, innerTextWithSpaces, parseHtml } from '@frogpond/html-lib'
-import { toLaxTitleCase } from '@frogpond/titlecase'
+import {decode, innerTextWithSpaces, parseHtml} from '@frogpond/html-lib'
+import {toLaxTitleCase} from '@frogpond/titlecase'
 import {useQuery} from '@tanstack/react-query'
 import {groupBy, mapValues, toPairs} from 'lodash'
 import {queryClient} from '../../init/tanstack-query'
 import {upgradeMenuItem, upgradeStation} from './lib/process-menu-shorthands'
-import { trimItemLabel, trimStationName } from './lib/trim-names'
+import {trimItemLabel, trimStationName} from './lib/trim-names'
 import {
-    EditedBonAppCafeInfoType,
+	EditedBonAppCafeInfoType,
 	EditedBonAppMenuInfoType,
 	GithubMenuType,
 	MasterCorIconMapType,
@@ -25,9 +25,9 @@ export const cafeKeys = {
 	hosted: (url: string) => ['cafe-info', 'hosted', url] as const,
 }
 
-// 
+//
 // BonApp
-// 
+//
 
 function buildMenuPath(cafeParam: string | {id: string}) {
 	if (typeof cafeParam === 'string') {
@@ -45,33 +45,33 @@ function buildCafePath(cafeParam: string | {id: string}) {
 	} else if ('id' in cafeParam) {
 		return `/food/cafe/${cafeParam.id}`
 	} else {
-        throw new Error(`Unexpected cafe parameter: ${cafeParam}`)
-    }
+		throw new Error(`Unexpected cafe parameter: ${cafeParam}`)
+	}
 }
 
 export function useBonAppCafe(cafeParam: string | {id: string}) {
-    return useQuery({
-        queryKey: cafeKeys.bonAppCcc(buildCafePath(cafeParam)),
-        queryFn: async ({queryKey: [_group, _bonapp, cafePath], signal}) => {
-            let response = await client.get(cafePath, {signal}).json()
-            return response as EditedBonAppCafeInfoType
-        }
-    })
+	return useQuery({
+		queryKey: cafeKeys.bonAppCcc(buildCafePath(cafeParam)),
+		queryFn: async ({queryKey: [_group, _bonapp, cafePath], signal}) => {
+			let response = await client.get(cafePath, {signal}).json()
+			return response as EditedBonAppCafeInfoType
+		},
+	})
 }
 
 export function useBonAppMenu(cafeParam: string | {id: string}) {
-    return useQuery({
-        queryKey: menuKeys.bonAppCcc(buildMenuPath(cafeParam)),
-        queryFn: async ({queryKey: [_group, _bonapp, cafePath], signal}) => {
-            let response = await client.get(cafePath, {signal}).json()
-            return response as EditedBonAppMenuInfoType
-        },
-    })
+	return useQuery({
+		queryKey: menuKeys.bonAppCcc(buildMenuPath(cafeParam)),
+		queryFn: async ({queryKey: [_group, _bonapp, cafePath], signal}) => {
+			let response = await client.get(cafePath, {signal}).json()
+			return response as EditedBonAppMenuInfoType
+		},
+	})
 }
 
-// 
+//
 // The Pause
-// 
+//
 
 queryClient.setQueryData(
 	menuKeys.hosted('/food/named/menu/the-pause'),

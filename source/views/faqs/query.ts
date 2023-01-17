@@ -13,7 +13,7 @@ export function useFaqs() {
 		queryKey: keys.all,
 		queryFn: async ({signal}) => {
 			let response = await client.get('/faqs', {signal}).json()
-			return (response as {text: string})
+			return response as {text: string}
 		},
 	})
 }

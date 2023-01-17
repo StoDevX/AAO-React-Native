@@ -22,12 +22,7 @@ const styles = StyleSheet.create({
 export let ContactsListView = (): JSX.Element => {
 	let navigation = useNavigation()
 
-	let {
-		data = [],
-		error,
-		refetch,
-		isRefetching,
-	} = useGroupedContacts()
+	let {data = [], error, refetch, isRefetching} = useGroupedContacts()
 
 	let onPressContact = React.useCallback(
 		(data: ContactType) =>

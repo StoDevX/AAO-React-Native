@@ -4,7 +4,7 @@ export type ReasonCalendar = {type: 'reason'; url: string}
 export type IcsCalendar = {type: 'ics'; url: string}
 
 export type Calendar =
-		| NamedCalendar
-		| GoogleCalendar
-		| ReasonCalendar
-		| IcsCalendar
+	| NamedCalendar
+	| GoogleCalendar
+	| ReasonCalendar
+	| IcsCalendar

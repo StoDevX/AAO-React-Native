@@ -14,7 +14,12 @@ type Props = {
 
 export function GitHubHostedMenu(props: Props): JSX.Element {
 	let {
-		data = {foodItemsMap: {}, meals: [], corIcons: {}, now: moment.tz(timezone())},
+		data = {
+			foodItemsMap: {},
+			meals: [],
+			corIcons: {},
+			now: moment.tz(timezone()),
+		},
 		error,
 		isError,
 		isLoading,

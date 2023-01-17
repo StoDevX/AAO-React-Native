@@ -2,7 +2,13 @@ import {client} from '@frogpond/api'
 import {EventType} from '@frogpond/event-type'
 import {useQuery} from '@tanstack/react-query'
 import moment from 'moment'
-import {GoogleCalendar, IcsCalendar, NamedCalendar, ReasonCalendar, type Calendar} from './types'
+import {
+	GoogleCalendar,
+	IcsCalendar,
+	NamedCalendar,
+	ReasonCalendar,
+	type Calendar,
+} from './types'
 
 export const keys = {
 	named: (name: string) => ['calendar', 'named', name] as const,
@@ -13,26 +19,32 @@ export const keys = {
 
 type EventMapper = (event: EventType) => EventType
 
-function convertEvents(data: EventType[], options: {eventMapper?: EventMapper}): EventType[] {
-    let events = data.map((event) => {
-        const startTime = moment(event.startTime)
-        const endTime = moment(event.endTime)
+function convertEvents(
+	data: EventType[],
+	options: {eventMapper?: EventMapper},
+): EventType[] {
+	let events = data.map((event) => {
+		const startTime = moment(event.startTime)
+		const endTime = moment(event.endTime)
 
-        return {
-            ...event,
-            startTime,
-            endTime,
-        }
-    })
+		return {
+			...event,
+			startTime,
+			endTime,
+		}
+	})
 
-    if (options.eventMapper) {
-        events = events.map(options.eventMapper)
-    }
+	if (options.eventMapper) {
+		events = events.map(options.eventMapper)
+	}
 
-    return events
+	return events
 }
 
-export function useNamedCalendar(calendar: NamedCalendar, options: {eventMapper?: EventMapper} = {}) {
+export function useNamedCalendar(
+	calendar: NamedCalendar,
+	options: {eventMapper?: EventMapper} = {},
+) {
 	return useQuery({
 		queryKey: keys.named(calendar),
 		queryFn: async ({queryKey, signal}) => {
@@ -41,11 +53,14 @@ export function useNamedCalendar(calendar: NamedCalendar, options: {eventMapper?
 				.json()
 			return (response as {data: EventType[]}).data
 		},
-        select: (events) => convertEvents(events, options)
+		select: (events) => convertEvents(events, options),
 	})
 }
 
-export function useGoogleCalendar(calendar: GoogleCalendar, options: {eventMapper?: EventMapper} = {}) {
+export function useGoogleCalendar(
+	calendar: GoogleCalendar,
+	options: {eventMapper?: EventMapper} = {},
+) {
 	return useQuery({
 		queryKey: keys.google(calendar.id),
 		queryFn: async ({queryKey, signal}) => {
@@ -54,11 +69,14 @@ export function useGoogleCalendar(calendar: GoogleCalendar, options: {eventMappe
 				.json()
 			return (response as {data: EventType[]}).data
 		},
-        select: (events) => convertEvents(events, options)
+		select: (events) => convertEvents(events, options),
 	})
 }
 
-export function useReasonCalendar(calendar: ReasonCalendar, options: {eventMapper?: EventMapper} = {}) {
+export function useReasonCalendar(
+	calendar: ReasonCalendar,
+	options: {eventMapper?: EventMapper} = {},
+) {
 	return useQuery({
 		queryKey: keys.reason(calendar.url),
 		queryFn: async ({queryKey, signal}) => {
@@ -67,11 +85,14 @@ export function useReasonCalendar(calendar: ReasonCalendar, options: {eventMappe
 				.json()
 			return (response as {data: EventType[]}).data
 		},
-        select: (events) => convertEvents(events, options)
+		select: (events) => convertEvents(events, options),
 	})
 }
 
-export function useIcsCalendar(calendar: IcsCalendar, options: {eventMapper?: EventMapper} = {}) {
+export function useIcsCalendar(
+	calendar: IcsCalendar,
+	options: {eventMapper?: EventMapper} = {},
+) {
 	return useQuery({
 		queryKey: keys.ics(calendar.url),
 		queryFn: async ({queryKey, signal}) => {
@@ -80,6 +101,6 @@ export function useIcsCalendar(calendar: IcsCalendar, options: {eventMapper?: Ev
 				.json()
 			return (response as {data: EventType[]}).data
 		},
-        select: (events) => convertEvents(events, options)
+		select: (events) => convertEvents(events, options),
 	})
 }

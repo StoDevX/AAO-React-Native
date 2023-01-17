@@ -15,7 +15,7 @@ const Tabs = createBottomTabNavigator<Params>()
 function StOlafCalendarView() {
 	return (
 		<CccCalendarView
-			query={useNamedCalendar("stolaf")}
+			query={useNamedCalendar('stolaf')}
 			poweredBy={{
 				title: 'Powered by the St. Olaf calendar',
 				href: 'https://wp.stolaf.edu/calendar/',
@@ -27,7 +27,7 @@ function StOlafCalendarView() {
 function OlevilleCalendarView() {
 	return (
 		<CccCalendarView
-			query={useNamedCalendar("oleville")}
+			query={useNamedCalendar('oleville')}
 			poweredBy={{
 				title: 'Powered by the Oleville calendar',
 				href: 'https://oleville.com/events/',
@@ -39,7 +39,7 @@ function OlevilleCalendarView() {
 function NorthfieldCalendarView() {
 	return (
 		<CccCalendarView
-		query={useNamedCalendar("northfield")}
+			query={useNamedCalendar('northfield')}
 			poweredBy={{
 				title: 'Powered by VisitingNorthfield.com',
 				href: 'https://visitingnorthfield.com/events/calendar/',
