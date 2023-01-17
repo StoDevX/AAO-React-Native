@@ -1,32 +1,24 @@
-import * as React from 'react'
-import {StyleSheet, SectionList} from 'react-native'
+import {white} from '@frogpond/colors'
 import {
 	Detail,
-	Title,
+	largeListProps,
 	ListRow,
 	ListSectionHeader,
 	ListSeparator,
-	largeListProps,
-	emptyList,
+	Title,
 } from '@frogpond/lists'
 import {LoadingView, NoticeView} from '@frogpond/notice'
-import type {DictionaryGroup, WordType} from './types'
-import {white} from '@frogpond/colors'
-import words from 'lodash/words'
-import deburr from 'lodash/deburr'
-import groupBy from 'lodash/groupBy'
-import {useFetch} from 'react-async'
-import {API} from '@frogpond/api'
 import {useDebounce} from '@frogpond/use-debounce'
 import {useNavigation} from '@react-navigation/native'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+import deburr from 'lodash/deburr'
+import groupBy from 'lodash/groupBy'
+import words from 'lodash/words'
+import * as React from 'react'
+import {SectionList, StyleSheet} from 'react-native'
 import {ChangeTextEvent} from '../../navigation/types'
-
-const useDictionary = () => {
-	return useFetch<{data: WordType[]}>(API('/dictionary'), {
-		headers: {accept: 'application/json'},
-	})
-}
+import {useDictionary} from './query'
+import type {WordType, DictionaryGroup} from './types'
 
 function splitToArray(str: string) {
 	return words(deburr(str.toLowerCase()))
@@ -38,32 +30,12 @@ function termToArray(term: WordType) {
 	)
 }
 
-function createGrouping(words: WordType[]) {
+function groupWords(words: WordType[]): DictionaryGroup[] {
 	let grouped = groupBy(words, (w) => w.word[0] || '?')
 	return Object.entries(grouped).map(([k, v]) => ({
 		title: k,
 		data: v,
 	}))
-}
-
-let groupTerms = (
-	searchQuery: string,
-	data: DictionaryGroup[],
-	words: WordType[],
-) => {
-	if (!data) {
-		return emptyList
-	}
-
-	if (!searchQuery) {
-		return data
-	}
-
-	let filtered = words.filter((term: WordType) =>
-		termToArray(term).some((word) => word.startsWith(searchQuery)),
-	)
-
-	return createGrouping(filtered)
 }
 
 const styles = StyleSheet.create({
@@ -85,12 +57,12 @@ function DictionaryView(): JSX.Element {
 	let searchQuery = useDebounce(query.toLowerCase(), 200)
 
 	let {
-		data: {data: words = []} = {},
+		data = [],
 		error,
-		reload,
-		isPending,
-		isInitial,
+		refetch,
 		isLoading,
+		isError,
+		isInitialLoading,
 	} = useDictionary()
 
 	React.useLayoutEffect(() => {
@@ -103,22 +75,26 @@ function DictionaryView(): JSX.Element {
 		})
 	}, [navigation])
 
-	let groupedOriginal = React.useMemo(() => {
-		return createGrouping(words)
-	}, [words])
+	let filtered = React.useMemo(() => {
+		let grouped = groupWords(data)
+		let filteredData = []
+		for (let {title, data: items} of grouped) {
+			let filteredItems = items.filter((value) =>
+				termToArray(value).some((value) => value.includes(searchQuery)),
+			)
+			if (filteredItems.length) {
+				filteredData.push({title, data: items})
+			}
+		}
+		return filteredData
+	}, [data, searchQuery])
 
-	let grouped = React.useMemo(
-		() => groupTerms(searchQuery, groupedOriginal, words),
-		[searchQuery, groupedOriginal, words],
-	)
-
-	// conditionals must come after all hooks
-	if (error) {
+	if (isError) {
 		return (
 			<NoticeView
 				buttonText="Try Again"
-				onPress={reload}
-				text="A problem occured while loading the definitions"
+				onPress={refetch}
+				text={`A problem occured while loading: ${error}`}
 			/>
 		)
 	}
@@ -137,11 +113,11 @@ function DictionaryView(): JSX.Element {
 			}
 			contentContainerStyle={styles.contentContainer}
 			contentInsetAdjustmentBehavior="automatic"
-			keyExtractor={(item: WordType, index) => item.word + index}
+			keyExtractor={(item, index) => item.word + index}
 			keyboardDismissMode="on-drag"
 			keyboardShouldPersistTaps="never"
-			onRefresh={reload}
-			refreshing={isPending && !isInitial}
+			onRefresh={refetch}
+			refreshing={isLoading && !isInitialLoading}
 			renderItem={({item}) => {
 				return (
 					<ListRow
@@ -158,7 +134,7 @@ function DictionaryView(): JSX.Element {
 			renderSectionHeader={({section: {title}}) => (
 				<ListSectionHeader title={title} />
 			)}
-			sections={grouped}
+			sections={filtered}
 			style={styles.wrapper}
 			{...largeListProps}
 		/>
