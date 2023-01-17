@@ -9,14 +9,12 @@ export const keys = {
 
 queryClient.setQueryData(keys.all, require('../../docs/dictionary.json'))
 
-export async function fetchDictionary() {
-	let response = await client.get('/dictionary').json()
-	return (response as {data: WordType[]}).data
-}
-
 export function useDictionary() {
 	return useQuery({
 		queryKey: keys.all,
-		queryFn: fetchDictionary,
+		queryFn: async ({signal}) => {
+			let response = await client.get('/dictionary', {signal}).json()
+			return (response as {data: WordType[]}).data
+		},
 	})
 }

@@ -8,14 +8,12 @@ export const keys = {
 
 queryClient.setQueryData(keys.all, require('../../docs/faqs.json'))
 
-export async function fetchFaqs() {
-	let response = await client.get('/faqs').json()
-	return (response as {text: string})
-}
-
 export function useFaqs() {
 	return useQuery({
 		queryKey: keys.all,
-		queryFn: fetchFaqs,
+		queryFn: async ({signal}) => {
+			let response = await client.get('/faqs', {signal}).json()
+			return (response as {text: string})
+		},
 	})
 }

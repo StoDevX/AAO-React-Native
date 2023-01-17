@@ -12,24 +12,15 @@ export const keys = {
 
 queryClient.setQueryData(keys.all, require('../../docs/building-hours.json'))
 
-export async function fetchBuildingHours() {
-	let response = await client.get('/spaces/hours').json()
-	return (response as {data: BuildingType[]}).data
-}
-
-export function useBuildings() {
-	return useQuery({
-		queryKey: keys.all,
-		queryFn: fetchBuildingHours,
-	})
-}
-
 export function useGroupedBuildings() {
 	let favoriteBuildings = useSelector(selectFavoriteBuildings)
 
 	return useQuery({
 		queryKey: keys.all,
-		queryFn: fetchBuildingHours,
+		queryFn: async ({signal}) => {
+			let response = await client.get('/spaces/hours', {signal}).json()
+			return (response as {data: BuildingType[]}).data
+		},
 		select: (buildings) => {
 			let favoritesGroup = {
 				title: 'Favorites',

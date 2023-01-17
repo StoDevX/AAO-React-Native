@@ -10,22 +10,13 @@ export const keys = {
 
 queryClient.setQueryData(keys.all, require('../../docs/contact-info.json'))
 
-export async function fetchContacts() {
-	let response = await client.get('/contacts').json()
-	return (response as {data: ContactType[]}).data
-}
-
-export function useContacts() {
-	return useQuery({
-		queryKey: keys.all,
-		queryFn: fetchContacts,
-	})
-}
-
 export function useGroupedContacts() {
 	return useQuery({
 		queryKey: keys.all,
-		queryFn: fetchContacts,
+		queryFn: async ({signal}) => {
+			let response = await client.get('/contacts', {signal}).json()
+			return (response as {data: ContactType[]}).data
+		},
 		select: (contacts) => {
 			let grouped = groupBy(contacts, (c) => c.category)
 			return toPairs(grouped).map(([key, value]) => ({title: key, data: value}))

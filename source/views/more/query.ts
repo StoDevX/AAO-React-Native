@@ -9,14 +9,12 @@ export const keys = {
 
 queryClient.setQueryData(keys.all, require('../../docs/a-to-z.json'))
 
-export async function fetchSearchLinks() {
-	let response = await client.get('/a-to-z').json()
-	return (response as {data: LinkGroup[]}).data
-}
-
 export function useSearchLinks() {
 	return useQuery({
 		queryKey: keys.all,
-		queryFn: fetchSearchLinks,
+		queryFn: async ({signal}) => {
+			let response = await client.get('/a-to-z', {signal}).json()
+			return (response as {data: LinkGroup[]}).data
+		},
 	})
 }
