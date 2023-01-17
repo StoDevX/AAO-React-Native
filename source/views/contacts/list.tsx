@@ -26,8 +26,7 @@ export let ContactsListView = (): JSX.Element => {
 		data = [],
 		error,
 		refetch,
-		isLoading,
-		isInitialLoading,
+		isRefetching,
 	} = useGroupedContacts()
 
 	let onPressContact = React.useCallback(
@@ -61,7 +60,7 @@ export let ContactsListView = (): JSX.Element => {
 			contentContainerStyle={styles.contentContainer}
 			keyExtractor={(item) => item.title}
 			onRefresh={refetch}
-			refreshing={isLoading && !isInitialLoading}
+			refreshing={isRefetching}
 			renderItem={({item}) => (
 				<ContactRow contact={item} onPress={onPressContact} />
 			)}

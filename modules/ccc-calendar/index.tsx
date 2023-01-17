@@ -4,7 +4,6 @@ import {NoticeView} from '@frogpond/notice'
 import {useMomentTimer} from '@frogpond/timer/hook'
 import {UseQueryResult} from '@tanstack/react-query'
 import * as React from 'react'
-import {Calendar} from './types'
 
 export {
 	useNamedCalendar,
@@ -21,7 +20,7 @@ type Props = {
 
 export function CccCalendarView(props: Props) {
 	let {now} = useMomentTimer({intervalMs: 60000})
-	let {isError, refetch, data = [], isLoading, isInitialLoading} = props.query
+	let {isError, refetch, data = [], isRefetching} = props.query
 
 	if (isError) {
 		return (
@@ -40,7 +39,7 @@ export function CccCalendarView(props: Props) {
 			now={now}
 			onRefresh={refetch}
 			poweredBy={props.poweredBy}
-			refreshing={isLoading && !isInitialLoading}
+			refreshing={isRefetching}
 		/>
 	)
 }

@@ -53,7 +53,7 @@ function MoreView(): JSX.Element {
 		refetch,
 		isLoading,
 		isError,
-		isInitialLoading,
+		isRefetching,
 	} = useSearchLinks()
 
 	React.useLayoutEffect(() => {
@@ -107,7 +107,7 @@ function MoreView(): JSX.Element {
 			keyboardDismissMode="on-drag"
 			keyboardShouldPersistTaps="never"
 			onRefresh={refetch}
-			refreshing={isLoading && !isInitialLoading}
+			refreshing={isRefetching}
 			renderItem={({item}) => {
 				return (
 					<ListRow arrowPosition="center" onPress={() => openUrl(item.url)}>

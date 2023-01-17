@@ -54,7 +54,7 @@ export function DirectoryView(): JSX.Element {
 		error,
 		refetch,
 		isError,
-		isInitialLoading,
+		isRefetching,
 		isLoading,
 	} = useDirectoryEntries(searchQuery, searchQueryType)
 
@@ -71,7 +71,7 @@ export function DirectoryView(): JSX.Element {
 	}, [navigation])
 
 	React.useEffect(() => {
-		if (error instanceof Error) {
+		if (isError && error instanceof Error) {
 			setErrorMessage(getErrorMessage(error))
 		}
 	}, [error])
@@ -110,7 +110,7 @@ export function DirectoryView(): JSX.Element {
 					keyboardDismissMode="on-drag"
 					keyboardShouldPersistTaps="never"
 					onRefresh={refetch}
-					refreshing={isLoading && !isInitialLoading}
+					refreshing={isRefetching}
 					renderItem={({item}) => (
 						<DirectoryItemRow
 							item={item}

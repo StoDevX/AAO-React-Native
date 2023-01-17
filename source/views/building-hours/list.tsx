@@ -31,7 +31,7 @@ export function BuildingHoursView(): JSX.Element {
 		refetch,
 		isLoading,
 		isError,
-		isInitialLoading,
+		isRefetching,
 	} = useGroupedBuildings()
 
 	let onPressRow = React.useCallback(
@@ -59,7 +59,7 @@ export function BuildingHoursView(): JSX.Element {
 			contentContainerStyle={styles.container}
 			keyExtractor={(item) => item.name}
 			onRefresh={refetch}
-			refreshing={isLoading && !isInitialLoading}
+			refreshing={isRefetching}
 			renderItem={({item}) => (
 				<BuildingRow info={item} now={now} onPress={() => onPressRow(item)} />
 			)}

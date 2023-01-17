@@ -62,7 +62,7 @@ function DictionaryView(): JSX.Element {
 		refetch,
 		isLoading,
 		isError,
-		isInitialLoading,
+		isRefetching,
 	} = useDictionary()
 
 	React.useLayoutEffect(() => {
@@ -117,7 +117,7 @@ function DictionaryView(): JSX.Element {
 			keyboardDismissMode="on-drag"
 			keyboardShouldPersistTaps="never"
 			onRefresh={refetch}
-			refreshing={isLoading && !isInitialLoading}
+			refreshing={isRefetching}
 			renderItem={({item}) => {
 				return (
 					<ListRow
