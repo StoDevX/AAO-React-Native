@@ -2,8 +2,8 @@ import * as React from 'react'
 import {Cell} from '@frogpond/tableview'
 
 type Props = {
-	data: {key: string|number; value: unknown}
-	onPress: (key: string|number) => void
+	data: {key: string | number; value: unknown}
+	onPress: (key: string | number) => void
 }
 
 export const DebugRow = (props: Props): JSX.Element => {

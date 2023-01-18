@@ -106,7 +106,9 @@ export const DebugArrayItem = ({item}: {item: unknown[]}): JSX.Element => {
 				<DebugRow
 					data={item}
 					onPress={() =>
-						navigation.navigate('DebugView', {keyPath: [...keyPath, String(item.key)]})
+						navigation.navigate('DebugView', {
+							keyPath: [...keyPath, String(item.key)],
+						})
 					}
 				/>
 			)}
