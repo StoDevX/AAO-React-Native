@@ -5,4 +5,5 @@ export {
 export {
 	BuildingHoursProblemReportView,
 	NavigationOptions as ReportNavigationOptions,
+	NavigationKey as ReportNavigationKey,
 } from './overview'

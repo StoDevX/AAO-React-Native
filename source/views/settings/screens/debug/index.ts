@@ -1,1 +1,1 @@
-export {DebugListView, ConnectedDebugListView as DebugView} from './list'
+export {DebugView, NavigationKey} from './list'

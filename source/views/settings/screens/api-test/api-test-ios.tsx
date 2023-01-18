@@ -5,8 +5,7 @@ import {Toolbar} from '@frogpond/toolbar'
 import {client} from '@frogpond/api'
 import glamorous from 'glamorous-native'
 import {iOSUIKit} from 'react-native-typography'
-import {DebugListView} from '../../screens/debug'
-import {useNavigation} from '@react-navigation/native'
+import {DebugView} from '../../screens/debug'
 import {useQuery} from '@tanstack/react-query'
 
 const styles = StyleSheet.create({
@@ -44,8 +43,6 @@ export const IOSAPITestView = (): JSX.Element => {
 	let [path, setPath] = React.useState<string>('')
 	let [selectedIndex, setSelectedIndex] = React.useState(0)
 
-	let navigation = useNavigation()
-
 	let {data, error} = useQuery({
 		queryKey: ['api-test', path],
 		queryFn: ({signal, queryKey: [_group, path]}) => {
@@ -77,7 +74,7 @@ export const IOSAPITestView = (): JSX.Element => {
 				value={data ?? ''}
 			/>
 		) : (
-			<DebugListView apiTest={true} navigation={navigation} state={data} />
+			<DebugView state={JSON.parse(data || '{}')} />
 		)
 
 	return (

@@ -20,6 +20,8 @@ import {Printer, PrintJob} from '../lib/stoprint/types'
 import {JobType} from '../views/sis/student-work/types'
 import {CourseType} from '../lib/course-search/types'
 import {DirectoryItem, DirectorySearchTypeEnum} from '../views/directory/types'
+import { ReportNavigationKey as BuildingHoursProblemReport } from '../views/building-hours/report'
+import { NavigationKey as Debug } from '../views/settings/screens/debug'
 
 export type RootStackParamList = {
 	Home: undefined
@@ -29,7 +31,7 @@ export type RootStackParamList = {
 	EventDetail: {event: EventType; poweredBy: PoweredBy}
 	BuildingHoursDetail: {building: BuildingType}
 	BuildingHours: undefined
-	BuildingHoursProblemReport: {initialBuilding: BuildingType}
+	[BuildingHoursProblemReport]: {initialBuilding: BuildingType}
 	BuildingHoursScheduleEditor: HoursEditorType
 	[calendar.NavigationKey]: calendar.NavigationParams
 	Contacts: undefined
@@ -74,7 +76,7 @@ export type SettingsStackParamList = {
 	APITest: undefined
 	BonAppPicker: undefined
 	Credits: undefined
-	Debug: undefined
+	[Debug]: {keyPath: string[]}
 	Faq: undefined
 	IconSettings: undefined
 	Legal: undefined

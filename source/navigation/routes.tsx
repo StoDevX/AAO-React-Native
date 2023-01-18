@@ -36,6 +36,8 @@ import * as directory from '../views/directory'
 import {StyleSheet} from 'react-native'
 import {getTheme} from '@frogpond/app-theme'
 import {RootStackParamList, SettingsStackParamList} from './types'
+import {NavigationKey as Debug} from '../views/settings/screens/debug'
+import {toLaxTitleCase} from '@frogpond/titlecase'
 
 const theme = getTheme()
 
@@ -291,7 +293,15 @@ const SettingsStackScreens = () => (
 			name="BonAppPicker"
 			options={DevBonAppNavigationOptions}
 		/>
-		<SettingsStack.Screen component={settings.DebugView} name="Debug" />
+		<SettingsStack.Screen
+			component={settings.DebugView}
+			name={Debug}
+			options={({
+				route: {
+					params: {keyPath},
+				},
+			}) => ({title: toLaxTitleCase(keyPath?.[keyPath?.length - 1])})}
+		/>
 	</SettingsStack.Navigator>
 )
 
