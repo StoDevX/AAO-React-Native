@@ -8,27 +8,29 @@ const getDirectoryParams = (query: string, type: DirectorySearchTypeEnum) => {
 	let p = new URLSearchParams()
 	p.set('format', 'json')
 
+	query = query.trim()
+
 	switch (type) {
 		case 'department':
-			p.set('department', query.trim())
+			p.set('department', query)
 			break
 		case 'firstName':
-			p.set('firstname', query.trim())
+			p.set('firstname', query)
 			break
 		case 'lastName':
-			p.set('lastname', query.trim())
+			p.set('lastname', query)
 			break
 		case 'major':
-			p.set('major', query.trim())
+			p.set('major', query)
 			break
 		case 'query':
-			p.set('query', query.trim())
+			p.set('query', query)
 			break
 		case 'title':
-			p.set('title', query.trim())
+			p.set('title', query)
 			break
 		case 'username':
-			p.set('email', query.trim())
+			p.set('email', query)
 			break
 		default: {
 			let _neverHitMe: never = type
