@@ -2,8 +2,7 @@ import * as React from 'react'
 import {StyleSheet, ScrollView, Platform, View} from 'react-native'
 import Icon from 'react-native-vector-icons/Ionicons'
 import {useSelector, useDispatch} from 'react-redux'
-import {hasSeenAcknowledgement} from '../../redux/parts/settings'
-import type {ReduxState} from '../../redux'
+import {selectAcknowledgement, acknowledgeAcknowledgement} from '../../redux/parts/settings'
 import {Avatar, Button, Card, Paragraph as AndroidP} from 'react-native-paper'
 import {Paragraph as IosP} from '@frogpond/markdown'
 import {Card as IosCard} from '@frogpond/silly-card'
@@ -15,12 +14,10 @@ let Ack = Platform.OS === 'android' ? AndroidAck : IosAck
 
 export function BalancesOrAcknowledgementView(): JSX.Element {
 	let dispatch = useDispatch()
-	let alertSeen = useSelector(
-		(state: ReduxState) => state.settings?.unofficiallyAcknowledged || false,
-	)
+	let alertSeen = useSelector(selectAcknowledgement)
 
 	let acknowledge = React.useCallback(
-		() => dispatch(hasSeenAcknowledgement()),
+		() => dispatch(acknowledgeAcknowledgement(true)),
 		[dispatch],
 	)
 
