@@ -15,7 +15,6 @@ import com.reactcommunity.rndatetimepicker.RNDateTimePickerPackage;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 public class MainApplication extends Application implements ReactApplication {
