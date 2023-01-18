@@ -9,23 +9,17 @@ import {
 	ViewStyle,
 } from 'react-native'
 import {Cell, TableView, Section} from '@frogpond/tableview'
-import {BalancesShapeType, getBalances} from '../../lib/financials'
+import {BalancesShapeType, useBalances} from '../../lib/financials'
 import * as c from '@frogpond/colors'
 import {sto} from '../../lib/colors'
 import {useNavigation} from '@react-navigation/native'
-import {useQuery} from '@tanstack/react-query'
-import {NoCredentialsError} from '../../lib/financials/balances'
-
-let useBalances = () =>
-	useQuery({
-		queryKey: ['balances'],
-		queryFn: getBalances,
-	})
+import {NoCredentialsError, useCredentials} from '../../lib/login'
 
 const DISCLAIMER = 'This data may be outdated or otherwise inaccurate.'
 
 export const BalancesView = (): JSX.Element => {
 	let navigation = useNavigation()
+	let credentials = useCredentials()
 
 	let {
 		data = {} as BalancesShapeType,
@@ -34,7 +28,7 @@ export const BalancesView = (): JSX.Element => {
 		isLoading,
 		refetch,
 		isRefetching,
-	} = useBalances()
+	} = useBalances(credentials.data)
 
 	let openSettings = () => navigation.navigate('Settings')
 	let refresh = <RefreshControl onRefresh={refetch} refreshing={isRefetching} />

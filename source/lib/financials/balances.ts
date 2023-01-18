@@ -1,32 +1,29 @@
-import {loadLoginCredentials} from '../login'
-import {OLECARD_AUTH_URL, OLECARD_DATA_ENDPOINT} from './urls'
+import {OLECARD_DATA_ENDPOINT} from './urls'
 import type {BalancesShapeType, OleCardBalancesType} from './types'
 import ky from 'ky'
+import {performLogin} from '../login'
+import {useQuery, UseQueryResult} from '@tanstack/react-query'
+import {SharedWebCredentials} from 'react-native-keychain'
 
-export class NoCredentialsError extends Error {}
-export class LoginFailedError extends Error {}
+export const queryKeys = {
+	default: ['balances'] as const,
+} as const
 
-export async function getBalances(): Promise<BalancesShapeType> {
-	const {username, password} = await loadLoginCredentials()
-
-	if (!username || !password) {
-		throw new NoCredentialsError()
-	}
-
-	let formData = new FormData()
-	formData.set('username', username)
-	formData.set('password', password)
-
-	const loginResponse = await ky.post(OLECARD_AUTH_URL, {
-		body: formData,
-		credentials: 'include',
+export function useBalances(
+	credentials: SharedWebCredentials | false | undefined,
+): UseQueryResult<BalancesShapeType, unknown> {
+	return useQuery({
+		queryKey: queryKeys.default,
+		enabled: Boolean(credentials),
+		// query will only be run once `credentials` is not `false`
+		queryFn: () => getBalances(credentials as SharedWebCredentials),
 	})
+}
 
-	let responseUrl = new URL(loginResponse.url)
-	let responseMessage = responseUrl.searchParams.get('message')
-	if (responseMessage) {
-		throw new LoginFailedError(`Login failed: ${responseMessage}`)
-	}
+export async function getBalances(
+	credentials: SharedWebCredentials,
+): Promise<BalancesShapeType> {
+	await performLogin(credentials)
 
 	const url = OLECARD_DATA_ENDPOINT
 	const resp = (await ky
