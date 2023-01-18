@@ -8,7 +8,6 @@ import './init/moment'
 import * as sentryInit from './init/sentry'
 import './init/api'
 import './init/theme'
-import './init/data'
 import {queryClient, persister} from './init/tanstack-query'
 
 import * as React from 'react'
