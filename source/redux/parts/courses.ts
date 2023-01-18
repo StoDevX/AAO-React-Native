@@ -7,6 +7,7 @@ import {
 import {createSlice} from '@reduxjs/toolkit'
 import type {PayloadAction} from '@reduxjs/toolkit'
 import type {RootState} from '../store'
+import { CourseType } from '../../lib/course-search'
 
 type State = {
 	recentFilters: FilterComboType[]
@@ -23,7 +24,7 @@ const slice = createSlice({
 	name: 'courses',
 	initialState,
 	reducers: {
-		updateRecentFilters(state, action: PayloadAction<FilterType[]>) {
+		updateRecentFilters(state, action: PayloadAction<FilterType<CourseType>[]>) {
 			const newRecentFilter = formatFilterCombo(action.payload)
 			const recentFilters = state.recentFilters
 

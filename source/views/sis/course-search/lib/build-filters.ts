@@ -35,14 +35,14 @@ export function useFilters(): {
 
 	let allTerms = terms
 		.map((term) => ({
-			title: term.term,
+			title: String(term.term),
 			label: parseTerm(term.term.toString()),
 		}))
 		.reverse()
 
 	let allGEs = geReqs.map((ge) => ({title: ge}))
 	let allDepartments = departments.map((dep) => ({title: dep}))
-	let courseLevelOptions = [{title: 100}, {title: 200}, {title: 300}]
+	let courseLevelOptions = [{title: '100'}, {title: '200'}, {title: '300'}]
 
 	let response = [
 		{
