@@ -4,7 +4,7 @@ import { groupBy, toPairs } from 'lodash'
 import {OtherModeType} from '../types'
 
 export const keys = {
-	all: ['transit-modes'] as const,
+	all: ['transit', 'modes'] as const,
 }
 
 export function useOtherModes(): UseQueryResult<OtherModeType[], unknown> {

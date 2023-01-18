@@ -1,64 +1,50 @@
 import * as React from 'react'
-import type {UnprocessedBusLine} from './types'
 import {BusLine} from './line'
-import {Timer} from '@frogpond/timer'
 import {LoadingView, NoticeView} from '@frogpond/notice'
-import {API} from '@frogpond/api'
-import {fetch} from '@frogpond/fetch'
 import {timezone} from '@frogpond/constants'
 import {useNavigation} from '@react-navigation/native'
-
-const fetchBusTimes = (): Promise<Array<UnprocessedBusLine>> =>
-	fetch(API('/transit/bus'))
-		.json<{data: Array<UnprocessedBusLine>}>()
-		.then((body) => body.data)
+import {useBusRoutes} from './query'
+import {useMomentTimer} from '@frogpond/timer/hook'
 
 type Props = {
 	line: string
 }
 
 let BusView = (props: Props): JSX.Element => {
-	let [busLines, setBusLines] = React.useState<Array<UnprocessedBusLine>>([])
-	let [activeBusLine, setActiveBusLine] =
-		React.useState<UnprocessedBusLine | null>()
-	let [loading, setLoading] = React.useState(true)
-
+	let {now} = useMomentTimer({intervalMs: 1000 * 60, timezone: timezone()})
+	let {data: busLines = [], error, refetch, isError, isLoading} = useBusRoutes()
 	let navigation = useNavigation()
 
-	let fetchData = React.useCallback(async () => {
-		let busLines = await fetchBusTimes()
-		let activeBusLine = busLines.find(({line}) => line === props.line)
+	let activeBusLine = busLines.find(({line}) => line === props.line)
 
-		setBusLines(busLines)
-		setActiveBusLine(activeBusLine)
-	}, [props.line])
-
-	React.useEffect(() => {
-		fetchData()
-		setLoading(false)
-	}, [fetchData])
-
-	let openMap = () => {
-		activeBusLine && navigation.navigate('BusMapView', {line: activeBusLine})
-	}
-
-	if (loading) {
+	if (isLoading) {
 		return <LoadingView />
 	}
 
+	if (isError && error instanceof Error) {
+		return (
+			<NoticeView
+				buttonText="Try Again"
+				onPress={refetch}
+				text={`A problem occured while loading the bus routes. ${error.message}`}
+			/>
+		)
+	}
+
+	if (!activeBusLine) {
+		let lines = busLines.map(({line}) => line).join(', ')
+		let msg = `The line "${props.line}" was not found among ${lines}`
+		return <NoticeView text={msg} />
+	}
+
 	return (
-		<Timer
-			interval={60000}
-			moment={true}
-			render={({now}) => {
-				if (!activeBusLine) {
-					let lines = busLines.map(({line}) => line).join(', ')
-					let msg = `The line "${props.line}" was not found among ${lines}`
-					return <NoticeView text={msg} />
-				}
-				return <BusLine line={activeBusLine} now={now} openMap={openMap} />
+		<BusLine
+			line={activeBusLine}
+			now={now}
+			openMap={() => {
+				activeBusLine &&
+					navigation.navigate('BusMapView', {line: activeBusLine})
 			}}
-			timezone={timezone()}
 		/>
 	)
 }
