@@ -7,7 +7,7 @@ export type ToggleSpecType = {
 }
 
 export type ListItemSpecType = {
-	title: string | number
+	title: string
 	label?: string
 	detail?: string
 	image?: ImageSourcePropType | null
