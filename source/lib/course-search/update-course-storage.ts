@@ -1,13 +1,8 @@
 import {fetch} from '@frogpond/fetch'
 import * as Sentry from '@sentry/react-native'
 import type {RawCourseType, CourseType, TermType} from './types'
-import {COURSE_DATA_PAGE, INFO_PAGE} from './urls'
+import {COURSE_DATA_PAGE, infoJson, INFO_PAGE} from './urls'
 import * as storage from '../storage'
-
-type TermInfoType = {
-	files: Array<TermType>
-	type: string
-}
 
 export async function areAnyTermsCached(): Promise<boolean> {
 	const localTerms = await storage.getTermInfo()
@@ -40,25 +35,6 @@ async function determineOutdatedTerms(): Promise<Array<TermType>> {
 		storage.setTermInfo(remoteTerms)
 	}
 	return outdatedTerms
-}
-
-async function loadCurrentTermsFromServer(): Promise<Array<TermType>> {
-	const today = new Date()
-	const thisYear = today.getFullYear()
-	const resp: TermInfoType = await fetch(INFO_PAGE, {cache: 'no-store'})
-		.json<TermInfoType>()
-		.catch((error) => {
-			console.warn(`Error from loadCurrentTermsFromServer: ${error}`)
-			Sentry.captureException(error)
-			return {
-				files: [],
-				type: 'error',
-			}
-		})
-	const terms: Array<TermType> = resp.files.filter(
-		(file) => file.type === 'json' && file.year > thisYear - 5,
-	)
-	return terms
 }
 
 async function storeTermCoursesFromServer(term: TermType) {

@@ -52,7 +52,7 @@ const slice = createSlice({
 	},
 })
 
-export const {updateRecentFilters} = slice.actions
+export const {updateRecentFilters, updateRecentSearches} = slice.actions
 export const reducer = slice.reducer
 
 export const selectRecentFilters = (state: RootState): State['recentFilters'] =>

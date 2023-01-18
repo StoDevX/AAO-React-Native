@@ -47,7 +47,7 @@ export type RootStackParamList = {
 	Menus: undefined
 	News: undefined
 	SIS: undefined
-	CourseSearchResults: {initialQuery?: string; initialFilters?: FilterType[]}
+	CourseSearchResults: {initialQuery?: string; initialFilters?: FilterType<CourseType>[]}
 	CourseDetail: {course: CourseType}
 	Streaming: undefined
 	KSTOSchedule: undefined

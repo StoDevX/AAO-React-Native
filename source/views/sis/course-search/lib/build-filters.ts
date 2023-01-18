@@ -1,10 +1,38 @@
-import {getTermInfo} from '../../../../lib/storage'
 import {parseTerm} from '../../../../lib/course-search/parse-term'
-import type {FilterType} from '@frogpond/filter'
-import {loadAllCourseFilterOptions} from '../../../../lib/course-search'
+import type {FilterType, ListType, ToggleType} from '@frogpond/filter'
+import {CourseType} from '../../../../lib/course-search'
+import {useAvailableTerms, useDepartments, useGeReqs} from '../query'
 
-export async function buildFilters(): Promise<FilterType[]> {
-	let terms = await getTermInfo()
+export function useFilters(): {
+	isLoading: boolean
+	data: FilterType<CourseType>[]
+	error: unknown
+} {
+	let {
+		data: terms = [],
+		error: termError,
+		isLoading: termsLoading,
+	} = useAvailableTerms()
+
+	let {
+		data: geReqs = [],
+		error: geReqError,
+		isLoading: geReqsLoading,
+	} = useGeReqs()
+
+	let {
+		data: departments = [],
+		error: departmentsError,
+		isLoading: deptsLoading,
+	} = useDepartments()
+
+	let isLoading = termsLoading || geReqsLoading || deptsLoading
+	let error = termError || geReqError || departmentsError
+
+	if (error) {
+		return {data: [], error, isLoading}
+	}
+
 	let allTerms = terms
 		.map((term) => ({
 			title: term.term,
@@ -12,13 +40,11 @@ export async function buildFilters(): Promise<FilterType[]> {
 		}))
 		.reverse()
 
-	let {ges, departments} = await loadAllCourseFilterOptions()
-
-	let allGEs = ges.map((ge) => ({title: ge}))
+	let allGEs = geReqs.map((ge) => ({title: ge}))
 	let allDepartments = departments.map((dep) => ({title: dep}))
 	let courseLevelOptions = [{title: 100}, {title: 200}, {title: 300}]
 
-	return [
+	let response = [
 		{
 			type: 'toggle',
 			key: 'spaceAvailable',
@@ -31,7 +57,7 @@ export async function buildFilters(): Promise<FilterType[]> {
 			apply: {
 				key: 'spaceAvailable',
 			},
-		},
+		} as ToggleType<CourseType>,
 		{
 			type: 'list',
 			key: 'term',
@@ -46,7 +72,7 @@ export async function buildFilters(): Promise<FilterType[]> {
 			apply: {
 				key: 'term',
 			},
-		},
+		} as ListType<CourseType>,
 		{
 			type: 'list',
 			key: 'gereqs',
@@ -62,7 +88,7 @@ export async function buildFilters(): Promise<FilterType[]> {
 			apply: {
 				key: 'gereqs',
 			},
-		},
+		} as ListType<CourseType>,
 		{
 			type: 'list',
 			key: 'department',
@@ -78,7 +104,7 @@ export async function buildFilters(): Promise<FilterType[]> {
 			apply: {
 				key: 'department',
 			},
-		},
+		} as ListType<CourseType>,
 		{
 			type: 'list',
 			key: 'level',
@@ -94,7 +120,7 @@ export async function buildFilters(): Promise<FilterType[]> {
 			apply: {
 				key: 'level',
 			},
-		},
+		} as ListType<CourseType>,
 		{
 			type: 'toggle',
 			key: 'status',
@@ -109,7 +135,7 @@ export async function buildFilters(): Promise<FilterType[]> {
 				key: 'status',
 				trueEquivalent: 'O',
 			},
-		},
+		} as ToggleType<CourseType>,
 		{
 			type: 'toggle',
 			key: 'type',
@@ -123,6 +149,8 @@ export async function buildFilters(): Promise<FilterType[]> {
 				key: 'type',
 				trueEquivalent: 'Lab',
 			},
-		},
+		} as ToggleType<CourseType>,
 	]
+
+	return {data: response, error: null, isLoading}
 }

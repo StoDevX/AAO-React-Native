@@ -1,14 +1,11 @@
-import {fetch} from '@frogpond/fetch'
-import {GE_DATA, DEPT_DATA} from './urls'
+import {geData, deptData} from './urls'
 import mapValues from 'lodash/mapValues'
 import pProps from 'p-props'
 
 const filterCategories = {
-	ges: {name: 'ges', url: GE_DATA},
-	departments: {name: 'departments', url: DEPT_DATA},
+	ges: {name: 'ges', fetch: geData} as const,
+	departments: {name: 'departments', fetch: deptData} as const,
 }
-
-type FilterCategory = {name: string; url: string}
 
 type AllFilterCategories = {
 	ges: string[]
@@ -16,9 +13,5 @@ type AllFilterCategories = {
 }
 
 export function loadAllCourseFilterOptions(): Promise<AllFilterCategories> {
-	return pProps(
-		mapValues(filterCategories, (category: FilterCategory) =>
-			fetch(category.url).json<string[]>(),
-		),
-	)
+	return pProps(mapValues(filterCategories, (category) => category.fetch()))
 }
