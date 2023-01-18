@@ -17,19 +17,12 @@ import toPairs from 'lodash/toPairs'
 import words from 'lodash/words'
 import deburr from 'lodash/deburr'
 import type {StudentOrgType} from './types'
-import {API} from '@frogpond/api'
-import {useFetch} from 'react-async'
 import {useDebounce} from '@frogpond/use-debounce'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 import {useNavigation} from '@react-navigation/native'
 import memoize from 'lodash/memoize'
 import {ChangeTextEvent} from '../../navigation/types'
-
-const useStudentOrgs = () => {
-	return useFetch<StudentOrgType[]>(API('/orgs'), {
-		headers: {accept: 'application/json'},
-	})
-}
+import { useStudentOrgs } from './query'
 
 const splitToArray = memoize((str: string) => words(deburr(str.toLowerCase())))
 
@@ -62,9 +55,9 @@ function StudentOrgsView(): JSX.Element {
 	let {
 		data: orgs = [],
 		error,
-		reload,
-		isPending,
-		isInitial,
+		isError,
+		refetch,
+		isRefetching,
 		isLoading,
 	} = useStudentOrgs()
 
@@ -104,12 +97,12 @@ function StudentOrgsView(): JSX.Element {
 	)
 
 	// conditionals must come after all hooks
-	if (error) {
+	if (isError && error instanceof Error) {
 		return (
 			<NoticeView
 				buttonText="Try Again"
-				onPress={reload}
-				text="A problem occured while loading the orgs"
+				onPress={refetch}
+				text={`A problem occured while loading the student orgs. ${error.message}`}
 			/>
 		)
 	}
@@ -131,8 +124,8 @@ function StudentOrgsView(): JSX.Element {
 			keyExtractor={(item) => item.name + item.category}
 			keyboardDismissMode="on-drag"
 			keyboardShouldPersistTaps="never"
-			onRefresh={reload}
-			refreshing={isPending && !isInitial}
+			onRefresh={refetch}
+			refreshing={isRefetching}
 			renderItem={({item}) => (
 				<ListRow arrowPosition="top" onPress={() => onPressOrg(item)}>
 					<Column flex={1}>
