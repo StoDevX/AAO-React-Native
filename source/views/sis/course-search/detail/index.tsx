@@ -183,7 +183,7 @@ function Description({course}: {course: CourseType}) {
 const BGCOLORS = {
 	Open: c.moneyGreen,
 	Closed: c.salmon,
-}
+} as const
 
 export const NavigationOptions = (props: {
 	route: RouteProp<RootStackParamList, 'CourseDetail'>
@@ -198,7 +198,7 @@ export const CourseDetailView = (): JSX.Element => {
 	let route = useRoute<RouteProp<RootStackParamList, 'CourseDetail'>>()
 	let {course} = route.params
 
-	let status = course.status === 'O' ? 'Open' : 'Closed'
+	let status = course.status === 'O' ? ('Open' as const) : ('Closed' as const)
 
 	return (
 		<Container>
