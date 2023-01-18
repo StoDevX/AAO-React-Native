@@ -1,3 +1,10 @@
+declare module 'react' {
+	// source: https://fettblog.eu/typescript-react-generic-forward-refs/
+	function forwardRef<T, P = object>(
+		render: (props: P, ref: React.RefObject<T>) => React.ReactElement | null,
+	): (props: P & React.RefAttributes<T>) => React.ReactElement | null
+}
+
 import {AppRegistry, LogBox} from 'react-native'
 import App from './app'
 
