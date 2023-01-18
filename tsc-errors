@@ -4,50 +4,26 @@ modules/navigation-tabs/tabbed-view.ts(24,7): error TS2322: Type '(<ParamList ex
   Type '<ParamList extends ParamListBase>() => TypedNavigator<ParamList, TabNavigationState<ParamListBase>, MaterialBottomTabNavigationOptions, MaterialBottomTabNavigationEventMap, ({ id, initialRouteName, backBehavior, children, screenListeners, screenOptions, ...rest }: Props) => Element>' is not assignable to type '(screens: Record<string, NavigationScreenRouteConfig>, options?: ScreenOptions | undefined) => ComponentType'.
     Type 'TypedNavigator<ParamListBase, TabNavigationState<ParamListBase>, MaterialBottomTabNavigationOptions, MaterialBottomTabNavigationEventMap, ({ id, initialRouteName, backBehavior, children, screenListeners, screenOptions, ...rest }: Props) => Element>' is not assignable to type 'ComponentType'.
       Type 'TypedNavigator<ParamListBase, TabNavigationState<ParamListBase>, MaterialBottomTabNavigationOptions, MaterialBottomTabNavigationEventMap, ({ id, initialRouteName, backBehavior, children, screenListeners, screenOptions, ...rest }: Props) => Element>' provides no match for the signature '(screens: { [key: string]: NavigationScreenRouteConfig; }, options?: ScreenOptions | undefined): unknown'.
-source/app.tsx(44,11): error TS2322: Type '(prevState: Readonly<{ key: string; index: number; routeNames: string[]; history?: unknown[] | undefined; routes: NavigationRoute<ParamListBase, string>[]; type: string; stale: false; }>, currentState: Readonly<...>) => void' is not assignable to type '(state: Readonly<{ key: string; index: number; routeNames: string[]; history?: unknown[] | undefined; routes: NavigationRoute<ParamListBase, string>[]; type: string; stale: false; }> | undefined) => void'.
 source/lib/stoprint/api.ts(3,51): error TS2307: Cannot find module '@frogpond/fetch' or its corresponding type declarations.
 source/lib/stoprint/api.ts(7,9): error TS2305: Module '"@frogpond/api"' has no exported member 'API'.
-source/navigation/track.ts(11,12): error TS2339: Property 'routes' does not exist on type 'NavigationRoute<ParamListBase, string>'.
-source/navigation/track.ts(12,30): error TS2345: Argument of type 'NavigationRoute<ParamListBase, string>' is not assignable to parameter of type 'Readonly<{ key: string; index: number; routeNames: string[]; history?: unknown[] | undefined; routes: NavigationRoute<ParamListBase, string>[]; type: string; stale: false; }>'.
-  Type 'NavigationRoute<ParamListBase, string>' is missing the following properties from type 'Readonly<{ key: string; index: number; routeNames: string[]; history?: unknown[] | undefined; routes: NavigationRoute<ParamListBase, string>[]; type: string; stale: false; }>': index, routeNames, routes, type, stale
-source/navigation/track.ts(14,15): error TS2339: Property 'routeName' does not exist on type 'NavigationRoute<ParamListBase, string>'.
-source/redux/parts/courses.ts(26,52): error TS2314: Generic type 'FilterType' requires 1 type argument(s).
-source/redux/parts/login.ts(7,14): error TS2305: Module '"../index"' has no exported member 'ReduxState'.
-source/redux/parts/login.ts(122,23): error TS2322: Type '{ status: string; }' is not assignable to type 'State'.
-  Types of property 'status' are incompatible.
-    Type 'string' is not assignable to type 'LoginStateEnum'.
+source/redux/parts/stoprint.ts(1,9): error TS2305: Module '"../../lib/login"' has no exported member 'loadLoginCredentials'.
 source/redux/parts/stoprint.ts(2,14): error TS2305: Module '"../index"' has no exported member 'ReduxState'.
-source/redux/parts/stoprint.ts(68,34): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
-  Type 'undefined' is not assignable to type 'string'.
-source/redux/parts/stoprint.ts(78,21): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
-  Type 'undefined' is not assignable to type 'string'.
-source/redux/parts/stoprint.ts(79,24): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
-  Type 'undefined' is not assignable to type 'string'.
-source/redux/parts/stoprint.ts(128,34): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
-  Type 'undefined' is not assignable to type 'string'.
-source/redux/parts/stoprint.ts(133,40): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
-  Type 'undefined' is not assignable to type 'string'.
-source/views/settings/screens/debug/list.tsx(20,36): error TS2307: Cannot find module 'react-navigation' or its corresponding type declarations.
-source/views/settings/screens/debug/list.tsx(21,14): error TS2305: Module '"../../../../redux"' has no exported member 'ReduxState'.
-source/views/settings/screens/overview/login-credentials.tsx(11,14): error TS2305: Module '"../../../../redux"' has no exported member 'ReduxState'.
-source/views/settings/screens/overview/login-credentials.tsx(141,13): error TS2345: Argument of type 'ThunkAction<LogInActions>' is not assignable to parameter of type 'AnyAction'.
-source/views/settings/screens/overview/login-credentials.tsx(147,12): error TS2345: Argument of type 'Promise<LogOutAction>' is not assignable to parameter of type 'AnyAction'.
-  Property 'type' is missing in type 'Promise<LogOutAction>' but required in type 'AnyAction'.
+source/views/dictionary/report/editor.tsx(65,3): error TS2322: Type '(text: string) => void' is not assignable to type '(e: NativeSyntheticEvent<TextInputSubmitEditingEventData>) => void'.
+  Types of parameters 'text' and 'e' are incompatible.
+    Type 'NativeSyntheticEvent<TextInputSubmitEditingEventData>' is not assignable to type 'string'.
+source/views/dictionary/report/editor.tsx(77,3): error TS2322: Type '(text: string) => void' is not assignable to type '(e: NativeSyntheticEvent<TextInputSubmitEditingEventData>) => void'.
+source/views/settings/screens/overview/server-url.tsx(47,5): error TS2322: Type '{ key: number; _ref: RefObject<TextInput>; onChangeText: (text: string) => void; placeholder: string; value: string; }' is not assignable to type 'IntrinsicAttributes & TextInputProps & { label?: string | undefined; labelWidth?: number | undefined; } & RefAttributes<TextInput>'.
+  Property '_ref' does not exist on type 'IntrinsicAttributes & TextInputProps & { label?: string | undefined; labelWidth?: number | undefined; } & RefAttributes<TextInput>'. Did you mean 'ref'?
 source/views/sis/course-search/lib/execute-search.ts(2,27): error TS7016: Could not find a declaration file for module 'keyword-search'. './node_modules/keyword-search/index.js' implicitly has an 'any' type.
   Try `npm i --save-dev @types/keyword-search` if it exists or add a new declaration (.d.ts) file containing `declare module 'keyword-search';`
-source/views/sis/course-search/lib/format-filter-combo.ts(6,11): error TS2314: Generic type 'FilterType' requires 1 type argument(s).
-source/views/sis/course-search/lib/format-filter-combo.ts(10,44): error TS2314: Generic type 'FilterType' requires 1 type argument(s).
-source/views/sis/course-search/lib/format-filter-combo.ts(18,28): error TS2314: Generic type 'FilterType' requires 1 type argument(s).
-source/views/sis/course-search/lib/format-filter-combo.ts(18,49): error TS2314: Generic type 'FilterType' requires 1 type argument(s).
-source/views/sis/course-search/lib/format-filter-combo.ts(37,50): error TS2345: Argument of type 'string | number' is not assignable to parameter of type 'string'.
-  Type 'number' is not assignable to type 'string'.
 source/views/stoprint/print-jobs.tsx(5,14): error TS2305: Module '"../../redux"' has no exported member 'ReduxState'.
-source/views/stoprint/print-jobs.tsx(199,36): error TS2345: Argument of type 'ThunkAction<LogInActions>' is not assignable to parameter of type 'AnyAction'.
+source/views/stoprint/print-jobs.tsx(7,35): error TS2307: Cannot find module '../../redux/parts/login' or its corresponding type declarations.
+source/views/stoprint/print-jobs.tsx(8,35): error TS2307: Cannot find module '../../redux/parts/login' or its corresponding type declarations.
+source/views/stoprint/print-jobs.tsx(9,9): error TS2305: Module '"../../lib/login"' has no exported member 'loadLoginCredentials'.
 source/views/stoprint/print-jobs.tsx(203,18): error TS2345: Argument of type 'ThunkAction<UpdatePrintJobsAction>' is not assignable to parameter of type 'AnyAction'.
-source/views/stoprint/print-jobs.tsx(211,4): error TS2322: Type '(username: any, password: any) => AnyAction' is not assignable to type '(username: string, password: string) => Promise<any>'.
-  Type 'AnyAction' is missing the following properties from type 'Promise<any>': then, catch, finally, [Symbol.toStringTag]
 source/views/stoprint/print-jobs.tsx(213,4): error TS2322: Type '() => AnyAction' is not assignable to type '() => Promise<any>'.
-  Type 'AnyAction' is not assignable to type 'Promise<any>'.
+  Type 'AnyAction' is missing the following properties from type 'Promise<any>': then, catch, finally, [Symbol.toStringTag]
+source/views/stoprint/print-release.tsx(24,9): error TS2305: Module '"../../lib/login"' has no exported member 'loadLoginCredentials'.
 source/views/stoprint/printers.tsx(4,14): error TS2305: Module '"../../redux"' has no exported member 'ReduxState'.
 source/views/stoprint/printers.tsx(163,18): error TS2345: Argument of type 'ThunkAction<UpdateAllPrintersAction>' is not assignable to parameter of type 'AnyAction'.
 source/views/types.ts(5,8): error TS2307: Cannot find module 'react-navigation' or its corresponding type declarations.
