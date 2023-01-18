@@ -24,5 +24,7 @@ const slice = createSlice({
 export const {acknowledgeAcknowledgement} = slice.actions
 export const reducer = slice.reducer
 
-export const selectAcknowledgement = (state: RootState): State['unofficialityAcknowledged'] =>
+export const selectAcknowledgement = (
+	state: RootState,
+): State['unofficialityAcknowledged'] =>
 	state.settings.unofficialityAcknowledged

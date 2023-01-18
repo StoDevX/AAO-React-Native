@@ -48,7 +48,9 @@ type Props<T extends object> = {
 	title: string
 }
 
-export function FilterToolbarButton<T extends object>(props: Props<T>): JSX.Element | null {
+export function FilterToolbarButton<T extends object>(
+	props: Props<T>,
+): JSX.Element | null {
 	let {onPopoverDismiss, filter, isActive, style, title} = props
 
 	let theme = useTheme()

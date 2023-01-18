@@ -7,7 +7,10 @@ export const keys = {
 	all: ['contacts'] as const,
 }
 
-export function useGroupedContacts(): UseQueryResult<Array<{title: string, data: ContactType[]}>, unknown> {
+export function useGroupedContacts(): UseQueryResult<
+	Array<{title: string; data: ContactType[]}>,
+	unknown
+> {
 	return useQuery({
 		queryKey: keys.all,
 		queryFn: async ({signal}) => {

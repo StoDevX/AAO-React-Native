@@ -1,19 +1,19 @@
 import * as c from '@frogpond/colors'
-import { LoadingView, NoticeView } from '@frogpond/notice'
-import { useNavigation } from '@react-navigation/native'
-import { NativeStackNavigationOptions } from '@react-navigation/native-stack'
-import { debounce } from 'lodash'
+import {LoadingView, NoticeView} from '@frogpond/notice'
+import {useNavigation} from '@react-navigation/native'
+import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+import {debounce} from 'lodash'
 import fromPairs from 'lodash/fromPairs'
 import * as React from 'react'
-import { ScrollView, StyleSheet, View } from 'react-native'
-import { useSelector } from 'react-redux'
-import { ChangeTextEvent } from '../../../navigation/types'
+import {ScrollView, StyleSheet, View} from 'react-native'
+import {useSelector} from 'react-redux'
+import {ChangeTextEvent} from '../../../navigation/types'
 import {
 	selectRecentFilters,
-	selectRecentSearches
+	selectRecentSearches,
 } from '../../../redux/parts/courses'
-import { RecentItemsList } from '../components/recents-list'
-import { useFilters } from './lib/build-filters'
+import {RecentItemsList} from '../components/recents-list'
+import {useFilters} from './lib/build-filters'
 
 let _debounce = debounce((query: string, callback: () => void) => {
 	if (query.length >= 2) {
@@ -28,11 +28,7 @@ export const NavigationOptions: NativeStackNavigationOptions = {
 export const CourseSearchView = (): JSX.Element => {
 	let navigation = useNavigation()
 
-	let {
-		data: basicFilters = [],
-		isLoading,
-		error,
-	} = useFilters()
+	let {data: basicFilters = [], isLoading, error} = useFilters()
 
 	let recentFilters = useSelector(selectRecentFilters)
 	let recentSearches = useSelector(selectRecentSearches)
@@ -72,21 +68,26 @@ export const CourseSearchView = (): JSX.Element => {
 		navigation.navigate('CourseSearchResults', {initialQuery: ''})
 	}
 
-	let onRecentFilterPress = React.useCallback((text: string) => {
-		let selectedFilterCombo = recentFilters.find((f) => f.description === text)
-
-		let selectedFilters = basicFilters
-		if (selectedFilterCombo) {
-			let filterLookup = fromPairs(
-				selectedFilterCombo.filters.map((f) => [f.key, f]),
+	let onRecentFilterPress = React.useCallback(
+		(text: string) => {
+			let selectedFilterCombo = recentFilters.find(
+				(f) => f.description === text,
 			)
-			selectedFilters = basicFilters.map((f) => filterLookup[f.key] || f)
-		}
 
-		navigation.navigate('CourseSearchResults', {
-			initialFilters: selectedFilters,
-		})
-	}, [basicFilters, navigation, recentFilters])
+			let selectedFilters = basicFilters
+			if (selectedFilterCombo) {
+				let filterLookup = fromPairs(
+					selectedFilterCombo.filters.map((f) => [f.key, f]),
+				)
+				selectedFilters = basicFilters.map((f) => filterLookup[f.key] || f)
+			}
+
+			navigation.navigate('CourseSearchResults', {
+				initialFilters: selectedFilters,
+			})
+		},
+		[basicFilters, navigation, recentFilters],
+	)
 
 	if (isLoading) {
 		return <LoadingView text="Loading Course Data…" />

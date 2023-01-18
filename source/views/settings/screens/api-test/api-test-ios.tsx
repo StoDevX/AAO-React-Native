@@ -7,7 +7,7 @@ import glamorous from 'glamorous-native'
 import {iOSUIKit} from 'react-native-typography'
 import {DebugListView} from '../../screens/debug'
 import {useNavigation} from '@react-navigation/native'
-import { useQuery } from '@tanstack/react-query'
+import {useQuery} from '@tanstack/react-query'
 
 const styles = StyleSheet.create({
 	container: {
@@ -41,7 +41,7 @@ const Output = glamorous(TextInput)({
 const Segment = glamorous(SegmentedControlIOS)({})
 
 export const IOSAPITestView = (): JSX.Element => {
-	let [path, setPath] = React.useState<string>('');
+	let [path, setPath] = React.useState<string>('')
 	let [selectedIndex, setSelectedIndex] = React.useState(0)
 
 	let navigation = useNavigation()
@@ -53,31 +53,32 @@ export const IOSAPITestView = (): JSX.Element => {
 		},
 	})
 
-	let APIResponse = error instanceof Error ? (
-		<Output
-			editable={false}
-			// this aligns the text to the top on iOS, and centers it on Android
-			multiline={true}
-			scrollEnabled={true}
-			style={styles.error}
-			// use multiline with textAlignVertical="top" for the same behavior in both platforms
-			textAlignVertical="top"
-			value={error.toString()}
-		/>
-	) : selectedIndex === 0 ? (
-		<Output
-			editable={false}
-			// this aligns the text to the top on iOS, and centers it on Android
-			multiline={true}
-			scrollEnabled={true}
-			style={styles.data}
-			// use multiline with textAlignVertical="top" for the same behavior in both platforms
-			textAlignVertical="top"
-			value={data ?? ''}
-		/>
-	) : (
-		<DebugListView apiTest={true} navigation={navigation} state={data} />
-	)
+	let APIResponse =
+		error instanceof Error ? (
+			<Output
+				editable={false}
+				// this aligns the text to the top on iOS, and centers it on Android
+				multiline={true}
+				scrollEnabled={true}
+				style={styles.error}
+				// use multiline with textAlignVertical="top" for the same behavior in both platforms
+				textAlignVertical="top"
+				value={error.toString()}
+			/>
+		) : selectedIndex === 0 ? (
+			<Output
+				editable={false}
+				// this aligns the text to the top on iOS, and centers it on Android
+				multiline={true}
+				scrollEnabled={true}
+				style={styles.data}
+				// use multiline with textAlignVertical="top" for the same behavior in both platforms
+				textAlignVertical="top"
+				value={data ?? ''}
+			/>
+		) : (
+			<DebugListView apiTest={true} navigation={navigation} state={data} />
+		)
 
 	return (
 		<View style={styles.container}>

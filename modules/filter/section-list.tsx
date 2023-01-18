@@ -13,7 +13,10 @@ type Props<T extends object> = {
 	onChange: (filter: ListType<T>) => void
 }
 
-export function ListSection<T extends object>({filter, onChange}: Props<T>): JSX.Element {
+export function ListSection<T extends object>({
+	filter,
+	onChange,
+}: Props<T>): JSX.Element {
 	let {spec} = filter
 	let {title = '', options, selected, mode} = spec
 	let quantifier = mode === 'AND' ? 'all' : 'any'

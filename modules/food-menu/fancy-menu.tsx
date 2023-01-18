@@ -21,7 +21,10 @@ import {buildFilters} from './lib/build-filters'
 import {useNavigation} from '@react-navigation/native'
 import type {Moment} from 'moment'
 
-type FilterFunc = (filters: Array<FilterType<MenuItemType>>, item: MenuItemType) => boolean
+type FilterFunc = (
+	filters: Array<FilterType<MenuItemType>>,
+	item: MenuItemType,
+) => boolean
 
 type ReactProps = {
 	cafeMessage?: string | null
@@ -52,8 +55,9 @@ const styles = StyleSheet.create({
 const LEFT_MARGIN = 28
 const Separator = () => <ListSeparator spacing={{left: LEFT_MARGIN}} />
 
-const areSpecialsFiltered = (filters: Array<FilterType<MenuItemType>>): boolean =>
-	Boolean(filters.find(isSpecialsFilter))
+const areSpecialsFiltered = (
+	filters: Array<FilterType<MenuItemType>>,
+): boolean => Boolean(filters.find(isSpecialsFilter))
 
 const isSpecialsFilter = (f: FilterType<MenuItemType>): boolean =>
 	f.enabled && f.type === 'toggle' && f.spec.label === 'Only Show Specials'

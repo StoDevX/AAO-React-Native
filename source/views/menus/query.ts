@@ -46,7 +46,9 @@ function buildCafePath(cafeParam: string | {id: string}) {
 	}
 }
 
-export function useBonAppCafe(cafeParam: string | {id: string}): UseQueryResult<EditedBonAppCafeInfoType, unknown> {
+export function useBonAppCafe(
+	cafeParam: string | {id: string},
+): UseQueryResult<EditedBonAppCafeInfoType, unknown> {
 	return useQuery({
 		queryKey: cafeKeys.bonAppCcc(buildCafePath(cafeParam)),
 		queryFn: async ({queryKey: [_group, _bonapp, cafePath], signal}) => {
@@ -57,7 +59,9 @@ export function useBonAppCafe(cafeParam: string | {id: string}): UseQueryResult<
 	})
 }
 
-export function useBonAppMenu(cafeParam: string | {id: string}): UseQueryResult<EditedBonAppMenuInfoType, unknown> {
+export function useBonAppMenu(
+	cafeParam: string | {id: string},
+): UseQueryResult<EditedBonAppMenuInfoType, unknown> {
 	return useQuery({
 		queryKey: menuKeys.bonAppCcc(buildMenuPath(cafeParam)),
 		queryFn: async ({queryKey: [_group, _bonapp, cafePath], signal}) => {

@@ -12,7 +12,9 @@ type Props<T extends object> = {
 	onPopoverDismiss: (filter: FilterType<T>) => unknown
 }
 
-function updateAnyFilter<T extends object>(callback: (filter: FilterType<T>) => unknown) {
+function updateAnyFilter<T extends object>(
+	callback: (filter: FilterType<T>) => unknown,
+) {
 	return (filter: FilterType<T>, option?: ListItemSpecType) => {
 		if (filter.type === 'toggle') {
 			filter = updateToggleFilter(filter)
@@ -25,7 +27,9 @@ function updateAnyFilter<T extends object>(callback: (filter: FilterType<T>) => 
 	}
 }
 
-function updateToggleFilter<T extends object>(filter: ToggleType<T>): ToggleType<T> {
+function updateToggleFilter<T extends object>(
+	filter: ToggleType<T>,
+): ToggleType<T> {
 	return {...filter, enabled: false}
 }
 
@@ -54,7 +58,10 @@ function updateListFilter<T extends object>(
 	return newFilter
 }
 
-export function FilterToolbar<T extends object>({filters, onPopoverDismiss}: Props<T>): JSX.Element {
+export function FilterToolbar<T extends object>({
+	filters,
+	onPopoverDismiss,
+}: Props<T>): JSX.Element {
 	let updateFilter = updateAnyFilter(onPopoverDismiss)
 
 	let filterToggles = filters.map((filter) => (

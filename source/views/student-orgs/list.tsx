@@ -22,7 +22,7 @@ import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 import {useNavigation} from '@react-navigation/native'
 import memoize from 'lodash/memoize'
 import {ChangeTextEvent} from '../../navigation/types'
-import { useStudentOrgs } from './query'
+import {useStudentOrgs} from './query'
 
 const splitToArray = memoize((str: string) => words(deburr(str.toLowerCase())))
 

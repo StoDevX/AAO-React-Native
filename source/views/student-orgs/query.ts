@@ -1,6 +1,6 @@
 import {client} from '@frogpond/api'
 import {useQuery, UseQueryResult} from '@tanstack/react-query'
-import { StudentOrgType } from './types'
+import {StudentOrgType} from './types'
 
 export const keys = {
 	all: ['orgs'] as const,

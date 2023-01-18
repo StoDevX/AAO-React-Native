@@ -25,7 +25,10 @@ export function FilterPopover<T extends object>(props: Props<T>): JSX.Element {
 			placement={PopoverPlacement.BOTTOM}
 			popoverStyle={popoverContainer}
 		>
-			<FilterSection<T> filter={filter} onChange={(filter) => setFilter(filter)} />
+			<FilterSection<T>
+				filter={filter}
+				onChange={(filter) => setFilter(filter)}
+			/>
 		</Popover>
 	)
 }

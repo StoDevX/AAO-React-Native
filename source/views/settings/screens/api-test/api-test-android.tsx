@@ -5,7 +5,7 @@ import {Toolbar} from '@frogpond/toolbar'
 import {client} from '@frogpond/api'
 import glamorous from 'glamorous-native'
 import {material} from 'react-native-typography'
-import { useQuery } from '@tanstack/react-query'
+import {useQuery} from '@tanstack/react-query'
 
 const styles = StyleSheet.create({
 	container: {
@@ -30,7 +30,7 @@ const Output = glamorous(ScrollView)({
 })
 
 export const AndroidAPITestView = (): JSX.Element => {
-	let [path, setPath] = React.useState<string>('');
+	let [path, setPath] = React.useState<string>('')
 
 	let {data, error} = useQuery({
 		queryKey: ['api-test', path],

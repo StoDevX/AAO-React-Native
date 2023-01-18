@@ -58,5 +58,6 @@ export const reducer = slice.reducer
 export const selectRecentFilters = (state: RootState): State['recentFilters'] =>
 	state.courses.recentFilters
 
-export const selectRecentSearches = (state: RootState): State['recentSearches'] =>
-	state.courses.recentSearches
+export const selectRecentSearches = (
+	state: RootState,
+): State['recentSearches'] => state.courses.recentSearches

@@ -10,7 +10,10 @@ type Props<T extends object> = {
 	onChange: (filter: PickerType<T>) => void
 }
 
-export function PickerSection<T extends object>({filter, onChange}: Props<T>): JSX.Element {
+export function PickerSection<T extends object>({
+	filter,
+	onChange,
+}: Props<T>): JSX.Element {
 	let {spec} = filter
 	let {title = '', caption = '', options, selected} = spec
 

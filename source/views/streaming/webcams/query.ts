@@ -1,6 +1,6 @@
 import {client} from '@frogpond/api'
 import {useQuery, UseQueryResult} from '@tanstack/react-query'
-import { Webcam } from './types'
+import {Webcam} from './types'
 
 export const keys = {
 	all: ['streaming', 'webcams'] as const,

@@ -9,7 +9,10 @@ export const keys = {
 	all: ['buildings'] as const,
 }
 
-export function useGroupedBuildings(): UseQueryResult<Array<{title: string, data: BuildingType[]}>, unknown> {
+export function useGroupedBuildings(): UseQueryResult<
+	Array<{title: string; data: BuildingType[]}>,
+	unknown
+> {
 	let favoriteBuildings = useSelector(selectFavoriteBuildings)
 
 	return useQuery({

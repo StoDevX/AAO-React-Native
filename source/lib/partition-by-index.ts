@@ -1,5 +1,5 @@
 function* enumerate<T>(iter: Array<T>): Generator<[number, T]> {
-	let i = 0;
+	let i = 0
 	for (let item of iter) {
 		yield [i, item]
 		i += 1
@@ -7,8 +7,8 @@ function* enumerate<T>(iter: Array<T>): Generator<[number, T]> {
 }
 
 export function partitionByIndex<T>(arr: T[]): [T[], T[]] {
-	let evens = [];
-	let odds = [];
+	let evens = []
+	let odds = []
 	for (let [i, item] of enumerate(arr)) {
 		if (i % 2 === 0) {
 			evens.push(item)
