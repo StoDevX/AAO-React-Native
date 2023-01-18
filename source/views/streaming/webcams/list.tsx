@@ -18,12 +18,12 @@ export let WebcamsView = (): JSX.Element => {
 		isLoading,
 	} = useWebcams()
 
-	if (isError && error instanceof Error) {
+	if (isError) {
 		return (
 			<NoticeView
 				buttonText="Try Again"
 				onPress={refetch}
-				text={`A problem occured while loading the webcams. ${error.message}`}
+				text={`A problem occured while loading: ${error}`}
 			/>
 		)
 	}

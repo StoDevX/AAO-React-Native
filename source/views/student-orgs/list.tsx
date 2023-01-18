@@ -96,13 +96,12 @@ function StudentOrgsView(): JSX.Element {
 		[navigation],
 	)
 
-	// conditionals must come after all hooks
-	if (isError && error instanceof Error) {
+	if (isError) {
 		return (
 			<NoticeView
 				buttonText="Try Again"
 				onPress={refetch}
-				text={`A problem occured while loading the student orgs. ${error.message}`}
+				text={`A problem occured while loading: ${error}`}
 			/>
 		)
 	}

@@ -26,12 +26,12 @@ let OtherModesView = (): JSX.Element => {
 		isError,
 	} = useOtherModesGrouped()
 
-	if (isError && error instanceof Error) {
+	if (isError) {
 		return (
 			<NoticeView
 				buttonText="Try Again"
 				onPress={refetch}
-				text={`A problem occured while loading the transit modes. ${error.message}`}
+				text={`A problem occured while loading: ${error}`}
 			/>
 		)
 	}

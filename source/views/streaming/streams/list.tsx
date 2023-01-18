@@ -108,12 +108,12 @@ export const StreamListView = (): JSX.Element => {
 		setFilters(streamFilters)
 	}, [data])
 
-	if (isError && error instanceof Error) {
+	if (isError) {
 		return (
 			<NoticeView
 				buttonText="Try Again"
 				onPress={refetch}
-				text={`A problem occured while loading the streams. ${error.message}`}
+				text={`A problem occured while loading: ${error}`}
 			/>
 		)
 	}

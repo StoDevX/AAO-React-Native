@@ -21,12 +21,12 @@ let BusView = (props: Props): JSX.Element => {
 		return <LoadingView />
 	}
 
-	if (isError && error instanceof Error) {
+	if (isError) {
 		return (
 			<NoticeView
 				buttonText="Try Again"
 				onPress={refetch}
-				text={`A problem occured while loading the bus routes. ${error.message}`}
+				text={`A problem occured while loading: ${error}`}
 			/>
 		)
 	}
