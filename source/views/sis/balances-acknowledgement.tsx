@@ -2,12 +2,15 @@ import * as React from 'react'
 import {StyleSheet, ScrollView, Platform, View} from 'react-native'
 import Icon from 'react-native-vector-icons/Ionicons'
 import {useSelector, useDispatch} from 'react-redux'
-import {selectAcknowledgement, acknowledgeAcknowledgement} from '../../redux/parts/settings'
+import {
+	selectAcknowledgement,
+	acknowledgeAcknowledgement,
+} from '../../redux/parts/settings'
 import {Avatar, Button, Card, Paragraph as AndroidP} from 'react-native-paper'
 import {Paragraph as IosP} from '@frogpond/markdown'
 import {Card as IosCard} from '@frogpond/silly-card'
 import {Button as IosButton} from '@frogpond/button'
-import {ConnectedBalancesView as BalancesView} from './balances'
+import {BalancesView} from './balances'
 
 let Paragraph = Platform.OS === 'android' ? AndroidP : IosP
 let Ack = Platform.OS === 'android' ? AndroidAck : IosAck

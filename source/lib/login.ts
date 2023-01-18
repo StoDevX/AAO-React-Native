@@ -2,16 +2,11 @@ import {
 	setInternetCredentials,
 	getInternetCredentials,
 	resetInternetCredentials,
+	type Result as RNKeychainResult,
 } from 'react-native-keychain'
 
-import type {
-	Result as RNKeychainResult,
-	SharedWebCredentials as RNKeychainCredentials,
-} from 'react-native-keychain'
-
-import buildFormData from './formdata'
 import {OLECARD_AUTH_URL} from './financials/urls'
-import {ExpandedFetchArgs} from '@frogpond/fetch'
+import ky from 'ky'
 
 const SIS_LOGIN_KEY = 'stolaf.edu'
 
@@ -20,18 +15,15 @@ const EMPTY_CREDENTIALS: MaybeCredentials = {}
 export type Credentials = {username: string; password: string}
 export type MaybeCredentials = {username?: string; password?: string}
 
-export function saveLoginCredentials({
-	username,
-	password,
-}: Credentials): Promise<false | RNKeychainResult> {
-	return setInternetCredentials(SIS_LOGIN_KEY, username, password)
+export function saveLoginCredentials(
+	creds: Credentials,
+): Promise<false | RNKeychainResult> {
+	return setInternetCredentials(SIS_LOGIN_KEY, creds.username, creds.password)
 }
 
-export function loadLoginCredentials(): Promise<MaybeCredentials> {
-	return getInternetCredentials(SIS_LOGIN_KEY).then(
-		(result: false | RNKeychainCredentials): MaybeCredentials =>
-			result ? result : EMPTY_CREDENTIALS,
-	)
+export async function loadLoginCredentials(): Promise<MaybeCredentials> {
+	let result = await getInternetCredentials(SIS_LOGIN_KEY)
+	return result || EMPTY_CREDENTIALS
 }
 
 export function clearLoginCredentials(): Promise<void> {
@@ -46,28 +38,25 @@ export type LoginResultEnum =
 	| 'server-error'
 	| 'other'
 
-type Args = {attempts?: number}
-
 export async function performLogin({
 	attempts = 0,
-}: Args = {}): Promise<LoginResultEnum> {
+}: {attempts?: number} = {}): Promise<LoginResultEnum> {
 	const {username, password} = await loadLoginCredentials()
 	if (!username || !password) {
 		return 'no-credentials'
 	}
 
-	const form = buildFormData({username, password})
+	let formData = new FormData()
+	formData.set('username', username)
+	formData.set('password', password)
 
 	try {
-		const fetchParams: ExpandedFetchArgs = {
-			method: 'POST',
-			body: form,
+		const {status: statusCode} = await ky.post(OLECARD_AUTH_URL, {
+			body: formData,
 			credentials: 'include',
 			cache: 'no-store',
 			throwHttpErrors: false,
-		}
-
-		const {status: statusCode} = await fetch(OLECARD_AUTH_URL, fetchParams)
+		})
 
 		if (statusCode >= 400 && statusCode < 500) {
 			return 'bad-credentials'
