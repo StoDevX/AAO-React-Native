@@ -445,7 +445,7 @@ PODS:
     - React-RCTText
     - ReactCommon/turbomodule/core
     - Yoga
-  - RNScreens (3.17.0):
+  - RNScreens (3.18.2):
     - React-Core
     - React-RCTImage
   - RNSearchBar (3.5.1):
@@ -746,7 +746,7 @@ SPEC CHECKSUMS:
   RNInAppBrowser: e36d6935517101ccba0e875bac8ad7b0cb655364
   RNKeychain: ff836453cba46938e0e9e4c22e43d43fa2c90333
   RNReanimated: 2c1a20521293333aa28b6bb33bc6cd89c7c11066
-  RNScreens: 0df01424e9e0ed7827200d6ed1087ddd06c493f9
+  RNScreens: 34cc502acf1b916c582c60003dc3089fa01dc66d
   RNSearchBar: 9860431356b7d12a8449d2fddb2b5f3c78d1e99f
   RNSentry: 4c09f4dd9740cb9b33e94303de5b6d0dbeb0737d
   RNVectorIcons: fcc2f6cb32f5735b586e66d14103a74ce6ad61f8
@@ -755,6 +755,6 @@ SPEC CHECKSUMS:
   Yoga: c618b544ff8bd8865cdca602f00cbcdb92fd6d31
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
-PODFILE CHECKSUM: d6055bc54cdf5cc53391447ea299429ffba9d3d7
+PODFILE CHECKSUM: 48fcfa81de9f4c517c3ce1036c06f6b5a68a8b27
 
 COCOAPODS: 1.11.3
