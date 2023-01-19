@@ -1,7 +1,7 @@
 import * as React from 'react'
 import {StyleSheet, ScrollView, Platform, View} from 'react-native'
 import Icon from 'react-native-vector-icons/Ionicons'
-import {useSelector, useDispatch} from 'react-redux'
+import {useAppSelector, useAppDispatch} from '../../redux'
 import {
 	selectAcknowledgement,
 	acknowledgeAcknowledgement,
@@ -16,8 +16,8 @@ let Paragraph = Platform.OS === 'android' ? AndroidP : IosP
 let Ack = Platform.OS === 'android' ? AndroidAck : IosAck
 
 export function BalancesOrAcknowledgementView(): JSX.Element {
-	let dispatch = useDispatch()
-	let alertSeen = useSelector(selectAcknowledgement)
+	let dispatch = useAppDispatch()
+	let alertSeen = useAppSelector(selectAcknowledgement)
 
 	let acknowledge = React.useCallback(
 		() => dispatch(acknowledgeAcknowledgement(true)),

@@ -6,7 +6,7 @@ import {
 } from '../../../redux/parts/courses'
 import {LoadingView} from '@frogpond/notice'
 import type {CourseType} from '../../../lib/course-search'
-import {useDispatch} from 'react-redux'
+import { useAppDispatch } from '../../../redux'
 import {applyFiltersToItem} from '@frogpond/filter'
 import {FilterType} from '@frogpond/filter'
 import {useFilters} from './lib/build-filters'
@@ -60,7 +60,7 @@ function queriesToCourses(
 }
 
 export const CourseSearchResultsView = (): JSX.Element => {
-	let dispatch = useDispatch()
+	let dispatch = useAppDispatch()
 	let navigation = useNavigation()
 
 	let route = useRoute<RouteProp<RootStackParamList, 'CourseSearchResults'>>()

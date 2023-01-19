@@ -6,8 +6,8 @@ import {debounce} from 'lodash'
 import fromPairs from 'lodash/fromPairs'
 import * as React from 'react'
 import {ScrollView, StyleSheet, View} from 'react-native'
-import {useSelector} from 'react-redux'
 import {ChangeTextEvent} from '../../../navigation/types'
+import {useAppSelector} from '../../../redux'
 import {
 	selectRecentFilters,
 	selectRecentSearches,
@@ -30,8 +30,8 @@ export const CourseSearchView = (): JSX.Element => {
 
 	let {data: basicFilters = [], isLoading, error} = useFilters()
 
-	let recentFilters = useSelector(selectRecentFilters)
-	let recentSearches = useSelector(selectRecentSearches)
+	let recentFilters = useAppSelector(selectRecentFilters)
+	let recentSearches = useAppSelector(selectRecentSearches)
 
 	let [typedQuery, setTypedQuery] = React.useState('')
 

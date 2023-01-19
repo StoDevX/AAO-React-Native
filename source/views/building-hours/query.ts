@@ -1,8 +1,7 @@
 import {client} from '@frogpond/api'
 import {useQuery, UseQueryResult} from '@tanstack/react-query'
 import {groupBy} from 'lodash'
-import {useSelector} from 'react-redux'
-import {selectFavoriteBuildings} from '../../redux'
+import {selectFavoriteBuildings, useAppSelector} from '../../redux'
 import {BuildingType} from './types'
 
 export const keys = {
@@ -13,7 +12,7 @@ export function useGroupedBuildings(): UseQueryResult<
 	Array<{title: string; data: BuildingType[]}>,
 	unknown
 > {
-	let favoriteBuildings = useSelector(selectFavoriteBuildings)
+	let favoriteBuildings = useAppSelector(selectFavoriteBuildings)
 
 	return useQuery({
 		queryKey: keys.all,
