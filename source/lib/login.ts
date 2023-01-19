@@ -5,6 +5,7 @@ import {
 	SharedWebCredentials,
 } from 'react-native-keychain'
 import {OLECARD_AUTH_URL} from './financials/urls'
+import {identity} from 'lodash'
 
 export class NoCredentialsError extends Error {}
 export class LoginFailedError extends Error {}
@@ -13,6 +14,7 @@ export const SIS_LOGIN_KEY = 'stolaf.edu' as const
 
 const queryKeys = {
 	default: ['credentials'] as const,
+	username: ['credentials', 'username'] as const,
 } as const
 
 export async function performLogin(credentials: {
@@ -43,15 +45,26 @@ export async function performLogin(credentials: {
 	return credentials
 }
 
-export function useCredentials(): UseQueryResult<
-	false | SharedWebCredentials,
-	unknown
-> {
+export function useCredentials<T = false | SharedWebCredentials>(
+	selector: (
+		data: Awaited<ReturnType<typeof getInternetCredentials>>,
+	) => T = identity,
+): UseQueryResult<T, unknown> {
 	return useQuery({
 		queryKey: queryKeys.default,
 		queryFn: () => getInternetCredentials(SIS_LOGIN_KEY),
+		select: selector,
 		networkMode: 'always',
-		cacheTime: 0,
-		staleTime: 0,
 	})
+}
+
+export function useUsername(): UseQueryResult<
+	false | Pick<SharedWebCredentials, 'username'>,
+	unknown
+> {
+	return useCredentials((data) => (data ? {username: data.username} : false))
+}
+
+export function useHasCredentials(): UseQueryResult<boolean, unknown> {
+	return useCredentials((data) => Boolean(data))
 }
