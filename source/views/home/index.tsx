@@ -8,7 +8,6 @@ import {
 } from 'react-native'
 
 import {getTheme} from '@frogpond/app-theme'
-import type {ViewType} from '../views'
 import {allViews} from '../views'
 import {Column} from '@frogpond/layout'
 import {partitionByIndex} from '../../lib/partition-by-index'
@@ -31,13 +30,9 @@ const styles = StyleSheet.create({
 	},
 })
 
-type Props = {
-	views: Array<ViewType>
-}
-
-function HomePage({views = allViews}: Props): JSX.Element {
+function HomePage(): JSX.Element {
 	let navigation = useNavigation()
-	let columns = partitionByIndex(views)
+	let columns = partitionByIndex(allViews)
 
 	let {androidStatusBarColor, statusBarStyle} = getTheme()
 

@@ -23,54 +23,70 @@ import {DirectoryItem, DirectorySearchTypeEnum} from '../views/directory/types'
 import {ReportNavigationKey as BuildingHoursProblemReport} from '../views/building-hours/report'
 import {NavigationKey as Debug} from '../views/settings/screens/debug'
 
-export type RootStackParamList = {
+export type RootViewsParamList = {
 	Home: undefined
+	BuildingHours: undefined
+	[calendar.NavigationKey]: calendar.NavigationParams
+	Contacts: undefined
+	CourseSearch: undefined
+	Dictionary: undefined
+	Directory:
+		| {queryType?: DirectorySearchTypeEnum; queryParam?: string}
+		| undefined
+	Faq: undefined
+	Help: undefined
+	Menus: undefined
+	News: undefined
+	SIS: undefined
+	Streaming: undefined
+	StudentOrgs: undefined
+	Transportation: undefined
+	PrintJobs: undefined
+	More: undefined
+}
+
+export type CafeMenuParamList = {
+	CarletonBurtonMenu: undefined
+	CarletonLDCMenu: undefined
+	CarletonWeitzMenu: undefined
+	CarletonSaylesMenu: undefined
+}
+
+export type RadioScheduleParamList = {
+	KSTOSchedule: undefined
+	KRLXSchedule: undefined
+}
+
+export type MiscViewParamList = {
 	HomeRoot: undefined
 	Profile: {userId: string}
 	Feed: {sort: 'latest' | 'top'} | undefined
 	EventDetail: {event: EventType; poweredBy: PoweredBy}
 	BuildingHoursDetail: {building: BuildingType}
-	BuildingHours: undefined
 	[BuildingHoursProblemReport]: {initialBuilding: BuildingType}
 	BuildingHoursScheduleEditor: HoursEditorType
-	[calendar.NavigationKey]: calendar.NavigationParams
-	Contacts: undefined
 	ContactsDetail: {contact: ContactType}
-	CourseSearch: undefined
 	DictionaryDetail: {item: WordType}
-	Dictionary: undefined
 	DictionaryEditor: {item: WordType}
-	Directory: {queryType?: DirectorySearchTypeEnum; queryParam?: string}
 	DirectoryDetail: {contact: DirectoryItem}
-	Faq: undefined
-	Help: undefined
 	Job: undefined
 	JobDetail: {job: JobType}
-	Menus: undefined
-	News: undefined
-	SIS: undefined
 	CourseSearchResults: {
 		initialQuery?: string
 		initialFilters?: FilterType<CourseType>[]
 	}
 	CourseDetail: {course: CourseType}
-	Streaming: undefined
-	KSTOSchedule: undefined
-	KRLXSchedule: undefined
 	StudentOrgsDetail: {org: StudentOrgType}
-	StudentOrgs: undefined
-	Transportation: undefined
 	BusMapView: {line: UnprocessedBusLine}
-	CarletonBurtonMenu: undefined
-	CarletonLDCMenu: undefined
-	CarletonWeitzMenu: undefined
-	CarletonSaylesMenu: undefined
 	MenuItemDetail: {item: MenuItem; icons: MasterCorIconMapType}
-	PrintJobs: undefined
 	PrinterList: {job: PrintJob}
 	PrintJobRelease: {job: PrintJob; printer?: Printer}
-	More: undefined
 }
+
+export type RootStackParamList = RootViewsParamList &
+	CafeMenuParamList &
+	RadioScheduleParamList &
+	MiscViewParamList
 
 export type SettingsStackParamList = {
 	APITest: undefined

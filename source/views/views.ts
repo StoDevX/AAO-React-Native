@@ -1,6 +1,6 @@
 import * as c from '@frogpond/colors'
 import type {Gradient} from '@frogpond/colors'
-import {RootStackParamList} from '../navigation/types'
+import {RootViewsParamList} from '../navigation/types'
 
 type CommonView = {
 	title: string
@@ -12,7 +12,7 @@ type CommonView = {
 
 type NativeView = {
 	type: 'view'
-	view: keyof RootStackParamList
+	view: keyof RootViewsParamList
 }
 
 type WebLinkView = {

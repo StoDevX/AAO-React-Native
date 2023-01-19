@@ -294,7 +294,7 @@ const SettingsStackScreens = () => (
 			options={DevBonAppNavigationOptions}
 		/>
 		<SettingsStack.Screen
-			component={settings.DebugView}
+			component={settings.DebugRootView}
 			name={Debug}
 			options={({
 				route: {
