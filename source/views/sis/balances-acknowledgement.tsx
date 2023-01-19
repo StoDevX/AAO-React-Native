@@ -19,11 +19,6 @@ export function BalancesOrAcknowledgementView(): JSX.Element {
 	let dispatch = useAppDispatch()
 	let alertSeen = useAppSelector(selectAcknowledgement)
 
-	let acknowledge = React.useCallback(
-		() => dispatch(acknowledgeAcknowledgement(true)),
-		[dispatch],
-	)
-
 	if (alertSeen) {
 		return <BalancesView />
 	}
@@ -52,7 +47,7 @@ export function BalancesOrAcknowledgementView(): JSX.Element {
 	)
 
 	let ackProps = {
-		onPositive: acknowledge,
+		onPositive: () => dispatch(acknowledgeAcknowledgement(true)),
 		subtitle: 'Bon Appétit is always right',
 		title: 'Before you continue…',
 	}
