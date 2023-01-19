@@ -14,7 +14,7 @@ export function useGroupedContacts(): UseQueryResult<
 	return useQuery({
 		queryKey: keys.all,
 		queryFn: async ({signal}) => {
-			let response = await client.get('/contacts', {signal}).json()
+			let response = await client.get('contacts', {signal}).json()
 			return (response as {data: ContactType[]}).data
 		},
 		select: (contacts) => {

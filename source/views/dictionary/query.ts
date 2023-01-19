@@ -10,7 +10,7 @@ export function useDictionary(): UseQueryResult<WordType[], unknown> {
 	return useQuery({
 		queryKey: keys.all,
 		queryFn: async ({signal}) => {
-			let response = await client.get('/dictionary', {signal}).json()
+			let response = await client.get('dictionary', {signal}).json()
 			return (response as {data: WordType[]}).data
 		},
 	})

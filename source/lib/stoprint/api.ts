@@ -39,7 +39,7 @@ export async function logIn(
 	}
 
 	const result = (await papercutApi
-		.post(`/webclient/users/${username}/log-in`, {
+		.post(`webclient/users/${username}/log-in`, {
 			...options,
 			body: new URLSearchParams({password: encode(password)}),
 			searchParams: new URLSearchParams({nocache: String(now)}),
@@ -62,7 +62,7 @@ export async function fetchJobs(
 	}
 
 	return (await papercutApi
-		.get(`/webclient/users/${username}/jobs/status`, options)
+		.get(`webclient/users/${username}/jobs/status`, options)
 		.json()) as PrintJobsResponse
 }
 
@@ -75,7 +75,7 @@ export async function fetchAllPrinters(
 	}
 
 	return (await mobileReleaseApi
-		.get('/all-printers', {
+		.get('all-printers', {
 			...options,
 			searchParams: new URLSearchParams({username: username}),
 		})
@@ -91,7 +91,7 @@ export async function fetchRecentPrinters(
 	}
 
 	return (await mobileReleaseApi
-		.get('/recent-popular-printers', {
+		.get('recent-popular-printers', {
 			...options,
 			searchParams: new URLSearchParams({username: username}),
 		})
@@ -100,7 +100,7 @@ export async function fetchRecentPrinters(
 
 export async function fetchColorPrinters(options: Options): Promise<string[]> {
 	let response = (await client
-		.get('/color-printers', options)
+		.get('color-printers', options)
 		.json()) as ColorPrintersResponse
 	return response.data.colorPrinters
 }
@@ -116,7 +116,7 @@ export async function heldJobsAvailableAtPrinterForUser(
 	}
 
 	return (await mobileReleaseApi
-		.get('/held-jobs', {
+		.get('held-jobs', {
 			...options,
 			searchParams: new URLSearchParams({
 				username: username,
@@ -132,7 +132,7 @@ export async function cancelPrintJobForUser(
 	options: Options,
 ): Promise<CancelResponse> {
 	return (await mobileReleaseApi
-		.post('/held-jobs/cancel', {
+		.post('held-jobs/cancel', {
 			...options,
 			searchParams: new URLSearchParams({username: username}),
 			body: new URLSearchParams({'jobIds[]': jobId}),
@@ -155,7 +155,7 @@ export async function releasePrintJobToPrinterForUser(
 	}
 
 	let response = (await mobileReleaseApi
-		.post('/held-jobs/release', {
+		.post('held-jobs/release', {
 			...options,
 			searchParams: new URLSearchParams({username: username}),
 			body: new URLSearchParams({

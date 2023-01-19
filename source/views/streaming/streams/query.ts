@@ -25,7 +25,7 @@ export function useStreams(
 		queryKey: keys.all(searchParams),
 		queryFn: async ({queryKey: [_group, {sort, dateFrom, dateTo}], signal}) => {
 			let response = await client
-				.get('/streams/upcoming', {
+				.get('streams/upcoming', {
 					signal,
 					searchParams: {sort, dateFrom, dateTo},
 				})

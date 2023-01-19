@@ -15,7 +15,7 @@ export function useNamedNewsSource(
 		queryKey: keys.named(source),
 		queryFn: async ({queryKey, signal}) => {
 			let response = await client
-				.get(`/news/named/${queryKey[2]}`, {signal})
+				.get(`news/named/${queryKey[2]}`, {signal})
 				.json()
 			return (response as {data: StoryType[]}).data
 		},
@@ -29,7 +29,7 @@ export function useRssNewsSource(
 		queryKey: keys.rss(url),
 		queryFn: async ({queryKey, signal}) => {
 			let response = await client
-				.get('/news/rss', {signal, searchParams: {url: queryKey[2]}})
+				.get('news/rss', {signal, searchParams: {url: queryKey[2]}})
 				.json()
 			return (response as {data: StoryType[]}).data
 		},
@@ -43,7 +43,7 @@ export function useWpJsonNewsSource(
 		queryKey: keys.wpJson(url),
 		queryFn: async ({queryKey, signal}) => {
 			let response = await client
-				.get('/news/wpjson', {signal, searchParams: {url: queryKey[2]}})
+				.get('news/wpjson', {signal, searchParams: {url: queryKey[2]}})
 				.json()
 			return (response as {data: StoryType[]}).data
 		},

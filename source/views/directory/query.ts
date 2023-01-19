@@ -53,7 +53,7 @@ export function useDirectoryEntries(
 		queryKey: keys.all(query, type),
 		queryFn: async ({queryKey: [_, type, query], signal}) => {
 			let response = await directory
-				.get('/search', {searchParams: getDirectoryParams(query, type), signal})
+				.get('search', {searchParams: getDirectoryParams(query, type), signal})
 				.json()
 			return response as SearchResults
 		},

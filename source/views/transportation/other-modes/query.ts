@@ -11,7 +11,7 @@ export function useOtherModes(): UseQueryResult<OtherModeType[], unknown> {
 	return useQuery({
 		queryKey: keys.all,
 		queryFn: async ({signal}) => {
-			let response = await client.get('/transit/modes', {signal}).json()
+			let response = await client.get('transit/modes', {signal}).json()
 			return response as OtherModeType[]
 		},
 	})
@@ -24,7 +24,7 @@ export function useOtherModesGrouped(): UseQueryResult<
 	return useQuery({
 		queryKey: keys.all,
 		queryFn: async ({signal}) => {
-			let response = await client.get('/transit/modes', {signal}).json()
+			let response = await client.get('transit/modes', {signal}).json()
 			return response as OtherModeType[]
 		},
 		select: (modes) => {

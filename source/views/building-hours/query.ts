@@ -17,7 +17,7 @@ export function useGroupedBuildings(): UseQueryResult<
 	return useQuery({
 		queryKey: keys.all,
 		queryFn: async ({signal}) => {
-			let response = await client.get('/spaces/hours', {signal}).json()
+			let response = await client.get('spaces/hours', {signal}).json()
 			return (response as {data: BuildingType[]}).data
 		},
 		select: (buildings) => {

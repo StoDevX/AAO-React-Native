@@ -28,9 +28,9 @@ export const cafeKeys = {
 
 function buildMenuPath(cafeParam: string | {id: string}) {
 	if (typeof cafeParam === 'string') {
-		return `/food/named/menu/${cafeParam}`
+		return `food/named/menu/${cafeParam}`
 	} else if ('id' in cafeParam) {
-		return `/food/menu/${cafeParam.id}`
+		return `food/menu/${cafeParam.id}`
 	} else {
 		throw new Error(`Unexpected cafe parameter: ${cafeParam}`)
 	}
@@ -38,9 +38,9 @@ function buildMenuPath(cafeParam: string | {id: string}) {
 
 function buildCafePath(cafeParam: string | {id: string}) {
 	if (typeof cafeParam === 'string') {
-		return `/food/named/cafe/${cafeParam}`
+		return `food/named/cafe/${cafeParam}`
 	} else if ('id' in cafeParam) {
-		return `/food/cafe/${cafeParam.id}`
+		return `food/cafe/${cafeParam.id}`
 	} else {
 		throw new Error(`Unexpected cafe parameter: ${cafeParam}`)
 	}

@@ -27,7 +27,7 @@ export function useStudentWorkPostings(): UseQueryResult<
 	return useQuery({
 		queryKey: keys.all,
 		queryFn: async ({signal}) => {
-			let response = (await client.get('/jobs', {signal}).json()) as JobType[]
+			let response = (await client.get('jobs', {signal}).json()) as JobType[]
 
 			// force title-case on the job types, to prevent not-actually-duplicate headings
 			return response.map((job) => ({

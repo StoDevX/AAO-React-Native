@@ -48,7 +48,7 @@ export function useNamedCalendar(
 		queryKey: keys.named(calendar),
 		queryFn: async ({queryKey, signal}) => {
 			let response = await client
-				.get(`/calendar/named/${queryKey[2]}`, {signal})
+				.get(`calendar/named/${queryKey[2]}`, {signal})
 				.json()
 			return (response as {data: EventType[]}).data
 		},
@@ -64,7 +64,7 @@ export function useGoogleCalendar(
 		queryKey: keys.google(calendar.id),
 		queryFn: async ({queryKey, signal}) => {
 			let response = await client
-				.get('/calendar/google', {signal, searchParams: {id: queryKey[2]}})
+				.get('calendar/google', {signal, searchParams: {id: queryKey[2]}})
 				.json()
 			return (response as {data: EventType[]}).data
 		},
@@ -80,7 +80,7 @@ export function useReasonCalendar(
 		queryKey: keys.reason(calendar.url),
 		queryFn: async ({queryKey, signal}) => {
 			let response = await client
-				.get('/calendar/reason', {signal, searchParams: {url: queryKey[2]}})
+				.get('calendar/reason', {signal, searchParams: {url: queryKey[2]}})
 				.json()
 			return (response as {data: EventType[]}).data
 		},
@@ -96,7 +96,7 @@ export function useIcsCalendar(
 		queryKey: keys.ics(calendar.url),
 		queryFn: async ({queryKey, signal}) => {
 			let response = await client
-				.get('/calendar/ics', {signal, searchParams: {url: queryKey[2]}})
+				.get('calendar/ics', {signal, searchParams: {url: queryKey[2]}})
 				.json()
 			return (response as {data: EventType[]}).data
 		},

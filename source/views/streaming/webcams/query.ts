@@ -10,7 +10,7 @@ export function useWebcams(): UseQueryResult<Webcam[], unknown> {
 	return useQuery({
 		queryKey: keys.all,
 		queryFn: async ({signal}) => {
-			let response = await client.get('/transit/bus', {signal}).json()
+			let response = await client.get('webcams', {signal}).json()
 			return response as Webcam[]
 		},
 	})
