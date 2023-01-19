@@ -4,15 +4,4 @@ modules/navigation-tabs/tabbed-view.ts(24,7): error TS2322: Type '(<ParamList ex
   Type '<ParamList extends ParamListBase>() => TypedNavigator<ParamList, TabNavigationState<ParamListBase>, MaterialBottomTabNavigationOptions, MaterialBottomTabNavigationEventMap, ({ id, initialRouteName, backBehavior, children, screenListeners, screenOptions, ...rest }: Props) => Element>' is not assignable to type '(screens: Record<string, NavigationScreenRouteConfig>, options?: ScreenOptions | undefined) => ComponentType'.
     Type 'TypedNavigator<ParamListBase, TabNavigationState<ParamListBase>, MaterialBottomTabNavigationOptions, MaterialBottomTabNavigationEventMap, ({ id, initialRouteName, backBehavior, children, screenListeners, screenOptions, ...rest }: Props) => Element>' is not assignable to type 'ComponentType'.
       Type 'TypedNavigator<ParamListBase, TabNavigationState<ParamListBase>, MaterialBottomTabNavigationOptions, MaterialBottomTabNavigationEventMap, ({ id, initialRouteName, backBehavior, children, screenListeners, screenOptions, ...rest }: Props) => Element>' provides no match for the signature '(screens: { [key: string]: NavigationScreenRouteConfig; }, options?: ScreenOptions | undefined): unknown'.
-source/lib/stoprint/index.ts(11,2): error TS2305: Module '"./types"' has no exported member 'ReleaseResponseOrErrorType'.
-source/lib/stoprint/index.ts(12,2): error TS2305: Module '"./types"' has no exported member 'CancelResponseOrErrorType'.
-source/lib/stoprint/index.ts(13,2): error TS2305: Module '"./types"' has no exported member 'HeldJobsResponseOrErrorType'.
-source/views/dictionary/report/editor.tsx(65,3): error TS2322: Type '(text: string) => void' is not assignable to type '(e: NativeSyntheticEvent<TextInputSubmitEditingEventData>) => void'.
-  Types of parameters 'text' and 'e' are incompatible.
-    Type 'NativeSyntheticEvent<TextInputSubmitEditingEventData>' is not assignable to type 'string'.
-source/views/dictionary/report/editor.tsx(77,3): error TS2322: Type '(text: string) => void' is not assignable to type '(e: NativeSyntheticEvent<TextInputSubmitEditingEventData>) => void'.
-source/views/settings/screens/overview/server-url.tsx(47,5): error TS2322: Type '{ key: number; _ref: RefObject<TextInput>; onChangeText: (text: string) => void; placeholder: string; value: string; }' is not assignable to type 'IntrinsicAttributes & TextInputProps & { label?: string | undefined; labelWidth?: number | undefined; } & RefAttributes<TextInput>'.
-  Property '_ref' does not exist on type 'IntrinsicAttributes & TextInputProps & { label?: string | undefined; labelWidth?: number | undefined; } & RefAttributes<TextInput>'. Did you mean 'ref'?
-source/views/sis/course-search/lib/execute-search.ts(2,27): error TS7016: Could not find a declaration file for module 'keyword-search'. './node_modules/keyword-search/index.js' implicitly has an 'any' type.
-  Try `npm i --save-dev @types/keyword-search` if it exists or add a new declaration (.d.ts) file containing `declare module 'keyword-search';`
 source/views/types.ts(5,8): error TS2307: Cannot find module 'react-navigation' or its corresponding type declarations.
