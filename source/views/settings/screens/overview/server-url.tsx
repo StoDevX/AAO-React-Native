@@ -1,60 +1,59 @@
 import * as React from 'react'
-import {StyleSheet, TextInput} from 'react-native'
+import {StyleSheet} from 'react-native'
 import {Section} from '@frogpond/tableview'
 import {CellTextField, ButtonCell} from '@frogpond/tableview/cells'
 import restart from 'react-native-restart'
 import * as storage from '../../../../lib/storage'
 import {DEFAULT_URL} from '../../../../lib/constants'
+import {useMutation, useQuery} from '@tanstack/react-query'
 
 export const ServerUrlSection = (): React.ReactElement => {
 	const [serverAddress, setServerAddress] = React.useState('')
-	const serverAddressRef = React.useRef<TextInput>(null)
 
-	const [errorMessage, setErrorMessage] = React.useState('')
+	let {data: storedServerAddress = '', isLoading} = useQuery({
+		queryKey: ['settings', 'server-url'],
+		queryFn: () => storage.getServerAddress(),
+		onSuccess: () => {
+			setServerAddress(storedServerAddress)
+		},
+	})
 
-	const checkForValidity = (text: string) => {
-		const pattern = /^(http|https):\/\/[^ "]+$/u
-		const isUrlValid = pattern.test(text)
-		const isValid = isUrlValid || text.length === 0
+	let storeServerAddress = useMutation({
+		mutationKey: ['settings', 'server-url'],
+		mutationFn: () => storage.setServerAddress(serverAddress),
+	})
 
-		isValid ? setErrorMessage('') : setErrorMessage('Waiting for a valid URL…')
-	}
-
-	const handleOnChange = (text: string) => {
-		setServerAddress(text)
-		checkForValidity(text)
-	}
-
-	const refreshApp = () => {
-		storage.setServerAddress(serverAddress)
+	let reload = () => {
+		storeServerAddress.mutate()
 		restart.Restart()
 	}
 
-	React.useMemo(async () => {
-		if (!serverAddress && !serverAddressRef.current) {
-			const address = await storage.getServerAddress()
-			setServerAddress(address)
-		}
-	}, [serverAddress])
+	const isUrlValid = /^(http|https):\/\/[^ "]+$/u.test(serverAddress)
+	const isValid = isUrlValid || serverAddress.length === 0
 
 	return (
 		<Section
-			footer={serverAddress ? '' : 'Empty means we will use the default URL.'}
+			footer="Empty means we will use the default URL."
 			header="SERVER URL"
 		>
-			<CellTextField
-				key={0}
-				_ref={serverAddressRef}
-				onChangeText={handleOnChange}
-				placeholder={DEFAULT_URL}
-				value={serverAddress}
-			/>
-			<ButtonCell
-				disabled={errorMessage.length > 0}
-				onPress={refreshApp}
-				textStyle={styles.buttonCell}
-				title={errorMessage ? errorMessage : 'Save'}
-			/>
+			{isLoading ? (
+				<CellTextField editable={false} placeholder="Loading…" value="" />
+			) : (
+				<>
+					<CellTextField
+						onChangeText={setServerAddress}
+						onSubmitEditing={reload}
+						placeholder={DEFAULT_URL}
+						value={serverAddress}
+					/>
+					<ButtonCell
+						disabled={!isValid}
+						onPress={reload}
+						textStyle={styles.buttonCell}
+						title={isValid ? 'Invalid URL!' : 'Save'}
+					/>
+				</>
+			)}
 		</Section>
 	)
 }
