@@ -16,7 +16,6 @@
   },
   "dependencies": {
     "@frogpond/api": "^1.0.0",
-    "@frogpond/fetch": "^2.0.0",
     "@frogpond/event-list": "^1.0.0",
     "@frogpond/event-type": "^1.0.0",
     "@frogpond/notice": "^1.0.0"
