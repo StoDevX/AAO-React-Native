@@ -1,20 +1,16 @@
 import * as React from 'react'
-
-import {TabBarIcon} from '@frogpond/navigation-tabs'
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs'
+import {Platform} from 'react-native'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+import {
+	MaterialIcon,
+	IosIcon,
+	createTabNavigator,
+	type Tab,
+} from '@frogpond/navigation-tabs'
 
 import * as newsImages from '../../../images/news-sources/index'
 import {NewsList} from './news-list'
 import {useNamedNewsSource} from './query'
-
-type Params = {
-	StOlafNewsView: undefined
-	MessNewsView: undefined
-	OlevilleNewsView: undefined
-}
-
-const Tabs = createBottomTabNavigator<Params>()
 
 const StOlafNewsView = () => (
 	<NewsList
@@ -35,39 +31,45 @@ const OlevilleNewsView = () => (
 	/>
 )
 
-const NewsView = (): JSX.Element => {
-	return (
-		<Tabs.Navigator screenOptions={{headerShown: false}}>
-			<Tabs.Screen
-				component={StOlafNewsView}
-				name="StOlafNewsView"
-				options={{
-					tabBarLabel: 'St. Olaf',
-					tabBarIcon: TabBarIcon('school'),
-				}}
-			/>
-			<Tabs.Screen
-				component={MessNewsView}
-				name="MessNewsView"
-				options={{
-					tabBarLabel: 'The Mess',
-					tabBarIcon: TabBarIcon('newspaper'),
-				}}
-			/>
-			<Tabs.Screen
-				component={OlevilleNewsView}
-				name="OlevilleNewsView"
-				options={{
-					tabBarLabel: 'Oleville',
-					tabBarIcon: TabBarIcon('happy'),
-				}}
-			/>
-		</Tabs.Navigator>
-	)
+type Params = {
+	StOlafNewsView: undefined
+	MessNewsView: undefined
+	OlevilleNewsView: undefined
 }
 
-export {NewsView as View}
+const tabs: Tab<Params>[] = [
+	{
+		name: 'StOlafNewsView',
+		component: StOlafNewsView,
+		tabBarLabel: 'St. Olaf',
+		tabBarIcon: Platform.select({
+			ios: IosIcon('school'),
+			android: MaterialIcon('school'),
+		}),
+	},
+	{
+		name: 'MessNewsView',
+		component: MessNewsView,
+		tabBarLabel: 'The Mess',
+		tabBarIcon: Platform.select({
+			ios: IosIcon('newspaper'),
+			android: MaterialIcon('newspaper-variant'),
+		}),
+	},
+	{
+		name: 'OlevilleNewsView',
+		component: OlevilleNewsView,
+		tabBarLabel: 'Oleville',
+		tabBarIcon: Platform.select({
+			ios: IosIcon('happy'),
+			android: MaterialIcon('emoticon-happy'),
+		}),
+	},
+]
 
+export type NavigationParams = undefined
+export const View = createTabNavigator<Params>(tabs)
+export const NavigationKey = 'News'
 export const NavigationOptions: NativeStackNavigationOptions = {
 	title: 'News',
 }

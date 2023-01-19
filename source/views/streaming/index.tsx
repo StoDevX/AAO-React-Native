@@ -1,81 +1,80 @@
-import * as React from 'react'
+import {Platform} from 'react-native'
+import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+import {
+	MaterialIcon,
+	IosIcon,
+	createTabNavigator,
+	type Tab,
+} from '@frogpond/navigation-tabs'
 
-// import WeeklyMovieView from './movie'
+import {WeeklyMovieView} from './movie'
 import {WebcamsView} from './webcams'
 import {StreamListView} from './streams'
 import {KstoStationView} from './radio/station-ksto'
 import {KrlxStationView} from './radio/station-krlx'
-export {KSTOScheduleView, KRLXScheduleView} from './radio'
 
-import {TabBarIcon} from '@frogpond/navigation-tabs'
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs'
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+export {KSTOScheduleView, KRLXScheduleView} from './radio'
 
 type Params = {
 	StreamingView: undefined
 	LiveWebcamsView: undefined
 	KSTORadioView: undefined
 	KRLXRadioView: undefined
-	// WeeklyMovieView: undefined
+	WeeklyMovieView: undefined
 }
 
-const Tabs = createBottomTabNavigator<Params>()
+const tabs: Tab<Params>[] = [
+	{
+		name: 'StreamingView',
+		component: StreamListView,
+		tabBarLabel: 'Streaming',
+		tabBarIcon: Platform.select({
+			ios: IosIcon('recording'),
+			android: MaterialIcon('camcorder'),
+		}),
+	},
+	{
+		name: 'LiveWebcamsView',
+		component: WebcamsView,
+		tabBarLabel: 'Webcams',
+		tabBarIcon: Platform.select({
+			ios: IosIcon('videocam'),
+			android: MaterialIcon('webcam'),
+		}),
+	},
+	{
+		name: 'KSTORadioView',
+		component: KstoStationView,
+		tabBarLabel: 'KSTO',
+		tabBarIcon: Platform.select({
+			ios: IosIcon('radio'),
+			android: MaterialIcon('radio'),
+		}),
+	},
+	{
+		name: 'KRLXRadioView',
+		component: KrlxStationView,
+		tabBarLabel: 'KRLX',
+		tabBarIcon: Platform.select({
+			ios: IosIcon('mic'),
+			android: MaterialIcon('microphone'),
+		}),
+	},
+	{
+		enabled: false,
+		name: 'WeeklyMovieView',
+		component: WeeklyMovieView,
+		tabBarLabel: 'Weekly Movie',
+		tabBarIcon: Platform.select({
+			ios: IosIcon('film'),
+			android: MaterialIcon('film'),
+		}),
+	},
+]
 
-const StreamingView = () => <StreamListView />
-const LiveWebcamsView = () => <WebcamsView />
-const KSTOView = () => <KstoStationView />
-const KRLXView = () => <KrlxStationView />
-// const MovieView = () => <WeeklyMovieView />
-
-const StreamingMediaView = (): JSX.Element => {
-	return (
-		<Tabs.Navigator screenOptions={{headerShown: false}}>
-			<Tabs.Screen
-				component={StreamingView}
-				name="StreamingView"
-				options={{
-					tabBarLabel: 'Streaming',
-					tabBarIcon: TabBarIcon('recording'),
-				}}
-			/>
-			<Tabs.Screen
-				component={LiveWebcamsView}
-				name="LiveWebcamsView"
-				options={{
-					tabBarLabel: 'Webcams',
-					tabBarIcon: TabBarIcon('videocam'),
-				}}
-			/>
-			<Tabs.Screen
-				component={KSTOView}
-				name="KSTORadioView"
-				options={{
-					tabBarLabel: 'KSTO',
-					tabBarIcon: TabBarIcon('radio'),
-				}}
-			/>
-			<Tabs.Screen
-				component={KRLXView}
-				name="KRLXRadioView"
-				options={{
-					tabBarLabel: 'KRLX',
-					tabBarIcon: TabBarIcon('mic'),
-				}}
-			/>
-			{/* <Tabs.Screen
-				component={MovieView}
-				name="WeeklyMovieView"
-				options={{
-					tabBarLabel: 'Weekly Movie',
-					tabBarIcon: TabBarIcon('film'),
-				}}
-			/> */}
-		</Tabs.Navigator>
-	)
-}
-
-export {StreamingMediaView as View}
-
+export type NavigationParams = undefined
+export const View = createTabNavigator<Params>(tabs)
+export const NavigationKey = 'Streaming Media'
 export const NavigationOptions: NativeStackNavigationOptions = {
 	title: 'Streaming Media',
 }
@@ -87,5 +86,3 @@ export const KSTOScheduleNavigationOptions: NativeStackNavigationOptions = {
 export const KRLXScheduleNavigationOptions: NativeStackNavigationOptions = {
 	title: 'KRLX Schedule',
 }
-
-export type NavigationParams = undefined

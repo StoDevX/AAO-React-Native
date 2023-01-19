@@ -1,8 +1,12 @@
 import * as React from 'react'
-
-import {TabBarIcon} from '@frogpond/navigation-tabs'
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs'
+import {Platform} from 'react-native'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+import {
+	MaterialIcon,
+	IosIcon,
+	createTabNavigator,
+	type Tab,
+} from '@frogpond/navigation-tabs'
 
 import {BonAppHostedMenu} from './menu-bonapp'
 import {GitHubHostedMenu} from './menu-github'
@@ -14,15 +18,6 @@ export {
 	CarletonWeitzMenuScreen,
 	CarletonSaylesMenuScreen,
 } from './carleton-menus'
-
-type Params = {
-	StavHallMenuView: undefined
-	TheCageMenuView: undefined
-	ThePauseMenuView: undefined
-	CarletonMenuListView: undefined
-}
-
-const Tabs = createBottomTabNavigator<Params>()
 
 const StavHallMenuView = () => (
 	<BonAppHostedMenu
@@ -67,49 +62,55 @@ const ThePauseMenuView = () => (
 	/>
 )
 
-const CarletonMenuListView = () => CarletonCafeIndex
-
-const MenusView = (): JSX.Element => {
-	return (
-		<Tabs.Navigator screenOptions={{headerShown: false}}>
-			<Tabs.Screen
-				component={StavHallMenuView}
-				name="StavHallMenuView"
-				options={{
-					tabBarLabel: 'Stav Hall',
-					tabBarIcon: TabBarIcon('nutrition'),
-				}}
-			/>
-			<Tabs.Screen
-				component={TheCageMenuView}
-				name="TheCageMenuView"
-				options={{
-					tabBarLabel: 'The Cage',
-					tabBarIcon: TabBarIcon('cafe'),
-				}}
-			/>
-			<Tabs.Screen
-				component={ThePauseMenuView}
-				name="ThePauseMenuView"
-				options={{
-					tabBarLabel: 'The Pause',
-					tabBarIcon: TabBarIcon('paw'),
-				}}
-			/>
-			<Tabs.Screen
-				component={CarletonMenuListView()}
-				name="CarletonMenuListView"
-				options={{
-					tabBarLabel: 'Carleton',
-					tabBarIcon: TabBarIcon('menu'),
-				}}
-			/>
-		</Tabs.Navigator>
-	)
+type Params = {
+	StavHallMenuView: undefined
+	TheCageMenuView: undefined
+	ThePauseMenuView: undefined
+	CarletonMenuListView: undefined
 }
 
-export {MenusView as View}
+const tabs: Tab<Params>[] = [
+	{
+		name: 'StavHallMenuView',
+		component: StavHallMenuView,
+		tabBarLabel: 'Stav Hall',
+		tabBarIcon: Platform.select({
+			ios: IosIcon('nutrition'),
+			android: MaterialIcon('food-apple'),
+		}),
+	},
+	{
+		name: 'TheCageMenuView',
+		component: TheCageMenuView,
+		tabBarLabel: 'The Cage',
+		tabBarIcon: Platform.select({
+			ios: IosIcon('cafe'),
+			android: MaterialIcon('coffee'),
+		}),
+	},
+	{
+		name: 'ThePauseMenuView',
+		component: ThePauseMenuView,
+		tabBarLabel: 'The Pause',
+		tabBarIcon: Platform.select({
+			ios: IosIcon('paw'),
+			android: MaterialIcon('paw'),
+		}),
+	},
+	{
+		name: 'CarletonMenuListView',
+		component: CarletonCafeIndex,
+		tabBarLabel: 'Carleton',
+		tabBarIcon: Platform.select({
+			ios: IosIcon('menu'),
+			android: MaterialIcon('menu'),
+		}),
+	},
+]
 
+export type NavigationParams = undefined
+export const View = createTabNavigator<Params>(tabs)
+export const NavigationKey = 'Menus'
 export const NavigationOptions: NativeStackNavigationOptions = {
 	title: 'Menus',
 }
