@@ -20,7 +20,7 @@ import {getTimeRemaining} from './lib'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 import {useNavigation} from '@react-navigation/native'
 import {DebugNoticeButton} from '@frogpond/navigation-buttons'
-import {useMomentTimer} from '@frogpond/timer/hook'
+import {useMomentTimer} from '@frogpond/timer'
 import {usePrintJobs} from './query'
 import {useHasCredentials} from '../../lib/login'
 
@@ -67,7 +67,8 @@ export const PrintJobsView = (): JSX.Element => {
 	if (jobsIsError && jobsError instanceof Error) {
 		return (
 			<StoPrintErrorView
-				refresh={jobsRefetch}
+				onRefresh={jobsRefetch}
+				refreshing={jobsRefetching}
 				statusMessage={jobsError.message}
 			/>
 		)

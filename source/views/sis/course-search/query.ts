@@ -63,7 +63,7 @@ export function useCourseDataForTerms(
 		CourseType[],
 		unknown,
 		CourseType[],
-		ReturnType<typeof keys['courses']>
+		ReturnType<(typeof keys)['courses']>
 	> => ({
 		queryKey: keys.courses(term),
 		queryFn: ({queryKey: [_group, _courses, term], signal}) =>
@@ -85,7 +85,7 @@ export function useCourseData(): UseQueryResult<CourseType[], unknown>[] {
 		CourseType[],
 		unknown,
 		CourseType[],
-		ReturnType<typeof keys['courses']>
+		ReturnType<(typeof keys)['courses']>
 	> => ({
 		queryKey: keys.courses(term),
 		queryFn: ({queryKey: [_group, _courses, term], signal}) =>

@@ -6,7 +6,7 @@ import {
 } from '../../../redux/parts/courses'
 import {LoadingView} from '@frogpond/notice'
 import type {CourseType} from '../../../lib/course-search'
-import { useAppDispatch } from '../../../redux'
+import {useAppDispatch} from '../../../redux'
 import {applyFiltersToItem} from '@frogpond/filter'
 import {FilterType} from '@frogpond/filter'
 import {useFilters} from './lib/build-filters'

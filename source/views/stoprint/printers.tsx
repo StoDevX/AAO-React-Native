@@ -12,7 +12,7 @@ import {
 import {LoadingView} from '@frogpond/notice'
 import {DebugNoticeButton} from '@frogpond/navigation-buttons'
 import groupBy from 'lodash/groupBy'
-import {StoPrintErrorView} from './components'
+import {StoPrintErrorView} from './components/error'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 import {RouteProp, useNavigation, useRoute} from '@react-navigation/native'
 import {RootStackParamList} from '../../navigation/types'
@@ -73,7 +73,8 @@ export const PrinterListView = (): JSX.Element => {
 	if (allPrintersError) {
 		return (
 			<StoPrintErrorView
-				refresh={allPrintersRefetch}
+				onRefresh={allPrintersRefetch}
+				refreshing={allPrintersRefetching}
 				statusMessage={String(allPrintersError)}
 			/>
 		)
@@ -81,7 +82,8 @@ export const PrinterListView = (): JSX.Element => {
 	if (recentPrintersError) {
 		return (
 			<StoPrintErrorView
-				refresh={recentPrintersRefetch}
+				onRefresh={recentPrintersRefetch}
+				refreshing={recentPrintersRefetching}
 				statusMessage={String(recentPrintersError)}
 			/>
 		)
@@ -89,7 +91,8 @@ export const PrinterListView = (): JSX.Element => {
 	if (colorPrintersError) {
 		return (
 			<StoPrintErrorView
-				refresh={colorPrintersRefetch}
+				onRefresh={colorPrintersRefetch}
+				refreshing={colorPrintersRefetching}
 				statusMessage={String(colorPrintersError)}
 			/>
 		)

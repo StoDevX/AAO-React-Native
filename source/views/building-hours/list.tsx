@@ -8,7 +8,7 @@ import * as c from '@frogpond/colors'
 import {ListSeparator, ListSectionHeader} from '@frogpond/lists'
 import {LoadingView, NoticeView} from '@frogpond/notice'
 import {useNavigation} from '@react-navigation/native'
-import {useMomentTimer} from '@frogpond/timer/hook'
+import {useMomentTimer} from '@frogpond/timer'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 
 export {BuildingHoursDetailView} from './detail'

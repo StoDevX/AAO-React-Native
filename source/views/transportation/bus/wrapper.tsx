@@ -4,7 +4,7 @@ import {LoadingView, NoticeView} from '@frogpond/notice'
 import {timezone} from '@frogpond/constants'
 import {useNavigation} from '@react-navigation/native'
 import {useBusRoutes} from './query'
-import {useMomentTimer} from '@frogpond/timer/hook'
+import {useMomentTimer} from '@frogpond/timer'
 
 type Props = {
 	line: string

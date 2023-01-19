@@ -1,6 +1,6 @@
 import * as React from 'react'
 import type {BuildingType} from '../types'
-import {Timer} from '@frogpond/timer'
+import {useMomentTimer} from '@frogpond/timer'
 import {BuildingDetail} from './building'
 import {timezone} from '@frogpond/constants'
 import type {TopLevelViewPropsType} from '../../types'
@@ -15,6 +15,7 @@ type Props = TopLevelViewPropsType & {
 
 export function BuildingHoursDetailView(props: Props): JSX.Element {
 	let navigation = useNavigation()
+	let {now} = useMomentTimer({intervalMs: 60000, timezone: timezone()})
 
 	let info = props.route.params.building
 
@@ -27,14 +28,7 @@ export function BuildingHoursDetailView(props: Props): JSX.Element {
 	)
 
 	return (
-		<Timer
-			interval={60000}
-			moment={true}
-			render={({now}) => (
-				<BuildingDetail info={info} now={now} onProblemReport={reportProblem} />
-			)}
-			timezone={timezone()}
-		/>
+		<BuildingDetail info={info} now={now} onProblemReport={reportProblem} />
 	)
 }
 
