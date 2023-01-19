@@ -3,7 +3,6 @@ import * as c from '@frogpond/colors'
 import {SegmentedControlIOS, StyleSheet, TextInput, View} from 'react-native'
 import {Toolbar} from '@frogpond/toolbar'
 import {client} from '@frogpond/api'
-import glamorous from 'glamorous-native'
 import {iOSUIKit} from 'react-native-typography'
 import {DebugView} from '../../screens/debug'
 import {useQuery} from '@tanstack/react-query'
@@ -29,15 +28,12 @@ const styles = StyleSheet.create({
 		padding: 10,
 		color: c.brickRed,
 	},
+	output: {
+		marginVertical: 3,
+		paddingRight: 4,
+		...iOSUIKit.bodyObject,
+	}
 })
-
-const Output = glamorous(TextInput)({
-	marginVertical: 3,
-	paddingRight: 4,
-	...iOSUIKit.bodyObject,
-})
-
-const Segment = glamorous(SegmentedControlIOS)({})
 
 export const IOSAPITestView = (): JSX.Element => {
 	let [path, setPath] = React.useState<string>('')
@@ -52,23 +48,23 @@ export const IOSAPITestView = (): JSX.Element => {
 
 	let APIResponse =
 		error instanceof Error ? (
-			<Output
+			<TextInput 
 				editable={false}
 				// this aligns the text to the top on iOS, and centers it on Android
 				multiline={true}
 				scrollEnabled={true}
-				style={styles.error}
+				style={[styles.output, styles.error]}
 				// use multiline with textAlignVertical="top" for the same behavior in both platforms
 				textAlignVertical="top"
 				value={error.toString()}
 			/>
 		) : selectedIndex === 0 ? (
-			<Output
+			<TextInput 
 				editable={false}
 				// this aligns the text to the top on iOS, and centers it on Android
 				multiline={true}
 				scrollEnabled={true}
-				style={styles.data}
+				style={[styles.output, styles.data]}
 				// use multiline with textAlignVertical="top" for the same behavior in both platforms
 				textAlignVertical="top"
 				value={data ?? ''}
@@ -91,7 +87,7 @@ export const IOSAPITestView = (): JSX.Element => {
 				/>
 			</Toolbar>
 
-			<Segment
+			<SegmentedControlIOS
 				onChange={(event) => {
 					let selectedSegment = event.nativeEvent.selectedSegmentIndex
 					setSelectedIndex(selectedSegment)
