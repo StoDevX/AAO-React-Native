@@ -2,10 +2,3 @@
 > all-about-olaf@2.8.0-beta.8 lint
 > eslint --report-unused-disable-directives --cache source/ modules/ scripts/ images/
 
-
-./source/views/stoprint/print-jobs.tsx
-  39:71  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
-  40:33  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
-
-✖ 2 problems (0 errors, 2 warnings)
-
