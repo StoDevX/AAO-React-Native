@@ -175,7 +175,7 @@
     "junk": "4.0.0",
     "metro-react-native-babel-preset": "0.67.0",
     "minimist": "1.2.7",
-    "mkdirp": "1.0.4",
+    "mkdirp": "2.1.3",
     "pify": "6.1.0",
     "prettier": "2.8.1",
     "pretty-bytes": "6.0.0",
