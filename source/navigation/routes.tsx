@@ -71,7 +71,7 @@ const HomeStackScreens = () => (
 			/>
 			<Stack.Screen
 				component={eventDetail.EventDetail}
-				name="EventDetail"
+				name={eventDetail.NavigationKey}
 				options={eventDetail.EventDetailNavigationOptions}
 			/>
 		</Stack.Group>
@@ -88,7 +88,7 @@ const HomeStackScreens = () => (
 			/>
 			<Stack.Screen
 				component={buildingHours.BuildingHoursProblemReportView}
-				name="BuildingHoursProblemReport"
+				name={buildingHours.ReportNavigationKey}
 				options={buildingHours.ReportNavigationOptions}
 			/>
 			<Stack.Screen
@@ -129,14 +129,14 @@ const HomeStackScreens = () => (
 		<Stack.Group>
 			<Stack.Screen
 				component={transportation.View}
-				name="Transportation"
+				name={transportation.NavigationKey}
 				options={transportation.NavigationOptions}
 			/>
 		</Stack.Group>
 		<Stack.Group>
 			<Stack.Screen
 				component={menus.View}
-				name="Menus"
+				name={menus.NavigationKey}
 				options={menus.NavigationOptions}
 			/>
 			<Stack.Screen
@@ -168,7 +168,7 @@ const HomeStackScreens = () => (
 		<Stack.Group>
 			<Stack.Screen
 				component={streaming.View}
-				name="Streaming"
+				name={streaming.NavigationKey}
 				options={streaming.NavigationOptions}
 			/>
 			<Stack.Screen
@@ -197,7 +197,7 @@ const HomeStackScreens = () => (
 		<Stack.Group>
 			<Stack.Screen
 				component={news.View}
-				name="News"
+				name={news.NavigationKey}
 				options={news.NavigationOptions}
 			/>
 		</Stack.Group>
@@ -214,7 +214,7 @@ const HomeStackScreens = () => (
 			/>
 			<Stack.Screen
 				component={sis.View}
-				name="SIS"
+				name={sis.NavigationKey}
 				options={sis.NavigationOptions}
 			/>
 			<Stack.Screen

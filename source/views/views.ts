@@ -2,6 +2,22 @@ import * as c from '@frogpond/colors'
 import type {Gradient} from '@frogpond/colors'
 import {RootViewsParamList} from '../navigation/types'
 
+import { NavigationKey as menus } from './menus'
+import { NavigationKey as sis } from './sis'
+import { NavigationKey as calendar } from './calendar'
+import { NavigationKey as streaming } from './streaming'
+import { NavigationKey as news } from './news'
+import { NavigationKey as transportation } from './transportation'
+
+const hours: keyof RootViewsParamList = 'BuildingHours'
+const directory: keyof RootViewsParamList = 'Directory'
+const importantContacts: keyof RootViewsParamList = 'Contacts'
+const dictionary: keyof RootViewsParamList = 'Dictionary'
+const studentOrgs: keyof RootViewsParamList = 'StudentOrgs'
+const more: keyof RootViewsParamList = 'More'
+const printJobs: keyof RootViewsParamList = 'PrintJobs'
+const courseSearch: keyof RootViewsParamList = 'CourseSearch'
+
 type CommonView = {
 	title: string
 	icon: string
@@ -18,7 +34,6 @@ type NativeView = {
 type WebLinkView = {
 	type: 'url' | 'browser-url'
 	url: string
-	view: string
 }
 
 export type ViewType = CommonView & (NativeView | WebLinkView)
@@ -26,7 +41,7 @@ export type ViewType = CommonView & (NativeView | WebLinkView)
 export const allViews: Array<ViewType> = [
 	{
 		type: 'view',
-		view: 'Menus',
+		view: menus,
 		title: 'Menus',
 		icon: 'bowl',
 		foreground: 'light',
@@ -35,7 +50,7 @@ export const allViews: Array<ViewType> = [
 	},
 	{
 		type: 'view',
-		view: 'SIS',
+		view: sis,
 		title: 'SIS',
 		icon: 'fingerprint',
 		foreground: 'light',
@@ -44,7 +59,7 @@ export const allViews: Array<ViewType> = [
 	},
 	{
 		type: 'view',
-		view: 'BuildingHours',
+		view: hours,
 		title: 'Building Hours',
 		icon: 'clock',
 		foreground: 'light',
@@ -53,7 +68,7 @@ export const allViews: Array<ViewType> = [
 	},
 	{
 		type: 'view',
-		view: 'Calendar',
+		view: calendar,
 		title: 'Calendar',
 		icon: 'calendar',
 		foreground: 'light',
@@ -62,7 +77,7 @@ export const allViews: Array<ViewType> = [
 	},
 	{
 		type: 'view',
-		view: 'Directory',
+		view: directory,
 		title: 'Directory',
 		icon: 'v-card',
 		foreground: 'light',
@@ -71,7 +86,7 @@ export const allViews: Array<ViewType> = [
 	},
 	{
 		type: 'view',
-		view: 'Streaming',
+		view: streaming,
 		title: 'Streaming Media',
 		icon: 'video',
 		foreground: 'light',
@@ -80,7 +95,7 @@ export const allViews: Array<ViewType> = [
 	},
 	{
 		type: 'view',
-		view: 'News',
+		view: news,
 		title: 'News',
 		icon: 'news',
 		foreground: 'light',
@@ -90,7 +105,6 @@ export const allViews: Array<ViewType> = [
 	{
 		type: 'url',
 		url: 'https://www.myatlascms.com/map/index.php?id=294',
-		view: 'Map',
 		title: 'Campus Map',
 		icon: 'map',
 		foreground: 'light',
@@ -99,7 +113,7 @@ export const allViews: Array<ViewType> = [
 	},
 	{
 		type: 'view',
-		view: 'Contacts',
+		view: importantContacts,
 		title: 'Important Contacts',
 		icon: 'phone',
 		foreground: 'light',
@@ -108,7 +122,7 @@ export const allViews: Array<ViewType> = [
 	},
 	{
 		type: 'view',
-		view: 'Transportation',
+		view: transportation,
 		title: 'Transportation',
 		icon: 'address',
 		foreground: 'light',
@@ -117,7 +131,7 @@ export const allViews: Array<ViewType> = [
 	},
 	{
 		type: 'view',
-		view: 'Dictionary',
+		view: dictionary,
 		title: 'Campus Dictionary',
 		icon: 'open-book',
 		foreground: 'light',
@@ -126,7 +140,7 @@ export const allViews: Array<ViewType> = [
 	},
 	{
 		type: 'view',
-		view: 'StudentOrgs',
+		view: studentOrgs,
 		title: 'Student Orgs',
 		icon: 'globe',
 		foreground: 'light',
@@ -135,7 +149,7 @@ export const allViews: Array<ViewType> = [
 	},
 	{
 		type: 'view',
-		view: 'More',
+		view: more,
 		title: 'More',
 		icon: 'link',
 		foreground: 'light',
@@ -144,7 +158,7 @@ export const allViews: Array<ViewType> = [
 	},
 	{
 		type: 'view',
-		view: 'PrintJobs',
+		view: printJobs,
 		title: 'stoPrint',
 		icon: 'print',
 		foreground: 'light',
@@ -153,7 +167,7 @@ export const allViews: Array<ViewType> = [
 	},
 	{
 		type: 'view',
-		view: 'CourseSearch',
+		view: courseSearch,
 		title: 'Course Catalog',
 		icon: 'graduation-cap',
 		foreground: 'light',
@@ -163,7 +177,6 @@ export const allViews: Array<ViewType> = [
 	{
 		type: 'url',
 		url: 'https://oleville.com/',
-		view: 'Oleville',
 		title: 'Oleville',
 		icon: 'browser',
 		foreground: 'dark',
@@ -171,5 +184,3 @@ export const allViews: Array<ViewType> = [
 		gradient: c.yellowToGoldMid,
 	},
 ]
-
-export const allViewNames: Array<string> = allViews.map((v) => v.view)

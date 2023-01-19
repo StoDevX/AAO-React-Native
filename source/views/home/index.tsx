@@ -12,7 +12,7 @@ import {allViews} from '../views'
 import {Column} from '@frogpond/layout'
 import {partitionByIndex} from '../../lib/partition-by-index'
 import {HomeScreenButton, CELL_MARGIN} from './button'
-import {trackedOpenUrl} from '@frogpond/open-url'
+import {openUrl} from '@frogpond/open-url'
 import {OpenSettingsButton} from '@frogpond/navigation-buttons'
 import {UnofficialAppNotice} from './notice'
 import {useNavigation} from '@react-navigation/native'
@@ -54,10 +54,10 @@ function HomePage(): JSX.Element {
 						<Column key={i} style={styles.column}>
 							{contents.map((view) => (
 								<HomeScreenButton
-									key={view.view}
+									key={view.type === 'view' ? view.view : view.title}
 									onPress={() => {
 										if (view.type === 'url') {
-											return trackedOpenUrl({url: view.url, id: view.view})
+											return openUrl(view.url)
 										} else if (view.type === 'view') {
 											return navigation.navigate(view.view)
 										} else {

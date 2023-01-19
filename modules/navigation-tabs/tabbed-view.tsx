@@ -52,7 +52,7 @@ export function MaterialTabbedView<P extends ParamListBase, T extends ReturnType
 
 export class UnknownPlatformError extends Error {}
 
-export function createTabNavigator<Params extends ParamListBase>(tabs: readonly Tab<Params>[]): JSX.Element {
+export function createTabNavigator<Params extends ParamListBase>(tabs: readonly Tab<Params>[]): () => JSX.Element {
 	tabs = tabs.filter(tab => tab.enabled !== false)
 
 	let view = Platform.select({
@@ -70,5 +70,5 @@ export function createTabNavigator<Params extends ParamListBase>(tabs: readonly 
 		throw new UnknownPlatformError()
 	}
 
-	return view
+	return () => view as JSX.Element
 }
