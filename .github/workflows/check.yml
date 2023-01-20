@@ -198,11 +198,5 @@ jobs:
         working-directory: ./ios
       - run: brew tap wix/brew
       - run: brew install applesimutils
-      - run: npx detox build e2e --configuration ios.sim.debug
-      - name: Run Detox tests
-        run: |
-          npm start &
-          PID=$!
-          echo $PID
-          npx detox test e2e --configuration ios.sim.debug --cleanup
-          kill -INT $PID
+      - run: npx detox build e2e --configuration ios.sim.release
+      - run: npx detox test e2e --configuration ios.sim.release --cleanup
