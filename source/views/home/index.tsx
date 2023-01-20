@@ -8,12 +8,11 @@ import {
 } from 'react-native'
 
 import {getTheme} from '@frogpond/app-theme'
-import type {ViewType} from '../views'
 import {allViews} from '../views'
 import {Column} from '@frogpond/layout'
 import {partitionByIndex} from '../../lib/partition-by-index'
 import {HomeScreenButton, CELL_MARGIN} from './button'
-import {trackedOpenUrl} from '@frogpond/open-url'
+import {openUrl} from '@frogpond/open-url'
 import {OpenSettingsButton} from '@frogpond/navigation-buttons'
 import {UnofficialAppNotice} from './notice'
 import {useNavigation} from '@react-navigation/native'
@@ -31,13 +30,9 @@ const styles = StyleSheet.create({
 	},
 })
 
-type Props = {
-	views: Array<ViewType>
-}
-
-function HomePage({views = allViews}: Props): JSX.Element {
+function HomePage(): JSX.Element {
 	let navigation = useNavigation()
-	let columns = partitionByIndex(views)
+	let columns = partitionByIndex(allViews)
 
 	let {androidStatusBarColor, statusBarStyle} = getTheme()
 
@@ -59,10 +54,10 @@ function HomePage({views = allViews}: Props): JSX.Element {
 						<Column key={i} style={styles.column}>
 							{contents.map((view) => (
 								<HomeScreenButton
-									key={view.view}
+									key={view.type === 'view' ? view.view : view.title}
 									onPress={() => {
 										if (view.type === 'url') {
-											return trackedOpenUrl({url: view.url, id: view.view})
+											return openUrl(view.url)
 										} else if (view.type === 'view') {
 											return navigation.navigate(view.view)
 										} else {

@@ -3,155 +3,143 @@ import {Cell, Section} from '@frogpond/tableview'
 import {CellTextField} from '@frogpond/tableview/cells'
 import {LoginButton} from './login-button'
 import {
-	logInViaCredentials,
-	logOutViaCredentials,
-} from '../../../../redux/parts/login'
-import type {LoginStateEnum} from '../../../../redux/parts/login'
-import {loadLoginCredentials} from '../../../../lib/login'
-import type {ReduxState} from '../../../../redux'
-import {useSelector, useDispatch} from 'react-redux'
-import type {TextInput} from 'react-native'
+	performLogin,
+	SIS_LOGIN_KEY,
+	NoCredentialsError,
+} from '../../../../lib/login'
+import {TextInput} from 'react-native'
+import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query'
+import {NoticeView} from '@frogpond/notice'
+import {
+	getInternetCredentials,
+	resetInternetCredentials,
+	setInternetCredentials,
+} from 'react-native-keychain'
+import {sto} from '../../../../lib/colors'
 
-type ReduxStateProps = {
-	status: LoginStateEnum
+const keys = {
+	default: ['credentials'],
 }
 
-type ReduxDispatchProps = {
-	logInViaCredentials: (username: string, password: string) => void
-	logOutViaCredentials: () => void
-}
+export const CredentialsLoginSection = (): JSX.Element => {
+	const queryClient = useQueryClient()
 
-type Props = ReduxStateProps & ReduxDispatchProps
+	let [username, setUsername] = React.useState('')
+	let usernameInputRef = React.useRef<TextInput>(null)
 
-type State = {
-	username: string
-	password: string
-	loadingCredentials: boolean
-	initialCheckComplete: boolean
-}
+	let [password, setPassword] = React.useState('')
+	let passwordInputRef = React.useRef<TextInput>(null)
 
-class CredentialsLoginSection extends React.Component<Props, State> {
-	state = {
-		username: '',
-		password: '',
-		loadingCredentials: true,
-		initialCheckComplete: false,
-	}
+	let credentials = useQuery({
+		queryKey: keys.default,
+		queryFn: () => getInternetCredentials(SIS_LOGIN_KEY),
+		onSuccess: (data) => {
+			if (!data) {
+				return
+			}
 
-	componentDidMount() {
-		this.loadCredentialsFromKeychain()
-	}
+			setUsername(data.username ?? '')
+			setPassword(data.password ?? '')
+		},
+		networkMode: 'always',
+		cacheTime: 0,
+		staleTime: 0,
+	})
 
-	_usernameInput = React.createRef<TextInput>()
-	_passwordInput = React.createRef<TextInput>()
+	let logIn = useMutation({
+		mutationFn: () => performLogin({username, password}),
+		onSuccess: async (credentials) => {
+			await setInternetCredentials(
+				SIS_LOGIN_KEY,
+				credentials.username,
+				credentials.password,
+			)
+			queryClient.invalidateQueries({queryKey: keys.default})
+		},
+	})
 
-	focusPassword = () => this._passwordInput.current?.focus()
+	let logOut = useMutation({
+		mutationFn: () => resetInternetCredentials(SIS_LOGIN_KEY),
+		onSuccess: () => {
+			queryClient.invalidateQueries({queryKey: keys.default})
+		},
+	})
 
-	loadCredentialsFromKeychain = async () => {
-		let {username = '', password = ''} = await loadLoginCredentials()
-		this.setState(() => ({username, password, loadingCredentials: false}))
-
-		if (username && password) {
-			await this.props.logInViaCredentials(username, password)
-		}
-
-		this.setState(() => ({initialCheckComplete: true}))
-	}
-
-	logIn = () => {
-		this.props.logInViaCredentials(this.state.username, this.state.password)
-	}
-
-	logOut = () => {
-		this.setState(() => ({username: '', password: ''}))
-		this.props.logOutViaCredentials()
-	}
-
-	render(): JSX.Element {
-		let {status} = this.props
-		let {username, password, loadingCredentials, initialCheckComplete} =
-			this.state
-
-		let loggedIn = status === 'logged-in'
-		let checkingCredentials = status === 'checking'
-		let hasBothCredentials = username && password
-
-		// this becomes TRUE when (a) creds are loaded from AsyncStorage and
-		// (b) the initial check from those credentials has completed
-		let checkingState = loadingCredentials || !initialCheckComplete
-
+	if (credentials.error) {
 		return (
-			<Section
-				footer='St. Olaf login enables the "meals remaining" feature.'
-				header="ST. OLAF LOGIN"
-			>
-				{checkingState ? (
-					<Cell title="Loading…" />
-				) : loggedIn ? (
-					<Cell title={`Logged in as ${username}.`} />
-				) : (
-					[
-						<CellTextField
-							key={0}
-							_ref={this._usernameInput}
-							disabled={checkingCredentials}
-							label="Username"
-							onChangeText={(text) => this.setState(() => ({username: text}))}
-							onSubmitEditing={this.focusPassword}
-							placeholder="username"
-							returnKeyType="next"
-							secureTextEntry={false}
-							value={username}
-						/>,
-						<CellTextField
-							key={1}
-							_ref={this._passwordInput}
-							disabled={checkingCredentials}
-							label="Password"
-							onChangeText={(text) => this.setState(() => ({password: text}))}
-							onSubmitEditing={this.logIn}
-							placeholder="password"
-							returnKeyType="done"
-							secureTextEntry={true}
-							value={password}
-						/>,
-					]
-				)}
-
-				<LoginButton
-					disabled={!hasBothCredentials || checkingCredentials || checkingState}
-					label="St. Olaf"
-					loading={checkingCredentials || checkingState}
-					loggedIn={loggedIn}
-					onPress={loggedIn ? this.logOut : this.logIn}
-				/>
-			</Section>
+			<NoticeView
+				buttonText="Try Again"
+				onPress={credentials.refetch}
+				text={`A problem occured while loading: ${credentials.error}`}
+			/>
 		)
 	}
-}
 
-export function ConnectedCredentialsLoginSection(): JSX.Element {
-	let dispatch = useDispatch()
-	let status = useSelector(
-		(state: ReduxState) => state.login?.status || 'initializing',
-	)
-
-	let logIn = React.useCallback(
-		(u: string, p: string) => {
-			dispatch(logInViaCredentials(u, p))
-		},
-		[dispatch],
-	)
-
-	let logOut = React.useCallback(() => {
-		dispatch(logOutViaCredentials())
-	}, [dispatch])
+	let isLoggedIn = Boolean(credentials.data)
+	let hasBothCredentials = username && password
 
 	return (
-		<CredentialsLoginSection
-			logInViaCredentials={logIn}
-			logOutViaCredentials={logOut}
-			status={status}
-		/>
+		<Section
+			footer='St. Olaf login enables the "meals remaining" feature.'
+			header="ST. OLAF LOGIN"
+		>
+			{credentials.isLoading ? (
+				<Cell title="Loading…" />
+			) : isLoggedIn ? (
+				<Cell title={`Logged in as ${username}.`} />
+			) : (
+				<>
+					<CellTextField
+						ref={usernameInputRef}
+						editable={!logIn.isLoading}
+						label="Username"
+						onChangeText={(text) => setUsername(text)}
+						onSubmitEditing={() => passwordInputRef.current?.focus()}
+						placeholder="username"
+						returnKeyType="next"
+						secureTextEntry={false}
+						value={username}
+					/>
+
+					<CellTextField
+						ref={passwordInputRef}
+						editable={!logIn.isLoading}
+						label="Password"
+						onChangeText={(text) => setPassword(text)}
+						onSubmitEditing={() => logIn.mutate()}
+						placeholder="password"
+						returnKeyType="done"
+						secureTextEntry={true}
+						value={password}
+					/>
+				</>
+			)}
+
+			{logIn.isError && logIn.error instanceof Error && (
+				<Section footer="You'll need to log in in order to see this data.">
+					{logIn.error instanceof NoCredentialsError ? (
+						<Cell
+							cellStyle="Basic"
+							title="No credentials found"
+							titleTextColor={sto.red}
+						/>
+					) : (
+						<Cell
+							cellStyle="Basic"
+							title={logIn.error.message}
+							titleTextColor={sto.red}
+						/>
+					)}
+				</Section>
+			)}
+
+			<LoginButton
+				disabled={!hasBothCredentials || logIn.isLoading || logOut.isLoading}
+				label="St. Olaf"
+				loading={logIn.isLoading || logOut.isLoading}
+				loggedIn={isLoggedIn}
+				onPress={isLoggedIn ? logOut.mutate : logIn.mutate}
+			/>
+		</Section>
 	)
 }

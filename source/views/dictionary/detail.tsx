@@ -4,10 +4,8 @@ import {Markdown} from '@frogpond/markdown'
 import {ListFooter} from '@frogpond/lists'
 import {Button} from '@frogpond/button'
 import glamorous from 'glamorous-native'
-import type {WordType} from './types'
-import type {TopLevelViewPropsType} from '../types'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
-import {RouteProp, useNavigation} from '@react-navigation/native'
+import {RouteProp, useNavigation, useRoute} from '@react-navigation/native'
 import {RootStackParamList} from '../../navigation/types'
 
 const Term = glamorous.text({
@@ -28,12 +26,10 @@ const styles = StyleSheet.create({
 	},
 })
 
-type Props = TopLevelViewPropsType & {
-	route: {params: {item: WordType}}
-}
+export const NavigationKey = 'DictionaryDetail' as const
 
 export const DetailNavigationOptions = (props: {
-	route: RouteProp<RootStackParamList, 'DictionaryDetail'>
+	route: RouteProp<RootStackParamList, typeof NavigationKey>
 }): NativeStackNavigationOptions => {
 	let {word} = props.route.params.item
 	return {
@@ -41,8 +37,9 @@ export const DetailNavigationOptions = (props: {
 	}
 }
 
-export let DictionaryDetailView = (props: Props): JSX.Element => {
-	let {item} = props.route.params
+export let DictionaryDetailView = (): JSX.Element => {
+	let route = useRoute<RouteProp<RootStackParamList, typeof NavigationKey>>()
+	let {item} = route.params
 
 	let navigation = useNavigation()
 

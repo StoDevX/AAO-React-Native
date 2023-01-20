@@ -8,9 +8,9 @@ export type {
 	HeldJob,
 	Printer,
 	PrintJob,
-	ReleaseResponseOrErrorType,
-	CancelResponseOrErrorType,
-	HeldJobsResponseOrErrorType,
+	ReleaseResponse,
+	CancelResponse,
+	HeldJobsResponse,
 } from './types'
 export {showGeneralError} from './errors'
 export {isStoprintMocked} from './debug'

@@ -1,10 +1,9 @@
 import * as React from 'react'
 import {Cell} from '@frogpond/tableview'
-import type {TopLevelViewPropsType} from '../../../types'
 
-type Props = TopLevelViewPropsType & {
-	data: {key: string; value: any}
-	onPress: (key: string) => void
+type Props = {
+	data: {key: string | number; value: unknown}
+	onPress: (key: string | number) => void
 }
 
 export const DebugRow = (props: Props): JSX.Element => {
@@ -23,7 +22,7 @@ export const DebugRow = (props: Props): JSX.Element => {
 		arrowPosition = 'center'
 	} else if (typeof data.value === 'string') {
 		if (data.value.length > 20) {
-			rowDetail = `"${data.value.substr(0, 20)}…"`
+			rowDetail = `"${data.value.substring(0, 20)}…"`
 		} else {
 			rowDetail = JSON.stringify(data.value)
 		}

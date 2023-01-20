@@ -21,7 +21,10 @@ import {buildFilters} from './lib/build-filters'
 import {useNavigation} from '@react-navigation/native'
 import type {Moment} from 'moment'
 
-type FilterFunc = (filters: Array<FilterType>, item: MenuItemType) => boolean
+type FilterFunc = (
+	filters: Array<FilterType<MenuItemType>>,
+	item: MenuItemType,
+) => boolean
 
 type ReactProps = {
 	cafeMessage?: string | null
@@ -52,14 +55,15 @@ const styles = StyleSheet.create({
 const LEFT_MARGIN = 28
 const Separator = () => <ListSeparator spacing={{left: LEFT_MARGIN}} />
 
-const areSpecialsFiltered = (filters: Array<FilterType>): boolean =>
-	Boolean(filters.find(isSpecialsFilter))
+const areSpecialsFiltered = (
+	filters: Array<FilterType<MenuItemType>>,
+): boolean => Boolean(filters.find(isSpecialsFilter))
 
-const isSpecialsFilter = (f: FilterType): boolean =>
+const isSpecialsFilter = (f: FilterType<MenuItemType>): boolean =>
 	f.enabled && f.type === 'toggle' && f.spec.label === 'Only Show Specials'
 
 const groupMenuData = (args: {
-	filters: Array<FilterType>
+	filters: Array<FilterType<MenuItemType>>
 	stations: Array<StationMenuType>
 	foodItems: MenuItemContainerType
 	applyFilters: FilterFunc
@@ -89,7 +93,7 @@ export function FancyMenu(props: Props): JSX.Element {
 
 	let navigation = useNavigation()
 
-	const [filters, setFilters] = useState<FilterType[]>([])
+	const [filters, setFilters] = useState<FilterType<MenuItemType>[]>([])
 
 	const meal = chooseMeal(meals, filters, now)
 	const {label: mealName, stations} = meal

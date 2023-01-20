@@ -36,6 +36,8 @@ import * as directory from '../views/directory'
 import {StyleSheet} from 'react-native'
 import {getTheme} from '@frogpond/app-theme'
 import {RootStackParamList, SettingsStackParamList} from './types'
+import {NavigationKey as Debug} from '../views/settings/screens/debug'
+import {toLaxTitleCase} from '@frogpond/titlecase'
 
 const theme = getTheme()
 
@@ -69,7 +71,7 @@ const HomeStackScreens = () => (
 			/>
 			<Stack.Screen
 				component={eventDetail.EventDetail}
-				name="EventDetail"
+				name={eventDetail.NavigationKey}
 				options={eventDetail.EventDetailNavigationOptions}
 			/>
 		</Stack.Group>
@@ -86,7 +88,7 @@ const HomeStackScreens = () => (
 			/>
 			<Stack.Screen
 				component={buildingHours.BuildingHoursProblemReportView}
-				name="BuildingHoursProblemReport"
+				name={buildingHours.ReportNavigationKey}
 				options={buildingHours.ReportNavigationOptions}
 			/>
 			<Stack.Screen
@@ -127,14 +129,14 @@ const HomeStackScreens = () => (
 		<Stack.Group>
 			<Stack.Screen
 				component={transportation.View}
-				name="Transportation"
+				name={transportation.NavigationKey}
 				options={transportation.NavigationOptions}
 			/>
 		</Stack.Group>
 		<Stack.Group>
 			<Stack.Screen
 				component={menus.View}
-				name="Menus"
+				name={menus.NavigationKey}
 				options={menus.NavigationOptions}
 			/>
 			<Stack.Screen
@@ -166,7 +168,7 @@ const HomeStackScreens = () => (
 		<Stack.Group>
 			<Stack.Screen
 				component={streaming.View}
-				name="Streaming"
+				name={streaming.NavigationKey}
 				options={streaming.NavigationOptions}
 			/>
 			<Stack.Screen
@@ -195,7 +197,7 @@ const HomeStackScreens = () => (
 		<Stack.Group>
 			<Stack.Screen
 				component={news.View}
-				name="News"
+				name={news.NavigationKey}
 				options={news.NavigationOptions}
 			/>
 		</Stack.Group>
@@ -212,7 +214,7 @@ const HomeStackScreens = () => (
 			/>
 			<Stack.Screen
 				component={sis.View}
-				name="SIS"
+				name={sis.NavigationKey}
 				options={sis.NavigationOptions}
 			/>
 			<Stack.Screen
@@ -291,7 +293,15 @@ const SettingsStackScreens = () => (
 			name="BonAppPicker"
 			options={DevBonAppNavigationOptions}
 		/>
-		<SettingsStack.Screen component={settings.DebugView} name="Debug" />
+		<SettingsStack.Screen
+			component={settings.DebugRootView}
+			name={Debug}
+			options={({
+				route: {
+					params: {keyPath},
+				},
+			}) => ({title: toLaxTitleCase(keyPath?.[keyPath?.length - 1])})}
+		/>
 	</SettingsStack.Navigator>
 )
 

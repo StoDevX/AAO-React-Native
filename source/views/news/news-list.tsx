@@ -1,18 +1,17 @@
 import * as React from 'react'
 import {FlatList, StyleSheet} from 'react-native'
 import type {StoryType} from './types'
-import {API} from '@frogpond/api'
 import * as c from '@frogpond/colors'
-import {useFetch} from 'react-async'
 import {ListSeparator} from '@frogpond/lists'
 import {LoadingView, NoticeView} from '@frogpond/notice'
 import {openUrl} from '@frogpond/open-url'
 import {NewsRow} from './news-row'
 import {cleanEntries, trimStoryCateogry} from './lib/util'
 import {FilterToolbar, ListType} from '@frogpond/filter'
+import {UseQueryResult} from '@tanstack/react-query'
 
 type Props = {
-	source: string | {url: string; type: 'rss' | 'wp-json'}
+	query: UseQueryResult<StoryType[]>
 	thumbnail: false | number
 }
 
@@ -25,30 +24,13 @@ const styles = StyleSheet.create({
 	},
 })
 
-const useNews = (source: Props['source']) => {
-	let url
-	if (typeof source === 'string') {
-		url = API(`/news/named/${source}`)
-	} else if (source.type === 'rss') {
-		url = API('/news/rss', {url: source.url})
-	} else if (source.type === 'wp-json') {
-		url = API('/news/wpjson', {url: source.url})
-	} else {
-		throw new Error('invalid news source type!')
-	}
-
-	return useFetch<StoryType[]>(url, {
-		headers: {accept: 'application/json'},
-	})
-}
-
 let getStoryCategories = (story: StoryType) => {
 	return story.categories.map((c) => trimStoryCateogry(c))
 }
 
-let filterStories = (entries: StoryType[], filters: ListType[]) => {
+let filterStories = (entries: StoryType[], filters: ListType<StoryType>[]) => {
 	return entries.filter((story) => {
-		let enabledCategories = filters.flatMap((f: ListType) =>
+		let enabledCategories = filters.flatMap((f: ListType<StoryType>) =>
 			f.spec.selected.flatMap((s) => s.title),
 		)
 
@@ -66,15 +48,15 @@ export const NewsList = (props: Props): JSX.Element => {
 	let {
 		data = [],
 		error,
-		reload,
-		isPending,
-		isInitial,
+		refetch,
+		isRefetching,
+		isError,
 		isLoading,
-	} = useNews(props.source)
+	} = props.query
 
 	let entries = React.useMemo(() => cleanEntries(data), [data])
 
-	let [filters, setFilters] = React.useState<ListType[]>([])
+	let [filters, setFilters] = React.useState<ListType<StoryType>[]>([])
 
 	React.useEffect(() => {
 		let allCategories = entries.flatMap((story) => getStoryCategories(story))
@@ -88,7 +70,7 @@ export const NewsList = (props: Props): JSX.Element => {
 			return {title: c}
 		})
 
-		let newsFilters: ListType[] = [
+		let newsFilters: ListType<StoryType>[] = [
 			{
 				type: 'list',
 				key: 'category',
@@ -100,18 +82,18 @@ export const NewsList = (props: Props): JSX.Element => {
 					mode: 'OR',
 					displayTitle: true,
 				},
-				apply: {key: 'category'},
+				apply: {key: 'categories'},
 			},
 		]
 		setFilters(newsFilters)
 	}, [entries])
 
-	if (error) {
+	if (isError) {
 		return (
 			<NoticeView
 				buttonText="Try Again"
-				onPress={reload}
-				text="A problem occured while loading the news stories"
+				onPress={refetch}
+				text={`A problem occured while loading: ${error}`}
 			/>
 		)
 	}
@@ -123,7 +105,7 @@ export const NewsList = (props: Props): JSX.Element => {
 				let edited = filters.map((f) =>
 					f.key === newFilter.key ? newFilter : f,
 				)
-				setFilters(edited as ListType[])
+				setFilters(edited as ListType<StoryType>[])
 			}}
 		/>
 	)
@@ -138,7 +120,7 @@ export const NewsList = (props: Props): JSX.Element => {
 			ListEmptyComponent={
 				isLoading ? (
 					<LoadingView />
-				) : filters.some((f: ListType) => f.spec.selected.length) ? (
+				) : filters.some((f) => f.spec.selected.length) ? (
 					<NoticeView text="No stories to show. Try changing the filters." />
 				) : (
 					<NoticeView text="No news stories." />
@@ -148,9 +130,9 @@ export const NewsList = (props: Props): JSX.Element => {
 			contentContainerStyle={styles.contentContainer}
 			data={filterStories(entries, filters)}
 			keyExtractor={(item: StoryType) => item.title}
-			onRefresh={reload}
-			refreshing={isPending && !isInitial}
-			renderItem={({item}: {item: StoryType}) => (
+			onRefresh={refetch}
+			refreshing={isRefetching}
+			renderItem={({item}) => (
 				<NewsRow
 					onPress={(url: string) => openUrl(url)}
 					story={item}

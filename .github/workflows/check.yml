@@ -105,6 +105,7 @@ jobs:
           node-version: ^16.0
           cache: npm
       - run: npm ci
+      - run: npm run bundle-data
       - run: npx tsc
 
   data:

@@ -1,2 +1,2 @@
-export {TabBarIcon} from './tabbar-icon'
-export {TabNavigator} from './tabbed-view'
+export {IosIcon, MaterialIcon} from './tabbar-icon'
+export {createTabNavigator, type Tab} from './tabbed-view'

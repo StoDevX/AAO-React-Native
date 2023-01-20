@@ -6,18 +6,20 @@ parserOptions:
   project: './tsconfig.json'
 
 plugins:
-  - '@typescript-eslint'
-  - babel
-  - jsx-expressions
-  - react
-  - react-native
-  - react-hooks
+  - '@typescript-eslint/eslint-plugin'
+  - 'eslint-plugin-babel'
+  - 'eslint-plugin-jsx-expressions'
+  - 'eslint-plugin-react'
+  - 'eslint-plugin-react-native'
+  - 'eslint-plugin-react-hooks'
+  - '@tanstack/eslint-plugin-query'
 
 extends:
-  - eslint:recommended
-  - plugin:react/recommended
+  - 'eslint:recommended'
+  - 'plugin:react/recommended'
   - 'plugin:@typescript-eslint/recommended'
-  - prettier
+  - 'plugin:@tanstack/eslint-plugin-query/recommended'
+  - 'prettier'
 
 settings:
   react:

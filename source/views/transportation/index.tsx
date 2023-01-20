@@ -1,12 +1,15 @@
-import * as React from 'react'
-
-import {TabBarIcon} from '@frogpond/navigation-tabs'
+import React from 'react'
+import {Platform} from 'react-native'
+import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+import {
+	MaterialIcon,
+	IosIcon,
+	createTabNavigator,
+	type Tab,
+} from '@frogpond/navigation-tabs'
 
 import {OtherModesView} from './other-modes'
 import {BusView} from './bus'
-
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs'
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 
 type Params = {
 	ExpressLineBusView: undefined
@@ -16,64 +19,62 @@ type Params = {
 	TransportationOtherModesListView: undefined
 }
 
-const Tabs = createBottomTabNavigator<Params>()
-
 const ExpressLineBusView = () => <BusView line="Express Bus" />
 const RedLineBusView = () => <BusView line="Red Line" />
 const BlueLineBusView = () => <BusView line="Blue Line" />
 const OlesGoView = () => <BusView line="Oles Go" />
 
-const TransportationView = (): JSX.Element => {
-	return (
-		<Tabs.Navigator screenOptions={{headerShown: false}}>
-			<Tabs.Screen
-				component={ExpressLineBusView}
-				name="ExpressLineBusView"
-				options={{
-					tabBarLabel: 'Express Bus',
-					tabBarIcon: TabBarIcon('bus'),
-				}}
-			/>
-			<Tabs.Screen
-				component={RedLineBusView}
-				name="RedLineBusView"
-				options={{
-					tabBarLabel: 'Red Line',
-					tabBarIcon: TabBarIcon('bus'),
-				}}
-			/>
-			<Tabs.Screen
-				component={BlueLineBusView}
-				name="BlueLineBusView"
-				options={{
-					tabBarLabel: 'Blue Line',
-					tabBarIcon: TabBarIcon('bus'),
-				}}
-			/>
-			<Tabs.Screen
-				component={OlesGoView}
-				name="OlesGoView"
-				options={{
-					tabBarLabel: 'Oles Go',
-					tabBarIcon: TabBarIcon('car'),
-				}}
-			/>
-			<Tabs.Screen
-				component={OtherModesView}
-				name="TransportationOtherModesListView"
-				options={{
-					tabBarLabel: 'Other Modes',
-					tabBarIcon: TabBarIcon('boat'),
-				}}
-			/>
-		</Tabs.Navigator>
-	)
-}
+const tabs: Tab<Params>[] = [
+	{
+		name: 'ExpressLineBusView',
+		component: ExpressLineBusView,
+		tabBarLabel: 'Express Bus',
+		tabBarIcon: Platform.select({
+			ios: IosIcon('bus'),
+			android: MaterialIcon('bus'),
+		}),
+	},
+	{
+		name: 'RedLineBusView',
+		component: RedLineBusView,
+		tabBarLabel: 'Red Line',
+		tabBarIcon: Platform.select({
+			ios: IosIcon('bus'),
+			android: MaterialIcon('bus'),
+		}),
+	},
+	{
+		name: 'BlueLineBusView',
+		component: BlueLineBusView,
+		tabBarLabel: 'Blue Line',
+		tabBarIcon: Platform.select({
+			ios: IosIcon('bus'),
+			android: MaterialIcon('bus'),
+		}),
+	},
+	{
+		name: 'OlesGoView',
+		component: OlesGoView,
+		tabBarLabel: 'Oles Go',
+		tabBarIcon: Platform.select({
+			ios: IosIcon('car'),
+			android: MaterialIcon('car'),
+		}),
+	},
+	{
+		name: 'TransportationOtherModesListView',
+		component: OtherModesView,
+		tabBarLabel: 'Other Modes',
+		tabBarIcon: Platform.select({
+			ios: IosIcon('boat'),
+			android: MaterialIcon('sail-boat'),
+		}),
+	},
+]
 
-export {TransportationView as View}
-
+export type NavigationParams = undefined
+export const View = createTabNavigator<Params>(tabs)
+export const NavigationKey = 'Transportation'
 export const NavigationOptions: NativeStackNavigationOptions = {
 	title: 'Transportation',
 }
-
-export type NavigationParams = undefined

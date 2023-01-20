@@ -1,106 +1,44 @@
-import * as React from 'react'
-import {default as moment, type Moment} from 'moment-timezone'
-import delay from 'delay'
+import {useState} from 'react'
+import {default as moment, unitOfTime, type Moment} from 'moment-timezone'
+import {useInterval} from './use-interval'
 
-export function msUntilIntervalRepeat(now: number, interval: number): number {
-	return interval - (now % interval)
+interface BasicProps {
+	intervalMs: number // ms
 }
 
-type RenderState<T> = {
-	now: T
-	loading: boolean
-	refresh: () => void
-}
-
-type MomentRender = {
-	moment: true
-	render: (state: RenderState<Moment>) => JSX.Element
-}
-type DateRender = {
-	moment: false
-	render: (state: RenderState<Date>) => JSX.Element
-}
-
-type Props = {
-	interval: number // ms
+interface MomentProps extends BasicProps {
 	timezone?: string
-	invoke?: () => void
-} & (MomentRender | DateRender)
-
-type State = {
-	now: Date
-	loading: boolean
+	startOf?: unitOfTime.StartOf
 }
 
-export class Timer extends React.Component<Props, State> {
-	_timeoutId?: NodeJS.Timeout
-	_intervalId?: NodeJS.Timer
+export function useDateTimer(props: BasicProps): {now: Date} {
+	let {intervalMs} = props
+	let [now, setNow] = useState(() => new Date())
 
-	state: State = {
-		now: new Date(),
-		loading: false,
-	}
+	useInterval(() => {
+		setNow(new Date())
+	}, intervalMs)
 
-	componentDidMount(): void {
-		// get the time remaining until the next $interval
-		let {interval} = this.props
-		let nowMs = this.state.now.getTime()
-		let untilNextInterval = msUntilIntervalRepeat(nowMs, interval)
+	return {now}
+}
 
-		this._timeoutId = setTimeout(() => {
-			this.updateTime()
-			this._intervalId = setInterval(this.updateTime, interval)
-		}, untilNextInterval)
-	}
+export function useMomentTimer(props: MomentProps): {now: Moment} {
+	let {intervalMs, timezone, startOf} = props
+	let [now, setNow] = useState(() => moment())
 
-	componentWillUnmount(): void {
-		this._timeoutId != null && clearTimeout(this._timeoutId)
-		this._intervalId != null && clearInterval(this._intervalId)
-	}
-
-	updateTime = (): void => {
-		this.setState(() => ({now: new Date()}))
-	}
-
-	_refresh = async (): Promise<void> => {
-		let start = Date.now()
-		this.setState(() => ({loading: true}))
-
-		this.updateTime()
-
-		let elapsed = Date.now() - start
-		if (elapsed < 500) {
-			await delay(500 - elapsed)
+	useInterval(() => {
+		let newNow = moment()
+		if (timezone) {
+			newNow = newNow.tz(timezone)
 		}
-
-		this.setState(() => ({loading: false}))
-	}
-
-	refresh = (): void => {
-		this._refresh()
-	}
-
-	render(): JSX.Element {
-		let {now, loading} = this.state
-
-		if (this.props.invoke) {
-			this.props.invoke()
+		if (startOf) {
+			newNow = newNow.startOf(startOf)
 		}
-
-		if (this.props.moment) {
-			let nowMoment: Moment = moment(now)
-
-			if (this.props.timezone) {
-				nowMoment = nowMoment.tz(this.props.timezone)
-			}
-
-			return this.props.render({now: nowMoment, loading, refresh: this.refresh})
-		} else {
-			return this.props.render({
-				now,
-				loading,
-				refresh: this.refresh,
-			})
+		if (now.isSame(newNow)) {
+			return
 		}
-	}
+		setNow(newNow)
+	}, intervalMs)
+
+	return {now}
 }

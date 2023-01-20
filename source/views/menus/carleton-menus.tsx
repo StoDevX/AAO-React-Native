@@ -5,7 +5,7 @@ import {ListRow, ListSeparator, Title} from '@frogpond/lists'
 import {BonAppHostedMenu} from './menu-bonapp'
 import {useNavigation} from '@react-navigation/native'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
-import {RootStackParamList} from '../../navigation/types'
+import {CafeMenuParamList} from '../../navigation/types'
 
 export const CarletonBurtonMenuScreen = (): JSX.Element => (
 	<BonAppHostedMenu
@@ -42,7 +42,7 @@ export const CarletonSaylesMenuScreen = (): JSX.Element => (
 export function CarletonCafeIndex(): JSX.Element {
 	let navigation = useNavigation()
 
-	let carletonCafes: Array<{id: keyof RootStackParamList; title: string}> = [
+	let carletonCafes: Array<{id: keyof CafeMenuParamList; title: string}> = [
 		{id: 'CarletonBurtonMenu', title: 'Burton'},
 		{id: 'CarletonLDCMenu', title: 'LDC'},
 		{id: 'CarletonWeitzMenu', title: 'Weitz Center'},

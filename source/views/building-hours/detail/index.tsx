@@ -1,22 +1,17 @@
 import * as React from 'react'
-import type {BuildingType} from '../types'
-import {Timer} from '@frogpond/timer'
+import {useMomentTimer} from '@frogpond/timer'
 import {BuildingDetail} from './building'
 import {timezone} from '@frogpond/constants'
-import type {TopLevelViewPropsType} from '../../types'
 import {BuildingFavoriteButton} from './toolbar-button'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
-import {RouteProp, useNavigation} from '@react-navigation/native'
+import {RouteProp, useNavigation, useRoute} from '@react-navigation/native'
 import {RootStackParamList} from '../../../navigation/types'
 
-type Props = TopLevelViewPropsType & {
-	route: {params: {building: BuildingType}}
-}
-
-export function BuildingHoursDetailView(props: Props): JSX.Element {
+export function BuildingHoursDetailView(): JSX.Element {
 	let navigation = useNavigation()
-
-	let info = props.route.params.building
+	let {now} = useMomentTimer({intervalMs: 60000, timezone: timezone()})
+	let route = useRoute<RouteProp<RootStackParamList, typeof NavigationKey>>()
+	let {building: info} = route.params
 
 	let reportProblem = React.useCallback(
 		() =>
@@ -27,14 +22,7 @@ export function BuildingHoursDetailView(props: Props): JSX.Element {
 	)
 
 	return (
-		<Timer
-			interval={60000}
-			moment={true}
-			render={({now}) => (
-				<BuildingDetail info={info} now={now} onProblemReport={reportProblem} />
-			)}
-			timezone={timezone()}
-		/>
+		<BuildingDetail info={info} now={now} onProblemReport={reportProblem} />
 	)
 }
 

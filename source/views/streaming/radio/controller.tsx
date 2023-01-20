@@ -18,7 +18,7 @@ import {useTheme} from './theme'
 import {ActionButton, CallButton, ShowCalendarButton} from './buttons'
 import {openUrl} from '@frogpond/open-url'
 import {useNavigation} from '@react-navigation/native'
-import {RootStackParamList} from '../../../navigation/types'
+import {RadioScheduleParamList} from '../../../navigation/types'
 
 // If you want to fix the inline player, switch to `true`
 const ALLOW_INLINE_PLAYER = false
@@ -59,7 +59,7 @@ type Props = {
 	playerUrl: string
 	stationNumber: string
 	title: string
-	scheduleViewName: keyof RootStackParamList
+	scheduleViewName: keyof RadioScheduleParamList
 	stationName: string
 	source: {
 		useEmbeddedPlayer: boolean

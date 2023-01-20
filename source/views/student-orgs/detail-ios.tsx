@@ -4,14 +4,12 @@ import moment from 'moment'
 import {Cell, Section, TableView} from '@frogpond/tableview'
 import {SelectableCell} from '@frogpond/tableview/cells'
 import * as c from '@frogpond/colors'
-import type {StudentOrgType} from './types'
-import type {TopLevelViewPropsType} from '../types'
 import {openUrl} from '@frogpond/open-url'
 import {sendEmail} from '../../components/send-email'
 import {showNameOrEmail} from './util'
 import {decode} from '@frogpond/html-lib'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
-import {RouteProp} from '@react-navigation/native'
+import {RouteProp, useRoute} from '@react-navigation/native'
 import {RootStackParamList} from '../../navigation/types'
 
 const styles = StyleSheet.create({
@@ -37,12 +35,10 @@ const styles = StyleSheet.create({
 	},
 })
 
-type Props = TopLevelViewPropsType & {
-	route: {params: {org: StudentOrgType}}
-}
+export const NavigationKey = 'StudentOrgsDetail' as const
 
 export const NavigationOptions = (props: {
-	route: RouteProp<RootStackParamList, 'StudentOrgsDetail'>
+	route: RouteProp<RootStackParamList, typeof NavigationKey>
 }): NativeStackNavigationOptions => {
 	let {name} = props.route.params.org
 	return {
@@ -50,7 +46,9 @@ export const NavigationOptions = (props: {
 	}
 }
 
-let StudentOrgsDetailView = (props: Props): JSX.Element => {
+let StudentOrgsDetailView = (): JSX.Element => {
+	let route = useRoute<RouteProp<RootStackParamList, typeof NavigationKey>>()
+
 	let {
 		name: orgName,
 		category,
@@ -60,7 +58,7 @@ let StudentOrgsDetailView = (props: Props): JSX.Element => {
 		advisors,
 		description,
 		lastUpdated: orgLastUpdated,
-	} = props.route.params.org
+	} = route.params.org
 
 	return (
 		<ScrollView>

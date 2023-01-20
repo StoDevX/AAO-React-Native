@@ -1,10 +1,5 @@
-/* globals Headers */
-
-import {ExpandedFetchArgs, fetch as fpFetch} from '@frogpond/fetch'
-import {PAPERCUT_MOBILE_RELEASE_API, PAPERCUT_API, PAPERCUT} from './urls'
-import querystring from 'query-string'
+import {mobileReleaseApi, papercutApi} from './urls'
 import {encode} from 'base-64'
-import {API} from '@frogpond/api'
 import {
 	fetchAllPrinters as mockFetchAllPrinters,
 	fetchRecentPrinters as mockFetchRecentPrinters,
@@ -16,246 +11,163 @@ import {
 import {isStoprintMocked} from '../../lib/stoprint'
 
 import type {
-	PrintJobsResponseOrErrorType,
-	AllPrintersResponseOrErrorType,
-	ColorPrintersResponseOrErrorType,
-	RecentPopularPrintersResponseOrErrorType,
-	ReleaseResponseOrErrorType,
-	CancelResponseOrErrorType,
-	HeldJobsResponseOrErrorType,
 	LoginResponse,
-	LoginResponseOrErrorType,
 	PrintJobsResponse,
 	AllPrintersResponse,
 	RecentPopularPrintersResponse,
-	ColorPrintersReponse,
+	ColorPrintersResponse,
 	HeldJobsResponse,
 	ReleaseResponse,
+	CancelResponse,
 } from './types'
+import {Options} from 'ky'
+import {SharedWebCredentials} from 'react-native-keychain'
+import {LoginFailedError} from '../login'
+import {client} from '@frogpond/api'
 
-const PAPERCUT_API_HEADERS = {
-	'Content-Type': 'application/x-www-form-urlencoded',
-	Origin: PAPERCUT,
-}
-
-function papercut<T>(url: string, opts?: ExpandedFetchArgs): Promise<T> {
-	return fpFetch(url, {cache: 'no-store', ...opts}).json<T>()
-}
+export class PapercutJobReleaseError extends Error {}
 
 export async function logIn(
-	username: string,
-	password: string,
-): Promise<'success' | string> {
+	credentials: SharedWebCredentials,
+	options: Options,
+	now: number = new Date().getTime(),
+): Promise<void> {
+	let {username, password} = credentials
+
 	if (isStoprintMocked) {
-		return mockLogIn(username, password)
+		return mockLogIn(credentials, now)
 	}
 
-	const now = new Date().getTime()
-	const url = `${PAPERCUT_API}/webclient/users/${username}/log-in?nocache=${now}`
-	const body = querystring.stringify({password: encode(password)})
-	const result: LoginResponseOrErrorType = await papercut<LoginResponse>(url, {
-		method: 'POST',
-		body: body,
-		headers: PAPERCUT_API_HEADERS,
-	})
-		.then(
-			(response: LoginResponse): LoginResponseOrErrorType => ({
-				error: false,
-				value: response,
-			}),
-		)
-		.catch(
-			(error: Error): LoginResponseOrErrorType => ({
-				error: true,
-				value: error,
-			}),
-		)
+	const result = (await papercutApi
+		.post(`webclient/users/${username}/log-in`, {
+			...options,
+			body: new URLSearchParams({password: encode(password)}),
+			searchParams: new URLSearchParams({nocache: String(now)}),
+		})
+		.json()) as LoginResponse
 
-	if (result.error) {
-		return 'The print server seems to be having some issues.'
+	if (!result.success) {
+		throw new LoginFailedError()
 	}
 
-	if (!result.value.success) {
-		return 'Your username or password appear to be invalid.'
-	}
-
-	return 'success'
+	return
 }
 
-export const fetchJobs = (
+export async function fetchJobs(
 	username: string,
-): Promise<PrintJobsResponseOrErrorType> => {
+	options: Options,
+): Promise<PrintJobsResponse> {
 	if (isStoprintMocked) {
 		return mockFetchJobs(username)
 	}
 
-	return papercut<PrintJobsResponse>(
-		`${PAPERCUT_API}/webclient/users/${username}/jobs/status`,
-	)
-		.then(
-			(response: PrintJobsResponse): PrintJobsResponseOrErrorType => ({
-				error: false,
-				value: response,
-			}),
-		)
-		.catch(
-			(): PrintJobsResponseOrErrorType => ({
-				error: true,
-				value: 'Unable to fetch a list of print jobs from stoPrint.',
-			}),
-		)
+	return (await papercutApi
+		.get(`webclient/users/${username}/jobs/status`, options)
+		.json()) as PrintJobsResponse
 }
 
-export const fetchAllPrinters = (
+export async function fetchAllPrinters(
 	username: string,
-): Promise<AllPrintersResponseOrErrorType> => {
+	options: Options,
+): Promise<AllPrintersResponse> {
 	if (isStoprintMocked) {
 		return mockFetchAllPrinters(username)
 	}
 
-	return papercut<AllPrintersResponse>(
-		`${PAPERCUT_MOBILE_RELEASE_API}/all-printers?username=${username}`,
-	)
-		.then(
-			(response: AllPrintersResponse): AllPrintersResponseOrErrorType => ({
-				error: false,
-				value: response,
-			}),
-		)
-		.catch(
-			(): AllPrintersResponseOrErrorType => ({
-				error: true,
-				value: 'Unable to fetch the list of all printers from stoPrint.',
-			}),
-		)
+	return (await mobileReleaseApi
+		.get('all-printers', {
+			...options,
+			searchParams: new URLSearchParams({username: username}),
+		})
+		.json()) as AllPrintersResponse
 }
 
-export const fetchRecentPrinters = (
+export async function fetchRecentPrinters(
 	username: string,
-): Promise<RecentPopularPrintersResponseOrErrorType> => {
+	options: Options,
+): Promise<RecentPopularPrintersResponse> {
 	if (isStoprintMocked) {
 		return mockFetchRecentPrinters(username)
 	}
 
-	return papercut<RecentPopularPrintersResponse>(
-		`${PAPERCUT_MOBILE_RELEASE_API}/recent-popular-printers?username=${username}`,
-	)
-		.then(
-			(
-				response: RecentPopularPrintersResponse,
-			): RecentPopularPrintersResponseOrErrorType => ({
-				error: false,
-				value: response,
-			}),
-		)
-		.catch(
-			(): RecentPopularPrintersResponseOrErrorType => ({
-				error: true,
-				value: 'Unable to fetch a list of recent printers from stoPrint.',
-			}),
-		)
+	return (await mobileReleaseApi
+		.get('recent-popular-printers', {
+			...options,
+			searchParams: new URLSearchParams({username: username}),
+		})
+		.json()) as RecentPopularPrintersResponse
 }
 
-const colorPrintersUrl = API('/printing/color-printers')
+export async function fetchColorPrinters(options: Options): Promise<string[]> {
+	let response = (await client
+		.get('color-printers', options)
+		.json()) as ColorPrintersResponse
+	return response.data.colorPrinters
+}
 
-export const fetchColorPrinters =
-	(): Promise<ColorPrintersResponseOrErrorType> =>
-		papercut<ColorPrintersReponse>(colorPrintersUrl)
-			.then(
-				(response: ColorPrintersReponse): ColorPrintersResponseOrErrorType => ({
-					error: false,
-					value: response,
-				}),
-			)
-			.catch(() => ({
-				error: true,
-				value: 'Unable to fetch the list of color printers from stoPrint.',
-			}))
-
-export const heldJobsAvailableAtPrinterForUser = (
+export async function heldJobsAvailableAtPrinterForUser(
 	printerName: string,
 	username: string,
-): Promise<HeldJobsResponseOrErrorType> => {
+	options: Options,
+): Promise<HeldJobsResponse> {
 	// https://PAPERCUT_API.stolaf.edu/rpc/api/rest/internal/mobilerelease/api/held-jobs/?username=rives&printerName=printers%5Cmfc-it
 	if (isStoprintMocked) {
 		return mockHeldJobsAvailableAtPrinterForUser(printerName, username)
 	}
 
-	return papercut<HeldJobsResponse>(
-		`${PAPERCUT_MOBILE_RELEASE_API}/held-jobs/?username=${username}&printerName=printers%5C${printerName}`,
-	)
-		.then(
-			(response: HeldJobsResponse): HeldJobsResponseOrErrorType => ({
-				error: false,
-				value: response,
+	return (await mobileReleaseApi
+		.get('held-jobs', {
+			...options,
+			searchParams: new URLSearchParams({
+				username: username,
+				printerName: `printers\\${printerName}`,
 			}),
-		)
-		.catch(
-			(error): HeldJobsResponseOrErrorType => ({error: true, value: error}),
-		)
+		})
+		.json()) as HeldJobsResponse
 }
 
-export const cancelPrintJobForUser = (
+export async function cancelPrintJobForUser(
 	jobId: string,
 	username: string,
-): Promise<CancelResponseOrErrorType> =>
-	fetch(
-		`${PAPERCUT_MOBILE_RELEASE_API}/held-jobs/cancel?username=${username}`,
-		{
-			method: 'POST',
-			body: querystring.stringify({'jobIds[]': jobId}),
-			headers: new Headers(PAPERCUT_API_HEADERS),
-		},
-	)
-		.then(
-			(response: Response): CancelResponseOrErrorType => ({
-				error: false,
-				value: response,
-			}),
-		)
-		.catch((error): CancelResponseOrErrorType => ({error: true, value: error}))
+	options: Options,
+): Promise<CancelResponse> {
+	return (await mobileReleaseApi
+		.post('held-jobs/cancel', {
+			...options,
+			searchParams: new URLSearchParams({username: username}),
+			body: new URLSearchParams({'jobIds[]': jobId}),
+		})
+		.json()) as CancelResponse
+}
 
-export const releasePrintJobToPrinterForUser = ({
-	jobId,
-	printerName,
-	username,
-}: {
+type PrintJobReleaseArgs = {
 	jobId: string
 	printerName: string
 	username: string
-}): Promise<ReleaseResponseOrErrorType> => {
+}
+
+export async function releasePrintJobToPrinterForUser(
+	{jobId, printerName, username}: PrintJobReleaseArgs,
+	options: Options,
+): Promise<ReleaseResponse> {
 	if (isStoprintMocked) {
 		return mockReleasePrintJobToPrinterForUser({jobId, printerName, username})
 	}
 
-	return papercut<ReleaseResponse>(
-		`${PAPERCUT_MOBILE_RELEASE_API}/held-jobs/release?username=${username}`,
-		{
-			method: 'POST',
-			body: querystring.stringify({
+	let response = (await mobileReleaseApi
+		.post('held-jobs/release', {
+			...options,
+			searchParams: new URLSearchParams({username: username}),
+			body: new URLSearchParams({
 				printerName: `printers\\${printerName}`,
 				'jobIds[]': jobId,
 			}),
-			headers: PAPERCUT_API_HEADERS,
-		},
-	)
-		.then((response: ReleaseResponse): ReleaseResponseOrErrorType => {
-			if (response.numJobsReleased === 0) {
-				return {
-					error: true,
-					value: new Error('Problem with Papercut API releasing job'),
-				}
-			} else {
-				return {
-					error: false,
-					value: response,
-				}
-			}
 		})
-		.catch(
-			(error): ReleaseResponseOrErrorType => ({
-				error: true,
-				value: error,
-			}),
-		)
+		.json()) as ReleaseResponse
+
+	if (response.numJobsReleased === 0) {
+		throw new PapercutJobReleaseError()
+	}
+
+	return response
 }
