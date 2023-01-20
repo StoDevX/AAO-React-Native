@@ -1,24 +1,29 @@
-import {beforeEach, describe, it} from '@jest/globals'
+import {beforeAll, beforeEach, test} from '@jest/globals'
 import {by, device, element, expect} from 'detox'
 
-describe('Basic smoke tests', () => {
-	beforeEach(async () => {
-		await device.reloadReactNative()
-	})
+// launch the app once - do this per-test-file to grant only the permissions
+// needed for a given test
+beforeAll(async () => {
+	await device.launchApp()
+})
 
-	it('should have homescreen', async () => {
-		await expect(element(by.id('screen-homescreen'))).toBeVisible()
-	})
+// in this file, only reload the rn stuff between tests
+beforeEach(async () => {
+	await device.reloadReactNative()
+})
 
-	it('should show settings screen after tap', async () => {
-		await element(by.id('button-open-settings')).tap()
-		await expect(element(by.text('Sign In to St. Olaf'))).toBeVisible()
-	})
+test('should show the home screen', async () => {
+	await expect(element(by.id('screen-homescreen'))).toBeVisible()
+})
 
-	it('should show home screen after tap to exit settings screen', async () => {
-		await element(by.id('button-open-settings')).tap()
-		await expect(element(by.id('screen-homescreen'))).toBeNotVisible()
-		await element(by.text('All About Olaf')).tap()
-		await expect(element(by.id('screen-homescreen'))).toBeVisible()
-	})
+test('should show the settings screen after tap', async () => {
+	await element(by.id('button-open-settings')).tap()
+	await expect(element(by.text('Sign In to St. Olaf'))).toBeVisible()
+})
+
+test('should show home screen after tap to exit settings screen', async () => {
+	await element(by.id('button-open-settings')).tap()
+	await expect(element(by.id('screen-homescreen'))).not.toBeVisible()
+	await element(by.id('button-close-screen')).tap()
+	await expect(element(by.id('screen-homescreen'))).toBeVisible()
 })
