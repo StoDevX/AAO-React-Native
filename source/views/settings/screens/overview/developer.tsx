@@ -7,11 +7,13 @@ import {isDevMode} from '@frogpond/constants'
 import {ServerUrlSection} from './server-url'
 import {useNavigation} from '@react-navigation/native'
 import {NavigationKey as DebugKey} from '../debug'
+import {NavigationKey as ColorsInfoNavigationKey} from '../debug/colors'
 
 export const DeveloperSection = (): React.ReactElement => {
 	let navigation = useNavigation()
 
 	const onAPIButton = () => navigation.navigate('APITest')
+	const onColorsButton = () => navigation.navigate(ColorsInfoNavigationKey)
 	const onBonAppButton = () => navigation.navigate('BonAppPicker')
 	const onDebugButton = () => navigation.navigate(DebugKey, {keyPath: ['Root']})
 	const sendSentryMessage = () => {
@@ -39,6 +41,7 @@ export const DeveloperSection = (): React.ReactElement => {
 	return (
 		<>
 			<Section header="DEVELOPER">
+				<PushButtonCell onPress={onColorsButton} title="Colors Tester" />
 				<PushButtonCell onPress={onAPIButton} title="API Tester" />
 				<PushButtonCell onPress={onBonAppButton} title="Bon Appetit Picker" />
 				<PushButtonCell disabled={true} onPress={onDebugButton} title="Debug" />
