@@ -1,9 +1,5 @@
-import {beforeAll, beforeEach, describe, it} from '@jest/globals'
+import {beforeEach, describe, it} from '@jest/globals'
 import {by, device, element, expect} from 'detox'
-
-beforeAll(async () => {
-	await device.launchApp()
-})
 
 describe('Basic smoke tests', () => {
 	beforeEach(async () => {
