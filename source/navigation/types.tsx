@@ -11,6 +11,7 @@ import * as streaming from '../views/streaming'
 import * as transportation from '../views/transportation'
 import * as debug from '../views/settings/screens/debug'
 import * as buildingHours from '../views/building-hours'
+import * as settings from '../views/settings'
 
 import {BuildingType} from '../views/building-hours/types'
 import {ContactType} from '../views/contacts/types'
@@ -97,6 +98,7 @@ export type SettingsStackParamList = {
 	BonAppPicker: undefined
 	Credits: undefined
 	[debug.NavigationKey]: {keyPath: string[]}
+	[settings.ColorsInfoNavigationKey]: undefined
 	Faq: undefined
 	IconSettings: undefined
 	Legal: undefined

@@ -21,8 +21,8 @@ import {
 	DevBonAppNavigationOptions,
 } from '../views/menus/dev-bonapp-picker'
 import {
-	MenuItemDetailView,
 	DetailNavigationOptions,
+	MenuItemDetailView,
 } from '@frogpond/food-menu/food-item-detail'
 import * as news from '../views/news'
 import * as settings from '../views/settings/'
@@ -288,6 +288,10 @@ const SettingsStackScreens = () => (
 		<SettingsStack.Screen component={settings.PrivacyView} name="Privacy" />
 		<SettingsStack.Screen component={settings.LegalView} name="Legal" />
 		<SettingsStack.Screen component={settings.APITestView} name="APITest" />
+		<SettingsStack.Screen
+			component={settings.ColorsInfoView}
+			name={settings.ColorsInfoNavigationKey}
+		/>
 		<SettingsStack.Screen
 			component={DevBonAppPickerView}
 			name="BonAppPicker"
