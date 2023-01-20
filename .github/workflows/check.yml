@@ -199,16 +199,5 @@ jobs:
         working-directory: ./ios
       - run: brew tap wix/brew
       - run: brew install applesimutils
-      - run: bundle exec fastlane ios ci-run
-        env:
-          FASTLANE_PASSWORD: ${{ secrets.FASTLANE_PASSWORD }}
-          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
-          GIT_COMMIT_DESC: $(git log --format=oneline -n 1 $GITHUB_SHA)
-          FASTLANE_SKIP_UPDATE_CHECK: '1'
-          FASTLANE_DISABLE_ANIMATION: '1'
-          SENTRY_ORG: frog-pond-labs
-          SENTRY_PROJECT: all-about-olaf
-          SENTRY_AUTH_TOKEN: ${{ secrets.HOSTED_SENTRY_AUTH_TOKEN }}
-          GITHUB_KEYS_REPOSITORY_TOKEN: ${{ secrets.GITHUB_KEYS_REPOSITORY_TOKEN }}
       - run: npx detox build e2e --configuration ios.sim.release
       - run: npx detox test e2e --configuration ios.sim.release --cleanup
