@@ -14,7 +14,7 @@ jobs:
           node-version: ^16.0
           cache: npm
       - run: npm ci
-      - run: npm run pretty --no-write --list-different
+      - run: npm run pretty -- --no-write --list-different
 
   eslint:
     name: ESLint
