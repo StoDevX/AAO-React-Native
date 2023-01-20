@@ -59,9 +59,9 @@ const makeHtmlBody = (before: string, after: string) => `
 
 function makeIssueLink(before: string, after: string, title: string): string {
 	let url = new URL(GH_NEW_ISSUE_URL)
-	url.searchParams.set('labels[]', 'data/hours')
-	url.searchParams.set('title', `Building hours update for ${title}`)
-	url.searchParams.set('body', makeMarkdownBody(before, after))
+	url.searchParams.append('labels[]', 'data/hours')
+	url.searchParams.append('title', `Building hours update for ${title}`)
+	url.searchParams.append('body', makeMarkdownBody(before, after))
 	return url.toString()
 }
 

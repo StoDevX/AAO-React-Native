@@ -6,31 +6,31 @@ let directory = ky.create({prefixUrl: 'https://www.stolaf.edu/directory'})
 
 const getDirectoryParams = (query: string, type: DirectorySearchTypeEnum) => {
 	let p = new URLSearchParams()
-	p.set('format', 'json')
+	p.append('format', 'json')
 
 	query = query.trim()
 
 	switch (type) {
 		case 'department':
-			p.set('department', query)
+			p.append('department', query)
 			break
 		case 'firstName':
-			p.set('firstname', query)
+			p.append('firstname', query)
 			break
 		case 'lastName':
-			p.set('lastname', query)
+			p.append('lastname', query)
 			break
 		case 'major':
-			p.set('major', query)
+			p.append('major', query)
 			break
 		case 'query':
-			p.set('query', query)
+			p.append('query', query)
 			break
 		case 'title':
-			p.set('title', query)
+			p.append('title', query)
 			break
 		case 'username':
-			p.set('email', query)
+			p.append('email', query)
 			break
 		default: {
 			let _neverHitMe: never = type

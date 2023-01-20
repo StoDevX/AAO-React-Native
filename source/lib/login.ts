@@ -27,8 +27,8 @@ export async function performLogin(credentials: {
 	}
 
 	let formData = new FormData()
-	formData.set('username', credentials.username)
-	formData.set('password', credentials.password)
+	formData.append('username', credentials.username)
+	formData.append('password', credentials.password)
 
 	const loginResponse = await ky.post(OLECARD_AUTH_URL, {
 		body: formData,
