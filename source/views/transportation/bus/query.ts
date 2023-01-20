@@ -11,7 +11,7 @@ export function useBusRoutes(): UseQueryResult<UnprocessedBusLine[], unknown> {
 		queryKey: keys.all,
 		queryFn: async ({signal}) => {
 			let response = await client.get('transit/bus', {signal}).json()
-			return response as UnprocessedBusLine[]
+			return (response as {data: UnprocessedBusLine[]}).data
 		},
 	})
 }

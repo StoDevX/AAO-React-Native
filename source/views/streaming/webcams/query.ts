@@ -11,7 +11,7 @@ export function useWebcams(): UseQueryResult<Webcam[], unknown> {
 		queryKey: keys.all,
 		queryFn: async ({signal}) => {
 			let response = await client.get('webcams', {signal}).json()
-			return response as Webcam[]
+			return (response as {data: Webcam[]}).data
 		},
 	})
 }
