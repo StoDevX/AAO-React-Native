@@ -8,8 +8,8 @@ import {
 	EventDetail as AndroidEventDetail,
 	NavigationOptions as AndroidDetailNavigationOptions,
 } from './event-detail-android'
-import { EventType } from '@frogpond/event-type'
-import { PoweredBy } from './types'
+import {EventType} from '@frogpond/event-type'
+import {PoweredBy} from './types'
 
 export const EventDetailNavigationOptions =
 	Platform.OS === 'ios'
