@@ -22,10 +22,10 @@ DerivedData
 *.hmap
 *.ipa
 *.xcuserstate
-ios/.xcode.env.local
+/ios/.xcode.env.local
 
 # Cocoapods
-ios/Pods
+/ios/Pods
 
 # Android/IntelliJ
 build/
