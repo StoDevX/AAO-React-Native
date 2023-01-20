@@ -21,12 +21,12 @@ export function FilterPopover(props: Props): JSX.Element {
 
 	return (
 		<Popover
+			displayAreaInsets={safeareaInsets}
 			from={anchor}
 			isVisible={visible}
 			onRequestClose={() => onClosePopover(filter)}
 			placement={PopoverPlacement.BOTTOM}
 			popoverStyle={popoverContainer}
-			displayAreaInsets={safeareaInsets}
 		>
 			{/* This view wrapper shouldn't be needed but it does appear to fix a rendering issue */}
 			<View style={popoverContainer}>
