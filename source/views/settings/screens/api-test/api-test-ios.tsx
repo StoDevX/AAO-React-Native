@@ -32,7 +32,7 @@ const styles = StyleSheet.create({
 		marginVertical: 3,
 		paddingRight: 4,
 		...iOSUIKit.bodyObject,
-	}
+	},
 })
 
 export const IOSAPITestView = (): JSX.Element => {
@@ -48,7 +48,7 @@ export const IOSAPITestView = (): JSX.Element => {
 
 	let APIResponse =
 		error instanceof Error ? (
-			<TextInput 
+			<TextInput
 				editable={false}
 				// this aligns the text to the top on iOS, and centers it on Android
 				multiline={true}
@@ -59,7 +59,7 @@ export const IOSAPITestView = (): JSX.Element => {
 				value={error.toString()}
 			/>
 		) : selectedIndex === 0 ? (
-			<TextInput 
+			<TextInput
 				editable={false}
 				// this aligns the text to the top on iOS, and centers it on Android
 				multiline={true}
