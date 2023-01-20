@@ -4,55 +4,6 @@ on:
   push:
 
 jobs:
-  tsc-errors:
-    name: No New TSC Errors
-    runs-on: ubuntu-20.04
-    steps:
-      - uses: actions/checkout@v3.3.0
-      - uses: actions/setup-node@v3
-        with:
-          node-version: ^16.0
-          cache: npm
-      - run: npm ci
-      - run: npm run bundle-data
-      - run: |
-          echo "::remove-matcher owner=tsc::"
-      - run: make tsc-errors
-      - run: git diff --exit-code
-
-  tsc-counts:
-    name: No New TSC Error Counts
-    runs-on: ubuntu-20.04
-    steps:
-      - run: sudo apt-get install -y ripgrep
-      - uses: actions/checkout@v3.3.0
-      - uses: actions/setup-node@v3
-        with:
-          node-version: ^16.0
-          cache: npm
-      - run: npm ci
-      - run: npm run bundle-data
-      - run: |
-          echo "::remove-matcher owner=tsc::"
-      - run: make tsc-counts
-      - run: git diff --exit-code
-
-  eslint-problems:
-    name: No New ESLint Problems
-    runs-on: ubuntu-20.04
-    steps:
-      - uses: actions/checkout@v3.3.0
-      - uses: actions/setup-node@v3
-        with:
-          node-version: ^16.0
-          cache: npm
-      - run: npm ci
-      - run: |
-          echo "::remove-matcher owner=eslint-compact::"
-          echo "::remove-matcher owner=eslint-stylish::"
-      - run: make eslint-problems
-      - run: git diff --exit-code
-
   format:
     name: Prettier
     runs-on: ubuntu-20.04

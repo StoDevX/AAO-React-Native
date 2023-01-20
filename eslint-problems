@@ -1,4 +1,0 @@
-
-> all-about-olaf@2.8.0-beta.8 lint
-> eslint --report-unused-disable-directives --cache source/ modules/ scripts/ images/
-
