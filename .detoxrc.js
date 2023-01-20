@@ -33,8 +33,13 @@ function generateBuildCommand({configuration}) {
 }
 
 module.exports = {
-	'test-runner': 'jest',
-	specs: '',
+	testRunner: {
+		$0: 'jest',
+		args: {
+			config: 'e2e/config.json',
+			_: ['e2e'],
+		},
+	},	
 
 	configurations: {
 		'ios.sim.debug': {
