@@ -90,7 +90,8 @@ jobs:
         with:
           path: ios/Pods
           key: ${{ runner.os }}-pods-${{ hashFiles('**/Podfile.lock') }}
-          restore-keys: ${{ runner.os }}-pods-
+          restore-keys: |
+            ${{ runner.os }}-pods-
       - run: sudo xcode-select -s /Applications/Xcode_13.1.app
       - run: npm ci
         env: {SKIP_POSTINSTALL: '1'}
