@@ -44,11 +44,6 @@
       }
     ]
   },
-  "overrides": {
-    "detox": {
-      "jest": "^29"
-    }
-  },
   "dependencies": {
     "@callstack/react-theme-provider": "3.0.8",
     "@expo/react-native-action-sheet": "3.14.0",
