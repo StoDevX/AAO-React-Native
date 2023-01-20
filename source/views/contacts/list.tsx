@@ -22,17 +22,21 @@ const styles = StyleSheet.create({
 export let ContactsListView = (): JSX.Element => {
 	let navigation = useNavigation()
 
-	let {data = [], error, refetch, isRefetching} = useGroupedContacts()
+	let {
+		data = [],
+		error,
+		refetch,
+		isRefetching,
+		isLoading,
+	} = useGroupedContacts()
 
 	let onPressContact = React.useCallback(
 		(data: ContactType) =>
-			navigation.navigate(DetailNavigationKey, {
-				contact: data,
-			}),
+			navigation.navigate(DetailNavigationKey, {contact: data}),
 		[navigation],
 	)
 
-	if (status === 'error') {
+	if (error) {
 		return (
 			<NoticeView
 				buttonText="Try Again"
@@ -46,11 +50,7 @@ export let ContactsListView = (): JSX.Element => {
 		<SectionList
 			ItemSeparatorComponent={ListSeparator}
 			ListEmptyComponent={
-				status === 'loading' ? (
-					<LoadingView />
-				) : (
-					<NoticeView text="No results found." />
-				)
+				isLoading ? <LoadingView /> : <NoticeView text="No results found." />
 			}
 			contentContainerStyle={styles.contentContainer}
 			keyExtractor={(item) => item.title}
