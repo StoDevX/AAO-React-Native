@@ -1,42 +1,18 @@
-import * as React from 'react'
-import {StyleSheet, View, ScrollView} from 'react-native'
 import * as c from '@frogpond/colors'
-import {
-	updateCourseData,
-	loadCourseDataIntoMemory,
-} from '../../../redux/parts/courses'
-import {areAnyTermsCached} from '../../../lib/course-search'
-import type {ReduxState} from '../../../redux'
-import {useDispatch, useSelector} from 'react-redux'
-import {NoticeView, LoadingView} from '@frogpond/notice'
-import {RecentItemsList} from '../components/recents-list'
-import {buildFilters} from './lib/build-filters'
-import type {FilterComboType} from './lib/format-filter-combo'
-import fromPairs from 'lodash/fromPairs'
+import {LoadingView, NoticeView} from '@frogpond/notice'
 import {useNavigation} from '@react-navigation/native'
-import {ChangeTextEvent} from '../../../navigation/types'
-import {debounce} from 'lodash'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
-
-const PROMPT_TEXT =
-	'We need to download the courses from the server. This will take a few seconds.'
-const NETWORK_WARNING =
-	'(Please make sure that you are connected to the Internet before downloading the courses).'
-
-type ReduxStateProps = {
-	courseDataState: string
-	recentFilters: FilterComboType[]
-	recentSearches: string[]
-}
-
-type ReduxDispatchProps = {
-	updateCourseData: () => Promise<any>
-	loadCourseDataIntoMemory: () => Promise<any>
-}
-
-type Props = ReduxStateProps & ReduxDispatchProps
-
-type Mode = 'loading' | 'pending' | 'ready'
+import {debounce, fromPairs} from 'lodash'
+import * as React from 'react'
+import {ScrollView, StyleSheet, View} from 'react-native'
+import {ChangeTextEvent} from '../../../navigation/types'
+import {useAppSelector} from '../../../redux'
+import {
+	selectRecentFilters,
+	selectRecentSearches,
+} from '../../../redux/parts/courses'
+import {RecentItemsList} from '../components/recents-list'
+import {useFilters} from './lib/build-filters'
 
 let _debounce = debounce((query: string, callback: () => void) => {
 	if (query.length >= 2) {
@@ -48,11 +24,15 @@ export const NavigationOptions: NativeStackNavigationOptions = {
 	title: 'Course Catalog',
 }
 
-const CourseSearchView = (props: Props): JSX.Element => {
-	let [mode, setMode] = React.useState<Mode>('pending')
-	let [typedQuery, setTypedQuery] = React.useState('')
-
+export const CourseSearchView = (): JSX.Element => {
 	let navigation = useNavigation()
+
+	let {data: basicFilters = [], isLoading, error} = useFilters()
+
+	let recentFilters = useAppSelector(selectRecentFilters)
+	let recentSearches = useAppSelector(selectRecentSearches)
+
+	let [typedQuery, setTypedQuery] = React.useState('')
 
 	React.useLayoutEffect(() => {
 		// TODO: refactor the SIS tabview to not be tabview in order to support search.
@@ -83,86 +63,46 @@ const CourseSearchView = (props: Props): JSX.Element => {
 		})
 	}, [showSearchResult, typedQuery])
 
-	let loadData = React.useCallback(
-		async ({userInitiated = true}: {userInitiated?: boolean} = {}) => {
-			let hasCache = await areAnyTermsCached()
-
-			if (!hasCache && !userInitiated) {
-				// if no terms are cached, and the user didn't push the button,
-				// then don't download anything.
-				setMode('pending')
-				return
-			}
-
-			setMode('loading')
-
-			// If the data has not been loaded into Redux State:
-			if (props.courseDataState !== 'ready') {
-				// 1. load the cached courses
-				await props.loadCourseDataIntoMemory()
-
-				// 2. if any courses are cached, hide the spinner
-				if (hasCache) {
-					setMode('ready')
-				}
-
-				// 3. either way, start updating courses in the background
-				await props.updateCourseData()
-			} else {
-				// If the course data is already in Redux State, check for update
-				await props.updateCourseData()
-			}
-
-			// 4. when everything is done, make sure the spinner is hidden
-			setMode('ready')
-		},
-		[props],
-	)
-
-	React.useEffect(() => {
-		loadData({userInitiated: false})
-	}, [loadData])
-
 	let browseAll = () => {
 		navigation.navigate('CourseSearchResults', {initialQuery: ''})
 	}
 
-	let onRecentFilterPress = async (text: string) => {
-		let {recentFilters} = props
-		let selectedFilterCombo = recentFilters.find((f) => f.description === text)
-
-		let freshFilters = await buildFilters()
-		let selectedFilters = freshFilters
-		if (selectedFilterCombo) {
-			let filterLookup = fromPairs(
-				selectedFilterCombo.filters.map((f) => [f.key, f]),
+	let onRecentFilterPress = React.useCallback(
+		(text: string) => {
+			let selectedFilterCombo = recentFilters.find(
+				(f) => f.description === text,
 			)
-			selectedFilters = freshFilters.map((f) => filterLookup[f.key] || f)
-		}
 
-		navigation.navigate('CourseSearchResults', {
-			initialFilters: selectedFilters,
-		})
-	}
+			let selectedFilters = basicFilters
+			if (selectedFilterCombo) {
+				let filterLookup = fromPairs(
+					selectedFilterCombo.filters.map((f) => [f.key, f]),
+				)
+				selectedFilters = basicFilters.map((f) => filterLookup[f.key] || f)
+			}
 
-	if (mode === 'loading') {
+			navigation.navigate('CourseSearchResults', {
+				initialFilters: selectedFilters,
+			})
+		},
+		[basicFilters, navigation, recentFilters],
+	)
+
+	if (isLoading) {
 		return <LoadingView text="Loading Course Data…" />
 	}
 
-	if (props.courseDataState === 'not-loaded') {
-		let msg = PROMPT_TEXT + '\n\n' + NETWORK_WARNING
-
+	if (error) {
 		return (
 			<NoticeView
-				buttonText="Download"
-				header="Almost there…"
-				onPress={loadData}
-				text={msg}
+				buttonText="Try Again"
+				// onPress={refetch}  // TODO: implement refetch here
+				text={`A problem occured while loading: ${error}`}
 			/>
 		)
 	}
 
-	let recentFilterDescriptions = props.recentFilters.map((f) => f.description)
+	let recentFilterDescriptions = recentFilters.map((f) => f.description)
 
 	return (
 		<View style={[styles.container, styles.common]}>
@@ -175,7 +115,7 @@ const CourseSearchView = (props: Props): JSX.Element => {
 				<RecentItemsList
 					emptyHeader="No recent searches"
 					emptyText="Your recent searches will appear here."
-					items={props.recentSearches}
+					items={recentSearches}
 					onItemPress={showSearchResult}
 					title="Recent"
 				/>
@@ -190,39 +130,6 @@ const CourseSearchView = (props: Props): JSX.Element => {
 				/>
 			</ScrollView>
 		</View>
-	)
-}
-
-export function ConnectedCourseSearchView(): JSX.Element {
-	let dispatch = useDispatch()
-
-	let courseDataState = useSelector(
-		(state: ReduxState) => state.courses?.readyState || '',
-	)
-	let recentFilters = useSelector(
-		(state: ReduxState) => state.courses?.recentFilters || [],
-	)
-	let recentSearches = useSelector(
-		(state: ReduxState) => state.courses?.recentSearches || [],
-	)
-
-	let _loadCourseDataIntoMemory = React.useCallback(
-		() => dispatch(loadCourseDataIntoMemory()),
-		[dispatch],
-	)
-	let _updateCourseData = React.useCallback(
-		() => dispatch(updateCourseData()),
-		[dispatch],
-	)
-
-	return (
-		<CourseSearchView
-			courseDataState={courseDataState}
-			loadCourseDataIntoMemory={_loadCourseDataIntoMemory}
-			recentFilters={recentFilters}
-			recentSearches={recentSearches}
-			updateCourseData={_updateCourseData}
-		/>
 	)
 }
 

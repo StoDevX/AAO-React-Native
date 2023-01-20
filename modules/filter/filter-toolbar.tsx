@@ -7,13 +7,15 @@ import {ActiveFilterButton} from './active-filter-button'
 import flatten from 'lodash/flatten'
 import cloneDeep from 'lodash/cloneDeep'
 
-type Props = {
-	filters: Array<FilterType>
-	onPopoverDismiss: (filter: FilterType) => unknown
+type Props<T extends object> = {
+	filters: Array<FilterType<T>>
+	onPopoverDismiss: (filter: FilterType<T>) => unknown
 }
 
-function updateAnyFilter(callback: (filter: FilterType) => unknown) {
-	return (filter: FilterType, option?: ListItemSpecType) => {
+function updateAnyFilter<T extends object>(
+	callback: (filter: FilterType<T>) => unknown,
+) {
+	return (filter: FilterType<T>, option?: ListItemSpecType) => {
 		if (filter.type === 'toggle') {
 			filter = updateToggleFilter(filter)
 		} else if (filter.type === 'list') {
@@ -25,14 +27,16 @@ function updateAnyFilter(callback: (filter: FilterType) => unknown) {
 	}
 }
 
-function updateToggleFilter(filter: ToggleType): ToggleType {
+function updateToggleFilter<T extends object>(
+	filter: ToggleType<T>,
+): ToggleType<T> {
 	return {...filter, enabled: false}
 }
 
-function updateListFilter(
-	filter: ListType,
+function updateListFilter<T extends object>(
+	filter: ListType<T>,
 	option?: ListItemSpecType,
-): ListType {
+): ListType<T> {
 	// easier to just clone the filter and mutate than avoid mutations
 	let newFilter = cloneDeep(filter)
 
@@ -54,11 +58,14 @@ function updateListFilter(
 	return newFilter
 }
 
-export function FilterToolbar({filters, onPopoverDismiss}: Props): JSX.Element {
+export function FilterToolbar<T extends object>({
+	filters,
+	onPopoverDismiss,
+}: Props<T>): JSX.Element {
 	let updateFilter = updateAnyFilter(onPopoverDismiss)
 
 	let filterToggles = filters.map((filter) => (
-		<FilterToolbarButton
+		<FilterToolbarButton<T>
 			key={filter.spec.title}
 			filter={filter}
 			isActive={filter.enabled}
@@ -72,7 +79,7 @@ export function FilterToolbar({filters, onPopoverDismiss}: Props): JSX.Element {
 		.map((filter) => {
 			if (filter.type === 'toggle') {
 				return (
-					<ActiveFilterButton
+					<ActiveFilterButton<T>
 						key={filter.spec.title}
 						filter={filter}
 						label={filter.spec.label}
@@ -82,7 +89,7 @@ export function FilterToolbar({filters, onPopoverDismiss}: Props): JSX.Element {
 			} else if (filter.type === 'list') {
 				if (!filter.spec.selected.length) {
 					return (
-						<ActiveFilterButton
+						<ActiveFilterButton<T>
 							key={filter.spec.title}
 							filter={filter}
 							label={`No ${filter.spec.title}`}
@@ -92,7 +99,7 @@ export function FilterToolbar({filters, onPopoverDismiss}: Props): JSX.Element {
 				}
 
 				return filter.spec.selected.map((selected) => (
-					<ActiveFilterButton
+					<ActiveFilterButton<T>
 						key={selected.title}
 						filter={filter}
 						label={selected.label || selected.title.toString()}

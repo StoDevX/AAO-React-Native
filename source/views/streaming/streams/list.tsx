@@ -1,6 +1,5 @@
 import * as React from 'react'
 import {StyleSheet, SectionList} from 'react-native'
-import {timezone} from '@frogpond/constants'
 import * as c from '@frogpond/colors'
 import {ListSeparator, ListSectionHeader} from '@frogpond/lists'
 import {NoticeView, LoadingView} from '@frogpond/notice'
@@ -12,8 +11,7 @@ import moment from 'moment-timezone'
 import type {Moment} from 'moment-timezone'
 import {toLaxTitleCase as titleCase} from '@frogpond/titlecase'
 import type {StreamType} from './types'
-import {API} from '@frogpond/api'
-import {useFetch} from 'react-async'
+import {useStreams} from './query'
 
 const styles = StyleSheet.create({
 	listContainer: {
@@ -44,14 +42,17 @@ const groupStreamsByCategoryAndDate = (stream: StreamType) => {
 	}
 }
 
-const getEnabledCategories = (filters: ListType[]) => {
-	return filters.flatMap((filter: ListType) => {
-		let filterSelections: ListType['spec']['selected'] = filter.spec.selected
+const getEnabledCategories = <T extends object>(filters: ListType<T>[]) => {
+	return filters.flatMap((filter: ListType<T>) => {
+		let filterSelections: ListType<T>['spec']['selected'] = filter.spec.selected
 		return filterSelections.flatMap((spec) => spec.title)
 	})
 }
 
-const filterStreams = (streams: StreamType[], filters: ListType[]) => {
+const filterStreams = <T extends object>(
+	streams: StreamType[],
+	filters: ListType<T>[],
+) => {
 	let enabledCategories = getEnabledCategories(filters)
 
 	if (enabledCategories.length === 0) {
@@ -61,26 +62,17 @@ const filterStreams = (streams: StreamType[], filters: ListType[]) => {
 	return streams.filter((stream) => enabledCategories.includes(stream.category))
 }
 
-const useStreams = (date: Moment = moment.tz(timezone())) => {
-	let dateFrom = date.format('YYYY-MM-DD')
-	let dateTo = date.clone().add(2, 'month').format('YYYY-MM-DD')
-
-	return useFetch<StreamType[]>(
-		API('/streams/upcoming', {
-			sort: 'ascending',
-			dateFrom,
-			dateTo,
-		}),
-		{
-			headers: {accept: 'application/json'},
-		},
-	)
-}
-
 export const StreamListView = (): JSX.Element => {
-	let {data = [], error, reload, isPending, isInitial, isLoading} = useStreams()
+	let {
+		data = [],
+		error,
+		refetch,
+		isLoading,
+		isRefetching,
+		isError,
+	} = useStreams()
 
-	let [filters, setFilters] = React.useState<ListType[]>([])
+	let [filters, setFilters] = React.useState<ListType<StreamType>[]>([])
 
 	let entries = React.useMemo(() => {
 		return data.map((stream) => groupStreamsByCategoryAndDate(stream))
@@ -98,7 +90,7 @@ export const StreamListView = (): JSX.Element => {
 			return {title: c}
 		})
 
-		let streamFilters: ListType[] = [
+		let streamFilters: ListType<StreamType>[] = [
 			{
 				type: 'list',
 				key: 'category',
@@ -116,12 +108,12 @@ export const StreamListView = (): JSX.Element => {
 		setFilters(streamFilters)
 	}, [data])
 
-	if (error) {
+	if (isError) {
 		return (
 			<NoticeView
 				buttonText="Try Again"
-				onPress={reload}
-				text={`A problem occured while loading the streams. ${error.message}`}
+				onPress={refetch}
+				text={`A problem occured while loading: ${error}`}
 			/>
 		)
 	}
@@ -133,7 +125,7 @@ export const StreamListView = (): JSX.Element => {
 				let edited = filters.map((f) =>
 					f.key === newFilter.key ? newFilter : f,
 				)
-				setFilters(edited as ListType[])
+				setFilters(edited as ListType<StreamType>[])
 			}}
 		/>
 	)
@@ -144,7 +136,7 @@ export const StreamListView = (): JSX.Element => {
 			ListEmptyComponent={
 				isLoading ? (
 					<LoadingView />
-				) : filters.some((f: ListType) => f.spec.selected.length) ? (
+				) : filters.some((f) => f.spec.selected.length) ? (
 					<NoticeView text="No streams to show. Try changing the filters." />
 				) : (
 					<NoticeView text="No streams." />
@@ -153,8 +145,8 @@ export const StreamListView = (): JSX.Element => {
 			ListHeaderComponent={header}
 			contentContainerStyle={styles.contentContainer}
 			keyExtractor={(item: StreamType) => item.eid}
-			onRefresh={reload}
-			refreshing={isPending && !isInitial}
+			onRefresh={refetch}
+			refreshing={isRefetching}
 			renderItem={({item}) => <StreamRow stream={item} />}
 			renderSectionHeader={({section: {title}}) => (
 				<ListSectionHeader title={title} />

@@ -8,7 +8,7 @@ import {FAB} from 'react-native-paper'
 // and flatten the array into just the object underneath
 type Flatten<Type> = Type extends Array<infer Item> ? Item : Type
 type RNPaperFABGroupAction = Flatten<
-	ComponentProps<typeof FAB['Group']>['actions']
+	ComponentProps<(typeof FAB)['Group']>['actions']
 >
 
 import type {

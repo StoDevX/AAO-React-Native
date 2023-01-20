@@ -1,5 +1,5 @@
-import * as React from 'react'
-import glamorous from 'glamorous-native'
+import React from 'react'
+import {View, Text, StyleSheet} from 'react-native'
 import * as c from '@frogpond/colors'
 import sample from 'lodash/sample'
 import {CELL_MARGIN} from './button'
@@ -28,16 +28,27 @@ if (isDevMode()) {
 
 export function UnofficialAppNotice(): JSX.Element {
 	return (
-		<glamorous.View
-			justifyContent="center"
-			marginBottom={CELL_MARGIN}
-			marginHorizontal={CELL_MARGIN}
-		>
-			<glamorous.View backgroundColor="rgba(0,0,0,0.05)" borderRadius={7}>
-				<glamorous.Text color={c.black25Percent} padding={8} textAlign="center">
-					{sample(messages)}
-				</glamorous.Text>
-			</glamorous.View>
-		</glamorous.View>
+		<View style={styles.wrapper}>
+			<View style={styles.background}>
+				<Text style={styles.text}>{sample(messages)}</Text>
+			</View>
+		</View>
 	)
 }
+
+const styles = StyleSheet.create({
+	wrapper: {
+		justifyContent: 'center',
+		marginBottom: CELL_MARGIN,
+		marginHorizontal: CELL_MARGIN,
+	},
+	background: {
+		backgroundColor: c.verySemitransparentGray,
+		borderRadius: 7,
+	},
+	text: {
+		color: c.black25Percent,
+		padding: 8,
+		textAlign: 'center',
+	},
+})

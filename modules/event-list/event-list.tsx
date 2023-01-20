@@ -65,7 +65,7 @@ export function EventList(props: Props): JSX.Element {
 			ItemSeparatorComponent={FullWidthSeparator}
 			ListEmptyComponent={<NoticeView text="No events." />}
 			contentContainerStyle={styles.contentContainer}
-			keyExtractor={(item: EventType, index: number) => index.toString()}
+			keyExtractor={(item, index) => index.toString()}
 			onRefresh={props.onRefresh}
 			refreshing={props.refreshing}
 			renderItem={({item}) => <EventRow event={item} onPress={onPressEvent} />}

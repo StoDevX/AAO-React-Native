@@ -2,34 +2,45 @@ import * as React from 'react'
 import {StyleSheet, ScrollView, useWindowDimensions} from 'react-native'
 import {Column} from '@frogpond/layout'
 import {partitionByIndex} from '../../../lib/partition-by-index'
-import type {Webcam} from './types'
 import {StreamThumbnail} from './thumbnail'
-import {API} from '@frogpond/api'
-import {fetch} from '@frogpond/fetch'
-
-const fetchWebcams = (): Promise<Array<Webcam>> =>
-	fetch(API('/webcams'))
-		.json<{data: Array<Webcam>}>()
-		.then((body) => body.data)
+import {useWebcams} from './query'
+import {LoadingView, NoticeView} from '@frogpond/notice'
+import {RefreshControl} from 'react-native-gesture-handler'
 
 export let WebcamsView = (): JSX.Element => {
-	let [webcams, setWebcams] = React.useState<Webcam[]>([])
-
 	let viewport = useWindowDimensions()
+	let {
+		data: webcams = [],
+		error,
+		refetch,
+		isRefetching,
+		isError,
+		isLoading,
+	} = useWebcams()
 
-	React.useEffect(() => {
-		let fetchData = async () => {
-			let webcams = await fetchWebcams()
-			setWebcams(webcams)
-		}
+	if (isError) {
+		return (
+			<NoticeView
+				buttonText="Try Again"
+				onPress={refetch}
+				text={`A problem occured while loading: ${error}`}
+			/>
+		)
+	}
 
-		fetchData()
-	}, [])
+	if (isLoading) {
+		return <LoadingView />
+	}
 
 	let columns = partitionByIndex(webcams)
 
 	return (
-		<ScrollView contentContainerStyle={styles.container}>
+		<ScrollView
+			contentContainerStyle={styles.container}
+			refreshControl={
+				<RefreshControl onRefresh={refetch} refreshing={isRefetching} />
+			}
+		>
 			{columns.map((contents, i) => (
 				<Column key={i} style={styles.column}>
 					{contents.map((webcam) => (

@@ -324,7 +324,7 @@ const TitleCell = ({text, onChange}: TextFieldProps) => (
 	<CellTextField
 		autoCapitalize="words"
 		onChangeText={onChange}
-		onSubmitEditing={onChange}
+		onSubmitEditing={(ev) => onChange(ev.nativeEvent.text)}
 		placeholder="Title"
 		returnKeyType="done"
 		value={text}
@@ -336,7 +336,7 @@ const NotesCell = ({text, onChange}: TextFieldProps) => (
 	<CellTextField
 		autoCapitalize="sentences"
 		onChangeText={onChange}
-		onSubmitEditing={onChange}
+		onSubmitEditing={(ev) => onChange(ev.nativeEvent.text)}
 		placeholder="Notes"
 		returnKeyType="done"
 		value={text}

@@ -65,3 +65,8 @@ export type TermType = {
 	type: string
 	year: number
 }
+
+export type TermInfoType = {
+	files: Array<TermType>
+	type: string
+}

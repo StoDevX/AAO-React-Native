@@ -1,9 +1,9 @@
 export {
-	ConnectedPrintJobsView as PrintJobsView,
+	PrintJobsView,
 	NavigationOptions as PrintJobsNavigationOptions,
 } from './print-jobs'
 export {
-	ConnectedPrinterListView as PrinterListView,
+	PrinterListView,
 	NavigationOptions as PrinterListNavigationOptions,
 } from './printers'
 export {

@@ -6,13 +6,14 @@ import {PushButtonCell} from '@frogpond/tableview/cells'
 import {isDevMode} from '@frogpond/constants'
 import {ServerUrlSection} from './server-url'
 import {useNavigation} from '@react-navigation/native'
+import {NavigationKey as DebugKey} from '../debug'
 
 export const DeveloperSection = (): React.ReactElement => {
 	let navigation = useNavigation()
 
 	const onAPIButton = () => navigation.navigate('APITest')
 	const onBonAppButton = () => navigation.navigate('BonAppPicker')
-	const onDebugButton = () => navigation.navigate('Debug')
+	const onDebugButton = () => navigation.navigate(DebugKey, {keyPath: ['Root']})
 	const sendSentryMessage = () => {
 		Sentry.captureMessage('A Sentry Message', {level: 'info'})
 		showSentryAlert()

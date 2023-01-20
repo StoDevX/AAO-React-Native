@@ -5,12 +5,15 @@ import type {PickerType} from './types'
 import {Section} from '@frogpond/tableview'
 import {Picker} from '@react-native-picker/picker'
 
-type PropsType = {
-	filter: PickerType
-	onChange: (filter: PickerType) => void
+type Props<T extends object> = {
+	filter: PickerType<T>
+	onChange: (filter: PickerType<T>) => void
 }
 
-export function PickerSection({filter, onChange}: PropsType): JSX.Element {
+export function PickerSection<T extends object>({
+	filter,
+	onChange,
+}: Props<T>): JSX.Element {
 	let {spec} = filter
 	let {title = '', caption = '', options, selected} = spec
 

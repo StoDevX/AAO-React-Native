@@ -3,31 +3,31 @@ import {applyToggleFilter} from '../apply-filters'
 import type {FilterType} from '../types'
 
 it('should return `true` if the item has a truthy value', () => {
-	let filter: FilterType = {
+	let item = {'i-am-a-key': true}
+	let filter: FilterType<typeof item> = {
 		type: 'toggle',
 		key: 'key',
 		enabled: true,
 		spec: {label: 'label', title: 'title'},
 		apply: {key: 'i-am-a-key'},
 	}
-	let item = {'i-am-a-key': true}
 	expect(applyToggleFilter(filter, item)).toBeTruthy()
 })
 
 it('should return `false` if the item has a falsy value', () => {
-	let filter: FilterType = {
+	let item = {'i-am-a-key': false}
+	let filter: FilterType<typeof item> = {
 		type: 'toggle',
 		key: 'key',
 		enabled: true,
 		spec: {label: 'label', title: 'title'},
 		apply: {key: 'i-am-a-key'},
 	}
-	let item = {'i-am-a-key': false}
 	expect(applyToggleFilter(filter, item)).toBeFalsy()
 })
 
 it('should ignore the `enabled` status of the filter', () => {
-	let filter: FilterType = {
+	let filter: FilterType<{'i-am-a-key': boolean}> = {
 		type: 'toggle',
 		key: 'key',
 		enabled: false,

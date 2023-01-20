@@ -3,10 +3,9 @@ import {RefreshControl, StyleSheet} from 'react-native'
 import * as c from '@frogpond/colors'
 import glamorous from 'glamorous-native'
 import {Markdown} from '@frogpond/markdown'
-import {LoadingView} from '@frogpond/notice'
-import {API} from '@frogpond/api'
-import {fetch} from '@frogpond/fetch'
+import {LoadingView, NoticeView} from '@frogpond/notice'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+import {useFaqs} from './query'
 
 const styles = StyleSheet.create({
 	container: {
@@ -14,44 +13,28 @@ const styles = StyleSheet.create({
 	},
 })
 
-let fetchData = async (reload?: boolean) => {
-	let {text}: {text: string} = await fetch(API('/faqs'), {
-		delay: reload ? 500 : 0,
-	})
-		.json<{text: string}>()
-		.catch(() => ({text: 'There was a problem loading the FAQs'}))
-
-	return text
-}
-
 function FaqView(): JSX.Element {
-	let [text, setText] = React.useState('')
-	let [loading, setLoading] = React.useState(true)
-	let [refreshing, setRefreshing] = React.useState(false)
+	let {
+		data = {text: ''},
+		error,
+		isLoading,
+		isError,
+		isRefetching,
+		refetch,
+	} = useFaqs()
 
-	React.useEffect(() => {
-		fetchData().then((text) => {
-			setText(text)
-			setLoading(false)
-		})
-	}, [setText, setLoading])
-
-	let refresh = async (): Promise<void> => {
-		setRefreshing(true)
-
-		await fetchData(true).then((text) => {
-			setText(text)
-		})
-
-		setRefreshing(false)
+	if (isLoading) {
+		return <LoadingView />
 	}
 
-	let refreshControl = (
-		<RefreshControl onRefresh={refresh} refreshing={refreshing} />
-	)
-
-	if (loading) {
-		return <LoadingView />
+	if (isError) {
+		return (
+			<NoticeView
+				buttonText="Try Again"
+				onPress={refetch}
+				text={`A problem occured while loading: ${error}`}
+			/>
+		)
 	}
 
 	return (
@@ -59,10 +42,12 @@ function FaqView(): JSX.Element {
 			backgroundColor={c.white}
 			contentContainerStyle={styles.container}
 			contentInsetAdjustmentBehavior="automatic"
-			refreshControl={refreshControl}
+			refreshControl={
+				<RefreshControl onRefresh={refetch} refreshing={isRefetching} />
+			}
 		>
 			<glamorous.View paddingVertical={15}>
-				<Markdown source={text} />
+				<Markdown source={data.text} />
 			</glamorous.View>
 		</glamorous.ScrollView>
 	)

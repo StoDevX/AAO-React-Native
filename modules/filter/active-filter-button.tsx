@@ -14,19 +14,19 @@ import {white} from '@frogpond/colors'
 import type {AppTheme} from '@frogpond/app-theme'
 import {getTheme} from '@frogpond/app-theme'
 
-type Props = {
-	filter: FilterType
+type Props<T extends object> = {
+	filter: FilterType<T>
 	label: string
-	onRemove: (filter: FilterType) => void
+	onRemove: (filter: FilterType<T>) => void
 	style?: StyleProp<ViewStyle>
 }
 
-export function ActiveFilterButton({
+export function ActiveFilterButton<T extends object>({
 	filter,
 	label,
 	onRemove,
 	style,
-}: Props): JSX.Element {
+}: Props<T>): JSX.Element {
 	let theme: AppTheme = getTheme()
 
 	let iconName = Platform.select({
