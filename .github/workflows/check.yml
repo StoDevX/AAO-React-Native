@@ -179,13 +179,9 @@ jobs:
       - name: Restore Pods cache
         uses: actions/cache@v3
         with:
-          path: |
-            ios/Pods
-            ~/Library/Caches/CocoaPods
-            ~/.cocoapods
+          path: ios/Pods
           key: ${{ runner.os }}-pods-${{ hashFiles('**/Podfile.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-pods-
+          restore-keys: ${{ runner.os }}-pods-
       - uses: mikehardy/buildcache-action@v2
         continue-on-error: true
         with:
