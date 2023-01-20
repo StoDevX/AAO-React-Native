@@ -1,6 +1,7 @@
 import * as React from 'react'
 import {RefObject, useState} from 'react'
 import Popover, {PopoverPlacement} from 'react-native-popover-view'
+import {useSafeAreaInsets} from 'react-native-safe-area-context'
 import {FilterSection} from './section'
 import type {FilterType} from './types'
 import * as c from '@frogpond/colors'
@@ -16,16 +17,24 @@ type Props = {
 export function FilterPopover(props: Props): JSX.Element {
 	let {anchor, onClosePopover, visible} = props
 	let [filter, setFilter] = useState<FilterType>(props.filter)
+	let safeareaInsets = useSafeAreaInsets()
 
 	return (
 		<Popover
+			displayAreaInsets={safeareaInsets}
 			from={anchor}
 			isVisible={visible}
 			onRequestClose={() => onClosePopover(filter)}
 			placement={PopoverPlacement.BOTTOM}
 			popoverStyle={popoverContainer}
 		>
-			<FilterSection filter={filter} onChange={(filter) => setFilter(filter)} />
+			{/* This view wrapper shouldn't be needed but it does appear to fix a rendering issue */}
+			<View style={popoverContainer}>
+				<FilterSection
+					filter={filter}
+					onChange={(filter) => setFilter(filter)}
+				/>
+			</View>
 		</Popover>
 	)
 }
