@@ -59,6 +59,10 @@ target 'AllAboutOlaf' do
 				config.build_settings["LD"] = "clang"
 				config.build_settings["CXX"] = "clang++"
 				config.build_settings["LDPLUSPLUS"] = "clang++"
+
+				# cocoapods defaults to not stripping the frameworks it creates
+				# issue for cocoapods is https://github.com/CocoaPods/CocoaPods/issues/10277
+				config.build_settings['STRIP_INSTALLED_PRODUCT'] = 'YES'
 			end
 		end
 	end
