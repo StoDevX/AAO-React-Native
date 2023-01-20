@@ -1,6 +1,6 @@
-/* eslint-env jest */
+import {describe, expect, test} from '@jest/globals'
 
-import {getItemAsBoolean, getItemAsString, getItemAsArray} from '../index'
+import {getItemAsArray, getItemAsBoolean, getItemAsString} from '../index'
 
 describe('getItemAsBoolean', () => {
 	test('returns fallback value', async () => {

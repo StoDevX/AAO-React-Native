@@ -1,6 +1,9 @@
-/* eslint-env jest */
+import {beforeAll, beforeEach, describe, it} from '@jest/globals'
+import {by, device, element, expect} from 'detox'
 
-import {device, element, by} from 'detox'
+beforeAll(async () => {
+	await device.launchApp()
+})
 
 describe('Basic smoke tests', () => {
 	beforeEach(async () => {
