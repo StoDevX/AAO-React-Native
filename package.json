@@ -103,7 +103,7 @@
     "moment": "2.29.4",
     "moment-timezone": "0.5.40",
     "p-props": "5.0.0",
-    "query-string": "7.1.1",
+    "query-string": "8.1.0",
     "querystring": "0.2.1",
     "react": "17.0.2",
     "react-markdown": "2.5.1",
