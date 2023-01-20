@@ -85,6 +85,13 @@ jobs:
         with:
           ruby-version: '2.6'
           bundler-cache: true
+      - name: Restore Pods cache
+        uses: actions/cache@v3
+        with:
+          path: ios/Pods
+          key: ${{ runner.os }}-pods-${{ hashFiles('**/Podfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-pods-
       - run: sudo xcode-select -s /Applications/Xcode_13.1.app
       - run: npm ci
         env: {SKIP_POSTINSTALL: '1'}
@@ -179,13 +186,9 @@ jobs:
       - name: Restore Pods cache
         uses: actions/cache@v3
         with:
-          path: |
-            ios/Pods
-            ~/Library/Caches/CocoaPods
-            ~/.cocoapods
+          path: ios/Pods
           key: ${{ runner.os }}-pods-${{ hashFiles('**/Podfile.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-pods-
+          restore-keys: ${{ runner.os }}-pods-
       - uses: mikehardy/buildcache-action@v2
         continue-on-error: true
         with:
