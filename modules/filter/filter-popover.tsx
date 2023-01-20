@@ -30,7 +30,10 @@ export function FilterPopover(props: Props): JSX.Element {
 		>
 			{/* This view wrapper shouldn't be needed but it does appear to fix a rendering issue */}
 			<View style={popoverContainer}>
-				<FilterSection filter={filter} onChange={(filter) => setFilter(filter)} />
+				<FilterSection
+					filter={filter}
+					onChange={(filter) => setFilter(filter)}
+				/>
 			</View>
 		</Popover>
 	)
