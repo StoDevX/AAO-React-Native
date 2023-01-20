@@ -184,6 +184,6 @@
     "typescript": "4.9.4"
   },
   "optionalDependencies": {
-    "detox": "19.12.1"
+    "detox": "20.1.2"
   }
 }
