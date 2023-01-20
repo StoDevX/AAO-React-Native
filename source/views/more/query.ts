@@ -11,7 +11,7 @@ export function useSearchLinks(): UseQueryResult<LinkGroup[], unknown> {
 		queryKey: keys.all,
 		queryFn: async ({signal}) => {
 			let response = await client.get('a-to-z', {signal}).json()
-			return (response as {data: LinkGroup[]}).data
+			return response as LinkGroup[]
 		},
 	})
 }
