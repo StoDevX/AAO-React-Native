@@ -2,8 +2,6 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 
 /**
- * @typedef { typeof import("detox") } detox
- * @typedef { Parameters<detox['init']>[0] } DetoxConfig
  * @typedef { 'Debug' | 'Release' } Configuration
  */
 
@@ -69,9 +67,14 @@ function generateBinaryPath(configuration) {
 	)
 }
 
-/** @type DetoxConfig */
 module.exports = {
-	testRunner: 'jest --config e2e/jest.config.js e2e',
+	testRunner: {
+		$0: 'jest',
+		args: {
+			config: 'e2e/jest.config.js',
+			_: 'e2e',
+		},
+	},
 
 	configurations: {
 		'ios.sim.debug': {
