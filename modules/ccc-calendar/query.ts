@@ -50,7 +50,7 @@ export function useNamedCalendar(
 			let response = await client
 				.get(`calendar/named/${queryKey[2]}`, {signal})
 				.json()
-			return (response as {data: EventType[]}).data
+			return response as EventType[]
 		},
 		select: (events) => convertEvents(events, options),
 	})
@@ -66,7 +66,7 @@ export function useGoogleCalendar(
 			let response = await client
 				.get('calendar/google', {signal, searchParams: {id: queryKey[2]}})
 				.json()
-			return (response as {data: EventType[]}).data
+			return response as EventType[]
 		},
 		select: (events) => convertEvents(events, options),
 	})
@@ -82,7 +82,7 @@ export function useReasonCalendar(
 			let response = await client
 				.get('calendar/reason', {signal, searchParams: {url: queryKey[2]}})
 				.json()
-			return (response as {data: EventType[]}).data
+			return response as EventType[]
 		},
 		select: (events) => convertEvents(events, options),
 	})
