@@ -73,49 +73,76 @@ jobs:
         run: exit 1
       - run: npm run lint
 
-  # jest:
-  #   name: Jest
-  #   runs-on: ubuntu-22.04
-  #   steps:
-  #     - uses: actions/checkout@v3.3.0
-  #     - uses: actions/setup-node@v3
-  #       with:
-  #         node-version: ^16.0
-  #         cache: npm
-  #     - run: npm ci
-  #     - run: npm run bundle-data
-  #     - name: Run tests
-  #       run: npm run test -- --coverage
-  #     - name: Upload coverage
-  #       env:
-  #         CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
-  #       run: bash <(curl -s https://codecov.io/bash)
+  jest:
+    name: Jest
+    needs: [ cache-npm-linux ]
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ ubuntu-22.04 ]
+        node: [ ^16.0 ]
+    steps:
+      - uses: actions/checkout@v3.3.0
+      - uses: actions/setup-node@v3
+        with: { node-version: '${{ matrix.node }}' }
+      - uses: actions/cache/restore@v3
+        id: cache-restore
+        with:
+          path: node_modules/
+          key: ${{ runner.os }}-npm-node@${{ matrix.node }}-${{ hashFiles('package-lock.json') }}
+      - if: steps.cache-restore.outputs.cache-hit != 'true'
+        run: exit 1
+      - run: npm run bundle-data
+      - name: Run tests
+        run: npm run test -- --coverage
+      - name: Upload coverage
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+        run: bash <(curl -s https://codecov.io/bash)
 
-  # tsc:
-  #   name: TypeScript
-  #   runs-on: ubuntu-22.04
-  #   steps:
-  #     - uses: actions/checkout@v3.3.0
-  #     - uses: actions/setup-node@v3
-  #       with:
-  #         node-version: ^16.0
-  #         cache: npm
-  #     - run: npm ci
-  #     - run: npm run bundle-data
-  #     - run: npx tsc
+  tsc:
+    name: TypeScript
+    needs: [ cache-npm-linux ]
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ ubuntu-22.04 ]
+        node: [ ^16.0 ]
+    steps:
+      - uses: actions/checkout@v3.3.0
+      - uses: actions/setup-node@v3
+        with: { node-version: '${{ matrix.node }}' }
+      - uses: actions/cache/restore@v3
+        id: cache-restore
+        with:
+          path: node_modules/
+          key: ${{ runner.os }}-npm-node@${{ matrix.node }}-${{ hashFiles('package-lock.json') }}
+      - if: steps.cache-restore.outputs.cache-hit != 'true'
+        run: exit 1
+      - run: npm run bundle-data
+      - run: npx tsc
 
-  # data:
-  #   name: Data
-  #   runs-on: ubuntu-22.04
-  #   steps:
-  #     - uses: actions/checkout@v3.3.0
-  #     - uses: actions/setup-node@v3
-  #       with:
-  #         node-version: ^16.0
-  #         cache: npm
-  #     - run: npm ci
-  #     - run: npm run validate-data
-  #     - run: npm run bundle-data
+  data:
+    name: Data
+    needs: [ cache-npm-linux ]
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ ubuntu-22.04 ]
+        node: [ ^16.0 ]
+    steps:
+      - uses: actions/checkout@v3.3.0
+      - uses: actions/setup-node@v3
+        with: { node-version: '${{ matrix.node }}' }
+      - uses: actions/cache/restore@v3
+        id: cache-restore
+        with:
+          path: node_modules/
+          key: ${{ runner.os }}-npm-node@${{ matrix.node }}-${{ hashFiles('package-lock.json') }}
+      - if: steps.cache-restore.outputs.cache-hit != 'true'
+        run: exit 1
+      - run: npm run validate-data
+      - run: npm run bundle-data
 
   # ios-pods:
   #   name: iOS Cocoapods
@@ -143,32 +170,50 @@ jobs:
   #     - run: bundle exec pod install --deployment
   #       working-directory: ./ios
 
-  # ios-bundle:
-  #   name: iOS Bundle
-  #   runs-on: ubuntu-22.04
-  #   steps:
-  #     - uses: actions/checkout@v3.3.0
-  #     - uses: actions/setup-node@v3
-  #       with:
-  #         node-version: ^16.0
-  #         cache: npm
-  #     - run: npm ci
-  #     - run: npm run bundle-data
-  #     - run: npm run bundle:ios
+  ios-bundle:
+    name: iOS Bundle
+    needs: [ cache-npm-linux ]
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ ubuntu-22.04 ]
+        node: [ ^16.0 ]
+    steps:
+      - uses: actions/checkout@v3.3.0
+      - uses: actions/setup-node@v3
+        with: { node-version: '${{ matrix.node }}' }
+      - uses: actions/cache/restore@v3
+        id: cache-restore
+        with:
+          path: node_modules/
+          key: ${{ runner.os }}-npm-node@${{ matrix.node }}-${{ hashFiles('package-lock.json') }}
+      - if: steps.cache-restore.outputs.cache-hit != 'true'
+        run: exit 1
+      - run: npm run bundle-data
+      - run: npm run bundle:ios
 
-  # android-bundle:
-  #   name: Android Bundle
-  #   runs-on: ubuntu-22.04
-  #   steps:
-  #     - uses: actions/checkout@v3.3.0
-  #     - uses: actions/setup-node@v3
-  #       with:
-  #         node-version: ^16.0
-  #         cache: npm
-  #     - run: npm ci
-  #     - run: npm run bundle-data
-  #     - run: mkdir -p ./android/app/src/main/assets/
-  #     - run: npm run bundle:android
+  android-bundle:
+    name: Android Bundle
+    needs: [ cache-npm-linux ]
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ ubuntu-22.04 ]
+        node: [ ^16.0 ]
+    steps:
+      - uses: actions/checkout@v3.3.0
+      - uses: actions/setup-node@v3
+        with: { node-version: '${{ matrix.node }}' }
+      - uses: actions/cache/restore@v3
+        id: cache-restore
+        with:
+          path: node_modules/
+          key: ${{ runner.os }}-npm-node@${{ matrix.node }}-${{ hashFiles('package-lock.json') }}
+      - if: steps.cache-restore.outputs.cache-hit != 'true'
+        run: exit 1
+      - run: npm run bundle-data
+      - run: mkdir -p ./android/app/src/main/assets/
+      - run: npm run bundle:android
 
   # android:
   #   name: Build for Android
