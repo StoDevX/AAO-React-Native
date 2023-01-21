@@ -3,30 +3,31 @@ name: Check
 on:
   push:
 
-env:
-  cache-key-node: &cache-key-node ${{ runner.os }}-npm-node@${{ matrix.node }}-${{ hashFiles('package-lock.json') }}
-
 jobs:
   cache-npm-linux:
     name: ${{ matrix.os }} cache npm
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [&ubuntu ubuntu-22.04, &macos macos-11]
+        os: [ ubuntu-22.04, macos-11 ]
         # I'm a little worried about using allowing the minor version to fluctuate across cache hits...
-        node: [&node ^16.0]
-        ruby: [&ruby ^2.6]
+        node: [ ^16.0 ]
+        ruby: [ ^2.6 ]
     steps:
       - uses: actions/checkout@v3.3.0
       - uses: actions/cache/restore@v3
         id: cache-restore
-        with: {path: node_modules/, key: *cache-key-node}
+        with: 
+          path: node_modules/
+          key: ${{ runner.os }}-npm-node@${{ matrix.node }}-${{ hashFiles('package-lock.json') }}
       - if: steps.cache-restore.outputs.cache-hit != 'true'
         uses: actions/setup-node@v3
         with: {node-version: '${{ matrix.node }}', cache: npm}
       - if: steps.cache-restore.outputs.cache-hit != 'true'
         uses: actions/cache/save@v3
-        with: {path: node_modules/, key: *cache-key-node}
+        with: 
+          path: node_modules/
+          key: ${{ runner.os }}-npm-node@${{ matrix.node }}-${{ hashFiles('package-lock.json') }}
   
   cached-eslint:
     name: eslint - cached
@@ -34,15 +35,18 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [*ubuntu]
-        node: [*node]
+        os: [ ubuntu-22.04, macos-11 ]
+        # I'm a little worried about using allowing the minor version to fluctuate across cache hits...
+        node: [ ^16.0 ]
     steps:
       - uses: actions/checkout@v3.3.0
       - uses: actions/setup-node@v3
         with: {node-version: '${{ matrix.node }}'}
       - uses: actions/cache/restore@v3
         id: cache-restore
-        with: {path: node_modules/, key: *cache-key-node}
+        with:
+          path: node_modules/
+          key: ${{ runner.os }}-npm-node@${{ matrix.node }}-${{ hashFiles('package-lock.json') }}
       - if: steps.cache-restore.outputs.cache-hit != 'true'
         run: exit 1
       - run: npm run lint
