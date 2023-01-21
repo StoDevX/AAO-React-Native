@@ -8,7 +8,7 @@ declare module 'react' {
 	): (props: P & React.RefAttributes<T>) => React.ReactElement | null
 }
 
-import {AppRegistry, LogBox} from 'react-native'
+import {AppRegistry} from 'react-native'
 import App from './app'
 
 AppRegistry.registerComponent('AllAboutOlaf', () => App)
