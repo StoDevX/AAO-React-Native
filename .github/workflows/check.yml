@@ -327,6 +327,7 @@ jobs:
         os: [ macos-11 ]
         node: [ ^16.0 ]
         ruby: [ 2.6 ]
+        xcode: [ Xcode_13.1 ]
     steps:
       - uses: actions/checkout@v3.3.0
       - uses: actions/setup-node@v3
@@ -363,6 +364,7 @@ jobs:
         os: [ macos-11 ]
         node: [ ^16.0 ]
         ruby: [ 2.6 ]
+        xcode: [ Xcode_13.1 ]
     steps:
       - uses: actions/checkout@v3.3.0
       - uses: actions/setup-node@v3
