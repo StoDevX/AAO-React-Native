@@ -89,16 +89,16 @@ export const IOSAPITestView = (): JSX.Element => {
 			</Toolbar>
 
 			{/**
-			  * SegmentedControl component seems to be unhappy
-			  *
-			  * @TODO fix 'JSX element class does not support attributes because it does not have a 'props' property.'
-			  * 
-			  * Options: 
-			  * 1. Rework the typings of SegmentedControl
-			  * 2. Use react-native-paper@5.0 SegmentedButton
-			  */}
+			 * SegmentedControl component seems to be unhappy
+			 *
+			 * @TODO fix 'JSX element class does not support attributes because it does not have a 'props' property.'
+			 *
+			 * Options:
+			 * 1. Rework the typings of SegmentedControl
+			 * 2. Use react-native-paper@5.0 SegmentedButton
+			 */}
 			<SegmentedControl
-				onChange={(event: { nativeEvent: { selectedSegmentIndex: number } }) => {
+				onChange={(event: {nativeEvent: {selectedSegmentIndex: number}}) => {
 					let selectedSegment = event.nativeEvent.selectedSegmentIndex
 					setSelectedIndex(selectedSegment)
 				}}
