@@ -2,8 +2,8 @@ import {mobileReleaseApi, papercutApi} from './urls'
 import {encode} from 'base-64'
 import {
 	fetchAllPrinters as mockFetchAllPrinters,
-	fetchRecentPrinters as mockFetchRecentPrinters,
 	fetchJobs as mockFetchJobs,
+	fetchRecentPrinters as mockFetchRecentPrinters,
 	heldJobsAvailableAtPrinterForUser as mockHeldJobsAvailableAtPrinterForUser,
 	logIn as mockLogIn,
 	releasePrintJobToPrinterForUser as mockReleasePrintJobToPrinterForUser,
@@ -11,14 +11,14 @@ import {
 import {isStoprintMocked} from '../../lib/stoprint'
 
 import type {
-	LoginResponse,
-	PrintJobsResponse,
 	AllPrintersResponse,
-	RecentPopularPrintersResponse,
+	CancelResponse,
 	ColorPrintersResponse,
 	HeldJobsResponse,
+	LoginResponse,
+	PrintJobsResponse,
+	RecentPopularPrintersResponse,
 	ReleaseResponse,
-	CancelResponse,
 } from './types'
 import {Options} from 'ky'
 import {SharedWebCredentials} from 'react-native-keychain'
@@ -41,8 +41,9 @@ export async function logIn(
 	const result = (await papercutApi
 		.post(`webclient/users/${username}/log-in`, {
 			...options,
+			// use URLSearchParams to auto-set Content-Type: application/x-www-form-urlencoded
 			body: new URLSearchParams({password: encode(password)}),
-			searchParams: new URLSearchParams({nocache: String(now)}),
+			searchParams: {nocache: String(now)},
 		})
 		.json()) as LoginResponse
 
@@ -77,7 +78,7 @@ export async function fetchAllPrinters(
 	return (await mobileReleaseApi
 		.get('all-printers', {
 			...options,
-			searchParams: new URLSearchParams({username: username}),
+			searchParams: {username: username},
 		})
 		.json()) as AllPrintersResponse
 }
@@ -93,7 +94,7 @@ export async function fetchRecentPrinters(
 	return (await mobileReleaseApi
 		.get('recent-popular-printers', {
 			...options,
-			searchParams: new URLSearchParams({username: username}),
+			searchParams: {username: username},
 		})
 		.json()) as RecentPopularPrintersResponse
 }
@@ -118,10 +119,10 @@ export async function heldJobsAvailableAtPrinterForUser(
 	return (await mobileReleaseApi
 		.get('held-jobs', {
 			...options,
-			searchParams: new URLSearchParams({
+			searchParams: {
 				username: username,
 				printerName: `printers\\${printerName}`,
-			}),
+			},
 		})
 		.json()) as HeldJobsResponse
 }
@@ -134,7 +135,8 @@ export async function cancelPrintJobForUser(
 	return (await mobileReleaseApi
 		.post('held-jobs/cancel', {
 			...options,
-			searchParams: new URLSearchParams({username: username}),
+			searchParams: {username: username},
+			// use URLSearchParams to auto-set Content-Type: application/x-www-form-urlencoded
 			body: new URLSearchParams({'jobIds[]': jobId}),
 		})
 		.json()) as CancelResponse
@@ -157,7 +159,8 @@ export async function releasePrintJobToPrinterForUser(
 	let response = (await mobileReleaseApi
 		.post('held-jobs/release', {
 			...options,
-			searchParams: new URLSearchParams({username: username}),
+			searchParams: {username: username},
+			// use URLSearchParams to auto-set Content-Type: application/x-www-form-urlencoded
 			body: new URLSearchParams({
 				printerName: `printers\\${printerName}`,
 				'jobIds[]': jobId,

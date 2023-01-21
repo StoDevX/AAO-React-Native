@@ -4,45 +4,39 @@ import {DirectorySearchTypeEnum, SearchResults} from './types'
 
 let directory = ky.create({prefixUrl: 'https://www.stolaf.edu/directory'})
 
-const getDirectoryParams = (query: string, type: DirectorySearchTypeEnum) => {
-	let p = new URLSearchParams()
-	p.append('format', 'json')
+type GetDirectoryQueryArgs = {
+	query: string
+	type: DirectorySearchTypeEnum
+}
 
+const getDirectoryQuery = ({query, type}: GetDirectoryQueryArgs) => {
+	let common = {format: 'json'}
 	query = query.trim()
 
 	switch (type) {
 		case 'department':
-			p.append('department', query)
-			break
+			return {...common, department: query}
 		case 'firstName':
-			p.append('firstname', query)
-			break
+			return {...common, firstname: query}
 		case 'lastName':
-			p.append('lastname', query)
-			break
+			return {...common, lastname: query}
 		case 'major':
-			p.append('major', query)
-			break
+			return {...common, major: query}
 		case 'query':
-			p.append('query', query)
-			break
+			return {...common, query: query}
 		case 'title':
-			p.append('title', query)
-			break
+			return {...common, title: query}
 		case 'username':
-			p.append('email', query)
-			break
+			return {...common, email: query}
 		default: {
 			let _neverHitMe: never = type
 		}
 	}
-
-	return p
 }
 
 export const keys = {
-	all: (query: string, type: DirectorySearchTypeEnum) =>
-		['directory', type, query] as const,
+	all: (query: ReturnType<typeof getDirectoryQuery>) =>
+		['directory', query] as const,
 }
 
 export function useDirectoryEntries(
@@ -50,10 +44,10 @@ export function useDirectoryEntries(
 	type: DirectorySearchTypeEnum,
 ): UseQueryResult<SearchResults, unknown> {
 	return useQuery({
-		queryKey: keys.all(query, type),
-		queryFn: async ({queryKey: [_, type, query], signal}) => {
+		queryKey: keys.all(getDirectoryQuery({query, type})),
+		queryFn: async ({queryKey: [_, query], signal}) => {
 			let response = await directory
-				.get('search', {searchParams: getDirectoryParams(query, type), signal})
+				.get('search', {searchParams: query, signal})
 				.json()
 			return response as SearchResults
 		},
