@@ -269,7 +269,7 @@ jobs:
       - run: mkdir -p ./android/app/src/main/assets/
       - run: npm run bundle:android
 
-  android:
+  android-gradle-cache:
     name: Build for Android
     needs: [jest, eslint, android-bundle, cache-npm-linux]
     runs-on: ${{ matrix.os }}
@@ -278,6 +278,43 @@ jobs:
         os: [ ubuntu-22.04 ]
         node: [ ^16.0 ]
         ruby: [ 2.6 ]
+        jdk: [ jdk8 ]
+    steps:
+      - uses: actions/checkout@v3.3.0
+      - uses: actions/setup-node@v3
+        with: { node-version: '${{ matrix.node }}' }
+      - uses: actions/cache/restore@v3
+        id: node-cache
+        with:
+          path: node_modules/
+          key: ${{ runner.os }}-npm-node@${{ matrix.node }}-${{ hashFiles('package-lock.json') }}
+      - if: steps.node-cache.outputs.cache-hit != 'true'
+        run: exit 1
+      - name: Raise the fs.inotify ulimits to 524288 watches/queued events/user instances
+        run: |
+          echo 524288 | sudo tee -a /proc/sys/fs/inotify/max_user_watches
+          echo 524288 | sudo tee -a /proc/sys/fs/inotify/max_queued_events
+          echo 524288 | sudo tee -a /proc/sys/fs/inotify/max_user_instances
+          sudo sysctl -p
+      - run: echo 'org.gradle.workers.max=2' >> ./android/gradle.properties
+      - uses: burrunan/gradle-cache-action@v1
+        name: Build for Android
+        working-directory: android
+        with:
+          job-id: ${{ matrix.jdk }}
+          arguments: androidDependencies
+          gradle-version: wrapper
+
+  android:
+    name: Build for Android
+    needs: [android-gradle-cache]
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ ubuntu-22.04 ]
+        node: [ ^16.0 ]
+        ruby: [ 2.6 ]
+        jdk: [ jdk8 ]
     steps:
       - uses: actions/checkout@v3.3.0
       - uses: actions/setup-node@v3
@@ -291,13 +328,6 @@ jobs:
         run: exit 1
       - uses: ruby/setup-ruby@v1
         with: { ruby-version: '${{ matrix.ruby }}', bundler-cache: true }
-      - uses: actions/cache@v3
-        id: cache-restore
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
       - name: Raise the fs.inotify ulimits to 524288 watches/queued events/user instances
         run: |
           echo 524288 | sudo tee -a /proc/sys/fs/inotify/max_user_watches
@@ -305,7 +335,13 @@ jobs:
           echo 524288 | sudo tee -a /proc/sys/fs/inotify/max_user_instances
           sudo sysctl -p
       - run: echo 'org.gradle.workers.max=2' >> ./android/gradle.properties
-      - run: cd android && ./gradlew androidDependencies --console=plain
+      - uses: burrunan/gradle-cache-action@v1
+        name: Build for Android
+        working-directory: android
+        with:
+          job-id: ${{ matrix.jdk }}
+          arguments: androidDependencies
+          gradle-version: wrapper
       - run: bundle exec fastlane android ci-run
         env:
           FASTLANE_PASSWORD: ${{ secrets.FASTLANE_PASSWORD }}
