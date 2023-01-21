@@ -27,28 +27,6 @@
       "modules/*"
     ]
   },
-  "jest": {
-    "testMatch": [
-      "**/__tests__/**/*.(spec|test).(js|ts|tsx)",
-      "!**/node_modules/**"
-    ],
-    "collectCoverageFrom": [
-      "modules/**/*.js",
-      "modules/**/*.ts",
-      "modules/**/*.tsx",
-      "source/**/*.js",
-      "source/**/*.ts",
-      "source/**/*.tsx",
-      "!**/node_modules/**"
-    ],
-    "setupFiles": [
-      "./scripts/jest-setup.js"
-    ],
-    "transformIgnorePatterns": [
-      "node_modules/(?!(jest-)?react-native|@react-native|@frogpond|glamorous-native|react-navigation)"
-    ],
-    "preset": "react-native"
-  },
   "prettier": {
     "useTabs": true,
     "singleQuote": true,
@@ -65,11 +43,6 @@
         }
       }
     ]
-  },
-  "overrides": {
-    "detox": {
-      "jest": "^29"
-    }
   },
   "dependencies": {
     "@callstack/react-theme-provider": "3.0.8",
@@ -141,6 +114,7 @@
     "@babel/core": "7.20.12",
     "@babel/preset-typescript": "7.18.6",
     "@babel/runtime": "7.20.7",
+    "@jest/globals": "29.3.1",
     "@sentry/cli": "2.11.0",
     "@tanstack/eslint-plugin-query": "4.21.0",
     "@types/base-64": "1.0.0",
@@ -182,9 +156,10 @@
     "pretty-quick": "3.1.3",
     "string-natural-compare": "3.0.1",
     "strip-ansi": "7.0.1",
+    "ts-jest": "29.0.5",
     "typescript": "4.9.4"
   },
   "optionalDependencies": {
-    "detox": "19.12.1"
+    "detox": "20.1.2"
   }
 }

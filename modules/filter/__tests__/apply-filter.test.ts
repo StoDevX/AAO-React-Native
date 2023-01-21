@@ -1,4 +1,4 @@
-/* eslint-env jest */
+import {expect, it} from '@jest/globals'
 import {applyFilter} from '../apply-filters'
 import {filterValue} from './filter-value.helper'
 import type {FilterType} from '../types'

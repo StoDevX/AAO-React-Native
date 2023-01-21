@@ -1,8 +1,8 @@
-/* eslint-env jest */
+import {describe, expect, test} from '@jest/globals'
 
 import type {EventType} from '@frogpond/event-type'
 import moment from 'moment'
-import {times, detailTimes} from '../times'
+import {detailTimes, times} from '../times'
 
 describe('allDay', () => {
 	function generateEvent(start: string, end: string): EventType {

@@ -1,4 +1,4 @@
-/* eslint-env jest */
+import {expect, it} from '@jest/globals'
 import {applyToggleFilter} from '../apply-filters'
 import type {FilterType} from '../types'
 

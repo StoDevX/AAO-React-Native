@@ -1,4 +1,4 @@
-/* eslint-env jest */
+import {describe, expect, it} from '@jest/globals'
 import {formatEmailParts} from '../send-email'
 
 describe('formatEmailParts', () => {
