@@ -50,7 +50,7 @@ export const ServerUrlSection = (): React.ReactElement => {
 						disabled={!isValid}
 						onPress={reload}
 						textStyle={styles.buttonCell}
-						title={isValid ? 'Invalid URL!' : 'Save'}
+						title={!isValid ? 'Invalid URL!' : 'Save'}
 					/>
 				</>
 			)}
