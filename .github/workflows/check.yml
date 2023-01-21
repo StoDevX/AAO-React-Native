@@ -299,11 +299,11 @@ jobs:
       - run: echo 'org.gradle.workers.max=2' >> ./android/gradle.properties
       - uses: burrunan/gradle-cache-action@v1
         name: Build for Android
-        working-directory: android
         with:
           job-id: ${{ matrix.jdk }}
           arguments: androidDependencies
           gradle-version: wrapper
+          build-root-directory: android
 
   android:
     name: Build for Android
@@ -337,11 +337,11 @@ jobs:
       - run: echo 'org.gradle.workers.max=2' >> ./android/gradle.properties
       - uses: burrunan/gradle-cache-action@v1
         name: Build for Android
-        working-directory: android
         with:
+          # cache-only mode
           job-id: ${{ matrix.jdk }}
-          arguments: androidDependencies
           gradle-version: wrapper
+          build-root-directory: android
       - run: bundle exec fastlane android ci-run
         env:
           FASTLANE_PASSWORD: ${{ secrets.FASTLANE_PASSWORD }}
