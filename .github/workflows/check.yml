@@ -301,7 +301,7 @@ jobs:
         name: Build for Android
         with:
           job-id: ${{ matrix.jdk }}
-          arguments: androidDependencies
+          arguments: --build-cache androidDependencies
           gradle-version: wrapper
           build-root-directory: android
 
