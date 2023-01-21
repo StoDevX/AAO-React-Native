@@ -87,7 +87,7 @@ export function DirectoryDetailView(): JSX.Element {
 							icon="account-multiple-outline"
 							onPress={() => {
 								navigation.push('Directory', {
-									queryType: 'Department',
+									queryType: 'department',
 									queryParam: dept.name,
 								})
 							}}

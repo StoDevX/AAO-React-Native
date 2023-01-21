@@ -1,9 +1,9 @@
 export {
-	ConnectedCourseSearchView as CourseSearchView,
+	CourseSearchView,
 	NavigationOptions as CourseSearchViewNavigationOptions,
 } from './search'
 export {
-	ConnectedCourseSearchResultsView as CourseSearchResultsView,
+	CourseSearchResultsView,
 	NavigationOptions as CourseSearchNavigationOptions,
 } from './results'
 export {

@@ -7,16 +7,16 @@ import type {FilterType} from './types'
 import * as c from '@frogpond/colors'
 import {View} from 'react-native'
 
-type Props = {
+type Props<T extends object> = {
 	anchor: RefObject<View>
-	filter: FilterType
-	onClosePopover: (filter: FilterType) => unknown
+	filter: FilterType<T>
+	onClosePopover: (filter: FilterType<T>) => unknown
 	visible: boolean
 }
 
-export function FilterPopover(props: Props): JSX.Element {
+export function FilterPopover<T extends object>(props: Props<T>): JSX.Element {
 	let {anchor, onClosePopover, visible} = props
-	let [filter, setFilter] = useState<FilterType>(props.filter)
+	let [filter, setFilter] = useState<FilterType<T>>(props.filter)
 	let safeareaInsets = useSafeAreaInsets()
 
 	return (
@@ -30,7 +30,7 @@ export function FilterPopover(props: Props): JSX.Element {
 		>
 			{/* This view wrapper shouldn't be needed but it does appear to fix a rendering issue */}
 			<View style={popoverContainer}>
-				<FilterSection
+				<FilterSection<T>
 					filter={filter}
 					onChange={(filter) => setFilter(filter)}
 				/>

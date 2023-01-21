@@ -1,100 +1,70 @@
+import ky from 'ky'
+import {useQuery, UseQueryResult} from '@tanstack/react-query'
 import {
-	setInternetCredentials,
 	getInternetCredentials,
-	resetInternetCredentials,
+	SharedWebCredentials,
 } from 'react-native-keychain'
-
-import type {
-	Result as RNKeychainResult,
-	SharedWebCredentials as RNKeychainCredentials,
-} from 'react-native-keychain'
-
-import buildFormData from './formdata'
 import {OLECARD_AUTH_URL} from './financials/urls'
-import {ExpandedFetchArgs} from '@frogpond/fetch'
+import {identity} from 'lodash'
 
-const SIS_LOGIN_KEY = 'stolaf.edu'
+export class NoCredentialsError extends Error {}
+export class LoginFailedError extends Error {}
 
-const EMPTY_CREDENTIALS: MaybeCredentials = {}
+export const SIS_LOGIN_KEY = 'stolaf.edu' as const
 
-export type Credentials = {username: string; password: string}
-export type MaybeCredentials = {username?: string; password?: string}
+const queryKeys = {
+	default: ['credentials'] as const,
+	username: ['credentials', 'username'] as const,
+} as const
 
-export function saveLoginCredentials({
-	username,
-	password,
-}: Credentials): Promise<false | RNKeychainResult> {
-	return setInternetCredentials(SIS_LOGIN_KEY, username, password)
-}
-
-export function loadLoginCredentials(): Promise<MaybeCredentials> {
-	return getInternetCredentials(SIS_LOGIN_KEY).then(
-		(result: false | RNKeychainCredentials): MaybeCredentials =>
-			result ? result : EMPTY_CREDENTIALS,
-	)
-}
-
-export function clearLoginCredentials(): Promise<void> {
-	return resetInternetCredentials(SIS_LOGIN_KEY)
-}
-
-export type LoginResultEnum =
-	| 'success'
-	| 'network'
-	| 'bad-credentials'
-	| 'no-credentials'
-	| 'server-error'
-	| 'other'
-
-type Args = {attempts?: number}
-
-export async function performLogin({
-	attempts = 0,
-}: Args = {}): Promise<LoginResultEnum> {
-	const {username, password} = await loadLoginCredentials()
+export async function performLogin(credentials: {
+	username: string
+	password: string
+}): Promise<{username: string; password: string}> {
+	const {username, password} = credentials
 	if (!username || !password) {
-		return 'no-credentials'
+		throw new NoCredentialsError()
 	}
 
-	const form = buildFormData({username, password})
+	let formData = new FormData()
+	formData.append('username', credentials.username)
+	formData.append('password', credentials.password)
 
-	try {
-		const fetchParams: ExpandedFetchArgs = {
-			method: 'POST',
-			body: form,
-			credentials: 'include',
-			cache: 'no-store',
-			throwHttpErrors: false,
-		}
+	const loginResponse = await ky.post(OLECARD_AUTH_URL, {
+		body: formData,
+		credentials: 'include',
+		cache: 'no-store',
+	})
 
-		const {status: statusCode} = await fetch(OLECARD_AUTH_URL, fetchParams)
-
-		if (statusCode >= 400 && statusCode < 500) {
-			return 'bad-credentials'
-		}
-
-		if (statusCode >= 500 && statusCode < 600) {
-			return 'server-error'
-		}
-
-		if (statusCode < 200 || statusCode >= 300) {
-			return 'other'
-		}
-
-		return 'success'
-	} catch (err) {
-		if (err instanceof Error) {
-			const wasNetworkFailure = err.message === 'Network request failed'
-			if (wasNetworkFailure) {
-				if (attempts > 0) {
-					// console.log(`login failed; trying ${attempts - 1} more time(s)`)
-					return performLogin({attempts: attempts - 1})
-				}
-
-				return 'network'
-			}
-		}
-
-		return 'other'
+	let responseUrl = new URL(loginResponse.url)
+	let responseMessage = responseUrl.searchParams.get('message')
+	if (responseMessage) {
+		throw new LoginFailedError(`Login failed: ${responseMessage}`)
 	}
+
+	return credentials
+}
+
+export function useCredentials<T = false | SharedWebCredentials>(
+	selector: (
+		data: Awaited<ReturnType<typeof getInternetCredentials>>,
+	) => T = identity,
+): UseQueryResult<T, unknown> {
+	return useQuery({
+		queryKey: queryKeys.default,
+		queryFn: () => getInternetCredentials(SIS_LOGIN_KEY),
+		select: selector,
+		networkMode: 'always',
+	})
+}
+
+export function useUsername(): UseQueryResult<
+	false | Pick<SharedWebCredentials, 'username'>,
+	unknown
+> {
+	return useCredentials((data) => (data ? {username: data.username} : false))
+}
+
+export function useHasCredentials(): UseQueryResult<boolean, unknown> {
+	return useCredentials((data) => Boolean(data))
 }

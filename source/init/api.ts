@@ -9,7 +9,7 @@ const configureApiRoot = async () => {
 		address = DEFAULT_URL
 	}
 
-	setApiRoot(address)
+	setApiRoot(new URL(address))
 }
 
 configureApiRoot()

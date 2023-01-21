@@ -1,5 +1,4 @@
-/* eslint-env jest */
-
+import {expect, test} from '@jest/globals'
 import {stringifyDictionaryEntry} from '../submit'
 
 test('handles a basic term', () => {

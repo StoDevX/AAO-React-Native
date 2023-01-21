@@ -5,17 +5,17 @@ import {SingleToggleSection} from './section-toggle'
 import {ListSection} from './section-list'
 import {PickerSection} from './section-picker'
 
-type FilterSectionPropsType = {
-	filter: FilterType
-	onChange: (filter: FilterType) => unknown
+type Props<T extends object> = {
+	filter: FilterType<T>
+	onChange: (filter: FilterType<T>) => unknown
 }
 
-export function FilterSection({
+export function FilterSection<T extends object>({
 	filter,
 	onChange,
-}: FilterSectionPropsType): JSX.Element | null {
+}: Props<T>): JSX.Element | null {
 	if (filter.type === 'toggle') {
-		return <SingleToggleSection filter={filter} onChange={onChange} />
+		return <SingleToggleSection<T> filter={filter} onChange={onChange} />
 	}
 
 	if (filter.type === 'list') {
@@ -25,7 +25,7 @@ export function FilterSection({
 
 		return (
 			<ScrollView>
-				<ListSection filter={filter} onChange={onChange} />
+				<ListSection<T> filter={filter} onChange={onChange} />
 			</ScrollView>
 		)
 	}
@@ -35,7 +35,7 @@ export function FilterSection({
 			return null
 		}
 
-		return <PickerSection filter={filter} onChange={onChange} />
+		return <PickerSection<T> filter={filter} onChange={onChange} />
 	}
 
 	return null

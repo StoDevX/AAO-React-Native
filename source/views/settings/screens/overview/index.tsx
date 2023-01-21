@@ -6,7 +6,7 @@ import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 
 import {isDevMode} from '@frogpond/constants'
 
-import {ConnectedCredentialsLoginSection} from './login-credentials'
+import {CredentialsLoginSection} from './login-credentials'
 import {MiscellanySection} from './miscellany'
 import {SupportSection} from './support'
 import {DeveloperSection} from './developer'
@@ -25,7 +25,7 @@ const SettingsView = (): JSX.Element => (
 		keyboardShouldPersistTaps="always"
 	>
 		<TableView>
-			<ConnectedCredentialsLoginSection />
+			<CredentialsLoginSection />
 
 			<SupportSection />
 

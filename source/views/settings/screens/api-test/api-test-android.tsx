@@ -2,10 +2,10 @@ import * as React from 'react'
 import * as c from '@frogpond/colors'
 import {ScrollView, StyleSheet, Text, TextInput, View} from 'react-native'
 import {Toolbar} from '@frogpond/toolbar'
-import {fetch} from '@frogpond/fetch'
-import {API} from '@frogpond/api'
+import {client} from '@frogpond/api'
 import glamorous from 'glamorous-native'
 import {material} from 'react-native-typography'
+import {useQuery} from '@tanstack/react-query'
 
 const styles = StyleSheet.create({
 	container: {
@@ -30,24 +30,14 @@ const Output = glamorous(ScrollView)({
 })
 
 export const AndroidAPITestView = (): JSX.Element => {
-	let [results, setResults] = React.useState<string | null>(null)
-	let [error, setError] = React.useState<string | null>(null)
+	let [path, setPath] = React.useState<string>('')
 
-	let fetchData = async (path: string) => {
-		try {
-			let correctedPath: `/${string}` = path.startsWith('/')
-				? (path as `/${string}`)
-				: `/${path}`
-			let responseData: string = await fetch(API(correctedPath), {
-				cache: 'no-store',
-			}).text()
-			setResults(responseData)
-			setError(null)
-		} catch (err) {
-			setResults(null)
-			setError(JSON.stringify(err))
-		}
-	}
+	let {data, error} = useQuery({
+		queryKey: ['api-test', path],
+		queryFn: ({signal, queryKey: [_group, path]}) => {
+			return client.get(path, {signal, cache: 'no-store'}).text()
+		},
+	})
 
 	return (
 		<View style={styles.container}>
@@ -56,7 +46,7 @@ export const AndroidAPITestView = (): JSX.Element => {
 					autoCapitalize="none"
 					autoCorrect={false}
 					keyboardType="web-search"
-					onEndEditing={(e) => fetchData(e.nativeEvent.text)}
+					onEndEditing={(e) => setPath(e.nativeEvent.text)}
 					placeholder="/path/to/resource"
 					returnKeyType="done"
 					style={styles.default}
@@ -64,7 +54,7 @@ export const AndroidAPITestView = (): JSX.Element => {
 			</Toolbar>
 
 			<Output>
-				<Text>{error ? error : results}</Text>
+				<Text>{error ? error : data}</Text>
 			</Output>
 		</View>
 	)

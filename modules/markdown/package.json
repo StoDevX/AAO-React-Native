@@ -9,7 +9,7 @@
     "test": "jest"
   },
   "peerDependencies": {
-    "@expo/react-native-action-sheet": "^3.0.0",
+    "@expo/react-native-action-sheet": "^4.0.0",
     "glamorous-native": "^2.0.0",
     "react": "^18.0.0",
     "react-native": "^0.71.0"

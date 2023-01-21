@@ -70,10 +70,10 @@ export type SearchResults = {
 }
 
 export type DirectorySearchTypeEnum =
-	| 'Department'
-	| 'FirstName'
-	| 'LastName'
-	| 'Major'
-	| 'Query'
-	| 'Title'
-	| 'Username'
+	| 'department'
+	| 'firstName'
+	| 'lastName'
+	| 'major'
+	| 'query'
+	| 'title'
+	| 'username'

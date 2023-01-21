@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 46;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -1037,6 +1037,7 @@
 /* Begin PBXShellScriptBuildPhase section */
 		00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */ = {
 			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
 			files = (
 			);
@@ -1051,6 +1052,7 @@
 		};
 		6776346D1ECC93FA00C6F018 /* Bundle Data Files */ = {
 			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
 			files = (
 			);
@@ -1296,7 +1298,11 @@
 				CLANG_WARN_SUSPICIOUS_MOVES = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				INFOPLIST_FILE = AllAboutOlafUITests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				LIBRARY_SEARCH_PATHS = "$(SDKROOT)/usr/lib/swift$(inherited)";
 				PRODUCT_BUNDLE_IDENTIFIER = "hawkrives.All-About-Olaf-UI-Tests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1315,7 +1321,11 @@
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				INFOPLIST_FILE = AllAboutOlafUITests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				LIBRARY_SEARCH_PATHS = "$(SDKROOT)/usr/lib/swift$(inherited)";
 				PRODUCT_BUNDLE_IDENTIFIER = "hawkrives.All-About-Olaf-UI-Tests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1338,7 +1348,10 @@
 				ENABLE_TESTABILITY = YES;
 				HEADER_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = AllAboutOlaf/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -1367,7 +1380,10 @@
 				DEVELOPMENT_TEAM = TMK6S7TPX2;
 				HEADER_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = AllAboutOlaf/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -1493,7 +1509,8 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
-				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_VERSION = 5.0;
 				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";

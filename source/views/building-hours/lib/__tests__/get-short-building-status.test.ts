@@ -1,3 +1,4 @@
+import {expect, it} from '@jest/globals'
 import {getShortBuildingStatus} from '../get-short-status'
 import {dayMoment} from './moment.helper'
 import {BuildingType} from '../../types'

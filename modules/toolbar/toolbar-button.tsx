@@ -34,7 +34,11 @@ type ButtonPropsType = {
 	isActive: boolean
 }
 
-export function ToolbarButton({title, iconName, isActive}: ButtonPropsType): React.ReactElement {
+export function ToolbarButton({
+	title,
+	iconName,
+	isActive,
+}: ButtonPropsType): React.ReactElement {
 	let theme: AppTheme = getTheme()
 
 	let activeButton = {

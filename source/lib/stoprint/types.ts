@@ -35,10 +35,6 @@ export type PrintJobsResponse = {
 	jobs: Array<PrintJob>
 }
 
-export type PrintJobsResponseOrErrorType =
-	| {error: true; value: string}
-	| {error: false; value: PrintJobsResponse}
-
 // https://papercut.stolaf.edu:9192/rpc/api/rest/internal/webclient/users/rives/jobs/status
 export type StatusResponse = {
 	hashCode: number
@@ -52,6 +48,8 @@ export type Printer = {
 	printerName: string
 }
 
+export type EnhancedPrinter = Printer & {isColor: boolean; location: string}
+
 // https://papercut.stolaf.edu:9192/rpc/api/rest/internal/mobilerelease/api/recent-popular-printers
 // ?username=rives
 export type RecentPopularPrintersResponse = {
@@ -59,46 +57,25 @@ export type RecentPopularPrintersResponse = {
 	recentPrinters: Array<Printer>
 }
 
-export type RecentPopularPrintersResponseOrErrorType =
-	| {error: true; value: string}
-	| {error: false; value: RecentPopularPrintersResponse}
-
-export type ColorPrintersReponse = {
+export type ColorPrintersResponse = {
 	data: {colorPrinters: Array<string>}
 }
-
-export type ColorPrintersResponseOrErrorType =
-	| {error: true; value: string}
-	| {error: false; value: ColorPrintersReponse}
 
 export type ReleaseResponse = {
 	numJobsReleased: number
 	statusMessage: string
 }
 
-export type ReleaseResponseOrErrorType =
-	| {error: true; value: Error}
-	| {error: false; value: ReleaseResponse}
-
-export type CancelResponseOrErrorType =
-	| {error: true; value: Error}
-	| {error: false; value: Response}
+export type CancelResponse = Response
 
 // https://papercut.stolaf.edu:9192/rpc/api/rest/internal/mobilerelease/api/all-printers
 // ?username=rives
 export type AllPrintersResponse = Array<Printer>
 
-export type AllPrintersResponseOrErrorType =
-	| {error: true; value: string}
-	| {error: false; value: AllPrintersResponse}
-
 // https://papercut.stolaf.edu:9192/rpc/api/rest/internal/mobilerelease/api/held-jobs/
 // ?username=rives
 // &printerName=printers\mfc-it
 export type HeldJobsResponse = Array<HeldJob>
-export type HeldJobsResponseOrErrorType =
-	| {error: true; value: Error}
-	| {error: false; value: HeldJobsResponse}
 
 export type LoginResponse = {
 	authCookie: string
@@ -107,7 +84,3 @@ export type LoginResponse = {
 	rememberMeEnabled: boolean
 	success: boolean
 }
-
-export type LoginResponseOrErrorType =
-	| {error: true; value: Error}
-	| {error: false; value: LoginResponse}

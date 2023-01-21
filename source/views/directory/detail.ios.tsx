@@ -129,7 +129,7 @@ export function DirectoryDetailView(): JSX.Element {
 								detail="Department"
 								onPress={() => {
 									navigation.push('Directory', {
-										queryType: 'Department',
+										queryType: 'department',
 										queryParam: dept.name,
 									})
 								}}

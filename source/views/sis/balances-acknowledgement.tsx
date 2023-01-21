@@ -1,28 +1,23 @@
 import * as React from 'react'
 import {StyleSheet, ScrollView, Platform, View} from 'react-native'
 import Icon from 'react-native-vector-icons/Ionicons'
-import {useSelector, useDispatch} from 'react-redux'
-import {hasSeenAcknowledgement} from '../../redux/parts/settings'
-import type {ReduxState} from '../../redux'
+import {useAppSelector, useAppDispatch} from '../../redux'
+import {
+	selectAcknowledgement,
+	acknowledgeAcknowledgement,
+} from '../../redux/parts/settings'
 import {Avatar, Button, Card, Paragraph as AndroidP} from 'react-native-paper'
 import {Paragraph as IosP} from '@frogpond/markdown'
 import {Card as IosCard} from '@frogpond/silly-card'
 import {Button as IosButton} from '@frogpond/button'
-import {ConnectedBalancesView as BalancesView} from './balances'
+import {BalancesView} from './balances'
 
 let Paragraph = Platform.OS === 'android' ? AndroidP : IosP
 let Ack = Platform.OS === 'android' ? AndroidAck : IosAck
 
 export function BalancesOrAcknowledgementView(): JSX.Element {
-	let dispatch = useDispatch()
-	let alertSeen = useSelector(
-		(state: ReduxState) => state.settings?.unofficiallyAcknowledged || false,
-	)
-
-	let acknowledge = React.useCallback(
-		() => dispatch(hasSeenAcknowledgement()),
-		[dispatch],
-	)
+	let dispatch = useAppDispatch()
+	let alertSeen = useAppSelector(selectAcknowledgement)
 
 	if (alertSeen) {
 		return <BalancesView />
@@ -52,7 +47,7 @@ export function BalancesOrAcknowledgementView(): JSX.Element {
 	)
 
 	let ackProps = {
-		onPositive: acknowledge,
+		onPositive: () => dispatch(acknowledgeAcknowledgement(true)),
 		subtitle: 'Bon Appétit is always right',
 		title: 'Before you continue…',
 	}

@@ -18,6 +18,7 @@ export const yellow = '#FFDC00'
 export const transparent = 'transparent'
 
 export const semitransparentGray = 'rgba(0,0,0,0.2)'
+export const verySemitransparentGray = 'rgba(0,0,0,0.05)'
 
 // MARK: System Colors
 export const infoBlue = 'rgb(47, 112, 225)'

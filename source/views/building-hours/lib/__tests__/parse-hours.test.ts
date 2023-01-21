@@ -1,5 +1,6 @@
+import {expect, it} from '@jest/globals'
 import {parseHours} from '../parse-hours'
-import {dayMoment, plainMoment, hourMoment, moment} from './moment.helper'
+import {dayMoment, hourMoment, moment, plainMoment} from './moment.helper'
 import {SingleBuildingScheduleType} from '../../types'
 
 it('returns an {open, close} tuple', () => {

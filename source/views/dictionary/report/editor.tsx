@@ -62,7 +62,7 @@ const TitleCell = ({text, onChange = noop}: TextFieldProps) => (
 	<CellTextField
 		autoCapitalize="words"
 		onChangeText={onChange}
-		onSubmitEditing={onChange}
+		onSubmitEditing={(ev) => onChange(ev.nativeEvent.text)}
 		placeholder="Title"
 		returnKeyType="done"
 		value={text}
@@ -74,7 +74,7 @@ const DefinitionCell = ({text, onChange = noop}: TextFieldProps) => (
 		autoCapitalize="sentences"
 		multiline={true}
 		onChangeText={onChange}
-		onSubmitEditing={onChange}
+		onSubmitEditing={(ev) => onChange(ev.nativeEvent.text)}
 		placeholder="Definition"
 		returnKeyType="default"
 		value={text}

@@ -1,3 +1,4 @@
+import {describe, expect, it} from '@jest/globals'
 import {cleanEntries} from '../util'
 
 describe('cleanEntries', () => {

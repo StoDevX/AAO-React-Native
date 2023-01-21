@@ -3,7 +3,7 @@ GEM
   specs:
     CFPropertyList (3.0.5)
       rexml
-    activesupport (6.1.5)
+    activesupport (6.1.7.1)
       concurrent-ruby (~> 1.0, >= 1.0.2)
       i18n (>= 1.6, < 2)
       minitest (>= 5.1)
@@ -202,7 +202,7 @@ GEM
     http-cookie (1.0.5)
       domain_name (~> 0.5)
     httpclient (2.8.3)
-    i18n (1.10.0)
+    i18n (1.12.0)
       concurrent-ruby (~> 1.0)
     jmespath (1.6.1)
     json (2.6.3)
@@ -210,7 +210,7 @@ GEM
     memoist (0.16.2)
     mini_magick (4.11.0)
     mini_mime (1.1.2)
-    minitest (5.15.0)
+    minitest (5.17.0)
     molinillo (0.8.0)
     multi_json (1.15.0)
     multipart-post (2.0.0)
@@ -221,7 +221,7 @@ GEM
     optparse (0.1.1)
     os (1.1.4)
     parallel (1.22.1)
-    parser (3.1.3.0)
+    parser (3.2.0.0)
       ast (~> 2.4.1)
     plist (3.6.0)
     public_suffix (4.0.7)
@@ -235,16 +235,16 @@ GEM
     retriable (3.1.2)
     rexml (3.2.5)
     rouge (2.0.7)
-    rubocop (1.42.0)
+    rubocop (1.43.0)
       json (~> 2.3)
       parallel (~> 1.10)
-      parser (>= 3.1.2.1)
+      parser (>= 3.2.0.0)
       rainbow (>= 2.2.2, < 4.0)
       regexp_parser (>= 1.8, < 3.0)
       rexml (>= 3.2.5, < 4.0)
       rubocop-ast (>= 1.24.1, < 2.0)
       ruby-progressbar (~> 1.7)
-      unicode-display_width (>= 1.4.0, < 3.0)
+      unicode-display_width (>= 2.4.0, < 3.0)
     rubocop-ast (1.24.1)
       parser (>= 3.1.1.0)
     ruby-macho (2.5.1)
@@ -269,13 +269,13 @@ GEM
       tty-cursor (~> 0.7)
     typhoeus (1.4.0)
       ethon (>= 0.9.0)
-    tzinfo (2.0.4)
+    tzinfo (2.0.5)
       concurrent-ruby (~> 1.0)
     uber (0.1.0)
     unf (0.1.4)
       unf_ext
     unf_ext (0.0.8.2)
-    unicode-display_width (2.3.0)
+    unicode-display_width (2.4.2)
     webrick (1.7.0)
     word_wrap (1.0.0)
     xcodeproj (1.22.0)
@@ -289,7 +289,7 @@ GEM
       rouge (~> 2.0.7)
     xcpretty-travis-formatter (1.0.1)
       xcpretty (~> 0.2, >= 0.0.7)
-    zeitwerk (2.5.4)
+    zeitwerk (2.6.6)
 
 PLATFORMS
   ruby
@@ -300,7 +300,7 @@ DEPENDENCIES
   fastlane
   json
   netrc
-  rubocop (~> 1.42)
+  rubocop (~> 1.43)
   xcodeproj
 
 BUNDLED WITH

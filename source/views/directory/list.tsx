@@ -14,13 +14,9 @@ import * as c from '@frogpond/colors'
 import {useDebounce} from '@frogpond/use-debounce'
 import {NoticeView, LoadingView} from '@frogpond/notice'
 import {formatResults} from './helpers'
-import {useFetch} from 'react-async'
+import {useDirectoryEntries} from './query'
 import {List, Avatar} from 'react-native-paper'
-import type {
-	DirectorySearchTypeEnum,
-	DirectoryItem,
-	SearchResults,
-} from './types'
+import type {DirectorySearchTypeEnum, DirectoryItem} from './types'
 import Icon from 'react-native-vector-icons/Ionicons'
 import {RouteProp, useNavigation, useRoute} from '@react-navigation/native'
 import {
@@ -28,42 +24,6 @@ import {
 	NativeStackNavigationProp,
 } from '@react-navigation/native-stack'
 import {ChangeTextEvent, RootStackParamList} from '../../navigation/types'
-
-const getDirectoryUrl = (query: string, type: DirectorySearchTypeEnum) => {
-	let baseUrl = 'https://www.stolaf.edu/directory/search?format=json'
-
-	switch (type) {
-		case 'Department': {
-			let formattedDepartment = query.split(' ').join('+')
-			return `${baseUrl}&department=${formattedDepartment}`
-		}
-		case 'FirstName':
-			return `${baseUrl}&firstname=${query.trim()}`
-		case 'LastName':
-			return `${baseUrl}&lastname=${query.trim()}`
-		case 'Major':
-			return `${baseUrl}&major=${query.trim()}`
-		case 'Query':
-			return `${baseUrl}&query=${query.trim()}`
-		case 'Title':
-			return `${baseUrl}&title=${query.trim()}`
-		case 'Username':
-			return `${baseUrl}&email=${query.trim()}`
-		default:
-			console.warn(
-				'Unknown directory search type found when constructing directory url.',
-			)
-			return `${baseUrl}&query=${query.trim()}`
-	}
-}
-
-const useDirectory = (query: string, type: DirectorySearchTypeEnum) => {
-	const url = getDirectoryUrl(query, type)
-
-	return useFetch<SearchResults>(url, {
-		headers: {accept: 'application/json'},
-	})
-}
 
 export const NavigationKey = 'Directory'
 
@@ -77,9 +37,8 @@ export const NavigationOptions = (props: {
 }
 
 export function DirectoryView(): JSX.Element {
-	let [errorMessage, setErrorMessage] = React.useState<string | null>(null)
 	let [searchQueryType, setSearchQueryType] =
-		React.useState<DirectorySearchTypeEnum>('Query')
+		React.useState<DirectorySearchTypeEnum>('query')
 	let [typedQuery, setTypedQuery] = React.useState('')
 	let searchQuery = useDebounce(typedQuery, 500)
 
@@ -87,24 +46,23 @@ export function DirectoryView(): JSX.Element {
 	let navigation =
 		useNavigation<NativeStackNavigationProp<RootStackParamList>>()
 
-	let route = useRoute<RouteProp<RootStackParamList, typeof NavigationKey>>()
-	let {params} = route
+	let {params} = useRoute<RouteProp<RootStackParamList, typeof NavigationKey>>()
 
 	let {
-		data: {results = []} = {},
+		data = {results: []},
 		error,
-		reload,
-		isPending,
-		isInitial,
+		refetch,
+		isError,
+		isRefetching,
 		isLoading,
-	} = useDirectory(searchQuery, searchQueryType)
+	} = useDirectoryEntries(searchQuery, searchQueryType)
 
 	React.useLayoutEffect(() => {
 		navigation.setOptions({
 			headerSearchBarOptions: {
 				barTintColor: c.white,
 				onChangeText: (event: ChangeTextEvent) => {
-					setSearchQueryType('Query')
+					setSearchQueryType('query')
 					setTypedQuery(event.nativeEvent.text)
 				},
 			},
@@ -112,17 +70,11 @@ export function DirectoryView(): JSX.Element {
 	}, [navigation])
 
 	React.useEffect(() => {
-		if (error) {
-			setErrorMessage(getErrorMessage(error))
-		}
-	}, [error])
-
-	React.useEffect(() => {
-		if (params?.queryType === 'Department' && params?.queryParam) {
-			setSearchQueryType('Department')
+		if (params?.queryType === 'department' && params?.queryParam) {
+			setSearchQueryType('department')
 			setTypedQuery(params.queryParam)
 		}
-	}, [params])
+	}, [params?.queryType, params?.queryParam])
 
 	if (!searchQuery) {
 		return <NoSearchPerformed />
@@ -132,38 +84,34 @@ export function DirectoryView(): JSX.Element {
 		return <NoticeView text="Your search is too short." />
 	}
 
-	const items = results ? formatResults(results) : []
-
-	const renderRow = ({item}: {item: DirectoryItem}) => (
-		<DirectoryItemRow
-			item={item}
-			onPress={() => {
-				navigation.push('DirectoryDetail', {contact: item})
-			}}
-		/>
-	)
+	const items = data.results ? formatResults(data.results) : []
 
 	return (
 		<View style={styles.wrapper}>
 			{isLoading ? (
 				<LoadingView />
-			) : errorMessage ? (
-				<NoticeView text={parseErrorMessage(errorMessage)} />
+			) : isError && error instanceof Error ? (
+				<NoticeView text={parseErrorMessage(getErrorMessage(error))} />
 			) : !items.length ? (
 				<NoticeView text={`No results found for "${searchQuery}".`} />
 			) : (
 				<FlatList
 					ItemSeparatorComponent={IndentedListSeparator}
 					contentInsetAdjustmentBehavior="automatic"
-					data={items.map((r: DirectoryItem, i: number) => ({
-						...r,
-						key: String(i),
-					}))}
+					data={items}
+					keyExtractor={(_item, index) => String(index)}
 					keyboardDismissMode="on-drag"
 					keyboardShouldPersistTaps="never"
-					onRefresh={reload}
-					refreshing={isPending && !isInitial}
-					renderItem={renderRow}
+					onRefresh={refetch}
+					refreshing={isRefetching}
+					renderItem={({item}) => (
+						<DirectoryItemRow
+							item={item}
+							onPress={() =>
+								navigation.push('DirectoryDetail', {contact: item})
+							}
+						/>
+					)}
 				/>
 			)}
 		</View>

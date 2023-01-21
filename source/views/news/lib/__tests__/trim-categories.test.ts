@@ -1,7 +1,7 @@
-/* eslint-env jest */
+import {describe, expect, it} from '@jest/globals'
 import {trimStoryCateogry} from '../util'
 
-describe('trimStoryCateogry', () => {
+describe('trimStoryCategory', () => {
 	it('should remove extraneous whitespace from the input', () => {
 		expect(trimStoryCateogry('Blah    Hi\t Bleep')).toStrictEqual(
 			'Blah Hi Bleep',

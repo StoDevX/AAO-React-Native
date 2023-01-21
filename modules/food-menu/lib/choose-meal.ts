@@ -10,21 +10,17 @@ export const EMPTY_MEAL: ProcessedMealType = {
 	endtime: '0:00',
 }
 
-export function chooseMeal(
+export function chooseMeal<T extends object>(
 	meals: ProcessedMealType[],
-	filters: FilterType[],
+	filters: FilterType<T>[],
 	now: Moment,
 ): ProcessedMealType {
-	let mealChooserFilter: FilterType | undefined = filters.find(
+	let mealChooserFilter = filters.find(
 		(f) => f.type === 'picker' && f.spec.title === "Today's Menus",
-	) as PickerType | undefined
+	) as PickerType<T> | undefined
 
 	let selectedMeal: ProcessedMealType | undefined
-	if (
-		mealChooserFilter &&
-		mealChooserFilter.spec.selected &&
-		mealChooserFilter.spec.selected.label
-	) {
+	if (mealChooserFilter?.spec?.selected?.label) {
 		const label = mealChooserFilter.spec.selected.label
 		selectedMeal = meals.find((meal) => meal.label === label)
 	} else {

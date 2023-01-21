@@ -1,4 +1,4 @@
-/* eslint-env jest */
+import {describe, expect, test} from '@jest/globals'
 
 import {canOpenUrl} from '../open-url'
 

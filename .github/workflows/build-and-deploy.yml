@@ -84,20 +84,6 @@ jobs:
         with:
           ruby-version: '2.6'
           bundler-cache: true
-      # - name: Restore Pods cache
-      #   uses: actions/cache@v3
-      #   with:
-      #     path: |
-      #       ios/Pods
-      #       ~/Library/Caches/CocoaPods
-      #       ~/.cocoapods
-      #     key: ${{ runner.os }}-pods-${{ hashFiles('**/Podfile.lock') }}
-      #     restore-keys: |
-      #       ${{ runner.os }}-pods-
-      # - uses: mikehardy/buildcache-action@v1
-      #   continue-on-error: true
-      #   with:
-      #     cache_key: ${{ matrix.os }}
       - run: sudo xcode-select -s /Applications/Xcode_13.1.app
       - run: git fetch --prune --unshallow
       - run: npm ci
@@ -119,5 +105,3 @@ jobs:
           SENTRY_PROJECT: all-about-olaf
           SENTRY_AUTH_TOKEN: ${{ secrets.HOSTED_SENTRY_AUTH_TOKEN }}
           GITHUB_KEYS_REPOSITORY_TOKEN: ${{ secrets.GITHUB_KEYS_REPOSITORY_TOKEN }}
-      - run: npx detox build e2e --configuration ios.sim.release
-      - run: npx detox test e2e --configuration ios.sim.release --cleanup

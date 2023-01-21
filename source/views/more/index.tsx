@@ -1,7 +1,6 @@
 import * as React from 'react'
 import {SectionList, StyleSheet} from 'react-native'
 
-import {API} from '@frogpond/api'
 import * as c from '@frogpond/colors'
 import {useDebounce} from '@frogpond/use-debounce'
 import {LoadingView, NoticeView} from '@frogpond/notice'
@@ -13,17 +12,14 @@ import {
 	largeListProps,
 	Title,
 	ListRow,
-	emptyList,
 } from '@frogpond/lists'
-import {LinkGroup, LinkValue} from './types'
+import {LinkValue} from './types'
 
-import {useFetch} from 'react-async'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 import {useNavigation} from '@react-navigation/native'
 import {ChangeTextEvent} from '../../navigation/types'
-import deburr from 'lodash/deburr'
-import words from 'lodash/words'
-import groupBy from 'lodash/groupBy'
+import {deburr, words} from 'lodash'
+import {useSearchLinks} from './query'
 
 const styles = StyleSheet.create({
 	wrapper: {
@@ -45,37 +41,6 @@ function linkToArray(data: LinkValue) {
 	return Array.from(new Set([...splitToArray(data.label)]))
 }
 
-let groupResults = (searchQuery: string, rawData: LinkGroup[]) => {
-	if (!rawData) {
-		return emptyList
-	}
-
-	if (searchQuery.length < 3) {
-		return rawData
-	}
-
-	let filtered = rawData.flatMap(({data}) =>
-		data.filter((value) =>
-			linkToArray(value).some((value) => value.includes(searchQuery)),
-		),
-	)
-
-	let groupedResults = groupBy(filtered, (result) => result.label[0] || '?')
-
-	let groupedLinks = Object.entries(groupedResults).map(([key, value]) => ({
-		title: key,
-		data: value,
-	}))
-
-	return groupedLinks
-}
-
-const useSearchLinks = () => {
-	return useFetch<LinkGroup[]>(API('/a-to-z'), {
-		headers: {accept: 'application/json'},
-	})
-}
-
 function MoreView(): JSX.Element {
 	let navigation = useNavigation()
 
@@ -85,16 +50,11 @@ function MoreView(): JSX.Element {
 	let {
 		data = [],
 		error,
-		isPending,
-		isInitial,
-		reload,
+		refetch,
 		isLoading,
+		isError,
+		isRefetching,
 	} = useSearchLinks()
-
-	let grouped = React.useMemo(
-		() => groupResults(searchQuery, data),
-		[searchQuery, data],
-	)
 
 	React.useLayoutEffect(() => {
 		navigation.setOptions({
@@ -106,12 +66,25 @@ function MoreView(): JSX.Element {
 		})
 	}, [navigation])
 
-	if (error) {
+	let filtered = React.useMemo(() => {
+		let filteredData = []
+		for (let {title, data: items} of data) {
+			let filteredItems = items.filter((value) =>
+				linkToArray(value).some((value) => value.includes(searchQuery)),
+			)
+			if (filteredItems.length) {
+				filteredData.push({title, data: items})
+			}
+		}
+		return filteredData
+	}, [data, searchQuery])
+
+	if (isError) {
 		return (
 			<NoticeView
 				buttonText="Try Again"
-				onPress={reload}
-				text="A problem occured while loading."
+				onPress={refetch}
+				text={`A problem occured while loading: ${error}`}
 			/>
 		)
 	}
@@ -133,8 +106,8 @@ function MoreView(): JSX.Element {
 			keyExtractor={(item: LinkValue, index) => `${item.label}-${index}`}
 			keyboardDismissMode="on-drag"
 			keyboardShouldPersistTaps="never"
-			onRefresh={reload}
-			refreshing={isPending && !isInitial}
+			onRefresh={refetch}
+			refreshing={isRefetching}
 			renderItem={({item}) => {
 				return (
 					<ListRow arrowPosition="center" onPress={() => openUrl(item.url)}>
@@ -147,7 +120,7 @@ function MoreView(): JSX.Element {
 			renderSectionHeader={({section: {title}}) => (
 				<ListSectionHeader title={title} />
 			)}
-			sections={grouped}
+			sections={filtered}
 			style={styles.wrapper}
 			{...largeListProps}
 		/>

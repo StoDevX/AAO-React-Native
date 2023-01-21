@@ -1,9 +1,15 @@
-import * as React from 'react'
-
-import {TabBarIcon} from '@frogpond/navigation-tabs'
+import {Platform} from 'react-native'
+import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+import {
+	MaterialIcon,
+	IosIcon,
+	createTabNavigator,
+	type Tab,
+} from '@frogpond/navigation-tabs'
 
 import {BalancesOrAcknowledgementView} from './balances-acknowledgement'
 import {View as StudentWorkView} from './student-work'
+
 export * as studentwork from './student-work'
 export {
 	CourseSearchView,
@@ -14,47 +20,35 @@ export {
 	CourseSearchDetailNavigationOptions,
 } from './course-search'
 
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs'
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
-
 type Params = {
 	BalancesView: undefined
-	CourseSearchView: undefined
 	StudentWorkView: undefined
 }
 
-const Tabs = createBottomTabNavigator<Params>()
+const tabs: Tab<Params>[] = [
+	{
+		name: 'BalancesView',
+		component: BalancesOrAcknowledgementView,
+		tabBarLabel: 'Balances',
+		tabBarIcon: Platform.select({
+			ios: IosIcon('card'),
+			android: MaterialIcon('credit-card'),
+		}),
+	},
+	{
+		name: 'StudentWorkView',
+		component: StudentWorkView,
+		tabBarLabel: 'Open Jobs',
+		tabBarIcon: Platform.select({
+			ios: IosIcon('briefcase'),
+			android: MaterialIcon('briefcase-search'),
+		}),
+	},
+]
 
-const Balances = () => <BalancesOrAcknowledgementView />
-const StudentWork = () => <StudentWorkView />
-
-const SisView = (): JSX.Element => {
-	return (
-		<Tabs.Navigator screenOptions={{headerShown: false}}>
-			<Tabs.Screen
-				component={Balances}
-				name="BalancesView"
-				options={{
-					tabBarLabel: 'Balances',
-					tabBarIcon: TabBarIcon('card'),
-				}}
-			/>
-			<Tabs.Screen
-				component={StudentWork}
-				name="StudentWorkView"
-				options={{
-					tabBarLabel: 'Open Jobs',
-					tabBarIcon: TabBarIcon('briefcase'),
-				}}
-			/>
-		</Tabs.Navigator>
-	)
-}
-
-export {SisView as View}
-
+export type NavigationParams = undefined
+export const View = createTabNavigator<Params>(tabs)
+export const NavigationKey = 'SIS'
 export const NavigationOptions: NativeStackNavigationOptions = {
 	title: 'SIS',
 }
-
-export type NavigationParams = undefined

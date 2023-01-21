@@ -54,7 +54,7 @@ export let IconSettingsView = (): JSX.Element => {
 	}
 
 	let getIcon = async () => {
-		let name = await Icons.getIconName()
+		let name = (await Icons.getIconName()) as IconTypeEnum
 		setIconType(name)
 	}
 
