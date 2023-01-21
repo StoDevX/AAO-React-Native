@@ -30,10 +30,10 @@ jobs:
         with: 
           path: node_modules/
           key: ${{ runner.os }}-npm-node@${{ matrix.node }}-${{ hashFiles('package-lock.json') }}
-  
-  cached-eslint:
-    name: eslint - cached
-    needs: [cache-npm-linux]
+
+  prettier:
+    name: Prettier
+    needs: [ cache-npm-linux ]
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -42,7 +42,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3.3.0
       - uses: actions/setup-node@v3
-        with: {node-version: '${{ matrix.node }}'}
+        with: { node-version: '${{ matrix.node }}' }
       - uses: actions/cache/restore@v3
         id: cache-restore
         with:
@@ -50,30 +50,27 @@ jobs:
           key: ${{ runner.os }}-npm-node@${{ matrix.node }}-${{ hashFiles('package-lock.json') }}
       - if: steps.cache-restore.outputs.cache-hit != 'true'
         run: exit 1
-      - run: npm run lint
-
-  # prettier:
-  #   name: Prettier
-  #   runs-on: ubuntu-22.04
-  #   steps:
-  #     - uses: actions/checkout@v3.3.0
-  #     - uses: actions/setup-node@v3
-  #       with:
-  #         node-version: ^16.0
-  #         cache: npm
-  #     - run: npm ci
-  #     - run: npm run pretty -- --no-write --list-different
+      - run: npm run pretty -- --no-write --list-different
 
   eslint:
-    name: ESLint
-    runs-on: ubuntu-22.04
+    name: ESlint
+    needs: [ cache-npm-linux ]
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ ubuntu-22.04 ]
+        node: [ ^16.0 ]
     steps:
       - uses: actions/checkout@v3.3.0
       - uses: actions/setup-node@v3
+        with: { node-version: '${{ matrix.node }}' }
+      - uses: actions/cache/restore@v3
+        id: cache-restore
         with:
-          node-version: ^16.0
-          cache: npm
-      - run: npm ci
+          path: node_modules/
+          key: ${{ runner.os }}-npm-node@${{ matrix.node }}-${{ hashFiles('package-lock.json') }}
+      - if: steps.cache-restore.outputs.cache-hit != 'true'
+        run: exit 1
       - run: npm run lint
 
   # jest:
