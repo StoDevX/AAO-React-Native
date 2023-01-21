@@ -3,7 +3,6 @@ import * as c from '@frogpond/colors'
 import {ScrollView, StyleSheet, Text, TextInput, View} from 'react-native'
 import {Toolbar} from '@frogpond/toolbar'
 import {client} from '@frogpond/api'
-import glamorous from 'glamorous-native'
 import {material} from 'react-native-typography'
 import {useQuery} from '@tanstack/react-query'
 
@@ -21,12 +20,11 @@ const styles = StyleSheet.create({
 		paddingVertical: 4,
 		paddingHorizontal: 8,
 	},
-})
-
-const Output = glamorous(ScrollView)({
-	marginVertical: 3,
-	paddingRight: 4,
-	...material.body1Object,
+	output: {
+		marginVertical: 3,
+		paddingRight: 4,
+		...material.body1Object,
+	},
 })
 
 export const AndroidAPITestView = (): JSX.Element => {
@@ -53,9 +51,9 @@ export const AndroidAPITestView = (): JSX.Element => {
 				/>
 			</Toolbar>
 
-			<Output>
-				<Text>{error ? error : data}</Text>
-			</Output>
+			<ScrollView style={styles.output}>
+				<Text>{Boolean(error) === true ? String(error) : data ?? ''}</Text>
+			</ScrollView>
 		</View>
 	)
 }
