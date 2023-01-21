@@ -270,8 +270,8 @@ jobs:
       - run: npm run bundle:android
 
   android-gradle-cache:
-    name: Build for Android
-    needs: [jest, eslint, android-bundle, cache-npm-linux]
+    name: Android Gradle Cache
+    needs: [cache-npm-linux]
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
