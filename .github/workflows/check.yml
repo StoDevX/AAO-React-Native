@@ -361,7 +361,7 @@ jobs:
           path: ios/build/Build/Products/
           key: ${{ runner.os }}-ios-xcode@${{ matrix.xcode }}-${{ hashFiles('**/Podfile.lock') }}-${{ hashFiles('**/Podfile.lock') }}-${{ hashFiles('package-lock.json') }}
 
-ios-detox:
+  ios-detox:
     name: Build for iOS
     needs: [ios-build]
     runs-on: ${{ matrix.os }}
