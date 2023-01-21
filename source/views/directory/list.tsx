@@ -1,22 +1,22 @@
 import React from 'react'
 import {
-	StyleSheet,
-	View,
-	Text,
-	Image,
 	FlatList,
+	Image,
 	Platform,
 	SafeAreaView,
+	StyleSheet,
+	Text,
+	View,
 } from 'react-native'
 import {Column} from '@frogpond/layout'
-import {ListRow, ListSeparator, Detail, Title} from '@frogpond/lists'
+import {Detail, ListRow, ListSeparator, Title} from '@frogpond/lists'
 import * as c from '@frogpond/colors'
 import {useDebounce} from '@frogpond/use-debounce'
-import {NoticeView, LoadingView} from '@frogpond/notice'
+import {LoadingView, NoticeView} from '@frogpond/notice'
 import {formatResults} from './helpers'
 import {useDirectoryEntries} from './query'
-import {List, Avatar} from 'react-native-paper'
-import type {DirectorySearchTypeEnum, DirectoryItem} from './types'
+import {Avatar, List} from 'react-native-paper'
+import type {DirectoryItem, DirectorySearchTypeEnum} from './types'
 import Icon from 'react-native-vector-icons/Ionicons'
 import {RouteProp, useNavigation, useRoute} from '@react-navigation/native'
 import {
