@@ -98,7 +98,7 @@ export const IOSAPITestView = (): JSX.Element => {
 			  * 2. Use react-native-paper@5.0 SegmentedButton
 			  */}
 			<SegmentedControl
-				onChange={(event) => {
+				onChange={(event: { nativeEvent: { selectedSegmentIndex: number } }) => {
 					let selectedSegment = event.nativeEvent.selectedSegmentIndex
 					setSelectedIndex(selectedSegment)
 				}}
