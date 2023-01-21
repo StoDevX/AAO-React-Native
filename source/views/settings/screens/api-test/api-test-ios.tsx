@@ -1,12 +1,12 @@
 import * as React from 'react'
 import * as c from '@frogpond/colors'
 import {StyleSheet, TextInput, View} from 'react-native'
-import SegmentedControl from '@react-native-segmented-control/segmented-control'
 import {Toolbar} from '@frogpond/toolbar'
 import {client} from '@frogpond/api'
 import {iOSUIKit} from 'react-native-typography'
 import {DebugView} from '../../screens/debug'
 import {useQuery} from '@tanstack/react-query'
+import {CellToggle} from '@frogpond/tableview/cells'
 
 const styles = StyleSheet.create({
 	container: {
@@ -36,43 +36,46 @@ const styles = StyleSheet.create({
 	},
 })
 
+type DisplayMode = 'raw' | 'parsed'
+
 export const IOSAPITestView = (): JSX.Element => {
 	let [path, setPath] = React.useState<string>('')
-	let [selectedIndex, setSelectedIndex] = React.useState(0)
+	let [displayMode, setDisplayMode] = React.useState<DisplayMode>('raw')
 
 	let {data, error} = useQuery({
 		queryKey: ['api-test', path],
 		queryFn: ({signal, queryKey: [_group, path]}) => {
 			return client.get(path, {signal, cache: 'no-store'}).text()
 		},
+		staleTime: 0,
+		cacheTime: 0,
 	})
 
-	let APIResponse =
-		error instanceof Error ? (
-			<TextInput
-				editable={false}
-				// this aligns the text to the top on iOS, and centers it on Android
-				multiline={true}
-				scrollEnabled={true}
-				style={[styles.output, styles.error]}
-				// use multiline with textAlignVertical="top" for the same behavior in both platforms
-				textAlignVertical="top"
-				value={error.toString()}
-			/>
-		) : selectedIndex === 0 ? (
-			<TextInput
-				editable={false}
-				// this aligns the text to the top on iOS, and centers it on Android
-				multiline={true}
-				scrollEnabled={true}
-				style={[styles.output, styles.data]}
-				// use multiline with textAlignVertical="top" for the same behavior in both platforms
-				textAlignVertical="top"
-				value={data ?? ''}
-			/>
-		) : (
-			<DebugView state={JSON.parse(data || '{}')} />
-		)
+	let APIResponse = error ? (
+		<TextInput
+			editable={false}
+			// this aligns the text to the top on iOS, and centers it on Android
+			multiline={true}
+			scrollEnabled={true}
+			style={[styles.output, styles.error]}
+			// use multiline with textAlignVertical="top" for the same behavior in both platforms
+			textAlignVertical="top"
+			value={String(error)}
+		/>
+	) : displayMode === 'raw' ? (
+		<TextInput
+			editable={false}
+			// this aligns the text to the top on iOS, and centers it on Android
+			multiline={true}
+			scrollEnabled={true}
+			style={[styles.output, styles.data]}
+			// use multiline with textAlignVertical="top" for the same behavior in both platforms
+			textAlignVertical="top"
+			value={data ?? ''}
+		/>
+	) : (
+		<DebugView state={JSON.parse(data || '{}')} />
+	)
 
 	return (
 		<View style={styles.container}>
@@ -88,22 +91,10 @@ export const IOSAPITestView = (): JSX.Element => {
 				/>
 			</Toolbar>
 
-			{/**
-			 * SegmentedControl component seems to be unhappy
-			 *
-			 * @TODO fix 'JSX element class does not support attributes because it does not have a 'props' property.'
-			 *
-			 * Options:
-			 * 1. Rework the typings of SegmentedControl
-			 * 2. Use react-native-paper@5.0 SegmentedButton
-			 */}
-			<SegmentedControl
-				onChange={(event: {nativeEvent: {selectedSegmentIndex: number}}) => {
-					let selectedSegment = event.nativeEvent.selectedSegmentIndex
-					setSelectedIndex(selectedSegment)
-				}}
-				selectedIndex={selectedIndex}
-				values={['Text', 'Parsed']}
+			<CellToggle
+				label="Parse as JSON"
+				onChange={(val) => setDisplayMode(val ? 'parsed' : 'raw')}
+				value={displayMode === 'parsed'}
 			/>
 
 			{APIResponse}
