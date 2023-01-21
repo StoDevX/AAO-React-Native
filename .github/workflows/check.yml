@@ -385,6 +385,8 @@ jobs:
       - run: sudo xcode-select -s /Applications/${{ matrix.xcode }}.app
       - if: steps.pods-cache.outputs.cache-hit != 'true'
         run: exit 1
+      - uses: mikehardy/buildcache-action@v2
+        continue-on-error: true
       - run: npx detox build e2e --configuration ios.sim.release
       - uses: actions/cache/save@v3
         with:
