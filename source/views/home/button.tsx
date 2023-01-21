@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {View, Text, StyleSheet, Platform} from 'react-native'
+import {Platform, StyleSheet, Text, View} from 'react-native'
 import Icon from 'react-native-vector-icons/Entypo'
 import type {ViewType} from '../views'
 import LinearGradient from 'react-native-linear-gradient'
@@ -32,13 +32,12 @@ export function HomeScreenButton({view, onPress}: Props): JSX.Element {
 	)
 }
 
-type TouchableButtonProps = {
+type TouchableButtonProps = React.PropsWithChildren<{
 	onPress: () => void
 	label: string
-	children: React.ReactChildren | JSX.Element
 	tint: string
 	gradient?: [string, string]
-}
+}>
 
 function TouchableButton(props: TouchableButtonProps) {
 	let {onPress, label, children, tint, gradient} = props
@@ -62,11 +61,10 @@ function TouchableButton(props: TouchableButtonProps) {
 	}
 }
 
-type TouchableWrapperProps = {
+type TouchableWrapperProps = React.PropsWithChildren<{
 	onPress: () => void
 	label: string
-	children: React.ReactChildren | JSX.Element
-}
+}>
 
 function TouchableWrapper({onPress, children, label}: TouchableWrapperProps) {
 	return (
@@ -82,11 +80,10 @@ function TouchableWrapper({onPress, children, label}: TouchableWrapperProps) {
 	)
 }
 
-type TintProps = {
-	children: React.ReactChildren | JSX.Element
+type TintProps = React.PropsWithChildren<{
 	tint: string
 	gradient?: [string, string]
-}
+}>
 
 function Tint({tint = 'black', gradient, children}: TintProps) {
 	if (!gradient) {

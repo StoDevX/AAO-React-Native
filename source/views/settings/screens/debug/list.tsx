@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {FlatList, ScrollView, Text, StyleSheet} from 'react-native'
+import {FlatList, ScrollView, StyleSheet, Text} from 'react-native'
 import {DebugRow} from './row'
 import {NoticeView} from '@frogpond/notice'
 import {ListSeparator} from '@frogpond/lists'
@@ -61,7 +61,7 @@ export const DebugSimpleItem = ({item}: {item: unknown}): JSX.Element => {
 					hideSurroundingSeparators={true}
 					roundedCorners={true}
 				>
-					<Text>{item}</Text>
+					<Text>{String(item)}</Text>
 				</Section>
 			</TableView>
 		</ScrollView>
