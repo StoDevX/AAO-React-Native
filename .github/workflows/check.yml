@@ -355,7 +355,7 @@ jobs:
           key: ${{ runner.os }}-ios-xcode@${{ matrix.xcode }}-${{ hashFiles('**/Podfile.lock') }}-${{ hashFiles('**/Podfile.lock') }}-${{ hashFiles('package-lock.json') }}
 
   ios-detox:
-    name: Build for iOS
+    name: Detox E2E for iOS
     needs: [ios-build]
     runs-on: ${{ matrix.os }}
     strategy:
