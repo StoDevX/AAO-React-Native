@@ -36,8 +36,6 @@ target 'AllAboutOlaf' do
 		:app_path => "#{Pod::Config.instance.installation_root}/.."
 	)
 
-	pod 'RNDateTimePicker', :path => '../node_modules/@frogpond/datepicker/node_modules/@react-native-community/datetimepicker' 
-
 	target 'AllAboutOlafUITests' do
 		inherit! :complete
 		# Pods for testing
