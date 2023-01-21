@@ -1,34 +1,41 @@
 import * as React from 'react'
 import {
+	Image,
+	ImageProps,
+	ImageStyle,
 	StyleProp,
+	StyleSheet,
+	Text,
 	TextProps,
 	TextStyle,
 	View,
 	ViewProps,
 	ViewStyle,
-	Text,
 } from 'react-native'
-import glamorous from 'glamorous-native'
 import ReactMarkdown from 'react-markdown'
 
 import propTypes from 'prop-types'
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-;(ReactMarkdown as any).propTypes.containerTagName = propTypes.func
-
-import {Paragraph, Strong, Emph, BlockQuote} from './formatting'
+import {BlockQuote, Emph, Paragraph, Strong} from './formatting'
 import {Code, CodeBlock} from './code'
 import {Heading} from './heading'
 import {Link} from './link'
-import {Image} from './image'
 import {List, ListItem} from './list'
+
+;(ReactMarkdown as any).propTypes.containerTagName = propTypes.func
+
+const styles = StyleSheet.create({
+	hr: {
+		width: '100%',
+		height: 1,
+		backgroundColor: 'black',
+	},
+})
 
 const Softbreak = (props: TextProps) => <Text {...props}> </Text>
 const Hardbreak = (props: TextProps) => <Text {...props}>{'\n'}</Text>
-const HorizontalRule = glamorous.view({
-	width: '100%',
-	height: 1,
-	backgroundColor: 'black',
-})
+const HorizontalRule = (props: ViewProps) => (
+	<View {...props} style={[styles.hr, props.style]} />
+)
 
 export type MarkdownProps = {
 	styles?: {
@@ -37,7 +44,7 @@ export type MarkdownProps = {
 		CodeBlock?: StyleProp<TextStyle>
 		Emph?: StyleProp<TextStyle>
 		Heading?: StyleProp<TextStyle>
-		Image?: StyleProp<ViewStyle>
+		Image?: StyleProp<ImageStyle>
 		ListItem?: StyleProp<TextStyle>
 		Link?: StyleProp<TextStyle>
 		List?: StyleProp<ViewStyle>
@@ -71,7 +78,7 @@ export class Markdown extends React.PureComponent<MarkdownProps> {
 					Heading: (props: TextProps & {level: number}) => (
 						<Heading {...props} style={[styles.Heading, props.style]} />
 					),
-					Image: (props) => (
+					Image: (props: ImageProps) => (
 						<Image {...props} style={[styles.Image, props.style]} />
 					),
 					Item: (props: TextProps) => (
