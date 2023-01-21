@@ -77,13 +77,6 @@ jobs:
       - if: steps.cache-restore.outputs.cache-hit != 'true'
         uses: ruby/setup-ruby@v1
         with: {ruby-version: '${{ matrix.ruby }}', bundler-cache: true}
-      - if: steps.cache-restore.outputs.cache-hit != 'true'
-        run: npm ci
-      - if: steps.cache-restore.outputs.cache-hit != 'true'
-        uses: actions/cache/save@v3
-        with:
-          path: node_modules/
-          key: ${{ runner.os }}-npm-node@${{ matrix.node }}-${{ hashFiles('package-lock.json') }}
 
   prettier:
     name: Prettier
