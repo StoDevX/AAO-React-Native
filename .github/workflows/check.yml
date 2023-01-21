@@ -6,7 +6,7 @@ on:
 jobs:
   prettier:
     name: Prettier
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v3.3.0
       - uses: actions/setup-node@v3
@@ -18,7 +18,7 @@ jobs:
 
   eslint:
     name: ESLint
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v3.3.0
       - uses: actions/setup-node@v3
@@ -30,7 +30,7 @@ jobs:
 
   jest:
     name: Jest
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v3.3.0
       - uses: actions/setup-node@v3
@@ -48,7 +48,7 @@ jobs:
 
   tsc:
     name: TypeScript
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v3.3.0
       - uses: actions/setup-node@v3
@@ -61,7 +61,7 @@ jobs:
 
   data:
     name: Data
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v3.3.0
       - uses: actions/setup-node@v3
@@ -100,7 +100,7 @@ jobs:
 
   ios-bundle:
     name: iOS Bundle
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v3.3.0
       - uses: actions/setup-node@v3
@@ -113,7 +113,7 @@ jobs:
 
   android-bundle:
     name: Android Bundle
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v3.3.0
       - uses: actions/setup-node@v3
@@ -127,7 +127,7 @@ jobs:
 
   android:
     name: Build for Android
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     needs: [jest, eslint, android-bundle]
     steps:
       - uses: actions/checkout@v3.3.0
