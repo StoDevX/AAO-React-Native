@@ -37,7 +37,7 @@ const getDirectoryParams = (query: string, type: DirectorySearchTypeEnum) => {
 		}
 	}
 
-	return p
+	return p.toString()
 }
 
 export const keys = {
