@@ -78,7 +78,7 @@ export function useBonAppMenu(
 
 export function usePauseMenu(): UseQueryResult<GithubMenuType, unknown> {
 	return useQuery({
-		queryKey: menuKeys.hosted('/food/named/menu/the-pause'),
+		queryKey: menuKeys.hosted('food/named/menu/the-pause'),
 		queryFn: async ({queryKey: [_menu, _hosted, url], signal}) => {
 			let response = await client.get(url, {signal}).json()
 			return response as GithubMenuResponse
