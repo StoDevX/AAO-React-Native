@@ -1,7 +1,7 @@
 import * as React from 'react'
 import * as c from '@frogpond/colors'
 import {StyleSheet, TextInput, View} from 'react-native'
-import SegmentedControl from '@react-native-community/segmented-control'
+import SegmentedControl from '@react-native-segmented-control/segmented-control'
 import {Toolbar} from '@frogpond/toolbar'
 import {client} from '@frogpond/api'
 import {iOSUIKit} from 'react-native-typography'
