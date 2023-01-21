@@ -91,7 +91,7 @@ export function DirectoryView(): JSX.Element {
 			{isLoading ? (
 				<LoadingView />
 			) : isError && error instanceof Error ? (
-				<NoticeView text={parseErrorMessage(getErrorMessage(error))} />
+				<NoticeView text={String(error)} />
 			) : !items.length ? (
 				<NoticeView text={`No results found for "${searchQuery}".`} />
 			) : (
@@ -172,29 +172,6 @@ function AndroidDirectoryItemRow({item, onPress}: DirectoryItemRowProps) {
 			title={item.displayName}
 		/>
 	)
-}
-
-const DIRECTORY_HTML_ERROR_CODE = 'directory-html'
-
-const getErrorMessage = (error: Error | undefined) => {
-	if (!(error instanceof Error)) {
-		return 'Unknown Error: Not an Error'
-	}
-
-	if (error.message === "JSON Parse error: Unrecognized token '<'") {
-		return DIRECTORY_HTML_ERROR_CODE
-	} else {
-		return error.message
-	}
-}
-
-const parseErrorMessage = (errorMessage: string) => {
-	let message = `Error: ${errorMessage}`
-	if (errorMessage === DIRECTORY_HTML_ERROR_CODE) {
-		message =
-			'Something between you and the directory is having problems. Try again in a minute or two?'
-	}
-	return message
 }
 
 const DirectoryItemRow =
