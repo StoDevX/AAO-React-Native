@@ -20,7 +20,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3.3.0
       - name: Generate comment
-        run: echo "comment" > ./output.txt
+        run: echo "comment $(date)" > ./output.txt
       - name: Publish comment
         run: |
           gh pr comment --edit-last --body-file ./output.txt || gh pr comment --body-file ./output.txt
