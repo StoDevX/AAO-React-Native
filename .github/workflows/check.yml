@@ -347,8 +347,6 @@ jobs:
       - if: steps.cache-restore.outputs.cache-hit != 'true'
         run: exit 1
 
-      - run: mkdir -p ./android/app/src/main/assets/
-
       - name: Cache the jsbundle
         uses: actions/cache@v3
         id: jsbundle
@@ -362,6 +360,7 @@ jobs:
       - name: Generate jsbundle
         if: steps.jsbundle.outputs.cache-hit != 'true'
         run: |
+          mkdir -p ./android/app/src/main/assets/
           npm run bundle-data
           npm run bundle:android
 
@@ -515,6 +514,7 @@ jobs:
 
       - name: Move cached jsbundle into place
         run: |
+          mkdir -p ios/build/Build/Products/Release-iphonesimulator/AllAboutOlaf
           mv ./ios/AllAboutOlaf/main.jsbundle ios/build/Build/Products/Release-iphonesimulator/AllAboutOlaf/
           mv ./ios/AllAboutOlaf/main.jsbundle.map ios/build/Build/Products/Release-iphonesimulator/AllAboutOlaf/
           rm -rf ios/build/Build/Products/Release-iphonesimulator/AllAboutOlaf/assets
