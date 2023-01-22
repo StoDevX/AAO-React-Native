@@ -23,7 +23,7 @@ jobs:
         run: echo "comment" > ./output.txt
       - name: Publish comment
         run: |
-          { gh pr comment --edit-last --body-file ./output.txt || gh pr comment --edit-last --body-file ./output.txt }
+          gh pr comment --edit-last --body-file ./output.txt || gh pr comment --body-file ./output.txt
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
