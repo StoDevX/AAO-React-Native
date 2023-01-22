@@ -4,8 +4,6 @@ on:
   push:
 
 env:
-  ubuntu_version: ubuntu-22.04
-  macos_version: macos-11
   node_version: ^16.0
   ruby_version: 2.6
   jdk_version: jdk8
@@ -14,7 +12,7 @@ env:
 jobs:
   cache-npm-linux:
     name: Cache npm for Linux
-    runs-on: ${{ env.ubuntu_version }}
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v3.3.0
 
@@ -36,7 +34,7 @@ jobs:
 
   cache-npm-macos:
     name: Cache npm for macOS
-    runs-on: ${{ env.macos_version }}
+    runs-on: macos11
     steps:
       - uses: actions/checkout@v3.3.0
 
@@ -58,7 +56,7 @@ jobs:
 
   cache-bundler-macos:
     name: Cache bundler for macOS
-    runs-on: ${{ env.macos_version }}
+    runs-on: macos11
     steps:
       - uses: actions/checkout@v3.3.0
 
@@ -70,7 +68,7 @@ jobs:
   cache-gradle:
     name: Cache Gradle
     needs: [cache-npm-linux]
-    runs-on: ${{ env.ubuntu_version }}
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v3.3.0
 
@@ -108,7 +106,7 @@ jobs:
   cache-cocoapods:
     name: Cache Cocoapods
     needs: [ cache-npm-macos, cache-bundler-macos ]
-    runs-on: ${{ env.macos_version }}
+    runs-on: macos11
     steps:
       - run: sudo xcode-select -s /Applications/${{ env.xcode_version }}.app
 
@@ -149,7 +147,7 @@ jobs:
   prettier:
     name: Prettier
     needs: [ cache-npm-linux ]
-    runs-on: ${{ env.ubuntu_version }}
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v3.3.0
 
@@ -172,7 +170,7 @@ jobs:
   eslint:
     name: ESlint
     needs: [ cache-npm-linux ]
-    runs-on: ${{ env.ubuntu_version }}
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v3.3.0
 
@@ -195,7 +193,7 @@ jobs:
   jest:
     name: Jest
     needs: [ cache-npm-linux ]
-    runs-on: ${{ env.ubuntu_version }}
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v3.3.0
 
@@ -226,7 +224,7 @@ jobs:
   tsc:
     name: TypeScript
     needs: [ cache-npm-linux ]
-    runs-on: ${{ env.ubuntu_version }}
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v3.3.0
 
@@ -251,7 +249,7 @@ jobs:
   data:
     name: Validate Data
     needs: [ cache-npm-linux ]
-    runs-on: ${{ env.ubuntu_version }}
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v3.3.0
 
@@ -276,7 +274,7 @@ jobs:
   ios-bundle:
     name: Generate iOS RN Bundle
     needs: [ cache-npm-linux ]
-    runs-on: ${{ env.ubuntu_version }}
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v3.3.0
 
@@ -301,7 +299,7 @@ jobs:
   android-bundle:
     name: Generate Android RN Bundle
     needs: [ cache-npm-linux ]
-    runs-on: ${{ env.ubuntu_version }}
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v3.3.0
 
@@ -328,7 +326,7 @@ jobs:
   android:
     name: Build for Android
     needs: [jest, eslint, android-bundle, cache-npm-linux, cache-gradle]
-    runs-on: ${{ env.ubuntu_version }}
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v3.3.0
 
@@ -383,7 +381,7 @@ jobs:
   ios-build:
     name: Build for iOS
     needs: [jest, eslint, ios-bundle, cache-npm-macos, cache-bundler-macos, cache-cocoapods]
-    runs-on: ${{ env.macos_version }}
+    runs-on: macos11
     steps:
       - run: sudo xcode-select -s /Applications/${{ env.xcode_version }}.app
 
@@ -435,7 +433,7 @@ jobs:
   ios-detox:
     name: Detox E2E for iOS
     needs: [cache-npm-macos, ios-build]
-    runs-on: ${{ env.macos_version }}
+    runs-on: macos11
     steps:
       - run: sudo xcode-select -s /Applications/${{ env.xcode_version }}.app
 
