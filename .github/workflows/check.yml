@@ -19,10 +19,13 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v3.3.0
-      - run: echo "comment" | gh pr comment $PR --edit-last --body-file -
+      - name: Generate comment
+        run: echo "comment" > ./output.txt
+      - name: Publish comment
+        run: |
+          { gh pr comment --edit-last --body-file ./output.txt || gh pr comment --edit-last --body-file ./output.txt }
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PR: ${{ github.event.pull_request.html_url }}
 
   cache-npm-linux:
     name: Cache npm for Linux
