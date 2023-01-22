@@ -33,20 +33,20 @@ jobs:
     steps:
       - uses: actions/checkout@v3.3.0
 
-      - name: Restore node_modules cache
-        uses: actions/cache/restore@v3
-        id: cache-restore
+      - name: Prepare node_modules cache
+        uses: actions/cache@v3
+        id: cache
         with:
           path: node_modules/
           key: ${{ runner.os }}-npm-node@${{ env.node_version }}-${{ hashFiles('package-lock.json') }}
 
-      - if: steps.cache-restore.outputs.cache-hit != 'true'
+      - if: steps.cache.outputs.cache-hit != 'true'
         uses: actions/setup-node@v3
         with:
           node-version: ${{ env.node_version }}
           cache: npm
 
-      - if: steps.cache-restore.outputs.cache-hit != 'true'
+      - if: steps.cache.outputs.cache-hit != 'true'
         run: npm ci
 
   cache-npm-macos:
@@ -55,20 +55,20 @@ jobs:
     steps:
       - uses: actions/checkout@v3.3.0
 
-      - name: Restore node_modules cache
-        uses: actions/cache/restore@v3
-        id: cache-restore
+      - name: Prepare node_modules cache
+        uses: actions/cache@v3
+        id: cache
         with:
           path: node_modules/
           key: ${{ runner.os }}-npm-node@${{ env.node_version }}-${{ hashFiles('package-lock.json') }}
 
-      - if: steps.cache-restore.outputs.cache-hit != 'true'
+      - if: steps.cache.outputs.cache-hit != 'true'
         uses: actions/setup-node@v3
         with:
           node-version: ${{ env.node_version }}
           cache: npm
 
-      - if: steps.cache-restore.outputs.cache-hit != 'true'
+      - if: steps.cache.outputs.cache-hit != 'true'
         run: npm ci
 
   cache-bundler-macos:
