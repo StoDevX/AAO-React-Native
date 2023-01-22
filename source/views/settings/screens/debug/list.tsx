@@ -10,6 +10,8 @@ import {Section, TableView} from 'react-native-tableview-simple'
 
 export const NavigationKey = 'DebugView' as const
 
+const TEMP_ENABLE_NAV = false
+
 type Props = {
 	state?: unknown
 }
@@ -105,11 +107,12 @@ export const DebugArrayItem = ({item}: {item: unknown[]}): JSX.Element => {
 			renderItem={({item}) => (
 				<DebugRow
 					data={item}
-					onPress={() =>
-						navigation.navigate('DebugView', {
-							keyPath: [...keyPath, String(item.key)],
-						})
-					}
+					onPress={() => {
+						TEMP_ENABLE_NAV &&
+							navigation.navigate('DebugView', {
+								keyPath: [...keyPath, String(item.key)],
+							})
+					}}
 				/>
 			)}
 		/>
@@ -131,6 +134,7 @@ export const DebugObjectItem = ({item}: {item: object}): JSX.Element => {
 				<DebugRow
 					data={item}
 					onPress={() =>
+						TEMP_ENABLE_NAV &&
 						navigation.navigate('DebugView', {keyPath: [...keyPath, item.key]})
 					}
 				/>
