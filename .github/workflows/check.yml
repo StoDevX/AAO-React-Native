@@ -8,10 +8,10 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  node_version: ^16.0
-  ruby_version: 2.6
-  jdk_version: jdk8
-  xcode_version: Xcode_13.1
+  node_version: '^16.0'
+  ruby_version: '2.6'
+  jdk_version: 'jdk8'
+  xcode_version: 'Xcode_13.1'
 
 jobs:
   cache-npm-linux:
