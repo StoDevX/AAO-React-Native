@@ -139,7 +139,7 @@ jobs:
           key: ${{ runner.os }}-cocoapods-ruby@${{ env.ruby_version }}-xcode@${{ env.xcode_version }}-${{ hashFiles('**/Podfile.lock') }}-${{ hashFiles('package-lock.json') }}
 
       # TODO: is installing pods fast enough, if the cache exists, to let us skip this conditional?
-      - # if: steps.pods-cache.outputs.cache-hit != 'true'
+      - if: steps.pods-cache.outputs.cache-hit != 'true'
         run: bundle exec pod install --deployment
         working-directory: ./ios
 
