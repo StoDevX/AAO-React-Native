@@ -310,9 +310,21 @@ jobs:
       - if: steps.cache-restore.outputs.cache-hit != 'true'
         run: exit 1
 
-      - run: npm run bundle-data
+      - name: Cache the jsbundle
+        uses: actions/cache@v3
+        id: jsbundle
+        with:
+          path: |
+            ./ios/AllAboutOlaf/main.jsbundle
+            ./ios/AllAboutOlaf/main.jsbundle.map
+            ./ios/AllAboutOlaf/assets
+          key: ${{ runner.os }}-npm-node@${{ env.node_version }}-pkg@${{ hashFiles('package-lock.json' }}-files@${{ hashFiles('data/**', 'images/**', 'modules/**.ts', 'modules/**.tsx', 'source/**.ts', 'source/**.tsx') }}
 
-      - run: npm run bundle:ios
+      - name: Generate jsbundle
+        if: steps.jsbundle.outputs.cache-hit != 'true'
+        run: |
+          npm run bundle-data
+          npm run bundle:ios
 
   android-bundle:
     name: Android Bundle
@@ -335,11 +347,23 @@ jobs:
       - if: steps.cache-restore.outputs.cache-hit != 'true'
         run: exit 1
 
-      - run: npm run bundle-data
-
       - run: mkdir -p ./android/app/src/main/assets/
 
-      - run: npm run bundle:android
+      - name: Cache the jsbundle
+        uses: actions/cache@v3
+        id: jsbundle
+        with:
+          path: |
+            ./android/app/src/main/assets/index.android.bundle
+            ./android/app/src/main/assets/index.android.bundle.map
+            ./android/app/src/main/res/
+          key: ${{ runner.os }}-npm-node@${{ env.node_version }}-pkg@${{ hashFiles('package-lock.json' }}-files@${{ hashFiles('data/**', 'images/**', 'modules/**.ts', 'modules/**.tsx', 'source/**.ts', 'source/**.tsx') }}
+
+      - name: Generate jsbundle
+        if: steps.jsbundle.outputs.cache-hit != 'true'
+        run: |
+          npm run bundle-data
+          npm run bundle:android
 
   android:
     name: Build for Android
@@ -457,16 +481,14 @@ jobs:
 
   ios-detox:
     name: Detox E2E for iOS
-    needs: [cache-npm-macos, ios-build]
+    needs: [cache-npm-macos, ios-build, ios-bundle]
     runs-on: macos-11
     steps:
       - run: sudo xcode-select -s /Applications/${{ env.xcode_version }}.app
 
       - uses: actions/checkout@v3.3.0
 
-      # TODO: figure out how to replace the JS bundle in the compiled app…
-
-      - # load the app before reinstalling detox, so that the package-lock cannot chsnge
+      - # load the app before reinstalling detox, so that the package-lock cannot change
         name: Load the cached iOS app
         uses: actions/cache/restore@v3
         id: app
@@ -476,6 +498,27 @@ jobs:
 
       - if: steps.app.outputs.cache-hit != 'true'
         run: exit 1
+
+      - # load the jsbundle before reinstalling detox, so that the package-lock cannot change
+        name: Load the cached iOS jsbundle
+        uses: actions/cache/restore@v3
+        id: jsbundle
+        with:
+          path: |
+            ./ios/AllAboutOlaf/main.jsbundle
+            ./ios/AllAboutOlaf/main.jsbundle.map
+            ./ios/AllAboutOlaf/assets
+          key: ${{ runner.os }}-npm-node@${{ env.node_version }}-pkg@${{ hashFiles('package-lock.json' }}-files@${{ hashFiles('data/**', 'images/**', 'modules/**.ts', 'modules/**.tsx', 'source/**.ts', 'source/**.tsx') }}
+
+      - if: steps.jsbundle.outputs.cache-hit != 'true'
+        run: exit 1
+
+      - name: Move cached jsbundle into place
+        run: |
+          mv ./ios/AllAboutOlaf/main.jsbundle ios/build/Build/Products/Release-iphonesimulator/AllAboutOlaf/
+          mv ./ios/AllAboutOlaf/main.jsbundle.map ios/build/Build/Products/Release-iphonesimulator/AllAboutOlaf/
+          rm -rf ios/build/Build/Products/Release-iphonesimulator/AllAboutOlaf/assets
+          mv ./ios/AllAboutOlaf/assets ios/build/Build/Products/Release-iphonesimulator/AllAboutOlaf/
 
       - uses: actions/setup-node@v3
         with:
