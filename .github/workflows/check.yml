@@ -464,16 +464,14 @@ jobs:
           node-version: ${{ env.node_version }}
           cache: npm
 
-      - name: Restore node_modules cache
-        uses: actions/cache/restore@v3
-        id: node-cache
-        with:
-          path: node_modules/
-          key: ${{ runner.os }}-npm-node@${{ env.node_version }}-${{ hashFiles('package-lock.json') }}
-
       - # We have to install Detox explicitly because it installs things outside of node_modules/detox/…
         name: Install Detox
-        run: npm install "detox@$(jq -r .optionalDependencies.detox package.json)"
+        run: |
+          mv package.json{,old} 
+          mv package-lock.json{,old}
+          npm install "detox@$(jq -r .optionalDependencies.detox package.json.old)"
+          mv package.json{old,}
+          mv package-lock.json{old,}
 
       - run: brew tap wix/brew
 
