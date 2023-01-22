@@ -129,12 +129,10 @@ export const APITestView = (): JSX.Element => {
 				textAlignVertical="top"
 				value={String(error)}
 			/>
+		) : !path ? (
+			<EmptySearch />
 		) : displayMode === 'raw' ? (
-			path ? (
-				<JSONView />
-			) : (
-				<EmptySearch />
-			)
+			<JSONView />
 		) : (
 			<DebugView state={JSON.parse(data || '{}')} />
 		)
