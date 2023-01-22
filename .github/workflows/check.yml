@@ -3,138 +3,142 @@ name: Check
 on:
   push:
 
+env:
+  ubuntu_version: ubuntu-22.04
+  macos_version: macos-11
+  node_version: ^16.0
+  ruby_version: 2.6
+  jdk_version: jdk8
+  xcode_version: Xcode_13.1
+
 jobs:
   cache-npm-linux:
-    name: ${{ matrix.os }} cache npm
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ ubuntu-22.04 ]
-        node: [ ^16.0 ]
-        ruby: [ 2.6 ]
+    name: Cache npm for Linux
+    runs-on: ${{ env.ubuntu_version }}
     steps:
       - uses: actions/checkout@v3.3.0
-      - uses: actions/cache@v3
+
+      - name: Restore node_modules cache
+        uses: actions/cache/restore@v3
         id: cache-restore
         with:
           path: node_modules/
-          key: ${{ runner.os }}-npm-node@${{ matrix.node }}-${{ hashFiles('package-lock.json') }}
+          key: ${{ runner.os }}-npm-node@${{ env.node_version }}-${{ hashFiles('package-lock.json') }}
+
       - if: steps.cache-restore.outputs.cache-hit != 'true'
         uses: actions/setup-node@v3
         with:
-          node-version: ${{ matrix.node }}
+          node-version: ${{ env.node_version }}
           cache: npm
+
       - if: steps.cache-restore.outputs.cache-hit != 'true'
         run: npm ci
 
   cache-npm-macos:
-    name: ${{ matrix.os }} cache npm
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ macos-11 ]
-        node: [ ^16.0 ]
-        ruby: [ 2.6 ]
+    name: Cache npm for macOS
+    runs-on: ${{ env.macos_version }}
     steps:
       - uses: actions/checkout@v3.3.0
-      - uses: actions/cache@v3
+
+      - name: Restore node_modules cache
+        uses: actions/cache/restore@v3
         id: cache-restore
         with:
           path: node_modules/
-          key: ${{ runner.os }}-npm-node@${{ matrix.node }}-${{ hashFiles('package-lock.json') }}
+          key: ${{ runner.os }}-npm-node@${{ env.node_version }}-${{ hashFiles('package-lock.json') }}
+
       - if: steps.cache-restore.outputs.cache-hit != 'true'
         uses: actions/setup-node@v3
         with:
-          node-version: ${{ matrix.node }}
+          node-version: ${{ env.node_version }}
           cache: npm
+
       - if: steps.cache-restore.outputs.cache-hit != 'true'
         run: npm ci
 
   cache-bundler-macos:
-    name: ${{ matrix.os }} cache bundler
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ macos-11 ]
-        node: [ ^16.0 ]
-        ruby: [ 2.6 ]
+    name: Cache bundler for macOS
+    runs-on: ${{ env.macos_version }}
     steps:
       - uses: actions/checkout@v3.3.0
-      - uses: actions/cache/restore@v3
-        id: cache-restore
+
+      - uses: ruby/setup-ruby@v1
         with:
-          path: node_modules/
-          key: ${{ runner.os }}-ruby-bundler@${{ matrix.node }}-${{ hashFiles('package-lock.json') }}
-      - if: steps.cache-restore.outputs.cache-hit != 'true'
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: '${{ matrix.ruby }}'
+          ruby-version: ${{ env.ruby_version }}
           bundler-cache: true
 
   prettier:
     name: Prettier
     needs: [ cache-npm-linux ]
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ ubuntu-22.04 ]
-        node: [ ^16.0 ]
+    runs-on: ${{ env.ubuntu_version }}
     steps:
       - uses: actions/checkout@v3.3.0
+
       - uses: actions/setup-node@v3
-        with: { node-version: '${{ matrix.node }}' }
-      - uses: actions/cache/restore@v3
+        with:
+          node-version: ${{ env.node_version }}
+
+      - name: Restore node_modules cache
+        uses: actions/cache/restore@v3
         id: cache-restore
         with:
           path: node_modules/
-          key: ${{ runner.os }}-npm-node@${{ matrix.node }}-${{ hashFiles('package-lock.json') }}
+          key: ${{ runner.os }}-npm-node@${{ env.node_version }}-${{ hashFiles('package-lock.json') }}
+
       - if: steps.cache-restore.outputs.cache-hit != 'true'
         run: exit 1
+
       - run: npm run pretty -- --no-write --list-different
 
   eslint:
     name: ESlint
     needs: [ cache-npm-linux ]
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ ubuntu-22.04 ]
-        node: [ ^16.0 ]
+    runs-on: ${{ env.ubuntu_version }}
     steps:
       - uses: actions/checkout@v3.3.0
+
       - uses: actions/setup-node@v3
-        with: { node-version: '${{ matrix.node }}' }
-      - uses: actions/cache/restore@v3
+        with:
+          node-version: ${{ env.node_version }}
+
+      - name: Restore node_modules cache
+        uses: actions/cache/restore@v3
         id: cache-restore
         with:
           path: node_modules/
-          key: ${{ runner.os }}-npm-node@${{ matrix.node }}-${{ hashFiles('package-lock.json') }}
+          key: ${{ runner.os }}-npm-node@${{ env.node_version }}-${{ hashFiles('package-lock.json') }}
+
       - if: steps.cache-restore.outputs.cache-hit != 'true'
         run: exit 1
+
       - run: npm run lint
 
   jest:
     name: Jest
     needs: [ cache-npm-linux ]
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ ubuntu-22.04 ]
-        node: [ ^16.0 ]
+    runs-on: ${{ env.ubuntu_version }}
     steps:
       - uses: actions/checkout@v3.3.0
+
       - uses: actions/setup-node@v3
-        with: { node-version: '${{ matrix.node }}' }
-      - uses: actions/cache/restore@v3
+        with:
+          node-version: ${{ env.node_version }}
+
+      - name: Restore node_modules cache
+        uses: actions/cache/restore@v3
         id: cache-restore
         with:
           path: node_modules/
-          key: ${{ runner.os }}-npm-node@${{ matrix.node }}-${{ hashFiles('package-lock.json') }}
+          key: ${{ runner.os }}-npm-node@${{ env.node_version }}-${{ hashFiles('package-lock.json') }}
+
       - if: steps.cache-restore.outputs.cache-hit != 'true'
         run: exit 1
+
       - run: npm run bundle-data
+
       - name: Run tests
         run: npm run test -- --coverage
+
       - name: Upload coverage
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
@@ -143,198 +147,226 @@ jobs:
   tsc:
     name: TypeScript
     needs: [ cache-npm-linux ]
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ ubuntu-22.04 ]
-        node: [ ^16.0 ]
+    runs-on: ${{ env.ubuntu_version }}
     steps:
       - uses: actions/checkout@v3.3.0
+
       - uses: actions/setup-node@v3
-        with: { node-version: '${{ matrix.node }}' }
-      - uses: actions/cache/restore@v3
+        with:
+          node-version: ${{ env.node_version }}
+
+      - name: Restore node_modules cache
+        uses: actions/cache/restore@v3
         id: cache-restore
         with:
           path: node_modules/
-          key: ${{ runner.os }}-npm-node@${{ matrix.node }}-${{ hashFiles('package-lock.json') }}
+          key: ${{ runner.os }}-npm-node@${{ env.node_version }}-${{ hashFiles('package-lock.json') }}
+
       - if: steps.cache-restore.outputs.cache-hit != 'true'
         run: exit 1
+
       - run: npm run bundle-data
+
       - run: npx tsc
 
   data:
     name: Validate Data
     needs: [ cache-npm-linux ]
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ ubuntu-22.04 ]
-        node: [ ^16.0 ]
+    runs-on: ${{ env.ubuntu_version }}
     steps:
       - uses: actions/checkout@v3.3.0
+
       - uses: actions/setup-node@v3
-        with: { node-version: '${{ matrix.node }}' }
-      - uses: actions/cache/restore@v3
+        with:
+          node-version: ${{ env.node_version }}
+
+      - name: Restore node_modules cache
+        uses: actions/cache/restore@v3
         id: cache-restore
         with:
           path: node_modules/
-          key: ${{ runner.os }}-npm-node@${{ matrix.node }}-${{ hashFiles('package-lock.json') }}
+          key: ${{ runner.os }}-npm-node@${{ env.node_version }}-${{ hashFiles('package-lock.json') }}
+
       - if: steps.cache-restore.outputs.cache-hit != 'true'
         run: exit 1
+
       - run: npm run validate-data
+
       - run: npm run bundle-data
 
   ios-pods:
-    name: iOS Cocoapods
-    needs: [ cache-npm-macos ]
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ macos-11 ]
-        node: [ ^16.0 ]
-        ruby: [ 2.6 ]
-        xcode: [ Xcode_13.1 ]
+    name: Cache Cocoapods
+    needs: [ cache-npm-macos, cache-bundler-macos ]
+    runs-on: ${{ env.macos_version }}
     steps:
+      - run: sudo xcode-select -s /Applications/${{ env.xcode_version }}.app
+
       - uses: actions/checkout@v3.3.0
+
       - uses: actions/setup-node@v3
-        with: { node-version: '${{ matrix.node }}' }
-      - uses: actions/cache/restore@v3
+        with:
+          node-version: ${{ env.node_version }}
+
+      - name: Restore node_modules cache
+        uses: actions/cache/restore@v3
         id: node-cache
         with:
           path: node_modules/
-          key: ${{ runner.os }}-npm-node@${{ matrix.node }}-${{ hashFiles('package-lock.json') }}
+          key: ${{ runner.os }}-npm-node@${{ env.node_version }}-${{ hashFiles('package-lock.json') }}
+
       - if: steps.node-cache.outputs.cache-hit != 'true'
         run: exit 1
+
       - uses: ruby/setup-ruby@v1
-        with: { ruby-version: '${{ matrix.ruby }}', bundler-cache: true }
-      - uses: actions/cache@v3
+        with:
+          ruby-version: ${{ env.ruby_version }}
+          bundler-cache: true
+
+      - name: Restore Cocoapods cache
+        uses: actions/cache@v3
         id: pods-cache
         with:
           path: ios/Pods
-          key: ${{ runner.os }}-cocoapods-ruby@${{ matrix.ruby }}-xcode@${{ matrix.xcode }}-${{ hashFiles('**/Podfile.lock') }}-${{ hashFiles('package-lock.json') }}
-      - run: sudo xcode-select -s /Applications/${{ matrix.xcode }}.app
-      - if: steps.pods-cache.outputs.cache-hit != 'true'
+          key: ${{ runner.os }}-cocoapods-ruby@${{ env.ruby_version }}-xcode@${{ env.xcode_version }}-${{ hashFiles('**/Podfile.lock') }}-${{ hashFiles('package-lock.json') }}
+
+      # TODO: is installing pods fast enough, if the cache exists, to let us skip this conditional?
+      - # if: steps.pods-cache.outputs.cache-hit != 'true'
         run: bundle exec pod install --deployment
         working-directory: ./ios
 
   ios-bundle:
-    name: iOS Bundle
+    name: Generate iOS RN Bundle
     needs: [ cache-npm-linux ]
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ ubuntu-22.04 ]
-        node: [ ^16.0 ]
+    runs-on: ${{ env.ubuntu_version }}
     steps:
       - uses: actions/checkout@v3.3.0
+
       - uses: actions/setup-node@v3
-        with: { node-version: '${{ matrix.node }}' }
-      - uses: actions/cache/restore@v3
+        with:
+          node-version: ${{ env.node_version }}
+
+      - name: Restore node_modules cache
+        uses: actions/cache/restore@v3
         id: cache-restore
         with:
           path: node_modules/
-          key: ${{ runner.os }}-npm-node@${{ matrix.node }}-${{ hashFiles('package-lock.json') }}
+          key: ${{ runner.os }}-npm-node@${{ env.node_version }}-${{ hashFiles('package-lock.json') }}
+
       - if: steps.cache-restore.outputs.cache-hit != 'true'
         run: exit 1
+
       - run: npm run bundle-data
+
       - run: npm run bundle:ios
 
   android-bundle:
-    name: Android Bundle
+    name: Generate Android RN Bundle
     needs: [ cache-npm-linux ]
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ ubuntu-22.04 ]
-        node: [ ^16.0 ]
+    runs-on: ${{ env.ubuntu_version }}
     steps:
       - uses: actions/checkout@v3.3.0
+
       - uses: actions/setup-node@v3
-        with: { node-version: '${{ matrix.node }}' }
-      - uses: actions/cache/restore@v3
+        with:
+          node-version: ${{ env.node_version }}
+
+      - name: Restore node_modules cache
+        uses: actions/cache/restore@v3
         id: cache-restore
         with:
           path: node_modules/
-          key: ${{ runner.os }}-npm-node@${{ matrix.node }}-${{ hashFiles('package-lock.json') }}
+          key: ${{ runner.os }}-npm-node@${{ env.node_version }}-${{ hashFiles('package-lock.json') }}
+
       - if: steps.cache-restore.outputs.cache-hit != 'true'
         run: exit 1
+
       - run: npm run bundle-data
+
       - run: mkdir -p ./android/app/src/main/assets/
+
       - run: npm run bundle:android
 
   android-gradle-cache:
-    name: Android Gradle Cache
+    name: Cache Gradle
     needs: [cache-npm-linux]
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ ubuntu-22.04 ]
-        node: [ ^16.0 ]
-        ruby: [ 2.6 ]
-        jdk: [ jdk8 ]
+    runs-on: ${{ env.ubuntu_version }}
     steps:
       - uses: actions/checkout@v3.3.0
+
       - uses: actions/setup-node@v3
-        with: { node-version: '${{ matrix.node }}' }
-      - uses: actions/cache/restore@v3
+        with:
+          node-version: ${{ env.node_version }}
+
+      - name: Restore node_modules cache
+        uses: actions/cache/restore@v3
         id: node-cache
         with:
           path: node_modules/
-          key: ${{ runner.os }}-npm-node@${{ matrix.node }}-${{ hashFiles('package-lock.json') }}
+          key: ${{ runner.os }}-npm-node@${{ env.node_version }}-${{ hashFiles('package-lock.json') }}
+
       - if: steps.node-cache.outputs.cache-hit != 'true'
         run: exit 1
-      - name: Raise the fs.inotify ulimits to 524288 watches/queued events/user instances
+
+      - name: Raise the fs.inotify ulimits
         run: |
           echo 524288 | sudo tee -a /proc/sys/fs/inotify/max_user_watches
           echo 524288 | sudo tee -a /proc/sys/fs/inotify/max_queued_events
           echo 524288 | sudo tee -a /proc/sys/fs/inotify/max_user_instances
           sudo sysctl -p
+
       - run: echo 'org.gradle.workers.max=2' >> ./android/gradle.properties
+
       - uses: burrunan/gradle-cache-action@v1
-        name: Build for Android
+        name: Run Gradle to cache dependencies
         with:
-          job-id: ${{ matrix.jdk }}
+          job-id: ${{ env.jdk_version }}
           arguments: --build-cache androidDependencies
           gradle-version: wrapper
           build-root-directory: android
 
   android:
     name: Build for Android
-    needs: [android-gradle-cache]
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ ubuntu-22.04 ]
-        node: [ ^16.0 ]
-        ruby: [ 2.6 ]
-        jdk: [ jdk8 ]
+    needs: [cache-npm-linux, android-gradle-cache, jest, eslint, android-bundle]
+    runs-on: ${{ env.ubuntu_version }}
     steps:
       - uses: actions/checkout@v3.3.0
+
       - uses: actions/setup-node@v3
-        with: { node-version: '${{ matrix.node }}' }
-      - uses: actions/cache/restore@v3
+        with:
+          node-version: ${{ env.node_version }}
+
+      - name: Restore node_modules cache
+        uses: actions/cache/restore@v3
         id: node-cache
         with:
           path: node_modules/
-          key: ${{ runner.os }}-npm-node@${{ matrix.node }}-${{ hashFiles('package-lock.json') }}
+          key: ${{ runner.os }}-npm-node@${{ env.node_version }}-${{ hashFiles('package-lock.json') }}
+
       - if: steps.node-cache.outputs.cache-hit != 'true'
         run: exit 1
+
       - uses: ruby/setup-ruby@v1
-        with: { ruby-version: '${{ matrix.ruby }}', bundler-cache: true }
-      - name: Raise the fs.inotify ulimits to 524288 watches/queued events/user instances
+        with:
+          ruby-version: ${{ env.ruby_version }}
+          bundler-cache: true
+
+      - name: Raise the fs.inotify ulimits
         run: |
           echo 524288 | sudo tee -a /proc/sys/fs/inotify/max_user_watches
           echo 524288 | sudo tee -a /proc/sys/fs/inotify/max_queued_events
           echo 524288 | sudo tee -a /proc/sys/fs/inotify/max_user_instances
           sudo sysctl -p
+
       - run: echo 'org.gradle.workers.max=2' >> ./android/gradle.properties
+
       - uses: burrunan/gradle-cache-action@v1
-        name: Build for Android
+        name: Run Gradle
         with:
           # cache-only mode
-          job-id: ${{ matrix.jdk }}
+          job-id: ${{ env.jdk_version }}
           gradle-version: wrapper
           build-root-directory: android
+
       - run: bundle exec fastlane android ci-run
         env:
           FASTLANE_PASSWORD: ${{ secrets.FASTLANE_PASSWORD }}
@@ -350,73 +382,85 @@ jobs:
   ios-build:
     name: Build for iOS
     needs: [jest, eslint, ios-bundle, cache-npm-macos, cache-bundler-macos, ios-pods]
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ macos-11 ]
-        node: [ ^16.0 ]
-        ruby: [ 2.6 ]
-        xcode: [ Xcode_13.1 ]
+    runs-on: ${{ env.macos_version }}
     steps:
-      - run: sudo xcode-select -s /Applications/${{ matrix.xcode }}.app
+      - run: sudo xcode-select -s /Applications/${{ env.xcode_version }}.app
+
       - uses: actions/checkout@v3.3.0
+
       - uses: actions/setup-node@v3
-        with: { node-version: '${{ matrix.node }}' }
+        with:
+          node-version: ${{ env.node_version }}
+
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: '2.6'
           bundler-cache: true
-      - name: restore cache of node_modules
+
+      - name: Restore node_modules cache
         uses: actions/cache/restore@v3
-        id: cache-restore
+        id: node-cache
         with:
           path: node_modules/
-          key: ${{ runner.os }}-npm-node@${{ matrix.node }}-${{ hashFiles('package-lock.json') }}
+          key: ${{ runner.os }}-npm-node@${{ env.node_version }}-${{ hashFiles('package-lock.json') }}
+
       - name: exit if the node_modules cache did not load
-        if: steps.pods-cache.outputs.cache-hit != 'true'
+        if: steps.node-cache.outputs.cache-hit != 'true'
         run: exit 1
-      - name: restore cache of installed CocoaPods
+
+      - name: Restore Cocoapods cache
         uses: actions/cache@v3
         id: pods-cache
         with:
           path: ios/Pods
-          key: ${{ runner.os }}-cocoapods-ruby@${{ matrix.ruby }}-xcode@${{ matrix.xcode }}-${{ hashFiles('**/Podfile.lock') }}-${{ hashFiles('package-lock.json') }}
-      - name: exit if the CocoaPods cache did not load
+          key: ${{ runner.os }}-cocoapods-ruby@${{ env.ruby_version }}-xcode@${{ env.xcode_version }}-${{ hashFiles('**/Podfile.lock') }}-${{ hashFiles('package-lock.json') }}
+
+      - name: exit if the Cocoapods cache did not load
         if: steps.pods-cache.outputs.cache-hit != 'true'
         run: exit 1
+
       - uses: mikehardy/buildcache-action@v2
         continue-on-error: true
-      - run: npx detox build e2e --configuration ios.sim.release
-      - name: cache the generated iOS app
+
+      - name: Build the iOS app
+        run: npx detox build e2e --configuration ios.sim.release
+
+      - name: Cache the iOS app
         uses: actions/cache/save@v3
         with:
           path: ios/build/Build/Products/
-          key: ${{ runner.os }}-ios-xcode@${{ matrix.xcode }}-${{ hashFiles('**/Podfile.lock') }}-${{ hashFiles('**/Podfile.lock') }}-${{ hashFiles('package-lock.json') }}
+          key: ${{ runner.os }}-ios-xcode@${{ env.xcode_version }}-pbxproj@${{ hashFiles('**/project.pbxproj') }}-podfile@${{ hashFiles('**/Podfile.lock') }}-packagelock@${{ hashFiles('package-lock.json') }}
 
   ios-detox:
     name: Detox E2E for iOS
     needs: [cache-npm-macos, ios-build]
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ macos-11 ]
-        node: [ ^16.0 ]
-        ruby: [ 2.6 ]
-        xcode: [ Xcode_13.1 ]
+    runs-on: ${{ env.macos_version }}
     steps:
-      - run: sudo xcode-select -s /Applications/${{ matrix.xcode }}.app
+      - run: sudo xcode-select -s /Applications/${{ env.xcode_version }}.app
+
       - uses: actions/checkout@v3.3.0
+
       - uses: actions/setup-node@v3
         with:
-          node-version: ${{ matrix.node }}
-      - run: npm install "detox@$(jq -r .optionalDependencies.detox package.json)"
-      - uses: actions/cache/restore@v3
+          node-version: ${{ env.node_version }}
+
+      - # We have to install Detox because it installs things outside of node_modules/detox/…
+        name: Install Detox
+        run: npm install "detox@$(jq -r .optionalDependencies.detox package.json)"
+
+      - name: Load the cached iOS app
+        uses: actions/cache/restore@v3
         id: ios-app-cache
         with:
           path: ios/build/Build/Products/
-          key: ${{ runner.os }}-ios-xcode@${{ matrix.xcode }}-${{ hashFiles('**/Podfile.lock') }}-${{ hashFiles('**/Podfile.lock') }}-${{ hashFiles('package-lock.json') }}
+          key: ${{ runner.os }}-ios-xcode@${{ env.xcode_version }}-pbxproj@${{ hashFiles('**/project.pbxproj') }}-podfile@${{ hashFiles('**/Podfile.lock') }}-packagelock@${{ hashFiles('package-lock.json') }}
+
       - if: steps.ios-app-cache.outputs.cache-hit != 'true'
         run: exit 1
+
       - run: brew tap wix/brew
+
       - run: brew install applesimutils
-      - run: npx detox test e2e --configuration ios.sim.release --cleanup --debug-synchronization 500
+
+      - name: Run the Detox tests
+        run: npx detox test e2e --configuration ios.sim.release --cleanup --debug-synchronization 500
