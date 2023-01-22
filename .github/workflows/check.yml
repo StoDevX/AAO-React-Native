@@ -138,7 +138,7 @@ jobs:
           path: node_modules/
           key: ${{ runner.os }}-npm-node@${{ env.node_version }}-${{ hashFiles('package-lock.json') }}
 
-      - if: steps.node-cache.outputs.cache-hit != 'true'
+      - if: steps.pods-cache.outputs.cache-hit != 'true' && steps.node-cache.outputs.cache-hit != 'true'
         run: exit 1
 
       - if: steps.pods-cache.outputs.cache-hit != 'true'
