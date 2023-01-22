@@ -67,6 +67,85 @@ jobs:
           ruby-version: ${{ env.ruby_version }}
           bundler-cache: true
 
+  cache-gradle:
+    name: Cache Gradle
+    needs: [cache-npm-linux]
+    runs-on: ${{ env.ubuntu_version }}
+    steps:
+      - uses: actions/checkout@v3.3.0
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.node_version }}
+
+      - name: Restore node_modules cache
+        uses: actions/cache/restore@v3
+        id: node-cache
+        with:
+          path: node_modules/
+          key: ${{ runner.os }}-npm-node@${{ env.node_version }}-${{ hashFiles('package-lock.json') }}
+
+      - if: steps.node-cache.outputs.cache-hit != 'true'
+        run: exit 1
+
+      - name: Raise the fs.inotify ulimits
+        run: |
+          echo 524288 | sudo tee -a /proc/sys/fs/inotify/max_user_watches
+          echo 524288 | sudo tee -a /proc/sys/fs/inotify/max_queued_events
+          echo 524288 | sudo tee -a /proc/sys/fs/inotify/max_user_instances
+          sudo sysctl -p
+
+      - run: echo 'org.gradle.workers.max=2' >> ./android/gradle.properties
+
+      - uses: burrunan/gradle-cache-action@v1
+        name: Run Gradle to cache dependencies
+        with:
+          job-id: ${{ env.jdk_version }}
+          arguments: --build-cache androidDependencies
+          gradle-version: wrapper
+          build-root-directory: android
+
+  cache-cocoapods:
+    name: Cache Cocoapods
+    needs: [ cache-npm-macos, cache-bundler-macos ]
+    runs-on: ${{ env.macos_version }}
+    steps:
+      - run: sudo xcode-select -s /Applications/${{ env.xcode_version }}.app
+
+      - uses: actions/checkout@v3.3.0
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.node_version }}
+
+      - name: Restore node_modules cache
+        uses: actions/cache/restore@v3
+        id: node-cache
+        with:
+          path: node_modules/
+          key: ${{ runner.os }}-npm-node@${{ env.node_version }}-${{ hashFiles('package-lock.json') }}
+
+      - if: steps.node-cache.outputs.cache-hit != 'true'
+        run: exit 1
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ env.ruby_version }}
+          bundler-cache: true
+
+      - name: Restore Cocoapods cache
+        uses: actions/cache@v3
+        id: pods-cache
+        with:
+          path: ios/Pods
+          key: ${{ runner.os }}-cocoapods-ruby@${{ env.ruby_version }}-xcode@${{ env.xcode_version }}-${{ hashFiles('**/Podfile.lock') }}-${{ hashFiles('package-lock.json') }}
+
+      # TODO: is installing pods fast enough, if the cache exists, to let us skip this conditional?
+      - # if: steps.pods-cache.outputs.cache-hit != 'true'
+        run: bundle exec pod install --deployment
+        working-directory: ./ios
+
+
   prettier:
     name: Prettier
     needs: [ cache-npm-linux ]
@@ -194,46 +273,6 @@ jobs:
 
       - run: npm run bundle-data
 
-  ios-pods:
-    name: Cache Cocoapods
-    needs: [ cache-npm-macos, cache-bundler-macos ]
-    runs-on: ${{ env.macos_version }}
-    steps:
-      - run: sudo xcode-select -s /Applications/${{ env.xcode_version }}.app
-
-      - uses: actions/checkout@v3.3.0
-
-      - uses: actions/setup-node@v3
-        with:
-          node-version: ${{ env.node_version }}
-
-      - name: Restore node_modules cache
-        uses: actions/cache/restore@v3
-        id: node-cache
-        with:
-          path: node_modules/
-          key: ${{ runner.os }}-npm-node@${{ env.node_version }}-${{ hashFiles('package-lock.json') }}
-
-      - if: steps.node-cache.outputs.cache-hit != 'true'
-        run: exit 1
-
-      - uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: ${{ env.ruby_version }}
-          bundler-cache: true
-
-      - name: Restore Cocoapods cache
-        uses: actions/cache@v3
-        id: pods-cache
-        with:
-          path: ios/Pods
-          key: ${{ runner.os }}-cocoapods-ruby@${{ env.ruby_version }}-xcode@${{ env.xcode_version }}-${{ hashFiles('**/Podfile.lock') }}-${{ hashFiles('package-lock.json') }}
-
-      # TODO: is installing pods fast enough, if the cache exists, to let us skip this conditional?
-      - # if: steps.pods-cache.outputs.cache-hit != 'true'
-        run: bundle exec pod install --deployment
-        working-directory: ./ios
-
   ios-bundle:
     name: Generate iOS RN Bundle
     needs: [ cache-npm-linux ]
@@ -286,47 +325,9 @@ jobs:
 
       - run: npm run bundle:android
 
-  android-gradle-cache:
-    name: Cache Gradle
-    needs: [cache-npm-linux]
-    runs-on: ${{ env.ubuntu_version }}
-    steps:
-      - uses: actions/checkout@v3.3.0
-
-      - uses: actions/setup-node@v3
-        with:
-          node-version: ${{ env.node_version }}
-
-      - name: Restore node_modules cache
-        uses: actions/cache/restore@v3
-        id: node-cache
-        with:
-          path: node_modules/
-          key: ${{ runner.os }}-npm-node@${{ env.node_version }}-${{ hashFiles('package-lock.json') }}
-
-      - if: steps.node-cache.outputs.cache-hit != 'true'
-        run: exit 1
-
-      - name: Raise the fs.inotify ulimits
-        run: |
-          echo 524288 | sudo tee -a /proc/sys/fs/inotify/max_user_watches
-          echo 524288 | sudo tee -a /proc/sys/fs/inotify/max_queued_events
-          echo 524288 | sudo tee -a /proc/sys/fs/inotify/max_user_instances
-          sudo sysctl -p
-
-      - run: echo 'org.gradle.workers.max=2' >> ./android/gradle.properties
-
-      - uses: burrunan/gradle-cache-action@v1
-        name: Run Gradle to cache dependencies
-        with:
-          job-id: ${{ env.jdk_version }}
-          arguments: --build-cache androidDependencies
-          gradle-version: wrapper
-          build-root-directory: android
-
   android:
     name: Build for Android
-    needs: [cache-npm-linux, android-gradle-cache, jest, eslint, android-bundle]
+    needs: [jest, eslint, android-bundle, cache-npm-linux, cache-gradle]
     runs-on: ${{ env.ubuntu_version }}
     steps:
       - uses: actions/checkout@v3.3.0
@@ -381,7 +382,7 @@ jobs:
 
   ios-build:
     name: Build for iOS
-    needs: [jest, eslint, ios-bundle, cache-npm-macos, cache-bundler-macos, ios-pods]
+    needs: [jest, eslint, ios-bundle, cache-npm-macos, cache-bundler-macos, cache-cocoapods]
     runs-on: ${{ env.macos_version }}
     steps:
       - run: sudo xcode-select -s /Applications/${{ env.xcode_version }}.app
