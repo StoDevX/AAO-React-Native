@@ -3,6 +3,10 @@ name: Check
 on:
   push:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 env:
   node_version: ^16.0
   ruby_version: 2.6
