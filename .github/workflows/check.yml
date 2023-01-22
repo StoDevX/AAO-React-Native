@@ -149,7 +149,6 @@ jobs:
         run: bundle exec pod install --deployment
         working-directory: ./ios
 
-
   prettier:
     name: Prettier
     needs: [ cache-npm-linux ]
@@ -253,7 +252,7 @@ jobs:
       - run: npx tsc
 
   data:
-    name: Validate Data
+    name: Data
     needs: [ cache-npm-linux ]
     runs-on: ubuntu-22.04
     steps:
