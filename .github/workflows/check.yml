@@ -387,16 +387,26 @@ jobs:
 
       - uses: actions/checkout@v3.3.0
 
-      - uses: actions/setup-node@v3
+      - name: Cache the iOS app
+        id: app
+        uses: actions/cache@v3
+        with:
+          path: ios/build/Build/Products/
+          key: ${{ runner.os }}-ios-xcode@${{ env.xcode_version }}-pbxproj@${{ hashFiles('**/project.pbxproj') }}-podfile@${{ hashFiles('**/Podfile.lock') }}-packagelock@${{ hashFiles('package-lock.json') }}
+
+      - if: steps.app.outputs.cache-hit != 'true'
+        uses: actions/setup-node@v3
         with:
           node-version: ${{ env.node_version }}
 
-      - uses: ruby/setup-ruby@v1
+      - if: steps.app.outputs.cache-hit != 'true'
+        uses: ruby/setup-ruby@v1
         with:
           ruby-version: '2.6'
           bundler-cache: true
 
       - name: Restore node_modules cache
+        if: steps.app.outputs.cache-hit != 'true'
         uses: actions/cache/restore@v3
         id: node-cache
         with:
@@ -404,10 +414,11 @@ jobs:
           key: ${{ runner.os }}-npm-node@${{ env.node_version }}-${{ hashFiles('package-lock.json') }}
 
       - name: exit if the node_modules cache did not load
-        if: steps.node-cache.outputs.cache-hit != 'true'
+        if: steps.app.outputs.cache-hit != 'true' && steps.node-cache.outputs.cache-hit != 'true'
         run: exit 1
 
       - name: Restore Cocoapods cache
+        if: steps.app.outputs.cache-hit != 'true'
         uses: actions/cache@v3
         id: pods-cache
         with:
@@ -415,20 +426,16 @@ jobs:
           key: ${{ runner.os }}-cocoapods-ruby@${{ env.ruby_version }}-xcode@${{ env.xcode_version }}-${{ hashFiles('**/Podfile.lock') }}-${{ hashFiles('package-lock.json') }}
 
       - name: exit if the Cocoapods cache did not load
-        if: steps.pods-cache.outputs.cache-hit != 'true'
+        if: steps.app.outputs.cache-hit != 'true' && steps.pods-cache.outputs.cache-hit != 'true'
         run: exit 1
 
-      - uses: mikehardy/buildcache-action@v2
+      - if: steps.app.outputs.cache-hit != 'true'
+        uses: mikehardy/buildcache-action@v2
         continue-on-error: true
 
       - name: Build the iOS app
+        if: steps.app.outputs.cache-hit != 'true'
         run: npx detox build e2e --configuration ios.sim.release
-
-      - name: Cache the iOS app
-        uses: actions/cache/save@v3
-        with:
-          path: ios/build/Build/Products/
-          key: ${{ runner.os }}-ios-xcode@${{ env.xcode_version }}-pbxproj@${{ hashFiles('**/project.pbxproj') }}-podfile@${{ hashFiles('**/Podfile.lock') }}-packagelock@${{ hashFiles('package-lock.json') }}
 
   ios-detox:
     name: Detox E2E for iOS
@@ -438,6 +445,8 @@ jobs:
       - run: sudo xcode-select -s /Applications/${{ env.xcode_version }}.app
 
       - uses: actions/checkout@v3.3.0
+
+      # TODO: figure out how to replace the JS bundle in the compiled app… 
 
       - # load the app before reinstalling detox, so that the package-lock cannot chsnge
         name: Load the cached iOS app
@@ -462,7 +471,7 @@ jobs:
           path: node_modules/
           key: ${{ runner.os }}-npm-node@${{ env.node_version }}-${{ hashFiles('package-lock.json') }}
 
-      - # We have to install Detox because it installs things outside of node_modules/detox/…
+      - # We have to install Detox explicitly because it installs things outside of node_modules/detox/…
         name: Install Detox
         run: npm install "detox@$(jq -r .optionalDependencies.detox package.json)"
 
