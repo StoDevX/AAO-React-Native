@@ -81,7 +81,7 @@ export function usePauseMenu(): UseQueryResult<GithubMenuType, unknown> {
 		queryKey: menuKeys.hosted('food/named/menu/the-pause'),
 		queryFn: async ({queryKey: [_menu, _hosted, url], signal}) => {
 			let response = await client.get(url, {signal}).json()
-			return response as GithubMenuResponse
+			return (response as {data: GithubMenuResponse}).data
 		},
 		select(data) {
 			let foodItems: MenuItemType[] = data?.foodItems || []

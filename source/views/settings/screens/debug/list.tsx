@@ -87,7 +87,7 @@ export const DebugToStringItem = ({item}: {item: unknown}): JSX.Element => {
 let useKeyPath = () => {
 	let route =
 		useRoute<RouteProp<SettingsStackParamList, typeof NavigationKey>>()
-	let {keyPath} = route.params
+	let {keyPath} = route.params ?? []
 	return keyPath
 }
 
