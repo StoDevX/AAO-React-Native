@@ -10,26 +10,22 @@ jobs:
     strategy:
       matrix:
         os: [ ubuntu-22.04 ]
-        # I'm a little worried about using allowing the minor version to fluctuate across cache hits...
         node: [ ^16.0 ]
         ruby: [ 2.6 ]
     steps:
       - uses: actions/checkout@v3.3.0
-      - uses: actions/cache/restore@v3
+      - uses: actions/cache@v3
         id: cache-restore
-        with: 
+        with:
           path: node_modules/
           key: ${{ runner.os }}-npm-node@${{ matrix.node }}-${{ hashFiles('package-lock.json') }}
       - if: steps.cache-restore.outputs.cache-hit != 'true'
         uses: actions/setup-node@v3
-        with: {node-version: '${{ matrix.node }}', cache: npm}
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
       - if: steps.cache-restore.outputs.cache-hit != 'true'
         run: npm ci
-      - if: steps.cache-restore.outputs.cache-hit != 'true'
-        uses: actions/cache/save@v3
-        with: 
-          path: node_modules/
-          key: ${{ runner.os }}-npm-node@${{ matrix.node }}-${{ hashFiles('package-lock.json') }}
 
   cache-npm-macos:
     name: ${{ matrix.os }} cache npm
@@ -37,26 +33,22 @@ jobs:
     strategy:
       matrix:
         os: [ macos-11 ]
-        # I'm a little worried about using allowing the minor version to fluctuate across cache hits...
         node: [ ^16.0 ]
         ruby: [ 2.6 ]
     steps:
       - uses: actions/checkout@v3.3.0
-      - uses: actions/cache/restore@v3
+      - uses: actions/cache@v3
         id: cache-restore
         with:
           path: node_modules/
           key: ${{ runner.os }}-npm-node@${{ matrix.node }}-${{ hashFiles('package-lock.json') }}
       - if: steps.cache-restore.outputs.cache-hit != 'true'
         uses: actions/setup-node@v3
-        with: {node-version: '${{ matrix.node }}', cache: npm}
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
       - if: steps.cache-restore.outputs.cache-hit != 'true'
         run: npm ci
-      - if: steps.cache-restore.outputs.cache-hit != 'true'
-        uses: actions/cache/save@v3
-        with:
-          path: node_modules/
-          key: ${{ runner.os }}-npm-node@${{ matrix.node }}-${{ hashFiles('package-lock.json') }}
 
   cache-bundler-macos:
     name: ${{ matrix.os }} cache bundler
@@ -64,7 +56,6 @@ jobs:
     strategy:
       matrix:
         os: [ macos-11 ]
-        # I'm a little worried about using allowing the minor version to fluctuate across cache hits...
         node: [ ^16.0 ]
         ruby: [ 2.6 ]
     steps:
@@ -76,7 +67,9 @@ jobs:
           key: ${{ runner.os }}-ruby-bundler@${{ matrix.node }}-${{ hashFiles('package-lock.json') }}
       - if: steps.cache-restore.outputs.cache-hit != 'true'
         uses: ruby/setup-ruby@v1
-        with: {ruby-version: '${{ matrix.ruby }}', bundler-cache: true}
+        with:
+          ruby-version: '${{ matrix.ruby }}'
+          bundler-cache: true
 
   prettier:
     name: Prettier
@@ -170,7 +163,7 @@ jobs:
       - run: npx tsc
 
   data:
-    name: Data
+    name: Validate Data
     needs: [ cache-npm-linux ]
     runs-on: ${{ matrix.os }}
     strategy:
@@ -365,6 +358,7 @@ jobs:
         ruby: [ 2.6 ]
         xcode: [ Xcode_13.1 ]
     steps:
+      - run: sudo xcode-select -s /Applications/${{ matrix.xcode }}.app
       - uses: actions/checkout@v3.3.0
       - uses: actions/setup-node@v3
         with: { node-version: '${{ matrix.node }}' }
@@ -372,30 +366,36 @@ jobs:
         with:
           ruby-version: '2.6'
           bundler-cache: true
-      - uses: actions/cache/restore@v3
+      - name: restore cache of node_modules
+        uses: actions/cache/restore@v3
         id: cache-restore
         with:
           path: node_modules/
           key: ${{ runner.os }}-npm-node@${{ matrix.node }}-${{ hashFiles('package-lock.json') }}
-      - uses: actions/cache@v3
+      - name: exit if the node_modules cache did not load
+        if: steps.pods-cache.outputs.cache-hit != 'true'
+        run: exit 1
+      - name: restore cache of installed CocoaPods
+        uses: actions/cache@v3
         id: pods-cache
         with:
           path: ios/Pods
           key: ${{ runner.os }}-cocoapods-ruby@${{ matrix.ruby }}-xcode@${{ matrix.xcode }}-${{ hashFiles('**/Podfile.lock') }}-${{ hashFiles('package-lock.json') }}
-      - run: sudo xcode-select -s /Applications/${{ matrix.xcode }}.app
-      - if: steps.pods-cache.outputs.cache-hit != 'true'
+      - name: exit if the CocoaPods cache did not load
+        if: steps.pods-cache.outputs.cache-hit != 'true'
         run: exit 1
       - uses: mikehardy/buildcache-action@v2
         continue-on-error: true
       - run: npx detox build e2e --configuration ios.sim.release
-      - uses: actions/cache/save@v3
+      - name: cache the generated iOS app
+        uses: actions/cache/save@v3
         with:
           path: ios/build/Build/Products/
           key: ${{ runner.os }}-ios-xcode@${{ matrix.xcode }}-${{ hashFiles('**/Podfile.lock') }}-${{ hashFiles('**/Podfile.lock') }}-${{ hashFiles('package-lock.json') }}
 
   ios-detox:
     name: Detox E2E for iOS
-    needs: [ios-build]
+    needs: [cache-npm-macos, ios-build]
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -404,23 +404,18 @@ jobs:
         ruby: [ 2.6 ]
         xcode: [ Xcode_13.1 ]
     steps:
+      - run: sudo xcode-select -s /Applications/${{ matrix.xcode }}.app
       - uses: actions/checkout@v3.3.0
       - uses: actions/setup-node@v3
-        with: { node-version: '${{ matrix.node }}' }
-      - uses: actions/cache/restore@v3
-        id: npm-cache-restore
         with:
-          path: node_modules/
-          key: ${{ runner.os }}-npm-node@${{ matrix.node }}-${{ hashFiles('package-lock.json') }}
-      - if: steps.npm-cache-restore.outputs.cache-hit != 'true'
-        run: exit 1
-      - run: sudo xcode-select -s /Applications/${{ matrix.xcode }}.app
+          node-version: ${{ matrix.node }}
+      - run: npm install "detox@$(jq -r .optionalDependencies.detox package.json)"
       - uses: actions/cache/restore@v3
-        id: binary-cache-restore
+        id: ios-app-cache
         with:
           path: ios/build/Build/Products/
           key: ${{ runner.os }}-ios-xcode@${{ matrix.xcode }}-${{ hashFiles('**/Podfile.lock') }}-${{ hashFiles('**/Podfile.lock') }}-${{ hashFiles('package-lock.json') }}
-      - if: steps.binary-cache-restore.outputs.cache-hit != 'true'
+      - if: steps.ios-app-cache.outputs.cache-hit != 'true'
         run: exit 1
       - run: brew tap wix/brew
       - run: brew install applesimutils
