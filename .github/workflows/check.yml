@@ -318,7 +318,7 @@ jobs:
             ./ios/AllAboutOlaf/main.jsbundle
             ./ios/AllAboutOlaf/main.jsbundle.map
             ./ios/AllAboutOlaf/assets
-          key: ${{ runner.os }}-npm-node@${{ env.node_version }}-pkg@${{ hashFiles('package-lock.json' }}-files@${{ hashFiles('data/**', 'images/**', 'modules/**.ts', 'modules/**.tsx', 'source/**.ts', 'source/**.tsx') }}
+          key: ${{ runner.os }}-npm-node@${{ env.node_version }}-pkg@${{ hashFiles('package-lock.json') }}-files@${{ hashFiles('data/**', 'images/**', 'modules/**.ts', 'modules/**.tsx', 'source/**.ts', 'source/**.tsx') }}
 
       - name: Generate jsbundle
         if: steps.jsbundle.outputs.cache-hit != 'true'
@@ -508,7 +508,7 @@ jobs:
             ./ios/AllAboutOlaf/main.jsbundle
             ./ios/AllAboutOlaf/main.jsbundle.map
             ./ios/AllAboutOlaf/assets
-          key: ${{ runner.os }}-npm-node@${{ env.node_version }}-pkg@${{ hashFiles('package-lock.json' }}-files@${{ hashFiles('data/**', 'images/**', 'modules/**.ts', 'modules/**.tsx', 'source/**.ts', 'source/**.tsx') }}
+          key: ${{ runner.os }}-npm-node@${{ env.node_version }}-pkg@${{ hashFiles('package-lock.json') }}-files@${{ hashFiles('data/**', 'images/**', 'modules/**.ts', 'modules/**.tsx', 'source/**.ts', 'source/**.tsx') }}
 
       - if: steps.jsbundle.outputs.cache-hit != 'true'
         run: exit 1
