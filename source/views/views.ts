@@ -1,5 +1,4 @@
 import * as c from '@frogpond/colors'
-import type {Gradient} from '@frogpond/colors'
 import {RootViewsParamList} from '../navigation/types'
 
 import {NavigationKey as menus} from './menus'
@@ -23,7 +22,6 @@ type CommonView = {
 	icon: string
 	foreground: 'light' | 'dark'
 	tint: string
-	gradient?: Gradient
 }
 
 type NativeView = {
@@ -45,8 +43,7 @@ export const allViews: Array<ViewType> = [
 		title: 'Menus',
 		icon: 'bowl',
 		foreground: 'light',
-		tint: c.emerald,
-		gradient: c.grassToLime,
+		tint: c.grassToLime[0],
 	},
 	{
 		type: 'view',
@@ -54,8 +51,7 @@ export const allViews: Array<ViewType> = [
 		title: 'SIS',
 		icon: 'fingerprint',
 		foreground: 'light',
-		tint: c.goldenrod,
-		gradient: c.yellowToGoldDark,
+		tint: c.yellowToGoldDark[0],
 	},
 	{
 		type: 'view',
@@ -63,8 +59,7 @@ export const allViews: Array<ViewType> = [
 		title: 'Building Hours',
 		icon: 'clock',
 		foreground: 'light',
-		tint: c.wave,
-		gradient: c.lightBlueToBlueDark,
+		tint: c.lightBlueToBlueDark[0],
 	},
 	{
 		type: 'view',
@@ -72,8 +67,7 @@ export const allViews: Array<ViewType> = [
 		title: 'Calendar',
 		icon: 'calendar',
 		foreground: 'light',
-		tint: c.coolPurple,
-		gradient: c.magentaToPurple,
+		tint: c.magentaToPurple[0],
 	},
 	{
 		type: 'view',
@@ -81,8 +75,7 @@ export const allViews: Array<ViewType> = [
 		title: 'Directory',
 		icon: 'v-card',
 		foreground: 'light',
-		tint: c.indianRed,
-		gradient: c.redToPurple,
+		tint: c.redToPurple[0],
 	},
 	{
 		type: 'view',
@@ -90,8 +83,7 @@ export const allViews: Array<ViewType> = [
 		title: 'Streaming Media',
 		icon: 'video',
 		foreground: 'light',
-		tint: c.denim,
-		gradient: c.lightBlueToBlueLight,
+		tint: c.lightBlueToBlueLight[0],
 	},
 	{
 		type: 'view',
@@ -99,8 +91,7 @@ export const allViews: Array<ViewType> = [
 		title: 'News',
 		icon: 'news',
 		foreground: 'light',
-		tint: c.eggplant,
-		gradient: c.purpleToIndigo,
+		tint: c.purpleToIndigo[0],
 	},
 	{
 		type: 'url',
@@ -108,8 +99,7 @@ export const allViews: Array<ViewType> = [
 		title: 'Campus Map',
 		icon: 'map',
 		foreground: 'light',
-		tint: c.coffee,
-		gradient: c.navyToNavy,
+		tint: c.navyToNavy[0],
 	},
 	{
 		type: 'view',
@@ -117,8 +107,7 @@ export const allViews: Array<ViewType> = [
 		title: 'Important Contacts',
 		icon: 'phone',
 		foreground: 'light',
-		tint: c.crimson,
-		gradient: c.orangeToRed,
+		tint: c.orangeToRed[0],
 	},
 	{
 		type: 'view',
@@ -126,8 +115,7 @@ export const allViews: Array<ViewType> = [
 		title: 'Transportation',
 		icon: 'address',
 		foreground: 'light',
-		tint: c.cardTable,
-		gradient: c.grayToDarkGray,
+		tint: c.grayToDarkGray[0],
 	},
 	{
 		type: 'view',
@@ -135,8 +123,7 @@ export const allViews: Array<ViewType> = [
 		title: 'Campus Dictionary',
 		icon: 'open-book',
 		foreground: 'light',
-		tint: c.olive,
-		gradient: c.pinkToHotpink,
+		tint: c.pinkToHotpink[0],
 	},
 	{
 		type: 'view',
@@ -144,8 +131,7 @@ export const allViews: Array<ViewType> = [
 		title: 'Student Orgs',
 		icon: 'globe',
 		foreground: 'light',
-		tint: c.wave,
-		gradient: c.darkBlueToIndigo,
+		tint: c.darkBlueToIndigo[0],
 	},
 	{
 		type: 'view',
@@ -153,8 +139,7 @@ export const allViews: Array<ViewType> = [
 		title: 'More',
 		icon: 'link',
 		foreground: 'light',
-		tint: c.lavender,
-		gradient: c.seafoamToGrass,
+		tint: c.seafoamToGrass[0],
 	},
 	{
 		type: 'view',
@@ -162,8 +147,7 @@ export const allViews: Array<ViewType> = [
 		title: 'stoPrint',
 		icon: 'print',
 		foreground: 'light',
-		tint: c.periwinkle,
-		gradient: c.tealToSeafoam,
+		tint: c.tealToSeafoam[0],
 	},
 	{
 		type: 'view',
@@ -172,7 +156,6 @@ export const allViews: Array<ViewType> = [
 		icon: 'graduation-cap',
 		foreground: 'light',
 		tint: c.lavender,
-		gradient: c.seafoamToGrass,
 	},
 	{
 		type: 'url',
@@ -180,7 +163,6 @@ export const allViews: Array<ViewType> = [
 		title: 'Oleville',
 		icon: 'browser',
 		foreground: 'dark',
-		tint: c.periwinkle,
-		gradient: c.yellowToGoldMid,
+		tint: c.yellowToGoldMid[0],
 	},
 ]

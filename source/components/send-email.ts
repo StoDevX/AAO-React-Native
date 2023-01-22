@@ -1,6 +1,5 @@
 import {Alert} from 'react-native'
 import Clipboard from '@react-native-community/clipboard'
-import querystring from 'query-string'
 import {openUrl} from '@frogpond/open-url'
 
 type Args = {
@@ -40,20 +39,23 @@ export function sendEmail(args: Args): void {
 export function formatEmailParts(args: Args): string {
 	const {to = [], cc = [], bcc = [], subject = '', body = ''} = args
 
-	let paramsToSend = {
-		cc: cc.join(','),
-		bcc: bcc.join(','),
-		subject,
-		body,
+	let mailto = new URL(`mailto:${to.join(',')}`)
+
+	if (cc.length) {
+		mailto.searchParams.append('cc', cc.join(','))
 	}
 
-	// removing empty values from the key:value pairs
-	let filtered = Object.fromEntries(
-		Object.entries(paramsToSend).filter((entry) => entry[1]),
-	)
+	if (bcc.length) {
+		mailto.searchParams.append('bcc', bcc.join(','))
+	}
 
-	let encodedTo = encodeURIComponent(to.join(','))
-	let query = querystring.stringify(filtered)
+	if (subject) {
+		mailto.searchParams.append('subject', subject)
+	}
 
-	return `mailto:${encodedTo}?${query}`
+	if (body) {
+		mailto.searchParams.append('body', body)
+	}
+
+	return mailto.href
 }
