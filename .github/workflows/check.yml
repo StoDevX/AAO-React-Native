@@ -451,12 +451,12 @@ jobs:
       - # load the app before reinstalling detox, so that the package-lock cannot chsnge
         name: Load the cached iOS app
         uses: actions/cache/restore@v3
-        id: ios-app-cache
+        id: app
         with:
           path: ios/build/Build/Products/
           key: ${{ runner.os }}-ios-xcode@${{ env.xcode_version }}-pbxproj@${{ hashFiles('**/project.pbxproj') }}-podfile@${{ hashFiles('**/Podfile.lock') }}-packagelock@${{ hashFiles('package-lock.json') }}
 
-      - if: steps.ios-app-cache.outputs.cache-hit != 'true'
+      - if: steps.app.outputs.cache-hit != 'true'
         run: exit 1
 
       - uses: actions/setup-node@v3
@@ -464,14 +464,18 @@ jobs:
           node-version: ${{ env.node_version }}
           cache: npm
 
-      - # We have to install Detox explicitly because it installs things outside of node_modules/detox/…
+      - name: Restore node_modules cache
+        uses: actions/cache/restore@v3
+        id: node-cache
+        with:
+          path: node_modules/
+          key: ${{ runner.os }}-npm-node@${{ env.node_version }}-${{ hashFiles('package-lock.json') }}
+
+      - # We have to re-install Detox because it installs things outside of node_modules/detox/…
         name: Install Detox
         run: |
-          mv package.json{,old} 
-          mv package-lock.json{,old}
-          npm install "detox@$(jq -r .optionalDependencies.detox package.json.old)"
-          mv package.json{old,}
-          mv package-lock.json{old,}
+          npm uninstall detox
+          npm install detox
 
       - run: brew tap wix/brew
 
