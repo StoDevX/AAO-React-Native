@@ -425,7 +425,7 @@ jobs:
     runs-on: ubuntu-22.04
     strategy:
       matrix:
-        ANDROID_SDK_VERSION: ['21', '31', '33']
+        android_sdk: ['21', '31', '33']
     steps:
       - uses: actions/checkout@v3.3.0
 
@@ -448,8 +448,8 @@ jobs:
 
       - name: Download Android Emulator Image
         run: |
-          echo "y" | $ANDROID_HOME/tools/bin/sdkmanager --install "system-images;android-${{ ANDROID_SDK_VERSION }};google_apis;x86"
-          echo "no" | $ANDROID_HOME/tools/bin/avdmanager create avd --force --name emu --device "Nexus 5X" -k 'system-images;android-${{ ANDROID_SDK_VERSION }};google_apis;x86'
+          echo "y" | $ANDROID_HOME/tools/bin/sdkmanager --install "system-images;android-${{ matrix.android_sdk }};google_apis;x86"
+          echo "no" | $ANDROID_HOME/tools/bin/avdmanager create avd --force --name emu --device "Nexus 5X" -k 'system-images;android-${{ matrix.android_sdk }};google_apis;x86'
           $ANDROID_HOME/emulator/emulator -list-avds
 
       - name: Launch Android Emulator
