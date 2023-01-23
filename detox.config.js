@@ -85,6 +85,12 @@ module.exports = {
 			device: 'ios.simulator',
 			app: 'ios.sim.release',
 		},
+		'android.emu.debug': {
+			binaryPath: 'android/app/build/outputs/apk/debug/app-debug.apk',
+			build: 'cd android && ./gradlew assembleDebug assembleAndroidTest -DtestBuildType=debug && cd ..',
+			type: 'android.emulator',
+			name: 'emu',
+		},
 	},
 
 	apps: {
