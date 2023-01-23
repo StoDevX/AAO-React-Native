@@ -1,9 +1,15 @@
 import * as React from 'react'
 import * as c from '@frogpond/colors'
-import {ScrollView, StyleSheet, Text, TextInput, View} from 'react-native'
+import {
+	ScrollView,
+	ScrollViewProps,
+	StyleSheet,
+	Text,
+	TextInput,
+	View,
+} from 'react-native'
 import {Toolbar} from '@frogpond/toolbar'
 import {client} from '@frogpond/api'
-import glamorous from 'glamorous-native'
 import {material} from 'react-native-typography'
 import {useQuery} from '@tanstack/react-query'
 
@@ -21,13 +27,16 @@ const styles = StyleSheet.create({
 		paddingVertical: 4,
 		paddingHorizontal: 8,
 	},
+	output: {
+		marginVertical: 3,
+		paddingRight: 4,
+		...material.body1Object,
+	},
 })
 
-const Output = glamorous(ScrollView)({
-	marginVertical: 3,
-	paddingRight: 4,
-	...material.body1Object,
-})
+export const Output = (props: ScrollViewProps): JSX.Element => (
+	<ScrollView {...props} style={[styles.output, props.style]} />
+)
 
 export const AndroidAPITestView = (): JSX.Element => {
 	let [path, setPath] = React.useState<string>('')

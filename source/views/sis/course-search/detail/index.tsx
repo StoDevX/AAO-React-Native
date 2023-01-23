@@ -1,8 +1,14 @@
 import * as React from 'react'
 import {timezone} from '@frogpond/constants'
-import {StyleSheet, Text, Platform} from 'react-native'
+import {
+	StyleSheet,
+	Text,
+	Platform,
+	ScrollViewProps,
+	ScrollView,
+	TextProps,
+} from 'react-native'
 import type {CourseType} from '../../../../lib/course-search'
-import glamorous from 'glamorous-native'
 import {SolidBadge as Badge} from '@frogpond/badge'
 import moment from 'moment-timezone'
 import {formatDay} from '../lib/format-day'
@@ -21,23 +27,16 @@ import {RouteProp, useRoute} from '@react-navigation/native'
 import {RootStackParamList} from '../../../../navigation/types'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 
-const Container = glamorous.scrollView({
-	paddingVertical: 6,
-})
+const Container = (props: ScrollViewProps) => (
+	<ScrollView {...props} style={[styles.container, props.style]} />
+)
 
-const Header = glamorous.text({
-	fontSize: 36,
-	textAlign: 'center',
-	marginTop: 20,
-	marginHorizontal: 10,
-	color: c.black,
-})
-
-const SubHeader = glamorous.text({
-	fontSize: 21,
-	textAlign: 'center',
-	marginTop: 5,
-})
+const Header = (props: TextProps) => (
+	<Text {...props} style={[styles.header, props.style]} />
+)
+const SubHeader = (props: TextProps) => (
+	<Text {...props} style={[styles.subHeader, props.style]} />
+)
 
 const styles = StyleSheet.create({
 	chunk: {
@@ -53,6 +52,21 @@ const styles = StyleSheet.create({
 	rightDetail: {
 		color: c.iosDisabledText,
 		textAlign: 'right',
+	},
+	container: {
+		paddingVertical: 6,
+	},
+	header: {
+		fontSize: 36,
+		textAlign: 'center',
+		marginTop: 20,
+		marginHorizontal: 10,
+		color: c.black,
+	},
+	subHeader: {
+		fontSize: 21,
+		textAlign: 'center',
+		marginTop: 5,
 	},
 })
 
