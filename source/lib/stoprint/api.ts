@@ -2,6 +2,7 @@ import {mobileReleaseApi, papercutApi} from './urls'
 import {encode} from 'base-64'
 import {
 	fetchAllPrinters as mockFetchAllPrinters,
+	fetchColorPrinters as mockFetchColorPrinters,
 	fetchJobs as mockFetchJobs,
 	fetchRecentPrinters as mockFetchRecentPrinters,
 	heldJobsAvailableAtPrinterForUser as mockHeldJobsAvailableAtPrinterForUser,
@@ -107,6 +108,7 @@ export async function fetchColorPrinters(
 	options: Options,
 ): Promise<ColorPrintersResponse> {
 	if (isDemoAccount) {
+		return mockFetchColorPrinters()
 	}
 
 	let response = (await client

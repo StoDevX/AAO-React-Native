@@ -2,6 +2,7 @@
 /* stoprint and papercut api mock data */
 
 import {mockAllPrinters} from './data/all-printers'
+import {mockColorPrinters} from './data/mock-color-printers'
 import {mockHeldJobs} from './data/held-jobs'
 import {mockJobs} from './data/jobs'
 import {mockRecent} from './data/recent'
@@ -10,6 +11,7 @@ import {mockRelease} from './data/release'
 import {SharedWebCredentials} from 'react-native-keychain'
 import type {
 	AllPrintersResponse,
+	ColorPrintersResponse,
 	HeldJobsResponse,
 	PrintJobsResponse,
 	RecentPopularPrintersResponse,
@@ -32,7 +34,13 @@ export const fetchJobs = (username: string): Promise<PrintJobsResponse> =>
 
 export const fetchAllPrinters = (
 	username: string,
-): Promise<AllPrintersResponse> => Promise.resolve(mockAllPrinters)
+): Promise<AllPrintersResponse> => {
+	return Promise.resolve(mockAllPrinters)
+}
+
+export const fetchColorPrinters = (): Promise<ColorPrintersResponse> => {
+	return Promise.resolve(mockColorPrinters)
+}
 
 export const fetchRecentPrinters = (
 	username: string,
