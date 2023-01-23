@@ -5,7 +5,8 @@ import 'react-native-gesture-handler'
 // initialization
 import './init/constants'
 import './init/moment'
-import * as sentryInit from './init/sentry'
+// import * as sentryInit from './init/sentry'
+import './init/sentry'
 import './init/api'
 import './init/theme'
 import {queryClient, persister} from './init/tanstack-query'
@@ -25,7 +26,7 @@ import {LoadingView} from '@frogpond/notice'
 
 export default function App(): JSX.Element {
 	// Create a ref for the navigation container
-	const navigationRef = React.useRef()
+	// const navigationRef = React.useRef()
 
 	return (
 		<ReduxProvider store={store}>
