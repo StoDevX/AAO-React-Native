@@ -533,7 +533,7 @@ jobs:
 
       - # We have to poke Detox because it installs things outside of node_modules/detox/…
         name: Re-install Detox
-        run: detox clean-framework-cache && detox build-framework-cache
+        run: npx detox clean-framework-cache && npx detox build-framework-cache
 
       - run: brew tap wix/brew
 
