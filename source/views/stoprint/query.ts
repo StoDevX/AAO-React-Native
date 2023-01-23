@@ -1,5 +1,6 @@
 import {useQuery, UseQueryResult} from '@tanstack/react-query'
 import {useUsername} from '../../lib/login'
+import {useDemoAccount} from '../../lib/stoprint'
 import {
 	fetchAllPrinters,
 	fetchColorPrinters,
@@ -32,22 +33,26 @@ export const keys = {
 export function usePrintJobs(): UseQueryResult<PrintJobsResponse, unknown> {
 	let {data} = useUsername()
 	let username = data ? data.username : ''
+	let isDemoAccount = useDemoAccount()
 
 	return useQuery({
 		queryKey: keys.jobs(username),
 		enabled: Boolean(username),
-		queryFn: ({signal}) => fetchJobs(username, {signal}),
+		queryFn: ({signal}) => {
+			return fetchJobs(username, isDemoAccount, {signal})
+		},
 	})
 }
 
 export function useAllPrinters(): UseQueryResult<AllPrintersResponse, unknown> {
 	let {data} = useUsername()
 	let username = data ? data.username : ''
+	let isDemoAccount = useDemoAccount()
 
 	return useQuery({
 		queryKey: keys.printers(username),
 		enabled: Boolean(username),
-		queryFn: ({signal}) => fetchAllPrinters(username, {signal}),
+		queryFn: ({signal}) => fetchAllPrinters(username, isDemoAccount, {signal}),
 	})
 }
 
@@ -57,18 +62,22 @@ export function useRecentPrinters(): UseQueryResult<
 > {
 	let {data} = useUsername()
 	let username = data ? data.username : ''
+	let isDemoAccount = useDemoAccount()
 
 	return useQuery({
 		queryKey: keys.printers(username),
 		enabled: Boolean(username),
-		queryFn: ({signal}) => fetchRecentPrinters(username, {signal}),
+		queryFn: ({signal}) =>
+			fetchRecentPrinters(username, isDemoAccount, {signal}),
 	})
 }
 
 export function useColorPrinters(): UseQueryResult<string[], unknown> {
+	let isDemoAccount = useDemoAccount()
+
 	return useQuery({
 		queryKey: keys.colorPrinters,
-		queryFn: ({signal}) => fetchColorPrinters({signal}),
+		queryFn: ({signal}) => fetchColorPrinters(isDemoAccount, {signal}),
 	})
 }
 
@@ -77,6 +86,7 @@ export function useHeldJobs(
 ): UseQueryResult<HeldJobsResponse, unknown> {
 	let {data} = useUsername()
 	let username = data ? data.username : ''
+	let isDemoAccount = useDemoAccount()
 
 	let usablePrinterName = printerName || 'undefined'
 
@@ -84,6 +94,11 @@ export function useHeldJobs(
 		enabled: Boolean(username) && printerName !== undefined,
 		queryKey: keys.heldJobs({username, printerName: usablePrinterName}),
 		queryFn: ({signal}) =>
-			heldJobsAvailableAtPrinterForUser(usablePrinterName, username, {signal}),
+			heldJobsAvailableAtPrinterForUser(
+				usablePrinterName,
+				username,
+				isDemoAccount,
+				{signal},
+			),
 	})
 }

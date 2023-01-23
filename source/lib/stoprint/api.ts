@@ -8,7 +8,6 @@ import {
 	logIn as mockLogIn,
 	releasePrintJobToPrinterForUser as mockReleasePrintJobToPrinterForUser,
 } from './__mocks__/api'
-import {isStoprintMocked} from '../../lib/stoprint'
 
 import type {
 	AllPrintersResponse,
@@ -29,12 +28,13 @@ export class PapercutJobReleaseError extends Error {}
 
 export async function logIn(
 	credentials: SharedWebCredentials,
+	isDemoAccount: boolean,
 	options: Options,
 	now: number = new Date().getTime(),
 ): Promise<void> {
 	let {username, password} = credentials
 
-	if (isStoprintMocked) {
+	if (isDemoAccount) {
 		return mockLogIn(credentials, now)
 	}
 
@@ -56,9 +56,10 @@ export async function logIn(
 
 export async function fetchJobs(
 	username: string,
+	isDemoAccount: boolean,
 	options: Options,
 ): Promise<PrintJobsResponse> {
-	if (isStoprintMocked) {
+	if (isDemoAccount) {
 		return mockFetchJobs(username)
 	}
 
@@ -69,9 +70,10 @@ export async function fetchJobs(
 
 export async function fetchAllPrinters(
 	username: string,
+	isDemoAccount: boolean,
 	options: Options,
 ): Promise<AllPrintersResponse> {
-	if (isStoprintMocked) {
+	if (isDemoAccount) {
 		return mockFetchAllPrinters(username)
 	}
 
@@ -85,9 +87,10 @@ export async function fetchAllPrinters(
 
 export async function fetchRecentPrinters(
 	username: string,
+	isDemoAccount: boolean,
 	options: Options,
 ): Promise<RecentPopularPrintersResponse> {
-	if (isStoprintMocked) {
+	if (isDemoAccount) {
 		return mockFetchRecentPrinters(username)
 	}
 
@@ -99,7 +102,13 @@ export async function fetchRecentPrinters(
 		.json()) as RecentPopularPrintersResponse
 }
 
-export async function fetchColorPrinters(options: Options): Promise<string[]> {
+export async function fetchColorPrinters(
+	isDemoAccount: boolean,
+	options: Options,
+): Promise<ColorPrintersResponse> {
+	if (isDemoAccount) {
+	}
+
 	let response = (await client
 		.get('color-printers', options)
 		.json()) as ColorPrintersResponse
@@ -109,10 +118,11 @@ export async function fetchColorPrinters(options: Options): Promise<string[]> {
 export async function heldJobsAvailableAtPrinterForUser(
 	printerName: string,
 	username: string,
+	isDemoAccount: boolean,
 	options: Options,
 ): Promise<HeldJobsResponse> {
 	// https://PAPERCUT_API.stolaf.edu/rpc/api/rest/internal/mobilerelease/api/held-jobs/?username=rives&printerName=printers%5Cmfc-it
-	if (isStoprintMocked) {
+	if (isDemoAccount) {
 		return mockHeldJobsAvailableAtPrinterForUser(printerName, username)
 	}
 
@@ -146,13 +156,14 @@ type PrintJobReleaseArgs = {
 	jobId: string
 	printerName: string
 	username: string
+	isDemoAccount: boolean
 }
 
 export async function releasePrintJobToPrinterForUser(
-	{jobId, printerName, username}: PrintJobReleaseArgs,
+	{jobId, printerName, username, isDemoAccount}: PrintJobReleaseArgs,
 	options: Options,
 ): Promise<ReleaseResponse> {
-	if (isStoprintMocked) {
+	if (isDemoAccount) {
 		return mockReleasePrintJobToPrinterForUser({jobId, printerName, username})
 	}
 

@@ -9,7 +9,7 @@ import {
 	releasePrintJobToPrinterForUser,
 } from '../../lib/stoprint/api'
 import {
-	isStoprintMocked,
+	useDemoAccount,
 	showGeneralError,
 	type Printer,
 	type PrintJob,
@@ -88,6 +88,8 @@ export const PrintJobReleaseView = (): JSX.Element => {
 		navigation.navigate('PrintJobs')
 	}, [navigation])
 
+	let isDemoAccount = useDemoAccount()
+
 	const releaseJob = useMutation({
 		mutationKey: ['printing', 'release', heldJob?.id],
 		mutationFn: async () => {
@@ -102,6 +104,7 @@ export const PrintJobReleaseView = (): JSX.Element => {
 						jobId: heldJob.id,
 						printerName: printer.printerName,
 						username: username,
+						isDemoAccount: isDemoAccount,
 					},
 					{},
 				)

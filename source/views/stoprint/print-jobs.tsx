@@ -2,7 +2,7 @@ import * as React from 'react'
 import {timezone} from '@frogpond/constants'
 import {Platform, SectionList} from 'react-native'
 import type {PrintJob} from '../../lib/stoprint'
-import {STOPRINT_HELP_PAGE, isStoprintMocked} from '../../lib/stoprint'
+import {STOPRINT_HELP_PAGE, useDemoAccount} from '../../lib/stoprint'
 import {
 	Detail,
 	ListRow,
@@ -49,11 +49,13 @@ export const PrintJobsView = (): JSX.Element => {
 		}
 	}
 
+	let isDemoAccount = useDemoAccount()
+
 	if (hasCredentialsLoading) {
 		return <LoadingView text="Loading…" />
 	}
 
-	if (!hasCredentials && !isStoprintMocked) {
+	if (!hasCredentials && !isDemoAccount) {
 		return (
 			<StoPrintNoticeView
 				buttonText="Open Settings"
@@ -134,5 +136,4 @@ export const PrintJobsView = (): JSX.Element => {
 
 export const NavigationOptions: NativeStackNavigationOptions = {
 	title: 'Print Jobs',
-	headerRight: () => <DebugNoticeButton shouldShow={isStoprintMocked} />,
 }
