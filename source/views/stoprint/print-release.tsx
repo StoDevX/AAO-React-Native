@@ -17,7 +17,6 @@ import {
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 import {RouteProp, useNavigation, useRoute} from '@react-navigation/native'
 import {RootStackParamList} from '../../navigation/types'
-import {DebugNoticeButton} from '@frogpond/navigation-buttons'
 import {useHeldJobs} from './query'
 import {useMutation} from '@tanstack/react-query'
 import {useUsername} from '../../lib/login'
@@ -216,5 +215,4 @@ export const PrintJobReleaseView = (): JSX.Element => {
 
 export const NavigationOptions: NativeStackNavigationOptions = {
 	title: 'Release job',
-	headerRight: () => <DebugNoticeButton shouldShow={isStoprintMocked} />,
 }

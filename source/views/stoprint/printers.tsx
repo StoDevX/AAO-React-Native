@@ -1,7 +1,6 @@
 import * as React from 'react'
 import {SectionList, StyleSheet} from 'react-native'
 import type {Printer} from '../../lib/stoprint'
-import {isStoprintMocked} from '../../lib/stoprint'
 import {
 	Detail,
 	ListRow,
@@ -10,7 +9,6 @@ import {
 	Title,
 } from '@frogpond/lists'
 import {LoadingView} from '@frogpond/notice'
-import {DebugNoticeButton} from '@frogpond/navigation-buttons'
 import groupBy from 'lodash/groupBy'
 import {StoPrintErrorView} from './components/error'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
@@ -159,5 +157,4 @@ export const PrinterListView = (): JSX.Element => {
 
 export const NavigationOptions: NativeStackNavigationOptions = {
 	title: 'Select Printer',
-	headerRight: () => <DebugNoticeButton shouldShow={isStoprintMocked} />,
 }
