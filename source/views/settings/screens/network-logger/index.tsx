@@ -1,46 +1,35 @@
 import * as React from 'react'
-import {
-	StyleSheet,
-	Button,
-	Platform,
-	View,
-	Text,
-	TouchableOpacity,
-} from 'react-native'
+import {StyleSheet, Platform, View, Text, TouchableOpacity} from 'react-native'
+import {Button} from '@frogpond/button'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
-import {useNavigation} from '@react-navigation/native'
 import NetworkLogger, {getBackHandler} from 'react-native-network-logger'
 import {CloseScreenButton} from '@frogpond/navigation-buttons'
 import * as c from '@frogpond/colors'
 
-export const NetworkLoggerView = (props) => {
+export const NetworkLoggerView = (): JSX.Element => {
 	const goBack = () => setUnmountNetworkLogger(true)
 	const [unmountNetworkLogger, setUnmountNetworkLogger] = React.useState(false)
 	const backHandler = getBackHandler(goBack)
 
 	const remountButton = (
-		<View>
-			<Button
-				title={'Re-open the network logger'}
-				onPress={() => setUnmountNetworkLogger(false)}
-			>
-				Re-open network logger
-			</Button>
-		</View>
+		<Button
+			onPress={() => setUnmountNetworkLogger(false)}
+			title="Re-open the network logger"
+		/>
 	)
 
 	return (
 		<>
 			<View style={styles.header}>
 				<TouchableOpacity
-					style={styles.navButton}
-					onPress={backHandler}
 					hitSlop={styles.hitSlop}
+					onPress={backHandler}
+					style={styles.navButton}
 				>
-					<Text style={styles.backButtonText}>{'‹'}</Text>
+					<Text style={styles.backButtonText}>‹</Text>
 				</TouchableOpacity>
 
-				<Text style={styles.title} accessibilityRole="header">
+				<Text accessibilityRole="header" style={styles.title}>
 					react-native-network-logger
 				</Text>
 
@@ -60,10 +49,6 @@ export const NavigationOptions: NativeStackNavigationOptions = {
 }
 
 const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		paddingTop: Platform.OS === 'android' ? 25 : 0,
-	},
 	header: {
 		flexDirection: 'row',
 	},
