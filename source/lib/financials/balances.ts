@@ -4,6 +4,7 @@ import ky from 'ky'
 import {performLogin} from '../login'
 import {useQuery, UseQueryResult} from '@tanstack/react-query'
 import {SharedWebCredentials} from 'react-native-keychain'
+import {useDemoAccount} from '../stoprint'
 
 export const queryKeys = {
 	default: ['balances'] as const,
@@ -12,18 +13,34 @@ export const queryKeys = {
 export function useBalances(
 	credentials: SharedWebCredentials | false | undefined,
 ): UseQueryResult<BalancesShapeType, unknown> {
+	let isDemoAccount = useDemoAccount()
+
 	return useQuery({
 		queryKey: queryKeys.default,
 		enabled: Boolean(credentials),
 		// query will only be run once `credentials` is not `false`
-		queryFn: () => getBalances(credentials as SharedWebCredentials),
+		queryFn: () => {
+			return getBalances(credentials as SharedWebCredentials, isDemoAccount)
+		},
 	})
 }
 
 export async function getBalances(
 	credentials: SharedWebCredentials,
+	isDemoAccount: boolean,
 ): Promise<BalancesShapeType> {
 	await performLogin(credentials)
+
+	if (isDemoAccount) {
+		return {
+			flex: '$125',
+			ole: '$40',
+			print: '$35',
+			daily: '2',
+			weekly: '15',
+			plan: '14 meals/week - $205 Flex/semester',
+		}
+	}
 
 	const url = OLECARD_DATA_ENDPOINT
 	const resp = (await ky
