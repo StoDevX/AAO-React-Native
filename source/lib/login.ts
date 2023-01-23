@@ -6,6 +6,7 @@ import {
 } from 'react-native-keychain'
 import {OLECARD_AUTH_URL} from './financials/urls'
 import {identity} from 'lodash'
+import {DEMO_USER} from '../init/constants'
 
 export class NoCredentialsError extends Error {}
 export class LoginFailedError extends Error {}
@@ -24,6 +25,11 @@ export async function performLogin(credentials: {
 	const {username, password} = credentials
 	if (!username || !password) {
 		throw new NoCredentialsError()
+	}
+
+	// check for the demo account credentials
+	if (username === DEMO_USER.username && password === DEMO_USER.password) {
+		return credentials
 	}
 
 	let formData = new FormData()
