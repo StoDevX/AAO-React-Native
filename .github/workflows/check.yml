@@ -531,11 +531,9 @@ jobs:
           path: node_modules/
           key: ${{ runner.os }}-npm-node@${{ env.node_version }}-${{ hashFiles('package-lock.json') }}
 
-      - # We have to re-install Detox because it installs things outside of node_modules/detox/…
-        name: Install Detox
-        run: |
-          npm uninstall detox
-          npm install detox
+      - # We have to poke Detox because it installs things outside of node_modules/detox/…
+        name: Re-install Detox
+        run: detox clean-framework-cache && detox build-framework-cache
 
       - run: brew tap wix/brew
 
