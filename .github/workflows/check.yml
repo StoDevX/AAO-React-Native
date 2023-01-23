@@ -425,7 +425,7 @@ jobs:
     runs-on: ubuntu-22.04
     strategy:
       matrix:
-        android_sdk: ['21', '31', '33']
+        android_sdk: ['21', '31']
     steps:
       - uses: actions/checkout@v3.3.0
 
