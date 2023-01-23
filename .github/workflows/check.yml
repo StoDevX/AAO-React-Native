@@ -366,7 +366,7 @@ jobs:
 
   android-build:
     name: Build for Android
-    needs: [jest, eslint, android-bundle, cache-npm-linux, cache-gradle]
+    needs: [jest, eslint, cache-npm-linux, cache-gradle]  # eventually android-bundle
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v3.3.0
@@ -421,7 +421,7 @@ jobs:
 
   android-detox:
     name: Detox E2E for Android
-    needs: [cache-npm-linux, android-build, android-bundle]
+    needs: [cache-npm-linux]  # eventually android-build, android-bundle
     runs-on: ubuntu-22.04
     strategy:
       matrix:
