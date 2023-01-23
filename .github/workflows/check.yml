@@ -364,7 +364,7 @@ jobs:
           npm run bundle-data
           npm run bundle:android
 
-  android:
+  android-build:
     name: Build for Android
     needs: [jest, eslint, android-bundle, cache-npm-linux, cache-gradle]
     runs-on: ubuntu-22.04
