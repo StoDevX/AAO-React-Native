@@ -315,9 +315,9 @@ jobs:
         id: jsbundle
         with:
           path: |
-            ./ios/AllAboutOlaf/main.jsbundle
-            ./ios/AllAboutOlaf/main.jsbundle.map
-            ./ios/AllAboutOlaf/assets
+            ios/AllAboutOlaf/main.jsbundle
+            ios/AllAboutOlaf/main.jsbundle.map
+            ios/AllAboutOlaf/assets/
           key: ${{ runner.os }}-npm-node@${{ env.node_version }}-pkg@${{ hashFiles('package-lock.json') }}-files@${{ hashFiles('tsconfig.json', 'babel.config.js', 'index.js', 'data/**', 'images/**', 'modules/**.ts', 'modules/**.tsx', 'source/**.ts', 'source/**.tsx') }}
 
       - name: Generate jsbundle
@@ -504,9 +504,9 @@ jobs:
         id: jsbundle
         with:
           path: |
-            ./ios/AllAboutOlaf/main.jsbundle
-            ./ios/AllAboutOlaf/main.jsbundle.map
-            ./ios/AllAboutOlaf/assets
+            ios/AllAboutOlaf/main.jsbundle
+            ios/AllAboutOlaf/main.jsbundle.map
+            ios/AllAboutOlaf/assets/
           key: ${{ runner.os }}-npm-node@${{ env.node_version }}-pkg@${{ hashFiles('package-lock.json') }}-files@${{ hashFiles('tsconfig.json', 'babel.config.js', 'index.js', 'data/**', 'images/**', 'modules/**.ts', 'modules/**.tsx', 'source/**.ts', 'source/**.tsx') }}
 
       - if: steps.jsbundle.outputs.cache-hit != 'true'
@@ -514,11 +514,10 @@ jobs:
 
       - name: Move cached jsbundle into place
         run: |
-          mkdir -p ios/build/Build/Products/Release-iphonesimulator/AllAboutOlaf
-          mv ./ios/AllAboutOlaf/main.jsbundle ios/build/Build/Products/Release-iphonesimulator/AllAboutOlaf/
-          mv ./ios/AllAboutOlaf/main.jsbundle.map ios/build/Build/Products/Release-iphonesimulator/AllAboutOlaf/
-          rm -rf ios/build/Build/Products/Release-iphonesimulator/AllAboutOlaf/assets
-          mv ./ios/AllAboutOlaf/assets ios/build/Build/Products/Release-iphonesimulator/AllAboutOlaf/
+          mv ios/AllAboutOlaf/main.jsbundle ios/build/Build/Products/Release-iphonesimulator/AllAboutOlaf.app/
+          mv ios/AllAboutOlaf/main.jsbundle.map ios/build/Build/Products/Release-iphonesimulator/AllAboutOlaf.app/
+          rm -rf ios/build/Build/Products/Release-iphonesimulator/AllAboutOlaf.app/assets
+          mv ios/AllAboutOlaf/assets ios/build/Build/Products/Release-iphonesimulator/AllAboutOlaf.app/
 
       - uses: actions/setup-node@v3
         with:
