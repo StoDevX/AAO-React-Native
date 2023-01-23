@@ -570,7 +570,6 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: ${{ env.node_version }}
-          cache: npm
 
       - name: Restore node_modules cache
         uses: actions/cache/restore@v3
