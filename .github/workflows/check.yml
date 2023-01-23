@@ -421,7 +421,7 @@ jobs:
 
   ios-build:
     name: Build for iOS
-    needs: [jest, eslint, ios-bundle, cache-npm-macos, cache-bundler-macos, cache-cocoapods]
+    needs: [jest, eslint, cache-npm-macos, cache-bundler-macos, cache-cocoapods]
     runs-on: macos-11
     steps:
       - run: sudo xcode-select -s /Applications/${{ env.xcode_version }}.app
