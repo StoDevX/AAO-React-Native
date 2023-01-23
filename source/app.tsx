@@ -42,10 +42,13 @@ export default function App(): JSX.Element {
 							<ActionSheetProvider>
 								<NavigationContainer
 									onReady={() => {
+										// TODO(2023-01-22): Sentry and Detox, combined, cause hangs when running
+										// e2e tests. We need to disable Sentry for now.
+										//
 										// Register the navigation container with the instrumentation
-										sentryInit.routingInstrumentation.registerNavigationContainer(
-											navigationRef,
-										)
+										// sentryInit.routingInstrumentation.registerNavigationContainer(
+										// 	navigationRef,
+										// )
 									}}
 								>
 									<RootStack />
