@@ -2,8 +2,7 @@ import * as React from 'react'
 import * as c from '@frogpond/colors'
 import {Markdown, MarkdownProps} from '@frogpond/markdown'
 import {data as credits} from '../../../../docs/credits.json'
-import glamorous from 'glamorous-native'
-import {Platform, StyleSheet, Text, TextProps} from 'react-native'
+import {Platform, ScrollView, StyleSheet, TextProps, Text} from 'react-native'
 import {iOSUIKit, material} from 'react-native-typography'
 import {AppLogo} from '../components/logo'
 
@@ -61,7 +60,7 @@ const Title = (props: TextProps) => (
 	<Text {...props} style={[styles.title, props.style]} />
 )
 
-const Heading = (props: TextProps) => (
+const Heading = (props: Parameters<typeof Title>[0]) => (
 	<Title {...props} style={[styles.heading, props.style]} />
 )
 
@@ -70,14 +69,14 @@ const About = (props: TextProps) => (
 )
 
 const Contributors = (props: TextProps) => (
-	<About {...props} style={[styles.contributors, props.style]} />
+	<Text {...props} style={[styles.contributors, props.style]} />
 )
 
 const formatPeopleList = (arr: Array<string>) =>
 	arr.map((w) => w.replace(' ', ' ')).join(' • ')
 
 export let CreditsView = (): JSX.Element => (
-	<glamorous.ScrollView
+	<ScrollView
 		contentContainerStyle={styles.contentContainer}
 		contentInsetAdjustmentBehavior="automatic"
 		style={styles.container}
@@ -94,5 +93,5 @@ export let CreditsView = (): JSX.Element => (
 
 		<Heading>Acknowledgements</Heading>
 		<Contributors>{formatPeopleList(credits.acknowledgements)}</Contributors>
-	</glamorous.ScrollView>
+	</ScrollView>
 )

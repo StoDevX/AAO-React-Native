@@ -1,17 +1,26 @@
-import * as React from 'react'
+import React from 'react'
+import {ScrollView, View, StyleSheet} from 'react-native'
 import * as c from '@frogpond/colors'
-import glamorous from 'glamorous-native'
 import {Markdown} from '@frogpond/markdown'
 import {text} from '../../../../docs/privacy.json'
 
+const styles = StyleSheet.create({
+	scrollView: {
+		backgroundColor: c.white,
+		paddingHorizontal: 15,
+	},
+	view: {
+		paddingVertical: 15,
+	},
+})
+
 export let PrivacyView = (): JSX.Element => (
-	<glamorous.ScrollView
-		backgroundColor={c.white}
+	<ScrollView
 		contentInsetAdjustmentBehavior="automatic"
-		paddingHorizontal={15}
+		style={styles.scrollView}
 	>
-		<glamorous.View paddingVertical={15}>
+		<View style={styles.view}>
 			<Markdown source={text} />
-		</glamorous.View>
-	</glamorous.ScrollView>
+		</View>
+	</ScrollView>
 )

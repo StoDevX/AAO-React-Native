@@ -1,6 +1,13 @@
 import * as React from 'react'
 import * as c from '@frogpond/colors'
-import {ScrollView, StyleSheet, Text, TextInput, View} from 'react-native'
+import {
+	ScrollView,
+	ScrollViewProps,
+	StyleSheet,
+	Text,
+	TextInput,
+	View,
+} from 'react-native'
 import {Toolbar} from '@frogpond/toolbar'
 import {client} from '@frogpond/api'
 import {material} from 'react-native-typography'
@@ -27,6 +34,10 @@ const styles = StyleSheet.create({
 	},
 })
 
+export const Output = (props: ScrollViewProps): JSX.Element => (
+	<ScrollView {...props} style={[styles.output, props.style]} />
+)
+
 export const AndroidAPITestView = (): JSX.Element => {
 	let [path, setPath] = React.useState<string>('')
 
@@ -51,9 +62,9 @@ export const AndroidAPITestView = (): JSX.Element => {
 				/>
 			</Toolbar>
 
-			<ScrollView style={styles.output}>
-				<Text>{Boolean(error) === true ? String(error) : data ?? ''}</Text>
-			</ScrollView>
+			<Output>
+				<Text>{error ? error : data}</Text>
+			</Output>
 		</View>
 	)
 }
