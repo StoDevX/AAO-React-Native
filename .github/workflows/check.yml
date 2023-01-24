@@ -62,9 +62,7 @@ jobs:
         run: npm run test -- --coverage
 
       - name: Upload coverage
-        env:
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
-        run: bash <(curl -s https://codecov.io/bash)
+        uses: codecov/codecov-action@v3
 
   tsc:
     name: TypeScript
