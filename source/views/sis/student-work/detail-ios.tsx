@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {Text, ScrollView, StyleSheet} from 'react-native'
+import {Text, ScrollView, StyleSheet, TextProps} from 'react-native'
 import {sendEmail} from '../../../components/send-email'
 import {callPhone} from '../../../components/call-phone'
 import {Cell, Section, TableView} from '@frogpond/tableview'
@@ -8,7 +8,6 @@ import {openUrl} from '@frogpond/open-url'
 import moment from 'moment'
 import * as c from '@frogpond/colors'
 import type {JobType} from './types'
-import glamorous from 'glamorous-native'
 import {ShareButton} from '@frogpond/navigation-buttons'
 import {shareJob} from './lib'
 import {decode} from '@frogpond/html-lib'
@@ -25,14 +24,17 @@ const styles = StyleSheet.create({
 		color: c.iosDisabledText,
 		textAlign: 'center',
 	},
+	title: {
+		fontSize: 36,
+		textAlign: 'center',
+		marginHorizontal: 18,
+		marginVertical: 10,
+	},
 })
 
-const Title = glamorous.text({
-	fontSize: 36,
-	textAlign: 'center',
-	marginHorizontal: 18,
-	marginVertical: 10,
-})
+const Title = (props: TextProps) => (
+	<Text {...props} style={[styles.title, props.style]} />
+)
 
 function ContactInformation({job}: {job: JobType}) {
 	let office = job.office ? (

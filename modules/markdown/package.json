@@ -10,7 +10,6 @@
   },
   "peerDependencies": {
     "@expo/react-native-action-sheet": "^4.0.0",
-    "glamorous-native": "^2.0.0",
     "react": "^17.0.0",
     "react-native": "^0.68.0"
   },

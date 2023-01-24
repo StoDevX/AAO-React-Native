@@ -16,6 +16,7 @@ export const DeveloperSection = (): React.ReactElement => {
 	const onColorsButton = () => navigation.navigate(ColorsInfoNavigationKey)
 	const onBonAppButton = () => navigation.navigate('BonAppPicker')
 	const onDebugButton = () => navigation.navigate(DebugKey, {keyPath: ['Root']})
+	const onNetworkLoggerButton = () => navigation.navigate('NetworkLogger')
 	const sendSentryMessage = () => {
 		Sentry.captureMessage('A Sentry Message', {level: 'info'})
 		showSentryAlert()
@@ -45,6 +46,10 @@ export const DeveloperSection = (): React.ReactElement => {
 				<PushButtonCell onPress={onAPIButton} title="API Tester" />
 				<PushButtonCell onPress={onBonAppButton} title="Bon Appetit Picker" />
 				<PushButtonCell onPress={onDebugButton} title="Debug" />
+				<PushButtonCell
+					onPress={onNetworkLoggerButton}
+					title="Network Logger"
+				/>
 				<PushButtonCell
 					onPress={sendSentryMessage}
 					showLinkStyle={true}

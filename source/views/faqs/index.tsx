@@ -1,7 +1,6 @@
 import * as React from 'react'
-import {RefreshControl, StyleSheet} from 'react-native'
+import {RefreshControl, StyleSheet, ScrollView, View} from 'react-native'
 import * as c from '@frogpond/colors'
-import glamorous from 'glamorous-native'
 import {Markdown} from '@frogpond/markdown'
 import {LoadingView, NoticeView} from '@frogpond/notice'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
@@ -10,6 +9,12 @@ import {useFaqs} from './query'
 const styles = StyleSheet.create({
 	container: {
 		paddingHorizontal: 15,
+	},
+	scrollView: {
+		backgroundColor: c.white,
+	},
+	view: {
+		paddingVertical: 15,
 	},
 })
 
@@ -38,18 +43,18 @@ function FaqView(): JSX.Element {
 	}
 
 	return (
-		<glamorous.ScrollView
-			backgroundColor={c.white}
+		<ScrollView
 			contentContainerStyle={styles.container}
 			contentInsetAdjustmentBehavior="automatic"
 			refreshControl={
 				<RefreshControl onRefresh={refetch} refreshing={isRefetching} />
 			}
+			style={styles.scrollView}
 		>
-			<glamorous.View paddingVertical={15}>
+			<View style={styles.view}>
 				<Markdown source={data.text} />
-			</glamorous.View>
-		</glamorous.ScrollView>
+			</View>
+		</ScrollView>
 	)
 }
 

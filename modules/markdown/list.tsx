@@ -1,26 +1,39 @@
 import * as React from 'react'
-import glamorous from 'glamorous-native'
 import {BaseText, Paragraph} from './formatting'
-import {StyleProp, TextStyle} from 'react-native'
+import {ViewProps, StyleProp, View, StyleSheet, ViewStyle} from 'react-native'
 
-// the list itself
-export const List = glamorous.view({})
-
-// the list item's text
-export const ListText = glamorous(Paragraph)({
-	flex: 1,
+const styles = StyleSheet.create({
+	list: {},
+	listText: {
+		flex: 1,
+	},
+	listItem: {
+		alignItems: 'center',
+		flexDirection: 'row',
+	},
 })
 
-// the list item's container box thing
-type Props = React.PropsWithChildren<{style: StyleProp<TextStyle>}>
+// the list itself
+export const List = (props: ViewProps): JSX.Element => (
+	<View {...props} style={[styles.list, props.style]} />
+)
 
-export class ListItem extends React.PureComponent<Props> {
-	render(): JSX.Element {
-		return (
-			<glamorous.View alignItems="center" flexDirection="row">
-				<BaseText>• </BaseText>
-				<ListText {...this.props} />
-			</glamorous.View>
-		)
-	}
-}
+// the list item's text
+export const ListText = (
+	props: Parameters<typeof Paragraph>[0],
+): JSX.Element => (
+	<Paragraph {...props} style={[styles.listText, props.style]} />
+)
+
+// the list item's container box thing
+export const ListItem = ({
+	style,
+	...props
+}: Parameters<typeof ListText>[0] & {
+	style: StyleProp<ViewStyle>
+}): JSX.Element => (
+	<View style={[styles.listItem, style]}>
+		<BaseText>• </BaseText>
+		<ListText {...props} />
+	</View>
+)

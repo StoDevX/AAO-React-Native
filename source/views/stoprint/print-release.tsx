@@ -1,6 +1,5 @@
 import * as React from 'react'
-import {Alert, StyleSheet, ScrollView} from 'react-native'
-import glamorous from 'glamorous-native'
+import {Alert, StyleSheet, ScrollView, Text, TextProps} from 'react-native'
 import {TableView, Section, Cell} from '@frogpond/tableview'
 import {ButtonCell} from '@frogpond/tableview/cells'
 import * as c from '@frogpond/colors'
@@ -30,15 +29,18 @@ const styles = StyleSheet.create({
 	buttonCell: {
 		textAlign: 'center',
 	},
+	header: {
+		fontSize: 30,
+		textAlign: 'center',
+		marginTop: 20,
+		marginHorizontal: 10,
+		color: c.black,
+	},
 })
 
-const Header = glamorous.text({
-	fontSize: 30,
-	textAlign: 'center',
-	marginTop: 20,
-	marginHorizontal: 10,
-	color: c.black,
-})
+const Header = (props: TextProps) => (
+	<Text {...props} style={[styles.header, props.style]} />
+)
 
 function LeftDetailCell({detail, title}: {detail: string; title: string}) {
 	return <Cell cellStyle="LeftDetail" detail={detail} title={title} />
