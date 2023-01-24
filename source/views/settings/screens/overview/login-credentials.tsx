@@ -62,6 +62,8 @@ export const CredentialsLoginSection = (): JSX.Element => {
 		mutationFn: () => resetInternetCredentials(SIS_LOGIN_KEY),
 		onSuccess: () => {
 			queryClient.invalidateQueries({queryKey: keys.default})
+			setUsername('')
+			setPassword('')
 		},
 	})
 
