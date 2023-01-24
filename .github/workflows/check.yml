@@ -7,6 +7,11 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+env:
+  node_version: '^16.0'
+  ruby_version: '2.6'
+  xcode_version: 'Xcode_13.1'
+
 jobs:
   format:
     name: Prettier
@@ -15,7 +20,7 @@ jobs:
       - uses: actions/checkout@v3.3.0
       - uses: actions/setup-node@v3
         with:
-          node-version: ^16.0
+          node-version: ${{ env.node_version }}
           cache: npm
       - run: npm ci
       - run: npm run pretty -- --no-write --list-different
@@ -27,7 +32,7 @@ jobs:
       - uses: actions/checkout@v3.3.0
       - uses: actions/setup-node@v3
         with:
-          node-version: ^16.0
+          node-version: ${{ env.node_version }}
           cache: npm
       - run: npm ci
       - run: npm run lint
@@ -39,7 +44,7 @@ jobs:
       - uses: actions/checkout@v3.3.0
       - uses: actions/setup-node@v3
         with:
-          node-version: ^16.0
+          node-version: ${{ env.node_version }}
           cache: npm
       - run: npm ci
       - run: npm run bundle-data
@@ -57,7 +62,7 @@ jobs:
       - uses: actions/checkout@v3.3.0
       - uses: actions/setup-node@v3
         with:
-          node-version: ^16.0
+          node-version: ${{ env.node_version }}
           cache: npm
       - run: npm ci
       - run: npm run bundle-data
@@ -70,7 +75,7 @@ jobs:
       - uses: actions/checkout@v3.3.0
       - uses: actions/setup-node@v3
         with:
-          node-version: ^16.0
+          node-version: ${{ env.node_version }}
           cache: npm
       - run: npm ci
       - run: npm run validate-data
@@ -83,11 +88,11 @@ jobs:
       - uses: actions/checkout@v3.3.0
       - uses: actions/setup-node@v3
         with:
-          node-version: '^16.0'
+          node-version: ${{ env.node_version }}
           cache: npm
       - uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '2.6'
+          ruby-version: ${{ env.ruby_version }}
           bundler-cache: true
       - name: Restore Pods cache
         uses: actions/cache@v3
@@ -96,7 +101,7 @@ jobs:
           key: ${{ runner.os }}-pods-${{ hashFiles('**/Podfile.lock') }}
           restore-keys: |
             ${{ runner.os }}-pods-
-      - run: sudo xcode-select -s /Applications/Xcode_13.1.app
+      - run: sudo xcode-select -s /Applications/${{ env.xcode_version }}.app
       - run: npm ci
         env: {SKIP_POSTINSTALL: '1'}
       - run: bundle exec pod install --deployment
@@ -109,7 +114,7 @@ jobs:
       - uses: actions/checkout@v3.3.0
       - uses: actions/setup-node@v3
         with:
-          node-version: ^16.0
+          node-version: ${{ env.node_version }}
           cache: npm
       - run: npm ci
       - run: npm run bundle-data
@@ -122,7 +127,7 @@ jobs:
       - uses: actions/checkout@v3.3.0
       - uses: actions/setup-node@v3
         with:
-          node-version: ^16.0
+          node-version: ${{ env.node_version }}
           cache: npm
       - run: npm ci
       - run: npm run bundle-data
@@ -137,11 +142,11 @@ jobs:
       - uses: actions/checkout@v3.3.0
       - uses: actions/setup-node@v3
         with:
-          node-version: ^16.0
+          node-version: ${{ env.node_version }}
           cache: npm
       - uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '2.6'
+          ruby-version: ${{ env.ruby_version }}
           bundler-cache: true
       - name: Restore Gradle cache
         uses: actions/cache@v3
@@ -181,11 +186,11 @@ jobs:
       - uses: actions/checkout@v3.3.0
       - uses: actions/setup-node@v3
         with:
-          node-version: ^16.0
+          node-version: ${{ env.node_version }}
           cache: npm
       - uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '2.6'
+          ruby-version: ${{ env.ruby_version }}
           bundler-cache: true
       - name: Restore Pods cache
         uses: actions/cache@v3
@@ -197,7 +202,7 @@ jobs:
         continue-on-error: true
         with:
           cache_key: ${{ matrix.os }}
-      - run: sudo xcode-select -s /Applications/Xcode_13.1.app
+      - run: sudo xcode-select -s /Applications/${{ env.xcode_version }}.app
       - run: npm ci
         env:
           SKIP_POSTINSTALL: '1'
