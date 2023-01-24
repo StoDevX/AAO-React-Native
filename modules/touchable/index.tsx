@@ -32,12 +32,12 @@ const CustomPressable = forwardRef<View, Props>((props, ref): JSX.Element => {
 		...passthrough
 	} = props
 
-	let containerAdjustmentStyle: (
-		state: PressableStateCallbackType,
-	) => Array<StyleProp<ViewStyle>>
+	let containerAdjustmentStyle:
+		| StyleProp<ViewStyle>
+		| ((state: PressableStateCallbackType) => StyleProp<ViewStyle>)
 
 	if (Platform.OS === 'android') {
-		containerAdjustmentStyle = (_state) => [containerStyle]
+		containerAdjustmentStyle = [containerStyle]
 	} else if (Platform.OS === 'ios') {
 		if (highlight) {
 			containerAdjustmentStyle = (state) =>
@@ -57,7 +57,7 @@ const CustomPressable = forwardRef<View, Props>((props, ref): JSX.Element => {
 	return (
 		<Pressable
 			ref={ref}
-			android_ripple={{borderless: borderless}}
+			android_ripple={{borderless}}
 			style={containerAdjustmentStyle}
 			{...passthrough}
 		>

@@ -28,12 +28,13 @@ export function HomeScreenButton({
 			accessible={true}
 			highlight={false}
 			onPress={onPress}
-			style={[styles.button, {backgroundColor: view.tint}]}
+			style={[styles.button, styles.contents, {backgroundColor: view.tint}]}
+			testID={testID}
 		>
-			<View style={styles.contents} testID={testID}>
+			<>
 				<Icon name={view.icon} size={32} style={[foreground, styles.icon]} />
 				<Text style={[foreground, styles.text]}>{view.title}</Text>
-			</View>
+			</>
 		</Touchable>
 	)
 }
