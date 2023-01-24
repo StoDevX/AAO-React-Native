@@ -35,6 +35,18 @@ describe('Streaming Media View', () => {
 		await expect(element(by.id('stream-list'))).toBeVisible()
 	})
 
+	describe('Webcams', () => {
+		it('is reachable under the home screen', async () => {
+			// Navigate into Streaming Media
+			await element(by.id('homescreen-button-Streaming Media')).tap()
+
+			// Enter the ksto view
+			await expect(element(by.id('tab-Webcams'))).toBeVisible()
+			await element(by.id('tab-Webcams')).tap()
+			await expect(element(by.id('screen-streaming-webcams'))).toBeVisible()
+		})
+	})
+
 	describe('KSTO Radio View', () => {
 		it('is reachable under the home screen', async () => {
 			// Navigate into Streaming Media
