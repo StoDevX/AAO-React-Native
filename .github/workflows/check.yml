@@ -369,7 +369,7 @@ jobs:
           npm run bundle:android
 
       - name: Cache the jsbundle
-        uses: actions/cache/restore@v3
+        uses: actions/cache/save@v3
         with:
           path: |
             ./android/app/src/main/assets/index.android.bundle
