@@ -97,6 +97,58 @@ jobs:
           ruby-version: ${{ env.ruby_version }}
           bundler-cache: true
 
+  cache-cocoapods:
+    name: iOS Cocoapods
+    needs: [cache-npm-macos, cache-bundler-macos]
+    runs-on: macos-11
+    outputs:
+      cache-key: ${{ steps.cocoapods-cache.outputs.cache-primary-key }}
+    steps:
+      - run: sudo xcode-select -s /Applications/${{ env.xcode_version }}.app
+
+      - uses: actions/checkout@v3.3.0
+
+      - name: Extract job definition
+        run: yq '.jobs.${{ github.job }}' .github/workflows/check.yml > .github/job.yml
+
+      - name: Restore Cocoapods cache
+        uses: actions/cache/restore@v3
+        id: cocoapods-cache
+        with:
+          path: ios/Pods
+          key: ${{ runner.os }}-cocoapods-ruby@${{ env.ruby_version }}-xcode@${{ env.xcode_version }}-${{ hashFiles('**/Podfile.lock', 'package-lock.json', '.github/job.yml') }}
+
+      - if: steps.cocoapods-cache.outputs.cache-hit != 'true'
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.node_version }}
+
+      - if: steps.cocoapods-cache.outputs.cache-hit != 'true'
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ env.ruby_version }}
+          bundler-cache: true
+
+      - name: Restore node_modules cache
+        if: steps.cocoapods-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/restore@v3
+        id: node-cache
+        with:
+          path: node_modules/
+          key: ${{ needs.cache-npm-macos.outputs.cache-key }}
+
+      - if: steps.cocoapods-cache.outputs.cache-hit != 'true' && steps.node-cache.outputs.cache-hit != 'true'
+        run: exit 1
+
+      - if: steps.cocoapods-cache.outputs.cache-hit != 'true'
+        run: bundle exec pod install --deployment
+        working-directory: ./ios
+
+      - uses: actions/cache/save@v3
+        with:
+          path: ios/Pods
+          key: ${{ steps.cocoapods-cache.outputs.cache-primary-key }}
+
   prettier:
     name: Prettier
     needs: [cache-npm-linux]
@@ -221,45 +273,6 @@ jobs:
       - run: npm run validate-data
 
       - run: npm run bundle-data
-
-  ios-pods:
-    name: iOS Cocoapods
-    needs: [cache-npm-macos, cache-bundler-macos]
-    runs-on: macos-11
-    steps:
-      - uses: actions/checkout@v3.3.0
-
-      - uses: actions/setup-node@v3
-        with:
-          node-version: ${{ env.node_version }}
-
-      - name: Restore node_modules cache
-        uses: actions/cache/restore@v3
-        id: node-cache
-        with:
-          path: node_modules/
-          key: ${{ needs.cache-npm-macos.outputs.cache-key }}
-
-      - if: steps.node-cache.outputs.cache-hit != 'true'
-        run: exit 1
-
-      - uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: ${{ env.ruby_version }}
-          bundler-cache: true
-
-      - name: Restore Pods cache
-        uses: actions/cache@v3
-        with:
-          path: ios/Pods
-          key: ${{ runner.os }}-pods-${{ hashFiles('**/Podfile.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-pods-
-
-      - run: sudo xcode-select -s /Applications/${{ env.xcode_version }}.app
-
-      - run: bundle exec pod install --deployment
-        working-directory: ./ios
 
   ios-bundle:
     name: iOS Bundle
@@ -398,12 +411,16 @@ jobs:
           ruby-version: ${{ env.ruby_version }}
           bundler-cache: true
 
-      - name: Restore Pods cache
-        uses: actions/cache@v3
+      - name: Restore Cocoapods cache
+        uses: actions/cache/restore@v3
+        id: pods-cache
         with:
           path: ios/Pods
-          key: ${{ runner.os }}-pods-${{ hashFiles('**/Podfile.lock') }}
-          restore-keys: ${{ runner.os }}-pods-
+          key: ${{ needs.cache-cocoapods.outputs.cache-key }}
+
+      - name: exit if the Cocoapods cache did not load
+        if: steps.pods-cache.outputs.cache-hit != 'true'
+        run: exit 1
 
       - uses: mikehardy/buildcache-action@v2
         continue-on-error: true
