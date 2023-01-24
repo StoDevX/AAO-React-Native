@@ -276,10 +276,15 @@ jobs:
 
   ios-bundle:
     name: iOS Bundle
-    needs: [cache-npm-linux]
-    runs-on: ubuntu-22.04
+    needs: [cache-npm-macos]
+    runs-on: macos-11
+    outputs:
+      cache-key: ${{ steps.jsbundle-cache.outputs.cache-primary-key }}
     steps:
       - uses: actions/checkout@v3.3.0
+
+      - name: Extract job definition
+        run: yq '.jobs.${{ github.job }}' .github/workflows/check.yml > .github/job.yml
 
       - uses: actions/setup-node@v3
         with:
@@ -290,14 +295,35 @@ jobs:
         id: node-cache
         with:
           path: node_modules/
-          key: ${{ needs.cache-npm-linux.outputs.cache-key }}
+          key: ${{ needs.cache-npm-macos.outputs.cache-key }}
 
       - if: steps.node-cache.outputs.cache-hit != 'true'
         run: exit 1
 
-      - run: npm run bundle-data
+      - name: Cache the jsbundle
+        uses: actions/cache/restore@v3
+        id: jsbundle-cache
+        with:
+          path: |
+            ios/AllAboutOlaf/main.jsbundle
+            ios/AllAboutOlaf/main.jsbundle.map
+            ios/assets/
+          key: ${{ runner.os }}-jsbundle-node@${{ env.node_version }}-${{ hashFiles('package.json', 'package-lock.json', '.github/job.yml','tsconfig.json', 'babel.config.js', 'index.js', 'data/**', 'images/**', 'modules/**.ts', 'modules/**.tsx', 'source/**.ts', 'source/**.tsx') }}
 
-      - run: npm run bundle:ios
+      - name: Generate jsbundle
+        if: steps.jsbundle-cache.outputs.cache-hit != 'true'
+        run: |
+          npm run bundle-data
+          npm run bundle:ios
+
+      - uses: actions/cache/save@v3
+        if: steps.jsbundle-cache.outputs.cache-hit != 'true'
+        with:
+          path: |
+            ios/AllAboutOlaf/main.jsbundle
+            ios/AllAboutOlaf/main.jsbundle.map
+            ios/assets/
+          key: ${{ steps.jsbundle-cache.outputs.cache-primary-key }}
 
   android-bundle:
     name: Android Bundle
