@@ -13,8 +13,71 @@ env:
   xcode_version: 'Xcode_13.1'
 
 jobs:
+  cache-npm-linux:
+    name: Cache npm for Linux
+    runs-on: ubuntu-22.04
+    outputs:
+      cache-key: ${{ steps.node-cache.outputs.cache-primary-key }}
+    steps:
+      - uses: actions/checkout@v3.3.0
+
+      - name: Extract job definition
+        run: yq '.jobs.${{ github.job }}' .github/workflows/check.yml > .github/job.yml
+
+      - uses: actions/cache/restore@v3
+        id: node-cache
+        with:
+          path: node_modules/
+          key: ${{ runner.os }}-npm-node@${{ env.node_version }}-${{ hashFiles('package-lock.json', '.github/job.yml') }}
+
+      - if: steps.node-cache.outputs.cache-hit != 'true'
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.node_version }}
+          cache: npm
+
+      - if: steps.node-cache.outputs.cache-hit != 'true'
+        run: npm ci
+
+      - uses: actions/cache/save@v3
+        with:
+          path: node_modules/
+          key: ${{ steps.node-cache.outputs.cache-primary-key }}
+
+  cache-npm-macos:
+    name: Cache npm for macOS
+    runs-on: macos-11
+    outputs:
+      cache-key: ${{ steps.node-cache.outputs.cache-primary-key }}
+    steps:
+      - uses: actions/checkout@v3.3.0
+
+      - name: Extract job definition
+        run: yq '.jobs.${{ github.job }}' .github/workflows/check.yml > .github/job.yml
+
+      - uses: actions/cache/restore@v3
+        id: node-cache
+        with:
+          path: node_modules/
+          key: ${{ runner.os }}-npm-node@${{ env.node_version }}-${{ hashFiles('package-lock.json', '.github/job.yml') }}
+
+      - if: steps.node-cache.outputs.cache-hit != 'true'
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.node_version }}
+          cache: npm
+
+      - if: steps.node-cache.outputs.cache-hit != 'true'
+        run: npm ci
+
+      - uses: actions/cache/save@v3
+        with:
+          path: node_modules/
+          key: ${{ steps.node-cache.outputs.cache-primary-key }}
+
   prettier:
     name: Prettier
+    needs: [cache-npm-linux]
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v3.3.0
@@ -22,14 +85,22 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: ${{ env.node_version }}
-          cache: npm
 
-      - run: npm ci
+      - name: Restore node_modules cache
+        uses: actions/cache/restore@v3
+        id: node-cache
+        with:
+          path: node_modules/
+          key: ${{ needs.cache-npm-linux.outputs.cache-key }}
+
+      - if: steps.node-cache.outputs.cache-hit != 'true'
+        run: exit 1
 
       - run: npm run pretty -- --no-write --list-different
 
   eslint:
     name: ESLint
+    needs: [cache-npm-linux]
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v3.3.0
@@ -37,14 +108,22 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: ${{ env.node_version }}
-          cache: npm
 
-      - run: npm ci
+      - name: Restore node_modules cache
+        uses: actions/cache/restore@v3
+        id: node-cache
+        with:
+          path: node_modules/
+          key: ${{ needs.cache-npm-linux.outputs.cache-key }}
+
+      - if: steps.node-cache.outputs.cache-hit != 'true'
+        run: exit 1
 
       - run: npm run lint
 
   jest:
     name: Jest
+    needs: [cache-npm-linux]
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v3.3.0
@@ -52,9 +131,16 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: ${{ env.node_version }}
-          cache: npm
 
-      - run: npm ci
+      - name: Restore node_modules cache
+        uses: actions/cache/restore@v3
+        id: node-cache
+        with:
+          path: node_modules/
+          key: ${{ needs.cache-npm-linux.outputs.cache-key }}
+
+      - if: steps.node-cache.outputs.cache-hit != 'true'
+        run: exit 1
 
       - run: npm run bundle-data
 
@@ -66,6 +152,7 @@ jobs:
 
   tsc:
     name: TypeScript
+    needs: [cache-npm-linux]
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v3.3.0
@@ -73,9 +160,16 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: ${{ env.node_version }}
-          cache: npm
 
-      - run: npm ci
+      - name: Restore node_modules cache
+        uses: actions/cache/restore@v3
+        id: node-cache
+        with:
+          path: node_modules/
+          key: ${{ needs.cache-npm-linux.outputs.cache-key }}
+
+      - if: steps.node-cache.outputs.cache-hit != 'true'
+        run: exit 1
 
       - run: npm run bundle-data
 
@@ -83,6 +177,7 @@ jobs:
 
   data:
     name: Data
+    needs: [cache-npm-linux]
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v3.3.0
@@ -90,9 +185,16 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: ${{ env.node_version }}
-          cache: npm
 
-      - run: npm ci
+      - name: Restore node_modules cache
+        uses: actions/cache/restore@v3
+        id: node-cache
+        with:
+          path: node_modules/
+          key: ${{ needs.cache-npm-linux.outputs.cache-key }}
+
+      - if: steps.node-cache.outputs.cache-hit != 'true'
+        run: exit 1
 
       - run: npm run validate-data
 
@@ -100,6 +202,7 @@ jobs:
 
   ios-pods:
     name: iOS Cocoapods
+    needs: [cache-npm-macos]
     runs-on: macos-11
     steps:
       - uses: actions/checkout@v3.3.0
@@ -107,7 +210,16 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: ${{ env.node_version }}
-          cache: npm
+
+      - name: Restore node_modules cache
+        uses: actions/cache/restore@v3
+        id: node-cache
+        with:
+          path: node_modules/
+          key: ${{ needs.cache-npm-macos.outputs.cache-key }}
+
+      - if: steps.node-cache.outputs.cache-hit != 'true'
+        run: exit 1
 
       - uses: ruby/setup-ruby@v1
         with:
@@ -124,14 +236,12 @@ jobs:
 
       - run: sudo xcode-select -s /Applications/${{ env.xcode_version }}.app
 
-      - run: npm ci
-        env: {SKIP_POSTINSTALL: '1'}
-
       - run: bundle exec pod install --deployment
         working-directory: ./ios
 
   ios-bundle:
     name: iOS Bundle
+    needs: [cache-npm-linux]
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v3.3.0
@@ -139,9 +249,16 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: ${{ env.node_version }}
-          cache: npm
 
-      - run: npm ci
+      - name: Restore node_modules cache
+        uses: actions/cache/restore@v3
+        id: node-cache
+        with:
+          path: node_modules/
+          key: ${{ needs.cache-npm-linux.outputs.cache-key }}
+
+      - if: steps.node-cache.outputs.cache-hit != 'true'
+        run: exit 1
 
       - run: npm run bundle-data
 
@@ -149,6 +266,7 @@ jobs:
 
   android-bundle:
     name: Android Bundle
+    needs: [cache-npm-linux]
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v3.3.0
@@ -156,9 +274,16 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: ${{ env.node_version }}
-          cache: npm
 
-      - run: npm ci
+      - name: Restore node_modules cache
+        uses: actions/cache/restore@v3
+        id: node-cache
+        with:
+          path: node_modules/
+          key: ${{ needs.cache-npm-linux.outputs.cache-key }}
+
+      - if: steps.node-cache.outputs.cache-hit != 'true'
+        run: exit 1
 
       - run: npm run bundle-data
 
@@ -168,15 +293,24 @@ jobs:
 
   android:
     name: Build for Android
+    needs: [jest, eslint, android-bundle, cache-npm-linux]
     runs-on: ubuntu-22.04
-    needs: [jest, eslint, android-bundle]
     steps:
       - uses: actions/checkout@v3.3.0
 
       - uses: actions/setup-node@v3
         with:
           node-version: ${{ env.node_version }}
-          cache: npm
+
+      - name: Restore node_modules cache
+        uses: actions/cache/restore@v3
+        id: node-cache
+        with:
+          path: node_modules/
+          key: ${{ needs.cache-npm-linux.outputs.cache-key }}
+
+      - if: steps.node-cache.outputs.cache-hit != 'true'
+        run: exit 1
 
       - uses: ruby/setup-ruby@v1
         with:
@@ -192,8 +326,6 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
-
-      - run: npm ci
 
       - name: Raise the fs.inotify ulimits to 524288 watches/queued events/user instances
         run: |
@@ -220,15 +352,24 @@ jobs:
 
   ios:
     name: Build for iOS
+    needs: [jest, eslint, ios-bundle, ios-pods, cache-npm-macos]
     runs-on: macos-11
-    needs: [jest, eslint, ios-bundle, ios-pods]
     steps:
       - uses: actions/checkout@v3.3.0
 
       - uses: actions/setup-node@v3
         with:
           node-version: ${{ env.node_version }}
-          cache: npm
+
+      - name: Restore node_modules cache
+        uses: actions/cache/restore@v3
+        id: node-cache
+        with:
+          path: node_modules/
+          key: ${{ needs.cache-npm-macos.outputs.cache-key }}
+
+      - if: steps.node-cache.outputs.cache-hit != 'true'
+        run: exit 1
 
       - uses: ruby/setup-ruby@v1
         with:
@@ -248,10 +389,6 @@ jobs:
           cache_key: ${{ matrix.os }}
 
       - run: sudo xcode-select -s /Applications/${{ env.xcode_version }}.app
-
-      - run: npm ci
-        env:
-          SKIP_POSTINSTALL: '1'
 
       - run: bundle exec pod install --deployment
         working-directory: ./ios
