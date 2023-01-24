@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {FlatList, ScrollView, Text, StyleSheet} from 'react-native'
+import {FlatList, ScrollView, StyleSheet, Text} from 'react-native'
 import {DebugRow} from './row'
 import {NoticeView} from '@frogpond/notice'
 import {ListSeparator} from '@frogpond/lists'
@@ -61,7 +61,7 @@ export const DebugSimpleItem = ({item}: {item: unknown}): JSX.Element => {
 					hideSurroundingSeparators={true}
 					roundedCorners={true}
 				>
-					<Text>{item}</Text>
+					<Text>{String(item)}</Text>
 				</Section>
 			</TableView>
 		</ScrollView>
@@ -87,8 +87,7 @@ export const DebugToStringItem = ({item}: {item: unknown}): JSX.Element => {
 let useKeyPath = () => {
 	let route =
 		useRoute<RouteProp<SettingsStackParamList, typeof NavigationKey>>()
-	let {keyPath} = route.params ?? []
-	return keyPath
+	return route.params?.keyPath ?? []
 }
 
 export const DebugArrayItem = ({item}: {item: unknown[]}): JSX.Element => {
@@ -105,11 +104,11 @@ export const DebugArrayItem = ({item}: {item: unknown[]}): JSX.Element => {
 			renderItem={({item}) => (
 				<DebugRow
 					data={item}
-					onPress={() =>
+					onPress={() => {
 						navigation.navigate('DebugView', {
 							keyPath: [...keyPath, String(item.key)],
 						})
-					}
+					}}
 				/>
 			)}
 		/>
