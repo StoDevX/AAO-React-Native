@@ -1,5 +1,15 @@
-import glamorous from 'glamorous-native'
+import React from 'react'
+import {Text, StyleSheet, TextProps} from 'react-native'
 
-export const Code = glamorous.text({})
+const styles = StyleSheet.create({
+	code: {},
+	codeBlock: {},
+})
 
-export const CodeBlock = glamorous.text({})
+export const Code = (props: TextProps): JSX.Element => (
+	<Text {...props} style={[styles.code, props.style]} />
+)
+
+export const CodeBlock = (props: TextProps): JSX.Element => (
+	<Text {...props} style={[styles.codeBlock, props.style]} />
+)

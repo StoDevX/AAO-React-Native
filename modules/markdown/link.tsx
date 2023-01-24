@@ -1,18 +1,23 @@
 import * as React from 'react'
 import Clipboard from '@react-native-community/clipboard'
-import glamorous from 'glamorous-native'
 import {openUrl} from '@frogpond/open-url'
 import {useActionSheet} from '@expo/react-native-action-sheet'
 import * as c from '@frogpond/colors'
-import {TextProps} from 'react-native'
+import {TextProps, StyleSheet, Text} from 'react-native'
 
-export const LinkText = glamorous.text({
-	textDecorationLine: 'underline',
-	textDecorationStyle: 'solid',
-	color: c.infoBlue,
+const styles = StyleSheet.create({
+	linkText: {
+		textDecorationLine: 'underline',
+		textDecorationStyle: 'solid',
+		color: c.infoBlue,
+	},
 })
 
-type Props = TextProps & {
+export const LinkText = (props: TextProps): JSX.Element => (
+	<Text {...props} style={[styles.linkText, props.style]} />
+)
+
+type Props = Parameters<typeof LinkText>[0] & {
 	href: string
 	title?: string
 }

@@ -1,30 +1,35 @@
 import * as React from 'react'
-import {StyleSheet} from 'react-native'
+import {StyleSheet, TextProps, Text, View, ViewProps} from 'react-native'
 import {Markdown} from '@frogpond/markdown'
 import {ListFooter} from '@frogpond/lists'
 import {Button} from '@frogpond/button'
-import glamorous from 'glamorous-native'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 import {RouteProp, useNavigation, useRoute} from '@react-navigation/native'
 import {RootStackParamList} from '../../navigation/types'
-
-const Term = glamorous.text({
-	fontSize: 36,
-	textAlign: 'center',
-	marginHorizontal: 18,
-	marginVertical: 10,
-})
-
-const Container = glamorous.scrollView({
-	paddingHorizontal: 18,
-	paddingVertical: 6,
-})
 
 const styles = StyleSheet.create({
 	paragraph: {
 		fontSize: 16,
 	},
+	container: {
+		paddingHorizontal: 18,
+		paddingVertical: 6,
+	},
+	term: {
+		fontSize: 36,
+		textAlign: 'center',
+		marginHorizontal: 18,
+		marginVertical: 10,
+	},
 })
+
+export const Term = (props: TextProps): JSX.Element => (
+	<Text {...props} style={[styles.term, props.style]} />
+)
+
+export const Container = (props: ViewProps): JSX.Element => (
+	<View {...props} style={[styles.container, props.style]} />
+)
 
 export const NavigationKey = 'DictionaryDetail' as const
 

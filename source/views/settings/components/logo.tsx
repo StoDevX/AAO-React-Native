@@ -1,15 +1,25 @@
-import * as React from 'react'
-import {StyleProp, ImageStyle} from 'react-native'
+import React from 'react'
+import {
+	StyleProp,
+	ImageStyle,
+	Image,
+	StyleSheet,
+	ImageProps,
+} from 'react-native'
 import * as Icons from '@hawkrives/react-native-alternate-icons'
-import glamorous from 'glamorous-native'
-
 import {lookup as getAppIcon} from '../../../../images/icons/index'
 
-const LogoImage = glamorous.image({
-	width: 100,
-	height: 100,
-	alignSelf: 'center',
+const styles = StyleSheet.create({
+	logoImage: {
+		width: 100,
+		height: 100,
+		alignSelf: 'center',
+	},
 })
+
+export const LogoImage = (props: ImageProps): JSX.Element => (
+	<Image {...props} style={[styles.logoImage, props.style]} />
+)
 
 type Props = {
 	style?: StyleProp<ImageStyle>
