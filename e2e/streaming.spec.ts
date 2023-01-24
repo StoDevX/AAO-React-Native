@@ -1,4 +1,4 @@
-import {beforeAll, beforeEach, test} from '@jest/globals'
+import {beforeAll, beforeEach, describe, it} from '@jest/globals'
 import {by, device, element, expect} from 'detox'
 
 // launch the app once - do this per-test-file to grant only the permissions
@@ -17,19 +17,19 @@ describe('Streaming Media View', () => {
 		// Start at the home screen
 		await expect(element(by.id('screen-homescreen'))).toBeVisible()
 
-		// Expect the StreamingView button to be present, and tap on it
+		// Expect the Streaming Media button to be present, and tap on it
 		await expect(
-			element(by.id('homescreen-button-StreamingView')),
+			element(by.id('homescreen-button-Streaming Media')),
 		).toBeVisible()
-		await element(by.id('homescreen-button-StreamingView')).tap()
+		await element(by.id('homescreen-button-Streaming Media')).tap()
 
 		// Verify that the navigation took us away from the homescreen
 		await expect(element(by.id('screen-homescreen'))).toBeNotVisible()
 	})
 
 	it('has the Stream List visible by default', async () => {
-		// Navigate into StreamingView
-		await element(by.id('homescreen-button-StreamingView')).tap()
+		// Navigate into Streaming Media
+		await element(by.id('homescreen-button-Streaming Media')).tap()
 
 		// The stream-list should be visible now
 		await expect(element(by.id('stream-list'))).toBeVisible()
@@ -37,8 +37,8 @@ describe('Streaming Media View', () => {
 
 	describe('KSTO Radio View', () => {
 		it('is reachable under the home screen', async () => {
-			// Navigate into StreamingView
-			await element(by.id('homescreen-button-StreamingView')).tap()
+			// Navigate into Streaming Media
+			await element(by.id('homescreen-button-Streaming Media')).tap()
 
 			// Enter the ksto view
 			await element(by.id('button-ksto')).tap()
@@ -48,8 +48,8 @@ describe('Streaming Media View', () => {
 
 	describe('KRLX Radio View', () => {
 		it('is reachable under the home screen', async () => {
-			// Navigate into StreamingView
-			await element(by.id('homescreen-button-StreamingView')).tap()
+			// Navigate into Streaming Media
+			await element(by.id('homescreen-button-Streaming Media')).tap()
 
 			// Enter the ksto view
 			await element(by.id('button-krlx')).tap()
