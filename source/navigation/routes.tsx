@@ -306,6 +306,11 @@ const SettingsStackScreens = () => (
 				},
 			}) => ({title: toLaxTitleCase(keyPath?.[keyPath?.length - 1])})}
 		/>
+		<SettingsStack.Screen
+			component={settings.NetworkLoggerView}
+			name="NetworkLogger"
+			options={settings.NetworkLoggerNavigationOptions}
+		/>
 	</SettingsStack.Navigator>
 )
 
