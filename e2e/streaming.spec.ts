@@ -24,7 +24,7 @@ describe('Streaming Media View', () => {
 		await element(by.id('homescreen-button-Streaming Media')).tap()
 
 		// Verify that the navigation took us away from the homescreen
-		await expect(element(by.id('screen-homescreen'))).toBeNotVisible()
+		await expect(element(by.id('screen-homescreen'))).not.toBeVisible()
 	})
 
 	it('has the Stream List visible by default', async () => {
