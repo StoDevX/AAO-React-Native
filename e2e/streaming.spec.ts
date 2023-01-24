@@ -1,6 +1,17 @@
 import {beforeAll, beforeEach, test} from '@jest/globals'
 import {by, device, element, expect} from 'detox'
 
+// launch the app once - do this per-test-file to grant only the permissions
+// needed for a given test
+beforeAll(async () => {
+	await device.launchApp()
+})
+
+// in this file, only reload the rn stuff between tests
+beforeEach(async () => {
+	await device.reloadReactNative()
+})
+
 describe('Streaming Media View', () => {
 	it('is reachable from the homescreen', async () => {
 		// Start at the home screen
