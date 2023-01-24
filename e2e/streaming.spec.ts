@@ -41,7 +41,8 @@ describe('Streaming Media View', () => {
 			await element(by.id('homescreen-button-Streaming Media')).tap()
 
 			// Enter the ksto view
-			await element(by.id('button-ksto')).tap()
+			await expect(element(by.id('tab-KSTO'))).toBeVisible()
+			await element(by.id('tab-KSTO')).tap()
 			await expect(element(by.id('screen-streaming-radio-ksto'))).toBeVisible()
 		})
 	})
@@ -52,7 +53,8 @@ describe('Streaming Media View', () => {
 			await element(by.id('homescreen-button-Streaming Media')).tap()
 
 			// Enter the ksto view
-			await element(by.id('button-krlx')).tap()
+			await expect(element(by.id('tab-KRLX'))).toBeVisible()
+			await element(by.id('tab-KRLX')).tap()
 			await expect(element(by.id('screen-streaming-radio-krlx'))).toBeVisible()
 		})
 	})
