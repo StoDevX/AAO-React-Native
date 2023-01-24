@@ -16,7 +16,7 @@ import {Provider as ReduxProvider} from 'react-redux'
 import {Provider as PaperProvider} from 'react-native-paper'
 import {PersistQueryClientProvider} from '@tanstack/react-query-persist-client'
 import {store, persistor} from './redux'
-import {ThemeProvider, CombinedDefaultTheme} from '@frogpond/app-theme'
+import {ThemeProvider, CombinedLightTheme} from '@frogpond/app-theme'
 import {ActionSheetProvider} from '@expo/react-native-action-sheet'
 import {NavigationContainer} from '@react-navigation/native'
 
@@ -37,7 +37,7 @@ export default function App(): JSX.Element {
 					client={queryClient}
 					persistOptions={{persister}}
 				>
-					<PaperProvider theme={CombinedDefaultTheme}>
+					<PaperProvider theme={CombinedLightTheme}>
 						<ThemeProvider>
 							<ActionSheetProvider>
 								<NavigationContainer
