@@ -329,8 +329,13 @@ jobs:
     name: Android Bundle
     needs: [cache-npm-linux]
     runs-on: ubuntu-22.04
+    outputs:
+      cache-key: ${{ steps.jsbundle-cache.outputs.cache-primary-key }}
     steps:
       - uses: actions/checkout@v3.3.0
+
+      - name: Extract job definition
+        run: yq '.jobs.${{ github.job }}' .github/workflows/check.yml > .github/job.yml
 
       - uses: actions/setup-node@v3
         with:
@@ -346,11 +351,31 @@ jobs:
       - if: steps.node-cache.outputs.cache-hit != 'true'
         run: exit 1
 
-      - run: npm run bundle-data
+      - name: Restore the jsbundle
+        uses: actions/cache/restore@v3
+        id: jsbundle-cache
+        with:
+          path: |
+            ./android/app/src/main/assets/index.android.bundle
+            ./android/app/src/main/assets/index.android.bundle.map
+            ./android/app/src/main/res/
+          key: ${{ runner.os }}-npm-node@${{ env.node_version }}-pkg@${{ hashFiles('package.json', 'package-lock.json', '.github/job.yml') }}-files@${{ hashFiles('tsconfig.json', 'babel.config.js', 'index.js', 'data/**', 'images/**', 'modules/**.ts', 'modules/**.tsx', 'source/**.ts', 'source/**.tsx') }}
 
-      - run: mkdir -p ./android/app/src/main/assets/
+      - name: Generate jsbundle
+        if: steps.jsbundle-cache.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p ./android/app/src/main/assets/
+          npm run bundle-data
+          npm run bundle:android
 
-      - run: npm run bundle:android
+      - name: Cache the jsbundle
+        uses: actions/cache/restore@v3
+        with:
+          path: |
+            ./android/app/src/main/assets/index.android.bundle
+            ./android/app/src/main/assets/index.android.bundle.map
+            ./android/app/src/main/res/
+          key: ${{ steps.jsbundle-cache.outputs.cache-primary-key }}
 
   android:
     name: Build for Android
