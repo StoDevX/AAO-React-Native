@@ -13,7 +13,7 @@ env:
   xcode_version: 'Xcode_13.1'
 
 jobs:
-  format:
+  prettier:
     name: Prettier
     runs-on: ubuntu-22.04
     steps:
