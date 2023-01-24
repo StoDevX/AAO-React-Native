@@ -1,26 +1,29 @@
-parser: babel-eslint
+---
+root: true
+
+parser: '@typescript-eslint/parser'
 parserOptions:
-  sourceType: module
+  project: './tsconfig.json'
 
 plugins:
-  - babel
-  - react
-  - react-native
-  - flowtype
-  - react-hooks
+  - '@typescript-eslint/eslint-plugin'
+  - 'eslint-plugin-babel'
+  - 'eslint-plugin-jsx-expressions'
+  - 'eslint-plugin-react'
+  - 'eslint-plugin-react-native'
+  - 'eslint-plugin-react-hooks'
+  - '@tanstack/eslint-plugin-query'
 
 extends:
-  - eslint:recommended
-  - plugin:flowtype/recommended
-  - plugin:react/recommended
-  - prettier
-  - prettier/flowtype
-  - prettier/react
+  - 'eslint:recommended'
+  - 'plugin:react/recommended'
+  - 'plugin:@typescript-eslint/recommended'
+  - 'plugin:@tanstack/eslint-plugin-query/recommended'
+  - 'prettier'
 
 settings:
   react:
     version: '16.6'
-    flowVersion: '0.78'
 
 env:
   es6: true
@@ -55,13 +58,15 @@ rules:
   no-undef-init: off
   no-underscore-dangle: off
   no-unmodified-loop-condition: error
-  no-unused-vars:
+  no-unused-vars: off
+  '@typescript-eslint/no-unused-vars':
     - warn
     - args: 'after-used'
       argsIgnorePattern: '^_'
       varsIgnorePattern: '^_'
   no-useless-constructor: error
   no-var: error
+  prefer-const: off
   prefer-promise-reject-errors: error
   prefer-spread: error
   quotes: [warn, single, avoid-escape]
@@ -95,6 +100,7 @@ rules:
   react/sort-comp:
     - warn
     - order:
+        - static-variables
         - static-methods
         - type-annotations
         - lifecycle
@@ -104,10 +110,6 @@ rules:
   react/wrap-multilines: off
   react/jsx-boolean-value: [error, always]
 
-  # flow rules
-  flowtype/no-dupe-keys: error
-  flowtype/use-flow-type: error
-
   # react-native rules
   react-native/no-unused-styles: warn
   react-native/no-inline-styles: warn
@@ -116,3 +118,10 @@ rules:
   # react hooks rules
   react-hooks/rules-of-hooks: error
   react-hooks/exhaustive-deps: warn
+
+  # TODO(rye): Follow-up: DENY these
+  '@typescript-eslint/explicit-module-boundary-types': warn
+  '@typescript-eslint/no-empty-function': warn
+
+  # eslint-plugin-jsx-expressions – https://github.com/hpersson/eslint-plugin-jsx-expressions/
+  jsx-expressions/strict-logical-expressions: warn

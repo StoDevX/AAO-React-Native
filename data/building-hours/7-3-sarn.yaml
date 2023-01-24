@@ -14,6 +14,7 @@ schedule:
     isPhysicallyOpen: false
     hours:
       - {days: [Mo, Tu, We, Th, Fr, Sa, Su], from: '8:00pm', to: '8:00am'}
+    notes: Call 507-786-3777 to connect with a SARN Advocate
 
 breakSchedule:
   fall: []

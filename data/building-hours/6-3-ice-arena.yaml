@@ -4,13 +4,7 @@ category: Gym
 schedule:
   - title: Open Skate
     hours:
-      - {days: [Su], from: '2:00pm', to: '5:00pm'}
-      - {days: [Th], from: '11:30am', to: '1:00pm'}
-      - {days: [Fr], from: '7:00pm', to: '9:00pm'}
-
-  - title: Open Hockey
-    hours:
-      - {days: [Tu], from: '11:30am', to: '1:00pm'}
+      - {days: [Su], from: '3:00pm', to: '6:00pm'}
 
 breakSchedule:
   fall: []

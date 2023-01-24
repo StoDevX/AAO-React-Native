@@ -1,43 +1,16 @@
 line: Oles Go
 colors:
-  bar: '#E3A025'
+  bar: '#E4A01B'
   dot: rgb(0, 0, 0)
-notice: 'Daytime transportation for students to get to volunteer, medical appointments, pharmacy trips, or work locally. This is not intended for shopping or other personal trips.'
+notice: >-
+  Daytime transportation for students to get to volunteer, medical appointments, 
+  pharmacy trips, or work locally. This is not intended for shopping or other personal trips.
+  
+  Call 507-301-4818 to schedule a ride!
 schedules:
   - days: [Mo, Tu, We, Th, Fr]
-    coordinates:
-      'Allina':                                 [44.445188, -93.174279]
-      'Bridge Square':                          [44.456398, -93.160751]
-      'Bridgewater School':                     [44.439477, -93.164320]
-      'Carleton College (Willis)':              [44.460753, -93.156045]
-      'Greenvale Elementary School':            [44.469093, -93.169965]
-      'Northfield Community Resources':         [44.442359, -93.166582]
-      'Northfield High School':                 [44.444072, -93.163405]
-      'Northfield Middle School':               [44.435085, -93.164004]
-      'Sibley Elementary School':               [44.445147, -93.151771]
-      'St. Olaf College (Buntrock Commons)':    [44.462210, -93.183026]
+    coordinates: {}
     stops:
-      - St. Olaf College (Buntrock Commons)
-      - Greenvale Elementary School
-      - Bridge Square
-      - Allina
-      - Northfield Community Resources
-      - Bridgewater School
-      - Northfield Middle School
-      - Northfield High School
-      - Sibley Elementary School
-      - Carleton College (Willis)
-      - Bridge Square
-      - Greenvale Elementary School
-      - St. Olaf College (Buntrock Commons)
+      - Schedule
     times:
-      - ['7:30am', '7:34am', '7:38am', '7:45am', '7:50am', '7:55am', '7:58am', '8:05am', '8:10am', '8:17am', '8:20am', '8:25am', '8:30am']
-      - ['8:30am', '8:34am', '8:38am', '8:45am', '8:50am', '8:55am', '8:58am', '9:05am', '9:10am', '9:17am', '9:20am', '9:25am', '9:30am']
-      - ['9:30am', '9:34am', '9:38am', '9:45am', '9:50am', '9:55am', '9:58am', '10:05am', '10:10am', '10:17am', '10:20am', '10:25am', '10:30am']
-      - ['10:30am', '10:34am', '10:38am', '10:45am', '10:50am', '10:55am', '10:58am', '11:05am', '11:10am', '11:17am', '11:20am', '11:25am', '11:30am']
-      - ['11:30am', '11:34am', '11:38am', '11:45am', '11:50am', '11:55am', '11:58am', '12:05pm', '12:10pm', '12:17pm', '12:20pm', '12:25pm', '12:30pm']
-      - ['1:30pm', '1:34pm', '1:38pm', '1:45pm', '1:50pm', '1:55pm', '1:58pm', '2:05pm', '2:10pm', '2:17pm', '2:20pm', '2:25pm', '2:30pm']
-      - ['2:30pm', '2:34pm', '2:38pm', '2:45pm', '2:50pm', '2:55pm', '2:58pm', '3:05pm', '3:10pm', '3:17pm', '3:20pm', '3:25pm', '3:30pm']
-      - ['3:30pm', '3:34pm', '3:38pm', '3:45pm', '3:50pm', '3:55pm', '3:58pm', '4:05pm', '4:10pm', '4:17pm', '4:20pm', '4:25pm', '4:30pm']
-      - ['4:30pm', '4:34pm', '4:38pm', '4:45pm', '4:50pm', '4:55pm', '4:58pm', '5:05pm', '5:10pm', '5:17pm', '5:20pm', '5:25pm', '5:30pm']
-      - ['5:30pm', '5:34pm', '5:38pm', '5:45pm', '5:50pm', '5:55pm', '5:58pm', '6:05pm', '6:10pm', '6:17pm', '6:20pm', '6:25pm', '6:30pm']
+      - ['9:30am', '5:00pm']

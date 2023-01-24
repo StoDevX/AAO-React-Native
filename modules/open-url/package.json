@@ -2,16 +2,15 @@
   "name": "@frogpond/open-url",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "index.ts",
   "author": "",
   "license": "ISC",
   "scripts": {
     "test": "jest"
   },
   "peerDependencies": {
-    "react-native": "^0.61.0",
-    "react-native-custom-tabs": "^0.1.7",
-    "react-native-safari-view": "^2.1.0"
+    "react-native-inappbrowser-reborn": "3.7.0",
+    "react-native": "^0.68.0"
   },
   "dependencies": {}
 }

@@ -63,5 +63,5 @@ compensation is a blatant violation of trust; we will never share this data.
 ### Contact Us
 
 If you have any questions, comments, or concerns about this privacy policy,
-please reach out to us via email at <allaboutolaf+privacy@stolaf.edu>.  This
+please reach out to us via email at <allaboutolaf@frogpond.tech>.  This
 mailing list contains all active maintainers and developers.

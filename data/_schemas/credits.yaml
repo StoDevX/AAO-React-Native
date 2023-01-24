@@ -1,9 +1,11 @@
 $schema: http://json-schema.org/draft-07/schema#
 
+type: object
 additionalProperties: false
 required: [name, content, contributors, acknowledgements]
 properties:
   name: {type: string}
   content: {type: string}
+  timeline: {type: string}
   contributors: {type: array, items: {type: string}}
   acknowledgements: {type: array, items: {type: string}}

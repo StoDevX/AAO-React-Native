@@ -32,6 +32,8 @@ platform :ios do
 		products_dir = products_dir.map { |entry| entry.gsub(/.*BUILT_PRODUCTS_DIR = /, '') }
 		products = products_dir.map { |entry| entry + "/#{ENV['GYM_OUTPUT_NAME']}.app/" }
 
+		propagate_version
+
 		# save it to a log file for later use
 		FileUtils.mkdir_p('../logs')
 		File.open('../logs/products', 'w') { |file| file.write(products.to_json) }
@@ -39,14 +41,11 @@ platform :ios do
 		# build the .app
 		build_status = 0
 		begin
-			propagate_version
-			xcodebuild(
-			           build: true,
-			           scheme: ENV['GYM_SCHEME'],
-			           workspace: ENV['GYM_WORKSPACE'],
-			           destination: 'generic/platform=iOS',
-			           xcargs: %(CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY=""),
-			           )
+			gym(include_symbols: true,
+			    skip_codesigning: true,
+			    skip_package_ipa: true,
+			    skip_package_pkg: true,
+			    skip_archive: true)
 		rescue IOError => e
 			build_status = 1
 			raise e
@@ -65,8 +64,7 @@ platform :ios do
 		File.open('../logs/products', 'w') { |file| file.write('[]') }
 		build_status = 0
 		begin
-			gym(include_bitcode: true,
-			    include_symbols: true)
+			gym(include_symbols: true)
 		rescue IOError => e
 			build_status = 1
 			raise e
@@ -125,14 +123,51 @@ platform :ios do
 
 	desc 'Run iOS builds or tests, as appropriate'
 	lane :'ci-run' do
-		# set up a temporary keychain for signing
-		setup_keychain
+		if api_keys_available?
+			# set up a temporary keychain for signing
+			setup_keychain
 
-		# set up things so they can run
-		authorize_ci_for_keys
+			# set up things so they can run
+			authorize_ci_for_keys
+
+			# hook up the app store connect api token
+			load_app_store_connect_api_token
+		end
 
 		# and run
 		auto_beta
+	end
+
+	desc 'properly load the iOS App Store Connect API token'
+	lane :load_app_store_connect_api_token do
+		match_dir = clone_match
+
+		# we'll be copying files out of the tempdir from the git-clone operation
+		src = "#{match_dir}/ios"
+		# don't forget: lanes run inside of ./fastlane, so we go up a level for our basedir
+		dest = File.expand_path('..', '.')
+
+		# we export this variable so that Gradle knows where to find the .properties file
+		token_dest = "#{dest}/ios/AuthKey_WPMP85A826.p8"
+
+		pairs = [
+			{:from => "#{src}/AuthKey_WPMP85A826.p8", :to => token_dest},
+		]
+
+		pairs.each do |pair|
+			UI.command "cp #{pair[:from]} #{pair[:to]}"
+			FileUtils.cp(pair[:from], pair[:to])
+		end
+
+		remove_match_clone(dir: match_dir)
+
+		app_store_connect_api_key(
+			key_id: "WPMP85A826",
+			issuer_id: "69a6de94-2cd3-47e3-e053-5b8c7c11a4d1",
+			key_filepath: token_dest,
+			duration: 1200, # optional (maximum 1200)
+			in_house: false, # optional but may be required if using match/sigh
+		)
 	end
 
 	desc 'Fetch certs for both the app and any extensions'
@@ -153,14 +188,12 @@ platform :ios do
 
 	desc 'Generate the app and any extensions on the Apple Developer Portal / App Store Connect'
 	private_lane :generate_apps do
-		produce(
-		        app_identifier: lane_context[:APPLE_APP_ID],
+		produce(app_identifier: lane_context[:APPLE_APP_ID],
 		        app_name: lane_context[:APPLE_APP_NAME],
 		        language: 'English',
 		        enable_services: {
 			        app_group: 'on',
-		        },
-		        )
+		        })
 	end
 
 	desc 'Generate certs for the app and for any extensions'

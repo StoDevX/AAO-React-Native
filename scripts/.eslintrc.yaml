@@ -1,0 +1,65 @@
+---
+root: true
+
+parserOptions:
+  ecmaVersion: 2020
+  sourceType: module
+
+extends:
+  - eslint:recommended
+  - prettier
+
+overrides:
+  - files: '*.mjs'
+
+env:
+  es6: true
+  node: true
+
+rules:
+  '@typescript-eslint/no-var-requires': 0
+
+  array-callback-return: error
+  camelcase: warn
+  consistent-this: [error, self]
+  curly: [warn, multi-line]
+  default-case: error
+  guard-for-in: error
+  eqeqeq: [error, smart]
+  linebreak-style: [error, unix]
+  new-cap: off
+  no-await-in-loop: warn
+  no-case-declarations: error
+  no-console: off
+  no-div-regex: error
+  no-extra-label: error
+  no-implicit-coercion:
+    - error
+    - boolean: true
+      number: true
+      string: true
+  no-implicit-globals: error
+  no-multi-assign: error
+  no-new-symbol: error
+  no-restricted-syntax: [error, WithStatement]
+  no-return-await: error
+  no-throw-literal: error
+  no-undef-init: off
+  no-underscore-dangle: off
+  no-unmodified-loop-condition: error
+  no-unused-vars:
+    - warn
+    - args: 'after-used'
+      argsIgnorePattern: '^_'
+      varsIgnorePattern: '^_'
+  no-useless-constructor: error
+  no-var: error
+  prefer-promise-reject-errors: error
+  prefer-spread: error
+  quotes: [warn, single, avoid-escape]
+  require-await: warn
+  semi: off
+  no-misleading-character-class: warn
+  require-atomic-updates: error
+  no-async-promise-executor: error
+  require-unicode-regexp: error

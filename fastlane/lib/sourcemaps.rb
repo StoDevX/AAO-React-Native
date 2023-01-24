@@ -6,15 +6,13 @@ def sourcemap_args
 	when :android
 		platform = 'android'
 		entry_file = 'index.js'
-		bundle_output = '../android-release.bundle'
-		sourcemap_output = '../android-release.bundle.map'
-		bundle_url = 'index.android.bundle'
+		bundle_output = 'index.android.bundle'
+		sourcemap_output = 'index.android.bundle.map'
 	when :ios
 		platform = 'ios'
 		entry_file = 'index.js'
-		bundle_output = '../ios-release.bundle'
-		sourcemap_output = '../ios-release.bundle.map'
-		bundle_url = 'main.jsbundle'
+		bundle_output = 'main.jsbundle'
+		sourcemap_output = 'main.jsbundle.map'
 	end
 
 	{
@@ -22,7 +20,6 @@ def sourcemap_args
 		entry_file: entry_file,
 		bundle_output: bundle_output,
 		sourcemap_output: sourcemap_output,
-		bundle_url: bundle_url,
 	}
 end
 
@@ -31,7 +28,7 @@ def generate_sourcemap
 	args = sourcemap_args
 
 	cmd = [
-	       'yarn react-native bundle',
+	       'npx react-native bundle',
 	       '--dev false',
 	       "--platform '#{args[:platform]}'",
 	       "--entry-file '#{args[:entry_file]}'",
@@ -42,6 +39,14 @@ def generate_sourcemap
 	FastlaneCore::CommandExecutor.execute(command: cmd,
 	                                      print_all: true,
 	                                      print_command: true)
+end
+
+def sentry_release
+	"#{bundle_identifier}@#{current_bundle_version}+#{current_bundle_code}"
+end
+
+def sentry_dist
+	current_bundle_code
 end
 
 def bundle_identifier
@@ -58,14 +63,15 @@ def upload_sourcemap_to_sentry
 	args = sourcemap_args
 
 	cmd = [
-	       'yarn sentry-cli',
+	       'npx sentry-cli',
 	       'releases',
 	       'files',
-	       "#{bundle_identifier}-#{current_bundle_version}",
+	       sentry_release,
 	       'upload-sourcemaps',
-	       "--dist #{current_bundle_code}",
+	       "--dist #{sentry_dist}",
 	       "--strip-prefix #{File.expand_path(File.join(__FILE__, '..', '..', '..'))}",
 	       '--rewrite',
+	       args[:bundle_output],
 	       args[:sourcemap_output]
 	].join ' '
 

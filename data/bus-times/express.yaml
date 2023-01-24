@@ -19,7 +19,6 @@ schedules:
       - St. Olaf College
       - Carleton College
       - Food Co-op
-      - Express Care Clinic
       - Cub/Target
       - Aldi
       - Cinema 10
@@ -28,13 +27,13 @@ schedules:
       - Carleton College
       - St. Olaf College
     times:
-      - [ '4:00pm',  '4:07pm',  '4:12pm',  '4:13pm',  '4:20pm',  '4:26pm',  '4:32pm',  '4:38pm',  '4:41pm',  '4:49pm',  '4:55pm']
-      - [ '5:00pm',  '5:07pm',  '5:12pm',  '5:13pm',  '5:20pm',  '5:26pm',  '5:32pm',  '5:38pm',  '5:41pm',  '5:49pm',  '5:55pm']
-      - [ '6:00pm',  '6:07pm',  '6:12pm',  '6:13pm',  '6:20pm',  '6:26pm',  '6:32pm',  '6:38pm',  '6:41pm',  '6:49pm',  '6:55pm']
-      - [ '7:00pm',  '7:07pm',  '7:12pm',  '7:13pm',  '7:20pm',  '7:26pm',  '7:32pm',  '7:38pm',  '7:41pm',  '7:49pm',  '7:55pm']
-      - [ '8:00pm',  '8:07pm',  '8:12pm',  '8:13pm',  '8:20pm',  '8:26pm',  '8:32pm',  '8:38pm',  '8:41pm',  '8:49pm',  '8:55pm']
-      - [ '9:00pm',  '9:07pm',  '9:12pm',     false,  '9:20pm',     false,  '9:32pm',  '9:38pm',  '9:41pm',  '9:49pm',  '9:55pm']
-      - ['10:00pm', '10:07pm', '10:12pm',     false, '10:20pm',     false, '10:32pm', '10:38pm', '10:41pm', '10:49pm', '10:55pm']
+      - [ '3:00pm',  '3:07pm',  '3:12pm',  '3:20pm',  '3:26pm',  '3:32pm',  '3:38pm',  '3:41pm',  '3:49pm',  '3:55pm']
+      - [ '4:00pm',  '4:07pm',  '4:12pm',  '4:20pm',  '4:26pm',  '4:32pm',  '4:38pm',  '4:41pm',  '4:49pm',  '4:55pm']
+      - [ '5:00pm',  '5:07pm',  '5:12pm',  '5:20pm',  '5:26pm',  '5:32pm',  '5:38pm',  '5:41pm',  '5:49pm',  '5:55pm']
+      - [ '6:00pm',  '6:07pm',  '6:12pm',  '6:20pm',  '6:26pm',  '6:32pm',  '6:38pm',  '6:41pm',  '6:49pm',  '6:55pm']
+      - [ '7:00pm',  '7:07pm',  '7:12pm',  '7:20pm',  '7:26pm',  '7:32pm',  '7:38pm',  '7:41pm',  '7:49pm',  '7:55pm']
+      - [ '8:00pm',  '8:07pm',  '8:12pm',  '8:20pm',  '8:26pm',  '8:32pm',  '8:38pm',  '8:41pm',  '8:49pm',  '8:55pm']
+      - [ '9:00pm',  '9:07pm',  '9:12pm',  '9:20pm',  '9:26pm',  '9:32pm',  '9:38pm',  '9:41pm',  '9:49pm',  '9:55pm']
 
   - days: [Su]
     coordinates:
@@ -50,7 +49,6 @@ schedules:
       - St. Olaf College
       - Carleton College
       - Food Co-op
-      - Express Care Clinic
       - Cub/Target
       - Aldi
       - Cinema 10
@@ -59,6 +57,6 @@ schedules:
       - Carleton College
       - St. Olaf College
     times:
-      - ['3:00pm',  '3:07pm',  '3:12pm',  '3:13pm',  '3:20pm',  '3:26pm',     false,  '3:38pm',  '3:41pm',  '3:49pm',  '3:55pm']
-      - ['4:00pm',  '4:07pm',  '4:12pm',  '4:13pm',  '4:20pm',  '4:26pm',     false,  '4:38pm',  '4:41pm',  '4:49pm',  '4:55pm']
-      - ['5:00pm',  '5:07pm',  '5:12pm',  '5:13pm',  '5:20pm',  '5:26pm',     false,  '5:38pm',  '5:41pm',  '5:49pm',  '5:55pm']
+      - ['11:00am', '11:07am', '11:12am', '11:20am', '11:26am',     false, '11:38am', '11:41am', '11:49am', '11:55am']
+      - ['12:00pm', '12:07pm', '12:12pm', '12:20pm', '12:26pm',     false, '12:38pm', '12:41pm', '12:49pm', '12:55pm']
+      - [ '1:00pm',  '1:07pm',  '1:12pm',  '1:20pm',  '1:26pm',     false,  '1:38pm',  '1:41pm',  '1:49pm',  '1:55pm']

@@ -1,6 +1,6 @@
 require 'netrc'
 
-# Pick what to do - build + deploy, build + sign, or just plain build.
+# Pick what to do - build + deploy, build + sign, skip, or just plain build.
 def auto_beta
 	if should_nightly?
 		UI.message 'building nightly'
@@ -9,6 +9,11 @@ def auto_beta
 	elsif should_beta?
 		UI.message 'building beta'
 		beta
+		return
+	end
+
+	if simulator_also?
+		UI.message 'skipping non-simulator build on CI'
 		return
 	end
 

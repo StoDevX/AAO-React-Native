@@ -2,13 +2,13 @@
   "name": "@frogpond/api",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "index.ts",
   "author": "",
   "license": "ISC",
   "scripts": {
     "test": "jest"
   },
   "dependencies": {
-    "query-string": "^6.8.3"
+    "ky": "^0.33.2"
   }
 }

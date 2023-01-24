@@ -2,18 +2,18 @@
   "name": "@frogpond/tableview",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "index.tsx",
   "author": "",
   "license": "ISC",
   "scripts": {
     "test": "jest"
   },
   "peerDependencies": {
-    "react": "^16.0.0",
-    "react-native": "^0.61.0"
+    "react": "^17.0.0",
+    "react-native": "^0.68.0"
   },
   "dependencies": {
     "@frogpond/colors": "^1.0.0",
-    "react-native-tableview-simple": "2.4.0"
+    "react-native-tableview-simple": "^4.3.0"
   }
 }

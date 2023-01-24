@@ -10,16 +10,15 @@ The St. Olaf community, now in pocket size… rewritten in React Native.
 ## Join the Beta
 
 - [Sign up for the Android Beta](https://play.google.com/apps/testing/com.allaboutolaf)!
-- [Sign up for the iOS Beta](https://boarding-aao.herokuapp.com)!
+- [Sign up for the iOS Beta](https://testflight.apple.com/join/3KFbWHU8)!
 
 ## Getting Started
 
-- If you're on a system with the `brew` command, run `brew bundle install` to install the system dependencies. (Node, Ruby, Yarn, Watchman, etc.)
+- If you're on a system with the `brew` command, run `brew bundle install` to install the system dependencies. (Node, Ruby, Watchman, etc.)
 - [Install React Native](http://facebook.github.io/react-native/docs/getting-started.html#content)
-- [Install Yarn](https://yarnpkg.com/en/docs/install)
 - Clone the repository
 - `cd` into your clone
-- Run `yarn`
+- Run `npm ci`
 - For iOS: `npm run ios`
 - For Android: launch your favorite Android emulator first, then run `npm run android`
 

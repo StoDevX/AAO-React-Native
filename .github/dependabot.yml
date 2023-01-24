@@ -1,0 +1,29 @@
+version: 2
+updates:
+- package-ecosystem: bundler
+  directory: "/"
+  schedule:
+    interval: weekly
+    time: '11:00'
+  open-pull-requests-limit: 100
+  commit-message: { prefix: "" }
+
+- package-ecosystem: npm
+  directory: "/"
+  schedule:
+    interval: daily
+    time: '11:00'
+  open-pull-requests-limit: 100
+  commit-message: { prefix: "" }
+  ignore:
+    - dependency-name: react-markdown
+      versions:
+      - "> 2.5.1"
+
+- package-ecosystem: github-actions
+  directory: "/"
+  schedule:
+    interval: daily
+    time: '11:00'
+  open-pull-requests-limit: 100
+  commit-message: { prefix: "" }

@@ -1,5 +1,0 @@
-rules:
-  flowtype/use-flow-type: off
-  flowtype/no-types-missing-file-annotation: off
-  camelcase: off
-  no-unused-vars: off

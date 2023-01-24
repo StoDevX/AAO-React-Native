@@ -43,7 +43,7 @@ platform :android do
 				apk.end_with? '-release.aab'
 			end
 
-		supply(track: track, check_superseded_tracks: true)
+		supply(track: track)
 
 		generate_sourcemap
 		upload_sourcemap_to_sentry
@@ -66,8 +66,10 @@ platform :android do
 
 	desc 'Run the appropriate action on CI'
 	lane :'ci-run' do
-		# prepare for the bright future with signed android betas
-		authorize_ci_for_keys
+		if api_keys_available?
+			# prepare for the bright future with signed android betas
+			authorize_ci_for_keys
+		end
 
 		# and run
 		auto_beta

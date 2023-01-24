@@ -19,6 +19,7 @@ definitions:
     items: {$ref: '#/definitions/day-of-week'}
 
   day:
+    type: object
     additionalProperties: false
     required: [days, from, to]
     properties:

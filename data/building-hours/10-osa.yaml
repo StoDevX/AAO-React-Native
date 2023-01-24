@@ -5,7 +5,7 @@ category: Offices
 schedule:
   - title: Hours
     hours:
-      - {days: [Mo, Tu, We, Th, Fr], from: '8:00am', to: '5:00pm'}
+      - {days: [Mo, Tu, We, Th, Fr], from: '8:00am', to: '8:00pm'}
 
 breakSchedule:
   fall: []

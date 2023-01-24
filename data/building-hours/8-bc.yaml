@@ -6,7 +6,7 @@ schedule:
   - title: Hours
     hours:
       - {days: [Su, Mo, Tu, We, Th], from: '7:00am', to: '12:00am'}
-      - {days: [Fr, Sa], from: '7:00am', to: '2:00am'}
+      - {days: [Fr, Sa], from: '7:00am', to: '1:00am'}
 
 breakSchedule:
   fall: []

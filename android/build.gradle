@@ -1,20 +1,43 @@
+import org.apache.tools.ant.taskdefs.condition.Os
+
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
     ext {
-        buildToolsVersion = "28.0.3"
+        buildToolsVersion = "31.0.0"
         minSdkVersion = 21
-        compileSdkVersion = 28
-        targetSdkVersion = 28
+        compileSdkVersion = 31
+        targetSdkVersion = 31
+        kotlinVersion = '1.6.10'
+        // react-native-inappbrowser-reborn was using a 1.+ which pulled in an alpha which is very bad
+        // - we will want to upgrade to 1.5.0 when we support minsdk 33
+        // - we can delete this when inappbrowser-reborn changes their build script to avoid this pattern
+        //   but until then, we'll keep it pinned since a future alpha release could cause this problem. 
+        androidXBrowser = "1.4.0"
+
+        if (System.properties['os.arch'] == "aarch64") {
+            // For M1 Users we need to use the NDK 24 which added support for aarch64
+            ndkVersion = "24.0.8215888"
+        } else if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+            // For Android Users, we need to use NDK 23, otherwise the build will
+            // fail due to paths longer than the OS limit
+            ndkVersion = "23.1.7779620"
+        } else {
+            // Otherwise we default to the side-by-side NDK version from AGP.
+            ndkVersion = "21.4.7075529"
+        }
     }
 
     repositories {
-        jcenter()
         google()
+        mavenCentral()
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.5.1'
+        classpath('com.android.tools.build:gradle:7.0.4')
+        classpath("com.facebook.react:react-native-gradle-plugin")
+        classpath("de.undercouch:gradle-download-task:4.1.2")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
@@ -33,15 +56,23 @@ ext {
 
 allprojects {
     repositories {
-        // All of React Native (JS, Obj-C sources, Android binaries) is installed from npm
-        maven { url "$rootDir/../node_modules/react-native/android" }
-        // Local Maven repo containing AARs with JSC library built for Android, like RN
-        maven { url "$rootDir/../node_modules/jsc-android/dist" }
-        mavenLocal()
+        maven {
+            // All of React Native (JS, Obj-C sources, Android binaries) is installed from npm
+            url("$rootDir/../node_modules/react-native/android")
+        }
+        maven {
+            // Android JSC is installed from npm
+            url("$rootDir/../node_modules/jsc-android/dist")
+        }
+        mavenCentral {
+            // We don't want to fetch react-native from Maven Central as there are
+            // older versions over there.
+            content {
+                excludeGroup "com.facebook.react"
+            }
+        }
         google()
-        jcenter()
-        // react-native-custom-tabs (and react-native) require this maven repository
-        maven { url "https://jitpack.io" }
+        maven { url 'https://www.jitpack.io' }
     }
 }
 

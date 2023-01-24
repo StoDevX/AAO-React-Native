@@ -3,8 +3,8 @@ category: Food
 
 schedule:
   - title: Hours
-    hours:
-      - {days: [Mo, Tu, We, Th, Fr], from: '7:00am', to: '2:00pm'}
+    notes: Closed until further notice
+    hours: []
 
 breakSchedule:
   fall: []

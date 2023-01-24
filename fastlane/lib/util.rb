@@ -25,7 +25,14 @@ end
 
 # does the build have the api keys needed for signing?
 def api_keys_available?
-	ENV['MATCH_PASSWORD'] && ENV['FASTLANE_PASSWORD']
+	ENV['MATCH_PASSWORD'] && !ENV['MATCH_PASSWORD'].empty? &&
+		ENV['FASTLANE_PASSWORD'] && !ENV['FASTLANE_PASSWORD'].empty? &&
+		ENV['GITHUB_KEYS_REPOSITORY_TOKEN'] && !ENV['GITHUB_KEYS_REPOSITORY_TOKEN'].empty?
+end
+
+# is the build happening for a platform where we also run a simulator build?
+def simulator_also?
+	lane_context[:PLATFORM_NAME] == :ios
 end
 
 # is this a build of a tagged commit?

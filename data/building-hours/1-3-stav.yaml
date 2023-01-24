@@ -5,13 +5,15 @@ category: Food
 schedule:
   - title: Breakfast
     hours:
-      - {days: [Mo, Tu, We, Th, Fr, Sa], from: '7:00am', to: '9:45am'}
-      - {days: [Su], from: '8:30am', to: '10:15am'}
+      - {days: [Mo, Tu, We, Th, Fr], from: '7:15am', to: '9:45am'}
+      - {days: [Sa], from: '8:00am', to: '9:30am'}
+      - {days: [Su], from: '8:00am', to: '9:00am'}
 
   - title: Lunch
     hours:
-      - {days: [Mo, Tu, We, Th, Fr], from: '10:45am', to: '2:00pm'}
-      - {days: [Sa, Su], from: '11:00am', to: '1:30pm'}
+      - {days: [Mo, Tu, We, Th, Fr], from: '10:30am', to: '2:00pm'}
+      - {days: [Sa], from: '11:00am', to: '1:30pm'}
+      - {days: [Su], from: '10:30am', to: '1:30pm'}
 
   - title: Dinner
     hours:
