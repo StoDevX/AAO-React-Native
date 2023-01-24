@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {FlatList, ScrollView, Text, StyleSheet} from 'react-native'
+import {FlatList, ScrollView, StyleSheet, Text} from 'react-native'
 import {DebugRow} from './row'
 import {NoticeView} from '@frogpond/notice'
 import {ListSeparator} from '@frogpond/lists'
@@ -9,8 +9,6 @@ import {SettingsStackParamList} from '../../../../navigation/types'
 import {Section, TableView} from 'react-native-tableview-simple'
 
 export const NavigationKey = 'DebugView' as const
-
-const TEMP_ENABLE_NAV = false
 
 type Props = {
 	state?: unknown
@@ -63,7 +61,7 @@ export const DebugSimpleItem = ({item}: {item: unknown}): JSX.Element => {
 					hideSurroundingSeparators={true}
 					roundedCorners={true}
 				>
-					<Text>{item}</Text>
+					<Text>{String(item)}</Text>
 				</Section>
 			</TableView>
 		</ScrollView>
@@ -89,8 +87,7 @@ export const DebugToStringItem = ({item}: {item: unknown}): JSX.Element => {
 let useKeyPath = () => {
 	let route =
 		useRoute<RouteProp<SettingsStackParamList, typeof NavigationKey>>()
-	let {keyPath} = route.params ?? []
-	return keyPath
+	return route.params?.keyPath ?? []
 }
 
 export const DebugArrayItem = ({item}: {item: unknown[]}): JSX.Element => {
@@ -108,10 +105,9 @@ export const DebugArrayItem = ({item}: {item: unknown[]}): JSX.Element => {
 				<DebugRow
 					data={item}
 					onPress={() => {
-						TEMP_ENABLE_NAV &&
-							navigation.navigate('DebugView', {
-								keyPath: [...keyPath, String(item.key)],
-							})
+						navigation.navigate('DebugView', {
+							keyPath: [...keyPath, String(item.key)],
+						})
 					}}
 				/>
 			)}
@@ -134,7 +130,6 @@ export const DebugObjectItem = ({item}: {item: object}): JSX.Element => {
 				<DebugRow
 					data={item}
 					onPress={() =>
-						TEMP_ENABLE_NAV &&
 						navigation.navigate('DebugView', {keyPath: [...keyPath, item.key]})
 					}
 				/>
