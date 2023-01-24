@@ -3,73 +3,99 @@ name: Check
 on:
   push:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  node_version: '^16.0'
+  ruby_version: '2.6'
+  xcode_version: 'Xcode_13.1'
+
 jobs:
-  format:
+  prettier:
     name: Prettier
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v3.3.0
+
       - uses: actions/setup-node@v3
         with:
-          node-version: ^16.0
+          node-version: ${{ env.node_version }}
           cache: npm
+
       - run: npm ci
+
       - run: npm run pretty -- --no-write --list-different
 
   eslint:
     name: ESLint
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v3.3.0
+
       - uses: actions/setup-node@v3
         with:
-          node-version: ^16.0
+          node-version: ${{ env.node_version }}
           cache: npm
+
       - run: npm ci
+
       - run: npm run lint
 
   jest:
     name: Jest
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v3.3.0
+
       - uses: actions/setup-node@v3
         with:
-          node-version: ^16.0
+          node-version: ${{ env.node_version }}
           cache: npm
+
       - run: npm ci
+
       - run: npm run bundle-data
+
       - name: Run tests
         run: npm run test -- --coverage
+
       - name: Upload coverage
-        env:
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
-        run: bash <(curl -s https://codecov.io/bash)
+        uses: codecov/codecov-action@v3
 
   tsc:
     name: TypeScript
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v3.3.0
+
       - uses: actions/setup-node@v3
         with:
-          node-version: ^16.0
+          node-version: ${{ env.node_version }}
           cache: npm
+
       - run: npm ci
+
       - run: npm run bundle-data
+
       - run: npx tsc
 
   data:
     name: Data
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v3.3.0
+
       - uses: actions/setup-node@v3
         with:
-          node-version: ^16.0
+          node-version: ${{ env.node_version }}
           cache: npm
+
       - run: npm ci
+
       - run: npm run validate-data
+
       - run: npm run bundle-data
 
   ios-pods:
@@ -77,14 +103,17 @@ jobs:
     runs-on: macos-11
     steps:
       - uses: actions/checkout@v3.3.0
+
       - uses: actions/setup-node@v3
         with:
-          node-version: '^16.0'
+          node-version: ${{ env.node_version }}
           cache: npm
+
       - uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '2.6'
+          ruby-version: ${{ env.ruby_version }}
           bundler-cache: true
+
       - name: Restore Pods cache
         uses: actions/cache@v3
         with:
@@ -92,53 +121,68 @@ jobs:
           key: ${{ runner.os }}-pods-${{ hashFiles('**/Podfile.lock') }}
           restore-keys: |
             ${{ runner.os }}-pods-
-      - run: sudo xcode-select -s /Applications/Xcode_13.1.app
+
+      - run: sudo xcode-select -s /Applications/${{ env.xcode_version }}.app
+
       - run: npm ci
         env: {SKIP_POSTINSTALL: '1'}
+
       - run: bundle exec pod install --deployment
         working-directory: ./ios
 
   ios-bundle:
     name: iOS Bundle
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v3.3.0
+
       - uses: actions/setup-node@v3
         with:
-          node-version: ^16.0
+          node-version: ${{ env.node_version }}
           cache: npm
+
       - run: npm ci
+
       - run: npm run bundle-data
+
       - run: npm run bundle:ios
 
   android-bundle:
     name: Android Bundle
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v3.3.0
+
       - uses: actions/setup-node@v3
         with:
-          node-version: ^16.0
+          node-version: ${{ env.node_version }}
           cache: npm
+
       - run: npm ci
+
       - run: npm run bundle-data
+
       - run: mkdir -p ./android/app/src/main/assets/
+
       - run: npm run bundle:android
 
   android:
     name: Build for Android
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     needs: [jest, eslint, android-bundle]
     steps:
       - uses: actions/checkout@v3.3.0
+
       - uses: actions/setup-node@v3
         with:
-          node-version: ^16.0
+          node-version: ${{ env.node_version }}
           cache: npm
+
       - uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '2.6'
+          ruby-version: ${{ env.ruby_version }}
           bundler-cache: true
+
       - name: Restore Gradle cache
         uses: actions/cache@v3
         with:
@@ -148,15 +192,20 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
+
       - run: npm ci
+
       - name: Raise the fs.inotify ulimits to 524288 watches/queued events/user instances
         run: |
           echo 524288 | sudo tee -a /proc/sys/fs/inotify/max_user_watches
           echo 524288 | sudo tee -a /proc/sys/fs/inotify/max_queued_events
           echo 524288 | sudo tee -a /proc/sys/fs/inotify/max_user_instances
           sudo sysctl -p
+
       - run: echo 'org.gradle.workers.max=2' >> ./android/gradle.properties
+
       - run: cd android && ./gradlew androidDependencies --console=plain
+
       - run: bundle exec fastlane android ci-run
         env:
           FASTLANE_PASSWORD: ${{ secrets.FASTLANE_PASSWORD }}
@@ -175,31 +224,42 @@ jobs:
     needs: [jest, eslint, ios-bundle, ios-pods]
     steps:
       - uses: actions/checkout@v3.3.0
+
       - uses: actions/setup-node@v3
         with:
-          node-version: ^16.0
+          node-version: ${{ env.node_version }}
           cache: npm
+
       - uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '2.6'
+          ruby-version: ${{ env.ruby_version }}
           bundler-cache: true
+
       - name: Restore Pods cache
         uses: actions/cache@v3
         with:
           path: ios/Pods
           key: ${{ runner.os }}-pods-${{ hashFiles('**/Podfile.lock') }}
           restore-keys: ${{ runner.os }}-pods-
+
       - uses: mikehardy/buildcache-action@v2
         continue-on-error: true
         with:
           cache_key: ${{ matrix.os }}
-      - run: sudo xcode-select -s /Applications/Xcode_13.1.app
+
+      - run: sudo xcode-select -s /Applications/${{ env.xcode_version }}.app
+
       - run: npm ci
         env:
           SKIP_POSTINSTALL: '1'
+
       - run: bundle exec pod install --deployment
         working-directory: ./ios
+
       - run: brew tap wix/brew
+
       - run: brew install applesimutils
+
       - run: npx detox build e2e --configuration ios.sim.release
+
       - run: npx detox test e2e --configuration ios.sim.release --cleanup  --debug-synchronization 500
