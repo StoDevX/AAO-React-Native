@@ -64,7 +64,6 @@ function HomePage(): JSX.Element {
 											throw new Error(`unexpected view type ${view.type}`)
 										}
 									}}
-									testID={`homescreen-button-${view.type === 'view' ? view.view : view.title}`}
 									view={view}
 								/>
 							))}

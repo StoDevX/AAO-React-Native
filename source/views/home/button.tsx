@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {View, Text, StyleSheet, Platform} from 'react-native'
+import {Text, StyleSheet, Platform} from 'react-native'
 import Icon from 'react-native-vector-icons/Entypo'
 import type {ViewType} from '../views'
 import {Touchable} from '@frogpond/touchable'
@@ -8,16 +8,11 @@ import {homescreenForegroundDark, homescreenForegroundLight} from './colors'
 import {hasNotch} from 'react-native-device-info'
 
 type Props = {
-	view: ViewType,
-	onPress: () => void,
-	testID?: string,
+	view: ViewType
+	onPress: () => void
 }
 
-export function HomeScreenButton({
-	view,
-	onPress,
-	testID,
-}: Props): JSX.Element {
+export function HomeScreenButton({view, onPress}: Props): JSX.Element {
 	let foreground =
 		view.foreground === 'light' ? styles.lightForeground : styles.darkForeground
 
@@ -29,7 +24,6 @@ export function HomeScreenButton({
 			highlight={false}
 			onPress={onPress}
 			style={[styles.button, styles.contents, {backgroundColor: view.tint}]}
-			testID={testID}
 		>
 			<>
 				<Icon name={view.icon} size={32} style={[foreground, styles.icon]} />
