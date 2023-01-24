@@ -16,6 +16,7 @@ import propTypes from 'prop-types'
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ;(ReactMarkdown as any).propTypes.containerTagName = propTypes.func
 
+import {black} from '@frogpond/colors'
 import {Paragraph, Strong, Emph, BlockQuote} from './formatting'
 import {Code, CodeBlock} from './code'
 import {Heading} from './heading'
@@ -24,11 +25,10 @@ import {Image} from './image'
 import {List, ListItem} from './list'
 
 const styles = StyleSheet.create({
-	// eslint-disable-next-line react-native/no-color-literals
 	horizontalRule: {
 		width: '100%',
 		height: 1,
-		backgroundColor: 'black',
+		backgroundColor: black,
 	},
 })
 
