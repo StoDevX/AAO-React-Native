@@ -40,6 +40,7 @@ jobs:
         run: npm ci
 
       - uses: actions/cache/save@v3
+        if: steps.node-cache.outputs.cache-hit != 'true'
         with:
           path: node_modules/
           key: ${{ steps.node-cache.outputs.cache-primary-key }}
@@ -71,6 +72,7 @@ jobs:
         run: npm ci
 
       - uses: actions/cache/save@v3
+        if: steps.node-cache.outputs.cache-hit != 'true'
         with:
           path: node_modules/
           key: ${{ steps.node-cache.outputs.cache-primary-key }}
@@ -144,7 +146,9 @@ jobs:
         run: bundle exec pod install --deployment
         working-directory: ./ios
 
-      - uses: actions/cache/save@v3
+      - name: Save Cocoapods cache
+        uses: actions/cache/save@v3
+        if: steps.cocoapods-cache.outputs.cache-hit != 'true'
         with:
           path: ios/Pods
           key: ${{ steps.cocoapods-cache.outputs.cache-primary-key }}
@@ -370,6 +374,7 @@ jobs:
           npm run bundle:android
 
       - name: Cache the jsbundle
+        if: steps.jsbundle-cache.outputs.cache-hit != 'true'
         uses: actions/cache/save@v3
         with:
           path: |
