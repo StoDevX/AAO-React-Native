@@ -75,6 +75,28 @@ jobs:
           path: node_modules/
           key: ${{ steps.node-cache.outputs.cache-primary-key }}
 
+  cache-bundler-linux:
+    name: Cache bundler for Linux
+    runs-on: macos-11
+    steps:
+      - uses: actions/checkout@v3.3.0
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ env.ruby_version }}
+          bundler-cache: true
+
+  cache-bundler-macos:
+    name: Cache bundler for macOS
+    runs-on: macos-11
+    steps:
+      - uses: actions/checkout@v3.3.0
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ env.ruby_version }}
+          bundler-cache: true
+
   prettier:
     name: Prettier
     needs: [cache-npm-linux]
@@ -202,7 +224,7 @@ jobs:
 
   ios-pods:
     name: iOS Cocoapods
-    needs: [cache-npm-macos]
+    needs: [cache-npm-macos, cache-bundler-macos]
     runs-on: macos-11
     steps:
       - uses: actions/checkout@v3.3.0
@@ -293,7 +315,7 @@ jobs:
 
   android:
     name: Build for Android
-    needs: [jest, eslint, android-bundle, cache-npm-linux]
+    needs: [jest, eslint, android-bundle, cache-npm-linux, cache-bundler-linux]
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v3.3.0
@@ -352,7 +374,7 @@ jobs:
 
   ios:
     name: Build for iOS
-    needs: [jest, eslint, ios-bundle, ios-pods, cache-npm-macos]
+    needs: [jest, eslint, ios-bundle, ios-pods, cache-npm-macos, cache-bundler-macos]
     runs-on: macos-11
     steps:
       - uses: actions/checkout@v3.3.0
