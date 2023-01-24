@@ -45,7 +45,7 @@ describe('Streaming Media View', () => {
 		})
 	})
 
-	describe('KSTO Radio View', () => {
+	describe('KSTO Radio', () => {
 		it('is reachable under the home screen', async () => {
 			// Navigate into Streaming Media
 			await element(by.text('Streaming Media')).tap()
@@ -53,11 +53,11 @@ describe('Streaming Media View', () => {
 			// Enter the ksto view
 			await expect(element(by.text('KSTO'))).toBeVisible()
 			await element(by.text('KSTO')).tap()
-			await expect(element(by.id('screen-streaming-radio-ksto'))).toBeVisible()
+			await expect(element(by.text('KSTO 93.1 FM'))).toBeVisible()
 		})
 	})
 
-	describe('KRLX Radio View', () => {
+	describe('KRLX Radio', () => {
 		it('is reachable under the home screen', async () => {
 			// Navigate into Streaming Media
 			await element(by.text('Streaming Media')).tap()
@@ -65,7 +65,7 @@ describe('Streaming Media View', () => {
 			// Enter the ksto view
 			await expect(element(by.text('KRLX'))).toBeVisible()
 			await element(by.text('KRLX')).tap()
-			await expect(element(by.id('screen-streaming-radio-krlx'))).toBeVisible()
+			await expect(element(by.text('88.1 KRLX-FM'))).toBeVisible()
 		})
 	})
 })
