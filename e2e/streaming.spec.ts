@@ -18,10 +18,8 @@ describe('Streaming Media View', () => {
 		await expect(element(by.id('screen-homescreen'))).toBeVisible()
 
 		// Expect the Streaming Media button to be present, and tap on it
-		await expect(
-			element(by.id('homescreen-button-Streaming Media')),
-		).toBeVisible()
-		await element(by.id('homescreen-button-Streaming Media')).tap()
+		await expect(element(by.text('Streaming Media'))).toBeVisible()
+		await element(by.text('Streaming Media')).tap()
 
 		// Verify that the navigation took us away from the homescreen
 		await expect(element(by.id('screen-homescreen'))).not.toBeVisible()
@@ -29,7 +27,7 @@ describe('Streaming Media View', () => {
 
 	it('has the Stream List visible by default', async () => {
 		// Navigate into Streaming Media
-		await element(by.id('homescreen-button-Streaming Media')).tap()
+		await element(by.text('Streaming Media')).tap()
 
 		// The stream-list should be visible now
 		await expect(element(by.id('stream-list'))).toBeVisible()
@@ -38,23 +36,23 @@ describe('Streaming Media View', () => {
 	describe('Webcams', () => {
 		it('is reachable under the home screen', async () => {
 			// Navigate into Streaming Media
-			await element(by.id('homescreen-button-Streaming Media')).tap()
+			await element(by.text('Streaming Media')).tap()
 
 			// Enter the ksto view
-			await expect(element(by.id('tab-Webcams'))).toBeVisible()
-			await element(by.id('tab-Webcams')).tap()
-			await expect(element(by.id('screen-streaming-webcams'))).toBeVisible()
+			await expect(element(by.text('Webcams'))).toBeVisible()
+			await element(by.text('Webcams')).tap()
+			await expect(element(by.text('East Quad'))).toBeVisible()
 		})
 	})
 
 	describe('KSTO Radio View', () => {
 		it('is reachable under the home screen', async () => {
 			// Navigate into Streaming Media
-			await element(by.id('homescreen-button-Streaming Media')).tap()
+			await element(by.text('Streaming Media')).tap()
 
 			// Enter the ksto view
-			await expect(element(by.id('tab-KSTO'))).toBeVisible()
-			await element(by.id('tab-KSTO')).tap()
+			await expect(element(by.text('KSTO'))).toBeVisible()
+			await element(by.text('KSTO')).tap()
 			await expect(element(by.id('screen-streaming-radio-ksto'))).toBeVisible()
 		})
 	})
@@ -62,11 +60,11 @@ describe('Streaming Media View', () => {
 	describe('KRLX Radio View', () => {
 		it('is reachable under the home screen', async () => {
 			// Navigate into Streaming Media
-			await element(by.id('homescreen-button-Streaming Media')).tap()
+			await element(by.text('Streaming Media')).tap()
 
 			// Enter the ksto view
-			await expect(element(by.id('tab-KRLX'))).toBeVisible()
-			await element(by.id('tab-KRLX')).tap()
+			await expect(element(by.text('KRLX'))).toBeVisible()
+			await element(by.text('KRLX')).tap()
 			await expect(element(by.id('screen-streaming-radio-krlx'))).toBeVisible()
 		})
 	})
