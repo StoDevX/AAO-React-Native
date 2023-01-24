@@ -2,17 +2,14 @@ import merge from 'deepmerge'
 
 import {
 	DarkTheme as NavigationDarkTheme,
-	DefaultTheme as NavigationDefaultTheme,
+	DefaultTheme as NavigationLightTheme,
 } from '@react-navigation/native'
 
 import {
-	DarkTheme as PaperDarkTheme,
-	DefaultTheme as PaperDefaultTheme,
+	MD3DarkTheme as PaperDarkTheme,
+	MD3LightTheme as PaperLightTheme,
 } from 'react-native-paper'
 
-export const CombinedDefaultTheme = merge(
-	PaperDefaultTheme,
-	NavigationDefaultTheme,
-)
+export const CombinedLightTheme = merge(PaperLightTheme, NavigationLightTheme)
 
 export const CombinedDarkTheme = merge(PaperDarkTheme, NavigationDarkTheme)
