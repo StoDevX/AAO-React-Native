@@ -436,12 +436,118 @@ jobs:
           SENTRY_AUTH_TOKEN: ${{ secrets.HOSTED_SENTRY_AUTH_TOKEN }}
           GITHUB_KEYS_REPOSITORY_TOKEN: ${{ secrets.GITHUB_KEYS_REPOSITORY_TOKEN }}
 
-  ios:
+  ios-build:
     name: Build for iOS
-    needs: [jest, eslint, ios-bundle, ios-pods, cache-npm-macos, cache-bundler-macos]
+    needs: [jest, eslint, cache-cocoapods, cache-npm-macos, cache-bundler-macos]
+    runs-on: macos-11
+    outputs:
+      cache-key: ${{ steps.app-cache.outputs.cache-primary-key }}
+    steps:
+      - run: sudo xcode-select -s /Applications/${{ env.xcode_version }}.app
+
+      - uses: actions/checkout@v3.3.0
+
+      - name: Extract job definition
+        run: yq '.jobs.${{ github.job }}' .github/workflows/check.yml > .github/job.yml
+
+      - name: Check for cached iOS app
+        id: app-cache
+        uses: actions/cache/restore@v3
+        with:
+          path: ios/build/Build/Products/
+          key: ${{ runner.os }}-ios-xcode@${{ env.xcode_version }}-${{ hashFiles('**/project.pbxproj', '**/Podfile.lock', 'package-lock.json', '.github/job.yml') }}
+
+      - uses: actions/setup-node@v3
+        if: steps.app-cache.outputs.cache-hit != 'true'
+        with:
+          node-version: ${{ env.node_version }}
+
+      - name: Restore node_modules cache
+        if: steps.app-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/restore@v3
+        id: node-cache
+        with:
+          path: node_modules/
+          key: ${{ needs.cache-npm-macos.outputs.cache-key }}
+
+      - name: exit if the node_modules cache did not load
+        if: steps.app-cache.outputs.cache-hit != 'true' && steps.node-cache.outputs.cache-hit != 'true'
+        run: exit 1
+
+      - uses: ruby/setup-ruby@v1
+        if: steps.app-cache.outputs.cache-hit != 'true'
+        with:
+          ruby-version: ${{ env.ruby_version }}
+          bundler-cache: true
+
+      - name: Restore Cocoapods cache
+        if: steps.app-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/restore@v3
+        id: pods-cache
+        with:
+          path: ios/Pods
+          key: ${{ needs.cache-cocoapods.outputs.cache-key }}
+
+      - name: exit if the Cocoapods cache did not load
+        if: steps.app-cache.outputs.cache-hit != 'true' && steps.pods-cache.outputs.cache-hit != 'true'
+        run: exit 1
+
+      - uses: mikehardy/buildcache-action@v2
+        if: steps.app-cache.outputs.cache-hit != 'true'
+        continue-on-error: true
+        with:
+          cache_key: ${{ matrix.os }}
+
+      - name: Build the iOS app
+        if: steps.app-cache.outputs.cache-hit != 'true'
+        run: npx detox build e2e --configuration ios.sim.release
+
+      - name: Cache the iOS app
+        uses: actions/cache/save@v3
+        with:
+          path: ios/build/Build/Products/
+          key: ${{ steps.app-cache.outputs.cache-primary-key }}
+
+  ios-detox:
+    name: Detox E2E for iOS
+    needs: [cache-npm-macos, ios-build, ios-bundle]
     runs-on: macos-11
     steps:
+      - run: sudo xcode-select -s /Applications/${{ env.xcode_version }}.app
+
       - uses: actions/checkout@v3.3.0
+
+      - # load the app before reinstalling detox, so that the package-lock cannot change
+        name: Load the cached iOS app
+        uses: actions/cache/restore@v3
+        id: app-cache
+        with:
+          path: ios/build/Build/Products/
+          key: ${{ needs.ios-build.outputs.cache-key }}
+
+      - if: steps.app-cache.outputs.cache-hit != 'true'
+        run: exit 1
+
+      - # load the jsbundle before reinstalling detox, so that the package-lock cannot change
+        name: Load the cached iOS jsbundle
+        uses: actions/cache/restore@v3
+        id: jsbundle-cache
+        with:
+          path: |
+            ios/AllAboutOlaf/main.jsbundle
+            ios/AllAboutOlaf/main.jsbundle.map
+            ios/assets/
+          key: ${{ needs.ios-bundle.outputs.cache-key }}
+
+      - if: steps.jsbundle-cache.outputs.cache-hit != 'true'
+        run: exit 1
+
+      - name: Move cached jsbundle into place
+        run: |
+          mv ios/AllAboutOlaf/main.jsbundle ios/build/Build/Products/Release-iphonesimulator/AllAboutOlaf.app/
+          mv ios/AllAboutOlaf/main.jsbundle.map ios/build/Build/Products/Release-iphonesimulator/AllAboutOlaf.app/
+          rm -rf ios/build/Build/Products/Release-iphonesimulator/AllAboutOlaf.app/assets
+          mv ios/assets ios/build/Build/Products/Release-iphonesimulator/AllAboutOlaf.app/
 
       - uses: actions/setup-node@v3
         with:
@@ -454,39 +560,13 @@ jobs:
           path: node_modules/
           key: ${{ needs.cache-npm-macos.outputs.cache-key }}
 
-      - if: steps.node-cache.outputs.cache-hit != 'true'
-        run: exit 1
-
-      - uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: ${{ env.ruby_version }}
-          bundler-cache: true
-
-      - name: Restore Cocoapods cache
-        uses: actions/cache/restore@v3
-        id: pods-cache
-        with:
-          path: ios/Pods
-          key: ${{ needs.cache-cocoapods.outputs.cache-key }}
-
-      - name: exit if the Cocoapods cache did not load
-        if: steps.pods-cache.outputs.cache-hit != 'true'
-        run: exit 1
-
-      - uses: mikehardy/buildcache-action@v2
-        continue-on-error: true
-        with:
-          cache_key: ${{ matrix.os }}
-
-      - run: sudo xcode-select -s /Applications/${{ env.xcode_version }}.app
-
-      - run: bundle exec pod install --deployment
-        working-directory: ./ios
+      - # We have to poke Detox because it installs things outside of node_modules/detox/…
+        name: Re-install Detox
+        run: npx detox clean-framework-cache && npx detox build-framework-cache
 
       - run: brew tap wix/brew
 
       - run: brew install applesimutils
 
-      - run: npx detox build e2e --configuration ios.sim.release
-
-      - run: npx detox test e2e --configuration ios.sim.release --cleanup  --debug-synchronization 500
+      - name: Run the Detox tests
+        run: npx detox test e2e --configuration ios.sim.release --cleanup --debug-synchronization 500
