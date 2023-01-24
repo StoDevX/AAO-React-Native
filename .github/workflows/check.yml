@@ -300,7 +300,7 @@ jobs:
       - if: steps.node-cache.outputs.cache-hit != 'true'
         run: exit 1
 
-      - name: Cache the jsbundle
+      - name: Load the cached jsbundle
         uses: actions/cache/restore@v3
         id: jsbundle-cache
         with:
@@ -316,7 +316,8 @@ jobs:
           npm run bundle-data
           npm run bundle:ios
 
-      - uses: actions/cache/save@v3
+      - name: Cache the jsbundle
+        uses: actions/cache/save@v3
         if: steps.jsbundle-cache.outputs.cache-hit != 'true'
         with:
           path: |
@@ -351,7 +352,7 @@ jobs:
       - if: steps.node-cache.outputs.cache-hit != 'true'
         run: exit 1
 
-      - name: Restore the jsbundle
+      - name: Load the cached jsbundle
         uses: actions/cache/restore@v3
         id: jsbundle-cache
         with:
