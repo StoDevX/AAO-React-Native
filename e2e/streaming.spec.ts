@@ -1,5 +1,5 @@
-/* eslint-env jest */
-/* global element, by */
+import {beforeAll, beforeEach, test} from '@jest/globals'
+import {by, device, element, expect} from 'detox'
 
 describe('Streaming Media View', () => {
 	it('is reachable from the homescreen', async () => {
