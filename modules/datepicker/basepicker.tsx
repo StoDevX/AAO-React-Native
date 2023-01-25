@@ -1,6 +1,5 @@
 import * as React from 'react'
 import {Button} from 'react-native'
-import {useTheme} from '@frogpond/app-theme'
 
 import type {Moment} from 'moment-timezone'
 import moment from 'moment-timezone'

@@ -1,5 +1,5 @@
-import type {ThemingType} from '@callstack/react-theme-provider'
-import {createTheming} from '@callstack/react-theme-provider'
+// import type {ThemingType} from '@callstack/react-theme-provider'
+// import {createTheming} from '@callstack/react-theme-provider'
 import {useTheme} from '@react-navigation/native'
 export {CombinedLightTheme, CombinedDarkTheme} from './paper'
 
@@ -26,25 +26,25 @@ export type AppTheme = {
 	toolbarButtonForeground: string
 }
 
-let defaultTheme: AppTheme = {
-	accent: '#000',
-	androidListHeaderBackground: '#fff',
-	androidListHeaderForeground: '#000',
-	androidStatusBarColor: '#000',
-	androidTabBarBackground: '#fff',
-	androidTabBarForeground: '#000',
-	buttonBackground: '#000',
-	buttonForeground: '#fff',
-	iosPushButtonCellBackground: '#000',
-	iosPushButtonCellForeground: '#fff',
-	iosTabBarActiveColor: '#0f0',
-	iosTabBarBackground: '#000',
-	navigationBackground: '#000',
-	navigationForeground: '#fff',
-	statusBarStyle: 'light-content',
-	toolbarButtonBackground: '#000',
-	toolbarButtonForeground: '#fff',
-}
+// let defaultTheme: AppTheme = {
+// 	accent: '#000',
+// 	androidListHeaderBackground: '#fff',
+// 	androidListHeaderForeground: '#000',
+// 	androidStatusBarColor: '#000',
+// 	androidTabBarBackground: '#fff',
+// 	androidTabBarForeground: '#000',
+// 	buttonBackground: '#000',
+// 	buttonForeground: '#fff',
+// 	iosPushButtonCellBackground: '#000',
+// 	iosPushButtonCellForeground: '#fff',
+// 	iosTabBarActiveColor: '#0f0',
+// 	iosTabBarBackground: '#000',
+// 	navigationBackground: '#000',
+// 	navigationForeground: '#fff',
+// 	statusBarStyle: 'light-content',
+// 	toolbarButtonBackground: '#000',
+// 	toolbarButtonForeground: '#fff',
+// }
 
 // let {ThemeProvider, withTheme, useTheme} = createTheming(
 // 	defaultTheme,

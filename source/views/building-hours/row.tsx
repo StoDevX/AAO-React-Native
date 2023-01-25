@@ -10,7 +10,6 @@ import {
 	getDetailedBuildingStatus,
 	getShortBuildingStatus,
 	getAccentBackgroundColor,
-	getAccentTextColor,
 } from './lib'
 
 const styles = StyleSheet.create({

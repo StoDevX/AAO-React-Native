@@ -9,7 +9,6 @@ import {
 import BasicButton from 'react-native-button'
 import noop from 'lodash/noop'
 import {iOSUIKit, material} from 'react-native-typography'
-import {useTheme} from '@frogpond/app-theme'
 import * as c from '@frogpond/colors'
 
 const styles = StyleSheet.create({
@@ -22,7 +21,7 @@ const styles = StyleSheet.create({
 		overflow: 'hidden',
 	},
 	disabled: {
-		backgroundColor: c.clear, // TODO: what should go here?
+		backgroundColor: c.tertiarySystemFill,
 	},
 	text: {
 		...Platform.select({

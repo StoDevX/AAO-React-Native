@@ -9,7 +9,6 @@ import {
 	ViewStyle,
 } from 'react-native'
 import * as c from '@frogpond/colors'
-import {useTheme} from '@frogpond/app-theme'
 
 const styles = StyleSheet.create({
 	container: {
