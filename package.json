@@ -117,7 +117,7 @@
     "@tanstack/eslint-plugin-query": "4.21.0",
     "@types/base-64": "1.0.0",
     "@types/http-cache-semantics": "4.0.1",
-    "@types/jest": "29.2.6",
+    "@types/jest": "29.4.0",
     "@types/js-yaml": "4.0.5",
     "@types/lodash": "4.14.191",
     "@types/react": "17.0.39",
