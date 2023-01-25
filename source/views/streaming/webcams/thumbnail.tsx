@@ -37,25 +37,24 @@ export const StreamThumbnail = (props: Props): JSX.Element => {
 
 	return (
 		// do not remove this View; it is needed to prevent extra highlighting
-		<View style={styles.cell}>
-			<Touchable
-				highlight={true}
-				onPress={handlePress}
-				style={{width, height}}
-				underlayColor={baseColor}
-			>
-				<Image
-					accessibilityIgnoresInvertColors={true}
-					resizeMode="cover"
-					source={img}
-					style={[StyleSheet.absoluteFill, {width, height}]}
-				/>
+		<Touchable
+			containerStyle={styles.cell}
+			highlight={true}
+			onPress={handlePress}
+			style={{width, height}}
+			underlayColor={baseColor}
+		>
+			<Image
+				accessibilityIgnoresInvertColors={true}
+				resizeMode="cover"
+				source={img}
+				style={[StyleSheet.absoluteFill, {width, height}]}
+			/>
 
-				<View style={styles.titleWrapper}>
-					<Text style={[styles.titleText, {color: textColor}]}>{name}</Text>
-				</View>
-			</Touchable>
-		</View>
+			<View style={styles.titleWrapper}>
+				<Text style={[styles.titleText, {color: textColor}]}>{name}</Text>
+			</View>
+		</Touchable>
 	)
 }
 

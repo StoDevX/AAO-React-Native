@@ -24,6 +24,6 @@ test('should show the settings screen after tap', async () => {
 test('should show home screen after tap to exit settings screen', async () => {
 	await element(by.id('button-open-settings')).tap()
 	await expect(element(by.id('screen-homescreen'))).not.toBeVisible()
-	await element(by.id('button-close-screen')).tap()
+	await element(by.text('Done')).tap()
 	await expect(element(by.id('screen-homescreen'))).toBeVisible()
 })
