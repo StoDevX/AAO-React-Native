@@ -42,7 +42,7 @@ const styles = StyleSheet.create({
 	},
 	emptySearchText: {
 		fontSize: 18,
-		color: c.semitransparentGray,
+		color: c.secondaryLabel,
 		textAlign: 'center',
 		paddingTop: 20,
 		paddingBottom: 10,
@@ -107,11 +107,7 @@ export const APITestView = (): JSX.Element => {
 	const EmptySearch = () => {
 		return (
 			<View style={styles.emptySearch}>
-				<Icon
-					color={c.semitransparentGray}
-					name="analytics-outline"
-					size={64}
-				/>
+				<Icon color={c.secondaryLabel} name="analytics-outline" size={64} />
 				<Text style={styles.emptySearchText}>Search for an API Endpoint</Text>
 			</View>
 		)

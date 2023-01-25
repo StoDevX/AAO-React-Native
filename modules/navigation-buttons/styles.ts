@@ -42,7 +42,7 @@ export const rightButtonStyles = StyleSheet.create({
 	icon: {
 		...Platform.select({
 			ios: {
-				fontSize: 32,
+				fontSize: 24,
 			},
 			android: {
 				fontSize: 24,

@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {StyleSheet, Text, View, Platform, Pressable, PlatformColor} from 'react-native'
+import {StyleSheet, Text, View, Platform, Pressable} from 'react-native'
 import {ListSeparator, ListRow} from '@frogpond/lists'
 import {NoticeView} from '@frogpond/notice'
 import * as c from '@frogpond/colors'
@@ -16,10 +16,9 @@ type Props = {
 }
 
 function RecentItemsList(props: Props): JSX.Element {
-	let {items, actionLabel, onAction, title, emptyHeader, emptyText} =
-		props
+	let {items, actionLabel, onAction, title, emptyHeader, emptyText} = props
 
-	let foreground = {color: PlatformColor('link')}
+	let foreground = {color: c.link}
 
 	return (
 		<>
@@ -82,7 +81,7 @@ const styles = StyleSheet.create({
 		paddingBottom: 35,
 	},
 	noticeText: {
-		color: c.gray,
+		color: c.secondaryLabel,
 	},
 	rowFlex: {
 		flexDirection: 'row',

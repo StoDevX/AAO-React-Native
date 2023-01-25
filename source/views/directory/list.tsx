@@ -127,11 +127,7 @@ function IndentedListSeparator() {
 function NoSearchPerformed() {
 	return (
 		<View style={styles.emptySearch}>
-			<Icon
-				color={c.semitransparentGray}
-				name="people-circle-outline"
-				size={64}
-			/>
+			<Icon color={c.secondaryLabel} name="people-circle-outline" size={64} />
 			<Text style={styles.emptySearchText}>Search the Directory</Text>
 		</View>
 	)
@@ -210,7 +206,7 @@ const styles = StyleSheet.create({
 	},
 	emptySearchText: {
 		fontSize: 18,
-		color: c.semitransparentGray,
+		color: c.secondaryLabel,
 		textAlign: 'center',
 		paddingTop: 20,
 		paddingBottom: 10,

@@ -57,7 +57,7 @@ export const BaseDateTimePicker = (
 		return momentZone ? -momentZone.utcOffset(dateInUnixMs) : 0
 	}
 
-	const { colors } = useTheme();
+	const {colors} = useTheme()
 
 	let sharedPlatformProps = {
 		minuteInterval: props.minuteInterval,

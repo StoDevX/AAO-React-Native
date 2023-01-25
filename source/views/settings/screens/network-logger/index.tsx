@@ -62,14 +62,14 @@ const styles = StyleSheet.create({
 		right: 20,
 	},
 	backButtonText: {
-		color: c.black,
+		color: c.label,
 		paddingHorizontal: 20,
 		fontSize: 30,
 		fontWeight: 'bold',
 	},
 	title: {
 		flex: 5,
-		color: c.black,
+		color: c.label,
 		textAlign: 'center',
 		padding: 10,
 		fontSize: 18,

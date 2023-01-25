@@ -25,8 +25,7 @@ export function ActiveFilterButton<T extends object>({
 	onRemove,
 	style,
 }: Props<T>): JSX.Element {
-	const { colors } = useTheme();
-
+	const {colors} = useTheme()
 
 	let iconName = Platform.select({
 		ios: 'ios-close-circle',

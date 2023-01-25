@@ -37,6 +37,6 @@ export function PickerSection<T extends object>({
 
 const styles = StyleSheet.create({
 	picker: {
-		backgroundColor: c.white,
+		backgroundColor: c.secondarySystemBackground,
 	},
 })

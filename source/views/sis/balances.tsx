@@ -109,12 +109,12 @@ let styles = StyleSheet.create({
 	},
 
 	common: {
-		backgroundColor: c.white,
+		backgroundColor: c.systemBackground,
 	},
 
 	balances: {
 		borderRightWidth: StyleSheet.hairlineWidth,
-		borderRightColor: c.iosSeparator,
+		borderRightColor: c.separator,
 	},
 
 	finalCell: {
@@ -139,14 +139,14 @@ let styles = StyleSheet.create({
 	// Text styling
 	financialText: {
 		paddingTop: 8,
-		color: c.iosDisabledText,
+		color: c.secondaryLabel,
 		textAlign: 'center',
 		fontWeight: '200',
 		fontSize: 23,
 	},
 	rectangleButtonText: {
 		paddingTop: 15,
-		color: c.black,
+		color: c.label,
 		textAlign: 'center',
 		fontSize: 16,
 	},

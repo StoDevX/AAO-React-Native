@@ -211,7 +211,7 @@ const styles = StyleSheet.create({
 	iOSweekToggles: {
 		alignItems: 'stretch',
 		justifyContent: 'center',
-		backgroundColor: c.white,
+		backgroundColor: c.secondarySystemBackground,
 		paddingHorizontal: 10,
 		paddingVertical: 20,
 	},
@@ -228,7 +228,7 @@ const styles = StyleSheet.create({
 		paddingVertical: 10,
 		borderRadius: 20,
 		margin: 5,
-		backgroundColor: c.iosGray,
+		backgroundColor: c.systemBackground,
 	},
 	androidDayWrapper: {
 		flex: 1,
@@ -245,7 +245,7 @@ const styles = StyleSheet.create({
 		borderColor: c.transparent,
 	},
 	iOSDayActive: {
-		backgroundColor: c.infoBlue,
+		backgroundColor: c.link,
 	},
 	dayText: {
 		fontSize: 16,
@@ -260,7 +260,7 @@ const styles = StyleSheet.create({
 		minWidth: 110,
 	},
 	datePickerDash: {
-		color: c.iosDisabledText,
+		color: c.secondaryLabel,
 		fontWeight: 'bold',
 		marginHorizontal: 2,
 	},

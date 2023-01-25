@@ -9,7 +9,7 @@ const styles = StyleSheet.create({
 	linkText: {
 		textDecorationLine: 'underline',
 		textDecorationStyle: 'solid',
-		color: c.infoBlue,
+		color: c.link,
 	},
 })
 

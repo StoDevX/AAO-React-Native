@@ -50,7 +50,7 @@ const styles = StyleSheet.create({
 		lineHeight: 20,
 	},
 	rightDetail: {
-		color: c.iosDisabledText,
+		color: c.secondaryLabel,
 		textAlign: 'right',
 	},
 	container: {
@@ -61,7 +61,7 @@ const styles = StyleSheet.create({
 		textAlign: 'center',
 		marginTop: 20,
 		marginHorizontal: 10,
-		color: c.black,
+		color: c.label,
 	},
 	subHeader: {
 		fontSize: 21,

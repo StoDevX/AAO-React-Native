@@ -20,7 +20,10 @@ export function CellToggle(props: PropsType): JSX.Element {
 		<Switch
 			disabled={disabled}
 			onValueChange={onChange}
-			trackColor={{true: Platform.select({ios: colors.primary, android: undefined}), false: undefined}}
+			trackColor={{
+				true: Platform.select({ios: colors.primary, android: undefined}),
+				false: undefined,
+			}}
 			value={value}
 		/>
 	)

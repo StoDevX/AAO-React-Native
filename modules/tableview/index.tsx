@@ -32,7 +32,7 @@ let Section = (props: SectionInterface): JSX.Element => (
 
 let TableView = (props: TableViewInterface): JSX.Element => (
 	<RNTableView.TableView
-		appearance="light"
+		appearance="auto"
 		style={styles.tableview}
 		{...props}
 	/>

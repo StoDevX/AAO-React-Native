@@ -264,7 +264,7 @@ const HomeStackScreens = () => {
 }
 
 const SettingsStackScreens = () => {
-	let {colors} = useTheme();
+	let {colors} = useTheme()
 	return (
 		<SettingsStack.Navigator
 			screenOptions={{

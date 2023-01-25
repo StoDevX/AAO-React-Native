@@ -26,7 +26,7 @@ type Props = {
 }
 
 function DottedBar({style}: Props) {
-	const { colors } = useTheme();
+	const {colors} = useTheme()
 	let background = {backgroundColor: colors.primary}
 
 	return (

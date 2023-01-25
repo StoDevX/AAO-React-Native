@@ -224,7 +224,7 @@ const styles = StyleSheet.create({
 	},
 	logoBorder: {
 		borderRadius: 6,
-		borderColor: c.black,
+		borderColor: c.systemBackground,
 		borderWidth: 3,
 	},
 	titleWrapper: {
@@ -232,14 +232,14 @@ const styles = StyleSheet.create({
 		marginBottom: 20,
 	},
 	heading: {
-		color: c.black,
+		color: c.label,
 		fontWeight: '600',
 		fontSize: 28,
 		textAlign: 'center',
 	},
 	subHeading: {
 		marginTop: 5,
-		color: c.black,
+		color: c.label,
 		fontWeight: '300',
 		fontSize: 28,
 		textAlign: 'center',
@@ -248,7 +248,7 @@ const styles = StyleSheet.create({
 		fontWeight: '400',
 		fontSize: 18,
 		textAlign: 'center',
-		color: c.grapefruit,
+		color: c.orange,
 		marginTop: 15,
 		marginBottom: 5,
 	},

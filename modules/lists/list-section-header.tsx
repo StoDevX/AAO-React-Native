@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
 		...Platform.select({
 			ios: {
 				fontSize: 16,
-				color: c.black,
+				color: c.label,
 			},
 			android: {
 				fontSize: 16,
@@ -52,12 +52,12 @@ const styles = StyleSheet.create({
 		...Platform.select({
 			ios: {
 				fontSize: 16,
-				color: c.iosDisabledText,
+				color: c.secondaryLabel,
 			},
 			android: {
 				fontSize: 16,
 				fontFamily: 'sans-serif-condensed',
-				color: c.iosDisabledText, // todo: find android equivalent
+				color: c.secondaryLabel, // todo: find android equivalent
 			},
 		}),
 	},

@@ -43,12 +43,12 @@ const styles = StyleSheet.create({
 	cellTitle: {
 		fontSize: 16,
 		letterSpacing: -0.32,
-		color: c.black,
+		color: c.label,
 	},
 	cellLeftDetail: {
 		fontSize: 16,
 		letterSpacing: -0.32,
-		color: c.iosDisabledText,
+		color: c.secondaryLabel,
 	},
 	cellRightDetail: {
 		alignSelf: 'center',
