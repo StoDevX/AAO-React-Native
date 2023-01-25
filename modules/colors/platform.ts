@@ -1,6 +1,6 @@
-import {Platform} from 'react-native'
+import {Platform, PlatformColor} from 'react-native'
 
-export const iosGray = 'rgb(241, 241, 242)'
+export const iosGray = PlatformColor('systemFill') as unknown as string
 
 export const androidLightBackground = 'rgb(244, 244, 244)'
 export const androidSeparator = 'rgb(224, 224, 224)'
@@ -8,18 +8,18 @@ export const androidDisabledIcon = 'rgb(224, 224, 224)'
 export const androidTextColor = 'rgb(113, 113, 118)'
 export const androidTabAccentColor = '#ffeb3b'
 
-export const iosLightBackground = 'rgb(240, 239, 245)'
-export const iosSeparator = '#C8C7CC'
+export const iosBackground = PlatformColor('secondarySystemBackground')
+export const iosSeparator = PlatformColor('separator')
 export const iosLightBorder = iosSeparator
-export const iosDisabledText = 'rgb(142, 142, 147)'
+export const iosDisabledText = PlatformColor('secondaryLabel')
 export const iosText = iosSeparator
 export const iosNavbarBottomBorder = iosSeparator
-export const iosListSectionHeader = 'rgb(248, 248, 248)'
+export const iosListSectionHeader = PlatformColor('secondarySystemBackground')
 export const iosPlaceholderText = iosSeparator
 export const iosHeaderTopBorder = iosSeparator
-export const iosHeaderBottomBorder = 'rgb(224, 224, 224)'
+export const iosHeaderBottomBorder = iosSeparator
 
 export const sectionBgColor =
-	Platform.OS === 'ios' ? iosLightBackground : androidLightBackground
+	Platform.OS === 'ios' ? iosBackground : androidLightBackground
 
-export const tableviewAccessoryColor = 'rgb(0, 122, 255)'
+export const tableviewAccessoryColor = PlatformColor('secondaryLabel')

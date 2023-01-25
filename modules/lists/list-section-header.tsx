@@ -9,20 +9,14 @@ import {
 	ViewStyle,
 } from 'react-native'
 import * as c from '@frogpond/colors'
-import type {AppTheme} from '@frogpond/app-theme'
-import {getTheme} from '@frogpond/app-theme'
+import {useTheme} from '@frogpond/app-theme'
 
 const styles = StyleSheet.create({
 	container: {
 		paddingLeft: 15,
 		...Platform.select({
 			ios: {
-				backgroundColor: c.iosListSectionHeader,
 				paddingVertical: 6,
-				borderTopWidth: StyleSheet.hairlineWidth,
-				borderBottomWidth: StyleSheet.hairlineWidth,
-				borderTopColor: c.iosHeaderTopBorder,
-				borderBottomColor: c.iosHeaderBottomBorder,
 				paddingRight: 10,
 			},
 			android: {
@@ -30,7 +24,6 @@ const styles = StyleSheet.create({
 				paddingBottom: 10,
 				borderTopWidth: 1,
 				borderBottomWidth: 0,
-				borderColor: '#c8c7cc',
 				paddingRight: 15,
 			},
 		}),
@@ -93,7 +86,7 @@ export function ListSectionHeader(props: Props): JSX.Element {
 		spacing: {left: leftSpacing = 15} = {},
 	} = props
 
-	const theme: AppTheme = getTheme()
+	const {colors} = useTheme()
 
 	let containerTheme: ViewStyle = {paddingLeft: leftSpacing}
 	let titleTheme = {}
@@ -101,11 +94,21 @@ export function ListSectionHeader(props: Props): JSX.Element {
 	if (Platform.OS === 'android') {
 		containerTheme = {
 			...containerTheme,
-			backgroundColor: theme.androidListHeaderBackground,
+			backgroundColor: colors.background,
+			borderColor: colors.border,
 		}
 		titleTheme = {
 			...titleTheme,
-			color: theme.androidListHeaderForeground,
+			color: colors.text,
+		}
+	} else if (Platform.OS === 'ios') {
+		containerTheme = {
+			...containerTheme,
+			backgroundColor: c.iosListSectionHeader,
+			borderTopWidth: StyleSheet.hairlineWidth,
+			borderBottomWidth: StyleSheet.hairlineWidth,
+			borderTopColor: c.iosHeaderTopBorder,
+			borderBottomColor: c.iosHeaderBottomBorder,
 		}
 	}
 

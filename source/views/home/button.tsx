@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {View, Text, StyleSheet, Platform} from 'react-native'
+import {View, Text, StyleSheet, Platform, SafeAreaView} from 'react-native'
 import Icon from 'react-native-vector-icons/Entypo'
 import type {ViewType} from '../views'
 import {Touchable} from '@frogpond/touchable'
@@ -17,19 +17,21 @@ export function HomeScreenButton({view, onPress}: Props): JSX.Element {
 		view.foreground === 'light' ? styles.lightForeground : styles.darkForeground
 
 	return (
-		<Touchable
-			accessibilityLabel={view.title}
-			accessibilityRole="button"
-			accessible={true}
-			highlight={false}
-			onPress={onPress}
-			style={[styles.button, {backgroundColor: view.tint}]}
-		>
-			<View style={styles.contents}>
-				<Icon name={view.icon} size={32} style={[foreground, styles.icon]} />
-				<Text style={[foreground, styles.text]}>{view.title}</Text>
-			</View>
-		</Touchable>
+		<SafeAreaView>
+			<Touchable
+				accessibilityLabel={view.title}
+				accessibilityRole="button"
+				accessible={true}
+				highlight={false}
+				onPress={onPress}
+				style={[styles.button, {backgroundColor: view.tint}]}
+			>
+				<View style={styles.contents}>
+					<Icon name={view.icon} size={32} style={[foreground, styles.icon]} />
+					<Text style={[foreground, styles.text]}>{view.title}</Text>
+				</View>
+			</Touchable>
+		</SafeAreaView>
 	)
 }
 

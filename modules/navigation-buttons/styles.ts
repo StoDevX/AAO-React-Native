@@ -1,7 +1,4 @@
 import {StyleSheet, Platform} from 'react-native'
-import {getTheme} from '@frogpond/app-theme'
-
-const theme = getTheme()
 
 export const commonStyles = StyleSheet.create({
 	button: {
@@ -19,7 +16,6 @@ export const commonStyles = StyleSheet.create({
 	},
 	text: {
 		fontSize: 17,
-		color: theme.navigationForeground,
 		...Platform.select({
 			android: {
 				marginTop: 1,
@@ -44,7 +40,6 @@ export const rightButtonStyles = StyleSheet.create({
 		}),
 	},
 	icon: {
-		color: theme.navigationForeground,
 		...Platform.select({
 			ios: {
 				fontSize: 32,
@@ -58,7 +53,6 @@ export const rightButtonStyles = StyleSheet.create({
 
 export const leftButtonStyles = StyleSheet.create({
 	icon: {
-		color: theme.navigationForeground,
 		fontSize: 24,
 	},
 })

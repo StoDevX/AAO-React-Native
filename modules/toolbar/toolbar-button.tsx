@@ -3,8 +3,7 @@ import {StyleSheet, View, Text, Platform, TextStyle} from 'react-native'
 import {Icon} from '@frogpond/icon'
 import type {Glyphs} from '@frogpond/icon'
 import * as c from '@frogpond/colors'
-import type {AppTheme} from '@frogpond/app-theme'
-import {getTheme} from '@frogpond/app-theme'
+import {useTheme} from '@frogpond/app-theme'
 
 const buttonStyles = StyleSheet.create({
 	button: {
@@ -39,15 +38,14 @@ export function ToolbarButton({
 	iconName,
 	isActive,
 }: ButtonPropsType): React.ReactElement {
-	let theme: AppTheme = getTheme()
-
+	let {colors} = useTheme()
 	let activeButton = {
-		backgroundColor: theme.toolbarButtonBackground,
-		borderColor: theme.toolbarButtonBackground,
+		backgroundColor: colors.background,
+		borderColor: colors.border,
 	}
 
 	let activeText = {
-		color: theme.toolbarButtonForeground,
+		color: colors.text,
 	}
 
 	let activeButtonStyle = isActive ? activeButton : buttonStyles.inactiveButton

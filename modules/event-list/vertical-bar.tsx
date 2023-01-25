@@ -1,8 +1,7 @@
 import * as React from 'react'
 import {Platform, StyleProp, StyleSheet, View, ViewStyle} from 'react-native'
 import * as c from '@frogpond/colors'
-import type {AppTheme} from '@frogpond/app-theme'
-import {getTheme} from '@frogpond/app-theme'
+import {useTheme} from '@frogpond/app-theme'
 
 const dotBarStyles = StyleSheet.create({
 	diagram: {
@@ -27,8 +26,8 @@ type Props = {
 }
 
 function DottedBar({style}: Props) {
-	let theme: AppTheme = getTheme()
-	let background = {backgroundColor: theme.accent}
+	const { colors } = useTheme();
+	let background = {backgroundColor: colors.primary}
 
 	return (
 		<View style={[dotBarStyles.diagram, style]}>

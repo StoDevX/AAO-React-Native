@@ -53,7 +53,7 @@ export function FilterToolbarButton<T extends object>(
 ): JSX.Element | null {
 	let {onPopoverDismiss, filter, isActive, style, title} = props
 
-	let theme = useTheme()
+	let {colors} = useTheme()
 	let [popoverVisible, setPopoverVisible] = useState(false)
 	let touchable = useRef<View>(null)
 
@@ -73,16 +73,16 @@ export function FilterToolbarButton<T extends object>(
 	})
 
 	let activeButton = {
-		backgroundColor: theme.toolbarButtonBackground,
-		borderColor: theme.toolbarButtonBackground,
+		backgroundColor: colors.primary,
+		borderColor: colors.border,
 	}
 
-	let inactiveText = {
-		color: theme.toolbarButtonForeground,
+	let activeText = {
+		color: colors.text,
 	}
 
 	let activeButtonStyle = isActive ? activeButton : buttonStyles.inactiveButton
-	let activeContentStyle = isActive ? inactiveText : buttonStyles.inactiveText
+	let activeContentStyle = isActive ? activeText : buttonStyles.inactiveText
 
 	let textWithIconStyle = icon ? buttonStyles.textWithIcon : null
 	let activeTextStyle: TextStyle = {

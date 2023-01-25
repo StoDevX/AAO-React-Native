@@ -10,9 +10,7 @@ import {
 	ViewStyle,
 } from 'react-native'
 import Icon from 'react-native-vector-icons/Ionicons'
-import {white} from '@frogpond/colors'
-import type {AppTheme} from '@frogpond/app-theme'
-import {getTheme} from '@frogpond/app-theme'
+import {useTheme} from '@frogpond/app-theme'
 
 type Props<T extends object> = {
 	filter: FilterType<T>
@@ -27,7 +25,8 @@ export function ActiveFilterButton<T extends object>({
 	onRemove,
 	style,
 }: Props<T>): JSX.Element {
-	let theme: AppTheme = getTheme()
+	const { colors } = useTheme();
+
 
 	let iconName = Platform.select({
 		ios: 'ios-close-circle',
@@ -35,10 +34,9 @@ export function ActiveFilterButton<T extends object>({
 		default: '',
 	})
 
-	let foreground = {color: theme.buttonForeground}
-	let background = {backgroundColor: theme.buttonBackground}
-	// TODO: pick an appropriate icon color automatically
-	let iconColor = white
+	let foreground = {color: colors.text}
+	let background = {backgroundColor: colors.primary}
+	let iconColor = colors.text
 
 	return (
 		<TouchableWithoutFeedback onPress={() => onRemove(filter)}>

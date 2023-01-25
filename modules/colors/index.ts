@@ -1,3 +1,5 @@
+import { PlatformColor } from 'react-native'
+
 export {firstReadable} from './util'
 
 export * from './colors'
@@ -5,7 +7,7 @@ export * from './gradients'
 
 export {
 	iosDisabledText,
-	iosLightBackground,
+	iosBackground,
 	androidSeparator,
 	iosPlaceholderText,
 	iosListSectionHeader,
@@ -16,3 +18,6 @@ export {
 	iosSeparator,
 	androidLightBackground,
 } from './platform'
+
+export const secondaryLabel = PlatformColor('secondaryLabel')
+export const link = PlatformColor('link')
