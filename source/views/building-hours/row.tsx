@@ -29,7 +29,7 @@ const styles = StyleSheet.create({
 	},
 	subtitleText: {
 		fontWeight: '400',
-		color: c.iosDisabledText,
+		color: c.secondaryLabel,
 	},
 	accessoryBadge: {
 		marginLeft: 4,
@@ -73,7 +73,6 @@ export function BuildingRow(props: Props): JSX.Element {
 						accentColor={getAccentBackgroundColor(openStatus)}
 						style={styles.accessoryBadge}
 						text={openStatus}
-						textColor={getAccentTextColor(openStatus)}
 					/>
 				) : null}
 			</Row>

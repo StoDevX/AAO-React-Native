@@ -1,14 +1,14 @@
 import * as React from 'react'
 import {Touchable} from '@frogpond/touchable'
 import {Icon, platformPrefixIconName} from '@frogpond/icon'
-import {useTheme} from '@frogpond/app-theme'
+import * as c from '@frogpond/colors'
 import {commonStyles, rightButtonStyles} from './styles'
 import {useNavigation} from '@react-navigation/native'
 import {HeaderBackButtonProps} from '@react-navigation/native-stack/lib/typescript/src/types'
 
 export function OpenSettingsButton(_props: HeaderBackButtonProps): JSX.Element {
 	let navigation = useNavigation()
-	let {colors} = useTheme()
+
 	return (
 		<Touchable
 			accessibilityLabel="Open Settings"
@@ -22,7 +22,7 @@ export function OpenSettingsButton(_props: HeaderBackButtonProps): JSX.Element {
 		>
 			<Icon
 				name={platformPrefixIconName('settings')}
-				style={[rightButtonStyles.icon, {color: colors.text}]}
+				style={[rightButtonStyles.icon, {color: c.label}]}
 			/>
 		</Touchable>
 	)

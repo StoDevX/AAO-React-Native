@@ -72,7 +72,7 @@ const styles = StyleSheet.create({
 
 function Information({course}: {course: CourseType}) {
 	return (
-		<Section header="INFORMATION" sectionTintColor={c.sectionBgColor}>
+		<Section header="INFORMATION">
 			{course.instructors ? (
 				<Cell
 					cellStyle="LeftDetail"
@@ -142,7 +142,7 @@ function Schedule({course}: {course: CourseType}) {
 	})
 
 	return (
-		<Section header="SCHEDULE" sectionTintColor={c.sectionBgColor}>
+		<Section header="SCHEDULE">
 			{schedule}
 		</Section>
 	)

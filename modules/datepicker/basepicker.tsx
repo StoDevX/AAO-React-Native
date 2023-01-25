@@ -57,8 +57,6 @@ export const BaseDateTimePicker = (
 		return momentZone ? -momentZone.utcOffset(dateInUnixMs) : 0
 	}
 
-	const {colors} = useTheme()
-
 	let sharedPlatformProps = {
 		minuteInterval: props.minuteInterval,
 		mode: props.mode,
@@ -73,7 +71,6 @@ export const BaseDateTimePicker = (
 		<>
 			{props.showPickerButtonAndroid && (
 				<Button
-					color={colors.background}
 					onPress={() => props.setShowPickerAndroid?.(true)}
 					testID="datepicker-button-android"
 					title={formatDate(date, timezone)}

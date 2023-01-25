@@ -1,13 +1,13 @@
-import * as React from 'react'
-import {RefObject, useState} from 'react'
+import React from 'react'
 import Popover, {PopoverPlacement} from 'react-native-popover-view'
 import {FilterSection} from './section'
 import type {FilterType} from './types'
 import * as c from '@frogpond/colors'
-import {View} from 'react-native'
+import {View, StyleSheet} from 'react-native'
+import {TableView} from '@frogpond/tableview'
 
 type Props<T extends object> = {
-	anchor: RefObject<View>
+	anchor: React.RefObject<View>
 	filter: FilterType<T>
 	onClosePopover: (filter: FilterType<T>) => unknown
 	visible: boolean
@@ -15,7 +15,7 @@ type Props<T extends object> = {
 
 export function FilterPopover<T extends object>(props: Props<T>): JSX.Element {
 	let {anchor, onClosePopover, visible} = props
-	let [filter, setFilter] = useState<FilterType<T>>(props.filter)
+	let [filter, setFilter] = React.useState<FilterType<T>>(props.filter)
 
 	return (
 		<Popover
@@ -23,18 +23,22 @@ export function FilterPopover<T extends object>(props: Props<T>): JSX.Element {
 			isVisible={visible}
 			onRequestClose={() => onClosePopover(filter)}
 			placement={PopoverPlacement.BOTTOM}
-			popoverStyle={popoverContainer}
+			popoverStyle={styles.container}
 		>
-			<FilterSection<T>
-				filter={filter}
-				onChange={(filter) => setFilter(filter)}
-			/>
+			<TableView>
+				<FilterSection<T>
+					filter={filter}
+					onChange={(filter) => setFilter(filter)}
+				/>
+			</TableView>
 		</Popover>
 	)
 }
 
-const popoverContainer = {
-	minWidth: 200,
-	maxWidth: 300,
-	backgroundColor: c.sectionBgColor,
-}
+const styles = StyleSheet.create({
+	container: {
+		minWidth: 200,
+		maxWidth: 300,
+		backgroundColor: c.systemGroupedBackground,
+	},
+})

@@ -30,7 +30,6 @@ import * as stoprint from '../views/stoprint'
 import * as more from '../views/more'
 import * as directory from '../views/directory'
 
-import {useTheme} from '@frogpond/app-theme'
 import {RootStackParamList, SettingsStackParamList} from './types'
 import {NavigationKey as Debug} from '../views/settings/screens/debug'
 import {toLaxTitleCase} from '@frogpond/titlecase'
@@ -39,15 +38,8 @@ const Stack = createNativeStackNavigator<RootStackParamList>()
 const SettingsStack = createNativeStackNavigator<SettingsStackParamList>()
 
 const HomeStackScreens = () => {
-	let {colors} = useTheme()
 	return (
-		<Stack.Navigator
-			screenOptions={{
-				gestureEnabled: true,
-				headerTintColor: colors.text,
-				headerStyle: {backgroundColor: colors.primary},
-			}}
-		>
+		<Stack.Navigator screenOptions={{gestureEnabled: true}}>
 			<Stack.Screen
 				component={home.View}
 				name="Home"
@@ -264,15 +256,8 @@ const HomeStackScreens = () => {
 }
 
 const SettingsStackScreens = () => {
-	let {colors} = useTheme()
 	return (
-		<SettingsStack.Navigator
-			screenOptions={{
-				gestureEnabled: true,
-				headerTintColor: colors.text,
-				headerStyle: {backgroundColor: colors.primary},
-			}}
-		>
+		<SettingsStack.Navigator screenOptions={{gestureEnabled: true}}>
 			<SettingsStack.Screen
 				component={settings.SettingsView}
 				name="SettingsRoot"

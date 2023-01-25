@@ -22,7 +22,7 @@ const styles = StyleSheet.create({
 		overflow: 'hidden',
 	},
 	disabled: {
-		backgroundColor: c.secondaryBackground,
+		backgroundColor: c.clear, // TODO: what should go here?
 	},
 	text: {
 		...Platform.select({
@@ -61,14 +61,8 @@ export function Button({
 	textStyle = null,
 	mode = 'default',
 }: Props): JSX.Element {
-	let {colors} = useTheme()
-
-	let background =
-		mode === 'default'
-			? {backgroundColor: colors.background}
-			: {backgroundColor: colors.text}
-	let foreground =
-		mode === 'default' ? {color: colors.text} : {color: colors.background}
+	let background = {backgroundColor: c.tertiarySystemFill}
+	let foreground = {color: c.label}
 
 	const textStyleThing = mode === 'default' ? styles.text : inverted.text
 	const containerStyle = [styles.button, background, buttonStyle]

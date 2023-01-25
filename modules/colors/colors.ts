@@ -1,36 +1,21 @@
-import {PlatformColor} from 'react-native'
+import * as platform from './platform'
 
-export const blue = PlatformColor('systemBlue')
-export const brown = PlatformColor('systemBrown')
-export const cyan = PlatformColor('systemCyan')
-export const green = PlatformColor('systemGreen')
-export const indigo = PlatformColor('systemIndigo')
-export const mint = PlatformColor('systemMint')
-export const orange = PlatformColor('systemOrange')
-export const pink = PlatformColor('systemPink')
-export const purple = PlatformColor('systemPurple')
-export const red = PlatformColor('systemRed')
-export const teal = PlatformColor('systemTeal')
-export const yellow = PlatformColor('systemYellow')
+export const blue = platform.systemBlue
+export const brown = platform.systemBrown
+export const cyan = platform.systemCyan
+export const green = platform.systemGreen
+export const indigo = platform.systemIndigo
+export const mint = platform.systemMint
+export const orange = platform.systemOrange
+export const pink = platform.systemPink
+export const purple = platform.systemPurple
+export const red = platform.systemRed
+export const teal = platform.systemTeal
+export const yellow = platform.systemYellow
 
 export const black = '#111111'
 export const white = '#FFFFFF'
-export const transparent = 'transparent'
-
-// MARK: Whites
-export const antiqueWhite = 'rgb(250, 235, 215)'
-export const oldLace = 'rgb(253, 245, 230)'
-export const ivory = 'rgb(255, 255, 240)'
-export const seashell = 'rgb(255, 245, 238)'
-export const ghostWhite = 'rgb(248, 248, 255)'
-export const snow = 'rgb(255, 250, 250)'
-export const linen = 'rgb(250, 240, 230)'
-
-// MARK: Grays
-export const black75Percent = 'rgb(191.25, 191.25, 191.25)'
-export const warmGray = 'rgb(133, 117, 112)'
-export const coolGray = 'rgb(118, 122, 133)'
-export const charcoal = 'rgb(34, 34, 34)'
+export const transparent = platform.clear
 
 // MARK: Greens
 export const emerald = 'rgb(1, 152, 117)'

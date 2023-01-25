@@ -4,11 +4,11 @@ import * as c from '@frogpond/colors'
 
 const styles = StyleSheet.create({
 	content: {
-		backgroundColor: c.white,
+		backgroundColor: c.secondarySystemGroupedBackground,
 		borderTopWidth: StyleSheet.hairlineWidth,
 		borderBottomWidth: StyleSheet.hairlineWidth,
-		borderTopColor: c.iosHeaderTopBorder,
-		borderBottomColor: c.iosHeaderBottomBorder,
+		borderTopColor: c.separator,
+		borderBottomColor: c.separator,
 		marginBottom: 10,
 	},
 	title: {

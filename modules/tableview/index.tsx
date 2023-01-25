@@ -1,6 +1,5 @@
 import * as React from 'react'
 import {Platform, StyleSheet} from 'react-native'
-import {sectionBgColor} from '@frogpond/colors'
 
 import * as RNTableView from 'react-native-tableview-simple'
 import type {SectionInterface} from 'react-native-tableview-simple/lib/typescript/components/Section'
@@ -24,7 +23,6 @@ let Section = (props: SectionInterface): JSX.Element => (
 	<RNTableView.Section
 		hideSurroundingSeparators={Platform.OS === 'ios'}
 		roundedCorners={Platform.OS === 'ios'}
-		sectionTintColor={sectionBgColor}
 		withSafeAreaView={false}
 		{...props}
 	/>

@@ -1,11 +1,10 @@
 import * as React from 'react'
-import {StyleSheet, View, Text, Platform, TextStyle} from 'react-native'
+import {StyleSheet, View, Text} from 'react-native'
 import {Icon} from '@frogpond/icon'
 import type {Glyphs} from '@frogpond/icon'
 import * as c from '@frogpond/colors'
-import {useTheme} from '@frogpond/app-theme'
 
-const buttonStyles = StyleSheet.create({
+const styles = StyleSheet.create({
 	button: {
 		flexDirection: 'row',
 		alignItems: 'center',
@@ -15,55 +14,30 @@ const buttonStyles = StyleSheet.create({
 		marginVertical: 8,
 		borderWidth: 1,
 		borderRadius: 2,
+		backgroundColor: c.systemGroupedBackground,
+		borderColor: c.separator,
 	},
-	inactiveButton: {
-		borderColor: c.iosDisabledText,
-	},
-	inactiveText: {
-		color: c.iosDisabledText,
+	text: {
+		color: c.label,
 	},
 	textWithIcon: {
 		paddingRight: 8,
 	},
 })
 
-type ButtonPropsType = {
+type Props = {
 	iconName?: Glyphs
 	title: string
 	isActive: boolean
 }
 
-export function ToolbarButton({
-	title,
-	iconName,
-	isActive,
-}: ButtonPropsType): React.ReactElement {
-	let {colors} = useTheme()
-	let activeButton = {
-		backgroundColor: colors.background,
-		borderColor: colors.border,
-	}
-
-	let activeText = {
-		color: colors.text,
-	}
-
-	let activeButtonStyle = isActive ? activeButton : buttonStyles.inactiveButton
-	let activeContentStyle = isActive ? activeText : buttonStyles.inactiveText
-
-	let textWithIconStyle = iconName ? buttonStyles.textWithIcon : null
-	let activeTextStyle: TextStyle = {
-		fontWeight: isActive && Platform.OS === 'android' ? 'bold' : 'normal',
-	}
-
+export function ToolbarButton({title, iconName}: Props): React.ReactElement {
 	return (
-		<View style={[buttonStyles.button, activeButtonStyle]}>
-			<Text style={[activeContentStyle, textWithIconStyle, activeTextStyle]}>
+		<View style={[styles.button]}>
+			<Text style={[styles.text, iconName ? styles.textWithIcon : null]}>
 				{title}
 			</Text>
-			{iconName ? (
-				<Icon name={iconName} size={18} style={activeContentStyle} />
-			) : null}
+			{iconName ? <Icon name={iconName} size={18} style={styles.text} /> : null}
 		</View>
 	)
 }

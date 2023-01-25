@@ -86,29 +86,26 @@ export function ListSectionHeader(props: Props): JSX.Element {
 		spacing: {left: leftSpacing = 15} = {},
 	} = props
 
-	const {colors} = useTheme()
-
 	let containerTheme: ViewStyle = {paddingLeft: leftSpacing}
 	let titleTheme = {}
 
 	if (Platform.OS === 'android') {
 		containerTheme = {
 			...containerTheme,
-			backgroundColor: colors.background,
-			borderColor: colors.border,
+			backgroundColor: c.systemGroupedBackground,
 		}
 		titleTheme = {
 			...titleTheme,
-			color: colors.text,
+			color: c.label,
 		}
 	} else if (Platform.OS === 'ios') {
 		containerTheme = {
 			...containerTheme,
-			backgroundColor: c.iosListSectionHeader,
+			backgroundColor: c.systemGroupedBackground,
 			borderTopWidth: StyleSheet.hairlineWidth,
 			borderBottomWidth: StyleSheet.hairlineWidth,
-			borderTopColor: c.iosHeaderTopBorder,
-			borderBottomColor: c.iosHeaderBottomBorder,
+			borderTopColor: c.separator,
+			borderBottomColor: c.separator,
 		}
 	}
 

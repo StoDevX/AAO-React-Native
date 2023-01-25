@@ -47,7 +47,7 @@ const styles = StyleSheet.create({
 	},
 	footer: {
 		fontSize: 10,
-		color: c.iosDisabledText,
+		color: c.secondaryLabel,
 		textAlign: 'center',
 	},
 })
