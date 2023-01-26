@@ -1,6 +1,8 @@
 import * as React from 'react'
 import {Platform, StyleSheet} from 'react-native'
 
+import * as c from '@frogpond/colors'
+
 import * as RNTableView from 'react-native-tableview-simple'
 import type {SectionInterface} from 'react-native-tableview-simple/lib/typescript/components/Section'
 import type {TableViewInterface} from 'react-native-tableview-simple/lib/typescript/components/TableView'
@@ -37,7 +39,11 @@ let TableView = (props: TableViewInterface): JSX.Element => (
 )
 
 let Cell = (props: CellInterfaceModifiedType): JSX.Element => (
-	<RNTableView.Cell {...props} />
+	<RNTableView.Cell
+		backgroundColor={c.systemBackground}
+		titleTextColor={c.label}
+		{...props}
+	/>
 )
 
 const styles = StyleSheet.create({
