@@ -16,7 +16,7 @@ const styles = StyleSheet.create({
 		marginTop: 20,
 		marginBottom: 15,
 		paddingHorizontal: 5,
-		color: c.black,
+		color: c.label,
 		fontSize: 32,
 		fontWeight: '300',
 	},
@@ -24,7 +24,7 @@ const styles = StyleSheet.create({
 		marginBottom: 20,
 	},
 	cardBody: {
-		color: c.black,
+		color: c.label,
 		paddingTop: 13,
 		paddingBottom: 13,
 		paddingLeft: 16,

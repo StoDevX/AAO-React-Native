@@ -59,7 +59,7 @@ function MoreView(): JSX.Element {
 	React.useLayoutEffect(() => {
 		navigation.setOptions({
 			headerSearchBarOptions: {
-				barTintColor: c.white,
+				barTintColor: c.quaternarySystemFill,
 				onChangeText: (event: ChangeTextEvent) =>
 					setQuery(event.nativeEvent.text),
 			},

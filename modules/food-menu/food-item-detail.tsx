@@ -35,7 +35,6 @@ export const MenuItemDetailView = (): JSX.Element => {
 				<React.Fragment>
 					<ListRow
 						arrowPosition="none"
-						contentContainerStyle={styles.container}
 						fullWidth={false}
 					>
 						<Title>Description</Title>
@@ -75,10 +74,8 @@ export const MenuItemDetailView = (): JSX.Element => {
 }
 
 const styles = StyleSheet.create({
-	container: {
-		backgroundColor: c.white,
-	},
 	title: {
+		color: c.label,
 		fontSize: 36,
 		textAlign: 'center',
 		marginHorizontal: 18,

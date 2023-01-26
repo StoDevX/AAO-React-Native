@@ -6,7 +6,7 @@ import {text} from '../../../../docs/legal.json'
 
 const styles = StyleSheet.create({
 	scroll: {
-		backgroundColor: c.white,
+		backgroundColor: c.systemBackground,
 		paddingHorizontal: 15,
 	},
 	view: {

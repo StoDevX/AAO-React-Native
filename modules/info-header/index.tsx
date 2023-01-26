@@ -12,12 +12,14 @@ const styles = StyleSheet.create({
 		marginBottom: 10,
 	},
 	title: {
+		color: c.label,
 		fontSize: 16,
 		fontWeight: 'bold',
 		paddingTop: 15,
 		paddingHorizontal: 15,
 	},
 	message: {
+		color: c.secondaryLabel,
 		fontSize: 14,
 		paddingTop: 5,
 		paddingBottom: 15,

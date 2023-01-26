@@ -11,7 +11,7 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 15,
 	},
 	scrollView: {
-		backgroundColor: c.white,
+		backgroundColor: c.systemBackground,
 	},
 	view: {
 		paddingVertical: 15,

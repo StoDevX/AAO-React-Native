@@ -8,7 +8,7 @@ import {AppLogo} from '../components/logo'
 
 const styles = StyleSheet.create({
 	container: {
-		backgroundColor: c.white,
+		backgroundColor: c.systemBackground,
 	},
 	contentContainer: {
 		paddingHorizontal: 5,
@@ -22,12 +22,14 @@ const styles = StyleSheet.create({
 			ios: iOSUIKit.largeTitleEmphasizedObject,
 			android: material.headlineObject,
 		}),
+		color: c.label,
 	},
 	heading: {
 		...Platform.select({
 			ios: iOSUIKit.subheadEmphasizedObject,
 			android: material.titleObject,
 		}),
+		color: c.label,
 	},
 	about: {
 		...Platform.select({
@@ -36,6 +38,7 @@ const styles = StyleSheet.create({
 		}),
 		paddingHorizontal: 25,
 		paddingTop: 10,
+		color: c.label,
 	},
 	contributors: {
 		...Platform.select({
@@ -43,14 +46,17 @@ const styles = StyleSheet.create({
 			android: material.body1Object,
 		}),
 		textAlign: 'center',
+		color: c.secondaryLabel,
 	},
 })
 
 const markdownStyles: MarkdownProps['styles'] = {
 	Heading: {
 		paddingHorizontal: 25,
+		color: c.secondaryLabel,
 	},
 	Paragraph: {
+		color: c.label,
 		paddingHorizontal: 25,
 		paddingVertical: 10,
 	},

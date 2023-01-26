@@ -20,7 +20,7 @@ import {ChangeTextEvent} from '../../../../navigation/types'
 
 const styles = StyleSheet.create({
 	container: {
-		backgroundColor: c.white,
+		backgroundColor: c.systemBackground,
 		flex: 1,
 	},
 	error: {
@@ -75,7 +75,7 @@ export const APITestView = (): JSX.Element => {
 		navigation.setOptions({
 			headerSearchBarOptions: {
 				autoCapitalize: 'none',
-				barTintColor: c.white,
+				barTintColor: c.systemFill,
 				// android-only
 				autoFocus: true,
 				hideNavigationBar: false,
@@ -101,7 +101,7 @@ export const APITestView = (): JSX.Element => {
 			<pre>${highlighted}</pre>
 		`
 
-		return <HtmlContent html={HTML_CONTENT} />
+		return <HtmlContent html={HTML_CONTENT} style={{backgroundColor: c.systemBackground}} />
 	}
 
 	const EmptySearch = () => {

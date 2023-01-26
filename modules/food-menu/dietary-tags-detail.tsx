@@ -1,6 +1,7 @@
 import * as React from 'react'
 import {Image, StyleProp, StyleSheet, Text, View, ViewStyle} from 'react-native'
 import {Row} from '@frogpond/layout'
+import * as c from '@frogpond/colors'
 import type {ItemCorIconMapType, MasterCorIconMapType} from './types'
 
 const styles = StyleSheet.create({
@@ -17,6 +18,9 @@ const styles = StyleSheet.create({
 		width: 15,
 		height: 15,
 	},
+	label: {
+		color: c.label,
+	}
 })
 
 type Props = {
@@ -42,7 +46,7 @@ export function DietaryTagsDetail({
 					source={{uri: dietaryIcon.image}}
 					style={styles.iconsDetail}
 				/>
-				<Text>{dietaryIcon.label}</Text>
+				<Text style={styles.label}>{dietaryIcon.label}</Text>
 			</Row>
 		</Row>
 	))

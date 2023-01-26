@@ -60,7 +60,7 @@ export function DirectoryView(): JSX.Element {
 	React.useLayoutEffect(() => {
 		navigation.setOptions({
 			headerSearchBarOptions: {
-				barTintColor: c.white,
+				barTintColor: c.systemFill,
 				onChangeText: (event: ChangeTextEvent) => {
 					setSearchQueryType('query')
 					setTypedQuery(event.nativeEvent.text)
@@ -179,7 +179,7 @@ const imageMargin = 10
 const styles = StyleSheet.create({
 	wrapper: {
 		flex: 1,
-		backgroundColor: c.white,
+		backgroundColor: c.systemBackground,
 	},
 	row: {
 		flexDirection: 'row',

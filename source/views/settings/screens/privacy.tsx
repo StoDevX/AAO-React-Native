@@ -6,7 +6,7 @@ import {text} from '../../../../docs/privacy.json'
 
 const styles = StyleSheet.create({
 	scrollView: {
-		backgroundColor: c.white,
+		backgroundColor: c.systemBackground,
 		paddingHorizontal: 15,
 	},
 	view: {
