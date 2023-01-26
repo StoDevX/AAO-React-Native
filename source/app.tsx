@@ -22,7 +22,7 @@ import {NavigationContainer} from '@react-navigation/native'
 
 import {RootStack} from './navigation'
 import {LoadingView} from '@frogpond/notice'
-import {useColorScheme} from 'react-native'
+import {StatusBar, useColorScheme} from 'react-native'
 
 export default function App(): JSX.Element {
 	// Create a ref for the navigation container
@@ -49,6 +49,9 @@ export default function App(): JSX.Element {
 							}}
 							theme={scheme === 'dark' ? CombinedDarkTheme : CombinedLightTheme}
 						>
+							<StatusBar
+								barStyle={scheme === 'dark' ? 'light-content' : 'dark-content'}
+							/>
 							<RootStack />
 						</NavigationContainer>
 					</ActionSheetProvider>
