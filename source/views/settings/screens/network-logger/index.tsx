@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {StyleSheet, Platform, View, Text, TouchableOpacity} from 'react-native'
+import {StyleSheet, Platform, View, Text, TouchableOpacity, useColorScheme} from 'react-native'
 import {Button} from '@frogpond/button'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 import NetworkLogger, {getBackHandler} from 'react-native-network-logger'
@@ -10,6 +10,9 @@ export const NetworkLoggerView = (): JSX.Element => {
 	const goBack = () => setUnmountNetworkLogger(true)
 	const [unmountNetworkLogger, setUnmountNetworkLogger] = React.useState(false)
 	const backHandler = getBackHandler(goBack)
+
+	const scheme = useColorScheme()
+	const themeMode = scheme === 'dark' ? 'dark' : 'light'
 
 	const remountButton = (
 		<Button
@@ -36,7 +39,7 @@ export const NetworkLoggerView = (): JSX.Element => {
 				<View style={styles.navButton} />
 			</View>
 
-			{(unmountNetworkLogger && remountButton) || <NetworkLogger />}
+			{(unmountNetworkLogger && remountButton) || <NetworkLogger theme={themeMode} />}
 		</>
 	)
 }
