@@ -28,6 +28,7 @@
     {
       "matchPackageNames": [
         "react-markdown",
+        "@types/react-native",
         "react-native",
         "metro-react-native-babel-preset",
         "@types/react-test-renderer",
