@@ -19,6 +19,7 @@ const config: Config = {
 	transformIgnorePatterns: [
 		'node_modules/(?!(jest-)?react-native|@react-native|@frogpond|glamorous-native|react-navigation)',
 	],
+	reporters: [['github-actions', {silent: false}], 'summary'],
 }
 
 export default config
