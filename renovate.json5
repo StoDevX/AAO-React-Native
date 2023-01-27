@@ -1,6 +1,34 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
-    "config:base"
+    "config:base",
+    // automatically merge linting, testing, @types, and :digest PRs
+    "automergeDigest",
+    "automergeLinters",
+    "automergeTesters",
+    "automergeTypes",
+    // go ahead and update Docker FROM sources, and pin them with a hash
+    "docker",
+    "docker:pinDigests",
+    // update lockfile versions weekly
+    "maintainLockFilesWeekly",
+    // keep all dependency versions pinned - except peerDependencies
+    "pinAllExceptPeerDependencies",
+    // pin github-actions with a digest, to avoid surprises when they update
+    "helpers:pinGitHubActionDigests",
+    // > wait until the npm package is three days old before raising the 
+    // > update. This prevents npm unpublishing a package you already upgraded to.
+    "npm:unpublishSafe",
+    // include ts-jest and @types/jest in jestjs grouped updates
+    "group:jestPlusTSJest",
+    "group:jestPlusTypes"
+  ],
+  "packageRules": [
+    // include babel-jest in jestjs grouped updates
+    {
+      "groupName": "jest monorepo",
+      "matchPackageNames": [ "babel-jest" ],
+      "matchUpdateTypes": [ "digest", "patch", "minor", "major" ]
+    }
   ]
 }
