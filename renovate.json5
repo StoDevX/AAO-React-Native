@@ -29,6 +29,15 @@
       "groupName": "jest monorepo",
       "matchPackageNames": [ "babel-jest" ],
       "matchUpdateTypes": [ "digest", "patch", "minor", "major" ]
+    },
+    // require manual approval for these packages to update
+    {
+      "matchPackagePatterns": [
+        "react-markdown",
+        "react-native", 
+        "react"
+      ],
+      "dependencyDashboardApproval": true
     }
   ]
 }
