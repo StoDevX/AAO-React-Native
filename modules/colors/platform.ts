@@ -4,7 +4,7 @@ import {PlatformColor} from 'react-native'
 
 /**
  * The color for text labels that contain primary content.
- * 
+ *
  * @see {@link secondaryLabel}, the color for text labels that contain secondary content.
  * @see {@link tertiaryLabel}, the color for text labels that contain tertiary content.
  * @see {@link quaternaryLabel}, the color for text labels that contain quaternary content.
@@ -13,7 +13,7 @@ export const label = PlatformColor('label')
 
 /**
  * The color for text labels that contain secondary content.
- * 
+ *
  * @see {@link label}, the color for text labels that contain primary content.
  * @see {@link tertiaryLabel}, the color for text labels that contain tertiary content.
  * @see {@link quaternaryLabel}, the color for text labels that contain quaternary content.
@@ -22,7 +22,7 @@ export const secondaryLabel = PlatformColor('secondaryLabel')
 
 /**
  * The color for text labels that contain tertiary content.
- * 
+ *
  * @see {@link label}, the color for text labels that contain primary content.
  * @see {@link secondaryLabel}, the color for text labels that contain secondary content.
  * @see {@link quaternaryLabel}, the color for text labels that contain quaternary content.
@@ -31,7 +31,7 @@ export const tertiaryLabel = PlatformColor('tertiaryLabel')
 
 /**
  * The color for text labels that contain quaternary content.
- * 
+ *
  * @see {@link label}, the color for text labels that contain primary content.
  * @see {@link secondaryLabel}, the color for text labels that contain secondary content.
  * @see {@link tertiaryLabel}, the color for text labels that contain tertiary content.

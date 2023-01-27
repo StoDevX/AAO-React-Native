@@ -20,7 +20,7 @@ const styles = StyleSheet.create({
 	},
 	label: {
 		color: c.label,
-	}
+	},
 })
 
 type Props = {

@@ -23,7 +23,6 @@ import deburr from 'lodash/deburr'
 import groupBy from 'lodash/groupBy'
 import words from 'lodash/words'
 
-
 function splitToArray(str: string) {
 	return words(deburr(str.toLowerCase()))
 }

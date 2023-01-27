@@ -111,17 +111,17 @@ let styles = StyleSheet.create({
 		borderRightWidth: StyleSheet.hairlineWidth,
 		borderRightColor: c.separator,
 	},
-	
+
 	finalCell: {
 		borderRightWidth: 0,
 	},
-	
+
 	balancesRow: {
 		flexDirection: 'row',
 		marginTop: 0,
 		marginBottom: -10,
 	},
-	
+
 	rectangle: {
 		backgroundColor: c.secondarySystemGroupedBackground,
 		height: 88,

@@ -141,11 +141,7 @@ function Schedule({course}: {course: CourseType}) {
 		)
 	})
 
-	return (
-		<Section header="SCHEDULE">
-			{schedule}
-		</Section>
-	)
+	return <Section header="SCHEDULE">{schedule}</Section>
 }
 
 function Notes({course}: {course: CourseType}) {

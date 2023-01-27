@@ -101,7 +101,12 @@ export const APITestView = (): JSX.Element => {
 			<pre>${highlighted}</pre>
 		`
 
-		return <HtmlContent html={HTML_CONTENT} style={{backgroundColor: c.systemBackground}} />
+		return (
+			<HtmlContent
+				html={HTML_CONTENT}
+				style={{backgroundColor: c.systemBackground}}
+			/>
+		)
 	}
 
 	const EmptySearch = () => {

@@ -58,10 +58,13 @@ export type MarkdownProps = {
 
 export class Markdown extends React.PureComponent<MarkdownProps> {
 	render(): JSX.Element {
-		const {styles = {
-			Heading: {color: c.label},
-			Paragraph: {color: c.label},
-		}, source} = this.props
+		const {
+			styles = {
+				Heading: {color: c.label},
+				Paragraph: {color: c.label},
+			},
+			source,
+		} = this.props
 		return (
 			<ReactMarkdown
 				containerTagName={View as unknown as string}

@@ -33,10 +33,7 @@ export const MenuItemDetailView = (): JSX.Element => {
 
 			{item.description ? (
 				<React.Fragment>
-					<ListRow
-						arrowPosition="none"
-						fullWidth={false}
-					>
+					<ListRow arrowPosition="none" fullWidth={false}>
 						<Title>Description</Title>
 						<Detail>{item.description}</Detail>
 					</ListRow>

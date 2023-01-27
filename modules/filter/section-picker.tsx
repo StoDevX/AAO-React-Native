@@ -28,7 +28,12 @@ export function PickerSection<T extends object>({
 				style={styles.picker}
 			>
 				{options.map((val, i) => (
-					<Picker.Item key={i} label={val.label} style={styles.pickerItem} value={JSON.stringify(val)} />
+					<Picker.Item
+						key={i}
+						label={val.label}
+						style={styles.pickerItem}
+						value={JSON.stringify(val)}
+					/>
 				))}
 			</Picker>
 		</Section>
@@ -41,5 +46,5 @@ const styles = StyleSheet.create({
 	},
 	pickerItem: {
 		color: c.label,
-	}
+	},
 })

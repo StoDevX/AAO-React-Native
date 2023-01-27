@@ -1,5 +1,5 @@
 import * as c from '@frogpond/colors'
-import { ColorValue } from 'react-native'
+import {ColorValue} from 'react-native'
 
 export const BG_COLORS: Record<string, ColorValue> = {
 	Open: c.systemGreen,
