@@ -124,7 +124,7 @@
     "@types/react-native": "0.67.4",
     "@types/react-native-button": "3.0.1",
     "@types/react-native-vector-icons": "6.4.13",
-    "@types/react-test-renderer": "17.0.1",
+    "@types/react-test-renderer": "17.0.2",
     "@types/tinycolor2": "1.4.3",
     "@types/wordwrap": "1.0.1",
     "@typescript-eslint/eslint-plugin": "5.49.0",
