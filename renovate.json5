@@ -42,11 +42,6 @@
     {
       "matchPackageNames": ["com.facebook.react:react-native", "org.webkit:android-jsc"],
       "enabled": false
-    },
-    // avoid changing from "^range" to "exact" versions in our module packages
-    {
-      "matchPaths": ["modules/**/package.json"],
-      "rangeStrategy": "bump"
     }
   ]
 }
