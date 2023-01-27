@@ -13,3 +13,11 @@ if (settings.hasProperty("newArchEnabled") && settings.newArchEnabled == "true")
     include(":ReactAndroid")
     project(":ReactAndroid").projectDir = file('../node_modules/react-native/ReactAndroid')
 }
+
+// Cache build artifacts, so expensive operations do not need to be re-computed
+boolean isCiServer = System.getenv().containsKey("CI")
+buildCache {
+   local {
+       enabled(!isCiServer)
+   }
+}
