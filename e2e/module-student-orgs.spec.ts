@@ -28,9 +28,9 @@ it('has the List visible', async () => {
 	// Navigate into Student Orgs
 	await element(by.text('Student Orgs')).tap()
 
-    // Verify that the navigation took us away from the homescreen
+	// Verify that the navigation took us away from the homescreen
 	await expect(element(by.id('screen-homescreen'))).not.toBeVisible()
 
 	// The view should be visible now
-    await expect(element(by.text('Student Orgs'))).toBeVisible()
+	await expect(element(by.text('Student Orgs'))).toBeVisible()
 })

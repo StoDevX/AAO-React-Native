@@ -28,7 +28,7 @@ it('says "you are not logged in" by default', async () => {
 	// Navigate into stoPrint
 	await element(by.text('stoPrint')).tap()
 
-    // Verify that the navigation took us away from the homescreen
+	// Verify that the navigation took us away from the homescreen
 	await expect(element(by.id('screen-homescreen'))).not.toBeVisible()
-    await expect(element(by.text('You are not logged in'))).toBeVisible()
+	await expect(element(by.text('You are not logged in'))).toBeVisible()
 })
