@@ -24,15 +24,9 @@
     "group:jestPlusTypes"
   ],
   "packageRules": [
-    // include babel-jest in jestjs grouped updates
+    // require manual approval for new major versions of these packages
     {
-      "groupName": "jest monorepo",
-      "matchPackageNames": [ "babel-jest" ],
-      "matchUpdateTypes": [ "digest", "patch", "minor", "major" ]
-    },
-    // require manual approval for these packages to update
-    {
-      "matchPackagePatterns": [
+      "matchPackageNames": [
         "react-markdown",
         "react-native", 
         "react"
