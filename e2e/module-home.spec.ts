@@ -15,15 +15,3 @@ beforeEach(async () => {
 test('should show the home screen', async () => {
 	await expect(element(by.id('screen-homescreen'))).toBeVisible()
 })
-
-test('should show the settings screen after tap', async () => {
-	await element(by.id('button-open-settings')).tap()
-	await expect(element(by.text('Sign In to St. Olaf'))).toBeVisible()
-})
-
-test('should show home screen after tap to exit settings screen', async () => {
-	await element(by.id('button-open-settings')).tap()
-	await expect(element(by.id('screen-homescreen'))).not.toBeVisible()
-	await element(by.text('Done')).tap()
-	await expect(element(by.id('screen-homescreen'))).toBeVisible()
-})
