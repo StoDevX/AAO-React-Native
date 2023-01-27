@@ -24,10 +24,9 @@
     "group:jestPlusTypes"
   ],
   "packageRules": [
-    // require manual approval for new major versions of these packages
+    // require manual approval for new minor versions of these packages
     {
       "matchPackageNames": [
-        "react-markdown",
         "@types/react-native",
         "react-native",
         "metro-react-native-babel-preset",
@@ -35,6 +34,14 @@
         "react-test-renderer",
         "@types/react",
         "react"
+      ],
+      "matchUpdateTypes": ["minor"],
+      "dependencyDashboardApproval": true
+    },
+    // require manual approval for new major versions of these packages
+    {
+      "matchPackageNames": [
+        "react-markdown"
       ],
       "matchUpdateTypes": ["major"],
       "dependencyDashboardApproval": true
