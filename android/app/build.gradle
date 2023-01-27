@@ -350,7 +350,7 @@ if (isNewArchitectureEnabled()) {
 
 dependencyLocking {
     lockAllConfigurations()
-    lockMode = LockMode.STRICT
+    // lockMode = LockMode.STRICT
 }
 
 // Bundles the app's data for the build process
