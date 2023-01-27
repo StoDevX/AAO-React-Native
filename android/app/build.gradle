@@ -1,5 +1,7 @@
 // this plugin adapts the gradle build for android apps
 apply plugin: 'com.android.application'
+// this plugin applies dependency locking to gradle dependencies
+apply plugin: 'nebula.dependency-lock'
 
 import org.apache.tools.ant.taskdefs.condition.Os
 
@@ -348,6 +350,7 @@ if (isNewArchitectureEnabled()) {
 
 dependencyLocking {
     lockAllConfigurations()
+    lockMode = LockMode.STRICT
 }
 
 // Bundles the app's data for the build process
