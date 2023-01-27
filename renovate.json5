@@ -28,7 +28,11 @@
     {
       "matchPackageNames": [
         "react-markdown",
-        "react-native", 
+        "react-native",
+        "metro-react-native-babel-preset",
+        "@types/react-test-renderer",
+        "react-test-renderer",
+        "@types/react",
         "react"
       ],
       "dependencyDashboardApproval": true
