@@ -515,7 +515,7 @@ jobs:
           key: ${{ steps.app-cache.outputs.cache-primary-key }}
 
   ios-detox:
-    name: Detox E2E for iOS
+    name: Detox E2E for iOS (1 worker)
     needs: [cache-npm-macos, ios-build, ios-bundle]
     runs-on: macos-11
     steps:
@@ -575,7 +575,95 @@ jobs:
       - run: brew install applesimutils
 
       - name: Run the Detox tests
-        run: npx detox test e2e --configuration ios.sim.release --cleanup --record-logs failing --record-videos failing --record-performance all --capture-view-hierarchy enabled --take-screenshots failing
+        run: >
+          npx
+          detox test
+          e2e/
+          --configuration ios.sim.release
+          --record-logs failing
+          --record-videos failing
+          --record-performance all
+          --capture-view-hierarchy enabled
+          --take-screenshots failing
+
+      - uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: detox-ios
+          path: artifacts/
+
+  ios-detox-b:
+    name: Detox E2E for iOS (3 workers)
+    needs: [cache-npm-macos, ios-build, ios-bundle]
+    runs-on: macos-11
+    steps:
+      - run: sudo xcode-select -s /Applications/${{ env.xcode_version }}.app
+
+      - uses: actions/checkout@v3.3.0
+
+      - # load the app before reinstalling detox, so that the package-lock cannot change
+        name: Load the cached iOS app
+        uses: actions/cache/restore@v3
+        id: app-cache
+        with:
+          path: ios/build/Build/Products/
+          key: ${{ needs.ios-build.outputs.cache-key }}
+
+      - if: steps.app-cache.outputs.cache-hit != 'true'
+        run: exit 1
+
+      - # load the jsbundle before reinstalling detox, so that the package-lock cannot change
+        name: Load the cached iOS jsbundle
+        uses: actions/cache/restore@v3
+        id: jsbundle-cache
+        with:
+          path: |
+            ios/AllAboutOlaf/main.jsbundle
+            ios/AllAboutOlaf/main.jsbundle.map
+            ios/assets/
+          key: ${{ needs.ios-bundle.outputs.cache-key }}
+
+      - if: steps.jsbundle-cache.outputs.cache-hit != 'true'
+        run: exit 1
+
+      - name: Move cached jsbundle into place
+        run: |
+          mv ios/AllAboutOlaf/main.jsbundle ios/build/Build/Products/Release-iphonesimulator/AllAboutOlaf.app/
+          mv ios/AllAboutOlaf/main.jsbundle.map ios/build/Build/Products/Release-iphonesimulator/AllAboutOlaf.app/
+          rm -rf ios/build/Build/Products/Release-iphonesimulator/AllAboutOlaf.app/assets
+          mv ios/assets ios/build/Build/Products/Release-iphonesimulator/AllAboutOlaf.app/
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.node_version }}
+
+      - name: Restore node_modules cache
+        uses: actions/cache/restore@v3
+        id: node-cache
+        with:
+          path: node_modules/
+          key: ${{ needs.cache-npm-macos.outputs.cache-key }}
+
+      - # We have to poke Detox because it installs things outside of node_modules/detox/…
+        name: Re-install Detox
+        run: npx detox clean-framework-cache && npx detox build-framework-cache
+
+      - run: brew tap wix/brew
+
+      - run: brew install applesimutils
+
+      - name: Run the Detox tests
+        run: >
+          npx
+          detox test
+          e2e/
+          --configuration ios.sim.release
+          --record-logs failing
+          --record-videos failing
+          --record-performance all
+          --capture-view-hierarchy enabled
+          --take-screenshots failing
+          --max-workers 3
 
       - uses: actions/upload-artifact@v3
         if: always()
