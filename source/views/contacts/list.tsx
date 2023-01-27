@@ -12,7 +12,7 @@ import type {ContactType} from './types'
 
 const styles = StyleSheet.create({
 	listContainer: {
-		backgroundColor: c.systemBackground,
+		backgroundColor: c.secondarySystemGroupedBackground,
 	},
 	contentContainer: {
 		flexGrow: 1,
