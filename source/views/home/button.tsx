@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {View, Text, StyleSheet, Platform, SafeAreaView} from 'react-native'
+import {Text, StyleSheet, Platform, SafeAreaView} from 'react-native'
 import Icon from 'react-native-vector-icons/Entypo'
 import type {ViewType} from '../views'
 import {Touchable} from '@frogpond/touchable'
@@ -26,10 +26,10 @@ export function HomeScreenButton({view, onPress}: Props): JSX.Element {
 				onPress={onPress}
 				style={[styles.button, {backgroundColor: view.tint}]}
 			>
-				<View style={styles.contents}>
+				<>
 					<Icon name={view.icon} size={32} style={[foreground, styles.icon]} />
 					<Text style={[foreground, styles.text]}>{view.title}</Text>
-				</View>
+				</>
 			</Touchable>
 		</SafeAreaView>
 	)

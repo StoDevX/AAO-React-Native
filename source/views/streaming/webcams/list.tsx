@@ -40,6 +40,7 @@ export let WebcamsView = (): JSX.Element => {
 			refreshControl={
 				<RefreshControl onRefresh={refetch} refreshing={isRefetching} />
 			}
+			testID="screen-streaming-webcams"
 		>
 			{columns.map((contents, i) => (
 				<Column key={i} style={styles.column}>
