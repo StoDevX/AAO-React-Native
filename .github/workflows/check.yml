@@ -127,6 +127,8 @@ jobs:
 
       - if: steps.cocoapods-cache.outputs.cache-hit != 'true'
         uses: ruby/setup-ruby@v1
+        env:
+          BUNDLE_FROZEN: "true"
         with:
           ruby-version: ${{ env.ruby_version }}
           bundler-cache: true
@@ -405,6 +407,8 @@ jobs:
         run: exit 1
 
       - uses: ruby/setup-ruby@v1
+        env:
+          BUNDLE_FROZEN: "true"
         with:
           ruby-version: ${{ env.ruby_version }}
           bundler-cache: true
@@ -482,6 +486,8 @@ jobs:
 
       - uses: ruby/setup-ruby@v1
         if: steps.app-cache.outputs.cache-hit != 'true'
+        env:
+          BUNDLE_FROZEN: "true"
         with:
           ruby-version: ${{ env.ruby_version }}
           bundler-cache: true
