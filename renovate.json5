@@ -19,7 +19,7 @@
     "group:jestPlusTypes"
   ],
   "packageRules": [
-    // require manual approval for new minor versions of these packages
+    // require manual approval for new minor OR major versions of these packages
     {
       "matchPackageNames": [
         "@types/react-native",
@@ -30,7 +30,7 @@
         "@types/react",
         "react"
       ],
-      "matchUpdateTypes": ["minor"],
+      "matchUpdateTypes": ["minor", "major"],
       "dependencyDashboardApproval": true
     },
     // require manual approval for new major versions of these packages
