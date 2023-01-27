@@ -37,6 +37,11 @@
       ],
       "matchUpdateTypes": ["major"],
       "dependencyDashboardApproval": true
+    },
+    // disable renovate for the app/build.gradle react-native and webkit dependencies
+    {
+      "matchPackageNames": ["com.facebook.react:react-native", "org.webkit:android-jsc"],
+      "enabled": false
     }
   ]
 }
