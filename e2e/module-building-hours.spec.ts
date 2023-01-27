@@ -28,9 +28,9 @@ it('has the Building List visible by default', async () => {
 	// Navigate into Building Hours
 	await element(by.text('Building Hours')).tap()
 
-    // Verify that the navigation took us away from the homescreen
+	// Verify that the navigation took us away from the homescreen
 	await expect(element(by.id('screen-homescreen'))).not.toBeVisible()
 
 	// The stream-list should be visible now
-    await expect(element(by.text('Building Hours'))).toBeVisible()
+	await expect(element(by.text('Building Hours'))).toBeVisible()
 })

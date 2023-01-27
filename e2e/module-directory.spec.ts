@@ -28,10 +28,10 @@ it('has the search view visible by default', async () => {
 	// Navigate into Directory
 	await element(by.text('Directory')).tap()
 
-    // Verify that the navigation took us away from the homescreen
+	// Verify that the navigation took us away from the homescreen
 	await expect(element(by.id('screen-homescreen'))).not.toBeVisible()
 
 	// The search interface should be visible now
-    await expect(element(by.text('Directory'))).toBeVisible()
-    await expect(element(by.text('Search the Directory'))).toBeVisible()
+	await expect(element(by.text('Directory'))).toBeVisible()
+	await expect(element(by.text('Search the Directory'))).toBeVisible()
 })

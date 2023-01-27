@@ -26,7 +26,7 @@ test('is reachable from the homescreen', async () => {
 
 describe('balances', () => {
 	beforeEach(async () => {
-		// go ahead and reinstall the app so that it has fresh state each time - we 
+		// go ahead and reinstall the app so that it has fresh state each time - we
 		// are agreeing to the agreement in this file.
 		await device.launchApp({delete: true})
 	})
@@ -34,10 +34,10 @@ describe('balances', () => {
 	test('has the acknowledgement visible by default', async () => {
 		// Navigate into SIS
 		await element(by.text('SIS')).tap()
-	
+
 		// Verify that the navigation took us away from the homescreen
 		await expect(element(by.id('screen-homescreen'))).not.toBeVisible()
-	
+
 		// The acknowledgement should be visible now
 		await expect(element(by.text('I Agree'))).toBeVisible()
 	})
@@ -45,17 +45,17 @@ describe('balances', () => {
 	test('shows the balances after acknowledgement', async () => {
 		// Navigate into SIS
 		await element(by.text('SIS')).tap()
-	
+
 		// Verify that the navigation took us away from the homescreen
 		await expect(element(by.id('screen-homescreen'))).not.toBeVisible()
-	
+
 		// The acknowledgement should be visible now
 		await expect(element(by.text('I Agree'))).toBeVisible()
 		await element(by.text('I Agree')).tap()
 
 		// the ack. should be hidden now
 		await expect(element(by.text('I Agree'))).not.toBeVisible()
-		
+
 		// instead, the balances fields should be visible
 		await expect(element(by.text('BALANCES'))).toBeVisible()
 		await expect(element(by.text('MEAL PLAN'))).toBeVisible()
@@ -64,20 +64,20 @@ describe('balances', () => {
 	test('continues to show the balances after re-opening the view', async () => {
 		// Navigate into SIS
 		await element(by.text('SIS')).tap()
-	
+
 		// Verify that the navigation took us away from the homescreen
 		await expect(element(by.id('screen-homescreen'))).not.toBeVisible()
-	
+
 		// The acknowledgement should be visible now
 		await expect(element(by.text('I Agree'))).toBeVisible()
 		await element(by.text('I Agree')).tap()
 
 		// the ack. should be hidden now
 		await expect(element(by.text('I Agree'))).not.toBeVisible()
-		
+
 		// instead, the balances fields should be visible
 		await expect(element(by.text('BALANCES'))).toBeVisible()
-		
+
 		// return to the home screen
 		await element(by.text('All About Olaf')).tap()
 		await expect(element(by.id('screen-homescreen'))).toBeVisible()
