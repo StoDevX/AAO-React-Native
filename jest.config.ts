@@ -1,4 +1,6 @@
-module.exports = {
+import type {Config} from 'jest'
+
+const config: Config = {
 	preset: 'react-native',
 	testMatch: [
 		'**/__tests__/**/*.(spec|test).(js|ts|tsx)',
@@ -18,3 +20,5 @@ module.exports = {
 		'node_modules/(?!(jest-)?react-native|@react-native|@frogpond|glamorous-native|react-navigation)',
 	],
 }
+
+export default config
