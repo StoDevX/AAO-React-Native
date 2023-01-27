@@ -9,7 +9,7 @@
     "test": "jest"
   },
   "peerDependencies": {
-    "react": "^17.0.0",
+    "react": "^17.0.0 || ^18.0.0",
     "react-native": "^0.68.0",
     "react-native-popover-view": "^4.0.0",
     "react-native-vector-icons": "^9.0.0"

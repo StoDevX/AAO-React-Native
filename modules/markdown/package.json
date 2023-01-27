@@ -10,7 +10,7 @@
   },
   "peerDependencies": {
     "@expo/react-native-action-sheet": "^4.0.0",
-    "react": "^17.0.0",
+    "react": "^17.0.0 || ^18.0.0",
     "react-native": "^0.68.0"
   },
   "dependencies": {
