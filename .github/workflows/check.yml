@@ -11,6 +11,8 @@ env:
   node_version: '^16.0'
   ruby_version: '2.6'
   xcode_version: 'Xcode_13.1'
+  java_version: '11'
+  java_distribution: temurin
 
 jobs:
   cache-npm-linux:
@@ -76,17 +78,6 @@ jobs:
         with:
           path: node_modules/
           key: ${{ steps.node-cache.outputs.cache-primary-key }}
-
-  cache-bundler-linux:
-    name: Cache bundler for Linux
-    runs-on: macos-11
-    steps:
-      - uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c # v3.3.0
-
-      - uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: ${{ env.ruby_version }}
-          bundler-cache: true
 
   cache-bundler-macos:
     name: Cache bundler for macOS
@@ -387,7 +378,7 @@ jobs:
 
   android:
     name: Build for Android
-    needs: [jest, eslint, android-bundle, cache-npm-linux, cache-bundler-linux]
+    needs: [jest, eslint, android-bundle, cache-npm-linux]
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c # v3.3.0
@@ -406,20 +397,10 @@ jobs:
       - if: steps.node-cache.outputs.cache-hit != 'true'
         run: exit 1
 
-      - uses: ruby/setup-ruby@v1
-        env:
-          BUNDLE_FROZEN: "true"
+      - uses: actions/setup-java@v3
         with:
-          ruby-version: ${{ env.ruby_version }}
-          bundler-cache: true
-
-      - name: Restore Gradle cache
-        uses: actions/cache@58c146cc91c5b9e778e71775dfe9bf1442ad9a12 # v3
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties', '**/*gradle.lockfile') }}
+          distribution: ${{ env.java_distribution }}
+          java-version: ${{ env.java_version }}
 
       - name: Raise the fs.inotify ulimits to 524288 watches/queued events/user instances
         run: |
@@ -428,21 +409,37 @@ jobs:
           echo 524288 | sudo tee -a /proc/sys/fs/inotify/max_user_instances
           sudo sysctl -p
 
-      - run: echo 'org.gradle.workers.max=2' >> ./android/gradle.properties
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v2
+        with:
+          build-root-directory: android
+          gradle-home-cache-cleanup: true
 
-      - run: cd android && ./gradlew androidDependencies --console=plain
-
-      - run: bundle exec fastlane android ci-run
+      - name: Gradle
+        run: ./gradlew bundleRelease --scan
+        working-directory: android
         env:
-          FASTLANE_PASSWORD: ${{ secrets.FASTLANE_PASSWORD }}
-          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
-          GIT_COMMIT_DESC: $(git log --format=oneline -n 1 $GITHUB_SHA)
-          FASTLANE_SKIP_UPDATE_CHECK: '1'
-          FASTLANE_DISABLE_ANIMATION: '1'
           SENTRY_ORG: frog-pond-labs
           SENTRY_PROJECT: all-about-olaf
-          SENTRY_AUTH_TOKEN: ${{ secrets.HOSTED_SENTRY_AUTH_TOKEN }}
-          GITHUB_KEYS_REPOSITORY_TOKEN: ${{ secrets.GITHUB_KEYS_REPOSITORY_TOKEN }}
+
+      - name: Upload build reports
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-reports
+          path: build/reports/
+
+      - name: "Add build scan URL as PR comment"
+        uses: actions/github-script@v5
+        if: github.event_name == 'pull_request' && failure()
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '❌ ${{ github.workflow }} failed: ${{ steps.gradle.outputs.build-scan-url }}'
+            })
 
   ios-build:
     name: Build for iOS
