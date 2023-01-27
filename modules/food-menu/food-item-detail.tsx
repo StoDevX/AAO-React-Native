@@ -20,7 +20,7 @@ export const MenuItemDetailView = (): JSX.Element => {
 	const {item, icons} = route.params
 
 	return (
-		<ScrollView style={styles.container}>
+		<ScrollView>
 			<Text selectable={true} style={styles.title}>
 				{item.label}
 			</Text>
@@ -48,7 +48,6 @@ export const MenuItemDetailView = (): JSX.Element => {
 							<ListRow
 								arrowPosition="none"
 								fullWidth={false}
-								style={styles.container}
 							>
 								<Row>
 									<Column flex={1}>
