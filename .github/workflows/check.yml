@@ -19,19 +19,19 @@ jobs:
     outputs:
       cache-key: ${{ steps.node-cache.outputs.cache-primary-key }}
     steps:
-      - uses: actions/checkout@v3.3.0
+      - uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c # v3.3.0
 
       - name: Extract job definition
         run: yq '.jobs.${{ github.job }}' .github/workflows/check.yml > .github/job.yml
 
-      - uses: actions/cache/restore@v3
+      - uses: actions/cache/restore@58c146cc91c5b9e778e71775dfe9bf1442ad9a12 # v3
         id: node-cache
         with:
           path: node_modules/
           key: ${{ runner.os }}-npm-node@${{ env.node_version }}-${{ hashFiles('package-lock.json', '.github/job.yml') }}
 
       - if: steps.node-cache.outputs.cache-hit != 'true'
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@64ed1c7eab4cce3362f8c340dee64e5eaeef8f7c # v3
         with:
           node-version: ${{ env.node_version }}
           cache: npm
@@ -39,7 +39,7 @@ jobs:
       - if: steps.node-cache.outputs.cache-hit != 'true'
         run: npm ci
 
-      - uses: actions/cache/save@v3
+      - uses: actions/cache/save@58c146cc91c5b9e778e71775dfe9bf1442ad9a12 # v3
         if: steps.node-cache.outputs.cache-hit != 'true'
         with:
           path: node_modules/
@@ -51,19 +51,19 @@ jobs:
     outputs:
       cache-key: ${{ steps.node-cache.outputs.cache-primary-key }}
     steps:
-      - uses: actions/checkout@v3.3.0
+      - uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c # v3.3.0
 
       - name: Extract job definition
         run: yq '.jobs.${{ github.job }}' .github/workflows/check.yml > .github/job.yml
 
-      - uses: actions/cache/restore@v3
+      - uses: actions/cache/restore@58c146cc91c5b9e778e71775dfe9bf1442ad9a12 # v3
         id: node-cache
         with:
           path: node_modules/
           key: ${{ runner.os }}-npm-node@${{ env.node_version }}-${{ hashFiles('package-lock.json', '.github/job.yml') }}
 
       - if: steps.node-cache.outputs.cache-hit != 'true'
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@64ed1c7eab4cce3362f8c340dee64e5eaeef8f7c # v3
         with:
           node-version: ${{ env.node_version }}
           cache: npm
@@ -71,7 +71,7 @@ jobs:
       - if: steps.node-cache.outputs.cache-hit != 'true'
         run: npm ci
 
-      - uses: actions/cache/save@v3
+      - uses: actions/cache/save@58c146cc91c5b9e778e71775dfe9bf1442ad9a12 # v3
         if: steps.node-cache.outputs.cache-hit != 'true'
         with:
           path: node_modules/
@@ -81,7 +81,7 @@ jobs:
     name: Cache bundler for Linux
     runs-on: macos-11
     steps:
-      - uses: actions/checkout@v3.3.0
+      - uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c # v3.3.0
 
       - uses: ruby/setup-ruby@v1
         with:
@@ -92,7 +92,7 @@ jobs:
     name: Cache bundler for macOS
     runs-on: macos-11
     steps:
-      - uses: actions/checkout@v3.3.0
+      - uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c # v3.3.0
 
       - uses: ruby/setup-ruby@v1
         with:
@@ -108,32 +108,34 @@ jobs:
     steps:
       - run: sudo xcode-select -s /Applications/${{ env.xcode_version }}.app
 
-      - uses: actions/checkout@v3.3.0
+      - uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c # v3.3.0
 
       - name: Extract job definition
         run: yq '.jobs.${{ github.job }}' .github/workflows/check.yml > .github/job.yml
 
       - name: Restore Cocoapods cache
-        uses: actions/cache/restore@v3
+        uses: actions/cache/restore@58c146cc91c5b9e778e71775dfe9bf1442ad9a12 # v3
         id: cocoapods-cache
         with:
           path: ios/Pods
           key: ${{ runner.os }}-cocoapods-ruby@${{ env.ruby_version }}-xcode@${{ env.xcode_version }}-${{ hashFiles('**/Podfile.lock', 'package-lock.json', '.github/job.yml') }}
 
       - if: steps.cocoapods-cache.outputs.cache-hit != 'true'
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@64ed1c7eab4cce3362f8c340dee64e5eaeef8f7c # v3
         with:
           node-version: ${{ env.node_version }}
 
       - if: steps.cocoapods-cache.outputs.cache-hit != 'true'
         uses: ruby/setup-ruby@v1
+        env:
+          BUNDLE_FROZEN: "true"
         with:
           ruby-version: ${{ env.ruby_version }}
           bundler-cache: true
 
       - name: Restore node_modules cache
         if: steps.cocoapods-cache.outputs.cache-hit != 'true'
-        uses: actions/cache/restore@v3
+        uses: actions/cache/restore@58c146cc91c5b9e778e71775dfe9bf1442ad9a12 # v3
         id: node-cache
         with:
           path: node_modules/
@@ -147,7 +149,7 @@ jobs:
         working-directory: ./ios
 
       - name: Save Cocoapods cache
-        uses: actions/cache/save@v3
+        uses: actions/cache/save@58c146cc91c5b9e778e71775dfe9bf1442ad9a12 # v3
         if: steps.cocoapods-cache.outputs.cache-hit != 'true'
         with:
           path: ios/Pods
@@ -158,14 +160,14 @@ jobs:
     needs: [cache-npm-linux]
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v3.3.0
+      - uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c # v3.3.0
 
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@64ed1c7eab4cce3362f8c340dee64e5eaeef8f7c # v3
         with:
           node-version: ${{ env.node_version }}
 
       - name: Restore node_modules cache
-        uses: actions/cache/restore@v3
+        uses: actions/cache/restore@58c146cc91c5b9e778e71775dfe9bf1442ad9a12 # v3
         id: node-cache
         with:
           path: node_modules/
@@ -181,14 +183,14 @@ jobs:
     needs: [cache-npm-linux]
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v3.3.0
+      - uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c # v3.3.0
 
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@64ed1c7eab4cce3362f8c340dee64e5eaeef8f7c # v3
         with:
           node-version: ${{ env.node_version }}
 
       - name: Restore node_modules cache
-        uses: actions/cache/restore@v3
+        uses: actions/cache/restore@58c146cc91c5b9e778e71775dfe9bf1442ad9a12 # v3
         id: node-cache
         with:
           path: node_modules/
@@ -204,14 +206,14 @@ jobs:
     needs: [cache-npm-linux]
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v3.3.0
+      - uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c # v3.3.0
 
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@64ed1c7eab4cce3362f8c340dee64e5eaeef8f7c # v3
         with:
           node-version: ${{ env.node_version }}
 
       - name: Restore node_modules cache
-        uses: actions/cache/restore@v3
+        uses: actions/cache/restore@58c146cc91c5b9e778e71775dfe9bf1442ad9a12 # v3
         id: node-cache
         with:
           path: node_modules/
@@ -226,21 +228,21 @@ jobs:
         run: npm run test -- --coverage
 
       - name: Upload coverage
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@d9f34f8cd5cb3b3eb79b3e4b5dae3a16df499a70 # v3
 
   tsc:
     name: TypeScript
     needs: [cache-npm-linux]
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v3.3.0
+      - uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c # v3.3.0
 
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@64ed1c7eab4cce3362f8c340dee64e5eaeef8f7c # v3
         with:
           node-version: ${{ env.node_version }}
 
       - name: Restore node_modules cache
-        uses: actions/cache/restore@v3
+        uses: actions/cache/restore@58c146cc91c5b9e778e71775dfe9bf1442ad9a12 # v3
         id: node-cache
         with:
           path: node_modules/
@@ -258,14 +260,14 @@ jobs:
     needs: [cache-npm-linux]
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v3.3.0
+      - uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c # v3.3.0
 
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@64ed1c7eab4cce3362f8c340dee64e5eaeef8f7c # v3
         with:
           node-version: ${{ env.node_version }}
 
       - name: Restore node_modules cache
-        uses: actions/cache/restore@v3
+        uses: actions/cache/restore@58c146cc91c5b9e778e71775dfe9bf1442ad9a12 # v3
         id: node-cache
         with:
           path: node_modules/
@@ -285,17 +287,17 @@ jobs:
     outputs:
       cache-key: ${{ steps.jsbundle-cache.outputs.cache-primary-key }}
     steps:
-      - uses: actions/checkout@v3.3.0
+      - uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c # v3.3.0
 
       - name: Extract job definition
         run: yq '.jobs.${{ github.job }}' .github/workflows/check.yml > .github/job.yml
 
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@64ed1c7eab4cce3362f8c340dee64e5eaeef8f7c # v3
         with:
           node-version: ${{ env.node_version }}
 
       - name: Restore node_modules cache
-        uses: actions/cache/restore@v3
+        uses: actions/cache/restore@58c146cc91c5b9e778e71775dfe9bf1442ad9a12 # v3
         id: node-cache
         with:
           path: node_modules/
@@ -305,7 +307,7 @@ jobs:
         run: exit 1
 
       - name: Load the cached jsbundle
-        uses: actions/cache/restore@v3
+        uses: actions/cache/restore@58c146cc91c5b9e778e71775dfe9bf1442ad9a12 # v3
         id: jsbundle-cache
         with:
           path: |
@@ -321,7 +323,7 @@ jobs:
           npm run bundle:ios
 
       - name: Cache the jsbundle
-        uses: actions/cache/save@v3
+        uses: actions/cache/save@58c146cc91c5b9e778e71775dfe9bf1442ad9a12 # v3
         if: steps.jsbundle-cache.outputs.cache-hit != 'true'
         with:
           path: |
@@ -337,17 +339,17 @@ jobs:
     outputs:
       cache-key: ${{ steps.jsbundle-cache.outputs.cache-primary-key }}
     steps:
-      - uses: actions/checkout@v3.3.0
+      - uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c # v3.3.0
 
       - name: Extract job definition
         run: yq '.jobs.${{ github.job }}' .github/workflows/check.yml > .github/job.yml
 
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@64ed1c7eab4cce3362f8c340dee64e5eaeef8f7c # v3
         with:
           node-version: ${{ env.node_version }}
 
       - name: Restore node_modules cache
-        uses: actions/cache/restore@v3
+        uses: actions/cache/restore@58c146cc91c5b9e778e71775dfe9bf1442ad9a12 # v3
         id: node-cache
         with:
           path: node_modules/
@@ -357,7 +359,7 @@ jobs:
         run: exit 1
 
       - name: Load the cached jsbundle
-        uses: actions/cache/restore@v3
+        uses: actions/cache/restore@58c146cc91c5b9e778e71775dfe9bf1442ad9a12 # v3
         id: jsbundle-cache
         with:
           path: |
@@ -375,7 +377,7 @@ jobs:
 
       - name: Cache the jsbundle
         if: steps.jsbundle-cache.outputs.cache-hit != 'true'
-        uses: actions/cache/save@v3
+        uses: actions/cache/save@58c146cc91c5b9e778e71775dfe9bf1442ad9a12 # v3
         with:
           path: |
             ./android/app/src/main/assets/index.android.bundle
@@ -388,14 +390,14 @@ jobs:
     needs: [jest, eslint, android-bundle, cache-npm-linux, cache-bundler-linux]
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v3.3.0
+      - uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c # v3.3.0
 
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@64ed1c7eab4cce3362f8c340dee64e5eaeef8f7c # v3
         with:
           node-version: ${{ env.node_version }}
 
       - name: Restore node_modules cache
-        uses: actions/cache/restore@v3
+        uses: actions/cache/restore@58c146cc91c5b9e778e71775dfe9bf1442ad9a12 # v3
         id: node-cache
         with:
           path: node_modules/
@@ -405,19 +407,19 @@ jobs:
         run: exit 1
 
       - uses: ruby/setup-ruby@v1
+        env:
+          BUNDLE_FROZEN: "true"
         with:
           ruby-version: ${{ env.ruby_version }}
           bundler-cache: true
 
       - name: Restore Gradle cache
-        uses: actions/cache@v3
+        uses: actions/cache@58c146cc91c5b9e778e71775dfe9bf1442ad9a12 # v3
         with:
           path: |
             ~/.gradle/caches
             ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties', '**/*gradle.lockfile') }}
 
       - name: Raise the fs.inotify ulimits to 524288 watches/queued events/user instances
         run: |
@@ -451,26 +453,26 @@ jobs:
     steps:
       - run: sudo xcode-select -s /Applications/${{ env.xcode_version }}.app
 
-      - uses: actions/checkout@v3.3.0
+      - uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c # v3.3.0
 
       - name: Extract job definition
         run: yq '.jobs.${{ github.job }}' .github/workflows/check.yml > .github/job.yml
 
       - name: Check for cached iOS app
         id: app-cache
-        uses: actions/cache/restore@v3
+        uses: actions/cache/restore@58c146cc91c5b9e778e71775dfe9bf1442ad9a12 # v3
         with:
           path: ios/build/Build/Products/
           key: ${{ runner.os }}-ios-xcode@${{ env.xcode_version }}-${{ hashFiles('**/project.pbxproj', '**/Podfile.lock', 'package-lock.json', '.github/job.yml') }}
 
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@64ed1c7eab4cce3362f8c340dee64e5eaeef8f7c # v3
         if: steps.app-cache.outputs.cache-hit != 'true'
         with:
           node-version: ${{ env.node_version }}
 
       - name: Restore node_modules cache
         if: steps.app-cache.outputs.cache-hit != 'true'
-        uses: actions/cache/restore@v3
+        uses: actions/cache/restore@58c146cc91c5b9e778e71775dfe9bf1442ad9a12 # v3
         id: node-cache
         with:
           path: node_modules/
@@ -482,13 +484,15 @@ jobs:
 
       - uses: ruby/setup-ruby@v1
         if: steps.app-cache.outputs.cache-hit != 'true'
+        env:
+          BUNDLE_FROZEN: "true"
         with:
           ruby-version: ${{ env.ruby_version }}
           bundler-cache: true
 
       - name: Restore Cocoapods cache
         if: steps.app-cache.outputs.cache-hit != 'true'
-        uses: actions/cache/restore@v3
+        uses: actions/cache/restore@58c146cc91c5b9e778e71775dfe9bf1442ad9a12 # v3
         id: pods-cache
         with:
           path: ios/Pods
@@ -498,7 +502,7 @@ jobs:
         if: steps.app-cache.outputs.cache-hit != 'true' && steps.pods-cache.outputs.cache-hit != 'true'
         run: exit 1
 
-      - uses: mikehardy/buildcache-action@v2
+      - uses: mikehardy/buildcache-action@1db83fb06b0da378aa7db7a1110923b904417cbc # v2
         if: steps.app-cache.outputs.cache-hit != 'true'
         continue-on-error: true
         with:
@@ -509,7 +513,7 @@ jobs:
         run: npx detox build e2e --configuration ios.sim.release
 
       - name: Cache the iOS app
-        uses: actions/cache/save@v3
+        uses: actions/cache/save@58c146cc91c5b9e778e71775dfe9bf1442ad9a12 # v3
         with:
           path: ios/build/Build/Products/
           key: ${{ steps.app-cache.outputs.cache-primary-key }}
@@ -521,11 +525,11 @@ jobs:
     steps:
       - run: sudo xcode-select -s /Applications/${{ env.xcode_version }}.app
 
-      - uses: actions/checkout@v3.3.0
+      - uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c # v3.3.0
 
       - # load the app before reinstalling detox, so that the package-lock cannot change
         name: Load the cached iOS app
-        uses: actions/cache/restore@v3
+        uses: actions/cache/restore@58c146cc91c5b9e778e71775dfe9bf1442ad9a12 # v3
         id: app-cache
         with:
           path: ios/build/Build/Products/
@@ -536,7 +540,7 @@ jobs:
 
       - # load the jsbundle before reinstalling detox, so that the package-lock cannot change
         name: Load the cached iOS jsbundle
-        uses: actions/cache/restore@v3
+        uses: actions/cache/restore@58c146cc91c5b9e778e71775dfe9bf1442ad9a12 # v3
         id: jsbundle-cache
         with:
           path: |
@@ -555,12 +559,12 @@ jobs:
           rm -rf ios/build/Build/Products/Release-iphonesimulator/AllAboutOlaf.app/assets
           mv ios/assets ios/build/Build/Products/Release-iphonesimulator/AllAboutOlaf.app/
 
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@64ed1c7eab4cce3362f8c340dee64e5eaeef8f7c # v3
         with:
           node-version: ${{ env.node_version }}
 
       - name: Restore node_modules cache
-        uses: actions/cache/restore@v3
+        uses: actions/cache/restore@58c146cc91c5b9e778e71775dfe9bf1442ad9a12 # v3
         id: node-cache
         with:
           path: node_modules/
@@ -577,7 +581,7 @@ jobs:
       - name: Run the Detox tests
         run: npx detox test e2e --configuration ios.sim.release --cleanup --record-logs failing --record-videos failing --record-performance all --capture-view-hierarchy enabled --take-screenshots failing
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@0b7f8abb1508181956e8e162db84b466c27e18ce # v3
         if: always()
         with:
           name: detox-ios

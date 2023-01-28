@@ -1,5 +1,7 @@
 // this plugin adapts the gradle build for android apps
 apply plugin: 'com.android.application'
+// this plugin applies dependency locking to gradle dependencies
+apply plugin: 'nebula.dependency-lock'
 
 import org.apache.tools.ant.taskdefs.condition.Os
 
@@ -141,8 +143,8 @@ android {
     compileSdkVersion rootProject.ext.compileSdkVersion
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
     }
 
     defaultConfig {
@@ -313,7 +315,7 @@ android {
 
 dependencies {
     // required by react-native-screens
-    implementation 'androidx.appcompat:appcompat:1.4.1'
+    implementation 'androidx.appcompat:appcompat:1.6.0'
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
 
     // this is for react-native itself
@@ -345,6 +347,7 @@ if (isNewArchitectureEnabled()) {
 
 dependencyLocking {
     lockAllConfigurations()
+    // lockMode = LockMode.STRICT
 }
 
 // Bundles the app's data for the build process
