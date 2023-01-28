@@ -421,6 +421,7 @@ jobs:
         env:
           SENTRY_ORG: frog-pond-labs
           SENTRY_PROJECT: all-about-olaf
+          SKIP_BUNDLING: 'true'
 
       - name: Upload build reports
         uses: actions/upload-artifact@v3

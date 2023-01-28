@@ -78,12 +78,16 @@ import org.apache.tools.ant.taskdefs.condition.Os
  * ]
  */
 
+def skipBundling = System.getenv().containsKey("SKIP_BUNDLING")
+
 project.ext.react = [
     // ignore the ruby deps
     inputExcludes: ["android/**", "ios/**", "vendor/**"],
     // set the input file manually
     entryFile: "index.js",
     enableHermes: true,  // clean and rebuild if changing
+    bundleInDebug: !skipBundling,
+    bundleInRelease: !skipBundling,
 ]
 
 apply from: "../../node_modules/react-native/react.gradle"
