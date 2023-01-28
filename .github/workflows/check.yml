@@ -504,6 +504,7 @@ jobs:
         continue-on-error: true
         with:
           cache_key: ${{ matrix.os }}
+          upload_buildcache_log: 'true'
 
       - name: Build the iOS app
         if: steps.app-cache.outputs.cache-hit != 'true'
