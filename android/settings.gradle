@@ -17,3 +17,11 @@ buildCache {
        enabled(!isCiServer)
    }
 }
+
+// Auto-accept Gradle's TOS (but only in CI!)
+if (isCiServer && hasProperty('buildScan')) {
+    buildScan {
+        termsOfServiceUrl = 'https://gradle.com/terms-of-service'
+        termsOfServiceAgree = 'yes'
+    }
+}
