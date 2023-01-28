@@ -311,7 +311,7 @@ jobs:
         if: steps.jsbundle-cache.outputs.cache-hit != 'true'
         run: |
           npm run bundle-data
-          npm run bundle:ios
+          APP_MODE=mocked npm run bundle:ios
 
       - name: Cache the jsbundle
         uses: actions/cache/save@58c146cc91c5b9e778e71775dfe9bf1442ad9a12 # v3
@@ -364,7 +364,7 @@ jobs:
         run: |
           mkdir -p ./android/app/src/main/assets/
           npm run bundle-data
-          npm run bundle:android
+          APP_MODE=mocked npm run bundle:android
 
       - name: Cache the jsbundle
         if: steps.jsbundle-cache.outputs.cache-hit != 'true'
