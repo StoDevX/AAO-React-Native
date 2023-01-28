@@ -85,6 +85,14 @@ module.exports = {
 			device: 'ios.simulator',
 			app: 'ios.sim.release',
 		},
+		'android.debug': {
+			device: 'emulator',
+			app: 'android.debug',
+		},
+		'android.release': {
+			device: 'emulator',
+			app: 'android.release',
+		},
 	},
 
 	apps: {
@@ -98,6 +106,18 @@ module.exports = {
 			binaryPath: generateBinaryPath('Release'),
 			build: generateBuildCommand('Release'),
 		},
+		'android.debug': {
+			type: 'android.apk',
+			build:
+				'cd android && ./gradlew :app:assembleDebug :app:assembleAndroidTest -DtestBuildType=debug && cd ..',
+			binaryPath: 'android/app/build/outputs/apk/debug/app-debug.apk',
+		},
+		'android.release': {
+			type: 'android.apk',
+			build:
+				'cd android && ./gradlew :app:assembleRelease :app:assembleAndroidTest -DtestBuildType=release && cd ..',
+			binaryPath: 'android/app/build/outputs/apk/release/app-release.apk',
+		},
 	},
 
 	devices: {
@@ -106,6 +126,12 @@ module.exports = {
 			device: {
 				type: iPhoneSimulatorDevice,
 				os: currentDeploymentTarget,
+			},
+		},
+		'android.emulator': {
+			type: 'android.emulator',
+			device: {
+				avdName: 'pixel_4',
 			},
 		},
 	},
