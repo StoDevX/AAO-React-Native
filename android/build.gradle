@@ -14,6 +14,13 @@ buildscript {
         // - we can delete this when inappbrowser-reborn changes their build script to avoid this pattern
         //   but until then, we'll keep it pinned since a future alpha release could cause this problem. 
         androidXBrowser = "1.4.0"
+        // react-native-inappbrowser-reborn installs androidx.annotations@1.6.0 which has a dependency on
+        // kotlin-stdlib:1.8.0. By default, gradle is using the higher version of this lib in the project
+        // which causes incompatabilities between kotlin-stdlib-jdk8 and kotlin-stdlib-jdk7. This is due
+        // to the merge of jdk7 & jdk8 artifacts that occured in kotlin-stdlib:1.8.0, resulting in an
+        // an error if you use packages that have kotlin-stdlib-jdk7/8 < 1.8.0. The latest
+        // includes a kotlin 1.8.0 dependency that enables this issue and fails to build.
+        androidXAnnotation = "1.5.0"
 
         if (System.properties['os.arch'] == "aarch64") {
             // For M1 Users we need to use the NDK 24 which added support for aarch64
