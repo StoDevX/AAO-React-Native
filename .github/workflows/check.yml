@@ -508,6 +508,8 @@ jobs:
 
       - name: Build the iOS app
         if: steps.app-cache.outputs.cache-hit != 'true'
+        env:
+          SKIP_BUNDLING: 'true'
         run: npx detox build e2e --configuration ios.sim.release
 
       - name: Cache the iOS app
