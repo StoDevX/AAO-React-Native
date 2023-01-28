@@ -101,14 +101,7 @@ subprojects {
     }
 }
 
-// Cache build artifacts, so expensive operations do not need to be re-computed
 def isCiServer = System.getenv().containsKey("CI")
-buildCache {
-    local {
-        enabled(!isCiServer)
-    }
-}
-
 // Auto-accept Gradle's TOS (but only in CI!)
 if (isCiServer && hasProperty('buildScan')) {
     buildScan {
