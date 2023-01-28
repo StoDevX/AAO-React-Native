@@ -16,7 +16,7 @@
     "@react-navigation/native": "^6.0.0"
   },
   "dependencies": {
-    "@callstack/react-theme-provider": "^3.0.8",
+    "@callstack/react-theme-provider": "3.0.8",
     "@frogpond/add-to-device-calendar": "^1.0.0",
     "@frogpond/app-theme": "^1.0.0",
     "@frogpond/colors": "^1.0.0",
@@ -26,6 +26,6 @@
     "@frogpond/notice": "^1.0.0",
     "@frogpond/open-url": "^1.0.0",
     "@frogpond/tableview": "^1.0.0",
-    "lodash": "^4.17.21"
+    "lodash": "4.17.21"
   }
 }

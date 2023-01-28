@@ -415,7 +415,7 @@ PODS:
     - React-RCTImage
   - RNSearchBar (3.5.1):
     - React
-  - RNSentry (4.13.0):
+  - RNSentry (4.14.0):
     - React-Core
     - Sentry/HybridSDK (= 7.31.5)
   - RNVectorIcons (9.2.0):
@@ -692,13 +692,13 @@ SPEC CHECKSUMS:
   RNReanimated: 73afd1a9b4087e403163e0d300854cb99260c9b6
   RNScreens: ea4cd3a853063cda19a4e3c28d2e52180c80f4eb
   RNSearchBar: 9860431356b7d12a8449d2fddb2b5f3c78d1e99f
-  RNSentry: acebe4104a6f5915ae871eb59dc73f13dcc92ef7
+  RNSentry: 7e90aec2633d2fdad8aeb839c9915e4376fd27d1
   RNVectorIcons: fcc2f6cb32f5735b586e66d14103a74ce6ad61f8
   Sentry: 4c9babff9034785067c896fd580b1f7de44da020
   SocketRocket: fccef3f9c5cedea1353a9ef6ada904fde10d6608
   Yoga: c4d61225a466f250c35c1ee78d2d0b3d41fe661c
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
-PODFILE CHECKSUM: beadf17ef4e816508151c3d09fd800f19958dddc
+PODFILE CHECKSUM: 03b72f42f1070cecce9ba1f073c9dee9513b58fa
 
 COCOAPODS: 1.11.3

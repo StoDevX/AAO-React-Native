@@ -25,7 +25,7 @@ export const BalancesView = (): JSX.Element => {
 		data = {} as BalancesShapeType,
 		error,
 		isError,
-		isLoading,
+		isInitialLoading,
 		refetch,
 		isRefetching,
 	} = useBalances(credentials.data)
@@ -39,19 +39,19 @@ export const BalancesView = (): JSX.Element => {
 				<Section footer={DISCLAIMER} header="BALANCES">
 					<View style={styles.balancesRow}>
 						<FormattedValueCell
-							indeterminate={isLoading}
+							indeterminate={isInitialLoading}
 							label="Flex"
 							value={data.flex}
 						/>
 
 						<FormattedValueCell
-							indeterminate={isLoading}
+							indeterminate={isInitialLoading}
 							label="Ole"
 							value={data.ole}
 						/>
 
 						<FormattedValueCell
-							indeterminate={isLoading}
+							indeterminate={isInitialLoading}
 							label="Copy/Print"
 							style={styles.finalCell}
 							value={data.print}
@@ -62,13 +62,13 @@ export const BalancesView = (): JSX.Element => {
 				<Section footer={DISCLAIMER} header="MEAL PLAN">
 					<View style={styles.balancesRow}>
 						<FormattedValueCell
-							indeterminate={isLoading}
+							indeterminate={isInitialLoading}
 							label="Daily Meals Left"
 							value={data.daily}
 						/>
 
 						<FormattedValueCell
-							indeterminate={isLoading}
+							indeterminate={isInitialLoading}
 							label="Weekly Meals Left"
 							style={styles.finalCell}
 							value={data.weekly}
