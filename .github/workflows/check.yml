@@ -470,10 +470,10 @@ jobs:
           key: ${{ needs.cache-npm-linux.outputs.cache-key }}
 
       - name: Download Android Emulator Image SDK-${{ matrix.android_sdk }}
-        run: sdkmanager --install "system-images;android-${{ matrix.android_sdk }};google_apis;x86_64"
+        run: echo "y" | $ANDROID_HOME/tools/bin/sdkmanager --install "system-images;android-${{ matrix.android_sdk }};google_apis;x86_64"
 
       - name: Create AVD ${{ env.android_emulator }}
-        run: avdmanager --verbose create avd --force --name "${{ env.android_emulator }}" --device "Pixel 4" -k 'system-images;android-${{ matrix.android_sdk }};google_apis;x86_64'
+        run: echo "no" | $ANDROID_HOME/tools/bin/avdmanager --verbose create avd --force --name "${{ env.android_emulator }}" --device "Pixel 4" -k 'system-images;android-${{ matrix.android_sdk }};google_apis;x86_64'
 
       - name: List AVDs
         run: $ANDROID_HOME/emulator/emulator -list-avds
