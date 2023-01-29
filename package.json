@@ -78,7 +78,7 @@
     "querystring": "0.2.1",
     "react": "18.2.0",
     "react-markdown": "2.5.1",
-    "react-native": "0.71.0",
+    "react-native": "0.71.1",
     "react-native-button": "3.0.1",
     "react-native-calendar-events": "2.2.0",
     "react-native-device-info": "10.3.0",
