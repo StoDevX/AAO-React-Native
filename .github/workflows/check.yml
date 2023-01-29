@@ -418,7 +418,7 @@ jobs:
   
       - name: Run Gradle
         run: ./gradlew bundleRelease --scan
-        working-directory: androind 
+        working-directory: android
         env:
           SENTRY_ORG: frog-pond-labs
           SENTRY_PROJECT: all-about-olaf
