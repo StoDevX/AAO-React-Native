@@ -354,16 +354,12 @@ jobs:
         uses: actions/cache/restore@58c146cc91c5b9e778e71775dfe9bf1442ad9a12 # v3
         id: jsbundle-cache
         with:
-          path: |
-            ./android/app/src/main/assets/index.android.bundle
-            ./android/app/src/main/assets/index.android.bundle.map
-            ./android/app/src/main/res/
+          path: ./android/generated/
           key: ${{ runner.os }}-npm-node@${{ env.node_version }}-pkg@${{ hashFiles('package.json', 'package-lock.json', '.github/job.yml') }}-files@${{ hashFiles('tsconfig.json', 'babel.config.js', 'index.js', 'data/**', 'images/**', 'modules/**.ts', 'modules/**.tsx', 'source/**.ts', 'source/**.tsx') }}
 
       - name: Generate jsbundle
         if: steps.jsbundle-cache.outputs.cache-hit != 'true'
         run: |
-          mkdir -p ./android/app/src/main/assets/
           npm run bundle-data
           APP_MODE=mocked npm run bundle:android
 
@@ -371,10 +367,7 @@ jobs:
         if: steps.jsbundle-cache.outputs.cache-hit != 'true'
         uses: actions/cache/save@58c146cc91c5b9e778e71775dfe9bf1442ad9a12 # v3
         with:
-          path: |
-            ./android/app/src/main/assets/index.android.bundle
-            ./android/app/src/main/assets/index.android.bundle.map
-            ./android/app/src/main/res/
+          path: ./android/generated/
           key: ${{ steps.jsbundle-cache.outputs.cache-primary-key }}
 
   android:
@@ -409,6 +402,9 @@ jobs:
           echo 524288 | sudo tee -a /proc/sys/fs/inotify/max_queued_events
           echo 524288 | sudo tee -a /proc/sys/fs/inotify/max_user_instances
           sudo sysctl -p
+      
+      # temporary, until we can get SKIP_BUNDLING to work
+      - run: npm run bundle-data
 
       - name: Gradle
         uses: gradle/gradle-build-action@3fbe033aaae657f011f88f29be9e65ed26bd29ef # v2
@@ -426,6 +422,17 @@ jobs:
         with:
           name: build-reports
           path: build/reports/
+      
+      - name: Cache the Android app
+        uses: actions/cache/save@58c146cc91c5b9e778e71775dfe9bf1442ad9a12 # v3
+        with:
+          path: android/app/build/outputs/apk/
+          key: ${{ steps.app-cache.outputs.cache-primary-key }}
+      
+      - uses: actions/upload-artifact@0b7f8abb1508181956e8e162db84b466c27e18ce # v3
+        with:
+          name: android-app
+          path: android/app/build/outputs/apk/
 
   ios-build:
     name: Build for iOS
@@ -503,6 +510,11 @@ jobs:
         with:
           path: ios/build/Build/Products/
           key: ${{ steps.app-cache.outputs.cache-primary-key }}
+      
+      - uses: actions/upload-artifact@0b7f8abb1508181956e8e162db84b466c27e18ce # v3
+        with:
+          name: ios-app
+          path: ios/build/Build/Products/
 
   ios-detox:
     name: Detox E2E for iOS

@@ -1,4 +1,3 @@
-import type {ThemingType} from '@callstack/react-theme-provider'
 import {createTheming} from '@callstack/react-theme-provider'
 export {CombinedLightTheme, CombinedDarkTheme} from './paper'
 
@@ -45,18 +44,16 @@ let defaultTheme: AppTheme = {
 	toolbarButtonForeground: '#fff',
 }
 
-let {ThemeProvider, withTheme, useTheme} = createTheming(
-	defaultTheme,
-) as ThemingType<AppTheme>
-
-export {ThemeProvider, withTheme, useTheme}
-
 let theme: AppTheme
+
+let ThemeProvider: ReturnType<typeof createTheming<AppTheme>>['ThemeProvider']
+let withTheme: ReturnType<typeof createTheming<AppTheme>>['withTheme']
+let useTheme: ReturnType<typeof createTheming<AppTheme>>['useTheme']
 
 export function setTheme(newTheme: AppTheme): void {
 	theme = newTheme
 
-	const result: ThemingType<AppTheme> = createTheming(newTheme)
+	const result = createTheming<AppTheme>(newTheme)
 
 	ThemeProvider = result.ThemeProvider
 	withTheme = result.withTheme
@@ -66,3 +63,8 @@ export function setTheme(newTheme: AppTheme): void {
 export function getTheme(): AppTheme {
 	return theme
 }
+
+// initialize
+setTheme(defaultTheme)
+
+export {ThemeProvider, withTheme, useTheme}

@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {forwardRef} from 'react'
+import {forwardRef, type PropsWithChildren} from 'react'
 import {
 	Platform,
 	Pressable,
@@ -11,14 +11,16 @@ import {
 } from 'react-native'
 import {white} from '@frogpond/colors'
 
-type Props = PressableProps & {
-	borderless?: boolean
-	containerStyle?: StyleProp<ViewStyle>
-	style?: StyleProp<ViewStyle>
-	highlight?: boolean
-	activeOpacity?: number
-	underlayColor?: string
-}
+type Props = PropsWithChildren<
+	PressableProps & {
+		borderless?: boolean
+		containerStyle?: StyleProp<ViewStyle>
+		style?: StyleProp<ViewStyle>
+		highlight?: boolean
+		activeOpacity?: number
+		underlayColor?: string
+	}
+>
 
 const CustomPressable = forwardRef<View, Props>((props, ref): JSX.Element => {
 	let {

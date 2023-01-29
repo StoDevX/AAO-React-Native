@@ -10,8 +10,8 @@
   },
   "peerDependencies": {
     "@expo/react-native-action-sheet": "^4.0.1",
-    "react": "^17.0.2",
-    "react-native": "^0.68.0"
+    "react": "^18.0.0",
+    "react-native": "^0.71.0"
   },
   "dependencies": {
     "@callstack/react-theme-provider": "3.0.8",
