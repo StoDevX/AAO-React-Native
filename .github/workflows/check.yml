@@ -410,15 +410,12 @@ jobs:
           echo 524288 | sudo tee -a /proc/sys/fs/inotify/max_user_instances
           sudo sysctl -p
 
-      - name: Set Up Gradle
+      - name: Gradle
         uses: gradle/gradle-build-action@v2
         with:
+          arguments: bundleRelease --scan
           build-root-directory: android
           gradle-home-cache-cleanup: true
-  
-      - name: Run Gradle
-        run: ./gradlew bundleRelease --scan
-        working-directory: android
         env:
           SENTRY_ORG: frog-pond-labs
           SENTRY_PROJECT: all-about-olaf
