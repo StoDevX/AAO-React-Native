@@ -17,11 +17,11 @@ type Props<T extends object> = {
 export function FilterPopover<T extends object>(props: Props<T>): JSX.Element {
 	let {anchor, onClosePopover, visible} = props
 	let [filter, setFilter] = useState<FilterType<T>>(props.filter)
-	let safeareaInsets = useSafeAreaInsets()
+	let insets = useSafeAreaInsets()
 
 	return (
 		<Popover
-			displayAreaInsets={safeareaInsets}
+			displayAreaInsets={insets}
 			from={anchor}
 			isVisible={visible}
 			onRequestClose={() => onClosePopover(filter)}
