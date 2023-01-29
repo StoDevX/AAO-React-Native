@@ -87,8 +87,7 @@ export const DebugToStringItem = ({item}: {item: unknown}): JSX.Element => {
 let useKeyPath = () => {
 	let route =
 		useRoute<RouteProp<SettingsStackParamList, typeof NavigationKey>>()
-	let {keyPath} = route.params ?? []
-	return keyPath
+	return route.params?.keyPath ?? []
 }
 
 export const DebugArrayItem = ({item}: {item: unknown[]}): JSX.Element => {
@@ -105,11 +104,11 @@ export const DebugArrayItem = ({item}: {item: unknown[]}): JSX.Element => {
 			renderItem={({item}) => (
 				<DebugRow
 					data={item}
-					onPress={() =>
+					onPress={() => {
 						navigation.navigate('DebugView', {
 							keyPath: [...keyPath, String(item.key)],
 						})
-					}
+					}}
 				/>
 			)}
 		/>

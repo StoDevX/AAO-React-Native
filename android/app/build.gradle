@@ -1,6 +1,9 @@
 // this plugin adapts the gradle build for android apps
 apply plugin: 'com.android.application'
 apply plugin: 'com.facebook.react'
+// this plugin applies dependency locking to gradle dependencies
+apply plugin: 'nebula.dependency-lock'
+
 
 /**
  * This is the configuration block to customize your React Native Android app.
@@ -51,6 +54,18 @@ react {
     // hermesFlags = ["-O", "-output-source-map"]
 }
 
+def skipBundling = System.getenv().containsKey("SKIP_BUNDLING")
+
+project.ext.react = [
+    // ignore the ruby deps
+    inputExcludes: ["android/**", "ios/**", "vendor/**"],
+    // set the input file manually
+    entryFile: "index.js",
+    enableHermes: true,  // clean and rebuild if changing
+    bundleInDebug: !skipBundling,
+    bundleInRelease: !skipBundling,
+]
+
 /**
  * Set this to true to create four separate APKs instead of one,
  * one for each native architecture. This is useful if you don't
@@ -96,8 +111,8 @@ android {
     compileSdkVersion rootProject.ext.compileSdkVersion
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
     }
 
     namespace "com.allaboutolaf"
@@ -198,7 +213,7 @@ android {
 
 dependencies {
     // required by react-native-screens
-    implementation 'androidx.appcompat:appcompat:1.4.1'
+    implementation("androidx.appcompat:appcompat:1.6.0")
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
 
     // The version of react-native is set by the React Native Gradle Plugin
@@ -207,10 +222,6 @@ dependencies {
     debugImplementation("com.facebook.flipper:flipper-network-plugin:${FLIPPER_VERSION}") {
         exclude group:'com.squareup.okhttp3', module:'okhttp'
     }
-
-    debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}")
-
-    debugImplementation("com.facebook.flipper:flipper-fresco-plugin:${FLIPPER_VERSION}")
 
     if (hermesEnabled.toBoolean()) {
         implementation("com.facebook.react:hermes-android")
@@ -221,6 +232,7 @@ dependencies {
 
 dependencyLocking {
     lockAllConfigurations()
+    // lockMode = LockMode.STRICT
 }
 
 // Bundles the app's data for the build process

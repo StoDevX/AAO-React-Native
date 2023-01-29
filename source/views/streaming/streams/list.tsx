@@ -153,6 +153,7 @@ export const StreamListView = (): JSX.Element => {
 			)}
 			sections={groupStreams(filterStreams(entries, filters))}
 			style={styles.listContainer}
+			testID="stream-list"
 		/>
 	)
 }
