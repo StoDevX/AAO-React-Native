@@ -331,7 +331,6 @@ jobs:
           --configuration ios.sim.release
           --record-logs failing
           --record-videos failing
-          --record-performance all
           --take-screenshots failing
 
       - uses: actions/upload-artifact@v3
@@ -408,7 +407,6 @@ jobs:
           --configuration ios.sim.release
           --record-logs failing
           --record-videos failing
-          --record-performance all
           --take-screenshots failing
           --max-workers 3
 
