@@ -354,16 +354,12 @@ jobs:
         uses: actions/cache/restore@58c146cc91c5b9e778e71775dfe9bf1442ad9a12 # v3
         id: jsbundle-cache
         with:
-          path: |
-            ./android/app/src/main/assets/index.android.bundle
-            ./android/app/src/main/assets/index.android.bundle.map
-            ./android/app/src/main/res/
+          path: ./android/generated/
           key: ${{ runner.os }}-npm-node@${{ env.node_version }}-pkg@${{ hashFiles('package.json', 'package-lock.json', '.github/job.yml') }}-files@${{ hashFiles('tsconfig.json', 'babel.config.js', 'index.js', 'data/**', 'images/**', 'modules/**.ts', 'modules/**.tsx', 'source/**.ts', 'source/**.tsx') }}
 
       - name: Generate jsbundle
         if: steps.jsbundle-cache.outputs.cache-hit != 'true'
         run: |
-          mkdir -p ./android/app/src/main/assets/
           npm run bundle-data
           APP_MODE=mocked npm run bundle:android
 
@@ -371,10 +367,7 @@ jobs:
         if: steps.jsbundle-cache.outputs.cache-hit != 'true'
         uses: actions/cache/save@58c146cc91c5b9e778e71775dfe9bf1442ad9a12 # v3
         with:
-          path: |
-            ./android/app/src/main/assets/index.android.bundle
-            ./android/app/src/main/assets/index.android.bundle.map
-            ./android/app/src/main/res/
+          path: ./android/generated/
           key: ${{ steps.jsbundle-cache.outputs.cache-primary-key }}
 
   android:
