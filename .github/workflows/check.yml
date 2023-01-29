@@ -1,7 +1,8 @@
 name: Check
 
 on:
-  push:
+  push: {branches: [master]}
+  pull_request:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -409,25 +410,17 @@ jobs:
           echo 524288 | sudo tee -a /proc/sys/fs/inotify/max_user_instances
           sudo sysctl -p
 
-      - name: Setup Gradle
+      - name: Gradle
+        id: gradle
         uses: gradle/gradle-build-action@v2
         with:
+          arguments: bundleRelease --scan
           build-root-directory: android
           gradle-home-cache-cleanup: true
-
-      - name: Gradle
-        run: ./gradlew bundleRelease
-        working-directory: android
         env:
           SENTRY_ORG: frog-pond-labs
           SENTRY_PROJECT: all-about-olaf
           SKIP_BUNDLING: 'true'
-
-      - name: Upload build reports
-        uses: actions/upload-artifact@v3
-        with:
-          name: build-reports
-          path: build/reports/
 
       - name: "Add build scan URL as PR comment"
         uses: actions/github-script@d556feaca394842dc55e4734bf3bb9f685482fa0 # v6
@@ -441,6 +434,12 @@ jobs:
               repo: context.repo.repo,
               body: '❌ ${{ github.workflow }} failed: ${{ steps.gradle.outputs.build-scan-url }}'
             })
+  
+      - name: Upload build reports
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-reports
+          path: build/reports/
 
   ios-build:
     name: Build for iOS
