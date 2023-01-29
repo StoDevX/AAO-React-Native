@@ -402,6 +402,9 @@ jobs:
           echo 524288 | sudo tee -a /proc/sys/fs/inotify/max_queued_events
           echo 524288 | sudo tee -a /proc/sys/fs/inotify/max_user_instances
           sudo sysctl -p
+      
+      # temporary, until we can get SKIP_BUNDLING to work
+      - run: npm run bundle-data
 
       - name: Gradle
         uses: gradle/gradle-build-action@v2
