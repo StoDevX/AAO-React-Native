@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {Text, StyleSheet, Platform} from 'react-native'
+import {Platform, StyleSheet, Text} from 'react-native'
 import Icon from 'react-native-vector-icons/Entypo'
 import type {ViewType} from '../views'
 import {Touchable} from '@frogpond/touchable'

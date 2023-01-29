@@ -45,6 +45,12 @@
     {
       "matchPackageNames": ["com.facebook.react:react-native", "org.webkit:android-jsc"],
       "enabled": false
+    },
+    // stop widening peerDep ranges for custom modules
+    {
+      "matchPaths": ["modules/**/package.json"],
+      "matchDepTypes": ["peerDependencies"],
+      "rangeStrategy": "bump"
     }
   ]
 }

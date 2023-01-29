@@ -1,5 +1,5 @@
 import * as React from 'react'
-import Clipboard from '@react-native-community/clipboard'
+import Clipboard from '@react-native-clipboard/clipboard'
 import {openUrl} from '@frogpond/open-url'
 import {useActionSheet} from '@expo/react-native-action-sheet'
 import * as c from '@frogpond/colors'

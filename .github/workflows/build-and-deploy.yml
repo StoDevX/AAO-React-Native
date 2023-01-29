@@ -60,6 +60,7 @@ jobs:
           sudo sysctl -p
       - run: echo 'org.gradle.workers.max=2' >> ./android/gradle.properties
       - run: cd android && ./gradlew androidDependencies --console=plain
+      - run: npm run bundle-data
       - run: bundle exec fastlane android ci-run
         env:
           FASTLANE_PASSWORD: ${{ secrets.FASTLANE_PASSWORD }}
