@@ -411,7 +411,7 @@ jobs:
           sudo sysctl -p
 
       - name: Gradle
-        uses: gradle/gradle-build-action@v2
+        uses: gradle/gradle-build-action@3fbe033aaae657f011f88f29be9e65ed26bd29ef # v2
         with:
           arguments: bundleRelease --scan
           build-root-directory: android
@@ -422,7 +422,7 @@ jobs:
           SKIP_BUNDLING: 'true'
 
       - name: Upload build reports
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@0b7f8abb1508181956e8e162db84b466c27e18ce # v3
         with:
           name: build-reports
           path: build/reports/
