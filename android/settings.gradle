@@ -13,7 +13,7 @@ if (settings.hasProperty("newArchEnabled") && settings.newArchEnabled == "true")
 // Cache build artifacts, so expensive operations do not need to be re-computed
 def isCiServer = System.getenv().containsKey("CI")
 buildCache {
-   local {
-       enabled(!isCiServer)
-   }
+    local {
+        enabled(!isCiServer)
+    }
 }
