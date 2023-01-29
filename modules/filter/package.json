@@ -10,7 +10,7 @@
   },
   "peerDependencies": {
     "react": "^18.0.0",
-    "react-native": "^0.71.0",
+    "react-native": "^0.71.1",
     "react-native-popover-view": "^5.1.7",
     "react-native-vector-icons": "^9.2.0"
   },

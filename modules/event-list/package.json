@@ -11,7 +11,7 @@
   "peerDependencies": {
     "moment-timezone": "^0.5.40",
     "react": "^18.0.0",
-    "react-native": "^0.71.0",
+    "react-native": "^0.71.1",
     "react-native-vector-icons": "^9.2.0",
     "@react-navigation/native": "^6.1.2"
   },

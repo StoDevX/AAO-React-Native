@@ -10,7 +10,7 @@
   },
   "peerDependencies": {
     "react": "^18.0.0",
-    "react-native": "^0.71.0"
+    "react-native": "^0.71.1"
   },
   "dependencies": {
     "@frogpond/colors": "^1.0.0"
