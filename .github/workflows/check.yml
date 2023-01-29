@@ -585,7 +585,6 @@ jobs:
           --record-logs failing
           --record-videos failing
           --record-performance all
-          --capture-view-hierarchy enabled
           --take-screenshots failing
 
       - uses: actions/upload-artifact@v3
@@ -663,7 +662,6 @@ jobs:
           --record-logs failing
           --record-videos failing
           --record-performance all
-          --capture-view-hierarchy enabled
           --take-screenshots failing
           --max-workers 3
 
