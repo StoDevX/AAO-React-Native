@@ -507,6 +507,11 @@ jobs:
         with:
           path: ios/build/Build/Products/
           key: ${{ steps.app-cache.outputs.cache-primary-key }}
+      
+      - uses: actions/upload-artifact@0b7f8abb1508181956e8e162db84b466c27e18ce # v3
+        with:
+          name: ios-app
+          path: ios/build/Build/Products/
 
   ios-detox:
     name: Detox E2E for iOS
