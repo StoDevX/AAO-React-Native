@@ -11,7 +11,7 @@
   "peerDependencies": {
     "react": "^17.0.2",
     "react-native": "^0.68.0",
-    "react-native-popover-view": "^4.0.0",
+    "react-native-popover-view": "^5.1.7",
     "react-native-vector-icons": "^9.2.0"
   },
   "dependencies": {
