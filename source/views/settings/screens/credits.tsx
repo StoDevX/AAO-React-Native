@@ -1,6 +1,5 @@
 import * as React from 'react'
 import * as c from '@frogpond/colors'
-import {Heading as H, Paragraph as P} from '@frogpond/markdown'
 import {Platform, ScrollView, StyleSheet, TextProps, Text} from 'react-native'
 import {iOSUIKit, material} from 'react-native-typography'
 import {AppLogo} from '../components/logo'
@@ -10,19 +9,21 @@ const styles = StyleSheet.create({
 		backgroundColor: c.white,
 	},
 	contentContainer: {
-		paddingHorizontal: 5,
+		paddingHorizontal: 25,
 		paddingVertical: 10,
 	},
 	title: {
 		textAlign: 'center',
-		marginTop: 10,
-		marginBottom: 5,
+		marginTop: 15,
+		marginBottom: 20,
 		...Platform.select({
 			ios: iOSUIKit.largeTitleEmphasizedObject,
 			android: material.headlineObject,
 		}),
 	},
 	heading: {
+		marginTop: 20,
+		marginBottom: 4,
 		...Platform.select({
 			ios: iOSUIKit.subheadEmphasizedObject,
 			android: material.titleObject,
@@ -33,8 +34,6 @@ const styles = StyleSheet.create({
 			ios: iOSUIKit.bodyObject,
 			android: material.body1Object,
 		}),
-		paddingHorizontal: 25,
-		paddingTop: 10,
 	},
 	contributors: {
 		...Platform.select({
@@ -61,7 +60,10 @@ const Contributors = (props: TextProps) => (
 	<Text {...props} style={[styles.contributors, props.style]} />
 )
 
-let contributors = [
+const formatPeopleList = (arr: Array<string>) =>
+	arr.map((w) => w.replace(' ', ' ')).join(' • ')
+
+const contributors = [
 	'Anna Linden',
 	'Drew Turnblad',
 	'Drew Volz',
@@ -74,7 +76,7 @@ let contributors = [
 	'Matt Kilens',
 ]
 
-let acknowledgements = [
+const acknowledgements = [
 	'Brandon Cash',
 	'Catherine Paro',
 	'Dan Beach',
@@ -102,33 +104,33 @@ export let CreditsView = (): JSX.Element => (
 			College in Northfield, MN under the name StoDevX.
 		</About>
 
-		<H level={3}>🏡 October 2017 — Today</H>
-		<P>
+		<Heading>🏡 October 2017 — Today</Heading>
+		<About>
 			Alumni of St. Olaf — Hawken Rives, Kris Rye, and Drew Volz — develop and
 			support the app in its current form. Rewritten from top to bottom in
 			Typescript, this is the version you see today in the iOS and Android app
 			stores. It remains self-published, open-source, cross-platform, and free
 			of trackers and data collection.
-		</P>
+		</About>
 
-		<H level={3}>🧱 July 2016 — September 2017</H>
-		<P>
+		<Heading>🧱 July 2016 — September 2017</Heading>
+		<About>
 			This version was written in the summer of 2016, led by Elijah Verdoorn and
 			assisted by Hawken Rives and Drew Volz. The app was supported and
 			published by the Student Government Association (SGA) web team, called the
 			Oleville Development Team.
-		</P>
+		</About>
 
-		<H level={3}>🏗 2014</H>
-		<P>
+		<Heading>🏗 2014</Heading>
+		<About>
 			The first version of All About Olaf was an iOS app created by Drew Volz as
 			an independent project, self-published and written in Objective-C.
-		</P>
+		</About>
 
 		<Heading>Contributors</Heading>
-		<Contributors names={contributors} />
+		<Contributors>{formatPeopleList(contributors)}</Contributors>
 
 		<Heading>Acknowledgements</Heading>
-		<Contributors names={acknowledgements} />
+		<Contributors>{formatPeopleList(acknowledgements)}</Contributors>
 	</ScrollView>
 )
