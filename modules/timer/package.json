@@ -10,6 +10,6 @@
   },
   "peerDependencies": {
     "react": "^17.0.0",
-    "moment-timezone": "^0.5.21"
+    "moment-timezone": "^0.5.40"
   }
 }
