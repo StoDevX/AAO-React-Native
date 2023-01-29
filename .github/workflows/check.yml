@@ -416,7 +416,7 @@ jobs:
           gradle-home-cache-cleanup: true
 
       - name: Gradle
-        run: ./gradlew bundleRelease --scan
+        run: ./gradlew bundleRelease
         working-directory: android
         env:
           SENTRY_ORG: frog-pond-labs
