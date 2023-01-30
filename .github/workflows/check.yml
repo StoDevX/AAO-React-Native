@@ -9,7 +9,6 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  node_version: '^16.0'
   ruby_version: '2.6'
   xcode_version: 'Xcode_13.1'
   java_version: '11'
@@ -31,12 +30,12 @@ jobs:
         id: node-cache
         with:
           path: node_modules/
-          key: ${{ runner.os }}-npm-node@${{ env.node_version }}-${{ hashFiles('package-lock.json', '.github/job.yml') }}
+          key: ${{ runner.os }}-node_modules-${{ hashFiles('.node-version', 'package-lock.json', '.github/job.yml') }}
 
       - if: steps.node-cache.outputs.cache-hit != 'true'
         uses: actions/setup-node@64ed1c7eab4cce3362f8c340dee64e5eaeef8f7c # v3
         with:
-          node-version: ${{ env.node_version }}
+          node-version-file: '.node-version'
           cache: npm
 
       - if: steps.node-cache.outputs.cache-hit != 'true'
@@ -63,12 +62,12 @@ jobs:
         id: node-cache
         with:
           path: node_modules/
-          key: ${{ runner.os }}-npm-node@${{ env.node_version }}-${{ hashFiles('package-lock.json', '.github/job.yml') }}
+          key: ${{ runner.os }}-node_modules-${{ hashFiles('.node-version', 'package-lock.json', '.github/job.yml') }}
 
       - if: steps.node-cache.outputs.cache-hit != 'true'
         uses: actions/setup-node@64ed1c7eab4cce3362f8c340dee64e5eaeef8f7c # v3
         with:
-          node-version: ${{ env.node_version }}
+          node-version-file: '.node-version'
           cache: npm
 
       - if: steps.node-cache.outputs.cache-hit != 'true'
@@ -115,7 +114,7 @@ jobs:
       - if: steps.cocoapods-cache.outputs.cache-hit != 'true'
         uses: actions/setup-node@64ed1c7eab4cce3362f8c340dee64e5eaeef8f7c # v3
         with:
-          node-version: ${{ env.node_version }}
+          node-version-file: '.node-version'
 
       - if: steps.cocoapods-cache.outputs.cache-hit != 'true'
         uses: ruby/setup-ruby@v1
@@ -156,7 +155,7 @@ jobs:
 
       - uses: actions/setup-node@64ed1c7eab4cce3362f8c340dee64e5eaeef8f7c # v3
         with:
-          node-version: ${{ env.node_version }}
+          node-version-file: '.node-version'
 
       - name: Restore node_modules cache
         uses: actions/cache/restore@627f0f41f6904a5b1efbaed9f96d9eb58e92e920 # v3
@@ -179,7 +178,7 @@ jobs:
 
       - uses: actions/setup-node@64ed1c7eab4cce3362f8c340dee64e5eaeef8f7c # v3
         with:
-          node-version: ${{ env.node_version }}
+          node-version-file: '.node-version'
 
       - name: Restore node_modules cache
         uses: actions/cache/restore@627f0f41f6904a5b1efbaed9f96d9eb58e92e920 # v3
@@ -202,7 +201,7 @@ jobs:
 
       - uses: actions/setup-node@64ed1c7eab4cce3362f8c340dee64e5eaeef8f7c # v3
         with:
-          node-version: ${{ env.node_version }}
+          node-version-file: '.node-version'
 
       - name: Restore node_modules cache
         uses: actions/cache/restore@627f0f41f6904a5b1efbaed9f96d9eb58e92e920 # v3
@@ -229,7 +228,7 @@ jobs:
 
       - uses: actions/setup-node@64ed1c7eab4cce3362f8c340dee64e5eaeef8f7c # v3
         with:
-          node-version: ${{ env.node_version }}
+          node-version-file: '.node-version'
 
       - name: Restore node_modules cache
         uses: actions/cache/restore@627f0f41f6904a5b1efbaed9f96d9eb58e92e920 # v3
@@ -252,7 +251,7 @@ jobs:
 
       - uses: actions/setup-node@64ed1c7eab4cce3362f8c340dee64e5eaeef8f7c # v3
         with:
-          node-version: ${{ env.node_version }}
+          node-version-file: '.node-version'
 
       - name: Restore node_modules cache
         uses: actions/cache/restore@627f0f41f6904a5b1efbaed9f96d9eb58e92e920 # v3
@@ -282,7 +281,7 @@ jobs:
 
       - uses: actions/setup-node@64ed1c7eab4cce3362f8c340dee64e5eaeef8f7c # v3
         with:
-          node-version: ${{ env.node_version }}
+          node-version-file: '.node-version'
 
       - name: Restore node_modules cache
         uses: actions/cache/restore@627f0f41f6904a5b1efbaed9f96d9eb58e92e920 # v3
@@ -302,7 +301,7 @@ jobs:
             ios/AllAboutOlaf/main.jsbundle
             ios/AllAboutOlaf/main.jsbundle.map
             ios/assets/
-          key: ${{ runner.os }}-jsbundle-node@${{ env.node_version }}-${{ hashFiles('package.json', 'package-lock.json', '.github/job.yml', 'tsconfig.json', 'babel.config.js', 'index.js', 'data/**', 'images/**', 'modules/**.ts', 'modules/**.tsx', 'source/**.ts', 'source/**.tsx') }}
+          key: ${{ runner.os }}-jsbundle-${{ hashFiles('.node-version', 'package.json', 'package-lock.json', '.github/job.yml', 'tsconfig.json', 'babel.config.js', 'index.js', 'data/**', 'images/**', 'modules/**.ts', 'modules/**.tsx', 'source/**.ts', 'source/**.tsx') }}
 
       - name: Generate jsbundle
         if: steps.jsbundle-cache.outputs.cache-hit != 'true'
@@ -334,7 +333,7 @@ jobs:
 
       - uses: actions/setup-node@64ed1c7eab4cce3362f8c340dee64e5eaeef8f7c # v3
         with:
-          node-version: ${{ env.node_version }}
+          node-version-file: '.node-version'
 
       - name: Restore node_modules cache
         uses: actions/cache/restore@627f0f41f6904a5b1efbaed9f96d9eb58e92e920 # v3
@@ -351,7 +350,7 @@ jobs:
         id: jsbundle-cache
         with:
           path: ./android/generated/
-          key: ${{ runner.os }}-npm-node@${{ env.node_version }}-pkg@${{ hashFiles('package.json', 'package-lock.json', '.github/job.yml') }}-files@${{ hashFiles('tsconfig.json', 'babel.config.js', 'index.js', 'data/**', 'images/**', 'modules/**.ts', 'modules/**.tsx', 'source/**.ts', 'source/**.tsx') }}
+          key: ${{ runner.os }}-jsbundle-${{ hashFiles('.node-version', 'package.json', 'package-lock.json', '.github/job.yml', 'tsconfig.json', 'babel.config.js', 'index.js', 'data/**', 'images/**', 'modules/**.ts', 'modules/**.tsx', 'source/**.ts', 'source/**.tsx') }}
 
       - name: Generate jsbundle
         if: steps.jsbundle-cache.outputs.cache-hit != 'true'
@@ -375,7 +374,7 @@ jobs:
 
       - uses: actions/setup-node@64ed1c7eab4cce3362f8c340dee64e5eaeef8f7c # v3
         with:
-          node-version: ${{ env.node_version }}
+          node-version-file: '.node-version'
 
       - name: Restore node_modules cache
         uses: actions/cache/restore@627f0f41f6904a5b1efbaed9f96d9eb58e92e920 # v3
@@ -451,7 +450,7 @@ jobs:
       - uses: actions/setup-node@64ed1c7eab4cce3362f8c340dee64e5eaeef8f7c # v3
         if: steps.app-cache.outputs.cache-hit != 'true'
         with:
-          node-version: ${{ env.node_version }}
+          node-version-file: '.node-version'
 
       - name: Restore node_modules cache
         if: steps.app-cache.outputs.cache-hit != 'true'
@@ -552,7 +551,7 @@ jobs:
 
       - uses: actions/setup-node@64ed1c7eab4cce3362f8c340dee64e5eaeef8f7c # v3
         with:
-          node-version: ${{ env.node_version }}
+          node-version-file: '.node-version'
 
       - name: Restore node_modules cache
         uses: actions/cache/restore@627f0f41f6904a5b1efbaed9f96d9eb58e92e920 # v3
