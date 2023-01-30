@@ -1,10 +1,10 @@
 import * as React from 'react'
-import {StyleSheet, ScrollView, Platform, View} from 'react-native'
+import {Platform, ScrollView, StyleSheet, View} from 'react-native'
 import Icon from 'react-native-vector-icons/Ionicons'
-import {useAppSelector, useAppDispatch} from '../../redux'
+import {useAppDispatch, useAppSelector} from '../../redux'
 import {
-	selectAcknowledgement,
 	acknowledgeAcknowledgement,
+	selectAcknowledgement,
 } from '../../redux/parts/settings'
 import {Avatar, Button, Card, Paragraph as AndroidP} from 'react-native-paper'
 import {Paragraph as IosP} from '@frogpond/markdown'
@@ -59,12 +59,11 @@ export function BalancesOrAcknowledgementView(): JSX.Element {
 	return <Ack {...ackProps}>{content}</Ack>
 }
 
-type AcknowledgementProps = {
+type AcknowledgementProps = React.PropsWithChildren<{
 	title: string
 	subtitle: string
-	children: React.ReactChildren | JSX.Element
 	onPositive: () => void
-}
+}>
 
 function AndroidAck(props: AcknowledgementProps) {
 	let {title, subtitle, children, onPositive} = props
@@ -101,11 +100,13 @@ function IosAck(props: AcknowledgementProps) {
 	return (
 		<ScrollView contentContainerStyle={styles.container}>
 			<IosCard header={title}>
-				{children}
+				<>
+					{children}
 
-				<View style={styles.iosButtonRow}>
-					<IosButton onPress={onPositive} title="I Agree" />
-				</View>
+					<View style={styles.iosButtonRow}>
+						<IosButton onPress={onPositive} title="I Agree" />
+					</View>
+				</>
 			</IosCard>
 		</ScrollView>
 	)

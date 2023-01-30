@@ -1,5 +1,6 @@
-import React from 'react'
+import React, {useState} from 'react'
 import Popover, {PopoverPlacement} from 'react-native-popover-view'
+import {useSafeAreaInsets} from 'react-native-safe-area-context'
 import {FilterSection} from './section'
 import type {FilterType} from './types'
 import * as c from '@frogpond/colors'
@@ -15,10 +16,12 @@ type Props<T extends object> = {
 
 export function FilterPopover<T extends object>(props: Props<T>): JSX.Element {
 	let {anchor, onClosePopover, visible} = props
-	let [filter, setFilter] = React.useState<FilterType<T>>(props.filter)
+	let [filter, setFilter] = useState<FilterType<T>>(props.filter)
+	let insets = useSafeAreaInsets()
 
 	return (
 		<Popover
+			displayAreaInsets={insets}
 			from={anchor}
 			isVisible={visible}
 			onRequestClose={() => onClosePopover(filter)}

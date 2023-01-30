@@ -117,7 +117,7 @@ function WeekToggles(props: WeekTogglesProps) {
 	let {onChangeDays, days} = props
 
 	let toggleDay = useCallback(
-		(day) => {
+		(day: DayOfWeekEnumType) => {
 			onChangeDays(xor(days, [day]))
 		},
 		[onChangeDays, days],

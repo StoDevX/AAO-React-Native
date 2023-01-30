@@ -3,7 +3,7 @@ name: Check & Update Cocoapods
 on:
   pull_request_target:
     branches:
-      - dependabot/npm_and_yarn/**
+      - renovate/**
 
 permissions:
   contents: write
@@ -14,12 +14,12 @@ jobs:
     # Adapted from https://gist.github.com/A-Tokyo/0d811e818513fc4d3272335d2847d748
     name: iOS Update Cocoapods
     runs-on: macos-11
-    if: ${{ github.actor == 'dependabot[bot]' }}
+    if: ${{ github.actor == 'renovate[bot]' }}
     steps:
-      - uses: actions/checkout@v3.3.0
+      - uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c # v3.3.0
         with:
           token: ${{ secrets.COCOAPODS_LOCKFILE_GH_PUSH_TOKEN }}
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@64ed1c7eab4cce3362f8c340dee64e5eaeef8f7c # v3
         with:
           node-version: '^16.0'
           cache: npm
@@ -29,7 +29,6 @@ jobs:
           bundler-cache: true
       - run: sudo xcode-select -s /Applications/Xcode_13.1.app
       - run: npm ci
-        env: {SKIP_POSTINSTALL: '1'}
       - run: bundle exec -- pod install --verbose
         working-directory: ./ios
       - name: push-on-podfile-change

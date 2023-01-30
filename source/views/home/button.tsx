@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {Text, StyleSheet, Platform, SafeAreaView} from 'react-native'
+import {Platform, SafeAreaView, StyleSheet, Text} from 'react-native'
 import Icon from 'react-native-vector-icons/Entypo'
 import type {ViewType} from '../views'
 import {Touchable} from '@frogpond/touchable'
@@ -36,8 +36,6 @@ export function HomeScreenButton({view, onPress}: Props): JSX.Element {
 }
 
 export const CELL_MARGIN = 10
-const cellVerticalPadding = 8
-const cellHorizontalPadding = 4
 
 const styles = StyleSheet.create({
 	button: {
@@ -47,14 +45,6 @@ const styles = StyleSheet.create({
 		marginBottom: CELL_MARGIN,
 		marginLeft: CELL_MARGIN / 2,
 		marginRight: CELL_MARGIN / 2,
-	},
-	contents: {
-		alignItems: 'center',
-		justifyContent: 'center',
-
-		paddingTop: cellVerticalPadding,
-		paddingBottom: cellVerticalPadding / 2,
-		paddingHorizontal: cellHorizontalPadding,
 	},
 	icon: {
 		backgroundColor: transparent,

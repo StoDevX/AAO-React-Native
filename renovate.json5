@@ -1,0 +1,52 @@
+{
+	$schema: 'https://docs.renovatebot.com/renovate-schema.json',
+	extends: [
+		'config:base',
+		// go ahead and update Docker FROM sources, and pin them with a hash
+		':docker',
+		'docker:pinDigests',
+		// update lockfile versions weekly
+		':maintainLockFilesWeekly',
+		// keep all dependency versions pinned - except peerDependencies
+		':pinAllExceptPeerDependencies',
+		// pin github-actions with a digest, to avoid surprises when they update
+		'helpers:pinGitHubActionDigests',
+		// > wait until the npm package is three days old before raising the
+		// > update. This prevents npm unpublishing a package you already upgraded to.
+		'npm:unpublishSafe',
+		// include ts-jest and @types/jest in jestjs grouped updates
+		'group:jestPlusTSJest',
+		'group:jestPlusTypes',
+	],
+	packageRules: [
+		// require manual approval for new minor OR major versions of these packages
+		{
+			matchPackageNames: [
+				'@types/react-native',
+				'react-native',
+				'metro-react-native-babel-preset',
+				'@types/react-test-renderer',
+				'react-test-renderer',
+				'@types/react',
+				'react',
+				'com.facebook.flipper:flipper',
+				'com.facebook.flipper:flipper-fresco-plugin',
+				'com.facebook.flipper:flipper-network-plugin',
+			],
+			matchUpdateTypes: ['minor', 'major'],
+			dependencyDashboardApproval: true,
+		},
+		// require manual approval for new major versions of these packages
+		{
+			matchPackageNames: ['react-markdown'],
+			matchUpdateTypes: ['major'],
+			dependencyDashboardApproval: true,
+		},
+		// stop widening peerDep ranges for custom modules
+		{
+			matchPaths: ['modules/**/package.json'],
+			matchDepTypes: ['peerDependencies'],
+			rangeStrategy: 'bump',
+		},
+	],
+}
