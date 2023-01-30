@@ -1,5 +1,3 @@
-// @flow
-
 import {jest} from '@jest/globals'
 import {setTimezone} from '@frogpond/constants'
 

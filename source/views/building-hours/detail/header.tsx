@@ -1,6 +1,4 @@
 /**
- * @flow
- *
  * <Header/> controls the header of the detail view – title, abbr, and
  * subtitle.
  */

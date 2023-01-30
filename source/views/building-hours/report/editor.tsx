@@ -1,6 +1,4 @@
 /**
- * @flow
- *
  * An editor for individual building schedules.
  */
 

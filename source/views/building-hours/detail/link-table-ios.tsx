@@ -1,6 +1,4 @@
 /**
- * @flow
- *
  * <LinkTable/> renders the table of building-related links.
  */
 
