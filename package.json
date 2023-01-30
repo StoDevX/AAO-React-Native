@@ -13,7 +13,7 @@
     "ios": "react-native run-ios",
     "lint": "eslint --report-unused-disable-directives --cache source/ modules/ scripts/ images/",
     "prepare": "patch -p0 -Nfsi contrib/*.patch || true",
-    "pretty": "prettier --write '{source,modules,scripts,images,e2e}/**/*.{js,ts,tsx,json}' 'data/**/*.css' '{*,.*}.{yaml,yml,json,js,ts,tsx}'",
+    "pretty": "prettier --write '{source,modules,scripts,images,e2e}/**/*.{js,ts,tsx,json}' 'data/**/*.css' '{*,.*}.{yaml,yml,json,json5,js,ts,tsx}'",
     "p": "pretty-quick",
     "pods": "scripts/pods.sh",
     "start": "react-native start",
