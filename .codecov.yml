@@ -20,3 +20,6 @@ comment:
   layout: 'diff'
   behavior: default
   require_changes: true
+
+github_checks:
+  annotations: false
