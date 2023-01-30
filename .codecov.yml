@@ -23,4 +23,4 @@ parsers:
 comment:
   layout: 'diff'
   behavior: default
-  require_changes: false
+  require_changes: true
