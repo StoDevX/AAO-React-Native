@@ -231,22 +231,6 @@ dependencyLocking {
     // lockMode = LockMode.STRICT
 }
 
-// Bundles the app's data for the build process
-task bundleData(type: Exec) {
-    workingDir '../../'
-    commandLine 'npm', 'run', 'bundle-data'
-}
-
-gradle.projectsEvaluated {
-    // hook bundleData into the android build process
-    if (project.hasProperty('bundleDebugJsAndAssets')) {
-        bundleDebugJsAndAssets.dependsOn bundleData
-    }
-    if (project.hasProperty('bundleReleaseJsAndAssets')) {
-        bundleReleaseJsAndAssets.dependsOn bundleData
-    }
-}
-
 project.ext.vectoricons = [
     // Name of the font files you want to copy
     iconFontNames: [

@@ -214,8 +214,6 @@ jobs:
       - if: steps.node-cache.outputs.cache-hit != 'true'
         run: exit 1
 
-      - run: npm run bundle-data
-
       - name: Run tests
         run: npm run test -- --coverage
 
@@ -242,8 +240,6 @@ jobs:
 
       - if: steps.node-cache.outputs.cache-hit != 'true'
         run: exit 1
-
-      - run: npm run bundle-data
 
       - run: npx tsc
 
@@ -310,9 +306,9 @@ jobs:
 
       - name: Generate jsbundle
         if: steps.jsbundle-cache.outputs.cache-hit != 'true'
-        run: |
-          npm run bundle-data
-          APP_MODE=mocked npm run bundle:ios
+        run: npm run bundle:ios
+        env:
+          APP_MODE: mocked
 
       - name: Cache the jsbundle
         uses: actions/cache/save@58c146cc91c5b9e778e71775dfe9bf1442ad9a12 # v3
@@ -359,9 +355,9 @@ jobs:
 
       - name: Generate jsbundle
         if: steps.jsbundle-cache.outputs.cache-hit != 'true'
-        run: |
-          npm run bundle-data
-          APP_MODE=mocked npm run bundle:android
+        run: npm run bundle:android
+        env:
+          APP_MODE: mocked
 
       - name: Cache the jsbundle
         if: steps.jsbundle-cache.outputs.cache-hit != 'true'
@@ -402,9 +398,6 @@ jobs:
           echo 524288 | sudo tee -a /proc/sys/fs/inotify/max_queued_events
           echo 524288 | sudo tee -a /proc/sys/fs/inotify/max_user_instances
           sudo sysctl -p
-      
-      # temporary, until we can get SKIP_BUNDLING to work
-      - run: npm run bundle-data
 
       - name: Gradle
         uses: gradle/gradle-build-action@3fbe033aaae657f011f88f29be9e65ed26bd29ef # v2
