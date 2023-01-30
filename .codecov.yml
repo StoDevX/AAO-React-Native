@@ -4,8 +4,8 @@ coverage:
   range: 8...100
 
   status:
-    project: false
-    patch: true
+    project: true
+    patch: false
     changes: false
 
 parsers:
