@@ -113,7 +113,7 @@
     "@babel/runtime": "7.20.13",
     "@jest/globals": "29.4.1",
     "@sentry/cli": "2.11.0",
-    "@tanstack/eslint-plugin-query": "4.21.0",
+    "@tanstack/eslint-plugin-query": "4.24.0",
     "@types/base-64": "1.0.0",
     "@types/http-cache-semantics": "4.0.1",
     "@types/jest": "29.4.0",
