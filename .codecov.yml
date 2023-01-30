@@ -1,7 +1,7 @@
 coverage:
   precision: 2
   round: down
-  range: '8...100'
+  range: 8...100
 
   status:
     project: false
@@ -17,7 +17,7 @@ parsers:
       macro: false
 
 comment:
-  layout: 'diff'
+  layout: diff
   behavior: default
   require_changes: true
 
