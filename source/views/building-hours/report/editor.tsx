@@ -238,10 +238,10 @@ const styles = StyleSheet.create({
 		borderRadius: 20,
 		borderWidth: 1,
 		margin: 5,
-		backgroundColor: c.white,
+		backgroundColor: c.tertiarySystemGroupedBackground,
 	},
 	androidDayActive: {
-		backgroundColor: sto.purple,
+		backgroundColor: c.link,
 		borderColor: c.transparent,
 	},
 	iOSDayActive: {

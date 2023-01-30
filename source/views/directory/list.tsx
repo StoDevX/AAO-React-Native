@@ -60,7 +60,8 @@ export function DirectoryView(): JSX.Element {
 	React.useLayoutEffect(() => {
 		navigation.setOptions({
 			headerSearchBarOptions: {
-				barTintColor: c.systemFill,
+				// forcibly pretend that OpaqueColorValue is a string
+				barTintColor: c.systemFill as unknown as string,
 				onChangeText: (event: ChangeTextEvent) => {
 					setSearchQueryType('query')
 					setTypedQuery(event.nativeEvent.text)
