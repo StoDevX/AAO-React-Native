@@ -1,6 +1,6 @@
 import * as React from 'react'
 import {Cell} from '@frogpond/tableview'
-import {infoBlue} from '@frogpond/colors'
+import * as c from '@frogpond/colors'
 
 type Props = {
 	title: string
@@ -24,6 +24,6 @@ export const PushButtonCell = ({
 		isDisabled={disabled}
 		onPress={onPress}
 		title={title}
-		titleTextColor={showLinkStyle ? infoBlue : undefined}
+		titleTextColor={showLinkStyle ? c.link : undefined}
 	/>
 )

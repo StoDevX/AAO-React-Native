@@ -11,6 +11,7 @@ import {
 import {images as contactImages} from '../../../images/contacts'
 import {Markdown} from '@frogpond/markdown'
 import {ListFooter} from '@frogpond/lists'
+import * as c from '@frogpond/colors'
 import {callPhone} from '../../components/call-phone'
 import {Button} from '@frogpond/button'
 import {openUrl} from '@frogpond/open-url'
@@ -21,6 +22,7 @@ import {RouteProp, useRoute} from '@react-navigation/native'
 
 const styles = StyleSheet.create({
 	paragraph: {
+		color: c.label,
 		fontSize: 16,
 	},
 	image: {
@@ -32,6 +34,7 @@ const styles = StyleSheet.create({
 		paddingVertical: 6,
 	},
 	title: {
+		color: c.label,
 		fontSize: 36,
 		textAlign: 'center',
 		marginHorizontal: 18,

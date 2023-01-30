@@ -79,7 +79,7 @@ const styles = StyleSheet.create({
 		paddingVertical: 5,
 		borderRadius: 8,
 		overflow: 'hidden',
-		backgroundColor: c.black,
+		backgroundColor: c.tertiarySystemBackground,
 	},
 	wrapper: {
 		justifyContent: 'center',
@@ -92,11 +92,11 @@ const styles = StyleSheet.create({
 		width: 50,
 	},
 	icon: {
-		color: c.white,
+		color: c.label,
 		fontSize: 30,
 	},
 	action: {
-		color: c.white,
+		color: c.label,
 		paddingLeft: 10,
 		paddingTop: 7,
 		fontWeight: '900',

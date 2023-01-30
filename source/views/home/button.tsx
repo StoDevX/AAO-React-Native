@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {Platform, StyleSheet, Text} from 'react-native'
+import {Platform, SafeAreaView, StyleSheet, Text} from 'react-native'
 import Icon from 'react-native-vector-icons/Entypo'
 import type {ViewType} from '../views'
 import {Touchable} from '@frogpond/touchable'
@@ -17,25 +17,25 @@ export function HomeScreenButton({view, onPress}: Props): JSX.Element {
 		view.foreground === 'light' ? styles.lightForeground : styles.darkForeground
 
 	return (
-		<Touchable
-			accessibilityLabel={view.title}
-			accessibilityRole="button"
-			accessible={true}
-			highlight={false}
-			onPress={onPress}
-			style={[styles.button, styles.contents, {backgroundColor: view.tint}]}
-		>
-			<>
-				<Icon name={view.icon} size={32} style={[foreground, styles.icon]} />
-				<Text style={[foreground, styles.text]}>{view.title}</Text>
-			</>
-		</Touchable>
+		<SafeAreaView>
+			<Touchable
+				accessibilityLabel={view.title}
+				accessibilityRole="button"
+				accessible={true}
+				highlight={false}
+				onPress={onPress}
+				style={[styles.button, {backgroundColor: view.tint}]}
+			>
+				<>
+					<Icon name={view.icon} size={32} style={[foreground, styles.icon]} />
+					<Text style={[foreground, styles.text]}>{view.title}</Text>
+				</>
+			</Touchable>
+		</SafeAreaView>
 	)
 }
 
 export const CELL_MARGIN = 10
-const cellVerticalPadding = 8
-const cellHorizontalPadding = 4
 
 const styles = StyleSheet.create({
 	button: {
@@ -45,14 +45,6 @@ const styles = StyleSheet.create({
 		marginBottom: CELL_MARGIN,
 		marginLeft: CELL_MARGIN / 2,
 		marginRight: CELL_MARGIN / 2,
-	},
-	contents: {
-		alignItems: 'center',
-		justifyContent: 'center',
-
-		paddingTop: cellVerticalPadding,
-		paddingBottom: cellVerticalPadding / 2,
-		paddingHorizontal: cellHorizontalPadding,
 	},
 	icon: {
 		backgroundColor: transparent,

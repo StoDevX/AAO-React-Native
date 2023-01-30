@@ -24,8 +24,8 @@ const styles = StyleSheet.create({
 		zIndex: 1,
 	},
 	skippingStop: {
-		backgroundColor: c.transparent,
-		borderColor: c.transparent,
+		backgroundColor: c.clear,
+		borderColor: c.clear,
 	},
 	passedStop: {
 		height: 12,
@@ -33,16 +33,16 @@ const styles = StyleSheet.create({
 	},
 	beforeStop: {
 		borderWidth: 3,
-		backgroundColor: c.white,
+		backgroundColor: c.systemFill,
 		height: 18,
 		width: 18,
 	},
 	atStop: {
 		height: 20,
 		width: 20,
-		borderColor: c.white,
+		borderColor: c.systemFill,
 		borderWidth: 3,
-		backgroundColor: c.white,
+		backgroundColor: c.systemFill,
 	},
 })
 
@@ -60,8 +60,8 @@ export function ProgressChunk(props: Props): JSX.Element {
 
 	// To draw the bar, we draw a chunk of the bar, then we draw the dot, then
 	// we draw the last chunk of the bar.
-	let startBarColor = isAndroid && isFirstChunk ? c.transparent : barColor
-	let endBarColor = isAndroid && isLastChunk ? c.transparent : barColor
+	let startBarColor = isAndroid && isFirstChunk ? c.clear : barColor
+	let endBarColor = isAndroid && isLastChunk ? c.clear : barColor
 
 	return (
 		<View style={styles.barContainer}>

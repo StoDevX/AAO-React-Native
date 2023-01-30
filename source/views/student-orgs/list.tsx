@@ -11,7 +11,7 @@ import {
 	largeListProps,
 	emptyList,
 } from '@frogpond/lists'
-import {white} from '@frogpond/colors'
+import * as c from '@frogpond/colors'
 import groupBy from 'lodash/groupBy'
 import toPairs from 'lodash/toPairs'
 import words from 'lodash/words'
@@ -39,7 +39,7 @@ const orgToArray = memoize((term: StudentOrgType) =>
 const styles = StyleSheet.create({
 	wrapper: {
 		flex: 1,
-		backgroundColor: white,
+		backgroundColor: c.systemBackground,
 	},
 	contentContainer: {
 		flexGrow: 1,
@@ -64,7 +64,7 @@ function StudentOrgsView(): JSX.Element {
 	React.useLayoutEffect(() => {
 		navigation.setOptions({
 			headerSearchBarOptions: {
-				barTintColor: white,
+				barTintColor: c.systemFill,
 				onChangeText: (event: ChangeTextEvent) =>
 					setQuery(event.nativeEvent.text),
 			},

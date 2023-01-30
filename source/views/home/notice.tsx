@@ -28,10 +28,8 @@ if (isDevMode()) {
 
 export function UnofficialAppNotice(): JSX.Element {
 	return (
-		<View style={styles.wrapper}>
-			<View style={styles.background}>
-				<Text style={styles.text}>{sample(messages)}</Text>
-			</View>
+		<View style={[styles.wrapper, styles.background]}>
+			<Text style={styles.text}>{sample(messages)}</Text>
 		</View>
 	)
 }
@@ -43,11 +41,11 @@ const styles = StyleSheet.create({
 		marginHorizontal: CELL_MARGIN,
 	},
 	background: {
-		backgroundColor: c.verySemitransparentGray,
+		backgroundColor: c.secondarySystemFill,
 		borderRadius: 7,
 	},
 	text: {
-		color: c.black25Percent,
+		color: c.secondaryLabel,
 		padding: 8,
 		textAlign: 'center',
 	},

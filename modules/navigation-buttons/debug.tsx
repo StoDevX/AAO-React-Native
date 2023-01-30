@@ -2,12 +2,12 @@ import * as React from 'react'
 import {Alert, StyleSheet} from 'react-native'
 import Icon from 'react-native-vector-icons/Ionicons'
 import {Touchable} from '@frogpond/touchable'
-import {infoBlue} from '@frogpond/colors'
+import * as c from '@frogpond/colors'
 import {rightButtonStyles as styles} from './styles'
 
 export const debugStyles = StyleSheet.create({
 	debugButton: {
-		color: infoBlue,
+		color: c.link,
 	},
 })
 

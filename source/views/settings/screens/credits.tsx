@@ -6,7 +6,7 @@ import {AppLogo} from '../components/logo'
 
 const styles = StyleSheet.create({
 	container: {
-		backgroundColor: c.white,
+		backgroundColor: c.systemBackground,
 	},
 	contentContainer: {
 		paddingHorizontal: 25,
@@ -20,6 +20,7 @@ const styles = StyleSheet.create({
 			ios: iOSUIKit.largeTitleEmphasizedObject,
 			android: material.headlineObject,
 		}),
+		color: c.label,
 	},
 	heading: {
 		marginTop: 20,
@@ -28,12 +29,16 @@ const styles = StyleSheet.create({
 			ios: iOSUIKit.subheadEmphasizedObject,
 			android: material.titleObject,
 		}),
+		color: c.label,
 	},
 	about: {
 		...Platform.select({
 			ios: iOSUIKit.bodyObject,
 			android: material.body1Object,
 		}),
+		paddingHorizontal: 25,
+		paddingTop: 10,
+		color: c.label,
 	},
 	contributors: {
 		...Platform.select({
@@ -41,6 +46,7 @@ const styles = StyleSheet.create({
 			android: material.body1Object,
 		}),
 		textAlign: 'center',
+		color: c.secondaryLabel,
 	},
 })
 

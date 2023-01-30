@@ -5,7 +5,7 @@ import * as m from '@frogpond/markdown'
 
 const styles = StyleSheet.create({
 	scrollView: {
-		backgroundColor: c.white,
+		backgroundColor: c.systemBackground,
 		paddingHorizontal: 15,
 		paddingVertical: 15,
 	},

@@ -1,6 +1,4 @@
 /**
- * @flow
- *
  * <ScheduleRow/> renders a single row of the schedule information.
  */
 

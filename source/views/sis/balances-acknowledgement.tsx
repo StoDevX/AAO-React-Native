@@ -11,6 +11,7 @@ import {Paragraph as IosP} from '@frogpond/markdown'
 import {Card as IosCard} from '@frogpond/silly-card'
 import {Button as IosButton} from '@frogpond/button'
 import {BalancesView} from './balances'
+import * as c from '@frogpond/colors'
 
 let Paragraph = Platform.OS === 'android' ? AndroidP : IosP
 let Ack = Platform.OS === 'android' ? AndroidAck : IosAck
@@ -25,23 +26,26 @@ export function BalancesOrAcknowledgementView(): JSX.Element {
 
 	let content = (
 		<>
-			<Paragraph>
-				While we strive to keep this app and the data therein up-to-date, there
-				will always be issues, especially seeing as we are not part of the
-				college. (Students and alumni of, yes, but officially sponsored by, no.)
+			<Paragraph style={styles.cardText}>
+				We want to make sure you have the most up-to-date information in the
+				app, but please keep in mind that there may be some inaccuracies.
 			</Paragraph>
-			<Paragraph>
-				As such, we require that you agree to the following statement before you
-				can see your balances within the app:
+			<Paragraph style={styles.cardText}>
+				With that in mind, before you can view your balances in the app, we ask
+				that you agree to the following.{'\n'}
 			</Paragraph>
+
 			<Paragraph style={styles.bonappNotice}>
-				This data may be inaccurate.{'\n'}
-				Bon Appétit is always right.{'\n'}
-				This app is unofficial.
+				The information in the app may not be completely accurate.{'\n'}
+				{'\n'}
+				Bon Appétit is always the final authority on any discrepancies.{'\n'}
+				{'\n'}
+				This app is not an official college app.{'\n'}
 			</Paragraph>
-			<Paragraph>
-				If you disagree, you will simply not be able to access this Balances
-				view. The rest of the app will remain available for perusal.
+
+			<Paragraph style={styles.cardText}>
+				If you do not agree to these terms, you will not be able to see your
+				balances in the app, but you can still use the rest of the features.
 			</Paragraph>
 		</>
 	)
@@ -112,6 +116,9 @@ let styles = StyleSheet.create({
 	container: {
 		marginVertical: 10,
 	},
+	cardText: {
+		color: c.secondaryLabel,
+	},
 	androidCard: {
 		marginHorizontal: 10,
 		marginBottom: 10,
@@ -121,6 +128,7 @@ let styles = StyleSheet.create({
 			ios: '600',
 			android: '700',
 		}),
+		color: c.label,
 		textAlign: 'center',
 	},
 	iosButtonRow: {

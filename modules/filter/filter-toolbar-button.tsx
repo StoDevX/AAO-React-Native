@@ -5,7 +5,6 @@ import {
 	StyleProp,
 	StyleSheet,
 	Text,
-	TextStyle,
 	View,
 	ViewStyle,
 } from 'react-native'
@@ -14,7 +13,6 @@ import type {FilterType} from './types'
 import {FilterPopover} from './filter-popover'
 import * as c from '@frogpond/colors'
 import {Touchable} from '@frogpond/touchable'
-import {useTheme} from '@frogpond/app-theme'
 
 const buttonStyles = StyleSheet.create({
 	button: {
@@ -25,19 +23,22 @@ const buttonStyles = StyleSheet.create({
 		paddingVertical: 5,
 		borderWidth: 1,
 		borderRadius: 2,
-	},
-	inactiveButton: {
-		borderColor: c.iosDisabledText,
-	},
-	inactiveText: {
-		color: c.iosDisabledText,
+		backgroundColor: c.systemGroupedBackground,
+		borderColor: c.separator,
 	},
 	text: {
+		color: c.label,
 		fontSize: 16,
 	},
 	textWithIcon: {
 		paddingRight: 8,
 	},
+})
+
+const ICON_NAME = Platform.select({
+	ios: 'ios-chevron-down',
+	android: 'md-chevron-down',
+	default: '',
 })
 
 type Props<T extends object> = {
@@ -51,9 +52,8 @@ type Props<T extends object> = {
 export function FilterToolbarButton<T extends object>(
 	props: Props<T>,
 ): JSX.Element | null {
-	let {onPopoverDismiss, filter, isActive, style, title} = props
+	let {onPopoverDismiss, filter, style, title} = props
 
-	let theme = useTheme()
 	let [popoverVisible, setPopoverVisible] = useState(false)
 	let touchable = useRef<View>(null)
 
@@ -66,41 +66,11 @@ export function FilterToolbarButton<T extends object>(
 		setPopoverVisible(false)
 	}
 
-	let icon = Platform.select({
-		ios: 'ios-chevron-down',
-		android: 'md-chevron-down',
-		default: '',
-	})
-
-	let activeButton = {
-		backgroundColor: theme.toolbarButtonBackground,
-		borderColor: theme.toolbarButtonBackground,
-	}
-
-	let inactiveText = {
-		color: theme.toolbarButtonForeground,
-	}
-
-	let activeButtonStyle = isActive ? activeButton : buttonStyles.inactiveButton
-	let activeContentStyle = isActive ? inactiveText : buttonStyles.inactiveText
-
-	let textWithIconStyle = icon ? buttonStyles.textWithIcon : null
-	let activeTextStyle: TextStyle = {
-		fontWeight: isActive && Platform.OS === 'android' ? 'bold' : 'normal',
-	}
-
 	if (filter.type === 'list') {
 		if (!filter.spec.options.length) {
 			return null
 		}
 	}
-
-	let buttonTextStyle = [
-		activeContentStyle,
-		textWithIconStyle,
-		activeTextStyle,
-		buttonStyles.text,
-	]
 
 	return (
 		<React.Fragment>
@@ -108,10 +78,17 @@ export function FilterToolbarButton<T extends object>(
 				ref={touchable}
 				highlight={false}
 				onPress={openPopover}
-				style={[buttonStyles.button, activeButtonStyle, style]}
+				style={[buttonStyles.button, style]}
 			>
-				<Text style={buttonTextStyle}>{title}</Text>
-				<Icon name={icon} size={18} style={activeContentStyle} />
+				<Text
+					style={[
+						buttonStyles.text,
+						ICON_NAME ? buttonStyles.textWithIcon : null,
+					]}
+				>
+					{title}
+				</Text>
+				<Icon name={ICON_NAME} size={18} style={buttonStyles.text} />
 			</Touchable>
 			{popoverVisible && (
 				<FilterPopover<T>

@@ -4,12 +4,16 @@ import type {Moment} from 'moment'
 import type {FilterType} from '@frogpond/filter'
 import {FilterToolbar, FilterToolbarButton} from '@frogpond/filter'
 import {Toolbar} from '@frogpond/toolbar'
+import * as c from '@frogpond/colors'
 
 const styles = StyleSheet.create({
 	today: {
 		flex: 1,
 		paddingLeft: 12,
 		paddingVertical: 14,
+	},
+	toolbarText: {
+		color: c.label,
 	},
 	toolbarSection: {
 		flexDirection: 'row',
@@ -43,8 +47,8 @@ export function FilterMenuToolbar<T extends object>({
 		<>
 			<Toolbar>
 				<View style={[styles.toolbarSection, styles.today]}>
-					<Text>{date.format('MMM. Do')}</Text>
-					{title ? <Text> — {title}</Text> : null}
+					<Text style={styles.toolbarText}>{date.format('MMM. Do')}</Text>
+					{title ? <Text style={styles.toolbarText}> — {title}</Text> : null}
 				</View>
 				{mealFilter && multipleMeals ? (
 					<FilterToolbarButton<T>

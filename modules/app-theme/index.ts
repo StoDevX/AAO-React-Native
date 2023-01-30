@@ -1,4 +1,6 @@
-import {createTheming} from '@callstack/react-theme-provider'
+// import type {ThemingType} from '@callstack/react-theme-provider'
+// import {createTheming} from '@callstack/react-theme-provider'
+import {useTheme} from '@react-navigation/native'
 export {CombinedLightTheme, CombinedDarkTheme} from './paper'
 
 export type AppTheme = {
@@ -24,47 +26,46 @@ export type AppTheme = {
 	toolbarButtonForeground: string
 }
 
-let defaultTheme: AppTheme = {
-	accent: '#000',
-	androidListHeaderBackground: '#fff',
-	androidListHeaderForeground: '#000',
-	androidStatusBarColor: '#000',
-	androidTabBarBackground: '#fff',
-	androidTabBarForeground: '#000',
-	buttonBackground: '#000',
-	buttonForeground: '#fff',
-	iosPushButtonCellBackground: '#000',
-	iosPushButtonCellForeground: '#fff',
-	iosTabBarActiveColor: '#0f0',
-	iosTabBarBackground: '#000',
-	navigationBackground: '#000',
-	navigationForeground: '#fff',
-	statusBarStyle: 'light-content',
-	toolbarButtonBackground: '#000',
-	toolbarButtonForeground: '#fff',
-}
+// let defaultTheme: AppTheme = {
+// 	accent: '#000',
+// 	androidListHeaderBackground: '#fff',
+// 	androidListHeaderForeground: '#000',
+// 	androidStatusBarColor: '#000',
+// 	androidTabBarBackground: '#fff',
+// 	androidTabBarForeground: '#000',
+// 	buttonBackground: '#000',
+// 	buttonForeground: '#fff',
+// 	iosPushButtonCellBackground: '#000',
+// 	iosPushButtonCellForeground: '#fff',
+// 	iosTabBarActiveColor: '#0f0',
+// 	iosTabBarBackground: '#000',
+// 	navigationBackground: '#000',
+// 	navigationForeground: '#fff',
+// 	statusBarStyle: 'light-content',
+// 	toolbarButtonBackground: '#000',
+// 	toolbarButtonForeground: '#fff',
+// }
 
-let theme: AppTheme
+// let {ThemeProvider, withTheme, useTheme} = createTheming(
+// 	defaultTheme,
+// ) as ThemingType<AppTheme>
 
-let ThemeProvider: ReturnType<typeof createTheming<AppTheme>>['ThemeProvider']
-let withTheme: ReturnType<typeof createTheming<AppTheme>>['withTheme']
-let useTheme: ReturnType<typeof createTheming<AppTheme>>['useTheme']
+export {useTheme}
 
-export function setTheme(newTheme: AppTheme): void {
-	theme = newTheme
+// export {ThemeProvider, withTheme, useTheme}
 
-	const result = createTheming<AppTheme>(newTheme)
+// let theme: AppTheme
 
-	ThemeProvider = result.ThemeProvider
-	withTheme = result.withTheme
-	useTheme = result.useTheme
-}
+// export function setTheme(newTheme: AppTheme): void {
+// 	theme = newTheme
 
-export function getTheme(): AppTheme {
-	return theme
-}
+// 	const result: ThemingType<AppTheme> = createTheming(newTheme)
 
-// initialize
-setTheme(defaultTheme)
+// 	ThemeProvider = result.ThemeProvider
+// 	withTheme = result.withTheme
+// 	useTheme = result.useTheme
+// }
 
-export {ThemeProvider, withTheme, useTheme}
+// export function getTheme(): AppTheme {
+// 	return theme
+// }

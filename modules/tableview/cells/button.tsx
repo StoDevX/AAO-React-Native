@@ -9,12 +9,21 @@ const styles = StyleSheet.create({
 		textAlign: 'left',
 	},
 	active: {
-		color: c.infoBlue,
+		color: c.link,
 	},
 	disabled: {
-		color: c.iosDisabledText,
+		color: c.secondaryLabel,
 	},
 })
+
+type ButtonCellProps = {
+	indeterminate?: boolean
+	disabled?: boolean
+	onPress: () => void
+	textStyle?: StyleProp<TextStyle>
+	title: string
+	accessoryIcon?: string
+}
 
 export function ButtonCell({
 	indeterminate,
@@ -23,14 +32,7 @@ export function ButtonCell({
 	textStyle,
 	title,
 	accessoryIcon,
-}: {
-	indeterminate?: boolean
-	disabled?: boolean
-	onPress: () => void
-	textStyle?: StyleProp<TextStyle>
-	title: string
-	accessoryIcon?: string
-}): JSX.Element {
+}: ButtonCellProps): JSX.Element {
 	return (
 		<Cell
 			cellAccessoryView={

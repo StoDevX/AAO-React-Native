@@ -3,8 +3,6 @@ import {StyleSheet, Text, View, Platform, Pressable} from 'react-native'
 import {ListSeparator, ListRow} from '@frogpond/lists'
 import {NoticeView} from '@frogpond/notice'
 import * as c from '@frogpond/colors'
-import type {AppTheme} from '@frogpond/app-theme'
-import {withTheme} from '@frogpond/app-theme'
 import {noop} from 'lodash'
 
 type Props = {
@@ -15,14 +13,12 @@ type Props = {
 	onItemPress: (item: string) => void
 	items: string[]
 	title: string
-	theme: AppTheme
 }
 
 function RecentItemsList(props: Props): JSX.Element {
-	let {items, actionLabel, onAction, title, emptyHeader, emptyText, theme} =
-		props
+	let {items, actionLabel, onAction, title, emptyHeader, emptyText} = props
 
-	let foreground = {color: theme.iosPushButtonCellForeground}
+	let foreground = {color: c.link}
 
 	return (
 		<>
@@ -72,11 +68,7 @@ function RecentItemsList(props: Props): JSX.Element {
 	)
 }
 
-export const RawRecentItemsList = RecentItemsList
-
-const ThemedRecentItemsList = withTheme(RecentItemsList)
-
-export {ThemedRecentItemsList as RecentItemsList}
+export {RecentItemsList}
 
 const styles = StyleSheet.create({
 	listItem: {
@@ -89,7 +81,7 @@ const styles = StyleSheet.create({
 		paddingBottom: 35,
 	},
 	noticeText: {
-		color: c.gray,
+		color: c.secondaryLabel,
 	},
 	rowFlex: {
 		flexDirection: 'row',

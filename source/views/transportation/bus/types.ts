@@ -32,8 +32,8 @@ export type BusLine = {
 
 export type UnprocessedBusSchedule = {
 	days: Array<DayOfWeek>
-	stops: Array<string>
-	coordinates: {[name: string]: Coordinates}
+	coordinates: Record<string, Coordinates>
+	stops: string[]
 	times: Array<UnprocessedDepartureTimeList>
 }
 

@@ -8,20 +8,16 @@ const styles = StyleSheet.create({
 		...Platform.select({
 			ios: {
 				borderBottomWidth: StyleSheet.hairlineWidth,
-				borderBottomColor: c.iosSeparator,
+				borderBottomColor: c.separator,
 			},
 			android: {
 				borderBottomWidth: 1,
-				borderBottomColor: c.androidSeparator,
+				borderBottomColor: c.separator,
 			},
 		}),
 	},
 })
 
-export function Separator({
-	style,
-}: {
-	style?: StyleProp<ViewStyle>
-}): JSX.Element {
-	return <View style={[styles.separator, style]} />
+export function Separator(props: {style?: StyleProp<ViewStyle>}): JSX.Element {
+	return <View style={[styles.separator, props.style]} />
 }

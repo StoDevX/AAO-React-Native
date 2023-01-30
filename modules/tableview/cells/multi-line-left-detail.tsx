@@ -49,7 +49,7 @@ const styles = StyleSheet.create({
 	cellLeftDetailTitle: {
 		fontSize: 12,
 		flex: 1,
-		color: c.black,
+		color: c.label,
 	},
 	cellLeftDetail: {
 		fontSize: 12,
@@ -57,6 +57,6 @@ const styles = StyleSheet.create({
 		textAlign: 'right',
 		marginRight: 5,
 		width: 75,
-		color: c.infoBlue,
+		color: c.link,
 	},
 })
