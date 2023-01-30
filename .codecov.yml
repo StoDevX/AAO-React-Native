@@ -5,7 +5,7 @@ coverage:
 
   status:
     project: false
-    patch: false
+    patch: true
     changes: false
 
 parsers:
