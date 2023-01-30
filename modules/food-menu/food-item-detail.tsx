@@ -45,10 +45,7 @@ export const MenuItemDetailView = (): JSX.Element => {
 				map(item.nutrition_details, (nutrition, key: number) => {
 					return (
 						<React.Fragment key={`${nutrition}-${key}`}>
-							<ListRow
-								arrowPosition="none"
-								fullWidth={false}
-							>
+							<ListRow arrowPosition="none" fullWidth={false}>
 								<Row>
 									<Column flex={1}>
 										<Title>{nutrition.label}</Title>
