@@ -7,4 +7,9 @@
 
 module.exports = {
 	dependencies: {},
+	project: {
+		ios: {
+			sourceDir: 'ios',
+		},
+	},
 }
