@@ -9,7 +9,6 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  node_version: '^18.13'
   ruby_version: '2.6'
   xcode_version: 'Xcode_13.1'
   java_version: '11'
@@ -36,7 +35,7 @@ jobs:
       - if: steps.node-cache.outputs.cache-hit != 'true'
         uses: actions/setup-node@64ed1c7eab4cce3362f8c340dee64e5eaeef8f7c # v3
         with:
-          node-version: ${{ env.node_version }}
+          node-version-file: '.node-version'
           cache: npm
 
       - if: steps.node-cache.outputs.cache-hit != 'true'
@@ -68,7 +67,7 @@ jobs:
       - if: steps.node-cache.outputs.cache-hit != 'true'
         uses: actions/setup-node@64ed1c7eab4cce3362f8c340dee64e5eaeef8f7c # v3
         with:
-          node-version: ${{ env.node_version }}
+          node-version-file: '.node-version'
           cache: npm
 
       - if: steps.node-cache.outputs.cache-hit != 'true'
@@ -115,7 +114,7 @@ jobs:
       - if: steps.cocoapods-cache.outputs.cache-hit != 'true'
         uses: actions/setup-node@64ed1c7eab4cce3362f8c340dee64e5eaeef8f7c # v3
         with:
-          node-version: ${{ env.node_version }}
+          node-version-file: '.node-version'
 
       - if: steps.cocoapods-cache.outputs.cache-hit != 'true'
         uses: ruby/setup-ruby@v1
@@ -156,7 +155,7 @@ jobs:
 
       - uses: actions/setup-node@64ed1c7eab4cce3362f8c340dee64e5eaeef8f7c # v3
         with:
-          node-version: ${{ env.node_version }}
+          node-version-file: '.node-version'
 
       - name: Restore node_modules cache
         uses: actions/cache/restore@58c146cc91c5b9e778e71775dfe9bf1442ad9a12 # v3
@@ -179,7 +178,7 @@ jobs:
 
       - uses: actions/setup-node@64ed1c7eab4cce3362f8c340dee64e5eaeef8f7c # v3
         with:
-          node-version: ${{ env.node_version }}
+          node-version-file: '.node-version'
 
       - name: Restore node_modules cache
         uses: actions/cache/restore@58c146cc91c5b9e778e71775dfe9bf1442ad9a12 # v3
@@ -202,7 +201,7 @@ jobs:
 
       - uses: actions/setup-node@64ed1c7eab4cce3362f8c340dee64e5eaeef8f7c # v3
         with:
-          node-version: ${{ env.node_version }}
+          node-version-file: '.node-version'
 
       - name: Restore node_modules cache
         uses: actions/cache/restore@58c146cc91c5b9e778e71775dfe9bf1442ad9a12 # v3
@@ -231,7 +230,7 @@ jobs:
 
       - uses: actions/setup-node@64ed1c7eab4cce3362f8c340dee64e5eaeef8f7c # v3
         with:
-          node-version: ${{ env.node_version }}
+          node-version-file: '.node-version'
 
       - name: Restore node_modules cache
         uses: actions/cache/restore@58c146cc91c5b9e778e71775dfe9bf1442ad9a12 # v3
@@ -256,7 +255,7 @@ jobs:
 
       - uses: actions/setup-node@64ed1c7eab4cce3362f8c340dee64e5eaeef8f7c # v3
         with:
-          node-version: ${{ env.node_version }}
+          node-version-file: '.node-version'
 
       - name: Restore node_modules cache
         uses: actions/cache/restore@58c146cc91c5b9e778e71775dfe9bf1442ad9a12 # v3
@@ -286,7 +285,7 @@ jobs:
 
       - uses: actions/setup-node@64ed1c7eab4cce3362f8c340dee64e5eaeef8f7c # v3
         with:
-          node-version: ${{ env.node_version }}
+          node-version-file: '.node-version'
 
       - name: Restore node_modules cache
         uses: actions/cache/restore@58c146cc91c5b9e778e71775dfe9bf1442ad9a12 # v3
@@ -338,7 +337,7 @@ jobs:
 
       - uses: actions/setup-node@64ed1c7eab4cce3362f8c340dee64e5eaeef8f7c # v3
         with:
-          node-version: ${{ env.node_version }}
+          node-version-file: '.node-version'
 
       - name: Restore node_modules cache
         uses: actions/cache/restore@58c146cc91c5b9e778e71775dfe9bf1442ad9a12 # v3
@@ -379,7 +378,7 @@ jobs:
 
       - uses: actions/setup-node@64ed1c7eab4cce3362f8c340dee64e5eaeef8f7c # v3
         with:
-          node-version: ${{ env.node_version }}
+          node-version-file: '.node-version'
 
       - name: Restore node_modules cache
         uses: actions/cache/restore@58c146cc91c5b9e778e71775dfe9bf1442ad9a12 # v3
@@ -458,7 +457,7 @@ jobs:
       - uses: actions/setup-node@64ed1c7eab4cce3362f8c340dee64e5eaeef8f7c # v3
         if: steps.app-cache.outputs.cache-hit != 'true'
         with:
-          node-version: ${{ env.node_version }}
+          node-version-file: '.node-version'
 
       - name: Restore node_modules cache
         if: steps.app-cache.outputs.cache-hit != 'true'
@@ -559,7 +558,7 @@ jobs:
 
       - uses: actions/setup-node@64ed1c7eab4cce3362f8c340dee64e5eaeef8f7c # v3
         with:
-          node-version: ${{ env.node_version }}
+          node-version-file: '.node-version'
 
       - name: Restore node_modules cache
         uses: actions/cache/restore@58c146cc91c5b9e778e71775dfe9bf1442ad9a12 # v3
