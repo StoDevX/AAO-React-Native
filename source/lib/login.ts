@@ -41,8 +41,14 @@ async function loadCredentials(): Promise<SharedWebCredentials> {
 	return credentials
 }
 
-export async function storeCredentials(credentials: Credentials): Promise<Credentials> {
-	let saved = await setInternetCredentials(SIS_LOGIN_KEY, credentials.username, credentials.password)
+export async function storeCredentials(
+	credentials: Credentials,
+): Promise<Credentials> {
+	let saved = await setInternetCredentials(
+		SIS_LOGIN_KEY,
+		credentials.username,
+		credentials.password,
+	)
 	if (saved === false) {
 		throw new NoCredentialsError()
 	}
