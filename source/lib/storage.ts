@@ -57,6 +57,15 @@ export function getInAppLinkPreference(): Promise<openLinksInAppType> {
 	return getItemAsBoolean(openLinksInAppKey, true)
 }
 
+const appThemeKey = 'settings:app-theme'
+type appThemeType = string
+export function setAppThemePreference(theme: appThemeType): Promise<void> {
+	return setItem(appThemeKey, theme)
+}
+export function getAppThemePreference(): Promise<appThemeType> {
+	return getItemAsString(appThemeKey)
+}
+
 const serverAddressKey = 'settings:server-address'
 type serverAddressType = string
 export function setServerAddress(address: serverAddressType): Promise<void> {

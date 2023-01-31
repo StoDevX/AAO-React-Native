@@ -9,6 +9,7 @@ import * as sentryInit from './init/sentry'
 import './init/api'
 import './init/theme'
 import {queryClient, persister} from './init/tanstack-query'
+import * as storage from './lib/storage'
 
 import * as React from 'react'
 import {PersistGate} from 'redux-persist/integration/react'
@@ -27,7 +28,23 @@ import {StatusBar, useColorScheme} from 'react-native'
 export default function App(): JSX.Element {
 	// Create a ref for the navigation container
 	const navigationRef = React.useRef()
+
+	/**
+	 * TODO: the theme looks inverted when chosen with the toggle?
+	 * TODO: can we make the scheme change without calling restart?
+	 * TODO: use scheme as a fallback? curently 'system' isn't a valid option
+	 */
 	const scheme = useColorScheme()
+
+	let [appThemePreference, setAppThemePreference] = React.useState('')
+
+	React.useEffect(() => {
+		async function loadAppThemePreferece() {
+			setAppThemePreference(await storage.getAppThemePreference())
+		}
+
+		loadAppThemePreferece()
+	}, [appThemePreference])
 
 	return (
 		<ReduxProvider store={store}>
@@ -47,10 +64,18 @@ export default function App(): JSX.Element {
 									navigationRef,
 								)
 							}}
-							theme={scheme === 'dark' ? CombinedDarkTheme : CombinedLightTheme}
+							theme={
+								appThemePreference === 'dark'
+									? CombinedDarkTheme
+									: CombinedLightTheme
+							}
 						>
 							<StatusBar
-								barStyle={scheme === 'dark' ? 'light-content' : 'dark-content'}
+								barStyle={
+									appThemePreference === 'dark'
+										? 'light-content'
+										: 'dark-content'
+								}
 							/>
 							<RootStack />
 						</NavigationContainer>
