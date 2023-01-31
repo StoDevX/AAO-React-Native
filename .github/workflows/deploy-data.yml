@@ -7,8 +7,6 @@ jobs:
   validate-then-deploy:
     name: Validate, then deploy data
     runs-on: ubuntu-latest
-    env:
-      task: GH_PAGES
     steps:
       - uses: actions/setup-node@64ed1c7eab4cce3362f8c340dee64e5eaeef8f7c # v3
         with: {node-version-file: '.node-version'}
