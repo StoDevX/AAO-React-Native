@@ -28,7 +28,7 @@ export const BalancesView = (): JSX.Element => {
 		isInitialLoading,
 		refetch,
 		isRefetching,
-	} = useBalances(credentials.data)
+	} = useBalances(credentials.data?.username)
 
 	let openSettings = () => navigation.navigate('Settings')
 	let refresh = <RefreshControl onRefresh={refetch} refreshing={isRefetching} />
@@ -148,8 +148,8 @@ let styles = StyleSheet.create({
 	},
 })
 
-function getValueOrNa(value: string | null): string {
-	if (value == null) {
+function getValueOrNa(value: string | undefined): string {
+	if (value === undefined) {
 		return 'N/A'
 	}
 	return value
@@ -158,9 +158,9 @@ function getValueOrNa(value: string | null): string {
 function FormattedValueCell(props: {
 	indeterminate: boolean
 	label: string
-	value: string | null
+	value: string | undefined
 	style?: StyleProp<ViewStyle>
-	formatter?: (str: string | null) => string
+	formatter?: (str: string | undefined) => string
 }) {
 	let {indeterminate, label, value, style, formatter = getValueOrNa} = props
 

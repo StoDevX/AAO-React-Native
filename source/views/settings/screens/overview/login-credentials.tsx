@@ -4,35 +4,25 @@ import {CellTextField} from '@frogpond/tableview/cells'
 import {LoginButton} from './login-button'
 import {
 	performLogin,
-	SIS_LOGIN_KEY,
 	NoCredentialsError,
+	useCredentials,
+	invalidateCredentials,
+	storeCredentials,
+	resetCredentials,
 } from '../../../../lib/login'
 import {TextInput} from 'react-native'
-import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query'
+import {useMutation} from '@tanstack/react-query'
 import {NoticeView} from '@frogpond/notice'
-import {
-	getInternetCredentials,
-	resetInternetCredentials,
-	setInternetCredentials,
-} from 'react-native-keychain'
 import {sto} from '../../../../lib/colors'
 
-const keys = {
-	default: ['credentials'],
-}
-
 export const CredentialsLoginSection = (): JSX.Element => {
-	const queryClient = useQueryClient()
-
 	let [username, setUsername] = React.useState('')
 	let usernameInputRef = React.useRef<TextInput>(null)
 
 	let [password, setPassword] = React.useState('')
 	let passwordInputRef = React.useRef<TextInput>(null)
 
-	let credentials = useQuery({
-		queryKey: keys.default,
-		queryFn: () => getInternetCredentials(SIS_LOGIN_KEY),
+	let credentials = useCredentials({
 		onSuccess: (data) => {
 			if (!data) {
 				return
@@ -41,27 +31,20 @@ export const CredentialsLoginSection = (): JSX.Element => {
 			setUsername(data.username ?? '')
 			setPassword(data.password ?? '')
 		},
-		networkMode: 'always',
-		cacheTime: 0,
-		staleTime: 0,
 	})
 
 	let logIn = useMutation({
 		mutationFn: () => performLogin({username, password}),
 		onSuccess: async (credentials) => {
-			await setInternetCredentials(
-				SIS_LOGIN_KEY,
-				credentials.username,
-				credentials.password,
-			)
-			queryClient.invalidateQueries({queryKey: keys.default})
+			await storeCredentials(credentials)
+			await invalidateCredentials()
 		},
 	})
 
 	let logOut = useMutation({
-		mutationFn: () => resetInternetCredentials(SIS_LOGIN_KEY),
-		onSuccess: () => {
-			queryClient.invalidateQueries({queryKey: keys.default})
+		mutationFn: () => resetCredentials(),
+		onSuccess: async () => {
+			await invalidateCredentials()
 			setUsername('')
 			setPassword('')
 		},
