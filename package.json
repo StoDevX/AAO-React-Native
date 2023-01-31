@@ -61,7 +61,7 @@
     "@react-navigation/stack": "6.3.11",
     "@reduxjs/toolkit": "1.9.2",
     "@sentry/react-native": "4.14.0",
-    "@tanstack/query-async-storage-persister": "4.22.4",
+    "@tanstack/query-async-storage-persister": "4.24.4",
     "@tanstack/react-query": "4.23.0",
     "@tanstack/react-query-persist-client": "4.23.0",
     "base-64": "1.0.0",
