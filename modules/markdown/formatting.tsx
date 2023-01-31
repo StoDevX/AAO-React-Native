@@ -25,6 +25,7 @@ const styles = StyleSheet.create({
 			ios: iOSUIKit.bodyObject,
 			android: material.body1Object,
 		}),
+		color: c.label,
 	},
 	blockQuote: {
 		marginHorizontal: 8,
