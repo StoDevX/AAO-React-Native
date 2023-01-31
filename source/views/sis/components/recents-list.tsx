@@ -93,6 +93,7 @@ const styles = StyleSheet.create({
 		padding: 14,
 	},
 	subHeader: {
+		color: c.label,
 		fontSize: 20,
 		fontWeight: 'bold',
 		padding: 10,
