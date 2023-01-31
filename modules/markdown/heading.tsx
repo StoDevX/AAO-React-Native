@@ -2,6 +2,7 @@ import * as React from 'react'
 import {Platform, StyleSheet} from 'react-native'
 import {SelectableText} from './selectable'
 import {iOSUIKit, material} from 'react-native-typography'
+import * as c from '@frogpond/colors'
 
 const styles = StyleSheet.create({
 	header: {
@@ -13,24 +14,28 @@ const styles = StyleSheet.create({
 			ios: iOSUIKit.title3EmphasizedObject,
 			android: material.headlineObject,
 		}),
+		color: c.label,
 	},
 	h2: {
 		...Platform.select({
 			ios: iOSUIKit.title3Object,
 			android: material.titleObject,
 		}),
+		color: c.label,
 	},
 	h3: {
 		...Platform.select({
 			ios: iOSUIKit.subheadEmphasizedObject,
 			android: material.subheadingObject,
 		}),
+		color: c.label,
 	},
 	h4: {
 		...Platform.select({
 			ios: iOSUIKit.subheadObject,
 			android: material.buttonObject,
 		}),
+		color: c.label,
 	},
 })
 

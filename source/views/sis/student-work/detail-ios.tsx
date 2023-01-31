@@ -25,6 +25,7 @@ const styles = StyleSheet.create({
 		textAlign: 'center',
 	},
 	title: {
+		color: c.label,
 		fontSize: 36,
 		textAlign: 'center',
 		marginHorizontal: 18,
