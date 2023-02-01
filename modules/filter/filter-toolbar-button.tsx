@@ -13,6 +13,7 @@ import type {FilterType} from './types'
 import {FilterPopover} from './filter-popover'
 import * as c from '@frogpond/colors'
 import {Touchable} from '@frogpond/touchable'
+import {ContextMenu} from '@frogpond/context-menu'
 
 const buttonStyles = StyleSheet.create({
 	button: {
@@ -54,16 +55,8 @@ export function FilterToolbarButton<T extends object>(
 ): JSX.Element | null {
 	let {onPopoverDismiss, filter, style, title} = props
 
-	let [popoverVisible, setPopoverVisible] = useState(false)
-	let touchable = useRef<View>(null)
-
-	let openPopover = (): void => {
-		setPopoverVisible(true)
-	}
-
-	let onClosePopover = (filter: FilterType<T>): void => {
-		onPopoverDismiss(filter)
-		setPopoverVisible(false)
+	let onClosePopover = (): void => {
+		onPopoverDismiss(props.filter)
 	}
 
 	if (filter.type === 'list') {
@@ -72,14 +65,24 @@ export function FilterToolbarButton<T extends object>(
 		}
 	}
 
+	let actions: string[] =
+		filter.type === 'toggle'
+			? ['Enabled']
+			: filter.type === 'picker'
+			? filter.spec.options.map((o) => o.label)
+			: filter.type === 'list'
+			? filter.spec.options.map(o => o.title)
+			: ['unknown']
+
 	return (
-		<React.Fragment>
-			<Touchable
-				ref={touchable}
-				highlight={false}
-				onPress={openPopover}
-				style={[buttonStyles.button, style]}
-			>
+		<ContextMenu
+			actions={actions}
+			disabled={false}
+			isMenuPrimaryAction={true}
+			onPressMenuItem={onClosePopover}
+			title={filter.spec.title}
+		>
+			<View style={[buttonStyles.button, style]}>
 				<Text
 					style={[
 						buttonStyles.text,
@@ -89,15 +92,7 @@ export function FilterToolbarButton<T extends object>(
 					{title}
 				</Text>
 				<Icon name={ICON_NAME} size={18} style={buttonStyles.text} />
-			</Touchable>
-			{popoverVisible && (
-				<FilterPopover<T>
-					anchor={touchable}
-					filter={filter}
-					onClosePopover={onClosePopover}
-					visible={true}
-				/>
-			)}
-		</React.Fragment>
+			</View>
+		</ContextMenu>
 	)
 }
