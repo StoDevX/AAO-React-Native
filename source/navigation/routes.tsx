@@ -306,6 +306,11 @@ const SettingsStackScreens = () => {
 				name="ComponentLibrary"
 				options={settings.ComponentLibraryNavigationOptions}
 			/>
+			<SettingsStack.Screen
+				component={settings.ButtonLibrary}
+				name="ButtonLibrary"
+				options={{title: 'Buttons'}}
+			/>
 			{/* End component library */}
 		</SettingsStack.Navigator>
 	)

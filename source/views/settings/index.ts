@@ -24,4 +24,5 @@ export {
 export {
 	ComponentLibrary,
 	ComponentLibraryNavigationOptions,
+	ButtonLibrary,
 } from './screens/overview/component-library'

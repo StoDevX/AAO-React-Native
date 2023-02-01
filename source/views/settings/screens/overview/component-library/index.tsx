@@ -3,3 +3,4 @@ export {
 	NavigationOptions as ComponentLibraryNavigationOptions,
 } from './library'
 
+export {ButtonLibrary} from './button'
