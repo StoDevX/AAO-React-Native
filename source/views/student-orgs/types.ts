@@ -10,7 +10,7 @@ export type AdvisorType = {
 	name: string
 }
 
-export type StudentOrgType = {
+export interface RawStudentOrgType {
 	meetings: string
 	contacts: ContactPersonType[]
 	advisors: AdvisorType[]
@@ -19,4 +19,8 @@ export type StudentOrgType = {
 	lastUpdated: string
 	website: string
 	name: string
+}
+
+export interface StudentOrgType extends RawStudentOrgType {
+	key: string
 }

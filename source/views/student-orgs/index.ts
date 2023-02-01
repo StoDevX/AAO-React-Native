@@ -1,4 +1,4 @@
-export {View as StudentOrgsView, NavigationOptions} from './list'
+export {StudentOrgsView, NavigationOptions} from './list'
 export {
 	View as StudentOrgsDetailView,
 	NavigationOptions as DetailNavigationOptions,
