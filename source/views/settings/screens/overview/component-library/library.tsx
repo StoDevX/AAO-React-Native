@@ -14,6 +14,10 @@ export const ComponentLibrary = (): JSX.Element => {
 					onPress={() => navigation.navigate('ButtonLibrary')}
 					title="Buttons"
 				/>
+				<PushButtonCell
+					onPress={() => navigation.navigate('ContextMenuLibrary')}
+					title="Context Menus"
+				/>
 			</Section>
 		</TableView>
 	)

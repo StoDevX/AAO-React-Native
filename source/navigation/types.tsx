@@ -110,6 +110,7 @@ export type SettingsStackParamList = {
 	// Start component library
 	ComponentLibrary: undefined
 	ButtonLibrary: undefined
+	ContextMenuLibrary: undefined
 	// End component library
 }
 

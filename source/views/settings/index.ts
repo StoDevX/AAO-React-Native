@@ -25,4 +25,5 @@ export {
 	ComponentLibrary,
 	ComponentLibraryNavigationOptions,
 	ButtonLibrary,
+	ContextMenuLibrary,
 } from './screens/overview/component-library'
