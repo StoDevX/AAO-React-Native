@@ -7,6 +7,7 @@ export type WordType = {
 	word: string
 	definition: string
 	key: string
+	firstLetter: string
 }
 
 export interface DictionaryGroup {

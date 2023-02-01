@@ -1,7 +1,6 @@
 import {client} from '@frogpond/api'
 import {useQuery, UseQueryResult} from '@tanstack/react-query'
-import { groupBy } from 'lodash'
-import {DictionaryGroup, RawWordType, WordType} from './types'
+import {RawWordType, WordType} from './types'
 
 export const keys = {
 	all: ['dictionary'] as const,
@@ -10,7 +9,8 @@ export const keys = {
 function groupWords(words: RawWordType[]): WordType[] {
 	return words.map((w) => ({
 		...w,
-		key: w.word[0],
+		key: w.word,
+		firstLetter: w.word[0],
 	}))
 }
 

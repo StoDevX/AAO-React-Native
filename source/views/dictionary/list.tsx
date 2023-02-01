@@ -8,15 +8,12 @@ import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 import {useNavigation} from '@react-navigation/native'
 
 export function DictionaryView(): JSX.Element {
-	let query = useDictionary()
-
 	return (
 		<List
-			filter={[]}
-			groupBy="key"
-			query={query}
+			groupByKey="firstLetter"
+			query={useDictionary()}
 			renderItem={({item}) => <DictionaryRow item={item} />}
-			search={['word', 'definition']}
+			searchInKeys={['word', 'definition']}
 		/>
 	)
 }
