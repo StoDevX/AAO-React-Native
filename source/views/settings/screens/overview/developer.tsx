@@ -12,6 +12,7 @@ import {NavigationKey as ColorsInfoNavigationKey} from '../debug/colors'
 export const DeveloperSection = (): React.ReactElement => {
 	let navigation = useNavigation()
 
+	const onComponentsButton = () => navigation.navigate('ComponentLibrary')
 	const onAPIButton = () => navigation.navigate('APITest')
 	const onColorsButton = () => navigation.navigate(ColorsInfoNavigationKey)
 	const onBonAppButton = () => navigation.navigate('BonAppPicker')
@@ -42,6 +43,7 @@ export const DeveloperSection = (): React.ReactElement => {
 	return (
 		<>
 			<Section header="DEVELOPER">
+				<PushButtonCell onPress={onComponentsButton} title="Components" />
 				<PushButtonCell onPress={onColorsButton} title="Colors Tester" />
 				<PushButtonCell onPress={onAPIButton} title="API Tester" />
 				<PushButtonCell onPress={onBonAppButton} title="Bon Appetit Picker" />

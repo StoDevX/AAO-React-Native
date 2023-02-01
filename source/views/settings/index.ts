@@ -16,3 +16,9 @@ export {
 	NetworkLoggerView,
 	NavigationOptions as NetworkLoggerNavigationOptions,
 } from './screens/network-logger'
+
+// Component library
+export {
+	ComponentLibrary,
+	ComponentLibraryNavigationOptions,
+} from './screens/overview/component-library'

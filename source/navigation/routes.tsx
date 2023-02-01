@@ -299,6 +299,14 @@ const SettingsStackScreens = () => {
 				name="NetworkLogger"
 				options={settings.NetworkLoggerNavigationOptions}
 			/>
+
+			{/* Start component library */}
+			<SettingsStack.Screen
+				component={settings.ComponentLibrary}
+				name="ComponentLibrary"
+				options={settings.ComponentLibraryNavigationOptions}
+			/>
+			{/* End component library */}
 		</SettingsStack.Navigator>
 	)
 }

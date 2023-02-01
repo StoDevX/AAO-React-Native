@@ -106,6 +106,10 @@ export type SettingsStackParamList = {
 	Privacy: undefined
 	Settings: undefined
 	SettingsRoot: undefined
+
+	// Start component library
+	ComponentLibrary: undefined
+	// End component library
 }
 
 export interface ChangeTextEvent {
