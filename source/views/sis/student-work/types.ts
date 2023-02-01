@@ -1,4 +1,4 @@
-export type JobType = {
+export interface RawJobType {
 	comments: string
 	contactEmail: string
 	contactName: string
@@ -19,4 +19,8 @@ export type JobType = {
 	type: string
 	url: string
 	year: string
+}
+
+export interface JobType extends RawJobType {
+	key: string
 }
