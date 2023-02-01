@@ -13,9 +13,9 @@ export function DictionaryView(): JSX.Element {
 	return (
 		<List
 			filter={[]}
-			group={[]}
+			groupBy="key"
 			query={query}
-			renderItem={DictionaryRow}
+			renderItem={({item}) => <DictionaryRow item={item} />}
 			search={['word', 'definition']}
 		/>
 	)
@@ -36,4 +36,6 @@ export const Key = 'CampusDictionary'
 
 export const NavigationOptions: NativeStackNavigationOptions = {
 	title: 'Campus Dictionary',
+	headerLargeTitle: true,
+	headerLargeTitleShadowVisible: false,
 }

@@ -1,3 +1,5 @@
+import React, {useMemo} from 'react'
+
 import * as c from '@frogpond/colors'
 import {
 	Detail,
@@ -9,17 +11,21 @@ import {
 import {LoadingView, NoticeView} from '@frogpond/notice'
 import {useNavigation} from '@react-navigation/native'
 import {UseQueryResult} from '@tanstack/react-query'
-import React, {useMemo} from 'react'
-import {SectionList, StyleSheet} from 'react-native'
+import {groupBy} from 'lodash'
+import {
+	FlatList,
+	SectionList,
+	StyleSheet,
+	VirtualizedListWithoutRenderItemProps,
+} from 'react-native'
 import {ChangeTextEvent} from '../navigation/types'
 
 type FlatData<T> = ({key: string} & T)[]
-type SectionData<T> = {title: string; data: FlatData<T>}[]
 
 type Props<T extends {key: string}, E> = {
-	query: UseQueryResult<SectionData<T>, E>
+	query: UseQueryResult<FlatData<T>, E>
 	search?: ReadonlyArray<keyof T>
-	group?: ReadonlyArray<keyof T>
+	groupBy?: keyof T
 	filter?: ReadonlyArray<keyof T>
 	renderItem: ({item}: {item: T}) => JSX.Element
 }
@@ -48,6 +54,9 @@ export function Row(props: {
 	)
 }
 
+/**
+ * List will return either a FlatList or a SectionList, depending on
+ */
 export function List<T extends {key: string}, E extends Error>(
 	props: Props<T, E>,
 ): JSX.Element {
@@ -55,7 +64,7 @@ export function List<T extends {key: string}, E extends Error>(
 		query,
 		search = EMPTY_LIST,
 		filter = EMPTY_LIST,
-		group = EMPTY_LIST,
+		groupBy: groupByKey,
 		renderItem,
 	} = props
 
@@ -64,18 +73,27 @@ export function List<T extends {key: string}, E extends Error>(
 
 	let {data, error, refetch, isLoading, isError, isRefetching} = query
 
-	let filtered = useMemo(
-		() =>
-			data
-				?.map((group) => ({
-					...group,
-					data: group.data.filter((record) =>
-						search.some((key) => String(record[key]).includes(searchQuery)),
-					),
-				}))
-				.filter((group) => group.data.length) ?? [],
-		[data, searchQuery, search],
-	)
+	let searched = useMemo(() => {
+		if (!data) {
+			return EMPTY_LIST
+		}
+		if (!searchQuery) {
+			return data
+		}
+		return data?.filter((record) =>
+			search.some((key) => String(record[key]).includes(searchQuery)),
+		)
+	}, [data, searchQuery, search])
+
+	let grouped = useMemo(() => {
+		if (!groupByKey) {
+			return EMPTY_LIST
+		}
+		let key = groupByKey
+		return Object.entries(groupBy(searched ?? [], (record) => record[key])).map(
+			([title, data]) => ({title, data}),
+		)
+	}, [searched, groupByKey])
 
 	React.useLayoutEffect(() => {
 		navigation.setOptions({
@@ -97,28 +115,39 @@ export function List<T extends {key: string}, E extends Error>(
 		)
 	}
 
-	return (
-		<SectionList
-			ItemSeparatorComponent={ListSeparator}
-			ListEmptyComponent={
-				searchQuery ? (
-					<NoticeView text={`No results found for "${searchQuery}"`} />
-				) : isLoading ? (
-					<LoadingView />
-				) : (
-					<NoticeView text="No results found." />
-				)
-			}
-			contentContainerStyle={styles.contentContainer}
-			contentInsetAdjustmentBehavior="automatic"
-			keyboardDismissMode="on-drag"
-			keyboardShouldPersistTaps="never"
-			onRefresh={refetch}
-			refreshing={isRefetching}
-			renderItem={renderItem}
-			renderSectionHeader={(p) => <ListSectionHeader title={p.section.title} />}
-			sections={filtered}
-			style={styles.wrapper}
-		/>
+	let listEmpty = searchQuery ? (
+		<NoticeView text={`No results found for "${searchQuery}"`} />
+	) : isLoading ? (
+		<LoadingView />
+	) : (
+		<NoticeView text="No results found." />
 	)
+
+	let commonProps: VirtualizedListWithoutRenderItemProps<T> = {
+		ItemSeparatorComponent: ListSeparator,
+		ListEmptyComponent: listEmpty,
+		ListHeaderComponent: null, // this is where the FilterToolbar would go!
+		contentContainerStyle: styles.contentContainer,
+		contentInsetAdjustmentBehavior: 'automatic',
+		keyboardDismissMode: 'on-drag',
+		keyboardShouldPersistTaps: 'never',
+		onRefresh: refetch,
+		refreshing: isRefetching,
+		style: styles.wrapper,
+	}
+
+	if (groupByKey) {
+		return (
+			<SectionList
+				{...commonProps}
+				renderItem={renderItem}
+				renderSectionHeader={(p) => (
+					<ListSectionHeader title={p.section.title} />
+				)}
+				sections={grouped}
+			/>
+		)
+	} else {
+		return <FlatList {...commonProps} data={searched} renderItem={renderItem} />
+	}
 }
