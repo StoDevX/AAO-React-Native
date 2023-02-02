@@ -22,8 +22,10 @@ export function applyFilter<T>(filter: Filter<T>, item: T): boolean {
 			return applyToggleFilter(filter, item)
 		case 'list':
 			return applyListFilter(filter, item)
-		default:
-			return true
+		default: {
+			let unreachable: never = filter
+			return unreachable
+		}
 	}
 }
 
@@ -36,8 +38,12 @@ export function applyToggleFilter<T>(
 	// that isn't a boolean, but it gets very confused when we try to look up
 	// the value here - it thinks `item[filter.field]` is `T[boolean]`,
 	// instead of `boolean`.
-	let itemValue = item[filter.field] as boolean
+	let itemValue = item[filter.field] as boolean | undefined
 	return itemValue === true
+}
+
+function isArrayOfNumbers(arr: Array<unknown>): arr is Array<number> {
+	return typeof arr[0] === 'number'
 }
 
 export function applyListFilter<T>(filter: ListFilter<T>, item: T): boolean {
@@ -46,25 +52,36 @@ export function applyListFilter<T>(filter: ListFilter<T>, item: T): boolean {
 	// field name that isn't a string|string[], but it gets very confused when
 	// we try to look up the value here - it thinks `item[filter.field]` is
 	// `T[string|string[]]`, instead of `string|string[]`.
-	let itemValue = item[filter.field] as string | string[]
+	let itemValues = item[filter.field] as string | string[] | undefined | number | number[]
+
+	if (itemValues === undefined) {
+		return true
+	}
 
 	let filterValues = filter.options
 		.filter((_option, index) => filter.selectedIndices.includes(index))
 		.map((option) => option.title)
 
 	// ensure that itemValue is an Array<string>
-	if (typeof itemValue === 'string') {
-		itemValue = [itemValue]
+	if (typeof itemValues === 'string') {
+		// if it's a single string, wrap it in an array
+		itemValues = [itemValues]
+	} else if (typeof itemValues === 'number') {
+		// if it's a single number, turn it into a string and wrap it in an array
+		itemValues = [String(itemValues)]
+	} else if (isArrayOfNumbers(itemValues)) {
+		// if it's an array, go ahead and convert everything into a string
+		itemValues = itemValues.map(String)
 	}
 
 	if (filter.mode === 'any') {
 		// An item passes if its value is in the filter's selected items array
-		let intersectionValues = intersection(filterValues, itemValue)
+		let intersectionValues = intersection(filterValues, itemValues)
 		return intersectionValues.length !== 0
 	} else if (filter.mode === 'all') {
 		// Check that the number of different items between the two lists is 0, to
 		// ensure that all of the restrictions we're seeking are present.
-		let differentItems = difference(filterValues, itemValue)
+		let differentItems = difference(filterValues, itemValues)
 		return differentItems.length === 0
 	} else {
 		let unreachable: never = filter.mode
