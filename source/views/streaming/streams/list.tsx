@@ -31,14 +31,10 @@ const groupStreams = (entries: StreamType[]) => {
 	return toPairs(grouped).map(([title, data]) => ({title, data}))
 }
 
-function getEnabledCategories<T>(filters: Filter<T>[]) {
-	return filters.filter(isListFilter).flatMap((filter) => {
+function filterStreams<T>(streams: StreamType[], filters: Filter<T>[]) {
+	let enabledCategories = filters.filter(isListFilter).flatMap((filter) => {
 		return filter.selectedIndices.map((index) => filter.options[index].title)
 	})
-}
-
-function filterStreams<T>(streams: StreamType[], filters: Filter<T>[]) {
-	let enabledCategories = getEnabledCategories(filters)
 
 	if (enabledCategories.length === 0) {
 		return streams
