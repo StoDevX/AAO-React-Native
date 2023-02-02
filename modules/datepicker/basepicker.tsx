@@ -1,9 +1,6 @@
 import * as React from 'react'
 import {Button} from 'react-native'
 
-import type {AppTheme} from '@frogpond/app-theme'
-import {getTheme} from '@frogpond/app-theme'
-
 import type {Moment} from 'moment-timezone'
 import moment from 'moment-timezone'
 
@@ -59,8 +56,6 @@ export const BaseDateTimePicker = (
 		return momentZone ? -momentZone.utcOffset(dateInUnixMs) : 0
 	}
 
-	let theme: AppTheme = getTheme()
-
 	let sharedPlatformProps = {
 		minuteInterval: props.minuteInterval,
 		mode: props.mode,
@@ -75,7 +70,6 @@ export const BaseDateTimePicker = (
 		<>
 			{props.showPickerButtonAndroid && (
 				<Button
-					color={theme.buttonBackground}
 					onPress={() => props.setShowPickerAndroid?.(true)}
 					testID="datepicker-button-android"
 					title={formatDate(date, timezone)}

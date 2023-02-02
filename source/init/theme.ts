@@ -1,5 +1,5 @@
-import {themeObject} from '../lib/theme'
+import {themeObject as _} from '../lib/theme'
 
-import {setTheme} from '@frogpond/app-theme'
+// import {setTheme} from '@frogpond/app-theme'
 
-setTheme(themeObject)
+// setTheme(themeObject)

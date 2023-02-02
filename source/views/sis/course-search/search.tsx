@@ -42,7 +42,7 @@ export const CourseSearchView = (): JSX.Element => {
 		// can at least rely on the "browse all" button to let us view search.
 		navigation.setOptions({
 			headerSearchBarOptions: {
-				barTintColor: c.white,
+				barTintColor: c.quaternarySystemFill,
 				onChangeText: (event: ChangeTextEvent) => {
 					setTypedQuery(event.nativeEvent.text)
 				},
@@ -141,6 +141,6 @@ let styles = StyleSheet.create({
 		flex: 1,
 	},
 	common: {
-		backgroundColor: c.white,
+		backgroundColor: c.systemBackground,
 	},
 })

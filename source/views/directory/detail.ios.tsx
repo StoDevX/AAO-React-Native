@@ -154,7 +154,7 @@ const styles = StyleSheet.create({
 		alignSelf: 'center',
 		borderRadius: 4,
 		borderWidth: 0.2,
-		borderColor: c.black,
+		borderColor: c.label,
 		marginTop: 10,
 	},
 	header: {
@@ -173,7 +173,7 @@ const styles = StyleSheet.create({
 	},
 	footer: {
 		fontSize: 10,
-		color: c.iosDisabledText,
+		color: c.secondaryLabel,
 		textAlign: 'center',
 	},
 	poweredBy: {

@@ -1,20 +1,35 @@
+diff --git node_modules/@callstack/react-theme-provider/typings/index.d.ts node_modules/@callstack/react-theme-provider/typings/index.d.ts
+index c209bec..228fb92 100644
+--- node_modules/@callstack/react-theme-provider/typings/index.d.ts
++++ node_modules/@callstack/react-theme-provider/typings/index.d.ts
+@@ -8,7 +8,7 @@ type $Without<T, K extends keyof any> = T extends any ? Pick<T, Exclude<keyof T,
+ type $DeepPartial<T> = { [P in keyof T]?: $DeepPartial<T[P]> };
+
+ export type ThemingType<Theme> = {
+-  ThemeProvider: React.ComponentType<{ theme?: Theme }>;
++  ThemeProvider: React.ComponentType<React.PropsWithChildren<{ theme?: Theme }>>;
+   withTheme: <Props extends { theme: Theme }, C>(
+     WrappedComponent: React.ComponentType<Props> & C
+   ) => React.ComponentType<
+
 diff --git node_modules/react-native/Libraries/Blob/FileReader.js node_modules/react-native/Libraries/Blob/FileReader.js
-index c0b7fea..ca523f1 100644
+index 57b3093..0720094 100644
 --- node_modules/react-native/Libraries/Blob/FileReader.js
 +++ node_modules/react-native/Libraries/Blob/FileReader.js
-@@ -9,6 +9,7 @@
+@@ -9,7 +9,7 @@
   */
  
- const Blob = require('./Blob');
-+const {toByteArray} = require('base64-js');
- const EventTarget = require('event-target-shim');
- 
+ import type Blob from './Blob';
+-
++import {toByteArray} from 'base64-js';
  import NativeFileReaderModule from './NativeFileReaderModule';
-@@ -73,8 +74,35 @@ class FileReader extends (EventTarget(...READER_EVENTS): any) {
+ 
+ const EventTarget = require('event-target-shim');
+@@ -74,8 +74,35 @@ class FileReader extends (EventTarget(...READER_EVENTS): any) {
      }
    }
  
--  readAsArrayBuffer() {
+-  readAsArrayBuffer(): any {
 -    throw new Error('FileReader.readAsArrayBuffer is not implemented');
 +  readAsArrayBuffer(blob: ?Blob) {
 +    this._aborted = false;
@@ -46,5 +61,5 @@ index c0b7fea..ca523f1 100644
 +      },
 +    );
    }
- 
-   readAsDataURL(blob: ?Blob) {
+
+   readAsDataURL(blob: ?Blob): void {

@@ -10,7 +10,7 @@
   },
   "peerDependencies": {
     "react-native-inappbrowser-reborn": "3.7.0",
-    "react-native": "^0.68.0"
+    "react-native": "^0.71.1"
   },
   "dependencies": {}
 }

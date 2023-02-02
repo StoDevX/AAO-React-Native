@@ -5,7 +5,7 @@ import * as c from '@frogpond/colors'
 const styles = StyleSheet.create({
 	footer: {
 		fontSize: 10,
-		color: c.iosDisabledText,
+		color: c.secondaryLabel,
 		textAlign: 'center',
 		paddingVertical: 20,
 		paddingBottom: 25,

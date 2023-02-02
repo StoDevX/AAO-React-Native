@@ -9,20 +9,13 @@ import {
 	ViewStyle,
 } from 'react-native'
 import * as c from '@frogpond/colors'
-import type {AppTheme} from '@frogpond/app-theme'
-import {getTheme} from '@frogpond/app-theme'
 
 const styles = StyleSheet.create({
 	container: {
 		paddingLeft: 15,
 		...Platform.select({
 			ios: {
-				backgroundColor: c.iosListSectionHeader,
 				paddingVertical: 6,
-				borderTopWidth: StyleSheet.hairlineWidth,
-				borderBottomWidth: StyleSheet.hairlineWidth,
-				borderTopColor: c.iosHeaderTopBorder,
-				borderBottomColor: c.iosHeaderBottomBorder,
 				paddingRight: 10,
 			},
 			android: {
@@ -30,7 +23,6 @@ const styles = StyleSheet.create({
 				paddingBottom: 10,
 				borderTopWidth: 1,
 				borderBottomWidth: 0,
-				borderColor: '#c8c7cc',
 				paddingRight: 15,
 			},
 		}),
@@ -46,7 +38,7 @@ const styles = StyleSheet.create({
 		...Platform.select({
 			ios: {
 				fontSize: 16,
-				color: c.black,
+				color: c.label,
 			},
 			android: {
 				fontSize: 16,
@@ -59,12 +51,12 @@ const styles = StyleSheet.create({
 		...Platform.select({
 			ios: {
 				fontSize: 16,
-				color: c.iosDisabledText,
+				color: c.secondaryLabel,
 			},
 			android: {
 				fontSize: 16,
 				fontFamily: 'sans-serif-condensed',
-				color: c.iosDisabledText, // todo: find android equivalent
+				color: c.secondaryLabel, // todo: find android equivalent
 			},
 		}),
 	},
@@ -93,19 +85,26 @@ export function ListSectionHeader(props: Props): JSX.Element {
 		spacing: {left: leftSpacing = 15} = {},
 	} = props
 
-	const theme: AppTheme = getTheme()
-
 	let containerTheme: ViewStyle = {paddingLeft: leftSpacing}
 	let titleTheme = {}
 
 	if (Platform.OS === 'android') {
 		containerTheme = {
 			...containerTheme,
-			backgroundColor: theme.androidListHeaderBackground,
+			backgroundColor: c.systemGroupedBackground,
 		}
 		titleTheme = {
 			...titleTheme,
-			color: theme.androidListHeaderForeground,
+			color: c.label,
+		}
+	} else if (Platform.OS === 'ios') {
+		containerTheme = {
+			...containerTheme,
+			backgroundColor: c.systemGroupedBackground,
+			borderTopWidth: StyleSheet.hairlineWidth,
+			borderBottomWidth: StyleSheet.hairlineWidth,
+			borderTopColor: c.separator,
+			borderBottomColor: c.separator,
 		}
 	}
 

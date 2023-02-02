@@ -18,7 +18,7 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 	},
 	skippingStopTitle: {
-		color: c.iosDisabledText,
+		color: c.tertiaryLabel,
 	},
 	skippingStopDetail: {},
 	internalPadding: {
@@ -28,7 +28,7 @@ const styles = StyleSheet.create({
 		fontWeight: Platform.OS === 'ios' ? '500' : '600',
 	},
 	passedStopTitle: {
-		color: c.iosDisabledText,
+		color: c.secondaryLabel,
 	},
 })
 

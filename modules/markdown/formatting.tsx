@@ -2,6 +2,7 @@ import React from 'react'
 import {Platform, Text, StyleSheet, TextProps} from 'react-native'
 import {SelectableText} from './selectable'
 import {iOSUIKit, material} from 'react-native-typography'
+import * as c from '@frogpond/colors'
 
 const styles = StyleSheet.create({
 	text: {
@@ -9,6 +10,7 @@ const styles = StyleSheet.create({
 			ios: iOSUIKit.bodyObject,
 			android: material.body1Object,
 		}),
+		color: c.label,
 	},
 	strong: {
 		fontWeight: 'bold',
@@ -23,6 +25,7 @@ const styles = StyleSheet.create({
 			ios: iOSUIKit.bodyObject,
 			android: material.body1Object,
 		}),
+		color: c.label,
 	},
 	blockQuote: {
 		marginHorizontal: 8,

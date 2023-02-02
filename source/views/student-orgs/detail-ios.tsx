@@ -18,13 +18,13 @@ const styles = StyleSheet.create({
 		marginTop: 20,
 		marginBottom: 15,
 		paddingHorizontal: 5,
-		color: c.black,
+		color: c.label,
 		fontSize: 32,
 		fontWeight: '300',
 	},
 	footer: {
 		fontSize: 10,
-		color: c.iosDisabledText,
+		color: c.secondaryLabel,
 		textAlign: 'center',
 	},
 	lastUpdated: {

@@ -1,5 +1,4 @@
 /**
- * @flow
  * Stringify a set of filters for transfer to GA.
  * (because we really don't need to ship those descriptions over the network)
  */

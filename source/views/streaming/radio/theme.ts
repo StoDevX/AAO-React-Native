@@ -1,4 +1,4 @@
-import {createTheming, ThemingType} from '@callstack/react-theme-provider'
+import {createTheming} from '@callstack/react-theme-provider'
 
 export type PlayerTheme = {
 	tintColor?: string
@@ -16,8 +16,7 @@ const defaultTheme: PlayerTheme = {
 	imageBackgroundColor: 'transparent',
 }
 
-let {ThemeProvider, withTheme, useTheme} = createTheming(
-	defaultTheme,
-) as ThemingType<PlayerTheme>
+let {ThemeProvider, withTheme, useTheme} =
+	createTheming<PlayerTheme>(defaultTheme)
 
 export {ThemeProvider, withTheme, useTheme}

@@ -10,7 +10,6 @@ import BasicButton from 'react-native-button'
 import noop from 'lodash/noop'
 import {iOSUIKit, material} from 'react-native-typography'
 import * as c from '@frogpond/colors'
-import {useTheme} from '@frogpond/app-theme'
 
 const styles = StyleSheet.create({
 	button: {
@@ -22,7 +21,7 @@ const styles = StyleSheet.create({
 		overflow: 'hidden',
 	},
 	disabled: {
-		backgroundColor: c.sectionBgColor,
+		backgroundColor: c.tertiarySystemFill,
 	},
 	text: {
 		...Platform.select({
@@ -31,7 +30,7 @@ const styles = StyleSheet.create({
 		}),
 	},
 	textDisabled: {
-		color: c.iosDisabledText,
+		color: c.secondaryLabel,
 	},
 })
 
@@ -61,16 +60,8 @@ export function Button({
 	textStyle = null,
 	mode = 'default',
 }: Props): JSX.Element {
-	const theme = useTheme()
-
-	const background =
-		mode === 'default'
-			? {backgroundColor: theme?.buttonBackground}
-			: {backgroundColor: theme?.buttonForeground}
-	const foreground =
-		mode === 'default'
-			? {color: theme?.buttonForeground}
-			: {color: theme?.buttonBackground}
+	let background = {backgroundColor: c.tertiarySystemFill}
+	let foreground = {color: c.label}
 
 	const textStyleThing = mode === 'default' ? styles.text : inverted.text
 	const containerStyle = [styles.button, background, buttonStyle]

@@ -50,7 +50,7 @@ const styles = StyleSheet.create({
 		lineHeight: 20,
 	},
 	rightDetail: {
-		color: c.iosDisabledText,
+		color: c.secondaryLabel,
 		textAlign: 'right',
 	},
 	container: {
@@ -61,7 +61,7 @@ const styles = StyleSheet.create({
 		textAlign: 'center',
 		marginTop: 20,
 		marginHorizontal: 10,
-		color: c.black,
+		color: c.label,
 	},
 	subHeader: {
 		fontSize: 21,
@@ -72,7 +72,7 @@ const styles = StyleSheet.create({
 
 function Information({course}: {course: CourseType}) {
 	return (
-		<Section header="INFORMATION" sectionTintColor={c.sectionBgColor}>
+		<Section header="INFORMATION">
 			{course.instructors ? (
 				<Cell
 					cellStyle="LeftDetail"
@@ -141,11 +141,7 @@ function Schedule({course}: {course: CourseType}) {
 		)
 	})
 
-	return (
-		<Section header="SCHEDULE" sectionTintColor={c.sectionBgColor}>
-			{schedule}
-		</Section>
-	)
+	return <Section header="SCHEDULE">{schedule}</Section>
 }
 
 function Notes({course}: {course: CourseType}) {

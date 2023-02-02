@@ -1,10 +1,12 @@
 import * as React from 'react'
 import {BaseText, Paragraph} from './formatting'
 import {ViewProps, StyleProp, View, StyleSheet, ViewStyle} from 'react-native'
+import * as c from '@frogpond/colors'
 
 const styles = StyleSheet.create({
 	list: {},
 	listText: {
+		color: c.label,
 		flex: 1,
 	},
 	listItem: {

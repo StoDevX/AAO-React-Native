@@ -20,7 +20,7 @@ import {ChangeTextEvent} from '../../../../navigation/types'
 
 const styles = StyleSheet.create({
 	container: {
-		backgroundColor: c.white,
+		backgroundColor: c.systemBackground,
 		flex: 1,
 	},
 	error: {
@@ -42,7 +42,7 @@ const styles = StyleSheet.create({
 	},
 	emptySearchText: {
 		fontSize: 18,
-		color: c.semitransparentGray,
+		color: c.secondaryLabel,
 		textAlign: 'center',
 		paddingTop: 20,
 		paddingBottom: 10,
@@ -75,7 +75,7 @@ export const APITestView = (): JSX.Element => {
 		navigation.setOptions({
 			headerSearchBarOptions: {
 				autoCapitalize: 'none',
-				barTintColor: c.white,
+				barTintColor: c.systemFill,
 				// android-only
 				autoFocus: true,
 				hideNavigationBar: false,
@@ -101,17 +101,18 @@ export const APITestView = (): JSX.Element => {
 			<pre>${highlighted}</pre>
 		`
 
-		return <HtmlContent html={HTML_CONTENT} />
+		return (
+			<HtmlContent
+				html={HTML_CONTENT}
+				style={{backgroundColor: c.systemBackground}}
+			/>
+		)
 	}
 
 	const EmptySearch = () => {
 		return (
 			<View style={styles.emptySearch}>
-				<Icon
-					color={c.semitransparentGray}
-					name="analytics-outline"
-					size={64}
-				/>
+				<Icon color={c.secondaryLabel} name="analytics-outline" size={64} />
 				<Text style={styles.emptySearchText}>Search for an API Endpoint</Text>
 			</View>
 		)

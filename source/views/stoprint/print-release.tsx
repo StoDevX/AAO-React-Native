@@ -34,7 +34,7 @@ const styles = StyleSheet.create({
 		textAlign: 'center',
 		marginTop: 20,
 		marginHorizontal: 10,
-		color: c.black,
+		color: c.label,
 	},
 })
 
@@ -49,7 +49,7 @@ function LeftDetailCell({detail, title}: {detail: string; title: string}) {
 function JobInformation({job}: {job: PrintJob}) {
 	let wasPrintedAlready = job.statusFormatted === 'Sent to Printer'
 	return (
-		<Section header="JOB INFO" sectionTintColor={c.sectionBgColor}>
+		<Section header="JOB INFO">
 			<LeftDetailCell detail="Status" title={job.statusFormatted} />
 			<LeftDetailCell detail="Time" title={job.usageTimeFormatted} />
 			<LeftDetailCell detail="Pages" title={job.totalPages.toString()} />
@@ -65,7 +65,7 @@ function JobInformation({job}: {job: PrintJob}) {
 
 function PrinterInformation({printer}: {printer: Printer}) {
 	return (
-		<Section header="PRINTER INFO" sectionTintColor={c.sectionBgColor}>
+		<Section header="PRINTER INFO">
 			<LeftDetailCell detail="Name" title={printer.printerName} />
 			{Boolean(printer.location) && (
 				<LeftDetailCell detail="Location" title={printer.location ?? ''} />

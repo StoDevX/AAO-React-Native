@@ -1,64 +1,21 @@
-export const aqua = '#7FDBFF'
+import * as platform from './platform'
+
+export const blue = platform.systemBlue
+export const brown = platform.systemBrown
+export const cyan = platform.systemCyan
+export const green = platform.systemGreen
+export const indigo = platform.systemIndigo
+export const mint = platform.systemMint
+export const orange = platform.systemOrange
+export const pink = platform.systemPink
+export const purple = platform.systemPurple
+export const red = platform.systemRed
+export const teal = platform.systemTeal
+export const yellow = platform.systemYellow
+
 export const black = '#111111'
-export const blue = '#0074D9'
-export const fuchsia = '#F012BE'
-export const gray = '#AAAAAA'
-export const green = '#2ECC40'
-// export const lime = '#01FF70'
-// export const maroon = '#85144b'
-export const navy = '#001f3f'
-// export const olive = '#3D9970'
-export const orange = '#FF851B'
-export const purple = '#B10DC9'
-export const red = '#FF4136'
-export const silver = '#DDDDDD'
-// export const teal = '#39CCCC'
 export const white = '#FFFFFF'
-export const yellow = '#FFDC00'
-export const transparent = 'transparent'
-
-export const semitransparentGray = 'rgba(0,0,0,0.2)'
-export const verySemitransparentGray = 'rgba(0,0,0,0.05)'
-
-// MARK: System Colors
-export const infoBlue = 'rgb(47, 112, 225)'
-export const success = 'rgb(83, 215, 106)'
-export const warning = 'rgb(221, 170, 59)'
-export const danger = 'rgb(229, 0, 15)'
-
-// MARK: Whites
-export const antiqueWhite = 'rgb(250, 235, 215)'
-export const oldLace = 'rgb(253, 245, 230)'
-export const ivory = 'rgb(255, 255, 240)'
-export const seashell = 'rgb(255, 245, 238)'
-export const ghostWhite = 'rgb(248, 248, 255)'
-export const snow = 'rgb(255, 250, 250)'
-export const linen = 'rgb(250, 240, 230)'
-
-// MARK: Grays
-export const black25Percent = 'rgb(63.75, 63.75, 63.75)'
-export const black50Percent = 'rgb(127.5, 127.5, 127.5)'
-export const black75Percent = 'rgb(191.25, 191.25, 191.25)'
-export const warmGray = 'rgb(133, 117, 112)'
-export const coolGray = 'rgb(118, 122, 133)'
-export const charcoal = 'rgb(34, 34, 34)'
-
-// MARK: Blues
-export const teal = 'rgb(28, 160, 170)'
-export const steelBlue = 'rgb(103, 153, 170)'
-export const robinEgg = 'rgb(141, 218, 247)'
-export const pastelBlue = 'rgb(99, 161, 247)'
-export const turquoise = 'rgb(112, 219, 219)'
-export const skyBlue = 'rgb(0, 178, 238)'
-export const indigo = 'rgb(13, 79, 139)'
-export const denim = 'rgb(67, 114, 170)'
-export const blueberry = 'rgb(89, 113, 173)'
-export const cornflower = 'rgb(100, 149, 237)'
-export const babyBlue = 'rgb(190, 220, 230)'
-export const midnightBlue = 'rgb(13, 26, 35)'
-export const fadedBlue = 'rgb(23, 137, 155)'
-export const iceberg = 'rgb(200, 213, 219)'
-export const wave = 'rgb(102, 169, 251)'
+export const transparent = platform.clear
 
 // MARK: Greens
 export const emerald = 'rgb(1, 152, 117)'
@@ -81,7 +38,6 @@ export const salmon = 'rgb(233, 87, 95)'
 export const brickRed = 'rgb(151, 27, 16)'
 export const easterPink = 'rgb(241, 167, 162)'
 export const grapefruit = 'rgb(228, 31, 54)'
-export const pink = 'rgb(255, 95, 154)'
 export const indianRed = 'rgb(205, 92, 92)'
 export const strawberry = 'rgb(190, 38, 37)'
 export const coral = 'rgb(240, 128, 128)'

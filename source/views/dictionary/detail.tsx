@@ -3,12 +3,15 @@ import {StyleSheet, TextProps, Text, View, ViewProps} from 'react-native'
 import {Markdown} from '@frogpond/markdown'
 import {ListFooter} from '@frogpond/lists'
 import {Button} from '@frogpond/button'
+import * as c from '@frogpond/colors'
+
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 import {RouteProp, useNavigation, useRoute} from '@react-navigation/native'
 import {RootStackParamList} from '../../navigation/types'
 
 const styles = StyleSheet.create({
 	paragraph: {
+		color: c.label,
 		fontSize: 16,
 	},
 	container: {
@@ -16,6 +19,7 @@ const styles = StyleSheet.create({
 		paddingVertical: 6,
 	},
 	term: {
+		color: c.label,
 		fontSize: 36,
 		textAlign: 'center',
 		marginHorizontal: 18,

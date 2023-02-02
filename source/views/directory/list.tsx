@@ -60,7 +60,8 @@ export function DirectoryView(): JSX.Element {
 	React.useLayoutEffect(() => {
 		navigation.setOptions({
 			headerSearchBarOptions: {
-				barTintColor: c.white,
+				// forcibly pretend that OpaqueColorValue is a string
+				barTintColor: c.systemFill as unknown as string,
 				onChangeText: (event: ChangeTextEvent) => {
 					setSearchQueryType('query')
 					setTypedQuery(event.nativeEvent.text)
@@ -127,11 +128,7 @@ function IndentedListSeparator() {
 function NoSearchPerformed() {
 	return (
 		<View style={styles.emptySearch}>
-			<Icon
-				color={c.semitransparentGray}
-				name="people-circle-outline"
-				size={64}
-			/>
+			<Icon color={c.secondaryLabel} name="people-circle-outline" size={64} />
 			<Text style={styles.emptySearchText}>Search the Directory</Text>
 		</View>
 	)
@@ -183,7 +180,7 @@ const imageMargin = 10
 const styles = StyleSheet.create({
 	wrapper: {
 		flex: 1,
-		backgroundColor: c.white,
+		backgroundColor: c.systemBackground,
 	},
 	row: {
 		flexDirection: 'row',
@@ -210,7 +207,7 @@ const styles = StyleSheet.create({
 	},
 	emptySearchText: {
 		fontSize: 18,
-		color: c.semitransparentGray,
+		color: c.secondaryLabel,
 		textAlign: 'center',
 		paddingTop: 20,
 		paddingBottom: 10,

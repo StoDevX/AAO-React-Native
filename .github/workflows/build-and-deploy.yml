@@ -14,7 +14,7 @@ jobs:
       - uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c # v3.3.0
       - uses: actions/setup-node@64ed1c7eab4cce3362f8c340dee64e5eaeef8f7c # v3
         with:
-          node-version: ^16.0
+          node-version-file: '.node-version'
           cache: npm
       - run: npm ci
       - run: npm run validate-data
@@ -36,14 +36,14 @@ jobs:
       - uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c # v3.3.0
       - uses: actions/setup-node@64ed1c7eab4cce3362f8c340dee64e5eaeef8f7c # v3
         with:
-          node-version: ^16.0
+          node-version-file: '.node-version'
           cache: npm
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: '2.6'
           bundler-cache: true
       - name: Restore Gradle cache
-        uses: actions/cache@58c146cc91c5b9e778e71775dfe9bf1442ad9a12 # v3
+        uses: actions/cache@627f0f41f6904a5b1efbaed9f96d9eb58e92e920 # v3
         with:
           path: |
             ~/.gradle/caches
@@ -60,6 +60,7 @@ jobs:
           sudo sysctl -p
       - run: echo 'org.gradle.workers.max=2' >> ./android/gradle.properties
       - run: cd android && ./gradlew androidDependencies --console=plain
+      - run: npm run bundle-data
       - run: bundle exec fastlane android ci-run
         env:
           FASTLANE_PASSWORD: ${{ secrets.FASTLANE_PASSWORD }}
@@ -79,7 +80,7 @@ jobs:
       - uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c # v3.3.0
       - uses: actions/setup-node@64ed1c7eab4cce3362f8c340dee64e5eaeef8f7c # v3
         with:
-          node-version: ^16.0
+          node-version-file: '.node-version'
           cache: npm
       - uses: ruby/setup-ruby@v1
         with:

@@ -104,17 +104,12 @@ export const BalancesView = (): JSX.Element => {
 
 let styles = StyleSheet.create({
 	stage: {
-		backgroundColor: c.sectionBgColor,
 		paddingVertical: 20,
-	},
-
-	common: {
-		backgroundColor: c.white,
 	},
 
 	balances: {
 		borderRightWidth: StyleSheet.hairlineWidth,
-		borderRightColor: c.iosSeparator,
+		borderRightColor: c.separator,
 	},
 
 	finalCell: {
@@ -128,6 +123,7 @@ let styles = StyleSheet.create({
 	},
 
 	rectangle: {
+		backgroundColor: c.secondarySystemGroupedBackground,
 		height: 88,
 		flex: 1,
 		alignItems: 'center',
@@ -139,14 +135,14 @@ let styles = StyleSheet.create({
 	// Text styling
 	financialText: {
 		paddingTop: 8,
-		color: c.iosDisabledText,
+		color: c.secondaryLabel,
 		textAlign: 'center',
 		fontWeight: '200',
 		fontSize: 23,
 	},
 	rectangleButtonText: {
 		paddingTop: 15,
-		color: c.black,
+		color: c.label,
 		textAlign: 'center',
 		fontSize: 16,
 	},
@@ -169,7 +165,7 @@ function FormattedValueCell(props: {
 	let {indeterminate, label, value, style, formatter = getValueOrNa} = props
 
 	return (
-		<View style={[styles.rectangle, styles.common, styles.balances, style]}>
+		<View style={[styles.rectangle, styles.balances, style]}>
 			<Text selectable={true} style={styles.financialText}>
 				{indeterminate ? '…' : formatter(value)}
 			</Text>

@@ -15,7 +15,7 @@ import {useStreams} from './query'
 
 const styles = StyleSheet.create({
 	listContainer: {
-		backgroundColor: c.white,
+		backgroundColor: c.systemBackground,
 	},
 	contentContainer: {
 		flexGrow: 1,

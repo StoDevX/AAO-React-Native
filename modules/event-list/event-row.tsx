@@ -26,10 +26,10 @@ const styles = StyleSheet.create({
 		textAlign: 'right',
 	},
 	start: {
-		color: c.black,
+		color: c.label,
 	},
 	end: {
-		color: c.iosDisabledText,
+		color: c.secondaryLabel,
 	},
 	titleArea: {
 		flex: 1,

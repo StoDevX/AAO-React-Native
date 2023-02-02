@@ -1,6 +1,4 @@
 /**
- * @flow
- *
  * <ScheduleTable/> renders the table of schedules.
  */
 

@@ -11,12 +11,12 @@ const styles = StyleSheet.create({
 		...Platform.select({
 			ios: {
 				lineHeight: FONT_SIZE * 1.25,
-				color: c.iosDisabledText,
+				color: c.secondaryLabel,
 			},
 			android: {
 				// android lineHeight must be an integer: see kinda https://github.com/facebook/react-native/issues/10607
 				lineHeight: Math.round(FONT_SIZE * 1.25),
-				color: c.iosDisabledText,
+				color: c.secondaryLabel,
 			},
 		}),
 	},

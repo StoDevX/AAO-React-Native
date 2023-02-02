@@ -4,8 +4,8 @@ import * as c from '@frogpond/colors'
 
 const styles = StyleSheet.create({
 	text: {
-		color: c.black,
-		backgroundColor: c.white,
+		color: c.secondaryLabel,
+		backgroundColor: c.systemBackground,
 		paddingHorizontal: 15,
 		paddingTop: 10,
 		paddingBottom: 10,
