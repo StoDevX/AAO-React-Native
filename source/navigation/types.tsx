@@ -98,7 +98,6 @@ export type SettingsStackParamList = {
 	BonAppPicker: undefined
 	Credits: undefined
 	[debug.NavigationKey]: {keyPath: string[]}
-	[settings.ColorsInfoNavigationKey]: undefined
 	Faq: undefined
 	IconSettings: undefined
 	Legal: undefined
@@ -112,6 +111,7 @@ export type ComponentLibraryStackParamList = {
 	ComponentLibraryRoot: undefined
 	ComponentLibrary: undefined
 	ButtonLibrary: undefined
+	[settings.ColorsLibraryNavigationKey]: undefined
 	ContextMenuLibrary: undefined
 }
 

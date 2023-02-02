@@ -283,10 +283,6 @@ const SettingsStackScreens = () => {
 				options={settings.APITestNavigationOptions}
 			/>
 			<SettingsStack.Screen
-				component={settings.ColorsInfoView}
-				name={settings.ColorsInfoNavigationKey}
-			/>
-			<SettingsStack.Screen
 				component={DevBonAppPickerView}
 				name="BonAppPicker"
 				options={DevBonAppNavigationOptions}
@@ -321,6 +317,11 @@ const ComponentLibraryStackScreens = () => {
 				component={settings.ButtonLibrary}
 				name="ButtonLibrary"
 				options={{title: 'Buttons'}}
+			/>
+			<ComponentLibraryStack.Screen
+				component={settings.ColorsLibrary}
+				name={settings.ColorsLibraryNavigationKey}
+				options={{title: 'Colors'}}
 			/>
 			<ComponentLibraryStack.Screen
 				component={settings.ContextMenuLibrary}

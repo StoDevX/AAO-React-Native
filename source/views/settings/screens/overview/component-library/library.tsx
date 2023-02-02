@@ -7,6 +7,8 @@ import {PushButtonCell} from '@frogpond/tableview/cells'
 import {useNavigation} from '@react-navigation/native'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 
+import {NavigationKey as ColorsLibrNavigationKey} from './colors'
+
 export const ComponentLibrary = (): JSX.Element => {
 	const navigation = useNavigation()
 
@@ -16,6 +18,10 @@ export const ComponentLibrary = (): JSX.Element => {
 				<PushButtonCell
 					onPress={() => navigation.navigate('ButtonLibrary')}
 					title="Buttons"
+				/>
+				<PushButtonCell
+					onPress={() => navigation.navigate(ColorsLibrNavigationKey)}
+					title="Colors"
 				/>
 				<PushButtonCell
 					onPress={() => navigation.navigate('ContextMenuLibrary')}

@@ -17,12 +17,12 @@ import {
 	DynamicColorIOS,
 	Platform,
 	PlatformColor,
-	ScrollView,
 	StyleSheet,
 	Text,
 	View,
 } from 'react-native'
-import {Section, TableView} from '@frogpond/tableview'
+import {Section} from '@frogpond/tableview'
+import {LibraryWrapper} from './base/library-wrapper'
 
 function createTable(): Array<{
 	color: ReturnType<typeof PlatformColor>
@@ -324,26 +324,25 @@ const styles = StyleSheet.create({
 })
 
 export const NavigationKey = 'ColorsInfoView'
-export const ColorsInfoView = (): JSX.Element => {
+
+export const ColorsLibrary = (): JSX.Element => {
 	return (
-		<ScrollView>
-			<TableView>
-				<Section header="Platform Colors">
-					<PlatformColorsExample />
-				</Section>
+		<LibraryWrapper>
+			<Section header="Platform Colors">
+				<PlatformColorsExample />
+			</Section>
 
-				<Section header="Fallback Colors">
-					<FallbackColorsExample />
-				</Section>
+			<Section header="Fallback Colors">
+				<FallbackColorsExample />
+			</Section>
 
-				<Section header="iOS Dynamic Colors">
-					<DynamicColorsExample />
-				</Section>
+			<Section header="iOS Dynamic Colors">
+				<DynamicColorsExample />
+			</Section>
 
-				<Section header="Variant Colors">
-					<VariantColorsExample />
-				</Section>
-			</TableView>
-		</ScrollView>
+			<Section header="Variant Colors">
+				<VariantColorsExample />
+			</Section>
+		</LibraryWrapper>
 	)
 }
