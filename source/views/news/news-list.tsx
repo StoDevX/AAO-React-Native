@@ -7,7 +7,7 @@ import {LoadingView, NoticeView} from '@frogpond/notice'
 import {openUrl} from '@frogpond/open-url'
 import {NewsRow} from './news-row'
 import {cleanEntries, trimStoryCateogry} from './lib/util'
-import {FilterToolbar, ListType} from '@frogpond/filter'
+import {FilterToolbar, ListFilter} from '@frogpond/filter'
 import {UseQueryResult} from '@tanstack/react-query'
 
 type Props = {
@@ -28,9 +28,9 @@ let getStoryCategories = (story: StoryType) => {
 	return story.categories.map((c) => trimStoryCateogry(c))
 }
 
-let filterStories = (entries: StoryType[], filters: ListType<StoryType>[]) => {
+let filterStories = (entries: StoryType[], filters: ListFilter<StoryType>[]) => {
 	return entries.filter((story) => {
-		let enabledCategories = filters.flatMap((f: ListType<StoryType>) =>
+		let enabledCategories = filters.flatMap((f: ListFilter<StoryType>) =>
 			f.spec.selected.flatMap((s) => s.title),
 		)
 
@@ -56,7 +56,7 @@ export const NewsList = (props: Props): JSX.Element => {
 
 	let entries = React.useMemo(() => cleanEntries(data), [data])
 
-	let [filters, setFilters] = React.useState<ListType<StoryType>[]>([])
+	let [filters, setFilters] = React.useState<ListFilter<StoryType>[]>([])
 
 	React.useEffect(() => {
 		let allCategories = entries.flatMap((story) => getStoryCategories(story))
@@ -70,7 +70,7 @@ export const NewsList = (props: Props): JSX.Element => {
 			return {title: c}
 		})
 
-		let newsFilters: ListType<StoryType>[] = [
+		let newsFilters: ListFilter<StoryType>[] = [
 			{
 				type: 'list',
 				key: 'category',
@@ -105,7 +105,7 @@ export const NewsList = (props: Props): JSX.Element => {
 				let edited = filters.map((f) =>
 					f.key === newFilter.key ? newFilter : f,
 				)
-				setFilters(edited as ListType<StoryType>[])
+				setFilters(edited as ListFilter<StoryType>[])
 			}}
 		/>
 	)

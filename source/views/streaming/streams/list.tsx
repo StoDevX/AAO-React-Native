@@ -3,7 +3,7 @@ import {StyleSheet, SectionList} from 'react-native'
 import * as c from '@frogpond/colors'
 import {ListSeparator, ListSectionHeader} from '@frogpond/lists'
 import {NoticeView, LoadingView} from '@frogpond/notice'
-import {FilterToolbar, ListType} from '@frogpond/filter'
+import {FilterToolbar, ListFilter} from '@frogpond/filter'
 import {StreamRow} from './row'
 import toPairs from 'lodash/toPairs'
 import groupBy from 'lodash/groupBy'
@@ -42,16 +42,16 @@ const groupStreamsByCategoryAndDate = (stream: StreamType) => {
 	}
 }
 
-const getEnabledCategories = <T extends object>(filters: ListType<T>[]) => {
-	return filters.flatMap((filter: ListType<T>) => {
-		let filterSelections: ListType<T>['spec']['selected'] = filter.spec.selected
+const getEnabledCategories = <T extends object>(filters: ListFilter<T>[]) => {
+	return filters.flatMap((filter: ListFilter<T>) => {
+		let filterSelections: ListFilter<T>['spec']['selected'] = filter.spec.selected
 		return filterSelections.flatMap((spec) => spec.title)
 	})
 }
 
 const filterStreams = <T extends object>(
 	streams: StreamType[],
-	filters: ListType<T>[],
+	filters: ListFilter<T>[],
 ) => {
 	let enabledCategories = getEnabledCategories(filters)
 
@@ -72,7 +72,7 @@ export const StreamListView = (): JSX.Element => {
 		isError,
 	} = useStreams()
 
-	let [filters, setFilters] = React.useState<ListType<StreamType>[]>([])
+	let [filters, setFilters] = React.useState<ListFilter<StreamType>[]>([])
 
 	let entries = React.useMemo(() => {
 		return data.map((stream) => groupStreamsByCategoryAndDate(stream))
@@ -90,7 +90,7 @@ export const StreamListView = (): JSX.Element => {
 			return {title: c}
 		})
 
-		let streamFilters: ListType<StreamType>[] = [
+		let streamFilters: ListFilter<StreamType>[] = [
 			{
 				type: 'list',
 				key: 'category',
@@ -125,7 +125,7 @@ export const StreamListView = (): JSX.Element => {
 				let edited = filters.map((f) =>
 					f.key === newFilter.key ? newFilter : f,
 				)
-				setFilters(edited as ListType<StreamType>[])
+				setFilters(edited as ListFilter<StreamType>[])
 			}}
 		/>
 	)

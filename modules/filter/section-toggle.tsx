@@ -1,11 +1,11 @@
 import * as React from 'react'
-import type {ToggleType} from './types'
+import type {ToggleFilter} from './types'
 import {Section} from '@frogpond/tableview'
 import {CellToggle} from '@frogpond/tableview/cells'
 
 type Props<T extends object> = {
-	filter: ToggleType<T>
-	onChange: (filterSpec: ToggleType<T>) => void
+	filter: ToggleFilter<T>
+	onChange: (filterSpec: ToggleFilter<T>) => void
 }
 
 export function SingleToggleSection<T extends object>({

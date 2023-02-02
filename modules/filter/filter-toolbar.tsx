@@ -1,5 +1,5 @@
 import * as React from 'react'
-import type {FilterType, ListItemSpecType, ListType, ToggleType} from './types'
+import type {Filter, ListSpecItem, ListFilter, ToggleFilter} from './types'
 import {ScrollView, StyleSheet} from 'react-native'
 import {Toolbar} from '@frogpond/toolbar'
 import {FilterToolbarButton} from './filter-toolbar-button'
@@ -8,14 +8,14 @@ import flatten from 'lodash/flatten'
 import cloneDeep from 'lodash/cloneDeep'
 
 type Props<T extends object> = {
-	filters: Array<FilterType<T>>
-	onPopoverDismiss: (filter: FilterType<T>) => unknown
+	filters: Array<Filter<T>>
+	onPopoverDismiss: (filter: Filter<T>) => unknown
 }
 
 function updateAnyFilter<T extends object>(
-	callback: (filter: FilterType<T>) => unknown,
+	callback: (filter: Filter<T>) => unknown,
 ) {
-	return (filter: FilterType<T>, option?: ListItemSpecType) => {
+	return (filter: Filter<T>, option?: ListSpecItem) => {
 		if (filter.type === 'toggle') {
 			filter = updateToggleFilter(filter)
 		} else if (filter.type === 'list') {
@@ -28,15 +28,15 @@ function updateAnyFilter<T extends object>(
 }
 
 function updateToggleFilter<T extends object>(
-	filter: ToggleType<T>,
-): ToggleType<T> {
+	filter: ToggleFilter<T>,
+): ToggleFilter<T> {
 	return {...filter, enabled: false}
 }
 
 function updateListFilter<T extends object>(
-	filter: ListType<T>,
-	option?: ListItemSpecType,
-): ListType<T> {
+	filter: ListFilter<T>,
+	option?: ListSpecItem,
+): ListFilter<T> {
 	// easier to just clone the filter and mutate than avoid mutations
 	let newFilter = cloneDeep(filter)
 

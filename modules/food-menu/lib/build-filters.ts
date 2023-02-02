@@ -5,10 +5,10 @@ import type {
 	ProcessedMealType,
 } from '../types'
 import type {
-	FilterType,
-	ListType,
-	PickerType,
-	ToggleType,
+	Filter,
+	ListFilter,
+	PickerFilter,
+	ToggleFilter,
 } from '@frogpond/filter/types'
 import {decode, fastGetTrimmedText} from '@frogpond/html-lib'
 import {chooseMeal, EMPTY_MEAL} from './choose-meal'
@@ -18,7 +18,7 @@ export function buildFilters(
 	corIcons: MasterCorIconMapType,
 	meals: ProcessedMealType[],
 	now?: Moment,
-): FilterType<MenuItemType>[] {
+): Filter<MenuItemType>[] {
 	// Format the items for the stations filter
 	const stations = meals.flatMap((meal) => meal.stations)
 	const stationLabels = new Set(stations.map((station) => station.label))
@@ -57,7 +57,7 @@ export function buildFilters(
 			apply: {
 				key: 'special',
 			},
-		} as ToggleType<MenuItemType>,
+		} as ToggleFilter<MenuItemType>,
 		{
 			type: 'picker',
 			key: 'meals',
@@ -70,7 +70,7 @@ export function buildFilters(
 			apply: {
 				key: 'label',
 			},
-		} as PickerType<MenuItemType>,
+		} as PickerFilter<MenuItemType>,
 		{
 			type: 'list',
 			key: 'stations',
@@ -85,7 +85,7 @@ export function buildFilters(
 			apply: {
 				key: 'station',
 			},
-		} as ListType<MenuItemType>,
+		} as ListFilter<MenuItemType>,
 		{
 			type: 'list',
 			key: 'dietary-restrictions',
@@ -101,6 +101,6 @@ export function buildFilters(
 			apply: {
 				key: 'cor_icon',
 			},
-		} as ListType<MenuItemType>,
+		} as ListFilter<MenuItemType>,
 	]
 }

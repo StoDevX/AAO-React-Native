@@ -1,5 +1,5 @@
 import * as React from 'react'
-import type {FilterType} from './types'
+import type {Filter} from './types'
 import {
 	Platform,
 	StyleProp,
@@ -13,9 +13,9 @@ import Icon from 'react-native-vector-icons/Ionicons'
 import * as c from '@frogpond/colors'
 
 type Props<T extends object> = {
-	filter: FilterType<T>
+	filter: Filter<T>
 	label: string
-	onRemove: (filter: FilterType<T>) => void
+	onRemove: (filter: Filter<T>) => void
 	style?: StyleProp<ViewStyle>
 }
 

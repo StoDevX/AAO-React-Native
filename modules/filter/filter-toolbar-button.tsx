@@ -9,7 +9,7 @@ import {
 	ViewStyle,
 } from 'react-native'
 import Icon from 'react-native-vector-icons/Ionicons'
-import type {FilterType} from './types'
+import type {Filter} from './types'
 import {FilterPopover} from './filter-popover'
 import * as c from '@frogpond/colors'
 import {Touchable} from '@frogpond/touchable'
@@ -44,9 +44,9 @@ const ICON_NAME = Platform.select({
 })
 
 type Props<T extends object> = {
-	filter: FilterType<T>
+	filter: Filter<T>
 	isActive: boolean
-	onPopoverDismiss: (filter: FilterType<T>) => unknown
+	onPopoverDismiss: (filter: Filter<T>) => unknown
 	style?: StyleProp<ViewStyle>
 	title: string
 }

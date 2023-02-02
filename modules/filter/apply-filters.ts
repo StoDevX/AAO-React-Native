@@ -1,10 +1,10 @@
-import type {FilterType, ToggleType, ListType, ListItemSpecType} from './types'
+import type {Filter, ToggleFilter, ListFilter, ListSpecItem} from './types'
 import difference from 'lodash/difference'
 import intersection from 'lodash/intersection'
 import {isPlainObject, values} from 'lodash'
 
 export function applyFiltersToItem<T extends object>(
-	filters: FilterType<T>[],
+	filters: Filter<T>[],
 	item: T,
 ): boolean {
 	// Given a list of filters, return the result of running all of those
@@ -13,7 +13,7 @@ export function applyFiltersToItem<T extends object>(
 }
 
 export function applyFilter<T extends object>(
-	filter: FilterType<T>,
+	filter: Filter<T>,
 	item: T,
 ): boolean {
 	// if the filter is disabled, we don't want to filter at all, so we return
@@ -34,7 +34,7 @@ export function applyFilter<T extends object>(
 }
 
 export function applyToggleFilter<T extends object>(
-	filter: ToggleType<T>,
+	filter: ToggleFilter<T>,
 	item: T,
 ): boolean {
 	// Dereference the value-to-check
@@ -49,7 +49,7 @@ function isArrayOfString(arr: unknown): arr is Array<string> {
 }
 
 export function applyListFilter<T extends object>(
-	filter: ListType<T>,
+	filter: ListFilter<T>,
 	item: T,
 ): boolean {
 	// Dereference the value-to-check
@@ -81,7 +81,7 @@ export function applyListFilter<T extends object>(
 }
 
 export function applyOrListFilter(
-	filterValue: ListItemSpecType[],
+	filterValue: ListSpecItem[],
 	itemValue: string[],
 ): boolean {
 	// An item passes if its value is in the filter's selected items array
@@ -91,7 +91,7 @@ export function applyOrListFilter(
 }
 
 export function applyAndListFilter(
-	filterValue: ListItemSpecType[],
+	filterValue: ListSpecItem[],
 	itemValue: string[],
 ): boolean {
 	// Check that the number of different items between the two lists is 0, to

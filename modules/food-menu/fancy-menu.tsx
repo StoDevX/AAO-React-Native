@@ -11,7 +11,7 @@ import type {
 } from './types'
 import size from 'lodash/size'
 import {ListSectionHeader, ListSeparator} from '@frogpond/lists'
-import type {FilterType} from '@frogpond/filter'
+import type {Filter} from '@frogpond/filter'
 import {applyFiltersToItem} from '@frogpond/filter'
 import {NoticeView} from '@frogpond/notice'
 import {FilterMenuToolbar as FilterToolbar} from './filter-menu-toolbar'
@@ -22,7 +22,7 @@ import {useNavigation} from '@react-navigation/native'
 import type {Moment} from 'moment'
 
 type FilterFunc = (
-	filters: Array<FilterType<MenuItemType>>,
+	filters: Array<Filter<MenuItemType>>,
 	item: MenuItemType,
 ) => boolean
 
@@ -56,14 +56,14 @@ const LEFT_MARGIN = 28
 const Separator = () => <ListSeparator spacing={{left: LEFT_MARGIN}} />
 
 const areSpecialsFiltered = (
-	filters: Array<FilterType<MenuItemType>>,
+	filters: Array<Filter<MenuItemType>>,
 ): boolean => Boolean(filters.find(isSpecialsFilter))
 
-const isSpecialsFilter = (f: FilterType<MenuItemType>): boolean =>
+const isSpecialsFilter = (f: Filter<MenuItemType>): boolean =>
 	f.enabled && f.type === 'toggle' && f.spec.label === 'Only Show Specials'
 
 const groupMenuData = (args: {
-	filters: Array<FilterType<MenuItemType>>
+	filters: Array<Filter<MenuItemType>>
 	stations: Array<StationMenuType>
 	foodItems: MenuItemContainerType
 	applyFilters: FilterFunc
@@ -93,7 +93,7 @@ export function FancyMenu(props: Props): JSX.Element {
 
 	let navigation = useNavigation()
 
-	const [filters, setFilters] = useState<FilterType<MenuItemType>[]>([])
+	const [filters, setFilters] = useState<Filter<MenuItemType>[]>([])
 
 	const meal = chooseMeal(meals, filters, now)
 	const {label: mealName, stations} = meal

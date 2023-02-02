@@ -1,4 +1,4 @@
-import type {FilterType} from '@frogpond/filter'
+import type {Filter} from '@frogpond/filter'
 import {
 	formatFilterCombo,
 	type FilterComboType,
@@ -26,7 +26,7 @@ const slice = createSlice({
 	reducers: {
 		updateRecentFilters(
 			state,
-			action: PayloadAction<FilterType<CourseType>[]>,
+			action: PayloadAction<Filter<CourseType>[]>,
 		) {
 			const newRecentFilter = formatFilterCombo(action.payload)
 			const recentFilters = state.recentFilters

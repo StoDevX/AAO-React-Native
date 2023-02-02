@@ -8,7 +8,7 @@ import {LoadingView} from '@frogpond/notice'
 import type {CourseType} from '../../../lib/course-search'
 import {useAppDispatch} from '../../../redux'
 import {applyFiltersToItem} from '@frogpond/filter'
-import {FilterType} from '@frogpond/filter'
+import {Filter} from '@frogpond/filter'
 import {useFilters} from './lib/build-filters'
 import {RouteProp, useNavigation, useRoute} from '@react-navigation/native'
 import {ChangeTextEvent, RootStackParamList} from '../../../navigation/types'
@@ -27,9 +27,9 @@ import {UseQueryResult} from '@tanstack/react-query'
 
 function doSearch(args: {
 	query: string
-	filters: Array<FilterType<CourseType>>
+	filters: Array<Filter<CourseType>>
 	courses: Array<CourseType>
-	applyFilters: (filters: FilterType<CourseType>[], item: CourseType) => boolean
+	applyFilters: (filters: Filter<CourseType>[], item: CourseType) => boolean
 }) {
 	let {query, filters, courses, applyFilters} = args
 
@@ -71,7 +71,7 @@ export const CourseSearchResultsView = (): JSX.Element => {
 		isLoading: filtersLoading,
 	} = useFilters()
 
-	let [filters, setFilters] = React.useState<FilterType<CourseType>[]>(
+	let [filters, setFilters] = React.useState<Filter<CourseType>[]>(
 		initialFilters.length ? initialFilters : basicFilters,
 	)
 
@@ -107,7 +107,7 @@ export const CourseSearchResultsView = (): JSX.Element => {
 	)
 
 	let updateFilter = React.useCallback(
-		(filter: FilterType<CourseType>) => {
+		(filter: Filter<CourseType>) => {
 			let edited = filters.map((f) => (f.key !== filter.key ? f : filter))
 			setFilters(edited)
 		},

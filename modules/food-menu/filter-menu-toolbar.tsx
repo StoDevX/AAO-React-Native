@@ -1,7 +1,7 @@
 import * as React from 'react'
 import {StyleSheet, Text, View} from 'react-native'
 import type {Moment} from 'moment'
-import type {FilterType} from '@frogpond/filter'
+import type {Filter} from '@frogpond/filter'
 import {FilterToolbar, FilterToolbarButton} from '@frogpond/filter'
 import {Toolbar} from '@frogpond/toolbar'
 import * as c from '@frogpond/colors'
@@ -25,8 +25,8 @@ type Props<T extends object> = {
 	date: Moment
 	isOpen: boolean
 	title?: string
-	onPopoverDismiss: (filter: FilterType<T>) => void
-	filters: FilterType<T>[]
+	onPopoverDismiss: (filter: Filter<T>) => void
+	filters: Filter<T>[]
 }
 
 export function FilterMenuToolbar<T extends object>({

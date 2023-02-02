@@ -1,5 +1,5 @@
 import {Image, StyleSheet, Text} from 'react-native'
-import type {ListItemSpecType, ListType} from './types'
+import type {ListSpecItem, ListFilter} from './types'
 import {Cell, Section} from '@frogpond/tableview'
 import {Column} from '@frogpond/layout'
 import * as c from '@frogpond/colors'
@@ -11,8 +11,8 @@ import * as React from 'react'
 import {useCallback} from 'react'
 
 type Props<T extends object> = {
-	filter: ListType<T>
-	onChange: (filter: ListType<T>) => void
+	filter: ListFilter<T>
+	onChange: (filter: ListFilter<T>) => void
 }
 
 export function ListSection<T extends object>({
@@ -25,7 +25,7 @@ export function ListSection<T extends object>({
 	let {caption = `Show items with ${quantifier} of these options.`} = spec
 
 	let buttonPushed = useCallback(
-		(tappedValue: ListItemSpecType) => {
+		(tappedValue: ListSpecItem) => {
 			let result
 
 			if (mode === 'OR' && selected.length === options.length) {
@@ -58,7 +58,7 @@ export function ListSection<T extends object>({
 	)
 
 	let showAll = useCallback(() => {
-		let result: ListItemSpecType[]
+		let result: ListSpecItem[]
 
 		if (selected.length === options.length) {
 			// when all items are selected: uncheck them all
