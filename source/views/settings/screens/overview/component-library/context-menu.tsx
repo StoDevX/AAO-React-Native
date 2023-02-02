@@ -11,7 +11,7 @@ const SingleMenu = (): JSX.Element => {
 		<Cell
 			cellAccessoryView={
 				<ContextMenu
-					actions={['bird', 'cat', 'cow', 'dog', 'cow']}
+					actions={['bird', 'cat', 'cow', 'dog']}
 					isMenuPrimaryAction={true}
 					onPressMenuItem={setValue}
 					title="Select an animal."

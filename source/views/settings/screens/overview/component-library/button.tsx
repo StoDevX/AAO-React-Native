@@ -1,5 +1,6 @@
 import * as React from 'react'
 import {Alert, ScrollView, StyleSheet} from 'react-native'
+import * as c from '@frogpond/colors'
 import {TableView, Section, Cell} from '@frogpond/tableview'
 import {Button} from '@frogpond/button'
 import {ButtonCell} from '@frogpond/tableview/cells'
@@ -37,7 +38,7 @@ const ButtonCellExample = (): JSX.Element => {
 			<ButtonCell
 				accessoryIcon="school"
 				onPress={() => undefined}
-				textStyle={{color: 'red'}}
+				textStyle={{color: c.red}}
 				title="Accessory, textstyle"
 			/>
 
@@ -45,7 +46,7 @@ const ButtonCellExample = (): JSX.Element => {
 				accessoryIcon="school"
 				disabled={true}
 				onPress={() => undefined}
-				textStyle={{color: 'red'}}
+				textStyle={{color: c.red}}
 				title="Disabled, textstyle, accessory"
 			/>
 
