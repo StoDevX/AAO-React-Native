@@ -1,9 +1,11 @@
 import * as React from 'react'
-import {Alert, ScrollView, StyleSheet} from 'react-native'
+import {Alert} from 'react-native'
+
 import * as c from '@frogpond/colors'
-import {TableView, Section, Cell} from '@frogpond/tableview'
+import {Section, Cell} from '@frogpond/tableview'
 import {Button} from '@frogpond/button'
 import {ButtonCell} from '@frogpond/tableview/cells'
+import {LibraryWrapper} from './base/library-wrapper'
 
 interface RowProps {
 	title: string
@@ -92,24 +94,16 @@ const ButtonExample = (): JSX.Element => {
 	)
 }
 
-export const ButtonLibrary = (): JSX.Element => {
-	return (
-		<ScrollView contentContainerStyle={styles.container}>
-			<TableView>
-				<Section header="@frogpond/tableview/cells">
-					<ButtonCellExample />
-				</Section>
+export const ButtonLibrary = (): JSX.Element => (
+	<LibraryWrapper>
+		<>
+			<Section header="@frogpond/tableview/cells">
+				<ButtonCellExample />
+			</Section>
 
-				<Section header="@frogpond/button">
-					<ButtonExample />
-				</Section>
-			</TableView>
-		</ScrollView>
-	)
-}
-
-const styles = StyleSheet.create({
-	container: {
-		paddingVertical: 20,
-	},
-})
+			<Section header="@frogpond/button">
+				<ButtonExample />
+			</Section>
+		</>
+	</LibraryWrapper>
+)
