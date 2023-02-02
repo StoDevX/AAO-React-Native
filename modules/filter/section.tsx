@@ -19,7 +19,7 @@ export function FilterSection<T extends object>({
 	}
 
 	if (filter.type === 'list') {
-		if (!filter.spec.options.length) {
+		if (!filter.config.options.length) {
 			return null
 		}
 
@@ -31,7 +31,7 @@ export function FilterSection<T extends object>({
 	}
 
 	if (filter.type === 'picker') {
-		if (filter.spec.options.length < 2) {
+		if (filter.config.options.length < 2) {
 			return null
 		}
 

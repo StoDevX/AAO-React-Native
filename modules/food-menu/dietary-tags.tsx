@@ -23,8 +23,9 @@ type Args = {
 
 export function DietaryTags({corIcons, dietary, style}: Args): JSX.Element {
 	// filter the mapping of all icons by just the icons provided by this item
-	const dietaryKeys = new Set(Object.keys(dietary))
-	const filtered = Object.entries(corIcons).filter(([k]) => dietaryKeys.has(k))
+	const filtered = Object.entries(corIcons).filter(([k]) =>
+		Object.prototype.hasOwnProperty.call(dietary, k),
+	)
 
 	// turn the remaining items into images
 	const tags = filtered.map(([key, dietaryIcon]) => (

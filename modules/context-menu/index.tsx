@@ -14,7 +14,7 @@ interface ContextMenuProps {
 	disabled?: boolean
 	isMenuPrimaryAction?: boolean
 	onPress?: () => void
-	onPressMenuItem: (menuKey: string) => void | Promise<void>
+	onPressMenuItem: (actionKey: string) => void | Promise<void>
 	title: string
 }
 

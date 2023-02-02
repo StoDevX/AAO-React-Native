@@ -44,7 +44,7 @@ const groupStreamsByCategoryAndDate = (stream: StreamType) => {
 
 const getEnabledCategories = <T extends object>(filters: ListFilter<T>[]) => {
 	return filters.flatMap((filter: ListFilter<T>) => {
-		let filterSelections: ListFilter<T>['spec']['selected'] = filter.spec.selected
+		let filterSelections: ListFilter<T>['config']['selected'] = filter.config.selected
 		return filterSelections.flatMap((spec) => spec.title)
 	})
 }
@@ -95,7 +95,7 @@ export const StreamListView = (): JSX.Element => {
 				type: 'list',
 				key: 'category',
 				enabled: true,
-				spec: {
+				config: {
 					title: 'Categories',
 					options: filterCategories,
 					selected: filterCategories,
@@ -136,7 +136,7 @@ export const StreamListView = (): JSX.Element => {
 			ListEmptyComponent={
 				isLoading ? (
 					<LoadingView />
-				) : filters.some((f) => f.spec.selected.length) ? (
+				) : filters.some((f) => f.config.selected.length) ? (
 					<NoticeView text="No streams to show. Try changing the filters." />
 				) : (
 					<NoticeView text="No streams." />

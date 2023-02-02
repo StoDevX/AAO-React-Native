@@ -8,6 +8,7 @@ export type MenuItemType = {
 	connector: string
 	cor_icon: ItemCorIconMapType
 	description: string
+	dietary: string[] // keyof MasterCorIcon[]
 	id: NumericStringType
 	label: string
 	monotony: MonotonyContainer

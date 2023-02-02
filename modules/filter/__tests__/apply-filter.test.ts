@@ -8,7 +8,7 @@ it('should return `true` if the filter is disabled', () => {
 		type: 'list',
 		key: 'key',
 		enabled: false,
-		spec: {
+		config: {
 			title: 'title',
 			options: filterValue('1', '2', '3'),
 			selected: [],

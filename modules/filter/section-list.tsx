@@ -1,5 +1,5 @@
 import {Image, StyleSheet, Text} from 'react-native'
-import type {ListSpecItem, ListFilter} from './types'
+import type {ListMenuItem, ListFilter} from './types'
 import {Cell, Section} from '@frogpond/tableview'
 import {Column} from '@frogpond/layout'
 import * as c from '@frogpond/colors'
@@ -19,13 +19,13 @@ export function ListSection<T extends object>({
 	filter,
 	onChange,
 }: Props<T>): JSX.Element {
-	let {spec} = filter
+	let {config: spec} = filter
 	let {title = '', options, selected, mode} = spec
 	let quantifier = mode === 'AND' ? 'all' : 'any'
 	let {caption = `Show items with ${quantifier} of these options.`} = spec
 
 	let buttonPushed = useCallback(
-		(tappedValue: ListSpecItem) => {
+		(tappedValue: ListMenuItem) => {
 			let result
 
 			if (mode === 'OR' && selected.length === options.length) {
@@ -51,14 +51,14 @@ export function ListSection<T extends object>({
 			onChange({
 				...filter,
 				enabled: enabled,
-				spec: {...spec, selected: result},
+				config: {...spec, selected: result},
 			})
 		},
 		[filter, mode, onChange, options.length, selected, spec],
 	)
 
 	let showAll = useCallback(() => {
-		let result: ListSpecItem[]
+		let result: ListMenuItem[]
 
 		if (selected.length === options.length) {
 			// when all items are selected: uncheck them all
@@ -71,7 +71,7 @@ export function ListSection<T extends object>({
 		onChange({
 			...filter,
 			enabled: result.length !== options.length,
-			spec: {...spec, selected: result},
+			config: {...spec, selected: result},
 		})
 	}, [filter, onChange, options, selected.length, spec])
 

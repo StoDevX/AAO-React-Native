@@ -14,7 +14,7 @@ export function PickerSection<T extends object>({
 	filter,
 	onChange,
 }: Props<T>): JSX.Element {
-	let {spec} = filter
+	let {config: spec} = filter
 	let {title = '', caption = '', options, selected} = spec
 
 	return (
@@ -22,7 +22,7 @@ export function PickerSection<T extends object>({
 			<Picker
 				onValueChange={(itemValue, itemIndex) => {
 					let pickedItem = spec.options[itemIndex]
-					onChange({...filter, spec: {...spec, selected: pickedItem}})
+					onChange({...filter, config: {...spec, selected: pickedItem}})
 				}}
 				selectedValue={JSON.stringify(selected || options[0])}
 				style={styles.picker}

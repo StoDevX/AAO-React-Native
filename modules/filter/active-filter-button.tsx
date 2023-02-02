@@ -12,14 +12,14 @@ import {
 import Icon from 'react-native-vector-icons/Ionicons'
 import * as c from '@frogpond/colors'
 
-type Props<T extends object> = {
+type Props<T> = {
 	filter: Filter<T>
 	label: string
 	onRemove: (filter: Filter<T>) => void
 	style?: StyleProp<ViewStyle>
 }
 
-export function ActiveFilterButton<T extends object>({
+export function ActiveFilterButton<T>({
 	filter,
 	label,
 	onRemove,

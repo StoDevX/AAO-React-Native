@@ -65,8 +65,11 @@ export function useBonAppMenu(
 	return useQuery({
 		queryKey: menuKeys.bonAppCcc(buildMenuPath(cafeParam)),
 		queryFn: async ({queryKey: [_group, _bonapp, cafePath], signal}) => {
-			let response = await client.get(cafePath, {signal}).json()
-			return response as EditedBonAppMenuInfoType
+			let response = await client.get(cafePath, {signal}).json() as EditedBonAppMenuInfoType
+			Object.entries(response.items).forEach(([_key, value]) => {
+				value.dietary = Object.keys(value.cor_icon)
+			})
+			return response
 		},
 		staleTime: 1000 * 60 * 60, // 1 hour
 	})

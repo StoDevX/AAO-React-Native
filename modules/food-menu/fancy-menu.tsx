@@ -1,5 +1,5 @@
-import * as React from 'react'
-import {useEffect, useState} from 'react'
+import React from 'react'
+import {useState, useMemo} from 'react'
 import {SectionList, StyleSheet} from 'react-native'
 import * as c from '@frogpond/colors'
 import type {
@@ -11,20 +11,27 @@ import type {
 } from './types'
 import size from 'lodash/size'
 import {ListSectionHeader, ListSeparator} from '@frogpond/lists'
-import type {Filter} from '@frogpond/filter'
+import {Filter, FilterToolbar, isFilterEnabled} from '@frogpond/filter'
 import {applyFiltersToItem} from '@frogpond/filter'
 import {NoticeView} from '@frogpond/notice'
-import {FilterMenuToolbar as FilterToolbar} from './filter-menu-toolbar'
+import {FilterMenuToolbar} from './filter-menu-toolbar'
 import {FoodItemRow} from './food-item-row'
-import {chooseMeal} from './lib/choose-meal'
-import {buildFilters} from './lib/build-filters'
+import {buildFilters, SPECIALS_FILTER_NAME} from './lib/build-filters'
 import {useNavigation} from '@react-navigation/native'
 import type {Moment} from 'moment'
+import {findMeal} from './lib/find-menu'
 
 type FilterFunc = (
 	filters: Array<Filter<MenuItemType>>,
 	item: MenuItemType,
 ) => boolean
+
+export const EMPTY_MEAL: ProcessedMealType = {
+	label: '',
+	stations: [],
+	starttime: '0:00',
+	endtime: '0:00',
+}
 
 type ReactProps = {
 	cafeMessage?: string | null
@@ -55,12 +62,10 @@ const styles = StyleSheet.create({
 const LEFT_MARGIN = 28
 const Separator = () => <ListSeparator spacing={{left: LEFT_MARGIN}} />
 
-const areSpecialsFiltered = (
-	filters: Array<Filter<MenuItemType>>,
-): boolean => Boolean(filters.find(isSpecialsFilter))
-
-const isSpecialsFilter = (f: Filter<MenuItemType>): boolean =>
-	f.enabled && f.type === 'toggle' && f.spec.label === 'Only Show Specials'
+const areSpecialsFiltered = (filters: Filter<MenuItemType>[]): boolean =>
+	filters.some(
+		(f) => f.type === 'toggle' && f.active && f.title === SPECIALS_FILTER_NAME,
+	)
 
 const groupMenuData = (args: {
 	filters: Array<Filter<MenuItemType>>
@@ -88,37 +93,29 @@ const groupMenuData = (args: {
 }
 
 export function FancyMenu(props: Props): JSX.Element {
-	const {now, meals, cafeMessage, foodItems, menuCorIcons} = props
-	const applyFilters = props.applyFilters ?? applyFiltersToItem
-
 	let navigation = useNavigation()
 
-	const [filters, setFilters] = useState<Filter<MenuItemType>[]>([])
+	let {now, meals, cafeMessage, foodItems, menuCorIcons} = props
+	let applyFilters = props.applyFilters ?? applyFiltersToItem
 
-	const meal = chooseMeal(meals, filters, now)
-	const {label: mealName, stations} = meal
-	const stationsByLabel = new Map(
+	let [selectedMeal, setSelectedMeal] = useState(() => findMeal(meals, now))
+	let [filters, setFilters] = useState(() =>
+		buildFilters(Object.values(foodItems), menuCorIcons, selectedMeal),
+	)
+
+	const anyFiltersEnabled = filters.some(isFilterEnabled)
+	const specialsFilterEnabled = areSpecialsFiltered(filters)
+
+	const {label: mealName, stations} = selectedMeal || EMPTY_MEAL
+	const stationsByLabel = Object.fromEntries(
 		stations.map((station) => [station.label, station]),
 	)
 
-	const [groupedMenuData, setGroupedMenuData] = useState<
-		{title: string; data: Array<MenuItemType>}[]
-	>([])
-
-	const anyFiltersEnabled = filters.some((f) => f.enabled)
-	const specialsFilterEnabled = areSpecialsFiltered(filters)
-
-	// reset the filters when the data changes
-	useEffect(() => {
-		let foodItemsArray = Object.values(foodItems)
-		setFilters(buildFilters(foodItemsArray, menuCorIcons, [meal]))
-	}, [foodItems, menuCorIcons, meal])
-
 	// re-group the food when the data changes
-	useEffect(() => {
-		let grouped = groupMenuData({stations, filters, applyFilters, foodItems})
-		setGroupedMenuData(grouped)
-	}, [applyFilters, filters, foodItems, stations])
+	let groupedMenuData = useMemo(
+		() => groupMenuData({stations, filters, applyFilters, foodItems}),
+		[applyFilters, filters, foodItems, stations],
+	)
 
 	let message = 'No items to show.'
 	if (cafeMessage) {
@@ -134,18 +131,17 @@ export function FancyMenu(props: Props): JSX.Element {
 	const isOpen = Object.keys(foodItems).length !== 0
 
 	const header = (
-		<FilterToolbar
-			date={now}
-			filters={filters}
-			isOpen={isOpen}
-			onPopoverDismiss={(newFilter) => {
-				let edited = filters.map((f) =>
-					f.key === newFilter.key ? newFilter : f,
-				)
-				setFilters(edited)
-			}}
-			title={mealName}
-		/>
+		<>
+			<FilterMenuToolbar
+				date={now}
+				isOpen={isOpen}
+				meals={meals}
+				onMealSelection={setSelectedMeal}
+				selectedMeal={selectedMeal}
+				title={mealName}
+			/>
+			<FilterToolbar filters={filters} onChange={setFilters} />
+		</>
 	)
 
 	return (
@@ -173,19 +169,17 @@ export function FancyMenu(props: Props): JSX.Element {
 			}}
 			renderSectionHeader={(info) => {
 				const title = info.section.title
-				const note = stationsByLabel.get(title)?.note ?? ''
 
 				return (
 					<ListSectionHeader
 						spacing={{left: LEFT_MARGIN}}
-						subtitle={note}
+						subtitle={stationsByLabel[title]?.note ?? ''}
 						title={title}
 					/>
 				)
 			}}
 			sections={groupedMenuData}
 			style={styles.inner}
-			windowSize={5}
 		/>
 	)
 }

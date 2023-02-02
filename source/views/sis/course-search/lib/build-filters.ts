@@ -49,7 +49,7 @@ export function useFilters(): {
 			type: 'toggle',
 			key: 'spaceAvailable',
 			enabled: false,
-			spec: {
+			config: {
 				label: 'Space Available',
 				title: 'Enrollment',
 				caption: 'When activated, shows only courses with space available.',
@@ -62,7 +62,7 @@ export function useFilters(): {
 			type: 'list',
 			key: 'term',
 			enabled: false,
-			spec: {
+			config: {
 				title: 'Terms',
 				options: allTerms,
 				mode: 'OR',
@@ -77,7 +77,7 @@ export function useFilters(): {
 			type: 'list',
 			key: 'gereqs',
 			enabled: false,
-			spec: {
+			config: {
 				title: 'GEs',
 				showImages: false,
 				options: allGEs,
@@ -93,7 +93,7 @@ export function useFilters(): {
 			type: 'list',
 			key: 'department',
 			enabled: false,
-			spec: {
+			config: {
 				title: 'Department',
 				showImages: false,
 				options: allDepartments,
@@ -109,7 +109,7 @@ export function useFilters(): {
 			type: 'list',
 			key: 'level',
 			enabled: false,
-			spec: {
+			config: {
 				title: 'Level',
 				showImages: false,
 				options: courseLevelOptions,
@@ -125,7 +125,7 @@ export function useFilters(): {
 			type: 'toggle',
 			key: 'status',
 			enabled: false,
-			spec: {
+			config: {
 				label: 'Open Courses',
 				title: 'Status',
 				caption:
@@ -140,7 +140,7 @@ export function useFilters(): {
 			type: 'toggle',
 			key: 'type',
 			enabled: false,
-			spec: {
+			config: {
 				label: 'Lab Only',
 				title: 'Lab',
 				caption: 'Allows you to only see labs.',

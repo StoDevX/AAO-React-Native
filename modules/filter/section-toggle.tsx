@@ -12,7 +12,7 @@ export function SingleToggleSection<T extends object>({
 	filter,
 	onChange,
 }: Props<T>): JSX.Element {
-	let {spec, enabled} = filter
+	let {config: spec, enabled} = filter
 	let {title = '', caption, label} = spec
 	return (
 		<Section footer={caption} header={title.toUpperCase()}>

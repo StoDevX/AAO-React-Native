@@ -31,7 +31,7 @@ let getStoryCategories = (story: StoryType) => {
 let filterStories = (entries: StoryType[], filters: ListFilter<StoryType>[]) => {
 	return entries.filter((story) => {
 		let enabledCategories = filters.flatMap((f: ListFilter<StoryType>) =>
-			f.spec.selected.flatMap((s) => s.title),
+			f.config.selected.flatMap((s) => s.title),
 		)
 
 		if (enabledCategories.length === 0) {
@@ -75,7 +75,7 @@ export const NewsList = (props: Props): JSX.Element => {
 				type: 'list',
 				key: 'category',
 				enabled: true,
-				spec: {
+				config: {
 					title: 'Categories',
 					options: filterCategories,
 					selected: filterCategories,
@@ -120,7 +120,7 @@ export const NewsList = (props: Props): JSX.Element => {
 			ListEmptyComponent={
 				isLoading ? (
 					<LoadingView />
-				) : filters.some((f) => f.spec.selected.length) ? (
+				) : filters.some((f) => f.config.selected.length) ? (
 					<NoticeView text="No stories to show. Try changing the filters." />
 				) : (
 					<NoticeView text="No news stories." />

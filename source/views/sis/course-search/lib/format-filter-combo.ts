@@ -25,7 +25,7 @@ function describeFilter(
 	switch (f.key) {
 		case 'level': {
 			let levelFilter = filterListSpecs(filters).find((f) => f.key === 'level')
-			let selectedLevels = levelFilter ? levelFilter.spec.selected : []
+			let selectedLevels = levelFilter ? levelFilter.config.selected : []
 			return selectedLevels.map((level) => level.title).join('/') + ' Level'
 		}
 		case 'spaceAvailable': {
@@ -39,20 +39,20 @@ function describeFilter(
 		}
 		case 'term': {
 			let termFilter = filterListSpecs(filters).find((f) => f.key === 'term')
-			let selectedTerms = termFilter ? termFilter.spec.selected : []
+			let selectedTerms = termFilter ? termFilter.config.selected : []
 			let terms = selectedTerms.map((t) => parseInt(t.title))
 			return formatTerms(terms)
 		}
 		case 'gereqs': {
 			let geFilter = filterListSpecs(filters).find((f) => f.key === 'gereqs')
-			let selectedGEs = geFilter ? geFilter.spec.selected : []
+			let selectedGEs = geFilter ? geFilter.config.selected : []
 			return selectedGEs.map((ge) => ge.title).join('/')
 		}
 		case 'department': {
 			let deptFilter = filterListSpecs(filters).find(
 				(f) => f.key === 'department',
 			)
-			let selectedDepts = deptFilter ? deptFilter.spec.selected : []
+			let selectedDepts = deptFilter ? deptFilter.config.selected : []
 			return selectedDepts.map((dept) => dept.title).join('/')
 		}
 		default:
