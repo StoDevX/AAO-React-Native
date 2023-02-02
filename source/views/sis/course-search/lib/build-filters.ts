@@ -44,112 +44,71 @@ export function useFilters(): {
 	let allDepartments = departments.map((dep) => ({title: dep}))
 	let courseLevelOptions = [{title: '100'}, {title: '200'}, {title: '300'}]
 
+	let spaceAvailableFilter: ToggleFilter<CourseType> = {
+		type: 'toggle',
+		active: false,
+		field: 'spaceAvailable',
+		title: 'Space Available',
+	}
+
+	let termFilter: ListFilter<CourseType> = {
+		type: 'list',
+		field: 'term',
+		title: 'Terms',
+		options: allTerms,
+		mode: 'any',
+		selectedIndices: [],
+	}
+
+	let gereqFilter: ListFilter<CourseType> = {
+		type: 'list',
+		field: 'gereqs',
+		title: 'GEs',
+		options: allGEs,
+		mode: 'all',
+		selectedIndices: [],
+	}
+
+	let departmentFilter: ListFilter<CourseType> = {
+		type: 'list',
+		field: 'department',
+		title: 'Department',
+		options: allDepartments,
+		mode: 'any',
+		selectedIndices: [],
+	}
+
+	let levelFilter: ListFilter<CourseType> = {
+		type: 'list',
+		field: 'level',
+		title: 'Level',
+		options: courseLevelOptions,
+		mode: 'any',
+		selectedIndices: [],
+	}
+
+	let courseStatusFilter: ToggleFilter<CourseType> = {
+		type: 'toggle',
+		field: 'isOpen',
+		active: false,
+		title: 'Only Open Courses',
+	}
+
+	let labsFilter: ToggleFilter<CourseType> = {
+		type: 'toggle',
+		field: 'isLab',
+		active: false,
+		title: 'Only Labs',
+	}
+
 	let response = [
-		{
-			type: 'toggle',
-			key: 'spaceAvailable',
-			enabled: false,
-			config: {
-				label: 'Space Available',
-				title: 'Enrollment',
-				caption: 'When activated, shows only courses with space available.',
-			},
-			apply: {
-				key: 'spaceAvailable',
-			},
-		} as ToggleFilter<CourseType>,
-		{
-			type: 'list',
-			key: 'term',
-			enabled: false,
-			config: {
-				title: 'Terms',
-				options: allTerms,
-				mode: 'OR',
-				selected: allTerms,
-				displayTitle: false,
-			},
-			apply: {
-				key: 'term',
-			},
-		} as ListFilter<CourseType>,
-		{
-			type: 'list',
-			key: 'gereqs',
-			enabled: false,
-			config: {
-				title: 'GEs',
-				showImages: false,
-				options: allGEs,
-				mode: 'AND',
-				selected: [],
-				displayTitle: true,
-			},
-			apply: {
-				key: 'gereqs',
-			},
-		} as ListFilter<CourseType>,
-		{
-			type: 'list',
-			key: 'department',
-			enabled: false,
-			config: {
-				title: 'Department',
-				showImages: false,
-				options: allDepartments,
-				mode: 'OR',
-				selected: allDepartments,
-				displayTitle: true,
-			},
-			apply: {
-				key: 'department',
-			},
-		} as ListFilter<CourseType>,
-		{
-			type: 'list',
-			key: 'level',
-			enabled: false,
-			config: {
-				title: 'Level',
-				showImages: false,
-				options: courseLevelOptions,
-				mode: 'OR',
-				selected: courseLevelOptions,
-				displayTitle: true,
-			},
-			apply: {
-				key: 'level',
-			},
-		} as ListFilter<CourseType>,
-		{
-			type: 'toggle',
-			key: 'status',
-			enabled: false,
-			config: {
-				label: 'Open Courses',
-				title: 'Status',
-				caption:
-					'Allows you to either see only courses that are open, or all courses.',
-			},
-			apply: {
-				key: 'status',
-				trueEquivalent: 'O',
-			},
-		} as ToggleFilter<CourseType>,
-		{
-			type: 'toggle',
-			key: 'type',
-			enabled: false,
-			config: {
-				label: 'Lab Only',
-				title: 'Lab',
-				caption: 'Allows you to only see labs.',
-			},
-			apply: {
-				key: 'type',
-				trueEquivalent: 'Lab',
-			},
-		} as ToggleFilter<CourseType>,
+		spaceAvailableFilter,
+		termFilter,
+		gereqFilter,
+		departmentFilter,
+		levelFilter,
+		courseStatusFilter,
+		labsFilter,
 	]
 
 	return {data: response, error: null, isLoading}

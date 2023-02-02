@@ -1,4 +1,5 @@
-import * as React from 'react'
+import React from 'react'
+
 import {StyleSheet, SectionList, ActivityIndicator, Text} from 'react-native'
 import {
 	updateRecentSearches,
@@ -7,7 +8,7 @@ import {
 import {LoadingView} from '@frogpond/notice'
 import type {CourseType} from '../../../lib/course-search'
 import {useAppDispatch} from '../../../redux'
-import {applyFiltersToItem} from '@frogpond/filter'
+import {applyFiltersToItem, isFilterEnabled} from '@frogpond/filter'
 import {Filter} from '@frogpond/filter'
 import {useFilters} from './lib/build-filters'
 import {RouteProp, useNavigation, useRoute} from '@react-navigation/native'
@@ -97,21 +98,13 @@ export const CourseSearchResultsView = (): JSX.Element => {
 			if (delayedQuery?.length) {
 				// if there is text in the search bar, add the text to the Recent Searches list
 				dispatch(updateRecentSearches(delayedQuery))
-			} else if (filters.some((f) => f.enabled)) {
+			} else if (filters.some(isFilterEnabled)) {
 				// if there is at least one active filter, add the filter set to the Recent Filters list
 				dispatch(updateRecentFilters(filters))
 			}
 			navigation.navigate('CourseDetail', {course: data})
 		},
 		[navigation, dispatch, delayedQuery, filters],
-	)
-
-	let updateFilter = React.useCallback(
-		(filter: Filter<CourseType>) => {
-			let edited = filters.map((f) => (f.key !== filter.key ? f : filter))
-			setFilters(edited)
-		},
-		[filters],
 	)
 
 	if (areCoursesInError) {
@@ -162,10 +155,10 @@ export const CourseSearchResultsView = (): JSX.Element => {
 		) : filtersLoading ? (
 			<ActivityIndicator style={styles.spinner} />
 		) : (
-			<FilterToolbar filters={filters} onPopoverDismiss={updateFilter} />
+			<FilterToolbar filters={filters} onChange={setFilters} />
 		)
 
-	let hasActiveFilter = filters.some((f) => f.enabled)
+	let hasActiveFilter = filters.some(isFilterEnabled)
 	let message = hasActiveFilter
 		? 'There were no courses that matched your selected filters. Try a different filter combination.'
 		: query?.length
