@@ -1,17 +1,26 @@
 import {client} from '@frogpond/api'
 import {useQuery, UseQueryResult} from '@tanstack/react-query'
-import {WordType} from './types'
+import {RawWordType, WordType} from './types'
 
 export const keys = {
 	all: ['dictionary'] as const,
 }
 
-export function useDictionary(): UseQueryResult<WordType[], unknown> {
+function groupWords(words: RawWordType[]): WordType[] {
+	return words.map((w) => ({
+		...w,
+		key: w.word,
+		firstLetter: w.word[0],
+	}))
+}
+
+export function useDictionary(): UseQueryResult<WordType[], Error> {
 	return useQuery({
 		queryKey: keys.all,
 		queryFn: async ({signal}) => {
 			let response = await client.get('dictionary', {signal}).json()
 			return (response as {data: WordType[]}).data
 		},
+		select: groupWords,
 	})
 }

@@ -2,7 +2,7 @@ import {client} from '@frogpond/api'
 import {useQuery, UseQueryResult} from '@tanstack/react-query'
 import {JobType} from './types'
 import {toLaxTitleCase as titleCase} from '@frogpond/titlecase'
-import {groupBy, orderBy} from 'lodash'
+import {orderBy} from 'lodash'
 
 export const keys = {
 	all: ['student-work'] as const,
@@ -20,10 +20,7 @@ let sorters: Array<(job: JobType) => string> = [
 
 let ordered: Array<'desc' | 'asc'> = ['desc', 'asc', 'desc']
 
-export function useStudentWorkPostings(): UseQueryResult<
-	{title: string; data: JobType[]}[],
-	unknown
-> {
+export function useStudentWorkPostings(): UseQueryResult<JobType[], Error> {
 	return useQuery({
 		queryKey: keys.all,
 		queryFn: async ({signal}) => {
@@ -33,12 +30,11 @@ export function useStudentWorkPostings(): UseQueryResult<
 			return response.map((job) => ({
 				...job,
 				type: titleCase(job.type),
+				key: `t=${job.type} l=${job.title} u=${job.url}`,
 			})) as JobType[]
 		},
 		select: (data) => {
-			let sorted = orderBy(data, sorters, ordered)
-			let grouped = groupBy(sorted, (j) => j.type)
-			return Object.entries(grouped).map(([title, data]) => ({title, data}))
+			return orderBy(data, sorters, ordered)
 		},
 	})
 }

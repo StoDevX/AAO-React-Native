@@ -103,6 +103,7 @@
     "stream": "0.0.2",
     "timers": "0.1.1",
     "tinycolor2": "1.5.2",
+    "type-fest": "3.5.4",
     "url": "0.11.0",
     "wordwrap": "1.0.0"
   },
