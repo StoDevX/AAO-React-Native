@@ -40,6 +40,8 @@ export type CourseType = {
 	enrolled: number
 	gereqs?: string[]
 	instructors: string[]
+	isOpen: boolean
+	isLab: boolean
 	level: number
 	max: number
 	name: string
