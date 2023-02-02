@@ -30,12 +30,18 @@ import * as stoprint from '../views/stoprint'
 import * as more from '../views/more'
 import * as directory from '../views/directory'
 
-import {RootStackParamList, SettingsStackParamList} from './types'
+import {
+	RootStackParamList,
+	SettingsStackParamList,
+	ComponentLibraryStackParamList,
+} from './types'
 import {NavigationKey as Debug} from '../views/settings/screens/debug'
 import {toLaxTitleCase} from '@frogpond/titlecase'
 
 const Stack = createNativeStackNavigator<RootStackParamList>()
 const SettingsStack = createNativeStackNavigator<SettingsStackParamList>()
+const ComponentLibraryStack =
+	createNativeStackNavigator<ComponentLibraryStackParamList>()
 
 const HomeStackScreens = () => {
 	return (
@@ -299,25 +305,29 @@ const SettingsStackScreens = () => {
 				name="NetworkLogger"
 				options={settings.NetworkLoggerNavigationOptions}
 			/>
+		</SettingsStack.Navigator>
+	)
+}
 
-			{/* Start component library */}
-			<SettingsStack.Screen
+const ComponentLibraryStackScreens = () => {
+	return (
+		<ComponentLibraryStack.Navigator screenOptions={{gestureEnabled: true}}>
+			<ComponentLibraryStack.Screen
 				component={settings.ComponentLibrary}
-				name="ComponentLibrary"
+				name="ComponentLibraryRoot"
 				options={settings.ComponentLibraryNavigationOptions}
 			/>
-			<SettingsStack.Screen
+			<ComponentLibraryStack.Screen
 				component={settings.ButtonLibrary}
 				name="ButtonLibrary"
 				options={{title: 'Buttons'}}
 			/>
-			<SettingsStack.Screen
+			<ComponentLibraryStack.Screen
 				component={settings.ContextMenuLibrary}
 				name="ContextMenuLibrary"
 				options={{title: 'Context Menus'}}
 			/>
-			{/* End component library */}
-		</SettingsStack.Navigator>
+		</ComponentLibraryStack.Navigator>
 	)
 }
 
@@ -327,6 +337,11 @@ export const RootStack = (): JSX.Element => (
 		<SettingsStack.Screen
 			component={SettingsStackScreens}
 			name="Settings"
+			options={{presentation: 'modal'}}
+		/>
+		<ComponentLibraryStack.Screen
+			component={ComponentLibraryStackScreens}
+			name="ComponentLibrary"
 			options={{presentation: 'modal'}}
 		/>
 	</Stack.Navigator>

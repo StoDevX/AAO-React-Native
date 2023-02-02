@@ -106,12 +106,13 @@ export type SettingsStackParamList = {
 	Privacy: undefined
 	Settings: undefined
 	SettingsRoot: undefined
+}
 
-	// Start component library
+export type ComponentLibraryStackParamList = {
+	ComponentLibraryRoot: undefined
 	ComponentLibrary: undefined
 	ButtonLibrary: undefined
 	ContextMenuLibrary: undefined
-	// End component library
 }
 
 export interface ChangeTextEvent {
@@ -128,6 +129,7 @@ declare global {
 	namespace ReactNavigation {
 		interface RootParamList
 			extends RootStackParamList,
-				SettingsStackParamList {}
+				SettingsStackParamList,
+				ComponentLibraryStackParamList {}
 	}
 }
