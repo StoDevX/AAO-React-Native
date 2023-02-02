@@ -14,6 +14,7 @@ import {FilterPopover} from './filter-popover'
 import * as c from '@frogpond/colors'
 import {Touchable} from '@frogpond/touchable'
 import {ContextMenu} from '@frogpond/context-menu'
+import {MenuElementConfig} from 'react-native-ios-context-menu'
 
 const buttonStyles = StyleSheet.create({
 	button: {
@@ -65,14 +66,28 @@ export function FilterToolbarButton<T extends object>(
 		}
 	}
 
-	let actions: string[] =
+	let actions: MenuElementConfig[] =
 		filter.type === 'toggle'
-			? ['Enabled']
+			? [{actionKey: 'enabled', actionTitle: 'Enabled'}]
 			: filter.type === 'picker'
-			? filter.spec.options.map((o) => o.label)
+			? filter.spec.options.map((o) => ({
+					actionKey: o.label,
+					actionTitle: o.label,
+			  }))
 			: filter.type === 'list'
-			? filter.spec.options.map(o => o.title)
-			: ['unknown']
+			? filter.spec.options.map((o) => ({
+					actionKey: o.title,
+					actionTitle: o.title,
+					actionSubtitle: o.detail?.startsWith(o.title) ? o.detail.substring(o.title.length + 2) : o.detail,
+					icon: o.image && typeof o.image ===  'object' && !Array.isArray(o.image) ? {
+						type: 'IMAGE_REMOTE_URL',
+						imageValue: {
+							url: o.image.uri,
+							shouldCache: true,
+						},
+					} : null,
+			  }))
+			: []
 
 	return (
 		<ContextMenu
