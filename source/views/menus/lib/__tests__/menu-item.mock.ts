@@ -13,6 +13,7 @@ export const item: (params: {
 }) => ({
 	connector: '',
 	cor_icon: corIcon,
+	dietary: Object.keys(corIcon),
 	id: '',
 	description: '',
 	label: '',

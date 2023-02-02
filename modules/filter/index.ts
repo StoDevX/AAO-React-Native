@@ -1,5 +1,5 @@
 export type {Filter, ListFilter, ToggleFilter} from './types'
 export {applyFiltersToItem} from './apply-filters'
-export {filterListSpecs, filterToggleSpecs, isFilterEnabled} from './tools'
+export {isListFilter, isToggleFilter, isFilterEnabled} from './tools'
 export {FilterToolbar} from './filter-toolbar'
 export {FilterToolbarButton} from './filter-toolbar-button'

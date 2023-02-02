@@ -1,17 +1,13 @@
 import type {Filter, ListFilter, ToggleFilter} from './types'
 
-export function filterListSpecs<T extends object>(
-	specs: Array<Filter<T>>,
-): Array<ListFilter<T>> {
-	let retval = specs.filter((f) => f.type === 'list')
-	return retval as Array<ListFilter<T>>
+export function isListFilter<T>(filter: Filter<T>): filter is ListFilter<T> {
+	return filter.type === 'list'
 }
 
-export function filterToggleSpecs<T extends object>(
-	specs: Array<Filter<T>>,
-): Array<ToggleFilter<T>> {
-	let retval = specs.filter((f) => f.type === 'toggle')
-	return retval as Array<ToggleFilter<T>>
+export function isToggleFilter<T>(
+	filter: Filter<T>,
+): filter is ToggleFilter<T> {
+	return filter.type === 'toggle'
 }
 
 export function isFilterEnabled<T>(filter: Filter<T>): boolean {

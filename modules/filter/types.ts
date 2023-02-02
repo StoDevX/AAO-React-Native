@@ -23,7 +23,7 @@ export type ToggleFilter<T> = {
 	/** If the filter will be applied */
 	active: boolean
 	/** The field which the filter checks (must be a boolean) */
-	field: ConditionalKeys<T, boolean>
+	field: ConditionalKeys<T, boolean | undefined>
 	/** The title of the filter chip */
 	title: string
 }
@@ -38,7 +38,7 @@ export type ListFilter<T> = {
 	/** The type of the filter */
 	type: 'list'
 	/** The field which the filter checks; must be a `string` or `string[]` */
-	field: ConditionalKeys<T, string | string[]>
+	field: ConditionalKeys<T, string | number | string[] | number[] | undefined>
 	/** The title of the filter chip */
 	title: string
 	/** The subtitle to show inside the menu */

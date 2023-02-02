@@ -28,7 +28,10 @@ let getStoryCategories = (story: StoryType) => {
 	return story.categories.map((c) => trimStoryCateogry(c))
 }
 
-let filterStories = (entries: StoryType[], filters: ListFilter<StoryType>[]) => {
+let filterStories = (
+	entries: StoryType[],
+	filters: ListFilter<StoryType>[],
+) => {
 	return entries.filter((story) => {
 		let enabledCategories = filters.flatMap((f: ListFilter<StoryType>) =>
 			f.config.selected.flatMap((s) => s.title),

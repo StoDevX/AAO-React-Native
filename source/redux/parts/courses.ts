@@ -24,10 +24,7 @@ const slice = createSlice({
 	name: 'courses',
 	initialState,
 	reducers: {
-		updateRecentFilters(
-			state,
-			action: PayloadAction<Filter<CourseType>[]>,
-		) {
+		updateRecentFilters(state, action: PayloadAction<Filter<CourseType>[]>) {
 			const newRecentFilter = formatFilterCombo(action.payload)
 			const recentFilters = state.recentFilters
 
