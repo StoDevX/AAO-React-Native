@@ -1,4 +1,6 @@
 import * as React from 'react'
+import {Platform} from 'react-native'
+import {CloseScreenButton} from '@frogpond/navigation-buttons'
 import {TableView, Section} from '@frogpond/tableview'
 import {PushButtonCell} from '@frogpond/tableview/cells'
 import {useNavigation} from '@react-navigation/native'
@@ -25,4 +27,5 @@ export const ComponentLibrary = (): JSX.Element => {
 
 export const NavigationOptions: NativeStackNavigationOptions = {
 	title: 'Component Library',
+	headerRight: () => Platform.OS === 'ios' && <CloseScreenButton />,
 }
