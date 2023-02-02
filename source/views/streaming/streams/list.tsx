@@ -1,14 +1,18 @@
-import * as React from 'react'
+import React, {useEffect, useMemo, useState} from 'react'
+
 import {StyleSheet, SectionList} from 'react-native'
 import * as c from '@frogpond/colors'
 import {ListSeparator, ListSectionHeader} from '@frogpond/lists'
 import {NoticeView, LoadingView} from '@frogpond/notice'
-import {FilterToolbar, ListFilter} from '@frogpond/filter'
+import {
+	Filter,
+	FilterToolbar,
+	isFilterEnabled,
+	isListFilter,
+} from '@frogpond/filter'
 import {StreamRow} from './row'
 import toPairs from 'lodash/toPairs'
 import groupBy from 'lodash/groupBy'
-import moment from 'moment-timezone'
-import type {Moment} from 'moment-timezone'
 import {toLaxTitleCase as titleCase} from '@frogpond/titlecase'
 import type {StreamType} from './types'
 import {useStreams} from './query'
@@ -27,32 +31,13 @@ const groupStreams = (entries: StreamType[]) => {
 	return toPairs(grouped).map(([title, data]) => ({title, data}))
 }
 
-const groupStreamsByCategoryAndDate = (stream: StreamType) => {
-	let date: Moment = moment(stream.starttime)
-	let dateGroup = date.format('dddd, MMMM Do')
-
-	let group = stream.status.toLowerCase() !== 'live' ? dateGroup : 'Live'
-
-	return {
-		...stream,
-		// force title-case on the stream types, to prevent not-actually-duplicate headings
-		category: titleCase(stream.category),
-		date: date,
-		$groupBy: group,
-	}
-}
-
-const getEnabledCategories = <T extends object>(filters: ListFilter<T>[]) => {
-	return filters.flatMap((filter: ListFilter<T>) => {
-		let filterSelections: ListFilter<T>['config']['selected'] = filter.config.selected
-		return filterSelections.flatMap((spec) => spec.title)
+function getEnabledCategories<T>(filters: Filter<T>[]) {
+	return filters.filter(isListFilter).flatMap((filter) => {
+		return filter.selectedIndices.map((index) => filter.options[index].title)
 	})
 }
 
-const filterStreams = <T extends object>(
-	streams: StreamType[],
-	filters: ListFilter<T>[],
-) => {
+function filterStreams<T>(streams: StreamType[], filters: Filter<T>[]) {
 	let enabledCategories = getEnabledCategories(filters)
 
 	if (enabledCategories.length === 0) {
@@ -72,63 +57,37 @@ export const StreamListView = (): JSX.Element => {
 		isError,
 	} = useStreams()
 
-	let [filters, setFilters] = React.useState<ListFilter<StreamType>[]>([])
-
-	let entries = React.useMemo(() => {
-		return data.map((stream) => groupStreamsByCategoryAndDate(stream))
-	}, [data])
-
-	React.useEffect(() => {
+	let categories = useMemo(() => {
 		let allCategories = data.map((stream) => titleCase(stream.category))
 
 		if (allCategories.length === 0) {
-			return
+			return []
 		}
 
-		let categories = [...new Set(allCategories)].sort()
-		let filterCategories = categories.map((c) => {
-			return {title: c}
-		})
-
-		let streamFilters: ListFilter<StreamType>[] = [
-			{
-				type: 'list',
-				key: 'category',
-				enabled: true,
-				config: {
-					title: 'Categories',
-					options: filterCategories,
-					selected: filterCategories,
-					mode: 'OR',
-					displayTitle: true,
-				},
-				apply: {key: 'category'},
-			},
-		]
-		setFilters(streamFilters)
+		return [...new Set(allCategories)].sort()
 	}, [data])
 
-	if (isError) {
-		return (
-			<NoticeView
-				buttonText="Try Again"
-				onPress={refetch}
-				text={`A problem occured while loading: ${error}`}
-			/>
-		)
-	}
+	let [filters, setFilters] = useState<Filter<StreamType>[]>([])
 
-	const header = (
-		<FilterToolbar
-			filters={filters}
-			onPopoverDismiss={(newFilter) => {
-				let edited = filters.map((f) =>
-					f.key === newFilter.key ? newFilter : f,
-				)
-				setFilters(edited as ListFilter<StreamType>[])
-			}}
-		/>
-	)
+	useEffect(() => {
+		let filterCategories = categories.map((c) => ({title: c}))
+		setFilters([
+			{
+				type: 'list',
+				field: 'category',
+				title: 'Categories',
+				options: filterCategories,
+				selectedIndices: filterCategories.map((_category, index) => index),
+				mode: 'any',
+			},
+		])
+	}, [data, categories])
+
+	let sections = useMemo(() => {
+		return groupStreams(filterStreams(data, filters))
+	}, [data, filters])
+
+	const header = <FilterToolbar filters={filters} onChange={setFilters} />
 
 	return (
 		<SectionList
@@ -136,7 +95,13 @@ export const StreamListView = (): JSX.Element => {
 			ListEmptyComponent={
 				isLoading ? (
 					<LoadingView />
-				) : filters.some((f) => f.config.selected.length) ? (
+				) : isError ? (
+					<NoticeView
+						buttonText="Try Again"
+						onPress={refetch}
+						text={`A problem occured while loading: ${error}`}
+					/>
+				) : filters.some(isFilterEnabled) ? (
 					<NoticeView text="No streams to show. Try changing the filters." />
 				) : (
 					<NoticeView text="No streams." />
@@ -151,7 +116,7 @@ export const StreamListView = (): JSX.Element => {
 			renderSectionHeader={({section: {title}}) => (
 				<ListSectionHeader title={title} />
 			)}
-			sections={groupStreams(filterStreams(entries, filters))}
+			sections={sections}
 			style={styles.listContainer}
 			testID="stream-list"
 		/>

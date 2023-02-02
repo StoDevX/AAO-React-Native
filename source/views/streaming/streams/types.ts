@@ -1,6 +1,4 @@
-import type {Moment} from 'moment-timezone'
-
-export type StreamType = {
+export interface RawStreamType {
 	category: string
 	eid: string
 	iframesrc: string
@@ -14,6 +12,9 @@ export type StreamType = {
 	subtitle?: string
 	thumb: string
 	title: string
-	date: Moment
+}
+
+export interface StreamType extends RawStreamType {
+	renderedDate: string
 	$groupBy?: string
 }
