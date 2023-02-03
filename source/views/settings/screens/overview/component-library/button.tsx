@@ -2,21 +2,10 @@ import * as React from 'react'
 import {Alert} from 'react-native'
 
 import * as c from '@frogpond/colors'
-import {Section, Cell} from '@frogpond/tableview'
+import {Section} from '@frogpond/tableview'
 import {Button} from '@frogpond/button'
 import {ButtonCell} from '@frogpond/tableview/cells'
-import {LibraryWrapper} from './base/library-wrapper'
-
-interface RowProps {
-	title: string
-	children: JSX.Element
-}
-
-const Example = ({title, children}: RowProps): JSX.Element => {
-	return (
-		<Cell cellAccessoryView={children} cellStyle="RightDetail" title={title} />
-	)
-}
+import {LibraryWrapper, Example} from './base/library-wrapper'
 
 const ButtonCellExample = (): JSX.Element => {
 	return (
