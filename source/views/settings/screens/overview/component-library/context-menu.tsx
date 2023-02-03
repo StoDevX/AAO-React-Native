@@ -1,8 +1,8 @@
 import * as React from 'react'
 import {ContextMenu} from '@frogpond/context-menu'
-import {Cell, Section} from '@frogpond/tableview'
+import {Section} from '@frogpond/tableview'
 import {Button} from '@frogpond/button'
-import {LibraryWrapper} from './base/library-wrapper'
+import {Example, LibraryWrapper} from './base/library-wrapper'
 import {upperFirst} from 'lodash'
 
 const SingleMenu = (): JSX.Element => {
@@ -10,20 +10,16 @@ const SingleMenu = (): JSX.Element => {
 
 	return (
 		<Section>
-			<Cell
-				cellAccessoryView={
-					<ContextMenu
-						actions={['bird', 'cat', 'cow', 'dog']}
-						isMenuPrimaryAction={true}
-						onPressMenuItem={setValue}
-						title="Select an animal."
-					>
-						<Button title={upperFirst(value)} />
-					</ContextMenu>
-				}
-				cellStyle="RightDetail"
-				title="Top-level menu"
-			/>
+			<Example title="Top-level menu">
+				<ContextMenu
+					actions={['bird', 'cat', 'cow', 'dog']}
+					isMenuPrimaryAction={true}
+					onPressMenuItem={setValue}
+					title="Select an animal."
+				>
+					<Button title={upperFirst(value)} />
+				</ContextMenu>
+			</Example>
 		</Section>
 	)
 }
