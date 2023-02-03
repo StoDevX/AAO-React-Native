@@ -30,12 +30,18 @@ import * as stoprint from '../views/stoprint'
 import * as more from '../views/more'
 import * as directory from '../views/directory'
 
-import {RootStackParamList, SettingsStackParamList} from './types'
+import {
+	RootStackParamList,
+	SettingsStackParamList,
+	ComponentLibraryStackParamList,
+} from './types'
 import {NavigationKey as Debug} from '../views/settings/screens/debug'
 import {toLaxTitleCase} from '@frogpond/titlecase'
 
 const Stack = createNativeStackNavigator<RootStackParamList>()
 const SettingsStack = createNativeStackNavigator<SettingsStackParamList>()
+const ComponentLibraryStack =
+	createNativeStackNavigator<ComponentLibraryStackParamList>()
 
 const HomeStackScreens = () => {
 	return (
@@ -277,10 +283,6 @@ const SettingsStackScreens = () => {
 				options={settings.APITestNavigationOptions}
 			/>
 			<SettingsStack.Screen
-				component={settings.ColorsInfoView}
-				name={settings.ColorsInfoNavigationKey}
-			/>
-			<SettingsStack.Screen
 				component={DevBonAppPickerView}
 				name="BonAppPicker"
 				options={DevBonAppNavigationOptions}
@@ -303,12 +305,49 @@ const SettingsStackScreens = () => {
 	)
 }
 
+const ComponentLibraryStackScreens = () => {
+	return (
+		<ComponentLibraryStack.Navigator screenOptions={{gestureEnabled: true}}>
+			<ComponentLibraryStack.Screen
+				component={settings.ComponentLibrary}
+				name="ComponentLibraryRoot"
+				options={settings.ComponentLibraryNavigationOptions}
+			/>
+			<ComponentLibraryStack.Screen
+				component={settings.BadgeLibrary}
+				name="BadgeLibrary"
+				options={{title: 'Badges'}}
+			/>
+			<ComponentLibraryStack.Screen
+				component={settings.ButtonLibrary}
+				name="ButtonLibrary"
+				options={{title: 'Buttons'}}
+			/>
+			<ComponentLibraryStack.Screen
+				component={settings.ColorsLibrary}
+				name={settings.ColorsLibraryNavigationKey}
+				options={{title: 'Colors'}}
+			/>
+			<ComponentLibraryStack.Screen
+				component={settings.ContextMenuLibrary}
+				name="ContextMenuLibrary"
+				options={{title: 'Context Menus'}}
+			/>
+		</ComponentLibraryStack.Navigator>
+	)
+}
+
 export const RootStack = (): JSX.Element => (
 	<Stack.Navigator initialRouteName="Home" screenOptions={{headerShown: false}}>
 		<Stack.Screen component={HomeStackScreens} name="HomeRoot" />
 		<SettingsStack.Screen
 			component={SettingsStackScreens}
 			name="Settings"
+			options={{presentation: 'modal'}}
+		/>
+		<ComponentLibraryStack.Screen
+			component={ComponentLibraryStackScreens}
+			name="ComponentLibrary"
 			options={{presentation: 'modal'}}
 		/>
 	</Stack.Navigator>
