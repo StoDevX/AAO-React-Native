@@ -328,21 +328,23 @@ export const NavigationKey = 'ColorsInfoView'
 export const ColorsLibrary = (): JSX.Element => {
 	return (
 		<LibraryWrapper>
-			<Section header="Platform Colors">
-				<PlatformColorsExample />
-			</Section>
+			<>
+				<Section header="Platform Colors">
+					<PlatformColorsExample />
+				</Section>
 
-			<Section header="Fallback Colors">
-				<FallbackColorsExample />
-			</Section>
+				<Section header="Fallback Colors">
+					<FallbackColorsExample />
+				</Section>
 
-			<Section header="iOS Dynamic Colors">
-				<DynamicColorsExample />
-			</Section>
+				<Section header="iOS Dynamic Colors">
+					<DynamicColorsExample />
+				</Section>
 
-			<Section header="Variant Colors">
-				<VariantColorsExample />
-			</Section>
+				<Section header="Variant Colors">
+					<VariantColorsExample />
+				</Section>
+			</>
 		</LibraryWrapper>
 	)
 }
