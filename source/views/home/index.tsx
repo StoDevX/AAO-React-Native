@@ -137,6 +137,10 @@ export const NavigationKey = 'Home'
 export const NavigationOptions: NativeStackNavigationOptions = {
 	title: 'All About Olaf',
 	headerBackTitle: 'Home',
+	headerLargeTitle: true,
+	headerTransparent: true,
+	// TODO: which blur effect do we want?
+	headerBlurEffect: 'systemThinMaterial',
 }
 
 export type NavigationParams = undefined
