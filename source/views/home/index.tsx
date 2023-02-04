@@ -1,6 +1,11 @@
 import * as React from 'react'
-import {ScrollView, View, StyleSheet} from 'react-native'
-
+import {
+	ImageBackground,
+	SafeAreaView,
+	ScrollView,
+	View,
+	StyleSheet,
+} from 'react-native'
 import {allViews} from '../views'
 import {Column} from '@frogpond/layout'
 import {partitionByIndex} from '../../lib/partition-by-index'
@@ -10,6 +15,7 @@ import {OpenSettingsButton} from '@frogpond/navigation-buttons'
 import {UnofficialAppNotice} from './notice'
 import {useNavigation} from '@react-navigation/native'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+import {updateBackgroundImage} from './background'
 
 const styles = StyleSheet.create({
 	cells: {
@@ -21,6 +27,18 @@ const styles = StyleSheet.create({
 	column: {
 		flex: 1,
 	},
+	safearea: {
+		flex: 1,
+	},
+	background: {
+		flex: 1,
+		top: 0,
+		left: 0,
+		right: 0,
+		bottom: 0,
+		zIndex: -1,
+		position: 'absolute',
+	},
 })
 
 function HomePage(): JSX.Element {
@@ -28,9 +46,10 @@ function HomePage(): JSX.Element {
 	let columns = partitionByIndex(allViews)
 
 	return (
-		<SafeAreaView>
+		<SafeAreaView style={styles.safearea}>
 			<ScrollView
 				alwaysBounceHorizontal={false}
+				contentInsetAdjustmentBehavior="automatic"
 				showsHorizontalScrollIndicator={false}
 				showsVerticalScrollIndicator={false}
 				testID="screen-homescreen"
@@ -59,6 +78,11 @@ function HomePage(): JSX.Element {
 
 				<UnofficialAppNotice />
 			</ScrollView>
+			<ImageBackground
+				resizeMode="cover"
+				source={{uri: backgroundImage}}
+				style={styles.background}
+			/>
 		</SafeAreaView>
 	)
 }
