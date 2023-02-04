@@ -12,6 +12,7 @@ import {partitionByIndex} from '../../lib/partition-by-index'
 import {HomeScreenButton, CELL_MARGIN} from './button'
 import {openUrl} from '@frogpond/open-url'
 import {OpenSettingsButton} from '@frogpond/navigation-buttons'
+import {ContextMenu} from '@frogpond/context-menu'
 import {UnofficialAppNotice} from './notice'
 import {useNavigation} from '@react-navigation/native'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
@@ -44,6 +45,43 @@ const styles = StyleSheet.create({
 function HomePage(): JSX.Element {
 	let navigation = useNavigation()
 	let columns = partitionByIndex(allViews)
+	let [backgroundImage, setBackgroundImage] = React.useState('')
+
+	const SettingsContextButton = React.useMemo(() => {
+		const OnPressMenuItem = async (result: string): Promise<void> => {
+			const typedResult = result as keyof typeof HomeNavbarButtonsEnum
+			switch (typedResult) {
+				case HomeNavbarButtonsEnum.Settings:
+					navigation.navigate('Settings')
+					break
+				case HomeNavbarButtonsEnum.ChangeBackground: {
+					const background = (await updateBackgroundImage()) ?? ''
+					setBackgroundImage(background)
+					break
+				}
+				default:
+					console.warn(`Unhandled tap on settings button item: ${result}`)
+					break
+			}
+		}
+
+		return (
+			<ContextMenu
+				actions={Object.values(HomeNavbarButtonsEnum)}
+				isMenuPrimaryAction={true}
+				onPressMenuItem={OnPressMenuItem}
+				title=""
+			>
+				<OpenSettingsButton canGoBack={true} />
+			</ContextMenu>
+		)
+	}, [navigation])
+
+	React.useLayoutEffect(() => {
+		navigation.setOptions({
+			headerRight: () => SettingsContextButton,
+		})
+	}, [SettingsContextButton, navigation])
 
 	return (
 		<SafeAreaView style={styles.safearea}>
@@ -87,6 +125,11 @@ function HomePage(): JSX.Element {
 	)
 }
 
+const HomeNavbarButtonsEnum = {
+	Settings: 'Settings',
+	ChangeBackground: 'Change background',
+}
+
 export {HomePage as View}
 
 export const NavigationKey = 'Home'
@@ -94,7 +137,6 @@ export const NavigationKey = 'Home'
 export const NavigationOptions: NativeStackNavigationOptions = {
 	title: 'All About Olaf',
 	headerBackTitle: 'Home',
-	headerRight: (props) => <OpenSettingsButton {...props} />,
 }
 
 export type NavigationParams = undefined
