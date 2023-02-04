@@ -19,6 +19,7 @@ export function upgradeMenuItem(
 	return {
 		connector: '',
 		cor_icon: {},
+		dietary: [],
 		options: [],
 		monotony: {id: '', name: '', image: ''},
 		nutrition: {

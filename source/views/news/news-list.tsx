@@ -1,4 +1,4 @@
-import * as React from 'react'
+import React, {useEffect, useState, useMemo} from 'react'
 import {FlatList, StyleSheet} from 'react-native'
 import type {StoryType} from './types'
 import * as c from '@frogpond/colors'
@@ -6,8 +6,13 @@ import {ListSeparator} from '@frogpond/lists'
 import {LoadingView, NoticeView} from '@frogpond/notice'
 import {openUrl} from '@frogpond/open-url'
 import {NewsRow} from './news-row'
-import {cleanEntries, trimStoryCateogry} from './lib/util'
-import {FilterToolbar, ListType} from '@frogpond/filter'
+import {
+	Filter,
+	FilterToolbar,
+	isFilterEnabled,
+	isListFilter,
+	ListFilter,
+} from '@frogpond/filter'
 import {UseQueryResult} from '@tanstack/react-query'
 
 type Props = {
@@ -24,21 +29,19 @@ const styles = StyleSheet.create({
 	},
 })
 
-let getStoryCategories = (story: StoryType) => {
-	return story.categories.map((c) => trimStoryCateogry(c))
-}
-
-let filterStories = (entries: StoryType[], filters: ListType<StoryType>[]) => {
+let filterStories = (entries: StoryType[], filters: Filter<StoryType>[]) => {
 	return entries.filter((story) => {
-		let enabledCategories = filters.flatMap((f: ListType<StoryType>) =>
-			f.spec.selected.flatMap((s) => s.title),
-		)
+		let enabledCategories = filters
+			.filter(isListFilter)
+			.flatMap((f) =>
+				f.selectedIndices.flatMap((index) => f.options[index].title),
+			)
 
 		if (enabledCategories.length === 0) {
 			return entries
 		}
 
-		return getStoryCategories(story).some((category) =>
+		return story.categories.some((category) =>
 			enabledCategories.includes(category),
 		)
 	})
@@ -54,61 +57,37 @@ export const NewsList = (props: Props): JSX.Element => {
 		isLoading,
 	} = props.query
 
-	let entries = React.useMemo(() => cleanEntries(data), [data])
-
-	let [filters, setFilters] = React.useState<ListType<StoryType>[]>([])
-
-	React.useEffect(() => {
-		let allCategories = entries.flatMap((story) => getStoryCategories(story))
+	let categories = useMemo(() => {
+		let allCategories = data.flatMap((story) => story.categories)
 
 		if (allCategories.length === 0) {
-			return
+			return []
 		}
 
-		let categories = [...new Set(allCategories)].sort()
-		let filterCategories = categories.map((c) => {
-			return {title: c}
-		})
+		return [...new Set(allCategories)].sort()
+	}, [data])
 
-		let newsFilters: ListType<StoryType>[] = [
+	let [filters, setFilters] = useState<Filter<StoryType>[]>([])
+
+	useEffect(() => {
+		let filterCategories = categories.map((c) => ({title: c}))
+		setFilters([
 			{
 				type: 'list',
-				key: 'category',
-				enabled: true,
-				spec: {
-					title: 'Categories',
-					options: filterCategories,
-					selected: filterCategories,
-					mode: 'OR',
-					displayTitle: true,
-				},
-				apply: {key: 'categories'},
+				field: 'categories',
+				title: 'Categories',
+				options: filterCategories,
+				selectedIndices: filterCategories.map((_category, index) => index),
+				mode: 'any',
 			},
-		]
-		setFilters(newsFilters)
-	}, [entries])
+		])
+	}, [data, categories])
 
-	if (isError) {
-		return (
-			<NoticeView
-				buttonText="Try Again"
-				onPress={refetch}
-				text={`A problem occured while loading: ${error}`}
-			/>
-		)
-	}
+	let sections = useMemo(() => {
+		return filterStories(data, filters)
+	}, [data, filters])
 
-	const header = (
-		<FilterToolbar
-			filters={filters}
-			onPopoverDismiss={(newFilter) => {
-				let edited = filters.map((f) =>
-					f.key === newFilter.key ? newFilter : f,
-				)
-				setFilters(edited as ListType<StoryType>[])
-			}}
-		/>
-	)
+	const header = <FilterToolbar filters={filters} onChange={setFilters} />
 
 	return (
 		<FlatList
@@ -120,7 +99,13 @@ export const NewsList = (props: Props): JSX.Element => {
 			ListEmptyComponent={
 				isLoading ? (
 					<LoadingView />
-				) : filters.some((f) => f.spec.selected.length) ? (
+				) : isError ? (
+					<NoticeView
+						buttonText="Try Again"
+						onPress={refetch}
+						text={`A problem occured while loading: ${error}`}
+					/>
+				) : filters.some(isFilterEnabled) ? (
 					<NoticeView text="No stories to show. Try changing the filters." />
 				) : (
 					<NoticeView text="No news stories." />
@@ -128,7 +113,7 @@ export const NewsList = (props: Props): JSX.Element => {
 			}
 			ListHeaderComponent={header}
 			contentContainerStyle={styles.contentContainer}
-			data={filterStories(entries, filters)}
+			data={sections}
 			keyExtractor={(item: StoryType) => item.title}
 			onRefresh={refetch}
 			refreshing={isRefetching}

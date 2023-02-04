@@ -75,3 +75,6 @@ fastlane/play-private-key.json
 
 # generated logs files in CI
 /logs
+
+# typescript --incremental output
+*.tsbuildinfo

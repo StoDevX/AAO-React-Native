@@ -1,22 +1,22 @@
-import type {FilterType, ListType, PickerType, ToggleType} from './types'
+import type {Filter, ListFilter, ToggleFilter} from './types'
 
-export function filterListSpecs<T extends object>(
-	specs: Array<FilterType<T>>,
-): Array<ListType<T>> {
-	let retval = specs.filter((f) => f.type === 'list')
-	return retval as Array<ListType<T>>
+export function isListFilter<T>(filter: Filter<T>): filter is ListFilter<T> {
+	return filter.type === 'list'
 }
 
-export function filterPickerSpecs<T extends object>(
-	specs: Array<FilterType<T>>,
-): Array<PickerType<T>> {
-	let retval = specs.filter((f: FilterType<T>) => f.type === 'picker')
-	return retval as Array<PickerType<T>>
+export function isToggleFilter<T>(
+	filter: Filter<T>,
+): filter is ToggleFilter<T> {
+	return filter.type === 'toggle'
 }
 
-export function filterToggleSpecs<T extends object>(
-	specs: Array<FilterType<T>>,
-): Array<ToggleType<T>> {
-	let retval = specs.filter((f) => f.type === 'toggle')
-	return retval as Array<ToggleType<T>>
+export function isFilterEnabled<T>(filter: Filter<T>): boolean {
+	if (filter.type === 'toggle') {
+		return filter.active === true
+	} else if (filter.type === 'list') {
+		return filter.selectedIndices.length > 0
+	} else {
+		let unreachable: never = filter
+		return unreachable
+	}
 }

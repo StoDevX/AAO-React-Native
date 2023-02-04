@@ -1,9 +1,10 @@
+import React, {useState, useCallback, useEffect, useLayoutEffect} from 'react'
+
 import * as c from '@frogpond/colors'
 import {LoadingView, NoticeView} from '@frogpond/notice'
 import {useNavigation} from '@react-navigation/native'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
-import {debounce, fromPairs} from 'lodash'
-import * as React from 'react'
+import {debounce} from 'lodash'
 import {ScrollView, StyleSheet, View} from 'react-native'
 import {ChangeTextEvent} from '../../../navigation/types'
 import {useAppSelector} from '../../../redux'
@@ -32,9 +33,9 @@ export const CourseSearchView = (): JSX.Element => {
 	let recentFilters = useAppSelector(selectRecentFilters)
 	let recentSearches = useAppSelector(selectRecentSearches)
 
-	let [typedQuery, setTypedQuery] = React.useState('')
+	let [typedQuery, setTypedQuery] = useState('')
 
-	React.useLayoutEffect(() => {
+	useLayoutEffect(() => {
 		// TODO: refactor the SIS tabview to not be tabview in order to support search.
 		// search will not be injected properly embedded inside of a tab navigator and
 		// calling navigation.getParent() is not a solution because the parent is a tab
@@ -50,14 +51,14 @@ export const CourseSearchView = (): JSX.Element => {
 		})
 	}, [navigation, typedQuery])
 
-	let showSearchResult = React.useCallback(
+	let showSearchResult = useCallback(
 		(query: string) => {
 			navigation.navigate('CourseSearchResults', {initialQuery: query})
 		},
 		[navigation],
 	)
 
-	React.useEffect(() => {
+	useEffect(() => {
 		_debounce(typedQuery, () => {
 			showSearchResult(typedQuery)
 		})
@@ -67,19 +68,13 @@ export const CourseSearchView = (): JSX.Element => {
 		navigation.navigate('CourseSearchResults', {initialQuery: ''})
 	}
 
-	let onRecentFilterPress = React.useCallback(
+	let onRecentFilterPress = useCallback(
 		(text: string) => {
 			let selectedFilterCombo = recentFilters.find(
 				(f) => f.description === text,
 			)
 
-			let selectedFilters = basicFilters
-			if (selectedFilterCombo) {
-				let filterLookup = fromPairs(
-					selectedFilterCombo.filters.map((f) => [f.key, f]),
-				)
-				selectedFilters = basicFilters.map((f) => filterLookup[f.key] || f)
-			}
+			let selectedFilters = selectedFilterCombo?.filters ?? basicFilters
 
 			navigation.navigate('CourseSearchResults', {
 				initialFilters: selectedFilters,

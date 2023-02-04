@@ -1,17 +1,20 @@
 import React from 'react'
 import {StyleProp, ViewStyle} from 'react-native'
 import {Touchable} from '@frogpond/touchable'
-import {ContextMenuButton} from 'react-native-ios-context-menu'
+import {
+	ContextMenuButton,
+	type MenuElementConfig,
+} from 'react-native-ios-context-menu'
 import {upperFirst} from 'lodash'
 
 interface ContextMenuProps {
-	actions: string[]
+	actions: (string | MenuElementConfig)[]
 	buttonStyle?: StyleProp<ViewStyle>
 	children?: React.ReactElement
 	disabled?: boolean
 	isMenuPrimaryAction?: boolean
 	onPress?: () => void
-	onPressMenuItem: (menuKey: string) => void | Promise<void>
+	onPressMenuItem: (actionKey: string) => void | Promise<void>
 	title: string
 }
 
@@ -31,10 +34,11 @@ export const ContextMenu = React.forwardRef<
 	} = props
 
 	let menuItems = React.useMemo(() => {
-		return actions.map((option) => ({
-			actionKey: option,
-			actionTitle: upperFirst(option),
-		}))
+		return actions.map((option) =>
+			typeof option === 'string'
+				? {actionKey: option, actionTitle: upperFirst(option)}
+				: option,
+		)
 	}, [actions])
 
 	return (

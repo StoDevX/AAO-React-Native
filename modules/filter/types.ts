@@ -1,77 +1,54 @@
-import {ImageSourcePropType} from 'react-native'
+import {ImageURISource} from 'react-native'
+import type {ConditionalKeys} from 'type-fest'
 
-export type ToggleSpecType = {
-	label: string
+/**
+ * Configuration for a "list" filter's menu items.
+ */
+export type ListMenuItem = {
 	title: string
-	caption?: string
+	subtitle?: string
+	image?: ImageURISource | null
 }
 
-export type ListItemSpecType = {
-	title: string
-	label?: string
-	detail?: string
-	image?: ImageSourcePropType | null
-}
-
-export type ListSpecType = {
-	title: string
-	caption?: string
-	showImages?: boolean
-	options: ListItemSpecType[]
-	selected: ListItemSpecType[]
-	mode: 'AND' | 'OR'
-	displayTitle: boolean
-}
-
-export type PickerItemSpecType = {
-	label: string
-}
-
-export type PickerSpecType = {
-	title: string
-	caption?: string
-	options: PickerItemSpecType[]
-	selected?: PickerItemSpecType
-}
-
-export type ToggleFilterFunctionType<T extends object> = {
-	key: keyof T
-	trueEquivalent?: string
-}
-
-export type PickerFilterFunctionType<T extends object> = {
-	key: keyof T
-}
-
-export type ListFilterFunctionType<T extends object> = {
-	key: keyof T
-}
-
-export type ToggleType<T extends object> = {
+/**
+ * A "toggle" filter renders only a filter chip, with no menu, as there is
+ * only one action.
+ *
+ * When enabled, any items which do not have `item[field]` set to `true` are
+ * excluded from the list.
+ */
+export type ToggleFilter<T> = {
+	/** The type of the filter */
 	type: 'toggle'
-	key: string
-	enabled: boolean
-	spec: ToggleSpecType
-	apply: ToggleFilterFunctionType<T>
+	/** If the filter will be applied */
+	active: boolean
+	/** The field which the filter checks (must be a boolean) */
+	field: ConditionalKeys<T, boolean | undefined>
+	/** The title of the filter chip */
+	title: string
 }
 
-export type PickerType<T extends object> = {
-	type: 'picker'
-	key: string
-	enabled: true
-	spec: PickerSpecType
-	apply: PickerFilterFunctionType<T>
-}
-
-export type ListType<T extends object> = {
+/**
+ * A "list" filter renders a filter chip which shows a menu when tapped.
+ *
+ * When enabled, if any menu items are selected, any list items which do not
+ * contain (all|any) of those items are excluded from the list.
+ */
+export type ListFilter<T> = {
+	/** The type of the filter */
 	type: 'list'
-	key: string
-	enabled: boolean
-	spec: ListSpecType
-	apply: ListFilterFunctionType<T>
+	/** The field which the filter checks; must be a `string` or `string[]` */
+	field: ConditionalKeys<T, string | number | string[] | number[] | undefined>
+	/** The title of the filter chip */
+	title: string
+	/** The subtitle to show inside the menu */
+	subtitle?: string
+	/** The menu options */
+	options: ListMenuItem[]
+	/** The selected menu options */
+	selectedIndices: number[]
+	/** If "all", all of the selected indices must match; if "any", then only one must match */
+	mode: 'all' | 'any'
 }
 
-export type FilterType<T extends object> =
-	| ToggleType<T>
-	| PickerType<T>
-	| ListType<T>
+export type Filter<T> = ToggleFilter<T> | ListFilter<T>

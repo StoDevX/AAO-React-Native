@@ -1,5 +1,5 @@
-import * as React from 'react'
-import {useRef, useState} from 'react'
+import React, {useCallback} from 'react'
+
 import {
 	Platform,
 	StyleProp,
@@ -9,10 +9,13 @@ import {
 	ViewStyle,
 } from 'react-native'
 import Icon from 'react-native-vector-icons/Ionicons'
-import type {FilterType} from './types'
-import {FilterPopover} from './filter-popover'
+import type {Filter, ListFilter, ToggleFilter} from './types'
 import * as c from '@frogpond/colors'
-import {Touchable} from '@frogpond/touchable'
+import {ContextMenu} from '@frogpond/context-menu'
+import {MenuElementConfig} from 'react-native-ios-context-menu'
+import produce from 'immer'
+
+class MissingActionKeyError extends Error {}
 
 const buttonStyles = StyleSheet.create({
 	button: {
@@ -41,63 +44,112 @@ const ICON_NAME = Platform.select({
 	default: '',
 })
 
-type Props<T extends object> = {
-	filter: FilterType<T>
+function updateFilter<T>(
+	filter: ToggleFilter<T> | ListFilter<T>,
+	actionKey?: string,
+): ToggleFilter<T> | ListFilter<T> {
+	if (filter.type === 'toggle') {
+		return updateToggleFilter(filter)
+	} else if (filter.type === 'list') {
+		if (!actionKey) {
+			throw new MissingActionKeyError()
+		}
+		return updateListFilter(filter, actionKey)
+	} else {
+		let unreachable: never = filter
+		return unreachable
+	}
+}
+
+function updateToggleFilter<T>(filter: ToggleFilter<T>): ToggleFilter<T> {
+	return {...filter, active: !filter.active}
+}
+
+function updateListFilter<T>(
+	filter: ListFilter<T>,
+	actionKey: string,
+): ListFilter<T> {
+	return produce(filter, (filter) => {
+		// if the actionKey is already in selectedIndices, remove it;
+		// otherwise, add it.
+		let indexOfActionKey = filter.options.findIndex(
+			(opt) => opt.title === actionKey,
+		)
+
+		let selections = new Set(filter.selectedIndices)
+		if (selections.has(indexOfActionKey)) {
+			selections.delete(indexOfActionKey)
+		} else {
+			selections.add(indexOfActionKey)
+		}
+
+		filter.selectedIndices = [...selections].sort()
+
+		return filter
+	})
+}
+
+type Props<T> = {
+	filter: Filter<T>
 	isActive: boolean
-	onPopoverDismiss: (filter: FilterType<T>) => unknown
+	onChange: (updatedFilter: Filter<T>) => void
 	style?: StyleProp<ViewStyle>
 	title: string
 }
 
-export function FilterToolbarButton<T extends object>(
-	props: Props<T>,
-): JSX.Element | null {
-	let {onPopoverDismiss, filter, style, title} = props
+export function FilterToolbarButton<T>(props: Props<T>): JSX.Element | null {
+	let {onChange, filter, style, title} = props
 
-	let [popoverVisible, setPopoverVisible] = useState(false)
-	let touchable = useRef<View>(null)
+	let handleSelection = useCallback(
+		(actionKey: string) => onChange(updateFilter(filter, actionKey)),
+		[onChange, filter],
+	)
 
-	let openPopover = (): void => {
-		setPopoverVisible(true)
-	}
-
-	let onClosePopover = (filter: FilterType<T>): void => {
-		onPopoverDismiss(filter)
-		setPopoverVisible(false)
-	}
-
-	if (filter.type === 'list') {
-		if (!filter.spec.options.length) {
-			return null
-		}
-	}
-
-	return (
-		<React.Fragment>
-			<Touchable
-				ref={touchable}
-				highlight={false}
-				onPress={openPopover}
-				style={[buttonStyles.button, style]}
-			>
-				<Text
-					style={[
-						buttonStyles.text,
-						ICON_NAME ? buttonStyles.textWithIcon : null,
-					]}
-				>
+	if (filter.type === 'toggle') {
+		return (
+			<View style={[buttonStyles.button, style]}>
+				<Icon name="checkmark" size={18} style={buttonStyles.text} />
+				<Text style={[buttonStyles.text, buttonStyles.textWithIcon]}>
 					{title}
 				</Text>
 				<Icon name={ICON_NAME} size={18} style={buttonStyles.text} />
-			</Touchable>
-			{popoverVisible && (
-				<FilterPopover<T>
-					anchor={touchable}
-					filter={filter}
-					onClosePopover={onClosePopover}
-					visible={true}
-				/>
-			)}
-		</React.Fragment>
+			</View>
+		)
+	} else if (filter.type !== 'list') {
+		let unreachable: never = filter
+		return unreachable
+	}
+
+	if (!filter.options.length) {
+		return null
+	}
+
+	let actions: MenuElementConfig[] = filter.options.map((o) => ({
+		actionKey: o.title,
+		actionTitle: o.title,
+		actionSubtitle: o.subtitle,
+		icon: o.image?.uri
+			? {
+					type: 'IMAGE_REMOTE_URL',
+					imageValue: {url: o.image.uri, shouldCache: true},
+			  }
+			: undefined,
+	}))
+
+	return (
+		<ContextMenu
+			actions={actions}
+			disabled={false}
+			isMenuPrimaryAction={true}
+			onPressMenuItem={handleSelection}
+			title={filter.title}
+		>
+			<View style={[buttonStyles.button, style]}>
+				<Text style={[buttonStyles.text, buttonStyles.textWithIcon]}>
+					{title}
+				</Text>
+				<Icon name={ICON_NAME} size={18} style={buttonStyles.text} />
+			</View>
+		</ContextMenu>
 	)
 }

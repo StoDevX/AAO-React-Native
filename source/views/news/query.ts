@@ -1,5 +1,6 @@
 import {client} from '@frogpond/api'
 import {useQuery, type UseQueryResult} from '@tanstack/react-query'
+import {cleanNewsStories, filterUnwantedStories} from './lib/util'
 import {StoryType} from './types'
 
 export const keys = {
@@ -17,7 +18,8 @@ export function useNamedNewsSource(
 			let response = await client
 				.get(`news/named/${queryKey[2]}`, {signal})
 				.json()
-			return response as StoryType[]
+			let stories = response as StoryType[]
+			return filterUnwantedStories(cleanNewsStories(stories))
 		},
 	})
 }
@@ -31,7 +33,8 @@ export function useRssNewsSource(
 			let response = await client
 				.get('news/rss', {signal, searchParams: {url: queryKey[2]}})
 				.json()
-			return response as StoryType[]
+			let stories = response as StoryType[]
+			return filterUnwantedStories(cleanNewsStories(stories))
 		},
 	})
 }
@@ -45,7 +48,8 @@ export function useWpJsonNewsSource(
 			let response = await client
 				.get('news/wpjson', {signal, searchParams: {url: queryKey[2]}})
 				.json()
-			return response as StoryType[]
+			let stories = response as StoryType[]
+			return filterUnwantedStories(cleanNewsStories(stories))
 		},
 	})
 }

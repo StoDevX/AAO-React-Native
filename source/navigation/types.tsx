@@ -1,6 +1,6 @@
 import React from 'react'
 
-import {FilterType} from '@frogpond/filter/types'
+import {Filter} from '@frogpond/filter/types'
 import * as eventList from '@frogpond/event-list'
 
 import * as menus from '../views/menus'
@@ -78,7 +78,7 @@ export type MiscViewParamList = {
 	JobDetail: {job: JobType}
 	CourseSearchResults: {
 		initialQuery?: string
-		initialFilters?: FilterType<CourseType>[]
+		initialFilters?: Filter<CourseType>[]
 	}
 	CourseDetail: {course: CourseType}
 	StudentOrgsDetail: {org: StudentOrgType}
