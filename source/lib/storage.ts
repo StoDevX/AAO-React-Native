@@ -15,6 +15,17 @@ setStoragePrefix('aao:')
 
 /// MARK: Settings
 
+const backgroundPreferenceKey = 'settings:background'
+type backgroundPreferenceType = string
+export function setBackgroundPreference(
+	setting: backgroundPreferenceType,
+): Promise<void> {
+	return setItem(backgroundPreferenceKey, setting)
+}
+export function getBackgroundPreference(): Promise<backgroundPreferenceType> {
+	return getItemAsString(backgroundPreferenceKey)
+}
+
 const homescreenOrderKey = 'homescreen:view-order'
 type homescreenOrderType = string[]
 export function setHomescreenOrder(order: homescreenOrderType): Promise<void> {

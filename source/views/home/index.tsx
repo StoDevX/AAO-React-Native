@@ -16,7 +16,7 @@ import {ContextMenu} from '@frogpond/context-menu'
 import {UnofficialAppNotice} from './notice'
 import {useNavigation} from '@react-navigation/native'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
-import {updateBackgroundImage} from './background'
+import {useAppBackground, useUpdateAppBackground} from './background'
 
 const styles = StyleSheet.create({
 	cells: {
@@ -45,18 +45,19 @@ const styles = StyleSheet.create({
 function HomePage(): JSX.Element {
 	let navigation = useNavigation()
 	let columns = partitionByIndex(allViews)
-	let [backgroundImage, setBackgroundImage] = React.useState('')
+
+	let {data: appBackgroundImage} = useAppBackground()
+	const appBackground = useUpdateAppBackground()
 
 	const SettingsContextButton = React.useMemo(() => {
-		const OnPressMenuItem = async (result: string): Promise<void> => {
+		const OnPressMenuItem = (result: string) => {
 			const typedResult = result as keyof typeof HomeNavbarButtonsEnum
 			switch (typedResult) {
 				case HomeNavbarButtonsEnum.Settings:
 					navigation.navigate('Settings')
 					break
 				case HomeNavbarButtonsEnum.ChangeBackground: {
-					const background = (await updateBackgroundImage()) ?? ''
-					setBackgroundImage(background)
+					appBackground.mutate()
 					break
 				}
 				default:
@@ -75,7 +76,7 @@ function HomePage(): JSX.Element {
 				<OpenSettingsButton canGoBack={true} />
 			</ContextMenu>
 		)
-	}, [navigation])
+	}, [appBackground, navigation])
 
 	React.useLayoutEffect(() => {
 		navigation.setOptions({
@@ -116,11 +117,13 @@ function HomePage(): JSX.Element {
 
 				<UnofficialAppNotice />
 			</ScrollView>
-			<ImageBackground
-				resizeMode="cover"
-				source={{uri: backgroundImage}}
-				style={styles.background}
-			/>
+			{Boolean(appBackgroundImage) && (
+				<ImageBackground
+					resizeMode="cover"
+					source={{uri: appBackgroundImage}}
+					style={styles.background}
+				/>
+			)}
 		</SafeAreaView>
 	)
 }
@@ -139,7 +142,6 @@ export const NavigationOptions: NativeStackNavigationOptions = {
 	headerBackTitle: 'Home',
 	headerLargeTitle: true,
 	headerTransparent: true,
-	// TODO: which blur effect do we want?
 	headerBlurEffect: 'systemThinMaterial',
 }
 
