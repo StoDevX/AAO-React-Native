@@ -28,36 +28,38 @@ function HomePage(): JSX.Element {
 	let columns = partitionByIndex(allViews)
 
 	return (
-		<ScrollView
-			alwaysBounceHorizontal={false}
-			showsHorizontalScrollIndicator={false}
-			showsVerticalScrollIndicator={false}
-			testID="screen-homescreen"
-		>
-			<View style={styles.cells}>
-				{columns.map((contents, i) => (
-					<Column key={i} style={styles.column}>
-						{contents.map((view) => (
-							<HomeScreenButton
-								key={view.type === 'view' ? view.view : view.title}
-								onPress={() => {
-									if (view.type === 'url') {
-										return openUrl(view.url)
-									} else if (view.type === 'view') {
-										return navigation.navigate(view.view)
-									} else {
-										throw new Error(`unexpected view type ${view.type}`)
-									}
-								}}
-								view={view}
-							/>
-						))}
-					</Column>
-				))}
-			</View>
+		<SafeAreaView>
+			<ScrollView
+				alwaysBounceHorizontal={false}
+				showsHorizontalScrollIndicator={false}
+				showsVerticalScrollIndicator={false}
+				testID="screen-homescreen"
+			>
+				<View style={styles.cells}>
+					{columns.map((contents, i) => (
+						<Column key={i} style={styles.column}>
+							{contents.map((view) => (
+								<HomeScreenButton
+									key={view.type === 'view' ? view.view : view.title}
+									onPress={() => {
+										if (view.type === 'url') {
+											return openUrl(view.url)
+										} else if (view.type === 'view') {
+											return navigation.navigate(view.view)
+										} else {
+											throw new Error(`unexpected view type ${view.type}`)
+										}
+									}}
+									view={view}
+								/>
+							))}
+						</Column>
+					))}
+				</View>
 
-			<UnofficialAppNotice />
-		</ScrollView>
+				<UnofficialAppNotice />
+			</ScrollView>
+		</SafeAreaView>
 	)
 }
 
