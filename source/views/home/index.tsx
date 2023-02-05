@@ -5,7 +5,6 @@ import {
 	ScrollView,
 	View,
 	StyleSheet,
-	ViewStyle,
 } from 'react-native'
 import {allViews} from '../views'
 import {Column} from '@frogpond/layout'
@@ -49,10 +48,6 @@ function HomePage(): JSX.Element {
 
 	let {data: appBackgroundImage} = useAppBackground()
 	const appBackground = useUpdateAppBackground()
-
-	const backgroundImageHiddenStyles: ViewStyle = {
-		display: appBackgroundImage ? 'flex' : 'none',
-	}
 
 	const SettingsContextButton = React.useMemo(() => {
 		const OnPressMenuItem = (result: string) => {
@@ -122,11 +117,13 @@ function HomePage(): JSX.Element {
 
 				<UnofficialAppNotice />
 			</ScrollView>
-			<ImageBackground
-				resizeMode="cover"
-				source={{uri: appBackgroundImage}}
-				style={[styles.background, backgroundImageHiddenStyles]}
-			/>
+			{Boolean(appBackgroundImage) && (
+				<ImageBackground
+					resizeMode="cover"
+					source={{uri: appBackgroundImage}}
+					style={styles.background}
+				/>
+			)}
 		</SafeAreaView>
 	)
 }
