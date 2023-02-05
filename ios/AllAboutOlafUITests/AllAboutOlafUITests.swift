@@ -117,4 +117,35 @@ class AllAboutOlafUITests: XCTestCase {
         sleep(5)
         snapshot("13StudentOrgsScreen")
     }
+    
+    func testSettingCustomHomeBackgroundImageScreen() {
+        sleep(2)
+
+        // screenshot the initial state
+        XCTAssertTrue(app.buttons["button-open-settings"].isHittable)
+        let before = XCUIScreen.main.screenshot().image
+
+        // open settings and tap the change background button
+        app.buttons["button-open-settings"].tap()
+        app.buttons["Change Background"].tap()
+
+        // ensure we are on the photos tab
+        XCTAssertTrue(app.buttons["Photos"].isHittable)
+        app.buttons["Photos"].tap()
+
+        // get the scrollable photos
+        let photoPredicate = NSPredicate(format: "label BEGINSWITH 'Photo'")
+        let imageElements = app.scrollViews.otherElements.images.containing(photoPredicate)
+
+        // select the second photo in the image library (the first strangely does not load)
+        let secondImage = 1
+        imageElements.element(boundBy: secondImage).tap()
+
+        // screenshot the changed state
+        sleep(2)
+        let after = XCUIScreen.main.screenshot().image
+
+        // visual difference check of before and after with threshold
+        assert(image: after, matches: before, requiredAccuracy: 1, comparisonName: "Custom background image")
+    }
 }

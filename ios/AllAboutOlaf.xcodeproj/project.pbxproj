@@ -17,6 +17,9 @@
 		3ACC8B85273335930069E931 /* windmill@2x~iPad.png in Resources */ = {isa = PBXBuildFile; fileRef = 3ACC8B83273335930069E931 /* windmill@2x~iPad.png */; };
 		3ACC8B86273335930069E931 /* windmill@3x~iPad.png in Resources */ = {isa = PBXBuildFile; fileRef = 3ACC8B84273335930069E931 /* windmill@3x~iPad.png */; };
 		3AE408501E1E280800F0FD83 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3AE4084F1E1E280800F0FD83 /* LaunchScreen.storyboard */; };
+		3AEA098429904E9F009007FF /* ImageComparison.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AEA098329904E9F009007FF /* ImageComparison.swift */; };
+		3AEA098729906E66009007FF /* UIImage+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AEA098629906E66009007FF /* UIImage+Extensions.swift */; };
+		3AEA098929906EE2009007FF /* Structures.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AEA098829906EE2009007FF /* Structures.swift */; };
 		8222E4786CCF790474A60080 /* libPods-AllAboutOlaf-AllAboutOlafUITests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2256074D704451D201AB966D /* libPods-AllAboutOlaf-AllAboutOlafUITests.a */; };
 		91E0D7C5F14D215A7C718236 /* libPods-AllAboutOlaf.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EB28C76433AECBFEDDD439B /* libPods-AllAboutOlaf.a */; };
 /* End PBXBuildFile section */
@@ -334,6 +337,9 @@
 		3ACC8B83273335930069E931 /* windmill@2x~iPad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "windmill@2x~iPad.png"; path = "../images/icons/windmill@2x~iPad.png"; sourceTree = "<group>"; };
 		3ACC8B84273335930069E931 /* windmill@3x~iPad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "windmill@3x~iPad.png"; path = "../images/icons/windmill@3x~iPad.png"; sourceTree = "<group>"; };
 		3AE4084F1E1E280800F0FD83 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = AllAboutOlaf/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		3AEA098329904E9F009007FF /* ImageComparison.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageComparison.swift; sourceTree = "<group>"; };
+		3AEA098629906E66009007FF /* UIImage+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+Extensions.swift"; sourceTree = "<group>"; };
+		3AEA098829906EE2009007FF /* Structures.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Structures.swift; sourceTree = "<group>"; };
 		5CBB688C2084ADBF20C737EF /* Pods-AllAboutOlaf-AllAboutOlafUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AllAboutOlaf-AllAboutOlafUITests.debug.xcconfig"; path = "Target Support Files/Pods-AllAboutOlaf-AllAboutOlafUITests/Pods-AllAboutOlaf-AllAboutOlafUITests.debug.xcconfig"; sourceTree = "<group>"; };
 		67354E87236E0E5900B1E8E8 /* AllAboutOlaf.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AllAboutOlaf.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		67354E88236E0E5900B1E8E8 /* AllAboutOlafUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AllAboutOlafUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -438,6 +444,7 @@
 		00D33BE01DDA58A8001E830E /* UI Tests */ = {
 			isa = PBXGroup;
 			children = (
+				3AEA098529906E31009007FF /* ImageComparison */,
 				00D33BE31DDA58A8001E830E /* Info.plist */,
 				00D33C011DDA5958001E830E /* SnapshotHelper.swift */,
 				00D33BE11DDA58A8001E830E /* AllAboutOlafUITests.swift */,
@@ -510,6 +517,16 @@
 				3A0CEA7A1DEA20340036E739 /* libRCTAnimation.a */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		3AEA098529906E31009007FF /* ImageComparison */ = {
+			isa = PBXGroup;
+			children = (
+				3AEA098329904E9F009007FF /* ImageComparison.swift */,
+				3AEA098629906E66009007FF /* UIImage+Extensions.swift */,
+				3AEA098829906EE2009007FF /* Structures.swift */,
+			);
+			path = ImageComparison;
 			sourceTree = "<group>";
 		};
 		3C5BFA21338636E7EB4E5E0D /* Frameworks */ = {
@@ -1236,8 +1253,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3AEA098929906EE2009007FF /* Structures.swift in Sources */,
 				00D33BE21DDA58A8001E830E /* AllAboutOlafUITests.swift in Sources */,
 				00D33C031DDA598B001E830E /* SnapshotHelper.swift in Sources */,
+				3AEA098429904E9F009007FF /* ImageComparison.swift in Sources */,
+				3AEA098729906E66009007FF /* UIImage+Extensions.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
