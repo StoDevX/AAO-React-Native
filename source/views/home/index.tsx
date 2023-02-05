@@ -69,9 +69,11 @@ function HomePage(): JSX.Element {
 
 		return (
 			<ContextMenu
+				accessibilityLabel='Settings and background preferences.'
 				actions={Object.values(HomeNavbarButtonsEnum)}
 				isMenuPrimaryAction={true}
 				onPressMenuItem={OnPressMenuItem}
+				testId='button-open-settings'
 				title=""
 			>
 				<OpenSettingsButton canGoBack={true} />

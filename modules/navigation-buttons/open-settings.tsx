@@ -15,7 +15,6 @@ export function OpenSettingsButton(_props: HeaderBackButtonProps): JSX.Element {
 			<Icon
 				name={platformPrefixIconName('ellipsis-horizontal-circle')}
 				style={[commonStyles.button, rightButtonStyles.icon, {color: c.label}]}
-				testID="button-open-settings"
 			/>
 		),
 		android: (

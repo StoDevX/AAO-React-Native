@@ -5,6 +5,7 @@ import {ContextMenuButton} from 'react-native-ios-context-menu'
 import {upperFirst} from 'lodash'
 
 interface ContextMenuProps {
+	accessibilityLabel?: string
 	actions: string[]
 	buttonStyle?: StyleProp<ViewStyle>
 	children?: React.ReactElement
@@ -12,6 +13,7 @@ interface ContextMenuProps {
 	isMenuPrimaryAction?: boolean
 	onPress?: () => void
 	onPressMenuItem: (menuKey: string) => void | Promise<void>
+	testId?: string
 	title: string
 }
 
@@ -20,6 +22,7 @@ export const ContextMenu = React.forwardRef<
 	ContextMenuProps
 >((props, ref): JSX.Element => {
 	const {
+		accessibilityLabel,
 		actions,
 		buttonStyle,
 		children,
@@ -27,6 +30,7 @@ export const ContextMenu = React.forwardRef<
 		isMenuPrimaryAction,
 		onPress,
 		onPressMenuItem,
+		testId,
 		title,
 	} = props
 
@@ -40,6 +44,7 @@ export const ContextMenu = React.forwardRef<
 	return (
 		<ContextMenuButton
 			ref={ref}
+			accessibilityLabel={accessibilityLabel}
 			enableContextMenu={!disabled ?? false}
 			isMenuPrimaryAction={isMenuPrimaryAction ?? false}
 			menuConfig={{
@@ -50,6 +55,7 @@ export const ContextMenu = React.forwardRef<
 				onPressMenuItem(nativeEvent.actionKey)
 			}}
 			style={buttonStyle}
+			testID={testId}
 		>
 			{onPress ? (
 				<Touchable highlight={false} onPress={onPress}>
