@@ -139,7 +139,7 @@ function HomePage(): JSX.Element {
 
 const HomeNavbarButtonsEnum = {
 	Settings: 'Settings',
-	ChangeBackground: 'Change background',
+	ChangeBackground: 'Change Background',
 }
 
 export {HomePage as View}
