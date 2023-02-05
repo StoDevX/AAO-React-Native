@@ -6,6 +6,7 @@ import {Touchable} from '@frogpond/touchable'
 import {transparent} from '@frogpond/colors'
 import {homescreenForegroundDark, homescreenForegroundLight} from './colors'
 import {hasNotch} from 'react-native-device-info'
+import {SafeAreaView} from 'react-native-safe-area-context'
 
 type Props = {
 	view: ViewType
@@ -16,7 +17,7 @@ export function HomeScreenButton({view, onPress}: Props): JSX.Element {
 	let foreground =
 		view.foreground === 'light' ? styles.lightForeground : styles.darkForeground
 
-	return (
+	const Internaltouchable = () => (
 		<Touchable
 			accessibilityLabel={view.title}
 			accessibilityRole="button"
@@ -32,6 +33,16 @@ export function HomeScreenButton({view, onPress}: Props): JSX.Element {
 			</View>
 		</Touchable>
 	)
+
+	return Platform.select({
+		ios: <Internaltouchable />,
+		android: (
+			<SafeAreaView>
+				<Internaltouchable />
+			</SafeAreaView>
+		),
+		default: <></>,
+	})
 }
 
 export const CELL_MARGIN = 10

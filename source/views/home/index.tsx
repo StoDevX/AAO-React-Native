@@ -5,6 +5,7 @@ import {
 	ScrollView,
 	View,
 	StyleSheet,
+	Platform,
 } from 'react-native'
 import {allViews} from '../views'
 import {Column} from '@frogpond/layout'
@@ -84,48 +85,56 @@ function HomePage(): JSX.Element {
 		})
 	}, [SettingsContextButton, navigation])
 
-	return (
-		<SafeAreaView style={styles.safearea}>
-			<ScrollView
-				alwaysBounceHorizontal={false}
-				contentInsetAdjustmentBehavior="automatic"
-				showsHorizontalScrollIndicator={false}
-				showsVerticalScrollIndicator={false}
-				testID="screen-homescreen"
-			>
-				<View style={styles.cells}>
-					{columns.map((contents, i) => (
-						<Column key={i} style={styles.column}>
-							{contents.map((view) => (
-								<HomeScreenButton
-									key={view.type === 'view' ? view.view : view.title}
-									onPress={() => {
-										if (view.type === 'url') {
-											return openUrl(view.url)
-										} else if (view.type === 'view') {
-											return navigation.navigate(view.view)
-										} else {
-											throw new Error(`unexpected view type ${view.type}`)
-										}
-									}}
-									view={view}
-								/>
-							))}
-						</Column>
-					))}
-				</View>
+	const HomeScrollView = () => (
+		<ScrollView
+			alwaysBounceHorizontal={false}
+			contentInsetAdjustmentBehavior="automatic"
+			showsHorizontalScrollIndicator={false}
+			showsVerticalScrollIndicator={false}
+			testID="screen-homescreen"
+		>
+			<View style={styles.cells}>
+				{columns.map((contents, i) => (
+					<Column key={i} style={styles.column}>
+						{contents.map((view) => (
+							<HomeScreenButton
+								key={view.type === 'view' ? view.view : view.title}
+								onPress={() => {
+									if (view.type === 'url') {
+										return openUrl(view.url)
+									} else if (view.type === 'view') {
+										return navigation.navigate(view.view)
+									} else {
+										throw new Error(`unexpected view type ${view.type}`)
+									}
+								}}
+								view={view}
+							/>
+						))}
+					</Column>
+				))}
+			</View>
 
-				<UnofficialAppNotice />
-			</ScrollView>
-			{Boolean(appBackgroundImage) && (
-				<ImageBackground
-					resizeMode="cover"
-					source={{uri: appBackgroundImage}}
-					style={styles.background}
-				/>
-			)}
-		</SafeAreaView>
+			<UnofficialAppNotice />
+		</ScrollView>
 	)
+
+	return Platform.select({
+		ios: (
+			<SafeAreaView style={styles.safearea}>
+				<HomeScrollView />
+				{Boolean(appBackgroundImage) && (
+					<ImageBackground
+						resizeMode="cover"
+						source={{uri: appBackgroundImage}}
+						style={styles.background}
+					/>
+				)}
+			</SafeAreaView>
+		),
+		android: <HomeScrollView />,
+		default: <></>,
+	})
 }
 
 const HomeNavbarButtonsEnum = {
@@ -140,9 +149,9 @@ export const NavigationKey = 'Home'
 export const NavigationOptions: NativeStackNavigationOptions = {
 	title: 'All About Olaf',
 	headerBackTitle: 'Home',
-	headerLargeTitle: true,
-	headerTransparent: true,
-	headerBlurEffect: 'systemThinMaterial',
+	headerLargeTitle: Platform.OS === 'ios',
+	headerTransparent: Platform.OS === 'ios',
+	headerBlurEffect: Platform.OS === 'ios' ? 'systemThinMaterial' : undefined,
 }
 
 export type NavigationParams = undefined
