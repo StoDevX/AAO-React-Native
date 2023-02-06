@@ -61,6 +61,6 @@ func assert(
       )
     }
   } catch{
-    print("Something very bad happened and we're note sure how to recover.")
+    print("Something very bad happened during the visual regression checking and we're not sure how to recover.")
   }
 }
