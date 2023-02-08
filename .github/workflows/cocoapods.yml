@@ -1,9 +1,11 @@
 name: Check & Update Cocoapods
 
 on:
-  pull_request_target:
+  push:
     branches:
       - renovate/**
+    paths:
+      - package-lock.json
 
 permissions:
   contents: write
@@ -14,6 +16,7 @@ jobs:
     # Adapted from https://gist.github.com/A-Tokyo/0d811e818513fc4d3272335d2847d748
     name: iOS Update Cocoapods
     runs-on: macos-11
+    timeout-minutes: 15
     if: github.actor == 'renovate[bot]'
     steps:
       - uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c # v3.3.0
@@ -41,5 +44,4 @@ jobs:
         run: bash scripts/push-on-podfile-change.sh
         env:
           branch: ${{ github.ref_name }}
-          actor: ${{ github.actor }}
           head_ref: ${{ github.ref }}
