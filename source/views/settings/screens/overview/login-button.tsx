@@ -11,9 +11,10 @@ type Props = {
 
 export function LoginButton(props: Props): JSX.Element {
 	let {loading, disabled, loggedIn, onPress, label} = props
+	let innerText = loggedIn ? 'Signing out of' : 'Signing in to'
 
 	let message = loading
-		? `Logging in to ${label}…`
+		? `${innerText} ${label}…`
 		: loggedIn
 		? `Sign Out of ${label}`
 		: `Sign In to ${label}`
