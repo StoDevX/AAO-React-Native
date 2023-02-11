@@ -155,6 +155,6 @@
     "typescript": "4.9.5"
   },
   "optionalDependencies": {
-    "detox": "20.1.2"
+    "detox": "20.1.3"
   }
 }
