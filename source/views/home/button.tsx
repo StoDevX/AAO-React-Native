@@ -17,7 +17,7 @@ export function HomeScreenButton({view, onPress}: Props): JSX.Element {
 	let foreground =
 		view.foreground === 'light' ? styles.lightForeground : styles.darkForeground
 
-	const Internaltouchable = () => (
+	const InternalTouchable = () => (
 		<Touchable
 			accessibilityLabel={view.title}
 			accessibilityRole="button"
@@ -38,7 +38,7 @@ export function HomeScreenButton({view, onPress}: Props): JSX.Element {
 		ios: <Internaltouchable />,
 		android: (
 			<SafeAreaView>
-				<Internaltouchable />
+				<InternalTouchable />
 			</SafeAreaView>
 		),
 		default: <></>,
