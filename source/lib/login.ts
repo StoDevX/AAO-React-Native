@@ -78,7 +78,8 @@ export async function performLogin(
 	})
 
 	let responseUrl = new URL(loginResponse.url)
-	let responseMessage = responseUrl.searchParams.get('message')
+	// URLSearchParams.get requires a polyfill in react native
+	let responseMessage = responseUrl.href.includes('error=')
 	if (responseMessage) {
 		throw new LoginFailedError(`Login failed: ${responseMessage}`)
 	}
