@@ -33,11 +33,8 @@ type Credentials = {
 	password: string
 }
 
-async function loadCredentials(): Promise<SharedWebCredentials> {
+async function loadCredentials(): Promise<false | SharedWebCredentials> {
 	let credentials = await getInternetCredentials(SIS_LOGIN_KEY)
-	if (credentials === false) {
-		throw new NoCredentialsError()
-	}
 	return credentials
 }
 
@@ -62,10 +59,11 @@ export function resetCredentials(): Promise<void> {
 export async function performLogin(
 	credentials: Credentials | null = null,
 ): Promise<Credentials> {
-	const {username, password} = credentials ?? (await loadCredentials())
-	if (!username || !password) {
+	const saved = credentials ?? (await loadCredentials())
+	if (!saved) {
 		throw new NoCredentialsError()
 	}
+	const {username, password} = saved
 
 	let formData = new FormData()
 	formData.append('username', username)
@@ -86,7 +84,7 @@ export async function performLogin(
 	return {username, password}
 }
 
-type QueryFnData = SharedWebCredentials
+type QueryFnData = false | SharedWebCredentials
 type DefaultError = null | unknown
 type QueryT<Select> = ReturnType<typeof useCredentials<Select>>
 
