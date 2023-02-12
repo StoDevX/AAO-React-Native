@@ -35,7 +35,7 @@ export function HomeScreenButton({view, onPress}: Props): JSX.Element {
 	)
 
 	return Platform.select({
-		ios: <Internaltouchable />,
+		ios: <InternalTouchable />,
 		android: (
 			<SafeAreaView>
 				<InternalTouchable />
