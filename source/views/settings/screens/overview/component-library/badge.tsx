@@ -15,25 +15,25 @@ const OutlineBadgeExamples = (): JSX.Element => (
 			<OutlineBadge
 				accentColor={c.systemGreen}
 				style={styles.overriden}
+				text="Status"
 				textColor={c.label}
 				textStyle={styles.overridenText}
-				text="Status"
 			/>
 		</Example>
 
 		<Example title="Hours open">
 			<OutlineBadge
 				accentColor={c.systemGreen}
-				textColor={c.label}
 				text="Open"
+				textColor={c.label}
 			/>
 		</Example>
 
 		<Example title="Hours closed">
 			<OutlineBadge
 				accentColor={c.systemRed}
-				textColor={c.label}
 				text="Closed"
+				textColor={c.label}
 			/>
 		</Example>
 	</Section>
