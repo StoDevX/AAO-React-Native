@@ -81,7 +81,7 @@ export const PrintJobReleaseView = (): JSX.Element => {
 	let {job, printer} = route.params
 
 	let {data: usernameData, isLoading: loadingUsername} = useUsername()
-	let username = usernameData ? usernameData.username : ''
+	const username = usernameData ?? ''
 
 	let {data: heldJobs = []} = useHeldJobs(printer?.printerName)
 	let jobId = job.id.toString()

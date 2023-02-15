@@ -20,7 +20,7 @@ const DISCLAIMER = 'This data may be outdated or otherwise inaccurate.'
 export const BalancesView = (): JSX.Element => {
 	let navigation = useNavigation()
 	let {data: usernameData} = useUsername()
-	let username = usernameData ? usernameData.username : ''
+	const username = usernameData ?? ''
 
 	let {
 		data = {} as BalancesShapeType,

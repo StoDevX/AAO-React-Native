@@ -31,7 +31,7 @@ export const keys = {
 
 export function usePrintJobs(): UseQueryResult<PrintJobsResponse, unknown> {
 	let {data} = useUsername()
-	let username = data ? data.username : ''
+	const username = data ?? ''
 
 	return useQuery({
 		queryKey: keys.jobs(username),
@@ -42,7 +42,7 @@ export function usePrintJobs(): UseQueryResult<PrintJobsResponse, unknown> {
 
 export function useAllPrinters(): UseQueryResult<AllPrintersResponse, unknown> {
 	let {data} = useUsername()
-	let username = data ? data.username : ''
+	const username = data ?? ''
 
 	return useQuery({
 		queryKey: keys.printers(username),
@@ -56,7 +56,7 @@ export function useRecentPrinters(): UseQueryResult<
 	unknown
 > {
 	let {data} = useUsername()
-	let username = data ? data.username : ''
+	const username = data ?? ''
 
 	return useQuery({
 		queryKey: keys.printers(username),
@@ -76,7 +76,7 @@ export function useHeldJobs(
 	printerName: string | undefined,
 ): UseQueryResult<HeldJobsResponse, unknown> {
 	let {data} = useUsername()
-	let username = data ? data.username : ''
+	const username = data ?? ''
 
 	let usablePrinterName = printerName || 'undefined'
 

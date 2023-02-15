@@ -28,8 +28,8 @@ export const CredentialsLoginSection = (): JSX.Element => {
 				return
 			}
 
-			setUsername(data.username ?? '')
-			setPassword(data.password ?? '')
+			setUsername(data.username)
+			setPassword(data.password)
 		},
 	})
 

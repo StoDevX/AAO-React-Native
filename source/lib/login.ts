@@ -102,11 +102,9 @@ export function useCredentials<TData = QueryFnData, TError = DefaultError>(
 	})
 }
 
-export function useUsername(): QueryT<
-	null | Pick<SharedWebCredentials, 'username'>
-> {
+export function useUsername(): QueryT<string | undefined> {
 	return useCredentials({
-		select: (data) => (data ? {username: data.username} : null),
+		select: (data) => data?.username,
 	})
 }
 
