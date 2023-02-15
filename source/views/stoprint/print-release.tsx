@@ -80,8 +80,7 @@ export const PrintJobReleaseView = (): JSX.Element => {
 	let route = useRoute<RouteProp<RootStackParamList, 'PrintJobRelease'>>()
 	let {job, printer} = route.params
 
-	let {data: usernameData, isLoading: loadingUsername} = useUsername()
-	const username = usernameData ?? ''
+	let {data: username = '', isLoading: loadingUsername} = useUsername()
 
 	let {data: heldJobs = []} = useHeldJobs(printer?.printerName)
 	let jobId = job.id.toString()
