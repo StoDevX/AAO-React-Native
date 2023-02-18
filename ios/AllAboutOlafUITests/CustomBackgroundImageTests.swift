@@ -55,7 +55,7 @@ final class CustomBackgroundImageTests: XCTestCase {
 
         // screenshot the changed state
         let image = app.images.firstMatch.screenshot().image
-      assertSnapshot(matching: image, as: .imageHEIC, named: "custom-background")
+        assertSnapshot(matching: image, as: .imageHEIC, named: "custom-background")
     }
     #endif
 }
