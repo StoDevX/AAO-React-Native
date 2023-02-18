@@ -41,7 +41,11 @@ export const DeveloperSection = (): React.ReactElement => {
 	return (
 		<>
 			<Section header="DEVELOPER">
-				<PushButtonCell onPress={onComponentsButton} title="Components" />
+				<PushButtonCell
+					onPress={onComponentsButton}
+					testID="component-library-button"
+					title="Components"
+				/>
 				<PushButtonCell onPress={onAPIButton} title="API Tester" />
 				<PushButtonCell onPress={onBonAppButton} title="Bon Appetit Picker" />
 				<PushButtonCell onPress={onDebugButton} title="Debug" />
