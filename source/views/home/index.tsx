@@ -12,8 +12,7 @@ import {Column} from '@frogpond/layout'
 import {partitionByIndex} from '../../lib/partition-by-index'
 import {HomeScreenButton, CELL_MARGIN} from './button'
 import {openUrl} from '@frogpond/open-url'
-import {OpenSettingsButton} from '@frogpond/navigation-buttons'
-import {ContextMenu} from '@frogpond/context-menu'
+import {RightHomeContextMenu} from './right-button'
 import {UnofficialAppNotice} from './notice'
 import {useNavigation} from '@react-navigation/native'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
@@ -50,36 +49,10 @@ function HomePage(): JSX.Element {
 	let {data: appBackgroundImage} = useAppBackground()
 	const appBackground = useUpdateAppBackground()
 
-	const SettingsContextButton = React.useMemo(() => {
-		const OnPressMenuItem = (result: string) => {
-			const typedResult = result as keyof typeof HomeNavbarButtonsEnum
-			switch (typedResult) {
-				case HomeNavbarButtonsEnum.Settings:
-					navigation.navigate('Settings')
-					break
-				case HomeNavbarButtonsEnum.ChangeBackground: {
-					appBackground.mutate()
-					break
-				}
-				default:
-					console.warn(`Unhandled tap on settings button item: ${result}`)
-					break
-			}
-		}
-
-		return (
-			<ContextMenu
-				accessibilityLabel='Settings and background preferences.'
-				actions={Object.values(HomeNavbarButtonsEnum)}
-				isMenuPrimaryAction={true}
-				onPressMenuItem={OnPressMenuItem}
-				testId='button-open-settings'
-				title=""
-			>
-				<OpenSettingsButton canGoBack={true} />
-			</ContextMenu>
-		)
-	}, [appBackground, navigation])
+	const SettingsContextButton = React.useMemo(
+		() => <RightHomeContextMenu callback={appBackground.mutate} />,
+		[appBackground],
+	)
 
 	React.useLayoutEffect(() => {
 		navigation.setOptions({
@@ -127,6 +100,8 @@ function HomePage(): JSX.Element {
 				<HomeScrollView />
 				{Boolean(appBackgroundImage) && (
 					<ImageBackground
+						accessibilityLabel="Custom background image"
+						accessible={false}
 						resizeMode="cover"
 						source={{uri: appBackgroundImage}}
 						style={styles.background}
@@ -137,11 +112,6 @@ function HomePage(): JSX.Element {
 		android: <HomeScrollView />,
 		default: <></>,
 	})
-}
-
-const HomeNavbarButtonsEnum = {
-	Settings: 'Settings',
-	ChangeBackground: 'Change Background',
 }
 
 export {HomePage as View}
