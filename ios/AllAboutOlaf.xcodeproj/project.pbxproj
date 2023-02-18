@@ -14,6 +14,7 @@
 		13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.mm */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
+		3AC0DB8D29A088CC00F25BC5 /* SnapshotTestingHEIC in Frameworks */ = {isa = PBXBuildFile; productRef = 3AC0DB8C29A088CC00F25BC5 /* SnapshotTestingHEIC */; };
 		3ACC8B85273335930069E931 /* windmill@2x~iPad.png in Resources */ = {isa = PBXBuildFile; fileRef = 3ACC8B83273335930069E931 /* windmill@2x~iPad.png */; };
 		3ACC8B86273335930069E931 /* windmill@3x~iPad.png in Resources */ = {isa = PBXBuildFile; fileRef = 3ACC8B84273335930069E931 /* windmill@3x~iPad.png */; };
 		3AE408501E1E280800F0FD83 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3AE4084F1E1E280800F0FD83 /* LaunchScreen.storyboard */; };
@@ -357,6 +358,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3AC0DB8D29A088CC00F25BC5 /* SnapshotTestingHEIC in Frameworks */,
 				8222E4786CCF790474A60080 /* libPods-AllAboutOlaf-AllAboutOlafUITests.a in Frameworks */,
 				3AEA0AC629A03B3A009007FF /* SnapshotTesting in Frameworks */,
 			);
@@ -624,6 +626,7 @@
 			name = AllAboutOlafUITests;
 			packageProductDependencies = (
 				3AEA0AC529A03B3A009007FF /* SnapshotTesting */,
+				3AC0DB8C29A088CC00F25BC5 /* SnapshotTestingHEIC */,
 			);
 			productName = AllAboutOlafUITests;
 			productReference = 67354E88236E0E5900B1E8E8 /* AllAboutOlafUITests.xctest */;
@@ -695,6 +698,7 @@
 			mainGroup = 83CBB9F61A601CBA00E9B192;
 			packageReferences = (
 				3AEA0AC429A03B3A009007FF /* XCRemoteSwiftPackageReference "swift-snapshot-testing" */,
+				3AC0DB8B29A088CC00F25BC5 /* XCRemoteSwiftPackageReference "SnapshotTestingHEIC" */,
 			);
 			productRefGroup = 83CBB9F61A601CBA00E9B192;
 			projectDirPath = "";
@@ -1530,6 +1534,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		3AC0DB8B29A088CC00F25BC5 /* XCRemoteSwiftPackageReference "SnapshotTestingHEIC" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/alexey1312/SnapshotTestingHEIC.git";
+			requirement = {
+				kind = exactVersion;
+				version = 1.2.1;
+			};
+		};
 		3AEA0AC429A03B3A009007FF /* XCRemoteSwiftPackageReference "swift-snapshot-testing" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/pointfreeco/swift-snapshot-testing";
@@ -1541,6 +1553,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		3AC0DB8C29A088CC00F25BC5 /* SnapshotTestingHEIC */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 3AC0DB8B29A088CC00F25BC5 /* XCRemoteSwiftPackageReference "SnapshotTestingHEIC" */;
+			productName = SnapshotTestingHEIC;
+		};
 		3AEA0AC529A03B3A009007FF /* SnapshotTesting */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 3AEA0AC429A03B3A009007FF /* XCRemoteSwiftPackageReference "swift-snapshot-testing" */;
