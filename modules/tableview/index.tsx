@@ -41,6 +41,7 @@ let TableView = (props: TableViewInterface): JSX.Element => (
 let Cell = (props: CellInterfaceModifiedType): JSX.Element => (
 	<RNTableView.Cell
 		backgroundColor={c.systemBackground}
+		testID={props.testID}
 		titleTextColor={c.label}
 		{...props}
 	/>

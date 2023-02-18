@@ -8,6 +8,7 @@ type Props = {
 	onPress: () => void
 	disabled?: boolean
 	showLinkStyle?: boolean
+	testID?: string
 }
 
 export const PushButtonCell = ({
@@ -16,6 +17,7 @@ export const PushButtonCell = ({
 	onPress,
 	disabled = false,
 	showLinkStyle = false,
+	testID,
 }: Props): JSX.Element => (
 	<Cell
 		accessory={showLinkStyle ? undefined : 'DisclosureIndicator'}
@@ -23,6 +25,7 @@ export const PushButtonCell = ({
 		detail={detail}
 		isDisabled={disabled}
 		onPress={onPress}
+		testID={testID}
 		title={title}
 		titleTextColor={showLinkStyle ? c.link : undefined}
 	/>
