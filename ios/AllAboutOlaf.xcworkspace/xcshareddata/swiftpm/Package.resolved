@@ -1,23 +1,23 @@
 {
-  "pins" : [
-    {
-      "identity" : "snapshottestingheic",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/alexey1312/SnapshotTestingHEIC",
-      "state" : {
-        "revision" : "a282334d83b536212fc1a074f0a5a241256718f0",
-        "version" : "1.2.1"
+  "object": {
+    "pins" : [
+      {
+        "package" : "snapshottestingheic",
+        "repositoryURL" : "https://github.com/alexey1312/SnapshotTestingHEIC",
+        "state" : {
+          "revision" : "a282334d83b536212fc1a074f0a5a241256718f0",
+          "version" : "1.2.1"
+        }
+      },
+      {
+        "package" : "swift-snapshot-testing",
+        "repositoryURL" : "https://github.com/pointfreeco/swift-snapshot-testing",
+        "state" : {
+          "revision" : "cef5b3f6f11781dd4591bdd1dd0a3d22bd609334",
+          "version" : "1.11.0"
+        }
       }
-    },
-    {
-      "identity" : "swift-snapshot-testing",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/pointfreeco/swift-snapshot-testing",
-      "state" : {
-        "revision" : "cef5b3f6f11781dd4591bdd1dd0a3d22bd609334",
-        "version" : "1.11.0"
-      }
-    }
-  ],
-  "version" : 2
+    ]
+  },
+  "version" : 1
 }
