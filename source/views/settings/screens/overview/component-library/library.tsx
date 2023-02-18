@@ -16,6 +16,11 @@ export const ComponentLibrary = (): JSX.Element => {
 		<TableView>
 			<Section>
 				<PushButtonCell
+					onPress={() => navigation.navigate('BackgroundLibrary')}
+					testID="background-library-button"
+					title="Backgrounds"
+				/>
+				<PushButtonCell
 					onPress={() => navigation.navigate('BadgeLibrary')}
 					title="Badges"
 				/>

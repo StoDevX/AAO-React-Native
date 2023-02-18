@@ -110,6 +110,7 @@ export type SettingsStackParamList = {
 export type ComponentLibraryStackParamList = {
 	ComponentLibraryRoot: undefined
 	ComponentLibrary: undefined
+	BackgroundLibrary: undefined
 	BadgeLibrary: undefined
 	ButtonLibrary: undefined
 	[settings.ColorsLibraryNavigationKey]: undefined

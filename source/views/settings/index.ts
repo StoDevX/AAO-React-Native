@@ -20,6 +20,7 @@ export {
 export {
 	ComponentLibrary,
 	ComponentLibraryNavigationOptions,
+	BackgroundLibrary,
 	BadgeLibrary,
 	ButtonLibrary,
 	ColorsLibrary,

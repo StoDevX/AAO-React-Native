@@ -314,6 +314,11 @@ const ComponentLibraryStackScreens = () => {
 				options={settings.ComponentLibraryNavigationOptions}
 			/>
 			<ComponentLibraryStack.Screen
+				component={settings.BackgroundLibrary}
+				name="BackgroundLibrary"
+				options={{title: 'Backgrounds'}}
+			/>
+			<ComponentLibraryStack.Screen
 				component={settings.BadgeLibrary}
 				name="BadgeLibrary"
 				options={{title: 'Badges'}}
