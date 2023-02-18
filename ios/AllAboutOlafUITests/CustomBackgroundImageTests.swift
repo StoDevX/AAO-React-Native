@@ -7,7 +7,6 @@
 
 import XCTest
 import SnapshotTesting
-import SnapshotTestingHEIC
 
 final class CustomBackgroundImageTests: XCTestCase {
     var app = XCUIApplication()
@@ -54,8 +53,9 @@ final class CustomBackgroundImageTests: XCTestCase {
         imageElements.element(boundBy: secondImage).tap()
 
         // screenshot the changed state
+        sleep(2)
         let image = app.images.firstMatch.screenshot().image
-        assertSnapshot(matching: image, as: .imageHEIC, named: "custom-background")
+        assertSnapshot(matching: image, as: .image, named: "custom-background")
     }
     #endif
 }
