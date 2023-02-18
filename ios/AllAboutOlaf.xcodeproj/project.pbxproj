@@ -17,6 +17,7 @@
 		3ACC8B85273335930069E931 /* windmill@2x~iPad.png in Resources */ = {isa = PBXBuildFile; fileRef = 3ACC8B83273335930069E931 /* windmill@2x~iPad.png */; };
 		3ACC8B86273335930069E931 /* windmill@3x~iPad.png in Resources */ = {isa = PBXBuildFile; fileRef = 3ACC8B84273335930069E931 /* windmill@3x~iPad.png */; };
 		3AE408501E1E280800F0FD83 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3AE4084F1E1E280800F0FD83 /* LaunchScreen.storyboard */; };
+		3AEA0AC629A03B3A009007FF /* SnapshotTesting in Frameworks */ = {isa = PBXBuildFile; productRef = 3AEA0AC529A03B3A009007FF /* SnapshotTesting */; };
 		8222E4786CCF790474A60080 /* libPods-AllAboutOlaf-AllAboutOlafUITests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2256074D704451D201AB966D /* libPods-AllAboutOlaf-AllAboutOlafUITests.a */; };
 		91E0D7C5F14D215A7C718236 /* libPods-AllAboutOlaf.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EB28C76433AECBFEDDD439B /* libPods-AllAboutOlaf.a */; };
 /* End PBXBuildFile section */
@@ -357,6 +358,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8222E4786CCF790474A60080 /* libPods-AllAboutOlaf-AllAboutOlafUITests.a in Frameworks */,
+				3AEA0AC629A03B3A009007FF /* SnapshotTesting in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -620,6 +622,9 @@
 				00D33BE51DDA58A8001E830E /* PBXTargetDependency */,
 			);
 			name = AllAboutOlafUITests;
+			packageProductDependencies = (
+				3AEA0AC529A03B3A009007FF /* SnapshotTesting */,
+			);
 			productName = AllAboutOlafUITests;
 			productReference = 67354E88236E0E5900B1E8E8 /* AllAboutOlafUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
@@ -688,6 +693,9 @@
 				Base,
 			);
 			mainGroup = 83CBB9F61A601CBA00E9B192;
+			packageReferences = (
+				3AEA0AC429A03B3A009007FF /* XCRemoteSwiftPackageReference "swift-snapshot-testing" */,
+			);
 			productRefGroup = 83CBB9F61A601CBA00E9B192;
 			projectDirPath = "";
 			projectReferences = (
@@ -1520,6 +1528,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		3AEA0AC429A03B3A009007FF /* XCRemoteSwiftPackageReference "swift-snapshot-testing" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/pointfreeco/swift-snapshot-testing";
+			requirement = {
+				kind = exactVersion;
+				version = 1.11.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		3AEA0AC529A03B3A009007FF /* SnapshotTesting */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 3AEA0AC429A03B3A009007FF /* XCRemoteSwiftPackageReference "swift-snapshot-testing" */;
+			productName = SnapshotTesting;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 83CBB9F71A601CBA00E9B192 /* Project object */;
 }
