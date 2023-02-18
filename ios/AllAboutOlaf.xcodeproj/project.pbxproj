@@ -15,6 +15,7 @@
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		3AC0DB8D29A088CC00F25BC5 /* SnapshotTestingHEIC in Frameworks */ = {isa = PBXBuildFile; productRef = 3AC0DB8C29A088CC00F25BC5 /* SnapshotTestingHEIC */; };
+		3AC0DB8F29A0891E00F25BC5 /* CustomBackgroundImageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AC0DB8E29A0891E00F25BC5 /* CustomBackgroundImageTests.swift */; };
 		3ACC8B85273335930069E931 /* windmill@2x~iPad.png in Resources */ = {isa = PBXBuildFile; fileRef = 3ACC8B83273335930069E931 /* windmill@2x~iPad.png */; };
 		3ACC8B86273335930069E931 /* windmill@3x~iPad.png in Resources */ = {isa = PBXBuildFile; fileRef = 3ACC8B84273335930069E931 /* windmill@3x~iPad.png */; };
 		3AE408501E1E280800F0FD83 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3AE4084F1E1E280800F0FD83 /* LaunchScreen.storyboard */; };
@@ -333,6 +334,7 @@
 		2256074D704451D201AB966D /* libPods-AllAboutOlaf-AllAboutOlafUITests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-AllAboutOlaf-AllAboutOlafUITests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		363F0F7690215720438C6ABC /* Pods-AllAboutOlaf.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AllAboutOlaf.debug.xcconfig"; path = "Target Support Files/Pods-AllAboutOlaf/Pods-AllAboutOlaf.debug.xcconfig"; sourceTree = "<group>"; };
 		3A0CEA711DEA20340036E739 /* RCTAnimation.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTAnimation.xcodeproj; path = "../node_modules/react-native/Libraries/NativeAnimation/RCTAnimation.xcodeproj"; sourceTree = "<group>"; };
+		3AC0DB8E29A0891E00F25BC5 /* CustomBackgroundImageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomBackgroundImageTests.swift; sourceTree = "<group>"; };
 		3ACC8B83273335930069E931 /* windmill@2x~iPad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "windmill@2x~iPad.png"; path = "../images/icons/windmill@2x~iPad.png"; sourceTree = "<group>"; };
 		3ACC8B84273335930069E931 /* windmill@3x~iPad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "windmill@3x~iPad.png"; path = "../images/icons/windmill@3x~iPad.png"; sourceTree = "<group>"; };
 		3AE4084F1E1E280800F0FD83 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = AllAboutOlaf/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -445,6 +447,7 @@
 				00D33BE31DDA58A8001E830E /* Info.plist */,
 				00D33C011DDA5958001E830E /* SnapshotHelper.swift */,
 				00D33BE11DDA58A8001E830E /* AllAboutOlafUITests.swift */,
+				3AC0DB8E29A0891E00F25BC5 /* CustomBackgroundImageTests.swift */,
 				00D33C001DDA5958001E830E /* AllAboutOlaf-Bridging-Header.h */,
 			);
 			name = "UI Tests";
@@ -1250,6 +1253,7 @@
 			files = (
 				00D33BE21DDA58A8001E830E /* AllAboutOlafUITests.swift in Sources */,
 				00D33C031DDA598B001E830E /* SnapshotHelper.swift in Sources */,
+				3AC0DB8F29A0891E00F25BC5 /* CustomBackgroundImageTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
