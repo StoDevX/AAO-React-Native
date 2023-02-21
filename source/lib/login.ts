@@ -33,12 +33,9 @@ type Credentials = {
 	password: string
 }
 
-async function loadCredentials(): Promise<SharedWebCredentials> {
+async function loadCredentials(): Promise<null | SharedWebCredentials> {
 	let credentials = await getInternetCredentials(SIS_LOGIN_KEY)
-	if (credentials === false) {
-		throw new NoCredentialsError()
-	}
-	return credentials
+	return credentials ? credentials : null
 }
 
 export async function storeCredentials(
@@ -62,10 +59,11 @@ export function resetCredentials(): Promise<void> {
 export async function performLogin(
 	credentials: Credentials | null = null,
 ): Promise<Credentials> {
-	const {username, password} = credentials ?? (await loadCredentials())
-	if (!username || !password) {
+	const saved = credentials ?? (await loadCredentials())
+	if (!saved) {
 		throw new NoCredentialsError()
 	}
+	const {username, password} = saved
 
 	let formData = new FormData()
 	formData.append('username', username)
@@ -78,7 +76,8 @@ export async function performLogin(
 	})
 
 	let responseUrl = new URL(loginResponse.url)
-	let responseMessage = responseUrl.searchParams.get('message')
+	// URLSearchParams.get requires a polyfill in react native
+	let responseMessage = responseUrl.href.includes('error=')
 	if (responseMessage) {
 		throw new LoginFailedError(`Login failed: ${responseMessage}`)
 	}
@@ -86,7 +85,7 @@ export async function performLogin(
 	return {username, password}
 }
 
-type QueryFnData = SharedWebCredentials
+type QueryFnData = null | SharedWebCredentials
 type DefaultError = null | unknown
 type QueryT<Select> = ReturnType<typeof useCredentials<Select>>
 
@@ -103,11 +102,9 @@ export function useCredentials<TData = QueryFnData, TError = DefaultError>(
 	})
 }
 
-export function useUsername(): QueryT<
-	false | Pick<SharedWebCredentials, 'username'>
-> {
+export function useUsername(): QueryT<string | undefined> {
 	return useCredentials({
-		select: (data) => (data ? {username: data.username} : false),
+		select: (data) => data?.username,
 	})
 }
 

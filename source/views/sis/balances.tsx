@@ -13,13 +13,13 @@ import {BalancesShapeType, useBalances} from '../../lib/financials'
 import * as c from '@frogpond/colors'
 import {sto} from '../../lib/colors'
 import {useNavigation} from '@react-navigation/native'
-import {NoCredentialsError, useCredentials} from '../../lib/login'
+import {NoCredentialsError, useUsername} from '../../lib/login'
 
 const DISCLAIMER = 'This data may be outdated or otherwise inaccurate.'
 
 export const BalancesView = (): JSX.Element => {
 	let navigation = useNavigation()
-	let credentials = useCredentials()
+	let {data: username = ''} = useUsername()
 
 	let {
 		data = {} as BalancesShapeType,
@@ -28,7 +28,7 @@ export const BalancesView = (): JSX.Element => {
 		isInitialLoading,
 		refetch,
 		isRefetching,
-	} = useBalances(credentials.data?.username)
+	} = useBalances(username)
 
 	let openSettings = () => navigation.navigate('Settings')
 	let refresh = <RefreshControl onRefresh={refetch} refreshing={isRefetching} />
