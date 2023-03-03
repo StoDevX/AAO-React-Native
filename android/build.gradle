@@ -6,7 +6,7 @@ buildscript {
         minSdkVersion = 21
         compileSdkVersion = 33
         targetSdkVersion = 33
-        kotlinVersion = '1.6.10'
+        kotlinVersion = '1.8.10'
         // react-native-inappbrowser-reborn was using a 1.+ which pulled in an alpha which is very bad
         // - we will want to upgrade to 1.5.0 when we support minsdk 33
         // - we can delete this when inappbrowser-reborn changes their build script to avoid this pattern
