@@ -111,7 +111,7 @@
     "@babel/preset-typescript": "7.21.0",
     "@babel/runtime": "7.21.0",
     "@jest/globals": "29.4.3",
-    "@sentry/cli": "2.12.0",
+    "@sentry/cli": "2.14.3",
     "@tanstack/eslint-plugin-query": "4.24.11",
     "@types/base-64": "1.0.0",
     "@types/http-cache-semantics": "4.0.1",
