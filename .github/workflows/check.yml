@@ -11,7 +11,7 @@ concurrency:
 
 env:
   ruby_version: '2.6'
-  xcode_version: 'Xcode_13.1'
+  xcode_version: 'Xcode_14.2'
   java_version: '11'
   java_distribution: temurin
 
