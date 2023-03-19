@@ -11,7 +11,7 @@ concurrency:
 
 env:
   ruby_version: '2.6'
-  xcode_version: 'Xcode_13.1'
+  xcode_version: 'Xcode_14.2'
   java_version: '11'
   java_distribution: temurin
 
@@ -50,7 +50,7 @@ jobs:
 
   cache-npm-macos:
     name: Cache npm for macOS
-    runs-on: macos-11
+    runs-on: macos-12
     outputs:
       cache-key: ${{ steps.node-cache.outputs.cache-primary-key }}
     steps:
@@ -82,7 +82,7 @@ jobs:
 
   cache-bundler-macos:
     name: Cache bundler for macOS
-    runs-on: macos-11
+    runs-on: macos-12
     steps:
       - uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c # v3.3.0
 
@@ -94,7 +94,7 @@ jobs:
   cache-cocoapods:
     name: iOS Cocoapods
     needs: [cache-npm-macos, cache-bundler-macos]
-    runs-on: macos-11
+    runs-on: macos-12
     outputs:
       cache-key: ${{ steps.cocoapods-cache.outputs.cache-primary-key }}
     steps:
@@ -271,7 +271,7 @@ jobs:
   ios-bundle:
     name: iOS Bundle
     needs: [cache-npm-macos]
-    runs-on: macos-11
+    runs-on: macos-12
     outputs:
       cache-key: ${{ steps.jsbundle-cache.outputs.cache-primary-key }}
     steps:
@@ -430,7 +430,7 @@ jobs:
   ios-build:
     name: Build for iOS
     needs: [jest, eslint, cache-cocoapods, cache-npm-macos, cache-bundler-macos]
-    runs-on: macos-11
+    runs-on: macos-12
     outputs:
       cache-key: ${{ steps.app-cache.outputs.cache-primary-key }}
     steps:
@@ -512,7 +512,7 @@ jobs:
   ios-detox:
     name: Detox E2E for iOS
     needs: [cache-npm-macos, ios-build, ios-bundle]
-    runs-on: macos-11
+    runs-on: macos-12
     steps:
       - run: sudo xcode-select -s /Applications/${{ env.xcode_version }}.app
 

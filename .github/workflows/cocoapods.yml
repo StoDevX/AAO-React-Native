@@ -15,7 +15,7 @@ jobs:
   ios-podfile-update:
     # Adapted from https://gist.github.com/A-Tokyo/0d811e818513fc4d3272335d2847d748
     name: iOS Update Cocoapods
-    runs-on: macos-11
+    runs-on: macos-12
     timeout-minutes: 15
     if: github.actor == 'renovate[bot]'
     steps:
@@ -33,7 +33,7 @@ jobs:
           ruby-version: '2.6'
           bundler-cache: true
 
-      - run: sudo xcode-select -s /Applications/Xcode_13.1.app
+      - run: sudo xcode-select -s /Applications/Xcode_14.2.app
 
       - run: npm ci
 
