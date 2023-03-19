@@ -8,7 +8,7 @@ const arrowStyles = StyleSheet.create({
 		marginLeft: 10,
 	},
 	icon: {
-		color: c.iosDisabledText,
+		color: c.secondaryLabel,
 		fontSize: 20,
 	},
 })

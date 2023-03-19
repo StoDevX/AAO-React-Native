@@ -15,8 +15,12 @@ import {Separator} from '@frogpond/separator'
 import {BusStopRow} from './components/bus-stop-row'
 import {ListFooter, ListRow, ListSectionHeader} from '@frogpond/lists'
 import {InfoHeader} from '@frogpond/info-header'
+import * as c from '@frogpond/colors'
 
 const styles = StyleSheet.create({
+	container: {
+		backgroundColor: c.secondarySystemGroupedBackground,
+	},
 	separator: {
 		marginLeft: 45,
 		// erase the gap in the bar caused by the separators' block-ness
@@ -173,6 +177,7 @@ export function BusLine(props: Props): JSX.Element {
 					stop={item}
 				/>
 			)}
+			style={styles.container}
 		/>
 	)
 }

@@ -6,10 +6,12 @@ import {isScheduleReallyOpenAtMoment} from './is-schedule-really-open'
 import {formatBuildingTimes} from './format-times'
 import {parseHours} from './parse-hours'
 
-import {data as chapelData} from '../../../../docs/chapel.json'
-
-const chapelSchedule =
-	chapelData.chapelSchedule as unknown as SingleBuildingScheduleType[]
+// TODO: fetch this over the network
+const chapelSchedule: SingleBuildingScheduleType[] = [
+	{days: ['Mo', 'We', 'Fr'], from: '10:10am', to: '10:30am'},
+	{days: ['Tu'], from: '11:10am', to: '11:30am'},
+	{days: ['Th'], from: '11:00am', to: '12:35pm'},
+]
 
 export function isChapelTime(
 	m: Moment,

@@ -2,6 +2,8 @@ import {Image, StyleSheet, Text} from 'react-native'
 import type {ListItemSpecType, ListType} from './types'
 import {Cell, Section} from '@frogpond/tableview'
 import {Column} from '@frogpond/layout'
+import * as c from '@frogpond/colors'
+
 import concat from 'lodash/concat'
 import isEqual from 'lodash/isEqual'
 import reject from 'lodash/reject'
@@ -128,9 +130,11 @@ const styles = StyleSheet.create({
 		paddingVertical: 10,
 	},
 	title: {
+		color: c.label,
 		fontSize: 16,
 	},
 	detail: {
+		color: c.label,
 		fontSize: 11,
 	},
 	icon: {

@@ -18,10 +18,11 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 30,
 		justifyContent: 'center',
 		alignItems: 'center',
-		backgroundColor: c.white,
+		backgroundColor: c.systemBackground,
 	},
 	text: {
 		textAlign: 'center',
+		color: c.label,
 	},
 	spinner: {
 		alignItems: 'center',

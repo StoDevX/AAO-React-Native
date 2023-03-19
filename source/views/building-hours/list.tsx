@@ -15,7 +15,7 @@ export {BuildingHoursDetailView} from './detail'
 
 const styles = StyleSheet.create({
 	container: {
-		backgroundColor: c.white,
+		backgroundColor: c.systemBackground,
 		flexGrow: 1,
 	},
 })

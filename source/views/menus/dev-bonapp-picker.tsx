@@ -17,7 +17,7 @@ const styles = StyleSheet.create({
 	default: {
 		height: 44,
 		borderBottomWidth: StyleSheet.hairlineWidth,
-		borderColor: c.black,
+		borderColor: c.label,
 		flex: 1,
 		fontSize: 13,
 		paddingVertical: 4,

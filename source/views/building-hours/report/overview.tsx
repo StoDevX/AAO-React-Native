@@ -1,6 +1,4 @@
 /**
- * @flow
- *
  * Building Hours "report a problem" screen.
  */
 

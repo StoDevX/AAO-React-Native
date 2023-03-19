@@ -1,6 +1,4 @@
 /**
- * @flow
- *
  * An editor for individual building schedules.
  */
 
@@ -16,7 +14,6 @@ import type {DayOfWeekEnumType, SingleBuildingScheduleType} from '../types'
 import {Row} from '@frogpond/layout'
 import {blankSchedule, parseHours, summarizeDaysAndHours} from '../lib'
 import * as c from '@frogpond/colors'
-import {sto} from '../../../lib/colors'
 import {DatePicker} from '@frogpond/datepicker'
 import {Touchable} from '@frogpond/touchable'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
@@ -211,7 +208,7 @@ const styles = StyleSheet.create({
 	iOSweekToggles: {
 		alignItems: 'stretch',
 		justifyContent: 'center',
-		backgroundColor: c.white,
+		backgroundColor: c.secondarySystemGroupedBackground,
 		paddingHorizontal: 10,
 		paddingVertical: 20,
 	},
@@ -228,24 +225,24 @@ const styles = StyleSheet.create({
 		paddingVertical: 10,
 		borderRadius: 20,
 		margin: 5,
-		backgroundColor: c.iosGray,
+		backgroundColor: c.tertiarySystemGroupedBackground,
 	},
 	androidDayWrapper: {
 		flex: 1,
 		alignItems: 'center',
 		paddingVertical: 10,
-		borderColor: c.androidSeparator,
+		borderColor: c.separator,
 		borderRadius: 20,
 		borderWidth: 1,
 		margin: 5,
-		backgroundColor: c.white,
+		backgroundColor: c.tertiarySystemGroupedBackground,
 	},
 	androidDayActive: {
-		backgroundColor: sto.purple,
+		backgroundColor: c.link,
 		borderColor: c.transparent,
 	},
 	iOSDayActive: {
-		backgroundColor: c.infoBlue,
+		backgroundColor: c.link,
 	},
 	dayText: {
 		fontSize: 16,
@@ -260,7 +257,7 @@ const styles = StyleSheet.create({
 		minWidth: 110,
 	},
 	datePickerDash: {
-		color: c.iosDisabledText,
+		color: c.secondaryLabel,
 		fontWeight: 'bold',
 		marginHorizontal: 2,
 	},

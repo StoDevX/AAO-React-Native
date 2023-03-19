@@ -2,7 +2,7 @@ import * as React from 'react'
 import {Platform, RefreshControl, ScrollView, StyleSheet} from 'react-native'
 import Icon from 'react-native-vector-icons/Ionicons'
 import {NoticeView} from '@frogpond/notice'
-import {sto} from '../../../lib/colors'
+import * as c from '@frogpond/colors'
 import {openEmail} from '../../settings/screens/overview/support'
 
 const ERROR_MESSAGE =
@@ -33,7 +33,7 @@ export function StoPrintErrorView(props: Props): JSX.Element {
 			showsVerticalScrollIndicator={false}
 			style={styles.container}
 		>
-			<Icon color={sto.black} name={iconName} size={100} />
+			<Icon color={c.systemFill} name={iconName} size={100} />
 			<NoticeView
 				buttonText="Report"
 				header="Connection Issue"
@@ -47,7 +47,7 @@ export function StoPrintErrorView(props: Props): JSX.Element {
 
 const styles = StyleSheet.create({
 	container: {
-		backgroundColor: sto.white,
+		backgroundColor: c.systemBackground,
 	},
 	content: {
 		flex: 1,

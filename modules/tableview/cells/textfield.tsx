@@ -11,6 +11,7 @@ import * as c from '@frogpond/colors'
 
 const styles = StyleSheet.create({
 	label: {
+		color: c.label,
 		width: 90,
 		fontSize: 16,
 		marginTop: Platform.OS === 'ios' ? -2 : 0, // lines the label up with the text on iOS
@@ -20,6 +21,7 @@ const styles = StyleSheet.create({
 		width: 0,
 	},
 	customTextInput: {
+		color: c.label,
 		flex: 1,
 	},
 	singlelineCell: {
@@ -80,7 +82,7 @@ export const CellTextField = React.forwardRef<TextInput, Props>(
 				onChangeText={onChangeText}
 				onSubmitEditing={onSubmitEditing}
 				placeholder={placeholder}
-				placeholderTextColor={c.iosPlaceholderText}
+				placeholderTextColor={c.placeholderText}
 				returnKeyType={returnKeyType}
 				scrollEnabled={!multiline}
 				secureTextEntry={secureTextEntry}

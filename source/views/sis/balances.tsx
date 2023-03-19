@@ -13,13 +13,13 @@ import {BalancesShapeType, useBalances} from '../../lib/financials'
 import * as c from '@frogpond/colors'
 import {sto} from '../../lib/colors'
 import {useNavigation} from '@react-navigation/native'
-import {NoCredentialsError, useCredentials} from '../../lib/login'
+import {NoCredentialsError, useUsername} from '../../lib/login'
 
 const DISCLAIMER = 'This data may be outdated or otherwise inaccurate.'
 
 export const BalancesView = (): JSX.Element => {
 	let navigation = useNavigation()
-	let credentials = useCredentials()
+	let {data: username = ''} = useUsername()
 
 	let {
 		data = {} as BalancesShapeType,
@@ -28,7 +28,7 @@ export const BalancesView = (): JSX.Element => {
 		isInitialLoading,
 		refetch,
 		isRefetching,
-	} = useBalances(credentials.data)
+	} = useBalances(username)
 
 	let openSettings = () => navigation.navigate('Settings')
 	let refresh = <RefreshControl onRefresh={refetch} refreshing={isRefetching} />
@@ -104,17 +104,12 @@ export const BalancesView = (): JSX.Element => {
 
 let styles = StyleSheet.create({
 	stage: {
-		backgroundColor: c.sectionBgColor,
 		paddingVertical: 20,
-	},
-
-	common: {
-		backgroundColor: c.white,
 	},
 
 	balances: {
 		borderRightWidth: StyleSheet.hairlineWidth,
-		borderRightColor: c.iosSeparator,
+		borderRightColor: c.separator,
 	},
 
 	finalCell: {
@@ -128,6 +123,7 @@ let styles = StyleSheet.create({
 	},
 
 	rectangle: {
+		backgroundColor: c.secondarySystemGroupedBackground,
 		height: 88,
 		flex: 1,
 		alignItems: 'center',
@@ -139,21 +135,21 @@ let styles = StyleSheet.create({
 	// Text styling
 	financialText: {
 		paddingTop: 8,
-		color: c.iosDisabledText,
+		color: c.secondaryLabel,
 		textAlign: 'center',
 		fontWeight: '200',
 		fontSize: 23,
 	},
 	rectangleButtonText: {
 		paddingTop: 15,
-		color: c.black,
+		color: c.label,
 		textAlign: 'center',
 		fontSize: 16,
 	},
 })
 
-function getValueOrNa(value: string | null): string {
-	if (value == null) {
+function getValueOrNa(value: string | undefined): string {
+	if (value === undefined) {
 		return 'N/A'
 	}
 	return value
@@ -162,14 +158,14 @@ function getValueOrNa(value: string | null): string {
 function FormattedValueCell(props: {
 	indeterminate: boolean
 	label: string
-	value: string | null
+	value: string | undefined
 	style?: StyleProp<ViewStyle>
-	formatter?: (str: string | null) => string
+	formatter?: (str: string | undefined) => string
 }) {
 	let {indeterminate, label, value, style, formatter = getValueOrNa} = props
 
 	return (
-		<View style={[styles.rectangle, styles.common, styles.balances, style]}>
+		<View style={[styles.rectangle, styles.balances, style]}>
 			<Text selectable={true} style={styles.financialText}>
 				{indeterminate ? '…' : formatter(value)}
 			</Text>

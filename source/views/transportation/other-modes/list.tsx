@@ -9,7 +9,7 @@ import {LoadingView, NoticeView} from '@frogpond/notice'
 
 const styles = StyleSheet.create({
 	listContainer: {
-		backgroundColor: c.white,
+		backgroundColor: c.systemBackground,
 	},
 	contentContainer: {
 		flexGrow: 1,

@@ -13,10 +13,10 @@ import * as c from '@frogpond/colors'
 const cardStyles = StyleSheet.create({
 	card: {
 		marginHorizontal: 10,
-		paddingHorizontal: 10,
+		paddingHorizontal: 20,
 		paddingBottom: 4,
-		backgroundColor: c.white,
-		borderRadius: 2,
+		backgroundColor: c.tertiarySystemBackground,
+		borderRadius: 12,
 		elevation: 2,
 	},
 	title: {
@@ -28,16 +28,18 @@ const cardStyles = StyleSheet.create({
 			ios: iOSUIKit.title3Object,
 			android: material.titleObject,
 		}),
+		color: c.label,
 	},
 	footerText: {
 		...Platform.select({
 			ios: iOSUIKit.footnoteObject,
 			android: material.captionObject,
 		}),
+		color: c.secondaryLabel,
 	},
 	footer: {
 		borderTopWidth: 1,
-		borderTopColor: c.androidSeparator,
+		borderTopColor: c.separator,
 		paddingTop: 6,
 		paddingBottom: 2,
 	},

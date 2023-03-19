@@ -21,10 +21,11 @@ const styles = StyleSheet.create({
 	},
 	footer: {
 		fontSize: 10,
-		color: c.iosDisabledText,
+		color: c.secondaryLabel,
 		textAlign: 'center',
 	},
 	title: {
+		color: c.label,
 		fontSize: 36,
 		textAlign: 'center',
 		marginHorizontal: 18,

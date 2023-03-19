@@ -3,7 +3,6 @@ import {ScrollView, StyleSheet, Image} from 'react-native'
 import {images as buildingImages} from '../../../../images/spaces'
 import type {BuildingType} from '../types'
 import type {Moment} from 'moment-timezone'
-import * as c from '@frogpond/colors'
 import {getShortBuildingStatus, hoursBackgroundColors} from '../lib'
 
 import {SolidBadge as Badge} from '@frogpond/badge'
@@ -13,10 +12,6 @@ import {ListFooter} from '@frogpond/lists'
 import {LinkTable} from './link-table'
 
 const styles = StyleSheet.create({
-	container: {
-		alignItems: 'stretch',
-		backgroundColor: c.sectionBgColor,
-	},
 	image: {
 		width: undefined,
 		height: 100,
@@ -42,7 +37,7 @@ export const BuildingDetail = React.memo((props: Props): JSX.Element => {
 	let links = info.links || []
 
 	return (
-		<ScrollView contentContainerStyle={styles.container}>
+		<ScrollView>
 			{headerImage ? (
 				<Image
 					accessibilityIgnoresInvertColors={true}

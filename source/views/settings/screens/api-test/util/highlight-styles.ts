@@ -1,5 +1,3 @@
-import * as c from '@frogpond/colors'
-
 export const CSS_CODE_STYLES = `
     <style>
         body {
@@ -11,19 +9,19 @@ export const CSS_CODE_STYLES = `
             white-space: pre-wrap;
         }
         .string {
-                color:  ${c.coffee};
+                color: coffee;
             }
         .number {
-                color: ${c.burntOrange};
+                color: orange;
             }
         .boolean {
-                color: ${c.brickRed};
+                color: red;
             }
         .null {
-                color: ${c.purple};
+                color: rebeccapurple;
             }
         .key {
-                color: ${c.blue};
+                color: blue;
             }
     </style>
 `

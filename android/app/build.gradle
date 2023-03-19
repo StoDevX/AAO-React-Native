@@ -74,19 +74,6 @@ def enableSeparateBuildPerCPUArchitecture = false
 def enableProguardInReleaseBuilds = false
 
 /**
- * The preferred build flavor of JavaScriptCore (JSC)
- *
- * For example, to use the international variant, you can use:
- * `def jscFlavor = 'org.webkit:android-jsc-intl:+'`
- *
- * The international variant includes ICU i18n library and necessary data
- * allowing to use e.g. `Date.toLocaleString` and `String.localeCompare` that
- * give correct results when using with locales other than en-US. Note that
- * this variant is about 6MiB larger per architecture than default.
- */
-def jscFlavor = 'org.webkit:android-jsc:+'
-
-/**
  * Private function to get the list of Native Architectures you want to build.
  * This reads the value from reactNativeArchitectures in your gradle.properties
  * file and works together with the --active-arch-only flag of react-native run-android.
@@ -207,7 +194,7 @@ android {
 
 dependencies {
     // required by react-native-screens
-    implementation("androidx.appcompat:appcompat:1.6.0")
+    implementation("androidx.appcompat:appcompat:1.6.1")
 
     // The version of react-native is set by the React Native Gradle Plugin
     implementation("com.facebook.react:react-android")
@@ -219,32 +206,12 @@ dependencies {
         exclude group:'com.squareup.okhttp3', module:'okhttp'
     }
 
-    if (hermesEnabled.toBoolean()) {
-        implementation("com.facebook.react:hermes-android")
-    } else {
-        implementation jscFlavor
-    }
+    implementation("com.facebook.react:hermes-android")
 }
 
 dependencyLocking {
     lockAllConfigurations()
     // lockMode = LockMode.STRICT
-}
-
-// Bundles the app's data for the build process
-task bundleData(type: Exec) {
-    workingDir '../../'
-    commandLine 'npm', 'run', 'bundle-data'
-}
-
-gradle.projectsEvaluated {
-    // hook bundleData into the android build process
-    if (project.hasProperty('bundleDebugJsAndAssets')) {
-        bundleDebugJsAndAssets.dependsOn bundleData
-    }
-    if (project.hasProperty('bundleReleaseJsAndAssets')) {
-        bundleReleaseJsAndAssets.dependsOn bundleData
-    }
 }
 
 project.ext.vectoricons = [

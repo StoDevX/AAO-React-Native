@@ -11,7 +11,7 @@ import {useStudentWorkPostings} from './query'
 
 const styles = StyleSheet.create({
 	listContainer: {
-		backgroundColor: c.white,
+		backgroundColor: c.systemBackground,
 	},
 	contentContainer: {
 		flexGrow: 1,

@@ -9,11 +9,11 @@
     "test": "jest"
   },
   "peerDependencies": {
-    "moment-timezone": "^0.5.40",
+    "moment-timezone": "^0.5.41",
     "react": "^18.0.0",
     "react-native": "^0.71.1",
     "react-native-vector-icons": "^9.2.0",
-    "@react-navigation/native": "^6.1.2"
+    "@react-navigation/native": "^6.1.6"
   },
   "dependencies": {
     "@callstack/react-theme-provider": "3.0.8",

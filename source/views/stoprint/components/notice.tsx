@@ -8,7 +8,7 @@ import {
 } from 'react-native'
 import Icon from 'react-native-vector-icons/Ionicons'
 import {NoticeView} from '@frogpond/notice'
-import {sto} from '../../../lib/colors'
+import * as c from '@frogpond/colors'
 
 type Props = {
 	buttonText: string
@@ -36,7 +36,7 @@ export const StoPrintNoticeView = (props: Props): React.ReactElement => {
 			showsVerticalScrollIndicator={false}
 			style={styles.container}
 		>
-			<Icon color={sto.black} name={iconName} size={100} />
+			<Icon color={c.systemFill} name={iconName} size={100} />
 			<NoticeView
 				buttonText={buttonText}
 				header={header}
@@ -53,7 +53,7 @@ export const StoPrintNoticeView = (props: Props): React.ReactElement => {
 
 const styles = StyleSheet.create({
 	container: {
-		backgroundColor: sto.white,
+		backgroundColor: c.systemBackground,
 	},
 	content: {
 		flex: 1,
@@ -61,6 +61,7 @@ const styles = StyleSheet.create({
 		justifyContent: 'center',
 	},
 	description: {
+		color: c.label,
 		marginHorizontal: 30,
 		marginVertical: 20,
 		textAlign: 'center',

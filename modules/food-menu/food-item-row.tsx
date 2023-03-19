@@ -67,7 +67,7 @@ const styles = StyleSheet.create({
 	},
 	badgeIcon: {
 		fontSize: 16,
-		color: c.iosDisabledText,
+		color: c.secondaryLabel,
 	},
 	iconContainer: {
 		marginLeft: 10,

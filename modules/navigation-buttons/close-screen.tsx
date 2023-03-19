@@ -3,6 +3,7 @@ import {Text, Platform, StyleSheet, ViewStyle, StyleProp} from 'react-native'
 import {Touchable} from '@frogpond/touchable'
 import {commonStyles} from './styles'
 import {useNavigation} from '@react-navigation/native'
+import {useTheme} from '@frogpond/app-theme'
 
 type Props = {
 	title?: string
@@ -11,6 +12,8 @@ type Props = {
 
 export function CloseScreenButton({title, buttonStyle}: Props): JSX.Element {
 	let navigation = useNavigation()
+	let {colors} = useTheme()
+
 	return (
 		<Touchable
 			accessibilityLabel="Close the screen"
@@ -22,7 +25,9 @@ export function CloseScreenButton({title, buttonStyle}: Props): JSX.Element {
 			style={[commonStyles.button, buttonStyle]}
 			testID="button-close-screen"
 		>
-			<Text style={[commonStyles.text, styles.text]}>{title ?? 'Done'}</Text>
+			<Text style={[commonStyles.text, styles.text, {color: colors.primary}]}>
+				{title ?? 'Done'}
+			</Text>
 		</Touchable>
 	)
 }

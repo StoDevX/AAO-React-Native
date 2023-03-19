@@ -13,7 +13,6 @@ import {useFilters} from './lib/build-filters'
 import {RouteProp, useNavigation, useRoute} from '@react-navigation/native'
 import {ChangeTextEvent, RootStackParamList} from '../../../navigation/types'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
-import {white} from '@frogpond/colors'
 import {useDebounce} from '@frogpond/use-debounce'
 import {ListSeparator, ListSectionHeader} from '@frogpond/lists'
 import * as c from '@frogpond/colors'
@@ -86,7 +85,7 @@ export const CourseSearchResultsView = (): JSX.Element => {
 	React.useLayoutEffect(() => {
 		navigation.setOptions({
 			headerSearchBarOptions: {
-				barTintColor: white,
+				barTintColor: c.systemFill,
 				onChangeText: (event: ChangeTextEvent) =>
 					setSearchQuery(event.nativeEvent.text),
 			},
@@ -201,7 +200,7 @@ export const NavigationOptions: NativeStackNavigationOptions = {
 let styles = StyleSheet.create({
 	contentContainer: {
 		flexGrow: 1,
-		backgroundColor: c.white,
+		backgroundColor: c.systemBackground,
 	},
 	message: {
 		paddingVertical: 16,
