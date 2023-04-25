@@ -6,8 +6,8 @@ We take security issues in our project seriously and appreciate the efforts of t
 
 | Version | Supported          |
 | ------- | ------------------ |
-| 2.x.x   | :white_check_mark: |
-| < 2.0   | :x:                |
+|   2.7   | :white_check_mark: |
+| < 2.7   | :x:                |
 
 ## Reporting a vulnerability
 
