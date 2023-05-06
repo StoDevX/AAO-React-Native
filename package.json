@@ -131,6 +131,7 @@
     "ajv-keywords": "5.1.0",
     "babel-core": "7.0.0-bridge.0",
     "babel-jest": "29.4.3",
+    "babel-plugin-transform-remove-console": "6.9.4",
     "eslint": "8.39.0",
     "eslint-config-prettier": "8.6.0",
     "eslint-plugin-babel": "5.3.1",
