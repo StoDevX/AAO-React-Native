@@ -21,6 +21,7 @@ const TEMP_ANDROID_PLACEHOLDER = PlatformColor('?attr/colorAccent')
 export const label = Platform.select({
 	ios: PlatformColor('label'),
 	android: TEMP_ANDROID_PLACEHOLDER,
+	default: TEMP_ANDROID_PLACEHOLDER,
 })
 
 /**
@@ -300,6 +301,7 @@ export const systemCyan = Platform.select({
 export const systemGreen = Platform.select({
 	ios: PlatformColor('systemGreen'),
 	android: TEMP_ANDROID_PLACEHOLDER,
+	default: TEMP_ANDROID_PLACEHOLDER,
 })
 
 /**
@@ -348,6 +350,7 @@ export const systemPurple = Platform.select({
 export const systemRed = Platform.select({
 	ios: PlatformColor('systemRed'),
 	android: TEMP_ANDROID_PLACEHOLDER,
+	default: TEMP_ANDROID_PLACEHOLDER,
 })
 
 /**
