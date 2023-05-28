@@ -418,12 +418,14 @@ PODS:
     - React-RCTImage
   - RNSearchBar (3.5.1):
     - React
-  - RNSentry (4.15.0):
+  - RNSentry (5.5.0):
     - React-Core
-    - Sentry/HybridSDK (= 7.31.5)
+    - Sentry/HybridSDK (= 8.7.1)
   - RNVectorIcons (9.2.0):
     - React-Core
-  - Sentry/HybridSDK (7.31.5)
+  - Sentry/HybridSDK (8.7.1):
+    - SentryPrivate (= 8.7.1)
+  - SentryPrivate (8.7.1)
   - Yoga (1.14.0)
 
 DEPENDENCIES:
@@ -490,6 +492,7 @@ SPEC REPOS:
     - fmt
     - libevent
     - Sentry
+    - SentryPrivate
 
 EXTERNAL SOURCES:
   boost:
@@ -658,9 +661,10 @@ SPEC CHECKSUMS:
   RNReanimated: cc5e3aa479cb9170bcccf8204291a6950a3be128
   RNScreens: 218801c16a2782546d30bd2026bb625c0302d70f
   RNSearchBar: 9860431356b7d12a8449d2fddb2b5f3c78d1e99f
-  RNSentry: 50f8b7147d1d0973a56635e524b192ec80e53195
+  RNSentry: 4fb2cd7d2d6cb94423c24884488206ef881da136
   RNVectorIcons: fcc2f6cb32f5735b586e66d14103a74ce6ad61f8
-  Sentry: 4c9babff9034785067c896fd580b1f7de44da020
+  Sentry: 11776f6a25a128808d793d0d41bb7ad873b5ae4f
+  SentryPrivate: b3c448eacdabe9eab7679a2e0af609c608f91572
   Yoga: d56980c8914db0b51692f55533409e844b66133c
 
 PODFILE CHECKSUM: 2c630a81eed648e24662d69d4bdaba0d8a2f4985
