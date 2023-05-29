@@ -51,7 +51,7 @@
     "@react-native-async-storage/async-storage": "1.17.11",
     "@react-native-clipboard/clipboard": "1.11.1",
     "@react-native-community/datetimepicker": "6.7.5",
-    "@react-native-community/netinfo": "9.3.7",
+    "@react-native-community/netinfo": "9.3.10",
     "@react-native-picker/picker": "2.4.10",
     "@react-navigation/bottom-tabs": "6.5.7",
     "@react-navigation/material-bottom-tabs": "6.2.15",
@@ -107,9 +107,9 @@
     "wordwrap": "1.0.0"
   },
   "devDependencies": {
-    "@babel/core": "7.21.0",
-    "@babel/preset-typescript": "7.21.0",
-    "@babel/runtime": "7.21.0",
+    "@babel/core": "7.21.8",
+    "@babel/preset-typescript": "7.21.5",
+    "@babel/runtime": "7.21.5",
     "@jest/globals": "29.4.3",
     "@sentry/cli": "2.14.3",
     "@tanstack/eslint-plugin-query": "4.24.11",
