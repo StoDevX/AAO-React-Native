@@ -4,7 +4,7 @@ gem 'fastlane', '2.212.2'
 gem 'netrc', '0.11.0'
 gem 'json', '2.6.3'
 gem 'xcodeproj', '1.22.0'
-gem 'cocoapods', '1.12.0'
+gem 'cocoapods', '1.12.1'
 
 # fastlane plugins
 
