@@ -12,6 +12,6 @@
     "@frogpond/colors": "^1.0.0",
     "react": "^18.0.0",
     "tinycolor2": "^1.6.0",
-    "react-native": "^0.71.7"
+    "react-native": "^0.72.0"
   }
 }
