@@ -10,7 +10,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  ruby_version: '2.6'
+  ruby_version: '3.0'
   xcode_version: 'Xcode_14.2'
   java_version: '11'
   java_distribution: temurin
