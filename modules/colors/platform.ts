@@ -1,15 +1,19 @@
-import {PlatformColor, Platform} from 'react-native'
+import {PlatformColor, Platform, OpaqueColorValue} from 'react-native'
 
 // MARK: Label colors
 
 /**
  * Temporary constant to get Android building
  *
+ * Note: Android has issues with borderBottomColor of a view managed by RCTView
+ * com.facebook.react.bridge.ReadableNativeMap cannot be cast to java.lang.Integer
+ *
  * @todo: Replace this constant and make the necessary changes to align with
  *        Material You color palette. This issue is being tracked over at
  *        https://github.com/StoDevX/AAO-React-Native/issues/6919
  */
-const TEMP_ANDROID_PLACEHOLDER = PlatformColor('?attr/colorAccent')
+const TEMP_ANDROID_BACKGROUND = 'white' as unknown as OpaqueColorValue
+const TEMP_ANDROID_FOREGROUND = 'black' as unknown as OpaqueColorValue
 
 /**
  * The color for text labels that contain primary content.
@@ -20,8 +24,8 @@ const TEMP_ANDROID_PLACEHOLDER = PlatformColor('?attr/colorAccent')
  */
 export const label = Platform.select({
 	ios: PlatformColor('label'),
-	android: TEMP_ANDROID_PLACEHOLDER,
-	default: TEMP_ANDROID_PLACEHOLDER,
+	android: PlatformColor('@android:color/primary_text_light'),
+	default: TEMP_ANDROID_FOREGROUND,
 })
 
 /**
@@ -57,7 +61,7 @@ export const tertiaryLabel = Platform.select({
  */
 export const quaternaryLabel = Platform.select({
 	ios: PlatformColor('quaternaryLabel'),
-	android: TEMP_ANDROID_PLACEHOLDER,
+	android: TEMP_ANDROID_FOREGROUND,
 })
 
 // MARK: MARK: Fill colors
@@ -76,7 +80,7 @@ export const quaternaryLabel = Platform.select({
  */
 export const systemFill = Platform.select({
 	ios: PlatformColor('systemFill'),
-	android: TEMP_ANDROID_PLACEHOLDER,
+	android: TEMP_ANDROID_BACKGROUND,
 })
 
 /**
@@ -93,7 +97,7 @@ export const systemFill = Platform.select({
  */
 export const secondarySystemFill = Platform.select({
 	ios: PlatformColor('secondarySystemFill'),
-	android: TEMP_ANDROID_PLACEHOLDER,
+	android: TEMP_ANDROID_BACKGROUND,
 })
 
 /**
@@ -110,7 +114,7 @@ export const secondarySystemFill = Platform.select({
  */
 export const tertiarySystemFill = Platform.select({
 	ios: PlatformColor('tertiarySystemFill'),
-	android: TEMP_ANDROID_PLACEHOLDER,
+	android: TEMP_ANDROID_BACKGROUND,
 })
 
 /**
@@ -127,7 +131,7 @@ export const tertiarySystemFill = Platform.select({
  */
 export const quaternarySystemFill = Platform.select({
 	ios: PlatformColor('quaternarySystemFill'),
-	android: TEMP_ANDROID_PLACEHOLDER,
+	android: TEMP_ANDROID_BACKGROUND,
 })
 
 // MARK: Text colors
@@ -137,7 +141,7 @@ export const quaternarySystemFill = Platform.select({
  */
 export const placeholderText = Platform.select({
 	ios: PlatformColor('placeholderText'),
-	android: TEMP_ANDROID_PLACEHOLDER,
+	android: TEMP_ANDROID_FOREGROUND,
 })
 
 // MARK: Tint color
@@ -147,7 +151,7 @@ export const placeholderText = Platform.select({
  */
 export const tintColor = Platform.select({
 	ios: PlatformColor('tintColor'),
-	android: TEMP_ANDROID_PLACEHOLDER,
+	android: TEMP_ANDROID_FOREGROUND,
 })
 
 // MARK: Standard content background colors
@@ -162,7 +166,7 @@ export const tintColor = Platform.select({
  */
 export const systemBackground = Platform.select({
 	ios: PlatformColor('systemBackground'),
-	android: TEMP_ANDROID_PLACEHOLDER,
+	android: TEMP_ANDROID_BACKGROUND,
 })
 
 /**
@@ -175,7 +179,7 @@ export const systemBackground = Platform.select({
  */
 export const secondarySystemBackground = Platform.select({
 	ios: PlatformColor('secondarySystemBackground'),
-	android: TEMP_ANDROID_PLACEHOLDER,
+	android: TEMP_ANDROID_BACKGROUND,
 })
 
 /**
@@ -188,7 +192,7 @@ export const secondarySystemBackground = Platform.select({
  */
 export const tertiarySystemBackground = Platform.select({
 	ios: PlatformColor('tertiarySystemBackground'),
-	android: TEMP_ANDROID_PLACEHOLDER,
+	android: TEMP_ANDROID_BACKGROUND,
 })
 
 // MARK: Grouped content background colors
@@ -203,7 +207,7 @@ export const tertiarySystemBackground = Platform.select({
  */
 export const systemGroupedBackground = Platform.select({
 	ios: PlatformColor('systemGroupedBackground'),
-	android: TEMP_ANDROID_PLACEHOLDER,
+	android: TEMP_ANDROID_BACKGROUND,
 })
 
 /**
@@ -216,7 +220,7 @@ export const systemGroupedBackground = Platform.select({
  */
 export const secondarySystemGroupedBackground = Platform.select({
 	ios: PlatformColor('secondarySystemGroupedBackground'),
-	android: TEMP_ANDROID_PLACEHOLDER,
+	android: TEMP_ANDROID_BACKGROUND,
 })
 
 /**
@@ -229,7 +233,7 @@ export const secondarySystemGroupedBackground = Platform.select({
  */
 export const tertiarySystemGroupedBackground = Platform.select({
 	ios: PlatformColor('tertiarySystemGroupedBackground'),
-	android: TEMP_ANDROID_PLACEHOLDER,
+	android: TEMP_ANDROID_BACKGROUND,
 })
 
 // MARK: Separator colors
@@ -244,7 +248,7 @@ export const tertiarySystemGroupedBackground = Platform.select({
  */
 export const separator = Platform.select({
 	ios: PlatformColor('separator'),
-	android: TEMP_ANDROID_PLACEHOLDER,
+	android: TEMP_ANDROID_FOREGROUND,
 })
 
 /**
@@ -257,7 +261,7 @@ export const separator = Platform.select({
  */
 export const opaqueSeparator = Platform.select({
 	ios: PlatformColor('opaqueSeparator'),
-	android: TEMP_ANDROID_PLACEHOLDER,
+	android: TEMP_ANDROID_FOREGROUND,
 })
 
 // MARK: Link color
@@ -266,7 +270,7 @@ export const opaqueSeparator = Platform.select({
  */
 export const link = Platform.select({
 	ios: PlatformColor('link'),
-	android: TEMP_ANDROID_PLACEHOLDER,
+	android: TEMP_ANDROID_FOREGROUND,
 })
 
 // MARK: Adaptable colors
@@ -276,7 +280,7 @@ export const link = Platform.select({
  */
 export const systemBlue = Platform.select({
 	ios: PlatformColor('systemBlue'),
-	android: TEMP_ANDROID_PLACEHOLDER,
+	android: TEMP_ANDROID_FOREGROUND,
 })
 
 /**
@@ -284,7 +288,7 @@ export const systemBlue = Platform.select({
  */
 export const systemBrown = Platform.select({
 	ios: PlatformColor('systemBrown'),
-	android: TEMP_ANDROID_PLACEHOLDER,
+	android: TEMP_ANDROID_FOREGROUND,
 })
 
 /**
@@ -292,7 +296,7 @@ export const systemBrown = Platform.select({
  */
 export const systemCyan = Platform.select({
 	ios: PlatformColor('systemCyan'),
-	android: TEMP_ANDROID_PLACEHOLDER,
+	android: TEMP_ANDROID_FOREGROUND,
 })
 
 /**
@@ -300,8 +304,8 @@ export const systemCyan = Platform.select({
  */
 export const systemGreen = Platform.select({
 	ios: PlatformColor('systemGreen'),
-	android: TEMP_ANDROID_PLACEHOLDER,
-	default: TEMP_ANDROID_PLACEHOLDER,
+	android: TEMP_ANDROID_FOREGROUND,
+	default: TEMP_ANDROID_FOREGROUND,
 })
 
 /**
@@ -309,7 +313,7 @@ export const systemGreen = Platform.select({
  */
 export const systemIndigo = Platform.select({
 	ios: PlatformColor('systemIndigo'),
-	android: TEMP_ANDROID_PLACEHOLDER,
+	android: TEMP_ANDROID_FOREGROUND,
 })
 
 /**
@@ -317,7 +321,7 @@ export const systemIndigo = Platform.select({
  */
 export const systemMint = Platform.select({
 	ios: PlatformColor('systemMint'),
-	android: TEMP_ANDROID_PLACEHOLDER,
+	android: TEMP_ANDROID_FOREGROUND,
 })
 
 /**
@@ -325,7 +329,7 @@ export const systemMint = Platform.select({
  */
 export const systemOrange = Platform.select({
 	ios: PlatformColor('systemOrange'),
-	android: TEMP_ANDROID_PLACEHOLDER,
+	android: TEMP_ANDROID_FOREGROUND,
 })
 
 /**
@@ -333,7 +337,7 @@ export const systemOrange = Platform.select({
  */
 export const systemPink = Platform.select({
 	ios: PlatformColor('systemPink'),
-	android: TEMP_ANDROID_PLACEHOLDER,
+	android: TEMP_ANDROID_FOREGROUND,
 })
 
 /**
@@ -341,7 +345,7 @@ export const systemPink = Platform.select({
  */
 export const systemPurple = Platform.select({
 	ios: PlatformColor('systemPurple'),
-	android: TEMP_ANDROID_PLACEHOLDER,
+	android: TEMP_ANDROID_FOREGROUND,
 })
 
 /**
@@ -349,8 +353,8 @@ export const systemPurple = Platform.select({
  */
 export const systemRed = Platform.select({
 	ios: PlatformColor('systemRed'),
-	android: TEMP_ANDROID_PLACEHOLDER,
-	default: TEMP_ANDROID_PLACEHOLDER,
+	android: TEMP_ANDROID_FOREGROUND,
+	default: TEMP_ANDROID_FOREGROUND,
 })
 
 /**
@@ -358,7 +362,7 @@ export const systemRed = Platform.select({
  */
 export const systemTeal = Platform.select({
 	ios: PlatformColor('systemTeal'),
-	android: TEMP_ANDROID_PLACEHOLDER,
+	android: TEMP_ANDROID_FOREGROUND,
 })
 
 /**
@@ -366,7 +370,7 @@ export const systemTeal = Platform.select({
  */
 export const systemYellow = Platform.select({
 	ios: PlatformColor('systemYellow'),
-	android: TEMP_ANDROID_PLACEHOLDER,
+	android: TEMP_ANDROID_FOREGROUND,
 })
 
 // MARK: Adaptable gray colors
@@ -376,7 +380,7 @@ export const systemYellow = Platform.select({
  */
 export const systemGray = Platform.select({
 	ios: PlatformColor('systemGray'),
-	android: TEMP_ANDROID_PLACEHOLDER,
+	android: TEMP_ANDROID_BACKGROUND,
 })
 
 /**
@@ -384,7 +388,7 @@ export const systemGray = Platform.select({
  */
 export const systemGray2 = Platform.select({
 	ios: PlatformColor('systemGray2'),
-	android: TEMP_ANDROID_PLACEHOLDER,
+	android: TEMP_ANDROID_BACKGROUND,
 })
 
 /**
@@ -392,7 +396,7 @@ export const systemGray2 = Platform.select({
  */
 export const systemGray3 = Platform.select({
 	ios: PlatformColor('systemGray3'),
-	android: TEMP_ANDROID_PLACEHOLDER,
+	android: TEMP_ANDROID_BACKGROUND,
 })
 
 /**
@@ -400,7 +404,7 @@ export const systemGray3 = Platform.select({
  */
 export const systemGray4 = Platform.select({
 	ios: PlatformColor('systemGray4'),
-	android: TEMP_ANDROID_PLACEHOLDER,
+	android: TEMP_ANDROID_BACKGROUND,
 })
 
 /**
@@ -408,7 +412,7 @@ export const systemGray4 = Platform.select({
  */
 export const systemGray5 = Platform.select({
 	ios: PlatformColor('systemGray5'),
-	android: TEMP_ANDROID_PLACEHOLDER,
+	android: TEMP_ANDROID_BACKGROUND,
 })
 
 /**
@@ -416,7 +420,7 @@ export const systemGray5 = Platform.select({
  */
 export const systemGray6 = Platform.select({
 	ios: PlatformColor('systemGray6'),
-	android: TEMP_ANDROID_PLACEHOLDER,
+	android: TEMP_ANDROID_BACKGROUND,
 })
 
 // MARK: Transparent color
