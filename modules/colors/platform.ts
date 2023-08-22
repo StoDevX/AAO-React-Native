@@ -8,7 +8,7 @@ import {PlatformColor, Platform, OpaqueColorValue} from 'react-native'
  * Note: Android has issues with borderBottomColor of a view managed by RCTView
  * com.facebook.react.bridge.ReadableNativeMap cannot be cast to java.lang.Integer
  *
- * @todo: Replace this constant and make the necessary changes to align with
+ * @todo: Replace these constants and make the necessary changes to align with
  *        Material You color palette. This issue is being tracked over at
  *        https://github.com/StoDevX/AAO-React-Native/issues/6919
  */
@@ -37,7 +37,7 @@ export const label = Platform.select({
  */
 export const secondaryLabel = Platform.select({
 	ios: PlatformColor('secondaryLabel'),
-	android: TEMP_ANDROID_PLACEHOLDER,
+	android: PlatformColor('@android:color/secondary_text_light'),
 })
 
 /**
@@ -49,7 +49,7 @@ export const secondaryLabel = Platform.select({
  */
 export const tertiaryLabel = Platform.select({
 	ios: PlatformColor('tertiaryLabel'),
-	android: TEMP_ANDROID_PLACEHOLDER,
+	android: PlatformColor('@android:color/tertiary_text_light'),
 })
 
 /**
@@ -430,7 +430,7 @@ export const systemGray6 = Platform.select({
  */
 export const clear = Platform.select({
 	ios: PlatformColor('clear'),
-	android: TEMP_ANDROID_PLACEHOLDER,
+	android: PlatformColor('@android:color/transparent'),
 })
 
 export const androidLightBackground = 'rgb(244, 244, 244)'
