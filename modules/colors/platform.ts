@@ -270,7 +270,7 @@ export const opaqueSeparator = Platform.select({
  */
 export const link = Platform.select({
 	ios: PlatformColor('link'),
-	android: TEMP_ANDROID_FOREGROUND,
+	android: PlatformColor('?attr/colorAccent'),
 })
 
 // MARK: Adaptable colors
