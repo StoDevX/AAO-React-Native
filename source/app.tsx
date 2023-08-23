@@ -28,6 +28,7 @@ export default function App(): JSX.Element {
 	// Create a ref for the navigation container
 	const navigationRef = React.useRef()
 	const scheme = useColorScheme()
+	const theme = scheme === 'dark' ? CombinedDarkTheme : CombinedLightTheme
 
 	return (
 		<ReduxProvider store={store}>
@@ -39,7 +40,7 @@ export default function App(): JSX.Element {
 					client={queryClient}
 					persistOptions={{persister}}
 				>
-					<PaperProvider>
+					<PaperProvider theme={theme}>
 						<ActionSheetProvider>
 							<NavigationContainer
 								onReady={() => {
@@ -48,9 +49,7 @@ export default function App(): JSX.Element {
 										navigationRef,
 									)
 								}}
-								theme={
-									scheme === 'dark' ? CombinedDarkTheme : CombinedLightTheme
-								}
+								theme={theme}
 							>
 								<StatusBar
 									barStyle={
