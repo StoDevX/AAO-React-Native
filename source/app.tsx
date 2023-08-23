@@ -29,6 +29,7 @@ export default function App(): JSX.Element {
 	const navigationRef = React.useRef()
 	const scheme = useColorScheme()
 	const theme = scheme === 'dark' ? CombinedDarkTheme : CombinedLightTheme
+	const statusBarStyle = scheme === 'dark' ? 'light-content' : 'dark-content'
 
 	return (
 		<ReduxProvider store={store}>
@@ -51,11 +52,7 @@ export default function App(): JSX.Element {
 								}}
 								theme={theme}
 							>
-								<StatusBar
-									barStyle={
-										scheme === 'dark' ? 'light-content' : 'dark-content'
-									}
-								/>
+								<StatusBar barStyle={statusBarStyle} />
 								<RootStack />
 							</NavigationContainer>
 						</ActionSheetProvider>
