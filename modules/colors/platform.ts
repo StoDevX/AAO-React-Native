@@ -304,7 +304,7 @@ export const systemCyan = Platform.select({
  */
 export const systemGreen = Platform.select({
 	ios: PlatformColor('systemGreen'),
-	android: TEMP_ANDROID_FOREGROUND,
+	android: PlatformColor('@android:color/holo_green_light'),
 	default: TEMP_ANDROID_FOREGROUND,
 })
 
@@ -353,7 +353,7 @@ export const systemPurple = Platform.select({
  */
 export const systemRed = Platform.select({
 	ios: PlatformColor('systemRed'),
-	android: TEMP_ANDROID_FOREGROUND,
+	android: PlatformColor('@android:color/holo_red_light'),
 	default: TEMP_ANDROID_FOREGROUND,
 })
 
@@ -370,7 +370,8 @@ export const systemTeal = Platform.select({
  */
 export const systemYellow = Platform.select({
 	ios: PlatformColor('systemYellow'),
-	android: TEMP_ANDROID_FOREGROUND,
+	// TODO: make this yellow and not orange
+	android: PlatformColor('@android:color/holo_orange_light'),
 })
 
 // MARK: Adaptable gray colors
