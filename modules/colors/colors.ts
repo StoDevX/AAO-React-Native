@@ -15,7 +15,7 @@ export const yellow = platform.systemYellow
 
 export const black = '#111111'
 export const white = '#FFFFFF'
-export const transparent = platform.clear
+export const transparent = 'rgba(0, 0, 0, 0)'
 
 // MARK: Greens
 export const emerald = 'rgb(1, 152, 117)'
