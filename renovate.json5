@@ -51,4 +51,6 @@
 			rangeStrategy: 'bump',
 		},
 	],
+	// Allow Renovate to open as many PRs as it wants
+	prConcurrentLimit: 0,
 }
