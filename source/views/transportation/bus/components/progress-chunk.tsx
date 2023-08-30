@@ -1,6 +1,6 @@
 import * as React from 'react'
 import * as c from '@frogpond/colors'
-import {Platform, StyleSheet, View} from 'react-native'
+import {ColorValue, Platform, StyleSheet, View} from 'react-native'
 import type {BusStopStatusEnum} from '../lib'
 
 const isAndroid = Platform.OS === 'android'
@@ -47,8 +47,8 @@ const styles = StyleSheet.create({
 })
 
 type Props = {
-	barColor: string
-	currentStopColor: string
+	barColor: ColorValue
+	currentStopColor: ColorValue
 	isFirstChunk: boolean
 	isLastChunk: boolean
 	stopStatus: BusStopStatusEnum

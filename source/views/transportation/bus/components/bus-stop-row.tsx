@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {Platform, StyleSheet} from 'react-native'
+import {ColorValue, Platform, StyleSheet} from 'react-native'
 import {Column} from '@frogpond/layout'
 import {Detail, ListRow, Title} from '@frogpond/lists'
 import type {BusTimetableEntry} from '../types'
@@ -36,8 +36,8 @@ type Props = {
 	stop: BusTimetableEntry
 	departureIndex: null | number
 	now: Moment
-	barColor: string
-	currentStopColor: string
+	barColor: ColorValue
+	currentStopColor: ColorValue
 	isFirstRow: boolean
 	isLastRow: boolean
 	status: BusStateEnum
