@@ -25,7 +25,7 @@ const styles = StyleSheet.create({
 	},
 	skippingStop: {
 		backgroundColor: c.clear,
-		borderColor: c.clear,
+		borderColor: c.transparent,
 	},
 	passedStop: {
 		height: 12,
