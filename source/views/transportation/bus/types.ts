@@ -1,11 +1,12 @@
 import type {Moment} from 'moment'
+import {ColorValue} from 'react-native'
 
 export type DayOfWeek = 'Su' | 'Mo' | 'Tu' | 'We' | 'Th' | 'Fr' | 'Sa'
 export type Coordinates = [number, number]
 
 export type BusLineColors = {
-	bar: string
-	dot: string
+	bar: ColorValue
+	dot: ColorValue
 }
 
 export type UnprocessedDepartureTimeList = Array<string | false>

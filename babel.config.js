@@ -4,7 +4,7 @@ module.exports = {
 		'@babel/preset-typescript',
 	],
 	plugins: [
-		'@babel/plugin-proposal-export-namespace-from',
+		'@babel/plugin-transform-export-namespace-from',
 		// the react-native-reanimated plugin must come last
 		'react-native-reanimated/plugin',
 	],

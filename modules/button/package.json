@@ -17,7 +17,7 @@
     "@frogpond/app-theme": "^1.0.0",
     "@frogpond/colors": "^1.0.0",
     "lodash": "4.17.21",
-    "react-native-button": "3.0.1",
+    "react-native-button": "3.1.0",
     "react-native-typography": "1.4.1"
   }
 }
