@@ -21,6 +21,9 @@ const styles = StyleSheet.create({
 	container: {
 		backgroundColor: c.secondarySystemGroupedBackground,
 	},
+	label: {
+		color: c.label,
+	},
 	separator: {
 		marginLeft: 45,
 		// erase the gap in the bar caused by the separators' block-ness
@@ -32,7 +35,7 @@ const isTruthy = (x: unknown) => Boolean(x)
 const BusLineSeparator = () => <Separator style={styles.separator} />
 const EMPTY_SCHEDULE_MESSAGE = (
 	<ListRow>
-		<Text>This line is not running today.</Text>
+		<Text style={styles.label}>This line is not running today.</Text>
 	</ListRow>
 )
 
