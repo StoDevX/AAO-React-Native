@@ -13,6 +13,6 @@
     "domhandler": "5.0.3",
     "domutils": "3.0.1",
     "html-entities": "2.3.3",
-    "htmlparser2": "8.0.1"
+    "htmlparser2": "9.0.0"
   }
 }
