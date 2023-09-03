@@ -16,7 +16,7 @@
     "@react-navigation/native": "^6.1.6"
   },
   "dependencies": {
-    "@callstack/react-theme-provider": "3.0.8",
+    "@callstack/react-theme-provider": "3.0.9",
     "@frogpond/add-to-device-calendar": "^1.0.0",
     "@frogpond/app-theme": "^1.0.0",
     "@frogpond/colors": "^1.0.0",
