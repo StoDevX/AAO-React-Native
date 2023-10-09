@@ -127,6 +127,7 @@ export function ListSection<T extends object>({
 const styles = StyleSheet.create({
 	content: {
 		flex: 1,
+		flexShrink: 1,
 		paddingVertical: 10,
 	},
 	title: {
