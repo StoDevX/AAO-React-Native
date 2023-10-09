@@ -10,7 +10,7 @@ import type {
 	StationMenuType,
 } from './types'
 import size from 'lodash/size'
-import {ListSectionHeader, ListSeparator} from '@frogpond/lists'
+import {ListSectionHeader, ListSeparator, largeListProps} from '@frogpond/lists'
 import type {FilterType} from '@frogpond/filter'
 import {applyFiltersToItem} from '@frogpond/filter'
 import {NoticeView} from '@frogpond/notice'
@@ -62,6 +62,12 @@ const areSpecialsFiltered = (
 const isSpecialsFilter = (f: FilterType<MenuItemType>): boolean =>
 	f.enabled && f.type === 'toggle' && f.spec.label === 'Only Show Specials'
 
+const areDietsFiltered = (filters: Array<FilterType<MenuItemType>>): boolean =>
+	Boolean(filters.find(isDietsFilter))
+
+const isDietsFilter = (f: FilterType<MenuItemType>): boolean =>
+	f.enabled && f.type === 'list' && f.spec.title === 'Dietary Restrictions'
+
 const groupMenuData = (args: {
 	filters: Array<FilterType<MenuItemType>>
 	stations: Array<StationMenuType>
@@ -70,13 +76,23 @@ const groupMenuData = (args: {
 }): {title: string; data: Array<MenuItemType>}[] => {
 	const {applyFilters, foodItems, stations, filters} = args
 
+	const dietsFilterEnabled = areDietsFiltered(filters)
+
 	const dereferenceMenuItems = (menu: StationMenuType) =>
 		menu.items
 			// Dereference each menu item
 			.map((id) => foodItems[id])
 			// Ensure that the referenced menu items exist,
 			// and apply the selected filters to the items in the menu
-			.filter((item) => item && applyFilters(filters, item))
+			.filter((item) => {
+				// Ensure that items with dietary data are the only
+				// items being shown when a diet filter is enabled
+				if (dietsFilterEnabled) {
+					return !item?.cor_icon?.entries && applyFilters(filters, item)
+				}
+
+				return item && applyFilters(filters, item)
+			})
 
 	const stationMenusByLabel: [string, MenuItemType[]][] = stations.map(
 		(menu: StationMenuType) => [menu.label, dereferenceMenuItems(menu)],
@@ -185,7 +201,7 @@ export function FancyMenu(props: Props): JSX.Element {
 			}}
 			sections={groupedMenuData}
 			style={styles.inner}
-			windowSize={5}
+			{...largeListProps}
 		/>
 	)
 }
