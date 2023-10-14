@@ -10,7 +10,6 @@ import {
 	deptData,
 	geData,
 	infoJson,
-	timeData,
 } from '../../../lib/course-search/urls'
 
 const ONE_SECOND = 1000
@@ -43,40 +42,7 @@ export function useAvailableTerms(): UseQueryResult<TermType[], unknown> {
 	})
 }
 
-export function useCourseDataForTerm(
-	term: TermType,
-): UseQueryResult<CourseType[], unknown> {
-	return useQuery({
-		queryKey: keys.courses(term),
-		queryFn: ({queryKey: [_group, _courses, term], signal}) =>
-			coursesForTerm(term, {signal}),
-		staleTime: ONE_HOUR,
-	})
-}
-
-export function useCourseDataForTerms(
-	terms: TermType[],
 ): UseQueryResult<CourseType[], unknown>[] {
-	let query = (
-		term: TermType,
-	): UseQueryOptions<
-		CourseType[],
-		unknown,
-		CourseType[],
-		ReturnType<(typeof keys)['courses']>
-	> => ({
-		queryKey: keys.courses(term),
-		queryFn: ({queryKey: [_group, _courses, term], signal}) =>
-			coursesForTerm(term, {signal}),
-		staleTime: ONE_HOUR,
-	})
-
-	return useQueries({
-		queries: terms.map(query),
-	})
-}
-
-export function useCourseData(): UseQueryResult<CourseType[], unknown>[] {
 	let {data: terms = []} = useAvailableTerms()
 
 	let query = (
@@ -111,14 +77,6 @@ export function useDepartments(): UseQueryResult<string[]> {
 	return useQuery({
 		queryKey: keys.departments,
 		queryFn: ({signal}) => deptData({signal}),
-		staleTime: ONE_DAY,
-	})
-}
-
-export function useTimes(): UseQueryResult<string[]> {
-	return useQuery({
-		queryKey: keys.times,
-		queryFn: ({signal}) => timeData({signal}),
 		staleTime: ONE_DAY,
 	})
 }
