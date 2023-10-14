@@ -14,7 +14,7 @@ import {RouteProp, useNavigation, useRoute} from '@react-navigation/native'
 import {ChangeTextEvent, RootStackParamList} from '../../../navigation/types'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 import {useDebounce} from '@frogpond/use-debounce'
-import {ListSeparator, ListSectionHeader} from '@frogpond/lists'
+import {ListSeparator, ListSectionHeader, largeListProps} from '@frogpond/lists'
 import * as c from '@frogpond/colors'
 import {CourseRow} from './row'
 import memoize from 'lodash/memoize'
@@ -188,7 +188,7 @@ export const CourseSearchResultsView = (): JSX.Element => {
 				<ListSectionHeader title={parseTerm(title)} />
 			)}
 			sections={results}
-			windowSize={10}
+			{...largeListProps}
 		/>
 	)
 }
