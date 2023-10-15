@@ -11,10 +11,6 @@ export {
 	View as FeatureFlagView,
 	NavigationOptions as FeatureFlagNavigationOptions,
 } from './screens/feature-flags'
-export {
-	Detail as FeatureFlagDetailView,
-	DetailNavigationOptions as FeatureFlagDetailNavigationOptions,
-} from './screens/feature-flags'
 
 // Developer settings
 export {DebugRootView} from './screens/debug'

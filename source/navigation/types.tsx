@@ -100,7 +100,6 @@ export type SettingsStackParamList = {
 	[debug.NavigationKey]: {keyPath: string[]}
 	Faq: undefined
 	FeatureFlags: undefined
-	FeatureFlagsDetail: {flags: FeatureFlagSectionType}
 	IconSettings: undefined
 	Legal: undefined
 	NetworkLogger: undefined
