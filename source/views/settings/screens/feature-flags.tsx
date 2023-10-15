@@ -35,7 +35,13 @@ export const FeatureFlagsView = (): JSX.Element => {
 	return (
 		<SectionList
 			ItemSeparatorComponent={ListSeparator}
-			ListEmptyComponent={loading ? <LoadingView /> : <NoticeView text="No feature flags found." />}
+			ListEmptyComponent={
+				loading ? (
+					<LoadingView />
+				) : (
+					<NoticeView text="No feature flags found." />
+				)
+			}
 			contentContainerStyle={styles.contentContainer}
 			contentInsetAdjustmentBehavior="automatic"
 			keyExtractor={(item, key) => `${item.title}-${key}`}
