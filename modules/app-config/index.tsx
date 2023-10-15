@@ -1,4 +1,3 @@
-import React from 'react'
 import {getFeatureFlag} from '../../source/lib/storage'
 import {AppConfigKey, AppConfigGroupKey, FeatureFlagType} from './types'
 import {useQuery} from '@tanstack/react-query'
