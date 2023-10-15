@@ -13,15 +13,14 @@ export const FeatureFlagsView = (): JSX.Element => {
 	let [loading, setLoading] = React.useState(true)
 	let [sections, setSections] = React.useState<FeatureFlagSectionType[]>([])
 
-	async function fetchData() {
-		let config = await AppConfig()
-		setSections(config)
-		setLoading(false)
-	}
-
 	React.useEffect(() => {
+		async function fetchData() {
+			let config = await AppConfig()
+			setSections(config)
+			setLoading(false)
+		}
 		fetchData()
-	}, [])
+	}, [sections])
 
 	if (!sections) {
 		return <ListEmpty mode="bug" />
@@ -48,7 +47,6 @@ export const FeatureFlagsView = (): JSX.Element => {
 							label={title}
 							onChange={(newValue) => {
 								storage.setFeatureFlag(configKey, newValue)
-								fetchData()
 							}}
 							value={Boolean(active)}
 						/>
