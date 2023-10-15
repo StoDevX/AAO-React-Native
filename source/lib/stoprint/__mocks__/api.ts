@@ -28,28 +28,35 @@ export function logIn(
 	return Promise.resolve()
 }
 
-export const fetchJobs = (username: string): Promise<PrintJobsResponse> =>
-	Promise.resolve(mockJobs)
+export const fetchJobs = (
+	username: string,
+	useMockPrintData = true,
+): Promise<PrintJobsResponse> => Promise.resolve(mockJobs)
 
 export const fetchAllPrinters = (
 	username: string,
+	useMockPrintData = true,
 ): Promise<AllPrintersResponse> => Promise.resolve(mockAllPrinters)
 
 export const fetchRecentPrinters = (
 	username: string,
+	useMockPrintData = true,
 ): Promise<RecentPopularPrintersResponse> => Promise.resolve(mockRecent)
 
 export const heldJobsAvailableAtPrinterForUser = (
 	printerName: string,
 	username: string,
+	useMockPrintData = true,
 ): Promise<HeldJobsResponse> => Promise.resolve(mockHeldJobs)
 
 export const releasePrintJobToPrinterForUser = ({
 	jobId,
 	printerName,
 	username,
+	useMockPrintData = true,
 }: {
 	jobId: string
 	printerName: string
 	username: string
+	useMockPrintData: boolean
 }): Promise<ReleaseResponse> => Promise.resolve(mockRelease)

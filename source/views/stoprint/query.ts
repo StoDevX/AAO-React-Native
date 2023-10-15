@@ -16,18 +16,30 @@ import {
 } from '../../lib/stoprint/types'
 
 export const keys = {
-	jobs: (username: string) => ['printing', 'jobs', 'all', username] as const,
+	jobs: (username: string, useMockPrintData: boolean) =>
+		['printing', 'jobs', 'all', username, useMockPrintData] as const,
 	heldJobs: ({
 		username,
 		printerName,
+		useMockPrintData,
 	}: {
 		username: string
 		printerName: string
-	}) => ['printing', 'jobs', 'held', username, printerName] as const,
-	printers: (username: string) => ['printing', 'printers', username] as const,
+		useMockPrintData: boolean
+	}) =>
+		[
+			'printing',
+			'jobs',
+			'held',
+			username,
+			printerName,
+			useMockPrintData,
+		] as const,
+	printers: (username: string, useMockPrintData: boolean) =>
+		['printing', 'printers', username, useMockPrintData] as const,
 	recentPrinters: (username: string) =>
 		['printing', 'printers', 'recent', username] as const,
-	colorPrinters: ['printing', 'printers', 'color'] as const,
+	colorPrinters: ['printing', 'printers', 'color', useMockedStoprint] as const,
 }
 
 export function usePrintJobs(): UseQueryResult<PrintJobsResponse, unknown> {
@@ -35,8 +47,8 @@ export function usePrintJobs(): UseQueryResult<PrintJobsResponse, unknown> {
 	const useMockPrintData = useMockedStoprint()
 
 	return useQuery({
-		queryKey: keys.jobs(username),
-		enabled: Boolean(username),
+		queryKey: keys.jobs(username, useMockPrintData),
+		enabled: Boolean(username) || useMockPrintData,
 		queryFn: ({signal}) => fetchJobs(username, {signal}, useMockPrintData),
 	})
 }
@@ -46,8 +58,8 @@ export function useAllPrinters(): UseQueryResult<AllPrintersResponse, unknown> {
 	const useMockPrintData = useMockedStoprint()
 
 	return useQuery({
-		queryKey: keys.printers(username),
-		enabled: Boolean(username),
+		queryKey: keys.printers(username, useMockPrintData),
+		enabled: Boolean(username) || useMockPrintData,
 		queryFn: ({signal}) =>
 			fetchAllPrinters(username, {signal}, useMockPrintData),
 	})
@@ -61,17 +73,19 @@ export function useRecentPrinters(): UseQueryResult<
 	const useMockPrintData = useMockedStoprint()
 
 	return useQuery({
-		queryKey: keys.printers(username),
-		enabled: Boolean(username),
+		queryKey: keys.printers(username, useMockPrintData),
+		enabled: Boolean(username) || useMockPrintData,
 		queryFn: ({signal}) =>
 			fetchRecentPrinters(username, {signal}, useMockPrintData),
 	})
 }
 
 export function useColorPrinters(): UseQueryResult<string[], unknown> {
+	const useMockPrintData = useMockedStoprint()
+
 	return useQuery({
 		queryKey: keys.colorPrinters,
-		queryFn: ({signal}) => fetchColorPrinters({signal}),
+		queryFn: ({signal}) => fetchColorPrinters({signal}, useMockPrintData),
 	})
 }
 
@@ -84,8 +98,13 @@ export function useHeldJobs(
 	let usablePrinterName = printerName || 'undefined'
 
 	return useQuery({
-		enabled: Boolean(username) && printerName !== undefined,
-		queryKey: keys.heldJobs({username, printerName: usablePrinterName}),
+		enabled:
+			(Boolean(username) && printerName !== undefined) || useMockPrintData,
+		queryKey: keys.heldJobs({
+			username,
+			printerName: usablePrinterName,
+			useMockPrintData,
+		}),
 		queryFn: ({signal}) =>
 			heldJobsAvailableAtPrinterForUser(
 				usablePrinterName,

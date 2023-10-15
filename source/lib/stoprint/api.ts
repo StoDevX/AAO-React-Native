@@ -102,7 +102,14 @@ export async function fetchRecentPrinters(
 		.json()) as RecentPopularPrintersResponse
 }
 
-export async function fetchColorPrinters(options: Options): Promise<string[]> {
+export async function fetchColorPrinters(
+	options: Options,
+	useMockPrintData = false,
+): Promise<string[]> {
+	if (useMockPrintData) {
+		return ['mfc-rml-4-disco', 'mfc-toh101']
+	}
+
 	let response = (await client
 		.get('color-printers', options)
 		.json()) as ColorPrintersResponse
