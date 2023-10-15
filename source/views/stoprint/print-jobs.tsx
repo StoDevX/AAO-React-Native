@@ -2,7 +2,8 @@ import * as React from 'react'
 import {timezone} from '@frogpond/constants'
 import {Platform, SectionList} from 'react-native'
 import type {PrintJob} from '../../lib/stoprint'
-import {STOPRINT_HELP_PAGE, useMockedStoprint} from '../../lib/stoprint'
+import {STOPRINT_HELP_PAGE} from '../../lib/stoprint'
+import {useMockedStoprint} from '@frogpond/app-config'
 import {
 	Detail,
 	ListRow,

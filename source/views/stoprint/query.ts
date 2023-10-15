@@ -1,6 +1,6 @@
 import {useQuery, UseQueryResult} from '@tanstack/react-query'
 import {useUsername} from '../../lib/login'
-import {useMockedStoprint} from '../../lib/stoprint'
+import {useMockedStoprint} from '@frogpond/app-config'
 import {
 	fetchAllPrinters,
 	fetchColorPrinters,
