@@ -31,7 +31,7 @@ export const FeatureFlagsView = (): JSX.Element => {
 			setSections(config)
 		}
 		fetchData()
-	}, [])
+	}, [sections])
 
 	return (
 		<FlatList
