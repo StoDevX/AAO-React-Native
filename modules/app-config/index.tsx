@@ -1,30 +1,15 @@
 import {getFeatureFlag} from '../../source/lib/storage'
-import {AppConfigKey, FeatureFlagSectionType} from './types'
+import {AppConfigKey, AppConfigGroupKey, FeatureFlagType} from './types'
 
-export type {
-	FeatureFlagSectionType,
-	FeatureFlagDataType,
-	FeatureFlagType,
-} from './types'
+export type {FeatureFlagType} from './types'
 
-export {AppConfigKey} from './types'
-
-export const AppConfig = async (): Promise<FeatureFlagSectionType[]> => {
+export const AppConfig = async (): Promise<FeatureFlagType[]> => {
 	return [
 		{
-			title: 'StoPrint',
-			data: [
-				{
-					title: 'Mock data',
-					data: [
-						{
-							configKey: AppConfigKey.MockStoprintData,
-							title: 'Show mocked data',
-							active: await getFeatureFlag(AppConfigKey.MockStoprintData),
-						},
-					],
-				},
-			],
+			configKey: AppConfigKey.MockStoprintData,
+			group: AppConfigGroupKey.stoprint,
+			title: 'Use mock data',
+			active: await getFeatureFlag(AppConfigKey.MockStoprintData),
 		},
-	].sort((a, b) => a.title.localeCompare(b.title))
+	]
 }

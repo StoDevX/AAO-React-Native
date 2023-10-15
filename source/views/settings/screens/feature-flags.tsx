@@ -5,13 +5,14 @@ import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 import {CellToggle} from '@frogpond/tableview/cells'
 import {ListEmpty, ListSectionHeader, ListSeparator} from '@frogpond/lists'
 import * as c from '@frogpond/colors'
-import {AppConfig, FeatureFlagSectionType} from '@frogpond/app-config'
-import {groupBy} from 'lodash'
+import {AppConfig, FeatureFlagType} from '@frogpond/app-config'
+import {groupBy, orderBy} from 'lodash'
 import {LoadingView, NoticeView} from '@frogpond/notice'
+import {toLaxTitleCase} from '@frogpond/titlecase'
 
 export const FeatureFlagsView = (): JSX.Element => {
 	let [loading, setLoading] = React.useState(true)
-	let [sections, setSections] = React.useState<FeatureFlagSectionType[]>([])
+	let [sections, setSections] = React.useState<FeatureFlagType[]>([])
 
 	React.useEffect(() => {
 		async function fetchData() {
@@ -26,11 +27,21 @@ export const FeatureFlagsView = (): JSX.Element => {
 		return <ListEmpty mode="bug" />
 	}
 
-	let grouped = groupBy(sections, (s) => s.title)
-	let groupedSections = Object.entries(grouped).map(([key, value]) => ({
-		title: key,
-		data: value,
-	}))
+	let sorters: Array<(flag: FeatureFlagType) => string> = [
+		(flag) => flag.group,
+		(flag) => flag.title,
+	]
+
+	let ordered: Array<'desc' | 'asc'> = ['desc', 'asc', 'desc']
+
+	let sorted = orderBy(sections, sorters, ordered)
+	let grouped = groupBy(sorted, (s) => s.group)
+	let groupedSections = Object.entries(grouped)
+		.map(([key, value]) => ({
+			title: key,
+			data: value,
+		}))
+		.sort((a, b) => a.title.localeCompare(b.title))
 
 	return (
 		<SectionList
@@ -45,22 +56,18 @@ export const FeatureFlagsView = (): JSX.Element => {
 			contentContainerStyle={styles.contentContainer}
 			contentInsetAdjustmentBehavior="automatic"
 			keyExtractor={(item, key) => `${item.title}-${key}`}
-			renderItem={({item}) => {
-				return item.data.map(({data}) => {
-					return data.map(({title, active, configKey}) => (
-						<CellToggle
-							key={configKey}
-							label={title}
-							onChange={(newValue) => {
-								storage.setFeatureFlag(configKey, newValue)
-							}}
-							value={Boolean(active)}
-						/>
-					))
-				})
-			}}
+			renderItem={({item: {title, active, configKey}}) => (
+				<CellToggle
+					key={configKey}
+					label={title}
+					onChange={(newValue) => {
+						storage.setFeatureFlag(configKey, newValue)
+					}}
+					value={Boolean(active)}
+				/>
+			)}
 			renderSectionHeader={({section: {title}}) => (
-				<ListSectionHeader title={title} />
+				<ListSectionHeader title={toLaxTitleCase(title)} />
 			)}
 			sections={groupedSections}
 		/>
