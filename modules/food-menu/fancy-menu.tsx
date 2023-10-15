@@ -127,8 +127,8 @@ export function FancyMenu(props: Props): JSX.Element {
 	// reset the filters when the data changes
 	useEffect(() => {
 		let foodItemsArray = Object.values(foodItems)
-		setFilters(buildFilters(foodItemsArray, menuCorIcons, [meal]))
-	}, [foodItems, menuCorIcons, meal])
+		setFilters(buildFilters(foodItemsArray, menuCorIcons, meals, now))
+	}, [foodItems, menuCorIcons, meals, now])
 
 	// re-group the food when the data changes
 	useEffect(() => {
