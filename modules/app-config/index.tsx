@@ -30,4 +30,5 @@ const useFeature = (featureKey: AppConfigKey): boolean => {
 }
 
 // exported feature flags
-export const useMockedStoprint = (): boolean => useFeature(AppConfigKey.MockStoprintData)
+export const useMockedStoprint = (): boolean =>
+	useFeature(AppConfigKey.MockStoprintData)
