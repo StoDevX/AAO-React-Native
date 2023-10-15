@@ -2,7 +2,7 @@ import * as React from 'react'
 import {timezone} from '@frogpond/constants'
 import {Platform, SectionList} from 'react-native'
 import type {PrintJob} from '../../lib/stoprint'
-import {STOPRINT_HELP_PAGE, isStoprintMocked} from '../../lib/stoprint'
+import {STOPRINT_HELP_PAGE, useMockedStoprint} from '../../lib/stoprint'
 import {
 	Detail,
 	ListRow,
@@ -19,7 +19,6 @@ import sortBy from 'lodash/sortBy'
 import {getTimeRemaining} from './lib'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 import {useNavigation} from '@react-navigation/native'
-import {DebugNoticeButton} from '@frogpond/navigation-buttons'
 import {useMomentTimer} from '@frogpond/timer'
 import {usePrintJobs} from './query'
 import {useHasCredentials} from '../../lib/login'
@@ -38,6 +37,8 @@ export const PrintJobsView = (): JSX.Element => {
 		isRefetching: jobsRefetching,
 	} = usePrintJobs()
 
+	const useMockPrintData = useMockedStoprint()
+
 	let navigation = useNavigation()
 	let openSettings = () => navigation.navigate('Settings')
 
@@ -53,7 +54,7 @@ export const PrintJobsView = (): JSX.Element => {
 		return <LoadingView text="Loading…" />
 	}
 
-	if (!hasCredentials && !isStoprintMocked) {
+	if (!hasCredentials && !useMockPrintData) {
 		return (
 			<StoPrintNoticeView
 				buttonText="Open Settings"
@@ -134,5 +135,4 @@ export const PrintJobsView = (): JSX.Element => {
 
 export const NavigationOptions: NativeStackNavigationOptions = {
 	title: 'Print Jobs',
-	headerRight: () => <DebugNoticeButton shouldShow={isStoprintMocked} />,
 }

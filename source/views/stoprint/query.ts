@@ -1,5 +1,6 @@
 import {useQuery, UseQueryResult} from '@tanstack/react-query'
 import {useUsername} from '../../lib/login'
+import {useMockedStoprint} from '../../lib/stoprint'
 import {
 	fetchAllPrinters,
 	fetchColorPrinters,
@@ -31,21 +32,24 @@ export const keys = {
 
 export function usePrintJobs(): UseQueryResult<PrintJobsResponse, unknown> {
 	let {data: username = ''} = useUsername()
+	const useMockPrintData = useMockedStoprint()
 
 	return useQuery({
 		queryKey: keys.jobs(username),
 		enabled: Boolean(username),
-		queryFn: ({signal}) => fetchJobs(username, {signal}),
+		queryFn: ({signal}) => fetchJobs(username, {signal}, useMockPrintData),
 	})
 }
 
 export function useAllPrinters(): UseQueryResult<AllPrintersResponse, unknown> {
 	let {data: username = ''} = useUsername()
+	const useMockPrintData = useMockedStoprint()
 
 	return useQuery({
 		queryKey: keys.printers(username),
 		enabled: Boolean(username),
-		queryFn: ({signal}) => fetchAllPrinters(username, {signal}),
+		queryFn: ({signal}) =>
+			fetchAllPrinters(username, {signal}, useMockPrintData),
 	})
 }
 
@@ -54,11 +58,13 @@ export function useRecentPrinters(): UseQueryResult<
 	unknown
 > {
 	let {data: username = ''} = useUsername()
+	const useMockPrintData = useMockedStoprint()
 
 	return useQuery({
 		queryKey: keys.printers(username),
 		enabled: Boolean(username),
-		queryFn: ({signal}) => fetchRecentPrinters(username, {signal}),
+		queryFn: ({signal}) =>
+			fetchRecentPrinters(username, {signal}, useMockPrintData),
 	})
 }
 
@@ -73,6 +79,7 @@ export function useHeldJobs(
 	printerName: string | undefined,
 ): UseQueryResult<HeldJobsResponse, unknown> {
 	let {data: username = ''} = useUsername()
+	const useMockPrintData = useMockedStoprint()
 
 	let usablePrinterName = printerName || 'undefined'
 
@@ -80,6 +87,11 @@ export function useHeldJobs(
 		enabled: Boolean(username) && printerName !== undefined,
 		queryKey: keys.heldJobs({username, printerName: usablePrinterName}),
 		queryFn: ({signal}) =>
-			heldJobsAvailableAtPrinterForUser(usablePrinterName, username, {signal}),
+			heldJobsAvailableAtPrinterForUser(
+				usablePrinterName,
+				username,
+				{signal},
+				useMockPrintData,
+			),
 	})
 }

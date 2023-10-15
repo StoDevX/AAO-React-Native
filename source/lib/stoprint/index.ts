@@ -13,4 +13,4 @@ export type {
 	HeldJobsResponse,
 } from './types'
 export {showGeneralError} from './errors'
-export {isStoprintMocked} from './debug'
+export {useMockedStoprint} from './debug'
