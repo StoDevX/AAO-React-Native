@@ -19,6 +19,9 @@ const parseTime = (now: Moment, time: string): null | Moment => {
 	return m
 }
 
-export const getTimeRemaining = (now: Moment, time: string) => {
+export const getTimeRemaining = (
+	now: Moment,
+	time: string,
+): undefined | string => {
 	return parseTime(now, time)?.fromNow()
 }

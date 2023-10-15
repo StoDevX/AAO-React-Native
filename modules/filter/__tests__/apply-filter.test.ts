@@ -1,10 +1,10 @@
-/* eslint-env jest */
+import {expect, it} from '@jest/globals'
 import {applyFilter} from '../apply-filters'
 import {filterValue} from './filter-value.helper'
 import type {FilterType} from '../types'
 
 it('should return `true` if the filter is disabled', () => {
-	let filter: FilterType = {
+	let filter: FilterType<{categories: string[]}> = {
 		type: 'list',
 		key: 'key',
 		enabled: false,

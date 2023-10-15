@@ -1,8 +1,5 @@
 import * as React from 'react'
 import {SectionList, StyleSheet} from 'react-native'
-import {useDispatch, useSelector} from 'react-redux'
-import type {ReduxState} from '../../redux'
-import {updatePrinters} from '../../redux/parts/stoprint'
 import type {Printer} from '../../lib/stoprint'
 import {isStoprintMocked} from '../../lib/stoprint'
 import {
@@ -14,93 +11,113 @@ import {
 } from '@frogpond/lists'
 import {LoadingView} from '@frogpond/notice'
 import {DebugNoticeButton} from '@frogpond/navigation-buttons'
-import delay from 'delay'
-import toPairs from 'lodash/toPairs'
 import groupBy from 'lodash/groupBy'
-import {StoPrintErrorView} from './components'
+import {StoPrintErrorView} from './components/error'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 import {RouteProp, useNavigation, useRoute} from '@react-navigation/native'
 import {RootStackParamList} from '../../navigation/types'
+import {useAllPrinters, useColorPrinters, useRecentPrinters} from './query'
+import {RecentPopularPrintersResponse} from '../../lib/stoprint/types'
 
 const styles = StyleSheet.create({
 	list: {},
 })
 
-type ReduxStateProps = {
-	readonly printers: Array<Printer>
-	readonly recentPrinters: Array<Printer>
-	readonly popularPrinters: Array<Printer>
-	readonly colorPrinters: Array<Printer>
-	readonly error: string | null
-}
-
-type ReduxDispatchProps = {
-	updatePrinters: () => void
-}
-
-type Props = ReduxDispatchProps & ReduxStateProps
-
-const PrinterListView = (props: Props) => {
-	let [initialLoadComplete, setInitialLoadComplete] = React.useState(false)
-	let [loading, setLoading] = React.useState(true)
-
+export const PrinterListView = (): JSX.Element => {
 	let navigation = useNavigation()
 
 	let route = useRoute<RouteProp<RootStackParamList, 'PrinterList'>>()
 	let {job} = route.params
 
-	let fetchData = React.useCallback(() => props.updatePrinters(), [props])
+	let {
+		data: allPrinters = [],
+		error: allPrintersError,
+		isLoading: allPrintersLoading,
+		refetch: allPrintersRefetch,
+		isRefetching: allPrintersRefetching,
+	} = useAllPrinters()
 
-	React.useEffect(() => {
-		async function getData() {
-			await fetchData()
-			setLoading(false)
-			setInitialLoadComplete(true)
-		}
-		getData()
-	}, [fetchData])
+	let {
+		data: recentPrinters = {} as Partial<RecentPopularPrintersResponse>,
+		error: recentPrintersError,
+		isLoading: recentPrintersLoading,
+		refetch: recentPrintersRefetch,
+		isRefetching: recentPrintersRefetching,
+	} = useRecentPrinters()
 
-	let refresh = async () => {
-		let start = Date.now()
+	let {
+		data: colorPrinters = [],
+		error: colorPrintersError,
+		isLoading: colorPrintersLoading,
+		refetch: colorPrintersRefetch,
+		isRefetching: colorPrintersRefetching,
+	} = useColorPrinters()
 
-		setLoading(true)
+	let isLoading =
+		allPrintersLoading || recentPrintersLoading || colorPrintersLoading
+	let isRefetching =
+		allPrintersRefetching || recentPrintersRefetching || colorPrintersRefetching
 
-		await fetchData()
-
-		// wait 0.5 seconds – if we let it go at normal speed, it feels broken.
-		let elapsed = start - Date.now()
-		if (elapsed < 500) {
-			await delay(500 - elapsed)
-		}
-		setLoading(false)
-	}
-
-	let openPrintRelease = (item: Printer) =>
-		navigation.navigate('PrintJobRelease', {
-			job: job,
-			printer: item,
-		})
-
-	if (props.error) {
-		return <StoPrintErrorView refresh={fetchData} statusMessage={props.error} />
-	}
-	if (loading && !initialLoadComplete) {
-		return <LoadingView text="Querying Available Printers…" />
-	}
-	let colorJob = job.grayscaleFormatted === 'No'
-
-	let availablePrinters = colorJob ? props.colorPrinters : props.printers
-
-	let allWithLocations = availablePrinters.map((j) => ({
-		...j,
-		location: j.location || 'Unknown Building',
-	}))
-
-	let allGrouped = groupBy(allWithLocations, (j) =>
-		/^[A-Z]+ \d+/u.test(j.location) ? j.location.split(/\s+/u)[0] : j.location,
+	let openPrintRelease = React.useCallback(
+		(printer: Printer) =>
+			navigation.navigate('PrintJobRelease', {job, printer}),
+		[navigation, job],
 	)
 
-	let groupedByBuilding = toPairs(allGrouped).map(([title, data]) => ({
+	let refetchAll = React.useCallback(() => {
+		allPrintersRefetch()
+		colorPrintersRefetch()
+		recentPrintersRefetch()
+	}, [allPrintersRefetch, colorPrintersRefetch, recentPrintersRefetch])
+
+	if (allPrintersError) {
+		return (
+			<StoPrintErrorView
+				onRefresh={allPrintersRefetch}
+				refreshing={allPrintersRefetching}
+				statusMessage={String(allPrintersError)}
+			/>
+		)
+	}
+	if (recentPrintersError) {
+		return (
+			<StoPrintErrorView
+				onRefresh={recentPrintersRefetch}
+				refreshing={recentPrintersRefetching}
+				statusMessage={String(recentPrintersError)}
+			/>
+		)
+	}
+	if (colorPrintersError) {
+		return (
+			<StoPrintErrorView
+				onRefresh={colorPrintersRefetch}
+				refreshing={colorPrintersRefetching}
+				statusMessage={String(colorPrintersError)}
+			/>
+		)
+	}
+
+	if (isLoading) {
+		return <LoadingView text="Querying Available Printers…" />
+	}
+
+	let colorJob = job.grayscaleFormatted === 'No'
+
+	let availablePrinters = colorJob
+		? allPrinters.filter((p) => colorPrinters.includes(p.printerName))
+		: allPrinters
+
+	let allWithLocations = availablePrinters.map((p) => ({
+		...p,
+		location: p.location || 'Unknown Building',
+	}))
+
+	let allGrouped = groupBy(allWithLocations, (p) =>
+		/^[A-Z]+ \d+/u.test(p.location) ? p.location.split(/\s+/u)[0] : p.location,
+	)
+
+	let groupedByBuilding = Object.entries(allGrouped).map(([title, data]) => ({
 		title,
 		data,
 	}))
@@ -109,10 +126,10 @@ const PrinterListView = (props: Props) => {
 		a.title === '' && b.title !== '' ? 1 : a.title.localeCompare(b.title),
 	)
 
-	let grouped = props.printers.length
+	let grouped = allPrinters
 		? [
-				{title: 'Recent', data: props.recentPrinters},
-				{title: 'Popular', data: props.popularPrinters},
+				{title: 'Recent', data: recentPrinters.recentPrinters ?? []},
+				{title: 'Popular', data: recentPrinters.popularPrinters ?? []},
 				...groupedByBuilding,
 		  ]
 		: []
@@ -123,55 +140,19 @@ const PrinterListView = (props: Props) => {
 		<SectionList
 			ItemSeparatorComponent={ListSeparator}
 			keyExtractor={(item: Printer) => item.printerName}
-			onRefresh={refresh}
-			refreshing={loading}
+			onRefresh={refetchAll}
+			refreshing={isRefetching}
 			renderItem={({item}: {item: Printer}) => (
 				<ListRow onPress={() => openPrintRelease(item)}>
 					<Title>{item.printerName}</Title>
 					<Detail>{item.location}</Detail>
 				</ListRow>
 			)}
-			renderSectionHeader={({section: {title}}: any) => (
+			renderSectionHeader={({section: {title}}) => (
 				<ListSectionHeader title={title} />
 			)}
 			sections={availableGrouped}
 			style={styles.list}
-		/>
-	)
-}
-
-export function ConnectedPrinterListView(): JSX.Element {
-	let dispatch = useDispatch()
-
-	let printers = useSelector(
-		(state: ReduxState) => state.stoprint?.printers || [],
-	)
-	let recentPrinters = useSelector(
-		(state: ReduxState) => state.stoprint?.recentPrinters || [],
-	)
-	let popularPrinters = useSelector(
-		(state: ReduxState) => state.stoprint?.popularPrinters || [],
-	)
-	let colorPrinters = useSelector(
-		(state: ReduxState) => state.stoprint?.colorPrinters || [],
-	)
-	let error = useSelector(
-		(state: ReduxState) => state.stoprint?.printersError || null,
-	)
-
-	let _updatePrinters = React.useCallback(
-		() => dispatch(updatePrinters()),
-		[dispatch],
-	)
-
-	return (
-		<PrinterListView
-			colorPrinters={colorPrinters}
-			error={error}
-			popularPrinters={popularPrinters}
-			printers={printers}
-			recentPrinters={recentPrinters}
-			updatePrinters={_updatePrinters}
 		/>
 	)
 }

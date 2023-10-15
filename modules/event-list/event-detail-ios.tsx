@@ -1,11 +1,7 @@
 import * as React from 'react'
 import {ScrollView} from 'react-native'
-import {
-	ButtonCell,
-	Section,
-	SelectableCell,
-	TableView,
-} from '@frogpond/tableview'
+import {Section, TableView} from '@frogpond/tableview'
+import {ButtonCell, SelectableCell} from '@frogpond/tableview/cells'
 import {ShareButton} from '@frogpond/navigation-buttons'
 import {ListFooter} from '@frogpond/lists'
 import {getTimes, shareEvent} from './calendar-util'

@@ -1,6 +1,6 @@
 import {Alert} from 'react-native'
-import Clipboard from '@react-native-community/clipboard'
-import {email} from 'react-native-communications'
+import Clipboard from '@react-native-clipboard/clipboard'
+import {openUrl} from '@frogpond/open-url'
 
 type Args = {
 	to?: Array<string>
@@ -11,10 +11,10 @@ type Args = {
 }
 
 export function sendEmail(args: Args): void {
-	const {to = [], cc = [], bcc = [], subject = '', body = ''} = args
 	try {
-		email(to, cc, bcc, subject, body)
+		openUrl(formatEmailParts(args))
 	} catch (err) {
+		const {to = []} = args
 		const toString = to.join(', ')
 
 		Alert.alert(
@@ -34,4 +34,28 @@ export function sendEmail(args: Args): void {
 			],
 		)
 	}
+}
+
+export function formatEmailParts(args: Args): string {
+	const {to = [], cc = [], bcc = [], subject = '', body = ''} = args
+
+	let mailto = new URL(`mailto:${to.join(',')}`)
+
+	if (cc.length) {
+		mailto.searchParams.append('cc', cc.join(','))
+	}
+
+	if (bcc.length) {
+		mailto.searchParams.append('bcc', bcc.join(','))
+	}
+
+	if (subject) {
+		mailto.searchParams.append('subject', subject)
+	}
+
+	if (body) {
+		mailto.searchParams.append('body', body)
+	}
+
+	return mailto.href
 }

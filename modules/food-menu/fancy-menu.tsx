@@ -10,7 +10,7 @@ import type {
 	StationMenuType,
 } from './types'
 import size from 'lodash/size'
-import {ListSectionHeader, ListSeparator} from '@frogpond/lists'
+import {ListSectionHeader, ListSeparator, largeListProps} from '@frogpond/lists'
 import type {FilterType} from '@frogpond/filter'
 import {applyFiltersToItem} from '@frogpond/filter'
 import {NoticeView} from '@frogpond/notice'
@@ -21,7 +21,10 @@ import {buildFilters} from './lib/build-filters'
 import {useNavigation} from '@react-navigation/native'
 import type {Moment} from 'moment'
 
-type FilterFunc = (filters: Array<FilterType>, item: MenuItemType) => boolean
+type FilterFunc = (
+	filters: Array<FilterType<MenuItemType>>,
+	item: MenuItemType,
+) => boolean
 
 type ReactProps = {
 	cafeMessage?: string | null
@@ -39,7 +42,7 @@ type Props = ReactProps
 
 const styles = StyleSheet.create({
 	inner: {
-		backgroundColor: c.white,
+		backgroundColor: c.separator,
 	},
 	message: {
 		paddingVertical: 16,
@@ -52,19 +55,28 @@ const styles = StyleSheet.create({
 const LEFT_MARGIN = 28
 const Separator = () => <ListSeparator spacing={{left: LEFT_MARGIN}} />
 
-const areSpecialsFiltered = (filters: Array<FilterType>): boolean =>
-	Boolean(filters.find(isSpecialsFilter))
+const areSpecialsFiltered = (
+	filters: Array<FilterType<MenuItemType>>,
+): boolean => Boolean(filters.find(isSpecialsFilter))
 
-const isSpecialsFilter = (f: FilterType): boolean =>
+const isSpecialsFilter = (f: FilterType<MenuItemType>): boolean =>
 	f.enabled && f.type === 'toggle' && f.spec.label === 'Only Show Specials'
 
+const areDietsFiltered = (filters: Array<FilterType<MenuItemType>>): boolean =>
+	Boolean(filters.find(isDietsFilter))
+
+const isDietsFilter = (f: FilterType<MenuItemType>): boolean =>
+	f.enabled && f.type === 'list' && f.spec.title === 'Dietary Restrictions'
+
 const groupMenuData = (args: {
-	filters: Array<FilterType>
+	filters: Array<FilterType<MenuItemType>>
 	stations: Array<StationMenuType>
 	foodItems: MenuItemContainerType
 	applyFilters: FilterFunc
 }): {title: string; data: Array<MenuItemType>}[] => {
 	const {applyFilters, foodItems, stations, filters} = args
+
+	const dietsFilterEnabled = areDietsFiltered(filters)
 
 	const dereferenceMenuItems = (menu: StationMenuType) =>
 		menu.items
@@ -72,7 +84,15 @@ const groupMenuData = (args: {
 			.map((id) => foodItems[id])
 			// Ensure that the referenced menu items exist,
 			// and apply the selected filters to the items in the menu
-			.filter((item) => item && applyFilters(filters, item))
+			.filter((item) => {
+				// Ensure that items with dietary data are the only
+				// items being shown when a diet filter is enabled
+				if (dietsFilterEnabled) {
+					return !item?.cor_icon?.entries && applyFilters(filters, item)
+				}
+
+				return item && applyFilters(filters, item)
+			})
 
 	const stationMenusByLabel: [string, MenuItemType[]][] = stations.map(
 		(menu: StationMenuType) => [menu.label, dereferenceMenuItems(menu)],
@@ -89,7 +109,7 @@ export function FancyMenu(props: Props): JSX.Element {
 
 	let navigation = useNavigation()
 
-	const [filters, setFilters] = useState<FilterType[]>([])
+	const [filters, setFilters] = useState<FilterType<MenuItemType>[]>([])
 
 	const meal = chooseMeal(meals, filters, now)
 	const {label: mealName, stations} = meal
@@ -107,8 +127,8 @@ export function FancyMenu(props: Props): JSX.Element {
 	// reset the filters when the data changes
 	useEffect(() => {
 		let foodItemsArray = Object.values(foodItems)
-		setFilters(buildFilters(foodItemsArray, menuCorIcons, [meal]))
-	}, [foodItems, menuCorIcons, meal])
+		setFilters(buildFilters(foodItemsArray, menuCorIcons, meals, now))
+	}, [foodItems, menuCorIcons, meals, now])
 
 	// re-group the food when the data changes
 	useEffect(() => {
@@ -181,7 +201,7 @@ export function FancyMenu(props: Props): JSX.Element {
 			}}
 			sections={groupedMenuData}
 			style={styles.inner}
-			windowSize={5}
+			{...largeListProps}
 		/>
 	)
 }

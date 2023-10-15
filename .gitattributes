@@ -1,3 +1,4 @@
+* text=auto eol=lf
 *.pbxproj -text
 flow-typed/npm/* linguist-vendored
 CHANGELOG.md merge=union

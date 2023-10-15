@@ -1,11 +1,13 @@
 import * as React from 'react'
-import {Cell} from 'react-native-tableview-simple'
+import {Cell} from '@frogpond/tableview'
+import * as c from '@frogpond/colors'
 
 type Props = {
 	title: string
 	detail?: string | number
 	onPress: () => void
 	disabled?: boolean
+	showLinkStyle?: boolean
 }
 
 export const PushButtonCell = ({
@@ -13,13 +15,15 @@ export const PushButtonCell = ({
 	detail,
 	onPress,
 	disabled = false,
+	showLinkStyle = false,
 }: Props): JSX.Element => (
 	<Cell
-		accessory="DisclosureIndicator"
+		accessory={showLinkStyle ? undefined : 'DisclosureIndicator'}
 		cellStyle={detail ? 'RightDetail' : 'Basic'}
 		detail={detail}
 		isDisabled={disabled}
 		onPress={onPress}
 		title={title}
+		titleTextColor={showLinkStyle ? c.link : undefined}
 	/>
 )

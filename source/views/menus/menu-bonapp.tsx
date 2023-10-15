@@ -1,5 +1,4 @@
 import * as React from 'react'
-import {useEffect, useState} from 'react'
 import {timezone} from '@frogpond/constants'
 import {SUPPORT_EMAIL} from '../../lib/constants'
 import {LoadingView, NoticeView} from '@frogpond/notice'
@@ -14,14 +13,12 @@ import type {
 	StationMenuType,
 } from './types'
 import sample from 'lodash/sample'
-import mapValues from 'lodash/mapValues'
-import reduce from 'lodash/reduce'
+import {mapValues, reduce} from 'lodash'
 import moment, {type Moment} from 'moment-timezone'
 import {trimItemLabel, trimStationName} from './lib/trim-names'
+import {useBonAppCafe, useBonAppMenu} from './query'
 import {decode, innerTextWithSpaces, parseHtml} from '@frogpond/html-lib'
 import {toLaxTitleCase} from '@frogpond/titlecase'
-import {API} from '@frogpond/api'
-import {useFetch} from 'react-async'
 
 const BONAPP_HTML_ERROR_CODE = 'bonapp-html'
 
@@ -150,41 +147,6 @@ function prepareFood(cafeMenu: MenuInfoType) {
 	}))
 }
 
-function useCafeMenu(menuUrl: string) {
-	return useFetch<MenuInfoType>(menuUrl, {
-		headers: {accept: 'application/json'},
-	})
-}
-
-function useCafeInfo(cafeUrl: string) {
-	return useFetch<CafeInfoType>(cafeUrl, {
-		headers: {accept: 'application/json'},
-	})
-}
-
-function getCafeThing(cafe: Props['cafe']) {
-	return typeof cafe === 'string' ? cafe : cafe.id
-}
-
-function buildUrls(cafeThing: Props['cafe']) {
-	let cafe = getCafeThing(cafeThing)
-
-	let cafeUrl = undefined
-	let menuUrl = undefined
-
-	if (typeof cafeThing === 'string') {
-		cafeUrl = API(`/food/named/cafe/${cafe}`)
-		menuUrl = API(`/food/named/menu/${cafe}`)
-	} else if ('id' in cafeThing) {
-		cafeUrl = API(`/food/cafe/${cafe}`)
-		menuUrl = API(`/food/menu/${cafe}`)
-	} else {
-		throw new Error('invalid cafe passed to BonappMenu!')
-	}
-
-	return {cafeUrl, menuUrl}
-}
-
 function getErrorMessage(error: Error | undefined) {
 	if (!(error instanceof Error)) {
 		return 'Unknown Error: Not an Error'
@@ -199,60 +161,49 @@ function getErrorMessage(error: Error | undefined) {
 
 export function BonAppHostedMenu(props: Props): JSX.Element {
 	let now = moment.tz(timezone())
-	let {cafeUrl, menuUrl} = buildUrls(props.cafe)
-	let [errorMessage, setErrorMessage] = useState<string | null>(null)
 
 	let {
 		data: cafeMenu,
 		error: menuError,
-		reload: menuReload,
-		isPending: isMenuPending,
-		isInitial: isMenuInitial,
+		refetch: menuReload,
+		isError: isMenuError,
+		isRefetching: isMenuRefetching,
 		isLoading: isMenuLoading,
-	} = useCafeMenu(menuUrl)
+	} = useBonAppMenu(props.cafe)
 
 	let {
 		data: cafeInfo,
 		error: cafeError,
-		reload: cafeReload,
-		isPending: isCafePending,
-		isInitial: isCafeInitial,
+		refetch: cafeReload,
+		isError: isCafeError,
+		isRefetching: isCafeRefetching,
 		isLoading: isCafeLoading,
-	} = useCafeInfo(cafeUrl)
+	} = useBonAppCafe(props.cafe)
 
-	useEffect(() => {
-		if (cafeError) {
-			setErrorMessage(getErrorMessage(cafeError))
-		}
-
-		if (menuError) {
-			setErrorMessage(getErrorMessage(menuError))
-		}
-	}, [cafeError, menuError])
-
-	let refreshing =
-		(isCafePending && !isCafeInitial) || (isMenuPending && !isMenuInitial)
+	let refetching = isMenuRefetching || isCafeRefetching
 
 	if (isMenuLoading || isCafeLoading) {
 		return <LoadingView text={sample(props.loadingMessage)} />
 	}
 
-	if (errorMessage?.length) {
+	if (isMenuError && menuError instanceof Error) {
+		let errorMessage = getErrorMessage(menuError)
 		let msg = `Error: ${errorMessage}`
 		if (errorMessage === BONAPP_HTML_ERROR_CODE) {
 			msg =
 				'Something between you and BonApp is having problems. Try again in a minute or two?'
 		}
-		return (
-			<NoticeView
-				buttonText="Again!"
-				onPress={() => {
-					cafeReload()
-					menuReload()
-				}}
-				text={msg}
-			/>
-		)
+		return <NoticeView buttonText="Again!" onPress={menuReload} text={msg} />
+	}
+
+	if (isCafeError && cafeError instanceof Error) {
+		let errorMessage = getErrorMessage(cafeError)
+		let msg = `Error: ${errorMessage}`
+		if (errorMessage === BONAPP_HTML_ERROR_CODE) {
+			msg =
+				'Something between you and BonApp is having problems. Try again in a minute or two?'
+		}
+		return <NoticeView buttonText="Again!" onPress={cafeReload} text={msg} />
 	}
 
 	if (!cafeMenu || !cafeInfo) {
@@ -265,9 +216,7 @@ export function BonAppHostedMenu(props: Props): JSX.Element {
 	// The API returns an empty array for the cafeInfo.cafe value if there is no
 	// matching cafe with the inputted id number, otherwise it returns an non-array object
 	if (Array.isArray(cafeInfo.cafe)) {
-		let cafe = getCafeThing(props.cafe)
-		let msg = `There is no cafe with id #${cafe}`
-		return <NoticeView text={msg} />
+		return <NoticeView text={`There is no cafe with id #${props.cafe}`} />
 	}
 
 	// We grab the "today" info from here because BonApp returns special
@@ -291,7 +240,7 @@ export function BonAppHostedMenu(props: Props): JSX.Element {
 				cafeReload()
 				menuReload()
 			}}
-			refreshing={refreshing}
+			refreshing={refetching}
 		/>
 	)
 }

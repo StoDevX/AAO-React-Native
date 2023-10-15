@@ -1,83 +1,143 @@
 import * as React from 'react'
-import {FlatList} from 'react-native'
+import {FlatList, ScrollView, StyleSheet, Text} from 'react-native'
 import {DebugRow} from './row'
-import {useSelector} from 'react-redux'
 import {NoticeView} from '@frogpond/notice'
 import {ListSeparator} from '@frogpond/lists'
-import toPairs from 'lodash/toPairs'
-import {toLaxTitleCase} from '@frogpond/titlecase'
-import get from 'lodash/get'
-import type {NavigationState} from 'react-navigation'
-import type {ReduxState} from '../../../../redux'
-import type {TopLevelViewPropsType} from '../../../types'
+import {useAppSelector} from '../../../../redux'
+import {RouteProp, useNavigation, useRoute} from '@react-navigation/core'
+import {SettingsStackParamList} from '../../../../navigation/types'
+import {Section, TableView} from 'react-native-tableview-simple'
 
-type Props = TopLevelViewPropsType & {
-	apiTest?: boolean
-	state: any
+export const NavigationKey = 'DebugView' as const
+
+type Props = {
+	state?: unknown
 }
 
-export class DebugListView extends React.PureComponent<Props> {
-	static navigationOptions = ({navigation}: NavigationState) => {
-		let titleParam = navigation.getParam('keyPath', ['Debug'])
-		let title = titleParam[titleParam.length - 1]
-
-		return {
-			title: toLaxTitleCase(title),
-		}
-	}
-
-	onPressRow = (row: any) => {
-		let apiTest = this.props.apiTest
-		let keyPath = this.props.navigation.getParam('keyPath', [])
-		keyPath = [...keyPath, row.key]
-		this.props.navigation.push('DebugView', {keyPath, apiTest})
-	}
-
-	keyExtractor = (item: any) => item.key
-
-	renderItem = ({item}: {item: any}) => (
-		<DebugRow
-			data={item}
-			navigation={this.props.navigation}
-			onPress={
-				() => undefined
-				// TODO: fix navigation in DebugListView
-				// this.onPressRow(item)
-			}
-		/>
-	)
-
-	render() {
-		let parsedData = this.props.apiTest
-			? JSON.parse(this.props.state)
-			: this.props.state
-
-		let keyed = toPairs(parsedData).map(([key, value]) => {
-			return {key, value}
-		})
-
-		return (
-			<FlatList
-				ItemSeparatorComponent={ListSeparator}
-				ListEmptyComponent={<NoticeView text="Nothing found." />}
-				data={keyed}
-				keyExtractor={this.keyExtractor}
-				renderItem={this.renderItem}
-			/>
-		)
-	}
-}
-
-export function ConnectedDebugListView(
-	props: TopLevelViewPropsType,
-): JSX.Element {
-	let keyPath = props.navigation.getParam('keyPath', [])
-	let state = useSelector((state: ReduxState) => {
-		if (keyPath.length === 0) {
-			return state
-		}
-		return get(state, keyPath, {})
+export const DebugRootView = (): JSX.Element => {
+	let reduxState = useAppSelector((state) => {
+		return state
 	})
 
-	return <DebugListView {...props} state={state} />
+	return <DebugView state={reduxState} />
 }
+
+export const DebugView = (props: Props = {}): JSX.Element => {
+	let {state} = props
+
+	if (state === null) {
+		return <DebugSimpleItem item={state} />
+	}
+
+	switch (typeof state) {
+		case 'object': {
+			if (Array.isArray(state)) {
+				return <DebugArrayItem item={state} />
+			} else {
+				return <DebugObjectItem item={state} />
+			}
+		}
+		case 'function':
+		case 'symbol':
+			return <DebugToStringItem item={state} />
+		case 'bigint':
+		case 'number':
+		case 'boolean':
+		case 'string':
+		case 'undefined':
+			return <DebugSimpleItem item={state} />
+		default: {
+			return <Text>unknown type: {typeof state}</Text>
+		}
+	}
+}
+
+export const DebugSimpleItem = ({item}: {item: unknown}): JSX.Element => {
+	return (
+		<ScrollView>
+			<TableView style={styles.table}>
+				<Section
+					header={typeof item}
+					hideSurroundingSeparators={true}
+					roundedCorners={true}
+				>
+					<Text>{String(item)}</Text>
+				</Section>
+			</TableView>
+		</ScrollView>
+	)
+}
+
+export const DebugToStringItem = ({item}: {item: unknown}): JSX.Element => {
+	return (
+		<ScrollView>
+			<TableView style={styles.table}>
+				<Section
+					header={typeof item}
+					hideSurroundingSeparators={true}
+					roundedCorners={true}
+				>
+					<Text>{String(item)}</Text>
+				</Section>
+			</TableView>
+		</ScrollView>
+	)
+}
+
+let useKeyPath = () => {
+	let route =
+		useRoute<RouteProp<SettingsStackParamList, typeof NavigationKey>>()
+	return route.params?.keyPath ?? []
+}
+
+export const DebugArrayItem = ({item}: {item: unknown[]}): JSX.Element => {
+	let navigation = useNavigation()
+	let keyPath = useKeyPath()
+
+	let keyed = item.map((value, key) => ({key, value}))
+
+	return (
+		<FlatList
+			ItemSeparatorComponent={ListSeparator}
+			ListEmptyComponent={<NoticeView text="Nothing found." />}
+			data={keyed}
+			renderItem={({item}) => (
+				<DebugRow
+					data={item}
+					onPress={() => {
+						navigation.navigate('DebugView', {
+							keyPath: [...keyPath, String(item.key)],
+						})
+					}}
+				/>
+			)}
+		/>
+	)
+}
+
+export const DebugObjectItem = ({item}: {item: object}): JSX.Element => {
+	let navigation = useNavigation()
+	let keyPath = useKeyPath()
+
+	let keyed = Object.entries(item).map(([key, value]) => ({key, value}))
+
+	return (
+		<FlatList
+			ItemSeparatorComponent={ListSeparator}
+			ListEmptyComponent={<NoticeView text="Nothing found." />}
+			data={keyed}
+			renderItem={({item}) => (
+				<DebugRow
+					data={item}
+					onPress={() =>
+						navigation.navigate('DebugView', {keyPath: [...keyPath, item.key]})
+					}
+				/>
+			)}
+		/>
+	)
+}
+
+let styles = StyleSheet.create({
+	table: {marginHorizontal: 15},
+})

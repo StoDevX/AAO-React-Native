@@ -1,25 +1,14 @@
 import {Platform, Share} from 'react-native'
-import querystring from 'query-string'
 import type {JobType} from './types'
 
-export function createJobFullUrl(job: JobType) {
-	let jobBaseUrl = 'https://www.stolaf.edu/apps/stuwork/index.cfm?'
-	let query = querystring.stringify({
-		fuseaction: 'Details',
-		jobID: String(job.id),
-	})
-	return `${jobBaseUrl}${query}`
-}
-
-export function shareJob(job: JobType) {
-	let url = createJobFullUrl(job)
+export function shareJob(job: JobType): void {
 	if (Platform.OS === 'ios') {
 		Share.share({
-			url: url,
+			url: job.url,
 		}).catch((error) => console.log(error.message))
 	} else {
 		Share.share({
-			message: url,
+			message: job.url,
 		}).catch((error) => console.log(error.message))
 	}
 }

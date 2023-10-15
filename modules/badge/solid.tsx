@@ -1,15 +1,15 @@
 import * as React from 'react'
-import {Platform, StyleSheet, Text, View} from 'react-native'
+import {ColorValue, Platform, StyleSheet, Text, View} from 'react-native'
 import * as c from '@frogpond/colors'
 
 type Props = {
 	status: string
-	accentColor?: string
-	textColor?: string
+	accentColor?: ColorValue
+	textColor?: ColorValue
 }
 
 export function SolidBadge(props: Props): JSX.Element {
-	const {status, accentColor = c.goldenrod, textColor = c.white} = props
+	const {status, accentColor = c.systemYellow, textColor = c.label} = props
 
 	return (
 		<View style={[styles.badge, {backgroundColor: accentColor}]}>

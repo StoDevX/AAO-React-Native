@@ -1,6 +1,6 @@
 import * as React from 'react'
 import * as c from '@frogpond/colors'
-import {Platform, StyleSheet, View} from 'react-native'
+import {ColorValue, Platform, StyleSheet, View} from 'react-native'
 import type {BusStopStatusEnum} from '../lib'
 
 const isAndroid = Platform.OS === 'android'
@@ -24,7 +24,7 @@ const styles = StyleSheet.create({
 		zIndex: 1,
 	},
 	skippingStop: {
-		backgroundColor: c.transparent,
+		backgroundColor: c.clear,
 		borderColor: c.transparent,
 	},
 	passedStop: {
@@ -33,22 +33,22 @@ const styles = StyleSheet.create({
 	},
 	beforeStop: {
 		borderWidth: 3,
-		backgroundColor: c.white,
+		backgroundColor: c.systemFill,
 		height: 18,
 		width: 18,
 	},
 	atStop: {
 		height: 20,
 		width: 20,
-		borderColor: c.white,
+		borderColor: c.systemFill,
 		borderWidth: 3,
-		backgroundColor: c.white,
+		backgroundColor: c.systemFill,
 	},
 })
 
 type Props = {
-	barColor: string
-	currentStopColor: string
+	barColor: ColorValue
+	currentStopColor: ColorValue
 	isFirstChunk: boolean
 	isLastChunk: boolean
 	stopStatus: BusStopStatusEnum
@@ -60,8 +60,8 @@ export function ProgressChunk(props: Props): JSX.Element {
 
 	// To draw the bar, we draw a chunk of the bar, then we draw the dot, then
 	// we draw the last chunk of the bar.
-	let startBarColor = isAndroid && isFirstChunk ? c.transparent : barColor
-	let endBarColor = isAndroid && isLastChunk ? c.transparent : barColor
+	let startBarColor = isAndroid && isFirstChunk ? c.clear : barColor
+	let endBarColor = isAndroid && isLastChunk ? c.clear : barColor
 
 	return (
 		<View style={styles.barContainer}>

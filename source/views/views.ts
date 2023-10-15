@@ -1,24 +1,37 @@
 import * as c from '@frogpond/colors'
-import type {Gradient} from '@frogpond/colors'
-import {RootStackParamList} from '../navigation/types'
+import {RootViewsParamList} from '../navigation/types'
+
+import {NavigationKey as menus} from './menus'
+import {NavigationKey as sis} from './sis'
+import {NavigationKey as calendar} from './calendar'
+import {NavigationKey as streaming} from './streaming'
+import {NavigationKey as news} from './news'
+import {NavigationKey as transportation} from './transportation'
+
+const hours: keyof RootViewsParamList = 'BuildingHours'
+const directory: keyof RootViewsParamList = 'Directory'
+const importantContacts: keyof RootViewsParamList = 'Contacts'
+const dictionary: keyof RootViewsParamList = 'Dictionary'
+const studentOrgs: keyof RootViewsParamList = 'StudentOrgs'
+const more: keyof RootViewsParamList = 'More'
+const printJobs: keyof RootViewsParamList = 'PrintJobs'
+const courseSearch: keyof RootViewsParamList = 'CourseSearch'
 
 type CommonView = {
 	title: string
 	icon: string
 	foreground: 'light' | 'dark'
 	tint: string
-	gradient?: Gradient
 }
 
 type NativeView = {
 	type: 'view'
-	view: keyof RootStackParamList
+	view: keyof RootViewsParamList
 }
 
 type WebLinkView = {
 	type: 'url' | 'browser-url'
 	url: string
-	view: string
 }
 
 export type ViewType = CommonView & (NativeView | WebLinkView)
@@ -26,152 +39,130 @@ export type ViewType = CommonView & (NativeView | WebLinkView)
 export const allViews: Array<ViewType> = [
 	{
 		type: 'view',
-		view: 'Menus',
+		view: menus,
 		title: 'Menus',
 		icon: 'bowl',
 		foreground: 'light',
-		tint: c.emerald,
-		gradient: c.grassToLime,
+		tint: c.grassToLime[0],
 	},
 	{
 		type: 'view',
-		view: 'SIS',
+		view: sis,
 		title: 'SIS',
 		icon: 'fingerprint',
 		foreground: 'light',
-		tint: c.goldenrod,
-		gradient: c.yellowToGoldDark,
+		tint: c.yellowToGoldDark[0],
 	},
 	{
 		type: 'view',
-		view: 'BuildingHours',
+		view: hours,
 		title: 'Building Hours',
 		icon: 'clock',
 		foreground: 'light',
-		tint: c.wave,
-		gradient: c.lightBlueToBlueDark,
+		tint: c.lightBlueToBlueDark[0],
 	},
 	{
 		type: 'view',
-		view: 'Calendar',
+		view: calendar,
 		title: 'Calendar',
 		icon: 'calendar',
 		foreground: 'light',
-		tint: c.coolPurple,
-		gradient: c.magentaToPurple,
+		tint: c.magentaToPurple[0],
 	},
 	{
-		type: 'url',
-		url: 'https://www.stolaf.edu/directory',
-		view: 'Directory',
+		type: 'view',
+		view: directory,
 		title: 'Directory',
 		icon: 'v-card',
 		foreground: 'light',
-		tint: c.indianRed,
-		gradient: c.redToPurple,
+		tint: c.redToPurple[0],
 	},
 	{
 		type: 'view',
-		view: 'Streaming',
+		view: streaming,
 		title: 'Streaming Media',
 		icon: 'video',
 		foreground: 'light',
-		tint: c.denim,
-		gradient: c.lightBlueToBlueLight,
+		tint: c.lightBlueToBlueLight[0],
 	},
 	{
 		type: 'view',
-		view: 'News',
+		view: news,
 		title: 'News',
 		icon: 'news',
 		foreground: 'light',
-		tint: c.eggplant,
-		gradient: c.purpleToIndigo,
+		tint: c.purpleToIndigo[0],
 	},
 	{
 		type: 'url',
 		url: 'https://www.myatlascms.com/map/index.php?id=294',
-		view: 'Map',
 		title: 'Campus Map',
 		icon: 'map',
 		foreground: 'light',
-		tint: c.coffee,
-		gradient: c.navyToNavy,
+		tint: c.navyToNavy[0],
 	},
 	{
 		type: 'view',
-		view: 'Contacts',
+		view: importantContacts,
 		title: 'Important Contacts',
 		icon: 'phone',
 		foreground: 'light',
-		tint: c.crimson,
-		gradient: c.orangeToRed,
+		tint: c.orangeToRed[0],
 	},
 	{
 		type: 'view',
-		view: 'Transportation',
+		view: transportation,
 		title: 'Transportation',
 		icon: 'address',
 		foreground: 'light',
-		tint: c.cardTable,
-		gradient: c.grayToDarkGray,
+		tint: c.grayToDarkGray[0],
 	},
 	{
 		type: 'view',
-		view: 'Dictionary',
+		view: dictionary,
 		title: 'Campus Dictionary',
 		icon: 'open-book',
 		foreground: 'light',
-		tint: c.olive,
-		gradient: c.pinkToHotpink,
+		tint: c.pinkToHotpink[0],
 	},
 	{
 		type: 'view',
-		view: 'StudentOrgs',
+		view: studentOrgs,
 		title: 'Student Orgs',
 		icon: 'globe',
 		foreground: 'light',
-		tint: c.wave,
-		gradient: c.darkBlueToIndigo,
-	},
-	{
-		type: 'url',
-		url: 'https://moodle.stolaf.edu/',
-		view: 'Moodle',
-		title: 'Moodle',
-		icon: 'graduation-cap',
-		foreground: 'light',
-		tint: c.cantaloupe,
-		gradient: c.yellowToGoldLight,
+		tint: c.darkBlueToIndigo[0],
 	},
 	{
 		type: 'view',
-		view: 'Help',
-		title: 'Report A Problem',
-		icon: 'help',
+		view: more,
+		title: 'More',
+		icon: 'link',
 		foreground: 'light',
-		tint: c.lavender,
-		gradient: c.seafoamToGrass,
+		tint: c.seafoamToGrass[0],
 	},
 	{
 		type: 'view',
-		view: 'PrintJobs',
+		view: printJobs,
 		title: 'stoPrint',
 		icon: 'print',
 		foreground: 'light',
-		tint: c.periwinkle,
-		gradient: c.tealToSeafoam,
+		tint: c.tealToSeafoam[0],
 	},
 	{
-		type: 'browser-url',
+		type: 'view',
+		view: courseSearch,
+		title: 'Course Catalog',
+		icon: 'graduation-cap',
+		foreground: 'light',
+		tint: c.lavender,
+	},
+	{
+		type: 'url',
 		url: 'https://oleville.com/',
-		view: 'Oleville',
 		title: 'Oleville',
 		icon: 'browser',
 		foreground: 'dark',
-		tint: c.periwinkle,
-		gradient: c.yellowToGoldMid,
+		tint: c.yellowToGoldMid[0],
 	},
 ]
-
-export const allViewNames: Array<string> = allViews.map((v) => v.view)

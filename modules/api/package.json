@@ -9,6 +9,6 @@
     "test": "jest"
   },
   "dependencies": {
-    "query-string": "^7.1.1"
+    "ky": "0.33.3"
   }
 }

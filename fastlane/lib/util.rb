@@ -5,7 +5,7 @@ end
 
 # was this build triggered by a schedule event on GH?
 def github_scheduled?
-	ENV['GITHUB_EVENT_NAME'] == 'schedule'
+	ENV['GITHUB_EVENT_NAME'] == 'schedule' || ENV['GITHUB_EVENT_NAME'] == 'workflow_dispatch'
 end
 
 # was this build initiated by cron?

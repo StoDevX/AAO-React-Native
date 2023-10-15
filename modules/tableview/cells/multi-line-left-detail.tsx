@@ -1,16 +1,24 @@
 import * as React from 'react'
-import {Cell} from 'react-native-tableview-simple'
+import {Cell} from '@frogpond/tableview'
 import {StyleSheet, Text, View} from 'react-native'
 import * as c from '@frogpond/colors'
 
 type LeftDetailProps = {
 	detail: string
 	title: string
+	onPress?: (() => void) | undefined
+	accessory?:
+		| false
+		| 'DisclosureIndicator'
+		| 'Detail'
+		| 'DetailDisclosure'
+		| 'Checkmark'
+		| undefined
 }
 
 export function MultiLineLeftDetailCell(props: LeftDetailProps): JSX.Element {
-	let {detail, title} = props
-	let cellContent = (
+	const {detail, title, onPress, accessory} = props
+	const cellContent = (
 		<View style={styles.cellContentView}>
 			<Text allowFontScaling={true} style={styles.cellLeftDetail}>
 				{detail}
@@ -20,7 +28,13 @@ export function MultiLineLeftDetailCell(props: LeftDetailProps): JSX.Element {
 			</Text>
 		</View>
 	)
-	return <Cell cellContentView={cellContent} />
+	return (
+		<Cell
+			accessory={accessory}
+			cellContentView={cellContent}
+			onPress={onPress}
+		/>
+	)
 }
 
 const styles = StyleSheet.create({
@@ -35,7 +49,7 @@ const styles = StyleSheet.create({
 	cellLeftDetailTitle: {
 		fontSize: 12,
 		flex: 1,
-		color: c.black,
+		color: c.label,
 	},
 	cellLeftDetail: {
 		fontSize: 12,
@@ -43,6 +57,6 @@ const styles = StyleSheet.create({
 		textAlign: 'right',
 		marginRight: 5,
 		width: 75,
-		color: c.infoBlue,
+		color: c.link,
 	},
 })

@@ -18,7 +18,7 @@ import {useTheme} from './theme'
 import {ActionButton, CallButton, ShowCalendarButton} from './buttons'
 import {openUrl} from '@frogpond/open-url'
 import {useNavigation} from '@react-navigation/native'
-import {RootStackParamList} from '../../../navigation/types'
+import {RadioScheduleParamList} from '../../../navigation/types'
 
 // If you want to fix the inline player, switch to `true`
 const ALLOW_INLINE_PLAYER = false
@@ -59,7 +59,7 @@ type Props = {
 	playerUrl: string
 	stationNumber: string
 	title: string
-	scheduleViewName: keyof RootStackParamList
+	scheduleViewName: keyof RadioScheduleParamList
 	stationName: string
 	source: {
 		useEmbeddedPlayer: boolean
@@ -115,8 +115,8 @@ export function RadioControllerView(props: Props): JSX.Element {
 	}, [navigation, scheduleViewName])
 
 	let callStation = useCallback(() => {
-		callPhone(stationNumber)
-	}, [stationNumber])
+		callPhone(stationNumber, {title: stationName})
+	}, [stationName, stationNumber])
 
 	let openStreamWebsite = useCallback(() => {
 		openUrl(playerUrl)
@@ -224,7 +224,7 @@ const styles = StyleSheet.create({
 	},
 	logoBorder: {
 		borderRadius: 6,
-		borderColor: c.black,
+		borderColor: c.systemBackground,
 		borderWidth: 3,
 	},
 	titleWrapper: {
@@ -232,14 +232,14 @@ const styles = StyleSheet.create({
 		marginBottom: 20,
 	},
 	heading: {
-		color: c.black,
+		color: c.label,
 		fontWeight: '600',
 		fontSize: 28,
 		textAlign: 'center',
 	},
 	subHeading: {
 		marginTop: 5,
-		color: c.black,
+		color: c.label,
 		fontWeight: '300',
 		fontSize: 28,
 		textAlign: 'center',
@@ -248,7 +248,7 @@ const styles = StyleSheet.create({
 		fontWeight: '400',
 		fontSize: 18,
 		textAlign: 'center',
-		color: c.grapefruit,
+		color: c.orange,
 		marginTop: 15,
 		marginBottom: 5,
 	},

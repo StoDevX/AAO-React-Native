@@ -15,8 +15,15 @@ import {Separator} from '@frogpond/separator'
 import {BusStopRow} from './components/bus-stop-row'
 import {ListFooter, ListRow, ListSectionHeader} from '@frogpond/lists'
 import {InfoHeader} from '@frogpond/info-header'
+import * as c from '@frogpond/colors'
 
 const styles = StyleSheet.create({
+	container: {
+		backgroundColor: c.secondarySystemGroupedBackground,
+	},
+	label: {
+		color: c.label,
+	},
 	separator: {
 		marginLeft: 45,
 		// erase the gap in the bar caused by the separators' block-ness
@@ -28,7 +35,7 @@ const isTruthy = (x: unknown) => Boolean(x)
 const BusLineSeparator = () => <Separator style={styles.separator} />
 const EMPTY_SCHEDULE_MESSAGE = (
 	<ListRow>
-		<Text>This line is not running today.</Text>
+		<Text style={styles.label}>This line is not running today.</Text>
 	</ListRow>
 )
 
@@ -173,6 +180,7 @@ export function BusLine(props: Props): JSX.Element {
 					stop={item}
 				/>
 			)}
+			style={styles.container}
 		/>
 	)
 }

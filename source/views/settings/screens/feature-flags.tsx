@@ -10,7 +10,8 @@ import {
 	SettingsStackParamList,
 	ChangeTextEvent,
 } from '../../../navigation/types'
-import {Cell, CellToggle, Section, TableView} from '@frogpond/tableview'
+import {Cell, Section, TableView} from '@frogpond/tableview'
+import {CellToggle} from '@frogpond/tableview/cells'
 import {ListEmpty, ListSeparator} from '@frogpond/lists'
 import {FlatList} from 'react-native-gesture-handler'
 import {

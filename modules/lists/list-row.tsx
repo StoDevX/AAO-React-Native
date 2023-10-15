@@ -3,12 +3,14 @@ import {PropsWithChildren} from 'react'
 import {Platform, StyleProp, StyleSheet, View, ViewStyle} from 'react-native'
 import {Touchable} from '@frogpond/touchable'
 import {DisclosureArrow} from './disclosure-arrow'
+import * as c from '@frogpond/colors'
 
 const styles = StyleSheet.create({
 	childWrapper: {
 		flex: 1,
 	},
 	container: {
+		backgroundColor: c.secondarySystemGroupedBackground,
 		flexDirection: 'row',
 		paddingLeft: 15,
 		...Platform.select({

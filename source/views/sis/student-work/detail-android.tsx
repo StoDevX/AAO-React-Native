@@ -8,7 +8,7 @@ import {openUrl} from '@frogpond/open-url'
 import * as c from '@frogpond/colors'
 import type {JobType} from './types'
 import {ShareButton} from '@frogpond/navigation-buttons'
-import {shareJob, createJobFullUrl} from './lib'
+import {shareJob} from './lib'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 import {RouteProp, useRoute} from '@react-navigation/native'
 import {RootStackParamList} from '../../../navigation/types'
@@ -19,7 +19,7 @@ const styles = StyleSheet.create({
 		marginTop: 20,
 		marginBottom: 15,
 		paddingHorizontal: 5,
-		color: c.black,
+		color: c.label,
 		fontSize: 32,
 		fontWeight: '300',
 	},
@@ -27,7 +27,7 @@ const styles = StyleSheet.create({
 		textAlign: 'center',
 		marginBottom: 15,
 		paddingHorizontal: 5,
-		color: c.black,
+		color: c.secondaryLabel,
 		fontSize: 16,
 		fontWeight: '300',
 	},
@@ -35,7 +35,7 @@ const styles = StyleSheet.create({
 		marginBottom: 20,
 	},
 	cardBody: {
-		color: c.black,
+		color: c.label,
 		paddingTop: 13,
 		paddingBottom: 13,
 		paddingLeft: 16,
@@ -47,7 +47,7 @@ const styles = StyleSheet.create({
 	},
 	footer: {
 		fontSize: 10,
-		color: c.iosDisabledText,
+		color: c.secondaryLabel,
 		textAlign: 'center',
 	},
 })
@@ -86,7 +86,11 @@ function ContactInformation({job}: {job: JobType}) {
 
 			{contactNumber ? (
 				<Text
-					onPress={() => (job.contactPhone ? callPhone(contactNumber) : null)}
+					onPress={() =>
+						job.contactPhone
+							? callPhone(contactNumber, {title: contactName})
+							: null
+					}
 					style={styles.cardBody}
 				>
 					{contactNumber}
@@ -168,11 +172,11 @@ function Timeline({job}: {job: JobType}) {
 }
 
 function OpenWebpage({job}: {job: JobType}) {
-	return job.id ? (
+	return job.url ? (
 		<Card header="Webpage" style={styles.card}>
 			<Text
 				key={job.id}
-				onPress={() => openUrl(createJobFullUrl(job))}
+				onPress={() => openUrl(job.url)}
 				style={styles.cardBody}
 			>
 				Open Posting
@@ -197,7 +201,7 @@ function Links({job}: {job: JobType}) {
 function LastUpdated({when}: {when: string}) {
 	return when ? (
 		<Text selectable={true} style={[styles.footer, styles.lastUpdated]}>
-			Last updated: {moment(when, 'YYYY/MM/DD').calendar()}
+			Last updated: {moment(when, 'MMMM D, YYYY').calendar()}
 			{'\n'}
 			Powered by St. Olaf Student Employment job postings
 		</Text>

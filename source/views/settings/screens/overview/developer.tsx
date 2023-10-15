@@ -1,20 +1,24 @@
 import * as Sentry from '@sentry/react-native'
 import * as React from 'react'
 import {Alert} from 'react-native'
-import {Section, PushButtonCell} from '@frogpond/tableview'
+import {Section} from '@frogpond/tableview'
+import {PushButtonCell} from '@frogpond/tableview/cells'
 import {isDevMode} from '@frogpond/constants'
 import {ServerUrlSection} from './server-url'
 import {useNavigation} from '@react-navigation/native'
+import {NavigationKey as DebugKey} from '../debug'
 
 export const DeveloperSection = (): React.ReactElement => {
 	let navigation = useNavigation()
 
+	const onComponentsButton = () => navigation.navigate('ComponentLibrary')
 	const onAPIButton = () => navigation.navigate('APITest')
 	const onBonAppButton = () => navigation.navigate('BonAppPicker')
-	const onDebugButton = () => navigation.navigate('Debug')
 	const onFeatureFlagsButton = () => navigation.navigate('FeatureFlags')
+	const onDebugButton = () => navigation.navigate(DebugKey, {keyPath: ['Root']})
+	const onNetworkLoggerButton = () => navigation.navigate('NetworkLogger')
 	const sendSentryMessage = () => {
-		Sentry.captureMessage('A Sentry Message', {level: Sentry.Severity.Info})
+		Sentry.captureMessage('A Sentry Message', {level: 'info'})
 		showSentryAlert()
 	}
 	const sendSentryException = () => {
@@ -39,15 +43,22 @@ export const DeveloperSection = (): React.ReactElement => {
 		<>
 			<Section header="DEVELOPER">
 				<PushButtonCell onPress={onFeatureFlagsButton} title="Feature Flags" />
+				<PushButtonCell onPress={onComponentsButton} title="Components" />
 				<PushButtonCell onPress={onAPIButton} title="API Tester" />
 				<PushButtonCell onPress={onBonAppButton} title="Bon Appetit Picker" />
-				<PushButtonCell disabled={true} onPress={onDebugButton} title="Debug" />
+				<PushButtonCell onPress={onDebugButton} title="Debug" />
+				<PushButtonCell
+					onPress={onNetworkLoggerButton}
+					title="Network Logger"
+				/>
 				<PushButtonCell
 					onPress={sendSentryMessage}
+					showLinkStyle={true}
 					title="Send a Sentry Message"
 				/>
 				<PushButtonCell
 					onPress={sendSentryException}
+					showLinkStyle={true}
 					title="Send a Sentry Exception"
 				/>
 			</Section>

@@ -10,4 +10,5 @@ export {
 	BuildingHoursScheduleEditorView,
 	ReportNavigationOptions,
 	EditorNavigationOptions,
+	ReportNavigationKey,
 } from './report'

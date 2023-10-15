@@ -1,84 +1,113 @@
+import ky from 'ky'
 import {
-	setInternetCredentials,
+	QueryObserverOptions,
+	useQuery,
+	UseQueryResult,
+} from '@tanstack/react-query'
+import {
 	getInternetCredentials,
 	resetInternetCredentials,
+	setInternetCredentials,
+	SharedWebCredentials,
 } from 'react-native-keychain'
-import type {Result as RNKeychainResult} from 'react-native-keychain'
-
-import buildFormData from './formdata'
 import {OLECARD_AUTH_URL} from './financials/urls'
+import {queryClient} from '../init/tanstack-query'
 
-const SIS_LOGIN_KEY = 'stolaf.edu'
+export class NoCredentialsError extends Error {}
+export class LoginFailedError extends Error {}
 
-const empty = () => ({})
+export const SIS_LOGIN_KEY = 'stolaf.edu' as const
 
-export type Credentials = {username: string; password: string}
-export type MaybeCredentials = {username?: string; password?: string}
+const queryKeys = {
+	default: (server: string) => ['credentials', server] as const,
+} as const
 
-export function saveLoginCredentials({
-	username,
-	password,
-}: Credentials): Promise<false | RNKeychainResult> {
-	return setInternetCredentials(SIS_LOGIN_KEY, username, password).catch(empty)
-}
-export function loadLoginCredentials(): Promise<MaybeCredentials> {
-	return getInternetCredentials(SIS_LOGIN_KEY).catch(empty)
-}
-export function clearLoginCredentials(): Promise<void> {
-	return resetInternetCredentials(SIS_LOGIN_KEY).catch(empty)
+export function invalidateCredentials(): Promise<void> {
+	return queryClient.invalidateQueries({
+		queryKey: queryKeys.default(SIS_LOGIN_KEY),
+	})
 }
 
-export type LoginResultEnum =
-	| 'success'
-	| 'network'
-	| 'bad-credentials'
-	| 'no-credentials'
-	| 'server-error'
-	| 'other'
+type Credentials = {
+	username: string
+	password: string
+}
 
-type Args = {attempts?: number}
+async function loadCredentials(): Promise<null | SharedWebCredentials> {
+	let credentials = await getInternetCredentials(SIS_LOGIN_KEY)
+	return credentials ? credentials : null
+}
 
-export async function performLogin({
-	attempts = 0,
-}: Args = {}): Promise<LoginResultEnum> {
-	const {username, password} = await loadLoginCredentials()
-	if (!username || !password) {
-		return 'no-credentials'
+export async function storeCredentials(
+	credentials: Credentials,
+): Promise<Credentials> {
+	let saved = await setInternetCredentials(
+		SIS_LOGIN_KEY,
+		credentials.username,
+		credentials.password,
+	)
+	if (saved === false) {
+		throw new NoCredentialsError()
+	}
+	return credentials
+}
+
+export function resetCredentials(): Promise<void> {
+	return resetInternetCredentials(SIS_LOGIN_KEY)
+}
+
+export async function performLogin(
+	credentials: Credentials | null = null,
+): Promise<Credentials> {
+	const saved = credentials ?? (await loadCredentials())
+	if (!saved) {
+		throw new NoCredentialsError()
+	}
+	const {username, password} = saved
+
+	let formData = new FormData()
+	formData.append('username', username)
+	formData.append('password', password)
+
+	const loginResponse = await ky.post(OLECARD_AUTH_URL, {
+		body: formData,
+		credentials: 'include',
+		cache: 'no-store',
+	})
+
+	let responseUrl = new URL(loginResponse.url)
+	// URLSearchParams.get requires a polyfill in react native
+	let responseMessage = responseUrl.href.includes('error=')
+	if (responseMessage) {
+		throw new LoginFailedError(`Login failed: ${responseMessage}`)
 	}
 
-	const form = buildFormData({username, password})
+	return {username, password}
+}
 
-	try {
-		const {status: statusCode} = await fetch(OLECARD_AUTH_URL, {
-			method: 'POST',
-			body: form,
-			credentials: 'include',
-			cache: 'no-store',
-			throwHttpErrors: false,
-		})
+type QueryFnData = null | SharedWebCredentials
+type DefaultError = null | unknown
+type QueryT<Select> = ReturnType<typeof useCredentials<Select>>
 
-		if (statusCode >= 400 && statusCode < 500) {
-			return 'bad-credentials'
-		}
+export function useCredentials<TData = QueryFnData, TError = DefaultError>(
+	options: QueryObserverOptions<QueryFnData, TError, TData> = {},
+): UseQueryResult<TData, TError> {
+	return useQuery({
+		queryKey: queryKeys.default(SIS_LOGIN_KEY),
+		queryFn: () => loadCredentials(),
+		networkMode: 'always',
+		cacheTime: 0,
+		staleTime: 0,
+		...options,
+	})
+}
 
-		if (statusCode >= 500 && statusCode < 600) {
-			return 'server-error'
-		}
+export function useUsername(): QueryT<string | undefined> {
+	return useCredentials({
+		select: (data) => data?.username,
+	})
+}
 
-		if (statusCode < 200 || statusCode >= 300) {
-			return 'other'
-		}
-
-		return 'success'
-	} catch (err) {
-		const wasNetworkFailure = err.message === 'Network request failed'
-		if (wasNetworkFailure) {
-			if (attempts > 0) {
-				// console.log(`login failed; trying ${attempts - 1} more time(s)`)
-				return performLogin({attempts: attempts - 1})
-			}
-			return 'network'
-		}
-		return 'other'
-	}
+export function useHasCredentials(): QueryT<boolean> {
+	return useCredentials({select: (data) => Boolean(data)})
 }

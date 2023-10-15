@@ -5,15 +5,11 @@ import * as c from '@frogpond/colors'
 
 const styles = StyleSheet.create({
 	title: {
-		color: c.black,
+		color: c.label,
 		fontSize: 17,
 		...Platform.select({
-			ios: {
-				fontWeight: '500',
-			},
-			android: {
-				fontWeight: '600',
-			},
+			ios: {fontWeight: '500'},
+			android: {fontWeight: '600'},
 		}),
 	},
 	noBold: {

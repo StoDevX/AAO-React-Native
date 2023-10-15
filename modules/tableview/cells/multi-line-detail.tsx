@@ -1,12 +1,12 @@
 import * as React from 'react'
-import {Cell} from 'react-native-tableview-simple'
+import {Cell} from '@frogpond/tableview'
 import {StyleSheet, Text, View} from 'react-native'
 import * as c from '@frogpond/colors'
 
 type Props = {
 	title: string
 	leftDetail?: string
-	rightDetail: string
+	rightDetail?: JSX.Element[]
 }
 
 export function MultiLineDetailCell(props: Props): JSX.Element {
@@ -23,7 +23,9 @@ export function MultiLineDetailCell(props: Props): JSX.Element {
 					</Text>
 				)}
 			</View>
-			<View style={styles.cellRightDetail}>{rightDetail}</View>
+			{Boolean(rightDetail) && (
+				<View style={styles.cellRightDetail}>{rightDetail}</View>
+			)}
 		</View>
 	)
 	return <Cell cellContentView={cellContent} />
@@ -41,12 +43,12 @@ const styles = StyleSheet.create({
 	cellTitle: {
 		fontSize: 16,
 		letterSpacing: -0.32,
-		color: c.black,
+		color: c.label,
 	},
 	cellLeftDetail: {
 		fontSize: 16,
 		letterSpacing: -0.32,
-		color: c.iosDisabledText,
+		color: c.secondaryLabel,
 	},
 	cellRightDetail: {
 		alignSelf: 'center',

@@ -1,5 +1,5 @@
-/* eslint-env jest */
-import {trimStationName, trimItemLabel} from '../trim-names'
+import {describe, expect, it} from '@jest/globals'
+import {trimItemLabel, trimStationName} from '../trim-names'
 
 describe('trimStationName', () => {
 	it('should remove the <strong> html tags and @ prefix', () => {

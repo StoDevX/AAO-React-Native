@@ -8,61 +8,52 @@ import {
 } from 'react-native'
 import Icon from 'react-native-vector-icons/Ionicons'
 import {NoticeView} from '@frogpond/notice'
-import {sto} from '../../../lib/colors'
-import {Timer} from '@frogpond/timer'
+import * as c from '@frogpond/colors'
 
 type Props = {
 	buttonText: string
 	description?: string
 	header: string
-	onPress: () => any
-	refresh: () => any
+	onPress: () => void
+	onRefresh?: () => void
+	refreshing?: boolean
 	text: string
 }
 
-export class StoPrintNoticeView extends React.PureComponent<Props> {
-	render() {
-		let {buttonText, description, header, onPress, text} = this.props
+export const StoPrintNoticeView = (props: Props): React.ReactElement => {
+	let {buttonText, description, header, onPress, text, onRefresh, refreshing} =
+		props
+	let iconName = Platform.OS === 'ios' ? 'ios-print' : 'md-print'
 
-		return (
-			<Timer
-				interval={5000}
-				invoke={this.props.refresh}
-				moment={false}
-				render={({refresh, loading}) => (
-					<ScrollView
-						contentContainerStyle={styles.content}
-						refreshControl={
-							<RefreshControl onRefresh={refresh} refreshing={loading} />
-						}
-						showsVerticalScrollIndicator={false}
-						style={styles.container}
-					>
-						<Icon
-							color={sto.black}
-							name={Platform.OS === 'ios' ? 'ios-print' : 'md-print'}
-							size={100}
-						/>
-						<NoticeView
-							buttonText={buttonText}
-							header={header}
-							onPress={onPress}
-							style={styles.notice}
-							text={text}
-						/>
-						{description ? (
-							<Text style={styles.description}>{description}</Text>
-						) : null}
-					</ScrollView>
-				)}
+	return (
+		<ScrollView
+			contentContainerStyle={styles.content}
+			refreshControl={
+				onRefresh && refreshing != null ? (
+					<RefreshControl onRefresh={onRefresh} refreshing={refreshing} />
+				) : undefined
+			}
+			showsVerticalScrollIndicator={false}
+			style={styles.container}
+		>
+			<Icon color={c.systemFill} name={iconName} size={100} />
+			<NoticeView
+				buttonText={buttonText}
+				header={header}
+				onPress={onPress}
+				style={styles.notice}
+				text={text}
 			/>
-		)
-	}
+			{description ? (
+				<Text style={styles.description}>{description}</Text>
+			) : null}
+		</ScrollView>
+	)
 }
 
 const styles = StyleSheet.create({
 	container: {
-		backgroundColor: sto.white,
+		backgroundColor: c.systemBackground,
 	},
 	content: {
 		flex: 1,
@@ -70,6 +61,7 @@ const styles = StyleSheet.create({
 		justifyContent: 'center',
 	},
 	description: {
+		color: c.label,
 		marginHorizontal: 30,
 		marginVertical: 20,
 		textAlign: 'center',

@@ -20,7 +20,7 @@ export const MenuItemDetailView = (): JSX.Element => {
 	const {item, icons} = route.params
 
 	return (
-		<ScrollView style={styles.container}>
+		<ScrollView>
 			<Text selectable={true} style={styles.title}>
 				{item.label}
 			</Text>
@@ -33,11 +33,7 @@ export const MenuItemDetailView = (): JSX.Element => {
 
 			{item.description ? (
 				<React.Fragment>
-					<ListRow
-						arrowPosition="none"
-						contentContainerStyle={styles.container}
-						fullWidth={false}
-					>
+					<ListRow arrowPosition="none" fullWidth={false}>
 						<Title>Description</Title>
 						<Detail>{item.description}</Detail>
 					</ListRow>
@@ -49,11 +45,7 @@ export const MenuItemDetailView = (): JSX.Element => {
 				map(item.nutrition_details, (nutrition, key: number) => {
 					return (
 						<React.Fragment key={`${nutrition}-${key}`}>
-							<ListRow
-								arrowPosition="none"
-								fullWidth={false}
-								style={styles.container}
-							>
+							<ListRow arrowPosition="none" fullWidth={false}>
 								<Row>
 									<Column flex={1}>
 										<Title>{nutrition.label}</Title>
@@ -75,10 +67,8 @@ export const MenuItemDetailView = (): JSX.Element => {
 }
 
 const styles = StyleSheet.create({
-	container: {
-		backgroundColor: c.white,
-	},
 	title: {
+		color: c.label,
 		fontSize: 36,
 		textAlign: 'center',
 		marginHorizontal: 18,

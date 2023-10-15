@@ -3,12 +3,10 @@ import {ScrollView, Text, View, StyleSheet} from 'react-native'
 import moment from 'moment'
 import {Card} from '@frogpond/silly-card'
 import * as c from '@frogpond/colors'
-import type {StudentOrgType} from './types'
-import type {TopLevelViewPropsType} from '../types'
 import {sendEmail} from '../../components/send-email'
 import {openUrl} from '@frogpond/open-url'
 import {showNameOrEmail} from './util'
-import {RouteProp} from '@react-navigation/native'
+import {RouteProp, useRoute} from '@react-navigation/native'
 import {RootStackParamList} from '../../navigation/types'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 
@@ -18,7 +16,7 @@ const styles = StyleSheet.create({
 		marginTop: 20,
 		marginBottom: 15,
 		paddingHorizontal: 5,
-		color: c.black,
+		color: c.label,
 		fontSize: 32,
 		fontWeight: '300',
 	},
@@ -26,7 +24,7 @@ const styles = StyleSheet.create({
 		marginBottom: 20,
 	},
 	cardBody: {
-		color: c.black,
+		color: c.label,
 		paddingTop: 13,
 		paddingBottom: 13,
 		paddingLeft: 16,
@@ -45,7 +43,7 @@ const styles = StyleSheet.create({
 	},
 	footer: {
 		fontSize: 10,
-		color: c.iosDisabledText,
+		color: c.secondaryLabel,
 		textAlign: 'center',
 	},
 	lastUpdated: {
@@ -56,12 +54,10 @@ const styles = StyleSheet.create({
 	},
 })
 
-type Props = TopLevelViewPropsType & {
-	route: {params: {org: StudentOrgType}}
-}
+export const NavigationKey = 'StudentOrgsDetail' as const
 
 export const NavigationOptions = (props: {
-	route: RouteProp<RootStackParamList, 'StudentOrgsDetail'>
+	route: RouteProp<RootStackParamList, typeof NavigationKey>
 }): NativeStackNavigationOptions => {
 	let {name} = props.route.params.org
 	return {
@@ -69,7 +65,9 @@ export const NavigationOptions = (props: {
 	}
 }
 
-let StudentOrgsDetailView = (props: Props): JSX.Element => {
+let StudentOrgsDetailView = (): JSX.Element => {
+	let route = useRoute<RouteProp<RootStackParamList, typeof NavigationKey>>()
+
 	let {
 		name: orgName,
 		category,
@@ -79,7 +77,7 @@ let StudentOrgsDetailView = (props: Props): JSX.Element => {
 		advisors,
 		description,
 		lastUpdated: orgLastUpdated,
-	} = props.route.params.org
+	} = route.params.org
 
 	return (
 		<ScrollView>

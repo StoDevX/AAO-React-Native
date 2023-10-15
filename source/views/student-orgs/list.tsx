@@ -11,25 +11,18 @@ import {
 	largeListProps,
 	emptyList,
 } from '@frogpond/lists'
-import {white} from '@frogpond/colors'
+import * as c from '@frogpond/colors'
 import groupBy from 'lodash/groupBy'
 import toPairs from 'lodash/toPairs'
 import words from 'lodash/words'
 import deburr from 'lodash/deburr'
 import type {StudentOrgType} from './types'
-import {API} from '@frogpond/api'
-import {useFetch} from 'react-async'
 import {useDebounce} from '@frogpond/use-debounce'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 import {useNavigation} from '@react-navigation/native'
 import memoize from 'lodash/memoize'
 import {ChangeTextEvent} from '../../navigation/types'
-
-const useStudentOrgs = () => {
-	return useFetch<StudentOrgType[]>(API('/orgs'), {
-		headers: {accept: 'application/json'},
-	})
-}
+import {useStudentOrgs} from './query'
 
 const splitToArray = memoize((str: string) => words(deburr(str.toLowerCase())))
 
@@ -46,7 +39,7 @@ const orgToArray = memoize((term: StudentOrgType) =>
 const styles = StyleSheet.create({
 	wrapper: {
 		flex: 1,
-		backgroundColor: white,
+		backgroundColor: c.systemBackground,
 	},
 	contentContainer: {
 		flexGrow: 1,
@@ -62,16 +55,16 @@ function StudentOrgsView(): JSX.Element {
 	let {
 		data: orgs = [],
 		error,
-		reload,
-		isPending,
-		isInitial,
+		isError,
+		refetch,
+		isRefetching,
 		isLoading,
 	} = useStudentOrgs()
 
 	React.useLayoutEffect(() => {
 		navigation.setOptions({
 			headerSearchBarOptions: {
-				barTintColor: white,
+				barTintColor: c.systemFill,
 				onChangeText: (event: ChangeTextEvent) =>
 					setQuery(event.nativeEvent.text),
 			},
@@ -103,13 +96,12 @@ function StudentOrgsView(): JSX.Element {
 		[navigation],
 	)
 
-	// conditionals must come after all hooks
-	if (error) {
+	if (isError) {
 		return (
 			<NoticeView
 				buttonText="Try Again"
-				onPress={reload}
-				text="A problem occured while loading the orgs"
+				onPress={refetch}
+				text={`A problem occured while loading: ${error}`}
 			/>
 		)
 	}
@@ -131,8 +123,8 @@ function StudentOrgsView(): JSX.Element {
 			keyExtractor={(item) => item.name + item.category}
 			keyboardDismissMode="on-drag"
 			keyboardShouldPersistTaps="never"
-			onRefresh={reload}
-			refreshing={isPending && !isInitial}
+			onRefresh={refetch}
+			refreshing={isRefetching}
 			renderItem={({item}) => (
 				<ListRow arrowPosition="top" onPress={() => onPressOrg(item)}>
 					<Column flex={1}>

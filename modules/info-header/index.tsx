@@ -4,20 +4,22 @@ import * as c from '@frogpond/colors'
 
 const styles = StyleSheet.create({
 	content: {
-		backgroundColor: c.white,
+		backgroundColor: c.secondarySystemGroupedBackground,
 		borderTopWidth: StyleSheet.hairlineWidth,
 		borderBottomWidth: StyleSheet.hairlineWidth,
-		borderTopColor: c.iosHeaderTopBorder,
-		borderBottomColor: c.iosHeaderBottomBorder,
+		borderTopColor: c.separator,
+		borderBottomColor: c.separator,
 		marginBottom: 10,
 	},
 	title: {
+		color: c.label,
 		fontSize: 16,
 		fontWeight: 'bold',
 		paddingTop: 15,
 		paddingHorizontal: 15,
 	},
 	message: {
+		color: c.secondaryLabel,
 		fontSize: 14,
 		paddingTop: 5,
 		paddingBottom: 15,

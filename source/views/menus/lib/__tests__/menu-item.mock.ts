@@ -1,7 +1,6 @@
 /* eslint-disable camelcase */
 import type {MenuItemType} from '../../types'
-
-import type {ItemCorIconMapType} from '@frogpond/food-menu/types'
+import type {ItemCorIconMapType} from '../../../../../modules/food-menu/types'
 
 export const item: (params: {
 	cor_icon?: ItemCorIconMapType
@@ -17,10 +16,10 @@ export const item: (params: {
 	id: '',
 	description: '',
 	label: '',
-	monotony: {},
+	monotony: {id: '', name: '', image: ''},
 	nutrition_link: '',
-	nutrition: {},
-	nutrition_details: {},
+	nutrition: {kcal: '', well_being: '', well_being_image: ''},
+	nutrition_details: undefined,
 	options: [],
 	rating: '',
 	special: special,

@@ -6,7 +6,11 @@ import type {BuildingType} from './types'
 import * as c from '@frogpond/colors'
 import {Row} from '@frogpond/layout'
 import {ListRow, Detail, Title} from '@frogpond/lists'
-import {getDetailedBuildingStatus, getShortBuildingStatus} from './lib'
+import {
+	getDetailedBuildingStatus,
+	getShortBuildingStatus,
+	getAccentBackgroundColor,
+} from './lib'
 
 const styles = StyleSheet.create({
 	title: {
@@ -24,7 +28,7 @@ const styles = StyleSheet.create({
 	},
 	subtitleText: {
 		fontWeight: '400',
-		color: c.iosDisabledText,
+		color: c.secondaryLabel,
 	},
 	accessoryBadge: {
 		marginLeft: 4,
@@ -33,16 +37,6 @@ const styles = StyleSheet.create({
 		fontWeight: 'bold',
 	},
 })
-
-const BG_COLORS: Record<string, string> = {
-	Open: c.moneyGreen,
-	Closed: c.salmon,
-}
-
-const FG_COLORS: Record<string, string> = {
-	Open: c.hollyGreen,
-	Closed: c.brickRed,
-}
 
 type Props = {
 	info: BuildingType
@@ -62,9 +56,6 @@ export function BuildingRow(props: Props): JSX.Element {
 		[now, info],
 	)
 
-	let accentBg = BG_COLORS[openStatus] ?? c.goldenrod
-	let accentText = FG_COLORS[openStatus] ?? 'rgb(130, 82, 45)'
-
 	return (
 		<ListRow arrowPosition="center" onPress={onPress}>
 			<Row style={styles.title}>
@@ -78,10 +69,9 @@ export function BuildingRow(props: Props): JSX.Element {
 
 				{!info.isNotice ? (
 					<Badge
-						accentColor={accentBg}
+						accentColor={getAccentBackgroundColor(openStatus)}
 						style={styles.accessoryBadge}
 						text={openStatus}
-						textColor={accentText}
 					/>
 				) : null}
 			</Row>

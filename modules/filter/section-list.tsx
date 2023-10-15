@@ -2,18 +2,23 @@ import {Image, StyleSheet, Text} from 'react-native'
 import type {ListItemSpecType, ListType} from './types'
 import {Cell, Section} from '@frogpond/tableview'
 import {Column} from '@frogpond/layout'
+import * as c from '@frogpond/colors'
+
 import concat from 'lodash/concat'
 import isEqual from 'lodash/isEqual'
 import reject from 'lodash/reject'
 import * as React from 'react'
 import {useCallback} from 'react'
 
-type PropsType = {
-	filter: ListType
-	onChange: (filter: ListType) => void
+type Props<T extends object> = {
+	filter: ListType<T>
+	onChange: (filter: ListType<T>) => void
 }
 
-export function ListSection({filter, onChange}: PropsType): JSX.Element {
+export function ListSection<T extends object>({
+	filter,
+	onChange,
+}: Props<T>): JSX.Element {
 	let {spec} = filter
 	let {title = '', options, selected, mode} = spec
 	let quantifier = mode === 'AND' ? 'all' : 'any'
@@ -122,12 +127,15 @@ export function ListSection({filter, onChange}: PropsType): JSX.Element {
 const styles = StyleSheet.create({
 	content: {
 		flex: 1,
+		flexShrink: 1,
 		paddingVertical: 10,
 	},
 	title: {
+		color: c.label,
 		fontSize: 16,
 	},
 	detail: {
+		color: c.label,
 		fontSize: 11,
 	},
 	icon: {

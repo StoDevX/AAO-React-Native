@@ -1,19 +1,23 @@
 import * as React from 'react'
 import {timezone} from '@frogpond/constants'
-import {StyleSheet, Text, Platform} from 'react-native'
+import {
+	StyleSheet,
+	Text,
+	Platform,
+	ScrollViewProps,
+	ScrollView,
+	TextProps,
+} from 'react-native'
 import type {CourseType} from '../../../../lib/course-search'
-import glamorous from 'glamorous-native'
 import {SolidBadge as Badge} from '@frogpond/badge'
 import moment from 'moment-timezone'
 import {formatDay} from '../lib/format-day'
+import {TableView, Section, Cell} from '@frogpond/tableview'
 import {
-	TableView,
-	Section,
-	Cell,
 	SelectableCell,
 	MultiLineDetailCell,
 	MultiLineLeftDetailCell,
-} from '@frogpond/tableview'
+} from '@frogpond/tableview/cells'
 import * as c from '@frogpond/colors'
 import {deptNum} from '../lib/format-dept-num'
 import groupBy from 'lodash/groupBy'
@@ -23,23 +27,16 @@ import {RouteProp, useRoute} from '@react-navigation/native'
 import {RootStackParamList} from '../../../../navigation/types'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 
-const Container = glamorous.scrollView({
-	paddingVertical: 6,
-})
+const Container = (props: ScrollViewProps) => (
+	<ScrollView {...props} style={[styles.container, props.style]} />
+)
 
-const Header = glamorous.text({
-	fontSize: 36,
-	textAlign: 'center',
-	marginTop: 20,
-	marginHorizontal: 10,
-	color: c.black,
-})
-
-const SubHeader = glamorous.text({
-	fontSize: 21,
-	textAlign: 'center',
-	marginTop: 5,
-})
+const Header = (props: TextProps) => (
+	<Text {...props} style={[styles.header, props.style]} />
+)
+const SubHeader = (props: TextProps) => (
+	<Text {...props} style={[styles.subHeader, props.style]} />
+)
 
 const styles = StyleSheet.create({
 	chunk: {
@@ -53,14 +50,29 @@ const styles = StyleSheet.create({
 		lineHeight: 20,
 	},
 	rightDetail: {
-		color: c.iosDisabledText,
+		color: c.secondaryLabel,
 		textAlign: 'right',
+	},
+	container: {
+		paddingVertical: 6,
+	},
+	header: {
+		fontSize: 36,
+		textAlign: 'center',
+		marginTop: 20,
+		marginHorizontal: 10,
+		color: c.label,
+	},
+	subHeader: {
+		fontSize: 21,
+		textAlign: 'center',
+		marginTop: 5,
 	},
 })
 
 function Information({course}: {course: CourseType}) {
 	return (
-		<Section header="INFORMATION" sectionTintColor={c.sectionBgColor}>
+		<Section header="INFORMATION">
 			{course.instructors ? (
 				<Cell
 					cellStyle="LeftDetail"
@@ -129,11 +141,7 @@ function Schedule({course}: {course: CourseType}) {
 		)
 	})
 
-	return (
-		<Section header="SCHEDULE" sectionTintColor={c.sectionBgColor}>
-			{schedule}
-		</Section>
-	)
+	return <Section header="SCHEDULE">{schedule}</Section>
 }
 
 function Notes({course}: {course: CourseType}) {
@@ -185,7 +193,7 @@ function Description({course}: {course: CourseType}) {
 const BGCOLORS = {
 	Open: c.moneyGreen,
 	Closed: c.salmon,
-}
+} as const
 
 export const NavigationOptions = (props: {
 	route: RouteProp<RootStackParamList, 'CourseDetail'>
@@ -200,7 +208,7 @@ export const CourseDetailView = (): JSX.Element => {
 	let route = useRoute<RouteProp<RootStackParamList, 'CourseDetail'>>()
 	let {course} = route.params
 
-	let status = course.status === 'O' ? 'Open' : 'Closed'
+	let status = course.status === 'O' ? ('Open' as const) : ('Closed' as const)
 
 	return (
 		<Container>

@@ -1,12 +1,12 @@
 import * as React from 'react'
-import {StyleSheet, ScrollView} from 'react-native'
+import {StyleSheet, ScrollView, Platform} from 'react-native'
 import {TableView} from '@frogpond/tableview'
 import {CloseScreenButton} from '@frogpond/navigation-buttons'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 
 import {isDevMode} from '@frogpond/constants'
 
-import {ConnectedCredentialsLoginSection} from './login-credentials'
+import {CredentialsLoginSection} from './login-credentials'
 import {MiscellanySection} from './miscellany'
 import {SupportSection} from './support'
 import {DeveloperSection} from './developer'
@@ -25,7 +25,7 @@ const SettingsView = (): JSX.Element => (
 		keyboardShouldPersistTaps="always"
 	>
 		<TableView>
-			<ConnectedCredentialsLoginSection />
+			<CredentialsLoginSection />
 
 			<SupportSection />
 
@@ -42,5 +42,5 @@ export {SettingsView as View}
 
 export const NavigationOptions: NativeStackNavigationOptions = {
 	title: 'Settings',
-	headerRight: () => <CloseScreenButton />,
+	headerRight: () => Platform.OS === 'ios' && <CloseScreenButton />,
 }

@@ -1,6 +1,4 @@
 /**
- * @flow
- *
  * <ScheduleRow/> renders a single row of the schedule information.
  */
 
@@ -17,19 +15,17 @@ type Props = {
 	now: Moment
 }
 
-export class ScheduleRow extends React.PureComponent<Props> {
-	render() {
-		let {set, isActive, now} = this.props
-		return (
-			<Cell
-				cellStyle="RightDetail"
-				detail={formatBuildingTimes(set, now)}
-				detailTextStyle={isActive ? styles.bold : undefined}
-				title={summarizeDays(set.days)}
-				titleTextStyle={isActive ? styles.bold : undefined}
-			/>
-		)
-	}
+export const ScheduleRow = (props: Props): JSX.Element => {
+	let {set, isActive, now} = props
+	return (
+		<Cell
+			cellStyle="RightDetail"
+			detail={formatBuildingTimes(set, now)}
+			detailTextStyle={isActive ? styles.bold : undefined}
+			title={summarizeDays(set.days)}
+			titleTextStyle={isActive ? styles.bold : undefined}
+		/>
+	)
 }
 
 const styles = StyleSheet.create({

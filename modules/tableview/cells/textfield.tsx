@@ -6,11 +6,12 @@ import {
 	TextInput,
 	TextInputProps,
 } from 'react-native'
-import {Cell} from 'react-native-tableview-simple'
+import {Cell} from '@frogpond/tableview'
 import * as c from '@frogpond/colors'
 
 const styles = StyleSheet.create({
 	label: {
+		color: c.label,
 		width: 90,
 		fontSize: 16,
 		marginTop: Platform.OS === 'ios' ? -2 : 0, // lines the label up with the text on iOS
@@ -20,6 +21,7 @@ const styles = StyleSheet.create({
 		width: 0,
 	},
 	customTextInput: {
+		color: c.label,
 		flex: 1,
 	},
 	singlelineCell: {
@@ -37,52 +39,34 @@ const styles = StyleSheet.create({
 	},
 })
 
-type Props = {
+type Props = TextInputProps & {
 	label?: string
-	_ref?: {current: null | React.ElementRef<typeof TextInput>}
-	disabled: boolean
-	multiline?: boolean
-	onChangeText: (value: string) => void
-	onSubmitEditing?: (value: string) => void
-	placeholder: string
-	returnKeyType: 'done' | 'next' | 'default'
-	secureTextEntry: boolean
-	autoCapitalize: 'characters' | 'words' | 'sentences' | 'none'
-	value: string
 	labelWidth?: number
 }
 
-export class CellTextField extends React.Component<Props> {
-	static defaultProps = {
-		disabled: false,
-		placeholder: '',
-		returnKeyType: 'default',
-		secureTextEntry: false,
-		autoCapitalize: 'none',
-	}
+export const CellTextField = React.forwardRef<TextInput, Props>(
+	(props, ref): JSX.Element => {
+		let {
+			placeholder = '',
+			returnKeyType = 'default',
+			secureTextEntry = false,
+			autoCapitalize = 'none',
+			multiline = false,
+			labelWidth,
+			onSubmitEditing,
+			onChangeText,
+			value,
+			label,
+		} = props
 
-	_ref = this.props._ref || React.createRef()
+		let labelWidthStyle = labelWidth != null ? {width: labelWidth} : null
 
-	focusInput = (): void => {
-		this._ref.current && this._ref.current.focus()
-	}
-
-	onSubmit = (): void => {
-		this.props.onSubmitEditing?.(this.props.value)
-	}
-
-	render(): JSX.Element {
-		let moreProps: TextInputProps = {}
-		if (this.props.multiline) {
-			moreProps.scrollEnabled = false
-		}
-
-		let labelWidthStyle =
-			this.props.labelWidth != null ? {width: this.props.labelWidth} : null
-
-		let label = this.props.label ? (
-			<Text onPress={this.focusInput} style={[styles.label, labelWidthStyle]}>
-				{this.props.label}
+		let labelEl = label ? (
+			<Text
+				onPress={() => ref?.current?.focus()}
+				style={[styles.label, labelWidthStyle]}
+			>
+				{label}
 			</Text>
 		) : (
 			<Text style={styles.hiddenLabel} />
@@ -90,34 +74,32 @@ export class CellTextField extends React.Component<Props> {
 
 		let input = (
 			<TextInput
-				ref={this.props._ref}
-				autoCapitalize={this.props.autoCapitalize}
+				ref={ref}
+				autoCapitalize={autoCapitalize}
 				autoCorrect={false}
 				clearButtonMode="while-editing"
-				editable={!this.props.disabled}
-				multiline={this.props.multiline || false}
-				onChangeText={this.props.onChangeText}
-				onSubmitEditing={this.onSubmit}
-				placeholder={this.props.placeholder}
-				placeholderTextColor={c.iosPlaceholderText}
-				returnKeyType={this.props.returnKeyType}
-				secureTextEntry={this.props.secureTextEntry}
+				multiline={multiline || false}
+				onChangeText={onChangeText}
+				onSubmitEditing={onSubmitEditing}
+				placeholder={placeholder}
+				placeholderTextColor={c.placeholderText}
+				returnKeyType={returnKeyType}
+				scrollEnabled={!multiline}
+				secureTextEntry={secureTextEntry}
 				style={styles.customTextInput}
-				value={this.props.value}
-				{...moreProps}
+				value={value}
+				{...props}
 			/>
 		)
 
-		let style = this.props.multiline
-			? styles.multilineCell
-			: styles.singlelineCell
+		let style = multiline ? styles.multilineCell : styles.singlelineCell
 
 		return (
 			<Cell
 				cellAccessoryView={input}
-				cellContentView={label}
+				cellContentView={labelEl}
 				contentContainerStyle={style}
 			/>
 		)
-	}
-}
+	},
+)

@@ -5,42 +5,60 @@ import 'react-native-gesture-handler'
 // initialization
 import './init/constants'
 import './init/moment'
-import './init/sentry'
+import * as sentryInit from './init/sentry'
 import './init/api'
 import './init/theme'
-import './init/data'
+import {queryClient, persister} from './init/tanstack-query'
 
 import * as React from 'react'
+import {PersistGate} from 'redux-persist/integration/react'
 import {Provider as ReduxProvider} from 'react-redux'
 import {Provider as PaperProvider} from 'react-native-paper'
-import {makeStore, initRedux} from './redux'
-import * as navigation from './navigation'
-import {ThemeProvider} from '@frogpond/app-theme'
+import {PersistQueryClientProvider} from '@tanstack/react-query-persist-client'
+import {store, persistor} from './redux'
+import {CombinedLightTheme, CombinedDarkTheme} from '@frogpond/app-theme'
 import {ActionSheetProvider} from '@expo/react-native-action-sheet'
 import {NavigationContainer} from '@react-navigation/native'
 
 import {RootStack} from './navigation'
+import {LoadingView} from '@frogpond/notice'
+import {StatusBar, useColorScheme} from 'react-native'
 
-const store = makeStore()
-initRedux(store)
+export default function App(): JSX.Element {
+	// Create a ref for the navigation container
+	const navigationRef = React.useRef()
+	const scheme = useColorScheme()
+	const theme = scheme === 'dark' ? CombinedDarkTheme : CombinedLightTheme
+	const statusBarStyle = scheme === 'dark' ? 'light-content' : 'dark-content'
 
-export default class App extends React.Component {
-	render(): JSX.Element {
-		return (
-			<ReduxProvider store={store}>
-				<PaperProvider>
-					<ThemeProvider>
+	return (
+		<ReduxProvider store={store}>
+			<PersistGate
+				loading={<LoadingView text="Loading App..." />}
+				persistor={persistor}
+			>
+				<PersistQueryClientProvider
+					client={queryClient}
+					persistOptions={{persister}}
+				>
+					<PaperProvider theme={theme}>
 						<ActionSheetProvider>
 							<NavigationContainer
-								onStateChange={navigation.trackScreenChanges}
-								persistenceKey={navigation.persistenceKey}
+								onReady={() => {
+									// Register the navigation container with the instrumentation
+									sentryInit.routingInstrumentation.registerNavigationContainer(
+										navigationRef,
+									)
+								}}
+								theme={theme}
 							>
+								<StatusBar barStyle={statusBarStyle} />
 								<RootStack />
 							</NavigationContainer>
 						</ActionSheetProvider>
-					</ThemeProvider>
-				</PaperProvider>
-			</ReduxProvider>
-		)
-	}
+					</PaperProvider>
+				</PersistQueryClientProvider>
+			</PersistGate>
+		</ReduxProvider>
+	)
 }

@@ -1,261 +1,579 @@
 name: Check
 
 on:
-  push:
+  push: {branches: [master]}
+  pull_request:
+  merge_group:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  ruby_version: '3.0'
+  xcode_version: 'Xcode_14.2'
+  java_version: '11'
+  java_distribution: temurin
 
 jobs:
-  tsc-errors:
-    name: No New TSC Errors
-    runs-on: ubuntu-20.04
+  cache-npm-linux:
+    name: Cache npm for Linux
+    runs-on: ubuntu-22.04
+    outputs:
+      cache-key: ${{ steps.node-cache.outputs.cache-primary-key }}
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v3
-        with:
-          node-version: ^16.0
-          cache: npm
-      - run: npm ci
-      - run: npm run bundle-data
-      - run: |
-          echo "::remove-matcher owner=tsc::"
-      - run: make tsc-errors
-      - run: git diff --exit-code
+      - uses: actions/checkout@3df4ab11eba7bda6032a0b82a6bb43b11571feac # v4.0.0
 
-  tsc-counts:
-    name: No New TSC Error Counts
-    runs-on: ubuntu-20.04
+      - name: Extract job definition
+        run: yq '.jobs.${{ github.job }}' .github/workflows/check.yml > .github/job.yml
+
+      - uses: actions/cache/restore@88522ab9f39a2ea568f7027eddc7d8d8bc9d59c8 # v3
+        id: node-cache
+        with:
+          path: node_modules/
+          key: ${{ runner.os }}-node_modules-${{ hashFiles('.node-version', 'package-lock.json', '.github/job.yml') }}
+
+      - if: steps.node-cache.outputs.cache-hit != 'true'
+        uses: actions/setup-node@5e21ff4d9bc1a8cf6de233a3057d20ec6b3fb69d # v3
+        with:
+          node-version-file: '.node-version'
+          cache: npm
+
+      - if: steps.node-cache.outputs.cache-hit != 'true'
+        run: npm ci
+
+      - uses: actions/cache/save@88522ab9f39a2ea568f7027eddc7d8d8bc9d59c8 # v3
+        if: steps.node-cache.outputs.cache-hit != 'true'
+        with:
+          path: node_modules/
+          key: ${{ steps.node-cache.outputs.cache-primary-key }}
+
+  cache-npm-macos:
+    name: Cache npm for macOS
+    runs-on: macos-12
+    outputs:
+      cache-key: ${{ steps.node-cache.outputs.cache-primary-key }}
     steps:
-      - run: sudo apt-get install -y ripgrep
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v3
-        with:
-          node-version: ^16.0
-          cache: npm
-      - run: npm ci
-      - run: npm run bundle-data
-      - run: |
-          echo "::remove-matcher owner=tsc::"
-      - run: make tsc-counts
-      - run: git diff --exit-code
+      - uses: actions/checkout@3df4ab11eba7bda6032a0b82a6bb43b11571feac # v4.0.0
 
-  eslint-problems:
-    name: No New ESLint Problems
-    runs-on: ubuntu-20.04
+      - name: Extract job definition
+        run: yq '.jobs.${{ github.job }}' .github/workflows/check.yml > .github/job.yml
+
+      - uses: actions/cache/restore@88522ab9f39a2ea568f7027eddc7d8d8bc9d59c8 # v3
+        id: node-cache
+        with:
+          path: node_modules/
+          key: ${{ runner.os }}-node_modules-${{ hashFiles('.node-version', 'package-lock.json', '.github/job.yml') }}
+
+      - if: steps.node-cache.outputs.cache-hit != 'true'
+        uses: actions/setup-node@5e21ff4d9bc1a8cf6de233a3057d20ec6b3fb69d # v3
+        with:
+          node-version-file: '.node-version'
+          cache: npm
+
+      - if: steps.node-cache.outputs.cache-hit != 'true'
+        run: npm ci
+
+      - uses: actions/cache/save@88522ab9f39a2ea568f7027eddc7d8d8bc9d59c8 # v3
+        if: steps.node-cache.outputs.cache-hit != 'true'
+        with:
+          path: node_modules/
+          key: ${{ steps.node-cache.outputs.cache-primary-key }}
+
+  cache-bundler-macos:
+    name: Cache bundler for macOS
+    runs-on: macos-12
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v3
-        with:
-          node-version: ^16.0
-          cache: npm
-      - run: npm ci
-      - run: |
-          echo "::remove-matcher owner=eslint-compact::"
-          echo "::remove-matcher owner=eslint-stylish::"
-      - run: make eslint-problems
-      - run: git diff --exit-code
+      - uses: actions/checkout@3df4ab11eba7bda6032a0b82a6bb43b11571feac # v4.0.0
 
-  format:
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ env.ruby_version }}
+          bundler-cache: true
+
+  cache-cocoapods:
+    name: iOS Cocoapods
+    needs: [cache-npm-macos, cache-bundler-macos]
+    runs-on: macos-12
+    outputs:
+      cache-key: ${{ steps.cocoapods-cache.outputs.cache-primary-key }}
+    steps:
+      - run: sudo xcode-select -s /Applications/${{ env.xcode_version }}.app
+
+      - uses: actions/checkout@3df4ab11eba7bda6032a0b82a6bb43b11571feac # v4.0.0
+
+      - name: Extract job definition
+        run: yq '.jobs.${{ github.job }}' .github/workflows/check.yml > .github/job.yml
+
+      - name: Restore Cocoapods cache
+        uses: actions/cache/restore@88522ab9f39a2ea568f7027eddc7d8d8bc9d59c8 # v3
+        id: cocoapods-cache
+        with:
+          path: ios/Pods
+          key: ${{ runner.os }}-cocoapods-ruby@${{ env.ruby_version }}-xcode@${{ env.xcode_version }}-${{ hashFiles('**/Podfile', '**/Podfile.lock', 'package-lock.json', '.github/job.yml') }}
+
+      - if: steps.cocoapods-cache.outputs.cache-hit != 'true'
+        uses: actions/setup-node@5e21ff4d9bc1a8cf6de233a3057d20ec6b3fb69d # v3
+        with:
+          node-version-file: '.node-version'
+
+      - if: steps.cocoapods-cache.outputs.cache-hit != 'true'
+        uses: ruby/setup-ruby@v1
+        env:
+          BUNDLE_FROZEN: "true"
+        with:
+          ruby-version: ${{ env.ruby_version }}
+          bundler-cache: true
+
+      - name: Restore node_modules cache
+        if: steps.cocoapods-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/restore@88522ab9f39a2ea568f7027eddc7d8d8bc9d59c8 # v3
+        id: node-cache
+        with:
+          path: node_modules/
+          key: ${{ needs.cache-npm-macos.outputs.cache-key }}
+
+      - if: steps.cocoapods-cache.outputs.cache-hit != 'true' && steps.node-cache.outputs.cache-hit != 'true'
+        run: exit 1
+
+      - if: steps.cocoapods-cache.outputs.cache-hit != 'true'
+        run: bundle exec pod install --deployment
+        working-directory: ./ios
+
+      - name: Save Cocoapods cache
+        uses: actions/cache/save@88522ab9f39a2ea568f7027eddc7d8d8bc9d59c8 # v3
+        if: steps.cocoapods-cache.outputs.cache-hit != 'true'
+        with:
+          path: ios/Pods
+          key: ${{ steps.cocoapods-cache.outputs.cache-primary-key }}
+
+  prettier:
     name: Prettier
-    runs-on: ubuntu-20.04
+    needs: [cache-npm-linux]
+    runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@3df4ab11eba7bda6032a0b82a6bb43b11571feac # v4.0.0
+
+      - uses: actions/setup-node@5e21ff4d9bc1a8cf6de233a3057d20ec6b3fb69d # v3
         with:
-          node-version: ^16.0
-          cache: npm
-      - run: npm ci
-      - run: npm run pretty --no-write --list-different
+          node-version-file: '.node-version'
+
+      - name: Restore node_modules cache
+        uses: actions/cache/restore@88522ab9f39a2ea568f7027eddc7d8d8bc9d59c8 # v3
+        id: node-cache
+        with:
+          path: node_modules/
+          key: ${{ needs.cache-npm-linux.outputs.cache-key }}
+
+      - if: steps.node-cache.outputs.cache-hit != 'true'
+        run: exit 1
+
+      - run: npm run pretty -- --no-write --list-different
 
   eslint:
     name: ESLint
-    runs-on: ubuntu-20.04
+    needs: [cache-npm-linux]
+    runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@3df4ab11eba7bda6032a0b82a6bb43b11571feac # v4.0.0
+
+      - uses: actions/setup-node@5e21ff4d9bc1a8cf6de233a3057d20ec6b3fb69d # v3
         with:
-          node-version: ^16.0
-          cache: npm
-      - run: npm ci
+          node-version-file: '.node-version'
+
+      - name: Restore node_modules cache
+        uses: actions/cache/restore@88522ab9f39a2ea568f7027eddc7d8d8bc9d59c8 # v3
+        id: node-cache
+        with:
+          path: node_modules/
+          key: ${{ needs.cache-npm-linux.outputs.cache-key }}
+
+      - if: steps.node-cache.outputs.cache-hit != 'true'
+        run: exit 1
+
       - run: npm run lint
 
   jest:
     name: Jest
-    runs-on: ubuntu-20.04
+    needs: [cache-npm-linux]
+    runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@3df4ab11eba7bda6032a0b82a6bb43b11571feac # v4.0.0
+
+      - uses: actions/setup-node@5e21ff4d9bc1a8cf6de233a3057d20ec6b3fb69d # v3
         with:
-          node-version: ^16.0
-          cache: npm
-      - run: npm ci
+          node-version-file: '.node-version'
+
+      - name: Restore node_modules cache
+        uses: actions/cache/restore@88522ab9f39a2ea568f7027eddc7d8d8bc9d59c8 # v3
+        id: node-cache
+        with:
+          path: node_modules/
+          key: ${{ needs.cache-npm-linux.outputs.cache-key }}
+
+      - if: steps.node-cache.outputs.cache-hit != 'true'
+        run: exit 1
+
       - name: Run tests
         run: npm run test -- --coverage
+
       - name: Upload coverage
-        env:
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
-        run: bash <(curl -s https://codecov.io/bash)
+        uses: codecov/codecov-action@eaaf4bedf32dbdc6b720b63067d99c4d77d6047d # v3
 
   tsc:
     name: TypeScript
-    runs-on: ubuntu-20.04
+    needs: [cache-npm-linux]
+    runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@3df4ab11eba7bda6032a0b82a6bb43b11571feac # v4.0.0
+
+      - uses: actions/setup-node@5e21ff4d9bc1a8cf6de233a3057d20ec6b3fb69d # v3
         with:
-          node-version: ^16.0
-          cache: npm
-      - run: npm ci
+          node-version-file: '.node-version'
+
+      - name: Restore node_modules cache
+        uses: actions/cache/restore@88522ab9f39a2ea568f7027eddc7d8d8bc9d59c8 # v3
+        id: node-cache
+        with:
+          path: node_modules/
+          key: ${{ needs.cache-npm-linux.outputs.cache-key }}
+
+      - if: steps.node-cache.outputs.cache-hit != 'true'
+        run: exit 1
+
       - run: npx tsc
 
   data:
     name: Data
-    runs-on: ubuntu-20.04
+    needs: [cache-npm-linux]
+    runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v3
-        with:
-          node-version: ^16.0
-          cache: npm
-      - run: npm ci
-      - run: npm run validate-data
-      - run: npm run bundle-data
+      - uses: actions/checkout@3df4ab11eba7bda6032a0b82a6bb43b11571feac # v4.0.0
 
-  ios-pods:
-    name: iOS Cocoapods
-    runs-on: macos-11
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
+      - uses: actions/setup-node@5e21ff4d9bc1a8cf6de233a3057d20ec6b3fb69d # v3
         with:
-          node-version: '^16.0'
-          cache: npm
-      - uses: ruby/setup-ruby@v1
+          node-version-file: '.node-version'
+
+      - name: Restore node_modules cache
+        uses: actions/cache/restore@88522ab9f39a2ea568f7027eddc7d8d8bc9d59c8 # v3
+        id: node-cache
         with:
-          ruby-version: '2.6'
-          bundler-cache: true
-      - run: sudo xcode-select -s /Applications/Xcode_13.1.app
-      - run: npm ci
-        env: { SKIP_POSTINSTALL: '1' }
-      - run: bundle exec pod install --deployment
-        working-directory: ./ios
+          path: node_modules/
+          key: ${{ needs.cache-npm-linux.outputs.cache-key }}
+
+      - if: steps.node-cache.outputs.cache-hit != 'true'
+        run: exit 1
+
+      - run: npm run validate-data
+
+      - run: npm run bundle-data
 
   ios-bundle:
     name: iOS Bundle
-    runs-on: ubuntu-20.04
+    needs: [cache-npm-macos]
+    runs-on: macos-12
+    outputs:
+      cache-key: ${{ steps.jsbundle-cache.outputs.cache-primary-key }}
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@3df4ab11eba7bda6032a0b82a6bb43b11571feac # v4.0.0
+
+      - name: Extract job definition
+        run: yq '.jobs.${{ github.job }}' .github/workflows/check.yml > .github/job.yml
+
+      - uses: actions/setup-node@5e21ff4d9bc1a8cf6de233a3057d20ec6b3fb69d # v3
         with:
-          node-version: ^16.0
-          cache: npm
-      - run: npm ci
-      - run: npm run bundle-data
-      - run: npm run bundle:ios
+          node-version-file: '.node-version'
+
+      - name: Restore node_modules cache
+        uses: actions/cache/restore@88522ab9f39a2ea568f7027eddc7d8d8bc9d59c8 # v3
+        id: node-cache
+        with:
+          path: node_modules/
+          key: ${{ needs.cache-npm-macos.outputs.cache-key }}
+
+      - if: steps.node-cache.outputs.cache-hit != 'true'
+        run: exit 1
+
+      - name: Load the cached jsbundle
+        uses: actions/cache/restore@88522ab9f39a2ea568f7027eddc7d8d8bc9d59c8 # v3
+        id: jsbundle-cache
+        with:
+          path: |
+            ios/AllAboutOlaf/main.jsbundle
+            ios/AllAboutOlaf/main.jsbundle.map
+            ios/assets/
+          key: ${{ runner.os }}-jsbundle-${{ hashFiles('.node-version', 'package.json', 'package-lock.json', '.github/job.yml', 'tsconfig.json', 'babel.config.js', 'index.js', 'data/**', 'images/**', 'modules/**.ts', 'modules/**.tsx', 'source/**.ts', 'source/**.tsx') }}
+
+      - name: Generate jsbundle
+        if: steps.jsbundle-cache.outputs.cache-hit != 'true'
+        run: npm run bundle:ios
+        env:
+          APP_MODE: mocked
+
+      - name: Cache the jsbundle
+        uses: actions/cache/save@88522ab9f39a2ea568f7027eddc7d8d8bc9d59c8 # v3
+        if: steps.jsbundle-cache.outputs.cache-hit != 'true'
+        with:
+          path: |
+            ios/AllAboutOlaf/main.jsbundle
+            ios/AllAboutOlaf/main.jsbundle.map
+            ios/assets/
+          key: ${{ steps.jsbundle-cache.outputs.cache-primary-key }}
 
   android-bundle:
     name: Android Bundle
-    runs-on: ubuntu-20.04
+    needs: [cache-npm-linux]
+    runs-on: ubuntu-22.04
+    outputs:
+      cache-key: ${{ steps.jsbundle-cache.outputs.cache-primary-key }}
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@3df4ab11eba7bda6032a0b82a6bb43b11571feac # v4.0.0
+
+      - name: Extract job definition
+        run: yq '.jobs.${{ github.job }}' .github/workflows/check.yml > .github/job.yml
+
+      - uses: actions/setup-node@5e21ff4d9bc1a8cf6de233a3057d20ec6b3fb69d # v3
         with:
-          node-version: ^16.0
-          cache: npm
-      - run: npm ci
-      - run: npm run bundle-data
-      - run: mkdir -p ./android/app/src/main/assets/
-      - run: npm run bundle:android
+          node-version-file: '.node-version'
+
+      - name: Restore node_modules cache
+        uses: actions/cache/restore@88522ab9f39a2ea568f7027eddc7d8d8bc9d59c8 # v3
+        id: node-cache
+        with:
+          path: node_modules/
+          key: ${{ needs.cache-npm-linux.outputs.cache-key }}
+
+      - if: steps.node-cache.outputs.cache-hit != 'true'
+        run: exit 1
+
+      - name: Load the cached jsbundle
+        uses: actions/cache/restore@88522ab9f39a2ea568f7027eddc7d8d8bc9d59c8 # v3
+        id: jsbundle-cache
+        with:
+          path: ./android/generated/
+          key: ${{ runner.os }}-jsbundle-${{ hashFiles('.node-version', 'package.json', 'package-lock.json', '.github/job.yml', 'tsconfig.json', 'babel.config.js', 'index.js', 'data/**', 'images/**', 'modules/**.ts', 'modules/**.tsx', 'source/**.ts', 'source/**.tsx') }}
+
+      - name: Generate jsbundle
+        if: steps.jsbundle-cache.outputs.cache-hit != 'true'
+        run: npm run bundle:android
+        env:
+          APP_MODE: mocked
+
+      - name: Cache the jsbundle
+        if: steps.jsbundle-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@88522ab9f39a2ea568f7027eddc7d8d8bc9d59c8 # v3
+        with:
+          path: ./android/generated/
+          key: ${{ steps.jsbundle-cache.outputs.cache-primary-key }}
 
   android:
     name: Build for Android
-    runs-on: ubuntu-20.04
-    needs: [tsc, jest, eslint, android-bundle]
+    needs: [jest, eslint, android-bundle, cache-npm-linux]
+    runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
+      - uses: actions/checkout@3df4ab11eba7bda6032a0b82a6bb43b11571feac # v4.0.0
+
+      - uses: actions/setup-node@5e21ff4d9bc1a8cf6de233a3057d20ec6b3fb69d # v3
         with:
-          node-version: ^16.0
-          cache: npm
-      - uses: ruby/setup-ruby@v1
+          node-version-file: '.node-version'
+
+      - name: Restore node_modules cache
+        uses: actions/cache/restore@88522ab9f39a2ea568f7027eddc7d8d8bc9d59c8 # v3
+        id: node-cache
         with:
-          ruby-version: '2.6'
-          bundler-cache: true
-      - name: Restore Gradle cache
-        uses: actions/cache@v2
+          path: node_modules/
+          key: ${{ needs.cache-npm-linux.outputs.cache-key }}
+
+      - if: steps.node-cache.outputs.cache-hit != 'true'
+        run: exit 1
+
+      - uses: actions/setup-java@cd89f46ac9d01407894225f350157564c9c7cee2 # v3
         with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-      - run: npm ci
+          distribution: ${{ env.java_distribution }}
+          java-version: ${{ env.java_version }}
+
       - name: Raise the fs.inotify ulimits to 524288 watches/queued events/user instances
         run: |
           echo 524288 | sudo tee -a /proc/sys/fs/inotify/max_user_watches
           echo 524288 | sudo tee -a /proc/sys/fs/inotify/max_queued_events
           echo 524288 | sudo tee -a /proc/sys/fs/inotify/max_user_instances
           sudo sysctl -p
-      - run: echo 'org.gradle.workers.max=2' >> ./android/gradle.properties
-      - run: cd android && ./gradlew androidDependencies --console=plain
-      - run: bundle exec fastlane android ci-run
-        env:
-          FASTLANE_PASSWORD: ${{ secrets.FASTLANE_PASSWORD }}
-          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
-          GIT_COMMIT_DESC: $(git log --format=oneline -n 1 $GITHUB_SHA)
-          FASTLANE_SKIP_UPDATE_CHECK: '1'
-          FASTLANE_DISABLE_ANIMATION: '1'
-          SENTRY_ORG: frog-pond-labs
-          SENTRY_PROJECT: all-about-olaf
-          SENTRY_AUTH_TOKEN: ${{ secrets.HOSTED_SENTRY_AUTH_TOKEN }}
-          GITHUB_KEYS_REPOSITORY_TOKEN: ${{ secrets.GITHUB_KEYS_REPOSITORY_TOKEN }}
 
-  ios:
-    name: Build for iOS
-    runs-on: macos-11
-    needs: [tsc, jest, eslint, ios-bundle, ios-pods]
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
+      - name: Gradle
+        uses: gradle/gradle-build-action@ef76a971e2fa3f867b617efd72f2fbd72cf6f8bc # v2
         with:
-          node-version: ^16.0
-          cache: npm
-      - uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: '2.6'
-          bundler-cache: true
-      # - name: Restore Pods cache
-      #   uses: actions/cache@v2
-      #   with:
-      #     path: |
-      #       ios/Pods
-      #       ~/Library/Caches/CocoaPods
-      #       ~/.cocoapods
-      #     key: ${{ runner.os }}-pods-${{ hashFiles('**/Podfile.lock') }}
-      #     restore-keys: |
-      #       ${{ runner.os }}-pods-
-      # - uses: mikehardy/buildcache-action@v1
-      #   continue-on-error: true
-      #   with:
-      #     cache_key: ${{ matrix.os }}
-      - run: sudo xcode-select -s /Applications/Xcode_13.1.app
-      - run: git fetch --prune --unshallow
-      - run: npm ci
+          arguments: bundleRelease --scan
+          build-root-directory: android
+          gradle-home-cache-cleanup: true
         env:
-          SKIP_POSTINSTALL: '1'
-      - run: bundle exec pod install --deployment
-        working-directory: ./ios
-      - run: brew tap wix/brew
-      - run: brew install applesimutils
-      - run: bundle exec fastlane ios ci-run
-        env:
-          FASTLANE_PASSWORD: ${{ secrets.FASTLANE_PASSWORD }}
-          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
-          GIT_COMMIT_DESC: $(git log --format=oneline -n 1 $GITHUB_SHA)
-          FASTLANE_SKIP_UPDATE_CHECK: '1'
-          FASTLANE_DISABLE_ANIMATION: '1'
           SENTRY_ORG: frog-pond-labs
           SENTRY_PROJECT: all-about-olaf
-          SENTRY_AUTH_TOKEN: ${{ secrets.HOSTED_SENTRY_AUTH_TOKEN }}
-          GITHUB_KEYS_REPOSITORY_TOKEN: ${{ secrets.GITHUB_KEYS_REPOSITORY_TOKEN }}
-      - run: npx detox build e2e --configuration ios.sim.release
-      - run: npx detox test e2e --configuration ios.sim.release --cleanup
+          SKIP_BUNDLING: 'true'
+
+      - name: Upload build reports
+        uses: actions/upload-artifact@0b7f8abb1508181956e8e162db84b466c27e18ce # v3
+        with:
+          name: build-reports
+          path: build/reports/
+      
+      - name: Cache the Android app
+        uses: actions/cache/save@88522ab9f39a2ea568f7027eddc7d8d8bc9d59c8 # v3
+        with:
+          path: android/app/build/outputs/apk/
+          key: ${{ steps.app-cache.outputs.cache-primary-key }}
+      
+      - uses: actions/upload-artifact@0b7f8abb1508181956e8e162db84b466c27e18ce # v3
+        with:
+          name: android-app
+          path: android/app/build/outputs/apk/
+
+  ios-build:
+    name: Build for iOS
+    needs: [jest, eslint, cache-cocoapods, cache-npm-macos, cache-bundler-macos]
+    runs-on: macos-12
+    outputs:
+      cache-key: ${{ steps.app-cache.outputs.cache-primary-key }}
+    steps:
+      - run: sudo xcode-select -s /Applications/${{ env.xcode_version }}.app
+
+      - uses: actions/checkout@3df4ab11eba7bda6032a0b82a6bb43b11571feac # v4.0.0
+
+      - name: Extract job definition
+        run: yq '.jobs.${{ github.job }}' .github/workflows/check.yml > .github/job.yml
+
+      - name: Check for cached iOS app
+        id: app-cache
+        uses: actions/cache/restore@88522ab9f39a2ea568f7027eddc7d8d8bc9d59c8 # v3
+        with:
+          path: ios/build/Build/Products/
+          key: ${{ runner.os }}-ios-xcode@${{ env.xcode_version }}-${{ hashFiles('**/project.pbxproj', '**/Podfile', '**/Podfile.lock', 'package-lock.json', '.github/job.yml') }}
+
+      - uses: actions/setup-node@5e21ff4d9bc1a8cf6de233a3057d20ec6b3fb69d # v3
+        if: steps.app-cache.outputs.cache-hit != 'true'
+        with:
+          node-version-file: '.node-version'
+
+      - name: Restore node_modules cache
+        if: steps.app-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/restore@88522ab9f39a2ea568f7027eddc7d8d8bc9d59c8 # v3
+        id: node-cache
+        with:
+          path: node_modules/
+          key: ${{ needs.cache-npm-macos.outputs.cache-key }}
+
+      - name: exit if the node_modules cache did not load
+        if: steps.app-cache.outputs.cache-hit != 'true' && steps.node-cache.outputs.cache-hit != 'true'
+        run: exit 1
+
+      - uses: ruby/setup-ruby@v1
+        if: steps.app-cache.outputs.cache-hit != 'true'
+        env:
+          BUNDLE_FROZEN: "true"
+        with:
+          ruby-version: ${{ env.ruby_version }}
+          bundler-cache: true
+
+      - name: Restore Cocoapods cache
+        if: steps.app-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/restore@88522ab9f39a2ea568f7027eddc7d8d8bc9d59c8 # v3
+        id: pods-cache
+        with:
+          path: ios/Pods
+          key: ${{ needs.cache-cocoapods.outputs.cache-key }}
+
+      - name: exit if the Cocoapods cache did not load
+        if: steps.app-cache.outputs.cache-hit != 'true' && steps.pods-cache.outputs.cache-hit != 'true'
+        run: exit 1
+
+      - uses: mikehardy/buildcache-action@1db83fb06b0da378aa7db7a1110923b904417cbc # v2
+        if: steps.app-cache.outputs.cache-hit != 'true'
+        continue-on-error: true
+        with:
+          cache_key: ${{ matrix.os }}
+          upload_buildcache_log: 'true'
+
+      - name: Build the iOS app
+        if: steps.app-cache.outputs.cache-hit != 'true'
+        env:
+          SKIP_BUNDLING: 'true'
+        run: npx detox build e2e --configuration ios.sim.release
+
+      - name: Cache the iOS app
+        uses: actions/cache/save@88522ab9f39a2ea568f7027eddc7d8d8bc9d59c8 # v3
+        with:
+          path: ios/build/Build/Products/
+          key: ${{ steps.app-cache.outputs.cache-primary-key }}
+      
+      - uses: actions/upload-artifact@0b7f8abb1508181956e8e162db84b466c27e18ce # v3
+        with:
+          name: ios-app
+          path: ios/build/Build/Products/
+
+  ios-detox:
+    name: Detox E2E for iOS
+    needs: [cache-npm-macos, ios-build, ios-bundle]
+    runs-on: macos-12
+    steps:
+      - run: sudo xcode-select -s /Applications/${{ env.xcode_version }}.app
+
+      - uses: actions/checkout@3df4ab11eba7bda6032a0b82a6bb43b11571feac # v4.0.0
+
+      - # load the app before reinstalling detox, so that the package-lock cannot change
+        name: Load the cached iOS app
+        uses: actions/cache/restore@88522ab9f39a2ea568f7027eddc7d8d8bc9d59c8 # v3
+        id: app-cache
+        with:
+          path: ios/build/Build/Products/
+          key: ${{ needs.ios-build.outputs.cache-key }}
+
+      - if: steps.app-cache.outputs.cache-hit != 'true'
+        run: exit 1
+
+      - # load the jsbundle before reinstalling detox, so that the package-lock cannot change
+        name: Load the cached iOS jsbundle
+        uses: actions/cache/restore@88522ab9f39a2ea568f7027eddc7d8d8bc9d59c8 # v3
+        id: jsbundle-cache
+        with:
+          path: |
+            ios/AllAboutOlaf/main.jsbundle
+            ios/AllAboutOlaf/main.jsbundle.map
+            ios/assets/
+          key: ${{ needs.ios-bundle.outputs.cache-key }}
+
+      - if: steps.jsbundle-cache.outputs.cache-hit != 'true'
+        run: exit 1
+
+      - name: Move cached jsbundle into place
+        run: |
+          mv ios/AllAboutOlaf/main.jsbundle ios/build/Build/Products/Release-iphonesimulator/AllAboutOlaf.app/
+          mv ios/AllAboutOlaf/main.jsbundle.map ios/build/Build/Products/Release-iphonesimulator/AllAboutOlaf.app/
+          rm -rf ios/build/Build/Products/Release-iphonesimulator/AllAboutOlaf.app/assets
+          mv ios/assets ios/build/Build/Products/Release-iphonesimulator/AllAboutOlaf.app/
+
+      - uses: actions/setup-node@5e21ff4d9bc1a8cf6de233a3057d20ec6b3fb69d # v3
+        with:
+          node-version-file: '.node-version'
+
+      - name: Restore node_modules cache
+        uses: actions/cache/restore@88522ab9f39a2ea568f7027eddc7d8d8bc9d59c8 # v3
+        id: node-cache
+        with:
+          path: node_modules/
+          key: ${{ needs.cache-npm-macos.outputs.cache-key }}
+
+      - # We have to poke Detox because it installs things outside of node_modules/detox/…
+        name: Re-install Detox
+        run: npx detox clean-framework-cache && npx detox build-framework-cache
+
+      - run: brew tap wix/brew
+
+      - run: brew install applesimutils
+
+      - name: Run the Detox tests
+        run: npx detox test e2e --configuration ios.sim.release --cleanup --record-logs failing --record-videos failing --record-performance all --capture-view-hierarchy enabled --take-screenshots failing
+
+      - uses: actions/upload-artifact@0b7f8abb1508181956e8e162db84b466c27e18ce # v3
+        if: always()
+        with:
+          name: detox-ios
+          path: artifacts/

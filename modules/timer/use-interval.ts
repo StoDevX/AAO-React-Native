@@ -64,7 +64,7 @@ export function useInterval(
 	}, [interval])
 
 	const set = useCallback(
-		(ms) => {
+		(ms: number) => {
 			if (timer.current !== undefined) {
 				clearTimeout(timer.current)
 			}

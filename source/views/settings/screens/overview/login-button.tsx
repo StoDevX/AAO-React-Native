@@ -1,22 +1,23 @@
 import * as React from 'react'
-import {ButtonCell} from '@frogpond/tableview'
+import {ButtonCell} from '@frogpond/tableview/cells'
 
 type Props = {
 	loading: boolean
 	disabled?: boolean
 	loggedIn: boolean
-	onPress: () => any
+	onPress: () => void
 	label: string
 }
 
-export function LoginButton(props: Props) {
+export function LoginButton(props: Props): JSX.Element {
 	let {loading, disabled, loggedIn, onPress, label} = props
 
-	let message = loading
-		? `Logging in to ${label}…`
-		: loggedIn
-		? `Sign Out of ${label}`
-		: `Sign In to ${label}`
+	let message
+	if (loading) {
+		message = loggedIn ? `Signing out of ${label}` : `Signing in to ${label}`
+	} else {
+		message = loggedIn ? `Sign out of ${label}` : `Sign in to ${label}`
+	}
 
 	return (
 		<ButtonCell

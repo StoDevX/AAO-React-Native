@@ -5,11 +5,11 @@ import * as c from '@frogpond/colors'
 
 const toolbarStyles = StyleSheet.create({
 	shadow: {
-		backgroundColor: c.white,
+		backgroundColor: c.systemBackground,
 		...Platform.select({
 			ios: {
 				borderBottomWidth: StyleSheet.hairlineWidth,
-				borderBottomColor: '#ebebeb',
+				borderBottomColor: c.separator,
 			},
 			android: {
 				elevation: 1,

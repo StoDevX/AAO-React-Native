@@ -1,5 +1,5 @@
+import {expect, test} from '@jest/globals'
 import {findBusStopStatus} from '../find-bus-stop-status'
-
 import {getScheduleForNow} from '../get-schedule-for-now'
 import {getCurrentBusIteration} from '../get-current-bus-iteration'
 import {processBusSchedule} from '../process-bus-line'

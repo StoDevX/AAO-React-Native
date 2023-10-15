@@ -1,39 +1,44 @@
 import * as React from 'react'
-import {StyleSheet} from 'react-native'
+import {StyleSheet, TextProps, Text, View, ViewProps} from 'react-native'
 import {Markdown} from '@frogpond/markdown'
 import {ListFooter} from '@frogpond/lists'
 import {Button} from '@frogpond/button'
-import glamorous from 'glamorous-native'
-import type {WordType} from './types'
-import type {TopLevelViewPropsType} from '../types'
+import * as c from '@frogpond/colors'
+
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
-import {RouteProp, useNavigation} from '@react-navigation/native'
+import {RouteProp, useNavigation, useRoute} from '@react-navigation/native'
 import {RootStackParamList} from '../../navigation/types'
-
-const Term = glamorous.text({
-	fontSize: 36,
-	textAlign: 'center',
-	marginHorizontal: 18,
-	marginVertical: 10,
-})
-
-const Container = glamorous.scrollView({
-	paddingHorizontal: 18,
-	paddingVertical: 6,
-})
 
 const styles = StyleSheet.create({
 	paragraph: {
+		color: c.label,
 		fontSize: 16,
+	},
+	container: {
+		paddingHorizontal: 18,
+		paddingVertical: 6,
+	},
+	term: {
+		color: c.label,
+		fontSize: 36,
+		textAlign: 'center',
+		marginHorizontal: 18,
+		marginVertical: 10,
 	},
 })
 
-type Props = TopLevelViewPropsType & {
-	route: {params: {item: WordType}}
-}
+export const Term = (props: TextProps): JSX.Element => (
+	<Text {...props} style={[styles.term, props.style]} />
+)
+
+export const Container = (props: ViewProps): JSX.Element => (
+	<View {...props} style={[styles.container, props.style]} />
+)
+
+export const NavigationKey = 'DictionaryDetail' as const
 
 export const DetailNavigationOptions = (props: {
-	route: RouteProp<RootStackParamList, 'DictionaryDetail'>
+	route: RouteProp<RootStackParamList, typeof NavigationKey>
 }): NativeStackNavigationOptions => {
 	let {word} = props.route.params.item
 	return {
@@ -41,8 +46,9 @@ export const DetailNavigationOptions = (props: {
 	}
 }
 
-export let DictionaryDetailView = (props: Props): JSX.Element => {
-	let {item} = props.route.params
+export let DictionaryDetailView = (): JSX.Element => {
+	let route = useRoute<RouteProp<RootStackParamList, typeof NavigationKey>>()
+	let {item} = route.params
 
 	let navigation = useNavigation()
 

@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {Platform, StyleSheet} from 'react-native'
+import {ColorValue, Platform, StyleSheet} from 'react-native'
 import {Column} from '@frogpond/layout'
 import {Detail, ListRow, Title} from '@frogpond/lists'
 import type {BusTimetableEntry} from '../types'
@@ -18,7 +18,7 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 	},
 	skippingStopTitle: {
-		color: c.iosDisabledText,
+		color: c.tertiaryLabel,
 	},
 	skippingStopDetail: {},
 	internalPadding: {
@@ -28,7 +28,7 @@ const styles = StyleSheet.create({
 		fontWeight: Platform.OS === 'ios' ? '500' : '600',
 	},
 	passedStopTitle: {
-		color: c.iosDisabledText,
+		color: c.secondaryLabel,
 	},
 })
 
@@ -36,8 +36,8 @@ type Props = {
 	stop: BusTimetableEntry
 	departureIndex: null | number
 	now: Moment
-	barColor: string
-	currentStopColor: string
+	barColor: ColorValue
+	currentStopColor: ColorValue
 	isFirstRow: boolean
 	isLastRow: boolean
 	status: BusStateEnum

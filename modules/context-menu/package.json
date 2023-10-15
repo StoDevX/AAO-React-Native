@@ -1,0 +1,20 @@
+{
+  "name": "@frogpond/context-menu",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.tsx",
+  "author": "",
+  "license": "ISC",
+  "scripts": {
+    "test": "jest"
+  },
+  "peerDependencies": {
+    "react": "^18.0.0",
+    "react-native": "^0.71.7"
+  },
+  "dependencies": {
+    "@frogpond/touchable": "^1.0.0",
+    "lodash": "4.17.21",
+    "react-native-ios-context-menu": "1.15.3"
+  }
+}

@@ -1,25 +1,25 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`returns an empty schedule if there is no schedule for today 1`] = `
-Object {
-  "coordinates": Object {},
-  "days": Array [
+{
+  "coordinates": {},
+  "days": [
     "Su",
   ],
-  "stops": Array [],
-  "times": Array [],
-  "timetable": Array [],
+  "stops": [],
+  "times": [],
+  "timetable": [],
 }
 `;
 
 exports[`returns the bus schedule for today 1`] = `
-Object {
-  "coordinates": Object {},
-  "days": Array [
+{
+  "coordinates": {},
+  "days": [
     "Fr",
     "Sa",
   ],
-  "stops": Array [
+  "stops": [
     "St. Olaf",
     "Carleton",
     "Food Co-op",
@@ -29,8 +29,8 @@ Object {
     "Carleton",
     "St. Olaf",
   ],
-  "times": Array [
-    Array [
+  "times": [
+    [
       "2017-11-19T02:15:00.000Z",
       "2017-11-19T02:22:00.000Z",
       "2017-11-19T02:23:00.000Z",
@@ -40,7 +40,7 @@ Object {
       "2017-11-19T02:44:00.000Z",
       "2017-11-19T02:52:00.000Z",
     ],
-    Array [
+    [
       "2017-11-19T02:55:00.000Z",
       "2017-11-19T03:02:00.000Z",
       "2017-11-19T03:03:00.000Z",
@@ -50,7 +50,7 @@ Object {
       "2017-11-19T03:24:00.000Z",
       "2017-11-19T03:32:00.000Z",
     ],
-    Array [
+    [
       "2017-11-19T03:35:00.000Z",
       "2017-11-19T03:42:00.000Z",
       "2017-11-19T03:43:00.000Z",
@@ -61,65 +61,73 @@ Object {
       "2017-11-19T04:12:00.000Z",
     ],
   ],
-  "timetable": Array [
-    Object {
-      "departures": Array [
+  "timetable": [
+    {
+      "coordinates": undefined,
+      "departures": [
         "2017-11-19T02:15:00.000Z",
         "2017-11-19T02:55:00.000Z",
         "2017-11-19T03:35:00.000Z",
       ],
       "name": "St. Olaf",
     },
-    Object {
-      "departures": Array [
+    {
+      "coordinates": undefined,
+      "departures": [
         "2017-11-19T02:22:00.000Z",
         "2017-11-19T03:02:00.000Z",
         "2017-11-19T03:42:00.000Z",
       ],
       "name": "Carleton",
     },
-    Object {
-      "departures": Array [
+    {
+      "coordinates": undefined,
+      "departures": [
         "2017-11-19T02:23:00.000Z",
         "2017-11-19T03:03:00.000Z",
         "2017-11-19T03:43:00.000Z",
       ],
       "name": "Food Co-op",
     },
-    Object {
-      "departures": Array [
+    {
+      "coordinates": undefined,
+      "departures": [
         "2017-11-19T02:33:00.000Z",
         "2017-11-19T03:13:00.000Z",
         "2017-11-19T03:53:00.000Z",
       ],
       "name": "Cub/Target",
     },
-    Object {
-      "departures": Array [
+    {
+      "coordinates": undefined,
+      "departures": [
         "2017-11-19T02:37:00.000Z",
         "2017-11-19T03:17:00.000Z",
         "2017-11-19T03:57:00.000Z",
       ],
       "name": "El Tequila",
     },
-    Object {
-      "departures": Array [
+    {
+      "coordinates": undefined,
+      "departures": [
         "2017-11-19T02:43:00.000Z",
         "2017-11-19T03:23:00.000Z",
         "2017-11-19T04:03:00.000Z",
       ],
       "name": "Food Co-op",
     },
-    Object {
-      "departures": Array [
+    {
+      "coordinates": undefined,
+      "departures": [
         "2017-11-19T02:44:00.000Z",
         "2017-11-19T03:24:00.000Z",
         "2017-11-19T04:04:00.000Z",
       ],
       "name": "Carleton",
     },
-    Object {
-      "departures": Array [
+    {
+      "coordinates": undefined,
+      "departures": [
         "2017-11-19T02:52:00.000Z",
         "2017-11-19T03:32:00.000Z",
         "2017-11-19T04:12:00.000Z",

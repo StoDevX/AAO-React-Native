@@ -8,7 +8,7 @@ import {NoticeView} from '@frogpond/notice'
 import {getScheduleForNow, processBusLine} from './lib'
 // import uniqBy from 'lodash/uniqBy'
 import isEqual from 'lodash/isEqual'
-import {Timer} from '@frogpond/timer'
+import {useMomentTimer} from '@frogpond/timer'
 import {timezone} from '@frogpond/constants'
 import {RouteProp, useRoute} from '@react-navigation/native'
 import {RootStackParamList} from '../../../navigation/types'
@@ -18,17 +18,11 @@ import {RootStackParamList} from '../../../navigation/types'
 // })
 
 export function BusMap(): JSX.Element {
+	let {now} = useMomentTimer({intervalMs: 60000, timezone: timezone()})
 	let route = useRoute<RouteProp<RootStackParamList, 'BusMapView'>>()
 	let {line} = route.params
 
-	return (
-		<Timer
-			interval={60000}
-			moment={true}
-			render={({now}) => <Map line={line} now={now} />}
-			timezone={timezone()}
-		/>
-	)
+	return <Map line={line} now={now} />
 }
 
 type Props = {

@@ -1,8 +1,6 @@
-import {Alert, Linking, Platform} from 'react-native'
-
-import {appName} from '@frogpond/constants'
-import SafariView from 'react-native-safari-view'
-import {openURL} from '@frogpond/react-native-chrome-custom-tabs'
+import {Linking} from 'react-native'
+import {InAppBrowser} from 'react-native-inappbrowser-reborn'
+import * as storage from '../../source/lib/storage'
 
 function genericOpen(url: string): Promise<boolean> {
 	return Linking.canOpenURL(url)
@@ -17,22 +15,29 @@ function genericOpen(url: string): Promise<boolean> {
 		})
 }
 
-function iosOpen(url: string): Promise<boolean> {
-	// SafariView.isAvailable throws if it's not available
-	return SafariView.isAvailable()
-		.then(() => SafariView.show({url}))
-		.catch(() => genericOpen(url))
+async function launchBrowser(url: string): Promise<boolean> {
+	try {
+		if (await InAppBrowser.isAvailable()) {
+			await InAppBrowser.open(url, {
+				animated: true,
+				showTitle: true,
+				enableUrlBarHiding: true,
+				enableDefaultShare: true,
+				modalPresentationStyle: 'currentContext',
+			})
+		} else {
+			// fall back to opening in Chrome / Browser / platform default
+			await genericOpen(url)
+		}
+	} catch (error) {
+		console.warn(`Error when trying to call launchBrowser: ${error}`)
+		return false
+	}
+
+	return true
 }
 
-function androidOpen(url: string): Promise<boolean> {
-	return openURL(url, {
-		showPageTitle: true,
-		enableUrlBarHiding: true,
-		enableDefaultShare: true,
-	}).catch(() => genericOpen(url)) // fall back to opening in Chrome / Browser / platform default
-}
-
-export function openUrl(url: string): Promise<boolean> {
+export async function openUrl(url: string): Promise<boolean> {
 	let protocol = /^(.*?):/u.exec(url)
 
 	if (protocol && protocol.length) {
@@ -46,14 +51,11 @@ export function openUrl(url: string): Promise<boolean> {
 		}
 	}
 
-	switch (Platform.OS) {
-		case 'android':
-			return androidOpen(url)
-		case 'ios':
-			return iosOpen(url)
-		default:
-			return genericOpen(url)
+	if (await storage.getInAppLinkPreference()) {
+		return launchBrowser(url)
 	}
+
+	return genericOpen(url)
 }
 
 export function trackedOpenUrl({
@@ -72,18 +74,4 @@ export function canOpenUrl(url: string): boolean {
 		return false
 	}
 	return true
-}
-
-export function openUrlInBrowser({url}: {url: string; id?: string}): void {
-	return promptConfirm(url)
-}
-
-function promptConfirm(url: string): void {
-	let app = appName()
-	let title = `Leaving ${app}`
-	let detail = `A web page will be opened in a browser outside of ${app}.`
-	Alert.alert(title, detail, [
-		{text: 'Cancel', onPress: () => null},
-		{text: 'Open', onPress: () => genericOpen(url)},
-	])
 }

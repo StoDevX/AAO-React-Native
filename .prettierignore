@@ -2,5 +2,7 @@
 node_modules/
 /flow-typed/
 /docs/
+/data/bus-times/*.yaml
 /android/
 /ios/
+/package-lock.json

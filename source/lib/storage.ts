@@ -62,6 +62,17 @@ export function getAcknowledgementStatus(): Promise<acknowledgementStatusType> {
 	return getItemAsBoolean(acknowledgementStatusKey)
 }
 
+const openLinksInAppKey = 'settings:open-links-in-app'
+type openLinksInAppType = boolean
+export function setLinkPreference(
+	preference: openLinksInAppType,
+): Promise<void> {
+	return setItem(openLinksInAppKey, preference)
+}
+export function getInAppLinkPreference(): Promise<openLinksInAppType> {
+	return getItemAsBoolean(openLinksInAppKey, true)
+}
+
 const serverAddressKey = 'settings:server-address'
 type serverAddressType = string
 export function setServerAddress(address: serverAddressType): Promise<void> {

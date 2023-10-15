@@ -7,5 +7,13 @@
 
 module.exports = {
 	dependencies: {
+		...(process.env.NO_FLIPPER || process.env.CI
+			? {'react-native-flipper': {platforms: {ios: null}}}
+			: {}),
+	},
+	project: {
+		ios: {
+			sourceDir: 'ios',
+		},
 	},
 }

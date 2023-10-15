@@ -1,28 +1,28 @@
 import * as React from 'react'
-import {StyleSheet, Platform} from 'react-native'
-import {Icon, platformPrefixIconName} from '@frogpond/icon'
+import {StyleSheet} from 'react-native'
+import {default as Ionicon} from 'react-native-vector-icons/Ionicons'
+import {default as MaterialCommunityIcon} from 'react-native-vector-icons/MaterialCommunityIcons'
+import type * as IoniconsGlyphs from 'react-native-vector-icons/glyphmaps/Ionicons.json'
+import type * as MaterialCommunityIconsGlyphs from 'react-native-vector-icons/glyphmaps/MaterialCommunityIcons.json'
 
 const styles = StyleSheet.create({
 	icon: {
-		fontSize: Platform.select({
-			ios: 30,
-			android: 24,
-		}),
+		fontSize: 30,
 	},
 })
 
 type Props = {
 	color: string
 	focused: boolean
-	size: number
+	size?: number
 }
 
-export const TabBarIcon =
-	(icon: string) =>
+export const IosIcon =
+	(icon: keyof typeof IoniconsGlyphs) =>
 	({color}: Props): JSX.Element =>
-		(
-			<Icon
-				name={platformPrefixIconName(icon)}
-				style={[styles.icon, {color: color}]}
-			/>
-		)
+		<Ionicon name={icon} style={[styles.icon, {color: color}]} />
+
+export const MaterialIcon =
+	(icon: keyof typeof MaterialCommunityIconsGlyphs) =>
+	({color}: Props): JSX.Element =>
+		<MaterialCommunityIcon name={icon} style={[{color: color}]} />

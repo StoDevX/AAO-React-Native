@@ -1,21 +1,15 @@
 import * as React from 'react'
-import {Text, ScrollView, StyleSheet} from 'react-native'
+import {Text, ScrollView, StyleSheet, TextProps} from 'react-native'
 import {sendEmail} from '../../../components/send-email'
 import {callPhone} from '../../../components/call-phone'
-import {
-	Cell,
-	Section,
-	TableView,
-	SelectableCell,
-	PushButtonCell,
-} from '@frogpond/tableview'
+import {Cell, Section, TableView} from '@frogpond/tableview'
+import {SelectableCell, PushButtonCell} from '@frogpond/tableview/cells'
 import {openUrl} from '@frogpond/open-url'
 import moment from 'moment'
 import * as c from '@frogpond/colors'
 import type {JobType} from './types'
-import glamorous from 'glamorous-native'
 import {ShareButton} from '@frogpond/navigation-buttons'
-import {shareJob, createJobFullUrl} from './lib'
+import {shareJob} from './lib'
 import {decode} from '@frogpond/html-lib'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 import {RouteProp, useRoute} from '@react-navigation/native'
@@ -27,17 +21,21 @@ const styles = StyleSheet.create({
 	},
 	footer: {
 		fontSize: 10,
-		color: c.iosDisabledText,
+		color: c.secondaryLabel,
 		textAlign: 'center',
+	},
+	title: {
+		color: c.label,
+		fontSize: 36,
+		textAlign: 'center',
+		marginHorizontal: 18,
+		marginVertical: 10,
 	},
 })
 
-const Title = glamorous.text({
-	fontSize: 36,
-	textAlign: 'center',
-	marginHorizontal: 18,
-	marginVertical: 10,
-})
+const Title = (props: TextProps) => (
+	<Text {...props} style={[styles.title, props.style]} />
+)
 
 function ContactInformation({job}: {job: JobType}) {
 	let office = job.office ? (
@@ -68,7 +66,9 @@ function ContactInformation({job}: {job: JobType}) {
 			accessory={contactNumber ? 'DisclosureIndicator' : undefined}
 			cellStyle="LeftDetail"
 			detail="Phone"
-			onPress={() => (contactNumber ? callPhone(contactNumber) : false)}
+			onPress={() =>
+				contactNumber ? callPhone(contactNumber, {title: name}) : false
+			}
 			title={contactNumber}
 		/>
 	) : null
@@ -161,12 +161,9 @@ function Timeline({job}: {job: JobType}) {
 }
 
 function OpenWebpage({job}: {job: JobType}) {
-	return job.id ? (
+	return job.url ? (
 		<Section header="">
-			<PushButtonCell
-				onPress={() => openUrl(createJobFullUrl(job))}
-				title="Open Posting"
-			/>
+			<PushButtonCell onPress={() => openUrl(job.url)} title="Open Posting" />
 		</Section>
 	) : null
 }
@@ -182,7 +179,7 @@ function HowToApply({job}: {job: JobType}) {
 function LastUpdated({when}: {when: string}) {
 	return when ? (
 		<Text selectable={true} style={[styles.footer, styles.lastUpdated]}>
-			Last updated: {moment(when, 'YYYY/MM/DD').calendar()}
+			Last updated: {moment(when, 'MMMM D, YYYY').calendar()}
 			{'\n'}
 			Powered by St. Olaf Student Employment job postings
 		</Text>
