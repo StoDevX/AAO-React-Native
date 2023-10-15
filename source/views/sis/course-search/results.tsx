@@ -80,7 +80,7 @@ const useSelectedTerm = (filters: FilterType<CourseType>[]) => {
 	return []
 }
 
-const useSelecteLevel = (filters: FilterType<CourseType>[]) => {
+const useSelectedLevel = (filters: FilterType<CourseType>[]) => {
 	let levelFilter = useSelectedFilter('level', filters)
 
 	if (levelFilter?.enabled) {
@@ -123,7 +123,7 @@ export const CourseSearchResultsView = (): JSX.Element => {
 	let delayedQuery = useDebounce(searchQuery, 500)
 
 	let selectedTerms = useSelectedTerm(filters)
-	let selectedLevels = useSelecteLevel(filters)
+	let selectedLevels = useSelectedLevel(filters)
 	let selectedGEs = useSelectedGE(filters)
 
 	let allCoursesByTerm = useCourseData(
