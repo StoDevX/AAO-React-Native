@@ -72,11 +72,9 @@ const useSelectedFilter = (
 const useSelectedTerm = (filters: FilterType<CourseType>[]) => {
 	let termFilter = useSelectedFilter('term', filters)
 
-	if (termFilter) {
-		if (termFilter.enabled) {
-			let termFilterSpec = termFilter.spec as ListSpecType
-			return termFilterSpec.selected.map((spec) => Number(spec.title))
-		}
+	if (termFilter?.enabled) {
+		let termFilterSpec = termFilter.spec as ListSpecType
+		return termFilterSpec.selected.map((spec) => Number(spec.title))
 	}
 
 	return []
@@ -85,11 +83,9 @@ const useSelectedTerm = (filters: FilterType<CourseType>[]) => {
 const useSelecteLevel = (filters: FilterType<CourseType>[]) => {
 	let levelFilter = useSelectedFilter('level', filters)
 
-	if (levelFilter) {
-		if (levelFilter.enabled) {
-			let levelFilterSpec = levelFilter.spec as ListSpecType
-			return levelFilterSpec.selected.map((spec) => Number(spec.title))
-		}
+	if (levelFilter?.enabled) {
+		let levelFilterSpec = levelFilter.spec as ListSpecType
+		return levelFilterSpec.selected.map((spec) => Number(spec.title))
 	}
 
 	return []
@@ -98,11 +94,9 @@ const useSelecteLevel = (filters: FilterType<CourseType>[]) => {
 const useSelectedGE = (filters: FilterType<CourseType>[]) => {
 	let geFilter = useSelectedFilter('gereqs', filters)
 
-	if (geFilter) {
-		if (geFilter.enabled) {
-			let geFilterSpec = geFilter.spec as ListSpecType
-			return geFilterSpec.selected.map((spec) => spec.title)
-		}
+	if (geFilter?.enabled) {
+		let geFilterSpec = geFilter.spec as ListSpecType
+		return geFilterSpec.selected.map((spec) => spec.title)
 	}
 
 	return []
