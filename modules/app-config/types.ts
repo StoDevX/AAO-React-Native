@@ -15,6 +15,5 @@ export interface FeatureFlagType {
 }
 
 export enum AppConfigKey {
-	ReactNativeDirectory = 'ReactNativeDirectory',
 	MockStoprintData = 'MockStoprintData',
 }
