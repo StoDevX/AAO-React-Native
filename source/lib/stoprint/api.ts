@@ -8,6 +8,7 @@ import {
 	logIn as mockLogIn,
 	releasePrintJobToPrinterForUser as mockReleasePrintJobToPrinterForUser,
 } from './__mocks__/api'
+import {isStoprintMocked} from '../../lib/stoprint'
 
 import type {
 	AllPrintersResponse,
@@ -30,12 +31,11 @@ export async function logIn(
 	credentials: SharedWebCredentials,
 	options: Options,
 	now: number = new Date().getTime(),
-	useMockPrintData = false,
 ): Promise<void> {
 	let {username, password} = credentials
 
-	if (useMockPrintData) {
-		return mockLogIn(credentials, now, useMockPrintData)
+	if (isStoprintMocked) {
+		return mockLogIn(credentials, now)
 	}
 
 	const result = (await papercutApi
@@ -57,9 +57,8 @@ export async function logIn(
 export async function fetchJobs(
 	username: string,
 	options: Options,
-	useMockPrintData = false,
 ): Promise<PrintJobsResponse> {
-	if (useMockPrintData) {
+	if (isStoprintMocked) {
 		return mockFetchJobs(username)
 	}
 
@@ -71,9 +70,8 @@ export async function fetchJobs(
 export async function fetchAllPrinters(
 	username: string,
 	options: Options,
-	useMockPrintData = false,
 ): Promise<AllPrintersResponse> {
-	if (useMockPrintData) {
+	if (isStoprintMocked) {
 		return mockFetchAllPrinters(username)
 	}
 
@@ -88,9 +86,8 @@ export async function fetchAllPrinters(
 export async function fetchRecentPrinters(
 	username: string,
 	options: Options,
-	useMockPrintData = false,
 ): Promise<RecentPopularPrintersResponse> {
-	if (useMockPrintData) {
+	if (isStoprintMocked) {
 		return mockFetchRecentPrinters(username)
 	}
 
@@ -102,14 +99,7 @@ export async function fetchRecentPrinters(
 		.json()) as RecentPopularPrintersResponse
 }
 
-export async function fetchColorPrinters(
-	options: Options,
-	useMockPrintData = false,
-): Promise<string[]> {
-	if (useMockPrintData) {
-		return ['mfc-rml-4-disco', 'mfc-toh101']
-	}
-
+export async function fetchColorPrinters(options: Options): Promise<string[]> {
 	let response = (await client
 		.get('color-printers', options)
 		.json()) as ColorPrintersResponse
@@ -120,10 +110,9 @@ export async function heldJobsAvailableAtPrinterForUser(
 	printerName: string,
 	username: string,
 	options: Options,
-	useMockPrintData = false,
 ): Promise<HeldJobsResponse> {
 	// https://PAPERCUT_API.stolaf.edu/rpc/api/rest/internal/mobilerelease/api/held-jobs/?username=rives&printerName=printers%5Cmfc-it
-	if (useMockPrintData) {
+	if (isStoprintMocked) {
 		return mockHeldJobsAvailableAtPrinterForUser(printerName, username)
 	}
 
@@ -162,9 +151,8 @@ type PrintJobReleaseArgs = {
 export async function releasePrintJobToPrinterForUser(
 	{jobId, printerName, username}: PrintJobReleaseArgs,
 	options: Options,
-	useMockPrintData = false,
 ): Promise<ReleaseResponse> {
-	if (useMockPrintData) {
+	if (isStoprintMocked) {
 		return mockReleasePrintJobToPrinterForUser({jobId, printerName, username})
 	}
 

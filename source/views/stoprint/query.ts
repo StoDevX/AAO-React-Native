@@ -1,6 +1,5 @@
 import {useQuery, UseQueryResult} from '@tanstack/react-query'
 import {useUsername} from '../../lib/login'
-import {useMockedStoprint} from '@frogpond/app-config'
 import {
 	fetchAllPrinters,
 	fetchColorPrinters,
@@ -16,52 +15,37 @@ import {
 } from '../../lib/stoprint/types'
 
 export const keys = {
-	jobs: (username: string, useMockPrintData: boolean) =>
-		['printing', 'jobs', 'all', username, useMockPrintData] as const,
+	jobs: (username: string) => ['printing', 'jobs', 'all', username] as const,
 	heldJobs: ({
 		username,
 		printerName,
-		useMockPrintData,
 	}: {
 		username: string
 		printerName: string
-		useMockPrintData: boolean
-	}) =>
-		[
-			'printing',
-			'jobs',
-			'held',
-			username,
-			printerName,
-			useMockPrintData,
-		] as const,
-	printers: (username: string, useMockPrintData: boolean) =>
-		['printing', 'printers', username, useMockPrintData] as const,
+	}) => ['printing', 'jobs', 'held', username, printerName] as const,
+	printers: (username: string) => ['printing', 'printers', username] as const,
 	recentPrinters: (username: string) =>
 		['printing', 'printers', 'recent', username] as const,
-	colorPrinters: ['printing', 'printers', 'color', useMockedStoprint] as const,
+	colorPrinters: ['printing', 'printers', 'color'] as const,
 }
 
 export function usePrintJobs(): UseQueryResult<PrintJobsResponse, unknown> {
 	let {data: username = ''} = useUsername()
-	const useMockPrintData = useMockedStoprint()
 
 	return useQuery({
-		queryKey: keys.jobs(username, useMockPrintData),
-		enabled: Boolean(username) || useMockPrintData,
-		queryFn: ({signal}) => fetchJobs(username, {signal}, useMockPrintData),
+		queryKey: keys.jobs(username),
+		enabled: Boolean(username),
+		queryFn: ({signal}) => fetchJobs(username, {signal}),
 	})
 }
 
 export function useAllPrinters(): UseQueryResult<AllPrintersResponse, unknown> {
 	let {data: username = ''} = useUsername()
-	const useMockPrintData = useMockedStoprint()
 
 	return useQuery({
-		queryKey: keys.printers(username, useMockPrintData),
-		enabled: Boolean(username) || useMockPrintData,
-		queryFn: ({signal}) =>
-			fetchAllPrinters(username, {signal}, useMockPrintData),
+		queryKey: keys.printers(username),
+		enabled: Boolean(username),
+		queryFn: ({signal}) => fetchAllPrinters(username, {signal}),
 	})
 }
 
@@ -70,22 +54,18 @@ export function useRecentPrinters(): UseQueryResult<
 	unknown
 > {
 	let {data: username = ''} = useUsername()
-	const useMockPrintData = useMockedStoprint()
 
 	return useQuery({
-		queryKey: keys.printers(username, useMockPrintData),
-		enabled: Boolean(username) || useMockPrintData,
-		queryFn: ({signal}) =>
-			fetchRecentPrinters(username, {signal}, useMockPrintData),
+		queryKey: keys.printers(username),
+		enabled: Boolean(username),
+		queryFn: ({signal}) => fetchRecentPrinters(username, {signal}),
 	})
 }
 
 export function useColorPrinters(): UseQueryResult<string[], unknown> {
-	const useMockPrintData = useMockedStoprint()
-
 	return useQuery({
 		queryKey: keys.colorPrinters,
-		queryFn: ({signal}) => fetchColorPrinters({signal}, useMockPrintData),
+		queryFn: ({signal}) => fetchColorPrinters({signal}),
 	})
 }
 
@@ -93,24 +73,13 @@ export function useHeldJobs(
 	printerName: string | undefined,
 ): UseQueryResult<HeldJobsResponse, unknown> {
 	let {data: username = ''} = useUsername()
-	const useMockPrintData = useMockedStoprint()
 
 	let usablePrinterName = printerName || 'undefined'
 
 	return useQuery({
-		enabled:
-			(Boolean(username) && printerName !== undefined) || useMockPrintData,
-		queryKey: keys.heldJobs({
-			username,
-			printerName: usablePrinterName,
-			useMockPrintData,
-		}),
+		enabled: Boolean(username) && printerName !== undefined,
+		queryKey: keys.heldJobs({username, printerName: usablePrinterName}),
 		queryFn: ({signal}) =>
-			heldJobsAvailableAtPrinterForUser(
-				usablePrinterName,
-				username,
-				{signal},
-				useMockPrintData,
-			),
+			heldJobsAvailableAtPrinterForUser(usablePrinterName, username, {signal}),
 	})
 }

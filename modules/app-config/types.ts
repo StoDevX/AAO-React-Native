@@ -6,9 +6,9 @@ export interface FeatureFlagType {
 }
 
 export enum AppConfigKey {
-	MockStoprintData = 'MockStoprintData',
+	TestDataKey = 'TestData',
 }
 
 export enum AppConfigGroupKey {
-	stoprint = 'stoPrint',
+	test = 'test',
 }

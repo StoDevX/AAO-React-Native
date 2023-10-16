@@ -8,10 +8,10 @@ export type {AppConfigKey, FeatureFlagType} from './types'
 export const AppConfig = async (): Promise<FeatureFlagType[]> => {
 	return [
 		{
-			configKey: AppConfigKey.MockStoprintData,
-			group: AppConfigGroupKey.stoprint,
-			title: 'Use mock data',
-			active: await getFeatureFlag(AppConfigKey.MockStoprintData),
+			configKey: AppConfigKey.TestDataKey,
+			group: AppConfigGroupKey.test,
+			title: 'Test config key',
+			active: await getFeatureFlag(AppConfigKey.TestDataKey),
 		},
 	]
 }
@@ -30,5 +30,5 @@ const useFeature = (featureKey: AppConfigKey): boolean => {
 }
 
 // exported feature flags
-export const useMockedStoprint = (): boolean =>
-	useFeature(AppConfigKey.MockStoprintData)
+export const useTestFeature = (): boolean =>
+	useFeature(AppConfigKey.TestDataKey)
