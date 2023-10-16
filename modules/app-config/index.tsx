@@ -1,6 +1,7 @@
 import {getFeatureFlag} from '../../source/lib/storage'
 import {AppConfigKey, AppConfigGroupKey, FeatureFlagType} from './types'
 import {useQuery} from '@tanstack/react-query'
+import {isDevMode} from '@frogpond/constants'
 
 export type {AppConfigKey, FeatureFlagType} from './types'
 
@@ -25,6 +26,10 @@ const useFeature = (featureKey: AppConfigKey): boolean => {
 			return newValue
 		},
 	})
+
+	if (!isDevMode()) {
+		return false
+	}
 
 	return featureValue
 }
