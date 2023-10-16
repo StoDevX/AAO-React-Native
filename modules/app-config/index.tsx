@@ -23,15 +23,11 @@ const useFeature = (featureKey: AppConfigKey): boolean => {
 		queryKey: ['app', 'app:feature-flag', featureKey],
 		queryFn: () => getFeatureFlag(featureKey),
 		onSuccess: (newValue) => {
-			return newValue
+			return isDevMode() ? newValue : false
 		},
 	})
 
-	if (!isDevMode()) {
-		return false
-	}
-
-	return featureValue
+	return isDevMode() ? featureValue : false
 }
 
 // exported feature flags
