@@ -14,13 +14,14 @@ import {RouteProp, useNavigation, useRoute} from '@react-navigation/native'
 import {ChangeTextEvent, RootStackParamList} from '../../../navigation/types'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 import {useDebounce} from '@frogpond/use-debounce'
-import {ListSeparator, ListSectionHeader} from '@frogpond/lists'
+import {ListSeparator, ListSectionHeader, largeListProps} from '@frogpond/lists'
 import * as c from '@frogpond/colors'
 import {CourseRow} from './row'
 import memoize from 'lodash/memoize'
 import {parseTerm} from '../../../lib/course-search'
 import {NoticeView} from '@frogpond/notice'
 import {FilterToolbar} from '@frogpond/filter'
+import {ListSpecType} from '@frogpond/filter/types'
 import {applySearch, sortAndGroupResults} from './lib/execute-search'
 import {useCourseData} from './query'
 import {UseQueryResult} from '@tanstack/react-query'
@@ -58,6 +59,49 @@ function queriesToCourses(
 		.filter((data) => data !== undefined) as CourseType[]
 }
 
+const useSelectedFilter = (
+	filterKey: string,
+	filters: FilterType<CourseType>[],
+) => {
+	return React.useMemo(
+		() => filters.find((f) => f.key === filterKey),
+		[filterKey, filters],
+	)
+}
+
+const useSelectedTerm = (filters: FilterType<CourseType>[]) => {
+	let termFilter = useSelectedFilter('term', filters)
+
+	if (termFilter?.enabled) {
+		let termFilterSpec = termFilter.spec as ListSpecType
+		return termFilterSpec.selected.map((spec) => Number(spec.title))
+	}
+
+	return []
+}
+
+const useSelectedLevel = (filters: FilterType<CourseType>[]) => {
+	let levelFilter = useSelectedFilter('level', filters)
+
+	if (levelFilter?.enabled) {
+		let levelFilterSpec = levelFilter.spec as ListSpecType
+		return levelFilterSpec.selected.map((spec) => Number(spec.title))
+	}
+
+	return []
+}
+
+const useSelectedGE = (filters: FilterType<CourseType>[]) => {
+	let geFilter = useSelectedFilter('gereqs', filters)
+
+	if (geFilter?.enabled) {
+		let geFilterSpec = geFilter.spec as ListSpecType
+		return geFilterSpec.selected.map((spec) => spec.title)
+	}
+
+	return []
+}
+
 export const CourseSearchResultsView = (): JSX.Element => {
 	let dispatch = useAppDispatch()
 	let navigation = useNavigation()
@@ -78,7 +122,15 @@ export const CourseSearchResultsView = (): JSX.Element => {
 	let [searchQuery, setSearchQuery] = React.useState(initialQuery)
 	let delayedQuery = useDebounce(searchQuery, 500)
 
-	let allCoursesByTerm = useCourseData()
+	let selectedTerms = useSelectedTerm(filters)
+	let selectedLevels = useSelectedLevel(filters)
+	let selectedGEs = useSelectedGE(filters)
+
+	let allCoursesByTerm = useCourseData(
+		selectedTerms,
+		selectedLevels,
+		selectedGEs,
+	)
 	let areCoursesLoading = allCoursesByTerm.some((r) => r.isLoading)
 	let areCoursesInError = allCoursesByTerm.some((r) => r.isError)
 
@@ -188,7 +240,7 @@ export const CourseSearchResultsView = (): JSX.Element => {
 				<ListSectionHeader title={parseTerm(title)} />
 			)}
 			sections={results}
-			windowSize={10}
+			{...largeListProps}
 		/>
 	)
 }
