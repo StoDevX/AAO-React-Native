@@ -1,5 +1,5 @@
 import {getFeatureFlag} from '../../source/lib/storage'
-import {AppConfigKey, AppConfigGroupKey, FeatureFlagType} from './types'
+import {AppConfigKey, FeatureFlagType} from './types'
 import {useQuery} from '@tanstack/react-query'
 import {isDevMode} from '@frogpond/constants'
 
@@ -10,7 +10,6 @@ export const AppConfig = async (): Promise<FeatureFlagType[]> => {
 	return [
 		{
 			configKey: AppConfigKey.TestDataKey,
-			group: AppConfigGroupKey.test,
 			title: 'Test config key',
 			active: await getFeatureFlag(AppConfigKey.TestDataKey),
 		},

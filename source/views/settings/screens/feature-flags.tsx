@@ -27,15 +27,19 @@ export const FeatureFlagsView = (): JSX.Element => {
 		return <ListEmpty mode="bug" />
 	}
 
+	let findGroup = (configKey: FeatureFlagType['configKey']) => {
+		return configKey.split('_')?.[0] ?? 'Unknown'
+	}
+
 	let sorters: Array<(flag: FeatureFlagType) => string> = [
-		(flag) => flag.group,
+		(flag) => findGroup(flag.configKey),
 		(flag) => flag.title,
 	]
 
 	let ordered: Array<'desc' | 'asc'> = ['desc', 'asc', 'desc']
 
 	let sorted = orderBy(sections, sorters, ordered)
-	let grouped = groupBy(sorted, (s) => s.group)
+	let grouped = groupBy(sorted, (s) => findGroup(s.configKey))
 	let groupedSections = Object.entries(grouped)
 		.map(([key, value]) => ({
 			title: key,
