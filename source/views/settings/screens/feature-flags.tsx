@@ -1,5 +1,6 @@
 import * as React from 'react'
-import {StyleSheet, SectionList} from 'react-native'
+import {StyleSheet, Text, SectionList} from 'react-native'
+import restart from 'react-native-restart'
 import * as storage from '../../../lib/storage'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 import {CellToggle} from '@frogpond/tableview/cells'
@@ -9,6 +10,8 @@ import {AppConfig, FeatureFlagType} from '@frogpond/app-config'
 import {groupBy, orderBy} from 'lodash'
 import {LoadingView, NoticeView} from '@frogpond/notice'
 import {toLaxTitleCase} from '@frogpond/titlecase'
+import {Touchable} from '@frogpond/touchable'
+import {commonStyles} from '../../../../modules/navigation-buttons/styles'
 
 export const FeatureFlagsView = (): JSX.Element => {
 	let [loading, setLoading] = React.useState(true)
@@ -89,4 +92,20 @@ export {FeatureFlagsView as View}
 
 export const NavigationOptions: NativeStackNavigationOptions = {
 	title: 'Feature Flags',
+	headerRight: () => (
+		<Touchable
+			accessibilityLabel="Apply"
+			accessibilityRole="button"
+			accessible={true}
+			borderless={true}
+			highlight={false}
+			onPress={() => restart.Restart()}
+			style={commonStyles.button}
+		>
+			{/* eslint-disable-next-line react-native/no-inline-styles */}
+			<Text style={[commonStyles.text, {fontWeight: '600', color: c.link}]}>
+				Reload
+			</Text>
+		</Touchable>
+	),
 }
