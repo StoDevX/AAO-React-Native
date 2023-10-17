@@ -5,17 +5,6 @@ import {isDevMode} from '@frogpond/constants'
 
 export type {AppConfigKey, FeatureFlagType} from './types'
 
-// datastore for the __DEV__ feature flags
-export const AppConfig = async (): Promise<FeatureFlagType[]> => {
-	return [
-		{
-			configKey: AppConfigKey.TestDataKey,
-			title: 'Test config key',
-			active: await getFeatureFlag(AppConfigKey.TestDataKey),
-		},
-	]
-}
-
 // helper method to query exported __DEV__ feature flags
 const useFeature = (featureKey: AppConfigKey): boolean => {
 	let {data: featureValue = false} = useQuery({
@@ -29,6 +18,17 @@ const useFeature = (featureKey: AppConfigKey): boolean => {
 	return isDevMode() ? featureValue : false
 }
 
+// datastore for the __DEV__ feature flags
+export const AppConfig = async (): Promise<FeatureFlagType[]> => {
+	return [
+		{
+			title: 'Show the course search recents screen',
+			configKey: AppConfigKey.Courses_ShowRecentSearchScreen,
+			active: await getFeatureFlag(AppConfigKey.Courses_ShowRecentSearchScreen),
+		},
+	]
+}
+
 // exported feature flags
-export const useTestFeature = (): boolean =>
-	useFeature(AppConfigKey.TestDataKey)
+export const useCourseSearchRecentsScreen = (): boolean =>
+	useFeature(AppConfigKey.Courses_ShowRecentSearchScreen)
