@@ -21,11 +21,11 @@ export function setFeatureFlag(
 	name: AppConfigKey,
 	value: boolean,
 ): Promise<void> {
-	let key = `${featureFlagsKey}:${name}`
+	const key = `${featureFlagsKey}:${name}`
 	return setItem(key, value)
 }
 export function getFeatureFlag(name: AppConfigKey): Promise<boolean> {
-	let key = `${featureFlagsKey}:${name}`
+	const key = `${featureFlagsKey}:${name}`
 	return getItemAsBoolean(key)
 }
 
