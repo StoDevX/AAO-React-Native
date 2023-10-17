@@ -63,7 +63,7 @@ export const CourseSearchResultsView = (): JSX.Element => {
 	let navigation = useNavigation()
 
 	let route = useRoute<RouteProp<RootStackParamList, 'CourseSearchResults'>>()
-	let {initialFilters = [], initialQuery = ''} = route.params
+	let {initialFilters = [], initialQuery = ''} = route.params ?? {}
 
 	let {
 		data: basicFilters = [],
