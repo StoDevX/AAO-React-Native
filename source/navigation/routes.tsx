@@ -212,6 +212,7 @@ const HomeStackScreens = () => {
 				/>
 				<Stack.Screen
 					component={sis.CourseSearchResultsView}
+					initialParams={{initialFilters: [], initialQuery: ''}}
 					name="CourseSearchResults"
 					options={sis.CourseSearchNavigationOptions}
 				/>
