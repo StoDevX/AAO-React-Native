@@ -6,7 +6,7 @@ import {
 	setItem,
 	setStoragePrefix,
 } from '@frogpond/storage'
-import {AppConfigKey} from '@frogpond/app-config'
+import {AppConfigType} from '@frogpond/app-config'
 import type {FilterComboType} from '../views/sis/course-search/lib/format-filter-combo'
 import type {CourseType, TermType} from './course-search/types'
 
@@ -18,13 +18,13 @@ setStoragePrefix('aao:')
 
 const featureFlagsKey = 'app:feature-flag'
 export function setFeatureFlag(
-	name: AppConfigKey,
+	name: AppConfigType,
 	value: boolean,
 ): Promise<void> {
 	const key = `${featureFlagsKey}:${name}`
 	return setItem(key, value)
 }
-export function getFeatureFlag(name: AppConfigKey): Promise<boolean> {
+export function getFeatureFlag(name: AppConfigType): Promise<boolean> {
 	const key = `${featureFlagsKey}:${name}`
 	return getItemAsBoolean(key)
 }

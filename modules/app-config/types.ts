@@ -1,5 +1,5 @@
 export interface FeatureFlagType {
-	configKey: AppConfigKey
+	configKey: AppConfigType
 	title: string
 	active: boolean
 }
@@ -14,6 +14,6 @@ export interface FeatureFlagType {
  * split at render time for our view to group by, but the entirety
  * of the value (section + key) will be stored.
  */
-export enum AppConfigKey {
+export enum AppConfigType {
 	Courses_ShowRecentSearchScreen = 'Courses_ShowRecentSearchScreen',
 }
