@@ -20,6 +20,7 @@ export function PickerSection<T extends object>({
 	return (
 		<Section footer={caption} header={title.toUpperCase()}>
 			<Picker
+				itemStyle={styles.pickerItem}
 				onValueChange={(itemValue, itemIndex) => {
 					let pickedItem = spec.options[itemIndex]
 					onChange({...filter, spec: {...spec, selected: pickedItem}})
