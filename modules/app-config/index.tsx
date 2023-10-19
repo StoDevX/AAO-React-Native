@@ -6,7 +6,7 @@ import {isDevMode} from '@frogpond/constants'
 export type {AppConfigType, FeatureFlagType} from './types'
 
 // helper method to query exported __DEV__ feature flags
-const useFeature = (featureKey: AppConfigType): boolean => {
+export const useFeature = (featureKey: AppConfigType): boolean => {
 	let {data: featureValue = false} = useQuery({
 		queryKey: ['app', 'app:feature-flag', featureKey],
 		queryFn: () => getFeatureFlag(featureKey),
