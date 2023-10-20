@@ -1,5 +1,6 @@
 import ky, {Options} from 'ky'
 import {CourseType, RawCourseType, TermInfoType, TermType} from './types'
+import intersection from 'lodash/intersection'
 
 const BASE_URL = 'https://stolaf.dev'
 export const COURSE_DATA_PAGE = `${BASE_URL}/course-data/`
@@ -19,13 +20,49 @@ export let timeData = (options?: Options): Promise<string[]> =>
 	client.get('data-lists/valid_times.json', options).json()
 export let coursesForTerm = async (
 	term: TermType,
+	levels: Array<CourseType['level']>,
+	gereqs: string[] = [],
 	options?: Options,
 ): Promise<Array<CourseType>> => {
 	let data = (await client
 		.get(`${term.path}`, options)
 		.json()) as RawCourseType[]
-	return data.map((course) => ({
-		spaceAvailable: course.enrolled < course.max,
-		...course,
-	})) as CourseType[]
+	return data
+		.map((course) => ({
+			spaceAvailable: course.enrolled < course.max,
+			...course,
+		}))
+		.filter((c) => {
+			return findMatches(c.level, levels, c.gereqs, gereqs)
+		}) as CourseType[]
+}
+
+const findMatches = (
+	findLevel: number,
+	levels: Array<number>,
+	findgereqs: Array<string> = [],
+	gereqs: Array<string>,
+) => {
+	if (!levels.length && !gereqs.length) {
+		return true
+	}
+
+	if (levels.length && gereqs.length) {
+		return matchesLevels(findLevel, levels) && matchesGEs(findgereqs, gereqs)
+	} else if (levels.length) {
+		return matchesLevels(findLevel, levels)
+	} else if (gereqs.length) {
+		return matchesGEs(findgereqs, gereqs)
+	}
+
+	return true
+}
+
+const matchesLevels = (item: number, levels: Array<CourseType['level']>) => {
+	let levelRoundedDown = Math.floor(item / 100) * 100
+	return levels.includes(levelRoundedDown)
+}
+
+const matchesGEs = (items: string[] | undefined, gereqs: string[]) => {
+	return items ? intersection(gereqs, items).length > 0 : false
 }
