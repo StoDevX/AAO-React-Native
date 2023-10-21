@@ -14,6 +14,7 @@ plugins:
   - 'eslint-plugin-react-hooks'
   - '@tanstack/eslint-plugin-query'
   - 'simple-import-sort'
+  - 'import'
 
 extends:
   - 'eslint:recommended'
@@ -126,6 +127,11 @@ rules:
 
   # eslint-plugin-jsx-expressions – https://github.com/hpersson/eslint-plugin-jsx-expressions/
   jsx-expressions/strict-logical-expressions: warn
+
+  # eslint-plugin-import https://github.com/import-js/eslint-plugin-import/
+  import/first: error
+  import/newline-after-import: error
+  import/no-duplicates: error
 
   # eslint-plugin-simple-import-sort https://github.com/lydell/eslint-plugin-simple-import-sort/
   simple-import-sort/exports: error
