@@ -130,7 +130,6 @@ rules:
 
   # eslint-plugin-import https://github.com/import-js/eslint-plugin-import/
   import/first: error
-  import/newline-after-import: error
   import/no-duplicates: error
 
   # eslint-plugin-simple-import-sort https://github.com/lydell/eslint-plugin-simple-import-sort/
