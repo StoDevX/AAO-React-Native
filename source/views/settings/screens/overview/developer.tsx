@@ -14,6 +14,7 @@ export const DeveloperSection = (): React.ReactElement => {
 	const onComponentsButton = () => navigation.navigate('ComponentLibrary')
 	const onAPIButton = () => navigation.navigate('APITest')
 	const onBonAppButton = () => navigation.navigate('BonAppPicker')
+	const onFeatureFlagsButton = () => navigation.navigate('FeatureFlags')
 	const onDebugButton = () => navigation.navigate(DebugKey, {keyPath: ['Root']})
 	const onNetworkLoggerButton = () => navigation.navigate('NetworkLogger')
 	const sendSentryMessage = () => {
@@ -41,6 +42,7 @@ export const DeveloperSection = (): React.ReactElement => {
 	return (
 		<>
 			<Section header="DEVELOPER">
+				<PushButtonCell onPress={onFeatureFlagsButton} title="Feature Flags" />
 				<PushButtonCell onPress={onComponentsButton} title="Components" />
 				<PushButtonCell onPress={onAPIButton} title="API Tester" />
 				<PushButtonCell onPress={onBonAppButton} title="Bon Appetit Picker" />
