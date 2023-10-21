@@ -1,17 +1,20 @@
 import * as React from 'react'
 import {StyleSheet, Text, SectionList} from 'react-native'
+
 import restart from 'react-native-restart'
-import * as storage from '../../../lib/storage'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+
 import {CellToggle} from '@frogpond/tableview/cells'
 import {ListEmpty, ListSectionHeader, ListSeparator} from '@frogpond/lists'
 import * as c from '@frogpond/colors'
-import {AppConfig, FeatureFlagType} from '@frogpond/app-config'
-import {groupBy, orderBy} from 'lodash'
 import {LoadingView, NoticeView} from '@frogpond/notice'
 import {toLaxTitleCase} from '@frogpond/titlecase'
 import {Touchable} from '@frogpond/touchable'
+import {AppConfig, FeatureFlagType} from '@frogpond/app-config'
+
+import {groupBy, orderBy} from 'lodash'
 import {commonStyles} from '../../../../modules/navigation-buttons/styles'
+import * as storage from '../../../lib/storage'
 
 export const FeatureFlagsView = (): JSX.Element => {
 	let [loading, setLoading] = React.useState(true)
