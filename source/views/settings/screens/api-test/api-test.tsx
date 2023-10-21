@@ -4,10 +4,13 @@ import {Platform, StyleSheet, TextInput, Text, View} from 'react-native'
 import {client} from '@frogpond/api'
 import {useDebounce} from '@frogpond/use-debounce'
 import {useQuery} from '@tanstack/react-query'
-import {CellToggle} from '@frogpond/tableview/cells'
 import {HtmlContent} from '@frogpond/html-content'
 import {Icon} from '@frogpond/icon'
 import {CloseScreenButton} from '@frogpond/navigation-buttons'
+import {commonStyles} from '@frogpond/navigation-buttons/styles'
+import {LoadingView} from '@frogpond/notice'
+import {Touchable} from '@frogpond/touchable'
+import {CellToggle} from '@frogpond/tableview/cells'
 
 import {useNavigation} from '@react-navigation/native'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
@@ -17,6 +20,7 @@ import {DebugView} from '../debug'
 import {syntaxHighlight} from './util/highlight'
 import {CSS_CODE_STYLES} from './util/highlight-styles'
 import {ChangeTextEvent} from '../../../../navigation/types'
+import {ServerRoutesListView} from './routes-list'
 
 const styles = StyleSheet.create({
 	container: {
@@ -57,7 +61,7 @@ export const APITestView = (): JSX.Element => {
 
 	let [displayMode, setDisplayMode] = React.useState<DisplayMode>('raw')
 
-	let {data, error} = useQuery({
+	let {data, isLoading, error} = useQuery({
 		queryKey: ['api-test', path],
 		queryFn: ({signal, queryKey: [_group, path]}) => {
 			if (!path) {
@@ -71,8 +75,26 @@ export const APITestView = (): JSX.Element => {
 
 	let navigation = useNavigation()
 
+	const HeaderLeftButton = () => (
+		<Touchable
+			accessibilityLabel="Reset"
+			accessibilityRole="button"
+			accessible={true}
+			borderless={true}
+			highlight={false}
+			onPress={() => setSearchPath('')}
+			style={commonStyles.button}
+		>
+			{/* eslint-disable-next-line react-native/no-inline-styles */}
+			<Text style={[commonStyles.text, {fontWeight: '600', color: c.link}]}>
+				Reset
+			</Text>
+		</Touchable>
+	)
+
 	React.useLayoutEffect(() => {
 		navigation.setOptions({
+			headerLeft: () => Platform.OS === 'ios' && <HeaderLeftButton />,
 			headerSearchBarOptions: {
 				autoCapitalize: 'none',
 				barTintColor: c.systemFill,
@@ -132,13 +154,15 @@ export const APITestView = (): JSX.Element => {
 			/>
 		) : !path ? (
 			<EmptySearch />
+		) : isLoading ? (
+			<LoadingView />
 		) : displayMode === 'raw' ? (
 			<JSONView />
 		) : (
 			<DebugView state={JSON.parse(data || '{}')} />
 		)
 
-	return (
+	const SearchResponseView = () => (
 		<View style={styles.container}>
 			<CellToggle
 				label="Parse as JSON"
@@ -148,6 +172,12 @@ export const APITestView = (): JSX.Element => {
 
 			{APIResponse}
 		</View>
+	)
+
+	return path.length ? (
+		<SearchResponseView />
+	) : (
+		<ServerRoutesListView setSearchPath={setSearchPath} />
 	)
 }
 
