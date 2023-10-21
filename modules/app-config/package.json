@@ -2,7 +2,7 @@
   "name": "@frogpond/app-config",
   "version": "1.0.0",
   "description": "",
-  "main": "index.tsx",
+  "main": "index.ts",
   "author": "",
   "license": "ISC",
   "scripts": {
