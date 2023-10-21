@@ -51,6 +51,10 @@ const styles = StyleSheet.create({
 		paddingTop: 20,
 		paddingBottom: 10,
 	},
+	headerLeftButton: {
+		fontWeight: '600',
+		color: c.link,
+	},
 })
 
 type DisplayMode = 'raw' | 'parsed'
@@ -85,10 +89,7 @@ export const APITestView = (): JSX.Element => {
 			onPress={() => setSearchPath('')}
 			style={commonStyles.button}
 		>
-			{/* eslint-disable-next-line react-native/no-inline-styles */}
-			<Text style={[commonStyles.text, {fontWeight: '600', color: c.link}]}>
-				Reset
-			</Text>
+			<Text style={[commonStyles.text, styles.headerLeftButton]}>Reset</Text>
 		</Touchable>
 	)
 
