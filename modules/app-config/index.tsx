@@ -1,9 +1,9 @@
 import {getFeatureFlag} from '../../source/lib/storage'
-import {AppConfigEntry, FeatureFlagType} from './types'
+import {AppConfigEntry, FeatureFlag} from './types'
 import {useQuery} from '@tanstack/react-query'
 import {isDevMode} from '@frogpond/constants'
 
-export type {AppConfigEntry, FeatureFlagType} from './types'
+export type {AppConfigEntry, FeatureFlag} from './types'
 
 // helper method to query exported __DEV__ feature flags
 export const useFeature = (featureKey: AppConfigEntry): boolean => {
@@ -19,7 +19,7 @@ export const useFeature = (featureKey: AppConfigEntry): boolean => {
 }
 
 // datastore for the __DEV__ feature flags
-export const AppConfig = async (): Promise<FeatureFlagType[]> => {
+export const AppConfig = async (): Promise<FeatureFlag[]> => {
 	return [
 		{
 			title: 'Show the course search recents screen',

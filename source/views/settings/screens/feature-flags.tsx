@@ -10,7 +10,7 @@ import * as c from '@frogpond/colors'
 import {LoadingView, NoticeView} from '@frogpond/notice'
 import {toLaxTitleCase} from '@frogpond/titlecase'
 import {Touchable} from '@frogpond/touchable'
-import {AppConfig, FeatureFlagType} from '@frogpond/app-config'
+import {AppConfig, FeatureFlag} from '@frogpond/app-config'
 
 import {groupBy, orderBy} from 'lodash'
 import {commonStyles} from '../../../../modules/navigation-buttons/styles'
@@ -18,7 +18,7 @@ import * as storage from '../../../lib/storage'
 
 export const FeatureFlagsView = (): JSX.Element => {
 	let [loading, setLoading] = React.useState(true)
-	let [sections, setSections] = React.useState<FeatureFlagType[]>([])
+	let [sections, setSections] = React.useState<FeatureFlag[]>([])
 
 	React.useEffect(() => {
 		async function fetchData() {
@@ -33,11 +33,11 @@ export const FeatureFlagsView = (): JSX.Element => {
 		return <ListEmpty mode="bug" />
 	}
 
-	let findGroup = (configKey: FeatureFlagType['configKey']) => {
+	let findGroup = (configKey: FeatureFlag['configKey']) => {
 		return configKey.split('_')?.[0] ?? 'Unknown'
 	}
 
-	let sorters: Array<(flag: FeatureFlagType) => string> = [
+	let sorters: Array<(flag: FeatureFlag) => string> = [
 		(flag) => findGroup(flag.configKey),
 		(flag) => flag.title,
 	]

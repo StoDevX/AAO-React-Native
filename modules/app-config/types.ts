@@ -1,4 +1,4 @@
-export interface FeatureFlagType {
+export interface FeatureFlag {
 	configKey: AppConfigEntry
 	title: string
 	active: boolean
