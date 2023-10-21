@@ -4,7 +4,7 @@ import {renderHook, waitFor} from '@testing-library/react-native'
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query'
 
 import {useFeature} from '../index'
-import {AppConfigType} from '../types'
+import {AppConfigEntry} from '../types'
 
 jest.mock('../../../modules/constants', () => ({
 	isDevMode: jest.fn(),
@@ -41,7 +41,7 @@ describe('useCourseSearchRecentsScreen', () => {
 		getFeatureFlagMock.mockReturnValue(true)
 
 		const {result} = renderHook(
-			() => useFeature(AppConfigType.Courses_ShowRecentSearchScreen),
+			() => useFeature(AppConfigEntry.Courses_ShowRecentSearchScreen),
 			{
 				wrapper: queryWrapper,
 			},
@@ -57,7 +57,7 @@ describe('useCourseSearchRecentsScreen', () => {
 		getFeatureFlagMock.mockReturnValue(false)
 
 		const {result} = renderHook(
-			() => useFeature(AppConfigType.Courses_ShowRecentSearchScreen),
+			() => useFeature(AppConfigEntry.Courses_ShowRecentSearchScreen),
 			{
 				wrapper: queryWrapper,
 			},
