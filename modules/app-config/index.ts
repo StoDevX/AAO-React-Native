@@ -20,6 +20,10 @@ export const useFeature = (featureKey: AppConfigEntry): boolean => {
 
 // datastore for the __DEV__ feature flags
 export const AppConfig = async (): Promise<FeatureFlag[]> => {
+	if (!isDevMode()) {
+		return []
+	}
+
 	return [
 		{
 			title: 'Show the course search recents screen',
