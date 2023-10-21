@@ -1,11 +1,14 @@
 import * as React from 'react'
-import {StyleSheet, ScrollView, useWindowDimensions} from 'react-native'
-import {Column} from '@frogpond/layout'
-import {partitionByIndex} from '../../../lib/partition-by-index'
-import {StreamThumbnail} from './thumbnail'
-import {useWebcams} from './query'
-import {LoadingView, NoticeView} from '@frogpond/notice'
+import {ScrollView, StyleSheet, useWindowDimensions} from 'react-native'
+
 import {RefreshControl} from 'react-native-gesture-handler'
+
+import {Column} from '@frogpond/layout'
+import {LoadingView, NoticeView} from '@frogpond/notice'
+
+import {partitionByIndex} from '../../../lib/partition-by-index'
+import {useWebcams} from './query'
+import {StreamThumbnail} from './thumbnail'
 
 export let WebcamsView = (): JSX.Element => {
 	let viewport = useWindowDimensions()

@@ -1,11 +1,14 @@
 import * as React from 'react'
 import {Platform, SafeAreaView, StyleSheet, Text, View} from 'react-native'
-import Icon from 'react-native-vector-icons/Entypo'
-import type {ViewType} from '../views'
-import {Touchable} from '@frogpond/touchable'
-import {transparent} from '@frogpond/colors'
-import {homescreenForegroundDark, homescreenForegroundLight} from './colors'
+
 import {hasNotch} from 'react-native-device-info'
+import Icon from 'react-native-vector-icons/Entypo'
+
+import {transparent} from '@frogpond/colors'
+import {Touchable} from '@frogpond/touchable'
+
+import type {ViewType} from '../views'
+import {homescreenForegroundDark, homescreenForegroundLight} from './colors'
 
 type Props = {
 	view: ViewType

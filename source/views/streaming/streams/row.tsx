@@ -1,12 +1,13 @@
 import * as React from 'react'
-import {StyleSheet, Image} from 'react-native'
+import {Image, StyleSheet} from 'react-native'
 
-import {ListRow, Detail, Title} from '@frogpond/lists'
-import {Column, Row} from '@frogpond/layout'
 import {innerTextWithSpaces, parseHtml} from '@frogpond/html-lib'
+import {Column, Row} from '@frogpond/layout'
+import {Detail, ListRow, Title} from '@frogpond/lists'
 import {trackedOpenUrl} from '@frogpond/open-url'
-import moment from 'moment'
+
 import type {StreamType} from './types'
+import moment from 'moment'
 
 const styles = StyleSheet.create({
 	image: {

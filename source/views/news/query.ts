@@ -1,6 +1,7 @@
 import {client} from '@frogpond/api'
-import {useQuery, type UseQueryResult} from '@tanstack/react-query'
+
 import {StoryType} from './types'
+import {useQuery, type UseQueryResult} from '@tanstack/react-query'
 
 export const keys = {
 	named: (name: string) => ['news', 'named', name] as const,

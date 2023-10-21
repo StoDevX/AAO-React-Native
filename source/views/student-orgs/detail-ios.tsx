@@ -1,16 +1,19 @@
 import * as React from 'react'
-import {ScrollView, Text, StyleSheet} from 'react-native'
-import moment from 'moment'
+import {ScrollView, StyleSheet, Text} from 'react-native'
+
+import {RouteProp, useRoute} from '@react-navigation/native'
+import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+
+import * as c from '@frogpond/colors'
+import {decode} from '@frogpond/html-lib'
+import {openUrl} from '@frogpond/open-url'
 import {Cell, Section, TableView} from '@frogpond/tableview'
 import {SelectableCell} from '@frogpond/tableview/cells'
-import * as c from '@frogpond/colors'
-import {openUrl} from '@frogpond/open-url'
+
 import {sendEmail} from '../../components/send-email'
-import {showNameOrEmail} from './util'
-import {decode} from '@frogpond/html-lib'
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
-import {RouteProp, useRoute} from '@react-navigation/native'
 import {RootStackParamList} from '../../navigation/types'
+import {showNameOrEmail} from './util'
+import moment from 'moment'
 
 const styles = StyleSheet.create({
 	name: {

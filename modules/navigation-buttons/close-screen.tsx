@@ -1,9 +1,12 @@
 import * as React from 'react'
-import {Text, Platform, StyleSheet, ViewStyle, StyleProp} from 'react-native'
-import {Touchable} from '@frogpond/touchable'
-import {commonStyles} from './styles'
+import {Platform, StyleProp, StyleSheet, Text, ViewStyle} from 'react-native'
+
 import {useNavigation} from '@react-navigation/native'
+
 import {useTheme} from '@frogpond/app-theme'
+import {Touchable} from '@frogpond/touchable'
+
+import {commonStyles} from './styles'
 
 type Props = {
 	title?: string

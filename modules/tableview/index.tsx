@@ -1,12 +1,12 @@
 import * as React from 'react'
 import {Platform, StyleSheet} from 'react-native'
 
-import * as c from '@frogpond/colors'
-
 import * as RNTableView from 'react-native-tableview-simple'
+import {CellInterface} from 'react-native-tableview-simple/lib/typescript/components/Cell'
 import type {SectionInterface} from 'react-native-tableview-simple/lib/typescript/components/Section'
 import type {TableViewInterface} from 'react-native-tableview-simple/lib/typescript/components/TableView'
-import {CellInterface} from 'react-native-tableview-simple/lib/typescript/components/Cell'
+
+import * as c from '@frogpond/colors'
 
 /*
  * Replacing onPress type with a less restricted type of our own
@@ -52,4 +52,4 @@ const styles = StyleSheet.create({
 	},
 })
 
-export {TableView, Section, Cell}
+export {Cell, Section, TableView}

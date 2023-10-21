@@ -1,7 +1,9 @@
 import * as React from 'react'
-import {BaseText, Paragraph} from './formatting'
-import {ViewProps, StyleProp, View, StyleSheet, ViewStyle} from 'react-native'
+import {StyleProp, StyleSheet, View, ViewProps, ViewStyle} from 'react-native'
+
 import * as c from '@frogpond/colors'
+
+import {BaseText, Paragraph} from './formatting'
 
 const styles = StyleSheet.create({
 	list: {},

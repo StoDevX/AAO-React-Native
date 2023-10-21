@@ -1,2 +1,2 @@
 export {RadioControllerView} from './controller'
-export {KSTOScheduleView, KRLXScheduleView} from './schedule'
+export {KRLXScheduleView, KSTOScheduleView} from './schedule'

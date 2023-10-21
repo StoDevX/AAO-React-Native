@@ -1,5 +1,6 @@
 import {decode} from '@frogpond/html-lib'
 import {toLaxTitleCase} from '@frogpond/titlecase'
+
 import {StoryType} from '../types'
 
 // remove all entries with blank excerpts

@@ -4,9 +4,11 @@
 
 import * as React from 'react'
 import {StyleSheet} from 'react-native'
+
+import {openUrl} from '@frogpond/open-url'
 import {Card} from '@frogpond/silly-card'
 import {ButtonCell} from '@frogpond/tableview/cells'
-import {openUrl} from '@frogpond/open-url'
+
 import type {BuildingLinkType} from '../types'
 
 type Props = {

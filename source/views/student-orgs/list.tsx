@@ -1,28 +1,31 @@
 import * as React from 'react'
-import {StyleSheet, SectionList} from 'react-native'
-import {NoticeView, LoadingView} from '@frogpond/notice'
+import {SectionList, StyleSheet} from 'react-native'
+
+import {useNavigation} from '@react-navigation/native'
+import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+
+import * as c from '@frogpond/colors'
 import {Column} from '@frogpond/layout'
 import {
+	Detail,
+	emptyList,
+	largeListProps,
 	ListRow,
 	ListSectionHeader,
 	ListSeparator,
-	Detail,
 	Title,
-	largeListProps,
-	emptyList,
 } from '@frogpond/lists'
-import * as c from '@frogpond/colors'
-import groupBy from 'lodash/groupBy'
-import toPairs from 'lodash/toPairs'
-import words from 'lodash/words'
-import deburr from 'lodash/deburr'
-import type {StudentOrgType} from './types'
+import {LoadingView, NoticeView} from '@frogpond/notice'
 import {useDebounce} from '@frogpond/use-debounce'
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
-import {useNavigation} from '@react-navigation/native'
-import memoize from 'lodash/memoize'
+
 import {ChangeTextEvent} from '../../navigation/types'
 import {useStudentOrgs} from './query'
+import type {StudentOrgType} from './types'
+import deburr from 'lodash/deburr'
+import groupBy from 'lodash/groupBy'
+import memoize from 'lodash/memoize'
+import toPairs from 'lodash/toPairs'
+import words from 'lodash/words'
 
 const splitToArray = memoize((str: string) => words(deburr(str.toLowerCase())))
 

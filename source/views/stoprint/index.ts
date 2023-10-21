@@ -1,12 +1,12 @@
 export {
-	PrintJobsView,
 	NavigationOptions as PrintJobsNavigationOptions,
+	PrintJobsView,
 } from './print-jobs'
 export {
-	PrinterListView,
-	NavigationOptions as PrinterListNavigationOptions,
-} from './printers'
-export {
-	PrintJobReleaseView,
 	NavigationOptions as PrintJobReleaseNavigationOptions,
+	PrintJobReleaseView,
 } from './print-release'
+export {
+	NavigationOptions as PrinterListNavigationOptions,
+	PrinterListView,
+} from './printers'

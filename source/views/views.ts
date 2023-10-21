@@ -1,11 +1,11 @@
 import * as c from '@frogpond/colors'
-import {RootViewsParamList} from '../navigation/types'
 
-import {NavigationKey as menus} from './menus'
-import {NavigationKey as sis} from './sis'
+import {RootViewsParamList} from '../navigation/types'
 import {NavigationKey as calendar} from './calendar'
-import {NavigationKey as streaming} from './streaming'
+import {NavigationKey as menus} from './menus'
 import {NavigationKey as news} from './news'
+import {NavigationKey as sis} from './sis'
+import {NavigationKey as streaming} from './streaming'
 import {NavigationKey as transportation} from './transportation'
 
 const hours: keyof RootViewsParamList = 'BuildingHours'

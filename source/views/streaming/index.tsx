@@ -1,19 +1,21 @@
 import {Platform} from 'react-native'
+
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+
 import {
-	MaterialIcon,
-	IosIcon,
 	createTabNavigator,
+	IosIcon,
+	MaterialIcon,
 	type Tab,
 } from '@frogpond/navigation-tabs'
 
 import {WeeklyMovieView} from './movie'
-import {WebcamsView} from './webcams'
-import {StreamListView} from './streams'
-import {KstoStationView} from './radio/station-ksto'
 import {KrlxStationView} from './radio/station-krlx'
+import {KstoStationView} from './radio/station-ksto'
+import {StreamListView} from './streams'
+import {WebcamsView} from './webcams'
 
-export {KSTOScheduleView, KRLXScheduleView} from './radio'
+export {KRLXScheduleView, KSTOScheduleView} from './radio'
 
 type Params = {
 	StreamingView: undefined

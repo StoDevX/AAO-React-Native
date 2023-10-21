@@ -1,11 +1,10 @@
-import type {Moment} from 'moment-timezone'
-import flatten from 'lodash/flatten'
 import type {BuildingType} from '../types'
-
-import {getDayOfWeek} from './get-day-of-week'
-import {isChapelTime, formatChapelTime} from './chapel'
-import {isScheduleOpenAtMoment} from './is-schedule-open'
+import {formatChapelTime, isChapelTime} from './chapel'
 import {formatBuildingTimes} from './format-times'
+import {getDayOfWeek} from './get-day-of-week'
+import {isScheduleOpenAtMoment} from './is-schedule-open'
+import flatten from 'lodash/flatten'
+import type {Moment} from 'moment-timezone'
 
 export type BuildingStatus = {
 	isActive: boolean

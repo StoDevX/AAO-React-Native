@@ -1,7 +1,6 @@
-import type {Moment} from 'moment-timezone'
 import type {SingleBuildingScheduleType} from '../types'
-
 import {parseHours} from './parse-hours'
+import type {Moment} from 'moment-timezone'
 
 export function isScheduleReallyOpenAtMoment(
 	schedule: SingleBuildingScheduleType,

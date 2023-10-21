@@ -1,6 +1,6 @@
-import {expect, it} from '@jest/globals'
 import {applyToggleFilter} from '../apply-filters'
 import type {FilterType} from '../types'
+import {expect, it} from '@jest/globals'
 
 it('should return `true` if the item has a truthy value', () => {
 	let item = {'i-am-a-key': true}

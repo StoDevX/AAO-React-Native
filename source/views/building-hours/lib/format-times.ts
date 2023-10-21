@@ -1,8 +1,7 @@
-import type {Moment} from 'moment-timezone'
 import type {SingleBuildingScheduleType} from '../types'
-
 import {RESULT_FORMAT} from './constants'
 import {parseHours} from './parse-hours'
+import type {Moment} from 'moment-timezone'
 
 function formatSingleTime(time: Moment): string {
 	if (time.hour() === 0 && time.minute() === 0) {

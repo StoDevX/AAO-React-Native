@@ -1,8 +1,10 @@
 import * as React from 'react'
-import {timezone} from '@frogpond/constants'
 import {Platform, SectionList} from 'react-native'
-import type {PrintJob} from '../../lib/stoprint'
-import {STOPRINT_HELP_PAGE, isStoprintMocked} from '../../lib/stoprint'
+
+import {useNavigation} from '@react-navigation/native'
+import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+
+import {timezone} from '@frogpond/constants'
 import {
 	Detail,
 	ListRow,
@@ -10,19 +12,20 @@ import {
 	ListSeparator,
 	Title,
 } from '@frogpond/lists'
+import {DebugNoticeButton} from '@frogpond/navigation-buttons'
 import {LoadingView} from '@frogpond/notice'
 import {openUrl} from '@frogpond/open-url'
-import {StoPrintErrorView, StoPrintNoticeView} from './components'
-import groupBy from 'lodash/groupBy'
-import toPairs from 'lodash/toPairs'
-import sortBy from 'lodash/sortBy'
-import {getTimeRemaining} from './lib'
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
-import {useNavigation} from '@react-navigation/native'
-import {DebugNoticeButton} from '@frogpond/navigation-buttons'
 import {useMomentTimer} from '@frogpond/timer'
-import {usePrintJobs} from './query'
+
 import {useHasCredentials} from '../../lib/login'
+import type {PrintJob} from '../../lib/stoprint'
+import {isStoprintMocked, STOPRINT_HELP_PAGE} from '../../lib/stoprint'
+import {StoPrintErrorView, StoPrintNoticeView} from './components'
+import {getTimeRemaining} from './lib'
+import {usePrintJobs} from './query'
+import groupBy from 'lodash/groupBy'
+import sortBy from 'lodash/sortBy'
+import toPairs from 'lodash/toPairs'
 
 export const PrintJobsView = (): JSX.Element => {
 	let {now} = useMomentTimer({intervalMs: 60000, timezone: timezone()})

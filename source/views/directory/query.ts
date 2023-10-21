@@ -1,6 +1,6 @@
-import ky from 'ky'
-import {useQuery, UseQueryResult} from '@tanstack/react-query'
 import {DirectorySearchTypeEnum, SearchResults} from './types'
+import {useQuery, UseQueryResult} from '@tanstack/react-query'
+import ky from 'ky'
 
 let directory = ky.create({prefixUrl: 'https://www.stolaf.edu/directory'})
 

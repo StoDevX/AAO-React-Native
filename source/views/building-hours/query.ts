@@ -1,8 +1,9 @@
 import {client} from '@frogpond/api'
-import {useQuery, UseQueryResult} from '@tanstack/react-query'
-import {groupBy} from 'lodash'
+
 import {selectFavoriteBuildings, useAppSelector} from '../../redux'
 import {BuildingType} from './types'
+import {useQuery, UseQueryResult} from '@tanstack/react-query'
+import {groupBy} from 'lodash'
 
 export const keys = {
 	all: ['buildings'] as const,

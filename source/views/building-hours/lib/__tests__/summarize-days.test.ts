@@ -1,6 +1,6 @@
-import {describe, expect, test} from '@jest/globals'
-import {summarizeDays, summarizeDaysAndHours} from '../summarize-days'
 import {DayOfWeekEnumType} from '../../types'
+import {summarizeDays, summarizeDaysAndHours} from '../summarize-days'
+import {describe, expect, test} from '@jest/globals'
 
 describe('returns a single day if only a single day is given', () => {
 	let allDays: [DayOfWeekEnumType, string][] = [

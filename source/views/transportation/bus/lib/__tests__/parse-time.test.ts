@@ -1,5 +1,5 @@
-import {expect, it} from '@jest/globals'
 import {parseTime} from '../parse-time'
+import {expect, it} from '@jest/globals'
 import moment from 'moment'
 
 it('returns `null` given `false`', () => {

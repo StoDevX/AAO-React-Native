@@ -1,17 +1,20 @@
 import * as React from 'react'
 import {ScrollView, StyleSheet, Text} from 'react-native'
-import {openUrl} from '@frogpond/open-url'
-import {Card} from '@frogpond/silly-card'
-import * as c from '@frogpond/colors'
-import {ButtonCell} from '@frogpond/tableview/cells'
-import {getTimes} from './calendar-util'
-import {AddToCalendar} from '@frogpond/add-to-device-calendar'
-import {ListFooter} from '@frogpond/lists'
+
 import {RouteProp, useRoute} from '@react-navigation/native'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
-import {RootStackParamList} from '../../source/navigation/types'
-import {NavigationKey} from './event-detail-base'
+
+import {AddToCalendar} from '@frogpond/add-to-device-calendar'
+import * as c from '@frogpond/colors'
 import {EventType} from '@frogpond/event-type'
+import {ListFooter} from '@frogpond/lists'
+import {openUrl} from '@frogpond/open-url'
+import {Card} from '@frogpond/silly-card'
+import {ButtonCell} from '@frogpond/tableview/cells'
+
+import {RootStackParamList} from '../../source/navigation/types'
+import {getTimes} from './calendar-util'
+import {NavigationKey} from './event-detail-base'
 
 const styles = StyleSheet.create({
 	name: {

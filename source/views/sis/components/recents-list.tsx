@@ -1,8 +1,10 @@
 import * as React from 'react'
-import {StyleSheet, Text, View, Platform, Pressable} from 'react-native'
-import {ListSeparator, ListRow} from '@frogpond/lists'
-import {NoticeView} from '@frogpond/notice'
+import {Platform, Pressable, StyleSheet, Text, View} from 'react-native'
+
 import * as c from '@frogpond/colors'
+import {ListRow, ListSeparator} from '@frogpond/lists'
+import {NoticeView} from '@frogpond/notice'
+
 import {noop} from 'lodash'
 
 type Props = {

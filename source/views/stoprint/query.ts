@@ -1,4 +1,3 @@
-import {useQuery, UseQueryResult} from '@tanstack/react-query'
 import {useUsername} from '../../lib/login'
 import {
 	fetchAllPrinters,
@@ -13,6 +12,7 @@ import {
 	PrintJobsResponse,
 	RecentPopularPrintersResponse,
 } from '../../lib/stoprint/types'
+import {useQuery, UseQueryResult} from '@tanstack/react-query'
 
 export const keys = {
 	jobs: (username: string) => ['printing', 'jobs', 'all', username] as const,

@@ -1,9 +1,10 @@
 import * as React from 'react'
 import {ScrollView} from 'react-native'
-import type {FilterType} from './types'
-import {SingleToggleSection} from './section-toggle'
+
 import {ListSection} from './section-list'
 import {PickerSection} from './section-picker'
+import {SingleToggleSection} from './section-toggle'
+import type {FilterType} from './types'
 
 type Props<T extends object> = {
 	filter: FilterType<T>

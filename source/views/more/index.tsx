@@ -1,25 +1,26 @@
 import * as React from 'react'
 import {SectionList, StyleSheet} from 'react-native'
 
+import {useNavigation} from '@react-navigation/native'
+import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+
 import * as c from '@frogpond/colors'
-import {useDebounce} from '@frogpond/use-debounce'
-import {LoadingView, NoticeView} from '@frogpond/notice'
-import {openUrl} from '@frogpond/open-url'
 import {Row} from '@frogpond/layout'
 import {
-	ListSeparator,
-	ListSectionHeader,
 	largeListProps,
-	Title,
 	ListRow,
+	ListSectionHeader,
+	ListSeparator,
+	Title,
 } from '@frogpond/lists'
-import {LinkValue} from './types'
+import {LoadingView, NoticeView} from '@frogpond/notice'
+import {openUrl} from '@frogpond/open-url'
+import {useDebounce} from '@frogpond/use-debounce'
 
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
-import {useNavigation} from '@react-navigation/native'
 import {ChangeTextEvent} from '../../navigation/types'
-import {deburr, words} from 'lodash'
 import {useSearchLinks} from './query'
+import {LinkValue} from './types'
+import {deburr, words} from 'lodash'
 
 const styles = StyleSheet.create({
 	wrapper: {

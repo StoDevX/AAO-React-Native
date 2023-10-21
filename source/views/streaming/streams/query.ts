@@ -1,8 +1,9 @@
 import {client} from '@frogpond/api'
+import {timezone} from '@frogpond/constants'
+
+import {StreamType} from './types'
 import {useQuery, UseQueryResult} from '@tanstack/react-query'
 import moment, {type Moment} from 'moment-timezone'
-import {StreamType} from './types'
-import {timezone} from '@frogpond/constants'
 
 export const keys = {
 	all: (filter: {sort: 'ascending'; dateFrom: string; dateTo: string}) =>

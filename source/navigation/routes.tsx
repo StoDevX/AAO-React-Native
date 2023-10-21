@@ -1,42 +1,43 @@
 import React from 'react'
+
 import {createNativeStackNavigator} from '@react-navigation/native-stack'
 
-import * as home from '../views/home'
+import {EventDetail as eventDetail} from '@frogpond/event-list'
+import {
+	DetailNavigationOptions,
+	MenuItemDetailView,
+} from '@frogpond/food-menu/food-item-detail'
+import {toLaxTitleCase} from '@frogpond/titlecase'
+
 import * as buildingHours from '../views/building-hours'
 import * as calendar from '../views/calendar'
-import {EventDetail as eventDetail} from '@frogpond/event-list'
 import * as contacts from '../views/contacts'
 import * as dictionary from '../views/dictionary'
+import * as directory from '../views/directory'
 import * as faqs from '../views/faqs'
-import * as sis from '../views/sis'
-import * as studentwork from '../views/sis/student-work'
-import * as studentworkdetail from '../views/sis/student-work/detail'
+import * as home from '../views/home'
 import * as menus from '../views/menus'
 import * as carletonmenus from '../views/menus/carleton-menus'
 import {
 	BonAppPickerView as DevBonAppPickerView,
 	DevBonAppNavigationOptions,
 } from '../views/menus/dev-bonapp-picker'
-import {
-	DetailNavigationOptions,
-	MenuItemDetailView,
-} from '@frogpond/food-menu/food-item-detail'
+import * as more from '../views/more'
 import * as news from '../views/news'
 import * as settings from '../views/settings/'
+import {NavigationKey as Debug} from '../views/settings/screens/debug'
+import * as sis from '../views/sis'
+import * as studentwork from '../views/sis/student-work'
+import * as studentworkdetail from '../views/sis/student-work/detail'
+import * as stoprint from '../views/stoprint'
 import * as streaming from '../views/streaming'
 import * as orgs from '../views/student-orgs'
 import * as transportation from '../views/transportation'
-import * as stoprint from '../views/stoprint'
-import * as more from '../views/more'
-import * as directory from '../views/directory'
-
 import {
+	ComponentLibraryStackParamList,
 	RootStackParamList,
 	SettingsStackParamList,
-	ComponentLibraryStackParamList,
 } from './types'
-import {NavigationKey as Debug} from '../views/settings/screens/debug'
-import {toLaxTitleCase} from '@frogpond/titlecase'
 
 const Stack = createNativeStackNavigator<RootStackParamList>()
 const SettingsStack = createNativeStackNavigator<SettingsStackParamList>()

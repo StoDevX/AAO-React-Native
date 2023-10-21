@@ -1,20 +1,18 @@
-import {configureStore, combineReducers} from '@reduxjs/toolkit'
-
-import {reducer as settings} from './parts/settings'
 import {reducer as buildings} from './parts/buildings'
 import {reducer as courses} from './parts/courses'
-
+import {reducer as settings} from './parts/settings'
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import {combineReducers, configureStore} from '@reduxjs/toolkit'
 import {
-	persistStore,
-	persistReducer,
 	FLUSH,
-	REHYDRATE,
 	PAUSE,
 	PERSIST,
+	persistReducer,
+	persistStore,
 	PURGE,
 	REGISTER,
+	REHYDRATE,
 } from 'redux-persist'
-import AsyncStorage from '@react-native-async-storage/async-storage'
 
 const persistConfig = {
 	key: 'root',

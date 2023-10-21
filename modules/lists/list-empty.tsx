@@ -1,4 +1,5 @@
 import * as React from 'react'
+
 import {NoticeView} from '@frogpond/notice'
 
 type Props = {

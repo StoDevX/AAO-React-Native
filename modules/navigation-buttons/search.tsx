@@ -1,8 +1,11 @@
 import * as React from 'react'
 import {Platform, StyleSheet, Text} from 'react-native'
+
 import Icon from 'react-native-vector-icons/Ionicons'
-import {Touchable} from '@frogpond/touchable'
+
 import {useTheme} from '@frogpond/app-theme'
+import {Touchable} from '@frogpond/touchable'
+
 import {commonStyles, rightButtonStyles as styles} from './styles'
 
 type Props = {

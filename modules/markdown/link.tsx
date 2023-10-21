@@ -1,9 +1,11 @@
 import * as React from 'react'
-import Clipboard from '@react-native-clipboard/clipboard'
-import {openUrl} from '@frogpond/open-url'
-import {useActionSheet} from '@expo/react-native-action-sheet'
+import {StyleSheet, Text, TextProps} from 'react-native'
+
 import * as c from '@frogpond/colors'
-import {TextProps, StyleSheet, Text} from 'react-native'
+import {openUrl} from '@frogpond/open-url'
+
+import {useActionSheet} from '@expo/react-native-action-sheet'
+import Clipboard from '@react-native-clipboard/clipboard'
 
 const styles = StyleSheet.create({
 	linkText: {

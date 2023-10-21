@@ -1,22 +1,24 @@
 import * as React from 'react'
 import {Platform} from 'react-native'
+
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+
 import {
-	MaterialIcon,
-	IosIcon,
 	createTabNavigator,
+	IosIcon,
+	MaterialIcon,
 	type Tab,
 } from '@frogpond/navigation-tabs'
 
+import {CarletonCafeIndex} from './carleton-menus'
 import {BonAppHostedMenu} from './menu-bonapp'
 import {GitHubHostedMenu} from './menu-github'
-import {CarletonCafeIndex} from './carleton-menus'
 
 export {
 	CarletonBurtonMenuScreen,
 	CarletonLDCMenuScreen,
-	CarletonWeitzMenuScreen,
 	CarletonSaylesMenuScreen,
+	CarletonWeitzMenuScreen,
 } from './carleton-menus'
 
 const StavHallMenuView = () => (

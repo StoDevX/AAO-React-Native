@@ -1,31 +1,34 @@
 import * as React from 'react'
-import {timezone} from '@frogpond/constants'
 import {
+	Platform,
+	ScrollView,
+	ScrollViewProps,
 	StyleSheet,
 	Text,
-	Platform,
-	ScrollViewProps,
-	ScrollView,
 	TextProps,
 } from 'react-native'
-import type {CourseType} from '../../../../lib/course-search'
+
+import {RouteProp, useRoute} from '@react-navigation/native'
+import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+
 import {SolidBadge as Badge} from '@frogpond/badge'
-import moment from 'moment-timezone'
-import {formatDay} from '../lib/format-day'
-import {TableView, Section, Cell} from '@frogpond/tableview'
+import * as c from '@frogpond/colors'
+import {timezone} from '@frogpond/constants'
+import {Cell, Section, TableView} from '@frogpond/tableview'
 import {
-	SelectableCell,
 	MultiLineDetailCell,
 	MultiLineLeftDetailCell,
+	SelectableCell,
 } from '@frogpond/tableview/cells'
-import * as c from '@frogpond/colors'
+
+import type {CourseType} from '../../../../lib/course-search'
+import {RootStackParamList} from '../../../../navigation/types'
+import {formatDay} from '../lib/format-day'
 import {deptNum} from '../lib/format-dept-num'
 import groupBy from 'lodash/groupBy'
 import map from 'lodash/map'
 import zip from 'lodash/zip'
-import {RouteProp, useRoute} from '@react-navigation/native'
-import {RootStackParamList} from '../../../../navigation/types'
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+import moment from 'moment-timezone'
 
 const Container = (props: ScrollViewProps) => (
 	<ScrollView {...props} style={[styles.container, props.style]} />

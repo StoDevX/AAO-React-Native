@@ -6,8 +6,9 @@ import {
 	TextInput,
 	TextInputProps,
 } from 'react-native'
-import {Cell} from '@frogpond/tableview'
+
 import * as c from '@frogpond/colors'
+import {Cell} from '@frogpond/tableview'
 
 const styles = StyleSheet.create({
 	label: {

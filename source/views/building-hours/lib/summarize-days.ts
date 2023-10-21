@@ -1,9 +1,8 @@
-import moment from 'moment-timezone'
-import sortBy from 'lodash/sortBy'
-import type {DayOfWeekEnumType, SingleBuildingScheduleType} from '../types'
-
-import {daysOfTheWeek} from './constants'
 import {formatDay} from '../../sis/course-search/lib/format-day'
+import type {DayOfWeekEnumType, SingleBuildingScheduleType} from '../types'
+import {daysOfTheWeek} from './constants'
+import sortBy from 'lodash/sortBy'
+import moment from 'moment-timezone'
 
 export function summarizeDays(
 	days: DayOfWeekEnumType[],

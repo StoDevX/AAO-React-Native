@@ -1,17 +1,19 @@
 import * as React from 'react'
+import {TextInput} from 'react-native'
+
 import {Cell, Section} from '@frogpond/tableview'
 import {CellTextField} from '@frogpond/tableview/cells'
-import {LoginButton} from './login-button'
-import {
-	performLogin,
-	useCredentials,
-	invalidateCredentials,
-	storeCredentials,
-	resetCredentials,
-} from '../../../../lib/login'
-import {TextInput} from 'react-native'
-import {useMutation} from '@tanstack/react-query'
+
 import {sto} from '../../../../lib/colors'
+import {
+	invalidateCredentials,
+	performLogin,
+	resetCredentials,
+	storeCredentials,
+	useCredentials,
+} from '../../../../lib/login'
+import {LoginButton} from './login-button'
+import {useMutation} from '@tanstack/react-query'
 
 export const CredentialsLoginSection = (): JSX.Element => {
 	let [username, setUsername] = React.useState('')

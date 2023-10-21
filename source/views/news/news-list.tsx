@@ -1,13 +1,15 @@
 import * as React from 'react'
 import {FlatList, StyleSheet} from 'react-native'
-import type {StoryType} from './types'
+
 import * as c from '@frogpond/colors'
+import {FilterToolbar, ListType} from '@frogpond/filter'
 import {ListSeparator} from '@frogpond/lists'
 import {LoadingView, NoticeView} from '@frogpond/notice'
 import {openUrl} from '@frogpond/open-url'
-import {NewsRow} from './news-row'
+
 import {cleanEntries, trimStoryCateogry} from './lib/util'
-import {FilterToolbar, ListType} from '@frogpond/filter'
+import {NewsRow} from './news-row'
+import type {StoryType} from './types'
 import {UseQueryResult} from '@tanstack/react-query'
 
 type Props = {

@@ -1,7 +1,7 @@
-import {expect, it} from '@jest/globals'
+import {SingleBuildingScheduleType} from '../../types'
 import {parseHours} from '../parse-hours'
 import {dayMoment, hourMoment, moment, plainMoment} from './moment.helper'
-import {SingleBuildingScheduleType} from '../../types'
+import {expect, it} from '@jest/globals'
 
 it('returns an {open, close} tuple', () => {
 	let now = hourMoment('10:01am')

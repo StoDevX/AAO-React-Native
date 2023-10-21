@@ -1,14 +1,17 @@
 import * as React from 'react'
-import {ScrollView, Text, View, StyleSheet} from 'react-native'
-import moment from 'moment'
-import {Card} from '@frogpond/silly-card'
-import * as c from '@frogpond/colors'
-import {sendEmail} from '../../components/send-email'
-import {openUrl} from '@frogpond/open-url'
-import {showNameOrEmail} from './util'
+import {ScrollView, StyleSheet, Text, View} from 'react-native'
+
 import {RouteProp, useRoute} from '@react-navigation/native'
-import {RootStackParamList} from '../../navigation/types'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+
+import * as c from '@frogpond/colors'
+import {openUrl} from '@frogpond/open-url'
+import {Card} from '@frogpond/silly-card'
+
+import {sendEmail} from '../../components/send-email'
+import {RootStackParamList} from '../../navigation/types'
+import {showNameOrEmail} from './util'
+import moment from 'moment'
 
 const styles = StyleSheet.create({
 	name: {

@@ -1,12 +1,13 @@
-import type {Moment} from 'moment'
-import moment from 'moment-timezone'
-import findIndex from 'lodash/findIndex'
 import {timezone} from '@frogpond/constants'
+
 import type {
 	DayPartMenuType,
 	DayPartsCollectionType,
 	ProcessedMealType,
 } from '../types'
+import findIndex from 'lodash/findIndex'
+import type {Moment} from 'moment'
+import moment from 'moment-timezone'
 
 export function findMenu(
 	dayparts: DayPartsCollectionType,

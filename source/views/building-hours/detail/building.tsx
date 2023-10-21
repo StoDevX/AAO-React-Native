@@ -1,15 +1,16 @@
 import * as React from 'react'
-import {ScrollView, StyleSheet, Image} from 'react-native'
-import {images as buildingImages} from '../../../../images/spaces'
-import type {BuildingType} from '../types'
-import type {Moment} from 'moment-timezone'
-import {getShortBuildingStatus, hoursBackgroundColors} from '../lib'
+import {Image, ScrollView, StyleSheet} from 'react-native'
 
 import {SolidBadge as Badge} from '@frogpond/badge'
-import {Header} from './header'
-import {ScheduleTable} from './schedule-table'
 import {ListFooter} from '@frogpond/lists'
+
+import {images as buildingImages} from '../../../../images/spaces'
+import {getShortBuildingStatus, hoursBackgroundColors} from '../lib'
+import type {BuildingType} from '../types'
+import {Header} from './header'
 import {LinkTable} from './link-table'
+import {ScheduleTable} from './schedule-table'
+import type {Moment} from 'moment-timezone'
 
 const styles = StyleSheet.create({
 	image: {

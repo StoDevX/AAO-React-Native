@@ -1,4 +1,5 @@
 import type {EventType} from '@frogpond/event-type'
+
 import type {Moment} from 'moment-timezone'
 
 export interface PoweredBy {

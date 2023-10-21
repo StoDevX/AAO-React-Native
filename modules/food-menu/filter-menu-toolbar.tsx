@@ -1,10 +1,12 @@
 import * as React from 'react'
 import {StyleSheet, Text, View} from 'react-native'
-import type {Moment} from 'moment'
+
+import * as c from '@frogpond/colors'
 import type {FilterType} from '@frogpond/filter'
 import {FilterToolbar, FilterToolbarButton} from '@frogpond/filter'
 import {Toolbar} from '@frogpond/toolbar'
-import * as c from '@frogpond/colors'
+
+import type {Moment} from 'moment'
 
 const styles = StyleSheet.create({
 	today: {

@@ -1,17 +1,20 @@
 import * as React from 'react'
 import {
-	StyleSheet,
 	Platform,
-	View,
+	StyleSheet,
 	Text,
 	TouchableOpacity,
 	useColorScheme,
+	View,
 } from 'react-native'
-import {Button} from '@frogpond/button'
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+
 import NetworkLogger, {getBackHandler} from 'react-native-network-logger'
-import {CloseScreenButton} from '@frogpond/navigation-buttons'
+
+import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+
+import {Button} from '@frogpond/button'
 import * as c from '@frogpond/colors'
+import {CloseScreenButton} from '@frogpond/navigation-buttons'
 
 export const NetworkLoggerView = (): JSX.Element => {
 	const goBack = () => setUnmountNetworkLogger(true)

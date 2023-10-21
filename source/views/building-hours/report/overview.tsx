@@ -3,30 +3,33 @@
  */
 
 import * as React from 'react'
-import {Alert, ScrollView, Platform, View} from 'react-native'
-import moment from 'moment-timezone'
-import type {Moment} from 'moment-timezone'
-import noop from 'lodash/noop'
-import jsYaml from 'js-yaml'
+import {Alert, Platform, ScrollView, View} from 'react-native'
+
+import {RouteProp, useNavigation, useRoute} from '@react-navigation/native'
+import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+
 import {InfoHeader} from '@frogpond/info-header'
-import {TableView, Section, Cell} from '@frogpond/tableview'
+import {CloseScreenButton} from '@frogpond/navigation-buttons'
+import {Cell, Section, TableView} from '@frogpond/tableview'
 import {
+	ButtonCell,
 	CellTextField,
 	CellToggle,
 	DeleteButtonCell,
-	ButtonCell,
 } from '@frogpond/tableview/cells'
+
+import {RootStackParamList} from '../../../navigation/types'
+import {blankSchedule, formatBuildingTimes, summarizeDays} from '../lib'
 import type {
 	BuildingType,
 	NamedBuildingScheduleType,
 	SingleBuildingScheduleType,
 } from '../types'
-import {summarizeDays, formatBuildingTimes, blankSchedule} from '../lib'
 import {submitReport} from './submit'
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
-import {RouteProp, useNavigation, useRoute} from '@react-navigation/native'
-import {CloseScreenButton} from '@frogpond/navigation-buttons'
-import {RootStackParamList} from '../../../navigation/types'
+import jsYaml from 'js-yaml'
+import noop from 'lodash/noop'
+import type {Moment} from 'moment-timezone'
+import moment from 'moment-timezone'
 
 export let BuildingHoursProblemReportView = (): JSX.Element => {
 	let navigation = useNavigation()

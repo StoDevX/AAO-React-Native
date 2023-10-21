@@ -1,26 +1,29 @@
 import * as React from 'react'
-import {Alert, StyleSheet, ScrollView, Text, TextProps} from 'react-native'
-import {TableView, Section, Cell} from '@frogpond/tableview'
-import {ButtonCell} from '@frogpond/tableview/cells'
+import {Alert, ScrollView, StyleSheet, Text, TextProps} from 'react-native'
+
+import {RouteProp, useNavigation, useRoute} from '@react-navigation/native'
+import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+
 import * as c from '@frogpond/colors'
+import {DebugNoticeButton} from '@frogpond/navigation-buttons'
+import {LoadingView} from '@frogpond/notice'
+import {Cell, Section, TableView} from '@frogpond/tableview'
+import {ButtonCell} from '@frogpond/tableview/cells'
+
+import {useUsername} from '../../lib/login'
+import {
+	isStoprintMocked,
+	type Printer,
+	type PrintJob,
+	showGeneralError,
+} from '../../lib/stoprint'
 import {
 	cancelPrintJobForUser,
 	releasePrintJobToPrinterForUser,
 } from '../../lib/stoprint/api'
-import {
-	isStoprintMocked,
-	showGeneralError,
-	type Printer,
-	type PrintJob,
-} from '../../lib/stoprint'
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
-import {RouteProp, useNavigation, useRoute} from '@react-navigation/native'
 import {RootStackParamList} from '../../navigation/types'
-import {DebugNoticeButton} from '@frogpond/navigation-buttons'
 import {useHeldJobs} from './query'
 import {useMutation} from '@tanstack/react-query'
-import {useUsername} from '../../lib/login'
-import {LoadingView} from '@frogpond/notice'
 
 const styles = StyleSheet.create({
 	cancelButton: {

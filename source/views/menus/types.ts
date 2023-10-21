@@ -1,22 +1,22 @@
 import type {
-	MenuItemType,
-	StationMenuType,
-	MenuItemContainerType,
-	MasterCorIconMapType,
-	ProcessedMealType,
-	DayPartsCollectionType,
-	DayPartMenuType,
 	CorIconType,
+	DayPartMenuType,
+	DayPartsCollectionType,
+	MasterCorIconMapType,
+	MenuItemContainerType,
+	MenuItemType,
+	ProcessedMealType,
+	StationMenuType,
 } from '@frogpond/food-menu'
 
 export type {
-	MenuItemType,
-	StationMenuType,
-	MenuItemContainerType,
-	MasterCorIconMapType,
-	ProcessedMealType,
-	DayPartsCollectionType,
 	DayPartMenuType,
+	DayPartsCollectionType,
+	MasterCorIconMapType,
+	MenuItemContainerType,
+	MenuItemType,
+	ProcessedMealType,
+	StationMenuType,
 }
 
 export type NumericStringType = string

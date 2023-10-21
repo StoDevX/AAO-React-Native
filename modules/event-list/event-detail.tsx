@@ -1,14 +1,15 @@
 import {Platform} from 'react-native'
 
-import {
-	EventDetail as IosEventDetail,
-	NavigationOptions as IOSDetailNavigationOptions,
-} from './event-detail-ios'
+import {EventType} from '@frogpond/event-type'
+
 import {
 	EventDetail as AndroidEventDetail,
 	NavigationOptions as AndroidDetailNavigationOptions,
 } from './event-detail-android'
-import {EventType} from '@frogpond/event-type'
+import {
+	EventDetail as IosEventDetail,
+	NavigationOptions as IOSDetailNavigationOptions,
+} from './event-detail-ios'
 import {PoweredBy} from './types'
 
 export const EventDetailNavigationOptions =

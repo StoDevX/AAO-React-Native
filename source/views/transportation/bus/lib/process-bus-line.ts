@@ -5,7 +5,6 @@ import type {
 	UnprocessedBusSchedule,
 } from '../types'
 import {BusTimetableEntry} from '../types'
-
 import {parseTime} from './parse-time'
 import type {Moment} from 'moment'
 

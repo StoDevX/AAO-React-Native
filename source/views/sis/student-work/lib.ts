@@ -1,4 +1,5 @@
 import {Platform, Share} from 'react-native'
+
 import type {JobType} from './types'
 
 export function shareJob(job: JobType): void {

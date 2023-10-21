@@ -1,11 +1,13 @@
 import * as React from 'react'
-import type {FilterType, ListItemSpecType, ListType, ToggleType} from './types'
 import {ScrollView, StyleSheet} from 'react-native'
+
 import {Toolbar} from '@frogpond/toolbar'
-import {FilterToolbarButton} from './filter-toolbar-button'
+
 import {ActiveFilterButton} from './active-filter-button'
-import flatten from 'lodash/flatten'
+import {FilterToolbarButton} from './filter-toolbar-button'
+import type {FilterType, ListItemSpecType, ListType, ToggleType} from './types'
 import cloneDeep from 'lodash/cloneDeep'
+import flatten from 'lodash/flatten'
 
 type Props<T extends object> = {
 	filters: Array<FilterType<T>>

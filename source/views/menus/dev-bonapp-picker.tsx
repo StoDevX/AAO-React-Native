@@ -1,10 +1,13 @@
 import * as React from 'react'
-import {View, TextInput, StyleSheet} from 'react-native'
-import {NoticeView} from '@frogpond/notice'
-import * as c from '@frogpond/colors'
-import {Toolbar} from '@frogpond/toolbar'
-import {BonAppHostedMenu} from './menu-bonapp'
+import {StyleSheet, TextInput, View} from 'react-native'
+
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+
+import * as c from '@frogpond/colors'
+import {NoticeView} from '@frogpond/notice'
+import {Toolbar} from '@frogpond/toolbar'
+
+import {BonAppHostedMenu} from './menu-bonapp'
 
 export const DevBonAppNavigationOptions: NativeStackNavigationOptions = {
 	title: 'Dev BonApp Picker',

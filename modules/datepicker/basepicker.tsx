@@ -1,15 +1,13 @@
 import * as React from 'react'
 import {Button} from 'react-native'
 
-import type {Moment} from 'moment-timezone'
-import moment from 'moment-timezone'
-
+import {BaseDatetimePickerProps} from './types'
 import {
 	DateTimePickerEvent,
 	default as DateTimePicker,
 } from '@react-native-community/datetimepicker'
-
-import {BaseDatetimePickerProps} from './types'
+import type {Moment} from 'moment-timezone'
+import moment from 'moment-timezone'
 
 const FORMATS = {
 	date: 'YYYY-MM-DD',

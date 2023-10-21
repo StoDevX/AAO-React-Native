@@ -1,7 +1,7 @@
-import {expect, it} from '@jest/globals'
 import {applyFilter} from '../apply-filters'
-import {filterValue} from './filter-value.helper'
 import type {FilterType} from '../types'
+import {filterValue} from './filter-value.helper'
+import {expect, it} from '@jest/globals'
 
 it('should return `true` if the filter is disabled', () => {
 	let filter: FilterType<{categories: string[]}> = {

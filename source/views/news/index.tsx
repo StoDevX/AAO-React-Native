@@ -1,10 +1,12 @@
 import * as React from 'react'
 import {Platform} from 'react-native'
+
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+
 import {
-	MaterialIcon,
-	IosIcon,
 	createTabNavigator,
+	IosIcon,
+	MaterialIcon,
 	type Tab,
 } from '@frogpond/navigation-tabs'
 

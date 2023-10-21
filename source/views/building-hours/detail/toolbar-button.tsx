@@ -1,10 +1,12 @@
 import * as React from 'react'
+
 import {FavoriteButton} from '@frogpond/navigation-buttons'
+
+import {useAppDispatch, useAppSelector} from '../../../redux'
 import {
 	selectFavoriteBuildings,
 	toggleFavoriteBuilding,
 } from '../../../redux/parts/buildings'
-import {useAppDispatch, useAppSelector} from '../../../redux'
 
 type Props = {
 	buildingName: string

@@ -3,9 +3,11 @@
  */
 
 import * as React from 'react'
-import {TableView, Section} from '@frogpond/tableview'
-import {PushButtonCell} from '@frogpond/tableview/cells'
+
 import {openUrl} from '@frogpond/open-url'
+import {Section, TableView} from '@frogpond/tableview'
+import {PushButtonCell} from '@frogpond/tableview/cells'
+
 import type {BuildingLinkType} from '../types'
 
 type Props = {

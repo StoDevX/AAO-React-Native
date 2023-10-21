@@ -1,24 +1,26 @@
 import {Platform} from 'react-native'
+
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+
 import {
-	MaterialIcon,
-	IosIcon,
 	createTabNavigator,
+	IosIcon,
+	MaterialIcon,
 	type Tab,
 } from '@frogpond/navigation-tabs'
 
 import {BalancesOrAcknowledgementView} from './balances-acknowledgement'
 import {View as StudentWorkView} from './student-work'
 
-export * as studentwork from './student-work'
 export {
-	CourseSearchView,
-	CourseSearchResultsView,
 	CourseDetailView,
-	CourseSearchNavigationOptions,
-	CourseSearchViewNavigationOptions,
 	CourseSearchDetailNavigationOptions,
+	CourseSearchNavigationOptions,
+	CourseSearchResultsView,
+	CourseSearchView,
+	CourseSearchViewNavigationOptions,
 } from './course-search'
+export * as studentwork from './student-work'
 
 type Params = {
 	BalancesView: undefined

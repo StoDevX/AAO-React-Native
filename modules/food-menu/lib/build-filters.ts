@@ -1,9 +1,3 @@
-import type {Moment} from 'moment'
-import type {
-	MasterCorIconMapType,
-	MenuItemType,
-	ProcessedMealType,
-} from '../types'
 import type {
 	FilterType,
 	ListType,
@@ -11,7 +5,14 @@ import type {
 	ToggleType,
 } from '@frogpond/filter/types'
 import {decode, fastGetTrimmedText} from '@frogpond/html-lib'
+
+import type {
+	MasterCorIconMapType,
+	MenuItemType,
+	ProcessedMealType,
+} from '../types'
 import {chooseMeal, EMPTY_MEAL} from './choose-meal'
+import type {Moment} from 'moment'
 
 export function buildFilters(
 	foodItems: MenuItemType[],

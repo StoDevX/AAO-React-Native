@@ -1,10 +1,13 @@
 import * as React from 'react'
-import {BusLine} from './line'
-import {LoadingView, NoticeView} from '@frogpond/notice'
-import {timezone} from '@frogpond/constants'
+
 import {useNavigation} from '@react-navigation/native'
-import {useBusRoutes} from './query'
+
+import {timezone} from '@frogpond/constants'
+import {LoadingView, NoticeView} from '@frogpond/notice'
 import {useMomentTimer} from '@frogpond/timer'
+
+import {BusLine} from './line'
+import {useBusRoutes} from './query'
 
 type Props = {
 	line: string

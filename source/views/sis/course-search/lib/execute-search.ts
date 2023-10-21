@@ -1,6 +1,6 @@
 import type {CourseType as Course} from '../../../../lib/course-search'
-import keywordSearch from 'keyword-search'
 import {deptNum} from './format-dept-num'
+import keywordSearch from 'keyword-search'
 import groupBy from 'lodash/groupBy'
 import sortBy from 'lodash/sortBy'
 import toPairs from 'lodash/toPairs'

@@ -1,15 +1,17 @@
 import * as React from 'react'
-import {StyleSheet, SectionList} from 'react-native'
-import {BuildingRow} from './row'
-import {useGroupedBuildings} from './query'
-import {BuildingType} from './types'
+import {SectionList, StyleSheet} from 'react-native'
+
+import {useNavigation} from '@react-navigation/native'
+import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 
 import * as c from '@frogpond/colors'
-import {ListSeparator, ListSectionHeader} from '@frogpond/lists'
+import {ListSectionHeader, ListSeparator} from '@frogpond/lists'
 import {LoadingView, NoticeView} from '@frogpond/notice'
-import {useNavigation} from '@react-navigation/native'
 import {useMomentTimer} from '@frogpond/timer'
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+
+import {useGroupedBuildings} from './query'
+import {BuildingRow} from './row'
+import {BuildingType} from './types'
 
 export {BuildingHoursDetailView} from './detail'
 

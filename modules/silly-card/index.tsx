@@ -1,13 +1,15 @@
 import * as React from 'react'
 import {
-	View,
-	Text,
-	StyleSheet,
 	Platform,
 	StyleProp,
+	StyleSheet,
+	Text,
+	View,
 	ViewStyle,
 } from 'react-native'
-import {material, iOSUIKit} from 'react-native-typography'
+
+import {iOSUIKit, material} from 'react-native-typography'
+
 import * as c from '@frogpond/colors'
 
 const cardStyles = StyleSheet.create({

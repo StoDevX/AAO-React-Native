@@ -1,10 +1,11 @@
 import * as React from 'react'
 import {StyleProp, ViewStyle} from 'react-native'
-import type {Moment} from 'moment-timezone'
+
 import type {
 	AndroidNativeProps,
 	IOSNativeProps,
 } from '@react-native-community/datetimepicker'
+import type {Moment} from 'moment-timezone'
 
 export interface BaseDatetimePickerProps {
 	// dep-specific

@@ -1,10 +1,10 @@
-import {parseDocument} from 'htmlparser2'
-import {textContent} from 'domutils'
-import {AnyNode, Document} from 'domhandler'
 import cssSelect from 'css-select'
+import {AnyNode, Document} from 'domhandler'
+import {textContent} from 'domutils'
+import {parseDocument} from 'htmlparser2'
 
-export {textContent, cssSelect}
-export {encode, decode} from 'html-entities'
+export {cssSelect, textContent}
+export {decode, encode} from 'html-entities'
 
 export function parseHtml(string: string): Document {
 	return parseDocument(string, {

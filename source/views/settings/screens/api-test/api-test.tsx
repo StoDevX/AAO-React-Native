@@ -1,22 +1,24 @@
 import * as React from 'react'
-import * as c from '@frogpond/colors'
-import {Platform, StyleSheet, TextInput, Text, View} from 'react-native'
-import {client} from '@frogpond/api'
-import {useDebounce} from '@frogpond/use-debounce'
-import {useQuery} from '@tanstack/react-query'
-import {CellToggle} from '@frogpond/tableview/cells'
-import {HtmlContent} from '@frogpond/html-content'
-import {Icon} from '@frogpond/icon'
-import {CloseScreenButton} from '@frogpond/navigation-buttons'
+import {Platform, StyleSheet, Text, TextInput, View} from 'react-native'
+
+import {iOSUIKit, material} from 'react-native-typography'
 
 import {useNavigation} from '@react-navigation/native'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
-import {iOSUIKit, material} from 'react-native-typography'
 
+import {client} from '@frogpond/api'
+import * as c from '@frogpond/colors'
+import {HtmlContent} from '@frogpond/html-content'
+import {Icon} from '@frogpond/icon'
+import {CloseScreenButton} from '@frogpond/navigation-buttons'
+import {CellToggle} from '@frogpond/tableview/cells'
+import {useDebounce} from '@frogpond/use-debounce'
+
+import {ChangeTextEvent} from '../../../../navigation/types'
 import {DebugView} from '../debug'
 import {syntaxHighlight} from './util/highlight'
 import {CSS_CODE_STYLES} from './util/highlight-styles'
-import {ChangeTextEvent} from '../../../../navigation/types'
+import {useQuery} from '@tanstack/react-query'
 
 const styles = StyleSheet.create({
 	container: {

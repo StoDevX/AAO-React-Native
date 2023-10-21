@@ -1,7 +1,8 @@
-import {filterListSpecs} from '@frogpond/filter'
 import type {FilterType} from '@frogpond/filter'
-import {formatTerms} from './format-terms'
+import {filterListSpecs} from '@frogpond/filter'
+
 import {CourseType} from '../../../../lib/course-search'
+import {formatTerms} from './format-terms'
 
 export type FilterComboType = {
 	filters: FilterType<CourseType>[]

@@ -1,8 +1,8 @@
-import {expect, test} from '@jest/globals'
+import type {BusSchedule, UnprocessedBusSchedule} from '../../types'
 import {getScheduleForNow} from '../get-schedule-for-now'
 import {processBusSchedule} from '../process-bus-line'
+import {expect, test} from '@jest/globals'
 import moment from 'moment'
-import type {BusSchedule, UnprocessedBusSchedule} from '../../types'
 
 // prettier-ignore
 function buildBusSchedules(now: moment.Moment): Array<BusSchedule> {

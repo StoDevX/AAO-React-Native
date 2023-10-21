@@ -6,6 +6,7 @@ import {
 	setItem,
 	setStoragePrefix,
 } from '@frogpond/storage'
+
 import type {FilterComboType} from '../views/sis/course-search/lib/format-filter-combo'
 import type {CourseType, TermType} from './course-search/types'
 

@@ -1,8 +1,8 @@
-import ky from 'ky'
-import {OLECARD_DATA_ENDPOINT} from './urls'
-import type {BalancesShapeType, OleCardBalancesType} from './types'
 import {performLogin} from '../login'
+import type {BalancesShapeType, OleCardBalancesType} from './types'
+import {OLECARD_DATA_ENDPOINT} from './urls'
 import {useQuery, UseQueryResult} from '@tanstack/react-query'
+import ky from 'ky'
 
 export const queryKeys = {
 	default: (username: string | undefined) => ['balances', username] as const,

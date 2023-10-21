@@ -1,13 +1,16 @@
 import * as React from 'react'
-import {StyleSheet, SectionList} from 'react-native'
-import * as c from '@frogpond/colors'
-import {ListSeparator, ListSectionHeader} from '@frogpond/lists'
-import {NoticeView, LoadingView} from '@frogpond/notice'
-import {JobRow} from './job-row'
-import type {JobType} from './types'
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+import {SectionList, StyleSheet} from 'react-native'
+
 import {useNavigation} from '@react-navigation/native'
+import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+
+import * as c from '@frogpond/colors'
+import {ListSectionHeader, ListSeparator} from '@frogpond/lists'
+import {LoadingView, NoticeView} from '@frogpond/notice'
+
+import {JobRow} from './job-row'
 import {useStudentWorkPostings} from './query'
+import type {JobType} from './types'
 
 const styles = StyleSheet.create({
 	listContainer: {

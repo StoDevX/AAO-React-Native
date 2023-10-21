@@ -1,8 +1,10 @@
 import {Platform} from 'react-native'
-import tinycolor from 'tinycolor2'
-import {sto} from './colors'
-import {firstReadable} from '@frogpond/colors'
+
 import type {AppTheme} from '@frogpond/app-theme'
+import {firstReadable} from '@frogpond/colors'
+
+import {sto} from './colors'
+import tinycolor from 'tinycolor2'
 
 /**
  * The primary color of the app.

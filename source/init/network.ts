@@ -1,5 +1,6 @@
-import {isDevMode} from '@frogpond/constants'
 import {startNetworkLogging} from 'react-native-network-logger'
+
+import {isDevMode} from '@frogpond/constants'
 
 function initNetworkLogging() {
 	if (!isDevMode()) {

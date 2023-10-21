@@ -1,6 +1,7 @@
-import {parseTerm} from '../../../../lib/course-search/parse-term'
 import type {FilterType, ListType, ToggleType} from '@frogpond/filter'
+
 import {CourseType} from '../../../../lib/course-search'
+import {parseTerm} from '../../../../lib/course-search/parse-term'
 import {useAvailableTerms, useDepartments, useGeReqs} from '../query'
 
 export function useFilters(): {

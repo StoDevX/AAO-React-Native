@@ -1,5 +1,5 @@
 export {useAppDispatch, useAppSelector} from './hooks'
-export {type AppDispatch, type RootState, store, persistor} from './store'
 export {selectFavoriteBuildings} from './parts/buildings'
-export {selectAcknowledgement} from './parts/settings'
 export {selectRecentFilters, selectRecentSearches} from './parts/courses'
+export {selectAcknowledgement} from './parts/settings'
+export {type AppDispatch, persistor, type RootState, store} from './store'

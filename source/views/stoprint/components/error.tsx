@@ -1,8 +1,11 @@
 import * as React from 'react'
 import {Platform, RefreshControl, ScrollView, StyleSheet} from 'react-native'
+
 import Icon from 'react-native-vector-icons/Ionicons'
-import {NoticeView} from '@frogpond/notice'
+
 import * as c from '@frogpond/colors'
+import {NoticeView} from '@frogpond/notice'
+
 import {openEmail} from '../../settings/screens/overview/support'
 
 const ERROR_MESSAGE =

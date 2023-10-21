@@ -1,6 +1,6 @@
-import {expect, it} from '@jest/globals'
 import {isChapelTime} from '../chapel'
 import {dayMoment} from './moment.helper'
+import {expect, it} from '@jest/globals'
 
 it('checks if a moment is during chapel time', () => {
 	let m = isChapelTime(dayMoment('Mon 10:10am'))

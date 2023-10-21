@@ -1,6 +1,6 @@
 /* eslint-disable camelcase */
-import type {MenuItemType} from '../../types'
 import type {ItemCorIconMapType} from '../../../../../modules/food-menu/types'
+import type {MenuItemType} from '../../types'
 
 export const item: (params: {
 	cor_icon?: ItemCorIconMapType

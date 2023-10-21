@@ -1,11 +1,13 @@
 import * as React from 'react'
-import {OtherModesRow} from './row'
-import * as c from '@frogpond/colors'
 import {SectionList, StyleSheet} from 'react-native'
+
+import * as c from '@frogpond/colors'
 import {ListEmpty, ListSectionHeader, ListSeparator} from '@frogpond/lists'
-import {openUrl} from '@frogpond/open-url'
-import {useOtherModesGrouped} from './query'
 import {LoadingView, NoticeView} from '@frogpond/notice'
+import {openUrl} from '@frogpond/open-url'
+
+import {useOtherModesGrouped} from './query'
+import {OtherModesRow} from './row'
 
 const styles = StyleSheet.create({
 	listContainer: {

@@ -4,9 +4,11 @@
  */
 
 import * as React from 'react'
-import {View, Text, StyleSheet} from 'react-native'
-import type {BuildingType} from '../types'
+import {StyleSheet, Text, View} from 'react-native'
+
 import * as c from '@frogpond/colors'
+
+import type {BuildingType} from '../types'
 
 type Props = {building: BuildingType}
 

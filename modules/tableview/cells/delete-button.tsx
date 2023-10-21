@@ -1,7 +1,9 @@
 import * as React from 'react'
-import {StyleSheet, Alert} from 'react-native'
-import {Cell} from '@frogpond/tableview'
+import {Alert, StyleSheet} from 'react-native'
+
 import * as c from '@frogpond/colors'
+import {Cell} from '@frogpond/tableview'
+
 import noop from 'lodash/noop'
 
 const deleteStyles = StyleSheet.create({

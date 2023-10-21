@@ -1,5 +1,5 @@
-import ky, {Options} from 'ky'
 import {CourseType, RawCourseType, TermInfoType, TermType} from './types'
+import ky, {Options} from 'ky'
 import intersection from 'lodash/intersection'
 
 const BASE_URL = 'https://stolaf.dev'

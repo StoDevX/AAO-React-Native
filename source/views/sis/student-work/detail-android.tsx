@@ -1,17 +1,20 @@
 import * as React from 'react'
-import {Text, View, ScrollView, StyleSheet} from 'react-native'
-import {sendEmail} from '../../../components/send-email'
-import {callPhone} from '../../../components/call-phone'
-import {Card} from '@frogpond/silly-card'
-import moment from 'moment'
-import {openUrl} from '@frogpond/open-url'
-import * as c from '@frogpond/colors'
-import type {JobType} from './types'
-import {ShareButton} from '@frogpond/navigation-buttons'
-import {shareJob} from './lib'
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+import {ScrollView, StyleSheet, Text, View} from 'react-native'
+
 import {RouteProp, useRoute} from '@react-navigation/native'
+import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+
+import * as c from '@frogpond/colors'
+import {ShareButton} from '@frogpond/navigation-buttons'
+import {openUrl} from '@frogpond/open-url'
+import {Card} from '@frogpond/silly-card'
+
+import {callPhone} from '../../../components/call-phone'
+import {sendEmail} from '../../../components/send-email'
 import {RootStackParamList} from '../../../navigation/types'
+import {shareJob} from './lib'
+import type {JobType} from './types'
+import moment from 'moment'
 
 const styles = StyleSheet.create({
 	name: {

@@ -1,11 +1,14 @@
 import * as React from 'react'
 import {Platform, ScrollView, StyleSheet, View} from 'react-native'
-import {Row} from '@frogpond/layout'
-import {ListRow, ListSeparator, Title} from '@frogpond/lists'
-import {BonAppHostedMenu} from './menu-bonapp'
+
 import {useNavigation} from '@react-navigation/native'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+
+import {Row} from '@frogpond/layout'
+import {ListRow, ListSeparator, Title} from '@frogpond/lists'
+
 import {CafeMenuParamList} from '../../navigation/types'
+import {BonAppHostedMenu} from './menu-bonapp'
 
 export const CarletonBurtonMenuScreen = (): JSX.Element => (
 	<BonAppHostedMenu

@@ -1,7 +1,8 @@
-import type {Moment} from 'moment'
-import type {ProcessedMealType} from '../types'
 import type {FilterType, PickerType} from '@frogpond/filter'
+
+import type {ProcessedMealType} from '../types'
 import {findMeal} from './find-menu'
+import type {Moment} from 'moment'
 
 export const EMPTY_MEAL: ProcessedMealType = {
 	label: '',

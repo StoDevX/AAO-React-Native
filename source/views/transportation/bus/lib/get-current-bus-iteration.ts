@@ -1,8 +1,8 @@
+import type {BusSchedule, DepartureTimeList} from '../types'
 import find from 'lodash/find'
 import findLast from 'lodash/findLast'
 import findLastIndex from 'lodash/findLastIndex'
 import type {Moment} from 'moment-timezone'
-import type {BusSchedule, DepartureTimeList} from '../types'
 
 const isTruthy = (x: unknown) => Boolean(x)
 

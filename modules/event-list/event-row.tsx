@@ -1,11 +1,13 @@
 import * as React from 'react'
 import {StyleProp, StyleSheet, Text, ViewStyle} from 'react-native'
-import type {EventType} from '@frogpond/event-type'
+
 import * as c from '@frogpond/colors'
+import type {EventType} from '@frogpond/event-type'
 import {Column, Row} from '@frogpond/layout'
 import {Detail, ListRow, Title} from '@frogpond/lists'
-import {Bar} from './vertical-bar'
+
 import {times} from './times'
+import {Bar} from './vertical-bar'
 
 const styles = StyleSheet.create({
 	row: {

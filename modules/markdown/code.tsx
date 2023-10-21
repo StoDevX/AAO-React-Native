@@ -1,5 +1,5 @@
 import React from 'react'
-import {Text, StyleSheet, TextProps} from 'react-native'
+import {StyleSheet, Text, TextProps} from 'react-native'
 
 const styles = StyleSheet.create({
 	code: {},

@@ -1,16 +1,18 @@
 import * as React from 'react'
 import {ColorValue, Platform, StyleSheet} from 'react-native'
+
+import * as c from '@frogpond/colors'
 import {Column} from '@frogpond/layout'
 import {Detail, ListRow, Title} from '@frogpond/lists'
-import type {BusTimetableEntry} from '../types'
-import * as c from '@frogpond/colors'
-import {ProgressChunk} from './progress-chunk'
-import {ScheduleTimes} from './times'
+
 import {
 	BusStateEnum,
 	findBusStopStatus as findStopStatus,
 	findRemainingDeparturesForStop as findRemainingDepartures,
 } from '../lib'
+import type {BusTimetableEntry} from '../types'
+import {ProgressChunk} from './progress-chunk'
+import {ScheduleTimes} from './times'
 import type {Moment} from 'moment'
 
 const styles = StyleSheet.create({

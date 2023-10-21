@@ -1,7 +1,7 @@
-import {expect, test} from '@jest/globals'
+import {UnprocessedBusLine} from '../../types'
 import {processBusSchedule} from '../process-bus-line'
 import {time} from './moment.helper'
-import {UnprocessedBusLine} from '../../types'
+import {expect, test} from '@jest/globals'
 
 // prettier-ignore
 const line: UnprocessedBusLine = {

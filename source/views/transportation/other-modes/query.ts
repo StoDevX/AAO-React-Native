@@ -1,7 +1,8 @@
 import {client} from '@frogpond/api'
+
+import {OtherModeType} from '../types'
 import {useQuery, UseQueryResult} from '@tanstack/react-query'
 import {groupBy, toPairs} from 'lodash'
-import {OtherModeType} from '../types'
 
 export const keys = {
 	all: ['transit', 'modes'] as const,

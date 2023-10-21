@@ -1,5 +1,5 @@
-import {describe, expect, it} from '@jest/globals'
 import {formatEmailParts} from '../send-email'
+import {describe, expect, it} from '@jest/globals'
 
 describe('formatEmailParts', () => {
 	it('should format empty inputs', () => {

@@ -1,6 +1,7 @@
 import {client} from '@frogpond/api'
-import {useQuery, UseQueryResult} from '@tanstack/react-query'
+
 import {WordType} from './types'
+import {useQuery, UseQueryResult} from '@tanstack/react-query'
 
 export const keys = {
 	all: ['dictionary'] as const,

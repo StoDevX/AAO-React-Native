@@ -1,5 +1,6 @@
 import * as React from 'react'
 import {Platform, StyleProp, StyleSheet, View, ViewStyle} from 'react-native'
+
 import * as c from '@frogpond/colors'
 
 const dotBarStyles = StyleSheet.create({

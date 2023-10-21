@@ -4,22 +4,25 @@
 
 import * as React from 'react'
 import {useCallback, useState} from 'react'
-import xor from 'lodash/xor'
 import {Platform, ScrollView, StyleSheet, Text} from 'react-native'
-import type {Moment} from 'moment-timezone'
-import moment from 'moment-timezone'
-import {Cell, Section, TableView} from '@frogpond/tableview'
-import {DeleteButtonCell} from '@frogpond/tableview/cells'
-import type {DayOfWeekEnumType, SingleBuildingScheduleType} from '../types'
-import {Row} from '@frogpond/layout'
-import {blankSchedule, parseHours, summarizeDaysAndHours} from '../lib'
+
+import {RouteProp, useNavigation, useRoute} from '@react-navigation/native'
+import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+
 import * as c from '@frogpond/colors'
 import {DatePicker} from '@frogpond/datepicker'
-import {Touchable} from '@frogpond/touchable'
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+import {Row} from '@frogpond/layout'
 import {CloseScreenButton} from '@frogpond/navigation-buttons'
-import {RouteProp, useNavigation, useRoute} from '@react-navigation/native'
+import {Cell, Section, TableView} from '@frogpond/tableview'
+import {DeleteButtonCell} from '@frogpond/tableview/cells'
+import {Touchable} from '@frogpond/touchable'
+
 import {RootStackParamList} from '../../../navigation/types'
+import {blankSchedule, parseHours, summarizeDaysAndHours} from '../lib'
+import type {DayOfWeekEnumType, SingleBuildingScheduleType} from '../types'
+import xor from 'lodash/xor'
+import type {Moment} from 'moment-timezone'
+import moment from 'moment-timezone'
 
 export type RouteParams = {
 	set: SingleBuildingScheduleType | undefined

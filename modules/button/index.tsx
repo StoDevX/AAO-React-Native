@@ -6,10 +6,13 @@ import {
 	TextStyle,
 	ViewStyle,
 } from 'react-native'
+
 import BasicButton from 'react-native-button'
-import noop from 'lodash/noop'
 import {iOSUIKit, material} from 'react-native-typography'
+
 import * as c from '@frogpond/colors'
+
+import noop from 'lodash/noop'
 
 const styles = StyleSheet.create({
 	button: {

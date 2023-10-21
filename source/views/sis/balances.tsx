@@ -1,18 +1,21 @@
 import * as React from 'react'
 import {
-	StyleSheet,
-	ScrollView,
-	View,
-	Text,
 	RefreshControl,
+	ScrollView,
 	StyleProp,
+	StyleSheet,
+	Text,
+	View,
 	ViewStyle,
 } from 'react-native'
-import {Cell, TableView, Section} from '@frogpond/tableview'
-import {BalancesShapeType, useBalances} from '../../lib/financials'
-import * as c from '@frogpond/colors'
-import {sto} from '../../lib/colors'
+
 import {useNavigation} from '@react-navigation/native'
+
+import * as c from '@frogpond/colors'
+import {Cell, Section, TableView} from '@frogpond/tableview'
+
+import {sto} from '../../lib/colors'
+import {BalancesShapeType, useBalances} from '../../lib/financials'
 import {NoCredentialsError, useUsername} from '../../lib/login'
 
 const DISCLAIMER = 'This data may be outdated or otherwise inaccurate.'

@@ -1,6 +1,7 @@
-import moment from 'moment-timezone'
-import type {EventType} from '@frogpond/event-type'
 import type {EventDetailTime} from '@frogpond/event-list/types'
+import type {EventType} from '@frogpond/event-type'
+
+import moment from 'moment-timezone'
 
 export function times(event: EventType): EventDetailTime {
 	let eventLength = moment

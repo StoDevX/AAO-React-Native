@@ -1,13 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* stoprint and papercut api mock data */
 
-import {mockAllPrinters} from './data/all-printers'
-import {mockHeldJobs} from './data/held-jobs'
-import {mockJobs} from './data/jobs'
-import {mockRecent} from './data/recent'
-import {mockRelease} from './data/release'
-
 import {SharedWebCredentials} from 'react-native-keychain'
+
 import type {
 	AllPrintersResponse,
 	HeldJobsResponse,
@@ -15,6 +10,11 @@ import type {
 	RecentPopularPrintersResponse,
 	ReleaseResponse,
 } from '../types'
+import {mockAllPrinters} from './data/all-printers'
+import {mockHeldJobs} from './data/held-jobs'
+import {mockJobs} from './data/jobs'
+import {mockRecent} from './data/recent'
+import {mockRelease} from './data/release'
 
 function papercut<T>(mockData: T): Promise<T> {
 	return new Promise((resolve) => resolve(mockData))

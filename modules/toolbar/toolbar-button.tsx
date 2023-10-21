@@ -1,8 +1,9 @@
 import * as React from 'react'
-import {StyleSheet, View, Text} from 'react-native'
-import {Icon} from '@frogpond/icon'
-import type {Glyphs} from '@frogpond/icon'
+import {StyleSheet, Text, View} from 'react-native'
+
 import * as c from '@frogpond/colors'
+import type {Glyphs} from '@frogpond/icon'
+import {Icon} from '@frogpond/icon'
 
 const styles = StyleSheet.create({
 	button: {

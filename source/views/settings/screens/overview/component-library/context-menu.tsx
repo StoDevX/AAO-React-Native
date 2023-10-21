@@ -1,7 +1,9 @@
 import * as React from 'react'
+
+import {Button} from '@frogpond/button'
 import {ContextMenu} from '@frogpond/context-menu'
 import {Section} from '@frogpond/tableview'
-import {Button} from '@frogpond/button'
+
 import {Example, LibraryWrapper} from './base/library-wrapper'
 import {upperFirst} from 'lodash'
 

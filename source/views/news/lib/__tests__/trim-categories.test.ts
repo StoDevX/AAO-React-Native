@@ -1,5 +1,5 @@
-import {describe, expect, it} from '@jest/globals'
 import {trimStoryCateogry} from '../util'
+import {describe, expect, it} from '@jest/globals'
 
 describe('trimStoryCategory', () => {
 	it('should remove extraneous whitespace from the input', () => {

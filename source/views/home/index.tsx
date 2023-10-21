@@ -1,15 +1,17 @@
 import * as React from 'react'
-import {ScrollView, View, StyleSheet} from 'react-native'
+import {ScrollView, StyleSheet, View} from 'react-native'
 
-import {allViews} from '../views'
-import {Column} from '@frogpond/layout'
-import {partitionByIndex} from '../../lib/partition-by-index'
-import {HomeScreenButton, CELL_MARGIN} from './button'
-import {openUrl} from '@frogpond/open-url'
-import {OpenSettingsButton} from '@frogpond/navigation-buttons'
-import {UnofficialAppNotice} from './notice'
 import {useNavigation} from '@react-navigation/native'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+
+import {Column} from '@frogpond/layout'
+import {OpenSettingsButton} from '@frogpond/navigation-buttons'
+import {openUrl} from '@frogpond/open-url'
+
+import {partitionByIndex} from '../../lib/partition-by-index'
+import {allViews} from '../views'
+import {CELL_MARGIN, HomeScreenButton} from './button'
+import {UnofficialAppNotice} from './notice'
 
 const styles = StyleSheet.create({
 	cells: {

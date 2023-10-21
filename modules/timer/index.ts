@@ -1,6 +1,7 @@
 import {useState} from 'react'
-import {default as moment, unitOfTime, type Moment} from 'moment-timezone'
+
 import {useInterval} from './use-interval'
+import {default as moment, type Moment, unitOfTime} from 'moment-timezone'
 
 interface BasicProps {
 	intervalMs: number // ms

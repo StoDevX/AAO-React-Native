@@ -21,7 +21,9 @@ import {
 	Text,
 	View,
 } from 'react-native'
+
 import {Section} from '@frogpond/tableview'
+
 import {LibraryWrapper} from './base/library-wrapper'
 
 function createTable(): Array<{

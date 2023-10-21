@@ -1,17 +1,20 @@
 import * as React from 'react'
 // import {StyleSheet} from 'react-native'
 import {Text} from 'react-native'
-import type {Moment} from 'moment'
-import type {UnprocessedBusLine} from './types'
+
+import {RouteProp, useRoute} from '@react-navigation/native'
+
+import {timezone} from '@frogpond/constants'
 // import MapView from '@mapbox/react-native-mapbox-gl'
 import {NoticeView} from '@frogpond/notice'
+import {useMomentTimer} from '@frogpond/timer'
+
+import {RootStackParamList} from '../../../navigation/types'
 import {getScheduleForNow, processBusLine} from './lib'
+import type {UnprocessedBusLine} from './types'
 // import uniqBy from 'lodash/uniqBy'
 import isEqual from 'lodash/isEqual'
-import {useMomentTimer} from '@frogpond/timer'
-import {timezone} from '@frogpond/constants'
-import {RouteProp, useRoute} from '@react-navigation/native'
-import {RootStackParamList} from '../../../navigation/types'
+import type {Moment} from 'moment'
 
 // const styles = StyleSheet.create({
 // 	map: {...StyleSheet.absoluteFillObject},

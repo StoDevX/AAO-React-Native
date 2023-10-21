@@ -1,5 +1,5 @@
-import {describe, expect, it} from '@jest/globals'
 import {formatNumber} from '../call-phone'
+import {describe, expect, it} from '@jest/globals'
 
 describe('formatNumber', () => {
 	it('should return the same if not formattable', () => {

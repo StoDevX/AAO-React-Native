@@ -1,7 +1,19 @@
 import * as React from 'react'
 import {useEffect, useState} from 'react'
 import {SectionList, StyleSheet} from 'react-native'
+
+import {useNavigation} from '@react-navigation/native'
+
 import * as c from '@frogpond/colors'
+import type {FilterType} from '@frogpond/filter'
+import {applyFiltersToItem} from '@frogpond/filter'
+import {largeListProps, ListSectionHeader, ListSeparator} from '@frogpond/lists'
+import {NoticeView} from '@frogpond/notice'
+
+import {FilterMenuToolbar as FilterToolbar} from './filter-menu-toolbar'
+import {FoodItemRow} from './food-item-row'
+import {buildFilters} from './lib/build-filters'
+import {chooseMeal} from './lib/choose-meal'
 import type {
 	MasterCorIconMapType,
 	MenuItemContainerType,
@@ -10,15 +22,6 @@ import type {
 	StationMenuType,
 } from './types'
 import size from 'lodash/size'
-import {ListSectionHeader, ListSeparator, largeListProps} from '@frogpond/lists'
-import type {FilterType} from '@frogpond/filter'
-import {applyFiltersToItem} from '@frogpond/filter'
-import {NoticeView} from '@frogpond/notice'
-import {FilterMenuToolbar as FilterToolbar} from './filter-menu-toolbar'
-import {FoodItemRow} from './food-item-row'
-import {chooseMeal} from './lib/choose-meal'
-import {buildFilters} from './lib/build-filters'
-import {useNavigation} from '@react-navigation/native'
 import type {Moment} from 'moment'
 
 type FilterFunc = (

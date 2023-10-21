@@ -1,7 +1,7 @@
-import {expect, it} from '@jest/globals'
+import {BuildingType} from '../../types'
 import {getDetailedBuildingStatus} from '../get-detailed-status'
 import {plainMoment} from './moment.helper'
-import {BuildingType} from '../../types'
+import {expect, it} from '@jest/globals'
 
 it('returns a list of [isOpen, scheduleName, verboseStatus] tuples', () => {
 	let m = plainMoment('06-23-2018 1:00pm', 'MM-DD-YYYY h:mma')

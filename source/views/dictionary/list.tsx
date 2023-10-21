@@ -1,9 +1,10 @@
 import * as React from 'react'
 import {SectionList, StyleSheet} from 'react-native'
-import {ChangeTextEvent} from '../../navigation/types'
-import {useDictionary} from './query'
-import type {WordType, DictionaryGroup} from './types'
 
+import {useNavigation} from '@react-navigation/native'
+import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+
+import * as c from '@frogpond/colors'
 import {
 	Detail,
 	largeListProps,
@@ -14,11 +15,10 @@ import {
 } from '@frogpond/lists'
 import {LoadingView, NoticeView} from '@frogpond/notice'
 import {useDebounce} from '@frogpond/use-debounce'
-import * as c from '@frogpond/colors'
 
-import {useNavigation} from '@react-navigation/native'
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
-
+import {ChangeTextEvent} from '../../navigation/types'
+import {useDictionary} from './query'
+import type {DictionaryGroup, WordType} from './types'
 import deburr from 'lodash/deburr'
 import groupBy from 'lodash/groupBy'
 import words from 'lodash/words'

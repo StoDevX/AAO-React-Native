@@ -1,9 +1,11 @@
 import * as React from 'react'
 import {PropsWithChildren} from 'react'
 import {Platform, StyleProp, StyleSheet, View, ViewStyle} from 'react-native'
-import {Touchable} from '@frogpond/touchable'
-import {DisclosureArrow} from './disclosure-arrow'
+
 import * as c from '@frogpond/colors'
+import {Touchable} from '@frogpond/touchable'
+
+import {DisclosureArrow} from './disclosure-arrow'
 
 const styles = StyleSheet.create({
 	childWrapper: {

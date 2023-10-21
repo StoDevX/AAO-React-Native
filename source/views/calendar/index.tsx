@@ -1,14 +1,15 @@
 import * as React from 'react'
 import {Platform} from 'react-native'
+
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
-import {
-	MaterialIcon,
-	IosIcon,
-	createTabNavigator,
-	type Tab,
-} from '@frogpond/navigation-tabs'
 
 import {CccCalendarView, useNamedCalendar} from '@frogpond/ccc-calendar'
+import {
+	createTabNavigator,
+	IosIcon,
+	MaterialIcon,
+	type Tab,
+} from '@frogpond/navigation-tabs'
 
 function StOlafCalendarView() {
 	return (

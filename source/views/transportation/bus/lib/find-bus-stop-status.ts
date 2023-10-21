@@ -1,6 +1,6 @@
-import type {Moment} from 'moment'
 import type {BusTimetableEntry} from '../types'
 import type {BusStateEnum} from './get-current-bus-iteration'
+import type {Moment} from 'moment'
 
 export type BusStopStatusEnum = 'at' | 'before' | 'after' | 'skip'
 

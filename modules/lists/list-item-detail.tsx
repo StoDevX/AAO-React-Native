@@ -1,7 +1,8 @@
-import {Platform, StyleProp, StyleSheet, Text, TextStyle} from 'react-native'
-import * as c from '@frogpond/colors'
 import * as React from 'react'
 import {PropsWithChildren} from 'react'
+import {Platform, StyleProp, StyleSheet, Text, TextStyle} from 'react-native'
+
+import * as c from '@frogpond/colors'
 
 const FONT_SIZE = 14
 const styles = StyleSheet.create({

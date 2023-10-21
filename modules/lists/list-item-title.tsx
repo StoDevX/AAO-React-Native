@@ -1,6 +1,7 @@
 import * as React from 'react'
 import {PropsWithChildren} from 'react'
 import {Platform, StyleProp, StyleSheet, Text, TextStyle} from 'react-native'
+
 import * as c from '@frogpond/colors'
 
 const styles = StyleSheet.create({

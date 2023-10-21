@@ -1,7 +1,8 @@
 import {client} from '@frogpond/api'
-import {useQuery, UseQueryResult} from '@tanstack/react-query'
-import {JobType} from './types'
 import {toLaxTitleCase as titleCase} from '@frogpond/titlecase'
+
+import {JobType} from './types'
+import {useQuery, UseQueryResult} from '@tanstack/react-query'
 import {groupBy, orderBy} from 'lodash'
 
 export const keys = {

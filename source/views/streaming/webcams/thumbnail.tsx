@@ -1,12 +1,13 @@
 import * as React from 'react'
-import {StyleSheet, View, Text, Image} from 'react-native'
-import {Touchable} from '@frogpond/touchable'
+import {Image, StyleSheet, Text, View} from 'react-native'
+
 import * as c from '@frogpond/colors'
-import {images as webcamImages} from '../../../../images/webcams'
 import {trackedOpenUrl} from '@frogpond/open-url'
-import type {Webcam} from './types'
+import {Touchable} from '@frogpond/touchable'
 
 import transparentPixel from '../../../../images/transparent.png'
+import {images as webcamImages} from '../../../../images/webcams'
+import type {Webcam} from './types'
 
 type Props = {
 	webcam: Webcam

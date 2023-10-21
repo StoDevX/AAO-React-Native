@@ -4,10 +4,12 @@
 
 import * as React from 'react'
 import {StyleSheet} from 'react-native'
+
+import {Cell} from '@frogpond/tableview'
+
+import {formatBuildingTimes, summarizeDays} from '../lib'
 import type {SingleBuildingScheduleType} from '../types'
 import type {Moment} from 'moment-timezone'
-import {Cell} from '@frogpond/tableview'
-import {formatBuildingTimes, summarizeDays} from '../lib'
 
 type Props = {
 	set: SingleBuildingScheduleType

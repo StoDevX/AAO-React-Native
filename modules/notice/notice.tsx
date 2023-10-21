@@ -8,8 +8,9 @@ import {
 	View,
 	ViewStyle,
 } from 'react-native'
-import * as c from '@frogpond/colors'
+
 import {Button} from '@frogpond/button'
+import * as c from '@frogpond/colors'
 import {Heading} from '@frogpond/markdown'
 
 const styles = StyleSheet.create({

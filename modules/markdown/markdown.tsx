@@ -1,28 +1,28 @@
 import * as React from 'react'
+import ReactMarkdown from 'react-markdown'
 import {
+	ImageStyle,
 	StyleProp,
+	StyleSheet,
+	Text,
 	TextProps,
 	TextStyle,
 	View,
 	ViewProps,
 	ViewStyle,
-	Text,
-	StyleSheet,
-	ImageStyle,
 } from 'react-native'
-import ReactMarkdown from 'react-markdown'
 
+import * as c from '@frogpond/colors'
+
+import {Code, CodeBlock} from './code'
+import {BlockQuote, Emph, Paragraph, Strong} from './formatting'
+import {Heading} from './heading'
+import {Image} from './image'
+import {Link} from './link'
+import {List, ListItem} from './list'
 import propTypes from 'prop-types'
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ;(ReactMarkdown as any).propTypes.containerTagName = propTypes.func
-
-import * as c from '@frogpond/colors'
-import {Paragraph, Strong, Emph, BlockQuote} from './formatting'
-import {Code, CodeBlock} from './code'
-import {Heading} from './heading'
-import {Link} from './link'
-import {Image} from './image'
-import {List, ListItem} from './list'
 
 const styles = StyleSheet.create({
 	horizontalRule: {

@@ -1,17 +1,18 @@
-import ky from 'ky'
-import {
-	QueryObserverOptions,
-	useQuery,
-	UseQueryResult,
-} from '@tanstack/react-query'
 import {
 	getInternetCredentials,
 	resetInternetCredentials,
 	setInternetCredentials,
 	SharedWebCredentials,
 } from 'react-native-keychain'
-import {OLECARD_AUTH_URL} from './financials/urls'
+
 import {queryClient} from '../init/tanstack-query'
+import {OLECARD_AUTH_URL} from './financials/urls'
+import {
+	QueryObserverOptions,
+	useQuery,
+	UseQueryResult,
+} from '@tanstack/react-query'
+import ky from 'ky'
 
 export class NoCredentialsError extends Error {}
 export class LoginFailedError extends Error {}
