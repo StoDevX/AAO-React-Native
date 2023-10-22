@@ -7,6 +7,10 @@ export {
 	View as SettingsView,
 } from './screens/overview'
 export {PrivacyView} from './screens/privacy'
+export {
+	View as FeatureFlagView,
+	NavigationOptions as FeatureFlagNavigationOptions,
+} from './screens/feature-flags'
 
 // Developer settings
 export {APITestNavigationOptions, APITestView} from './screens/api-test'

@@ -213,6 +213,7 @@ const HomeStackScreens = () => {
 				/>
 				<Stack.Screen
 					component={sis.CourseSearchResultsView}
+					initialParams={{initialFilters: [], initialQuery: ''}}
 					name="CourseSearchResults"
 					options={sis.CourseSearchNavigationOptions}
 				/>
@@ -265,43 +266,55 @@ const HomeStackScreens = () => {
 const SettingsStackScreens = () => {
 	return (
 		<SettingsStack.Navigator screenOptions={{gestureEnabled: true}}>
-			<SettingsStack.Screen
-				component={settings.SettingsView}
-				name="SettingsRoot"
-				options={settings.SettingsNavigationOptions}
-			/>
-			<SettingsStack.Screen
-				component={faqs.View}
-				name="Faq"
-				options={faqs.NavigationOptions}
-			/>
-			<SettingsStack.Screen component={settings.CreditsView} name="Credits" />
-			<SettingsStack.Screen component={settings.PrivacyView} name="Privacy" />
-			<SettingsStack.Screen component={settings.LegalView} name="Legal" />
-			<SettingsStack.Screen
-				component={settings.APITestView}
-				name="APITest"
-				options={settings.APITestNavigationOptions}
-			/>
-			<SettingsStack.Screen
-				component={DevBonAppPickerView}
-				name="BonAppPicker"
-				options={DevBonAppNavigationOptions}
-			/>
-			<SettingsStack.Screen
-				component={settings.DebugRootView}
-				name={Debug}
-				options={({
-					route: {
-						params: {keyPath},
-					},
-				}) => ({title: toLaxTitleCase(keyPath?.[keyPath?.length - 1])})}
-			/>
-			<SettingsStack.Screen
-				component={settings.NetworkLoggerView}
-				name="NetworkLogger"
-				options={settings.NetworkLoggerNavigationOptions}
-			/>
+			{/* user */}
+			<SettingsStack.Group>
+				<SettingsStack.Screen
+					component={settings.SettingsView}
+					name="SettingsRoot"
+					options={settings.SettingsNavigationOptions}
+				/>
+				<SettingsStack.Screen
+					component={faqs.View}
+					name="Faq"
+					options={faqs.NavigationOptions}
+				/>
+				<SettingsStack.Screen component={settings.CreditsView} name="Credits" />
+				<SettingsStack.Screen component={settings.PrivacyView} name="Privacy" />
+				<SettingsStack.Screen component={settings.LegalView} name="Legal" />
+			</SettingsStack.Group>
+
+			{/* developer */}
+			<SettingsStack.Group>
+				<SettingsStack.Screen
+					component={settings.FeatureFlagView}
+					name="FeatureFlags"
+					options={settings.FeatureFlagNavigationOptions}
+				/>
+				<SettingsStack.Screen
+					component={settings.APITestView}
+					name="APITest"
+					options={settings.APITestNavigationOptions}
+				/>
+				<SettingsStack.Screen
+					component={DevBonAppPickerView}
+					name="BonAppPicker"
+					options={DevBonAppNavigationOptions}
+				/>
+				<SettingsStack.Screen
+					component={settings.DebugRootView}
+					name={Debug}
+					options={({
+						route: {
+							params: {keyPath},
+						},
+					}) => ({title: toLaxTitleCase(keyPath?.[keyPath?.length - 1])})}
+				/>
+				<SettingsStack.Screen
+					component={settings.NetworkLoggerView}
+					name="NetworkLogger"
+					options={settings.NetworkLoggerNavigationOptions}
+				/>
+			</SettingsStack.Group>
 		</SettingsStack.Navigator>
 	)
 }

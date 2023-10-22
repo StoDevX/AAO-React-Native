@@ -9,7 +9,7 @@ import {OpenSettingsButton} from '@frogpond/navigation-buttons'
 import {openUrl} from '@frogpond/open-url'
 
 import {partitionByIndex} from '../../lib/partition-by-index'
-import {allViews} from '../views'
+import {AllViews} from '../views'
 import {CELL_MARGIN, HomeScreenButton} from './button'
 import {UnofficialAppNotice} from './notice'
 
@@ -27,6 +27,7 @@ const styles = StyleSheet.create({
 
 function HomePage(): JSX.Element {
 	let navigation = useNavigation()
+	let allViews = AllViews().filter((view) => !view.disabled ?? true)
 	let columns = partitionByIndex(allViews)
 
 	return (
