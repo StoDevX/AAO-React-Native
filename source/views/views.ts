@@ -1,7 +1,7 @@
 import {useCourseSearchRecentsScreen} from '@frogpond/app-config'
 import * as c from '@frogpond/colors'
 
-import {MiscViewParamList,RootViewsParamList} from '../navigation/types'
+import {MiscViewParamList, RootViewsParamList} from '../navigation/types'
 import {NavigationKey as calendar} from './calendar'
 import {NavigationKey as menus} from './menus'
 import {NavigationKey as news} from './news'
