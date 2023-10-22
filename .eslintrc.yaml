@@ -13,8 +13,8 @@ plugins:
   - 'eslint-plugin-react-native'
   - 'eslint-plugin-react-hooks'
   - '@tanstack/eslint-plugin-query'
-  - 'simple-import-sort'
-  - 'import'
+  - 'eslint-plugin-simple-import-sort'
+  - 'eslint-plugin-import'
 
 extends:
   - 'eslint:recommended'
