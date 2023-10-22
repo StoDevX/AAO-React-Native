@@ -6,6 +6,7 @@ import {trackedOpenUrl} from '@frogpond/open-url'
 import {Touchable} from '@frogpond/touchable'
 
 import transparentPixel from '../../../../images/transparent.png'
+
 import {images as webcamImages} from '../../../../images/webcams'
 import type {Webcam} from './types'
 
