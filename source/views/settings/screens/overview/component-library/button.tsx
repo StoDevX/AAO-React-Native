@@ -1,11 +1,12 @@
 import * as React from 'react'
 import {Alert} from 'react-native'
 
+import {Button} from '@frogpond/button'
 import * as c from '@frogpond/colors'
 import {Section} from '@frogpond/tableview'
-import {Button} from '@frogpond/button'
 import {ButtonCell} from '@frogpond/tableview/cells'
-import {LibraryWrapper, Example} from './base/library-wrapper'
+
+import {Example, LibraryWrapper} from './base/library-wrapper'
 
 const ButtonCellExample = (): JSX.Element => {
 	return (

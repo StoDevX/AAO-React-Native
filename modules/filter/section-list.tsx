@@ -1,14 +1,15 @@
+import * as React from 'react'
+import {useCallback} from 'react'
 import {Image, StyleSheet, Text} from 'react-native'
-import type {ListItemSpecType, ListType} from './types'
-import {Cell, Section} from '@frogpond/tableview'
-import {Column} from '@frogpond/layout'
-import * as c from '@frogpond/colors'
 
+import * as c from '@frogpond/colors'
+import {Column} from '@frogpond/layout'
+import {Cell, Section} from '@frogpond/tableview'
+
+import type {ListItemSpecType, ListType} from './types'
 import concat from 'lodash/concat'
 import isEqual from 'lodash/isEqual'
 import reject from 'lodash/reject'
-import * as React from 'react'
-import {useCallback} from 'react'
 
 type Props<T extends object> = {
 	filter: ListType<T>

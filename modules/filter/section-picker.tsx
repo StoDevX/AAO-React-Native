@@ -1,8 +1,10 @@
 import * as React from 'react'
 import {StyleSheet} from 'react-native'
+
 import * as c from '@frogpond/colors'
-import type {PickerType} from './types'
 import {Section} from '@frogpond/tableview'
+
+import type {PickerType} from './types'
 import {Picker} from '@react-native-picker/picker'
 
 type Props<T extends object> = {

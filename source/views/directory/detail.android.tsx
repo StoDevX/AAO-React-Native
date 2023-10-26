@@ -1,26 +1,30 @@
 import React from 'react'
-import {ScrollView, View, Text, StyleSheet} from 'react-native'
-import {openUrl} from '@frogpond/open-url'
-import {callPhone} from '../../components/call-phone'
-import {sendEmail} from '../../components/send-email'
-import {buildEmailAction, buildPhoneActions} from './helpers'
-import * as c from '@frogpond/colors'
-import type {CampusLocation, Department} from './types'
+import {ScrollView, StyleSheet, Text, View} from 'react-native'
+
 import {
 	Avatar,
-	Title,
-	Subheading,
 	Chip,
 	FAB,
 	List,
 	Portal,
+	Subheading,
+	Title,
 } from 'react-native-paper'
-import {RouteProp, useRoute, useNavigation} from '@react-navigation/native'
+
+import {RouteProp, useNavigation, useRoute} from '@react-navigation/native'
 import {
 	NativeStackNavigationOptions,
 	NativeStackNavigationProp,
 } from '@react-navigation/native-stack'
+
+import * as c from '@frogpond/colors'
+import {openUrl} from '@frogpond/open-url'
+
 import {RootStackParamList} from '../../../source/navigation/types'
+import {callPhone} from '../../components/call-phone'
+import {sendEmail} from '../../components/send-email'
+import {buildEmailAction, buildPhoneActions} from './helpers'
+import type {CampusLocation, Department} from './types'
 
 export const DetailNavigationOptions: NativeStackNavigationOptions = {
 	title: 'Contact',

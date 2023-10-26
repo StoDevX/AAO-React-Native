@@ -1,12 +1,12 @@
 export {
-	CourseSearchView,
-	NavigationOptions as CourseSearchViewNavigationOptions,
-} from './search'
-export {
-	CourseSearchResultsView,
-	NavigationOptions as CourseSearchNavigationOptions,
-} from './results'
-export {
 	CourseDetailView,
 	NavigationOptions as CourseSearchDetailNavigationOptions,
 } from './detail'
+export {
+	NavigationOptions as CourseSearchNavigationOptions,
+	CourseSearchResultsView,
+} from './results'
+export {
+	CourseSearchView,
+	NavigationOptions as CourseSearchViewNavigationOptions,
+} from './search'

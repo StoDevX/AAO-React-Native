@@ -1,12 +1,14 @@
 import * as React from 'react'
-import {StyleSheet, TextProps, Text, View, ViewProps} from 'react-native'
-import {Markdown} from '@frogpond/markdown'
-import {ListFooter} from '@frogpond/lists'
+import {StyleSheet, Text, TextProps, View, ViewProps} from 'react-native'
+
+import {RouteProp, useNavigation, useRoute} from '@react-navigation/native'
+import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+
 import {Button} from '@frogpond/button'
 import * as c from '@frogpond/colors'
+import {ListFooter} from '@frogpond/lists'
+import {Markdown} from '@frogpond/markdown'
 
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
-import {RouteProp, useNavigation, useRoute} from '@react-navigation/native'
 import {RootStackParamList} from '../../navigation/types'
 
 const styles = StyleSheet.create({

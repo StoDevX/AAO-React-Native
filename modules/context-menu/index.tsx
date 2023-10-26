@@ -1,7 +1,10 @@
 import React from 'react'
 import {StyleProp, ViewStyle} from 'react-native'
-import {Touchable} from '@frogpond/touchable'
+
 import {ContextMenuButton} from 'react-native-ios-context-menu'
+
+import {Touchable} from '@frogpond/touchable'
+
 import {upperFirst} from 'lodash'
 
 interface ContextMenuProps {

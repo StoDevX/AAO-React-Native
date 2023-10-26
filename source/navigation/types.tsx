@@ -1,32 +1,31 @@
 import React from 'react'
 
-import {FilterType} from '@frogpond/filter/types'
 import * as eventList from '@frogpond/event-list'
+import {FilterType} from '@frogpond/filter/types'
 
-import * as menus from '../views/menus'
-import * as calendar from '../views/calendar'
-import * as news from '../views/news'
-import * as sis from '../views/sis'
-import * as streaming from '../views/streaming'
-import * as transportation from '../views/transportation'
-import * as debug from '../views/settings/screens/debug'
+import {CourseType} from '../lib/course-search/types'
+import {Printer, PrintJob} from '../lib/stoprint/types'
 import * as buildingHours from '../views/building-hours'
-import * as settings from '../views/settings'
-
-import {BuildingType} from '../views/building-hours/types'
-import {ContactType} from '../views/contacts/types'
-import {StudentOrgType} from '../views/student-orgs/types'
 import {RouteParams as HoursEditorType} from '../views/building-hours/report/editor'
+import {BuildingType} from '../views/building-hours/types'
+import * as calendar from '../views/calendar'
+import {ContactType} from '../views/contacts/types'
 import {WordType} from '../views/dictionary/types'
-import {UnprocessedBusLine} from '../views/transportation/bus/types'
+import {DirectoryItem, DirectorySearchTypeEnum} from '../views/directory/types'
+import * as menus from '../views/menus'
 import type {
 	MasterCorIconMapType,
 	MenuItemType as MenuItem,
 } from '../views/menus/types'
-import {Printer, PrintJob} from '../lib/stoprint/types'
+import * as news from '../views/news'
+import * as settings from '../views/settings'
+import * as debug from '../views/settings/screens/debug'
+import * as sis from '../views/sis'
 import {JobType} from '../views/sis/student-work/types'
-import {CourseType} from '../lib/course-search/types'
-import {DirectoryItem, DirectorySearchTypeEnum} from '../views/directory/types'
+import * as streaming from '../views/streaming'
+import {StudentOrgType} from '../views/student-orgs/types'
+import * as transportation from '../views/transportation'
+import {UnprocessedBusLine} from '../views/transportation/bus/types'
 
 export type RootViewsParamList = {
 	Home: undefined

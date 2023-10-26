@@ -1,10 +1,9 @@
-import type {Moment} from 'moment-timezone'
-import flatten from 'lodash/flatten'
 import type {BuildingType} from '../types'
-
-import {getDayOfWeek} from './get-day-of-week'
 import {isChapelTime} from './chapel'
+import {getDayOfWeek} from './get-day-of-week'
 import {isScheduleOpenAtMoment} from './is-schedule-open'
+import flatten from 'lodash/flatten'
+import type {Moment} from 'moment-timezone'
 
 export function isBuildingOpen(info: BuildingType, m: Moment): boolean {
 	let dayOfWeek = getDayOfWeek(m)

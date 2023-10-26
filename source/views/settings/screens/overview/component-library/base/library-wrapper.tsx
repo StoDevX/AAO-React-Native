@@ -1,6 +1,7 @@
 import * as React from 'react'
 import {ScrollView, StyleProp, StyleSheet, ViewStyle} from 'react-native'
-import {TableView, Cell} from '@frogpond/tableview'
+
+import {Cell, TableView} from '@frogpond/tableview'
 
 interface WrapperProps {
 	children: JSX.Element

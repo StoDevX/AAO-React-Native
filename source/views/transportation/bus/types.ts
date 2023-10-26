@@ -1,5 +1,6 @@
-import type {Moment} from 'moment'
 import {ColorValue} from 'react-native'
+
+import type {Moment} from 'moment'
 
 export type DayOfWeek = 'Su' | 'Mo' | 'Tu' | 'We' | 'Th' | 'Fr' | 'Sa'
 export type Coordinates = [number, number]

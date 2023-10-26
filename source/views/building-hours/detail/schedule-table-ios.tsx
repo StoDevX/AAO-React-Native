@@ -3,11 +3,13 @@
  */
 
 import * as React from 'react'
-import {TableView, Section, Cell} from '@frogpond/tableview'
-import type {Moment} from 'moment-timezone'
+
+import {Cell, Section, TableView} from '@frogpond/tableview'
+
+import {getDayOfWeek, isScheduleOpenAtMoment} from '../lib'
 import type {NamedBuildingScheduleType} from '../types'
-import {isScheduleOpenAtMoment, getDayOfWeek} from '../lib'
 import {ScheduleRow} from './schedule-row'
+import type {Moment} from 'moment-timezone'
 
 type Props = {
 	now: Moment

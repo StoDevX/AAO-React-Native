@@ -1,12 +1,15 @@
-import * as Sentry from '@sentry/react-native'
 import * as React from 'react'
 import {Alert} from 'react-native'
+
+import {useNavigation} from '@react-navigation/native'
+
+import {isDevMode} from '@frogpond/constants'
 import {Section} from '@frogpond/tableview'
 import {PushButtonCell} from '@frogpond/tableview/cells'
-import {isDevMode} from '@frogpond/constants'
-import {ServerUrlSection} from './server-url'
-import {useNavigation} from '@react-navigation/native'
+
 import {NavigationKey as DebugKey} from '../debug'
+import {ServerUrlSection} from './server-url'
+import * as Sentry from '@sentry/react-native'
 
 export const DeveloperSection = (): React.ReactElement => {
 	let navigation = useNavigation()

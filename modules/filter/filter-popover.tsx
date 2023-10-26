@@ -1,11 +1,14 @@
 import React, {useState} from 'react'
+import {StyleSheet, View} from 'react-native'
+
 import Popover, {PopoverPlacement} from 'react-native-popover-view'
 import {useSafeAreaInsets} from 'react-native-safe-area-context'
+
+import * as c from '@frogpond/colors'
+import {TableView} from '@frogpond/tableview'
+
 import {FilterSection} from './section'
 import type {FilterType} from './types'
-import * as c from '@frogpond/colors'
-import {View, StyleSheet} from 'react-native'
-import {TableView} from '@frogpond/tableview'
 
 type Props<T extends object> = {
 	anchor: React.RefObject<View>

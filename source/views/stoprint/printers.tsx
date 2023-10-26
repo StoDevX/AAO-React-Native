@@ -1,7 +1,9 @@
 import * as React from 'react'
 import {SectionList, StyleSheet} from 'react-native'
-import type {Printer} from '../../lib/stoprint'
-import {isStoprintMocked} from '../../lib/stoprint'
+
+import {RouteProp, useNavigation, useRoute} from '@react-navigation/native'
+import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+
 import {
 	Detail,
 	ListRow,
@@ -9,15 +11,16 @@ import {
 	ListSeparator,
 	Title,
 } from '@frogpond/lists'
-import {LoadingView} from '@frogpond/notice'
 import {DebugNoticeButton} from '@frogpond/navigation-buttons'
-import groupBy from 'lodash/groupBy'
-import {StoPrintErrorView} from './components/error'
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
-import {RouteProp, useNavigation, useRoute} from '@react-navigation/native'
-import {RootStackParamList} from '../../navigation/types'
-import {useAllPrinters, useColorPrinters, useRecentPrinters} from './query'
+import {LoadingView} from '@frogpond/notice'
+
+import type {Printer} from '../../lib/stoprint'
+import {isStoprintMocked} from '../../lib/stoprint'
 import {RecentPopularPrintersResponse} from '../../lib/stoprint/types'
+import {RootStackParamList} from '../../navigation/types'
+import {StoPrintErrorView} from './components/error'
+import {useAllPrinters, useColorPrinters, useRecentPrinters} from './query'
+import groupBy from 'lodash/groupBy'
 
 const styles = StyleSheet.create({
 	list: {},

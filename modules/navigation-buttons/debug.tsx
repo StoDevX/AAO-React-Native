@@ -1,8 +1,11 @@
 import * as React from 'react'
 import {Alert, StyleSheet} from 'react-native'
+
 import Icon from 'react-native-vector-icons/Ionicons'
-import {Touchable} from '@frogpond/touchable'
+
 import * as c from '@frogpond/colors'
+import {Touchable} from '@frogpond/touchable'
+
 import {rightButtonStyles as styles} from './styles'
 
 export const debugStyles = StyleSheet.create({

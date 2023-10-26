@@ -1,8 +1,9 @@
 import {AppState, Platform} from 'react-native'
-import NetInfo from '@react-native-community/netinfo'
+
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import NetInfo from '@react-native-community/netinfo'
 import {createAsyncStoragePersister} from '@tanstack/query-async-storage-persister'
-import {QueryClient, onlineManager, focusManager} from '@tanstack/react-query'
+import {focusManager, onlineManager, QueryClient} from '@tanstack/react-query'
 
 //
 // Set up caching

@@ -1,8 +1,9 @@
 import * as React from 'react'
 import {StyleProp, StyleSheet, Text, TextStyle} from 'react-native'
-import {Cell} from '@frogpond/tableview'
+
 import * as c from '@frogpond/colors'
 import {Icon} from '@frogpond/icon'
+import {Cell} from '@frogpond/tableview'
 
 const styles = StyleSheet.create({
 	title: {

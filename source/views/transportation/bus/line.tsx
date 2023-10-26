@@ -1,21 +1,23 @@
 import * as React from 'react'
 import {useEffect, useState} from 'react'
 import {FlatList, Platform, StyleSheet, Text} from 'react-native'
-import type {BusSchedule, UnprocessedBusLine} from './types'
+
+import * as c from '@frogpond/colors'
+import {InfoHeader} from '@frogpond/info-header'
+import {ListFooter, ListRow, ListSectionHeader} from '@frogpond/lists'
+import {Separator} from '@frogpond/separator'
+
+import {BusStopRow} from './components/bus-stop-row'
 import {
 	BusStateEnum,
 	getCurrentBusIteration,
 	getScheduleForNow,
 	processBusLine,
 } from './lib'
-import type {Moment} from 'moment-timezone'
+import type {BusSchedule, UnprocessedBusLine} from './types'
 import find from 'lodash/find'
 import findLast from 'lodash/findLast'
-import {Separator} from '@frogpond/separator'
-import {BusStopRow} from './components/bus-stop-row'
-import {ListFooter, ListRow, ListSectionHeader} from '@frogpond/lists'
-import {InfoHeader} from '@frogpond/info-header'
-import * as c from '@frogpond/colors'
+import type {Moment} from 'moment-timezone'
 
 const styles = StyleSheet.create({
 	container: {

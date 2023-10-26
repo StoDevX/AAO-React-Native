@@ -1,6 +1,7 @@
 import {Share, ShareAction} from 'react-native'
 
 import type {EventType} from '@frogpond/event-type'
+
 import {detailTimes} from './times'
 
 export function shareEvent(event: EventType): Promise<ShareAction | void> {

@@ -1,5 +1,7 @@
 import {Linking} from 'react-native'
+
 import {InAppBrowser} from 'react-native-inappbrowser-reborn'
+
 import * as storage from '../../source/lib/storage'
 
 function genericOpen(url: string): Promise<boolean> {

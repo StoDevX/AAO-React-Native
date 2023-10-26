@@ -1,5 +1,9 @@
-import {mobileReleaseApi, papercutApi} from './urls'
-import {encode} from 'base-64'
+import {SharedWebCredentials} from 'react-native-keychain'
+
+import {client} from '@frogpond/api'
+
+import {isStoprintMocked} from '../../lib/stoprint'
+import {LoginFailedError} from '../login'
 import {
 	fetchAllPrinters as mockFetchAllPrinters,
 	fetchJobs as mockFetchJobs,
@@ -8,8 +12,6 @@ import {
 	logIn as mockLogIn,
 	releasePrintJobToPrinterForUser as mockReleasePrintJobToPrinterForUser,
 } from './__mocks__/api'
-import {isStoprintMocked} from '../../lib/stoprint'
-
 import type {
 	AllPrintersResponse,
 	CancelResponse,
@@ -20,10 +22,9 @@ import type {
 	RecentPopularPrintersResponse,
 	ReleaseResponse,
 } from './types'
+import {mobileReleaseApi, papercutApi} from './urls'
+import {encode} from 'base-64'
 import {Options} from 'ky'
-import {SharedWebCredentials} from 'react-native-keychain'
-import {LoginFailedError} from '../login'
-import {client} from '@frogpond/api'
 
 export class PapercutJobReleaseError extends Error {}
 

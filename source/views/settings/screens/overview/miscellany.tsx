@@ -1,10 +1,13 @@
 import * as React from 'react'
+
+import {useNavigation} from '@react-navigation/native'
+
+import {trackedOpenUrl} from '@frogpond/open-url'
 import {Section} from '@frogpond/tableview'
 import {CellToggle, PushButtonCell} from '@frogpond/tableview/cells'
-import {trackedOpenUrl} from '@frogpond/open-url'
+
 import {GH_BASE_URL} from '../../../../lib/constants'
 import * as storage from '../../../../lib/storage'
-import {useNavigation} from '@react-navigation/native'
 
 export let MiscellanySection = (): JSX.Element => {
 	let navigation = useNavigation()

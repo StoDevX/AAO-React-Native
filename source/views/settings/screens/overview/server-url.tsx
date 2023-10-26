@@ -1,10 +1,13 @@
 import * as React from 'react'
 import {StyleSheet} from 'react-native'
-import {Section} from '@frogpond/tableview'
-import {CellTextField, ButtonCell} from '@frogpond/tableview/cells'
+
 import restart from 'react-native-restart'
-import * as storage from '../../../../lib/storage'
+
+import {Section} from '@frogpond/tableview'
+import {ButtonCell, CellTextField} from '@frogpond/tableview/cells'
+
 import {DEFAULT_URL} from '../../../../lib/constants'
+import * as storage from '../../../../lib/storage'
 import {useMutation, useQuery} from '@tanstack/react-query'
 
 export const ServerUrlSection = (): React.ReactElement => {

@@ -1,13 +1,12 @@
 export {FancyMenu as FoodMenu} from './fancy-menu'
-
 export type {
-	MenuItemType,
-	StationMenuType,
 	CorIconType,
-	MenuItemContainerType,
+	DayPartMenuType,
+	DayPartsCollectionType,
 	ItemCorIconMapType,
 	MasterCorIconMapType,
+	MenuItemContainerType,
+	MenuItemType,
 	ProcessedMealType,
-	DayPartsCollectionType,
-	DayPartMenuType,
+	StationMenuType,
 } from './types'

@@ -1,9 +1,12 @@
 import * as React from 'react'
-import {RefreshControl, StyleSheet, ScrollView, View} from 'react-native'
+import {RefreshControl, ScrollView, StyleSheet, View} from 'react-native'
+
+import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+
 import * as c from '@frogpond/colors'
 import {Markdown} from '@frogpond/markdown'
 import {LoadingView, NoticeView} from '@frogpond/notice'
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+
 import {useFaqs} from './query'
 
 const styles = StyleSheet.create({

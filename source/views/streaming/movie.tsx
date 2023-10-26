@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {StyleSheet, View, Text} from 'react-native'
+import {StyleSheet, Text, View} from 'react-native'
 
 export function WeeklyMovieView(): JSX.Element {
 	return (

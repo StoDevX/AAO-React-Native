@@ -1,9 +1,11 @@
 import * as React from 'react'
 import {Platform, StyleSheet} from 'react-native'
-import * as c from '@frogpond/colors'
+
 import {OutlineBadge, SolidBadge} from '@frogpond/badge'
+import * as c from '@frogpond/colors'
 import {Section} from '@frogpond/tableview'
-import {LibraryWrapper, Example} from './base/library-wrapper'
+
+import {Example, LibraryWrapper} from './base/library-wrapper'
 
 const OutlineBadgeExamples = (): JSX.Element => (
 	<Section header="Outline badge">

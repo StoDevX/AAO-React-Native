@@ -1,9 +1,10 @@
 import * as React from 'react'
-import {sto} from '../../../lib/colors'
+
 import * as logos from '../../../../images/streaming'
+import {sto} from '../../../lib/colors'
 import {RadioControllerView} from './index'
-import tinycolor from 'tinycolor2'
 import {PlayerTheme, ThemeProvider} from './theme'
+import tinycolor from 'tinycolor2'
 
 let tintColor = '#37a287'
 const colors: PlayerTheme = {

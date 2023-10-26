@@ -1,6 +1,6 @@
 import groupBy from 'lodash/groupBy'
-import sortBy from 'lodash/sortBy'
 import mapValues from 'lodash/mapValues'
+import sortBy from 'lodash/sortBy'
 import toPairs from 'lodash/toPairs'
 
 //example: [20171,20173,20154,20153] -> "17/18: Fall/Spr, "15/16: Spr/Sum1""

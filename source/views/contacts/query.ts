@@ -1,7 +1,8 @@
 import {client} from '@frogpond/api'
+
+import {ContactType} from './types'
 import {useQuery, UseQueryResult} from '@tanstack/react-query'
 import {groupBy, toPairs} from 'lodash'
-import {ContactType} from './types'
 
 export const keys = {
 	all: ['contacts'] as const,

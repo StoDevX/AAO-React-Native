@@ -1,6 +1,5 @@
-import {describe, expect, test} from '@jest/globals'
-
 import {getItemAsArray, getItemAsBoolean, getItemAsString} from '../index'
+import {describe, expect, test} from '@jest/globals'
 
 describe('getItemAsBoolean', () => {
 	test('returns fallback value', async () => {

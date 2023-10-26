@@ -1,5 +1,6 @@
 import * as React from 'react'
 import {ColorValue, Platform, StyleSheet, Text, View} from 'react-native'
+
 import * as c from '@frogpond/colors'
 
 type Props = {

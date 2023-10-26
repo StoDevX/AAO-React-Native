@@ -1,8 +1,11 @@
 import * as React from 'react'
 import {Platform, StyleSheet} from 'react-native'
-import {SelectableText} from './selectable'
+
 import {iOSUIKit, material} from 'react-native-typography'
+
 import * as c from '@frogpond/colors'
+
+import {SelectableText} from './selectable'
 
 const styles = StyleSheet.create({
 	header: {

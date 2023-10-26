@@ -1,12 +1,14 @@
 import React from 'react'
 import {
-	StyleProp,
-	ImageStyle,
 	Image,
-	StyleSheet,
 	ImageProps,
+	ImageStyle,
+	StyleProp,
+	StyleSheet,
 } from 'react-native'
+
 import * as Icons from '@hawkrives/react-native-alternate-icons'
+
 import {lookup as getAppIcon} from '../../../../images/icons/index'
 
 const styles = StyleSheet.create({

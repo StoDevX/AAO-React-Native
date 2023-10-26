@@ -1,15 +1,17 @@
 import React from 'react'
 import {Platform} from 'react-native'
+
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+
 import {
-	MaterialIcon,
-	IosIcon,
 	createTabNavigator,
+	IosIcon,
+	MaterialIcon,
 	type Tab,
 } from '@frogpond/navigation-tabs'
 
-import {OtherModesView} from './other-modes'
 import {BusView} from './bus'
+import {OtherModesView} from './other-modes'
 
 type Params = {
 	ExpressLineBusView: undefined

@@ -1,9 +1,11 @@
 import * as React from 'react'
 import {Image, ImageSourcePropType, StyleSheet} from 'react-native'
-import * as Icons from '@hawkrives/react-native-alternate-icons'
-import {Cell, Section} from '@frogpond/tableview'
-import {icons as appIcons} from '../../../../images/icons'
+
 import * as c from '@frogpond/colors'
+import {Cell, Section} from '@frogpond/tableview'
+import * as Icons from '@hawkrives/react-native-alternate-icons'
+
+import {icons as appIcons} from '../../../../images/icons'
 
 const styles = StyleSheet.create({
 	icon: {

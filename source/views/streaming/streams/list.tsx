@@ -1,17 +1,19 @@
 import * as React from 'react'
-import {StyleSheet, SectionList} from 'react-native'
+import {SectionList, StyleSheet} from 'react-native'
+
 import * as c from '@frogpond/colors'
-import {ListSeparator, ListSectionHeader} from '@frogpond/lists'
-import {NoticeView, LoadingView} from '@frogpond/notice'
 import {FilterToolbar, ListType} from '@frogpond/filter'
-import {StreamRow} from './row'
-import toPairs from 'lodash/toPairs'
-import groupBy from 'lodash/groupBy'
-import moment from 'moment-timezone'
-import type {Moment} from 'moment-timezone'
+import {ListSectionHeader, ListSeparator} from '@frogpond/lists'
+import {LoadingView, NoticeView} from '@frogpond/notice'
 import {toLaxTitleCase as titleCase} from '@frogpond/titlecase'
-import type {StreamType} from './types'
+
 import {useStreams} from './query'
+import {StreamRow} from './row'
+import type {StreamType} from './types'
+import groupBy from 'lodash/groupBy'
+import toPairs from 'lodash/toPairs'
+import type {Moment} from 'moment-timezone'
+import moment from 'moment-timezone'
 
 const styles = StyleSheet.create({
 	listContainer: {

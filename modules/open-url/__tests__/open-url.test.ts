@@ -1,6 +1,5 @@
-import {describe, expect, test} from '@jest/globals'
-
 import {canOpenUrl} from '../open-url'
+import {describe, expect, test} from '@jest/globals'
 
 describe('canOpenUrl', () => {
 	test('opens http:// links', () => {

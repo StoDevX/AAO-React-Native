@@ -1,10 +1,10 @@
 import React, {ReactElement} from 'react'
-import {describe, expect, test} from '@jest/globals'
-import {renderHook, waitFor} from '@testing-library/react-native'
-import {QueryClient, QueryClientProvider} from '@tanstack/react-query'
 
 import {useFeature} from '../index'
 import {AppConfigEntry} from '../types'
+import {describe, expect, test} from '@jest/globals'
+import {QueryClient, QueryClientProvider} from '@tanstack/react-query'
+import {renderHook, waitFor} from '@testing-library/react-native'
 
 jest.mock('../../../modules/constants', () => ({
 	isDevMode: jest.fn(),

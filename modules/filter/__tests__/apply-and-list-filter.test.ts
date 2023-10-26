@@ -1,6 +1,6 @@
-import {expect, it} from '@jest/globals'
 import {applyAndListFilter} from '../apply-filters'
 import {filterValue} from './filter-value.helper'
+import {expect, it} from '@jest/globals'
 
 it("should return `true` if the item's value is a superset of the needle", () => {
 	expect(applyAndListFilter(filterValue('1'), ['1', '2'])).toBeTruthy()

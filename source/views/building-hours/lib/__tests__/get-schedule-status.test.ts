@@ -1,7 +1,7 @@
-import {expect, it} from '@jest/globals'
+import {SingleBuildingScheduleType} from '../../types'
 import {getScheduleStatusAtMoment} from '../get-schedule-status'
 import {dayMoment} from './moment.helper'
-import {SingleBuildingScheduleType} from '../../types'
+import {expect, it} from '@jest/globals'
 
 it('handles if a schedule is open', () => {
 	let m = dayMoment('Fri 3:00pm')

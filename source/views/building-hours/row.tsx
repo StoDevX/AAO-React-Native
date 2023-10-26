@@ -1,16 +1,18 @@
 import * as React from 'react'
-import {View, Text, StyleSheet} from 'react-native'
+import {StyleSheet, Text, View} from 'react-native'
+
 import {OutlineBadge as Badge} from '@frogpond/badge'
-import type {Moment} from 'moment'
-import type {BuildingType} from './types'
 import * as c from '@frogpond/colors'
 import {Row} from '@frogpond/layout'
-import {ListRow, Detail, Title} from '@frogpond/lists'
+import {Detail, ListRow, Title} from '@frogpond/lists'
+
 import {
+	getAccentBackgroundColor,
 	getDetailedBuildingStatus,
 	getShortBuildingStatus,
-	getAccentBackgroundColor,
 } from './lib'
+import type {BuildingType} from './types'
+import type {Moment} from 'moment'
 
 const styles = StyleSheet.create({
 	title: {

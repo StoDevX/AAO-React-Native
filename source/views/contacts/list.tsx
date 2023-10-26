@@ -1,10 +1,13 @@
+import * as React from 'react'
+import {SectionList, StyleSheet} from 'react-native'
+
+import {useNavigation} from '@react-navigation/native'
+import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+
 import * as c from '@frogpond/colors'
 import {ListSectionHeader, ListSeparator} from '@frogpond/lists'
 import {LoadingView, NoticeView} from '@frogpond/notice'
-import {useNavigation} from '@react-navigation/native'
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
-import * as React from 'react'
-import {SectionList, StyleSheet} from 'react-native'
+
 import {DetailNavigationKey} from './detail'
 import {useGroupedContacts} from './query'
 import {ContactRow} from './row'

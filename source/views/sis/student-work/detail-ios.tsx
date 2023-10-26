@@ -1,19 +1,22 @@
 import * as React from 'react'
-import {Text, ScrollView, StyleSheet, TextProps} from 'react-native'
-import {sendEmail} from '../../../components/send-email'
-import {callPhone} from '../../../components/call-phone'
-import {Cell, Section, TableView} from '@frogpond/tableview'
-import {SelectableCell, PushButtonCell} from '@frogpond/tableview/cells'
-import {openUrl} from '@frogpond/open-url'
-import moment from 'moment'
-import * as c from '@frogpond/colors'
-import type {JobType} from './types'
-import {ShareButton} from '@frogpond/navigation-buttons'
-import {shareJob} from './lib'
-import {decode} from '@frogpond/html-lib'
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+import {ScrollView, StyleSheet, Text, TextProps} from 'react-native'
+
 import {RouteProp, useRoute} from '@react-navigation/native'
+import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+
+import * as c from '@frogpond/colors'
+import {decode} from '@frogpond/html-lib'
+import {ShareButton} from '@frogpond/navigation-buttons'
+import {openUrl} from '@frogpond/open-url'
+import {Cell, Section, TableView} from '@frogpond/tableview'
+import {PushButtonCell, SelectableCell} from '@frogpond/tableview/cells'
+
+import {callPhone} from '../../../components/call-phone'
+import {sendEmail} from '../../../components/send-email'
 import {RootStackParamList} from '../../../navigation/types'
+import {shareJob} from './lib'
+import type {JobType} from './types'
+import moment from 'moment'
 
 const styles = StyleSheet.create({
 	lastUpdated: {

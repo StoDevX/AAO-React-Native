@@ -1,5 +1,5 @@
-import {expect, test} from '@jest/globals'
 import {stringifyDictionaryEntry} from '../submit'
+import {expect, test} from '@jest/globals'
 
 test('handles a basic term', () => {
 	expect(

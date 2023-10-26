@@ -1,7 +1,8 @@
 import * as React from 'react'
 import {Platform, Switch} from 'react-native'
-import {Cell} from '@frogpond/tableview'
+
 import {useTheme} from '@frogpond/app-theme'
+import {Cell} from '@frogpond/tableview'
 
 type PropsType = {
 	label: string

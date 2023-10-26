@@ -1,19 +1,22 @@
 import React from 'react'
-import {ScrollView, Text, StyleSheet, Image} from 'react-native'
-import {openUrl} from '@frogpond/open-url'
-import {callPhone} from '../../components/call-phone'
-import {sendEmail} from '../../components/send-email'
-import {Title, Detail} from '@frogpond/lists'
-import {TableView, Section, Cell} from '@frogpond/tableview'
-import {MultiLineLeftDetailCell} from '@frogpond/tableview/cells'
-import * as c from '@frogpond/colors'
-import type {Department, CampusLocation} from './types'
-import {RouteProp, useRoute, useNavigation} from '@react-navigation/native'
+import {Image, ScrollView, StyleSheet, Text} from 'react-native'
+
+import {RouteProp, useNavigation, useRoute} from '@react-navigation/native'
 import {
 	NativeStackNavigationOptions,
 	NativeStackNavigationProp,
 } from '@react-navigation/native-stack'
+
+import * as c from '@frogpond/colors'
+import {Detail, Title} from '@frogpond/lists'
+import {openUrl} from '@frogpond/open-url'
+import {Cell, Section, TableView} from '@frogpond/tableview'
+import {MultiLineLeftDetailCell} from '@frogpond/tableview/cells'
+
 import {RootStackParamList} from '../../../source/navigation/types'
+import {callPhone} from '../../components/call-phone'
+import {sendEmail} from '../../components/send-email'
+import type {CampusLocation, Department} from './types'
 
 export const DetailNavigationOptions: NativeStackNavigationOptions = {
 	title: 'Contact',

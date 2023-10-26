@@ -1,13 +1,14 @@
 import {client} from '@frogpond/api'
 import {EventType} from '@frogpond/event-type'
-import {useQuery, type UseQueryResult} from '@tanstack/react-query'
-import moment from 'moment'
+
 import {
 	GoogleCalendar,
 	IcsCalendar,
 	NamedCalendar,
 	ReasonCalendar,
 } from './types'
+import {useQuery, type UseQueryResult} from '@tanstack/react-query'
+import moment from 'moment'
 
 export const keys = {
 	named: (name: string) => ['calendar', 'named', name] as const,

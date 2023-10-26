@@ -1,9 +1,11 @@
 import * as React from 'react'
 import {StyleSheet} from 'react-native'
-import type {CourseType} from '../../../lib/course-search/types'
-import {ListRow, Title, Detail} from '@frogpond/lists'
-import {deptNum} from './lib/format-dept-num'
+
 import {Row} from '@frogpond/layout'
+import {Detail, ListRow, Title} from '@frogpond/lists'
+
+import type {CourseType} from '../../../lib/course-search/types'
+import {deptNum} from './lib/format-dept-num'
 
 type Props = {
 	course: CourseType

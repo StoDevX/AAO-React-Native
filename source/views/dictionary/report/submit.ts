@@ -1,7 +1,7 @@
-import jsYaml from 'js-yaml'
-import type {WordType} from '../types'
 import {sendEmail} from '../../../components/send-email'
 import {GH_NEW_ISSUE_URL, SUPPORT_EMAIL} from '../../../lib/constants'
+import type {WordType} from '../types'
+import jsYaml from 'js-yaml'
 import wrap from 'wordwrap'
 
 export function submitReport(current: WordType, suggestion: WordType): void {

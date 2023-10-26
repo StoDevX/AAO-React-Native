@@ -8,22 +8,26 @@ import {
 	Text,
 	View,
 } from 'react-native'
-import {Column} from '@frogpond/layout'
-import {Detail, ListRow, ListSeparator, Title} from '@frogpond/lists'
-import * as c from '@frogpond/colors'
-import {useDebounce} from '@frogpond/use-debounce'
-import {LoadingView, NoticeView} from '@frogpond/notice'
-import {formatResults} from './helpers'
-import {useDirectoryEntries} from './query'
+
 import {Avatar, List} from 'react-native-paper'
-import type {DirectoryItem, DirectorySearchTypeEnum} from './types'
 import Icon from 'react-native-vector-icons/Ionicons'
+
 import {RouteProp, useNavigation, useRoute} from '@react-navigation/native'
 import {
 	NativeStackNavigationOptions,
 	NativeStackNavigationProp,
 } from '@react-navigation/native-stack'
+
+import * as c from '@frogpond/colors'
+import {Column} from '@frogpond/layout'
+import {Detail, ListRow, ListSeparator, Title} from '@frogpond/lists'
+import {LoadingView, NoticeView} from '@frogpond/notice'
+import {useDebounce} from '@frogpond/use-debounce'
+
 import {ChangeTextEvent, RootStackParamList} from '../../navigation/types'
+import {formatResults} from './helpers'
+import {useDirectoryEntries} from './query'
+import type {DirectoryItem, DirectorySearchTypeEnum} from './types'
 
 export const NavigationKey = 'Directory'
 

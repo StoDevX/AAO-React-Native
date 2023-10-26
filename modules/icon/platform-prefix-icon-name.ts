@@ -1,6 +1,7 @@
 import {Platform} from 'react-native'
-import {Icon} from './source'
+
 import type {Glyphs} from './source'
+import {Icon} from './source'
 
 export function platformPrefixIconName(name: string): Glyphs {
 	const isAvailable = Icon.hasIcon(name)

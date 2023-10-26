@@ -1,10 +1,12 @@
 import * as React from 'react'
+
 import {timezone} from '@frogpond/constants'
-import {LoadingView, NoticeView} from '@frogpond/notice'
 import {FoodMenu} from '@frogpond/food-menu'
-import moment from 'moment-timezone'
-import sample from 'lodash/sample'
+import {LoadingView, NoticeView} from '@frogpond/notice'
+
 import {usePauseMenu} from './query'
+import sample from 'lodash/sample'
+import moment from 'moment-timezone'
 
 type Props = {
 	name: string

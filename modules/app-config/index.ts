@@ -1,7 +1,8 @@
+import {isDevMode} from '@frogpond/constants'
+
 import {getFeatureFlag} from '../../source/lib/storage'
 import {AppConfigEntry, FeatureFlag} from './types'
 import {useQuery} from '@tanstack/react-query'
-import {isDevMode} from '@frogpond/constants'
 
 export type {AppConfigEntry, FeatureFlag} from './types'
 

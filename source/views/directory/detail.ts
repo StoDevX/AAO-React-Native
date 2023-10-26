@@ -1,13 +1,13 @@
 import {Platform} from 'react-native'
 
 import {
-	DirectoryDetailView as IosDetail,
-	DetailNavigationOptions as IosNavigationOptions,
-} from './detail.ios'
-import {
-	DirectoryDetailView as AndroidDetail,
 	DetailNavigationOptions as AndroidNavigationOptions,
+	DirectoryDetailView as AndroidDetail,
 } from './detail.android'
+import {
+	DetailNavigationOptions as IosNavigationOptions,
+	DirectoryDetailView as IosDetail,
+} from './detail.ios'
 
 export const DirectoryDetailView =
 	Platform.OS === 'ios' ? IosDetail : AndroidDetail

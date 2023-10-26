@@ -1,7 +1,7 @@
-import {expect, it} from '@jest/globals'
+import {BuildingType} from '../../types'
 import {getShortBuildingStatus} from '../get-short-status'
 import {dayMoment} from './moment.helper'
-import {BuildingType} from '../../types'
+import {expect, it} from '@jest/globals'
 
 it('checks a list of schedules to see if any are open', () => {
 	let m = dayMoment('Fri 1:00pm')

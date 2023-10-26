@@ -6,9 +6,11 @@ import {
 	StyleSheet,
 	Text,
 } from 'react-native'
+
 import Icon from 'react-native-vector-icons/Ionicons'
-import {NoticeView} from '@frogpond/notice'
+
 import * as c from '@frogpond/colors'
+import {NoticeView} from '@frogpond/notice'
 
 type Props = {
 	buttonText: string

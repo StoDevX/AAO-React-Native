@@ -4,6 +4,6 @@ export {
 } from './editor'
 export {
 	BuildingHoursProblemReportView,
-	NavigationOptions as ReportNavigationOptions,
 	NavigationKey as ReportNavigationKey,
+	NavigationOptions as ReportNavigationOptions,
 } from './overview'

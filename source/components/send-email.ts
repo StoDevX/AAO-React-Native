@@ -1,6 +1,8 @@
 import {Alert} from 'react-native'
-import Clipboard from '@react-native-clipboard/clipboard'
+
 import {openUrl} from '@frogpond/open-url'
+
+import Clipboard from '@react-native-clipboard/clipboard'
 
 type Args = {
 	to?: Array<string>

@@ -1,9 +1,11 @@
 import * as React from 'react'
 import {Platform, StyleSheet, Text, View} from 'react-native'
+
 import * as c from '@frogpond/colors'
 import type {Glyphs} from '@frogpond/icon'
 import {Icon} from '@frogpond/icon'
 import {Touchable} from '@frogpond/touchable'
+
 import {useTheme} from './theme'
 
 type ActionButtonProps = {

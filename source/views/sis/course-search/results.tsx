@@ -1,30 +1,30 @@
 import * as React from 'react'
-import {StyleSheet, SectionList, ActivityIndicator, Text} from 'react-native'
-import {
-	updateRecentSearches,
-	updateRecentFilters,
-} from '../../../redux/parts/courses'
-import {LoadingView} from '@frogpond/notice'
-import type {CourseType} from '../../../lib/course-search'
-import {useAppDispatch} from '../../../redux'
-import {applyFiltersToItem} from '@frogpond/filter'
-import {FilterType} from '@frogpond/filter'
-import {useFilters} from './lib/build-filters'
+import {ActivityIndicator, SectionList, StyleSheet, Text} from 'react-native'
+
 import {RouteProp, useNavigation, useRoute} from '@react-navigation/native'
-import {ChangeTextEvent, RootStackParamList} from '../../../navigation/types'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
-import {useDebounce} from '@frogpond/use-debounce'
-import {ListSeparator, ListSectionHeader, largeListProps} from '@frogpond/lists'
+
 import * as c from '@frogpond/colors'
-import {CourseRow} from './row'
-import memoize from 'lodash/memoize'
-import {parseTerm} from '../../../lib/course-search'
-import {NoticeView} from '@frogpond/notice'
-import {FilterToolbar} from '@frogpond/filter'
+import {applyFiltersToItem, FilterToolbar, FilterType} from '@frogpond/filter'
 import {ListSpecType} from '@frogpond/filter/types'
+import {largeListProps, ListSectionHeader, ListSeparator} from '@frogpond/lists'
+import {LoadingView, NoticeView} from '@frogpond/notice'
+import {useDebounce} from '@frogpond/use-debounce'
+
+import type {CourseType} from '../../../lib/course-search'
+import {parseTerm} from '../../../lib/course-search'
+import {ChangeTextEvent, RootStackParamList} from '../../../navigation/types'
+import {useAppDispatch} from '../../../redux'
+import {
+	updateRecentFilters,
+	updateRecentSearches,
+} from '../../../redux/parts/courses'
+import {useFilters} from './lib/build-filters'
 import {applySearch, sortAndGroupResults} from './lib/execute-search'
 import {useCourseData} from './query'
+import {CourseRow} from './row'
 import {UseQueryResult} from '@tanstack/react-query'
+import memoize from 'lodash/memoize'
 
 function doSearch(args: {
 	query: string

@@ -1,9 +1,11 @@
 import * as React from 'react'
+
 import * as c from '@frogpond/colors'
+
 import * as logos from '../../../../images/streaming'
 import {RadioControllerView} from './index'
-import tinycolor from 'tinycolor2'
 import {PlayerTheme, ThemeProvider} from './theme'
+import tinycolor from 'tinycolor2'
 
 let tintColor = '#33348e'
 const colors: PlayerTheme = {

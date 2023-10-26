@@ -1,9 +1,8 @@
-import type {Moment} from 'moment-timezone'
 import type {BuildingType} from '../types'
-
 import {isChapelTime} from './chapel'
 import {getDayOfWeek} from './get-day-of-week'
 import {getScheduleStatusAtMoment} from './get-schedule-status'
+import type {Moment} from 'moment-timezone'
 
 export function getShortBuildingStatus(info: BuildingType, m: Moment): string {
 	let dayOfWeek = getDayOfWeek(m)

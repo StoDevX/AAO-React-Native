@@ -1,12 +1,11 @@
-import {expect, test} from '@jest/globals'
+import type {BusSchedule, UnprocessedBusSchedule} from '../../types'
 import {findBusStopStatus} from '../find-bus-stop-status'
-import {getScheduleForNow} from '../get-schedule-for-now'
 import {getCurrentBusIteration} from '../get-current-bus-iteration'
+import {getScheduleForNow} from '../get-schedule-for-now'
 import {processBusSchedule} from '../process-bus-line'
 import {dayAndTime} from './moment.helper'
+import {expect, test} from '@jest/globals'
 import moment from 'moment'
-
-import type {BusSchedule, UnprocessedBusSchedule} from '../../types'
 
 function buildBusSchedules(now: moment.Moment): Array<BusSchedule> {
 	// prettier-ignore

@@ -1,7 +1,8 @@
 import * as React from 'react'
-import {View, StyleSheet, Platform} from 'react-native'
+import type {StyleProp, ViewStyle} from 'react-native'
+import {Platform, StyleSheet, View} from 'react-native'
+
 import * as c from '@frogpond/colors'
-import type {ViewStyle, StyleProp} from 'react-native'
 
 const styles = StyleSheet.create({
 	separator: {

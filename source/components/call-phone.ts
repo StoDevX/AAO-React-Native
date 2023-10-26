@@ -1,6 +1,8 @@
 import {Alert} from 'react-native'
-import Clipboard from '@react-native-clipboard/clipboard'
+
 import {openUrl} from '@frogpond/open-url'
+
+import Clipboard from '@react-native-clipboard/clipboard'
 import {noop} from 'lodash'
 
 type Options = {

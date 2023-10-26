@@ -1,7 +1,6 @@
-import type {Moment} from 'moment-timezone'
 import type {SingleBuildingScheduleType} from '../types'
-
 import {parseHours} from './parse-hours'
+import type {Moment} from 'moment-timezone'
 
 function in30(start: Moment, end: Moment) {
 	return start.clone().add(30, 'minutes').isSameOrAfter(end)

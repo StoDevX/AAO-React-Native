@@ -3,11 +3,11 @@
  */
 
 import * as React from 'react'
-import {View, Text, StyleSheet, StyleProp, TextStyle} from 'react-native'
-import type {Moment} from 'moment-timezone'
-import type {SingleBuildingScheduleType} from '../types'
+import {StyleProp, StyleSheet, Text, TextStyle, View} from 'react-native'
 
 import {formatBuildingTimes, summarizeDays} from '../lib'
+import type {SingleBuildingScheduleType} from '../types'
+import type {Moment} from 'moment-timezone'
 
 type Props = {
 	set: SingleBuildingScheduleType

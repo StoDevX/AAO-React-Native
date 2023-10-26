@@ -1,10 +1,9 @@
-import type {Moment} from 'moment-timezone'
 import type {SingleBuildingScheduleType} from '../types'
-
+import {formatBuildingTimes} from './format-times'
 import {getDayOfWeek} from './get-day-of-week'
 import {isScheduleReallyOpenAtMoment} from './is-schedule-really-open'
-import {formatBuildingTimes} from './format-times'
 import {parseHours} from './parse-hours'
+import type {Moment} from 'moment-timezone'
 
 // TODO: fetch this over the network
 const chapelSchedule: SingleBuildingScheduleType[] = [

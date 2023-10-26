@@ -1,9 +1,9 @@
-import moment from 'moment-timezone'
-import type {Moment} from 'moment-timezone'
-import type {SingleBuildingScheduleType} from '../types'
 import {timezone} from '@frogpond/constants'
 
+import type {SingleBuildingScheduleType} from '../types'
 import {TIME_FORMAT} from './constants'
+import type {Moment} from 'moment-timezone'
+import moment from 'moment-timezone'
 
 type HourPairType = {open: Moment; close: Moment}
 

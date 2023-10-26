@@ -8,6 +8,7 @@ import {
 	View,
 	ViewStyle,
 } from 'react-native'
+
 import * as c from '@frogpond/colors'
 
 type Props = {

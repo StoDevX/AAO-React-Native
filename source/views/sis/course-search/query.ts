@@ -1,9 +1,3 @@
-import {
-	useQueries,
-	useQuery,
-	UseQueryOptions,
-	UseQueryResult,
-} from '@tanstack/react-query'
 import {CourseType, TermType} from '../../../lib/course-search'
 import {
 	coursesForTerm,
@@ -11,6 +5,12 @@ import {
 	geData,
 	infoJson,
 } from '../../../lib/course-search/urls'
+import {
+	useQueries,
+	useQuery,
+	UseQueryOptions,
+	UseQueryResult,
+} from '@tanstack/react-query'
 
 const ONE_SECOND = 1000
 const ONE_MINUTE = ONE_SECOND * 60

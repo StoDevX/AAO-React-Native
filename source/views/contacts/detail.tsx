@@ -1,24 +1,27 @@
 import * as React from 'react'
 import {
-	StyleSheet,
-	ScrollView,
 	Image,
-	View,
+	ScrollView,
+	StyleSheet,
 	Text,
 	TextProps,
+	View,
 	ViewProps,
 } from 'react-native'
-import {images as contactImages} from '../../../images/contacts'
-import {Markdown} from '@frogpond/markdown'
-import {ListFooter} from '@frogpond/lists'
-import * as c from '@frogpond/colors'
-import {callPhone} from '../../components/call-phone'
-import {Button} from '@frogpond/button'
-import {openUrl} from '@frogpond/open-url'
-import {GH_NEW_ISSUE_URL} from '../../lib/constants'
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
-import {RootStackParamList} from '../../navigation/types'
+
 import {RouteProp, useRoute} from '@react-navigation/native'
+import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+
+import {Button} from '@frogpond/button'
+import * as c from '@frogpond/colors'
+import {ListFooter} from '@frogpond/lists'
+import {Markdown} from '@frogpond/markdown'
+import {openUrl} from '@frogpond/open-url'
+
+import {images as contactImages} from '../../../images/contacts'
+import {callPhone} from '../../components/call-phone'
+import {GH_NEW_ISSUE_URL} from '../../lib/constants'
+import {RootStackParamList} from '../../navigation/types'
 
 const styles = StyleSheet.create({
 	paragraph: {

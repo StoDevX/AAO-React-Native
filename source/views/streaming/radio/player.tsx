@@ -1,8 +1,10 @@
 import * as React from 'react'
 import {useCallback, useEffect, useRef} from 'react'
-import {WebView, WebViewMessageEvent} from 'react-native-webview'
-import type {HtmlAudioError, PlayState} from './types'
 import {StyleProp, ViewStyle} from 'react-native'
+
+import {WebView, WebViewMessageEvent} from 'react-native-webview'
+
+import type {HtmlAudioError, PlayState} from './types'
 
 type Props = {
 	playState: PlayState

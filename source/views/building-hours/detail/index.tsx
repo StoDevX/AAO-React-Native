@@ -1,11 +1,14 @@
 import * as React from 'react'
-import {useMomentTimer} from '@frogpond/timer'
-import {BuildingDetail} from './building'
-import {timezone} from '@frogpond/constants'
-import {BuildingFavoriteButton} from './toolbar-button'
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+
 import {RouteProp, useNavigation, useRoute} from '@react-navigation/native'
+import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+
+import {timezone} from '@frogpond/constants'
+import {useMomentTimer} from '@frogpond/timer'
+
 import {RootStackParamList} from '../../../navigation/types'
+import {BuildingDetail} from './building'
+import {BuildingFavoriteButton} from './toolbar-button'
 
 export function BuildingHoursDetailView(): JSX.Element {
 	let navigation = useNavigation()

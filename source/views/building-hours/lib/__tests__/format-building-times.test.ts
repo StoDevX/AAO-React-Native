@@ -1,7 +1,7 @@
-import {expect, it} from '@jest/globals'
+import {SingleBuildingScheduleType} from '../../types'
 import {formatBuildingTimes} from '../format-times'
 import {dayMoment} from './moment.helper'
-import {SingleBuildingScheduleType} from '../../types'
+import {expect, it} from '@jest/globals'
 
 it('formats the times', () => {
 	let m = dayMoment('Fri 3:00pm')

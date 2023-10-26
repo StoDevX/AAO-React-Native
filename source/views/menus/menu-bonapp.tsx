@@ -1,8 +1,14 @@
 import * as React from 'react'
+
 import {timezone} from '@frogpond/constants'
-import {SUPPORT_EMAIL} from '../../lib/constants'
-import {LoadingView, NoticeView} from '@frogpond/notice'
 import {FoodMenu} from '@frogpond/food-menu'
+import {decode, innerTextWithSpaces, parseHtml} from '@frogpond/html-lib'
+import {LoadingView, NoticeView} from '@frogpond/notice'
+import {toLaxTitleCase} from '@frogpond/titlecase'
+
+import {SUPPORT_EMAIL} from '../../lib/constants'
+import {trimItemLabel, trimStationName} from './lib/trim-names'
+import {useBonAppCafe, useBonAppMenu} from './query'
 import type {
 	DayPartMenuType,
 	EditedBonAppCafeInfoType as CafeInfoType,
@@ -12,13 +18,9 @@ import type {
 	ProcessedMealType,
 	StationMenuType,
 } from './types'
-import sample from 'lodash/sample'
 import {mapValues, reduce} from 'lodash'
+import sample from 'lodash/sample'
 import moment, {type Moment} from 'moment-timezone'
-import {trimItemLabel, trimStationName} from './lib/trim-names'
-import {useBonAppCafe, useBonAppMenu} from './query'
-import {decode, innerTextWithSpaces, parseHtml} from '@frogpond/html-lib'
-import {toLaxTitleCase} from '@frogpond/titlecase'
 
 const BONAPP_HTML_ERROR_CODE = 'bonapp-html'
 

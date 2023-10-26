@@ -1,8 +1,8 @@
-import {describe, expect, test} from '@jest/globals'
-
 import type {EventType} from '@frogpond/event-type'
-import moment from 'moment'
+
 import {detailTimes, times} from '../times'
+import {describe, expect, test} from '@jest/globals'
+import moment from 'moment'
 
 describe('allDay', () => {
 	function generateEvent(start: string, end: string): EventType {

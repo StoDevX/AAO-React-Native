@@ -1,12 +1,15 @@
 import * as React from 'react'
 import {ScrollView} from 'react-native'
-import {InfoHeader} from '@frogpond/info-header'
-import {TableView, Section} from '@frogpond/tableview'
-import {CellTextField, ButtonCell} from '@frogpond/tableview/cells'
-import {submitReport} from './submit'
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+
 import {RouteProp, useRoute} from '@react-navigation/native'
+import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+
+import {InfoHeader} from '@frogpond/info-header'
+import {Section, TableView} from '@frogpond/tableview'
+import {ButtonCell, CellTextField} from '@frogpond/tableview/cells'
+
 import {RootStackParamList} from '../../../navigation/types'
+import {submitReport} from './submit'
 import noop from 'lodash/noop'
 
 export const NavigationOptions: NativeStackNavigationOptions = {

@@ -1,5 +1,5 @@
-import tinycolor from 'tinycolor2'
 import {black, white} from './colors'
+import tinycolor from 'tinycolor2'
 
 /**
  * Given a background and a set of foreground colors, returns the first

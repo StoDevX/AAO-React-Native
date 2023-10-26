@@ -1,12 +1,16 @@
 import * as React from 'react'
 import {FlatList, ScrollView, StyleSheet, Text} from 'react-native'
-import {DebugRow} from './row'
-import {NoticeView} from '@frogpond/notice'
-import {ListSeparator} from '@frogpond/lists'
-import {useAppSelector} from '../../../../redux'
-import {RouteProp, useNavigation, useRoute} from '@react-navigation/core'
-import {SettingsStackParamList} from '../../../../navigation/types'
+
 import {Section, TableView} from 'react-native-tableview-simple'
+
+import {RouteProp, useNavigation, useRoute} from '@react-navigation/core'
+
+import {ListSeparator} from '@frogpond/lists'
+import {NoticeView} from '@frogpond/notice'
+
+import {SettingsStackParamList} from '../../../../navigation/types'
+import {useAppSelector} from '../../../../redux'
+import {DebugRow} from './row'
 
 export const NavigationKey = 'DebugView' as const
 

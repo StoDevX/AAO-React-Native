@@ -1,6 +1,6 @@
-import {expect, it} from '@jest/globals'
 import {applyOrListFilter} from '../apply-filters'
 import {filterValue} from './filter-value.helper'
+import {expect, it} from '@jest/globals'
 
 it("should return `true` if the item's value contains the needle", () => {
 	expect(applyOrListFilter(filterValue('1', '2', '3'), ['1'])).toBeTruthy()

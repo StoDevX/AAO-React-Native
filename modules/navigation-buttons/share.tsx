@@ -1,6 +1,8 @@
 import * as React from 'react'
+
 import {Icon, platformPrefixIconName} from '@frogpond/icon'
 import {Touchable, TouchableProps} from '@frogpond/touchable'
+
 import {rightButtonStyles as styles} from './styles'
 
 export function ShareButton(

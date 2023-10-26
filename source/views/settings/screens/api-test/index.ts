@@ -1,4 +1,4 @@
 export {
-	APITestView,
 	NavigationOptions as APITestNavigationOptions,
+	APITestView,
 } from './api-test'

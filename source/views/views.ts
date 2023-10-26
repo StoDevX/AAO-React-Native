@@ -1,14 +1,13 @@
-import * as c from '@frogpond/colors'
-import {RootViewsParamList, MiscViewParamList} from '../navigation/types'
-
-import {NavigationKey as menus} from './menus'
-import {NavigationKey as sis} from './sis'
-import {NavigationKey as calendar} from './calendar'
-import {NavigationKey as streaming} from './streaming'
-import {NavigationKey as news} from './news'
-import {NavigationKey as transportation} from './transportation'
-
 import {useCourseSearchRecentsScreen} from '@frogpond/app-config'
+import * as c from '@frogpond/colors'
+
+import {MiscViewParamList, RootViewsParamList} from '../navigation/types'
+import {NavigationKey as calendar} from './calendar'
+import {NavigationKey as menus} from './menus'
+import {NavigationKey as news} from './news'
+import {NavigationKey as sis} from './sis'
+import {NavigationKey as streaming} from './streaming'
+import {NavigationKey as transportation} from './transportation'
 
 const hours: keyof RootViewsParamList = 'BuildingHours'
 const directory: keyof RootViewsParamList = 'Directory'

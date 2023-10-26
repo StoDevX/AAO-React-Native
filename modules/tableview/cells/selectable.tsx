@@ -1,5 +1,6 @@
 import * as React from 'react'
-import {TextInput, StyleSheet} from 'react-native'
+import {StyleSheet, TextInput} from 'react-native'
+
 import * as c from '@frogpond/colors'
 
 const styles = StyleSheet.create({

@@ -1,12 +1,16 @@
 import * as React from 'react'
 import {Alert} from 'react-native'
-import {Section, Cell} from '@frogpond/tableview'
-import {PushButtonCell} from '@frogpond/tableview/cells'
-import {sendEmail} from '../../../../components/send-email'
+
 import deviceInfo from 'react-native-device-info'
-import {appVersion, appBuild} from '@frogpond/constants'
-import {refreshApp} from '../../../../lib/refresh'
+
 import {useNavigation} from '@react-navigation/native'
+
+import {appBuild, appVersion} from '@frogpond/constants'
+import {Cell, Section} from '@frogpond/tableview'
+import {PushButtonCell} from '@frogpond/tableview/cells'
+
+import {sendEmail} from '../../../../components/send-email'
+import {refreshApp} from '../../../../lib/refresh'
 
 const getDeviceInfo = () => `
 

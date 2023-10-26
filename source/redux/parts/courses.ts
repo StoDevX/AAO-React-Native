@@ -1,13 +1,13 @@
 import type {FilterType} from '@frogpond/filter'
-import {
-	formatFilterCombo,
-	type FilterComboType,
-} from '../../views/sis/course-search/lib/format-filter-combo'
 
-import {createSlice} from '@reduxjs/toolkit'
-import type {PayloadAction} from '@reduxjs/toolkit'
-import type {RootState} from '../store'
 import {CourseType} from '../../lib/course-search'
+import {
+	type FilterComboType,
+	formatFilterCombo,
+} from '../../views/sis/course-search/lib/format-filter-combo'
+import type {RootState} from '../store'
+import type {PayloadAction} from '@reduxjs/toolkit'
+import {createSlice} from '@reduxjs/toolkit'
 
 type State = {
 	recentFilters: FilterComboType[]

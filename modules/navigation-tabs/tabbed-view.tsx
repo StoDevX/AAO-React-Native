@@ -1,8 +1,9 @@
 import React from 'react'
+import {Platform} from 'react-native'
+
 import {createBottomTabNavigator as createCupertinoBottomTabNavigator} from '@react-navigation/bottom-tabs'
 import {createMaterialBottomTabNavigator} from '@react-navigation/material-bottom-tabs'
 import {ParamListBase} from '@react-navigation/native'
-import {Platform} from 'react-native'
 
 export interface Tab<TabNavigatorParams> {
 	enabled?: true | false | undefined

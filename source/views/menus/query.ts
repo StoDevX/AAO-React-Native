@@ -1,6 +1,5 @@
 import {client} from '@frogpond/api'
-import {useQuery, UseQueryResult} from '@tanstack/react-query'
-import {groupBy} from 'lodash'
+
 import {upgradeMenuItem, upgradeStation} from './lib/process-menu-shorthands'
 import type {
 	EditedBonAppCafeInfoType,
@@ -11,6 +10,8 @@ import type {
 	MenuItemType,
 	StationMenuType,
 } from './types'
+import {useQuery, UseQueryResult} from '@tanstack/react-query'
+import {groupBy} from 'lodash'
 
 export const menuKeys = {
 	bonAppCcc: (cafePath: string) => ['cafe-menu', 'bonApp', cafePath] as const,

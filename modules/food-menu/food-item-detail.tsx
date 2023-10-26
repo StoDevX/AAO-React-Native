@@ -1,15 +1,18 @@
 import * as React from 'react'
 import {ScrollView, StyleSheet, Text} from 'react-native'
+
+import {RouteProp, useRoute} from '@react-navigation/native'
+import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+
+import * as c from '@frogpond/colors'
 import {Column, Row} from '@frogpond/layout'
 import {Detail, ListRow, ListSeparator, Title} from '@frogpond/lists'
-import * as c from '@frogpond/colors'
-import map from 'lodash/map'
+
+import {RootStackParamList} from '../../source/navigation/types'
 import {DietaryTagsDetail} from './dietary-tags-detail'
 import {calculateAmount} from './lib/calculate-amount'
+import map from 'lodash/map'
 import size from 'lodash/size'
-import {RouteProp, useRoute} from '@react-navigation/native'
-import {RootStackParamList} from '../../source/navigation/types'
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 
 export const DetailNavigationOptions: NativeStackNavigationOptions = {
 	title: 'Nutrition',

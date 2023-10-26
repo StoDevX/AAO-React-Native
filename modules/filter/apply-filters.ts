@@ -1,7 +1,7 @@
-import type {FilterType, ToggleType, ListType, ListItemSpecType} from './types'
+import type {FilterType, ListItemSpecType, ListType, ToggleType} from './types'
+import {isPlainObject, values} from 'lodash'
 import difference from 'lodash/difference'
 import intersection from 'lodash/intersection'
-import {isPlainObject, values} from 'lodash'
 
 export function applyFiltersToItem<T extends object>(
 	filters: FilterType<T>[],

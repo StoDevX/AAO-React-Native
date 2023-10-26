@@ -1,15 +1,18 @@
 import * as React from 'react'
-import {StyleSheet, SectionList} from 'react-native'
+import {SectionList, StyleSheet} from 'react-native'
+
+import {useNavigation} from '@react-navigation/native'
+
 import * as c from '@frogpond/colors'
-import toPairs from 'lodash/toPairs'
 import type {EventType} from '@frogpond/event-type'
-import groupBy from 'lodash/groupBy'
-import type {Moment} from 'moment-timezone'
 import {FullWidthSeparator, ListSectionHeader} from '@frogpond/lists'
 import {NoticeView} from '@frogpond/notice'
+
 import EventRow from './event-row'
-import {useNavigation} from '@react-navigation/native'
 import {PoweredBy} from './types'
+import groupBy from 'lodash/groupBy'
+import toPairs from 'lodash/toPairs'
+import type {Moment} from 'moment-timezone'
 
 type Props = {
 	detailView?: string

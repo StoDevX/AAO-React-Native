@@ -1,7 +1,7 @@
-import jsYaml from 'js-yaml'
-import type {BuildingType} from '../types'
 import {sendEmail} from '../../../components/send-email'
 import {GH_NEW_ISSUE_URL, SUPPORT_EMAIL} from '../../../lib/constants'
+import type {BuildingType} from '../types'
+import jsYaml from 'js-yaml'
 
 export function submitReport(
 	current: BuildingType,

@@ -1,6 +1,7 @@
 import * as React from 'react'
-import {Cell} from '@frogpond/tableview'
+
 import * as c from '@frogpond/colors'
+import {Cell} from '@frogpond/tableview'
 
 type Props = {
 	title: string

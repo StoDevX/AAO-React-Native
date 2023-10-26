@@ -8,11 +8,14 @@ import {
 	View,
 	ViewStyle,
 } from 'react-native'
+
 import Icon from 'react-native-vector-icons/Ionicons'
-import type {FilterType} from './types'
-import {FilterPopover} from './filter-popover'
+
 import * as c from '@frogpond/colors'
 import {Touchable} from '@frogpond/touchable'
+
+import {FilterPopover} from './filter-popover'
+import type {FilterType} from './types'
 
 const buttonStyles = StyleSheet.create({
 	button: {

@@ -1,11 +1,13 @@
 import * as React from 'react'
-import {View, StyleSheet} from 'react-native'
+import {StyleSheet, View} from 'react-native'
+
 import {Card} from '@frogpond/silly-card'
-import type {Moment} from 'moment-timezone'
-import type {NamedBuildingScheduleType} from '../types'
-import {isScheduleOpenAtMoment, getDayOfWeek} from '../lib'
-import {ScheduleRow} from './schedule-row'
 import {ButtonCell} from '@frogpond/tableview/cells'
+
+import {getDayOfWeek, isScheduleOpenAtMoment} from '../lib'
+import type {NamedBuildingScheduleType} from '../types'
+import {ScheduleRow} from './schedule-row'
+import type {Moment} from 'moment-timezone'
 
 type Props = {
 	now: Moment

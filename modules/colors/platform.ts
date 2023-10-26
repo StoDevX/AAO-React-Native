@@ -1,4 +1,4 @@
-import {PlatformColor, Platform, OpaqueColorValue} from 'react-native'
+import {OpaqueColorValue, Platform, PlatformColor} from 'react-native'
 
 // MARK: Label colors
 

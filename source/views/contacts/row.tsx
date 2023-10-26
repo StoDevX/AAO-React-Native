@@ -1,7 +1,9 @@
 import * as React from 'react'
-import type {ContactType} from './types'
-import {ListRow, Detail, Title} from '@frogpond/lists'
+
 import {Column, Row} from '@frogpond/layout'
+import {Detail, ListRow, Title} from '@frogpond/lists'
+
+import type {ContactType} from './types'
 
 type Props = {
 	onPress: (contact: ContactType) => void

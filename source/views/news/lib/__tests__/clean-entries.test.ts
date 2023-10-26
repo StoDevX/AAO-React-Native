@@ -1,5 +1,5 @@
-import {describe, expect, it} from '@jest/globals'
 import {cleanEntries} from '../util'
+import {describe, expect, it} from '@jest/globals'
 
 describe('cleanEntries', () => {
 	let rest = {authors: [], categories: [], title: ''}

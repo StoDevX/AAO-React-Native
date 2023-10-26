@@ -1,11 +1,13 @@
-import * as c from '@frogpond/colors'
-import {LoadingView, NoticeView} from '@frogpond/notice'
-import {SearchButton} from '@frogpond/navigation-buttons'
-import {useNavigation} from '@react-navigation/native'
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
-import {debounce, fromPairs} from 'lodash'
 import * as React from 'react'
 import {ScrollView, StyleSheet, View} from 'react-native'
+
+import {useNavigation} from '@react-navigation/native'
+import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+
+import * as c from '@frogpond/colors'
+import {SearchButton} from '@frogpond/navigation-buttons'
+import {LoadingView, NoticeView} from '@frogpond/notice'
+
 import {ChangeTextEvent} from '../../../navigation/types'
 import {useAppSelector} from '../../../redux'
 import {
@@ -14,6 +16,7 @@ import {
 } from '../../../redux/parts/courses'
 import {RecentItemsList} from '../components/recents-list'
 import {useFilters} from './lib/build-filters'
+import {debounce, fromPairs} from 'lodash'
 
 let _debounce = debounce((query: string, callback: () => void) => {
 	if (query.length >= 2) {

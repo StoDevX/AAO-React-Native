@@ -1,7 +1,10 @@
 import * as React from 'react'
-import * as c from '@frogpond/colors'
-import {Platform, ScrollView, StyleSheet, TextProps, Text} from 'react-native'
+import {Platform, ScrollView, StyleSheet, Text, TextProps} from 'react-native'
+
 import {iOSUIKit, material} from 'react-native-typography'
+
+import * as c from '@frogpond/colors'
+
 import {AppLogo} from '../components/logo'
 
 const styles = StyleSheet.create({

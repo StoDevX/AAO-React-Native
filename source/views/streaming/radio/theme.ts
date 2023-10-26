@@ -19,4 +19,4 @@ const defaultTheme: PlayerTheme = {
 let {ThemeProvider, withTheme, useTheme} =
 	createTheming<PlayerTheme>(defaultTheme)
 
-export {ThemeProvider, withTheme, useTheme}
+export {ThemeProvider, useTheme, withTheme}

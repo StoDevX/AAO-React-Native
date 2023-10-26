@@ -5,20 +5,23 @@ import {
 	ScrollView,
 	StyleSheet,
 	Text,
-	View,
 	useWindowDimensions,
+	View,
 } from 'react-native'
-import noop from 'lodash/noop'
-import * as c from '@frogpond/colors'
-import {callPhone} from '../../../components/call-phone'
-import {Row} from '@frogpond/layout'
-import {StreamPlayer} from './player'
-import type {HtmlAudioError, PlayState} from './types'
-import {useTheme} from './theme'
-import {ActionButton, CallButton, ShowCalendarButton} from './buttons'
-import {openUrl} from '@frogpond/open-url'
+
 import {useNavigation} from '@react-navigation/native'
+
+import * as c from '@frogpond/colors'
+import {Row} from '@frogpond/layout'
+import {openUrl} from '@frogpond/open-url'
+
+import {callPhone} from '../../../components/call-phone'
 import {RadioScheduleParamList} from '../../../navigation/types'
+import {ActionButton, CallButton, ShowCalendarButton} from './buttons'
+import {StreamPlayer} from './player'
+import {useTheme} from './theme'
+import type {HtmlAudioError, PlayState} from './types'
+import noop from 'lodash/noop'
 
 // If you want to fix the inline player, switch to `true`
 const ALLOW_INLINE_PLAYER = false

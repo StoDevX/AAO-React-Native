@@ -9,6 +9,7 @@ import {
 	View,
 	ViewStyle,
 } from 'react-native'
+
 import {white} from '@frogpond/colors'
 
 type Props = PropsWithChildren<

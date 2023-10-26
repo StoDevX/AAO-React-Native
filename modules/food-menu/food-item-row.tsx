@@ -1,11 +1,14 @@
 import * as React from 'react'
 import {Platform, StyleProp, StyleSheet, View, ViewStyle} from 'react-native'
-import {DietaryTags} from './dietary-tags'
+
+import Icon from 'react-native-vector-icons/Ionicons'
+
+import * as c from '@frogpond/colors'
 import {Column, Row} from '@frogpond/layout'
 import {Detail, ListRow, Title} from '@frogpond/lists'
+
+import {DietaryTags} from './dietary-tags'
 import type {MasterCorIconMapType, MenuItemType} from './types'
-import * as c from '@frogpond/colors'
-import Icon from 'react-native-vector-icons/Ionicons'
 
 const specialsIcon = Platform.OS === 'ios' ? 'ios-star' : 'md-star'
 

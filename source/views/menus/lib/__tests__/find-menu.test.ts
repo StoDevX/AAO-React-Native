@@ -1,8 +1,8 @@
-import {expect, it} from '@jest/globals'
 import {findMenu} from '../../../../../modules/food-menu/lib/find-menu'
-import moment from 'moment-timezone'
 import type {DayPartsCollectionType} from '../../types'
+import {expect, it} from '@jest/globals'
 import uniqueId from 'lodash/uniqueId'
+import moment from 'moment-timezone'
 
 const CENTRAL_TZ = 'America/Chicago'
 
