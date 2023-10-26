@@ -17,7 +17,12 @@ const slice = createSlice({
 	reducers: {
 		toggleFavoriteBuilding(state, action: PayloadAction<string>) {
 			let favoritesSet = new Set(state.favorites)
-			favoritesSet.delete(action.payload)
+
+			if (favoritesSet.has(action.payload)) {
+				favoritesSet.delete(action.payload)
+			} else {
+				favoritesSet.add(action.payload)
+			}
 
 			let newFavorites = Array.from(favoritesSet)
 

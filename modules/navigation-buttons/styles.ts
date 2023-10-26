@@ -1,4 +1,5 @@
 import {StyleSheet, Platform} from 'react-native'
+import {link} from '@frogpond/colors'
 
 export const commonStyles = StyleSheet.create({
 	button: {
@@ -40,6 +41,7 @@ export const rightButtonStyles = StyleSheet.create({
 		}),
 	},
 	icon: {
+		color: link,
 		...Platform.select({
 			ios: {
 				fontSize: 24,
