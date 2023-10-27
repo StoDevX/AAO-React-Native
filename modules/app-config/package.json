@@ -1,0 +1,16 @@
+{
+  "name": "@frogpond/app-config",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.ts",
+  "author": "",
+  "license": "ISC",
+  "scripts": {
+    "test": "jest"
+  },
+  "peerDependencies": {
+    "react": "^18.0.0",
+    "react-native": "^0.71.7"
+  },
+  "dependencies": {}
+}

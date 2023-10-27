@@ -7,7 +7,7 @@ import {
 	StyleSheet,
 	Platform,
 } from 'react-native'
-import {allViews} from '../views'
+import {AllViews} from '../views'
 import {Column} from '@frogpond/layout'
 import {partitionByIndex} from '../../lib/partition-by-index'
 import {HomeScreenButton, CELL_MARGIN} from './button'
@@ -45,6 +45,7 @@ const styles = StyleSheet.create({
 
 function HomePage(): JSX.Element {
 	let navigation = useNavigation()
+	let allViews = AllViews().filter((view) => !view.disabled ?? true)
 	let columns = partitionByIndex(allViews)
 
 	let {data: appBackgroundImage} = useAppBackground()

@@ -1,5 +1,6 @@
 import * as c from '@frogpond/colors'
 import {LoadingView, NoticeView} from '@frogpond/notice'
+import {SearchButton} from '@frogpond/navigation-buttons'
 import {useNavigation} from '@react-navigation/native'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 import {debounce, fromPairs} from 'lodash'
@@ -35,12 +36,15 @@ export const CourseSearchView = (): JSX.Element => {
 	let [typedQuery, setTypedQuery] = React.useState('')
 
 	React.useLayoutEffect(() => {
-		// TODO: refactor the SIS tabview to not be tabview in order to support search.
-		// search will not be injected properly embedded inside of a tab navigator and
-		// calling navigation.getParent() is not a solution because the parent is a tab
-		// navigator so all top-level tabs here would receive a searchbar. For now we
-		// can at least rely on the "browse all" button to let us view search.
 		navigation.setOptions({
+			headerRight: () => (
+				<SearchButton
+					onPress={() =>
+						navigation.navigate('CourseSearchResults', {initialQuery: ''})
+					}
+					title="Browse"
+				/>
+			),
 			headerSearchBarOptions: {
 				barTintColor: c.quaternarySystemFill,
 				onChangeText: (event: ChangeTextEvent) => {
@@ -62,10 +66,6 @@ export const CourseSearchView = (): JSX.Element => {
 			showSearchResult(typedQuery)
 		})
 	}, [showSearchResult, typedQuery])
-
-	let browseAll = () => {
-		navigation.navigate('CourseSearchResults', {initialQuery: ''})
-	}
 
 	let onRecentFilterPress = React.useCallback(
 		(text: string) => {
@@ -120,11 +120,9 @@ export const CourseSearchView = (): JSX.Element => {
 					title="Recent"
 				/>
 				<RecentItemsList
-					actionLabel="Browse All"
 					emptyHeader="No recent filter combinations"
 					emptyText="Your recent filter combinations will appear here."
 					items={recentFilterDescriptions}
-					onAction={browseAll}
 					onItemPress={onRecentFilterPress}
 					title="Browse"
 				/>

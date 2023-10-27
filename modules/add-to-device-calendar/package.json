@@ -9,9 +9,9 @@
     "test": "jest"
   },
   "peerDependencies": {
-    "delay": "^5.0.0",
+    "delay": "^6.0.0",
     "react": "^18.0.0",
-    "react-native": "^0.71.1",
+    "react-native": "^0.71.7",
     "react-native-calendar-events": "^2.2.0"
   },
   "dependencies": {

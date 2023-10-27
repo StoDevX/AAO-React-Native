@@ -17,6 +17,8 @@
 		// include ts-jest and @types/jest in jestjs grouped updates
 		'group:jestPlusTSJest',
 		'group:jestPlusTypes',
+		// disable semantic commits
+		':semanticCommitsDisabled',
 	],
 	packageRules: [
 		// require manual approval for new minor OR major versions of these packages

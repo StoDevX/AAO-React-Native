@@ -1,6 +1,7 @@
 import * as React from 'react'
 import {StyleSheet, Image, Alert} from 'react-native'
 import {Column, Row} from '@frogpond/layout'
+import * as c from '@frogpond/colors'
 import {ListRow, Detail, Title} from '@frogpond/lists'
 import type {StoryType} from './types'
 
@@ -49,6 +50,7 @@ export const NewsRow = (props: Props): JSX.Element => {
 
 const styles = StyleSheet.create({
 	image: {
+		backgroundColor: c.white,
 		borderRadius: 5,
 		marginRight: 15,
 		height: 70,
