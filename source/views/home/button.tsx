@@ -1,11 +1,12 @@
 import * as React from 'react'
-import {Platform, SafeAreaView, StyleSheet, Text, View} from 'react-native'
+import {Platform, StyleSheet, Text, View} from 'react-native'
 import Icon from 'react-native-vector-icons/Entypo'
 import type {ViewType} from '../views'
 import {Touchable} from '@frogpond/touchable'
 import {transparent} from '@frogpond/colors'
 import {homescreenForegroundDark, homescreenForegroundLight} from './colors'
 import {hasNotch} from 'react-native-device-info'
+import {SafeAreaView} from 'react-native-safe-area-context'
 
 type Props = {
 	view: ViewType
@@ -16,23 +17,32 @@ export function HomeScreenButton({view, onPress}: Props): JSX.Element {
 	let foreground =
 		view.foreground === 'light' ? styles.lightForeground : styles.darkForeground
 
-	return (
-		<SafeAreaView>
-			<Touchable
-				accessibilityLabel={view.title}
-				accessibilityRole="button"
-				accessible={true}
-				highlight={false}
-				onPress={onPress}
-				style={[styles.button, {backgroundColor: view.tint}]}
-			>
-				<View style={styles.contents}>
-					<Icon name={view.icon} size={32} style={[foreground, styles.icon]} />
-					<Text style={[foreground, styles.text]}>{view.title}</Text>
-				</View>
-			</Touchable>
-		</SafeAreaView>
+	const InternalTouchable = () => (
+		<Touchable
+			accessibilityLabel={view.title}
+			accessibilityRole="button"
+			accessible={true}
+			activeOpacity={0.9}
+			highlight={false}
+			onPress={onPress}
+			style={[styles.button, {backgroundColor: view.tint}]}
+		>
+			<View style={styles.contents}>
+				<Icon name={view.icon} size={32} style={[foreground, styles.icon]} />
+				<Text style={[foreground, styles.text]}>{view.title}</Text>
+			</View>
+		</Touchable>
 	)
+
+	return Platform.select({
+		ios: <InternalTouchable />,
+		android: (
+			<SafeAreaView>
+				<InternalTouchable />
+			</SafeAreaView>
+		),
+		default: <></>,
+	})
 }
 
 export const CELL_MARGIN = 10

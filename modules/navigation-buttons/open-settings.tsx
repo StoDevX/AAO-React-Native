@@ -1,4 +1,5 @@
 import * as React from 'react'
+import {Platform} from 'react-native'
 import {Touchable} from '@frogpond/touchable'
 import {Icon, platformPrefixIconName} from '@frogpond/icon'
 import * as c from '@frogpond/colors'
@@ -9,21 +10,31 @@ import {HeaderBackButtonProps} from '@react-navigation/native-stack/lib/typescri
 export function OpenSettingsButton(_props: HeaderBackButtonProps): JSX.Element {
 	let navigation = useNavigation()
 
-	return (
-		<Touchable
-			accessibilityLabel="Open Settings"
-			accessibilityRole="button"
-			accessible={true}
-			borderless={true}
-			highlight={false}
-			onPress={() => navigation.navigate('Settings')}
-			style={commonStyles.button}
-			testID="button-open-settings"
-		>
+	return Platform.select({
+		ios: (
 			<Icon
-				name={platformPrefixIconName('settings')}
-				style={[rightButtonStyles.icon, {color: c.label}]}
+				name={platformPrefixIconName('ellipsis-horizontal-circle')}
+				style={[commonStyles.button, rightButtonStyles.icon, {color: c.label}]}
+				testID="button-open-settings"
 			/>
-		</Touchable>
-	)
+		),
+		android: (
+			<Touchable
+				accessibilityLabel="Open Settings"
+				accessibilityRole="button"
+				accessible={true}
+				borderless={true}
+				highlight={false}
+				onPress={() => navigation.navigate('Settings')}
+				style={commonStyles.button}
+				testID="button-open-settings"
+			>
+				<Icon
+					name={platformPrefixIconName('settings')}
+					style={[rightButtonStyles.icon, {color: c.label}]}
+				/>
+			</Touchable>
+		),
+		default: <></>,
+	})
 }
