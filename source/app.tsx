@@ -22,6 +22,7 @@ import {NavigationContainer} from '@react-navigation/native'
 
 import {RootStack} from './navigation'
 import {LoadingView} from '@frogpond/notice'
+import {IS_PRODUCTION} from '@frogpond/constants'
 import {StatusBar, useColorScheme} from 'react-native'
 
 export default function App(): JSX.Element {
@@ -30,6 +31,15 @@ export default function App(): JSX.Element {
 	const scheme = useColorScheme()
 	const theme = scheme === 'dark' ? CombinedDarkTheme : CombinedLightTheme
 	const statusBarStyle = scheme === 'dark' ? 'light-content' : 'dark-content'
+
+	const registerContainer = () => {
+		if (!IS_PRODUCTION) {
+			return
+		}
+
+		// Register the navigation container with the instrumentation
+		sentryInit.routingInstrumentation.registerNavigationContainer(navigationRef)
+	}
 
 	return (
 		<ReduxProvider store={store}>
@@ -43,15 +53,7 @@ export default function App(): JSX.Element {
 				>
 					<PaperProvider theme={theme}>
 						<ActionSheetProvider>
-							<NavigationContainer
-								onReady={() => {
-									// Register the navigation container with the instrumentation
-									sentryInit.routingInstrumentation.registerNavigationContainer(
-										navigationRef,
-									)
-								}}
-								theme={theme}
-							>
+							<NavigationContainer onReady={registerContainer} theme={theme}>
 								<StatusBar barStyle={statusBarStyle} />
 								<RootStack />
 							</NavigationContainer>
