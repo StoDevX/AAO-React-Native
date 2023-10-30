@@ -4,6 +4,49 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [2.8.0] 2023-10-28
+# Exciting New Features #
+- Dark mode! Now you can use the app in a sleek, darker theme.
+- You'll notice an updated design that gives the app a modern look.
+- We've introduced a native campus directory for your convenience.
+- Find A-Z campus links in the More view, making navigation easier.
+- Enjoy a top-level course catalog search for a faster planning experience.
+- We've added filtering support in the news and streaming sections.
+- Discover related links in building hours for more information.
+- Access the Oleville web view with just a tap.
+
+# Fixes and Improvements #
+- We've switched to Sentry for crash reporting, improving reliability.
+- Radio streams will now open the player in a web view.
+- Transportation links will directly open a web view for quick access.
+- Fixed various nasty bugs and crashes to enhance stability.
+- Made significant performance improvements for a smoother experience.
+- Implemented important security updates to protect your information.
+- Updated our privacy policy.
+
+# Development Enhancements #
+- We've rewritten the app in TypeScript to improve code quality and safety.
+- We've re-licensed the project to AGPL3.
+- Overhauled the build pipeline caching for faster updates.
+- Upgraded React Native, Xcode, and CocoaPods for better performance.
+- Introduced feature flags to enable/disable specific app features.
+- Added a network logger for better debugging and monitoring.
+- Included an API tester to ensure seamless data integration.
+- A component viewer is now available for developers to inspect the app's components.
+- Added local server URL support for an improved development experience.
+
+# Removed Features #
+- Analytics have been removed to respect your privacy.
+- Push notifications have been retired.
+- Home screen reordering has been retired.
+- The Moodle tile is no longer present.
+- The "Report a Problem" tile has been removed.
+- The "Safety Concerns" tile is no longer part of the app.
+- The TES SIS tab has been retired.
+- The PoliticOle news tab is no longer available.
+
+## [2.8.0] (old) - 2023-10-28
 ### Added
 - Added a new "yarn d" command to deduplicate dependencies
 - Added Renovate as our new automated dependency management tool, with a nice configuration (#3193)

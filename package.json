@@ -1,6 +1,6 @@
 {
   "name": "all-about-olaf",
-  "version": "2.8.0-beta.8",
+  "version": "2.8.0",
   "private": true,
   "scripts": {
     "android": "react-native run-android",
