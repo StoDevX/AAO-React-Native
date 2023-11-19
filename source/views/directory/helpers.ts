@@ -63,8 +63,8 @@ const descriptionText = (
 		shortRoom && item.title
 			? `${shortRoom} • ${item.title}`
 			: shortRoom
-			? shortRoom
-			: item.title
+			  ? shortRoom
+			  : item.title
 
 	return description && decode(description)
 }

@@ -32,8 +32,8 @@ export const StreamThumbnail = (props: Props): JSX.Element => {
 	let img = thumbnailUrl
 		? {uri: thumbnailUrl}
 		: webcamImages.has(thumbnail)
-		? webcamImages.get(thumbnail)
-		: transparentPixel
+		  ? webcamImages.get(thumbnail)
+		  : transparentPixel
 
 	return (
 		// do not remove this View; it is needed to prevent extra highlighting
