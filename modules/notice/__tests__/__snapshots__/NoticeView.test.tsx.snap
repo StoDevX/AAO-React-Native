@@ -1,0 +1,363 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`NoticeView when buttonText is given displays a button with the buttonText in its title 1`] = `
+<View
+  style={
+    [
+      {
+        "alignItems": "center",
+        "backgroundColor": {
+          "semantic": [
+            "systemBackground",
+          ],
+        },
+        "flex": 1,
+        "justifyContent": "center",
+        "paddingHorizontal": 30,
+      },
+      undefined,
+    ]
+  }
+>
+  <Text
+    selectable={true}
+    style={
+      [
+        {
+          "color": {
+            "semantic": [
+              "label",
+            ],
+          },
+          "textAlign": "center",
+        },
+        undefined,
+      ]
+    }
+  >
+    foo bar
+  </Text>
+  <View
+    accessibilityRole="button"
+    accessibilityState={
+      {
+        "busy": undefined,
+        "checked": undefined,
+        "disabled": undefined,
+        "expanded": undefined,
+        "selected": undefined,
+      }
+    }
+    accessibilityValue={
+      {
+        "max": undefined,
+        "min": undefined,
+        "now": undefined,
+        "text": undefined,
+      }
+    }
+    accessible={true}
+    collapsable={false}
+    focusable={true}
+    onClick={[Function]}
+    onResponderGrant={[Function]}
+    onResponderMove={[Function]}
+    onResponderRelease={[Function]}
+    onResponderTerminate={[Function]}
+    onResponderTerminationRequest={[Function]}
+    onStartShouldSetResponder={[Function]}
+    style={
+      {
+        "alignSelf": "center",
+        "backgroundColor": {
+          "semantic": [
+            "tertiarySystemFill",
+          ],
+        },
+        "borderRadius": 6,
+        "marginVertical": 10,
+        "opacity": 1,
+        "overflow": "hidden",
+        "paddingHorizontal": 20,
+        "paddingVertical": 10,
+      }
+    }
+  >
+    <Text
+      style={
+        [
+          {
+            "color": "#007aff",
+            "fontSize": 17,
+            "fontWeight": "500",
+            "textAlign": "center",
+          },
+          null,
+          [
+            {
+              "backgroundColor": "transparent",
+              "color": "#FFFFFF",
+              "fontFamily": "System",
+              "fontSize": 16,
+              "fontWeight": "400",
+              "letterSpacing": -0.32,
+              "lineHeight": 21,
+            },
+            {
+              "color": {
+                "semantic": [
+                  "label",
+                ],
+              },
+            },
+            null,
+          ],
+          null,
+        ]
+      }
+    >
+      button text
+    </Text>
+  </View>
+</View>
+`;
+
+exports[`NoticeView when given no text to display displays "Notice!" as its text 1`] = `
+<View
+  style={
+    [
+      {
+        "alignItems": "center",
+        "backgroundColor": {
+          "semantic": [
+            "systemBackground",
+          ],
+        },
+        "flex": 1,
+        "justifyContent": "center",
+        "paddingHorizontal": 30,
+      },
+      undefined,
+    ]
+  }
+>
+  <Text
+    selectable={true}
+    style={
+      [
+        {
+          "color": {
+            "semantic": [
+              "label",
+            ],
+          },
+          "textAlign": "center",
+        },
+        undefined,
+      ]
+    }
+  >
+    Notice!
+  </Text>
+</View>
+`;
+
+exports[`NoticeView when given text to display displays the text 1`] = `
+<View
+  style={
+    [
+      {
+        "alignItems": "center",
+        "backgroundColor": {
+          "semantic": [
+            "systemBackground",
+          ],
+        },
+        "flex": 1,
+        "justifyContent": "center",
+        "paddingHorizontal": 30,
+      },
+      undefined,
+    ]
+  }
+>
+  <Text
+    selectable={true}
+    style={
+      [
+        {
+          "color": {
+            "semantic": [
+              "label",
+            ],
+          },
+          "textAlign": "center",
+        },
+        undefined,
+      ]
+    }
+  >
+    foo bar
+  </Text>
+</View>
+`;
+
+exports[`NoticeView when given view style overrides applies view style overrides 1`] = `
+<View
+  style={
+    [
+      {
+        "alignItems": "center",
+        "backgroundColor": {
+          "semantic": [
+            "systemBackground",
+          ],
+        },
+        "flex": 1,
+        "justifyContent": "center",
+        "paddingHorizontal": 30,
+      },
+      {
+        "padding": 31,
+      },
+    ]
+  }
+>
+  <Text
+    selectable={true}
+    style={
+      [
+        {
+          "color": {
+            "semantic": [
+              "label",
+            ],
+          },
+          "textAlign": "center",
+        },
+        undefined,
+      ]
+    }
+  >
+    foo bar
+  </Text>
+</View>
+`;
+
+exports[`NoticeView when header text is given displays the header text 1`] = `
+<View
+  style={
+    [
+      {
+        "alignItems": "center",
+        "backgroundColor": {
+          "semantic": [
+            "systemBackground",
+          ],
+        },
+        "flex": 1,
+        "justifyContent": "center",
+        "paddingHorizontal": 30,
+      },
+      undefined,
+    ]
+  }
+>
+  <Text
+    selectable={true}
+    style={
+      [
+        {
+          "marginBottom": 4,
+          "marginTop": 8,
+        },
+        [
+          {
+            "backgroundColor": "transparent",
+            "color": {
+              "semantic": [
+                "label",
+              ],
+            },
+            "fontFamily": "System",
+            "fontSize": 20,
+            "fontWeight": "600",
+            "letterSpacing": 0.75,
+            "lineHeight": 25,
+          },
+          undefined,
+        ],
+      ]
+    }
+  >
+    blammo
+  </Text>
+  <Text
+    selectable={true}
+    style={
+      [
+        {
+          "color": {
+            "semantic": [
+              "label",
+            ],
+          },
+          "textAlign": "center",
+        },
+        undefined,
+      ]
+    }
+  >
+    foo bar
+  </Text>
+</View>
+`;
+
+exports[`NoticeView when instructed to display a spinner displays a spinner 1`] = `
+<View
+  style={
+    [
+      {
+        "alignItems": "center",
+        "backgroundColor": {
+          "semantic": [
+            "systemBackground",
+          ],
+        },
+        "flex": 1,
+        "justifyContent": "center",
+        "paddingHorizontal": 30,
+      },
+      undefined,
+    ]
+  }
+>
+  <ActivityIndicator
+    style={
+      {
+        "alignItems": "center",
+        "justifyContent": "center",
+        "padding": 8,
+      }
+    }
+  />
+  <Text
+    selectable={true}
+    style={
+      [
+        {
+          "color": {
+            "semantic": [
+              "label",
+            ],
+          },
+          "textAlign": "center",
+        },
+        undefined,
+      ]
+    }
+  >
+    foo bar
+  </Text>
+</View>
+`;
