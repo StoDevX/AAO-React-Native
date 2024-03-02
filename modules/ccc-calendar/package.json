@@ -10,9 +10,9 @@
   },
   "peerDependencies": {
     "react": "^18.0.0",
-    "@react-navigation/native": "^6.1.6",
+    "@react-navigation/native": "^6.1.7",
     "moment-timezone": "^0.5.41",
-    "delay": "^5.0.0"
+    "delay": "^6.0.0"
   },
   "dependencies": {
     "@frogpond/api": "^1.0.0",

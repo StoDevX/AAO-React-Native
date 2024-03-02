@@ -48,7 +48,7 @@ export type RootViewsParamList = {
 	More: undefined
 	PrintJobs: undefined
 	StudentOrgs: undefined
-}
+} & Pick<MiscViewParamList, 'CourseSearchResults'>
 
 export type CafeMenuParamList = {
 	CarletonBurtonMenu: undefined
@@ -76,10 +76,9 @@ export type MiscViewParamList = {
 	DirectoryDetail: {contact: DirectoryItem}
 	Job: undefined
 	JobDetail: {job: JobType}
-	CourseSearchResults: {
-		initialQuery?: string
-		initialFilters?: FilterType<CourseType>[]
-	}
+	CourseSearchResults:
+		| {initialQuery?: string; initialFilters?: FilterType<CourseType>[]}
+		| undefined
 	CourseDetail: {course: CourseType}
 	StudentOrgsDetail: {org: StudentOrgType}
 	BusMapView: {line: UnprocessedBusLine}
@@ -99,6 +98,7 @@ export type SettingsStackParamList = {
 	Credits: undefined
 	[debug.NavigationKey]: {keyPath: string[]}
 	Faq: undefined
+	FeatureFlags: undefined
 	IconSettings: undefined
 	Legal: undefined
 	NetworkLogger: undefined

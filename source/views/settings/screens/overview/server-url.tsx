@@ -10,23 +10,19 @@ import {useMutation, useQuery} from '@tanstack/react-query'
 export const ServerUrlSection = (): React.ReactElement => {
 	const [serverAddress, setServerAddress] = React.useState('')
 
-	let {data: storedServerAddress = '', isLoading} = useQuery({
+	let {isLoading} = useQuery({
 		queryKey: ['settings', 'server-url'],
 		queryFn: () => storage.getServerAddress(),
-		onSuccess: () => {
-			setServerAddress(storedServerAddress)
-		},
+		onSuccess: setServerAddress,
 	})
 
 	let storeServerAddress = useMutation({
 		mutationKey: ['settings', 'server-url'],
 		mutationFn: () => storage.setServerAddress(serverAddress),
+		onSuccess: () => restart.Restart(),
 	})
 
-	let reload = () => {
-		storeServerAddress.mutate()
-		restart.Restart()
-	}
+	let reload = () => storeServerAddress.mutate()
 
 	const isUrlValid = /^(http|https):\/\/[^ "]+$/u.test(serverAddress)
 	const isValid = isUrlValid || serverAddress.length === 0

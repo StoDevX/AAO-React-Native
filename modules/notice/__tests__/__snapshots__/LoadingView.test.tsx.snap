@@ -1,0 +1,99 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`LoadingView it displays "Loading…" when no text is supplied 1`] = `
+<View
+  style={
+    [
+      {
+        "alignItems": "center",
+        "backgroundColor": {
+          "semantic": [
+            "systemBackground",
+          ],
+        },
+        "flex": 1,
+        "justifyContent": "center",
+        "paddingHorizontal": 30,
+      },
+      undefined,
+    ]
+  }
+>
+  <ActivityIndicator
+    style={
+      {
+        "alignItems": "center",
+        "justifyContent": "center",
+        "padding": 8,
+      }
+    }
+  />
+  <Text
+    selectable={true}
+    style={
+      [
+        {
+          "color": {
+            "semantic": [
+              "label",
+            ],
+          },
+          "textAlign": "center",
+        },
+        undefined,
+      ]
+    }
+  >
+    Loading…
+  </Text>
+</View>
+`;
+
+exports[`LoadingView it displays text when text is supplied 1`] = `
+<View
+  style={
+    [
+      {
+        "alignItems": "center",
+        "backgroundColor": {
+          "semantic": [
+            "systemBackground",
+          ],
+        },
+        "flex": 1,
+        "justifyContent": "center",
+        "paddingHorizontal": 30,
+      },
+      undefined,
+    ]
+  }
+>
+  <ActivityIndicator
+    style={
+      {
+        "alignItems": "center",
+        "justifyContent": "center",
+        "padding": 8,
+      }
+    }
+  />
+  <Text
+    selectable={true}
+    style={
+      [
+        {
+          "color": {
+            "semantic": [
+              "label",
+            ],
+          },
+          "textAlign": "center",
+        },
+        undefined,
+      ]
+    }
+  >
+    foo bar
+  </Text>
+</View>
+`;

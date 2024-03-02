@@ -6,7 +6,14 @@ require Pod::Executable.execute_command('node', ['-p',
   )', __dir__]).strip
 
 platform :ios, min_ios_version_supported
-prepare_react_native_project!
+
+# overriding ../node_modules/react-native/scripts/react_native_pods.rb
+# see https://github.com/CocoaPods/CocoaPods/pull/11232
+# prepare_react_native_project!
+install! 'cocoapods',
+	:deterministic_uuids => false,
+	:parallel_pod_downloads => true,
+	:parallel_pod_download_thread_pool_size => 40
 
 flipper_config = ENV['CI'] || ENV['NO_FLIPPER'] == "1" ? FlipperConfiguration.disabled : FlipperConfiguration.enabled
 

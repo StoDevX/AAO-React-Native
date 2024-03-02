@@ -179,10 +179,10 @@ export const PrintJobReleaseView = (): JSX.Element => {
 	let status = releaseJob.isLoading
 		? 'printing'
 		: cancelJob.isLoading
-		? 'cancelling'
-		: job?.statusFormatted === 'Pending Release'
-		? 'pending'
-		: 'complete'
+		  ? 'cancelling'
+		  : job?.statusFormatted === 'Pending Release'
+		    ? 'pending'
+		    : 'complete'
 
 	let actionAvailable = status !== 'complete' && printer
 

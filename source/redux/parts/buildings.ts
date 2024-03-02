@@ -2,7 +2,7 @@ import {createSlice} from '@reduxjs/toolkit'
 import type {PayloadAction} from '@reduxjs/toolkit'
 import type {RootState} from '../store'
 
-type State = {
+export type State = {
 	favorites: Array<string>
 }
 
@@ -17,7 +17,12 @@ const slice = createSlice({
 	reducers: {
 		toggleFavoriteBuilding(state, action: PayloadAction<string>) {
 			let favoritesSet = new Set(state.favorites)
-			favoritesSet.delete(action.payload)
+
+			if (favoritesSet.has(action.payload)) {
+				favoritesSet.delete(action.payload)
+			} else {
+				favoritesSet.add(action.payload)
+			}
 
 			let newFavorites = Array.from(favoritesSet)
 

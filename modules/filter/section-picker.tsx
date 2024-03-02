@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {StyleSheet} from 'react-native'
+import {Platform, StyleSheet} from 'react-native'
 import * as c from '@frogpond/colors'
 import type {PickerType} from './types'
 import {Section} from '@frogpond/tableview'
@@ -20,6 +20,8 @@ export function PickerSection<T extends object>({
 	return (
 		<Section footer={caption} header={title.toUpperCase()}>
 			<Picker
+				itemStyle={styles.pickerItem}
+				mode="dropdown"
 				onValueChange={(itemValue, itemIndex) => {
 					let pickedItem = spec.options[itemIndex]
 					onChange({...filter, spec: {...spec, selected: pickedItem}})
@@ -45,6 +47,10 @@ const styles = StyleSheet.create({
 		backgroundColor: c.secondarySystemBackground,
 	},
 	pickerItem: {
-		color: c.label,
+		...Platform.select({
+			ios: {
+				color: c.label,
+			},
+		}),
 	},
 })
