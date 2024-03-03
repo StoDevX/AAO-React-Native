@@ -23,4 +23,3 @@ const config: Config = {
 }
 
 export default config
-  preset: 'react-native',
