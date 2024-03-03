@@ -493,7 +493,7 @@ jobs:
           upload_buildcache_log: 'true'
 
       - name: Build the iOS app
-        if: ${{ steps.app-cache.outputs.cache-hit != 'true' || !contains(github.event.pull_request.labels.*.name, 'ci/skip-detox') }}
+        if: ${{ steps.app-cache.outputs.cache-hit != 'true' && !contains(github.event.pull_request.labels.*.name, 'ci/skip-detox') }}
         env:
           SKIP_BUNDLING: 'true'
         run: npx detox build e2e --configuration ios.sim.release
