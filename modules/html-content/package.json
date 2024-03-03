@@ -10,7 +10,7 @@
   },
   "peerDependencies": {
     "react": "^18.0.0",
-    "react-native": "^0.71.7"
+    "react-native": "^0.72.4"
   },
   "dependencies": {
     "@frogpond/open-url": "^1.0.0"

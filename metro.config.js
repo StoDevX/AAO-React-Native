@@ -1,27 +1,23 @@
 /**
- * Metro configuration for React Native
- * https://github.com/facebook/react-native
+ * Metro configuration
+ * https://facebook.github.io/metro/docs/configuration
  *
- * @format
+ * @type {import('metro-config').MetroConfig}
  */
+
+const {getDefaultConfig, mergeConfig} = require('@react-native/metro-config')
 
 const defaultSourceExts =
 	// eslint-disable-next-line @typescript-eslint/no-var-requires
 	require('metro-config/src/defaults/defaults').sourceExts
 
-module.exports = {
+const config = {
 	resolver: {
 		sourceExts:
 			process.env.APP_MODE === 'mocked'
 				? ['mock.ts', ...defaultSourceExts]
 				: defaultSourceExts,
 	},
-	transformer: {
-		getTransformOptions: () => ({
-			transform: {
-				experimentalImportSupport: false,
-				inlineRequires: false,
-			},
-		}),
-	},
 }
+
+module.exports = mergeConfig(getDefaultConfig(__dirname), config)
