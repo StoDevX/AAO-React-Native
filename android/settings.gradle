@@ -3,7 +3,7 @@ apply from: file("../node_modules/@react-native-community/cli-platform-android/n
 
 include ':app'
 
-includeBuild('../node_modules/react-native-gradle-plugin')
+includeBuild('../node_modules/@react-native/gradle-plugin')
 
 // Cache build artifacts, so expensive operations do not need to be re-computed
 def isCiServer = System.getenv().containsKey("CI")
