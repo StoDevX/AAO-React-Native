@@ -493,7 +493,7 @@ jobs:
           upload_buildcache_log: 'true'
 
       - name: Build the iOS app
-        if: steps.app-cache.outputs.cache-hit != 'true' || "!contains(github.event.pull_request.labels.*.name, 'ci/skip-detox')"
+        if: ${{ steps.app-cache.outputs.cache-hit != 'true' || !contains(github.event.pull_request.labels.*.name, 'ci/skip-detox') }}
         env:
           SKIP_BUNDLING: 'true'
         run: npx detox build e2e --configuration ios.sim.release
@@ -513,7 +513,7 @@ jobs:
     name: Detox E2E for iOS
     needs: [cache-npm-macos, ios-build, ios-bundle]
     runs-on: macos-14
-    if: "!contains(github.event.pull_request.labels.*.name, 'ci/skip-detox')"
+    if: ${{ !contains(github.event.pull_request.labels.*.name, 'ci/skip-detox') }}
     steps:
       - run: sudo xcode-select -s /Applications/${{ env.xcode_version }}.app
 
