@@ -47,7 +47,7 @@ export function FilterMenuToolbar<T extends object>({
 		<>
 			<Toolbar>
 				<View style={[styles.toolbarSection, styles.today]}>
-					<Text style={styles.toolbarText}>{date.format('MMM. Do')}</Text>
+					<Text style={styles.toolbarText}>{date.format('MMM Do')}</Text>
 					{title ? <Text style={styles.toolbarText}> — {title}</Text> : null}
 				</View>
 				{mealFilter && multipleMeals ? (
