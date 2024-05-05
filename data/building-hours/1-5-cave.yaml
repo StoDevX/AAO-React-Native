@@ -1,0 +1,17 @@
+name: C-Store
+subtitle: The Cave
+category: Food
+
+schedule:
+  - title: Hours
+    hours:
+      - {days: [Su, Mo, Tu, We, Th, Fr, Sa], from: 10:00am, to: 8:00pm}
+
+breakSchedule:
+  fall: []
+  thanksgiving: []
+  winter: []
+  interim: []
+  spring: []
+  easter: []
+  summer: []
