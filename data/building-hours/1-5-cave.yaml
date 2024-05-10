@@ -1,10 +1,11 @@
-name: Bag Lunch Line
+name: C-Store
+subtitle: The Cave
 category: Food
 
 schedule:
   - title: Hours
-    notes: Closed until further notice
-    hours: []
+    hours:
+      - {days: [Su, Mo, Tu, We, Th, Fr, Sa], from: 10:00am, to: 8:00pm}
 
 breakSchedule:
   fall: []
