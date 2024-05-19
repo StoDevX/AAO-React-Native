@@ -1,6 +1,6 @@
 import * as React from 'react'
 import {useEffect, useState} from 'react'
-import {SectionList, StyleSheet} from 'react-native'
+import {SectionList, StyleSheet, View} from 'react-native'
 import * as c from '@frogpond/colors'
 import type {
 	MasterCorIconMapType,
@@ -20,6 +20,7 @@ import {chooseMeal} from './lib/choose-meal'
 import {buildFilters} from './lib/build-filters'
 import {useNavigation} from '@react-navigation/native'
 import type {Moment} from 'moment'
+import {StavMealtimeReport} from '../../source/views/reports'
 
 type FilterFunc = (
 	filters: Array<FilterType<MenuItemType>>,
@@ -150,18 +151,22 @@ export function FancyMenu(props: Props): JSX.Element {
 	const isOpen = Object.keys(foodItems).length !== 0
 
 	const header = (
-		<FilterToolbar
-			date={now}
-			filters={filters}
-			isOpen={isOpen}
-			onPopoverDismiss={(newFilter) => {
-				let edited = filters.map((f) =>
-					f.key === newFilter.key ? newFilter : f,
-				)
-				setFilters(edited)
-			}}
-			title={mealName}
-		/>
+		<View style={{backgroundColor: c.systemBackground}}>
+			<FilterToolbar
+				date={now}
+				filters={filters}
+				isOpen={isOpen}
+				onPopoverDismiss={(newFilter) => {
+					let edited = filters.map((f) =>
+						f.key === newFilter.key ? newFilter : f,
+					)
+					setFilters(edited)
+				}}
+				title={mealName}
+			/>
+
+			{props.name === 'Stav Hall' ? <StavMealtimeReport /> : undefined}
+		</View>
 	)
 
 	return (

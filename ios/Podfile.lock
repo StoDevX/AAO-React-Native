@@ -473,6 +473,8 @@ PODS:
   - RNSentry (5.9.1):
     - React-Core
     - Sentry/HybridSDK (= 8.10.0)
+  - RNSVG (15.3.0):
+    - React-Core
   - RNVectorIcons (9.2.0):
     - React-Core
   - Sentry/HybridSDK (8.10.0):
@@ -542,6 +544,7 @@ DEPENDENCIES:
   - RNScreens (from `../node_modules/react-native-screens`)
   - RNSearchBar (from `../node_modules/react-native-search-bar`)
   - "RNSentry (from `../node_modules/@sentry/react-native`)"
+  - RNSVG (from `../node_modules/react-native-svg`)
   - RNVectorIcons (from `../node_modules/react-native-vector-icons`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
@@ -671,6 +674,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-search-bar"
   RNSentry:
     :path: "../node_modules/@sentry/react-native"
+  RNSVG:
+    :path: "../node_modules/react-native-svg"
   RNVectorIcons:
     :path: "../node_modules/react-native-vector-icons"
   Yoga:
@@ -737,6 +742,7 @@ SPEC CHECKSUMS:
   RNScreens: b21dc57dfa2b710c30ec600786a3fc223b1b92e7
   RNSearchBar: 9860431356b7d12a8449d2fddb2b5f3c78d1e99f
   RNSentry: 0a1daa8ee81e2776f977ae8c66e67c8d85587828
+  RNSVG: a48668fd382115bc89761ce291a81c4ca5f2fd2e
   RNVectorIcons: fcc2f6cb32f5735b586e66d14103a74ce6ad61f8
   Sentry: 71cd4427146ac56eab6e70401ac7a24384c3d3b5
   SentryPrivate: 9334613897c85a9e30f2c9d7a331af8aaa4fe71f
