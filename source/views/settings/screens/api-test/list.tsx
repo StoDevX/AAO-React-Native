@@ -1,139 +1,122 @@
-import * as c from '@frogpond/colors'
+import React from 'react'
+import {View, SectionList, SafeAreaView, StyleSheet} from 'react-native'
+
+import {ListRow, ListSectionHeader, ListSeparator, Title} from '@frogpond/lists'
+import {Column} from '@frogpond/layout'
 import {LoadingView, NoticeView} from '@frogpond/notice'
-import {SearchButton} from '@frogpond/navigation-buttons'
+import * as c from '@frogpond/colors'
 import {debounceSearch} from '@frogpond/use-debounce'
+import {NetworkLoggerButton} from '@frogpond/navigation-buttons'
+
+import {ServerRoute, useServerRoutes} from './query'
+import {ChangeTextEvent} from '../../../../navigation/types'
 import {useNavigation} from '@react-navigation/native'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
-import {fromPairs} from 'lodash'
-import * as React from 'react'
-import {ScrollView, StyleSheet, View} from 'react-native'
-import {ChangeTextEvent} from '../../../navigation/types'
-import {useAppSelector} from '../../../redux'
-import {
-	selectRecentFilters,
-	selectRecentSearches,
-} from '../../../redux/parts/courses'
-import {RecentItemsList} from '../components/recents-list'
-import {useFilters} from './lib/build-filters'
 
-export const NavigationOptions: NativeStackNavigationOptions = {
-	title: 'Course Catalog',
-}
-
-export const CourseSearchView = (): JSX.Element => {
+export const APITestView = (): JSX.Element => {
 	let navigation = useNavigation()
 
-	let {data: basicFilters = [], isLoading, error} = useFilters()
+	let [filterPath, setFilterPath] = React.useState<string>('')
 
-	let recentFilters = useAppSelector(selectRecentFilters)
-	let recentSearches = useAppSelector(selectRecentSearches)
-
-	let [typedQuery, setTypedQuery] = React.useState('')
+	let {
+		data: groupedRoutes = [],
+		error: routesError,
+		isLoading: isRoutesLoading,
+		isError: isRoutesError,
+		refetch: routesRefetch,
+	} = useServerRoutes()
 
 	React.useLayoutEffect(() => {
 		navigation.setOptions({
-			headerRight: () => (
-				<SearchButton
-					onPress={() =>
-						navigation.navigate('CourseSearchResults', {initialQuery: ''})
-					}
-					title="Browse"
-				/>
-			),
 			headerSearchBarOptions: {
-				barTintColor: c.quaternarySystemFill,
-				onChangeText: (event: ChangeTextEvent) => {
-					setTypedQuery(event.nativeEvent.text)
-				},
+				autoCapitalize: 'none',
+				barTintColor: c.systemFill,
+				// android-only
+				autoFocus: true,
+				hideNavigationBar: false,
+				hideWhenScrolling: false,
+				onChangeText: (event: ChangeTextEvent) =>
+					setFilterPath(event.nativeEvent.text),
+				placeholder: '/path/to/uri',
+			},
+			headerRight: () => <NetworkLoggerButton />,
+		})
+	}, [navigation])
+
+	let showSearchResult = React.useCallback(() => {
+		navigation.navigate('APITestDetail', {
+			query: {
+				displayName: filterPath,
+				path: filterPath,
+				params: [],
 			},
 		})
-	}, [navigation, typedQuery])
+	}, [filterPath, navigation])
 
-	let showSearchResult = React.useCallback(
-		(query: string) => {
-			navigation.navigate('CourseSearchResults', {initialQuery: query})
-		},
+	React.useEffect(() => {
+		debounceSearch(filterPath, () => showSearchResult())
+	}, [filterPath, navigation, showSearchResult])
+
+	const renderItem = React.useCallback(
+		(item: ServerRoute) => (
+			<SafeAreaView>
+				<ListRow
+					fullWidth={false}
+					onPress={() => navigation.navigate('APITestDetail', {query: item})}
+					style={styles.serverRouteRow}
+				>
+					<Column flex={1}>
+						<Title lines={1}>{item.displayName}</Title>
+					</Column>
+				</ListRow>
+			</SafeAreaView>
+		),
 		[navigation],
 	)
 
-	React.useEffect(() => {
-		debounceSearch(typedQuery, () => {
-			showSearchResult(typedQuery)
-		})
-	}, [showSearchResult, typedQuery])
-
-	let onRecentFilterPress = React.useCallback(
-		(text: string) => {
-			let selectedFilterCombo = recentFilters.find(
-				(f) => f.description === text,
-			)
-
-			let selectedFilters = basicFilters
-			if (selectedFilterCombo) {
-				let filterLookup = fromPairs(
-					selectedFilterCombo.filters.map((f) => [f.key, f]),
-				)
-				selectedFilters = basicFilters.map((f) => filterLookup[f.key] || f)
-			}
-
-			navigation.navigate('CourseSearchResults', {
-				initialFilters: selectedFilters,
-			})
-		},
-		[basicFilters, navigation, recentFilters],
-	)
-
-	if (isLoading) {
-		return <LoadingView text="Loading Course Data…" />
-	}
-
-	if (error) {
-		return (
-			<NoticeView
-				buttonText="Try Again"
-				// onPress={refetch}  // TODO: implement refetch here
-				text={`A problem occured while loading: ${error}`}
-			/>
-		)
-	}
-
-	let recentFilterDescriptions = recentFilters.map((f) => f.description)
-
 	return (
-		<View style={[styles.container, styles.common]}>
-			<ScrollView
-				// needed for handling native searchbar alignment
-				contentInsetAdjustmentBehavior="automatic"
-				keyboardDismissMode="interactive"
-				style={[styles.common, styles.bottomContainer]}
-			>
-				<RecentItemsList
-					emptyHeader="No recent searches"
-					emptyText="Your recent searches will appear here."
-					items={recentSearches}
-					onItemPress={showSearchResult}
-					title="Recent"
+		<View style={styles.serverRouteContainer}>
+			{isRoutesLoading ? (
+				<LoadingView />
+			) : isRoutesError && routesError instanceof Error ? (
+				<NoticeView
+					buttonText="Try Again"
+					onPress={routesRefetch}
+					text={`A problem occured while loading: ${routesError}`}
 				/>
-				<RecentItemsList
-					emptyHeader="No recent filter combinations"
-					emptyText="Your recent filter combinations will appear here."
-					items={recentFilterDescriptions}
-					onItemPress={onRecentFilterPress}
-					title="Browse"
+			) : !groupedRoutes ? (
+				<NoticeView text="No routes were found." />
+			) : (
+				<SectionList
+					ItemSeparatorComponent={ListSeparator}
+					contentInsetAdjustmentBehavior="automatic"
+					keyExtractor={(item, index) => `${item.path}-${index}`}
+					keyboardDismissMode="on-drag"
+					keyboardShouldPersistTaps="never"
+					onRefresh={routesRefetch}
+					refreshing={isRoutesLoading}
+					renderItem={({item}) => renderItem(item)}
+					renderSectionHeader={({section: {title}}) => (
+						<ListSectionHeader title={title} />
+					)}
+					sections={groupedRoutes}
 				/>
-			</ScrollView>
+			)}
 		</View>
 	)
 }
 
-let styles = StyleSheet.create({
-	bottomContainer: {
-		paddingTop: 12,
-	},
-	container: {
+const styles = StyleSheet.create({
+	serverRouteContainer: {
 		flex: 1,
-	},
-	common: {
 		backgroundColor: c.systemBackground,
 	},
+	serverRouteRow: {
+		flexDirection: 'row',
+		alignItems: 'center',
+	},
 })
+
+export const NavigationOptions: NativeStackNavigationOptions = {
+	title: 'API Tester',
+}
