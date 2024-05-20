@@ -27,6 +27,7 @@ import {Printer, PrintJob} from '../lib/stoprint/types'
 import {JobType} from '../views/sis/student-work/types'
 import {CourseType} from '../lib/course-search/types'
 import {DirectoryItem, DirectorySearchTypeEnum} from '../views/directory/types'
+import {ServerRoute} from '../views/settings/screens/api-test/query'
 
 export type RootViewsParamList = {
 	Home: undefined
@@ -94,6 +95,7 @@ export type RootStackParamList = RootViewsParamList &
 
 export type SettingsStackParamList = {
 	APITest: undefined
+	APITestDetail: {query: ServerRoute}
 	BonAppPicker: undefined
 	Credits: undefined
 	[debug.NavigationKey]: {keyPath: string[]}

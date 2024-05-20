@@ -1,3 +1,4 @@
+import {debounce} from 'lodash'
 import {useState, useEffect} from 'react'
 
 export function useDebounce<T>(value: T, delay: number): T {
@@ -15,3 +16,12 @@ export function useDebounce<T>(value: T, delay: number): T {
 
 	return debouncedValue
 }
+
+export const debounceSearch = debounce(
+	(query: string, callback: () => void) => {
+		if (query.length >= 2) {
+			callback()
+		}
+	},
+	1500,
+)

@@ -14,7 +14,12 @@ export {
 
 // Developer settings
 export {DebugRootView} from './screens/debug'
-export {APITestView, APITestNavigationOptions} from './screens/api-test'
+export {
+	APITestView,
+	APITestNavigationOptions,
+	APITestDetailView,
+	APITestDetailNavigationOptions,
+} from './screens/api-test'
 export {
 	NetworkLoggerView,
 	NavigationOptions as NetworkLoggerNavigationOptions,

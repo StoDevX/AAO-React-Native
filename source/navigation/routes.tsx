@@ -295,6 +295,11 @@ const SettingsStackScreens = () => {
 					options={settings.APITestNavigationOptions}
 				/>
 				<SettingsStack.Screen
+					component={settings.APITestDetailView}
+					name="APITestDetail"
+					options={settings.APITestDetailNavigationOptions}
+				/>
+				<SettingsStack.Screen
 					component={DevBonAppPickerView}
 					name="BonAppPicker"
 					options={DevBonAppNavigationOptions}
