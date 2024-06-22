@@ -15,7 +15,7 @@
     "react-native-vector-icons": "^9.2.0"
   },
   "dependencies": {
-    "@callstack/react-theme-provider": "3.0.8",
+    "@callstack/react-theme-provider": "3.0.9",
     "@frogpond/app-theme": "^1.0.0",
     "@frogpond/colors": "^1.0.0",
     "@frogpond/layout": "^1.0.0",

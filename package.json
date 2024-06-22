@@ -44,7 +44,7 @@
     ]
   },
   "dependencies": {
-    "@callstack/react-theme-provider": "3.0.8",
+    "@callstack/react-theme-provider": "3.0.9",
     "@expo/react-native-action-sheet": "4.0.1",
     "@frogpond/titlecase": "2.0.4",
     "@hawkrives/react-native-alternate-icons": "0.6.2",
