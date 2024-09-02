@@ -1,6 +1,12 @@
 require 'json'
 
 platform :ios do
+	def build_xcargs
+		xcargs = "-allowProvisioningUpdates"
+		xcargs += " CODE_SIGN_STYLE=Automatic"
+		return xcargs
+	end
+
 	desc 'Runs all the tests'
 	lane :test do
 		scan(scheme: ENV['GYM_SCHEME'], workspace: ENV['GYM_WORKSPACE'])
@@ -45,7 +51,8 @@ platform :ios do
 			    skip_codesigning: true,
 			    skip_package_ipa: true,
 			    skip_package_pkg: true,
-			    skip_archive: true)
+			    skip_archive: true,
+			    xcargs: build_xcargs)
 		rescue IOError => e
 			build_status = 1
 			raise e
@@ -64,7 +71,7 @@ platform :ios do
 		File.open('../logs/products', 'w') { |file| file.write('[]') }
 		build_status = 0
 		begin
-			gym(include_symbols: true)
+			gym(include_symbols: true, xcargs: build_xcargs)
 		rescue IOError => e
 			build_status = 1
 			raise e
