@@ -72,6 +72,7 @@ platform :ios do
 
 	desc 'Builds and exports the app'
 	lane :build do
+		certificates(type: 'appstore')
 		propagate_version
 
 		# save it to a log file for later use
@@ -185,9 +186,19 @@ platform :ios do
 		)
 	end
 
+	desc 'Fetch certs for both the app and any extensions'
+	lane :certificates do |options|
+		app = lane_context[:APPLE_APP_ID]
+
+		match(app_identifier: [app],
+		      type: options[:type],
+		      readonly: true)
+	end
+
 	desc 'Ensure that everything is set up (must be run manually, as it needs a 2FA code)'
 	lane :bootstrap do
 		generate_apps
+		generate_certificates
 		generate_pem
 	end
 
@@ -199,5 +210,13 @@ platform :ios do
 		        enable_services: {
 			        app_group: 'on',
 		        })
+	end
+
+	desc 'Generate certs for the app and for any extensions'
+	lane :generate_certificates do
+		app = lane_context[:APPLE_APP_ID]
+
+		match(app_identifier: [app], type: 'adhoc', readonly: false, force: true)
+		match(app_identifier: [app], type: 'appstore', readonly: false, force: true)
 	end
 end
