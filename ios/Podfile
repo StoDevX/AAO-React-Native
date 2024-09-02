@@ -5,8 +5,10 @@ require Pod::Executable.execute_command('node', ['-p',
     {paths: [process.argv[1]]},
   )', __dir__]).strip
 
+deployment_target = '17.2'
+
 # force the IPHONEOS_DEPLOYMENT_TARGET to a known value
-platform :ios, '17.2'
+platform :ios, deployment_target
 
 # overriding ../node_modules/react-native/scripts/react_native_pods.rb
 # see https://github.com/CocoaPods/CocoaPods/pull/11232
@@ -71,6 +73,9 @@ target 'AllAboutOlaf' do
 				# cocoapods defaults to not stripping the frameworks it creates
 				# issue for cocoapods is https://github.com/CocoaPods/CocoaPods/issues/10277
 				config.build_settings['STRIP_INSTALLED_PRODUCT'] = 'YES'
+
+				# force the deployment target to a newer version
+				config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = deployment_target
 			end
 		end
 	end
