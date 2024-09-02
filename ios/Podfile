@@ -5,7 +5,8 @@ require Pod::Executable.execute_command('node', ['-p',
     {paths: [process.argv[1]]},
   )', __dir__]).strip
 
-platform :ios, min_ios_version_supported
+# force the IPHONEOS_DEPLOYMENT_TARGET to a known value
+platform :ios, '17.2'
 
 # overriding ../node_modules/react-native/scripts/react_native_pods.rb
 # see https://github.com/CocoaPods/CocoaPods/pull/11232
