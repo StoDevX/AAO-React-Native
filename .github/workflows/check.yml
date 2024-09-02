@@ -27,7 +27,7 @@ jobs:
       - name: Extract job definition
         run: yq '.jobs.${{ github.job }}' .github/workflows/check.yml > .github/job.yml
 
-      - uses: actions/cache/restore@88522ab9f39a2ea568f7027eddc7d8d8bc9d59c8 # v3
+      - uses: actions/cache/restore@e12d46a63a90f2fae62d114769bbf2a179198b5c # v3
         id: node-cache
         with:
           path: node_modules/
@@ -42,7 +42,7 @@ jobs:
       - if: steps.node-cache.outputs.cache-hit != 'true'
         run: npm ci
 
-      - uses: actions/cache/save@88522ab9f39a2ea568f7027eddc7d8d8bc9d59c8 # v3
+      - uses: actions/cache/save@e12d46a63a90f2fae62d114769bbf2a179198b5c # v3
         if: steps.node-cache.outputs.cache-hit != 'true'
         with:
           path: node_modules/
@@ -59,7 +59,7 @@ jobs:
       - name: Extract job definition
         run: yq '.jobs.${{ github.job }}' .github/workflows/check.yml > .github/job.yml
 
-      - uses: actions/cache/restore@88522ab9f39a2ea568f7027eddc7d8d8bc9d59c8 # v3
+      - uses: actions/cache/restore@e12d46a63a90f2fae62d114769bbf2a179198b5c # v3
         id: node-cache
         with:
           path: node_modules/
@@ -74,7 +74,7 @@ jobs:
       - if: steps.node-cache.outputs.cache-hit != 'true'
         run: npm ci
 
-      - uses: actions/cache/save@88522ab9f39a2ea568f7027eddc7d8d8bc9d59c8 # v3
+      - uses: actions/cache/save@e12d46a63a90f2fae62d114769bbf2a179198b5c # v3
         if: steps.node-cache.outputs.cache-hit != 'true'
         with:
           path: node_modules/
@@ -106,7 +106,7 @@ jobs:
         run: yq '.jobs.${{ github.job }}' .github/workflows/check.yml > .github/job.yml
 
       - name: Restore Cocoapods cache
-        uses: actions/cache/restore@88522ab9f39a2ea568f7027eddc7d8d8bc9d59c8 # v3
+        uses: actions/cache/restore@e12d46a63a90f2fae62d114769bbf2a179198b5c # v3
         id: cocoapods-cache
         with:
           path: ios/Pods
@@ -127,7 +127,7 @@ jobs:
 
       - name: Restore node_modules cache
         if: steps.cocoapods-cache.outputs.cache-hit != 'true'
-        uses: actions/cache/restore@88522ab9f39a2ea568f7027eddc7d8d8bc9d59c8 # v3
+        uses: actions/cache/restore@e12d46a63a90f2fae62d114769bbf2a179198b5c # v3
         id: node-cache
         with:
           path: node_modules/
@@ -141,7 +141,7 @@ jobs:
         working-directory: ./ios
 
       - name: Save Cocoapods cache
-        uses: actions/cache/save@88522ab9f39a2ea568f7027eddc7d8d8bc9d59c8 # v3
+        uses: actions/cache/save@e12d46a63a90f2fae62d114769bbf2a179198b5c # v3
         if: steps.cocoapods-cache.outputs.cache-hit != 'true'
         with:
           path: ios/Pods
@@ -159,7 +159,7 @@ jobs:
           node-version-file: '.node-version'
 
       - name: Restore node_modules cache
-        uses: actions/cache/restore@88522ab9f39a2ea568f7027eddc7d8d8bc9d59c8 # v3
+        uses: actions/cache/restore@e12d46a63a90f2fae62d114769bbf2a179198b5c # v3
         id: node-cache
         with:
           path: node_modules/
@@ -182,7 +182,7 @@ jobs:
           node-version-file: '.node-version'
 
       - name: Restore node_modules cache
-        uses: actions/cache/restore@88522ab9f39a2ea568f7027eddc7d8d8bc9d59c8 # v3
+        uses: actions/cache/restore@e12d46a63a90f2fae62d114769bbf2a179198b5c # v3
         id: node-cache
         with:
           path: node_modules/
@@ -205,7 +205,7 @@ jobs:
           node-version-file: '.node-version'
 
       - name: Restore node_modules cache
-        uses: actions/cache/restore@88522ab9f39a2ea568f7027eddc7d8d8bc9d59c8 # v3
+        uses: actions/cache/restore@e12d46a63a90f2fae62d114769bbf2a179198b5c # v3
         id: node-cache
         with:
           path: node_modules/
@@ -232,7 +232,7 @@ jobs:
           node-version-file: '.node-version'
 
       - name: Restore node_modules cache
-        uses: actions/cache/restore@88522ab9f39a2ea568f7027eddc7d8d8bc9d59c8 # v3
+        uses: actions/cache/restore@e12d46a63a90f2fae62d114769bbf2a179198b5c # v3
         id: node-cache
         with:
           path: node_modules/
@@ -255,7 +255,7 @@ jobs:
           node-version-file: '.node-version'
 
       - name: Restore node_modules cache
-        uses: actions/cache/restore@88522ab9f39a2ea568f7027eddc7d8d8bc9d59c8 # v3
+        uses: actions/cache/restore@e12d46a63a90f2fae62d114769bbf2a179198b5c # v3
         id: node-cache
         with:
           path: node_modules/
@@ -285,7 +285,7 @@ jobs:
           node-version-file: '.node-version'
 
       - name: Restore node_modules cache
-        uses: actions/cache/restore@88522ab9f39a2ea568f7027eddc7d8d8bc9d59c8 # v3
+        uses: actions/cache/restore@e12d46a63a90f2fae62d114769bbf2a179198b5c # v3
         id: node-cache
         with:
           path: node_modules/
@@ -295,7 +295,7 @@ jobs:
         run: exit 1
 
       - name: Load the cached jsbundle
-        uses: actions/cache/restore@88522ab9f39a2ea568f7027eddc7d8d8bc9d59c8 # v3
+        uses: actions/cache/restore@e12d46a63a90f2fae62d114769bbf2a179198b5c # v3
         id: jsbundle-cache
         with:
           path: |
@@ -311,7 +311,7 @@ jobs:
           APP_MODE: mocked
 
       - name: Cache the jsbundle
-        uses: actions/cache/save@88522ab9f39a2ea568f7027eddc7d8d8bc9d59c8 # v3
+        uses: actions/cache/save@e12d46a63a90f2fae62d114769bbf2a179198b5c # v3
         if: steps.jsbundle-cache.outputs.cache-hit != 'true'
         with:
           path: |
@@ -337,7 +337,7 @@ jobs:
           node-version-file: '.node-version'
 
       - name: Restore node_modules cache
-        uses: actions/cache/restore@88522ab9f39a2ea568f7027eddc7d8d8bc9d59c8 # v3
+        uses: actions/cache/restore@e12d46a63a90f2fae62d114769bbf2a179198b5c # v3
         id: node-cache
         with:
           path: node_modules/
@@ -347,7 +347,7 @@ jobs:
         run: exit 1
 
       - name: Load the cached jsbundle
-        uses: actions/cache/restore@88522ab9f39a2ea568f7027eddc7d8d8bc9d59c8 # v3
+        uses: actions/cache/restore@e12d46a63a90f2fae62d114769bbf2a179198b5c # v3
         id: jsbundle-cache
         with:
           path: ./android/generated/
@@ -361,7 +361,7 @@ jobs:
 
       - name: Cache the jsbundle
         if: steps.jsbundle-cache.outputs.cache-hit != 'true'
-        uses: actions/cache/save@88522ab9f39a2ea568f7027eddc7d8d8bc9d59c8 # v3
+        uses: actions/cache/save@e12d46a63a90f2fae62d114769bbf2a179198b5c # v3
         with:
           path: ./android/generated/
           key: ${{ steps.jsbundle-cache.outputs.cache-primary-key }}
@@ -378,7 +378,7 @@ jobs:
           node-version-file: '.node-version'
 
       - name: Restore node_modules cache
-        uses: actions/cache/restore@88522ab9f39a2ea568f7027eddc7d8d8bc9d59c8 # v3
+        uses: actions/cache/restore@e12d46a63a90f2fae62d114769bbf2a179198b5c # v3
         id: node-cache
         with:
           path: node_modules/
@@ -417,7 +417,7 @@ jobs:
           path: build/reports/
       
       - name: Cache the Android app
-        uses: actions/cache/save@88522ab9f39a2ea568f7027eddc7d8d8bc9d59c8 # v3
+        uses: actions/cache/save@e12d46a63a90f2fae62d114769bbf2a179198b5c # v3
         with:
           path: android/app/build/outputs/apk/
           key: ${{ steps.app-cache.outputs.cache-primary-key }}
@@ -443,7 +443,7 @@ jobs:
 
       - name: Check for cached iOS app
         id: app-cache
-        uses: actions/cache/restore@88522ab9f39a2ea568f7027eddc7d8d8bc9d59c8 # v3
+        uses: actions/cache/restore@e12d46a63a90f2fae62d114769bbf2a179198b5c # v3
         with:
           path: ios/build/Build/Products/
           key: ${{ runner.os }}-ios-xcode@${{ env.xcode_version }}-${{ hashFiles('**/project.pbxproj', '**/Podfile', '**/Podfile.lock', 'package-lock.json', '.github/job.yml') }}
@@ -455,7 +455,7 @@ jobs:
 
       - name: Restore node_modules cache
         if: steps.app-cache.outputs.cache-hit != 'true'
-        uses: actions/cache/restore@88522ab9f39a2ea568f7027eddc7d8d8bc9d59c8 # v3
+        uses: actions/cache/restore@e12d46a63a90f2fae62d114769bbf2a179198b5c # v3
         id: node-cache
         with:
           path: node_modules/
@@ -475,7 +475,7 @@ jobs:
 
       - name: Restore Cocoapods cache
         if: steps.app-cache.outputs.cache-hit != 'true'
-        uses: actions/cache/restore@88522ab9f39a2ea568f7027eddc7d8d8bc9d59c8 # v3
+        uses: actions/cache/restore@e12d46a63a90f2fae62d114769bbf2a179198b5c # v3
         id: pods-cache
         with:
           path: ios/Pods
@@ -499,7 +499,7 @@ jobs:
         run: npx detox build e2e --configuration ios.sim.release
 
       - name: Cache the iOS app
-        uses: actions/cache/save@88522ab9f39a2ea568f7027eddc7d8d8bc9d59c8 # v3
+        uses: actions/cache/save@e12d46a63a90f2fae62d114769bbf2a179198b5c # v3
         with:
           path: ios/build/Build/Products/
           key: ${{ steps.app-cache.outputs.cache-primary-key }}
@@ -521,7 +521,7 @@ jobs:
 
       - # load the app before reinstalling detox, so that the package-lock cannot change
         name: Load the cached iOS app
-        uses: actions/cache/restore@88522ab9f39a2ea568f7027eddc7d8d8bc9d59c8 # v3
+        uses: actions/cache/restore@e12d46a63a90f2fae62d114769bbf2a179198b5c # v3
         id: app-cache
         with:
           path: ios/build/Build/Products/
@@ -532,7 +532,7 @@ jobs:
 
       - # load the jsbundle before reinstalling detox, so that the package-lock cannot change
         name: Load the cached iOS jsbundle
-        uses: actions/cache/restore@88522ab9f39a2ea568f7027eddc7d8d8bc9d59c8 # v3
+        uses: actions/cache/restore@e12d46a63a90f2fae62d114769bbf2a179198b5c # v3
         id: jsbundle-cache
         with:
           path: |
@@ -556,7 +556,7 @@ jobs:
           node-version-file: '.node-version'
 
       - name: Restore node_modules cache
-        uses: actions/cache/restore@88522ab9f39a2ea568f7027eddc7d8d8bc9d59c8 # v3
+        uses: actions/cache/restore@e12d46a63a90f2fae62d114769bbf2a179198b5c # v3
         id: node-cache
         with:
           path: node_modules/
