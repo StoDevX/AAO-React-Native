@@ -106,8 +106,8 @@ export let CreditsView = (): JSX.Element => (
 
 		<Title>All About Olaf</Title>
 		<About>
-			All About Olaf is a collaborative application created by alumni of St. Olaf
-			College in Northfield, MN under the name StoDevX.
+			All About Olaf is a collaborative application created by alumni of St. 
+			Olaf College in Northfield, MN under the name StoDevX.
 		</About>
 
 		<Heading>🏡 October 2017 — Today</Heading>
