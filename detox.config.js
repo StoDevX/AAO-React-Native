@@ -48,7 +48,6 @@ function generateBuildCommand(configuration) {
 		`-configuration ${configuration}`,
 		`-destination 'platform=iOS Simulator,name=${iPhoneSimulatorDevice},OS=${currentDeploymentTarget}'`,
 		'-derivedDataPath ios/build',
-		'-allowProvisioningUpdates',
 		'build',
 	].join(' ')
 }
