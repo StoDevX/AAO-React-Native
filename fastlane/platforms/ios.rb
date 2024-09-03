@@ -1,21 +1,6 @@
 require 'json'
 
 platform :ios do
-	def build_keyfile_path
-		key_file_path = Pathname.new(ENV['APP_STORE_CONNECT_API_KEY_KEY_FILEPATH'])
-		UI.user_error "APP_STORE_CONNECT_API_KEY_KEY_FILEPATH must be absolute" if key_file_path.relative?
-		return key_file_path
-	end
-
-	def build_xcargs
-		xcargs = "-allowProvisioningUpdates"
-		xcargs += " -authenticationKeyID #{ENV['APP_STORE_CONNECT_API_KEY_KEY_ID']}"
-		xcargs += " -authenticationKeyIssuerID #{ENV['APP_STORE_CONNECT_API_KEY_ISSUER_ID']}"
-		xcargs += " -authenticationKeyPath #{build_keyfile_path}"
-		xcargs += " CODE_SIGN_STYLE=Automatic"
-		return xcargs
-	end
-
 	desc 'Runs all the tests'
 	lane :test do
 		scan(scheme: ENV['GYM_SCHEME'], workspace: ENV['GYM_WORKSPACE'])
@@ -60,8 +45,7 @@ platform :ios do
 			    skip_codesigning: true,
 			    skip_package_ipa: true,
 			    skip_package_pkg: true,
-			    skip_archive: true,
-			    xcargs: build_xcargs)
+			    skip_archive: true)
 		rescue IOError => e
 			build_status = 1
 			raise e
@@ -80,7 +64,7 @@ platform :ios do
 		File.open('../logs/products', 'w') { |file| file.write('[]') }
 		build_status = 0
 		begin
-			gym(include_symbols: true, xcargs: build_xcargs)
+			gym(include_symbols: true)
 		rescue IOError => e
 			build_status = 1
 			raise e
