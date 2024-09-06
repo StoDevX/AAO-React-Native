@@ -33,7 +33,7 @@ buildscript {
         classpath('com.android.tools.build:gradle')
         classpath("com.facebook.react:react-native-gradle-plugin")
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
-        classpath("com.netflix.nebula:gradle-dependency-lock-plugin:12.7.1")
+        classpath("com.netflix.nebula:gradle-dependency-lock-plugin:15.1.0")
     }
 
     configurations.classpath {
