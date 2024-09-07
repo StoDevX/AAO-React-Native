@@ -16,7 +16,11 @@ import {LoadingView, NoticeView} from '@frogpond/notice'
 import {formatResults} from './helpers'
 import {useDirectoryEntries} from './query'
 import {Avatar, List} from 'react-native-paper'
-import type {DirectoryIconProps, DirectoryItem, DirectorySearchTypeEnum} from './types'
+import type {
+	DirectoryIconProps,
+	DirectoryItem,
+	DirectorySearchTypeEnum,
+} from './types'
 import Icon from 'react-native-vector-icons/Ionicons'
 import {RouteProp, useNavigation, useRoute} from '@react-navigation/native'
 import {

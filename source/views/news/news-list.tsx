@@ -70,8 +70,8 @@ export const NewsList = (props: Props): JSX.Element => {
 		}
 
 		let categories = [...new Set(allCategories)].sort()
-		let filterCategories = categories.map((c) => {
-			return {title: c}
+		let filterCategories = categories.map((category) => {
+			return {title: category}
 		})
 
 		let newsFilters: ListType<StoryType>[] = [
