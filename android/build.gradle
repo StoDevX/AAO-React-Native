@@ -26,14 +26,12 @@ buildscript {
     repositories {
         google()
         mavenCentral()
-        maven { url = uri("https://plugins.gradle.org/m2/") }
     }
 
     dependencies {
         classpath('com.android.tools.build:gradle')
         classpath("com.facebook.react:react-native-gradle-plugin")
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
-        classpath("com.netflix.nebula:gradle-dependency-lock-plugin:12.7.1")
     }
 
     configurations.classpath {
