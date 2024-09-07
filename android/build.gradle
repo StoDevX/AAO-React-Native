@@ -4,13 +4,13 @@ buildscript {
     ext {
         buildToolsVersion = "33.0.0"
         minSdkVersion = 21
-        compileSdkVersion = 33
-        targetSdkVersion = 33
+        compileSdkVersion = 34
+        targetSdkVersion = 34
         kotlinVersion = '1.6.10'
         // react-native-inappbrowser-reborn was using a 1.+ which pulled in an alpha which is very bad
         // - we will want to upgrade to 1.5.0 when we support minsdk 33
         // - we can delete this when inappbrowser-reborn changes their build script to avoid this pattern
-        //   but until then, we'll keep it pinned since a future alpha release could cause this problem. 
+        //   but until then, we'll keep it pinned since a future alpha release could cause this problem.
         androidXBrowser = "1.4.0"
         // react-native-inappbrowser-reborn installs androidx.annotations@1.6.0 which has a dependency on
         // kotlin-stdlib:1.8.0. By default, gradle is using the higher version of this lib in the project
