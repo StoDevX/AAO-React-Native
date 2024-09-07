@@ -28,11 +28,11 @@ const styles = StyleSheet.create({
 export const BonAppPickerView = (): JSX.Element => {
 	let [cafeId, setCafeId] = React.useState('')
 
-	let chooseCafe = (cafeId: string) => {
-		if (!/^\d*$/u.test(cafeId)) {
+	let chooseCafe = (selectedCafeId: string) => {
+		if (!/^\d*$/u.test(selectedCafeId)) {
 			return
 		}
-		setCafeId(cafeId)
+		setCafeId(selectedCafeId)
 	}
 
 	return (

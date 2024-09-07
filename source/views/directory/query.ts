@@ -45,9 +45,9 @@ export function useDirectoryEntries(
 ): UseQueryResult<SearchResults, unknown> {
 	return useQuery({
 		queryKey: keys.all(getDirectoryQuery({query, type})),
-		queryFn: async ({queryKey: [_, query], signal}) => {
+		queryFn: async ({queryKey: [_, searchQuery], signal}) => {
 			let response = await directory
-				.get('search', {searchParams: query, signal})
+				.get('search', {searchParams: searchQuery, signal})
 				.json()
 			return response as SearchResults
 		},

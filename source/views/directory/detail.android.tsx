@@ -5,7 +5,12 @@ import {callPhone} from '../../components/call-phone'
 import {sendEmail} from '../../components/send-email'
 import {buildEmailAction, buildPhoneActions} from './helpers'
 import * as c from '@frogpond/colors'
-import type {CampusLocation, Department} from './types'
+import type {
+	CampusLocation,
+	Department,
+	DirectoryIconName,
+	DirectoryIconProps,
+} from './types'
 import {
 	Avatar,
 	Title,
@@ -21,24 +26,9 @@ import {
 	NativeStackNavigationProp,
 } from '@react-navigation/native-stack'
 import {RootStackParamList} from '../../../source/navigation/types'
-import {StyleProp, ViewStyle} from 'react-native'
 
 export const DetailNavigationOptions: NativeStackNavigationOptions = {
 	title: 'Contact',
-}
-
-type DirectoryIconName =
-	| 'calendar-clock-outline'
-	| 'email-outline'
-	| 'handshake-outline'
-	| 'link'
-	| 'map-marker-outline'
-	| 'open-in-new'
-	| 'phone'
-
-interface DirectoryIconProps {
-	color: string
-	style?: StyleProp<ViewStyle>
 }
 
 const createDirectoryIcon =

@@ -70,7 +70,7 @@ function MoreView(): JSX.Element {
 		let filteredData = []
 		for (let {title, data: items} of data) {
 			let filteredItems = items.filter((value) =>
-				linkToArray(value).some((value) => value.includes(searchQuery)),
+				linkToArray(value).some((item) => item.includes(searchQuery)),
 			)
 			if (filteredItems.length) {
 				filteredData.push({title, data: items})
