@@ -80,6 +80,7 @@ describe('handles weird times', () => {
 	})
 })
 
+// eslint-disable-next-line jest/no-disabled-tests
 xdescribe('checks a list of schedules to see if any are open', () => {
 	let schedule: SingleBuildingScheduleType = {
 		days: ['Fr', 'Sa'],

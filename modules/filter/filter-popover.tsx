@@ -31,7 +31,7 @@ export function FilterPopover<T extends object>(props: Props<T>): JSX.Element {
 			<TableView>
 				<FilterSection<T>
 					filter={filter}
-					onChange={(filter) => setFilter(filter)}
+					onChange={(updatedFilter) => setFilter(updatedFilter)}
 				/>
 			</TableView>
 		</Popover>

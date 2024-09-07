@@ -83,7 +83,7 @@ export function FilterToolbar<T extends object>({
 						key={filter.spec.title}
 						filter={filter}
 						label={filter.spec.label}
-						onRemove={(filter) => updateFilter(filter)}
+						onRemove={(updatedFilter) => updateFilter(updatedFilter)}
 					/>
 				)
 			} else if (filter.type === 'list') {
@@ -93,7 +93,7 @@ export function FilterToolbar<T extends object>({
 							key={filter.spec.title}
 							filter={filter}
 							label={`No ${filter.spec.title}`}
-							onRemove={(filter) => updateFilter(filter)}
+							onRemove={(updatedFilter) => updateFilter(updatedFilter)}
 						/>
 					)
 				}
@@ -103,7 +103,7 @@ export function FilterToolbar<T extends object>({
 						key={selected.title}
 						filter={filter}
 						label={selected.label || selected.title.toString()}
-						onRemove={(filter) => updateFilter(filter, selected)}
+						onRemove={(updatedFilter) => updateFilter(updatedFilter, selected)}
 					/>
 				))
 			}

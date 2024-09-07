@@ -63,8 +63,7 @@ export function detailTimes(event: EventType): EventDetailTime {
 		// 12:00 PM to Jun. 25 3:00pm
 		// Midnight to Jun. 25 <-- assuming the end time is also midnight
 		start = startTimeFormatted
-		let endFormat =
-			endTimeFormatted === midnightTime ? 'MMM. D' : 'MMM. D h:mm A'
+		endFormat = endTimeFormatted === midnightTime ? 'MMM. D' : 'MMM. D h:mm A'
 		end = `${event.endTime.format(endFormat)}`
 	} else if (sillyZeroLength) {
 		start = `Starts on ${startTimeFormatted}`
