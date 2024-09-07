@@ -33,8 +33,8 @@ function termToArray(term: WordType) {
 	)
 }
 
-function groupWords(words: WordType[]): DictionaryGroup[] {
-	let grouped = groupBy(words, (w) => w.word[0] || '?')
+function groupWords(wordsToGroup: WordType[]): DictionaryGroup[] {
+	let grouped = groupBy(wordsToGroup, (w) => w.word[0] || '?')
 	return Object.entries(grouped).map(([k, v]) => ({
 		title: k,
 		data: v,
@@ -82,8 +82,8 @@ function DictionaryView(): JSX.Element {
 		let grouped = groupWords(data)
 		let filteredData = []
 		for (let {title, data: items} of grouped) {
-			let filteredItems = items.filter((value) =>
-				termToArray(value).some((value) => value.includes(searchQuery)),
+			let filteredItems = items.filter((item) =>
+				termToArray(item).some((value) => value.includes(searchQuery)),
 			)
 			if (filteredItems.length) {
 				filteredData.push({title, data: items})
