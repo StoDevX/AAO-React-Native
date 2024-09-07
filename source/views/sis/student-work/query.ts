@@ -38,7 +38,10 @@ export function useStudentWorkPostings(): UseQueryResult<
 		select: (data) => {
 			let sorted = orderBy(data, sorters, ordered)
 			let grouped = groupBy(sorted, (j) => j.type)
-			return Object.entries(grouped).map(([title, data]) => ({title, data}))
+			return Object.entries(grouped).map(([title, groupedData]) => ({
+				title,
+				data: groupedData,
+			}))
 		},
 	})
 }

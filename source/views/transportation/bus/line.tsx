@@ -126,14 +126,19 @@ export function BusLine(props: Props): JSX.Element {
 	let [status, setStatus] = useState<BusStateEnum>('none')
 
 	useEffect(() => {
-		let {schedule, subtitle, currentBusIteration, status} = deriveFromProps({
+		let {
+			schedule: scheduleForToday,
+			subtitle: scheduleSubtitle,
+			currentBusIteration: busIteration,
+			status: currentStatus,
+		} = deriveFromProps({
 			line,
 			now,
 		})
-		setSchedule(schedule)
-		setSubtitle(subtitle)
-		setStatus(status)
-		setCurrentBusIteration(currentBusIteration)
+		setSchedule(scheduleForToday)
+		setSubtitle(scheduleSubtitle)
+		setStatus(currentStatus)
+		setCurrentBusIteration(busIteration)
 	}, [line, now])
 
 	let INFO_EL = (
