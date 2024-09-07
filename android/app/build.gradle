@@ -1,8 +1,6 @@
 // this plugin adapts the gradle build for android apps
 apply plugin: 'com.android.application'
 apply plugin: 'com.facebook.react'
-// this plugin applies dependency locking to gradle dependencies
-apply plugin: 'nebula.dependency-lock'
 
 
 /**
@@ -183,7 +181,6 @@ dependencies {
 
 dependencyLocking {
     lockAllConfigurations()
-    // lockMode = LockMode.STRICT
 }
 
 project.ext.vectoricons = [
