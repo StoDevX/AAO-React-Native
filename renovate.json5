@@ -1,22 +1,16 @@
 {
 	$schema: 'https://docs.renovatebot.com/renovate-schema.json',
 	extends: [
-		'config:base',
+		'config:best-practices',
 		// go ahead and update Docker FROM sources, and pin them with a hash
 		':docker',
-		'docker:pinDigests',
 		// update lockfile versions weekly
 		':maintainLockFilesWeekly',
 		// keep all dependency versions pinned - except peerDependencies
 		':pinAllExceptPeerDependencies',
-		// pin github-actions with a digest, to avoid surprises when they update
-		'helpers:pinGitHubActionDigests',
 		// > wait until the npm package is three days old before raising the
 		// > update. This prevents npm unpublishing a package you already upgraded to.
 		'npm:unpublishSafe',
-		// include ts-jest and @types/jest in jestjs grouped updates
-		'group:jestPlusTSJest',
-		'group:jestPlusTypes',
 		// disable semantic commits
 		':semanticCommitsDisabled',
 	],
@@ -27,6 +21,8 @@
 				'@types/react-native',
 				'react-native',
 				'metro-react-native-babel-preset',
+				'@react-native/metro-config',
+				'@react-native/eslint-config',
 				'@types/react-test-renderer',
 				'react-test-renderer',
 				'@types/react',
@@ -49,6 +45,11 @@
 			matchPaths: ['modules/**/package.json'],
 			matchDepTypes: ['peerDependencies'],
 			rangeStrategy: 'bump',
+		},
+		// group all redux packages together
+		{
+			groupName: 'redux',
+			matchPackageNames: ['@reduxjs/**', 'react-redux'],
 		},
 	],
 	// Allow Renovate to open as many PRs as it wants
