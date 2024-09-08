@@ -12,7 +12,7 @@
     "css-select": "5.1.0",
     "domhandler": "5.0.3",
     "domutils": "3.1.0",
-    "html-entities": "2.4.0",
+    "html-entities": "2.5.2",
     "htmlparser2": "9.0.0"
   }
 }
