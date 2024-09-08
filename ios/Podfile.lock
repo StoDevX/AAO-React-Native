@@ -329,7 +329,7 @@ PODS:
     - RCTTypeSafety
     - React-Core
     - ReactCommon/turbomodule/core
-  - react-native-sfsymbols (1.2.1):
+  - react-native-sfsymbols (1.2.2):
     - React
   - react-native-webview (13.5.1):
     - React-Core
@@ -705,7 +705,7 @@ SPEC CHECKSUMS:
   react-native-netinfo: 076df4f9b07f6670acf4ce9a75aac8d34c2e2ccc
   react-native-restart: 7595693413fe3ca15893702f2c8306c62a708162
   react-native-safe-area-context: 39c2d8be3328df5d437ac1700f4f3a4f75716acc
-  react-native-sfsymbols: bd3a0d3eab185e80b571bae60753dcf5a0d57967
+  react-native-sfsymbols: ca90d8bb7d6ad06523bf833f2becae22b97fb056
   react-native-webview: 8baa0f5c6d336d6ba488e942bcadea5bf51f050a
   React-NativeModulesApple: edb5ace14f73f4969df6e7b1f3e41bef0012740f
   React-perflogger: 496a1a3dc6737f964107cb3ddae7f9e265ddda58
