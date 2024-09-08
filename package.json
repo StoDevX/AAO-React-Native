@@ -114,7 +114,7 @@
     "@sentry/cli": "2.34.1",
     "@tanstack/eslint-plugin-query": "4.34.1",
     "@testing-library/react-native": "12.6.1",
-    "@types/base-64": "1.0.0",
+    "@types/base-64": "1.0.2",
     "@types/http-cache-semantics": "4.0.4",
     "@types/jest": "29.5.12",
     "@types/js-yaml": "4.0.9",
