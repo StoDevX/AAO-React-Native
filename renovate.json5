@@ -49,7 +49,7 @@
 		// group all redux packages together
 		{
 			groupName: 'redux',
-			matchPackageNames: ['@reduxjs/**', 'react-redux']
+			matchPackageNames: ['@reduxjs/**', 'react-redux'],
 		},
 	],
 	// Allow Renovate to open as many PRs as it wants
