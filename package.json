@@ -115,7 +115,7 @@
     "@tanstack/eslint-plugin-query": "5.53.0",
     "@testing-library/react-native": "12.3.0",
     "@types/base-64": "1.0.0",
-    "@types/http-cache-semantics": "4.0.1",
+    "@types/http-cache-semantics": "4.0.4",
     "@types/jest": "29.5.12",
     "@types/js-yaml": "4.0.5",
     "@types/lodash": "4.14.200",
