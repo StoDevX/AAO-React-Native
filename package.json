@@ -120,7 +120,7 @@
     "@types/js-yaml": "4.0.9",
     "@types/lodash": "4.14.200",
     "@types/react": "18.0.28",
-    "@types/react-native-button": "3.0.1",
+    "@types/react-native-button": "3.0.5",
     "@types/react-native-vector-icons": "6.4.16",
     "@types/react-test-renderer": "18.0.0",
     "@types/tinycolor2": "1.4.3",
