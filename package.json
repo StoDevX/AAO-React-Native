@@ -81,7 +81,7 @@
     "react-native-button": "3.1.0",
     "react-native-calendar-events": "2.2.0",
     "react-native-device-info": "11.1.0",
-    "react-native-gesture-handler": "2.9.0",
+    "react-native-gesture-handler": "2.19.0",
     "react-native-inappbrowser-reborn": "3.7.0",
     "react-native-ios-context-menu": "1.15.3",
     "react-native-keychain": "8.2.0",
