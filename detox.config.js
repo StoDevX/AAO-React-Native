@@ -35,13 +35,14 @@ function findCurrentDeploymentTarget() {
 
 const iPhoneSimulatorDevice = 'iPhone 11 Pro'
 const currentDeploymentTarget = findCurrentDeploymentTarget()
+const codeSigningDisabled = process.env.CODE_SIGNING_DISABLED === 'true'
 
 /**
  * @param {Configuration} configuration
  * @returns {string}
  */
 function generateBuildCommand(configuration) {
-	return [
+	const baseCommand = [
 		'xcodebuild',
 		'-workspace ios/AllAboutOlaf.xcworkspace',
 		'-scheme AllAboutOlaf',
@@ -49,7 +50,17 @@ function generateBuildCommand(configuration) {
 		`-destination 'platform=iOS Simulator,name=${iPhoneSimulatorDevice},OS=${currentDeploymentTarget}'`,
 		'-derivedDataPath ios/build',
 		'build',
-	].join(' ')
+	]
+
+	if (codeSigningDisabled) {
+		baseCommand.push(
+			'CODE_SIGN_IDENTITY=""',
+			'CODE_SIGNING_REQUIRED=NO',
+			'CODE_SIGNING_ALLOWED=NO',
+		)
+	}
+
+	return baseCommand.join(' ')
 }
 
 /**

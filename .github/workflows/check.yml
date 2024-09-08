@@ -497,6 +497,7 @@ jobs:
         if: ${{ steps.app-cache.outputs.cache-hit != 'true' && !contains(github.event.pull_request.labels.*.name, 'ci/skip-detox') }}
         env:
           SKIP_BUNDLING: 'true'
+          CODE_SIGNING_DISABLED: true
         run: npx detox build e2e --configuration ios.sim.release
 
       - name: Cache the iOS app
