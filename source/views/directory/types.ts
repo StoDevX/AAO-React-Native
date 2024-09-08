@@ -1,3 +1,5 @@
+import {StyleProp, ViewStyle} from 'react-native'
+
 export type CampusLocation = {
 	display: string
 	buildingabbr: string
@@ -77,3 +79,17 @@ export type DirectorySearchTypeEnum =
 	| 'query'
 	| 'title'
 	| 'username'
+
+export type DirectoryIconName =
+	| 'calendar-clock-outline'
+	| 'email-outline'
+	| 'handshake-outline'
+	| 'link'
+	| 'map-marker-outline'
+	| 'open-in-new'
+	| 'phone'
+
+export interface DirectoryIconProps {
+	color: string
+	style?: StyleProp<ViewStyle>
+}

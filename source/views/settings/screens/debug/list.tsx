@@ -101,12 +101,12 @@ export const DebugArrayItem = ({item}: {item: unknown[]}): JSX.Element => {
 			ItemSeparatorComponent={ListSeparator}
 			ListEmptyComponent={<NoticeView text="Nothing found." />}
 			data={keyed}
-			renderItem={({item}) => (
+			renderItem={({item: debugItem}) => (
 				<DebugRow
-					data={item}
+					data={debugItem}
 					onPress={() => {
 						navigation.navigate('DebugView', {
-							keyPath: [...keyPath, String(item.key)],
+							keyPath: [...keyPath, String(debugItem.key)],
 						})
 					}}
 				/>
@@ -126,11 +126,13 @@ export const DebugObjectItem = ({item}: {item: object}): JSX.Element => {
 			ItemSeparatorComponent={ListSeparator}
 			ListEmptyComponent={<NoticeView text="Nothing found." />}
 			data={keyed}
-			renderItem={({item}) => (
+			renderItem={({item: debugItem}) => (
 				<DebugRow
-					data={item}
+					data={debugItem}
 					onPress={() =>
-						navigation.navigate('DebugView', {keyPath: [...keyPath, item.key]})
+						navigation.navigate('DebugView', {
+							keyPath: [...keyPath, debugItem.key],
+						})
 					}
 				/>
 			)}

@@ -52,27 +52,29 @@ export function useCourseData(
 	let {data: terms = []} = useAvailableTerms()
 	let filteredTerms = terms.filter((t) => selectedTerms.includes(t.term))
 
-	let query = (
+	let createQueryOptions = (
 		term: TermType,
-		levels: Array<number> = [],
-		gereqs: Array<string> = [],
+		levelsList: Array<number> = [],
+		gereqsList: Array<string> = [],
 	): UseQueryOptions<
 		CourseType[],
 		unknown,
 		CourseType[],
 		ReturnType<(typeof keys)['courses']>
 	> => ({
-		queryKey: keys.courses(term, levels, gereqs),
-		queryFn: ({queryKey: [_group, _courses, term, levels, gereqs], signal}) =>
-			coursesForTerm(term, levels, gereqs, {signal}),
+		queryKey: keys.courses(term, levelsList, gereqsList),
+		queryFn: ({
+			queryKey: [_group, _courses, termKey, levelsKey, gereqsKey],
+			signal,
+		}) => coursesForTerm(termKey, levelsKey, gereqsKey, {signal}),
 		staleTime: ONE_HOUR,
 		enabled: terms.length > 0,
 	})
 
 	return useQueries({
 		queries: filteredTerms.length
-			? filteredTerms.map((term) => query(term, levels, gereqs))
-			: terms.map((term) => query(term, levels, gereqs)),
+			? filteredTerms.map((term) => createQueryOptions(term, levels, gereqs))
+			: terms.map((term) => createQueryOptions(term, levels, gereqs)),
 	})
 }
 

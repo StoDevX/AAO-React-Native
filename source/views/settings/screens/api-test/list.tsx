@@ -27,6 +27,7 @@ export const APITestView = (): JSX.Element => {
 	} = useServerRoutes()
 
 	React.useLayoutEffect(() => {
+		const rightButton = () => <NetworkLoggerButton />
 		navigation.setOptions({
 			headerSearchBarOptions: {
 				autoCapitalize: 'none',
@@ -39,7 +40,7 @@ export const APITestView = (): JSX.Element => {
 					setFilterPath(event.nativeEvent.text),
 				placeholder: '/path/to/uri',
 			},
-			headerRight: () => <NetworkLoggerButton />,
+			headerRight: rightButton,
 		})
 	}, [navigation])
 

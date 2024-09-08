@@ -10,8 +10,8 @@ export function getScheduleForNow(
 	// now.day returns 0-6, Sunday to Saturday
 	let thisWeekday = allDaysOfWeek[now.day()]
 
-	let schedule = schedules.find((schedule) =>
-		schedule.days.includes(thisWeekday),
+	let schedule = schedules.find((instance) =>
+		instance.days.includes(thisWeekday),
 	)
 
 	if (!schedule) {

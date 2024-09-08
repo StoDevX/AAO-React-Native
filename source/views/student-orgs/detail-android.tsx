@@ -105,15 +105,15 @@ let StudentOrgsDetailView = (): JSX.Element => {
 
 			{contacts.length ? (
 				<Card header="Contact" style={styles.card}>
-					{contacts.map((c, i) => (
+					{contacts.map((contact, i) => (
 						<Text
 							key={i}
-							onPress={() => sendEmail({to: [c.email], subject: orgName})}
+							onPress={() => sendEmail({to: [contact.email], subject: orgName})}
 							selectable={true}
 							style={styles.cardBody}
 						>
-							{c.title ? c.title + ': ' : ''}
-							{showNameOrEmail(c)}
+							{contact.title ? contact.title + ': ' : ''}
+							{showNameOrEmail(contact)}
 						</Text>
 					))}
 				</Card>
@@ -124,14 +124,14 @@ let StudentOrgsDetailView = (): JSX.Element => {
 					header={advisors.length === 1 ? 'Advisor' : 'Advisors'}
 					style={styles.card}
 				>
-					{advisors.map((c, i) => (
+					{advisors.map((contact, i) => (
 						<Text
 							key={i}
-							onPress={() => sendEmail({to: [c.email], subject: orgName})}
+							onPress={() => sendEmail({to: [contact.email], subject: orgName})}
 							selectable={true}
 							style={styles.cardBody}
 						>
-							{c.name} ({c.email})
+							{contact.name} ({contact.email})
 						</Text>
 					))}
 				</Card>

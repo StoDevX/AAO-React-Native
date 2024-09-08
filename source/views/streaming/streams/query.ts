@@ -12,22 +12,25 @@ export const keys = {
 export function useStreams(
 	date: Moment = moment.tz(timezone()),
 ): UseQueryResult<StreamType[], unknown> {
-	let dateFrom = date.format('YYYY-MM-DD')
-	let dateTo = date.clone().add(2, 'month').format('YYYY-MM-DD')
+	const dateFromFormatted = date.format('YYYY-MM-DD')
+	const dateToFormatted = date.clone().add(2, 'month').format('YYYY-MM-DD')
 
-	let searchParams = {
+	const searchParams = {
 		sort: 'ascending',
-		dateFrom,
-		dateTo,
+		dateFrom: dateFromFormatted,
+		dateTo: dateToFormatted,
 	} as const
 
 	return useQuery({
 		queryKey: keys.all(searchParams),
-		queryFn: async ({queryKey: [_group, {sort, dateFrom, dateTo}], signal}) => {
-			let response = await client
+		queryFn: async ({
+			queryKey: [_group, {sort, dateFrom: queryDateFrom, dateTo: queryDateTo}],
+			signal,
+		}) => {
+			const response = await client
 				.get('streams/upcoming', {
 					signal,
-					searchParams: {sort, dateFrom, dateTo},
+					searchParams: {sort, dateFrom: queryDateFrom, dateTo: queryDateTo},
 				})
 				.json()
 			return response as StreamType[]

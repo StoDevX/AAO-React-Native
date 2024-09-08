@@ -4,16 +4,16 @@ const CENTRAL_TZ = 'America/Chicago'
 
 const baseTime = moment('2019-12-18T18:39:45').tz(CENTRAL_TZ)
 
-export const time = (time: string): moment.Moment => {
+export const time = (timeToFormat: string): moment.Moment => {
 	return moment
-		.tz(time, 'h:mma', true, CENTRAL_TZ)
+		.tz(timeToFormat, 'h:mma', true, CENTRAL_TZ)
 		.year(baseTime.year())
 		.month(baseTime.month())
 		.date(baseTime.date())
 }
 
-export const dayAndTime = (time: string): moment.Moment => {
-	let parsed = moment.tz(time, 'dd h:mma', true, CENTRAL_TZ)
+export const dayAndTime = (timeToFormat: string): moment.Moment => {
+	let parsed = moment.tz(timeToFormat, 'dd h:mma', true, CENTRAL_TZ)
 
 	let dayOfWeek = parsed.day()
 

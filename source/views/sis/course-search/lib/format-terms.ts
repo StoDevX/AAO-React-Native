@@ -11,8 +11,8 @@ export function formatTerms(terms: Array<number>): string {
 		parseTermAbbrev(term.toString()),
 	)
 	let groupedTerms = groupBy(formattedTerms, (term) => term.year)
-	let groupedDescriptions = mapValues(groupedTerms, (terms) => {
-		let semesters = terms.map((term) => term.semester)
+	let groupedDescriptions = mapValues(groupedTerms, (abbreviatedTerms) => {
+		let semesters = abbreviatedTerms.map((term) => term.semester)
 		return semesters.join('/')
 	})
 	let finalDescription = toPairs(groupedDescriptions)
@@ -29,7 +29,7 @@ type TermAbbrevType = {
 function parseTermAbbrev(term: string): TermAbbrevType {
 	let semester = term.slice(-1)
 	let year = term.slice(0, -1)
-	let currentYear = parseInt(year)
+	let currentYear = parseInt(year, 10)
 	let currentYearAbbrev = year.slice(-2)
 	let nextYear = (currentYear + 1).toString().slice(-2)
 	switch (semester) {

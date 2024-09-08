@@ -19,7 +19,7 @@ function buildBusSchedules(now: moment.Moment): BusSchedule {
 	return processBusSchedule(now)(schedules)
 }
 
-test('returns the bus times index for the given time', () => {
+test('returns the bus times index for the first index', () => {
 	let now = time('1:00pm')
 	let input = buildBusSchedules(now)
 	let actual = getCurrentBusIteration(input, now)
@@ -27,7 +27,7 @@ test('returns the bus times index for the given time', () => {
 	expect(actual.index).toBe(0)
 })
 
-test('returns the bus times index for the given time', () => {
+test('returns the bus times index for the second index', () => {
 	let now = time('2:05pm')
 	let input = buildBusSchedules(now)
 	let actual = getCurrentBusIteration(input, now)

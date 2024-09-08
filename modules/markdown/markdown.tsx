@@ -24,7 +24,7 @@ import {Link} from './link'
 import {Image} from './image'
 import {List, ListItem} from './list'
 
-const styles = StyleSheet.create({
+const baseStyles = StyleSheet.create({
 	horizontalRule: {
 		width: '100%',
 		height: 1,
@@ -35,7 +35,7 @@ const styles = StyleSheet.create({
 const Softbreak = (props: TextProps) => <Text {...props}> </Text>
 const Hardbreak = (props: TextProps) => <Text {...props}>{'\n'}</Text>
 const HorizontalRule = (props: ViewProps) => (
-	<View {...props} style={[styles.horizontalRule, props.style]} />
+	<View {...props} style={[baseStyles.horizontalRule, props.style]} />
 )
 
 export type MarkdownProps = {

@@ -94,14 +94,16 @@ let StudentOrgsDetailView = (): JSX.Element => {
 
 				{contacts.length ? (
 					<Section header="CONTACT">
-						{contacts.map((c, i) => (
+						{contacts.map((contact, i) => (
 							<Cell
 								key={i}
 								accessory="DisclosureIndicator"
-								cellStyle={c.title ? 'Subtitle' : 'Basic'}
-								detail={c.title}
-								onPress={() => sendEmail({to: [c.email], subject: orgName})}
-								title={showNameOrEmail(c)}
+								cellStyle={contact.title ? 'Subtitle' : 'Basic'}
+								detail={contact.title}
+								onPress={() =>
+									sendEmail({to: [contact.email], subject: orgName})
+								}
+								title={showNameOrEmail(contact)}
 							/>
 						))}
 					</Section>
@@ -109,13 +111,15 @@ let StudentOrgsDetailView = (): JSX.Element => {
 
 				{advisors.length ? (
 					<Section header={advisors.length === 1 ? 'ADVISOR' : 'ADVISORS'}>
-						{advisors.map((c, i) => (
+						{advisors.map((contact, i) => (
 							<Cell
 								key={i}
 								accessory="DisclosureIndicator"
 								cellStyle="Basic"
-								onPress={() => sendEmail({to: [c.email], subject: orgName})}
-								title={c.name}
+								onPress={() =>
+									sendEmail({to: [contact.email], subject: orgName})
+								}
+								title={contact.name}
 							/>
 						))}
 					</Section>

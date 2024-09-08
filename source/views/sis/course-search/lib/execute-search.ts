@@ -17,7 +17,11 @@ export function applySearch(query: string, course: Course): boolean {
 	}
 
 	let {instructors = []} = course
-	if (instructors.some((name) => keywordSearch(query, name.toLowerCase(), 1))) {
+	if (
+		instructors.some((instructorName) =>
+			keywordSearch(query, instructorName.toLowerCase(), 1),
+		)
+	) {
 		return true
 	}
 

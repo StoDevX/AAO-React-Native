@@ -40,9 +40,10 @@ export const APITestDetailView = (): JSX.Element => {
 	})
 
 	React.useLayoutEffect(() => {
+		const rightButton = () => <NetworkLoggerButton />
 		navigation.setOptions({
 			title: cleanedName,
-			headerRight: () => <NetworkLoggerButton />,
+			headerRight: rightButton,
 		})
 	}, [cleanedName, navigation])
 
