@@ -27,6 +27,7 @@
 				'@types/react-native',
 				'react-native',
 				'metro-react-native-babel-preset',
+				'@react-native/metro-config',
 				'@types/react-test-renderer',
 				'react-test-renderer',
 				'@types/react',
