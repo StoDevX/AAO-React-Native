@@ -445,7 +445,7 @@ PODS:
     - React-perflogger (= 0.72.4)
   - RNCalendarEvents (2.2.0):
     - React
-  - RNCAsyncStorage (1.19.3):
+  - RNCAsyncStorage (1.24.0):
     - React-Core
   - RNCClipboard (1.11.1):
     - React-Core
@@ -725,7 +725,7 @@ SPEC CHECKSUMS:
   React-utils: b79f2411931f9d3ea5781404dcbb2fa8a837e13a
   ReactCommon: 4b2bdcb50a3543e1c2b2849ad44533686610826d
   RNCalendarEvents: 7e65eb4a94f53c1744d1e275f7fafcfaa619f7a3
-  RNCAsyncStorage: c913ede1fa163a71cea118ed4670bbaaa4b511bb
+  RNCAsyncStorage: ec53e44dc3e75b44aa2a9f37618a49c3bc080a7a
   RNCClipboard: 2834e1c4af68697089cdd455ee4a4cdd198fa7dd
   RNCPicker: 529d564911e93598cc399b56cc0769ce3675f8c8
   RNDateTimePicker: 65e1d202799460b286ff5e741d8baf54695e8abd
