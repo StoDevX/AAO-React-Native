@@ -2,7 +2,7 @@ import ky from 'ky'
 import {OLECARD_DATA_ENDPOINT} from './urls'
 import type {BalancesShapeType, OleCardBalancesType} from './types'
 import {performLogin} from '../login'
-import {useQuery, UseQueryResult} from '@tanstack/react-query'
+import {useQuery, type UseQueryResult} from '@tanstack/react-query'
 
 export const queryKeys = {
 	default: (username: string | undefined) => ['balances', username] as const,
