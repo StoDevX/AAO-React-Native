@@ -1,8 +1,5 @@
-// TODO Check on https://github.com/kmagiera/react-native-gesture-handler/issues/320,
-// and remove this if/when it is no longer necessary
 import 'react-native-gesture-handler'
 
-// initialization
 import './init/constants'
 import './init/moment'
 import * as sentryInit from './init/sentry'
@@ -26,7 +23,6 @@ import {IS_PRODUCTION} from '@frogpond/constants'
 import {StatusBar, useColorScheme} from 'react-native'
 
 export default function App(): JSX.Element {
-	// Create a ref for the navigation container
 	const navigationRef = React.useRef()
 	const scheme = useColorScheme()
 	const theme = scheme === 'dark' ? CombinedDarkTheme : CombinedLightTheme
@@ -37,7 +33,6 @@ export default function App(): JSX.Element {
 			return
 		}
 
-		// Register the navigation container with the instrumentation
 		sentryInit.routingInstrumentation.registerNavigationContainer(navigationRef)
 	}
 
