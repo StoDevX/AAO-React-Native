@@ -10,8 +10,8 @@ export const AppIconSection = (): JSX.Element | null => {
 	}, [])
 
 	let checkIfCustomIconsSupported = async () => {
-		let canChangeIcon = await Icons.isSupported()
-		setCanChangeIcon(canChangeIcon)
+		let canChange = await Icons.isSupported()
+		setCanChangeIcon(canChange)
 	}
 
 	return canChangeIcon ? <IconSettingsView /> : null

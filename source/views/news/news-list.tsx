@@ -25,7 +25,7 @@ const styles = StyleSheet.create({
 })
 
 let getStoryCategories = (story: StoryType) => {
-	return story.categories.map((c) => trimStoryCateogry(c))
+	return story.categories.map((category) => trimStoryCateogry(category))
 }
 
 let filterStories = (entries: StoryType[], filters: ListType<StoryType>[]) => {
@@ -43,6 +43,10 @@ let filterStories = (entries: StoryType[], filters: ListType<StoryType>[]) => {
 		)
 	})
 }
+
+const NewsItemSeparator = (thumbnail: Props['thumbnail']) => (
+	<ListSeparator spacing={{left: thumbnail === false ? undefined : 101}} />
+)
 
 export const NewsList = (props: Props): JSX.Element => {
 	let {
@@ -66,8 +70,8 @@ export const NewsList = (props: Props): JSX.Element => {
 		}
 
 		let categories = [...new Set(allCategories)].sort()
-		let filterCategories = categories.map((c) => {
-			return {title: c}
+		let filterCategories = categories.map((category) => {
+			return {title: category}
 		})
 
 		let newsFilters: ListType<StoryType>[] = [
@@ -112,11 +116,7 @@ export const NewsList = (props: Props): JSX.Element => {
 
 	return (
 		<FlatList
-			ItemSeparatorComponent={() => (
-				<ListSeparator
-					spacing={{left: props.thumbnail === false ? undefined : 101}}
-				/>
-			)}
+			ItemSeparatorComponent={NewsItemSeparator}
 			ListEmptyComponent={
 				isLoading ? (
 					<LoadingView />

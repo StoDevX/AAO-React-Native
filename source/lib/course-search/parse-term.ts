@@ -1,7 +1,7 @@
 export function parseTerm(term: string): string {
 	const semester = term.slice(-1)
 	const year = term.slice(0, -1)
-	const currentYear = parseInt(year)
+	const currentYear = parseInt(year, 10)
 	const nextYear = (currentYear + 1).toString().slice(-2)
 	switch (semester) {
 		case '0':

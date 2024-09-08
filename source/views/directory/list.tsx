@@ -16,7 +16,11 @@ import {LoadingView, NoticeView} from '@frogpond/notice'
 import {formatResults} from './helpers'
 import {useDirectoryEntries} from './query'
 import {Avatar, List} from 'react-native-paper'
-import type {DirectoryItem, DirectorySearchTypeEnum} from './types'
+import type {
+	DirectoryIconProps,
+	DirectoryItem,
+	DirectorySearchTypeEnum,
+} from './types'
 import Icon from 'react-native-vector-icons/Ionicons'
 import {RouteProp, useNavigation, useRoute} from '@react-navigation/native'
 import {
@@ -154,17 +158,21 @@ function IosDirectoryItemRow({item, onPress}: DirectoryItemRowProps) {
 }
 
 function AndroidDirectoryItemRow({item, onPress}: DirectoryItemRowProps) {
+	const renderAvatar = (props: DirectoryIconProps) => {
+		return (
+			<Avatar.Image
+				{...props}
+				size={42}
+				source={{uri: item.thumbnail}}
+				style={[props.style, styles.image]}
+			/>
+		)
+	}
+
 	return (
 		<List.Item
 			description={item.description}
-			left={(props) => (
-				<Avatar.Image
-					{...props}
-					size={42}
-					source={{uri: item.thumbnail}}
-					style={[props.style, styles.image]}
-				/>
-			)}
+			left={renderAvatar}
 			onPress={onPress}
 			title={item.displayName}
 		/>

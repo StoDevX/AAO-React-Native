@@ -25,6 +25,10 @@ export const NavigationOptions: NativeStackNavigationOptions = {
 	title: 'Course Catalog',
 }
 
+const RightButton: React.FC<{onPress: () => void}> = ({onPress}) => (
+	<SearchButton onPress={onPress} title="Browse" />
+)
+
 export const CourseSearchView = (): JSX.Element => {
 	let navigation = useNavigation()
 
@@ -36,15 +40,16 @@ export const CourseSearchView = (): JSX.Element => {
 	let [typedQuery, setTypedQuery] = React.useState('')
 
 	React.useLayoutEffect(() => {
+		const getRightButton = () => (
+			<RightButton
+				onPress={() =>
+					navigation.navigate('CourseSearchResults', {initialQuery: ''})
+				}
+			/>
+		)
+
 		navigation.setOptions({
-			headerRight: () => (
-				<SearchButton
-					onPress={() =>
-						navigation.navigate('CourseSearchResults', {initialQuery: ''})
-					}
-					title="Browse"
-				/>
-			),
+			headerRight: getRightButton,
 			headerSearchBarOptions: {
 				barTintColor: c.quaternarySystemFill,
 				onChangeText: (event: ChangeTextEvent) => {

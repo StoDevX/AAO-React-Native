@@ -1,17 +1,17 @@
 import * as React from 'react'
 import {Platform, ScrollView, StyleSheet, View} from 'react-native'
 import Icon from 'react-native-vector-icons/Ionicons'
-import {useAppDispatch, useAppSelector} from '../../redux'
-import {
-	acknowledgeAcknowledgement,
-	selectAcknowledgement,
-} from '../../redux/parts/settings'
 import {Avatar, Button, Card, Paragraph as AndroidP} from 'react-native-paper'
 import {Paragraph as IosP} from '@frogpond/markdown'
 import {Card as IosCard} from '@frogpond/silly-card'
 import {Button as IosButton} from '@frogpond/button'
 import {BalancesView} from './balances'
 import * as c from '@frogpond/colors'
+import {useAppDispatch, useAppSelector} from '../../redux'
+import {
+	acknowledgeAcknowledgement,
+	selectAcknowledgement,
+} from '../../redux/parts/settings'
 
 let Paragraph = Platform.OS === 'android' ? AndroidP : IosP
 let Ack = Platform.OS === 'android' ? AndroidAck : IosAck
@@ -65,24 +65,23 @@ type AcknowledgementProps = React.PropsWithChildren<{
 	onPositive: () => void
 }>
 
+const TitleLeftIcon: React.FC<{size: number; color: string}> = (props) => {
+	return (
+		<Icon name="md-warning" size={props.size} style={{color: props.color}} />
+	)
+}
+
+const AvatarIcon: React.FC<{size: number}> = (props) => {
+	return <Avatar.Icon {...props} icon={TitleLeftIcon} />
+}
+
 function AndroidAck(props: AcknowledgementProps) {
 	let {title, subtitle, children, onPositive} = props
 
 	return (
 		<ScrollView contentContainerStyle={styles.container}>
 			<Card style={styles.androidCard}>
-				<Card.Title
-					left={(props) => (
-						<Avatar.Icon
-							{...props}
-							icon={({size, color}) => (
-								<Icon name="md-warning" size={size} style={{color}} />
-							)}
-						/>
-					)}
-					subtitle={subtitle}
-					title={title}
-				/>
+				<Card.Title left={AvatarIcon} subtitle={subtitle} title={title} />
 				<Card.Content>{children}</Card.Content>
 				<Card.Actions>
 					<Button mode="contained" onPress={onPositive}>

@@ -84,7 +84,7 @@ export const PrintJobReleaseView = (): JSX.Element => {
 
 	let {data: heldJobs = []} = useHeldJobs(printer?.printerName)
 	let jobId = job.id.toString()
-	let heldJob = heldJobs.find((heldJob) => heldJob.id.startsWith(jobId))
+	let heldJob = heldJobs.find((item) => item.id.startsWith(jobId))
 
 	const returnToJobsView = React.useCallback(() => {
 		navigation.navigate('PrintJobs')

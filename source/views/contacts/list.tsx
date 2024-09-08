@@ -31,8 +31,8 @@ export let ContactsListView = (): JSX.Element => {
 	} = useGroupedContacts()
 
 	let onPressContact = React.useCallback(
-		(data: ContactType) =>
-			navigation.navigate(DetailNavigationKey, {contact: data}),
+		(contactData: ContactType) =>
+			navigation.navigate(DetailNavigationKey, {contact: contactData}),
 		[navigation],
 	)
 

@@ -61,8 +61,8 @@ export function FilterToolbarButton<T extends object>(
 		setPopoverVisible(true)
 	}
 
-	let onClosePopover = (filter: FilterType<T>): void => {
-		onPopoverDismiss(filter)
+	let onClosePopover = (updatedFilter: FilterType<T>): void => {
+		onPopoverDismiss(updatedFilter)
 		setPopoverVisible(false)
 	}
 

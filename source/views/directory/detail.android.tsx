@@ -5,7 +5,12 @@ import {callPhone} from '../../components/call-phone'
 import {sendEmail} from '../../components/send-email'
 import {buildEmailAction, buildPhoneActions} from './helpers'
 import * as c from '@frogpond/colors'
-import type {CampusLocation, Department} from './types'
+import type {
+	CampusLocation,
+	Department,
+	DirectoryIconName,
+	DirectoryIconProps,
+} from './types'
 import {
 	Avatar,
 	Title,
@@ -25,6 +30,11 @@ import {RootStackParamList} from '../../../source/navigation/types'
 export const DetailNavigationOptions: NativeStackNavigationOptions = {
 	title: 'Contact',
 }
+
+const createDirectoryIcon =
+	(iconName: DirectoryIconName) => (props: DirectoryIconProps) => (
+		<List.Icon {...props} icon={iconName} />
+	)
 
 export function DirectoryDetailView(): JSX.Element {
 	// typing useNavigation's props to inform typescript about `push`
@@ -101,7 +111,7 @@ export function DirectoryDetailView(): JSX.Element {
 				{pronouns?.length ? (
 					<List.Item
 						description={pronouns.join(', ').concat('')}
-						left={(props) => <List.Icon {...props} icon="handshake-outline" />}
+						left={createDirectoryIcon('handshake-outline')}
 						title="Pronouns"
 					/>
 				) : null}
@@ -109,9 +119,7 @@ export function DirectoryDetailView(): JSX.Element {
 				{officeHours && (
 					<List.Item
 						description={officeHours.description}
-						left={(props) => (
-							<List.Icon {...props} icon="calendar-clock-outline" />
-						)}
+						left={createDirectoryIcon('calendar-clock-outline')}
 						onPress={
 							officeHours.href
 								? () => officeHours.href && openUrl(officeHours.href)
@@ -124,7 +132,7 @@ export function DirectoryDetailView(): JSX.Element {
 				{email ? (
 					<List.Item
 						description={email}
-						left={(props) => <List.Icon {...props} icon="email-outline" />}
+						left={createDirectoryIcon('email-outline')}
 						onPress={() => sendEmail({to: [email], subject: '', body: ''})}
 						title="Email"
 					/>
@@ -134,9 +142,9 @@ export function DirectoryDetailView(): JSX.Element {
 					<List.Item
 						key={i}
 						description={loc.shortLocation}
-						left={(props) => <List.Icon {...props} icon="map-marker-outline" />}
+						left={createDirectoryIcon('map-marker-outline')}
 						onPress={() => callPhone(loc.phone)}
-						right={(props) => <List.Icon {...props} icon="phone" />}
+						right={createDirectoryIcon('phone')}
 						title={loc.display}
 					/>
 				))}
@@ -144,7 +152,7 @@ export function DirectoryDetailView(): JSX.Element {
 				{profileUrl ? (
 					<List.Item
 						description={profileUrl}
-						left={(props) => <List.Icon {...props} icon="link" />}
+						left={createDirectoryIcon('link')}
 						onPress={() => openUrl(profileUrl)}
 						title="Professional Profile"
 					/>
@@ -152,7 +160,7 @@ export function DirectoryDetailView(): JSX.Element {
 
 				{username ? (
 					<List.Item
-						left={(props) => <List.Icon {...props} icon="open-in-new" />}
+						left={createDirectoryIcon('open-in-new')}
 						onPress={() =>
 							openUrl(
 								`https://www.stolaf.edu/directory/search?lookup=${username}`,

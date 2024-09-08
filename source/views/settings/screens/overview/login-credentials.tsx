@@ -33,8 +33,8 @@ export const CredentialsLoginSection = (): JSX.Element => {
 
 	let logIn = useMutation({
 		mutationFn: () => performLogin({username, password}),
-		onSuccess: async (credentials) => {
-			await storeCredentials(credentials)
+		onSuccess: async (credentialsToStore) => {
+			await storeCredentials(credentialsToStore)
 			await invalidateCredentials()
 		},
 	})

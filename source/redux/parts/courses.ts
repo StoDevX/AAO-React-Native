@@ -47,7 +47,9 @@ const slice = createSlice({
 		updateRecentSearches(state, action: PayloadAction<string>) {
 			let recentSearches = state.recentSearches
 			let query = action.payload
-			const recentLowerCase = recentSearches.map((query) => query.toLowerCase())
+			const recentLowerCase = recentSearches.map((searchQuery) =>
+				searchQuery.toLowerCase(),
+			)
 			if (recentLowerCase.includes(query.toLowerCase())) {
 				return
 			}
