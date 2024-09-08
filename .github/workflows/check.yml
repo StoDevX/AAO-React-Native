@@ -23,7 +23,7 @@ jobs:
     outputs:
       cache-key: ${{ steps.node-cache.outputs.cache-primary-key }}
     steps:
-      - uses: actions/checkout@1e31de5234b9f8995739874a8ce0492dc87873e2 # v4.0.0
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
       - name: Extract job definition
         run: yq '.jobs.${{ github.job }}' .github/workflows/check.yml > .github/job.yml
@@ -55,7 +55,7 @@ jobs:
     outputs:
       cache-key: ${{ steps.node-cache.outputs.cache-primary-key }}
     steps:
-      - uses: actions/checkout@1e31de5234b9f8995739874a8ce0492dc87873e2 # v4.0.0
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
       - name: Extract job definition
         run: yq '.jobs.${{ github.job }}' .github/workflows/check.yml > .github/job.yml
@@ -85,7 +85,7 @@ jobs:
     name: Cache bundler for macOS
     runs-on: macos-14
     steps:
-      - uses: actions/checkout@1e31de5234b9f8995739874a8ce0492dc87873e2 # v4.0.0
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
       - uses: ruby/setup-ruby@v1
         with:
@@ -101,7 +101,7 @@ jobs:
     steps:
       - run: sudo xcode-select -s /Applications/${{ env.xcode_version }}.app
 
-      - uses: actions/checkout@1e31de5234b9f8995739874a8ce0492dc87873e2 # v4.0.0
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
       - name: Extract job definition
         run: yq '.jobs.${{ github.job }}' .github/workflows/check.yml > .github/job.yml
@@ -153,7 +153,7 @@ jobs:
     needs: [cache-npm-linux]
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@1e31de5234b9f8995739874a8ce0492dc87873e2 # v4.0.0
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
       - uses: actions/setup-node@1a4442cacd436585916779262731d5b162bc6ec7 # v3
         with:
@@ -176,7 +176,7 @@ jobs:
     needs: [cache-npm-linux]
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@1e31de5234b9f8995739874a8ce0492dc87873e2 # v4.0.0
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
       - uses: actions/setup-node@1a4442cacd436585916779262731d5b162bc6ec7 # v3
         with:
@@ -199,7 +199,7 @@ jobs:
     needs: [cache-npm-linux]
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@1e31de5234b9f8995739874a8ce0492dc87873e2 # v4.0.0
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
       - uses: actions/setup-node@1a4442cacd436585916779262731d5b162bc6ec7 # v3
         with:
@@ -226,7 +226,7 @@ jobs:
     needs: [cache-npm-linux]
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@1e31de5234b9f8995739874a8ce0492dc87873e2 # v4.0.0
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
       - uses: actions/setup-node@1a4442cacd436585916779262731d5b162bc6ec7 # v3
         with:
@@ -249,7 +249,7 @@ jobs:
     needs: [cache-npm-linux]
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@1e31de5234b9f8995739874a8ce0492dc87873e2 # v4.0.0
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
       - uses: actions/setup-node@1a4442cacd436585916779262731d5b162bc6ec7 # v3
         with:
@@ -276,7 +276,7 @@ jobs:
     outputs:
       cache-key: ${{ steps.jsbundle-cache.outputs.cache-primary-key }}
     steps:
-      - uses: actions/checkout@1e31de5234b9f8995739874a8ce0492dc87873e2 # v4.0.0
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
       - name: Extract job definition
         run: yq '.jobs.${{ github.job }}' .github/workflows/check.yml > .github/job.yml
@@ -328,7 +328,7 @@ jobs:
     outputs:
       cache-key: ${{ steps.jsbundle-cache.outputs.cache-primary-key }}
     steps:
-      - uses: actions/checkout@1e31de5234b9f8995739874a8ce0492dc87873e2 # v4.0.0
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
       - name: Extract job definition
         run: yq '.jobs.${{ github.job }}' .github/workflows/check.yml > .github/job.yml
@@ -372,7 +372,7 @@ jobs:
     needs: [jest, eslint, android-bundle, cache-npm-linux]
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@1e31de5234b9f8995739874a8ce0492dc87873e2 # v4.0.0
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
       - uses: actions/setup-node@1a4442cacd436585916779262731d5b162bc6ec7 # v3
         with:
@@ -437,7 +437,7 @@ jobs:
     steps:
       - run: sudo xcode-select -s /Applications/${{ env.xcode_version }}.app
 
-      - uses: actions/checkout@1e31de5234b9f8995739874a8ce0492dc87873e2 # v4.0.0
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
       - name: Extract job definition
         run: yq '.jobs.${{ github.job }}' .github/workflows/check.yml > .github/job.yml
@@ -519,7 +519,7 @@ jobs:
     steps:
       - run: sudo xcode-select -s /Applications/${{ env.xcode_version }}.app
 
-      - uses: actions/checkout@1e31de5234b9f8995739874a8ce0492dc87873e2 # v4.0.0
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
       - # load the app before reinstalling detox, so that the package-lock cannot change
         name: Load the cached iOS app
