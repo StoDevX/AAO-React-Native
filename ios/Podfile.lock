@@ -455,7 +455,8 @@ PODS:
     - React-Core
   - RNDeviceInfo (11.1.0):
     - React-Core
-  - RNGestureHandler (2.9.0):
+  - RNGestureHandler (2.19.0):
+    - RCT-Folly (= 2021.07.22.00)
     - React-Core
   - RNInAppBrowser (3.7.0):
     - React-Core
@@ -730,7 +731,7 @@ SPEC CHECKSUMS:
   RNCPicker: 529d564911e93598cc399b56cc0769ce3675f8c8
   RNDateTimePicker: 65e1d202799460b286ff5e741d8baf54695e8abd
   RNDeviceInfo: b899ce37a403a4dea52b7cb85e16e49c04a5b88e
-  RNGestureHandler: 071d7a9ad81e8b83fe7663b303d132406a7d8f39
+  RNGestureHandler: 7ad14a6c7b491add489246611d324f10009083ac
   RNInAppBrowser: e36d6935517101ccba0e875bac8ad7b0cb655364
   RNKeychain: ff836453cba46938e0e9e4c22e43d43fa2c90333
   RNReanimated: ab1295f59541cb26000d394b4b4aea72cb7ca448
