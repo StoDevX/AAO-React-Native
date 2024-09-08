@@ -169,6 +169,8 @@ jobs:
       - if: steps.node-cache.outputs.cache-hit != 'true'
         run: exit 1
 
+            - run: npm run pretty -- --no-write
+
       - run: npm run pretty -- --no-write --list-different
 
   eslint:
