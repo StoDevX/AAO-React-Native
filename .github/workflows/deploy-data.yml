@@ -11,7 +11,7 @@ jobs:
       - name: Check out the code
         uses: actions/checkout@1e31de5234b9f8995739874a8ce0492dc87873e2 # v4.0.0
 
-      - uses: actions/setup-node@5e21ff4d9bc1a8cf6de233a3057d20ec6b3fb69d # v3
+      - uses: actions/setup-node@1a4442cacd436585916779262731d5b162bc6ec7 # v3
         with: {node-version-file: '.node-version'}
 
       - name: Install dependencies
