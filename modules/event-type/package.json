@@ -9,6 +9,6 @@
     "test": "jest"
   },
   "peerDependencies": {
-    "moment": "^2.29.4"
+    "moment": "^2.30.1"
   }
 }
