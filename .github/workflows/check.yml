@@ -401,7 +401,7 @@ jobs:
           sudo sysctl -p
 
       - name: Gradle
-        uses: gradle/gradle-build-action@ef76a971e2fa3f867b617efd72f2fbd72cf6f8bc # v2
+        uses: gradle/gradle-build-action@ac2d340dc04d9e1113182899e983b5400c17cda1 # v3
         with:
           arguments: bundleRelease --scan
           build-root-directory: android
