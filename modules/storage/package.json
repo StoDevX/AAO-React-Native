@@ -9,6 +9,6 @@
     "test": "jest"
   },
   "peerDependencies": {
-    "react-native": "^0.72.4"
+    "react-native": "^0.75.3"
   }
 }
