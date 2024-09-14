@@ -2,21 +2,15 @@
 	$schema: 'https://docs.renovatebot.com/renovate-schema.json',
 	extends: [
 		'config:best-practices',
-		// go ahead and update Docker FROM sources, and pin them with a hash
 		':docker',
-		// update lockfile versions weekly
 		':maintainLockFilesWeekly',
-		// keep all dependency versions pinned - except peerDependencies
 		':pinAllExceptPeerDependencies',
-		// > wait until the npm package is three days old before raising the
-		// > update. This prevents npm unpublishing a package you already upgraded to.
 		'npm:unpublishSafe',
-		// disable semantic commits
 		':semanticCommitsDisabled',
 	],
 	packageRules: [
-		// require manual approval for new minor OR major versions of these packages
 		{
+			description: 'require manual approval for new minor OR major versions of these packages',
 			matchPackageNames: [
 				'@types/react-native',
 				'react-native',
@@ -34,24 +28,23 @@
 			matchUpdateTypes: ['minor', 'major'],
 			dependencyDashboardApproval: true,
 		},
-		// require manual approval for new major versions of these packages
 		{
+			description: 'require manual approval for new major versions of these packages',
 			matchPackageNames: ['react-markdown'],
 			matchUpdateTypes: ['major'],
 			dependencyDashboardApproval: true,
 		},
-		// stop widening peerDep ranges for custom modules
 		{
-			matchPaths: ['modules/**/package.json'],
+			description: 'stop widening peerDep ranges for custom modules',
+			matchFileNames: ['modules/**/package.json'],
 			matchDepTypes: ['peerDependencies'],
 			rangeStrategy: 'bump',
 		},
-		// group all redux packages together
 		{
+			description: 'group all redux packages together',
 			groupName: 'redux',
 			matchPackageNames: ['@reduxjs/**', 'react-redux'],
 		},
 	],
-	// Allow Renovate to open as many PRs as it wants
 	prConcurrentLimit: 0,
 }
