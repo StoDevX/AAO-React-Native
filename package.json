@@ -127,7 +127,7 @@
     "@types/wordwrap": "1.0.3",
     "@typescript-eslint/eslint-plugin": "5.62.0",
     "@typescript-eslint/parser": "5.62.0",
-    "@react-native/eslint-config": "0.73.2",
+    "@react-native/eslint-config": "0.75.3",
     "@react-native/metro-config": "0.72.11",
     "@tsconfig/react-native": "3.0.5",
     "ajv": "8.17.1",
