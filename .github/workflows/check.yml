@@ -447,7 +447,7 @@ jobs:
         uses: actions/cache/restore@0c45773b623bea8c8e75f6c82b208c3cf94ea4f9 # v4
         with:
           path: ios/build/Build/Products/
-          key: ${{ runner.os }}-ios-xcode@${{ env.xcode_version }}-${{ hashFiles('**/project.pbxproj', '**/Podfile', '**/Podfile.lock', 'package-lock.json', '.github/job.yml') }}
+          key: ${{ runner.os }}-ios-sim-xcode@${{ env.xcode_version }}-${{ hashFiles('**/project.pbxproj', '**/Podfile', '**/Podfile.lock', 'package-lock.json', '.github/job.yml') }}
 
       - uses: actions/setup-node@1e60f620b9541d16bece96c5465dc8ee9832be0b # v4
         if: steps.app-cache.outputs.cache-hit != 'true'
@@ -548,10 +548,11 @@ jobs:
 
       - name: Move cached jsbundle into place
         run: |
+          mkdir -p ios/build/Build/Products/Release-iphonesimulator/AllAboutOlaf.app/
+          mv ios/AllAboutOlaf/Info.plist ios/build/Build/Products/Release-iphonesimulator/AllAboutOlaf.app/
           mv ios/AllAboutOlaf/main.jsbundle ios/build/Build/Products/Release-iphonesimulator/AllAboutOlaf.app/
           mv ios/AllAboutOlaf/main.jsbundle.map ios/build/Build/Products/Release-iphonesimulator/AllAboutOlaf.app/
-          rm -rf ios/build/Build/Products/Release-iphonesimulator/AllAboutOlaf.app/assets
-          mv ios/assets ios/build/Build/Products/Release-iphonesimulator/AllAboutOlaf.app/
+          mv -f ios/assets ios/build/Build/Products/Release-iphonesimulator/AllAboutOlaf.app/
 
       - uses: actions/setup-node@1e60f620b9541d16bece96c5465dc8ee9832be0b # v4
         with:
