@@ -11,7 +11,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  ruby_version: '3.0'
+  ruby-version: '3.1'
   xcode_version: 'Xcode_15.2'
   java_version: '11'
   java_distribution: temurin
@@ -89,7 +89,7 @@ jobs:
 
       - uses: ruby/setup-ruby@v1
         with:
-          ruby-version: ${{ env.ruby_version }}
+          ruby-version: ${{ env.ruby-version }}
           bundler-cache: true
 
   cache-cocoapods:
@@ -111,7 +111,7 @@ jobs:
         id: cocoapods-cache
         with:
           path: ios/Pods
-          key: ${{ runner.os }}-cocoapods-ruby@${{ env.ruby_version }}-xcode@${{ env.xcode_version }}-${{ hashFiles('**/Podfile', '**/Podfile.lock', 'package-lock.json', '.github/job.yml') }}
+          key: ${{ runner.os }}-cocoapods-ruby@${{ env.ruby-version }}-xcode@${{ env.xcode_version }}-${{ hashFiles('**/Podfile', '**/Podfile.lock', 'package-lock.json', '.github/job.yml') }}
 
       - if: steps.cocoapods-cache.outputs.cache-hit != 'true'
         uses: actions/setup-node@1e60f620b9541d16bece96c5465dc8ee9832be0b # v4
@@ -123,7 +123,7 @@ jobs:
         env:
           BUNDLE_FROZEN: "true"
         with:
-          ruby-version: ${{ env.ruby_version }}
+          ruby-version: ${{ env.ruby-version }}
           bundler-cache: true
 
       - name: Restore node_modules cache
@@ -471,7 +471,7 @@ jobs:
         env:
           BUNDLE_FROZEN: "true"
         with:
-          ruby-version: ${{ env.ruby_version }}
+          ruby-version: ${{ env.ruby-version }}
           bundler-cache: true
 
       - name: Restore Cocoapods cache
