@@ -33,7 +33,7 @@ function findCurrentDeploymentTarget() {
 	return target
 }
 
-const iPhoneSimulatorDevice = 'iPhone 11 Pro'
+const iPhoneSimulatorDevice = 'iPhone 15 Pro'
 const currentDeploymentTarget = findCurrentDeploymentTarget()
 const codeSigningDisabled = process.env.CODE_SIGNING_DISABLED === 'true'
 
@@ -47,7 +47,7 @@ function generateBuildCommand(configuration) {
 		'-workspace ios/AllAboutOlaf.xcworkspace',
 		'-scheme AllAboutOlaf',
 		`-configuration ${configuration}`,
-		`-destination 'platform=iOS Simulator,name=${iPhoneSimulatorDevice},OS=${currentDeploymentTarget}'`,
+		`-destination 'platform=iOS Simulator,name=${iPhoneSimulatorDevice}'`,
 		'-derivedDataPath ios/build',
 		'build',
 	]
