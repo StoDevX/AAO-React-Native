@@ -167,6 +167,6 @@
     "node": ">=18"
   },
   "optionalDependencies": {
-    "detox": "20.26.1"
+    "detox": "20.27.3"
   }
 }
