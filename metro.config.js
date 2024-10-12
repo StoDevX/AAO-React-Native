@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 /**
  * Metro configuration
  * https://facebook.github.io/metro/docs/configuration
@@ -5,10 +6,10 @@
  * @type {import('metro-config').MetroConfig}
  */
 
-const {getDefaultConfig, mergeConfig} = require('@react-native/metro-config')
+const {getDefaultConfig} = require('expo/metro-config')
+const {mergeConfig} = require('@react-native/metro-config')
 
 const defaultSourceExts =
-	// eslint-disable-next-line @typescript-eslint/no-var-requires
 	require('metro-config/src/defaults/defaults').sourceExts
 
 const config = {
