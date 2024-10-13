@@ -19,7 +19,7 @@ export const DetailNavigationOptions: NativeStackNavigationOptions = {
 	title: 'Contact',
 }
 
-export function DirectoryDetailView(): JSX.Element {
+export function DirectoryDetailView(): React.JSX.Element {
 	// typing useNavigation's props to inform typescript about `push`
 	let navigation =
 		useNavigation<NativeStackNavigationProp<RootStackParamList>>()
@@ -66,7 +66,7 @@ export function DirectoryDetailView(): JSX.Element {
 								accessory="DisclosureIndicator"
 								cellStyle="LeftDetail"
 								detail="Email"
-								onPress={() => sendEmail({to: [email], subject: '', body: ''})}
+								onPress={() => { sendEmail({to: [email], subject: '', body: ''}); }}
 								title={email}
 							/>
 						) : null}
@@ -110,7 +110,7 @@ export function DirectoryDetailView(): JSX.Element {
 								accessory="DisclosureIndicator"
 								cellStyle="LeftDetail"
 								detail="Phone"
-								onPress={() => callPhone(loc.phone, {prompt: false})}
+								onPress={() => { callPhone(loc.phone, {prompt: false}); }}
 								title={loc.phone}
 							/>
 						)}

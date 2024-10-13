@@ -13,7 +13,7 @@ import {ChangeTextEvent} from '../../../../navigation/types'
 import {useNavigation} from '@react-navigation/native'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 
-export const APITestView = (): JSX.Element => {
+export const APITestView = (): React.JSX.Element => {
 	let navigation = useNavigation()
 
 	let [filterPath, setFilterPath] = React.useState<string>('')
@@ -37,7 +37,7 @@ export const APITestView = (): JSX.Element => {
 				hideNavigationBar: false,
 				hideWhenScrolling: false,
 				onChangeText: (event: ChangeTextEvent) =>
-					setFilterPath(event.nativeEvent.text),
+					{ setFilterPath(event.nativeEvent.text); },
 				placeholder: '/path/to/uri',
 			},
 			headerRight: rightButton,
@@ -55,7 +55,7 @@ export const APITestView = (): JSX.Element => {
 	}, [filterPath, navigation])
 
 	React.useEffect(() => {
-		debounceSearch(filterPath, () => showSearchResult())
+		debounceSearch(filterPath, () => { showSearchResult(); })
 	}, [filterPath, navigation, showSearchResult])
 
 	const renderItem = React.useCallback(
@@ -63,7 +63,7 @@ export const APITestView = (): JSX.Element => {
 			<SafeAreaView>
 				<ListRow
 					fullWidth={false}
-					onPress={() => navigation.navigate('APITestDetail', {query: item})}
+					onPress={() => { navigation.navigate('APITestDetail', {query: item}); }}
 					style={styles.serverRouteRow}
 				>
 					<Column flex={1}>

@@ -28,8 +28,8 @@ import {UseQueryResult} from '@tanstack/react-query'
 
 function doSearch(args: {
 	query: string
-	filters: Array<FilterType<CourseType>>
-	courses: Array<CourseType>
+	filters: FilterType<CourseType>[]
+	courses: CourseType[]
 	applyFilters: (filters: FilterType<CourseType>[], item: CourseType) => boolean
 }) {
 	let {query, filters, courses, applyFilters} = args
@@ -56,7 +56,7 @@ function queriesToCourses(
 ): CourseType[] {
 	return queries
 		.flatMap((q) => q.data)
-		.filter((data) => data !== undefined) as CourseType[]
+		.filter((data) => data !== undefined)
 }
 
 const useSelectedFilter = (
@@ -102,7 +102,7 @@ const useSelectedGE = (filters: FilterType<CourseType>[]) => {
 	return []
 }
 
-export const CourseSearchResultsView = (): JSX.Element => {
+export const CourseSearchResultsView = (): React.JSX.Element => {
 	let dispatch = useAppDispatch()
 	let navigation = useNavigation()
 
@@ -139,7 +139,7 @@ export const CourseSearchResultsView = (): JSX.Element => {
 			headerSearchBarOptions: {
 				barTintColor: c.systemFill,
 				onChangeText: (event: ChangeTextEvent) =>
-					setSearchQuery(event.nativeEvent.text),
+					{ setSearchQuery(event.nativeEvent.text); },
 			},
 		})
 	}, [initialQuery, navigation, searchQuery])
@@ -221,8 +221,8 @@ export const CourseSearchResultsView = (): JSX.Element => {
 	let message = hasActiveFilter
 		? 'There were no courses that matched your selected filters. Try a different filter combination.'
 		: query?.length
-		  ? 'There were no courses that matched your query. Please try again.'
-		  : "You can search by Professor (e.g. 'Jill Dietz'), Course Name (e.g. 'Abstract Algebra'), Department/Number (e.g. MATH 252), or GE (e.g. WRI)"
+			? 'There were no courses that matched your query. Please try again.'
+			: "You can search by Professor (e.g. 'Jill Dietz'), Course Name (e.g. 'Abstract Algebra'), Department/Number (e.g. MATH 252), or GE (e.g. WRI)"
 
 	let messageView = <NoticeView style={styles.message} text={message} />
 

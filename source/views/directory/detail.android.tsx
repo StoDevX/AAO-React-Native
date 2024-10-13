@@ -36,7 +36,7 @@ const createDirectoryIcon =
 		<List.Icon {...props} icon={iconName} />
 	)
 
-export function DirectoryDetailView(): JSX.Element {
+export function DirectoryDetailView(): React.JSX.Element {
 	// typing useNavigation's props to inform typescript about `push`
 	let navigation =
 		useNavigation<NativeStackNavigationProp<RootStackParamList>>()
@@ -73,7 +73,7 @@ export function DirectoryDetailView(): JSX.Element {
 					<FAB.Group
 						actions={fabActions}
 						icon={isFabOpen ? 'close' : 'dots-horizontal'}
-						onStateChange={({open}) => setIsFabOpen(open)}
+						onStateChange={({open}) => { setIsFabOpen(open); }}
 						open={isFabOpen}
 						visible={true}
 					/>
@@ -133,7 +133,7 @@ export function DirectoryDetailView(): JSX.Element {
 					<List.Item
 						description={email}
 						left={createDirectoryIcon('email-outline')}
-						onPress={() => sendEmail({to: [email], subject: '', body: ''})}
+						onPress={() => { sendEmail({to: [email], subject: '', body: ''}); }}
 						title="Email"
 					/>
 				) : null}
@@ -143,7 +143,7 @@ export function DirectoryDetailView(): JSX.Element {
 						key={i}
 						description={loc.shortLocation}
 						left={createDirectoryIcon('map-marker-outline')}
-						onPress={() => callPhone(loc.phone)}
+						onPress={() => { callPhone(loc.phone); }}
 						right={createDirectoryIcon('phone')}
 						title={loc.display}
 					/>

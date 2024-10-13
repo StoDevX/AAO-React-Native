@@ -1,4 +1,4 @@
-import {setApiRoot} from '@frogpond/api'
+import {setApiRoot} from '../modules/api'
 import * as storage from '../lib/storage'
 import {DEFAULT_URL} from '../lib/constants'
 
@@ -12,4 +12,4 @@ const configureApiRoot = async () => {
 	setApiRoot(new URL(address))
 }
 
-configureApiRoot()
+await configureApiRoot()

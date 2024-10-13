@@ -40,7 +40,7 @@ export const NavigationOptions = (props: {
 	}
 }
 
-export function DirectoryView(): JSX.Element {
+export function DirectoryView(): React.JSX.Element {
 	let [searchQueryType, setSearchQueryType] =
 		React.useState<DirectorySearchTypeEnum>('query')
 	let [typedQuery, setTypedQuery] = React.useState('')
@@ -75,7 +75,7 @@ export function DirectoryView(): JSX.Element {
 	}, [navigation])
 
 	React.useEffect(() => {
-		if (params?.queryType === 'department' && params?.queryParam) {
+		if (params?.queryType === 'department' && params.queryParam) {
 			setSearchQueryType('department')
 			setTypedQuery(params.queryParam)
 		}
@@ -113,7 +113,7 @@ export function DirectoryView(): JSX.Element {
 						<DirectoryItemRow
 							item={item}
 							onPress={() =>
-								navigation.push('DirectoryDetail', {contact: item})
+								{ navigation.push('DirectoryDetail', {contact: item}); }
 							}
 						/>
 					)}
@@ -138,7 +138,7 @@ function NoSearchPerformed() {
 	)
 }
 
-type DirectoryItemRowProps = {
+interface DirectoryItemRowProps {
 	item: DirectoryItem
 	onPress: () => void
 }
@@ -203,11 +203,11 @@ const styles = StyleSheet.create({
 					borderRadius: 4,
 					marginRight: imageMargin,
 					marginLeft: leftMargin,
-			  }
+				}
 			: {
 					alignSelf: 'center',
 					marginHorizontal: 8,
-			  },
+				},
 	emptySearch: {
 		flex: 1,
 		alignItems: 'center',

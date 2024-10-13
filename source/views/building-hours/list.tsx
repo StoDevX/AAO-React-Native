@@ -20,7 +20,7 @@ const styles = StyleSheet.create({
 	},
 })
 
-export function BuildingHoursView(): JSX.Element {
+export function BuildingHoursView(): React.JSX.Element {
 	let navigation = useNavigation()
 
 	let {now} = useMomentTimer({intervalMs: 60000, startOf: 'minute'})
@@ -36,7 +36,7 @@ export function BuildingHoursView(): JSX.Element {
 
 	let onPressRow = React.useCallback(
 		(building: BuildingType) =>
-			navigation.navigate('BuildingHoursDetail', {building}),
+			{ navigation.navigate('BuildingHoursDetail', {building}); },
 		[navigation],
 	)
 
@@ -61,7 +61,7 @@ export function BuildingHoursView(): JSX.Element {
 			onRefresh={refetch}
 			refreshing={isRefetching}
 			renderItem={({item}) => (
-				<BuildingRow info={item} now={now} onPress={() => onPressRow(item)} />
+				<BuildingRow info={item} now={now} onPress={() => { onPressRow(item); }} />
 			)}
 			renderSectionHeader={({section: {title}}) => (
 				<ListSectionHeader title={title} />

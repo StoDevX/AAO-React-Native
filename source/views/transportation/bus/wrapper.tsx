@@ -6,11 +6,11 @@ import {useNavigation} from '@react-navigation/native'
 import {useBusRoutes} from './query'
 import {useMomentTimer} from '@frogpond/timer'
 
-type Props = {
+interface Props {
 	line: string
 }
 
-let BusView = (props: Props): JSX.Element => {
+let BusView = (props: Props): React.JSX.Element => {
 	let {now} = useMomentTimer({intervalMs: 1000 * 60, timezone: timezone()})
 	let {data: busLines = [], error, refetch, isError, isLoading} = useBusRoutes()
 	let navigation = useNavigation()

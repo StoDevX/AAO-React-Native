@@ -13,10 +13,10 @@ import {Touchable} from '@frogpond/touchable'
 import {AppConfig, FeatureFlag} from '@frogpond/app-config'
 
 import {groupBy, orderBy} from 'lodash'
-import {commonStyles} from '../../../../modules/navigation-buttons/styles'
+import {commonStyles} from '../../../modules/navigation-buttons/styles'
 import * as storage from '../../../lib/storage'
 
-export const FeatureFlagsView = (): JSX.Element => {
+export const FeatureFlagsView = (): React.JSX.Element => {
 	let [loading, setLoading] = React.useState(true)
 	let [sections, setSections] = React.useState<FeatureFlag[]>([])
 
@@ -37,12 +37,12 @@ export const FeatureFlagsView = (): JSX.Element => {
 		return configKey.split('_')?.[0] ?? 'Unknown'
 	}
 
-	let sorters: Array<(flag: FeatureFlag) => string> = [
+	let sorters: ((flag: FeatureFlag) => string)[] = [
 		(flag) => findGroup(flag.configKey),
 		(flag) => flag.title,
 	]
 
-	let ordered: Array<'desc' | 'asc'> = ['desc', 'asc', 'desc']
+	let ordered: ('desc' | 'asc')[] = ['desc', 'asc', 'desc']
 
 	let sorted = orderBy(sections, sorters, ordered)
 	let grouped = groupBy(sorted, (s) => findGroup(s.configKey))

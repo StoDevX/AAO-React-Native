@@ -17,15 +17,15 @@ const styles = StyleSheet.create({
 	},
 })
 
-export const LogoImage = (props: ImageProps): JSX.Element => (
+export const LogoImage = (props: ImageProps): React.JSX.Element => (
 	<Image {...props} style={[styles.logoImage, props.style]} />
 )
 
-type Props = {
+interface Props {
 	style?: StyleProp<ImageStyle>
 }
 
-export let AppLogo = (props: Props): JSX.Element => {
+export let AppLogo = (props: Props): React.JSX.Element => {
 	let [icon, setIcon] = React.useState(getAppIcon('default'))
 
 	React.useEffect(() => {

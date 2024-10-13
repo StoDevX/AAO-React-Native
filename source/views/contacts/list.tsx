@@ -19,7 +19,7 @@ const styles = StyleSheet.create({
 	},
 })
 
-export let ContactsListView = (): JSX.Element => {
+export let ContactsListView = (): React.JSX.Element => {
 	let navigation = useNavigation()
 
 	let {
@@ -32,7 +32,7 @@ export let ContactsListView = (): JSX.Element => {
 
 	let onPressContact = React.useCallback(
 		(contactData: ContactType) =>
-			navigation.navigate(DetailNavigationKey, {contact: contactData}),
+			{ navigation.navigate(DetailNavigationKey, {contact: contactData}); },
 		[navigation],
 	)
 

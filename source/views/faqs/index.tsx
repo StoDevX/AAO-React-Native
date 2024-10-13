@@ -18,7 +18,7 @@ const styles = StyleSheet.create({
 	},
 })
 
-function FaqView(): JSX.Element {
+function FaqView(): React.JSX.Element {
 	let {
 		data = {text: ''},
 		error,

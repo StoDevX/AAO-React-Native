@@ -1,4 +1,4 @@
-export type ContactType = {
+export interface ContactType {
 	title: string
 	phoneNumber?: string
 	buttonText: string

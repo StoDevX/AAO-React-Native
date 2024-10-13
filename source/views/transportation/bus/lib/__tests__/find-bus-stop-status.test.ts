@@ -8,9 +8,9 @@ import moment from 'moment'
 
 import type {BusSchedule, UnprocessedBusSchedule} from '../../types'
 
-function buildBusSchedules(now: moment.Moment): Array<BusSchedule> {
+function buildBusSchedules(now: moment.Moment): BusSchedule[] {
 	// prettier-ignore
-	let schedules: Array<UnprocessedBusSchedule> = [
+	let schedules: UnprocessedBusSchedule[] = [
     {
       days: ['Mo', 'Tu'],
       coordinates: {},

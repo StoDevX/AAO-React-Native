@@ -1,12 +1,12 @@
 import * as React from 'react'
 import {Cell} from '@frogpond/tableview'
 
-type Props = {
+interface Props {
 	data: {key: string | number; value: unknown}
 	onPress: (key: string | number) => void
 }
 
-export const DebugRow = (props: Props): JSX.Element => {
+export const DebugRow = (props: Props): React.JSX.Element => {
 	let {data} = props
 
 	let rowDetail = '<unknown>'
@@ -31,7 +31,7 @@ export const DebugRow = (props: Props): JSX.Element => {
 	}
 
 	let onPress = (): void => {
-		return arrowPosition === 'none' ? undefined : props.onPress(data.key)
+		arrowPosition === 'none' ? undefined : props.onPress(data.key);
 	}
 
 	return (

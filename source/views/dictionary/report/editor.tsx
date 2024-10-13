@@ -13,7 +13,7 @@ export const NavigationOptions: NativeStackNavigationOptions = {
 	title: 'Suggest an edit',
 }
 
-let DictionaryEditorView = (): JSX.Element => {
+let DictionaryEditorView = (): React.JSX.Element => {
 	let route = useRoute<RouteProp<RootStackParamList, 'DictionaryEditor'>>()
 	let {item} = route.params
 
@@ -56,13 +56,13 @@ let DictionaryEditorView = (): JSX.Element => {
 
 export {DictionaryEditorView as View}
 
-type TextFieldProps = {text: string; onChange: (text: string) => void}
+interface TextFieldProps {text: string; onChange: (text: string) => void}
 
 const TitleCell = ({text, onChange = noop}: TextFieldProps) => (
 	<CellTextField
 		autoCapitalize="words"
 		onChangeText={onChange}
-		onSubmitEditing={(ev) => onChange(ev.nativeEvent.text)}
+		onSubmitEditing={(ev) => { onChange(ev.nativeEvent.text); }}
 		placeholder="Title"
 		returnKeyType="done"
 		value={text}
@@ -74,7 +74,7 @@ const DefinitionCell = ({text, onChange = noop}: TextFieldProps) => (
 		autoCapitalize="sentences"
 		multiline={true}
 		onChangeText={onChange}
-		onSubmitEditing={(ev) => onChange(ev.nativeEvent.text)}
+		onSubmitEditing={(ev) => { onChange(ev.nativeEvent.text); }}
 		placeholder="Definition"
 		returnKeyType="default"
 		value={text}

@@ -4,7 +4,7 @@ import {WebView, WebViewMessageEvent} from 'react-native-webview'
 import type {HtmlAudioError, PlayState} from './types'
 import {StyleProp, ViewStyle} from 'react-native'
 
-type Props = {
+interface Props {
 	playState: PlayState
 	onWaiting?: () => unknown
 	onEnded?: () => unknown
@@ -120,7 +120,7 @@ function playerJs(selector: string): string {
 	`
 }
 
-export function StreamPlayer(props: Props): JSX.Element {
+export function StreamPlayer(props: Props): React.JSX.Element {
 	let {playState, onWaiting, onEnded, onStalled, onPause, onPlay, onError} =
 		props
 
@@ -147,12 +147,12 @@ export function StreamPlayer(props: Props): JSX.Element {
 
 		switch (playState) {
 			case 'paused':
-				return pausePlayback()
+				{ pausePlayback(); return; }
 
 			case 'loading':
 			case 'checking':
 			case 'playing':
-				return beginPlayback()
+				{ beginPlayback(); return; }
 
 			default:
 				return

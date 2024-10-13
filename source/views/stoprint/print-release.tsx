@@ -74,7 +74,7 @@ function PrinterInformation({printer}: {printer: Printer}) {
 	)
 }
 
-export const PrintJobReleaseView = (): JSX.Element => {
+export const PrintJobReleaseView = (): React.JSX.Element => {
 	let navigation = useNavigation()
 
 	let route = useRoute<RouteProp<RootStackParamList, 'PrintJobRelease'>>()
@@ -163,7 +163,7 @@ export const PrintJobReleaseView = (): JSX.Element => {
 			{
 				text: 'Cancel Job',
 				style: 'destructive',
-				onPress: () => cancelJob.mutate(),
+				onPress: () => { cancelJob.mutate(); },
 			},
 		])
 	}
@@ -172,17 +172,17 @@ export const PrintJobReleaseView = (): JSX.Element => {
 		let prompt = `Are you sure you want to print "${job.documentName}" to ${printer?.printerName}?`
 		Alert.alert('Print Job Release Confirmation', prompt, [
 			{text: 'Nope!', style: 'cancel'},
-			{text: 'Print', style: 'default', onPress: () => releaseJob.mutate()},
+			{text: 'Print', style: 'default', onPress: () => { releaseJob.mutate(); }},
 		])
 	}
 
 	let status = releaseJob.isLoading
 		? 'printing'
 		: cancelJob.isLoading
-		  ? 'cancelling'
-		  : job?.statusFormatted === 'Pending Release'
-		    ? 'pending'
-		    : 'complete'
+			? 'cancelling'
+			: job.statusFormatted === 'Pending Release'
+				? 'pending'
+				: 'complete'
 
 	let actionAvailable = status !== 'complete' && printer
 

@@ -29,7 +29,7 @@ const RightButton: React.FC<{onPress: () => void}> = ({onPress}) => (
 	<SearchButton onPress={onPress} title="Browse" />
 )
 
-export const CourseSearchView = (): JSX.Element => {
+export const CourseSearchView = (): React.JSX.Element => {
 	let navigation = useNavigation()
 
 	let {data: basicFilters = [], isLoading, error} = useFilters()
@@ -43,7 +43,7 @@ export const CourseSearchView = (): JSX.Element => {
 		const getRightButton = () => (
 			<RightButton
 				onPress={() =>
-					navigation.navigate('CourseSearchResults', {initialQuery: ''})
+					{ navigation.navigate('CourseSearchResults', {initialQuery: ''}); }
 				}
 			/>
 		)

@@ -1,5 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unnecessary-condition */
 import {mobileReleaseApi, papercutApi} from './urls'
-import {encode} from 'base-64'
 import {
 	fetchAllPrinters as mockFetchAllPrinters,
 	fetchJobs as mockFetchJobs,
@@ -9,7 +9,6 @@ import {
 	releasePrintJobToPrinterForUser as mockReleasePrintJobToPrinterForUser,
 } from './__mocks__/api'
 import {isStoprintMocked} from '../../lib/stoprint'
-
 import type {
 	AllPrintersResponse,
 	CancelResponse,
@@ -21,14 +20,13 @@ import type {
 	ReleaseResponse,
 } from './types'
 import {Options} from 'ky'
-import {SharedWebCredentials} from 'react-native-keychain'
-import {LoginFailedError} from '../login'
-import {client} from '@frogpond/api'
+import {LoginFailedError, type Credentials} from '../login'
+import {client} from '../../modules/api'
 
 export class PapercutJobReleaseError extends Error {}
 
 export async function logIn(
-	credentials: SharedWebCredentials,
+	credentials: Credentials,
 	options: Options,
 	now: number = new Date().getTime(),
 ): Promise<void> {
@@ -38,14 +36,14 @@ export async function logIn(
 		return mockLogIn(credentials, now)
 	}
 
-	const result = (await papercutApi
+	const result = await papercutApi
 		.post(`webclient/users/${username}/log-in`, {
 			...options,
 			// use URLSearchParams to auto-set Content-Type: application/x-www-form-urlencoded
-			body: new URLSearchParams({password: encode(password)}),
+			body: new URLSearchParams({password: btoa(password)}),
 			searchParams: {nocache: String(now)},
 		})
-		.json()) as LoginResponse
+		.json<LoginResponse>()
 
 	if (!result.success) {
 		throw new LoginFailedError()
@@ -62,9 +60,9 @@ export async function fetchJobs(
 		return mockFetchJobs(username)
 	}
 
-	return (await papercutApi
+	return papercutApi
 		.get(`webclient/users/${username}/jobs/status`, options)
-		.json()) as PrintJobsResponse
+		.json<PrintJobsResponse>()
 }
 
 export async function fetchAllPrinters(
@@ -75,12 +73,12 @@ export async function fetchAllPrinters(
 		return mockFetchAllPrinters(username)
 	}
 
-	return (await mobileReleaseApi
+	return mobileReleaseApi
 		.get('all-printers', {
 			...options,
 			searchParams: {username: username},
 		})
-		.json()) as AllPrintersResponse
+		.json<AllPrintersResponse>()
 }
 
 export async function fetchRecentPrinters(
@@ -91,18 +89,18 @@ export async function fetchRecentPrinters(
 		return mockFetchRecentPrinters(username)
 	}
 
-	return (await mobileReleaseApi
+	return mobileReleaseApi
 		.get('recent-popular-printers', {
 			...options,
 			searchParams: {username: username},
 		})
-		.json()) as RecentPopularPrintersResponse
+		.json<RecentPopularPrintersResponse>()
 }
 
 export async function fetchColorPrinters(options: Options): Promise<string[]> {
-	let response = (await client
+	let response = await client
 		.get('color-printers', options)
-		.json()) as ColorPrintersResponse
+		.json<ColorPrintersResponse>()
 	return response.data.colorPrinters
 }
 
@@ -116,7 +114,7 @@ export async function heldJobsAvailableAtPrinterForUser(
 		return mockHeldJobsAvailableAtPrinterForUser(printerName, username)
 	}
 
-	return (await mobileReleaseApi
+	return mobileReleaseApi
 		.get('held-jobs', {
 			...options,
 			searchParams: {
@@ -124,7 +122,7 @@ export async function heldJobsAvailableAtPrinterForUser(
 				printerName: `printers\\${printerName}`,
 			},
 		})
-		.json()) as HeldJobsResponse
+		.json<HeldJobsResponse>()
 }
 
 export async function cancelPrintJobForUser(
@@ -132,17 +130,17 @@ export async function cancelPrintJobForUser(
 	username: string,
 	options: Options,
 ): Promise<CancelResponse> {
-	return (await mobileReleaseApi
+	return mobileReleaseApi
 		.post('held-jobs/cancel', {
 			...options,
 			searchParams: {username: username},
 			// use URLSearchParams to auto-set Content-Type: application/x-www-form-urlencoded
 			body: new URLSearchParams({'jobIds[]': jobId}),
 		})
-		.json()) as CancelResponse
+		.json<CancelResponse>()
 }
 
-type PrintJobReleaseArgs = {
+interface PrintJobReleaseArgs {
 	jobId: string
 	printerName: string
 	username: string
@@ -156,7 +154,7 @@ export async function releasePrintJobToPrinterForUser(
 		return mockReleasePrintJobToPrinterForUser({jobId, printerName, username})
 	}
 
-	let response = (await mobileReleaseApi
+	let response = await mobileReleaseApi
 		.post('held-jobs/release', {
 			...options,
 			searchParams: {username: username},
@@ -166,7 +164,7 @@ export async function releasePrintJobToPrinterForUser(
 				'jobIds[]': jobId,
 			}),
 		})
-		.json()) as ReleaseResponse
+		.json<ReleaseResponse>()
 
 	if (response.numJobsReleased === 0) {
 		throw new PapercutJobReleaseError()

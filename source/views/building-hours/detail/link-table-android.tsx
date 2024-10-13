@@ -9,7 +9,7 @@ import {ButtonCell} from '@frogpond/tableview/cells'
 import {openUrl} from '@frogpond/open-url'
 import type {BuildingLinkType} from '../types'
 
-type Props = {
+interface Props {
 	links: BuildingLinkType[]
 }
 

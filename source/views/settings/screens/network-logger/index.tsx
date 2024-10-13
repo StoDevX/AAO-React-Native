@@ -13,8 +13,8 @@ import NetworkLogger, {getBackHandler} from 'react-native-network-logger'
 import {CloseScreenButton} from '@frogpond/navigation-buttons'
 import * as c from '@frogpond/colors'
 
-export const NetworkLoggerView = (): JSX.Element => {
-	const goBack = () => setUnmountNetworkLogger(true)
+export const NetworkLoggerView = (): React.JSX.Element => {
+	const goBack = () => { setUnmountNetworkLogger(true); }
 	const [unmountNetworkLogger, setUnmountNetworkLogger] = React.useState(false)
 	const backHandler = getBackHandler(goBack)
 
@@ -23,7 +23,7 @@ export const NetworkLoggerView = (): JSX.Element => {
 
 	const remountButton = (
 		<Button
-			onPress={() => setUnmountNetworkLogger(false)}
+			onPress={() => { setUnmountNetworkLogger(false); }}
 			title="Re-open the network logger"
 		/>
 	)

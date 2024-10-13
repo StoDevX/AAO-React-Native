@@ -17,7 +17,7 @@ import {NoCredentialsError, useUsername} from '../../lib/login'
 
 const DISCLAIMER = 'This data may be outdated or otherwise inaccurate.'
 
-export const BalancesView = (): JSX.Element => {
+export const BalancesView = (): React.JSX.Element => {
 	let navigation = useNavigation()
 	let {data: username = ''} = useUsername()
 
@@ -30,7 +30,7 @@ export const BalancesView = (): JSX.Element => {
 		isRefetching,
 	} = useBalances(username)
 
-	let openSettings = () => navigation.navigate('Settings')
+	let openSettings = () => { navigation.navigate('Settings'); }
 	let refresh = <RefreshControl onRefresh={refetch} refreshing={isRefetching} />
 
 	return (

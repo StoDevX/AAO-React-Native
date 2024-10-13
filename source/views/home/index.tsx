@@ -23,7 +23,7 @@ const styles = StyleSheet.create({
 	},
 })
 
-function HomePage(): JSX.Element {
+function HomePage(): React.JSX.Element {
 	let navigation = useNavigation()
 	let allViews = AllViews().filter((view) => !view.disabled ?? true)
 	let columns = partitionByIndex(allViews)
@@ -45,7 +45,7 @@ function HomePage(): JSX.Element {
 									if (view.type === 'url') {
 										return openUrl(view.url)
 									} else if (view.type === 'view') {
-										return navigation.navigate(view.view)
+										navigation.navigate(view.view); return;
 									} else {
 										throw new Error(`unexpected view type ${view.type}`)
 									}

@@ -23,14 +23,14 @@ import {RadioScheduleParamList} from '../../../navigation/types'
 // If you want to fix the inline player, switch to `true`
 const ALLOW_INLINE_PLAYER = false
 
-type PlayButtonProps = {
+interface PlayButtonProps {
 	state: PlayState
 	onPlay: () => unknown
 	onPause: () => unknown
 	onLink: () => unknown
 }
 
-function PlayButton(props: PlayButtonProps): JSX.Element {
+function PlayButton(props: PlayButtonProps): React.JSX.Element {
 	const {state, onPlay, onPause, onLink} = props
 
 	if (!ALLOW_INLINE_PLAYER) {
@@ -54,7 +54,7 @@ function PlayButton(props: PlayButtonProps): JSX.Element {
 	}
 }
 
-type Props = {
+interface Props {
 	image: number
 	playerUrl: string
 	stationNumber: string
@@ -68,7 +68,7 @@ type Props = {
 	}
 }
 
-export function RadioControllerView(props: Props): JSX.Element {
+export function RadioControllerView(props: Props): React.JSX.Element {
 	const theme = useTheme()
 	const {
 		source,

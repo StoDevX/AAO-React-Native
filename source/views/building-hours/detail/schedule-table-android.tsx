@@ -7,13 +7,13 @@ import {isScheduleOpenAtMoment, getDayOfWeek} from '../lib'
 import {ScheduleRow} from './schedule-row'
 import {ButtonCell} from '@frogpond/tableview/cells'
 
-type Props = {
+interface Props {
 	now: Moment
 	schedules: NamedBuildingScheduleType[]
 	onProblemReport: () => void
 }
 
-export const ScheduleTable = (props: Props): JSX.Element => {
+export const ScheduleTable = (props: Props): React.JSX.Element => {
 	let {now, schedules, onProblemReport} = props
 	let dayOfWeek = getDayOfWeek(now)
 

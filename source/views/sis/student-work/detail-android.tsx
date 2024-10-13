@@ -214,11 +214,11 @@ export const NavigationOptions = (props: {
 	let {job} = props.route.params
 	return {
 		title: job.title,
-		headerRight: () => <ShareButton onPress={() => shareJob(job)} />,
+		headerRight: () => <ShareButton onPress={() => { shareJob(job); }} />,
 	}
 }
 
-export const JobDetailView = (): JSX.Element => {
+export const JobDetailView = (): React.JSX.Element => {
 	let route = useRoute<RouteProp<RootStackParamList, 'JobDetail'>>()
 	let {job} = route.params
 

@@ -19,7 +19,7 @@ import {DebugView} from '../debug'
 
 type DisplayMode = 'raw' | 'parsed'
 
-export const APITestDetailView = (): JSX.Element => {
+export const APITestDetailView = (): React.JSX.Element => {
 	let navigation = useNavigation()
 	let route = useRoute<RouteProp<SettingsStackParamList, 'APITestDetail'>>()
 
@@ -47,7 +47,7 @@ export const APITestDetailView = (): JSX.Element => {
 		})
 	}, [cleanedName, navigation])
 
-	const JSONView = React.useCallback((): JSX.Element => {
+	const JSONView = React.useCallback((): React.JSX.Element => {
 		if (data === undefined) {
 			return <></>
 		}
@@ -95,7 +95,7 @@ export const APITestDetailView = (): JSX.Element => {
 		<View style={styles.container}>
 			<CellToggle
 				label="Parse as JSON"
-				onChange={(val) => setDisplayMode(val ? 'parsed' : 'raw')}
+				onChange={(val) => { setDisplayMode(val ? 'parsed' : 'raw'); }}
 				value={displayMode === 'parsed'}
 			/>
 

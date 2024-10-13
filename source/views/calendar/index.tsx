@@ -46,7 +46,7 @@ function NorthfieldCalendarView() {
 	)
 }
 
-type Params = {
+interface Params {
 	StOlafCalendarView: undefined
 	OlevilleCalendarView: undefined
 	NorthfieldCalendarView: undefined

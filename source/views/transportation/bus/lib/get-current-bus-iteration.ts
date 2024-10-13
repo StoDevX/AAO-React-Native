@@ -12,7 +12,7 @@ export type BusStateEnum =
 	| 'after-end'
 	| 'running'
 	| 'between-rounds'
-type ReturnVal = {
+interface ReturnVal {
 	status: BusStateEnum
 	times: DepartureTimeList
 	index: null | number

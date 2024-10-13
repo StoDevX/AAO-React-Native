@@ -46,7 +46,7 @@ const styles = StyleSheet.create({
 	},
 })
 
-function StudentOrgsView(): JSX.Element {
+function StudentOrgsView(): React.JSX.Element {
 	let navigation = useNavigation()
 
 	let [query, setQuery] = React.useState('')
@@ -66,7 +66,7 @@ function StudentOrgsView(): JSX.Element {
 			headerSearchBarOptions: {
 				barTintColor: c.systemFill,
 				onChangeText: (event: ChangeTextEvent) =>
-					setQuery(event.nativeEvent.text),
+					{ setQuery(event.nativeEvent.text); },
 			},
 		})
 	}, [navigation])
@@ -92,7 +92,7 @@ function StudentOrgsView(): JSX.Element {
 	}, [results])
 
 	let onPressOrg = React.useCallback(
-		(org: StudentOrgType) => navigation.navigate('StudentOrgsDetail', {org}),
+		(org: StudentOrgType) => { navigation.navigate('StudentOrgsDetail', {org}); },
 		[navigation],
 	)
 
@@ -126,7 +126,7 @@ function StudentOrgsView(): JSX.Element {
 			onRefresh={refetch}
 			refreshing={isRefetching}
 			renderItem={({item}) => (
-				<ListRow arrowPosition="top" onPress={() => onPressOrg(item)}>
+				<ListRow arrowPosition="top" onPress={() => { onPressOrg(item); }}>
 					<Column flex={1}>
 						<Title lines={1}>{item.name}</Title>
 						<Detail lines={1}>{item.category}</Detail>

@@ -7,7 +7,7 @@ import {useWebcams} from './query'
 import {LoadingView, NoticeView} from '@frogpond/notice'
 import {RefreshControl} from 'react-native-gesture-handler'
 
-export let WebcamsView = (): JSX.Element => {
+export let WebcamsView = (): React.JSX.Element => {
 	let viewport = useWindowDimensions()
 	let {
 		data: webcams = [],

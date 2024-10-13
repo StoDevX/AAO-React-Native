@@ -31,7 +31,7 @@ const OlevilleNewsView = () => (
 	/>
 )
 
-type Params = {
+interface Params {
 	StOlafNewsView: undefined
 	MessNewsView: undefined
 	OlevilleNewsView: undefined

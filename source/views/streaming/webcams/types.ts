@@ -1,4 +1,4 @@
-export type Webcam = {
+export interface Webcam {
 	streamUrl: string
 	pageUrl: string
 	name: string

@@ -25,7 +25,7 @@ const styles = StyleSheet.create({
 	},
 })
 
-export const BonAppPickerView = (): JSX.Element => {
+export const BonAppPickerView = (): React.JSX.Element => {
 	let [cafeId, setCafeId] = React.useState('')
 
 	let chooseCafe = (selectedCafeId: string) => {
@@ -40,7 +40,7 @@ export const BonAppPickerView = (): JSX.Element => {
 			<Toolbar>
 				<TextInput
 					keyboardType="numeric"
-					onEndEditing={(e) => chooseCafe(e.nativeEvent.text)}
+					onEndEditing={(e) => { chooseCafe(e.nativeEvent.text); }}
 					placeholder="id"
 					returnKeyType="done"
 					style={styles.default}

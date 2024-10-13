@@ -9,7 +9,7 @@ import type {PayloadAction} from '@reduxjs/toolkit'
 import type {RootState} from '../store'
 import {CourseType} from '../../lib/course-search'
 
-type State = {
+interface State {
 	recentFilters: FilterComboType[]
 	recentSearches: string[]
 }

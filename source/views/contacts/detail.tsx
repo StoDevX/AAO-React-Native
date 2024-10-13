@@ -42,15 +42,15 @@ const styles = StyleSheet.create({
 	},
 })
 
-export const Title = (props: TextProps): JSX.Element => (
+export const Title = (props: TextProps): React.JSX.Element => (
 	<Text {...props} style={[styles.title, props.style]} />
 )
 
-export const Container = (props: ViewProps): JSX.Element => (
+export const Container = (props: ViewProps): React.JSX.Element => (
 	<View {...props} style={[styles.container, props.style]} />
 )
 
-export const ContactsDetailView = (): JSX.Element => {
+export const ContactsDetailView = (): React.JSX.Element => {
 	let route =
 		useRoute<RouteProp<RootStackParamList, typeof DetailNavigationKey>>()
 	let {contact} = route.params

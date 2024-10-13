@@ -53,7 +53,7 @@ const styles = StyleSheet.create({
 	},
 })
 
-function DictionaryView(): JSX.Element {
+function DictionaryView(): React.JSX.Element {
 	let navigation = useNavigation()
 
 	let [query, setQuery] = React.useState('')
@@ -73,7 +73,7 @@ function DictionaryView(): JSX.Element {
 			headerSearchBarOptions: {
 				barTintColor: c.quaternarySystemFill,
 				onChangeText: (event: ChangeTextEvent) =>
-					setQuery(event.nativeEvent.text),
+					{ setQuery(event.nativeEvent.text); },
 			},
 		})
 	}, [navigation])
@@ -125,7 +125,7 @@ function DictionaryView(): JSX.Element {
 				return (
 					<ListRow
 						arrowPosition="top"
-						onPress={() => navigation.navigate('DictionaryDetail', {item})}
+						onPress={() => { navigation.navigate('DictionaryDetail', {item}); }}
 					>
 						<Title lines={1}>{item.word}</Title>
 						<Detail lines={2} style={styles.rowDetailText}>

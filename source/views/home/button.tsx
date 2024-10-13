@@ -1,18 +1,18 @@
 import * as React from 'react'
 import {Platform, StyleSheet, Text, View} from 'react-native'
 import Entypo from '@expo/vector-icons/Entypo'
-import {Touchable} from '../../../modules/touchable'
-import {transparent} from '../../../modules/colors'
+import {Touchable} from '../../modules/touchable'
+import {transparent} from '../../modules/colors'
 import {homescreenForegroundDark, homescreenForegroundLight} from './colors'
 
-type Props = {
+interface Props {
 	title: string
-	iconName: keyof (typeof Entypo)['glyphMap']
+	iconName: keyof typeof Entypo.glyphMap
 	foreground: 'light' | 'dark'
 	tintColor: string
 }
 
-export function HomeScreenButton(props: Props): JSX.Element {
+export function HomeScreenButton(props: Props): React.JSX.Element {
 	let {title, iconName, foreground, tintColor} = props
 	let foregroundStyle =
 		foreground === 'light' ? styles.lightForeground : styles.darkForeground

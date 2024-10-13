@@ -9,13 +9,13 @@ import type {Moment} from 'moment-timezone'
 import {Cell} from '@frogpond/tableview'
 import {formatBuildingTimes, summarizeDays} from '../lib'
 
-type Props = {
+interface Props {
 	set: SingleBuildingScheduleType
 	isActive: boolean
 	now: Moment
 }
 
-export const ScheduleRow = (props: Props): JSX.Element => {
+export const ScheduleRow = (props: Props): React.JSX.Element => {
 	let {set, isActive, now} = props
 	return (
 		<Cell

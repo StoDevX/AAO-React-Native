@@ -84,9 +84,9 @@ export function usePauseMenu(): UseQueryResult<GithubMenuType, unknown> {
 			return (response as {data: GithubMenuResponse}).data
 		},
 		select(data) {
-			let foodItems: MenuItemType[] = data?.foodItems || []
-			let stationMenus: StationMenuType[] = data?.stationMenus || []
-			let corIcons: MasterCorIconMapType = data?.corIcons || {}
+			let foodItems: MenuItemType[] = data.foodItems || []
+			let stationMenus: StationMenuType[] = data.stationMenus || []
+			let corIcons: MasterCorIconMapType = data.corIcons || {}
 
 			let upgradedFoodItems = foodItems.map(upgradeMenuItem)
 			let upgradedFoodItemsMap = Object.fromEntries(
@@ -99,7 +99,7 @@ export function usePauseMenu(): UseQueryResult<GithubMenuType, unknown> {
 
 			stationMenus = stationMenus.map((menu, index) => ({
 				...upgradeStation(menu, index),
-				items: foodItemsByStation[menu.label]?.map((item) => item.id) ?? [],
+				items: foodItemsByStation[menu.label].map((item) => item.id) ?? [],
 			}))
 
 			let meals = [

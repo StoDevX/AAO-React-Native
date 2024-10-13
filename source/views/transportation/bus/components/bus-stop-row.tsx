@@ -32,7 +32,7 @@ const styles = StyleSheet.create({
 	},
 })
 
-type Props = {
+interface Props {
 	stop: BusTimetableEntry
 	departureIndex: null | number
 	now: Moment
@@ -43,7 +43,7 @@ type Props = {
 	status: BusStateEnum
 }
 
-export function BusStopRow(props: Props): JSX.Element {
+export function BusStopRow(props: Props): React.JSX.Element {
 	let {
 		barColor,
 		currentStopColor,

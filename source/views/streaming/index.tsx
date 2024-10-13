@@ -15,7 +15,7 @@ import {KrlxStationView} from './radio/station-krlx'
 
 export {KSTOScheduleView, KRLXScheduleView} from './radio'
 
-type Params = {
+interface Params {
 	StreamingView: undefined
 	LiveWebcamsView: undefined
 	KSTORadioView: undefined

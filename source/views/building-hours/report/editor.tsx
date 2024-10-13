@@ -21,13 +21,13 @@ import {CloseScreenButton} from '@frogpond/navigation-buttons'
 import {RouteProp, useNavigation, useRoute} from '@react-navigation/native'
 import {RootStackParamList} from '../../../navigation/types'
 
-export type RouteParams = {
+export interface RouteParams {
 	set: SingleBuildingScheduleType | undefined
 	onEditSet: (set: SingleBuildingScheduleType) => unknown
 	onDeleteSet: () => unknown
 }
 
-export function BuildingHoursScheduleEditorView(): JSX.Element {
+export function BuildingHoursScheduleEditorView(): React.JSX.Element {
 	let navigation = useNavigation()
 
 	let route =
@@ -105,7 +105,7 @@ export function BuildingHoursScheduleEditorView(): JSX.Element {
 	)
 }
 
-type WeekTogglesProps = {
+interface WeekTogglesProps {
 	days: DayOfWeekEnumType[]
 	onChangeDays: (days: DayOfWeekEnumType[]) => unknown
 }
@@ -142,7 +142,7 @@ function WeekToggles(props: WeekTogglesProps) {
 	)
 }
 
-type ToggleButtonProps = {
+interface ToggleButtonProps {
 	active: boolean
 	text: DayOfWeekEnumType
 	onPress: (newState: DayOfWeekEnumType) => unknown
@@ -176,7 +176,7 @@ const ToggleButton = (props: ToggleButtonProps) => {
 	)
 }
 
-type DatePickerAccessoryProps = {
+interface DatePickerAccessoryProps {
 	date: Moment
 	onChange: (date: Moment) => unknown
 }

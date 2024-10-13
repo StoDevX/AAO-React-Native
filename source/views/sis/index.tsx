@@ -20,7 +20,7 @@ export {
 	CourseSearchDetailNavigationOptions,
 } from './course-search'
 
-type Params = {
+interface Params {
 	BalancesView: undefined
 	StudentWorkView: undefined
 }

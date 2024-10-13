@@ -3,7 +3,7 @@ import type {FilterType} from '@frogpond/filter'
 import {formatTerms} from './format-terms'
 import {CourseType} from '../../../../lib/course-search'
 
-export type FilterComboType = {
+export interface FilterComboType {
 	filters: FilterType<CourseType>[]
 	description: string
 }

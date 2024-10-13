@@ -1,6 +1,6 @@
 import {createTheming} from '@callstack/react-theme-provider'
 
-export type PlayerTheme = {
+export interface PlayerTheme {
 	tintColor?: string
 	buttonTextColor?: string
 	textColor?: string

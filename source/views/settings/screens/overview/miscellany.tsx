@@ -6,12 +6,12 @@ import {GH_BASE_URL} from '../../../../lib/constants'
 import * as storage from '../../../../lib/storage'
 import {useNavigation} from '@react-navigation/native'
 
-export let MiscellanySection = (): JSX.Element => {
+export let MiscellanySection = (): React.JSX.Element => {
 	let navigation = useNavigation()
 
-	let onCreditsButton = () => navigation.navigate('Credits')
-	let onPrivacyButton = () => navigation.navigate('Privacy')
-	let onLegalButton = () => navigation.navigate('Legal')
+	let onCreditsButton = () => { navigation.navigate('Credits'); }
+	let onPrivacyButton = () => { navigation.navigate('Privacy'); }
+	let onLegalButton = () => { navigation.navigate('Legal'); }
 	let onSourceButton = () =>
 		trackedOpenUrl({url: GH_BASE_URL, id: 'ContributingView'})
 

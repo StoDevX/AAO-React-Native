@@ -33,7 +33,7 @@ const DEFAULT_MENU = [
 	},
 ]
 
-type Props = {
+interface Props {
 	cafe: string | {id: string}
 	ignoreProvidedMenus?: boolean
 	loadingMessage: string[]
@@ -57,7 +57,7 @@ function findCafeMessage(cafeInfo: CafeInfoType, now: Moment): string | null {
 
 function buildCustomStationMenu(
 	foodItems: MenuItemContainerType,
-): Array<StationMenuType> {
+): StationMenuType[] {
 	let groupByStation = (
 		grouped: Record<string, MenuItemType['id'][]>,
 		item: MenuItemType,
@@ -75,11 +75,11 @@ function buildCustomStationMenu(
 	let idsGroupedByStation = reduce(foodItems, groupByStation, {})
 
 	// then we make our own StationMenus list
-	let paired: Array<[string, Array<string>]> =
+	let paired: [string, string[]][] =
 		Object.entries(idsGroupedByStation)
 	return paired.map(
 		([name, items], i): StationMenuType => ({
-			// eslint-disable-next-line camelcase
+			 
 			order_id: String(i),
 			id: String(i),
 			label: name,
@@ -120,7 +120,7 @@ function getMeals(
 	cafeMenu: MenuInfoType,
 	foodItems: MenuItemContainerType,
 	args: {ignoreProvidedMenus: boolean},
-): Array<ProcessedMealType> {
+): ProcessedMealType[] {
 	let {ignoreProvidedMenus} = args
 
 	// We hard-code to the first day returned because we're only requesting
@@ -159,7 +159,7 @@ function getErrorMessage(error: Error | undefined) {
 	}
 }
 
-export function BonAppHostedMenu(props: Props): JSX.Element {
+export function BonAppHostedMenu(props: Props): React.JSX.Element {
 	let now = moment.tz(timezone())
 
 	let {

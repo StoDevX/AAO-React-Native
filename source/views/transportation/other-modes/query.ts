@@ -1,4 +1,4 @@
-import {client} from '@frogpond/api'
+import {client} from '../../../modules/api'
 import {useQuery, UseQueryResult} from '@tanstack/react-query'
 import {groupBy, toPairs} from 'lodash'
 import {OtherModeType} from '../types'

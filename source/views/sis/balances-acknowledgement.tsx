@@ -16,7 +16,7 @@ import {
 let Paragraph = Platform.OS === 'android' ? AndroidP : IosP
 let Ack = Platform.OS === 'android' ? AndroidAck : IosAck
 
-export function BalancesOrAcknowledgementView(): JSX.Element {
+export function BalancesOrAcknowledgementView(): React.JSX.Element {
 	let dispatch = useAppDispatch()
 	let alertSeen = useAppSelector(selectAcknowledgement)
 

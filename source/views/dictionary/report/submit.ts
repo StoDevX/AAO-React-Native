@@ -10,11 +10,11 @@ export function submitReport(current: WordType, suggestion: WordType): void {
 
 	let body = makeEmailBody(before, after, current.word)
 
-	return sendEmail({
+	sendEmail({
 		to: [SUPPORT_EMAIL],
 		subject: `[dictionary] Suggestion for ${current.word}`,
 		body,
-	})
+	});
 }
 
 function makeEmailBody(before: string, after: string, title: string): string {

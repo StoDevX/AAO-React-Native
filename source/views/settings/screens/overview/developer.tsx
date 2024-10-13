@@ -11,12 +11,12 @@ import {NavigationKey as DebugKey} from '../debug'
 export const DeveloperSection = (): React.ReactElement => {
 	let navigation = useNavigation()
 
-	const onComponentsButton = () => navigation.navigate('ComponentLibrary')
-	const onAPIButton = () => navigation.navigate('APITest')
-	const onBonAppButton = () => navigation.navigate('BonAppPicker')
-	const onFeatureFlagsButton = () => navigation.navigate('FeatureFlags')
-	const onDebugButton = () => navigation.navigate(DebugKey, {keyPath: ['Root']})
-	const onNetworkLoggerButton = () => navigation.navigate('NetworkLogger')
+	const onComponentsButton = () => { navigation.navigate('ComponentLibrary'); }
+	const onAPIButton = () => { navigation.navigate('APITest'); }
+	const onBonAppButton = () => { navigation.navigate('BonAppPicker'); }
+	const onFeatureFlagsButton = () => { navigation.navigate('FeatureFlags'); }
+	const onDebugButton = () => { navigation.navigate(DebugKey, {keyPath: ['Root']}); }
+	const onNetworkLoggerButton = () => { navigation.navigate('NetworkLogger'); }
 	const sendSentryMessage = () => {
 		Sentry.captureMessage('A Sentry Message', {level: 'info'})
 		showSentryAlert()

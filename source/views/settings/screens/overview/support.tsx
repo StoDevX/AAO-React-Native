@@ -36,7 +36,7 @@ const getVersion = () => {
 	}
 }
 
-export const SupportSection = (): JSX.Element => {
+export const SupportSection = (): React.JSX.Element => {
 	let navigation = useNavigation()
 
 	let onResetButton = () => {
@@ -56,7 +56,7 @@ export const SupportSection = (): JSX.Element => {
 
 	return (
 		<Section header="SUPPORT">
-			<PushButtonCell onPress={() => navigation.navigate('Faq')} title="FAQs" />
+			<PushButtonCell onPress={() => { navigation.navigate('Faq'); }} title="FAQs" />
 			<PushButtonCell
 				onPress={openEmail}
 				showLinkStyle={true}

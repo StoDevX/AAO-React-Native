@@ -5,12 +5,12 @@ import type {DepartureTimeList} from '../types'
 
 const TIME_FORMAT = 'h:mma'
 
-type Props = {
+interface Props {
 	times: DepartureTimeList
 	style: StyleProp<TextStyle>
 }
 
-export function ScheduleTimes({times, style}: Props): JSX.Element {
+export function ScheduleTimes({times, style}: Props): React.JSX.Element {
 	return (
 		<Text style={style}>
 			{times

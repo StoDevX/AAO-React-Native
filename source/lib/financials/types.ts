@@ -1,4 +1,4 @@
-export type BalancesShapeType = {
+export interface BalancesShapeType {
 	flex: string | undefined
 	ole: string | undefined
 	print: string | undefined
@@ -7,21 +7,21 @@ export type BalancesShapeType = {
 	plan: string | undefined
 }
 
-export type MealPlanInfoType = {
+export interface MealPlanInfoType {
 	plan?: string
 	leftDaily?: string
 	leftWeekly?: string
 }
 
-export type AccountBalanceType = {
+export interface AccountBalanceType {
 	account: string
 	numeric: number
 	formatted: string
 }
 
-export type OleCardBalancesType = {
+export interface OleCardBalancesType {
 	data: {
-		accounts: Array<AccountBalanceType>
+		accounts: AccountBalanceType[]
 		meals?: MealPlanInfoType
 	}
 	error?: string

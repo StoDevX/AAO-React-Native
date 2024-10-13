@@ -17,7 +17,7 @@ import {RootStackParamList} from '../../../navigation/types'
 // 	map: {...StyleSheet.absoluteFillObject},
 // })
 
-export function BusMap(): JSX.Element {
+export function BusMap(): React.JSX.Element {
 	let {now} = useMomentTimer({intervalMs: 60000, timezone: timezone()})
 	let route = useRoute<RouteProp<RootStackParamList, 'BusMapView'>>()
 	let {line} = route.params
@@ -25,12 +25,12 @@ export function BusMap(): JSX.Element {
 	return <Map line={line} now={now} />
 }
 
-type Props = {
+interface Props {
 	line: UnprocessedBusLine
 	now: Moment
 }
 
-type State = {
+interface State {
 	region: {
 		latitude: number
 		latitudeDelta: number

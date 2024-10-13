@@ -23,7 +23,7 @@ const styles = StyleSheet.create({
 	list: {},
 })
 
-export const PrinterListView = (): JSX.Element => {
+export const PrinterListView = (): React.JSX.Element => {
 	let navigation = useNavigation()
 
 	let route = useRoute<RouteProp<RootStackParamList, 'PrinterList'>>()
@@ -60,7 +60,7 @@ export const PrinterListView = (): JSX.Element => {
 
 	let openPrintRelease = React.useCallback(
 		(printer: Printer) =>
-			navigation.navigate('PrintJobRelease', {job, printer}),
+			{ navigation.navigate('PrintJobRelease', {job, printer}); },
 		[navigation, job],
 	)
 
@@ -131,7 +131,7 @@ export const PrinterListView = (): JSX.Element => {
 				{title: 'Recent', data: recentPrinters.recentPrinters ?? []},
 				{title: 'Popular', data: recentPrinters.popularPrinters ?? []},
 				...groupedByBuilding,
-		  ]
+			]
 		: []
 
 	let availableGrouped = colorJob ? groupedByBuilding : grouped
@@ -143,7 +143,7 @@ export const PrinterListView = (): JSX.Element => {
 			onRefresh={refetchAll}
 			refreshing={isRefetching}
 			renderItem={({item}: {item: Printer}) => (
-				<ListRow onPress={() => openPrintRelease(item)}>
+				<ListRow onPress={() => { openPrintRelease(item); }}>
 					<Title>{item.printerName}</Title>
 					<Detail>{item.location}</Detail>
 				</ListRow>

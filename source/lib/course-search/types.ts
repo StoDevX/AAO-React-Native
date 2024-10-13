@@ -1,11 +1,11 @@
-type CourseOffering = {
+interface CourseOffering {
 	day: string
 	end: string
 	location: string
 	start: string
 }
 
-export type RawCourseType = {
+export interface RawCourseType {
 	clbid: number
 	credits: number
 	crsid: number
@@ -19,7 +19,7 @@ export type RawCourseType = {
 	name: string
 	notes?: string[]
 	number: number
-	offerings: Array<CourseOffering>
+	offerings: CourseOffering[]
 	pn: boolean
 	prerequisites: false | string
 	section?: string
@@ -31,7 +31,7 @@ export type RawCourseType = {
 	year: number
 }
 
-export type CourseType = {
+export interface CourseType {
 	clbid: number
 	credits: number
 	crsid: number
@@ -45,7 +45,7 @@ export type CourseType = {
 	name: string
 	notes?: string[]
 	number: number
-	offerings: Array<CourseOffering>
+	offerings: CourseOffering[]
 	spaceAvailable: boolean
 	pn: boolean
 	prerequisites: false | string
@@ -58,7 +58,7 @@ export type CourseType = {
 	year: number
 }
 
-export type TermType = {
+export interface TermType {
 	hash: string
 	path: string
 	term: number
@@ -66,7 +66,7 @@ export type TermType = {
 	year: number
 }
 
-export type TermInfoType = {
-	files: Array<TermType>
+export interface TermInfoType {
+	files: TermType[]
 	type: string
 }

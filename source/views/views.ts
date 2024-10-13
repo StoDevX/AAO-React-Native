@@ -1,4 +1,4 @@
-import * as c from '../../modules/colors'
+import * as c from '../modules/colors'
 import {RootViewsParamList, MiscViewParamList} from '../navigation/types'
 
 import {NavigationKey as menus} from './menus'
@@ -8,7 +8,7 @@ import {NavigationKey as streaming} from './streaming'
 import {NavigationKey as news} from './news'
 import {NavigationKey as transportation} from './transportation'
 
-import {useCourseSearchRecentsScreen} from '../../modules/app-config'
+import {useCourseSearchRecentsScreen} from '../modules/app-config'
 
 const hours: keyof RootViewsParamList = 'BuildingHours'
 const directory: keyof RootViewsParamList = 'Directory'
@@ -20,7 +20,7 @@ const printJobs: keyof RootViewsParamList = 'PrintJobs'
 const courseSearch: keyof RootViewsParamList = 'CourseSearch'
 const courseSearchResults: keyof MiscViewParamList = 'CourseSearchResults'
 
-type CommonView = {
+interface CommonView {
 	title: string
 	icon: string
 	foreground: 'light' | 'dark'
@@ -28,12 +28,12 @@ type CommonView = {
 	disabled?: boolean
 }
 
-type NativeView = {
+interface NativeView {
 	type: 'view'
 	view: keyof RootViewsParamList
 }
 
-type WebLinkView = {
+interface WebLinkView {
 	type: 'url' | 'browser-url'
 	url: string
 }

@@ -1,4 +1,4 @@
-export type PrintJob = {
+export interface PrintJob {
 	copies: number
 	documentName: string
 	deniedReasonFormatted?: string
@@ -15,7 +15,7 @@ export type PrintJob = {
 	usageTimeFormatted: string
 }
 
-export type HeldJob = {
+export interface HeldJob {
 	canRelease: boolean
 	client: string
 	isDenied: boolean
@@ -31,17 +31,17 @@ export type HeldJob = {
 	usageTimeFormatted: string
 }
 
-export type PrintJobsResponse = {
-	jobs: Array<PrintJob>
+export interface PrintJobsResponse {
+	jobs: PrintJob[]
 }
 
 // https://papercut.stolaf.edu:9192/rpc/api/rest/internal/webclient/users/rives/jobs/status
-export type StatusResponse = {
+export interface StatusResponse {
 	hashCode: number
-	jobs: Array<PrintJob>
+	jobs: PrintJob[]
 }
 
-export type Printer = {
+export interface Printer {
 	location?: string
 	serverName: string
 	code: string
@@ -52,16 +52,16 @@ export type EnhancedPrinter = Printer & {isColor: boolean; location: string}
 
 // https://papercut.stolaf.edu:9192/rpc/api/rest/internal/mobilerelease/api/recent-popular-printers
 // ?username=rives
-export type RecentPopularPrintersResponse = {
-	popularPrinters: Array<Printer>
-	recentPrinters: Array<Printer>
+export interface RecentPopularPrintersResponse {
+	popularPrinters: Printer[]
+	recentPrinters: Printer[]
 }
 
-export type ColorPrintersResponse = {
-	data: {colorPrinters: Array<string>}
+export interface ColorPrintersResponse {
+	data: {colorPrinters: string[]}
 }
 
-export type ReleaseResponse = {
+export interface ReleaseResponse {
 	numJobsReleased: number
 	statusMessage: string
 }
@@ -70,14 +70,14 @@ export type CancelResponse = Response
 
 // https://papercut.stolaf.edu:9192/rpc/api/rest/internal/mobilerelease/api/all-printers
 // ?username=rives
-export type AllPrintersResponse = Array<Printer>
+export type AllPrintersResponse = Printer[]
 
 // https://papercut.stolaf.edu:9192/rpc/api/rest/internal/mobilerelease/api/held-jobs/
 // ?username=rives
 // &printerName=printers\mfc-it
-export type HeldJobsResponse = Array<HeldJob>
+export type HeldJobsResponse = HeldJob[]
 
-export type LoginResponse = {
+export interface LoginResponse {
 	authCookie: string
 	isMobileReleaseEnabled: boolean
 	realName: string

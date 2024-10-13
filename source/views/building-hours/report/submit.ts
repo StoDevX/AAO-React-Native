@@ -13,11 +13,11 @@ export function submitReport(
 
 	let body = makeEmailBody(before, after, current.name)
 
-	return sendEmail({
+	sendEmail({
 		to: [SUPPORT_EMAIL],
 		subject: `[building] Suggestion for ${current.name}`,
 		body,
-	})
+	});
 }
 
 function makeEmailBody(before: string, after: string, title: string): string {

@@ -66,7 +66,7 @@ const Contributors = (props: TextProps) => (
 	<Text {...props} style={[styles.contributors, props.style]} />
 )
 
-const formatPeopleList = (arr: Array<string>) =>
+const formatPeopleList = (arr: string[]) =>
 	arr.map((w) => w.replace(' ', ' ')).join(' • ')
 
 const contributors = [
@@ -96,7 +96,7 @@ const acknowledgements = [
 	'William Seabrook',
 ]
 
-export let CreditsView = (): JSX.Element => (
+export let CreditsView = (): React.JSX.Element => (
 	<ScrollView
 		contentContainerStyle={styles.contentContainer}
 		contentInsetAdjustmentBehavior="automatic"

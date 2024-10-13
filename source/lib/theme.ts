@@ -1,8 +1,8 @@
 import {Platform} from 'react-native'
 import tinycolor from 'tinycolor2'
 import {sto} from './colors'
-import {firstReadable} from '@frogpond/colors'
-import type {AppTheme} from '@frogpond/app-theme'
+import {firstReadable} from '../modules/colors'
+import type {AppTheme} from '../modules/app-theme'
 
 /**
  * The primary color of the app.
@@ -16,7 +16,8 @@ export const accent = sto.gold
 export const navigationBackground = Platform.select({
 	ios: accent,
 	android: accent,
-}) as string
+	default: accent,
+})
 export const navigationForeground = firstReadable(navigationBackground, [
 	sto.black,
 	sto.white,
@@ -46,11 +47,13 @@ export const switchTintOn = Platform.select({
 // Border color on iOS and background color on Android when the switch is turned off.
 export const switchTintOff = undefined
 // Color of the foreground switch grip. If this is set on iOS, the switch grip will lose its drop shadow.
+// eslint-disable-next-line @typescript-eslint/no-confusing-void-expression
 export const switchThumbTint = Platform.select({
 	// don't set on ios so we keep the drop shadow
 	ios: undefined,
 	// don't set on Android so the platform can pick the right shades from the theming system
 	android: undefined,
+	default: undefined,
 })
 
 export const androidListHeaderBackground = sto.white
@@ -81,7 +84,8 @@ export const statusBarStyle = Platform.select({
 	android: tinycolor.isReadable('#000', androidStatusBarColor)
 		? 'dark-content'
 		: 'light-content',
-}) as 'dark-content' | 'light-content'
+	default: 'dark-content',
+}) satisfies 'dark-content' | 'light-content'
 
 export const themeObject: AppTheme = {
 	accent,

@@ -11,7 +11,7 @@ import {
 import {OtherModesView} from './other-modes'
 import {BusView} from './bus'
 
-type Params = {
+interface Params {
 	ExpressLineBusView: undefined
 	RedLineBusView: undefined
 	BlueLineBusView: undefined

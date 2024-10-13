@@ -34,5 +34,5 @@ export function isBuildingOpen(info: BuildingType, m: Moment): boolean {
 		)
 	})
 
-	return flatten(results).find((status) => status !== false) || false
+	return flatten(results).find((status) => status) || false
 }

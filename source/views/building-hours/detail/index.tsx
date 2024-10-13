@@ -7,7 +7,7 @@ import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 import {RouteProp, useNavigation, useRoute} from '@react-navigation/native'
 import {RootStackParamList} from '../../../navigation/types'
 
-export function BuildingHoursDetailView(): JSX.Element {
+export function BuildingHoursDetailView(): React.JSX.Element {
 	let navigation = useNavigation()
 	let {now} = useMomentTimer({intervalMs: 60000, timezone: timezone()})
 	let route = useRoute<RouteProp<RootStackParamList, typeof NavigationKey>>()
@@ -15,9 +15,9 @@ export function BuildingHoursDetailView(): JSX.Element {
 
 	let reportProblem = React.useCallback(
 		() =>
-			navigation.navigate('BuildingHoursProblemReport', {
+			{ navigation.navigate('BuildingHoursProblemReport', {
 				initialBuilding: info,
-			}),
+			}); },
 		[info, navigation],
 	)
 

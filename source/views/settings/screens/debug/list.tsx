@@ -8,13 +8,13 @@ import {RouteProp, useNavigation, useRoute} from '@react-navigation/core'
 import {SettingsStackParamList} from '../../../../navigation/types'
 import {Section, TableView} from 'react-native-tableview-simple'
 
-export const NavigationKey = 'DebugView' as const
+export const NavigationKey = 'DebugView'
 
-type Props = {
+interface Props {
 	state?: unknown
 }
 
-export const DebugRootView = (): JSX.Element => {
+export const DebugRootView = (): React.JSX.Element => {
 	let reduxState = useAppSelector((state) => {
 		return state
 	})
@@ -22,7 +22,7 @@ export const DebugRootView = (): JSX.Element => {
 	return <DebugView state={reduxState} />
 }
 
-export const DebugView = (props: Props = {}): JSX.Element => {
+export const DebugView = (props: Props = {}): React.JSX.Element => {
 	let {state} = props
 
 	if (state === null) {
@@ -52,7 +52,7 @@ export const DebugView = (props: Props = {}): JSX.Element => {
 	}
 }
 
-export const DebugSimpleItem = ({item}: {item: unknown}): JSX.Element => {
+export const DebugSimpleItem = ({item}: {item: unknown}): React.JSX.Element => {
 	return (
 		<ScrollView>
 			<TableView style={styles.table}>
@@ -68,7 +68,11 @@ export const DebugSimpleItem = ({item}: {item: unknown}): JSX.Element => {
 	)
 }
 
-export const DebugToStringItem = ({item}: {item: unknown}): JSX.Element => {
+export const DebugToStringItem = ({
+	item,
+}: {
+	item: unknown
+}): React.JSX.Element => {
 	return (
 		<ScrollView>
 			<TableView style={styles.table}>
@@ -87,10 +91,14 @@ export const DebugToStringItem = ({item}: {item: unknown}): JSX.Element => {
 let useKeyPath = () => {
 	let route =
 		useRoute<RouteProp<SettingsStackParamList, typeof NavigationKey>>()
-	return route.params?.keyPath ?? []
+	return route.params.keyPath ?? []
 }
 
-export const DebugArrayItem = ({item}: {item: unknown[]}): JSX.Element => {
+export const DebugArrayItem = ({
+	item,
+}: {
+	item: unknown[]
+}): React.JSX.Element => {
 	let navigation = useNavigation()
 	let keyPath = useKeyPath()
 
@@ -115,7 +123,7 @@ export const DebugArrayItem = ({item}: {item: unknown[]}): JSX.Element => {
 	)
 }
 
-export const DebugObjectItem = ({item}: {item: object}): JSX.Element => {
+export const DebugObjectItem = ({item}: {item: object}): React.JSX.Element => {
 	let navigation = useNavigation()
 	let keyPath = useKeyPath()
 
@@ -130,9 +138,9 @@ export const DebugObjectItem = ({item}: {item: object}): JSX.Element => {
 				<DebugRow
 					data={debugItem}
 					onPress={() =>
-						navigation.navigate('DebugView', {
+						{ navigation.navigate('DebugView', {
 							keyPath: [...keyPath, debugItem.key],
-						})
+						}); }
 					}
 				/>
 			)}

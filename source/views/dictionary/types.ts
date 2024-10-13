@@ -1,4 +1,4 @@
-export type WordType = {
+export interface WordType {
 	word: string
 	definition: string
 }

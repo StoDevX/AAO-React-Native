@@ -5,13 +5,13 @@ import * as c from '@frogpond/colors'
 import {ListRow, Detail, Title} from '@frogpond/lists'
 import type {StoryType} from './types'
 
-type Props = {
+interface Props {
 	onPress: (link: string) => void
 	story: StoryType
 	thumbnail: false | number
 }
 
-export const NewsRow = (props: Props): JSX.Element => {
+export const NewsRow = (props: Props): React.JSX.Element => {
 	let _onPress = () => {
 		if (!props.story.link) {
 			Alert.alert('There is nowhere to go for this story')

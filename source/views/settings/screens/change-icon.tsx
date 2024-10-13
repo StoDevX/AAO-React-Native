@@ -17,13 +17,13 @@ const styles = StyleSheet.create({
 
 type IconTypeEnum = 'default' | 'icon_type_windmill'
 
-type Icon = {
+interface Icon {
 	src: ImageSourcePropType
 	title: string
 	type: IconTypeEnum
 }
 
-export const icons: Array<Icon> = [
+export const icons: Icon[] = [
 	{
 		src: appIcons.oldMain,
 		title: 'Old Main',
@@ -36,7 +36,7 @@ export const icons: Array<Icon> = [
 	},
 ]
 
-export let IconSettingsView = (): JSX.Element => {
+export let IconSettingsView = (): React.JSX.Element => {
 	let [iconType, setIconType] = React.useState<IconTypeEnum>('default')
 
 	React.useEffect(() => {
@@ -72,7 +72,7 @@ export let IconSettingsView = (): JSX.Element => {
 	)
 }
 
-type IconCellProps = {
+interface IconCellProps {
 	readonly icon: Icon
 	readonly isSelected: boolean
 	readonly onPress: (iconType: string) => void

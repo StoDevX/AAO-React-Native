@@ -2,7 +2,9 @@
   "extends": "expo/tsconfig.base",
   "compilerOptions": {
     "strict": true,
-    "module": "esnext"
+    "module": "esnext",
+    "isolatedModules": true,
+    "noUncheckedIndexedAccess": true
     // "paths": {
     //   "@/*": ["./*"]
     // }

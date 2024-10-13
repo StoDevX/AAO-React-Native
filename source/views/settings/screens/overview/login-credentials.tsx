@@ -13,7 +13,7 @@ import {TextInput} from 'react-native'
 import {useMutation} from '@tanstack/react-query'
 import {sto} from '../../../../lib/colors'
 
-export const CredentialsLoginSection = (): JSX.Element => {
+export const CredentialsLoginSection = (): React.JSX.Element => {
 	let [username, setUsername] = React.useState('')
 	let usernameInputRef = React.useRef<TextInput>(null)
 
@@ -68,7 +68,7 @@ export const CredentialsLoginSection = (): JSX.Element => {
 							ref={usernameInputRef}
 							editable={!logIn.isLoading}
 							label="Username"
-							onChangeText={(text) => setUsername(text)}
+							onChangeText={(text) => { setUsername(text); }}
 							onSubmitEditing={() => passwordInputRef.current?.focus()}
 							placeholder="username"
 							returnKeyType="next"
@@ -80,8 +80,8 @@ export const CredentialsLoginSection = (): JSX.Element => {
 							ref={passwordInputRef}
 							editable={!logIn.isLoading}
 							label="Password"
-							onChangeText={(text) => setPassword(text)}
-							onSubmitEditing={() => logIn.mutate()}
+							onChangeText={(text) => { setPassword(text); }}
+							onSubmitEditing={() => { logIn.mutate(); }}
 							placeholder="password"
 							returnKeyType="done"
 							secureTextEntry={true}

@@ -18,7 +18,7 @@ const styles = StyleSheet.create({
 	},
 })
 
-const StudentWorkView = (): JSX.Element => {
+const StudentWorkView = (): React.JSX.Element => {
 	let navigation = useNavigation()
 	let {
 		data = [],
@@ -56,7 +56,7 @@ const StudentWorkView = (): JSX.Element => {
 			renderItem={({item}) => (
 				<JobRow
 					job={item}
-					onPress={(job: JobType) => navigation.navigate('JobDetail', {job})}
+					onPress={(job: JobType) => { navigation.navigate('JobDetail', {job}); }}
 				/>
 			)}
 			renderSectionHeader={({section: {title}}) => (

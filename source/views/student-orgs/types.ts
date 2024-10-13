@@ -1,16 +1,16 @@
-export type ContactPersonType = {
+export interface ContactPersonType {
 	lastName: string
 	title: string
 	firstName: string
 	email: string
 }
 
-export type AdvisorType = {
+export interface AdvisorType {
 	email: string
 	name: string
 }
 
-export type StudentOrgType = {
+export interface StudentOrgType {
 	meetings: string
 	contacts: ContactPersonType[]
 	advisors: AdvisorType[]

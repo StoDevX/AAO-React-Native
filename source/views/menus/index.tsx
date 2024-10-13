@@ -62,7 +62,7 @@ const ThePauseMenuView = () => (
 	/>
 )
 
-type Params = {
+interface Params {
 	StavHallMenuView: undefined
 	TheCageMenuView: undefined
 	ThePauseMenuView: undefined

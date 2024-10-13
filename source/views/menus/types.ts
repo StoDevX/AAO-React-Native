@@ -21,24 +21,24 @@ export type {
 
 export type NumericStringType = string
 
-export type CafeMenuType = {
+export interface CafeMenuType {
 	name: string
 	menu_id: NumericStringType
 	dayparts: DayPartsCollectionType
 }
 
-export type EditedMenuForDayType = {
+export interface EditedMenuForDayType {
 	date: string
 	cafe: CafeMenuType
 }
 
-export type EditedBonAppMenuInfoType = {
-	cor_icons: {[key: string]: CorIconType}
+export interface EditedBonAppMenuInfoType {
+	cor_icons: Record<string, CorIconType>
 	days: EditedMenuForDayType[]
 	items: MenuItemContainerType
 }
 
-type BonAppSingleCafeInfo = {
+interface BonAppSingleCafeInfo {
 	name: string
 	address: string
 	city: string
@@ -71,17 +71,17 @@ type BonAppSingleCafeInfo = {
 	]
 }
 
-export type EditedBonAppCafeInfoType = {
+export interface EditedBonAppCafeInfoType {
 	cafe: BonAppSingleCafeInfo
 }
 
-export type GithubMenuResponse = {
+export interface GithubMenuResponse {
 	foodItems: MenuItemType[]
 	stationMenus: StationMenuType[]
 	corIcons: MasterCorIconMapType
 }
 
-export type GithubMenuType = {
+export interface GithubMenuType {
 	foodItems: MenuItemContainerType
 	corIcons: MasterCorIconMapType
 	meals: ProcessedMealType[]

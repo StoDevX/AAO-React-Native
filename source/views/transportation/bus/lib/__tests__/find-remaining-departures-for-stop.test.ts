@@ -7,9 +7,9 @@ import {dayAndTime} from './moment.helper'
 import type {BusSchedule, UnprocessedBusSchedule} from '../../types'
 import moment from 'moment'
 
-function buildBusSchedules(now: moment.Moment): Array<BusSchedule> {
+function buildBusSchedules(now: moment.Moment): BusSchedule[] {
 	// prettier-ignore
-	let schedules: Array<UnprocessedBusSchedule> = [
+	let schedules: UnprocessedBusSchedule[] = [
     {
       days: ['Mo', 'Tu'],
       coordinates: {},

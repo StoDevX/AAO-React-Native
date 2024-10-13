@@ -6,7 +6,7 @@ import {SafeAreaView} from 'react-native-safe-area-context'
 import {Link} from 'expo-router'
 import {UnofficialAppNotice} from '../../source/views/home/notice'
 // import {partitionByIndex} from '../../source/lib/partition-by-index'
-import {Column} from '../../modules/layout/column'
+import {Column} from '../../source/modules/layout/column'
 
 const styles = StyleSheet.create({
 	cells: {

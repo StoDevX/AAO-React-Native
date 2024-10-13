@@ -27,15 +27,15 @@ const styles = StyleSheet.create({
 	},
 })
 
-export const Term = (props: TextProps): JSX.Element => (
+export const Term = (props: TextProps): React.JSX.Element => (
 	<Text {...props} style={[styles.term, props.style]} />
 )
 
-export const Container = (props: ViewProps): JSX.Element => (
+export const Container = (props: ViewProps): React.JSX.Element => (
 	<View {...props} style={[styles.container, props.style]} />
 )
 
-export const NavigationKey = 'DictionaryDetail' as const
+export const NavigationKey = 'DictionaryDetail'
 
 export const DetailNavigationOptions = (props: {
 	route: RouteProp<RootStackParamList, typeof NavigationKey>
@@ -46,14 +46,14 @@ export const DetailNavigationOptions = (props: {
 	}
 }
 
-export let DictionaryDetailView = (): JSX.Element => {
+export let DictionaryDetailView = (): React.JSX.Element => {
 	let route = useRoute<RouteProp<RootStackParamList, typeof NavigationKey>>()
 	let {item} = route.params
 
 	let navigation = useNavigation()
 
 	let handleEditButtonPress = React.useCallback(
-		() => navigation.navigate('DictionaryEditor', {item}),
+		() => { navigation.navigate('DictionaryEditor', {item}); },
 		[item, navigation],
 	)
 

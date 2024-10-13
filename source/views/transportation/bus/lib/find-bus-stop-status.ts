@@ -4,7 +4,7 @@ import type {BusStateEnum} from './get-current-bus-iteration'
 
 export type BusStopStatusEnum = 'at' | 'before' | 'after' | 'skip'
 
-type Args = {
+interface Args {
 	stop: BusTimetableEntry
 	busStatus: BusStateEnum
 	departureIndex: null | number

@@ -54,7 +54,7 @@ const styles = StyleSheet.create({
 	},
 })
 
-export const NavigationKey = 'StudentOrgsDetail' as const
+export const NavigationKey = 'StudentOrgsDetail'
 
 export const NavigationOptions = (props: {
 	route: RouteProp<RootStackParamList, typeof NavigationKey>
@@ -65,7 +65,7 @@ export const NavigationOptions = (props: {
 	}
 }
 
-let StudentOrgsDetailView = (): JSX.Element => {
+let StudentOrgsDetailView = (): React.JSX.Element => {
 	let route = useRoute<RouteProp<RootStackParamList, typeof NavigationKey>>()
 
 	let {
@@ -108,7 +108,7 @@ let StudentOrgsDetailView = (): JSX.Element => {
 					{contacts.map((contact, i) => (
 						<Text
 							key={i}
-							onPress={() => sendEmail({to: [contact.email], subject: orgName})}
+							onPress={() => { sendEmail({to: [contact.email], subject: orgName}); }}
 							selectable={true}
 							style={styles.cardBody}
 						>
@@ -127,7 +127,7 @@ let StudentOrgsDetailView = (): JSX.Element => {
 					{advisors.map((contact, i) => (
 						<Text
 							key={i}
-							onPress={() => sendEmail({to: [contact.email], subject: orgName})}
+							onPress={() => { sendEmail({to: [contact.email], subject: orgName}); }}
 							selectable={true}
 							style={styles.cardBody}
 						>

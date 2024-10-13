@@ -1,4 +1,4 @@
-export type OtherModeType = {
+export interface OtherModeType {
 	name: string
 	synopsis: string
 	url: string

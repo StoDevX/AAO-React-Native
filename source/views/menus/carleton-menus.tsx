@@ -7,7 +7,7 @@ import {useNavigation} from '@react-navigation/native'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 import {CafeMenuParamList} from '../../navigation/types'
 
-export const CarletonBurtonMenuScreen = (): JSX.Element => (
+export const CarletonBurtonMenuScreen = (): React.JSX.Element => (
 	<BonAppHostedMenu
 		cafe="burton"
 		loadingMessage={['Searching for Schiller…']}
@@ -15,7 +15,7 @@ export const CarletonBurtonMenuScreen = (): JSX.Element => (
 	/>
 )
 
-export const CarletonLDCMenuScreen = (): JSX.Element => (
+export const CarletonLDCMenuScreen = (): React.JSX.Element => (
 	<BonAppHostedMenu
 		cafe="ldc"
 		loadingMessage={['Tracking down empty seats…']}
@@ -23,7 +23,7 @@ export const CarletonLDCMenuScreen = (): JSX.Element => (
 	/>
 )
 
-export const CarletonWeitzMenuScreen = (): JSX.Element => (
+export const CarletonWeitzMenuScreen = (): React.JSX.Element => (
 	<BonAppHostedMenu
 		cafe="weitz"
 		loadingMessage={['Observing the artwork…', 'Previewing performances…']}
@@ -31,7 +31,7 @@ export const CarletonWeitzMenuScreen = (): JSX.Element => (
 	/>
 )
 
-export const CarletonSaylesMenuScreen = (): JSX.Element => (
+export const CarletonSaylesMenuScreen = (): React.JSX.Element => (
 	<BonAppHostedMenu
 		cafe="sayles"
 		loadingMessage={['Engaging in people-watching…', 'Checking the mail…']}
@@ -39,10 +39,10 @@ export const CarletonSaylesMenuScreen = (): JSX.Element => (
 	/>
 )
 
-export function CarletonCafeIndex(): JSX.Element {
+export function CarletonCafeIndex(): React.JSX.Element {
 	let navigation = useNavigation()
 
-	let carletonCafes: Array<{id: keyof CafeMenuParamList; title: string}> = [
+	let carletonCafes: {id: keyof CafeMenuParamList; title: string}[] = [
 		{id: 'CarletonBurtonMenu', title: 'Burton'},
 		{id: 'CarletonLDCMenu', title: 'LDC'},
 		{id: 'CarletonWeitzMenu', title: 'Weitz Center'},
@@ -55,7 +55,7 @@ export function CarletonCafeIndex(): JSX.Element {
 				<View key={i}>
 					<ListRow
 						arrowPosition="center"
-						onPress={() => navigation.navigate(loc.id)}
+						onPress={() => { navigation.navigate(loc.id); }}
 					>
 						<Row alignItems="center">
 							<Title style={styles.rowText}>{loc.title}</Title>

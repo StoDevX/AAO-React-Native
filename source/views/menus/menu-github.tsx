@@ -6,12 +6,12 @@ import moment from 'moment-timezone'
 import sample from 'lodash/sample'
 import {usePauseMenu} from './query'
 
-type Props = {
+interface Props {
 	name: string
 	loadingMessage: string[]
 }
 
-export function GitHubHostedMenu(props: Props): JSX.Element {
+export function GitHubHostedMenu(props: Props): React.JSX.Element {
 	let {
 		data = {foodItems: {}, meals: [], corIcons: {}},
 		error,

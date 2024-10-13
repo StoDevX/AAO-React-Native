@@ -6,11 +6,13 @@ import {
 } from '../../../redux/parts/buildings'
 import {useAppDispatch, useAppSelector} from '../../../redux'
 
-type Props = {
+interface Props {
 	buildingName: string
 }
 
-export const BuildingFavoriteButton = function (props: Props): JSX.Element {
+export const BuildingFavoriteButton = function (
+	props: Props,
+): React.JSX.Element {
 	let dispatch = useAppDispatch()
 	let favorites = useAppSelector(selectFavoriteBuildings)
 

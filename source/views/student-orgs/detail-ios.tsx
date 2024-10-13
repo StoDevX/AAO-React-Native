@@ -35,7 +35,7 @@ const styles = StyleSheet.create({
 	},
 })
 
-export const NavigationKey = 'StudentOrgsDetail' as const
+export const NavigationKey = 'StudentOrgsDetail'
 
 export const NavigationOptions = (props: {
 	route: RouteProp<RootStackParamList, typeof NavigationKey>
@@ -46,7 +46,7 @@ export const NavigationOptions = (props: {
 	}
 }
 
-let StudentOrgsDetailView = (): JSX.Element => {
+let StudentOrgsDetailView = (): React.JSX.Element => {
 	let route = useRoute<RouteProp<RootStackParamList, typeof NavigationKey>>()
 
 	let {
@@ -101,7 +101,7 @@ let StudentOrgsDetailView = (): JSX.Element => {
 								cellStyle={contact.title ? 'Subtitle' : 'Basic'}
 								detail={contact.title}
 								onPress={() =>
-									sendEmail({to: [contact.email], subject: orgName})
+									{ sendEmail({to: [contact.email], subject: orgName}); }
 								}
 								title={showNameOrEmail(contact)}
 							/>
@@ -117,7 +117,7 @@ let StudentOrgsDetailView = (): JSX.Element => {
 								accessory="DisclosureIndicator"
 								cellStyle="Basic"
 								onPress={() =>
-									sendEmail({to: [contact.email], subject: orgName})
+									{ sendEmail({to: [contact.email], subject: orgName}); }
 								}
 								title={contact.name}
 							/>
