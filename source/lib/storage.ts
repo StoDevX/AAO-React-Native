@@ -5,8 +5,8 @@ import {
 	getItemAsString,
 	setItem,
 	setStoragePrefix,
-} from '@frogpond/storage'
-import {AppConfigEntry} from '@frogpond/app-config'
+} from '../../modules/storage'
+import {AppConfigEntry} from '../../modules/app-config'
 import type {FilterComboType} from '../views/sis/course-search/lib/format-filter-combo'
 import type {CourseType, TermType} from './course-search/types'
 
