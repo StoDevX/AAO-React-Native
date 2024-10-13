@@ -1,4 +1,4 @@
-import * as c from '@frogpond/colors'
+import * as c from '../../modules/colors'
 import {RootViewsParamList, MiscViewParamList} from '../navigation/types'
 
 import {NavigationKey as menus} from './menus'
@@ -8,7 +8,7 @@ import {NavigationKey as streaming} from './streaming'
 import {NavigationKey as news} from './news'
 import {NavigationKey as transportation} from './transportation'
 
-import {useCourseSearchRecentsScreen} from '@frogpond/app-config'
+import {useCourseSearchRecentsScreen} from '../../modules/app-config'
 
 const hours: keyof RootViewsParamList = 'BuildingHours'
 const directory: keyof RootViewsParamList = 'Directory'
@@ -40,7 +40,7 @@ type WebLinkView = {
 
 export type ViewType = CommonView & (NativeView | WebLinkView)
 
-export const AllViews = (): Array<ViewType> => {
+export const AllViews = (): ViewType[] => {
 	const showRecentCourseSearches = useCourseSearchRecentsScreen()
 
 	return [

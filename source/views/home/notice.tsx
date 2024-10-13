@@ -1,9 +1,9 @@
 import React from 'react'
 import {View, Text, StyleSheet} from 'react-native'
-import * as c from '@frogpond/colors'
+import * as c from '../../../modules/colors'
 import sample from 'lodash/sample'
 import {CELL_MARGIN} from './button'
-import {isDevMode} from '@frogpond/constants'
+import {isDevMode} from '../../../modules/constants'
 
 let messages = [
 	'☃️ An Unofficial App Project ☃️',
