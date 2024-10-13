@@ -2,7 +2,7 @@ import * as React from 'react'
 import {StyleSheet, Text, SectionList} from 'react-native'
 
 import restart from 'react-native-restart'
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+import {NativeStackNavigationOptions} from 'expo-router-stack'
 
 import {CellToggle} from '@frogpond/tableview/cells'
 import {ListEmpty, ListSectionHeader, ListSeparator} from '@frogpond/lists'

@@ -1,5 +1,5 @@
 import * as React from 'react'
-import * as c from '@frogpond/colors'
+import * as c from '../../../../modules/colors'
 import {ColorValue, Platform, StyleSheet, View} from 'react-native'
 import type {BusStopStatusEnum} from '../lib'
 

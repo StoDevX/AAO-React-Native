@@ -17,7 +17,7 @@ import type {HtmlAudioError, PlayState} from './types'
 import {useTheme} from './theme'
 import {ActionButton, CallButton, ShowCalendarButton} from './buttons'
 import {openUrl} from '@frogpond/open-url'
-import {useNavigation} from '@react-navigation/native'
+import {useNavigation} from 'expo-router'
 import {RadioScheduleParamList} from '../../../navigation/types'
 
 // If you want to fix the inline player, switch to `true`

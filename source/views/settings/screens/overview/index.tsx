@@ -2,7 +2,7 @@ import * as React from 'react'
 import {StyleSheet, ScrollView, Platform} from 'react-native'
 import {TableView} from '@frogpond/tableview'
 import {CloseScreenButton} from '@frogpond/navigation-buttons'
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+import {NativeStackNavigationOptions} from 'expo-router-stack'
 
 import {isDevMode} from '@frogpond/constants'
 

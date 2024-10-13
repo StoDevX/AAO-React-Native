@@ -4,7 +4,7 @@ import {NoticeView} from '@frogpond/notice'
 import * as c from '@frogpond/colors'
 import {Toolbar} from '@frogpond/toolbar'
 import {BonAppHostedMenu} from './menu-bonapp'
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+import {NativeStackNavigationOptions} from 'expo-router-stack'
 
 export const DevBonAppNavigationOptions: NativeStackNavigationOptions = {
 	title: 'Dev BonApp Picker',
@@ -40,7 +40,9 @@ export const BonAppPickerView = (): React.JSX.Element => {
 			<Toolbar>
 				<TextInput
 					keyboardType="numeric"
-					onEndEditing={(e) => { chooseCafe(e.nativeEvent.text); }}
+					onEndEditing={(e) => {
+						chooseCafe(e.nativeEvent.text)
+					}}
 					placeholder="id"
 					returnKeyType="done"
 					style={styles.default}

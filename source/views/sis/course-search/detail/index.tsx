@@ -23,9 +23,9 @@ import {deptNum} from '../lib/format-dept-num'
 import groupBy from 'lodash/groupBy'
 import map from 'lodash/map'
 import zip from 'lodash/zip'
-import {RouteProp, useRoute} from '@react-navigation/native'
+import {RouteProp, useRoute} from 'expo-router'
 import {RootStackParamList} from '../../../../navigation/types'
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+import {NativeStackNavigationOptions} from 'expo-router-stack'
 
 const Container = (props: ScrollViewProps) => (
 	<ScrollView {...props} style={[styles.container, props.style]} />

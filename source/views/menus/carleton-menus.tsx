@@ -3,8 +3,8 @@ import {Platform, ScrollView, StyleSheet, View} from 'react-native'
 import {Row} from '@frogpond/layout'
 import {ListRow, ListSeparator, Title} from '@frogpond/lists'
 import {BonAppHostedMenu} from './menu-bonapp'
-import {useNavigation} from '@react-navigation/native'
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+import {useNavigation} from 'expo-router'
+import {NativeStackNavigationOptions} from 'expo-router-stack'
 import {CafeMenuParamList} from '../../navigation/types'
 
 export const CarletonBurtonMenuScreen = (): React.JSX.Element => (
@@ -55,7 +55,9 @@ export function CarletonCafeIndex(): React.JSX.Element {
 				<View key={i}>
 					<ListRow
 						arrowPosition="center"
-						onPress={() => { navigation.navigate(loc.id); }}
+						onPress={() => {
+							navigation.navigate(loc.id)
+						}}
 					>
 						<Row alignItems="center">
 							<Title style={styles.rowText}>{loc.title}</Title>

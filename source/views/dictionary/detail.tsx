@@ -5,8 +5,8 @@ import {ListFooter} from '@frogpond/lists'
 import {Button} from '@frogpond/button'
 import * as c from '@frogpond/colors'
 
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
-import {RouteProp, useNavigation, useRoute} from '@react-navigation/native'
+import {NativeStackNavigationOptions} from 'expo-router-stack'
+import {RouteProp, useNavigation, useRoute} from 'expo-router'
 import {RootStackParamList} from '../../navigation/types'
 
 const styles = StyleSheet.create({
@@ -52,10 +52,9 @@ export let DictionaryDetailView = (): React.JSX.Element => {
 
 	let navigation = useNavigation()
 
-	let handleEditButtonPress = React.useCallback(
-		() => { navigation.navigate('DictionaryEditor', {item}); },
-		[item, navigation],
-	)
+	let handleEditButtonPress = React.useCallback(() => {
+		navigation.navigate('DictionaryEditor', {item})
+	}, [item, navigation])
 
 	return (
 		<Container>

@@ -16,9 +16,9 @@ import {callPhone} from '../../components/call-phone'
 import {Button} from '@frogpond/button'
 import {openUrl} from '@frogpond/open-url'
 import {GH_NEW_ISSUE_URL} from '../../lib/constants'
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+import {NativeStackNavigationOptions} from 'expo-router-stack'
 import {RootStackParamList} from '../../navigation/types'
-import {RouteProp, useRoute} from '@react-navigation/native'
+import {RouteProp, useRoute} from 'expo-router'
 
 const styles = StyleSheet.create({
 	paragraph: {

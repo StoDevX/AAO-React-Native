@@ -1,5 +1,5 @@
 /*import React from 'react'
-import {createNativeStackNavigator} from '@react-navigation/native-stack'
+import {createNativeStackNavigator} from 'expo-router-stack'
 
 import * as home from '../views/home'
 import * as buildingHours from '../views/building-hours'

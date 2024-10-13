@@ -1,7 +1,7 @@
 import type {Moment} from 'moment'
 import moment from 'moment-timezone'
 import findIndex from 'lodash/findIndex'
-import {timezone} from '../constants'
+import {timezone} from '../../constants'
 import type {
 	DayPartMenuType,
 	DayPartsCollectionType,
@@ -11,20 +11,21 @@ import type {
 export function findMenu(
 	dayparts: DayPartsCollectionType,
 	now: Moment,
-): void | DayPartMenuType {
+): null | DayPartMenuType {
 	// `dayparts` is, conceptually, a collection of bonapp menus for a
 	// location. It's a single-element array of arrays, so we first check
 	// to see if either dimension is empty.
-	if (!dayparts.length || !dayparts[0].length) {
-		return
-	}
 
 	// Now that we know they're not empty, we grab the single element out of
 	// the top array for easier use.
 	const daypart = dayparts[0]
 
+	if (!daypart) {
+		return null
+	}
+
 	const menuIndex = findMenuIndex(daypart, now)
-	return daypart[menuIndex]
+	return daypart[menuIndex] ?? null
 }
 
 export function findMeal(

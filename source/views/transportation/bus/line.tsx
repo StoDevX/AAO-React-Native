@@ -11,11 +11,11 @@ import {
 import type {Moment} from 'moment-timezone'
 import find from 'lodash/find'
 import findLast from 'lodash/findLast'
-import {Separator} from '@frogpond/separator'
+import {Separator} from '../../../modules/separator'
 import {BusStopRow} from './components/bus-stop-row'
-import {ListFooter, ListRow, ListSectionHeader} from '@frogpond/lists'
-import {InfoHeader} from '@frogpond/info-header'
-import * as c from '@frogpond/colors'
+import {ListFooter, ListRow, ListSectionHeader} from '../../../modules/lists'
+import {InfoHeader} from '../../../modules/info-header'
+import * as c from '../../../modules/colors'
 
 const styles = StyleSheet.create({
 	container: {
@@ -42,7 +42,7 @@ const EMPTY_SCHEDULE_MESSAGE = (
 interface Props {
 	line: UnprocessedBusLine
 	now: Moment
-	openMap: () => unknown
+	// openMap: () => unknown
 }
 
 function startsIn(now: Moment, start?: Moment | null) {
@@ -149,7 +149,7 @@ export function BusLine(props: Props): React.JSX.Element {
 		/>
 	)
 
-	let lineMessage = line.notice || ''
+	let lineMessage = line.notice ?? ''
 	let footerMessage =
 		'Bus routes and times subject to change without notice\n\nData collected by the humans of All About Olaf'
 
@@ -172,7 +172,7 @@ export function BusLine(props: Props): React.JSX.Element {
 			ListFooterComponent={footerElement}
 			ListHeaderComponent={headerElement}
 			data={timetable}
-			keyExtractor={(item, index) => index.toString()}
+			keyExtractor={(_item, index) => index.toString()}
 			renderItem={({item, index}) => (
 				<BusStopRow
 					barColor={line.colors.bar}

@@ -10,9 +10,9 @@ import {useAppDispatch} from '../../../redux'
 import {applyFiltersToItem} from '@frogpond/filter'
 import {FilterType} from '@frogpond/filter'
 import {useFilters} from './lib/build-filters'
-import {RouteProp, useNavigation, useRoute} from '@react-navigation/native'
+import {RouteProp, useNavigation, useRoute} from 'expo-router'
 import {ChangeTextEvent, RootStackParamList} from '../../../navigation/types'
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+import {NativeStackNavigationOptions} from 'expo-router-stack'
 import {useDebounce} from '@frogpond/use-debounce'
 import {ListSeparator, ListSectionHeader, largeListProps} from '@frogpond/lists'
 import * as c from '@frogpond/colors'
@@ -54,9 +54,7 @@ function isError(e: unknown): e is Error {
 function queriesToCourses(
 	queries: UseQueryResult<CourseType[]>[],
 ): CourseType[] {
-	return queries
-		.flatMap((q) => q.data)
-		.filter((data) => data !== undefined)
+	return queries.flatMap((q) => q.data).filter((data) => data !== undefined)
 }
 
 const useSelectedFilter = (
@@ -138,8 +136,9 @@ export const CourseSearchResultsView = (): React.JSX.Element => {
 		navigation.setOptions({
 			headerSearchBarOptions: {
 				barTintColor: c.systemFill,
-				onChangeText: (event: ChangeTextEvent) =>
-					{ setSearchQuery(event.nativeEvent.text); },
+				onChangeText: (event: ChangeTextEvent) => {
+					setSearchQuery(event.nativeEvent.text)
+				},
 			},
 		})
 	}, [initialQuery, navigation, searchQuery])

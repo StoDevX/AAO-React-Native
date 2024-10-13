@@ -1,8 +1,8 @@
 import * as c from '@frogpond/colors'
 import {LoadingView, NoticeView} from '@frogpond/notice'
 import {SearchButton} from '@frogpond/navigation-buttons'
-import {useNavigation} from '@react-navigation/native'
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+import {useNavigation} from 'expo-router'
+import {NativeStackNavigationOptions} from 'expo-router-stack'
 import {debounce, fromPairs} from 'lodash'
 import * as React from 'react'
 import {ScrollView, StyleSheet, View} from 'react-native'
@@ -42,9 +42,9 @@ export const CourseSearchView = (): React.JSX.Element => {
 	React.useLayoutEffect(() => {
 		const getRightButton = () => (
 			<RightButton
-				onPress={() =>
-					{ navigation.navigate('CourseSearchResults', {initialQuery: ''}); }
-				}
+				onPress={() => {
+					navigation.navigate('CourseSearchResults', {initialQuery: ''})
+				}}
 			/>
 		)
 

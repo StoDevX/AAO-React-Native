@@ -1,6 +1,6 @@
 // import type {ThemingType} from '@callstack/react-theme-provider'
 // import {createTheming} from '@callstack/react-theme-provider'
-import {useTheme} from '@react-navigation/native'
+import {useTheme} from 'expo-router'
 export {CombinedLightTheme, CombinedDarkTheme} from './paper'
 
 export interface AppTheme {

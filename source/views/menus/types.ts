@@ -7,7 +7,7 @@ import type {
 	DayPartsCollectionType,
 	DayPartMenuType,
 	CorIconType,
-} from '@frogpond/food-menu'
+} from '../../modules/food-menu'
 
 export type {
 	MenuItemType,
@@ -65,7 +65,7 @@ interface BonAppSingleCafeInfo {
 					label: string
 				},
 			]
-			status: 'open' | 'closed' | string
+			status: 'open' | 'closed'
 			message: false | string
 		},
 	]

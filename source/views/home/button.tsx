@@ -10,6 +10,7 @@ interface Props {
 	iconName: keyof typeof Entypo.glyphMap
 	foreground: 'light' | 'dark'
 	tintColor: string
+	onPress: () => void
 }
 
 export function HomeScreenButton(props: Props): React.JSX.Element {
@@ -23,6 +24,7 @@ export function HomeScreenButton(props: Props): React.JSX.Element {
 			accessibilityRole="button"
 			accessible={true}
 			highlight={false}
+			onPress={props.onPress}
 			style={[styles.button, {backgroundColor: tintColor}]}
 		>
 			<View style={styles.contents}>

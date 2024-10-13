@@ -15,7 +15,7 @@ import {Provider as PaperProvider} from 'react-native-paper'
 import {PersistQueryClientProvider} from '@tanstack/react-query-persist-client'
 import {CombinedLightTheme, CombinedDarkTheme} from './modules/app-theme'
 import {ActionSheetProvider} from '@expo/react-native-action-sheet'
-import {NavigationContainer} from '@react-navigation/native'
+import {NavigationContainer} from 'expo-router'
 
 import {RootStack} from './navigation'
 import {IS_PRODUCTION} from './modules/constants'

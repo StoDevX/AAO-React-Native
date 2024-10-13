@@ -18,7 +18,7 @@ export const processBusSchedule =
 
 		let timetable = scheduleData.stops.map((stopName, i) => {
 			let coordinates = scheduleData.coordinates[stopName]
-			let departures = times.map((timeList) => timeList[i])
+			let departures = times.map((timeList) => timeList[i] ?? null)
 			let stop: BusTimetableEntry = {name: stopName, departures, coordinates}
 			return stop
 		})

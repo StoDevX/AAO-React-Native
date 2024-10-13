@@ -6,7 +6,7 @@ import {sendEmail} from '../../../../components/send-email'
 import deviceInfo from 'react-native-device-info'
 import {appVersion, appBuild} from '@frogpond/constants'
 import {refreshApp} from '../../../../lib/refresh'
-import {useNavigation} from '@react-navigation/native'
+import {useNavigation} from 'expo-router'
 
 const getDeviceInfo = () => `
 
@@ -56,7 +56,12 @@ export const SupportSection = (): React.JSX.Element => {
 
 	return (
 		<Section header="SUPPORT">
-			<PushButtonCell onPress={() => { navigation.navigate('Faq'); }} title="FAQs" />
+			<PushButtonCell
+				onPress={() => {
+					navigation.navigate('Faq')
+				}}
+				title="FAQs"
+			/>
 			<PushButtonCell
 				onPress={openEmail}
 				showLinkStyle={true}

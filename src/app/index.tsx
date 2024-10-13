@@ -3,10 +3,12 @@ import {ScrollView, StyleSheet} from 'react-native'
 // import {AllViews} from '../../source/views/views'
 import {SafeAreaView} from 'react-native-safe-area-context'
 // import {genericOpenUrl, openUrl} from '../../modules/open-url/open-url'
-import {Link} from 'expo-router'
+import {Link, useNavigation, useRouter} from 'expo-router'
 import {UnofficialAppNotice} from '../../source/views/home/notice'
 // import {partitionByIndex} from '../../source/lib/partition-by-index'
 import {Column} from '../../source/modules/layout/column'
+import type React from 'react'
+import * as c from '../../source/modules/colors'
 
 const styles = StyleSheet.create({
 	cells: {
@@ -20,9 +22,10 @@ const styles = StyleSheet.create({
 	},
 })
 
-export default function Index() {
+export default function Index(): React.JSX.Element {
 	// let allViews = AllViews().filter((view) => !view.disabled)
 	// let columns = partitionByIndex(allViews)
+	const router = useRouter()
 
 	return (
 		<ScrollView
@@ -33,16 +36,27 @@ export default function Index() {
 		>
 			<SafeAreaView edges={['left', 'right', 'bottom']} style={styles.cells}>
 				<Column style={styles.column}>
-					<Link href="/menu">
-						<HomeScreenButton
-							title="Menus"
-							iconName="bowl"
-							foreground="light"
-							tintColor="#7CBB00"
-						/>
-					</Link>
+					<HomeScreenButton
+						title="Menus"
+						iconName="bowl"
+						foreground="light"
+						tintColor="#7CBB00"
+						onPress={() => {
+							router.navigate('/menu')
+						}}
+					/>
 				</Column>
-				<Column style={styles.column}></Column>
+				<Column style={styles.column}>
+					<HomeScreenButton
+						title="Transportation"
+						iconName="address"
+						foreground="light"
+						tintColor={c.grayToDarkGray[0]}
+						onPress={() => {
+							router.navigate('/transportation')
+						}}
+					/>
+				</Column>
 				{/* {columns.map((contents, i) => (
 						<Column key={i} style={styles.column}>
 							{contents.map((view) => (

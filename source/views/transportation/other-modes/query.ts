@@ -7,7 +7,7 @@ export const keys = {
 	all: ['transit', 'modes'] as const,
 }
 
-export function useOtherModes(): UseQueryResult<OtherModeType[], unknown> {
+export function useOtherModes(): UseQueryResult<OtherModeType[]> {
 	return useQuery({
 		queryKey: keys.all,
 		queryFn: async ({signal}) => {
@@ -18,8 +18,7 @@ export function useOtherModes(): UseQueryResult<OtherModeType[], unknown> {
 }
 
 export function useOtherModesGrouped(): UseQueryResult<
-	{title: string; data: OtherModeType[]}[],
-	unknown
+	{title: string; data: OtherModeType[]}[]
 > {
 	return useQuery({
 		queryKey: keys.all,

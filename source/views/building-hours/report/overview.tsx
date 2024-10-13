@@ -23,8 +23,8 @@ import type {
 } from '../types'
 import {summarizeDays, formatBuildingTimes, blankSchedule} from '../lib'
 import {submitReport} from './submit'
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
-import {RouteProp, useNavigation, useRoute} from '@react-navigation/native'
+import {NativeStackNavigationOptions} from 'expo-router-stack'
+import {RouteProp, useNavigation, useRoute} from 'expo-router'
 import {CloseScreenButton} from '@frogpond/navigation-buttons'
 import {RootStackParamList} from '../../../navigation/types'
 
@@ -66,7 +66,9 @@ export let BuildingHoursProblemReportView = (): React.JSX.Element => {
 						{
 							text: 'Discard',
 							style: 'destructive',
-							onPress: () => { navigation.dispatch(event.data.action); },
+							onPress: () => {
+								navigation.dispatch(event.data.action)
+							},
 						},
 					],
 				)
@@ -171,13 +173,17 @@ export let BuildingHoursProblemReportView = (): React.JSX.Element => {
 	)
 
 	let openEditor = React.useCallback(
-		(scheduleIdx: number, setIdx: number, set?: SingleBuildingScheduleType) =>
-			{ navigation.navigate('BuildingHoursScheduleEditor', {
+		(scheduleIdx: number, setIdx: number, set?: SingleBuildingScheduleType) => {
+			navigation.navigate('BuildingHoursScheduleEditor', {
 				set: set,
-				onEditSet: (editedData: SingleBuildingScheduleType) =>
-					{ editHoursRow(scheduleIdx, setIdx, editedData); },
-				onDeleteSet: () => { deleteHoursRow(scheduleIdx, setIdx); },
-			}); },
+				onEditSet: (editedData: SingleBuildingScheduleType) => {
+					editHoursRow(scheduleIdx, setIdx, editedData)
+				},
+				onDeleteSet: () => {
+					deleteHoursRow(scheduleIdx, setIdx)
+				},
+			})
+		},
 		[deleteHoursRow, editHoursRow, navigation],
 	)
 
@@ -316,13 +322,18 @@ const EditableSchedule = (props: EditableScheduleProps) => {
 	)
 }
 
-interface TextFieldProps {text: string; onChange: (text: string) => void}
+interface TextFieldProps {
+	text: string
+	onChange: (text: string) => void
+}
 // "Title" will become a textfield like the login form
 const TitleCell = ({text, onChange}: TextFieldProps) => (
 	<CellTextField
 		autoCapitalize="words"
 		onChangeText={onChange}
-		onSubmitEditing={(ev) => { onChange(ev.nativeEvent.text); }}
+		onSubmitEditing={(ev) => {
+			onChange(ev.nativeEvent.text)
+		}}
 		placeholder="Title"
 		returnKeyType="done"
 		value={text}
@@ -334,7 +345,9 @@ const NotesCell = ({text, onChange}: TextFieldProps) => (
 	<CellTextField
 		autoCapitalize="sentences"
 		onChangeText={onChange}
-		onSubmitEditing={(ev) => { onChange(ev.nativeEvent.text); }}
+		onSubmitEditing={(ev) => {
+			onChange(ev.nativeEvent.text)
+		}}
 		placeholder="Notes"
 		returnKeyType="done"
 		value={text}

@@ -4,8 +4,8 @@ import {InfoHeader} from '@frogpond/info-header'
 import {TableView, Section} from '@frogpond/tableview'
 import {CellTextField, ButtonCell} from '@frogpond/tableview/cells'
 import {submitReport} from './submit'
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
-import {RouteProp, useRoute} from '@react-navigation/native'
+import {NativeStackNavigationOptions} from 'expo-router-stack'
+import {RouteProp, useRoute} from 'expo-router'
 import {RootStackParamList} from '../../../navigation/types'
 import noop from 'lodash/noop'
 
@@ -56,13 +56,18 @@ let DictionaryEditorView = (): React.JSX.Element => {
 
 export {DictionaryEditorView as View}
 
-interface TextFieldProps {text: string; onChange: (text: string) => void}
+interface TextFieldProps {
+	text: string
+	onChange: (text: string) => void
+}
 
 const TitleCell = ({text, onChange = noop}: TextFieldProps) => (
 	<CellTextField
 		autoCapitalize="words"
 		onChangeText={onChange}
-		onSubmitEditing={(ev) => { onChange(ev.nativeEvent.text); }}
+		onSubmitEditing={(ev) => {
+			onChange(ev.nativeEvent.text)
+		}}
 		placeholder="Title"
 		returnKeyType="done"
 		value={text}
@@ -74,7 +79,9 @@ const DefinitionCell = ({text, onChange = noop}: TextFieldProps) => (
 		autoCapitalize="sentences"
 		multiline={true}
 		onChangeText={onChange}
-		onSubmitEditing={(ev) => { onChange(ev.nativeEvent.text); }}
+		onSubmitEditing={(ev) => {
+			onChange(ev.nativeEvent.text)
+		}}
 		placeholder="Definition"
 		returnKeyType="default"
 		value={text}

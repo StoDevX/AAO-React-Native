@@ -8,11 +8,11 @@ import {TableView, Section, Cell} from '@frogpond/tableview'
 import {MultiLineLeftDetailCell} from '@frogpond/tableview/cells'
 import * as c from '@frogpond/colors'
 import type {Department, CampusLocation} from './types'
-import {RouteProp, useRoute, useNavigation} from '@react-navigation/native'
+import {RouteProp, useRoute, useNavigation} from 'expo-router'
 import {
 	NativeStackNavigationOptions,
 	NativeStackNavigationProp,
-} from '@react-navigation/native-stack'
+} from 'expo-router-stack'
 import {RootStackParamList} from '../../../source/navigation/types'
 
 export const DetailNavigationOptions: NativeStackNavigationOptions = {
@@ -66,7 +66,9 @@ export function DirectoryDetailView(): React.JSX.Element {
 								accessory="DisclosureIndicator"
 								cellStyle="LeftDetail"
 								detail="Email"
-								onPress={() => { sendEmail({to: [email], subject: '', body: ''}); }}
+								onPress={() => {
+									sendEmail({to: [email], subject: '', body: ''})
+								}}
 								title={email}
 							/>
 						) : null}
@@ -110,7 +112,9 @@ export function DirectoryDetailView(): React.JSX.Element {
 								accessory="DisclosureIndicator"
 								cellStyle="LeftDetail"
 								detail="Phone"
-								onPress={() => { callPhone(loc.phone, {prompt: false}); }}
+								onPress={() => {
+									callPhone(loc.phone, {prompt: false})
+								}}
 								title={loc.phone}
 							/>
 						)}

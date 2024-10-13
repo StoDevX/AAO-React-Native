@@ -15,8 +15,8 @@ import {
 } from '@frogpond/lists'
 import {LinkValue} from './types'
 
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
-import {useNavigation} from '@react-navigation/native'
+import {NativeStackNavigationOptions} from 'expo-router-stack'
+import {useNavigation} from 'expo-router'
 import {ChangeTextEvent} from '../../navigation/types'
 import {deburr, words} from 'lodash'
 import {useSearchLinks} from './query'
@@ -60,8 +60,9 @@ function MoreView(): React.JSX.Element {
 		navigation.setOptions({
 			headerSearchBarOptions: {
 				barTintColor: c.quaternarySystemFill,
-				onChangeText: (event: ChangeTextEvent) =>
-					{ setQuery(event.nativeEvent.text); },
+				onChangeText: (event: ChangeTextEvent) => {
+					setQuery(event.nativeEvent.text)
+				},
 			},
 		})
 	}, [navigation])

@@ -8,7 +8,7 @@ import type {Moment} from 'moment-timezone'
 import {FullWidthSeparator, ListSectionHeader} from '../lists'
 import {NoticeView} from '../notice'
 import EventRow from './event-row'
-import {useNavigation} from '@react-navigation/native'
+import {useNavigation} from 'expo-router'
 
 interface Props {
 	detailView?: string

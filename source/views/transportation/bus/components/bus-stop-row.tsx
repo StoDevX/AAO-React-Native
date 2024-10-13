@@ -1,9 +1,9 @@
 import * as React from 'react'
 import {ColorValue, Platform, StyleSheet} from 'react-native'
-import {Column} from '@frogpond/layout'
-import {Detail, ListRow, Title} from '@frogpond/lists'
+import {Column} from '../../../../modules/layout'
+import {Detail, ListRow, Title} from '../../../../modules/lists'
 import type {BusTimetableEntry} from '../types'
-import * as c from '@frogpond/colors'
+import * as c from '../../../../modules/colors'
 import {ProgressChunk} from './progress-chunk'
 import {ScheduleTimes} from './times'
 import {

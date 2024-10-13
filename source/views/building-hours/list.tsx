@@ -7,9 +7,9 @@ import {BuildingType} from './types'
 import * as c from '@frogpond/colors'
 import {ListSeparator, ListSectionHeader} from '@frogpond/lists'
 import {LoadingView, NoticeView} from '@frogpond/notice'
-import {useNavigation} from '@react-navigation/native'
+import {useNavigation} from 'expo-router'
 import {useMomentTimer} from '@frogpond/timer'
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+import {NativeStackNavigationOptions} from 'expo-router-stack'
 
 export {BuildingHoursDetailView} from './detail'
 
@@ -35,8 +35,9 @@ export function BuildingHoursView(): React.JSX.Element {
 	} = useGroupedBuildings()
 
 	let onPressRow = React.useCallback(
-		(building: BuildingType) =>
-			{ navigation.navigate('BuildingHoursDetail', {building}); },
+		(building: BuildingType) => {
+			navigation.navigate('BuildingHoursDetail', {building})
+		},
 		[navigation],
 	)
 
@@ -61,7 +62,13 @@ export function BuildingHoursView(): React.JSX.Element {
 			onRefresh={refetch}
 			refreshing={isRefetching}
 			renderItem={({item}) => (
-				<BuildingRow info={item} now={now} onPress={() => { onPressRow(item); }} />
+				<BuildingRow
+					info={item}
+					now={now}
+					onPress={() => {
+						onPressRow(item)
+					}}
+				/>
 			)}
 			renderSectionHeader={({section: {title}}) => (
 				<ListSectionHeader title={title} />

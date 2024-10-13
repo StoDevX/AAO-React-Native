@@ -1,7 +1,7 @@
 import * as React from 'react'
 import {Platform, StyleSheet, Text} from 'react-native'
 import {Touchable} from '../touchable'
-import {useNavigation, useTheme} from '@react-navigation/native'
+import {useNavigation, useTheme} from 'expo-router'
 import {commonStyles, rightButtonStyles as styles} from './styles'
 
 export const buttonStyles = StyleSheet.create({

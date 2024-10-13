@@ -9,8 +9,8 @@ import type {
 	ListType,
 	PickerType,
 	ToggleType,
-} from '../filter/types'
-import {decode, fastGetTrimmedText} from '../html-lib'
+} from '../../filter/types'
+import {decode, fastGetTrimmedText} from '../../html-lib'
 import {chooseMeal, EMPTY_MEAL} from './choose-meal'
 
 export function buildFilters(

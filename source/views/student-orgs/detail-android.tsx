@@ -6,9 +6,9 @@ import * as c from '@frogpond/colors'
 import {sendEmail} from '../../components/send-email'
 import {openUrl} from '@frogpond/open-url'
 import {showNameOrEmail} from './util'
-import {RouteProp, useRoute} from '@react-navigation/native'
+import {RouteProp, useRoute} from 'expo-router'
 import {RootStackParamList} from '../../navigation/types'
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+import {NativeStackNavigationOptions} from 'expo-router-stack'
 
 const styles = StyleSheet.create({
 	name: {
@@ -108,7 +108,9 @@ let StudentOrgsDetailView = (): React.JSX.Element => {
 					{contacts.map((contact, i) => (
 						<Text
 							key={i}
-							onPress={() => { sendEmail({to: [contact.email], subject: orgName}); }}
+							onPress={() => {
+								sendEmail({to: [contact.email], subject: orgName})
+							}}
 							selectable={true}
 							style={styles.cardBody}
 						>
@@ -127,7 +129,9 @@ let StudentOrgsDetailView = (): React.JSX.Element => {
 					{advisors.map((contact, i) => (
 						<Text
 							key={i}
-							onPress={() => { sendEmail({to: [contact.email], subject: orgName}); }}
+							onPress={() => {
+								sendEmail({to: [contact.email], subject: orgName})
+							}}
 							selectable={true}
 							style={styles.cardBody}
 						>

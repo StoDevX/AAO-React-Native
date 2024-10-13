@@ -16,9 +16,9 @@ import {blankSchedule, parseHours, summarizeDaysAndHours} from '../lib'
 import * as c from '@frogpond/colors'
 import {DatePicker} from '@frogpond/datepicker'
 import {Touchable} from '@frogpond/touchable'
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+import {NativeStackNavigationOptions} from 'expo-router-stack'
 import {CloseScreenButton} from '@frogpond/navigation-buttons'
-import {RouteProp, useNavigation, useRoute} from '@react-navigation/native'
+import {RouteProp, useNavigation, useRoute} from 'expo-router'
 import {RootStackParamList} from '../../../navigation/types'
 
 export interface RouteParams {

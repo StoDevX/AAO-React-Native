@@ -9,8 +9,8 @@ import * as c from '@frogpond/colors'
 import type {JobType} from './types'
 import {ShareButton} from '@frogpond/navigation-buttons'
 import {shareJob} from './lib'
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
-import {RouteProp, useRoute} from '@react-navigation/native'
+import {NativeStackNavigationOptions} from 'expo-router-stack'
+import {RouteProp, useRoute} from 'expo-router'
 import {RootStackParamList} from '../../../navigation/types'
 
 const styles = StyleSheet.create({
@@ -214,7 +214,13 @@ export const NavigationOptions = (props: {
 	let {job} = props.route.params
 	return {
 		title: job.title,
-		headerRight: () => <ShareButton onPress={() => { shareJob(job); }} />,
+		headerRight: () => (
+			<ShareButton
+				onPress={() => {
+					shareJob(job)
+				}}
+			/>
+		),
 	}
 }
 

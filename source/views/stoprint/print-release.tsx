@@ -13,8 +13,8 @@ import {
 	type Printer,
 	type PrintJob,
 } from '../../lib/stoprint'
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
-import {RouteProp, useNavigation, useRoute} from '@react-navigation/native'
+import {NativeStackNavigationOptions} from 'expo-router-stack'
+import {RouteProp, useNavigation, useRoute} from 'expo-router'
 import {RootStackParamList} from '../../navigation/types'
 import {DebugNoticeButton} from '@frogpond/navigation-buttons'
 import {useHeldJobs} from './query'
@@ -163,7 +163,9 @@ export const PrintJobReleaseView = (): React.JSX.Element => {
 			{
 				text: 'Cancel Job',
 				style: 'destructive',
-				onPress: () => { cancelJob.mutate(); },
+				onPress: () => {
+					cancelJob.mutate()
+				},
 			},
 		])
 	}
@@ -172,7 +174,13 @@ export const PrintJobReleaseView = (): React.JSX.Element => {
 		let prompt = `Are you sure you want to print "${job.documentName}" to ${printer?.printerName}?`
 		Alert.alert('Print Job Release Confirmation', prompt, [
 			{text: 'Nope!', style: 'cancel'},
-			{text: 'Print', style: 'default', onPress: () => { releaseJob.mutate(); }},
+			{
+				text: 'Print',
+				style: 'default',
+				onPress: () => {
+					releaseJob.mutate()
+				},
+			},
 		])
 	}
 

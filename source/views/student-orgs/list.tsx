@@ -1,7 +1,7 @@
 import * as React from 'react'
 import {StyleSheet, SectionList} from 'react-native'
-import {NoticeView, LoadingView} from '@frogpond/notice'
-import {Column} from '@frogpond/layout'
+import {NoticeView, LoadingView} from '../../modules/notice'
+import {Column} from '../../modules/layout'
 import {
 	ListRow,
 	ListSectionHeader,
@@ -10,18 +10,12 @@ import {
 	Title,
 	largeListProps,
 	emptyList,
-} from '@frogpond/lists'
-import * as c from '@frogpond/colors'
-import groupBy from 'lodash/groupBy'
-import toPairs from 'lodash/toPairs'
-import words from 'lodash/words'
-import deburr from 'lodash/deburr'
+} from '../../modules/lists'
+import * as c from '../../modules/colors'
 import type {StudentOrgType} from './types'
-import {useDebounce} from '@frogpond/use-debounce'
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
-import {useNavigation} from '@react-navigation/native'
-import memoize from 'lodash/memoize'
-import {ChangeTextEvent} from '../../navigation/types'
+import {useDebounce} from '../../modules/use-debounce'
+import {useNavigation} from 'expo-router'
+import {memoize, deburr, groupBy, toPairs, words} from 'lodash'
 import {useStudentOrgs} from './query'
 
 const splitToArray = memoize((str: string) => words(deburr(str.toLowerCase())))
@@ -65,17 +59,14 @@ function StudentOrgsView(): React.JSX.Element {
 		navigation.setOptions({
 			headerSearchBarOptions: {
 				barTintColor: c.systemFill,
-				onChangeText: (event: ChangeTextEvent) =>
-					{ setQuery(event.nativeEvent.text); },
+				onChangeText: (event: ChangeTextEvent) => {
+					setQuery(event.nativeEvent.text)
+				},
 			},
 		})
 	}, [navigation])
 
 	let results = React.useMemo(() => {
-		if (!orgs) {
-			return emptyList
-		}
-
 		if (!searchQuery) {
 			return orgs
 		}
@@ -92,7 +83,9 @@ function StudentOrgsView(): React.JSX.Element {
 	}, [results])
 
 	let onPressOrg = React.useCallback(
-		(org: StudentOrgType) => { navigation.navigate('StudentOrgsDetail', {org}); },
+		(org: StudentOrgType) => {
+			navigation.navigate('/orgs/[ordId]', {orgId: org.id})
+		},
 		[navigation],
 	)
 
@@ -101,7 +94,7 @@ function StudentOrgsView(): React.JSX.Element {
 			<NoticeView
 				buttonText="Try Again"
 				onPress={refetch}
-				text={`A problem occured while loading: ${error}`}
+				text={`A problem occured while loading: ${String(error)}`}
 			/>
 		)
 	}
@@ -126,7 +119,12 @@ function StudentOrgsView(): React.JSX.Element {
 			onRefresh={refetch}
 			refreshing={isRefetching}
 			renderItem={({item}) => (
-				<ListRow arrowPosition="top" onPress={() => { onPressOrg(item); }}>
+				<ListRow
+					arrowPosition="top"
+					onPress={() => {
+						onPressOrg(item)
+					}}
+				>
 					<Column flex={1}>
 						<Title lines={1}>{item.name}</Title>
 						<Detail lines={1}>{item.category}</Detail>
@@ -144,7 +142,3 @@ function StudentOrgsView(): React.JSX.Element {
 }
 
 export {StudentOrgsView as View}
-
-export const NavigationOptions: NativeStackNavigationOptions = {
-	title: 'Student Orgs',
-}

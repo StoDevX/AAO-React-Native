@@ -1,24 +1,6 @@
 import * as c from '../modules/colors'
-import {RootViewsParamList, MiscViewParamList} from '../navigation/types'
-
-import {NavigationKey as menus} from './menus'
-import {NavigationKey as sis} from './sis'
-import {NavigationKey as calendar} from './calendar'
-import {NavigationKey as streaming} from './streaming'
-import {NavigationKey as news} from './news'
-import {NavigationKey as transportation} from './transportation'
 
 import {useCourseSearchRecentsScreen} from '../modules/app-config'
-
-const hours: keyof RootViewsParamList = 'BuildingHours'
-const directory: keyof RootViewsParamList = 'Directory'
-const importantContacts: keyof RootViewsParamList = 'Contacts'
-const dictionary: keyof RootViewsParamList = 'Dictionary'
-const studentOrgs: keyof RootViewsParamList = 'StudentOrgs'
-const more: keyof RootViewsParamList = 'More'
-const printJobs: keyof RootViewsParamList = 'PrintJobs'
-const courseSearch: keyof RootViewsParamList = 'CourseSearch'
-const courseSearchResults: keyof MiscViewParamList = 'CourseSearchResults'
 
 interface CommonView {
 	title: string
@@ -30,7 +12,7 @@ interface CommonView {
 
 interface NativeView {
 	type: 'view'
-	view: keyof RootViewsParamList
+	view: string
 }
 
 interface WebLinkView {
@@ -46,15 +28,7 @@ export const AllViews = (): ViewType[] => {
 	return [
 		{
 			type: 'view',
-			view: menus,
-			title: 'Menus',
-			icon: 'bowl',
-			foreground: 'light',
-			tint: c.grassToLime[0],
-		},
-		{
-			type: 'view',
-			view: sis,
+			view: 'SIS',
 			title: 'SIS',
 			icon: 'fingerprint',
 			foreground: 'light',
@@ -62,7 +36,7 @@ export const AllViews = (): ViewType[] => {
 		},
 		{
 			type: 'view',
-			view: hours,
+			view: 'BuildingHours',
 			title: 'Building Hours',
 			icon: 'clock',
 			foreground: 'light',
@@ -70,7 +44,7 @@ export const AllViews = (): ViewType[] => {
 		},
 		{
 			type: 'view',
-			view: calendar,
+			view: 'Calendar',
 			title: 'Calendar',
 			icon: 'calendar',
 			foreground: 'light',
@@ -78,7 +52,7 @@ export const AllViews = (): ViewType[] => {
 		},
 		{
 			type: 'view',
-			view: directory,
+			view: 'Directory',
 			title: 'Directory',
 			icon: 'v-card',
 			foreground: 'light',
@@ -86,7 +60,7 @@ export const AllViews = (): ViewType[] => {
 		},
 		{
 			type: 'view',
-			view: streaming,
+			view: 'Streaming Media',
 			title: 'Streaming Media',
 			icon: 'video',
 			foreground: 'light',
@@ -94,7 +68,7 @@ export const AllViews = (): ViewType[] => {
 		},
 		{
 			type: 'view',
-			view: news,
+			view: 'News',
 			title: 'News',
 			icon: 'news',
 			foreground: 'light',
@@ -110,7 +84,7 @@ export const AllViews = (): ViewType[] => {
 		},
 		{
 			type: 'view',
-			view: importantContacts,
+			view: 'Contacts',
 			title: 'Important Contacts',
 			icon: 'phone',
 			foreground: 'light',
@@ -118,15 +92,7 @@ export const AllViews = (): ViewType[] => {
 		},
 		{
 			type: 'view',
-			view: transportation,
-			title: 'Transportation',
-			icon: 'address',
-			foreground: 'light',
-			tint: c.grayToDarkGray[0],
-		},
-		{
-			type: 'view',
-			view: dictionary,
+			view: 'Dictionary',
 			title: 'Campus Dictionary',
 			icon: 'open-book',
 			foreground: 'light',
@@ -134,7 +100,7 @@ export const AllViews = (): ViewType[] => {
 		},
 		{
 			type: 'view',
-			view: studentOrgs,
+			view: 'StudentOrgs',
 			title: 'Student Orgs',
 			icon: 'globe',
 			foreground: 'light',
@@ -142,7 +108,7 @@ export const AllViews = (): ViewType[] => {
 		},
 		{
 			type: 'view',
-			view: more,
+			view: 'More',
 			title: 'More',
 			icon: 'link',
 			foreground: 'light',
@@ -150,7 +116,7 @@ export const AllViews = (): ViewType[] => {
 		},
 		{
 			type: 'view',
-			view: printJobs,
+			view: 'PrintJobs',
 			title: 'stoPrint',
 			icon: 'print',
 			foreground: 'light',
@@ -159,7 +125,7 @@ export const AllViews = (): ViewType[] => {
 		{
 			disabled: !showRecentCourseSearches,
 			type: 'view',
-			view: courseSearch,
+			view: 'CourseSearch',
 			title: 'Course Catalog',
 			icon: 'graduation-cap',
 			foreground: 'light',
@@ -168,7 +134,7 @@ export const AllViews = (): ViewType[] => {
 		{
 			disabled: showRecentCourseSearches,
 			type: 'view',
-			view: courseSearchResults,
+			view: 'CourseSearchResults',
 			title: 'Course Catalog',
 			icon: 'lab-flask',
 			foreground: 'light',

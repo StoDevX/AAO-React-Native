@@ -17,8 +17,8 @@ import groupBy from 'lodash/groupBy'
 import toPairs from 'lodash/toPairs'
 import sortBy from 'lodash/sortBy'
 import {getTimeRemaining} from './lib'
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
-import {useNavigation} from '@react-navigation/native'
+import {NativeStackNavigationOptions} from 'expo-router-stack'
+import {useNavigation} from 'expo-router'
 import {DebugNoticeButton} from '@frogpond/navigation-buttons'
 import {useMomentTimer} from '@frogpond/timer'
 import {usePrintJobs} from './query'
@@ -39,7 +39,9 @@ export const PrintJobsView = (): React.JSX.Element => {
 	} = usePrintJobs()
 
 	let navigation = useNavigation()
-	let openSettings = () => { navigation.navigate('Settings'); }
+	let openSettings = () => {
+		navigation.navigate('Settings')
+	}
 
 	let handleJobPress = (job: PrintJob) => {
 		if (job.statusFormatted === 'Pending Release') {
@@ -113,7 +115,11 @@ export const PrintJobsView = (): React.JSX.Element => {
 			onRefresh={jobsRefetch}
 			refreshing={jobsRefetching}
 			renderItem={({item}) => (
-				<ListRow onPress={() => { handleJobPress(item); }}>
+				<ListRow
+					onPress={() => {
+						handleJobPress(item)
+					}}
+				>
 					<Title>{item.documentName}</Title>
 					<Detail>
 						Expires {getTimeRemaining(now, item.usageTimeFormatted)}

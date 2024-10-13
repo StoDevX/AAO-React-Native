@@ -22,11 +22,11 @@ import type {
 	DirectorySearchTypeEnum,
 } from './types'
 import Icon from 'react-native-vector-icons/Ionicons'
-import {RouteProp, useNavigation, useRoute} from '@react-navigation/native'
+import {RouteProp, useNavigation, useRoute} from 'expo-router'
 import {
 	NativeStackNavigationOptions,
 	NativeStackNavigationProp,
-} from '@react-navigation/native-stack'
+} from 'expo-router-stack'
 import {ChangeTextEvent, RootStackParamList} from '../../navigation/types'
 
 export const NavigationKey = 'Directory'
@@ -112,9 +112,9 @@ export function DirectoryView(): React.JSX.Element {
 					renderItem={({item}) => (
 						<DirectoryItemRow
 							item={item}
-							onPress={() =>
-								{ navigation.push('DirectoryDetail', {contact: item}); }
-							}
+							onPress={() => {
+								navigation.push('DirectoryDetail', {contact: item})
+							}}
 						/>
 					)}
 				/>

@@ -1,10 +1,10 @@
 import * as React from 'react'
 import {BusLine} from './line'
-import {LoadingView, NoticeView} from '@frogpond/notice'
-import {timezone} from '@frogpond/constants'
-import {useNavigation} from '@react-navigation/native'
+import {LoadingView, NoticeView} from '../../../modules/notice'
+import {timezone} from '../../../modules/constants'
+import {useNavigation} from 'expo-router'
 import {useBusRoutes} from './query'
-import {useMomentTimer} from '@frogpond/timer'
+import {useMomentTimer} from '../../../modules/timer'
 
 interface Props {
 	line: string
@@ -26,7 +26,7 @@ let BusView = (props: Props): React.JSX.Element => {
 			<NoticeView
 				buttonText="Try Again"
 				onPress={refetch}
-				text={`A problem occured while loading: ${error}`}
+				text={`A problem occured while loading: ${String(error)}`}
 			/>
 		)
 	}
@@ -41,10 +41,9 @@ let BusView = (props: Props): React.JSX.Element => {
 		<BusLine
 			line={activeBusLine}
 			now={now}
-			openMap={() => {
-				activeBusLine &&
-					navigation.navigate('BusMapView', {line: activeBusLine})
-			}}
+			// openMap={() => {
+			// 	navigation.navigate('BusMapView', {line: activeBusLine})
+			// }}
 		/>
 	)
 }

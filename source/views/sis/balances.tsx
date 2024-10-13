@@ -12,7 +12,7 @@ import {Cell, TableView, Section} from '@frogpond/tableview'
 import {BalancesShapeType, useBalances} from '../../lib/financials'
 import * as c from '@frogpond/colors'
 import {sto} from '../../lib/colors'
-import {useNavigation} from '@react-navigation/native'
+import {useNavigation} from 'expo-router'
 import {NoCredentialsError, useUsername} from '../../lib/login'
 
 const DISCLAIMER = 'This data may be outdated or otherwise inaccurate.'
@@ -30,7 +30,9 @@ export const BalancesView = (): React.JSX.Element => {
 		isRefetching,
 	} = useBalances(username)
 
-	let openSettings = () => { navigation.navigate('Settings'); }
+	let openSettings = () => {
+		navigation.navigate('Settings')
+	}
 	let refresh = <RefreshControl onRefresh={refetch} refreshing={isRefetching} />
 
 	return (

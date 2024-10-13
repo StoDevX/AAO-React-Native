@@ -18,7 +18,7 @@ import {FilterMenuToolbar as FilterToolbar} from './filter-menu-toolbar'
 import {FoodItemRow} from './food-item-row'
 import {chooseMeal} from './lib/choose-meal'
 import {buildFilters} from './lib/build-filters'
-import {useNavigation} from '@react-navigation/native'
+import {useNavigation} from 'expo-router'
 import type {Moment} from 'moment'
 
 type FilterFunc = (
