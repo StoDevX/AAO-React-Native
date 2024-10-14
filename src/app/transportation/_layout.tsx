@@ -3,7 +3,7 @@ import {Tabs} from 'expo-router'
 
 export default function TabLayout(): React.JSX.Element {
 	return (
-		<Tabs screenOptions={{tabBarActiveTintColor: 'blue'}}>
+		<Tabs screenOptions={{tabBarActiveTintColor: 'blue', headerShown: false}}>
 			<Tabs.Screen
 				name="express"
 				options={{
@@ -23,7 +23,7 @@ export default function TabLayout(): React.JSX.Element {
 				}}
 			/>
 			<Tabs.Screen
-				name="pause"
+				name="blue-line"
 				options={{
 					title: 'Blue Line',
 					tabBarIcon: ({color}) => (
