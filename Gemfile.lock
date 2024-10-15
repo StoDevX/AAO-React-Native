@@ -254,7 +254,7 @@ GEM
     retriable (3.1.2)
     rexml (3.3.7)
     rouge (2.0.7)
-    rubocop (1.66.1)
+    rubocop (1.67.0)
       json (~> 2.3)
       language_server-protocol (>= 3.17.0)
       parallel (~> 1.10)
@@ -316,7 +316,7 @@ DEPENDENCIES
   fastlane (= 2.216.0)
   json (= 2.7.2)
   netrc (= 0.11.0)
-  rubocop (= 1.66.1)
+  rubocop (= 1.67.0)
   xcodeproj (= 1.25.0)
 
 BUNDLED WITH
