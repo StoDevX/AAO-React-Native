@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Stack, useRouter, useRootNavigationState } from 'expo-router'
 import { configureApiRoot } from '../../source/init/api'
+import '../../source/init/constants'
 
 const useIsNavigationReady = () => {
 	const rootNavigationState = useRootNavigationState()
