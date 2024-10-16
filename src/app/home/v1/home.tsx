@@ -12,6 +12,9 @@ import * as c from '../../../../source/modules/colors'
 import { useLayoutEffect } from 'react'
 
 const styles = StyleSheet.create({
+	scrollview: {
+		backgroundColor: c.systemBackground,
+	},
 	cells: {
 		marginHorizontal: CELL_MARGIN / 2,
 		paddingTop: CELL_MARGIN,
@@ -36,6 +39,7 @@ export default function HomeScreenView(): React.JSX.Element {
 	return (
 		<ScrollView
 			alwaysBounceHorizontal={false}
+			style={styles.scrollview}
 			showsHorizontalScrollIndicator={false}
 			showsVerticalScrollIndicator={false}
 			testID="screen-homescreen"
