@@ -1,24 +1,20 @@
 import {CELL_MARGIN, HomeScreenButton} from '../../../../source/views/home/button'
-import {ScrollView, StyleSheet} from 'react-native'
-// import {AllViews} from '../../source/views/views'
+import {ScrollView, StyleSheet, View} from 'react-native'
 import {SafeAreaView} from 'react-native-safe-area-context'
-// import {genericOpenUrl, openUrl} from '../../modules/open-url/open-url'
 import {Link, useNavigation, useRouter} from 'expo-router'
 import {UnofficialAppNotice} from '../../../../source/views/home/notice'
-// import {partitionByIndex} from '../../source/lib/partition-by-index'
 import {Column} from '../../../../source/modules/layout/column'
-import type React from 'react'
 import * as c from '../../../../source/modules/colors'
 import { useLayoutEffect } from 'react'
 
 const styles = StyleSheet.create({
 	scrollview: {
+		flex: 1,
 		backgroundColor: c.systemBackground,
 	},
 	cells: {
 		marginHorizontal: CELL_MARGIN / 2,
 		paddingTop: CELL_MARGIN,
-
 		flexDirection: 'row',
 	},
 	column: {
@@ -27,46 +23,45 @@ const styles = StyleSheet.create({
 })
 
 export default function HomeScreenView(): React.JSX.Element {
-	// let allViews = AllViews().filter((view) => !view.disabled)
-	// let columns = partitionByIndex(allViews)
 	const router = useRouter()
-    const navigation = useNavigation()
+	const navigation = useNavigation()
 
 	useLayoutEffect(() => {
-        navigation.setOptions({title: 'All About Olaf'})
-    }, [navigation])
+		navigation.setOptions({title: 'All About Olaf'})
+	}, [navigation])
 
 	return (
-		<ScrollView
-			alwaysBounceHorizontal={false}
-			style={styles.scrollview}
-			showsHorizontalScrollIndicator={false}
-			showsVerticalScrollIndicator={false}
-			testID="screen-homescreen"
-		>
-			<SafeAreaView edges={['left', 'right', 'bottom']} style={styles.cells}>
-				<Column style={styles.column}>
-					<HomeScreenButton
-						title="Menus"
-						iconName="bowl"
-						foreground="light"
-						tintColor="#7CBB00"
-						onPress={() => {
-							router.navigate('/menu')
-						}}
-					/>
-				</Column>
-				<Column style={styles.column}>
-					<HomeScreenButton
-						title="Transportation"
-						iconName="address"
-						foreground="light"
-						tintColor={c.grayToDarkGray[0]}
-						onPress={() => {
-							router.navigate('/transportation')
-						}}
-					/>
-				</Column>
+		<SafeAreaView style={styles.scrollview} edges={['left', 'right', 'bottom']}>
+			<ScrollView
+				alwaysBounceHorizontal={false}
+				showsHorizontalScrollIndicator={false}
+				showsVerticalScrollIndicator={false}
+				testID="screen-homescreen"
+			>
+				<View style={styles.cells}>
+					<Column style={styles.column}>
+						<HomeScreenButton
+							title="Menus"
+							iconName="bowl"
+							foreground="light"
+							tintColor="#7CBB00"
+							onPress={() => {
+								router.navigate('/menu')
+							}}
+						/>
+					</Column>
+					<Column style={styles.column}>
+						<HomeScreenButton
+							title="Transportation"
+							iconName="address"
+							foreground="light"
+							tintColor={c.grayToDarkGray[0]}
+							onPress={() => {
+								router.navigate('/transportation')
+							}}
+						/>
+					</Column>
+				</View>
 				{/* {columns.map((contents, i) => (
 						<Column key={i} style={styles.column}>
 							{contents.map((view) => (
@@ -89,9 +84,8 @@ export default function HomeScreenView(): React.JSX.Element {
 							))}
 						</Column>
 					))} */}
-
 				<UnofficialAppNotice />
-			</SafeAreaView>
-		</ScrollView>
+			</ScrollView>
+		</SafeAreaView>
 	)
 }
