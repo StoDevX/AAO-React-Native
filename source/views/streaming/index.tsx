@@ -1,5 +1,5 @@
 import {Platform} from 'react-native'
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+import {NativeStackNavigationOptions} from 'expo-router-stack'
 import {
 	MaterialIcon,
 	IosIcon,
@@ -15,7 +15,7 @@ import {KrlxStationView} from './radio/station-krlx'
 
 export {KSTOScheduleView, KRLXScheduleView} from './radio'
 
-type Params = {
+interface Params {
 	StreamingView: undefined
 	LiveWebcamsView: undefined
 	KSTORadioView: undefined

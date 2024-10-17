@@ -1,5 +1,5 @@
 import {expect, it} from '@jest/globals'
-import {findMenu} from '../../../../../modules/food-menu/lib/find-menu'
+import {findMenu} from '../../../../modules/food-menu/lib/find-menu'
 import moment from 'moment-timezone'
 import type {DayPartsCollectionType} from '../../types'
 import uniqueId from 'lodash/uniqueId'

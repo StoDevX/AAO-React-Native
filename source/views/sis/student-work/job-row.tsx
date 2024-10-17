@@ -4,13 +4,13 @@ import {ListRow, Detail, Title} from '@frogpond/lists'
 import {fastGetTrimmedText} from '@frogpond/html-lib'
 import type {JobType} from './types'
 
-type Props = {
+interface Props {
 	onPress: (job: JobType) => void
 	job: JobType
 }
 
-export const JobRow = (props: Props): JSX.Element => {
-	let _onPress = () => props.onPress(props.job)
+export const JobRow = (props: Props): React.JSX.Element => {
+	let _onPress = () => { props.onPress(props.job); }
 
 	let {job} = props
 	let title = fastGetTrimmedText(job.title)

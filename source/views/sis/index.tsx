@@ -1,5 +1,5 @@
 import {Platform} from 'react-native'
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+import {NativeStackNavigationOptions} from 'expo-router-stack'
 import {
 	MaterialIcon,
 	IosIcon,
@@ -20,7 +20,7 @@ export {
 	CourseSearchDetailNavigationOptions,
 } from './course-search'
 
-type Params = {
+interface Params {
 	BalancesView: undefined
 	StudentWorkView: undefined
 }

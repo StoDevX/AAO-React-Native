@@ -1,48 +1,53 @@
 import * as React from 'react'
-import {Platform, SafeAreaView, StyleSheet, Text, View} from 'react-native'
-import Icon from 'react-native-vector-icons/Entypo'
-import type {ViewType} from '../views'
-import {Touchable} from '@frogpond/touchable'
-import {transparent} from '@frogpond/colors'
+import {Platform, StyleSheet, Text, View} from 'react-native'
+import Entypo from '@expo/vector-icons/Entypo'
+import {Touchable} from '../../modules/touchable'
+import {transparent} from '../../modules/colors'
 import {homescreenForegroundDark, homescreenForegroundLight} from './colors'
-import {hasNotch} from 'react-native-device-info'
 
-type Props = {
-	view: ViewType
+interface Props {
+	title: string
+	iconName: keyof typeof Entypo.glyphMap
+	foreground: 'light' | 'dark'
+	tintColor: string
 	onPress: () => void
 }
 
-export function HomeScreenButton({view, onPress}: Props): JSX.Element {
-	let foreground =
-		view.foreground === 'light' ? styles.lightForeground : styles.darkForeground
+export function HomeScreenButton(props: Props): React.JSX.Element {
+	let {title, iconName, foreground, tintColor} = props
+	let foregroundStyle =
+		foreground === 'light' ? styles.lightForeground : styles.darkForeground
 
 	return (
-		<SafeAreaView>
-			<Touchable
-				accessibilityLabel={view.title}
-				accessibilityRole="button"
-				accessible={true}
-				highlight={false}
-				onPress={onPress}
-				style={[styles.button, {backgroundColor: view.tint}]}
-			>
-				<View style={styles.contents}>
-					<Icon name={view.icon} size={32} style={[foreground, styles.icon]} />
-					<Text style={[foreground, styles.text]}>{view.title}</Text>
-				</View>
-			</Touchable>
-		</SafeAreaView>
+		<Touchable
+			accessibilityLabel={title}
+			accessibilityRole="button"
+			accessible={true}
+			highlight={false}
+			onPress={props.onPress}
+			style={[styles.button, {backgroundColor: tintColor}]}
+		>
+			<View style={styles.contents}>
+				<Entypo
+					name={iconName}
+					size={32}
+					style={[foregroundStyle, styles.icon]}
+				/>
+				<Text style={[foregroundStyle, styles.text]}>{title}</Text>
+			</View>
+		</Touchable>
 	)
 }
 
 export const CELL_MARGIN = 10
 const cellVerticalPadding = 8
 const cellHorizontalPadding = 4
+// hasNotch() ? 17 : 6
 
 const styles = StyleSheet.create({
 	button: {
 		elevation: 2,
-		borderRadius: Platform.OS === 'ios' ? (hasNotch() ? 17 : 6) : 3,
+		borderRadius: Platform.OS === 'ios' ? 17 : 3,
 
 		marginBottom: CELL_MARGIN,
 		marginLeft: CELL_MARGIN / 2,

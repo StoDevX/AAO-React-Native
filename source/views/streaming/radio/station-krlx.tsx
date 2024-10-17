@@ -16,7 +16,7 @@ const colors: PlayerTheme = {
 	imageBackgroundColor: 'transparent',
 }
 
-export function KrlxStationView(): JSX.Element {
+export function KrlxStationView(): React.JSX.Element {
 	return (
 		<ThemeProvider theme={colors}>
 			<RadioControllerView

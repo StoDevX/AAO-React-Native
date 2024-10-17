@@ -10,7 +10,7 @@ import Icon from 'react-native-vector-icons/Ionicons'
 import {NoticeView} from '@frogpond/notice'
 import * as c from '@frogpond/colors'
 
-type Props = {
+interface Props {
 	buttonText: string
 	description?: string
 	header: string

@@ -4,31 +4,39 @@ import {Platform} from 'react-native'
 import {CloseScreenButton} from '@frogpond/navigation-buttons'
 import {TableView, Section} from '@frogpond/tableview'
 import {PushButtonCell} from '@frogpond/tableview/cells'
-import {useNavigation} from '@react-navigation/native'
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+import {useNavigation} from 'expo-router'
+import {NativeStackNavigationOptions} from 'expo-router-stack'
 
 import {NavigationKey as ColorsLibrNavigationKey} from './colors'
 
-export const ComponentLibrary = (): JSX.Element => {
+export const ComponentLibrary = (): React.JSX.Element => {
 	const navigation = useNavigation()
 
 	return (
 		<TableView>
 			<Section>
 				<PushButtonCell
-					onPress={() => navigation.navigate('BadgeLibrary')}
+					onPress={() => {
+						navigation.navigate('BadgeLibrary')
+					}}
 					title="Badges"
 				/>
 				<PushButtonCell
-					onPress={() => navigation.navigate('ButtonLibrary')}
+					onPress={() => {
+						navigation.navigate('ButtonLibrary')
+					}}
 					title="Buttons"
 				/>
 				<PushButtonCell
-					onPress={() => navigation.navigate(ColorsLibrNavigationKey)}
+					onPress={() => {
+						navigation.navigate(ColorsLibrNavigationKey)
+					}}
 					title="Colors"
 				/>
 				<PushButtonCell
-					onPress={() => navigation.navigate('ContextMenuLibrary')}
+					onPress={() => {
+						navigation.navigate('ContextMenuLibrary')
+					}}
 					title="Context Menus"
 				/>
 			</Section>

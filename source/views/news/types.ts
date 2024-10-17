@@ -1,4 +1,4 @@
-export type StoryType = {
+export interface StoryType {
 	authors: string[]
 	categories: string[]
 	content: string
@@ -9,7 +9,7 @@ export type StoryType = {
 	title: string
 }
 
-export type RssFeedItemType = {
+export interface RssFeedItemType {
 	'dc:creator': string[]
 	category: string[]
 	'content:encoded': string[]
@@ -19,20 +19,20 @@ export type RssFeedItemType = {
 	title: string[]
 }
 
-export type FeedResponseType = {
+export interface FeedResponseType {
 	rss: {
-		channel: Array<{
+		channel: {
 			title: string[]
 			'atom:link': unknown[]
 			link: string[]
 			description: string[]
 			item: RssFeedItemType[]
-		}>
+		}[]
 	}
 }
 
-export type WpEmbeddedAuthorType = {
-	avatar_urls: {[key: string]: string}
+export interface WpEmbeddedAuthorType {
+	avatar_urls: Record<string, string>
 	description: string
 	id: number
 	link: string
@@ -40,7 +40,7 @@ export type WpEmbeddedAuthorType = {
 	slug: string
 }
 
-export type WpEmbeddedFeaturedMediaType = {
+export interface WpEmbeddedFeaturedMediaType {
 	alt_text: string
 	author: number
 	date: string
@@ -49,15 +49,13 @@ export type WpEmbeddedFeaturedMediaType = {
 	media_details: {
 		height: number
 		width: number
-		sizes: {
-			[key: string]: {
+		sizes: Record<string, {
 				file: string
 				height: number
 				width: number
 				mime_type: string
 				source_url: string
-			}
-		}
+			}>
 	}
 	media_type: 'image'
 	mime_type: string
@@ -69,7 +67,7 @@ export type WpEmbeddedFeaturedMediaType = {
 	type: 'attachment'
 }
 
-export type WpJsonItemType = {
+export interface WpJsonItemType {
 	_embedded?: {
 		author?: WpEmbeddedAuthorType[]
 		'wp:featuredmedia'?: WpEmbeddedFeaturedMediaType[]

@@ -8,13 +8,13 @@ import {openEmail} from '../../settings/screens/overview/support'
 const ERROR_MESSAGE =
 	"Make sure you are connected to the St. Olaf Network via eduroam or the VPN. If you are, please report this so we can make sure it doesn't happen again."
 
-type Props = {
+interface Props {
 	onRefresh: () => void
 	refreshing: boolean
 	statusMessage: string
 }
 
-export function StoPrintErrorView(props: Props): JSX.Element {
+export function StoPrintErrorView(props: Props): React.JSX.Element {
 	let iconName: string =
 		Platform.select({
 			ios: 'ios-bug',

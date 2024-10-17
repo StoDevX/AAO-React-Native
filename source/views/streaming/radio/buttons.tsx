@@ -6,13 +6,13 @@ import {Icon} from '@frogpond/icon'
 import {Touchable} from '@frogpond/touchable'
 import {useTheme} from './theme'
 
-type ActionButtonProps = {
+interface ActionButtonProps {
 	icon: Glyphs
 	text: string
 	onPress: () => unknown
 }
 
-export function ActionButton(props: ActionButtonProps): JSX.Element {
+export function ActionButton(props: ActionButtonProps): React.JSX.Element {
 	let theme = useTheme()
 	let {icon, text, onPress} = props
 	let bg = {backgroundColor: theme.tintColor}
@@ -29,11 +29,11 @@ export function ActionButton(props: ActionButtonProps): JSX.Element {
 	)
 }
 
-type CallButtonProps = {
+interface CallButtonProps {
 	onPress: () => unknown
 }
 
-export function CallButton({onPress}: CallButtonProps): JSX.Element {
+export function CallButton({onPress}: CallButtonProps): React.JSX.Element {
 	return (
 		<SmallActionButton
 			icon={Platform.OS === 'ios' ? 'ios-call' : 'md-call'}
@@ -42,13 +42,13 @@ export function CallButton({onPress}: CallButtonProps): JSX.Element {
 	)
 }
 
-type ShowCalendarButtonProps = {
+interface ShowCalendarButtonProps {
 	onPress: () => unknown
 }
 
 export function ShowCalendarButton({
 	onPress,
-}: ShowCalendarButtonProps): JSX.Element {
+}: ShowCalendarButtonProps): React.JSX.Element {
 	return (
 		<SmallActionButton
 			icon={Platform.OS === 'ios' ? 'ios-calendar' : 'md-calendar'}
@@ -59,7 +59,9 @@ export function ShowCalendarButton({
 
 type SmallActionButtonProps = Omit<ActionButtonProps, 'text'>
 
-export function SmallActionButton(props: SmallActionButtonProps): JSX.Element {
+export function SmallActionButton(
+	props: SmallActionButtonProps,
+): React.JSX.Element {
 	let theme = useTheme()
 	let {icon, onPress} = props
 	let bg = {backgroundColor: theme.tintColor}

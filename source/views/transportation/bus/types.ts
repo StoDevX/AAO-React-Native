@@ -4,44 +4,44 @@ import {ColorValue} from 'react-native'
 export type DayOfWeek = 'Su' | 'Mo' | 'Tu' | 'We' | 'Th' | 'Fr' | 'Sa'
 export type Coordinates = [number, number]
 
-export type BusLineColors = {
+export interface BusLineColors {
 	bar: ColorValue
 	dot: ColorValue
 }
 
-export type UnprocessedDepartureTimeList = Array<string | false>
-export type DepartureTimeList = Array<null | Moment>
+export type UnprocessedDepartureTimeList = (string | false)[]
+export type DepartureTimeList = (null | Moment)[]
 
-export type BusTimetableEntry = {
+export interface BusTimetableEntry {
 	name: string
 	coordinates?: Coordinates
 	departures: DepartureTimeList
 }
 
-export type UnprocessedBusLine = {
+export interface UnprocessedBusLine {
 	line: string
 	colors: BusLineColors
 	notice?: string
-	schedules: Array<UnprocessedBusSchedule>
+	schedules: UnprocessedBusSchedule[]
 }
 
-export type BusLine = {
+export interface BusLine {
 	line: string
 	colors: BusLineColors
-	schedules: Array<BusSchedule>
+	schedules: BusSchedule[]
 }
 
-export type UnprocessedBusSchedule = {
-	days: Array<DayOfWeek>
+export interface UnprocessedBusSchedule {
+	days: DayOfWeek[]
 	coordinates: Record<string, Coordinates>
 	stops: string[]
-	times: Array<UnprocessedDepartureTimeList>
+	times: UnprocessedDepartureTimeList[]
 }
 
-export type BusSchedule = {
-	days: Array<DayOfWeek>
-	timetable: Array<BusTimetableEntry>
-	stops: Array<string>
-	coordinates: {[name: string]: Coordinates}
-	times: Array<DepartureTimeList>
+export interface BusSchedule {
+	days: DayOfWeek[]
+	timetable: BusTimetableEntry[]
+	stops: string[]
+	coordinates: Record<string, Coordinates>
+	times: DepartureTimeList[]
 }

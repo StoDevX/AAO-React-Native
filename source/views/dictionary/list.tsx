@@ -16,8 +16,8 @@ import {LoadingView, NoticeView} from '@frogpond/notice'
 import {useDebounce} from '@frogpond/use-debounce'
 import * as c from '@frogpond/colors'
 
-import {useNavigation} from '@react-navigation/native'
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+import {useNavigation} from 'expo-router'
+import {NativeStackNavigationOptions} from 'expo-router-stack'
 
 import deburr from 'lodash/deburr'
 import groupBy from 'lodash/groupBy'
@@ -53,7 +53,7 @@ const styles = StyleSheet.create({
 	},
 })
 
-function DictionaryView(): JSX.Element {
+function DictionaryView(): React.JSX.Element {
 	let navigation = useNavigation()
 
 	let [query, setQuery] = React.useState('')
@@ -72,8 +72,9 @@ function DictionaryView(): JSX.Element {
 		navigation.setOptions({
 			headerSearchBarOptions: {
 				barTintColor: c.quaternarySystemFill,
-				onChangeText: (event: ChangeTextEvent) =>
-					setQuery(event.nativeEvent.text),
+				onChangeText: (event: ChangeTextEvent) => {
+					setQuery(event.nativeEvent.text)
+				},
 			},
 		})
 	}, [navigation])
@@ -125,7 +126,9 @@ function DictionaryView(): JSX.Element {
 				return (
 					<ListRow
 						arrowPosition="top"
-						onPress={() => navigation.navigate('DictionaryDetail', {item})}
+						onPress={() => {
+							navigation.navigate('DictionaryDetail', {item})
+						}}
 					>
 						<Title lines={1}>{item.word}</Title>
 						<Detail lines={2} style={styles.rowDetailText}>

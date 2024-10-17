@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import {expect, test} from '@jest/globals'
 import {processBusSchedule} from '../process-bus-line'
 import {time} from './moment.helper'
@@ -28,6 +29,6 @@ const line: UnprocessedBusLine = {
 }
 
 test('processBusSchedule returns a timetable property', () => {
-	let actual = processBusSchedule(time('12:00pm'))(line.schedules[0])
+	let actual = processBusSchedule(time('12:00pm'))(line.schedules[0]!)
 	expect('timetable' in actual).toBe(true)
 })

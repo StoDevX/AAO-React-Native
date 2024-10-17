@@ -1,0 +1,38 @@
+{
+  "expo": {
+    "name": "all-about-olaf",
+    "slug": "all-about-olaf",
+    "version": "2.8.0",
+    "orientation": "default",
+    "icon": "./src/assets/images/icon.png",
+    "scheme": "allaboutolaf",
+    "userInterfaceStyle": "automatic",
+    "splash": {
+      "image": "./src/assets/images/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "NFMTHAZVS9.com.drewvolz.stolaf",
+      "userInterfaceStyle": "automatic",
+      "config": {
+        "usesNonExemptEncryption": false
+      }
+    },
+    "android": {
+      "userInterfaceStyle": "automatic",
+      "adaptiveIcon": {
+        "foregroundImage": "./src/assets/images/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      }
+    },
+    "plugins": [
+      "expo-router",
+      "expo-secure-store"
+    ],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}

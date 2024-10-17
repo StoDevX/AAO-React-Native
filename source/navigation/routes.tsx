@@ -1,5 +1,5 @@
-import React from 'react'
-import {createNativeStackNavigator} from '@react-navigation/native-stack'
+/*import React from 'react'
+import {createNativeStackNavigator} from 'expo-router-stack'
 
 import * as home from '../views/home'
 import * as buildingHours from '../views/building-hours'
@@ -265,7 +265,7 @@ const HomeStackScreens = () => {
 const SettingsStackScreens = () => {
 	return (
 		<SettingsStack.Navigator screenOptions={{gestureEnabled: true}}>
-			{/* user */}
+			{// user //}
 			<SettingsStack.Group>
 				<SettingsStack.Screen
 					component={settings.SettingsView}
@@ -282,7 +282,7 @@ const SettingsStackScreens = () => {
 				<SettingsStack.Screen component={settings.LegalView} name="Legal" />
 			</SettingsStack.Group>
 
-			{/* developer */}
+			{/* developer //}
 			<SettingsStack.Group>
 				<SettingsStack.Screen
 					component={settings.FeatureFlagView}
@@ -311,7 +311,7 @@ const SettingsStackScreens = () => {
 						route: {
 							params: {keyPath},
 						},
-					}) => ({title: toLaxTitleCase(keyPath?.[keyPath?.length - 1])})}
+					}) => ({title: toLaxTitleCase(keyPath[keyPath.length - 1])})}
 				/>
 				<SettingsStack.Screen
 					component={settings.NetworkLoggerView}
@@ -355,7 +355,7 @@ const ComponentLibraryStackScreens = () => {
 	)
 }
 
-export const RootStack = (): JSX.Element => (
+export const RootStack = (): React.JSX.Element => (
 	<Stack.Navigator initialRouteName="Home" screenOptions={{headerShown: false}}>
 		<Stack.Screen component={HomeStackScreens} name="HomeRoot" />
 		<SettingsStack.Screen
@@ -370,3 +370,4 @@ export const RootStack = (): JSX.Element => (
 		/>
 	</Stack.Navigator>
 )
+*/

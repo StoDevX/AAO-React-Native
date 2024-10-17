@@ -17,13 +17,13 @@ export type BreakNameEnumType =
 	| 'easter'
 	| 'summer'
 
-export type SingleBuildingScheduleType = {
+export interface SingleBuildingScheduleType {
 	days: DayOfWeekEnumType[]
 	from: string
 	to: string
 }
 
-export type NamedBuildingScheduleType = {
+export interface NamedBuildingScheduleType {
 	title: 'Hours' | string
 	notes?: string
 	isPhysicallyOpen?: boolean
@@ -36,12 +36,12 @@ export type BreakScheduleContainerType = Record<
 	NamedBuildingScheduleType[]
 >
 
-export type BuildingLinkType = {
+export interface BuildingLinkType {
 	title: string
 	url: URL
 }
 
-export type BuildingType = {
+export interface BuildingType {
 	name: string
 	subtitle?: string
 	abbreviation?: string

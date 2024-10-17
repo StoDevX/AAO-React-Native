@@ -4,8 +4,8 @@ import {View, StyleSheet, Platform, TextInput} from 'react-native'
 import {LoadingView, NoticeView} from '@frogpond/notice'
 import * as c from '@frogpond/colors'
 
-import {RouteProp, useNavigation, useRoute} from '@react-navigation/native'
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+import {RouteProp, useNavigation, useRoute} from 'expo-router'
+import {NativeStackNavigationOptions} from 'expo-router-stack'
 import {SettingsStackParamList} from '../../../../navigation/types'
 import {useQuery} from '@tanstack/react-query'
 import {client} from '@frogpond/api'
@@ -19,7 +19,7 @@ import {DebugView} from '../debug'
 
 type DisplayMode = 'raw' | 'parsed'
 
-export const APITestDetailView = (): JSX.Element => {
+export const APITestDetailView = (): React.JSX.Element => {
 	let navigation = useNavigation()
 	let route = useRoute<RouteProp<SettingsStackParamList, 'APITestDetail'>>()
 
@@ -47,7 +47,7 @@ export const APITestDetailView = (): JSX.Element => {
 		})
 	}, [cleanedName, navigation])
 
-	const JSONView = React.useCallback((): JSX.Element => {
+	const JSONView = React.useCallback((): React.JSX.Element => {
 		if (data === undefined) {
 			return <></>
 		}
@@ -95,7 +95,9 @@ export const APITestDetailView = (): JSX.Element => {
 		<View style={styles.container}>
 			<CellToggle
 				label="Parse as JSON"
-				onChange={(val) => setDisplayMode(val ? 'parsed' : 'raw')}
+				onChange={(val) => {
+					setDisplayMode(val ? 'parsed' : 'raw')
+				}}
 				value={displayMode === 'parsed'}
 			/>
 

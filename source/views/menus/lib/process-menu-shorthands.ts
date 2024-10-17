@@ -1,14 +1,14 @@
-/* eslint-disable camelcase */
+ 
 import type {MenuItemType, StationMenuType} from '../types'
 
-type BasicMenuItemType = {
+interface BasicMenuItemType {
 	label: string
 	station: string
 	special: boolean
 	description: string
 }
 
-type BasicStationMenuType = {
+interface BasicStationMenuType {
 	label: string
 }
 

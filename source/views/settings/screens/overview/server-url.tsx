@@ -22,7 +22,7 @@ export const ServerUrlSection = (): React.ReactElement => {
 		onSuccess: () => restart.Restart(),
 	})
 
-	let reload = () => storeServerAddress.mutate()
+	let reload = () => { storeServerAddress.mutate(); }
 
 	const isUrlValid = /^(http|https):\/\/[^ "]+$/u.test(serverAddress)
 	const isValid = isUrlValid || serverAddress.length === 0

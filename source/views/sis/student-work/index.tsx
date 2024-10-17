@@ -5,8 +5,8 @@ import {ListSeparator, ListSectionHeader} from '@frogpond/lists'
 import {NoticeView, LoadingView} from '@frogpond/notice'
 import {JobRow} from './job-row'
 import type {JobType} from './types'
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
-import {useNavigation} from '@react-navigation/native'
+import {NativeStackNavigationOptions} from 'expo-router-stack'
+import {useNavigation} from 'expo-router'
 import {useStudentWorkPostings} from './query'
 
 const styles = StyleSheet.create({
@@ -18,7 +18,7 @@ const styles = StyleSheet.create({
 	},
 })
 
-const StudentWorkView = (): JSX.Element => {
+const StudentWorkView = (): React.JSX.Element => {
 	let navigation = useNavigation()
 	let {
 		data = [],
@@ -56,7 +56,9 @@ const StudentWorkView = (): JSX.Element => {
 			renderItem={({item}) => (
 				<JobRow
 					job={item}
-					onPress={(job: JobType) => navigation.navigate('JobDetail', {job})}
+					onPress={(job: JobType) => {
+						navigation.navigate('JobDetail', {job})
+					}}
 				/>
 			)}
 			renderSectionHeader={({section: {title}}) => (

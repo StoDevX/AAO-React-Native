@@ -1,7 +1,7 @@
 import * as React from 'react'
 import {ButtonCell} from '@frogpond/tableview/cells'
 
-type Props = {
+interface Props {
 	loading: boolean
 	disabled?: boolean
 	loggedIn: boolean
@@ -9,7 +9,7 @@ type Props = {
 	label: string
 }
 
-export function LoginButton(props: Props): JSX.Element {
+export function LoginButton(props: Props): React.JSX.Element {
 	let {loading, disabled, loggedIn, onPress, label} = props
 
 	let message

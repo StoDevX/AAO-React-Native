@@ -1,22 +1,19 @@
 import ky from 'ky'
 import {
-	QueryObserverOptions,
+	queryOptions,
 	useQuery,
-	UseQueryResult,
+	type UseQueryResult,
 } from '@tanstack/react-query'
-import {
-	getInternetCredentials,
-	resetInternetCredentials,
-	setInternetCredentials,
-	SharedWebCredentials,
-} from 'react-native-keychain'
+import * as SecureStore from 'expo-secure-store'
 import {OLECARD_AUTH_URL} from './financials/urls'
 import {queryClient} from '../init/tanstack-query'
 
 export class NoCredentialsError extends Error {}
 export class LoginFailedError extends Error {}
 
-export const SIS_LOGIN_KEY = 'stolaf.edu' as const
+export const SIS_LOGIN_KEY = 'stolaf.edu'
+export const SIS_USERNAME_KEY = `${SIS_LOGIN_KEY}::username`
+export const SIS_PASSWORD_KEY = `${SIS_LOGIN_KEY}::password`
 
 const queryKeys = {
 	default: (server: string) => ['credentials', server] as const,
@@ -28,32 +25,37 @@ export function invalidateCredentials(): Promise<void> {
 	})
 }
 
-type Credentials = {
+export interface Credentials {
 	username: string
 	password: string
 }
 
-async function loadCredentials(): Promise<null | SharedWebCredentials> {
-	let credentials = await getInternetCredentials(SIS_LOGIN_KEY)
-	return credentials ? credentials : null
+async function loadCredentials(): Promise<null | Credentials> {
+	let [username, password] = await Promise.all([
+		SecureStore.getItemAsync(SIS_USERNAME_KEY),
+		SecureStore.getItemAsync(SIS_PASSWORD_KEY),
+	])
+	return username != null && password != null ? {username, password} : null
 }
 
 export async function storeCredentials(
 	credentials: Credentials,
 ): Promise<Credentials> {
-	let saved = await setInternetCredentials(
-		SIS_LOGIN_KEY,
-		credentials.username,
-		credentials.password,
-	)
-	if (saved === false) {
+	if (!credentials.username || !credentials.password) {
 		throw new NoCredentialsError()
 	}
+	await Promise.all([
+		SecureStore.setItemAsync(SIS_USERNAME_KEY, credentials.username),
+		SecureStore.setItemAsync(SIS_PASSWORD_KEY, credentials.password),
+	])
 	return credentials
 }
 
-export function resetCredentials(): Promise<void> {
-	return resetInternetCredentials(SIS_LOGIN_KEY)
+export async function resetCredentials(): Promise<void> {
+	await Promise.all([
+		SecureStore.deleteItemAsync(SIS_USERNAME_KEY),
+		SecureStore.deleteItemAsync(SIS_PASSWORD_KEY),
+	])
 }
 
 export async function performLogin(
@@ -77,37 +79,34 @@ export async function performLogin(
 
 	let responseUrl = new URL(loginResponse.url)
 	// URLSearchParams.get requires a polyfill in react native
-	let responseMessage = responseUrl.href.includes('error=')
-	if (responseMessage) {
+	let responseMessage = responseUrl.searchParams.get('error')
+	if (responseMessage != null) {
 		throw new LoginFailedError(`Login failed: ${responseMessage}`)
 	}
 
 	return {username, password}
 }
 
-type QueryFnData = null | SharedWebCredentials
-type DefaultError = null | unknown
-type QueryT<Select> = ReturnType<typeof useCredentials<Select>>
-
-export function useCredentials<TData = QueryFnData, TError = DefaultError>(
-	options: QueryObserverOptions<QueryFnData, TError, TData> = {},
-): UseQueryResult<TData, TError> {
-	return useQuery({
+function useCredentialsOptions() {
+	return queryOptions({
 		queryKey: queryKeys.default(SIS_LOGIN_KEY),
 		queryFn: () => loadCredentials(),
 		networkMode: 'always',
-		cacheTime: 0,
+		gcTime: 0,
 		staleTime: 0,
-		...options,
 	})
 }
 
-export function useUsername(): QueryT<string | undefined> {
-	return useCredentials({
+export function useUsername(): UseQueryResult<string | undefined> {
+	return useQuery({
+		...useCredentialsOptions(),
 		select: (data) => data?.username,
 	})
 }
 
-export function useHasCredentials(): QueryT<boolean> {
-	return useCredentials({select: (data) => Boolean(data)})
+export function useHasCredentials(): UseQueryResult<boolean> {
+	return useQuery({
+		...useCredentialsOptions(),
+		select: (data) => Boolean(data),
+	})
 }

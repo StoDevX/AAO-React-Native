@@ -7,7 +7,7 @@ import {isChapelTime, formatChapelTime} from './chapel'
 import {isScheduleOpenAtMoment} from './is-schedule-open'
 import {formatBuildingTimes} from './format-times'
 
-export type BuildingStatus = {
+export interface BuildingStatus {
 	isActive: boolean
 	label: string | null
 	status: string

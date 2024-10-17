@@ -12,7 +12,7 @@ export type BusStateEnum =
 	| 'after-end'
 	| 'running'
 	| 'between-rounds'
-type ReturnVal = {
+interface ReturnVal {
 	status: BusStateEnum
 	times: DepartureTimeList
 	index: null | number
@@ -69,8 +69,8 @@ export function getCurrentBusIteration(
 
 	// If we found something, yay!
 	if (index !== -1) {
-		let times = schedule.times[index]
-		let nextTimes = schedule.times[index + 1] || []
+		let times = schedule.times[index] ?? []
+		let nextTimes = schedule.times[index + 1] ?? []
 
 		let lastStopTime = findLast(times, isTruthy)
 		let nextStart = find(nextTimes, isTruthy)

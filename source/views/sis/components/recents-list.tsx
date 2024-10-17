@@ -5,7 +5,7 @@ import {NoticeView} from '@frogpond/notice'
 import * as c from '@frogpond/colors'
 import {noop} from 'lodash'
 
-type Props = {
+interface Props {
 	actionLabel?: string
 	emptyHeader: string
 	emptyText: string
@@ -15,7 +15,7 @@ type Props = {
 	title: string
 }
 
-function RecentItemsList(props: Props): JSX.Element {
+function RecentItemsList(props: Props): React.JSX.Element {
 	let {items, actionLabel, onAction, title, emptyHeader, emptyText} = props
 
 	let foreground = {color: c.link}
@@ -45,7 +45,7 @@ function RecentItemsList(props: Props): JSX.Element {
 							key={item}
 							// adding long press allows for copy text when selectable is true
 							onLongPress={noop}
-							onPress={() => props.onItemPress(item)}
+							onPress={() => { props.onItemPress(item); }}
 						>
 							<ListRow arrowPosition="none">
 								<Text

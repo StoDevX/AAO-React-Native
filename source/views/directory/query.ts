@@ -4,7 +4,7 @@ import {DirectorySearchTypeEnum, SearchResults} from './types'
 
 let directory = ky.create({prefixUrl: 'https://www.stolaf.edu/directory'})
 
-type GetDirectoryQueryArgs = {
+interface GetDirectoryQueryArgs {
 	query: string
 	type: DirectorySearchTypeEnum
 }

@@ -18,13 +18,13 @@ const styles = StyleSheet.create({
 	},
 })
 
-type Props = {
+interface Props {
 	info: BuildingType
 	now: Moment
 	onProblemReport: () => void
 }
 
-export const BuildingDetail = React.memo((props: Props): JSX.Element => {
+export const BuildingDetail = React.memo((props: Props): React.JSX.Element => {
 	let {info, now, onProblemReport} = props
 
 	let headerImage =

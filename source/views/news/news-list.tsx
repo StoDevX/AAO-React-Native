@@ -10,7 +10,7 @@ import {cleanEntries, trimStoryCateogry} from './lib/util'
 import {FilterToolbar, ListType} from '@frogpond/filter'
 import {UseQueryResult} from '@tanstack/react-query'
 
-type Props = {
+interface Props {
 	query: UseQueryResult<StoryType[]>
 	thumbnail: false | number
 }
@@ -48,7 +48,7 @@ const NewsItemSeparator = (thumbnail: Props['thumbnail']) => (
 	<ListSeparator spacing={{left: thumbnail === false ? undefined : 101}} />
 )
 
-export const NewsList = (props: Props): JSX.Element => {
+export const NewsList = (props: Props): React.JSX.Element => {
 	let {
 		data = [],
 		error,

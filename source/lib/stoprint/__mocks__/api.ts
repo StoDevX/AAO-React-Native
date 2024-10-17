@@ -6,8 +6,6 @@ import {mockHeldJobs} from './data/held-jobs'
 import {mockJobs} from './data/jobs'
 import {mockRecent} from './data/recent'
 import {mockRelease} from './data/release'
-
-import {SharedWebCredentials} from 'react-native-keychain'
 import type {
 	AllPrintersResponse,
 	HeldJobsResponse,
@@ -15,13 +13,16 @@ import type {
 	RecentPopularPrintersResponse,
 	ReleaseResponse,
 } from '../types'
+import type {Credentials} from '../../login'
 
 function papercut<T>(mockData: T): Promise<T> {
-	return new Promise((resolve) => resolve(mockData))
+	return new Promise((resolve) => {
+		resolve(mockData)
+	})
 }
 
 export function logIn(
-	credentials: SharedWebCredentials,
+	credentials: Credentials,
 	now: number = new Date().getTime(),
 ): Promise<void> {
 	return Promise.resolve()

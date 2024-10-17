@@ -1,16 +1,14 @@
 import * as React from 'react'
 import {ScrollView, Text, StyleSheet} from 'react-native'
 import moment from 'moment'
-import {Cell, Section, TableView} from '@frogpond/tableview'
-import {SelectableCell} from '@frogpond/tableview/cells'
-import * as c from '@frogpond/colors'
-import {openUrl} from '@frogpond/open-url'
+import {Cell, Section, TableView} from '../../modules/tableview'
+import {SelectableCell} from '../../modules/tableview/cells'
+import * as c from '../../modules/colors'
+import {openUrl} from '../../modules/open-url'
 import {sendEmail} from '../../components/send-email'
 import {showNameOrEmail} from './util'
-import {decode} from '@frogpond/html-lib'
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
-import {RouteProp, useRoute} from '@react-navigation/native'
-import {RootStackParamList} from '../../navigation/types'
+import {decode} from '../../modules/html-lib'
+import {useLocalSearchParams, useRoute} from 'expo-router'
 
 const styles = StyleSheet.create({
 	name: {
@@ -35,19 +33,10 @@ const styles = StyleSheet.create({
 	},
 })
 
-export const NavigationKey = 'StudentOrgsDetail' as const
+export const NavigationKey = 'StudentOrgsDetail'
 
-export const NavigationOptions = (props: {
-	route: RouteProp<RootStackParamList, typeof NavigationKey>
-}): NativeStackNavigationOptions => {
-	let {name} = props.route.params.org
-	return {
-		title: name,
-	}
-}
-
-let StudentOrgsDetailView = (): JSX.Element => {
-	let route = useRoute<RouteProp<RootStackParamList, typeof NavigationKey>>()
+let StudentOrgsDetailView = (): React.JSX.Element => {
+	let params = useLocalSearchParams()
 
 	let {
 		name: orgName,
@@ -58,7 +47,7 @@ let StudentOrgsDetailView = (): JSX.Element => {
 		advisors,
 		description,
 		lastUpdated: orgLastUpdated,
-	} = route.params.org
+	} = params.org
 
 	return (
 		<ScrollView>
@@ -100,9 +89,9 @@ let StudentOrgsDetailView = (): JSX.Element => {
 								accessory="DisclosureIndicator"
 								cellStyle={contact.title ? 'Subtitle' : 'Basic'}
 								detail={contact.title}
-								onPress={() =>
+								onPress={() => {
 									sendEmail({to: [contact.email], subject: orgName})
-								}
+								}}
 								title={showNameOrEmail(contact)}
 							/>
 						))}
@@ -116,9 +105,9 @@ let StudentOrgsDetailView = (): JSX.Element => {
 								key={i}
 								accessory="DisclosureIndicator"
 								cellStyle="Basic"
-								onPress={() =>
+								onPress={() => {
 									sendEmail({to: [contact.email], subject: orgName})
-								}
+								}}
 								title={contact.name}
 							/>
 						))}

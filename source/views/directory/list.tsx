@@ -22,11 +22,11 @@ import type {
 	DirectorySearchTypeEnum,
 } from './types'
 import Icon from 'react-native-vector-icons/Ionicons'
-import {RouteProp, useNavigation, useRoute} from '@react-navigation/native'
+import {RouteProp, useNavigation, useRoute} from 'expo-router'
 import {
 	NativeStackNavigationOptions,
 	NativeStackNavigationProp,
-} from '@react-navigation/native-stack'
+} from 'expo-router-stack'
 import {ChangeTextEvent, RootStackParamList} from '../../navigation/types'
 
 export const NavigationKey = 'Directory'
@@ -40,7 +40,7 @@ export const NavigationOptions = (props: {
 	}
 }
 
-export function DirectoryView(): JSX.Element {
+export function DirectoryView(): React.JSX.Element {
 	let [searchQueryType, setSearchQueryType] =
 		React.useState<DirectorySearchTypeEnum>('query')
 	let [typedQuery, setTypedQuery] = React.useState('')
@@ -75,7 +75,7 @@ export function DirectoryView(): JSX.Element {
 	}, [navigation])
 
 	React.useEffect(() => {
-		if (params?.queryType === 'department' && params?.queryParam) {
+		if (params?.queryType === 'department' && params.queryParam) {
 			setSearchQueryType('department')
 			setTypedQuery(params.queryParam)
 		}
@@ -112,9 +112,9 @@ export function DirectoryView(): JSX.Element {
 					renderItem={({item}) => (
 						<DirectoryItemRow
 							item={item}
-							onPress={() =>
+							onPress={() => {
 								navigation.push('DirectoryDetail', {contact: item})
-							}
+							}}
 						/>
 					)}
 				/>
@@ -138,7 +138,7 @@ function NoSearchPerformed() {
 	)
 }
 
-type DirectoryItemRowProps = {
+interface DirectoryItemRowProps {
 	item: DirectoryItem
 	onPress: () => void
 }
@@ -203,11 +203,11 @@ const styles = StyleSheet.create({
 					borderRadius: 4,
 					marginRight: imageMargin,
 					marginLeft: leftMargin,
-			  }
+				}
 			: {
 					alignSelf: 'center',
 					marginHorizontal: 8,
-			  },
+				},
 	emptySearch: {
 		flex: 1,
 		alignItems: 'center',

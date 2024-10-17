@@ -1,6 +1,6 @@
 import * as React from 'react'
 import {Platform} from 'react-native'
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+import {NativeStackNavigationOptions} from 'expo-router-stack'
 import {
 	MaterialIcon,
 	IosIcon,
@@ -31,7 +31,7 @@ const OlevilleNewsView = () => (
 	/>
 )
 
-type Params = {
+interface Params {
 	StOlafNewsView: undefined
 	MessNewsView: undefined
 	OlevilleNewsView: undefined

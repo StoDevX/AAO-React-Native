@@ -1,11 +1,16 @@
 import * as React from 'react'
 import {OtherModesRow} from './row'
-import * as c from '@frogpond/colors'
+import * as c from '../../../modules/colors'
 import {SectionList, StyleSheet} from 'react-native'
-import {ListEmpty, ListSectionHeader, ListSeparator} from '@frogpond/lists'
-import {openUrl} from '@frogpond/open-url'
+import {
+	ListEmpty,
+	ListSectionHeader,
+	ListSeparator,
+} from '../../../modules/lists'
+import {openUrl} from '../../../modules/open-url'
 import {useOtherModesGrouped} from './query'
-import {LoadingView, NoticeView} from '@frogpond/notice'
+import {LoadingView, NoticeView} from '../../../modules/notice'
+import {captureException} from '@sentry/react-native'
 
 const styles = StyleSheet.create({
 	listContainer: {
@@ -16,7 +21,7 @@ const styles = StyleSheet.create({
 	},
 })
 
-let OtherModesView = (): JSX.Element => {
+let OtherModesView = (): React.JSX.Element => {
 	let {
 		data = [],
 		error,
@@ -31,7 +36,7 @@ let OtherModesView = (): JSX.Element => {
 			<NoticeView
 				buttonText="Try Again"
 				onPress={refetch}
-				text={`A problem occured while loading: ${error}`}
+				text={`A problem occured while loading: ${String(error)}`}
 			/>
 		)
 	}
@@ -44,10 +49,17 @@ let OtherModesView = (): JSX.Element => {
 			}
 			contentContainerStyle={styles.contentContainer}
 			keyExtractor={(item) => item.name}
-			onRefresh={refetch}
+			onRefresh={() => {
+				refetch().catch((error: unknown) => captureException(error))
+			}}
 			refreshing={isRefetching}
 			renderItem={({item}) => (
-				<OtherModesRow mode={item} onPress={(mode) => openUrl(mode.url)} />
+				<OtherModesRow
+					mode={item}
+					onPress={(mode) => {
+						openUrl(mode.url).catch((error: unknown) => captureException(error))
+					}}
+				/>
 			)}
 			renderSectionHeader={({section: {title}}) => (
 				<ListSectionHeader title={title} />

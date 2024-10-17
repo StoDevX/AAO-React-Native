@@ -8,12 +8,12 @@ import type {Webcam} from './types'
 
 import transparentPixel from '../../../../images/transparent.png'
 
-type Props = {
+interface Props {
 	webcam: Webcam
 	viewportWidth: number
 }
 
-export const StreamThumbnail = (props: Props): JSX.Element => {
+export const StreamThumbnail = (props: Props): React.JSX.Element => {
 	let handlePress = () => {
 		let {name, pageUrl} = props.webcam
 		trackedOpenUrl({url: pageUrl, id: `${name}WebcamView`})
@@ -32,8 +32,8 @@ export const StreamThumbnail = (props: Props): JSX.Element => {
 	let img = thumbnailUrl
 		? {uri: thumbnailUrl}
 		: webcamImages.has(thumbnail)
-		  ? webcamImages.get(thumbnail)
-		  : transparentPixel
+			? webcamImages.get(thumbnail)
+			: transparentPixel
 
 	return (
 		// do not remove this View; it is needed to prevent extra highlighting

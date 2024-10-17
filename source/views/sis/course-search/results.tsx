@@ -10,9 +10,9 @@ import {useAppDispatch} from '../../../redux'
 import {applyFiltersToItem} from '@frogpond/filter'
 import {FilterType} from '@frogpond/filter'
 import {useFilters} from './lib/build-filters'
-import {RouteProp, useNavigation, useRoute} from '@react-navigation/native'
+import {RouteProp, useNavigation, useRoute} from 'expo-router'
 import {ChangeTextEvent, RootStackParamList} from '../../../navigation/types'
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+import {NativeStackNavigationOptions} from 'expo-router-stack'
 import {useDebounce} from '@frogpond/use-debounce'
 import {ListSeparator, ListSectionHeader, largeListProps} from '@frogpond/lists'
 import * as c from '@frogpond/colors'
@@ -28,8 +28,8 @@ import {UseQueryResult} from '@tanstack/react-query'
 
 function doSearch(args: {
 	query: string
-	filters: Array<FilterType<CourseType>>
-	courses: Array<CourseType>
+	filters: FilterType<CourseType>[]
+	courses: CourseType[]
 	applyFilters: (filters: FilterType<CourseType>[], item: CourseType) => boolean
 }) {
 	let {query, filters, courses, applyFilters} = args
@@ -54,9 +54,7 @@ function isError(e: unknown): e is Error {
 function queriesToCourses(
 	queries: UseQueryResult<CourseType[]>[],
 ): CourseType[] {
-	return queries
-		.flatMap((q) => q.data)
-		.filter((data) => data !== undefined) as CourseType[]
+	return queries.flatMap((q) => q.data).filter((data) => data !== undefined)
 }
 
 const useSelectedFilter = (
@@ -102,7 +100,7 @@ const useSelectedGE = (filters: FilterType<CourseType>[]) => {
 	return []
 }
 
-export const CourseSearchResultsView = (): JSX.Element => {
+export const CourseSearchResultsView = (): React.JSX.Element => {
 	let dispatch = useAppDispatch()
 	let navigation = useNavigation()
 
@@ -138,8 +136,9 @@ export const CourseSearchResultsView = (): JSX.Element => {
 		navigation.setOptions({
 			headerSearchBarOptions: {
 				barTintColor: c.systemFill,
-				onChangeText: (event: ChangeTextEvent) =>
-					setSearchQuery(event.nativeEvent.text),
+				onChangeText: (event: ChangeTextEvent) => {
+					setSearchQuery(event.nativeEvent.text)
+				},
 			},
 		})
 	}, [initialQuery, navigation, searchQuery])
@@ -221,8 +220,8 @@ export const CourseSearchResultsView = (): JSX.Element => {
 	let message = hasActiveFilter
 		? 'There were no courses that matched your selected filters. Try a different filter combination.'
 		: query?.length
-		  ? 'There were no courses that matched your query. Please try again.'
-		  : "You can search by Professor (e.g. 'Jill Dietz'), Course Name (e.g. 'Abstract Algebra'), Department/Number (e.g. MATH 252), or GE (e.g. WRI)"
+			? 'There were no courses that matched your query. Please try again.'
+			: "You can search by Professor (e.g. 'Jill Dietz'), Course Name (e.g. 'Abstract Algebra'), Department/Number (e.g. MATH 252), or GE (e.g. WRI)"
 
 	let messageView = <NoticeView style={styles.message} text={message} />
 

@@ -1,19 +1,21 @@
 import {Alert} from 'react-native'
-import Clipboard from '@react-native-clipboard/clipboard'
-import {openUrl} from '@frogpond/open-url'
+import Clipboard from 'expo-clipboard'
+import {openUrl} from '../modules/open-url'
+import {captureException} from '@sentry/react-native'
 
-type Args = {
-	to?: Array<string>
-	cc?: Array<string>
-	bcc?: Array<string>
+interface Args {
+	to?: string[]
+	cc?: string[]
+	bcc?: string[]
 	subject?: string
 	body?: string
 }
 
-export function sendEmail(args: Args): void {
+export async function sendEmail(args: Args): Promise<void> {
 	try {
-		openUrl(formatEmailParts(args))
-	} catch (err) {
+		await openUrl(formatEmailParts(args))
+	} catch (err: unknown) {
+		captureException(err)
 		const {to = []} = args
 		const toString = to.join(', ')
 
@@ -29,7 +31,11 @@ export function sendEmail(args: Args): void {
 				},
 				{
 					text: 'Copy addresses',
-					onPress: () => Clipboard.setString(toString),
+					onPress: () => {
+						Clipboard.setStringAsync(toString).catch((err: unknown) =>
+							captureException(err),
+						)
+					},
 				},
 			],
 		)

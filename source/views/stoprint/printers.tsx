@@ -13,8 +13,8 @@ import {LoadingView} from '@frogpond/notice'
 import {DebugNoticeButton} from '@frogpond/navigation-buttons'
 import groupBy from 'lodash/groupBy'
 import {StoPrintErrorView} from './components/error'
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
-import {RouteProp, useNavigation, useRoute} from '@react-navigation/native'
+import {NativeStackNavigationOptions} from 'expo-router-stack'
+import {RouteProp, useNavigation, useRoute} from 'expo-router'
 import {RootStackParamList} from '../../navigation/types'
 import {useAllPrinters, useColorPrinters, useRecentPrinters} from './query'
 import {RecentPopularPrintersResponse} from '../../lib/stoprint/types'
@@ -23,7 +23,7 @@ const styles = StyleSheet.create({
 	list: {},
 })
 
-export const PrinterListView = (): JSX.Element => {
+export const PrinterListView = (): React.JSX.Element => {
 	let navigation = useNavigation()
 
 	let route = useRoute<RouteProp<RootStackParamList, 'PrinterList'>>()
@@ -59,8 +59,9 @@ export const PrinterListView = (): JSX.Element => {
 		allPrintersRefetching || recentPrintersRefetching || colorPrintersRefetching
 
 	let openPrintRelease = React.useCallback(
-		(printer: Printer) =>
-			navigation.navigate('PrintJobRelease', {job, printer}),
+		(printer: Printer) => {
+			navigation.navigate('PrintJobRelease', {job, printer})
+		},
 		[navigation, job],
 	)
 
@@ -131,7 +132,7 @@ export const PrinterListView = (): JSX.Element => {
 				{title: 'Recent', data: recentPrinters.recentPrinters ?? []},
 				{title: 'Popular', data: recentPrinters.popularPrinters ?? []},
 				...groupedByBuilding,
-		  ]
+			]
 		: []
 
 	let availableGrouped = colorJob ? groupedByBuilding : grouped
@@ -143,7 +144,11 @@ export const PrinterListView = (): JSX.Element => {
 			onRefresh={refetchAll}
 			refreshing={isRefetching}
 			renderItem={({item}: {item: Printer}) => (
-				<ListRow onPress={() => openPrintRelease(item)}>
+				<ListRow
+					onPress={() => {
+						openPrintRelease(item)
+					}}
+				>
 					<Title>{item.printerName}</Title>
 					<Detail>{item.location}</Detail>
 				</ListRow>

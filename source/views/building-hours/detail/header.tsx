@@ -8,9 +8,9 @@ import {View, Text, StyleSheet} from 'react-native'
 import type {BuildingType} from '../types'
 import * as c from '@frogpond/colors'
 
-type Props = {building: BuildingType}
+interface Props {building: BuildingType}
 
-export const Header = (props: Props): JSX.Element => {
+export const Header = (props: Props): React.JSX.Element => {
 	let {building} = props
 
 	let abbr = building.abbreviation ? ` (${building.abbreviation})` : ''

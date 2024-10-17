@@ -1,4 +1,4 @@
-import {client} from '@frogpond/api'
+import {client} from '../../modules/api'
 import {useQuery, UseQueryResult} from '@tanstack/react-query'
 import {groupBy} from 'lodash'
 import {upgradeMenuItem, upgradeStation} from './lib/process-menu-shorthands'
@@ -32,7 +32,7 @@ function buildMenuPath(cafeParam: string | {id: string}) {
 	} else if ('id' in cafeParam) {
 		return `food/menu/${cafeParam.id}`
 	} else {
-		throw new Error(`Unexpected cafe parameter: ${cafeParam}`)
+		throw new Error(`Unexpected cafe parameter: ${String(cafeParam)}`)
 	}
 }
 
@@ -42,7 +42,7 @@ function buildCafePath(cafeParam: string | {id: string}) {
 	} else if ('id' in cafeParam) {
 		return `food/cafe/${cafeParam.id}`
 	} else {
-		throw new Error(`Unexpected cafe parameter: ${cafeParam}`)
+		throw new Error(`Unexpected cafe parameter: ${String(cafeParam)}`)
 	}
 }
 
@@ -84,9 +84,9 @@ export function usePauseMenu(): UseQueryResult<GithubMenuType, unknown> {
 			return (response as {data: GithubMenuResponse}).data
 		},
 		select(data) {
-			let foodItems: MenuItemType[] = data?.foodItems || []
-			let stationMenus: StationMenuType[] = data?.stationMenus || []
-			let corIcons: MasterCorIconMapType = data?.corIcons || {}
+			let foodItems: MenuItemType[] = data.foodItems
+			let stationMenus: StationMenuType[] = data.stationMenus
+			let corIcons: MasterCorIconMapType = data.corIcons
 
 			let upgradedFoodItems = foodItems.map(upgradeMenuItem)
 			let upgradedFoodItemsMap = Object.fromEntries(

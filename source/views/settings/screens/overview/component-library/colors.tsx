@@ -24,10 +24,10 @@ import {
 import {Section} from '@frogpond/tableview'
 import {LibraryWrapper} from './base/library-wrapper'
 
-function createTable(): Array<{
+function createTable(): {
 	color: ReturnType<typeof PlatformColor>
 	label: string
-}> {
+}[] {
 	if (Platform.OS === 'ios') {
 		return [
 			// https://developer.apple.com/documentation/uikit/uicolor/ui_element_colors
@@ -300,8 +300,8 @@ function VariantColorsExample() {
 							Platform.OS === 'ios'
 								? DynamicColorIOS({light: 'red', dark: 'blue'})
 								: Platform.OS === 'android'
-								  ? PlatformColor('?attr/colorAccent')
-								  : 'red',
+									? PlatformColor('?attr/colorAccent')
+									: 'red',
 					}}
 				/>
 			</View>
@@ -325,7 +325,7 @@ const styles = StyleSheet.create({
 
 export const NavigationKey = 'ColorsInfoView'
 
-export const ColorsLibrary = (): JSX.Element => {
+export const ColorsLibrary = (): React.JSX.Element => {
 	return (
 		<LibraryWrapper>
 			<>

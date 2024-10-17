@@ -19,7 +19,7 @@ const ONE_DAY = ONE_HOUR * 24
 
 export const keys = {
 	terms: ['catalog', 'terms'] as const,
-	courses: (term: TermType, levels: Array<number>, gereqs: Array<string>) =>
+	courses: (term: TermType, levels: number[], gereqs: string[]) =>
 		['catalog', 'courses', term, levels, gereqs] as const,
 	gereqs: ['catalog', 'gereqs'] as const,
 	departments: ['catalog', 'departments'] as const,
@@ -45,17 +45,17 @@ export function useAvailableTerms(): UseQueryResult<TermType[], unknown> {
 }
 
 export function useCourseData(
-	selectedTerms: Array<number> = [],
-	levels: Array<number> = [],
-	gereqs: Array<string> = [],
+	selectedTerms: number[] = [],
+	levels: number[] = [],
+	gereqs: string[] = [],
 ): UseQueryResult<CourseType[], unknown>[] {
 	let {data: terms = []} = useAvailableTerms()
 	let filteredTerms = terms.filter((t) => selectedTerms.includes(t.term))
 
 	let createQueryOptions = (
 		term: TermType,
-		levelsList: Array<number> = [],
-		gereqsList: Array<string> = [],
+		levelsList: number[] = [],
+		gereqsList: string[] = [],
 	): UseQueryOptions<
 		CourseType[],
 		unknown,

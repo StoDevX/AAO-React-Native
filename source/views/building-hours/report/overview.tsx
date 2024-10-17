@@ -23,12 +23,12 @@ import type {
 } from '../types'
 import {summarizeDays, formatBuildingTimes, blankSchedule} from '../lib'
 import {submitReport} from './submit'
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
-import {RouteProp, useNavigation, useRoute} from '@react-navigation/native'
+import {NativeStackNavigationOptions} from 'expo-router-stack'
+import {RouteProp, useNavigation, useRoute} from 'expo-router'
 import {CloseScreenButton} from '@frogpond/navigation-buttons'
 import {RootStackParamList} from '../../../navigation/types'
 
-export let BuildingHoursProblemReportView = (): JSX.Element => {
+export let BuildingHoursProblemReportView = (): React.JSX.Element => {
 	let navigation = useNavigation()
 	let route = useRoute<RouteProp<RootStackParamList, typeof NavigationKey>>()
 	let {initialBuilding} = route.params
@@ -66,7 +66,9 @@ export let BuildingHoursProblemReportView = (): JSX.Element => {
 						{
 							text: 'Discard',
 							style: 'destructive',
-							onPress: () => navigation.dispatch(event.data.action),
+							onPress: () => {
+								navigation.dispatch(event.data.action)
+							},
 						},
 					],
 				)
@@ -171,13 +173,17 @@ export let BuildingHoursProblemReportView = (): JSX.Element => {
 	)
 
 	let openEditor = React.useCallback(
-		(scheduleIdx: number, setIdx: number, set?: SingleBuildingScheduleType) =>
+		(scheduleIdx: number, setIdx: number, set?: SingleBuildingScheduleType) => {
 			navigation.navigate('BuildingHoursScheduleEditor', {
 				set: set,
-				onEditSet: (editedData: SingleBuildingScheduleType) =>
-					editHoursRow(scheduleIdx, setIdx, editedData),
-				onDeleteSet: () => deleteHoursRow(scheduleIdx, setIdx),
-			}),
+				onEditSet: (editedData: SingleBuildingScheduleType) => {
+					editHoursRow(scheduleIdx, setIdx, editedData)
+				},
+				onDeleteSet: () => {
+					deleteHoursRow(scheduleIdx, setIdx)
+				},
+			})
+		},
 		[deleteHoursRow, editHoursRow, navigation],
 	)
 
@@ -233,7 +239,7 @@ export let BuildingHoursProblemReportView = (): JSX.Element => {
 	)
 }
 
-type EditableScheduleProps = {
+interface EditableScheduleProps {
 	schedule: NamedBuildingScheduleType
 	scheduleIndex: number
 	addRow: (idx: number) => void
@@ -316,13 +322,18 @@ const EditableSchedule = (props: EditableScheduleProps) => {
 	)
 }
 
-type TextFieldProps = {text: string; onChange: (text: string) => void}
+interface TextFieldProps {
+	text: string
+	onChange: (text: string) => void
+}
 // "Title" will become a textfield like the login form
 const TitleCell = ({text, onChange}: TextFieldProps) => (
 	<CellTextField
 		autoCapitalize="words"
 		onChangeText={onChange}
-		onSubmitEditing={(ev) => onChange(ev.nativeEvent.text)}
+		onSubmitEditing={(ev) => {
+			onChange(ev.nativeEvent.text)
+		}}
 		placeholder="Title"
 		returnKeyType="done"
 		value={text}
@@ -334,14 +345,16 @@ const NotesCell = ({text, onChange}: TextFieldProps) => (
 	<CellTextField
 		autoCapitalize="sentences"
 		onChangeText={onChange}
-		onSubmitEditing={(ev) => onChange(ev.nativeEvent.text)}
+		onSubmitEditing={(ev) => {
+			onChange(ev.nativeEvent.text)
+		}}
 		placeholder="Notes"
 		returnKeyType="done"
 		value={text}
 	/>
 )
 
-type TimesCellProps = {
+interface TimesCellProps {
 	set: SingleBuildingScheduleType
 	setIndex: number
 	onPress: (setIdx: number, set: SingleBuildingScheduleType) => void

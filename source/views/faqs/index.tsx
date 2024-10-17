@@ -3,7 +3,7 @@ import {RefreshControl, StyleSheet, ScrollView, View} from 'react-native'
 import * as c from '@frogpond/colors'
 import {Markdown} from '@frogpond/markdown'
 import {LoadingView, NoticeView} from '@frogpond/notice'
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+import {NativeStackNavigationOptions} from 'expo-router-stack'
 import {useFaqs} from './query'
 
 const styles = StyleSheet.create({
@@ -18,7 +18,7 @@ const styles = StyleSheet.create({
 	},
 })
 
-function FaqView(): JSX.Element {
+function FaqView(): React.JSX.Element {
 	let {
 		data = {text: ''},
 		error,

@@ -1,6 +1,6 @@
 import * as React from 'react'
 import {Platform} from 'react-native'
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+import {NativeStackNavigationOptions} from 'expo-router-stack'
 import {
 	MaterialIcon,
 	IosIcon,
@@ -46,7 +46,7 @@ function NorthfieldCalendarView() {
 	)
 }
 
-type Params = {
+interface Params {
 	StOlafCalendarView: undefined
 	OlevilleCalendarView: undefined
 	NorthfieldCalendarView: undefined

@@ -12,13 +12,13 @@ export const keys = {
 // _backwards_ - that is, On-Campus Work Study should come before
 // Off-Campus Work Study, and the Work Studies should come before the
 // Summer Employments
-let sorters: Array<(job: JobType) => string> = [
+let sorters: ((job: JobType) => string)[] = [
 	(j) => j.type, // sort any groups with the same sort index alphabetically
 	(j) => j.office, // sort all jobs with the same office
 	(j) => j.lastModified, // sort all jobs by date-last-modified
 ]
 
-let ordered: Array<'desc' | 'asc'> = ['desc', 'asc', 'desc']
+let ordered: ('desc' | 'asc')[] = ['desc', 'asc', 'desc']
 
 export function useStudentWorkPostings(): UseQueryResult<
 	{title: string; data: JobType[]}[],

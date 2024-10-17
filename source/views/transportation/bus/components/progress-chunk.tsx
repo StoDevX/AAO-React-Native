@@ -1,5 +1,5 @@
 import * as React from 'react'
-import * as c from '@frogpond/colors'
+import * as c from '../../../../modules/colors'
 import {ColorValue, Platform, StyleSheet, View} from 'react-native'
 import type {BusStopStatusEnum} from '../lib'
 
@@ -46,7 +46,7 @@ const styles = StyleSheet.create({
 	},
 })
 
-type Props = {
+interface Props {
 	barColor: ColorValue
 	currentStopColor: ColorValue
 	isFirstChunk: boolean
@@ -54,7 +54,7 @@ type Props = {
 	stopStatus: BusStopStatusEnum
 }
 
-export function ProgressChunk(props: Props): JSX.Element {
+export function ProgressChunk(props: Props): React.JSX.Element {
 	let {stopStatus, barColor, currentStopColor, isFirstChunk, isLastChunk} =
 		props
 

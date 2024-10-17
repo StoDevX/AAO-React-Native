@@ -1,6 +1,6 @@
 import {StyleProp, ViewStyle} from 'react-native'
 
-export type CampusLocation = {
+export interface CampusLocation {
 	display: string
 	buildingabbr: string
 	building: string
@@ -9,20 +9,20 @@ export type CampusLocation = {
 	shortLocation: string
 }
 
-export type Department = {
+export interface Department {
 	href: string
 	name: string
 }
 
-type Address = {
+interface Address {
 	zip: string
 	city: string
 	country: string
 	state: string
-	street: Array<string>
+	street: string[]
 }
 
-export type OfficeHours = {
+export interface OfficeHours {
 	display: string
 	prefix: string
 	hrefLabel: string | null
@@ -33,16 +33,16 @@ export type OfficeHours = {
 	title: string
 }
 
-type OnLeave = {
+interface OnLeave {
 	start: string
 	end: string
 	type: string
 }
 
-export type DirectoryItem = {
-	campusLocations: Array<CampusLocation>
+export interface DirectoryItem {
+	campusLocations: CampusLocation[]
 	classYear: string | null
-	departments: Array<Department>
+	departments: Department[]
 	displayName: string
 	displayTitle: string | null
 	email: string | null
@@ -54,7 +54,7 @@ export type DirectoryItem = {
 	onLeave: OnLeave | null
 	photo: string
 	profileUrl: string | null
-	pronouns: Array<string> | null
+	pronouns: string[] | null
 	suffixName: string | null
 	thumbnail: string
 	title: string | null
@@ -63,12 +63,12 @@ export type DirectoryItem = {
 	description: string | null
 }
 
-export type SearchResults = {
+export interface SearchResults {
 	meta: {
 		count: number
 		fullCount: number
 	}
-	results: Array<DirectoryItem>
+	results: DirectoryItem[]
 }
 
 export type DirectorySearchTypeEnum =

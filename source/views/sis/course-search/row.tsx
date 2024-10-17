@@ -5,12 +5,12 @@ import {ListRow, Title, Detail} from '@frogpond/lists'
 import {deptNum} from './lib/format-dept-num'
 import {Row} from '@frogpond/layout'
 
-type Props = {
+interface Props {
 	course: CourseType
 	onPress: (course: CourseType) => void
 }
 
-export const CourseRow = (props: Props): JSX.Element => {
+export const CourseRow = (props: Props): React.JSX.Element => {
 	let {course} = props
 
 	let onPress = (): void => {

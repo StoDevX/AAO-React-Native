@@ -13,7 +13,7 @@ const oneDayInMs = 1000 * 60 * 60 * 24 // 24 hours
 export const queryClient = new QueryClient({
 	defaultOptions: {
 		queries: {
-			cacheTime: oneDayInMs,
+			gcTime: oneDayInMs,
 		},
 	},
 })

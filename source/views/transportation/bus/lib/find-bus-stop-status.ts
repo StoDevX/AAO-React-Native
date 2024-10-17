@@ -4,7 +4,7 @@ import type {BusStateEnum} from './get-current-bus-iteration'
 
 export type BusStopStatusEnum = 'at' | 'before' | 'after' | 'skip'
 
-type Args = {
+interface Args {
 	stop: BusTimetableEntry
 	busStatus: BusStateEnum
 	departureIndex: null | number
@@ -20,19 +20,21 @@ export function findBusStopStatus(args: Args): BusStopStatusEnum {
 	switch (busStatus) {
 		case 'before-start': {
 			stopStatus = 'before'
-			arrivalTime = stop.departures[0]
+			arrivalTime = stop.departures[0] ?? null
 			break
 		}
 
 		case 'after-end': {
 			stopStatus = 'after'
-			arrivalTime = stop.departures[stop.departures.length - 1]
+			arrivalTime = stop.departures[stop.departures.length - 1] ?? null
 			break
 		}
 
 		default: {
 			arrivalTime =
-				departureIndex === null ? null : stop.departures[departureIndex]
+				departureIndex === null
+					? null
+					: (stop.departures[departureIndex] ?? null)
 
 			if (arrivalTime && now.isAfter(arrivalTime, 'minute')) {
 				stopStatus = 'after'

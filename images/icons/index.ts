@@ -5,8 +5,8 @@ export const icons = {
 
 export const defaultIcon = icons.oldMain
 
-export const iosToNamedIconsMap: {[key: string]: keyof typeof icons} = {
-	// eslint-disable-next-line camelcase
+export const iosToNamedIconsMap: Record<string, keyof typeof icons> = {
+	 
 	icon_type_windmill: 'windmill',
 	default: 'oldMain',
 }

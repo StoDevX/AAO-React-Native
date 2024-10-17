@@ -5,7 +5,7 @@ import {OutlineBadge, SolidBadge} from '@frogpond/badge'
 import {Section} from '@frogpond/tableview'
 import {LibraryWrapper, Example} from './base/library-wrapper'
 
-const OutlineBadgeExamples = (): JSX.Element => (
+const OutlineBadgeExamples = (): React.JSX.Element => (
 	<Section header="Outline badge">
 		<Example title="Default">
 			<OutlineBadge text="Status" />
@@ -39,7 +39,7 @@ const OutlineBadgeExamples = (): JSX.Element => (
 	</Section>
 )
 
-const SolidBadgeExamples = (): JSX.Element => (
+const SolidBadgeExamples = (): React.JSX.Element => (
 	<Section header="Solid badge">
 		<Example title="Default">
 			<SolidBadge status="Status" />
@@ -59,7 +59,7 @@ const SolidBadgeExamples = (): JSX.Element => (
 	</Section>
 )
 
-export const BadgeLibrary = (): JSX.Element => (
+export const BadgeLibrary = (): React.JSX.Element => (
 	<LibraryWrapper>
 		<>
 			<OutlineBadgeExamples />

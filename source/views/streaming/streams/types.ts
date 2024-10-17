@@ -1,6 +1,6 @@
 import type {Moment} from 'moment-timezone'
 
-export type StreamType = {
+export interface StreamType {
 	category: string
 	eid: string
 	iframesrc: string

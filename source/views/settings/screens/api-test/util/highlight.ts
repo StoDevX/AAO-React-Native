@@ -18,15 +18,15 @@ export function syntaxHighlight(json: string): string {
 
 	return json.replace(replaceRegex, function (match) {
 		let cls = 'number'
-		if (/^"/u.test(match)) {
-			if (/:$/u.test(match)) {
+		if (match.startsWith("\"")) {
+			if (match.endsWith(":")) {
 				cls = 'key'
 			} else {
 				cls = 'string'
 			}
 		} else if (/true|false/u.test(match)) {
 			cls = 'boolean'
-		} else if (/null/u.test(match)) {
+		} else if (match.includes('null')) {
 			cls = 'null'
 		}
 		return '<span class="' + cls + '">' + match + '</span>'

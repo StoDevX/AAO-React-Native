@@ -38,13 +38,13 @@ const styles = StyleSheet.create({
 	},
 })
 
-type Props = {
+interface Props {
 	info: BuildingType
 	now: Moment
 	onPress: () => void
 }
 
-export function BuildingRow(props: Props): JSX.Element {
+export function BuildingRow(props: Props): React.JSX.Element {
 	let {info, now, onPress} = props
 
 	let openStatus = React.useMemo(
@@ -89,14 +89,14 @@ export function BuildingRow(props: Props): JSX.Element {
 									status={status}
 								/>
 							</Detail>
-					  ))
+						))
 					: null}
 			</View>
 		</ListRow>
 	)
 }
 
-type BuildingTimeSlotProps = {
+interface BuildingTimeSlotProps {
 	label: string | null
 	status: string
 	highlight: boolean

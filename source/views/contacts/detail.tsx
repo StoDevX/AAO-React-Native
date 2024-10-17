@@ -16,9 +16,9 @@ import {callPhone} from '../../components/call-phone'
 import {Button} from '@frogpond/button'
 import {openUrl} from '@frogpond/open-url'
 import {GH_NEW_ISSUE_URL} from '../../lib/constants'
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+import {NativeStackNavigationOptions} from 'expo-router-stack'
 import {RootStackParamList} from '../../navigation/types'
-import {RouteProp, useRoute} from '@react-navigation/native'
+import {RouteProp, useRoute} from 'expo-router'
 
 const styles = StyleSheet.create({
 	paragraph: {
@@ -42,15 +42,15 @@ const styles = StyleSheet.create({
 	},
 })
 
-export const Title = (props: TextProps): JSX.Element => (
+export const Title = (props: TextProps): React.JSX.Element => (
 	<Text {...props} style={[styles.title, props.style]} />
 )
 
-export const Container = (props: ViewProps): JSX.Element => (
+export const Container = (props: ViewProps): React.JSX.Element => (
 	<View {...props} style={[styles.container, props.style]} />
 )
 
-export const ContactsDetailView = (): JSX.Element => {
+export const ContactsDetailView = (): React.JSX.Element => {
 	let route =
 		useRoute<RouteProp<RootStackParamList, typeof DetailNavigationKey>>()
 	let {contact} = route.params

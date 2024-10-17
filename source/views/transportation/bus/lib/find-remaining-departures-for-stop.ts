@@ -1,7 +1,7 @@
 import type {BusTimetableEntry, DepartureTimeList} from '../types'
 import type {BusStateEnum} from './get-current-bus-iteration'
 
-type Args = {
+interface Args {
 	stop: BusTimetableEntry
 	busStatus: BusStateEnum
 	departureIndex: null | number

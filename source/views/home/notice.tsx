@@ -1,9 +1,9 @@
 import React from 'react'
 import {View, Text, StyleSheet} from 'react-native'
-import * as c from '@frogpond/colors'
+import * as c from '../../modules/colors'
 import sample from 'lodash/sample'
 import {CELL_MARGIN} from './button'
-import {isDevMode} from '@frogpond/constants'
+import {isDevMode} from '../../modules/constants'
 
 let messages = [
 	'☃️ An Unofficial App Project ☃️',
@@ -26,27 +26,15 @@ if (isDevMode()) {
 	]
 }
 
-export function UnofficialAppNotice(): JSX.Element {
-	return (
-		<View style={[styles.wrapper, styles.background]}>
-			<Text style={styles.text}>{sample(messages)}</Text>
-		</View>
-	)
+export function UnofficialAppNotice(): React.JSX.Element {
+	return <Text numberOfLines={1} style={styles.text}>{sample(messages)}</Text>
 }
 
 const styles = StyleSheet.create({
-	wrapper: {
-		justifyContent: 'center',
-		marginBottom: CELL_MARGIN,
-		marginHorizontal: CELL_MARGIN,
-	},
-	background: {
-		backgroundColor: c.secondarySystemFill,
-		borderRadius: 7,
-	},
 	text: {
 		color: c.secondaryLabel,
-		padding: 8,
+		paddingHorizontal: 8,
+		paddingTop: 8,
 		textAlign: 'center',
 	},
 })
