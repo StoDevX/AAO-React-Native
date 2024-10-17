@@ -27,26 +27,14 @@ if (isDevMode()) {
 }
 
 export function UnofficialAppNotice(): React.JSX.Element {
-	return (
-		<View style={[styles.wrapper, styles.background]}>
-			<Text style={styles.text}>{sample(messages)}</Text>
-		</View>
-	)
+	return <Text numberOfLines={1} style={styles.text}>{sample(messages)}</Text>
 }
 
 const styles = StyleSheet.create({
-	wrapper: {
-		justifyContent: 'center',
-		marginBottom: CELL_MARGIN,
-		marginHorizontal: CELL_MARGIN,
-	},
-	background: {
-		backgroundColor: c.secondarySystemFill,
-		borderRadius: 7,
-	},
 	text: {
 		color: c.secondaryLabel,
-		padding: 8,
+		paddingHorizontal: 8,
+		paddingTop: 8,
 		textAlign: 'center',
 	},
 })
