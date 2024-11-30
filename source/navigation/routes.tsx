@@ -285,11 +285,6 @@ const SettingsStackScreens = () => {
 			{/* developer */}
 			<SettingsStack.Group>
 				<SettingsStack.Screen
-					component={settings.FeatureFlagView}
-					name="FeatureFlags"
-					options={settings.FeatureFlagNavigationOptions}
-				/>
-				<SettingsStack.Screen
 					component={settings.APITestView}
 					name="APITest"
 					options={settings.APITestNavigationOptions}

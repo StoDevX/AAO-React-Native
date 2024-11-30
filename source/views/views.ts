@@ -1,5 +1,5 @@
 import * as c from '@frogpond/colors'
-import {RootViewsParamList, MiscViewParamList} from '../navigation/types'
+import {RootViewsParamList} from '../navigation/types'
 
 import {NavigationKey as menus} from './menus'
 import {NavigationKey as sis} from './sis'
@@ -7,8 +7,6 @@ import {NavigationKey as calendar} from './calendar'
 import {NavigationKey as streaming} from './streaming'
 import {NavigationKey as news} from './news'
 import {NavigationKey as transportation} from './transportation'
-
-import {useCourseSearchRecentsScreen} from '@frogpond/app-config'
 
 const hours: keyof RootViewsParamList = 'BuildingHours'
 const directory: keyof RootViewsParamList = 'Directory'
@@ -18,7 +16,6 @@ const studentOrgs: keyof RootViewsParamList = 'StudentOrgs'
 const more: keyof RootViewsParamList = 'More'
 const printJobs: keyof RootViewsParamList = 'PrintJobs'
 const courseSearch: keyof RootViewsParamList = 'CourseSearch'
-const courseSearchResults: keyof MiscViewParamList = 'CourseSearchResults'
 
 type CommonView = {
 	title: string
@@ -41,8 +38,6 @@ type WebLinkView = {
 export type ViewType = CommonView & (NativeView | WebLinkView)
 
 export const AllViews = (): Array<ViewType> => {
-	const showRecentCourseSearches = useCourseSearchRecentsScreen()
-
 	return [
 		{
 			type: 'view',
@@ -157,20 +152,10 @@ export const AllViews = (): Array<ViewType> => {
 			tint: c.tealToSeafoam[0],
 		},
 		{
-			disabled: !showRecentCourseSearches,
 			type: 'view',
 			view: courseSearch,
 			title: 'Course Catalog',
 			icon: 'graduation-cap',
-			foreground: 'light',
-			tint: c.lavender,
-		},
-		{
-			disabled: showRecentCourseSearches,
-			type: 'view',
-			view: courseSearchResults,
-			title: 'Course Catalog',
-			icon: 'lab-flask',
 			foreground: 'light',
 			tint: c.lavender,
 		},
