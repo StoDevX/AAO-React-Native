@@ -49,7 +49,7 @@ export type RootViewsParamList = {
 	More: undefined
 	PrintJobs: undefined
 	StudentOrgs: undefined
-} & Pick<MiscViewParamList, 'CourseSearchResults'>
+}
 
 export type CafeMenuParamList = {
 	CarletonBurtonMenu: undefined
@@ -100,7 +100,6 @@ export type SettingsStackParamList = {
 	Credits: undefined
 	[debug.NavigationKey]: {keyPath: string[]}
 	Faq: undefined
-	FeatureFlags: undefined
 	IconSettings: undefined
 	Legal: undefined
 	NetworkLogger: undefined

@@ -25,7 +25,7 @@ const styles = StyleSheet.create({
 
 function HomePage(): JSX.Element {
 	let navigation = useNavigation()
-	let allViews = AllViews().filter((view) => !view.disabled ?? true)
+	let allViews = AllViews().filter((view) => !view.disabled)
 	let columns = partitionByIndex(allViews)
 
 	return (
