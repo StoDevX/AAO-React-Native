@@ -107,9 +107,9 @@
     "wordwrap": "1.0.0"
   },
   "devDependencies": {
-    "@babel/core": "7.25.2",
-    "@babel/preset-typescript": "7.24.7",
-    "@babel/runtime": "7.25.6",
+    "@babel/core": "7.26.9",
+    "@babel/preset-typescript": "7.26.0",
+    "@babel/runtime": "7.26.9",
     "@jest/globals": "29.7.0",
     "@sentry/cli": "2.36.1",
     "@tanstack/eslint-plugin-query": "4.34.1",
