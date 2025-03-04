@@ -25,3 +25,11 @@ index 3d9331c..bbbb738 100644
                    :sha256 => 'f0397ba6e982c4450f27bf32a2a83292aba035b827a5623a14636ea583318c41' }
  
    # Pinning to the same version as React.podspec.
+
+diff --git ios/Podfile.lock ios/Podfile.lock
+index abc123..def456 100644
+--- ios/Podfile.lock
++++ ios/Podfile.lock
+@@ -676,1 +676,1 @@
+-  boost: 7dcd2de282d72e344012f7d6564d024930a6a440
++  boost: 57d2868c099736d80fcd648bf211b4431e51a558
