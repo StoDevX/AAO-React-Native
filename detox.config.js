@@ -33,7 +33,7 @@ function findCurrentDeploymentTarget() {
 	return target
 }
 
-const iPhoneSimulatorDevice = 'iPhone 11 Pro'
+const iPhoneSimulatorDevice = 'iPhone 15 Pro'
 const currentDeploymentTarget = findCurrentDeploymentTarget()
 const codeSigningDisabled = process.env.CODE_SIGNING_DISABLED === 'true'
 
