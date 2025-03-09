@@ -1,4 +1,4 @@
-ackimport {SectionList} from 'react-native'
+import {SectionList} from 'react-native'
 
 // Opting out of RN's defaults (because we are dealing with a large list)
 // and this seems to fix the headers from jumping all over when scrolling.
