@@ -612,6 +612,7 @@ jobs:
             grep -A 2 "CFBundleIdentifier" ios/build/Build/Products/Release-iphonesimulator/AllAboutOlaf.app/Info.plist || echo "CFBundleIdentifier not found in Info.plist"
           else
             echo "ERROR: Info.plist still missing after all operations!"
+            exit 1
           fi
 
       - uses: actions/setup-node@1e60f620b9541d16bece96c5465dc8ee9832be0b # v4
