@@ -548,9 +548,10 @@ jobs:
 
       - name: Move cached jsbundle into place
         run: |
+          mkdir -p ios/build/Build/Products/Release-iphonesimulator/AllAboutOlaf.app/
           mv ios/AllAboutOlaf/main.jsbundle ios/build/Build/Products/Release-iphonesimulator/AllAboutOlaf.app/
           mv ios/AllAboutOlaf/main.jsbundle.map ios/build/Build/Products/Release-iphonesimulator/AllAboutOlaf.app/
-          rm -rf ios/build/Build/Products/Release-iphonesimulator/AllAboutOlaf.app/assets
+          rm -rf ios/build/Build/Products/Release-iphonesimulator/AllAboutOlaf.app/assets || true
           mv ios/assets ios/build/Build/Products/Release-iphonesimulator/AllAboutOlaf.app/
 
       - uses: actions/setup-node@1e60f620b9541d16bece96c5465dc8ee9832be0b # v4
