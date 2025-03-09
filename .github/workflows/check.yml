@@ -500,6 +500,17 @@ jobs:
           CODE_SIGNING_DISABLED: true
         run: npx detox build e2e --configuration ios.sim.release
 
+      # Debug step to verify build output
+      - name: Verify build output
+        if: ${{ steps.app-cache.outputs.cache-hit != 'true' && !contains(github.event.pull_request.labels.*.name, 'ci/skip-detox') }}
+        run: |
+          echo "Checking build output directory structure..."
+          ls -la ios/build/Build/Products/
+          echo "Checking if app bundle exists..."
+          ls -la ios/build/Build/Products/Release-iphonesimulator/AllAboutOlaf.app/ || echo "App bundle not found!"
+          echo "Checking for Info.plist in app bundle..."
+          cat ios/build/Build/Products/Release-iphonesimulator/AllAboutOlaf.app/Info.plist | head -10 || echo "Info.plist not found!"
+
       - name: Cache the iOS app
         uses: actions/cache/save@1bd1e32a3bdc45362d1e726936510720a7c30a57 # v4.2.0
         with:
@@ -532,6 +543,17 @@ jobs:
       - if: steps.app-cache.outputs.cache-hit != 'true'
         run: exit 1
 
+      - name: Debug - Check app cache contents
+        run: |
+          echo "Checking app cache contents..."
+          ls -la ios/build/Build/Products/
+          echo "Checking simulator app directory..."
+          ls -la ios/build/Build/Products/Release-iphonesimulator/ || echo "Directory not found"
+          echo "Checking app bundle contents..."
+          ls -la ios/build/Build/Products/Release-iphonesimulator/AllAboutOlaf.app/ || echo "App bundle not found"
+          echo "Checking for Info.plist..."
+          cat ios/build/Build/Products/Release-iphonesimulator/AllAboutOlaf.app/Info.plist | head -10 || echo "Info.plist not found"
+
       - # load the jsbundle before reinstalling detox, so that the package-lock cannot change
         name: Load the cached iOS jsbundle
         uses: actions/cache/restore@1bd1e32a3bdc45362d1e726936510720a7c30a57 # v4.2.0
@@ -546,18 +568,31 @@ jobs:
       - if: steps.jsbundle-cache.outputs.cache-hit != 'true'
         run: exit 1
 
+      - name: Debug - Verify cache keys
+        run: |
+          echo "App cache key: ${{ needs.ios-build.outputs.cache-key }}"
+          echo "App cache hit: ${{ steps.app-cache.outputs.cache-hit }}"
+          echo "JS bundle cache key: ${{ needs.ios-bundle.outputs.cache-key }}"
+          echo "JS bundle cache hit: ${{ steps.jsbundle-cache.outputs.cache-hit }}"
+
       - name: Move cached jsbundle into place
         run: |
+          # Ensure app directory exists
           mkdir -p ios/build/Build/Products/Release-iphonesimulator/AllAboutOlaf.app/
 
+          # Check if app bundle seems incomplete
           if [ ! -f ios/build/Build/Products/Release-iphonesimulator/AllAboutOlaf.app/Info.plist ]; then
             echo "WARNING: Info.plist not found in app bundle, build may be incomplete!"
-            echo "Copying essential files from source directory as fallback…"
+            echo "Copying essential files from source directory as fallback..."
+            
+            # Copy essential app files
             cp ios/AllAboutOlaf/Info.plist ios/build/Build/Products/Release-iphonesimulator/AllAboutOlaf.app/
-
+            
+            # Create simulated app executable
             echo "#!/bin/sh" > ios/build/Build/Products/Release-iphonesimulator/AllAboutOlaf.app/AllAboutOlaf
             echo "echo 'This is a placeholder executable for testing purposes'" >> ios/build/Build/Products/Release-iphonesimulator/AllAboutOlaf.app/AllAboutOlaf
             chmod +x ios/build/Build/Products/Release-iphonesimulator/AllAboutOlaf.app/AllAboutOlaf
+            
             echo "Created minimal app structure for testing"
           fi
 
@@ -567,10 +602,16 @@ jobs:
           rm -rf ios/build/Build/Products/Release-iphonesimulator/AllAboutOlaf.app/assets || true
           mv ios/assets ios/build/Build/Products/Release-iphonesimulator/AllAboutOlaf.app/
 
+          # Debug app bundle again after changes
+          echo "App bundle contents after moving JS files:"
+          ls -la ios/build/Build/Products/Release-iphonesimulator/AllAboutOlaf.app/
+
+          # Final verification of Info.plist
           if [ -f ios/build/Build/Products/Release-iphonesimulator/AllAboutOlaf.app/Info.plist ]; then
             echo "Info.plist exists in final app bundle"
+            grep -A 2 "CFBundleIdentifier" ios/build/Build/Products/Release-iphonesimulator/AllAboutOlaf.app/Info.plist || echo "CFBundleIdentifier not found in Info.plist"
           else
-            echo "ERROR: Info.plist still missing. Build is incomplete!"
+            echo "ERROR: Info.plist still missing after all operations!"
           fi
 
       - uses: actions/setup-node@1e60f620b9541d16bece96c5465dc8ee9832be0b # v4
