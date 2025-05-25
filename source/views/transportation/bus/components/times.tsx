@@ -7,7 +7,7 @@ const TIME_FORMAT = 'h:mma'
 
 type Props = {
 	times: DepartureTimeList
-	style: StyleProp<TextStyle>
+	style?: StyleProp<TextStyle>
 }
 
 export function ScheduleTimes({times, style}: Props): JSX.Element {

@@ -26,6 +26,7 @@ import * as settings from '../views/settings/'
 import * as streaming from '../views/streaming'
 import * as orgs from '../views/student-orgs'
 import * as transportation from '../views/transportation'
+import {BusRouteDetail} from '../views/transportation/bus/detail'
 import * as stoprint from '../views/stoprint'
 import * as more from '../views/more'
 import * as directory from '../views/directory'
@@ -119,6 +120,13 @@ const HomeStackScreens = () => {
 					component={transportation.View}
 					name={transportation.NavigationKey}
 					options={transportation.NavigationOptions}
+				/>
+				<Stack.Screen
+					component={BusRouteDetail}
+					name="BusRouteDetail"
+					options={({route}) => ({
+						title: `${route.params.line.line} Schedule`,
+					})}
 				/>
 			</Stack.Group>
 			<Stack.Group>

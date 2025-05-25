@@ -65,7 +65,12 @@ export function BusStopRow(props: Props): JSX.Element {
 	]
 
 	return (
-		<ListRow fullHeight={true} fullWidth={true} style={styles.row}>
+		<ListRow
+			arrowPosition="center"
+			fullHeight={true}
+			fullWidth={true}
+			style={styles.row}
+		>
 			<ProgressChunk
 				barColor={barColor}
 				currentStopColor={currentStopColor}

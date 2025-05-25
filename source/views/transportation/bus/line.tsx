@@ -1,6 +1,6 @@
 import * as React from 'react'
 import {useEffect, useState} from 'react'
-import {FlatList, Platform, StyleSheet, Text} from 'react-native'
+import {FlatList, Platform, StyleSheet, Text, TouchableOpacity} from 'react-native'
 import type {BusSchedule, UnprocessedBusLine} from './types'
 import {
 	BusStateEnum,
@@ -16,6 +16,8 @@ import {BusStopRow} from './components/bus-stop-row'
 import {ListFooter, ListRow, ListSectionHeader} from '@frogpond/lists'
 import {InfoHeader} from '@frogpond/info-header'
 import * as c from '@frogpond/colors'
+import {useNavigation} from '@react-navigation/native'
+import {BUS_FOOTER_MESSAGE} from './constants'
 
 const styles = StyleSheet.create({
 	container: {
@@ -117,6 +119,7 @@ function deriveFromProps({line, now}: {line: UnprocessedBusLine; now: Moment}) {
 
 export function BusLine(props: Props): JSX.Element {
 	let {line, now} = props
+	let navigation = useNavigation()
 
 	let [schedule, setSchedule] = useState<BusSchedule | null>(null)
 	let [subtitle, setSubtitle] = useState<string>()
@@ -150,10 +153,8 @@ export function BusLine(props: Props): JSX.Element {
 	)
 
 	let lineMessage = line.notice || ''
-	let footerMessage =
-		'Bus routes and times subject to change without notice\n\nData collected by the humans of All About Olaf'
 
-	let footerElement = <ListFooter title={footerMessage} />
+	let footerElement = <ListFooter title={BUS_FOOTER_MESSAGE} />
 	let headerElement = lineMessage ? (
 		<>
 			<InfoHeader message={lineMessage} title={`About ${line.line}`} />
@@ -172,18 +173,24 @@ export function BusLine(props: Props): JSX.Element {
 			ListFooterComponent={footerElement}
 			ListHeaderComponent={headerElement}
 			data={timetable}
-			keyExtractor={(item, index) => index.toString()}
+			keyExtractor={(item, index) => `${item.name}-${index}`}
 			renderItem={({item, index}) => (
-				<BusStopRow
-					barColor={line.colors.bar}
-					currentStopColor={line.colors.dot}
-					departureIndex={currentBusIteration}
-					isFirstRow={index === 0}
-					isLastRow={timetable.length === 0 || index === timetable.length - 1}
-					now={now}
-					status={status}
-					stop={item}
-				/>
+				<TouchableOpacity
+					onPress={() => {
+						navigation.navigate('BusRouteDetail', {stop: item, line})
+					}}
+				>
+					<BusStopRow
+						barColor={line.colors.bar}
+						currentStopColor={line.colors.dot}
+						departureIndex={currentBusIteration}
+						isFirstRow={index === 0}
+						isLastRow={timetable.length === 0 || index === timetable.length - 1}
+						now={now}
+						status={status}
+						stop={item}
+					/>
+				</TouchableOpacity>
 			)}
 			style={styles.container}
 		/>
