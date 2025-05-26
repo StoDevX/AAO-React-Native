@@ -162,7 +162,7 @@ export function BusLine(props: Props): JSX.Element {
 	let navigation = useNavigation()
 
 	let [schedule, setSchedule] = useState<BusSchedule | null>(null)
-	let [subtitle, setSubtitle] = useState<string>()
+	let [subtitle, setSubtitle] = useState<string>('')
 	let [currentBusIteration, setCurrentBusIteration] = useState<number | null>(
 		null,
 	)
@@ -249,7 +249,7 @@ export function BusLine(props: Props): JSX.Element {
 			renderItem={({item, index}) => (
 				<TouchableOpacity
 					onPress={() => {
-						navigation.navigate('BusRouteDetail', {stop: item, line})
+						navigation.navigate('BusRouteDetail', {stop: item, line, subtitle})
 					}}
 				>
 					<BusStopRow

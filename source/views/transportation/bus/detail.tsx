@@ -57,10 +57,11 @@ type Props = {
 	stop: BusTimetableEntry
 	line: UnprocessedBusLine
 	now: Moment
+	subtitle: string
 }
 
 function BusStopDetailInternal(props: Props): JSX.Element {
-	let {stop, line, now} = props
+	let {stop, line, now, subtitle} = props
 
 	let [_, setSchedule] = useState<BusSchedule | null>(null)
 	let [currentBusIteration, setCurrentBusIteration] = useState<number | null>(
@@ -90,7 +91,7 @@ function BusStopDetailInternal(props: Props): JSX.Element {
 	})
 
 	let headerElement = (
-		<ListSectionHeader subtitle="Departures" title={stop.name} />
+		<ListSectionHeader subtitle={subtitle} title={stop.name} />
 	)
 
 	let rowTextStyle = [
@@ -192,7 +193,14 @@ function BusStopDetailInternal(props: Props): JSX.Element {
 export function BusRouteDetail(): JSX.Element {
 	let {now} = useMomentTimer({intervalMs: 1000 * 60, timezone: timezone()})
 	let route = useRoute<RouteProp<RootStackParamList, 'BusRouteDetail'>>()
-	let {stop, line} = route.params
+	let {stop, line, subtitle} = route.params
 
-	return <BusStopDetailInternal line={line} now={now} stop={stop} />
+	return (
+		<BusStopDetailInternal
+			line={line}
+			now={now}
+			stop={stop}
+			subtitle={subtitle}
+		/>
+	)
 }

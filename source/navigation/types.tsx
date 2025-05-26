@@ -86,7 +86,11 @@ export type MiscViewParamList = {
 	CourseDetail: {course: CourseType}
 	StudentOrgsDetail: {org: StudentOrgType}
 	BusMapView: {line: UnprocessedBusLine}
-	BusRouteDetail: {stop: BusTimetableEntry; line: UnprocessedBusLine}
+	BusRouteDetail: {
+		stop: BusTimetableEntry
+		line: UnprocessedBusLine
+		subtitle: string
+	}
 	MenuItemDetail: {item: MenuItem; icons: MasterCorIconMapType}
 	PrinterList: {job: PrintJob}
 	PrintJobRelease: {job: PrintJob; printer?: Printer}
