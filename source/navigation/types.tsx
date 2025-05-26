@@ -18,7 +18,10 @@ import {ContactType} from '../views/contacts/types'
 import {StudentOrgType} from '../views/student-orgs/types'
 import {RouteParams as HoursEditorType} from '../views/building-hours/report/editor'
 import {WordType} from '../views/dictionary/types'
-import {UnprocessedBusLine} from '../views/transportation/bus/types'
+import {
+	UnprocessedBusLine,
+	BusTimetableEntry,
+} from '../views/transportation/bus/types'
 import type {
 	MasterCorIconMapType,
 	MenuItemType as MenuItem,
@@ -83,6 +86,11 @@ export type MiscViewParamList = {
 	CourseDetail: {course: CourseType}
 	StudentOrgsDetail: {org: StudentOrgType}
 	BusMapView: {line: UnprocessedBusLine}
+	BusRouteDetail: {
+		stop: BusTimetableEntry
+		line: UnprocessedBusLine
+		subtitle: string
+	}
 	MenuItemDetail: {item: MenuItem; icons: MasterCorIconMapType}
 	PrinterList: {job: PrintJob}
 	PrintJobRelease: {job: PrintJob; printer?: Printer}

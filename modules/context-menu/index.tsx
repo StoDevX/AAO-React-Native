@@ -1,7 +1,7 @@
 import React from 'react'
 import {StyleProp, ViewStyle} from 'react-native'
 import {Touchable} from '@frogpond/touchable'
-import {ContextMenuButton} from 'react-native-ios-context-menu'
+import {ContextMenuButton, MenuState} from 'react-native-ios-context-menu'
 import {upperFirst} from 'lodash'
 
 interface ContextMenuProps {
@@ -12,6 +12,7 @@ interface ContextMenuProps {
 	isMenuPrimaryAction?: boolean
 	onPress?: () => void
 	onPressMenuItem: (menuKey: string) => void | Promise<void>
+	selectedAction?: string
 	title: string
 }
 
@@ -27,20 +28,25 @@ export const ContextMenu = React.forwardRef<
 		isMenuPrimaryAction,
 		onPress,
 		onPressMenuItem,
+		selectedAction,
 		title,
 	} = props
 
 	let menuItems = React.useMemo(() => {
-		return actions.map((option) => ({
-			actionKey: option,
-			actionTitle: upperFirst(option),
-		}))
-	}, [actions])
+		return actions.map((option) => {
+			const menuState: MenuState = selectedAction === option ? 'on' : 'off'
+			return {
+				actionKey: option,
+				actionTitle: upperFirst(option),
+				menuState,
+			}
+		})
+	}, [actions, selectedAction])
 
 	return (
 		<ContextMenuButton
 			ref={ref}
-			enableContextMenu={!disabled ?? false}
+			enableContextMenu={!disabled}
 			isMenuPrimaryAction={isMenuPrimaryAction ?? false}
 			menuConfig={{
 				menuTitle: title ?? '',
