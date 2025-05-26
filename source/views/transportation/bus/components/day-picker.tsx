@@ -193,6 +193,7 @@ export const DayPickerHeader = ({
 					onDaySelect(selectedDayData.day)
 				}
 			}}
+			selectedAction={selectedLabel}
 			title="Pick a schedule"
 		>
 			<View style={[styles.headerButtonContainer, {borderColor: accentColor}]}>
