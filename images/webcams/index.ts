@@ -4,6 +4,7 @@ import eastquad from './eastquad.jpg'
 import tomsoneast from './tomsoneast.jpg'
 import tomsonwest from './tomsonwest.jpg'
 import oleave from './oleave.jpg'
+import madson from './madson.jpg'
 
 export const images = new Map<string, number>([
 	['alumniwest', alumniwest],
@@ -12,4 +13,5 @@ export const images = new Map<string, number>([
 	['tomsoneast', tomsoneast],
 	['tomsonwest', tomsonwest],
 	['oleave', oleave],
+	['madson', madson],
 ])
