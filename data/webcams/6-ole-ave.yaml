@@ -1,6 +1,6 @@
 name: St. Olaf Avenue
 pageUrl: https://www.stolaf.edu/multimedia/webcams/?cam=oleave#fold
-streamUrl: https://cdn.stobcm.com/webcams/oleave.stream/master.m3u8
+streamUrl: https://cdn.stobcm.com/webcams/oleave.m3u8
 thumbnail: oleave
 tagline: View the eastern entrance to the campus and new dorms
 accentColor: [48, 63, 102]
