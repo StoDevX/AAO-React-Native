@@ -456,7 +456,8 @@ PODS:
     - React-Core
   - RNInAppBrowser (3.7.0):
     - React-Core
-  - RNKeychain (8.2.0):
+  - RNKeychain (10.0.0):
+    - RCT-Folly (= 2021.07.22.00)
     - React-Core
   - RNReanimated (3.7.2):
     - RCT-Folly (= 2021.07.22.00)
@@ -728,7 +729,7 @@ SPEC CHECKSUMS:
   RNDeviceInfo: b899ce37a403a4dea52b7cb85e16e49c04a5b88e
   RNGestureHandler: 071d7a9ad81e8b83fe7663b303d132406a7d8f39
   RNInAppBrowser: e36d6935517101ccba0e875bac8ad7b0cb655364
-  RNKeychain: bfe3d12bf4620fe488771c414530bf16e88f3678
+  RNKeychain: 06e12b24ae5fab8b31f079ab86e7913014e58f14
   RNReanimated: ab1295f59541cb26000d394b4b4aea72cb7ca448
   RNScreens: b21dc57dfa2b710c30ec600786a3fc223b1b92e7
   RNSearchBar: 9860431356b7d12a8449d2fddb2b5f3c78d1e99f
