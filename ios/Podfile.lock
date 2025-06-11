@@ -319,7 +319,7 @@ PODS:
     - glog
   - react-native-ios-context-menu (1.15.3):
     - React-Core
-  - react-native-netinfo (11.3.2):
+  - react-native-netinfo (11.4.1):
     - React-Core
   - react-native-restart (0.0.27):
     - React-Core
@@ -698,7 +698,7 @@ SPEC CHECKSUMS:
   React-jsinspector: 54205b269da20c51417e0fc02c4cde9f29a4bf1a
   React-logger: f42d2f2bc4cbb5d19d7c0ce84b8741b1e54e88c8
   react-native-ios-context-menu: e529171ba760a1af7f2ef0729f5a7f4d226171c5
-  react-native-netinfo: 076df4f9b07f6670acf4ce9a75aac8d34c2e2ccc
+  react-native-netinfo: f0a9899081c185db1de5bb2fdc1c88c202a059ac
   react-native-restart: 7595693413fe3ca15893702f2c8306c62a708162
   react-native-safe-area-context: 851c62c48dce80ccaa5637b6aa5991a1bc36eca9
   react-native-sfsymbols: ca90d8bb7d6ad06523bf833f2becae22b97fb056
