@@ -120,7 +120,7 @@ describe('StudentJobCard', () => {
 
 #### Testing Custom Hooks
 ```typescript
-import {renderHook, act} from '@testing-library/react-native';
+import {renderHook, act} from '@testing-library/react-hooks';
 import {useStudentJobs} from '../hooks/use-student-jobs';
 
 describe('useStudentJobs', () => {
