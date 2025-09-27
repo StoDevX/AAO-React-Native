@@ -119,7 +119,7 @@ All About Olaf is a React Native mobile application for the St. Olaf College com
 - Log errors appropriately (using Sentry integration)
 
 ### Data Formatting
-- Use moment.js for date/time formatting (though consider migrating to date-fns)
+- **Do not use Moment.js for new code; it is deprecated.** Use modern alternatives such as `date-fns` or `Day.js` for date/time formatting.
 - Use utility functions for consistent data formatting
 - Handle edge cases in data parsing
 
