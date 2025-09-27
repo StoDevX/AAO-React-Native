@@ -12,6 +12,7 @@ import {
 	acknowledgeAcknowledgement,
 	selectAcknowledgement,
 } from '../../redux/parts/settings'
+import {platformPrefixIconName} from '../../../modules/icon/platform-prefix-icon-name'
 
 let Paragraph = Platform.OS === 'android' ? AndroidP : IosP
 let Ack = Platform.OS === 'android' ? AndroidAck : IosAck
@@ -67,7 +68,7 @@ type AcknowledgementProps = React.PropsWithChildren<{
 
 const TitleLeftIcon: React.FC<{size: number; color: string}> = (props) => {
 	return (
-		<Icon name="md-warning" size={props.size} style={{color: props.color}} />
+		<Icon name={platformPrefixIconName('warning')} size={props.size} style={{color: props.color}} />
 	)
 }
 

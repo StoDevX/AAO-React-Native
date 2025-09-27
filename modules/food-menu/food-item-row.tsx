@@ -6,8 +6,9 @@ import {Detail, ListRow, Title} from '@frogpond/lists'
 import type {MasterCorIconMapType, MenuItemType} from './types'
 import * as c from '@frogpond/colors'
 import Icon from 'react-native-vector-icons/Ionicons'
+import {platformPrefixIconName} from '../icon/platform-prefix-icon-name'
 
-const specialsIcon = Platform.OS === 'ios' ? 'ios-star' : 'md-star'
+const specialsIcon = platformPrefixIconName('star')
 
 type Props = {
 	corIcons: MasterCorIconMapType

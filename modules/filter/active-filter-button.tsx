@@ -11,6 +11,7 @@ import {
 } from 'react-native'
 import Icon from 'react-native-vector-icons/Ionicons'
 import * as c from '@frogpond/colors'
+import {platformPrefixIconName} from '../icon/platform-prefix-icon-name'
 
 type Props<T extends object> = {
 	filter: FilterType<T>
@@ -25,11 +26,7 @@ export function ActiveFilterButton<T extends object>({
 	onRemove,
 	style,
 }: Props<T>): JSX.Element {
-	let iconName = Platform.select({
-		ios: 'ios-close-circle',
-		android: 'md-close-circle',
-		default: '',
-	})
+	let iconName = platformPrefixIconName('close-circle')
 
 	let iconColor = c.label
 

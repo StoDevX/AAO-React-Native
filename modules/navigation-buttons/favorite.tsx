@@ -3,15 +3,15 @@ import {Platform} from 'react-native'
 import Icon from 'react-native-vector-icons/Ionicons'
 import {Touchable} from '@frogpond/touchable'
 import {rightButtonStyles as styles} from './styles'
+import {platformPrefixIconName} from '../icon/platform-prefix-icon-name'
 
 type Props = {
 	onFavorite: () => unknown
 	favorited: boolean
 }
 
-const filled = Platform.OS === 'ios' ? 'ios-heart' : 'md-heart'
-const outlined =
-	Platform.OS === 'ios' ? 'ios-heart-outline' : 'md-heart-outline'
+const filled = platformPrefixIconName('heart')
+const outlined = platformPrefixIconName('heart-outline')
 
 export function FavoriteButton(props: Props): JSX.Element {
 	const icon = props.favorited ? filled : outlined

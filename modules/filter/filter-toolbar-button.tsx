@@ -13,6 +13,7 @@ import type {FilterType} from './types'
 import {FilterPopover} from './filter-popover'
 import * as c from '@frogpond/colors'
 import {Touchable} from '@frogpond/touchable'
+import {platformPrefixIconName} from '../icon/platform-prefix-icon-name'
 
 const buttonStyles = StyleSheet.create({
 	button: {
@@ -35,11 +36,7 @@ const buttonStyles = StyleSheet.create({
 	},
 })
 
-const ICON_NAME = Platform.select({
-	ios: 'ios-chevron-down',
-	android: 'md-chevron-down',
-	default: '',
-})
+const ICON_NAME = platformPrefixIconName('chevron-down')
 
 type Props<T extends object> = {
 	filter: FilterType<T>
