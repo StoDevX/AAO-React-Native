@@ -133,7 +133,7 @@ Study these key directories to understand the app structure:
 - [AsyncStorage](https://react-native-async-storage.github.io/async-storage/)
 
 ### Utilities
-- [Moment.js](https://momentjs.com/) (consider migrating to date-fns)
+- [Moment.js](https://momentjs.com/) (deprecated; migrate to a modern alternative such as [date-fns](https://date-fns.org/), [dayjs](https://day.js.org/), or the native JavaScript Date API)
 - [Lodash](https://lodash.com/)
 - [React Native Device Info](https://github.com/react-native-device-info/react-native-device-info)
 - [React Native Keychain](https://github.com/oblador/react-native-keychain)
