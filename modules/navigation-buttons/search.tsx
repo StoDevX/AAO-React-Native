@@ -4,6 +4,7 @@ import Icon from 'react-native-vector-icons/Ionicons'
 import {Touchable} from '@frogpond/touchable'
 import {useTheme} from '@frogpond/app-theme'
 import {commonStyles, rightButtonStyles as styles} from './styles'
+import {platformPrefixIconName} from '../icon/platform-prefix-icon-name'
 
 type Props = {
 	onPress: () => void
@@ -27,9 +28,7 @@ export function SearchButton(props: Props): JSX.Element {
 				</Text>
 			) : (
 				<Icon
-					name={
-						Platform.OS === 'ios' ? 'ios-search-outline' : 'md-search-outline'
-					}
+					name={platformPrefixIconName('search-outline')}
 					style={styles.icon}
 				/>
 			)}

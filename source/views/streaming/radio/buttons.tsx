@@ -5,6 +5,7 @@ import type {Glyphs} from '@frogpond/icon'
 import {Icon} from '@frogpond/icon'
 import {Touchable} from '@frogpond/touchable'
 import {useTheme} from './theme'
+import {platformPrefixIconName} from '../../../../modules/icon/platform-prefix-icon-name'
 
 type ActionButtonProps = {
 	icon: Glyphs
@@ -36,7 +37,7 @@ type CallButtonProps = {
 export function CallButton({onPress}: CallButtonProps): JSX.Element {
 	return (
 		<SmallActionButton
-			icon={Platform.OS === 'ios' ? 'ios-call' : 'md-call'}
+			icon={platformPrefixIconName('call')}
 			onPress={onPress}
 		/>
 	)
@@ -51,7 +52,7 @@ export function ShowCalendarButton({
 }: ShowCalendarButtonProps): JSX.Element {
 	return (
 		<SmallActionButton
-			icon={Platform.OS === 'ios' ? 'ios-calendar' : 'md-calendar'}
+			icon={platformPrefixIconName('calendar')}
 			onPress={onPress}
 		/>
 	)
