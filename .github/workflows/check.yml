@@ -35,7 +35,7 @@ jobs:
           key: ${{ runner.os }}-node_modules-${{ hashFiles('.node-version', 'package-lock.json', '.github/job.yml') }}
 
       - if: steps.node-cache.outputs.cache-hit != 'true'
-        uses: actions/setup-node@1e60f620b9541d16bece96c5465dc8ee9832be0b # v4
+        uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
         with:
           node-version-file: '.node-version'
           cache: npm
@@ -67,7 +67,7 @@ jobs:
           key: ${{ runner.os }}-node_modules-${{ hashFiles('.node-version', 'package-lock.json', '.github/job.yml') }}
 
       - if: steps.node-cache.outputs.cache-hit != 'true'
-        uses: actions/setup-node@1e60f620b9541d16bece96c5465dc8ee9832be0b # v4
+        uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
         with:
           node-version-file: '.node-version'
           cache: npm
@@ -114,7 +114,7 @@ jobs:
           key: ${{ runner.os }}-cocoapods-ruby@${{ env.ruby-version }}-xcode@${{ env.xcode_version }}-${{ hashFiles('**/Podfile', '**/Podfile.lock', 'package-lock.json', '.github/job.yml') }}
 
       - if: steps.cocoapods-cache.outputs.cache-hit != 'true'
-        uses: actions/setup-node@1e60f620b9541d16bece96c5465dc8ee9832be0b # v4
+        uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
         with:
           node-version-file: '.node-version'
 
@@ -155,7 +155,7 @@ jobs:
     steps:
       - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
-      - uses: actions/setup-node@1e60f620b9541d16bece96c5465dc8ee9832be0b # v4
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
         with:
           node-version-file: '.node-version'
 
@@ -178,7 +178,7 @@ jobs:
     steps:
       - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
-      - uses: actions/setup-node@1e60f620b9541d16bece96c5465dc8ee9832be0b # v4
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
         with:
           node-version-file: '.node-version'
 
@@ -201,7 +201,7 @@ jobs:
     steps:
       - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
-      - uses: actions/setup-node@1e60f620b9541d16bece96c5465dc8ee9832be0b # v4
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
         with:
           node-version-file: '.node-version'
 
@@ -228,7 +228,7 @@ jobs:
     steps:
       - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
-      - uses: actions/setup-node@1e60f620b9541d16bece96c5465dc8ee9832be0b # v4
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
         with:
           node-version-file: '.node-version'
 
@@ -251,7 +251,7 @@ jobs:
     steps:
       - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
-      - uses: actions/setup-node@1e60f620b9541d16bece96c5465dc8ee9832be0b # v4
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
         with:
           node-version-file: '.node-version'
 
@@ -281,7 +281,7 @@ jobs:
       - name: Extract job definition
         run: yq '.jobs.${{ github.job }}' .github/workflows/check.yml > .github/job.yml
 
-      - uses: actions/setup-node@1e60f620b9541d16bece96c5465dc8ee9832be0b # v4
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
         with:
           node-version-file: '.node-version'
 
@@ -333,7 +333,7 @@ jobs:
       - name: Extract job definition
         run: yq '.jobs.${{ github.job }}' .github/workflows/check.yml > .github/job.yml
 
-      - uses: actions/setup-node@1e60f620b9541d16bece96c5465dc8ee9832be0b # v4
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
         with:
           node-version-file: '.node-version'
 
@@ -374,7 +374,7 @@ jobs:
     steps:
       - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
-      - uses: actions/setup-node@1e60f620b9541d16bece96c5465dc8ee9832be0b # v4
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
         with:
           node-version-file: '.node-version'
 
@@ -449,7 +449,7 @@ jobs:
           path: ios/build/Build/Products/
           key: ${{ runner.os }}-ios-xcode@${{ env.xcode_version }}-${{ hashFiles('**/project.pbxproj', '**/Podfile', '**/Podfile.lock', 'package-lock.json', '.github/job.yml') }}
 
-      - uses: actions/setup-node@1e60f620b9541d16bece96c5465dc8ee9832be0b # v4
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
         if: steps.app-cache.outputs.cache-hit != 'true'
         with:
           node-version-file: '.node-version'
@@ -615,7 +615,7 @@ jobs:
             exit 1
           fi
 
-      - uses: actions/setup-node@1e60f620b9541d16bece96c5465dc8ee9832be0b # v4
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
         with:
           node-version-file: '.node-version'
 
