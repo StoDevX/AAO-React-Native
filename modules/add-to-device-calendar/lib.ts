@@ -63,7 +63,7 @@ async function requestCalendarAccess(): Promise<boolean> {
 	let status = null
 	try {
 		status = await RNCalendarEvents.requestPermissions(false)
-	} catch (err) {
+	} catch {
 		return false
 	}
 

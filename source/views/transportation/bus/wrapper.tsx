@@ -42,6 +42,7 @@ let BusView = (props: Props): JSX.Element => {
 			line={activeBusLine}
 			now={now}
 			openMap={() => {
+				// eslint-disable-next-line @typescript-eslint/no-unused-expressions
 				activeBusLine &&
 					navigation.navigate('BusMapView', {line: activeBusLine})
 			}}
