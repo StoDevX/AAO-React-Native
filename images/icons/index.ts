@@ -1,5 +1,7 @@
 export const icons = {
+	// eslint-disable-next-line @typescript-eslint/no-require-imports
 	oldMain: require('./old-main.png'),
+	// eslint-disable-next-line @typescript-eslint/no-require-imports
 	windmill: require('./windmill.png'),
 }
 

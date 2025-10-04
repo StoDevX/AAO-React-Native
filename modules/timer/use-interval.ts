@@ -125,6 +125,7 @@ export function useInterval(
 	}, [callback])
 
 	useEffect(() => {
+		// eslint-disable-next-line @typescript-eslint/no-unused-expressions
 		autoStart && start()
 
 		return stop

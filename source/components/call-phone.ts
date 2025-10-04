@@ -12,10 +12,11 @@ export function callPhone(phoneNumber: string, opts?: Options): void {
 	const {prompt = true, title = ''} = opts || {}
 	try {
 		let phoneNumberAsUrl = `tel:${phoneNumber}`
+		// eslint-disable-next-line @typescript-eslint/no-unused-expressions
 		prompt
 			? promptCall(title, phoneNumberAsUrl, phoneNumber)
 			: openUrl(phoneNumberAsUrl)
-	} catch (err) {
+	} catch {
 		Alert.alert(
 			"Apologies, we couldn't call that number",
 			`We were trying to call "${phoneNumber}".`,

@@ -17,7 +17,7 @@ const config: Config = {
 	],
 	setupFiles: ['./scripts/jest-setup.js'],
 	transformIgnorePatterns: [
-		'node_modules/(?!(jest-)?react-native|@react-native|@frogpond|glamorous-native|react-navigation)',
+		'node_modules/(?!(jest-)?react-native|@react-native|@frogpond|glamorous-native|react-navigation|immer)',
 	],
 	reporters: [['github-actions', {silent: false}], 'summary'],
 }
