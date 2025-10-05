@@ -73,7 +73,7 @@
     "lodash": "4.17.21",
     "moment": "2.30.1",
     "moment-timezone": "0.5.45",
-    "p-props": "6.0.0",
+    "p-props": "6.1.0",
     "querystring": "0.2.1",
     "react": "18.2.0",
     "react-markdown": "2.5.1",
