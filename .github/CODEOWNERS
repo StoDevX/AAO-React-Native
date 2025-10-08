@@ -1,1 +1,5 @@
 *	@drewvolz @hawkrives kristofer.rye@gmail.com
+
+# Exclude from automatic review due to dependabot
+package.json
+package-lock.json
