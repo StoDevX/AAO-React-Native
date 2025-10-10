@@ -46,5 +46,5 @@
 			"matchPackageNames": ["@reduxjs/**", "react-redux"]
 		}
 	],
-	"prConcurrentLimit": 0
+	"prConcurrentLimit": 4
 }
