@@ -4,6 +4,7 @@ import Icon from 'react-native-vector-icons/Ionicons'
 import {NoticeView} from '@frogpond/notice'
 import * as c from '@frogpond/colors'
 import {openEmail} from '../../settings/screens/overview/support'
+import {platformPrefixIconName} from '../../../../modules/icon/platform-prefix-icon-name'
 
 const ERROR_MESSAGE =
 	"Make sure you are connected to the St. Olaf Network via eduroam or the VPN. If you are, please report this so we can make sure it doesn't happen again."
@@ -15,11 +16,7 @@ type Props = {
 }
 
 export function StoPrintErrorView(props: Props): JSX.Element {
-	let iconName: string =
-		Platform.select({
-			ios: 'ios-bug',
-			android: 'md-bug',
-		}) ?? 'ios-bug'
+	let iconName: string = platformPrefixIconName('bug')
 
 	return (
 		<ScrollView
