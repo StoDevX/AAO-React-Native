@@ -40,6 +40,8 @@ jobs:
         id: tag
         run: |
           NATIVE_COMPAT_VERSION=$(cat NATIVE_VERSION)
+          REPO_LOWERCASE=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
+          echo "repo=${REPO_LOWERCASE}" >> $GITHUB_OUTPUT
           if [[ "${{ github.event_name }}" == "pull_request" ]]; then
             echo "tag=pr-${{ github.event.pull_request.number }}-${NATIVE_COMPAT_VERSION}-${{ matrix.platform }}" >> $GITHUB_OUTPUT
           else
@@ -51,7 +53,7 @@ jobs:
         with:
           context: ./dist/ota
           push: true
-          tags: ghcr.io/${{ github.repository }}:${{ steps.tag.outputs.tag }}
+          tags: ghcr.io/${{ steps.tag.outputs.repo }}:${{ steps.tag.outputs.tag }}
           labels: org.opencontainers.image.source=${{ github.repositoryUrl }}
           # The following two lines make the image public
           # See: https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry#ensuring-workflow-access-to-your-package
