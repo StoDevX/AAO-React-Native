@@ -32,7 +32,9 @@ jobs:
         run: npm ci
 
       - name: Build OTA update
-        run: npm run build:ota -- --platform ${{ matrix.platform }}
+        run: |
+          mkdir -p dist/ota/bundles
+          npm run build:ota -- --platform ${{ matrix.platform }}
 
       - name: Generate image tag
         id: tag
