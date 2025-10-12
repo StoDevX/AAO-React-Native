@@ -1,0 +1,59 @@
+name: Publish OTA Update
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - 'v*.*.*'
+  pull_request:
+
+permissions:
+  packages: write
+
+jobs:
+  build_and_publish:
+    name: Build and Publish OTA Update
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        platform: [ios, android]
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version-file: '.node-version'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build OTA update
+        run: npm run build:ota -- --platform ${{ matrix.platform }}
+
+      - name: Generate image tag
+        id: tag
+        run: |
+          NATIVE_COMPAT_VERSION=$(cat NATIVE_VERSION)
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            echo "tag=pr-${{ github.event.pull_request.number }}-${NATIVE_COMPAT_VERSION}-${{ matrix.platform }}" >> $GITHUB_OUTPUT
+          else
+            echo "tag=${{ github.ref_name }}-${NATIVE_COMPAT_VERSION}-${{ matrix.platform }}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Publish to GHCR
+        uses: docker/build-push-action@v4
+        with:
+          context: ./dist/ota
+          push: true
+          tags: ghcr.io/${{ github.repository }}:${{ steps.tag.outputs.tag }}
+          labels: org.opencontainers.image.source=${{ github.repositoryUrl }}
+          # The following two lines make the image public
+          # See: https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry#ensuring-workflow-access-to-your-package
+          # and: https://github.com/docker/build-push-action/issues/294
+          # We're not using login-action as we have the permissions set at the workflow level
+          # All we need to do is set the actor to the GITHUB_TOKEN user
+          github-token: ${{ secrets.GITHUB_TOKEN }}
