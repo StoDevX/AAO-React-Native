@@ -67,4 +67,4 @@ jobs:
           # and: https://github.com/docker/build-push-action/issues/294
           # We're not using login-action as we have the permissions set at the workflow level
           # All we need to do is set the actor to the GITHUB_TOKEN user
-          github-token: ${{ secrets.GHCR_TOKEN }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
