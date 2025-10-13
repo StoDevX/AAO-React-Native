@@ -82,8 +82,6 @@ jobs:
         env:
           SOURCE_DATE_EPOCH: ${{ steps.git-timestamp.outputs.timestamp }}
         with:
-          enableBuildKit: true
-          multiPlatform: true
           context: ./dist/ota
           push: true
           tags: ${{ steps.meta.outputs.tags }}
