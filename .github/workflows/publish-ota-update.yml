@@ -36,6 +36,13 @@ jobs:
           mkdir -p dist/ota/bundles
           npm run build:ota -- --platform ${{ matrix.platform }}
 
+      - name: Create Dockerfile for OTA bundle
+        run: |
+          cat > dist/ota/Dockerfile <<'EOF'
+          FROM scratch
+          COPY . /
+          EOF
+
       - name: Generate image tag
         id: tag
         run: |
