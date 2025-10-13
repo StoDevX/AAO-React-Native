@@ -8,6 +8,7 @@ on:
   pull_request:
 
 permissions:
+  contents: read
   packages: write
 
 jobs:
@@ -54,6 +55,13 @@ jobs:
           else
             echo "tag=${{ github.ref_name }}-${NATIVE_COMPAT_VERSION}-${{ matrix.platform }}" >> $GITHUB_OUTPUT
           fi
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }} 
 
       - name: Publish to GHCR
         uses: docker/build-push-action@v4
