@@ -85,7 +85,9 @@ jobs:
           context: ./dist/ota
           push: true
           tags: ${{ steps.meta.outputs.tags }}
-          annotations: ${{ steps.meta.outputs.annotations }}
+          annotations: |
+            manifest:test.annotation=value
+            ${{ steps.meta.outputs.annotations }}
           # The following two lines make the image public
           # See: https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry#ensuring-workflow-access-to-your-package
           # and: https://github.com/docker/build-push-action/issues/294
