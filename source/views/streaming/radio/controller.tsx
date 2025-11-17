@@ -19,6 +19,7 @@ import {ActionButton, CallButton, ShowCalendarButton} from './buttons'
 import {openUrl} from '@frogpond/open-url'
 import {useNavigation} from '@react-navigation/native'
 import {RadioScheduleParamList} from '../../../navigation/types'
+import {platformPrefixIconName} from '../../../../modules/icon/platform-prefix-icon-name'
 
 // If you want to fix the inline player, switch to `true`
 const ALLOW_INLINE_PLAYER = false
@@ -34,12 +35,12 @@ function PlayButton(props: PlayButtonProps): JSX.Element {
 	const {state, onPlay, onPause, onLink} = props
 
 	if (!ALLOW_INLINE_PLAYER) {
-		return <ActionButton icon="ios-planet" onPress={onLink} text="Open" />
+		return <ActionButton icon={platformPrefixIconName('planet')} onPress={onLink} text="Open" />
 	}
 
 	switch (state) {
 		case 'paused':
-			return <ActionButton icon="ios-play" onPress={onPlay} text="Listen" />
+			return <ActionButton icon={platformPrefixIconName('play')} onPress={onPlay} text="Listen" />
 
 		case 'checking':
 			return (
@@ -47,10 +48,10 @@ function PlayButton(props: PlayButtonProps): JSX.Element {
 			)
 
 		case 'playing':
-			return <ActionButton icon="ios-pause" onPress={onPlay} text="Pause" />
+			return <ActionButton icon={platformPrefixIconName('pause')} onPress={onPlay} text="Pause" />
 
 		default:
-			return <ActionButton icon="ios-bug" onPress={noop} text="Error" />
+			return <ActionButton icon={platformPrefixIconName('bug')} onPress={noop} text="Error" />
 	}
 }
 

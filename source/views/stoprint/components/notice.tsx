@@ -9,6 +9,7 @@ import {
 import Icon from 'react-native-vector-icons/Ionicons'
 import {NoticeView} from '@frogpond/notice'
 import * as c from '@frogpond/colors'
+import {platformPrefixIconName} from '../../../../modules/icon/platform-prefix-icon-name'
 
 type Props = {
 	buttonText: string
@@ -23,7 +24,7 @@ type Props = {
 export const StoPrintNoticeView = (props: Props): React.ReactElement => {
 	let {buttonText, description, header, onPress, text, onRefresh, refreshing} =
 		props
-	let iconName = Platform.OS === 'ios' ? 'ios-print' : 'md-print'
+	let iconName = platformPrefixIconName('print')
 
 	return (
 		<ScrollView
