@@ -104,7 +104,8 @@
     "timers": "0.1.1",
     "tinycolor2": "1.6.0",
     "url": "0.11.4",
-    "wordwrap": "1.0.0"
+    "wordwrap": "1.0.0",
+    "zustand": "4.4.1"
   },
   "devDependencies": {
     "@babel/core": "7.25.2",

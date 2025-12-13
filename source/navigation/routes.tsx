@@ -266,6 +266,13 @@ const HomeStackScreens = () => {
 					options={directory.DetailNavigationOptions}
 				/>
 			</Stack.Group>
+			<Stack.Group>
+				<Stack.Screen
+					component={faqs.View}
+					name="Faq"
+					options={faqs.NavigationOptions}
+				/>
+			</Stack.Group>
 		</Stack.Navigator>
 	)
 }
@@ -353,6 +360,11 @@ const ComponentLibraryStackScreens = () => {
 				component={settings.ContextMenuLibrary}
 				name="ContextMenuLibrary"
 				options={{title: 'Context Menus'}}
+			/>
+			<ComponentLibraryStack.Screen
+				component={settings.FaqBannerLibrary}
+				name="FaqBannerLibrary"
+				options={settings.FaqBannerNavigationOptions}
 			/>
 		</ComponentLibraryStack.Navigator>
 	)
