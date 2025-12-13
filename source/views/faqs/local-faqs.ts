@@ -6,7 +6,7 @@ export const fallbackLegacyText =
 export const fallbackFaqs: Faq[] = [
 	{
 		id: 'sis-login-disabled',
-		question: "Why can't I log in to Balances anymore?",
+		question: "Why can't I log in and see my balances?",
 		answer:
 			'Balances login now appears to require Google sign-in on St. Olaf’s end, which the All About Olaf app can’t currently access or support.\n\nThese features will be unavailable until further notice. We’ll update this if access options change.',
 		bannerTitle: 'Login and Balances Unavailable',
@@ -20,7 +20,7 @@ export const fallbackFaqs: Faq[] = [
 		question: 'How do I get support?',
 		answer:
 			'Email [allaboutolaf@frogpond.tech](mailto:allaboutolaf@frogpond.tech) with any screenshots or details you have and a developer will follow up.',
-		bannerTitle: 'Need help with the app?',
+		bannerTitle: 'How do I get support?',
 		bannerText: 'Reach out to the team if something looks wrong or confusing.',
 		targets: ['Home'],
 		updatedAt: '2024-12-02T00:00:00Z',
@@ -30,7 +30,7 @@ export const fallbackFaqs: Faq[] = [
 		question: 'How can I reset the app?',
 		answer:
 			'Open Settings → Support → Reset Everything. This will clear cached data and reload.',
-		bannerTitle: 'Need to reset the app?',
+		bannerTitle: 'How can I reset the app?',
 		bannerText: 'You can reset cached data from Settings if things get stuck.',
 		targets: ['SettingsRoot', 'Settings'],
 		updatedAt: '2024-12-02T00:00:00Z',
