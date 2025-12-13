@@ -18,13 +18,15 @@ import {getFaqVersion, useFaqBannerStore} from './store'
 
 type Props = {
 	style?: StyleProp<ViewStyle>
-	target: FaqTarget
+	target?: FaqTarget
+	faqId?: string
 	onPressOverride?: () => void
 }
 
 export function FaqBanner({
 	style,
 	target,
+	faqId,
 	onPressOverride,
 }: Props): JSX.Element | null {
 	let navigation =
@@ -38,8 +40,16 @@ export function FaqBanner({
 			return undefined
 		}
 
-		return data.faqs.find((entry) => entry.targets.includes(target))
-	}, [data, target])
+		if (faqId) {
+			return data.faqs.find((entry) => entry.id === faqId)
+		}
+
+		if (target) {
+			return data.faqs.find((entry) => entry.targets.includes(target))
+		}
+
+		return undefined
+	}, [data, target, faqId])
 
 	let faqVersion = faq ? getFaqVersion(faq) : ''
 	let isDismissed = Boolean(faq && dismissedMap[faq.id] === faqVersion)
@@ -60,7 +70,7 @@ export function FaqBanner({
 			accessibilityRole="button"
 			onPress={onPress}
 			style={[styles.container, style]}
-			testID={`faq-banner-${target}`}
+			testID={`faq-banner-${faqId ?? target ?? 'unknown'}`}
 		>
 			<View style={styles.header}>
 				<Text style={styles.title}>{faq.bannerTitle ?? faq.question}</Text>

@@ -46,7 +46,7 @@ function normalizeFaqResponse(raw: unknown): FaqQueryData {
 	}
 
 	let faqs = Array.isArray(raw.faqs)
-		? (raw.faqs as unknown[]).map(normalizeFaq).filter(isFaq)
+		? dedupeFaqs((raw.faqs as unknown[]).map(normalizeFaq).filter(isFaq))
 		: []
 
 	if (!faqs.length) {
@@ -184,3 +184,26 @@ function buildSummary(value: string): string {
 }
 
 export {emptyData as emptyFaqData}
+
+function dedupeFaqs(faqs: Faq[]): Faq[] {
+	let seen = new Map<FaqTarget, string>()
+	let result: Faq[] = []
+
+	for (let faq of faqs) {
+		let hasConflict = faq.targets.some(
+			(target) => seen.get(target) && seen.get(target) !== faq.id,
+		)
+
+		if (hasConflict) {
+			continue
+		}
+
+		for (let target of faq.targets) {
+			seen.set(target, faq.id)
+		}
+
+		result.push(faq)
+	}
+
+	return result
+}

@@ -6,20 +6,20 @@ import {CloseScreenButton} from '@frogpond/navigation-buttons'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 
 import {FaqBanner} from '../../../../faqs'
-
-const banners = [
-	{target: 'Home' as const, title: 'Home'},
-	{target: 'Menus' as const, title: 'Menus'},
-	{target: 'SIS' as const, title: 'SIS'},
-	{target: 'SettingsRoot' as const, title: 'Settings'},
-]
+import {fallbackFaqs} from '../../../../faqs/local-faqs'
 
 export const FaqBannerLibrary = (): JSX.Element => (
 	<ScrollView contentContainerStyle={styles.container}>
-		{banners.map((banner) => (
-			<View key={banner.target} style={styles.example}>
-				<Text style={styles.exampleTitle}>{banner.title}</Text>
-				<FaqBanner style={styles.banner} target={banner.target} />
+		{fallbackFaqs.map((banner) => (
+			<View key={banner.id} style={styles.example}>
+				<Text style={styles.exampleTitle}>
+					Targets: {banner.targets.join(', ')}
+				</Text>
+				<FaqBanner
+					faqId={banner.id}
+					style={styles.banner}
+					target={banner.targets[0]}
+				/>
 			</View>
 		))}
 	</ScrollView>
