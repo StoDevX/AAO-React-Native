@@ -2,7 +2,8 @@ import * as React from 'react'
 import {ScrollView, View, StyleSheet} from 'react-native'
 
 import {AllViews} from '../views'
-import {FaqBanner} from '../faqs'
+import {FaqBannerGroup} from '../faqs'
+import {FAQ_TARGETS} from '../faqs/constants'
 import {Column} from '@frogpond/layout'
 import {partitionByIndex} from '../../lib/partition-by-index'
 import {HomeScreenButton, CELL_MARGIN} from './button'
@@ -41,7 +42,7 @@ function HomePage(): JSX.Element {
 			showsVerticalScrollIndicator={false}
 			testID="screen-homescreen"
 		>
-			<FaqBanner style={styles.banner} target="Home" />
+			<FaqBannerGroup style={styles.banner} target={FAQ_TARGETS.HOME} />
 
 			<View style={styles.cells}>
 				{columns.map((contents, i) => (

@@ -3,11 +3,12 @@ import {RefreshControl, StyleSheet, ScrollView, View, Text} from 'react-native'
 import * as c from '@frogpond/colors'
 import {Markdown} from '@frogpond/markdown'
 import {LoadingView, NoticeView} from '@frogpond/notice'
-import {RouteProp, useRoute} from '@react-navigation/native'
+import {ParamListBase, RouteProp, useRoute} from '@react-navigation/native'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
-import {useFaqs, Faq, FaqQueryData, emptyFaqData} from './query'
+import {useFaqs, emptyFaqData} from './query'
+import type {Faq, FaqQueryData} from './types'
 
-type FaqRoute = RouteProp<ReactNavigation.RootParamList, 'Faq'>
+type FaqRoute = RouteProp<ParamListBase & {Faq: {faqId?: string}}, 'Faq'>
 
 const styles = StyleSheet.create({
 	container: {
@@ -121,7 +122,7 @@ const FaqCard = ({faq, isHighlighted}: CardProps): JSX.Element => {
 }
 
 export {FaqView as View}
-export {FaqBanner} from './banner'
+export {FaqBanner, FaqBannerGroup} from './banner'
 
 export const NavigationOptions: NativeStackNavigationOptions = {
 	title: 'FAQs',

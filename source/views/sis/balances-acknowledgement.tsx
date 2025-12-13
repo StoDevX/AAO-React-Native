@@ -12,12 +12,9 @@ import {
 	acknowledgeAcknowledgement,
 	selectAcknowledgement,
 } from '../../redux/parts/settings'
-import {FaqBanner} from '../faqs'
 
 let Paragraph = Platform.OS === 'android' ? AndroidP : IosP
 let Ack = Platform.OS === 'android' ? AndroidAck : IosAck
-
-const SisLoginFaqBanner = () => <FaqBanner style={styles.banner} target="SIS" />
 
 export function BalancesOrAcknowledgementView(): JSX.Element {
 	let dispatch = useAppDispatch()
@@ -83,7 +80,6 @@ function AndroidAck(props: AcknowledgementProps) {
 
 	return (
 		<ScrollView contentContainerStyle={styles.container}>
-			<SisLoginFaqBanner />
 			<Card style={styles.androidCard}>
 				<Card.Title left={AvatarIcon} subtitle={subtitle} title={title} />
 				<Card.Content>{children}</Card.Content>
@@ -102,7 +98,6 @@ function IosAck(props: AcknowledgementProps) {
 
 	return (
 		<ScrollView contentContainerStyle={styles.container}>
-			<SisLoginFaqBanner />
 			<IosCard header={title}>
 				<>
 					{children}
@@ -119,10 +114,6 @@ function IosAck(props: AcknowledgementProps) {
 let styles = StyleSheet.create({
 	container: {
 		marginVertical: 10,
-	},
-	banner: {
-		marginHorizontal: 16,
-		marginBottom: 16,
 	},
 	cardText: {
 		color: c.secondaryLabel,

@@ -2,9 +2,14 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import {create} from 'zustand'
 import {persist, createJSONStorage} from 'zustand/middleware'
 
-import type {Faq} from './query'
+import type {Faq} from './types'
 
-type DismissedMap = Record<string, string>
+type DismissedEntry = {
+	version: string
+	dismissedAt: number
+}
+
+type DismissedMap = Record<string, DismissedEntry>
 
 type BannerStore = {
 	dismissed: DismissedMap
@@ -24,7 +29,7 @@ export const useFaqBannerStore = create<BannerStore>()(
 				set((state) => ({
 					dismissed: {
 						...state.dismissed,
-						[faqId]: version,
+						[faqId]: {version, dismissedAt: Date.now()},
 					},
 				})),
 			resetFaq: (faqId) =>
