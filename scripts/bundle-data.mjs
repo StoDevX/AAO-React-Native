@@ -5,6 +5,7 @@ import path from 'node:path'
 import mkdirp from 'mkdirp'
 import {bundleDataDir} from './bundle-data-dir.mjs'
 import {convertDataFile} from './convert-data-file.mjs'
+import {buildFaqs} from './build-faqs.mjs'
 
 const isDir = (pth) => fs.statSync(pth).isDirectory()
 const isFile = (pth) => fs.statSync(pth).isFile()
@@ -43,7 +44,9 @@ dirs.forEach((dirname) => {
 })
 
 // Convert these files into JSON equivalents
-const files = findFilesIn(fromDir)
+const specialFiles = new Map([['faqs.yaml', buildFaqs]])
+
+const files = findFilesIn(fromDir).filter((file) => !specialFiles.has(file))
 files.forEach((file) => {
 	// Get the absolute paths to the input and output files
 	let input = path.join(fromDir, file)
@@ -57,3 +60,16 @@ files.forEach((file) => {
 	}
 	console.timeEnd(`convert-data-file ${input} ${output}`)
 })
+
+for (let [file, builder] of specialFiles.entries()) {
+	let source = path.join(fromDir, file)
+	if (!fs.existsSync(source)) {
+		continue
+	}
+
+	let output = path.join(toDir, file).replace(/\.(.*)$/u, '.json')
+	console.log(`build-faqs ${source} ${output}`)
+	console.time(`build-faqs ${source} ${output}`)
+	builder({sourceFile: source, outputFile: output})
+	console.timeEnd(`build-faqs ${source} ${output}`)
+}

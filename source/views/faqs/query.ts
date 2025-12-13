@@ -1,30 +1,12 @@
 import {client} from '@frogpond/api'
 import {useQuery, UseQueryResult} from '@tanstack/react-query'
-import {
-	RootViewsParamList,
-	SettingsStackParamList,
-} from '../../navigation/types'
 import {fallbackFaqs, fallbackLegacyText} from './local-faqs'
+import {evaluateConditions} from './conditions'
+import {parseFaqMetadata} from './schema'
+import type {Faq, FaqQueryData, FaqTarget} from './types'
 
 export const keys = {
 	all: ['faqs'] as const,
-}
-
-export type FaqTarget = keyof (RootViewsParamList & SettingsStackParamList)
-
-export type Faq = {
-	id: string
-	question: string
-	answer: string
-	targets: FaqTarget[]
-	bannerTitle: string
-	bannerText: string
-	updatedAt?: string
-}
-
-export type FaqQueryData = {
-	faqs: Faq[]
-	legacyText?: string
 }
 
 const emptyData: FaqQueryData = {
@@ -46,7 +28,10 @@ function normalizeFaqResponse(raw: unknown): FaqQueryData {
 	}
 
 	let faqs = Array.isArray(raw.faqs)
-		? dedupeFaqs((raw.faqs as unknown[]).map(normalizeFaq).filter(isFaq))
+		? (raw.faqs as unknown[])
+				.map(normalizeFaq)
+				.filter(isFaq)
+				.filter((faq) => evaluateConditions(faq.conditions))
 		: []
 
 	if (!faqs.length) {
@@ -86,8 +71,9 @@ function normalizeFaq(value: unknown, index: number): Faq | null {
 		slugify(question) ??
 		`faq-${index.toString()}`
 
-	let bannerTitle = readString(value, ['bannerTitle']) ?? question
-	let summary = readString(value, ['bannerText', 'summary'])
+	let metadata = parseFaqMetadata(value)
+	let bannerTitle = metadata.bannerTitle ?? question
+	let summary = metadata.bannerText ?? readString(value, ['summary'])
 	let bannerText = summary ?? buildSummary(answer)
 	let updatedAt = readString(value, ['updatedAt'])
 	let targets = normalizeTargets(value)
@@ -99,6 +85,14 @@ function normalizeFaq(value: unknown, index: number): Faq | null {
 		targets,
 		bannerTitle,
 		bannerText,
+		severity: metadata.severity ?? 'notice',
+		icon: metadata.icon,
+		backgroundColor: metadata.backgroundColor,
+		foregroundColor: metadata.foregroundColor,
+		dismissable: metadata.dismissable ?? true,
+		repeatRule: metadata.repeatRule,
+		conditions: metadata.conditions,
+		bannerCta: metadata.bannerCta,
 		updatedAt,
 	}
 }
@@ -184,26 +178,3 @@ function buildSummary(value: string): string {
 }
 
 export {emptyData as emptyFaqData}
-
-function dedupeFaqs(faqs: Faq[]): Faq[] {
-	let seen = new Map<FaqTarget, string>()
-	let result: Faq[] = []
-
-	for (let faq of faqs) {
-		let hasConflict = faq.targets.some(
-			(target) => seen.get(target) && seen.get(target) !== faq.id,
-		)
-
-		if (hasConflict) {
-			continue
-		}
-
-		for (let target of faq.targets) {
-			seen.set(target, faq.id)
-		}
-
-		result.push(faq)
-	}
-
-	return result
-}
