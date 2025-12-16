@@ -1,3 +1,5 @@
+# yaml-language-server: $schema=./_schemas/faqs.yaml
+
 legacyText: |-
   # Support
   Say hello to us at [allaboutolaf@frogpond.tech](mailto:allaboutolaf@frogpond.tech).
