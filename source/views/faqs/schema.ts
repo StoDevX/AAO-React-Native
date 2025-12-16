@@ -19,7 +19,7 @@ const platformSchema = z.union([
 const dateTimeString = z
 	.string()
 	.trim()
-	.pipe(z.string().datetime({ offset: true }))
+	.pipe(z.string().datetime({offset: true}))
 
 const conditionRuleSchema = z
 	.object({
