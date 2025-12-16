@@ -72,8 +72,8 @@ function normalizeFaq(value: unknown, index: number): Faq | null {
 		`faq-${index.toString()}`
 
 	let metadata = parseFaqMetadata(value)
-	let bannerTitle = metadata.bannerTitle ?? question
-	let summary = metadata.bannerText ?? readString(value, ['summary'])
+	let bannerTitle = metadata.bannerTitle || question
+	let summary = metadata.bannerText || readString(value, ['summary'])
 	let bannerText = summary ?? buildSummary(answer)
 	let updatedAt = readString(value, ['updatedAt'])
 	let targets = normalizeTargets(value)
@@ -85,11 +85,11 @@ function normalizeFaq(value: unknown, index: number): Faq | null {
 		targets,
 		bannerTitle,
 		bannerText,
-		severity: metadata.severity ?? 'notice',
+		severity: metadata.severity,
 		icon: metadata.icon,
 		backgroundColor: metadata.backgroundColor,
 		foregroundColor: metadata.foregroundColor,
-		dismissable: metadata.dismissable ?? true,
+		dismissable: metadata.dismissable,
 		repeatRule: metadata.repeatRule,
 		conditions: metadata.conditions,
 		bannerCta: metadata.bannerCta,
@@ -155,20 +155,14 @@ function slugify(value: string): string | undefined {
 }
 
 function stripMarkdown(value: string): string {
-	return (
-		value
-			// eslint-disable-next-line require-unicode-regexp
-			.replace(/!\[[^\]]*]\([^)]*\)/g, '')
-			// eslint-disable-next-line require-unicode-regexp
-			.replace(/\[([^\]]+)]\(([^)]+)\)/g, '$1')
-			// eslint-disable-next-line require-unicode-regexp
-			.replace(/[`*_>#]/g, '')
-	)
+	return value
+		.replace(/!\[[^\]]*\]\([^)]*\)/gu, '')
+		.replace(/\[([^\]]+)\]\(([^)]+)\)/gu, '$1')
+		.replace(/[`*_>#]/gu, '')
 }
 
 function buildSummary(value: string): string {
-	// eslint-disable-next-line require-unicode-regexp
-	let plain = stripMarkdown(value).replace(/\s+/g, ' ').trim()
+	let plain = stripMarkdown(value).replace(/\s+/gu, ' ').trim()
 
 	if (plain.length <= 140) {
 		return plain
