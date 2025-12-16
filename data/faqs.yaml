@@ -1,5 +1,3 @@
-# yaml-language-server: $schema=./_schemas/faqs.yaml
-
 legacyText: |-
   # Support
   Say hello to us at [allaboutolaf@frogpond.tech](mailto:allaboutolaf@frogpond.tech).
@@ -9,6 +7,18 @@ legacyText: |-
   - Building Hours: It reports the 2am buildings as open too often; for instance, the Pause is open on Saturday at 2am, continuing from Friday, but the app reports it as being open on Friday at 2am, as well. This is incorrect.
 
 faqs:
+  - id: support
+    question: "Say hello to us"
+    answer: "Email us at [allaboutolaf@frogpond.tech](mailto:allaboutolaf@frogpond.tech)."
+    bannerTitle: Say hello to us
+    bannerText: "Email us at [allaboutolaf@frogpond.tech](mailto:allaboutolaf@frogpond.tech)."
+    targets:
+      - "Faq"
+    severity: alert
+    icon: email-circle
+    dismissable: false
+    updatedAt: '2025-12-14T00:00:00Z'
+
   - id: sis-login-disabled
     question: "Why can't I log in and see my balances?"
     answer: |-
