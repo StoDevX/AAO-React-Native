@@ -8,12 +8,12 @@ legacyText: |-
 
 faqs:
   - id: support
-    question: "Say hello to us"
-    answer: "Email us at [allaboutolaf@frogpond.tech](mailto:allaboutolaf@frogpond.tech)."
+    question: 'Say hello to us'
+    answer: 'Email us at [allaboutolaf@frogpond.tech](mailto:allaboutolaf@frogpond.tech).'
     bannerTitle: Say hello to us
-    bannerText: "Email us at [allaboutolaf@frogpond.tech](mailto:allaboutolaf@frogpond.tech)."
+    bannerText: 'Email us at [allaboutolaf@frogpond.tech](mailto:allaboutolaf@frogpond.tech).'
     targets:
-      - "Faq"
+      - 'Faq'
     severity: alert
     icon: email-circle
     dismissable: false
