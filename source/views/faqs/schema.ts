@@ -3,138 +3,134 @@ import {z} from 'zod'
 import {parseConditionInput} from './conditions'
 import type {ConditionNode, FaqSeverity, RepeatRule} from './types'
 
-const severitySchema = z.union([
-	z.literal('notice'),
-	z.literal('info'),
-	z.literal('alert'),
+const trimmedString = z.string().trim().min(1)
+const optionalTrimmedString = z.string().trim().min(1).optional()
+
+const severitySchema = z
+	.union([z.literal('notice'), z.literal('info'), z.literal('alert')])
+	.default('notice')
+
+const platformSchema = z.union([
+	z.literal('ios'),
+	z.literal('android'),
+	z.literal('native'),
+])
+
+const dateTimeString = z
+	.string()
+	.trim()
+	.pipe(z.string().datetime({ offset: true }))
+
+const conditionRuleSchema = z
+	.object({
+		platform: platformSchema.optional(),
+		platforms: z.array(platformSchema).nonempty().optional(),
+		versionRange: optionalTrimmedString,
+		startDate: dateTimeString.optional(),
+		endDate: dateTimeString.optional(),
+	})
+	.refine(
+		(value) =>
+			Boolean(
+				value.platform ??
+					value.platforms?.length ??
+					value.versionRange ??
+					value.startDate ??
+					value.endDate,
+			),
+		{message: 'Condition rule must include at least one filter'},
+	)
+
+type ConditionInput =
+	| {and: ConditionInput[]}
+	| {or: ConditionInput[]}
+	| {not: ConditionInput}
+	| z.infer<typeof conditionRuleSchema>
+
+const conditionNodeSchema: z.ZodType<ConditionInput> = z.lazy(() =>
+	z.union([
+		z.object({
+			and: z.array(conditionNodeSchema).min(1),
+		}),
+		z.object({
+			or: z.array(conditionNodeSchema).min(1),
+		}),
+		z.object({
+			not: conditionNodeSchema,
+		}),
+		conditionRuleSchema,
+	]),
+)
+
+const conditionsSchema = z.union([
+	conditionNodeSchema,
+	z.array(conditionNodeSchema).min(1),
 ])
 
 const metadataSchema = z
 	.object({
-		bannerTitle: z.string().optional(),
-		bannerText: z.string().optional(),
-		bannerCta: z.string().optional(),
-		ctaText: z.string().optional(),
-		severity: severitySchema.optional(),
-		icon: z.string().optional(),
-		backgroundColor: z.string().optional(),
-		foregroundColor: z.string().optional(),
-		dismissable: z.boolean().optional(),
-		repeatIfDismissed: z.any().optional(),
-		repeatIntervalHours: z.number().positive().optional(),
-		repeatIntervalMinutes: z.number().positive().optional(),
-		repeatInterval: z.string().optional(),
-		conditions: z.any().optional(),
+		bannerTitle: trimmedString,
+		bannerText: trimmedString,
+		bannerCta: optionalTrimmedString,
+		ctaText: optionalTrimmedString,
+		severity: severitySchema,
+		icon: optionalTrimmedString,
+		backgroundColor: optionalTrimmedString,
+		foregroundColor: optionalTrimmedString,
+		dismissable: z.boolean().default(true),
+		repeatInterval: optionalTrimmedString,
+		conditions: conditionsSchema.optional(),
 	})
-	.partial()
+	.passthrough()
 
 type MetadataInput = z.infer<typeof metadataSchema>
 
 export type ParsedFaqMetadata = {
-	bannerTitle?: string
-	bannerText?: string
+	bannerTitle: string
+	bannerText: string
 	bannerCta?: string
-	severity?: FaqSeverity
+	severity: FaqSeverity
 	icon?: string
 	backgroundColor?: string
 	foregroundColor?: string
-	dismissable?: boolean
+	dismissable: boolean
 	repeatRule?: RepeatRule
 	conditions?: ConditionNode[]
+}
+
+const fallbackMetadata: ParsedFaqMetadata = {
+	bannerTitle: '',
+	bannerText: '',
+	severity: 'notice',
+	dismissable: true,
 }
 
 export function parseFaqMetadata(value: unknown): ParsedFaqMetadata {
 	let result = metadataSchema.safeParse(value ?? {})
 
 	if (!result.success) {
-		return {}
+		return {...fallbackMetadata}
 	}
 
 	let data = result.data
 
 	return {
-		bannerTitle: optionalString(data.bannerTitle),
-		bannerText: optionalString(data.bannerText),
-		bannerCta: optionalString(data.bannerCta ?? data.ctaText),
-		severity: data.severity ?? 'notice',
-		icon: optionalString(data.icon),
-		backgroundColor: optionalString(data.backgroundColor),
-		foregroundColor: optionalString(data.foregroundColor),
-		dismissable: data.dismissable ?? true,
+		bannerTitle: data.bannerTitle,
+		bannerText: data.bannerText,
+		bannerCta: data.bannerCta ?? data.ctaText,
+		severity: data.severity,
+		icon: data.icon,
+		backgroundColor: data.backgroundColor,
+		foregroundColor: data.foregroundColor,
+		dismissable: data.dismissable,
 		repeatRule: parseRepeatRule(data),
 		conditions: parseConditionInput(data.conditions),
 	}
 }
 
-function optionalString(value: string | undefined): string | undefined {
-	if (!value) {
-		return undefined
-	}
-
-	let trimmed = value.trim()
-	return trimmed.length ? trimmed : undefined
-}
-
 function parseRepeatRule(data: MetadataInput): RepeatRule | undefined {
-	let fromValue = parseRepeatValue(data.repeatIfDismissed)
-	if (fromValue) {
-		return fromValue
-	}
-
-	if (typeof data.repeatIntervalHours === 'number') {
-		return {
-			intervalMs: data.repeatIntervalHours * 60 * 60 * 1000,
-			description: `${data.repeatIntervalHours}h`,
-		}
-	}
-
-	if (typeof data.repeatIntervalMinutes === 'number') {
-		return {
-			intervalMs: data.repeatIntervalMinutes * 60 * 1000,
-			description: `${data.repeatIntervalMinutes}m`,
-		}
-	}
-
 	if (data.repeatInterval) {
 		return parseRepeatString(data.repeatInterval)
-	}
-
-	return undefined
-}
-
-function parseRepeatValue(value: unknown): RepeatRule | undefined {
-	if (!value) {
-		return undefined
-	}
-
-	if (typeof value === 'string') {
-		return parseRepeatString(value)
-	}
-
-	if (!isRecord(value)) {
-		return undefined
-	}
-
-	if (value.repeat === false) {
-		return undefined
-	}
-
-	if (typeof value.intervalHours === 'number') {
-		return {
-			intervalMs: value.intervalHours * 60 * 60 * 1000,
-			description: `${value.intervalHours}h`,
-		}
-	}
-
-	if (typeof value.intervalMinutes === 'number') {
-		return {
-			intervalMs: value.intervalMinutes * 60 * 1000,
-			description: `${value.intervalMinutes}m`,
-		}
-	}
-
-	if (typeof value.interval === 'string') {
-		return parseRepeatString(value.interval)
 	}
 
 	return undefined
@@ -222,8 +218,4 @@ function parseIsoDuration(value: string): number | undefined {
 		seconds * 1000
 
 	return totalMs > 0 ? totalMs : undefined
-}
-
-function isRecord(value: unknown): value is Record<string, any> {
-	return typeof value === 'object' && value !== null
 }
