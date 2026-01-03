@@ -78,5 +78,7 @@ target 'AllAboutOlaf' do
 				config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = deployment_target
 			end
 		end
+
+			system('cd .. && scripts/apply-patches.sh')
 	end
 end
