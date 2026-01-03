@@ -12,7 +12,7 @@
     "data": "echo 'use the `bundle-data` script instead' && exit 1",
     "ios": "react-native run-ios",
     "lint": "eslint --report-unused-disable-directives --cache source/ modules/ scripts/ images/",
-    "prepare": "patch -p0 -Nfsi contrib/*.patch || true",
+    "prepare": "scripts/apply-patches.sh",
     "pretty": "prettier --write '{source,modules,scripts,images,e2e}/**/*.{js,ts,tsx,json}' 'data/**/*.css' '{*,.*}.{yaml,yml,json,json5,js,ts,tsx}'",
     "p": "pretty-quick",
     "pods": "scripts/pods.sh",

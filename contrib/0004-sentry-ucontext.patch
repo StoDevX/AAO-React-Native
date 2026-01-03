@@ -1,0 +1,16 @@
+diff --git ios/Pods/Sentry/Sources/SentryCrash/Recording/Tools/SentryCrashMachineContext.c ios/Pods/Sentry/Sources/SentryCrash/Recording/Tools/SentryCrashMachineContext.c
+index c44ec24..6fb78bc 100644
+--- ios/Pods/Sentry/Sources/SentryCrash/Recording/Tools/SentryCrashMachineContext.c
++++ ios/Pods/Sentry/Sources/SentryCrash/Recording/Tools/SentryCrashMachineContext.c
+@@ -35,7 +35,8 @@
+ #include <mach/mach.h>
+ 
+ // #define SentryCrashLogger_LocalLevel TRACE
+ #include "SentryCrashLogger.h"
+ 
+-#ifdef __arm64__
++#ifdef __arm64__
++#    include <sys/_types/_ucontext64.h>
+ #    define UC_MCONTEXT uc_mcontext64
+ typedef ucontext64_t SignalUserContext;
+ #else
