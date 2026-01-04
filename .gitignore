@@ -68,6 +68,7 @@ fastlane/play-private-key.json
 *.swp
 
 # rubygems bundle
+/.bundle/
 /vendor/bundle/
 
 # detox artifacts folder

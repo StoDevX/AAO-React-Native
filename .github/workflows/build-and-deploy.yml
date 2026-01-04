@@ -40,7 +40,7 @@ jobs:
           cache: npm
       - uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '3.4.7'
+          ruby-version: '3.4.8'
           bundler-cache: true
       - name: Restore Gradle cache
         uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
@@ -84,7 +84,7 @@ jobs:
           cache: npm
       - uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '3.4.7'
+          ruby-version: '3.4.8'
           bundler-cache: true
       - run: sudo xcode-select -s /Applications/Xcode_15.2.app
       - run: git fetch --prune --unshallow
