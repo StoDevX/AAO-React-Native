@@ -6,7 +6,6 @@
     "isolatedModules": true,
     "jsx": "react",
     "lib": [
-      "DOM",
       "ESNext"
     ],
     "module": "esnext",
@@ -16,10 +15,12 @@
     "skipLibCheck": true,
     "strict": true,
     "resolveJsonModule": true,
-    "target": "esnext"
+    "target": "esnext",
+    "typeRoots": [
+      "./types"
+    ]
   },
   "exclude": [
     "node_modules",
-    "scripts"
   ]
 }

@@ -2,6 +2,7 @@ import * as React from 'react'
 import {useCallback, useState} from 'react'
 import {
 	Image,
+	ImageResolvedAssetSource,
 	ScrollView,
 	StyleSheet,
 	Text,
@@ -14,7 +15,7 @@ import {callPhone} from '../../../components/call-phone'
 import {Row} from '@frogpond/layout'
 import {StreamPlayer} from './player'
 import type {HtmlAudioError, PlayState} from './types'
-import {useTheme} from './theme'
+import {theming} from './theme'
 import {ActionButton, CallButton, ShowCalendarButton} from './buttons'
 import {openUrl} from '@frogpond/open-url'
 import {useNavigation} from '@react-navigation/native'
@@ -55,7 +56,7 @@ function PlayButton(props: PlayButtonProps): JSX.Element {
 }
 
 type Props = {
-	image: number
+	image: ImageResolvedAssetSource
 	playerUrl: string
 	stationNumber: string
 	title: string
@@ -69,7 +70,7 @@ type Props = {
 }
 
 export function RadioControllerView(props: Props): JSX.Element {
-	const theme = useTheme()
+	const theme = theming.useTheme()
 	const {
 		source,
 		title,

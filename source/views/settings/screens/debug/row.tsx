@@ -18,6 +18,7 @@ export const DebugRow = (props: Props): JSX.Element => {
 		arrowPosition = 'center'
 	} else if (typeof data.value === 'object' && data.value !== null) {
 		// [object Object], [object Symbol], etc
+		// eslint-disable-next-line @typescript-eslint/no-base-to-string
 		rowDetail = data.value.toString()
 		arrowPosition = 'center'
 	} else if (typeof data.value === 'string') {

@@ -16,7 +16,4 @@ const defaultTheme: PlayerTheme = {
 	imageBackgroundColor: 'transparent',
 }
 
-let {ThemeProvider, withTheme, useTheme} =
-	createTheming<PlayerTheme>(defaultTheme)
-
-export {ThemeProvider, withTheme, useTheme}
+export const theming = createTheming<PlayerTheme>(defaultTheme)

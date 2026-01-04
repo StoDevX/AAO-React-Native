@@ -27,7 +27,7 @@ export const keys = {
 	levels: ['catalog', 'levels'] as const,
 }
 
-export function useAvailableTerms(): UseQueryResult<TermType[], unknown> {
+export function useAvailableTerms(): UseQueryResult<TermType[], Error> {
 	return useQuery({
 		queryKey: keys.terms,
 		queryFn: async ({signal}) => {
@@ -48,7 +48,7 @@ export function useCourseData(
 	selectedTerms: Array<number> = [],
 	levels: Array<number> = [],
 	gereqs: Array<string> = [],
-): UseQueryResult<CourseType[], unknown>[] {
+): UseQueryResult<CourseType[], Error>[] {
 	let {data: terms = []} = useAvailableTerms()
 	let filteredTerms = terms.filter((t) => selectedTerms.includes(t.term))
 
@@ -58,7 +58,7 @@ export function useCourseData(
 		gereqsList: Array<string> = [],
 	): UseQueryOptions<
 		CourseType[],
-		unknown,
+		Error,
 		CourseType[],
 		ReturnType<(typeof keys)['courses']>
 	> => ({
@@ -78,7 +78,7 @@ export function useCourseData(
 	})
 }
 
-export function useGeReqs(): UseQueryResult<string[]> {
+export function useGeReqs(): UseQueryResult<string[], Error> {
 	return useQuery({
 		queryKey: keys.gereqs,
 		queryFn: ({signal}) => geData({signal}),
@@ -86,7 +86,7 @@ export function useGeReqs(): UseQueryResult<string[]> {
 	})
 }
 
-export function useDepartments(): UseQueryResult<string[]> {
+export function useDepartments(): UseQueryResult<string[], Error> {
 	return useQuery({
 		queryKey: keys.departments,
 		queryFn: ({signal}) => deptData({signal}),

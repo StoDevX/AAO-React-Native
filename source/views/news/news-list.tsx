@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {FlatList, StyleSheet} from 'react-native'
+import {FlatList, type ImageResolvedAssetSource, StyleSheet} from 'react-native'
 import type {StoryType} from './types'
 import * as c from '@frogpond/colors'
 import {ListSeparator} from '@frogpond/lists'
@@ -12,7 +12,7 @@ import {UseQueryResult} from '@tanstack/react-query'
 
 type Props = {
 	query: UseQueryResult<StoryType[]>
-	thumbnail: false | number
+	thumbnail: false | ImageResolvedAssetSource
 }
 
 const styles = StyleSheet.create({

@@ -5,10 +5,10 @@ export function shareJob(job: JobType): void {
 	if (Platform.OS === 'ios') {
 		Share.share({
 			url: job.url,
-		}).catch((error) => console.log(error.message))
+		}).catch((error) => console.log(String(error)))
 	} else {
 		Share.share({
 			message: job.url,
-		}).catch((error) => console.log(error.message))
+		}).catch((error) => console.log(String(error)))
 	}
 }

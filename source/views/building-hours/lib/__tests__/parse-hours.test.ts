@@ -1,4 +1,4 @@
-import {expect, it} from '@jest/globals'
+import {expect, it, xdescribe, describe} from '@jest/globals'
 import {parseHours} from '../parse-hours'
 import {dayMoment, hourMoment, moment, plainMoment} from './moment.helper'
 import {SingleBuildingScheduleType} from '../../types'

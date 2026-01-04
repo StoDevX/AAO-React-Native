@@ -112,7 +112,7 @@ export const PrintJobReleaseView = (): JSX.Element => {
 					`Document "${job.documentName}" is printing at ${printer.printerName}.`,
 					[{text: 'OK', onPress: returnToJobsView}],
 				)
-			} catch (err) {
+			} catch (_error) {
 				Alert.alert(
 					'Error Releasing Job',
 					'We encountered a problem while trying to release your job to the printer. Please try again or release your job at the printer itself.',
@@ -138,7 +138,7 @@ export const PrintJobReleaseView = (): JSX.Element => {
 					`Document "${job.documentName}" has been removed from your print queue.`,
 					[{text: 'OK', onPress: returnToJobsView}],
 				)
-			} catch (error) {
+			} catch (_error) {
 				Alert.alert(
 					'Error Cancelling Job',
 					'We encountered a problem while trying to cancel your job. Please try again or cancel your job at the printer itself.',
