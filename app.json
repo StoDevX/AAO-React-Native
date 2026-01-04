@@ -1,0 +1,57 @@
+{
+  "expo": {
+    "name": "All About Olaf",
+    "slug": "all-about-olaf",
+    "version": "2.8.0",
+    "orientation": "portrait",
+    "icon": "./images/icon.png",
+    "userInterfaceStyle": "automatic",
+    "splash": {
+      "image": "./images/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.drewvolz.stolaf",
+      "infoPlist": {
+        "UIBackgroundModes": ["audio"]
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./images/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "package": "com.allaboutolaf"
+    },
+    "web": {
+      "favicon": "./images/favicon.png"
+    },
+    "plugins": [
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "deploymentTarget": "17.2"
+          },
+          "android": {
+            "minSdkVersion": 21,
+            "compileSdkVersion": 34,
+            "targetSdkVersion": 34
+          }
+        }
+      ],
+      "expo-calendar",
+      "expo-secure-store",
+      "@react-native-async-storage/async-storage",
+      "@react-native-community/netinfo",
+      "react-native-gesture-handler",
+      "react-native-safe-area-context",
+      "@sentry/react-native"
+    ]
+  }
+}
