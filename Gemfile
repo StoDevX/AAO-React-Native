@@ -6,6 +6,9 @@ gem 'json', '2.7.2'
 gem 'xcodeproj', '1.27.0'
 gem 'cocoapods', '1.16.2'
 
+# Ruby 3.4 stdlib gems that need to be explicitly required
+gem 'nkf'
+
 # fastlane plugins
 
 group :development do
