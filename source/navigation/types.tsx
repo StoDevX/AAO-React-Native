@@ -135,7 +135,7 @@ export interface OnChangeTextHandler {
 
 // this block sourced from https://reactnavigation.org/docs/typescript/#specifying-default-types-for-usenavigation-link-ref-etc
 declare global {
-	// eslint-disable-next-line @typescript-eslint/no-namespace
+	 
 	namespace ReactNavigation {
 		interface RootParamList
 			extends RootStackParamList,

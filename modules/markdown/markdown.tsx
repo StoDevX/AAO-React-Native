@@ -13,7 +13,7 @@ import {
 import ReactMarkdown from 'react-markdown'
 
 import propTypes from 'prop-types'
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+ 
 ;(ReactMarkdown as any).propTypes.containerTagName = propTypes.func
 
 import * as c from '@frogpond/colors'
