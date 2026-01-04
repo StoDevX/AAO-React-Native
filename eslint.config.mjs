@@ -160,6 +160,30 @@ export default defineConfig([
 			'react-hooks/set-state-in-effect': 'off',
 		},
 	},
+	// Script files - less strict type checking
+	{
+		files: ['scripts/**/*.mjs'],
+		rules: {
+			'@typescript-eslint/no-unsafe-assignment': 'off',
+			'@typescript-eslint/no-unsafe-member-access': 'off',
+			'@typescript-eslint/no-unsafe-call': 'off',
+			'@typescript-eslint/no-unsafe-argument': 'off',
+			'@typescript-eslint/no-unsafe-return': 'off',
+			'@typescript-eslint/unbound-method': 'off',
+			'@typescript-eslint/no-unused-expressions': 'off',
+			'@typescript-eslint/explicit-module-boundary-types': 'off',
+			'@typescript-eslint/no-unused-vars': 'off',
+		},
+	},
+	// Image index files - require() returns any for images
+	{
+		files: ['images/**/index.ts', 'images/transparent.ts'],
+		rules: {
+			'@typescript-eslint/no-unsafe-argument': 'off',
+			'@typescript-eslint/no-unsafe-member-access': 'off',
+			'@typescript-eslint/no-unsafe-return': 'off',
+		},
+	},
 	// Apply Prettier config to disable conflicting rules
 	eslintConfigPrettier,
 ])

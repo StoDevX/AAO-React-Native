@@ -216,7 +216,7 @@ export function BonAppHostedMenu(props: Props): JSX.Element {
 	// The API returns an empty array for the cafeInfo.cafe value if there is no
 	// matching cafe with the inputted id number, otherwise it returns an non-array object
 	if (Array.isArray(cafeInfo.cafe)) {
-		return <NoticeView text={`There is no cafe with id #${props.cafe}`} />
+		return <NoticeView text={`There is no cafe with id #${typeof props.cafe === 'string' ? props.cafe : props.cafe.id}`} />
 	}
 
 	// We grab the "today" info from here because BonApp returns special

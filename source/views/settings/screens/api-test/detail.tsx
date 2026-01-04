@@ -47,7 +47,7 @@ export const APITestDetailView = (): JSX.Element => {
 		})
 	}, [cleanedName, navigation])
 
-	const JSONView = React.useCallback((): JSX.Element => {
+	const jsonViewContent = React.useMemo((): JSX.Element => {
 		if (data === undefined) {
 			return <></>
 		}
@@ -86,7 +86,7 @@ export const APITestDetailView = (): JSX.Element => {
 		) : isLoading ? (
 			<LoadingView />
 		) : displayMode === 'raw' ? (
-			<JSONView />
+			jsonViewContent
 		) : (
 			<DebugView state={JSON.parse(data || '{}') as unknown} />
 		)

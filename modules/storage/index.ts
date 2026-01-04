@@ -20,7 +20,7 @@ export async function getItem<T>(key: string): Promise<T | null> {
 	if (stored === null) {
 		return null
 	}
-	return JSON.parse(stored)
+	return JSON.parse(stored) as T
 }
 export function removeItem(key: string): Promise<void> {
 	return AsyncStorage.removeItem(`${prefix}:${key}`)

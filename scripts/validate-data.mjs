@@ -149,7 +149,7 @@ function tryBoolean(cb) {
 	// try a function; return a boolean version of success
 	try {
 		return Boolean(cb())
-	} catch (err) {
+	} catch (_err) {
 		return false
 	}
 }

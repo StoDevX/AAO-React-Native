@@ -12,27 +12,28 @@ const {get, memoize} = lodash
 function formatError(err, data) {
 	// format some of the errors from ajv
 	let contents = ''
-	let dataPath = err.dataPath.replace(/^\./u, '')
+	let dataPath = (err.dataPath || err.instancePath || '').replace(/^\./u, '')
 	switch (err.keyword) {
 		case 'enum': {
 			let value = get(data, dataPath)
-			let allowed = err.params.allowedValues
+			let params = err.params
+			let allowed = (params.allowedValues || [])
 				.map((v) => JSON.stringify(v))
 				.join(', ')
 			contents = `Given value "${JSON.stringify(value)}" ${
-				err.message
+				err.message || 'is not valid'
 			} [${allowed}]`
 			break
 		}
 		case 'type': {
-			contents = `${get(data, dataPath)} ${err.message}`
+			contents = `${get(data, dataPath)} ${err.message || 'has incorrect type'}`
 			break
 		}
 		default: {
 			return JSON.stringify(err, null, 2)
 		}
 	}
-	return `Error at ${err.dataPath}:\n${contents}`
+	return `Error at ${err.dataPath || err.instancePath || '(unknown)'}:\n${contents}`
 }
 
 const init = memoize(() => {

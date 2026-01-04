@@ -86,7 +86,7 @@ export async function performLogin(
 }
 
 type QueryFnData = null | SharedWebCredentials
-type DefaultError = null | unknown
+type DefaultError = unknown
 type QueryT<Select> = ReturnType<typeof useCredentials<Select>>
 
 export function useCredentials<TData = QueryFnData, TError = DefaultError>(
