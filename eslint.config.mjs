@@ -7,6 +7,7 @@ import reactNativePlugin from 'eslint-plugin-react-native'
 import reactHooks from 'eslint-plugin-react-hooks'
 import tanstackQuery from '@tanstack/eslint-plugin-query'
 import eslintConfigPrettier from 'eslint-config-prettier'
+import globals from 'globals'
 
 export default [
 	// Ignore patterns (replaces .eslintignore)
@@ -29,72 +30,13 @@ export default [
 				},
 			},
 			globals: {
-				// ES6 globals
-				console: 'readonly',
-				Promise: 'readonly',
-				Set: 'readonly',
-				Map: 'readonly',
-				Symbol: 'readonly',
-				WeakMap: 'readonly',
-				WeakSet: 'readonly',
-				Proxy: 'readonly',
-				Reflect: 'readonly',
-				ArrayBuffer: 'readonly',
-				DataView: 'readonly',
-				Int8Array: 'readonly',
-				Uint8Array: 'readonly',
-				Uint8ClampedArray: 'readonly',
-				Int16Array: 'readonly',
-				Uint16Array: 'readonly',
-				Int32Array: 'readonly',
-				Uint32Array: 'readonly',
-				Float32Array: 'readonly',
-				Float64Array: 'readonly',
-				// Node.js globals
-				__dirname: 'readonly',
-				__filename: 'readonly',
-				Buffer: 'readonly',
-				global: 'readonly',
-				process: 'readonly',
-				require: 'readonly',
-				module: 'readonly',
-				exports: 'readonly',
-				NodeJS: 'readonly',
-				setTimeout: 'readonly',
-				clearTimeout: 'readonly',
-				setInterval: 'readonly',
-				clearInterval: 'readonly',
-				// Browser/Web APIs
-				URL: 'readonly',
-				URLSearchParams: 'readonly',
-				Response: 'readonly',
-				Headers: 'readonly',
-				// React Native globals
-				fetch: 'readonly',
-				FormData: 'readonly',
-				navigator: 'readonly',
-				window: 'readonly',
-				document: 'readonly',
-				XMLHttpRequest: 'readonly',
-				WebSocket: 'readonly',
-				requestAnimationFrame: 'readonly',
-				cancelAnimationFrame: 'readonly',
-				setImmediate: 'readonly',
-				clearImmediate: 'readonly',
-				// TypeScript/JSX globals
+				...globals.node,
+				...globals.browser,
+				...globals.es2021,
+				...globals.jest,
+				// Additional TypeScript/JSX/React globals
 				JSX: 'readonly',
 				React: 'readonly',
-				// Test globals (Jest)
-				describe: 'readonly',
-				xdescribe: 'readonly',
-				it: 'readonly',
-				expect: 'readonly',
-				jest: 'readonly',
-				beforeEach: 'readonly',
-				afterEach: 'readonly',
-				beforeAll: 'readonly',
-				afterAll: 'readonly',
-				test: 'readonly',
 			},
 		},
 		plugins: {
@@ -113,8 +55,7 @@ export default [
 			// ESLint recommended rules
 			...js.configs.recommended.rules,
 			
-			// TypeScript rules
-			...tseslint.configs.recommended.rules,
+			// TypeScript rules (using individual rule configuration for flat config)
 			'@typescript-eslint/no-unused-vars': [
 				'warn',
 				{
@@ -125,6 +66,10 @@ export default [
 			],
 			'@typescript-eslint/explicit-module-boundary-types': 'warn',
 			'@typescript-eslint/no-empty-function': 'warn',
+			'@typescript-eslint/no-explicit-any': 'warn',
+			'@typescript-eslint/no-inferrable-types': 'warn',
+			'@typescript-eslint/no-non-null-assertion': 'warn',
+			'@typescript-eslint/no-require-imports': 'error',
 			
 			// React rules
 			...react.configs.recommended.rules,
@@ -167,7 +112,6 @@ export default [
 				},
 			],
 			'react/sort-prop-types': 'warn',
-			'react/wrap-multilines': 'off',
 			'react/jsx-boolean-value': ['error', 'always'],
 			
 			// React Native rules
@@ -179,8 +123,10 @@ export default [
 			'react-hooks/rules-of-hooks': 'error',
 			'react-hooks/exhaustive-deps': 'warn',
 			
-			// TanStack Query rules
-			...tanstackQuery.configs.recommended.rules,
+			// TanStack Query rules (explicit configuration for flat config)
+			'@tanstack/query/exhaustive-deps': 'error',
+			'@tanstack/query/no-rest-destructuring': 'warn',
+			'@tanstack/query/stable-query-client': 'error',
 			
 			// General rules
 			'array-callback-return': 'error',
@@ -227,6 +173,13 @@ export default [
 			'require-atomic-updates': 'error',
 			'no-async-promise-executor': 'error',
 			'require-unicode-regexp': 'error',
+		},
+	},
+	// Allow require() for React Native image imports
+	{
+		files: ['images/icons/index.ts'],
+		rules: {
+			'@typescript-eslint/no-require-imports': 'off',
 		},
 	},
 	// Apply Prettier config to disable conflicting rules
