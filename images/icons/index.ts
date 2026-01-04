@@ -1,7 +1,9 @@
 import {Image, type ImageResolvedAssetSource} from 'react-native'
 
-const oldMain = Image.resolveAssetSource(require('./old-main.png'))
-const windmill = Image.resolveAssetSource(require('./windmill.png'))
+const oldMain = Image.resolveAssetSource(
+	require('./old-main.png') as number,
+)
+const windmill = Image.resolveAssetSource(require('./windmill.png') as number)
 
 export const icons = {
 	oldMain,

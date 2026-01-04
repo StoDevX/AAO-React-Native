@@ -1,9 +1,11 @@
 declare module '*.png' {
-	const value: number
-	export default value
+	import type {ImageRequireSource} from 'react-native'
+	const source: ImageRequireSource
+	export default source
 }
 
 declare module '*.jpg' {
-	const value: number
-	export default value
+	import type {ImageRequireSource} from 'react-native'
+	const source: ImageRequireSource
+	export default source
 }

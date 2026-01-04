@@ -179,7 +179,6 @@ export default defineConfig([
 	{
 		files: ['images/**/index.ts', 'images/transparent.ts'],
 		rules: {
-			'@typescript-eslint/no-unsafe-argument': 'off',
 			'@typescript-eslint/no-unsafe-member-access': 'off',
 			'@typescript-eslint/no-unsafe-return': 'off',
 		},
