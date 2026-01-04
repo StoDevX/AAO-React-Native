@@ -5,6 +5,14 @@
 /ios/*/main.jsbundle*
 /ios/assets/images
 
+# Expo
+/.expo
+/.env.local
+*.local.json
+# Ignored due to prebuild support
+/android
+/ios
+
 # Xcode
 build/
 *.pbxuser

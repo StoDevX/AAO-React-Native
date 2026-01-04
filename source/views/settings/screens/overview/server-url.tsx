@@ -2,7 +2,7 @@ import * as React from 'react'
 import {StyleSheet} from 'react-native'
 import {Section} from '@frogpond/tableview'
 import {CellTextField, ButtonCell} from '@frogpond/tableview/cells'
-import restart from 'react-native-restart'
+import * as Updates from 'expo-updates'
 import * as storage from '../../../../lib/storage'
 import {DEFAULT_URL} from '../../../../lib/constants'
 import {useMutation, useQuery} from '@tanstack/react-query'
@@ -19,7 +19,7 @@ export const ServerUrlSection = (): React.ReactElement => {
 	let storeServerAddress = useMutation({
 		mutationKey: ['settings', 'server-url'],
 		mutationFn: () => storage.setServerAddress(serverAddress),
-		onSuccess: () => restart.Restart(),
+		onSuccess: async () => await Updates.reloadAsync(),
 	})
 
 	let reload = () => storeServerAddress.mutate()
