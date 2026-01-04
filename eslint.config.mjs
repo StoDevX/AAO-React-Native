@@ -34,9 +34,10 @@ export default [
 				...globals.browser,
 				...globals.es2021,
 				...globals.jest,
-				// Additional TypeScript/JSX/React globals
+				// Additional TypeScript/JSX/React/Node globals
 				JSX: 'readonly',
 				React: 'readonly',
+				NodeJS: 'readonly',
 			},
 		},
 		plugins: {
