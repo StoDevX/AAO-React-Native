@@ -160,6 +160,10 @@ android {
 
     configurations.all {
         resolutionStrategy.force 'org.webkit:android-jsc:r250230'
+
+        // Exclude Sentry Android Replay module as we're not using it
+        // and it has dexing issues with current Android Gradle configuration
+        exclude group: 'io.sentry', module: 'sentry-android-replay'
     }
 }
 
