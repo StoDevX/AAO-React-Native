@@ -1,7 +1,6 @@
 import js from '@eslint/js'
 import tseslint from '@typescript-eslint/eslint-plugin'
 import tsparser from '@typescript-eslint/parser'
-import reactNative from '@react-native/eslint-config'
 import react from 'eslint-plugin-react'
 import reactNativePlugin from 'eslint-plugin-react-native'
 import reactHooks from 'eslint-plugin-react-hooks'
@@ -49,7 +48,7 @@ export default [
 		},
 		settings: {
 			react: {
-				version: '16.6',
+				version: '18.2',
 			},
 		},
 		rules: {
