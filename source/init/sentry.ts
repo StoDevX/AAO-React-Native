@@ -18,8 +18,8 @@ function install() {
 		tracePropagationTargets: ['localhost', 'frogpond.tech', /^\//u],
 
 		integrations: [
-			Sentry.reactNativeTracingIntegration(),
 			routingInstrumentation,
+			Sentry.reactNativeTracingIntegration(),
 		],
 	})
 }
