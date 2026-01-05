@@ -15,12 +15,17 @@
     "skipLibCheck": true,
     "strict": true,
     "resolveJsonModule": true,
-    "target": "esnext",
-    "typeRoots": [
-      "./types"
-    ]
+    "target": "esnext"
   },
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    "**/*.js",
+    "**/*.jsx",
+    "**/*.mjs",
+    "**/*.cjs"
+  ],
   "exclude": [
-    "node_modules",
+    "node_modules"
   ]
 }

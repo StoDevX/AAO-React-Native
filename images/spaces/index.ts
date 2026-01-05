@@ -1,74 +1,54 @@
 import {Image, ImageResolvedAssetSource} from 'react-native'
 
 const alumniHall = Image.resolveAssetSource(
-	require('./optimized/alumni-hall.jpg') as number,
+	require('./optimized/alumni-hall.jpg'),
 )
-const boe = Image.resolveAssetSource(require('./optimized/boe.jpg') as number)
-const bookstore = Image.resolveAssetSource(
-	require('./optimized/bookstore.jpg') as number,
-)
-const buntrock = Image.resolveAssetSource(
-	require('./optimized/buntrock.jpg') as number,
-)
-const cage = Image.resolveAssetSource(require('./optimized/cage.jpg') as number)
+const boe = Image.resolveAssetSource(require('./optimized/boe.jpg'))
+const bookstore = Image.resolveAssetSource(require('./optimized/bookstore.jpg'))
+const buntrock = Image.resolveAssetSource(require('./optimized/buntrock.jpg'))
+const cage = Image.resolveAssetSource(require('./optimized/cage.jpg'))
 const centerForArtsAndDance = Image.resolveAssetSource(
-	require('./optimized/center-for-arts-and-dance.jpg') as number,
+	require('./optimized/center-for-arts-and-dance.jpg'),
 )
 const christiansen = Image.resolveAssetSource(
-	require('./optimized/christiansen.jpg') as number,
+	require('./optimized/christiansen.jpg'),
 )
 const convenience = Image.resolveAssetSource(
-	require('./optimized/convenience.jpg') as number,
+	require('./optimized/convenience.jpg'),
 )
-const disco = Image.resolveAssetSource(
-	require('./optimized/disco.jpg') as number,
-)
+const disco = Image.resolveAssetSource(require('./optimized/disco.jpg'))
 const hallOfMusic = Image.resolveAssetSource(
-	require('./optimized/hall-of-music.jpg') as number,
+	require('./optimized/hall-of-music.jpg'),
 )
-const halvorson = Image.resolveAssetSource(
-	require('./optimized/halvorson.jpg') as number,
-)
-const oldMain = Image.resolveAssetSource(
-	require('./optimized/old-main.jpg') as number,
-)
+const halvorson = Image.resolveAssetSource(require('./optimized/halvorson.jpg'))
+const oldMain = Image.resolveAssetSource(require('./optimized/old-main.jpg'))
 const pauseKitchen = Image.resolveAssetSource(
-	require('./optimized/pause-kitchen.jpg') as number,
+	require('./optimized/pause-kitchen.jpg'),
 )
-const print = Image.resolveAssetSource(
-	require('./optimized/print.jpg') as number,
-)
+const print = Image.resolveAssetSource(require('./optimized/print.jpg'))
 const postOffice = Image.resolveAssetSource(
-	require('./optimized/post-office.jpg') as number,
+	require('./optimized/post-office.jpg'),
 )
 const regentsHall = Image.resolveAssetSource(
-	require('./optimized/regents-hall.jpg') as number,
+	require('./optimized/regents-hall.jpg'),
 )
 const regentsMath = Image.resolveAssetSource(
-	require('./optimized/regents-math.jpg') as number,
+	require('./optimized/regents-math.jpg'),
 )
 const rolvaagLibrary = Image.resolveAssetSource(
-	require('./optimized/rolvaag-library.jpg') as number,
+	require('./optimized/rolvaag-library.jpg'),
 )
 const skifterStudioa = Image.resolveAssetSource(
-	require('./optimized/skifter-studioa.jpg') as number,
+	require('./optimized/skifter-studioa.jpg'),
 )
-const skoglund = Image.resolveAssetSource(
-	require('./optimized/skoglund.jpg') as number,
-)
-const stav = Image.resolveAssetSource(require('./optimized/stav.jpg') as number)
-const theater = Image.resolveAssetSource(
-	require('./optimized/theater.jpg') as number,
-)
+const skoglund = Image.resolveAssetSource(require('./optimized/skoglund.jpg'))
+const stav = Image.resolveAssetSource(require('./optimized/stav.jpg'))
+const theater = Image.resolveAssetSource(require('./optimized/theater.jpg'))
 const tomPorter = Image.resolveAssetSource(
-	require('./optimized/tom-porter.jpg') as number,
+	require('./optimized/tom-porter.jpg'),
 )
-const tomson = Image.resolveAssetSource(
-	require('./optimized/tomson.jpg') as number,
-)
-const wellness = Image.resolveAssetSource(
-	require('./optimized/wellness.jpg') as number,
-)
+const tomson = Image.resolveAssetSource(require('./optimized/tomson.jpg'))
+const wellness = Image.resolveAssetSource(require('./optimized/wellness.jpg'))
 
 export const images = new Map<string, ImageResolvedAssetSource>([
 	['alumni-hall', alumniHall],
