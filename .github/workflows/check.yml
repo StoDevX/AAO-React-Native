@@ -32,7 +32,7 @@ jobs:
         id: node-cache
         with:
           path: node_modules/
-          key: ${{ runner.os }}-node_modules-${{ hashFiles('.node-version', 'package-lock.json', '.github/job.yml') }}
+          key: ${{ runner.os }}-node_modules-${{ hashFiles('.node-version', 'package-lock.json', 'contrib/*.patch', '.github/job.yml') }}
 
       - if: steps.node-cache.outputs.cache-hit != 'true'
         uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
@@ -64,7 +64,7 @@ jobs:
         id: node-cache
         with:
           path: node_modules/
-          key: ${{ runner.os }}-node_modules-${{ hashFiles('.node-version', 'package-lock.json', '.github/job.yml') }}
+          key: ${{ runner.os }}-node_modules-${{ hashFiles('.node-version', 'package-lock.json', 'contrib/*.patch', '.github/job.yml') }}
 
       - if: steps.node-cache.outputs.cache-hit != 'true'
         uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
@@ -111,7 +111,7 @@ jobs:
         id: cocoapods-cache
         with:
           path: ios/Pods
-          key: ${{ runner.os }}-cocoapods-ruby@${{ env.ruby-version }}-xcode@${{ env.xcode_version }}-${{ hashFiles('**/Podfile', '**/Podfile.lock', 'package-lock.json', '.github/job.yml') }}
+          key: ${{ runner.os }}-cocoapods-ruby@${{ env.ruby-version }}-xcode@${{ env.xcode_version }}-${{ hashFiles('**/Podfile', '**/Podfile.lock', 'package-lock.json', 'contrib/*.patch', '.github/job.yml') }}
 
       - if: steps.cocoapods-cache.outputs.cache-hit != 'true'
         uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
