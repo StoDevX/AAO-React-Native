@@ -18,7 +18,7 @@ install! 'cocoapods',
 	:parallel_pod_downloads => true,
 	:parallel_pod_download_thread_pool_size => 40
 
-flipper_config = ENV['CI'] || ENV['NO_FLIPPER'] == "1" ? FlipperConfiguration.disabled : FlipperConfiguration.enabled
+flipper_config = ENV['USE_FLIPPER'] != nil && ENV['USE_FLIPPER'] != "" ? FlipperConfiguration.enabled : FlipperConfiguration.disabled
 
 linkage = ENV['USE_FRAMEWORKS']
 if linkage != nil
