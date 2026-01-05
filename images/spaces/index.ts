@@ -1,54 +1,55 @@
 import {Image, ImageResolvedAssetSource} from 'react-native'
+import rawAlumniHall from './optimized/alumni-hall.jpg'
+import rawBoe from './optimized/boe.jpg'
+import rawBookstore from './optimized/bookstore.jpg'
+import rawBuntrock from './optimized/buntrock.jpg'
+import rawCage from './optimized/cage.jpg'
+import rawCenterForArtsAndDance from './optimized/center-for-arts-and-dance.jpg'
+import rawChristiansen from './optimized/christiansen.jpg'
+import rawConvenience from './optimized/convenience.jpg'
+import rawDisco from './optimized/disco.jpg'
+import rawHallOfMusic from './optimized/hall-of-music.jpg'
+import rawHalvorson from './optimized/halvorson.jpg'
+import rawOldMain from './optimized/old-main.jpg'
+import rawPauseKitchen from './optimized/pause-kitchen.jpg'
+import rawPrint from './optimized/print.jpg'
+import rawPostOffice from './optimized/post-office.jpg'
+import rawRegentsHall from './optimized/regents-hall.jpg'
+import rawRegentsMath from './optimized/regents-math.jpg'
+import rawRolvaagLibrary from './optimized/rolvaag-library.jpg'
+import rawSkifterStudioa from './optimized/skifter-studioa.jpg'
+import rawSkoglund from './optimized/skoglund.jpg'
+import rawStav from './optimized/stav.jpg'
+import rawTheater from './optimized/theater.jpg'
+import rawTomPorter from './optimized/tom-porter.jpg'
+import rawTomson from './optimized/tomson.jpg'
+import rawWellness from './optimized/wellness.jpg'
 
-const alumniHall = Image.resolveAssetSource(
-	require('./optimized/alumni-hall.jpg'),
-)
-const boe = Image.resolveAssetSource(require('./optimized/boe.jpg'))
-const bookstore = Image.resolveAssetSource(require('./optimized/bookstore.jpg'))
-const buntrock = Image.resolveAssetSource(require('./optimized/buntrock.jpg'))
-const cage = Image.resolveAssetSource(require('./optimized/cage.jpg'))
-const centerForArtsAndDance = Image.resolveAssetSource(
-	require('./optimized/center-for-arts-and-dance.jpg'),
-)
-const christiansen = Image.resolveAssetSource(
-	require('./optimized/christiansen.jpg'),
-)
-const convenience = Image.resolveAssetSource(
-	require('./optimized/convenience.jpg'),
-)
-const disco = Image.resolveAssetSource(require('./optimized/disco.jpg'))
-const hallOfMusic = Image.resolveAssetSource(
-	require('./optimized/hall-of-music.jpg'),
-)
-const halvorson = Image.resolveAssetSource(require('./optimized/halvorson.jpg'))
-const oldMain = Image.resolveAssetSource(require('./optimized/old-main.jpg'))
-const pauseKitchen = Image.resolveAssetSource(
-	require('./optimized/pause-kitchen.jpg'),
-)
-const print = Image.resolveAssetSource(require('./optimized/print.jpg'))
-const postOffice = Image.resolveAssetSource(
-	require('./optimized/post-office.jpg'),
-)
-const regentsHall = Image.resolveAssetSource(
-	require('./optimized/regents-hall.jpg'),
-)
-const regentsMath = Image.resolveAssetSource(
-	require('./optimized/regents-math.jpg'),
-)
-const rolvaagLibrary = Image.resolveAssetSource(
-	require('./optimized/rolvaag-library.jpg'),
-)
-const skifterStudioa = Image.resolveAssetSource(
-	require('./optimized/skifter-studioa.jpg'),
-)
-const skoglund = Image.resolveAssetSource(require('./optimized/skoglund.jpg'))
-const stav = Image.resolveAssetSource(require('./optimized/stav.jpg'))
-const theater = Image.resolveAssetSource(require('./optimized/theater.jpg'))
-const tomPorter = Image.resolveAssetSource(
-	require('./optimized/tom-porter.jpg'),
-)
-const tomson = Image.resolveAssetSource(require('./optimized/tomson.jpg'))
-const wellness = Image.resolveAssetSource(require('./optimized/wellness.jpg'))
+const alumniHall = Image.resolveAssetSource(rawAlumniHall)
+const boe = Image.resolveAssetSource(rawBoe)
+const bookstore = Image.resolveAssetSource(rawBookstore)
+const buntrock = Image.resolveAssetSource(rawBuntrock)
+const cage = Image.resolveAssetSource(rawCage)
+const centerForArtsAndDance = Image.resolveAssetSource(rawCenterForArtsAndDance)
+const christiansen = Image.resolveAssetSource(rawChristiansen)
+const convenience = Image.resolveAssetSource(rawConvenience)
+const disco = Image.resolveAssetSource(rawDisco)
+const hallOfMusic = Image.resolveAssetSource(rawHallOfMusic)
+const halvorson = Image.resolveAssetSource(rawHalvorson)
+const oldMain = Image.resolveAssetSource(rawOldMain)
+const pauseKitchen = Image.resolveAssetSource(rawPauseKitchen)
+const print = Image.resolveAssetSource(rawPrint)
+const postOffice = Image.resolveAssetSource(rawPostOffice)
+const regentsHall = Image.resolveAssetSource(rawRegentsHall)
+const regentsMath = Image.resolveAssetSource(rawRegentsMath)
+const rolvaagLibrary = Image.resolveAssetSource(rawRolvaagLibrary)
+const skifterStudioa = Image.resolveAssetSource(rawSkifterStudioa)
+const skoglund = Image.resolveAssetSource(rawSkoglund)
+const stav = Image.resolveAssetSource(rawStav)
+const theater = Image.resolveAssetSource(rawTheater)
+const tomPorter = Image.resolveAssetSource(rawTomPorter)
+const tomson = Image.resolveAssetSource(rawTomson)
+const wellness = Image.resolveAssetSource(rawWellness)
 
 export const images = new Map<string, ImageResolvedAssetSource>([
 	['alumni-hall', alumniHall],

@@ -1,7 +1,10 @@
 import {Image} from 'react-native'
+import rawMess from './mess.png'
+import rawOleville from './oleville.png'
+import rawStolaf from './stolaf.png'
 
 export {ksto} from '../streaming'
 
-export const mess = Image.resolveAssetSource(require('./mess.png'))
-export const oleville = Image.resolveAssetSource(require('./oleville.png'))
-export const stolaf = Image.resolveAssetSource(require('./stolaf.png'))
+export const mess = Image.resolveAssetSource(rawMess)
+export const oleville = Image.resolveAssetSource(rawOleville)
+export const stolaf = Image.resolveAssetSource(rawStolaf)
