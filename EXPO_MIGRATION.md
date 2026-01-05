@@ -4,25 +4,27 @@ This document describes the migration from bare React Native to Expo (Prebuild w
 
 ## Migration Overview
 
-**Date**: 2026-01-04
+**Date**: 2026-01-05
 **From**: React Native 0.72.9 (bare/vanilla)
-**To**: Expo SDK 50 (with Expo Prebuild)
+**To**: Expo SDK 54 with React Native 0.81 and React 19.1
 **Migration Type**: Bare workflow with Expo tooling
 
 ## What Has Been Done
 
-### 1. Expo SDK Installation ✅
+### 1. Expo SDK 54 Installation ✅
 
 Installed packages:
-- `expo@^50.0.0` - Core Expo SDK
-- `expo-status-bar@~1.11.1` - Status bar component
-- `babel-preset-expo@^10.0.0` - Expo Babel preset
-- `@expo/metro-config@^0.17.0` - Expo Metro configuration
+- `expo@~54.0.0` (installed: 54.0.30) - Core Expo SDK
+- `react-native@0.81.0` - Latest React Native with precompiled iOS XCFrameworks
+- `react@19.1.0` - React 19 with improved performance and new features
+- `expo-status-bar@3.0.9` - Status bar component
+- `babel-preset-expo@^12.0.0` - Expo Babel preset for SDK 54
+- `@expo/metro-config@^0.21.0` - Expo Metro configuration
 - `expo-build-properties` - Build configuration plugin
 
 ### 2. Expo Native Module Replacements ✅
 
-Installed Expo equivalents:
+Installed Expo equivalents (SDK 54 compatible):
 - `expo-device` - Replacement for `react-native-device-info`
 - `expo-secure-store` - Replacement for `react-native-keychain`
 - `expo-web-browser` - Works alongside `react-native-inappbrowser-reborn`
@@ -196,6 +198,44 @@ After migration, test:
 - [ ] Push notifications (if applicable)
 - [ ] iOS-specific features (SF Symbols, Search Bar, Context Menu)
 
+## Expo SDK 54 & React Native 0.81 New Features
+
+### React Native 0.81 Improvements
+- **Precompiled iOS XCFrameworks**: Significantly faster iOS build times (React Native and dependencies now ship as precompiled binaries)
+- **Android 16 Support**: Edge-to-edge display enabled by default
+- **Predictive Back**: Android predictive back gesture support
+- **Performance Improvements**: Various optimizations and bug fixes
+
+### React 19.1 Features
+- **Improved Performance**: Better rendering performance and smaller bundle sizes
+- **Actions & Transitions**: New features for handling async state
+- **use() Hook**: New hook for reading promises and context
+- **ref as a Prop**: No more forwardRef wrapper needed in many cases
+- **Better Error Handling**: Improved error boundaries and error reporting
+
+### Expo SDK 54 Highlights
+- **iOS 26 Liquid Glass Icons**: Support for new iOS icon styles
+- **Expo UI**: New UI components and design system
+- **EAS Update Improvements**: Better update delivery and reliability
+- **Autolinking Enhancements**: Improved native module detection
+
+## Requirements for SDK 54
+
+### Node.js
+- **Minimum**: Node.js 20.19.4 or higher
+- Current project requires: Node.js >=18 (consider updating to 20+)
+
+### iOS Development
+- **Xcode**: 16.1 or higher required
+- **iOS Deployment Target**: 17.2 (as configured in app.json)
+  - Note: This is very recent and may limit device compatibility
+  - Consider lowering to 15.0 or 16.0 for broader support
+
+### Android Development
+- **Android SDK**: 34 (targetSdkVersion)
+- **Minimum SDK**: 21 (minSdkVersion)
+- **Compile SDK**: 34
+
 ## Benefits of Expo
 
 1. **Simplified Development**: `expo start` provides QR code for quick testing
@@ -204,6 +244,7 @@ After migration, test:
 4. **Expo Go**: Quick testing on physical devices without builds
 5. **Config Plugins**: Manage native code declaratively
 6. **EAS Build**: Cloud building for iOS and Android
+7. **Faster iOS Builds**: Precompiled XCFrameworks in SDK 54 drastically reduce build times
 
 ## Potential Issues
 
@@ -232,11 +273,14 @@ This project uses Yarn workspaces with 35 custom modules in `modules/*`:
 
 ## Resources
 
+- [Expo SDK 54 Changelog](https://expo.dev/changelog/sdk-54)
+- [React Native 0.81 Release Notes](https://reactnative.dev/blog/2025/08/12/react-native-0.81)
+- [React 19 Documentation](https://react.dev/blog/2024/04/25/react-19)
 - [Expo Documentation](https://docs.expo.dev/)
 - [Expo Prebuild](https://docs.expo.dev/workflow/prebuild/)
 - [Config Plugins](https://docs.expo.dev/guides/config-plugins/)
 - [Migrating from Bare React Native](https://docs.expo.dev/bare/installing-expo-modules/)
-- [Expo SDK 50 Release Notes](https://blog.expo.dev/expo-sdk-50-is-here-1cc19e2fcc8e)
+- [Expo SDK Upgrade Guide](https://docs.expo.dev/workflow/upgrading-expo-sdk-walkthrough/)
 
 ## Rollback Plan
 
