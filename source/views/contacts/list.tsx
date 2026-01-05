@@ -41,7 +41,9 @@ export let ContactsListView = (): JSX.Element => {
 			<NoticeView
 				buttonText="Try Again"
 				onPress={refetch}
-				text={`A problem occured while loading: ${error instanceof Error ? error.message : 'Unknown error'}`}
+				text={`A problem occured while loading: ${
+					error instanceof Error ? error.message : 'Unknown error'
+				}`}
 			/>
 		)
 	}

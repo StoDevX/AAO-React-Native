@@ -24,9 +24,7 @@ export let coursesForTerm = async (
 	gereqs: string[] = [],
 	options?: Options,
 ): Promise<Array<CourseType>> => {
-	let data: RawCourseType[] = await client
-		.get(`${term.path}`, options)
-		.json()
+	let data: RawCourseType[] = await client.get(`${term.path}`, options).json()
 	return data
 		.map((course) => ({
 			spaceAvailable: course.enrolled < course.max,
