@@ -109,7 +109,7 @@
   "devDependencies": {
     "@babel/core": "7.28.5",
     "@babel/preset-typescript": "7.28.5",
-    "@babel/runtime": "7.25.6",
+    "@babel/runtime": "7.26.10",
     "@eslint/js": "9.39.2",
     "@jest/globals": "29.7.0",
     "@react-native/eslint-config": "0.83.1",
