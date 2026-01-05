@@ -374,6 +374,16 @@ jobs:
     steps:
       - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
+      - name: Extract job definition
+        run: yq '.jobs.${{ github.job }}' .github/workflows/check.yml > .github/job.yml
+
+      - name: Check for cached Android app
+        id: app-cache
+        uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        with:
+          path: android/app/build/outputs/apk/
+          key: ${{ runner.os }}-android-java@${{ env.java_version }}-${{ hashFiles('**/*.gradle', 'android/gradle', '**/gradle-wrapper.properties', 'package-lock.json', '.github/job.yml') }}
+
       - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
         with:
           node-version-file: '.node-version'
