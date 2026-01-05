@@ -102,7 +102,6 @@ export function fetchRecentPrinters(
 
 export async function fetchColorPrinters(options: Options): Promise<string[]> {
 	let response = await client
-		// @ts-expect-error react-native's URLSearchParams type is not compatible with RequestBody's init
 		.get<ColorPrintersResponse>('color-printers', options)
 		.json()
 	return response.data.colorPrinters
