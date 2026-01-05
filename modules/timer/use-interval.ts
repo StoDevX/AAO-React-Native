@@ -125,7 +125,7 @@ export function useInterval(
 	}, [callback])
 
 	useEffect(() => {
-		autoStart && start()
+		void (autoStart && start())
 
 		return stop
 		// eslint-disable-next-line react-hooks/exhaustive-deps

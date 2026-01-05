@@ -161,7 +161,9 @@ export function StreamPlayer(props: Props): JSX.Element {
 
 	let handleMessage = useCallback(
 		(event: WebViewMessageEvent): unknown => {
-			let data: HtmlAudioEvent = JSON.parse(event.nativeEvent.data)
+			let data: HtmlAudioEvent = JSON.parse(
+				event.nativeEvent.data,
+			) as unknown as HtmlAudioEvent
 
 			// console.log('<audio> dispatched event', data.type)
 

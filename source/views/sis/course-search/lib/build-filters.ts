@@ -6,7 +6,7 @@ import {useAvailableTerms, useDepartments, useGeReqs} from '../query'
 export function useFilters(): {
 	isLoading: boolean
 	data: FilterType<CourseType>[]
-	error: unknown
+	error: null | Error
 } {
 	let {
 		data: terms = [],

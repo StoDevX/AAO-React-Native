@@ -34,7 +34,7 @@ export const DebugView = (props: Props = {}): JSX.Element => {
 			if (Array.isArray(state)) {
 				return <DebugArrayItem item={state} />
 			} else {
-				return <DebugObjectItem item={state} />
+				return <DebugObjectItem item={state as Record<string, unknown>} />
 			}
 		}
 		case 'function':
@@ -115,7 +115,11 @@ export const DebugArrayItem = ({item}: {item: unknown[]}): JSX.Element => {
 	)
 }
 
-export const DebugObjectItem = ({item}: {item: object}): JSX.Element => {
+export const DebugObjectItem = ({
+	item,
+}: {
+	item: Record<string, unknown>
+}): JSX.Element => {
 	let navigation = useNavigation()
 	let keyPath = useKeyPath()
 

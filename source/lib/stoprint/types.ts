@@ -7,7 +7,7 @@ export type PrintJob = {
 	paperSizeFormatted: string
 	printerName: string
 	serverName: string
-	status: string | 'DENIED'
+	status: string
 	statusDetail: string
 	statusFormatted: string
 	totalPages: number

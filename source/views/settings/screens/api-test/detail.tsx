@@ -27,7 +27,7 @@ export const APITestDetailView = (): JSX.Element => {
 	const cleanedName = displayName.trim().toLowerCase()
 	let [displayMode, setDisplayMode] = React.useState<DisplayMode>('raw')
 
-	let {data, isLoading, error} = useQuery({
+	let {data, isLoading, error} = useQuery<string, Error>({
 		queryKey: ['api-test', cleanedName],
 		queryFn: ({signal, queryKey: [_group]}) => {
 			if (!cleanedName) {
@@ -47,12 +47,12 @@ export const APITestDetailView = (): JSX.Element => {
 		})
 	}, [cleanedName, navigation])
 
-	const JSONView = React.useCallback((): JSX.Element => {
+	const jsonViewContent = React.useMemo((): JSX.Element => {
 		if (data === undefined) {
 			return <></>
 		}
 
-		const parsed = JSON.parse(data ?? '')
+		const parsed = JSON.parse(data ?? '') as unknown
 		const formatted = JSON.stringify(parsed, null, 2)
 		const highlighted = syntaxHighlight(formatted)
 
@@ -86,9 +86,9 @@ export const APITestDetailView = (): JSX.Element => {
 		) : isLoading ? (
 			<LoadingView />
 		) : displayMode === 'raw' ? (
-			<JSONView />
+			jsonViewContent
 		) : (
-			<DebugView state={JSON.parse(data || '{}')} />
+			<DebugView state={JSON.parse(data || '{}') as unknown} />
 		)
 
 	return (

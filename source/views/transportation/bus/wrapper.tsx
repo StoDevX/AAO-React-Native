@@ -42,8 +42,9 @@ let BusView = (props: Props): JSX.Element => {
 			line={activeBusLine}
 			now={now}
 			openMap={() => {
-				activeBusLine &&
+				if (activeBusLine) {
 					navigation.navigate('BusMapView', {line: activeBusLine})
+				}
 			}}
 		/>
 	)

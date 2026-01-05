@@ -24,7 +24,7 @@ export type SingleBuildingScheduleType = {
 }
 
 export type NamedBuildingScheduleType = {
-	title: 'Hours' | string
+	title: string
 	notes?: string
 	isPhysicallyOpen?: boolean
 	closedForChapelTime?: boolean

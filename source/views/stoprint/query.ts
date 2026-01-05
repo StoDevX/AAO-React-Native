@@ -29,7 +29,7 @@ export const keys = {
 	colorPrinters: ['printing', 'printers', 'color'] as const,
 }
 
-export function usePrintJobs(): UseQueryResult<PrintJobsResponse, unknown> {
+export function usePrintJobs(): UseQueryResult<PrintJobsResponse, Error> {
 	let {data: username = ''} = useUsername()
 
 	return useQuery({
@@ -39,7 +39,7 @@ export function usePrintJobs(): UseQueryResult<PrintJobsResponse, unknown> {
 	})
 }
 
-export function useAllPrinters(): UseQueryResult<AllPrintersResponse, unknown> {
+export function useAllPrinters(): UseQueryResult<AllPrintersResponse, Error> {
 	let {data: username = ''} = useUsername()
 
 	return useQuery({
@@ -51,7 +51,7 @@ export function useAllPrinters(): UseQueryResult<AllPrintersResponse, unknown> {
 
 export function useRecentPrinters(): UseQueryResult<
 	RecentPopularPrintersResponse,
-	unknown
+	Error
 > {
 	let {data: username = ''} = useUsername()
 
@@ -62,7 +62,7 @@ export function useRecentPrinters(): UseQueryResult<
 	})
 }
 
-export function useColorPrinters(): UseQueryResult<string[], unknown> {
+export function useColorPrinters(): UseQueryResult<string[], Error> {
 	return useQuery({
 		queryKey: keys.colorPrinters,
 		queryFn: ({signal}) => fetchColorPrinters({signal}),
@@ -71,7 +71,7 @@ export function useColorPrinters(): UseQueryResult<string[], unknown> {
 
 export function useHeldJobs(
 	printerName: string | undefined,
-): UseQueryResult<HeldJobsResponse, unknown> {
+): UseQueryResult<HeldJobsResponse, Error> {
 	let {data: username = ''} = useUsername()
 
 	let usablePrinterName = printerName || 'undefined'

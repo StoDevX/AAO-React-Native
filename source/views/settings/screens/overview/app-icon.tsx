@@ -5,14 +5,14 @@ import {IconSettingsView} from '../change-icon'
 export const AppIconSection = (): JSX.Element | null => {
 	let [canChangeIcon, setCanChangeIcon] = React.useState(false)
 
-	React.useEffect(() => {
-		checkIfCustomIconsSupported()
-	}, [])
-
 	let checkIfCustomIconsSupported = async () => {
 		let canChange = await Icons.isSupported()
 		setCanChangeIcon(canChange)
 	}
+
+	React.useEffect(() => {
+		checkIfCustomIconsSupported()
+	}, [])
 
 	return canChangeIcon ? <IconSettingsView /> : null
 }

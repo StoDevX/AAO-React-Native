@@ -13,7 +13,7 @@ type Args = {
 export function sendEmail(args: Args): void {
 	try {
 		openUrl(formatEmailParts(args))
-	} catch (err) {
+	} catch (_err) {
 		const {to = []} = args
 		const toString = to.join(', ')
 

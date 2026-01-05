@@ -1,10 +1,17 @@
-import boeHouse from './optimized/boe-house.jpg'
-import pauseKitchen from './optimized/pause-kitchen.jpg'
-import pubsafe from './optimized/pubsafe.jpg'
-import safeRide from './optimized/safe-ride.jpg'
-import sarn from './optimized/sarn.png'
+import {Image, type ImageResolvedAssetSource} from 'react-native'
+import rawBoeHouse from './optimized/boe-house.jpg'
+import rawPauseKitchen from './optimized/pause-kitchen.jpg'
+import rawPubsafe from './optimized/pubsafe.jpg'
+import rawSafeRide from './optimized/safe-ride.jpg'
+import rawSarn from './optimized/sarn.png'
 
-export const images = new Map<string, number>([
+const boeHouse = Image.resolveAssetSource(rawBoeHouse)
+const pauseKitchen = Image.resolveAssetSource(rawPauseKitchen)
+const pubsafe = Image.resolveAssetSource(rawPubsafe)
+const safeRide = Image.resolveAssetSource(rawSafeRide)
+const sarn = Image.resolveAssetSource(rawSarn)
+
+export const images = new Map<string, ImageResolvedAssetSource>([
 	['boe-house', boeHouse],
 	['pause-kitchen', pauseKitchen],
 	['pubsafe', pubsafe],

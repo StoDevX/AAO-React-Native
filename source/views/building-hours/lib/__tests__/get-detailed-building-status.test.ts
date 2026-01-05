@@ -1,4 +1,4 @@
-import {expect, it} from '@jest/globals'
+import {expect, it, jest} from '@jest/globals'
 import {getDetailedBuildingStatus} from '../get-detailed-status'
 import {plainMoment} from './moment.helper'
 import {BuildingType} from '../../types'

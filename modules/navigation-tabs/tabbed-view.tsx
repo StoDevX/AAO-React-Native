@@ -72,5 +72,5 @@ export function createTabNavigator<Params extends ParamListBase>(
 		throw new UnknownPlatformError()
 	}
 
-	return () => view as JSX.Element
+	return () => view
 }

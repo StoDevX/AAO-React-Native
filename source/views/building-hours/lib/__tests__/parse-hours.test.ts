@@ -1,4 +1,4 @@
-import {expect, it} from '@jest/globals'
+import {expect, it, xdescribe, describe} from '@jest/globals'
 import {parseHours} from '../parse-hours'
 import {dayMoment, hourMoment, moment, plainMoment} from './moment.helper'
 import {SingleBuildingScheduleType} from '../../types'
@@ -80,7 +80,6 @@ describe('handles weird times', () => {
 	})
 })
 
-// eslint-disable-next-line jest/no-disabled-tests
 xdescribe('checks a list of schedules to see if any are open', () => {
 	let schedule: SingleBuildingScheduleType = {
 		days: ['Fr', 'Sa'],

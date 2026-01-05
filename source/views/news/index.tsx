@@ -15,19 +15,16 @@ import {useNamedNewsSource} from './query'
 const StOlafNewsView = () => (
 	<NewsList
 		query={useNamedNewsSource('stolaf')}
-		thumbnail={newsImages.stolaf.default}
+		thumbnail={newsImages.stolaf}
 	/>
 )
 const MessNewsView = () => (
-	<NewsList
-		query={useNamedNewsSource('mess')}
-		thumbnail={newsImages.mess.default}
-	/>
+	<NewsList query={useNamedNewsSource('mess')} thumbnail={newsImages.mess} />
 )
 const OlevilleNewsView = () => (
 	<NewsList
 		query={useNamedNewsSource('oleville')}
-		thumbnail={newsImages.oleville.default}
+		thumbnail={newsImages.oleville}
 	/>
 )
 
