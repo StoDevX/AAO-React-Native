@@ -4,12 +4,7 @@ import {
 	useQuery,
 	UseQueryResult,
 } from '@tanstack/react-query'
-import {
-	getInternetCredentials,
-	resetInternetCredentials,
-	setInternetCredentials,
-	SharedWebCredentials,
-} from 'react-native-keychain'
+import * as SecureStore from 'expo-secure-store'
 import {OLECARD_AUTH_URL} from './financials/urls'
 import {queryClient} from '../init/tanstack-query'
 
@@ -33,27 +28,29 @@ type Credentials = {
 	password: string
 }
 
-async function loadCredentials(): Promise<null | SharedWebCredentials> {
-	let credentials = await getInternetCredentials(SIS_LOGIN_KEY)
-	return credentials ? credentials : null
+type StoredCredentials = Credentials
+
+async function loadCredentials(): Promise<null | StoredCredentials> {
+	try {
+		const credentialsJson = await SecureStore.getItemAsync(SIS_LOGIN_KEY)
+		return credentialsJson ? JSON.parse(credentialsJson) : null
+	} catch {
+		return null
+	}
 }
 
 export async function storeCredentials(
 	credentials: Credentials,
 ): Promise<Credentials> {
-	let saved = await setInternetCredentials(
+	await SecureStore.setItemAsync(
 		SIS_LOGIN_KEY,
-		credentials.username,
-		credentials.password,
+		JSON.stringify(credentials),
 	)
-	if (saved === false) {
-		throw new NoCredentialsError()
-	}
 	return credentials
 }
 
-export function resetCredentials(): Promise<void> {
-	return resetInternetCredentials(SIS_LOGIN_KEY)
+export async function resetCredentials(): Promise<void> {
+	await SecureStore.deleteItemAsync(SIS_LOGIN_KEY)
 }
 
 export async function performLogin(
@@ -85,7 +82,7 @@ export async function performLogin(
 	return {username, password}
 }
 
-type QueryFnData = null | SharedWebCredentials
+type QueryFnData = null | StoredCredentials
 type DefaultError = unknown
 type QueryT<Select> = ReturnType<typeof useCredentials<Select>>
 

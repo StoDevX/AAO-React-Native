@@ -21,14 +21,18 @@ import type {
 	ReleaseResponse,
 } from './types'
 import {type Options} from 'ky'
-import {SharedWebCredentials} from 'react-native-keychain'
 import {LoginFailedError} from '../login'
 import {client} from '@frogpond/api'
 
 export class PapercutJobReleaseError extends Error {}
 
+type Credentials = {
+	username: string
+	password: string
+}
+
 export async function logIn(
-	credentials: SharedWebCredentials,
+	credentials: Credentials,
 	options: Options,
 	now: number = new Date().getTime(),
 ): Promise<void> {
