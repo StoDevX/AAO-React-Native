@@ -11,7 +11,7 @@
   "dependencies": {
     "css-select": "6.0.0",
     "domhandler": "5.0.3",
-    "domutils": "3.1.0",
+    "domutils": "3.2.2",
     "html-entities": "2.6.0",
     "htmlparser2": "9.1.0"
   }
