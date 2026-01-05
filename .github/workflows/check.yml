@@ -51,7 +51,7 @@ jobs:
 
   cache-npm-macos:
     name: Cache npm for macOS
-    runs-on: macos-14
+    runs-on: macos-15
     outputs:
       cache-key: ${{ steps.node-cache.outputs.cache-primary-key }}
     steps:
@@ -83,7 +83,7 @@ jobs:
 
   cache-bundler-macos:
     name: Cache bundler for macOS
-    runs-on: macos-14
+    runs-on: macos-15
     steps:
       - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
@@ -95,7 +95,7 @@ jobs:
   cache-cocoapods:
     name: iOS Cocoapods
     needs: [cache-npm-macos, cache-bundler-macos]
-    runs-on: macos-14
+    runs-on: macos-15
     outputs:
       cache-key: ${{ steps.cocoapods-cache.outputs.cache-primary-key }}
     steps:
@@ -272,7 +272,7 @@ jobs:
   ios-bundle:
     name: iOS Bundle
     needs: [cache-npm-macos]
-    runs-on: macos-14
+    runs-on: macos-15
     outputs:
       cache-key: ${{ steps.jsbundle-cache.outputs.cache-primary-key }}
     steps:
@@ -431,7 +431,7 @@ jobs:
   ios-build:
     name: Build for iOS
     needs: [jest, eslint, cache-cocoapods, cache-npm-macos, cache-bundler-macos]
-    runs-on: macos-14
+    runs-on: macos-15
     outputs:
       cache-key: ${{ steps.app-cache.outputs.cache-primary-key }}
     steps:
@@ -525,7 +525,7 @@ jobs:
   ios-detox:
     name: Detox E2E for iOS
     needs: [cache-npm-macos, ios-build, ios-bundle]
-    runs-on: macos-14
+    runs-on: macos-15
     if: ${{ !contains(github.event.pull_request.labels.*.name, 'ci/skip-detox') }}
     steps:
       - run: sudo xcode-select -s /Applications/${{ env.xcode_version }}.app
