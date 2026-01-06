@@ -5,7 +5,7 @@ require Pod::Executable.execute_command('node', ['-p',
     {paths: [process.argv[1]]},
   )', __dir__]).strip
 
-deployment_target = '17.2'
+deployment_target = '18.5'
 
 # force the IPHONEOS_DEPLOYMENT_TARGET to a known value
 platform :ios, deployment_target
@@ -18,7 +18,7 @@ install! 'cocoapods',
 	:parallel_pod_downloads => true,
 	:parallel_pod_download_thread_pool_size => 40
 
-flipper_config = ENV['CI'] || ENV['NO_FLIPPER'] == "1" ? FlipperConfiguration.disabled : FlipperConfiguration.enabled
+flipper_config = ENV['USE_FLIPPER'] != nil && ENV['USE_FLIPPER'] != "" ? FlipperConfiguration.enabled : FlipperConfiguration.disabled
 
 linkage = ENV['USE_FRAMEWORKS']
 if linkage != nil

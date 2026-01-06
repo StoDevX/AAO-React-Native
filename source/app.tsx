@@ -5,7 +5,7 @@ import 'react-native-gesture-handler'
 // initialization
 import './init/constants'
 import './init/moment'
-import * as sentryInit from './init/sentry'
+import * as Sentry from './init/sentry'
 import './init/api'
 import './init/theme'
 import {queryClient, persister} from './init/tanstack-query'
@@ -18,16 +18,19 @@ import {PersistQueryClientProvider} from '@tanstack/react-query-persist-client'
 import {store, persistor} from './redux'
 import {CombinedLightTheme, CombinedDarkTheme} from '@frogpond/app-theme'
 import {ActionSheetProvider} from '@expo/react-native-action-sheet'
-import {NavigationContainer} from '@react-navigation/native'
+import {
+	createNavigationContainerRef,
+	NavigationContainer,
+} from '@react-navigation/native'
 
 import {RootStack} from './navigation'
 import {LoadingView} from '@frogpond/notice'
 import {IS_PRODUCTION} from '@frogpond/constants'
 import {StatusBar, useColorScheme} from 'react-native'
 
-export default function App(): JSX.Element {
+function App(): JSX.Element {
 	// Create a ref for the navigation container
-	const navigationRef = React.useRef()
+	const containerRef = createNavigationContainerRef()
 	const scheme = useColorScheme()
 	const theme = scheme === 'dark' ? CombinedDarkTheme : CombinedLightTheme
 	const statusBarStyle = scheme === 'dark' ? 'light-content' : 'dark-content'
@@ -38,7 +41,7 @@ export default function App(): JSX.Element {
 		}
 
 		// Register the navigation container with the instrumentation
-		sentryInit.routingInstrumentation.registerNavigationContainer(navigationRef)
+		Sentry.navigationIntegration.registerNavigationContainer(containerRef)
 	}
 
 	return (
@@ -64,3 +67,5 @@ export default function App(): JSX.Element {
 		</ReduxProvider>
 	)
 }
+
+export default Sentry.wrap(App)

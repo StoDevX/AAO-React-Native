@@ -75,7 +75,7 @@ jobs:
 
   ios:
     name: Build for iOS
-    runs-on: macos-14
+    runs-on: macos-15
     steps:
       - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
       - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
@@ -86,7 +86,7 @@ jobs:
         with:
           ruby-version: '3.4.8'
           bundler-cache: true
-      - run: sudo xcode-select -s /Applications/Xcode_15.2.app
+      - run: sudo xcode-select -s /Applications/Xcode_16.4.app
       - run: git fetch --prune --unshallow
       - run: npm ci
         env:

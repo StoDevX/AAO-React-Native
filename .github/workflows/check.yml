@@ -12,7 +12,7 @@ concurrency:
 
 env:
   ruby-version: '3.4.8'
-  xcode_version: 'Xcode_15.2'
+  xcode_version: 'Xcode_16.4'
   java_version: '11'
   java_distribution: temurin
 
@@ -32,7 +32,7 @@ jobs:
         id: node-cache
         with:
           path: node_modules/
-          key: ${{ runner.os }}-node_modules-${{ hashFiles('.node-version', 'package-lock.json', '.github/job.yml') }}
+          key: ${{ runner.os }}-node_modules-${{ hashFiles('.node-version', 'package-lock.json', 'contrib/*.patch', '.github/job.yml') }}
 
       - if: steps.node-cache.outputs.cache-hit != 'true'
         uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
@@ -51,7 +51,7 @@ jobs:
 
   cache-npm-macos:
     name: Cache npm for macOS
-    runs-on: macos-14
+    runs-on: macos-15
     outputs:
       cache-key: ${{ steps.node-cache.outputs.cache-primary-key }}
     steps:
@@ -64,7 +64,7 @@ jobs:
         id: node-cache
         with:
           path: node_modules/
-          key: ${{ runner.os }}-node_modules-${{ hashFiles('.node-version', 'package-lock.json', '.github/job.yml') }}
+          key: ${{ runner.os }}-node_modules-${{ hashFiles('.node-version', 'package-lock.json', 'contrib/*.patch', '.github/job.yml') }}
 
       - if: steps.node-cache.outputs.cache-hit != 'true'
         uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
@@ -83,7 +83,7 @@ jobs:
 
   cache-bundler-macos:
     name: Cache bundler for macOS
-    runs-on: macos-14
+    runs-on: macos-15
     steps:
       - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
@@ -95,7 +95,7 @@ jobs:
   cache-cocoapods:
     name: iOS Cocoapods
     needs: [cache-npm-macos, cache-bundler-macos]
-    runs-on: macos-14
+    runs-on: macos-15
     outputs:
       cache-key: ${{ steps.cocoapods-cache.outputs.cache-primary-key }}
     steps:
@@ -111,7 +111,7 @@ jobs:
         id: cocoapods-cache
         with:
           path: ios/Pods
-          key: ${{ runner.os }}-cocoapods-ruby@${{ env.ruby-version }}-xcode@${{ env.xcode_version }}-${{ hashFiles('**/Podfile', '**/Podfile.lock', 'package-lock.json', '.github/job.yml') }}
+          key: ${{ runner.os }}-cocoapods-ruby@${{ env.ruby-version }}-xcode@${{ env.xcode_version }}-${{ hashFiles('**/Podfile', '**/Podfile.lock', 'package-lock.json', 'contrib/*.patch', '.github/job.yml') }}
 
       - if: steps.cocoapods-cache.outputs.cache-hit != 'true'
         uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
@@ -272,7 +272,7 @@ jobs:
   ios-bundle:
     name: iOS Bundle
     needs: [cache-npm-macos]
-    runs-on: macos-14
+    runs-on: macos-15
     outputs:
       cache-key: ${{ steps.jsbundle-cache.outputs.cache-primary-key }}
     steps:
@@ -374,6 +374,16 @@ jobs:
     steps:
       - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
+      - name: Extract job definition
+        run: yq '.jobs.${{ github.job }}' .github/workflows/check.yml > .github/job.yml
+
+      - name: Check for cached Android app
+        id: app-cache
+        uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        with:
+          path: android/app/build/outputs/apk/
+          key: ${{ runner.os }}-android-java@${{ env.java_version }}-${{ hashFiles('**/*.gradle', 'android/gradle', '**/gradle-wrapper.properties', 'package-lock.json', '.github/job.yml') }}
+
       - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
         with:
           node-version-file: '.node-version'
@@ -431,7 +441,7 @@ jobs:
   ios-build:
     name: Build for iOS
     needs: [jest, eslint, cache-cocoapods, cache-npm-macos, cache-bundler-macos]
-    runs-on: macos-14
+    runs-on: macos-15
     outputs:
       cache-key: ${{ steps.app-cache.outputs.cache-primary-key }}
     steps:
@@ -525,7 +535,7 @@ jobs:
   ios-detox:
     name: Detox E2E for iOS
     needs: [cache-npm-macos, ios-build, ios-bundle]
-    runs-on: macos-14
+    runs-on: macos-15
     if: ${{ !contains(github.event.pull_request.labels.*.name, 'ci/skip-detox') }}
     steps:
       - run: sudo xcode-select -s /Applications/${{ env.xcode_version }}.app

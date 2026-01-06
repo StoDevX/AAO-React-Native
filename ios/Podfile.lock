@@ -467,14 +467,15 @@ PODS:
     - React-RCTImage
   - RNSearchBar (3.5.1):
     - React
-  - RNSentry (5.9.1):
+  - RNSentry (7.8.0):
+    - hermes-engine
+    - RCT-Folly (= 2021.07.22.00)
     - React-Core
-    - Sentry/HybridSDK (= 8.10.0)
+    - React-hermes
+    - Sentry/HybridSDK (= 8.57.3)
   - RNVectorIcons (9.2.0):
     - React-Core
-  - Sentry/HybridSDK (8.10.0):
-    - SentryPrivate (= 8.10.0)
-  - SentryPrivate (8.10.0)
+  - Sentry/HybridSDK (8.57.3)
   - SocketRocket (0.6.1)
   - Yoga (1.14.0)
 
@@ -547,7 +548,6 @@ SPEC REPOS:
     - fmt
     - libevent
     - Sentry
-    - SentryPrivate
     - SocketRocket
 
 EXTERNAL SOURCES:
@@ -732,13 +732,12 @@ SPEC CHECKSUMS:
   RNReanimated: ab1295f59541cb26000d394b4b4aea72cb7ca448
   RNScreens: b21dc57dfa2b710c30ec600786a3fc223b1b92e7
   RNSearchBar: 9860431356b7d12a8449d2fddb2b5f3c78d1e99f
-  RNSentry: 0a1daa8ee81e2776f977ae8c66e67c8d85587828
+  RNSentry: 5871c097b02cffe3ada2d0221107bc05f443f46e
   RNVectorIcons: fcc2f6cb32f5735b586e66d14103a74ce6ad61f8
-  Sentry: 71cd4427146ac56eab6e70401ac7a24384c3d3b5
-  SentryPrivate: 9334613897c85a9e30f2c9d7a331af8aaa4fe71f
+  Sentry: c643eb180df401dd8c734c5036ddd9dd9218daa6
   SocketRocket: f32cd54efbe0f095c4d7594881e52619cfe80b17
   Yoga: eddf2bbe4a896454c248a8f23b4355891eb720a6
 
-PODFILE CHECKSUM: acf8ee7a414ca1f1e59db3451fd156aa4bf12e8a
+PODFILE CHECKSUM: b5c84cd3c4b0ebdf476c77646568272bcadcf954
 
 COCOAPODS: 1.16.2
