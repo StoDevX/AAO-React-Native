@@ -9,7 +9,7 @@
     "test": "jest"
   },
   "peerDependencies": {
-    "react": "^18.0.0",
+    "react": "^19.1.0",
     "@react-navigation/native": "^6.1.18",
     "moment-timezone": "^0.5.45",
     "delay": "^6.0.0"

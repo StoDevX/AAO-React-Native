@@ -1,14 +1,14 @@
 import * as Sentry from '@sentry/react-native'
 import type {EventType} from '@frogpond/event-type'
-import RNCalendarEvents from 'react-native-calendar-events'
+import * as Calendar from 'expo-calendar'
 import {Alert, Linking, Platform} from 'react-native'
 
 export async function addToCalendar(event: EventType): Promise<boolean> {
 	try {
-		const authCode = await RNCalendarEvents.checkPermissions(false)
+		const {status: currentStatus} = await Calendar.getCalendarPermissionsAsync()
 
 		const authStatus =
-			authCode === 'authorized' ? true : await requestCalendarAccess()
+			currentStatus === 'granted' ? true : await requestCalendarAccess()
 
 		if (!authStatus) {
 			return false
@@ -24,11 +24,19 @@ export async function addToCalendar(event: EventType): Promise<boolean> {
 
 async function saveEventToCalendar(event: EventType): Promise<boolean> {
 	try {
-		await RNCalendarEvents.saveEvent(event.title, {
+		const calendars = await Calendar.getCalendarsAsync(Calendar.EntityTypes.EVENT)
+		const defaultCalendar = calendars.find(cal => cal.allowsModifications) || calendars[0]
+
+		if (!defaultCalendar) {
+			console.error('No calendar available')
+			return false
+		}
+
+		await Calendar.createEventAsync(defaultCalendar.id, {
+			title: event.title,
 			location: event.location,
-			startDate: event.startTime.toISOString(),
-			endDate: event.endTime.toISOString(),
-			description: event.description,
+			startDate: event.startTime.toDate(),
+			endDate: event.endTime.toDate(),
 			notes: event.description,
 		})
 
@@ -60,16 +68,15 @@ function promptSettings(): Alert | void {
 }
 
 async function requestCalendarAccess(): Promise<boolean> {
-	let status = null
 	try {
-		status = await RNCalendarEvents.requestPermissions(false)
+		const {status} = await Calendar.requestCalendarPermissionsAsync()
+
+		if (status !== 'granted') {
+			return promptSettings() === undefined
+		}
+
+		return true
 	} catch (_err) {
 		return false
 	}
-
-	if (status !== 'authorized') {
-		return promptSettings() === undefined
-	}
-
-	return true
 }
