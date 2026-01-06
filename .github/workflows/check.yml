@@ -242,9 +242,6 @@ jobs:
       - if: steps.node-cache.outputs.cache-hit != 'true'
         run: exit 1
 
-      - name: Bundle data
-        run: npm run bundle-data
-
       - run: npx tsc
 
   data:
