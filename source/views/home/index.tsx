@@ -2,6 +2,8 @@ import * as React from 'react'
 import {ScrollView, View, StyleSheet} from 'react-native'
 
 import {AllViews} from '../views'
+import {FaqBannerGroup} from '../faqs'
+import {FAQ_TARGETS} from '../faqs/constants'
 import {Column} from '@frogpond/layout'
 import {partitionByIndex} from '../../lib/partition-by-index'
 import {HomeScreenButton, CELL_MARGIN} from './button'
@@ -12,6 +14,11 @@ import {useNavigation} from '@react-navigation/native'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 
 const styles = StyleSheet.create({
+	banner: {
+		marginHorizontal: CELL_MARGIN,
+		marginTop: CELL_MARGIN,
+		marginBottom: CELL_MARGIN / 2,
+	},
 	cells: {
 		marginHorizontal: CELL_MARGIN / 2,
 		paddingTop: CELL_MARGIN,
@@ -35,6 +42,8 @@ function HomePage(): JSX.Element {
 			showsVerticalScrollIndicator={false}
 			testID="screen-homescreen"
 		>
+			<FaqBannerGroup style={styles.banner} target={FAQ_TARGETS.HOME} />
+
 			<View style={styles.cells}>
 				{columns.map((contents, i) => (
 					<Column key={i} style={styles.column}>

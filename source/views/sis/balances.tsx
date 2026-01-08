@@ -14,6 +14,8 @@ import * as c from '@frogpond/colors'
 import {sto} from '../../lib/colors'
 import {useNavigation} from '@react-navigation/native'
 import {NoCredentialsError, useUsername} from '../../lib/login'
+import {FaqBannerGroup} from '../faqs'
+import {FAQ_TARGETS} from '../faqs/constants'
 
 const DISCLAIMER = 'This data may be outdated or otherwise inaccurate.'
 
@@ -35,6 +37,7 @@ export const BalancesView = (): JSX.Element => {
 
 	return (
 		<ScrollView contentContainerStyle={styles.stage} refreshControl={refresh}>
+			<FaqBannerGroup style={styles.banner} target={FAQ_TARGETS.SIS} />
 			<TableView>
 				<Section footer={DISCLAIMER} header="BALANCES">
 					<View style={styles.balancesRow}>
@@ -105,6 +108,10 @@ export const BalancesView = (): JSX.Element => {
 let styles = StyleSheet.create({
 	stage: {
 		paddingVertical: 20,
+	},
+	banner: {
+		marginHorizontal: 16,
+		marginBottom: 16,
 	},
 
 	balances: {
