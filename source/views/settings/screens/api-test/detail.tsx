@@ -33,7 +33,7 @@ export const APITestDetailView = (): JSX.Element => {
 			if (!cleanedName) {
 				return ''
 			}
-			return client.get(cleanedName, {signal, cache: 'no-store'}).text()
+			return client.get(cleanedName, {signal}).text()
 		},
 		staleTime: 0,
 		cacheTime: 0,

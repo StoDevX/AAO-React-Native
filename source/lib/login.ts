@@ -72,7 +72,6 @@ export async function performLogin(
 	const loginResponse = await ky.post(OLECARD_AUTH_URL, {
 		body: formData,
 		credentials: 'include',
-		cache: 'no-store',
 	})
 
 	let responseUrl = new URL(loginResponse.url)
