@@ -3,7 +3,7 @@ import {sto} from '../../../lib/colors'
 import * as logos from '../../../../images/streaming'
 import {RadioControllerView} from './index'
 import tinycolor from 'tinycolor2'
-import {PlayerTheme, ThemeProvider} from './theme'
+import {PlayerTheme, theming} from './theme'
 
 let tintColor = '#37a287'
 const colors: PlayerTheme = {
@@ -21,7 +21,7 @@ const colors: PlayerTheme = {
 
 export function KstoStationView(): JSX.Element {
 	return (
-		<ThemeProvider theme={colors}>
+		<theming.ThemeProvider theme={colors}>
 			<RadioControllerView
 				image={logos.ksto}
 				playerUrl="https://www.stolaf.edu/multimedia/play/embed/ksto.html"
@@ -36,6 +36,6 @@ export function KstoStationView(): JSX.Element {
 				stationNumber="+15077863602"
 				title="St. Olaf College Radio"
 			/>
-		</ThemeProvider>
+		</theming.ThemeProvider>
 	)
 }

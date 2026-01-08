@@ -4,7 +4,7 @@ import * as c from '@frogpond/colors'
 import type {Glyphs} from '@frogpond/icon'
 import {Icon} from '@frogpond/icon'
 import {Touchable} from '@frogpond/touchable'
-import {useTheme} from './theme'
+import {theming} from './theme'
 
 type ActionButtonProps = {
 	icon: Glyphs
@@ -13,7 +13,7 @@ type ActionButtonProps = {
 }
 
 export function ActionButton(props: ActionButtonProps): JSX.Element {
-	let theme = useTheme()
+	let theme = theming.useTheme()
 	let {icon, text, onPress} = props
 	let bg = {backgroundColor: theme.tintColor}
 	let fg = {color: theme.buttonTextColor}
@@ -60,7 +60,7 @@ export function ShowCalendarButton({
 type SmallActionButtonProps = Omit<ActionButtonProps, 'text'>
 
 export function SmallActionButton(props: SmallActionButtonProps): JSX.Element {
-	let theme = useTheme()
+	let theme = theming.useTheme()
 	let {icon, onPress} = props
 	let bg = {backgroundColor: theme.tintColor}
 	let fg = {color: theme.buttonTextColor}

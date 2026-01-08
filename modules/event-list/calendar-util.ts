@@ -11,7 +11,7 @@ export function shareEvent(event: EventType): Promise<ShareAction | void> {
 
 	let message = `${title}\n\n${times}\n\n${location}\n\n${description}`.trim()
 
-	return Share.share({message}).catch((error) => console.log(error.message))
+	return Share.share({message}).catch((error) => console.log(String(error)))
 }
 
 export function getTimes(event: EventType): string {

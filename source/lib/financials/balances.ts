@@ -22,9 +22,9 @@ export async function getBalances(): Promise<BalancesShapeType> {
 	await performLogin()
 
 	const url = OLECARD_DATA_ENDPOINT
-	const resp = (await ky
+	const resp: OleCardBalancesType = await ky
 		.get(url, {credentials: 'include'})
-		.json()) as OleCardBalancesType
+		.json()
 
 	return getBalancesFromData(resp)
 }

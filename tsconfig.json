@@ -6,7 +6,6 @@
     "isolatedModules": true,
     "jsx": "react",
     "lib": [
-      "DOM",
       "ESNext"
     ],
     "module": "esnext",
@@ -18,8 +17,15 @@
     "resolveJsonModule": true,
     "target": "esnext"
   },
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    "**/*.js",
+    "**/*.jsx",
+    "**/*.mjs",
+    "**/*.cjs"
+  ],
   "exclude": [
-    "node_modules",
-    "scripts"
+    "node_modules"
   ]
 }

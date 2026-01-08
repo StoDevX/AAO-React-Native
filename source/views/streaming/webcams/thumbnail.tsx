@@ -3,10 +3,9 @@ import {StyleSheet, View, Text, Image} from 'react-native'
 import {Touchable} from '@frogpond/touchable'
 import * as c from '@frogpond/colors'
 import {images as webcamImages} from '../../../../images/webcams'
+import {transparentPixel} from '../../../../images/transparent'
 import {trackedOpenUrl} from '@frogpond/open-url'
 import type {Webcam} from './types'
-
-import transparentPixel from '../../../../images/transparent.png'
 
 type Props = {
 	webcam: Webcam
@@ -31,9 +30,7 @@ export const StreamThumbnail = (props: Props): JSX.Element => {
 
 	let img = thumbnailUrl
 		? {uri: thumbnailUrl}
-		: webcamImages.has(thumbnail)
-		  ? webcamImages.get(thumbnail)
-		  : transparentPixel
+		: webcamImages.get(thumbnail) ?? transparentPixel
 
 	return (
 		// do not remove this View; it is needed to prevent extra highlighting

@@ -65,7 +65,7 @@ type BonAppSingleCafeInfo = {
 					label: string
 				},
 			]
-			status: 'open' | 'closed' | string
+			status: string
 			message: false | string
 		},
 	]

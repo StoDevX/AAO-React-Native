@@ -54,9 +54,7 @@ function isError(e: unknown): e is Error {
 function queriesToCourses(
 	queries: UseQueryResult<CourseType[]>[],
 ): CourseType[] {
-	return queries
-		.flatMap((q) => q.data)
-		.filter((data) => data !== undefined) as CourseType[]
+	return queries.flatMap((q) => q.data).filter((data) => data !== undefined)
 }
 
 const useSelectedFilter = (

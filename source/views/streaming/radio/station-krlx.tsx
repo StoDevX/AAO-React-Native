@@ -3,7 +3,7 @@ import * as c from '@frogpond/colors'
 import * as logos from '../../../../images/streaming'
 import {RadioControllerView} from './index'
 import tinycolor from 'tinycolor2'
-import {PlayerTheme, ThemeProvider} from './theme'
+import {PlayerTheme, theming} from './theme'
 
 let tintColor = '#33348e'
 const colors: PlayerTheme = {
@@ -18,7 +18,7 @@ const colors: PlayerTheme = {
 
 export function KrlxStationView(): JSX.Element {
 	return (
-		<ThemeProvider theme={colors}>
+		<theming.ThemeProvider theme={colors}>
 			<RadioControllerView
 				image={logos.krlx}
 				playerUrl="https://live.krlx.org"
@@ -32,6 +32,6 @@ export function KrlxStationView(): JSX.Element {
 				stationNumber="+15072224127"
 				title="Carleton College Radio"
 			/>
-		</ThemeProvider>
+		</theming.ThemeProvider>
 	)
 }

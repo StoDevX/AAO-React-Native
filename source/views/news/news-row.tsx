@@ -1,5 +1,10 @@
 import * as React from 'react'
-import {StyleSheet, Image, Alert} from 'react-native'
+import {
+	StyleSheet,
+	Image,
+	Alert,
+	type ImageResolvedAssetSource,
+} from 'react-native'
 import {Column, Row} from '@frogpond/layout'
 import * as c from '@frogpond/colors'
 import {ListRow, Detail, Title} from '@frogpond/lists'
@@ -8,7 +13,7 @@ import type {StoryType} from './types'
 type Props = {
 	onPress: (link: string) => void
 	story: StoryType
-	thumbnail: false | number
+	thumbnail: false | ImageResolvedAssetSource
 }
 
 export const NewsRow = (props: Props): JSX.Element => {

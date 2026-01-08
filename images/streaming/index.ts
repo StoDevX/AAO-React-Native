@@ -1,4 +1,6 @@
-import krlx from './krlx.png'
-import ksto from './ksto.png'
+import {Image} from 'react-native'
+import rawKrlx from './krlx.png'
+import rawKsto from './ksto.png'
 
-export {krlx, ksto}
+export const krlx = Image.resolveAssetSource(rawKrlx)
+export const ksto = Image.resolveAssetSource(rawKsto)

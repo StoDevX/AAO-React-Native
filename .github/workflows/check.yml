@@ -11,7 +11,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  ruby-version: '3.1'
+  ruby-version: '3.4.8'
   xcode_version: 'Xcode_15.2'
   java_version: '11'
   java_distribution: temurin
@@ -219,7 +219,7 @@ jobs:
         run: npm run test -- --coverage
 
       - name: Upload coverage
-        uses: codecov/codecov-action@e28ff129e5465c2c0dcc6f003fc735cb6ae0c673 # v4
+        uses: codecov/codecov-action@671740ac38dd9b0130fbe1cec585b89eea48d3de # v5.5.2
 
   tsc:
     name: TypeScript
@@ -388,7 +388,7 @@ jobs:
       - if: steps.node-cache.outputs.cache-hit != 'true'
         run: exit 1
 
-      - uses: actions/setup-java@6a0805fcefea3d4657a47ac4c165951e33482018 # v4
+      - uses: actions/setup-java@f2beeb24e141e01a676f977032f5a29d81c9e27e # v5.1.0
         with:
           distribution: ${{ env.java_distribution }}
           java-version: ${{ env.java_version }}

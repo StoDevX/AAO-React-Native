@@ -24,10 +24,7 @@ export const BaseDateTimePicker = (
 	let [date, setDate] = React.useState(props.initialDate)
 	let [timezone] = React.useState(props.initialDate.tz() || '')
 
-	const onChange = (
-		_event: DateTimePickerEvent,
-		selectedDate?: Date | undefined,
-	) => {
+	const onChange = (_event: DateTimePickerEvent, selectedDate?: Date) => {
 		// Reset Android's modal's presenting state
 		props.onChange?.()
 

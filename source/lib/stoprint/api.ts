@@ -20,7 +20,7 @@ import type {
 	RecentPopularPrintersResponse,
 	ReleaseResponse,
 } from './types'
-import {Options} from 'ky'
+import {type Options} from 'ky'
 import {SharedWebCredentials} from 'react-native-keychain'
 import {LoginFailedError} from '../login'
 import {client} from '@frogpond/api'
@@ -38,14 +38,15 @@ export async function logIn(
 		return mockLogIn(credentials, now)
 	}
 
-	const result = (await papercutApi
-		.post(`webclient/users/${username}/log-in`, {
+	const result = await papercutApi
+		.post<LoginResponse>(`webclient/users/${username}/log-in`, {
 			...options,
 			// use URLSearchParams to auto-set Content-Type: application/x-www-form-urlencoded
+			// @ts-expect-error react-native's URLSearchParams type is not compatible with RequestBody's init
 			body: new URLSearchParams({password: encode(password)}),
 			searchParams: {nocache: String(now)},
 		})
-		.json()) as LoginResponse
+		.json()
 
 	if (!result.success) {
 		throw new LoginFailedError()
@@ -54,7 +55,7 @@ export async function logIn(
 	return
 }
 
-export async function fetchJobs(
+export function fetchJobs(
 	username: string,
 	options: Options,
 ): Promise<PrintJobsResponse> {
@@ -62,12 +63,12 @@ export async function fetchJobs(
 		return mockFetchJobs(username)
 	}
 
-	return (await papercutApi
-		.get(`webclient/users/${username}/jobs/status`, options)
-		.json()) as PrintJobsResponse
+	return papercutApi
+		.get<PrintJobsResponse>(`webclient/users/${username}/jobs/status`, options)
+		.json()
 }
 
-export async function fetchAllPrinters(
+export function fetchAllPrinters(
 	username: string,
 	options: Options,
 ): Promise<AllPrintersResponse> {
@@ -75,15 +76,15 @@ export async function fetchAllPrinters(
 		return mockFetchAllPrinters(username)
 	}
 
-	return (await mobileReleaseApi
-		.get('all-printers', {
+	return mobileReleaseApi
+		.get<AllPrintersResponse>('all-printers', {
 			...options,
 			searchParams: {username: username},
 		})
-		.json()) as AllPrintersResponse
+		.json()
 }
 
-export async function fetchRecentPrinters(
+export function fetchRecentPrinters(
 	username: string,
 	options: Options,
 ): Promise<RecentPopularPrintersResponse> {
@@ -91,22 +92,22 @@ export async function fetchRecentPrinters(
 		return mockFetchRecentPrinters(username)
 	}
 
-	return (await mobileReleaseApi
-		.get('recent-popular-printers', {
+	return mobileReleaseApi
+		.get<RecentPopularPrintersResponse>('recent-popular-printers', {
 			...options,
 			searchParams: {username: username},
 		})
-		.json()) as RecentPopularPrintersResponse
+		.json()
 }
 
 export async function fetchColorPrinters(options: Options): Promise<string[]> {
-	let response = (await client
-		.get('color-printers', options)
-		.json()) as ColorPrintersResponse
+	let response = await client
+		.get<ColorPrintersResponse>('color-printers', options)
+		.json()
 	return response.data.colorPrinters
 }
 
-export async function heldJobsAvailableAtPrinterForUser(
+export function heldJobsAvailableAtPrinterForUser(
 	printerName: string,
 	username: string,
 	options: Options,
@@ -116,30 +117,31 @@ export async function heldJobsAvailableAtPrinterForUser(
 		return mockHeldJobsAvailableAtPrinterForUser(printerName, username)
 	}
 
-	return (await mobileReleaseApi
-		.get('held-jobs', {
+	return mobileReleaseApi
+		.get<HeldJobsResponse>('held-jobs', {
 			...options,
 			searchParams: {
 				username: username,
 				printerName: `printers\\${printerName}`,
 			},
 		})
-		.json()) as HeldJobsResponse
+		.json()
 }
 
-export async function cancelPrintJobForUser(
+export function cancelPrintJobForUser(
 	jobId: string,
 	username: string,
 	options: Options,
 ): Promise<CancelResponse> {
-	return (await mobileReleaseApi
-		.post('held-jobs/cancel', {
+	return mobileReleaseApi
+		.post<CancelResponse>('held-jobs/cancel', {
 			...options,
 			searchParams: {username: username},
 			// use URLSearchParams to auto-set Content-Type: application/x-www-form-urlencoded
+			// @ts-expect-error react-native's URLSearchParams type is not compatible with RequestBody's init
 			body: new URLSearchParams({'jobIds[]': jobId}),
 		})
-		.json()) as CancelResponse
+		.json()
 }
 
 type PrintJobReleaseArgs = {
@@ -156,17 +158,18 @@ export async function releasePrintJobToPrinterForUser(
 		return mockReleasePrintJobToPrinterForUser({jobId, printerName, username})
 	}
 
-	let response = (await mobileReleaseApi
-		.post('held-jobs/release', {
+	let response = await mobileReleaseApi
+		.post<ReleaseResponse>('held-jobs/release', {
 			...options,
 			searchParams: {username: username},
 			// use URLSearchParams to auto-set Content-Type: application/x-www-form-urlencoded
+			// @ts-expect-error react-native's URLSearchParams type is not compatible with RequestBody's init
 			body: new URLSearchParams({
 				printerName: `printers\\${printerName}`,
 				'jobIds[]': jobId,
 			}),
 		})
-		.json()) as ReleaseResponse
+		.json()
 
 	if (response.numJobsReleased === 0) {
 		throw new PapercutJobReleaseError()
