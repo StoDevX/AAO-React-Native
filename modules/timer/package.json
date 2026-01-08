@@ -9,7 +9,7 @@
     "test": "jest"
   },
   "peerDependencies": {
-    "react": "^18.0.0",
+    "react": "^19.2.3",
     "moment-timezone": "^0.5.45"
   }
 }
