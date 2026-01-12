@@ -3,6 +3,16 @@ import {act} from '@testing-library/react-native'
 import {fallbackFaqs} from '../../faqs/local-faqs'
 import {getFaqVersion, useFaqBannerStore} from '../store'
 
+jest.mock('../../faqs/local-faqs', () => ({
+	fallbackFaqs: [
+		{
+			id: 'test-faq-1',
+			question: 'Test faq?',
+			answer: 'Test!',
+		},
+	],
+}))
+
 describe('FAQ banner store', () => {
 	beforeEach(() => {
 		useFaqBannerStore.getState().resetAll()
