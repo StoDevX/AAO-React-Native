@@ -110,7 +110,6 @@ Study these key directories to understand the app structure:
 
 ### Debugging Tools
 - [React Native Debugger](https://github.com/jhen0409/react-native-debugger)
-- [Flipper](https://fbflipper.com/)
 - [Chrome DevTools](https://reactnative.dev/docs/debugging)
 
 ### Build and Deployment

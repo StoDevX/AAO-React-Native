@@ -493,23 +493,6 @@ const apiCall = async (url: string) => {
 # Use Redux DevTools for state inspection
 ```
 
-### Device Debugging
-```typescript
-// Use Flipper for advanced debugging
-import {logger} from 'flipper';
-
-// Log network requests
-fetch(url).then(response => {
-  logger.info('API Response', {url, status: response.status});
-});
-
-// Use console statements strategically
-console.log('Component rendered with props:', props);
-
-// Remote debugging
-// Shake device or press Cmd+D (iOS) / Cmd+M (Android) to open debug menu
-```
-
 ### Common Mobile Issues
 1. **Memory leaks** - Monitor with profiling tools
 2. **Network timeouts** - Implement proper timeout handling

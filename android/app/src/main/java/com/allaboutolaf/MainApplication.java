@@ -46,7 +46,7 @@ public class MainApplication extends Application implements ReactApplication {
         @Override
         protected Boolean isHermesEnabled() {
             return BuildConfig.IS_HERMES_ENABLED;
-        }        
+        }
     };
 
     @Override
@@ -72,7 +72,5 @@ public class MainApplication extends Application implements ReactApplication {
         } catch (IOException e) {
             Log.i("allaboutolaf", "HTTP response cache installation failed:", e);
         }
-
-        ReactNativeFlipper.initializeFlipper(this, getReactNativeHost().getReactInstanceManager());
     }
 }

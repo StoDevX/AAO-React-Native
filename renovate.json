@@ -21,44 +21,27 @@
         "@types/react-test-renderer",
         "react-test-renderer",
         "@types/react",
-        "react",
-        "com.facebook.flipper:flipper",
-        "com.facebook.flipper:flipper-fresco-plugin",
-        "com.facebook.flipper:flipper-network-plugin"
+        "react"
       ],
-      "matchUpdateTypes": [
-        "minor",
-        "major"
-      ],
+      "matchUpdateTypes": ["minor", "major"],
       "dependencyDashboardApproval": true
     },
     {
       "description": "require manual approval for new major versions of these packages",
-      "matchPackageNames": [
-        "react-markdown"
-      ],
-      "matchUpdateTypes": [
-        "major"
-      ],
+      "matchPackageNames": ["react-markdown"],
+      "matchUpdateTypes": ["major"],
       "dependencyDashboardApproval": true
     },
     {
       "description": "stop widening peerDep ranges for custom modules",
-      "matchFileNames": [
-        "modules/**/package.json"
-      ],
-      "matchDepTypes": [
-        "peerDependencies"
-      ],
+      "matchFileNames": ["modules/**/package.json"],
+      "matchDepTypes": ["peerDependencies"],
       "rangeStrategy": "bump"
     },
     {
       "description": "group all redux packages together",
       "groupName": "redux",
-      "matchPackageNames": [
-        "@reduxjs/**",
-        "react-redux"
-      ]
+      "matchPackageNames": ["@reduxjs/**", "react-redux"]
     }
   ],
   "prConcurrentLimit": 4

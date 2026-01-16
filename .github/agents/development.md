@@ -177,7 +177,6 @@ try {
 
 ### Debugging Tools
 - React Native Debugger
-- Flipper for network and Redux debugging
 - Console logs (remove before production)
 - React DevTools
 
