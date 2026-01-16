@@ -1,9 +1,5 @@
 import ky from 'ky'
-import {
-	QueryObserverOptions,
-	useQuery,
-	UseQueryResult,
-} from '@tanstack/react-query'
+import {queryOptions} from '@tanstack/react-query'
 import * as SecureStore from 'expo-secure-store'
 import {OLECARD_AUTH_URL} from './financials/urls'
 import {queryClient} from '../init/tanstack-query'
@@ -14,7 +10,7 @@ export class LoginFailedError extends Error {}
 export const SIS_LOGIN_KEY = 'stolaf.edu' as const
 
 const queryKeys = {
-	default: (server: string) => ['credentials', server] as const,
+	default: <T extends string>(server: T) => ['credentials', server] as const,
 } as const
 
 export function invalidateCredentials(): Promise<void> {
@@ -42,10 +38,7 @@ async function loadCredentials(): Promise<null | StoredCredentials> {
 export async function storeCredentials(
 	credentials: Credentials,
 ): Promise<Credentials> {
-	await SecureStore.setItemAsync(
-		SIS_LOGIN_KEY,
-		JSON.stringify(credentials),
-	)
+	await SecureStore.setItemAsync(SIS_LOGIN_KEY, JSON.stringify(credentials))
 	return credentials
 }
 
@@ -82,29 +75,20 @@ export async function performLogin(
 	return {username, password}
 }
 
-type QueryFnData = null | StoredCredentials
-type DefaultError = unknown
-type QueryT<Select> = ReturnType<typeof useCredentials<Select>>
+export const credentialsQuery = queryOptions({
+	networkMode: 'always',
+	gcTime: 0,
+	staleTime: 0,
+	queryKey: queryKeys.default(SIS_LOGIN_KEY),
+	queryFn: () => loadCredentials(),
+})
 
-export function useCredentials<TData = QueryFnData, TError = DefaultError>(
-	options: QueryObserverOptions<QueryFnData, TError, TData> = {},
-): UseQueryResult<TData, TError> {
-	return useQuery({
-		queryKey: queryKeys.default(SIS_LOGIN_KEY),
-		queryFn: () => loadCredentials(),
-		networkMode: 'always',
-		cacheTime: 0,
-		staleTime: 0,
-		...options,
-	})
-}
+export const usernameQuery = queryOptions({
+	...credentialsQuery,
+	select: (data) => data?.username,
+})
 
-export function useUsername(): QueryT<string | undefined> {
-	return useCredentials({
-		select: (data) => data?.username,
-	})
-}
-
-export function useHasCredentials(): QueryT<boolean> {
-	return useCredentials({select: (data) => Boolean(data)})
-}
+export const hasCredentialsQuery = queryOptions({
+	...credentialsQuery,
+	select: (data) => Boolean(data),
+})

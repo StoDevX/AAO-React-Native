@@ -19,12 +19,12 @@ type Props = {
 
 export const IosIcon =
 	(icon: keyof typeof IoniconsGlyphs) =>
-	({color}: Props): JSX.Element => (
+	({color}: Props): React.JSX.Element => (
 		<Ionicon name={icon} style={[styles.icon, {color: color}]} />
 	)
 
 export const MaterialIcon =
 	(icon: keyof typeof MaterialCommunityIconsGlyphs) =>
-	({color}: Props): JSX.Element => (
+	({color}: Props): React.JSX.Element => (
 		<MaterialCommunityIcon name={icon} style={[{color: color}]} />
 	)

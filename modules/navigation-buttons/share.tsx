@@ -5,7 +5,7 @@ import {rightButtonStyles as styles} from './styles'
 
 export function ShareButton(
 	props: Pick<TouchableProps, 'onPress'>,
-): JSX.Element {
+): React.JSX.Element {
 	return (
 		<Touchable highlight={false} onPress={props.onPress} style={styles.button}>
 			<Icon

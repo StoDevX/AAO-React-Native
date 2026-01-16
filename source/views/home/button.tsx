@@ -9,8 +9,21 @@ import * as Device from 'expo-device'
 
 const hasNotch = () => {
 	// Check if device has a notch by model name
-	const notchModels = ['iPhone X', 'iPhone XS', 'iPhone XS Max', 'iPhone XR', 'iPhone 11', 'iPhone 12', 'iPhone 13', 'iPhone 14', 'iPhone 15', 'iPhone 16']
-	return notchModels.some(model => Device.modelName?.includes(model.replace('iPhone ', '')))
+	const notchModels = [
+		'iPhone X',
+		'iPhone XS',
+		'iPhone XS Max',
+		'iPhone XR',
+		'iPhone 11',
+		'iPhone 12',
+		'iPhone 13',
+		'iPhone 14',
+		'iPhone 15',
+		'iPhone 16',
+	]
+	return notchModels.some(
+		(model) => Device.modelName?.includes(model.replace('iPhone ', '')),
+	)
 }
 
 type Props = {
@@ -18,7 +31,7 @@ type Props = {
 	onPress: () => void
 }
 
-export function HomeScreenButton({view, onPress}: Props): JSX.Element {
+export function HomeScreenButton({view, onPress}: Props): React.JSX.Element {
 	let foreground =
 		view.foreground === 'light' ? styles.lightForeground : styles.darkForeground
 

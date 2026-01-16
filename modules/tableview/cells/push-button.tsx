@@ -16,7 +16,7 @@ export const PushButtonCell = ({
 	onPress,
 	disabled = false,
 	showLinkStyle = false,
-}: Props): JSX.Element => (
+}: Props): React.JSX.Element => (
 	<Cell
 		accessory={showLinkStyle ? undefined : 'DisclosureIndicator'}
 		cellStyle={detail ? 'RightDetail' : 'Basic'}

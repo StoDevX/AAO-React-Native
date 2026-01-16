@@ -11,7 +11,7 @@ const styles = StyleSheet.create({
 	},
 })
 
-export let PrivacyView = (): JSX.Element => (
+export let PrivacyView = (): React.JSX.Element => (
 	<ScrollView
 		contentInsetAdjustmentBehavior="automatic"
 		style={styles.scrollView}

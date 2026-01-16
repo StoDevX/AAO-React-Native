@@ -323,7 +323,7 @@ const styles = StyleSheet.create({
 
 export const NavigationKey = 'ColorsInfoView'
 
-export const ColorsLibrary = (): JSX.Element => {
+export const ColorsLibrary = (): React.JSX.Element => {
 	return (
 		<LibraryWrapper>
 			<>

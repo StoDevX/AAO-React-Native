@@ -90,7 +90,7 @@ export const DayPicker = ({
 	onDaySelect,
 	currentDay,
 	onReset,
-}: DayPickerProps): JSX.Element => {
+}: DayPickerProps): React.JSX.Element => {
 	const isOverridden = selectedDay !== currentDay
 
 	return (
@@ -175,7 +175,7 @@ export const DayPickerHeader = ({
 	onDaySelect,
 	currentDay,
 	accentColor = c.systemBlue,
-}: DayPickerHeaderProps): JSX.Element => {
+}: DayPickerHeaderProps): React.JSX.Element => {
 	const dayOptions = DAYS_OF_WEEK.map(({label}) => label)
 	const selectedIndex = DAYS_OF_WEEK.findIndex(({day}) => day === selectedDay)
 	const selectedLabel = DAYS_OF_WEEK[selectedIndex]?.label || 'Today'

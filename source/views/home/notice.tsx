@@ -26,7 +26,7 @@ if (isDevMode()) {
 	]
 }
 
-export function UnofficialAppNotice(): JSX.Element {
+export function UnofficialAppNotice(): React.JSX.Element {
 	return (
 		<View style={[styles.wrapper, styles.background]}>
 			<Text style={styles.text}>{sample(messages)}</Text>

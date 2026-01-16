@@ -18,7 +18,7 @@ const styles = StyleSheet.create({
 	},
 })
 
-const SettingsView = (): JSX.Element => (
+const SettingsView = (): React.JSX.Element => (
 	<ScrollView
 		contentContainerStyle={styles.container}
 		keyboardDismissMode="on-drag"

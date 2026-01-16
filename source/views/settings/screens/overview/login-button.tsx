@@ -9,7 +9,7 @@ type Props = {
 	label: string
 }
 
-export function LoginButton(props: Props): JSX.Element {
+export function LoginButton(props: Props): React.JSX.Element {
 	let {loading, disabled, loggedIn, onPress, label} = props
 
 	let message

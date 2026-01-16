@@ -1,0 +1,2 @@
+overrides:
+  'react-native>@react-native/community-cli-plugin': '-'

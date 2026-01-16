@@ -19,7 +19,7 @@ interface ContextMenuProps {
 export const ContextMenu = React.forwardRef<
 	ContextMenuButton,
 	ContextMenuProps
->((props, ref): JSX.Element => {
+>((props, ref): React.JSX.Element => {
 	const {
 		actions,
 		buttonStyle,

@@ -10,7 +10,7 @@ export const keys = {
 
 export function useNamedNewsSource(
 	source: string,
-): UseQueryResult<StoryType[], unknown> {
+): UseQueryResult<StoryType[]> {
 	return useQuery({
 		queryKey: keys.named(source),
 		queryFn: async ({queryKey, signal}) => {
@@ -22,9 +22,7 @@ export function useNamedNewsSource(
 	})
 }
 
-export function useRssNewsSource(
-	url: string,
-): UseQueryResult<StoryType[], unknown> {
+export function useRssNewsSource(url: string): UseQueryResult<StoryType[]> {
 	return useQuery({
 		queryKey: keys.rss(url),
 		queryFn: async ({queryKey, signal}) => {
@@ -36,9 +34,7 @@ export function useRssNewsSource(
 	})
 }
 
-export function useWpJsonNewsSource(
-	url: string,
-): UseQueryResult<StoryType[], unknown> {
+export function useWpJsonNewsSource(url: string): UseQueryResult<StoryType[]> {
 	return useQuery({
 		queryKey: keys.wpJson(url),
 		queryFn: async ({queryKey, signal}) => {

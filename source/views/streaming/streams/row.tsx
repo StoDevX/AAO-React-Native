@@ -47,7 +47,7 @@ function Thumbnail({item}: {item: StreamType}) {
 
 type Props = {stream: StreamType}
 
-export const StreamRow = (props: Props): JSX.Element => {
+export const StreamRow = (props: Props): React.JSX.Element => {
 	let onPressStream = () => {
 		let {stream} = props
 		trackedOpenUrl({url: stream.player, id: 'StreamingMedia_StreamView'})

@@ -27,7 +27,7 @@ export type RouteParams = {
 	onDeleteSet: () => unknown
 }
 
-export function BuildingHoursScheduleEditorView(): JSX.Element {
+export function BuildingHoursScheduleEditorView(): React.JSX.Element {
 	let navigation = useNavigation()
 
 	let route =

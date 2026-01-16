@@ -24,7 +24,7 @@ type Props = {
 	onProblemReport: () => void
 }
 
-export const BuildingDetail = React.memo((props: Props): JSX.Element => {
+export const BuildingDetail = React.memo((props: Props): React.JSX.Element => {
 	let {info, now, onProblemReport} = props
 
 	let headerImage =

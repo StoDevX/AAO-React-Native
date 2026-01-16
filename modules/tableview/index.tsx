@@ -21,7 +21,7 @@ type CellInterfaceModifiedType = Omit<CellInterface, 'onPress'> & {
 	onPress?: () => void
 }
 
-let Section = (props: SectionInterface): JSX.Element => (
+let Section = (props: SectionInterface): React.JSX.Element => (
 	<RNTableView.Section
 		hideSurroundingSeparators={Platform.OS === 'ios'}
 		roundedCorners={Platform.OS === 'ios'}
@@ -30,7 +30,7 @@ let Section = (props: SectionInterface): JSX.Element => (
 	/>
 )
 
-let TableView = (props: TableViewInterface): JSX.Element => (
+let TableView = (props: TableViewInterface): React.JSX.Element => (
 	<RNTableView.TableView
 		appearance="auto"
 		style={styles.tableview}
@@ -38,7 +38,7 @@ let TableView = (props: TableViewInterface): JSX.Element => (
 	/>
 )
 
-let Cell = (props: CellInterfaceModifiedType): JSX.Element => (
+let Cell = (props: CellInterfaceModifiedType): React.JSX.Element => (
 	<RNTableView.Cell
 		backgroundColor={c.systemBackground}
 		titleTextColor={c.label}

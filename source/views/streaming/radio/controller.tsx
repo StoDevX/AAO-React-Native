@@ -31,7 +31,7 @@ type PlayButtonProps = {
 	onLink: () => unknown
 }
 
-function PlayButton(props: PlayButtonProps): JSX.Element {
+function PlayButton(props: PlayButtonProps): React.JSX.Element {
 	const {state, onPlay, onPause, onLink} = props
 
 	if (!ALLOW_INLINE_PLAYER) {
@@ -69,7 +69,7 @@ type Props = {
 	}
 }
 
-export function RadioControllerView(props: Props): JSX.Element {
+export function RadioControllerView(props: Props): React.JSX.Element {
 	const theme = theming.useTheme()
 	const {
 		source,

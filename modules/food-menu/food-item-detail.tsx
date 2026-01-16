@@ -15,7 +15,7 @@ export const DetailNavigationOptions: NativeStackNavigationOptions = {
 	title: 'Nutrition',
 }
 
-export const MenuItemDetailView = (): JSX.Element => {
+export const MenuItemDetailView = (): React.JSX.Element => {
 	let route = useRoute<RouteProp<RootStackParamList, 'MenuItemDetail'>>()
 	const {item, icons} = route.params
 

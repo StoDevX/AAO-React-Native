@@ -28,7 +28,7 @@ import {RouteProp, useNavigation, useRoute} from '@react-navigation/native'
 import {CloseScreenButton} from '@frogpond/navigation-buttons'
 import {RootStackParamList} from '../../../navigation/types'
 
-export let BuildingHoursProblemReportView = (): JSX.Element => {
+export let BuildingHoursProblemReportView = (): React.JSX.Element => {
 	let navigation = useNavigation()
 	let route = useRoute<RouteProp<RootStackParamList, typeof NavigationKey>>()
 	let {initialBuilding} = route.params

@@ -2,7 +2,9 @@ import * as React from 'react'
 import {BaseDateTimePicker} from './basepicker'
 import {AndroidDatetimePickerProps} from './types'
 
-export const DatePicker = (props: AndroidDatetimePickerProps): JSX.Element => {
+export const DatePicker = (
+	props: AndroidDatetimePickerProps,
+): React.JSX.Element => {
 	// Android's picker button does not initially show
 	let showPickerButtonAndroid = true
 

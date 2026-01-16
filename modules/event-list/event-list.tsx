@@ -43,7 +43,7 @@ function groupEvents(
 	}))
 }
 
-export function EventList(props: Props): JSX.Element {
+export function EventList(props: Props): React.JSX.Element {
 	let navigation = useNavigation()
 
 	let onPressEvent = React.useCallback(

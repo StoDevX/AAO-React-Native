@@ -22,7 +22,7 @@ const styles = StyleSheet.create({
   },
 })
 
-function [ScreenName]Page(): JSX.Element {
+function [ScreenName]Page(): React.JSX.Element {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>[Screen Title]</Text>
@@ -64,7 +64,7 @@ export type NavigationParams = {
   title?: string
 }
 
-function [ScreenName]Page({route}: {route: {params: NavigationParams}}): JSX.Element {
+function [ScreenName]Page({route}: {route: {params: NavigationParams}}): React.JSX.Element {
   const {itemId, title} = route.params
 
   // Use parameters in your component

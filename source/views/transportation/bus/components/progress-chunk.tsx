@@ -54,7 +54,7 @@ type Props = {
 	stopStatus: BusStopStatusEnum
 }
 
-export function ProgressChunk(props: Props): JSX.Element {
+export function ProgressChunk(props: Props): React.JSX.Element {
 	let {stopStatus, barColor, currentStopColor, isFirstChunk, isLastChunk} =
 		props
 

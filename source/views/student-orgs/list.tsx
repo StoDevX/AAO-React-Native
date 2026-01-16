@@ -46,7 +46,7 @@ const styles = StyleSheet.create({
 	},
 })
 
-function StudentOrgsView(): JSX.Element {
+function StudentOrgsView(): React.JSX.Element {
 	let navigation = useNavigation()
 
 	let [query, setQuery] = React.useState('')

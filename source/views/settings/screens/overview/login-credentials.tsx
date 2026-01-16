@@ -4,32 +4,26 @@ import {CellTextField} from '@frogpond/tableview/cells'
 import {LoginButton} from './login-button'
 import {
 	performLogin,
-	useCredentials,
+	credentialsQuery,
 	invalidateCredentials,
 	storeCredentials,
 	resetCredentials,
 } from '../../../../lib/login'
 import {TextInput} from 'react-native'
-import {useMutation} from '@tanstack/react-query'
+import {useMutation, useQuery} from '@tanstack/react-query'
 import {sto} from '../../../../lib/colors'
 
-export const CredentialsLoginSection = (): JSX.Element => {
-	let [username, setUsername] = React.useState('')
+export const CredentialsLoginSection = (): React.JSX.Element => {
+	let [editedUsername, setEditedUsername] = React.useState<string | undefined>()
 	let usernameInputRef = React.useRef<TextInput>(null)
 
-	let [password, setPassword] = React.useState('')
+	let [editedPassword, setEditedPassword] = React.useState<string | undefined>()
 	let passwordInputRef = React.useRef<TextInput>(null)
 
-	let credentials = useCredentials({
-		onSuccess: (data) => {
-			if (!data) {
-				return
-			}
+	let credentials = useQuery(credentialsQuery)
 
-			setUsername(data.username)
-			setPassword(data.password)
-		},
-	})
+	let username = editedUsername ?? credentials.data?.username ?? ''
+	let password = editedPassword ?? credentials.data?.password ?? ''
 
 	let logIn = useMutation({
 		mutationFn: () => performLogin({username, password}),
@@ -43,8 +37,8 @@ export const CredentialsLoginSection = (): JSX.Element => {
 		mutationFn: resetCredentials,
 		onSuccess: async () => {
 			await invalidateCredentials()
-			setUsername('')
-			setPassword('')
+			setEditedUsername('')
+			setEditedPassword('')
 		},
 	})
 
@@ -55,7 +49,7 @@ export const CredentialsLoginSection = (): JSX.Element => {
 		? 'St. Olaf login enables the "meals remaining" feature.'
 		: 'St. Olaf login enables the "meals remaining" feature. Sign in to see this data.'
 
-	let actionPending = logIn.isLoading || logOut.isLoading
+	let actionPending = logIn.isPending || logOut.isPending
 
 	return (
 		<Section footer={sectionFooter} header="ST. OLAF LOGIN">
@@ -66,9 +60,9 @@ export const CredentialsLoginSection = (): JSX.Element => {
 					<>
 						<CellTextField
 							ref={usernameInputRef}
-							editable={!logIn.isLoading}
+							editable={!logIn.isPending}
 							label="Username"
-							onChangeText={(text) => setUsername(text)}
+							onChangeText={(text) => setEditedUsername(text)}
 							onSubmitEditing={() => passwordInputRef.current?.focus()}
 							placeholder="username"
 							returnKeyType="next"
@@ -78,9 +72,9 @@ export const CredentialsLoginSection = (): JSX.Element => {
 
 						<CellTextField
 							ref={passwordInputRef}
-							editable={!logIn.isLoading}
+							editable={!logIn.isPending}
 							label="Password"
-							onChangeText={(text) => setPassword(text)}
+							onChangeText={(text) => setEditedPassword(text)}
 							onSubmitEditing={() => logIn.mutate()}
 							placeholder="password"
 							returnKeyType="done"

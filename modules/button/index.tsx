@@ -59,7 +59,7 @@ export function Button({
 	buttonStyle = null,
 	textStyle = null,
 	mode = 'default',
-}: Props): JSX.Element {
+}: Props): React.JSX.Element {
 	let background = {backgroundColor: c.tertiarySystemFill}
 	let foreground = {color: c.label}
 

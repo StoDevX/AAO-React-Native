@@ -16,7 +16,7 @@ type Props = {
 	thumbnail: false | ImageResolvedAssetSource
 }
 
-export const NewsRow = (props: Props): JSX.Element => {
+export const NewsRow = (props: Props): React.JSX.Element => {
 	let _onPress = () => {
 		if (!props.story.link) {
 			Alert.alert('There is nowhere to go for this story')

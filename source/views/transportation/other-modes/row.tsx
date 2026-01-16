@@ -8,7 +8,7 @@ type Props = {
 	mode: OtherModeType
 }
 
-export function OtherModesRow(props: Props): JSX.Element {
+export function OtherModesRow(props: Props): React.JSX.Element {
 	let {mode, onPress} = props
 
 	return (

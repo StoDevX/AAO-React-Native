@@ -16,7 +16,7 @@ import {
 let Paragraph = Platform.OS === 'android' ? AndroidP : IosP
 let Ack = Platform.OS === 'android' ? AndroidAck : IosAck
 
-export function BalancesOrAcknowledgementView(): JSX.Element {
+export function BalancesOrAcknowledgementView(): React.JSX.Element {
 	let dispatch = useAppDispatch()
 	let alertSeen = useAppSelector(selectAcknowledgement)
 
@@ -65,13 +65,13 @@ type AcknowledgementProps = React.PropsWithChildren<{
 	onPositive: () => void
 }>
 
-const TitleLeftIcon: React.FC<{size: number; color: string}> = (props) => {
+const TitleLeftIcon = (props: {size: number; color: string}) => {
 	return (
 		<Icon name="md-warning" size={props.size} style={{color: props.color}} />
 	)
 }
 
-const AvatarIcon: React.FC<{size: number}> = (props) => {
+const AvatarIcon = (props: {size: number}) => {
 	return <Avatar.Icon {...props} icon={TitleLeftIcon} />
 }
 

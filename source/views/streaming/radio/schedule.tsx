@@ -12,7 +12,7 @@ function eventMapper(event: EventType): EventType {
 	}
 }
 
-export function KSTOScheduleView(): JSX.Element {
+export function KSTOScheduleView(): React.JSX.Element {
 	return (
 		<CccCalendarView
 			poweredBy={{
@@ -24,7 +24,7 @@ export function KSTOScheduleView(): JSX.Element {
 	)
 }
 
-export function KRLXScheduleView(): JSX.Element {
+export function KRLXScheduleView(): React.JSX.Element {
 	return (
 		<CccCalendarView
 			poweredBy={{

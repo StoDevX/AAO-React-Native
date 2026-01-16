@@ -15,7 +15,9 @@ const getDeviceInfo = () => `
 ${Device.brand || ''} ${Device.modelName || ''}
 ${Device.modelId || ''}
 ${Platform.OS} ${Platform.Version} ${getVersion()}
-${Application.nativeApplicationVersion || ''} (${Application.nativeBuildVersion || ''})
+${Application.nativeApplicationVersion || ''} (${
+	Application.nativeBuildVersion || ''
+})
 `
 
 export const openEmail = (): void => {
@@ -37,7 +39,7 @@ const getVersion = () => {
 	}
 }
 
-export const SupportSection = (): JSX.Element => {
+export const SupportSection = (): React.JSX.Element => {
 	let navigation = useNavigation()
 
 	let onResetButton = () => {

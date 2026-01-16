@@ -15,7 +15,7 @@ type Props = {
 	now: Moment
 }
 
-export const ScheduleRow = (props: Props): JSX.Element => {
+export const ScheduleRow = (props: Props): React.JSX.Element => {
 	let {set, isActive, now} = props
 	return (
 		<Cell

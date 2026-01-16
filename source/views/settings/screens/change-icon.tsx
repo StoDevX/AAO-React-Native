@@ -36,7 +36,7 @@ export const icons: Array<Icon> = [
 	},
 ]
 
-export let IconSettingsView = (): JSX.Element => {
+export let IconSettingsView = (): React.JSX.Element => {
 	let [iconType, setIconType] = React.useState<IconTypeEnum>('default')
 
 	let getIcon = async () => {

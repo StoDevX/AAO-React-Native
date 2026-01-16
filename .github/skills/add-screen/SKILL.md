@@ -70,7 +70,7 @@ const styles = StyleSheet.create({
   },
 })
 
-function MyScreen(): JSX.Element {
+function MyScreen(): React.JSX.Element {
   return (
     <View style={styles.container}>
       <Text>My New Screen</Text>

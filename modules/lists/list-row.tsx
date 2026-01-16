@@ -42,7 +42,7 @@ type PropsType = PropsWithChildren<{
 	onPress?: () => void
 }>
 
-export function ListRow(props: PropsType): JSX.Element {
+export function ListRow(props: PropsType): React.JSX.Element {
 	const {
 		style,
 		contentContainerStyle,

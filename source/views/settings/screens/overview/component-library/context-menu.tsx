@@ -5,7 +5,7 @@ import {Button} from '@frogpond/button'
 import {Example, LibraryWrapper} from './base/library-wrapper'
 import {upperFirst} from 'lodash'
 
-const SingleMenu = (): JSX.Element => {
+const SingleMenu = (): React.JSX.Element => {
 	const [value, setValue] = React.useState('dog')
 
 	return (
@@ -24,7 +24,7 @@ const SingleMenu = (): JSX.Element => {
 	)
 }
 
-export const ContextMenuLibrary = (): JSX.Element => (
+export const ContextMenuLibrary = (): React.JSX.Element => (
 	<LibraryWrapper>
 		<SingleMenu />
 	</LibraryWrapper>

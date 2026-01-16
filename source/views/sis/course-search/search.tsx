@@ -25,11 +25,11 @@ export const NavigationOptions: NativeStackNavigationOptions = {
 	title: 'Course Catalog',
 }
 
-const RightButton: React.FC<{onPress: () => void}> = ({onPress}) => (
+const RightButton = ({onPress}: {onPress: () => void}) => (
 	<SearchButton onPress={onPress} title="Browse" />
 )
 
-export const CourseSearchView = (): JSX.Element => {
+export const CourseSearchView = (): React.JSX.Element => {
 	let navigation = useNavigation()
 
 	let {data: basicFilters = [], isLoading, error} = useFilters()

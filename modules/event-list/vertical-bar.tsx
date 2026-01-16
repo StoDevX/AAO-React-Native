@@ -47,7 +47,7 @@ function SolidBar({style}: Props) {
 	return <View style={[solidBarStyles.border, style]} />
 }
 
-export function Bar(props: Props): JSX.Element {
+export function Bar(props: Props): React.JSX.Element {
 	switch (Platform.OS) {
 		case 'ios':
 			return <SolidBar {...props} />

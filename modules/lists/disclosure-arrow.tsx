@@ -17,7 +17,7 @@ export function DisclosureArrow({
 	style,
 }: {
 	style?: StyleProp<ViewStyle>
-}): JSX.Element | null {
+}): React.JSX.Element | null {
 	if (Platform.OS === 'android') {
 		return null
 	}

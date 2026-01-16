@@ -207,7 +207,7 @@ export const NavigationOptions = (props: {
 	}
 }
 
-export const CourseDetailView = (): JSX.Element => {
+export const CourseDetailView = (): React.JSX.Element => {
 	let route = useRoute<RouteProp<RootStackParamList, 'CourseDetail'>>()
 	let {course} = route.params
 

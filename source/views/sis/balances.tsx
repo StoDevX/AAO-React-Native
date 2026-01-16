@@ -13,19 +13,20 @@ import {BalancesShapeType, useBalances} from '../../lib/financials'
 import * as c from '@frogpond/colors'
 import {sto} from '../../lib/colors'
 import {useNavigation} from '@react-navigation/native'
-import {NoCredentialsError, useUsername} from '../../lib/login'
+import {NoCredentialsError, usernameQuery} from '../../lib/login'
+import {useQuery} from '@tanstack/react-query'
 
 const DISCLAIMER = 'This data may be outdated or otherwise inaccurate.'
 
-export const BalancesView = (): JSX.Element => {
+export const BalancesView = (): React.JSX.Element => {
 	let navigation = useNavigation()
-	let {data: username = ''} = useUsername()
+	let {data: username = ''} = useQuery(usernameQuery)
 
 	let {
 		data = {} as BalancesShapeType,
 		error,
 		isError,
-		isInitialLoading,
+		isPending,
 		refetch,
 		isRefetching,
 	} = useBalances(username)
@@ -39,19 +40,19 @@ export const BalancesView = (): JSX.Element => {
 				<Section footer={DISCLAIMER} header="BALANCES">
 					<View style={styles.balancesRow}>
 						<FormattedValueCell
-							indeterminate={isInitialLoading}
+							indeterminate={isPending}
 							label="Flex"
 							value={data.flex}
 						/>
 
 						<FormattedValueCell
-							indeterminate={isInitialLoading}
+							indeterminate={isPending}
 							label="Ole"
 							value={data.ole}
 						/>
 
 						<FormattedValueCell
-							indeterminate={isInitialLoading}
+							indeterminate={isPending}
 							label="Copy/Print"
 							style={styles.finalCell}
 							value={data.print}
@@ -62,13 +63,13 @@ export const BalancesView = (): JSX.Element => {
 				<Section footer={DISCLAIMER} header="MEAL PLAN">
 					<View style={styles.balancesRow}>
 						<FormattedValueCell
-							indeterminate={isInitialLoading}
+							indeterminate={isPending}
 							label="Daily Meals Left"
 							value={data.daily}
 						/>
 
 						<FormattedValueCell
-							indeterminate={isInitialLoading}
+							indeterminate={isPending}
 							label="Weekly Meals Left"
 							style={styles.finalCell}
 							value={data.weekly}

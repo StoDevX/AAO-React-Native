@@ -24,7 +24,7 @@ export function FoodItemRow({
 	badgeSpecials = true,
 	onPress,
 	...props
-}: Props): JSX.Element {
+}: Props): React.JSX.Element {
 	const {left = 0} = props.spacing
 	return (
 		<ListRow

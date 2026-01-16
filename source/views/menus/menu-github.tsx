@@ -11,7 +11,7 @@ type Props = {
 	loadingMessage: string[]
 }
 
-export function GitHubHostedMenu(props: Props): JSX.Element {
+export function GitHubHostedMenu(props: Props): React.JSX.Element {
 	let {
 		data = {foodItems: {}, meals: [], corIcons: {}},
 		error,

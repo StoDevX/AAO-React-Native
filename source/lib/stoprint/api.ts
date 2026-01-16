@@ -46,7 +46,6 @@ export async function logIn(
 		.post<LoginResponse>(`webclient/users/${username}/log-in`, {
 			...options,
 			// use URLSearchParams to auto-set Content-Type: application/x-www-form-urlencoded
-			// @ts-expect-error react-native's URLSearchParams type is not compatible with RequestBody's init
 			body: new URLSearchParams({password: encode(password)}),
 			searchParams: {nocache: String(now)},
 		})
@@ -142,7 +141,6 @@ export function cancelPrintJobForUser(
 			...options,
 			searchParams: {username: username},
 			// use URLSearchParams to auto-set Content-Type: application/x-www-form-urlencoded
-			// @ts-expect-error react-native's URLSearchParams type is not compatible with RequestBody's init
 			body: new URLSearchParams({'jobIds[]': jobId}),
 		})
 		.json()
@@ -167,7 +165,6 @@ export async function releasePrintJobToPrinterForUser(
 			...options,
 			searchParams: {username: username},
 			// use URLSearchParams to auto-set Content-Type: application/x-www-form-urlencoded
-			// @ts-expect-error react-native's URLSearchParams type is not compatible with RequestBody's init
 			body: new URLSearchParams({
 				printerName: `printers\\${printerName}`,
 				'jobIds[]': jobId,

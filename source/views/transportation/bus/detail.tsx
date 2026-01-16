@@ -60,7 +60,7 @@ type Props = {
 	subtitle: string
 }
 
-function BusStopDetailInternal(props: Props): JSX.Element {
+function BusStopDetailInternal(props: Props): React.JSX.Element {
 	let {stop, line, now, subtitle} = props
 
 	let [_, setSchedule] = useState<BusSchedule | null>(null)
@@ -190,7 +190,7 @@ function BusStopDetailInternal(props: Props): JSX.Element {
 	)
 }
 
-export function BusRouteDetail(): JSX.Element {
+export function BusRouteDetail(): React.JSX.Element {
 	let {now} = useMomentTimer({intervalMs: 1000 * 60, timezone: timezone()})
 	let route = useRoute<RouteProp<RootStackParamList, 'BusRouteDetail'>>()
 	let {stop, line, subtitle} = route.params

@@ -9,7 +9,7 @@ type Props = {
 	job: JobType
 }
 
-export const JobRow = (props: Props): JSX.Element => {
+export const JobRow = (props: Props): React.JSX.Element => {
 	let _onPress = () => props.onPress(props.job)
 
 	let {job} = props

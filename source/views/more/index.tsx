@@ -38,10 +38,10 @@ function splitToArray(str: string) {
 }
 
 function linkToArray(data: LinkValue) {
-	return Array.from(new Set([...splitToArray(data.label)]))
+	return Array.from(new Set(splitToArray(data.label)))
 }
 
-function MoreView(): JSX.Element {
+function MoreView(): React.JSX.Element {
 	let navigation = useNavigation()
 
 	let [query, setQuery] = React.useState('')

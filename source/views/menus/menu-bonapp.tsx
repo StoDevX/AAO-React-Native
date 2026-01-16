@@ -159,7 +159,7 @@ function getErrorMessage(error: Error | undefined) {
 	}
 }
 
-export function BonAppHostedMenu(props: Props): JSX.Element {
+export function BonAppHostedMenu(props: Props): React.JSX.Element {
 	let now = moment.tz(timezone())
 
 	let {

@@ -40,7 +40,7 @@ export const NavigationOptions = (props: {
 	}
 }
 
-export function DirectoryView(): JSX.Element {
+export function DirectoryView(): React.JSX.Element {
 	let [searchQueryType, setSearchQueryType] =
 		React.useState<DirectorySearchTypeEnum>('query')
 	let [typedQuery, setTypedQuery] = React.useState('')

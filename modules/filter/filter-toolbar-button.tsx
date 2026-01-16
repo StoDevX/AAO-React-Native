@@ -51,7 +51,7 @@ type Props<T extends object> = {
 
 export function FilterToolbarButton<T extends object>(
 	props: Props<T>,
-): JSX.Element | null {
+): React.ReactNode {
 	let {onPopoverDismiss, filter, style, title} = props
 
 	let [popoverVisible, setPopoverVisible] = useState(false)

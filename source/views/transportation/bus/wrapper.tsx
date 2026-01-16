@@ -10,7 +10,7 @@ type Props = {
 	line: string
 }
 
-let BusView = (props: Props): JSX.Element => {
+let BusView = (props: Props): React.JSX.Element => {
 	let {now} = useMomentTimer({intervalMs: 1000 * 60, timezone: timezone()})
 	let {data: busLines = [], error, refetch, isError, isLoading} = useBusRoutes()
 	let navigation = useNavigation()

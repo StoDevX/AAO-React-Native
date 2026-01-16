@@ -8,43 +8,43 @@ import {DEFAULT_URL} from '../../../../lib/constants'
 import {useMutation, useQuery} from '@tanstack/react-query'
 
 export const ServerUrlSection = (): React.ReactElement => {
-	const [serverAddress, setServerAddress] = React.useState('')
+	const [editedServerUrl, setEditedServerUrl] = React.useState<
+		string | undefined
+	>()
 
-	let {isLoading} = useQuery({
+	let storedServerUrl = useQuery({
 		queryKey: ['settings', 'server-url'],
 		queryFn: () => storage.getServerAddress(),
-		onSuccess: setServerAddress,
 	})
 
-	let storeServerAddress = useMutation({
+	let serverUrl = editedServerUrl ?? storedServerUrl.data ?? ''
+
+	let persistServerUrl = useMutation({
 		mutationKey: ['settings', 'server-url'],
-		mutationFn: () => storage.setServerAddress(serverAddress),
+		mutationFn: () => storage.setServerAddress(serverUrl),
 		onSuccess: async () => await Updates.reloadAsync(),
 	})
 
-	let reload = () => storeServerAddress.mutate()
-
-	const isUrlValid = /^(http|https):\/\/[^ "]+$/u.test(serverAddress)
-	const isValid = isUrlValid || serverAddress.length === 0
+	let isValid = serverUrl.length === 0 || URL.canParse(serverUrl)
 
 	return (
 		<Section
 			footer="Empty means we will use the default URL."
 			header="SERVER URL"
 		>
-			{isLoading ? (
+			{storedServerUrl.isLoading ? (
 				<CellTextField editable={false} placeholder="Loading…" value="" />
 			) : (
 				<>
 					<CellTextField
-						onChangeText={setServerAddress}
-						onSubmitEditing={reload}
+						onChangeText={setEditedServerUrl}
+						onSubmitEditing={() => persistServerUrl.mutate()}
 						placeholder={DEFAULT_URL}
-						value={serverAddress}
+						value={serverUrl}
 					/>
 					<ButtonCell
 						disabled={!isValid}
-						onPress={reload}
+						onPress={() => persistServerUrl.mutate()}
 						textStyle={styles.buttonCell}
 						title={!isValid ? 'Invalid URL!' : 'Save'}
 					/>

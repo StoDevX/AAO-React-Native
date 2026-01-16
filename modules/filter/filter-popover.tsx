@@ -8,21 +8,27 @@ import {View, StyleSheet} from 'react-native'
 import {TableView} from '@frogpond/tableview'
 
 type Props<T extends object> = {
-	anchor: React.RefObject<View>
+	anchor: React.RefObject<View | null>
 	filter: FilterType<T>
 	onClosePopover: (filter: FilterType<T>) => unknown
 	visible: boolean
 }
 
-export function FilterPopover<T extends object>(props: Props<T>): JSX.Element {
+export function FilterPopover<T extends object>(
+	props: Props<T>,
+): React.ReactNode {
 	let {anchor, onClosePopover, visible} = props
 	let [filter, setFilter] = useState<FilterType<T>>(props.filter)
 	let insets = useSafeAreaInsets()
 
+	if (!anchor.current) {
+		return null
+	}
+
 	return (
 		<Popover
 			displayAreaInsets={insets}
-			from={anchor}
+			from={anchor as React.RefObject<View>}
 			isVisible={visible}
 			onRequestClose={() => onClosePopover(filter)}
 			placement={PopoverPlacement.BOTTOM}

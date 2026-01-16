@@ -3,7 +3,7 @@ import {describe, it, expect} from '@jest/globals'
 
 describe('toggle favorite building hours', () => {
 	it('should return the initial state', () => {
-		const {favorites} = reducer(undefined, {type: undefined})
+		const {favorites} = reducer(undefined, {type: ''})
 		expect(favorites).toEqual([])
 	})
 

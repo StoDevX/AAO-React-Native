@@ -17,9 +17,9 @@ import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 import {RouteProp, useNavigation, useRoute} from '@react-navigation/native'
 import {RootStackParamList} from '../../navigation/types'
 import {DebugNoticeButton} from '@frogpond/navigation-buttons'
-import {useHeldJobs} from './query'
-import {useMutation} from '@tanstack/react-query'
-import {useUsername} from '../../lib/login'
+import {heldJobsQuery} from './query'
+import {useMutation, useQuery} from '@tanstack/react-query'
+import {usernameQuery} from '../../lib/login'
 import {LoadingView} from '@frogpond/notice'
 
 const styles = StyleSheet.create({
@@ -74,15 +74,18 @@ function PrinterInformation({printer}: {printer: Printer}) {
 	)
 }
 
-export const PrintJobReleaseView = (): JSX.Element => {
+export const PrintJobReleaseView = (): React.JSX.Element => {
 	let navigation = useNavigation()
 
 	let route = useRoute<RouteProp<RootStackParamList, 'PrintJobRelease'>>()
 	let {job, printer} = route.params
 
-	let {data: username = '', isLoading: loadingUsername} = useUsername()
+	let {data: username = '', isLoading: loadingUsername} =
+		useQuery(usernameQuery)
 
-	let {data: heldJobs = []} = useHeldJobs(printer?.printerName)
+	let {data: heldJobs = []} = useQuery(
+		heldJobsQuery({username, printerName: printer?.printerName}),
+	)
 	let jobId = job.id.toString()
 	let heldJob = heldJobs.find((item) => item.id.startsWith(jobId))
 
@@ -176,9 +179,9 @@ export const PrintJobReleaseView = (): JSX.Element => {
 		])
 	}
 
-	let status = releaseJob.isLoading
+	let status = releaseJob.isPending
 		? 'printing'
-		: cancelJob.isLoading
+		: cancelJob.isPending
 		  ? 'cancelling'
 		  : job?.statusFormatted === 'Pending Release'
 		    ? 'pending'

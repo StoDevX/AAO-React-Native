@@ -32,7 +32,7 @@ export function ButtonCell({
 	textStyle,
 	title,
 	accessoryIcon,
-}: ButtonCellProps): JSX.Element {
+}: ButtonCellProps): React.JSX.Element {
 	return (
 		<Cell
 			cellAccessoryView={

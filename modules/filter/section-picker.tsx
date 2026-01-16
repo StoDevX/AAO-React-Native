@@ -13,7 +13,7 @@ type Props<T extends object> = {
 export function PickerSection<T extends object>({
 	filter,
 	onChange,
-}: Props<T>): JSX.Element {
+}: Props<T>): React.JSX.Element {
 	let {spec} = filter
 	let {title = '', caption = '', options, selected} = spec
 

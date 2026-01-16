@@ -44,7 +44,7 @@ type Props = {
 	onPress: () => void
 }
 
-export function BuildingRow(props: Props): JSX.Element {
+export function BuildingRow(props: Props): React.JSX.Element {
 	let {info, now, onPress} = props
 
 	let openStatus = React.useMemo(

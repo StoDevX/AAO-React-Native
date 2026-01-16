@@ -10,7 +10,10 @@ type Props = {
 	buttonStyle?: StyleProp<ViewStyle>
 }
 
-export function CloseScreenButton({title, buttonStyle}: Props): JSX.Element {
+export function CloseScreenButton({
+	title,
+	buttonStyle,
+}: Props): React.JSX.Element {
 	let navigation = useNavigation()
 	let {colors} = useTheme()
 

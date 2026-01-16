@@ -31,7 +31,7 @@ export const NavigationOptions = (props: {
 	}
 }
 
-export function EventDetail(): JSX.Element {
+export function EventDetail(): React.JSX.Element {
 	let route = useRoute<RouteProp<RootStackParamList, typeof NavigationKey>>()
 	let {event, poweredBy} = route.params
 

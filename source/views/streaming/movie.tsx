@@ -1,7 +1,7 @@
 import * as React from 'react'
 import {StyleSheet, View, Text} from 'react-native'
 
-export function WeeklyMovieView(): JSX.Element {
+export function WeeklyMovieView(): React.JSX.Element {
 	return (
 		<View style={styles.container}>
 			<Text>Movie</Text>

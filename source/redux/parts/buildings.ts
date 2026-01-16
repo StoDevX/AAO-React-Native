@@ -6,10 +6,9 @@ export type State = {
 	favorites: Array<string>
 }
 
-// why `as`? see https://redux-toolkit.js.org/tutorials/typescript#:~:text=In%20some%20cases%2C%20TypeScript
 const initialState = {
 	favorites: [],
-} as State
+} satisfies State as State
 
 const slice = createSlice({
 	name: 'buildings',

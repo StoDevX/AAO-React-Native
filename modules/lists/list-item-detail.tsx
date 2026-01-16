@@ -26,7 +26,7 @@ type Props = PropsWithChildren<{
 	style?: StyleProp<TextStyle>
 	lines?: number
 }>
-export function Detail(props: Props): JSX.Element {
+export function Detail(props: Props): React.JSX.Element {
 	return (
 		<Text numberOfLines={props.lines} style={[styles.detail, props.style]}>
 			{props.children}

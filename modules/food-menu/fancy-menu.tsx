@@ -103,7 +103,7 @@ const groupMenuData = (args: {
 		.map(([title, data]) => ({title, data}))
 }
 
-export function FancyMenu(props: Props): JSX.Element {
+export function FancyMenu(props: Props): React.JSX.Element {
 	const {now, meals, cafeMessage, foodItems, menuCorIcons} = props
 	const applyFilters = props.applyFilters ?? applyFiltersToItem
 

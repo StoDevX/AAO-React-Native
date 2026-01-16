@@ -10,7 +10,7 @@ type Props = {
 	style?: StyleProp<ViewStyle>
 }
 
-export function HtmlContent(props: Props): JSX.Element {
+export function HtmlContent(props: Props): React.JSX.Element {
 	let webview = useRef<WebView | null>(null)
 
 	const onNavigationStateChange = useCallback(

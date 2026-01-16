@@ -14,7 +14,7 @@ type Props = {
 	statusMessage: string
 }
 
-export function StoPrintErrorView(props: Props): JSX.Element {
+export function StoPrintErrorView(props: Props): React.JSX.Element {
 	let iconName: string =
 		Platform.select({
 			ios: 'ios-bug',

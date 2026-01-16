@@ -36,7 +36,7 @@ const createDirectoryIcon =
 		<List.Icon {...props} icon={iconName} />
 	)
 
-export function DirectoryDetailView(): JSX.Element {
+export function DirectoryDetailView(): React.JSX.Element {
 	// typing useNavigation's props to inform typescript about `push`
 	let navigation =
 		useNavigation<NativeStackNavigationProp<RootStackParamList>>()

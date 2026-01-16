@@ -308,8 +308,6 @@ jobs:
       - name: Generate jsbundle
         if: steps.jsbundle-cache.outputs.cache-hit != 'true'
         run: npm run bundle:ios
-        env:
-          APP_MODE: mocked
 
       - name: Cache the jsbundle
         uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
@@ -357,8 +355,6 @@ jobs:
       - name: Generate jsbundle
         if: steps.jsbundle-cache.outputs.cache-hit != 'true'
         run: npm run bundle:android
-        env:
-          APP_MODE: mocked
 
       - name: Cache the jsbundle
         if: steps.jsbundle-cache.outputs.cache-hit != 'true'
@@ -584,15 +580,15 @@ jobs:
           if [ ! -f ios/build/Build/Products/Release-iphonesimulator/AllAboutOlaf.app/Info.plist ]; then
             echo "WARNING: Info.plist not found in app bundle, build may be incomplete!"
             echo "Copying essential files from source directory as fallback..."
-            
+
             # Copy essential app files
             cp ios/AllAboutOlaf/Info.plist ios/build/Build/Products/Release-iphonesimulator/AllAboutOlaf.app/
-            
+
             # Create simulated app executable
             echo "#!/bin/sh" > ios/build/Build/Products/Release-iphonesimulator/AllAboutOlaf.app/AllAboutOlaf
             echo "echo 'This is a placeholder executable for testing purposes'" >> ios/build/Build/Products/Release-iphonesimulator/AllAboutOlaf.app/AllAboutOlaf
             chmod +x ios/build/Build/Products/Release-iphonesimulator/AllAboutOlaf.app/AllAboutOlaf
-            
+
             echo "Created minimal app structure for testing"
           fi
 

@@ -18,7 +18,7 @@ const styles = StyleSheet.create({
 	},
 })
 
-const StudentWorkView = (): JSX.Element => {
+const StudentWorkView = (): React.JSX.Element => {
 	let navigation = useNavigation()
 	let {
 		data = [],

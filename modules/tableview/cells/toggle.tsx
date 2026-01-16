@@ -11,7 +11,7 @@ type PropsType = {
 	disabled?: boolean
 }
 
-export function CellToggle(props: PropsType): JSX.Element {
+export function CellToggle(props: PropsType): React.JSX.Element {
 	let {colors} = useTheme()
 
 	let {value, onChange, label, detail, disabled} = props

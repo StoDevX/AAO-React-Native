@@ -12,7 +12,7 @@ type Props = {
 	viewportWidth: number
 }
 
-export const StreamThumbnail = (props: Props): JSX.Element => {
+export const StreamThumbnail = (props: Props): React.JSX.Element => {
 	let handlePress = () => {
 		let {name, pageUrl} = props.webcam
 		trackedOpenUrl({url: pageUrl, id: `${name}WebcamView`})

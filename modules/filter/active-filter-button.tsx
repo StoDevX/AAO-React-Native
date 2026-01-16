@@ -24,7 +24,7 @@ export function ActiveFilterButton<T extends object>({
 	label,
 	onRemove,
 	style,
-}: Props<T>): JSX.Element {
+}: Props<T>): React.JSX.Element {
 	let iconName = Platform.select({
 		ios: 'ios-close-circle',
 		android: 'md-close-circle',

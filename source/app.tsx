@@ -25,9 +25,9 @@ import {LoadingView} from '@frogpond/notice'
 import {IS_PRODUCTION} from '@frogpond/constants'
 import {StatusBar, useColorScheme} from 'react-native'
 
-function App(): JSX.Element {
+function App(): React.JSX.Element {
 	// Create a ref for the navigation container
-	const navigationRef = React.useRef()
+	const navigationRef = React.useRef(null)
 	const scheme = useColorScheme()
 	const theme = scheme === 'dark' ? CombinedDarkTheme : CombinedLightTheme
 	const statusBarStyle = scheme === 'dark' ? 'light-content' : 'dark-content'

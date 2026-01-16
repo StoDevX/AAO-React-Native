@@ -1,12 +1,6 @@
 module.exports = {
-	presets: [
-		'babel-preset-expo',
-	],
-	plugins: [
-		'@babel/plugin-transform-export-namespace-from',
-		// the react-native-reanimated plugin must come last
-		'react-native-reanimated/plugin',
-	],
+	presets: ['babel-preset-expo'],
+	plugins: ['@babel/plugin-transform-export-namespace-from'],
 	env: {
 		production: {
 			plugins: ['transform-remove-console'],

@@ -17,7 +17,7 @@ export const buttonStyles = StyleSheet.create({
 	},
 })
 
-export const NetworkLoggerButton: React.FC = () => {
+export const NetworkLoggerButton = () => {
 	const navigation = useNavigation()
 	let {colors} = useTheme()
 

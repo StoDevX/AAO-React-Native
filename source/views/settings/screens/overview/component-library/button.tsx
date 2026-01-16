@@ -7,7 +7,7 @@ import {Button} from '@frogpond/button'
 import {ButtonCell} from '@frogpond/tableview/cells'
 import {LibraryWrapper, Example} from './base/library-wrapper'
 
-const ButtonCellExample = (): JSX.Element => {
+const ButtonCellExample = (): React.JSX.Element => {
 	return (
 		<>
 			<ButtonCell disabled={false} onPress={() => undefined} title="Enabled" />
@@ -50,7 +50,7 @@ const ButtonCellExample = (): JSX.Element => {
 	)
 }
 
-const ButtonExample = (): JSX.Element => {
+const ButtonExample = (): React.JSX.Element => {
 	return (
 		<>
 			<Example title="No props">
@@ -83,7 +83,7 @@ const ButtonExample = (): JSX.Element => {
 	)
 }
 
-export const ButtonLibrary = (): JSX.Element => (
+export const ButtonLibrary = (): React.JSX.Element => (
 	<LibraryWrapper>
 		<>
 			<Section header="@frogpond/tableview/cells">

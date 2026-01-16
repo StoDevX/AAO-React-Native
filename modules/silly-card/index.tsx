@@ -51,7 +51,12 @@ type Props = React.PropsWithChildren<{
 	style?: StyleProp<ViewStyle>
 }>
 
-export function Card({header, footer, children, style}: Props): JSX.Element {
+export function Card({
+	header,
+	footer,
+	children,
+	style,
+}: Props): React.JSX.Element {
 	return (
 		<View style={[cardStyles.card, style]}>
 			{header ? (

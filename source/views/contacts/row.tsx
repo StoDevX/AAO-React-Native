@@ -8,7 +8,7 @@ type Props = {
 	contact: ContactType
 }
 
-export const ContactRow = (props: Props): JSX.Element => {
+export const ContactRow = (props: Props): React.JSX.Element => {
 	let {contact, onPress} = props
 
 	let _onPress = () => onPress(contact)

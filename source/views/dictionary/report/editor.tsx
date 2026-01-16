@@ -13,7 +13,7 @@ export const NavigationOptions: NativeStackNavigationOptions = {
 	title: 'Suggest an edit',
 }
 
-let DictionaryEditorView = (): JSX.Element => {
+let DictionaryEditorView = (): React.JSX.Element => {
 	let route = useRoute<RouteProp<RootStackParamList, 'DictionaryEditor'>>()
 	let {item} = route.params
 

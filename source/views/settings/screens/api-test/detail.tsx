@@ -19,7 +19,7 @@ import {DebugView} from '../debug'
 
 type DisplayMode = 'raw' | 'parsed'
 
-export const APITestDetailView = (): JSX.Element => {
+export const APITestDetailView = (): React.JSX.Element => {
 	let navigation = useNavigation()
 	let route = useRoute<RouteProp<SettingsStackParamList, 'APITestDetail'>>()
 
@@ -36,7 +36,7 @@ export const APITestDetailView = (): JSX.Element => {
 			return client.get(cleanedName, {signal, cache: 'no-store'}).text()
 		},
 		staleTime: 0,
-		cacheTime: 0,
+		gcTime: 0,
 	})
 
 	React.useLayoutEffect(() => {
@@ -47,12 +47,12 @@ export const APITestDetailView = (): JSX.Element => {
 		})
 	}, [cleanedName, navigation])
 
-	const jsonViewContent = React.useMemo((): JSX.Element => {
+	const jsonViewContent = React.useMemo((): React.JSX.Element => {
 		if (data === undefined) {
 			return <></>
 		}
 
-		const parsed = JSON.parse(data ?? '') as unknown
+		const parsed = JSON.parse(data) as unknown
 		const formatted = JSON.stringify(parsed, null, 2)
 		const highlighted = syntaxHighlight(formatted)
 

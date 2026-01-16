@@ -1,7 +1,9 @@
 // @ts-check
 
 import eslint from '@eslint/js'
-import {defineConfig} from 'eslint/config'
+import {defineConfig, globalIgnores} from 'eslint/config'
+// @ts-expect-error Could not find a declaration file for module
+import expoConfig from 'eslint-config-expo/flat'
 import tseslint from 'typescript-eslint'
 import reactPlugin from 'eslint-plugin-react'
 import reactHooks from 'eslint-plugin-react-hooks'
@@ -11,7 +13,8 @@ import globals from 'globals'
 
 export default defineConfig([
 	// Ignore patterns (replaces .eslintignore)
-	{ignores: ['**/*.min.js', '**/*-min.js']},
+	globalIgnores(['**/*.min.js', '**/*-min.js']),
+	expoConfig,
 	// base eslint rules
 	eslint.configs.recommended,
 	// @typescript-eslint

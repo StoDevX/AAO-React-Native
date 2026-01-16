@@ -16,7 +16,9 @@ type LeftDetailProps = {
 		| undefined
 }
 
-export function MultiLineLeftDetailCell(props: LeftDetailProps): JSX.Element {
+export function MultiLineLeftDetailCell(
+	props: LeftDetailProps,
+): React.JSX.Element {
 	const {detail, title, onPress, accessory} = props
 	const cellContent = (
 		<View style={styles.cellContentView}>
