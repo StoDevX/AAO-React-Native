@@ -13,7 +13,7 @@
     "react-native": "^0.81.0"
   },
   "dependencies": {
-    "@frogpond/colors": "^1.0.0",
-    "react-native-typography": "1.4.1"
+    "@frogpond/colors": "workspace:",
+    "react-native-typography": "^1.4.1"
   }
 }

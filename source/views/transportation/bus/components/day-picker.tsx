@@ -11,7 +11,7 @@ import type {Moment} from 'moment-timezone'
 import type {DayOfWeek} from '../types'
 import * as c from '@frogpond/colors'
 import {ContextMenu} from '@frogpond/context-menu'
-import {Icon} from '@frogpond/icon'
+import {Ionicons} from '@react-native-vector-icons/ionicons'
 
 const styles = StyleSheet.create({
 	dayPickerContainer: {
@@ -197,7 +197,7 @@ export const DayPickerHeader = ({
 			title="Pick a schedule"
 		>
 			<View style={[styles.headerButtonContainer, {borderColor: accentColor}]}>
-				<Icon color={accentColor} name="calendar" size={16} />
+				<Ionicons color={accentColor} name="calendar" size={16} />
 				<Text style={[styles.headerButtonText, {color: accentColor}]}>
 					{displayText}
 				</Text>

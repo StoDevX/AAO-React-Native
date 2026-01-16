@@ -12,7 +12,6 @@
     "data": "echo 'use the `bundle-data` script instead' && exit 1",
     "ios": "expo run:ios",
     "lint": "eslint --report-unused-disable-directives --cache source/ modules/ scripts/ images/",
-    "prepare": "patch -p0 -Nfsi contrib/*.patch || true",
     "pretty": "prettier --write '{source,modules,scripts,images,e2e}/**/*.{js,ts,tsx,json}' 'data/**/*.css' '{*,.*}.{yaml,yml,json,json5,js,ts,tsx}'",
     "p": "pretty-quick",
     "pods": "scripts/pods.sh",
@@ -20,11 +19,6 @@
     "test": "jest",
     "validate-bus-data": "node scripts/validate-bus-schedules.mjs",
     "validate-data": "node scripts/validate-data.mjs"
-  },
-  "workspaces": {
-    "packages": [
-      "modules/*"
-    ]
   },
   "prettier": {
     "useTabs": true,
@@ -53,6 +47,9 @@
     "@react-native-community/datetimepicker": "8.5.1",
     "@react-native-community/netinfo": "11.4.1",
     "@react-native-picker/picker": "2.5.1",
+    "@react-native-vector-icons/entypo": "12.4.0",
+    "@react-native-vector-icons/ionicons": "12.3.0",
+    "@react-native-vector-icons/material-design-icons": "12.4.0",
     "@react-navigation/bottom-tabs": "6.6.1",
     "@react-navigation/material-bottom-tabs": "6.2.29",
     "@react-navigation/material-top-tabs": "6.6.14",
@@ -93,7 +90,7 @@
     "react-native-gesture-handler": "2.28.0",
     "react-native-ios-context-menu": "1.15.3",
     "react-native-network-logger": "2.0.1",
-    "react-native-paper": "5.12.5",
+    "react-native-paper": "5.14.5",
     "react-native-popover-view": "5.1.8",
     "react-native-reanimated": "4.1.1",
     "react-native-safe-area-context": "5.6.0",
@@ -102,7 +99,6 @@
     "react-native-sfsymbols": "1.2.2",
     "react-native-tableview-simple": "4.4.1",
     "react-native-typography": "1.4.1",
-    "react-native-vector-icons": "9.2.0",
     "react-native-webview": "13.12.2",
     "react-native-worklets": "0.5.1",
     "react-redux": "9.2.0",
@@ -175,6 +171,6 @@
     "node": ">=18"
   },
   "optionalDependencies": {
-    "detox": "20.26.1"
+    "detox": "20.46.3"
   }
 }

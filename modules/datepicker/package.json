@@ -14,8 +14,8 @@
     "moment-timezone": "^0.5.45"
   },
   "dependencies": {
-    "@frogpond/app-theme": "^1.0.0",
-    "@frogpond/colors": "^1.0.0",
-    "@react-native-community/datetimepicker": "8.5.1"
+    "@frogpond/app-theme": "workspace:",
+    "@frogpond/colors": "workspace:",
+    "@react-native-community/datetimepicker": "^8.5.1"
   }
 }

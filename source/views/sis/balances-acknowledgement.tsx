@@ -1,6 +1,6 @@
 import * as React from 'react'
 import {Platform, ScrollView, StyleSheet, View} from 'react-native'
-import Icon from 'react-native-vector-icons/Ionicons'
+import {Ionicons} from '@react-native-vector-icons/ionicons'
 import {Avatar, Button, Card, Paragraph as AndroidP} from 'react-native-paper'
 import {Paragraph as IosP} from '@frogpond/markdown'
 import {Card as IosCard} from '@frogpond/silly-card'
@@ -67,7 +67,7 @@ type AcknowledgementProps = React.PropsWithChildren<{
 
 const TitleLeftIcon = (props: {size: number; color: string}) => {
 	return (
-		<Icon name="md-warning" size={props.size} style={{color: props.color}} />
+		<Ionicons name="warning" size={props.size} style={{color: props.color}} />
 	)
 }
 

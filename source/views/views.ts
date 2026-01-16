@@ -1,5 +1,6 @@
 import * as c from '@frogpond/colors'
 import {RootViewsParamList} from '../navigation/types'
+import type {EntypoIconName} from '@react-native-vector-icons/entypo'
 
 import {NavigationKey as menus} from './menus'
 import {NavigationKey as sis} from './sis'
@@ -19,7 +20,7 @@ const courseSearch: keyof RootViewsParamList = 'CourseSearch'
 
 type CommonView = {
 	title: string
-	icon: string
+	icon: EntypoIconName
 	foreground: 'light' | 'dark'
 	tint: string
 	disabled?: boolean

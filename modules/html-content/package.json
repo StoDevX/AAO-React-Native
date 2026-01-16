@@ -13,6 +13,6 @@
     "react-native": "^0.81.0"
   },
   "dependencies": {
-    "@frogpond/open-url": "^1.0.0"
+    "@frogpond/open-url": "workspace:"
   }
 }

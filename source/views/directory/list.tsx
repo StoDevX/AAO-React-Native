@@ -1,13 +1,5 @@
 import React from 'react'
-import {
-	FlatList,
-	Image,
-	Platform,
-	SafeAreaView,
-	StyleSheet,
-	Text,
-	View,
-} from 'react-native'
+import {FlatList, Image, Platform, StyleSheet, Text, View} from 'react-native'
 import {Column} from '@frogpond/layout'
 import {Detail, ListRow, ListSeparator, Title} from '@frogpond/lists'
 import * as c from '@frogpond/colors'
@@ -21,13 +13,14 @@ import type {
 	DirectoryItem,
 	DirectorySearchTypeEnum,
 } from './types'
-import Icon from 'react-native-vector-icons/Ionicons'
+import {Ionicons} from '@react-native-vector-icons/ionicons'
 import {RouteProp, useNavigation, useRoute} from '@react-navigation/native'
 import {
 	NativeStackNavigationOptions,
 	NativeStackNavigationProp,
 } from '@react-navigation/native-stack'
 import {ChangeTextEvent, RootStackParamList} from '../../navigation/types'
+import {SafeAreaView} from 'react-native-safe-area-context'
 
 export const NavigationKey = 'Directory'
 
@@ -132,7 +125,11 @@ function IndentedListSeparator() {
 function NoSearchPerformed() {
 	return (
 		<View style={styles.emptySearch}>
-			<Icon color={c.secondaryLabel} name="people-circle-outline" size={64} />
+			<Ionicons
+				color={c.secondaryLabel}
+				name="people-circle-outline"
+				size={64}
+			/>
 			<Text style={styles.emptySearchText}>Search the Directory</Text>
 		</View>
 	)

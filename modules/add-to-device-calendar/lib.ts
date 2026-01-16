@@ -24,8 +24,11 @@ export async function addToCalendar(event: EventType): Promise<boolean> {
 
 async function saveEventToCalendar(event: EventType): Promise<boolean> {
 	try {
-		const calendars = await Calendar.getCalendarsAsync(Calendar.EntityTypes.EVENT)
-		const defaultCalendar = calendars.find(cal => cal.allowsModifications) || calendars[0]
+		const calendars = await Calendar.getCalendarsAsync(
+			Calendar.EntityTypes.EVENT,
+		)
+		const defaultCalendar =
+			calendars.find((cal) => cal.allowsModifications) || calendars[0]
 
 		if (!defaultCalendar) {
 			console.error('No calendar available')

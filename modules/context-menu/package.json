@@ -13,8 +13,8 @@
     "react-native": "^0.81.0"
   },
   "dependencies": {
-    "@frogpond/touchable": "^1.0.0",
-    "lodash": "4.17.21",
-    "react-native-ios-context-menu": "1.15.3"
+    "@frogpond/touchable": "workspace:",
+    "lodash": "^4.17.21",
+    "react-native-ios-context-menu": "^1.15.3"
   }
 }

@@ -1,12 +1,34 @@
 import * as React from 'react'
 import {Platform, StyleSheet} from 'react-native'
-
 import * as c from '@frogpond/colors'
+import {
+	TableView as RNTableView,
+	Section as RNSection,
+	Cell as RNCell,
+} from 'react-native-tableview-simple'
 
-import * as RNTableView from 'react-native-tableview-simple'
-import type {SectionInterface} from 'react-native-tableview-simple/lib/typescript/components/Section'
-import type {TableViewInterface} from 'react-native-tableview-simple/lib/typescript/components/TableView'
-import {CellInterface} from 'react-native-tableview-simple/lib/typescript/components/Cell'
+const styles = StyleSheet.create({
+	tableview: {
+		marginHorizontal: Platform.OS === 'ios' ? 15 : 0,
+	},
+})
+
+export const Section = (
+	props: React.ComponentProps<typeof RNSection>,
+): React.JSX.Element => (
+	<RNSection
+		hideSurroundingSeparators={Platform.OS === 'ios'}
+		roundedCorners={Platform.OS === 'ios'}
+		withSafeAreaView={false}
+		{...props}
+	/>
+)
+
+export const TableView = (
+	props: React.ComponentProps<typeof RNTableView>,
+): React.JSX.Element => (
+	<RNTableView appearance="auto" style={styles.tableview} {...props} />
+)
 
 /*
  * Replacing onPress type with a less restricted type of our own
@@ -17,39 +39,14 @@ import {CellInterface} from 'react-native-tableview-simple/lib/typescript/compon
  * Otherwise we deal with type issues being flagged for perfectly
  * valid callbacks.
  */
-type CellInterfaceModifiedType = Omit<CellInterface, 'onPress'> & {
+type CellInterface = Omit<React.ComponentProps<typeof RNCell>, 'onPress'> & {
 	onPress?: () => void
 }
 
-let Section = (props: SectionInterface): React.JSX.Element => (
-	<RNTableView.Section
-		hideSurroundingSeparators={Platform.OS === 'ios'}
-		roundedCorners={Platform.OS === 'ios'}
-		withSafeAreaView={false}
-		{...props}
-	/>
-)
-
-let TableView = (props: TableViewInterface): React.JSX.Element => (
-	<RNTableView.TableView
-		appearance="auto"
-		style={styles.tableview}
-		{...props}
-	/>
-)
-
-let Cell = (props: CellInterfaceModifiedType): React.JSX.Element => (
-	<RNTableView.Cell
+export const Cell = (props: CellInterface): React.JSX.Element => (
+	<RNCell
 		backgroundColor={c.systemBackground}
 		titleTextColor={c.label}
 		{...props}
 	/>
 )
-
-const styles = StyleSheet.create({
-	tableview: {
-		marginHorizontal: Platform.OS === 'ios' ? 15 : 0,
-	},
-})
-
-export {TableView, Section, Cell}

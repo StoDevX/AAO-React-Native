@@ -1,6 +1,6 @@
 import * as React from 'react'
 import {Alert, StyleSheet} from 'react-native'
-import Icon from 'react-native-vector-icons/Ionicons'
+import {Ionicons} from '@react-native-vector-icons/ionicons'
 import {Touchable} from '@frogpond/touchable'
 import * as c from '@frogpond/colors'
 import {rightButtonStyles as styles} from './styles'
@@ -28,7 +28,7 @@ export const DebugNoticeButton = function (props: Props): React.JSX.Element {
 			}}
 			style={styles.button}
 		>
-			<Icon name="bug" style={[styles.icon, debugStyles.debugButton]} />
+			<Ionicons name="bug" style={[styles.icon, debugStyles.debugButton]} />
 		</Touchable>
 	)
 }

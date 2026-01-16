@@ -1,13 +1,15 @@
 import * as React from 'react'
-import {Platform, StyleSheet, Text, View} from 'react-native'
+import {StyleSheet, Text, View} from 'react-native'
 import * as c from '@frogpond/colors'
-import type {Glyphs} from '@frogpond/icon'
-import {Icon} from '@frogpond/icon'
+import {
+	Ionicons,
+	type IoniconsIconName,
+} from '@react-native-vector-icons/ionicons'
 import {Touchable} from '@frogpond/touchable'
 import {theming} from './theme'
 
 type ActionButtonProps = {
-	icon: Glyphs
+	icon: IoniconsIconName
 	text: string
 	onPress: () => unknown
 }
@@ -22,7 +24,7 @@ export function ActionButton(props: ActionButtonProps): React.JSX.Element {
 	return (
 		<Touchable highlight={false} onPress={onPress} style={style}>
 			<View style={styles.wrapper}>
-				<Icon name={icon} style={[styles.icon, fg]} />
+				<Ionicons name={icon} style={[styles.icon, fg]} />
 				<Text style={[styles.action, fg]}>{text}</Text>
 			</View>
 		</Touchable>
@@ -34,12 +36,7 @@ type CallButtonProps = {
 }
 
 export function CallButton({onPress}: CallButtonProps): React.JSX.Element {
-	return (
-		<SmallActionButton
-			icon={Platform.OS === 'ios' ? 'ios-call' : 'md-call'}
-			onPress={onPress}
-		/>
-	)
+	return <SmallActionButton icon="call" onPress={onPress} />
 }
 
 type ShowCalendarButtonProps = {
@@ -49,12 +46,7 @@ type ShowCalendarButtonProps = {
 export function ShowCalendarButton({
 	onPress,
 }: ShowCalendarButtonProps): React.JSX.Element {
-	return (
-		<SmallActionButton
-			icon={Platform.OS === 'ios' ? 'ios-calendar' : 'md-calendar'}
-			onPress={onPress}
-		/>
-	)
+	return <SmallActionButton icon="calendar" onPress={onPress} />
 }
 
 type SmallActionButtonProps = Omit<ActionButtonProps, 'text'>
@@ -70,7 +62,7 @@ export function SmallActionButton(
 
 	return (
 		<Touchable highlight={false} onPress={onPress} style={style}>
-			<Icon name={icon} style={[styles.icon, fg]} />
+			<Ionicons name={icon} style={[styles.icon, fg]} />
 		</Touchable>
 	)
 }

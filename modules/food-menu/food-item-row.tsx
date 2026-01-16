@@ -1,13 +1,16 @@
 import * as React from 'react'
-import {Platform, StyleProp, StyleSheet, View, ViewStyle} from 'react-native'
+import {StyleProp, StyleSheet, View, ViewStyle} from 'react-native'
 import {DietaryTags} from './dietary-tags'
 import {Column, Row} from '@frogpond/layout'
 import {Detail, ListRow, Title} from '@frogpond/lists'
 import type {MasterCorIconMapType, MenuItemType} from './types'
 import * as c from '@frogpond/colors'
-import Icon from 'react-native-vector-icons/Ionicons'
+import {
+	Ionicons,
+	type IoniconsIconName,
+} from '@react-native-vector-icons/ionicons'
 
-const specialsIcon = Platform.OS === 'ios' ? 'ios-star' : 'md-star'
+const specialsIcon = 'star' as const satisfies IoniconsIconName
 
 type Props = {
 	corIcons: MasterCorIconMapType
@@ -36,7 +39,7 @@ export function FoodItemRow({
 			<Row alignItems="center">
 				<View style={[styles.badge, {width: left}]}>
 					{badgeSpecials && data.special ? (
-						<Icon name={specialsIcon} style={styles.badgeIcon} />
+						<Ionicons name={specialsIcon} style={styles.badgeIcon} />
 					) : null}
 				</View>
 

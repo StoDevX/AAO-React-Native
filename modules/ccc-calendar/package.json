@@ -15,9 +15,9 @@
     "delay": "^6.0.0"
   },
   "dependencies": {
-    "@frogpond/api": "^1.0.0",
-    "@frogpond/event-list": "^1.0.0",
-    "@frogpond/event-type": "^1.0.0",
-    "@frogpond/notice": "^1.0.0"
+    "@frogpond/api": "workspace:",
+    "@frogpond/event-list": "workspace:",
+    "@frogpond/event-type": "workspace:",
+    "@frogpond/notice": "workspace:"
   }
 }
