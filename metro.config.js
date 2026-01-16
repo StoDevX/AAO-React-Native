@@ -1,17 +1,10 @@
-/**
- * Metro configuration for Expo
- * https://docs.expo.dev/guides/customizing-metro/
- *
- * @type {import('expo/metro-config').MetroConfig}
- */
-
-const {getDefaultConfig} = require('expo/metro-config')
+const {getSentryExpoConfig} = require('@sentry/react-native/metro')
 
 const defaultSourceExts =
 	// eslint-disable-next-line @typescript-eslint/no-var-requires
 	require('metro-config/src/defaults/defaults').sourceExts
 
-const config = getDefaultConfig(__dirname)
+const config = getSentryExpoConfig(__dirname)
 
 config.resolver.sourceExts =
 	process.env.APP_MODE === 'mocked'

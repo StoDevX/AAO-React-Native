@@ -25,7 +25,7 @@ import {LoadingView} from '@frogpond/notice'
 import {IS_PRODUCTION} from '@frogpond/constants'
 import {StatusBar, useColorScheme} from 'react-native'
 
-export default function App(): JSX.Element {
+function App(): JSX.Element {
 	// Create a ref for the navigation container
 	const navigationRef = React.useRef()
 	const scheme = useColorScheme()
@@ -64,3 +64,5 @@ export default function App(): JSX.Element {
 		</ReduxProvider>
 	)
 }
+
+export default sentryInit.wrap(App)
