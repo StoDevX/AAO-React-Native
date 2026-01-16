@@ -1,23 +1,21 @@
 /**
- * Metro configuration
- * https://facebook.github.io/metro/docs/configuration
+ * Metro configuration for Expo
+ * https://docs.expo.dev/guides/customizing-metro/
  *
- * @type {import('metro-config').MetroConfig}
+ * @type {import('expo/metro-config').MetroConfig}
  */
 
-const {getDefaultConfig, mergeConfig} = require('@react-native/metro-config')
+const {getDefaultConfig} = require('expo/metro-config')
 
 const defaultSourceExts =
 	// eslint-disable-next-line @typescript-eslint/no-var-requires
 	require('metro-config/src/defaults/defaults').sourceExts
 
-const config = {
-	resolver: {
-		sourceExts:
-			process.env.APP_MODE === 'mocked'
-				? ['mock.ts', ...defaultSourceExts]
-				: defaultSourceExts,
-	},
-}
+const config = getDefaultConfig(__dirname)
 
-module.exports = mergeConfig(getDefaultConfig(__dirname), config)
+config.resolver.sourceExts =
+	process.env.APP_MODE === 'mocked'
+		? ['mock.ts', ...defaultSourceExts]
+		: defaultSourceExts
+
+module.exports = config
