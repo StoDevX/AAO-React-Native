@@ -10,12 +10,10 @@ export const routingInstrumentation = Sentry.reactNavigationIntegration({
 	useDispatchedActionData: true,
 })
 
-function install() {
-	if (!IS_PRODUCTION) {
-		return
-	}
-
+export function init() {
 	Sentry.init({
+		enabled: IS_PRODUCTION,
+
 		dsn: SENTRY_DSN,
 
 		// Adds more context data to events (IP address, cookies, user, etc.)
@@ -42,4 +40,3 @@ function install() {
 	})
 }
 
-install()

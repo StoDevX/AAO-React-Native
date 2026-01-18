@@ -65,4 +65,6 @@ function App(): React.JSX.Element {
 	)
 }
 
+sentryInit.init()
+
 export default sentryInit.wrap(App)
