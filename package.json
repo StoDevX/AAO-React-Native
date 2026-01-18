@@ -38,6 +38,7 @@
   "dependencies": {
     "@callstack/react-theme-provider": "catalog:",
     "@expo/react-native-action-sheet": "catalog:",
+    "@expo/ui": "catalog:",
     "@frogpond/titlecase": "catalog:",
     "@hawkrives/react-native-alternate-icons": "catalog:",
     "@react-native-async-storage/async-storage": "catalog:",
