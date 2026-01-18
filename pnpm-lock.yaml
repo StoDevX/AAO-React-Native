@@ -36,8 +36,8 @@ importers:
         specifier: 11.4.1
         version: 11.4.1(react-native@0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0))
       '@react-native-picker/picker':
-        specifier: 2.5.1
-        version: 2.5.1(react-native@0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0))(react@19.1.0)
+        specifier: 2.11.4
+        version: 2.11.4(react-native@0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0))(react@19.1.0)
       '@react-native-vector-icons/entypo':
         specifier: 12.4.0
         version: 12.4.0(react-native@0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0))(react@19.1.0)
@@ -1848,11 +1848,11 @@ packages:
     peerDependencies:
       react-native: '>=0.59'
 
-  '@react-native-picker/picker@2.5.1':
-    resolution: {integrity: sha512-/sADUfQsosMRYtrqqL3ZYZSECRygj0fXtpRLqxJfwuMEoqfvfn40756R6B1alzusVvDRZFI0ari0iQid56hA/Q==}
+  '@react-native-picker/picker@2.11.4':
+    resolution: {integrity: sha512-Kf8h1AMnBo54b1fdiVylP2P/iFcZqzpMYcglC28EEFB1DEnOjsNr6Ucqc+3R9e91vHxEDnhZFbYDmAe79P2gjA==}
     peerDependencies:
-      react: '>=16'
-      react-native: '>=0.57'
+      react: '*'
+      react-native: '*'
 
   '@react-native-vector-icons/common@12.4.0':
     resolution: {integrity: sha512-t9W0q+AW7WH1Oj5aEg7wGNXDLZJb5sIVkAWo5qtad3PcbBADqoCdikRK/ToLK+xlB0TxjcuL0T74ogudMkYGeA==}
@@ -7450,7 +7450,7 @@ snapshots:
     dependencies:
       react-native: 0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0)
 
-  '@react-native-picker/picker@2.5.1(react-native@0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0))(react@19.1.0)':
+  '@react-native-picker/picker@2.11.4(react-native@0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0))(react@19.1.0)':
     dependencies:
       react: 19.1.0
       react-native: 0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0)

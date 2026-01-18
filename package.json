@@ -44,7 +44,7 @@
     "@react-native-clipboard/clipboard": "1.11.1",
     "@react-native-community/datetimepicker": "8.5.1",
     "@react-native-community/netinfo": "11.4.1",
-    "@react-native-picker/picker": "2.5.1",
+    "@react-native-picker/picker": "2.11.4",
     "@react-native-vector-icons/entypo": "12.4.0",
     "@react-native-vector-icons/ionicons": "12.3.0",
     "@react-native-vector-icons/material-design-icons": "12.4.0",
