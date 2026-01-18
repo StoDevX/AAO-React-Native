@@ -9,8 +9,8 @@
     "test": "jest"
   },
   "peerDependencies": {
-    "react": "^19.1.0",
-    "react-native": "^0.81.0"
+    "react": "catalog:",
+    "react-native": "catalog:"
   },
   "dependencies": {
     "@frogpond/colors": "workspace:"

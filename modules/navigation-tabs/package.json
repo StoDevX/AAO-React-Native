@@ -9,10 +9,10 @@
     "test": "jest"
   },
   "peerDependencies": {
-    "@react-native-vector-icons/ionicons": "12.3.0",
-    "@react-navigation/native": "^6.1.18",
-    "react": "^19.1.0",
-    "react-native": "^0.81.0"
+    "@react-native-vector-icons/ionicons": "catalog:",
+    "@react-navigation/native": "catalog:",
+    "react": "catalog:",
+    "react-native": "catalog:"
   },
   "dependencies": {
     "@frogpond/app-theme": "workspace:"

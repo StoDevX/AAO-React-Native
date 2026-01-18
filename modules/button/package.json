@@ -13,11 +13,11 @@
     "react-native": "^0.81.0"
   },
   "dependencies": {
-    "@callstack/react-theme-provider": "^3.0.9",
+    "@callstack/react-theme-provider": "catalog:",
     "@frogpond/app-theme": "workspace:",
     "@frogpond/colors": "workspace:",
-    "lodash": "^4.17.21",
-    "react-native-button": "^3.1.0",
-    "react-native-typography": "^1.4.1"
+    "lodash": "catalog:",
+    "react-native-button": "catalog:",
+    "react-native-typography": "catalog:"
   }
 }

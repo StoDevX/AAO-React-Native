@@ -9,17 +9,17 @@
     "test": "jest"
   },
   "peerDependencies": {
-    "@expo/react-native-action-sheet": "^4.1.1",
-    "react": "^19.1.0",
-    "react-native": "^0.81.0"
+    "@expo/react-native-action-sheet": "catalog:",
+    "react": "catalog:",
+    "react-native": "catalog:"
   },
   "dependencies": {
-    "@callstack/react-theme-provider": "^3.0.9",
+    "@callstack/react-theme-provider": "catalog:",
     "@frogpond/app-theme": "workspace:",
     "@frogpond/colors": "workspace:",
     "@frogpond/open-url": "workspace:",
-    "lodash": "^4.17.21",
-    "react-markdown": "2.5.1",
-    "react-native-typography": "^1.4.1"
+    "lodash": "catalog:",
+    "react-markdown": "catalog:",
+    "react-native-typography": "catalog:"
   }
 }

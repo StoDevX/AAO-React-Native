@@ -9,8 +9,8 @@
     "test": "jest"
   },
   "peerDependencies": {
-    "react-native-inappbrowser-reborn": "^3.7.0",
-    "react-native": "^0.81.0"
+    "react-native-inappbrowser-reborn": "catalog:",
+    "react-native": "catalog:"
   },
   "dependencies": {}
 }

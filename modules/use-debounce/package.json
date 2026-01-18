@@ -9,9 +9,9 @@
     "test": "jest"
   },
   "dependencies": {
-    "lodash": "^4.17.21"
+    "lodash": "catalog:"
   },
   "peerDependencies": {
-    "react": "^19.1.0"
+    "react": "catalog:"
   }
 }

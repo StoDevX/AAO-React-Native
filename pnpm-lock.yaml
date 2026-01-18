@@ -4,6 +4,96 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+catalogs:
+  default:
+    '@callstack/react-theme-provider':
+      specifier: 3.0.9
+      version: 3.0.9
+    '@expo/react-native-action-sheet':
+      specifier: 4.1.1
+      version: 4.1.1
+    '@react-native-community/datetimepicker':
+      specifier: 8.6.0
+      version: 8.6.0
+    '@react-native-picker/picker':
+      specifier: 2.11.4
+      version: 2.11.4
+    '@react-native-vector-icons/entypo':
+      specifier: 12.4.0
+      version: 12.4.0
+    '@react-native-vector-icons/ionicons':
+      specifier: 12.3.0
+      version: 12.3.0
+    '@react-native-vector-icons/material-design-icons':
+      specifier: 12.4.0
+      version: 12.4.0
+    '@react-navigation/bottom-tabs':
+      specifier: 6.6.1
+      version: 6.6.1
+    '@react-navigation/material-bottom-tabs':
+      specifier: 6.2.29
+      version: 6.2.29
+    '@react-navigation/material-top-tabs':
+      specifier: 6.6.14
+      version: 6.6.14
+    '@react-navigation/native':
+      specifier: 6.1.18
+      version: 6.1.18
+    '@react-navigation/native-stack':
+      specifier: 6.11.0
+      version: 6.11.0
+    '@react-navigation/stack':
+      specifier: 6.4.1
+      version: 6.4.1
+    delay:
+      specifier: 6.0.0
+      version: 6.0.0
+    ky:
+      specifier: 1.7.2
+      version: 1.7.2
+    lodash:
+      specifier: 4.17.21
+      version: 4.17.21
+    moment:
+      specifier: 2.30.1
+      version: 2.30.1
+    moment-timezone:
+      specifier: 0.5.45
+      version: 0.5.45
+    react:
+      specifier: 19.1.0
+      version: 19.1.0
+    react-markdown:
+      specifier: 2.5.1
+      version: 2.5.1
+    react-native:
+      specifier: 0.81.5
+      version: 0.81.5
+    react-native-button:
+      specifier: 3.1.0
+      version: 3.1.0
+    react-native-calendar-events:
+      specifier: 2.2.0
+      version: 2.2.0
+    react-native-inappbrowser-reborn:
+      specifier: 3.7.0
+      version: 3.7.0
+    react-native-ios-context-menu:
+      specifier: 1.15.3
+      version: 1.15.3
+    react-native-popover-view:
+      specifier: 5.1.8
+      version: 5.1.8
+    react-native-tableview-simple:
+      specifier: 4.4.1
+      version: 4.4.1
+    react-native-typography:
+      specifier: 1.4.1
+      version: 1.4.1
+    tinycolor2:
+      specifier: 1.6.0
+      version: 1.6.0
+
 overrides:
   react-native>@react-native/community-cli-plugin: '-'
 
@@ -12,10 +102,10 @@ importers:
   .:
     dependencies:
       '@callstack/react-theme-provider':
-        specifier: 3.0.9
+        specifier: 'catalog:'
         version: 3.0.9(react@19.1.0)
       '@expo/react-native-action-sheet':
-        specifier: 4.1.1
+        specifier: 'catalog:'
         version: 4.1.1(@types/react@19.1.0)(react@19.1.0)
       '@frogpond/titlecase':
         specifier: 2.0.4
@@ -30,40 +120,40 @@ importers:
         specifier: 1.16.3
         version: 1.16.3(react-native@0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0))(react@19.1.0)
       '@react-native-community/datetimepicker':
-        specifier: 8.6.0
+        specifier: 'catalog:'
         version: 8.6.0(expo@54.0.31(@babel/core@7.28.6)(react-native-webview@13.12.2(react-native@0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0))(react@19.1.0))(react-native@0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0))(react@19.1.0))(react-native@0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0))(react@19.1.0)
       '@react-native-community/netinfo':
         specifier: 11.4.1
         version: 11.4.1(react-native@0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0))
       '@react-native-picker/picker':
-        specifier: 2.11.4
+        specifier: 'catalog:'
         version: 2.11.4(react-native@0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0))(react@19.1.0)
       '@react-native-vector-icons/entypo':
-        specifier: 12.4.0
+        specifier: 'catalog:'
         version: 12.4.0(react-native@0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0))(react@19.1.0)
       '@react-native-vector-icons/ionicons':
-        specifier: 12.3.0
+        specifier: 'catalog:'
         version: 12.3.0(react-native@0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0))(react@19.1.0)
       '@react-native-vector-icons/material-design-icons':
-        specifier: 12.4.0
+        specifier: 'catalog:'
         version: 12.4.0(react-native@0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0))(react@19.1.0)
       '@react-navigation/bottom-tabs':
-        specifier: 6.6.1
+        specifier: 'catalog:'
         version: 6.6.1(@react-navigation/native@6.1.18(react-native@0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0))(react@19.1.0))(react-native-safe-area-context@5.6.2(react-native@0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0))(react@19.1.0))(react-native-screens@4.16.0(react-native@0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0))(react@19.1.0))(react-native@0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0))(react@19.1.0)
       '@react-navigation/material-bottom-tabs':
-        specifier: 6.2.29
+        specifier: 'catalog:'
         version: 6.2.29(@react-navigation/native@6.1.18(react-native@0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0))(react@19.1.0))(react-native-paper@5.14.5(react-native-safe-area-context@5.6.2(react-native@0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0))(react@19.1.0))(react-native@0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0))(react@19.1.0))(react-native-safe-area-context@5.6.2(react-native@0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0))(react@19.1.0))(react-native-vector-icons@9.2.0)(react-native@0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0))(react@19.1.0)
       '@react-navigation/material-top-tabs':
-        specifier: 6.6.14
+        specifier: 'catalog:'
         version: 6.6.14(@react-navigation/native@6.1.18(react-native@0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0))(react@19.1.0))(react-native-pager-view@8.0.0(react-native@0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0))(react@19.1.0))(react-native-tab-view@4.2.2(react-native-pager-view@8.0.0(react-native@0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0))(react@19.1.0))(react-native@0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0))(react@19.1.0))(react-native@0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0))(react@19.1.0)
       '@react-navigation/native':
-        specifier: 6.1.18
+        specifier: 'catalog:'
         version: 6.1.18(react-native@0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0))(react@19.1.0)
       '@react-navigation/native-stack':
-        specifier: 6.11.0
+        specifier: 'catalog:'
         version: 6.11.0(@react-navigation/native@6.1.18(react-native@0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0))(react@19.1.0))(react-native-safe-area-context@5.6.2(react-native@0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0))(react@19.1.0))(react-native-screens@4.16.0(react-native@0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0))(react@19.1.0))(react-native@0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0))(react@19.1.0)
       '@react-navigation/stack':
-        specifier: 6.4.1
+        specifier: 'catalog:'
         version: 6.4.1(@react-navigation/native@6.1.18(react-native@0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0))(react@19.1.0))(react-native-gesture-handler@2.28.0(react-native@0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0))(react@19.1.0))(react-native-safe-area-context@5.6.2(react-native@0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0))(react@19.1.0))(react-native-screens@4.16.0(react-native@0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0))(react@19.1.0))(react-native@0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0))(react@19.1.0)
       '@reduxjs/toolkit':
         specifier: 2.11.2
@@ -87,7 +177,7 @@ importers:
         specifier: 6.0.3
         version: 6.0.3
       delay:
-        specifier: 6.0.0
+        specifier: 'catalog:'
         version: 6.0.0
       events:
         specifier: 3.3.0
@@ -132,37 +222,37 @@ importers:
         specifier: 0.1.2
         version: 0.1.2
       ky:
-        specifier: 1.7.2
+        specifier: 'catalog:'
         version: 1.7.2
       lodash:
-        specifier: 4.17.21
+        specifier: 'catalog:'
         version: 4.17.21
       moment:
-        specifier: 2.30.1
+        specifier: 'catalog:'
         version: 2.30.1
       moment-timezone:
-        specifier: 0.5.45
+        specifier: 'catalog:'
         version: 0.5.45
       p-props:
         specifier: 6.1.0
         version: 6.1.0
       react:
-        specifier: 19.1.0
+        specifier: 'catalog:'
         version: 19.1.0
       react-markdown:
-        specifier: 2.5.1
+        specifier: 'catalog:'
         version: 2.5.1(react@19.1.0)
       react-native:
-        specifier: 0.81.5
+        specifier: 'catalog:'
         version: 0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0)
       react-native-button:
-        specifier: 3.1.0
+        specifier: 'catalog:'
         version: 3.1.0(react-native@0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0))
       react-native-gesture-handler:
         specifier: 2.28.0
         version: 2.28.0(react-native@0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0))(react@19.1.0)
       react-native-ios-context-menu:
-        specifier: 1.15.3
+        specifier: 'catalog:'
         version: 1.15.3(react-native@0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0))(react@19.1.0)
       react-native-network-logger:
         specifier: 2.0.1
@@ -171,7 +261,7 @@ importers:
         specifier: 5.14.5
         version: 5.14.5(react-native-safe-area-context@5.6.2(react-native@0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0))(react@19.1.0))(react-native@0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0))(react@19.1.0)
       react-native-popover-view:
-        specifier: 5.1.8
+        specifier: 'catalog:'
         version: 5.1.8
       react-native-reanimated:
         specifier: 4.1.1
@@ -189,10 +279,10 @@ importers:
         specifier: 1.2.2
         version: 1.2.2(react-native@0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0))(react@19.1.0)
       react-native-tableview-simple:
-        specifier: 4.4.1
+        specifier: 'catalog:'
         version: 4.4.1(react-native@0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0))(react@19.1.0)
       react-native-typography:
-        specifier: 1.4.1
+        specifier: 'catalog:'
         version: 1.4.1(react-native@0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0))(react@19.1.0)
       react-native-webview:
         specifier: 13.12.2
@@ -213,7 +303,7 @@ importers:
         specifier: 0.1.1
         version: 0.1.1
       tinycolor2:
-        specifier: 1.6.0
+        specifier: 'catalog:'
         version: 1.6.0
       url:
         specifier: 0.11.4
@@ -310,7 +400,7 @@ importers:
         specifier: 9.39.2
         version: 9.39.2
       eslint-config-expo:
-        specifier: ^10.0.0
+        specifier: 10.0.0
         version: 10.0.0(eslint@9.39.2)(typescript@5.9.3)
       eslint-config-prettier:
         specifier: 10.1.8
@@ -383,22 +473,22 @@ importers:
         specifier: 'workspace:'
         version: link:../event-type
       delay:
-        specifier: ^6.0.0
+        specifier: 'catalog:'
         version: 6.0.0
       react:
-        specifier: ^19.1.0
+        specifier: 'catalog:'
         version: 19.1.0
       react-native:
-        specifier: ^0.81.0
+        specifier: 'catalog:'
         version: 0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0)
       react-native-calendar-events:
-        specifier: ^2.2.0
+        specifier: 'catalog:'
         version: 2.2.0(react-native@0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0))
 
   modules/api:
     dependencies:
       ky:
-        specifier: ^1.7.2
+        specifier: 'catalog:'
         version: 1.7.2
 
   modules/app-theme: {}
@@ -409,19 +499,19 @@ importers:
         specifier: 'workspace:'
         version: link:../colors
       react:
-        specifier: ^19.1.0
+        specifier: 'catalog:'
         version: 19.1.0
       react-native:
-        specifier: ^0.81.0
+        specifier: 'catalog:'
         version: 0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0)
       tinycolor2:
-        specifier: ^1.6.0
+        specifier: 'catalog:'
         version: 1.6.0
 
   modules/button:
     dependencies:
       '@callstack/react-theme-provider':
-        specifier: ^3.0.9
+        specifier: 'catalog:'
         version: 3.0.9(react@19.1.0)
       '@frogpond/app-theme':
         specifier: 'workspace:'
@@ -430,7 +520,7 @@ importers:
         specifier: 'workspace:'
         version: link:../colors
       lodash:
-        specifier: ^4.17.21
+        specifier: 'catalog:'
         version: 4.17.21
       react:
         specifier: ^19.1.0
@@ -439,10 +529,10 @@ importers:
         specifier: ^0.81.0
         version: 0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0)
       react-native-button:
-        specifier: ^3.1.0
+        specifier: 'catalog:'
         version: 3.1.0(react-native@0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0))
       react-native-typography:
-        specifier: ^1.4.1
+        specifier: 'catalog:'
         version: 1.4.1(react-native@0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0))(react@19.1.0)
 
   modules/ccc-calendar:
@@ -460,16 +550,16 @@ importers:
         specifier: 'workspace:'
         version: link:../notice
       '@react-navigation/native':
-        specifier: ^6.1.18
+        specifier: 'catalog:'
         version: 6.1.18(react-native@0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0))(react@19.1.0)
       delay:
-        specifier: ^6.0.0
+        specifier: 'catalog:'
         version: 6.0.0
       moment-timezone:
-        specifier: ^0.5.45
+        specifier: 'catalog:'
         version: 0.5.45
       react:
-        specifier: ^19.1.0
+        specifier: 'catalog:'
         version: 19.1.0
 
   modules/colors: {}
@@ -477,7 +567,7 @@ importers:
   modules/constants:
     dependencies:
       react-native:
-        specifier: ^0.81.0
+        specifier: 'catalog:'
         version: 0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0)
 
   modules/context-menu:
@@ -486,16 +576,16 @@ importers:
         specifier: 'workspace:'
         version: link:../touchable
       lodash:
-        specifier: ^4.17.21
+        specifier: 'catalog:'
         version: 4.17.21
       react:
-        specifier: ^19.1.0
+        specifier: 'catalog:'
         version: 19.1.0
       react-native:
-        specifier: ^0.81.0
+        specifier: 'catalog:'
         version: 0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0)
       react-native-ios-context-menu:
-        specifier: ^1.15.3
+        specifier: 'catalog:'
         version: 1.15.3(react-native@0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0))(react@19.1.0)
 
   modules/datepicker:
@@ -507,22 +597,22 @@ importers:
         specifier: 'workspace:'
         version: link:../colors
       '@react-native-community/datetimepicker':
-        specifier: ^8.5.1
-        version: 8.5.1(expo@54.0.31(@babel/core@7.28.6)(react-native-webview@13.12.2(react-native@0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0))(react@19.1.0))(react-native@0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0))(react@19.1.0))(react-native@0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0))(react@19.1.0)
+        specifier: 'catalog:'
+        version: 8.6.0(expo@54.0.31(@babel/core@7.28.6)(react-native-webview@13.12.2(react-native@0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0))(react@19.1.0))(react-native@0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0))(react@19.1.0))(react-native@0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0))(react@19.1.0)
       moment-timezone:
-        specifier: ^0.5.45
+        specifier: 'catalog:'
         version: 0.5.45
       react:
-        specifier: ^19.1.0
+        specifier: 'catalog:'
         version: 19.1.0
       react-native:
-        specifier: ^0.81.0
+        specifier: 'catalog:'
         version: 0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0)
 
   modules/event-list:
     dependencies:
       '@callstack/react-theme-provider':
-        specifier: ^3.0.9
+        specifier: 'catalog:'
         version: 3.0.9(react@19.1.0)
       '@frogpond/add-to-device-calendar':
         specifier: 'workspace:'
@@ -552,19 +642,19 @@ importers:
         specifier: 'workspace:'
         version: link:../tableview
       '@react-navigation/native':
-        specifier: ^6.1.18
+        specifier: 'catalog:'
         version: 6.1.18(react-native@0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0))(react@19.1.0)
       lodash:
-        specifier: ^4.17.21
+        specifier: 'catalog:'
         version: 4.17.21
       moment-timezone:
-        specifier: ^0.5.45
+        specifier: 'catalog:'
         version: 0.5.45
       react:
-        specifier: ^19.1.0
+        specifier: 'catalog:'
         version: 19.1.0
       react-native:
-        specifier: ^0.81.0
+        specifier: 'catalog:'
         version: 0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0)
 
   modules/event-type:
@@ -576,7 +666,7 @@ importers:
   modules/filter:
     dependencies:
       '@callstack/react-theme-provider':
-        specifier: ^3.0.9
+        specifier: 'catalog:'
         version: 3.0.9(react@19.1.0)
       '@frogpond/app-theme':
         specifier: 'workspace:'
@@ -596,27 +686,26 @@ importers:
       '@frogpond/viewport':
         specifier: 'workspace:'
         version: link:../viewport
+      '@react-native-vector-icons/ionicons':
+        specifier: 'catalog:'
+        version: 12.3.0(react-native@0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0))(react@19.1.0)
       lodash:
-        specifier: ^4.17.21
+        specifier: 'catalog:'
         version: 4.17.21
       react:
-        specifier: ^19.1.0
+        specifier: 'catalog:'
         version: 19.1.0
       react-native:
-        specifier: ^0.81.0
+        specifier: 'catalog:'
         version: 0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0)
       react-native-popover-view:
-        specifier: ^5.1.8
+        specifier: 'catalog:'
         version: 5.1.8
-    devDependencies:
-      '@react-native-vector-icons/ionicons':
-        specifier: 12.3.0
-        version: 12.3.0(react-native@0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0))(react@19.1.0)
 
   modules/food-menu:
     dependencies:
       '@callstack/react-theme-provider':
-        specifier: ^3.0.9
+        specifier: 'catalog:'
         version: 3.0.9(react@19.1.0)
       '@frogpond/app-theme':
         specifier: 'workspace:'
@@ -648,28 +737,27 @@ importers:
       '@frogpond/touchable':
         specifier: 'workspace:'
         version: link:../touchable
+      '@react-native-vector-icons/ionicons':
+        specifier: 'catalog:'
+        version: 12.3.0(react-native@0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0))(react@19.1.0)
       '@react-navigation/native':
-        specifier: ^6.1.18
+        specifier: 'catalog:'
         version: 6.1.18(react-native@0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0))(react@19.1.0)
       lodash:
-        specifier: ^4.17.21
+        specifier: 'catalog:'
         version: 4.17.21
       moment:
-        specifier: ^2.30.1
+        specifier: 'catalog:'
         version: 2.30.1
       moment-timezone:
-        specifier: ^0.5.45
+        specifier: 'catalog:'
         version: 0.5.45
       react:
-        specifier: ^19.1.0
+        specifier: 'catalog:'
         version: 19.1.0
       react-native:
-        specifier: ^0.81.0
+        specifier: 'catalog:'
         version: 0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0)
-    devDependencies:
-      '@react-native-vector-icons/ionicons':
-        specifier: 12.3.0
-        version: 12.3.0(react-native@0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0))(react@19.1.0)
 
   modules/html-content:
     dependencies:
@@ -677,10 +765,10 @@ importers:
         specifier: 'workspace:'
         version: link:../open-url
       react:
-        specifier: ^19.1.0
+        specifier: 'catalog:'
         version: 19.1.0
       react-native:
-        specifier: ^0.81.0
+        specifier: 'catalog:'
         version: 0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0)
 
   modules/html-lib:
@@ -707,25 +795,25 @@ importers:
         specifier: 'workspace:'
         version: link:../colors
       react:
-        specifier: ^19.1.0
+        specifier: 'catalog:'
         version: 19.1.0
       react-native:
-        specifier: ^0.81.0
+        specifier: 'catalog:'
         version: 0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0)
 
   modules/layout:
     dependencies:
       react:
-        specifier: ^19.1.0
+        specifier: 'catalog:'
         version: 19.1.0
       react-native:
-        specifier: ^0.81.0
+        specifier: 'catalog:'
         version: 0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0)
 
   modules/lists:
     dependencies:
       '@callstack/react-theme-provider':
-        specifier: ^3.0.9
+        specifier: 'catalog:'
         version: 3.0.9(react@19.1.0)
       '@frogpond/app-theme':
         specifier: 'workspace:'
@@ -739,24 +827,23 @@ importers:
       '@frogpond/touchable':
         specifier: 'workspace:'
         version: link:../touchable
+      '@react-native-vector-icons/ionicons':
+        specifier: 'catalog:'
+        version: 12.3.0(react-native@0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0))(react@19.1.0)
       lodash:
-        specifier: ^4.17.21
+        specifier: 'catalog:'
         version: 4.17.21
       react:
-        specifier: ^19.1.0
+        specifier: 'catalog:'
         version: 19.1.0
       react-native:
-        specifier: ^0.81.0
+        specifier: 'catalog:'
         version: 0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0)
-    devDependencies:
-      '@react-native-vector-icons/ionicons':
-        specifier: 12.3.0
-        version: 12.3.0(react-native@0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0))(react@19.1.0)
 
   modules/listview:
     dependencies:
       '@callstack/react-theme-provider':
-        specifier: ^3.0.9
+        specifier: 'catalog:'
         version: 3.0.9(react@19.1.0)
       '@frogpond/app-theme':
         specifier: 'workspace:'
@@ -765,22 +852,22 @@ importers:
         specifier: 'workspace:'
         version: link:../colors
       lodash:
-        specifier: ^4.17.21
+        specifier: 'catalog:'
         version: 4.17.21
       react:
-        specifier: ^19.1.0
+        specifier: 'catalog:'
         version: 19.1.0
       react-native:
-        specifier: ^0.81.0
+        specifier: 'catalog:'
         version: 0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0)
 
   modules/markdown:
     dependencies:
       '@callstack/react-theme-provider':
-        specifier: ^3.0.9
+        specifier: 'catalog:'
         version: 3.0.9(react@19.1.0)
       '@expo/react-native-action-sheet':
-        specifier: ^4.1.1
+        specifier: 'catalog:'
         version: 4.1.1(@types/react@19.1.0)(react@19.1.0)
       '@frogpond/app-theme':
         specifier: 'workspace:'
@@ -792,19 +879,19 @@ importers:
         specifier: 'workspace:'
         version: link:../open-url
       lodash:
-        specifier: ^4.17.21
+        specifier: 'catalog:'
         version: 4.17.21
       react:
-        specifier: ^19.1.0
+        specifier: 'catalog:'
         version: 19.1.0
       react-markdown:
-        specifier: 2.5.1
+        specifier: 'catalog:'
         version: 2.5.1(react@19.1.0)
       react-native:
-        specifier: ^0.81.0
+        specifier: 'catalog:'
         version: 0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0)
       react-native-typography:
-        specifier: ^1.4.1
+        specifier: 'catalog:'
         version: 1.4.1(react-native@0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0))(react@19.1.0)
 
   modules/navigation-buttons:
@@ -812,19 +899,18 @@ importers:
       '@frogpond/app-theme':
         specifier: 'workspace:'
         version: link:../app-theme
+      '@react-native-vector-icons/ionicons':
+        specifier: 'catalog:'
+        version: 12.3.0(react-native@0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0))(react@19.1.0)
       '@react-navigation/native':
-        specifier: ^6.1.18
+        specifier: 'catalog:'
         version: 6.1.18(react-native@0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0))(react@19.1.0)
       react:
-        specifier: ^19.1.0
+        specifier: 'catalog:'
         version: 19.1.0
       react-native:
-        specifier: ^0.81.0
+        specifier: 'catalog:'
         version: 0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0)
-    devDependencies:
-      '@react-native-vector-icons/ionicons':
-        specifier: 12.3.0
-        version: 12.3.0(react-native@0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0))(react@19.1.0)
 
   modules/navigation-tabs:
     dependencies:
@@ -832,16 +918,16 @@ importers:
         specifier: 'workspace:'
         version: link:../app-theme
       '@react-native-vector-icons/ionicons':
-        specifier: 12.3.0
+        specifier: 'catalog:'
         version: 12.3.0(react-native@0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0))(react@19.1.0)
       '@react-navigation/native':
-        specifier: ^6.1.18
+        specifier: 'catalog:'
         version: 6.1.18(react-native@0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0))(react@19.1.0)
       react:
-        specifier: ^19.1.0
+        specifier: 'catalog:'
         version: 19.1.0
       react-native:
-        specifier: ^0.81.0
+        specifier: 'catalog:'
         version: 0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0)
 
   modules/notice:
@@ -856,19 +942,19 @@ importers:
         specifier: 'workspace:'
         version: link:../markdown
       react:
-        specifier: ^19.1.0
+        specifier: 'catalog:'
         version: 19.1.0
       react-native:
-        specifier: ^0.81.0
+        specifier: 'catalog:'
         version: 0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0)
 
   modules/open-url:
     dependencies:
       react-native:
-        specifier: ^0.81.0
+        specifier: 'catalog:'
         version: 0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0)
       react-native-inappbrowser-reborn:
-        specifier: ^3.7.0
+        specifier: 'catalog:'
         version: 3.7.0(react-native@0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0))
 
   modules/separator:
@@ -877,10 +963,10 @@ importers:
         specifier: 'workspace:'
         version: link:../colors
       react:
-        specifier: ^19.1.0
+        specifier: 'catalog:'
         version: 19.1.0
       react-native:
-        specifier: ^0.81.0
+        specifier: 'catalog:'
         version: 0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0)
 
   modules/silly-card:
@@ -889,19 +975,19 @@ importers:
         specifier: 'workspace:'
         version: link:../colors
       react:
-        specifier: ^19.1.0
+        specifier: 'catalog:'
         version: 19.1.0
       react-native:
-        specifier: ^0.81.0
+        specifier: 'catalog:'
         version: 0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0)
       react-native-typography:
-        specifier: ^1.4.1
+        specifier: 'catalog:'
         version: 1.4.1(react-native@0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0))(react@19.1.0)
 
   modules/storage:
     dependencies:
       react-native:
-        specifier: ^0.81.0
+        specifier: 'catalog:'
         version: 0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0)
 
   modules/tableview:
@@ -909,27 +995,26 @@ importers:
       '@frogpond/colors':
         specifier: 'workspace:'
         version: link:../colors
+      '@react-native-vector-icons/ionicons':
+        specifier: 'catalog:'
+        version: 12.3.0(react-native@0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0))(react@19.1.0)
       react:
-        specifier: ^19.1.0
+        specifier: 'catalog:'
         version: 19.1.0
       react-native:
-        specifier: ^0.81.0
+        specifier: 'catalog:'
         version: 0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0)
       react-native-tableview-simple:
-        specifier: ^4.4.1
+        specifier: 'catalog:'
         version: 4.4.1(react-native@0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0))(react@19.1.0)
-    devDependencies:
-      '@react-native-vector-icons/ionicons':
-        specifier: 12.3.0
-        version: 12.3.0(react-native@0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0))(react@19.1.0)
 
   modules/timer:
     dependencies:
       moment-timezone:
-        specifier: ^0.5.45
+        specifier: 'catalog:'
         version: 0.5.45
       react:
-        specifier: ^19.1.0
+        specifier: 'catalog:'
         version: 19.1.0
 
   modules/toolbar:
@@ -938,37 +1023,37 @@ importers:
         specifier: 'workspace:'
         version: link:../colors
       react:
-        specifier: ^19.1.0
+        specifier: 'catalog:'
         version: 19.1.0
       react-native:
-        specifier: ^0.81.0
+        specifier: 'catalog:'
         version: 0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0)
 
   modules/touchable:
     dependencies:
       react:
-        specifier: ^19.1.0
+        specifier: 'catalog:'
         version: 19.1.0
       react-native:
-        specifier: ^0.81.0
+        specifier: 'catalog:'
         version: 0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0)
 
   modules/use-debounce:
     dependencies:
       lodash:
-        specifier: ^4.17.21
+        specifier: 'catalog:'
         version: 4.17.21
       react:
-        specifier: ^19.1.0
+        specifier: 'catalog:'
         version: 19.1.0
 
   modules/viewport:
     dependencies:
       react:
-        specifier: ^19.1.0
+        specifier: 'catalog:'
         version: 19.1.0
       react-native:
-        specifier: ^0.81.0
+        specifier: 'catalog:'
         version: 0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0)
 
 packages:
@@ -1833,19 +1918,6 @@ packages:
       react-native-windows: '>= 0.61.0'
     peerDependenciesMeta:
       react-native-macos:
-        optional: true
-      react-native-windows:
-        optional: true
-
-  '@react-native-community/datetimepicker@8.5.1':
-    resolution: {integrity: sha512-TuwM1ORbxCjOp1GOtONj0QnpDpVfq0F4UlfKZYPxL/vmriaLHt2Kgvw63Bv0Bpep4eOkslVVSS1IRfRI6d392g==}
-    peerDependencies:
-      expo: '>=52.0.0'
-      react: '*'
-      react-native: '*'
-      react-native-windows: '*'
-    peerDependenciesMeta:
-      expo:
         optional: true
       react-native-windows:
         optional: true
@@ -7457,14 +7529,6 @@ snapshots:
     dependencies:
       react: 19.1.0
       react-native: 0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0)
-
-  '@react-native-community/datetimepicker@8.5.1(expo@54.0.31(@babel/core@7.28.6)(react-native-webview@13.12.2(react-native@0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0))(react@19.1.0))(react-native@0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0))(react@19.1.0))(react-native@0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0))(react@19.1.0)':
-    dependencies:
-      invariant: 2.2.4
-      react: 19.1.0
-      react-native: 0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0)
-    optionalDependencies:
-      expo: 54.0.31(@babel/core@7.28.6)(react-native-webview@13.12.2(react-native@0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0))(react@19.1.0))(react-native@0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0))(react@19.1.0)
 
   '@react-native-community/datetimepicker@8.6.0(expo@54.0.31(@babel/core@7.28.6)(react-native-webview@13.12.2(react-native@0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0))(react@19.1.0))(react-native@0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0))(react@19.1.0))(react-native@0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0))(react@19.1.0)':
     dependencies:

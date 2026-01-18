@@ -9,6 +9,6 @@
     "test": "jest"
   },
   "peerDependencies": {
-    "react-native": "^0.81.0"
+    "react-native": "catalog:"
   }
 }

@@ -9,13 +9,13 @@
     "test": "jest"
   },
   "peerDependencies": {
-    "react": "^19.1.0",
-    "react-native": "^0.81.0",
-    "moment-timezone": "^0.5.45"
+    "react": "catalog:",
+    "react-native": "catalog:",
+    "moment-timezone": "catalog:"
   },
   "dependencies": {
     "@frogpond/app-theme": "workspace:",
     "@frogpond/colors": "workspace:",
-    "@react-native-community/datetimepicker": "^8.5.1"
+    "@react-native-community/datetimepicker": "catalog:"
   }
 }

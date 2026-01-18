@@ -9,13 +9,13 @@
     "test": "jest"
   },
   "peerDependencies": {
-    "moment-timezone": "^0.5.45",
-    "react": "^19.1.0",
-    "react-native": "^0.81.0",
-    "@react-navigation/native": "^6.1.18"
+    "moment-timezone": "catalog:",
+    "react": "catalog:",
+    "react-native": "catalog:",
+    "@react-navigation/native": "catalog:"
   },
   "dependencies": {
-    "@callstack/react-theme-provider": "^3.0.9",
+    "@callstack/react-theme-provider": "catalog:",
     "@frogpond/add-to-device-calendar": "workspace:",
     "@frogpond/app-theme": "workspace:",
     "@frogpond/colors": "workspace:",
@@ -25,6 +25,6 @@
     "@frogpond/notice": "workspace:",
     "@frogpond/open-url": "workspace:",
     "@frogpond/tableview": "workspace:",
-    "lodash": "^4.17.21"
+    "lodash": "catalog:"
   }
 }

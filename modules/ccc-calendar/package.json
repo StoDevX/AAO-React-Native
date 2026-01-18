@@ -9,10 +9,10 @@
     "test": "jest"
   },
   "peerDependencies": {
-    "react": "^19.1.0",
-    "@react-navigation/native": "^6.1.18",
-    "moment-timezone": "^0.5.45",
-    "delay": "^6.0.0"
+    "react": "catalog:",
+    "@react-navigation/native": "catalog:",
+    "moment-timezone": "catalog:",
+    "delay": "catalog:"
   },
   "dependencies": {
     "@frogpond/api": "workspace:",

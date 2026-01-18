@@ -9,22 +9,19 @@
     "test": "jest"
   },
   "peerDependencies": {
-    "@react-native-vector-icons/ionicons": "12.3.0",
-    "react": "^19.1.0",
-    "react-native": "^0.81.0",
-    "react-native-popover-view": "^5.1.8"
+    "@react-native-vector-icons/ionicons": "catalog:",
+    "react": "catalog:",
+    "react-native": "catalog:",
+    "react-native-popover-view": "catalog:"
   },
   "dependencies": {
-    "@callstack/react-theme-provider": "^3.0.9",
+    "@callstack/react-theme-provider": "catalog:",
     "@frogpond/app-theme": "workspace:",
     "@frogpond/colors": "workspace:",
     "@frogpond/layout": "workspace:",
     "@frogpond/tableview": "workspace:",
     "@frogpond/touchable": "workspace:",
     "@frogpond/viewport": "workspace:",
-    "lodash": "^4.17.21"
-  },
-  "devDependencies": {
-    "@react-native-vector-icons/ionicons": "12.3.0"
+    "lodash": "catalog:"
   }
 }
