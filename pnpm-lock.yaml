@@ -339,9 +339,6 @@ importers:
       minimist:
         specifier: 1.2.8
         version: 1.2.8
-      mkdirp:
-        specifier: 2.1.6
-        version: 2.1.6
       pify:
         specifier: 6.1.0
         version: 6.1.0
@@ -4715,11 +4712,6 @@ packages:
 
   mkdirp@1.0.4:
     resolution: {integrity: sha512-vVqVZQyf3WLx2Shd0qJ9xuvqgAyKPLAiqITEtqW0oIUjzo3PePDd6fW9iFz30ef7Ysp/oiWqbhszeGWW2T6Gzw==}
-    engines: {node: '>=10'}
-    hasBin: true
-
-  mkdirp@2.1.6:
-    resolution: {integrity: sha512-+hEnITedc8LAtIP9u3HJDFIdcLV2vXP33sqLLIzkv1Db1zO/1OxbvYf0Y1OC/S/Qo5dxHXepofhmxL02PsKe+A==}
     engines: {node: '>=10'}
     hasBin: true
 
@@ -10998,8 +10990,6 @@ snapshots:
     optional: true
 
   mkdirp@1.0.4: {}
-
-  mkdirp@2.1.6: {}
 
   moment-timezone@0.5.45:
     dependencies:
