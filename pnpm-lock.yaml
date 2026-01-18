@@ -250,8 +250,8 @@ importers:
         specifier: 12.9.0
         version: 12.9.0(jest@29.7.0(@types/node@25.0.3)(ts-node@10.9.2(@types/node@25.0.3)(typescript@5.9.3)))(react-native@0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0))(react-test-renderer@19.1.0(react@19.1.0))(react@19.1.0)
       '@tsconfig/react-native':
-        specifier: 3.0.8
-        version: 3.0.8
+        specifier: 3.0.9
+        version: 3.0.9
       '@types/base-64':
         specifier: 1.0.2
         version: 1.0.2
@@ -2242,8 +2242,8 @@ packages:
   '@tsconfig/node16@1.0.4':
     resolution: {integrity: sha512-vxhUy4J8lyeyinH7Azl1pdd43GJhZH/tP2weN8TntQblOY+A0XbT8DJk1/oCPuOOyg/Ja757rG0CgHcWC8OfMA==}
 
-  '@tsconfig/react-native@3.0.8':
-    resolution: {integrity: sha512-UYj/xmU3JizeDj6E4pdGCFNlLCB7WdMg0Yyxnma4W3UNcKwJUtdBJ8BR8azwdLlOy2iKszl59nt4mWn/pS+bqQ==}
+  '@tsconfig/react-native@3.0.9':
+    resolution: {integrity: sha512-+PuvMuxb0OTHo/o04vEQI7LfUoiPH33pePvAH+qxf5ZPsRAVwtespj7LqysOTAYcsmRvjLPjik7V8pIcm84dEQ==}
 
   '@tybys/wasm-util@0.10.1':
     resolution: {integrity: sha512-9tTaPJLSiejZKx+Bmog4uSubteqTvFrVrURwkmHixBo0G4seD0zUxp98E1DzUBJxLQ3NPwXrGKDiVjwx/DpPsg==}
@@ -7900,7 +7900,7 @@ snapshots:
 
   '@tsconfig/node16@1.0.4': {}
 
-  '@tsconfig/react-native@3.0.8': {}
+  '@tsconfig/react-native@3.0.9': {}
 
   '@tybys/wasm-util@0.10.1':
     dependencies:
