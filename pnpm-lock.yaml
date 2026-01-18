@@ -75,18 +75,9 @@ catalogs:
     buffer:
       specifier: 6.0.3
       version: 6.0.3
-    css-select:
-      specifier: ^6.0.0
-      version: 6.0.0
     delay:
       specifier: 7.0.0
       version: 7.0.0
-    domhandler:
-      specifier: ^5.0.3
-      version: 5.0.3
-    domutils:
-      specifier: ^3.2.2
-      version: 3.2.2
     events:
       specifier: 3.3.0
       version: 3.3.0
@@ -126,12 +117,6 @@ catalogs:
     expo-web-browser:
       specifier: 15.0.10
       version: 15.0.10
-    html-entities:
-      specifier: ^2.6.0
-      version: 2.6.0
-    htmlparser2:
-      specifier: ^10.0.0
-      version: 10.0.0
     keyword-search:
       specifier: 0.1.2
       version: 0.1.2
@@ -162,15 +147,9 @@ catalogs:
     react-native-button:
       specifier: 3.1.0
       version: 3.1.0
-    react-native-calendar-events:
-      specifier: 2.2.0
-      version: 2.2.0
     react-native-gesture-handler:
       specifier: 2.28.0
       version: 2.28.0
-    react-native-inappbrowser-reborn:
-      specifier: 3.7.0
-      version: 3.7.0
     react-native-ios-context-menu:
       specifier: 1.15.3
       version: 1.15.3
@@ -195,9 +174,6 @@ catalogs:
     react-native-search-bar:
       specifier: 3.5.1
       version: 3.5.1
-    react-native-sfsymbols:
-      specifier: 1.2.2
-      version: 1.2.2
     react-native-tableview-simple:
       specifier: 4.4.1
       version: 4.4.1
@@ -407,9 +383,6 @@ importers:
       react-native-search-bar:
         specifier: 'catalog:'
         version: 3.5.1(react-native@0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0))(react@19.1.0)
-      react-native-sfsymbols:
-        specifier: 'catalog:'
-        version: 1.2.2(react-native@0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0))(react@19.1.0)
       react-native-tableview-simple:
         specifier: 'catalog:'
         version: 4.4.1(react-native@0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0))(react@19.1.0)
@@ -2124,6 +2097,8 @@ packages:
   '@react-native/codegen@0.81.5':
     resolution: {integrity: sha512-a2TDA03Up8lpSa9sh5VRGCQDXgCTOyDOFH+aqyinxp1HChG8uk89/G+nkJ9FPd0rqgi25eCTR16TWdS3b+fA6g==}
     engines: {node: '>= 20.19.4'}
+    peerDependencies:
+      '@babel/core': '*'
 
   '@react-native/debugger-frontend@0.81.5':
     resolution: {integrity: sha512-bnd9FSdWKx2ncklOetCgrlwqSGhMHP2zOxObJbOWXoj7GHEmih4MKarBo5/a8gX8EfA1EwRATdfNBQ81DY+h+w==}
@@ -5386,12 +5361,6 @@ packages:
       react: '>=15.1 || >=16.0.0'
       react-native: '>=0.40'
 
-  react-native-sfsymbols@1.2.2:
-    resolution: {integrity: sha512-/9zshSuIlvCTnD9yfrD7/AbO/Vhlcml8GEri9gLa+sRhZL2ZFvqTOopiRJdC9+eWO+NVtLN+qX8FNXm5y5URSQ==}
-    peerDependencies:
-      react: '*'
-      react-native: '*'
-
   react-native-tableview-simple@4.4.1:
     resolution: {integrity: sha512-iB95jhzH2gPqhymkQuI2qx2OE+GK79TxGMqUDpjWaXohQ30iP1z9bakA6tBe7rmfwk+WU2fmlSlwt/ov3RYVNw==}
     peerDependencies:
@@ -7673,11 +7642,12 @@ snapshots:
 
   '@react-native/assets-registry@0.81.5': {}
 
-  '@react-native/babel-plugin-codegen@0.81.5':
+  '@react-native/babel-plugin-codegen@0.81.5(@babel/core@7.28.6)':
     dependencies:
       '@babel/traverse': 7.28.6
-      '@react-native/codegen': 0.81.5
+      '@react-native/codegen': 0.81.5(@babel/core@7.28.6)
     transitivePeerDependencies:
+      - '@babel/core'
       - supports-color
 
   '@react-native/babel-preset@0.81.5(@babel/core@7.28.6)':
@@ -7723,14 +7693,14 @@ snapshots:
       '@babel/plugin-transform-typescript': 7.28.6(@babel/core@7.28.6)
       '@babel/plugin-transform-unicode-regex': 7.27.1(@babel/core@7.28.6)
       '@babel/template': 7.28.6
-      '@react-native/babel-plugin-codegen': 0.81.5
+      '@react-native/babel-plugin-codegen': 0.81.5(@babel/core@7.28.6)
       babel-plugin-syntax-hermes-parser: 0.29.1
       babel-plugin-transform-flow-enums: 0.0.2(@babel/core@7.28.6)
       react-refresh: 0.14.2
     transitivePeerDependencies:
       - supports-color
 
-  '@react-native/codegen@0.81.5':
+  '@react-native/codegen@0.81.5(@babel/core@7.28.6)':
     dependencies:
       '@babel/core': 7.28.6
       '@babel/parser': 7.28.6
@@ -7739,8 +7709,6 @@ snapshots:
       invariant: 2.2.4
       nullthrows: 1.1.1
       yargs: 17.7.2
-    transitivePeerDependencies:
-      - supports-color
 
   '@react-native/debugger-frontend@0.81.5': {}
 
@@ -11569,11 +11537,6 @@ snapshots:
       react: 19.1.0
       react-native: 0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0)
 
-  react-native-sfsymbols@1.2.2(react-native@0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0))(react@19.1.0):
-    dependencies:
-      react: 19.1.0
-      react-native: 0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0)
-
   react-native-tableview-simple@4.4.1(react-native@0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0))(react@19.1.0):
     dependencies:
       react: 19.1.0
@@ -11614,7 +11577,7 @@ snapshots:
     dependencies:
       '@jest/create-cache-key-function': 29.7.0
       '@react-native/assets-registry': 0.81.5
-      '@react-native/codegen': 0.81.5
+      '@react-native/codegen': 0.81.5(@babel/core@7.28.6)
       '@react-native/gradle-plugin': 0.81.5
       '@react-native/js-polyfills': 0.81.5
       '@react-native/normalize-colors': 0.81.5
