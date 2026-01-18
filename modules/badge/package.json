@@ -8,7 +8,7 @@
   "scripts": {
     "test": "jest"
   },
-  "peerDependencies": {
+  "dependencies": {
     "@frogpond/colors": "workspace:",
     "react": "catalog:",
     "tinycolor2": "catalog:",

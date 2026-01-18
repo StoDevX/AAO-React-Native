@@ -8,13 +8,11 @@
   "scripts": {
     "test": "jest"
   },
-  "peerDependencies": {
+  "dependencies": {
     "moment-timezone": "catalog:",
     "react": "catalog:",
     "react-native": "catalog:",
-    "@react-navigation/native": "catalog:"
-  },
-  "dependencies": {
+    "@react-navigation/native": "catalog:",
     "@callstack/react-theme-provider": "catalog:",
     "@frogpond/add-to-device-calendar": "workspace:",
     "@frogpond/app-theme": "workspace:",

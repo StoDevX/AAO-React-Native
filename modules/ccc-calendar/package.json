@@ -8,13 +8,11 @@
   "scripts": {
     "test": "jest"
   },
-  "peerDependencies": {
+  "dependencies": {
     "react": "catalog:",
     "@react-navigation/native": "catalog:",
     "moment-timezone": "catalog:",
-    "delay": "catalog:"
-  },
-  "dependencies": {
+    "delay": "catalog:",
     "@frogpond/api": "workspace:",
     "@frogpond/event-list": "workspace:",
     "@frogpond/event-type": "workspace:",

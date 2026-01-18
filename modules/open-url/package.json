@@ -8,9 +8,8 @@
   "scripts": {
     "test": "jest"
   },
-  "peerDependencies": {
+  "dependencies": {
     "react-native-inappbrowser-reborn": "catalog:",
     "react-native": "catalog:"
-  },
-  "dependencies": {}
+  }
 }

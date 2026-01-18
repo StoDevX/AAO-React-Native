@@ -8,11 +8,9 @@
   "scripts": {
     "test": "jest"
   },
-  "peerDependencies": {
-    "react": "catalog:",
-    "react-native": "catalog:"
-  },
   "dependencies": {
+    "react": "catalog:",
+    "react-native": "catalog:",
     "@frogpond/colors": "workspace:",
     "react-native-typography": "catalog:"
   }

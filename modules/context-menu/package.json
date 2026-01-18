@@ -8,13 +8,11 @@
   "scripts": {
     "test": "jest"
   },
-  "peerDependencies": {
-    "react": "catalog:",
-    "react-native": "catalog:"
-  },
   "dependencies": {
     "@frogpond/touchable": "workspace:",
     "lodash": "catalog:",
-    "react-native-ios-context-menu": "catalog:"
+    "react-native-ios-context-menu": "catalog:",
+    "react-native": "catalog:",
+    "react": "catalog:"
   }
 }

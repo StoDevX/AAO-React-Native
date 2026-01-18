@@ -8,12 +8,10 @@
   "scripts": {
     "test": "jest"
   },
-  "peerDependencies": {
+  "dependencies": {
     "react": "catalog:",
     "react-native": "catalog:",
-    "moment-timezone": "catalog:"
-  },
-  "dependencies": {
+    "moment-timezone": "catalog:",
     "@frogpond/app-theme": "workspace:",
     "@frogpond/colors": "workspace:",
     "@react-native-community/datetimepicker": "catalog:"

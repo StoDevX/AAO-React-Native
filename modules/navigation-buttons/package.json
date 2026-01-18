@@ -8,13 +8,11 @@
   "scripts": {
     "test": "jest"
   },
-  "peerDependencies": {
+  "dependencies": {
+    "@frogpond/app-theme": "workspace:",
     "@react-native-vector-icons/ionicons": "catalog:",
     "@react-navigation/native": "catalog:",
     "react": "catalog:",
     "react-native": "catalog:"
-  },
-  "dependencies": {
-    "@frogpond/app-theme": "workspace:"
   }
 }

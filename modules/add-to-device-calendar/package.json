@@ -8,13 +8,11 @@
   "scripts": {
     "test": "jest"
   },
-  "peerDependencies": {
+  "dependencies": {
     "delay": "catalog:",
     "react": "catalog:",
     "react-native": "catalog:",
-    "react-native-calendar-events": "catalog:"
-  },
-  "dependencies": {
+    "react-native-calendar-events": "catalog:",
     "@frogpond/event-type": "workspace:"
   }
 }
