@@ -9,8 +9,9 @@
     "test": "jest"
   },
   "dependencies": {
+    "@frogpond/open-url": "workspace:",
     "react": "catalog:",
     "react-native": "catalog:",
-    "@frogpond/open-url": "workspace:"
+    "react-native-webview": "catalog:"
   }
 }

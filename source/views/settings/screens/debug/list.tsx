@@ -4,7 +4,7 @@ import {DebugRow} from './row'
 import {NoticeView} from '@frogpond/notice'
 import {ListSeparator} from '@frogpond/lists'
 import {useAppSelector} from '../../../../redux'
-import {RouteProp, useNavigation, useRoute} from '@react-navigation/core'
+import {RouteProp, useNavigation, useRoute} from '@react-navigation/native'
 import {SettingsStackParamList} from '../../../../navigation/types'
 import {Section, TableView} from 'react-native-tableview-simple'
 

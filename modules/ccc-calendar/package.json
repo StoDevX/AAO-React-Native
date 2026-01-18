@@ -16,6 +16,7 @@
     "@frogpond/api": "workspace:",
     "@frogpond/event-list": "workspace:",
     "@frogpond/event-type": "workspace:",
+    "@frogpond/timer": "workspace:",
     "@frogpond/notice": "workspace:"
   }
 }

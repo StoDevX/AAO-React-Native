@@ -81,6 +81,9 @@ catalogs:
     css-select:
       specifier: ^6.0.0
       version: 6.0.0
+    deepmerge:
+      specifier: 4.3.1
+      version: 4.3.1
     delay:
       specifier: 7.0.0
       version: 7.0.0
@@ -174,9 +177,6 @@ catalogs:
     react-native-inappbrowser-reborn:
       specifier: 3.7.0
       version: 3.7.0
-    react-native-ios-context-menu:
-      specifier: 1.15.3
-      version: 1.15.3
     react-native-network-logger:
       specifier: 2.0.1
       version: 2.0.1
@@ -235,8 +235,6 @@ catalogs:
 overrides:
   react-native>@react-native/community-cli-plugin: '-'
 
-packageExtensionsChecksum: sha256-L2026Rghgrgo9ZaqGCN1LK9quJMkzwbqu+mB7Hnowd4=
-
 importers:
 
   .:
@@ -250,9 +248,99 @@ importers:
       '@expo/ui':
         specifier: 'catalog:'
         version: 0.2.0-beta.9(expo@54.0.31(@babel/core@7.28.6)(react-native-webview@13.15.0(react-native@0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0))(react@19.1.0))(react-native@0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0))(react@19.1.0))(react-native@0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0))(react@19.1.0)
+      '@frogpond/api':
+        specifier: 'workspace:'
+        version: link:modules/api
+      '@frogpond/app-theme':
+        specifier: 'workspace:'
+        version: link:modules/app-theme
+      '@frogpond/badge':
+        specifier: 'workspace:'
+        version: link:modules/badge
+      '@frogpond/button':
+        specifier: 'workspace:'
+        version: link:modules/button
+      '@frogpond/ccc-calendar':
+        specifier: 'workspace:'
+        version: link:modules/ccc-calendar
+      '@frogpond/colors':
+        specifier: 'workspace:'
+        version: link:modules/colors
+      '@frogpond/constants':
+        specifier: 'workspace:'
+        version: link:modules/constants
+      '@frogpond/datepicker':
+        specifier: 'workspace:'
+        version: link:modules/datepicker
+      '@frogpond/event-list':
+        specifier: 'workspace:'
+        version: link:modules/event-list
+      '@frogpond/event-type':
+        specifier: 'workspace:'
+        version: link:modules/event-type
+      '@frogpond/filter':
+        specifier: 'workspace:'
+        version: link:modules/filter
+      '@frogpond/food-menu':
+        specifier: 'workspace:'
+        version: link:modules/food-menu
+      '@frogpond/html-content':
+        specifier: 'workspace:'
+        version: link:modules/html-content
+      '@frogpond/html-lib':
+        specifier: 'workspace:'
+        version: link:modules/html-lib
+      '@frogpond/info-header':
+        specifier: 'workspace:'
+        version: link:modules/info-header
+      '@frogpond/layout':
+        specifier: 'workspace:'
+        version: link:modules/layout
+      '@frogpond/lists':
+        specifier: 'workspace:'
+        version: link:modules/lists
+      '@frogpond/markdown':
+        specifier: 'workspace:'
+        version: link:modules/markdown
+      '@frogpond/navigation-buttons':
+        specifier: 'workspace:'
+        version: link:modules/navigation-buttons
+      '@frogpond/navigation-tabs':
+        specifier: 'workspace:'
+        version: link:modules/navigation-tabs
+      '@frogpond/notice':
+        specifier: 'workspace:'
+        version: link:modules/notice
+      '@frogpond/open-url':
+        specifier: 'workspace:'
+        version: link:modules/open-url
+      '@frogpond/separator':
+        specifier: 'workspace:'
+        version: link:modules/separator
+      '@frogpond/silly-card':
+        specifier: 'workspace:'
+        version: link:modules/silly-card
+      '@frogpond/storage':
+        specifier: 'workspace:'
+        version: link:modules/storage
+      '@frogpond/tableview':
+        specifier: 'workspace:'
+        version: link:modules/tableview
+      '@frogpond/timer':
+        specifier: 'workspace:'
+        version: link:modules/timer
       '@frogpond/titlecase':
         specifier: 'catalog:'
         version: 2.0.4
+      '@frogpond/toolbar':
+        specifier: 'workspace:'
+        version: link:modules/toolbar
+      '@frogpond/touchable':
+        specifier: 'workspace:'
+        version: link:modules/touchable
+      '@frogpond/use-debounce':
+        specifier: 'workspace:'
+        version: link:modules/use-debounce
       '@hawkrives/react-native-alternate-icons':
         specifier: 'catalog:'
         version: 0.6.2
@@ -297,7 +385,7 @@ importers:
         version: 2.11.2(react-redux@9.2.0(@types/react@19.1.0)(react@19.1.0)(redux@5.0.1))(react@19.1.0)
       '@sentry/react-native':
         specifier: 'catalog:'
-        version: 7.9.0(@expo/config-plugins@54.0.4)(expo@54.0.31(@babel/core@7.28.6)(react-native-webview@13.15.0(react-native@0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0))(react@19.1.0))(react-native@0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0))(react@19.1.0))(react-native@0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0))(react@19.1.0)
+        version: 7.9.0(expo@54.0.31(@babel/core@7.28.6)(react-native-webview@13.15.0(react-native@0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0))(react@19.1.0))(react-native@0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0))(react@19.1.0))(react-native@0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0))(react@19.1.0)
       '@tanstack/query-async-storage-persister':
         specifier: 'catalog:'
         version: 5.90.21
@@ -388,9 +476,6 @@ importers:
       react-native-gesture-handler:
         specifier: 'catalog:'
         version: 2.28.0(react-native@0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0))(react@19.1.0)
-      react-native-ios-context-menu:
-        specifier: 'catalog:'
-        version: 1.15.3(react-native@0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0))(react@19.1.0)
       react-native-network-logger:
         specifier: 'catalog:'
         version: 2.0.1(react-native@0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0))(react@19.1.0)
@@ -625,7 +710,11 @@ importers:
         specifier: 'catalog:'
         version: 1.14.2
 
-  modules/app-theme: {}
+  modules/app-theme:
+    dependencies:
+      deepmerge:
+        specifier: 'catalog:'
+        version: 4.3.1
 
   modules/badge:
     dependencies:
@@ -683,6 +772,9 @@ importers:
       '@frogpond/notice':
         specifier: 'workspace:'
         version: link:../notice
+      '@frogpond/timer':
+        specifier: 'workspace:'
+        version: link:../timer
       '@react-navigation/native':
         specifier: 'catalog:'
         version: 6.1.18(react-native@0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0))(react@19.1.0)
@@ -703,24 +795,6 @@ importers:
       react-native:
         specifier: 'catalog:'
         version: 0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0)
-
-  modules/context-menu:
-    dependencies:
-      '@frogpond/touchable':
-        specifier: 'workspace:'
-        version: link:../touchable
-      lodash:
-        specifier: 'catalog:'
-        version: 4.17.21
-      react:
-        specifier: 'catalog:'
-        version: 19.1.0
-      react-native:
-        specifier: 'catalog:'
-        version: 0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0)
-      react-native-ios-context-menu:
-        specifier: 'catalog:'
-        version: 1.15.3(react-native@0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0))(react@19.1.0)
 
   modules/datepicker:
     dependencies:
@@ -757,9 +831,15 @@ importers:
       '@frogpond/colors':
         specifier: 'workspace:'
         version: link:../colors
+      '@frogpond/event-list':
+        specifier: 'workspace:'
+        version: 'link:'
       '@frogpond/event-type':
         specifier: 'workspace:'
         version: link:../event-type
+      '@frogpond/layout':
+        specifier: 'workspace:'
+        version: link:../layout
       '@frogpond/lists':
         specifier: 'workspace:'
         version: link:../lists
@@ -772,6 +852,9 @@ importers:
       '@frogpond/open-url':
         specifier: 'workspace:'
         version: link:../open-url
+      '@frogpond/silly-card':
+        specifier: 'workspace:'
+        version: link:../silly-card
       '@frogpond/tableview':
         specifier: 'workspace:'
         version: link:../tableview
@@ -798,6 +881,9 @@ importers:
       '@callstack/react-theme-provider':
         specifier: 'catalog:'
         version: 3.0.9(react@19.1.0)
+      '@expo/ui':
+        specifier: 'catalog:'
+        version: 0.2.0-beta.9(expo@54.0.31(@babel/core@7.28.6)(react-native-webview@13.15.0(react-native@0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0))(react@19.1.0))(react-native@0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0))(react@19.1.0))(react-native@0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0))(react@19.1.0)
       '@frogpond/app-theme':
         specifier: 'workspace:'
         version: link:../app-theme
@@ -810,6 +896,9 @@ importers:
       '@frogpond/tableview':
         specifier: 'workspace:'
         version: link:../tableview
+      '@frogpond/toolbar':
+        specifier: 'workspace:'
+        version: link:../toolbar
       '@frogpond/touchable':
         specifier: 'workspace:'
         version: link:../touchable
@@ -828,9 +917,6 @@ importers:
       react-native:
         specifier: 'catalog:'
         version: 0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0)
-      react-native-popover-view:
-        specifier: 'catalog:'
-        version: 5.1.8
 
   modules/food-menu:
     dependencies:
@@ -900,6 +986,9 @@ importers:
       react-native:
         specifier: 'catalog:'
         version: 0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0)
+      react-native-webview:
+        specifier: 'catalog:'
+        version: 13.15.0(react-native@0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0))(react@19.1.0)
 
   modules/html-lib:
     dependencies:
@@ -1718,9 +1807,6 @@ packages:
   '@dabh/diagnostics@2.0.8':
     resolution: {integrity: sha512-R4MSXTVnuMzGD7bzHdW2ZhhdPC/igELENcq5IjEverBvq5hn1SXCWcsi6eSsdWP0/Ur+SItRRjAktmdoX/8R/Q==}
 
-  '@dominicstop/ts-event-emitter@1.1.0':
-    resolution: {integrity: sha512-CcxmJIvUb1vsFheuGGVSQf4KdPZC44XolpUT34+vlal+LyQoBUOn31pjFET5M9ctOxEpt8xa0M3/2M7uUiAoJw==}
-
   '@egjs/hammerjs@2.0.17':
     resolution: {integrity: sha512-XQsZgjm2EcVUiZQf11UBJQfmZeEmOW8DpI1gsFeln6w0ae0ii4dMQEQ0kjl6DspdWX1aGY1/loyXnP0JS06e/A==}
     engines: {node: '>=0.8.0'}
@@ -2133,8 +2219,6 @@ packages:
   '@react-native/codegen@0.81.5':
     resolution: {integrity: sha512-a2TDA03Up8lpSa9sh5VRGCQDXgCTOyDOFH+aqyinxp1HChG8uk89/G+nkJ9FPd0rqgi25eCTR16TWdS3b+fA6g==}
     engines: {node: '>= 20.19.4'}
-    peerDependencies:
-      '@babel/core': '*'
 
   '@react-native/debugger-frontend@0.81.5':
     resolution: {integrity: sha512-bnd9FSdWKx2ncklOetCgrlwqSGhMHP2zOxObJbOWXoj7GHEmih4MKarBo5/a8gX8EfA1EwRATdfNBQ81DY+h+w==}
@@ -2369,7 +2453,6 @@ packages:
     resolution: {integrity: sha512-1prBMo51vpYffVoZMakYSecy/iQjehziLhNshRtv7bNdIdoLn4+pNkVSKn6I6BaiJc8iD8lRNbmKH0by/Mr/NQ==}
     hasBin: true
     peerDependencies:
-      '@expo/config-plugins': '*'
       expo: '>=49.0.0'
       react: '>=17.0.0'
       react-native: '>=0.65.0'
@@ -5344,12 +5427,6 @@ packages:
     peerDependencies:
       react-native: '>=0.56'
 
-  react-native-ios-context-menu@1.15.3:
-    resolution: {integrity: sha512-UNkVl7ocvSpNaEpvBvE1aHOfDy/DFdZ5I+ElfnTXFsRxrVZmxLtST0b1q2wSWGWDmd2Ig2AYd7GRbYtcY222Ag==}
-    peerDependencies:
-      react: '*'
-      react-native: '*'
-
   react-native-is-edge-to-edge@1.2.1:
     resolution: {integrity: sha512-FLbPWl/MyYQWz+KwqOZsSyj2JmLKglHatd3xLZWskXOpRaio4LfEDEz8E/A6uD8QoTHW6Aobw1jbEwK7KMgR7Q==}
     peerDependencies:
@@ -7013,8 +7090,6 @@ snapshots:
       kuler: 2.0.0
     optional: true
 
-  '@dominicstop/ts-event-emitter@1.1.0': {}
-
   '@egjs/hammerjs@2.0.17':
     dependencies:
       '@types/hammerjs': 2.0.46
@@ -7690,12 +7765,11 @@ snapshots:
 
   '@react-native/assets-registry@0.81.5': {}
 
-  '@react-native/babel-plugin-codegen@0.81.5(@babel/core@7.28.6)':
+  '@react-native/babel-plugin-codegen@0.81.5':
     dependencies:
       '@babel/traverse': 7.28.6
-      '@react-native/codegen': 0.81.5(@babel/core@7.28.6)
+      '@react-native/codegen': 0.81.5
     transitivePeerDependencies:
-      - '@babel/core'
       - supports-color
 
   '@react-native/babel-preset@0.81.5(@babel/core@7.28.6)':
@@ -7741,14 +7815,14 @@ snapshots:
       '@babel/plugin-transform-typescript': 7.28.6(@babel/core@7.28.6)
       '@babel/plugin-transform-unicode-regex': 7.27.1(@babel/core@7.28.6)
       '@babel/template': 7.28.6
-      '@react-native/babel-plugin-codegen': 0.81.5(@babel/core@7.28.6)
+      '@react-native/babel-plugin-codegen': 0.81.5
       babel-plugin-syntax-hermes-parser: 0.29.1
       babel-plugin-transform-flow-enums: 0.0.2(@babel/core@7.28.6)
       react-refresh: 0.14.2
     transitivePeerDependencies:
       - supports-color
 
-  '@react-native/codegen@0.81.5(@babel/core@7.28.6)':
+  '@react-native/codegen@0.81.5':
     dependencies:
       '@babel/core': 7.28.6
       '@babel/parser': 7.28.6
@@ -7757,6 +7831,8 @@ snapshots:
       invariant: 2.2.4
       nullthrows: 1.1.1
       yargs: 17.7.2
+    transitivePeerDependencies:
+      - supports-color
 
   '@react-native/debugger-frontend@0.81.5': {}
 
@@ -7986,9 +8062,8 @@ snapshots:
 
   '@sentry/core@10.34.0': {}
 
-  '@sentry/react-native@7.9.0(@expo/config-plugins@54.0.4)(expo@54.0.31(@babel/core@7.28.6)(react-native-webview@13.15.0(react-native@0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0))(react@19.1.0))(react-native@0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0))(react@19.1.0))(react-native@0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0))(react@19.1.0)':
+  '@sentry/react-native@7.9.0(expo@54.0.31(@babel/core@7.28.6)(react-native-webview@13.15.0(react-native@0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0))(react@19.1.0))(react-native@0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0))(react@19.1.0))(react-native@0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0))(react@19.1.0)':
     dependencies:
-      '@expo/config-plugins': 54.0.4
       '@sentry/babel-plugin-component-annotate': 4.6.2
       '@sentry/browser': 10.34.0
       '@sentry/cli': 2.58.4
@@ -11528,12 +11603,6 @@ snapshots:
       opencollective-postinstall: 2.0.3
       react-native: 0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0)
 
-  react-native-ios-context-menu@1.15.3(react-native@0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0))(react@19.1.0):
-    dependencies:
-      '@dominicstop/ts-event-emitter': 1.1.0
-      react: 19.1.0
-      react-native: 0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0)
-
   react-native-is-edge-to-edge@1.2.1(react-native@0.81.5(@babel/core@7.28.6)(@types/react@19.1.0)(react@19.1.0))(react@19.1.0):
     dependencies:
       react: 19.1.0
@@ -11626,7 +11695,7 @@ snapshots:
     dependencies:
       '@jest/create-cache-key-function': 29.7.0
       '@react-native/assets-registry': 0.81.5
-      '@react-native/codegen': 0.81.5(@babel/core@7.28.6)
+      '@react-native/codegen': 0.81.5
       '@react-native/gradle-plugin': 0.81.5
       '@react-native/js-polyfills': 0.81.5
       '@react-native/normalize-colors': 0.81.5

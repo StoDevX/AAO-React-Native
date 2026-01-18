@@ -9,17 +9,18 @@
     "test": "jest"
   },
   "dependencies": {
-    "@react-native-vector-icons/ionicons": "catalog:",
-    "react": "catalog:",
-    "react-native": "catalog:",
-    "react-native-popover-view": "catalog:",
     "@callstack/react-theme-provider": "catalog:",
+    "@expo/ui": "catalog:",
     "@frogpond/app-theme": "workspace:",
     "@frogpond/colors": "workspace:",
     "@frogpond/layout": "workspace:",
     "@frogpond/tableview": "workspace:",
+    "@frogpond/toolbar": "workspace:",
     "@frogpond/touchable": "workspace:",
     "@frogpond/viewport": "workspace:",
-    "lodash": "catalog:"
+    "@react-native-vector-icons/ionicons": "catalog:",
+    "lodash": "catalog:",
+    "react": "catalog:",
+    "react-native": "catalog:"
   }
 }

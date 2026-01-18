@@ -3,14 +3,14 @@ import {
 	ColorValue,
 	ScrollView,
 	StyleSheet,
-	Text,
+	Text as RNText,
 	TouchableOpacity,
 	View,
 } from 'react-native'
+import {ContextMenu, Host, Button, Text} from '@expo/ui/swift-ui'
 import type {Moment} from 'moment-timezone'
 import type {DayOfWeek} from '../types'
 import * as c from '@frogpond/colors'
-import {ContextMenu} from '@frogpond/context-menu'
 import {Ionicons} from '@react-native-vector-icons/ionicons'
 
 const styles = StyleSheet.create({
@@ -108,21 +108,21 @@ export const DayPicker = ({
 							onPress={() => onDaySelect(day)}
 							style={[styles.dayButton, isSelected && styles.dayButtonSelected]}
 						>
-							<Text
+							<RNText
 								style={[
 									styles.dayButtonText,
 									isSelected && styles.dayButtonTextSelected,
 								]}
 							>
 								{label}
-							</Text>
+							</RNText>
 						</TouchableOpacity>
 					)
 				})}
 			</ScrollView>
 			{isOverridden && onReset && (
 				<TouchableOpacity onPress={onReset} style={styles.resetButton}>
-					<Text style={styles.resetButtonText}>Reset</Text>
+					<RNText style={styles.resetButtonText}>Reset</RNText>
 				</TouchableOpacity>
 			)}
 		</View>
@@ -184,24 +184,59 @@ export const DayPickerHeader = ({
 	const displayText = isOverridden ? selectedLabel : 'Today'
 
 	return (
-		<ContextMenu
-			actions={dayOptions}
-			isMenuPrimaryAction={true}
-			onPressMenuItem={(item: string) => {
-				const selectedDayData = DAYS_OF_WEEK.find(({label}) => label === item)
-				if (selectedDayData) {
-					onDaySelect(selectedDayData.day)
-				}
-			}}
-			selectedAction={selectedLabel}
-			title="Pick a schedule"
-		>
-			<View style={[styles.headerButtonContainer, {borderColor: accentColor}]}>
-				<Ionicons color={accentColor} name="calendar" size={16} />
-				<Text style={[styles.headerButtonText, {color: accentColor}]}>
-					{displayText}
-				</Text>
-			</View>
-		</ContextMenu>
+		<Host style={{width: 150, height: 50}}>
+			<ContextMenu>
+				<ContextMenu.Items>
+					<Text>Pick a schedule</Text>
+					{dayOptions.map((dayLabel) => (
+						<Button
+							key={dayLabel}
+							onPress={() => {
+								const selectedDayData = DAYS_OF_WEEK.find(
+									({label}) => label === dayLabel,
+								)
+								if (selectedDayData) {
+									onDaySelect(selectedDayData.day)
+								}
+							}}
+						>
+							{dayLabel}
+						</Button>
+					))}
+				</ContextMenu.Items>
+				<ContextMenu.Trigger>
+					<View
+						style={[styles.headerButtonContainer, {borderColor: accentColor}]}
+					>
+						<Ionicons color={accentColor} name="calendar" size={16} />
+						<RNText style={[styles.headerButtonText, {color: accentColor}]}>
+							{displayText}
+						</RNText>
+					</View>
+				</ContextMenu.Trigger>
+			</ContextMenu>
+		</Host>
 	)
+
+	// return (
+	// 	<ContextMenu
+	// 		actions={dayOptions}
+	// 		isMenuPrimaryAction={true}
+	// 		onPressMenuItem={(item: string) => {
+	// 			const selectedDayData = DAYS_OF_WEEK.find(({label}) => label === item)
+	// 			if (selectedDayData) {
+	// 				onDaySelect(selectedDayData.day)
+	// 			}
+	// 		}}
+	// 		selectedAction={selectedLabel}
+	// 		title="Pick a schedule"
+	// 	>
+	// 		<View style={[styles.headerButtonContainer, {borderColor: accentColor}]}>
+	// 			<Ionicons color={accentColor} name="calendar" size={16} />
+	// 			<Text style={[styles.headerButtonText, {color: accentColor}]}>
+	// 				{displayText}
+	// 			</Text>
+	// 		</View>
+	// 	</ContextMenu>
+	// )
 }

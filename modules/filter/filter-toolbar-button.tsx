@@ -1,11 +1,13 @@
 import * as React from 'react'
-import {useRef, useState} from 'react'
+import {useState} from 'react'
 import {StyleProp, StyleSheet, Text, View, ViewStyle} from 'react-native'
+// import {Popover} from '@expo/ui/swift-ui'
 import {Ionicons} from '@react-native-vector-icons/ionicons'
 import type {FilterType} from './types'
-import {FilterPopover} from './filter-popover'
 import * as c from '@frogpond/colors'
 import {Touchable} from '@frogpond/touchable'
+import {TableView} from '@frogpond/tableview'
+import {FilterSection} from './section'
 
 const buttonStyles = StyleSheet.create({
 	button: {
@@ -42,16 +44,7 @@ export function FilterToolbarButton<T extends object>(
 	let {onPopoverDismiss, filter, style, title} = props
 
 	let [popoverVisible, setPopoverVisible] = useState(false)
-	let touchable = useRef<View>(null)
-
-	let openPopover = (): void => {
-		setPopoverVisible(true)
-	}
-
-	let onClosePopover = (updatedFilter: FilterType<T>): void => {
-		onPopoverDismiss(updatedFilter)
-		setPopoverVisible(false)
-	}
+	let [editedFilter, setEditedFilter] = useState<FilterType<T>>(props.filter)
 
 	if (filter.type === 'list') {
 		if (!filter.spec.options.length) {
@@ -60,26 +53,40 @@ export function FilterToolbarButton<T extends object>(
 	}
 
 	return (
-		<React.Fragment>
-			<Touchable
-				ref={touchable}
-				highlight={false}
-				onPress={openPopover}
-				style={[buttonStyles.button, style]}
-			>
-				<Text style={[buttonStyles.text, buttonStyles.textWithIcon]}>
-					{title}
-				</Text>
-				<Ionicons name="chevron-down" size={18} style={buttonStyles.text} />
-			</Touchable>
-			{popoverVisible && (
-				<FilterPopover<T>
-					anchor={touchable}
-					filter={filter}
-					onClosePopover={onClosePopover}
-					visible={true}
-				/>
-			)}
-		</React.Fragment>
+		<></>
+		// waiting for expo/ui@beta.10 to work with expo
+		// <Popover
+		// 	isPresented={popoverVisible}
+		// 	arrowEdge="leading"
+		// 	attachmentAnchor="trailing"
+		// 	onStateChange={(newState) => {
+		// 		if (newState.isPresented === false) {
+		// 			onPopoverDismiss(editedFilter)
+		// 			setPopoverVisible(false)
+		// 		}
+		// 	}}
+		// >
+		// 	<Popover.Trigger>
+		// 		<Touchable
+		// 			highlight={false}
+		// 			onPress={() => setPopoverVisible(true)}
+		// 			style={[buttonStyles.button, style]}
+		// 		>
+		// 			<Text style={[buttonStyles.text, buttonStyles.textWithIcon]}>
+		// 				{title}
+		// 			</Text>
+		// 			<Ionicons name="chevron-down" size={18} style={buttonStyles.text} />
+		// 		</Touchable>
+		// 	</Popover.Trigger>
+
+		// 	<Popover.Content>
+		// 		<TableView>
+		// 			<FilterSection<T>
+		// 				filter={editedFilter}
+		// 				onChange={(updatedFilter) => setEditedFilter(updatedFilter)}
+		// 			/>
+		// 		</TableView>
+		// 	</Popover.Content>
+		// </Popover>
 	)
 }

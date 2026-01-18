@@ -39,6 +39,7 @@ catalog:
   base-64: 1.0.0
   buffer: 6.0.3
   css-select: ^6.0.0
+  deepmerge: 4.3.1
   delay: 7.0.0
   domhandler: ^5.0.3
   domutils: ^3.2.2
@@ -70,7 +71,6 @@ catalog:
   react-native-calendar-events: 2.2.0
   react-native-gesture-handler: 2.28.0
   react-native-inappbrowser-reborn: 3.7.0
-  react-native-ios-context-menu: 1.15.3
   react-native-network-logger: 2.0.1
   react-native-paper: 5.14.5
   react-native-popover-view: 5.1.8
@@ -94,9 +94,7 @@ catalogMode: strict
 
 cleanupUnusedCatalogs: true
 
-enableGlobalVirtualStore: true
-
-hoistPattern: []
+# enableGlobalVirtualStore: true
 
 ignoreWorkspaceRootCheck: true
 
@@ -106,11 +104,6 @@ optimisticRepeatInstall: true
 
 overrides:
   react-native>@react-native/community-cli-plugin: '-'
-
-packageExtensions:
-  '@sentry/react-native@7.9.0':
-    peerDependencies:
-      '@expo/config-plugins': '*'
 
 shellEmulator: true
 

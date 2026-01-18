@@ -1,9 +1,8 @@
 import * as React from 'react'
-import {Platform, StyleSheet} from 'react-native'
-import * as c from '@frogpond/colors'
 import type {PickerType} from './types'
 import {Section} from '@frogpond/tableview'
-import {Picker} from '@react-native-picker/picker'
+// import {Host, Picker, Text} from '@expo/ui/swift-ui'
+// import {pickerStyle, tag} from '@expo/ui/swift-ui/modifiers'
 
 type Props<T extends object> = {
 	filter: PickerType<T>
@@ -19,38 +18,25 @@ export function PickerSection<T extends object>({
 
 	return (
 		<Section footer={caption} header={title.toUpperCase()}>
-			<Picker
-				itemStyle={styles.pickerItem}
-				mode="dropdown"
-				onValueChange={(itemValue, itemIndex) => {
-					let pickedItem = spec.options[itemIndex]
-					onChange({...filter, spec: {...spec, selected: pickedItem}})
-				}}
-				selectedValue={JSON.stringify(selected || options[0])}
-				style={styles.picker}
-			>
-				{options.map((val, i) => (
-					<Picker.Item
-						key={i}
-						label={val.label}
-						style={styles.pickerItem}
-						value={JSON.stringify(val)}
-					/>
-				))}
-			</Picker>
+			{/* waiting for beta.10 to work with expo */}
+			{/* <Host>
+				<Picker
+					modifiers={[pickerStyle('inline')]}
+					selection={JSON.stringify(selected || options[0])}
+					onSelectionChange={(selection) => {
+						let pickedItem = spec.options.find(
+							(opt) => JSON.stringify(opt) === selection.nativeEvent.selection,
+						)
+						onChange({...filter, spec: {...spec, selected: pickedItem}})
+					}}
+				>
+					{options.map((val, i) => (
+						<Text key={val.label} modifiers={[tag(JSON.stringify(val))]}>
+							{val.label}
+						</Text>
+					))}
+				</Picker>
+			</Host> */}
 		</Section>
 	)
 }
-
-const styles = StyleSheet.create({
-	picker: {
-		backgroundColor: c.secondarySystemBackground,
-	},
-	pickerItem: {
-		...Platform.select({
-			ios: {
-				color: c.label,
-			},
-		}),
-	},
-})

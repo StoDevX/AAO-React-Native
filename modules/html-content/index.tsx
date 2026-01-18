@@ -1,6 +1,5 @@
-import * as React from 'react'
-import {useCallback, useRef} from 'react'
-import {WebView, WebViewNavigation} from 'react-native-webview'
+import {useCallback, useRef, type ReactNode} from 'react'
+import {WebView, type WebViewNavigation} from 'react-native-webview'
 import type {StyleProp, ViewStyle} from 'react-native'
 import {canOpenUrl, openUrl} from '@frogpond/open-url'
 
@@ -10,7 +9,7 @@ type Props = {
 	style?: StyleProp<ViewStyle>
 }
 
-export function HtmlContent(props: Props): React.JSX.Element {
+export function HtmlContent(props: Props): ReactNode {
 	let webview = useRef<WebView | null>(null)
 
 	const onNavigationStateChange = useCallback(
@@ -40,6 +39,7 @@ export function HtmlContent(props: Props): React.JSX.Element {
 	return (
 		<WebView
 			ref={webview}
+			originWhitelist={['*']}
 			onNavigationStateChange={onNavigationStateChange}
 			source={{html: props.html, baseUrl: props.baseUrl}}
 			style={props.style}

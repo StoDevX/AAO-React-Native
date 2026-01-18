@@ -17,10 +17,13 @@
     "@frogpond/add-to-device-calendar": "workspace:",
     "@frogpond/app-theme": "workspace:",
     "@frogpond/colors": "workspace:",
+    "@frogpond/event-list": "workspace:",
     "@frogpond/event-type": "workspace:",
     "@frogpond/lists": "workspace:",
+    "@frogpond/layout": "workspace:",
     "@frogpond/navigation-buttons": "workspace:",
     "@frogpond/notice": "workspace:",
+    "@frogpond/silly-card": "workspace:",
     "@frogpond/open-url": "workspace:",
     "@frogpond/tableview": "workspace:",
     "lodash": "catalog:"
