@@ -151,7 +151,7 @@ const {data, isLoading, error} = useQuery({
 ### Navigation
 ```typescript
 // Typed navigation
-import {useNavigation} from '@react-navigation/native';
+import {useNavigation} from 'expo-router';
 import type {RootStackParamList} from '../navigation/types';
 
 const navigation = useNavigation<NavigationProp<RootStackParamList>>();

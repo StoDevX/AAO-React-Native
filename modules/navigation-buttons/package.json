@@ -11,7 +11,7 @@
   "dependencies": {
     "@frogpond/app-theme": "workspace:",
     "@react-native-vector-icons/ionicons": "catalog:",
-    "@react-navigation/native": "catalog:",
+    "expo-router": "catalog:",
     "react": "catalog:",
     "react-native": "catalog:"
   }

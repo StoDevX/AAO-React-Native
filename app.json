@@ -2,6 +2,7 @@
   "expo": {
     "name": "All About Olaf",
     "slug": "all-about-olaf",
+    "scheme": "all-about-olaf",
     "version": "2.8.0",
     "orientation": "portrait",
     "icon": "./images/icons/windmill@3x.png",
@@ -53,6 +54,9 @@
           "organization": "frog-pond-labs"
         }
       ]
-    ]
+    ],
+    "experiments": {
+      "typedRoutes": true
+    }
   }
 }

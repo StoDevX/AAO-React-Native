@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "react": "catalog:",
-    "@react-navigation/native": "catalog:",
+    "expo-router": "catalog:",
     "moment-timezone": "catalog:",
     "delay": "catalog:",
     "@frogpond/api": "workspace:",

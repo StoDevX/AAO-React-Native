@@ -12,7 +12,7 @@
     "moment-timezone": "catalog:",
     "react": "catalog:",
     "react-native": "catalog:",
-    "@react-navigation/native": "catalog:",
+    "expo-router": "catalog:",
     "@callstack/react-theme-provider": "catalog:",
     "@frogpond/add-to-device-calendar": "workspace:",
     "@frogpond/app-theme": "workspace:",

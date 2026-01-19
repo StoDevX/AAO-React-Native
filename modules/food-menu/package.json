@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@react-native-vector-icons/ionicons": "catalog:",
-    "@react-navigation/native": "catalog:",
+    "expo-router": "catalog:",
     "moment": "catalog:",
     "moment-timezone": "catalog:",
     "react": "catalog:",

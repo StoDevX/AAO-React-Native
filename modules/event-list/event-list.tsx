@@ -8,7 +8,7 @@ import type {Moment} from 'moment-timezone'
 import {FullWidthSeparator, ListSectionHeader} from '@frogpond/lists'
 import {NoticeView} from '@frogpond/notice'
 import EventRow from './event-row'
-import {useNavigation} from '@react-navigation/native'
+import {useNavigation} from 'expo-router'
 import {PoweredBy} from './types'
 
 type Props = {

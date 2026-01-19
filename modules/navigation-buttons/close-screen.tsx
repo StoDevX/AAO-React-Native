@@ -2,7 +2,7 @@ import * as React from 'react'
 import {Text, Platform, StyleSheet, ViewStyle, StyleProp} from 'react-native'
 import {Touchable} from '@frogpond/touchable'
 import {commonStyles} from './styles'
-import {useNavigation} from '@react-navigation/native'
+import {useNavigation} from 'expo-router'
 import {useTheme} from '@frogpond/app-theme'
 
 type Props = {
