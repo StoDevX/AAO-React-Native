@@ -1,6 +1,6 @@
 import React from 'react'
 import {createBottomTabNavigator as createCupertinoBottomTabNavigator} from '@react-navigation/bottom-tabs'
-// import {createMaterialBottomTabNavigator} from '@react-navigation/material-bottom-tabs'
+// import {createMaterialBottomTabNavigator} from 'react-native-paper/react-navigation'
 import {ParamListBase} from '@react-navigation/native'
 import {Platform} from 'react-native'
 

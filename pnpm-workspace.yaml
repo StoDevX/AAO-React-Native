@@ -27,10 +27,10 @@ catalog:
   '@react-native-vector-icons/entypo': 12.4.0
   '@react-native-vector-icons/ionicons': 12.3.0
   '@react-native-vector-icons/material-design-icons': 12.4.0
-  '@react-navigation/bottom-tabs': 6.6.1
-  '@react-navigation/native': 6.1.18
-  '@react-navigation/native-stack': 6.11.0
-  '@react-navigation/stack': 6.4.1
+  '@react-navigation/bottom-tabs': 7.10.0
+  '@react-navigation/native': 7.1.28
+  '@react-navigation/native-stack': 7.10.0
+  '@react-navigation/stack': 7.6.15
   '@reduxjs/toolkit': 2.11.2
   '@sentry/react-native': 7.9.0
   '@tanstack/query-async-storage-persister': 5.90.21
@@ -93,8 +93,6 @@ catalog:
 catalogMode: strict
 
 cleanupUnusedCatalogs: true
-
-# enableGlobalVirtualStore: true
 
 ignoreWorkspaceRootCheck: true
 

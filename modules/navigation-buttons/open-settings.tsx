@@ -4,11 +4,8 @@ import {Ionicons} from '@react-native-vector-icons/ionicons'
 import * as c from '@frogpond/colors'
 import {commonStyles, rightButtonStyles} from './styles'
 import {useNavigation} from '@react-navigation/native'
-import {HeaderBackButtonProps} from '@react-navigation/native-stack/lib/typescript/src/types'
 
-export function OpenSettingsButton(
-	_props: HeaderBackButtonProps,
-): React.JSX.Element {
+export function OpenSettingsButton(): React.JSX.Element {
 	let navigation = useNavigation()
 
 	return (
