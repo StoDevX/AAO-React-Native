@@ -4,7 +4,7 @@ import {FilterType} from '@frogpond/filter/types'
 import * as eventList from '@frogpond/event-list'
 
 import * as menus from '../app/menus'
-import * as calendar from '../app/calendar'
+import * as calendar from '../app/(calendar)'
 import * as news from '../app/news'
 import * as sis from '../app/sis'
 import * as streaming from '../app/streaming'
