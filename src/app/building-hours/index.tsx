@@ -1,17 +1,14 @@
 import * as React from 'react'
 import {StyleSheet, SectionList} from 'react-native'
-import {BuildingRow} from './row'
-import {useGroupedBuildings} from './query'
-import {BuildingType} from './types'
+import {BuildingRow} from '../../views/building-hours/row'
+import {useGroupedBuildings} from '../../views/building-hours/query'
+import {BuildingType} from '../../views/building-hours/types'
 
 import * as c from '@frogpond/colors'
 import {ListSeparator, ListSectionHeader} from '@frogpond/lists'
 import {LoadingView, NoticeView} from '@frogpond/notice'
 import {useNavigation} from 'expo-router'
 import {useMomentTimer} from '@frogpond/timer'
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
-
-export {BuildingHoursDetailView} from './detail'
 
 const styles = StyleSheet.create({
 	container: {
@@ -69,9 +66,4 @@ export function BuildingHoursView(): React.JSX.Element {
 			sections={data}
 		/>
 	)
-}
-
-export const NavigationOptions: NativeStackNavigationOptions = {
-	title: 'Building Hours',
-	headerBackTitle: 'Back',
 }

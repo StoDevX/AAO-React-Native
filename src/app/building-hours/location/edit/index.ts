@@ -1,9 +1,9 @@
 export {
 	BuildingHoursScheduleEditorView,
 	NavigationOptions as EditorNavigationOptions,
-} from './editor'
+} from '../../../../views/building-hours/report/editor'
 export {
 	BuildingHoursProblemReportView,
 	NavigationOptions as ReportNavigationOptions,
 	NavigationKey as ReportNavigationKey,
-} from './overview'
+} from '../../../../views/building-hours/report/overview'
