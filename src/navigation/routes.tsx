@@ -3,7 +3,7 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack'
 
 import * as home from '../app'
 import * as buildingHours from '../app/building-hours'
-import * as calendar from '../app/(calendar)'
+import * as calendar from '../app/calendar'
 import {EventDetail as eventDetail} from '@frogpond/event-list'
 import * as contacts from '../app/contacts'
 import * as dictionary from '../app/dictionary'
