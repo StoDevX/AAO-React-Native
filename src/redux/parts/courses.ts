@@ -2,7 +2,7 @@ import type {FilterType} from '@frogpond/filter'
 import {
 	formatFilterCombo,
 	type FilterComboType,
-} from '../../app/sis/course-search/lib/format-filter-combo'
+} from '../../views/sis/course-search/lib/format-filter-combo'
 
 import {createSlice} from '@reduxjs/toolkit'
 import type {PayloadAction} from '@reduxjs/toolkit'

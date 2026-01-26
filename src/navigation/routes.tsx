@@ -2,41 +2,41 @@ import React from 'react'
 import {createNativeStackNavigator} from '@react-navigation/native-stack'
 
 import * as home from '../app'
-import * as buildingHours from '../app/building-hours'
+import * as buildingHours from '../views/building-hours'
 import * as calendar from '../app/calendar'
 import {EventDetail as eventDetail} from '@frogpond/event-list'
-import * as contacts from '../app/contacts'
-import * as dictionary from '../app/dictionary'
-import * as faqs from '../app/faqs'
-import * as sis from '../app/sis'
-import * as studentwork from '../app/sis/student-work'
-import * as studentworkdetail from '../app/sis/student-work/detail'
-import * as menus from '../app/menus'
-import * as carletonmenus from '../app/menus/carleton-menus'
+import * as contacts from '../views/contacts'
+import * as dictionary from '../views/dictionary'
+import * as faqs from '../views/faqs'
+import * as sis from '../views/sis'
+import * as studentwork from '../views/sis/student-work'
+import * as studentworkdetail from '../views/sis/student-work/detail'
+import * as menus from '../views/menus'
+import * as carletonmenus from '../views/menus/carleton-menus'
 import {
 	BonAppPickerView as DevBonAppPickerView,
 	DevBonAppNavigationOptions,
-} from '../app/menus/dev-bonapp-picker'
+} from '../views/menus/dev-bonapp-picker'
 import {
 	DetailNavigationOptions,
 	MenuItemDetailView,
 } from '@frogpond/food-menu/food-item-detail'
-import * as news from '../app/news'
-import * as settings from '../app/settings'
-import * as streaming from '../app/streaming'
-import * as orgs from '../app/student-orgs'
+import * as news from '../views/news'
+import * as settings from '../views/settings'
+import * as streaming from '../views/streaming'
+import * as orgs from '../views/student-orgs'
 import * as transportation from '../app/transportation'
 import {BusRouteDetail} from '../views/transportation/bus/detail'
-import * as stoprint from '../app/stoprint'
+import * as stoprint from '../views/stoprint'
 import * as more from '../app/more'
-import * as directory from '../app/directory'
+import * as directory from '../views/directory'
 
 import {
 	RootStackParamList,
 	SettingsStackParamList,
 	ComponentLibraryStackParamList,
 } from './types'
-import {NavigationKey as Debug} from '../app/settings/screens/debug'
+import {NavigationKey as Debug} from '../views/settings/screens/debug'
 import {toLaxTitleCase} from '@frogpond/titlecase'
 
 const Stack = createNativeStackNavigator<RootStackParamList>()
