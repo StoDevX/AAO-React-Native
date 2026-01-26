@@ -2,7 +2,7 @@ import * as React from 'react'
 import {Text, Platform, StyleSheet, ViewStyle, StyleProp} from 'react-native'
 import {Touchable} from '@frogpond/touchable'
 import {commonStyles} from './styles'
-import {useNavigation} from 'expo-router'
+import {useRouter} from 'expo-router'
 import {useTheme} from '@frogpond/app-theme'
 
 type Props = {
@@ -14,7 +14,8 @@ export function CloseScreenButton({
 	title,
 	buttonStyle,
 }: Props): React.JSX.Element {
-	let navigation = useNavigation()
+	let router = useRouter()
+	let canGoBack = router.canGoBack()
 	let {colors} = useTheme()
 
 	return (
@@ -24,7 +25,7 @@ export function CloseScreenButton({
 			accessible={true}
 			borderless={true}
 			highlight={false}
-			onPress={() => navigation.goBack()}
+			onPress={() => canGoBack && router.dismiss()}
 			style={[commonStyles.button, buttonStyle]}
 			testID="button-close-screen"
 		>
@@ -38,12 +39,8 @@ export function CloseScreenButton({
 const styles = StyleSheet.create({
 	text: {
 		...Platform.select({
-			ios: {
-				fontWeight: '600',
-			},
-			android: {
-				fontWeight: '400',
-			},
+			ios: {fontWeight: '600'},
+			android: {fontWeight: '400'},
 		}),
 	},
 })

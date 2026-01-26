@@ -2,12 +2,11 @@ import * as React from 'react'
 import {StyleSheet, SectionList} from 'react-native'
 import {BuildingRow} from '../../views/building-hours/row'
 import {useGroupedBuildings} from '../../views/building-hours/query'
-import {BuildingType} from '../../views/building-hours/types'
 
 import * as c from '@frogpond/colors'
 import {ListSeparator, ListSectionHeader} from '@frogpond/lists'
 import {LoadingView, NoticeView} from '@frogpond/notice'
-import {useNavigation} from 'expo-router'
+import {Link} from 'expo-router'
 import {useMomentTimer} from '@frogpond/timer'
 
 const styles = StyleSheet.create({
@@ -17,9 +16,7 @@ const styles = StyleSheet.create({
 	},
 })
 
-export function BuildingHoursView(): React.JSX.Element {
-	let navigation = useNavigation()
-
+export default function BuildingHoursView(): React.JSX.Element {
 	let {now} = useMomentTimer({intervalMs: 60000, startOf: 'minute'})
 
 	let {
@@ -30,12 +27,6 @@ export function BuildingHoursView(): React.JSX.Element {
 		isError,
 		isRefetching,
 	} = useGroupedBuildings()
-
-	let onPressRow = React.useCallback(
-		(building: BuildingType) =>
-			navigation.navigate('BuildingHoursDetail', {building}),
-		[navigation],
-	)
 
 	if (isError) {
 		return (
@@ -58,7 +49,15 @@ export function BuildingHoursView(): React.JSX.Element {
 			onRefresh={refetch}
 			refreshing={isRefetching}
 			renderItem={({item}) => (
-				<BuildingRow info={item} now={now} onPress={() => onPressRow(item)} />
+				<Link
+					asChild={true}
+					href={{
+						pathname: '/building-hours/location/[locationName]',
+						params: {locationName: item.name},
+					}}
+				>
+					<BuildingRow info={item} now={now} />
+				</Link>
 			)}
 			renderSectionHeader={({section: {title}}) => (
 				<ListSectionHeader title={title} />

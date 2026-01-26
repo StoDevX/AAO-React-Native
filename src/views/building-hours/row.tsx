@@ -41,7 +41,7 @@ const styles = StyleSheet.create({
 type Props = {
 	info: BuildingType
 	now: Moment
-	onPress: () => void
+	onPress?: () => void
 }
 
 export function BuildingRow(props: Props): React.JSX.Element {
