@@ -3,21 +3,21 @@ import React from 'react'
 import {FilterType} from '@frogpond/filter/types'
 import * as eventList from '@frogpond/event-list'
 
-import * as menus from '../app/menus'
+import * as menus from '../views/menus'
 import * as calendar from '../app/calendar'
-import * as news from '../app/news'
-import * as sis from '../app/sis'
-import * as streaming from '../app/streaming'
+import * as news from '../views/news'
+import * as sis from '../views/sis'
+import * as streaming from '../views/streaming'
 import * as transportation from '../app/transportation'
-import * as debug from '../app/settings/screens/debug'
-import * as buildingHours from '../app/building-hours'
-import * as settings from '../app/settings'
+import * as debug from '../views/settings/screens/debug'
+import * as buildingHours from '../views/building-hours'
+import * as settings from '../views/settings'
 
-import {BuildingType} from '../app/building-hours/types'
-import {ContactType} from '../app/contacts/types'
-import {StudentOrgType} from '../app/student-orgs/types'
-import {RouteParams as HoursEditorType} from '../app/building-hours/report/editor'
-import {WordType} from '../app/dictionary/types'
+import {BuildingType} from '../views/building-hours/types'
+import {ContactType} from '../views/contacts/types'
+import {StudentOrgType} from '../views/student-orgs/types'
+import {RouteParams as HoursEditorType} from '../views/building-hours/report/editor'
+import {WordType} from '../views/dictionary/types'
 import {
 	UnprocessedBusLine,
 	BusTimetableEntry,
@@ -25,12 +25,12 @@ import {
 import type {
 	MasterCorIconMapType,
 	MenuItemType as MenuItem,
-} from '../app/menus/types'
+} from '../views/menus/types'
 import {Printer, PrintJob} from '../lib/stoprint/types'
-import {JobType} from '../app/sis/student-work/types'
+import {JobType} from '../views/sis/student-work/types'
 import {CourseType} from '../lib/course-search/types'
-import {DirectoryItem, DirectorySearchTypeEnum} from '../app/directory/types'
-import {ServerRoute} from '../app/settings/screens/api-test/query'
+import {DirectoryItem, DirectorySearchTypeEnum} from '../views/directory/types'
+import {ServerRoute} from '../views/settings/screens/api-test/query'
 
 export type RootViewsParamList = {
 	Home: undefined
