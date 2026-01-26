@@ -1,9 +1,9 @@
-export {BuildingHoursView, NavigationOptions} from './list'
+export {BuildingHoursView, NavigationOptions} from '../../app/building-hours'
 
 export {
 	BuildingHoursDetailView,
 	NavigationOptions as DetailNavigationOptions,
-} from './detail'
+} from '../../app/building-hours/location'
 
 export {
 	BuildingHoursProblemReportView,
@@ -11,4 +11,4 @@ export {
 	ReportNavigationOptions,
 	EditorNavigationOptions,
 	ReportNavigationKey,
-} from './report'
+} from '../../app/building-hours/location/edit'
