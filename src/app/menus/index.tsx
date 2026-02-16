@@ -1,6 +1,5 @@
 import * as React from 'react'
 import {Platform} from 'react-native'
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 import {
 	MaterialIcon,
 	IosIcon,
@@ -11,13 +10,6 @@ import {
 import {BonAppHostedMenu} from './menu-bonapp'
 import {GitHubHostedMenu} from './menu-github'
 import {CarletonCafeIndex} from './carleton-menus'
-
-export {
-	CarletonBurtonMenuScreen,
-	CarletonLDCMenuScreen,
-	CarletonWeitzMenuScreen,
-	CarletonSaylesMenuScreen,
-} from './carleton-menus'
 
 const StavHallMenuView = () => (
 	<BonAppHostedMenu
@@ -108,9 +100,5 @@ const tabs: Tab<Params>[] = [
 	},
 ]
 
-export type NavigationParams = undefined
-export const View = createTabNavigator<Params>(tabs)
-export const NavigationKey = 'Menus'
-export const NavigationOptions: NativeStackNavigationOptions = {
-	title: 'Menus',
-}
+const MenusView = createTabNavigator<Params>(tabs)
+export default MenusView

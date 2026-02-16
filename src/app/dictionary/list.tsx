@@ -125,7 +125,7 @@ function DictionaryView(): React.JSX.Element {
 				return (
 					<ListRow
 						arrowPosition="top"
-						onPress={() => navigation.navigate('DictionaryDetail', {item})}
+						onPress={() => navigation.navigate('dictionary/detail', {item})}
 					>
 						<Title lines={1}>{item.word}</Title>
 						<Detail lines={2} style={styles.rowDetailText}>

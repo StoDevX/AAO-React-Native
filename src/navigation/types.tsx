@@ -1,17 +1,6 @@
 import React from 'react'
-
-import {FilterType} from '@frogpond/filter/types'
 import * as eventList from '@frogpond/event-list'
-
-import * as menus from '../app/menus'
-import * as calendar from '../app/(calendar)'
-import * as news from '../app/news'
-import * as sis from '../app/sis'
-import * as streaming from '../app/streaming'
-import * as transportation from '../app/transportation'
-import * as debug from '../app/settings/screens/debug'
-import * as buildingHours from '../app/building-hours'
-import * as settings from '../app/settings'
+import {FilterType} from '@frogpond/filter/types'
 
 import {BuildingType} from '../app/building-hours/types'
 import {ContactType} from '../app/contacts/types'
@@ -32,97 +21,55 @@ import {CourseType} from '../lib/course-search/types'
 import {DirectoryItem, DirectorySearchTypeEnum} from '../app/directory/types'
 import {ServerRoute} from '../app/settings/screens/api-test/query'
 
-export type RootViewsParamList = {
-	Home: undefined
-	[calendar.NavigationKey]: calendar.NavigationParams
-	[menus.NavigationKey]: undefined
-	[news.NavigationKey]: undefined
-	[sis.NavigationKey]: undefined
-	[streaming.NavigationKey]: undefined
-	[transportation.NavigationKey]: undefined
-	BuildingHours: undefined
-	Contacts: undefined
-	CourseSearch: undefined
-	Dictionary: undefined
-	Directory:
+export type RootStackParamList = {
+	settings: undefined
+	stoprint: undefined
+	faqs: undefined
+	'contacts/detail': {contact: ContactType}
+	'event-detail': eventList.EventDetail.ParamList
+	'menus/dev-bonapp-picker': undefined
+	'menus/carleton-burton': undefined
+	'menus/carleton-ldc': undefined
+	'menus/carleton-weitz': undefined
+	'menus/carleton-sayles': undefined
+	'menus/menu-item-detail': {item: MenuItem; icons: MasterCorIconMapType}
+	directory:
 		| {queryType?: DirectorySearchTypeEnum; queryParam?: string}
 		| undefined
-	Faq: undefined
-	Help: undefined
-	More: undefined
-	PrintJobs: undefined
-	StudentOrgs: undefined
-}
-
-export type CafeMenuParamList = {
-	CarletonBurtonMenu: undefined
-	CarletonLDCMenu: undefined
-	CarletonWeitzMenu: undefined
-	CarletonSaylesMenu: undefined
-}
-
-export type RadioScheduleParamList = {
-	KSTOSchedule: undefined
-	KRLXSchedule: undefined
-}
-
-export type MiscViewParamList = {
-	HomeRoot: undefined
-	Profile: {userId: string}
-	Feed: {sort: 'latest' | 'top'} | undefined
-	[eventList.EventDetail.NavigationKey]: eventList.EventDetail.ParamList
-	BuildingHoursDetail: {building: BuildingType}
-	[buildingHours.ReportNavigationKey]: {initialBuilding: BuildingType}
-	BuildingHoursScheduleEditor: HoursEditorType
-	ContactsDetail: {contact: ContactType}
-	DictionaryDetail: {item: WordType}
-	DictionaryEditor: {item: WordType}
-	DirectoryDetail: {contact: DirectoryItem}
-	Job: undefined
-	JobDetail: {job: JobType}
-	CourseSearchResults:
+	'directory/detail': {contact: DirectoryItem}
+	'building-hours/detail': {building: BuildingType}
+	'building-hours/report': {initialBuilding: BuildingType}
+	'building-hours/report/editor': HoursEditorType
+	'dictionary/detail': {item: WordType}
+	'dictionary/report/editor': {item: WordType}
+	'student-orgs/detail': {org: StudentOrgType}
+	'sis/student-work/detail': {job: JobType}
+	'sis/course-search/results':
 		| {initialQuery?: string; initialFilters?: FilterType<CourseType>[]}
 		| undefined
-	CourseDetail: {course: CourseType}
-	StudentOrgsDetail: {org: StudentOrgType}
-	BusMapView: {line: UnprocessedBusLine}
-	BusRouteDetail: {
+	'sis/course-search/detail': {course: CourseType}
+	'stoprint/printers': {job: PrintJob}
+	'stoprint/print-release': {job: PrintJob; printer?: Printer}
+	'transportation/map': {line: UnprocessedBusLine}
+	'transportation/detail': {
 		stop: BusTimetableEntry
 		line: UnprocessedBusLine
 		subtitle: string
 	}
-	MenuItemDetail: {item: MenuItem; icons: MasterCorIconMapType}
-	PrinterList: {job: PrintJob}
-	PrintJobRelease: {job: PrintJob; printer?: Printer}
-}
-
-export type RootStackParamList = RootViewsParamList &
-	CafeMenuParamList &
-	RadioScheduleParamList &
-	MiscViewParamList
-
-export type SettingsStackParamList = {
-	APITest: undefined
-	APITestDetail: {query: ServerRoute}
-	BonAppPicker: undefined
-	Credits: undefined
-	[debug.NavigationKey]: {keyPath: string[]}
-	Faq: undefined
-	IconSettings: undefined
-	Legal: undefined
-	NetworkLogger: undefined
-	Privacy: undefined
-	Settings: undefined
-	SettingsRoot: undefined
-}
-
-export type ComponentLibraryStackParamList = {
-	ComponentLibraryRoot: undefined
-	ComponentLibrary: undefined
-	BadgeLibrary: undefined
-	ButtonLibrary: undefined
-	[settings.ColorsLibraryNavigationKey]: undefined
-	ContextMenuLibrary: undefined
+	'streaming/ksto-schedule': undefined
+	'streaming/krlx-schedule': undefined
+	'settings/screens/credits': undefined
+	'settings/screens/privacy': undefined
+	'settings/screens/legal': undefined
+	'settings/screens/network-logger': undefined
+	'settings/screens/api-test': undefined
+	'settings/screens/api-test/detail': {query: ServerRoute}
+	'settings/screens/debug': {keyPath: string[]} | undefined
+	'settings/screens/overview/component-library': undefined
+	'settings/screens/overview/component-library/badge': undefined
+	'settings/screens/overview/component-library/button': undefined
+	'settings/screens/overview/component-library/colors': undefined
+	'settings/screens/overview/component-library/context-menu': undefined
 }
 
 export interface ChangeTextEvent {
@@ -133,13 +80,8 @@ export interface OnChangeTextHandler {
 	onChange: (event: ChangeTextEvent) => void
 }
 
-// this block sourced from https://reactnavigation.org/docs/typescript/#specifying-default-types-for-usenavigation-link-ref-etc
 declare global {
-	// eslint-disable-next-line @typescript-eslint/no-namespace
 	namespace ReactNavigation {
-		interface RootParamList
-			extends RootStackParamList,
-				SettingsStackParamList,
-				ComponentLibraryStackParamList {}
+		interface RootParamList extends RootStackParamList {}
 	}
 }

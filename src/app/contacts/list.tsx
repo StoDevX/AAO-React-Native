@@ -5,7 +5,6 @@ import {useNavigation} from 'expo-router'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 import * as React from 'react'
 import {SectionList, StyleSheet} from 'react-native'
-import {DetailNavigationKey} from './detail'
 import {useGroupedContacts} from './query'
 import {ContactRow} from './row'
 import type {ContactType} from './types'
@@ -32,7 +31,7 @@ export let ContactsListView = (): React.JSX.Element => {
 
 	let onPressContact = React.useCallback(
 		(contactData: ContactType) =>
-			navigation.navigate(DetailNavigationKey, {contact: contactData}),
+			navigation.navigate('contacts/detail', {contact: contactData}),
 		[navigation],
 	)
 

@@ -43,7 +43,7 @@ export const CourseSearchView = (): React.JSX.Element => {
 		const getRightButton = () => (
 			<RightButton
 				onPress={() =>
-					navigation.navigate('CourseSearchResults', {initialQuery: ''})
+					navigation.navigate('sis/course-search/results', {initialQuery: ''})
 				}
 			/>
 		)
@@ -61,7 +61,7 @@ export const CourseSearchView = (): React.JSX.Element => {
 
 	let showSearchResult = React.useCallback(
 		(query: string) => {
-			navigation.navigate('CourseSearchResults', {initialQuery: query})
+			navigation.navigate('sis/course-search/results', {initialQuery: query})
 		},
 		[navigation],
 	)
@@ -86,7 +86,7 @@ export const CourseSearchView = (): React.JSX.Element => {
 				selectedFilters = basicFilters.map((f) => filterLookup[f.key] || f)
 			}
 
-			navigation.navigate('CourseSearchResults', {
+			navigation.navigate('sis/course-search/results', {
 				initialFilters: selectedFilters,
 			})
 		},
@@ -135,6 +135,8 @@ export const CourseSearchView = (): React.JSX.Element => {
 		</View>
 	)
 }
+
+export default CourseSearchView
 
 let styles = StyleSheet.create({
 	bottomContainer: {

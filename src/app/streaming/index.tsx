@@ -1,5 +1,4 @@
 import {Platform} from 'react-native'
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 import {
 	MaterialIcon,
 	IosIcon,
@@ -12,8 +11,6 @@ import {WebcamsView} from './webcams'
 import {StreamListView} from './streams'
 import {KstoStationView} from './radio/station-ksto'
 import {KrlxStationView} from './radio/station-krlx'
-
-export {KSTOScheduleView, KRLXScheduleView} from './radio'
 
 type Params = {
 	StreamingView: undefined
@@ -72,17 +69,5 @@ const tabs: Tab<Params>[] = [
 	},
 ]
 
-export type NavigationParams = undefined
-export const View = createTabNavigator<Params>(tabs)
-export const NavigationKey = 'Streaming Media'
-export const NavigationOptions: NativeStackNavigationOptions = {
-	title: 'Streaming Media',
-}
-
-export const KSTOScheduleNavigationOptions: NativeStackNavigationOptions = {
-	title: 'KSTO Schedule',
-}
-
-export const KRLXScheduleNavigationOptions: NativeStackNavigationOptions = {
-	title: 'KRLX Schedule',
-}
+const StreamingView = createTabNavigator<Params>(tabs)
+export default StreamingView

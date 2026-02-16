@@ -92,7 +92,7 @@ function StudentOrgsView(): React.JSX.Element {
 	}, [results])
 
 	let onPressOrg = React.useCallback(
-		(org: StudentOrgType) => navigation.navigate('StudentOrgsDetail', {org}),
+		(org: StudentOrgType) => navigation.navigate('student-orgs/detail', {org}),
 		[navigation],
 	)
 

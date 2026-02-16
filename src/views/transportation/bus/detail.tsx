@@ -192,7 +192,7 @@ function BusStopDetailInternal(props: Props): React.JSX.Element {
 
 export function BusRouteDetail(): React.JSX.Element {
 	let {now} = useMomentTimer({intervalMs: 1000 * 60, timezone: timezone()})
-	let route = useRoute<RouteProp<RootStackParamList, 'BusRouteDetail'>>()
+	let route = useRoute<RouteProp<RootStackParamList, 'transportation/detail'>>()
 	let {stop, line, subtitle} = route.params
 
 	return (

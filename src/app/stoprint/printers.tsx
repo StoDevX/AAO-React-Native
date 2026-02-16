@@ -32,7 +32,7 @@ const styles = StyleSheet.create({
 export const PrinterListView = (): React.JSX.Element => {
 	let navigation = useNavigation()
 
-	let route = useRoute<RouteProp<RootStackParamList, 'PrinterList'>>()
+	let route = useRoute<RouteProp<RootStackParamList, 'stoprint/printers'>>()
 	let {job} = route.params
 
 	const {data: username} = useQuery(usernameQuery)
@@ -68,7 +68,7 @@ export const PrinterListView = (): React.JSX.Element => {
 
 	let openPrintRelease = React.useCallback(
 		(printer: Printer) =>
-			navigation.navigate('PrintJobRelease', {job, printer}),
+			navigation.navigate('stoprint/print-release', {job, printer}),
 		[navigation, job],
 	)
 
@@ -164,6 +164,8 @@ export const PrinterListView = (): React.JSX.Element => {
 		/>
 	)
 }
+
+export default PrinterListView
 
 export const NavigationOptions: NativeStackNavigationOptions = {
 	title: 'Select Printer',

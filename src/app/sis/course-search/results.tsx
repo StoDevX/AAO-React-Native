@@ -104,7 +104,8 @@ export const CourseSearchResultsView = (): React.JSX.Element => {
 	let dispatch = useAppDispatch()
 	let navigation = useNavigation()
 
-	let route = useRoute<RouteProp<RootStackParamList, 'CourseSearchResults'>>()
+	let route =
+		useRoute<RouteProp<RootStackParamList, 'sis/course-search/results'>>()
 	let {initialFilters = [], initialQuery = ''} = route.params ?? {}
 
 	let {
@@ -151,7 +152,7 @@ export const CourseSearchResultsView = (): React.JSX.Element => {
 				// if there is at least one active filter, add the filter set to the Recent Filters list
 				dispatch(updateRecentFilters(filters))
 			}
-			navigation.navigate('CourseDetail', {course: data})
+			navigation.navigate('sis/course-search/detail', {course: data})
 		},
 		[navigation, dispatch, delayedQuery, filters],
 	)
@@ -242,6 +243,8 @@ export const CourseSearchResultsView = (): React.JSX.Element => {
 		/>
 	)
 }
+
+export default CourseSearchResultsView
 
 export const NavigationOptions: NativeStackNavigationOptions = {
 	title: 'Course Catalog',

@@ -19,7 +19,7 @@ import {RootStackParamList} from '../../../navigation/types'
 
 export function BusMap(): React.JSX.Element {
 	let {now} = useMomentTimer({intervalMs: 60000, timezone: timezone()})
-	let route = useRoute<RouteProp<RootStackParamList, 'BusMapView'>>()
+	let route = useRoute<RouteProp<RootStackParamList, 'transportation/map'>>()
 	let {line} = route.params
 
 	return <Map line={line} now={now} />

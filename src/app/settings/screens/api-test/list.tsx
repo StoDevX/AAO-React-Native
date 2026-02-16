@@ -45,7 +45,7 @@ export const APITestView = (): React.JSX.Element => {
 	}, [navigation])
 
 	let showSearchResult = React.useCallback(() => {
-		navigation.navigate('APITestDetail', {
+		navigation.navigate('settings/screens/api-test/detail', {
 			query: {
 				displayName: filterPath,
 				path: filterPath,
@@ -63,7 +63,11 @@ export const APITestView = (): React.JSX.Element => {
 			<SafeAreaView>
 				<ListRow
 					fullWidth={false}
-					onPress={() => navigation.navigate('APITestDetail', {query: item})}
+					onPress={() =>
+						navigation.navigate('settings/screens/api-test/detail', {
+							query: item,
+						})
+					}
 					style={styles.serverRouteRow}
 				>
 					<Column flex={1}>
@@ -117,6 +121,8 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 	},
 })
+
+export default APITestView
 
 export const NavigationOptions: NativeStackNavigationOptions = {
 	title: 'API Tester',

@@ -199,7 +199,7 @@ const BGCOLORS = {
 } as const
 
 export const NavigationOptions = (props: {
-	route: RouteProp<RootStackParamList, 'CourseDetail'>
+	route: RouteProp<RootStackParamList, 'sis/course-search/detail'>
 }): NativeStackNavigationOptions => {
 	let {name} = props.route.params.course
 	return {
@@ -208,7 +208,8 @@ export const NavigationOptions = (props: {
 }
 
 export const CourseDetailView = (): React.JSX.Element => {
-	let route = useRoute<RouteProp<RootStackParamList, 'CourseDetail'>>()
+	let route =
+		useRoute<RouteProp<RootStackParamList, 'sis/course-search/detail'>>()
 	let {course} = route.params
 
 	let status = course.status === 'O' ? ('Open' as const) : ('Closed' as const)
@@ -227,3 +228,5 @@ export const CourseDetailView = (): React.JSX.Element => {
 		</Container>
 	)
 }
+
+export default CourseDetailView

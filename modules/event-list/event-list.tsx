@@ -48,7 +48,7 @@ export function EventList(props: Props): React.JSX.Element {
 
 	let onPressEvent = React.useCallback(
 		(event: EventType) => {
-			navigation.navigate('EventDetail', {
+			navigation.navigate('event-detail', {
 				event,
 				poweredBy: props.poweredBy,
 			})

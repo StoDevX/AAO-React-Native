@@ -96,3 +96,5 @@ export const ButtonLibrary = (): React.JSX.Element => (
 		</>
 	</LibraryWrapper>
 )
+
+export default ButtonLibrary

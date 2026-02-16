@@ -68,6 +68,8 @@ export const BadgeLibrary = (): React.JSX.Element => (
 	</LibraryWrapper>
 )
 
+export default BadgeLibrary
+
 const styles = StyleSheet.create({
 	overriden: {
 		backgroundColor: c.systemTeal,

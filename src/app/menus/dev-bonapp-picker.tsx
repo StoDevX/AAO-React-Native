@@ -59,3 +59,5 @@ export const BonAppPickerView = (): React.JSX.Element => {
 		</View>
 	)
 }
+
+export default BonAppPickerView

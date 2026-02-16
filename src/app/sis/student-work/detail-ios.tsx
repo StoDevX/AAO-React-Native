@@ -187,7 +187,7 @@ function LastUpdated({when}: {when: string}) {
 }
 
 export const NavigationOptions = (props: {
-	route: RouteProp<RootStackParamList, 'JobDetail'>
+	route: RouteProp<RootStackParamList, 'sis/student-work/detail'>
 }): NativeStackNavigationOptions => {
 	let {job} = props.route.params
 	return {
@@ -197,7 +197,8 @@ export const NavigationOptions = (props: {
 }
 
 export const JobDetailView = (): React.JSX.Element => {
-	let route = useRoute<RouteProp<RootStackParamList, 'JobDetail'>>()
+	let route =
+		useRoute<RouteProp<RootStackParamList, 'sis/student-work/detail'>>()
 	let {job} = route.params
 
 	return (

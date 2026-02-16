@@ -35,7 +35,7 @@ export const Container = (props: ViewProps): React.JSX.Element => (
 	<View {...props} style={[styles.container, props.style]} />
 )
 
-export const NavigationKey = 'DictionaryDetail' as const
+export const NavigationKey = 'dictionary/detail' as const
 
 export const DetailNavigationOptions = (props: {
 	route: RouteProp<RootStackParamList, typeof NavigationKey>
@@ -53,7 +53,7 @@ export let DictionaryDetailView = (): React.JSX.Element => {
 	let navigation = useNavigation()
 
 	let handleEditButtonPress = React.useCallback(
-		() => navigation.navigate('DictionaryEditor', {item}),
+		() => navigation.navigate('dictionary/report/editor', {item}),
 		[item, navigation],
 	)
 
@@ -71,3 +71,5 @@ export let DictionaryDetailView = (): React.JSX.Element => {
 		</Container>
 	)
 }
+
+export default DictionaryDetailView

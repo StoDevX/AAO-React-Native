@@ -43,7 +43,7 @@ export function BusView(props: Props): React.JSX.Element {
 			now={now}
 			openMap={() => {
 				if (activeBusLine) {
-					navigation.navigate('BusMapView', {line: activeBusLine})
+					navigation.navigate('transportation/map', {line: activeBusLine})
 				}
 			}}
 		/>

@@ -27,7 +27,19 @@ import {LoadingView} from '@frogpond/notice'
 import {store, persistor} from '../redux'
 
 function RootLayout() {
-	return <Stack />
+	return (
+		<Stack screenOptions={{gestureEnabled: true}}>
+			<Stack.Screen name="settings" options={{presentation: 'modal'}} />
+			<Stack.Screen
+				name="building-hours/report"
+				options={{presentation: 'modal'}}
+			/>
+			<Stack.Screen
+				name="building-hours/report/editor"
+				options={{presentation: 'modal'}}
+			/>
+		</Stack>
+	)
 }
 
 function App() {

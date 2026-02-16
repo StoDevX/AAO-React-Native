@@ -117,3 +117,5 @@ export let PrivacyView = (): React.JSX.Element => (
 		</m.Paragraph>
 	</ScrollView>
 )
+
+export default PrivacyView

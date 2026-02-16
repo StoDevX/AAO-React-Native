@@ -31,7 +31,7 @@ export function BuildingHoursScheduleEditorView(): React.JSX.Element {
 	let navigation = useNavigation()
 
 	let route =
-		useRoute<RouteProp<RootStackParamList, 'BuildingHoursScheduleEditor'>>()
+		useRoute<RouteProp<RootStackParamList, 'building-hours/report/editor'>>()
 	let {params} = route
 
 	let [set, setSet] = useState<SingleBuildingScheduleType>(
@@ -263,10 +263,12 @@ const styles = StyleSheet.create({
 	},
 })
 
-export const NavigationKey = 'BuildingHoursProblemReportEditor'
+export const NavigationKey = 'building-hours/report/editor' as const
 
 export const NavigationOptions: NativeStackNavigationOptions = {
 	title: 'Edit Schedule',
 	presentation: 'modal',
 	headerRight: () => Platform.OS === 'ios' && <CloseScreenButton />,
 }
+
+export default BuildingHoursScheduleEditorView

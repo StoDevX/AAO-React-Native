@@ -6,7 +6,7 @@ import * as c from '@frogpond/colors'
 
 import {RouteProp, useNavigation, useRoute} from '@react-navigation/native'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
-import {SettingsStackParamList} from '../../../../navigation/types'
+import {RootStackParamList} from '../../../../navigation/types'
 import {useQuery} from '@tanstack/react-query'
 import {client} from '@frogpond/api'
 import {iOSUIKit, material} from 'react-native-typography'
@@ -21,7 +21,8 @@ type DisplayMode = 'raw' | 'parsed'
 
 export const APITestDetailView = (): React.JSX.Element => {
 	let navigation = useNavigation()
-	let route = useRoute<RouteProp<SettingsStackParamList, 'APITestDetail'>>()
+	let route =
+		useRoute<RouteProp<RootStackParamList, 'settings/screens/api-test/detail'>>()
 
 	const {displayName} = route.params.query
 	const cleanedName = displayName.trim().toLowerCase()
@@ -122,5 +123,7 @@ const styles = StyleSheet.create({
 		}),
 	},
 })
+
+export default APITestDetailView
 
 export const NavigationOptions: NativeStackNavigationOptions = {}

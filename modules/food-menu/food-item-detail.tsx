@@ -8,7 +8,7 @@ import {DietaryTagsDetail} from './dietary-tags-detail'
 import {calculateAmount} from './lib/calculate-amount'
 import size from 'lodash/size'
 import {RouteProp, useRoute} from '@react-navigation/native'
-import {RootStackParamList} from '../../source/navigation/types'
+import {RootStackParamList} from '../../src/navigation/types'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 
 export const DetailNavigationOptions: NativeStackNavigationOptions = {
@@ -16,7 +16,8 @@ export const DetailNavigationOptions: NativeStackNavigationOptions = {
 }
 
 export const MenuItemDetailView = (): React.JSX.Element => {
-	let route = useRoute<RouteProp<RootStackParamList, 'MenuItemDetail'>>()
+	let route =
+		useRoute<RouteProp<RootStackParamList, 'menus/menu-item-detail'>>()
 	const {item, icons} = route.params
 
 	return (

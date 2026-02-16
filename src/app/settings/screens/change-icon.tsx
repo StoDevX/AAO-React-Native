@@ -72,6 +72,8 @@ export let IconSettingsView = (): React.JSX.Element => {
 	)
 }
 
+export default IconSettingsView
+
 type IconCellProps = {
 	readonly icon: Icon
 	readonly isSelected: boolean

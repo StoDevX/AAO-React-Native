@@ -5,7 +5,6 @@ import {ListRow, ListSeparator, Title} from '@frogpond/lists'
 import {BonAppHostedMenu} from './menu-bonapp'
 import {useNavigation} from 'expo-router'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
-import {CafeMenuParamList} from '../../navigation/types'
 
 export const CarletonBurtonMenuScreen = (): React.JSX.Element => (
 	<BonAppHostedMenu
@@ -41,12 +40,17 @@ export const CarletonSaylesMenuScreen = (): React.JSX.Element => (
 
 export function CarletonCafeIndex(): React.JSX.Element {
 	let navigation = useNavigation()
+	type CarletonRoute =
+		| 'menus/carleton-burton'
+		| 'menus/carleton-ldc'
+		| 'menus/carleton-weitz'
+		| 'menus/carleton-sayles'
 
-	let carletonCafes: Array<{id: keyof CafeMenuParamList; title: string}> = [
-		{id: 'CarletonBurtonMenu', title: 'Burton'},
-		{id: 'CarletonLDCMenu', title: 'LDC'},
-		{id: 'CarletonWeitzMenu', title: 'Weitz Center'},
-		{id: 'CarletonSaylesMenu', title: 'Sayles Hill'},
+	let carletonCafes: Array<{href: CarletonRoute; title: string}> = [
+		{href: 'menus/carleton-burton', title: 'Burton'},
+		{href: 'menus/carleton-ldc', title: 'LDC'},
+		{href: 'menus/carleton-weitz', title: 'Weitz Center'},
+		{href: 'menus/carleton-sayles', title: 'Sayles Hill'},
 	]
 
 	return (
@@ -55,7 +59,7 @@ export function CarletonCafeIndex(): React.JSX.Element {
 				<View key={i}>
 					<ListRow
 						arrowPosition="center"
-						onPress={() => navigation.navigate(loc.id)}
+						onPress={() => navigation.navigate(loc.href)}
 					>
 						<Row alignItems="center">
 							<Title style={styles.rowText}>{loc.title}</Title>

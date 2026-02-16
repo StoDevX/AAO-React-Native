@@ -56,7 +56,9 @@ const StudentWorkView = (): React.JSX.Element => {
 			renderItem={({item}) => (
 				<JobRow
 					job={item}
-					onPress={(job: JobType) => navigation.navigate('JobDetail', {job})}
+					onPress={(job: JobType) =>
+						navigation.navigate('sis/student-work/detail', {job})
+					}
 				/>
 			)}
 			renderSectionHeader={({section: {title}}) => (
@@ -69,6 +71,7 @@ const StudentWorkView = (): React.JSX.Element => {
 }
 
 export {StudentWorkView as View}
+export default StudentWorkView
 
 export const NavigationOptions: NativeStackNavigationOptions = {
 	title: 'Open Jobs',

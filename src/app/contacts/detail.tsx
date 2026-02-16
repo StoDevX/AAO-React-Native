@@ -93,7 +93,7 @@ export const ContactsDetailView = (): React.JSX.Element => {
 	)
 }
 
-export const DetailNavigationKey = 'ContactsDetail'
+export const DetailNavigationKey = 'contacts/detail' as const
 
 export const NavigationOptions = (props: {
 	route: RouteProp<RootStackParamList, typeof DetailNavigationKey>
@@ -103,3 +103,5 @@ export const NavigationOptions = (props: {
 		title: title,
 	}
 }
+
+export default ContactsDetailView

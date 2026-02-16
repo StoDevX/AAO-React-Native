@@ -181,7 +181,10 @@ export function FancyMenu(props: Props): React.JSX.Element {
 						corIcons={menuCorIcons}
 						data={item}
 						onPress={() =>
-							navigation.navigate('MenuItemDetail', {item, icons: menuCorIcons})
+							navigation.navigate('menus/menu-item-detail', {
+								item,
+								icons: menuCorIcons,
+							})
 						}
 						spacing={{left: LEFT_MARGIN}}
 					/>

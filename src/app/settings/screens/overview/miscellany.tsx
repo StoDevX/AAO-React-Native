@@ -9,9 +9,9 @@ import {useNavigation} from 'expo-router'
 export let MiscellanySection = (): React.JSX.Element => {
 	let navigation = useNavigation()
 
-	let onCreditsButton = () => navigation.navigate('Credits')
-	let onPrivacyButton = () => navigation.navigate('Privacy')
-	let onLegalButton = () => navigation.navigate('Legal')
+	let onCreditsButton = () => navigation.navigate('settings/screens/credits')
+	let onPrivacyButton = () => navigation.navigate('settings/screens/privacy')
+	let onLegalButton = () => navigation.navigate('settings/screens/legal')
 	let onSourceButton = () =>
 		trackedOpenUrl({url: GH_BASE_URL, id: 'ContributingView'})
 

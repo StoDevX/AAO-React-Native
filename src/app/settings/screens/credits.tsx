@@ -140,3 +140,5 @@ export let CreditsView = (): React.JSX.Element => (
 		<Contributors>{formatPeopleList(acknowledgements)}</Contributors>
 	</ScrollView>
 )
+
+export default CreditsView

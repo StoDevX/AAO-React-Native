@@ -59,7 +59,7 @@ export const SupportSection = (): React.JSX.Element => {
 
 	return (
 		<Section header="SUPPORT">
-			<PushButtonCell onPress={() => navigation.navigate('Faq')} title="FAQs" />
+			<PushButtonCell onPress={() => navigation.navigate('faqs')} title="FAQs" />
 			<PushButtonCell
 				onPress={openEmail}
 				showLinkStyle={true}

@@ -65,11 +65,11 @@ export default function HomePage(): React.ReactNode {
 				/>
 
 				<HomeScreenButton
-					href="/calendar"
-					title="Calendar"
+					href="/(calendar)"
 					icon="calendar"
 					foreground="light"
 					tint={c.magentaToPurple[0]}
+					title={'Calendar'}
 				/>
 
 				<HomeScreenButton

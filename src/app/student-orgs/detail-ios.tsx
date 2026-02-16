@@ -35,7 +35,7 @@ const styles = StyleSheet.create({
 	},
 })
 
-export const NavigationKey = 'StudentOrgsDetail' as const
+export const NavigationKey = 'student-orgs/detail' as const
 
 export const NavigationOptions = (props: {
 	route: RouteProp<RootStackParamList, typeof NavigationKey>

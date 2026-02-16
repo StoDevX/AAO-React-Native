@@ -7,8 +7,6 @@ import {PushButtonCell} from '@frogpond/tableview/cells'
 import {useNavigation} from 'expo-router'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 
-import {NavigationKey as ColorsLibrNavigationKey} from './colors'
-
 export const ComponentLibrary = (): React.JSX.Element => {
 	const navigation = useNavigation()
 
@@ -16,19 +14,29 @@ export const ComponentLibrary = (): React.JSX.Element => {
 		<TableView>
 			<Section>
 				<PushButtonCell
-					onPress={() => navigation.navigate('BadgeLibrary')}
+					onPress={() =>
+						navigation.navigate('settings/screens/overview/component-library/badge')
+					}
 					title="Badges"
 				/>
 				<PushButtonCell
-					onPress={() => navigation.navigate('ButtonLibrary')}
+					onPress={() =>
+						navigation.navigate('settings/screens/overview/component-library/button')
+					}
 					title="Buttons"
 				/>
 				<PushButtonCell
-					onPress={() => navigation.navigate(ColorsLibrNavigationKey)}
+					onPress={() =>
+						navigation.navigate('settings/screens/overview/component-library/colors')
+					}
 					title="Colors"
 				/>
 				<PushButtonCell
-					onPress={() => navigation.navigate('ContextMenuLibrary')}
+					onPress={() =>
+						navigation.navigate(
+							'settings/screens/overview/component-library/context-menu',
+						)
+					}
 					title="Context Menus"
 				/>
 			</Section>
@@ -40,3 +48,5 @@ export const NavigationOptions: NativeStackNavigationOptions = {
 	title: 'Component Library',
 	headerRight: () => Platform.OS === 'ios' && <CloseScreenButton />,
 }
+
+export default ComponentLibrary

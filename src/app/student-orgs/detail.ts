@@ -12,6 +12,7 @@ import {
 const StudentOrgsDetailView = Platform.OS === 'ios' ? IosDetail : AndroidDetail
 
 export {StudentOrgsDetailView as View}
+export default StudentOrgsDetailView
 
 export const NavigationOptions =
 	Platform.OS === 'ios'

@@ -31,7 +31,7 @@ export const BalancesView = (): React.JSX.Element => {
 		isRefetching,
 	} = useBalances(username)
 
-	let openSettings = () => navigation.navigate('Settings')
+	let openSettings = () => navigation.navigate('settings')
 	let refresh = <RefreshControl onRefresh={refetch} refreshing={isRefetching} />
 
 	return (

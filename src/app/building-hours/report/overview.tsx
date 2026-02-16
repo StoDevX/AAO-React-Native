@@ -172,7 +172,7 @@ export let BuildingHoursProblemReportView = (): React.JSX.Element => {
 
 	let openEditor = React.useCallback(
 		(scheduleIdx: number, setIdx: number, set?: SingleBuildingScheduleType) =>
-			navigation.navigate('BuildingHoursScheduleEditor', {
+			navigation.navigate('building-hours/report/editor', {
 				set: set,
 				onEditSet: (editedData: SingleBuildingScheduleType) =>
 					editHoursRow(scheduleIdx, setIdx, editedData),
@@ -366,7 +366,7 @@ const TimesCell = (props: TimesCellProps) => {
 	)
 }
 
-export const NavigationKey = 'BuildingHoursProblemReport'
+export const NavigationKey = 'building-hours/report' as const
 
 export const NavigationOptions: NativeStackNavigationOptions = {
 	title: 'Report a Problem',
@@ -383,3 +383,5 @@ export const NavigationOptions: NativeStackNavigationOptions = {
 	 */
 	gestureEnabled: false,
 }
+
+export default BuildingHoursProblemReportView

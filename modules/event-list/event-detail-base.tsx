@@ -1,1 +1,1 @@
-export const NavigationKey = 'EventDetail'
+export const NavigationKey = 'event-detail'

@@ -21,7 +21,7 @@ import {
 } from '@react-navigation/native-stack'
 import {ChangeTextEvent, RootStackParamList} from '../../navigation/types'
 
-export const NavigationKey = 'Directory'
+export const NavigationKey = 'directory' as const
 
 export const NavigationOptions = (props: {
 	route: RouteProp<RootStackParamList, typeof NavigationKey>
@@ -105,7 +105,7 @@ export function DirectoryView(): React.JSX.Element {
 						<DirectoryItemRow
 							item={item}
 							onPress={() =>
-								navigation.push('DirectoryDetail', {contact: item})
+								navigation.push('directory/detail', {contact: item})
 							}
 						/>
 					)}

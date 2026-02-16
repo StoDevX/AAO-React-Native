@@ -1,6 +1,5 @@
 import * as React from 'react'
 import {Platform} from 'react-native'
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 import {
 	MaterialIcon,
 	IosIcon,
@@ -64,9 +63,5 @@ const tabs: Tab<Params>[] = [
 	},
 ]
 
-export type NavigationParams = undefined
-export const View = createTabNavigator<Params>(tabs)
-export const NavigationKey = 'News'
-export const NavigationOptions: NativeStackNavigationOptions = {
-	title: 'News',
-}
+const NewsView = createTabNavigator<Params>(tabs)
+export default NewsView

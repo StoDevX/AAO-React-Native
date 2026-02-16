@@ -13,7 +13,7 @@ import {
 	NativeStackNavigationOptions,
 	NativeStackNavigationProp,
 } from '@react-navigation/native-stack'
-import {RootStackParamList} from '../../../source/navigation/types'
+import {RootStackParamList} from '../../navigation/types'
 
 export const DetailNavigationOptions: NativeStackNavigationOptions = {
 	title: 'Contact',
@@ -24,7 +24,7 @@ export function DirectoryDetailView(): React.JSX.Element {
 	let navigation =
 		useNavigation<NativeStackNavigationProp<RootStackParamList>>()
 
-	let route = useRoute<RouteProp<RootStackParamList, 'DirectoryDetail'>>()
+	let route = useRoute<RouteProp<RootStackParamList, 'directory/detail'>>()
 	const {
 		displayName,
 		campusLocations,
@@ -128,7 +128,7 @@ export function DirectoryDetailView(): React.JSX.Element {
 								cellStyle="Basic"
 								detail="Department"
 								onPress={() => {
-									navigation.push('Directory', {
+									navigation.push('directory', {
 										queryType: 'department',
 										queryParam: dept.name,
 									})

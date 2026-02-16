@@ -39,6 +39,7 @@ const SettingsView = (): React.JSX.Element => (
 )
 
 export {SettingsView as View}
+export default SettingsView
 
 export const NavigationOptions: NativeStackNavigationOptions = {
 	title: 'Settings',

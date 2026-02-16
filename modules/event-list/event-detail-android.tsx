@@ -9,7 +9,7 @@ import {AddToCalendar} from '@frogpond/add-to-device-calendar'
 import {ListFooter} from '@frogpond/lists'
 import {RouteProp, useRoute} from '@react-navigation/native'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
-import {RootStackParamList} from '../../source/navigation/types'
+import {RootStackParamList} from '../../src/navigation/types'
 import {NavigationKey} from './event-detail-base'
 import {EventType} from '@frogpond/event-type'
 

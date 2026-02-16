@@ -41,13 +41,13 @@ export const PrintJobsView = (): React.JSX.Element => {
 	} = useQuery(printJobsQuery(username))
 
 	let navigation = useNavigation()
-	let openSettings = () => navigation.navigate('Settings')
+	let openSettings = () => navigation.navigate('settings')
 
 	let handleJobPress = (job: PrintJob) => {
 		if (job.statusFormatted === 'Pending Release') {
-			navigation.navigate('PrinterList', {job: job})
+			navigation.navigate('stoprint/printers', {job})
 		} else {
-			navigation.navigate('PrintJobRelease', {job: job})
+			navigation.navigate('stoprint/print-release', {job})
 		}
 	}
 
@@ -133,6 +133,8 @@ export const PrintJobsView = (): React.JSX.Element => {
 		/>
 	)
 }
+
+export default PrintJobsView
 
 export const NavigationOptions: NativeStackNavigationOptions = {
 	title: 'Print Jobs',

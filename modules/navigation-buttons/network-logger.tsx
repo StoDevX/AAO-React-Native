@@ -24,7 +24,7 @@ export const NetworkLoggerButton = () => {
 	return (
 		<Touchable
 			highlight={false}
-			onPress={() => navigation.navigate('NetworkLogger')}
+			onPress={() => navigation.navigate('settings/screens/network-logger')}
 			style={styles.button}
 		>
 			<Text

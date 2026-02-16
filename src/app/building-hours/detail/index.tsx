@@ -15,7 +15,7 @@ export function BuildingHoursDetailView(): React.JSX.Element {
 
 	let reportProblem = React.useCallback(
 		() =>
-			navigation.navigate('BuildingHoursProblemReport', {
+			navigation.navigate('building-hours/report', {
 				initialBuilding: info,
 			}),
 		[info, navigation],
@@ -26,7 +26,7 @@ export function BuildingHoursDetailView(): React.JSX.Element {
 	)
 }
 
-export const NavigationKey = 'BuildingHoursDetail'
+export const NavigationKey = 'building-hours/detail' as const
 
 export const NavigationOptions = (props: {
 	route: RouteProp<RootStackParamList, typeof NavigationKey>
@@ -37,3 +37,5 @@ export const NavigationOptions = (props: {
 		headerRight: (p) => <BuildingFavoriteButton {...p} buildingName={name} />,
 	}
 }
+
+export default BuildingHoursDetailView

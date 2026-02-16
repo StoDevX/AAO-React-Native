@@ -19,5 +19,5 @@ export const EventDetailNavigationOptions =
 export const EventDetail =
 	Platform.OS === 'ios' ? IosEventDetail : AndroidEventDetail
 
-export const NavigationKey = 'EventDetail' as const
+export const NavigationKey = 'event-detail' as const
 export type ParamList = {event: EventType; poweredBy: PoweredBy}

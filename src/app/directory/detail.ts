@@ -11,6 +11,7 @@ import {
 
 export const DirectoryDetailView =
 	Platform.OS === 'ios' ? IosDetail : AndroidDetail
+export default DirectoryDetailView
 
 export const DetailNavigationOptions =
 	Platform.OS === 'ios' ? IosNavigationOptions : AndroidNavigationOptions

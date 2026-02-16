@@ -5,10 +5,10 @@ import {NoticeView} from '@frogpond/notice'
 import {ListSeparator} from '@frogpond/lists'
 import {useAppSelector} from '../../../../redux'
 import {RouteProp, useNavigation, useRoute} from '@react-navigation/native'
-import {SettingsStackParamList} from '../../../../navigation/types'
+import {RootStackParamList} from '../../../../navigation/types'
 import {Section, TableView} from 'react-native-tableview-simple'
 
-export const NavigationKey = 'DebugView' as const
+export const NavigationKey = 'settings/screens/debug' as const
 
 type Props = {
 	state?: unknown
@@ -21,6 +21,8 @@ export const DebugRootView = (): React.JSX.Element => {
 
 	return <DebugView state={reduxState} />
 }
+
+export default DebugRootView
 
 export const DebugView = (props: Props = {}): React.JSX.Element => {
 	let {state} = props
@@ -89,8 +91,7 @@ export const DebugToStringItem = ({
 }
 
 let useKeyPath = () => {
-	let route =
-		useRoute<RouteProp<SettingsStackParamList, typeof NavigationKey>>()
+	let route = useRoute<RouteProp<RootStackParamList, typeof NavigationKey>>()
 	return route.params?.keyPath ?? []
 }
 
@@ -110,13 +111,13 @@ export const DebugArrayItem = ({
 			ListEmptyComponent={<NoticeView text="Nothing found." />}
 			data={keyed}
 			renderItem={({item: debugItem}) => (
-				<DebugRow
-					data={debugItem}
-					onPress={() => {
-						navigation.navigate('DebugView', {
-							keyPath: [...keyPath, String(debugItem.key)],
-						})
-					}}
+					<DebugRow
+						data={debugItem}
+						onPress={() => {
+							navigation.navigate('settings/screens/debug', {
+								keyPath: [...keyPath, String(debugItem.key)],
+							})
+						}}
 				/>
 			)}
 		/>
@@ -142,7 +143,7 @@ export const DebugObjectItem = ({
 				<DebugRow
 					data={debugItem}
 					onPress={() =>
-						navigation.navigate('DebugView', {
+						navigation.navigate('settings/screens/debug', {
 							keyPath: [...keyPath, debugItem.key],
 						})
 					}

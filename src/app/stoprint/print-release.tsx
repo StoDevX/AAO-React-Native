@@ -77,7 +77,8 @@ function PrinterInformation({printer}: {printer: Printer}) {
 export const PrintJobReleaseView = (): React.JSX.Element => {
 	let navigation = useNavigation()
 
-	let route = useRoute<RouteProp<RootStackParamList, 'PrintJobRelease'>>()
+	let route =
+		useRoute<RouteProp<RootStackParamList, 'stoprint/print-release'>>()
 	let {job, printer} = route.params
 
 	let {data: username = '', isLoading: loadingUsername} =
@@ -90,7 +91,7 @@ export const PrintJobReleaseView = (): React.JSX.Element => {
 	let heldJob = heldJobs.find((item) => item.id.startsWith(jobId))
 
 	const returnToJobsView = React.useCallback(() => {
-		navigation.navigate('PrintJobs')
+		navigation.navigate('stoprint')
 	}, [navigation])
 
 	const releaseJob = useMutation({
@@ -217,6 +218,8 @@ export const PrintJobReleaseView = (): React.JSX.Element => {
 		</ScrollView>
 	)
 }
+
+export default PrintJobReleaseView
 
 export const NavigationOptions: NativeStackNavigationOptions = {
 	title: 'Release job',

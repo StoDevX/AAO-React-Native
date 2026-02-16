@@ -14,7 +14,8 @@ export const NavigationOptions: NativeStackNavigationOptions = {
 }
 
 let DictionaryEditorView = (): React.JSX.Element => {
-	let route = useRoute<RouteProp<RootStackParamList, 'DictionaryEditor'>>()
+	let route =
+		useRoute<RouteProp<RootStackParamList, 'dictionary/report/editor'>>()
 	let {item} = route.params
 
 	let [term, setTerm] = React.useState(item.word)
@@ -55,6 +56,7 @@ let DictionaryEditorView = (): React.JSX.Element => {
 }
 
 export {DictionaryEditorView as View}
+export default DictionaryEditorView
 
 type TextFieldProps = {text: string; onChange: (text: string) => void}
 

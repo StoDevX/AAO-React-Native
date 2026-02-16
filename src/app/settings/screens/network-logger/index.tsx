@@ -53,6 +53,8 @@ export const NetworkLoggerView = (): React.JSX.Element => {
 	)
 }
 
+export default NetworkLoggerView
+
 export const NavigationOptions: NativeStackNavigationOptions = {
 	title: 'Network Logger',
 	headerRight: () => Platform.OS === 'ios' && <CloseScreenButton />,

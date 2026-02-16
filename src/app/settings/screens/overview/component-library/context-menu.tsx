@@ -41,3 +41,5 @@ export const ContextMenuLibrary = (): React.JSX.Element => (
 		<SingleMenu />
 	</LibraryWrapper>
 )
+
+export default ContextMenuLibrary

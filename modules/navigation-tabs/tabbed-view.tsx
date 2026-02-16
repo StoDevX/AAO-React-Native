@@ -1,8 +1,12 @@
 import React from 'react'
-import {createBottomTabNavigator as createCupertinoBottomTabNavigator} from '@react-navigation/bottom-tabs'
-// import {createMaterialBottomTabNavigator} from 'react-native-paper/react-navigation'
-import {ParamListBase} from '@react-navigation/native'
-import {Platform} from 'react-native'
+import {
+	Platform,
+	Pressable,
+	StyleSheet,
+	Text,
+	View,
+	useColorScheme,
+} from 'react-native'
 
 export interface Tab<TabNavigatorParams> {
 	enabled?: true | false | undefined
@@ -20,63 +24,106 @@ export interface Tab<TabNavigatorParams> {
 		  }) => React.JSX.Element)
 }
 
-export function IosTabbedView<
-	P extends ParamListBase,
-	T extends ReturnType<typeof createCupertinoBottomTabNavigator<P>>,
->(Tabs: T, screens: readonly Tab<P>[]): React.JSX.Element {
-	return (
-		<Tabs.Navigator screenOptions={{headerShown: false}}>
-			{screens.map(({name, component, tabBarLabel, tabBarIcon}, i) => (
-				<Tabs.Screen
-					key={i}
-					component={component}
-					name={name}
-					options={{tabBarLabel, tabBarIcon}}
-				/>
-			))}
-		</Tabs.Navigator>
-	)
-}
-
-// export function MaterialTabbedView<
-// 	P extends ParamListBase,
-// 	T extends ReturnType<typeof createMaterialBottomTabNavigator<P>>,
-// >(Tabs: T, screens: readonly Tab<P>[]): React.JSX.Element {
-// 	return (
-// 		<Tabs.Navigator>
-// 			{screens.map(({name, component, tabBarLabel, tabBarIcon}, i) => (
-// 				<Tabs.Screen
-// 					key={i}
-// 					component={component}
-// 					name={name}
-// 					options={{tabBarLabel, tabBarIcon}}
-// 				/>
-// 			))}
-// 		</Tabs.Navigator>
-// 	)
-// }
-
 export class UnknownPlatformError extends Error {}
+
+const styles = StyleSheet.create({
+	root: {
+		flex: 1,
+	},
+	screenArea: {
+		flex: 1,
+	},
+	screen: {
+		flex: 1,
+	},
+	hiddenScreen: {
+		display: 'none',
+	},
+	tabBar: {
+		flexDirection: 'row',
+		borderTopWidth: StyleSheet.hairlineWidth,
+	},
+	tab: {
+		flex: 1,
+		alignItems: 'center',
+		justifyContent: 'center',
+		paddingTop: 8,
+		paddingBottom: Platform.OS === 'ios' ? 18 : 10,
+		paddingHorizontal: 4,
+		gap: 2,
+	},
+	label: {
+		fontSize: 11,
+		fontWeight: '500',
+		textAlign: 'center',
+	},
+})
+
+type ParamListBase = Record<string, object | undefined>
 
 export function createTabNavigator<Params extends ParamListBase>(
 	tabs: readonly Tab<Params>[],
 ): () => React.JSX.Element {
-	tabs = tabs.filter((tab) => tab.enabled !== false)
+	const activeTabs = tabs.filter((tab) => tab.enabled !== false)
 
-	let view = Platform.select({
-		default: (() => {
-			const IosTabs = createCupertinoBottomTabNavigator<Params>()
-			return IosTabbedView<Params, typeof IosTabs>(IosTabs, tabs)
-		})(),
-		// android: (() => {
-		// 	const MaterialTabs = createMaterialBottomTabNavigator<Params>()
-		// 	return MaterialTabbedView<Params, typeof MaterialTabs>(MaterialTabs, tabs)
-		// })(),
-	})
-
-	if (!view) {
+	if (!activeTabs.length) {
 		throw new UnknownPlatformError()
 	}
 
-	return () => view
+	return function TabbedView(): React.JSX.Element {
+		const [activeIndex, setActiveIndex] = React.useState(0)
+		const colorScheme = useColorScheme()
+		const isDark = colorScheme === 'dark'
+		const activeTint = isDark ? '#ffffff' : '#000000'
+		const inactiveTint = isDark ? '#8e8e93' : '#6b7280'
+		const tabBarBackground = isDark ? '#101114' : '#f7f7f7'
+		const tabBarBorder = isDark ? '#26272b' : '#d1d5db'
+
+		return (
+			<View style={styles.root}>
+				<View style={styles.screenArea}>
+					{activeTabs.map((tab, index) => {
+						const Component = tab.component
+						const hidden = index !== activeIndex
+						return (
+							<View
+								key={tab.name}
+								style={[styles.screen, hidden && styles.hiddenScreen]}
+							>
+								<Component />
+							</View>
+						)
+					})}
+				</View>
+
+				<View
+					style={[
+						styles.tabBar,
+						{
+							backgroundColor: tabBarBackground,
+							borderTopColor: tabBarBorder,
+						},
+					]}
+				>
+					{activeTabs.map(({name, tabBarIcon, tabBarLabel}, index) => {
+						const focused = activeIndex === index
+						const color = focused ? activeTint : inactiveTint
+						return (
+							<Pressable
+								key={name}
+								accessibilityLabel={tabBarLabel}
+								accessibilityRole="tab"
+								accessibilityState={{selected: focused}}
+								onPress={() => setActiveIndex(index)}
+								style={styles.tab}
+							>
+								{tabBarIcon ? tabBarIcon({color, focused}) : null}
+								<Text style={[styles.label, {color}]}>{tabBarLabel}</Text>
+							</Pressable>
+						)
+					})}
+				</View>
+			</View>
+		)
+	}
 }

@@ -249,7 +249,11 @@ export function BusLine(props: Props): React.JSX.Element {
 			renderItem={({item, index}) => (
 				<TouchableOpacity
 					onPress={() => {
-						navigation.navigate('BusRouteDetail', {stop: item, line, subtitle})
+						navigation.navigate('transportation/detail', {
+							stop: item,
+							line,
+							subtitle,
+						})
 					}}
 				>
 					<BusStopRow

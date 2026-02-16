@@ -56,3 +56,5 @@ export let LegalView = (): React.JSX.Element => (
 		</m.Paragraph>
 	</ScrollView>
 )
+
+export default LegalView

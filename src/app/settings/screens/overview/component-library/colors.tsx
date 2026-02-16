@@ -321,8 +321,6 @@ const styles = StyleSheet.create({
 	colorCell: {flex: 0.25, alignItems: 'stretch'},
 })
 
-export const NavigationKey = 'ColorsInfoView'
-
 export const ColorsLibrary = (): React.JSX.Element => {
 	return (
 		<LibraryWrapper>
@@ -346,3 +344,5 @@ export const ColorsLibrary = (): React.JSX.Element => {
 		</LibraryWrapper>
 	)
 }
+
+export default ColorsLibrary

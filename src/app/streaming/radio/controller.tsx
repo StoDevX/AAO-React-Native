@@ -19,7 +19,6 @@ import {theming} from './theme'
 import {ActionButton, CallButton, ShowCalendarButton} from './buttons'
 import {openUrl} from '@frogpond/open-url'
 import {useNavigation} from 'expo-router'
-import {RadioScheduleParamList} from '../../../navigation/types'
 
 // If you want to fix the inline player, switch to `true`
 const ALLOW_INLINE_PLAYER = false
@@ -60,7 +59,7 @@ type Props = {
 	playerUrl: string
 	stationNumber: string
 	title: string
-	scheduleViewName: keyof RadioScheduleParamList
+	scheduleViewName: 'streaming/ksto-schedule' | 'streaming/krlx-schedule'
 	stationName: string
 	source: {
 		useEmbeddedPlayer: boolean

@@ -59,6 +59,7 @@ function FaqView(): React.JSX.Element {
 }
 
 export {FaqView as View}
+export default FaqView
 
 export const NavigationOptions: NativeStackNavigationOptions = {
 	title: 'FAQs',

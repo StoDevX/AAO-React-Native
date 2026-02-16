@@ -1,5 +1,4 @@
 import {Platform} from 'react-native'
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 import {
 	MaterialIcon,
 	IosIcon,
@@ -9,16 +8,6 @@ import {
 
 import {BalancesOrAcknowledgementView} from './balances-acknowledgement'
 import {View as StudentWorkView} from './student-work'
-
-export * as studentwork from './student-work'
-export {
-	CourseSearchView,
-	CourseSearchResultsView,
-	CourseDetailView,
-	CourseSearchNavigationOptions,
-	CourseSearchViewNavigationOptions,
-	CourseSearchDetailNavigationOptions,
-} from './course-search'
 
 type Params = {
 	BalancesView: undefined
@@ -46,9 +35,5 @@ const tabs: Tab<Params>[] = [
 	},
 ]
 
-export type NavigationParams = undefined
-export const View = createTabNavigator<Params>(tabs)
-export const NavigationKey = 'SIS'
-export const NavigationOptions: NativeStackNavigationOptions = {
-	title: 'SIS',
-}
+const SisView = createTabNavigator<Params>(tabs)
+export default SisView

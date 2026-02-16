@@ -11,8 +11,6 @@ import {useNavigation} from 'expo-router'
 import {useMomentTimer} from '@frogpond/timer'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 
-export {BuildingHoursDetailView} from './detail'
-
 const styles = StyleSheet.create({
 	container: {
 		backgroundColor: c.systemBackground,
@@ -36,7 +34,7 @@ export function BuildingHoursView(): React.JSX.Element {
 
 	let onPressRow = React.useCallback(
 		(building: BuildingType) =>
-			navigation.navigate('BuildingHoursDetail', {building}),
+			navigation.navigate('building-hours/detail', {building}),
 		[navigation],
 	)
 
