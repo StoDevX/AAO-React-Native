@@ -18,8 +18,7 @@ import type {HtmlAudioError, PlayState} from './types'
 import {theming} from './theme'
 import {ActionButton, CallButton, ShowCalendarButton} from './buttons'
 import {openUrl} from '@frogpond/open-url'
-import {useNavigation} from 'expo-router'
-import {RadioScheduleParamList} from '../../../navigation/types'
+import {useRouter} from 'expo-router'
 
 // If you want to fix the inline player, switch to `true`
 const ALLOW_INLINE_PLAYER = false
@@ -60,7 +59,7 @@ type Props = {
 	playerUrl: string
 	stationNumber: string
 	title: string
-	scheduleViewName: keyof RadioScheduleParamList
+	scheduleViewPath: string
 	stationName: string
 	source: {
 		useEmbeddedPlayer: boolean
@@ -76,12 +75,12 @@ export function RadioControllerView(props: Props): React.JSX.Element {
 		title,
 		stationName,
 		image,
-		scheduleViewName,
+		scheduleViewPath,
 		stationNumber,
 		playerUrl,
 	} = props
 
-	let navigation = useNavigation()
+	let router = useRouter()
 
 	let [playState, setPlayState] = useState<PlayState>('paused')
 	let [streamError, setStreamError] = useState<HtmlAudioError | null>(null)
@@ -112,8 +111,8 @@ export function RadioControllerView(props: Props): React.JSX.Element {
 	}
 
 	let openSchedule = useCallback(() => {
-		navigation.navigate(scheduleViewName)
-	}, [navigation, scheduleViewName])
+		router.push(scheduleViewPath)
+	}, [router, scheduleViewPath])
 
 	let callStation = useCallback(() => {
 		callPhone(stationNumber, {title: stationName})
