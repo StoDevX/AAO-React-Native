@@ -23,7 +23,7 @@ import {BusStopRow} from './components/bus-stop-row'
 import {ListFooter, ListRow} from '@frogpond/lists'
 import {InfoHeader} from '@frogpond/info-header'
 import * as c from '@frogpond/colors'
-import {useNavigation} from 'expo-router'
+import {useRouter} from 'expo-router'
 import {BUS_FOOTER_MESSAGE} from './constants'
 import {
 	DayPickerHeader,
@@ -159,7 +159,7 @@ function deriveFromProps({line, now}: {line: UnprocessedBusLine; now: Moment}) {
 
 export function BusLine(props: Props): React.JSX.Element {
 	let {line, now} = props
-	let navigation = useNavigation()
+	let router = useRouter()
 
 	let [schedule, setSchedule] = useState<BusSchedule | null>(null)
 	let [subtitle, setSubtitle] = useState<string>('')
@@ -249,7 +249,14 @@ export function BusLine(props: Props): React.JSX.Element {
 			renderItem={({item, index}) => (
 				<TouchableOpacity
 					onPress={() => {
-						navigation.navigate('BusRouteDetail', {stop: item, line, subtitle})
+						router.push({
+							pathname: '/transportation/route-detail',
+							params: {
+								stop: JSON.stringify(item),
+								line: JSON.stringify(line),
+								subtitle,
+							},
+						})
 					}}
 				>
 					<BusStopRow

@@ -2,13 +2,12 @@ import * as React from 'react'
 import {useEffect, useState} from 'react'
 import {FlatList, StyleSheet, Text} from 'react-native'
 
-import {RouteProp, useRoute} from '@react-navigation/native'
 import type {Moment} from 'moment-timezone'
 
 import {ScheduleTimes} from './components/times'
 import {ProgressChunk} from './components/progress-chunk'
 import type {BusTimetableEntry, UnprocessedBusLine, BusSchedule} from './types'
-import {RootStackParamList} from '../../../navigation/types'
+import {Stack, useLocalSearchParams} from 'expo-router'
 import {
 	BusStateEnum,
 	getCurrentBusIteration,
@@ -192,15 +191,24 @@ function BusStopDetailInternal(props: Props): React.JSX.Element {
 
 export function BusRouteDetail(): React.JSX.Element {
 	let {now} = useMomentTimer({intervalMs: 1000 * 60, timezone: timezone()})
-	let route = useRoute<RouteProp<RootStackParamList, 'BusRouteDetail'>>()
-	let {stop, line, subtitle} = route.params
+	let params = useLocalSearchParams<{
+		stop: string
+		line: string
+		subtitle: string
+	}>()
+	let stop = JSON.parse(params.stop) as BusTimetableEntry
+	let line = JSON.parse(params.line) as UnprocessedBusLine
+	let subtitle = params.subtitle
 
 	return (
-		<BusStopDetailInternal
-			line={line}
-			now={now}
-			stop={stop}
-			subtitle={subtitle}
-		/>
+		<>
+			<Stack.Screen options={{title: `${line.line} Schedule`}} />
+			<BusStopDetailInternal
+				line={line}
+				now={now}
+				stop={stop}
+				subtitle={subtitle}
+			/>
+		</>
 	)
 }

@@ -2,7 +2,7 @@ import * as React from 'react'
 import {BusLine} from './line'
 import {LoadingView, NoticeView} from '@frogpond/notice'
 import {timezone} from '@frogpond/constants'
-import {useNavigation} from 'expo-router'
+import {useRouter} from 'expo-router'
 import {useBusRoutes} from './query'
 import {useMomentTimer} from '@frogpond/timer'
 
@@ -13,7 +13,7 @@ type Props = {
 export function BusView(props: Props): React.JSX.Element {
 	let {now} = useMomentTimer({intervalMs: 1000 * 60, timezone: timezone()})
 	let {data: busLines = [], error, refetch, isError, isLoading} = useBusRoutes()
-	let navigation = useNavigation()
+	let router = useRouter()
 
 	let activeBusLine = busLines.find(({line}) => line === props.line)
 
@@ -43,7 +43,10 @@ export function BusView(props: Props): React.JSX.Element {
 			now={now}
 			openMap={() => {
 				if (activeBusLine) {
-					navigation.navigate('BusMapView', {line: activeBusLine})
+					router.push({
+						pathname: '/transportation/bus-map',
+						params: {line: JSON.stringify(activeBusLine)},
+					})
 				}
 			}}
 		/>

@@ -10,8 +10,7 @@ import {getScheduleForNow, processBusLine} from './lib'
 import isEqual from 'lodash/isEqual'
 import {useMomentTimer} from '@frogpond/timer'
 import {timezone} from '@frogpond/constants'
-import {RouteProp, useRoute} from '@react-navigation/native'
-import {RootStackParamList} from '../../../navigation/types'
+import {Stack, useLocalSearchParams} from 'expo-router'
 
 // const styles = StyleSheet.create({
 // 	map: {...StyleSheet.absoluteFillObject},
@@ -19,10 +18,15 @@ import {RootStackParamList} from '../../../navigation/types'
 
 export function BusMap(): React.JSX.Element {
 	let {now} = useMomentTimer({intervalMs: 60000, timezone: timezone()})
-	let route = useRoute<RouteProp<RootStackParamList, 'BusMapView'>>()
-	let {line} = route.params
+	let params = useLocalSearchParams<{line: string}>()
+	let line = JSON.parse(params.line) as UnprocessedBusLine
 
-	return <Map line={line} now={now} />
+	return (
+		<>
+			<Stack.Screen options={{title: `${line.line} Map`}} />
+			<Map line={line} now={now} />
+		</>
+	)
 }
 
 type Props = {

@@ -7,11 +7,9 @@ import {ButtonCell} from '@frogpond/tableview/cells'
 import {getTimes} from './calendar-util'
 import {AddToCalendar} from '@frogpond/add-to-device-calendar'
 import {ListFooter} from '@frogpond/lists'
-import {RouteProp, useRoute} from '@react-navigation/native'
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
-import {RootStackParamList} from '../../source/navigation/types'
-import {NavigationKey} from './event-detail-base'
+import {Stack, useLocalSearchParams} from 'expo-router'
 import {EventType} from '@frogpond/event-type'
+import type {PoweredBy} from './types'
 
 const styles = StyleSheet.create({
 	name: {
@@ -60,21 +58,15 @@ function Links({urls}: {urls: Array<string>}) {
 	) : null
 }
 
-export const NavigationOptions = (props: {
-	route: RouteProp<RootStackParamList, typeof NavigationKey>
-}): NativeStackNavigationOptions => {
-	let {event} = props.route.params
-	return {
-		title: event.title,
-	}
-}
-
 export function EventDetail(): React.JSX.Element {
-	let route = useRoute<RouteProp<RootStackParamList, typeof NavigationKey>>()
-	let {event, poweredBy} = route.params
+	let params = useLocalSearchParams<{event: string; poweredBy: string}>()
+	let event = JSON.parse(params.event) as EventType
+	let poweredBy = JSON.parse(params.poweredBy) as PoweredBy
 
 	return (
-		<ScrollView>
+		<>
+			<Stack.Screen options={{title: event.title}} />
+			<ScrollView>
 			<Title event={event} />
 			<MaybeCard content={getTimes(event)} header="When" />
 			<MaybeCard content={event.location} header="Location" />
@@ -98,6 +90,7 @@ export function EventDetail(): React.JSX.Element {
 			{poweredBy.title ? (
 				<ListFooter href={poweredBy.href} title={poweredBy.title} />
 			) : null}
-		</ScrollView>
+			</ScrollView>
+		</>
 	)
 }
