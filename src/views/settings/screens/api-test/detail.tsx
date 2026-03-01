@@ -4,9 +4,7 @@ import {View, StyleSheet, Platform, TextInput} from 'react-native'
 import {LoadingView, NoticeView} from '@frogpond/notice'
 import * as c from '@frogpond/colors'
 
-import {RouteProp, useNavigation, useRoute} from '@react-navigation/native'
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
-import {SettingsStackParamList} from '../../../../navigation/types'
+import {useLocalSearchParams, useNavigation} from 'expo-router'
 import {useQuery} from '@tanstack/react-query'
 import {client} from '@frogpond/api'
 import {iOSUIKit, material} from 'react-native-typography'
@@ -19,11 +17,18 @@ import {DebugView} from '../debug'
 
 type DisplayMode = 'raw' | 'parsed'
 
+interface ServerRouteParam {
+	displayName: string
+	path: string
+	params: string[]
+}
+
 export const APITestDetailView = (): React.JSX.Element => {
 	let navigation = useNavigation()
-	let route = useRoute<RouteProp<SettingsStackParamList, 'APITestDetail'>>()
+	let params = useLocalSearchParams<{query: string}>()
+	let query = JSON.parse(params.query) as ServerRouteParam
 
-	const {displayName} = route.params.query
+	const {displayName} = query
 	const cleanedName = displayName.trim().toLowerCase()
 	let [displayMode, setDisplayMode] = React.useState<DisplayMode>('raw')
 
@@ -123,4 +128,3 @@ const styles = StyleSheet.create({
 	},
 })
 
-export const NavigationOptions: NativeStackNavigationOptions = {}

@@ -7,7 +7,7 @@ import * as Device from 'expo-device'
 import * as Application from 'expo-application'
 import {appVersion, appBuild} from '@frogpond/constants'
 import {refreshApp} from '../../../../lib/refresh'
-import {useNavigation} from 'expo-router'
+import {useRouter} from 'expo-router'
 
 const getDeviceInfo = () => `
 
@@ -40,7 +40,7 @@ const getVersion = () => {
 }
 
 export const SupportSection = (): React.JSX.Element => {
-	let navigation = useNavigation()
+	let router = useRouter()
 
 	let onResetButton = () => {
 		Alert.alert(
@@ -59,7 +59,7 @@ export const SupportSection = (): React.JSX.Element => {
 
 	return (
 		<Section header="SUPPORT">
-			<PushButtonCell onPress={() => navigation.navigate('Faq')} title="FAQs" />
+			<PushButtonCell onPress={() => router.push('/settings/faq')} title="FAQs" />
 			<PushButtonCell
 				onPress={openEmail}
 				showLinkStyle={true}

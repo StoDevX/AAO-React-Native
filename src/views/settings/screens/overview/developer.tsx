@@ -5,17 +5,16 @@ import {Section} from '@frogpond/tableview'
 import {PushButtonCell} from '@frogpond/tableview/cells'
 import {isDevMode} from '@frogpond/constants'
 import {ServerUrlSection} from './server-url'
-import {useNavigation} from 'expo-router'
-import {NavigationKey as DebugKey} from '../debug'
+import {useRouter} from 'expo-router'
 
 export const DeveloperSection = (): React.ReactElement => {
-	let navigation = useNavigation()
+	let router = useRouter()
 
-	const onComponentsButton = () => navigation.navigate('ComponentLibrary')
-	const onAPIButton = () => navigation.navigate('APITest')
-	const onBonAppButton = () => navigation.navigate('BonAppPicker')
-	const onDebugButton = () => navigation.navigate(DebugKey, {keyPath: ['Root']})
-	const onNetworkLoggerButton = () => navigation.navigate('NetworkLogger')
+	const onComponentsButton = () => router.push('/settings/component-library')
+	const onAPIButton = () => router.push('/settings/api-test')
+	const onBonAppButton = () => router.push('/settings/bonapp-picker')
+	const onDebugButton = () => router.push('/settings/debug')
+	const onNetworkLoggerButton = () => router.push('/settings/network-logger')
 	const sendSentryMessage = () => {
 		Sentry.captureMessage('A Sentry Message', {level: 'info'})
 		showSentryAlert()

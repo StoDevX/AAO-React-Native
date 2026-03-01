@@ -9,12 +9,15 @@ import {debounceSearch} from '@frogpond/use-debounce'
 import {NetworkLoggerButton} from '@frogpond/navigation-buttons'
 
 import {ServerRoute, useServerRoutes} from './query'
-import {ChangeTextEvent} from '../../../../navigation/types'
-import {useNavigation} from 'expo-router'
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+import {useNavigation, useRouter} from 'expo-router'
+
+interface ChangeTextEvent {
+	nativeEvent: {text: React.SetStateAction<string>}
+}
 
 export const APITestView = (): React.JSX.Element => {
 	let navigation = useNavigation()
+	let router = useRouter()
 
 	let [filterPath, setFilterPath] = React.useState<string>('')
 
@@ -45,14 +48,17 @@ export const APITestView = (): React.JSX.Element => {
 	}, [navigation])
 
 	let showSearchResult = React.useCallback(() => {
-		navigation.navigate('APITestDetail', {
-			query: {
-				displayName: filterPath,
-				path: filterPath,
-				params: [],
+		router.push({
+			pathname: '/settings/api-test/[query]',
+			params: {
+				query: JSON.stringify({
+					displayName: filterPath,
+					path: filterPath,
+					params: [],
+				}),
 			},
 		})
-	}, [filterPath, navigation])
+	}, [filterPath, router])
 
 	React.useEffect(() => {
 		debounceSearch(filterPath, () => showSearchResult())
@@ -63,7 +69,12 @@ export const APITestView = (): React.JSX.Element => {
 			<SafeAreaView>
 				<ListRow
 					fullWidth={false}
-					onPress={() => navigation.navigate('APITestDetail', {query: item})}
+					onPress={() =>
+						router.push({
+							pathname: '/settings/api-test/[query]',
+							params: {query: JSON.stringify(item)},
+						})
+					}
 					style={styles.serverRouteRow}
 				>
 					<Column flex={1}>
@@ -72,7 +83,7 @@ export const APITestView = (): React.JSX.Element => {
 				</ListRow>
 			</SafeAreaView>
 		),
-		[navigation],
+		[router],
 	)
 
 	return (
@@ -118,6 +129,3 @@ const styles = StyleSheet.create({
 	},
 })
 
-export const NavigationOptions: NativeStackNavigationOptions = {
-	title: 'API Tester',
-}

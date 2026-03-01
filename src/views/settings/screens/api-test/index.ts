@@ -1,8 +1,2 @@
-export {
-	APITestView,
-	NavigationOptions as APITestNavigationOptions,
-} from './list'
-export {
-	APITestDetailView,
-	NavigationOptions as APITestDetailNavigationOptions,
-} from './detail'
+export {APITestView} from './list'
+export {APITestDetailView} from './detail'

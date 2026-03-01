@@ -4,14 +4,14 @@ import {CellToggle, PushButtonCell} from '@frogpond/tableview/cells'
 import {trackedOpenUrl} from '@frogpond/open-url'
 import {GH_BASE_URL} from '../../../../lib/constants'
 import * as storage from '../../../../lib/storage'
-import {useNavigation} from 'expo-router'
+import {useRouter} from 'expo-router'
 
 export let MiscellanySection = (): React.JSX.Element => {
-	let navigation = useNavigation()
+	let router = useRouter()
 
-	let onCreditsButton = () => navigation.navigate('Credits')
-	let onPrivacyButton = () => navigation.navigate('Privacy')
-	let onLegalButton = () => navigation.navigate('Legal')
+	let onCreditsButton = () => router.push('/settings/credits')
+	let onPrivacyButton = () => router.push('/settings/privacy')
+	let onLegalButton = () => router.push('/settings/legal')
 	let onSourceButton = () =>
 		trackedOpenUrl({url: GH_BASE_URL, id: 'ContributingView'})
 

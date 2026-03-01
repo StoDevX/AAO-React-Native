@@ -8,9 +8,7 @@ import {
 	useColorScheme,
 } from 'react-native'
 import {Button} from '@frogpond/button'
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 import NetworkLogger, {getBackHandler} from 'react-native-network-logger'
-import {CloseScreenButton} from '@frogpond/navigation-buttons'
 import * as c from '@frogpond/colors'
 
 export const NetworkLoggerView = (): React.JSX.Element => {
@@ -51,13 +49,6 @@ export const NetworkLoggerView = (): React.JSX.Element => {
 			)}
 		</>
 	)
-}
-
-export const NavigationOptions: NativeStackNavigationOptions = {
-	title: 'Network Logger',
-	headerRight: () => Platform.OS === 'ios' && <CloseScreenButton />,
-	presentation: 'modal',
-	gestureEnabled: false,
 }
 
 const styles = StyleSheet.create({

@@ -4,8 +4,7 @@ import {DebugRow} from './row'
 import {NoticeView} from '@frogpond/notice'
 import {ListSeparator} from '@frogpond/lists'
 import {useAppSelector} from '../../../../redux'
-import {RouteProp, useNavigation, useRoute} from '@react-navigation/native'
-import {SettingsStackParamList} from '../../../../navigation/types'
+import {useLocalSearchParams, useRouter} from 'expo-router'
 import {Section, TableView} from 'react-native-tableview-simple'
 
 export const NavigationKey = 'DebugView' as const
@@ -89,9 +88,8 @@ export const DebugToStringItem = ({
 }
 
 let useKeyPath = () => {
-	let route =
-		useRoute<RouteProp<SettingsStackParamList, typeof NavigationKey>>()
-	return route.params?.keyPath ?? []
+	let params = useLocalSearchParams<{keyPath?: string}>()
+	return params.keyPath ? (JSON.parse(params.keyPath) as string[]) : []
 }
 
 export const DebugArrayItem = ({
@@ -99,7 +97,7 @@ export const DebugArrayItem = ({
 }: {
 	item: unknown[]
 }): React.JSX.Element => {
-	let navigation = useNavigation()
+	let router = useRouter()
 	let keyPath = useKeyPath()
 
 	let keyed = item.map((value, key) => ({key, value}))
@@ -113,8 +111,11 @@ export const DebugArrayItem = ({
 				<DebugRow
 					data={debugItem}
 					onPress={() => {
-						navigation.navigate('DebugView', {
-							keyPath: [...keyPath, String(debugItem.key)],
+						router.push({
+							pathname: '/settings/debug',
+							params: {
+								keyPath: JSON.stringify([...keyPath, String(debugItem.key)]),
+							},
 						})
 					}}
 				/>
@@ -128,7 +129,7 @@ export const DebugObjectItem = ({
 }: {
 	item: Record<string, unknown>
 }): React.JSX.Element => {
-	let navigation = useNavigation()
+	let router = useRouter()
 	let keyPath = useKeyPath()
 
 	let keyed = Object.entries(item).map(([key, value]) => ({key, value}))
@@ -142,8 +143,11 @@ export const DebugObjectItem = ({
 				<DebugRow
 					data={debugItem}
 					onPress={() =>
-						navigation.navigate('DebugView', {
-							keyPath: [...keyPath, debugItem.key],
+						router.push({
+							pathname: '/settings/debug',
+							params: {
+								keyPath: JSON.stringify([...keyPath, debugItem.key]),
+							},
 						})
 					}
 				/>
