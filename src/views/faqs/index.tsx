@@ -3,7 +3,6 @@ import {RefreshControl, StyleSheet, ScrollView, View} from 'react-native'
 import * as c from '@frogpond/colors'
 import {Markdown} from '@frogpond/markdown'
 import {LoadingView, NoticeView} from '@frogpond/notice'
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 import {useFaqs} from './query'
 
 const styles = StyleSheet.create({
@@ -59,7 +58,3 @@ function FaqView(): React.JSX.Element {
 }
 
 export {FaqView as View}
-
-export const NavigationOptions: NativeStackNavigationOptions = {
-	title: 'FAQs',
-}

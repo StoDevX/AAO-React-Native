@@ -12,14 +12,14 @@ import {Cell, TableView, Section} from '@frogpond/tableview'
 import {BalancesShapeType, useBalances} from '../../lib/financials'
 import * as c from '@frogpond/colors'
 import {sto} from '../../lib/colors'
-import {useNavigation} from 'expo-router'
+import {useRouter} from 'expo-router'
 import {NoCredentialsError, usernameQuery} from '../../lib/login'
 import {useQuery} from '@tanstack/react-query'
 
 const DISCLAIMER = 'This data may be outdated or otherwise inaccurate.'
 
 export const BalancesView = (): React.JSX.Element => {
-	let navigation = useNavigation()
+	let router = useRouter()
 	let {data: username = ''} = useQuery(usernameQuery)
 
 	let {
@@ -31,7 +31,7 @@ export const BalancesView = (): React.JSX.Element => {
 		isRefetching,
 	} = useBalances(username)
 
-	let openSettings = () => navigation.navigate('Settings')
+	let openSettings = () => router.push('/settings')
 	let refresh = <RefreshControl onRefresh={refetch} refreshing={isRefetching} />
 
 	return (

@@ -13,9 +13,9 @@ import {useCallback} from 'react'
 import {useQueryClient} from '@tanstack/react-query'
 import {keys} from '../../../views/building-hours/query'
 import {BuildingType} from '../../../views/building-hours/types'
-import {Platform, TouchableOpacity, Text} from 'react-native'
+import {TouchableOpacity} from 'react-native'
 import {NoticeView} from '@frogpond/notice'
-import Ionicons from '@expo/vector-icons/Ionicons'
+import {Ionicons} from '@react-native-vector-icons/ionicons'
 
 export default function BuildingHoursDetailView(): React.JSX.Element {
 	let dispatch = useAppDispatch()
@@ -48,7 +48,7 @@ export default function BuildingHoursDetailView(): React.JSX.Element {
 		return <NoticeView text="Building not found." />
 	}
 
-	let starIcon = favorited ? 'star' : 'star-outline'
+	let starIcon = favorited ? ('star' as const) : ('star-outline' as const)
 
 	return (
 		<>
@@ -57,11 +57,7 @@ export default function BuildingHoursDetailView(): React.JSX.Element {
 					title: info.name,
 					headerRight: () => (
 						<TouchableOpacity onPress={onFavorite}>
-							{Platform.OS === 'ios' ? (
-								<Ionicons color="#007AFF" name={starIcon} size={24} />
-							) : (
-								<Ionicons color="#007AFF" name={starIcon} size={24} />
-							)}
+							<Ionicons color="#007AFF" name={starIcon} size={24} />
 						</TouchableOpacity>
 					),
 				}}

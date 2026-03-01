@@ -1,4 +1,1 @@
-export {
-	View as DictionaryEditorView,
-	NavigationOptions as EditorNavigationOptions,
-} from './editor'
+export {View as DictionaryEditorView} from './editor'
