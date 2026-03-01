@@ -7,24 +7,14 @@ import {Title, Detail} from '@frogpond/lists'
 import {TableView, Section, Cell} from '@frogpond/tableview'
 import {MultiLineLeftDetailCell} from '@frogpond/tableview/cells'
 import * as c from '@frogpond/colors'
-import type {Department, CampusLocation} from './types'
-import {RouteProp, useRoute, useNavigation} from '@react-navigation/native'
-import {
-	NativeStackNavigationOptions,
-	NativeStackNavigationProp,
-} from '@react-navigation/native-stack'
-import {RootStackParamList} from '../../../source/navigation/types'
-
-export const DetailNavigationOptions: NativeStackNavigationOptions = {
-	title: 'Contact',
-}
+import type {Department, CampusLocation, DirectoryItem} from './types'
+import {useLocalSearchParams, useRouter} from 'expo-router'
 
 export function DirectoryDetailView(): React.JSX.Element {
-	// typing useNavigation's props to inform typescript about `push`
-	let navigation =
-		useNavigation<NativeStackNavigationProp<RootStackParamList>>()
+	let router = useRouter()
+	let params = useLocalSearchParams<{contact: string}>()
+	let contact = JSON.parse(params.contact) as DirectoryItem
 
-	let route = useRoute<RouteProp<RootStackParamList, 'DirectoryDetail'>>()
 	const {
 		displayName,
 		campusLocations,
@@ -35,7 +25,7 @@ export function DirectoryDetailView(): React.JSX.Element {
 		email,
 		departments,
 		pronouns,
-	} = route.params.contact
+	} = contact
 
 	return (
 		<ScrollView>
@@ -128,9 +118,12 @@ export function DirectoryDetailView(): React.JSX.Element {
 								cellStyle="Basic"
 								detail="Department"
 								onPress={() => {
-									navigation.push('Directory', {
-										queryType: 'department',
-										queryParam: dept.name,
+									router.push({
+										pathname: '/directory',
+										params: {
+											queryType: 'department',
+											queryParam: dept.name,
+										},
 									})
 								}}
 								title={dept.name}

@@ -18,11 +18,13 @@ import words from 'lodash/words'
 import deburr from 'lodash/deburr'
 import type {StudentOrgType} from './types'
 import {useDebounce} from '@frogpond/use-debounce'
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
-import {useNavigation} from 'expo-router'
+import {useNavigation, useRouter} from 'expo-router'
 import memoize from 'lodash/memoize'
-import {ChangeTextEvent} from '../../navigation/types'
 import {useStudentOrgs} from './query'
+
+interface ChangeTextEvent {
+	nativeEvent: {text: React.SetStateAction<string>}
+}
 
 const splitToArray = memoize((str: string) => words(deburr(str.toLowerCase())))
 
@@ -46,8 +48,9 @@ const styles = StyleSheet.create({
 	},
 })
 
-function StudentOrgsView(): React.JSX.Element {
+export function StudentOrgsView(): React.JSX.Element {
 	let navigation = useNavigation()
+	let router = useRouter()
 
 	let [query, setQuery] = React.useState('')
 	let searchQuery = useDebounce(query.toLowerCase(), 200)
@@ -92,8 +95,12 @@ function StudentOrgsView(): React.JSX.Element {
 	}, [results])
 
 	let onPressOrg = React.useCallback(
-		(org: StudentOrgType) => navigation.navigate('StudentOrgsDetail', {org}),
-		[navigation],
+		(org: StudentOrgType) =>
+			router.push({
+				pathname: '/student-orgs/[org]',
+				params: {org: JSON.stringify(org)},
+			}),
+		[router],
 	)
 
 	if (isError) {
@@ -144,7 +151,3 @@ function StudentOrgsView(): React.JSX.Element {
 }
 
 export {StudentOrgsView as View}
-
-export const NavigationOptions: NativeStackNavigationOptions = {
-	title: 'Student Orgs',
-}

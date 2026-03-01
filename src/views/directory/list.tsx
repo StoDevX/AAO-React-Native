@@ -14,22 +14,10 @@ import type {
 	DirectorySearchTypeEnum,
 } from './types'
 import {Ionicons} from '@react-native-vector-icons/ionicons'
-import {RouteProp, useNavigation, useRoute} from '@react-navigation/native'
-import {
-	NativeStackNavigationOptions,
-	NativeStackNavigationProp,
-} from '@react-navigation/native-stack'
-import {ChangeTextEvent, RootStackParamList} from '../../navigation/types'
+import {useLocalSearchParams, useNavigation, useRouter} from 'expo-router'
 
-export const NavigationKey = 'Directory'
-
-export const NavigationOptions = (props: {
-	route: RouteProp<RootStackParamList, typeof NavigationKey>
-}): NativeStackNavigationOptions => {
-	let {params} = props.route
-	return {
-		title: params?.queryParam ?? 'Directory',
-	}
+interface ChangeTextEvent {
+	nativeEvent: {text: React.SetStateAction<string>}
 }
 
 export function DirectoryView(): React.JSX.Element {
@@ -38,11 +26,13 @@ export function DirectoryView(): React.JSX.Element {
 	let [typedQuery, setTypedQuery] = React.useState('')
 	let searchQuery = useDebounce(typedQuery, 500)
 
-	// typing useNavigation's props to inform typescript about `push`
-	let navigation =
-		useNavigation<NativeStackNavigationProp<RootStackParamList>>()
+	let router = useRouter()
+	let navigation = useNavigation()
 
-	let {params} = useRoute<RouteProp<RootStackParamList, typeof NavigationKey>>()
+	let params = useLocalSearchParams<{
+		queryType?: string
+		queryParam?: string
+	}>()
 
 	let {
 		data = {results: []},
@@ -56,8 +46,7 @@ export function DirectoryView(): React.JSX.Element {
 	React.useLayoutEffect(() => {
 		navigation.setOptions({
 			headerSearchBarOptions: {
-				// forcibly pretend that OpaqueColorValue is a string
-				barTintColor: c.systemFill as unknown as string,
+				barTintColor: c.systemFill as string,
 				onChangeText: (event: ChangeTextEvent) => {
 					setSearchQueryType('query')
 					setTypedQuery(event.nativeEvent.text)
@@ -105,7 +94,10 @@ export function DirectoryView(): React.JSX.Element {
 						<DirectoryItemRow
 							item={item}
 							onPress={() =>
-								navigation.push('DirectoryDetail', {contact: item})
+								router.push({
+									pathname: '/directory/[contact]',
+									params: {contact: JSON.stringify(item)},
+								})
 							}
 						/>
 					)}

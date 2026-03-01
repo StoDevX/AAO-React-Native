@@ -6,9 +6,8 @@ import * as c from '@frogpond/colors'
 import {sendEmail} from '../../components/send-email'
 import {openUrl} from '@frogpond/open-url'
 import {showNameOrEmail} from './util'
-import {RouteProp, useRoute} from '@react-navigation/native'
-import {RootStackParamList} from '../../navigation/types'
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+import {Stack, useLocalSearchParams} from 'expo-router'
+import type {StudentOrgType} from './types'
 
 const styles = StyleSheet.create({
 	name: {
@@ -54,19 +53,9 @@ const styles = StyleSheet.create({
 	},
 })
 
-export const NavigationKey = 'StudentOrgsDetail' as const
-
-export const NavigationOptions = (props: {
-	route: RouteProp<RootStackParamList, typeof NavigationKey>
-}): NativeStackNavigationOptions => {
-	let {name} = props.route.params.org
-	return {
-		title: name,
-	}
-}
-
 let StudentOrgsDetailView = (): React.JSX.Element => {
-	let route = useRoute<RouteProp<RootStackParamList, typeof NavigationKey>>()
+	let params = useLocalSearchParams<{org: string}>()
+	let org = JSON.parse(params.org) as StudentOrgType
 
 	let {
 		name: orgName,
@@ -77,83 +66,90 @@ let StudentOrgsDetailView = (): React.JSX.Element => {
 		advisors,
 		description,
 		lastUpdated: orgLastUpdated,
-	} = route.params.org
+	} = org
 
 	return (
-		<ScrollView>
-			<Text style={styles.name}>{orgName}</Text>
+		<>
+			<Stack.Screen options={{title: orgName}} />
+			<ScrollView>
+				<Text style={styles.name}>{orgName}</Text>
 
-			{category ? (
-				<Card header="Category" style={styles.card}>
-					<Text style={styles.cardBody}>{category}</Text>
-				</Card>
-			) : null}
+				{category ? (
+					<Card header="Category" style={styles.card}>
+						<Text style={styles.cardBody}>{category}</Text>
+					</Card>
+				) : null}
 
-			{meetings ? (
-				<Card header="Meetings" style={styles.card}>
-					<Text style={styles.cardBody}>{meetings}</Text>
-				</Card>
-			) : null}
+				{meetings ? (
+					<Card header="Meetings" style={styles.card}>
+						<Text style={styles.cardBody}>{meetings}</Text>
+					</Card>
+				) : null}
 
-			{website ? (
-				<Card header="Website" style={styles.card}>
-					<Text onPress={() => openUrl(website)} style={styles.cardBody}>
-						{website}
-					</Text>
-				</Card>
-			) : null}
-
-			{contacts.length ? (
-				<Card header="Contact" style={styles.card}>
-					{contacts.map((contact, i) => (
-						<Text
-							key={i}
-							onPress={() => sendEmail({to: [contact.email], subject: orgName})}
-							selectable={true}
-							style={styles.cardBody}
-						>
-							{contact.title ? contact.title + ': ' : ''}
-							{showNameOrEmail(contact)}
+				{website ? (
+					<Card header="Website" style={styles.card}>
+						<Text onPress={() => openUrl(website)} style={styles.cardBody}>
+							{website}
 						</Text>
-					))}
-				</Card>
-			) : null}
+					</Card>
+				) : null}
 
-			{advisors.length ? (
-				<Card
-					header={advisors.length === 1 ? 'Advisor' : 'Advisors'}
-					style={styles.card}
-				>
-					{advisors.map((contact, i) => (
-						<Text
-							key={i}
-							onPress={() => sendEmail({to: [contact.email], subject: orgName})}
-							selectable={true}
-							style={styles.cardBody}
-						>
-							{contact.name} ({contact.email})
-						</Text>
-					))}
-				</Card>
-			) : null}
+				{contacts.length ? (
+					<Card header="Contact" style={styles.card}>
+						{contacts.map((contact, i) => (
+							<Text
+								key={i}
+								onPress={() =>
+									sendEmail({to: [contact.email], subject: orgName})
+								}
+								selectable={true}
+								style={styles.cardBody}
+							>
+								{contact.title ? contact.title + ': ' : ''}
+								{showNameOrEmail(contact)}
+							</Text>
+						))}
+					</Card>
+				) : null}
 
-			{description ? (
-				<Card header="Description" style={styles.card}>
-					<View style={styles.description}>
-						<Text style={styles.descriptionText}>{description}</Text>
-					</View>
-				</Card>
-			) : null}
+				{advisors.length ? (
+					<Card
+						header={advisors.length === 1 ? 'Advisor' : 'Advisors'}
+						style={styles.card}
+					>
+						{advisors.map((contact, i) => (
+							<Text
+								key={i}
+								onPress={() =>
+									sendEmail({to: [contact.email], subject: orgName})
+								}
+								selectable={true}
+								style={styles.cardBody}
+							>
+								{contact.name} ({contact.email})
+							</Text>
+						))}
+					</Card>
+				) : null}
 
-			<Text selectable={true} style={[styles.footer, styles.lastUpdated]}>
-				Last updated:{' '}
-				{moment(orgLastUpdated, 'MMMM, DD YYYY HH:mm:ss').calendar()}
-			</Text>
+				{description ? (
+					<Card header="Description" style={styles.card}>
+						<View style={styles.description}>
+							<Text style={styles.descriptionText}>{description}</Text>
+						</View>
+					</Card>
+				) : null}
 
-			<Text selectable={true} style={[styles.footer, styles.poweredBy]}>
-				Powered by the St. Olaf Student Orgs Database
-			</Text>
-		</ScrollView>
+				<Text selectable={true} style={[styles.footer, styles.lastUpdated]}>
+					Last updated:{' '}
+					{moment(orgLastUpdated, 'MMMM, DD YYYY HH:mm:ss').calendar()}
+				</Text>
+
+				<Text selectable={true} style={[styles.footer, styles.poweredBy]}>
+					Powered by the St. Olaf Student Orgs Database
+				</Text>
+			</ScrollView>
+		</>
 	)
 }
 

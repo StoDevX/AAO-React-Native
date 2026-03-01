@@ -10,6 +10,7 @@ import type {
 	Department,
 	DirectoryIconName,
 	DirectoryIconProps,
+	DirectoryItem,
 } from './types'
 import {
 	Avatar,
@@ -20,16 +21,7 @@ import {
 	List,
 	Portal,
 } from 'react-native-paper'
-import {RouteProp, useRoute, useNavigation} from '@react-navigation/native'
-import {
-	NativeStackNavigationOptions,
-	NativeStackNavigationProp,
-} from '@react-navigation/native-stack'
-import {RootStackParamList} from '../../../source/navigation/types'
-
-export const DetailNavigationOptions: NativeStackNavigationOptions = {
-	title: 'Contact',
-}
+import {useLocalSearchParams, useRouter} from 'expo-router'
 
 const createDirectoryIcon =
 	(iconName: DirectoryIconName) => (props: DirectoryIconProps) => (
@@ -37,11 +29,10 @@ const createDirectoryIcon =
 	)
 
 export function DirectoryDetailView(): React.JSX.Element {
-	// typing useNavigation's props to inform typescript about `push`
-	let navigation =
-		useNavigation<NativeStackNavigationProp<RootStackParamList>>()
+	let router = useRouter()
+	let params = useLocalSearchParams<{contact: string}>()
+	let contact = JSON.parse(params.contact) as DirectoryItem
 
-	let route = useRoute<RouteProp<RootStackParamList, 'DirectoryDetail'>>()
 	const {
 		displayName,
 		campusLocations,
@@ -53,7 +44,7 @@ export function DirectoryDetailView(): React.JSX.Element {
 		email,
 		departments,
 		username,
-	} = route.params.contact
+	} = contact
 
 	const [isFabOpen, setIsFabOpen] = React.useState(false)
 
@@ -96,9 +87,12 @@ export function DirectoryDetailView(): React.JSX.Element {
 							accessibilityLabel={`Department: ${dept.name}`}
 							icon="account-multiple-outline"
 							onPress={() => {
-								navigation.push('Directory', {
-									queryType: 'department',
-									queryParam: dept.name,
+								router.push({
+									pathname: '/directory',
+									params: {
+										queryType: 'department',
+										queryParam: dept.name,
+									},
 								})
 							}}
 							style={styles.departmentChip}

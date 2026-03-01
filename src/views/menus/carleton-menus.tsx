@@ -3,9 +3,7 @@ import {Platform, ScrollView, StyleSheet, View} from 'react-native'
 import {Row} from '@frogpond/layout'
 import {ListRow, ListSeparator, Title} from '@frogpond/lists'
 import {BonAppHostedMenu} from './menu-bonapp'
-import {useNavigation} from 'expo-router'
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
-import {CafeMenuParamList} from '../../navigation/types'
+import {useRouter} from 'expo-router'
 
 export const CarletonBurtonMenuScreen = (): React.JSX.Element => (
 	<BonAppHostedMenu
@@ -40,14 +38,14 @@ export const CarletonSaylesMenuScreen = (): React.JSX.Element => (
 )
 
 export function CarletonCafeIndex(): React.JSX.Element {
-	let navigation = useNavigation()
+	let router = useRouter()
 
-	let carletonCafes: Array<{id: keyof CafeMenuParamList; title: string}> = [
-		{id: 'CarletonBurtonMenu', title: 'Burton'},
-		{id: 'CarletonLDCMenu', title: 'LDC'},
-		{id: 'CarletonWeitzMenu', title: 'Weitz Center'},
-		{id: 'CarletonSaylesMenu', title: 'Sayles Hill'},
-	]
+	let carletonCafes = [
+		{path: '/menus/carleton-burton', title: 'Burton'},
+		{path: '/menus/carleton-ldc', title: 'LDC'},
+		{path: '/menus/carleton-weitz', title: 'Weitz Center'},
+		{path: '/menus/carleton-sayles', title: 'Sayles Hill'},
+	] as const
 
 	return (
 		<ScrollView style={styles.container}>
@@ -55,7 +53,7 @@ export function CarletonCafeIndex(): React.JSX.Element {
 				<View key={i}>
 					<ListRow
 						arrowPosition="center"
-						onPress={() => navigation.navigate(loc.id)}
+						onPress={() => router.push(loc.path)}
 					>
 						<Row alignItems="center">
 							<Title style={styles.rowText}>{loc.title}</Title>
@@ -78,19 +76,3 @@ const styles = StyleSheet.create({
 		paddingTop: Platform.OS === 'ios' ? 20 : 0,
 	},
 })
-
-export const BurtonNavigationOptions: NativeStackNavigationOptions = {
-	title: 'Burton',
-}
-
-export const LDCNavigationOptions: NativeStackNavigationOptions = {
-	title: 'LDC',
-}
-
-export const WeitzNavigationOptions: NativeStackNavigationOptions = {
-	title: 'Weitz Center',
-}
-
-export const SaylesNavigationOptions: NativeStackNavigationOptions = {
-	title: 'Sayles Hill',
-}

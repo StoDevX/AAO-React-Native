@@ -16,49 +16,47 @@ import {blankSchedule, parseHours, summarizeDaysAndHours} from '../lib'
 import * as c from '@frogpond/colors'
 import {DatePicker} from '@frogpond/datepicker'
 import {Touchable} from '@frogpond/touchable'
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
-import {CloseScreenButton} from '@frogpond/navigation-buttons'
-import {RouteProp, useNavigation, useRoute} from '@react-navigation/native'
-import {RootStackParamList} from '../../../navigation/types'
-
-export type RouteParams = {
-	set: SingleBuildingScheduleType | undefined
-	onEditSet: (set: SingleBuildingScheduleType) => unknown
-	onDeleteSet: () => unknown
-}
+import {useLocalSearchParams, useRouter} from 'expo-router'
+import {callEditCallback, callDeleteCallback} from './editor-bridge'
 
 export function BuildingHoursScheduleEditorView(): React.JSX.Element {
-	let navigation = useNavigation()
+	let router = useRouter()
 
-	let route =
-		useRoute<RouteProp<RootStackParamList, 'BuildingHoursScheduleEditor'>>()
-	let {params} = route
+	let params = useLocalSearchParams<{
+		set?: string
+		scheduleIdx: string
+		setIdx: string
+	}>()
 
-	let [set, setSet] = useState<SingleBuildingScheduleType>(
-		params.set ?? blankSchedule(),
-	)
+	let initialSet = params.set
+		? (JSON.parse(params.set) as SingleBuildingScheduleType)
+		: blankSchedule()
+	let scheduleIdx = Number(params.scheduleIdx)
+	let setIdx = Number(params.setIdx)
+
+	let [set, setSet] = useState<SingleBuildingScheduleType>(initialSet)
 
 	let deleteSet = () => {
-		params.onDeleteSet()
-		navigation.goBack()
+		callDeleteCallback(scheduleIdx, setIdx)
+		router.back()
 	}
 
 	let onChangeDays = (newDays: DayOfWeekEnumType[]) => {
 		let newSet = {...set, days: newDays}
 		setSet(newSet)
-		params.onEditSet(newSet)
+		callEditCallback(scheduleIdx, setIdx, newSet)
 	}
 
 	let onChangeOpen = (newDate: Moment) => {
 		let newSet = {...set, from: newDate.format('h:mma')}
 		setSet(newSet)
-		params.onEditSet(newSet)
+		callEditCallback(scheduleIdx, setIdx, newSet)
 	}
 
 	let onChangeClose = (newDate: Moment) => {
 		let newSet = {...set, to: newDate.format('h:mma')}
 		setSet(newSet)
-		params.onEditSet(newSet)
+		callEditCallback(scheduleIdx, setIdx, newSet)
 	}
 
 	let {open, close} = parseHours(set, moment())
@@ -263,10 +261,3 @@ const styles = StyleSheet.create({
 	},
 })
 
-export const NavigationKey = 'BuildingHoursProblemReportEditor'
-
-export const NavigationOptions: NativeStackNavigationOptions = {
-	title: 'Edit Schedule',
-	presentation: 'modal',
-	headerRight: () => Platform.OS === 'ios' && <CloseScreenButton />,
-}

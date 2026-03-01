@@ -7,7 +7,7 @@ import {BuildingType} from '../../views/building-hours/types'
 import * as c from '@frogpond/colors'
 import {ListSeparator, ListSectionHeader} from '@frogpond/lists'
 import {LoadingView, NoticeView} from '@frogpond/notice'
-import {useNavigation} from 'expo-router'
+import {useRouter} from 'expo-router'
 import {useMomentTimer} from '@frogpond/timer'
 
 const styles = StyleSheet.create({
@@ -18,7 +18,7 @@ const styles = StyleSheet.create({
 })
 
 export function BuildingHoursView(): React.JSX.Element {
-	let navigation = useNavigation()
+	let router = useRouter()
 
 	let {now} = useMomentTimer({intervalMs: 60000, startOf: 'minute'})
 
@@ -33,8 +33,11 @@ export function BuildingHoursView(): React.JSX.Element {
 
 	let onPressRow = React.useCallback(
 		(building: BuildingType) =>
-			navigation.navigate('BuildingHoursDetail', {building}),
-		[navigation],
+			router.push({
+				pathname: '/building-hours/location/[location]',
+				params: {location: building.name},
+			}),
+		[router],
 	)
 
 	if (isError) {

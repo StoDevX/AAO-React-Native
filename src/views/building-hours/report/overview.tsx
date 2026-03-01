@@ -23,15 +23,14 @@ import type {
 } from '../types'
 import {summarizeDays, formatBuildingTimes, blankSchedule} from '../lib'
 import {submitReport} from './submit'
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
-import {RouteProp, useNavigation, useRoute} from '@react-navigation/native'
-import {CloseScreenButton} from '@frogpond/navigation-buttons'
-import {RootStackParamList} from '../../../navigation/types'
+import {setEditorCallbacks} from './editor-bridge'
+import {useLocalSearchParams, useNavigation, useRouter} from 'expo-router'
 
 export let BuildingHoursProblemReportView = (): React.JSX.Element => {
 	let navigation = useNavigation()
-	let route = useRoute<RouteProp<RootStackParamList, typeof NavigationKey>>()
-	let {initialBuilding} = route.params
+	let router = useRouter()
+	let params = useLocalSearchParams<{initialBuilding: string}>()
+	let initialBuilding = JSON.parse(params.initialBuilding) as BuildingType
 
 	let [building, setBuilding] = React.useState(initialBuilding)
 
@@ -170,15 +169,21 @@ export let BuildingHoursProblemReportView = (): React.JSX.Element => {
 		[building],
 	)
 
+	React.useEffect(() => {
+		setEditorCallbacks(editHoursRow, deleteHoursRow)
+	}, [editHoursRow, deleteHoursRow])
+
 	let openEditor = React.useCallback(
 		(scheduleIdx: number, setIdx: number, set?: SingleBuildingScheduleType) =>
-			navigation.navigate('BuildingHoursScheduleEditor', {
-				set: set,
-				onEditSet: (editedData: SingleBuildingScheduleType) =>
-					editHoursRow(scheduleIdx, setIdx, editedData),
-				onDeleteSet: () => deleteHoursRow(scheduleIdx, setIdx),
+			router.push({
+				pathname: '/building-hours/location/editor',
+				params: {
+					set: JSON.stringify(set),
+					scheduleIdx: String(scheduleIdx),
+					setIdx: String(setIdx),
+				},
 			}),
-		[deleteHoursRow, editHoursRow, navigation],
+		[router],
 	)
 
 	let submit = (): void => {
@@ -366,20 +371,3 @@ const TimesCell = (props: TimesCellProps) => {
 	)
 }
 
-export const NavigationKey = 'BuildingHoursProblemReport'
-
-export const NavigationOptions: NativeStackNavigationOptions = {
-	title: 'Report a Problem',
-	presentation: 'modal',
-	headerRight: () =>
-		Platform.OS === 'ios' && <CloseScreenButton title="Discard" />,
-	/**
-	 * Explicility setting `gestureEnabled` to false otherwise we can end up with a
-	 * a screen that gets removed natively but did not get removed from JS state.
-	 *
-	 * This happens if the action was prevented in a `beforeRemove` listener which:
-	 * (1) we are currently doing, and
-	 * (2) is not fully supported in native-stack.
-	 */
-	gestureEnabled: false,
-}

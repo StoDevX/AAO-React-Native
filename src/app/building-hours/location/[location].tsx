@@ -2,7 +2,7 @@ import * as React from 'react'
 import {useMomentTimer} from '@frogpond/timer'
 import {BuildingDetail} from '../../../views/building-hours/detail/building'
 import {timezone} from '@frogpond/constants'
-import {Stack, useLocalSearchParams} from 'expo-router'
+import {Stack, useLocalSearchParams, useRouter} from 'expo-router'
 import {
 	selectFavoriteBuildings,
 	useAppDispatch,
@@ -10,13 +10,23 @@ import {
 } from '../../../redux'
 import {toggleFavoriteBuilding} from '../../../redux/parts/buildings'
 import {useCallback} from 'react'
+import {useQueryClient} from '@tanstack/react-query'
+import {keys} from '../../../views/building-hours/query'
+import {BuildingType} from '../../../views/building-hours/types'
+import {Platform, TouchableOpacity, Text} from 'react-native'
+import {NoticeView} from '@frogpond/notice'
+import Ionicons from '@expo/vector-icons/Ionicons'
 
-export function BuildingHoursDetailView(): React.JSX.Element {
+export default function BuildingHoursDetailView(): React.JSX.Element {
 	let dispatch = useAppDispatch()
+	let router = useRouter()
 	let {now} = useMomentTimer({intervalMs: 60000, timezone: timezone()})
-	let locationName =
-		useLocalSearchParams<'/building-hours/location/[location]'>()
-	let {building: info} = route.params
+	let params = useLocalSearchParams<{location: string}>()
+	let locationName = params.location
+
+	let queryClient = useQueryClient()
+	let buildings = queryClient.getQueryData<BuildingType[]>(keys.all)
+	let info = buildings?.find((b) => b.name === locationName)
 
 	let favorites = useAppSelector(selectFavoriteBuildings)
 	let favorited = favorites.includes(locationName)
@@ -25,16 +35,38 @@ export function BuildingHoursDetailView(): React.JSX.Element {
 		[dispatch, locationName],
 	)
 
+	let onProblemReport = useCallback(() => {
+		if (info) {
+			router.push({
+				pathname: '/building-hours/location/report',
+				params: {initialBuilding: JSON.stringify(info)},
+			})
+		}
+	}, [router, info])
+
+	if (!info) {
+		return <NoticeView text="Building not found." />
+	}
+
+	let starIcon = favorited ? 'star' : 'star-outline'
+
 	return (
 		<>
-			<Stack.Screen options={{title: info.name}} />
-			<Stack.Toolbar placement="right">
-				<Stack.Toolbar.Button
-					icon={favorited ? 'star.fill' : 'star'}
-					onPress={() => onFavorite()}
-				/>
-			</Stack.Toolbar>
-			<BuildingDetail info={info} now={now} />
+			<Stack.Screen
+				options={{
+					title: info.name,
+					headerRight: () => (
+						<TouchableOpacity onPress={onFavorite}>
+							{Platform.OS === 'ios' ? (
+								<Ionicons color="#007AFF" name={starIcon} size={24} />
+							) : (
+								<Ionicons color="#007AFF" name={starIcon} size={24} />
+							)}
+						</TouchableOpacity>
+					),
+				}}
+			/>
+			<BuildingDetail info={info} now={now} onProblemReport={onProblemReport} />
 		</>
 	)
 }

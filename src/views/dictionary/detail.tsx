@@ -5,9 +5,8 @@ import {ListFooter} from '@frogpond/lists'
 import {Button} from '@frogpond/button'
 import * as c from '@frogpond/colors'
 
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
-import {RouteProp, useNavigation, useRoute} from '@react-navigation/native'
-import {RootStackParamList} from '../../navigation/types'
+import {Stack, useLocalSearchParams, useRouter} from 'expo-router'
+import {useDictionary} from './query'
 
 const styles = StyleSheet.create({
 	paragraph: {
@@ -35,39 +34,45 @@ export const Container = (props: ViewProps): React.JSX.Element => (
 	<View {...props} style={[styles.container, props.style]} />
 )
 
-export const NavigationKey = 'DictionaryDetail' as const
-
-export const DetailNavigationOptions = (props: {
-	route: RouteProp<RootStackParamList, typeof NavigationKey>
-}): NativeStackNavigationOptions => {
-	let {word} = props.route.params.item
-	return {
-		title: word,
-	}
-}
-
 export let DictionaryDetailView = (): React.JSX.Element => {
-	let route = useRoute<RouteProp<RootStackParamList, typeof NavigationKey>>()
-	let {item} = route.params
+	let params = useLocalSearchParams<{word: string}>()
+	let router = useRouter()
 
-	let navigation = useNavigation()
+	let {data = []} = useDictionary()
+	let item = data.find((w) => w.word === params.word)
 
 	let handleEditButtonPress = React.useCallback(
-		() => navigation.navigate('DictionaryEditor', {item}),
-		[item, navigation],
+		() =>
+			item &&
+			router.push({
+				pathname: '/dictionary/report',
+				params: {word: item.word, definition: item.definition},
+			}),
+		[item, router],
 	)
 
+	if (!item) {
+		return (
+			<Container>
+				<Term>Word not found</Term>
+			</Container>
+		)
+	}
+
 	return (
-		<Container>
-			<Term selectable={true}>{item.word}</Term>
-			<Markdown
-				source={item.definition}
-				styles={{Paragraph: styles.paragraph}}
-			/>
+		<>
+			<Stack.Screen options={{title: item.word}} />
+			<Container>
+				<Term selectable={true}>{item.word}</Term>
+				<Markdown
+					source={item.definition}
+					styles={{Paragraph: styles.paragraph}}
+				/>
 
-			<Button onPress={handleEditButtonPress} title="Suggest an Edit" />
+				<Button onPress={handleEditButtonPress} title="Suggest an Edit" />
 
-			<ListFooter title="Collected by the humans of All About Olaf" />
-		</Container>
+				<ListFooter title="Collected by the humans of All About Olaf" />
+			</Container>
+		</>
 	)
 }

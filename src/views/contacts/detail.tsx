@@ -16,9 +16,8 @@ import {callPhone} from '../../components/call-phone'
 import {Button} from '@frogpond/button'
 import {openUrl} from '@frogpond/open-url'
 import {GH_NEW_ISSUE_URL} from '../../lib/constants'
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
-import {RootStackParamList} from '../../navigation/types'
-import {RouteProp, useRoute} from '@react-navigation/native'
+import {Stack, useLocalSearchParams} from 'expo-router'
+import type {ContactType} from './types'
 
 const styles = StyleSheet.create({
 	paragraph: {
@@ -51,9 +50,8 @@ export const Container = (props: ViewProps): React.JSX.Element => (
 )
 
 export const ContactsDetailView = (): React.JSX.Element => {
-	let route =
-		useRoute<RouteProp<RootStackParamList, typeof DetailNavigationKey>>()
-	let {contact} = route.params
+	let params = useLocalSearchParams<{contact: string}>()
+	let contact = JSON.parse(params.contact) as ContactType
 
 	let onPress = (): void => {
 		let {phoneNumber, buttonText, buttonLink} = contact
@@ -70,36 +68,28 @@ export const ContactsDetailView = (): React.JSX.Element => {
 			: null
 
 	return (
-		<ScrollView>
-			{headerImage ? (
-				<Image resizeMode="cover" source={headerImage} style={styles.image} />
-			) : null}
-			<Container>
-				<Title selectable={true}>{contact.title}</Title>
+		<>
+			<Stack.Screen options={{title: contact.title}} />
+			<ScrollView>
+				{headerImage ? (
+					<Image resizeMode="cover" source={headerImage} style={styles.image} />
+				) : null}
+				<Container>
+					<Title selectable={true}>{contact.title}</Title>
 
-				<Markdown
-					source={contact.text}
-					styles={{Paragraph: styles.paragraph}}
-				/>
+					<Markdown
+						source={contact.text}
+						styles={{Paragraph: styles.paragraph}}
+					/>
 
-				<Button onPress={onPress} title={contact.buttonText} />
+					<Button onPress={onPress} title={contact.buttonText} />
 
-				<ListFooter
-					href={GH_NEW_ISSUE_URL}
-					title="Collected by the humans of All About Olaf"
-				/>
-			</Container>
-		</ScrollView>
+					<ListFooter
+						href={GH_NEW_ISSUE_URL}
+						title="Collected by the humans of All About Olaf"
+					/>
+				</Container>
+			</ScrollView>
+		</>
 	)
-}
-
-export const DetailNavigationKey = 'ContactsDetail'
-
-export const NavigationOptions = (props: {
-	route: RouteProp<RootStackParamList, typeof DetailNavigationKey>
-}): NativeStackNavigationOptions => {
-	let {title} = props.route.params.contact
-	return {
-		title: title,
-	}
 }
