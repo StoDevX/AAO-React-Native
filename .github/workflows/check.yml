@@ -28,20 +28,22 @@ jobs:
       - name: Extract job definition
         run: yq '.jobs.${{ github.job }}' .github/workflows/check.yml > .github/job.yml
 
+      - uses: pnpm/action-setup@a3252b7022e8aa7897723da3eb66e8001a2aa5e1 # v4
+
       - uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         id: node-cache
         with:
           path: node_modules/
-          key: ${{ runner.os }}-node_modules-${{ hashFiles('.node-version', 'package-lock.json', '.github/job.yml') }}
+          key: ${{ runner.os }}-node_modules-${{ hashFiles('.node-version', 'pnpm-lock.yaml', '.github/job.yml') }}
 
       - if: steps.node-cache.outputs.cache-hit != 'true'
         uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
         with:
           node-version-file: '.node-version'
-          cache: npm
+          cache: pnpm
 
       - if: steps.node-cache.outputs.cache-hit != 'true'
-        run: npm ci
+        run: pnpm install --frozen-lockfile
 
       - uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         if: steps.node-cache.outputs.cache-hit != 'true'
@@ -60,20 +62,22 @@ jobs:
       - name: Extract job definition
         run: yq '.jobs.${{ github.job }}' .github/workflows/check.yml > .github/job.yml
 
+      - uses: pnpm/action-setup@a3252b7022e8aa7897723da3eb66e8001a2aa5e1 # v4
+
       - uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         id: node-cache
         with:
           path: node_modules/
-          key: ${{ runner.os }}-node_modules-${{ hashFiles('.node-version', 'package-lock.json', '.github/job.yml') }}
+          key: ${{ runner.os }}-node_modules-${{ hashFiles('.node-version', 'pnpm-lock.yaml', '.github/job.yml') }}
 
       - if: steps.node-cache.outputs.cache-hit != 'true'
         uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
         with:
           node-version-file: '.node-version'
-          cache: npm
+          cache: pnpm
 
       - if: steps.node-cache.outputs.cache-hit != 'true'
-        run: npm ci
+        run: pnpm install --frozen-lockfile
 
       - uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         if: steps.node-cache.outputs.cache-hit != 'true'
@@ -111,7 +115,7 @@ jobs:
         id: cocoapods-cache
         with:
           path: ios/Pods
-          key: ${{ runner.os }}-cocoapods-ruby@${{ env.ruby-version }}-xcode@${{ env.xcode_version }}-${{ hashFiles('**/Podfile', '**/Podfile.lock', 'package-lock.json', '.github/job.yml') }}
+          key: ${{ runner.os }}-cocoapods-ruby@${{ env.ruby-version }}-xcode@${{ env.xcode_version }}-${{ hashFiles('**/Podfile', '**/Podfile.lock', 'pnpm-lock.yaml', '.github/job.yml') }}
 
       - if: steps.cocoapods-cache.outputs.cache-hit != 'true'
         uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
@@ -303,7 +307,7 @@ jobs:
             ios/AllAboutOlaf/main.jsbundle
             ios/AllAboutOlaf/main.jsbundle.map
             ios/assets/
-          key: ${{ runner.os }}-jsbundle-${{ hashFiles('.node-version', 'package.json', 'package-lock.json', '.github/job.yml', 'tsconfig.json', 'babel.config.js', 'index.js', 'data/**', 'images/**', 'modules/**.ts', 'modules/**.tsx', 'src/**.ts', 'src/**.tsx') }}
+          key: ${{ runner.os }}-jsbundle-${{ hashFiles('.node-version', 'package.json', 'pnpm-lock.yaml', '.github/job.yml', 'tsconfig.json', 'babel.config.js', 'index.js', 'data/**', 'images/**', 'modules/**.ts', 'modules/**.tsx', 'src/**.ts', 'src/**.tsx') }}
 
       - name: Generate jsbundle
         if: steps.jsbundle-cache.outputs.cache-hit != 'true'
@@ -350,7 +354,7 @@ jobs:
         id: jsbundle-cache
         with:
           path: ./android/generated/
-          key: ${{ runner.os }}-jsbundle-${{ hashFiles('.node-version', 'package.json', 'package-lock.json', '.github/job.yml', 'tsconfig.json', 'babel.config.js', 'index.js', 'data/**', 'images/**', 'modules/**.ts', 'modules/**.tsx', 'src/**.ts', 'src/**.tsx') }}
+          key: ${{ runner.os }}-jsbundle-${{ hashFiles('.node-version', 'package.json', 'pnpm-lock.yaml', '.github/job.yml', 'tsconfig.json', 'babel.config.js', 'index.js', 'data/**', 'images/**', 'modules/**.ts', 'modules/**.tsx', 'src/**.ts', 'src/**.tsx') }}
 
       - name: Generate jsbundle
         if: steps.jsbundle-cache.outputs.cache-hit != 'true'
@@ -443,7 +447,7 @@ jobs:
         uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         with:
           path: ios/build/Build/Products/
-          key: ${{ runner.os }}-ios-xcode@${{ env.xcode_version }}-${{ hashFiles('**/project.pbxproj', '**/Podfile', '**/Podfile.lock', 'package-lock.json', '.github/job.yml') }}
+          key: ${{ runner.os }}-ios-xcode@${{ env.xcode_version }}-${{ hashFiles('**/project.pbxproj', '**/Podfile', '**/Podfile.lock', 'pnpm-lock.yaml', '.github/job.yml') }}
 
       - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
         if: steps.app-cache.outputs.cache-hit != 'true'
