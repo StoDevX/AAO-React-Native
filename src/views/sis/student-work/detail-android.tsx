@@ -9,9 +9,7 @@ import * as c from '@frogpond/colors'
 import type {JobType} from './types'
 import {ShareButton} from '@frogpond/navigation-buttons'
 import {shareJob} from './lib'
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
-import {RouteProp, useRoute} from '@react-navigation/native'
-import {RootStackParamList} from '../../../navigation/types'
+import {useLocalSearchParams, Stack} from 'expo-router'
 
 const styles = StyleSheet.create({
 	name: {
@@ -208,22 +206,18 @@ function LastUpdated({when}: {when: string}) {
 	) : null
 }
 
-export const NavigationOptions = (props: {
-	route: RouteProp<RootStackParamList, 'JobDetail'>
-}): NativeStackNavigationOptions => {
-	let {job} = props.route.params
-	return {
-		title: job.title,
-		headerRight: () => <ShareButton onPress={() => shareJob(job)} />,
-	}
-}
-
 export const JobDetailView = (): React.JSX.Element => {
-	let route = useRoute<RouteProp<RootStackParamList, 'JobDetail'>>()
-	let {job} = route.params
+	let params = useLocalSearchParams<{job: string}>()
+	let job = JSON.parse(params.job) as JobType
 
 	return (
 		<ScrollView>
+			<Stack.Screen
+				options={{
+					title: job.title,
+					headerRight: () => <ShareButton onPress={() => shareJob(job)} />,
+				}}
+			/>
 			<Title job={job} />
 			<ContactInformation job={job} />
 			<JobInformation job={job} />

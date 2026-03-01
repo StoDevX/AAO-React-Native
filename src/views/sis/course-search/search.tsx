@@ -1,12 +1,10 @@
 import * as c from '@frogpond/colors'
 import {LoadingView, NoticeView} from '@frogpond/notice'
 import {SearchButton} from '@frogpond/navigation-buttons'
-import {useNavigation} from 'expo-router'
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+import {useNavigation, useRouter} from 'expo-router'
 import {debounce, fromPairs} from 'lodash'
 import * as React from 'react'
 import {ScrollView, StyleSheet, View} from 'react-native'
-import {ChangeTextEvent} from '../../../navigation/types'
 import {useAppSelector} from '../../../redux'
 import {
 	selectRecentFilters,
@@ -21,8 +19,8 @@ let _debounce = debounce((query: string, callback: () => void) => {
 	}
 }, 1500)
 
-export const NavigationOptions: NativeStackNavigationOptions = {
-	title: 'Course Catalog',
+interface ChangeTextEvent {
+	nativeEvent: {text: React.SetStateAction<string>}
 }
 
 const RightButton = ({onPress}: {onPress: () => void}) => (
@@ -31,6 +29,7 @@ const RightButton = ({onPress}: {onPress: () => void}) => (
 
 export const CourseSearchView = (): React.JSX.Element => {
 	let navigation = useNavigation()
+	let router = useRouter()
 
 	let {data: basicFilters = [], isLoading, error} = useFilters()
 
@@ -43,7 +42,10 @@ export const CourseSearchView = (): React.JSX.Element => {
 		const getRightButton = () => (
 			<RightButton
 				onPress={() =>
-					navigation.navigate('CourseSearchResults', {initialQuery: ''})
+					router.push({
+						pathname: '/sis/course-search/results',
+						params: {initialQuery: ''},
+					})
 				}
 			/>
 		)
@@ -61,9 +63,12 @@ export const CourseSearchView = (): React.JSX.Element => {
 
 	let showSearchResult = React.useCallback(
 		(query: string) => {
-			navigation.navigate('CourseSearchResults', {initialQuery: query})
+			router.push({
+				pathname: '/sis/course-search/results',
+				params: {initialQuery: query},
+			})
 		},
-		[navigation],
+		[router],
 	)
 
 	React.useEffect(() => {
@@ -86,11 +91,12 @@ export const CourseSearchView = (): React.JSX.Element => {
 				selectedFilters = basicFilters.map((f) => filterLookup[f.key] || f)
 			}
 
-			navigation.navigate('CourseSearchResults', {
-				initialFilters: selectedFilters,
+			router.push({
+				pathname: '/sis/course-search/results',
+				params: {initialFilters: JSON.stringify(selectedFilters)},
 			})
 		},
-		[basicFilters, navigation, recentFilters],
+		[basicFilters, router, recentFilters],
 	)
 
 	if (isLoading) {

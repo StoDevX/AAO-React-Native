@@ -15,9 +15,6 @@ export {
 	CourseSearchView,
 	CourseSearchResultsView,
 	CourseDetailView,
-	CourseSearchNavigationOptions,
-	CourseSearchViewNavigationOptions,
-	CourseSearchDetailNavigationOptions,
 } from './course-search'
 
 type Params = {

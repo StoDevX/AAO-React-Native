@@ -23,9 +23,7 @@ import {deptNum} from '../lib/format-dept-num'
 import groupBy from 'lodash/groupBy'
 import map from 'lodash/map'
 import zip from 'lodash/zip'
-import {RouteProp, useRoute} from '@react-navigation/native'
-import {RootStackParamList} from '../../../../navigation/types'
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+import {useLocalSearchParams, Stack} from 'expo-router'
 
 const Container = (props: ScrollViewProps) => (
 	<ScrollView {...props} style={[styles.container, props.style]} />
@@ -198,23 +196,15 @@ const BGCOLORS = {
 	Closed: c.salmon,
 } as const
 
-export const NavigationOptions = (props: {
-	route: RouteProp<RootStackParamList, 'CourseDetail'>
-}): NativeStackNavigationOptions => {
-	let {name} = props.route.params.course
-	return {
-		title: name,
-	}
-}
-
 export const CourseDetailView = (): React.JSX.Element => {
-	let route = useRoute<RouteProp<RootStackParamList, 'CourseDetail'>>()
-	let {course} = route.params
+	let params = useLocalSearchParams<{course: string}>()
+	let course = JSON.parse(params.course) as CourseType
 
 	let status = course.status === 'O' ? ('Open' as const) : ('Closed' as const)
 
 	return (
 		<Container>
+			<Stack.Screen options={{title: course.name}} />
 			<Header>{course.title || course.name}</Header>
 			<SubHeader>{deptNum(course)}</SubHeader>
 			<Badge accentColor={BGCOLORS[status]} status={status} />

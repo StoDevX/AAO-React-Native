@@ -10,9 +10,7 @@ import {useAppDispatch} from '../../../redux'
 import {applyFiltersToItem} from '@frogpond/filter'
 import {FilterType} from '@frogpond/filter'
 import {useFilters} from './lib/build-filters'
-import {RouteProp, useNavigation, useRoute} from '@react-navigation/native'
-import {ChangeTextEvent, RootStackParamList} from '../../../navigation/types'
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+import {useLocalSearchParams, useNavigation, useRouter} from 'expo-router'
 import {useDebounce} from '@frogpond/use-debounce'
 import {ListSeparator, ListSectionHeader, largeListProps} from '@frogpond/lists'
 import * as c from '@frogpond/colors'
@@ -100,12 +98,20 @@ const useSelectedGE = (filters: FilterType<CourseType>[]) => {
 	return []
 }
 
+interface ChangeTextEvent {
+	nativeEvent: {text: React.SetStateAction<string>}
+}
+
 export const CourseSearchResultsView = (): React.JSX.Element => {
 	let dispatch = useAppDispatch()
 	let navigation = useNavigation()
+	let router = useRouter()
 
-	let route = useRoute<RouteProp<RootStackParamList, 'CourseSearchResults'>>()
-	let {initialFilters = [], initialQuery = ''} = route.params ?? {}
+	let params = useLocalSearchParams<{initialFilters?: string; initialQuery?: string}>()
+	let initialFilters = params.initialFilters
+		? (JSON.parse(params.initialFilters) as FilterType<CourseType>[])
+		: []
+	let initialQuery = params.initialQuery ?? ''
 
 	let {
 		data: basicFilters = [],
@@ -151,9 +157,12 @@ export const CourseSearchResultsView = (): React.JSX.Element => {
 				// if there is at least one active filter, add the filter set to the Recent Filters list
 				dispatch(updateRecentFilters(filters))
 			}
-			navigation.navigate('CourseDetail', {course: data})
+			router.push({
+				pathname: '/sis/course-search/[course]',
+				params: {course: JSON.stringify(data)},
+			})
 		},
-		[navigation, dispatch, delayedQuery, filters],
+		[router, dispatch, delayedQuery, filters],
 	)
 
 	let updateFilter = React.useCallback(
@@ -241,10 +250,6 @@ export const CourseSearchResultsView = (): React.JSX.Element => {
 			{...largeListProps}
 		/>
 	)
-}
-
-export const NavigationOptions: NativeStackNavigationOptions = {
-	title: 'Course Catalog',
 }
 
 let styles = StyleSheet.create({
