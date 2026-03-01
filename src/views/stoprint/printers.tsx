@@ -10,12 +10,10 @@ import {
 	Title,
 } from '@frogpond/lists'
 import {LoadingView} from '@frogpond/notice'
-import {DebugNoticeButton} from '@frogpond/navigation-buttons'
 import groupBy from 'lodash/groupBy'
 import {StoPrintErrorView} from './components/error'
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
-import {RouteProp, useNavigation, useRoute} from '@react-navigation/native'
-import {RootStackParamList} from '../../navigation/types'
+import {useLocalSearchParams, useRouter} from 'expo-router'
+import type {PrintJob} from '../../lib/stoprint'
 import {
 	allPrintersQuery,
 	colorPrintersQuery,
@@ -30,10 +28,10 @@ const styles = StyleSheet.create({
 })
 
 export const PrinterListView = (): React.JSX.Element => {
-	let navigation = useNavigation()
+	let router = useRouter()
 
-	let route = useRoute<RouteProp<RootStackParamList, 'PrinterList'>>()
-	let {job} = route.params
+	let params = useLocalSearchParams<{job: string}>()
+	let job = JSON.parse(params.job) as PrintJob
 
 	const {data: username} = useQuery(usernameQuery)
 
@@ -68,8 +66,11 @@ export const PrinterListView = (): React.JSX.Element => {
 
 	let openPrintRelease = React.useCallback(
 		(printer: Printer) =>
-			navigation.navigate('PrintJobRelease', {job, printer}),
-		[navigation, job],
+			router.push({
+				pathname: '/stoprint/release',
+				params: {job: JSON.stringify(job), printer: JSON.stringify(printer)},
+			}),
+		[router, job],
 	)
 
 	let refetchAll = React.useCallback(() => {
@@ -165,7 +166,3 @@ export const PrinterListView = (): React.JSX.Element => {
 	)
 }
 
-export const NavigationOptions: NativeStackNavigationOptions = {
-	title: 'Select Printer',
-	headerRight: () => <DebugNoticeButton shouldShow={isStoprintMocked} />,
-}

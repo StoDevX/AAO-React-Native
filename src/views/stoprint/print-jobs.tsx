@@ -17,9 +17,7 @@ import groupBy from 'lodash/groupBy'
 import toPairs from 'lodash/toPairs'
 import sortBy from 'lodash/sortBy'
 import {getTimeRemaining} from './lib'
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
-import {useNavigation} from 'expo-router'
-import {DebugNoticeButton} from '@frogpond/navigation-buttons'
+import {useRouter} from 'expo-router'
 import {useMomentTimer} from '@frogpond/timer'
 import {printJobsQuery} from './query'
 import {hasCredentialsQuery, usernameQuery} from '../../lib/login'
@@ -40,14 +38,20 @@ export const PrintJobsView = (): React.JSX.Element => {
 		isRefetching: jobsRefetching,
 	} = useQuery(printJobsQuery(username))
 
-	let navigation = useNavigation()
-	let openSettings = () => navigation.navigate('Settings')
+	let router = useRouter()
+	let openSettings = () => router.push('/settings')
 
 	let handleJobPress = (job: PrintJob) => {
 		if (job.statusFormatted === 'Pending Release') {
-			navigation.navigate('PrinterList', {job: job})
+			router.push({
+				pathname: '/stoprint/printers',
+				params: {job: JSON.stringify(job)},
+			})
 		} else {
-			navigation.navigate('PrintJobRelease', {job: job})
+			router.push({
+				pathname: '/stoprint/release',
+				params: {job: JSON.stringify(job)},
+			})
 		}
 	}
 
@@ -134,7 +138,3 @@ export const PrintJobsView = (): React.JSX.Element => {
 	)
 }
 
-export const NavigationOptions: NativeStackNavigationOptions = {
-	title: 'Print Jobs',
-	headerRight: () => <DebugNoticeButton shouldShow={isStoprintMocked} />,
-}

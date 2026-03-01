@@ -13,10 +13,7 @@ import {
 	type Printer,
 	type PrintJob,
 } from '../../lib/stoprint'
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
-import {RouteProp, useNavigation, useRoute} from '@react-navigation/native'
-import {RootStackParamList} from '../../navigation/types'
-import {DebugNoticeButton} from '@frogpond/navigation-buttons'
+import {useLocalSearchParams, useRouter} from 'expo-router'
 import {heldJobsQuery} from './query'
 import {useMutation, useQuery} from '@tanstack/react-query'
 import {usernameQuery} from '../../lib/login'
@@ -75,10 +72,11 @@ function PrinterInformation({printer}: {printer: Printer}) {
 }
 
 export const PrintJobReleaseView = (): React.JSX.Element => {
-	let navigation = useNavigation()
+	let router = useRouter()
 
-	let route = useRoute<RouteProp<RootStackParamList, 'PrintJobRelease'>>()
-	let {job, printer} = route.params
+	let params = useLocalSearchParams<{job: string; printer?: string}>()
+	let job = JSON.parse(params.job) as PrintJob
+	let printer = params.printer ? (JSON.parse(params.printer) as Printer) : undefined
 
 	let {data: username = '', isLoading: loadingUsername} =
 		useQuery(usernameQuery)
@@ -90,8 +88,8 @@ export const PrintJobReleaseView = (): React.JSX.Element => {
 	let heldJob = heldJobs.find((item) => item.id.startsWith(jobId))
 
 	const returnToJobsView = React.useCallback(() => {
-		navigation.navigate('PrintJobs')
-	}, [navigation])
+		router.push('/stoprint')
+	}, [router])
 
 	const releaseJob = useMutation({
 		mutationKey: ['printing', 'release', heldJob?.id],
@@ -218,7 +216,3 @@ export const PrintJobReleaseView = (): React.JSX.Element => {
 	)
 }
 
-export const NavigationOptions: NativeStackNavigationOptions = {
-	title: 'Release job',
-	headerRight: () => <DebugNoticeButton shouldShow={isStoprintMocked} />,
-}
