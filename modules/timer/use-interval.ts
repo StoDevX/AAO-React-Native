@@ -35,7 +35,7 @@ export function useInterval(
 		selfCorrecting = true,
 	}: IntervalHookOptions = {},
 ): IntervalHookResult {
-	const timer = useRef<NodeJS.Timeout>()
+	const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
 	const active = useRef<boolean>(false)
 	const expected = useRef<number | null>(null)
 	const savedCallback = useRef<IntervalHookCallback>(callback)

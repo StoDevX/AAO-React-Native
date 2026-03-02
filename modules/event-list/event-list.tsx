@@ -8,7 +8,7 @@ import type {Moment} from 'moment-timezone'
 import {FullWidthSeparator, ListSectionHeader} from '@frogpond/lists'
 import {NoticeView} from '@frogpond/notice'
 import EventRow from './event-row'
-import {useNavigation} from '@react-navigation/native'
+import {useRouter} from 'expo-router'
 import {PoweredBy} from './types'
 
 type Props = {
@@ -43,17 +43,20 @@ function groupEvents(
 	}))
 }
 
-export function EventList(props: Props): JSX.Element {
-	let navigation = useNavigation()
+export function EventList(props: Props): React.JSX.Element {
+	let router = useRouter()
 
 	let onPressEvent = React.useCallback(
 		(event: EventType) => {
-			navigation.navigate('EventDetail', {
-				event,
-				poweredBy: props.poweredBy,
+			router.push({
+				pathname: '/event/[event]',
+				params: {
+					event: JSON.stringify(event),
+					poweredBy: JSON.stringify(props.poweredBy),
+				},
 			})
 		},
-		[navigation, props.poweredBy],
+		[router, props.poweredBy],
 	)
 
 	if (props.message) {

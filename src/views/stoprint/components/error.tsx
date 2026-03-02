@@ -1,0 +1,54 @@
+import * as React from 'react'
+import {RefreshControl, ScrollView, StyleSheet} from 'react-native'
+import {Ionicons} from '@react-native-vector-icons/ionicons'
+import {NoticeView} from '@frogpond/notice'
+import * as c from '@frogpond/colors'
+import {openEmail} from '../../settings/screens/overview/support'
+
+const ERROR_MESSAGE =
+	"Make sure you are connected to the St. Olaf Network via eduroam or the VPN. If you are, please report this so we can make sure it doesn't happen again."
+
+type Props = {
+	onRefresh: () => void
+	refreshing: boolean
+	statusMessage: string
+}
+
+export function StoPrintErrorView(props: Props): React.JSX.Element {
+	return (
+		<ScrollView
+			contentContainerStyle={styles.content}
+			refreshControl={
+				<RefreshControl
+					onRefresh={props.onRefresh}
+					refreshing={props.refreshing}
+				/>
+			}
+			showsVerticalScrollIndicator={false}
+			style={styles.container}
+		>
+			<Ionicons color={c.systemFill} name="bug" size={100} />
+			<NoticeView
+				buttonText="Report"
+				header="Connection Issue"
+				onPress={openEmail}
+				style={styles.notice}
+				text={`${props.statusMessage} ${ERROR_MESSAGE}`}
+			/>
+		</ScrollView>
+	)
+}
+
+const styles = StyleSheet.create({
+	container: {
+		backgroundColor: c.systemBackground,
+	},
+	content: {
+		flex: 1,
+		alignItems: 'center',
+		justifyContent: 'center',
+	},
+	notice: {
+		flex: 0,
+	},
+})

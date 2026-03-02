@@ -7,17 +7,13 @@ import map from 'lodash/map'
 import {DietaryTagsDetail} from './dietary-tags-detail'
 import {calculateAmount} from './lib/calculate-amount'
 import size from 'lodash/size'
-import {RouteProp, useRoute} from '@react-navigation/native'
-import {RootStackParamList} from '../../source/navigation/types'
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+import {useLocalSearchParams} from 'expo-router'
+import type {MasterCorIconMapType, MenuItemType} from './types'
 
-export const DetailNavigationOptions: NativeStackNavigationOptions = {
-	title: 'Nutrition',
-}
-
-export const MenuItemDetailView = (): JSX.Element => {
-	let route = useRoute<RouteProp<RootStackParamList, 'MenuItemDetail'>>()
-	const {item, icons} = route.params
+export const MenuItemDetailView = (): React.JSX.Element => {
+	let params = useLocalSearchParams<{item: string; icons: string}>()
+	let item = JSON.parse(params.item) as MenuItemType
+	let icons = JSON.parse(params.icons) as MasterCorIconMapType
 
 	return (
 		<ScrollView>

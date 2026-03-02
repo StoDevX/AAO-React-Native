@@ -1,6 +1,6 @@
 import * as React from 'react'
 import {Platform, StyleSheet, Text} from 'react-native'
-import Icon from 'react-native-vector-icons/Ionicons'
+import {Ionicons} from '@react-native-vector-icons/ionicons'
 import {Touchable} from '@frogpond/touchable'
 import {useTheme} from '@frogpond/app-theme'
 import {commonStyles, rightButtonStyles as styles} from './styles'
@@ -10,7 +10,7 @@ type Props = {
 	title?: string
 }
 
-export function SearchButton(props: Props): JSX.Element {
+export function SearchButton(props: Props): React.JSX.Element {
 	let {colors} = useTheme()
 
 	return (
@@ -26,12 +26,7 @@ export function SearchButton(props: Props): JSX.Element {
 					{props.title}
 				</Text>
 			) : (
-				<Icon
-					name={
-						Platform.OS === 'ios' ? 'ios-search-outline' : 'md-search-outline'
-					}
-					style={styles.icon}
-				/>
+				<Ionicons name="search-outline" style={styles.icon} />
 			)}
 		</Touchable>
 	)

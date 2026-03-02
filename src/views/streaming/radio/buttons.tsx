@@ -1,0 +1,98 @@
+import * as React from 'react'
+import {StyleSheet, Text, View} from 'react-native'
+import * as c from '@frogpond/colors'
+import {
+	Ionicons,
+	type IoniconsIconName,
+} from '@react-native-vector-icons/ionicons'
+import {Touchable} from '@frogpond/touchable'
+import {theming} from './theme'
+
+type ActionButtonProps = {
+	icon: IoniconsIconName
+	text: string
+	onPress: () => unknown
+}
+
+export function ActionButton(props: ActionButtonProps): React.JSX.Element {
+	let theme = theming.useTheme()
+	let {icon, text, onPress} = props
+	let bg = {backgroundColor: theme.tintColor}
+	let fg = {color: theme.buttonTextColor}
+	let style = [styles.button, styles.largeButton, bg]
+
+	return (
+		<Touchable highlight={false} onPress={onPress} style={style}>
+			<View style={styles.wrapper}>
+				<Ionicons name={icon} style={[styles.icon, fg]} />
+				<Text style={[styles.action, fg]}>{text}</Text>
+			</View>
+		</Touchable>
+	)
+}
+
+type CallButtonProps = {
+	onPress: () => unknown
+}
+
+export function CallButton({onPress}: CallButtonProps): React.JSX.Element {
+	return <SmallActionButton icon="call" onPress={onPress} />
+}
+
+type ShowCalendarButtonProps = {
+	onPress: () => unknown
+}
+
+export function ShowCalendarButton({
+	onPress,
+}: ShowCalendarButtonProps): React.JSX.Element {
+	return <SmallActionButton icon="calendar" onPress={onPress} />
+}
+
+type SmallActionButtonProps = Omit<ActionButtonProps, 'text'>
+
+export function SmallActionButton(
+	props: SmallActionButtonProps,
+): React.JSX.Element {
+	let theme = theming.useTheme()
+	let {icon, onPress} = props
+	let bg = {backgroundColor: theme.tintColor}
+	let fg = {color: theme.buttonTextColor}
+	let style = [styles.button, styles.smallButton, bg]
+
+	return (
+		<Touchable highlight={false} onPress={onPress} style={style}>
+			<Ionicons name={icon} style={[styles.icon, fg]} />
+		</Touchable>
+	)
+}
+
+const styles = StyleSheet.create({
+	button: {
+		alignItems: 'center',
+		paddingVertical: 5,
+		borderRadius: 8,
+		overflow: 'hidden',
+		backgroundColor: c.tertiarySystemBackground,
+	},
+	wrapper: {
+		justifyContent: 'center',
+		flexDirection: 'row',
+	},
+	largeButton: {
+		width: 180,
+	},
+	smallButton: {
+		width: 50,
+	},
+	icon: {
+		color: c.label,
+		fontSize: 30,
+	},
+	action: {
+		color: c.label,
+		paddingLeft: 10,
+		paddingTop: 7,
+		fontWeight: '900',
+	},
+})

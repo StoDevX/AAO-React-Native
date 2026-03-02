@@ -9,18 +9,21 @@ Example: python scaffold_screen.py user-profile "User Profile"
 """
 
 import os
-import sys
 import re
+import sys
 from pathlib import Path
+
 
 def to_pascal_case(snake_str):
     """Convert snake_case to PascalCase"""
-    return ''.join(word.capitalize() for word in snake_str.split('_'))
+    return "".join(word.capitalize() for word in snake_str.split("_"))
+
 
 def to_camel_case(snake_str):
     """Convert snake_case to camelCase"""
-    components = snake_str.split('_')
-    return components[0] + ''.join(word.capitalize() for word in components[1:])
+    components = snake_str.split("_")
+    return components[0] + "".join(word.capitalize() for word in components[1:])
+
 
 def create_screen_files(screen_name, title):
     """Create the basic screen files"""
@@ -34,7 +37,7 @@ def create_screen_files(screen_name, title):
     screen_dir.mkdir(parents=True, exist_ok=True)
 
     # Create index.tsx
-    index_template = '''import * as React from 'react'
+    index_template = """import * as React from 'react'
 import {View, Text, StyleSheet} from 'react-native'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 
@@ -53,7 +56,7 @@ const styles = StyleSheet.create({
   },
 })
 
-function $PASCAL$Page(): JSX.Element {
+function $PASCAL$Page(): React.JSX.Element {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>$TITLE$</Text>
@@ -74,21 +77,23 @@ export const NavigationOptions: NativeStackNavigationOptions = {
 }
 
 export type NavigationParams = undefined
-'''
+"""
 
-    index_content = index_template.replace('$PASCAL$', pascal_name).replace('$TITLE$', title)
+    index_content = index_template.replace("$PASCAL$", pascal_name).replace(
+        "$TITLE$", title
+    )
 
     (screen_dir / "index.tsx").write_text(index_content)
 
     # Create types.ts if needed (basic template)
-    types_template = '''// Types for {title} screen
+    types_template = """// Types for {title} screen
 
 // Add any screen-specific types here
 // export type SomeType = {{
 //   id: string
 //   name: string
 // }}
-'''
+"""
 
     types_content = types_template.format(title=title)
 
@@ -103,21 +108,29 @@ export type NavigationParams = undefined
     print("5. Update views/views.ts if this should appear on home screen")
     print("6. Test the implementation")
 
+
 def main():
     if len(sys.argv) < 2:
         print("Usage: python scaffold_screen.py <screen_name> [title]")
-        print("Example: python scaffold_screen.py user_profile \"User Profile\"")
+        print('Example: python scaffold_screen.py user_profile "User Profile"')
         sys.exit(1)
 
-    screen_name = sys.argv[1].lower().replace(' ', '_')
-    title = sys.argv[2] if len(sys.argv) > 2 else to_pascal_case(screen_name).replace('_', ' ')
+    screen_name = sys.argv[1].lower().replace(" ", "_")
+    title = (
+        sys.argv[2]
+        if len(sys.argv) > 2
+        else to_pascal_case(screen_name).replace("_", " ")
+    )
 
     # Validate screen name
-    if not re.match(r'^[a-z][a-z0-9_]*$', screen_name):
-        print("Error: screen_name must be lowercase letters, numbers, and underscores only, starting with a letter")
+    if not re.match(r"^[a-z][a-z0-9_]*$", screen_name):
+        print(
+            "Error: screen_name must be lowercase letters, numbers, and underscores only, starting with a letter"
+        )
         sys.exit(1)
 
     create_screen_files(screen_name, title)
+
 
 if __name__ == "__main__":
     main()

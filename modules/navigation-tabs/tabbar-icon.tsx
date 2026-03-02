@@ -1,9 +1,11 @@
 import * as React from 'react'
 import {StyleSheet} from 'react-native'
-import {default as Ionicon} from 'react-native-vector-icons/Ionicons'
-import {default as MaterialCommunityIcon} from 'react-native-vector-icons/MaterialCommunityIcons'
-import type * as IoniconsGlyphs from 'react-native-vector-icons/glyphmaps/Ionicons.json'
-import type * as MaterialCommunityIconsGlyphs from 'react-native-vector-icons/glyphmaps/MaterialCommunityIcons.json'
+import Ionicons, {
+	type IoniconsIconName,
+} from '@react-native-vector-icons/ionicons'
+import MaterialDesignIcons, {
+	type MaterialDesignIconsIconName,
+} from '@react-native-vector-icons/material-design-icons'
 
 const styles = StyleSheet.create({
 	icon: {
@@ -17,14 +19,16 @@ type Props = {
 	size?: number
 }
 
+export type IconName = IoniconsIconName & MaterialDesignIconsIconName
+
 export const IosIcon =
-	(icon: keyof typeof IoniconsGlyphs) =>
-	({color}: Props): JSX.Element => (
-		<Ionicon name={icon} style={[styles.icon, {color: color}]} />
+	(icon: IoniconsIconName) =>
+	({color}: Props): React.JSX.Element => (
+		<Ionicons name={icon} style={[styles.icon, {color: color}]} />
 	)
 
 export const MaterialIcon =
-	(icon: keyof typeof MaterialCommunityIconsGlyphs) =>
-	({color}: Props): JSX.Element => (
-		<MaterialCommunityIcon name={icon} style={[{color: color}]} />
+	(icon: MaterialDesignIconsIconName) =>
+	({color}: Props): React.JSX.Element => (
+		<MaterialDesignIcons name={icon} style={[{color: color}]} />
 	)

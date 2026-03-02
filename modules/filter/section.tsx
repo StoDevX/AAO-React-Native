@@ -13,7 +13,7 @@ type Props<T extends object> = {
 export function FilterSection<T extends object>({
 	filter,
 	onChange,
-}: Props<T>): JSX.Element | null {
+}: Props<T>): React.JSX.Element | null {
 	if (filter.type === 'toggle') {
 		return <SingleToggleSection<T> filter={filter} onChange={onChange} />
 	}

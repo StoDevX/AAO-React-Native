@@ -1,7 +1,8 @@
 import * as React from 'react'
 import {Platform, StyleSheet, Text} from 'react-native'
 import {Touchable} from '@frogpond/touchable'
-import {useNavigation, useTheme} from '@react-navigation/native'
+import {useRouter} from 'expo-router'
+import {useTheme} from '@react-navigation/native'
 import {commonStyles, rightButtonStyles as styles} from './styles'
 
 export const buttonStyles = StyleSheet.create({
@@ -17,14 +18,14 @@ export const buttonStyles = StyleSheet.create({
 	},
 })
 
-export const NetworkLoggerButton: React.FC = () => {
-	const navigation = useNavigation()
+export const NetworkLoggerButton = () => {
+	let router = useRouter()
 	let {colors} = useTheme()
 
 	return (
 		<Touchable
 			highlight={false}
-			onPress={() => navigation.navigate('NetworkLogger')}
+			onPress={() => router.push('/settings/network-logger')}
 			style={styles.button}
 		>
 			<Text

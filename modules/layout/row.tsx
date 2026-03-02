@@ -18,7 +18,7 @@ export const Row = ({
 	flex,
 	alignItems,
 	...props
-}: PropsType): JSX.Element => {
+}: PropsType): React.JSX.Element => {
 	let flexStyle = flex != null ? {flex: flex} : null
 	let alignItemsStyle = alignItems != null ? {alignItems: alignItems} : null
 	return (

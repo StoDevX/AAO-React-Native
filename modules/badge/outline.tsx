@@ -37,7 +37,7 @@ export function OutlineBadge({
 	textStyle,
 	accentColor = c.systemYellow,
 	textColor = c.label,
-}: Props): JSX.Element {
+}: Props): React.JSX.Element {
 	return (
 		<View
 			style={[

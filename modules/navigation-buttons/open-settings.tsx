@@ -1,29 +1,24 @@
 import * as React from 'react'
-import {Touchable} from '@frogpond/touchable'
-import {Icon, platformPrefixIconName} from '@frogpond/icon'
+import {Ionicons} from '@react-native-vector-icons/ionicons'
 import * as c from '@frogpond/colors'
 import {commonStyles, rightButtonStyles} from './styles'
-import {useNavigation} from '@react-navigation/native'
-import {HeaderBackButtonProps} from '@react-navigation/native-stack/lib/typescript/src/types'
+import {useNavigation} from 'expo-router'
+import {Link} from 'expo-router'
 
-export function OpenSettingsButton(_props: HeaderBackButtonProps): JSX.Element {
+export function OpenSettingsButton(): React.JSX.Element {
 	let navigation = useNavigation()
 
 	return (
-		<Touchable
-			accessibilityLabel="Open Settings"
-			accessibilityRole="button"
-			accessible={true}
-			borderless={true}
-			highlight={false}
-			onPress={() => navigation.navigate('Settings')}
+		<Link
+			href="/settings"
+			aria-label="Open Settings"
 			style={commonStyles.button}
-			testID="button-open-settings"
+			suppressHighlighting={true}
 		>
-			<Icon
-				name={platformPrefixIconName('settings')}
+			<Ionicons
+				name="settings"
 				style={[rightButtonStyles.icon, {color: c.label}]}
 			/>
-		</Touchable>
+		</Link>
 	)
 }

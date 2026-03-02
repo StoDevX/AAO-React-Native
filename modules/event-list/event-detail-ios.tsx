@@ -6,10 +6,9 @@ import {ShareButton} from '@frogpond/navigation-buttons'
 import {ListFooter} from '@frogpond/lists'
 import {getTimes, shareEvent} from './calendar-util'
 import {AddToCalendar} from '@frogpond/add-to-device-calendar'
-import {RouteProp, useRoute} from '@react-navigation/native'
-import {RootStackParamList} from '../../source/navigation/types'
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
-import {NavigationKey} from './event-detail-base'
+import {Stack, useLocalSearchParams} from 'expo-router'
+import type {EventType} from '@frogpond/event-type'
+import type {PoweredBy} from './types'
 
 function MaybeSection({header, content}: {header: string; content: string}) {
 	return content ? (
@@ -19,25 +18,23 @@ function MaybeSection({header, content}: {header: string; content: string}) {
 	) : null
 }
 
-export const NavigationOptions = (props: {
-	route: RouteProp<RootStackParamList, typeof NavigationKey>
-}): NativeStackNavigationOptions => {
-	let {event} = props.route.params
-	return {
-		title: event.title,
-		headerRight: (p) => (
-			<ShareButton {...p} onPress={() => shareEvent(event)} />
-		),
-	}
-}
-
-export function EventDetail(): JSX.Element {
-	let route = useRoute<RouteProp<RootStackParamList, typeof NavigationKey>>()
-	let {event, poweredBy} = route.params
+export function EventDetail(): React.JSX.Element {
+	let params = useLocalSearchParams<{event: string; poweredBy: string}>()
+	let event = JSON.parse(params.event) as EventType
+	let poweredBy = JSON.parse(params.poweredBy) as PoweredBy
 
 	return (
-		<ScrollView>
-			<TableView>
+		<>
+			<Stack.Screen
+				options={{
+					title: event.title,
+					headerRight: () => (
+						<ShareButton onPress={() => shareEvent(event)} />
+					),
+				}}
+			/>
+			<ScrollView>
+				<TableView>
 				<MaybeSection content={event.title.trim()} header="EVENT" />
 				<MaybeSection content={getTimes(event).trim()} header="TIME" />
 				<MaybeSection content={event.location.trim()} header="LOCATION" />
@@ -60,6 +57,7 @@ export function EventDetail(): JSX.Element {
 					<ListFooter href={poweredBy.href} title={poweredBy.title} />
 				) : null}
 			</TableView>
-		</ScrollView>
+			</ScrollView>
+		</>
 	)
 }

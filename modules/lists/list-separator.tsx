@@ -15,7 +15,7 @@ type Props = {
 	force?: boolean
 }
 
-export function ListSeparator(props: Props): JSX.Element | null {
+export function ListSeparator(props: Props): React.JSX.Element | null {
 	if (Platform.OS === 'android' && !props.force) {
 		return null
 	}
@@ -40,6 +40,6 @@ export function ListSeparator(props: Props): JSX.Element | null {
 
 export function FullWidthSeparator<T extends Record<string, unknown>>(
 	props: T,
-): JSX.Element {
+): React.JSX.Element {
 	return <ListSeparator fullWidth={true} {...props} />
 }

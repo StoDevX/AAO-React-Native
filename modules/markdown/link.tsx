@@ -13,7 +13,7 @@ const styles = StyleSheet.create({
 	},
 })
 
-export const LinkText = (props: TextProps): JSX.Element => (
+export const LinkText = (props: TextProps): React.JSX.Element => (
 	<Text {...props} style={[styles.linkText, props.style]} />
 )
 
@@ -42,7 +42,7 @@ const LINK_OPTIONS: Array<{name: string; action: Callback}> = [
 	},
 ]
 
-export function Link(props: Props): JSX.Element {
+export function Link(props: Props): React.JSX.Element {
 	let {showActionSheetWithOptions} = useActionSheet()
 
 	const onPress = React.useCallback(() => {

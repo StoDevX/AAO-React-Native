@@ -8,8 +8,8 @@
   "scripts": {
     "test": "jest"
   },
-  "peerDependencies": {
-    "react": "^18.0.0",
-    "moment-timezone": "^0.5.45"
+  "dependencies": {
+    "react": "catalog:",
+    "moment-timezone": "catalog:"
   }
 }

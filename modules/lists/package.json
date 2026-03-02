@@ -8,17 +8,15 @@
   "scripts": {
     "test": "jest"
   },
-  "peerDependencies": {
-    "react": "^18.0.0",
-    "react-native": "^0.72.9",
-    "react-native-vector-icons": "^9.2.0"
-  },
   "dependencies": {
-    "@callstack/react-theme-provider": "3.0.9",
-    "@frogpond/app-theme": "^1.0.0",
-    "@frogpond/colors": "^1.0.0",
-    "@frogpond/separator": "^1.0.0",
-    "@frogpond/touchable": "^1.0.0",
-    "lodash": "4.17.21"
+    "@react-native-vector-icons/ionicons": "catalog:",
+    "react": "catalog:",
+    "react-native": "catalog:",
+    "@callstack/react-theme-provider": "catalog:",
+    "@frogpond/app-theme": "workspace:",
+    "@frogpond/colors": "workspace:",
+    "@frogpond/separator": "workspace:",
+    "@frogpond/touchable": "workspace:",
+    "lodash": "catalog:"
   }
 }

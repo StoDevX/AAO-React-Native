@@ -5,7 +5,7 @@ on:
     branches:
       - renovate/**
     paths:
-      - package-lock.json
+      - pnpm-lock.yaml
 
 permissions:
   contents: write
@@ -23,10 +23,12 @@ jobs:
         with:
           token: ${{ secrets.COCOAPODS_LOCKFILE_GH_PUSH_TOKEN }}
 
+      - uses: pnpm/action-setup@v4
+
       - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
         with:
           node-version-file: '.node-version'
-          cache: npm
+          cache: pnpm
 
       - uses: ruby/setup-ruby@v1
         with:
@@ -35,7 +37,7 @@ jobs:
 
       - run: sudo xcode-select -s /Applications/Xcode_15.2.app
 
-      - run: npm ci
+      - run: pnpm install --frozen-lockfile
 
       - run: bundle exec -- pod install --verbose
         working-directory: ./ios

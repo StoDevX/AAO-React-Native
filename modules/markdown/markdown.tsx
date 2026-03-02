@@ -12,9 +12,7 @@ import {
 } from 'react-native'
 import ReactMarkdown from 'react-markdown'
 
-import propTypes from 'prop-types'
-// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access
-;(ReactMarkdown as any).propTypes.containerTagName = propTypes.func
+delete (ReactMarkdown as any).propTypes
 
 import * as c from '@frogpond/colors'
 import {Paragraph, Strong, Emph, BlockQuote} from './formatting'
@@ -57,7 +55,7 @@ export type MarkdownProps = {
 }
 
 export class Markdown extends React.PureComponent<MarkdownProps> {
-	render(): JSX.Element {
+	render(): React.JSX.Element {
 		const {
 			styles = {
 				Heading: {color: c.label},

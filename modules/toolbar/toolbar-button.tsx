@@ -1,7 +1,9 @@
 import * as React from 'react'
 import {StyleSheet, View, Text} from 'react-native'
-import {Icon} from '@frogpond/icon'
-import type {Glyphs} from '@frogpond/icon'
+import {
+	type IoniconsIconName,
+	Ionicons,
+} from '@react-native-vector-icons/ionicons'
 import * as c from '@frogpond/colors'
 
 const styles = StyleSheet.create({
@@ -26,7 +28,7 @@ const styles = StyleSheet.create({
 })
 
 type Props = {
-	iconName?: Glyphs
+	iconName?: IoniconsIconName
 	title: string
 	isActive: boolean
 }
@@ -37,7 +39,9 @@ export function ToolbarButton({title, iconName}: Props): React.ReactElement {
 			<Text style={[styles.text, iconName ? styles.textWithIcon : null]}>
 				{title}
 			</Text>
-			{iconName ? <Icon name={iconName} size={18} style={styles.text} /> : null}
+			{iconName ? (
+				<Ionicons name={iconName} size={18} style={styles.text} />
+			) : null}
 		</View>
 	)
 }

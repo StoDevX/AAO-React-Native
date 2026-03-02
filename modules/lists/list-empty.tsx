@@ -7,6 +7,6 @@ type Props = {
 
 export const emptyList: ReadonlyArray<never> = []
 
-export function ListEmpty(_props: Props): JSX.Element {
+export function ListEmpty(_props: Props): React.JSX.Element {
 	return <NoticeView text="List is empty" />
 }

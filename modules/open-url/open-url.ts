@@ -1,18 +1,18 @@
 import {Linking} from 'react-native'
 import {InAppBrowser} from 'react-native-inappbrowser-reborn'
-import * as storage from '../../source/lib/storage'
+import * as storage from '../../src/lib/storage'
 
-function genericOpen(url: string): Promise<boolean> {
-	return Linking.canOpenURL(url)
-		.then((isSupported) => {
-			if (!isSupported) {
-				console.warn('cannot handle', url)
-			}
-			return Linking.openURL(url)
-		})
-		.catch((err) => {
-			console.error(err)
-		})
+async function genericOpen(url: string): Promise<boolean> {
+	try {
+		const isSupported = await Linking.canOpenURL(url)
+		if (!isSupported) {
+			console.warn('cannot handle', url)
+		}
+		return await Linking.openURL(url)
+	} catch (err) {
+		console.error(err)
+		return false
+	}
 }
 
 async function launchBrowser(url: string): Promise<boolean> {

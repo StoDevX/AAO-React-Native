@@ -16,14 +16,14 @@ const styles = StyleSheet.create({
 })
 
 // the list itself
-export const List = (props: ViewProps): JSX.Element => (
+export const List = (props: ViewProps): React.JSX.Element => (
 	<View {...props} style={[styles.list, props.style]} />
 )
 
 // the list item's text
 export const ListText = (
 	props: Parameters<typeof Paragraph>[0],
-): JSX.Element => (
+): React.JSX.Element => (
 	<Paragraph {...props} style={[styles.listText, props.style]} />
 )
 
@@ -33,7 +33,7 @@ export const ListItem = ({
 	...props
 }: Parameters<typeof ListText>[0] & {
 	style: StyleProp<ViewStyle>
-}): JSX.Element => (
+}): React.JSX.Element => (
 	<View style={[styles.listItem, style]}>
 		<BaseText>• </BaseText>
 		<ListText {...props} />

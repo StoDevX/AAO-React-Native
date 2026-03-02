@@ -41,14 +41,14 @@ const styles = StyleSheet.create({
 
 export const Header = (
 	props: Parameters<typeof SelectableText>[0],
-): JSX.Element => (
+): React.JSX.Element => (
 	<SelectableText {...props} style={[styles.header, props.style]} />
 )
 
 export const Heading = ({
 	level,
 	...props
-}: Parameters<typeof Header>[0] & {level: number}): JSX.Element => {
+}: Parameters<typeof Header>[0] & {level: number}): React.JSX.Element => {
 	switch (level) {
 		case 1:
 			return <Header {...props} style={[styles.h1, props.style]} />

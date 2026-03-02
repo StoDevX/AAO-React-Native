@@ -18,7 +18,7 @@ import {FilterMenuToolbar as FilterToolbar} from './filter-menu-toolbar'
 import {FoodItemRow} from './food-item-row'
 import {chooseMeal} from './lib/choose-meal'
 import {buildFilters} from './lib/build-filters'
-import {useNavigation} from '@react-navigation/native'
+import {useRouter} from 'expo-router'
 import type {Moment} from 'moment'
 
 type FilterFunc = (
@@ -103,11 +103,11 @@ const groupMenuData = (args: {
 		.map(([title, data]) => ({title, data}))
 }
 
-export function FancyMenu(props: Props): JSX.Element {
+export function FancyMenu(props: Props): React.JSX.Element {
 	const {now, meals, cafeMessage, foodItems, menuCorIcons} = props
 	const applyFilters = props.applyFilters ?? applyFiltersToItem
 
-	let navigation = useNavigation()
+	let router = useRouter()
 
 	const [filters, setFilters] = useState<FilterType<MenuItemType>[]>([])
 
@@ -181,7 +181,13 @@ export function FancyMenu(props: Props): JSX.Element {
 						corIcons={menuCorIcons}
 						data={item}
 						onPress={() =>
-							navigation.navigate('MenuItemDetail', {item, icons: menuCorIcons})
+							router.push({
+								pathname: '/menus/item-detail',
+								params: {
+									item: JSON.stringify(item),
+									icons: JSON.stringify(menuCorIcons),
+								},
+							})
 						}
 						spacing={{left: LEFT_MARGIN}}
 					/>

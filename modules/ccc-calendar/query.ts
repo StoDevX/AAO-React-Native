@@ -43,7 +43,7 @@ function convertEvents(
 export function useNamedCalendar(
 	calendar: NamedCalendar,
 	options: {eventMapper?: EventMapper} = {},
-): UseQueryResult<EventType[], unknown> {
+): UseQueryResult<EventType[]> {
 	return useQuery({
 		queryKey: keys.named(calendar),
 		queryFn: async ({queryKey, signal}) => {
@@ -59,7 +59,7 @@ export function useNamedCalendar(
 export function useGoogleCalendar(
 	calendar: GoogleCalendar,
 	options: {eventMapper?: EventMapper} = {},
-): UseQueryResult<EventType[], unknown> {
+): UseQueryResult<EventType[]> {
 	return useQuery({
 		queryKey: keys.google(calendar.id),
 		queryFn: async ({queryKey, signal}) => {

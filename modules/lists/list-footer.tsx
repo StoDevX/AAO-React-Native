@@ -17,7 +17,7 @@ type Props = {
 	href?: string
 }
 
-export function ListFooter(props: Props): JSX.Element {
+export function ListFooter(props: Props): React.JSX.Element {
 	const {title} = props
 	return (
 		<Text selectable={true} style={[styles.footer]}>

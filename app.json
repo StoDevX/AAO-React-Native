@@ -1,0 +1,62 @@
+{
+  "expo": {
+    "name": "All About Olaf",
+    "slug": "all-about-olaf",
+    "scheme": "all-about-olaf",
+    "version": "2.8.0",
+    "orientation": "portrait",
+    "icon": "./images/icons/windmill@3x.png",
+    "userInterfaceStyle": "automatic",
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.drewvolz.stolaf",
+      "infoPlist": {
+        "UIBackgroundModes": [
+          "audio"
+        ]
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./images/icons/windmill@3x.png",
+        "backgroundColor": "#ffffff"
+      },
+      "package": "com.allaboutolaf"
+    },
+    "web": {
+      "favicon": "./images/favicon.png"
+    },
+    "plugins": [
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "deploymentTarget": "17.2"
+          },
+          "android": {
+            "minSdkVersion": 21,
+            "compileSdkVersion": 34,
+            "targetSdkVersion": 34
+          }
+        }
+      ],
+      "expo-calendar",
+      "expo-secure-store",
+      "@sentry/react-native",
+      [
+        "@sentry/react-native/expo",
+        {
+          "url": "https://sentry.io/",
+          "project": "all-about-olaf",
+          "organization": "frog-pond-labs"
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}

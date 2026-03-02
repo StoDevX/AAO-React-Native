@@ -8,12 +8,11 @@
   "scripts": {
     "test": "jest"
   },
-  "peerDependencies": {
-    "react": "^18.0.0",
-    "react-native": "^0.72.9"
-  },
   "dependencies": {
-    "@frogpond/colors": "^1.0.0",
-    "react-native-tableview-simple": "4.4.1"
+    "@react-native-vector-icons/ionicons": "catalog:",
+    "react": "catalog:",
+    "react-native": "catalog:",
+    "@frogpond/colors": "workspace:",
+    "react-native-tableview-simple": "catalog:"
   }
 }

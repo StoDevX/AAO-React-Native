@@ -20,7 +20,7 @@ const FORMATS = {
 
 export const BaseDateTimePicker = (
 	props: BaseDatetimePickerProps,
-): JSX.Element => {
+): React.JSX.Element => {
 	let [date, setDate] = React.useState(props.initialDate)
 	let [timezone] = React.useState(props.initialDate.tz() || '')
 

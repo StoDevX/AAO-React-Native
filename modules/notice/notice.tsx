@@ -42,7 +42,7 @@ type Props = {
 	textStyle?: StyleProp<TextStyle>
 }
 
-export function NoticeView(props: Props): JSX.Element {
+export function NoticeView(props: Props): React.JSX.Element {
 	let {header, text, style, textStyle} = props
 	let {buttonDisabled, buttonText, onPress} = props
 	let {spinner} = props

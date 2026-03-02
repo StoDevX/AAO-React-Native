@@ -8,8 +8,7 @@
   "scripts": {
     "test": "jest"
   },
-  "peerDependencies": {
-    "react-native": "^0.72.9"
-  },
-  "dependencies": {}
+  "dependencies": {
+    "react-native": "catalog:"
+  }
 }

@@ -29,5 +29,5 @@ export interface EventListProps {
 
 export type NavigationHeaderProps = {
 	title: string
-	headerRight: JSX.Element
+	headerRight: React.JSX.Element
 }

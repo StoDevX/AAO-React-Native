@@ -1,0 +1,105 @@
+import * as React from 'react'
+import {Cell, Section} from '@frogpond/tableview'
+import {CellTextField} from '@frogpond/tableview/cells'
+import {LoginButton} from './login-button'
+import {
+	performLogin,
+	credentialsQuery,
+	invalidateCredentials,
+	storeCredentials,
+	resetCredentials,
+} from '../../../../lib/login'
+import {TextInput} from 'react-native'
+import {useMutation, useQuery} from '@tanstack/react-query'
+import {sto} from '../../../../lib/colors'
+
+export const CredentialsLoginSection = (): React.JSX.Element => {
+	let [editedUsername, setEditedUsername] = React.useState<string | undefined>()
+	let usernameInputRef = React.useRef<TextInput>(null)
+
+	let [editedPassword, setEditedPassword] = React.useState<string | undefined>()
+	let passwordInputRef = React.useRef<TextInput>(null)
+
+	let credentials = useQuery(credentialsQuery)
+
+	let username = editedUsername ?? credentials.data?.username ?? ''
+	let password = editedPassword ?? credentials.data?.password ?? ''
+
+	let logIn = useMutation({
+		mutationFn: () => performLogin({username, password}),
+		onSuccess: async (credentialsToStore) => {
+			await storeCredentials(credentialsToStore)
+			await invalidateCredentials()
+		},
+	})
+
+	let logOut = useMutation({
+		mutationFn: resetCredentials,
+		onSuccess: async () => {
+			await invalidateCredentials()
+			setEditedUsername('')
+			setEditedPassword('')
+		},
+	})
+
+	let isLoggedIn = Boolean(credentials.data)
+	let hasBothCredentials = Boolean(username && password)
+
+	let sectionFooter = isLoggedIn
+		? 'St. Olaf login enables the "meals remaining" feature.'
+		: 'St. Olaf login enables the "meals remaining" feature. Sign in to see this data.'
+
+	let actionPending = logIn.isPending || logOut.isPending
+
+	return (
+		<Section footer={sectionFooter} header="ST. OLAF LOGIN">
+			<>
+				{isLoggedIn ? (
+					<Cell title={`Logged in as ${username}.`} />
+				) : (
+					<>
+						<CellTextField
+							ref={usernameInputRef}
+							editable={!logIn.isPending}
+							label="Username"
+							onChangeText={(text) => setEditedUsername(text)}
+							onSubmitEditing={() => passwordInputRef.current?.focus()}
+							placeholder="username"
+							returnKeyType="next"
+							secureTextEntry={false}
+							value={username}
+						/>
+
+						<CellTextField
+							ref={passwordInputRef}
+							editable={!logIn.isPending}
+							label="Password"
+							onChangeText={(text) => setEditedPassword(text)}
+							onSubmitEditing={() => logIn.mutate()}
+							placeholder="password"
+							returnKeyType="done"
+							secureTextEntry={true}
+							value={password}
+						/>
+					</>
+				)}
+
+				<LoginButton
+					disabled={!hasBothCredentials || actionPending}
+					label="St. Olaf"
+					loading={actionPending}
+					loggedIn={isLoggedIn}
+					onPress={isLoggedIn ? logOut.mutate : logIn.mutate}
+				/>
+
+				{!actionPending && logIn.isError && logIn.error instanceof Error && (
+					<Cell
+						cellStyle="Basic"
+						title={logIn.error.message}
+						titleTextColor={sto.red}
+					/>
+				)}
+			</>
+		</Section>
+	)
+}
