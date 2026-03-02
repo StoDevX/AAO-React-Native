@@ -28,35 +28,36 @@ export function EventDetail(): React.JSX.Element {
 			<Stack.Screen
 				options={{
 					title: event.title,
-					headerRight: () => (
-						<ShareButton onPress={() => shareEvent(event)} />
-					),
+					headerRight: () => <ShareButton onPress={() => shareEvent(event)} />,
 				}}
 			/>
 			<ScrollView>
 				<TableView>
-				<MaybeSection content={event.title.trim()} header="EVENT" />
-				<MaybeSection content={getTimes(event).trim()} header="TIME" />
-				<MaybeSection content={event.location.trim()} header="LOCATION" />
-				<MaybeSection content={event.description.trim()} header="DESCRIPTION" />
+					<MaybeSection content={event.title.trim()} header="EVENT" />
+					<MaybeSection content={getTimes(event).trim()} header="TIME" />
+					<MaybeSection content={event.location.trim()} header="LOCATION" />
+					<MaybeSection
+						content={event.description.trim()}
+						header="DESCRIPTION"
+					/>
 
-				<AddToCalendar
-					event={event}
-					render={({message, disabled, onPress}) => (
-						<Section footer={message}>
-							<ButtonCell
-								disabled={disabled}
-								onPress={onPress}
-								title="Add to calendar"
-							/>
-						</Section>
-					)}
-				/>
+					<AddToCalendar
+						event={event}
+						render={({message, disabled, onPress}) => (
+							<Section footer={message}>
+								<ButtonCell
+									disabled={disabled}
+									onPress={onPress}
+									title="Add to calendar"
+								/>
+							</Section>
+						)}
+					/>
 
-				{poweredBy.title ? (
-					<ListFooter href={poweredBy.href} title={poweredBy.title} />
-				) : null}
-			</TableView>
+					{poweredBy.title ? (
+						<ListFooter href={poweredBy.href} title={poweredBy.title} />
+					) : null}
+				</TableView>
 			</ScrollView>
 		</>
 	)

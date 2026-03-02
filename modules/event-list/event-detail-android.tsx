@@ -67,29 +67,29 @@ export function EventDetail(): React.JSX.Element {
 		<>
 			<Stack.Screen options={{title: event.title}} />
 			<ScrollView>
-			<Title event={event} />
-			<MaybeCard content={getTimes(event)} header="When" />
-			<MaybeCard content={event.location} header="Location" />
-			<MaybeCard content={event.description} header="Description" />
+				<Title event={event} />
+				<MaybeCard content={getTimes(event)} header="When" />
+				<MaybeCard content={event.location} header="Location" />
+				<MaybeCard content={event.description} header="Description" />
 
-			<Links urls={event.links} />
+				<Links urls={event.links} />
 
-			<AddToCalendar
-				event={event}
-				render={({message, disabled, onPress}) => (
-					<Card footer={message} style={styles.card}>
-						<ButtonCell
-							disabled={disabled}
-							onPress={onPress}
-							title="Add to calendar"
-						/>
-					</Card>
-				)}
-			/>
+				<AddToCalendar
+					event={event}
+					render={({message, disabled, onPress}) => (
+						<Card footer={message} style={styles.card}>
+							<ButtonCell
+								disabled={disabled}
+								onPress={onPress}
+								title="Add to calendar"
+							/>
+						</Card>
+					)}
+				/>
 
-			{poweredBy.title ? (
-				<ListFooter href={poweredBy.href} title={poweredBy.title} />
-			) : null}
+				{poweredBy.title ? (
+					<ListFooter href={poweredBy.href} title={poweredBy.title} />
+				) : null}
 			</ScrollView>
 		</>
 	)

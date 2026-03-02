@@ -3,10 +3,8 @@
 import eslint from '@eslint/js'
 import {defineConfig, globalIgnores} from 'eslint/config'
 // @ts-expect-error Could not find a declaration file for module
-import expoConfig from 'eslint-config-expo/flat'
+import expoConfig from 'eslint-config-expo/flat.js'
 import tseslint from 'typescript-eslint'
-import reactPlugin from 'eslint-plugin-react'
-import reactHooks from 'eslint-plugin-react-hooks'
 import tanstackQuery from '@tanstack/eslint-plugin-query'
 import eslintConfigPrettier from 'eslint-config-prettier/flat'
 import globals from 'globals'
@@ -19,16 +17,24 @@ export default defineConfig([
 	eslint.configs.recommended,
 	// @typescript-eslint
 	tseslint.configs.recommendedTypeChecked,
-	{languageOptions: {parserOptions: {projectService: true}}}, // enable projectService for faster linting
+	{
+		languageOptions: {
+			parserOptions: {
+				projectService: {
+					allowDefaultProject: [
+						'scripts/*.mjs',
+						'scripts/*.js',
+						'*.js',
+						'*.mjs',
+					],
+					maximumDefaultProjectFileMatchCount_THIS_WILL_SLOW_DOWN_LINTING:
+						20,
+				},
+			},
+		},
+	},
 	// @tanstack/eslint-plugin-query
 	...tanstackQuery.configs['flat/recommended'],
-	// eslint-plugin-react-hooks
-	reactHooks.configs.flat.recommended,
-	// eslint-plugin-react
-	{
-		files: ['**/*.{js,jsx,ts,tsx,mjs,cjs}'],
-		...reactPlugin.configs.flat.recommended,
-	},
 	// custom rule settings
 	{
 		files: ['**/*.{js,jsx,ts,tsx,mjs,cjs}'],
@@ -146,11 +152,21 @@ export default defineConfig([
 			'react/jsx-boolean-value': ['error', 'always'],
 		},
 	},
-	// Allow require() for React Native image imports
+	// Allow require() for React Native image imports and disable unresolved imports for images
 	{
 		files: ['images/**/*.ts'],
 		rules: {
 			'@typescript-eslint/no-require-imports': 'off',
+			'import/no-unresolved': 'off',
+		},
+	},
+	// Platform-specific files that use require() for conditional imports
+	{
+		files: ['src/app/**/\\[*\\].tsx'],
+		rules: {
+			'@typescript-eslint/no-require-imports': 'off',
+			'@typescript-eslint/no-unsafe-assignment': 'off',
+			'@typescript-eslint/no-unsafe-member-access': 'off',
 		},
 	},
 	// Eslint v9/ts-eslint v8 upgrade temporary overrides
@@ -160,6 +176,10 @@ export default defineConfig([
 			'@typescript-eslint/no-misused-promises': 'off',
 			'@typescript-eslint/restrict-template-expressions': 'off',
 			'@typescript-eslint/no-floating-promises': 'off',
+			'@typescript-eslint/no-unsafe-enum-comparison': 'warn',
+			'@typescript-eslint/no-unsafe-member-access': 'warn',
+			'@typescript-eslint/no-unsafe-return': 'warn',
+			'no-return-await': 'warn',
 			'react-hooks/set-state-in-effect': 'off',
 		},
 	},

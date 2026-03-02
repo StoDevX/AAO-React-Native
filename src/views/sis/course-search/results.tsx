@@ -107,7 +107,10 @@ export const CourseSearchResultsView = (): React.JSX.Element => {
 	let navigation = useNavigation()
 	let router = useRouter()
 
-	let params = useLocalSearchParams<{initialFilters?: string; initialQuery?: string}>()
+	let params = useLocalSearchParams<{
+		initialFilters?: string
+		initialQuery?: string
+	}>()
 	let initialFilters = params.initialFilters
 		? (JSON.parse(params.initialFilters) as FilterType<CourseType>[])
 		: []

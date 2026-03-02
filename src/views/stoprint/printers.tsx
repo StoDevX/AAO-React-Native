@@ -165,4 +165,3 @@ export const PrinterListView = (): React.JSX.Element => {
 		/>
 	)
 }
-

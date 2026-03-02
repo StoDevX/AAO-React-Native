@@ -76,7 +76,9 @@ export const PrintJobReleaseView = (): React.JSX.Element => {
 
 	let params = useLocalSearchParams<{job: string; printer?: string}>()
 	let job = JSON.parse(params.job) as PrintJob
-	let printer = params.printer ? (JSON.parse(params.printer) as Printer) : undefined
+	let printer = params.printer
+		? (JSON.parse(params.printer) as Printer)
+		: undefined
 
 	let {data: username = '', isLoading: loadingUsername} =
 		useQuery(usernameQuery)
@@ -215,4 +217,3 @@ export const PrintJobReleaseView = (): React.JSX.Element => {
 		</ScrollView>
 	)
 }
-

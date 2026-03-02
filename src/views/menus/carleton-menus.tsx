@@ -51,10 +51,7 @@ export function CarletonCafeIndex(): React.JSX.Element {
 		<ScrollView style={styles.container}>
 			{carletonCafes.map((loc, i, collection) => (
 				<View key={i}>
-					<ListRow
-						arrowPosition="center"
-						onPress={() => router.push(loc.path)}
-					>
+					<ListRow arrowPosition="center" onPress={() => router.push(loc.path)}>
 						<Row alignItems="center">
 							<Title style={styles.rowText}>{loc.title}</Title>
 						</Row>

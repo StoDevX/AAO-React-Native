@@ -63,7 +63,11 @@ export const CellTextField = React.forwardRef<TextInput, Props>(
 
 		let labelEl = label ? (
 			<Text
-				onPress={() => ref?.current?.focus()}
+				onPress={() => {
+					if (ref && typeof ref !== 'function' && ref.current) {
+						ref.current.focus()
+					}
+				}}
 				style={[styles.label, labelWidthStyle]}
 			>
 				{label}

@@ -17,9 +17,9 @@ const config: Config = {
 	],
 	setupFiles: ['./scripts/jest-setup.js'],
 	transformIgnorePatterns: [
-		'node_modules/(?!(jest-)?react-native|@react-native|@frogpond|glamorous-native|react-navigation)',
+		'node_modules/(?!(.pnpm/.+/node_modules/)?((jest-)?react-native|@react-native|@react-native-clipboard|@reduxjs|@frogpond|@expo|@sentry|@tanstack|expo|glamorous-native|react-navigation|react-native-button|react-native-inappbrowser-reborn|immer|invariant)(/|$))',
 	],
-	reporters: [['github-actions', {silent: false}], 'summary'],
+	reporters: ['default', 'summary'],
 }
 
 export default config
