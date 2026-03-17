@@ -225,7 +225,7 @@ function toArray<T>(value: T | T[] | undefined): T[] {
 	return [value]
 }
 
-function isRecord(value: unknown): value is Record<string, any> {
+function isRecord(value: unknown): value is Record<string, unknown> {
 	return typeof value === 'object' && value !== null
 }
 
