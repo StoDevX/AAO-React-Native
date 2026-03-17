@@ -139,7 +139,9 @@ jobs:
         uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         id: node-cache
         with:
-          path: node_modules/
+          path: |
+            node_modules/
+            modules/*/node_modules/
           key: ${{ needs.cache-npm-macos.outputs.cache-key }}
 
       - if: steps.cocoapods-cache.outputs.cache-hit != 'true' && steps.node-cache.outputs.cache-hit != 'true'
@@ -171,7 +173,9 @@ jobs:
         uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         id: node-cache
         with:
-          path: node_modules/
+          path: |
+            node_modules/
+            modules/*/node_modules/
           key: ${{ needs.cache-npm-linux.outputs.cache-key }}
 
       - if: steps.node-cache.outputs.cache-hit != 'true'
@@ -277,7 +281,9 @@ jobs:
         uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         id: node-cache
         with:
-          path: node_modules/
+          path: |
+            node_modules/
+            modules/*/node_modules/
           key: ${{ needs.cache-npm-linux.outputs.cache-key }}
 
       - if: steps.node-cache.outputs.cache-hit != 'true'
@@ -412,7 +418,9 @@ jobs:
         uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         id: node-cache
         with:
-          path: node_modules/
+          path: |
+            node_modules/
+            modules/*/node_modules/
           key: ${{ needs.cache-npm-linux.outputs.cache-key }}
 
       - if: steps.node-cache.outputs.cache-hit != 'true'
@@ -489,7 +497,9 @@ jobs:
         uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         id: node-cache
         with:
-          path: node_modules/
+          path: |
+            node_modules/
+            modules/*/node_modules/
           key: ${{ needs.cache-npm-macos.outputs.cache-key }}
 
       - name: exit if the node_modules cache did not load
@@ -653,7 +663,9 @@ jobs:
         uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         id: node-cache
         with:
-          path: node_modules/
+          path: |
+            node_modules/
+            modules/*/node_modules/
           key: ${{ needs.cache-npm-macos.outputs.cache-key }}
 
       - # We have to poke Detox because it installs things outside of node_modules/detox/…
