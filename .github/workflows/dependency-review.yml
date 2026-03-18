@@ -17,4 +17,4 @@ jobs:
       - name: 'Dependency Review'
         uses: actions/dependency-review-action@45529485b5eb76184ced07362d2331fd9d26f03f # v4
         with:
-          allow-ghsas: GHSA-3xgq-45jj-v275
+          allow-ghsas: GHSA-3xgq-45jj-v275, GHSA-2p57-rm9w-gvfp

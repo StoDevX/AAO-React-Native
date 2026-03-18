@@ -166,7 +166,8 @@
     "eslint-plugin-prettier": "5.5.4",
     "eslint-plugin-ft-flow": "3.0.11",
     "eslint-plugin-react-native": "5.0.0",
-    "image-size": "1.2.1"
+    "image-size": "1.2.1",
+    "flatted": "3.4.2"
   },
   "engines": {
     "node": ">=18"
