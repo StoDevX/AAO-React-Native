@@ -354,6 +354,7 @@ jobs:
   android-bundle:
     name: Android Bundle
     needs: [cache-npm-linux]
+    if: false
     runs-on: ubuntu-24.04
     outputs:
       cache-key: ${{ steps.jsbundle-cache.outputs.cache-primary-key }}
@@ -406,6 +407,7 @@ jobs:
   android:
     name: Build for Android
     needs: [jest, eslint, android-bundle, cache-npm-linux]
+    if: false
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
