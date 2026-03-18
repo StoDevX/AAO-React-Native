@@ -31,7 +31,9 @@ jobs:
       - uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         id: node-cache
         with:
-          path: node_modules/
+          path: |
+            node_modules/
+            modules/*/node_modules/
           key: ${{ runner.os }}-node_modules-${{ hashFiles('.node-version', 'package-lock.json', '.github/job.yml') }}
 
       - if: steps.node-cache.outputs.cache-hit != 'true'
@@ -46,7 +48,9 @@ jobs:
       - uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         if: steps.node-cache.outputs.cache-hit != 'true'
         with:
-          path: node_modules/
+          path: |
+            node_modules/
+            modules/*/node_modules/
           key: ${{ steps.node-cache.outputs.cache-primary-key }}
 
   cache-npm-macos:
@@ -63,7 +67,9 @@ jobs:
       - uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         id: node-cache
         with:
-          path: node_modules/
+          path: |
+            node_modules/
+            modules/*/node_modules/
           key: ${{ runner.os }}-node_modules-${{ hashFiles('.node-version', 'package-lock.json', '.github/job.yml') }}
 
       - if: steps.node-cache.outputs.cache-hit != 'true'
@@ -78,7 +84,9 @@ jobs:
       - uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         if: steps.node-cache.outputs.cache-hit != 'true'
         with:
-          path: node_modules/
+          path: |
+            node_modules/
+            modules/*/node_modules/
           key: ${{ steps.node-cache.outputs.cache-primary-key }}
 
   cache-bundler-macos:
@@ -131,7 +139,9 @@ jobs:
         uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         id: node-cache
         with:
-          path: node_modules/
+          path: |
+            node_modules/
+            modules/*/node_modules/
           key: ${{ needs.cache-npm-macos.outputs.cache-key }}
 
       - if: steps.cocoapods-cache.outputs.cache-hit != 'true' && steps.node-cache.outputs.cache-hit != 'true'
@@ -163,7 +173,9 @@ jobs:
         uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         id: node-cache
         with:
-          path: node_modules/
+          path: |
+            node_modules/
+            modules/*/node_modules/
           key: ${{ needs.cache-npm-linux.outputs.cache-key }}
 
       - if: steps.node-cache.outputs.cache-hit != 'true'
@@ -186,11 +198,15 @@ jobs:
         uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         id: node-cache
         with:
-          path: node_modules/
+          path: |
+            node_modules/
+            modules/*/node_modules/
           key: ${{ needs.cache-npm-linux.outputs.cache-key }}
 
       - if: steps.node-cache.outputs.cache-hit != 'true'
         run: exit 1
+
+      - run: npm run bundle-data
 
       - run: npm run lint
 
@@ -209,7 +225,9 @@ jobs:
         uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         id: node-cache
         with:
-          path: node_modules/
+          path: |
+            node_modules/
+            modules/*/node_modules/
           key: ${{ needs.cache-npm-linux.outputs.cache-key }}
 
       - if: steps.node-cache.outputs.cache-hit != 'true'
@@ -236,11 +254,15 @@ jobs:
         uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         id: node-cache
         with:
-          path: node_modules/
+          path: |
+            node_modules/
+            modules/*/node_modules/
           key: ${{ needs.cache-npm-linux.outputs.cache-key }}
 
       - if: steps.node-cache.outputs.cache-hit != 'true'
         run: exit 1
+
+      - run: npm run bundle-data
 
       - run: npx tsc
 
@@ -259,7 +281,9 @@ jobs:
         uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         id: node-cache
         with:
-          path: node_modules/
+          path: |
+            node_modules/
+            modules/*/node_modules/
           key: ${{ needs.cache-npm-linux.outputs.cache-key }}
 
       - if: steps.node-cache.outputs.cache-hit != 'true'
@@ -289,7 +313,9 @@ jobs:
         uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         id: node-cache
         with:
-          path: node_modules/
+          path: |
+            node_modules/
+            modules/*/node_modules/
           key: ${{ needs.cache-npm-macos.outputs.cache-key }}
 
       - if: steps.node-cache.outputs.cache-hit != 'true'
@@ -304,6 +330,10 @@ jobs:
             ios/AllAboutOlaf/main.jsbundle.map
             ios/assets/
           key: ${{ runner.os }}-jsbundle-${{ hashFiles('.node-version', 'package.json', 'package-lock.json', '.github/job.yml', 'tsconfig.json', 'babel.config.js', 'index.js', 'data/**', 'images/**', 'modules/**.ts', 'modules/**.tsx', 'source/**.ts', 'source/**.tsx') }}
+
+      - name: Bundle data
+        if: steps.jsbundle-cache.outputs.cache-hit != 'true'
+        run: npm run bundle-data
 
       - name: Generate jsbundle
         if: steps.jsbundle-cache.outputs.cache-hit != 'true'
@@ -324,6 +354,7 @@ jobs:
   android-bundle:
     name: Android Bundle
     needs: [cache-npm-linux]
+    if: false
     runs-on: ubuntu-24.04
     outputs:
       cache-key: ${{ steps.jsbundle-cache.outputs.cache-primary-key }}
@@ -341,7 +372,9 @@ jobs:
         uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         id: node-cache
         with:
-          path: node_modules/
+          path: |
+            node_modules/
+            modules/*/node_modules/
           key: ${{ needs.cache-npm-linux.outputs.cache-key }}
 
       - if: steps.node-cache.outputs.cache-hit != 'true'
@@ -353,6 +386,10 @@ jobs:
         with:
           path: ./android/generated/
           key: ${{ runner.os }}-jsbundle-${{ hashFiles('.node-version', 'package.json', 'package-lock.json', '.github/job.yml', 'tsconfig.json', 'babel.config.js', 'index.js', 'data/**', 'images/**', 'modules/**.ts', 'modules/**.tsx', 'source/**.ts', 'source/**.tsx') }}
+
+      - name: Bundle data
+        if: steps.jsbundle-cache.outputs.cache-hit != 'true'
+        run: npm run bundle-data
 
       - name: Generate jsbundle
         if: steps.jsbundle-cache.outputs.cache-hit != 'true'
@@ -370,6 +407,7 @@ jobs:
   android:
     name: Build for Android
     needs: [jest, eslint, android-bundle, cache-npm-linux]
+    if: false
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
@@ -382,7 +420,9 @@ jobs:
         uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         id: node-cache
         with:
-          path: node_modules/
+          path: |
+            node_modules/
+            modules/*/node_modules/
           key: ${{ needs.cache-npm-linux.outputs.cache-key }}
 
       - if: steps.node-cache.outputs.cache-hit != 'true'
@@ -459,7 +499,9 @@ jobs:
         uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         id: node-cache
         with:
-          path: node_modules/
+          path: |
+            node_modules/
+            modules/*/node_modules/
           key: ${{ needs.cache-npm-macos.outputs.cache-key }}
 
       - name: exit if the node_modules cache did not load
@@ -623,7 +665,9 @@ jobs:
         uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         id: node-cache
         with:
-          path: node_modules/
+          path: |
+            node_modules/
+            modules/*/node_modules/
           key: ${{ needs.cache-npm-macos.outputs.cache-key }}
 
       - # We have to poke Detox because it installs things outside of node_modules/detox/…

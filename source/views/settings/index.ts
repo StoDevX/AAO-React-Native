@@ -30,4 +30,6 @@ export {
 	ColorsLibrary,
 	ColorsLibraryNavigationKey,
 	ContextMenuLibrary,
+	FaqBannerLibrary,
+	FaqBannerNavigationOptions,
 } from './screens/overview/component-library'

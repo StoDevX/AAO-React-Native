@@ -12,7 +12,6 @@ export const papercutApi = ky.create({
 		'Content-Type': 'application/x-www-form-urlencoded',
 		Origin: PAPERCUT,
 	}),
-	cache: 'no-store',
 })
 
 export const mobileReleaseApi = papercutApi.extend({

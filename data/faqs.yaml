@@ -1,0 +1,41 @@
+legacyText: |-
+  # Support
+  Say hello to us at [allaboutolaf@frogpond.tech](mailto:allaboutolaf@frogpond.tech).
+
+  # Known Issues
+  - Login Unavailable: SIS now requires Google sign-in, which the All About Olaf app can't currently support. This means login and balances are unavailable until further notice.
+  - Building Hours: It reports the 2am buildings as open too often; for instance, the Pause is open on Saturday at 2am, continuing from Friday, but the app reports it as being open on Friday at 2am, as well. This is incorrect.
+
+faqs:
+  - id: support
+    question: 'Say hello to us'
+    answer: 'Email us at [allaboutolaf@frogpond.tech](mailto:allaboutolaf@frogpond.tech).'
+    bannerTitle: Say hello to us
+    bannerText: 'Email us at [allaboutolaf@frogpond.tech](mailto:allaboutolaf@frogpond.tech).'
+    targets:
+      - 'Faq'
+    severity: alert
+    icon: email-circle
+    dismissable: false
+    updatedAt: '2025-12-14T00:00:00Z'
+
+  - id: sis-login-disabled
+    question: "Why can't I log in and see my balances?"
+    answer: |-
+      Unavailable until further notice.
+
+      Balances login now appears to require Google sign-in on St. Olaf's end, which the All About Olaf app can't currently access or support.
+
+      We'll update this if this change.
+    bannerTitle: Login and Balances Unavailable
+    bannerText: Balances login now appears to require Google sign-in on St. Olaf's end, which the All About Olaf app can't currently access or support.
+    targets:
+      - SIS
+      - Settings
+      - SettingsRoot
+    severity: alert
+    icon: alert-circle
+    backgroundColor: '#fef3f2'
+    foregroundColor: '#b42318'
+    dismissable: false
+    updatedAt: '2025-12-14T00:00:00Z'

@@ -32,6 +32,8 @@ import {CourseType} from '../lib/course-search/types'
 import {DirectoryItem, DirectorySearchTypeEnum} from '../views/directory/types'
 import {ServerRoute} from '../views/settings/screens/api-test/query'
 
+export type FaqRouteParams = {faqId?: string} | undefined
+
 export type RootViewsParamList = {
 	Home: undefined
 	[calendar.NavigationKey]: calendar.NavigationParams
@@ -47,7 +49,7 @@ export type RootViewsParamList = {
 	Directory:
 		| {queryType?: DirectorySearchTypeEnum; queryParam?: string}
 		| undefined
-	Faq: undefined
+	Faq: FaqRouteParams
 	Help: undefined
 	More: undefined
 	PrintJobs: undefined
@@ -107,7 +109,7 @@ export type SettingsStackParamList = {
 	BonAppPicker: undefined
 	Credits: undefined
 	[debug.NavigationKey]: {keyPath: string[]}
-	Faq: undefined
+	Faq: FaqRouteParams
 	IconSettings: undefined
 	Legal: undefined
 	NetworkLogger: undefined
@@ -123,6 +125,7 @@ export type ComponentLibraryStackParamList = {
 	ButtonLibrary: undefined
 	[settings.ColorsLibraryNavigationKey]: undefined
 	ContextMenuLibrary: undefined
+	FaqBannerLibrary: undefined
 }
 
 export interface ChangeTextEvent {
