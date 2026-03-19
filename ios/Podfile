@@ -80,15 +80,18 @@ target 'AllAboutOlaf' do
 		end
 
 		# Fix Xcode 15.2 / iOS 17 SDK compatibility issues in RCT-Folly:
-		# - memalign requires malloc/malloc.h on newer Apple SDKs (patch the source file
-		#   since -include malloc/malloc.h does not work with -fmodules)
+		# - The #else branch in Memory.h uses memalign, which is removed from iOS SDK headers.
+		#   Replace it with posix_memalign (always available on Apple platforms).
 		# - libevent headers inside extern "C" blocks trigger -Wmodule-import-in-extern-c as errors
 		folly_memory_path = "#{installer.sandbox.root}/RCT-Folly/folly/Memory.h"
 		if File.exist?(folly_memory_path)
 			content = File.read(folly_memory_path)
-			unless content.include?('malloc/malloc.h')
-				content.sub!('#pragma once', "#pragma once\n#if defined(__APPLE__)\n#include <malloc/malloc.h>\n#endif")
+			if content.include?('return memalign(align, size);')
 				File.chmod(0644, folly_memory_path)
+				content.gsub!(
+					"inline void* aligned_malloc(size_t size, size_t align) {\n  return memalign(align, size);\n}",
+					"inline void* aligned_malloc(size_t size, size_t align) {\n  void* ptr = nullptr;\n  int rc = posix_memalign(&ptr, align, size);\n  return rc == 0 ? (errno = 0, ptr) : (errno = rc, nullptr);\n}"
+				)
 				File.write(folly_memory_path, content)
 			end
 		end
