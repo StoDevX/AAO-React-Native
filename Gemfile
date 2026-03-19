@@ -1,6 +1,7 @@
 source 'https://rubygems.org'
 
-gem 'fastlane', '2.216.0'
+gem 'fastlane', '2.232.2'
+gem 'google-cloud-env', '~> 2.1.1'
 gem 'netrc', '0.11.0'
 gem 'json', '2.7.2'
 gem 'xcodeproj', '1.27.0'
