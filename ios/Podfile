@@ -79,6 +79,16 @@ target 'AllAboutOlaf' do
 			end
 		end
 
+		# Fix Xcode 15.2 / iOS 17 SDK compatibility issues in RCT-Folly:
+		# - memalign requires malloc/malloc.h on newer Apple SDKs
+		# - libevent headers inside extern "C" blocks trigger -Wmodule-import-in-extern-c as errors
+		installer.pods_project.targets.each do |target|
+			next unless target.name == 'RCT-Folly'
+			target.build_configurations.each do |config|
+				config.build_settings['OTHER_CPLUSPLUSFLAGS'] = '$(inherited) -include malloc/malloc.h -Wno-module-import-in-extern-c'
+			end
+		end
+
 			system('cd .. && scripts/apply-patches.sh')
 	end
 end
