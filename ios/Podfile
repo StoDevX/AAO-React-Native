@@ -79,17 +79,6 @@ target 'AllAboutOlaf' do
 			end
 		end
 
-		# Fix Xcode 15.2 / iOS 17 SDK compatibility issues in RCT-Folly:
-		# RCT-Folly relies on transitive includes that break with -fmodules + strict C++17.
-		# Disabling modules for this target reverts to traditional text inclusion, which
-		# also fixes the memalign and extern "C" libevent issues in one shot.
-		installer.pods_project.targets.each do |target|
-			next unless target.name == 'RCT-Folly'
-			target.build_configurations.each do |config|
-				config.build_settings['CLANG_ENABLE_MODULES'] = 'NO'
-			end
-		end
-
 			system('cd .. && scripts/apply-patches.sh')
 	end
 end
