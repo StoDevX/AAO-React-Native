@@ -95,10 +95,13 @@ jobs:
           SKIP_POSTINSTALL: '1'
       - run: bundle exec pod install --deployment
         working-directory: ./ios
+      - run: npm run bundle-data
+      - run: npm run bundle:ios
       - run: brew tap wix/brew
       - run: brew install applesimutils
       - run: bundle exec fastlane ios ci-run
         env:
+          SKIP_BUNDLING: 'true'
           FASTLANE_PASSWORD: ${{ secrets.FASTLANE_PASSWORD }}
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
           GIT_COMMIT_DESC: $(git log --format=oneline -n 1 $GITHUB_SHA)
