@@ -12,9 +12,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: 'Checkout Repository'
-        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       - name: 'Dependency Review'
-        uses: actions/dependency-review-action@45529485b5eb76184ced07362d2331fd9d26f03f # v4
+        uses: actions/dependency-review-action@2031cfc080254a8a887f58cffee85186f0e49e48 # v4.9.0
         with:
           allow-ghsas: GHSA-3xgq-45jj-v275, GHSA-2p57-rm9w-gvfp

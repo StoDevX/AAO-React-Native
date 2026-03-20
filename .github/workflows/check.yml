@@ -23,12 +23,12 @@ jobs:
     outputs:
       cache-key: ${{ steps.node-cache.outputs.cache-primary-key }}
     steps:
-      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       - name: Extract job definition
         run: yq '.jobs.${{ github.job }}' .github/workflows/check.yml > .github/job.yml
 
-      - uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+      - uses: actions/cache/restore@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
         id: node-cache
         with:
           path: |
@@ -37,7 +37,7 @@ jobs:
           key: ${{ runner.os }}-node_modules-${{ hashFiles('.node-version', 'package-lock.json', '.github/job.yml') }}
 
       - if: steps.node-cache.outputs.cache-hit != 'true'
-        uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
+        uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
         with:
           node-version-file: '.node-version'
           cache: npm
@@ -45,7 +45,7 @@ jobs:
       - if: steps.node-cache.outputs.cache-hit != 'true'
         run: npm ci
 
-      - uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+      - uses: actions/cache/save@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
         if: steps.node-cache.outputs.cache-hit != 'true'
         with:
           path: |
@@ -59,12 +59,12 @@ jobs:
     outputs:
       cache-key: ${{ steps.node-cache.outputs.cache-primary-key }}
     steps:
-      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       - name: Extract job definition
         run: yq '.jobs.${{ github.job }}' .github/workflows/check.yml > .github/job.yml
 
-      - uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+      - uses: actions/cache/restore@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
         id: node-cache
         with:
           path: |
@@ -73,7 +73,7 @@ jobs:
           key: ${{ runner.os }}-node_modules-${{ hashFiles('.node-version', 'package-lock.json', '.github/job.yml') }}
 
       - if: steps.node-cache.outputs.cache-hit != 'true'
-        uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
+        uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
         with:
           node-version-file: '.node-version'
           cache: npm
@@ -81,7 +81,7 @@ jobs:
       - if: steps.node-cache.outputs.cache-hit != 'true'
         run: npm ci
 
-      - uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+      - uses: actions/cache/save@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
         if: steps.node-cache.outputs.cache-hit != 'true'
         with:
           path: |
@@ -93,7 +93,7 @@ jobs:
     name: Cache bundler for macOS
     runs-on: macos-26
     steps:
-      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       - uses: ruby/setup-ruby@v1
         with:
@@ -109,20 +109,20 @@ jobs:
     steps:
       - run: sudo xcode-select -s /Applications/${{ env.xcode_version }}.app
 
-      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       - name: Extract job definition
         run: yq '.jobs.${{ github.job }}' .github/workflows/check.yml > .github/job.yml
 
       - name: Restore Cocoapods cache
-        uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        uses: actions/cache/restore@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
         id: cocoapods-cache
         with:
           path: ios/Pods
           key: ${{ runner.os }}-cocoapods-ruby@${{ env.ruby-version }}-xcode@${{ env.xcode_version }}-${{ hashFiles('**/Podfile', '**/Podfile.lock', 'package-lock.json', '.github/job.yml') }}
 
       - if: steps.cocoapods-cache.outputs.cache-hit != 'true'
-        uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
+        uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
         with:
           node-version-file: '.node-version'
 
@@ -136,7 +136,7 @@ jobs:
 
       - name: Restore node_modules cache
         if: steps.cocoapods-cache.outputs.cache-hit != 'true'
-        uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        uses: actions/cache/restore@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
         id: node-cache
         with:
           path: |
@@ -152,7 +152,7 @@ jobs:
         working-directory: ./ios
 
       - name: Save Cocoapods cache
-        uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        uses: actions/cache/save@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
         if: steps.cocoapods-cache.outputs.cache-hit != 'true'
         with:
           path: ios/Pods
@@ -163,14 +163,14 @@ jobs:
     needs: [cache-npm-linux]
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
-      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
+      - uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
         with:
           node-version-file: '.node-version'
 
       - name: Restore node_modules cache
-        uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        uses: actions/cache/restore@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
         id: node-cache
         with:
           path: |
@@ -188,14 +188,14 @@ jobs:
     needs: [cache-npm-linux]
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
-      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
+      - uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
         with:
           node-version-file: '.node-version'
 
       - name: Restore node_modules cache
-        uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        uses: actions/cache/restore@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
         id: node-cache
         with:
           path: |
@@ -215,14 +215,14 @@ jobs:
     needs: [cache-npm-linux]
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
-      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
+      - uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
         with:
           node-version-file: '.node-version'
 
       - name: Restore node_modules cache
-        uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        uses: actions/cache/restore@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
         id: node-cache
         with:
           path: |
@@ -244,14 +244,14 @@ jobs:
     needs: [cache-npm-linux]
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
-      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
+      - uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
         with:
           node-version-file: '.node-version'
 
       - name: Restore node_modules cache
-        uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        uses: actions/cache/restore@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
         id: node-cache
         with:
           path: |
@@ -271,14 +271,14 @@ jobs:
     needs: [cache-npm-linux]
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
-      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
+      - uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
         with:
           node-version-file: '.node-version'
 
       - name: Restore node_modules cache
-        uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        uses: actions/cache/restore@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
         id: node-cache
         with:
           path: |
@@ -300,17 +300,17 @@ jobs:
     outputs:
       cache-key: ${{ steps.jsbundle-cache.outputs.cache-primary-key }}
     steps:
-      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       - name: Extract job definition
         run: yq '.jobs.${{ github.job }}' .github/workflows/check.yml > .github/job.yml
 
-      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
+      - uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
         with:
           node-version-file: '.node-version'
 
       - name: Restore node_modules cache
-        uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        uses: actions/cache/restore@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
         id: node-cache
         with:
           path: |
@@ -322,7 +322,7 @@ jobs:
         run: exit 1
 
       - name: Load the cached jsbundle
-        uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        uses: actions/cache/restore@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
         id: jsbundle-cache
         with:
           path: |
@@ -342,7 +342,7 @@ jobs:
           APP_MODE: mocked
 
       - name: Cache the jsbundle
-        uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        uses: actions/cache/save@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
         if: steps.jsbundle-cache.outputs.cache-hit != 'true'
         with:
           path: |
@@ -359,17 +359,17 @@ jobs:
     outputs:
       cache-key: ${{ steps.jsbundle-cache.outputs.cache-primary-key }}
     steps:
-      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       - name: Extract job definition
         run: yq '.jobs.${{ github.job }}' .github/workflows/check.yml > .github/job.yml
 
-      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
+      - uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
         with:
           node-version-file: '.node-version'
 
       - name: Restore node_modules cache
-        uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        uses: actions/cache/restore@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
         id: node-cache
         with:
           path: |
@@ -381,7 +381,7 @@ jobs:
         run: exit 1
 
       - name: Load the cached jsbundle
-        uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        uses: actions/cache/restore@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
         id: jsbundle-cache
         with:
           path: ./android/generated/
@@ -399,7 +399,7 @@ jobs:
 
       - name: Cache the jsbundle
         if: steps.jsbundle-cache.outputs.cache-hit != 'true'
-        uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        uses: actions/cache/save@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
         with:
           path: ./android/generated/
           key: ${{ steps.jsbundle-cache.outputs.cache-primary-key }}
@@ -410,14 +410,14 @@ jobs:
     if: false
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
-      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
+      - uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
         with:
           node-version-file: '.node-version'
 
       - name: Restore node_modules cache
-        uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        uses: actions/cache/restore@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
         id: node-cache
         with:
           path: |
@@ -428,7 +428,7 @@ jobs:
       - if: steps.node-cache.outputs.cache-hit != 'true'
         run: exit 1
 
-      - uses: actions/setup-java@f2beeb24e141e01a676f977032f5a29d81c9e27e # v5.1.0
+      - uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654 # v5.2.0
         with:
           distribution: ${{ env.java_distribution }}
           java-version: ${{ env.java_version }}
@@ -452,18 +452,18 @@ jobs:
           SKIP_BUNDLING: 'true'
 
       - name: Upload build reports
-        uses: actions/upload-artifact@50769540e7f4bd5e21e526ee35c689e35e0d6874 # v4
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
         with:
           name: build-reports
           path: build/reports/
 
       - name: Cache the Android app
-        uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        uses: actions/cache/save@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
         with:
           path: android/app/build/outputs/apk/
           key: ${{ steps.app-cache.outputs.cache-primary-key }}
 
-      - uses: actions/upload-artifact@50769540e7f4bd5e21e526ee35c689e35e0d6874 # v4
+      - uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
         with:
           name: android-app
           path: android/app/build/outputs/apk/
@@ -477,26 +477,26 @@ jobs:
     steps:
       - run: sudo xcode-select -s /Applications/${{ env.xcode_version }}.app
 
-      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       - name: Extract job definition
         run: yq '.jobs.${{ github.job }}' .github/workflows/check.yml > .github/job.yml
 
       - name: Check for cached iOS app
         id: app-cache
-        uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        uses: actions/cache/restore@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
         with:
           path: ios/build/Build/Products/
           key: ${{ runner.os }}-ios-xcode@${{ env.xcode_version }}-${{ hashFiles('**/project.pbxproj', '**/Podfile', '**/Podfile.lock', 'package-lock.json', '.github/job.yml') }}
 
-      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
+      - uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
         if: steps.app-cache.outputs.cache-hit != 'true'
         with:
           node-version-file: '.node-version'
 
       - name: Restore node_modules cache
         if: steps.app-cache.outputs.cache-hit != 'true'
-        uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        uses: actions/cache/restore@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
         id: node-cache
         with:
           path: |
@@ -518,7 +518,7 @@ jobs:
 
       - name: Restore Cocoapods cache
         if: steps.app-cache.outputs.cache-hit != 'true'
-        uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        uses: actions/cache/restore@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
         id: pods-cache
         with:
           path: ios/Pods
@@ -554,12 +554,12 @@ jobs:
           cat ios/build/Build/Products/Release-iphonesimulator/AllAboutOlaf.app/Info.plist | head -10 || echo "Info.plist not found!"
 
       - name: Cache the iOS app
-        uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        uses: actions/cache/save@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
         with:
           path: ios/build/Build/Products/
           key: ${{ steps.app-cache.outputs.cache-primary-key }}
 
-      - uses: actions/upload-artifact@50769540e7f4bd5e21e526ee35c689e35e0d6874 # v4
+      - uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
         with:
           name: ios-app
           path: ios/build/Build/Products/
@@ -572,11 +572,11 @@ jobs:
     steps:
       - run: sudo xcode-select -s /Applications/${{ env.xcode_version }}.app
 
-      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       - # load the app before reinstalling detox, so that the package-lock cannot change
         name: Load the cached iOS app
-        uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        uses: actions/cache/restore@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
         id: app-cache
         with:
           path: ios/build/Build/Products/
@@ -598,7 +598,7 @@ jobs:
 
       - # load the jsbundle before reinstalling detox, so that the package-lock cannot change
         name: Load the cached iOS jsbundle
-        uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        uses: actions/cache/restore@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
         id: jsbundle-cache
         with:
           path: |
@@ -657,12 +657,12 @@ jobs:
             exit 1
           fi
 
-      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
+      - uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
         with:
           node-version-file: '.node-version'
 
       - name: Restore node_modules cache
-        uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        uses: actions/cache/restore@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
         id: node-cache
         with:
           path: |
@@ -681,7 +681,7 @@ jobs:
       - name: Run the Detox tests
         run: npx detox test e2e --configuration ios.sim.release --cleanup --record-logs failing --record-videos failing --record-performance all --capture-view-hierarchy enabled --take-screenshots failing
 
-      - uses: actions/upload-artifact@50769540e7f4bd5e21e526ee35c689e35e0d6874 # v4
+      - uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
         if: always()
         with:
           name: detox-ios
