@@ -97,6 +97,13 @@ jobs:
         working-directory: ./ios
       - run: npm run bundle-data
       - run: npm run bundle:ios
+      - name: Compile JS bundle to Hermes bytecode
+        run: |
+          HERMESC=./ios/Pods/hermes-engine/destroot/bin/hermesc
+          $HERMESC -emit-binary -max-diagnostic-width=80 -O \
+            -out ios/AllAboutOlaf/main.jsbundle.hbc \
+            ios/AllAboutOlaf/main.jsbundle
+          mv ios/AllAboutOlaf/main.jsbundle.hbc ios/AllAboutOlaf/main.jsbundle
       - run: brew tap wix/brew
       - run: brew install applesimutils
       - run: bundle exec fastlane ios ci-run

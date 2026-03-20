@@ -64,13 +64,11 @@ def upload_sourcemap_to_sentry
 
 	cmd = [
 	       'npx sentry-cli',
-	       'releases',
-	       'files',
-	       sentry_release,
-	       'upload-sourcemaps',
+	       'sourcemaps',
+	       'upload',
+	       "--release #{sentry_release}",
 	       "--dist #{sentry_dist}",
 	       "--strip-prefix #{File.expand_path(File.join(__FILE__, '..', '..', '..'))}",
-	       '--rewrite',
 	       args[:bundle_output],
 	       args[:sourcemap_output]
 	].join ' '
