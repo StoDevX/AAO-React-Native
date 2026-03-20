@@ -80,5 +80,12 @@ target 'AllAboutOlaf' do
 		end
 
 			system('cd .. && scripts/apply-patches.sh')
+
+		bitcode_strip_path = `xcrun --find bitcode_strip`.chop!
+		Dir.glob("Pods/**/*.framework/**/*").select { |f| File.file?(f) && File.executable?(f) }.each do |framework_path|
+			full_path = File.join(Dir.pwd, framework_path)
+			puts "Stripping bitcode: #{full_path}"
+			system("#{bitcode_strip_path} #{full_path} -r -o #{full_path}")
+		end
 	end
 end
