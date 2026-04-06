@@ -1,0 +1,17 @@
+[hooks.pre-commit]
+fix = true
+stash = "git"
+
+[hooks.pre-commit.steps.prettier]
+check = "mise run pretty:check"
+fix = "mise run pretty"
+
+[hooks.pre-commit.steps.eslint]
+check = "mise run lint"
+fix = "eslint --report-unused-disable-directives --cache --fix source/ modules/ scripts/ images/"
+
+[hooks.pre-commit.steps.tsc]
+check = "mise run tsc"
+
+[hooks.pre-commit.steps.jest]
+check = "mise run test"
