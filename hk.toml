@@ -3,15 +3,19 @@ fix = true
 stash = "git"
 
 [hooks.pre-commit.steps.prettier]
+_type = "step"
 check = "mise run pretty:check"
 fix = "mise run pretty"
 
 [hooks.pre-commit.steps.eslint]
+_type = "step"
 check = "mise run lint"
 fix = "eslint --report-unused-disable-directives --cache --fix source/ modules/ scripts/ images/"
 
 [hooks.pre-commit.steps.tsc]
+_type = "step"
 check = "mise run tsc"
 
 [hooks.pre-commit.steps.jest]
+_type = "step"
 check = "mise run test"
