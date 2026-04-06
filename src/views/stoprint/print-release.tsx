@@ -8,7 +8,6 @@ import {
 	releasePrintJobToPrinterForUser,
 } from '../../lib/stoprint/api'
 import {
-	isStoprintMocked,
 	showGeneralError,
 	type Printer,
 	type PrintJob,

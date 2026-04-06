@@ -7,7 +7,7 @@ import {Alert, ScrollView, Platform, View} from 'react-native'
 import moment from 'moment-timezone'
 import type {Moment} from 'moment-timezone'
 import noop from 'lodash/noop'
-import jsYaml from 'js-yaml'
+import {dump} from 'js-yaml'
 import {InfoHeader} from '@frogpond/info-header'
 import {TableView, Section, Cell} from '@frogpond/tableview'
 import {
@@ -37,7 +37,7 @@ export let BuildingHoursProblemReportView = (): React.JSX.Element => {
 	// used for checking against unsaved edits
 	let [hasUnsavedChanges, setHasUnsavedChanges] = React.useState(false)
 	let initialBuildingYaml = React.useMemo(
-		() => jsYaml.dump(initialBuilding),
+		() => dump(initialBuilding),
 		[initialBuilding],
 	)
 
@@ -74,7 +74,7 @@ export let BuildingHoursProblemReportView = (): React.JSX.Element => {
 	)
 
 	React.useEffect(() => {
-		setHasUnsavedChanges(jsYaml.dump(building) !== initialBuildingYaml)
+		setHasUnsavedChanges(dump(building) !== initialBuildingYaml)
 	}, [building, initialBuildingYaml])
 
 	let editName = (newName: BuildingType['name']) => {

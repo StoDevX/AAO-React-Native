@@ -20,7 +20,7 @@ import {Link} from './link'
 import {Image} from './image'
 import {List, ListItem} from './list'
 
-delete (ReactMarkdown as any).propTypes
+delete (ReactMarkdown as unknown as {propTypes?: unknown}).propTypes
 
 const baseStyles = StyleSheet.create({
 	horizontalRule: {

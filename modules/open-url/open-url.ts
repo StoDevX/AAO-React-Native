@@ -8,7 +8,8 @@ async function genericOpen(url: string): Promise<boolean> {
 		if (!isSupported) {
 			console.warn('cannot handle', url)
 		}
-		return await Linking.openURL(url)
+		await Linking.openURL(url)
+		return true
 	} catch (err) {
 		console.error(err)
 		return false

@@ -1,7 +1,6 @@
 import * as React from 'react'
 import {SectionList, StyleSheet} from 'react-native'
 import type {Printer,PrintJob} from '../../lib/stoprint'
-import {isStoprintMocked} from '../../lib/stoprint'
 import {
 	Detail,
 	ListRow,

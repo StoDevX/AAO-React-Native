@@ -2,9 +2,8 @@ import React from 'react'
 import {NativeTabs, Icon, Label} from 'expo-router/unstable-native-tabs'
 import MaterialDesignIcons from '@react-native-vector-icons/material-design-icons'
 import {Platform} from 'react-native'
-import {Stack} from 'expo-router'
 
-export default function TabLayout() {
+export default function TabLayout(): React.JSX.Element {
 	return (
 		<NativeTabs>
 			<NativeTabs.Trigger name="index">

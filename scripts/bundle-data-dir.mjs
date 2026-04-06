@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import yaml from 'js-yaml'
+import {load} from 'js-yaml'
 import fs from 'node:fs'
 import {isNotJunk} from 'junk'
 import path from 'node:path'
@@ -35,7 +35,7 @@ export function bundleDataDir({fromDir, toFile}) {
 	let loaded = files.map((fpath) => {
 		console.log(fpath)
 		let contents = fs.readFileSync(fpath, 'utf-8')
-		return yaml.load(contents)
+		return load(contents)
 	})
 	let dated = {data: loaded}
 	let output = JSON.stringify(dated) + '\n'

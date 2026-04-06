@@ -2,7 +2,7 @@
 
 import fs from 'node:fs'
 import path from 'node:path'
-import yaml from 'js-yaml'
+import {load} from 'js-yaml'
 import {isNotJunk} from 'junk'
 import minimist from 'minimist'
 import {validate} from './validate.mjs'
@@ -11,13 +11,13 @@ import {SCHEMA_BASE, DATA_BASE} from './paths.mjs'
 const isDir = (pth) => tryBoolean(() => fs.statSync(pth).isDirectory())
 const readYaml = (pth) =>
 	JSON.parse(
-		JSON.stringify(yaml.load(fs.readFileSync(pth, 'utf-8'), {filename: pth})),
+		JSON.stringify(load(fs.readFileSync(pth, 'utf-8'), {filename: pth})),
 	)
 
 /*
 const readYamlPipe = (pth) =>
 	fs.readFileSync(pth, 'utf-8')
-		|> yaml.load(%, {filename: pth})
+		|> load(%, {filename: pth})
 		|> JSON.stringify(%)
 		|> JSON.parse(%)
 */
@@ -40,7 +40,7 @@ if (args.data) {
 	let schemaFile = readYaml(args.schema)
 	iterator = [[[args.schema, schemaFile, dataFile]]]
 } else {
-	iterator = args.schemaNames.map((schemaName) => load(schemaName))
+	iterator = args.schemaNames.map((schemaName) => loadSchema(schemaName))
 }
 
 // iterate!
@@ -55,7 +55,7 @@ for (const multitudes of iterator) {
 			}
 			break
 		}
-		args.quiet || console.log(`${filename} is valid`)
+		if (!args.quiet) console.log(`${filename} is valid`)
 	}
 }
 
@@ -118,7 +118,7 @@ function parseArgs(argv) {
 	return args
 }
 
-function* load(schemaName) {
+function* loadSchema(schemaName) {
 	// grab the schema
 	let schema
 	try {

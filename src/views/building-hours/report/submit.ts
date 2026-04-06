@@ -1,4 +1,4 @@
-import jsYaml from 'js-yaml'
+import {dump} from 'js-yaml'
 import type {BuildingType} from '../types'
 import {sendEmail} from '../../../components/send-email'
 import {GH_NEW_ISSUE_URL, SUPPORT_EMAIL} from '../../../lib/constants'
@@ -68,7 +68,7 @@ function makeIssueLink(before: string, after: string, title: string): string {
 function stringifyBuilding(building: BuildingType): string {
 	let res = ''
 	let prev = null
-	let data = jsYaml.dump(building, {flowLevel: 4}).split('\n')
+	let data = dump(building, {flowLevel: 4}).split('\n')
 	for (let line of data) {
 		if (['schedule:', 'breakSchedule:'].includes(line)) {
 			res += `\n\n${line}`

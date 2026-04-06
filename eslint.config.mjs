@@ -159,6 +159,11 @@ export default defineConfig([
 	{
 		files: ['scripts/**/*.{mjs,js}'],
 		...tseslint.configs.disableTypeChecked,
+		rules: {
+			...tseslint.configs.disableTypeChecked.rules,
+			'@typescript-eslint/explicit-module-boundary-types': 'off',
+			'@typescript-eslint/no-unused-vars': 'off',
+		},
 	},
 	// Image index files - require() returns any for images
 	{

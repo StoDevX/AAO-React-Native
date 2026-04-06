@@ -8,7 +8,9 @@ export async function addToCalendar(event: EventType): Promise<boolean> {
 		const {status: currentStatus} = await Calendar.getCalendarPermissionsAsync()
 
 		const authStatus =
-			currentStatus === 'granted' ? true : await requestCalendarAccess()
+			currentStatus === Calendar.PermissionStatus.GRANTED
+				? true
+				: await requestCalendarAccess()
 
 		if (!authStatus) {
 			return false
@@ -74,7 +76,7 @@ async function requestCalendarAccess(): Promise<boolean> {
 	try {
 		const {status} = await Calendar.requestCalendarPermissionsAsync()
 
-		if (status !== 'granted') {
+		if (status !== Calendar.PermissionStatus.GRANTED) {
 			return promptSettings() === undefined
 		}
 

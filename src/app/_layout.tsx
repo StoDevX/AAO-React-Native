@@ -60,6 +60,7 @@ function App() {
 
 export default Sentry.wrap(App)
 
+// eslint-disable-next-line camelcase -- required by expo-router API
 export const unstable_settings = {
 	// https://docs.expo.dev/router/advanced/router-settings/#initialroutename
 	// Ensure any route can link back to `/`

@@ -1,4 +1,5 @@
-import {queryOptions} from '@tanstack/react-query'
+/* eslint-disable @typescript-eslint/no-non-null-assertion -- guarded by `enabled` in queryOptions */
+import {queryOptions, type UndefinedInitialDataOptions, type DataTag, type DefaultError} from '@tanstack/react-query'
 import {
 	fetchAllPrinters,
 	fetchColorPrinters,
@@ -6,6 +7,17 @@ import {
 	fetchRecentPrinters,
 	heldJobsAvailableAtPrinterForUser,
 } from '../../lib/stoprint/api'
+import type {
+	AllPrintersResponse,
+	HeldJobsResponse,
+	PrintJobsResponse,
+	RecentPopularPrintersResponse,
+} from '../../lib/stoprint/types'
+
+type QueryOptionsResult<TData, TKey extends readonly unknown[]> =
+	UndefinedInitialDataOptions<TData, DefaultError, TData, TKey> & {
+		queryKey: DataTag<TKey, TData, DefaultError>
+	}
 
 export const keys = {
 	jobs: <T extends string | undefined>(username: T) =>
@@ -24,7 +36,7 @@ export const keys = {
 	colorPrinters: ['printing', 'colorPrinters'] as const,
 }
 
-export function printJobsQuery(username: string | undefined) {
+export function printJobsQuery(username: string | undefined): QueryOptionsResult<PrintJobsResponse, readonly ['printing', 'jobs', 'all', string | undefined]> {
 	return queryOptions({
 		queryKey: keys.jobs(username),
 		enabled: Boolean(username),
@@ -32,7 +44,7 @@ export function printJobsQuery(username: string | undefined) {
 	})
 }
 
-export function allPrintersQuery(username: string | undefined) {
+export function allPrintersQuery(username: string | undefined): QueryOptionsResult<AllPrintersResponse, readonly ['printing', 'printers', string | undefined]> {
 	return queryOptions({
 		queryKey: keys.printers(username),
 		enabled: Boolean(username),
@@ -40,7 +52,7 @@ export function allPrintersQuery(username: string | undefined) {
 	})
 }
 
-export function recentPrintersQuery(username: string | undefined) {
+export function recentPrintersQuery(username: string | undefined): QueryOptionsResult<RecentPopularPrintersResponse, readonly ['printing', 'printers', string | undefined]> {
 	return queryOptions({
 		queryKey: keys.printers(username),
 		enabled: Boolean(username),
@@ -48,7 +60,7 @@ export function recentPrintersQuery(username: string | undefined) {
 	})
 }
 
-export function colorPrintersQuery() {
+export function colorPrintersQuery(): QueryOptionsResult<string[], readonly ['printing', 'colorPrinters']> {
 	return queryOptions({
 		queryKey: keys.colorPrinters,
 		queryFn: ({signal}) => fetchColorPrinters({signal}),
@@ -61,7 +73,7 @@ export function heldJobsQuery({
 }: {
 	username: string | undefined
 	printerName: string | undefined
-}) {
+}): QueryOptionsResult<HeldJobsResponse, readonly ['printing', 'jobs', 'held', string | undefined, string]> {
 	let usablePrinterName = printerName || 'undefined'
 
 	return queryOptions({

@@ -1,7 +1,7 @@
 import * as React from 'react'
 import {CccCalendarView, useNamedCalendar} from '@frogpond/ccc-calendar'
 
-export default function CalendarTabOleville() {
+export default function CalendarTabOleville(): React.JSX.Element {
 	return (
 		<CccCalendarView
 			poweredBy={{

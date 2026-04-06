@@ -4,7 +4,7 @@ import MaterialDesignIcons from '@react-native-vector-icons/material-design-icon
 import {Platform} from 'react-native'
 import {Stack} from 'expo-router'
 
-export default function MenusTabLayout() {
+export default function MenusTabLayout(): React.JSX.Element {
 	return (
 		<NativeTabs>
 			<Stack.Screen options={{title: 'Menus'}} />

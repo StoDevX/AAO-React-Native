@@ -11,10 +11,10 @@ type Props<T extends object> = {
 
 export function PickerSection<T extends object>({
 	filter,
-	onChange,
+	onChange: _onChange,
 }: Props<T>): React.JSX.Element {
 	let {spec} = filter
-	let {title = '', caption = '', options, selected} = spec
+	let {title = '', caption = '', options: _options, selected: _selected} = spec
 
 	return (
 		<Section footer={caption} header={title.toUpperCase()}>

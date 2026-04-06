@@ -1,34 +1,8 @@
 import * as React from 'react'
 import {useState} from 'react'
-import {StyleProp, StyleSheet, Text, View, ViewStyle} from 'react-native'
+import {StyleProp, ViewStyle} from 'react-native'
 // import {Popover} from '@expo/ui/swift-ui'
-import {Ionicons} from '@react-native-vector-icons/ionicons'
 import type {FilterType} from './types'
-import * as c from '@frogpond/colors'
-import {Touchable} from '@frogpond/touchable'
-import {TableView} from '@frogpond/tableview'
-import {FilterSection} from './section'
-
-const buttonStyles = StyleSheet.create({
-	button: {
-		flexDirection: 'row',
-		alignItems: 'center',
-		marginRight: 10,
-		paddingHorizontal: 8,
-		paddingVertical: 5,
-		borderWidth: 1,
-		borderRadius: 2,
-		backgroundColor: c.systemGroupedBackground,
-		borderColor: c.separator,
-	},
-	text: {
-		color: c.label,
-		fontSize: 16,
-	},
-	textWithIcon: {
-		paddingRight: 8,
-	},
-})
 
 type Props<T extends object> = {
 	filter: FilterType<T>
@@ -41,10 +15,10 @@ type Props<T extends object> = {
 export function FilterToolbarButton<T extends object>(
 	props: Props<T>,
 ): React.ReactNode {
-	let {onPopoverDismiss, filter, style, title} = props
+	let {onPopoverDismiss: _onPopoverDismiss, filter, style: _style, title: _title} = props
 
-	let [popoverVisible, setPopoverVisible] = useState(false)
-	let [editedFilter, setEditedFilter] = useState<FilterType<T>>(props.filter)
+	let [_popoverVisible, _setPopoverVisible] = useState(false)
+	let [_editedFilter, _setEditedFilter] = useState<FilterType<T>>(props.filter)
 
 	if (filter.type === 'list') {
 		if (!filter.spec.options.length) {

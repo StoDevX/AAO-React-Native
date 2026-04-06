@@ -2,7 +2,7 @@ import * as React from 'react'
 import {CccCalendarView, useNamedCalendar} from '@frogpond/ccc-calendar'
 import {Stack} from 'expo-router'
 
-export default function CalendarTabStOlaf() {
+export default function CalendarTabStOlaf(): React.JSX.Element {
 	return (
 		<>
 			<Stack.Screen options={{title: 'Cal'}} />
