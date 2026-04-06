@@ -10,8 +10,7 @@ export default function NetworkLoggerScreen(): React.ReactNode {
 			<Stack.Screen
 				options={{
 					title: 'Network Logger',
-					headerRight: () =>
-						Platform.OS === 'ios' && <CloseScreenButton />,
+					headerRight: () => Platform.OS === 'ios' && <CloseScreenButton />,
 					presentation: 'modal',
 					gestureEnabled: false,
 				}}

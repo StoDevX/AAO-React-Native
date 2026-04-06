@@ -7,7 +7,7 @@ import {BuildingType} from '../../views/building-hours/types'
 import * as c from '@frogpond/colors'
 import {ListSeparator, ListSectionHeader} from '@frogpond/lists'
 import {LoadingView, NoticeView} from '@frogpond/notice'
-import {useRouter} from 'expo-router'
+import {Stack, useRouter} from 'expo-router'
 import {useMomentTimer} from '@frogpond/timer'
 
 const styles = StyleSheet.create({
@@ -17,7 +17,7 @@ const styles = StyleSheet.create({
 	},
 })
 
-export function BuildingHoursView(): React.JSX.Element {
+export default function BuildingHoursView(): React.JSX.Element {
 	let router = useRouter()
 
 	let {now} = useMomentTimer({intervalMs: 60000, startOf: 'minute'})
@@ -51,22 +51,25 @@ export function BuildingHoursView(): React.JSX.Element {
 	}
 
 	return (
-		<SectionList
-			ItemSeparatorComponent={ListSeparator}
-			ListEmptyComponent={
-				isLoading ? <LoadingView /> : <NoticeView text="No hours." />
-			}
-			contentContainerStyle={styles.container}
-			keyExtractor={(item) => item.name}
-			onRefresh={refetch}
-			refreshing={isRefetching}
-			renderItem={({item}) => (
-				<BuildingRow info={item} now={now} onPress={() => onPressRow(item)} />
-			)}
-			renderSectionHeader={({section: {title}}) => (
-				<ListSectionHeader title={title} />
-			)}
-			sections={data}
-		/>
+		<>
+			<Stack.Screen options={{title: 'Building Hours'}} />
+			<SectionList
+				ItemSeparatorComponent={ListSeparator}
+				ListEmptyComponent={
+					isLoading ? <LoadingView /> : <NoticeView text="No hours." />
+				}
+				contentContainerStyle={styles.container}
+				keyExtractor={(item) => item.name}
+				onRefresh={refetch}
+				refreshing={isRefetching}
+				renderItem={({item}) => (
+					<BuildingRow info={item} now={now} onPress={() => onPressRow(item)} />
+				)}
+				renderSectionHeader={({section: {title}}) => (
+					<ListSectionHeader title={title} />
+				)}
+				sections={data}
+			/>
+		</>
 	)
 }

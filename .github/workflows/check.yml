@@ -118,6 +118,9 @@ jobs:
           key: ${{ runner.os }}-cocoapods-ruby@${{ env.ruby-version }}-xcode@${{ env.xcode_version }}-${{ hashFiles('**/Podfile', '**/Podfile.lock', 'pnpm-lock.yaml', '.github/job.yml') }}
 
       - if: steps.cocoapods-cache.outputs.cache-hit != 'true'
+        uses: pnpm/action-setup@v4
+
+      - if: steps.cocoapods-cache.outputs.cache-hit != 'true'
         uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
         with:
           node-version-file: '.node-version'
@@ -642,3 +645,42 @@ jobs:
         with:
           name: detox-ios
           path: artifacts/
+
+      - name: Post Detox failure to PR
+        if: failure() && github.event_name == 'pull_request'
+        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7
+        with:
+          script: |
+            const fs = require('fs');
+            const path = require('path');
+
+            function findLogs(dir) {
+              let results = [];
+              try {
+                for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+                  const fullPath = path.join(dir, entry.name);
+                  if (entry.isDirectory()) {
+                    results = results.concat(findLogs(fullPath));
+                  } else if (entry.name.endsWith('.log')) {
+                    results.push(fullPath);
+                  }
+                }
+              } catch (_e) { /* directory may not exist */ }
+              return results;
+            }
+
+            let body = '## :x: Detox E2E Test Failure\n\n';
+            const logFiles = findLogs('artifacts');
+            for (const file of logFiles) {
+              const content = fs.readFileSync(file, 'utf8').slice(-3000);
+              body += `### ${file}\n\`\`\`\n${content}\n\`\`\`\n`;
+            }
+            if (logFiles.length === 0) {
+              body += 'Detox tests failed. Check the uploaded artifacts for details.\n';
+            }
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: body.slice(0, 65000),
+            });

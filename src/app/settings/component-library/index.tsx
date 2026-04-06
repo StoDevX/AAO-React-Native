@@ -10,8 +10,7 @@ export default function ComponentLibraryScreen(): React.ReactNode {
 			<Stack.Screen
 				options={{
 					title: 'Component Library',
-					headerRight: () =>
-						Platform.OS === 'ios' && <CloseScreenButton />,
+					headerRight: () => Platform.OS === 'ios' && <CloseScreenButton />,
 				}}
 			/>
 			<ComponentLibrary />

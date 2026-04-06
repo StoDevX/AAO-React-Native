@@ -7,6 +7,8 @@ import {Stack} from 'expo-router'
 export default function TabLayout() {
 	return (
 		<NativeTabs>
+			<Stack.Screen options={{title: 'Calendar'}} />
+
 			<NativeTabs.Trigger name="index">
 				<Label>St. Olaf</Label>
 				{Platform.select({
