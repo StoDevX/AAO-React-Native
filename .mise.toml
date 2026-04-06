@@ -5,6 +5,10 @@ hk = "latest"
 [env]
 _.path = ["node_modules/.bin"]
 HK_PKL_BACKEND = "pklr"
+HK_MISE = "1"
+
+[hooks]
+postinstall = "hk install --mise"
 
 # --- App commands ---
 
