@@ -60,7 +60,6 @@
     "@frogpond/lists": "workspace:",
     "@frogpond/markdown": "workspace:",
     "@frogpond/navigation-buttons": "workspace:",
-    "@frogpond/navigation-tabs": "workspace:",
     "@frogpond/notice": "workspace:",
     "@frogpond/open-url": "workspace:",
     "@frogpond/separator": "workspace:",
