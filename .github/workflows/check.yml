@@ -17,265 +17,99 @@ env:
   java_distribution: temurin
 
 jobs:
-  cache-npm-linux:
-    name: Cache npm for Linux
-    runs-on: ubuntu-24.04
-    outputs:
-      cache-key: ${{ steps.node-cache.outputs.cache-primary-key }}
-    steps:
-      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
-
-      - name: Extract job definition
-        run: yq '.jobs.${{ github.job }}' .github/workflows/check.yml > .github/job.yml
-
-      - uses: pnpm/action-setup@v4
-
-      - uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
-        id: node-cache
-        with:
-          path: node_modules/
-          key: ${{ runner.os }}-node_modules-${{ hashFiles('.node-version', 'pnpm-lock.yaml', '.github/job.yml') }}
-
-      - if: steps.node-cache.outputs.cache-hit != 'true'
-        uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
-        with:
-          node-version-file: '.node-version'
-          cache: pnpm
-
-      - if: steps.node-cache.outputs.cache-hit != 'true'
-        run: pnpm install --frozen-lockfile
-
-      - uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
-        if: steps.node-cache.outputs.cache-hit != 'true'
-        with:
-          path: node_modules/
-          key: ${{ steps.node-cache.outputs.cache-primary-key }}
-
-  cache-npm-macos:
-    name: Cache npm for macOS
-    runs-on: macos-14
-    outputs:
-      cache-key: ${{ steps.node-cache.outputs.cache-primary-key }}
-    steps:
-      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
-
-      - name: Extract job definition
-        run: yq '.jobs.${{ github.job }}' .github/workflows/check.yml > .github/job.yml
-
-      - uses: pnpm/action-setup@v4
-
-      - uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
-        id: node-cache
-        with:
-          path: node_modules/
-          key: ${{ runner.os }}-node_modules-${{ hashFiles('.node-version', 'pnpm-lock.yaml', '.github/job.yml') }}
-
-      - if: steps.node-cache.outputs.cache-hit != 'true'
-        uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
-        with:
-          node-version-file: '.node-version'
-          cache: pnpm
-
-      - if: steps.node-cache.outputs.cache-hit != 'true'
-        run: pnpm install --frozen-lockfile
-
-      - uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
-        if: steps.node-cache.outputs.cache-hit != 'true'
-        with:
-          path: node_modules/
-          key: ${{ steps.node-cache.outputs.cache-primary-key }}
-
-  cache-bundler-macos:
-    name: Cache bundler for macOS
-    runs-on: macos-14
-    steps:
-      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
-
-      - uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: ${{ env.ruby-version }}
-          bundler-cache: true
-
-  cache-cocoapods:
-    name: iOS Cocoapods
-    needs: [cache-npm-macos, cache-bundler-macos]
-    runs-on: macos-14
-    outputs:
-      cache-key: ${{ steps.cocoapods-cache.outputs.cache-primary-key }}
-    steps:
-      - run: sudo xcode-select -s /Applications/${{ env.xcode_version }}.app
-
-      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
-
-      - name: Extract job definition
-        run: yq '.jobs.${{ github.job }}' .github/workflows/check.yml > .github/job.yml
-
-      - name: Restore Cocoapods cache
-        uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
-        id: cocoapods-cache
-        with:
-          path: ios/Pods
-          key: ${{ runner.os }}-cocoapods-ruby@${{ env.ruby-version }}-xcode@${{ env.xcode_version }}-${{ hashFiles('**/Podfile', '**/Podfile.lock', 'pnpm-lock.yaml', '.github/job.yml') }}
-
-      - if: steps.cocoapods-cache.outputs.cache-hit != 'true'
-        uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
-        with:
-          node-version-file: '.node-version'
-
-      - if: steps.cocoapods-cache.outputs.cache-hit != 'true'
-        uses: ruby/setup-ruby@v1
-        env:
-          BUNDLE_FROZEN: 'true'
-        with:
-          ruby-version: ${{ env.ruby-version }}
-          bundler-cache: true
-
-      - name: Restore node_modules cache
-        if: steps.cocoapods-cache.outputs.cache-hit != 'true'
-        uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
-        id: node-cache
-        with:
-          path: node_modules/
-          key: ${{ needs.cache-npm-macos.outputs.cache-key }}
-
-      - if: steps.cocoapods-cache.outputs.cache-hit != 'true' && steps.node-cache.outputs.cache-hit != 'true'
-        run: exit 1
-
-      - if: steps.cocoapods-cache.outputs.cache-hit != 'true'
-        run: bundle exec pod install --deployment
-        working-directory: ./ios
-
-      - name: Save Cocoapods cache
-        uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
-        if: steps.cocoapods-cache.outputs.cache-hit != 'true'
-        with:
-          path: ios/Pods
-          key: ${{ steps.cocoapods-cache.outputs.cache-primary-key }}
-
   prettier:
     name: Prettier
-    needs: [cache-npm-linux]
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+
+      - uses: pnpm/action-setup@v4
 
       - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
         with:
           node-version-file: '.node-version'
+          cache: pnpm
 
-      - name: Restore node_modules cache
-        uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
-        id: node-cache
-        with:
-          path: node_modules/
-          key: ${{ needs.cache-npm-linux.outputs.cache-key }}
+      - run: pnpm install --frozen-lockfile
 
-      - if: steps.node-cache.outputs.cache-hit != 'true'
-        run: exit 1
-
-      - run: npm run pretty -- --no-write --check
+      - run: pnpm run pretty --no-write --check
 
   eslint:
     name: ESLint
-    needs: [cache-npm-linux]
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
+      - uses: pnpm/action-setup@v4
+
       - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
         with:
           node-version-file: '.node-version'
+          cache: pnpm
 
-      - name: Restore node_modules cache
-        uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
-        id: node-cache
-        with:
-          path: node_modules/
-          key: ${{ needs.cache-npm-linux.outputs.cache-key }}
+      - run: pnpm install --frozen-lockfile
 
-      - if: steps.node-cache.outputs.cache-hit != 'true'
-        run: exit 1
-
-      - run: npm run lint
+      - run: pnpm run lint
 
   jest:
     name: Jest
-    needs: [cache-npm-linux]
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
+      - uses: pnpm/action-setup@v4
+
       - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
         with:
           node-version-file: '.node-version'
+          cache: pnpm
 
-      - name: Restore node_modules cache
-        uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
-        id: node-cache
-        with:
-          path: node_modules/
-          key: ${{ needs.cache-npm-linux.outputs.cache-key }}
-
-      - if: steps.node-cache.outputs.cache-hit != 'true'
-        run: exit 1
+      - run: pnpm install --frozen-lockfile
 
       - name: Run tests
-        run: npm run test -- --coverage
+        run: pnpm run test --coverage
 
       - name: Upload coverage
         uses: codecov/codecov-action@671740ac38dd9b0130fbe1cec585b89eea48d3de # v5.5.2
 
   tsc:
     name: TypeScript
-    needs: [cache-npm-linux]
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
+      - uses: pnpm/action-setup@v4
+
       - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
         with:
           node-version-file: '.node-version'
+          cache: pnpm
 
-      - name: Restore node_modules cache
-        uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
-        id: node-cache
-        with:
-          path: node_modules/
-          key: ${{ needs.cache-npm-linux.outputs.cache-key }}
+      - run: pnpm install --frozen-lockfile
 
-      - if: steps.node-cache.outputs.cache-hit != 'true'
-        run: exit 1
-
-      - run: npx tsc
+      - run: pnpm exec tsc
 
   data:
     name: Data
-    needs: [cache-npm-linux]
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
+      - uses: pnpm/action-setup@v4
+
       - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
         with:
           node-version-file: '.node-version'
+          cache: pnpm
 
-      - name: Restore node_modules cache
-        uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
-        id: node-cache
-        with:
-          path: node_modules/
-          key: ${{ needs.cache-npm-linux.outputs.cache-key }}
+      - run: pnpm install --frozen-lockfile
 
-      - if: steps.node-cache.outputs.cache-hit != 'true'
-        run: exit 1
+      - run: pnpm run validate-data
 
-      - run: npm run validate-data
-
-      - run: npm run bundle-data
+      - run: pnpm run bundle-data
 
   ios-bundle:
     name: iOS Bundle
-    needs: [cache-npm-macos]
     runs-on: macos-14
     outputs:
       cache-key: ${{ steps.jsbundle-cache.outputs.cache-primary-key }}
@@ -285,19 +119,12 @@ jobs:
       - name: Extract job definition
         run: yq '.jobs.${{ github.job }}' .github/workflows/check.yml > .github/job.yml
 
+      - uses: pnpm/action-setup@v4
+
       - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
         with:
           node-version-file: '.node-version'
-
-      - name: Restore node_modules cache
-        uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
-        id: node-cache
-        with:
-          path: node_modules/
-          key: ${{ needs.cache-npm-macos.outputs.cache-key }}
-
-      - if: steps.node-cache.outputs.cache-hit != 'true'
-        run: exit 1
+          cache: pnpm
 
       - name: Load the cached jsbundle
         uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
@@ -309,9 +136,12 @@ jobs:
             ios/assets/
           key: ${{ runner.os }}-jsbundle-${{ hashFiles('.node-version', 'package.json', 'pnpm-lock.yaml', '.github/job.yml', 'tsconfig.json', 'babel.config.js', 'index.js', 'data/**', 'images/**', 'modules/**.ts', 'modules/**.tsx', 'src/**.ts', 'src/**.tsx') }}
 
+      - if: steps.jsbundle-cache.outputs.cache-hit != 'true'
+        run: pnpm install --frozen-lockfile
+
       - name: Generate jsbundle
         if: steps.jsbundle-cache.outputs.cache-hit != 'true'
-        run: npm run bundle:ios
+        run: pnpm run bundle:ios
 
       - name: Cache the jsbundle
         uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
@@ -325,7 +155,6 @@ jobs:
 
   android-bundle:
     name: Android Bundle
-    needs: [cache-npm-linux]
     runs-on: ubuntu-24.04
     outputs:
       cache-key: ${{ steps.jsbundle-cache.outputs.cache-primary-key }}
@@ -335,19 +164,12 @@ jobs:
       - name: Extract job definition
         run: yq '.jobs.${{ github.job }}' .github/workflows/check.yml > .github/job.yml
 
+      - uses: pnpm/action-setup@v4
+
       - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
         with:
           node-version-file: '.node-version'
-
-      - name: Restore node_modules cache
-        uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
-        id: node-cache
-        with:
-          path: node_modules/
-          key: ${{ needs.cache-npm-linux.outputs.cache-key }}
-
-      - if: steps.node-cache.outputs.cache-hit != 'true'
-        run: exit 1
+          cache: pnpm
 
       - name: Load the cached jsbundle
         uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
@@ -356,9 +178,12 @@ jobs:
           path: ./android/generated/
           key: ${{ runner.os }}-jsbundle-${{ hashFiles('.node-version', 'package.json', 'pnpm-lock.yaml', '.github/job.yml', 'tsconfig.json', 'babel.config.js', 'index.js', 'data/**', 'images/**', 'modules/**.ts', 'modules/**.tsx', 'src/**.ts', 'src/**.tsx') }}
 
+      - if: steps.jsbundle-cache.outputs.cache-hit != 'true'
+        run: pnpm install --frozen-lockfile
+
       - name: Generate jsbundle
         if: steps.jsbundle-cache.outputs.cache-hit != 'true'
-        run: npm run bundle:android
+        run: pnpm run bundle:android
 
       - name: Cache the jsbundle
         if: steps.jsbundle-cache.outputs.cache-hit != 'true'
@@ -369,24 +194,19 @@ jobs:
 
   android:
     name: Build for Android
-    needs: [jest, eslint, android-bundle, cache-npm-linux]
+    needs: [jest, eslint, android-bundle]
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
+      - uses: pnpm/action-setup@v4
+
       - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
         with:
           node-version-file: '.node-version'
+          cache: pnpm
 
-      - name: Restore node_modules cache
-        uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
-        id: node-cache
-        with:
-          path: node_modules/
-          key: ${{ needs.cache-npm-linux.outputs.cache-key }}
-
-      - if: steps.node-cache.outputs.cache-hit != 'true'
-        run: exit 1
+      - run: pnpm install --frozen-lockfile
 
       - uses: actions/setup-java@f2beeb24e141e01a676f977032f5a29d81c9e27e # v5.1.0
         with:
@@ -430,7 +250,7 @@ jobs:
 
   ios-build:
     name: Build for iOS
-    needs: [jest, eslint, cache-cocoapods, cache-npm-macos, cache-bundler-macos]
+    needs: [jest, eslint]
     runs-on: macos-14
     outputs:
       cache-key: ${{ steps.app-cache.outputs.cache-primary-key }}
@@ -449,22 +269,17 @@ jobs:
           path: ios/build/Build/Products/
           key: ${{ runner.os }}-ios-xcode@${{ env.xcode_version }}-${{ hashFiles('**/project.pbxproj', '**/Podfile', '**/Podfile.lock', 'pnpm-lock.yaml', '.github/job.yml') }}
 
+      - uses: pnpm/action-setup@v4
+        if: steps.app-cache.outputs.cache-hit != 'true'
+
       - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
         if: steps.app-cache.outputs.cache-hit != 'true'
         with:
           node-version-file: '.node-version'
+          cache: pnpm
 
-      - name: Restore node_modules cache
-        if: steps.app-cache.outputs.cache-hit != 'true'
-        uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
-        id: node-cache
-        with:
-          path: node_modules/
-          key: ${{ needs.cache-npm-macos.outputs.cache-key }}
-
-      - name: exit if the node_modules cache did not load
-        if: steps.app-cache.outputs.cache-hit != 'true' && steps.node-cache.outputs.cache-hit != 'true'
-        run: exit 1
+      - if: steps.app-cache.outputs.cache-hit != 'true'
+        run: pnpm install --frozen-lockfile
 
       - uses: ruby/setup-ruby@v1
         if: steps.app-cache.outputs.cache-hit != 'true'
@@ -474,17 +289,9 @@ jobs:
           ruby-version: ${{ env.ruby-version }}
           bundler-cache: true
 
-      - name: Restore Cocoapods cache
-        if: steps.app-cache.outputs.cache-hit != 'true'
-        uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
-        id: pods-cache
-        with:
-          path: ios/Pods
-          key: ${{ needs.cache-cocoapods.outputs.cache-key }}
-
-      - name: exit if the Cocoapods cache did not load
-        if: steps.app-cache.outputs.cache-hit != 'true' && steps.pods-cache.outputs.cache-hit != 'true'
-        run: exit 1
+      - if: steps.app-cache.outputs.cache-hit != 'true'
+        run: bundle exec pod install --deployment
+        working-directory: ./ios
 
       - uses: mikehardy/buildcache-action@1db83fb06b0da378aa7db7a1110923b904417cbc # v2
         if: steps.app-cache.outputs.cache-hit != 'true'
@@ -498,7 +305,7 @@ jobs:
         env:
           SKIP_BUNDLING: 'true'
           CODE_SIGNING_DISABLED: true
-        run: npx detox build e2e --configuration ios.sim.release
+        run: pnpm exec detox build e2e --configuration ios.sim.release
 
       # Debug step to verify build output
       - name: Verify build output
@@ -524,7 +331,7 @@ jobs:
 
   ios-detox:
     name: Detox E2E for iOS
-    needs: [cache-npm-macos, ios-build, ios-bundle]
+    needs: [ios-build, ios-bundle]
     runs-on: macos-14
     if: ${{ !contains(github.event.pull_request.labels.*.name, 'ci/skip-detox') }}
     steps:
@@ -615,27 +422,25 @@ jobs:
             exit 1
           fi
 
+      - uses: pnpm/action-setup@v4
+
       - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
         with:
           node-version-file: '.node-version'
+          cache: pnpm
 
-      - name: Restore node_modules cache
-        uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
-        id: node-cache
-        with:
-          path: node_modules/
-          key: ${{ needs.cache-npm-macos.outputs.cache-key }}
+      - run: pnpm install --frozen-lockfile
 
       - # We have to poke Detox because it installs things outside of node_modules/detox/…
         name: Re-install Detox
-        run: npx detox clean-framework-cache && npx detox build-framework-cache
+        run: pnpm exec detox clean-framework-cache && pnpm exec detox build-framework-cache
 
       - run: brew tap wix/brew
 
       - run: brew install applesimutils
 
       - name: Run the Detox tests
-        run: npx detox test e2e --configuration ios.sim.release --cleanup --record-logs failing --record-videos failing --record-performance all --capture-view-hierarchy enabled --take-screenshots failing
+        run: pnpm exec detox test e2e --configuration ios.sim.release --cleanup --record-logs failing --record-videos failing --record-performance all --capture-view-hierarchy enabled --take-screenshots failing
 
       - uses: actions/upload-artifact@50769540e7f4bd5e21e526ee35c689e35e0d6874 # v4
         if: always()
