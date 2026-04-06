@@ -102,7 +102,7 @@ export const CourseSearchView = (): JSX.Element => {
 			<NoticeView
 				buttonText="Try Again"
 				onPress={refetch}
-				text={`A problem occured while loading: ${error}`}
+				text={`A problem occurred while loading: ${error}`}
 			/>
 		)
 	}
