@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion -- guarded by `enabled` in queryOptions */
 import {queryOptions, type UndefinedInitialDataOptions, type DataTag, type DefaultError} from '@tanstack/react-query'
 import {
 	fetchAllPrinters,
@@ -40,6 +39,7 @@ export function printJobsQuery(username: string | undefined): QueryOptionsResult
 	return queryOptions({
 		queryKey: keys.jobs(username),
 		enabled: Boolean(username),
+		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- guarded by `enabled`
 		queryFn: ({signal}) => fetchJobs(username!, {signal}),
 	})
 }
@@ -48,6 +48,7 @@ export function allPrintersQuery(username: string | undefined): QueryOptionsResu
 	return queryOptions({
 		queryKey: keys.printers(username),
 		enabled: Boolean(username),
+		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- guarded by `enabled`
 		queryFn: ({signal}) => fetchAllPrinters(username!, {signal}),
 	})
 }
@@ -56,6 +57,7 @@ export function recentPrintersQuery(username: string | undefined): QueryOptionsR
 	return queryOptions({
 		queryKey: keys.printers(username),
 		enabled: Boolean(username),
+		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- guarded by `enabled`
 		queryFn: ({signal}) => fetchRecentPrinters(username!, {signal}),
 	})
 }
@@ -80,6 +82,7 @@ export function heldJobsQuery({
 		enabled: Boolean(username) && printerName !== undefined,
 		queryKey: keys.heldJobs({username, printerName: usablePrinterName}),
 		queryFn: ({signal}) =>
+			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- guarded by `enabled`
 			heldJobsAvailableAtPrinterForUser(usablePrinterName, username!, {signal}),
 	})
 }
