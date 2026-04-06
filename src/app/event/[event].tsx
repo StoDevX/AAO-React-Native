@@ -1,12 +1,20 @@
 import React from 'react'
 import {Platform} from 'react-native'
 
-import {EventDetail as EventDetailIos} from '@frogpond/event-list/event-detail-ios'
-import {EventDetail as EventDetailAndroid} from '@frogpond/event-list/event-detail-android'
+const EventDetailView = React.lazy(() =>
+	Platform.OS === 'ios'
+		? import('@frogpond/event-list/event-detail-ios').then((m) => ({
+				default: m.EventDetail,
+			}))
+		: import('@frogpond/event-list/event-detail-android').then((m) => ({
+				default: m.EventDetail,
+			})),
+)
 
-const EventDetailView =
-	Platform.OS === 'ios' ? EventDetailIos : EventDetailAndroid
-
-export default function EventDetailScreen(): React.ReactNode {
-	return <EventDetailView />
+export default function EventDetailScreen(): React.JSX.Element {
+	return (
+		<React.Suspense>
+			<EventDetailView />
+		</React.Suspense>
+	)
 }

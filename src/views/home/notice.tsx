@@ -27,13 +27,15 @@ if (isDevMode()) {
 }
 
 export function UnofficialAppNotice(): React.JSX.Element {
-	const [msg, setMsg] = React.useState(() => sample(messages) ?? messages[0])
+	// eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- messages is non-empty
+	const [msg, setMsg] = React.useState(() => sample(messages)!)
 
 	const handlePress = React.useCallback(() => {
 		setMsg((current) => {
 			let next = current
 			while (next === current) {
-				next = sample(messages) ?? messages[0]
+				// eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- messages is non-empty
+				next = sample(messages)!
 			}
 			return next
 		})
