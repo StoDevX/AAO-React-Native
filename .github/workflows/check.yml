@@ -206,6 +206,9 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
+      - name: Generate native project
+        run: npx expo prebuild --platform android --no-install
+
       - uses: actions/setup-java@f2beeb24e141e01a676f977032f5a29d81c9e27e # v5.1.0
         with:
           distribution: ${{ env.java_distribution }}
@@ -259,7 +262,7 @@ jobs:
         uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         with:
           path: ios/build/Build/Products/
-          key: ${{ runner.os }}-ios-xcode@${{ env.xcode_version }}-${{ hashFiles('**/project.pbxproj', '**/Podfile', '**/Podfile.lock', 'pnpm-lock.yaml', '.github/job.yml') }}
+          key: ${{ runner.os }}-ios-xcode@${{ env.xcode_version }}-${{ hashFiles('app.json', 'package.json', 'pnpm-lock.yaml', '.github/job.yml') }}
 
       - uses: pnpm/action-setup@v4
         if: steps.app-cache.outputs.cache-hit != 'true'
@@ -273,6 +276,10 @@ jobs:
       - if: steps.app-cache.outputs.cache-hit != 'true'
         run: pnpm install --frozen-lockfile
 
+      - name: Generate native project
+        if: steps.app-cache.outputs.cache-hit != 'true'
+        run: npx expo prebuild --platform ios --no-install
+
       - uses: ruby/setup-ruby@v1
         if: steps.app-cache.outputs.cache-hit != 'true'
         env:
@@ -283,7 +290,7 @@ jobs:
 
       - name: Install CocoaPods
         if: steps.app-cache.outputs.cache-hit != 'true'
-        run: bundle exec pod install --deployment
+        run: bundle exec pod install
         working-directory: ./ios
 
       - uses: mikehardy/buildcache-action@1db83fb06b0da378aa7db7a1110923b904417cbc # v2
