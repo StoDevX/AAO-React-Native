@@ -21,7 +21,7 @@ export type AccountBalanceType = {
 
 export type OleCardBalancesType = {
 	data: {
-		accounts: Array<AccountBalanceType>
+		accounts: AccountBalanceType[]
 		meals?: MealPlanInfoType
 	}
 	error?: string

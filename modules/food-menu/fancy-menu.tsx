@@ -22,7 +22,7 @@ import {useRouter} from 'expo-router'
 import type {Moment} from 'moment'
 
 type FilterFunc = (
-	filters: Array<FilterType<MenuItemType>>,
+	filters: FilterType<MenuItemType>[],
 	item: MenuItemType,
 ) => boolean
 
@@ -55,25 +55,24 @@ const styles = StyleSheet.create({
 const LEFT_MARGIN = 28
 const Separator = () => <ListSeparator spacing={{left: LEFT_MARGIN}} />
 
-const areSpecialsFiltered = (
-	filters: Array<FilterType<MenuItemType>>,
-): boolean => Boolean(filters.find(isSpecialsFilter))
+const areSpecialsFiltered = (filters: FilterType<MenuItemType>[]): boolean =>
+	Boolean(filters.find(isSpecialsFilter))
 
 const isSpecialsFilter = (f: FilterType<MenuItemType>): boolean =>
 	f.enabled && f.type === 'toggle' && f.spec.label === 'Only Show Specials'
 
-const areDietsFiltered = (filters: Array<FilterType<MenuItemType>>): boolean =>
+const areDietsFiltered = (filters: FilterType<MenuItemType>[]): boolean =>
 	Boolean(filters.find(isDietsFilter))
 
 const isDietsFilter = (f: FilterType<MenuItemType>): boolean =>
 	f.enabled && f.type === 'list' && f.spec.title === 'Dietary Restrictions'
 
 const groupMenuData = (args: {
-	filters: Array<FilterType<MenuItemType>>
-	stations: Array<StationMenuType>
+	filters: FilterType<MenuItemType>[]
+	stations: StationMenuType[]
 	foodItems: MenuItemContainerType
 	applyFilters: FilterFunc
-}): {title: string; data: Array<MenuItemType>}[] => {
+}): {title: string; data: MenuItemType[]}[] => {
 	const {applyFilters, foodItems, stations, filters} = args
 
 	const dietsFilterEnabled = areDietsFiltered(filters)
@@ -118,7 +117,7 @@ export function FancyMenu(props: Props): React.JSX.Element {
 	)
 
 	const [groupedMenuData, setGroupedMenuData] = useState<
-		{title: string; data: Array<MenuItemType>}[]
+		{title: string; data: MenuItemType[]}[]
 	>([])
 
 	const anyFiltersEnabled = filters.some((f) => f.enabled)

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types -- queryOptions() return types are complex and best inferred */
 import {queryOptions} from '@tanstack/react-query'
 import {
 	fetchAllPrinters,
@@ -28,6 +29,7 @@ export function printJobsQuery(username: string | undefined) {
 	return queryOptions({
 		queryKey: keys.jobs(username),
 		enabled: Boolean(username),
+		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- guarded by `enabled`
 		queryFn: ({signal}) => fetchJobs(username!, {signal}),
 	})
 }
@@ -36,6 +38,7 @@ export function allPrintersQuery(username: string | undefined) {
 	return queryOptions({
 		queryKey: keys.printers(username),
 		enabled: Boolean(username),
+		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- guarded by `enabled`
 		queryFn: ({signal}) => fetchAllPrinters(username!, {signal}),
 	})
 }
@@ -44,6 +47,7 @@ export function recentPrintersQuery(username: string | undefined) {
 	return queryOptions({
 		queryKey: keys.printers(username),
 		enabled: Boolean(username),
+		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- guarded by `enabled`
 		queryFn: ({signal}) => fetchRecentPrinters(username!, {signal}),
 	})
 }
@@ -68,6 +72,7 @@ export function heldJobsQuery({
 		enabled: Boolean(username) && printerName !== undefined,
 		queryKey: keys.heldJobs({username, printerName: usablePrinterName}),
 		queryFn: ({signal}) =>
+			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- guarded by `enabled`
 			heldJobsAvailableAtPrinterForUser(usablePrinterName, username!, {signal}),
 	})
 }

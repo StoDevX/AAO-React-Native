@@ -29,7 +29,9 @@ type StoredCredentials = Credentials
 async function loadCredentials(): Promise<null | StoredCredentials> {
 	try {
 		const credentialsJson = await SecureStore.getItemAsync(SIS_LOGIN_KEY)
-		return credentialsJson ? JSON.parse(credentialsJson) : null
+		return credentialsJson
+			? (JSON.parse(credentialsJson) as StoredCredentials)
+			: null
 	} catch {
 		return null
 	}

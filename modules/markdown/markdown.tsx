@@ -12,8 +12,6 @@ import {
 } from 'react-native'
 import ReactMarkdown from 'react-markdown'
 
-delete (ReactMarkdown as any).propTypes
-
 import * as c from '@frogpond/colors'
 import {Paragraph, Strong, Emph, BlockQuote} from './formatting'
 import {Code, CodeBlock} from './code'
@@ -21,6 +19,8 @@ import {Heading} from './heading'
 import {Link} from './link'
 import {Image} from './image'
 import {List, ListItem} from './list'
+
+delete (ReactMarkdown as unknown as {propTypes?: unknown}).propTypes
 
 const baseStyles = StyleSheet.create({
 	horizontalRule: {

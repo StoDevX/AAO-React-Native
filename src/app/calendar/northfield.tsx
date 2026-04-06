@@ -1,7 +1,7 @@
 import * as React from 'react'
 import {CccCalendarView, useNamedCalendar} from '@frogpond/ccc-calendar'
 
-export default function CalendarTabNorthfield() {
+export default function CalendarTabNorthfield(): React.JSX.Element {
 	return (
 		<CccCalendarView
 			poweredBy={{

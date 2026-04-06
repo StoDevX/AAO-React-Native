@@ -80,7 +80,7 @@ export function getFavoriteBuildings(): Promise<favoriteBuildingsType> {
 }
 
 const courseDataKey = 'sis:course-data'
-type courseDataType = Array<CourseType>
+type courseDataType = CourseType[]
 export function setTermCourseData(
 	term: number,
 	courseData: courseDataType,
@@ -94,7 +94,7 @@ export function getTermCourseData(term: number): Promise<courseDataType> {
 }
 
 const termInfoKey = courseDataKey + ':term-info'
-type termInfoType = Array<TermType>
+type termInfoType = TermType[]
 export function setTermInfo(termData: termInfoType): Promise<void> {
 	return setItem(termInfoKey, termData)
 }
@@ -126,7 +126,7 @@ export function getRecentSearches(): Promise<recentSearchesType> {
 }
 
 const recentFiltersKey = 'courses:recent-filters'
-type recentFiltersType = Array<FilterComboType>
+type recentFiltersType = FilterComboType[]
 export function setRecentFilters(combos: recentFiltersType): Promise<void> {
 	return setItem(recentFiltersKey, combos)
 }

@@ -8,7 +8,7 @@ import {black, white} from './colors'
  */
 export function firstReadable(
 	background: string,
-	possibilities: Array<string>,
+	possibilities: string[],
 ): string {
 	for (let colorString of possibilities) {
 		let color = tinycolor(colorString)

@@ -5,7 +5,7 @@ import toPairs from 'lodash/toPairs'
 
 //example: [20171,20173,20154,20153] -> "17/18: Fall/Spr, "15/16: Spr/Sum1""
 
-export function formatTerms(terms: Array<number>): string {
+export function formatTerms(terms: number[]): string {
 	let sortedTerms = sortBy(terms)
 	let formattedTerms = sortedTerms.map((term) =>
 		parseTermAbbrev(term.toString()),

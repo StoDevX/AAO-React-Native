@@ -26,7 +26,7 @@ type EventSection = {readonly title: string; readonly data: EventType[]}
 function groupEvents(
 	events: readonly EventType[],
 	now: Moment,
-): Array<EventSection> {
+): EventSection[] {
 	let grouped = groupBy(events, (event) => {
 		if (event.isOngoing) {
 			return 'Ongoing'

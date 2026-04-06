@@ -8,7 +8,7 @@ import flatten from 'lodash/flatten'
 import cloneDeep from 'lodash/cloneDeep'
 
 type Props<T extends object> = {
-	filters: Array<FilterType<T>>
+	filters: FilterType<T>[]
 	onPopoverDismiss: (filter: FilterType<T>) => unknown
 }
 

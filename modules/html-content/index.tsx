@@ -39,8 +39,8 @@ export function HtmlContent(props: Props): ReactNode {
 	return (
 		<WebView
 			ref={webview}
-			originWhitelist={['*']}
 			onNavigationStateChange={onNavigationStateChange}
+			originWhitelist={['*']}
 			source={{html: props.html, baseUrl: props.baseUrl}}
 			style={props.style}
 		/>

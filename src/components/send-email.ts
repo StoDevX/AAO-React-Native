@@ -3,9 +3,9 @@ import Clipboard from '@react-native-clipboard/clipboard'
 import {openUrl} from '@frogpond/open-url'
 
 type Args = {
-	to?: Array<string>
-	cc?: Array<string>
-	bcc?: Array<string>
+	to?: string[]
+	cc?: string[]
+	bcc?: string[]
 	subject?: string
 	body?: string
 }

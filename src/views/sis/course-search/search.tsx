@@ -59,7 +59,7 @@ export const CourseSearchView = (): React.JSX.Element => {
 				},
 			},
 		})
-	}, [navigation, typedQuery])
+	}, [navigation, typedQuery, router])
 
 	let showSearchResult = React.useCallback(
 		(query: string) => {

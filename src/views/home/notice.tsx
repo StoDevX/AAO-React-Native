@@ -1,5 +1,5 @@
 import React from 'react'
-import {View, Text, StyleSheet, Pressable} from 'react-native'
+import {Text, StyleSheet, Pressable} from 'react-native'
 import * as c from '@frogpond/colors'
 import sample from 'lodash/sample'
 // import {CELL_MARGIN} from './button'
@@ -27,22 +27,24 @@ if (isDevMode()) {
 }
 
 export function UnofficialAppNotice(): React.JSX.Element {
-	const [msg, setMsg] = React.useState(() => sample(messages))
+	// eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- messages is non-empty
+	const [msg, setMsg] = React.useState(() => sample(messages)!)
 
 	const handlePress = React.useCallback(() => {
 		setMsg((current) => {
 			let next = current
 			while (next === current) {
+				// eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- messages is non-empty
 				next = sample(messages)!
 			}
 			return next
 		})
-	}, [msg])
+	}, [])
 
 	return (
 		<Pressable
-			style={[styles.wrapper, styles.background]}
 			onPress={handlePress}
+			style={[styles.wrapper, styles.background]}
 		>
 			<Text style={styles.text}>{msg}</Text>
 		</Pressable>

@@ -9,7 +9,7 @@ export type JobType = {
 	howToApply: string
 	id: number
 	lastModified: string
-	links: Array<string>
+	links: string[]
 	office: string
 	openPositions: string
 	skills: string

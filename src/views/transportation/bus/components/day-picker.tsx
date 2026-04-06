@@ -68,7 +68,7 @@ const styles = StyleSheet.create({
 	},
 })
 
-export const DAYS_OF_WEEK: Array<{day: DayOfWeek; label: string}> = [
+export const DAYS_OF_WEEK: {day: DayOfWeek; label: string}[] = [
 	{day: 'Su', label: 'Sunday'},
 	{day: 'Mo', label: 'Monday'},
 	{day: 'Tu', label: 'Tuesday'},

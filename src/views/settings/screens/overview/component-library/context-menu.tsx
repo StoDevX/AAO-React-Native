@@ -7,7 +7,7 @@ import {
 	Host,
 	HStack,
 } from '@expo/ui/swift-ui'
-import {Example, LibraryWrapper} from './base/library-wrapper'
+import {LibraryWrapper} from './base/library-wrapper'
 import {upperFirst} from 'lodash'
 
 const SingleMenu = (): React.JSX.Element => {

@@ -9,7 +9,7 @@ export const keys = {
 }
 
 export function useGroupedBuildings(): UseQueryResult<
-	Array<{title: string; data: BuildingType[]}>,
+	{title: string; data: BuildingType[]}[],
 	unknown
 > {
 	let favoriteBuildings = useAppSelector(selectFavoriteBuildings)

@@ -40,11 +40,11 @@ export function applySearch(query: string, course: Course): boolean {
 
 interface SortedAgainType {
 	title: string
-	data: Array<Course>
+	data: Course[]
 }
 
-export function sortAndGroupResults(results: Array<Course>): SortedAgainType[] {
-	let sorted: Array<Course> = sortBy(results, (course) => deptNum(course))
+export function sortAndGroupResults(results: Course[]): SortedAgainType[] {
+	let sorted: Course[] = sortBy(results, (course) => deptNum(course))
 	let byTerm = groupBy(sorted, (r) => r.term)
 
 	let forSectionList = toPairs(byTerm).map(([key, value]) => ({

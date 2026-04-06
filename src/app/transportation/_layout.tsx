@@ -4,7 +4,7 @@ import MaterialDesignIcons from '@react-native-vector-icons/material-design-icon
 import {Platform} from 'react-native'
 import {Stack} from 'expo-router'
 
-export default function TabLayout() {
+export default function TabLayout(): React.JSX.Element {
 	return (
 		<NativeTabs>
 			<Stack.Screen options={{title: 'Transportation'}} />

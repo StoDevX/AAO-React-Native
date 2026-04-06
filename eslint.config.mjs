@@ -3,10 +3,8 @@
 import eslint from '@eslint/js'
 import {defineConfig, globalIgnores} from 'eslint/config'
 // @ts-expect-error Could not find a declaration file for module
-import expoConfig from 'eslint-config-expo/flat'
+import expoConfig from 'eslint-config-expo/flat.js'
 import tseslint from 'typescript-eslint'
-import reactPlugin from 'eslint-plugin-react'
-import reactHooks from 'eslint-plugin-react-hooks'
 import tanstackQuery from '@tanstack/eslint-plugin-query'
 import eslintConfigPrettier from 'eslint-config-prettier/flat'
 import globals from 'globals'
@@ -22,13 +20,6 @@ export default defineConfig([
 	{languageOptions: {parserOptions: {projectService: true}}}, // enable projectService for faster linting
 	// @tanstack/eslint-plugin-query
 	...tanstackQuery.configs['flat/recommended'],
-	// eslint-plugin-react-hooks
-	reactHooks.configs.flat.recommended,
-	// eslint-plugin-react
-	{
-		files: ['**/*.{js,jsx,ts,tsx,mjs,cjs}'],
-		...reactPlugin.configs.flat.recommended,
-	},
 	// custom rule settings
 	{
 		files: ['**/*.{js,jsx,ts,tsx,mjs,cjs}'],
@@ -151,6 +142,7 @@ export default defineConfig([
 		files: ['images/**/*.ts'],
 		rules: {
 			'@typescript-eslint/no-require-imports': 'off',
+			'import/no-unresolved': 'off',
 		},
 	},
 	// Eslint v9/ts-eslint v8 upgrade temporary overrides
@@ -163,17 +155,12 @@ export default defineConfig([
 			'react-hooks/set-state-in-effect': 'off',
 		},
 	},
-	// Script files - less strict type checking
+	// Script files - disable type-checked linting (not in tsconfig)
 	{
-		files: ['scripts/**/*.mjs'],
+		files: ['scripts/**/*.{mjs,js}'],
+		...tseslint.configs.disableTypeChecked,
 		rules: {
-			'@typescript-eslint/no-unsafe-assignment': 'off',
-			'@typescript-eslint/no-unsafe-member-access': 'off',
-			'@typescript-eslint/no-unsafe-call': 'off',
-			'@typescript-eslint/no-unsafe-argument': 'off',
-			'@typescript-eslint/no-unsafe-return': 'off',
-			'@typescript-eslint/unbound-method': 'off',
-			'@typescript-eslint/no-unused-expressions': 'off',
+			...tseslint.configs.disableTypeChecked.rules,
 			'@typescript-eslint/explicit-module-boundary-types': 'off',
 			'@typescript-eslint/no-unused-vars': 'off',
 		},

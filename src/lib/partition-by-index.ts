@@ -1,4 +1,4 @@
-function* enumerate<T>(iter: Array<T>): Generator<[number, T]> {
+function* enumerate<T>(iter: T[]): Generator<[number, T]> {
 	let i = 0
 	for (let item of iter) {
 		yield [i, item]

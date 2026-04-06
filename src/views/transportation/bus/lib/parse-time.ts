@@ -1,7 +1,7 @@
-const TIME_FORMAT = 'h:mma'
 import {timezone} from '@frogpond/constants'
 import moment from 'moment-timezone'
 import type {Moment} from 'moment-timezone'
+const TIME_FORMAT = 'h:mma'
 
 type MaybeTime = string | false
 

@@ -21,13 +21,13 @@ export type RssFeedItemType = {
 
 export type FeedResponseType = {
 	rss: {
-		channel: Array<{
+		channel: {
 			title: string[]
 			'atom:link': unknown[]
 			link: string[]
 			description: string[]
 			item: RssFeedItemType[]
-		}>
+		}[]
 	}
 }
 

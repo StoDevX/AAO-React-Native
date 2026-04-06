@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import fs from 'node:fs/promises'
-import {isJunk, isNotJunk} from 'junk'
+import {isJunk} from 'junk'
 import path from 'node:path'
 import {bundleDataDir} from './bundle-data-dir.mjs'
 import {convertDataFile} from './convert-data-file.mjs'
@@ -22,7 +22,7 @@ for (const file of await fs.readdir(fromDir)) {
 	}
 
 	const fullPath = path.join(fromDir, file)
-	const stat = await fs.stat(fullPath)
+	const stat = await fs.stat(fullPath) // eslint-disable-line no-await-in-loop -- sequential processing is intentional
 
 	if (stat.isDirectory()) {
 		// Bundle each directory of yaml files into one big json file

@@ -24,7 +24,7 @@ type Props = Parameters<typeof LinkText>[0] & {
 
 type Callback = ({title, href}: {title?: string; href: string}) => void
 
-const LINK_OPTIONS: Array<{name: string; action: Callback}> = [
+const LINK_OPTIONS: {name: string; action: Callback}[] = [
 	{
 		name: 'Open',
 		action: ({href}: {href: string}) => openUrl(href),

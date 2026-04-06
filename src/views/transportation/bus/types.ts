@@ -9,8 +9,8 @@ export type BusLineColors = {
 	dot: ColorValue
 }
 
-export type UnprocessedDepartureTimeList = Array<string | false>
-export type DepartureTimeList = Array<null | Moment>
+export type UnprocessedDepartureTimeList = (string | false)[]
+export type DepartureTimeList = (null | Moment)[]
 
 export type BusTimetableEntry = {
 	name: string
@@ -22,26 +22,26 @@ export type UnprocessedBusLine = {
 	line: string
 	colors: BusLineColors
 	notice?: string
-	schedules: Array<UnprocessedBusSchedule>
+	schedules: UnprocessedBusSchedule[]
 }
 
 export type BusLine = {
 	line: string
 	colors: BusLineColors
-	schedules: Array<BusSchedule>
+	schedules: BusSchedule[]
 }
 
 export type UnprocessedBusSchedule = {
-	days: Array<DayOfWeek>
+	days: DayOfWeek[]
 	coordinates: Record<string, Coordinates>
 	stops: string[]
-	times: Array<UnprocessedDepartureTimeList>
+	times: UnprocessedDepartureTimeList[]
 }
 
 export type BusSchedule = {
-	days: Array<DayOfWeek>
-	timetable: Array<BusTimetableEntry>
-	stops: Array<string>
+	days: DayOfWeek[]
+	timetable: BusTimetableEntry[]
+	stops: string[]
 	coordinates: {[name: string]: Coordinates}
-	times: Array<DepartureTimeList>
+	times: DepartureTimeList[]
 }

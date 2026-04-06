@@ -4,7 +4,7 @@ import MaterialDesignIcons from '@react-native-vector-icons/material-design-icon
 import {Platform} from 'react-native'
 import {Stack} from 'expo-router'
 
-export default function SisTabLayout() {
+export default function SisTabLayout(): React.JSX.Element {
 	return (
 		<NativeTabs>
 			<Stack.Screen options={{title: 'SIS'}} />

@@ -7,12 +7,7 @@ import {
 	cancelPrintJobForUser,
 	releasePrintJobToPrinterForUser,
 } from '../../lib/stoprint/api'
-import {
-	isStoprintMocked,
-	showGeneralError,
-	type Printer,
-	type PrintJob,
-} from '../../lib/stoprint'
+import {showGeneralError, type Printer, type PrintJob} from '../../lib/stoprint'
 import {useLocalSearchParams, useRouter} from 'expo-router'
 import {heldJobsQuery} from './query'
 import {useMutation, useQuery} from '@tanstack/react-query'
@@ -182,10 +177,10 @@ export const PrintJobReleaseView = (): React.JSX.Element => {
 	let status = releaseJob.isPending
 		? 'printing'
 		: cancelJob.isPending
-			? 'cancelling'
-			: job?.statusFormatted === 'Pending Release'
-				? 'pending'
-				: 'complete'
+		  ? 'cancelling'
+		  : job?.statusFormatted === 'Pending Release'
+		    ? 'pending'
+		    : 'complete'
 
 	let actionAvailable = status !== 'complete' && printer
 

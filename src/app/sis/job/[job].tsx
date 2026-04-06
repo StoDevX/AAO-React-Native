@@ -1,11 +1,20 @@
 import React from 'react'
 import {Platform} from 'react-native'
 
-const JobDetailView =
+const JobDetailView = React.lazy(() =>
 	Platform.OS === 'ios'
-		? require('../../../views/sis/student-work/detail-ios').JobDetailView
-		: require('../../../views/sis/student-work/detail-android').JobDetailView
+		? import('../../../views/sis/student-work/detail-ios').then((m) => ({
+				default: m.JobDetailView,
+			}))
+		: import('../../../views/sis/student-work/detail-android').then((m) => ({
+				default: m.JobDetailView,
+			})),
+)
 
-export default function JobDetailScreen(): React.ReactNode {
-	return <JobDetailView />
+export default function JobDetailScreen(): React.JSX.Element {
+	return (
+		<React.Suspense>
+			<JobDetailView />
+		</React.Suspense>
+	)
 }

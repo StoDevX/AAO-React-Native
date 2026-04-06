@@ -18,7 +18,7 @@ export const buttonStyles = StyleSheet.create({
 	},
 })
 
-export const NetworkLoggerButton = () => {
+export const NetworkLoggerButton = (): React.JSX.Element => {
 	let router = useRouter()
 	let {colors} = useTheme()
 

@@ -26,8 +26,8 @@ export default function HomePage(): React.ReactNode {
 	return (
 		<ScrollView
 			alwaysBounceHorizontal={false}
-			showsHorizontalScrollIndicator={false}
 			contentContainerStyle={styles.container}
+			showsHorizontalScrollIndicator={false}
 			testID="screen-homescreen"
 		>
 			<Stack.Screen
@@ -41,131 +41,131 @@ export default function HomePage(): React.ReactNode {
 
 			<View style={styles.cells}>
 				<HomeScreenButton
+					foreground="light"
 					href="/menus"
-					title="Menus"
 					icon="bowl"
-					foreground="light"
 					tint={c.grassToLime[0]}
+					title="Menus"
 				/>
 
 				<HomeScreenButton
+					foreground="light"
 					href="/sis"
-					title="SIS"
 					icon="fingerprint"
-					foreground="light"
 					tint={c.yellowToGoldDark[0]}
+					title="SIS"
 				/>
 
 				<HomeScreenButton
+					foreground="light"
 					href="/building-hours"
-					title="Building Hours"
 					icon="clock"
-					foreground="light"
 					tint={c.lightBlueToBlueDark[0]}
+					title="Building Hours"
 				/>
 
 				<HomeScreenButton
+					foreground="light"
 					href="/calendar"
-					title="Calendar"
 					icon="calendar"
-					foreground="light"
 					tint={c.magentaToPurple[0]}
+					title="Calendar"
 				/>
 
 				<HomeScreenButton
+					foreground="light"
 					href="/directory"
-					title="Directory"
 					icon="v-card"
-					foreground="light"
 					tint={c.redToPurple[0]}
+					title="Directory"
 				/>
 
 				<HomeScreenButton
+					foreground="light"
 					href="/streaming"
-					title="Streaming Media"
 					icon="video"
-					foreground="light"
 					tint={c.lightBlueToBlueLight[0]}
+					title="Streaming Media"
 				/>
 
 				<HomeScreenButton
+					foreground="light"
 					href="/news"
-					title="News"
 					icon="news"
-					foreground="light"
 					tint={c.purpleToIndigo[0]}
+					title="News"
 				/>
 
 				<HomeScreenLink
+					foreground="light"
 					href="https://www.myatlascms.com/map/index.php?id=294"
-					title="Campus Map"
 					icon="map"
-					foreground="light"
 					tint={c.navyToNavy[0]}
+					title="Campus Map"
 				/>
 
 				<HomeScreenButton
+					foreground="light"
 					href="/contacts"
-					title="Important Contacts"
 					icon="phone"
-					foreground="light"
 					tint={c.orangeToRed[0]}
+					title="Important Contacts"
 				/>
 
 				<HomeScreenButton
+					foreground="light"
 					href="/transportation"
-					title="Transportation"
 					icon="address"
-					foreground="light"
 					tint={c.grayToDarkGray[0]}
+					title="Transportation"
 				/>
 
 				<HomeScreenButton
+					foreground="light"
 					href="/dictionary"
-					title="Campus Dictionary"
 					icon="open-book"
-					foreground="light"
 					tint={c.pinkToHotpink[0]}
+					title="Campus Dictionary"
 				/>
 
 				<HomeScreenButton
+					foreground="light"
 					href="/student-orgs"
-					title="Student Orgs"
 					icon="globe"
-					foreground="light"
 					tint={c.darkBlueToIndigo[0]}
+					title="Student Orgs"
 				/>
 
 				<HomeScreenButton
+					foreground="light"
 					href="/more"
-					title="More"
 					icon="link"
-					foreground="light"
 					tint={c.seafoamToGrass[0]}
+					title="More"
 				/>
 
 				<HomeScreenButton
+					foreground="light"
 					href="/stoprint"
-					title="stoPrint"
 					icon="print"
-					foreground="light"
 					tint={c.tealToSeafoam[0]}
+					title="stoPrint"
 				/>
 
 				<HomeScreenButton
-					href="/sis/course-search"
-					title="Course Catalog"
-					icon="graduation-cap"
 					foreground="light"
+					href="/sis/course-search"
+					icon="graduation-cap"
 					tint={c.lavender}
+					title="Course Catalog"
 				/>
 
 				<HomeScreenLink
-					href="https://oleville.com"
-					title="Oleville"
-					icon="browser"
 					foreground="dark"
+					href="https://oleville.com"
+					icon="browser"
 					tint={c.yellowToGoldMid[0]}
+					title="Oleville"
 				/>
 			</View>
 

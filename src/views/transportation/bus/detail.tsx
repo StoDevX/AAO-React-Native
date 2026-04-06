@@ -17,12 +17,17 @@ import {
 	type BusStopStatusEnum,
 } from './lib'
 
-import {ListFooter, ListRow, ListSectionHeader} from '@frogpond/lists'
+import {
+	ListFooter,
+	ListRow,
+	ListSectionHeader,
+	Detail,
+	Title,
+} from '@frogpond/lists'
 import * as c from '@frogpond/colors'
 import {useMomentTimer} from '@frogpond/timer'
 import {timezone} from '@frogpond/constants'
 import {Column} from '@frogpond/layout'
-import {Detail, Title} from '@frogpond/lists'
 import {BUS_FOOTER_MESSAGE} from './constants'
 
 const styles = StyleSheet.create({

@@ -8,7 +8,7 @@ export const keys = {
 }
 
 export function useGroupedContacts(): UseQueryResult<
-	Array<{title: string; data: ContactType[]}>,
+	{title: string; data: ContactType[]}[],
 	unknown
 > {
 	return useQuery({

@@ -1,4 +1,4 @@
-import jsYaml from 'js-yaml'
+import {dump} from 'js-yaml'
 import type {WordType} from '../types'
 import {sendEmail} from '../../../components/send-email'
 import {GH_NEW_ISSUE_URL, SUPPORT_EMAIL} from '../../../lib/constants'
@@ -64,7 +64,7 @@ function makeIssueLink(before: string, after: string, title: string): string {
 
 export function stringifyDictionaryEntry(entry: WordType): string {
 	// let js-yaml handle dumping the word, just in case
-	let initialData = jsYaml.dump({word: entry.word}, {flowLevel: 4})
+	let initialData = dump({word: entry.word}, {flowLevel: 4})
 
 	let definition = `definition: |
 ${wrap(2, 80)(entry.definition)}
