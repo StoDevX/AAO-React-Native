@@ -5,4 +5,5 @@ tasks."typecheck" = "pnpm run typecheck"
 tasks."test" = "pnpm test"
 
 [tools]
+node = "22.20.0"
 pnpm = "10.30"
