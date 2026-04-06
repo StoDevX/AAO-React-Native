@@ -13,7 +13,7 @@ concurrency:
 env:
   ruby-version: '3.4.8'
   xcode_version: 'Xcode_15.2'
-  java_version: '11'
+  java_version: '17'
   java_distribution: temurin
 
 jobs:
@@ -220,12 +220,15 @@ jobs:
           echo 524288 | sudo tee -a /proc/sys/fs/inotify/max_user_instances
           sudo sysctl -p
 
-      - name: Gradle
-        uses: gradle/gradle-build-action@ac2d340dc04d9e1113182899e983b5400c17cda1 # v3
-        with:
-          arguments: bundleRelease --scan
-          build-root-directory: android
-          gradle-home-cache-cleanup: true
+      - name: Generate native Android project
+        run: pnpm exec expo prebuild --platform android --no-install
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3.5.0
+
+      - name: Build with Gradle
+        run: ./gradlew bundleRelease --scan
+        working-directory: android
         env:
           SENTRY_ORG: frog-pond-labs
           SENTRY_PROJECT: all-about-olaf
@@ -267,7 +270,7 @@ jobs:
         uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         with:
           path: ios/build/Build/Products/
-          key: ${{ runner.os }}-ios-xcode@${{ env.xcode_version }}-${{ hashFiles('**/project.pbxproj', '**/Podfile', '**/Podfile.lock', 'pnpm-lock.yaml', '.github/job.yml') }}
+          key: ${{ runner.os }}-ios-xcode@${{ env.xcode_version }}-${{ hashFiles('app.json', 'pnpm-lock.yaml', '.github/job.yml') }}
 
       - uses: pnpm/action-setup@v4
         if: steps.app-cache.outputs.cache-hit != 'true'
@@ -289,8 +292,12 @@ jobs:
           ruby-version: ${{ env.ruby-version }}
           bundler-cache: true
 
+      - name: Generate native iOS project
+        if: steps.app-cache.outputs.cache-hit != 'true'
+        run: pnpm exec expo prebuild --platform ios --no-install
+
       - if: steps.app-cache.outputs.cache-hit != 'true'
-        run: bundle exec pod install --deployment
+        run: bundle exec pod install
         working-directory: ./ios
 
       - uses: mikehardy/buildcache-action@1db83fb06b0da378aa7db7a1110923b904417cbc # v2
