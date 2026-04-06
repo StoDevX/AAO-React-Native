@@ -12,18 +12,15 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
-      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
-        with:
-          node-version-file: '.node-version'
-          cache: npm
+      - uses: jdx/mise-action@v4
       - run: npm ci
-      - run: npm run validate-data
-      - run: npm run bundle-data
-      - run: npm run pretty --no-write --list-different
-      - run: npx tsc
-      - run: npm run lint
+      - run: mise run validate-data
+      - run: mise run bundle-data
+      - run: mise run pretty:check
+      - run: mise run tsc
+      - run: mise run lint
       - name: Run tests
-        run: npm run test -- --coverage
+        run: mise run test -- --coverage
       - name: Upload coverage
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
@@ -34,10 +31,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
-      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
-        with:
-          node-version-file: '.node-version'
-          cache: npm
+      - uses: jdx/mise-action@v4
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: '3.4.8'
@@ -60,7 +54,7 @@ jobs:
           sudo sysctl -p
       - run: echo 'org.gradle.workers.max=2' >> ./android/gradle.properties
       - run: cd android && ./gradlew androidDependencies --console=plain
-      - run: npm run bundle-data
+      - run: mise run bundle-data
       - run: bundle exec fastlane android ci-run
         env:
           FASTLANE_PASSWORD: ${{ secrets.FASTLANE_PASSWORD }}
@@ -78,10 +72,7 @@ jobs:
     runs-on: macos-14
     steps:
       - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
-      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
-        with:
-          node-version-file: '.node-version'
-          cache: npm
+      - uses: jdx/mise-action@v4
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: '3.4.8'

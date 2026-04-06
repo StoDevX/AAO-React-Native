@@ -34,13 +34,10 @@ jobs:
           path: |
             node_modules/
             modules/*/node_modules/
-          key: ${{ runner.os }}-node_modules-${{ hashFiles('.node-version', 'package-lock.json', '.github/job.yml') }}
+          key: ${{ runner.os }}-node_modules-${{ hashFiles('.mise.toml', 'package-lock.json', '.github/job.yml') }}
 
       - if: steps.node-cache.outputs.cache-hit != 'true'
-        uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
-        with:
-          node-version-file: '.node-version'
-          cache: npm
+        uses: jdx/mise-action@v4
 
       - if: steps.node-cache.outputs.cache-hit != 'true'
         run: npm ci
@@ -70,13 +67,10 @@ jobs:
           path: |
             node_modules/
             modules/*/node_modules/
-          key: ${{ runner.os }}-node_modules-${{ hashFiles('.node-version', 'package-lock.json', '.github/job.yml') }}
+          key: ${{ runner.os }}-node_modules-${{ hashFiles('.mise.toml', 'package-lock.json', '.github/job.yml') }}
 
       - if: steps.node-cache.outputs.cache-hit != 'true'
-        uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
-        with:
-          node-version-file: '.node-version'
-          cache: npm
+        uses: jdx/mise-action@v4
 
       - if: steps.node-cache.outputs.cache-hit != 'true'
         run: npm ci
@@ -122,9 +116,7 @@ jobs:
           key: ${{ runner.os }}-cocoapods-ruby@${{ env.ruby-version }}-xcode@${{ env.xcode_version }}-${{ hashFiles('**/Podfile', '**/Podfile.lock', 'package-lock.json', '.github/job.yml') }}
 
       - if: steps.cocoapods-cache.outputs.cache-hit != 'true'
-        uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
-        with:
-          node-version-file: '.node-version'
+        uses: jdx/mise-action@v4
 
       - if: steps.cocoapods-cache.outputs.cache-hit != 'true'
         uses: ruby/setup-ruby@v1
@@ -165,9 +157,7 @@ jobs:
     steps:
       - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
-      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
-        with:
-          node-version-file: '.node-version'
+      - uses: jdx/mise-action@v4
 
       - name: Restore node_modules cache
         uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
@@ -181,7 +171,7 @@ jobs:
       - if: steps.node-cache.outputs.cache-hit != 'true'
         run: exit 1
 
-      - run: npm run pretty -- --no-write --check
+      - run: mise run pretty:check
 
   eslint:
     name: ESLint
@@ -190,9 +180,7 @@ jobs:
     steps:
       - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
-      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
-        with:
-          node-version-file: '.node-version'
+      - uses: jdx/mise-action@v4
 
       - name: Restore node_modules cache
         uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
@@ -206,9 +194,9 @@ jobs:
       - if: steps.node-cache.outputs.cache-hit != 'true'
         run: exit 1
 
-      - run: npm run bundle-data
+      - run: mise run bundle-data
 
-      - run: npm run lint
+      - run: mise run lint
 
   jest:
     name: Jest
@@ -217,9 +205,7 @@ jobs:
     steps:
       - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
-      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
-        with:
-          node-version-file: '.node-version'
+      - uses: jdx/mise-action@v4
 
       - name: Restore node_modules cache
         uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
@@ -234,7 +220,7 @@ jobs:
         run: exit 1
 
       - name: Run tests
-        run: npm run test -- --coverage
+        run: mise run test -- --coverage
 
       - name: Upload coverage
         uses: codecov/codecov-action@671740ac38dd9b0130fbe1cec585b89eea48d3de # v5.5.2
@@ -246,9 +232,7 @@ jobs:
     steps:
       - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
-      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
-        with:
-          node-version-file: '.node-version'
+      - uses: jdx/mise-action@v4
 
       - name: Restore node_modules cache
         uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
@@ -262,9 +246,9 @@ jobs:
       - if: steps.node-cache.outputs.cache-hit != 'true'
         run: exit 1
 
-      - run: npm run bundle-data
+      - run: mise run bundle-data
 
-      - run: npx tsc
+      - run: mise run tsc
 
   data:
     name: Data
@@ -273,9 +257,7 @@ jobs:
     steps:
       - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
-      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
-        with:
-          node-version-file: '.node-version'
+      - uses: jdx/mise-action@v4
 
       - name: Restore node_modules cache
         uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
@@ -289,9 +271,9 @@ jobs:
       - if: steps.node-cache.outputs.cache-hit != 'true'
         run: exit 1
 
-      - run: npm run validate-data
+      - run: mise run validate-data
 
-      - run: npm run bundle-data
+      - run: mise run bundle-data
 
   ios-bundle:
     name: iOS Bundle
@@ -305,9 +287,7 @@ jobs:
       - name: Extract job definition
         run: yq '.jobs.${{ github.job }}' .github/workflows/check.yml > .github/job.yml
 
-      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
-        with:
-          node-version-file: '.node-version'
+      - uses: jdx/mise-action@v4
 
       - name: Restore node_modules cache
         uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
@@ -329,15 +309,15 @@ jobs:
             ios/AllAboutOlaf/main.jsbundle
             ios/AllAboutOlaf/main.jsbundle.map
             ios/assets/
-          key: ${{ runner.os }}-jsbundle-${{ hashFiles('.node-version', 'package.json', 'package-lock.json', '.github/job.yml', 'tsconfig.json', 'babel.config.js', 'index.js', 'data/**', 'images/**', 'modules/**.ts', 'modules/**.tsx', 'source/**.ts', 'source/**.tsx') }}
+          key: ${{ runner.os }}-jsbundle-${{ hashFiles('.mise.toml', 'package.json', 'package-lock.json', '.github/job.yml', 'tsconfig.json', 'babel.config.js', 'index.js', 'data/**', 'images/**', 'modules/**.ts', 'modules/**.tsx', 'source/**.ts', 'source/**.tsx') }}
 
       - name: Bundle data
         if: steps.jsbundle-cache.outputs.cache-hit != 'true'
-        run: npm run bundle-data
+        run: mise run bundle-data
 
       - name: Generate jsbundle
         if: steps.jsbundle-cache.outputs.cache-hit != 'true'
-        run: npm run bundle:ios
+        run: mise run bundle:ios
         env:
           APP_MODE: mocked
 
@@ -364,9 +344,7 @@ jobs:
       - name: Extract job definition
         run: yq '.jobs.${{ github.job }}' .github/workflows/check.yml > .github/job.yml
 
-      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
-        with:
-          node-version-file: '.node-version'
+      - uses: jdx/mise-action@v4
 
       - name: Restore node_modules cache
         uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
@@ -385,15 +363,15 @@ jobs:
         id: jsbundle-cache
         with:
           path: ./android/generated/
-          key: ${{ runner.os }}-jsbundle-${{ hashFiles('.node-version', 'package.json', 'package-lock.json', '.github/job.yml', 'tsconfig.json', 'babel.config.js', 'index.js', 'data/**', 'images/**', 'modules/**.ts', 'modules/**.tsx', 'source/**.ts', 'source/**.tsx') }}
+          key: ${{ runner.os }}-jsbundle-${{ hashFiles('.mise.toml', 'package.json', 'package-lock.json', '.github/job.yml', 'tsconfig.json', 'babel.config.js', 'index.js', 'data/**', 'images/**', 'modules/**.ts', 'modules/**.tsx', 'source/**.ts', 'source/**.tsx') }}
 
       - name: Bundle data
         if: steps.jsbundle-cache.outputs.cache-hit != 'true'
-        run: npm run bundle-data
+        run: mise run bundle-data
 
       - name: Generate jsbundle
         if: steps.jsbundle-cache.outputs.cache-hit != 'true'
-        run: npm run bundle:android
+        run: mise run bundle:android
         env:
           APP_MODE: mocked
 
@@ -412,9 +390,7 @@ jobs:
     steps:
       - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
-      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
-        with:
-          node-version-file: '.node-version'
+      - uses: jdx/mise-action@v4
 
       - name: Restore node_modules cache
         uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
@@ -489,10 +465,8 @@ jobs:
           path: ios/build/Build/Products/
           key: ${{ runner.os }}-ios-xcode@${{ env.xcode_version }}-${{ hashFiles('**/project.pbxproj', '**/Podfile', '**/Podfile.lock', 'package-lock.json', '.github/job.yml') }}
 
-      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
+      - uses: jdx/mise-action@v4
         if: steps.app-cache.outputs.cache-hit != 'true'
-        with:
-          node-version-file: '.node-version'
 
       - name: Restore node_modules cache
         if: steps.app-cache.outputs.cache-hit != 'true'
@@ -626,15 +600,15 @@ jobs:
           if [ ! -f ios/build/Build/Products/Release-iphonesimulator/AllAboutOlaf.app/Info.plist ]; then
             echo "WARNING: Info.plist not found in app bundle, build may be incomplete!"
             echo "Copying essential files from source directory as fallback..."
-            
+
             # Copy essential app files
             cp ios/AllAboutOlaf/Info.plist ios/build/Build/Products/Release-iphonesimulator/AllAboutOlaf.app/
-            
+
             # Create simulated app executable
             echo "#!/bin/sh" > ios/build/Build/Products/Release-iphonesimulator/AllAboutOlaf.app/AllAboutOlaf
             echo "echo 'This is a placeholder executable for testing purposes'" >> ios/build/Build/Products/Release-iphonesimulator/AllAboutOlaf.app/AllAboutOlaf
             chmod +x ios/build/Build/Products/Release-iphonesimulator/AllAboutOlaf.app/AllAboutOlaf
-            
+
             echo "Created minimal app structure for testing"
           fi
 
@@ -657,9 +631,7 @@ jobs:
             exit 1
           fi
 
-      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
-        with:
-          node-version-file: '.node-version'
+      - uses: jdx/mise-action@v4
 
       - name: Restore node_modules cache
         uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
