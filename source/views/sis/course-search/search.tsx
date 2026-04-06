@@ -32,7 +32,7 @@ const RightButton: React.FC<{onPress: () => void}> = ({onPress}) => (
 export const CourseSearchView = (): JSX.Element => {
 	let navigation = useNavigation()
 
-	let {data: basicFilters = [], isLoading, error} = useFilters()
+	let {data: basicFilters = [], isLoading, error, refetch} = useFilters()
 
 	let recentFilters = useAppSelector(selectRecentFilters)
 	let recentSearches = useAppSelector(selectRecentSearches)
@@ -101,8 +101,8 @@ export const CourseSearchView = (): JSX.Element => {
 		return (
 			<NoticeView
 				buttonText="Try Again"
-				// onPress={refetch}  // TODO: implement refetch here
-				text={`A problem occured while loading: ${error}`}
+				onPress={refetch}
+				text={`A problem occurred while loading: ${error}`}
 			/>
 		)
 	}

@@ -7,30 +7,40 @@ export function useFilters(): {
 	isLoading: boolean
 	data: FilterType<CourseType>[]
 	error: null | Error
+	refetch: () => void
 } {
 	let {
 		data: terms = [],
 		error: termError,
 		isLoading: termsLoading,
+		refetch: refetchTerms,
 	} = useAvailableTerms()
 
 	let {
 		data: geReqs = [],
 		error: geReqError,
 		isLoading: geReqsLoading,
+		refetch: refetchGeReqs,
 	} = useGeReqs()
 
 	let {
 		data: departments = [],
 		error: departmentsError,
 		isLoading: deptsLoading,
+		refetch: refetchDepts,
 	} = useDepartments()
+
+	let refetch = () => {
+		void refetchTerms()
+		void refetchGeReqs()
+		void refetchDepts()
+	}
 
 	let isLoading = termsLoading || geReqsLoading || deptsLoading
 	let error = termError || geReqError || departmentsError
 
 	if (error) {
-		return {data: [], error, isLoading}
+		return {data: [], error, isLoading, refetch}
 	}
 
 	let allTerms = terms
@@ -152,5 +162,5 @@ export function useFilters(): {
 		} as ToggleType<CourseType>,
 	]
 
-	return {data: response, error: null, isLoading}
+	return {data: response, error: null, isLoading, refetch}
 }
