@@ -1,0 +1,15 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "mise install 2>/dev/null || true",
+            "statusMessage": "Installing mise tools..."
+          }
+        ]
+      }
+    ]
+  }
+}

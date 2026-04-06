@@ -11,21 +11,20 @@ jobs:
       - name: Check out the code
         uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
-      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
-        with: {node-version-file: '.node-version'}
+      - uses: jdx/mise-action@v4
 
       - name: Install dependencies
         run: npm ci
 
       - name: Validate the data
         run: |
-          npm run validate-bus-data
-          npm run validate-data
+          mise run validate-bus-data
+          mise run validate-data
 
       # Having validated the data, we now prepare a bundle.  This script creates
       # files in a docs/ directory.
       - name: Bundle the data
-        run: npm run bundle-data
+        run: mise run bundle-data
 
       # Notes: actions/checkout@v2 no longer fetches entire history nor enters
       # detached HEAD state.  We really just need to check out an (orphaned)
