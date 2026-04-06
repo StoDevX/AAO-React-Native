@@ -12,6 +12,10 @@
       {
         "command": "pnpm run typecheck",
         "description": "Run TypeScript type checking"
+      },
+      {
+        "command": "pnpm test",
+        "description": "Run jest tests"
       }
     ]
   }
