@@ -7,8 +7,8 @@
   "scripts": {
     "android": "expo run:android",
     "bundle-data": "node scripts/bundle-data.mjs data/ docs/",
-    "bundle:android": "mkdir -p android/generated/assets/ android/generated/res/ && react-native bundle --entry-file index.js --dev true --platform android --bundle-output ./android/generated/assets/index.android.bundle  --sourcemap-output ./android/generated/assets/index.android.bundle.map --assets-dest ./android/generated/res/",
-    "bundle:ios": "react-native bundle --entry-file index.js --dev false --platform ios --bundle-output ./ios/AllAboutOlaf/main.jsbundle --sourcemap-output ./ios/AllAboutOlaf/main.jsbundle.map --assets-dest ./ios",
+    "bundle:android": "mkdir -p android/generated/assets/ android/generated/res/ && npx expo export:embed --entry-file index.js --dev true --platform android --bundle-output ./android/generated/assets/index.android.bundle --sourcemap-output ./android/generated/assets/index.android.bundle.map --assets-dest ./android/generated/res/",
+    "bundle:ios": "npx expo export:embed --entry-file index.js --dev false --platform ios --bundle-output ./ios/AllAboutOlaf/main.jsbundle --sourcemap-output ./ios/AllAboutOlaf/main.jsbundle.map --assets-dest ./ios",
     "fastlane": "bundle exec fastlane",
     "compress-data": "gzip --keep docs/*.json",
     "ios": "expo run:ios",
