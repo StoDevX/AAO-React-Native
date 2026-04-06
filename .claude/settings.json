@@ -1,0 +1,15 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "if [ ! -f .git/hooks/pre-commit ] || ! grep -q 'hk' .git/hooks/pre-commit 2>/dev/null; then mise install && hk install; fi"
+          }
+        ]
+      }
+    ]
+  }
+}
