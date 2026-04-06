@@ -1,24 +1,33 @@
 amends "package://github.com/jdx/hk/releases/download/v1.41.0/hk@1.41.0#/Config.pkl"
 
-hooks = new {
+local linters = new Mapping<String, Step> {
+  ["prettier"] {
+    check = "mise run pretty:check"
+    fix = "mise run pretty"
+  }
+  ["eslint"] {
+    check = "mise run lint"
+    fix = "eslint --report-unused-disable-directives --cache --fix source/ modules/ scripts/ images/"
+  }
+  ["tsc"] {
+    check = "mise run tsc"
+  }
+  ["jest"] {
+    check = "mise run test"
+  }
+}
+
+hooks {
   ["pre-commit"] {
     fix = true
     stash = "git"
-    steps {
-      ["prettier"] {
-        check = "mise run pretty:check"
-        fix = "mise run pretty"
-      }
-      ["eslint"] {
-        check = "mise run lint"
-        fix = "eslint --report-unused-disable-directives --cache --fix source/ modules/ scripts/ images/"
-      }
-      ["tsc"] {
-        check = "mise run tsc"
-      }
-      ["jest"] {
-        check = "mise run test"
-      }
-    }
+    steps = linters
+  }
+  ["fix"] {
+    fix = true
+    steps = linters
+  }
+  ["check"] {
+    steps = linters
   }
 }

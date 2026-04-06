@@ -150,6 +150,31 @@ jobs:
           path: ios/Pods
           key: ${{ steps.cocoapods-cache.outputs.cache-primary-key }}
 
+  hk:
+    name: hk
+    needs: [cache-npm-linux]
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+
+      - uses: jdx/mise-action@v4
+
+      - name: Restore node_modules cache
+        uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        id: node-cache
+        with:
+          path: |
+            node_modules/
+            modules/*/node_modules/
+          key: ${{ needs.cache-npm-linux.outputs.cache-key }}
+
+      - if: steps.node-cache.outputs.cache-hit != 'true'
+        run: exit 1
+
+      - run: mise run bundle-data
+
+      - run: hk check
+
   prettier:
     name: Prettier
     needs: [cache-npm-linux]
@@ -501,13 +526,6 @@ jobs:
       - name: exit if the Cocoapods cache did not load
         if: steps.app-cache.outputs.cache-hit != 'true' && steps.pods-cache.outputs.cache-hit != 'true'
         run: exit 1
-
-      - uses: mikehardy/buildcache-action@1db83fb06b0da378aa7db7a1110923b904417cbc # v2
-        if: steps.app-cache.outputs.cache-hit != 'true'
-        continue-on-error: true
-        with:
-          cache_key: ${{ matrix.os }}
-          upload_buildcache_log: 'true'
 
       - name: Build the iOS app
         if: ${{ steps.app-cache.outputs.cache-hit != 'true' && !contains(github.event.pull_request.labels.*.name, 'ci/skip-detox') }}
