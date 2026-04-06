@@ -142,6 +142,7 @@ export default defineConfig([
 		files: ['images/**/*.ts'],
 		rules: {
 			'@typescript-eslint/no-require-imports': 'off',
+			'import/no-unresolved': 'off',
 		},
 	},
 	// Eslint v9/ts-eslint v8 upgrade temporary overrides
@@ -154,20 +155,10 @@ export default defineConfig([
 			'react-hooks/set-state-in-effect': 'off',
 		},
 	},
-	// Script files - less strict type checking
+	// Script files - disable type-checked linting (not in tsconfig)
 	{
-		files: ['scripts/**/*.mjs'],
-		rules: {
-			'@typescript-eslint/no-unsafe-assignment': 'off',
-			'@typescript-eslint/no-unsafe-member-access': 'off',
-			'@typescript-eslint/no-unsafe-call': 'off',
-			'@typescript-eslint/no-unsafe-argument': 'off',
-			'@typescript-eslint/no-unsafe-return': 'off',
-			'@typescript-eslint/unbound-method': 'off',
-			'@typescript-eslint/no-unused-expressions': 'off',
-			'@typescript-eslint/explicit-module-boundary-types': 'off',
-			'@typescript-eslint/no-unused-vars': 'off',
-		},
+		files: ['scripts/**/*.{mjs,js}'],
+		...tseslint.configs.disableTypeChecked,
 	},
 	// Image index files - require() returns any for images
 	{
