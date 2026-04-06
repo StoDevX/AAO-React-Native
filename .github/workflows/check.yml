@@ -235,12 +235,6 @@ jobs:
           name: build-reports
           path: build/reports/
 
-      - name: Cache the Android app
-        uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
-        with:
-          path: android/app/build/outputs/apk/
-          key: ${{ steps.app-cache.outputs.cache-primary-key }}
-
       - uses: actions/upload-artifact@50769540e7f4bd5e21e526ee35c689e35e0d6874 # v4
         with:
           name: android-app
@@ -307,12 +301,14 @@ jobs:
         run: npx detox build e2e --configuration ios.sim.release
 
       - name: Cache the iOS app
+        if: steps.app-cache.outputs.cache-hit != 'true'
         uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         with:
           path: ios/build/Build/Products/
           key: ${{ steps.app-cache.outputs.cache-primary-key }}
 
       - uses: actions/upload-artifact@50769540e7f4bd5e21e526ee35c689e35e0d6874 # v4
+        if: always()
         with:
           name: ios-app
           path: ios/build/Build/Products/
