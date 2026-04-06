@@ -8,21 +8,21 @@ import {NoticeView} from '../notice'
 describe('NoticeView', () => {
 	describe('when given no text to display', () => {
 		it('displays "Notice!" as its text', async () => {
-			let tree: TestRenderer.ReactTestRenderer
+			let tree!: TestRenderer.ReactTestRenderer
 			await act(() => {
 				tree = TestRenderer.create(<NoticeView />)
 			})
-			expect(tree!.toJSON()).toMatchSnapshot()
+			expect(tree.toJSON()).toMatchSnapshot()
 		})
 	})
 
 	describe('when given text to display', () => {
 		it('displays the text', async () => {
-			let tree: TestRenderer.ReactTestRenderer
+			let tree!: TestRenderer.ReactTestRenderer
 			await act(() => {
 				tree = TestRenderer.create(<NoticeView text="foo bar" />)
 			})
-			expect(tree!.toJSON()).toMatchSnapshot()
+			expect(tree.toJSON()).toMatchSnapshot()
 		})
 	})
 
@@ -33,47 +33,47 @@ describe('NoticeView', () => {
 					padding: 31,
 				},
 			})
-			let tree: TestRenderer.ReactTestRenderer
+			let tree!: TestRenderer.ReactTestRenderer
 			await act(() => {
 				tree = TestRenderer.create(
 					<NoticeView style={styleOverride.view} text="foo bar" />,
 				)
 			})
-			expect(tree!.toJSON()).toMatchSnapshot()
+			expect(tree.toJSON()).toMatchSnapshot()
 		})
 	})
 
 	describe('when instructed to display a spinner', () => {
 		it('displays a spinner', async () => {
-			let tree: TestRenderer.ReactTestRenderer
+			let tree!: TestRenderer.ReactTestRenderer
 			await act(() => {
 				tree = TestRenderer.create(<NoticeView spinner={true} text="foo bar" />)
 			})
-			expect(tree!.toJSON()).toMatchSnapshot()
+			expect(tree.toJSON()).toMatchSnapshot()
 		})
 	})
 
 	describe('when header text is given', () => {
 		it('displays the header text', async () => {
-			let tree: TestRenderer.ReactTestRenderer
+			let tree!: TestRenderer.ReactTestRenderer
 			await act(() => {
 				tree = TestRenderer.create(
 					<NoticeView header="blammo" text="foo bar" />,
 				)
 			})
-			expect(tree!.toJSON()).toMatchSnapshot()
+			expect(tree.toJSON()).toMatchSnapshot()
 		})
 	})
 
 	describe('when buttonText is given', () => {
 		it('displays a button with the buttonText in its title', async () => {
-			let tree: TestRenderer.ReactTestRenderer
+			let tree!: TestRenderer.ReactTestRenderer
 			await act(() => {
 				tree = TestRenderer.create(
 					<NoticeView buttonText="button text" text="foo bar" />,
 				)
 			})
-			expect(tree!.toJSON()).toMatchSnapshot()
+			expect(tree.toJSON()).toMatchSnapshot()
 		})
 	})
 })
