@@ -22,7 +22,7 @@ export const ServerUrlSection = (): React.ReactElement => {
 	let persistServerUrl = useMutation({
 		mutationKey: ['settings', 'server-url'],
 		mutationFn: () => storage.setServerAddress(serverUrl),
-		onSuccess: async () => await Updates.reloadAsync(),
+		onSuccess: () => Updates.reloadAsync(),
 	})
 
 	let isValid = serverUrl.length === 0 || URL.canParse(serverUrl)

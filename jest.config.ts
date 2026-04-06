@@ -17,7 +17,7 @@ const config: Config = {
 	],
 	setupFiles: ['./scripts/jest-setup.js'],
 	transformIgnorePatterns: [
-		'node_modules/(?!(.pnpm/[^/]+/node_modules/)?((jest-)?react-native|@react-native|@frogpond|glamorous-native|react-navigation|expo|@expo|expo-router|expo-linking|expo-constants|expo-status-bar|expo-modules-core|expo-secure-store|expo-application|expo-device|expo-web-browser|expo-asset|expo-font|expo-system-ui|expo-updates|expo-calendar))',
+		'node_modules/(?!(.pnpm/[^/]+/node_modules/)?((jest-)?react-native|@react-native|@frogpond|glamorous-native|react-navigation|expo|@expo|expo-router|expo-linking|expo-constants|expo-status-bar|expo-modules-core|expo-secure-store|expo-application|expo-device|expo-web-browser|expo-asset|expo-font|expo-system-ui|expo-updates|expo-calendar|@reduxjs|immer|react-native-button|react-native-typography))',
 	],
 	reporters: [['github-actions', {silent: false}], 'summary'],
 }
