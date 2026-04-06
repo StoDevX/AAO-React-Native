@@ -15,7 +15,12 @@ type Props<T extends object> = {
 export function FilterToolbarButton<T extends object>(
 	props: Props<T>,
 ): React.ReactNode {
-	let {onPopoverDismiss: _onPopoverDismiss, filter, style: _style, title: _title} = props
+	let {
+		onPopoverDismiss: _onPopoverDismiss,
+		filter,
+		style: _style,
+		title: _title,
+	} = props
 
 	let [_popoverVisible, _setPopoverVisible] = useState(false)
 	let [_editedFilter, _setEditedFilter] = useState<FilterType<T>>(props.filter)

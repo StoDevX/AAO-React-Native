@@ -55,9 +55,8 @@ const styles = StyleSheet.create({
 const LEFT_MARGIN = 28
 const Separator = () => <ListSeparator spacing={{left: LEFT_MARGIN}} />
 
-const areSpecialsFiltered = (
-	filters: FilterType<MenuItemType>[],
-): boolean => Boolean(filters.find(isSpecialsFilter))
+const areSpecialsFiltered = (filters: FilterType<MenuItemType>[]): boolean =>
+	Boolean(filters.find(isSpecialsFilter))
 
 const isSpecialsFilter = (f: FilterType<MenuItemType>): boolean =>
 	f.enabled && f.type === 'toggle' && f.spec.label === 'Only Show Specials'

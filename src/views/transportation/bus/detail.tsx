@@ -17,7 +17,13 @@ import {
 	type BusStopStatusEnum,
 } from './lib'
 
-import {ListFooter, ListRow, ListSectionHeader,Detail, Title} from '@frogpond/lists'
+import {
+	ListFooter,
+	ListRow,
+	ListSectionHeader,
+	Detail,
+	Title,
+} from '@frogpond/lists'
 import * as c from '@frogpond/colors'
 import {useMomentTimer} from '@frogpond/timer'
 import {timezone} from '@frogpond/constants'

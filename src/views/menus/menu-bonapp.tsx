@@ -75,8 +75,7 @@ function buildCustomStationMenu(
 	let idsGroupedByStation = reduce(foodItems, groupByStation, {})
 
 	// then we make our own StationMenus list
-	let paired: [string, string[]][] =
-		Object.entries(idsGroupedByStation)
+	let paired: [string, string[]][] = Object.entries(idsGroupedByStation)
 	return paired.map(
 		([name, items], i): StationMenuType => ({
 			// eslint-disable-next-line camelcase

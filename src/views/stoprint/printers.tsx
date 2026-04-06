@@ -1,6 +1,6 @@
 import * as React from 'react'
 import {SectionList, StyleSheet} from 'react-native'
-import type {Printer,PrintJob} from '../../lib/stoprint'
+import type {Printer, PrintJob} from '../../lib/stoprint'
 import {
 	Detail,
 	ListRow,
@@ -138,7 +138,7 @@ export const PrinterListView = (): React.JSX.Element => {
 				{title: 'Recent', data: recentPrinters.recentPrinters ?? []},
 				{title: 'Popular', data: recentPrinters.popularPrinters ?? []},
 				...groupedByBuilding,
-			]
+		  ]
 		: []
 
 	let availableGrouped = colorJob ? groupedByBuilding : grouped
