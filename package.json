@@ -175,7 +175,7 @@
     "junk": "4.0.1",
     "minimist": "1.2.8",
     "pify": "6.1.0",
-    "prettier": "3.1.0",
+    "prettier": "catalog:",
     "pretty-bytes": "7.1.0",
     "pretty-quick": "4.2.2",
     "react-test-renderer": "19.1.0",

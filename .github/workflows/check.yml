@@ -32,7 +32,7 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
-      - run: npm run pretty -- --no-write --check
+      - run: pnpm run pretty -- --no-write --check
 
   eslint:
     name: ESLint
@@ -49,7 +49,7 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
-      - run: npm run lint
+      - run: pnpm run lint
 
   jest:
     name: Jest
@@ -67,7 +67,7 @@ jobs:
       - run: pnpm install --frozen-lockfile
 
       - name: Run tests
-        run: npm run test -- --coverage
+        run: pnpm run test -- --coverage
 
       - name: Upload coverage
         uses: codecov/codecov-action@671740ac38dd9b0130fbe1cec585b89eea48d3de # v5.5.2
@@ -87,7 +87,7 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
-      - run: npx tsc
+      - run: pnpm exec tsc
 
   data:
     name: Data
@@ -104,9 +104,9 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
-      - run: npm run validate-data
+      - run: pnpm run validate-data
 
-      - run: npm run bundle-data
+      - run: pnpm run bundle-data
 
   ios-bundle:
     name: iOS Bundle
@@ -141,7 +141,7 @@ jobs:
 
       - name: Generate jsbundle
         if: steps.jsbundle-cache.outputs.cache-hit != 'true'
-        run: npm run bundle:ios
+        run: pnpm run bundle:ios
 
       - name: Cache the jsbundle
         uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
@@ -183,7 +183,7 @@ jobs:
 
       - name: Generate jsbundle
         if: steps.jsbundle-cache.outputs.cache-hit != 'true'
-        run: npm run bundle:android
+        run: pnpm run bundle:android
 
       - name: Cache the jsbundle
         if: steps.jsbundle-cache.outputs.cache-hit != 'true'
@@ -305,7 +305,7 @@ jobs:
         env:
           SKIP_BUNDLING: 'true'
           CODE_SIGNING_DISABLED: true
-        run: npx detox build e2e --configuration ios.sim.release
+        run: pnpm exec detox build e2e --configuration ios.sim.release
 
       # Debug step to verify build output
       - name: Verify build output
@@ -433,14 +433,14 @@ jobs:
 
       - # We have to poke Detox because it installs things outside of node_modules/detox/…
         name: Re-install Detox
-        run: npx detox clean-framework-cache && npx detox build-framework-cache
+        run: pnpm exec detox clean-framework-cache && pnpm exec detox build-framework-cache
 
       - run: brew tap wix/brew
 
       - run: brew install applesimutils
 
       - name: Run the Detox tests
-        run: npx detox test e2e --configuration ios.sim.release --cleanup --record-logs failing --record-videos failing --record-performance all --capture-view-hierarchy enabled --take-screenshots failing
+        run: pnpm exec detox test e2e --configuration ios.sim.release --cleanup --record-logs failing --record-videos failing --record-performance all --capture-view-hierarchy enabled --take-screenshots failing
 
       - uses: actions/upload-artifact@50769540e7f4bd5e21e526ee35c689e35e0d6874 # v4
         if: always()
