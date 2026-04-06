@@ -1,0 +1,18 @@
+{
+  "hooks": {
+    "PreCommit": [
+      {
+        "command": "npx prettier --check '{src,modules,scripts,images,e2e}/**/*.{js,ts,tsx,json}' 'data/**/*.css' '{*,.*}.{yaml,yml,json,json5,js,ts,tsx}'",
+        "description": "Check formatting with prettier"
+      },
+      {
+        "command": "npx eslint --report-unused-disable-directives --cache src/ modules/ scripts/ images/",
+        "description": "Run ESLint"
+      },
+      {
+        "command": "npx jest --passWithNoTests",
+        "description": "Run unit tests"
+      }
+    ]
+  }
+}
