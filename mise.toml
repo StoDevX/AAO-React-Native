@@ -1,0 +1,8 @@
+tasks."claude:check".depends = ["pretty:check", "lint", "typecheck", "test"]
+tasks."pretty:check" = "pnpm run pretty --check"
+tasks."lint" = "pnpm run lint"
+tasks."typecheck" = "pnpm run typecheck"
+tasks."test" = "pnpm test"
+
+[tools]
+pnpm = "10.30"

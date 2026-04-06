@@ -1,21 +1,14 @@
 {
   "hooks": {
-    "PreCommit": [
+    "PreToolUse": [
       {
-        "command": "pnpm run pretty --check",
-        "description": "Check formatting with prettier"
-      },
-      {
-        "command": "pnpm run lint",
-        "description": "Run ESLint"
-      },
-      {
-        "command": "pnpm run typecheck",
-        "description": "Run TypeScript type checking"
-      },
-      {
-        "command": "pnpm test",
-        "description": "Run jest tests"
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "case \"$CLAUDE_TOOL_INPUT\" in *'git commit'*) if mise run claude:check 1>&2; then echo '{\"decision\": \"approve\"}'; else echo '{\"decision\": \"block\", \"reason\": \"pre-commit hooks failed. Fix the issues before committing.\"}'; fi ;; *) echo '{\"decision\": \"approve\"}' ;; esac"
+          }
+        ]
       }
     ]
   }
