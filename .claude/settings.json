@@ -1,0 +1,18 @@
+{
+  "hooks": {
+    "PreCommit": [
+      {
+        "command": "pnpm run pretty --check",
+        "description": "Check formatting with prettier"
+      },
+      {
+        "command": "pnpm run lint",
+        "description": "Run ESLint"
+      },
+      {
+        "command": "pnpm run typecheck",
+        "description": "Run TypeScript type checking"
+      }
+    ]
+  }
+}

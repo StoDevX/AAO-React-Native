@@ -18,6 +18,7 @@
     "start": "expo start",
     "test": "jest",
     "validate-bus-data": "node scripts/validate-bus-schedules.mjs",
+    "typecheck": "tsc --noEmit",
     "validate-data": "node scripts/validate-data.mjs"
   },
   "prettier": {
