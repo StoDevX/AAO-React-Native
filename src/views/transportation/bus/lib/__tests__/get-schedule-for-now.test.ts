@@ -5,8 +5,8 @@ import moment from 'moment'
 import type {BusSchedule, UnprocessedBusSchedule} from '../../types'
 
 // prettier-ignore
-function buildBusSchedules(now: moment.Moment): Array<BusSchedule> {
-  const schedules: Array<UnprocessedBusSchedule> = [
+function buildBusSchedules(now: moment.Moment): BusSchedule[] {
+  const schedules: UnprocessedBusSchedule[] = [
     {
       days: ['Fr', 'Sa'],
       coordinates: {},

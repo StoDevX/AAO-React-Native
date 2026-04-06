@@ -1,6 +1,6 @@
 import * as React from 'react'
 import {SectionList, StyleSheet} from 'react-native'
-import type {Printer} from '../../lib/stoprint'
+import type {Printer,PrintJob} from '../../lib/stoprint'
 import {isStoprintMocked} from '../../lib/stoprint'
 import {
 	Detail,
@@ -13,7 +13,6 @@ import {LoadingView} from '@frogpond/notice'
 import groupBy from 'lodash/groupBy'
 import {StoPrintErrorView} from './components/error'
 import {useLocalSearchParams, useRouter} from 'expo-router'
-import type {PrintJob} from '../../lib/stoprint'
 import {
 	allPrintersQuery,
 	colorPrintersQuery,

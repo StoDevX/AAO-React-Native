@@ -81,7 +81,7 @@ export type MenuItemContainerType = {
 }
 export type ItemCorIconMapType =
 	| {[key: NumericStringType]: string}
-	| Array<void>
+	| void[]
 export type MasterCorIconMapType = {[key: NumericStringType]: CorIconType}
 
 export type ProcessedMealType = {
@@ -91,7 +91,7 @@ export type ProcessedMealType = {
 	stations: StationMenuType[]
 }
 
-export type DayPartsCollectionType = Array<Array<DayPartMenuType>>
+export type DayPartsCollectionType = DayPartMenuType[][]
 
 export type DayPartMenuType = {
 	starttime: MilitaryTimeStringType

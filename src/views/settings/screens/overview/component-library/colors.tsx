@@ -22,10 +22,10 @@ import {
 import {Section} from '@frogpond/tableview'
 import {LibraryWrapper} from './base/library-wrapper'
 
-function createTable(): Array<{
+function createTable(): {
 	color: ReturnType<typeof PlatformColor>
 	label: string
-}> {
+}[] {
 	if (Platform.OS === 'ios') {
 		return [
 			// https://developer.apple.com/documentation/uikit/uicolor/ui_element_colors

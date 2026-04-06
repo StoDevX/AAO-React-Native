@@ -32,13 +32,13 @@ export type HeldJob = {
 }
 
 export type PrintJobsResponse = {
-	jobs: Array<PrintJob>
+	jobs: PrintJob[]
 }
 
 // https://papercut.stolaf.edu:9192/rpc/api/rest/internal/webclient/users/rives/jobs/status
 export type StatusResponse = {
 	hashCode: number
-	jobs: Array<PrintJob>
+	jobs: PrintJob[]
 }
 
 export type Printer = {
@@ -53,12 +53,12 @@ export type EnhancedPrinter = Printer & {isColor: boolean; location: string}
 // https://papercut.stolaf.edu:9192/rpc/api/rest/internal/mobilerelease/api/recent-popular-printers
 // ?username=rives
 export type RecentPopularPrintersResponse = {
-	popularPrinters: Array<Printer>
-	recentPrinters: Array<Printer>
+	popularPrinters: Printer[]
+	recentPrinters: Printer[]
 }
 
 export type ColorPrintersResponse = {
-	data: {colorPrinters: Array<string>}
+	data: {colorPrinters: string[]}
 }
 
 export type ReleaseResponse = {
@@ -70,12 +70,12 @@ export type CancelResponse = Response
 
 // https://papercut.stolaf.edu:9192/rpc/api/rest/internal/mobilerelease/api/all-printers
 // ?username=rives
-export type AllPrintersResponse = Array<Printer>
+export type AllPrintersResponse = Printer[]
 
 // https://papercut.stolaf.edu:9192/rpc/api/rest/internal/mobilerelease/api/held-jobs/
 // ?username=rives
 // &printerName=printers\mfc-it
-export type HeldJobsResponse = Array<HeldJob>
+export type HeldJobsResponse = HeldJob[]
 
 export type LoginResponse = {
 	authCookie: string

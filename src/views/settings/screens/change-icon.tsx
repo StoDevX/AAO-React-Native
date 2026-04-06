@@ -23,7 +23,7 @@ type Icon = {
 	type: IconTypeEnum
 }
 
-export const icons: Array<Icon> = [
+export const icons: Icon[] = [
 	{
 		src: appIcons.oldMain,
 		title: 'Old Main',

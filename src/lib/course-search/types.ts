@@ -19,7 +19,7 @@ export type RawCourseType = {
 	name: string
 	notes?: string[]
 	number: number
-	offerings: Array<CourseOffering>
+	offerings: CourseOffering[]
 	pn: boolean
 	prerequisites: false | string
 	section?: string
@@ -45,7 +45,7 @@ export type CourseType = {
 	name: string
 	notes?: string[]
 	number: number
-	offerings: Array<CourseOffering>
+	offerings: CourseOffering[]
 	spaceAvailable: boolean
 	pn: boolean
 	prerequisites: false | string
@@ -67,6 +67,6 @@ export type TermType = {
 }
 
 export type TermInfoType = {
-	files: Array<TermType>
+	files: TermType[]
 	type: string
 }

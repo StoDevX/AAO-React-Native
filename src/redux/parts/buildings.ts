@@ -3,7 +3,7 @@ import type {PayloadAction} from '@reduxjs/toolkit'
 import type {RootState} from '../store'
 
 export type State = {
-	favorites: Array<string>
+	favorites: string[]
 }
 
 const initialState = {

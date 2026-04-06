@@ -19,7 +19,7 @@ type Address = {
 	city: string
 	country: string
 	state: string
-	street: Array<string>
+	street: string[]
 }
 
 export type OfficeHours = {
@@ -40,9 +40,9 @@ type OnLeave = {
 }
 
 export type DirectoryItem = {
-	campusLocations: Array<CampusLocation>
+	campusLocations: CampusLocation[]
 	classYear: string | null
-	departments: Array<Department>
+	departments: Department[]
 	displayName: string
 	displayTitle: string | null
 	email: string | null
@@ -54,7 +54,7 @@ export type DirectoryItem = {
 	onLeave: OnLeave | null
 	photo: string
 	profileUrl: string | null
-	pronouns: Array<string> | null
+	pronouns: string[] | null
 	suffixName: string | null
 	thumbnail: string
 	title: string | null
@@ -68,7 +68,7 @@ export type SearchResults = {
 		count: number
 		fullCount: number
 	}
-	results: Array<DirectoryItem>
+	results: DirectoryItem[]
 }
 
 export type DirectorySearchTypeEnum =

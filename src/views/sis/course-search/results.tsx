@@ -4,11 +4,10 @@ import {
 	updateRecentSearches,
 	updateRecentFilters,
 } from '../../../redux/parts/courses'
-import {LoadingView} from '@frogpond/notice'
+import {LoadingView,NoticeView} from '@frogpond/notice'
 import type {CourseType} from '../../../lib/course-search'
 import {useAppDispatch} from '../../../redux'
-import {applyFiltersToItem} from '@frogpond/filter'
-import {FilterType} from '@frogpond/filter'
+import {applyFiltersToItem,FilterType,FilterToolbar} from '@frogpond/filter'
 import {useFilters} from './lib/build-filters'
 import {useLocalSearchParams, useNavigation, useRouter} from 'expo-router'
 import {useDebounce} from '@frogpond/use-debounce'
@@ -17,8 +16,6 @@ import * as c from '@frogpond/colors'
 import {CourseRow} from './row'
 import memoize from 'lodash/memoize'
 import {parseTerm} from '../../../lib/course-search'
-import {NoticeView} from '@frogpond/notice'
-import {FilterToolbar} from '@frogpond/filter'
 import {ListSpecType} from '@frogpond/filter/types'
 import {applySearch, sortAndGroupResults} from './lib/execute-search'
 import {useCourseData} from './query'
@@ -26,8 +23,8 @@ import {UseQueryResult} from '@tanstack/react-query'
 
 function doSearch(args: {
 	query: string
-	filters: Array<FilterType<CourseType>>
-	courses: Array<CourseType>
+	filters: FilterType<CourseType>[]
+	courses: CourseType[]
 	applyFilters: (filters: FilterType<CourseType>[], item: CourseType) => boolean
 }) {
 	let {query, filters, courses, applyFilters} = args

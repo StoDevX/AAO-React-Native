@@ -20,10 +20,10 @@ export let timeData = (options?: Options): Promise<string[]> =>
 	client.get('data-lists/valid_times.json', options).json()
 export let coursesForTerm = async (
 	term: TermType,
-	levels: Array<CourseType['level']>,
+	levels: CourseType['level'][],
 	gereqs: string[] = [],
 	options?: Options,
-): Promise<Array<CourseType>> => {
+): Promise<CourseType[]> => {
 	let data: RawCourseType[] = await client.get(`${term.path}`, options).json()
 	return data
 		.map((course) => ({
@@ -37,9 +37,9 @@ export let coursesForTerm = async (
 
 const findMatches = (
 	findLevel: number,
-	levels: Array<number>,
-	findgereqs: Array<string> = [],
-	gereqs: Array<string>,
+	levels: number[],
+	findgereqs: string[] = [],
+	gereqs: string[],
 ) => {
 	if (!levels.length && !gereqs.length) {
 		return true
@@ -56,7 +56,7 @@ const findMatches = (
 	return true
 }
 
-const matchesLevels = (item: number, levels: Array<CourseType['level']>) => {
+const matchesLevels = (item: number, levels: CourseType['level'][]) => {
 	let levelRoundedDown = Math.floor(item / 100) * 100
 	return levels.includes(levelRoundedDown)
 }

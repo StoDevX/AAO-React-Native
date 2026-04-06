@@ -53,9 +53,9 @@ export function HomeScreenLink({
 		<View style={styles.button}>
 			<PlatformPressable
 				aria-label={title}
+				onPress={() => openUrl(href)}
 				role="button"
 				style={{backgroundColor: tint}}
-				onPress={() => openUrl(href)}
 			>
 				<View style={styles.contents}>
 					<Entypo name={icon} size={32} style={foregroundStyle} />

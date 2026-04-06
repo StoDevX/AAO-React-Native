@@ -46,7 +46,7 @@ function Title({event}: {event: EventType}) {
 	return event.title ? <Text style={styles.name}>{event.title}</Text> : null
 }
 
-function Links({urls}: {urls: Array<string>}) {
+function Links({urls}: {urls: string[]}) {
 	return urls.length ? (
 		<Card header="Links" style={styles.card}>
 			{urls.map((url) => (

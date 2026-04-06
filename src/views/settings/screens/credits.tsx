@@ -66,7 +66,7 @@ const Contributors = (props: TextProps) => (
 	<Text {...props} style={[styles.contributors, props.style]} />
 )
 
-const formatPeopleList = (arr: Array<string>) =>
+const formatPeopleList = (arr: string[]) =>
 	arr.map((w) => w.replace(' ', ' ')).join(' • ')
 
 const contributors = [

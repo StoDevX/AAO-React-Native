@@ -44,7 +44,7 @@ export function applyToggleFilter<T extends object>(
 		: Boolean(itemValue)
 }
 
-function isArrayOfString(arr: unknown): arr is Array<string> {
+function isArrayOfString(arr: unknown): arr is string[] {
 	return Array.isArray(arr) && typeof arr[0] === 'string'
 }
 

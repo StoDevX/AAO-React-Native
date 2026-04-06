@@ -7,7 +7,7 @@ export type EventType = {
 	readonly startTime: Moment
 	readonly endTime: Moment
 	readonly isOngoing: boolean
-	readonly links: Array<string>
+	readonly links: string[]
 	readonly config: {
 		readonly startTime: boolean
 		readonly endTime: boolean

@@ -51,6 +51,6 @@ export async function getItemAsBoolean(
 export async function getItemAsArray<T>(
 	key: string,
 	defaultValue: T[] = [],
-): Promise<Array<T>> {
+): Promise<T[]> {
 	return (await getItem(key)) || defaultValue
 }

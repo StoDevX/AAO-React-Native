@@ -13,7 +13,7 @@ export interface ServerRoute {
 }
 
 export function useServerRoutes(): UseQueryResult<
-	Array<{title: string; data: ServerRoute[]}>,
+	{title: string; data: ServerRoute[]}[],
 	unknown
 > {
 	return useQuery({

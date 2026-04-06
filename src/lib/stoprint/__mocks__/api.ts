@@ -7,8 +7,6 @@ import {mockJobs} from './data/jobs'
 import {mockRecent} from './data/recent'
 import {mockRelease} from './data/release'
 
-type Credentials = {username: string; password: string}
-
 import type {
 	AllPrintersResponse,
 	HeldJobsResponse,
@@ -16,6 +14,8 @@ import type {
 	RecentPopularPrintersResponse,
 	ReleaseResponse,
 } from '../types'
+
+type Credentials = {username: string; password: string}
 
 function papercut<T>(mockData: T): Promise<T> {
 	return new Promise((resolve) => resolve(mockData))

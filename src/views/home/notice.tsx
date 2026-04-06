@@ -41,8 +41,8 @@ export function UnofficialAppNotice(): React.JSX.Element {
 
 	return (
 		<Pressable
-			style={[styles.wrapper, styles.background]}
 			onPress={handlePress}
+			style={[styles.wrapper, styles.background]}
 		>
 			<Text style={styles.text}>{msg}</Text>
 		</Pressable>
