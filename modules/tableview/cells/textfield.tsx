@@ -46,6 +46,8 @@ type Props = TextInputProps & {
 
 export const CellTextField = React.forwardRef<TextInput, Props>(
 	(props, ref): React.JSX.Element => {
+		let innerRef = React.useRef<TextInput>(null)
+
 		let {
 			placeholder = '',
 			returnKeyType = 'default',
@@ -63,7 +65,7 @@ export const CellTextField = React.forwardRef<TextInput, Props>(
 
 		let labelEl = label ? (
 			<Text
-				onPress={() => ref?.current?.focus()}
+				onPress={() => innerRef.current?.focus()}
 				style={[styles.label, labelWidthStyle]}
 			>
 				{label}
@@ -74,7 +76,14 @@ export const CellTextField = React.forwardRef<TextInput, Props>(
 
 		let input = (
 			<TextInput
-				ref={ref}
+				ref={(node) => {
+					innerRef.current = node
+					if (typeof ref === 'function') {
+						ref(node)
+					} else if (ref) {
+						ref.current = node
+					}
+				}}
 				autoCapitalize={autoCapitalize}
 				autoCorrect={false}
 				clearButtonMode="while-editing"

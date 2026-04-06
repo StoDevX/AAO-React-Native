@@ -46,7 +46,7 @@ export function DirectoryView(): React.JSX.Element {
 	React.useLayoutEffect(() => {
 		navigation.setOptions({
 			headerSearchBarOptions: {
-				barTintColor: c.systemFill as string,
+				barTintColor: c.systemFill as unknown as string,
 				onChangeText: (event: ChangeTextEvent) => {
 					setSearchQueryType('query')
 					setTypedQuery(event.nativeEvent.text)
