@@ -1,6 +1,7 @@
 [tools]
 node = "22.20.0"
 hk = "latest"
+pkl = "latest"
 
 [env]
 _.path = ["node_modules/.bin"]
