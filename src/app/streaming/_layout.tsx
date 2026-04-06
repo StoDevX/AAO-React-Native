@@ -13,9 +13,7 @@ export default function StreamingTabLayout() {
 				<Label>Streaming</Label>
 				{Platform.select({
 					ios: <Icon sf="video.fill" />,
-					android: (
-						<Icon src={<MaterialDesignIcons name="camcorder" />} />
-					),
+					android: <Icon src={<MaterialDesignIcons name="camcorder" />} />,
 				})}
 			</NativeTabs.Trigger>
 
@@ -39,9 +37,7 @@ export default function StreamingTabLayout() {
 				<Label>KRLX</Label>
 				{Platform.select({
 					ios: <Icon sf="mic.fill" />,
-					android: (
-						<Icon src={<MaterialDesignIcons name="microphone" />} />
-					),
+					android: <Icon src={<MaterialDesignIcons name="microphone" />} />,
 				})}
 			</NativeTabs.Trigger>
 		</NativeTabs>

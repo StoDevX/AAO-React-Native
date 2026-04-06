@@ -127,4 +127,3 @@ const styles = StyleSheet.create({
 		}),
 	},
 })
-

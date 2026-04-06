@@ -137,4 +137,3 @@ export const PrintJobsView = (): React.JSX.Element => {
 		/>
 	)
 }
-

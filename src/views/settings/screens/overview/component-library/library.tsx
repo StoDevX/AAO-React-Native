@@ -25,7 +25,9 @@ export const ComponentLibrary = (): React.JSX.Element => {
 					title="Colors"
 				/>
 				<PushButtonCell
-					onPress={() => router.push('/settings/component-library/context-menu')}
+					onPress={() =>
+						router.push('/settings/component-library/context-menu')
+					}
 					title="Context Menus"
 				/>
 			</Section>

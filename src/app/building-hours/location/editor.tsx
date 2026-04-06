@@ -11,8 +11,7 @@ export default function BuildingHoursEditorScreen(): React.ReactNode {
 				options={{
 					title: 'Edit Schedule',
 					presentation: 'modal',
-					headerRight: () =>
-						Platform.OS === 'ios' && <CloseScreenButton />,
+					headerRight: () => Platform.OS === 'ios' && <CloseScreenButton />,
 				}}
 			/>
 			<BuildingHoursScheduleEditorView />

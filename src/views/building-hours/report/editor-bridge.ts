@@ -26,9 +26,6 @@ export function callEditCallback(
 	editCallback?.(scheduleIdx, setIdx, set)
 }
 
-export function callDeleteCallback(
-	scheduleIdx: number,
-	setIdx: number,
-): void {
+export function callDeleteCallback(scheduleIdx: number, setIdx: number): void {
 	deleteCallback?.(scheduleIdx, setIdx)
 }

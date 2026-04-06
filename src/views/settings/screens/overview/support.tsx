@@ -59,7 +59,10 @@ export const SupportSection = (): React.JSX.Element => {
 
 	return (
 		<Section header="SUPPORT">
-			<PushButtonCell onPress={() => router.push('/settings/faq')} title="FAQs" />
+			<PushButtonCell
+				onPress={() => router.push('/settings/faq')}
+				title="FAQs"
+			/>
 			<PushButtonCell
 				onPress={openEmail}
 				showLinkStyle={true}
