@@ -89,7 +89,7 @@ export function BuildingRow(props: Props): React.JSX.Element {
 									status={status}
 								/>
 							</Detail>
-					  ))
+						))
 					: null}
 			</View>
 		</ListRow>

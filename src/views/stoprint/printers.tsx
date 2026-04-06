@@ -140,7 +140,7 @@ export const PrinterListView = (): React.JSX.Element => {
 				{title: 'Recent', data: recentPrinters.recentPrinters ?? []},
 				{title: 'Popular', data: recentPrinters.popularPrinters ?? []},
 				...groupedByBuilding,
-		  ]
+			]
 		: []
 
 	let availableGrouped = colorJob ? groupedByBuilding : grouped
@@ -165,4 +165,3 @@ export const PrinterListView = (): React.JSX.Element => {
 		/>
 	)
 }
-

@@ -31,9 +31,7 @@ export default function NewsTabLayout() {
 				<Label>Oleville</Label>
 				{Platform.select({
 					ios: <Icon sf="face.smiling.fill" />,
-					android: (
-						<Icon src={<MaterialDesignIcons name="emoticon-happy" />} />
-					),
+					android: <Icon src={<MaterialDesignIcons name="emoticon-happy" />} />,
 				})}
 			</NativeTabs.Trigger>
 		</NativeTabs>

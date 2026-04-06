@@ -107,7 +107,10 @@ export const CourseSearchResultsView = (): React.JSX.Element => {
 	let navigation = useNavigation()
 	let router = useRouter()
 
-	let params = useLocalSearchParams<{initialFilters?: string; initialQuery?: string}>()
+	let params = useLocalSearchParams<{
+		initialFilters?: string
+		initialQuery?: string
+	}>()
 	let initialFilters = params.initialFilters
 		? (JSON.parse(params.initialFilters) as FilterType<CourseType>[])
 		: []
@@ -228,8 +231,8 @@ export const CourseSearchResultsView = (): React.JSX.Element => {
 	let message = hasActiveFilter
 		? 'There were no courses that matched your selected filters. Try a different filter combination.'
 		: query?.length
-		  ? 'There were no courses that matched your query. Please try again.'
-		  : "You can search by Professor (e.g. 'Jill Dietz'), Course Name (e.g. 'Abstract Algebra'), Department/Number (e.g. MATH 252), or GE (e.g. WRI)"
+			? 'There were no courses that matched your query. Please try again.'
+			: "You can search by Professor (e.g. 'Jill Dietz'), Course Name (e.g. 'Abstract Algebra'), Department/Number (e.g. MATH 252), or GE (e.g. WRI)"
 
 	let messageView = <NoticeView style={styles.message} text={message} />
 

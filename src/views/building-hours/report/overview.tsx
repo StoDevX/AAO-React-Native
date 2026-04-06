@@ -370,4 +370,3 @@ const TimesCell = (props: TimesCellProps) => {
 		/>
 	)
 }
-
