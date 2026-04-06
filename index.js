@@ -1,1 +1,1 @@
-import './source/root'
+import 'expo-router/entry'
