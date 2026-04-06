@@ -47,9 +47,7 @@ describe('NoticeView', () => {
 		it('displays a spinner', async () => {
 			let tree: TestRenderer.ReactTestRenderer
 			await act(() => {
-				tree = TestRenderer.create(
-					<NoticeView spinner={true} text="foo bar" />,
-				)
+				tree = TestRenderer.create(<NoticeView spinner={true} text="foo bar" />)
 			})
 			expect(tree!.toJSON()).toMatchSnapshot()
 		})
