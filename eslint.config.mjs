@@ -3,10 +3,8 @@
 import eslint from '@eslint/js'
 import {defineConfig, globalIgnores} from 'eslint/config'
 // @ts-expect-error Could not find a declaration file for module
-import expoConfig from 'eslint-config-expo/flat'
+import expoConfig from 'eslint-config-expo/flat.js'
 import tseslint from 'typescript-eslint'
-import reactPlugin from 'eslint-plugin-react'
-import reactHooks from 'eslint-plugin-react-hooks'
 import tanstackQuery from '@tanstack/eslint-plugin-query'
 import eslintConfigPrettier from 'eslint-config-prettier/flat'
 import globals from 'globals'
@@ -22,13 +20,6 @@ export default defineConfig([
 	{languageOptions: {parserOptions: {projectService: true}}}, // enable projectService for faster linting
 	// @tanstack/eslint-plugin-query
 	...tanstackQuery.configs['flat/recommended'],
-	// eslint-plugin-react-hooks
-	reactHooks.configs.flat.recommended,
-	// eslint-plugin-react
-	{
-		files: ['**/*.{js,jsx,ts,tsx,mjs,cjs}'],
-		...reactPlugin.configs.flat.recommended,
-	},
 	// custom rule settings
 	{
 		files: ['**/*.{js,jsx,ts,tsx,mjs,cjs}'],
