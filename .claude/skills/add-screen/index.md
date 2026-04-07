@@ -1,9 +1,3 @@
----
-name: add-screen
-description: Guide for adding a new screen to the All About Olaf React Native app, including React Navigation setup, TypeScript types, component creation, and proper integration with the app's navigation system.
-license: Complete terms in LICENSE.txt
----
-
 # Add Screen Skill
 
 This skill provides a comprehensive guide for adding new screens to the All About Olaf React Native application. It covers all necessary steps including component creation, navigation setup, TypeScript types, and integration with the app's existing architecture.
@@ -220,3 +214,154 @@ See existing screens in `source/views/` for reference implementations:
 - `settings/` - Settings screen with multiple sub-screens
 
 Each example demonstrates different navigation patterns and component structures.
+
+---
+
+# Add Screen Checklist
+
+Use this checklist to ensure you've completed all necessary steps when adding a new screen.
+
+## Component Creation
+- [ ] Created `source/views/[screen-name]/` directory
+- [ ] Created `index.tsx` with main component
+- [ ] Exported `View`, `NavigationKey`, `NavigationOptions`, `NavigationParams`
+- [ ] Component follows React Native and project patterns
+- [ ] Added proper TypeScript types
+- [ ] Created additional component files if needed
+- [ ] Added `types.ts` file if screen has complex types
+
+## Navigation Setup
+- [ ] Added import to `source/navigation/types.tsx`
+- [ ] Added screen to appropriate ParamList in `types.tsx`
+- [ ] Added import to `source/navigation/routes.tsx`
+- [ ] Added `Stack.Screen` to appropriate navigator in `routes.tsx`
+- [ ] Verified NavigationKey matches between files
+
+## Home Screen Integration (if applicable)
+- [ ] Added NavigationKey import to `source/views/views.ts`
+- [ ] Added entry to `AllViews()` array
+- [ ] Chose appropriate icon from available icons
+- [ ] Selected appropriate color from `@frogpond/colors`
+- [ ] Set correct foreground (light/dark) for icon contrast
+
+## Testing & Validation
+- [ ] App builds without TypeScript errors
+- [ ] Screen appears in home menu (if added)
+- [ ] Navigation to screen works correctly
+- [ ] Back navigation works properly
+- [ ] Screen displays correctly on iOS and Android
+- [ ] No linting errors
+- [ ] Follows accessibility guidelines
+
+## Code Quality
+- [ ] Component is focused and single-responsibility
+- [ ] Uses proper hooks and state management
+- [ ] Follows existing styling patterns
+- [ ] Includes proper error handling
+- [ ] Has appropriate loading states
+- [ ] Includes meaningful comments for complex logic
+
+## Common Issues to Check
+
+### Navigation Issues
+- NavigationKey string matches exactly across all files
+- ParamList type matches NavigationParams export
+- Screen is added to correct navigator (Root vs Settings vs Component Library)
+
+### TypeScript Issues
+- All imports are correct and exist
+- Navigation parameter types match usage
+- Component props are properly typed
+
+### Display Issues
+- Screen title is user-friendly
+- Back button text is appropriate
+- Colors and icons follow design system
+- Layout works on different screen sizes
+
+### Integration Issues
+- Screen follows established patterns
+- No conflicts with existing screens
+- Proper cleanup on unmount (if needed)
+- Memory leaks avoided
+
+---
+
+# Screen Component Template
+
+Use this template as a starting point for new screen components. Replace placeholders with your specific implementation.
+
+```tsx
+import * as React from 'react'
+import {View, Text, StyleSheet} from 'react-native'
+import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 20,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 20,
+  },
+  content: {
+    flex: 1,
+  },
+})
+
+function [ScreenName]Page(): JSX.Element {
+  return (
+    <View style={styles.container}>
+      <Text style={styles.title}>[Screen Title]</Text>
+      <View style={styles.content}>
+        {/* Your screen content here */}
+        <Text>[Screen content goes here]</Text>
+      </View>
+    </View>
+  )
+}
+
+export {[ScreenName]Page as View}
+
+export const NavigationKey = '[ScreenName]'
+
+export const NavigationOptions: NativeStackNavigationOptions = {
+  title: '[Screen Title]',
+  headerBackTitle: '[Back Title]',
+}
+
+export type NavigationParams = undefined
+```
+
+## Template Usage
+
+1. Replace `[ScreenName]` with your actual screen name (e.g., `Settings`, `Profile`)
+2. Replace `[Screen Title]` with the display title
+3. Replace `[Back Title]` with appropriate back button text
+4. Add your screen-specific content in the `content` View
+5. Modify styles as needed following the project's patterns
+
+## With Navigation Parameters
+
+If your screen needs parameters, modify the template:
+
+```tsx
+export type NavigationParams = {
+  itemId: string
+  title?: string
+}
+
+function [ScreenName]Page({route}: {route: {params: NavigationParams}}): JSX.Element {
+  const {itemId, title} = route.params
+
+  // Use parameters in your component
+  return (
+    <View style={styles.container}>
+      <Text style={styles.title}>{title || '[Screen Title]'}</Text>
+      <Text>Item ID: {itemId}</Text>
+    </View>
+  )
+}
+```

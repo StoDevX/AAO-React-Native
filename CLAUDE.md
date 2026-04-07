@@ -1,5 +1,68 @@
 # AAO React Native
 
+## Project Overview
+
+All About Olaf is a React Native mobile app for the St. Olaf College community. It provides students, faculty, and staff with access to campus info, dining menus, course catalogs, campus maps, and more.
+
+- **React Native 0.72.9** with **TypeScript**
+- **React Navigation 6** for navigation (typed via `source/navigation/types.ts`)
+- **Redux Toolkit** for global state, **React Query 4** for server state
+- **Jest** + **React Native Testing Library** for testing
+- **Fastlane** for CI/CD
+- Monorepo with internal packages in `modules/`
+
+## Code Conventions
+
+- TypeScript for all new code — no `any`
+- Functional components with hooks only
+- `StyleSheet.create()` for all styles — no inline style objects
+- **Naming:** PascalCase components, kebab-case files, camelCase variables/functions, UPPER_SNAKE_CASE constants
+- **Imports:** React → React Native → third-party → local. Named imports preferred.
+- **No Moment.js** — use `date-fns` or `Day.js` for date/time
+- Colors from `@frogpond/colors` — follow existing color system
+- Prettier config in `package.json` (tabs, single quotes, no semis)
+
+## Architecture & Patterns
+
+- `source/views/` organized by feature (e.g., `dining/`, `directory/`, `calendar/`)
+- Barrel exports (`index.ts`) for clean imports
+- State: React Query for server state, Redux Toolkit for global app state, `useState` for component-local
+- Platform-specific files use `.ios.tsx` / `.android.tsx` extensions
+- `Platform.select()` for platform-specific styles
+- Email via `sendEmail`, phone via `callPhone` components
+- Error logging via Sentry integration
+- React Error Boundaries for component error handling
+
+## Mobile Priorities
+
+These patterns are especially important in this codebase:
+
+- **Lists:** Always use `FlatList`, never `ScrollView` for dynamic data. Memoize list items with `React.memo`.
+- **Safe areas:** Use `react-native-safe-area-context` — never hardcode status bar padding
+- **Touch targets:** Minimum 44x44pt on all interactive elements
+- **Accessibility:** Include `accessibilityLabel` and `accessibilityRole` on all interactive elements
+- **Offline:** Handle network unavailability gracefully — use cached data as fallback
+- **Performance:** Minimize bridge traffic; use `InteractionManager.runAfterInteractions()` for heavy work
+- **Memory:** Clean up subscriptions/listeners in `useEffect` cleanup functions
+- **Platform testing:** Test on both iOS and Android — verify platform-specific UI patterns
+
+## Testing
+
+- Jest + React Native Testing Library for component tests
+- Tests live adjacent to source files or in `__tests__/` directories
+- Mock native modules and external APIs
+- Descriptive test names; group with `describe` blocks
+- `beforeEach`/`afterEach` for setup/cleanup
+
+## Development Commands
+
+```bash
+npm run lint        # ESLint
+npm run pretty      # Prettier
+npm test            # Jest
+npx tsc --noEmit    # Type check
+```
+
 ## Superpowers Skills Framework
 
 This project uses the [Superpowers](https://github.com/obra/superpowers) skills framework. You have superpowers.
@@ -26,6 +89,7 @@ Skills are located in `.claude/skills/`. Agents are in `.claude/agents/`. Comman
 | `using-git-worktrees` | Parallel development branches |
 | `finishing-a-development-branch` | Merge/PR decision workflow |
 | `writing-skills` | Create new skills |
+| `add-screen` | Scaffold and integrate a new screen into the app |
 
 ### Available Agents
 

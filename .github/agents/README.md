@@ -4,8 +4,6 @@ This directory contains instructions for AI coding agents working on the All Abo
 
 ## Files in this directory:
 - `README.md` - This overview file
-- `development.md` - Development workflow and automation guidance
-- `testing.md` - Testing strategies and patterns
 - `mobile-specific.md` - Mobile development considerations
 
 ## For Copilot and other AI assistants:
