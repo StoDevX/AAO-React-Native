@@ -7,7 +7,6 @@ import {Alert, ScrollView, Platform, View} from 'react-native'
 import moment from 'moment-timezone'
 import type {Moment} from 'moment-timezone'
 import noop from 'lodash/noop'
-import jsYaml from 'js-yaml'
 import {InfoHeader} from '@frogpond/info-header'
 import {TableView, Section, Cell} from '@frogpond/tableview'
 import {
@@ -138,16 +137,18 @@ function useBuildingEditor(
 ) {
 	let [building, dispatch] = React.useReducer(buildingReducer, initialBuilding)
 
-	// Simplification 1: Derive hasUnsavedChanges with useMemo instead of useState+useEffect
-	let initialBuildingYaml = React.useMemo(
-		() => jsYaml.dump(initialBuilding),
-		[initialBuilding],
+	let [isDirty, setIsDirty] = React.useState(false)
+	let submittedRef = React.useRef(false)
+
+	let wrappedDispatch: typeof dispatch = React.useCallback(
+		(action) => {
+			setIsDirty(true)
+			dispatch(action)
+		},
+		[dispatch],
 	)
 
-	let hasUnsavedChanges = React.useMemo(
-		() => jsYaml.dump(building) !== initialBuildingYaml,
-		[building, initialBuildingYaml],
-	)
+	let hasUnsavedChanges = isDirty && !submittedRef.current
 
 	/**
 	 * checking for unsaved edits
@@ -186,28 +187,30 @@ function useBuildingEditor(
 			navigation.navigate('BuildingHoursScheduleEditor', {
 				set: set,
 				onEditSet: (editedData: SingleBuildingScheduleType) =>
-					dispatch({
+					wrappedDispatch({
 						type: 'EDIT_HOURS_ROW',
 						scheduleIndex: scheduleIdx,
 						setIndex: setIdx,
 						data: editedData,
 					}),
 				onDeleteSet: () =>
-					dispatch({
+					wrappedDispatch({
 						type: 'DELETE_HOURS_ROW',
 						scheduleIndex: scheduleIdx,
 						setIndex: setIdx,
 					}),
 			}),
-		[navigation],
+		[navigation, wrappedDispatch],
 	)
 
 	let submit = React.useCallback((): void => {
 		console.log(JSON.stringify(building))
+		submittedRef.current = true
+		setIsDirty(false)
 		submitReport(initialBuilding, building)
 	}, [building, initialBuilding])
 
-	return {building, dispatch, openEditor, submit}
+	return {building, dispatch: wrappedDispatch, openEditor, submit}
 }
 
 export let BuildingHoursProblemReportView = (): JSX.Element => {
