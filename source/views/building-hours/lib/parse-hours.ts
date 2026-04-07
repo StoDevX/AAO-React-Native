@@ -16,7 +16,7 @@ export function parseHours(
 	let currentTimeInCampusTimezone = m.clone().tz(timezone())
 	let dayOfYear = currentTimeInCampusTimezone.dayOfYear()
 
-	// if the moment is before 3am
+	// if the moment is before 2am
 	if (currentTimeInCampusTimezone.hour() < 2) {
 		dayOfYear -= 1
 	}
