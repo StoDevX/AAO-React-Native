@@ -40,11 +40,11 @@ run = "eslint --report-unused-disable-directives --cache source/ modules/ script
 
 [tasks.pretty]
 description = "Format code with Prettier"
-run = "prettier --write '{source,modules,scripts,images,e2e}/**/*.{js,ts,tsx,json}' 'data/**/*.css' '{*,.*}.{yaml,yml,json,json5,js,ts,tsx}'"
+run = "prettier --write ."
 
 [tasks."pretty:check"]
 description = "Check code formatting"
-run = "prettier --check '{source,modules,scripts,images,e2e}/**/*.{js,ts,tsx,json}' 'data/**/*.css' '{*,.*}.{yaml,yml,json,json5,js,ts,tsx}'"
+run = "prettier --check ."
 
 [tasks.p]
 description = "Format staged files with pretty-quick"
