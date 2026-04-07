@@ -323,7 +323,7 @@ PODS:
     - React-Core
   - react-native-restart (0.0.27):
     - React-Core
-  - react-native-safe-area-context (4.11.0):
+  - react-native-safe-area-context (4.14.1):
     - React-Core
   - react-native-sfsymbols (1.2.2):
     - React
@@ -700,7 +700,7 @@ SPEC CHECKSUMS:
   react-native-ios-context-menu: 986da6dcba70094bcc2a8049f68410fe7d25aff1
   react-native-netinfo: ce102083db558237dac20cf64172ef569ebe2dd9
   react-native-restart: 0bc732f4461709022a742bb29bcccf6bbc5b4863
-  react-native-safe-area-context: ca0ebcd9798c5a45863c608c961d4f3f984b6ed2
+  react-native-safe-area-context: 758e894ca5a9bd1868d2a9cfbca7326a2b6bf9dc
   react-native-sfsymbols: 3309f24c98d32705568c84b714268f3ec62017c7
   react-native-webview: 92c6b55d1a8c6203710a094204182199d154696e
   React-NativeModulesApple: 6cc32bf0a8dc0a9de48878ccca14788bbe5e4fc6
