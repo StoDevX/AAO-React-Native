@@ -29,15 +29,27 @@ describe('buildingReducer', () => {
 		}
 		let action: BuildingAction = {
 			type: 'EDIT_SCHEDULE',
-			index: 0,
+			scheduleIndex: 0,
 			schedule: newSchedule,
 		}
 		let result = buildingReducer(baseBuilding, action)
 		expect(result.schedule[0].title).toBe('Updated Hours')
 	})
 
+	it('handles EDIT_SCHEDULE_FIELD', () => {
+		let action: BuildingAction = {
+			type: 'EDIT_SCHEDULE_FIELD',
+			scheduleIndex: 0,
+			data: {title: 'Partial Update'},
+		}
+		let result = buildingReducer(baseBuilding, action)
+		expect(result.schedule[0].title).toBe('Partial Update')
+		// other fields preserved
+		expect(result.schedule[0].hours).toBe(baseBuilding.schedule[0].hours)
+	})
+
 	it('handles DELETE_SCHEDULE', () => {
-		let action: BuildingAction = {type: 'DELETE_SCHEDULE', index: 0}
+		let action: BuildingAction = {type: 'DELETE_SCHEDULE', scheduleIndex: 0}
 		let result = buildingReducer(baseBuilding, action)
 		expect(result.schedule).toHaveLength(0)
 	})
