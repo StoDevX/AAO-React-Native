@@ -370,8 +370,7 @@ export const systemTeal = Platform.select({
  */
 export const systemYellow = Platform.select({
 	ios: PlatformColor('systemYellow'),
-	// TODO: make this yellow and not orange
-	android: PlatformColor('@android:color/holo_orange_light'),
+	android: '#FFD600' as unknown as OpaqueColorValue,
 })
 
 // MARK: Adaptable gray colors
