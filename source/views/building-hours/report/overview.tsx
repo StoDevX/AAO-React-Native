@@ -124,8 +124,10 @@ export function buildingReducer(
 			return {...state, schedule: schedules}
 		}
 
-		default:
-			return state
+		default: {
+			let _exhaustive: never = action
+			return _exhaustive
+		}
 	}
 }
 
