@@ -136,7 +136,7 @@ function useBuildingEditor(
 	let [building, dispatch] = React.useReducer(buildingReducer, initialBuilding)
 
 	let [isDirty, setIsDirty] = React.useState(false)
-	let submittedRef = React.useRef(false)
+	let [submitted, setSubmitted] = React.useState(false)
 
 	let wrappedDispatch: typeof dispatch = React.useCallback(
 		(action) => {
@@ -146,7 +146,7 @@ function useBuildingEditor(
 		[dispatch],
 	)
 
-	let hasUnsavedChanges = isDirty && !submittedRef.current
+	let hasUnsavedChanges = isDirty && !submitted
 
 	/**
 	 * checking for unsaved edits
@@ -203,7 +203,7 @@ function useBuildingEditor(
 
 	let submit = React.useCallback((): void => {
 		console.log(JSON.stringify(building))
-		submittedRef.current = true
+		setSubmitted(true)
 		setIsDirty(false)
 		submitReport(initialBuilding, building)
 	}, [building, initialBuilding])
