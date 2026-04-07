@@ -53,7 +53,7 @@
     "delay": "6.0.0",
     "events": "3.3.0",
     "keyword-search": "0.1.2",
-    "ky": "1.7.2",
+    "ky": "1.14.3",
     "lodash": "4.18.1",
     "moment": "2.30.1",
     "moment-timezone": "0.6.1",
@@ -95,6 +95,7 @@
   },
   "devDependencies": {
     "@babel/core": "7.28.5",
+    "@babel/plugin-transform-private-methods": "7.28.6",
     "@babel/preset-typescript": "7.28.5",
     "@babel/runtime": "7.26.10",
     "@eslint/js": "9.39.2",
