@@ -33,10 +33,10 @@ const conditionRuleSchema = z
 		(value) =>
 			Boolean(
 				value.platform ??
-					value.platforms?.length ??
-					value.versionRange ??
-					value.startDate ??
-					value.endDate,
+				value.platforms?.length ??
+				value.versionRange ??
+				value.startDate ??
+				value.endDate,
 			),
 		{message: 'Condition rule must include at least one filter'},
 	)

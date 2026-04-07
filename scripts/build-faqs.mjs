@@ -10,8 +10,8 @@ export function buildFaqs({sourceFile, outputFile}) {
 		typeof raw.legacyText === 'string'
 			? raw.legacyText
 			: typeof raw.text === 'string'
-			  ? raw.text
-			  : ''
+				? raw.text
+				: ''
 
 	let payload = {
 		faqs,

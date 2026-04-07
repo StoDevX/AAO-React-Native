@@ -16,7 +16,6 @@ properties:
     type: object
     additionalProperties: false
 
-
 definitions:
   menu:
     type: object

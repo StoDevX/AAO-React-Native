@@ -203,11 +203,11 @@ const styles = StyleSheet.create({
 					borderRadius: 4,
 					marginRight: imageMargin,
 					marginLeft: leftMargin,
-			  }
+				}
 			: {
 					alignSelf: 'center',
 					marginHorizontal: 8,
-			  },
+				},
 	emptySearch: {
 		flex: 1,
 		alignItems: 'center',
