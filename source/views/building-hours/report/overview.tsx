@@ -84,10 +84,7 @@ export function buildingReducer(
 			let schedules = [...state.schedule]
 			schedules[action.scheduleIndex] = {
 				...schedules[action.scheduleIndex],
-				hours: [
-					...schedules[action.scheduleIndex].hours,
-					blankSchedule(),
-				],
+				hours: [...schedules[action.scheduleIndex].hours, blankSchedule()],
 			}
 			return {...state, schedule: schedules}
 		}
@@ -113,6 +110,9 @@ export function buildingReducer(
 			}
 			return {...state, schedule: schedules}
 		}
+
+		default:
+			return state
 	}
 }
 
@@ -122,10 +122,7 @@ function useBuildingEditor(
 	initialBuilding: BuildingType,
 	navigation: NativeStackNavigationProp<RootStackParamList>,
 ) {
-	let [building, dispatch] = React.useReducer(
-		buildingReducer,
-		initialBuilding,
-	)
+	let [building, dispatch] = React.useReducer(buildingReducer, initialBuilding)
 
 	// Simplification 1: Derive hasUnsavedChanges with useMemo instead of useState+useEffect
 	let initialBuildingYaml = React.useMemo(
@@ -171,11 +168,7 @@ function useBuildingEditor(
 	)
 
 	let openEditor = React.useCallback(
-		(
-			scheduleIdx: number,
-			setIdx: number,
-			set?: SingleBuildingScheduleType,
-		) =>
+		(scheduleIdx: number, setIdx: number, set?: SingleBuildingScheduleType) =>
 			navigation.navigate('BuildingHoursScheduleEditor', {
 				set: set,
 				onEditSet: (editedData: SingleBuildingScheduleType) =>
@@ -226,9 +219,7 @@ export let BuildingHoursProblemReportView = (): JSX.Element => {
 			<TableView>
 				<Section header="NAME">
 					<TitleCell
-						onChange={(newName) =>
-							dispatch({type: 'EDIT_NAME', name: newName})
-						}
+						onChange={(newName) => dispatch({type: 'EDIT_NAME', name: newName})}
 						text={name || ''}
 					/>
 				</Section>

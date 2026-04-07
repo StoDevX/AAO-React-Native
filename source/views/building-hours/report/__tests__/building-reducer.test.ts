@@ -96,7 +96,9 @@ describe('buildingReducer', () => {
 	})
 
 	it('does not mutate the original state', () => {
-		let original = JSON.parse(JSON.stringify(baseBuilding))
+		let original: BuildingType = JSON.parse(
+			JSON.stringify(baseBuilding),
+		) as BuildingType
 		buildingReducer(baseBuilding, {type: 'EDIT_NAME', name: 'Changed'})
 		expect(baseBuilding).toEqual(original)
 	})
