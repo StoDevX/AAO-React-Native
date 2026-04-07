@@ -1,6 +1,6 @@
 import {expect, it} from '@jest/globals'
 import {isBuildingOpen} from '../is-building-open'
-import {dayMoment} from './moment.helper'
+import {dayMoment, moment} from './moment.helper'
 import {BuildingType} from '../../types'
 
 it('checks a list of schedules to see if any are open', () => {
@@ -106,4 +106,25 @@ it('returns false if none are open', () => {
 	}
 
 	expect(isBuildingOpen(building, m)).toBe(false)
+})
+
+it('uses campus timezone for day matching', () => {
+	let m = moment.tz(
+		'2019-12-20 00:30',
+		'YYYY-MM-DD HH:mm',
+		'America/New_York',
+	)
+	let building: BuildingType = {
+		name: 'building',
+		category: '???',
+		breakSchedule: undefined,
+		schedule: [
+			{
+				title: 'Hours',
+				hours: [{days: ['Th'], from: '10:30am', to: '2:00am'}],
+			},
+		],
+	}
+
+	expect(isBuildingOpen(building, m)).toBe(true)
 })

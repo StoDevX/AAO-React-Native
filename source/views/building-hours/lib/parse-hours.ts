@@ -13,18 +13,27 @@ export function parseHours(
 	{from: fromTime, to: toTime}: SingleBuildingScheduleType,
 	m: Moment,
 ): HourPairType {
-	let dayOfYear = m.dayOfYear()
+	let currentTimeInCampusTimezone = m.clone().tz(timezone())
+	let dayOfYear = currentTimeInCampusTimezone.dayOfYear()
 
 	// if the moment is before 3am
-	if (m.hour() < 2) {
+	if (currentTimeInCampusTimezone.hour() < 2) {
 		dayOfYear -= 1
 	}
 
 	let open = moment.tz(fromTime, TIME_FORMAT, true, timezone())
-	open.year(m.year()).month(m.month()).date(m.date()).dayOfYear(dayOfYear)
+	open
+		.year(currentTimeInCampusTimezone.year())
+		.month(currentTimeInCampusTimezone.month())
+		.date(currentTimeInCampusTimezone.date())
+		.dayOfYear(dayOfYear)
 
 	let close = moment.tz(toTime, TIME_FORMAT, true, timezone())
-	close.year(m.year()).month(m.month()).date(m.date()).dayOfYear(dayOfYear)
+	close
+		.year(currentTimeInCampusTimezone.year())
+		.month(currentTimeInCampusTimezone.month())
+		.date(currentTimeInCampusTimezone.date())
+		.dayOfYear(dayOfYear)
 
 	if (close.isBefore(open)) {
 		close.add(1, 'day')
