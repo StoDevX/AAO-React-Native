@@ -327,7 +327,7 @@ PODS:
     - React-Core
   - react-native-sfsymbols (1.2.2):
     - React
-  - react-native-webview (13.12.2):
+  - react-native-webview (13.16.1):
     - RCT-Folly (= 2021.07.22.00)
     - React-Core
   - React-NativeModulesApple (0.72.9):
@@ -702,7 +702,7 @@ SPEC CHECKSUMS:
   react-native-restart: 0bc732f4461709022a742bb29bcccf6bbc5b4863
   react-native-safe-area-context: 758e894ca5a9bd1868d2a9cfbca7326a2b6bf9dc
   react-native-sfsymbols: 3309f24c98d32705568c84b714268f3ec62017c7
-  react-native-webview: 92c6b55d1a8c6203710a094204182199d154696e
+  react-native-webview: 3a2c7752fb32e41f9ca87eff8d1a36983933905a
   React-NativeModulesApple: 6cc32bf0a8dc0a9de48878ccca14788bbe5e4fc6
   React-perflogger: cb433f318c6667060fc1f62e26eb58d6eb30a627
   React-RCTActionSheet: 0af3f8ac067e8a1dde902810b7ad169d0a0ec31e
