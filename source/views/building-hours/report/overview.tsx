@@ -30,8 +30,6 @@ import {RouteProp, useNavigation, useRoute} from '@react-navigation/native'
 import {CloseScreenButton} from '@frogpond/navigation-buttons'
 import {RootStackParamList} from '../../../navigation/types'
 
-// Simplification 2: Centralize building mutations with useReducer
-
 export type BuildingAction =
 	| {type: 'EDIT_NAME'; name: string}
 	| {
@@ -130,8 +128,6 @@ export function buildingReducer(
 		}
 	}
 }
-
-// Simplification 3: Extract useBuildingEditor custom hook
 
 function useBuildingEditor(
 	initialBuilding: BuildingType,
