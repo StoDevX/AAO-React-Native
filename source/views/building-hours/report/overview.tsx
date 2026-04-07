@@ -23,23 +23,119 @@ import type {
 } from '../types'
 import {summarizeDays, formatBuildingTimes, blankSchedule} from '../lib'
 import {submitReport} from './submit'
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+import {
+	NativeStackNavigationOptions,
+	NativeStackNavigationProp,
+} from '@react-navigation/native-stack'
 import {RouteProp, useNavigation, useRoute} from '@react-navigation/native'
 import {CloseScreenButton} from '@frogpond/navigation-buttons'
 import {RootStackParamList} from '../../../navigation/types'
 
-export let BuildingHoursProblemReportView = (): JSX.Element => {
-	let navigation = useNavigation()
-	let route = useRoute<RouteProp<RootStackParamList, typeof NavigationKey>>()
-	let {initialBuilding} = route.params
+// Simplification 2: Centralize building mutations with useReducer
 
-	let [building, setBuilding] = React.useState(initialBuilding)
+export type BuildingAction =
+	| {type: 'EDIT_NAME'; name: string}
+	| {
+			type: 'EDIT_SCHEDULE'
+			index: number
+			schedule: NamedBuildingScheduleType
+	  }
+	| {type: 'DELETE_SCHEDULE'; index: number}
+	| {type: 'ADD_SCHEDULE'}
+	| {type: 'ADD_HOURS_ROW'; scheduleIndex: number}
+	| {
+			type: 'EDIT_HOURS_ROW'
+			scheduleIndex: number
+			setIndex: number
+			data: SingleBuildingScheduleType
+	  }
+	| {type: 'DELETE_HOURS_ROW'; scheduleIndex: number; setIndex: number}
 
-	// used for checking against unsaved edits
-	let [hasUnsavedChanges, setHasUnsavedChanges] = React.useState(false)
+export function buildingReducer(
+	state: BuildingType,
+	action: BuildingAction,
+): BuildingType {
+	switch (action.type) {
+		case 'EDIT_NAME':
+			return {...state, name: action.name}
+
+		case 'EDIT_SCHEDULE': {
+			let schedules = [...state.schedule]
+			schedules[action.index] = action.schedule
+			return {...state, schedule: schedules}
+		}
+
+		case 'DELETE_SCHEDULE': {
+			let schedules = [...state.schedule]
+			schedules.splice(action.index, 1)
+			return {...state, schedule: schedules}
+		}
+
+		case 'ADD_SCHEDULE':
+			return {
+				...state,
+				schedule: [
+					...state.schedule,
+					{title: 'Hours', hours: [blankSchedule()]},
+				],
+			}
+
+		case 'ADD_HOURS_ROW': {
+			let schedules = [...state.schedule]
+			schedules[action.scheduleIndex] = {
+				...schedules[action.scheduleIndex],
+				hours: [
+					...schedules[action.scheduleIndex].hours,
+					blankSchedule(),
+				],
+			}
+			return {...state, schedule: schedules}
+		}
+
+		case 'EDIT_HOURS_ROW': {
+			let schedules = [...state.schedule]
+			let hours = [...schedules[action.scheduleIndex].hours]
+			hours[action.setIndex] = action.data
+			schedules[action.scheduleIndex] = {
+				...schedules[action.scheduleIndex],
+				hours,
+			}
+			return {...state, schedule: schedules}
+		}
+
+		case 'DELETE_HOURS_ROW': {
+			let schedules = [...state.schedule]
+			let hours = [...schedules[action.scheduleIndex].hours]
+			hours.splice(action.setIndex, 1)
+			schedules[action.scheduleIndex] = {
+				...schedules[action.scheduleIndex],
+				hours,
+			}
+			return {...state, schedule: schedules}
+		}
+	}
+}
+
+// Simplification 3: Extract useBuildingEditor custom hook
+
+function useBuildingEditor(
+	initialBuilding: BuildingType,
+	navigation: NativeStackNavigationProp<RootStackParamList>,
+) {
+	let [building, dispatch] = React.useReducer(
+		buildingReducer,
+		initialBuilding,
+	)
+
+	// Simplification 1: Derive hasUnsavedChanges with useMemo instead of useState+useEffect
 	let initialBuildingYaml = React.useMemo(
 		() => jsYaml.dump(initialBuilding),
 		[initialBuilding],
+	)
+
+	let hasUnsavedChanges = React.useMemo(
+		() => jsYaml.dump(building) !== initialBuildingYaml,
+		[building, initialBuildingYaml],
 	)
 
 	/**
@@ -74,118 +170,49 @@ export let BuildingHoursProblemReportView = (): JSX.Element => {
 		[navigation, hasUnsavedChanges],
 	)
 
-	React.useEffect(() => {
-		setHasUnsavedChanges(jsYaml.dump(building) !== initialBuildingYaml)
-	}, [building, initialBuildingYaml])
-
-	let editName = (newName: BuildingType['name']) => {
-		setBuilding({
-			...building,
-			name: newName,
-		})
-	}
-
-	let editSchedule = (idx: number, newSchedule: NamedBuildingScheduleType) => {
-		let schedules = [...building.schedule]
-		schedules.splice(idx, 1, newSchedule)
-
-		setBuilding({
-			...building,
-			schedule: schedules,
-		})
-	}
-
-	let deleteSchedule = (idx: number) => {
-		let schedules = [...building.schedule]
-		schedules.splice(idx, 1)
-
-		setBuilding({
-			...building,
-			schedule: schedules,
-		})
-	}
-
-	let addSchedule = () => {
-		setBuilding({
-			...building,
-			schedule: [
-				...building.schedule,
-				{
-					title: 'Hours',
-					hours: [blankSchedule()],
-				},
-			],
-		})
-	}
-
-	let addHoursRow = (idx: number) => {
-		let schedules = [...building.schedule]
-
-		schedules[idx] = {
-			...schedules[idx],
-			hours: [...schedules[idx].hours, blankSchedule()],
-		}
-
-		setBuilding({
-			...building,
-			schedule: schedules,
-		})
-	}
-
-	let editHoursRow = React.useCallback(
+	let openEditor = React.useCallback(
 		(
 			scheduleIdx: number,
 			setIdx: number,
-			newData: SingleBuildingScheduleType,
-		) => {
-			let schedules = [...building.schedule]
-
-			let hours = [...schedules[scheduleIdx].hours]
-			hours.splice(setIdx, 1, newData)
-
-			schedules[scheduleIdx] = {...schedules[scheduleIdx], hours}
-
-			setBuilding({
-				...building,
-				schedule: schedules,
-			})
-		},
-		[building],
-	)
-
-	let deleteHoursRow = React.useCallback(
-		(scheduleIdx: number, setIdx: number) => {
-			let schedules = [...building.schedule]
-
-			let hours = [...schedules[scheduleIdx].hours]
-			hours.splice(setIdx, 1)
-
-			schedules[scheduleIdx] = {...schedules[scheduleIdx], hours}
-
-			setBuilding({
-				...building,
-				schedule: schedules,
-			})
-		},
-		[building],
-	)
-
-	let openEditor = React.useCallback(
-		(scheduleIdx: number, setIdx: number, set?: SingleBuildingScheduleType) =>
+			set?: SingleBuildingScheduleType,
+		) =>
 			navigation.navigate('BuildingHoursScheduleEditor', {
 				set: set,
 				onEditSet: (editedData: SingleBuildingScheduleType) =>
-					editHoursRow(scheduleIdx, setIdx, editedData),
-				onDeleteSet: () => deleteHoursRow(scheduleIdx, setIdx),
+					dispatch({
+						type: 'EDIT_HOURS_ROW',
+						scheduleIndex: scheduleIdx,
+						setIndex: setIdx,
+						data: editedData,
+					}),
+				onDeleteSet: () =>
+					dispatch({
+						type: 'DELETE_HOURS_ROW',
+						scheduleIndex: scheduleIdx,
+						setIndex: setIdx,
+					}),
 			}),
-		[deleteHoursRow, editHoursRow, navigation],
+		[navigation],
 	)
 
-	let submit = (): void => {
+	let submit = React.useCallback((): void => {
 		console.log(JSON.stringify(building))
-		setHasUnsavedChanges(false)
 		submitReport(initialBuilding, building)
-	}
+	}, [building, initialBuilding])
+
+	return {building, dispatch, openEditor, submit}
+}
+
+export let BuildingHoursProblemReportView = (): JSX.Element => {
+	let navigation =
+		useNavigation<NativeStackNavigationProp<RootStackParamList>>()
+	let route = useRoute<RouteProp<RootStackParamList, typeof NavigationKey>>()
+	let {initialBuilding} = route.params
+
+	let {building, dispatch, openEditor, submit} = useBuildingEditor(
+		initialBuilding,
+		navigation,
+	)
 
 	let {schedule: schedules = [], name} = building
 
@@ -198,16 +225,19 @@ export let BuildingHoursProblemReportView = (): JSX.Element => {
 
 			<TableView>
 				<Section header="NAME">
-					<TitleCell onChange={editName} text={name || ''} />
+					<TitleCell
+						onChange={(newName) =>
+							dispatch({type: 'EDIT_NAME', name: newName})
+						}
+						text={name || ''}
+					/>
 				</Section>
 
 				{schedules.map((s: NamedBuildingScheduleType, i) => (
 					<EditableSchedule
 						key={i}
-						addRow={addHoursRow}
+						dispatch={dispatch}
 						editRow={openEditor}
-						onDelete={deleteSchedule}
-						onEditSchedule={editSchedule}
 						schedule={s}
 						scheduleIndex={i}
 					/>
@@ -216,7 +246,7 @@ export let BuildingHoursProblemReportView = (): JSX.Element => {
 				<Section>
 					<Cell
 						accessory="DisclosureIndicator"
-						onPress={addSchedule}
+						onPress={() => dispatch({type: 'ADD_SCHEDULE'})}
 						title="Add New Schedule"
 					/>
 				</Section>
@@ -236,50 +266,53 @@ export let BuildingHoursProblemReportView = (): JSX.Element => {
 type EditableScheduleProps = {
 	schedule: NamedBuildingScheduleType
 	scheduleIndex: number
-	addRow: (idx: number) => void
+	dispatch: React.Dispatch<BuildingAction>
 	editRow: (
 		schedIdx: number,
 		setIdx: number,
 		set: SingleBuildingScheduleType,
 	) => void
-	onEditSchedule: (idx: number, set: NamedBuildingScheduleType) => void
-	onDelete: (idx: number) => void
 }
 
 const EditableSchedule = (props: EditableScheduleProps) => {
-	let onEdit = (data: Partial<NamedBuildingScheduleType>) => {
-		let idx = props.scheduleIndex
-		props.onEditSchedule(idx, {
-			...props.schedule,
-			...data,
+	let {dispatch, scheduleIndex, schedule} = props
+
+	let editTitle = (newValue: string) => {
+		dispatch({
+			type: 'EDIT_SCHEDULE',
+			index: scheduleIndex,
+			schedule: {...schedule, title: newValue},
 		})
 	}
 
-	let editTitle = (newValue: string) => {
-		onEdit({title: newValue})
-	}
-
 	let editNotes = (newValue: string) => {
-		onEdit({notes: newValue})
+		dispatch({
+			type: 'EDIT_SCHEDULE',
+			index: scheduleIndex,
+			schedule: {...schedule, notes: newValue},
+		})
 	}
 
 	let toggleChapel = (newValue: boolean) => {
-		onEdit({closedForChapelTime: newValue})
+		dispatch({
+			type: 'EDIT_SCHEDULE',
+			index: scheduleIndex,
+			schedule: {...schedule, closedForChapelTime: newValue},
+		})
 	}
 
 	let addHoursRow = () => {
-		props.addRow(props.scheduleIndex)
+		dispatch({type: 'ADD_HOURS_ROW', scheduleIndex})
 	}
 
 	let deleteSchedule = () => {
-		props.onDelete(props.scheduleIndex)
+		dispatch({type: 'DELETE_SCHEDULE', index: scheduleIndex})
 	}
 
 	let openEditor = (setIndex: number, hoursSet: SingleBuildingScheduleType) => {
-		props.editRow(props.scheduleIndex, setIndex, hoursSet)
+		props.editRow(scheduleIndex, setIndex, hoursSet)
 	}
 
-	let {schedule} = props
 	let now = moment()
 
 	return (
