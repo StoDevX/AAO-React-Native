@@ -17,159 +17,15 @@ env:
   java_distribution: temurin
 
 jobs:
-  cache-npm-linux:
-    name: Cache npm for Linux
-    runs-on: ubuntu-24.04
-    outputs:
-      cache-key: ${{ steps.node-cache.outputs.cache-primary-key }}
-    steps:
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
-
-      - name: Extract job definition
-        run: yq '.jobs.${{ github.job }}' .github/workflows/check.yml > .github/job.yml
-
-      - uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
-        id: node-cache
-        with:
-          path: |
-            node_modules/
-            modules/*/node_modules/
-          key: ${{ runner.os }}-node_modules-${{ hashFiles('.mise.toml', 'package-lock.json', '.github/job.yml') }}
-
-      - if: steps.node-cache.outputs.cache-hit != 'true'
-        uses: jdx/mise-action@v4
-
-      - if: steps.node-cache.outputs.cache-hit != 'true'
-        run: npm ci
-
-      - uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
-        if: steps.node-cache.outputs.cache-hit != 'true'
-        with:
-          path: |
-            node_modules/
-            modules/*/node_modules/
-          key: ${{ steps.node-cache.outputs.cache-primary-key }}
-
-  cache-npm-macos:
-    name: Cache npm for macOS
-    runs-on: macos-14
-    outputs:
-      cache-key: ${{ steps.node-cache.outputs.cache-primary-key }}
-    steps:
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
-
-      - name: Extract job definition
-        run: yq '.jobs.${{ github.job }}' .github/workflows/check.yml > .github/job.yml
-
-      - uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
-        id: node-cache
-        with:
-          path: |
-            node_modules/
-            modules/*/node_modules/
-          key: ${{ runner.os }}-node_modules-${{ hashFiles('.mise.toml', 'package-lock.json', '.github/job.yml') }}
-
-      - if: steps.node-cache.outputs.cache-hit != 'true'
-        uses: jdx/mise-action@v4
-
-      - if: steps.node-cache.outputs.cache-hit != 'true'
-        run: npm ci
-
-      - uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
-        if: steps.node-cache.outputs.cache-hit != 'true'
-        with:
-          path: |
-            node_modules/
-            modules/*/node_modules/
-          key: ${{ steps.node-cache.outputs.cache-primary-key }}
-
-  cache-bundler-macos:
-    name: Cache bundler for macOS
-    runs-on: macos-14
-    steps:
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
-
-      - uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: ${{ env.ruby-version }}
-          bundler-cache: true
-
-  cache-cocoapods:
-    name: iOS Cocoapods
-    needs: [cache-npm-macos, cache-bundler-macos]
-    runs-on: macos-14
-    outputs:
-      cache-key: ${{ steps.cocoapods-cache.outputs.cache-primary-key }}
-    steps:
-      - run: sudo xcode-select -s /Applications/${{ env.xcode_version }}.app
-
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
-
-      - name: Extract job definition
-        run: yq '.jobs.${{ github.job }}' .github/workflows/check.yml > .github/job.yml
-
-      - name: Restore Cocoapods cache
-        uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
-        id: cocoapods-cache
-        with:
-          path: ios/Pods
-          key: ${{ runner.os }}-cocoapods-ruby@${{ env.ruby-version }}-xcode@${{ env.xcode_version }}-${{ hashFiles('**/Podfile', '**/Podfile.lock', 'package-lock.json', '.github/job.yml') }}
-
-      - if: steps.cocoapods-cache.outputs.cache-hit != 'true'
-        uses: jdx/mise-action@v4
-
-      - if: steps.cocoapods-cache.outputs.cache-hit != 'true'
-        uses: ruby/setup-ruby@v1
-        env:
-          BUNDLE_FROZEN: 'true'
-        with:
-          ruby-version: ${{ env.ruby-version }}
-          bundler-cache: true
-
-      - name: Restore node_modules cache
-        if: steps.cocoapods-cache.outputs.cache-hit != 'true'
-        uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
-        id: node-cache
-        with:
-          path: |
-            node_modules/
-            modules/*/node_modules/
-          key: ${{ needs.cache-npm-macos.outputs.cache-key }}
-
-      - if: steps.cocoapods-cache.outputs.cache-hit != 'true' && steps.node-cache.outputs.cache-hit != 'true'
-        run: exit 1
-
-      - if: steps.cocoapods-cache.outputs.cache-hit != 'true'
-        run: bundle exec pod install --deployment
-        working-directory: ./ios
-
-      - name: Save Cocoapods cache
-        uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
-        if: steps.cocoapods-cache.outputs.cache-hit != 'true'
-        with:
-          path: ios/Pods
-          key: ${{ steps.cocoapods-cache.outputs.cache-primary-key }}
-
   hk:
     name: hk
-    needs: [cache-npm-linux]
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
 
       - uses: jdx/mise-action@v4
 
-      - name: Restore node_modules cache
-        uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
-        id: node-cache
-        with:
-          path: |
-            node_modules/
-            modules/*/node_modules/
-          key: ${{ needs.cache-npm-linux.outputs.cache-key }}
-
-      - if: steps.node-cache.outputs.cache-hit != 'true'
-        run: exit 1
+      - run: npm ci
 
       - run: mise run bundle-data
 
@@ -177,47 +33,25 @@ jobs:
 
   prettier:
     name: Prettier
-    needs: [cache-npm-linux]
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
 
       - uses: jdx/mise-action@v4
 
-      - name: Restore node_modules cache
-        uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
-        id: node-cache
-        with:
-          path: |
-            node_modules/
-            modules/*/node_modules/
-          key: ${{ needs.cache-npm-linux.outputs.cache-key }}
-
-      - if: steps.node-cache.outputs.cache-hit != 'true'
-        run: exit 1
+      - run: npm ci
 
       - run: mise run pretty:check
 
   eslint:
     name: ESLint
-    needs: [cache-npm-linux]
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
 
       - uses: jdx/mise-action@v4
 
-      - name: Restore node_modules cache
-        uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
-        id: node-cache
-        with:
-          path: |
-            node_modules/
-            modules/*/node_modules/
-          key: ${{ needs.cache-npm-linux.outputs.cache-key }}
-
-      - if: steps.node-cache.outputs.cache-hit != 'true'
-        run: exit 1
+      - run: npm ci
 
       - run: mise run bundle-data
 
@@ -225,24 +59,13 @@ jobs:
 
   jest:
     name: Jest
-    needs: [cache-npm-linux]
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
 
       - uses: jdx/mise-action@v4
 
-      - name: Restore node_modules cache
-        uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
-        id: node-cache
-        with:
-          path: |
-            node_modules/
-            modules/*/node_modules/
-          key: ${{ needs.cache-npm-linux.outputs.cache-key }}
-
-      - if: steps.node-cache.outputs.cache-hit != 'true'
-        run: exit 1
+      - run: npm ci
 
       - name: Run tests
         run: mise run test -- --coverage
@@ -252,24 +75,13 @@ jobs:
 
   tsc:
     name: TypeScript
-    needs: [cache-npm-linux]
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
 
       - uses: jdx/mise-action@v4
 
-      - name: Restore node_modules cache
-        uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
-        id: node-cache
-        with:
-          path: |
-            node_modules/
-            modules/*/node_modules/
-          key: ${{ needs.cache-npm-linux.outputs.cache-key }}
-
-      - if: steps.node-cache.outputs.cache-hit != 'true'
-        run: exit 1
+      - run: npm ci
 
       - run: mise run bundle-data
 
@@ -277,24 +89,13 @@ jobs:
 
   data:
     name: Data
-    needs: [cache-npm-linux]
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
 
       - uses: jdx/mise-action@v4
 
-      - name: Restore node_modules cache
-        uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
-        id: node-cache
-        with:
-          path: |
-            node_modules/
-            modules/*/node_modules/
-          key: ${{ needs.cache-npm-linux.outputs.cache-key }}
-
-      - if: steps.node-cache.outputs.cache-hit != 'true'
-        run: exit 1
+      - run: npm ci
 
       - run: mise run validate-data
 
@@ -302,7 +103,6 @@ jobs:
 
   ios-bundle:
     name: iOS Bundle
-    needs: [cache-npm-macos]
     runs-on: macos-14
     outputs:
       cache-key: ${{ steps.jsbundle-cache.outputs.cache-primary-key }}
@@ -314,17 +114,9 @@ jobs:
 
       - uses: jdx/mise-action@v4
 
-      - name: Restore node_modules cache
-        uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
-        id: node-cache
-        with:
-          path: |
-            node_modules/
-            modules/*/node_modules/
-          key: ${{ needs.cache-npm-macos.outputs.cache-key }}
-
-      - if: steps.node-cache.outputs.cache-hit != 'true'
-        run: exit 1
+      - run: npm ci
+        env:
+          SKIP_POSTINSTALL: '1'
 
       - name: Load the cached jsbundle
         uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
@@ -358,7 +150,6 @@ jobs:
 
   android-bundle:
     name: Android Bundle
-    needs: [cache-npm-linux]
     if: false
     runs-on: ubuntu-24.04
     outputs:
@@ -371,17 +162,7 @@ jobs:
 
       - uses: jdx/mise-action@v4
 
-      - name: Restore node_modules cache
-        uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
-        id: node-cache
-        with:
-          path: |
-            node_modules/
-            modules/*/node_modules/
-          key: ${{ needs.cache-npm-linux.outputs.cache-key }}
-
-      - if: steps.node-cache.outputs.cache-hit != 'true'
-        run: exit 1
+      - run: npm ci
 
       - name: Load the cached jsbundle
         uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
@@ -409,7 +190,7 @@ jobs:
 
   android:
     name: Build for Android
-    needs: [jest, eslint, android-bundle, cache-npm-linux]
+    needs: [jest, eslint, android-bundle]
     if: false
     runs-on: ubuntu-24.04
     steps:
@@ -417,17 +198,7 @@ jobs:
 
       - uses: jdx/mise-action@v4
 
-      - name: Restore node_modules cache
-        uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
-        id: node-cache
-        with:
-          path: |
-            node_modules/
-            modules/*/node_modules/
-          key: ${{ needs.cache-npm-linux.outputs.cache-key }}
-
-      - if: steps.node-cache.outputs.cache-hit != 'true'
-        run: exit 1
+      - run: npm ci
 
       - uses: actions/setup-java@f2beeb24e141e01a676f977032f5a29d81c9e27e # v5.1.0
         with:
@@ -471,7 +242,7 @@ jobs:
 
   ios-build:
     name: Build for iOS
-    needs: [jest, eslint, cache-cocoapods, cache-npm-macos, cache-bundler-macos]
+    needs: [jest, eslint]
     runs-on: macos-14
     outputs:
       cache-key: ${{ steps.app-cache.outputs.cache-primary-key }}
@@ -493,39 +264,22 @@ jobs:
       - uses: jdx/mise-action@v4
         if: steps.app-cache.outputs.cache-hit != 'true'
 
-      - name: Restore node_modules cache
+      - name: Install npm dependencies
         if: steps.app-cache.outputs.cache-hit != 'true'
-        uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
-        id: node-cache
-        with:
-          path: |
-            node_modules/
-            modules/*/node_modules/
-          key: ${{ needs.cache-npm-macos.outputs.cache-key }}
-
-      - name: exit if the node_modules cache did not load
-        if: steps.app-cache.outputs.cache-hit != 'true' && steps.node-cache.outputs.cache-hit != 'true'
-        run: exit 1
+        run: npm ci
+        env:
+          SKIP_POSTINSTALL: '1'
 
       - uses: ruby/setup-ruby@v1
         if: steps.app-cache.outputs.cache-hit != 'true'
-        env:
-          BUNDLE_FROZEN: 'true'
         with:
           ruby-version: ${{ env.ruby-version }}
           bundler-cache: true
 
-      - name: Restore Cocoapods cache
+      - name: Install CocoaPods
         if: steps.app-cache.outputs.cache-hit != 'true'
-        uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
-        id: pods-cache
-        with:
-          path: ios/Pods
-          key: ${{ needs.cache-cocoapods.outputs.cache-key }}
-
-      - name: exit if the Cocoapods cache did not load
-        if: steps.app-cache.outputs.cache-hit != 'true' && steps.pods-cache.outputs.cache-hit != 'true'
-        run: exit 1
+        run: bundle exec pod install --deployment
+        working-directory: ./ios
 
       - name: Build the iOS app
         if: ${{ steps.app-cache.outputs.cache-hit != 'true' && !contains(github.event.pull_request.labels.*.name, 'ci/skip-detox') }}
@@ -558,7 +312,7 @@ jobs:
 
   ios-detox:
     name: Detox E2E for iOS
-    needs: [cache-npm-macos, ios-build, ios-bundle]
+    needs: [ios-build, ios-bundle]
     runs-on: macos-14
     if: ${{ !contains(github.event.pull_request.labels.*.name, 'ci/skip-detox') }}
     steps:
@@ -651,14 +405,9 @@ jobs:
 
       - uses: jdx/mise-action@v4
 
-      - name: Restore node_modules cache
-        uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
-        id: node-cache
-        with:
-          path: |
-            node_modules/
-            modules/*/node_modules/
-          key: ${{ needs.cache-npm-macos.outputs.cache-key }}
+      - run: npm ci
+        env:
+          SKIP_POSTINSTALL: '1'
 
       - # We have to poke Detox because it installs things outside of node_modules/detox/…
         name: Re-install Detox
