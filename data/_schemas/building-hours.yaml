@@ -20,7 +20,6 @@ properties:
   breakSchedule:
     type: object
 
-
 definitions:
   links:
     additionalProperties: false

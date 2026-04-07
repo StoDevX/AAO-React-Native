@@ -1,5 +1,6 @@
 stationMenus:
-  - {label: Pizza, note: 'To order 4+ pizzas, please visit Oleville 24 hours in advance.'}
+  - label: Pizza
+    note: 'To order 4+ pizzas, please visit Oleville 24 hours in advance.'
   - {label: Specialty Pizza}
   - {label: Toppings}
   - {label: Quesadilla, note: 'Salsa & Sour Cream are extra'}

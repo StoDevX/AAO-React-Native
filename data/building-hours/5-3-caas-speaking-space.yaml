@@ -6,7 +6,6 @@ schedule:
     hours: []
     notes: By Appointment Only
 
-
 breakSchedule:
   fall: []
   thanksgiving: []

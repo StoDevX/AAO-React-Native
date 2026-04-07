@@ -27,7 +27,6 @@ properties:
   applicable: {$ref: '#/definitions/applicable-to'}
   schoolYear: {$ref: '#/definitions/school-year'}
 
-
 definitions:
   date-or-time:
     anyOf:

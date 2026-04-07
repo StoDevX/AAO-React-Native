@@ -1,6 +1,6 @@
 # example taken from https://github.com/marketplace/actions/gradle-wrapper-validation#add-a-new-dedicated-workflow
 
-name: "Validate Gradle Wrapper"
+name: 'Validate Gradle Wrapper'
 
 on:
   push:
@@ -10,7 +10,7 @@ permissions:
 
 jobs:
   validation:
-    name: "Validation"
+    name: 'Validation'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
