@@ -29,7 +29,7 @@ describe('buildingReducer', () => {
 		}
 		let action: BuildingAction = {
 			type: 'EDIT_SCHEDULE',
-			index: 0,
+			scheduleIndex: 0,
 			schedule: newSchedule,
 		}
 		let result = buildingReducer(baseBuilding, action)
@@ -37,7 +37,7 @@ describe('buildingReducer', () => {
 	})
 
 	it('handles DELETE_SCHEDULE', () => {
-		let action: BuildingAction = {type: 'DELETE_SCHEDULE', index: 0}
+		let action: BuildingAction = {type: 'DELETE_SCHEDULE', scheduleIndex: 0}
 		let result = buildingReducer(baseBuilding, action)
 		expect(result.schedule).toHaveLength(0)
 	})

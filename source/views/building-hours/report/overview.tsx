@@ -37,10 +37,10 @@ export type BuildingAction =
 	| {type: 'EDIT_NAME'; name: string}
 	| {
 			type: 'EDIT_SCHEDULE'
-			index: number
+			scheduleIndex: number
 			schedule: NamedBuildingScheduleType
 	  }
-	| {type: 'DELETE_SCHEDULE'; index: number}
+	| {type: 'DELETE_SCHEDULE'; scheduleIndex: number}
 	| {type: 'ADD_SCHEDULE'}
 	| {type: 'ADD_HOURS_ROW'; scheduleIndex: number}
 	| {
@@ -61,13 +61,13 @@ export function buildingReducer(
 
 		case 'EDIT_SCHEDULE': {
 			let schedules = [...state.schedule]
-			schedules[action.index] = action.schedule
+			schedules[action.scheduleIndex] = action.schedule
 			return {...state, schedule: schedules}
 		}
 
 		case 'DELETE_SCHEDULE': {
 			let schedules = [...state.schedule]
-			schedules.splice(action.index, 1)
+			schedules.splice(action.scheduleIndex, 1)
 			return {...state, schedule: schedules}
 		}
 
@@ -271,7 +271,7 @@ const EditableSchedule = (props: EditableScheduleProps) => {
 	let editTitle = (newValue: string) => {
 		dispatch({
 			type: 'EDIT_SCHEDULE',
-			index: scheduleIndex,
+			scheduleIndex: scheduleIndex,
 			schedule: {...schedule, title: newValue},
 		})
 	}
@@ -279,7 +279,7 @@ const EditableSchedule = (props: EditableScheduleProps) => {
 	let editNotes = (newValue: string) => {
 		dispatch({
 			type: 'EDIT_SCHEDULE',
-			index: scheduleIndex,
+			scheduleIndex: scheduleIndex,
 			schedule: {...schedule, notes: newValue},
 		})
 	}
@@ -287,7 +287,7 @@ const EditableSchedule = (props: EditableScheduleProps) => {
 	let toggleChapel = (newValue: boolean) => {
 		dispatch({
 			type: 'EDIT_SCHEDULE',
-			index: scheduleIndex,
+			scheduleIndex: scheduleIndex,
 			schedule: {...schedule, closedForChapelTime: newValue},
 		})
 	}
@@ -297,7 +297,7 @@ const EditableSchedule = (props: EditableScheduleProps) => {
 	}
 
 	let deleteSchedule = () => {
-		dispatch({type: 'DELETE_SCHEDULE', index: scheduleIndex})
+		dispatch({type: 'DELETE_SCHEDULE', scheduleIndex: scheduleIndex})
 	}
 
 	let openEditor = (setIndex: number, hoursSet: SingleBuildingScheduleType) => {
