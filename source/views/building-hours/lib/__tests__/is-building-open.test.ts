@@ -109,6 +109,8 @@ it('returns false if none are open', () => {
 })
 
 it('uses campus timezone for day matching', () => {
+	// 12:30am Friday in New York is still 11:30pm Thursday in Chicago.
+	// A Thursday overnight schedule should therefore still be open.
 	let m = moment.tz(
 		'2019-12-20 00:30',
 		'YYYY-MM-DD HH:mm',

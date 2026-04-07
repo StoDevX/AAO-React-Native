@@ -13,6 +13,7 @@ export function parseHours(
 	{from: fromTime, to: toTime}: SingleBuildingScheduleType,
 	m: Moment,
 ): HourPairType {
+	// Convert to campus timezone so day and hour checks match campus-local schedules.
 	let campusTime = m.clone().tz(timezone())
 	let dayOfYear = campusTime.dayOfYear()
 
