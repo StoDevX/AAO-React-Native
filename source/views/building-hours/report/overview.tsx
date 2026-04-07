@@ -50,6 +50,11 @@ export type BuildingAction =
 			data: SingleBuildingScheduleType
 	  }
 	| {type: 'DELETE_HOURS_ROW'; scheduleIndex: number; setIndex: number}
+	| {
+			type: 'EDIT_SCHEDULE_FIELD'
+			scheduleIndex: number
+			data: Partial<NamedBuildingScheduleType>
+	  }
 
 export function buildingReducer(
 	state: BuildingType,
@@ -107,6 +112,15 @@ export function buildingReducer(
 			schedules[action.scheduleIndex] = {
 				...schedules[action.scheduleIndex],
 				hours,
+			}
+			return {...state, schedule: schedules}
+		}
+
+		case 'EDIT_SCHEDULE_FIELD': {
+			let schedules = [...state.schedule]
+			schedules[action.scheduleIndex] = {
+				...schedules[action.scheduleIndex],
+				...action.data,
 			}
 			return {...state, schedule: schedules}
 		}
@@ -270,25 +284,25 @@ const EditableSchedule = (props: EditableScheduleProps) => {
 
 	let editTitle = (newValue: string) => {
 		dispatch({
-			type: 'EDIT_SCHEDULE',
-			scheduleIndex: scheduleIndex,
-			schedule: {...schedule, title: newValue},
+			type: 'EDIT_SCHEDULE_FIELD',
+			scheduleIndex,
+			data: {title: newValue},
 		})
 	}
 
 	let editNotes = (newValue: string) => {
 		dispatch({
-			type: 'EDIT_SCHEDULE',
-			scheduleIndex: scheduleIndex,
-			schedule: {...schedule, notes: newValue},
+			type: 'EDIT_SCHEDULE_FIELD',
+			scheduleIndex,
+			data: {notes: newValue},
 		})
 	}
 
 	let toggleChapel = (newValue: boolean) => {
 		dispatch({
-			type: 'EDIT_SCHEDULE',
-			scheduleIndex: scheduleIndex,
-			schedule: {...schedule, closedForChapelTime: newValue},
+			type: 'EDIT_SCHEDULE_FIELD',
+			scheduleIndex,
+			data: {closedForChapelTime: newValue},
 		})
 	}
 
