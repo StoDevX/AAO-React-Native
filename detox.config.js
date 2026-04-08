@@ -50,6 +50,7 @@ function generateBuildCommand(configuration) {
 		`-destination 'platform=iOS Simulator,name=${iPhoneSimulatorDevice},OS=${currentDeploymentTarget}'`,
 		'-derivedDataPath ios/build',
 		'build',
+		'COMPILER_INDEX_STORE_ENABLE=NO',
 	]
 
 	if (codeSigningDisabled) {
