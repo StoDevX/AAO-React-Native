@@ -153,13 +153,7 @@
     "eslint-plugin-ft-flow": "3.0.11",
     "eslint-plugin-react-native": "5.0.0",
     "image-size": "1.2.1",
-    "flatted": "3.4.2",
-    "@istanbuljs/load-nyc-config": {
-      "js-yaml": "3.14.2"
-    },
-    "cosmiconfig": {
-      "js-yaml": "3.14.2"
-    }
+    "flatted": "3.4.2"
   },
   "engines": {
     "node": ">=18"
