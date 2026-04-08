@@ -1,6 +1,5 @@
 # All About Olaf
 
-[![Get it on Google Play](images/readme/get_google_play.svg)](https://play.google.com/store/apps/details?id=com.allaboutolaf)
 [![Download on the App Store](images/readme/get_app_store.svg)](https://itunes.apple.com/us/app/all-about-olaf/id938588319)
 
 ## About
@@ -9,7 +8,6 @@ The St. Olaf community, now in pocket size… rewritten in React Native.
 
 ## Join the Beta
 
-- [Sign up for the Android Beta](https://play.google.com/apps/testing/com.allaboutolaf)!
 - [Sign up for the iOS Beta](https://testflight.apple.com/join/3KFbWHU8)!
 
 ## Getting Started
@@ -20,7 +18,6 @@ The St. Olaf community, now in pocket size… rewritten in React Native.
 - `cd` into your clone
 - Run `npm ci`
 - For iOS: `npm run ios`
-- For Android: launch your favorite Android emulator first, then run `npm run android`
 
 ## Contributing
 
