@@ -263,28 +263,6 @@ jobs:
           path: ios/build/Build/Products/
           key: ${{ runner.os }}-ios-xcode@${{ env.xcode_version }}-${{ hashFiles('**/project.pbxproj', '**/Podfile', '**/Podfile.lock', 'package-lock.json', '.github/job.yml') }}
 
-      - name: Install ccache
-        if: steps.app-cache.outputs.cache-hit != 'true'
-        run: brew install ccache
-
-      - name: Cache ccache
-        if: steps.app-cache.outputs.cache-hit != 'true'
-        uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
-        with:
-          path: ~/Library/Caches/ccache
-          key: ${{ runner.os }}-ccache-xcode@${{ env.xcode_version }}-${{ hashFiles('ios/Podfile.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-ccache-xcode@${{ env.xcode_version }}-
-
-      - name: Configure ccache
-        if: steps.app-cache.outputs.cache-hit != 'true'
-        run: |
-          ccache --set-config=cache_dir=$HOME/Library/Caches/ccache
-          ccache --set-config=max_size=2G
-          ccache --set-config=compression=true
-          ccache --set-config=sloppiness=file_macro,time_macros,include_file_mtime,include_file_ctime
-          ccache --zero-stats
-
       - uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151 # v4.0.1
         if: steps.app-cache.outputs.cache-hit != 'true'
 
@@ -328,7 +306,6 @@ jobs:
         env:
           SKIP_BUNDLING: 'true'
           CODE_SIGNING_DISABLED: true
-          USE_CCACHE: 'true'
         run: npx detox build e2e --configuration ios.sim.release
 
       # Debug step to verify build output
@@ -341,10 +318,6 @@ jobs:
           ls -la ios/build/Build/Products/Release-iphonesimulator/AllAboutOlaf.app/ || echo "App bundle not found!"
           echo "Checking for Info.plist in app bundle..."
           cat ios/build/Build/Products/Release-iphonesimulator/AllAboutOlaf.app/Info.plist | head -10 || echo "Info.plist not found!"
-
-      - name: Show ccache stats
-        if: steps.app-cache.outputs.cache-hit != 'true'
-        run: ccache --show-stats || true
 
       - name: Cache the iOS app
         uses: actions/cache/save@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
