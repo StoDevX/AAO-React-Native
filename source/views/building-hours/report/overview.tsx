@@ -36,16 +36,19 @@ function useBuildingEditor(
 	navigation: NativeStackNavigationProp<RootStackParamList>,
 ) {
 	let [building, dispatch] = React.useReducer(buildingReducer, initialBuilding)
+	let [submitted, setSubmitted] = React.useState(false)
 
 	let initialBuildingJson = React.useMemo(
 		() => JSON.stringify(initialBuilding),
 		[initialBuilding],
 	)
 
-	let hasUnsavedChanges = React.useMemo(
+	let hasDiff = React.useMemo(
 		() => JSON.stringify(building) !== initialBuildingJson,
 		[building, initialBuildingJson],
 	)
+
+	let hasUnsavedChanges = hasDiff && !submitted
 
 	/**
 	 * checking for unsaved edits
@@ -102,6 +105,7 @@ function useBuildingEditor(
 
 	let submit = React.useCallback((): void => {
 		console.log(JSON.stringify(building))
+		setSubmitted(true)
 		submitReport(initialBuilding, building)
 	}, [building, initialBuilding])
 
