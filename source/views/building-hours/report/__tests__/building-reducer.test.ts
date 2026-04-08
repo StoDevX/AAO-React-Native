@@ -1,4 +1,5 @@
-import {buildingReducer, BuildingAction} from '../overview'
+import {buildingReducer} from '../building-reducer'
+import type {BuildingAction} from '../building-reducer'
 import type {BuildingType} from '../../types'
 
 const baseBuilding: BuildingType = {
