@@ -23,7 +23,7 @@ jobs:
         with:
           token: ${{ secrets.COCOAPODS_LOCKFILE_GH_PUSH_TOKEN }}
 
-      - uses: jdx/mise-action@v4
+      - uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151 # v4.0.1
 
       - uses: ruby/setup-ruby@v1
         with:
