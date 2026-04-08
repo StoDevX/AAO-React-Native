@@ -165,7 +165,7 @@ jobs:
         uses: actions/cache/restore@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
         with:
           path: ios/build/Build/Products/
-          key: ${{ runner.os }}-ios-xcode@${{ env.xcode_version }}-${{ hashFiles('**/project.pbxproj', '**/Podfile', '**/Podfile.lock', 'package-lock.json', '.github/job.yml') }}
+          key: ${{ runner.os }}-ios-xcode@${{ env.xcode_version }}-${{ hashFiles('ios/project.yml', '**/Podfile', '**/Podfile.lock', 'package-lock.json', '.github/job.yml') }}
 
       - uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151 # v4.0.1
         if: steps.app-cache.outputs.cache-hit != 'true'
@@ -181,6 +181,11 @@ jobs:
         with:
           ruby-version: ${{ env.ruby-version }}
           bundler-cache: true
+
+      - name: Generate Xcode project
+        if: steps.app-cache.outputs.cache-hit != 'true'
+        run: xcodegen generate
+        working-directory: ./ios
 
       - name: Install CocoaPods
         if: steps.app-cache.outputs.cache-hit != 'true'

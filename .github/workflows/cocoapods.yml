@@ -34,6 +34,9 @@ jobs:
 
       - run: npm ci
 
+      - run: xcodegen generate
+        working-directory: ./ios
+
       - run: bundle exec -- pod install --verbose
         working-directory: ./ios
 
