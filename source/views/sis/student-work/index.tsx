@@ -50,6 +50,7 @@ const StudentWorkView = (): JSX.Element => {
 				)
 			}
 			contentContainerStyle={styles.contentContainer}
+			testID="student-work-list"
 			keyExtractor={(_item: JobType, index: number) => index.toString()}
 			onRefresh={refetch}
 			refreshing={isRefetching}

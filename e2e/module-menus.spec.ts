@@ -48,7 +48,8 @@ test.each`
 	await expect(element(tabMatcher)).toBeVisible()
 	await element(tabMatcher).tap()
 
-	await expect(element(by.text('Specials Only'))).toBeVisible()
+	// Verify the food menu loaded (using testID instead of live-data text)
+	await expect(element(by.id('food-menu'))).toBeVisible()
 })
 
 describe('carleton menus', () => {
@@ -70,6 +71,7 @@ describe('carleton menus', () => {
 		await expect(element(listItemMatcher)).toBeVisible()
 		await element(listItemMatcher).tap()
 
-		await expect(element(by.text('Specials Only'))).toBeVisible()
+		// Verify the food menu loaded (using testID instead of live-data text)
+		await expect(element(by.id('food-menu'))).toBeVisible()
 	})
 })

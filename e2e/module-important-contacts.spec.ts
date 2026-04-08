@@ -24,13 +24,13 @@ it('is reachable from the homescreen', async () => {
 	await expect(element(by.id('screen-homescreen'))).not.toBeVisible()
 })
 
-it('has the Building List visible by default', async () => {
+it('has the Contacts List visible by default', async () => {
 	// Navigate into Important Contacts
 	await element(by.text('Important Contacts')).tap()
 
 	// Verify that the navigation took us away from the homescreen
 	await expect(element(by.id('screen-homescreen'))).not.toBeVisible()
 
-	// The stream-list should be visible now
+	// The contacts list should be visible now
 	await expect(element(by.text('Important Contacts'))).toBeVisible()
 })

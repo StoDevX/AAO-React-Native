@@ -170,6 +170,7 @@ export function FancyMenu(props: Props): JSX.Element {
 			ListEmptyComponent={<NoticeView style={styles.message} text={message} />}
 			ListHeaderComponent={header}
 			contentContainerStyle={styles.contentContainer}
+			testID="food-menu"
 			extraData={filters}
 			keyExtractor={(item: MenuItemType) => item.id}
 			onRefresh={props.onRefresh}
