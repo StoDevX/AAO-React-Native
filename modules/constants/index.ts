@@ -51,12 +51,7 @@ export const setVersionInfo: (s: string) => void = (versionStr: string) => {
 }
 
 export const userAgent: () => string = () => {
-	const platformString =
-		Platform.OS === 'ios'
-			? 'iOS'
-			: Platform.OS === 'android'
-				? 'Android'
-				: 'unknown'
+	const platformString = 'iOS'
 
 	const platformVersion = Platform.Version || 'unknown'
 

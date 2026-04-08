@@ -1,7 +1,6 @@
 import * as React from 'react'
 import {forwardRef, type PropsWithChildren} from 'react'
 import {
-	Platform,
 	Pressable,
 	PressableProps,
 	PressableStateCallbackType,
@@ -38,28 +37,21 @@ const CustomPressable = forwardRef<View, Props>((props, ref): JSX.Element => {
 		| StyleProp<ViewStyle>
 		| ((state: PressableStateCallbackType) => StyleProp<ViewStyle>)
 
-	if (Platform.OS === 'android') {
-		containerAdjustmentStyle = [containerStyle]
-	} else if (Platform.OS === 'ios') {
-		if (highlight) {
-			containerAdjustmentStyle = (state) =>
-				state.pressed
-					? [{backgroundColor: underlayColor}, containerStyle]
-					: [{backgroundColor: white}, containerStyle]
-		} else {
-			containerAdjustmentStyle = (state) =>
-				state.pressed
-					? [{opacity: activeOpacity}, containerStyle]
-					: [containerStyle]
-		}
+	if (highlight) {
+		containerAdjustmentStyle = (state) =>
+			state.pressed
+				? [{backgroundColor: underlayColor}, containerStyle]
+				: [{backgroundColor: white}, containerStyle]
 	} else {
-		throw new Error(`unknown platform ${Platform.OS}`)
+		containerAdjustmentStyle = (state) =>
+			state.pressed
+				? [{opacity: activeOpacity}, containerStyle]
+				: [containerStyle]
 	}
 
 	return (
 		<Pressable
 			ref={ref}
-			android_ripple={{borderless}}
 			style={containerAdjustmentStyle}
 			{...passthrough}
 		>
