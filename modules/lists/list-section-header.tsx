@@ -53,11 +53,8 @@ export function ListSectionHeader(props: Props): JSX.Element {
 		spacing: {left: leftSpacing = 15} = {},
 	} = props
 
-	let containerTheme: ViewStyle = {paddingLeft: leftSpacing}
-	let titleTheme = {}
-
-	containerTheme = {
-		...containerTheme,
+	let containerTheme: ViewStyle = {
+		paddingLeft: leftSpacing,
 		backgroundColor: c.systemGroupedBackground,
 		borderTopWidth: StyleSheet.hairlineWidth,
 		borderBottomWidth: StyleSheet.hairlineWidth,
@@ -65,12 +62,7 @@ export function ListSectionHeader(props: Props): JSX.Element {
 		borderBottomColor: c.separator,
 	}
 
-	const finalTitleStyle = [
-		styles.title,
-		titleTheme,
-		titleStyle,
-		bold ? styles.bold : null,
-	]
+	const finalTitleStyle = [styles.title, titleStyle, bold ? styles.bold : null]
 
 	return (
 		<View style={[styles.container, containerTheme, style]}>
