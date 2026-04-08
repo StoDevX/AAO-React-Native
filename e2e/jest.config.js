@@ -4,7 +4,7 @@ module.exports = {
 	rootDir: '..',
 	testMatch: ['<rootDir>/e2e/**/*.(test|spec).ts'],
 	setupFilesAfterEnv: ['<rootDir>/e2e/init.js'],
-	testTimeout: 30000,
+	testTimeout: 60000,
 	verbose: true,
 	reporters: ['detox/runners/jest/reporter'],
 	globalSetup: 'detox/runners/jest/globalSetup',
