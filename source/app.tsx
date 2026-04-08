@@ -13,10 +13,10 @@ import {queryClient, persister} from './init/tanstack-query'
 // Diagnostic: check AsyncStorage native module availability
 import {NativeModules, TurboModuleRegistry} from 'react-native'
 console.log('[@AAO] AsyncStorage native module check:', {
-	RNCAsyncStorage: !!NativeModules.RNCAsyncStorage,
-	AsyncLocalStorage: !!NativeModules.AsyncLocalStorage,
-	AsyncSQLiteDBStorage: !!NativeModules.AsyncSQLiteDBStorage,
-	turboModule: !!TurboModuleRegistry?.get('RNCAsyncStorage'),
+	RNCAsyncStorage: Boolean(NativeModules.RNCAsyncStorage),
+	AsyncLocalStorage: Boolean(NativeModules.AsyncLocalStorage),
+	AsyncSQLiteDBStorage: Boolean(NativeModules.AsyncSQLiteDBStorage),
+	turboModule: Boolean(TurboModuleRegistry?.get('RNCAsyncStorage')),
 })
 
 import * as React from 'react'
