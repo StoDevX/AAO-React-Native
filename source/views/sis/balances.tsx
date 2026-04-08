@@ -36,7 +36,11 @@ export const BalancesView = (): JSX.Element => {
 	let refresh = <RefreshControl onRefresh={refetch} refreshing={isRefetching} />
 
 	return (
-		<ScrollView contentContainerStyle={styles.stage} refreshControl={refresh} testID="balances-view">
+		<ScrollView
+			contentContainerStyle={styles.stage}
+			refreshControl={refresh}
+			testID="balances-view"
+		>
 			<FaqBannerGroup style={styles.banner} target={FAQ_TARGETS.SIS} />
 			<TableView>
 				<Section footer={DISCLAIMER} header="BALANCES">
