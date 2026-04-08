@@ -290,6 +290,17 @@ jobs:
         run: bundle exec pod install --deployment
         working-directory: ./ios
 
+      - name: Cache Xcode DerivedData
+        if: steps.app-cache.outputs.cache-hit != 'true'
+        uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
+        with:
+          path: |
+            ios/build/Build/Intermediates.noindex
+            ios/build/ModuleCache.noindex
+          key: ${{ runner.os }}-deriveddata-xcode@${{ env.xcode_version }}-${{ hashFiles('**/project.pbxproj', '**/Podfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-deriveddata-xcode@${{ env.xcode_version }}-
+
       - name: Build the iOS app
         if: ${{ steps.app-cache.outputs.cache-hit != 'true' && !contains(github.event.pull_request.labels.*.name, 'ci/skip-detox') }}
         env:
