@@ -278,6 +278,13 @@ jobs:
           ruby-version: ${{ env.ruby-version }}
           bundler-cache: true
 
+      - name: Cache CocoaPods
+        if: steps.app-cache.outputs.cache-hit != 'true'
+        uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
+        with:
+          path: ios/Pods
+          key: ${{ runner.os }}-pods-${{ hashFiles('ios/Podfile.lock') }}
+
       - name: Install CocoaPods
         if: steps.app-cache.outputs.cache-hit != 'true'
         run: bundle exec pod install --deployment
