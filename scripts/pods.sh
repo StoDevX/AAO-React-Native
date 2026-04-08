@@ -9,6 +9,7 @@ if [[ $USE_PODS = 'yes' ]]; then
 		bundle install
 		cd ios || exit 1
 
+		xcodegen generate
 		if ! bundle exec pod install --deployment; then
 			echo 'try running "bundle exec pod install --repo-update"' 1>&2
 		fi
