@@ -56,10 +56,7 @@ function generateBuildCommand(configuration) {
 	]
 
 	if (useCcache) {
-		baseCommand.push(
-			'CC=ccache\\ clang',
-			'CXX=ccache\\ clang++',
-		)
+		baseCommand.push('CC=ccache\\ clang', 'CXX=ccache\\ clang++')
 	}
 
 	if (codeSigningDisabled) {
