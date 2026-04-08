@@ -24,6 +24,11 @@ DerivedData
 *.xcuserstate
 /ios/.xcode.env.local
 
+# XcodeGen — generated project files
+/ios/AllAboutOlaf.xcodeproj/project.pbxproj
+/ios/AllAboutOlaf.xcodeproj/project.xcworkspace/
+/ios/AllAboutOlaf.xcodeproj/xcshareddata/
+
 # Cocoapods
 /ios/Pods
 
