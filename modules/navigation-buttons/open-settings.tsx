@@ -14,7 +14,6 @@ export function OpenSettingsButton(_props: HeaderBackButtonProps): JSX.Element {
 			accessibilityLabel="Open Settings"
 			accessibilityRole="button"
 			accessible={true}
-			borderless={true}
 			highlight={false}
 			onPress={() => navigation.navigate('Settings')}
 			style={commonStyles.button}

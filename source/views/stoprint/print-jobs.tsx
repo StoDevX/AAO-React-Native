@@ -1,6 +1,6 @@
 import * as React from 'react'
 import {timezone} from '@frogpond/constants'
-import {Platform, SectionList} from 'react-native'
+import {SectionList} from 'react-native'
 import type {PrintJob} from '../../lib/stoprint'
 import {STOPRINT_HELP_PAGE, isStoprintMocked} from '../../lib/stoprint'
 import {
@@ -79,10 +79,7 @@ export const PrintJobsView = (): JSX.Element => {
 	}
 
 	if (jobsData.jobs.length === 0) {
-		let instructions =
-			Platform.OS === 'android'
-				? 'using the Mobility Print app'
-				: 'using the Print option in the Share Sheet'
+		let instructions = 'using the Print option in the Share Sheet'
 		let descriptionText = `You can print from a computer, or by ${instructions}.`
 
 		return (

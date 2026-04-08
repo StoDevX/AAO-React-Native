@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {Text, Platform, StyleSheet, ViewStyle, StyleProp} from 'react-native'
+import {Text, StyleSheet, ViewStyle, StyleProp} from 'react-native'
 import {Touchable} from '@frogpond/touchable'
 import {commonStyles} from './styles'
 import {useNavigation} from '@react-navigation/native'
@@ -19,7 +19,6 @@ export function CloseScreenButton({title, buttonStyle}: Props): JSX.Element {
 			accessibilityLabel="Close the screen"
 			accessibilityRole="button"
 			accessible={true}
-			borderless={true}
 			highlight={false}
 			onPress={() => navigation.goBack()}
 			style={[commonStyles.button, buttonStyle]}
@@ -34,13 +33,6 @@ export function CloseScreenButton({title, buttonStyle}: Props): JSX.Element {
 
 const styles = StyleSheet.create({
 	text: {
-		...Platform.select({
-			ios: {
-				fontWeight: '600',
-			},
-			android: {
-				fontWeight: '400',
-			},
-		}),
+		fontWeight: '600',
 	},
 })

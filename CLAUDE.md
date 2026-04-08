@@ -27,8 +27,7 @@ All About Olaf is a React Native mobile app for the St. Olaf College community. 
 - `source/views/` organized by feature (e.g., `dining/`, `directory/`, `calendar/`)
 - Barrel exports (`index.ts`) for clean imports
 - State: React Query for server state, Redux Toolkit for global app state, `useState` for component-local
-- Platform-specific files use `.ios.tsx` / `.android.tsx` extensions
-- `Platform.select()` for platform-specific styles
+- iOS is the only supported platform
 - Email via `sendEmail`, phone via `callPhone` components
 - Error logging via Sentry integration
 - React Error Boundaries for component error handling
@@ -44,7 +43,7 @@ These patterns are especially important in this codebase:
 - **Offline:** Handle network unavailability gracefully — use cached data as fallback
 - **Performance:** Minimize bridge traffic; use `InteractionManager.runAfterInteractions()` for heavy work
 - **Memory:** Clean up subscriptions/listeners in `useEffect` cleanup functions
-- **Platform testing:** Test on both iOS and Android — verify platform-specific UI patterns
+- **Platform testing:** Test on iOS — verify platform-specific UI patterns
 
 ## Testing
 

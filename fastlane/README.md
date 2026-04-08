@@ -15,45 +15,6 @@ Install _fastlane_ using
 or alternatively using `brew cask install fastlane`
 
 # Available Actions
-## Android
-### android build
-```
-fastlane android build
-```
-Makes a build
-### android check_build
-```
-fastlane android check_build
-```
-Checks that the app builds
-### android beta
-```
-fastlane android beta
-```
-Submit a new beta build to Google Play
-### android nightly
-```
-fastlane android nightly
-```
-Submit a new nightly build to Google Play
-### android sourcemap
-```
-fastlane android sourcemap
-```
-Bundle an Android sourcemap
-### android ci-run
-```
-fastlane android ci-run
-```
-Run the appropriate action on CI
-### android matchesque
-```
-fastlane android matchesque
-```
-extract the android keys from the match repo
-
-----
-
 ## iOS
 ### ios test
 ```

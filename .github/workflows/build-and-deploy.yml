@@ -26,48 +26,6 @@ jobs:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
         run: bash <(curl -s https://codecov.io/bash)
 
-  android:
-    name: Build for Android
-    if: ${{ false }}
-    runs-on: ubuntu-24.04
-    steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-      - uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151 # v4.0.1
-      - uses: ruby/setup-ruby@e65c17d16e57e481586a6a5a0282698790062f92 # v1.300.0
-        with:
-          ruby-version: '3.4.8'
-          bundler-cache: true
-      - name: Restore Gradle cache
-        uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-      - run: npm ci
-      - name: Raise the fs.inotify ulimits to 524288 watches/queued events/user instances
-        run: |
-          echo 524288 | sudo tee -a /proc/sys/fs/inotify/max_user_watches
-          echo 524288 | sudo tee -a /proc/sys/fs/inotify/max_queued_events
-          echo 524288 | sudo tee -a /proc/sys/fs/inotify/max_user_instances
-          sudo sysctl -p
-      - run: echo 'org.gradle.workers.max=2' >> ./android/gradle.properties
-      - run: cd android && ./gradlew androidDependencies --console=plain
-      - run: mise run bundle-data
-      - run: bundle exec fastlane android ci-run
-        env:
-          FASTLANE_PASSWORD: ${{ secrets.FASTLANE_PASSWORD }}
-          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
-          GIT_COMMIT_DESC: $(git log --format=oneline -n 1 $GITHUB_SHA)
-          FASTLANE_SKIP_UPDATE_CHECK: '1'
-          FASTLANE_DISABLE_ANIMATION: '1'
-          SENTRY_ORG: frog-pond-labs
-          SENTRY_PROJECT: all-about-olaf
-          SENTRY_AUTH_TOKEN: ${{ secrets.HOSTED_SENTRY_AUTH_TOKEN }}
-          GITHUB_KEYS_REPOSITORY_TOKEN: ${{ secrets.GITHUB_KEYS_REPOSITORY_TOKEN }}
-
   ios:
     name: Build for iOS
     runs-on: macos-14

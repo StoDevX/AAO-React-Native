@@ -1,11 +1,5 @@
 import * as React from 'react'
-import {
-	Platform,
-	StyleSheet,
-	Text,
-	TextInput,
-	TextInputProps,
-} from 'react-native'
+import {StyleSheet, Text, TextInput, TextInputProps} from 'react-native'
 import {Cell} from '@frogpond/tableview'
 import * as c from '@frogpond/colors'
 
@@ -14,7 +8,7 @@ const styles = StyleSheet.create({
 		color: c.label,
 		width: 90,
 		fontSize: 16,
-		marginTop: Platform.OS === 'ios' ? -2 : 0, // lines the label up with the text on iOS
+		marginTop: -2,
 		alignSelf: 'center',
 	},
 	hiddenLabel: {
@@ -25,7 +19,7 @@ const styles = StyleSheet.create({
 		flex: 1,
 	},
 	singlelineCell: {
-		height: Platform.OS === 'android' ? 65 : 44,
+		height: 44,
 		alignItems: 'stretch',
 		paddingTop: 0,
 		paddingBottom: 0,

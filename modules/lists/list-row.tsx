@@ -1,6 +1,6 @@
 import * as React from 'react'
 import {PropsWithChildren} from 'react'
-import {Platform, StyleProp, StyleSheet, View, ViewStyle} from 'react-native'
+import {StyleProp, StyleSheet, View, ViewStyle} from 'react-native'
 import {Touchable} from '@frogpond/touchable'
 import {DisclosureArrow} from './disclosure-arrow'
 import * as c from '@frogpond/colors'
@@ -13,16 +13,8 @@ const styles = StyleSheet.create({
 		backgroundColor: c.secondarySystemGroupedBackground,
 		flexDirection: 'row',
 		paddingLeft: 15,
-		...Platform.select({
-			ios: {
-				paddingVertical: 8,
-				paddingRight: 8,
-			},
-			android: {
-				paddingVertical: 16,
-				paddingRight: 15,
-			},
-		}),
+		paddingVertical: 8,
+		paddingRight: 8,
 	},
 	fullWidth: {
 		paddingLeft: 0,
@@ -58,7 +50,7 @@ export function ListRow(props: PropsType): JSX.Element {
 		alignSelf: arrowPosition === 'center' ? 'center' : 'flex-start',
 	}
 	const arrow =
-		arrowPosition === 'none' || Platform.OS === 'android' ? null : (
+		arrowPosition === 'none' ? null : (
 			<DisclosureArrow style={arrowPositionStyle} />
 		)
 

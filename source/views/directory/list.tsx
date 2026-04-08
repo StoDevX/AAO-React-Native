@@ -2,7 +2,6 @@ import React from 'react'
 import {
 	FlatList,
 	Image,
-	Platform,
 	SafeAreaView,
 	StyleSheet,
 	Text,
@@ -15,12 +14,7 @@ import {useDebounce} from '@frogpond/use-debounce'
 import {LoadingView, NoticeView} from '@frogpond/notice'
 import {formatResults} from './helpers'
 import {useDirectoryEntries} from './query'
-import {Avatar, List} from 'react-native-paper'
-import type {
-	DirectoryIconProps,
-	DirectoryItem,
-	DirectorySearchTypeEnum,
-} from './types'
+import type {DirectoryItem, DirectorySearchTypeEnum} from './types'
 import Icon from 'react-native-vector-icons/Ionicons'
 import {RouteProp, useNavigation, useRoute} from '@react-navigation/native'
 import {
@@ -157,30 +151,7 @@ function IosDirectoryItemRow({item, onPress}: DirectoryItemRowProps) {
 	)
 }
 
-function AndroidDirectoryItemRow({item, onPress}: DirectoryItemRowProps) {
-	const renderAvatar = (props: DirectoryIconProps) => {
-		return (
-			<Avatar.Image
-				{...props}
-				size={42}
-				source={{uri: item.thumbnail}}
-				style={[props.style, styles.image]}
-			/>
-		)
-	}
-
-	return (
-		<List.Item
-			description={item.description}
-			left={renderAvatar}
-			onPress={onPress}
-			title={item.displayName}
-		/>
-	)
-}
-
-const DirectoryItemRow =
-	Platform.OS === 'ios' ? IosDirectoryItemRow : AndroidDirectoryItemRow
+const DirectoryItemRow = IosDirectoryItemRow
 
 const leftMargin = 15
 const imageSize = 35
@@ -194,20 +165,14 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		alignItems: 'center',
 	},
-	image:
-		Platform.OS === 'ios'
-			? {
-					resizeMode: 'cover',
-					width: imageSize,
-					height: imageSize,
-					borderRadius: 4,
-					marginRight: imageMargin,
-					marginLeft: leftMargin,
-				}
-			: {
-					alignSelf: 'center',
-					marginHorizontal: 8,
-				},
+	image: {
+		resizeMode: 'cover',
+		width: imageSize,
+		height: imageSize,
+		borderRadius: 4,
+		marginRight: imageMargin,
+		marginLeft: leftMargin,
+	},
 	emptySearch: {
 		flex: 1,
 		alignItems: 'center',

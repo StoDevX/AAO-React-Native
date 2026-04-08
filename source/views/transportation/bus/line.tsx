@@ -1,13 +1,6 @@
 import * as React from 'react'
 import {useEffect, useState} from 'react'
-import {
-	FlatList,
-	Platform,
-	StyleSheet,
-	Text,
-	TouchableOpacity,
-	View,
-} from 'react-native'
+import {FlatList, StyleSheet, Text, TouchableOpacity, View} from 'react-native'
 import type {BusSchedule, UnprocessedBusLine, DayOfWeek} from './types'
 import {
 	BusStateEnum,
@@ -46,10 +39,10 @@ const styles = StyleSheet.create({
 	headerContainer: {
 		paddingLeft: 15,
 		paddingRight: 15,
-		paddingVertical: Platform.OS === 'ios' ? 6 : 10,
+		paddingVertical: 6,
 		backgroundColor: c.systemGroupedBackground,
-		borderTopWidth: Platform.OS === 'ios' ? StyleSheet.hairlineWidth : 1,
-		borderBottomWidth: Platform.OS === 'ios' ? StyleSheet.hairlineWidth : 0,
+		borderTopWidth: StyleSheet.hairlineWidth,
+		borderBottomWidth: StyleSheet.hairlineWidth,
 		borderTopColor: c.separator,
 		borderBottomColor: c.separator,
 		flexDirection: 'row',
@@ -61,15 +54,13 @@ const styles = StyleSheet.create({
 	},
 	headerTitle: {
 		fontSize: 16,
-		fontWeight: Platform.OS === 'ios' ? '500' : '600',
+		fontWeight: '500',
 		color: c.label,
-		fontFamily: Platform.OS === 'android' ? 'sans-serif-condensed' : undefined,
 	},
 	headerSubtitle: {
 		fontSize: 16,
 		fontWeight: '400',
 		color: c.secondaryLabel,
-		fontFamily: Platform.OS === 'android' ? 'sans-serif-condensed' : undefined,
 	},
 })
 

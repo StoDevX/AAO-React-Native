@@ -1,14 +1,8 @@
 import * as React from 'react'
-import {
-	Platform,
-	StyleProp,
-	StyleSheet,
-	TextStyle,
-	ViewStyle,
-} from 'react-native'
+import {StyleProp, StyleSheet, TextStyle, ViewStyle} from 'react-native'
 import BasicButton from 'react-native-button'
 import noop from 'lodash/noop'
-import {iOSUIKit, material} from 'react-native-typography'
+import {iOSUIKit} from 'react-native-typography'
 import * as c from '@frogpond/colors'
 
 const styles = StyleSheet.create({
@@ -23,24 +17,14 @@ const styles = StyleSheet.create({
 	disabled: {
 		backgroundColor: c.tertiarySystemFill,
 	},
-	text: {
-		...Platform.select({
-			ios: iOSUIKit.calloutWhiteObject,
-			android: material.buttonWhiteObject,
-		}),
-	},
+	text: iOSUIKit.calloutWhiteObject,
 	textDisabled: {
 		color: c.secondaryLabel,
 	},
 })
 
 const inverted = StyleSheet.create({
-	text: {
-		...Platform.select({
-			ios: iOSUIKit.calloutObject,
-			android: material.buttonObject,
-		}),
-	},
+	text: iOSUIKit.calloutObject,
 })
 
 type Props = {
@@ -76,7 +60,7 @@ export function Button({
 			style={style}
 			styleDisabled={styles.textDisabled}
 		>
-			{Platform.OS === 'android' ? title.toUpperCase() : title}
+			{title}
 		</BasicButton>
 	)
 }

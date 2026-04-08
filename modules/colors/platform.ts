@@ -1,19 +1,6 @@
-import {PlatformColor, Platform, OpaqueColorValue} from 'react-native'
+import {PlatformColor} from 'react-native'
 
 // MARK: Label colors
-
-/**
- * Temporary constant to get Android building
- *
- * Note: Android has issues with borderBottomColor of a view managed by RCTView
- * com.facebook.react.bridge.ReadableNativeMap cannot be cast to java.lang.Integer
- *
- * @todo: Replace these constants and make the necessary changes to align with
- *        Material You color palette. This issue is being tracked over at
- *        https://github.com/StoDevX/AAO-React-Native/issues/6919
- */
-const TEMP_ANDROID_BACKGROUND = 'white' as unknown as OpaqueColorValue
-const TEMP_ANDROID_FOREGROUND = 'black' as unknown as OpaqueColorValue
 
 /**
  * The color for text labels that contain primary content.
@@ -22,11 +9,7 @@ const TEMP_ANDROID_FOREGROUND = 'black' as unknown as OpaqueColorValue
  * @see {@link tertiaryLabel}, the color for text labels that contain tertiary content.
  * @see {@link quaternaryLabel}, the color for text labels that contain quaternary content.
  */
-export const label = Platform.select({
-	ios: PlatformColor('label'),
-	android: PlatformColor('@android:color/primary_text_light'),
-	default: TEMP_ANDROID_FOREGROUND,
-})
+export const label = PlatformColor('label')
 
 /**
  * The color for text labels that contain secondary content.
@@ -35,10 +18,7 @@ export const label = Platform.select({
  * @see {@link tertiaryLabel}, the color for text labels that contain tertiary content.
  * @see {@link quaternaryLabel}, the color for text labels that contain quaternary content.
  */
-export const secondaryLabel = Platform.select({
-	ios: PlatformColor('secondaryLabel'),
-	android: PlatformColor('@android:color/secondary_text_light'),
-})
+export const secondaryLabel = PlatformColor('secondaryLabel')
 
 /**
  * The color for text labels that contain tertiary content.
@@ -47,10 +27,7 @@ export const secondaryLabel = Platform.select({
  * @see {@link secondaryLabel}, the color for text labels that contain secondary content.
  * @see {@link quaternaryLabel}, the color for text labels that contain quaternary content.
  */
-export const tertiaryLabel = Platform.select({
-	ios: PlatformColor('tertiaryLabel'),
-	android: PlatformColor('@android:color/tertiary_text_light'),
-})
+export const tertiaryLabel = PlatformColor('tertiaryLabel')
 
 /**
  * The color for text labels that contain quaternary content.
@@ -59,10 +36,7 @@ export const tertiaryLabel = Platform.select({
  * @see {@link secondaryLabel}, the color for text labels that contain secondary content.
  * @see {@link tertiaryLabel}, the color for text labels that contain tertiary content.
  */
-export const quaternaryLabel = Platform.select({
-	ios: PlatformColor('quaternaryLabel'),
-	android: TEMP_ANDROID_FOREGROUND,
-})
+export const quaternaryLabel = PlatformColor('quaternaryLabel')
 
 // MARK: MARK: Fill colors
 
@@ -78,10 +52,7 @@ export const quaternaryLabel = Platform.select({
  * @see {@link tertiarySystemFill}, an overlay fill color for large shapes.
  * @see {@link quaternarySystemFill}, an overlay fill color for large areas that contain complex content.
  */
-export const systemFill = Platform.select({
-	ios: PlatformColor('systemFill'),
-	android: TEMP_ANDROID_BACKGROUND,
-})
+export const systemFill = PlatformColor('systemFill')
 
 /**
  * An overlay fill color for medium-size shapes.
@@ -95,10 +66,7 @@ export const systemFill = Platform.select({
  * @see {@link tertiarySystemFill}, an overlay fill color for large shapes.
  * @see {@link quaternarySystemFill}, an overlay fill color for large areas that contain complex content.
  */
-export const secondarySystemFill = Platform.select({
-	ios: PlatformColor('secondarySystemFill'),
-	android: TEMP_ANDROID_BACKGROUND,
-})
+export const secondarySystemFill = PlatformColor('secondarySystemFill')
 
 /**
  * An overlay fill color for large shapes.
@@ -112,10 +80,7 @@ export const secondarySystemFill = Platform.select({
  * @see {@link secondarySystemFill}, an overlay fill color for medium-size shapes.
  * @see {@link quaternarySystemFill}, an overlay fill color for large areas that contain complex content.
  */
-export const tertiarySystemFill = Platform.select({
-	ios: PlatformColor('tertiarySystemFill'),
-	android: TEMP_ANDROID_BACKGROUND,
-})
+export const tertiarySystemFill = PlatformColor('tertiarySystemFill')
 
 /**
  * An overlay fill color for large areas that contain complex content.
@@ -129,30 +94,21 @@ export const tertiarySystemFill = Platform.select({
  * @see {@link secondarySystemFill}, an overlay fill color for medium-size shapes.
  * @see {@link tertiarySystemFill}, an overlay fill color for large shapes.
  */
-export const quaternarySystemFill = Platform.select({
-	ios: PlatformColor('quaternarySystemFill'),
-	android: TEMP_ANDROID_BACKGROUND,
-})
+export const quaternarySystemFill = PlatformColor('quaternarySystemFill')
 
 // MARK: Text colors
 
 /**
  * The color for placeholder text in controls or text views.
  */
-export const placeholderText = Platform.select({
-	ios: PlatformColor('placeholderText'),
-	android: TEMP_ANDROID_FOREGROUND,
-})
+export const placeholderText = PlatformColor('placeholderText')
 
 // MARK: Tint color
 
 /**
  * A color value that resolves at runtime based on the current tint color of the app or trait hierarchy.
  */
-export const tintColor = Platform.select({
-	ios: PlatformColor('tintColor'),
-	android: TEMP_ANDROID_FOREGROUND,
-})
+export const tintColor = PlatformColor('tintColor')
 
 // MARK: Standard content background colors
 
@@ -164,10 +120,7 @@ export const tintColor = Platform.select({
  * @see {@link secondarySystemBackground} - The color for the main background of your grouped interface.
  * @see {@link tertiarySystemBackground} - The color for content layered on top of the main background of your grouped interface.
  */
-export const systemBackground = Platform.select({
-	ios: PlatformColor('systemBackground'),
-	android: TEMP_ANDROID_BACKGROUND,
-})
+export const systemBackground = PlatformColor('systemBackground')
 
 /**
  * The color for content layered on top of the main background.
@@ -177,10 +130,9 @@ export const systemBackground = Platform.select({
  * @see {@link systemBackground} - The color for the main background of your grouped interface.
  * @see {@link tertiarySystemBackground} - The color for content layered on top of the main background of your grouped interface.
  */
-export const secondarySystemBackground = Platform.select({
-	ios: PlatformColor('secondarySystemBackground'),
-	android: TEMP_ANDROID_BACKGROUND,
-})
+export const secondarySystemBackground = PlatformColor(
+	'secondarySystemBackground',
+)
 
 /**
  * The color for content layered on top of secondary backgrounds.
@@ -190,10 +142,9 @@ export const secondarySystemBackground = Platform.select({
  * @see {@link systemBackground} - The color for the main background of your grouped interface.
  * @see {@link secondarySystemBackground} - The color for content layered on top of the main background of your grouped interface.
  */
-export const tertiarySystemBackground = Platform.select({
-	ios: PlatformColor('tertiarySystemBackground'),
-	android: TEMP_ANDROID_BACKGROUND,
-})
+export const tertiarySystemBackground = PlatformColor(
+	'tertiarySystemBackground',
+)
 
 // MARK: Grouped content background colors
 
@@ -205,10 +156,7 @@ export const tertiarySystemBackground = Platform.select({
  * @see {@link secondarySystemGroupedBackground} - The color for the main background of your grouped interface.
  * @see {@link tertiarySystemGroupedBackground} - The color for content layered on top of the main background of your grouped interface.
  */
-export const systemGroupedBackground = Platform.select({
-	ios: PlatformColor('systemGroupedBackground'),
-	android: TEMP_ANDROID_BACKGROUND,
-})
+export const systemGroupedBackground = PlatformColor('systemGroupedBackground')
 
 /**
  * The color for content layered on top of the main background of your grouped interface.
@@ -218,10 +166,9 @@ export const systemGroupedBackground = Platform.select({
  * @see {@link systemGroupedBackground} - The color for the main background of your grouped interface.
  * @see {@link tertiarySystemGroupedBackground} - The color for content layered on top of the main background of your grouped interface.
  */
-export const secondarySystemGroupedBackground = Platform.select({
-	ios: PlatformColor('secondarySystemGroupedBackground'),
-	android: TEMP_ANDROID_BACKGROUND,
-})
+export const secondarySystemGroupedBackground = PlatformColor(
+	'secondarySystemGroupedBackground',
+)
 
 /**
  * The color for content layered on top of secondary backgrounds of your grouped interface.
@@ -231,10 +178,9 @@ export const secondarySystemGroupedBackground = Platform.select({
  * @see {@link systemGroupedBackground} - The color for the main background of your grouped interface.
  * @see {@link secondarySystemGroupedBackground} - The color for content layered on top of the main background of your grouped interface.
  */
-export const tertiarySystemGroupedBackground = Platform.select({
-	ios: PlatformColor('tertiarySystemGroupedBackground'),
-	android: TEMP_ANDROID_BACKGROUND,
-})
+export const tertiarySystemGroupedBackground = PlatformColor(
+	'tertiarySystemGroupedBackground',
+)
 
 // MARK: Separator colors
 
@@ -246,10 +192,7 @@ export const tertiarySystemGroupedBackground = Platform.select({
  *
  * @see {@link opaqueSeparator} - The color for borders or divider lines that hides any underlying content.
  */
-export const separator = Platform.select({
-	ios: PlatformColor('separator'),
-	android: TEMP_ANDROID_FOREGROUND,
-})
+export const separator = PlatformColor('separator')
 
 /**
  * The color for borders or divider lines that hides any underlying content.
@@ -259,183 +202,111 @@ export const separator = Platform.select({
  *
  * @see {@link separator} - The color for borders or divider lines that hides any underlying content.
  */
-export const opaqueSeparator = Platform.select({
-	ios: PlatformColor('opaqueSeparator'),
-	android: TEMP_ANDROID_FOREGROUND,
-})
+export const opaqueSeparator = PlatformColor('opaqueSeparator')
 
 // MARK: Link color
 /**
  * The specified color for links.
  */
-export const link = Platform.select({
-	ios: PlatformColor('link'),
-	android: PlatformColor('?attr/colorAccent'),
-})
+export const link = PlatformColor('link')
 
 // MARK: Adaptable colors
 
 /**
  * A blue color that automatically adapts to the current trait environment.
  */
-export const systemBlue = Platform.select({
-	ios: PlatformColor('systemBlue'),
-	android: TEMP_ANDROID_FOREGROUND,
-})
+export const systemBlue = PlatformColor('systemBlue')
 
 /**
  * A brown color that automatically adapts to the current trait environment.
  */
-export const systemBrown = Platform.select({
-	ios: PlatformColor('systemBrown'),
-	android: TEMP_ANDROID_FOREGROUND,
-})
+export const systemBrown = PlatformColor('systemBrown')
 
 /**
  * A cyan color that automatically adapts to the current trait environment.
  */
-export const systemCyan = Platform.select({
-	ios: PlatformColor('systemCyan'),
-	android: TEMP_ANDROID_FOREGROUND,
-})
+export const systemCyan = PlatformColor('systemCyan')
 
 /**
  * A green color that automatically adapts to the current trait environment.
  */
-export const systemGreen = Platform.select({
-	ios: PlatformColor('systemGreen'),
-	android: PlatformColor('@android:color/holo_green_light'),
-	default: TEMP_ANDROID_FOREGROUND,
-})
+export const systemGreen = PlatformColor('systemGreen')
 
 /**
  * An indigo color that automatically adapts to the current trait environment.
  */
-export const systemIndigo = Platform.select({
-	ios: PlatformColor('systemIndigo'),
-	android: TEMP_ANDROID_FOREGROUND,
-})
+export const systemIndigo = PlatformColor('systemIndigo')
 
 /**
  * A mint color that automatically adapts to the current trait environment.
  */
-export const systemMint = Platform.select({
-	ios: PlatformColor('systemMint'),
-	android: TEMP_ANDROID_FOREGROUND,
-})
+export const systemMint = PlatformColor('systemMint')
 
 /**
  * An orange color that automatically adapts to the current trait environment.
  */
-export const systemOrange = Platform.select({
-	ios: PlatformColor('systemOrange'),
-	android: TEMP_ANDROID_FOREGROUND,
-})
+export const systemOrange = PlatformColor('systemOrange')
 
 /**
  * A pink color that automatically adapts to the current trait environment.
  */
-export const systemPink = Platform.select({
-	ios: PlatformColor('systemPink'),
-	android: TEMP_ANDROID_FOREGROUND,
-})
+export const systemPink = PlatformColor('systemPink')
 
 /**
  * A purple color that automatically adapts to the current trait environment.
  */
-export const systemPurple = Platform.select({
-	ios: PlatformColor('systemPurple'),
-	android: TEMP_ANDROID_FOREGROUND,
-})
+export const systemPurple = PlatformColor('systemPurple')
 
 /**
  * A red color that automatically adapts to the current trait environment.
  */
-export const systemRed = Platform.select({
-	ios: PlatformColor('systemRed'),
-	android: PlatformColor('@android:color/holo_red_light'),
-	default: TEMP_ANDROID_FOREGROUND,
-})
+export const systemRed = PlatformColor('systemRed')
 
 /**
  * A teal color that automatically adapts to the current trait environment.
  */
-export const systemTeal = Platform.select({
-	ios: PlatformColor('systemTeal'),
-	android: TEMP_ANDROID_FOREGROUND,
-})
+export const systemTeal = PlatformColor('systemTeal')
 
 /**
  * A yellow color that automatically adapts to the current trait environment.
  */
-export const systemYellow = Platform.select({
-	ios: PlatformColor('systemYellow'),
-	// TODO: make this yellow and not orange
-	android: PlatformColor('@android:color/holo_orange_light'),
-})
+export const systemYellow = PlatformColor('systemYellow')
 
 // MARK: Adaptable gray colors
 
 /**
  * The standard base gray color that adapts to the environment.
  */
-export const systemGray = Platform.select({
-	ios: PlatformColor('systemGray'),
-	android: TEMP_ANDROID_BACKGROUND,
-})
+export const systemGray = PlatformColor('systemGray')
 
 /**
  * A second-level shade of gray that adapts to the environment.
  */
-export const systemGray2 = Platform.select({
-	ios: PlatformColor('systemGray2'),
-	android: TEMP_ANDROID_BACKGROUND,
-})
+export const systemGray2 = PlatformColor('systemGray2')
 
 /**
  * A third-level shade of gray that adapts to the environment.
  */
-export const systemGray3 = Platform.select({
-	ios: PlatformColor('systemGray3'),
-	android: TEMP_ANDROID_BACKGROUND,
-})
+export const systemGray3 = PlatformColor('systemGray3')
 
 /**
  * A fourth-level shade of gray that adapts to the environment.
  */
-export const systemGray4 = Platform.select({
-	ios: PlatformColor('systemGray4'),
-	android: TEMP_ANDROID_BACKGROUND,
-})
+export const systemGray4 = PlatformColor('systemGray4')
 
 /**
  * A fifth-level shade of gray that adapts to the environment.
  */
-export const systemGray5 = Platform.select({
-	ios: PlatformColor('systemGray5'),
-	android: TEMP_ANDROID_BACKGROUND,
-})
+export const systemGray5 = PlatformColor('systemGray5')
 
 /**
  * A sixth-level shade of gray that adapts to the environment.
  */
-export const systemGray6 = Platform.select({
-	ios: PlatformColor('systemGray6'),
-	android: TEMP_ANDROID_BACKGROUND,
-})
+export const systemGray6 = PlatformColor('systemGray6')
 
 // MARK: Transparent color
 
 /**
  * A color object with grayscale and alpha values that are both 0.0.
  */
-export const clear = Platform.select({
-	ios: PlatformColor('clear'),
-	android: PlatformColor('@android:color/transparent'),
-})
-
-export const androidLightBackground = 'rgb(244, 244, 244)'
-export const androidSeparator = 'rgb(224, 224, 224)'
-export const androidDisabledIcon = 'rgb(224, 224, 224)'
-export const androidTextColor = 'rgb(113, 113, 118)'
-export const androidTabAccentColor = '#ffeb3b'
+export const clear = PlatformColor('clear')
