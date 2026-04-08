@@ -38,10 +38,6 @@ const currentDeploymentTarget = findCurrentDeploymentTarget()
 const codeSigningDisabled = process.env.CODE_SIGNING_DISABLED === 'true'
 
 /**
- * @param {Configuration} configuration
- * @returns {string}
- */
-/**
  * Find the ccache libexec directory where compiler wrapper symlinks live.
  * Returns null if ccache is not installed.
  * @returns {string | null}
@@ -62,6 +58,10 @@ function findCcacheLibexec() {
 	return null
 }
 
+/**
+ * @param {Configuration} configuration
+ * @returns {string}
+ */
 function generateBuildCommand(configuration) {
 	const useCcache = process.env.USE_CCACHE === 'true'
 	const ccacheLibexec = useCcache ? findCcacheLibexec() : null
