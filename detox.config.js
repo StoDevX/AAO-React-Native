@@ -13,19 +13,19 @@ const path = require('node:path')
  * @returns {string}
  */
 function findCurrentDeploymentTarget() {
-	let pbxproj = fs.readFileSync(
-		path.join(__dirname, 'ios', 'AllAboutOlaf.xcodeproj', 'project.pbxproj'),
+	let projectYml = fs.readFileSync(
+		path.join(__dirname, 'ios', 'project.yml'),
 		{encoding: 'utf-8'},
 	)
 
-	const target = pbxproj
+	const target = projectYml
 		.split('\n')
 		.find((line) => line.includes('IPHONEOS_DEPLOYMENT_TARGET'))
-		?.replace(/.*IPHONEOS_DEPLOYMENT_TARGET = (.*?);/u, '$1')
+		?.replace(/.*IPHONEOS_DEPLOYMENT_TARGET:\s*"?([\d.]+)"?.*/u, '$1')
 
 	if (!target || !/\d+[.]\d+/u.test(target)) {
 		console.error(
-			`Could not find valid IPHONEOS_DEPLOYMENT_TARGET; found ${target}`,
+			`Could not find valid IPHONEOS_DEPLOYMENT_TARGET in project.yml; found ${target}`,
 		)
 		process.exit(1)
 	}
