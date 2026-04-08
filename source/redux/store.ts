@@ -16,9 +16,14 @@ import {
 } from 'redux-persist'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 
-// Guard against AsyncStorage being unavailable (e.g. native module bridge not
-// ready after a JS reload). Provide a no-op fallback so redux-persist doesn't
-// crash when calling storage.getItem / setItem.
+if (!AsyncStorage) {
+	console.error(
+		'[@AAO/redux] AsyncStorage is unavailable:',
+		typeof AsyncStorage,
+		AsyncStorage,
+	)
+}
+
 const safeStorage = AsyncStorage ?? {
 	getItem: () => Promise.resolve(null),
 	setItem: () => Promise.resolve(),

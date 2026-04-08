@@ -329,9 +329,21 @@ jobs:
           detox test
           e2e/
           --configuration ios.sim.release
-          --record-logs failing
+          --record-logs all
           --record-videos failing
           --take-screenshots failing
+          --loglevel trace
+
+      - name: Dump simulator system log on failure
+        if: failure()
+        run: |
+          DEVICE_UDID=$(xcrun simctl list devices booted -j | python3 -c "import sys,json; devs=json.load(sys.stdin)['devices']; print(next(d['udid'] for r in devs.values() for d in r if d['state']=='Booted'))" 2>/dev/null || echo "")
+          if [ -n "$DEVICE_UDID" ]; then
+            echo "=== Last 200 lines of simulator system log ==="
+            xcrun simctl spawn "$DEVICE_UDID" log show --last 5m --predicate 'process == "AllAboutOlaf"' --style compact 2>/dev/null | tail -200 || echo "Could not retrieve simulator log"
+          else
+            echo "No booted simulator found"
+          fi
 
       - uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
         if: always()

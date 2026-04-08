@@ -14,6 +14,7 @@ const configureApiRoot = async () => {
 	}
 }
 
-configureApiRoot().catch(() => {
-	// Already using default URL; safe to ignore storage errors
+configureApiRoot().catch((err) => {
+	// Already using default URL; log for diagnostics
+	console.error('[@AAO] configureApiRoot failed:', err)
 })
