@@ -12,7 +12,6 @@ type Props = {
 	styles?: StyleProp<ViewStyle>
 	fullWidth?: boolean
 	spacing?: {left?: number; right?: number}
-	force?: boolean
 }
 
 export function ListSeparator(props: Props): JSX.Element | null {

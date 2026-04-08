@@ -5,11 +5,6 @@ export {CombinedLightTheme, CombinedDarkTheme} from './paper'
 
 export type AppTheme = {
 	accent: string
-	androidListHeaderBackground: string
-	androidListHeaderForeground: string
-	androidStatusBarColor: string
-	androidTabBarBackground: string
-	androidTabBarForeground: string
 	buttonBackground: string
 	buttonForeground: string
 	iosPushButtonCellBackground: string
@@ -19,7 +14,6 @@ export type AppTheme = {
 	navigationBackground: string
 	navigationForeground: string
 	statusBarStyle: 'dark-content' | 'light-content'
-	switchThumbTint?: string
 	switchTintOff?: string
 	switchTintOn?: string
 	toolbarButtonBackground: string
@@ -28,11 +22,6 @@ export type AppTheme = {
 
 // let defaultTheme: AppTheme = {
 // 	accent: '#000',
-// 	androidListHeaderBackground: '#fff',
-// 	androidListHeaderForeground: '#000',
-// 	androidStatusBarColor: '#000',
-// 	androidTabBarBackground: '#fff',
-// 	androidTabBarForeground: '#000',
 // 	buttonBackground: '#000',
 // 	buttonForeground: '#fff',
 // 	iosPushButtonCellBackground: '#000',

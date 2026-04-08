@@ -5,7 +5,7 @@
 import * as React from 'react'
 import {useCallback, useState} from 'react'
 import xor from 'lodash/xor'
-import {Platform, ScrollView, StyleSheet, Text} from 'react-native'
+import {ScrollView, StyleSheet, Text} from 'react-native'
 import type {Moment} from 'moment-timezone'
 import moment from 'moment-timezone'
 import {Cell, Section, TableView} from '@frogpond/tableview'
@@ -123,13 +123,7 @@ function WeekToggles(props: WeekTogglesProps) {
 	let allDays: DayOfWeekEnumType[] = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su']
 
 	return (
-		<Row
-			style={
-				Platform.OS === 'ios'
-					? styles.iOSweekToggles
-					: styles.androidWeekToggles
-			}
-		>
+		<Row style={styles.iOSweekToggles}>
 			{allDays.map((day) => (
 				<ToggleButton
 					key={day}
@@ -151,15 +145,9 @@ type ToggleButtonProps = {
 const ToggleButton = (props: ToggleButtonProps) => {
 	let onPress = () => props.onPress(props.text)
 
-	let platformStyle = Platform.select({
-		ios: styles.iOSDayWrapper,
-		android: styles.androidDayWrapper,
-	})
+	let platformStyle = styles.iOSDayWrapper
 
-	let platformActiveStyle = Platform.select({
-		ios: styles.iOSDayActive,
-		android: styles.androidDayActive,
-	})
+	let platformActiveStyle = styles.iOSDayActive
 
 	let {text, active} = props
 
@@ -185,7 +173,6 @@ function DatePickerAccessory(props: DatePickerAccessoryProps) {
 	let format = 'h:mm A'
 	return (
 		<DatePicker
-			displayAndroid="clock"
 			displayIos="inline"
 			format={format}
 			initialDate={props.date}
@@ -212,13 +199,6 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 10,
 		paddingVertical: 20,
 	},
-	androidWeekToggles: {
-		alignItems: 'stretch',
-		justifyContent: 'center',
-		backgroundColor: c.white,
-		paddingHorizontal: 10,
-		paddingVertical: 20,
-	},
 	iOSDayWrapper: {
 		flex: 1,
 		alignItems: 'center',
@@ -226,20 +206,6 @@ const styles = StyleSheet.create({
 		borderRadius: 20,
 		margin: 5,
 		backgroundColor: c.tertiarySystemGroupedBackground,
-	},
-	androidDayWrapper: {
-		flex: 1,
-		alignItems: 'center',
-		paddingVertical: 10,
-		borderColor: c.separator,
-		borderRadius: 20,
-		borderWidth: 1,
-		margin: 5,
-		backgroundColor: c.tertiarySystemGroupedBackground,
-	},
-	androidDayActive: {
-		backgroundColor: c.link,
-		borderColor: c.transparent,
 	},
 	iOSDayActive: {
 		backgroundColor: c.link,
@@ -268,5 +234,5 @@ export const NavigationKey = 'BuildingHoursProblemReportEditor'
 export const NavigationOptions: NativeStackNavigationOptions = {
 	title: 'Edit Schedule',
 	presentation: 'modal',
-	headerRight: () => Platform.OS === 'ios' && <CloseScreenButton />,
+	headerRight: () => <CloseScreenButton />,
 }

@@ -12,7 +12,6 @@ import {white} from '@frogpond/colors'
 
 type Props = PropsWithChildren<
 	PressableProps & {
-		borderless?: boolean
 		containerStyle?: StyleProp<ViewStyle>
 		style?: StyleProp<ViewStyle>
 		highlight?: boolean
@@ -23,7 +22,6 @@ type Props = PropsWithChildren<
 
 const CustomPressable = forwardRef<View, Props>((props, ref): JSX.Element => {
 	let {
-		borderless: _borderless = false,
 		children,
 		containerStyle = {},
 		highlight = true,
