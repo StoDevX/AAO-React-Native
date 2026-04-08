@@ -223,7 +223,9 @@ export let BuildingHoursProblemReportView = (): JSX.Element => {
 			<TableView>
 				<Section header="NAME">
 					<TitleCell
-						onChange={(newName) => dispatch({type: 'SET_BUILDING_NAME', name: newName})}
+						onChange={(newName) =>
+							dispatch({type: 'SET_BUILDING_NAME', name: newName})
+						}
 						text={name || ''}
 					/>
 				</Section>
