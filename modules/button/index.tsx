@@ -17,18 +17,14 @@ const styles = StyleSheet.create({
 	disabled: {
 		backgroundColor: c.tertiarySystemFill,
 	},
-	text: {
-		...iOSUIKit.calloutWhiteObject,
-	},
+	text: iOSUIKit.calloutWhiteObject,
 	textDisabled: {
 		color: c.secondaryLabel,
 	},
 })
 
 const inverted = StyleSheet.create({
-	text: {
-		...iOSUIKit.calloutObject,
-	},
+	text: iOSUIKit.calloutObject,
 })
 
 type Props = {
