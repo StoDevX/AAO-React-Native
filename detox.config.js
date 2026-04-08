@@ -41,8 +41,30 @@ const codeSigningDisabled = process.env.CODE_SIGNING_DISABLED === 'true'
  * @param {Configuration} configuration
  * @returns {string}
  */
+/**
+ * Find the ccache libexec directory where compiler wrapper symlinks live.
+ * Returns null if ccache is not installed.
+ * @returns {string | null}
+ */
+function findCcacheLibexec() {
+	try {
+		const {execSync} = require('node:child_process')
+		const prefix = execSync('brew --prefix ccache', {
+			encoding: 'utf-8',
+		}).trim()
+		const libexec = path.join(prefix, 'libexec')
+		if (fs.existsSync(libexec)) {
+			return libexec
+		}
+	} catch {
+		// ccache not installed via brew
+	}
+	return null
+}
+
 function generateBuildCommand(configuration) {
 	const useCcache = process.env.USE_CCACHE === 'true'
+	const ccacheLibexec = useCcache ? findCcacheLibexec() : null
 
 	const baseCommand = [
 		'xcodebuild',
@@ -55,8 +77,11 @@ function generateBuildCommand(configuration) {
 		'COMPILER_INDEX_STORE_ENABLE=NO',
 	]
 
-	if (useCcache) {
-		baseCommand.push('CC=ccache\\ clang', 'CXX=ccache\\ clang++')
+	if (ccacheLibexec) {
+		baseCommand.push(
+			`CC=${ccacheLibexec}/clang`,
+			`CXX=${ccacheLibexec}/clang++`,
+		)
 	}
 
 	if (codeSigningDisabled) {
