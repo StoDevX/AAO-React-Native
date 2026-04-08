@@ -1,6 +1,6 @@
 import * as React from 'react'
 import {useEffect, useState} from 'react'
-import {SectionList, StyleSheet} from 'react-native'
+import {SectionList, StyleSheet, View} from 'react-native'
 import * as c from '@frogpond/colors'
 import type {
 	MasterCorIconMapType,
@@ -165,44 +165,50 @@ export function FancyMenu(props: Props): JSX.Element {
 	)
 
 	return (
-		<SectionList
-			ItemSeparatorComponent={Separator}
-			ListEmptyComponent={<NoticeView style={styles.message} text={message} />}
-			ListHeaderComponent={header}
-			contentContainerStyle={styles.contentContainer}
-			testID="food-menu"
-			extraData={filters}
-			keyExtractor={(item: MenuItemType) => item.id}
-			onRefresh={props.onRefresh}
-			refreshing={props.refreshing}
-			renderItem={({item}) => {
-				return (
-					<FoodItemRow
-						badgeSpecials={!specialsFilterEnabled}
-						corIcons={menuCorIcons}
-						data={item}
-						onPress={() =>
-							navigation.navigate('MenuItemDetail', {item, icons: menuCorIcons})
-						}
-						spacing={{left: LEFT_MARGIN}}
-					/>
-				)
-			}}
-			renderSectionHeader={(info) => {
-				const title = info.section.title
-				const note = stationsByLabel.get(title)?.note ?? ''
+		<View style={styles.inner} testID="food-menu">
+			<SectionList
+				ItemSeparatorComponent={Separator}
+				ListEmptyComponent={
+					<NoticeView style={styles.message} text={message} />
+				}
+				ListHeaderComponent={header}
+				contentContainerStyle={styles.contentContainer}
+				extraData={filters}
+				keyExtractor={(item: MenuItemType) => item.id}
+				onRefresh={props.onRefresh}
+				refreshing={props.refreshing}
+				renderItem={({item}) => {
+					return (
+						<FoodItemRow
+							badgeSpecials={!specialsFilterEnabled}
+							corIcons={menuCorIcons}
+							data={item}
+							onPress={() =>
+								navigation.navigate('MenuItemDetail', {
+									item,
+									icons: menuCorIcons,
+								})
+							}
+							spacing={{left: LEFT_MARGIN}}
+						/>
+					)
+				}}
+				renderSectionHeader={(info) => {
+					const title = info.section.title
+					const note = stationsByLabel.get(title)?.note ?? ''
 
-				return (
-					<ListSectionHeader
-						spacing={{left: LEFT_MARGIN}}
-						subtitle={note}
-						title={title}
-					/>
-				)
-			}}
-			sections={groupedMenuData}
-			style={styles.inner}
-			{...largeListProps}
-		/>
+					return (
+						<ListSectionHeader
+							spacing={{left: LEFT_MARGIN}}
+							subtitle={note}
+							title={title}
+						/>
+					)
+				}}
+				sections={groupedMenuData}
+				style={styles.inner}
+				{...largeListProps}
+			/>
+		</View>
 	)
 }
