@@ -1,6 +1,6 @@
 module.exports = {
 	preset: 'ts-jest',
-	maxWorkers: 2,
+	maxWorkers: 1,
 	rootDir: '..',
 	testMatch: ['<rootDir>/e2e/**/*.(test|spec).ts'],
 	setupFilesAfterEnv: ['<rootDir>/e2e/init.js'],
