@@ -64,7 +64,7 @@ function generateBuildCommand(configuration) {
 	const command = baseCommand.join(' ')
 
 	if (process.env.CI) {
-		return `set -o pipefail && ${command} | xcpretty`
+		return `set -o pipefail && ${command} | bundle exec xcpretty`
 	}
 
 	return command
