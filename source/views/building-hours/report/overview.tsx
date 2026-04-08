@@ -22,8 +22,7 @@ import type {
 } from '../types'
 import {summarizeDays, formatBuildingTimes} from '../lib'
 import {submitReport} from './submit'
-import {buildingReducer} from './building-reducer'
-import type {BuildingAction} from './building-reducer'
+import {buildingReducer, type BuildingAction} from './building-reducer'
 import {
 	NativeStackNavigationOptions,
 	NativeStackNavigationProp,
