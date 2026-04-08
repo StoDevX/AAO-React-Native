@@ -270,7 +270,7 @@ jobs:
         env:
           SKIP_POSTINSTALL: '1'
 
-      - uses: ruby/setup-ruby@v1
+      - uses: ruby/setup-ruby@e65c17d16e57e481586a6a5a0282698790062f92 # v1.300.0
         if: steps.app-cache.outputs.cache-hit != 'true'
         with:
           ruby-version: ${{ env.ruby-version }}
