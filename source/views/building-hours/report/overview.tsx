@@ -31,47 +31,30 @@ import {CloseScreenButton} from '@frogpond/navigation-buttons'
 import {RootStackParamList} from '../../../navigation/types'
 
 export type BuildingAction =
-	| {type: 'EDIT_NAME'; name: string}
+	| {type: 'SET_BUILDING_NAME'; name: string}
+	| {type: 'ADD_SCHEDULE'}
 	| {
-			type: 'EDIT_SCHEDULE'
+			type: 'UPDATE_SCHEDULE'
 			scheduleIndex: number
-			schedule: NamedBuildingScheduleType
+			data: Partial<NamedBuildingScheduleType>
 	  }
 	| {type: 'DELETE_SCHEDULE'; scheduleIndex: number}
-	| {type: 'ADD_SCHEDULE'}
-	| {type: 'ADD_HOURS_ROW'; scheduleIndex: number}
+	| {type: 'ADD_HOURS'; scheduleIndex: number}
 	| {
-			type: 'EDIT_HOURS_ROW'
+			type: 'SET_HOURS'
 			scheduleIndex: number
 			setIndex: number
 			data: SingleBuildingScheduleType
 	  }
-	| {type: 'DELETE_HOURS_ROW'; scheduleIndex: number; setIndex: number}
-	| {
-			type: 'EDIT_SCHEDULE_FIELD'
-			scheduleIndex: number
-			data: Partial<NamedBuildingScheduleType>
-	  }
+	| {type: 'DELETE_HOURS'; scheduleIndex: number; setIndex: number}
 
 export function buildingReducer(
 	state: BuildingType,
 	action: BuildingAction,
 ): BuildingType {
 	switch (action.type) {
-		case 'EDIT_NAME':
+		case 'SET_BUILDING_NAME':
 			return {...state, name: action.name}
-
-		case 'EDIT_SCHEDULE': {
-			let schedules = [...state.schedule]
-			schedules[action.scheduleIndex] = action.schedule
-			return {...state, schedule: schedules}
-		}
-
-		case 'DELETE_SCHEDULE': {
-			let schedules = [...state.schedule]
-			schedules.splice(action.scheduleIndex, 1)
-			return {...state, schedule: schedules}
-		}
 
 		case 'ADD_SCHEDULE':
 			return {
@@ -82,7 +65,22 @@ export function buildingReducer(
 				],
 			}
 
-		case 'ADD_HOURS_ROW': {
+		case 'UPDATE_SCHEDULE': {
+			let schedules = [...state.schedule]
+			schedules[action.scheduleIndex] = {
+				...schedules[action.scheduleIndex],
+				...action.data,
+			}
+			return {...state, schedule: schedules}
+		}
+
+		case 'DELETE_SCHEDULE': {
+			let schedules = [...state.schedule]
+			schedules.splice(action.scheduleIndex, 1)
+			return {...state, schedule: schedules}
+		}
+
+		case 'ADD_HOURS': {
 			let schedules = [...state.schedule]
 			schedules[action.scheduleIndex] = {
 				...schedules[action.scheduleIndex],
@@ -91,7 +89,7 @@ export function buildingReducer(
 			return {...state, schedule: schedules}
 		}
 
-		case 'EDIT_HOURS_ROW': {
+		case 'SET_HOURS': {
 			let schedules = [...state.schedule]
 			let hours = [...schedules[action.scheduleIndex].hours]
 			hours[action.setIndex] = action.data
@@ -102,22 +100,13 @@ export function buildingReducer(
 			return {...state, schedule: schedules}
 		}
 
-		case 'DELETE_HOURS_ROW': {
+		case 'DELETE_HOURS': {
 			let schedules = [...state.schedule]
 			let hours = [...schedules[action.scheduleIndex].hours]
 			hours.splice(action.setIndex, 1)
 			schedules[action.scheduleIndex] = {
 				...schedules[action.scheduleIndex],
 				hours,
-			}
-			return {...state, schedule: schedules}
-		}
-
-		case 'EDIT_SCHEDULE_FIELD': {
-			let schedules = [...state.schedule]
-			schedules[action.scheduleIndex] = {
-				...schedules[action.scheduleIndex],
-				...action.data,
 			}
 			return {...state, schedule: schedules}
 		}
@@ -186,14 +175,14 @@ function useBuildingEditor(
 				set: set,
 				onEditSet: (editedData: SingleBuildingScheduleType) =>
 					wrappedDispatch({
-						type: 'EDIT_HOURS_ROW',
+						type: 'SET_HOURS',
 						scheduleIndex: scheduleIdx,
 						setIndex: setIdx,
 						data: editedData,
 					}),
 				onDeleteSet: () =>
 					wrappedDispatch({
-						type: 'DELETE_HOURS_ROW',
+						type: 'DELETE_HOURS',
 						scheduleIndex: scheduleIdx,
 						setIndex: setIdx,
 					}),
@@ -234,7 +223,7 @@ export let BuildingHoursProblemReportView = (): JSX.Element => {
 			<TableView>
 				<Section header="NAME">
 					<TitleCell
-						onChange={(newName) => dispatch({type: 'EDIT_NAME', name: newName})}
+						onChange={(newName) => dispatch({type: 'SET_BUILDING_NAME', name: newName})}
 						text={name || ''}
 					/>
 				</Section>
@@ -285,7 +274,7 @@ const EditableSchedule = (props: EditableScheduleProps) => {
 
 	let editTitle = (newValue: string) => {
 		dispatch({
-			type: 'EDIT_SCHEDULE_FIELD',
+			type: 'UPDATE_SCHEDULE',
 			scheduleIndex,
 			data: {title: newValue},
 		})
@@ -293,7 +282,7 @@ const EditableSchedule = (props: EditableScheduleProps) => {
 
 	let editNotes = (newValue: string) => {
 		dispatch({
-			type: 'EDIT_SCHEDULE_FIELD',
+			type: 'UPDATE_SCHEDULE',
 			scheduleIndex,
 			data: {notes: newValue},
 		})
@@ -301,14 +290,14 @@ const EditableSchedule = (props: EditableScheduleProps) => {
 
 	let toggleChapel = (newValue: boolean) => {
 		dispatch({
-			type: 'EDIT_SCHEDULE_FIELD',
+			type: 'UPDATE_SCHEDULE',
 			scheduleIndex,
 			data: {closedForChapelTime: newValue},
 		})
 	}
 
 	let addHoursRow = () => {
-		dispatch({type: 'ADD_HOURS_ROW', scheduleIndex})
+		dispatch({type: 'ADD_HOURS', scheduleIndex})
 	}
 
 	let deleteSchedule = () => {

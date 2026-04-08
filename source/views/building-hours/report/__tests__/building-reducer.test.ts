@@ -15,43 +15,11 @@ const baseBuilding: BuildingType = {
 }
 
 describe('buildingReducer', () => {
-	it('handles EDIT_NAME', () => {
-		let action: BuildingAction = {type: 'EDIT_NAME', name: 'New Name'}
+	it('handles SET_BUILDING_NAME', () => {
+		let action: BuildingAction = {type: 'SET_BUILDING_NAME', name: 'New Name'}
 		let result = buildingReducer(baseBuilding, action)
 		expect(result.name).toBe('New Name')
 		expect(result.schedule).toBe(baseBuilding.schedule)
-	})
-
-	it('handles EDIT_SCHEDULE', () => {
-		let newSchedule = {
-			...baseBuilding.schedule[0],
-			title: 'Updated Hours',
-		}
-		let action: BuildingAction = {
-			type: 'EDIT_SCHEDULE',
-			scheduleIndex: 0,
-			schedule: newSchedule,
-		}
-		let result = buildingReducer(baseBuilding, action)
-		expect(result.schedule[0].title).toBe('Updated Hours')
-	})
-
-	it('handles EDIT_SCHEDULE_FIELD', () => {
-		let action: BuildingAction = {
-			type: 'EDIT_SCHEDULE_FIELD',
-			scheduleIndex: 0,
-			data: {title: 'Partial Update'},
-		}
-		let result = buildingReducer(baseBuilding, action)
-		expect(result.schedule[0].title).toBe('Partial Update')
-		// other fields preserved
-		expect(result.schedule[0].hours).toBe(baseBuilding.schedule[0].hours)
-	})
-
-	it('handles DELETE_SCHEDULE', () => {
-		let action: BuildingAction = {type: 'DELETE_SCHEDULE', scheduleIndex: 0}
-		let result = buildingReducer(baseBuilding, action)
-		expect(result.schedule).toHaveLength(0)
 	})
 
 	it('handles ADD_SCHEDULE', () => {
@@ -67,9 +35,27 @@ describe('buildingReducer', () => {
 		})
 	})
 
-	it('handles ADD_HOURS_ROW', () => {
+	it('handles UPDATE_SCHEDULE', () => {
 		let action: BuildingAction = {
-			type: 'ADD_HOURS_ROW',
+			type: 'UPDATE_SCHEDULE',
+			scheduleIndex: 0,
+			data: {title: 'Partial Update'},
+		}
+		let result = buildingReducer(baseBuilding, action)
+		expect(result.schedule[0].title).toBe('Partial Update')
+		// other fields preserved
+		expect(result.schedule[0].hours).toBe(baseBuilding.schedule[0].hours)
+	})
+
+	it('handles DELETE_SCHEDULE', () => {
+		let action: BuildingAction = {type: 'DELETE_SCHEDULE', scheduleIndex: 0}
+		let result = buildingReducer(baseBuilding, action)
+		expect(result.schedule).toHaveLength(0)
+	})
+
+	it('handles ADD_HOURS', () => {
+		let action: BuildingAction = {
+			type: 'ADD_HOURS',
 			scheduleIndex: 0,
 		}
 		let result = buildingReducer(baseBuilding, action)
@@ -81,14 +67,14 @@ describe('buildingReducer', () => {
 		})
 	})
 
-	it('handles EDIT_HOURS_ROW', () => {
+	it('handles SET_HOURS', () => {
 		let newHours = {
 			days: ['Sa' as const, 'Su' as const],
 			from: '10:00am',
 			to: '4:00pm',
 		}
 		let action: BuildingAction = {
-			type: 'EDIT_HOURS_ROW',
+			type: 'SET_HOURS',
 			scheduleIndex: 0,
 			setIndex: 0,
 			data: newHours,
@@ -97,9 +83,9 @@ describe('buildingReducer', () => {
 		expect(result.schedule[0].hours[0]).toEqual(newHours)
 	})
 
-	it('handles DELETE_HOURS_ROW', () => {
+	it('handles DELETE_HOURS', () => {
 		let action: BuildingAction = {
-			type: 'DELETE_HOURS_ROW',
+			type: 'DELETE_HOURS',
 			scheduleIndex: 0,
 			setIndex: 0,
 		}
@@ -111,7 +97,7 @@ describe('buildingReducer', () => {
 		let original: BuildingType = JSON.parse(
 			JSON.stringify(baseBuilding),
 		) as BuildingType
-		buildingReducer(baseBuilding, {type: 'EDIT_NAME', name: 'Changed'})
+		buildingReducer(baseBuilding, {type: 'SET_BUILDING_NAME', name: 'Changed'})
 		expect(baseBuilding).toEqual(original)
 	})
 })
