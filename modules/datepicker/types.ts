@@ -1,4 +1,3 @@
-import * as React from 'react'
 import {StyleProp, ViewStyle} from 'react-native'
 import type {Moment} from 'moment-timezone'
 import type {IOSNativeProps} from '@react-native-community/datetimepicker'

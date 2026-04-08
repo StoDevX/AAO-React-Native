@@ -371,8 +371,7 @@ export const NavigationKey = 'BuildingHoursProblemReport'
 export const NavigationOptions: NativeStackNavigationOptions = {
 	title: 'Report a Problem',
 	presentation: 'modal',
-	headerRight: () =>
-		<CloseScreenButton title="Discard" />,
+	headerRight: () => <CloseScreenButton title="Discard" />,
 	/**
 	 * Explicility setting `gestureEnabled` to false otherwise we can end up with a
 	 * a screen that gets removed natively but did not get removed from JS state.

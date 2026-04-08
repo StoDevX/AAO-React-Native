@@ -1,12 +1,6 @@
 import * as React from 'react'
 import {useEffect, useState} from 'react'
-import {
-	FlatList,
-	StyleSheet,
-	Text,
-	TouchableOpacity,
-	View,
-} from 'react-native'
+import {FlatList, StyleSheet, Text, TouchableOpacity, View} from 'react-native'
 import type {BusSchedule, UnprocessedBusLine, DayOfWeek} from './types'
 import {
 	BusStateEnum,

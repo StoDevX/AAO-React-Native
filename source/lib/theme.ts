@@ -42,11 +42,10 @@ export const switchTintOff = undefined
 const iosTabBarBackground = '#F7F7F7'
 export const iosTabBarActiveColor = sto.purple
 
-export const statusBarStyle = (
+export const statusBarStyle: 'dark-content' | 'light-content' =
 	tinycolor.isReadable('#000', navigationBackground)
 		? 'dark-content'
 		: 'light-content'
-) as 'dark-content' | 'light-content'
 
 export const themeObject: AppTheme = {
 	accent,

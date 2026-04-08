@@ -48,11 +48,7 @@ const CustomPressable = forwardRef<View, Props>((props, ref): JSX.Element => {
 	}
 
 	return (
-		<Pressable
-			ref={ref}
-			style={containerAdjustmentStyle}
-			{...passthrough}
-		>
+		<Pressable ref={ref} style={containerAdjustmentStyle} {...passthrough}>
 			{/* The child <View> is required; the Touchable needs a View as its direct child. */}
 			<View style={style}>{children}</View>
 		</Pressable>
