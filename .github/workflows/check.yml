@@ -13,8 +13,6 @@ concurrency:
 env:
   ruby-version: '3.4.8'
   xcode_version: 'Xcode_15.2'
-  java_version: '11'
-  java_distribution: temurin
 
 jobs:
   hk:
@@ -147,98 +145,6 @@ jobs:
             ios/AllAboutOlaf/main.jsbundle.map
             ios/assets/
           key: ${{ steps.jsbundle-cache.outputs.cache-primary-key }}
-
-  android-bundle:
-    name: Android Bundle
-    if: false
-    runs-on: ubuntu-24.04
-    outputs:
-      cache-key: ${{ steps.jsbundle-cache.outputs.cache-primary-key }}
-    steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-
-      - name: Extract job definition
-        run: yq '.jobs.${{ github.job }}' .github/workflows/check.yml > .github/job.yml
-
-      - uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151 # v4.0.1
-
-      - run: npm ci
-
-      - name: Load the cached jsbundle
-        uses: actions/cache/restore@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
-        id: jsbundle-cache
-        with:
-          path: ./android/generated/
-          key: ${{ runner.os }}-jsbundle-${{ hashFiles('.mise.toml', 'package.json', 'package-lock.json', '.github/job.yml', 'tsconfig.json', 'babel.config.js', 'index.js', 'data/**', 'images/**', 'modules/**.ts', 'modules/**.tsx', 'source/**.ts', 'source/**.tsx') }}
-
-      - name: Bundle data
-        if: steps.jsbundle-cache.outputs.cache-hit != 'true'
-        run: mise run bundle-data
-
-      - name: Generate jsbundle
-        if: steps.jsbundle-cache.outputs.cache-hit != 'true'
-        run: mise run bundle:android
-        env:
-          APP_MODE: mocked
-
-      - name: Cache the jsbundle
-        if: steps.jsbundle-cache.outputs.cache-hit != 'true'
-        uses: actions/cache/save@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
-        with:
-          path: ./android/generated/
-          key: ${{ steps.jsbundle-cache.outputs.cache-primary-key }}
-
-  android:
-    name: Build for Android
-    needs: [jest, eslint, android-bundle]
-    if: false
-    runs-on: ubuntu-24.04
-    steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-
-      - uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151 # v4.0.1
-
-      - run: npm ci
-
-      - uses: actions/setup-java@f2beeb24e141e01a676f977032f5a29d81c9e27e # v5.1.0
-        with:
-          distribution: ${{ env.java_distribution }}
-          java-version: ${{ env.java_version }}
-
-      - name: Raise the fs.inotify ulimits to 524288 watches/queued events/user instances
-        run: |
-          echo 524288 | sudo tee -a /proc/sys/fs/inotify/max_user_watches
-          echo 524288 | sudo tee -a /proc/sys/fs/inotify/max_queued_events
-          echo 524288 | sudo tee -a /proc/sys/fs/inotify/max_user_instances
-          sudo sysctl -p
-
-      - name: Gradle
-        uses: gradle/gradle-build-action@ac2d340dc04d9e1113182899e983b5400c17cda1 # v3
-        with:
-          arguments: bundleRelease --scan
-          build-root-directory: android
-          gradle-home-cache-cleanup: true
-        env:
-          SENTRY_ORG: frog-pond-labs
-          SENTRY_PROJECT: all-about-olaf
-          SKIP_BUNDLING: 'true'
-
-      - name: Upload build reports
-        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
-        with:
-          name: build-reports
-          path: build/reports/
-
-      - name: Cache the Android app
-        uses: actions/cache/save@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
-        with:
-          path: android/app/build/outputs/apk/
-          key: ${{ steps.app-cache.outputs.cache-primary-key }}
-
-      - uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
-        with:
-          name: android-app
-          path: android/app/build/outputs/apk/
 
   ios-build:
     name: Build for iOS

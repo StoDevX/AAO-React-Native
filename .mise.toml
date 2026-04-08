@@ -12,10 +12,6 @@ postinstall = "hk install --mise"
 
 # --- App commands ---
 
-[tasks.android]
-description = "Run the Android app"
-run = "react-native run-android"
-
 [tasks.ios]
 description = "Run the iOS app"
 run = "react-native run-ios"
@@ -81,19 +77,6 @@ description = "Compress data files"
 run = "gzip --keep docs/*.json"
 
 # --- Bundles ---
-
-[tasks."bundle:android"]
-description = "Generate Android JS bundle"
-run = """
-mkdir -p android/generated/assets/ android/generated/res/
-react-native bundle \
-  --entry-file index.js \
-  --dev true \
-  --platform android \
-  --bundle-output ./android/generated/assets/index.android.bundle \
-  --sourcemap-output ./android/generated/assets/index.android.bundle.map \
-  --assets-dest ./android/generated/res/
-"""
 
 [tasks."bundle:ios"]
 description = "Generate iOS JS bundle"
