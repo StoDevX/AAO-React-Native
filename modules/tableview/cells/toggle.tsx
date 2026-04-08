@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {Platform, Switch} from 'react-native'
+import {Switch} from 'react-native'
 import {Cell} from '@frogpond/tableview'
 import {useTheme} from '@frogpond/app-theme'
 
@@ -21,7 +21,7 @@ export function CellToggle(props: PropsType): JSX.Element {
 			disabled={disabled}
 			onValueChange={onChange}
 			trackColor={{
-				true: Platform.select({ios: colors.primary, android: undefined}),
+				true: colors.primary,
 				false: undefined,
 			}}
 			value={value}
