@@ -85,17 +85,12 @@ targets:
     type: application
     platform: iOS
     productName: AllAboutOlaf
-    configFiles:
-      Debug: Pods/Target Support Files/Pods-AllAboutOlaf/Pods-AllAboutOlaf.debug.xcconfig
-      Release: Pods/Target Support Files/Pods-AllAboutOlaf/Pods-AllAboutOlaf.release.xcconfig
     sources:
       - path: AllAboutOlaf
         excludes:
           - Info.plist
           - "*.entitlements"
     resources:
-      - path: AllAboutOlaf/Images.xcassets
-      - path: AllAboutOlaf/LaunchScreen.storyboard
       - path: PrivacyInfo.xcprivacy
       - path: ../images/icons/windmill@2x.png
       - path: ../images/icons/windmill@3x.png
@@ -138,22 +133,12 @@ targets:
           PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]: "match AppStore NFMTHAZVS9.com.drewvolz.stolaf"
     entitlements:
       path: AllAboutOlaf/AllAboutOlaf.entitlements
-    preBuildScripts: []
     postBuildScripts:
       - name: "Bundle React Native code and images"
         script: |
           export NODE_BINARY=node
           ../node_modules/react-native/scripts/react-native-xcode.sh
         basedOnDependencyAnalysis: false
-    attributes:
-      LastSwiftMigration: "0810"
-      SystemCapabilities:
-        com.apple.ApplicationGroups.iOS:
-          enabled: false
-        com.apple.BackgroundModes:
-          enabled: true
-        com.apple.Push:
-          enabled: false
 
   AllAboutOlafUITests:
     type: bundle.ui-testing
@@ -184,15 +169,8 @@ targets:
         Release:
           COPY_PHASE_STRIP: "NO"
           DEBUG_INFORMATION_FORMAT: "dwarf-with-dsym"
-    configFiles:
-      Debug: Pods/Target Support Files/Pods-AllAboutOlaf-AllAboutOlafUITests/Pods-AllAboutOlaf-AllAboutOlafUITests.debug.xcconfig
-      Release: Pods/Target Support Files/Pods-AllAboutOlaf-AllAboutOlafUITests/Pods-AllAboutOlaf-AllAboutOlafUITests.release.xcconfig
     dependencies:
       - target: AllAboutOlaf
-    attributes:
-      CreatedOnToolsVersion: "8.1"
-      ProvisioningStyle: Automatic
-      TestTargetID: AllAboutOlaf
 
 schemes:
   AllAboutOlaf:
