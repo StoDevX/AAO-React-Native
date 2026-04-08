@@ -13,10 +13,9 @@ const path = require('node:path')
  * @returns {string}
  */
 function findCurrentDeploymentTarget() {
-	let projectYml = fs.readFileSync(
-		path.join(__dirname, 'ios', 'project.yml'),
-		{encoding: 'utf-8'},
-	)
+	let projectYml = fs.readFileSync(path.join(__dirname, 'ios', 'project.yml'), {
+		encoding: 'utf-8',
+	})
 
 	const target = projectYml
 		.split('\n')
