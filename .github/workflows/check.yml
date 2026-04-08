@@ -279,8 +279,10 @@ jobs:
       - name: Configure ccache
         if: steps.app-cache.outputs.cache-hit != 'true'
         run: |
+          ccache --set-config=cache_dir=$HOME/Library/Caches/ccache
           ccache --set-config=max_size=2G
           ccache --set-config=compression=true
+          ccache --set-config=sloppiness=file_macro,time_macros,include_file_mtime,include_file_ctime
           ccache --zero-stats
 
       - uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151 # v4.0.1
