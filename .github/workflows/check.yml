@@ -182,6 +182,10 @@ jobs:
           ruby-version: ${{ env.ruby-version }}
           bundler-cache: true
 
+      - name: Install XcodeGen
+        if: steps.app-cache.outputs.cache-hit != 'true'
+        run: brew install xcodegen
+
       - name: Generate Xcode project
         if: steps.app-cache.outputs.cache-hit != 'true'
         run: xcodegen generate
