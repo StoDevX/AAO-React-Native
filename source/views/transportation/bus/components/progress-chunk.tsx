@@ -53,8 +53,7 @@ type Props = {
 }
 
 export function ProgressChunk(props: Props): JSX.Element {
-	let {stopStatus, barColor, currentStopColor, isFirstChunk, isLastChunk} =
-		props
+	let {stopStatus, barColor, currentStopColor} = props
 
 	// To draw the bar, we draw a chunk of the bar, then we draw the dot, then
 	// we draw the last chunk of the bar.

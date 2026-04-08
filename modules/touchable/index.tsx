@@ -23,7 +23,7 @@ type Props = PropsWithChildren<
 
 const CustomPressable = forwardRef<View, Props>((props, ref): JSX.Element => {
 	let {
-		borderless = false,
+		borderless: _borderless = false,
 		children,
 		containerStyle = {},
 		highlight = true,
