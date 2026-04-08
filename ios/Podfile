@@ -58,10 +58,17 @@ target 'AllAboutOlaf' do
 		# this looks redundant, but it should help xcode use the buildcache wrappers in CI
 		installer.pods_project.targets.each do |target|
 			target.build_configurations.each do |config|
-				config.build_settings["CC"] = "clang"
-				config.build_settings["LD"] = "clang"
-				config.build_settings["CXX"] = "clang++"
-				config.build_settings["LDPLUSPLUS"] = "clang++"
+				if system('which ccache > /dev/null 2>&1')
+					config.build_settings["CC"] = "ccache clang"
+					config.build_settings["LD"] = "clang"
+					config.build_settings["CXX"] = "ccache clang++"
+					config.build_settings["LDPLUSPLUS"] = "clang++"
+				else
+					config.build_settings["CC"] = "clang"
+					config.build_settings["LD"] = "clang"
+					config.build_settings["CXX"] = "clang++"
+					config.build_settings["LDPLUSPLUS"] = "clang++"
+				end
 
 				# cocoapods defaults to not stripping the frameworks it creates
 				# issue for cocoapods is https://github.com/CocoaPods/CocoaPods/issues/10277

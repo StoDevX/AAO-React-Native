@@ -42,6 +42,8 @@ const codeSigningDisabled = process.env.CODE_SIGNING_DISABLED === 'true'
  * @returns {string}
  */
 function generateBuildCommand(configuration) {
+	const useCcache = process.env.USE_CCACHE === 'true'
+
 	const baseCommand = [
 		'xcodebuild',
 		'-workspace ios/AllAboutOlaf.xcworkspace',
@@ -52,6 +54,13 @@ function generateBuildCommand(configuration) {
 		'build',
 		'COMPILER_INDEX_STORE_ENABLE=NO',
 	]
+
+	if (useCcache) {
+		baseCommand.push(
+			'CC=ccache\\ clang',
+			'CXX=ccache\\ clang++',
+		)
+	}
 
 	if (codeSigningDisabled) {
 		baseCommand.push(
