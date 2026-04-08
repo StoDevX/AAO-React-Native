@@ -6,7 +6,7 @@ module.exports = {
 	setupFilesAfterEnv: ['<rootDir>/e2e/init.js'],
 	testTimeout: 60000,
 	verbose: true,
-	reporters: ['detox/runners/jest/reporter'],
+	reporters: ['detox/runners/jest/reporter', ['github-actions', {silent: false}]],
 	globalSetup: 'detox/runners/jest/globalSetup',
 	globalTeardown: 'detox/runners/jest/globalTeardown',
 	testEnvironment: 'detox/runners/jest/testEnvironment',
