@@ -1,9 +1,5 @@
-import {beforeAll, beforeEach, xit, xtest} from '@jest/globals'
+import {beforeAll, beforeEach, it, test} from '@jest/globals'
 import {by, device, element, expect} from 'detox'
-
-// TODO: all Transportation tests skipped — app crashes with AsyncStorage
-// "Cannot read property 'getItem' of undefined" when navigating to this module.
-// See: https://github.com/StoDevX/AAO-React-Native/pull/7383
 
 // launch the app once - do this per-test-file to grant only the permissions
 // needed for a given test
@@ -16,7 +12,7 @@ beforeEach(async () => {
 	await device.reloadReactNative()
 })
 
-xit('is reachable from the homescreen', async () => {
+it('is reachable from the homescreen', async () => {
 	// Start at the home screen
 	await expect(element(by.id('screen-homescreen'))).toBeVisible()
 
@@ -28,7 +24,7 @@ xit('is reachable from the homescreen', async () => {
 	await expect(element(by.id('screen-homescreen'))).not.toBeVisible()
 })
 
-xit('has the Transportation view visible by default', async () => {
+it('has the Transportation view visible by default', async () => {
 	// Navigate into Transportation
 	await element(by.text('Transportation')).tap()
 
@@ -39,7 +35,7 @@ xit('has the Transportation view visible by default', async () => {
 	await expect(element(by.text('Transportation'))).toBeVisible()
 })
 
-xtest.each`
+test.each`
 	tab
 	${'Express Bus'}
 	${'Red Line'}

@@ -18,7 +18,12 @@ export const queryClient = new QueryClient({
 	},
 })
 
-export const persister = createAsyncStoragePersister({storage: AsyncStorage})
+// Guard against AsyncStorage being unavailable (e.g. native module bridge not
+// ready after a JS reload in Detox). Passing undefined falls back to a no-op
+// persister inside createAsyncStoragePersister.
+export const persister = createAsyncStoragePersister({
+	storage: AsyncStorage ?? undefined,
+})
 
 //
 // Enable auto-refresh on app switch or network reconnect
