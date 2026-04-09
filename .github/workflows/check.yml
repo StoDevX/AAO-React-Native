@@ -210,11 +210,9 @@ jobs:
         uses: actions/cache/restore@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
         id: app-cache
         with:
+          fail-on-cache-miss: true
           path: ios/build/Build/Products/
           key: ${{ needs.ios-build.outputs.cache-key }}
-
-      - if: steps.app-cache.outputs.cache-hit != 'true'
-        run: exit 1
 
       - name: Debug - Check app cache contents
         run: |
@@ -232,14 +230,12 @@ jobs:
         uses: actions/cache/restore@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
         id: jsbundle-cache
         with:
+          fail-on-cache-miss: true
           path: |
             ios/AllAboutOlaf/main.jsbundle
             ios/AllAboutOlaf/main.jsbundle.map
             ios/assets/
           key: ${{ needs.ios-bundle.outputs.cache-key }}
-
-      - if: steps.jsbundle-cache.outputs.cache-hit != 'true'
-        run: exit 1
 
       - name: Debug - Verify cache keys
         run: |
