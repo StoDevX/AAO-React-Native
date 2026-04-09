@@ -33,7 +33,7 @@ jobs:
       - uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151 # v4.0.1
       - run: npm ci
       - run: mise run pretty:check
-  
+
   cocoapods:
     name: CocoaPods
     runs-on: ubuntu-24.04
