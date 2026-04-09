@@ -16,16 +16,16 @@ Direct, faithful migration — reproduce the current pbxproj exactly in YAML, th
 - **iOS deployment target:** 17.2
 - **Development team:** TMK6S7TPX2
 - **Build configurations:** Debug, Release
-- **xcconfig includes:** CocoaPods-generated configs from `Pods/Target Support Files/`
+- **xcconfig includes:** Set automatically by CocoaPods during `pod install`
 
 ### Target: AllAboutOlaf (application)
 
 - **Sources:** `AllAboutOlaf/` (AppDelegate.mm, main.m)
-- **Resources:** `AllAboutOlaf/Images.xcassets`, font files (Entypo.ttf, Ionicons.ttf), `PrivacyInfo.xcprivacy`
+- **Resources:** Auto-detected from sources (Images.xcassets, LaunchScreen.storyboard) plus `PrivacyInfo.xcprivacy` and windmill icon PNGs
 - **Info.plist:** `AllAboutOlaf/Info.plist`
 - **Entitlements:** `AllAboutOlaf/AllAboutOlaf.entitlements`
-- **Bridging header:** `AllAboutOlaf/AllAboutOlaf-Bridging-Header.h`
-- **Product name:** "Hello World" (matching existing config)
+- **Bridging header:** `AllAboutOlafUITests/AllAboutOlaf-Bridging-Header.h`
+- **Product name:** `AllAboutOlaf`
 - **Bundle identifier:** `NFMTHAZVS9.com.drewvolz.stolaf`
 - **Code signing (Debug):** Manual, "Apple Development", provisioning profile `match Development NFMTHAZVS9.com.drewvolz.stolaf`
 - **Code signing (Release):** Manual, "iPhone Distribution", provisioning profile `match AppStore NFMTHAZVS9.com.drewvolz.stolaf`
@@ -105,7 +105,7 @@ When `project.yml` changes (e.g., after pulling), re-run `mise run pods`.
 
 ## CI / Fastlane
 
-No changes. XcodeGen outputs to the same `ios/AllAboutOlaf.xcodeproj` path, so all existing Fastfile references (`XCODE_PROJECT`, `GYM_WORKSPACE`, `GYM_SCHEME`) remain valid. CI just needs to run `mise run pods` (or equivalent) before building.
+Fastlane references do not change. XcodeGen outputs to the same `ios/AllAboutOlaf.xcodeproj` path, so existing Fastfile references (`XCODE_PROJECT`, `GYM_WORKSPACE`, `GYM_SCHEME`) remain valid. CI needs an updated setup step: before building, it must install XcodeGen (via Homebrew) and run `xcodegen generate` before `pod install`. The `detox.config.js` also needs to read the deployment target from `ios/project.yml` instead of the pbxproj.
 
 ## Validation
 
