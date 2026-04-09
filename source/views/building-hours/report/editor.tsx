@@ -63,22 +63,12 @@ export function BuildingHoursScheduleEditorView(): JSX.Element {
 
 	let {open, close} = parseHours(set, moment())
 
-	let [summary, setSummary] = React.useState('')
-
-	let buildSummary = React.useCallback(
-		(schedule: SingleBuildingScheduleType): string => {
-			if (!schedule.days.length) {
-				return 'Select a day to get started.'
-			}
-
-			return summarizeDaysAndHours(schedule)
-		},
-		[],
-	)
-
-	React.useEffect(() => {
-		setSummary(buildSummary(set))
-	}, [buildSummary, set])
+	let summary = React.useMemo(() => {
+		if (!set.days.length) {
+			return 'Select a day to get started.'
+		}
+		return summarizeDaysAndHours(set)
+	}, [set])
 
 	return (
 		<ScrollView>
