@@ -329,6 +329,7 @@ jobs:
 
       - name: Run the Detox tests
         run: |
+          set -o pipefail
           npx \
             detox test \
             e2e/ \
