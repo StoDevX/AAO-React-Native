@@ -14,5 +14,5 @@ gem 'nkf', '0.2.0'
 # fastlane plugins
 
 group :development do
-  gem 'rubocop', '1.86.0'
+  gem 'rubocop', '1.86.1'
 end
