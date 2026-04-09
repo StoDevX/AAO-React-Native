@@ -143,6 +143,12 @@ All About Olaf is a React Native mobile application for the St. Olaf College com
 - Write meaningful commit messages
 - Keep changes focused and atomic
 
+## Agent Workflow
+
+**Session startup:** Always run `mise run agent:setup` at the start of every session. This installs dependencies and bundles data files.
+
+**Before committing:** Always run `mise run agent:pre-commit` before committing any changes. This formats code with Prettier, runs ESLint, checks TypeScript types, and runs Jest tests. Do not commit if any step fails.
+
 ### Architecture Decisions
 - Follow existing component composition patterns
 - Use the established directory structure
