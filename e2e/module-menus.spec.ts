@@ -48,8 +48,7 @@ test.each`
 	await expect(element(tabMatcher)).toBeVisible()
 	await element(tabMatcher).tap()
 
-	// Verify the menu view loaded by checking the title is still visible
-	await expect(element(by.text('Menus'))).toBeVisible()
+	await expect(element(by.text('Specials Only'))).toBeVisible()
 })
 
 describe('carleton menus', () => {
@@ -71,7 +70,6 @@ describe('carleton menus', () => {
 		await expect(element(listItemMatcher)).toBeVisible()
 		await element(listItemMatcher).tap()
 
-		// Verify the menu view loaded by checking the title is still visible
-		await expect(element(by.text('Menus'))).toBeVisible()
+		await expect(element(by.text('Specials Only'))).toBeVisible()
 	})
 })
