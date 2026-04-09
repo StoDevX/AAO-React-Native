@@ -90,6 +90,24 @@ react-native bundle \
   --assets-dest ./ios
 """
 
+# --- Agent tasks ---
+
+[tasks."agent:setup"]
+description = "Set up the development environment for AI agents"
+run = """
+npm ci
+mise run bundle-data
+"""
+
+[tasks."agent:pre-commit"]
+description = "Run pre-commit checks: format, lint, typecheck, test"
+run = """
+mise run pretty
+mise run lint
+mise run tsc
+mise run test
+"""
+
 # --- Diagnostics (from Makefile) ---
 
 [tasks.tsc-errors]

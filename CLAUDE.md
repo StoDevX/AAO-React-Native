@@ -62,6 +62,12 @@ npm test            # Jest
 npx tsc --noEmit    # Type check
 ```
 
+## Agent Workflow
+
+**Session startup:** Always run `mise run agent:setup` at the start of every session. This installs dependencies and bundles data files.
+
+**Before committing:** Always run `mise run agent:pre-commit` before committing any changes. This formats code with Prettier, runs ESLint, checks TypeScript types, and runs Jest tests. Do not commit if any step fails.
+
 ## Superpowers Skills Framework
 
 This project uses the [Superpowers](https://github.com/obra/superpowers) skills framework. You have superpowers.
