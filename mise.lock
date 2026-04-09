@@ -12,6 +12,10 @@ backend = "gem:bundler"
 version = "2.232.2"
 backend = "gem:fastlane"
 
+[[tools."gem:rubocop"]]
+version = "1.86.1"
+backend = "gem:rubocop"
+
 [[tools.hk]]
 version = "1.41.0"
 backend = "aqua:jdx/hk"
