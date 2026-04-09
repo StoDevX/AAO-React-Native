@@ -1,0 +1,28 @@
+#!/bin/bash
+
+# Linux shim for React Native CocoaPods builds:
+# pass through to system cc, but strip Darwin-only flags that break on Linux.
+
+set -e -o pipefail
+
+if test "$(uname)" = "Darwin"; then
+	exec /usr/bin/cc "$@"
+fi
+
+args=()
+while test "$#" -gt 0; do
+	case "$1" in
+		-arch|-isysroot)
+			shift
+			if test "$#" -gt 0; then
+				shift
+			fi
+			;;
+		*)
+			args+=("$1")
+			shift
+			;;
+	esac
+done
+
+exec /usr/bin/cc "${args[@]}"

@@ -1,0 +1,17 @@
+#!/bin/bash
+
+set -e -o pipefail
+
+if test "$(uname)" == "Darwin"; then
+    exec /usr/bin/xcodebuild "$@"
+fi
+
+if test "$#" -eq 1 && test "$1" = "-version"; then
+    echo 'Xcode 26.4'
+    echo 'Build version 17E192'
+    exit 0
+fi
+
+echo 'xcodebuild shim on Linux only supports:' 1>&2
+echo '  xcodebuild -version' 1>&2
+exit 127

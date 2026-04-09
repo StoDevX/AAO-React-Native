@@ -1,0 +1,24 @@
+#!/bin/bash
+
+set -e -o pipefail
+
+if test "$(uname)" = "Darwin"; then
+	exec /usr/bin/xcrun "$@"
+fi
+
+# Linux shim that supports the xcrun invocations used by React Native's glog script.
+# export CC="$(xcrun -find -sdk $PLATFORM_NAME cc) -arch $CURRENT_ARCH -isysroot $(xcrun -sdk $PLATFORM_NAME --show-sdk-path)"
+if test "$#" -eq 4 && test "$1" = "-find" && test "$2" = "-sdk" && test "$4" = "cc"; then
+	echo 'cc'
+	exit 0
+fi
+
+if test "$#" -eq 3 && test "$1" = "-sdk" && test "$3" = "--show-sdk-path"; then
+	echo '/'
+	exit 0
+fi
+
+echo 'xcrun shim on Linux only supports:' 1>&2
+echo '  xcrun -find -sdk <platform> cc' 1>&2
+echo '  xcrun -sdk <platform> --show-sdk-path' 1>&2
+exit 127
