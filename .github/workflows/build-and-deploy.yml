@@ -29,10 +29,6 @@ jobs:
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151 # v4.0.1
-      - uses: ruby/setup-ruby@e65c17d16e57e481586a6a5a0282698790062f92 # v1.300.0
-        with:
-          ruby-version: '3.4.9'
-          bundler-cache: true
       - run: sudo xcode-select -s /Applications/Xcode_15.2.app
       - run: git fetch --prune --unshallow
       - run: npm ci
