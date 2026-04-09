@@ -60,7 +60,13 @@ function generateBuildCommand(configuration) {
 		)
 	}
 
-	return baseCommand.join(' ')
+	let command = baseCommand.join(' ')
+
+	if (process.env.CI) {
+		command = `set -o pipefail && ${command} | xcpretty`
+	}
+
+	return command
 }
 
 /**
