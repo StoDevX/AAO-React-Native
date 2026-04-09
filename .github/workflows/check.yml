@@ -99,8 +99,6 @@ jobs:
       - uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151 # v4.0.1
 
       - run: npm ci
-        env:
-          SKIP_POSTINSTALL: '1'
 
       - name: Load the cached jsbundle
         uses: actions/cache/restore@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
@@ -159,8 +157,6 @@ jobs:
       - name: Install npm dependencies
         if: steps.app-cache.outputs.cache-hit != 'true'
         run: npm ci
-        env:
-          SKIP_POSTINSTALL: '1'
 
       - name: Install CocoaPods
         if: steps.app-cache.outputs.cache-hit != 'true'
@@ -291,8 +287,6 @@ jobs:
       - uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151 # v4.0.1
 
       - run: npm ci
-        env:
-          SKIP_POSTINSTALL: '1'
 
       - # We have to poke Detox because it installs things outside of node_modules/detox/…
         name: Re-install Detox
