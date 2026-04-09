@@ -463,7 +463,8 @@ PODS:
     - RCT-Folly (= 2021.07.22.00)
     - React-Core
     - ReactCommon/turbomodule/core
-  - RNScreens (3.24.0):
+  - RNScreens (3.37.0):
+    - RCT-Folly (= 2021.07.22.00)
     - React-Core
     - React-RCTImage
   - RNSearchBar (3.5.1):
@@ -731,7 +732,7 @@ SPEC CHECKSUMS:
   RNInAppBrowser: 904d24dc75e8e6c6c98a3160329192608946f9df
   RNKeychain: bbe2f6d5cc008920324acb49ef86ccc03d3b38e4
   RNReanimated: a69b0025e0a69c2024a4a5f818789d21f76721b1
-  RNScreens: 3139e3291595a8f61e09f1348b8c1f89ed3fdfd2
+  RNScreens: c1a851e518284641160aa5af4894479773a6e719
   RNSearchBar: feb1a3829c44d6ae1b96dc1397062b2fbfb95825
   RNSentry: 5c1153e284b2300597640e9239423f7cfbb3b809
   RNVectorIcons: 5784330be9dddb5474e8b378d5f6947996c84e55
