@@ -143,7 +143,7 @@
     "react-test-renderer": "18.2.0",
     "string-natural-compare": "3.0.1",
     "strip-ansi": "7.1.2",
-    "ts-jest": "29.4.6",
+    "ts-jest": "29.4.9",
     "ts-node": "10.9.2",
     "typescript": "5.9.3",
     "typescript-eslint": "8.51.0"
