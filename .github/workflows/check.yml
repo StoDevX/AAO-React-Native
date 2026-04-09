@@ -288,9 +288,11 @@ jobs:
         name: Re-install Detox
         run: npx detox clean-framework-cache && npx detox build-framework-cache
 
-      - run: brew tap wix/brew
+      - name: brew install applesimutils
+        run: |
+          brew tap wix/brew
+          brew install applesimutils
 
-      - run: brew install applesimutils
 
       - name: Run the Detox tests
         run: npx detox test e2e --configuration ios.sim.release --cleanup --record-logs failing --record-videos failing --record-performance all --capture-view-hierarchy enabled --take-screenshots failing
