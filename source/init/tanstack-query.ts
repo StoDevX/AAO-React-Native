@@ -18,9 +18,7 @@ export const queryClient = new QueryClient({
 	},
 })
 
-export const persister = createAsyncStoragePersister({
-	storage: AsyncStorage ?? undefined,
-})
+export const persister = createAsyncStoragePersister({storage: AsyncStorage})
 
 //
 // Enable auto-refresh on app switch or network reconnect

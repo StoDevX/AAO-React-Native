@@ -2,12 +2,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import {create} from 'zustand'
 import {persist, createJSONStorage} from 'zustand/middleware'
 
-const storage = AsyncStorage ?? {
-	getItem: () => Promise.resolve(null),
-	setItem: () => Promise.resolve(),
-	removeItem: () => Promise.resolve(),
-}
-
 import type {Faq} from './types'
 
 type DismissedEntry = {
@@ -48,7 +42,7 @@ export const useFaqBannerStore = create<BannerStore>()(
 		}),
 		{
 			name: 'faq-banner-preferences',
-			storage: createJSONStorage(() => storage),
+			storage: createJSONStorage(() => AsyncStorage),
 			version: 1,
 		},
 	),

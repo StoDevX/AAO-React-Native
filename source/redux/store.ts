@@ -16,16 +16,10 @@ import {
 } from 'redux-persist'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 
-const safeStorage = AsyncStorage ?? {
-	getItem: () => Promise.resolve(null),
-	setItem: () => Promise.resolve(),
-	removeItem: () => Promise.resolve(),
-}
-
 const persistConfig = {
 	key: 'root',
 	version: 1,
-	storage: safeStorage,
+	storage: AsyncStorage,
 }
 
 const rootReducer = combineReducers({
