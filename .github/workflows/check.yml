@@ -217,10 +217,14 @@ jobs:
           path: ios/build/Build/Products/
 
   ios-detox:
-    name: Detox E2E for iOS
+    name: Detox E2E for iOS (${{ matrix.shard }}/${{ strategy.job-total }})
     needs: [ios-build, ios-bundle]
     runs-on: macos-14
     if: ${{ !contains(github.event.pull_request.labels.*.name, 'ci/skip-detox') }}
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3]
     steps:
       - run: sudo xcode-select -s /Applications/${{ env.xcode_version }}.app
 
@@ -332,12 +336,13 @@ jobs:
             --record-logs all \
             --record-videos failing \
             --take-screenshots failing \
+            -- --shard=${{ matrix.shard }}/${{ strategy.job-total }} \
             2>&1 | tee detox-output.log
 
       - name: Show Detox test results
         if: always()
         run: |
-          echo "## Detox E2E Test Results" >> $GITHUB_STEP_SUMMARY
+          echo "## Detox E2E Test Results (shard ${{ matrix.shard }}/${{ strategy.job-total }})" >> $GITHUB_STEP_SUMMARY
           echo '```' >> $GITHUB_STEP_SUMMARY
           tail -200 detox-output.log >> $GITHUB_STEP_SUMMARY 2>/dev/null || echo "No output log found" >> $GITHUB_STEP_SUMMARY
           echo '```' >> $GITHUB_STEP_SUMMARY
@@ -356,5 +361,5 @@ jobs:
       - uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
         if: always()
         with:
-          name: detox-ios
+          name: detox-ios-${{ matrix.shard }}
           path: artifacts/
