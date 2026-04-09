@@ -27,7 +27,7 @@ jobs:
 
       - uses: ruby/setup-ruby@e65c17d16e57e481586a6a5a0282698790062f92 # v1.300.0
         with:
-          ruby-version: '3.4.8'
+          ruby-version: '3.4.9'
           bundler-cache: true
 
       - run: sudo xcode-select -s /Applications/Xcode_15.2.app
