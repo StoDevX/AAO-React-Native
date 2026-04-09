@@ -95,10 +95,10 @@
     "zustand": "4.4.1"
   },
   "devDependencies": {
-    "@babel/core": "7.28.5",
+    "@babel/core": "7.29.0",
     "@babel/plugin-transform-private-methods": "7.28.6",
     "@babel/preset-typescript": "7.28.5",
-    "@babel/runtime": "7.26.10",
+    "@babel/runtime": "7.29.2",
     "@eslint/js": "9.39.4",
     "@jest/globals": "29.7.0",
     "@react-native/eslint-config": "0.83.1",
