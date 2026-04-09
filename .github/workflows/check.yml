@@ -292,9 +292,11 @@ jobs:
         name: Re-install Detox
         run: npx detox clean-framework-cache && npx detox build-framework-cache
 
-      - run: brew tap wix/brew
+      - name: brew install applesimutils
+        run: |
+          brew tap wix/brew
+          brew install applesimutils
 
-      - run: brew install applesimutils
 
       - name: Run the Detox tests
         run: |
