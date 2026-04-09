@@ -1,10 +1,9 @@
 module.exports = {
 	presets: [
-		'module:metro-react-native-babel-preset',
+		'module:@react-native/babel-preset',
 		'@babel/preset-typescript',
 	],
 	plugins: [
-		'@babel/plugin-transform-export-namespace-from',
 		['@babel/plugin-transform-private-methods', {loose: true}],
 		// the react-native-reanimated plugin must come last
 		'react-native-reanimated/plugin',
