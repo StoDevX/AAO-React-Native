@@ -237,13 +237,6 @@ jobs:
             ios/assets/
           key: ${{ needs.ios-bundle.outputs.cache-key }}
 
-      - name: Debug - Verify cache keys
-        run: |
-          echo "App cache key: ${{ needs.ios-build.outputs.cache-key }}"
-          echo "App cache hit: ${{ steps.app-cache.outputs.cache-hit }}"
-          echo "JS bundle cache key: ${{ needs.ios-bundle.outputs.cache-key }}"
-          echo "JS bundle cache hit: ${{ steps.jsbundle-cache.outputs.cache-hit }}"
-
       - name: Move cached jsbundle into place
         run: |
           # Ensure app directory exists
