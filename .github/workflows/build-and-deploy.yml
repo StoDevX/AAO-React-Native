@@ -1,7 +1,6 @@
 name: Build and Deploy
 
 on:
-  # push:
   workflow_dispatch:
   schedule:
     - cron: '17 8 * * *'
@@ -21,10 +20,8 @@ jobs:
       - run: mise run lint
       - name: Run tests
         run: mise run test -- --coverage
-      - name: Upload coverage
-        env:
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
-        run: bash <(curl -s https://codecov.io/bash)
+      - uses: codecov/codecov-action@57e3a136b779b570ffcdbf80b3bdc90e7fab3de2 # v6.0.0
+      - run: mise run pods
 
   ios:
     name: Build for iOS
@@ -41,8 +38,7 @@ jobs:
       - run: npm ci
         env:
           SKIP_POSTINSTALL: '1'
-      - run: bundle exec pod install --deployment
-        working-directory: ./ios
+      - run: mise run pods
       - run: brew tap wix/brew
       - run: brew install applesimutils
       - run: bundle exec fastlane ios ci-run

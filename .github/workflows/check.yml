@@ -20,13 +20,9 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-
       - uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151 # v4.0.1
-
       - run: npm ci
-
       - run: mise run bundle-data
-
       - run: hk check
 
   prettier:
@@ -34,25 +30,31 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-
       - uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151 # v4.0.1
-
       - run: npm ci
-
       - run: mise run pretty:check
+  
+  cocoapods:
+    name: CocoaPods
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151 # v4.0.1
+      - uses: ruby/setup-ruby@e65c17d16e57e481586a6a5a0282698790062f92 # v1.300.0
+        with:
+          ruby-version: ${{ env.ruby-version }}
+          bundler-cache: true
+      - run: npm ci
+      - run: mise run pods
 
   eslint:
     name: ESLint
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-
       - uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151 # v4.0.1
-
       - run: npm ci
-
       - run: mise run bundle-data
-
       - run: mise run lint
 
   jest:
@@ -60,14 +62,10 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-
       - uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151 # v4.0.1
-
       - run: npm ci
-
       - name: Run tests
         run: mise run test -- --coverage
-
       - name: Upload coverage
         uses: codecov/codecov-action@57e3a136b779b570ffcdbf80b3bdc90e7fab3de2 # v6.0.0
 
@@ -76,13 +74,9 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-
       - uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151 # v4.0.1
-
       - run: npm ci
-
       - run: mise run bundle-data
-
       - run: mise run tsc
 
   data:
@@ -90,13 +84,9 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-
       - uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151 # v4.0.1
-
       - run: npm ci
-
       - run: mise run validate-data
-
       - run: mise run bundle-data
 
   ios-bundle:
@@ -184,14 +174,13 @@ jobs:
 
       - name: Install CocoaPods
         if: steps.app-cache.outputs.cache-hit != 'true'
-        run: bundle exec pod install --deployment
-        working-directory: ./ios
+        run: mise run pods
 
       - name: Build the iOS app
         if: ${{ steps.app-cache.outputs.cache-hit != 'true' && !contains(github.event.pull_request.labels.*.name, 'ci/skip-detox') }}
         env:
           SKIP_BUNDLING: 'true'
-          CODE_SIGNING_DISABLED: true
+          CODE_SIGNING_DISABLED: 'true'
         run: npx detox build e2e --configuration ios.sim.release
 
       # Debug step to verify build output

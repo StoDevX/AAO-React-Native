@@ -56,10 +56,11 @@ These patterns are especially important in this codebase:
 ## Development Commands
 
 ```bash
-npm run lint        # ESLint
-npm run pretty      # Prettier
-npm test            # Jest
-npx tsc --noEmit    # Type check
+mise run lint   # ESLint
+mise run pretty # Prettier; run `pretty:check` to validate instead
+mise run test   # Jest, unit tests
+mise run tsc    # Type check
+mise run pods   # Install cocoapods, even on Linux
 ```
 
 ## Superpowers Skills Framework
