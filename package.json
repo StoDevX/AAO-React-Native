@@ -108,7 +108,7 @@
     "@testing-library/react-native": "12.9.0",
     "@tsconfig/react-native": "3.0.9",
     "@types/base-64": "1.0.2",
-    "@types/http-cache-semantics": "4.0.4",
+    "@types/http-cache-semantics": "4.2.0",
     "@types/jest": "29.5.14",
     "@types/js-yaml": "4.0.9",
     "@types/lodash": "4.17.24",
