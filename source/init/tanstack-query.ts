@@ -18,14 +18,6 @@ export const queryClient = new QueryClient({
 	},
 })
 
-if (!AsyncStorage) {
-	console.error(
-		'[@AAO] AsyncStorage is unavailable:',
-		typeof AsyncStorage,
-		AsyncStorage,
-	)
-}
-
 export const persister = createAsyncStoragePersister({
 	storage: AsyncStorage ?? undefined,
 })

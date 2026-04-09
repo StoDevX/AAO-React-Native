@@ -10,15 +10,6 @@ import './init/api'
 import './init/theme'
 import {queryClient, persister} from './init/tanstack-query'
 
-// Diagnostic: check AsyncStorage native module availability
-import {NativeModules, TurboModuleRegistry} from 'react-native'
-console.log('[@AAO] AsyncStorage native module check:', {
-	RNCAsyncStorage: Boolean(NativeModules.RNCAsyncStorage),
-	AsyncLocalStorage: Boolean(NativeModules.AsyncLocalStorage),
-	AsyncSQLiteDBStorage: Boolean(NativeModules.AsyncSQLiteDBStorage),
-	turboModule: Boolean(TurboModuleRegistry?.get('RNCAsyncStorage')),
-})
-
 import * as React from 'react'
 import {PersistGate} from 'redux-persist/integration/react'
 import {Provider as ReduxProvider} from 'react-redux'

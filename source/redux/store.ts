@@ -16,14 +16,6 @@ import {
 } from 'redux-persist'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 
-if (!AsyncStorage) {
-	console.error(
-		'[@AAO/redux] AsyncStorage is unavailable:',
-		typeof AsyncStorage,
-		AsyncStorage,
-	)
-}
-
 const safeStorage = AsyncStorage ?? {
 	getItem: () => Promise.resolve(null),
 	setItem: () => Promise.resolve(),
