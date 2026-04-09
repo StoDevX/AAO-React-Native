@@ -101,12 +101,7 @@ mise run bundle-data
 
 [tasks."agent:pre-commit"]
 description = "Run pre-commit checks: format, lint, typecheck, test"
-run = """
-mise run pretty
-mise run lint
-mise run tsc
-mise run test
-"""
+depends = ["pretty", "lint", "tsc", "test"]
 
 # --- Diagnostics (from Makefile) ---
 
