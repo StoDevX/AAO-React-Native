@@ -290,6 +290,12 @@ jobs:
           brew tap wix/brew
           brew install applesimutils
 
+      - name: Boot the simulator
+        run: |
+          DEVICE="$(node -e "const c = require('./detox.config.js'); console.log(c.devices['ios.simulator'].device.type)")"
+          xcrun simctl boot "$DEVICE" || true
+          # Wait for it to be ready
+          xcrun simctl bootstatus "$DEVICE" -b
 
       - name: Run the Detox tests
         run: |
