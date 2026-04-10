@@ -21,13 +21,16 @@ import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 import {useNavigation} from '@react-navigation/native'
 import {DebugNoticeButton} from '@frogpond/navigation-buttons'
 import {useMomentTimer} from '@frogpond/timer'
-import {usePrintJobs} from './query'
-import {useHasCredentials} from '../../lib/login'
+import {printJobsOptions} from './query'
+import {credentialsOptions} from '../../lib/login'
+import {useQuery} from '@tanstack/react-query'
 
 export const PrintJobsView = (): JSX.Element => {
 	let {now} = useMomentTimer({intervalMs: 60000, timezone: timezone()})
 	let {data: hasCredentials, isLoading: hasCredentialsLoading} =
-		useHasCredentials()
+		useQuery({...credentialsOptions, select: (data) => Boolean(data)})
+
+	let {data: username = ''} = useQuery({...credentialsOptions, select: (data) => data?.username})
 
 	let {
 		data: jobsData = {jobs: []},
@@ -36,7 +39,7 @@ export const PrintJobsView = (): JSX.Element => {
 		isLoading: jobsLoading,
 		refetch: jobsRefetch,
 		isRefetching: jobsRefetching,
-	} = usePrintJobs()
+	} = useQuery(printJobsOptions(username))
 
 	let navigation = useNavigation()
 	let openSettings = () => navigation.navigate('Settings')
