@@ -18,17 +18,26 @@ jobs:
     name: iOS Update Cocoapods
     runs-on: ubuntu-24.04
     timeout-minutes: 15
-    if: github.event_name == 'push' || (github.event_name == 'issue_comment' && github.event.issue.pull_request.url != '' && contains(github.event.comment.body, '/update-pods'))
+    if: github.event_name == 'push' || (github.event_name == 'issue_comment' && github.event.issue.pull_request.url != '' && contains(github.event.comment.body, '/update-pods') && contains(fromJSON('["OWNER","MEMBER","COLLABORATOR"]'), github.event.comment.author_association))
     steps:
       - name: Get PR branch info (comment trigger)
         if: github.event_name == 'issue_comment'
         id: pr-info
         run: |
           pr_data=$(gh api "${{ github.event.issue.pull_request.url }}")
-          echo "branch=$(echo "$pr_data" | jq -r '.head.ref')" >> "$GITHUB_OUTPUT"
-          echo "head_ref=refs/heads/$(echo "$pr_data" | jq -r '.head.ref')" >> "$GITHUB_OUTPUT"
+          pr_branch=$(echo "$pr_data" | jq -r '.head.ref')
+          pr_head_repo=$(echo "$pr_data" | jq -r '.head.repo.full_name')
+
+          if [ "$pr_head_repo" != "$BASE_REPOSITORY" ]; then
+            echo "::error::Refusing to update pods for forked PR head repository '$pr_head_repo'. Expected '$BASE_REPOSITORY'."
+            exit 1
+          fi
+
+          echo "branch=$pr_branch" >> "$GITHUB_OUTPUT"
+          echo "head_ref=refs/heads/$pr_branch" >> "$GITHUB_OUTPUT"
         env:
           GH_TOKEN: ${{ secrets.COCOAPODS_LOCKFILE_GH_PUSH_TOKEN }}
+          BASE_REPOSITORY: ${{ github.repository }}
 
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
