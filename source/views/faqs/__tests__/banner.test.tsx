@@ -16,8 +16,14 @@ jest.mock('@react-navigation/native', () => ({
 	}),
 }))
 
+jest.mock('../query', () => ({
+	faqsOptions: {queryKey: ['faqs']},
+}))
+
 jest.mock('@tanstack/react-query', () => ({
-	...jest.requireActual('@tanstack/react-query'),
+	...jest.requireActual<typeof import('@tanstack/react-query')>(
+		'@tanstack/react-query',
+	),
 	useQuery: jest.fn(),
 }))
 
