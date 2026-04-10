@@ -120,10 +120,12 @@ module.exports = {
 	devices: {
 		'ios.simulator': {
 			type: 'ios.simulator',
-			device: {
-				type: iPhoneSimulatorDevice,
-				os: currentDeploymentTarget,
-			},
+			device: process.env.DETOX_UDID
+				? {id: process.env.DETOX_UDID}
+				: {
+						type: iPhoneSimulatorDevice,
+						os: currentDeploymentTarget,
+					},
 		},
 	},
 }
