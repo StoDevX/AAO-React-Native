@@ -2,10 +2,11 @@ name: Check & Update Cocoapods
 
 on:
   push:
-    branches:
-      - renovate/**
     paths:
       - package-lock.json
+      - ios/Podfile
+  issue_comment:
+    types: [created]
 
 permissions:
   contents: write
@@ -17,11 +18,22 @@ jobs:
     name: iOS Update Cocoapods
     runs-on: ubuntu-24.04
     timeout-minutes: 15
-    if: github.actor == 'renovate[bot]'
+    if: github.event_name == 'push' || (github.event_name == 'issue_comment' && github.event.issue.pull_request.url != '' && contains(github.event.comment.body, '/update-pods'))
     steps:
+      - name: Get PR branch info (comment trigger)
+        if: github.event_name == 'issue_comment'
+        id: pr-info
+        run: |
+          pr_data=$(gh api "${{ github.event.issue.pull_request.url }}")
+          echo "branch=$(echo "$pr_data" | jq -r '.head.ref')" >> "$GITHUB_OUTPUT"
+          echo "head_ref=refs/heads/$(echo "$pr_data" | jq -r '.head.ref')" >> "$GITHUB_OUTPUT"
+        env:
+          GH_TOKEN: ${{ secrets.COCOAPODS_LOCKFILE_GH_PUSH_TOKEN }}
+
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           token: ${{ secrets.COCOAPODS_LOCKFILE_GH_PUSH_TOKEN }}
+          ref: ${{ steps.pr-info.outputs.branch || github.ref }}
 
       - uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151 # v4.0.1
 
@@ -34,5 +46,5 @@ jobs:
       - name: push-on-podfile-change
         run: bash scripts/push-on-podfile-change.sh
         env:
-          branch: ${{ github.ref_name }}
-          head_ref: ${{ github.ref }}
+          branch: ${{ steps.pr-info.outputs.branch || github.ref_name }}
+          head_ref: ${{ steps.pr-info.outputs.head_ref || github.ref }}
