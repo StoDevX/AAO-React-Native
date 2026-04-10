@@ -1,7 +1,11 @@
 import {parseTerm} from '../../../../lib/course-search/parse-term'
 import type {FilterType, ListType, ToggleType} from '@frogpond/filter'
 import {CourseType} from '../../../../lib/course-search'
-import {availableTermsOptions, departmentsOptions, geReqsOptions} from '../query'
+import {
+	availableTermsOptions,
+	departmentsOptions,
+	geReqsOptions,
+} from '../query'
 import {useQuery} from '@tanstack/react-query'
 
 export function useFilters(): {

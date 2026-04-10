@@ -27,10 +27,15 @@ import {useQuery} from '@tanstack/react-query'
 
 export const PrintJobsView = (): JSX.Element => {
 	let {now} = useMomentTimer({intervalMs: 60000, timezone: timezone()})
-	let {data: hasCredentials, isLoading: hasCredentialsLoading} =
-		useQuery({...credentialsOptions, select: (data) => Boolean(data)})
+	let {data: hasCredentials, isLoading: hasCredentialsLoading} = useQuery({
+		...credentialsOptions,
+		select: (data) => Boolean(data),
+	})
 
-	let {data: username = ''} = useQuery({...credentialsOptions, select: (data) => data?.username})
+	let {data: username = ''} = useQuery({
+		...credentialsOptions,
+		select: (data) => data?.username,
+	})
 
 	let {
 		data: jobsData = {jobs: []},

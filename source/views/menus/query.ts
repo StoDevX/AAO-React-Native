@@ -85,10 +85,7 @@ export const pauseMenuOptions = queryOptions({
 		let upgradedFoodItemsMap = Object.fromEntries(
 			upgradedFoodItems.map((item) => [item.id, item]),
 		)
-		let foodItemsByStation = groupBy(
-			upgradedFoodItems,
-			(item) => item.station,
-		)
+		let foodItemsByStation = groupBy(upgradedFoodItems, (item) => item.station)
 
 		stationMenus = stationMenus.map((menu, index) => ({
 			...upgradeStation(menu, index),

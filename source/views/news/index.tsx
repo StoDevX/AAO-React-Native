@@ -20,7 +20,10 @@ const StOlafNewsView = () => (
 	/>
 )
 const MessNewsView = () => (
-	<NewsList query={useQuery(namedNewsOptions('mess'))} thumbnail={newsImages.mess} />
+	<NewsList
+		query={useQuery(namedNewsOptions('mess'))}
+		thumbnail={newsImages.mess}
+	/>
 )
 const OlevilleNewsView = () => (
 	<NewsList

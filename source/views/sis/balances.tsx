@@ -22,7 +22,10 @@ const DISCLAIMER = 'This data may be outdated or otherwise inaccurate.'
 
 export const BalancesView = (): JSX.Element => {
 	let navigation = useNavigation()
-	let {data: username = ''} = useQuery({...credentialsOptions, select: (data) => data?.username})
+	let {data: username = ''} = useQuery({
+		...credentialsOptions,
+		select: (data) => data?.username,
+	})
 
 	let {
 		data = {} as BalancesShapeType,

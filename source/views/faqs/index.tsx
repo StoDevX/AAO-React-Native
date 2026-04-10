@@ -46,7 +46,8 @@ const styles = StyleSheet.create({
 
 function FaqView(): JSX.Element {
 	let route = useRoute<FaqRoute>()
-	let {data, error, isLoading, isError, isRefetching, refetch} = useQuery(faqsOptions)
+	let {data, error, isLoading, isError, isRefetching, refetch} =
+		useQuery(faqsOptions)
 	let faqData: FaqQueryData = data ?? emptyFaqData
 	let highlightId = route.params?.faqId
 	let hasFaqs = faqData.faqs.length > 0

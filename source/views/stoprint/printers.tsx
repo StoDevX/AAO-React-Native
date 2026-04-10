@@ -16,7 +16,11 @@ import {StoPrintErrorView} from './components/error'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 import {RouteProp, useNavigation, useRoute} from '@react-navigation/native'
 import {RootStackParamList} from '../../navigation/types'
-import {allPrintersOptions, colorPrintersOptions, recentPrintersOptions} from './query'
+import {
+	allPrintersOptions,
+	colorPrintersOptions,
+	recentPrintersOptions,
+} from './query'
 import {credentialsOptions} from '../../lib/login'
 import {useQuery} from '@tanstack/react-query'
 import {RecentPopularPrintersResponse} from '../../lib/stoprint/types'
@@ -31,7 +35,10 @@ export const PrinterListView = (): JSX.Element => {
 	let route = useRoute<RouteProp<RootStackParamList, 'PrinterList'>>()
 	let {job} = route.params
 
-	let {data: username = ''} = useQuery({...credentialsOptions, select: (data) => data?.username})
+	let {data: username = ''} = useQuery({
+		...credentialsOptions,
+		select: (data) => data?.username,
+	})
 
 	let {
 		data: allPrinters = [],

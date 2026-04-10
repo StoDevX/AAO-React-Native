@@ -13,7 +13,13 @@ type Props = {
 
 let BusView = (props: Props): JSX.Element => {
 	let {now} = useMomentTimer({intervalMs: 1000 * 60, timezone: timezone()})
-	let {data: busLines = [], error, refetch, isError, isLoading} = useQuery(busRoutesOptions)
+	let {
+		data: busLines = [],
+		error,
+		refetch,
+		isError,
+		isLoading,
+	} = useQuery(busRoutesOptions)
 	let navigation = useNavigation()
 
 	let activeBusLine = busLines.find(({line}) => line === props.line)
