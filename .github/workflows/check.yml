@@ -140,10 +140,10 @@ jobs:
       - name: List available Xcode versions
         run: ls -d /Applications/Xcode*.app
 
-      - name: List available iPhone simulators
-        run: xcrun simctl list devices iPhone available
-
       - run: sudo xcode-select -s /Applications/${{ env.xcode_version }}.app
+
+      - name: List available iOS simulators
+        run: xcrun simctl list devices iOS
 
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
