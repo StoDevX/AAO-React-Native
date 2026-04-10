@@ -44,7 +44,7 @@ export const allPrintersOptions = (username: string) =>
 
 export const recentPrintersOptions = (username: string) =>
 	queryOptions({
-		queryKey: keys.printers(username),
+		queryKey: keys.recentPrinters(username),
 		enabled: Boolean(username),
 		queryFn: ({signal}) => fetchRecentPrinters(username, {signal}),
 	})
