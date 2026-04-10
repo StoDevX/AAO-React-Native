@@ -1,12 +1,11 @@
 import React from 'react'
 import {fireEvent, render} from '@testing-library/react-native'
 
-import type {UseQueryResult} from '@tanstack/react-query'
+import {useQuery, type UseQueryResult} from '@tanstack/react-query'
 
 import {FaqBanner} from '../banner'
 import {useFaqBannerStore} from '../store'
 import type {Faq, FaqQueryData} from '../types'
-import {useFaqs} from '../query'
 import {FAQ_TARGETS} from '../constants'
 
 const mockNavigate = jest.fn()
@@ -17,11 +16,12 @@ jest.mock('@react-navigation/native', () => ({
 	}),
 }))
 
-jest.mock('../query', () => ({
-	useFaqs: jest.fn(),
+jest.mock('@tanstack/react-query', () => ({
+	...jest.requireActual('@tanstack/react-query'),
+	useQuery: jest.fn(),
 }))
 
-const mockedUseFaqs = useFaqs as jest.MockedFunction<typeof useFaqs>
+const mockedUseQuery = useQuery as jest.MockedFunction<typeof useQuery>
 
 const baseFaq: Faq = {
 	id: 'home-support',
@@ -52,7 +52,7 @@ const buildFaqQueryResult = (
 describe('FaqBanner component', () => {
 	beforeEach(() => {
 		useFaqBannerStore.getState().resetAll()
-		mockedUseFaqs.mockReturnValue(buildFaqQueryResult([baseFaq]))
+		mockedUseQuery.mockReturnValue(buildFaqQueryResult([baseFaq]))
 		mockNavigate.mockReset()
 	})
 
