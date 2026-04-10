@@ -18,7 +18,7 @@ jobs:
     name: iOS Update Cocoapods
     runs-on: ubuntu-24.04
     timeout-minutes: 15
-    if: github.event_name == 'push' || (github.event_name == 'issue_comment' && github.event.issue.pull_request.url != '' && contains(github.event.comment.body, '/update-pods') && contains(fromJSON('["OWNER","MEMBER","COLLABORATOR"]'), github.event.comment.author_association))
+    if: github.event_name == 'push' || (github.event_name == 'issue_comment' && github.event.issue.pull_request.url != '' && contains(github.event.comment.body, '/update-pods') && (contains(fromJSON('["OWNER","MEMBER","COLLABORATOR"]'), github.event.comment.author_association) || github.actor == 'renovate[bot]'))
     steps:
       - name: Get PR branch info (comment trigger)
         if: github.event_name == 'issue_comment'
