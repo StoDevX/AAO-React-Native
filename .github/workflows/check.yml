@@ -307,11 +307,14 @@ jobs:
 
       - name: Resolve Detox device UDID
         id: udid
+        env:
+          SIMULATOR_TYPE: '${{ steps.detox-device.outputs.type }}'
+          SIMULATOR_OS: '${{ steps.detox-device.outputs.os }}'
+          DEVICES: '${{ steps.devices.outputs.devices }}'
         run: |
-          export SIMULATOR_TYPE="${{ steps.detox-device.outputs.type }}"
-          export SIMULATOR_OS="${{ steps.detox-device.outputs.os }}"
-          echo "${{ steps.devices.outputs.devices }}" | jq -r '
-            .devices
+          jq -rn '
+            env.DEVICES
+            | .devices
             | to_entries[]
             | select(.key == env.SIMULATOR_OS)
             | .value[]
@@ -327,9 +330,10 @@ jobs:
 
       - name: Run the Detox tests
         timeout-minutes: 30
+        env:
+          DETOX_UDID: '${{ steps.udid.outputs.udid }}'
         run: |
           set -o pipefail
-          export DETOX_UDID="${{ steps.udid.outputs.udid }}"
           npx \
             detox test \
             e2e/ \
