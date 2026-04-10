@@ -23,5 +23,5 @@ jobs:
         with:
           experimental: true
 
-      - name: Install dependencies
-        run: npm ci
+      - name: Set up development environment
+        run: mise run agent:setup
