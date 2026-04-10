@@ -5,7 +5,8 @@ import {Markdown} from '@frogpond/markdown'
 import {LoadingView, NoticeView} from '@frogpond/notice'
 import {ParamListBase, RouteProp, useRoute} from '@react-navigation/native'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
-import {useFaqs, emptyFaqData} from './query'
+import {faqsOptions, emptyFaqData} from './query'
+import {useQuery} from '@tanstack/react-query'
 import type {Faq, FaqQueryData} from './types'
 
 type FaqRoute = RouteProp<ParamListBase & {Faq: {faqId?: string}}, 'Faq'>
@@ -45,7 +46,7 @@ const styles = StyleSheet.create({
 
 function FaqView(): JSX.Element {
 	let route = useRoute<FaqRoute>()
-	let {data, error, isLoading, isError, isRefetching, refetch} = useFaqs()
+	let {data, error, isLoading, isError, isRefetching, refetch} = useQuery(faqsOptions)
 	let faqData: FaqQueryData = data ?? emptyFaqData
 	let highlightId = route.params?.faqId
 	let hasFaqs = faqData.faqs.length > 0
