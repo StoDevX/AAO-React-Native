@@ -20,6 +20,8 @@ jobs:
 
       - name: Install mise
         uses: jdx/mise-action@v4
+        with:
+          experimental: true
 
       - name: Set up development environment
         run: mise run agent:setup

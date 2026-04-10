@@ -15,7 +15,7 @@ jobs:
   ios-podfile-update:
     # Adapted from https://gist.github.com/A-Tokyo/0d811e818513fc4d3272335d2847d748
     name: iOS Update Cocoapods
-    runs-on: macos-14
+    runs-on: ubuntu-24.04
     timeout-minutes: 15
     if: github.actor == 'renovate[bot]'
     steps:
@@ -34,8 +34,7 @@ jobs:
 
       - run: npm ci
 
-      - run: bundle exec -- pod install --verbose
-        working-directory: ./ios
+      - run: mise run pods
 
       - name: push-on-podfile-change
         run: bash scripts/push-on-podfile-change.sh
