@@ -15,7 +15,6 @@
       "matchPackageNames": [
         "@types/react-native",
         "react-native",
-        "metro-react-native-babel-preset",
         "@react-native/metro-config",
         "@react-native/eslint-config",
         "@types/react-test-renderer",
