@@ -92,7 +92,7 @@
     "url": "0.11.4",
     "wordwrap": "1.0.0",
     "zod": "3.25.76",
-    "zustand": "4.4.1"
+    "zustand": "4.5.7"
   },
   "devDependencies": {
     "@babel/core": "7.29.0",
