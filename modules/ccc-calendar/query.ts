@@ -1,6 +1,6 @@
 import {client} from '@frogpond/api'
 import {EventType} from '@frogpond/event-type'
-import {useQuery, type UseQueryResult} from '@tanstack/react-query'
+import {queryOptions} from '@tanstack/react-query'
 import moment from 'moment'
 import {
 	GoogleCalendar,
@@ -40,11 +40,11 @@ function convertEvents(
 	return events
 }
 
-export function useNamedCalendar(
+export const namedCalendarOptions = (
 	calendar: NamedCalendar,
 	options: {eventMapper?: EventMapper} = {},
-): UseQueryResult<EventType[], unknown> {
-	return useQuery({
+) =>
+	queryOptions({
 		queryKey: keys.named(calendar),
 		queryFn: async ({queryKey, signal}) => {
 			let response = await client
@@ -54,13 +54,12 @@ export function useNamedCalendar(
 		},
 		select: (events) => convertEvents(events, options),
 	})
-}
 
-export function useGoogleCalendar(
+export const googleCalendarOptions = (
 	calendar: GoogleCalendar,
 	options: {eventMapper?: EventMapper} = {},
-): UseQueryResult<EventType[], unknown> {
-	return useQuery({
+) =>
+	queryOptions({
 		queryKey: keys.google(calendar.id),
 		queryFn: async ({queryKey, signal}) => {
 			let response = await client
@@ -70,13 +69,12 @@ export function useGoogleCalendar(
 		},
 		select: (events) => convertEvents(events, options),
 	})
-}
 
-export function useReasonCalendar(
+export const reasonCalendarOptions = (
 	calendar: ReasonCalendar,
 	options: {eventMapper?: EventMapper} = {},
-): UseQueryResult<EventType[], unknown> {
-	return useQuery({
+) =>
+	queryOptions({
 		queryKey: keys.reason(calendar.url),
 		queryFn: async ({queryKey, signal}) => {
 			let response = await client
@@ -86,13 +84,12 @@ export function useReasonCalendar(
 		},
 		select: (events) => convertEvents(events, options),
 	})
-}
 
-export function useIcsCalendar(
+export const icsCalendarOptions = (
 	calendar: IcsCalendar,
 	options: {eventMapper?: EventMapper} = {},
-): UseQueryResult<EventType[], unknown> {
-	return useQuery({
+) =>
+	queryOptions({
 		queryKey: keys.ics(calendar.url),
 		queryFn: async ({queryKey, signal}) => {
 			let response = await client
@@ -102,4 +99,3 @@ export function useIcsCalendar(
 		},
 		select: (events) => convertEvents(events, options),
 	})
-}
