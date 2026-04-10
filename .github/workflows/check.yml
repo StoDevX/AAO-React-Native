@@ -168,7 +168,7 @@ jobs:
         uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
         with:
           path: ~/Library/Caches/ccache
-          key: ccache-${{ runner.os }}-xcode@${{ env.xcode_version }}-${{ github.sha }}
+          key: ccache-${{ runner.os }}-xcode@${{ env.xcode_version }}-${{ hashFiles('**/project.pbxproj', '**/Podfile.lock', '.github/job.yml') }}
           restore-keys: |
             ccache-${{ runner.os }}-xcode@${{ env.xcode_version }}-
 
