@@ -8,6 +8,7 @@ FILE=ios/Podfile.lock
 git diff
 
 if [[ -z $(git status -s -- "$FILE") ]]; then
+    echo "No changes to $FILE; nothing to push"
     exit 0
 fi
 
