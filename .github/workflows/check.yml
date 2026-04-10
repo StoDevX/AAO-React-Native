@@ -299,12 +299,21 @@ jobs:
 
       - name: List available simulators (json)
         id: devices
-        run: xcrun simctl list devices available -j | jq -r '"devices=\(.devices)"' | tee "$GITHUB_OUTPUT"
+        run: |
+          set -o pipefail
+          xcrun simctl list devices available -j \
+            | jq '.devices' \
+            | jq 'map_values([.[] | del(.dataPath, .dataPathSize, .logPath, .isAvailable)])' \
+            | jq -r '"devices=\(.)"' \
+            | tee "$GITHUB_OUTPUT"
 
       - name: Discover the Detox device
         id: detox-device
         run: |
-          node -e 'let c = require("./detox.config.js"); console.log(`type=${c.devices["ios.simulator"].device.type}`); console.log(`os=${c.devices["ios.simulator"].device.os}`)' | tee "$GITHUB_OUTPUT"
+          set -o pipefail
+          node -e 'let c = require("./detox.config.js"); console.log(JSON.stringify(c));' > detox-config.json
+          jq -r '"type=\(.devices["ios.simulator"].device.type)"' < detox-config.json | tee -a "$GITHUB_OUTPUT"
+          jq -r '"os=\(.devices["ios.simulator"].device.os)"' < detox-config.json | tee -a "$GITHUB_OUTPUT"
 
       - name: Resolve Detox device UDID
         id: udid
@@ -313,9 +322,9 @@ jobs:
           SIMULATOR_OS: '${{ steps.detox-device.outputs.os }}'
           DEVICES: '${{ steps.devices.outputs.devices }}'
         run: |
-          jq -rn '
-            env.DEVICES
-            | .devices
+          set -o pipefail
+          jq -rn --argjson devices "$DEVICES" '
+            $devices
             | to_entries[]
             | select(.key == env.SIMULATOR_OS)
             | .value[]
