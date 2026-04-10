@@ -17,7 +17,7 @@ jobs:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       - name: Clean up caches for the just-closed branch
-        if: github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch'
+        if: (github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch') && github.ref != 'master'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -25,8 +25,7 @@ jobs:
             gh cache delete --all --succeed-on-no-caches --ref "$ref"
           done
 
-      - name: Delete caches for all branches without PRs
-        if: github.event_name == 'push'
+      - name: Delete PR caches for all branches without open PRs
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
