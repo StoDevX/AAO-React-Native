@@ -34,7 +34,6 @@ function findCurrentDeploymentTarget() {
 }
 
 const iPhoneSimulatorDevice = 'iPhone 16 Pro'
-const simulatorOS = '18.6'
 const currentDeploymentTarget = findCurrentDeploymentTarget()
 const codeSigningDisabled = process.env.CODE_SIGNING_DISABLED === 'true'
 
@@ -48,7 +47,7 @@ function generateBuildCommand(configuration) {
 		'-workspace ios/AllAboutOlaf.xcworkspace',
 		'-scheme AllAboutOlaf',
 		`-configuration ${configuration}`,
-		`-destination 'platform=iOS Simulator,name=${iPhoneSimulatorDevice},OS=${simulatorOS}'`,
+		`-destination 'platform=iOS Simulator,name=${iPhoneSimulatorDevice},OS=${currentDeploymentTarget}'`,
 		'-derivedDataPath ios/build',
 		'build',
 	]
@@ -125,7 +124,7 @@ module.exports = {
 				? {id: process.env.DETOX_UDID}
 				: {
 						type: iPhoneSimulatorDevice,
-						os: simulatorOS,
+						os: currentDeploymentTarget,
 					},
 		},
 	},

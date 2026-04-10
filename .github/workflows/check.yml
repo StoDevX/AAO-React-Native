@@ -11,7 +11,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  xcode_version: 'Xcode_16.2'
+  xcode_version: 'Xcode_16.4'
 
 jobs:
   hk:
