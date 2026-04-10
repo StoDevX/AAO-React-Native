@@ -1,0 +1,8 @@
+#!/bin/sh
+
+if test "$(uname)" != "Darwin"; then
+    echo "not running on Darwin; overridding: $(ls ./scripts/pod-linux-overrides)"
+    export PATH="$PWD/../scripts/pod-linux-overrides:$PATH"
+fi
+
+exec pod "${@}"
