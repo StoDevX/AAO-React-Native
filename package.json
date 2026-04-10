@@ -92,7 +92,7 @@
     "url": "0.11.4",
     "wordwrap": "1.0.0",
     "zod": "3.25.76",
-    "zustand": "4.4.1"
+    "zustand": "4.5.7"
   },
   "devDependencies": {
     "@babel/core": "7.29.0",
@@ -142,11 +142,11 @@
     "pretty-quick": "4.2.2",
     "react-test-renderer": "18.2.0",
     "string-natural-compare": "3.0.1",
-    "strip-ansi": "7.1.2",
+    "strip-ansi": "7.2.0",
     "ts-jest": "29.4.9",
     "ts-node": "10.9.2",
     "typescript": "5.9.3",
-    "typescript-eslint": "8.51.0"
+    "typescript-eslint": "8.58.0"
   },
   "overrides": {
     "eslint-plugin-prettier": "5.5.5",

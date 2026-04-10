@@ -86,7 +86,7 @@ jobs:
 
   ios-bundle:
     name: iOS Bundle
-    runs-on: macos-15
+    runs-on: ubuntu-24.04
     outputs:
       cache-key: ${{ steps.jsbundle-cache.outputs.cache-primary-key }}
     steps:
@@ -108,7 +108,7 @@ jobs:
             ios/AllAboutOlaf/main.jsbundle
             ios/AllAboutOlaf/main.jsbundle.map
             ios/assets/
-          key: ${{ runner.os }}-jsbundle-${{ hashFiles('.mise.toml', 'package.json', 'package-lock.json', '.github/job.yml', 'tsconfig.json', 'babel.config.js', 'index.js', 'data/**', 'images/**', 'modules/**.ts', 'modules/**.tsx', 'source/**.ts', 'source/**.tsx') }}
+          key: jsbundle-${{ hashFiles('.mise.toml', 'package.json', 'package-lock.json', '.github/job.yml', 'tsconfig.json', 'babel.config.js', 'index.js', 'data/**', 'images/**', 'modules/**.ts', 'modules/**.tsx', 'source/**.ts', 'source/**.tsx') }}
 
       - name: Bundle data
         if: steps.jsbundle-cache.outputs.cache-hit != 'true'
@@ -156,7 +156,7 @@ jobs:
         with:
           lookup-only: true
           path: ios/build/Build/Products/
-          key: ${{ runner.os }}-ios-xcode@${{ env.xcode_version }}-${{ hashFiles('**/project.pbxproj', '**/Podfile.lock', '.github/job.yml') }}
+          key: ${{ runner.os }}-ios-xcode@${{ env.xcode_version }}-${{ hashFiles('**/project.pbxproj', '**/Podfile.lock', 'ios/**', '.github/job.yml') }}
 
       - uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151 # v4.0.1
         if: steps.app-cache.outputs.cache-hit != 'true'
@@ -165,16 +165,42 @@ jobs:
         if: steps.app-cache.outputs.cache-hit != 'true'
         run: npm ci
 
+      - name: Install ccache
+        if: steps.app-cache.outputs.cache-hit != 'true'
+        run: brew install ccache
+
+      - name: Restore ccache
+        if: steps.app-cache.outputs.cache-hit != 'true'
+        uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
+        with:
+          path: ~/Library/Caches/ccache
+          key: ccache-${{ runner.os }}-xcode@${{ env.xcode_version }}-${{ hashFiles('**/project.pbxproj', '**/Podfile.lock', 'ios/**', '.github/job.yml') }}
+          restore-keys: |
+            ccache-${{ runner.os }}-xcode@${{ env.xcode_version }}-
+
+      - name: Configure ccache
+        if: steps.app-cache.outputs.cache-hit != 'true'
+        run: |
+          ccache --set-config=max_size=2G
+          ccache --zero-stats
+
       - name: Install CocoaPods
         if: steps.app-cache.outputs.cache-hit != 'true'
         run: mise run pods
+        env:
+          USE_CCACHE: '1'
 
       - name: Build the iOS app
         if: ${{ steps.app-cache.outputs.cache-hit != 'true' && !contains(github.event.pull_request.labels.*.name, 'ci/skip-detox') }}
         env:
           SKIP_BUNDLING: 'true'
           CODE_SIGNING_DISABLED: 'true'
+          USE_CCACHE: '1'
         run: npx detox build e2e --configuration ios.sim.release
+
+      - name: Show ccache stats
+        if: steps.app-cache.outputs.cache-hit != 'true'
+        run: ccache --show-stats
 
       # Debug step to verify build output
       - name: Verify build output
