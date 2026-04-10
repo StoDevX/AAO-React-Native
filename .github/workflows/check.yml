@@ -11,7 +11,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  xcode_version: 'Xcode_15.2'
+  xcode_version: 'Xcode_16.2'
 
 jobs:
   hk:
@@ -86,7 +86,7 @@ jobs:
 
   ios-bundle:
     name: iOS Bundle
-    runs-on: macos-14
+    runs-on: macos-15
     outputs:
       cache-key: ${{ steps.jsbundle-cache.outputs.cache-primary-key }}
     steps:
@@ -133,7 +133,7 @@ jobs:
   ios-build:
     name: Build for iOS
     needs: [jest, eslint]
-    runs-on: macos-14
+    runs-on: macos-15
     outputs:
       cache-key: ${{ steps.app-cache.outputs.cache-primary-key }}
     steps:
@@ -195,7 +195,7 @@ jobs:
   ios-detox:
     name: Detox E2E for iOS (${{ matrix.shard }}/${{ strategy.job-total }})
     needs: [ios-build, ios-bundle]
-    runs-on: macos-14
+    runs-on: macos-15
     if: ${{ !contains(github.event.pull_request.labels.*.name, 'ci/skip-detox') }}
     strategy:
       fail-fast: false
