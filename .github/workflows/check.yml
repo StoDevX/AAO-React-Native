@@ -108,7 +108,7 @@ jobs:
             ios/AllAboutOlaf/main.jsbundle
             ios/AllAboutOlaf/main.jsbundle.map
             ios/assets/
-          key: ${{ runner.os }}-jsbundle-${{ hashFiles('.mise.toml', 'package.json', 'package-lock.json', '.github/job.yml', 'tsconfig.json', 'babel.config.js', 'index.js', 'data/**', 'images/**', 'modules/**.ts', 'modules/**.tsx', 'source/**.ts', 'source/**.tsx') }}
+          key: jsbundle-${{ hashFiles('.mise.toml', 'package.json', 'package-lock.json', '.github/job.yml', 'tsconfig.json', 'babel.config.js', 'index.js', 'data/**', 'images/**', 'modules/**.ts', 'modules/**.tsx', 'source/**.ts', 'source/**.tsx') }}
 
       - name: Bundle data
         if: steps.jsbundle-cache.outputs.cache-hit != 'true'
