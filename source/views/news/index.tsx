@@ -10,20 +10,21 @@ import {
 
 import * as newsImages from '../../../images/news-sources/index'
 import {NewsList} from './news-list'
-import {useNamedNewsSource} from './query'
+import {namedNewsOptions} from './query'
+import {useQuery} from '@tanstack/react-query'
 
 const StOlafNewsView = () => (
 	<NewsList
-		query={useNamedNewsSource('stolaf')}
+		query={useQuery(namedNewsOptions('stolaf'))}
 		thumbnail={newsImages.stolaf}
 	/>
 )
 const MessNewsView = () => (
-	<NewsList query={useNamedNewsSource('mess')} thumbnail={newsImages.mess} />
+	<NewsList query={useQuery(namedNewsOptions('mess'))} thumbnail={newsImages.mess} />
 )
 const OlevilleNewsView = () => (
 	<NewsList
-		query={useNamedNewsSource('oleville')}
+		query={useQuery(namedNewsOptions('oleville'))}
 		thumbnail={newsImages.oleville}
 	/>
 )

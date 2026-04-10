@@ -1,5 +1,5 @@
 import {client} from '@frogpond/api'
-import {useQuery, type UseQueryResult} from '@tanstack/react-query'
+import {queryOptions} from '@tanstack/react-query'
 import {StoryType} from './types'
 
 export const keys = {
@@ -8,10 +8,8 @@ export const keys = {
 	wpJson: (url: string) => ['news', 'wp-json', url] as const,
 }
 
-export function useNamedNewsSource(
-	source: string,
-): UseQueryResult<StoryType[], unknown> {
-	return useQuery({
+export const namedNewsOptions = (source: string) =>
+	queryOptions({
 		queryKey: keys.named(source),
 		queryFn: async ({queryKey, signal}) => {
 			let response = await client
@@ -20,12 +18,9 @@ export function useNamedNewsSource(
 			return response as StoryType[]
 		},
 	})
-}
 
-export function useRssNewsSource(
-	url: string,
-): UseQueryResult<StoryType[], unknown> {
-	return useQuery({
+export const rssNewsOptions = (url: string) =>
+	queryOptions({
 		queryKey: keys.rss(url),
 		queryFn: async ({queryKey, signal}) => {
 			let response = await client
@@ -34,12 +29,9 @@ export function useRssNewsSource(
 			return response as StoryType[]
 		},
 	})
-}
 
-export function useWpJsonNewsSource(
-	url: string,
-): UseQueryResult<StoryType[], unknown> {
-	return useQuery({
+export const wpJsonNewsOptions = (url: string) =>
+	queryOptions({
 		queryKey: keys.wpJson(url),
 		queryFn: async ({queryKey, signal}) => {
 			let response = await client
@@ -48,4 +40,3 @@ export function useWpJsonNewsSource(
 			return response as StoryType[]
 		},
 	})
-}
