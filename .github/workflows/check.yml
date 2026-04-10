@@ -206,10 +206,14 @@ jobs:
           path: ios/build/Build/Products/
 
   ios-detox:
-    name: Detox E2E for iOS
+    name: Detox E2E for iOS (${{ matrix.shard }}/${{ strategy.job-total }})
     needs: [ios-build, ios-bundle]
     runs-on: macos-14
     if: ${{ !contains(github.event.pull_request.labels.*.name, 'ci/skip-detox') }}
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3]
     steps:
       - run: sudo xcode-select -s /Applications/${{ env.xcode_version }}.app
 
@@ -313,10 +317,39 @@ jobs:
       - run: brew install applesimutils
 
       - name: Run the Detox tests
-        run: npx detox test e2e --configuration ios.sim.release --cleanup --record-logs failing --record-videos failing --record-performance all --capture-view-hierarchy enabled --take-screenshots failing
+        run: |
+          set -o pipefail
+          npx \
+            detox test \
+            e2e/ \
+            --configuration ios.sim.release \
+            --record-logs all \
+            --record-videos failing \
+            --take-screenshots failing \
+            -- --shard=${{ matrix.shard }}/${{ strategy.job-total }} \
+            2>&1 | tee detox-output.log
+
+      - name: Show Detox test results
+        if: always()
+        run: |
+          echo "## Detox E2E Test Results (shard ${{ matrix.shard }}/${{ strategy.job-total }})" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          tail -200 detox-output.log >> $GITHUB_STEP_SUMMARY 2>/dev/null || echo "No output log found" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+
+      - name: Dump simulator system log on failure
+        if: failure()
+        run: |
+          DEVICE_UDID=$(xcrun simctl list devices booted -j | python3 -c "import sys,json; devs=json.load(sys.stdin)['devices']; print(next(d['udid'] for r in devs.values() for d in r if d['state']=='Booted'))" 2>/dev/null || echo "")
+          if [ -n "$DEVICE_UDID" ]; then
+            echo "=== Last 200 lines of simulator system log ==="
+            xcrun simctl spawn "$DEVICE_UDID" log show --last 5m --predicate 'process == "AllAboutOlaf"' --style compact 2>/dev/null | tail -200 || echo "Could not retrieve simulator log"
+          else
+            echo "No booted simulator found"
+          fi
 
       - uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
         if: always()
         with:
-          name: detox-ios
+          name: detox-ios-${{ matrix.shard }}
           path: artifacts/
