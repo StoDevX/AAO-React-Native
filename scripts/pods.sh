@@ -14,7 +14,6 @@ if test "$(uname)" != "Darwin"; then
 	echo 'not on Darwin; using scripts/xcrun and scripts/xcodebuild shims so the react-native pod specs can run on Linux'
 fi
 
-bundle install
 cd ios || exit 1
 
 # if this script is invoked with a `--` argument, run the following command instead of `pod install`:
@@ -23,8 +22,8 @@ if test "$1" = "--"; then
 	exec "$@"
 fi
 
-if ! bundle exec pod install --deployment; then
+if ! pod install --deployment; then
 	STATUS=$?
-	echo 'try running "bundle exec pod install --repo-update"' 1>&2
+	echo 'try running "pod install --repo-update"' 1>&2
 	exit $STATUS
 fi
