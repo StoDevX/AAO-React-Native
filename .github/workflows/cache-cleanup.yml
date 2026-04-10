@@ -6,31 +6,49 @@ on:
     types:
       - closed
   workflow_dispatch:
+  push:
+    branches:
+      - master
 
 jobs:
   cleanup:
     runs-on: ubuntu-latest
     steps:
-      - name: Check out code
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-
-      - name: Cleanup
-        run: |
-          gh extension install actions/gh-actions-cache
-
-          REPO=${{ github.repository }}
-          BRANCH=${{ github.ref }}
-
-          echo "Fetching list of cache key"
-          cacheKeysForPR=$(gh actions-cache list -R $REPO -B $BRANCH | cut -f 1 )
-
-          ## Setting this to not fail the workflow while deleting cache keys.
-          set +e
-          echo "Deleting caches..."
-          for cacheKey in $cacheKeysForPR
-          do
-              gh actions-cache delete $cacheKey -R $REPO -B $BRANCH --confirm
-          done
-          echo "Done"
+      - name: Clean up caches for the just-closed branch
+        if: github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh cache list --ref "${{ github.ref }}" --limit 500 --json 'ref' -q '.[].ref' | while read ref; do
+            gh cache delete --all --succeed-on-no-caches --ref "$ref"
+          done
+
+      - name: Delete caches for all branches without PRs
+        if: github.event_name == 'push'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh cache list --limit 500 --json 'ref' -q '.[].ref' \
+            | sed -n 's|refs/pull/\([0-9]*\)/merge|\1|p' \
+            | sort -un \
+            | while read pr; do
+              state="$(gh pr view "$pr" --json state -q .state 2>/dev/null)"
+              case "$state" in MERGED|CLOSED)
+                gh cache delete --all --succeed-on-no-caches --ref "refs/pull/$pr/merge";;
+              esac
+            done
+
+      # - name: Delete caches for readonly-queue refs that have finished
+      #   if: github.event_name == 'push'
+      #   env:
+      #     GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #   run: |
+      #     gh cache list --limit 500 --json 'ref' -q '.[].ref' \
+      #       | sed -n 's|refs/pull/\([0-9]*\)/merge|\1|p' \
+      #       | sort -un \
+      #       | while read pr; do
+      #         state="$(gh pr view "$pr" --json state -q .state 2>/dev/null)"
+      #         case "$state" in MERGED|CLOSED)
+      #           gh cache delete --all --succeed-on-no-caches --ref "refs/pull/$pr/merge";;
+      #         esac
+      #       done

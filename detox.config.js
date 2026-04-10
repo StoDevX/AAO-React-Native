@@ -60,7 +60,13 @@ function generateBuildCommand(configuration) {
 		)
 	}
 
-	return baseCommand.join(' ')
+	let command = baseCommand.join(' ')
+
+	if (process.env.CI) {
+		command = `set -o pipefail && ${command} | xcpretty`
+	}
+
+	return command
 }
 
 /**
@@ -114,10 +120,12 @@ module.exports = {
 	devices: {
 		'ios.simulator': {
 			type: 'ios.simulator',
-			device: {
-				type: iPhoneSimulatorDevice,
-				os: currentDeploymentTarget,
-			},
+			device: process.env.DETOX_UDID
+				? {id: process.env.DETOX_UDID}
+				: {
+						type: iPhoneSimulatorDevice,
+						os: currentDeploymentTarget,
+					},
 		},
 	},
 }

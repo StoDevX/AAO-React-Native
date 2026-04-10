@@ -11,7 +11,6 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  ruby-version: '3.4.8'
   xcode_version: 'Xcode_15.2'
 
 jobs:
@@ -40,10 +39,6 @@ jobs:
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151 # v4.0.1
-      - uses: ruby/setup-ruby@e65c17d16e57e481586a6a5a0282698790062f92 # v1.300.0
-        with:
-          ruby-version: ${{ env.ruby-version }}
-          bundler-cache: true
       - run: npm ci
       - run: mise run pods
 
@@ -103,13 +98,12 @@ jobs:
       - uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151 # v4.0.1
 
       - run: npm ci
-        env:
-          SKIP_POSTINSTALL: '1'
 
       - name: Load the cached jsbundle
         uses: actions/cache/restore@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
         id: jsbundle-cache
         with:
+          lookup-only: true
           path: |
             ios/AllAboutOlaf/main.jsbundle
             ios/AllAboutOlaf/main.jsbundle.map
@@ -154,8 +148,9 @@ jobs:
         id: app-cache
         uses: actions/cache/restore@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
         with:
+          lookup-only: true
           path: ios/build/Build/Products/
-          key: ${{ runner.os }}-ios-xcode@${{ env.xcode_version }}-${{ hashFiles('**/project.pbxproj', '**/Podfile', '**/Podfile.lock', 'package-lock.json', '.github/job.yml') }}
+          key: ${{ runner.os }}-ios-xcode@${{ env.xcode_version }}-${{ hashFiles('**/project.pbxproj', '**/Podfile.lock', '.github/job.yml') }}
 
       - uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151 # v4.0.1
         if: steps.app-cache.outputs.cache-hit != 'true'
@@ -163,14 +158,6 @@ jobs:
       - name: Install npm dependencies
         if: steps.app-cache.outputs.cache-hit != 'true'
         run: npm ci
-        env:
-          SKIP_POSTINSTALL: '1'
-
-      - uses: ruby/setup-ruby@e65c17d16e57e481586a6a5a0282698790062f92 # v1.300.0
-        if: steps.app-cache.outputs.cache-hit != 'true'
-        with:
-          ruby-version: ${{ env.ruby-version }}
-          bundler-cache: true
 
       - name: Install CocoaPods
         if: steps.app-cache.outputs.cache-hit != 'true'
@@ -224,11 +211,9 @@ jobs:
         uses: actions/cache/restore@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
         id: app-cache
         with:
+          fail-on-cache-miss: true
           path: ios/build/Build/Products/
           key: ${{ needs.ios-build.outputs.cache-key }}
-
-      - if: steps.app-cache.outputs.cache-hit != 'true'
-        run: exit 1
 
       - name: Debug - Check app cache contents
         run: |
@@ -246,21 +231,12 @@ jobs:
         uses: actions/cache/restore@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
         id: jsbundle-cache
         with:
+          fail-on-cache-miss: true
           path: |
             ios/AllAboutOlaf/main.jsbundle
             ios/AllAboutOlaf/main.jsbundle.map
             ios/assets/
           key: ${{ needs.ios-bundle.outputs.cache-key }}
-
-      - if: steps.jsbundle-cache.outputs.cache-hit != 'true'
-        run: exit 1
-
-      - name: Debug - Verify cache keys
-        run: |
-          echo "App cache key: ${{ needs.ios-build.outputs.cache-key }}"
-          echo "App cache hit: ${{ steps.app-cache.outputs.cache-hit }}"
-          echo "JS bundle cache key: ${{ needs.ios-bundle.outputs.cache-key }}"
-          echo "JS bundle cache hit: ${{ steps.jsbundle-cache.outputs.cache-hit }}"
 
       - name: Move cached jsbundle into place
         run: |
@@ -305,37 +281,83 @@ jobs:
       - uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151 # v4.0.1
 
       - run: npm ci
-        env:
-          SKIP_POSTINSTALL: '1'
 
       - # We have to poke Detox because it installs things outside of node_modules/detox/…
         name: Re-install Detox
         run: npx detox clean-framework-cache && npx detox build-framework-cache
 
-      - run: brew tap wix/brew
+      - name: brew install applesimutils
+        run: |
+          brew tap wix/brew
+          brew install applesimutils
 
-      - run: brew install applesimutils
+      - name: List available simulators
+        run: xcrun simctl list devices iOS
 
-      - name: Run the Detox tests
+      - name: List available device types
+        run: xcrun simctl list devicetypes
+
+      - name: Discover the Detox device
+        id: detox-device
         run: |
           set -o pipefail
-          npx \
-            detox test \
+          node -e 'let c = require("./detox.config.js"); console.log(JSON.stringify(c));' > detox-config.json
+          jq -r '"type=\(.devices["ios.simulator"].device.type)"' < detox-config.json | tee -a "$GITHUB_OUTPUT"
+          jq -r '"os=\(.devices["ios.simulator"].device.os | gsub("\\."; "-"))"' < detox-config.json | tee -a "$GITHUB_OUTPUT"
+
+      - name: List available simulators (json)
+        id: devices
+        run: |
+          set -o pipefail
+          xcrun simctl list devices iOS -j \
+            | jq '.devices | map_values([.[] | del(.dataPath, .dataPathSize, .logPath, .isAvailable)])' \
+            | jq -r '"devices=\(.)"' \
+            | tee "$GITHUB_OUTPUT"
+
+      - name: List available simulators with "${{ steps.detox-device.outputs.os }}"
+        id: devices-by-os
+        env:
+          DEVICES: '${{ steps.devices.outputs.devices }}'
+          SIMULATOR_OS: '${{ steps.detox-device.outputs.os }}'
+        run: |
+          set -o pipefail
+          jq -rn --argjson devices "$DEVICES" '$devices | to_entries[] | select(.key | endswith("iOS-\(env.SIMULATOR_OS)")) | .value | "devices=\(.)"' | tee "$GITHUB_OUTPUT"
+
+      - name: List available ${{ steps.detox-device.outputs.os }} simulators for "${{ steps.detox-device.outputs.type }}"
+        id: devices-by-os-and-type
+        env:
+          DEVICES: '${{ steps.devices-by-os.outputs.devices }}'
+          SIMULATOR_TYPE: '${{ steps.detox-device.outputs.type }}'
+        run: |
+          set -o pipefail
+          jq -rn --argjson devices "$DEVICES" '$devices | .[] | select(.name == env.SIMULATOR_TYPE) | "devices=\(.)"' | tee "$GITHUB_OUTPUT"
+
+      - name: Resolve Detox device UDID
+        id: udid
+        env:
+          DEVICES: '${{ steps.devices-by-os-and-type.outputs.devices }}'
+        run: |
+          set -o pipefail
+          jq -rn --argjson devices "$DEVICES" '$devices | "udid=\(.udid)"' | tee "$GITHUB_OUTPUT"
+
+      - name: Boot the simulator for Detox
+        run: xcrun simctl boot "${{ steps.udid.outputs.udid }}"
+
+      - name: Wait for the simulator to be ready
+        run: xcrun simctl bootstatus "${{ steps.udid.outputs.udid }}" -b
+
+      - name: Run the Detox tests
+        timeout-minutes: 30
+        env:
+          DETOX_UDID: '${{ steps.udid.outputs.udid }}'
+        run: |
+          npx detox test \
             e2e/ \
             --configuration ios.sim.release \
             --record-logs all \
             --record-videos failing \
             --take-screenshots failing \
-            -- --shard=${{ matrix.shard }}/${{ strategy.job-total }} \
-            2>&1 | tee detox-output.log
-
-      - name: Show Detox test results
-        if: always()
-        run: |
-          echo "## Detox E2E Test Results (shard ${{ matrix.shard }}/${{ strategy.job-total }})" >> $GITHUB_STEP_SUMMARY
-          echo '```' >> $GITHUB_STEP_SUMMARY
-          tail -200 detox-output.log >> $GITHUB_STEP_SUMMARY 2>/dev/null || echo "No output log found" >> $GITHUB_STEP_SUMMARY
-          echo '```' >> $GITHUB_STEP_SUMMARY
+            -- --shard=${{ matrix.shard }}/${{ strategy.job-total }}
 
       - name: Dump simulator system log on failure
         if: failure()
