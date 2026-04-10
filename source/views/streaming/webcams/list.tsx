@@ -3,7 +3,8 @@ import {StyleSheet, ScrollView, useWindowDimensions} from 'react-native'
 import {Column} from '@frogpond/layout'
 import {partitionByIndex} from '../../../lib/partition-by-index'
 import {StreamThumbnail} from './thumbnail'
-import {useWebcams} from './query'
+import {webcamsOptions} from './query'
+import {useQuery} from '@tanstack/react-query'
 import {LoadingView, NoticeView} from '@frogpond/notice'
 import {RefreshControl} from 'react-native-gesture-handler'
 
@@ -16,7 +17,7 @@ export let WebcamsView = (): JSX.Element => {
 		isRefetching,
 		isError,
 		isLoading,
-	} = useWebcams()
+	} = useQuery(webcamsOptions)
 
 	if (isError) {
 		return (
