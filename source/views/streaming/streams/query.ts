@@ -1,5 +1,5 @@
 import {client} from '@frogpond/api'
-import {useQuery, UseQueryResult} from '@tanstack/react-query'
+import {queryOptions} from '@tanstack/react-query'
 import moment, {type Moment} from 'moment-timezone'
 import {StreamType} from './types'
 import {timezone} from '@frogpond/constants'
@@ -9,9 +9,7 @@ export const keys = {
 		['streams', filter] as const,
 }
 
-export function useStreams(
-	date: Moment = moment.tz(timezone()),
-): UseQueryResult<StreamType[], unknown> {
+export const streamsOptions = (date: Moment = moment.tz(timezone())) => {
 	const dateFromFormatted = date.format('YYYY-MM-DD')
 	const dateToFormatted = date.clone().add(2, 'month').format('YYYY-MM-DD')
 
@@ -21,7 +19,7 @@ export function useStreams(
 		dateTo: dateToFormatted,
 	} as const
 
-	return useQuery({
+	return queryOptions({
 		queryKey: keys.all(searchParams),
 		queryFn: async ({
 			queryKey: [_group, {sort, dateFrom: queryDateFrom, dateTo: queryDateTo}],
