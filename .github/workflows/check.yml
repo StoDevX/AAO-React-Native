@@ -159,16 +159,42 @@ jobs:
         if: steps.app-cache.outputs.cache-hit != 'true'
         run: npm ci
 
+      - name: Install ccache
+        if: steps.app-cache.outputs.cache-hit != 'true'
+        run: brew install ccache
+
+      - name: Restore ccache
+        if: steps.app-cache.outputs.cache-hit != 'true'
+        uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
+        with:
+          path: ~/Library/Caches/ccache
+          key: ccache-${{ runner.os }}-xcode@${{ env.xcode_version }}-${{ hashFiles('**/project.pbxproj', '**/Podfile.lock', 'ios/**', '.github/job.yml') }}
+          restore-keys: |
+            ccache-${{ runner.os }}-xcode@${{ env.xcode_version }}-
+
+      - name: Configure ccache
+        if: steps.app-cache.outputs.cache-hit != 'true'
+        run: |
+          ccache --set-config=max_size=2G
+          ccache --zero-stats
+
       - name: Install CocoaPods
         if: steps.app-cache.outputs.cache-hit != 'true'
         run: mise run pods
+        env:
+          USE_CCACHE: '1'
 
       - name: Build the iOS app
         if: ${{ steps.app-cache.outputs.cache-hit != 'true' && !contains(github.event.pull_request.labels.*.name, 'ci/skip-detox') }}
         env:
           SKIP_BUNDLING: 'true'
           CODE_SIGNING_DISABLED: 'true'
+          USE_CCACHE: '1'
         run: npx detox build e2e --configuration ios.sim.release
+
+      - name: Show ccache stats
+        if: steps.app-cache.outputs.cache-hit != 'true'
+        run: ccache --show-stats
 
       # Debug step to verify build output
       - name: Verify build output

@@ -41,19 +41,25 @@ target 'AllAboutOlaf' do
 	end
 
 	post_install do |installer|
+		ccache_enabled = ENV['USE_CCACHE'] == '1'
+
 		# https://github.com/facebook/react-native/blob/main/packages/react-native/scripts/react_native_pods.rb#L197-L202
 		react_native_post_install(
 			installer,
 			config[:reactNativePath],
-			 :mac_catalyst_enabled => false
+			:mac_catalyst_enabled => false,
+			:ccache_enabled => ccache_enabled
 		)
-		# this looks redundant, but it should help xcode use the buildcache wrappers in CI
 		installer.pods_project.targets.each do |target|
 			target.build_configurations.each do |config|
-				config.build_settings["CC"] = "clang"
-				config.build_settings["LD"] = "clang"
-				config.build_settings["CXX"] = "clang++"
-				config.build_settings["LDPLUSPLUS"] = "clang++"
+				# when ccache is enabled, react_native_post_install already sets
+				# CC/CXX/LD/LDPLUSPLUS to the ccache wrapper scripts
+				unless ccache_enabled
+					config.build_settings["CC"] = "clang"
+					config.build_settings["LD"] = "clang"
+					config.build_settings["CXX"] = "clang++"
+					config.build_settings["LDPLUSPLUS"] = "clang++"
+				end
 
 				# cocoapods defaults to not stripping the frameworks it creates
 				# issue for cocoapods is https://github.com/CocoaPods/CocoaPods/issues/10277
