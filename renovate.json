@@ -56,6 +56,16 @@
         "@reduxjs/**",
         "react-redux"
       ]
+    },
+    {
+      "description": "group all patch-level updates into a single weekly PR",
+      "matchUpdateTypes": [
+        "patch"
+      ],
+      "groupName": "all patch updates",
+      "schedule": [
+        "before 9am on monday"
+      ]
     }
   ],
   "prConcurrentLimit": 4
