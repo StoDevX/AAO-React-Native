@@ -290,17 +290,46 @@ jobs:
           brew tap wix/brew
           brew install applesimutils
 
-      - name: Boot the simulator
+      - name: List available simulators
+        run: xcrun simctl list devices available
+
+      - name: List available device types
+        run: xcrun simctl list devicetypes
+
+      - name: List available simulators (json)
+        id: devices
+        run: xcrun simctl list devices available -j | jq -r '"devices=\(.devices)"' | tee "$GITHUB_OUTPUT"
+
+      - name: Discover the Detox device
+        id: detox-device
         run: |
-          DEVICE="$(node -e "const c = require('./detox.config.js'); console.log(c.devices['ios.simulator'].device.type)")"
-          xcrun simctl boot "$DEVICE" || true
-          # Wait for it to be ready
-          xcrun simctl bootstatus "$DEVICE" -b
+          node -e 'let c = require("./detox.config.js"); console.log(`type=${c.devices["ios.simulator"].device.type}`); console.log(`os=${c.devices["ios.simulator"].device.os}`)' | tee "$GITHUB_OUTPUT"
+
+      - name: Resolve Detox device UDID
+        id: udid
+        run: |
+          export SIMULATOR_TYPE="${{ steps.detox-device.outputs.type }}"
+          export SIMULATOR_OS="${{ steps.detox-device.outputs.os }}"
+          echo "${{ steps.devices.outputs.devices }}" | jq -r '
+            .devices
+            | to_entries[]
+            | select(.key == env.SIMULATOR_OS)
+            | .value[]
+            | select(.name == env.SIMULATOR_TYPE)
+            | "udid=\(.udid)"
+          ' | tee "$GITHUB_OUTPUT"
+
+      - name: Boot the simulator for Detox
+        run: xcrun simctl boot "${{ steps.udid.outputs.udid }}" || true
+
+      - name: Wait for the simulator to be ready
+        run: xcrun simctl bootstatus "${{ steps.udid.outputs.udid }}" -b
 
       - name: Run the Detox tests
         timeout-minutes: 30
         run: |
           set -o pipefail
+          export DETOX_UDID="${{ steps.udid.outputs.udid }}"
           npx \
             detox test \
             e2e/ \
