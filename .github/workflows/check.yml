@@ -351,24 +351,13 @@ jobs:
         env:
           DETOX_UDID: '${{ steps.udid.outputs.udid }}'
         run: |
-          set -o pipefail
-          npx \
-            detox test \
+          npx detox test \
             e2e/ \
             --configuration ios.sim.release \
             --record-logs all \
             --record-videos failing \
             --take-screenshots failing \
-            -- --shard=${{ matrix.shard }}/${{ strategy.job-total }} \
-            2>&1 | tee detox-output.log
-
-      - name: Show Detox test results
-        if: always()
-        run: |
-          echo "## Detox E2E Test Results (shard ${{ matrix.shard }}/${{ strategy.job-total }})" >> $GITHUB_STEP_SUMMARY
-          echo '```' >> $GITHUB_STEP_SUMMARY
-          tail -200 detox-output.log >> $GITHUB_STEP_SUMMARY 2>/dev/null || echo "No output log found" >> $GITHUB_STEP_SUMMARY
-          echo '```' >> $GITHUB_STEP_SUMMARY
+            -- --shard=${{ matrix.shard }}/${{ strategy.job-total }}
 
       - name: Dump simulator system log on failure
         if: failure()
