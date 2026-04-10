@@ -86,7 +86,7 @@ jobs:
 
   ios-bundle:
     name: iOS Bundle
-    runs-on: macos-14
+    runs-on: ubuntu-24.04
     outputs:
       cache-key: ${{ steps.jsbundle-cache.outputs.cache-primary-key }}
     steps:
