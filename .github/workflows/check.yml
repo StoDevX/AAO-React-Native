@@ -12,6 +12,8 @@ concurrency:
 
 env:
   xcode_version: 'Xcode_16.4'
+  cache_epoch: '1'
+  MISE_RUBY_COMPILE: 'false'
 
 jobs:
   hk:
@@ -77,20 +79,18 @@ jobs:
 
   ios-bundle:
     name: iOS Bundle
+    needs: [jest, eslint]
     runs-on: ubuntu-24.04
     outputs:
-      cache-key: ${{ steps.jsbundle-cache.outputs.cache-primary-key }}
+      cache-key: ${{ steps.jsbundle-cache.outputs.cache-matched-key || steps.jsbundle-cache.outputs.cache-primary-key }}
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-
-      - name: Extract job definition
-        run: yq '.jobs.${{ github.job }}' .github/workflows/check.yml > .github/job.yml
 
       - uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151 # v4.0.1
 
       - run: npm ci
 
-      - name: Load the cached jsbundle
+      - name: Restore cached jsbundle
         uses: actions/cache/restore@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
         id: jsbundle-cache
         with:
@@ -99,21 +99,23 @@ jobs:
             ios/AllAboutOlaf/main.jsbundle
             ios/AllAboutOlaf/main.jsbundle.map
             ios/assets/
-          key: jsbundle-${{ hashFiles('.mise.toml', 'package.json', 'package-lock.json', '.github/job.yml', 'tsconfig.json', 'babel.config.js', 'index.js', 'data/**', 'images/**', 'modules/**.ts', 'modules/**.tsx', 'source/**.ts', 'source/**.tsx') }}
+          key: jsbundle/e=${{ env.cache_epoch }}/host=ubuntu@24.04/target=ios/ref=${{ github.head_ref || github.ref_name }}/hash=${{ hashFiles('.mise.toml', 'package.json', 'package-lock.json', 'tsconfig.json', 'babel.config.js', 'index.js', 'data/**', 'images/**', 'modules/**.ts', 'modules/**.tsx', 'source/**.ts', 'source/**.tsx') }}
+          restore-keys: |
+            jsbundle/e=${{ env.cache_epoch }}/host=ubuntu@24.04/target=ios/ref=master/hash=${{ hashFiles('.mise.toml', 'package.json', 'package-lock.json', 'tsconfig.json', 'babel.config.js', 'index.js', 'data/**', 'images/**', 'modules/**.ts', 'modules/**.tsx', 'source/**.ts', 'source/**.tsx') }}
 
       - name: Bundle data
-        if: steps.jsbundle-cache.outputs.cache-hit != 'true'
+        if: steps.jsbundle-cache.outputs.cache-matched-key == ''
         run: mise run bundle-data
 
       - name: Generate jsbundle
-        if: steps.jsbundle-cache.outputs.cache-hit != 'true'
+        if: steps.jsbundle-cache.outputs.cache-matched-key == ''
         run: mise run bundle:ios
         env:
           APP_MODE: mocked
 
-      - name: Cache the jsbundle
+      - name: Save jsbundle to cache
         uses: actions/cache/save@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
-        if: steps.jsbundle-cache.outputs.cache-hit != 'true'
+        if: steps.jsbundle-cache.outputs.cache-matched-key == ''
         with:
           path: |
             ios/AllAboutOlaf/main.jsbundle
@@ -126,20 +128,11 @@ jobs:
     needs: [jest, eslint]
     runs-on: macos-15
     outputs:
-      cache-key: ${{ steps.app-cache.outputs.cache-primary-key }}
+      cache-key: ${{ steps.app-cache.outputs.cache-matched-key || steps.app-cache.outputs.cache-primary-key }}
     steps:
-      - name: List available Xcode versions
-        run: ls -d /Applications/Xcode*.app
-
       - run: sudo xcode-select -s /Applications/${{ env.xcode_version }}.app
 
-      - name: List available iOS simulators
-        run: xcrun simctl list devices iOS
-
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-
-      - name: Extract job definition
-        run: yq '.jobs.${{ github.job }}' .github/workflows/check.yml > .github/job.yml
 
       - name: Check for cached iOS app
         id: app-cache
@@ -147,52 +140,44 @@ jobs:
         with:
           lookup-only: true
           path: ios/build/Build/Products/
-          key: ${{ runner.os }}-ios-xcode@${{ env.xcode_version }}-${{ hashFiles('**/project.pbxproj', 'ios/Podfile', '**/Podfile.lock', 'ios/AllAboutOlaf/**', '.github/job.yml') }}
+          key: ios-app/e=${{ env.cache_epoch }}/host=macOS@15/target=ios/xcode=${{ env.xcode_version }}/ref=${{ github.head_ref || github.ref_name }}/hash=${{ hashFiles('**/project.pbxproj', 'ios/Podfile', '**/Podfile.lock', 'ios/AllAboutOlaf/**') }}
+          restore-keys: |
+            ios-app/e=${{ env.cache_epoch }}/host=macOS@15/target=ios/xcode=${{ env.xcode_version }}/ref=master/hash=${{ hashFiles('**/project.pbxproj', 'ios/Podfile', '**/Podfile.lock', 'ios/AllAboutOlaf/**') }}
 
       - uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151 # v4.0.1
-        if: steps.app-cache.outputs.cache-hit != 'true'
+        if: steps.app-cache.outputs.cache-matched-key == ''
 
       - name: Install npm dependencies
-        if: steps.app-cache.outputs.cache-hit != 'true'
+        if: steps.app-cache.outputs.cache-matched-key == ''
         run: npm ci
 
       - name: Install ccache
-        if: steps.app-cache.outputs.cache-hit != 'true'
+        if: steps.app-cache.outputs.cache-matched-key == ''
         run: brew install ccache
 
-      - name: Restore ccache
-        if: steps.app-cache.outputs.cache-hit != 'true'
+      - name: Restore/save ccache
+        if: steps.app-cache.outputs.cache-matched-key == ''
         uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
         with:
           path: ~/Library/Caches/ccache
-          key: ccache-${{ runner.os }}-xcode@${{ env.xcode_version }}-${{ hashFiles('**/project.pbxproj', 'ios/Podfile', '**/Podfile.lock', 'ios/AllAboutOlaf/**', '.github/job.yml') }}
+          key: ccache/e=${{ env.cache_epoch }}/host=macOS@15/target=ios/xcode=${{ env.xcode_version }}/ref=${{ github.head_ref || github.ref_name }}/hash=${{ hashFiles('**/project.pbxproj', 'ios/Podfile', '**/Podfile.lock', 'ios/AllAboutOlaf/**') }}
           restore-keys: |
-            ccache-${{ runner.os }}-xcode@${{ env.xcode_version }}-${{ hashFiles('**/project.pbxproj', 'ios/Podfile', '**/Podfile.lock', 'ios/AllAboutOlaf/**', '.github/job.yml') }}
+            ccache/e=${{ env.cache_epoch }}/host=macOS@15/target=ios/xcode=${{ env.xcode_version }}/ref=master/hash=${{ hashFiles('**/project.pbxproj', 'ios/Podfile', '**/Podfile.lock', 'ios/AllAboutOlaf/**') }}
 
       - name: Configure ccache
-        if: steps.app-cache.outputs.cache-hit != 'true'
+        if: steps.app-cache.outputs.cache-matched-key == ''
         run: |
           ccache --set-config=max_size=2G
           ccache --zero-stats
 
-      - name: Restore CocoaPods cache
-        id: pods-cache
-        if: steps.app-cache.outputs.cache-hit != 'true'
-        uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
-        with:
-          path: ios/Pods
-          key: pods-${{ runner.os }}-xcode@${{ env.xcode_version }}-${{ hashFiles('**/project.pbxproj', 'ios/Podfile', '**/Podfile.lock', 'ios/AllAboutOlaf/**', '.github/job.yml') }}
-          restore-keys: |
-            pods-${{ runner.os }}-xcode@${{ env.xcode_version }}-${{ hashFiles('**/project.pbxproj', 'ios/Podfile', '**/Podfile.lock', 'ios/AllAboutOlaf/**', '.github/job.yml') }}
-
       - name: Install CocoaPods
-        if: steps.app-cache.outputs.cache-hit != 'true' && steps.pods-cache.outputs.cache-hit != 'true'
+        if: steps.app-cache.outputs.cache-matched-key == ''
         run: mise run pod:install --deployment
         env:
           USE_CCACHE: '1'
 
       - name: Build the iOS app
-        if: ${{ steps.app-cache.outputs.cache-hit != 'true' && !contains(github.event.pull_request.labels.*.name, 'ci/skip-detox') }}
+        if: ${{ steps.app-cache.outputs.cache-matched-key == '' && !contains(github.event.pull_request.labels.*.name, 'ci/skip-detox') }}
         env:
           SKIP_BUNDLING: 'true'
           CODE_SIGNING_DISABLED: 'true'
@@ -200,27 +185,18 @@ jobs:
         run: npx detox build e2e --configuration ios.sim.release
 
       - name: Show ccache stats
-        if: steps.app-cache.outputs.cache-hit != 'true'
+        if: steps.app-cache.outputs.cache-matched-key == ''
         run: ccache --show-stats
 
-      # Debug step to verify build output
-      - name: Verify build output
-        if: ${{ steps.app-cache.outputs.cache-hit != 'true' && !contains(github.event.pull_request.labels.*.name, 'ci/skip-detox') }}
-        run: |
-          echo "Checking build output directory structure..."
-          ls -la ios/build/Build/Products/
-          echo "Checking if app bundle exists..."
-          ls -la ios/build/Build/Products/Release-iphonesimulator/AllAboutOlaf.app/ || echo "App bundle not found!"
-          echo "Checking for Info.plist in app bundle..."
-          cat ios/build/Build/Products/Release-iphonesimulator/AllAboutOlaf.app/Info.plist | head -10 || echo "Info.plist not found!"
-
-      - name: Cache the iOS app
+      - name: Save iOS app to cache
         uses: actions/cache/save@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
+        if: steps.app-cache.outputs.cache-matched-key == ''
         with:
           path: ios/build/Build/Products/
           key: ${{ steps.app-cache.outputs.cache-primary-key }}
 
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        if: steps.app-cache.outputs.cache-matched-key == ''
         with:
           name: ios-app
           path: ios/build/Build/Products/
@@ -248,17 +224,6 @@ jobs:
           path: ios/build/Build/Products/
           key: ${{ needs.ios-build.outputs.cache-key }}
 
-      - name: Debug - Check app cache contents
-        run: |
-          echo "Checking app cache contents..."
-          ls -la ios/build/Build/Products/
-          echo "Checking simulator app directory..."
-          ls -la ios/build/Build/Products/Release-iphonesimulator/ || echo "Directory not found"
-          echo "Checking app bundle contents..."
-          ls -la ios/build/Build/Products/Release-iphonesimulator/AllAboutOlaf.app/ || echo "App bundle not found"
-          echo "Checking for Info.plist..."
-          cat ios/build/Build/Products/Release-iphonesimulator/AllAboutOlaf.app/Info.plist | head -10 || echo "Info.plist not found"
-
       - # load the jsbundle before reinstalling detox, so that the package-lock cannot change
         name: Load the cached iOS jsbundle
         uses: actions/cache/restore@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
@@ -273,43 +238,10 @@ jobs:
 
       - name: Move cached jsbundle into place
         run: |
-          # Ensure app directory exists
-          mkdir -p ios/build/Build/Products/Release-iphonesimulator/AllAboutOlaf.app/
-
-          # Check if app bundle seems incomplete
-          if [ ! -f ios/build/Build/Products/Release-iphonesimulator/AllAboutOlaf.app/Info.plist ]; then
-            echo "WARNING: Info.plist not found in app bundle, build may be incomplete!"
-            echo "Copying essential files from source directory as fallback..."
-
-            # Copy essential app files
-            cp ios/AllAboutOlaf/Info.plist ios/build/Build/Products/Release-iphonesimulator/AllAboutOlaf.app/
-
-            # Create simulated app executable
-            echo "#!/bin/sh" > ios/build/Build/Products/Release-iphonesimulator/AllAboutOlaf.app/AllAboutOlaf
-            echo "echo 'This is a placeholder executable for testing purposes'" >> ios/build/Build/Products/Release-iphonesimulator/AllAboutOlaf.app/AllAboutOlaf
-            chmod +x ios/build/Build/Products/Release-iphonesimulator/AllAboutOlaf.app/AllAboutOlaf
-
-            echo "Created minimal app structure for testing"
-          fi
-
-          # Move JS bundle files
           mv ios/AllAboutOlaf/main.jsbundle ios/build/Build/Products/Release-iphonesimulator/AllAboutOlaf.app/
           mv ios/AllAboutOlaf/main.jsbundle.map ios/build/Build/Products/Release-iphonesimulator/AllAboutOlaf.app/
           rm -rf ios/build/Build/Products/Release-iphonesimulator/AllAboutOlaf.app/assets || true
           mv ios/assets ios/build/Build/Products/Release-iphonesimulator/AllAboutOlaf.app/
-
-          # Debug app bundle again after changes
-          echo "App bundle contents after moving JS files:"
-          ls -la ios/build/Build/Products/Release-iphonesimulator/AllAboutOlaf.app/
-
-          # Final verification of Info.plist
-          if [ -f ios/build/Build/Products/Release-iphonesimulator/AllAboutOlaf.app/Info.plist ]; then
-            echo "Info.plist exists in final app bundle"
-            grep -A 2 "CFBundleIdentifier" ios/build/Build/Products/Release-iphonesimulator/AllAboutOlaf.app/Info.plist || echo "CFBundleIdentifier not found in Info.plist"
-          else
-            echo "ERROR: Info.plist still missing after all operations!"
-            exit 1
-          fi
 
       - uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151 # v4.0.1
 
@@ -323,12 +255,6 @@ jobs:
         run: |
           brew tap wix/brew
           brew install applesimutils
-
-      - name: List available simulators
-        run: xcrun simctl list devices iOS
-
-      - name: List available device types
-        run: xcrun simctl list devicetypes
 
       - name: Discover the Detox device
         id: detox-device
