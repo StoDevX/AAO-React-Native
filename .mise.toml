@@ -6,6 +6,7 @@ ruby = "3.4.9"
 "gem:fastlane" = "2.232.2"
 cocoapods = "1.16.2"
 "gem:rubocop" = "1.86.1"
+sentry = "3.3.5"
 
 [env]
 _.path = ["node_modules/.bin"]

@@ -104,7 +104,6 @@
     "@react-native/babel-preset": "0.75.4",
     "@react-native/eslint-config": "0.83.1",
     "@react-native/metro-config": "0.75.4",
-    "@sentry/cli": "3.3.5",
     "@tanstack/eslint-plugin-query": "5.96.2",
     "@testing-library/react-native": "12.9.0",
     "@tsconfig/react-native": "3.0.9",

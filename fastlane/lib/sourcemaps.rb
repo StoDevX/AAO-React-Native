@@ -63,7 +63,7 @@ def upload_sourcemap_to_sentry
 	args = sourcemap_args
 
 	cmd = [
-	       'npx sentry-cli',
+	       'mise x -- sentry-cli',
 	       'releases',
 	       'files',
 	       sentry_release,
