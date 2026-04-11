@@ -1,4 +1,4 @@
-import {expect, test} from '@jest/globals'
+import {expect, test} from 'vitest'
 import {processBusSchedule} from '../process-bus-line'
 import {time} from './moment.helper'
 import {UnprocessedBusLine} from '../../types'

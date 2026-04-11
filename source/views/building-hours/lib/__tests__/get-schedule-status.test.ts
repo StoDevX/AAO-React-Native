@@ -1,4 +1,4 @@
-import {expect, it} from '@jest/globals'
+import {expect, it} from 'vitest'
 import {getScheduleStatusAtMoment} from '../get-schedule-status'
 import {dayMoment} from './moment.helper'
 import {SingleBuildingScheduleType} from '../../types'

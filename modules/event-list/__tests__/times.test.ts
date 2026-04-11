@@ -1,4 +1,4 @@
-import {describe, expect, test} from '@jest/globals'
+import {describe, expect, test} from 'vitest'
 
 import type {EventType} from '@frogpond/event-type'
 import moment from 'moment'

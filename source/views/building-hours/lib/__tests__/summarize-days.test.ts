@@ -1,4 +1,4 @@
-import {describe, expect, test} from '@jest/globals'
+import {describe, expect, test} from 'vitest'
 import {summarizeDays, summarizeDaysAndHours} from '../summarize-days'
 import {DayOfWeekEnumType} from '../../types'
 

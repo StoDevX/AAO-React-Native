@@ -1,4 +1,4 @@
-import {expect, it} from '@jest/globals'
+import {expect, it} from 'vitest'
 import {isChapelTime} from '../chapel'
 import {dayMoment} from './moment.helper'
 

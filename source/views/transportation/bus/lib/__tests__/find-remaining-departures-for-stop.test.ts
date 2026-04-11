@@ -1,4 +1,4 @@
-import {expect, test} from '@jest/globals'
+import {expect, test} from 'vitest'
 import {findRemainingDeparturesForStop} from '../find-remaining-departures-for-stop'
 import {getScheduleForNow} from '../get-schedule-for-now'
 import {getCurrentBusIteration} from '../get-current-bus-iteration'

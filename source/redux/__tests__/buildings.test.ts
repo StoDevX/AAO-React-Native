@@ -1,5 +1,5 @@
 import {reducer, State, toggleFavoriteBuilding} from '../parts/buildings'
-import {describe, it, expect} from '@jest/globals'
+import {describe, it, expect} from 'vitest'
 
 describe('toggle favorite building hours', () => {
 	it('should return the initial state', () => {

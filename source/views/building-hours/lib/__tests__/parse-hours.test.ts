@@ -1,4 +1,4 @@
-import {expect, it, xdescribe, describe} from '@jest/globals'
+import {expect, it, describe} from 'vitest'
 import {parseHours} from '../parse-hours'
 import {dayMoment, hourMoment, moment, plainMoment} from './moment.helper'
 import {SingleBuildingScheduleType} from '../../types'
@@ -80,7 +80,7 @@ describe('handles weird times', () => {
 	})
 })
 
-xdescribe('checks a list of schedules to see if any are open', () => {
+describe.skip('checks a list of schedules to see if any are open', () => {
 	let schedule: SingleBuildingScheduleType = {
 		days: ['Fr', 'Sa'],
 		from: '10:30am',

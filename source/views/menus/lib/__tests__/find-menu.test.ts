@@ -1,4 +1,4 @@
-import {expect, it} from '@jest/globals'
+import {expect, it} from 'vitest'
 import {findMenu} from '../../../../../modules/food-menu/lib/find-menu'
 import moment from 'moment-timezone'
 import type {DayPartsCollectionType} from '../../types'

@@ -1,4 +1,4 @@
-import {expect, it} from '@jest/globals'
+import {expect, it} from 'vitest'
 import {applyFilter} from '../apply-filters'
 import {filterValue} from './filter-value.helper'
 import type {FilterType} from '../types'

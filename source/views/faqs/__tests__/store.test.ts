@@ -1,9 +1,10 @@
+import {vi, describe, it, expect, beforeEach} from 'vitest'
 import {act} from '@testing-library/react-native'
 
 import {fallbackFaqs} from '../../faqs/local-faqs'
 import {getFaqVersion, useFaqBannerStore} from '../store'
 
-jest.mock('../../faqs/local-faqs', () => ({
+vi.mock('../../faqs/local-faqs', () => ({
 	fallbackFaqs: [
 		{
 			id: 'test-faq-1',

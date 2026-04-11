@@ -1,4 +1,5 @@
 import React from 'react'
+import {vi, expect, describe, it, beforeEach} from 'vitest'
 import {fireEvent, render} from '@testing-library/react-native'
 
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query'
@@ -10,15 +11,15 @@ import {FAQ_TARGETS} from '../constants'
 
 const FAQS_QUERY_KEY = ['faqs'] as const
 
-const mockNavigate = jest.fn()
+const mockNavigate = vi.fn()
 
-jest.mock('@react-navigation/native', () => ({
+vi.mock('@react-navigation/native', () => ({
 	useNavigation: () => ({
 		navigate: mockNavigate,
 	}),
 }))
 
-jest.mock('../query', () => ({
+vi.mock('../query', () => ({
 	faqsOptions: {
 		queryKey: FAQS_QUERY_KEY,
 		queryFn: () => Promise.reject(new Error('queryFn should not be called')),
@@ -85,4 +86,6 @@ describe('FaqBanner component', () => {
 		expect(mockNavigate).toHaveBeenCalledWith('Faq', {faqId: baseFaq.id})
 	})
 })
-jest.mock('react-native-vector-icons/Ionicons', () => 'Icon')
+vi.mock('react-native-vector-icons/Ionicons', () => ({
+	default: 'Icon',
+}))

@@ -65,8 +65,8 @@ description = "Run TypeScript compiler"
 run = "tsc --noEmit"
 
 [tasks.test]
-description = "Run Jest tests"
-run = "jest"
+description = "Run Vitest tests"
+run = "vitest run"
 
 [tasks.prepare]
 description = "Apply patches"

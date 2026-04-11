@@ -1,10 +1,10 @@
-import {expect, it, jest} from '@jest/globals'
+import {expect, it, vi} from 'vitest'
 import {getDetailedBuildingStatus} from '../get-detailed-status'
 import {plainMoment} from './moment.helper'
 import {BuildingType} from '../../types'
 
 it('returns a list of [isOpen, scheduleName, verboseStatus] tuples', () => {
-	jest.useFakeTimers().setSystemTime(new Date('2018-06-23T13:00:00Z').getTime())
+	vi.useFakeTimers().setSystemTime(new Date('2018-06-23T13:00:00Z').getTime())
 
 	let m = plainMoment('06-23-2018 1:00pm', 'MM-DD-YYYY h:mma')
 	let building: BuildingType = {
@@ -32,11 +32,11 @@ it('returns a list of [isOpen, scheduleName, verboseStatus] tuples', () => {
 	expect(typeof actual[0].status).toBe('string')
 	expect(actual[0].status).toBe('10:30 AM — 2:00 AM')
 
-	jest.useRealTimers()
+	vi.useRealTimers()
 })
 
 it('checks a list of schedules to see if any are open', () => {
-	jest.useFakeTimers().setSystemTime(new Date('2018-06-23T13:00:00Z').getTime())
+	vi.useFakeTimers().setSystemTime(new Date('2018-06-23T13:00:00Z').getTime())
 
 	let m = plainMoment('06-23-2018 1:00pm', 'MM-DD-YYYY h:mma')
 	let building: BuildingType = {
@@ -59,7 +59,7 @@ it('checks a list of schedules to see if any are open', () => {
 	expect(actual[0].status).toBe('10:30 AM — 2:00 AM')
 	expect(actual[0].isActive).toBe(true)
 
-	jest.useRealTimers()
+	vi.useRealTimers()
 })
 
 it('handles multiple internal schedules for the same timeframe', () => {

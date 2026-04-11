@@ -1,5 +1,5 @@
 import React from 'react'
-import {describe, expect, test} from '@jest/globals'
+import {describe, expect, test} from 'vitest'
 
 import TestRenderer from 'react-test-renderer'
 import {LoadingView} from '../loading'

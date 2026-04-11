@@ -1,6 +1,6 @@
 import React from 'react'
 import {StyleSheet} from 'react-native'
-import {describe, expect, it} from '@jest/globals'
+import {describe, expect, it} from 'vitest'
 
 import TestRenderer from 'react-test-renderer'
 import {NoticeView} from '../notice'

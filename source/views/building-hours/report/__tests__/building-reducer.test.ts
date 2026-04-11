@@ -1,3 +1,4 @@
+import {describe, expect, it} from 'vitest'
 import {buildingReducer, type BuildingAction} from '../building-reducer'
 import type {BuildingType} from '../../types'
 
