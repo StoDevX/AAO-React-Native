@@ -4,9 +4,9 @@
 
 All About Olaf is a React Native mobile app for the St. Olaf College community. It provides students, faculty, and staff with access to campus info, dining menus, course catalogs, campus maps, and more.
 
-- **React Native 0.74.7** with **TypeScript**
+- **React Native 0.75.4** with **TypeScript**
 - **React Navigation 6** for navigation (typed via `source/navigation/types.ts`)
-- **Redux Toolkit** for global state, **React Query 4** for server state
+- **Redux Toolkit** for global state, **React Query 5** for server state
 - **Jest** + **React Native Testing Library** for testing
 - **Fastlane** for CI/CD
 - Monorepo with internal packages in `modules/`
@@ -68,6 +68,8 @@ mise run pods   # Install cocoapods, even on Linux
 **Session startup:** Always run `mise run agent:setup` at the start of every session. This installs dependencies and bundles data files.
 
 **Before committing:** Always run `mise run agent:pre-commit` before committing any changes. This formats code with Prettier, runs ESLint, checks TypeScript types, and runs Jest tests. Do not commit if any step fails.
+
+**Dependency upgrades:** Whenever you upgrade a dependency whose version is mentioned in this file (e.g., React Native, React Navigation, React Query, Redux Toolkit, TypeScript, Jest, Fastlane), update the version reference in CLAUDE.md as part of the same change. Stale version references in this file mislead future sessions about the project's current state.
 
 ## Superpowers Skills Framework
 
