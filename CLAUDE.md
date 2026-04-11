@@ -69,6 +69,8 @@ mise run pods   # Install cocoapods, even on Linux
 
 **Before committing:** Always run `mise run agent:pre-commit` before committing any changes. This formats code with Prettier, runs ESLint, checks TypeScript types, and runs Jest tests. Do not commit if any step fails.
 
+**Dependency upgrades:** When upgrading dependencies, update any version numbers mentioned in this file (CLAUDE.md) to match the new versions. For example, if upgrading React Native, update the version in the "Project Overview" section.
+
 ## Superpowers Skills Framework
 
 This project uses the [Superpowers](https://github.com/obra/superpowers) skills framework. You have superpowers.
