@@ -156,7 +156,7 @@ jobs:
         with:
           lookup-only: true
           path: ios/build/Build/Products/
-          key: ${{ runner.os }}-ios-xcode@${{ env.xcode_version }}-${{ hashFiles('**/project.pbxproj', '**/Podfile.lock', 'ios/**', '.github/job.yml') }}
+          key: ${{ runner.os }}-ios-xcode@${{ env.xcode_version }}-${{ hashFiles('**/project.pbxproj', 'ios/Podfile', '**/Podfile.lock', 'ios/AllAboutOlaf/**', '.github/job.yml') }}
 
       - uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151 # v4.0.1
         if: steps.app-cache.outputs.cache-hit != 'true'
@@ -174,7 +174,7 @@ jobs:
         uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
         with:
           path: ~/Library/Caches/ccache
-          key: ccache-${{ runner.os }}-xcode@${{ env.xcode_version }}-${{ hashFiles('**/project.pbxproj', '**/Podfile.lock', 'ios/**', '.github/job.yml') }}
+          key: ccache-${{ runner.os }}-xcode@${{ env.xcode_version }}-${{ hashFiles('**/project.pbxproj', 'ios/Podfile', '**/Podfile.lock', 'ios/AllAboutOlaf/**', '.github/job.yml') }}
           restore-keys: |
             ccache-${{ runner.os }}-xcode@${{ env.xcode_version }}-
 
@@ -184,8 +184,18 @@ jobs:
           ccache --set-config=max_size=2G
           ccache --zero-stats
 
-      - name: Install CocoaPods
+      - name: Restore CocoaPods cache
+        id: pods-cache
         if: steps.app-cache.outputs.cache-hit != 'true'
+        uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
+        with:
+          path: ios/Pods
+          key: pods-${{ runner.os }}-xcode@${{ env.xcode_version }}-${{ hashFiles('**/project.pbxproj', 'ios/Podfile', '**/Podfile.lock', 'ios/AllAboutOlaf/**', '.github/job.yml') }}
+          restore-keys: |
+            pods-${{ runner.os }}-xcode@${{ env.xcode_version }}-
+
+      - name: Install CocoaPods
+        if: steps.app-cache.outputs.cache-hit != 'true' && steps.pods-cache.outputs.cache-hit != 'true'
         run: mise run pods
         env:
           USE_CCACHE: '1'
