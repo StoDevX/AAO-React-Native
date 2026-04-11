@@ -7,6 +7,9 @@ ruby = "3.4.9"
 cocoapods = "1.16.2"
 "gem:rubocop" = "1.86.1"
 sentry = "3.3.5"
+oxfmt = "0.44.0"
+oxlint = "1.59.0"
+
 
 [env]
 _.path = ["node_modules/.bin"]

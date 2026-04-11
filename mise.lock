@@ -76,6 +76,14 @@ url = "https://nodejs.org/dist/v22.22.2/node-v22.22.2-darwin-x64.tar.gz"
 checksum = "sha256:7c93e9d92bf68c07182b471aa187e35ee6cd08ef0f24ab060dfff605fcc1c57c"
 url = "https://nodejs.org/dist/v22.22.2/node-v22.22.2-win-x64.zip"
 
+[[tools.oxfmt]]
+version = "0.44.0"
+backend = "npm:oxfmt"
+
+[[tools.oxlint]]
+version = "1.59.0"
+backend = "npm:oxlint"
+
 [[tools.ruby]]
 version = "3.4.9"
 backend = "core:ruby"
