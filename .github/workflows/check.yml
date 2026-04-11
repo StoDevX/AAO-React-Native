@@ -86,10 +86,6 @@ jobs:
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
-      - uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151 # v4.0.1
-
-      - run: npm ci
-
       - name: Restore cached jsbundle
         uses: actions/cache/restore@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
         id: jsbundle-cache
@@ -102,6 +98,13 @@ jobs:
           key: jsbundle/e=${{ env.cache_epoch }}/host=ubuntu@24.04/target=ios/ref=${{ github.head_ref || github.ref_name }}/hash=${{ hashFiles('.mise.toml', 'package.json', 'package-lock.json', 'tsconfig.json', 'babel.config.js', 'index.js', 'data/**', 'images/**', 'modules/**.ts', 'modules/**.tsx', 'source/**.ts', 'source/**.tsx') }}
           restore-keys: |
             jsbundle/e=${{ env.cache_epoch }}/host=ubuntu@24.04/target=ios/ref=master/hash=${{ hashFiles('.mise.toml', 'package.json', 'package-lock.json', 'tsconfig.json', 'babel.config.js', 'index.js', 'data/**', 'images/**', 'modules/**.ts', 'modules/**.tsx', 'source/**.ts', 'source/**.tsx') }}
+
+      - uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151 # v4.0.1
+        if: steps.jsbundle-cache.outputs.cache-matched-key == ''
+
+      - name: Install npm dependencies
+        if: steps.jsbundle-cache.outputs.cache-matched-key == ''
+        run: npm ci
 
       - name: Bundle data
         if: steps.jsbundle-cache.outputs.cache-matched-key == ''
@@ -196,13 +199,13 @@ jobs:
 
       - name: Save iOS app to cache
         uses: actions/cache/save@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
-        if: steps.app-cache.outputs.cache-matched-key == ''
+        if: ${{ steps.app-cache.outputs.cache-matched-key == '' && !contains(github.event.pull_request.labels.*.name, 'ci/skip-detox') }}
         with:
           path: ios/build/Build/Products/
           key: ${{ steps.app-cache.outputs.cache-primary-key }}
 
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
-        if: steps.app-cache.outputs.cache-matched-key == ''
+        if: ${{ steps.app-cache.outputs.cache-matched-key == '' && !contains(github.event.pull_request.labels.*.name, 'ci/skip-detox') }}
         with:
           name: ios-app
           path: ios/build/Build/Products/
