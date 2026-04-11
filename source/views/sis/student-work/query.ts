@@ -1,5 +1,5 @@
 import {client} from '@frogpond/api'
-import {useQuery, UseQueryResult} from '@tanstack/react-query'
+import {queryOptions} from '@tanstack/react-query'
 import {JobType} from './types'
 import {toLaxTitleCase as titleCase} from '@frogpond/titlecase'
 import {groupBy, orderBy} from 'lodash'
@@ -20,28 +20,23 @@ let sorters: Array<(job: JobType) => string> = [
 
 let ordered: Array<'desc' | 'asc'> = ['desc', 'asc', 'desc']
 
-export function useStudentWorkPostings(): UseQueryResult<
-	{title: string; data: JobType[]}[],
-	unknown
-> {
-	return useQuery({
-		queryKey: keys.all,
-		queryFn: async ({signal}) => {
-			let response = await client.get<JobType[]>('jobs', {signal}).json()
+export const studentWorkPostingsOptions = queryOptions({
+	queryKey: keys.all,
+	queryFn: async ({signal}) => {
+		let response = await client.get<JobType[]>('jobs', {signal}).json()
 
-			// force title-case on the job types, to prevent not-actually-duplicate headings
-			return response.map((job) => ({
-				...job,
-				type: titleCase(job.type),
-			})) as JobType[]
-		},
-		select: (data) => {
-			let sorted = orderBy(data, sorters, ordered)
-			let grouped = groupBy(sorted, (j) => j.type)
-			return Object.entries(grouped).map(([title, groupedData]) => ({
-				title,
-				data: groupedData,
-			}))
-		},
-	})
-}
+		// force title-case on the job types, to prevent not-actually-duplicate headings
+		return response.map((job) => ({
+			...job,
+			type: titleCase(job.type),
+		})) as JobType[]
+	},
+	select: (data) => {
+		let sorted = orderBy(data, sorters, ordered)
+		let grouped = groupBy(sorted, (j) => j.type)
+		return Object.entries(grouped).map(([title, groupedData]) => ({
+			title,
+			data: groupedData,
+		}))
+	},
+})

@@ -15,7 +15,8 @@ import {NativeStackNavigationProp} from '@react-navigation/native-stack'
 import Icon from 'react-native-vector-icons/Ionicons'
 
 import {RootStackParamList} from '../../navigation/types'
-import {useFaqs} from './query'
+import {faqsOptions} from './query'
+import {useQuery} from '@tanstack/react-query'
 import {getFaqVersion, useFaqBannerStore} from './store'
 import type {Faq, FaqTarget, FaqSeverity} from './types'
 
@@ -34,7 +35,7 @@ export function FaqBanner({
 }: Props): JSX.Element | null {
 	let navigation =
 		useNavigation<NativeStackNavigationProp<RootStackParamList>>()
-	let {data, isError} = useFaqs()
+	let {data, isError} = useQuery(faqsOptions)
 	let dismissFaq = useFaqBannerStore((state) => state.dismissFaq)
 	let dismissedMap = useFaqBannerStore((state) => state.dismissed)
 
@@ -147,7 +148,7 @@ export function FaqBannerGroup({
 	target,
 	style,
 }: GroupProps): JSX.Element | null {
-	let {data, isError} = useFaqs()
+	let {data, isError} = useQuery(faqsOptions)
 
 	if (!data || isError) {
 		return null

@@ -7,7 +7,8 @@ import {JobRow} from './job-row'
 import type {JobType} from './types'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 import {useNavigation} from '@react-navigation/native'
-import {useStudentWorkPostings} from './query'
+import {studentWorkPostingsOptions} from './query'
+import {useQuery} from '@tanstack/react-query'
 
 const styles = StyleSheet.create({
 	listContainer: {
@@ -27,7 +28,7 @@ const StudentWorkView = (): JSX.Element => {
 		refetch,
 		isRefetching,
 		isLoading,
-	} = useStudentWorkPostings()
+	} = useQuery(studentWorkPostingsOptions)
 
 	if (isError) {
 		return (
