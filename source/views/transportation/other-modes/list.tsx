@@ -4,7 +4,8 @@ import * as c from '@frogpond/colors'
 import {SectionList, StyleSheet} from 'react-native'
 import {ListEmpty, ListSectionHeader, ListSeparator} from '@frogpond/lists'
 import {openUrl} from '@frogpond/open-url'
-import {useOtherModesGrouped} from './query'
+import {otherModesGroupedOptions} from './query'
+import {useQuery} from '@tanstack/react-query'
 import {LoadingView, NoticeView} from '@frogpond/notice'
 
 const styles = StyleSheet.create({
@@ -24,7 +25,7 @@ let OtherModesView = (): JSX.Element => {
 		isRefetching,
 		isLoading,
 		isError,
-	} = useOtherModesGrouped()
+	} = useQuery(otherModesGroupedOptions)
 
 	if (isError) {
 		return (

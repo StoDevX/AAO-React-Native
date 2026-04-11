@@ -1,7 +1,7 @@
 import {
+	queryOptions,
 	useQueries,
 	useQuery,
-	UseQueryOptions,
 	UseQueryResult,
 } from '@tanstack/react-query'
 import {CourseType, TermType} from '../../../lib/course-search'
@@ -27,69 +27,61 @@ export const keys = {
 	levels: ['catalog', 'levels'] as const,
 }
 
-export function useAvailableTerms(): UseQueryResult<TermType[], Error> {
-	return useQuery({
-		queryKey: keys.terms,
-		queryFn: async ({signal}) => {
-			const resp = await infoJson({signal})
-			return resp.files
-		},
-		select: (data) => {
-			const thisYear = new Date().getFullYear()
-			return data.filter(
-				(file) => file.type === 'json' && file.year > thisYear - 5,
-			)
-		},
-		staleTime: ONE_DAY,
+export const availableTermsOptions = queryOptions({
+	queryKey: keys.terms,
+	queryFn: async ({signal}) => {
+		const resp = await infoJson({signal})
+		return resp.files
+	},
+	select: (data) => {
+		const thisYear = new Date().getFullYear()
+		return data.filter(
+			(file) => file.type === 'json' && file.year > thisYear - 5,
+		)
+	},
+	staleTime: ONE_DAY,
+})
+
+export const courseDataOptions = (
+	term: TermType,
+	levels: Array<number>,
+	gereqs: Array<string>,
+) =>
+	queryOptions({
+		queryKey: keys.courses(term, levels, gereqs),
+		queryFn: ({
+			queryKey: [_group, _courses, termKey, levelsKey, gereqsKey],
+			signal,
+		}) => coursesForTerm(termKey, levelsKey, gereqsKey, {signal}),
+		staleTime: ONE_HOUR,
 	})
-}
 
 export function useCourseData(
 	selectedTerms: Array<number> = [],
 	levels: Array<number> = [],
 	gereqs: Array<string> = [],
 ): UseQueryResult<CourseType[], Error>[] {
-	let {data: terms = []} = useAvailableTerms()
+	let {data: terms = []} = useQuery(availableTermsOptions)
 	let filteredTerms = terms.filter((t) => selectedTerms.includes(t.term))
 
-	let createQueryOptions = (
-		term: TermType,
-		levelsList: Array<number> = [],
-		gereqsList: Array<string> = [],
-	): UseQueryOptions<
-		CourseType[],
-		Error,
-		CourseType[],
-		ReturnType<(typeof keys)['courses']>
-	> => ({
-		queryKey: keys.courses(term, levelsList, gereqsList),
-		queryFn: ({
-			queryKey: [_group, _courses, termKey, levelsKey, gereqsKey],
-			signal,
-		}) => coursesForTerm(termKey, levelsKey, gereqsKey, {signal}),
-		staleTime: ONE_HOUR,
+	let buildQuery = (term: TermType) => ({
+		...courseDataOptions(term, levels, gereqs),
 		enabled: terms.length > 0,
 	})
 
 	return useQueries({
-		queries: filteredTerms.length
-			? filteredTerms.map((term) => createQueryOptions(term, levels, gereqs))
-			: terms.map((term) => createQueryOptions(term, levels, gereqs)),
+		queries: (filteredTerms.length ? filteredTerms : terms).map(buildQuery),
 	})
 }
 
-export function useGeReqs(): UseQueryResult<string[], Error> {
-	return useQuery({
-		queryKey: keys.gereqs,
-		queryFn: ({signal}) => geData({signal}),
-		staleTime: ONE_DAY,
-	})
-}
+export const geReqsOptions = queryOptions({
+	queryKey: keys.gereqs,
+	queryFn: ({signal}) => geData({signal}),
+	staleTime: ONE_DAY,
+})
 
-export function useDepartments(): UseQueryResult<string[], Error> {
-	return useQuery({
-		queryKey: keys.departments,
-		queryFn: ({signal}) => deptData({signal}),
-		staleTime: ONE_DAY,
-	})
-}
+export const departmentsOptions = queryOptions({
+	queryKey: keys.departments,
+	queryFn: ({signal}) => deptData({signal}),
+	staleTime: ONE_DAY,
+})

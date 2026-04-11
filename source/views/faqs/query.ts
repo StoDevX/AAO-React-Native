@@ -1,5 +1,5 @@
 import {client} from '@frogpond/api'
-import {useQuery, UseQueryResult} from '@tanstack/react-query'
+import {queryOptions} from '@tanstack/react-query'
 import {fallbackFaqs, fallbackLegacyText} from './local-faqs'
 import {evaluateConditions} from './conditions'
 import {parseFaqMetadata} from './schema'
@@ -14,13 +14,11 @@ const emptyData: FaqQueryData = {
 	legacyText: fallbackLegacyText,
 }
 
-export function useFaqs(): UseQueryResult<FaqQueryData, unknown> {
-	return useQuery<unknown, unknown, FaqQueryData>({
-		queryKey: keys.all,
-		queryFn: ({signal}) => client.get('faqs', {signal}).json(),
-		select: normalizeFaqResponse,
-	})
-}
+export const faqsOptions = queryOptions<unknown, unknown, FaqQueryData>({
+	queryKey: keys.all,
+	queryFn: ({signal}) => client.get('faqs', {signal}).json(),
+	select: normalizeFaqResponse,
+})
 
 function normalizeFaqResponse(raw: unknown): FaqQueryData {
 	if (!isRecord(raw)) {

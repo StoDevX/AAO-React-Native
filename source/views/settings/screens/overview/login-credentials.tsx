@@ -4,13 +4,13 @@ import {CellTextField} from '@frogpond/tableview/cells'
 import {LoginButton} from './login-button'
 import {
 	performLogin,
-	useCredentials,
+	credentialsOptions,
 	invalidateCredentials,
 	storeCredentials,
 	resetCredentials,
 } from '../../../../lib/login'
 import {TextInput} from 'react-native'
-import {useMutation} from '@tanstack/react-query'
+import {useMutation, useQuery} from '@tanstack/react-query'
 import {sto} from '../../../../lib/colors'
 
 export const CredentialsLoginSection = (): JSX.Element => {
@@ -20,16 +20,14 @@ export const CredentialsLoginSection = (): JSX.Element => {
 	let [password, setPassword] = React.useState('')
 	let passwordInputRef = React.useRef<TextInput>(null)
 
-	let credentials = useCredentials({
-		onSuccess: (data) => {
-			if (!data) {
-				return
-			}
+	let credentials = useQuery(credentialsOptions)
 
-			setUsername(data.username)
-			setPassword(data.password)
-		},
-	})
+	React.useEffect(() => {
+		if (credentials.data) {
+			setUsername(credentials.data.username)
+			setPassword(credentials.data.password)
+		}
+	}, [credentials.data])
 
 	let logIn = useMutation({
 		mutationFn: () => performLogin({username, password}),
@@ -55,7 +53,7 @@ export const CredentialsLoginSection = (): JSX.Element => {
 		? 'St. Olaf login enables the "meals remaining" feature.'
 		: 'St. Olaf login enables the "meals remaining" feature. Sign in to see this data.'
 
-	let actionPending = logIn.isLoading || logOut.isLoading
+	let actionPending = logIn.isPending || logOut.isPending
 
 	return (
 		<Section footer={sectionFooter} header="ST. OLAF LOGIN">
@@ -66,7 +64,7 @@ export const CredentialsLoginSection = (): JSX.Element => {
 					<>
 						<CellTextField
 							ref={usernameInputRef}
-							editable={!logIn.isLoading}
+							editable={!logIn.isPending}
 							label="Username"
 							onChangeText={(text) => setUsername(text)}
 							onSubmitEditing={() => passwordInputRef.current?.focus()}
@@ -78,7 +76,7 @@ export const CredentialsLoginSection = (): JSX.Element => {
 
 						<CellTextField
 							ref={passwordInputRef}
-							editable={!logIn.isLoading}
+							editable={!logIn.isPending}
 							label="Password"
 							onChangeText={(text) => setPassword(text)}
 							onSubmitEditing={() => logIn.mutate()}

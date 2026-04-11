@@ -8,7 +8,8 @@ import * as c from '@frogpond/colors'
 import {debounceSearch} from '@frogpond/use-debounce'
 import {NetworkLoggerButton} from '@frogpond/navigation-buttons'
 
-import {ServerRoute, useServerRoutes} from './query'
+import {ServerRoute, serverRoutesOptions} from './query'
+import {useQuery} from '@tanstack/react-query'
 import {ChangeTextEvent} from '../../../../navigation/types'
 import {useNavigation} from '@react-navigation/native'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
@@ -24,7 +25,7 @@ export const APITestView = (): JSX.Element => {
 		isLoading: isRoutesLoading,
 		isError: isRoutesError,
 		refetch: routesRefetch,
-	} = useServerRoutes()
+	} = useQuery(serverRoutesOptions)
 
 	React.useLayoutEffect(() => {
 		const rightButton = () => <NetworkLoggerButton />

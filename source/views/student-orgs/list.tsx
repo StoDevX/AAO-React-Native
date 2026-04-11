@@ -22,7 +22,8 @@ import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 import {useNavigation} from '@react-navigation/native'
 import memoize from 'lodash/memoize'
 import {ChangeTextEvent} from '../../navigation/types'
-import {useStudentOrgs} from './query'
+import {studentOrgsOptions} from './query'
+import {useQuery} from '@tanstack/react-query'
 
 const splitToArray = memoize((str: string) => words(deburr(str.toLowerCase())))
 
@@ -59,7 +60,7 @@ function StudentOrgsView(): JSX.Element {
 		refetch,
 		isRefetching,
 		isLoading,
-	} = useStudentOrgs()
+	} = useQuery(studentOrgsOptions)
 
 	React.useLayoutEffect(() => {
 		navigation.setOptions({

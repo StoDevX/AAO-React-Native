@@ -8,7 +8,8 @@ import {
 	type Tab,
 } from '@frogpond/navigation-tabs'
 
-import {CccCalendarView, useNamedCalendar} from '@frogpond/ccc-calendar'
+import {CccCalendarView, namedCalendarOptions} from '@frogpond/ccc-calendar'
+import {useQuery} from '@tanstack/react-query'
 
 function StOlafCalendarView() {
 	return (
@@ -17,7 +18,7 @@ function StOlafCalendarView() {
 				title: 'Powered by the St. Olaf calendar',
 				href: 'https://wp.stolaf.edu/calendar/',
 			}}
-			query={useNamedCalendar('stolaf')}
+			query={useQuery(namedCalendarOptions('stolaf'))}
 		/>
 	)
 }
@@ -29,7 +30,7 @@ function OlevilleCalendarView() {
 				title: 'Powered by the Oleville calendar',
 				href: 'https://oleville.com/events/',
 			}}
-			query={useNamedCalendar('oleville')}
+			query={useQuery(namedCalendarOptions('oleville'))}
 		/>
 	)
 }
@@ -41,7 +42,7 @@ function NorthfieldCalendarView() {
 				title: 'Powered by VisitingNorthfield.com',
 				href: 'https://visitingnorthfield.com/events/calendar/',
 			}}
-			query={useNamedCalendar('northfield')}
+			query={useQuery(namedCalendarOptions('northfield'))}
 		/>
 	)
 }
