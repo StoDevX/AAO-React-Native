@@ -1,14 +1,14 @@
 {
-  "name": "@frogpond/event-type",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.ts",
-  "author": "",
-  "license": "ISC",
-  "scripts": {
-    "test": "jest"
-  },
-  "peerDependencies": {
-    "moment": "^2.30.1"
-  }
+	"name": "@frogpond/event-type",
+	"version": "1.0.0",
+	"description": "",
+	"main": "index.ts",
+	"author": "",
+	"license": "ISC",
+	"scripts": {
+		"test": "jest"
+	},
+	"peerDependencies": {
+		"moment": "^2.30.1"
+	}
 }

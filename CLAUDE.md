@@ -20,7 +20,7 @@ All About Olaf is a React Native mobile app for the St. Olaf College community. 
 - **Imports:** React → React Native → third-party → local. Named imports preferred.
 - **No Moment.js** — use `date-fns` or `Day.js` for date/time
 - Colors from `@frogpond/colors` — follow existing color system
-- Prettier config in `package.json` (tabs, single quotes, no semis)
+- oxfmt config in `.oxfmtrc.json` (tabs, single quotes, no semis)
 
 ## Architecture & Patterns
 
@@ -56,8 +56,8 @@ These patterns are especially important in this codebase:
 ## Development Commands
 
 ```bash
-mise run lint   # ESLint
-mise run pretty # Prettier; run `pretty:check` to validate instead
+mise run lint   # oxlint
+mise run pretty # oxfmt; run `pretty:check` to validate instead
 mise run test   # Jest, unit tests
 mise run tsc    # Type check
 mise run pods   # Install cocoapods, even on Linux
@@ -67,7 +67,7 @@ mise run pods   # Install cocoapods, even on Linux
 
 **Session startup:** Always run `mise run agent:setup` at the start of every session. This installs dependencies and bundles data files.
 
-**Before committing:** Always run `mise run agent:pre-commit` before committing any changes. This formats code with Prettier, runs ESLint, checks TypeScript types, and runs Jest tests. Do not commit if any step fails.
+**Before committing:** Always run `mise run agent:pre-commit` before committing any changes. This formats code with oxfmt, runs oxlint, checks TypeScript types, and runs Jest tests. Do not commit if any step fails.
 
 **Dependency upgrades:** Whenever you upgrade a dependency whose version is mentioned in this file (e.g., React Native, React Navigation, React Query, Redux Toolkit, TypeScript, Jest, Fastlane), update the version reference in CLAUDE.md as part of the same change. Stale version references in this file mislead future sessions about the project's current state.
 

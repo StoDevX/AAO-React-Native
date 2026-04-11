@@ -48,20 +48,16 @@ run = "fastlane"
 # --- Code quality ---
 
 [tasks.lint]
-description = "Run ESLint"
-run = "eslint --report-unused-disable-directives --cache source/ modules/ scripts/ images/"
+description = "Run oxlint"
+run = "oxlint -c .oxlintrc.json source/ modules/ scripts/ images/"
 
 [tasks.pretty]
-description = "Format code with Prettier"
-run = "prettier --write ."
+description = "Format code with oxfmt"
+run = "oxfmt --write ."
 
 [tasks."pretty:check"]
-description = "Check code formatting"
-run = "prettier --check ."
-
-[tasks.p]
-description = "Format staged files with pretty-quick"
-run = "pretty-quick"
+description = "Check code formatting with oxfmt"
+run = "oxfmt --check ."
 
 [tasks.tsc]
 description = "Run TypeScript compiler"
@@ -131,13 +127,13 @@ description = "Count TypeScript errors by code"
 depends = ["tsc-errors"]
 run = "cat tsc-errors | rg -or '$1' 'error \\b(TS\\d+)\\b' | sort | uniq -c | sort -nr | sed 's/^ *//' | tee tsc-counts || true"
 
-[tasks.eslint-problems]
-description = "Generate ESLint problem report"
-run = 'mise run lint 2>&1 | sed "s:$(git rev-parse --show-toplevel):.:g" | tee eslint-problems || true'
+[tasks.lint-problems]
+description = "Generate oxlint problem report"
+run = 'mise run lint 2>&1 | sed "s:$(git rev-parse --show-toplevel):.:g" | tee lint-problems || true'
 
 [tasks.files]
 description = "Generate all diagnostic reports"
-depends = ["tsc-errors", "tsc-counts", "eslint-problems"]
+depends = ["tsc-errors", "tsc-counts", "lint-problems"]
 
 [tasks.verify]
 description = "Verify no diagnostic changes"

@@ -1,18 +1,18 @@
 {
-  "name": "@frogpond/html-lib",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.ts",
-  "author": "",
-  "license": "ISC",
-  "scripts": {
-    "test": "jest"
-  },
-  "dependencies": {
-    "css-select": "6.0.0",
-    "domhandler": "5.0.3",
-    "domutils": "3.2.2",
-    "html-entities": "2.6.0",
-    "htmlparser2": "10.1.0"
-  }
+	"name": "@frogpond/html-lib",
+	"version": "1.0.0",
+	"description": "",
+	"main": "index.ts",
+	"author": "",
+	"license": "ISC",
+	"scripts": {
+		"test": "jest"
+	},
+	"dependencies": {
+		"css-select": "6.0.0",
+		"domhandler": "5.0.3",
+		"domutils": "3.2.2",
+		"html-entities": "2.6.0",
+		"htmlparser2": "10.1.0"
+	}
 }

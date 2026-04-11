@@ -1,21 +1,19 @@
 {
-  "useTabs": false,
-  "singleQuote": true,
-  "trailingComma": "all",
-  "bracketSpacing": false,
-  "semi": false,
-  "parser": "json-stringify",
-  "tabWidth": 2,
-  "printWidth": 80,
-  "sortPackageJson": false,
-  "ignorePatterns": [
-    "*.md",
-    "node_modules/",
-    "/flow-typed/",
-    "/docs/",
-    "/data/bus-times/*.yaml",
-    "/android/",
-    "/ios/",
-    "/package-lock.json"
-  ]
+	"useTabs": true,
+	"singleQuote": true,
+	"trailingComma": "all",
+	"bracketSpacing": false,
+	"semi": false,
+	"printWidth": 80,
+	"sortPackageJson": false,
+	"ignorePatterns": [
+		"*.md",
+		"node_modules/",
+		"/flow-typed/",
+		"/docs/",
+		"/data/bus-times/*.yaml",
+		"/android/",
+		"/ios/",
+		"/package-lock.json"
+	]
 }

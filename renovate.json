@@ -1,70 +1,52 @@
 {
-  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": [
-    "config:best-practices",
-    "helpers:pinGitHubActionDigestsToSemver",
-    ":docker",
-    ":maintainLockFilesWeekly",
-    ":pinAllExceptPeerDependencies",
-    "security:minimumReleaseAgeNpm",
-    ":semanticCommitsDisabled"
-  ],
-  "packageRules": [
-    {
-      "description": "require manual approval for new minor OR major versions of these packages",
-      "matchPackageNames": [
-        "@types/react-native",
-        "react-native",
-        "@types/react-test-renderer",
-        "react-test-renderer",
-        "@types/react",
-        "react",
-        "@react-native/*"
-      ],
-      "matchUpdateTypes": [
-        "minor",
-        "major"
-      ],
-      "dependencyDashboardApproval": true
-    },
-    {
-      "description": "require manual approval for new major versions of these packages",
-      "matchPackageNames": [
-        "react-markdown"
-      ],
-      "matchUpdateTypes": [
-        "major"
-      ],
-      "dependencyDashboardApproval": true
-    },
-    {
-      "description": "stop widening peerDep ranges for custom modules",
-      "matchFileNames": [
-        "modules/**/package.json"
-      ],
-      "matchDepTypes": [
-        "peerDependencies"
-      ],
-      "rangeStrategy": "bump"
-    },
-    {
-      "description": "group all redux packages together",
-      "groupName": "redux",
-      "matchPackageNames": [
-        "@reduxjs/**",
-        "react-redux"
-      ]
-    },
-    {
-      "description": "group all patch-level updates into a single weekly PR",
-      "matchUpdateTypes": [
-        "patch"
-      ],
-      "groupName": "all patch updates",
-      "schedule": [
-        "before 9am on monday"
-      ]
-    }
-  ],
-  "prConcurrentLimit": 4
+	"$schema": "https://docs.renovatebot.com/renovate-schema.json",
+	"extends": [
+		"config:best-practices",
+		"helpers:pinGitHubActionDigestsToSemver",
+		":docker",
+		":maintainLockFilesWeekly",
+		":pinAllExceptPeerDependencies",
+		"security:minimumReleaseAgeNpm",
+		":semanticCommitsDisabled"
+	],
+	"packageRules": [
+		{
+			"description": "require manual approval for new minor OR major versions of these packages",
+			"matchPackageNames": [
+				"@types/react-native",
+				"react-native",
+				"@types/react-test-renderer",
+				"react-test-renderer",
+				"@types/react",
+				"react",
+				"@react-native/*"
+			],
+			"matchUpdateTypes": ["minor", "major"],
+			"dependencyDashboardApproval": true
+		},
+		{
+			"description": "require manual approval for new major versions of these packages",
+			"matchPackageNames": ["react-markdown"],
+			"matchUpdateTypes": ["major"],
+			"dependencyDashboardApproval": true
+		},
+		{
+			"description": "stop widening peerDep ranges for custom modules",
+			"matchFileNames": ["modules/**/package.json"],
+			"matchDepTypes": ["peerDependencies"],
+			"rangeStrategy": "bump"
+		},
+		{
+			"description": "group all redux packages together",
+			"groupName": "redux",
+			"matchPackageNames": ["@reduxjs/**", "react-redux"]
+		},
+		{
+			"description": "group all patch-level updates into a single weekly PR",
+			"matchUpdateTypes": ["patch"],
+			"groupName": "all patch updates",
+			"schedule": ["before 9am on monday"]
+		}
+	],
+	"prConcurrentLimit": 4
 }

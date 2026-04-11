@@ -1,15 +1,15 @@
 {
-  "hooks": {
-    "SessionStart": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "mise trust && mise settings experimental=true && mise install 2>/dev/null || true",
-            "statusMessage": "Installing mise tools..."
-          }
-        ]
-      }
-    ]
-  }
+	"hooks": {
+		"SessionStart": [
+			{
+				"hooks": [
+					{
+						"type": "command",
+						"command": "mise trust && mise settings experimental=true && mise install 2>/dev/null || true",
+						"statusMessage": "Installing mise tools..."
+					}
+				]
+			}
+		]
+	}
 }
