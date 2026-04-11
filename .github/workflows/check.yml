@@ -390,7 +390,8 @@ jobs:
             --record-logs all \
             --record-videos failing \
             --take-screenshots failing \
-            -- --shard=${{ matrix.shard }}/${{ strategy.job-total }}
+            -- --shard=${{ matrix.shard }}/${{ strategy.job-total }} \
+               --json --outputFile artifacts/results.json
 
       - name: Dump simulator system log on failure
         if: failure()
@@ -402,6 +403,86 @@ jobs:
           else
             echo "No booted simulator found"
           fi
+
+      - name: Write step summary
+        if: always()
+        env:
+          SHARD: '${{ matrix.shard }}'
+          TOTAL_SHARDS: '${{ strategy.job-total }}'
+          ARTIFACT_NAME: 'detox-ios-${{ matrix.shard }}'
+        run: |
+          node - <<'EOF'
+          const fs = require('fs')
+          const path = require('path')
+
+          const shard = process.env.SHARD
+          const totalShards = process.env.TOTAL_SHARDS
+          const artifactName = process.env.ARTIFACT_NAME
+          const summaryPath = process.env.GITHUB_STEP_SUMMARY
+
+          const resultsPath = 'artifacts/results.json'
+          if (!fs.existsSync(resultsPath)) {
+            const msg = `## Detox E2E — Shard ${shard}/${totalShards}\n\n> ⚠️ No results file found — the test run may have crashed before producing output.\n`
+            fs.appendFileSync(summaryPath, msg)
+            process.exit(0)
+          }
+
+          const results = JSON.parse(fs.readFileSync(resultsPath, 'utf8'))
+
+          let passed = 0
+          let failed = 0
+          let rows = []
+
+          for (const suite of results.testResults) {
+            for (const t of suite.testResults) {
+              const ok = t.status === 'passed'
+              if (ok) {
+                passed++
+              } else {
+                failed++
+              }
+
+              // Detox stores artifacts under artifacts/<test-title>/
+              // Look for .png and .mp4 files to surface in the table
+              const testDir = path.join('artifacts', t.fullName)
+              let artifacts = []
+              if (fs.existsSync(testDir)) {
+                const files = fs.readdirSync(testDir)
+                if (files.some(f => f.endsWith('.log'))) artifacts.push('log')
+                if (files.some(f => f.endsWith('.png'))) artifacts.push('screenshot')
+                if (files.some(f => f.endsWith('.mp4'))) artifacts.push('video')
+              }
+
+              if (!ok) {
+                const icon = '❌'
+                const artifactStr = artifacts.length ? artifacts.join(' · ') : '—'
+                const suiteName = path.basename(suite.testFilePath)
+                rows.push(`| ${icon} | \`${suiteName}\` | ${t.fullName} | ${artifactStr} |`)
+              }
+            }
+          }
+
+          const statusLine = failed === 0
+            ? `✅ All ${passed} tests passed`
+            : `❌ ${failed} failed, ${passed} passed`
+
+          let lines = []
+          lines.push(`## Detox E2E — Shard ${shard}/${totalShards}`)
+          lines.push('')
+          lines.push(statusLine)
+          lines.push('')
+
+          if (rows.length > 0) {
+            lines.push('| | File | Test | Artifacts |')
+            lines.push('|---|---|---|---|')
+            lines.push(...rows)
+            lines.push('')
+            lines.push(`> Download artifacts: \`${artifactName}\``)
+            lines.push('')
+          }
+
+          fs.appendFileSync(summaryPath, lines.join('\n') + '\n')
+          EOF
 
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         if: always()
