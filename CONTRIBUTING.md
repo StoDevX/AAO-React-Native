@@ -19,6 +19,7 @@ As always, please keep the [Code of Conduct][cc] in mind.
 
 1. [Labels](#labels)
 2. [Keep It Running](#keep-it-running)
+   - [E2E Tests (Detox)](#e2e-tests-detox)
 3. [Maintainers](#maintainers)
 
 ## Labels
@@ -52,25 +53,80 @@ Even though they may seem unorganized, there's a method to the madness.
 
 ## Keep It Running
 
-We use a continuous-integration (CI) system to make sure that the project still works as we change things.
-Any submissions you make will be validated by [CircleCI][circle] and [TravisCI][travis].
+We use [GitHub Actions][gh-actions] to make sure that the project still works as we change things.
+Any submissions you make will be validated automatically when you open or update a pull request.
 
-[circle]: https://circleci.com/gh/StoDevX/AAO-React-Native
-[travis]: https://travis-ci.org/StoDevX/AAO-React-Native/builds
+[gh-actions]: https://github.com/StoDevX/AAO-React-Native/actions
 
-We use a set of tools to enforce code style and find common bugs: [ESLint][eslint], [Flow][flow], [Jest][jest], and [Prettier][prettier].
+We use a set of tools to enforce code style and find common bugs: [ESLint][eslint], [TypeScript][tsc], [Jest][jest], and [Prettier][prettier].
 
-- `npm run lint`: ESLint finds and flags things that might be typos, or unintentional bugs
-- `npm run flow`: Flow looks for type errors (in JS? yes!)
-- `npm run test`: Jest runs our unit tests
-- `npm run prettier`: Prettier enforces a common style on the JS code, without us needing to edit anything
+- `mise run lint`: ESLint finds and flags things that might be typos, or unintentional bugs
+- `mise run tsc`: TypeScript checks for type errors
+- `mise run test`: Jest runs our unit tests
+- `mise run pretty`: Prettier enforces a common style on the JS/TS code, without us needing to edit anything
 
 Whenever commits are pushed, we have some GitHub Actions workflows that will run these commands (and a few others) to evaluate the changes.
 
 [eslint]: http://eslint.org/
-[flow]: https://flowtype.org/
+[tsc]: https://www.typescriptlang.org/
 [jest]: https://facebook.github.io/jest/
 [prettier]: https://github.com/prettier/prettier
+
+### E2E Tests (Detox)
+
+We run end-to-end tests with [Detox][detox] as part of CI.
+These tests build the app, install it in an iOS Simulator, and interact with it the way a real user would.
+
+[detox]: https://wix.github.io/Detox/
+
+#### Skipping Detox in CI
+
+If your PR doesn't affect anything that would be caught by E2E tests (e.g. a docs change or a fix to a data file), you can apply the **`ci/skip-detox`** label to skip the Detox job entirely and speed up CI.
+
+#### Debugging Failing E2E Tests
+
+When Detox tests fail in CI, the workflow automatically captures:
+
+- **Screenshots** of the app at the moment of failure
+- **Video recordings** of the test run for failing tests
+- **Device logs** from the iOS Simulator for every test
+
+These are all uploaded as GitHub Actions artifacts after each Detox job, even if the job fails.
+Each shard produces its own artifact: `detox-ios-1`, `detox-ios-2`, `detox-ios-3`.
+
+**To download them:**
+
+1. Go to the failing CI run on the [Actions tab][actions].
+2. Scroll to the bottom of the run summary page — the artifacts are listed there.
+3. Click the artifact name to download a `.zip` containing the logs, screenshots, and videos.
+
+[actions]: https://github.com/StoDevX/AAO-React-Native/actions
+
+Inside the zip, each test has its own folder.
+Failing tests will include a `.mp4` video and `.png` screenshots; every test includes a `.log` file with the Detox device log.
+
+#### Running E2E Tests Locally
+
+To run the E2E tests yourself:
+
+```sh
+# Build the app for the simulator
+npx detox build e2e --configuration ios.sim.debug
+
+# Run all tests
+npx detox test e2e/ --configuration ios.sim.debug
+
+# Run a single test file
+npx detox test e2e/module-home.spec.ts --configuration ios.sim.debug
+
+# Record everything locally for debugging
+npx detox test e2e/ --configuration ios.sim.debug \
+  --record-logs all \
+  --record-videos all \
+  --take-screenshots all
+```
+
+Artifacts from a local run are saved to the `artifacts/` directory at the project root.
 
 
 ## Maintainers
