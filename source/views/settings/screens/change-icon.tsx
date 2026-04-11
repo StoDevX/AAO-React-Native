@@ -39,13 +39,13 @@ export const icons: Array<Icon> = [
 export let IconSettingsView = (): JSX.Element => {
 	let [iconType, setIconType] = React.useState<IconTypeEnum>('default')
 
-	let fetchIcon = async () => {
+	let loadCurrentIcon = async () => {
 		let name = await getIcon()
 		setIconType((name === 'Default' ? 'default' : name) as IconTypeEnum)
 	}
 
 	React.useEffect(() => {
-		fetchIcon()
+		loadCurrentIcon()
 	}, [])
 
 	let setIcon = async (iconName: string) => {
@@ -55,7 +55,7 @@ export let IconSettingsView = (): JSX.Element => {
 			await changeIcon(iconName)
 		}
 
-		fetchIcon()
+		loadCurrentIcon()
 	}
 
 	return (
