@@ -1,5 +1,29 @@
 import type {Config} from 'jest'
 
+// Packages that ship as ESM-only and need Babel transformation for Jest
+const esmPackages = [
+	'(jest-)?react-native',
+	'@react-native',
+	'@frogpond',
+	'glamorous-native',
+	'react-navigation',
+	'@reduxjs/toolkit',
+	'immer',
+	'redux',
+	'redux-thunk',
+	'reselect',
+	// css-select v7+ and its ESM-only transitive deps
+	'css-select',
+	'boolbase',
+	'css-what',
+	'nth-check',
+	'domhandler',
+	'domutils',
+	'dom-serializer',
+	'domelementtype',
+	'entities',
+]
+
 const config: Config = {
 	preset: 'react-native',
 	testMatch: [
@@ -16,9 +40,7 @@ const config: Config = {
 		'!**/node_modules/**',
 	],
 	setupFiles: ['./scripts/jest-setup.js'],
-	transformIgnorePatterns: [
-		'node_modules/(?!(jest-)?react-native|@react-native|@frogpond|glamorous-native|react-navigation|@reduxjs/toolkit|immer|redux|redux-thunk|reselect|css-select|boolbase|css-what|nth-check|domhandler|domutils|dom-serializer|domelementtype|entities)',
-	],
+	transformIgnorePatterns: [`node_modules/(?!${esmPackages.join('|')})`],
 	reporters: [['github-actions', {silent: false}], 'summary'],
 }
 
