@@ -33,15 +33,6 @@ jobs:
       - run: npm ci
       - run: mise run pretty:check
 
-  cocoapods:
-    name: CocoaPods
-    runs-on: ubuntu-24.04
-    steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-      - uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151 # v4.0.1
-      - run: npm ci
-      - run: mise run pods
-
   eslint:
     name: ESLint
     runs-on: ubuntu-24.04
@@ -196,7 +187,7 @@ jobs:
 
       - name: Install CocoaPods
         if: steps.app-cache.outputs.cache-hit != 'true' && steps.pods-cache.outputs.cache-hit != 'true'
-        run: mise run pods
+        run: mise run pod:install --deployment
         env:
           USE_CCACHE: '1'
 

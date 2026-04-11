@@ -25,13 +25,21 @@ run = "react-native run-ios"
 description = "Start Metro bundler"
 run = "react-native start"
 
-[tasks.pods]
+[tasks."pod:install"]
 description = "Install CocoaPods"
-run = "scripts/pods.sh"
+usage = '''
+flag "--deployment" help="Disallow any changes to the Podfile or the Podfile.lock during installation"
+flag "--repo-update" negate="--no-repo-update" help="Force running `pod repo update` before install"
+flag "--verbose" help="Show more debugging information"
+'''
+dir = "{{ config_root }}/ios"
+run = '''
+../scripts/pod install {% if usage.deployment %}--deployment{% endif %} {% if usage.repo_update %}--repo-update{% endif %} {% if usage.verbose %}--verbose{% endif %}
+'''
 
 [tasks.fastlane]
 description = "Run fastlane"
-run = "bundle exec fastlane"
+run = "fastlane"
 
 # --- Code quality ---
 

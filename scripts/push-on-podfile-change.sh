@@ -8,6 +8,7 @@ FILE=ios/Podfile.lock
 git diff
 
 if [[ -z $(git status -s -- "$FILE") ]]; then
+    echo "No changes to $FILE; nothing to push"
     exit 0
 fi
 
@@ -31,8 +32,7 @@ author="""${actor}"" <${email}>"
 git config user.name "$actor"
 git config user.email "$email"
 
-# eg, "Bump apple-signin-auth-1.4.0 cocoapods packages"
 git add "$FILE"
-git commit --author="$author" --message="Bump ""${branch//renovate\// }"" cocoapods packages"
+git commit --author="$author" --message="chore: update Podfile.lock for ${branch}"
 
 git push origin "$head_ref"
