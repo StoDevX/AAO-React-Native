@@ -1,12 +1,14 @@
 import React from 'react'
 import {fireEvent, render} from '@testing-library/react-native'
 
-import {useQuery, type UseQueryResult} from '@tanstack/react-query'
+import {QueryClient, QueryClientProvider} from '@tanstack/react-query'
 
 import {FaqBanner} from '../banner'
 import {useFaqBannerStore} from '../store'
 import type {Faq, FaqQueryData} from '../types'
 import {FAQ_TARGETS} from '../constants'
+
+const FAQS_QUERY_KEY = ['faqs'] as const
 
 const mockNavigate = jest.fn()
 
@@ -17,17 +19,11 @@ jest.mock('@react-navigation/native', () => ({
 }))
 
 jest.mock('../query', () => ({
-	faqsOptions: {queryKey: ['faqs']},
+	faqsOptions: {
+		queryKey: FAQS_QUERY_KEY,
+		queryFn: () => Promise.reject(new Error('queryFn should not be called')),
+	},
 }))
-
-jest.mock('@tanstack/react-query', () => ({
-	...jest.requireActual<typeof import('@tanstack/react-query')>(
-		'@tanstack/react-query',
-	),
-	useQuery: jest.fn(),
-}))
-
-const mockedUseQuery = useQuery as jest.MockedFunction<typeof useQuery>
 
 const baseFaq: Faq = {
 	id: 'home-support',
@@ -46,33 +42,34 @@ const buildResponse = (faqs: Faq[]): FaqQueryData => ({
 	legacyText: undefined,
 })
 
-const buildFaqQueryResult = (
-	faqs: Faq[],
-): UseQueryResult<FaqQueryData, unknown> =>
-	({
-		data: buildResponse(faqs),
-		isLoading: false,
-		isError: false,
-	}) as unknown as UseQueryResult<FaqQueryData, unknown>
+const renderWithFaqs = (faqs: Faq[]) => {
+	const queryClient = new QueryClient({
+		defaultOptions: {queries: {retry: false}},
+	})
+	queryClient.setQueryData<FaqQueryData>(FAQS_QUERY_KEY, buildResponse(faqs))
+
+	return render(
+		<QueryClientProvider client={queryClient}>
+			<FaqBanner target={FAQ_TARGETS.HOME} />
+		</QueryClientProvider>,
+	)
+}
 
 describe('FaqBanner component', () => {
 	beforeEach(() => {
 		useFaqBannerStore.getState().resetAll()
-		mockedUseQuery.mockReturnValue(buildFaqQueryResult([baseFaq]))
 		mockNavigate.mockReset()
 	})
 
 	it('renders the banner title and text', () => {
-		let {getByText} = render(<FaqBanner target={FAQ_TARGETS.HOME} />)
+		let {getByText} = renderWithFaqs([baseFaq])
 
 		expect(getByText(baseFaq.bannerTitle)).toBeTruthy()
 		expect(getByText(baseFaq.bannerText)).toBeTruthy()
 	})
 
 	it('dismisses the banner when the close button is pressed', () => {
-		let {getByLabelText, queryByText} = render(
-			<FaqBanner target={FAQ_TARGETS.HOME} />,
-		)
+		let {getByLabelText, queryByText} = renderWithFaqs([baseFaq])
 
 		let button = getByLabelText('Dismiss FAQ banner')
 		fireEvent.press(button)
@@ -81,7 +78,7 @@ describe('FaqBanner component', () => {
 	})
 
 	it('navigates to FAQ screen when main pressable is tapped', () => {
-		let {getByText} = render(<FaqBanner target={FAQ_TARGETS.HOME} />)
+		let {getByText} = renderWithFaqs([baseFaq])
 
 		fireEvent.press(getByText('Learn more'))
 

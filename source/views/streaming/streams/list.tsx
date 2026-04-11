@@ -11,7 +11,7 @@ import moment from 'moment-timezone'
 import type {Moment} from 'moment-timezone'
 import {toLaxTitleCase as titleCase} from '@frogpond/titlecase'
 import type {StreamType} from './types'
-import {streamsOptions} from './query'
+import {streamsOptionsFor} from './query'
 import {useQuery} from '@tanstack/react-query'
 
 const styles = StyleSheet.create({
@@ -71,7 +71,7 @@ export const StreamListView = (): JSX.Element => {
 		isLoading,
 		isRefetching,
 		isError,
-	} = useQuery(streamsOptions())
+	} = useQuery(streamsOptionsFor())
 
 	let [filters, setFilters] = React.useState<ListType<StreamType>[]>([])
 

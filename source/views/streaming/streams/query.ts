@@ -9,7 +9,7 @@ export const keys = {
 		['streams', filter] as const,
 }
 
-export const streamsOptions = (date: Moment = moment.tz(timezone())) => {
+export const streamsOptionsFor = (date: Moment = moment.tz(timezone())) => {
 	const dateFromFormatted = date.format('YYYY-MM-DD')
 	const dateToFormatted = date.clone().add(2, 'month').format('YYYY-MM-DD')
 

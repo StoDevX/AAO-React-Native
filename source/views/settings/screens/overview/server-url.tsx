@@ -5,12 +5,8 @@ import {CellTextField, ButtonCell} from '@frogpond/tableview/cells'
 import restart from 'react-native-restart'
 import * as storage from '../../../../lib/storage'
 import {DEFAULT_URL} from '../../../../lib/constants'
-import {useMutation, useQuery, queryOptions} from '@tanstack/react-query'
-
-const serverUrlOptions = queryOptions({
-	queryKey: ['settings', 'server-url'] as const,
-	queryFn: () => storage.getServerAddress(),
-})
+import {useMutation, useQuery} from '@tanstack/react-query'
+import {serverUrlOptions} from './query'
 
 export const ServerUrlSection = (): React.ReactElement => {
 	const [serverAddress, setServerAddress] = React.useState('')

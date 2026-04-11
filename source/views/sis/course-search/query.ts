@@ -64,16 +64,13 @@ export function useCourseData(
 	let {data: terms = []} = useQuery(availableTermsOptions)
 	let filteredTerms = terms.filter((t) => selectedTerms.includes(t.term))
 
+	let buildQuery = (term: TermType) => ({
+		...courseDataOptions(term, levels, gereqs),
+		enabled: terms.length > 0,
+	})
+
 	return useQueries({
-		queries: filteredTerms.length
-			? filteredTerms.map((term) => ({
-					...courseDataOptions(term, levels, gereqs),
-					enabled: terms.length > 0,
-				}))
-			: terms.map((term) => ({
-					...courseDataOptions(term, levels, gereqs),
-					enabled: terms.length > 0,
-				})),
+		queries: (filteredTerms.length ? filteredTerms : terms).map(buildQuery),
 	})
 }
 
