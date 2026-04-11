@@ -50,6 +50,8 @@ jobs:
 
       - run: npm ci
 
+      - run: mise x -- pod repo update
+
       - run: mise run pod:install --verbose
 
       - name: push-on-podfile-change

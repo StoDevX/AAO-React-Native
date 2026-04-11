@@ -5,4 +5,4 @@ if test "$(uname)" != "Darwin"; then
     export PATH="$PWD/../scripts/pod-linux-overrides:$PATH"
 fi
 
-exec pod "${@}"
+exec mise x -- pod "${@}"
