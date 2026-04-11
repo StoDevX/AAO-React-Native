@@ -6,7 +6,8 @@ import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 import * as React from 'react'
 import {SectionList, StyleSheet} from 'react-native'
 import {DetailNavigationKey} from './detail'
-import {useGroupedContacts} from './query'
+import {groupedContactsOptions} from './query'
+import {useQuery} from '@tanstack/react-query'
 import {ContactRow} from './row'
 import type {ContactType} from './types'
 
@@ -28,7 +29,7 @@ export let ContactsListView = (): JSX.Element => {
 		refetch,
 		isRefetching,
 		isLoading,
-	} = useGroupedContacts()
+	} = useQuery(groupedContactsOptions)
 
 	let onPressContact = React.useCallback(
 		(contactData: ContactType) =>

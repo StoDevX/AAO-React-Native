@@ -9,11 +9,12 @@ import {
 	ViewStyle,
 } from 'react-native'
 import {Cell, TableView, Section} from '@frogpond/tableview'
-import {BalancesShapeType, useBalances} from '../../lib/financials'
+import {BalancesShapeType, balancesOptions} from '../../lib/financials'
 import * as c from '@frogpond/colors'
 import {sto} from '../../lib/colors'
 import {useNavigation} from '@react-navigation/native'
-import {NoCredentialsError, useUsername} from '../../lib/login'
+import {NoCredentialsError, credentialsOptions} from '../../lib/login'
+import {useQuery} from '@tanstack/react-query'
 import {FaqBannerGroup} from '../faqs'
 import {FAQ_TARGETS} from '../faqs/constants'
 
@@ -21,16 +22,19 @@ const DISCLAIMER = 'This data may be outdated or otherwise inaccurate.'
 
 export const BalancesView = (): JSX.Element => {
 	let navigation = useNavigation()
-	let {data: username = ''} = useUsername()
+	let {data: username = ''} = useQuery({
+		...credentialsOptions,
+		select: (data) => data?.username,
+	})
 
 	let {
 		data = {} as BalancesShapeType,
 		error,
 		isError,
-		isInitialLoading,
+		isLoading,
 		refetch,
 		isRefetching,
-	} = useBalances(username)
+	} = useQuery(balancesOptions(username))
 
 	let openSettings = () => navigation.navigate('Settings')
 	let refresh = <RefreshControl onRefresh={refetch} refreshing={isRefetching} />
@@ -46,19 +50,19 @@ export const BalancesView = (): JSX.Element => {
 				<Section footer={DISCLAIMER} header="BALANCES">
 					<View style={styles.balancesRow}>
 						<FormattedValueCell
-							indeterminate={isInitialLoading}
+							indeterminate={isLoading}
 							label="Flex"
 							value={data.flex}
 						/>
 
 						<FormattedValueCell
-							indeterminate={isInitialLoading}
+							indeterminate={isLoading}
 							label="Ole"
 							value={data.ole}
 						/>
 
 						<FormattedValueCell
-							indeterminate={isInitialLoading}
+							indeterminate={isLoading}
 							label="Copy/Print"
 							style={styles.finalCell}
 							value={data.print}
@@ -69,13 +73,13 @@ export const BalancesView = (): JSX.Element => {
 				<Section footer={DISCLAIMER} header="MEAL PLAN">
 					<View style={styles.balancesRow}>
 						<FormattedValueCell
-							indeterminate={isInitialLoading}
+							indeterminate={isLoading}
 							label="Daily Meals Left"
 							value={data.daily}
 						/>
 
 						<FormattedValueCell
-							indeterminate={isInitialLoading}
+							indeterminate={isLoading}
 							label="Weekly Meals Left"
 							style={styles.finalCell}
 							value={data.weekly}

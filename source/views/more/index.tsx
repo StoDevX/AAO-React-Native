@@ -19,7 +19,8 @@ import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 import {useNavigation} from '@react-navigation/native'
 import {ChangeTextEvent} from '../../navigation/types'
 import {deburr, words} from 'lodash'
-import {useSearchLinks} from './query'
+import {searchLinksOptions} from './query'
+import {useQuery} from '@tanstack/react-query'
 
 const styles = StyleSheet.create({
 	wrapper: {
@@ -54,7 +55,7 @@ function MoreView(): JSX.Element {
 		isLoading,
 		isError,
 		isRefetching,
-	} = useSearchLinks()
+	} = useQuery(searchLinksOptions)
 
 	React.useLayoutEffect(() => {
 		navigation.setOptions({

@@ -3,7 +3,8 @@ import {BusLine} from './line'
 import {LoadingView, NoticeView} from '@frogpond/notice'
 import {timezone} from '@frogpond/constants'
 import {useNavigation} from '@react-navigation/native'
-import {useBusRoutes} from './query'
+import {busRoutesOptions} from './query'
+import {useQuery} from '@tanstack/react-query'
 import {useMomentTimer} from '@frogpond/timer'
 
 type Props = {
@@ -12,7 +13,13 @@ type Props = {
 
 let BusView = (props: Props): JSX.Element => {
 	let {now} = useMomentTimer({intervalMs: 1000 * 60, timezone: timezone()})
-	let {data: busLines = [], error, refetch, isError, isLoading} = useBusRoutes()
+	let {
+		data: busLines = [],
+		error,
+		refetch,
+		isError,
+		isLoading,
+	} = useQuery(busRoutesOptions)
 	let navigation = useNavigation()
 
 	let activeBusLine = busLines.find(({line}) => line === props.line)

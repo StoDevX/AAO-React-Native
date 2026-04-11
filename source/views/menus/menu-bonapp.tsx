@@ -16,7 +16,8 @@ import sample from 'lodash/sample'
 import {mapValues, reduce} from 'lodash'
 import moment, {type Moment} from 'moment-timezone'
 import {trimItemLabel, trimStationName} from './lib/trim-names'
-import {useBonAppCafe, useBonAppMenu} from './query'
+import {bonAppCafeOptions, bonAppMenuOptions} from './query'
+import {useQuery} from '@tanstack/react-query'
 import {decode, innerTextWithSpaces, parseHtml} from '@frogpond/html-lib'
 import {toLaxTitleCase} from '@frogpond/titlecase'
 
@@ -169,7 +170,7 @@ export function BonAppHostedMenu(props: Props): JSX.Element {
 		isError: isMenuError,
 		isRefetching: isMenuRefetching,
 		isLoading: isMenuLoading,
-	} = useBonAppMenu(props.cafe)
+	} = useQuery(bonAppMenuOptions(props.cafe))
 
 	let {
 		data: cafeInfo,
@@ -178,7 +179,7 @@ export function BonAppHostedMenu(props: Props): JSX.Element {
 		isError: isCafeError,
 		isRefetching: isCafeRefetching,
 		isLoading: isCafeLoading,
-	} = useBonAppCafe(props.cafe)
+	} = useQuery(bonAppCafeOptions(props.cafe))
 
 	let refetching = isMenuRefetching || isCafeRefetching
 

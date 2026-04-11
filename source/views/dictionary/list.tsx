@@ -1,7 +1,8 @@
 import * as React from 'react'
 import {SectionList, StyleSheet} from 'react-native'
 import {ChangeTextEvent} from '../../navigation/types'
-import {useDictionary} from './query'
+import {dictionaryOptions} from './query'
+import {useQuery} from '@tanstack/react-query'
 import type {WordType, DictionaryGroup} from './types'
 
 import {
@@ -66,7 +67,7 @@ function DictionaryView(): JSX.Element {
 		isLoading,
 		isError,
 		isRefetching,
-	} = useDictionary()
+	} = useQuery(dictionaryOptions)
 
 	React.useLayoutEffect(() => {
 		navigation.setOptions({

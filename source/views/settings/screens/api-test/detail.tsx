@@ -36,7 +36,7 @@ export const APITestDetailView = (): JSX.Element => {
 			return client.get(cleanedName, {signal}).text()
 		},
 		staleTime: 0,
-		cacheTime: 0,
+		gcTime: 0,
 	})
 
 	React.useLayoutEffect(() => {

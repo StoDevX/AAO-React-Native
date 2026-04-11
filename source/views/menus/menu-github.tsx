@@ -4,7 +4,8 @@ import {LoadingView, NoticeView} from '@frogpond/notice'
 import {FoodMenu} from '@frogpond/food-menu'
 import moment from 'moment-timezone'
 import sample from 'lodash/sample'
-import {usePauseMenu} from './query'
+import {pauseMenuOptions} from './query'
+import {useQuery} from '@tanstack/react-query'
 
 type Props = {
 	name: string
@@ -20,7 +21,7 @@ export function GitHubHostedMenu(props: Props): JSX.Element {
 		refetch,
 		isRefetching,
 		dataUpdatedAt,
-	} = usePauseMenu()
+	} = useQuery(pauseMenuOptions)
 
 	if (isLoading) {
 		return <LoadingView text={sample(props.loadingMessage)} />

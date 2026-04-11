@@ -16,7 +16,13 @@ import {StoPrintErrorView} from './components/error'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 import {RouteProp, useNavigation, useRoute} from '@react-navigation/native'
 import {RootStackParamList} from '../../navigation/types'
-import {useAllPrinters, useColorPrinters, useRecentPrinters} from './query'
+import {
+	allPrintersOptions,
+	colorPrintersOptions,
+	recentPrintersOptions,
+} from './query'
+import {credentialsOptions} from '../../lib/login'
+import {useQuery} from '@tanstack/react-query'
 import {RecentPopularPrintersResponse} from '../../lib/stoprint/types'
 
 const styles = StyleSheet.create({
@@ -29,13 +35,18 @@ export const PrinterListView = (): JSX.Element => {
 	let route = useRoute<RouteProp<RootStackParamList, 'PrinterList'>>()
 	let {job} = route.params
 
+	let {data: username = ''} = useQuery({
+		...credentialsOptions,
+		select: (data) => data?.username,
+	})
+
 	let {
 		data: allPrinters = [],
 		error: allPrintersError,
 		isLoading: allPrintersLoading,
 		refetch: allPrintersRefetch,
 		isRefetching: allPrintersRefetching,
-	} = useAllPrinters()
+	} = useQuery(allPrintersOptions(username))
 
 	let {
 		data: recentPrinters = {} as Partial<RecentPopularPrintersResponse>,
@@ -43,7 +54,7 @@ export const PrinterListView = (): JSX.Element => {
 		isLoading: recentPrintersLoading,
 		refetch: recentPrintersRefetch,
 		isRefetching: recentPrintersRefetching,
-	} = useRecentPrinters()
+	} = useQuery(recentPrintersOptions(username))
 
 	let {
 		data: colorPrinters = [],
@@ -51,7 +62,7 @@ export const PrinterListView = (): JSX.Element => {
 		isLoading: colorPrintersLoading,
 		refetch: colorPrintersRefetch,
 		isRefetching: colorPrintersRefetching,
-	} = useColorPrinters()
+	} = useQuery(colorPrintersOptions)
 
 	let isLoading =
 		allPrintersLoading || recentPrintersLoading || colorPrintersLoading
