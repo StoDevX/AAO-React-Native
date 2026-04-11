@@ -112,3 +112,35 @@ url = "https://cache.ruby-lang.org/pub/ruby/3.4/ruby-3.4.9.tar.gz"
 [tools.ruby."platforms.windows-x64"]
 checksum = "sha256:4375268618b61dadf53bf8e54beaca74ea30580c90d3c47ea9f2a134bd3e494e"
 url = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-3.4.9-1/rubyinstaller-3.4.9-1-x64.7z"
+
+[[tools.sentry]]
+version = "3.3.5"
+backend = "aqua:getsentry/sentry-cli"
+
+[tools.sentry."platforms.linux-arm64"]
+checksum = "sha256:a7ed9089f28466ee830219100f70b6f13e9a7a7d03d54f9840e9b84436468661"
+url = "https://github.com/getsentry/sentry-cli/releases/download/3.3.5/sentry-cli-Linux-aarch64"
+
+[tools.sentry."platforms.linux-arm64-musl"]
+checksum = "sha256:a7ed9089f28466ee830219100f70b6f13e9a7a7d03d54f9840e9b84436468661"
+url = "https://github.com/getsentry/sentry-cli/releases/download/3.3.5/sentry-cli-Linux-aarch64"
+
+[tools.sentry."platforms.linux-x64"]
+checksum = "sha256:81bda3da764c957cdc9ddc6d368f9a2e1e4a1e385b6272180a0373830acaecdb"
+url = "https://github.com/getsentry/sentry-cli/releases/download/3.3.5/sentry-cli-Linux-x86_64"
+
+[tools.sentry."platforms.linux-x64-musl"]
+checksum = "sha256:81bda3da764c957cdc9ddc6d368f9a2e1e4a1e385b6272180a0373830acaecdb"
+url = "https://github.com/getsentry/sentry-cli/releases/download/3.3.5/sentry-cli-Linux-x86_64"
+
+[tools.sentry."platforms.macos-arm64"]
+checksum = "sha256:fd03e1efafb3a9fe8a5a1edb2462c39c277a40075d72ef9fe7574af5fdeb4352"
+url = "https://github.com/getsentry/sentry-cli/releases/download/3.3.5/sentry-cli-Darwin-arm64"
+
+[tools.sentry."platforms.macos-x64"]
+checksum = "sha256:906127f3f22c5fdbf5d04e456a2ba19220dde58b09a33287e7add3cc8e998df1"
+url = "https://github.com/getsentry/sentry-cli/releases/download/3.3.5/sentry-cli-Darwin-x86_64"
+
+[tools.sentry."platforms.windows-x64"]
+checksum = "sha256:74f88d12c1909797bda612dcac07b2f25e7419d7c06404f3a0ca94747c03892d"
+url = "https://github.com/getsentry/sentry-cli/releases/download/3.3.5/sentry-cli-Windows-x86_64.exe"
