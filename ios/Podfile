@@ -2,6 +2,11 @@
 # This assumes node_modules is located at ../node_modules relative to ios/.
 require '../node_modules/react-native/scripts/react_native_pods.rb'
 
+# Opt out of the New Architecture (Fabric/TurboModules/Bridgeless).
+# The Old Architecture is fully supported through RN 0.76.
+# See: https://github.com/StoDevX/AAO-React-Native/issues/7453
+ENV['RCT_NEW_ARCH_ENABLED'] = '0'
+
 platform :ios, min_ios_version_supported
 prepare_react_native_project!
 

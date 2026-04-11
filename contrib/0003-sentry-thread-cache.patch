@@ -2,8 +2,7 @@ diff --git ios/Pods/Sentry/Sources/Sentry/include/SentryThreadMetadataCache.hpp 
 index 3d7b2fe..b198343 100644
 --- ios/Pods/Sentry/Sources/Sentry/include/SentryThreadMetadataCache.hpp
 +++ ios/Pods/Sentry/Sources/Sentry/include/SentryThreadMetadataCache.hpp
-@@ -66,7 +66,7 @@ class ThreadMetadataCache {
-         struct ThreadHandleMetadataPair {
+@@ -66,8 +66,8 @@ class ThreadMetadataCache {
              ThreadHandle::NativeHandle handle;
              ThreadMetadata metadata;
          };
@@ -12,3 +11,5 @@ index 3d7b2fe..b198343 100644
 +        std::vector<ThreadHandleMetadataPair> threadMetadataCache_;
 +        std::vector<QueueMetadata> queueMetadataCache_;
      };
+ 
+ } // namespace profiling

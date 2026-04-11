@@ -167,7 +167,7 @@ jobs:
           path: ~/Library/Caches/ccache
           key: ccache-${{ runner.os }}-xcode@${{ env.xcode_version }}-${{ hashFiles('**/project.pbxproj', 'ios/Podfile', '**/Podfile.lock', 'ios/AllAboutOlaf/**', '.github/job.yml') }}
           restore-keys: |
-            ccache-${{ runner.os }}-xcode@${{ env.xcode_version }}-
+            ccache-${{ runner.os }}-xcode@${{ env.xcode_version }}-${{ hashFiles('**/project.pbxproj', 'ios/Podfile', '**/Podfile.lock', 'ios/AllAboutOlaf/**', '.github/job.yml') }}
 
       - name: Configure ccache
         if: steps.app-cache.outputs.cache-hit != 'true'
@@ -183,7 +183,7 @@ jobs:
           path: ios/Pods
           key: pods-${{ runner.os }}-xcode@${{ env.xcode_version }}-${{ hashFiles('**/project.pbxproj', 'ios/Podfile', '**/Podfile.lock', 'ios/AllAboutOlaf/**', '.github/job.yml') }}
           restore-keys: |
-            pods-${{ runner.os }}-xcode@${{ env.xcode_version }}-
+            pods-${{ runner.os }}-xcode@${{ env.xcode_version }}-${{ hashFiles('**/project.pbxproj', 'ios/Podfile', '**/Podfile.lock', 'ios/AllAboutOlaf/**', '.github/job.yml') }}
 
       - name: Install CocoaPods
         if: steps.app-cache.outputs.cache-hit != 'true' && steps.pods-cache.outputs.cache-hit != 'true'
