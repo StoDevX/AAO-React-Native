@@ -15,13 +15,11 @@
       "matchPackageNames": [
         "@types/react-native",
         "react-native",
-        "metro-react-native-babel-preset",
-        "@react-native/metro-config",
-        "@react-native/eslint-config",
         "@types/react-test-renderer",
         "react-test-renderer",
         "@types/react",
-        "react"
+        "react",
+        "@react-native/*"
       ],
       "matchUpdateTypes": [
         "minor",

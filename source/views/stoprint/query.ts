@@ -1,5 +1,4 @@
-import {useQuery, UseQueryResult} from '@tanstack/react-query'
-import {useUsername} from '../../lib/login'
+import {queryOptions} from '@tanstack/react-query'
 import {
 	fetchAllPrinters,
 	fetchColorPrinters,
@@ -29,54 +28,38 @@ export const keys = {
 	colorPrinters: ['printing', 'printers', 'color'] as const,
 }
 
-export function usePrintJobs(): UseQueryResult<PrintJobsResponse, Error> {
-	let {data: username = ''} = useUsername()
-
-	return useQuery({
+export const printJobsOptions = (username: string) =>
+	queryOptions({
 		queryKey: keys.jobs(username),
 		enabled: Boolean(username),
 		queryFn: ({signal}) => fetchJobs(username, {signal}),
 	})
-}
 
-export function useAllPrinters(): UseQueryResult<AllPrintersResponse, Error> {
-	let {data: username = ''} = useUsername()
-
-	return useQuery({
+export const allPrintersOptions = (username: string) =>
+	queryOptions({
 		queryKey: keys.printers(username),
 		enabled: Boolean(username),
 		queryFn: ({signal}) => fetchAllPrinters(username, {signal}),
 	})
-}
 
-export function useRecentPrinters(): UseQueryResult<
-	RecentPopularPrintersResponse,
-	Error
-> {
-	let {data: username = ''} = useUsername()
-
-	return useQuery({
-		queryKey: keys.printers(username),
+export const recentPrintersOptions = (username: string) =>
+	queryOptions({
+		queryKey: keys.recentPrinters(username),
 		enabled: Boolean(username),
 		queryFn: ({signal}) => fetchRecentPrinters(username, {signal}),
 	})
-}
 
-export function useColorPrinters(): UseQueryResult<string[], Error> {
-	return useQuery({
-		queryKey: keys.colorPrinters,
-		queryFn: ({signal}) => fetchColorPrinters({signal}),
-	})
-}
+export const colorPrintersOptions = queryOptions({
+	queryKey: keys.colorPrinters,
+	queryFn: ({signal}) => fetchColorPrinters({signal}),
+})
 
-export function useHeldJobs(
+export const heldJobsOptions = (
+	username: string,
 	printerName: string | undefined,
-): UseQueryResult<HeldJobsResponse, Error> {
-	let {data: username = ''} = useUsername()
-
+) => {
 	let usablePrinterName = printerName || 'undefined'
-
-	return useQuery({
+	return queryOptions({
 		enabled: Boolean(username) && printerName !== undefined,
 		queryKey: keys.heldJobs({username, printerName: usablePrinterName}),
 		queryFn: ({signal}) =>

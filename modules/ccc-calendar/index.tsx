@@ -6,10 +6,10 @@ import {UseQueryResult} from '@tanstack/react-query'
 import * as React from 'react'
 
 export {
-	useNamedCalendar,
-	useGoogleCalendar,
-	useReasonCalendar,
-	useIcsCalendar,
+	namedCalendarOptions,
+	googleCalendarOptions,
+	reasonCalendarOptions,
+	icsCalendarOptions,
 } from './query'
 
 type Props = {

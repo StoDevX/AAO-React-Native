@@ -1,7 +1,12 @@
 import {parseTerm} from '../../../../lib/course-search/parse-term'
 import type {FilterType, ListType, ToggleType} from '@frogpond/filter'
 import {CourseType} from '../../../../lib/course-search'
-import {useAvailableTerms, useDepartments, useGeReqs} from '../query'
+import {
+	availableTermsOptions,
+	departmentsOptions,
+	geReqsOptions,
+} from '../query'
+import {useQuery} from '@tanstack/react-query'
 
 export function useFilters(): {
 	isLoading: boolean
@@ -14,21 +19,21 @@ export function useFilters(): {
 		error: termError,
 		isLoading: termsLoading,
 		refetch: refetchTerms,
-	} = useAvailableTerms()
+	} = useQuery(availableTermsOptions)
 
 	let {
 		data: geReqs = [],
 		error: geReqError,
 		isLoading: geReqsLoading,
 		refetch: refetchGeReqs,
-	} = useGeReqs()
+	} = useQuery(geReqsOptions)
 
 	let {
 		data: departments = [],
 		error: departmentsError,
 		isLoading: deptsLoading,
 		refetch: refetchDepts,
-	} = useDepartments()
+	} = useQuery(departmentsOptions)
 
 	let refetch = () => {
 		void refetchTerms()

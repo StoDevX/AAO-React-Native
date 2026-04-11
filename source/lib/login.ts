@@ -1,9 +1,5 @@
 import ky from 'ky'
-import {
-	QueryObserverOptions,
-	useQuery,
-	UseQueryResult,
-} from '@tanstack/react-query'
+import {queryOptions} from '@tanstack/react-query'
 import {
 	getInternetCredentials,
 	resetInternetCredentials,
@@ -84,29 +80,10 @@ export async function performLogin(
 	return {username, password}
 }
 
-type QueryFnData = null | SharedWebCredentials
-type DefaultError = unknown
-type QueryT<Select> = ReturnType<typeof useCredentials<Select>>
-
-export function useCredentials<TData = QueryFnData, TError = DefaultError>(
-	options: QueryObserverOptions<QueryFnData, TError, TData> = {},
-): UseQueryResult<TData, TError> {
-	return useQuery({
-		queryKey: queryKeys.default(SIS_LOGIN_KEY),
-		queryFn: () => loadCredentials(),
-		networkMode: 'always',
-		cacheTime: 0,
-		staleTime: 0,
-		...options,
-	})
-}
-
-export function useUsername(): QueryT<string | undefined> {
-	return useCredentials({
-		select: (data) => data?.username,
-	})
-}
-
-export function useHasCredentials(): QueryT<boolean> {
-	return useCredentials({select: (data) => Boolean(data)})
-}
+export const credentialsOptions = queryOptions({
+	queryKey: queryKeys.default(SIS_LOGIN_KEY),
+	queryFn: () => loadCredentials(),
+	networkMode: 'always' as const,
+	gcTime: 0,
+	staleTime: 0,
+})

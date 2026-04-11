@@ -13,7 +13,8 @@ import * as c from '@frogpond/colors'
 import {useDebounce} from '@frogpond/use-debounce'
 import {LoadingView, NoticeView} from '@frogpond/notice'
 import {formatResults} from './helpers'
-import {useDirectoryEntries} from './query'
+import {directoryEntriesOptions} from './query'
+import {useQuery} from '@tanstack/react-query'
 import type {DirectoryItem, DirectorySearchTypeEnum} from './types'
 import Icon from 'react-native-vector-icons/Ionicons'
 import {RouteProp, useNavigation, useRoute} from '@react-navigation/native'
@@ -53,7 +54,7 @@ export function DirectoryView(): JSX.Element {
 		isError,
 		isRefetching,
 		isLoading,
-	} = useDirectoryEntries(searchQuery, searchQueryType)
+	} = useQuery(directoryEntriesOptions(searchQuery, searchQueryType))
 
 	React.useLayoutEffect(() => {
 		navigation.setOptions({
