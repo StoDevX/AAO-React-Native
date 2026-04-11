@@ -1,6 +1,6 @@
 import * as React from 'react'
 import {Image, ImageSourcePropType, StyleSheet} from 'react-native'
-import * as Icons from '@hawkrives/react-native-alternate-icons'
+import {changeIcon, getIcon, resetIcon} from 'react-native-change-icon'
 import {Cell, Section} from '@frogpond/tableview'
 import {icons as appIcons} from '../../../../images/icons'
 import * as c from '@frogpond/colors'
@@ -39,23 +39,23 @@ export const icons: Array<Icon> = [
 export let IconSettingsView = (): JSX.Element => {
 	let [iconType, setIconType] = React.useState<IconTypeEnum>('default')
 
-	let getIcon = async () => {
-		let name = (await Icons.getIconName()) as IconTypeEnum
-		setIconType(name)
+	let fetchIcon = async () => {
+		let name = await getIcon()
+		setIconType((name === 'Default' ? 'default' : name) as IconTypeEnum)
 	}
 
 	React.useEffect(() => {
-		getIcon()
+		fetchIcon()
 	}, [])
 
 	let setIcon = async (iconName: string) => {
 		if (iconName === 'default') {
-			await Icons.reset()
+			await resetIcon()
 		} else {
-			await Icons.setIconName(iconName)
+			await changeIcon(iconName)
 		}
 
-		getIcon()
+		fetchIcon()
 	}
 
 	return (

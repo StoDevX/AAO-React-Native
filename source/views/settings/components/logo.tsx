@@ -6,7 +6,7 @@ import {
 	StyleSheet,
 	ImageProps,
 } from 'react-native'
-import * as Icons from '@hawkrives/react-native-alternate-icons'
+import {getIcon} from 'react-native-change-icon'
 import {lookup as getAppIcon} from '../../../../images/icons/index'
 
 const styles = StyleSheet.create({
@@ -29,8 +29,8 @@ export let AppLogo = (props: Props): JSX.Element => {
 	let [icon, setIcon] = React.useState(getAppIcon('default'))
 
 	React.useEffect(() => {
-		Icons.getIconName().then((name: string) => {
-			setIcon(getAppIcon(name))
+		getIcon().then((name: string) => {
+			setIcon(getAppIcon(name === 'Default' ? 'default' : name))
 		})
 	}, [])
 
