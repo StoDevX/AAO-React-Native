@@ -2,6 +2,7 @@ import type {Config} from 'jest'
 
 const config: Config = {
 	preset: 'react-native',
+	extensionsToTreatAsEsm: ['.ts', '.tsx'],
 	testMatch: [
 		'**/__tests__/**/*.(spec|test).(js|ts|tsx)',
 		'!**/node_modules/**',
@@ -15,7 +16,7 @@ const config: Config = {
 		'source/**/*.tsx',
 		'!**/node_modules/**',
 	],
-	setupFiles: ['./scripts/jest-setup.js'],
+	setupFiles: ['./scripts/jest-setup.ts'],
 	transformIgnorePatterns: [
 		'node_modules/(?!(jest-)?react-native|@react-native|@frogpond|glamorous-native|react-navigation|@reduxjs/toolkit|immer|redux|redux-thunk|reselect)',
 	],
