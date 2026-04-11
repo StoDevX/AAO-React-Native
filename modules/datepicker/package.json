@@ -1,21 +1,21 @@
 {
-	"name": "@frogpond/datepicker",
-	"version": "1.0.0",
-	"description": "",
-	"main": "index.tsx",
-	"author": "鲜果FE",
-	"license": "MIT",
-	"scripts": {
-		"test": "jest"
-	},
-	"peerDependencies": {
-		"react": "^18.0.0",
-		"react-native": "^0.75.0",
-		"moment-timezone": "^0.6.1"
-	},
-	"dependencies": {
-		"@frogpond/app-theme": "^1.0.0",
-		"@frogpond/colors": "^1.0.0",
-		"@react-native-community/datetimepicker": "9.1.0"
-	}
+  "name": "@frogpond/datepicker",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.tsx",
+  "author": "鲜果FE",
+  "license": "MIT",
+  "scripts": {
+    "test": "jest"
+  },
+  "peerDependencies": {
+    "react": "^18.0.0",
+    "react-native": "^0.75.0",
+    "moment-timezone": "^0.6.1"
+  },
+  "dependencies": {
+    "@frogpond/app-theme": "^1.0.0",
+    "@frogpond/colors": "^1.0.0",
+    "@react-native-community/datetimepicker": "9.1.0"
+  }
 }

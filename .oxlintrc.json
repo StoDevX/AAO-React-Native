@@ -1,74 +1,92 @@
 {
-	"$schema": "https://cdn.jsdelivr.net/npm/oxlint/configuration_schema.json",
-	"plugins": ["react", "react-hooks", "typescript"],
-	"env": {
-		"browser": true,
-		"node": true,
-		"es2021": true
-	},
-	"globals": {
-		"JSX": "readonly",
-		"React": "readonly",
-		"NodeJS": "readonly"
-	},
-	"ignorePatterns": ["**/*.min.js", "**/*-min.js"],
-	"categories": {
-		"correctness": "error"
-	},
-	"rules": {
-		"array-callback-return": "error",
-		"default-case": "error",
-		"guard-for-in": "error",
-		"eqeqeq": ["error", "smart"],
-		"no-await-in-loop": "warn",
-		"no-case-declarations": "error",
-		"no-extra-label": "error",
-		"no-multi-assign": "error",
-		"no-throw-literal": "error",
-		"no-useless-constructor": "error",
-		"no-var": "error",
-		"prefer-promise-reject-errors": "error",
-		"prefer-spread": "error",
-		"require-await": "warn",
-		"no-misleading-character-class": "warn",
-		"no-async-promise-executor": "error",
-		"no-with": "error",
+  "$schema": "https://cdn.jsdelivr.net/npm/oxlint/configuration_schema.json",
+  "plugins": ["react", "react-hooks", "typescript"],
+  "jsPlugins": [
+    "./node_modules/@tanstack/eslint-plugin-query/build/modern/index.cjs"
+  ],
+  "options": {
+    "typeAware": true
+  },
+  "env": {
+    "browser": true,
+    "node": true,
+    "es2021": true
+  },
+  "globals": {
+    "JSX": "readonly",
+    "React": "readonly",
+    "NodeJS": "readonly"
+  },
+  "ignorePatterns": ["**/*.min.js", "**/*-min.js"],
+  "categories": {
+    "correctness": "error"
+  },
+  "rules": {
+    "array-callback-return": "error",
+    "default-case": "error",
+    "guard-for-in": "error",
+    "eqeqeq": ["error", "smart"],
+    "no-await-in-loop": "warn",
+    "no-case-declarations": "error",
+    "no-extra-label": "error",
+    "no-multi-assign": "error",
+    "no-throw-literal": "error",
+    "no-useless-constructor": "error",
+    "no-var": "error",
+    "prefer-promise-reject-errors": "error",
+    "prefer-spread": "error",
+    "require-await": "warn",
+    "no-misleading-character-class": "warn",
+    "no-async-promise-executor": "error",
+    "no-with": "error",
 
-		"typescript/no-unused-vars": [
-			"warn",
-			{
-				"args": "after-used",
-				"argsIgnorePattern": "^_",
-				"varsIgnorePattern": "^_",
-				"caughtErrorsIgnorePattern": "^_"
-			}
-		],
-		"typescript/no-inferrable-types": "warn",
-		"typescript/no-non-null-assertion": "warn",
-		"typescript/no-require-imports": "error",
-		"typescript/no-empty-function": "warn",
-		"typescript/no-explicit-any": "warn",
+    "typescript/no-unused-vars": [
+      "warn",
+      {
+        "args": "after-used",
+        "argsIgnorePattern": "^_",
+        "varsIgnorePattern": "^_",
+        "caughtErrorsIgnorePattern": "^_"
+      }
+    ],
+    "typescript/no-inferrable-types": "warn",
+    "typescript/no-non-null-assertion": "warn",
+    "typescript/no-require-imports": "error",
+    "typescript/no-empty-function": "warn",
+    "typescript/no-explicit-any": "warn",
 
-		"react-hooks/rules-of-hooks": "error",
-		"react-hooks/exhaustive-deps": "warn",
+    "typescript/no-floating-promises": "warn",
+    "typescript/restrict-template-expressions": "warn",
 
-		"react/jsx-curly-brace-presence": ["warn", "never"],
-		"react/jsx-key": "warn",
-		"react/self-closing-comp": "warn",
-		"react/jsx-boolean-value": ["error", "always"]
-	},
-	"overrides": [
-		{
-			"files": ["images/**/*.ts"],
-			"rules": {
-				"typescript/no-require-imports": "off"
-			}
-		},
-		{
-			"files": ["scripts/**/*.mjs"],
-			"rules": {
-				"no-unused-expressions": "off"
-			}
-		}
-	]
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "warn",
+
+    "react/jsx-curly-brace-presence": ["warn", "never"],
+    "react/jsx-key": "warn",
+    "react/self-closing-comp": "warn",
+    "react/jsx-boolean-value": ["error", "always"],
+
+    "@tanstack/query/exhaustive-deps": "error",
+    "@tanstack/query/no-rest-destructuring": "warn",
+    "@tanstack/query/stable-query-client": "error",
+    "@tanstack/query/no-unstable-deps": "error",
+    "@tanstack/query/infinite-query-property-order": "error",
+    "@tanstack/query/no-void-query-fn": "error",
+    "@tanstack/query/mutation-property-order": "error"
+  },
+  "overrides": [
+    {
+      "files": ["images/**/*.ts"],
+      "rules": {
+        "typescript/no-require-imports": "off"
+      }
+    },
+    {
+      "files": ["scripts/**/*.mjs"],
+      "rules": {
+        "no-unused-expressions": "off",
+        "typescript/unbound-method": "off"
+      }
+    }
+  ]
 }

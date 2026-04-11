@@ -1,20 +1,20 @@
 {
-	"name": "@frogpond/context-menu",
-	"version": "1.0.0",
-	"description": "",
-	"main": "index.tsx",
-	"author": "",
-	"license": "ISC",
-	"scripts": {
-		"test": "jest"
-	},
-	"peerDependencies": {
-		"react": "^18.0.0",
-		"react-native": "^0.75.0"
-	},
-	"dependencies": {
-		"@frogpond/touchable": "^1.0.0",
-		"lodash": "4.18.1",
-		"react-native-ios-context-menu": "1.15.3"
-	}
+  "name": "@frogpond/context-menu",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.tsx",
+  "author": "",
+  "license": "ISC",
+  "scripts": {
+    "test": "jest"
+  },
+  "peerDependencies": {
+    "react": "^18.0.0",
+    "react-native": "^0.75.0"
+  },
+  "dependencies": {
+    "@frogpond/touchable": "^1.0.0",
+    "lodash": "4.18.1",
+    "react-native-ios-context-menu": "1.15.3"
+  }
 }

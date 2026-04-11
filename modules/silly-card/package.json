@@ -1,19 +1,19 @@
 {
-	"name": "@frogpond/silly-card",
-	"version": "1.0.0",
-	"description": "",
-	"main": "index.tsx",
-	"author": "",
-	"license": "ISC",
-	"scripts": {
-		"test": "jest"
-	},
-	"peerDependencies": {
-		"react": "^18.0.0",
-		"react-native": "^0.75.0"
-	},
-	"dependencies": {
-		"@frogpond/colors": "^1.0.0",
-		"react-native-typography": "1.4.1"
-	}
+  "name": "@frogpond/silly-card",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.tsx",
+  "author": "",
+  "license": "ISC",
+  "scripts": {
+    "test": "jest"
+  },
+  "peerDependencies": {
+    "react": "^18.0.0",
+    "react-native": "^0.75.0"
+  },
+  "dependencies": {
+    "@frogpond/colors": "^1.0.0",
+    "react-native-typography": "1.4.1"
+  }
 }

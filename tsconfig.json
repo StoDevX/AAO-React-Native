@@ -1,27 +1,27 @@
 {
-	"compilerOptions": {
-		"allowJs": true,
-		"allowSyntheticDefaultImports": true,
-		"esModuleInterop": true,
-		"isolatedModules": true,
-		"jsx": "react",
-		"lib": ["ESNext"],
-		"module": "nodenext",
-		"moduleResolution": "nodenext",
-		"noEmit": true,
-		"noImplicitAny": true,
-		"skipLibCheck": true,
-		"strict": true,
-		"resolveJsonModule": true,
-		"target": "esnext"
-	},
-	"include": [
-		"**/*.ts",
-		"**/*.tsx",
-		"**/*.js",
-		"**/*.jsx",
-		"**/*.mjs",
-		"**/*.cjs"
-	],
-	"exclude": ["node_modules"]
+  "compilerOptions": {
+    "allowJs": true,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "isolatedModules": true,
+    "jsx": "react",
+    "lib": ["ESNext"],
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "noEmit": true,
+    "noImplicitAny": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "resolveJsonModule": true,
+    "target": "esnext"
+  },
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    "**/*.js",
+    "**/*.jsx",
+    "**/*.mjs",
+    "**/*.cjs"
+  ],
+  "exclude": ["node_modules"]
 }

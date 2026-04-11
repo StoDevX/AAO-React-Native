@@ -1,17 +1,17 @@
 {
-	"name": "@frogpond/use-debounce",
-	"version": "1.0.0",
-	"description": "",
-	"main": "index.ts",
-	"author": "",
-	"license": "ISC",
-	"scripts": {
-		"test": "jest"
-	},
-	"dependencies": {
-		"lodash": "4.18.1"
-	},
-	"peerDependencies": {
-		"react": "^18.0.0"
-	}
+  "name": "@frogpond/use-debounce",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.ts",
+  "author": "",
+  "license": "ISC",
+  "scripts": {
+    "test": "jest"
+  },
+  "dependencies": {
+    "lodash": "4.18.1"
+  },
+  "peerDependencies": {
+    "react": "^18.0.0"
+  }
 }

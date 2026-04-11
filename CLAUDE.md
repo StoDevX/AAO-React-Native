@@ -20,7 +20,7 @@ All About Olaf is a React Native mobile app for the St. Olaf College community. 
 - **Imports:** React → React Native → third-party → local. Named imports preferred.
 - **No Moment.js** — use `date-fns` or `Day.js` for date/time
 - Colors from `@frogpond/colors` — follow existing color system
-- oxfmt config in `.oxfmtrc.json` (tabs, single quotes, no semis)
+- oxfmt config in `.oxfmtrc.json` (tabs for JS/TS, 2-space for JSON, single quotes, no semis)
 
 ## Architecture & Patterns
 

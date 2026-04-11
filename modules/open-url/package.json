@@ -1,16 +1,16 @@
 {
-	"name": "@frogpond/open-url",
-	"version": "1.0.0",
-	"description": "",
-	"main": "index.ts",
-	"author": "",
-	"license": "ISC",
-	"scripts": {
-		"test": "jest"
-	},
-	"peerDependencies": {
-		"react-native-inappbrowser-reborn": "3.7.1",
-		"react-native": "^0.75.0"
-	},
-	"dependencies": {}
+  "name": "@frogpond/open-url",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.ts",
+  "author": "",
+  "license": "ISC",
+  "scripts": {
+    "test": "jest"
+  },
+  "peerDependencies": {
+    "react-native-inappbrowser-reborn": "3.7.1",
+    "react-native": "^0.75.0"
+  },
+  "dependencies": {}
 }

@@ -1,15 +1,15 @@
 {
-	"name": "@frogpond/icon",
-	"version": "1.0.0",
-	"description": "",
-	"main": "index.ts",
-	"author": "",
-	"license": "ISC",
-	"scripts": {
-		"test": "jest"
-	},
-	"peerDependencies": {
-		"react-native": "^0.75.0",
-		"react-native-vector-icons": "^9.2.0"
-	}
+  "name": "@frogpond/icon",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.ts",
+  "author": "",
+  "license": "ISC",
+  "scripts": {
+    "test": "jest"
+  },
+  "peerDependencies": {
+    "react-native": "^0.75.0",
+    "react-native-vector-icons": "^9.2.0"
+  }
 }
