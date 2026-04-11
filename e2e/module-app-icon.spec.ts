@@ -16,15 +16,11 @@ beforeEach(async () => {
 	await device.reloadReactNative()
 })
 
-// Make sure the icon is reset to default when the suite finishes so the next
-// test file doesn't inherit a changed icon.
+// Reinstall the app after this suite runs so the alternate icon (which iOS
+// persists across normal launches) can't leak into subsequent specs, even if
+// a test errored partway through without restoring the default.
 afterAll(async () => {
-	try {
-		await element(by.id('app-icon-cell-default')).tap()
-		await system.element(by.system.label('OK')).atIndex(0).tap()
-	} catch {
-		// Already the default icon, nothing to reset.
-	}
+	await device.launchApp({delete: true})
 })
 
 // Dismisses the iOS system alert that iOS raises whenever the alternate icon
