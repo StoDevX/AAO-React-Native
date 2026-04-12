@@ -9,6 +9,18 @@ class AppDelegate: RCTAppDelegate {
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
   ) -> Bool {
+    #if DEBUG
+    if ProcessInfo.processInfo.arguments.contains("--reset-state") {
+      if let libraryPath = FileManager.default.urls(for: .libraryDirectory, in: .userDomainMask).first {
+        let asyncStoragePath = libraryPath.appendingPathComponent("Application Support/RCTAsyncLocalStorage_V1")
+        try? FileManager.default.removeItem(at: asyncStoragePath)
+      }
+      if let bundleId = Bundle.main.bundleIdentifier {
+        UserDefaults.standard.removePersistentDomain(forName: bundleId)
+      }
+    }
+    #endif
+
     self.moduleName = "AllAboutOlaf"
 
     // set up the requests cacher
