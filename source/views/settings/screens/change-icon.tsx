@@ -102,6 +102,7 @@ let IconCell = (props: IconCellProps) => {
 				/>
 			}
 			onPress={setIcon}
+			testID={`app-icon-cell-${icon.type}${isSelected ? '-selected' : ''}`}
 			title={icon.title}
 		/>
 	)
