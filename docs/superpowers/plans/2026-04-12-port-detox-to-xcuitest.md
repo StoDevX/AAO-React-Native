@@ -1656,7 +1656,7 @@ This task updates `.github/workflows/check.yml` to:
 1. Remove the `ios-detox` job entirely
 2. Update `ios-build` to remove the Detox build step (the `npx detox build` step) — the `xcodebuild build-for-testing` step already builds both the app and UITest bundle
 3. Update `ios-uitest` to not depend on `detox.config.js` for simulator discovery — hardcode the device type and deployment target from the Xcode project instead
-4. Rename the `ci/skip-detox` label references to `ci/skip-e2e` (or just keep them — discuss with team)
+4. Rename all `ci/skip-detox` label references to `ci/skip-e2e`
 5. Add sharding to the `ios-uitest` job (optional, can be deferred)
 
 **Files:**
