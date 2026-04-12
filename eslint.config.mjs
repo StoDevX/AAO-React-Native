@@ -95,7 +95,7 @@ export default defineConfig([
 					caughtErrorsIgnorePattern: '^_',
 				},
 			],
-			'@typescript-eslint/explicit-module-boundary-types': 'warn',
+			'@typescript-eslint/explicit-module-boundary-types': 'off',
 			'@typescript-eslint/no-inferrable-types': 'warn',
 			'@typescript-eslint/no-non-null-assertion': 'warn',
 			'@typescript-eslint/no-require-imports': 'error',

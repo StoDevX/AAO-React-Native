@@ -6,12 +6,6 @@ import {
 	fetchRecentPrinters,
 	heldJobsAvailableAtPrinterForUser,
 } from '../../lib/stoprint/api'
-import {
-	AllPrintersResponse,
-	HeldJobsResponse,
-	PrintJobsResponse,
-	RecentPopularPrintersResponse,
-} from '../../lib/stoprint/types'
 
 export const keys = {
 	jobs: (username: string) => ['printing', 'jobs', 'all', username] as const,
