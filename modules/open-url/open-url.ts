@@ -1,5 +1,5 @@
 import {Linking} from 'react-native'
-import {InAppBrowser} from 'react-native-inappbrowser-reborn'
+import * as WebBrowser from 'expo-web-browser'
 import * as storage from '../../source/lib/storage'
 
 function genericOpen(url: string): Promise<boolean> {
@@ -17,18 +17,12 @@ function genericOpen(url: string): Promise<boolean> {
 
 async function launchBrowser(url: string): Promise<boolean> {
 	try {
-		if (await InAppBrowser.isAvailable()) {
-			await InAppBrowser.open(url, {
-				animated: true,
-				showTitle: true,
-				enableUrlBarHiding: true,
-				enableDefaultShare: true,
-				modalPresentationStyle: 'currentContext',
-			})
-		} else {
-			// fall back to opening in Chrome / Browser / platform default
-			await genericOpen(url)
-		}
+		await WebBrowser.openBrowserAsync(url, {
+			dismissButtonStyle: 'close',
+			enableBarCollapsing: true,
+			presentationStyle:
+				WebBrowser.WebBrowserPresentationStyle.CURRENT_CONTEXT,
+		})
 	} catch (error) {
 		console.warn(`Error when trying to call launchBrowser: ${error}`)
 		return false
