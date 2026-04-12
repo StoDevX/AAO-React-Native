@@ -188,7 +188,7 @@ jobs:
             pods-${{ runner.os }}-xcode@${{ env.xcode_version }}-${{ hashFiles('**/project.pbxproj', 'ios/Podfile', '**/Podfile.lock', 'ios/AllAboutOlaf/**', '.github/job.yml') }}
 
       - name: Install CocoaPods
-        if: steps.app-cache.outputs.cache-hit != 'true' && steps.pods-cache.outputs.cache-hit != 'true'
+        if: steps.app-cache.outputs.cache-hit != 'true'
         run: mise run pod:install --deployment
         env:
           USE_CCACHE: '1'
