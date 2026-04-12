@@ -14,6 +14,11 @@ afterAll(async () => {
 // depending on exact trailing-inset math.
 const SETTINGS_BUTTON_DEVICE_POINT = {x: 380, y: 80}
 
+// Each test does its own device.launchApp({delete: true}) which takes ~25s
+// on CI. Combined with navigation, taps, and sleeps, the default 60s Jest
+// timeout is too tight. Give each test 3 minutes.
+const TEST_TIMEOUT = 180_000
+
 // Fresh-install the app, then navigate from the home screen to settings.
 // Each test gets a clean install so leaked icon state can't cross tests.
 const freshLaunchAndNavigateToSettings = async () => {
@@ -41,33 +46,38 @@ const freshLaunchAndNavigateToSettings = async () => {
 // OK button doesn't exist yet, the system tap silently fails.
 //
 // Fix: Sleep BEFORE tapping OK to give the alert time to appear.
-// ---------------------------------------------------------------------------
-test('H1: sleep before tapping OK to let alert appear', async () => {
-	await freshLaunchAndNavigateToSettings()
+test(
+	'H1: sleep before tapping OK to let alert appear',
+	async () => {
+		await freshLaunchAndNavigateToSettings()
 
-	// Switch to Big Ole
-	await element(by.id('app-icon-cell-icon_type_windmill')).tap()
+		// Switch to Big Ole
+		await element(by.id('app-icon-cell-icon_type_windmill')).tap()
 
-	// H1: wait for alert to appear, then tap, then wait for dismiss animation
-	await new Promise((r) => setTimeout(r, 2000))
-	await system.element(by.system.label('OK')).atIndex(0).tap()
-	await new Promise((r) => setTimeout(r, 1500))
+		// H1: wait for alert to appear, then tap, then wait for dismiss animation
+		await new Promise((r) => setTimeout(r, 2000))
+		await system.element(by.system.label('OK')).atIndex(0).tap()
+		await new Promise((r) => setTimeout(r, 1500))
 
-	await expect(
-		element(by.id('app-icon-cell-icon_type_windmill-selected')),
-	).toBeVisible()
-	await expect(element(by.id('app-icon-cell-default'))).toBeVisible()
+		await expect(
+			element(by.id('app-icon-cell-icon_type_windmill-selected')),
+		).toBeVisible()
+		await expect(element(by.id('app-icon-cell-default'))).toBeVisible()
 
-	// Switch back to default
-	await element(by.id('app-icon-cell-default')).tap()
+		// Switch back to default
+		await element(by.id('app-icon-cell-default')).tap()
 
-	await new Promise((r) => setTimeout(r, 2000))
-	await system.element(by.system.label('OK')).atIndex(0).tap()
-	await new Promise((r) => setTimeout(r, 1500))
+		await new Promise((r) => setTimeout(r, 2000))
+		await system.element(by.system.label('OK')).atIndex(0).tap()
+		await new Promise((r) => setTimeout(r, 1500))
 
-	await expect(element(by.id('app-icon-cell-default-selected'))).toBeVisible()
-	await expect(element(by.id('app-icon-cell-icon_type_windmill'))).toBeVisible()
-})
+		await expect(element(by.id('app-icon-cell-default-selected'))).toBeVisible()
+		await expect(
+			element(by.id('app-icon-cell-icon_type_windmill')),
+		).toBeVisible()
+	},
+	TEST_TIMEOUT,
+)
 
 // ---------------------------------------------------------------------------
 // Hypothesis 2: The OK tap works, but _UITransitionView lingers longer than
@@ -76,28 +86,34 @@ test('H1: sleep before tapping OK to let alert appear', async () => {
 // Fix: Replace fixed post-tap sleep with condition-based waiting — poll
 // until the expected cell testID is visible.
 // ---------------------------------------------------------------------------
-test('H2: condition-based wait after tapping OK', async () => {
-	await freshLaunchAndNavigateToSettings()
+test(
+	'H2: condition-based wait after tapping OK',
+	async () => {
+		await freshLaunchAndNavigateToSettings()
 
-	// Switch to Big Ole
-	await element(by.id('app-icon-cell-icon_type_windmill')).tap()
+		// Switch to Big Ole
+		await element(by.id('app-icon-cell-icon_type_windmill')).tap()
 
-	// H2: tap OK immediately, then waitFor the expected state
-	await system.element(by.system.label('OK')).atIndex(0).tap()
-	await waitFor(element(by.id('app-icon-cell-icon_type_windmill-selected')))
-		.toBeVisible()
-		.withTimeout(10000)
-	await expect(element(by.id('app-icon-cell-default'))).toBeVisible()
+		// H2: tap OK immediately, then waitFor the expected state
+		await system.element(by.system.label('OK')).atIndex(0).tap()
+		await waitFor(element(by.id('app-icon-cell-icon_type_windmill-selected')))
+			.toBeVisible()
+			.withTimeout(10000)
+		await expect(element(by.id('app-icon-cell-default'))).toBeVisible()
 
-	// Switch back to default
-	await element(by.id('app-icon-cell-default')).tap()
+		// Switch back to default
+		await element(by.id('app-icon-cell-default')).tap()
 
-	await system.element(by.system.label('OK')).atIndex(0).tap()
-	await waitFor(element(by.id('app-icon-cell-default-selected')))
-		.toBeVisible()
-		.withTimeout(10000)
-	await expect(element(by.id('app-icon-cell-icon_type_windmill'))).toBeVisible()
-})
+		await system.element(by.system.label('OK')).atIndex(0).tap()
+		await waitFor(element(by.id('app-icon-cell-default-selected')))
+			.toBeVisible()
+			.withTimeout(10000)
+		await expect(
+			element(by.id('app-icon-cell-icon_type_windmill')),
+		).toBeVisible()
+	},
+	TEST_TIMEOUT,
+)
 
 // ---------------------------------------------------------------------------
 // Hypothesis 3: Both issues compound — the alert needs time to appear AND
@@ -105,27 +121,33 @@ test('H2: condition-based wait after tapping OK', async () => {
 //
 // Fix: Sleep before tapping OK + waitFor after tapping.
 // ---------------------------------------------------------------------------
-test('H3: sleep before tap + condition-based wait after', async () => {
-	await freshLaunchAndNavigateToSettings()
+test(
+	'H3: sleep before tap + condition-based wait after',
+	async () => {
+		await freshLaunchAndNavigateToSettings()
 
-	// Switch to Big Ole
-	await element(by.id('app-icon-cell-icon_type_windmill')).tap()
+		// Switch to Big Ole
+		await element(by.id('app-icon-cell-icon_type_windmill')).tap()
 
-	// H3: wait for alert, tap, then waitFor result
-	await new Promise((r) => setTimeout(r, 2000))
-	await system.element(by.system.label('OK')).atIndex(0).tap()
-	await waitFor(element(by.id('app-icon-cell-icon_type_windmill-selected')))
-		.toBeVisible()
-		.withTimeout(10000)
-	await expect(element(by.id('app-icon-cell-default'))).toBeVisible()
+		// H3: wait for alert, tap, then waitFor result
+		await new Promise((r) => setTimeout(r, 2000))
+		await system.element(by.system.label('OK')).atIndex(0).tap()
+		await waitFor(element(by.id('app-icon-cell-icon_type_windmill-selected')))
+			.toBeVisible()
+			.withTimeout(10000)
+		await expect(element(by.id('app-icon-cell-default'))).toBeVisible()
 
-	// Switch back to default
-	await element(by.id('app-icon-cell-default')).tap()
+		// Switch back to default
+		await element(by.id('app-icon-cell-default')).tap()
 
-	await new Promise((r) => setTimeout(r, 2000))
-	await system.element(by.system.label('OK')).atIndex(0).tap()
-	await waitFor(element(by.id('app-icon-cell-default-selected')))
-		.toBeVisible()
-		.withTimeout(10000)
-	await expect(element(by.id('app-icon-cell-icon_type_windmill'))).toBeVisible()
-})
+		await new Promise((r) => setTimeout(r, 2000))
+		await system.element(by.system.label('OK')).atIndex(0).tap()
+		await waitFor(element(by.id('app-icon-cell-default-selected')))
+			.toBeVisible()
+			.withTimeout(10000)
+		await expect(
+			element(by.id('app-icon-cell-icon_type_windmill')),
+		).toBeVisible()
+	},
+	TEST_TIMEOUT,
+)
