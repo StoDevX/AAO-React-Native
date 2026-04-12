@@ -5,6 +5,7 @@ import {Alert, Linking, Platform} from 'react-native'
 
 export async function addToCalendar(event: EventType): Promise<boolean> {
 	try {
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 		const {status, canAskAgain} = await Calendar.getCalendarPermissionsAsync()
 
 		if (status === 'granted') {
@@ -78,6 +79,7 @@ function promptSettings(): void {
 
 async function requestCalendarAccess(): Promise<boolean> {
 	try {
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 		const {status} = await Calendar.requestCalendarPermissionsAsync()
 		if (status !== 'granted') {
 			promptSettings()
