@@ -155,8 +155,5 @@
   },
   "engines": {
     "node": ">=18"
-  },
-  "optionalDependencies": {
-    "detox": "20.50.1"
   }
 }
