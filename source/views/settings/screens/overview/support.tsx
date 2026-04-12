@@ -13,8 +13,8 @@ const getDeviceInfo = () => `
 ----- Please do not edit below here -----
 ${Device.brand ?? 'Unknown'} ${Device.modelName ?? 'Unknown'}
 ${Device.modelId ?? 'Unknown'}
-${Device.osName ?? 'iOS'} ${getVersion()}
-${appBuild() ? `${appVersion()}.${appBuild()}` : appVersion()}
+${Device.osName ?? 'iOS'} ${Device.osVersion ?? 'Unknown'}
+${getVersion()}
 `
 
 export const openEmail = (): void => {
