@@ -42,10 +42,23 @@ target 'AllAboutOlaf' do
 		)
 
 		installer.pods_project.targets.each do |target|
+			# Remove SWIFT_VERSION from targets without Swift sources to silence
+			# "Disabling previews because SWIFT_VERSION is set" notes (Xcode 16+)
+			has_swift = target.respond_to?(:source_build_phase) &&
+				target.source_build_phase.files.any? { |file|
+					file.file_ref&.path&.end_with?('.swift')
+				}
+
 			target.build_configurations.each do |config|
 				# cocoapods defaults to not stripping the frameworks it creates
 				# issue for cocoapods is https://github.com/CocoaPods/CocoaPods/issues/10277
 				config.build_settings['STRIP_INSTALLED_PRODUCT'] = 'YES'
+
+				# Xcode 16+ enables explicit modules by default, but CocoaPods
+				# projects don't support it yet
+				config.build_settings['CLANG_ENABLE_EXPLICIT_MODULES'] = 'NO'
+
+				config.build_settings.delete('SWIFT_VERSION') unless has_swift
 			end
 		end
 
