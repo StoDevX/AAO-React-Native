@@ -5,8 +5,18 @@ import {Alert, Linking, Platform} from 'react-native'
 
 export async function addToCalendar(event: EventType): Promise<boolean> {
 	try {
-		const {status} = await Calendar.getCalendarPermissionsAsync()
-		const granted = status === 'granted' || (await requestCalendarAccess())
+		const {status, canAskAgain} = await Calendar.getCalendarPermissionsAsync()
+
+		if (status === 'granted') {
+			return await saveEventToCalendar(event)
+		}
+
+		if (!canAskAgain) {
+			promptSettings()
+			return false
+		}
+
+		const granted = await requestCalendarAccess()
 		if (!granted) {
 			return false
 		}
@@ -21,6 +31,16 @@ export async function addToCalendar(event: EventType): Promise<boolean> {
 
 async function saveEventToCalendar(event: EventType): Promise<boolean> {
 	try {
+		const calendars = await Calendar.getCalendarsAsync(
+			Calendar.EntityTypes.EVENT,
+		)
+		if (calendars.length === 0) {
+			Alert.alert(
+				'No Calendar Found',
+				'Please add a calendar account to your device in Settings before adding events.',
+			)
+			return false
+		}
 		const defaultCalendar = await Calendar.getDefaultCalendarAsync()
 		await Calendar.createEventAsync(defaultCalendar.id, {
 			title: event.title,
