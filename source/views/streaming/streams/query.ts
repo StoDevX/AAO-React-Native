@@ -9,6 +9,7 @@ export const keys = {
 		['streams', filter] as const,
 }
 
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export const streamsOptionsFor = (date: Moment = moment.tz(timezone())) => {
 	const dateFromFormatted = date.format('YYYY-MM-DD')
 	const dateToFormatted = date.clone().add(2, 'month').format('YYYY-MM-DD')

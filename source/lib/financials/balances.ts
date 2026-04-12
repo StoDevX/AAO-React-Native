@@ -8,6 +8,7 @@ export const queryKeys = {
 	default: (username: string | undefined) => ['balances', username] as const,
 } as const
 
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export const balancesOptions = (username: string | undefined) =>
 	queryOptions({
 		queryKey: queryKeys.default(username),

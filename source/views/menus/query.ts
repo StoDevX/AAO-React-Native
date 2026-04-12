@@ -46,6 +46,7 @@ function buildCafePath(cafeParam: string | {id: string}) {
 	}
 }
 
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export const bonAppCafeOptions = (cafeParam: string | {id: string}) =>
 	queryOptions({
 		queryKey: cafeKeys.bonAppCcc(buildCafePath(cafeParam)),
@@ -56,6 +57,7 @@ export const bonAppCafeOptions = (cafeParam: string | {id: string}) =>
 		staleTime: 1000 * 60 * 60, // 1 hour
 	})
 
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export const bonAppMenuOptions = (cafeParam: string | {id: string}) =>
 	queryOptions({
 		queryKey: menuKeys.bonAppCcc(buildMenuPath(cafeParam)),
