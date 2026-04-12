@@ -1,15 +1,19 @@
 import {afterAll, beforeAll, test} from '@jest/globals'
-import {by, device, element, expect, system} from 'detox'
+import {by, device, element, expect, system, waitFor} from 'detox'
 
 // Launch the app normally (matching module-settings.spec.ts and friends).
 //
-// We deliberately avoid `delete: true` here: on a fresh install the
-// native-stack header's right button fails Detox's 100%-hittable pixel
-// check for reasons we haven't pinned down (nothing clips it geometrically,
-// but the pixel-level visibility probe fails consistently). The same button
-// is tapped without issue by `module-settings.spec.ts`, which launches
-// normally. So we launch normally here too and normalize the icon state
-// inside the test itself via a tap-to-reset pattern.
+// The alternate-icon flow is only tappable through the settings screen,
+// which we reach via the header's `button-open-settings`. On a freshly-
+// installed app that button reliably fails Detox's element-level
+// `dtx_assertHittableAtPoint` pixel probe — nothing clips it geometrically,
+// but the 100% pixel-visibility check fails for reasons we haven't pinned
+// down. Since `module-sis.spec.ts` (same shard) reinstalls via
+// `{delete: true}` between its tests, this spec can't assume the app is
+// warmed up even when we launch normally. We work around the hittability
+// issue below by using `device.tap({x, y})` for that initial tap, which
+// goes through iOS's XCUITest `coordinateTap` and bypasses Detox's
+// element hit-test entirely.
 beforeAll(async () => {
 	await device.launchApp()
 })
@@ -30,8 +34,27 @@ const dismissIconChangedAlert = async () => {
 	await system.element(by.system.label('OK')).atIndex(0).tap()
 }
 
+// Absolute screen coordinates of the settings button in the home screen's
+// navigation header, on iPhone 16 Pro (the device pinned in
+// `detox.config.js`). The button sits in the top-right of the native-stack
+// header; these coordinates land well inside its ~60×26 hit area without
+// depending on exact trailing-inset math.
+const SETTINGS_BUTTON_DEVICE_POINT = {x: 380, y: 80}
+
 test('changes the app icon to Big Ole and back to Old Main', async () => {
-	await element(by.id('button-open-settings')).tap()
+	// Wait for RN to mount the header so `device.tap` hits something real.
+	// We use `.toExist()` (not `.toBeVisible()`) because the home
+	// ScrollView can fail Detox's 75% visibility threshold during the
+	// native-stack's first-launch transition, even though the header and
+	// its children are perfectly renderable.
+	await waitFor(element(by.id('button-open-settings')))
+		.toExist()
+		.withTimeout(30000)
+
+	// Device-level tap via XCUITest coordinate tap. This bypasses Detox's
+	// element hittability assertion that fails for this button on a cold
+	// start (see comment in `beforeAll`).
+	await device.tap(SETTINGS_BUTTON_DEVICE_POINT)
 
 	// Normalize the starting state. iOS remembers the alternate icon across
 	// launches, so if a previous run (in this sim) landed on Big Ole, we'd
