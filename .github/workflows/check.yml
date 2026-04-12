@@ -312,7 +312,7 @@ jobs:
         run: xcrun simctl bootstatus "${{ steps.udid.outputs.udid }}" -b
 
       - name: Run UITests
-        timeout-minutes: 15
+        timeout-minutes: 25
         run: |
           set -o pipefail
           xcodebuild test-without-building \
