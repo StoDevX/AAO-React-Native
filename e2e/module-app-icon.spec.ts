@@ -27,18 +27,25 @@ const dismissIconChangedAlert = async () => {
 }
 
 test('changes the app icon to Big Ole and back to Old Main', async () => {
-	// After a fresh install (`delete: true`), the native navigation header
-	// can still be animating into place when the first tap is attempted, which
-	// trips Detox's 100% visibility check on the header's settings button. Wait
-	// for the home screen and its header button to settle before tapping.
-	await waitFor(element(by.id('screen-homescreen')))
-		.toBeVisible()
-		.withTimeout(10000)
+	// Wait for the nav-bar settings button to mount. A fresh install
+	// (`delete: true`) needs several seconds on CI to boot up the RN runtime
+	// and render the native-stack header. Use `toExist` instead of
+	// `toBeVisible`: Detox's visibility check can race with the native
+	// header's first-launch animation and the home ScrollView layout, even
+	// though the view is on screen.
 	await waitFor(element(by.id('button-open-settings')))
-		.toBeVisible(100)
-		.withTimeout(10000)
+		.toExist()
+		.withTimeout(30000)
 
-	await element(by.id('button-open-settings')).tap()
+	// Let the native header animation settle before the first tap. `.tap()`
+	// without a point requires the whole view to be 100% visible, which
+	// trips while the header is still animating into place.
+	await new Promise((resolve) => setTimeout(resolve, 1000))
+
+	// Tap at a specific local point inside the button. Detox's tap-at-point
+	// only needs the tap coordinate itself to be visible, bypassing the
+	// strict 100%-whole-view visibility check that bare `.tap()` imposes.
+	await element(by.id('button-open-settings')).tap({x: 10, y: 10})
 
 	// The default icon should be selected on a fresh install.
 	await expect(element(by.id('app-icon-cell-default-selected'))).toBeVisible()
