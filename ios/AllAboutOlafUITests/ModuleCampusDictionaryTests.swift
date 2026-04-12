@@ -13,13 +13,13 @@ class ModuleCampusDictionaryTests: XCTestCase {
 		let homescreen = app.element(matching: "screen-homescreen")
 		XCTAssertTrue(homescreen.waitForExistence(timeout: 30))
 
-		app.staticTexts["Campus Dictionary"].firstMatch.tap()
+		app.buttons["Campus Dictionary"].firstMatch.tap()
 
 		XCTAssertFalse(homescreen.exists)
 	}
 
 	func testHasListVisible() throws {
-		app.staticTexts["Campus Dictionary"].firstMatch.tap()
+		app.buttons["Campus Dictionary"].firstMatch.tap()
 
 		let title = app.staticTexts["Campus Dictionary"].firstMatch
 		XCTAssertTrue(title.waitForExistence(timeout: 30),

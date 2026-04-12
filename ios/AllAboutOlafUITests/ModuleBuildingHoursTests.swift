@@ -13,13 +13,13 @@ class ModuleBuildingHoursTests: XCTestCase {
 		let homescreen = app.element(matching: "screen-homescreen")
 		XCTAssertTrue(homescreen.waitForExistence(timeout: 30))
 
-		app.staticTexts["Building Hours"].firstMatch.tap()
+		app.buttons["Building Hours"].firstMatch.tap()
 
 		XCTAssertFalse(homescreen.exists)
 	}
 
 	func testHasBuildingListVisibleByDefault() throws {
-		app.staticTexts["Building Hours"].firstMatch.tap()
+		app.buttons["Building Hours"].firstMatch.tap()
 
 		let title = app.staticTexts["Building Hours"].firstMatch
 		XCTAssertTrue(title.waitForExistence(timeout: 30),

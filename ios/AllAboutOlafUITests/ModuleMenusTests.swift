@@ -15,13 +15,13 @@ class ModuleMenusTests: XCTestCase {
 		let homescreen = app.element(matching: "screen-homescreen")
 		XCTAssertTrue(homescreen.waitForExistence(timeout: 30))
 
-		app.staticTexts["Menus"].firstMatch.tap()
+		app.buttons["Menus"].firstMatch.tap()
 
 		XCTAssertFalse(homescreen.exists)
 	}
 
 	func testHasMenusListVisibleByDefault() throws {
-		app.staticTexts["Menus"].firstMatch.tap()
+		app.buttons["Menus"].firstMatch.tap()
 
 		let title = app.staticTexts["Menus"].firstMatch
 		XCTAssertTrue(title.waitForExistence(timeout: 30),
@@ -31,7 +31,7 @@ class ModuleMenusTests: XCTestCase {
 	// MARK: - St. Olaf menus
 
 	func testStavHallMenuCanBeOpened() throws {
-		app.staticTexts["Menus"].firstMatch.tap()
+		app.buttons["Menus"].firstMatch.tap()
 
 		let stavHall = app.staticTexts["Stav Hall"].firstMatch
 		XCTAssertTrue(stavHall.waitForExistence(timeout: 30))
@@ -42,7 +42,7 @@ class ModuleMenusTests: XCTestCase {
 	}
 
 	func testTheCageMenuCanBeOpened() throws {
-		app.staticTexts["Menus"].firstMatch.tap()
+		app.buttons["Menus"].firstMatch.tap()
 
 		let theCage = app.staticTexts["The Cage"].firstMatch
 		XCTAssertTrue(theCage.waitForExistence(timeout: 30))
@@ -53,7 +53,7 @@ class ModuleMenusTests: XCTestCase {
 	}
 
 	func testThePauseMenuCanBeOpened() throws {
-		app.staticTexts["Menus"].firstMatch.tap()
+		app.buttons["Menus"].firstMatch.tap()
 
 		let thePause = app.staticTexts["The Pause"].firstMatch
 		XCTAssertTrue(thePause.waitForExistence(timeout: 30))
@@ -66,7 +66,7 @@ class ModuleMenusTests: XCTestCase {
 	// MARK: - Carleton menus
 
 	func testBurtonMenuCanBeOpened() throws {
-		app.staticTexts["Menus"].firstMatch.tap()
+		app.buttons["Menus"].firstMatch.tap()
 
 		let carleton = app.staticTexts["Carleton"].firstMatch
 		XCTAssertTrue(carleton.waitForExistence(timeout: 30))
@@ -81,7 +81,7 @@ class ModuleMenusTests: XCTestCase {
 	}
 
 	func testLDCMenuCanBeOpened() throws {
-		app.staticTexts["Menus"].firstMatch.tap()
+		app.buttons["Menus"].firstMatch.tap()
 
 		let carleton = app.staticTexts["Carleton"].firstMatch
 		XCTAssertTrue(carleton.waitForExistence(timeout: 30))
@@ -96,7 +96,7 @@ class ModuleMenusTests: XCTestCase {
 	}
 
 	func testWeitzCenterMenuCanBeOpened() throws {
-		app.staticTexts["Menus"].firstMatch.tap()
+		app.buttons["Menus"].firstMatch.tap()
 
 		let carleton = app.staticTexts["Carleton"].firstMatch
 		XCTAssertTrue(carleton.waitForExistence(timeout: 30))
@@ -111,7 +111,7 @@ class ModuleMenusTests: XCTestCase {
 	}
 
 	func testSaylesHillMenuCanBeOpened() throws {
-		app.staticTexts["Menus"].firstMatch.tap()
+		app.buttons["Menus"].firstMatch.tap()
 
 		let carleton = app.staticTexts["Carleton"].firstMatch
 		XCTAssertTrue(carleton.waitForExistence(timeout: 30))

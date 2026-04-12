@@ -13,13 +13,13 @@ class ModuleCalendarTests: XCTestCase {
 		let homescreen = app.element(matching: "screen-homescreen")
 		XCTAssertTrue(homescreen.waitForExistence(timeout: 30))
 
-		app.staticTexts["Calendar"].firstMatch.tap()
+		app.buttons["Calendar"].firstMatch.tap()
 
 		XCTAssertFalse(homescreen.exists)
 	}
 
 	func testHasCalendarListVisibleByDefault() throws {
-		app.staticTexts["Calendar"].firstMatch.tap()
+		app.buttons["Calendar"].firstMatch.tap()
 
 		let title = app.staticTexts["Calendar"].firstMatch
 		XCTAssertTrue(title.waitForExistence(timeout: 30),
@@ -27,7 +27,7 @@ class ModuleCalendarTests: XCTestCase {
 	}
 
 	func testStOlafCalendarCanBeOpened() throws {
-		app.staticTexts["Calendar"].firstMatch.tap()
+		app.buttons["Calendar"].firstMatch.tap()
 
 		let tab = app.staticTexts["St. Olaf"].firstMatch
 		XCTAssertTrue(tab.waitForExistence(timeout: 30))
@@ -35,7 +35,7 @@ class ModuleCalendarTests: XCTestCase {
 	}
 
 	func testOlevilleCalendarCanBeOpened() throws {
-		app.staticTexts["Calendar"].firstMatch.tap()
+		app.buttons["Calendar"].firstMatch.tap()
 
 		let tab = app.staticTexts["Oleville"].firstMatch
 		XCTAssertTrue(tab.waitForExistence(timeout: 30))
@@ -43,7 +43,7 @@ class ModuleCalendarTests: XCTestCase {
 	}
 
 	func testNorthfieldCalendarCanBeOpened() throws {
-		app.staticTexts["Calendar"].firstMatch.tap()
+		app.buttons["Calendar"].firstMatch.tap()
 
 		let tab = app.staticTexts["Northfield"].firstMatch
 		XCTAssertTrue(tab.waitForExistence(timeout: 30))

@@ -13,13 +13,13 @@ class ModuleMoreTests: XCTestCase {
 		let homescreen = app.element(matching: "screen-homescreen")
 		XCTAssertTrue(homescreen.waitForExistence(timeout: 30))
 
-		app.staticTexts["More"].firstMatch.tap()
+		app.buttons["More"].firstMatch.tap()
 
 		XCTAssertFalse(homescreen.exists)
 	}
 
 	func testHasListVisible() throws {
-		app.staticTexts["More"].firstMatch.tap()
+		app.buttons["More"].firstMatch.tap()
 
 		let title = app.staticTexts["More"].firstMatch
 		XCTAssertTrue(title.waitForExistence(timeout: 30),

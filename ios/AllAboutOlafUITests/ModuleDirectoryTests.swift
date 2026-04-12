@@ -13,13 +13,13 @@ class ModuleDirectoryTests: XCTestCase {
 		let homescreen = app.element(matching: "screen-homescreen")
 		XCTAssertTrue(homescreen.waitForExistence(timeout: 30))
 
-		app.staticTexts["Directory"].firstMatch.tap()
+		app.buttons["Directory"].firstMatch.tap()
 
 		XCTAssertFalse(homescreen.exists)
 	}
 
 	func testHasSearchViewVisibleByDefault() throws {
-		app.staticTexts["Directory"].firstMatch.tap()
+		app.buttons["Directory"].firstMatch.tap()
 
 		let title = app.staticTexts["Directory"].firstMatch
 		XCTAssertTrue(title.waitForExistence(timeout: 30),

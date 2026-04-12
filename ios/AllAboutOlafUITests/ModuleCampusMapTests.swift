@@ -13,7 +13,7 @@ class ModuleCampusMapTests: XCTestCase {
 		let homescreen = app.element(matching: "screen-homescreen")
 		XCTAssertTrue(homescreen.waitForExistence(timeout: 30))
 
-		app.staticTexts["Campus Map"].firstMatch.tap()
+		app.buttons["Campus Map"].firstMatch.tap()
 
 		XCTAssertFalse(homescreen.exists)
 	}
@@ -24,10 +24,10 @@ class ModuleCampusMapTests: XCTestCase {
 		let homescreen = app.element(matching: "screen-homescreen")
 		XCTAssertTrue(homescreen.waitForExistence(timeout: 30))
 
-		app.staticTexts["Campus Map"].firstMatch.tap()
+		app.buttons["Campus Map"].firstMatch.tap()
 		XCTAssertFalse(homescreen.exists)
 
-		app.staticTexts["Done"].firstMatch.tap()
+		app.buttons["Done"].firstMatch.tap()
 		XCTAssertTrue(homescreen.waitForExistence(timeout: 30))
 	}
 }

@@ -13,7 +13,7 @@ class ModuleSISTests: XCTestCase {
 		let homescreen = app.element(matching: "screen-homescreen")
 		XCTAssertTrue(homescreen.waitForExistence(timeout: 30))
 
-		app.staticTexts["SIS"].firstMatch.tap()
+		app.buttons["SIS"].firstMatch.tap()
 
 		XCTAssertFalse(homescreen.exists)
 	}
@@ -26,12 +26,12 @@ class ModuleSISTests: XCTestCase {
 		app.launchArguments = ["--reset-state"]
 		app.launch()
 
-		app.staticTexts["SIS"].firstMatch.tap()
+		app.buttons["SIS"].firstMatch.tap()
 
 		let homescreen = app.element(matching: "screen-homescreen")
 		XCTAssertFalse(homescreen.exists)
 
-		let iAgree = app.staticTexts["I Agree"].firstMatch
+		let iAgree = app.buttons["I Agree"].firstMatch
 		XCTAssertTrue(iAgree.waitForExistence(timeout: 30),
 		              "I Agree acknowledgement should be visible")
 	}
@@ -41,9 +41,9 @@ class ModuleSISTests: XCTestCase {
 		app.launchArguments = ["--reset-state"]
 		app.launch()
 
-		app.staticTexts["SIS"].firstMatch.tap()
+		app.buttons["SIS"].firstMatch.tap()
 
-		let iAgree = app.staticTexts["I Agree"].firstMatch
+		let iAgree = app.buttons["I Agree"].firstMatch
 		XCTAssertTrue(iAgree.waitForExistence(timeout: 30))
 		iAgree.tap()
 
@@ -64,9 +64,9 @@ class ModuleSISTests: XCTestCase {
 		app.launchArguments = ["--reset-state"]
 		app.launch()
 
-		app.staticTexts["SIS"].firstMatch.tap()
+		app.buttons["SIS"].firstMatch.tap()
 
-		let iAgree = app.staticTexts["I Agree"].firstMatch
+		let iAgree = app.buttons["I Agree"].firstMatch
 		XCTAssertTrue(iAgree.waitForExistence(timeout: 30))
 		iAgree.tap()
 
@@ -76,7 +76,7 @@ class ModuleSISTests: XCTestCase {
 		XCTAssertTrue(balances.waitForExistence(timeout: 30))
 
 		// Return to the home screen
-		let backButton = app.staticTexts["All About Olaf"].firstMatch
+		let backButton = app.buttons["All About Olaf"].firstMatch
 		XCTAssertTrue(backButton.waitForExistence(timeout: 10))
 		backButton.tap()
 
@@ -84,14 +84,14 @@ class ModuleSISTests: XCTestCase {
 		XCTAssertTrue(homescreen.waitForExistence(timeout: 30))
 
 		// Navigate back into SIS
-		app.staticTexts["SIS"].firstMatch.tap()
+		app.buttons["SIS"].firstMatch.tap()
 		XCTAssertFalse(homescreen.exists)
 	}
 
 	// MARK: - Tabs
 
 	func testOpenJobsTabCanBeOpened() throws {
-		app.staticTexts["SIS"].firstMatch.tap()
+		app.buttons["SIS"].firstMatch.tap()
 
 		let openJobs = app.staticTexts["Open Jobs"].firstMatch
 		XCTAssertTrue(openJobs.waitForExistence(timeout: 30))

@@ -13,7 +13,7 @@ class ModuleOlevilleTests: XCTestCase {
 		let homescreen = app.element(matching: "screen-homescreen")
 		XCTAssertTrue(homescreen.waitForExistence(timeout: 30))
 
-		app.staticTexts["Oleville"].firstMatch.tap()
+		app.buttons["Oleville"].firstMatch.tap()
 
 		XCTAssertFalse(homescreen.exists)
 	}
@@ -24,10 +24,10 @@ class ModuleOlevilleTests: XCTestCase {
 		let homescreen = app.element(matching: "screen-homescreen")
 		XCTAssertTrue(homescreen.waitForExistence(timeout: 30))
 
-		app.staticTexts["Oleville"].firstMatch.tap()
+		app.buttons["Oleville"].firstMatch.tap()
 		XCTAssertFalse(homescreen.exists)
 
-		app.staticTexts["Done"].firstMatch.tap()
+		app.buttons["Done"].firstMatch.tap()
 		XCTAssertTrue(homescreen.waitForExistence(timeout: 30))
 	}
 }

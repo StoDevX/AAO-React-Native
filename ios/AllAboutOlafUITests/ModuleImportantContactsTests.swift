@@ -13,13 +13,13 @@ class ModuleImportantContactsTests: XCTestCase {
 		let homescreen = app.element(matching: "screen-homescreen")
 		XCTAssertTrue(homescreen.waitForExistence(timeout: 30))
 
-		app.staticTexts["Important Contacts"].firstMatch.tap()
+		app.buttons["Important Contacts"].firstMatch.tap()
 
 		XCTAssertFalse(homescreen.exists)
 	}
 
 	func testHasContactsListVisibleByDefault() throws {
-		app.staticTexts["Important Contacts"].firstMatch.tap()
+		app.buttons["Important Contacts"].firstMatch.tap()
 
 		let title = app.staticTexts["Important Contacts"].firstMatch
 		XCTAssertTrue(title.waitForExistence(timeout: 30),

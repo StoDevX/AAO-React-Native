@@ -13,7 +13,7 @@ class ModuleStoPrintTests: XCTestCase {
 		let homescreen = app.element(matching: "screen-homescreen")
 		XCTAssertTrue(homescreen.waitForExistence(timeout: 30))
 
-		app.staticTexts["stoPrint"].firstMatch.tap()
+		app.buttons["stoPrint"].firstMatch.tap()
 
 		XCTAssertFalse(homescreen.exists)
 	}
@@ -21,7 +21,7 @@ class ModuleStoPrintTests: XCTestCase {
 	func testSaysYouAreNotLoggedInByDefault() throws {
 		throw XCTSkip("stoPrint API request hangs in CI")
 
-		app.staticTexts["stoPrint"].firstMatch.tap()
+		app.buttons["stoPrint"].firstMatch.tap()
 
 		let homescreen = app.element(matching: "screen-homescreen")
 		XCTAssertFalse(homescreen.exists)

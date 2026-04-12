@@ -13,13 +13,13 @@ class ModuleStreamingMediaTests: XCTestCase {
 		let homescreen = app.element(matching: "screen-homescreen")
 		XCTAssertTrue(homescreen.waitForExistence(timeout: 30))
 
-		app.staticTexts["Streaming Media"].firstMatch.tap()
+		app.buttons["Streaming Media"].firstMatch.tap()
 
 		XCTAssertFalse(homescreen.exists)
 	}
 
 	func testHasStreamListVisibleByDefault() throws {
-		app.staticTexts["Streaming Media"].firstMatch.tap()
+		app.buttons["Streaming Media"].firstMatch.tap()
 
 		let streamList = app.element(matching: "stream-list")
 		XCTAssertTrue(streamList.waitForExistence(timeout: 30),
@@ -27,7 +27,7 @@ class ModuleStreamingMediaTests: XCTestCase {
 	}
 
 	func testWebcamsTabCanBeOpened() throws {
-		app.staticTexts["Streaming Media"].firstMatch.tap()
+		app.buttons["Streaming Media"].firstMatch.tap()
 
 		let webcams = app.staticTexts["Webcams"].firstMatch
 		XCTAssertTrue(webcams.waitForExistence(timeout: 30))
@@ -39,7 +39,7 @@ class ModuleStreamingMediaTests: XCTestCase {
 	}
 
 	func testKSTOTabCanBeOpened() throws {
-		app.staticTexts["Streaming Media"].firstMatch.tap()
+		app.buttons["Streaming Media"].firstMatch.tap()
 
 		let ksto = app.staticTexts["KSTO"].firstMatch
 		XCTAssertTrue(ksto.waitForExistence(timeout: 30))
@@ -51,7 +51,7 @@ class ModuleStreamingMediaTests: XCTestCase {
 	}
 
 	func testKRLXTabCanBeOpened() throws {
-		app.staticTexts["Streaming Media"].firstMatch.tap()
+		app.buttons["Streaming Media"].firstMatch.tap()
 
 		let krlx = app.staticTexts["KRLX"].firstMatch
 		XCTAssertTrue(krlx.waitForExistence(timeout: 30))

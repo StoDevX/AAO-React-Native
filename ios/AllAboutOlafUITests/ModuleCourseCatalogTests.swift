@@ -13,13 +13,13 @@ class ModuleCourseCatalogTests: XCTestCase {
 		let homescreen = app.element(matching: "screen-homescreen")
 		XCTAssertTrue(homescreen.waitForExistence(timeout: 30))
 
-		app.staticTexts["Course Catalog"].firstMatch.tap()
+		app.buttons["Course Catalog"].firstMatch.tap()
 
 		XCTAssertFalse(homescreen.exists)
 	}
 
 	func testHasSearchViewVisibleByDefault() throws {
-		app.staticTexts["Course Catalog"].firstMatch.tap()
+		app.buttons["Course Catalog"].firstMatch.tap()
 
 		let title = app.staticTexts["Course Catalog"].firstMatch
 		XCTAssertTrue(title.waitForExistence(timeout: 30),

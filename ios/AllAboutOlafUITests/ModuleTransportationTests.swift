@@ -15,7 +15,7 @@ class ModuleTransportationTests: XCTestCase {
 		let homescreen = app.element(matching: "screen-homescreen")
 		XCTAssertTrue(homescreen.waitForExistence(timeout: 30))
 
-		app.staticTexts["Transportation"].firstMatch.tap()
+		app.buttons["Transportation"].firstMatch.tap()
 
 		XCTAssertFalse(homescreen.exists)
 	}
@@ -23,7 +23,7 @@ class ModuleTransportationTests: XCTestCase {
 	func testHasTransportationViewVisibleByDefault() throws {
 		throw XCTSkip("Transportation screen crashes in CI")
 
-		app.staticTexts["Transportation"].firstMatch.tap()
+		app.buttons["Transportation"].firstMatch.tap()
 
 		let title = app.staticTexts["Transportation"].firstMatch
 		XCTAssertTrue(title.waitForExistence(timeout: 30))
@@ -32,7 +32,7 @@ class ModuleTransportationTests: XCTestCase {
 	func testExpressBusTabCanBeOpened() throws {
 		throw XCTSkip("Transportation screen crashes in CI")
 
-		app.staticTexts["Transportation"].firstMatch.tap()
+		app.buttons["Transportation"].firstMatch.tap()
 
 		let tab = app.staticTexts["Express Bus"].firstMatch
 		XCTAssertTrue(tab.waitForExistence(timeout: 30))
@@ -42,7 +42,7 @@ class ModuleTransportationTests: XCTestCase {
 	func testRedLineTabCanBeOpened() throws {
 		throw XCTSkip("Transportation screen crashes in CI")
 
-		app.staticTexts["Transportation"].firstMatch.tap()
+		app.buttons["Transportation"].firstMatch.tap()
 
 		let tab = app.staticTexts["Red Line"].firstMatch
 		XCTAssertTrue(tab.waitForExistence(timeout: 30))
@@ -52,7 +52,7 @@ class ModuleTransportationTests: XCTestCase {
 	func testBlueLineTabCanBeOpened() throws {
 		throw XCTSkip("Transportation screen crashes in CI")
 
-		app.staticTexts["Transportation"].firstMatch.tap()
+		app.buttons["Transportation"].firstMatch.tap()
 
 		let tab = app.staticTexts["Blue Line"].firstMatch
 		XCTAssertTrue(tab.waitForExistence(timeout: 30))
@@ -62,7 +62,7 @@ class ModuleTransportationTests: XCTestCase {
 	func testOlesGoTabCanBeOpened() throws {
 		throw XCTSkip("Transportation screen crashes in CI")
 
-		app.staticTexts["Transportation"].firstMatch.tap()
+		app.buttons["Transportation"].firstMatch.tap()
 
 		let tab = app.staticTexts["Oles Go"].firstMatch
 		XCTAssertTrue(tab.waitForExistence(timeout: 30))
@@ -72,7 +72,7 @@ class ModuleTransportationTests: XCTestCase {
 	func testOtherModesTabCanBeOpened() throws {
 		throw XCTSkip("Transportation screen crashes in CI")
 
-		app.staticTexts["Transportation"].firstMatch.tap()
+		app.buttons["Transportation"].firstMatch.tap()
 
 		let tab = app.staticTexts["Other Modes"].firstMatch
 		XCTAssertTrue(tab.waitForExistence(timeout: 30))
