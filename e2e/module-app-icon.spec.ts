@@ -59,8 +59,12 @@ test('changes the app icon to Big Ole and back to Old Main', async () => {
 	await device.tap(SETTINGS_BUTTON_DEVICE_POINT)
 
 	// With a fresh install we know the starting state: default (Old Main)
-	// is selected, Big Ole is not.
-	await expect(element(by.id('app-icon-cell-default-selected'))).toBeVisible()
+	// is selected, Big Ole is not.  Use `waitFor` because the device-level
+	// coordinate tap above doesn't block on navigation — the settings
+	// screen may still be mid-transition when we reach this line.
+	await waitFor(element(by.id('app-icon-cell-default-selected')))
+		.toBeVisible()
+		.withTimeout(10000)
 	await expect(element(by.id('app-icon-cell-icon_type_windmill'))).toBeVisible()
 
 	// Switch to Big Ole.
