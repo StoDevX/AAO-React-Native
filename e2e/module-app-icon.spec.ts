@@ -1,37 +1,38 @@
 import {afterAll, beforeAll, test} from '@jest/globals'
 import {by, device, element, expect, system, waitFor} from 'detox'
 
-// Launch the app normally (matching module-settings.spec.ts and friends).
-//
-// The alternate-icon flow is only tappable through the settings screen,
-// which we reach via the header's `button-open-settings`. On a freshly-
-// installed app that button reliably fails Detox's element-level
-// `dtx_assertHittableAtPoint` pixel probe — nothing clips it geometrically,
-// but the 100% pixel-visibility check fails for reasons we haven't pinned
-// down. Since `module-sis.spec.ts` (same shard) reinstalls via
-// `{delete: true}` between its tests, this spec can't assume the app is
-// warmed up even when we launch normally. We work around the hittability
-// issue below by using `device.tap({x, y})` for that initial tap, which
-// goes through iOS's XCUITest `coordinateTap` and bypasses Detox's
-// element hit-test entirely.
+// Reinstall the app so this spec has a deterministic starting state. iOS
+// persists the alternate icon name across normal app launches, so without
+// a fresh install a previous run that left Big Ole selected would leak
+// into this one. The reinstall is also why we need the cold-start
+// hittability workarounds below.
 beforeAll(async () => {
-	await device.launchApp()
+	await device.launchApp({delete: true})
 })
 
-// iOS persists the alternate icon name across normal app launches, so a
-// test that errored partway through could leave Big Ole selected and leak
-// into a subsequent spec. Reinstalling on afterAll guarantees the next
-// spec file starts from a clean default.
+// Reinstall again on teardown so the next spec file in this shard starts
+// from a clean default state as well.
 afterAll(async () => {
 	await device.launchApp({delete: true})
 })
 
-// Dismisses the iOS system alert that iOS raises whenever the alternate icon
-// changes ("You have changed the icon to ..."). The alert is a system-owned
-// view, not something the app renders, so it has to be matched via Detox's
-// `system` facade.
+// Dismisses the iOS system alert that iOS raises whenever the alternate
+// icon changes ("You have changed the icon to …"). The alert is a
+// system-owned view, not something the app renders, so it has to be
+// matched via Detox's `system` facade.
+//
+// Detox does not sync with system alerts, so `system.element(...).tap()`
+// returns as soon as the tap is dispatched — before the presentation
+// controller's dismissal animation has finished. If we proceed straight
+// into another element tap, Detox's hittability check lands on the
+// alert's still-present `_UITransitionView` (whose dimming view covers
+// the screen during the transition) and fails with "View is not hittable
+// at its visible point". A screenshot from CI caught the alert in
+// mid-dismissal on top of the icon list, confirming the race. Sleep
+// briefly after tapping OK to let the dismissal animation finish.
 const dismissIconChangedAlert = async () => {
 	await system.element(by.system.label('OK')).atIndex(0).tap()
+	await new Promise((resolve) => setTimeout(resolve, 1500))
 }
 
 // Absolute screen coordinates of the settings button in the home screen's
@@ -52,27 +53,13 @@ test('changes the app icon to Big Ole and back to Old Main', async () => {
 		.withTimeout(30000)
 
 	// Device-level tap via XCUITest coordinate tap. This bypasses Detox's
-	// element hittability assertion that fails for this button on a cold
-	// start (see comment in `beforeAll`).
+	// element hittability assertion, which fails for this button on a
+	// cold start for reasons we haven't pinned down (the button isn't
+	// clipped; the 100% pixel-visibility check just refuses to pass).
 	await device.tap(SETTINGS_BUTTON_DEVICE_POINT)
 
-	// Normalize the starting state. iOS remembers the alternate icon across
-	// launches, so if a previous run (in this sim) landed on Big Ole, we'd
-	// start this test there. Tap default if it isn't already selected.
-	//
-	// Tapping an already-selected icon is a no-op in the app (see
-	// `IconCell`'s `setIcon`), so we can't "reset" by just always tapping
-	// default — we'd never see the confirmation alert and the subsequent
-	// `dismissIconChangedAlert` would hang. Instead, probe the current
-	// state with a try/catch and only reset when needed.
-	try {
-		await expect(element(by.id('app-icon-cell-default-selected'))).toBeVisible()
-	} catch {
-		await element(by.id('app-icon-cell-default')).tap()
-		await dismissIconChangedAlert()
-	}
-
-	// Known starting state: default (Old Main) is selected.
+	// With a fresh install we know the starting state: default (Old Main)
+	// is selected, Big Ole is not.
 	await expect(element(by.id('app-icon-cell-default-selected'))).toBeVisible()
 	await expect(element(by.id('app-icon-cell-icon_type_windmill'))).toBeVisible()
 
