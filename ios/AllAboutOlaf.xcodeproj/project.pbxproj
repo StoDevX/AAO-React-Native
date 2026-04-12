@@ -158,7 +158,7 @@
 		};
 		00D33BE41DDA58A8001E830E /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 83CBB9F71A601CBA00E9B192 /* Project object */;
+			containerPortal = 83CBB9F71A601CBA00E9B192;
 			proxyType = 1;
 			remoteGlobalIDString = 13B07F861A680F5B00A75B9A;
 			remoteInfo = AllAboutOlaf;
@@ -574,7 +574,7 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		83CBB9F61A601CBA00E9B192 = {
+		83CBB9F61A601CBA00E9B192 /* PBXGroup */ = {
 			isa = PBXGroup;
 			children = (
 				3ABFC1212C8D2FE30025E0B5 /* PrivacyInfo.xcprivacy */,
@@ -652,7 +652,7 @@
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		83CBB9F71A601CBA00E9B192 /* Project object */ = {
+		83CBB9F71A601CBA00E9B192 = {
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 810;
@@ -662,7 +662,7 @@
 					00D33BDE1DDA58A8001E830E = {
 						CreatedOnToolsVersion = 8.1;
 						ProvisioningStyle = Automatic;
-						TestTargetID = 13B07F861A680F5B00A75B9A;
+						TestTargetID = 13B07F861A680F5B00A75B9A /* AllAboutOlaf */;
 					};
 					13B07F861A680F5B00A75B9A = {
 						LastSwiftMigration = 810;
@@ -688,8 +688,8 @@
 				en,
 				Base,
 			);
-			mainGroup = 83CBB9F61A601CBA00E9B192;
-			productRefGroup = 83CBB9F61A601CBA00E9B192;
+			mainGroup = 83CBB9F61A601CBA00E9B192 /* PBXGroup */;
+			productRefGroup = 83CBB9F61A601CBA00E9B192 /* PBXGroup */;
 			projectDirPath = "";
 			projectReferences = (
 				{
@@ -1306,6 +1306,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				TEST_TARGET_NAME = AllAboutOlaf;
+				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
 		};
@@ -1328,6 +1329,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "hawkrives.All-About-Olaf-UI-Tests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_TARGET_NAME = AllAboutOlaf;
+				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
 		};
@@ -1363,6 +1365,7 @@
 				STRIPFLAGS = "-rSTx";
 				SWIFT_OBJC_BRIDGING_HEADER = "AllAboutOlafUITests/AllAboutOlaf-Bridging-Header.h";
 				TARGETED_DEVICE_FAMILY = "1,2";
+				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
 		};
@@ -1396,6 +1399,7 @@
 				STRIPFLAGS = "-rSTx";
 				SWIFT_OBJC_BRIDGING_HEADER = "AllAboutOlafUITests/AllAboutOlaf-Bridging-Header.h";
 				TARGETED_DEVICE_FAMILY = "1,2";
+				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
 		};
@@ -1578,5 +1582,5 @@
 		};
 /* End XCConfigurationList section */
 	};
-	rootObject = 83CBB9F71A601CBA00E9B192 /* Project object */;
+	rootObject = 83CBB9F71A601CBA00E9B192;
 }
