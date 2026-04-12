@@ -8,6 +8,13 @@ class AllAboutOlafUITests: XCTestCase {
         app = XCUIApplication()
     }
 
+    /// Find an element by its accessibility identifier regardless of element type.
+    /// React Native testID maps to accessibilityIdentifier, but the XCUITest
+    /// element type varies depending on the component (button, other, cell, etc.).
+    private func element(matching identifier: String) -> XCUIElement {
+        app.descendants(matching: .any).matching(identifier: identifier).firstMatch
+    }
+
     func testHomeScreenRenders() throws {
         app.launch()
         let menus = app.buttons["Menus"]
@@ -35,26 +42,26 @@ class AllAboutOlafUITests: XCTestCase {
         settingsButton.tap()
 
         // Verify default icon is selected, tap Big Ole
-        XCTAssertTrue(app.buttons["app-icon-cell-default-selected"]
-            .waitForExistence(timeout: 10),
-            "Default icon should be selected initially")
-        app.buttons["app-icon-cell-icon_type_windmill"].tap()
+        let defaultSelected = element(matching: "app-icon-cell-default-selected")
+        XCTAssertTrue(defaultSelected.waitForExistence(timeout: 10),
+                      "Default icon should be selected initially")
+        element(matching: "app-icon-cell-icon_type_windmill").tap()
 
         // Interact with the app to trigger the interruption monitor
         app.tap()
 
         // Verify Big Ole is now selected
-        XCTAssertTrue(app.buttons["app-icon-cell-icon_type_windmill-selected"]
-            .waitForExistence(timeout: 10),
-            "Windmill icon should be selected after tapping it")
+        let windmillSelected = element(matching: "app-icon-cell-icon_type_windmill-selected")
+        XCTAssertTrue(windmillSelected.waitForExistence(timeout: 10),
+                      "Windmill icon should be selected after tapping it")
 
         // Tap default to switch back
-        app.buttons["app-icon-cell-default"].tap()
+        element(matching: "app-icon-cell-default").tap()
         app.tap()
 
         // Verify default is selected again
-        XCTAssertTrue(app.buttons["app-icon-cell-default-selected"]
-            .waitForExistence(timeout: 10),
-            "Default icon should be selected after switching back")
+        let defaultReselected = element(matching: "app-icon-cell-default-selected")
+        XCTAssertTrue(defaultReselected.waitForExistence(timeout: 10),
+                      "Default icon should be selected after switching back")
     }
 }
