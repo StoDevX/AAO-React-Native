@@ -23,27 +23,21 @@ afterAll(async () => {
 // depending on exact trailing-inset math.
 const SETTINGS_BUTTON_DEVICE_POINT = {x: 380, y: 80}
 
-// Absolute screen coordinates of the OK button inside the iOS system alert
-// that appears whenever the alternate icon changes ("You have changed the
-// icon for …"). On iPhone 16 Pro the alert is a standard UIAlertController
-// centered at x=196; the OK button sits at the bottom of the alert.
+// Dismisses the iOS system alert that appears whenever the alternate icon
+// changes ("You have changed the icon for …"). Neither Detox's system
+// element API (hangs ~55s then throws DetoxRuntimeError) nor device-level
+// coordinate taps (go under the alert to the app window) can interact
+// with this alert — it's owned by SpringBoard in a separate window layer.
 //
-// We use coordinate taps instead of Detox's system.element API because the
-// XCUITest runner consistently fails to match the system alert's OK button,
-// hanging for ~55s before throwing a DetoxRuntimeError.
-const ALERT_OK_BUTTON_DEVICE_POINT = {x: 196, y: 395}
-
-// Dismisses the iOS system alert that iOS raises whenever the alternate
-// icon changes. Uses a device-level coordinate tap since the Detox system
-// element API can't reliably interact with this alert. Sleeps briefly
-// after tapping to let the dismissal animation finish — without this,
-// the _UITransitionView from the alert's presentation controller blocks
-// subsequent element interactions.
+// Workaround: background the app so iOS dismisses the alert, then
+// foreground it again. The app state (settings screen) is preserved.
 const dismissIconChangedAlert = async () => {
-	// Small delay to ensure the alert has been fully presented before tapping.
+	// Brief delay so the alert is fully presented before we background.
 	await new Promise((resolve) => setTimeout(resolve, 1000))
-	await device.tap(ALERT_OK_BUTTON_DEVICE_POINT)
-	await new Promise((resolve) => setTimeout(resolve, 1500))
+	await device.sendToHome()
+	await device.launchApp({newInstance: false})
+	// Brief delay for the UI to settle after foregrounding.
+	await new Promise((resolve) => setTimeout(resolve, 1000))
 }
 
 test('changes the app icon to Big Ole and back to Old Main', async () => {
