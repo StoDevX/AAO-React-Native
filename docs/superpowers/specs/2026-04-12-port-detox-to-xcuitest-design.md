@@ -57,7 +57,7 @@ extension XCUIApplication {
 | Detox | XCUITest |
 |---|---|
 | `device.launchApp()` | `app.launch()` in `setUpWithError()` |
-| `device.launchApp({delete: true})` | `app.terminate(); app.launch()` in the specific test method |
+| `device.launchApp({delete: true})` | `app.launchArguments = ["--reset-state"]; app.launch()` (clears AsyncStorage/UserDefaults) |
 | `device.reloadReactNative()` | No-op; no between-test reset by default |
 | `by.id(id)` | `app.element(matching: id)` (custom helper) |
 | `by.text(text)` | `app.staticTexts[text].firstMatch` |
@@ -81,9 +81,29 @@ override func setUpWithError() throws {
 
 - **Per-class**: `setUpWithError()` launches the app once before each test method.
 - **Per-test**: No special reset. XCUITest calls `setUpWithError()` before each test method, which relaunches the app.
-- **Fresh state tests**: The SIS `balances` tests need fresh app state. These test methods call `app.terminate()` and `app.launch()` explicitly (XCUITest does not support deleting app data directly, but a fresh launch resets the JS bundle state in the same way `reloadReactNative` does for these tests).
+- **Fresh state tests**: The SIS `balances` tests need a clean slate because the "I Agree" acknowledgement is persisted in AsyncStorage across app launches. These tests pass a `--reset-state` launch argument: `app.launchArguments = ["--reset-state"]`. The app checks for this argument on startup and clears AsyncStorage when present. This mirrors Detox's `device.launchApp({delete: true})` behavior.
 
 Note: XCUITest's default behavior calls `setUpWithError()` before each test method, so `app.launch()` there effectively gives us a fresh launch per test. This is slightly different from Detox's "launch once, reload RN between tests" but is actually more isolated and reliable.
+
+## App Changes
+
+A small change to `AppDelegate.swift` is required to support the `--reset-state` launch argument. On startup, check `ProcessInfo.processInfo.arguments` for `"--reset-state"` and, if present, clear AsyncStorage by removing its directory from the app's documents/library folder. This is gated behind `#if DEBUG` so it cannot run in production builds.
+
+```swift
+#if DEBUG
+if ProcessInfo.processInfo.arguments.contains("--reset-state") {
+    // Clear AsyncStorage
+    if let libraryPath = FileManager.default.urls(for: .libraryDirectory, in: .userDomainMask).first {
+        let asyncStoragePath = libraryPath.appendingPathComponent("Application Support/RCTAsyncLocalStorage_V1")
+        try? FileManager.default.removeItem(at: asyncStoragePath)
+    }
+    // Clear UserDefaults
+    if let bundleId = Bundle.main.bundleIdentifier {
+        UserDefaults.standard.removePersistentDomain(forName: bundleId)
+    }
+}
+#endif
+```
 
 ## Skip Markers
 
@@ -178,9 +198,9 @@ Skipped tests use `throw XCTSkip("reason")` at the start of the test body:
 ### ModuleSISTests (5 tests)
 
 1. `testIsReachableFromHomescreen` - Tap "SIS", verify homescreen gone.
-2. `testHasAcknowledgementVisibleByDefault` - Fresh launch, tap "SIS", verify "I Agree" visible.
-3. `testShowsBalancesAfterAcknowledgement` - Fresh launch, tap "SIS", tap "I Agree", verify "BALANCES" and "MEAL PLAN" visible.
-4. `testContinuesToShowBalancesAfterReopening` - Fresh launch, tap "SIS", tap "I Agree", go back, re-enter SIS, verify still showing balances.
+2. `testHasAcknowledgementVisibleByDefault` - Launch with `--reset-state`, tap "SIS", verify "I Agree" visible.
+3. `testShowsBalancesAfterAcknowledgement` - Launch with `--reset-state`, tap "SIS", tap "I Agree", verify "BALANCES" and "MEAL PLAN" visible.
+4. `testContinuesToShowBalancesAfterReopening` - Launch with `--reset-state`, tap "SIS", tap "I Agree", go back, re-enter SIS, verify still showing balances.
 5. `testOpenJobsTabCanBeOpened` - Tap "SIS", tap "Open Jobs", verify "Open Jobs" visible.
 
 ### ModuleStoPrintTests (2 tests, 1 skipped)
@@ -233,3 +253,7 @@ Remove all Detox artifacts:
 - The `Info.plist` and bridging header
 - The Xcode scheme test configuration
 - All React Native source code and accessibility identifiers
+
+## App Code Changes
+
+- `ios/AllAboutOlaf/AppDelegate.swift` — Add `#if DEBUG` block to check for `--reset-state` launch argument and clear AsyncStorage + UserDefaults when present
