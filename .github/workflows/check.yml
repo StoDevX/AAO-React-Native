@@ -147,7 +147,7 @@ jobs:
         with:
           lookup-only: true
           path: ios/build/Build/Products/
-          key: ${{ runner.os }}-ios-xcode@${{ env.xcode_version }}-${{ hashFiles('**/project.pbxproj', 'ios/Podfile', '**/Podfile.lock', 'ios/AllAboutOlaf/**', '.github/job.yml') }}
+          key: ${{ runner.os }}-ios-xcode@${{ env.xcode_version }}-${{ hashFiles('**/project.pbxproj', 'ios/Podfile', '**/Podfile.lock', 'ios/AllAboutOlaf/**', 'ios/AllAboutOlafUITests/**', '.github/job.yml') }}
 
       - uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151 # v4.0.1
         if: steps.app-cache.outputs.cache-hit != 'true'
@@ -198,6 +198,26 @@ jobs:
           CODE_SIGNING_DISABLED: 'true'
           USE_CCACHE: '1'
         run: npx detox build e2e --configuration ios.sim.release
+
+      - name: Build UITest bundle
+        if: ${{ steps.app-cache.outputs.cache-hit != 'true' && !contains(github.event.pull_request.labels.*.name, 'ci/skip-detox') }}
+        env:
+          SKIP_BUNDLING: 'true'
+          CODE_SIGNING_DISABLED: 'true'
+          USE_CCACHE: '1'
+        run: |
+          set -o pipefail
+          xcodebuild build-for-testing \
+            -workspace ios/AllAboutOlaf.xcworkspace \
+            -scheme AllAboutOlaf \
+            -configuration Release \
+            -sdk iphonesimulator \
+            -derivedDataPath ios/build \
+            -only-testing:AllAboutOlafUITests \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGNING_ALLOWED=NO \
+            | xcbeautify --renderer github-actions
 
       - name: Show ccache stats
         if: steps.app-cache.outputs.cache-hit != 'true'
@@ -419,7 +439,7 @@ jobs:
 
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
-      - name: Load the cached iOS app
+      - name: Load the cached iOS app and UITest bundle
         uses: actions/cache/restore@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
         id: app-cache
         with:
@@ -449,19 +469,6 @@ jobs:
       - uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151 # v4.0.1
 
       - run: npm ci
-
-      - name: Restore CocoaPods cache
-        id: pods-cache
-        uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
-        with:
-          path: ios/Pods
-          key: pods-${{ runner.os }}-xcode@${{ env.xcode_version }}-${{ hashFiles('**/project.pbxproj', 'ios/Podfile', '**/Podfile.lock', 'ios/AllAboutOlaf/**', '.github/job.yml') }}
-          restore-keys: |
-            pods-${{ runner.os }}-xcode@${{ env.xcode_version }}-${{ hashFiles('**/project.pbxproj', 'ios/Podfile', '**/Podfile.lock', 'ios/AllAboutOlaf/**', '.github/job.yml') }}
-
-      - name: Install CocoaPods
-        if: steps.pods-cache.outputs.cache-hit != 'true'
-        run: mise run pod:install --deployment
 
       - name: Discover simulator device
         id: detox-device
@@ -511,24 +518,6 @@ jobs:
 
       - name: Wait for the simulator to be ready
         run: xcrun simctl bootstatus "${{ steps.udid.outputs.udid }}" -b
-
-      - name: Build UITest bundle
-        env:
-          SKIP_BUNDLING: 'true'
-          CODE_SIGNING_DISABLED: 'true'
-        run: |
-          set -o pipefail
-          xcodebuild build-for-testing \
-            -workspace ios/AllAboutOlaf.xcworkspace \
-            -scheme AllAboutOlaf \
-            -configuration Release \
-            -sdk iphonesimulator \
-            -derivedDataPath ios/build \
-            -only-testing:AllAboutOlafUITests \
-            CODE_SIGN_IDENTITY="" \
-            CODE_SIGNING_REQUIRED=NO \
-            CODE_SIGNING_ALLOWED=NO \
-            | xcbeautify --renderer github-actions
 
       - name: Run UITests
         timeout-minutes: 15
