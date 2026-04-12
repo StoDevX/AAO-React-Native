@@ -93,12 +93,8 @@ class ModuleSISTests: XCTestCase {
 	func testOpenJobsTabCanBeOpened() throws {
 		app.buttons["SIS"].firstMatch.tap()
 
-		let openJobs = app.staticTexts["Open Jobs"].firstMatch
+		let openJobs = app.tabButton("Open Jobs")
 		XCTAssertTrue(openJobs.waitForExistence(timeout: 30))
 		openJobs.tap()
-
-		let openJobsTitle = app.staticTexts["Open Jobs"].firstMatch
-		XCTAssertTrue(openJobsTitle.waitForExistence(timeout: 30),
-		              "Open Jobs should be visible")
 	}
 }

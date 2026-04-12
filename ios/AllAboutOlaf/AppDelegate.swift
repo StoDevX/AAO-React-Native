@@ -9,7 +9,6 @@ class AppDelegate: RCTAppDelegate {
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
   ) -> Bool {
-    #if DEBUG
     if ProcessInfo.processInfo.arguments.contains("--reset-state") {
       if let libraryPath = FileManager.default.urls(for: .libraryDirectory, in: .userDomainMask).first {
         let asyncStoragePath = libraryPath.appendingPathComponent("Application Support/RCTAsyncLocalStorage_V1")
@@ -19,7 +18,6 @@ class AppDelegate: RCTAppDelegate {
         UserDefaults.standard.removePersistentDomain(forName: bundleId)
       }
     }
-    #endif
 
     self.moduleName = "AllAboutOlaf"
 

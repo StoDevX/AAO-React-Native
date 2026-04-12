@@ -37,7 +37,7 @@ class ModuleMenusTests: XCTestCase {
 		XCTAssertTrue(stavHall.waitForExistence(timeout: 30))
 		stavHall.tap()
 
-		let specialsOnly = app.staticTexts["Specials Only"].firstMatch
+		let specialsOnly = app.buttons["Specials Only"].firstMatch
 		XCTAssertTrue(specialsOnly.waitForExistence(timeout: 30))
 	}
 
@@ -48,7 +48,7 @@ class ModuleMenusTests: XCTestCase {
 		XCTAssertTrue(theCage.waitForExistence(timeout: 30))
 		theCage.tap()
 
-		let specialsOnly = app.staticTexts["Specials Only"].firstMatch
+		let specialsOnly = app.buttons["Specials Only"].firstMatch
 		XCTAssertTrue(specialsOnly.waitForExistence(timeout: 30))
 	}
 
@@ -59,7 +59,7 @@ class ModuleMenusTests: XCTestCase {
 		XCTAssertTrue(thePause.waitForExistence(timeout: 30))
 		thePause.tap()
 
-		let specialsOnly = app.staticTexts["Specials Only"].firstMatch
+		let specialsOnly = app.buttons["Specials Only"].firstMatch
 		XCTAssertTrue(specialsOnly.waitForExistence(timeout: 30))
 	}
 
@@ -76,7 +76,7 @@ class ModuleMenusTests: XCTestCase {
 		XCTAssertTrue(burton.waitForExistence(timeout: 30))
 		burton.tap()
 
-		let specialsOnly = app.staticTexts["Specials Only"].firstMatch
+		let specialsOnly = app.buttons["Specials Only"].firstMatch
 		XCTAssertTrue(specialsOnly.waitForExistence(timeout: 30))
 	}
 
@@ -91,7 +91,7 @@ class ModuleMenusTests: XCTestCase {
 		XCTAssertTrue(ldc.waitForExistence(timeout: 30))
 		ldc.tap()
 
-		let specialsOnly = app.staticTexts["Specials Only"].firstMatch
+		let specialsOnly = app.buttons["Specials Only"].firstMatch
 		XCTAssertTrue(specialsOnly.waitForExistence(timeout: 30))
 	}
 
@@ -106,7 +106,7 @@ class ModuleMenusTests: XCTestCase {
 		XCTAssertTrue(weitzCenter.waitForExistence(timeout: 30))
 		weitzCenter.tap()
 
-		let specialsOnly = app.staticTexts["Specials Only"].firstMatch
+		let specialsOnly = app.buttons["Specials Only"].firstMatch
 		XCTAssertTrue(specialsOnly.waitForExistence(timeout: 30))
 	}
 
@@ -121,7 +121,7 @@ class ModuleMenusTests: XCTestCase {
 		XCTAssertTrue(saylesHill.waitForExistence(timeout: 30))
 		saylesHill.tap()
 
-		let specialsOnly = app.staticTexts["Specials Only"].firstMatch
+		let specialsOnly = app.buttons["Specials Only"].firstMatch
 		XCTAssertTrue(specialsOnly.waitForExistence(timeout: 30))
 	}
 }
