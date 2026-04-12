@@ -1,8 +1,17 @@
-import {afterAll, test} from '@jest/globals'
-import {by, device, element, expect, system, waitFor} from 'detox'
+import {afterAll, beforeAll, test} from '@jest/globals'
+import {by, device, element, expect, waitFor} from 'detox'
 
-// Reinstall on teardown so the next spec file in this shard starts
-// from a clean default state.
+// Reinstall the app so this spec has a deterministic starting state. iOS
+// persists the alternate icon name across normal app launches, so without
+// a fresh install a previous run that left Big Ole selected would leak
+// into this one. The reinstall is also why we need the cold-start
+// hittability workarounds below.
+beforeAll(async () => {
+	await device.launchApp({delete: true})
+})
+
+// Reinstall again on teardown so the next spec file in this shard starts
+// from a clean default state as well.
 afterAll(async () => {
 	await device.launchApp({delete: true})
 })
@@ -14,140 +23,69 @@ afterAll(async () => {
 // depending on exact trailing-inset math.
 const SETTINGS_BUTTON_DEVICE_POINT = {x: 380, y: 80}
 
-// Each test does its own device.launchApp({delete: true}) which takes ~25s
-// on CI. Combined with navigation, taps, and sleeps, the default 60s Jest
-// timeout is too tight. Give each test 3 minutes.
-const TEST_TIMEOUT = 180_000
+// Absolute screen coordinates of the OK button inside the iOS system alert
+// that appears whenever the alternate icon changes ("You have changed the
+// icon for …"). On iPhone 16 Pro the alert is a standard UIAlertController
+// centered at x=196; the OK button sits at the bottom of the alert.
+//
+// We use coordinate taps instead of Detox's system.element API because the
+// XCUITest runner consistently fails to match the system alert's OK button,
+// hanging for ~55s before throwing a DetoxRuntimeError.
+const ALERT_OK_BUTTON_DEVICE_POINT = {x: 196, y: 395}
 
-// Fresh-install the app, then navigate from the home screen to settings.
-// Each test gets a clean install so leaked icon state can't cross tests.
-const freshLaunchAndNavigateToSettings = async () => {
-	await device.launchApp({delete: true})
+// Dismisses the iOS system alert that iOS raises whenever the alternate
+// icon changes. Uses a device-level coordinate tap since the Detox system
+// element API can't reliably interact with this alert. Sleeps briefly
+// after tapping to let the dismissal animation finish — without this,
+// the _UITransitionView from the alert's presentation controller blocks
+// subsequent element interactions.
+const dismissIconChangedAlert = async () => {
+	// Small delay to ensure the alert has been fully presented before tapping.
+	await new Promise((resolve) => setTimeout(resolve, 1000))
+	await device.tap(ALERT_OK_BUTTON_DEVICE_POINT)
+	await new Promise((resolve) => setTimeout(resolve, 1500))
+}
 
+test('changes the app icon to Big Ole and back to Old Main', async () => {
+	// Wait for RN to mount the header so `device.tap` hits something real.
+	// We use `.toExist()` (not `.toBeVisible()`) because the home
+	// ScrollView can fail Detox's 75% visibility threshold during the
+	// native-stack's first-launch transition, even though the header and
+	// its children are perfectly renderable.
 	await waitFor(element(by.id('button-open-settings')))
 		.toExist()
 		.withTimeout(30000)
 
+	// Device-level tap via XCUITest coordinate tap. This bypasses Detox's
+	// element hittability assertion, which fails for this button on a
+	// cold start for reasons we haven't pinned down (the button isn't
+	// clipped; the 100% pixel-visibility check just refuses to pass).
 	await device.tap(SETTINGS_BUTTON_DEVICE_POINT)
 
-	// waitFor because the device-level coordinate tap doesn't block on
-	// the navigation transition.
+	// With a fresh install we know the starting state: default (Old Main)
+	// is selected, Big Ole is not. waitFor because the device-level
+	// coordinate tap doesn't block on navigation.
 	await waitFor(element(by.id('app-icon-cell-default-selected')))
 		.toBeVisible()
 		.withTimeout(10000)
-}
+	await expect(element(by.id('app-icon-cell-icon_type_windmill'))).toBeVisible()
 
-// ---------------------------------------------------------------------------
-// Hypothesis 1: The system alert hasn't appeared yet when we try to tap OK.
-//
-// changeIcon() is a native bridge call. Detox returns control to the test
-// as soon as the JS onPress handler fires, but iOS may not have finished
-// presenting the alert by the time dismissIconChangedAlert runs. If the
-// OK button doesn't exist yet, the system tap silently fails.
-//
-// Fix: Sleep BEFORE tapping OK to give the alert time to appear.
-test(
-	'H1: sleep before tapping OK to let alert appear',
-	async () => {
-		await freshLaunchAndNavigateToSettings()
+	// Switch to Big Ole.
+	await element(by.id('app-icon-cell-icon_type_windmill')).tap()
+	await dismissIconChangedAlert()
 
-		// Switch to Big Ole
-		await element(by.id('app-icon-cell-icon_type_windmill')).tap()
+	// Big Ole is now selected; Old Main is not.
+	await waitFor(element(by.id('app-icon-cell-icon_type_windmill-selected')))
+		.toBeVisible()
+		.withTimeout(10000)
+	await expect(element(by.id('app-icon-cell-default'))).toBeVisible()
 
-		// H1: wait for alert to appear, then tap, then wait for dismiss animation
-		await new Promise((r) => setTimeout(r, 2000))
-		await system.element(by.system.label('OK')).atIndex(0).tap()
-		await new Promise((r) => setTimeout(r, 1500))
+	// Switch back to the default (Old Main).
+	await element(by.id('app-icon-cell-default')).tap()
+	await dismissIconChangedAlert()
 
-		await expect(
-			element(by.id('app-icon-cell-icon_type_windmill-selected')),
-		).toBeVisible()
-		await expect(element(by.id('app-icon-cell-default'))).toBeVisible()
-
-		// Switch back to default
-		await element(by.id('app-icon-cell-default')).tap()
-
-		await new Promise((r) => setTimeout(r, 2000))
-		await system.element(by.system.label('OK')).atIndex(0).tap()
-		await new Promise((r) => setTimeout(r, 1500))
-
-		await expect(element(by.id('app-icon-cell-default-selected'))).toBeVisible()
-		await expect(
-			element(by.id('app-icon-cell-icon_type_windmill')),
-		).toBeVisible()
-	},
-	TEST_TIMEOUT,
-)
-
-// ---------------------------------------------------------------------------
-// Hypothesis 2: The OK tap works, but _UITransitionView lingers longer than
-// 1500ms on CI, blocking subsequent cell taps and visibility checks.
-//
-// Fix: Replace fixed post-tap sleep with condition-based waiting — poll
-// until the expected cell testID is visible.
-// ---------------------------------------------------------------------------
-test(
-	'H2: condition-based wait after tapping OK',
-	async () => {
-		await freshLaunchAndNavigateToSettings()
-
-		// Switch to Big Ole
-		await element(by.id('app-icon-cell-icon_type_windmill')).tap()
-
-		// H2: tap OK immediately, then waitFor the expected state
-		await system.element(by.system.label('OK')).atIndex(0).tap()
-		await waitFor(element(by.id('app-icon-cell-icon_type_windmill-selected')))
-			.toBeVisible()
-			.withTimeout(10000)
-		await expect(element(by.id('app-icon-cell-default'))).toBeVisible()
-
-		// Switch back to default
-		await element(by.id('app-icon-cell-default')).tap()
-
-		await system.element(by.system.label('OK')).atIndex(0).tap()
-		await waitFor(element(by.id('app-icon-cell-default-selected')))
-			.toBeVisible()
-			.withTimeout(10000)
-		await expect(
-			element(by.id('app-icon-cell-icon_type_windmill')),
-		).toBeVisible()
-	},
-	TEST_TIMEOUT,
-)
-
-// ---------------------------------------------------------------------------
-// Hypothesis 3: Both issues compound — the alert needs time to appear AND
-// post-dismissal needs condition-based waiting.
-//
-// Fix: Sleep before tapping OK + waitFor after tapping.
-// ---------------------------------------------------------------------------
-test(
-	'H3: sleep before tap + condition-based wait after',
-	async () => {
-		await freshLaunchAndNavigateToSettings()
-
-		// Switch to Big Ole
-		await element(by.id('app-icon-cell-icon_type_windmill')).tap()
-
-		// H3: wait for alert, tap, then waitFor result
-		await new Promise((r) => setTimeout(r, 2000))
-		await system.element(by.system.label('OK')).atIndex(0).tap()
-		await waitFor(element(by.id('app-icon-cell-icon_type_windmill-selected')))
-			.toBeVisible()
-			.withTimeout(10000)
-		await expect(element(by.id('app-icon-cell-default'))).toBeVisible()
-
-		// Switch back to default
-		await element(by.id('app-icon-cell-default')).tap()
-
-		await new Promise((r) => setTimeout(r, 2000))
-		await system.element(by.system.label('OK')).atIndex(0).tap()
-		await waitFor(element(by.id('app-icon-cell-default-selected')))
-			.toBeVisible()
-			.withTimeout(10000)
-		await expect(
-			element(by.id('app-icon-cell-icon_type_windmill')),
-		).toBeVisible()
-	},
-	TEST_TIMEOUT,
-)
+	await waitFor(element(by.id('app-icon-cell-default-selected')))
+		.toBeVisible()
+		.withTimeout(10000)
+	await expect(element(by.id('app-icon-cell-icon_type_windmill'))).toBeVisible()
+})
