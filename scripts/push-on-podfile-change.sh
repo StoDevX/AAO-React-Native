@@ -2,13 +2,17 @@
 
 set -e -x -v -u -o pipefail
 
-# check if the file changed
-FILE=ios/Podfile.lock
+PODFILE_LOCK=ios/Podfile.lock
+PBXPROJ=ios/AllAboutOlaf.xcodeproj/project.pbxproj
 
 git diff
 
-if [[ -z $(git status -s -- "$FILE") ]]; then
-    echo "No changes to $FILE; nothing to push"
+# Check if either file changed
+LOCK_CHANGED=$(git status -s -- "$PODFILE_LOCK")
+PBXPROJ_CHANGED=$(git status -s -- "$PBXPROJ")
+
+if [[ -z "$LOCK_CHANGED" ]] && [[ -z "$PBXPROJ_CHANGED" ]]; then
+    echo "No changes to $PODFILE_LOCK or $PBXPROJ; nothing to push"
     exit 0
 fi
 
@@ -24,7 +28,7 @@ fi
 echo "branch: $branch"
 echo "head_ref: $head_ref"
 
-# commit the file
+# commit the file(s) that changed
 actor='github-actions[bot]'
 email="${actor}@users.noreply.github.com"
 author="""${actor}"" <${email}>"
@@ -32,7 +36,14 @@ author="""${actor}"" <${email}>"
 git config user.name "$actor"
 git config user.email "$email"
 
-git add "$FILE"
-git commit --author="$author" --message="chore: update Podfile.lock for ${branch}"
+if [[ -n "$LOCK_CHANGED" ]]; then
+    git add "$PODFILE_LOCK"
+fi
+
+if [[ -n "$PBXPROJ_CHANGED" ]]; then
+    git add "$PBXPROJ"
+fi
+
+git commit --author="$author" --message="chore: update Podfile.lock and project.pbxproj for ${branch}"
 
 git push origin "$head_ref"
