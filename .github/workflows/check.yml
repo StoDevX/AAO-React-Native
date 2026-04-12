@@ -212,7 +212,7 @@ jobs:
             -scheme AllAboutOlaf \
             -configuration Release \
             -destination 'generic/platform=iOS Simulator' \
-            -derivedDataPath ios/build \
+            -derivedDataPath "$(pwd)/ios/build" \
             -only-testing:AllAboutOlafUITests \
             CODE_SIGN_IDENTITY="" \
             CODE_SIGNING_REQUIRED=NO \
