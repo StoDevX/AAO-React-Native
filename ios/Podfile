@@ -45,8 +45,7 @@ target 'AllAboutOlaf' do
 	)
 
 	target 'AllAboutOlafUITests' do
-		inherit! :complete
-		# Pods for testing
+		inherit! :none
 	end
 
 	post_install do |installer|
