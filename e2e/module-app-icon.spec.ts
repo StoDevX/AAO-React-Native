@@ -1,5 +1,5 @@
-import {afterAll, beforeAll, beforeEach, test} from '@jest/globals'
-import {by, device, element, expect, system} from 'detox'
+import {afterAll, beforeAll, test} from '@jest/globals'
+import {by, device, element, expect, system, waitFor} from 'detox'
 
 // launch the app once - do this per-test-file to grant only the permissions
 // needed for a given test
@@ -9,11 +9,6 @@ import {by, device, element, expect, system} from 'detox'
 // launches, so we need a fresh install to guarantee a known starting state.
 beforeAll(async () => {
 	await device.launchApp({delete: true})
-})
-
-// in this file, only reload the rn stuff between tests
-beforeEach(async () => {
-	await device.reloadReactNative()
 })
 
 // Reinstall the app after this suite runs so the alternate icon (which iOS
@@ -32,6 +27,17 @@ const dismissIconChangedAlert = async () => {
 }
 
 test('changes the app icon to Big Ole and back to Old Main', async () => {
+	// After a fresh install (`delete: true`), the native navigation header
+	// can still be animating into place when the first tap is attempted, which
+	// trips Detox's 100% visibility check on the header's settings button. Wait
+	// for the home screen and its header button to settle before tapping.
+	await waitFor(element(by.id('screen-homescreen')))
+		.toBeVisible()
+		.withTimeout(10000)
+	await waitFor(element(by.id('button-open-settings')))
+		.toBeVisible(100)
+		.withTimeout(10000)
+
 	await element(by.id('button-open-settings')).tap()
 
 	// The default icon should be selected on a fresh install.
