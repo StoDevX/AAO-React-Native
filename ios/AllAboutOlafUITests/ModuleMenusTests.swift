@@ -33,7 +33,7 @@ class ModuleMenusTests: XCTestCase {
 	func testStavHallMenuCanBeOpened() throws {
 		app.buttons["Menus"].firstMatch.tap()
 
-		let stavHall = app.buttons["Stav Hall"].firstMatch
+		let stavHall = app.tabButton("Stav Hall")
 		XCTAssertTrue(stavHall.waitForExistence(timeout: 30))
 		stavHall.tap()
 
@@ -44,7 +44,7 @@ class ModuleMenusTests: XCTestCase {
 	func testTheCageMenuCanBeOpened() throws {
 		app.buttons["Menus"].firstMatch.tap()
 
-		let theCage = app.buttons["The Cage"].firstMatch
+		let theCage = app.tabButton("The Cage")
 		XCTAssertTrue(theCage.waitForExistence(timeout: 30))
 		theCage.tap()
 
@@ -55,7 +55,7 @@ class ModuleMenusTests: XCTestCase {
 	func testThePauseMenuCanBeOpened() throws {
 		app.buttons["Menus"].firstMatch.tap()
 
-		let thePause = app.buttons["The Pause"].firstMatch
+		let thePause = app.tabButton("The Pause")
 		XCTAssertTrue(thePause.waitForExistence(timeout: 30))
 		thePause.tap()
 
@@ -68,7 +68,7 @@ class ModuleMenusTests: XCTestCase {
 	func testBurtonMenuCanBeOpened() throws {
 		app.buttons["Menus"].firstMatch.tap()
 
-		let carleton = app.buttons["Carleton"].firstMatch
+		let carleton = app.tabButton("Carleton")
 		XCTAssertTrue(carleton.waitForExistence(timeout: 30))
 		carleton.tap()
 
@@ -83,7 +83,7 @@ class ModuleMenusTests: XCTestCase {
 	func testLDCMenuCanBeOpened() throws {
 		app.buttons["Menus"].firstMatch.tap()
 
-		let carleton = app.buttons["Carleton"].firstMatch
+		let carleton = app.tabButton("Carleton")
 		XCTAssertTrue(carleton.waitForExistence(timeout: 30))
 		carleton.tap()
 
@@ -98,7 +98,7 @@ class ModuleMenusTests: XCTestCase {
 	func testWeitzCenterMenuCanBeOpened() throws {
 		app.buttons["Menus"].firstMatch.tap()
 
-		let carleton = app.buttons["Carleton"].firstMatch
+		let carleton = app.tabButton("Carleton")
 		XCTAssertTrue(carleton.waitForExistence(timeout: 30))
 		carleton.tap()
 
@@ -113,7 +113,7 @@ class ModuleMenusTests: XCTestCase {
 	func testSaylesHillMenuCanBeOpened() throws {
 		app.buttons["Menus"].firstMatch.tap()
 
-		let carleton = app.buttons["Carleton"].firstMatch
+		let carleton = app.tabButton("Carleton")
 		XCTAssertTrue(carleton.waitForExistence(timeout: 30))
 		carleton.tap()
 

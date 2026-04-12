@@ -29,7 +29,7 @@ class ModuleCalendarTests: XCTestCase {
 	func testStOlafCalendarCanBeOpened() throws {
 		app.buttons["Calendar"].firstMatch.tap()
 
-		let tab = app.buttons["St. Olaf"].firstMatch
+		let tab = app.tabButton("St. Olaf")
 		XCTAssertTrue(tab.waitForExistence(timeout: 30))
 		tab.tap()
 	}
@@ -37,7 +37,7 @@ class ModuleCalendarTests: XCTestCase {
 	func testOlevilleCalendarCanBeOpened() throws {
 		app.buttons["Calendar"].firstMatch.tap()
 
-		let tab = app.buttons["Oleville"].firstMatch
+		let tab = app.tabButton("Oleville")
 		XCTAssertTrue(tab.waitForExistence(timeout: 30))
 		tab.tap()
 	}
@@ -45,7 +45,7 @@ class ModuleCalendarTests: XCTestCase {
 	func testNorthfieldCalendarCanBeOpened() throws {
 		app.buttons["Calendar"].firstMatch.tap()
 
-		let tab = app.buttons["Northfield"].firstMatch
+		let tab = app.tabButton("Northfield")
 		XCTAssertTrue(tab.waitForExistence(timeout: 30))
 		tab.tap()
 	}
