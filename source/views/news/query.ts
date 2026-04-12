@@ -8,6 +8,7 @@ export const keys = {
 	wpJson: (url: string) => ['news', 'wp-json', url] as const,
 }
 
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export const namedNewsOptions = (source: string) =>
 	queryOptions({
 		queryKey: keys.named(source),
@@ -19,6 +20,7 @@ export const namedNewsOptions = (source: string) =>
 		},
 	})
 
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export const rssNewsOptions = (url: string) =>
 	queryOptions({
 		queryKey: keys.rss(url),
@@ -30,6 +32,7 @@ export const rssNewsOptions = (url: string) =>
 		},
 	})
 
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export const wpJsonNewsOptions = (url: string) =>
 	queryOptions({
 		queryKey: keys.wpJson(url),

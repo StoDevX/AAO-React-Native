@@ -46,6 +46,7 @@ export const courseDataOptions = (
 	term: TermType,
 	levels: Array<number>,
 	gereqs: Array<string>,
+	// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 ) =>
 	queryOptions({
 		queryKey: keys.courses(term, levels, gereqs),
