@@ -16,14 +16,19 @@ export async function getInternetCredentials(
 	if (!raw) {
 		return null
 	}
-	const parsed = JSON.parse(raw) as unknown
+	let parsed: unknown
+	try {
+		parsed = JSON.parse(raw)
+	} catch {
+		return null
+	}
 	if (
 		typeof parsed === 'object' &&
 		parsed !== null &&
 		'username' in parsed &&
 		'password' in parsed &&
-		typeof (parsed as StoredCredentials).username === 'string' &&
-		typeof (parsed as StoredCredentials).password === 'string'
+		typeof (parsed as Record<string, unknown>).username === 'string' &&
+		typeof (parsed as Record<string, unknown>).password === 'string'
 	) {
 		return parsed as StoredCredentials
 	}
