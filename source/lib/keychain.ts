@@ -6,7 +6,7 @@ export type StoredCredentials = {
 }
 
 function credentialsKey(service: string): string {
-	return `credentials:${service}`
+	return `credentials_${service}`
 }
 
 export async function getInternetCredentials(
@@ -16,7 +16,18 @@ export async function getInternetCredentials(
 	if (!raw) {
 		return null
 	}
-	return JSON.parse(raw) as StoredCredentials
+	const parsed = JSON.parse(raw) as unknown
+	if (
+		typeof parsed === 'object' &&
+		parsed !== null &&
+		'username' in parsed &&
+		'password' in parsed &&
+		typeof (parsed as StoredCredentials).username === 'string' &&
+		typeof (parsed as StoredCredentials).password === 'string'
+	) {
+		return parsed as StoredCredentials
+	}
+	return null
 }
 
 export async function setInternetCredentials(

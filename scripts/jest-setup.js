@@ -12,3 +12,8 @@ jest.mock('expo-clipboard', () => ({
 	getStringAsync: jest.fn(() => Promise.resolve('')),
 	hasStringAsync: jest.fn(() => Promise.resolve(false)),
 }))
+jest.mock('expo-secure-store', () => ({
+	getItemAsync: jest.fn(() => Promise.resolve(null)),
+	setItemAsync: jest.fn(() => Promise.resolve()),
+	deleteItemAsync: jest.fn(() => Promise.resolve()),
+}))
