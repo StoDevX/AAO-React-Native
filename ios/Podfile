@@ -43,14 +43,16 @@ target 'AllAboutOlaf' do
 			:ccache_enabled => ccache_enabled
 		)
 
-		installer.pods_project.targets.each do |target|
-			# Remove SWIFT_VERSION from targets without Swift sources to silence
-			# "Disabling previews because SWIFT_VERSION is set" notes (Xcode 16+)
-			has_swift = target.respond_to?(:source_build_phase) &&
-				target.source_build_phase.files.any? { |file|
-					file.file_ref&.path&.end_with?('.swift')
-				}
+		# CocoaPods sets SWIFT_VERSION at the project level, which all targets
+		# inherit. Remove it from the project level to silence Xcode 16+'s
+		# "Disabling previews because SWIFT_VERSION is set" notes on non-Swift
+		# pods. Pods that actually use Swift have their own target-level
+		# SWIFT_VERSION from their podspec.
+		installer.pods_project.build_configurations.each do |project_config|
+			project_config.build_settings.delete('SWIFT_VERSION')
+		end
 
+		installer.pods_project.targets.each do |target|
 			target.build_configurations.each do |config|
 				# cocoapods defaults to not stripping the frameworks it creates
 				# issue for cocoapods is https://github.com/CocoaPods/CocoaPods/issues/10277
@@ -61,8 +63,6 @@ target 'AllAboutOlaf' do
 				if ccache_enabled
 					config.build_settings['CLANG_ENABLE_EXPLICIT_MODULES'] = 'NO'
 				end
-
-				config.build_settings.delete('SWIFT_VERSION') unless has_swift
 			end
 		end
 
