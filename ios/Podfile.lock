@@ -24,13 +24,19 @@ PODS:
   - DoubleConversion (1.1.6)
   - EXApplication (6.0.2):
     - ExpoModulesCore
+  - EXConstants (17.0.8):
+    - ExpoModulesCore
   - Expo (52.0.49):
+    - ExpoModulesCore
+  - ExpoAsset (11.0.5):
     - ExpoModulesCore
   - ExpoCalendar (14.0.6):
     - ExpoModulesCore
   - ExpoClipboard (7.0.1):
     - ExpoModulesCore
   - ExpoDevice (7.0.3):
+    - ExpoModulesCore
+  - ExpoFont (13.0.4):
     - ExpoModulesCore
   - ExpoModulesCore (2.2.3):
     - DoubleConversion
@@ -1818,10 +1824,13 @@ DEPENDENCIES:
   - boost (from `../node_modules/react-native/third-party-podspecs/boost.podspec`)
   - DoubleConversion (from `../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec`)
   - EXApplication (from `../node_modules/expo-application/ios`)
+  - EXConstants (from `../node_modules/expo-constants/ios`)
   - Expo (from `../node_modules/expo`)
+  - ExpoAsset (from `../node_modules/expo-asset/ios`)
   - ExpoCalendar (from `../node_modules/expo-calendar/ios`)
   - ExpoClipboard (from `../node_modules/expo-clipboard/ios`)
   - ExpoDevice (from `../node_modules/expo-device/ios`)
+  - ExpoFont (from `../node_modules/expo-font/ios`)
   - ExpoModulesCore (from `../node_modules/expo-modules-core`)
   - ExpoSecureStore (from `../node_modules/expo-secure-store/ios`)
   - ExpoWebBrowser (from `../node_modules/expo-web-browser/ios`)
@@ -1919,14 +1928,20 @@ EXTERNAL SOURCES:
     :podspec: "../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec"
   EXApplication:
     :path: "../node_modules/expo-application/ios"
+  EXConstants:
+    :path: "../node_modules/expo-constants/ios"
   Expo:
     :path: "../node_modules/expo"
+  ExpoAsset:
+    :path: "../node_modules/expo-asset/ios"
   ExpoCalendar:
     :path: "../node_modules/expo-calendar/ios"
   ExpoClipboard:
     :path: "../node_modules/expo-clipboard/ios"
   ExpoDevice:
     :path: "../node_modules/expo-device/ios"
+  ExpoFont:
+    :path: "../node_modules/expo-font/ios"
   ExpoModulesCore:
     :path: "../node_modules/expo-modules-core"
   ExpoSecureStore:
@@ -2092,10 +2107,13 @@ SPEC CHECKSUMS:
   boost: 1dca942403ed9342f98334bf4c3621f011aa7946
   DoubleConversion: f16ae600a246532c4020132d54af21d0ddb2a385
   EXApplication: 4c72f6017a14a65e338c5e74fca418f35141e819
+  EXConstants: fcfc75800824ac2d5c592b5bc74130bad17b146b
   Expo: 4bb70893882e6382b41d1e910d7226c6a1b85f0a
+  ExpoAsset: 48386d40d53a8c1738929b3ed509bcad595b5516
   ExpoCalendar: 12208702ad2461776a5a59b6e51e37ef23f9efac
   ExpoClipboard: 44fd1c8959ee8f6175d059dc011b154c9709a969
   ExpoDevice: d36ab4186b6799a28fd449bb9a1c77455f23fd1a
+  ExpoFont: f354e926f8feae5e831ec8087f36652b44a0b188
   ExpoModulesCore: 725faec070d590810d2ea5983d9f78f7cf6a38ec
   ExpoSecureStore: 9a3665d7161dd1031be386e278bffd623658f316
   ExpoWebBrowser: a212e6b480d8857d3e441fba51e0c968333803b3
