@@ -62,14 +62,15 @@ target 'AllAboutOlaf' do
 		# into all nested targets (including UITests) via CocoaPods target
 		# inheritance. UITests don't need expo module registration, and the
 		# generated ExpoModulesProvider.swift causes linker errors. Remove it.
-		installer.user_projects.each do |project|
-			project.native_targets.each do |target|
-				next unless target.name == 'AllAboutOlafUITests'
-				target.build_phases.delete_if { |phase|
+		installer.aggregate_targets.each do |agg_target|
+			next unless agg_target.user_project
+			agg_target.user_project.native_targets.each do |native_target|
+				next unless native_target.name == 'AllAboutOlafUITests'
+				native_target.build_phases.delete_if { |phase|
 					phase.respond_to?(:name) && phase.name == '[Expo] Configure project'
 				}
 			end
-			project.save
+			agg_target.user_project.save
 		end
 
 		system('cd .. && scripts/apply-patches.sh')
