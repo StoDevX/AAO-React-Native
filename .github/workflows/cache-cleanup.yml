@@ -5,10 +5,13 @@ on:
   pull_request:
     types:
       - closed
+  delete:
   workflow_dispatch:
   push:
     branches:
       - master
+  schedule:
+    - cron: '0 */6 * * *'
 
 jobs:
   cleanup:
@@ -17,7 +20,7 @@ jobs:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       - name: Clean up caches for the just-closed branch
-        if: (github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch') && github.ref != 'master'
+        if: (github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch') && github.ref_name != 'master'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -25,7 +28,16 @@ jobs:
             gh cache delete --all --succeed-on-no-caches --ref "$ref"
           done
 
+      - name: Clean up caches for the just-deleted branch
+        if: github.event_name == 'delete' && github.event.ref_type == 'branch'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DELETED_REF: refs/heads/${{ github.event.ref }}
+        run: |
+          gh cache delete --all --succeed-on-no-caches --ref "$DELETED_REF"
+
       - name: Delete PR caches for all branches without open PRs
+        if: github.event_name != 'delete'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -39,17 +51,17 @@ jobs:
               esac
             done
 
-      # - name: Delete caches for readonly-queue refs that have finished
-      #   if: github.event_name == 'push'
-      #   env:
-      #     GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #   run: |
-      #     gh cache list --limit 500 --json 'ref' -q '.[].ref' \
-      #       | sed -n 's|refs/pull/\([0-9]*\)/merge|\1|p' \
-      #       | sort -un \
-      #       | while read pr; do
-      #         state="$(gh pr view "$pr" --json state -q .state 2>/dev/null)"
-      #         case "$state" in MERGED|CLOSED)
-      #           gh cache delete --all --succeed-on-no-caches --ref "refs/pull/$pr/merge";;
-      #         esac
-      #       done
+      - name: Delete caches for merge-queue refs whose refs have gone away
+        if: github.event_name == 'push' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh cache list --limit 500 --json 'ref' -q '.[].ref' \
+            | grep '^refs/heads/gh-readonly-queue/' \
+            | sort -u \
+            | while read ref; do
+              branch="${ref#refs/heads/}"
+              if ! gh api "repos/${GITHUB_REPOSITORY}/git/ref/heads/${branch}" >/dev/null 2>&1; then
+                gh cache delete --all --succeed-on-no-caches --ref "$ref"
+              fi
+            done

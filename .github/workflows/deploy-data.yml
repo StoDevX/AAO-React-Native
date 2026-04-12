@@ -3,6 +3,9 @@ name: Validate/Deploy Data
 on:
   push: {branches: [master]}
 
+env:
+  MISE_RUBY_COMPILE: 'false'
+
 jobs:
   validate-then-deploy:
     name: Validate, then deploy data
