@@ -95,7 +95,7 @@ export default defineConfig([
 					caughtErrorsIgnorePattern: '^_',
 				},
 			],
-			'@typescript-eslint/explicit-module-boundary-types': 'off',
+			'@typescript-eslint/explicit-module-boundary-types': 'warn',
 			'@typescript-eslint/no-inferrable-types': 'warn',
 			'@typescript-eslint/no-non-null-assertion': 'warn',
 			'@typescript-eslint/no-require-imports': 'error',
@@ -158,6 +158,13 @@ export default defineConfig([
 			'@typescript-eslint/restrict-template-expressions': 'off',
 			'@typescript-eslint/no-floating-promises': 'off',
 			'react-hooks/set-state-in-effect': 'off',
+		},
+	},
+	// Query files - queryOptions() factories have complex inferred return types
+	{
+		files: ['**/query.ts', 'source/lib/financials/balances.ts'],
+		rules: {
+			'@typescript-eslint/explicit-module-boundary-types': 'off',
 		},
 	},
 	// Script files - less strict type checking
