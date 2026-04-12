@@ -20,8 +20,7 @@ async function launchBrowser(url: string): Promise<boolean> {
 		await WebBrowser.openBrowserAsync(url, {
 			dismissButtonStyle: 'close',
 			enableBarCollapsing: true,
-			presentationStyle:
-				WebBrowser.WebBrowserPresentationStyle.CURRENT_CONTEXT,
+			presentationStyle: WebBrowser.WebBrowserPresentationStyle.CURRENT_CONTEXT,
 		})
 	} catch (error) {
 		console.warn(`Error when trying to call launchBrowser: ${error}`)
