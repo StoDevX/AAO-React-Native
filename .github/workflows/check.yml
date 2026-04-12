@@ -171,7 +171,9 @@ jobs:
           path: ~/Library/Caches/ccache
           key: ccache/e=${{ env.cache_epoch }}/host=macOS@15/target=ios/xcode=${{ env.xcode_version }}/ref=${{ github.head_ref || github.ref_name }}/hash=${{ hashFiles('**/project.pbxproj', 'ios/Podfile', '**/Podfile.lock', 'ios/AllAboutOlaf/**') }}
           restore-keys: |
+            ccache/e=${{ env.cache_epoch }}/host=macOS@15/target=ios/xcode=${{ env.xcode_version }}/ref=${{ github.head_ref || github.ref_name }}/
             ccache/e=${{ env.cache_epoch }}/host=macOS@15/target=ios/xcode=${{ env.xcode_version }}/ref=master/hash=${{ hashFiles('**/project.pbxproj', 'ios/Podfile', '**/Podfile.lock', 'ios/AllAboutOlaf/**') }}
+            ccache/e=${{ env.cache_epoch }}/host=macOS@15/target=ios/xcode=${{ env.xcode_version }}/ref=master/
 
       - name: Configure ccache
         if: steps.app-cache.outputs.cache-matched-key == ''
