@@ -30,7 +30,7 @@ target 'AllAboutOlaf' do
 	)
 
 	target 'AllAboutOlafUITests' do
-		inherit! :none
+		inherit! :complete
 	end
 
 	post_install do |installer|
