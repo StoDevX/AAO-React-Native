@@ -3,7 +3,7 @@ import {Alert} from 'react-native'
 import {Section, Cell} from '@frogpond/tableview'
 import {PushButtonCell} from '@frogpond/tableview/cells'
 import {sendEmail} from '../../../../components/send-email'
-import deviceInfo from 'react-native-device-info'
+import * as Device from 'expo-device'
 import {appVersion, appBuild} from '@frogpond/constants'
 import {refreshApp} from '../../../../lib/refresh'
 import {useNavigation} from '@react-navigation/native'
@@ -11,10 +11,10 @@ import {useNavigation} from '@react-navigation/native'
 const getDeviceInfo = () => `
 
 ----- Please do not edit below here -----
-${deviceInfo.getBrand()} ${deviceInfo.getModel()}
-${deviceInfo.getDeviceId()}
-${deviceInfo.getSystemName()} ${getVersion()}
-${deviceInfo.getReadableVersion()}
+${Device.brand ?? 'Unknown'} ${Device.modelName ?? 'Unknown'}
+${Device.modelId ?? 'Unknown'}
+${Device.osName ?? 'iOS'} ${getVersion()}
+${appVersion()}.${appBuild() ?? ''}
 `
 
 export const openEmail = (): void => {
