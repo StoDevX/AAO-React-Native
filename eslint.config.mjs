@@ -160,13 +160,6 @@ export default defineConfig([
 			'react-hooks/set-state-in-effect': 'off',
 		},
 	},
-	// Query files - queryOptions() factories have complex inferred return types
-	{
-		files: ['**/query.ts', 'source/lib/financials/balances.ts'],
-		rules: {
-			'@typescript-eslint/explicit-module-boundary-types': 'off',
-		},
-	},
 	// Script files - less strict type checking
 	{
 		files: ['scripts/**/*.mjs'],

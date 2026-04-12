@@ -43,6 +43,7 @@ function convertEvents(
 export const namedCalendarOptions = (
 	calendar: NamedCalendar,
 	options: {eventMapper?: EventMapper} = {},
+	// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 ) =>
 	queryOptions({
 		queryKey: keys.named(calendar),
@@ -58,6 +59,7 @@ export const namedCalendarOptions = (
 export const googleCalendarOptions = (
 	calendar: GoogleCalendar,
 	options: {eventMapper?: EventMapper} = {},
+	// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 ) =>
 	queryOptions({
 		queryKey: keys.google(calendar.id),
@@ -73,6 +75,7 @@ export const googleCalendarOptions = (
 export const reasonCalendarOptions = (
 	calendar: ReasonCalendar,
 	options: {eventMapper?: EventMapper} = {},
+	// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 ) =>
 	queryOptions({
 		queryKey: keys.reason(calendar.url),
@@ -88,6 +91,7 @@ export const reasonCalendarOptions = (
 export const icsCalendarOptions = (
 	calendar: IcsCalendar,
 	options: {eventMapper?: EventMapper} = {},
+	// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 ) =>
 	queryOptions({
 		queryKey: keys.ics(calendar.url),

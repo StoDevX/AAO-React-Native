@@ -22,6 +22,7 @@ export const keys = {
 	colorPrinters: ['printing', 'printers', 'color'] as const,
 }
 
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export const printJobsOptions = (username: string) =>
 	queryOptions({
 		queryKey: keys.jobs(username),
@@ -29,6 +30,7 @@ export const printJobsOptions = (username: string) =>
 		queryFn: ({signal}) => fetchJobs(username, {signal}),
 	})
 
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export const allPrintersOptions = (username: string) =>
 	queryOptions({
 		queryKey: keys.printers(username),
@@ -36,6 +38,7 @@ export const allPrintersOptions = (username: string) =>
 		queryFn: ({signal}) => fetchAllPrinters(username, {signal}),
 	})
 
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export const recentPrintersOptions = (username: string) =>
 	queryOptions({
 		queryKey: keys.recentPrinters(username),
@@ -51,6 +54,7 @@ export const colorPrintersOptions = queryOptions({
 export const heldJobsOptions = (
 	username: string,
 	printerName: string | undefined,
+	// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 ) => {
 	let usablePrinterName = printerName || 'undefined'
 	return queryOptions({
