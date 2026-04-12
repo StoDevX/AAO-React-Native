@@ -12,8 +12,8 @@ const esmPackages = [
 	'redux',
 	'redux-thunk',
 	'reselect',
-  'expo',
-  '@expo',
+	'expo',
+	'@expo',
 	// css-select v7+ and its ESM-only transitive deps
 	'css-select',
 	'boolbase',
