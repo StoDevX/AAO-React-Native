@@ -82,5 +82,4 @@ test('changes the app icon to Big Ole and back to Old Main', async () => {
 		.toBeVisible()
 		.withTimeout(10000)
 	await expect(element(by.id('app-icon-cell-icon_type_windmill'))).toBeVisible()
-}, // Two app relaunches + navigations make this test slower than average.
-120_000)
+}, 120_000) // Two app relaunches + navigations make this test slower than average.
