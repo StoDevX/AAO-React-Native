@@ -180,7 +180,9 @@ jobs:
         if: steps.app-cache.outputs.cache-hit != 'true'
         uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
         with:
-          path: ios/Pods
+          path: |
+            ios/Pods
+            ios/build/generated
           key: pods-${{ runner.os }}-xcode@${{ env.xcode_version }}-${{ hashFiles('**/project.pbxproj', 'ios/Podfile', '**/Podfile.lock', 'ios/AllAboutOlaf/**', '.github/job.yml') }}
           restore-keys: |
             pods-${{ runner.os }}-xcode@${{ env.xcode_version }}-${{ hashFiles('**/project.pbxproj', 'ios/Podfile', '**/Podfile.lock', 'ios/AllAboutOlaf/**', '.github/job.yml') }}
