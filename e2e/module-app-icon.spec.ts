@@ -4,8 +4,7 @@ import {by, device, element, expect, waitFor} from 'detox'
 // Reinstall the app so this spec has a deterministic starting state. iOS
 // persists the alternate icon name across normal app launches, so without
 // a fresh install a previous run that left Big Ole selected would leak
-// into this one. The reinstall is also why we need the cold-start
-// hittability workarounds below.
+// into this one.
 beforeAll(async () => {
 	await device.launchApp({delete: true})
 })
@@ -23,50 +22,51 @@ afterAll(async () => {
 // depending on exact trailing-inset math.
 const SETTINGS_BUTTON_DEVICE_POINT = {x: 380, y: 80}
 
-// Dismisses the iOS system alert that appears whenever the alternate icon
-// changes ("You have changed the icon for …"). Neither Detox's system
-// element API (hangs ~55s then throws DetoxRuntimeError) nor device-level
-// coordinate taps (go under the alert to the app window) can interact
-// with this alert — it's owned by SpringBoard in a separate window layer.
-//
-// Workaround: background the app so iOS dismisses the alert, then
-// foreground it again. The app state (settings screen) is preserved.
-const dismissIconChangedAlert = async () => {
-	// Brief delay so the alert is fully presented before we background.
-	await new Promise((resolve) => setTimeout(resolve, 1000))
-	await device.sendToHome()
-	await device.launchApp({newInstance: false})
-	// Brief delay for the UI to settle after foregrounding.
-	await new Promise((resolve) => setTimeout(resolve, 1000))
-}
-
-test('changes the app icon to Big Ole and back to Old Main', async () => {
-	// Wait for RN to mount the header so `device.tap` hits something real.
-	// We use `.toExist()` (not `.toBeVisible()`) because the home
-	// ScrollView can fail Detox's 75% visibility threshold during the
-	// native-stack's first-launch transition, even though the header and
-	// its children are perfectly renderable.
+// Navigate from the home screen to the app's settings screen.
+const navigateToSettings = async () => {
 	await waitFor(element(by.id('button-open-settings')))
 		.toExist()
 		.withTimeout(30000)
 
-	// Device-level tap via XCUITest coordinate tap. This bypasses Detox's
-	// element hittability assertion, which fails for this button on a
-	// cold start for reasons we haven't pinned down (the button isn't
-	// clipped; the 100% pixel-visibility check just refuses to pass).
 	await device.tap(SETTINGS_BUTTON_DEVICE_POINT)
+}
+
+// Taps an icon cell, then relaunches the app and navigates back to
+// settings. iOS shows a system alert whenever the alternate icon changes
+// ("You have changed the icon for …"). Detox cannot dismiss this alert:
+//
+//   - system.element(by.system.label('OK')): the XCUITest runner hangs
+//     for ~55s then throws DetoxRuntimeError
+//   - device.tap(coordinates): the tap goes to the app's coordinate
+//     space, passing under the alert's SpringBoard-owned window layer
+//   - device.sendToHome(): hangs while the alert is presented
+//
+// The only reliable escape is to kill the app process (which tears down
+// the alert) and relaunch. The icon change persists because iOS commits
+// it before showing the alert. After relaunching we navigate back to
+// settings so the caller can verify the new icon state.
+const changeIconAndReturn = async (cellTestID: string) => {
+	await element(by.id(cellTestID)).tap()
+
+	// Brief delay so iOS commits the icon change before we kill the process.
+	await new Promise((resolve) => setTimeout(resolve, 1000))
+
+	await device.launchApp({newInstance: true})
+	await navigateToSettings()
+}
+
+test('changes the app icon to Big Ole and back to Old Main', async () => {
+	await navigateToSettings()
 
 	// With a fresh install we know the starting state: default (Old Main)
-	// is selected, Big Ole is not. waitFor because the device-level
-	// coordinate tap doesn't block on navigation.
+	// is selected, Big Ole is not.
 	await waitFor(element(by.id('app-icon-cell-default-selected')))
 		.toBeVisible()
 		.withTimeout(10000)
 	await expect(element(by.id('app-icon-cell-icon_type_windmill'))).toBeVisible()
 
-	// Switch to Big Ole.
-	await element(by.id('app-icon-cell-icon_type_windmill')).tap()
-	await dismissIconChangedAlert()
+	// Switch to Big Ole, relaunch to dismiss the system alert, come back.
+	await changeIconAndReturn('app-icon-cell-icon_type_windmill')
 
 	// Big Ole is now selected; Old Main is not.
 	await waitFor(element(by.id('app-icon-cell-icon_type_windmill-selected')))
@@ -74,12 +74,13 @@ test('changes the app icon to Big Ole and back to Old Main', async () => {
 		.withTimeout(10000)
 	await expect(element(by.id('app-icon-cell-default'))).toBeVisible()
 
-	// Switch back to the default (Old Main).
-	await element(by.id('app-icon-cell-default')).tap()
-	await dismissIconChangedAlert()
+	// Switch back to the default (Old Main), relaunch, come back.
+	await changeIconAndReturn('app-icon-cell-default')
 
+	// Default is selected again.
 	await waitFor(element(by.id('app-icon-cell-default-selected')))
 		.toBeVisible()
 		.withTimeout(10000)
 	await expect(element(by.id('app-icon-cell-icon_type_windmill'))).toBeVisible()
-})
+}, // Two app relaunches + navigations make this test slower than average.
+120_000)
