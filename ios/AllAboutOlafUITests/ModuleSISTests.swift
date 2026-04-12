@@ -1,0 +1,104 @@
+import XCTest
+
+class ModuleSISTests: XCTestCase {
+	private var app: XCUIApplication!
+
+	override func setUpWithError() throws {
+		continueAfterFailure = false
+		app = XCUIApplication()
+		app.launch()
+	}
+
+	func testIsReachableFromHomescreen() throws {
+		let homescreen = app.element(matching: "screen-homescreen")
+		XCTAssertTrue(homescreen.waitForExistence(timeout: 30))
+
+		app.staticTexts["SIS"].firstMatch.tap()
+
+		XCTAssertFalse(homescreen.exists)
+	}
+
+	// MARK: - Balances (need fresh state)
+
+	func testHasAcknowledgementVisibleByDefault() throws {
+		// Relaunch with fresh state to clear any prior "I Agree" acceptance
+		app.terminate()
+		app.launchArguments = ["--reset-state"]
+		app.launch()
+
+		app.staticTexts["SIS"].firstMatch.tap()
+
+		let homescreen = app.element(matching: "screen-homescreen")
+		XCTAssertFalse(homescreen.exists)
+
+		let iAgree = app.staticTexts["I Agree"].firstMatch
+		XCTAssertTrue(iAgree.waitForExistence(timeout: 30),
+		              "I Agree acknowledgement should be visible")
+	}
+
+	func testShowsBalancesAfterAcknowledgement() throws {
+		app.terminate()
+		app.launchArguments = ["--reset-state"]
+		app.launch()
+
+		app.staticTexts["SIS"].firstMatch.tap()
+
+		let iAgree = app.staticTexts["I Agree"].firstMatch
+		XCTAssertTrue(iAgree.waitForExistence(timeout: 30))
+		iAgree.tap()
+
+		XCTAssertFalse(iAgree.exists,
+		               "I Agree should be hidden after tapping")
+
+		let balances = app.staticTexts["BALANCES"].firstMatch
+		XCTAssertTrue(balances.waitForExistence(timeout: 30),
+		              "BALANCES should be visible")
+
+		let mealPlan = app.staticTexts["MEAL PLAN"].firstMatch
+		XCTAssertTrue(mealPlan.waitForExistence(timeout: 30),
+		              "MEAL PLAN should be visible")
+	}
+
+	func testContinuesToShowBalancesAfterReopening() throws {
+		app.terminate()
+		app.launchArguments = ["--reset-state"]
+		app.launch()
+
+		app.staticTexts["SIS"].firstMatch.tap()
+
+		let iAgree = app.staticTexts["I Agree"].firstMatch
+		XCTAssertTrue(iAgree.waitForExistence(timeout: 30))
+		iAgree.tap()
+
+		XCTAssertFalse(iAgree.exists)
+
+		let balances = app.staticTexts["BALANCES"].firstMatch
+		XCTAssertTrue(balances.waitForExistence(timeout: 30))
+
+		// Return to the home screen
+		let backButton = app.staticTexts["All About Olaf"].firstMatch
+		XCTAssertTrue(backButton.waitForExistence(timeout: 10))
+		backButton.tap()
+
+		let homescreen = app.element(matching: "screen-homescreen")
+		XCTAssertTrue(homescreen.waitForExistence(timeout: 30))
+
+		// Navigate back into SIS
+		app.staticTexts["SIS"].firstMatch.tap()
+		XCTAssertFalse(homescreen.exists)
+	}
+
+	// MARK: - Tabs
+
+	func testOpenJobsTabCanBeOpened() throws {
+		app.staticTexts["SIS"].firstMatch.tap()
+
+		let openJobs = app.staticTexts["Open Jobs"].firstMatch
+		XCTAssertTrue(openJobs.waitForExistence(timeout: 30))
+		openJobs.tap()
+
+		let openJobsTitle = app.staticTexts["Open Jobs"].firstMatch
+		XCTAssertTrue(openJobsTitle.waitForExistence(timeout: 30),
+		              "Open Jobs should be visible")
+	}
+}
