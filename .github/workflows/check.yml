@@ -263,7 +263,7 @@ jobs:
           mv ios/assets ios/build/Build/Products/Release-iphonesimulator/AllAboutOlaf.app/
 
       - name: Discover simulator device
-        id: detox-device
+        id: simulator-device
         run: |
           set -o pipefail
           OS_VERSION=$(grep -m1 'IPHONEOS_DEPLOYMENT_TARGET' ios/AllAboutOlaf.xcodeproj/project.pbxproj | sed 's/.*= \(.*\);/\1/' | tr -d '[:space:]')
@@ -283,7 +283,7 @@ jobs:
         id: devices-by-os
         env:
           DEVICES: '${{ steps.devices.outputs.devices }}'
-          SIMULATOR_OS: '${{ steps.detox-device.outputs.os }}'
+          SIMULATOR_OS: '${{ steps.simulator-device.outputs.os }}'
         run: |
           set -o pipefail
           jq -rn --argjson devices "$DEVICES" '$devices | to_entries[] | select(.key | endswith("iOS-\(env.SIMULATOR_OS)")) | .value | "devices=\(.)"' | tee "$GITHUB_OUTPUT"
@@ -292,7 +292,7 @@ jobs:
         id: devices-by-os-and-type
         env:
           DEVICES: '${{ steps.devices-by-os.outputs.devices }}'
-          SIMULATOR_TYPE: '${{ steps.detox-device.outputs.type }}'
+          SIMULATOR_TYPE: '${{ steps.simulator-device.outputs.type }}'
         run: |
           set -o pipefail
           jq -rn --argjson devices "$DEVICES" '$devices | .[] | select(.name == env.SIMULATOR_TYPE) | "devices=\(.)"' | tee "$GITHUB_OUTPUT"
