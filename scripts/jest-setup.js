@@ -7,14 +7,8 @@ jest.mock('expo-web-browser', () => ({
 	openBrowserAsync: jest.fn(() => Promise.resolve({type: 'dismiss'})),
 	WebBrowserPresentationStyle: {CURRENT_CONTEXT: 'currentContext'},
 }))
-jest.mock('@react-native-clipboard/clipboard', () => ({
-	getString: jest.fn(() => Promise.resolve('')),
-	setString: jest.fn(),
-	hasString: jest.fn(() => Promise.resolve(false)),
-	__esModule: true,
-	default: {
-		getString: jest.fn(() => Promise.resolve('')),
-		setString: jest.fn(),
-		hasString: jest.fn(() => Promise.resolve(false)),
-	},
+jest.mock('expo-clipboard', () => ({
+	setStringAsync: jest.fn(() => Promise.resolve()),
+	getStringAsync: jest.fn(() => Promise.resolve('')),
+	hasStringAsync: jest.fn(() => Promise.resolve(false)),
 }))
