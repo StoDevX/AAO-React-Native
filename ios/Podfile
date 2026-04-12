@@ -3,6 +3,25 @@ require File.join(File.dirname(`node --print "require.resolve('expo/package.json
 # This assumes node_modules is located at ../node_modules relative to ios/.
 require '../node_modules/react-native/scripts/react_native_pods.rb'
 
+# expo-modules-autolinking patches UserProjectIntegrator#integrate_user_targets
+# so that it calls integrate_targets_in_project for every CocoaPods target whose
+# TargetDefinition has an autolinking_manager set. Because AllAboutOlafUITests is
+# nested inside AllAboutOlaf, it inherits AllAboutOlaf's autolinking_manager via
+# TargetDefinition#autolinking_manager's parent-traversal logic. This causes expo
+# to add ExpoModulesProvider.swift (source file + "[Expo] Configure project" run
+# script) to the UITests native target, which then fails to link because the expo
+# module static libraries aren't linked into UITests.
+#
+# Fix: prepend a module override that returns nil for AllAboutOlafUITests so that
+# expo's integrate_targets_in_project skips it entirely.
+module ExpoUITestsAutolinkingFix
+  def autolinking_manager
+    return nil if name == 'AllAboutOlafUITests'
+    super
+  end
+end
+Pod::Podfile::TargetDefinition.prepend(ExpoUITestsAutolinkingFix)
+
 # Opt out of the New Architecture (Fabric/TurboModules/Bridgeless).
 # The Old Architecture is fully supported through RN 0.76.
 # See: https://github.com/StoDevX/AAO-React-Native/issues/7453
@@ -56,21 +75,6 @@ target 'AllAboutOlaf' do
 					config.build_settings['CLANG_ENABLE_EXPLICIT_MODULES'] = 'NO'
 				end
 			end
-		end
-
-		# use_expo_modules! installs its "[Expo] Configure project" build phase
-		# into all nested targets (including UITests) via CocoaPods target
-		# inheritance. UITests don't need expo module registration, and the
-		# generated ExpoModulesProvider.swift causes linker errors. Remove it.
-		installer.aggregate_targets.each do |agg_target|
-			next unless agg_target.user_project
-			agg_target.user_project.native_targets.each do |native_target|
-				next unless native_target.name == 'AllAboutOlafUITests'
-				native_target.build_phases.delete_if { |phase|
-					phase.respond_to?(:name) && phase.name == '[Expo] Configure project'
-				}
-			end
-			agg_target.user_project.save
 		end
 
 		system('cd .. && scripts/apply-patches.sh')
