@@ -147,7 +147,7 @@ Skipped tests use `throw XCTSkip("reason")` at the start of the test body:
 1. `testIsReachableFromHomescreen` - Tap "Important Contacts", verify homescreen gone.
 2. `testHasContactsListVisibleByDefault` - Tap "Important Contacts", verify "Important Contacts" text visible.
 
-### ModuleMenusTests (7 tests)
+### ModuleMenusTests (9 tests)
 
 1. `testIsReachableFromHomescreen` - Tap "Menus", verify homescreen gone.
 2. `testHasMenusListVisibleByDefault` - Tap "Menus", verify "Menus" text visible.
@@ -188,7 +188,7 @@ Skipped tests use `throw XCTSkip("reason")` at the start of the test body:
 1. `testIsReachableFromHomescreen` - Tap "stoPrint", verify homescreen gone.
 2. `testSaysYouAreNotLoggedInByDefault` - **SKIPPED**: "stoPrint API request hangs in CI". Tap "stoPrint", verify "You are not logged in" visible.
 
-### ModuleStreamingMediaTests (4 tests)
+### ModuleStreamingMediaTests (5 tests)
 
 1. `testIsReachableFromHomescreen` - Tap "Streaming Media", verify homescreen gone.
 2. `testHasStreamListVisibleByDefault` - Tap "Streaming Media", verify `stream-list` ID visible.
