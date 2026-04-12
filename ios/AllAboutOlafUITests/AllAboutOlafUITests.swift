@@ -35,23 +35,26 @@ class AllAboutOlafUITests: XCTestCase {
         settingsButton.tap()
 
         // Verify default icon is selected, tap Big Ole
-        XCTAssertTrue(app.cells["app-icon-cell-default-selected"]
-            .waitForExistence(timeout: 10))
-        app.cells["app-icon-cell-icon_type_windmill"].tap()
+        XCTAssertTrue(app.buttons["app-icon-cell-default-selected"]
+            .waitForExistence(timeout: 10),
+            "Default icon should be selected initially")
+        app.buttons["app-icon-cell-icon_type_windmill"].tap()
 
         // Interact with the app to trigger the interruption monitor
         app.tap()
 
         // Verify Big Ole is now selected
-        XCTAssertTrue(app.cells["app-icon-cell-icon_type_windmill-selected"]
-            .waitForExistence(timeout: 10))
+        XCTAssertTrue(app.buttons["app-icon-cell-icon_type_windmill-selected"]
+            .waitForExistence(timeout: 10),
+            "Windmill icon should be selected after tapping it")
 
         // Tap default to switch back
-        app.cells["app-icon-cell-default"].tap()
+        app.buttons["app-icon-cell-default"].tap()
         app.tap()
 
         // Verify default is selected again
-        XCTAssertTrue(app.cells["app-icon-cell-default-selected"]
-            .waitForExistence(timeout: 10))
+        XCTAssertTrue(app.buttons["app-icon-cell-default-selected"]
+            .waitForExistence(timeout: 10),
+            "Default icon should be selected after switching back")
     }
 }
