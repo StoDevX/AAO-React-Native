@@ -54,8 +54,8 @@ target 'AllAboutOlaf' do
 				# issue for cocoapods is https://github.com/CocoaPods/CocoaPods/issues/10277
 				config.build_settings['STRIP_INSTALLED_PRODUCT'] = 'YES'
 
-				# Xcode 16+ enables explicit modules by default, but CocoaPods
-				# projects don't support it yet
+				# Xcode 16+ enables explicit modules by default, but ccache
+				# replaces CC with a wrapper script that Xcode doesn't recognize
 				config.build_settings['CLANG_ENABLE_EXPLICIT_MODULES'] = 'NO'
 
 				config.build_settings.delete('SWIFT_VERSION') unless has_swift
