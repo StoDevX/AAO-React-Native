@@ -10,7 +10,7 @@ class AllAboutOlafUITests: XCTestCase {
 
     func testHomeScreenRenders() throws {
         app.launch()
-        let menus = app.staticTexts["Menus"]
+        let menus = app.buttons["Menus"]
         XCTAssertTrue(menus.waitForExistence(timeout: 30),
                       "Home screen should show Menus button")
     }
@@ -28,8 +28,11 @@ class AllAboutOlafUITests: XCTestCase {
             return false
         }
 
-        // Navigate to settings
-        app.buttons["button-open-settings"].tap()
+        // Wait for the home screen to load before navigating
+        let settingsButton = app.buttons["button-open-settings"]
+        XCTAssertTrue(settingsButton.waitForExistence(timeout: 30),
+                      "Settings button should appear on home screen")
+        settingsButton.tap()
 
         // Verify default icon is selected, tap Big Ole
         XCTAssertTrue(app.cells["app-icon-cell-default-selected"]
