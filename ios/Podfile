@@ -1,6 +1,26 @@
+require File.join(File.dirname(`node --print "require.resolve('expo/package.json')"`), "scripts/autolinking")
 # Load react_native_pods.rb from the app's local node_modules directory.
 # This assumes node_modules is located at ../node_modules relative to ios/.
 require '../node_modules/react-native/scripts/react_native_pods.rb'
+
+# expo-modules-autolinking patches UserProjectIntegrator#integrate_user_targets
+# so that it calls integrate_targets_in_project for every CocoaPods target whose
+# TargetDefinition has an autolinking_manager set. Because AllAboutOlafUITests is
+# nested inside AllAboutOlaf, it inherits AllAboutOlaf's autolinking_manager via
+# TargetDefinition#autolinking_manager's parent-traversal logic. This causes expo
+# to add ExpoModulesProvider.swift (source file + "[Expo] Configure project" run
+# script) to the UITests native target, which then fails to link because the expo
+# module static libraries aren't linked into UITests.
+#
+# Fix: prepend a module override that returns nil for AllAboutOlafUITests so that
+# expo's integrate_targets_in_project skips it entirely.
+module ExpoUITestsAutolinkingFix
+  def autolinking_manager
+    return nil if name == 'AllAboutOlafUITests'
+    super
+  end
+end
+Pod::Podfile::TargetDefinition.prepend(ExpoUITestsAutolinkingFix)
 
 # Opt out of the New Architecture (Fabric/TurboModules/Bridgeless).
 # The Old Architecture is fully supported through RN 0.76.
@@ -17,6 +37,7 @@ if linkage != nil
 end
 
 target 'AllAboutOlaf' do
+	use_expo_modules!
 	inhibit_all_warnings!
 
 	config = use_native_modules!
