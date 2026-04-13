@@ -14,7 +14,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  xcode_version: 'Xcode_16.4'
+  xcode_version: 'Xcode_26.0'
   cache_epoch: '1'
   MISE_RUBY_COMPILE: 'false'
 

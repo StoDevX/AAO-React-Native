@@ -49,7 +49,7 @@ jobs:
 
       - uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151 # v4.0.1
 
-      - run: sudo xcode-select -s /Applications/Xcode_16.4.app
+      - run: sudo xcode-select -s /Applications/Xcode_26.0.app
 
       - run: npm ci
 
