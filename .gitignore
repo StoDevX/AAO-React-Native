@@ -71,8 +71,6 @@ fastlane/play-private-key.json
 /.bundle/
 /vendor/bundle/
 
-# detox artifacts folder
-/artifacts
 
 # generated logs files in CI
 /logs
