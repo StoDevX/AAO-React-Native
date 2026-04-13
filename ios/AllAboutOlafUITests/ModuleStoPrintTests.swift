@@ -19,7 +19,8 @@ class ModuleStoPrintTests: XCTestCase {
 	}
 
 	func testSaysYouAreNotLoggedInByDefault() throws {
-		throw XCTSkip("stoPrint API request hangs in CI")
+    // we need more information about this before we can debug it, so go ahead and run the test
+    XCTExpectFailure("stoPrint API request hangs in CI", options: XCTExpectedFailure.Options.nonStrict())
 
 		app.buttons["stoPrint"].firstMatch.tap()
 
