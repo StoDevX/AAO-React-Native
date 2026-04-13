@@ -1330,7 +1330,7 @@ PODS:
     - Yoga
   - react-native-ios-context-menu (1.15.3):
     - React-Core
-  - react-native-netinfo (11.5.2):
+  - react-native-netinfo (12.0.1):
     - React-Core
   - react-native-restart (0.0.27):
     - React-Core
@@ -2091,7 +2091,7 @@ SPEC CHECKSUMS:
   React-microtasksnativemodule: 5c3d795318c22ab8df55100e50b151384a4a60b3
   react-native-change-icon: 478a35dc77022479d2e203f349b98c2c4165d123
   react-native-ios-context-menu: 986da6dcba70094bcc2a8049f68410fe7d25aff1
-  react-native-netinfo: 387c95161b1971d0b2acd61f5ecf394c8fd3fb95
+  react-native-netinfo: bed7e7b8f68e22e0862a77d7df28d31faa66375d
   react-native-restart: 0bc732f4461709022a742bb29bcccf6bbc5b4863
   react-native-safe-area-context: 758e894ca5a9bd1868d2a9cfbca7326a2b6bf9dc
   react-native-webview: ff76bd483e879911c9ca6f5430b6143531bdfcfd
