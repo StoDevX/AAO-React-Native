@@ -347,6 +347,23 @@ jobs:
             -resultBundlePath uitest-results \
             | xcbeautify --renderer github-actions
 
+      - name: Extract failure screenshots
+        if: failure()
+        run: |
+          mkdir -p uitest-screenshots
+          xcrun xcresulttool get test-results attachments \
+            --path uitest-results.xcresult \
+            --output-path uitest-screenshots || true
+          screenshot_count=$(find uitest-screenshots -name '*.png' -o -name '*.jpg' 2>/dev/null | wc -l | tr -d ' ')
+          echo "Found ${screenshot_count} screenshot(s)"
+
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        if: failure()
+        with:
+          name: uitest-screenshots-${{ matrix.shard }}
+          path: uitest-screenshots/
+          if-no-files-found: ignore
+
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         if: failure()
         with:
