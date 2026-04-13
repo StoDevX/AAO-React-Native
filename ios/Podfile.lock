@@ -22,6 +22,49 @@ PODS:
     - Yoga
   - boost (1.84.0)
   - DoubleConversion (1.1.6)
+  - EXApplication (6.0.2):
+    - ExpoModulesCore
+  - EXConstants (17.0.8):
+    - ExpoModulesCore
+  - Expo (52.0.49):
+    - ExpoModulesCore
+  - ExpoAsset (11.0.5):
+    - ExpoModulesCore
+  - ExpoCalendar (14.0.6):
+    - ExpoModulesCore
+  - ExpoClipboard (7.0.1):
+    - ExpoModulesCore
+  - ExpoDevice (7.0.3):
+    - ExpoModulesCore
+  - ExpoFont (13.0.4):
+    - ExpoModulesCore
+  - ExpoModulesCore (2.2.3):
+    - DoubleConversion
+    - glog
+    - hermes-engine
+    - RCT-Folly (= 2024.10.14.00)
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-jsinspector
+    - React-NativeModulesApple
+    - React-RCTAppDelegate
+    - React-RCTFabric
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - Yoga
+  - ExpoSecureStore (14.0.1):
+    - ExpoModulesCore
+  - ExpoWebBrowser (14.0.2):
+    - ExpoModulesCore
   - fast_float (6.1.4)
   - FBLazyVector (0.76.9)
   - fmt (11.0.2)
@@ -1336,8 +1379,6 @@ PODS:
     - React-Core
   - react-native-safe-area-context (4.14.1):
     - React-Core
-  - react-native-sfsymbols (1.2.2):
-    - React
   - react-native-webview (13.16.1):
     - DoubleConversion
     - glog
@@ -1631,15 +1672,9 @@ PODS:
     - React-logger
     - React-perflogger
     - React-utils (= 0.76.9)
-  - RNCalendarEvents (2.2.0):
-    - React
-  - RNCClipboard (1.16.3):
-    - React-Core
   - RNCPicker (2.11.4):
     - React-Core
   - RNDateTimePicker (9.1.0):
-    - React-Core
-  - RNDeviceInfo (11.1.0):
     - React-Core
   - RNGestureHandler (2.31.0):
     - DoubleConversion
@@ -1662,10 +1697,6 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - RNInAppBrowser (3.7.1):
-    - React-Core
-  - RNKeychain (8.2.0):
-    - React-Core
   - RNReanimated (3.16.7):
     - DoubleConversion
     - glog
@@ -1792,6 +1823,17 @@ DEPENDENCIES:
   - "AsyncStorage (from `../node_modules/@react-native-async-storage/async-storage`)"
   - boost (from `../node_modules/react-native/third-party-podspecs/boost.podspec`)
   - DoubleConversion (from `../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec`)
+  - EXApplication (from `../node_modules/expo-application/ios`)
+  - EXConstants (from `../node_modules/expo-constants/ios`)
+  - Expo (from `../node_modules/expo`)
+  - ExpoAsset (from `../node_modules/expo-asset/ios`)
+  - ExpoCalendar (from `../node_modules/expo-calendar/ios`)
+  - ExpoClipboard (from `../node_modules/expo-clipboard/ios`)
+  - ExpoDevice (from `../node_modules/expo-device/ios`)
+  - ExpoFont (from `../node_modules/expo-font/ios`)
+  - ExpoModulesCore (from `../node_modules/expo-modules-core`)
+  - ExpoSecureStore (from `../node_modules/expo-secure-store/ios`)
+  - ExpoWebBrowser (from `../node_modules/expo-web-browser/ios`)
   - fast_float (from `../node_modules/react-native/third-party-podspecs/fast_float.podspec`)
   - FBLazyVector (from `../node_modules/react-native/Libraries/FBLazyVector`)
   - fmt (from `../node_modules/react-native/third-party-podspecs/fmt.podspec`)
@@ -1833,7 +1875,6 @@ DEPENDENCIES:
   - "react-native-netinfo (from `../node_modules/@react-native-community/netinfo`)"
   - react-native-restart (from `../node_modules/react-native-restart`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
-  - react-native-sfsymbols (from `../node_modules/react-native-sfsymbols`)
   - react-native-webview (from `../node_modules/react-native-webview`)
   - React-nativeconfig (from `../node_modules/react-native/ReactCommon`)
   - React-NativeModulesApple (from `../node_modules/react-native/ReactCommon/react/nativemodule/core/platform/ios`)
@@ -1862,14 +1903,9 @@ DEPENDENCIES:
   - React-utils (from `../node_modules/react-native/ReactCommon/react/utils`)
   - ReactCodegen (from `build/generated/ios`)
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
-  - RNCalendarEvents (from `../node_modules/react-native-calendar-events`)
-  - "RNCClipboard (from `../node_modules/@react-native-clipboard/clipboard`)"
   - "RNCPicker (from `../node_modules/@react-native-picker/picker`)"
   - "RNDateTimePicker (from `../node_modules/@react-native-community/datetimepicker`)"
-  - RNDeviceInfo (from `../node_modules/react-native-device-info`)
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
-  - RNInAppBrowser (from `../node_modules/react-native-inappbrowser-reborn`)
-  - RNKeychain (from `../node_modules/react-native-keychain`)
   - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNScreens (from `../node_modules/react-native-screens`)
   - RNSearchBar (from `../node_modules/react-native-search-bar`)
@@ -1890,6 +1926,28 @@ EXTERNAL SOURCES:
     :podspec: "../node_modules/react-native/third-party-podspecs/boost.podspec"
   DoubleConversion:
     :podspec: "../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec"
+  EXApplication:
+    :path: "../node_modules/expo-application/ios"
+  EXConstants:
+    :path: "../node_modules/expo-constants/ios"
+  Expo:
+    :path: "../node_modules/expo"
+  ExpoAsset:
+    :path: "../node_modules/expo-asset/ios"
+  ExpoCalendar:
+    :path: "../node_modules/expo-calendar/ios"
+  ExpoClipboard:
+    :path: "../node_modules/expo-clipboard/ios"
+  ExpoDevice:
+    :path: "../node_modules/expo-device/ios"
+  ExpoFont:
+    :path: "../node_modules/expo-font/ios"
+  ExpoModulesCore:
+    :path: "../node_modules/expo-modules-core"
+  ExpoSecureStore:
+    :path: "../node_modules/expo-secure-store/ios"
+  ExpoWebBrowser:
+    :path: "../node_modules/expo-web-browser/ios"
   fast_float:
     :podspec: "../node_modules/react-native/third-party-podspecs/fast_float.podspec"
   FBLazyVector:
@@ -1969,8 +2027,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-restart"
   react-native-safe-area-context:
     :path: "../node_modules/react-native-safe-area-context"
-  react-native-sfsymbols:
-    :path: "../node_modules/react-native-sfsymbols"
   react-native-webview:
     :path: "../node_modules/react-native-webview"
   React-nativeconfig:
@@ -2027,22 +2083,12 @@ EXTERNAL SOURCES:
     :path: build/generated/ios
   ReactCommon:
     :path: "../node_modules/react-native/ReactCommon"
-  RNCalendarEvents:
-    :path: "../node_modules/react-native-calendar-events"
-  RNCClipboard:
-    :path: "../node_modules/@react-native-clipboard/clipboard"
   RNCPicker:
     :path: "../node_modules/@react-native-picker/picker"
   RNDateTimePicker:
     :path: "../node_modules/@react-native-community/datetimepicker"
-  RNDeviceInfo:
-    :path: "../node_modules/react-native-device-info"
   RNGestureHandler:
     :path: "../node_modules/react-native-gesture-handler"
-  RNInAppBrowser:
-    :path: "../node_modules/react-native-inappbrowser-reborn"
-  RNKeychain:
-    :path: "../node_modules/react-native-keychain"
   RNReanimated:
     :path: "../node_modules/react-native-reanimated"
   RNScreens:
@@ -2060,6 +2106,17 @@ SPEC CHECKSUMS:
   AsyncStorage: 18fb3cbfa2bf1e042b5bac9ac3689f2d81da14a0
   boost: 1dca942403ed9342f98334bf4c3621f011aa7946
   DoubleConversion: f16ae600a246532c4020132d54af21d0ddb2a385
+  EXApplication: 4c72f6017a14a65e338c5e74fca418f35141e819
+  EXConstants: fcfc75800824ac2d5c592b5bc74130bad17b146b
+  Expo: 4bb70893882e6382b41d1e910d7226c6a1b85f0a
+  ExpoAsset: 48386d40d53a8c1738929b3ed509bcad595b5516
+  ExpoCalendar: 12208702ad2461776a5a59b6e51e37ef23f9efac
+  ExpoClipboard: 44fd1c8959ee8f6175d059dc011b154c9709a969
+  ExpoDevice: d36ab4186b6799a28fd449bb9a1c77455f23fd1a
+  ExpoFont: f354e926f8feae5e831ec8087f36652b44a0b188
+  ExpoModulesCore: 725faec070d590810d2ea5983d9f78f7cf6a38ec
+  ExpoSecureStore: 9a3665d7161dd1031be386e278bffd623658f316
+  ExpoWebBrowser: a212e6b480d8857d3e441fba51e0c968333803b3
   fast_float: 06eeec4fe712a76acc9376682e4808b05ce978b6
   FBLazyVector: 7605ea4810e0e10ae4815292433c09bf4324ba45
   fmt: 01b82d4ca6470831d1cc0852a1af644be019e8f6
@@ -2099,7 +2156,6 @@ SPEC CHECKSUMS:
   react-native-netinfo: 387c95161b1971d0b2acd61f5ecf394c8fd3fb95
   react-native-restart: 0bc732f4461709022a742bb29bcccf6bbc5b4863
   react-native-safe-area-context: 758e894ca5a9bd1868d2a9cfbca7326a2b6bf9dc
-  react-native-sfsymbols: 3309f24c98d32705568c84b714268f3ec62017c7
   react-native-webview: ff76bd483e879911c9ca6f5430b6143531bdfcfd
   React-nativeconfig: 8efdb1ef1e9158c77098a93085438f7e7b463678
   React-NativeModulesApple: cebca2e5320a3d66e123cade23bd90a167ffce5e
@@ -2128,14 +2184,9 @@ SPEC CHECKSUMS:
   React-utils: ed818f19ab445000d6b5c4efa9d462449326cc9f
   ReactCodegen: f853a20cc9125c5521c8766b4b49375fec20648b
   ReactCommon: 300d8d9c5cb1a6cd79a67cf5d8f91e4d477195f9
-  RNCalendarEvents: f90f73666b6bcbb3cc8a491ffbb5e48c0db3de37
-  RNCClipboard: f6679d470d0da2bce2a37b0af7b9e0bf369ecda5
   RNCPicker: 7de564dce1f90b53e386a24001aafc3578233dfe
   RNDateTimePicker: a4679e6488003e5fb68502b50ffb1b74b8b31ca0
-  RNDeviceInfo: 900bd20e1fd3bfd894e7384cc4a83880c0341bd3
   RNGestureHandler: b1c06808f2eaf5c568e006ab3f34813d959ca1c8
-  RNInAppBrowser: 904d24dc75e8e6c6c98a3160329192608946f9df
-  RNKeychain: bbe2f6d5cc008920324acb49ef86ccc03d3b38e4
   RNReanimated: 6d22a1aec06a9787b797bc0c40fc2779be0599a5
   RNScreens: 09d0dfadf032f78e0580cd417dc378268d483a38
   RNSearchBar: feb1a3829c44d6ae1b96dc1397062b2fbfb95825
@@ -2146,6 +2197,6 @@ SPEC CHECKSUMS:
   SocketRocket: d4aabe649be1e368d1318fdf28a022d714d65748
   Yoga: feb4910aba9742cfedc059e2b2902e22ffe9954a
 
-PODFILE CHECKSUM: aee11cd505fbf606f62dd939494945f360b8e5d3
+PODFILE CHECKSUM: 5be4c8ddf5c6a78eeda76a924e5f6b83b202faf4
 
 COCOAPODS: 1.16.2

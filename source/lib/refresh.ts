@@ -2,7 +2,7 @@ import {clearAsyncStorage} from './storage'
 import restart from 'react-native-restart'
 import {SIS_LOGIN_KEY} from './login'
 import {getIcon, resetIcon} from 'react-native-change-icon'
-import {resetInternetCredentials} from 'react-native-keychain'
+import {resetInternetCredentials} from './keychain'
 
 export async function refreshApp(): Promise<void> {
 	// Clear AsyncStorage

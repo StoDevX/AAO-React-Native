@@ -1,5 +1,5 @@
 import * as React from 'react'
-import Clipboard from '@react-native-clipboard/clipboard'
+import * as Clipboard from 'expo-clipboard'
 import {openUrl} from '@frogpond/open-url'
 import {useActionSheet} from '@expo/react-native-action-sheet'
 import * as c from '@frogpond/colors'
@@ -32,7 +32,7 @@ const LINK_OPTIONS: Array<{name: string; action: Callback}> = [
 	{
 		name: 'Copy',
 		action: ({title, href}: {href: string; title?: string}) =>
-			Clipboard.setString(`${href}${title ? ' ' + title : ''}`),
+			void Clipboard.setStringAsync(`${href}${title ? ' ' + title : ''}`),
 	},
 	{
 		name: 'Cancel',

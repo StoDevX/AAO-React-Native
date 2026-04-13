@@ -9,6 +9,15 @@
 /* Begin PBXBuildFile section */
 		00B0A216202FB153002DBB76 /* windmill@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 00B0A1DD202FB153002DBB76 /* windmill@3x.png */; };
 		00B0A217202FB153002DBB76 /* windmill@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 00B0A215202FB153002DBB76 /* windmill@2x.png */; };
+		00D33C031DDA598B001E830E /* SnapshotHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00D33C011DDA5958001E830E /* SnapshotHelper.swift */; };
+		13B07FBC1A68108700A75B9A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.swift */; };
+		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
+		3ABFC1222C8D2FE30025E0B5 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 3ABFC1212C8D2FE30025E0B5 /* PrivacyInfo.xcprivacy */; };
+		3ACC8B85273335930069E931 /* windmill@2x~iPad.png in Resources */ = {isa = PBXBuildFile; fileRef = 3ACC8B83273335930069E931 /* windmill@2x~iPad.png */; };
+		3ACC8B86273335930069E931 /* windmill@3x~iPad.png in Resources */ = {isa = PBXBuildFile; fileRef = 3ACC8B84273335930069E931 /* windmill@3x~iPad.png */; };
+		3AE408501E1E280800F0FD83 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3AE4084F1E1E280800F0FD83 /* LaunchScreen.storyboard */; };
+		91E0D7C5F14D215A7C718236 /* libPods-AllAboutOlaf.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EB28C76433AECBFEDDD439B /* libPods-AllAboutOlaf.a */; };
+		9677C33C4061926FC98EF4E6 /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = E15F9948C74F213CA80DAB69 /* ExpoModulesProvider.swift */; };
 		A20000000000000000000001 /* XCUITestHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000001 /* XCUITestHelpers.swift */; };
 		A20000000000000000000002 /* ModuleHomeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000002 /* ModuleHomeTests.swift */; };
 		A20000000000000000000003 /* ModuleBuildingHoursTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000003 /* ModuleBuildingHoursTests.swift */; };
@@ -27,15 +36,7 @@
 		A20000000000000000000010 /* ModuleStreamingMediaTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000010 /* ModuleStreamingMediaTests.swift */; };
 		A20000000000000000000011 /* ModuleStudentOrgsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000011 /* ModuleStudentOrgsTests.swift */; };
 		A20000000000000000000012 /* ModuleTransportationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000012 /* ModuleTransportationTests.swift */; };
-		00D33C031DDA598B001E830E /* SnapshotHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00D33C011DDA5958001E830E /* SnapshotHelper.swift */; };
-		13B07FBC1A68108700A75B9A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.swift */; };
-		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
-		3ABFC1222C8D2FE30025E0B5 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 3ABFC1212C8D2FE30025E0B5 /* PrivacyInfo.xcprivacy */; };
-		3ACC8B85273335930069E931 /* windmill@2x~iPad.png in Resources */ = {isa = PBXBuildFile; fileRef = 3ACC8B83273335930069E931 /* windmill@2x~iPad.png */; };
-		3ACC8B86273335930069E931 /* windmill@3x~iPad.png in Resources */ = {isa = PBXBuildFile; fileRef = 3ACC8B84273335930069E931 /* windmill@3x~iPad.png */; };
-		3AE408501E1E280800F0FD83 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3AE4084F1E1E280800F0FD83 /* LaunchScreen.storyboard */; };
-		8222E4786CCF790474A60080 /* libPods-AllAboutOlaf-AllAboutOlafUITests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2256074D704451D201AB966D /* libPods-AllAboutOlaf-AllAboutOlafUITests.a */; };
-		91E0D7C5F14D215A7C718236 /* libPods-AllAboutOlaf.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EB28C76433AECBFEDDD439B /* libPods-AllAboutOlaf.a */; };
+		ECC963AEE9E76FCB0F2D8BAF /* libPods-AllAboutOlafUITests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 91290B108F66DE12EBF91147 /* libPods-AllAboutOlafUITests.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -333,6 +334,32 @@
 		00C302BB1ABCB91800DB3ED1 /* RCTImage.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTImage.xcodeproj; path = "../node_modules/react-native/Libraries/Image/RCTImage.xcodeproj"; sourceTree = "<group>"; };
 		00C302D31ABCB9D200DB3ED1 /* RCTNetwork.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTNetwork.xcodeproj; path = "../node_modules/react-native/Libraries/Network/RCTNetwork.xcodeproj"; sourceTree = "<group>"; };
 		00C302DF1ABCB9EE00DB3ED1 /* RCTVibration.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTVibration.xcodeproj; path = "../node_modules/react-native/Libraries/Vibration/RCTVibration.xcodeproj"; sourceTree = "<group>"; };
+		00D33BE31DDA58A8001E830E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		00D33C001DDA5958001E830E /* AllAboutOlaf-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "AllAboutOlaf-Bridging-Header.h"; sourceTree = "<group>"; };
+		00D33C011DDA5958001E830E /* SnapshotHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.swift; name = SnapshotHelper.swift; path = fastlane/SnapshotHelper.swift; sourceTree = SOURCE_ROOT; tabWidth = 4; };
+		139105B61AF99BAD00B5F7CC /* RCTSettings.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTSettings.xcodeproj; path = "../node_modules/react-native/Libraries/Settings/RCTSettings.xcodeproj"; sourceTree = "<group>"; };
+		139FDEE61B06529A00C62182 /* RCTWebSocket.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTWebSocket.xcodeproj; path = "../node_modules/react-native/Libraries/WebSocket/RCTWebSocket.xcodeproj"; sourceTree = "<group>"; };
+		13B07FB01A68108700A75B9A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = AllAboutOlaf/AppDelegate.swift; sourceTree = "<group>"; };
+		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = AllAboutOlaf/Images.xcassets; sourceTree = "<group>"; };
+		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = AllAboutOlaf/Info.plist; sourceTree = "<group>"; };
+		146833FF1AC3E56700842450 /* React.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = React.xcodeproj; path = "../node_modules/react-native/React/React.xcodeproj"; sourceTree = "<group>"; };
+		363F0F7690215720438C6ABC /* Pods-AllAboutOlaf.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AllAboutOlaf.debug.xcconfig"; path = "Target Support Files/Pods-AllAboutOlaf/Pods-AllAboutOlaf.debug.xcconfig"; sourceTree = "<group>"; };
+		3A0CEA711DEA20340036E739 /* RCTAnimation.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTAnimation.xcodeproj; path = "../node_modules/react-native/Libraries/NativeAnimation/RCTAnimation.xcodeproj"; sourceTree = "<group>"; };
+		3ABFC1212C8D2FE30025E0B5 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		3ACC8B83273335930069E931 /* windmill@2x~iPad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "windmill@2x~iPad.png"; path = "../images/icons/windmill@2x~iPad.png"; sourceTree = "<group>"; };
+		3ACC8B84273335930069E931 /* windmill@3x~iPad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "windmill@3x~iPad.png"; path = "../images/icons/windmill@3x~iPad.png"; sourceTree = "<group>"; };
+		3AE4084F1E1E280800F0FD83 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = AllAboutOlaf/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		5CBB688C2084ADBF20C737EF /* Pods-AllAboutOlaf-AllAboutOlafUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AllAboutOlaf-AllAboutOlafUITests.debug.xcconfig"; path = "Target Support Files/Pods-AllAboutOlaf-AllAboutOlafUITests/Pods-AllAboutOlaf-AllAboutOlafUITests.debug.xcconfig"; sourceTree = "<group>"; };
+		67354E87236E0E5900B1E8E8 /* AllAboutOlaf.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AllAboutOlaf.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		67354E88236E0E5900B1E8E8 /* AllAboutOlafUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AllAboutOlafUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		67B1D38E223C9BEF00F6A70E /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
+		6CDD8E7396B53B248B24BA24 /* Pods-AllAboutOlaf-AllAboutOlafUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AllAboutOlaf-AllAboutOlafUITests.release.xcconfig"; path = "Target Support Files/Pods-AllAboutOlaf-AllAboutOlafUITests/Pods-AllAboutOlaf-AllAboutOlafUITests.release.xcconfig"; sourceTree = "<group>"; };
+		71D5CCADA66D45008D9A38F2 /* RNVectorIcons.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNVectorIcons.xcodeproj; path = "../node_modules/react-native-vector-icons/RNVectorIcons.xcodeproj"; sourceTree = "<group>"; };
+		78C398B01ACF4ADC00677621 /* RCTLinking.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTLinking.xcodeproj; path = "../node_modules/react-native/Libraries/LinkingIOS/RCTLinking.xcodeproj"; sourceTree = "<group>"; };
+		832341B01AAA6A8300B99B32 /* RCTText.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTText.xcodeproj; path = "../node_modules/react-native/Libraries/Text/RCTText.xcodeproj"; sourceTree = "<group>"; };
+		91290B108F66DE12EBF91147 /* libPods-AllAboutOlafUITests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-AllAboutOlafUITests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		9B180E9666DB4A17E182E9C6 /* Pods-AllAboutOlafUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AllAboutOlafUITests.debug.xcconfig"; path = "Target Support Files/Pods-AllAboutOlafUITests/Pods-AllAboutOlafUITests.debug.xcconfig"; sourceTree = "<group>"; };
+		9EB28C76433AECBFEDDD439B /* libPods-AllAboutOlaf.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-AllAboutOlaf.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		A10000000000000000000001 /* XCUITestHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XCUITestHelpers.swift; sourceTree = "<group>"; };
 		A10000000000000000000002 /* ModuleHomeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModuleHomeTests.swift; sourceTree = "<group>"; };
 		A10000000000000000000003 /* ModuleBuildingHoursTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModuleBuildingHoursTests.swift; sourceTree = "<group>"; };
@@ -351,37 +378,12 @@
 		A10000000000000000000010 /* ModuleStreamingMediaTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModuleStreamingMediaTests.swift; sourceTree = "<group>"; };
 		A10000000000000000000011 /* ModuleStudentOrgsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModuleStudentOrgsTests.swift; sourceTree = "<group>"; };
 		A10000000000000000000012 /* ModuleTransportationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModuleTransportationTests.swift; sourceTree = "<group>"; };
-		00D33BE31DDA58A8001E830E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		00D33C001DDA5958001E830E /* AllAboutOlaf-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "AllAboutOlaf-Bridging-Header.h"; sourceTree = "<group>"; };
-		00D33C011DDA5958001E830E /* SnapshotHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.swift; name = SnapshotHelper.swift; path = fastlane/SnapshotHelper.swift; sourceTree = SOURCE_ROOT; tabWidth = 4; };
-		139105B61AF99BAD00B5F7CC /* RCTSettings.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTSettings.xcodeproj; path = "../node_modules/react-native/Libraries/Settings/RCTSettings.xcodeproj"; sourceTree = "<group>"; };
-		139FDEE61B06529A00C62182 /* RCTWebSocket.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTWebSocket.xcodeproj; path = "../node_modules/react-native/Libraries/WebSocket/RCTWebSocket.xcodeproj"; sourceTree = "<group>"; };
-		13B07FB01A68108700A75B9A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = AllAboutOlaf/AppDelegate.swift; sourceTree = "<group>"; };
-		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = AllAboutOlaf/Images.xcassets; sourceTree = "<group>"; };
-		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = AllAboutOlaf/Info.plist; sourceTree = "<group>"; };
-		146833FF1AC3E56700842450 /* React.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = React.xcodeproj; path = "../node_modules/react-native/React/React.xcodeproj"; sourceTree = "<group>"; };
-		2256074D704451D201AB966D /* libPods-AllAboutOlaf-AllAboutOlafUITests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-AllAboutOlaf-AllAboutOlafUITests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		363F0F7690215720438C6ABC /* Pods-AllAboutOlaf.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AllAboutOlaf.debug.xcconfig"; path = "Target Support Files/Pods-AllAboutOlaf/Pods-AllAboutOlaf.debug.xcconfig"; sourceTree = "<group>"; };
-		3A0CEA711DEA20340036E739 /* RCTAnimation.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTAnimation.xcodeproj; path = "../node_modules/react-native/Libraries/NativeAnimation/RCTAnimation.xcodeproj"; sourceTree = "<group>"; };
-		3ABFC1212C8D2FE30025E0B5 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
-		3ACC8B83273335930069E931 /* windmill@2x~iPad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "windmill@2x~iPad.png"; path = "../images/icons/windmill@2x~iPad.png"; sourceTree = "<group>"; };
-		3ACC8B84273335930069E931 /* windmill@3x~iPad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "windmill@3x~iPad.png"; path = "../images/icons/windmill@3x~iPad.png"; sourceTree = "<group>"; };
-		3AE4084F1E1E280800F0FD83 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = AllAboutOlaf/LaunchScreen.storyboard; sourceTree = "<group>"; };
-		5CBB688C2084ADBF20C737EF /* Pods-AllAboutOlaf-AllAboutOlafUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AllAboutOlaf-AllAboutOlafUITests.debug.xcconfig"; path = "Target Support Files/Pods-AllAboutOlaf-AllAboutOlafUITests/Pods-AllAboutOlaf-AllAboutOlafUITests.debug.xcconfig"; sourceTree = "<group>"; };
-		67354E87236E0E5900B1E8E8 /* AllAboutOlaf.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AllAboutOlaf.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		67354E88236E0E5900B1E8E8 /* AllAboutOlafUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AllAboutOlafUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		67B1D38E223C9BEF00F6A70E /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
-		6CDD8E7396B53B248B24BA24 /* Pods-AllAboutOlaf-AllAboutOlafUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AllAboutOlaf-AllAboutOlafUITests.release.xcconfig"; path = "Target Support Files/Pods-AllAboutOlaf-AllAboutOlafUITests/Pods-AllAboutOlaf-AllAboutOlafUITests.release.xcconfig"; sourceTree = "<group>"; };
-		71D5CCADA66D45008D9A38F2 /* RNVectorIcons.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNVectorIcons.xcodeproj; path = "../node_modules/react-native-vector-icons/RNVectorIcons.xcodeproj"; sourceTree = "<group>"; };
-		78C398B01ACF4ADC00677621 /* RCTLinking.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTLinking.xcodeproj; path = "../node_modules/react-native/Libraries/LinkingIOS/RCTLinking.xcodeproj"; sourceTree = "<group>"; };
-		832341B01AAA6A8300B99B32 /* RCTText.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTText.xcodeproj; path = "../node_modules/react-native/Libraries/Text/RCTText.xcodeproj"; sourceTree = "<group>"; };
-		9B180E9666DB4A17E182E9C6 /* Pods-AllAboutOlafUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AllAboutOlafUITests.debug.xcconfig"; path = "Target Support Files/Pods-AllAboutOlafUITests/Pods-AllAboutOlafUITests.debug.xcconfig"; sourceTree = "<group>"; };
-		9EB28C76433AECBFEDDD439B /* libPods-AllAboutOlaf.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-AllAboutOlaf.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		A91038679F834707B769D282 /* RNKeychain.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNKeychain.xcodeproj; path = "../node_modules/react-native-keychain/RNKeychain.xcodeproj"; sourceTree = "<group>"; };
 		C9C62AB413DD5F2C979EB571 /* Pods-AllAboutOlaf.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AllAboutOlaf.release.xcconfig"; path = "Target Support Files/Pods-AllAboutOlaf/Pods-AllAboutOlaf.release.xcconfig"; sourceTree = "<group>"; };
 		C9E6DCA95CEF977DEA0D094A /* Pods-AllAboutOlafUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AllAboutOlafUITests.release.xcconfig"; path = "Target Support Files/Pods-AllAboutOlafUITests/Pods-AllAboutOlafUITests.release.xcconfig"; sourceTree = "<group>"; };
 		D18853AA20995E40000A1DC5 /* AllAboutOlaf.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = AllAboutOlaf.entitlements; path = AllAboutOlaf/AllAboutOlaf.entitlements; sourceTree = "<group>"; };
 		D18853EC209973D7000A1DC5 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		E15F9948C74F213CA80DAB69 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-AllAboutOlaf/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -389,7 +391,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8222E4786CCF790474A60080 /* libPods-AllAboutOlaf-AllAboutOlafUITests.a in Frameworks */,
+				ECC963AEE9E76FCB0F2D8BAF /* libPods-AllAboutOlafUITests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -572,9 +574,25 @@
 				0002961E1E270BD9000909F2 /* SystemConfiguration.framework */,
 				0002961C1E270BD1000909F2 /* CoreData.framework */,
 				9EB28C76433AECBFEDDD439B /* libPods-AllAboutOlaf.a */,
-				2256074D704451D201AB966D /* libPods-AllAboutOlaf-AllAboutOlafUITests.a */,
+				91290B108F66DE12EBF91147 /* libPods-AllAboutOlafUITests.a */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		3E6AE7BF50F0F0BFAE82C799 /* ExpoModulesProviders */ = {
+			isa = PBXGroup;
+			children = (
+				4F5ADEFE6EBE5684DC1AFAC6 /* AllAboutOlaf */,
+			);
+			name = ExpoModulesProviders;
+			sourceTree = "<group>";
+		};
+		4F5ADEFE6EBE5684DC1AFAC6 /* AllAboutOlaf */ = {
+			isa = PBXGroup;
+			children = (
+				E15F9948C74F213CA80DAB69 /* ExpoModulesProvider.swift */,
+			);
+			name = AllAboutOlaf;
 			sourceTree = "<group>";
 		};
 		5A41494DACBB4D2795B46DE0 /* Resources */ = {
@@ -631,6 +649,7 @@
 				5A41494DACBB4D2795B46DE0 /* Resources */,
 				3C5BFA21338636E7EB4E5E0D /* Frameworks */,
 				A769180F26F9F7C00766031C /* Pods */,
+				3E6AE7BF50F0F0BFAE82C799 /* ExpoModulesProviders */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -660,8 +679,6 @@
 				00D33BDB1DDA58A8001E830E /* Sources */,
 				00D33BDC1DDA58A8001E830E /* Frameworks */,
 				00D33BDD1DDA58A8001E830E /* Resources */,
-				717F8A0D009C9E45FFD7CDCB /* [CP] Embed Pods Frameworks */,
-				71669A1E2623AE93009C095C /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -678,6 +695,7 @@
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "AllAboutOlaf" */;
 			buildPhases = (
 				CD55156431AFB9C5E64BD5CE /* [CP] Check Pods Manifest.lock */,
+				76A250010D5DA6F26AD7EB80 /* [Expo] Configure project */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
@@ -1097,85 +1115,24 @@
 			shellPath = /bin/sh;
 			shellScript = "export NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh\n";
 		};
-		71669A1E2623AE93009C095C /* [CP] Copy Pods Resources */ = {
+		76A250010D5DA6F26AD7EB80 /* [Expo] Configure project */ = {
 			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
 			files = (
 			);
-			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-AllAboutOlaf-AllAboutOlafUITests/Pods-AllAboutOlaf-AllAboutOlafUITests-resources.sh",
-				"${PODS_CONFIGURATION_BUILD_DIR}/AsyncStorage/AsyncStorage_resources.bundle",
-				"${PODS_CONFIGURATION_BUILD_DIR}/RCT-Folly/RCT-Folly_privacy.bundle",
-				"${PODS_CONFIGURATION_BUILD_DIR}/RNDeviceInfo/RNDeviceInfoPrivacyInfo.bundle",
-				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/AntDesign.ttf",
-				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Entypo.ttf",
-				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/EvilIcons.ttf",
-				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Feather.ttf",
-				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/FontAwesome.ttf",
-				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Brands.ttf",
-				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Regular.ttf",
-				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Solid.ttf",
-				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Fontisto.ttf",
-				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Foundation.ttf",
-				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Ionicons.ttf",
-				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/MaterialCommunityIcons.ttf",
-				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/MaterialIcons.ttf",
-				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Octicons.ttf",
-				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/SimpleLineIcons.ttf",
-				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Zocial.ttf",
-				"${PODS_CONFIGURATION_BUILD_DIR}/React-Core/React-Core_privacy.bundle",
-				"${PODS_CONFIGURATION_BUILD_DIR}/React-cxxreact/React-cxxreact_privacy.bundle",
-				"${PODS_CONFIGURATION_BUILD_DIR}/boost/boost_privacy.bundle",
-				"${PODS_CONFIGURATION_BUILD_DIR}/glog/glog_privacy.bundle",
+			inputFileListPaths = (
 			);
-			name = "[CP] Copy Pods Resources";
+			inputPaths = (
+			);
+			name = "[Expo] Configure project";
+			outputFileListPaths = (
+			);
 			outputPaths = (
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/AsyncStorage_resources.bundle",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/RCT-Folly_privacy.bundle",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/RNDeviceInfoPrivacyInfo.bundle",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/AntDesign.ttf",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Entypo.ttf",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/EvilIcons.ttf",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Feather.ttf",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/FontAwesome.ttf",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/FontAwesome5_Brands.ttf",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/FontAwesome5_Regular.ttf",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/FontAwesome5_Solid.ttf",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Fontisto.ttf",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Foundation.ttf",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Ionicons.ttf",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/MaterialCommunityIcons.ttf",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/MaterialIcons.ttf",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Octicons.ttf",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/SimpleLineIcons.ttf",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Zocial.ttf",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/React-Core_privacy.bundle",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/React-cxxreact_privacy.bundle",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/boost_privacy.bundle",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/glog_privacy.bundle",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-AllAboutOlaf-AllAboutOlafUITests/Pods-AllAboutOlaf-AllAboutOlafUITests-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		717F8A0D009C9E45FFD7CDCB /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-AllAboutOlaf-AllAboutOlafUITests/Pods-AllAboutOlaf-AllAboutOlafUITests-frameworks.sh",
-				"${PODS_XCFRAMEWORKS_BUILD_DIR}/hermes-engine/Pre-built/hermes.framework/hermes",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/hermes.framework",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-AllAboutOlaf-AllAboutOlafUITests/Pods-AllAboutOlaf-AllAboutOlafUITests-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
+			shellScript = "# This script configures Expo modules and generates the modules provider file.\nbash -l -c \"./Pods/Target\\ Support\\ Files/Pods-AllAboutOlaf/expo-configure-project.sh\"\n";
 		};
 		878A020C8F21FDAF804AB318 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1185,8 +1142,11 @@
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-AllAboutOlaf/Pods-AllAboutOlaf-resources.sh",
 				"${PODS_CONFIGURATION_BUILD_DIR}/AsyncStorage/AsyncStorage_resources.bundle",
+				"${PODS_CONFIGURATION_BUILD_DIR}/EXApplication/ExpoApplication_privacy.bundle",
+				"${PODS_CONFIGURATION_BUILD_DIR}/EXConstants/EXConstants.bundle",
+				"${PODS_CONFIGURATION_BUILD_DIR}/EXConstants/ExpoConstants_privacy.bundle",
+				"${PODS_CONFIGURATION_BUILD_DIR}/ExpoDevice/ExpoDevice_privacy.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/RCT-Folly/RCT-Folly_privacy.bundle",
-				"${PODS_CONFIGURATION_BUILD_DIR}/RNDeviceInfo/RNDeviceInfoPrivacyInfo.bundle",
 				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/AntDesign.ttf",
 				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Entypo.ttf",
 				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/EvilIcons.ttf",
@@ -1211,8 +1171,11 @@
 			name = "[CP] Copy Pods Resources";
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/AsyncStorage_resources.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/ExpoApplication_privacy.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/EXConstants.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/ExpoConstants_privacy.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/ExpoDevice_privacy.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/RCT-Folly_privacy.bundle",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/RNDeviceInfoPrivacyInfo.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/AntDesign.ttf",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Entypo.ttf",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/EvilIcons.ttf",
@@ -1254,7 +1217,7 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-AllAboutOlaf-AllAboutOlafUITests-checkManifestLockResult.txt",
+				"$(DERIVED_FILE_DIR)/Pods-AllAboutOlafUITests-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -1335,6 +1298,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				13B07FBC1A68108700A75B9A /* AppDelegate.swift in Sources */,
+				9677C33C4061926FC98EF4E6 /* ExpoModulesProvider.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1351,7 +1315,7 @@
 /* Begin XCBuildConfiguration section */
 		00D33BE61DDA58A8001E830E /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 5CBB688C2084ADBF20C737EF /* Pods-AllAboutOlaf-AllAboutOlafUITests.debug.xcconfig */;
+			baseConfigurationReference = 9B180E9666DB4A17E182E9C6 /* Pods-AllAboutOlafUITests.debug.xcconfig */;
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
@@ -1364,16 +1328,18 @@
 					"@loader_path/Frameworks",
 				);
 				LIBRARY_SEARCH_PATHS = "$(SDKROOT)/usr/lib/swift$(inherited)";
+				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_DEBUG";
 				PRODUCT_BUNDLE_IDENTIFIER = "hawkrives.All-About-Olaf-UI-Tests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_VERSION = 5.0;
 				TEST_TARGET_NAME = AllAboutOlaf;
 			};
 			name = Debug;
 		};
 		00D33BE71DDA58A8001E830E /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 6CDD8E7396B53B248B24BA24 /* Pods-AllAboutOlaf-AllAboutOlafUITests.release.xcconfig */;
+			baseConfigurationReference = C9E6DCA95CEF977DEA0D094A /* Pods-AllAboutOlafUITests.release.xcconfig */;
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
@@ -1387,8 +1353,10 @@
 					"@loader_path/Frameworks",
 				);
 				LIBRARY_SEARCH_PATHS = "$(SDKROOT)/usr/lib/swift$(inherited)";
+				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_RELEASE";
 				PRODUCT_BUNDLE_IDENTIFIER = "hawkrives.All-About-Olaf-UI-Tests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
 				TEST_TARGET_NAME = AllAboutOlaf;
 			};
 			name = Release;
@@ -1418,12 +1386,14 @@
 					"-ObjC",
 					"-lc++",
 				);
+				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_DEBUG";
 				PRODUCT_BUNDLE_IDENTIFIER = NFMTHAZVS9.com.drewvolz.stolaf;
 				PRODUCT_NAME = AllAboutOlaf;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "match Development NFMTHAZVS9.com.drewvolz.stolaf";
 				STRIPFLAGS = "-rSTx";
 				SWIFT_OBJC_BRIDGING_HEADER = "AllAboutOlafUITests/AllAboutOlaf-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -1451,12 +1421,14 @@
 					"-ObjC",
 					"-lc++",
 				);
+				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_RELEASE";
 				PRODUCT_BUNDLE_IDENTIFIER = NFMTHAZVS9.com.drewvolz.stolaf;
 				PRODUCT_NAME = AllAboutOlaf;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "match AppStore NFMTHAZVS9.com.drewvolz.stolaf";
 				STRIPFLAGS = "-rSTx";
 				SWIFT_OBJC_BRIDGING_HEADER = "AllAboutOlafUITests/AllAboutOlaf-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;

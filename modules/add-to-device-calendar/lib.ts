@@ -1,16 +1,23 @@
 import * as Sentry from '@sentry/react-native'
 import type {EventType} from '@frogpond/event-type'
-import RNCalendarEvents from 'react-native-calendar-events'
+import * as Calendar from 'expo-calendar'
 import {Alert, Linking, Platform} from 'react-native'
 
 export async function addToCalendar(event: EventType): Promise<boolean> {
 	try {
-		const authCode = await RNCalendarEvents.checkPermissions(false)
+		const {status, canAskAgain} = await Calendar.getCalendarPermissionsAsync()
 
-		const authStatus =
-			authCode === 'authorized' ? true : await requestCalendarAccess()
+		if (status === Calendar.PermissionStatus.GRANTED) {
+			return await saveEventToCalendar(event)
+		}
 
-		if (!authStatus) {
+		if (!canAskAgain) {
+			promptSettings()
+			return false
+		}
+
+		const granted = await requestCalendarAccess()
+		if (!granted) {
 			return false
 		}
 
@@ -24,14 +31,24 @@ export async function addToCalendar(event: EventType): Promise<boolean> {
 
 async function saveEventToCalendar(event: EventType): Promise<boolean> {
 	try {
-		await RNCalendarEvents.saveEvent(event.title, {
-			location: event.location,
-			startDate: event.startTime.toISOString(),
-			endDate: event.endTime.toISOString(),
-			description: event.description,
-			notes: event.description,
+		const calendars = await Calendar.getCalendarsAsync(
+			Calendar.EntityTypes.EVENT,
+		)
+		if (calendars.length === 0) {
+			Alert.alert(
+				'No Calendar Found',
+				'Please add a calendar account to your device in Settings before adding events.',
+			)
+			return false
+		}
+		const defaultCalendar = await Calendar.getDefaultCalendarAsync()
+		await Calendar.createEventAsync(defaultCalendar.id, {
+			title: event.title,
+			location: event.location || undefined,
+			startDate: event.startTime.toDate(),
+			endDate: event.endTime.toDate(),
+			notes: event.description || undefined,
 		})
-
 		return true
 	} catch (err) {
 		Sentry.captureException(err)
@@ -40,10 +57,10 @@ async function saveEventToCalendar(event: EventType): Promise<boolean> {
 	}
 }
 
-function promptSettings(): Alert | void {
+function promptSettings(): void {
 	if (Platform.OS === 'ios') {
 		// Note: remember to change this text in the iOS plist, too.
-		return Alert.alert(
+		Alert.alert(
 			'"All About Olaf" Would Like to Access Your Calendar',
 			`We use your calendar to add events to your calendar so that you remember
        what you wanted to attend.`,
@@ -60,16 +77,14 @@ function promptSettings(): Alert | void {
 }
 
 async function requestCalendarAccess(): Promise<boolean> {
-	let status = null
 	try {
-		status = await RNCalendarEvents.requestPermissions(false)
-	} catch (_err) {
+		const {status} = await Calendar.requestCalendarPermissionsAsync()
+		if (status !== Calendar.PermissionStatus.GRANTED) {
+			promptSettings()
+			return false
+		}
+		return true
+	} catch {
 		return false
 	}
-
-	if (status !== 'authorized') {
-		return promptSettings() === undefined
-	}
-
-	return true
 }

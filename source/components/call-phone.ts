@@ -1,5 +1,5 @@
 import {Alert} from 'react-native'
-import Clipboard from '@react-native-clipboard/clipboard'
+import * as Clipboard from 'expo-clipboard'
 import {openUrl} from '@frogpond/open-url'
 import {noop} from 'lodash'
 
@@ -28,7 +28,7 @@ export function callPhone(phoneNumber: string, opts?: Options): void {
 				},
 				{
 					text: 'Copy number',
-					onPress: () => Clipboard.setString(phoneNumber),
+					onPress: () => void Clipboard.setStringAsync(phoneNumber),
 				},
 			],
 		)

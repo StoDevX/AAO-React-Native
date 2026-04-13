@@ -5,7 +5,6 @@ import type {ViewType} from '../views'
 import {Touchable} from '@frogpond/touchable'
 import {transparent} from '@frogpond/colors'
 import {homescreenForegroundDark, homescreenForegroundLight} from './colors'
-import {hasNotch} from 'react-native-device-info'
 
 type Props = {
 	view: ViewType
@@ -42,7 +41,7 @@ const cellHorizontalPadding = 4
 const styles = StyleSheet.create({
 	button: {
 		elevation: 2,
-		borderRadius: Platform.OS === 'ios' ? (hasNotch() ? 17 : 6) : 3,
+		borderRadius: 17,
 
 		marginBottom: CELL_MARGIN,
 		marginLeft: CELL_MARGIN / 2,
