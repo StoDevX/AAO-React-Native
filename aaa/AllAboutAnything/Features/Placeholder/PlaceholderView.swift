@@ -9,10 +9,12 @@ struct PlaceholderView: View {
 			Image(systemName: store.sfSymbol)
 				.font(.system(size: 64))
 				.foregroundStyle(Color(hex: store.tintColor))
+				.accessibilityHidden(true)
 
 			Text(store.title)
 				.font(.title)
 				.fontWeight(.semibold)
+				.accessibilityHidden(true)
 
 			Text("Coming Soon")
 				.font(.subheadline)
