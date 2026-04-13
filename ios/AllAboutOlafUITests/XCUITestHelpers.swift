@@ -24,4 +24,26 @@ extension XCUIApplication {
 			.matching(NSPredicate(format: "label BEGINSWITH %@", label))
 			.firstMatch
 	}
+
+	/// Experimental helper for dismissing a SFSafariViewController. TBD which of these is correct.
+	func dismissSafariViewController(timeout: TimeInterval = 5) {
+		let buttonLabels = ["Done", "Close"]
+		let apps = [
+			XCUIApplication(),
+			XCUIApplication(bundleIdentifier: "com.apple.SafariViewService"),
+			XCUIApplication(bundleIdentifier: "com.apple.mobilesafari"),
+		]
+
+		for app in apps {
+			for label in buttonLabels {
+				let button = app.buttons[label]
+				if button.waitForExistence(timeout: 1) {
+					button.tap()
+					return
+				}
+			}
+		}
+
+		XCTFail("Could not find dismiss button for SFSafariViewController")
+	}
 }

@@ -19,15 +19,15 @@ class ModuleOlevilleTests: XCTestCase {
 	}
 
 	func testReturnsToHomescreenWhenClosed() throws {
-		throw XCTSkip("Cannot return to home from SFViewController")
-
 		let homescreen = app.element(matching: "screen-homescreen")
 		XCTAssertTrue(homescreen.waitForExistence(timeout: 30))
 
 		app.buttons["Oleville"].firstMatch.tap()
 		XCTAssertFalse(homescreen.exists)
 
-		app.buttons["Done"].firstMatch.tap()
+		// dismiss safari as soon as it opens
+		app.dismissSafariViewController()
+
 		XCTAssertTrue(homescreen.waitForExistence(timeout: 30))
 	}
 }
