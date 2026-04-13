@@ -18,7 +18,7 @@ class ModuleTransportationTests: XCTestCase {
 
 		app.buttons["Transportation"].firstMatch.tap()
 
-		XCTAssertFalse(homescreen.exists)
+		XCTAssertTrue(homescreen.waitForNonExistence(timeout: 30))
 	}
 
 	func testHasTransportationViewVisibleByDefault() throws {

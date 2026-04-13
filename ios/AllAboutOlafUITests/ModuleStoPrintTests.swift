@@ -15,7 +15,7 @@ class ModuleStoPrintTests: XCTestCase {
 
 		app.buttons["stoPrint"].firstMatch.tap()
 
-		XCTAssertFalse(homescreen.exists)
+		XCTAssertTrue(homescreen.waitForNonExistence(timeout: 30))
 	}
 
 	func testSaysYouAreNotLoggedInByDefault() throws {
@@ -25,7 +25,7 @@ class ModuleStoPrintTests: XCTestCase {
 		app.buttons["stoPrint"].firstMatch.tap()
 
 		let homescreen = app.element(matching: "screen-homescreen")
-		XCTAssertFalse(homescreen.exists)
+		XCTAssertTrue(homescreen.waitForNonExistence(timeout: 30))
 
 		let notLoggedIn = app.staticTexts["You are not logged in"].firstMatch
 		XCTAssertTrue(notLoggedIn.waitForExistence(timeout: 30))

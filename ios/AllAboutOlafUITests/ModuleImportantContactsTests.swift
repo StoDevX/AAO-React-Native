@@ -15,7 +15,7 @@ class ModuleImportantContactsTests: XCTestCase {
 
 		app.buttons["Important Contacts"].firstMatch.tap()
 
-		XCTAssertFalse(homescreen.exists)
+		XCTAssertTrue(homescreen.waitForNonExistence(timeout: 30))
 	}
 
 	func testHasContactsListVisibleByDefault() throws {

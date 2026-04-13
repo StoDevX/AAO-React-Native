@@ -15,7 +15,7 @@ class ModuleCampusDictionaryTests: XCTestCase {
 
 		app.buttons["Campus Dictionary"].firstMatch.tap()
 
-		XCTAssertFalse(homescreen.exists)
+		XCTAssertTrue(homescreen.waitForNonExistence(timeout: 30))
 	}
 
 	func testHasListVisible() throws {

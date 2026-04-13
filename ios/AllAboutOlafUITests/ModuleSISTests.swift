@@ -15,7 +15,7 @@ class ModuleSISTests: XCTestCase {
 
 		app.buttons["SIS"].firstMatch.tap()
 
-		XCTAssertFalse(homescreen.exists)
+		XCTAssertTrue(homescreen.waitForNonExistence(timeout: 30))
 	}
 
 	// MARK: - Balances (need fresh state)
@@ -29,7 +29,7 @@ class ModuleSISTests: XCTestCase {
 		app.buttons["SIS"].firstMatch.tap()
 
 		let homescreen = app.element(matching: "screen-homescreen")
-		XCTAssertFalse(homescreen.exists)
+		XCTAssertTrue(homescreen.waitForNonExistence(timeout: 30))
 
 		let iAgree = app.buttons["I Agree"].firstMatch
 		XCTAssertTrue(iAgree.waitForExistence(timeout: 30),
@@ -85,7 +85,7 @@ class ModuleSISTests: XCTestCase {
 
 		// Navigate back into SIS
 		app.buttons["SIS"].firstMatch.tap()
-		XCTAssertFalse(homescreen.exists)
+		XCTAssertTrue(homescreen.waitForNonExistence(timeout: 30))
 	}
 
 	// MARK: - Tabs

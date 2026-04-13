@@ -15,7 +15,7 @@ class ModuleBuildingHoursTests: XCTestCase {
 
 		app.buttons["Building Hours"].firstMatch.tap()
 
-		XCTAssertFalse(homescreen.exists)
+		XCTAssertTrue(homescreen.waitForNonExistence(timeout: 30))
 	}
 
 	func testHasBuildingListVisibleByDefault() throws {

@@ -15,7 +15,7 @@ class ModuleStreamingMediaTests: XCTestCase {
 
 		app.buttons["Streaming Media"].firstMatch.tap()
 
-		XCTAssertFalse(homescreen.exists)
+		XCTAssertTrue(homescreen.waitForNonExistence(timeout: 30))
 	}
 
 	func testHasStreamListVisibleByDefault() throws {

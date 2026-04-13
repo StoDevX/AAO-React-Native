@@ -17,7 +17,7 @@ class ModuleMenusTests: XCTestCase {
 
 		app.buttons["Menus"].firstMatch.tap()
 
-		XCTAssertFalse(homescreen.exists)
+		XCTAssertTrue(homescreen.waitForNonExistence(timeout: 30))
 	}
 
 	func testHasMenusListVisibleByDefault() throws {

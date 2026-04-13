@@ -15,7 +15,7 @@ class ModuleOlevilleTests: XCTestCase {
 
 		app.buttons["Oleville"].firstMatch.tap()
 
-		XCTAssertFalse(homescreen.exists)
+		XCTAssertTrue(homescreen.waitForNonExistence(timeout: 30))
 	}
 
 	func testReturnsToHomescreenWhenClosed() throws {
@@ -23,7 +23,7 @@ class ModuleOlevilleTests: XCTestCase {
 		XCTAssertTrue(homescreen.waitForExistence(timeout: 30))
 
 		app.buttons["Oleville"].firstMatch.tap()
-		XCTAssertFalse(homescreen.exists)
+		XCTAssertTrue(homescreen.waitForNonExistence(timeout: 30))
 
 		// dismiss safari as soon as it opens
 		app.dismissSafariViewController()

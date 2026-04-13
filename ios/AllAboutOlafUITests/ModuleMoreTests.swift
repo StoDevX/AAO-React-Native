@@ -15,7 +15,7 @@ class ModuleMoreTests: XCTestCase {
 
 		app.buttons["More"].firstMatch.tap()
 
-		XCTAssertFalse(homescreen.exists)
+		XCTAssertTrue(homescreen.waitForNonExistence(timeout: 30))
 	}
 
 	func testHasListVisible() throws {

@@ -15,7 +15,7 @@ class ModuleCalendarTests: XCTestCase {
 
 		app.buttons["Calendar"].firstMatch.tap()
 
-		XCTAssertFalse(homescreen.exists)
+		XCTAssertTrue(homescreen.waitForNonExistence(timeout: 30))
 	}
 
 	func testHasCalendarListVisibleByDefault() throws {
