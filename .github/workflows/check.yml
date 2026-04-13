@@ -155,10 +155,6 @@ jobs:
       - run: sudo xcode-select -s /Applications/${{ env.xcode_version }}.app
         if: steps.app-cache.outputs.cache-matched-key == ''
 
-      - name: List available iOS simulators
-        if: steps.app-cache.outputs.cache-matched-key == ''
-        run: xcrun simctl list devices iOS
-
       - uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151 # v4.0.1
         if: steps.app-cache.outputs.cache-matched-key == ''
 
@@ -219,8 +215,9 @@ jobs:
           path: ios/build/Build/Products/
           key: ${{ steps.app-cache.outputs.cache-primary-key }}
 
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
-        if: ${{ steps.app-cache.outputs.cache-matched-key == '' && !contains(github.event.pull_request.labels.*.name, 'ci/skip-e2e') }}
+      - name: Save iOS app as workflow artifact
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        if: steps.app-cache.outputs.cache-matched-key == ''
         with:
           name: ios-app
           path: ios/build/Build/Products/
@@ -228,6 +225,7 @@ jobs:
   uitest-plan:
     name: Plan UITest shards
     runs-on: ubuntu-24.04
+    needs: [jest, eslint]
     if: ${{ !contains(github.event.pull_request.labels.*.name, 'ci/skip-e2e') }}
     outputs:
       matrix: ${{ steps.split.outputs.matrix }}
@@ -237,18 +235,67 @@ jobs:
       - name: Split tests across shards
         id: split
         run: |
-          matrix=$(python3 scripts/split-uitests.py \
-            --test-dir ios/AllAboutOlafUITests \
-            --shards 2)
-          {
-            echo 'matrix<<EOF'
-            echo "${matrix}"
-            echo 'EOF'
-          } >> "$GITHUB_OUTPUT"
+          echo "matrix=$(python3 scripts/split-uitests.py --test-dir ios/AllAboutOlafUITests --shards 2)" >> "$GITHUB_OUTPUT"
+
+  uitest-udid:
+    # sometimes this can take up to 1.5min, so run it once and let's see if UDID are stable across VMs
+    name: Resolve device UUID for iOS
+    runs-on: macos-15
+    needs: [jest, eslint]
+    if: ${{ !contains(github.event.pull_request.labels.*.name, 'ci/skip-e2e') }}
+    outputs:
+      udid: ${{ steps.udid.outputs.udid }}
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - run: sudo xcode-select -s /Applications/${{ env.xcode_version }}.app
+
+      - name: Discover target simulator device
+        id: simulator-device
+        run: |
+          set -o pipefail
+          OS_VERSION=$(grep -m1 'IPHONEOS_DEPLOYMENT_TARGET' ios/AllAboutOlaf.xcodeproj/project.pbxproj | sed 's/.*= \(.*\);/\1/' | tr -d '[:space:]')
+          echo "type=iPhone 16 Pro" | tee -a "$GITHUB_OUTPUT"
+          echo "os=${OS_VERSION//./-}" | tee -a "$GITHUB_OUTPUT"
+
+      - name: List available simulators
+        id: devices
+        run: |
+          set -o pipefail
+          xcrun simctl list devices iOS -j \
+            | jq '.devices | map_values([.[] | del(.dataPath, .dataPathSize, .logPath, .isAvailable)])' \
+            | jq -r '"devices=\(.)"' \
+            | tee "$GITHUB_OUTPUT"
+          xcrun simctl list devices iOS
+
+      - name: Filter simulators by OS
+        id: devices-by-os
+        env:
+          DEVICES: '${{ steps.devices.outputs.devices }}'
+          SIMULATOR_OS: '${{ steps.simulator-device.outputs.os }}'
+        run: |
+          set -o pipefail
+          jq -rn --argjson devices "$DEVICES" '$devices | to_entries[] | select(.key | endswith("iOS-\(env.SIMULATOR_OS)")) | .value | "devices=\(.)"' | tee "$GITHUB_OUTPUT"
+
+      - name: Filter simulators by device type
+        id: devices-by-os-and-type
+        env:
+          DEVICES: '${{ steps.devices-by-os.outputs.devices }}'
+          SIMULATOR_TYPE: '${{ steps.simulator-device.outputs.type }}'
+        run: |
+          set -o pipefail
+          jq -rn --argjson devices "$DEVICES" '$devices | .[] | select(.name == env.SIMULATOR_TYPE) | "devices=\(.)"' | tee "$GITHUB_OUTPUT"
+
+      - name: Resolve simulator UDID
+        id: udid
+        env:
+          DEVICES: '${{ steps.devices-by-os-and-type.outputs.devices }}'
+        run: |
+          set -o pipefail
+          jq -rn --argjson devices "$DEVICES" '$devices | "udid=\(.udid)"' | tee "$GITHUB_OUTPUT"
 
   ios-uitest:
     name: Native UITest for iOS (${{ matrix.shard }})
-    needs: [uitest-plan, ios-build, ios-bundle]
+    needs: [uitest-plan, uitest-udid, ios-build, ios-bundle]
     runs-on: macos-15
     if: ${{ !contains(github.event.pull_request.labels.*.name, 'ci/skip-e2e') }}
     strategy:
@@ -286,54 +333,11 @@ jobs:
           rm -rf ios/build/Build/Products/Release-iphonesimulator/AllAboutOlaf.app/assets || true
           mv ios/assets ios/build/Build/Products/Release-iphonesimulator/AllAboutOlaf.app/
 
-      - name: Discover simulator device
-        id: simulator-device
-        run: |
-          set -o pipefail
-          OS_VERSION=$(grep -m1 'IPHONEOS_DEPLOYMENT_TARGET' ios/AllAboutOlaf.xcodeproj/project.pbxproj | sed 's/.*= \(.*\);/\1/' | tr -d '[:space:]')
-          echo "type=iPhone 16 Pro" | tee -a "$GITHUB_OUTPUT"
-          echo "os=${OS_VERSION//./-}" | tee -a "$GITHUB_OUTPUT"
-
-      - name: List available simulators (json)
-        id: devices
-        run: |
-          set -o pipefail
-          xcrun simctl list devices iOS -j \
-            | jq '.devices | map_values([.[] | del(.dataPath, .dataPathSize, .logPath, .isAvailable)])' \
-            | jq -r '"devices=\(.)"' \
-            | tee "$GITHUB_OUTPUT"
-
-      - name: Filter simulators by OS
-        id: devices-by-os
-        env:
-          DEVICES: '${{ steps.devices.outputs.devices }}'
-          SIMULATOR_OS: '${{ steps.simulator-device.outputs.os }}'
-        run: |
-          set -o pipefail
-          jq -rn --argjson devices "$DEVICES" '$devices | to_entries[] | select(.key | endswith("iOS-\(env.SIMULATOR_OS)")) | .value | "devices=\(.)"' | tee "$GITHUB_OUTPUT"
-
-      - name: Filter simulators by device type
-        id: devices-by-os-and-type
-        env:
-          DEVICES: '${{ steps.devices-by-os.outputs.devices }}'
-          SIMULATOR_TYPE: '${{ steps.simulator-device.outputs.type }}'
-        run: |
-          set -o pipefail
-          jq -rn --argjson devices "$DEVICES" '$devices | .[] | select(.name == env.SIMULATOR_TYPE) | "devices=\(.)"' | tee "$GITHUB_OUTPUT"
-
-      - name: Resolve simulator UDID
-        id: udid
-        env:
-          DEVICES: '${{ steps.devices-by-os-and-type.outputs.devices }}'
-        run: |
-          set -o pipefail
-          jq -rn --argjson devices "$DEVICES" '$devices | "udid=\(.udid)"' | tee "$GITHUB_OUTPUT"
-
       - name: Boot the simulator
-        run: xcrun simctl boot "${{ steps.udid.outputs.udid }}"
+        run: xcrun simctl boot "${{ needs.uitest-udid.outputs.udid }}"
 
       - name: Wait for the simulator to be ready
-        run: xcrun simctl bootstatus "${{ steps.udid.outputs.udid }}" -b
+        run: xcrun simctl bootstatus "${{ needs.uitest-udid.outputs.udid }}" -b
 
       - name: Run UITests
         timeout-minutes: 25
@@ -341,7 +345,7 @@ jobs:
           set -o pipefail
           xcodebuild test-without-building \
             -xctestrun $(find ios/build/Build/Products -name '*.xctestrun' -print -quit) \
-            -destination "platform=iOS Simulator,id=${{ steps.udid.outputs.udid }}" \
+            -destination "platform=iOS Simulator,id=${{ needs.uitest-udid.outputs.udid }}" \
             ${{ matrix.tests }} \
             -resultBundlePath uitest-results \
             | xcbeautify --renderer github-actions
