@@ -25,8 +25,18 @@ struct HomeFeature {
 		Reduce { state, action in
 			switch action {
 			case .onAppear:
-				try? databaseClient.seedIfNeeded()
-				let allItems = (try? databaseClient.fetchHomeItems()) ?? []
+				do {
+					try databaseClient.seedIfNeeded()
+				} catch {
+					reportIssue("Failed to seed database: \(error)")
+				}
+				let allItems: [HomeItemWithCustomization]
+				do {
+					allItems = try databaseClient.fetchHomeItems()
+				} catch {
+					reportIssue("Failed to fetch home items: \(error)")
+					allItems = []
+				}
 
 				let visible = allItems.filter { $0.customization?.isVisible != false }
 				let hidden = allItems.filter { $0.customization?.isVisible == false }
@@ -69,10 +79,18 @@ struct HomeFeature {
 
 	private func persistCustomizations(state: State) {
 		for (index, item) in state.gridItems.enumerated() {
-			try? databaseClient.updateCustomization(item.id, index, true)
+			do {
+				try databaseClient.updateCustomization(item.id, index, true)
+			} catch {
+				reportIssue("Failed to persist customization for \(item.id): \(error)")
+			}
 		}
 		for (index, item) in state.hiddenItems.enumerated() {
-			try? databaseClient.updateCustomization(item.id, index, false)
+			do {
+				try databaseClient.updateCustomization(item.id, index, false)
+			} catch {
+				reportIssue("Failed to persist customization for \(item.id): \(error)")
+			}
 		}
 	}
 }
