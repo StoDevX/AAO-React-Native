@@ -348,7 +348,13 @@ jobs:
 
       - name: Extract failure screenshots
         if: failure()
-        run: python3 scripts/extract-xcresult-screenshots.py uitest-results.xcresult uitest-screenshots
+        run: |
+          mkdir -p uitest-screenshots
+          xcrun xcresulttool export attachments \
+            --path uitest-results.xcresult \
+            --output-path uitest-screenshots || echo "No attachments to export"
+          screenshot_count=$(find uitest-screenshots \( -name '*.png' -o -name '*.jpg' \) 2>/dev/null | wc -l | tr -d ' ')
+          echo "Found ${screenshot_count} screenshot(s)"
 
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         if: failure()
