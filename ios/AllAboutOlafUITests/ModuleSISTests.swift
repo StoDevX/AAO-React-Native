@@ -70,10 +70,10 @@ class ModuleSISTests: XCTestCase {
 		XCTAssertTrue(iAgree.waitForExistence(timeout: 30))
 		iAgree.tap()
 
-		XCTAssertFalse(iAgree.exists)
-
 		let balances = app.staticTexts["BALANCES"].firstMatch
 		XCTAssertTrue(balances.waitForExistence(timeout: 30))
+
+		XCTAssertFalse(iAgree.exists)
 
 		// Return to the home screen
 		let backButton = app.buttons["All About Olaf"].firstMatch

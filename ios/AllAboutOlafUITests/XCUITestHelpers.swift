@@ -14,4 +14,14 @@ extension XCUIApplication {
 	func tabButton(_ label: String) -> XCUIElement {
 		buttons.matching(NSPredicate(format: "label BEGINSWITH %@", label)).firstMatch
 	}
+
+	/// Find any accessible element whose label starts with the given text.
+	/// Useful for React Native Pressable-wrapped elements whose accessibility
+	/// label is the concatenation of child text content (which may include
+	/// trailing icon glyphs from react-native-vector-icons).
+	func elementWithLabel(startingWith label: String) -> XCUIElement {
+		descendants(matching: .any)
+			.matching(NSPredicate(format: "label BEGINSWITH %@", label))
+			.firstMatch
+	}
 }

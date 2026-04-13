@@ -28,7 +28,7 @@ class ModuleSettingsTests: XCTestCase {
 		let homescreen = app.element(matching: "screen-homescreen")
 		XCTAssertFalse(homescreen.exists)
 
-		app.buttons["Done"].firstMatch.tap()
+		app.element(matching: "button-close-screen").tap()
 
 		XCTAssertTrue(homescreen.waitForExistence(timeout: 30),
 		              "Home screen should be visible after exiting settings")

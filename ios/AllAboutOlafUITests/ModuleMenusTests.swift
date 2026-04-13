@@ -63,7 +63,7 @@ class ModuleMenusTests: XCTestCase {
 		XCTAssertTrue(carleton.waitForExistence(timeout: 30))
 		carleton.tap()
 
-		let burton = app.buttons["Burton"].firstMatch
+		let burton = app.elementWithLabel(startingWith: "Burton")
 		XCTAssertTrue(burton.waitForExistence(timeout: 30))
 		burton.tap()
 	}
@@ -75,7 +75,7 @@ class ModuleMenusTests: XCTestCase {
 		XCTAssertTrue(carleton.waitForExistence(timeout: 30))
 		carleton.tap()
 
-		let ldc = app.buttons["LDC"].firstMatch
+		let ldc = app.elementWithLabel(startingWith: "LDC")
 		XCTAssertTrue(ldc.waitForExistence(timeout: 30))
 		ldc.tap()
 	}
@@ -87,7 +87,7 @@ class ModuleMenusTests: XCTestCase {
 		XCTAssertTrue(carleton.waitForExistence(timeout: 30))
 		carleton.tap()
 
-		let weitzCenter = app.buttons["Weitz Center"].firstMatch
+		let weitzCenter = app.elementWithLabel(startingWith: "Weitz Center")
 		XCTAssertTrue(weitzCenter.waitForExistence(timeout: 30))
 		weitzCenter.tap()
 	}
@@ -99,7 +99,7 @@ class ModuleMenusTests: XCTestCase {
 		XCTAssertTrue(carleton.waitForExistence(timeout: 30))
 		carleton.tap()
 
-		let saylesHill = app.buttons["Sayles Hill"].firstMatch
+		let saylesHill = app.elementWithLabel(startingWith: "Sayles Hill")
 		XCTAssertTrue(saylesHill.waitForExistence(timeout: 30))
 		saylesHill.tap()
 	}
