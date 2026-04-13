@@ -1,6 +1,7 @@
 import AVFoundation
 import React
 import React_RCTAppDelegate
+import Security
 import UIKit
 
 @UIApplicationMain
@@ -22,6 +23,9 @@ class AppDelegate: RCTAppDelegate {
       if let bundleId = Bundle.main.bundleIdentifier {
         UserDefaults.standard.removePersistentDomain(forName: bundleId)
       }
+      // Clear Keychain (expo-secure-store credentials)
+      let keychainQuery: [String: Any] = [kSecClass as String: kSecClassGenericPassword]
+      SecItemDelete(keychainQuery as CFDictionary)
     }
 
     self.moduleName = "AllAboutOlaf"
