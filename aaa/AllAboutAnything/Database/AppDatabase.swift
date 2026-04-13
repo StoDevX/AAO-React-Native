@@ -1,6 +1,10 @@
 import Foundation
 import GRDB
 
+enum AppDatabaseError: Error {
+	case missingSeedResource
+}
+
 struct AppDatabase: Sendable {
 	let dbQueue: DatabaseQueue
 
@@ -36,13 +40,13 @@ struct AppDatabase: Sendable {
 		return migrator
 	}
 
-	func seedIfNeeded() throws {
+	func seedIfNeeded(seedURL: URL? = Bundle.main.url(forResource: "default-items", withExtension: "json")) throws {
 		try dbQueue.write { db in
 			let count = try HomeItem.fetchCount(db)
 			guard count == 0 else { return }
 
-			guard let url = Bundle.main.url(forResource: "default-items", withExtension: "json") else {
-				return
+			guard let url = seedURL else {
+				throw AppDatabaseError.missingSeedResource
 			}
 
 			let data = try Data(contentsOf: url)
