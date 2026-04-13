@@ -163,9 +163,9 @@ jobs:
         if: steps.app-cache.outputs.cache-matched-key == ''
         run: npm ci
 
-      - name: Install ccache
+      - name: Install ccache and expect
         if: steps.app-cache.outputs.cache-matched-key == ''
-        run: brew install ccache
+        run: brew install ccache expect
 
       - name: Restore/save ccache
         if: steps.app-cache.outputs.cache-matched-key == ''
@@ -207,7 +207,7 @@ jobs:
             CODE_SIGN_IDENTITY="" \
             CODE_SIGNING_REQUIRED=NO \
             CODE_SIGNING_ALLOWED=NO \
-            | xcbeautify --renderer github-actions
+            | unbuffer -p xcbeautify --renderer github-actions
 
       - name: Show ccache stats
         if: steps.app-cache.outputs.cache-matched-key == ''
@@ -233,6 +233,9 @@ jobs:
     if: ${{ !contains(github.event.pull_request.labels.*.name, 'ci/skip-e2e') }}
     steps:
       - run: sudo xcode-select -s /Applications/${{ env.xcode_version }}.app
+
+      - name: Install expect
+        run: brew install expect
 
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
@@ -321,7 +324,7 @@ jobs:
             -destination "platform=iOS Simulator,id=${{ steps.udid.outputs.udid }},arch=arm64" \
             -only-testing:AllAboutOlafUITests \
             -resultBundlePath uitest-results \
-            | xcbeautify --renderer github-actions
+            | unbuffer -p xcbeautify --renderer github-actions
 
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         if: failure()
