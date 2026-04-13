@@ -322,8 +322,32 @@ jobs:
             -resultBundlePath uitest-results \
             | xcbeautify --renderer github-actions
 
+      - name: Collect crash logs from simulator
+        if: failure()
+        run: |
+          UDID="${{ steps.udid.outputs.udid }}"
+          mkdir -p crash-logs
+          # Simulator device logs
+          if [ -d ~/Library/Logs/DiagnosticReports ]; then
+            cp ~/Library/Logs/DiagnosticReports/*.crash crash-logs/ 2>/dev/null || true
+            cp ~/Library/Logs/DiagnosticReports/*.ips crash-logs/ 2>/dev/null || true
+          fi
+          # Simulator system log (last 500 lines)
+          xcrun simctl spawn "$UDID" log show --predicate 'process == "AllAboutOlaf"' --last 5m --style compact > crash-logs/simulator-app.log 2>/dev/null || true
+          # CoreSimulator logs
+          if [ -d ~/Library/Logs/CoreSimulator/"$UDID" ]; then
+            cp ~/Library/Logs/CoreSimulator/"$UDID"/system.log crash-logs/coresimulator.log 2>/dev/null || true
+          fi
+          ls -la crash-logs/
+
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         if: failure()
         with:
           name: uitest-results
           path: uitest-results.xcresult/
+
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        if: failure()
+        with:
+          name: crash-logs
+          path: crash-logs/
