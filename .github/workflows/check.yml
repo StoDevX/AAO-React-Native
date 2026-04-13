@@ -226,10 +226,35 @@ jobs:
           path: ios/build/Build/Products/
 
   ios-uitest:
-    name: Native UITest for iOS
+    name: Native UITest for iOS (${{ matrix.shard }})
     needs: [ios-build, ios-bundle]
     runs-on: macos-15
     if: ${{ !contains(github.event.pull_request.labels.*.name, 'ci/skip-e2e') }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - shard: 1
+            tests: >-
+              -only-testing:AllAboutOlafUITests/ModuleMenusTests
+              -only-testing:AllAboutOlafUITests/ModuleTransportationTests
+              -only-testing:AllAboutOlafUITests/ModuleStreamingMediaTests
+              -only-testing:AllAboutOlafUITests/ModuleSettingsTests
+              -only-testing:AllAboutOlafUITests/ModuleStudentOrgsTests
+              -only-testing:AllAboutOlafUITests/ModuleStoPrintTests
+          - shard: 2
+            tests: >-
+              -only-testing:AllAboutOlafUITests/ModuleSISTests
+              -only-testing:AllAboutOlafUITests/ModuleCalendarTests
+              -only-testing:AllAboutOlafUITests/ModuleOlevilleTests
+              -only-testing:AllAboutOlafUITests/ModuleMoreTests
+              -only-testing:AllAboutOlafUITests/ModuleImportantContactsTests
+              -only-testing:AllAboutOlafUITests/ModuleHomeTests
+              -only-testing:AllAboutOlafUITests/ModuleDirectoryTests
+              -only-testing:AllAboutOlafUITests/ModuleCourseCatalogTests
+              -only-testing:AllAboutOlafUITests/ModuleCampusMapTests
+              -only-testing:AllAboutOlafUITests/ModuleCampusDictionaryTests
+              -only-testing:AllAboutOlafUITests/ModuleBuildingHoursTests
     steps:
       - run: sudo xcode-select -s /Applications/${{ env.xcode_version }}.app
 
@@ -318,12 +343,12 @@ jobs:
           xcodebuild test-without-building \
             -xctestrun $(find ios/build/Build/Products -name '*.xctestrun' -print -quit) \
             -destination "platform=iOS Simulator,id=${{ steps.udid.outputs.udid }}" \
-            -only-testing:AllAboutOlafUITests \
+            ${{ matrix.tests }} \
             -resultBundlePath uitest-results \
             | xcbeautify --renderer github-actions
 
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         if: failure()
         with:
-          name: uitest-results
+          name: uitest-results-${{ matrix.shard }}
           path: uitest-results.xcresult/
