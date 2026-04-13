@@ -1,0 +1,465 @@
+<h2>Hidden Items Drawer: Which Style?</h2>
+<p class="subtitle">How should hidden items appear when in edit mode?</p>
+
+<div class="cards">
+	<!-- Option A: Inline Section -->
+	<div class="card" data-choice="inline" onclick="toggleSelect(this)">
+		<div class="card-image">
+			<div
+				style="
+					background: #1c1c1e;
+					border-radius: 12px;
+					padding: 16px;
+					font-family: -apple-system, system-ui, sans-serif;
+					color: white;
+				"
+			>
+				<!-- Mini home grid mockup -->
+				<div
+					style="
+						display: flex;
+						justify-content: space-between;
+						align-items: center;
+						margin-bottom: 12px;
+					"
+				>
+					<span style="font-size: 18px; font-weight: 600">Home</span>
+					<span style="color: #0a84ff; font-size: 14px">Done</span>
+				</div>
+				<!-- Grid items -->
+				<div
+					style="
+						display: grid;
+						grid-template-columns: 1fr 1fr;
+						gap: 8px;
+						margin-bottom: 16px;
+					"
+				>
+					<div
+						style="
+							background: #2c2c2e;
+							border-radius: 10px;
+							padding: 10px;
+							text-align: center;
+							position: relative;
+						"
+					>
+						<span
+							style="
+								position: absolute;
+								top: -4px;
+								left: -4px;
+								background: #ff3b30;
+								color: white;
+								border-radius: 50%;
+								width: 18px;
+								height: 18px;
+								font-size: 11px;
+								display: flex;
+								align-items: center;
+								justify-content: center;
+							"
+							>−</span
+						>
+						<div
+							style="
+								width: 32px;
+								height: 32px;
+								border-radius: 8px;
+								background: #34c759;
+								margin: 0 auto 4px;
+								display: flex;
+								align-items: center;
+								justify-content: center;
+							"
+						>
+							🍽
+						</div>
+						<div style="font-size: 11px; color: #ccc">Menus</div>
+					</div>
+					<div
+						style="
+							background: #2c2c2e;
+							border-radius: 10px;
+							padding: 10px;
+							text-align: center;
+							position: relative;
+						"
+					>
+						<span
+							style="
+								position: absolute;
+								top: -4px;
+								left: -4px;
+								background: #ff3b30;
+								color: white;
+								border-radius: 50%;
+								width: 18px;
+								height: 18px;
+								font-size: 11px;
+								display: flex;
+								align-items: center;
+								justify-content: center;
+							"
+							>−</span
+						>
+						<div
+							style="
+								width: 32px;
+								height: 32px;
+								border-radius: 8px;
+								background: #ff9500;
+								margin: 0 auto 4px;
+								display: flex;
+								align-items: center;
+								justify-content: center;
+							"
+						>
+							📋
+						</div>
+						<div style="font-size: 11px; color: #ccc">SIS</div>
+					</div>
+				</div>
+				<!-- Divider -->
+				<div style="border-top: 1px solid #3a3a3c; margin: 8px 0"></div>
+				<div
+					style="
+						font-size: 12px;
+						color: #8e8e93;
+						text-transform: uppercase;
+						letter-spacing: 0.5px;
+						margin-bottom: 8px;
+					"
+				>
+					Hidden
+				</div>
+				<!-- Hidden items as a row -->
+				<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px">
+					<div
+						style="
+							background: #2c2c2e;
+							border-radius: 10px;
+							padding: 10px;
+							text-align: center;
+							opacity: 0.7;
+							position: relative;
+						"
+					>
+						<span
+							style="
+								position: absolute;
+								top: -4px;
+								left: -4px;
+								background: #34c759;
+								color: white;
+								border-radius: 50%;
+								width: 18px;
+								height: 18px;
+								font-size: 11px;
+								display: flex;
+								align-items: center;
+								justify-content: center;
+							"
+							>+</span
+						>
+						<div
+							style="
+								width: 32px;
+								height: 32px;
+								border-radius: 8px;
+								background: #5856d6;
+								margin: 0 auto 4px;
+								display: flex;
+								align-items: center;
+								justify-content: center;
+							"
+						>
+							📰
+						</div>
+						<div style="font-size: 11px; color: #8e8e93">News</div>
+					</div>
+					<div
+						style="
+							background: #2c2c2e;
+							border-radius: 10px;
+							padding: 10px;
+							text-align: center;
+							opacity: 0.7;
+							position: relative;
+						"
+					>
+						<span
+							style="
+								position: absolute;
+								top: -4px;
+								left: -4px;
+								background: #34c759;
+								color: white;
+								border-radius: 50%;
+								width: 18px;
+								height: 18px;
+								font-size: 11px;
+								display: flex;
+								align-items: center;
+								justify-content: center;
+							"
+							>+</span
+						>
+						<div
+							style="
+								width: 32px;
+								height: 32px;
+								border-radius: 8px;
+								background: #ff2d55;
+								margin: 0 auto 4px;
+								display: flex;
+								align-items: center;
+								justify-content: center;
+							"
+						>
+							📖
+						</div>
+						<div style="font-size: 11px; color: #8e8e93">Dictionary</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="card-body">
+			<h3>A: Inline Section</h3>
+			<p>
+				Hidden items appear below a divider on the same screen. Same grid
+				layout, slightly dimmed with green + badges. Scroll to see them. Simple
+				to build, easy to discover.
+			</p>
+		</div>
+	</div>
+
+	<!-- Option B: Bottom Sheet -->
+	<div class="card" data-choice="sheet" onclick="toggleSelect(this)">
+		<div class="card-image">
+			<div
+				style="
+					background: #1c1c1e;
+					border-radius: 12px;
+					padding: 16px;
+					font-family: -apple-system, system-ui, sans-serif;
+					color: white;
+					position: relative;
+					min-height: 280px;
+				"
+			>
+				<!-- Mini home grid mockup -->
+				<div
+					style="
+						display: flex;
+						justify-content: space-between;
+						align-items: center;
+						margin-bottom: 12px;
+					"
+				>
+					<span style="font-size: 18px; font-weight: 600">Home</span>
+					<span style="color: #0a84ff; font-size: 14px">Done</span>
+				</div>
+				<!-- Grid items -->
+				<div
+					style="
+						display: grid;
+						grid-template-columns: 1fr 1fr;
+						gap: 8px;
+						margin-bottom: 16px;
+					"
+				>
+					<div
+						style="
+							background: #2c2c2e;
+							border-radius: 10px;
+							padding: 10px;
+							text-align: center;
+							position: relative;
+						"
+					>
+						<span
+							style="
+								position: absolute;
+								top: -4px;
+								left: -4px;
+								background: #ff3b30;
+								color: white;
+								border-radius: 50%;
+								width: 18px;
+								height: 18px;
+								font-size: 11px;
+								display: flex;
+								align-items: center;
+								justify-content: center;
+							"
+							>−</span
+						>
+						<div
+							style="
+								width: 32px;
+								height: 32px;
+								border-radius: 8px;
+								background: #34c759;
+								margin: 0 auto 4px;
+								display: flex;
+								align-items: center;
+								justify-content: center;
+							"
+						>
+							🍽
+						</div>
+						<div style="font-size: 11px; color: #ccc">Menus</div>
+					</div>
+					<div
+						style="
+							background: #2c2c2e;
+							border-radius: 10px;
+							padding: 10px;
+							text-align: center;
+							position: relative;
+						"
+					>
+						<span
+							style="
+								position: absolute;
+								top: -4px;
+								left: -4px;
+								background: #ff3b30;
+								color: white;
+								border-radius: 50%;
+								width: 18px;
+								height: 18px;
+								font-size: 11px;
+								display: flex;
+								align-items: center;
+								justify-content: center;
+							"
+							>−</span
+						>
+						<div
+							style="
+								width: 32px;
+								height: 32px;
+								border-radius: 8px;
+								background: #ff9500;
+								margin: 0 auto 4px;
+								display: flex;
+								align-items: center;
+								justify-content: center;
+							"
+						>
+							📋
+						</div>
+						<div style="font-size: 11px; color: #ccc">SIS</div>
+					</div>
+				</div>
+				<!-- Sheet overlay -->
+				<div
+					style="
+						position: absolute;
+						bottom: 0;
+						left: 0;
+						right: 0;
+						background: #2c2c2e;
+						border-radius: 12px 12px 0 0;
+						padding: 12px 16px 16px;
+					"
+				>
+					<div
+						style="
+							width: 36px;
+							height: 4px;
+							background: #5a5a5e;
+							border-radius: 2px;
+							margin: 0 auto 10px;
+						"
+					></div>
+					<div style="font-size: 13px; font-weight: 600; margin-bottom: 8px">
+						Hidden Items
+					</div>
+					<div style="display: flex; gap: 12px">
+						<div style="text-align: center; position: relative">
+							<span
+								style="
+									position: absolute;
+									top: -4px;
+									right: -4px;
+									background: #34c759;
+									color: white;
+									border-radius: 50%;
+									width: 18px;
+									height: 18px;
+									font-size: 11px;
+									display: flex;
+									align-items: center;
+									justify-content: center;
+								"
+								>+</span
+							>
+							<div
+								style="
+									width: 40px;
+									height: 40px;
+									border-radius: 10px;
+									background: #5856d6;
+									display: flex;
+									align-items: center;
+									justify-content: center;
+								"
+							>
+								📰
+							</div>
+							<div style="font-size: 10px; color: #8e8e93; margin-top: 2px">
+								News
+							</div>
+						</div>
+						<div style="text-align: center; position: relative">
+							<span
+								style="
+									position: absolute;
+									top: -4px;
+									right: -4px;
+									background: #34c759;
+									color: white;
+									border-radius: 50%;
+									width: 18px;
+									height: 18px;
+									font-size: 11px;
+									display: flex;
+									align-items: center;
+									justify-content: center;
+								"
+								>+</span
+							>
+							<div
+								style="
+									width: 40px;
+									height: 40px;
+									border-radius: 10px;
+									background: #ff2d55;
+									display: flex;
+									align-items: center;
+									justify-content: center;
+								"
+							>
+								📖
+							</div>
+							<div style="font-size: 10px; color: #8e8e93; margin-top: 2px">
+								Dict
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="card-body">
+			<h3>B: Bottom Sheet</h3>
+			<p>
+				Hidden items live in a pull-up sheet (like Shortcuts). More discoverable
+				via the drag handle, feels native. Slightly more complex — uses
+				SwiftUI's <code>.sheet</code> or a custom detent.
+			</p>
+		</div>
+	</div>
+</div>

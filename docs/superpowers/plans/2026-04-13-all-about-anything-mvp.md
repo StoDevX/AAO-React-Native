@@ -146,8 +146,11 @@ Expected: `TEST SUCCEEDED` (or similar), 1 test passed.
 
 - [ ] **Step 9: Commit**
 
+The `aaa/` directory lives in the parent `aao-react-native` repo — do NOT run `git init` inside it. Commit to the parent repo, staging only the new files (not xcuserdata):
+
 ```bash
-cd aaa && git init && git add -A && git commit -m "chore: scaffold AllAboutAnything Xcode project with TCA and GRDB dependencies"
+git add aaa/project.yml aaa/.gitignore aaa/AllAboutAnything aaa/AllAboutAnythingTests aaa/AllAboutAnything.xcodeproj/project.pbxproj aaa/AllAboutAnything.xcodeproj/xcshareddata
+git commit -m "chore: scaffold AllAboutAnything Xcode project with TCA and GRDB dependencies"
 ```
 
 ---

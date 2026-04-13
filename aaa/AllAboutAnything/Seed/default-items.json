@@ -1,0 +1,114 @@
+[
+  {
+    "id": "menus",
+    "title": "Menus",
+    "sfSymbol": "fork.knife",
+    "tintColor": "#34c759",
+    "destinationView": "menus"
+  },
+  {
+    "id": "sis",
+    "title": "SIS",
+    "sfSymbol": "touchid",
+    "tintColor": "#ff9500",
+    "destinationView": "sis"
+  },
+  {
+    "id": "building-hours",
+    "title": "Building Hours",
+    "sfSymbol": "clock",
+    "tintColor": "#007aff",
+    "destinationView": "building-hours"
+  },
+  {
+    "id": "calendar",
+    "title": "Calendar",
+    "sfSymbol": "calendar",
+    "tintColor": "#af52de",
+    "destinationView": "calendar"
+  },
+  {
+    "id": "directory",
+    "title": "Directory",
+    "sfSymbol": "person.text.rectangle",
+    "tintColor": "#ff2d55",
+    "destinationView": "directory"
+  },
+  {
+    "id": "streaming",
+    "title": "Streaming Media",
+    "sfSymbol": "play.tv",
+    "tintColor": "#5ac8fa",
+    "destinationView": "streaming"
+  },
+  {
+    "id": "news",
+    "title": "News",
+    "sfSymbol": "newspaper",
+    "tintColor": "#5856d6",
+    "destinationView": "news"
+  },
+  {
+    "id": "campus-map",
+    "title": "Campus Map",
+    "sfSymbol": "map",
+    "tintColor": "#1c2541",
+    "destinationUrl": "https://www.myatlascms.com/map/index.php?id=294"
+  },
+  {
+    "id": "contacts",
+    "title": "Important Contacts",
+    "sfSymbol": "phone",
+    "tintColor": "#ff3b30",
+    "destinationView": "contacts"
+  },
+  {
+    "id": "transportation",
+    "title": "Transportation",
+    "sfSymbol": "bus",
+    "tintColor": "#8e8e93",
+    "destinationView": "transportation"
+  },
+  {
+    "id": "dictionary",
+    "title": "Campus Dictionary",
+    "sfSymbol": "book",
+    "tintColor": "#ff2d55",
+    "destinationView": "dictionary"
+  },
+  {
+    "id": "student-orgs",
+    "title": "Student Orgs",
+    "sfSymbol": "globe",
+    "tintColor": "#1c3879",
+    "destinationView": "student-orgs"
+  },
+  {
+    "id": "more",
+    "title": "More",
+    "sfSymbol": "link",
+    "tintColor": "#30d158",
+    "destinationView": "more"
+  },
+  {
+    "id": "print-jobs",
+    "title": "stoPrint",
+    "sfSymbol": "printer",
+    "tintColor": "#25c4b0",
+    "destinationView": "print-jobs"
+  },
+  {
+    "id": "course-search",
+    "title": "Course Catalog",
+    "sfSymbol": "graduationcap",
+    "tintColor": "#bf5af2",
+    "destinationView": "course-search"
+  },
+  {
+    "id": "oleville",
+    "title": "Oleville",
+    "sfSymbol": "safari",
+    "tintColor": "#ffcc00",
+    "destinationUrl": "https://oleville.com/"
+  }
+]

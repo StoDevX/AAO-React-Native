@@ -15,7 +15,16 @@ DerivedData/
 
 # SPM
 .build/
-*.resolved
+
+# XcodeGen generates this — ignore it, but track Package.resolved for reproducibility
+AllAboutAnything.xcodeproj/*
+!AllAboutAnything.xcodeproj/project.xcworkspace/
+AllAboutAnything.xcodeproj/project.xcworkspace/*
+!AllAboutAnything.xcodeproj/project.xcworkspace/xcshareddata/
+AllAboutAnything.xcodeproj/project.xcworkspace/xcshareddata/*
+!AllAboutAnything.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/
+AllAboutAnything.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/*
+!AllAboutAnything.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved
 
 # macOS
 .DS_Store
