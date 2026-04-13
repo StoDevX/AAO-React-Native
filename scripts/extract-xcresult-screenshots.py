@@ -19,6 +19,8 @@ def run_xcresulttool(*args):
         ["xcrun", "xcresulttool", *args], capture_output=True, text=True
     )
     if result.returncode != 0:
+        if result.stderr.strip():
+            print(f"xcresulttool error: {result.stderr.strip()}", file=sys.stderr)
         return None
     try:
         return json.loads(result.stdout)
@@ -126,7 +128,9 @@ def main():
             exported += 1
             print(f"  Exported: {os.path.basename(out_path)}")
         else:
-            print(f"  Failed to export: {name} (id={payload_id})")
+            stderr = result.stderr.decode().strip() if result.stderr else ""
+            detail = f": {stderr}" if stderr else ""
+            print(f"  Failed to export: {name} (id={payload_id}){detail}")
 
     print(f"\nExported {exported}/{len(all_attachments)} screenshot(s)")
 

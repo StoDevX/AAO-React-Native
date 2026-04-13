@@ -38,6 +38,9 @@ local.properties
 *.keystore
 !debug.keystore
 
+# Python
+__pycache__/
+
 # node.js
 node_modules/
 npm-debug.log
