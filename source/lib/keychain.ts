@@ -12,12 +12,7 @@ function credentialsKey(service: string): string {
 export async function getInternetCredentials(
 	service: string,
 ): Promise<StoredCredentials | null> {
-	let raw: string | null
-	try {
-		raw = await SecureStore.getItemAsync(credentialsKey(service))
-	} catch {
-		return null
-	}
+	const raw = await SecureStore.getItemAsync(credentialsKey(service))
 	if (!raw) {
 		return null
 	}
@@ -57,9 +52,5 @@ export async function setInternetCredentials(
 }
 
 export async function resetInternetCredentials(service: string): Promise<void> {
-	try {
-		await SecureStore.deleteItemAsync(credentialsKey(service))
-	} catch {
-		// ignore errors during credential deletion
-	}
+	await SecureStore.deleteItemAsync(credentialsKey(service))
 }
