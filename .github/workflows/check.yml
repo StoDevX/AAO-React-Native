@@ -350,24 +350,26 @@ jobs:
             -resultBundlePath uitest-results \
             | xcbeautify --renderer github-actions
 
-      - name: Extract failure screenshots
+      - name: Extract failure attachments
         if: failure()
         run: |
-          mkdir -p uitest-screenshots
+          mkdir -p uitest-attachments
           xcrun xcresulttool export attachments \
             --path uitest-results.xcresult \
-            --output-path uitest-screenshots || echo "No attachments to export"
-          screenshot_count=$(find uitest-screenshots \( -name '*.png' -o -name '*.jpg' \) 2>/dev/null | wc -l | tr -d ' ')
-          echo "Found ${screenshot_count} screenshot(s)"
+            --output-path uitest-attachments || echo "No attachments to export"
+          screenshot_count=$(find uitest-attachments -name '*' 2>/dev/null | wc -l | tr -d ' ')
+          echo "Found ${screenshot_count} attachments(s)"
 
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+      - name: Upload failure attachments
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         if: failure()
         with:
-          name: uitest-screenshots-${{ matrix.shard }}
-          path: uitest-screenshots/
+          name: uitest-attachments-${{ matrix.shard }}
+          path: uitest-attachments/
           if-no-files-found: ignore
 
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+      - name: Upload XCResult bundle
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         if: failure()
         with:
           name: uitest-results-${{ matrix.shard }}.xcresult
