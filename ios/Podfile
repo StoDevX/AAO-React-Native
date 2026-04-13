@@ -2,6 +2,11 @@
 # This assumes node_modules is located at ../node_modules relative to ios/.
 require '../node_modules/react-native/scripts/react_native_pods.rb'
 
+# Opt out of the New Architecture (Fabric/TurboModules/Bridgeless).
+# The Old Architecture is fully supported through RN 0.76.
+# See: https://github.com/StoDevX/AAO-React-Native/issues/7453
+ENV['RCT_NEW_ARCH_ENABLED'] = '0'
+
 platform :ios, min_ios_version_supported
 prepare_react_native_project!
 
@@ -23,17 +28,18 @@ target 'AllAboutOlaf' do
 	)
 
 	target 'AllAboutOlafUITests' do
-		inherit! :complete
-		# Pods for testing
+		inherit! :none
 	end
 
 	post_install do |installer|
+		ccache_enabled = ENV['USE_CCACHE'] == '1'
+
 		# https://github.com/facebook/react-native/blob/main/packages/react-native/scripts/react_native_pods.rb#L197-L202
 		react_native_post_install(
 			installer,
 			config[:reactNativePath],
 			:mac_catalyst_enabled => false,
-			:ccache_enabled => ENV['USE_CCACHE'] == '1'
+			:ccache_enabled => ccache_enabled
 		)
 
 		installer.pods_project.targets.each do |target|
@@ -41,6 +47,12 @@ target 'AllAboutOlaf' do
 				# cocoapods defaults to not stripping the frameworks it creates
 				# issue for cocoapods is https://github.com/CocoaPods/CocoaPods/issues/10277
 				config.build_settings['STRIP_INSTALLED_PRODUCT'] = 'YES'
+
+				# ccache replaces CC with a wrapper script that Xcode 16+'s
+				# explicit modules feature doesn't recognize
+				if ccache_enabled
+					config.build_settings['CLANG_ENABLE_EXPLICIT_MODULES'] = 'NO'
+				end
 			end
 		end
 

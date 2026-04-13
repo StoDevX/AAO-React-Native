@@ -42,6 +42,7 @@ export const keys = {
 export const directoryEntriesOptions = (
 	query: string,
 	type: DirectorySearchTypeEnum,
+	// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 ) =>
 	queryOptions({
 		queryKey: keys.all(getDirectoryQuery({query, type})),

@@ -9,11 +9,27 @@
 /* Begin PBXBuildFile section */
 		00B0A216202FB153002DBB76 /* windmill@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 00B0A1DD202FB153002DBB76 /* windmill@3x.png */; };
 		00B0A217202FB153002DBB76 /* windmill@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 00B0A215202FB153002DBB76 /* windmill@2x.png */; };
-		00D33BE21DDA58A8001E830E /* AllAboutOlafUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00D33BE11DDA58A8001E830E /* AllAboutOlafUITests.swift */; };
+		A20000000000000000000001 /* XCUITestHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000001 /* XCUITestHelpers.swift */; };
+		A20000000000000000000002 /* ModuleHomeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000002 /* ModuleHomeTests.swift */; };
+		A20000000000000000000003 /* ModuleBuildingHoursTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000003 /* ModuleBuildingHoursTests.swift */; };
+		A20000000000000000000004 /* ModuleCalendarTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000004 /* ModuleCalendarTests.swift */; };
+		A20000000000000000000005 /* ModuleCampusDictionaryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000005 /* ModuleCampusDictionaryTests.swift */; };
+		A20000000000000000000006 /* ModuleCampusMapTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000006 /* ModuleCampusMapTests.swift */; };
+		A20000000000000000000007 /* ModuleCourseCatalogTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000007 /* ModuleCourseCatalogTests.swift */; };
+		A20000000000000000000008 /* ModuleDirectoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000008 /* ModuleDirectoryTests.swift */; };
+		A20000000000000000000009 /* ModuleImportantContactsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000009 /* ModuleImportantContactsTests.swift */; };
+		A2000000000000000000000A /* ModuleMenusTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000000000000000000000A /* ModuleMenusTests.swift */; };
+		A2000000000000000000000B /* ModuleMoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000000000000000000000B /* ModuleMoreTests.swift */; };
+		A2000000000000000000000C /* ModuleOlevilleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000000000000000000000C /* ModuleOlevilleTests.swift */; };
+		A2000000000000000000000D /* ModuleSettingsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000000000000000000000D /* ModuleSettingsTests.swift */; };
+		A2000000000000000000000E /* ModuleSISTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000000000000000000000E /* ModuleSISTests.swift */; };
+		A2000000000000000000000F /* ModuleStoPrintTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000000000000000000000F /* ModuleStoPrintTests.swift */; };
+		A20000000000000000000010 /* ModuleStreamingMediaTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000010 /* ModuleStreamingMediaTests.swift */; };
+		A20000000000000000000011 /* ModuleStudentOrgsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000011 /* ModuleStudentOrgsTests.swift */; };
+		A20000000000000000000012 /* ModuleTransportationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000012 /* ModuleTransportationTests.swift */; };
 		00D33C031DDA598B001E830E /* SnapshotHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00D33C011DDA5958001E830E /* SnapshotHelper.swift */; };
-		13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.mm */; };
+		13B07FBC1A68108700A75B9A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.swift */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
-		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		3ABFC1222C8D2FE30025E0B5 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 3ABFC1212C8D2FE30025E0B5 /* PrivacyInfo.xcprivacy */; };
 		3ACC8B85273335930069E931 /* windmill@2x~iPad.png in Resources */ = {isa = PBXBuildFile; fileRef = 3ACC8B83273335930069E931 /* windmill@2x~iPad.png */; };
 		3ACC8B86273335930069E931 /* windmill@3x~iPad.png in Resources */ = {isa = PBXBuildFile; fileRef = 3ACC8B84273335930069E931 /* windmill@3x~iPad.png */; };
@@ -317,17 +333,32 @@
 		00C302BB1ABCB91800DB3ED1 /* RCTImage.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTImage.xcodeproj; path = "../node_modules/react-native/Libraries/Image/RCTImage.xcodeproj"; sourceTree = "<group>"; };
 		00C302D31ABCB9D200DB3ED1 /* RCTNetwork.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTNetwork.xcodeproj; path = "../node_modules/react-native/Libraries/Network/RCTNetwork.xcodeproj"; sourceTree = "<group>"; };
 		00C302DF1ABCB9EE00DB3ED1 /* RCTVibration.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTVibration.xcodeproj; path = "../node_modules/react-native/Libraries/Vibration/RCTVibration.xcodeproj"; sourceTree = "<group>"; };
-		00D33BE11DDA58A8001E830E /* AllAboutOlafUITests.swift */ = {isa = PBXFileReference; indentWidth = 4; lastKnownFileType = sourcecode.swift; path = AllAboutOlafUITests.swift; sourceTree = "<group>"; };
+		A10000000000000000000001 /* XCUITestHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XCUITestHelpers.swift; sourceTree = "<group>"; };
+		A10000000000000000000002 /* ModuleHomeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModuleHomeTests.swift; sourceTree = "<group>"; };
+		A10000000000000000000003 /* ModuleBuildingHoursTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModuleBuildingHoursTests.swift; sourceTree = "<group>"; };
+		A10000000000000000000004 /* ModuleCalendarTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModuleCalendarTests.swift; sourceTree = "<group>"; };
+		A10000000000000000000005 /* ModuleCampusDictionaryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModuleCampusDictionaryTests.swift; sourceTree = "<group>"; };
+		A10000000000000000000006 /* ModuleCampusMapTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModuleCampusMapTests.swift; sourceTree = "<group>"; };
+		A10000000000000000000007 /* ModuleCourseCatalogTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModuleCourseCatalogTests.swift; sourceTree = "<group>"; };
+		A10000000000000000000008 /* ModuleDirectoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModuleDirectoryTests.swift; sourceTree = "<group>"; };
+		A10000000000000000000009 /* ModuleImportantContactsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModuleImportantContactsTests.swift; sourceTree = "<group>"; };
+		A1000000000000000000000A /* ModuleMenusTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModuleMenusTests.swift; sourceTree = "<group>"; };
+		A1000000000000000000000B /* ModuleMoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModuleMoreTests.swift; sourceTree = "<group>"; };
+		A1000000000000000000000C /* ModuleOlevilleTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModuleOlevilleTests.swift; sourceTree = "<group>"; };
+		A1000000000000000000000D /* ModuleSettingsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModuleSettingsTests.swift; sourceTree = "<group>"; };
+		A1000000000000000000000E /* ModuleSISTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModuleSISTests.swift; sourceTree = "<group>"; };
+		A1000000000000000000000F /* ModuleStoPrintTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModuleStoPrintTests.swift; sourceTree = "<group>"; };
+		A10000000000000000000010 /* ModuleStreamingMediaTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModuleStreamingMediaTests.swift; sourceTree = "<group>"; };
+		A10000000000000000000011 /* ModuleStudentOrgsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModuleStudentOrgsTests.swift; sourceTree = "<group>"; };
+		A10000000000000000000012 /* ModuleTransportationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModuleTransportationTests.swift; sourceTree = "<group>"; };
 		00D33BE31DDA58A8001E830E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		00D33C001DDA5958001E830E /* AllAboutOlaf-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "AllAboutOlaf-Bridging-Header.h"; sourceTree = "<group>"; };
 		00D33C011DDA5958001E830E /* SnapshotHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.swift; name = SnapshotHelper.swift; path = fastlane/SnapshotHelper.swift; sourceTree = SOURCE_ROOT; tabWidth = 4; };
 		139105B61AF99BAD00B5F7CC /* RCTSettings.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTSettings.xcodeproj; path = "../node_modules/react-native/Libraries/Settings/RCTSettings.xcodeproj"; sourceTree = "<group>"; };
 		139FDEE61B06529A00C62182 /* RCTWebSocket.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTWebSocket.xcodeproj; path = "../node_modules/react-native/Libraries/WebSocket/RCTWebSocket.xcodeproj"; sourceTree = "<group>"; };
-		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = AllAboutOlaf/AppDelegate.h; sourceTree = "<group>"; };
-		13B07FB01A68108700A75B9A /* AppDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AppDelegate.mm; path = AllAboutOlaf/AppDelegate.mm; sourceTree = "<group>"; };
+		13B07FB01A68108700A75B9A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = AllAboutOlaf/AppDelegate.swift; sourceTree = "<group>"; };
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = AllAboutOlaf/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = AllAboutOlaf/Info.plist; sourceTree = "<group>"; };
-		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = AllAboutOlaf/main.m; sourceTree = "<group>"; };
 		146833FF1AC3E56700842450 /* React.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = React.xcodeproj; path = "../node_modules/react-native/React/React.xcodeproj"; sourceTree = "<group>"; };
 		2256074D704451D201AB966D /* libPods-AllAboutOlaf-AllAboutOlafUITests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-AllAboutOlaf-AllAboutOlafUITests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		363F0F7690215720438C6ABC /* Pods-AllAboutOlaf.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AllAboutOlaf.debug.xcconfig"; path = "Target Support Files/Pods-AllAboutOlaf/Pods-AllAboutOlaf.debug.xcconfig"; sourceTree = "<group>"; };
@@ -442,7 +473,24 @@
 			children = (
 				00D33BE31DDA58A8001E830E /* Info.plist */,
 				00D33C011DDA5958001E830E /* SnapshotHelper.swift */,
-				00D33BE11DDA58A8001E830E /* AllAboutOlafUITests.swift */,
+				A10000000000000000000001 /* XCUITestHelpers.swift */,
+				A10000000000000000000002 /* ModuleHomeTests.swift */,
+				A10000000000000000000003 /* ModuleBuildingHoursTests.swift */,
+				A10000000000000000000004 /* ModuleCalendarTests.swift */,
+				A10000000000000000000005 /* ModuleCampusDictionaryTests.swift */,
+				A10000000000000000000006 /* ModuleCampusMapTests.swift */,
+				A10000000000000000000007 /* ModuleCourseCatalogTests.swift */,
+				A10000000000000000000008 /* ModuleDirectoryTests.swift */,
+				A10000000000000000000009 /* ModuleImportantContactsTests.swift */,
+				A1000000000000000000000A /* ModuleMenusTests.swift */,
+				A1000000000000000000000B /* ModuleMoreTests.swift */,
+				A1000000000000000000000C /* ModuleOlevilleTests.swift */,
+				A1000000000000000000000D /* ModuleSettingsTests.swift */,
+				A1000000000000000000000E /* ModuleSISTests.swift */,
+				A1000000000000000000000F /* ModuleStoPrintTests.swift */,
+				A10000000000000000000010 /* ModuleStreamingMediaTests.swift */,
+				A10000000000000000000011 /* ModuleStudentOrgsTests.swift */,
+				A10000000000000000000012 /* ModuleTransportationTests.swift */,
 				00D33C001DDA5958001E830E /* AllAboutOlaf-Bridging-Header.h */,
 			);
 			name = "UI Tests";
@@ -472,9 +520,7 @@
 			children = (
 				D18853AA20995E40000A1DC5 /* AllAboutOlaf.entitlements */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
-				13B07FB71A68108700A75B9A /* main.m */,
-				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
-				13B07FB01A68108700A75B9A /* AppDelegate.mm */,
+				13B07FB01A68108700A75B9A /* AppDelegate.swift */,
 				3AE4084F1E1E280800F0FD83 /* LaunchScreen.storyboard */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				00D33BE01DDA58A8001E830E /* UI Tests */,
@@ -1058,6 +1104,7 @@
 			);
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-AllAboutOlaf-AllAboutOlafUITests/Pods-AllAboutOlaf-AllAboutOlafUITests-resources.sh",
+				"${PODS_CONFIGURATION_BUILD_DIR}/AsyncStorage/AsyncStorage_resources.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/RCT-Folly/RCT-Folly_privacy.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/RNDeviceInfo/RNDeviceInfoPrivacyInfo.bundle",
 				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/AntDesign.ttf",
@@ -1083,6 +1130,7 @@
 			);
 			name = "[CP] Copy Pods Resources";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/AsyncStorage_resources.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/RCT-Folly_privacy.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/RNDeviceInfoPrivacyInfo.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/AntDesign.ttf",
@@ -1136,6 +1184,7 @@
 			);
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-AllAboutOlaf/Pods-AllAboutOlaf-resources.sh",
+				"${PODS_CONFIGURATION_BUILD_DIR}/AsyncStorage/AsyncStorage_resources.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/RCT-Folly/RCT-Folly_privacy.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/RNDeviceInfo/RNDeviceInfoPrivacyInfo.bundle",
 				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/AntDesign.ttf",
@@ -1161,6 +1210,7 @@
 			);
 			name = "[CP] Copy Pods Resources";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/AsyncStorage_resources.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/RCT-Folly_privacy.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/RNDeviceInfoPrivacyInfo.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/AntDesign.ttf",
@@ -1258,7 +1308,24 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				00D33BE21DDA58A8001E830E /* AllAboutOlafUITests.swift in Sources */,
+				A20000000000000000000001 /* XCUITestHelpers.swift in Sources */,
+				A20000000000000000000002 /* ModuleHomeTests.swift in Sources */,
+				A20000000000000000000003 /* ModuleBuildingHoursTests.swift in Sources */,
+				A20000000000000000000004 /* ModuleCalendarTests.swift in Sources */,
+				A20000000000000000000005 /* ModuleCampusDictionaryTests.swift in Sources */,
+				A20000000000000000000006 /* ModuleCampusMapTests.swift in Sources */,
+				A20000000000000000000007 /* ModuleCourseCatalogTests.swift in Sources */,
+				A20000000000000000000008 /* ModuleDirectoryTests.swift in Sources */,
+				A20000000000000000000009 /* ModuleImportantContactsTests.swift in Sources */,
+				A2000000000000000000000A /* ModuleMenusTests.swift in Sources */,
+				A2000000000000000000000B /* ModuleMoreTests.swift in Sources */,
+				A2000000000000000000000C /* ModuleOlevilleTests.swift in Sources */,
+				A2000000000000000000000D /* ModuleSettingsTests.swift in Sources */,
+				A2000000000000000000000E /* ModuleSISTests.swift in Sources */,
+				A2000000000000000000000F /* ModuleStoPrintTests.swift in Sources */,
+				A20000000000000000000010 /* ModuleStreamingMediaTests.swift in Sources */,
+				A20000000000000000000011 /* ModuleStudentOrgsTests.swift in Sources */,
+				A20000000000000000000012 /* ModuleTransportationTests.swift in Sources */,
 				00D33C031DDA598B001E830E /* SnapshotHelper.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1267,8 +1334,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */,
-				13B07FC11A68108700A75B9A /* main.m in Sources */,
+				13B07FBC1A68108700A75B9A /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1576,4 +1642,3 @@
 	};
 	rootObject = 83CBB9F71A601CBA00E9B192 /* Project object */;
 }
-
