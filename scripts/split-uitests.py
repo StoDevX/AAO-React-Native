@@ -109,6 +109,10 @@ def main() -> None:
     )
     args = parser.parse_args()
 
+    if args.shards < 1:
+        print(f"Error: --shards must be >= 1, got {args.shards}", file=sys.stderr)
+        sys.exit(1)
+
     if not args.test_dir.is_dir():
         print(f"Error: {args.test_dir} is not a directory", file=sys.stderr)
         sys.exit(1)
@@ -119,14 +123,15 @@ def main() -> None:
         print(f"Error: no test classes found in {args.test_dir}", file=sys.stderr)
         sys.exit(1)
 
+    num_shards = min(args.shards, len(classes))
     total_tests = sum(count for _, count in classes)
     print(
         f"Found {len(classes)} test classes with {total_tests} tests, "
-        f"splitting across {args.shards} shards",
+        f"splitting across {num_shards} shards",
         file=sys.stderr,
     )
 
-    shards = pack_shards(classes, args.shards)
+    shards = pack_shards(classes, num_shards)
 
     for i, shard in enumerate(shards):
         shard_total = sum(count for _, count in shard)
