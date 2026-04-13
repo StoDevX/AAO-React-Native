@@ -84,6 +84,8 @@
 			</dict>
 		</dict>
 	</dict>
+	<key>NSCalendarsFullAccessUsageDescription</key>
+	<string>We use your calendar to add events to your calendar so that you remember what you wanted to attend.</string>
 	<key>NSCalendarsUsageDescription</key>
 	<string>We use your calendar to add events to your calendar so that you remember what you wanted to attend.</string>
 	<key>UIAppFonts</key>

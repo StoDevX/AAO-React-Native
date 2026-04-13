@@ -1,11 +1,11 @@
 import AVFoundation
+import ExpoModulesCore
 import React
-import React_RCTAppDelegate
 import Security
 import UIKit
 
 @UIApplicationMain
-class AppDelegate: RCTAppDelegate {
+class AppDelegate: ExpoAppDelegate {
   override func application(
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
@@ -41,10 +41,6 @@ class AppDelegate: RCTAppDelegate {
     try? AVAudioSession.sharedInstance().setCategory(.playback)
 
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
-  }
-
-  override func sourceURL(for bridge: RCTBridge) -> URL? {
-    return bundleURL()
   }
 
   override func bundleURL() -> URL? {
