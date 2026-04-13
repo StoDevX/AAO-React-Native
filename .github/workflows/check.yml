@@ -225,36 +225,31 @@ jobs:
           name: ios-app
           path: ios/build/Build/Products/
 
+  uitest-plan:
+    name: Plan UITest shards
+    runs-on: ubuntu-24.04
+    if: ${{ !contains(github.event.pull_request.labels.*.name, 'ci/skip-e2e') }}
+    outputs:
+      matrix: ${{ steps.split.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Split tests across shards
+        id: split
+        run: |
+          matrix=$(python3 scripts/split-uitests.py \
+            --test-dir ios/AllAboutOlafUITests \
+            --shards 2)
+          echo "matrix=${matrix}" >> "$GITHUB_OUTPUT"
+
   ios-uitest:
     name: Native UITest for iOS (${{ matrix.shard }})
-    needs: [ios-build, ios-bundle]
+    needs: [uitest-plan, ios-build, ios-bundle]
     runs-on: macos-15
     if: ${{ !contains(github.event.pull_request.labels.*.name, 'ci/skip-e2e') }}
     strategy:
       fail-fast: false
-      matrix:
-        include:
-          - shard: 1
-            tests: >-
-              -only-testing:AllAboutOlafUITests/ModuleMenusTests
-              -only-testing:AllAboutOlafUITests/ModuleTransportationTests
-              -only-testing:AllAboutOlafUITests/ModuleStreamingMediaTests
-              -only-testing:AllAboutOlafUITests/ModuleSettingsTests
-              -only-testing:AllAboutOlafUITests/ModuleStudentOrgsTests
-              -only-testing:AllAboutOlafUITests/ModuleStoPrintTests
-          - shard: 2
-            tests: >-
-              -only-testing:AllAboutOlafUITests/ModuleSISTests
-              -only-testing:AllAboutOlafUITests/ModuleCalendarTests
-              -only-testing:AllAboutOlafUITests/ModuleOlevilleTests
-              -only-testing:AllAboutOlafUITests/ModuleMoreTests
-              -only-testing:AllAboutOlafUITests/ModuleImportantContactsTests
-              -only-testing:AllAboutOlafUITests/ModuleHomeTests
-              -only-testing:AllAboutOlafUITests/ModuleDirectoryTests
-              -only-testing:AllAboutOlafUITests/ModuleCourseCatalogTests
-              -only-testing:AllAboutOlafUITests/ModuleCampusMapTests
-              -only-testing:AllAboutOlafUITests/ModuleCampusDictionaryTests
-              -only-testing:AllAboutOlafUITests/ModuleBuildingHoursTests
+      matrix: ${{ fromJSON(needs.uitest-plan.outputs.matrix) }}
     steps:
       - run: sudo xcode-select -s /Applications/${{ env.xcode_version }}.app
 
