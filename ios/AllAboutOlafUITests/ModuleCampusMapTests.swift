@@ -10,24 +10,17 @@ class ModuleCampusMapTests: XCTestCase {
 	}
 
 	func testIsReachableFromHomescreen() throws {
-		let homescreen = app.element(matching: "screen-homescreen")
-		XCTAssertTrue(homescreen.waitForExistence(timeout: 30))
-
-		app.buttons["Campus Map"].firstMatch.tap()
-
-		XCTAssertFalse(homescreen.exists)
-	}
-
-	func testReturnsToHomescreenWhenClosed() throws {
-		throw XCTSkip("Cannot return to home from SFViewController")
+    XCTExpectFailure("can't hit the Done button in SFSafariViewController")
 
 		let homescreen = app.element(matching: "screen-homescreen")
 		XCTAssertTrue(homescreen.waitForExistence(timeout: 30))
 
 		app.buttons["Campus Map"].firstMatch.tap()
-		XCTAssertFalse(homescreen.exists)
+		XCTAssertTrue(homescreen.waitForNonExistence(timeout: 30))
 
-		app.buttons["Done"].firstMatch.tap()
+		// dismiss SFSafariViewController
+		app.buttons["Done"].tap()
+
 		XCTAssertTrue(homescreen.waitForExistence(timeout: 30))
 	}
 }

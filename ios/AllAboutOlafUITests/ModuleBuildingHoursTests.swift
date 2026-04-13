@@ -14,15 +14,11 @@ class ModuleBuildingHoursTests: XCTestCase {
 		XCTAssertTrue(homescreen.waitForExistence(timeout: 30))
 
 		app.buttons["Building Hours"].firstMatch.tap()
-
-		XCTAssertFalse(homescreen.exists)
-	}
-
-	func testHasBuildingListVisibleByDefault() throws {
-		app.buttons["Building Hours"].firstMatch.tap()
+		XCTAssertTrue(homescreen.waitForNonExistence(timeout: 30))
 
 		let title = app.staticTexts["Building Hours"].firstMatch
-		XCTAssertTrue(title.waitForExistence(timeout: 30),
-		              "Building Hours title should be visible")
+		XCTAssertTrue(
+			title.waitForExistence(timeout: 30),
+			"Building Hours title should be visible")
 	}
 }

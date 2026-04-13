@@ -129,21 +129,15 @@ jobs:
             ios/assets/
           key: ${{ steps.jsbundle-cache.outputs.cache-primary-key }}
 
-  ios-build:
-    name: Build for iOS
+  ios-cache-check:
+    name: Check if iOS cache exists
     needs: [jest, eslint]
-    runs-on: macos-15
+    runs-on: ubuntu-24.04
     outputs:
+      cache-matched-key: ${{ steps.app-cache.outputs.cache-matched-key }}
+      cache-primary-key: ${{ steps.app-cache.outputs.cache-primary-key }}
       cache-key: ${{ steps.app-cache.outputs.cache-matched-key || steps.app-cache.outputs.cache-primary-key }}
     steps:
-      - name: List available Xcode versions
-        run: ls -d /Applications/Xcode*.app
-
-      - run: sudo xcode-select -s /Applications/${{ env.xcode_version }}.app
-
-      - name: List available iOS simulators
-        run: xcrun simctl list devices iOS
-
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       - name: Check for cached iOS app
@@ -156,40 +150,45 @@ jobs:
           restore-keys: |
             ios-app/e=${{ env.cache_epoch }}/host=macOS@15/target=ios/xcode=${{ env.xcode_version }}/ref=master/hash=${{ hashFiles('**/project.pbxproj', 'ios/Podfile', '**/Podfile.lock', 'ios/AllAboutOlaf/**', 'ios/AllAboutOlafUITests/**') }}
 
+  ios-build:
+    name: Build for iOS
+    needs: [ios-cache-check]
+    runs-on: macos-15
+    if: needs.ios-cache-check.outputs.cache-matched-key == ''
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Select ${{ env.xcode_version }}
+        run: sudo xcode-select -s /Applications/${{ env.xcode_version }}.app
+
       - uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151 # v4.0.1
-        if: steps.app-cache.outputs.cache-matched-key == ''
 
       - name: Install npm dependencies
-        if: steps.app-cache.outputs.cache-matched-key == ''
         run: npm ci
 
-      - name: Install ccache
-        if: steps.app-cache.outputs.cache-matched-key == ''
-        run: brew install ccache
+      - name: Install and configure ccache
+        run: |
+          brew install ccache
+          ccache --set-config=max_size=2G
+          ccache --zero-stats
 
       - name: Restore/save ccache
-        if: steps.app-cache.outputs.cache-matched-key == ''
         uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
         with:
           path: ~/Library/Caches/ccache
           key: ccache/e=${{ env.cache_epoch }}/host=macOS@15/target=ios/xcode=${{ env.xcode_version }}/ref=${{ github.head_ref || github.ref_name }}/hash=${{ hashFiles('**/project.pbxproj', 'ios/Podfile', '**/Podfile.lock', 'ios/AllAboutOlaf/**') }}
           restore-keys: |
+            ccache/e=${{ env.cache_epoch }}/host=macOS@15/target=ios/xcode=${{ env.xcode_version }}/ref=${{ github.head_ref || github.ref_name }}/
             ccache/e=${{ env.cache_epoch }}/host=macOS@15/target=ios/xcode=${{ env.xcode_version }}/ref=master/hash=${{ hashFiles('**/project.pbxproj', 'ios/Podfile', '**/Podfile.lock', 'ios/AllAboutOlaf/**') }}
-
-      - name: Configure ccache
-        if: steps.app-cache.outputs.cache-matched-key == ''
-        run: |
-          ccache --set-config=max_size=2G
-          ccache --zero-stats
+            ccache/e=${{ env.cache_epoch }}/host=macOS@15/target=ios/xcode=${{ env.xcode_version }}/ref=master/
 
       - name: Install CocoaPods
-        if: steps.app-cache.outputs.cache-matched-key == ''
         run: mise run pod:install --deployment
         env:
           USE_CCACHE: '1'
 
       - name: Build UITest bundle
-        if: ${{ steps.app-cache.outputs.cache-matched-key == '' && !contains(github.event.pull_request.labels.*.name, 'ci/skip-e2e') }}
+        if: ${{ !contains(github.event.pull_request.labels.*.name, 'ci/skip-e2e') }}
         env:
           SKIP_BUNDLING: 'true'
           CODE_SIGNING_DISABLED: 'true'
@@ -209,60 +208,49 @@ jobs:
             | xcbeautify --renderer github-actions
 
       - name: Show ccache stats
-        if: steps.app-cache.outputs.cache-matched-key == ''
         run: ccache --show-stats
 
       - name: Save iOS app to cache
         uses: actions/cache/save@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
-        if: ${{ steps.app-cache.outputs.cache-matched-key == '' && !contains(github.event.pull_request.labels.*.name, 'ci/skip-e2e') }}
+        if: ${{ !contains(github.event.pull_request.labels.*.name, 'ci/skip-e2e') }}
         with:
           path: ios/build/Build/Products/
-          key: ${{ steps.app-cache.outputs.cache-primary-key }}
+          key: ${{ needs.ios-cache-check.outputs.cache-primary-key }}
 
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
-        if: ${{ steps.app-cache.outputs.cache-matched-key == '' && !contains(github.event.pull_request.labels.*.name, 'ci/skip-e2e') }}
+      - name: Save iOS app as workflow artifact
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: ios-app
           path: ios/build/Build/Products/
 
-  ios-uitest:
-    name: Native UITest for iOS
-    needs: [ios-build, ios-bundle]
-    runs-on: macos-15
+  uitest-plan:
+    name: Plan UITest shards
+    runs-on: ubuntu-24.04
+    needs: [jest, eslint]
     if: ${{ !contains(github.event.pull_request.labels.*.name, 'ci/skip-e2e') }}
+    outputs:
+      matrix: ${{ steps.split.outputs.matrix }}
     steps:
-      - run: sudo xcode-select -s /Applications/${{ env.xcode_version }}.app
-
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
-      - name: Load the cached iOS app and UITest bundle
-        uses: actions/cache/restore@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
-        id: app-cache
-        with:
-          fail-on-cache-miss: true
-          path: ios/build/Build/Products/
-          key: ${{ needs.ios-build.outputs.cache-key }}
-
-      - name: Load the cached iOS jsbundle
-        uses: actions/cache/restore@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
-        id: jsbundle-cache
-        with:
-          fail-on-cache-miss: true
-          path: |
-            ios/AllAboutOlaf/main.jsbundle
-            ios/AllAboutOlaf/main.jsbundle.map
-            ios/assets/
-          key: ${{ needs.ios-bundle.outputs.cache-key }}
-
-      - name: Move cached jsbundle into place
+      - name: Split tests across shards
+        id: split
         run: |
-          mkdir -p ios/build/Build/Products/Release-iphonesimulator/AllAboutOlaf.app/
-          mv ios/AllAboutOlaf/main.jsbundle ios/build/Build/Products/Release-iphonesimulator/AllAboutOlaf.app/
-          mv ios/AllAboutOlaf/main.jsbundle.map ios/build/Build/Products/Release-iphonesimulator/AllAboutOlaf.app/
-          rm -rf ios/build/Build/Products/Release-iphonesimulator/AllAboutOlaf.app/assets || true
-          mv ios/assets ios/build/Build/Products/Release-iphonesimulator/AllAboutOlaf.app/
+          echo "matrix=$(python3 scripts/split-uitests.py --test-dir ios/AllAboutOlafUITests --shards 2)" >> "$GITHUB_OUTPUT"
 
-      - name: Discover simulator device
+  uitest-udid:
+    # sometimes this can take up to 1.5min, so run it once and let's see if UDID are stable across VMs
+    name: Resolve device UUID for iOS
+    runs-on: macos-15
+    needs: [jest, eslint]
+    if: ${{ !contains(github.event.pull_request.labels.*.name, 'ci/skip-e2e') }}
+    outputs:
+      udid: ${{ steps.udid.outputs.udid }}
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - run: sudo xcode-select -s /Applications/${{ env.xcode_version }}.app
+
+      - name: Discover target simulator device
         id: simulator-device
         run: |
           set -o pipefail
@@ -270,7 +258,7 @@ jobs:
           echo "type=iPhone 16 Pro" | tee -a "$GITHUB_OUTPUT"
           echo "os=${OS_VERSION//./-}" | tee -a "$GITHUB_OUTPUT"
 
-      - name: List available simulators (json)
+      - name: List available simulators
         id: devices
         run: |
           set -o pipefail
@@ -278,6 +266,7 @@ jobs:
             | jq '.devices | map_values([.[] | del(.dataPath, .dataPathSize, .logPath, .isAvailable)])' \
             | jq -r '"devices=\(.)"' \
             | tee "$GITHUB_OUTPUT"
+          xcrun simctl list devices iOS
 
       - name: Filter simulators by OS
         id: devices-by-os
@@ -305,11 +294,51 @@ jobs:
           set -o pipefail
           jq -rn --argjson devices "$DEVICES" '$devices | "udid=\(.udid)"' | tee "$GITHUB_OUTPUT"
 
+  ios-uitest:
+    name: Native UITest for iOS (${{ matrix.shard }})
+    needs: [uitest-plan, uitest-udid, ios-build, ios-bundle, ios-cache-check]
+    runs-on: macos-15
+    if: ${{ !contains(github.event.pull_request.labels.*.name, 'ci/skip-e2e') }}
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.uitest-plan.outputs.matrix) }}
+    steps:
+      - run: sudo xcode-select -s /Applications/${{ env.xcode_version }}.app
+
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Load the cached iOS app and UITest bundle
+        uses: actions/cache/restore@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
+        id: app-cache
+        with:
+          fail-on-cache-miss: true
+          path: ios/build/Build/Products/
+          key: ${{ needs.ios-cache-check.outputs.cache-key }}
+
+      - name: Load the cached iOS jsbundle
+        uses: actions/cache/restore@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
+        id: jsbundle-cache
+        with:
+          fail-on-cache-miss: true
+          path: |
+            ios/AllAboutOlaf/main.jsbundle
+            ios/AllAboutOlaf/main.jsbundle.map
+            ios/assets/
+          key: ${{ needs.ios-bundle.outputs.cache-key }}
+
+      - name: Move cached jsbundle into place
+        run: |
+          mkdir -p ios/build/Build/Products/Release-iphonesimulator/AllAboutOlaf.app/
+          mv ios/AllAboutOlaf/main.jsbundle ios/build/Build/Products/Release-iphonesimulator/AllAboutOlaf.app/
+          mv ios/AllAboutOlaf/main.jsbundle.map ios/build/Build/Products/Release-iphonesimulator/AllAboutOlaf.app/
+          rm -rf ios/build/Build/Products/Release-iphonesimulator/AllAboutOlaf.app/assets || true
+          mv ios/assets ios/build/Build/Products/Release-iphonesimulator/AllAboutOlaf.app/
+
       - name: Boot the simulator
-        run: xcrun simctl boot "${{ steps.udid.outputs.udid }}"
+        run: xcrun simctl boot "${{ needs.uitest-udid.outputs.udid }}"
 
       - name: Wait for the simulator to be ready
-        run: xcrun simctl bootstatus "${{ steps.udid.outputs.udid }}" -b
+        run: xcrun simctl bootstatus "${{ needs.uitest-udid.outputs.udid }}" -b
 
       - name: Run UITests
         timeout-minutes: 25
@@ -317,13 +346,32 @@ jobs:
           set -o pipefail
           xcodebuild test-without-building \
             -xctestrun $(find ios/build/Build/Products -name '*.xctestrun' -print -quit) \
-            -destination "platform=iOS Simulator,id=${{ steps.udid.outputs.udid }}" \
-            -only-testing:AllAboutOlafUITests \
+            -destination "platform=iOS Simulator,id=${{ needs.uitest-udid.outputs.udid }}" \
+            ${{ matrix.tests }} \
             -resultBundlePath uitest-results \
             | xcbeautify --renderer github-actions
 
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+      - name: Extract failure attachments
+        if: failure()
+        run: |
+          mkdir -p uitest-attachments
+          xcrun xcresulttool export attachments \
+            --path uitest-results.xcresult \
+            --output-path uitest-attachments || echo "No attachments to export"
+          screenshot_count=$(find uitest-attachments -name '*' 2>/dev/null | wc -l | tr -d ' ')
+          echo "Found ${screenshot_count} attachments(s)"
+
+      - name: Upload failure attachments
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         if: failure()
         with:
-          name: uitest-results
+          name: uitest-attachments-${{ matrix.shard }}
+          path: uitest-attachments/
+          if-no-files-found: ignore
+
+      - name: Upload XCResult bundle
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        if: failure()
+        with:
+          name: uitest-results-${{ matrix.shard }}.xcresult
           path: uitest-results.xcresult/
