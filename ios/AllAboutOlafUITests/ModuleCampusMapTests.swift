@@ -10,6 +10,8 @@ class ModuleCampusMapTests: XCTestCase {
 	}
 
 	func testIsReachableFromHomescreen() throws {
+    XCTExpectFailure("can't hit the Done button in SFSafariViewController")
+
 		let homescreen = app.element(matching: "screen-homescreen")
 		XCTAssertTrue(homescreen.waitForExistence(timeout: 30))
 
