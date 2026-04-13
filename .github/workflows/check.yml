@@ -291,6 +291,7 @@ jobs:
           set -o pipefail
           node -e 'let c = require("./detox.config.js"); console.log(JSON.stringify(c));' > detox-config.json
           jq -r '"type=\(.devices["ios.simulator"].device.type)"' < detox-config.json | tee -a "$GITHUB_OUTPUT"
+          jq -r '"os=\(.devices["ios.simulator"].device.os | gsub("\\."; "-"))"' < detox-config.json | tee -a "$GITHUB_OUTPUT"
 
       - name: List available simulators (json)
         id: devices
@@ -301,17 +302,31 @@ jobs:
             | jq -r '"devices=\(.)"' \
             | tee "$GITHUB_OUTPUT"
 
-      - name: Resolve Detox device UDID
-        id: udid
+      - name: List available simulators with "${{ steps.detox-device.outputs.os }}"
+        id: devices-by-os
         env:
           DEVICES: '${{ steps.devices.outputs.devices }}'
+          SIMULATOR_OS: '${{ steps.detox-device.outputs.os }}'
+        run: |
+          set -o pipefail
+          jq -rn --argjson devices "$DEVICES" '$devices | to_entries[] | select(.key | endswith("iOS-\(env.SIMULATOR_OS)")) | .value | "devices=\(.)"' | tee "$GITHUB_OUTPUT"
+
+      - name: List available ${{ steps.detox-device.outputs.os }} simulators for "${{ steps.detox-device.outputs.type }}"
+        id: devices-by-os-and-type
+        env:
+          DEVICES: '${{ steps.devices-by-os.outputs.devices }}'
           SIMULATOR_TYPE: '${{ steps.detox-device.outputs.type }}'
         run: |
           set -o pipefail
-          # Find the latest-iOS-version simulator matching the device type
-          jq -rn --argjson devices "$DEVICES" --arg type "$SIMULATOR_TYPE" \
-            '$devices | to_entries | sort_by(.key) | reverse | .[].value[] | select(.name == $type) | "udid=\(.udid)"' \
-            | head -1 | tee "$GITHUB_OUTPUT"
+          jq -rn --argjson devices "$DEVICES" '$devices | .[] | select(.name == env.SIMULATOR_TYPE) | "devices=\(.)"' | tee "$GITHUB_OUTPUT"
+
+      - name: Resolve Detox device UDID
+        id: udid
+        env:
+          DEVICES: '${{ steps.devices-by-os-and-type.outputs.devices }}'
+        run: |
+          set -o pipefail
+          jq -rn --argjson devices "$DEVICES" '$devices | "udid=\(.udid)"' | tee "$GITHUB_OUTPUT"
 
       - name: Boot the simulator for Detox
         run: xcrun simctl boot "${{ steps.udid.outputs.udid }}"
@@ -396,6 +411,7 @@ jobs:
           set -o pipefail
           node -e 'let c = require("./detox.config.js"); console.log(JSON.stringify(c));' > detox-config.json
           jq -r '"type=\(.devices["ios.simulator"].device.type)"' < detox-config.json | tee -a "$GITHUB_OUTPUT"
+          jq -r '"os=\(.devices["ios.simulator"].device.os | gsub("\\."; "-"))"' < detox-config.json | tee -a "$GITHUB_OUTPUT"
 
       - name: List available simulators (json)
         id: devices
@@ -406,17 +422,31 @@ jobs:
             | jq -r '"devices=\(.)"' \
             | tee "$GITHUB_OUTPUT"
 
-      - name: Resolve simulator UDID
-        id: udid
+      - name: Filter simulators by OS
+        id: devices-by-os
         env:
           DEVICES: '${{ steps.devices.outputs.devices }}'
+          SIMULATOR_OS: '${{ steps.detox-device.outputs.os }}'
+        run: |
+          set -o pipefail
+          jq -rn --argjson devices "$DEVICES" '$devices | to_entries[] | select(.key | endswith("iOS-\(env.SIMULATOR_OS)")) | .value | "devices=\(.)"' | tee "$GITHUB_OUTPUT"
+
+      - name: Filter simulators by device type
+        id: devices-by-os-and-type
+        env:
+          DEVICES: '${{ steps.devices-by-os.outputs.devices }}'
           SIMULATOR_TYPE: '${{ steps.detox-device.outputs.type }}'
         run: |
           set -o pipefail
-          # Find the latest-iOS-version simulator matching the device type
-          jq -rn --argjson devices "$DEVICES" --arg type "$SIMULATOR_TYPE" \
-            '$devices | to_entries | sort_by(.key) | reverse | .[].value[] | select(.name == $type) | "udid=\(.udid)"' \
-            | head -1 | tee "$GITHUB_OUTPUT"
+          jq -rn --argjson devices "$DEVICES" '$devices | .[] | select(.name == env.SIMULATOR_TYPE) | "devices=\(.)"' | tee "$GITHUB_OUTPUT"
+
+      - name: Resolve simulator UDID
+        id: udid
+        env:
+          DEVICES: '${{ steps.devices-by-os-and-type.outputs.devices }}'
+        run: |
+          set -o pipefail
+          jq -rn --argjson devices "$DEVICES" '$devices | "udid=\(.udid)"' | tee "$GITHUB_OUTPUT"
 
       - name: Boot the simulator
         run: xcrun simctl boot "${{ steps.udid.outputs.udid }}"

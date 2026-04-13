@@ -51,11 +51,11 @@ export let IconSettingsView = (): JSX.Element => {
 	let setIcon = async (iconName: string) => {
 		if (iconName === 'default') {
 			await resetIcon()
+			setIconType('default')
 		} else {
 			await changeIcon(iconName)
+			setIconType(iconName as IconTypeEnum)
 		}
-
-		loadCurrentIcon()
 	}
 
 	return (
