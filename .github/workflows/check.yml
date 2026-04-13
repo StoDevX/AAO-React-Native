@@ -201,7 +201,7 @@ jobs:
             -scheme AllAboutOlaf \
             -configuration Release \
             -sdk iphonesimulator \
-            -destination "generic/platform=iOS Simulator" \
+            -destination "platform=iOS Simulator,name=iPhone 16 Pro,arch=arm64" \
             -derivedDataPath ios/build \
             -only-testing:AllAboutOlafUITests \
             CODE_SIGN_IDENTITY="" \
@@ -318,7 +318,7 @@ jobs:
           set -o pipefail
           xcodebuild test-without-building \
             -xctestrun $(find ios/build/Build/Products -name '*.xctestrun' -print -quit) \
-            -destination "platform=iOS Simulator,id=${{ steps.udid.outputs.udid }}" \
+            -destination "platform=iOS Simulator,id=${{ steps.udid.outputs.udid }},arch=arm64" \
             -only-testing:AllAboutOlafUITests \
             -resultBundlePath uitest-results \
             | xcbeautify --renderer github-actions
