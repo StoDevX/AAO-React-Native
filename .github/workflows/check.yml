@@ -129,11 +129,13 @@ jobs:
             ios/assets/
           key: ${{ steps.jsbundle-cache.outputs.cache-primary-key }}
 
-  ios-build:
-    name: Build for iOS
+  ios-cache-check:
+    name: Check if iOS cache exists
     needs: [jest, eslint]
-    runs-on: macos-15
+    runs-on: ubuntu-24.04
     outputs:
+      cache-matched-key: ${{ steps.app-cache.outputs.cache-matched-key }}
+      cache-primary-key: ${{ steps.app-cache.outputs.cache-primary-key }}
       cache-key: ${{ steps.app-cache.outputs.cache-matched-key || steps.app-cache.outputs.cache-primary-key }}
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
@@ -148,29 +150,29 @@ jobs:
           restore-keys: |
             ios-app/e=${{ env.cache_epoch }}/host=macOS@15/target=ios/xcode=${{ env.xcode_version }}/ref=master/hash=${{ hashFiles('**/project.pbxproj', 'ios/Podfile', '**/Podfile.lock', 'ios/AllAboutOlaf/**', 'ios/AllAboutOlafUITests/**') }}
 
-      - name: List available Xcode versions
-        if: steps.app-cache.outputs.cache-matched-key == ''
-        run: ls -d /Applications/Xcode*.app
+  ios-build:
+    name: Build for iOS
+    needs: [ios-cache-check]
+    runs-on: macos-15
+    if: needs.ios-cache-check.outputs.cache-matched-key == ''
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
-      - run: sudo xcode-select -s /Applications/${{ env.xcode_version }}.app
-        if: steps.app-cache.outputs.cache-matched-key == ''
+      - name: Select ${{ env.xcode_version }}
+        run: sudo xcode-select -s /Applications/${{ env.xcode_version }}.app
 
       - uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151 # v4.0.1
-        if: steps.app-cache.outputs.cache-matched-key == ''
 
       - name: Install npm dependencies
-        if: steps.app-cache.outputs.cache-matched-key == ''
         run: npm ci
 
       - name: Install and configure ccache
-        if: steps.app-cache.outputs.cache-matched-key == ''
         run: |
           brew install ccache
           ccache --set-config=max_size=2G
           ccache --zero-stats
 
       - name: Restore/save ccache
-        if: steps.app-cache.outputs.cache-matched-key == ''
         uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
         with:
           path: ~/Library/Caches/ccache
@@ -179,13 +181,12 @@ jobs:
             ccache/e=${{ env.cache_epoch }}/host=macOS@15/target=ios/xcode=${{ env.xcode_version }}/ref=master/hash=${{ hashFiles('**/project.pbxproj', 'ios/Podfile', '**/Podfile.lock', 'ios/AllAboutOlaf/**') }}
 
       - name: Install CocoaPods
-        if: steps.app-cache.outputs.cache-matched-key == ''
         run: mise run pod:install --deployment
         env:
           USE_CCACHE: '1'
 
       - name: Build UITest bundle
-        if: ${{ steps.app-cache.outputs.cache-matched-key == '' && !contains(github.event.pull_request.labels.*.name, 'ci/skip-e2e') }}
+        if: ${{ !contains(github.event.pull_request.labels.*.name, 'ci/skip-e2e') }}
         env:
           SKIP_BUNDLING: 'true'
           CODE_SIGNING_DISABLED: 'true'
@@ -205,19 +206,17 @@ jobs:
             | xcbeautify --renderer github-actions
 
       - name: Show ccache stats
-        if: steps.app-cache.outputs.cache-matched-key == ''
         run: ccache --show-stats
 
       - name: Save iOS app to cache
         uses: actions/cache/save@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
-        if: ${{ steps.app-cache.outputs.cache-matched-key == '' && !contains(github.event.pull_request.labels.*.name, 'ci/skip-e2e') }}
+        if: ${{ !contains(github.event.pull_request.labels.*.name, 'ci/skip-e2e') }}
         with:
           path: ios/build/Build/Products/
-          key: ${{ steps.app-cache.outputs.cache-primary-key }}
+          key: ${{ needs.ios-cache-check.outputs.cache-primary-key }}
 
       - name: Save iOS app as workflow artifact
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
-        if: steps.app-cache.outputs.cache-matched-key == ''
         with:
           name: ios-app
           path: ios/build/Build/Products/
@@ -295,7 +294,7 @@ jobs:
 
   ios-uitest:
     name: Native UITest for iOS (${{ matrix.shard }})
-    needs: [uitest-plan, uitest-udid, ios-build, ios-bundle]
+    needs: [uitest-plan, uitest-udid, ios-build, ios-bundle, ios-cache-check]
     runs-on: macos-15
     if: ${{ !contains(github.event.pull_request.labels.*.name, 'ci/skip-e2e') }}
     strategy:
@@ -312,7 +311,7 @@ jobs:
         with:
           fail-on-cache-miss: true
           path: ios/build/Build/Products/
-          key: ${{ needs.ios-build.outputs.cache-key }}
+          key: ${{ needs.ios-cache-check.outputs.cache-key }}
 
       - name: Load the cached iOS jsbundle
         uses: actions/cache/restore@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
