@@ -9,7 +9,7 @@ const TIME_FORMAT = 'h:mma'
 
 /** Parse a time string like "10:30am" or "1:05pm" to minutes since midnight */
 function parseTimeToMinutes(timeStr) {
-	const m = timeStr.match(/^(\d{1,2}):(\d{2})(am|pm)$/i)
+	const m = timeStr.match(/^(\d{1,2}):(\d{2})(am|pm)$/iu)
 	if (!m) return null
 	let hour = parseInt(m[1], 10)
 	const minute = parseInt(m[2], 10)

@@ -68,7 +68,7 @@ function hour12(h: number): number {
 
 // Token order: longest first to prevent partial matches
 const TOKEN_PATTERN =
-	/LLLL|LLL|LL|LTS|LT|YYYY|dddd|MMMM|MMM|ddd|HH|hh|mm|ss|MM|DD|YY|dd|Do|H|h|m|s|M|D|A|a/g
+	/LLLL|LLL|LL|LTS|LT|YYYY|dddd|MMMM|MMM|ddd|HH|hh|mm|ss|MM|DD|YY|dd|Do|H|h|m|s|M|D|A|a/gu
 
 export function format(dt: Temporal.ZonedDateTime, token: string): string {
 	return token.replace(TOKEN_PATTERN, (match) => {
@@ -185,7 +185,7 @@ export function parseDateFormat(
 		'A',
 		'a',
 	]
-	const TOKEN_RE = new RegExp(PARSE_TOKENS.join('|'), 'g')
+	const TOKEN_RE = new RegExp(PARSE_TOKENS.join('|'), 'gu')
 	const tokenRegexMap: Record<string, string> = {
 		YYYY: '(\\d{4})',
 		YY: '(\\d{2})',
@@ -206,8 +206,9 @@ export function parseDateFormat(
 	}
 
 	// Pre-process: replace [...] literal escapes (like [T]) with escaped literal chars
-	const processedFmt = fmt.replace(/\[([^\]]*)\]/g, (_match, literal) =>
-		literal.split('').map(escapeRegex).join(''),
+	const processedFmt = fmt.replace(
+		/\[([^\]]*)\]/gu,
+		(_match, literal: string) => literal.split('').map(escapeRegex).join(''),
 	)
 
 	const capturedTokens: string[] = []
@@ -218,12 +219,12 @@ export function parseDateFormat(
 				capturedTokens.push(tok)
 				return tokenRegexMap[tok] ?? escapeRegex(tok)
 			})
-			.replace(/[^()\\[\]{}?*+|^$]/g, (c) =>
-				/[.,\-/ :]/.test(c) ? escapeRegex(c) : c,
+			.replace(/[^()\\[\]{}?*+|^$]/gu, (c) =>
+				/[.,\-/ :]/u.test(c) ? escapeRegex(c) : c,
 			) +
 		'$'
 
-	const match = new RegExp(regexStr).exec(dateStr)
+	const match = new RegExp(regexStr, 'u').exec(dateStr)
 	if (!match) {
 		throw new Error(`parseDateFormat: "${dateStr}" does not match "${fmt}"`)
 	}
@@ -281,6 +282,8 @@ export function parseDateFormat(
 			case 'a':
 				ampm = val.toLowerCase()
 				break
+			default:
+				break
 		}
 	})
 
@@ -299,7 +302,7 @@ export function parseDateFormat(
 }
 
 function escapeRegex(s: string): string {
-	return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+	return s.replace(/[.*+?^${}()|[\]\\]/gu, '\\$&')
 }
 
 /**
@@ -314,7 +317,7 @@ export function parseTimeToday(
 	const refDate = base ?? Temporal.Now.zonedDateTimeISO(tz)
 
 	// Normalize: "10:30am" / "10:30 AM" / "10:30" / "H:mm" (24h)
-	const match = /^(\d{1,2}):(\d{2})(?::(\d{2}))?\s*(am|pm)?$/i.exec(
+	const match = /^(\d{1,2}):(\d{2})(?::(\d{2}))?\s*(am|pm)?$/iu.exec(
 		timeStr.trim(),
 	)
 	if (!match) {

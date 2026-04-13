@@ -28,7 +28,7 @@ const BASE_DAY_NUM = 3
 
 /** Parse a time string like '10:01am' and set it on the base date (Dec 18, 2019) */
 export const time = (timeToFormat: string): Temporal.ZonedDateTime => {
-	const m = timeToFormat.match(/^(\d{1,2}):(\d{2})(?::(\d{2}))?\s*(am|pm)?$/i)
+	const m = timeToFormat.match(/^(\d{1,2}):(\d{2})(?::(\d{2}))?\s*(am|pm)?$/iu)
 	if (!m) {
 		throw new Error(`time: cannot parse "${timeToFormat}"`)
 	}
@@ -51,7 +51,7 @@ export const time = (timeToFormat: string): Temporal.ZonedDateTime => {
 
 /** Parse a day+time string like 'Fr 3:00pm' (2-letter day + time) */
 export const dayAndTime = (timeToFormat: string): Temporal.ZonedDateTime => {
-	const dayMatch = timeToFormat.match(/^([A-Za-z]+)\s+(.+)$/)
+	const dayMatch = timeToFormat.match(/^([A-Za-z]+)\s+(.+)$/u)
 	if (!dayMatch) {
 		throw new Error(`dayAndTime: cannot parse "${timeToFormat}"`)
 	}
@@ -64,7 +64,7 @@ export const dayAndTime = (timeToFormat: string): Temporal.ZonedDateTime => {
 	const diff = dayNum - BASE_DAY_NUM
 	const date = baseDate.add({days: diff})
 
-	const m = timeStr.match(/^(\d{1,2}):(\d{2})(?::(\d{2}))?\s*(am|pm|AM|PM)?$/i)
+	const m = timeStr.match(/^(\d{1,2}):(\d{2})(?::(\d{2}))?\s*(am|pm|AM|PM)?$/iu)
 	if (!m) {
 		throw new Error(`dayAndTime: cannot parse time "${timeStr}"`)
 	}

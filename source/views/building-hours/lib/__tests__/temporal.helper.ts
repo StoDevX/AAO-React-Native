@@ -38,7 +38,7 @@ const BASE_DAY_NUM = 3
 function parseDayAndTime(time: string, fmt: string): Temporal.ZonedDateTime {
 	// Extract the day name prefix (before first space, or first non-digit/colon/am/pm)
 	// Format examples: 'ddd h:mma', 'ddd h:mm:ssa'
-	const dayMatch = time.match(/^([A-Za-z]+)\s+(.+)$/)
+	const dayMatch = time.match(/^([A-Za-z]+)\s+(.+)$/u)
 	if (!dayMatch) {
 		throw new Error(`parseDayAndTime: cannot parse "${time}" with "${fmt}"`)
 	}
@@ -54,7 +54,7 @@ function parseDayAndTime(time: string, fmt: string): Temporal.ZonedDateTime {
 
 	// Parse the time portion (h:mma or h:mm:ssa)
 	const timeMatch = timeStr.match(
-		/^(\d{1,2}):(\d{2})(?::(\d{2}))?\s*(am|pm|AM|PM)?$/i,
+		/^(\d{1,2}):(\d{2})(?::(\d{2}))?\s*(am|pm|AM|PM)?$/iu,
 	)
 	if (!timeMatch) {
 		throw new Error(`parseDayAndTime: cannot parse time "${timeStr}"`)
@@ -86,7 +86,7 @@ export const dayMoment = (
 
 /** Parse a time string like '10:01am' and set it on the base date (Dec 18, 2019) */
 export const hourMoment = (time: string): Temporal.ZonedDateTime => {
-	const m = time.match(/^(\d{1,2}):(\d{2})(?::(\d{2}))?\s*(am|pm)?$/i)
+	const m = time.match(/^(\d{1,2}):(\d{2})(?::(\d{2}))?\s*(am|pm)?$/iu)
 	if (!m) {
 		throw new Error(`hourMoment: cannot parse "${time}"`)
 	}
