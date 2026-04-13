@@ -2,11 +2,22 @@ import fs from 'node:fs'
 import path from 'node:path'
 import {isNotJunk} from 'junk'
 import yaml from 'js-yaml'
-import moment from 'moment'
 import {DATA_BASE} from './paths.mjs'
 
 const NO_VALUE_SEEN = Symbol()
 const TIME_FORMAT = 'h:mma'
+
+/** Parse a time string like "10:30am" or "1:05pm" to minutes since midnight */
+function parseTimeToMinutes(timeStr) {
+	const m = timeStr.match(/^(\d{1,2}):(\d{2})(am|pm)$/i)
+	if (!m) return null
+	let hour = parseInt(m[1], 10)
+	const minute = parseInt(m[2], 10)
+	const ampm = m[3].toLowerCase()
+	if (ampm === 'pm' && hour < 12) hour += 12
+	if (ampm === 'am' && hour === 12) hour = 0
+	return hour * 60 + minute
+}
 
 function* enumerate(iter) {
 	let i = 0
@@ -42,15 +53,15 @@ function* validate(data) {
 					continue
 				}
 
-				let lastM = moment(lastTime, TIME_FORMAT)
-				let thisM = moment(thisTime, TIME_FORMAT)
+				let lastM = parseTimeToMinutes(lastTime)
+				let thisM = parseTimeToMinutes(thisTime)
 
-				if (!thisM.isValid()) {
+				if (thisM === null) {
 					// prettier-ignore
 					yield `"${thisTime}" is invalid; does it match ${TIME_FORMAT}? (${thisRowNote})`
 				}
 
-				if (lastM.isAfter(thisM)) {
+				if (lastM !== null && thisM !== null && lastM > thisM) {
 					// prettier-ignore
 					yield `"${lastTime}" is after "${thisTime}" ${thisRowNote}`
 				}

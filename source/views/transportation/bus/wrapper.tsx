@@ -5,14 +5,14 @@ import {timezone} from '@frogpond/constants'
 import {useNavigation} from '@react-navigation/native'
 import {busRoutesOptions} from './query'
 import {useQuery} from '@tanstack/react-query'
-import {useMomentTimer} from '@frogpond/timer'
+import {useTemporalTimer} from '@frogpond/timer'
 
 type Props = {
 	line: string
 }
 
 let BusView = (props: Props): JSX.Element => {
-	let {now} = useMomentTimer({intervalMs: 1000 * 60, timezone: timezone()})
+	let {now} = useTemporalTimer({intervalMs: 1000 * 60, timezone: timezone()})
 	let {
 		data: busLines = [],
 		error,

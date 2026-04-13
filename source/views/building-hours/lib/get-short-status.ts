@@ -1,11 +1,14 @@
-import type {Moment} from 'moment-timezone'
+import type {Temporal} from 'temporal-polyfill'
 import type {BuildingType} from '../types'
 
 import {isChapelTime} from './chapel'
 import {getDayOfWeek} from './get-day-of-week'
 import {getScheduleStatusAtMoment} from './get-schedule-status'
 
-export function getShortBuildingStatus(info: BuildingType, m: Moment): string {
+export function getShortBuildingStatus(
+	info: BuildingType,
+	m: Temporal.ZonedDateTime,
+): string {
 	let dayOfWeek = getDayOfWeek(m)
 
 	let schedules = info.schedule || []

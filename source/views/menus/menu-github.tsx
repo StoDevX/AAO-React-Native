@@ -2,7 +2,7 @@ import * as React from 'react'
 import {timezone} from '@frogpond/constants'
 import {LoadingView, NoticeView} from '@frogpond/notice'
 import {FoodMenu} from '@frogpond/food-menu'
-import moment from 'moment-timezone'
+import {fromEpochMs} from '../../lib/temporal'
 import sample from 'lodash/sample'
 import {pauseMenuOptions} from './query'
 import {useQuery} from '@tanstack/react-query'
@@ -43,7 +43,7 @@ export function GitHubHostedMenu(props: Props): JSX.Element {
 			meals={data.meals}
 			menuCorIcons={data.corIcons}
 			name={props.name}
-			now={moment.tz(dataUpdatedAt, timezone())}
+			now={fromEpochMs(dataUpdatedAt, timezone())}
 			onRefresh={refetch}
 			refreshing={isRefetching}
 		/>

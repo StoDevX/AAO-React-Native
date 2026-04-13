@@ -1,6 +1,7 @@
 import {Share, ShareAction} from 'react-native'
 
 import type {EventType} from '@frogpond/event-type'
+import {format} from '../../source/lib/temporal'
 import {detailTimes} from './times'
 
 export function shareEvent(event: EventType): Promise<ShareAction | void> {
@@ -18,7 +19,7 @@ export function getTimes(event: EventType): string {
 	let {allDay, start, end} = detailTimes(event)
 
 	if (allDay) {
-		return `All-Day on ${event.startTime.format('MMM D.')}`
+		return `All-Day on ${format(event.startTime, 'MMM D.')}`
 	}
 
 	return `${start}${end ? ' to ' + end : ''}`

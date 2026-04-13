@@ -4,8 +4,9 @@
 
 import * as React from 'react'
 import {Alert, ScrollView, View} from 'react-native'
-import moment from 'moment-timezone'
-import type {Moment} from 'moment-timezone'
+import type {Temporal} from 'temporal-polyfill'
+import {now as temporalNow} from '../../../lib/temporal'
+import {timezone} from '@frogpond/constants'
 import noop from 'lodash/noop'
 import {InfoHeader} from '@frogpond/info-header'
 import {TableView, Section, Cell} from '@frogpond/tableview'
@@ -222,7 +223,7 @@ const EditableSchedule = (props: EditableScheduleProps) => {
 		props.editRow(scheduleIndex, setIndex, hoursSet)
 	}
 
-	let now = moment()
+	let now = temporalNow(timezone())
 
 	return (
 		<View>
@@ -287,7 +288,7 @@ type TimesCellProps = {
 	set: SingleBuildingScheduleType
 	setIndex: number
 	onPress: (setIdx: number, set: SingleBuildingScheduleType) => void
-	now: Moment
+	now: Temporal.ZonedDateTime
 }
 
 const TimesCell = (props: TimesCellProps) => {

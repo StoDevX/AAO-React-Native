@@ -4,7 +4,8 @@ import * as c from '@frogpond/colors'
 import toPairs from 'lodash/toPairs'
 import type {EventType} from '@frogpond/event-type'
 import groupBy from 'lodash/groupBy'
-import type {Moment} from 'moment-timezone'
+import type {Temporal} from 'temporal-polyfill'
+import {isSame, format} from '../../source/lib/temporal'
 import {FullWidthSeparator, ListSectionHeader} from '@frogpond/lists'
 import {NoticeView} from '@frogpond/notice'
 import EventRow from './event-row'
@@ -17,7 +18,7 @@ type Props = {
 	message?: string
 	refreshing: boolean
 	onRefresh: () => unknown
-	now: Moment
+	now: Temporal.ZonedDateTime
 	poweredBy: PoweredBy
 }
 
@@ -25,16 +26,16 @@ type EventSection = {readonly title: string; readonly data: EventType[]}
 
 function groupEvents(
 	events: readonly EventType[],
-	now: Moment,
+	now: Temporal.ZonedDateTime,
 ): Array<EventSection> {
 	let grouped = groupBy(events, (event) => {
 		if (event.isOngoing) {
 			return 'Ongoing'
 		}
-		if (event.startTime.isSame(now, 'day')) {
+		if (isSame(event.startTime, now, 'day')) {
 			return 'Today'
 		}
-		return event.startTime.format('ddd  MMM Do') // google returns events in CST
+		return format(event.startTime, 'ddd  MMM Do') // google returns events in CST
 	})
 
 	return toPairs(grouped).map(([key, value]) => ({

@@ -1,6 +1,7 @@
 import {client} from '@frogpond/api'
 import {queryOptions} from '@tanstack/react-query'
-import moment, {type Moment} from 'moment-timezone'
+import {Temporal} from 'temporal-polyfill'
+import {format, now as temporalNow} from '../../../lib/temporal'
 import {StreamType} from './types'
 import {timezone} from '@frogpond/constants'
 
@@ -9,10 +10,11 @@ export const keys = {
 		['streams', filter] as const,
 }
 
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-export const streamsOptionsFor = (date: Moment = moment.tz(timezone())) => {
-	const dateFromFormatted = date.format('YYYY-MM-DD')
-	const dateToFormatted = date.clone().add(2, 'month').format('YYYY-MM-DD')
+export const streamsOptionsFor = (
+	date: Temporal.ZonedDateTime = temporalNow(timezone()),
+) => {
+	const dateFromFormatted = format(date, 'YYYY-MM-DD')
+	const dateToFormatted = format(date.add({months: 2}), 'YYYY-MM-DD')
 
 	const searchParams = {
 		sort: 'ascending',

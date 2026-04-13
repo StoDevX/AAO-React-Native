@@ -8,7 +8,7 @@ import * as c from '@frogpond/colors'
 import {ListSeparator, ListSectionHeader} from '@frogpond/lists'
 import {LoadingView, NoticeView} from '@frogpond/notice'
 import {useNavigation} from '@react-navigation/native'
-import {useMomentTimer} from '@frogpond/timer'
+import {useTemporalTimer} from '@frogpond/timer'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 
 export {BuildingHoursDetailView} from './detail'
@@ -23,7 +23,7 @@ const styles = StyleSheet.create({
 export function BuildingHoursView(): JSX.Element {
 	let navigation = useNavigation()
 
-	let {now} = useMomentTimer({intervalMs: 60000, startOf: 'minute'})
+	let {now} = useTemporalTimer({intervalMs: 60000, startOf: 'minute'})
 
 	let {
 		data = [],

@@ -7,8 +7,8 @@ import {FilterToolbar, ListType} from '@frogpond/filter'
 import {StreamRow} from './row'
 import toPairs from 'lodash/toPairs'
 import groupBy from 'lodash/groupBy'
-import moment from 'moment-timezone'
-import type {Moment} from 'moment-timezone'
+import {format, fromTimestamp} from '../../../lib/temporal'
+import {timezone} from '@frogpond/constants'
 import {toLaxTitleCase as titleCase} from '@frogpond/titlecase'
 import type {StreamType} from './types'
 import {streamsOptionsFor} from './query'
@@ -29,8 +29,8 @@ const groupStreams = (entries: StreamType[]) => {
 }
 
 const groupStreamsByCategoryAndDate = (stream: StreamType) => {
-	let date: Moment = moment(stream.starttime)
-	let dateGroup = date.format('dddd, MMMM Do')
+	let date = fromTimestamp(stream.starttime, timezone())
+	let dateGroup = format(date, 'dddd, MMMM Do')
 
 	let group = stream.status.toLowerCase() !== 'live' ? dateGroup : 'Live'
 

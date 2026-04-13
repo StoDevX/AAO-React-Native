@@ -2,6 +2,7 @@ import * as React from 'react'
 
 import {StyleProp, Text, TextStyle} from 'react-native'
 import type {DepartureTimeList} from '../types'
+import {format as temporalFormat} from '../../../../lib/temporal'
 
 const TIME_FORMAT = 'h:mma'
 
@@ -15,7 +16,7 @@ export function ScheduleTimes({times, style}: Props): JSX.Element {
 		<Text style={style}>
 			{times
 				// and format the times
-				.map((time) => time?.format(TIME_FORMAT) ?? 'None')
+				.map((time) => (time ? temporalFormat(time, TIME_FORMAT) : 'None'))
 				.join(' • ')}
 		</Text>
 	)

@@ -7,10 +7,10 @@ import type {
 import {BusTimetableEntry} from '../types'
 
 import {parseTime} from './parse-time'
-import type {Moment} from 'moment'
+import type {Temporal} from 'temporal-polyfill'
 
 export const processBusSchedule =
-	(now: Moment) =>
+	(now: Temporal.ZonedDateTime) =>
 	(scheduleData: UnprocessedBusSchedule): BusSchedule => {
 		let times = scheduleData.times.map((timeList) =>
 			timeList.map(parseTime(now)),
@@ -34,7 +34,7 @@ export const processBusSchedule =
 
 export function processBusLine(
 	lineData: UnprocessedBusLine,
-	now: Moment,
+	now: Temporal.ZonedDateTime,
 ): BusLine {
 	return {
 		line: lineData.line,

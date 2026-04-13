@@ -1,6 +1,6 @@
 import {expect, it, jest} from '@jest/globals'
 import {getDetailedBuildingStatus} from '../get-detailed-status'
-import {plainMoment} from './moment.helper'
+import {plainMoment} from './temporal.helper'
 import {BuildingType} from '../../types'
 
 it('returns a list of [isOpen, scheduleName, verboseStatus] tuples', () => {

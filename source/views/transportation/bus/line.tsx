@@ -8,7 +8,13 @@ import {
 	getScheduleForNow,
 	processBusLine,
 } from './lib'
-import type {Moment} from 'moment-timezone'
+import type {Temporal} from 'temporal-polyfill'
+import {
+	relativeTo,
+	isBefore as temporalIsBefore,
+	isAfter as temporalIsAfter,
+	format as temporalFormat,
+} from '../../../lib/temporal'
 import find from 'lodash/find'
 import findLast from 'lodash/findLast'
 import {Separator} from '@frogpond/separator'
@@ -74,20 +80,34 @@ const EMPTY_SCHEDULE_MESSAGE = (
 
 type Props = {
 	line: UnprocessedBusLine
-	now: Moment
+	now: Temporal.ZonedDateTime
 	openMap: () => unknown
 }
 
-function startsIn(now: Moment, start?: Moment | null) {
+function startsIn(
+	now: Temporal.ZonedDateTime,
+	start?: Temporal.ZonedDateTime | null,
+) {
 	if (!start) {
 		return 'Error'
 	}
 
-	let nowCopy = now.clone()
-	return `Starts ${nowCopy.seconds(0).to(start)}`
+	let nowNoSeconds = now.with({
+		second: 0,
+		millisecond: 0,
+		microsecond: 0,
+		nanosecond: 0,
+	})
+	return `Starts ${relativeTo(nowNoSeconds, start)}`
 }
 
-function deriveFromProps({line, now}: {line: UnprocessedBusLine; now: Moment}) {
+function deriveFromProps({
+	line,
+	now,
+}: {
+	line: UnprocessedBusLine
+	now: Temporal.ZonedDateTime
+}) {
 	// Finds the stuff that's shared between FlatList and renderItem
 	let processedLine = processBusLine(line, now)
 
@@ -119,9 +139,9 @@ function deriveFromProps({line, now}: {line: UnprocessedBusLine; now: Moment}) {
 				let last = findLast(times, isTruthy)
 				if (!first || !last) {
 					subtitle = 'Not running today'
-				} else if (now.isBefore(first)) {
+				} else if (temporalIsBefore(now, first)) {
 					subtitle = startsIn(now, first)
-				} else if (now.isAfter(last)) {
+				} else if (temporalIsAfter(now, last)) {
 					subtitle = 'Running'
 				} else {
 					subtitle = 'Running'
@@ -137,7 +157,7 @@ function deriveFromProps({line, now}: {line: UnprocessedBusLine; now: Moment}) {
 
 	if (process.env.NODE_ENV !== 'production') {
 		// for debugging
-		subtitle += ` (${now.format('h:mma')})`
+		subtitle += ` (${temporalFormat(now, 'h:mma')})`
 	}
 
 	return {

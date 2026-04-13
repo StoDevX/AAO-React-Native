@@ -1,11 +1,11 @@
 import {expect, test} from '@jest/globals'
+import {Temporal} from 'temporal-polyfill'
 import {getCurrentBusIteration} from '../get-current-bus-iteration'
 import {processBusSchedule} from '../process-bus-line'
-import {dayAndTime, time} from './moment.helper'
+import {dayAndTime, time} from './temporal.helper'
 import type {BusSchedule, UnprocessedBusSchedule} from '../../types'
-import moment from 'moment'
 
-function buildBusSchedules(now: moment.Moment): BusSchedule {
+function buildBusSchedules(now: Temporal.ZonedDateTime): BusSchedule {
 	// prettier-ignore
 	let schedules: UnprocessedBusSchedule = {
     days: ['Mo', 'Tu'],

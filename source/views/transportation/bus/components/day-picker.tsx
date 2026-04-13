@@ -7,7 +7,8 @@ import {
 	TouchableOpacity,
 	View,
 } from 'react-native'
-import type {Moment} from 'moment-timezone'
+import type {Temporal} from 'temporal-polyfill'
+import {dayOfWeekNumber} from '../../../../lib/temporal'
 import type {DayOfWeek} from '../types'
 import * as c from '@frogpond/colors'
 import {ContextMenu} from '@frogpond/context-menu'
@@ -129,7 +130,7 @@ export const DayPicker = ({
 	)
 }
 
-export const momentToDayOfWeek = (moment: Moment): DayOfWeek => {
+export const momentToDayOfWeek = (dt: Temporal.ZonedDateTime): DayOfWeek => {
 	const dayMap: Record<number, DayOfWeek> = {
 		0: 'Su',
 		1: 'Mo',
@@ -139,13 +140,13 @@ export const momentToDayOfWeek = (moment: Moment): DayOfWeek => {
 		5: 'Fr',
 		6: 'Sa',
 	}
-	return dayMap[moment.day()]
+	return dayMap[dayOfWeekNumber(dt)]
 }
 
 export const createMomentForDay = (
-	baseMoment: Moment,
+	baseMoment: Temporal.ZonedDateTime,
 	targetDay: DayOfWeek,
-): Moment => {
+): Temporal.ZonedDateTime => {
 	const dayMap: Record<DayOfWeek, number> = {
 		Su: 0,
 		Mo: 1,
@@ -157,10 +158,10 @@ export const createMomentForDay = (
 	}
 
 	const targetDayNumber = dayMap[targetDay]
-	const currentDayNumber = baseMoment.day()
+	const currentDayNumber = dayOfWeekNumber(baseMoment)
 	const diff = targetDayNumber - currentDayNumber
 
-	return baseMoment.clone().add(diff, 'days')
+	return baseMoment.add({days: diff})
 }
 
 export type DayPickerHeaderProps = {

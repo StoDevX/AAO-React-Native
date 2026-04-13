@@ -1,5 +1,6 @@
-import type {Moment} from 'moment-timezone'
+import type {Temporal} from 'temporal-polyfill'
 import type {DayOfWeekEnumType} from '../types'
+import {twoLetterDay} from '../../../lib/temporal'
 
-export const getDayOfWeek = (m: Moment): DayOfWeekEnumType =>
-	m.format('dd') as DayOfWeekEnumType
+export const getDayOfWeek = (m: Temporal.ZonedDateTime): DayOfWeekEnumType =>
+	twoLetterDay(m) as DayOfWeekEnumType

@@ -1,6 +1,6 @@
 import {expect, test} from '@jest/globals'
 import {processBusSchedule} from '../process-bus-line'
-import {time} from './moment.helper'
+import {time} from './temporal.helper'
 import {UnprocessedBusLine} from '../../types'
 
 // prettier-ignore

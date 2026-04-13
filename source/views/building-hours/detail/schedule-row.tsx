@@ -5,14 +5,14 @@
 import * as React from 'react'
 import {StyleSheet} from 'react-native'
 import type {SingleBuildingScheduleType} from '../types'
-import type {Moment} from 'moment-timezone'
+import type {Temporal} from 'temporal-polyfill'
 import {Cell} from '@frogpond/tableview'
 import {formatBuildingTimes, summarizeDays} from '../lib'
 
 type Props = {
 	set: SingleBuildingScheduleType
 	isActive: boolean
-	now: Moment
+	now: Temporal.ZonedDateTime
 }
 
 export const ScheduleRow = (props: Props): JSX.Element => {

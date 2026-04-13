@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {useMomentTimer} from '@frogpond/timer'
+import {useTemporalTimer} from '@frogpond/timer'
 import {BuildingDetail} from './building'
 import {timezone} from '@frogpond/constants'
 import {BuildingFavoriteButton} from './toolbar-button'
@@ -9,7 +9,7 @@ import {RootStackParamList} from '../../../navigation/types'
 
 export function BuildingHoursDetailView(): JSX.Element {
 	let navigation = useNavigation()
-	let {now} = useMomentTimer({intervalMs: 60000, timezone: timezone()})
+	let {now} = useTemporalTimer({intervalMs: 60000, timezone: timezone()})
 	let route = useRoute<RouteProp<RootStackParamList, typeof NavigationKey>>()
 	let {building: info} = route.params
 

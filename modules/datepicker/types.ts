@@ -1,14 +1,14 @@
 import {StyleProp, ViewStyle} from 'react-native'
-import type {Moment} from 'moment-timezone'
+import type {Temporal} from 'temporal-polyfill'
 import type {IOSNativeProps} from '@react-native-community/datetimepicker'
 
 export interface BaseDatetimePickerProps {
 	// dep-specific
-	initialDate: Moment
+	initialDate: Temporal.ZonedDateTime
 	minuteInterval?: 1 | 2 | 3 | 4 | 5 | 6 | 10 | 12 | 15 | 20 | 30
 	mode: IOSProps['mode']
 	format?: string
-	onDateChange: (moment: Moment) => void
+	onDateChange: (dt: Temporal.ZonedDateTime) => void
 
 	// platform/wrapper components
 	displayIos?: IOSProps['display']

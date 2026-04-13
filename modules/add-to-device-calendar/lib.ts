@@ -26,8 +26,8 @@ async function saveEventToCalendar(event: EventType): Promise<boolean> {
 	try {
 		await RNCalendarEvents.saveEvent(event.title, {
 			location: event.location,
-			startDate: event.startTime.toISOString(),
-			endDate: event.endTime.toISOString(),
+			startDate: event.startTime.toInstant().toString(),
+			endDate: event.endTime.toInstant().toString(),
 			description: event.description,
 			notes: event.description,
 		})

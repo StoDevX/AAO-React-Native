@@ -1,11 +1,11 @@
-import type {Moment} from 'moment'
+import {Temporal} from 'temporal-polyfill'
 
 export type EventType = {
 	readonly title: string
 	readonly description: string
 	readonly location: string
-	readonly startTime: Moment
-	readonly endTime: Moment
+	readonly startTime: Temporal.ZonedDateTime
+	readonly endTime: Temporal.ZonedDateTime
 	readonly isOngoing: boolean
 	readonly links: Array<string>
 	readonly config: {

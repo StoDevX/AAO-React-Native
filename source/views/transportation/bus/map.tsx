@@ -1,14 +1,15 @@
 import * as React from 'react'
 // import {StyleSheet} from 'react-native'
 import {Text} from 'react-native'
-import type {Moment} from 'moment'
+import type {Temporal} from 'temporal-polyfill'
+import {format as temporalFormat} from '../../../lib/temporal'
 import type {UnprocessedBusLine} from './types'
 // import MapView from '@mapbox/react-native-mapbox-gl'
 import {NoticeView} from '@frogpond/notice'
 import {getScheduleForNow, processBusLine} from './lib'
 // import uniqBy from 'lodash/uniqBy'
 import isEqual from 'lodash/isEqual'
-import {useMomentTimer} from '@frogpond/timer'
+import {useTemporalTimer} from '@frogpond/timer'
 import {timezone} from '@frogpond/constants'
 import {RouteProp, useRoute} from '@react-navigation/native'
 import {RootStackParamList} from '../../../navigation/types'
@@ -18,7 +19,7 @@ import {RootStackParamList} from '../../../navigation/types'
 // })
 
 export function BusMap(): JSX.Element {
-	let {now} = useMomentTimer({intervalMs: 60000, timezone: timezone()})
+	let {now} = useTemporalTimer({intervalMs: 60000, timezone: timezone()})
 	let route = useRoute<RouteProp<RootStackParamList, 'BusMapView'>>()
 	let {line} = route.params
 
@@ -27,7 +28,7 @@ export function BusMap(): JSX.Element {
 
 type Props = {
 	line: UnprocessedBusLine
-	now: Moment
+	now: Temporal.ZonedDateTime
 }
 
 type State = {
@@ -78,7 +79,7 @@ class Map extends React.Component<Props, State> {
 		let scheduleForToday = getScheduleForNow(processedLine.schedules, now)
 
 		if (!scheduleForToday) {
-			let notice = `No schedule was found for today, ${now.format('dddd')}`
+			let notice = `No schedule was found for today, ${temporalFormat(now, 'dddd')}`
 			return <NoticeView text={notice} />
 		}
 
@@ -87,7 +88,7 @@ class Map extends React.Component<Props, State> {
 		)
 
 		if (!entriesWithCoordinates.length) {
-			let today = now.format('dddd')
+			let today = temporalFormat(now, 'dddd')
 			let msg = `No coordinates have been provided for today's (${today}) schedule on the "${lineToDisplay.line}" line`
 			return <NoticeView text={msg} />
 		}

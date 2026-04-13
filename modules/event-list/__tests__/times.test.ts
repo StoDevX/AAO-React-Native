@@ -1,7 +1,9 @@
 import {describe, expect, test} from '@jest/globals'
 
 import type {EventType} from '@frogpond/event-type'
-import moment from 'moment'
+import {Temporal} from 'temporal-polyfill'
+import {fromTimestamp} from '../../../source/lib/temporal'
+import {timezone} from '@frogpond/constants'
 import {detailTimes, times} from '../times'
 
 describe('allDay', () => {
@@ -9,8 +11,8 @@ describe('allDay', () => {
 		return {
 			title: 'title',
 			description: 'description',
-			startTime: moment(start),
-			endTime: moment(end),
+			startTime: fromTimestamp(start, timezone()),
+			endTime: fromTimestamp(end, timezone()),
 			location: 'location',
 			isOngoing: false,
 			links: [],
@@ -47,8 +49,8 @@ describe('ongoing events', () => {
 		return {
 			title: 'title',
 			description: 'description',
-			startTime: moment(start),
-			endTime: moment(end),
+			startTime: fromTimestamp(start, timezone()),
+			endTime: fromTimestamp(end, timezone()),
 			location: 'location',
 			isOngoing: true,
 			links: [],
@@ -70,17 +72,4 @@ describe('ongoing events', () => {
 	})
 })
 
-// multi-day events
-
-// zero-length events
-
-// midnight and noon
-// events starting at midnight
-// ... ending
-// starting ... noon
-// ... ending
-
-// unremarkable events
-
-// and they can all test times and detailTimes right next to each other -
-// no need for separate testcases.
+void Temporal
