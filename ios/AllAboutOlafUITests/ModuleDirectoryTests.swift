@@ -17,9 +17,13 @@ class ModuleDirectoryTests: XCTestCase {
 		XCTAssertTrue(homescreen.waitForNonExistence(timeout: 30))
 
 		let title = app.staticTexts["Directory"].firstMatch
-		XCTAssertTrue(title.waitForExistence(timeout: 30), "Directory title should be visible")
+		XCTAssertTrue(
+			title.waitForExistence(timeout: 30),
+			"Directory title should be visible")
 
 		let searchPrompt = app.staticTexts["Search the Directory"].firstMatch
-		XCTAssertTrue(searchPrompt.waitForExistence(timeout: 30), "Search the Directory prompt should be visible")
+		XCTAssertTrue(
+			searchPrompt.waitForExistence(timeout: 30),
+			"Search the Directory prompt should be visible")
 	}
 }

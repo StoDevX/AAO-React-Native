@@ -17,6 +17,8 @@ class ModuleMoreTests: XCTestCase {
 		XCTAssertTrue(homescreen.waitForNonExistence(timeout: 30))
 
 		let title = app.staticTexts["More"].firstMatch
-		XCTAssertTrue(title.waitForExistence(timeout: 30), "More title should be visible")
+		XCTAssertTrue(
+			title.waitForExistence(timeout: 30),
+			"More title should be visible")
 	}
 }

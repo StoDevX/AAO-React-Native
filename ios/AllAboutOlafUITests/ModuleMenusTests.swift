@@ -19,7 +19,9 @@ class ModuleMenusTests: XCTestCase {
 		XCTAssertTrue(homescreen.waitForNonExistence(timeout: 30))
 
 		let title = app.staticTexts["Menus"].firstMatch
-		XCTAssertTrue(title.waitForExistence(timeout: 30), "Menus title should be visible")
+		XCTAssertTrue(
+			title.waitForExistence(timeout: 30),
+			"Menus title should be visible")
 	}
 
 	// MARK: - St. Olaf menus
@@ -30,7 +32,9 @@ class ModuleMenusTests: XCTestCase {
 		for cafe in ["Stav Hall", "The Cage", "The Pause"] {
 			XCTContext.runActivity(named: cafe) { activity in
 				let tab = app.tabButton(cafe)
-				XCTAssertTrue(tab.waitForExistence(timeout: 30))
+				XCTAssertTrue(
+					tab.waitForExistence(timeout: 30),
+					"\(cafe) tab should be visible")
 				tab.tap()
 			}
 		}
@@ -49,14 +53,18 @@ class ModuleMenusTests: XCTestCase {
 		for cafe in ["Burton", "LDC", "Weitz Center", "Sayles Hill"] {
 			XCTContext.runActivity(named: cafe) { activity in
 				let menu = app.elementWithLabel(startingWith: cafe)
-				XCTAssertTrue(menu.waitForExistence(timeout: 30))
+				XCTAssertTrue(
+					menu.waitForExistence(timeout: 30),
+					"\(cafe) menu should be visible")
 				menu.tap()
 			}
 
 			// tab navigator should disappear
 			XCTAssertTrue(carleton.waitForNonExistence(timeout: 30))
 			// now look for the cafe name in the header
-			XCTAssertTrue(app.staticTexts[cafe].firstMatch.waitForExistence(timeout: 30), "Menus title should be visible")
+			XCTAssertTrue(
+				app.staticTexts[cafe].firstMatch.waitForExistence(timeout: 30),
+				"\(cafe) title should be visible")
 
 			// TODO: how to go back? maybe this?
 			app.elementWithLabel(startingWith: "Back").tap()

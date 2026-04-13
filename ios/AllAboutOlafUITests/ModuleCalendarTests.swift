@@ -17,16 +17,20 @@ class ModuleCalendarTests: XCTestCase {
 		XCTAssertTrue(homescreen.waitForNonExistence(timeout: 30))
 
 		let title = app.staticTexts["Calendar"].firstMatch
-		XCTAssertTrue(title.waitForExistence(timeout: 30), "Calendar title should be visible")
+		XCTAssertTrue(
+			title.waitForExistence(timeout: 30),
+			"Calendar title should be visible")
 	}
 
 	func testCalendarTabsCanBeOpened() throws {
 		app.buttons["Calendar"].firstMatch.tap()
-		
+
 		for cafe in ["St. Olaf", "Oleville", "Northfield"] {
 			XCTContext.runActivity(named: cafe) { activity in
 				let tab = app.tabButton(cafe)
-				XCTAssertTrue(tab.waitForExistence(timeout: 30))
+				XCTAssertTrue(
+					tab.waitForExistence(timeout: 30),
+					"\(cafe) tab should be visible")
 				tab.tap()
 			}
 		}

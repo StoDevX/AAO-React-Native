@@ -17,6 +17,8 @@ class ModuleStudentOrgsTests: XCTestCase {
 		XCTAssertTrue(homescreen.waitForNonExistence(timeout: 30))
 
 		let title = app.staticTexts["Student Orgs"].firstMatch
-		XCTAssertTrue(title.waitForExistence(timeout: 30), "Student Orgs title should be visible")
+		XCTAssertTrue(
+			title.waitForExistence(timeout: 30),
+			"Student Orgs title should be visible")
 	}
 }

@@ -17,9 +17,13 @@ class ModuleCourseCatalogTests: XCTestCase {
 		XCTAssertTrue(homescreen.waitForNonExistence(timeout: 30))
 
 		let title = app.staticTexts["Course Catalog"].firstMatch
-		XCTAssertTrue(title.waitForExistence(timeout: 30), "Course Catalog title should be visible")
+		XCTAssertTrue(
+			title.waitForExistence(timeout: 30),
+			"Course Catalog title should be visible")
 
 		let recent = app.staticTexts["Recent"].firstMatch
-		XCTAssertTrue(recent.waitForExistence(timeout: 30), "Recent section should be visible")
+		XCTAssertTrue(
+			recent.waitForExistence(timeout: 30),
+			"Recent section should be visible")
 	}
 }

@@ -10,8 +10,10 @@ class ModuleTransportationTests: XCTestCase {
 	}
 
 	func testIsReachableFromHomescreen() throws {
-    // we need more information about this before we can debug it, so go ahead and run the test
-    XCTExpectFailure("Transportation screen crashes in CI", options: XCTExpectedFailure.Options.nonStrict())
+		// we need more information about this before we can debug it, so go ahead and run the test
+		XCTExpectFailure(
+			"Transportation screen crashes in CI",
+			options: XCTExpectedFailure.Options.nonStrict())
 
 		let homescreen = app.element(matching: "screen-homescreen")
 		XCTAssertTrue(homescreen.waitForExistence(timeout: 30))
@@ -22,8 +24,10 @@ class ModuleTransportationTests: XCTestCase {
 	}
 
 	func testHasTransportationViewVisibleByDefault() throws {
-    // we need more information about this before we can debug it, so go ahead and run the test
-    XCTExpectFailure("Transportation screen crashes in CI", options: XCTExpectedFailure.Options.nonStrict())
+		// we need more information about this before we can debug it, so go ahead and run the test
+		XCTExpectFailure(
+			"Transportation screen crashes in CI",
+			options: XCTExpectedFailure.Options.nonStrict())
 
 		app.buttons["Transportation"].firstMatch.tap()
 
@@ -32,8 +36,10 @@ class ModuleTransportationTests: XCTestCase {
 	}
 
 	func testExpressBusTabCanBeOpened() throws {
-    // we need more information about this before we can debug it, so go ahead and run the test
-    XCTExpectFailure("Transportation screen crashes in CI", options: XCTExpectedFailure.Options.nonStrict())
+		// we need more information about this before we can debug it, so go ahead and run the test
+		XCTExpectFailure(
+			"Transportation screen crashes in CI",
+			options: XCTExpectedFailure.Options.nonStrict())
 
 		app.buttons["Transportation"].firstMatch.tap()
 
@@ -43,8 +49,10 @@ class ModuleTransportationTests: XCTestCase {
 	}
 
 	func testRedLineTabCanBeOpened() throws {
-    // we need more information about this before we can debug it, so go ahead and run the test
-    XCTExpectFailure("Transportation screen crashes in CI", options: XCTExpectedFailure.Options.nonStrict())
+		// we need more information about this before we can debug it, so go ahead and run the test
+		XCTExpectFailure(
+			"Transportation screen crashes in CI",
+			options: XCTExpectedFailure.Options.nonStrict())
 
 		app.buttons["Transportation"].firstMatch.tap()
 
@@ -54,8 +62,10 @@ class ModuleTransportationTests: XCTestCase {
 	}
 
 	func testBlueLineTabCanBeOpened() throws {
-    // we need more information about this before we can debug it, so go ahead and run the test
-    XCTExpectFailure("Transportation screen crashes in CI", options: XCTExpectedFailure.Options.nonStrict())
+		// we need more information about this before we can debug it, so go ahead and run the test
+		XCTExpectFailure(
+			"Transportation screen crashes in CI",
+			options: XCTExpectedFailure.Options.nonStrict())
 
 		app.buttons["Transportation"].firstMatch.tap()
 
@@ -65,8 +75,10 @@ class ModuleTransportationTests: XCTestCase {
 	}
 
 	func testOlesGoTabCanBeOpened() throws {
-    // we need more information about this before we can debug it, so go ahead and run the test
-    XCTExpectFailure("Transportation screen crashes in CI", options: XCTExpectedFailure.Options.nonStrict())
+		// we need more information about this before we can debug it, so go ahead and run the test
+		XCTExpectFailure(
+			"Transportation screen crashes in CI",
+			options: XCTExpectedFailure.Options.nonStrict())
 
 		app.buttons["Transportation"].firstMatch.tap()
 
@@ -76,8 +88,10 @@ class ModuleTransportationTests: XCTestCase {
 	}
 
 	func testOtherModesTabCanBeOpened() throws {
-    // we need more information about this before we can debug it, so go ahead and run the test
-    XCTExpectFailure("Transportation screen crashes in CI", options: XCTExpectedFailure.Options.nonStrict())
+		// we need more information about this before we can debug it, so go ahead and run the test
+		XCTExpectFailure(
+			"Transportation screen crashes in CI",
+			options: XCTExpectedFailure.Options.nonStrict())
 
 		app.buttons["Transportation"].firstMatch.tap()
 

@@ -15,8 +15,10 @@ class ModuleCampusDictionaryTests: XCTestCase {
 
 		app.buttons["Campus Dictionary"].firstMatch.tap()
 		XCTAssertTrue(homescreen.waitForNonExistence(timeout: 30))
-    
-    let title = app.staticTexts["Campus Dictionary"].firstMatch
-    XCTAssertTrue(title.waitForExistence(timeout: 30), "Campus Dictionary title should be visible")
+
+		let title = app.staticTexts["Campus Dictionary"].firstMatch
+		XCTAssertTrue(
+			title.waitForExistence(timeout: 30),
+			"Campus Dictionary title should be visible")
 	}
 }

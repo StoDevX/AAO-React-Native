@@ -16,8 +16,8 @@ class ModuleCampusMapTests: XCTestCase {
 		app.buttons["Campus Map"].firstMatch.tap()
 		XCTAssertTrue(homescreen.waitForNonExistence(timeout: 30))
 
-    // dismiss SFSafariViewController
-    app.buttons["Done"].tap()
+		// dismiss SFSafariViewController
+		app.buttons["Done"].tap()
 
 		XCTAssertTrue(homescreen.waitForExistence(timeout: 30))
 	}
