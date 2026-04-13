@@ -22,7 +22,7 @@ extension DatabaseClient {
 						SELECT homeItem.*, homeItemCustomization.sortOrder, homeItemCustomization.isVisible
 						FROM homeItem
 						LEFT JOIN homeItemCustomization ON homeItem.id = homeItemCustomization.itemId
-						ORDER BY homeItemCustomization.sortOrder NULLS LAST, homeItem.id
+						ORDER BY COALESCE(homeItemCustomization.sortOrder, homeItem.rowid)
 						""")
 
 					return try rows.map { row in

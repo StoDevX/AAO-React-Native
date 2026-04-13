@@ -34,6 +34,22 @@ import GRDB
 	#expect(items[0].customization?.isVisible == false)
 }
 
+@Test func fetchHomeItemsPreservesInsertionOrderWithoutCustomizations() throws {
+	let dbQueue = try DatabaseQueue()
+	let db = try AppDatabase(dbQueue: dbQueue)
+	let client = DatabaseClient.live(database: db)
+
+	try dbQueue.write { db in
+		// Insert in non-alphabetical order — test that rowid ordering preserves this
+		try HomeItem(id: "zebra", title: "Z", sfSymbol: "z", tintColor: "#000", destinationView: "z", destinationUrl: nil).insert(db)
+		try HomeItem(id: "apple", title: "A", sfSymbol: "a", tintColor: "#000", destinationView: "a", destinationUrl: nil).insert(db)
+		try HomeItem(id: "mango", title: "M", sfSymbol: "m", tintColor: "#000", destinationView: "m", destinationUrl: nil).insert(db)
+	}
+
+	let items = try client.fetchHomeItems()
+	#expect(items.map(\.item.id) == ["zebra", "apple", "mango"])
+}
+
 @Test func updateCustomizationUpsertsRow() throws {
 	let dbQueue = try DatabaseQueue()
 	let db = try AppDatabase(dbQueue: dbQueue)
