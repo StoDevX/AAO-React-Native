@@ -14,15 +14,9 @@ class ModuleStudentOrgsTests: XCTestCase {
 		XCTAssertTrue(homescreen.waitForExistence(timeout: 30))
 
 		app.buttons["Student Orgs"].firstMatch.tap()
-
 		XCTAssertTrue(homescreen.waitForNonExistence(timeout: 30))
-	}
-
-	func testHasListVisible() throws {
-		app.buttons["Student Orgs"].firstMatch.tap()
 
 		let title = app.staticTexts["Student Orgs"].firstMatch
-		XCTAssertTrue(title.waitForExistence(timeout: 30),
-		              "Student Orgs title should be visible")
+		XCTAssertTrue(title.waitForExistence(timeout: 30), "Student Orgs title should be visible")
 	}
 }

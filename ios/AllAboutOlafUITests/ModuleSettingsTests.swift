@@ -11,27 +11,18 @@ class ModuleSettingsTests: XCTestCase {
 
 	func testShowsSettingsScreenAfterTap() throws {
 		let settingsButton = app.buttons["button-open-settings"]
-		XCTAssertTrue(settingsButton.waitForExistence(timeout: 30),
-		              "Settings button should appear on home screen")
+		XCTAssertTrue(settingsButton.waitForExistence(timeout: 30), "Settings button should appear on home screen")
 		settingsButton.tap()
+
+    let homescreen = app.element(matching: "screen-homescreen")
+    XCTAssertTrue(homescreen.waitForNonExistence(timeout: 30))
 
 		let signIn = app.staticTexts["Sign in to St. Olaf"].firstMatch
-		XCTAssertTrue(signIn.waitForExistence(timeout: 30),
-		              "Sign in to St. Olaf should be visible")
-	}
+		XCTAssertTrue(signIn.waitForExistence(timeout: 30), "Sign in to St. Olaf should be visible")
 
-	func testShowsHomeScreenAfterExitingSettings() throws {
-		let settingsButton = app.buttons["button-open-settings"]
-		XCTAssertTrue(settingsButton.waitForExistence(timeout: 30))
-		settingsButton.tap()
+    app.element(matching: "button-close-screen").tap()
 
-		let homescreen = app.element(matching: "screen-homescreen")
-		XCTAssertTrue(homescreen.waitForNonExistence(timeout: 30))
-
-		app.element(matching: "button-close-screen").tap()
-
-		XCTAssertTrue(homescreen.waitForExistence(timeout: 30),
-		              "Home screen should be visible after exiting settings")
+    XCTAssertTrue(homescreen.waitForExistence(timeout: 30), "Home screen should be visible after exiting settings")
 	}
 
 	func testChangesAppIconToBigOleAndBack() throws {
@@ -53,8 +44,7 @@ class ModuleSettingsTests: XCTestCase {
 
 		// Verify default icon is selected, tap Big Ole
 		let defaultSelected = app.element(matching: "app-icon-cell-default-selected")
-		XCTAssertTrue(defaultSelected.waitForExistence(timeout: 10),
-		              "Default icon should be selected initially")
+		XCTAssertTrue(defaultSelected.waitForExistence(timeout: 10), "Default icon should be selected initially")
 		app.element(matching: "app-icon-cell-icon_type_windmill").tap()
 
 		// Interact with the app to trigger the interruption monitor
@@ -62,8 +52,7 @@ class ModuleSettingsTests: XCTestCase {
 
 		// Verify Big Ole is now selected
 		let windmillSelected = app.element(matching: "app-icon-cell-icon_type_windmill-selected")
-		XCTAssertTrue(windmillSelected.waitForExistence(timeout: 10),
-		              "Windmill icon should be selected after tapping it")
+		XCTAssertTrue(windmillSelected.waitForExistence(timeout: 10), "Windmill icon should be selected after tapping it")
 
 		// Tap default to switch back
 		app.element(matching: "app-icon-cell-default").tap()
@@ -71,7 +60,6 @@ class ModuleSettingsTests: XCTestCase {
 
 		// Verify default is selected again
 		let defaultReselected = app.element(matching: "app-icon-cell-default-selected")
-		XCTAssertTrue(defaultReselected.waitForExistence(timeout: 10),
-		              "Default icon should be selected after switching back")
+		XCTAssertTrue(defaultReselected.waitForExistence(timeout: 10), "Default icon should be selected after switching back")
 	}
 }

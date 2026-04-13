@@ -14,7 +14,6 @@ class ModuleStreamingMediaTests: XCTestCase {
 		XCTAssertTrue(homescreen.waitForExistence(timeout: 30))
 
 		app.buttons["Streaming Media"].firstMatch.tap()
-
 		XCTAssertTrue(homescreen.waitForNonExistence(timeout: 30))
 	}
 
@@ -22,8 +21,7 @@ class ModuleStreamingMediaTests: XCTestCase {
 		app.buttons["Streaming Media"].firstMatch.tap()
 
 		let streamList = app.element(matching: "stream-list")
-		XCTAssertTrue(streamList.waitForExistence(timeout: 30),
-		              "stream-list should be visible")
+		XCTAssertTrue(streamList.waitForExistence(timeout: 30), "stream-list should be visible")
 	}
 
 	func testWebcamsTabCanBeOpened() throws {

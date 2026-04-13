@@ -11,13 +11,9 @@ class ModuleHomeTests: XCTestCase {
 
 	func testShowsTheHomeScreen() throws {
 		let homescreen = app.element(matching: "screen-homescreen")
-		XCTAssertTrue(homescreen.waitForExistence(timeout: 30),
-		              "Home screen should be visible")
-	}
+		XCTAssertTrue(homescreen.waitForExistence(timeout: 30), "Home screen should be visible")
 
-	func testHomeScreenRenders() throws {
-		let menus = app.buttons["Menus"]
-		XCTAssertTrue(menus.waitForExistence(timeout: 30),
-		              "Home screen should show Menus button")
+    let menus = app.buttons["Menus"]
+		XCTAssertTrue(menus.waitForExistence(timeout: 30), "Home screen should show Menus button")
 	}
 }

@@ -32,8 +32,7 @@ class ModuleSISTests: XCTestCase {
 		XCTAssertTrue(homescreen.waitForNonExistence(timeout: 30))
 
 		let iAgree = app.buttons["I Agree"].firstMatch
-		XCTAssertTrue(iAgree.waitForExistence(timeout: 30),
-		              "I Agree acknowledgement should be visible")
+		XCTAssertTrue(iAgree.waitForExistence(timeout: 30), "I Agree acknowledgement should be visible")
 	}
 
 	func testShowsBalancesAfterAcknowledgement() throws {
@@ -47,16 +46,13 @@ class ModuleSISTests: XCTestCase {
 		XCTAssertTrue(iAgree.waitForExistence(timeout: 30))
 		iAgree.tap()
 
-		XCTAssertFalse(iAgree.exists,
-		               "I Agree should be hidden after tapping")
+		XCTAssertFalse(iAgree.exists, "I Agree should be hidden after tapping")
 
 		let balances = app.staticTexts["BALANCES"].firstMatch
-		XCTAssertTrue(balances.waitForExistence(timeout: 30),
-		              "BALANCES should be visible")
+		XCTAssertTrue(balances.waitForExistence(timeout: 30), "BALANCES should be visible")
 
 		let mealPlan = app.staticTexts["MEAL PLAN"].firstMatch
-		XCTAssertTrue(mealPlan.waitForExistence(timeout: 30),
-		              "MEAL PLAN should be visible")
+		XCTAssertTrue(mealPlan.waitForExistence(timeout: 30), "MEAL PLAN should be visible")
 	}
 
 	func testContinuesToShowBalancesAfterReopening() throws {
