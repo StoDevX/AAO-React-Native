@@ -136,14 +136,6 @@ jobs:
     outputs:
       cache-key: ${{ steps.app-cache.outputs.cache-matched-key || steps.app-cache.outputs.cache-primary-key }}
     steps:
-      - name: List available Xcode versions
-        run: ls -d /Applications/Xcode*.app
-
-      - run: sudo xcode-select -s /Applications/${{ env.xcode_version }}.app
-
-      - name: List available iOS simulators
-        run: xcrun simctl list devices iOS
-
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       - name: Check for cached iOS app
@@ -155,6 +147,17 @@ jobs:
           key: ios-app/e=${{ env.cache_epoch }}/host=macOS@15/target=ios/xcode=${{ env.xcode_version }}/ref=${{ github.head_ref || github.ref_name }}/hash=${{ hashFiles('**/project.pbxproj', 'ios/Podfile', '**/Podfile.lock', 'ios/AllAboutOlaf/**', 'ios/AllAboutOlafUITests/**') }}
           restore-keys: |
             ios-app/e=${{ env.cache_epoch }}/host=macOS@15/target=ios/xcode=${{ env.xcode_version }}/ref=master/hash=${{ hashFiles('**/project.pbxproj', 'ios/Podfile', '**/Podfile.lock', 'ios/AllAboutOlaf/**', 'ios/AllAboutOlafUITests/**') }}
+
+      - name: List available Xcode versions
+        if: steps.app-cache.outputs.cache-matched-key == ''
+        run: ls -d /Applications/Xcode*.app
+
+      - run: sudo xcode-select -s /Applications/${{ env.xcode_version }}.app
+        if: steps.app-cache.outputs.cache-matched-key == ''
+
+      - name: List available iOS simulators
+        if: steps.app-cache.outputs.cache-matched-key == ''
+        run: xcrun simctl list devices iOS
 
       - uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151 # v4.0.1
         if: steps.app-cache.outputs.cache-matched-key == ''
