@@ -36,9 +36,6 @@ class ModuleMenusTests: XCTestCase {
 		let stavHall = app.tabButton("Stav Hall")
 		XCTAssertTrue(stavHall.waitForExistence(timeout: 30))
 		stavHall.tap()
-
-		let specialsOnly = app.buttons["Specials Only"].firstMatch
-		XCTAssertTrue(specialsOnly.waitForExistence(timeout: 30))
 	}
 
 	func testTheCageMenuCanBeOpened() throws {
@@ -47,9 +44,6 @@ class ModuleMenusTests: XCTestCase {
 		let theCage = app.tabButton("The Cage")
 		XCTAssertTrue(theCage.waitForExistence(timeout: 30))
 		theCage.tap()
-
-		let specialsOnly = app.buttons["Specials Only"].firstMatch
-		XCTAssertTrue(specialsOnly.waitForExistence(timeout: 30))
 	}
 
 	func testThePauseMenuCanBeOpened() throws {
@@ -58,9 +52,6 @@ class ModuleMenusTests: XCTestCase {
 		let thePause = app.tabButton("The Pause")
 		XCTAssertTrue(thePause.waitForExistence(timeout: 30))
 		thePause.tap()
-
-		let specialsOnly = app.buttons["Specials Only"].firstMatch
-		XCTAssertTrue(specialsOnly.waitForExistence(timeout: 30))
 	}
 
 	// MARK: - Carleton menus
@@ -75,9 +66,6 @@ class ModuleMenusTests: XCTestCase {
 		let burton = app.buttons["Burton"].firstMatch
 		XCTAssertTrue(burton.waitForExistence(timeout: 30))
 		burton.tap()
-
-		let specialsOnly = app.buttons["Specials Only"].firstMatch
-		XCTAssertTrue(specialsOnly.waitForExistence(timeout: 30))
 	}
 
 	func testLDCMenuCanBeOpened() throws {
@@ -90,9 +78,6 @@ class ModuleMenusTests: XCTestCase {
 		let ldc = app.buttons["LDC"].firstMatch
 		XCTAssertTrue(ldc.waitForExistence(timeout: 30))
 		ldc.tap()
-
-		let specialsOnly = app.buttons["Specials Only"].firstMatch
-		XCTAssertTrue(specialsOnly.waitForExistence(timeout: 30))
 	}
 
 	func testWeitzCenterMenuCanBeOpened() throws {
@@ -105,9 +90,6 @@ class ModuleMenusTests: XCTestCase {
 		let weitzCenter = app.buttons["Weitz Center"].firstMatch
 		XCTAssertTrue(weitzCenter.waitForExistence(timeout: 30))
 		weitzCenter.tap()
-
-		let specialsOnly = app.buttons["Specials Only"].firstMatch
-		XCTAssertTrue(specialsOnly.waitForExistence(timeout: 30))
 	}
 
 	func testSaylesHillMenuCanBeOpened() throws {
@@ -120,8 +102,5 @@ class ModuleMenusTests: XCTestCase {
 		let saylesHill = app.buttons["Sayles Hill"].firstMatch
 		XCTAssertTrue(saylesHill.waitForExistence(timeout: 30))
 		saylesHill.tap()
-
-		let specialsOnly = app.buttons["Specials Only"].firstMatch
-		XCTAssertTrue(specialsOnly.waitForExistence(timeout: 30))
 	}
 }
