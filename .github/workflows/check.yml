@@ -166,9 +166,12 @@ jobs:
         if: steps.app-cache.outputs.cache-matched-key == ''
         run: npm ci
 
-      - name: Install ccache
+      - name: Install and configure ccache
         if: steps.app-cache.outputs.cache-matched-key == ''
-        run: brew install ccache
+        run: |
+          brew install ccache
+          ccache --set-config=max_size=2G
+          ccache --zero-stats
 
       - name: Restore/save ccache
         if: steps.app-cache.outputs.cache-matched-key == ''
@@ -178,12 +181,6 @@ jobs:
           key: ccache/e=${{ env.cache_epoch }}/host=macOS@15/target=ios/xcode=${{ env.xcode_version }}/ref=${{ github.head_ref || github.ref_name }}/hash=${{ hashFiles('**/project.pbxproj', 'ios/Podfile', '**/Podfile.lock', 'ios/AllAboutOlaf/**') }}
           restore-keys: |
             ccache/e=${{ env.cache_epoch }}/host=macOS@15/target=ios/xcode=${{ env.xcode_version }}/ref=master/hash=${{ hashFiles('**/project.pbxproj', 'ios/Podfile', '**/Podfile.lock', 'ios/AllAboutOlaf/**') }}
-
-      - name: Configure ccache
-        if: steps.app-cache.outputs.cache-matched-key == ''
-        run: |
-          ccache --set-config=max_size=2G
-          ccache --zero-stats
 
       - name: Install CocoaPods
         if: steps.app-cache.outputs.cache-matched-key == ''
