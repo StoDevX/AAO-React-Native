@@ -240,7 +240,11 @@ jobs:
           matrix=$(python3 scripts/split-uitests.py \
             --test-dir ios/AllAboutOlafUITests \
             --shards 2)
-          echo "matrix=${matrix}" >> "$GITHUB_OUTPUT"
+          {
+            echo 'matrix<<EOF'
+            echo "${matrix}"
+            echo 'EOF'
+          } >> "$GITHUB_OUTPUT"
 
   ios-uitest:
     name: Native UITest for iOS (${{ matrix.shard }})
