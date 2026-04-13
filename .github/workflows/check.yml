@@ -201,6 +201,7 @@ jobs:
             -scheme AllAboutOlaf \
             -configuration Release \
             -sdk iphonesimulator \
+            -destination "generic/platform=iOS Simulator" \
             -derivedDataPath ios/build \
             -only-testing:AllAboutOlafUITests \
             CODE_SIGN_IDENTITY="" \
