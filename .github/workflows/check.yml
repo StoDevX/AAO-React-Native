@@ -189,7 +189,7 @@ jobs:
           USE_CCACHE: '1'
 
       - name: Build UITest bundle
-        if: ${{ steps.app-cache.outputs.cache-hit != 'true' && !contains(github.event.pull_request.labels.*.name, 'ci/skip-e2e') }}
+        if: ${{ steps.app-cache.outputs.cache-matched-key == '' && !contains(github.event.pull_request.labels.*.name, 'ci/skip-e2e') }}
         env:
           SKIP_BUNDLING: 'true'
           CODE_SIGNING_DISABLED: 'true'
