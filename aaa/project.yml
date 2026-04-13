@@ -2,19 +2,19 @@ name: AllAboutAnything
 options:
   bundleIdPrefix: com.allaboutanything
   deploymentTarget:
-    iOS: "18.0"
+    iOS: '18.0'
 
 settings:
   base:
-    SWIFT_VERSION: "6.2"
+    SWIFT_VERSION: '6.2'
 
 packages:
   ComposableArchitecture:
     url: https://github.com/pointfreeco/swift-composable-architecture
-    from: "1.17.0"
+    from: '1.17.0'
   GRDB:
     url: https://github.com/groue/GRDB.swift
-    from: "7.4.0"
+    from: '7.4.0'
 
 targets:
   AllAboutAnything:
