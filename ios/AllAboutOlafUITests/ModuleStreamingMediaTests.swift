@@ -15,38 +15,19 @@ class ModuleStreamingMediaTests: XCTestCase {
 
 		app.buttons["Streaming Media"].firstMatch.tap()
 		XCTAssertTrue(homescreen.waitForNonExistence(timeout: 30))
-	}
-
-	func testHasStreamListVisibleByDefault() throws {
-		app.buttons["Streaming Media"].firstMatch.tap()
 
 		let streamList = app.element(matching: "stream-list")
 		XCTAssertTrue(
 			streamList.waitForExistence(timeout: 30),
 			"stream-list should be visible")
-	}
 
-	func testWebcamsTabCanBeOpened() throws {
-		app.buttons["Streaming Media"].firstMatch.tap()
-
-		let webcams = app.tabButton("Webcams")
-		XCTAssertTrue(webcams.waitForExistence(timeout: 30))
-		webcams.tap()
-	}
-
-	func testKSTOTabCanBeOpened() throws {
-		app.buttons["Streaming Media"].firstMatch.tap()
-
-		let ksto = app.tabButton("KSTO")
-		XCTAssertTrue(ksto.waitForExistence(timeout: 30))
-		ksto.tap()
-	}
-
-	func testKRLXTabCanBeOpened() throws {
-		app.buttons["Streaming Media"].firstMatch.tap()
-
-		let krlx = app.tabButton("KRLX")
-		XCTAssertTrue(krlx.waitForExistence(timeout: 30))
-		krlx.tap()
+		for tab in ["Webcams", "KSTO", "KRLX"] {
+			XCTContext.runActivity(named: tab) { activity in
+				let tabButton = app.tabButton(tab)
+				XCTAssertTrue(
+					tabButton.waitForExistence(timeout: 30),
+					"\(tab) tab button should be visible")
+			}
+		}
 	}
 }
