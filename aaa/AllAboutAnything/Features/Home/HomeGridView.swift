@@ -4,6 +4,8 @@ import SwiftUI
 struct HomeGridView: View {
 	let store: StoreOf<HomeFeature>
 
+	@State private var drawerDetent: PresentationDetent = .medium
+
 	private let columns = [
 		GridItem(.flexible()),
 		GridItem(.flexible()),
@@ -56,7 +58,7 @@ struct HomeGridView: View {
 			HiddenItemsDrawerView(items: store.hiddenItems) { id in
 				store.send(.showItem(id: id))
 			}
-			.presentationDetents([.medium, .large])
+			.presentationDetents([.height(80), .medium, .large], selection: $drawerDetent)
 			.presentationBackgroundInteraction(.enabled(upThrough: .medium))
 		}
 	}
