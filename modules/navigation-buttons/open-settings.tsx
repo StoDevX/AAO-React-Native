@@ -1,6 +1,6 @@
 import * as React from 'react'
 import {Touchable} from '@frogpond/touchable'
-import {Icon, platformPrefixIconName} from '@frogpond/icon'
+import {Icon} from '@frogpond/icon'
 import * as c from '@frogpond/colors'
 import {commonStyles, rightButtonStyles} from './styles'
 import {useNavigation} from '@react-navigation/native'
@@ -20,7 +20,7 @@ export function OpenSettingsButton(_props: HeaderBackButtonProps): JSX.Element {
 			testID="button-open-settings"
 		>
 			<Icon
-				name={platformPrefixIconName('settings')}
+				name="settings"
 				style={[rightButtonStyles.icon, {color: c.label}]}
 			/>
 		</Touchable>

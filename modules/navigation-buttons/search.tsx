@@ -26,12 +26,7 @@ export function SearchButton(props: Props): JSX.Element {
 					{props.title}
 				</Text>
 			) : (
-				<Icon
-					name={
-						Platform.OS === 'ios' ? 'ios-search-outline' : 'md-search-outline'
-					}
-					style={styles.icon}
-				/>
+				<Icon name="search-outline" style={styles.icon} />
 			)}
 		</Touchable>
 	)

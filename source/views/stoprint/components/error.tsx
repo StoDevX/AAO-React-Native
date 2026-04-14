@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {Platform, RefreshControl, ScrollView, StyleSheet} from 'react-native'
+import {RefreshControl, ScrollView, StyleSheet} from 'react-native'
 import Icon from 'react-native-vector-icons/Ionicons'
 import {NoticeView} from '@frogpond/notice'
 import * as c from '@frogpond/colors'
@@ -15,12 +15,6 @@ type Props = {
 }
 
 export function StoPrintErrorView(props: Props): JSX.Element {
-	let iconName: string =
-		Platform.select({
-			ios: 'ios-bug',
-			android: 'md-bug',
-		}) ?? 'ios-bug'
-
 	return (
 		<ScrollView
 			contentContainerStyle={styles.content}
@@ -33,7 +27,7 @@ export function StoPrintErrorView(props: Props): JSX.Element {
 			showsVerticalScrollIndicator={false}
 			style={styles.container}
 		>
-			<Icon color={c.systemFill} name={iconName} size={100} />
+			<Icon color={c.systemFill} name="bug" size={100} />
 			<NoticeView
 				buttonText="Report"
 				header="Connection Issue"

@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {Icon, platformPrefixIconName} from '@frogpond/icon'
+import {Icon} from '@frogpond/icon'
 import {Touchable, TouchableProps} from '@frogpond/touchable'
 import {rightButtonStyles as styles} from './styles'
 
@@ -8,10 +8,7 @@ export function ShareButton(
 ): JSX.Element {
 	return (
 		<Touchable highlight={false} onPress={props.onPress} style={styles.button}>
-			<Icon
-				name={platformPrefixIconName('share-outline')}
-				style={styles.icon}
-			/>
+			<Icon name="share-outline" style={styles.icon} />
 		</Touchable>
 	)
 }

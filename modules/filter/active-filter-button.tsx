@@ -1,7 +1,6 @@
 import * as React from 'react'
 import type {FilterType} from './types'
 import {
-	Platform,
 	StyleProp,
 	StyleSheet,
 	Text,
@@ -25,19 +24,11 @@ export function ActiveFilterButton<T extends object>({
 	onRemove,
 	style,
 }: Props<T>): JSX.Element {
-	let iconName = Platform.select({
-		ios: 'ios-close-circle',
-		android: 'md-close-circle',
-		default: '',
-	})
-
-	let iconColor = c.label
-
 	return (
 		<TouchableWithoutFeedback onPress={() => onRemove(filter)}>
 			<View style={[styles.badge, style]}>
 				<Text style={styles.text}>{label}</Text>
-				<Icon color={iconColor} name={iconName} size={20} />
+				<Icon color={c.label} name="close-circle" size={20} />
 			</View>
 		</TouchableWithoutFeedback>
 	)

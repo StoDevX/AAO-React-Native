@@ -1,11 +1,5 @@
 import * as React from 'react'
-import {
-	Platform,
-	RefreshControl,
-	ScrollView,
-	StyleSheet,
-	Text,
-} from 'react-native'
+import {RefreshControl, ScrollView, StyleSheet, Text} from 'react-native'
 import Icon from 'react-native-vector-icons/Ionicons'
 import {NoticeView} from '@frogpond/notice'
 import * as c from '@frogpond/colors'
@@ -23,7 +17,6 @@ type Props = {
 export const StoPrintNoticeView = (props: Props): React.ReactElement => {
 	let {buttonText, description, header, onPress, text, onRefresh, refreshing} =
 		props
-	let iconName = Platform.OS === 'ios' ? 'ios-print' : 'md-print'
 
 	return (
 		<ScrollView
@@ -36,7 +29,7 @@ export const StoPrintNoticeView = (props: Props): React.ReactElement => {
 			showsVerticalScrollIndicator={false}
 			style={styles.container}
 		>
-			<Icon color={c.systemFill} name={iconName} size={100} />
+			<Icon color={c.systemFill} name="print" size={100} />
 			<NoticeView
 				buttonText={buttonText}
 				header={header}

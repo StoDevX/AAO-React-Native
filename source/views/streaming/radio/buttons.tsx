@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {Platform, StyleSheet, Text, View} from 'react-native'
+import {StyleSheet, Text, View} from 'react-native'
 import * as c from '@frogpond/colors'
 import type {Glyphs} from '@frogpond/icon'
 import {Icon} from '@frogpond/icon'
@@ -34,12 +34,7 @@ type CallButtonProps = {
 }
 
 export function CallButton({onPress}: CallButtonProps): JSX.Element {
-	return (
-		<SmallActionButton
-			icon={Platform.OS === 'ios' ? 'ios-call' : 'md-call'}
-			onPress={onPress}
-		/>
-	)
+	return <SmallActionButton icon="call" onPress={onPress} />
 }
 
 type ShowCalendarButtonProps = {
@@ -49,12 +44,7 @@ type ShowCalendarButtonProps = {
 export function ShowCalendarButton({
 	onPress,
 }: ShowCalendarButtonProps): JSX.Element {
-	return (
-		<SmallActionButton
-			icon={Platform.OS === 'ios' ? 'ios-calendar' : 'md-calendar'}
-			onPress={onPress}
-		/>
-	)
+	return <SmallActionButton icon="calendar" onPress={onPress} />
 }
 
 type SmallActionButtonProps = Omit<ActionButtonProps, 'text'>
