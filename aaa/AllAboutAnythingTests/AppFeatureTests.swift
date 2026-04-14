@@ -1,4 +1,5 @@
 import ComposableArchitecture
+import Foundation
 import Testing
 @testable import AllAboutAnything
 
@@ -23,7 +24,7 @@ import Testing
 }
 
 @MainActor
-@Test func itemTappedPushesPlaceholderForUrlDestination() async {
+@Test func itemTappedPushesBrowserForUrlDestination() async {
 	let itemB = HomeItem(
 		id: "b",
 		title: "B",
@@ -43,9 +44,7 @@ import Testing
 	}
 
 	await store.send(\.home.itemTapped, "b") {
-		$0.path[id: 0] = .placeholder(
-			PlaceholderFeature.State(title: "B", sfSymbol: "link", tintColor: "#111")
-		)
+		$0.path[id: 0] = .browser(BrowserFeature.State(url: URL(string: "https://example.com")!))
 	}
 }
 

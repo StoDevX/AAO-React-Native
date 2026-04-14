@@ -30,6 +30,8 @@ struct AppView: View {
 			switch store.case {
 			case let .placeholder(store):
 				PlaceholderView(store: store)
+			case .browser:
+				EmptyView()
 			}
 		}
 	}

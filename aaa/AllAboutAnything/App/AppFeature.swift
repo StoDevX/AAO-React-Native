@@ -2,6 +2,20 @@ import ComposableArchitecture
 import Foundation
 
 @Reducer
+struct BrowserFeature {
+	@ObservableState
+	struct State: Equatable {
+		let url: URL
+	}
+
+	enum Action: Equatable {}
+
+	var body: some ReducerOf<Self> {
+		EmptyReducer()
+	}
+}
+
+@Reducer
 struct AppFeature {
 	@ObservableState
 	struct State: Equatable {
@@ -17,6 +31,7 @@ struct AppFeature {
 	@Reducer
 	enum Path {
 		case placeholder(PlaceholderFeature)
+		case browser(BrowserFeature)
 	}
 
 	var body: some ReducerOf<Self> {
@@ -41,18 +56,10 @@ struct AppFeature {
 						)
 					))
 				} else if let urlString = item.destinationUrl {
-					if URL(string: urlString) == nil {
-						reportIssue("HomeItem \(item.id) has invalid destinationUrl: \(urlString)")
+					if let url = URL(string: urlString) {
+						state.path.append(.browser(BrowserFeature.State(url: url)))
 					} else {
-						// For MVP, URL items also go to placeholder.
-						// In the future, open in SFSafariViewController.
-						state.path.append(.placeholder(
-							PlaceholderFeature.State(
-								title: item.title,
-								sfSymbol: item.sfSymbol,
-								tintColor: item.tintColor
-							)
-						))
+						reportIssue("HomeItem \(item.id) has invalid destinationUrl: \(urlString)")
 					}
 				} else {
 					reportIssue("HomeItem \(item.id) has no destination (both view and url are nil)")
