@@ -27,6 +27,13 @@ class ModuleSettingsTests: XCTestCase {
 
 		app.element(matching: "button-close-screen").tap()
 
+		// The home screen stayed mounted behind the sheet, so verify the
+		// sheet actually dismissed by checking that the Settings content
+		// is gone.
+		XCTAssertTrue(
+			signIn.waitForNonExistence(timeout: 30),
+			"Settings sheet should have dismissed")
+
 		let homescreen = app.element(matching: "screen-homescreen")
 		XCTAssertTrue(
 			homescreen.waitForExistence(timeout: 30),
