@@ -30,17 +30,18 @@ struct AppFeature {
 	struct State: Equatable {
 		var home = HomeFeature.State()
 		var path = StackState<Path.State>()
+		@Presents var browser: BrowserFeature.State?
 	}
 
 	enum Action {
 		case home(HomeFeature.Action)
 		case path(StackActionOf<Path>)
+		case browser(PresentationAction<BrowserFeature.Action>)
 	}
 
 	@Reducer
 	enum Path {
 		case placeholder(PlaceholderFeature)
-		case browser(BrowserFeature)
 	}
 
 	var body: some ReducerOf<Self> {
@@ -66,7 +67,7 @@ struct AppFeature {
 					))
 				} else if let urlString = item.destinationUrl {
 					if let url = URL(string: urlString) {
-						state.path.append(.browser(BrowserFeature.State(url: url)))
+						state.browser = BrowserFeature.State(url: url)
 					} else {
 						reportIssue("HomeItem \(item.id) has invalid destinationUrl: \(urlString)")
 					}
@@ -75,11 +76,14 @@ struct AppFeature {
 				}
 				return .none
 
-			case .home, .path:
+			case .home, .path, .browser:
 				return .none
 			}
 		}
 		.forEach(\.path, action: \.path)
+		.ifLet(\.$browser, action: \.browser) {
+			BrowserFeature()
+		}
 	}
 }
 

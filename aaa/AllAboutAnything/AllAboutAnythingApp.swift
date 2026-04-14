@@ -30,11 +30,11 @@ struct AppView: View {
 			switch store.case {
 			case let .placeholder(store):
 				PlaceholderView(store: store)
-			case let .browser(store):
-				SafariBrowserView(url: store.url, onDismiss: { store.send(.doneTapped) })
-					.ignoresSafeArea()
-					.navigationBarBackButtonHidden(true)
 			}
+		}
+		.sheet(item: $store.scope(state: \.browser, action: \.browser)) { store in
+			SafariBrowserView(url: store.url, onDismiss: { store.send(.doneTapped) })
+				.ignoresSafeArea()
 		}
 	}
 }

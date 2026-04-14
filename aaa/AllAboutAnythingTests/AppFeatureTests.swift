@@ -24,7 +24,7 @@ import Testing
 }
 
 @MainActor
-@Test func itemTappedPushesBrowserForUrlDestination() async {
+@Test func itemTappedPresentsBrowserForUrlDestination() async {
 	let itemB = HomeItem(
 		id: "b",
 		title: "B",
@@ -44,7 +44,7 @@ import Testing
 	}
 
 	await store.send(\.home.itemTapped, "b") {
-		$0.path[id: 0] = .browser(BrowserFeature.State(url: URL(string: "https://example.com")!))
+		$0.browser = BrowserFeature.State(url: URL(string: "https://example.com")!)
 	}
 }
 
