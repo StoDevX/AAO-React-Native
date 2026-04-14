@@ -48,3 +48,13 @@ import Testing
 	}
 }
 
+@MainActor
+@Test func settingsTappedAppendsSettingsPath() async {
+	let store = TestStore(initialState: AppFeature.State()) {
+		AppFeature()
+	}
+
+	await store.send(\.home.settingsTapped) {
+		$0.path[id: 0] = .settings(SettingsFeature.State())
+	}
+}

@@ -35,19 +35,19 @@ struct HomeGridView: View {
 		.toolbar {
 			ToolbarItem(placement: .topBarTrailing) {
 				Button {
-					store.send(.plusButtonTapped)
-				} label: {
-					Image(systemName: "plus")
-				}
-				.accessibilityLabel("Add items")
-			}
-			ToolbarItem(placement: .topBarTrailing) {
-				Button {
 					store.send(.settingsTapped)
 				} label: {
 					Image(systemName: "gear")
 				}
 				.accessibilityLabel("Settings")
+			}
+			ToolbarItem(placement: .topBarTrailing) {
+				Button {
+					store.send(.plusButtonTapped)
+				} label: {
+					Image(systemName: "plus")
+				}
+				.accessibilityLabel("Add items")
 			}
 		}
 		.onAppear { store.send(.onAppear) }
