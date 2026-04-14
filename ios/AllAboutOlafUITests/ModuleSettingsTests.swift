@@ -16,9 +16,10 @@ class ModuleSettingsTests: XCTestCase {
 			"Settings button should appear on home screen")
 		settingsButton.tap()
 
-		let homescreen = app.element(matching: "screen-homescreen")
-		XCTAssertTrue(homescreen.waitForNonExistence(timeout: 30))
-
+		// Settings is presented as a pageSheet modal, so the home screen
+		// remains mounted in the view hierarchy beneath it. Don't assert
+		// that the home screen disappears — instead confirm the Settings
+		// screen's content becomes visible.
 		let signIn = app.staticTexts["Sign in to St. Olaf"].firstMatch
 		XCTAssertTrue(
 			signIn.waitForExistence(timeout: 30),
@@ -26,6 +27,7 @@ class ModuleSettingsTests: XCTestCase {
 
 		app.element(matching: "button-close-screen").tap()
 
+		let homescreen = app.element(matching: "screen-homescreen")
 		XCTAssertTrue(
 			homescreen.waitForExistence(timeout: 30),
 			"Home screen should be visible after exiting settings")

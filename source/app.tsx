@@ -19,60 +19,50 @@ import {store, persistor} from './redux'
 import {CombinedLightTheme, CombinedDarkTheme} from '@frogpond/app-theme'
 import {ActionSheetProvider} from '@expo/react-native-action-sheet'
 import {NavigationContainer} from '@react-navigation/native'
+import * as Sentry from '@sentry/react-native'
 
 import {RootStack} from './navigation'
 import {LoadingView} from '@frogpond/notice'
 import {IS_PRODUCTION} from '@frogpond/constants'
 import {ScrollView, StatusBar, Text, useColorScheme} from 'react-native'
 
-type DiagnosticErrorBoundaryState = {
-	error: Error | null
-}
-
-class DiagnosticErrorBoundary extends React.Component<
-	React.PropsWithChildren<object>,
-	DiagnosticErrorBoundaryState
-> {
-	static getDerivedStateFromError(error: Error): DiagnosticErrorBoundaryState {
-		return {error}
-	}
-
-	state: DiagnosticErrorBoundaryState = {error: null}
-
-	render(): React.ReactNode {
-		if (this.state.error) {
-			const {message, stack} = this.state.error
-			return (
-				<ScrollView
-					accessibilityLabel="diagnostic-error"
-					style={{flex: 1, backgroundColor: 'white', padding: 24}}
-					testID="diagnostic-error"
-				>
-					<Text
-						accessibilityLabel="diagnostic-error-title"
-						style={{fontSize: 18, fontWeight: 'bold', marginBottom: 12}}
-					>
-						App crashed during render
-					</Text>
-					<Text
-						accessibilityLabel="diagnostic-error-message"
-						selectable={true}
-						style={{fontSize: 14, marginBottom: 12}}
-					>
-						{message}
-					</Text>
-					<Text
-						accessibilityLabel="diagnostic-error-stack"
-						selectable={true}
-						style={{fontSize: 11, fontFamily: 'Menlo'}}
-					>
-						{stack ?? '(no stack)'}
-					</Text>
-				</ScrollView>
-			)
-		}
-		return this.props.children
-	}
+function ErrorFallback({
+	error,
+	componentStack,
+}: {
+	error: unknown
+	componentStack: string
+}): JSX.Element {
+	const message = error instanceof Error ? error.message : String(error)
+	const stack = error instanceof Error ? error.stack : null
+	return (
+		<ScrollView
+			accessibilityLabel="diagnostic-error"
+			style={{flex: 1, backgroundColor: 'white', padding: 24}}
+			testID="diagnostic-error"
+		>
+			<Text
+				accessibilityLabel="diagnostic-error-title"
+				style={{fontSize: 18, fontWeight: 'bold', marginBottom: 12}}
+			>
+				App crashed during render
+			</Text>
+			<Text
+				accessibilityLabel="diagnostic-error-message"
+				selectable={true}
+				style={{fontSize: 14, marginBottom: 12}}
+			>
+				{message}
+			</Text>
+			<Text
+				accessibilityLabel="diagnostic-error-stack"
+				selectable={true}
+				style={{fontSize: 11, fontFamily: 'Menlo'}}
+			>
+				{stack ?? componentStack}
+			</Text>
+		</ScrollView>
+	)
 }
 
 export default function App(): JSX.Element {
@@ -92,7 +82,7 @@ export default function App(): JSX.Element {
 	}
 
 	return (
-		<DiagnosticErrorBoundary>
+		<Sentry.ErrorBoundary fallback={ErrorFallback}>
 			<ReduxProvider store={store}>
 				<PersistGate
 					loading={<LoadingView text="Loading App..." />}
@@ -113,6 +103,6 @@ export default function App(): JSX.Element {
 					</PersistQueryClientProvider>
 				</PersistGate>
 			</ReduxProvider>
-		</DiagnosticErrorBoundary>
+		</Sentry.ErrorBoundary>
 	)
 }
