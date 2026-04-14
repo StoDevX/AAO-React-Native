@@ -19,11 +19,51 @@ import {store, persistor} from './redux'
 import {CombinedLightTheme, CombinedDarkTheme} from '@frogpond/app-theme'
 import {ActionSheetProvider} from '@expo/react-native-action-sheet'
 import {NavigationContainer} from '@react-navigation/native'
+import * as Sentry from '@sentry/react-native'
 
 import {RootStack} from './navigation'
 import {LoadingView} from '@frogpond/notice'
 import {IS_PRODUCTION} from '@frogpond/constants'
-import {StatusBar, useColorScheme} from 'react-native'
+import {ScrollView, StatusBar, Text, useColorScheme} from 'react-native'
+
+function ErrorFallback({
+	error,
+	componentStack,
+}: {
+	error: unknown
+	componentStack: string
+}): JSX.Element {
+	const message = error instanceof Error ? error.message : String(error)
+	const stack = error instanceof Error ? error.stack : null
+	return (
+		<ScrollView
+			accessibilityLabel="diagnostic-error"
+			style={{flex: 1, backgroundColor: 'white', padding: 24}}
+			testID="diagnostic-error"
+		>
+			<Text
+				accessibilityLabel="diagnostic-error-title"
+				style={{fontSize: 18, fontWeight: 'bold', marginBottom: 12}}
+			>
+				App crashed during render
+			</Text>
+			<Text
+				accessibilityLabel="diagnostic-error-message"
+				selectable={true}
+				style={{fontSize: 14, marginBottom: 12}}
+			>
+				{message}
+			</Text>
+			<Text
+				accessibilityLabel="diagnostic-error-stack"
+				selectable={true}
+				style={{fontSize: 11, fontFamily: 'Menlo'}}
+			>
+				{stack ?? componentStack}
+			</Text>
+		</ScrollView>
+	)
+}
 
 export default function App(): JSX.Element {
 	// Create a ref for the navigation container
@@ -42,25 +82,27 @@ export default function App(): JSX.Element {
 	}
 
 	return (
-		<ReduxProvider store={store}>
-			<PersistGate
-				loading={<LoadingView text="Loading App..." />}
-				persistor={persistor}
-			>
-				<PersistQueryClientProvider
-					client={queryClient}
-					persistOptions={{persister}}
+		<Sentry.ErrorBoundary fallback={ErrorFallback}>
+			<ReduxProvider store={store}>
+				<PersistGate
+					loading={<LoadingView text="Loading App..." />}
+					persistor={persistor}
 				>
-					<PaperProvider theme={theme}>
-						<ActionSheetProvider>
-							<NavigationContainer onReady={registerContainer} theme={theme}>
-								<StatusBar barStyle={statusBarStyle} />
-								<RootStack />
-							</NavigationContainer>
-						</ActionSheetProvider>
-					</PaperProvider>
-				</PersistQueryClientProvider>
-			</PersistGate>
-		</ReduxProvider>
+					<PersistQueryClientProvider
+						client={queryClient}
+						persistOptions={{persister}}
+					>
+						<PaperProvider theme={theme}>
+							<ActionSheetProvider>
+								<NavigationContainer onReady={registerContainer} theme={theme}>
+									<StatusBar barStyle={statusBarStyle} />
+									<RootStack />
+								</NavigationContainer>
+							</ActionSheetProvider>
+						</PaperProvider>
+					</PersistQueryClientProvider>
+				</PersistGate>
+			</ReduxProvider>
+		</Sentry.ErrorBoundary>
 	)
 }

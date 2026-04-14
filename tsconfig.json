@@ -8,8 +8,8 @@
     "lib": [
       "ESNext"
     ],
-    "module": "nodenext",
-    "moduleResolution": "nodenext",
+    "module": "esnext",
+    "moduleResolution": "bundler",
     "noEmit": true,
     "noImplicitAny": true,
     "skipLibCheck": true,
