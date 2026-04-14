@@ -7,7 +7,6 @@ Items deferred during MVP implementation. Most have detailed implementation plan
 ### UX / Features
 
 - **Drag-to-reorder grid items** — gesture for reordering items in edit mode. `HomeFeature.moveItem` reducer action already exists; needs UI. Plan: [`2026-04-13-drag-to-reorder.md`](../docs/superpowers/plans/2026-04-13-drag-to-reorder.md)
-- **URL destinations open in-app browser** — route `destinationUrl` items to `SFSafariViewController` instead of the placeholder screen. Plan: [`2026-04-13-url-destinations-in-app-browser.md`](../docs/superpowers/plans/2026-04-13-url-destinations-in-app-browser.md)
 - **Bottom-sheet drawer for hidden items** — replace inline hidden section with a Shortcuts-app-style pull-up sheet. Plan: [`2026-04-13-bottom-sheet-drawer.md`](../docs/superpowers/plans/2026-04-13-bottom-sheet-drawer.md)
 
 ### Code Quality
