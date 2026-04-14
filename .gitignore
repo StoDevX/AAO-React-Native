@@ -1,6 +1,9 @@
 # OSX
 .DS_Store
 
+# Superpowers brainstorm session artifacts
+.superpowers/
+
 # React Native generated assets
 /ios/*/main.jsbundle*
 /ios/assets/images
