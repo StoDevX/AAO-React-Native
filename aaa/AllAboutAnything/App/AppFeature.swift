@@ -8,10 +8,19 @@ struct BrowserFeature {
 		let url: URL
 	}
 
-	enum Action: Equatable {}
+	enum Action: Equatable {
+		case doneTapped
+	}
+
+	@Dependency(\.dismiss) var dismiss
 
 	var body: some ReducerOf<Self> {
-		EmptyReducer()
+		Reduce { _, action in
+			switch action {
+			case .doneTapped:
+				return .run { _ in await dismiss() }
+			}
+		}
 	}
 }
 

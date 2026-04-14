@@ -31,7 +31,7 @@ struct AppView: View {
 			case let .placeholder(store):
 				PlaceholderView(store: store)
 			case let .browser(store):
-				SafariBrowserView(url: store.url)
+				SafariBrowserView(url: store.url, onDismiss: { store.send(.doneTapped) })
 					.ignoresSafeArea()
 					.navigationBarBackButtonHidden(true)
 			}
