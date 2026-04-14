@@ -12,7 +12,8 @@
     "@frogpond/app-theme": "^1.0.0",
     "react": "^18.0.0",
     "react-native": "^0.76.0",
-    "react-native-vector-icons": "^10.3.0",
+    "@react-native-vector-icons/ionicons": "^12.5.0",
+    "@react-native-vector-icons/material-design-icons": "^12.5.0",
     "@react-navigation/native": "^6.1.18"
   }
 }

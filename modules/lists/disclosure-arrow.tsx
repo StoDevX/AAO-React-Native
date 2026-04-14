@@ -1,7 +1,7 @@
 import * as React from 'react'
 import {StyleProp, StyleSheet, View, ViewStyle} from 'react-native'
 import * as c from '@frogpond/colors'
-import Icon from 'react-native-vector-icons/Ionicons'
+import {Ionicons as Icon} from '@react-native-vector-icons/ionicons'
 
 const arrowStyles = StyleSheet.create({
 	wrapper: {

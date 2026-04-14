@@ -1,6 +1,6 @@
 import * as React from 'react'
 import {RefreshControl, ScrollView, StyleSheet, Text} from 'react-native'
-import Icon from 'react-native-vector-icons/Ionicons'
+import {Ionicons as Icon} from '@react-native-vector-icons/ionicons'
 import {NoticeView} from '@frogpond/notice'
 import * as c from '@frogpond/colors'
 

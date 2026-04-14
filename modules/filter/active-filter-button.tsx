@@ -8,7 +8,7 @@ import {
 	View,
 	ViewStyle,
 } from 'react-native'
-import Icon from 'react-native-vector-icons/Ionicons'
+import {Ionicons as Icon} from '@react-native-vector-icons/ionicons'
 import * as c from '@frogpond/colors'
 
 type Props<T extends object> = {

@@ -3,6 +3,7 @@ import {StyleProp, StyleSheet, Text, TextStyle} from 'react-native'
 import {Cell} from '@frogpond/tableview'
 import * as c from '@frogpond/colors'
 import {Icon} from '@frogpond/icon'
+import type {Glyphs} from '@frogpond/icon'
 
 const styles = StyleSheet.create({
 	title: {
@@ -22,7 +23,7 @@ type ButtonCellProps = {
 	onPress: () => void
 	textStyle?: StyleProp<TextStyle>
 	title: string
-	accessoryIcon?: string
+	accessoryIcon?: Glyphs
 }
 
 export function ButtonCell({

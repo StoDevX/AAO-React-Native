@@ -1,4 +1,5 @@
 import * as c from '@frogpond/colors'
+import type EntypoGlyphs from '@react-native-vector-icons/entypo/glyphmaps/Entypo.json'
 import {RootViewsParamList} from '../navigation/types'
 
 import {NavigationKey as menus} from './menus'
@@ -19,7 +20,7 @@ const courseSearch: keyof RootViewsParamList = 'CourseSearch'
 
 type CommonView = {
 	title: string
-	icon: string
+	icon: keyof typeof EntypoGlyphs
 	foreground: 'light' | 'dark'
 	tint: string
 	disabled?: boolean

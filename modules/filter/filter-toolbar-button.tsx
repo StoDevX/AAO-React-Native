@@ -1,7 +1,7 @@
 import * as React from 'react'
 import {useRef, useState} from 'react'
 import {StyleProp, StyleSheet, Text, View, ViewStyle} from 'react-native'
-import Icon from 'react-native-vector-icons/Ionicons'
+import {Ionicons as Icon} from '@react-native-vector-icons/ionicons'
 import type {FilterType} from './types'
 import {FilterPopover} from './filter-popover'
 import * as c from '@frogpond/colors'

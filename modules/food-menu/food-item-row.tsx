@@ -5,7 +5,7 @@ import {Column, Row} from '@frogpond/layout'
 import {Detail, ListRow, Title} from '@frogpond/lists'
 import type {MasterCorIconMapType, MenuItemType} from './types'
 import * as c from '@frogpond/colors'
-import Icon from 'react-native-vector-icons/Ionicons'
+import {Ionicons as Icon} from '@react-native-vector-icons/ionicons'
 
 type Props = {
 	corIcons: MasterCorIconMapType

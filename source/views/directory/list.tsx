@@ -16,7 +16,7 @@ import {formatResults} from './helpers'
 import {directoryEntriesOptions} from './query'
 import {useQuery} from '@tanstack/react-query'
 import type {DirectoryItem, DirectorySearchTypeEnum} from './types'
-import Icon from 'react-native-vector-icons/Ionicons'
+import {Ionicons as Icon} from '@react-native-vector-icons/ionicons'
 import {RouteProp, useNavigation, useRoute} from '@react-navigation/native'
 import {
 	NativeStackNavigationOptions,
