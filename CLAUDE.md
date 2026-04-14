@@ -52,6 +52,7 @@ These patterns are especially important in this codebase:
 - Mock native modules and external APIs
 - Descriptive test names; group with `describe` blocks
 - `beforeEach`/`afterEach` for setup/cleanup
+- **Detox E2E debugging:** When a Detox test fails on CI, download the `detox-ios-{shard}` artifact and look at the `testFnFailure.png` screenshot first — it shows the simulator screen at the moment of failure and is far more informative than the error message alone. Detox also records `test.mp4` (for failing tests), `device.log`, and `detox.log` in the same artifact directory.
 
 ## Development Commands
 

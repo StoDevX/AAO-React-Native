@@ -63,6 +63,8 @@ export function FilterToolbarButton<T extends object>(
 		<React.Fragment>
 			<Touchable
 				ref={touchable}
+				accessibilityLabel={title}
+				accessibilityRole="button"
 				highlight={false}
 				onPress={openPopover}
 				style={[buttonStyles.button, style]}

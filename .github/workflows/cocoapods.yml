@@ -5,12 +5,17 @@ on:
     paths:
       - package-lock.json
       - ios/Podfile
+      - .github/workflows/cocoapods.yml
   issue_comment:
     types: [created]
+  workflow_dispatch:
 
 permissions:
   contents: write
   pull-requests: write
+
+env:
+  MISE_RUBY_COMPILE: 'false'
 
 jobs:
   ios-podfile-update:
@@ -51,6 +56,12 @@ jobs:
       - run: npm ci
 
       - run: mise x -- pod repo update
+
+      # Delete the existing Podfile.lock so `pod install` resolves from
+      # scratch instead of trying to update the existing lockfile. This
+      # avoids resolver failures when dependencies have drifted far enough
+      # that an in-place update can't find a consistent graph.
+      - run: rm -f ios/Podfile.lock
 
       - run: mise run pod:install --verbose
 
