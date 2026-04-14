@@ -1,8 +1,10 @@
 import * as React from 'react'
 import {StyleSheet, View, Text} from 'react-native'
-import {Icon} from '@frogpond/icon'
-import type {Glyphs} from '@frogpond/icon'
+import {Ionicons as Icon} from '@react-native-vector-icons/ionicons'
+import type IoniconsGlyphs from '@react-native-vector-icons/ionicons/glyphmaps/Ionicons.json'
 import * as c from '@frogpond/colors'
+
+type IoniconsGlyph = keyof typeof IoniconsGlyphs
 
 const styles = StyleSheet.create({
 	button: {
@@ -26,7 +28,7 @@ const styles = StyleSheet.create({
 })
 
 type Props = {
-	iconName?: Glyphs
+	iconName?: IoniconsGlyph
 	title: string
 	isActive: boolean
 }

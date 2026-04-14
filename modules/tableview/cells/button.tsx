@@ -2,8 +2,10 @@ import * as React from 'react'
 import {StyleProp, StyleSheet, Text, TextStyle} from 'react-native'
 import {Cell} from '@frogpond/tableview'
 import * as c from '@frogpond/colors'
-import {Icon} from '@frogpond/icon'
-import type {Glyphs} from '@frogpond/icon'
+import {Ionicons as Icon} from '@react-native-vector-icons/ionicons'
+import type IoniconsGlyphs from '@react-native-vector-icons/ionicons/glyphmaps/Ionicons.json'
+
+type IoniconsGlyph = keyof typeof IoniconsGlyphs
 
 const styles = StyleSheet.create({
 	title: {
@@ -23,7 +25,7 @@ type ButtonCellProps = {
 	onPress: () => void
 	textStyle?: StyleProp<TextStyle>
 	title: string
-	accessoryIcon?: Glyphs
+	accessoryIcon?: IoniconsGlyph
 }
 
 export function ButtonCell({

@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {Icon} from '@frogpond/icon'
+import {Ionicons as Icon} from '@react-native-vector-icons/ionicons'
 import {Touchable, TouchableProps} from '@frogpond/touchable'
 import {rightButtonStyles as styles} from './styles'
 

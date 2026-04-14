@@ -10,7 +10,8 @@
   },
   "peerDependencies": {
     "react": "^18.0.0",
-    "react-native": "^0.76.0"
+    "react-native": "^0.76.0",
+    "@react-native-vector-icons/ionicons": "^12.5.0"
   },
   "dependencies": {
     "@frogpond/colors": "^1.0.0",

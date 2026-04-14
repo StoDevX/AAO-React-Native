@@ -1,13 +1,15 @@
 import * as React from 'react'
 import {StyleSheet, Text, View} from 'react-native'
 import * as c from '@frogpond/colors'
-import type {Glyphs} from '@frogpond/icon'
-import {Icon} from '@frogpond/icon'
+import {Ionicons as Icon} from '@react-native-vector-icons/ionicons'
+import type IoniconsGlyphs from '@react-native-vector-icons/ionicons/glyphmaps/Ionicons.json'
 import {Touchable} from '@frogpond/touchable'
+
+type IoniconsGlyph = keyof typeof IoniconsGlyphs
 import {theming} from './theme'
 
 type ActionButtonProps = {
-	icon: Glyphs
+	icon: IoniconsGlyph
 	text: string
 	onPress: () => unknown
 }
