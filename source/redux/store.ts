@@ -3,6 +3,7 @@ import {configureStore, combineReducers} from '@reduxjs/toolkit'
 import {reducer as settings} from './parts/settings'
 import {reducer as buildings} from './parts/buildings'
 import {reducer as courses} from './parts/courses'
+import {sentryReduxEnhancer} from './sentry-enhancer'
 
 import {
 	persistStore,
@@ -38,6 +39,8 @@ export const store = configureStore({
 				ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
 			},
 		}),
+	enhancers: (getDefaultEnhancers) =>
+		getDefaultEnhancers().concat(sentryReduxEnhancer),
 })
 
 export const persistor = persistStore(store)
