@@ -371,7 +371,10 @@ const ComponentLibraryStackScreens = () => {
 }
 
 export const RootStack = (): JSX.Element => (
-	<Stack.Navigator initialRouteName="Home" screenOptions={{headerShown: false}}>
+	<Stack.Navigator
+		initialRouteName="HomeRoot"
+		screenOptions={{headerShown: false}}
+	>
 		<Stack.Screen component={HomeStackScreens} name="HomeRoot" />
 		<SettingsStack.Screen
 			component={SettingsStackScreens}
