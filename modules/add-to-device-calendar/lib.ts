@@ -3,11 +3,8 @@ import {encode as base64Encode} from 'base-64'
 import {Share} from 'react-native'
 import type {EventType} from '@frogpond/event-type'
 
-function pad(n: number): string {
-	return String(n).padStart(2, '0')
-}
-
 function formatICSDate(date: Date): string {
+	let pad = (n: number) => String(n).padStart(2, '0')
 	return (
 		date.getUTCFullYear().toString() +
 		pad(date.getUTCMonth() + 1) +
