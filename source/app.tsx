@@ -37,8 +37,8 @@ export default function App(): JSX.Element {
 			return
 		}
 
-		// Register the navigation container with the instrumentation
-		sentryInit.routingInstrumentation.registerNavigationContainer(navigationRef)
+		// Register the navigation container with the integration
+		sentryInit.navigationIntegration.registerNavigationContainer(navigationRef)
 	}
 
 	return (

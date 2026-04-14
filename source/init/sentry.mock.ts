@@ -22,7 +22,7 @@ export * from './sentry'
 
 export const install = (): void => {}
 
-export const routingInstrumentation = {
+export const navigationIntegration = {
 	registerNavigationContainer: (
 		navigationRef: React.MutableRefObject<undefined>,
 	) => {},
