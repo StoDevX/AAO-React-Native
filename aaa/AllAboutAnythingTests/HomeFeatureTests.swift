@@ -39,7 +39,7 @@ private struct CustomizationCall: Equatable, Sendable {
 	}
 }
 
-@Test @MainActor func toggleEditMode() async {
+@Test @MainActor func plusButtonOpensHiddenItemsSheet() async {
 	let store = TestStore(initialState: HomeFeature.State()) {
 		HomeFeature()
 	} withDependencies: {
@@ -48,13 +48,39 @@ private struct CustomizationCall: Equatable, Sendable {
 		$0.databaseClient.updateCustomization = { _, _, _ in }
 	}
 
-	await store.send(.toggleEditMode) {
-		$0.isEditing = true
+	await store.send(.plusButtonTapped) {
+		$0.isShowingHiddenItems = true
+	}
+}
+
+@Test @MainActor func setHiddenItemsPresentedUpdatesFlag() async {
+	var state = HomeFeature.State()
+	state.isShowingHiddenItems = true
+
+	let store = TestStore(initialState: state) {
+		HomeFeature()
+	} withDependencies: {
+		$0.databaseClient.seedIfNeeded = {}
+		$0.databaseClient.fetchHomeItems = { [] }
+		$0.databaseClient.updateCustomization = { _, _, _ in }
 	}
 
-	await store.send(.toggleEditMode) {
-		$0.isEditing = false
+	await store.send(.setHiddenItemsPresented(false)) {
+		$0.isShowingHiddenItems = false
 	}
+}
+
+@Test @MainActor func settingsTappedIsNoOpInHomeFeature() async {
+	let store = TestStore(initialState: HomeFeature.State()) {
+		HomeFeature()
+	} withDependencies: {
+		$0.databaseClient.seedIfNeeded = {}
+		$0.databaseClient.fetchHomeItems = { [] }
+		$0.databaseClient.updateCustomization = { _, _, _ in }
+	}
+
+	// Navigation is handled by AppFeature; HomeFeature should not mutate state.
+	await store.send(.settingsTapped)
 }
 
 @Test @MainActor func hideItemMovesToHiddenAndPersists() async {

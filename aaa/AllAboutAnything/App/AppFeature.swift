@@ -42,6 +42,7 @@ struct AppFeature {
 	@Reducer
 	enum Path {
 		case placeholder(PlaceholderFeature)
+		case settings(SettingsFeature)
 	}
 
 	var body: some ReducerOf<Self> {
@@ -52,8 +53,7 @@ struct AppFeature {
 		Reduce { state, action in
 			switch action {
 			case let .home(.itemTapped(id)):
-				guard !state.home.isEditing,
-				      let item = state.home.gridItems[id: id] else {
+				guard let item = state.home.gridItems[id: id] else {
 					return .none
 				}
 
@@ -74,6 +74,10 @@ struct AppFeature {
 				} else {
 					reportIssue("HomeItem \(item.id) has no destination (both view and url are nil)")
 				}
+				return .none
+
+			case .home(.settingsTapped):
+				state.path.append(.settings(SettingsFeature.State()))
 				return .none
 
 			case .home, .path, .browser:

@@ -48,27 +48,3 @@ import Testing
 	}
 }
 
-@MainActor
-@Test func itemTappedDoesNotNavigateWhileEditing() async {
-	let itemA = HomeItem(
-		id: "a",
-		title: "A",
-		sfSymbol: "star",
-		tintColor: "#000",
-		destinationView: "a",
-		destinationUrl: nil
-	)
-
-	var homeState = HomeFeature.State()
-	homeState.gridItems = [itemA]
-	homeState.isEditing = true
-
-	let store = TestStore(initialState: AppFeature.State(home: homeState)) {
-		AppFeature()
-	} withDependencies: {
-		$0.databaseClient.updateCustomization = { _, _, _ in }
-	}
-
-	await store.send(\.home.itemTapped, "a")
-	// No state change expected — no trailing closure asserting mutation
-}

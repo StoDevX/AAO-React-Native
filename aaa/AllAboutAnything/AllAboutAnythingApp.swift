@@ -30,6 +30,8 @@ struct AppView: View {
 			switch store.case {
 			case let .placeholder(store):
 				PlaceholderView(store: store)
+			case let .settings(store):
+				SettingsView(store: store)
 			}
 		}
 		.sheet(item: $store.scope(state: \.browser, action: \.browser)) { store in

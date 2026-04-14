@@ -15,22 +15,17 @@ struct HomeGridView: View {
 		ScrollView {
 			LazyVGrid(columns: columns, spacing: 12) {
 				ForEach(store.gridItems) { item in
-					if store.isEditing {
-						Button {
+					Button {
+						store.send(.itemTapped(id: item.id))
+					} label: {
+						HomeItemCell(item: item)
+					}
+					.buttonStyle(.plain)
+					.accessibilityLabel(item.title)
+					.contextMenu {
+						Button("Hide \(item.title)", systemImage: "eye.slash") {
 							store.send(.hideItem(id: item.id))
-						} label: {
-							HomeItemCell(item: item, isEditing: true)
 						}
-						.buttonStyle(.plain)
-						.accessibilityLabel("Hide \(item.title)")
-					} else {
-						Button {
-							store.send(.itemTapped(id: item.id))
-						} label: {
-							HomeItemCell(item: item, isEditing: false)
-						}
-						.buttonStyle(.plain)
-						.accessibilityLabel(item.title)
 					}
 				}
 			}
@@ -39,20 +34,27 @@ struct HomeGridView: View {
 		.navigationTitle("All About Anything")
 		.toolbar {
 			ToolbarItem(placement: .topBarTrailing) {
-				Button(store.isEditing ? "Done" : "Edit") {
-					store.send(.toggleEditMode)
+				Button {
+					store.send(.plusButtonTapped)
+				} label: {
+					Image(systemName: "plus")
 				}
+				.accessibilityLabel("Add items")
+			}
+			ToolbarItem(placement: .topBarTrailing) {
+				Button {
+					store.send(.settingsTapped)
+				} label: {
+					Image(systemName: "gear")
+				}
+				.accessibilityLabel("Settings")
 			}
 		}
 		.onAppear { store.send(.onAppear) }
 		.sheet(
 			isPresented: Binding(
-				get: { store.isEditing },
-				set: { isPresented in
-					if !isPresented && store.isEditing {
-						store.send(.toggleEditMode)
-					}
-				}
+				get: { store.isShowingHiddenItems },
+				set: { store.send(.setHiddenItemsPresented($0)) }
 			)
 		) {
 			HiddenItemsDrawerView(items: store.hiddenItems) { id in

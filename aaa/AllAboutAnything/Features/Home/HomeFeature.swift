@@ -7,16 +7,18 @@ struct HomeFeature {
 	struct State: Equatable {
 		var gridItems: IdentifiedArrayOf<HomeItem> = []
 		var hiddenItems: IdentifiedArrayOf<HomeItem> = []
-		var isEditing = false
+		var isShowingHiddenItems = false
 	}
 
 	enum Action: Equatable {
 		case onAppear
-		case toggleEditMode
 		case moveItem(fromOffsets: IndexSet, toOffset: Int)
 		case hideItem(id: String)
 		case showItem(id: String)
 		case itemTapped(id: String)
+		case plusButtonTapped
+		case setHiddenItemsPresented(Bool)
+		case settingsTapped
 	}
 
 	@Dependency(\.databaseClient) var databaseClient
@@ -45,10 +47,6 @@ struct HomeFeature {
 				state.hiddenItems = IdentifiedArrayOf(uniqueElements: hidden.map(\.item))
 				return .none
 
-			case .toggleEditMode:
-				state.isEditing.toggle()
-				return .none
-
 			case let .moveItem(fromOffsets, toOffset):
 				state.gridItems.move(fromOffsets: fromOffsets, toOffset: toOffset)
 				persistCustomizations(state: state)
@@ -71,6 +69,18 @@ struct HomeFeature {
 				return .none
 
 			case .itemTapped:
+				// Navigation handled by parent AppFeature
+				return .none
+
+			case .plusButtonTapped:
+				state.isShowingHiddenItems = true
+				return .none
+
+			case let .setHiddenItemsPresented(isPresented):
+				state.isShowingHiddenItems = isPresented
+				return .none
+
+			case .settingsTapped:
 				// Navigation handled by parent AppFeature
 				return .none
 			}
