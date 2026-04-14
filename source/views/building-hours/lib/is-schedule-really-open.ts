@@ -1,12 +1,13 @@
-import type {Moment} from 'moment-timezone'
+import type {Temporal} from 'temporal-polyfill'
 import type {SingleBuildingScheduleType} from '../types'
+import {isBetween} from '../../../lib/temporal'
 
 import {parseHours} from './parse-hours'
 
 export function isScheduleReallyOpenAtMoment(
 	schedule: SingleBuildingScheduleType,
-	m: Moment,
+	m: Temporal.ZonedDateTime,
 ): boolean {
 	let {open, close} = parseHours(schedule, m)
-	return m.isBetween(open, close, 'minute', '[)')
+	return isBetween(m, open, close, 'minute', '[)')
 }

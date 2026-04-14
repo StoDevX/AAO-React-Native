@@ -3,7 +3,7 @@ import {useEffect, useState} from 'react'
 import {FlatList, StyleSheet, Text} from 'react-native'
 
 import {RouteProp, useRoute} from '@react-navigation/native'
-import type {Moment} from 'moment-timezone'
+import {Temporal} from 'temporal-polyfill'
 
 import {ScheduleTimes} from './components/times'
 import {ProgressChunk} from './components/progress-chunk'
@@ -20,7 +20,7 @@ import {
 
 import {ListFooter, ListRow, ListSectionHeader} from '@frogpond/lists'
 import * as c from '@frogpond/colors'
-import {useMomentTimer} from '@frogpond/timer'
+import {useTemporalTimer} from '@frogpond/timer'
 import {timezone} from '@frogpond/constants'
 import {Column} from '@frogpond/layout'
 import {Detail, Title} from '@frogpond/lists'
@@ -56,7 +56,7 @@ const styles = StyleSheet.create({
 type Props = {
 	stop: BusTimetableEntry
 	line: UnprocessedBusLine
-	now: Moment
+	now: Temporal.ZonedDateTime
 	subtitle: string
 }
 
@@ -133,12 +133,23 @@ function BusStopDetailInternal(props: Props): JSX.Element {
 		)
 	}
 
-	const getTimeStatus = (departureTime: Moment | null): BusStopStatusEnum => {
+	const getTimeStatus = (
+		departureTime: Temporal.ZonedDateTime | null,
+	): BusStopStatusEnum => {
 		if (!departureTime) return 'skip'
 
-		if (now.isAfter(departureTime, 'minute')) {
+		const cmp = Temporal.ZonedDateTime.compare(
+			now.with({second: 0, millisecond: 0, microsecond: 0, nanosecond: 0}),
+			departureTime.with({
+				second: 0,
+				millisecond: 0,
+				microsecond: 0,
+				nanosecond: 0,
+			}),
+		)
+		if (cmp > 0) {
 			return 'after'
-		} else if (now.isSame(departureTime, 'minute')) {
+		} else if (cmp === 0) {
 			return 'at'
 		} else {
 			return 'before'
@@ -191,7 +202,7 @@ function BusStopDetailInternal(props: Props): JSX.Element {
 }
 
 export function BusRouteDetail(): JSX.Element {
-	let {now} = useMomentTimer({intervalMs: 1000 * 60, timezone: timezone()})
+	let {now} = useTemporalTimer({intervalMs: 1000 * 60, timezone: timezone()})
 	let route = useRoute<RouteProp<RootStackParamList, 'BusRouteDetail'>>()
 	let {stop, line, subtitle} = route.params
 

@@ -1,4 +1,4 @@
-import type {Moment} from 'moment-timezone'
+import type {Temporal} from 'temporal-polyfill'
 
 export type StreamType = {
 	category: string
@@ -14,6 +14,6 @@ export type StreamType = {
 	subtitle?: string
 	thumb: string
 	title: string
-	date: Moment
+	date: Temporal.ZonedDateTime
 	$groupBy?: string
 }

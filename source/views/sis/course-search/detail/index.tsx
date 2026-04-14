@@ -10,7 +10,11 @@ import {
 } from 'react-native'
 import type {CourseType} from '../../../../lib/course-search'
 import {SolidBadge as Badge} from '@frogpond/badge'
-import moment from 'moment-timezone'
+import {
+	parseTimeToday,
+	format,
+	now as temporalNow,
+} from '../../../../lib/temporal'
 import {formatDay} from '../lib/format-day'
 import {TableView, Section, Cell} from '@frogpond/tableview'
 import {
@@ -118,8 +122,14 @@ function Schedule({course}: {course: CourseType}) {
 	)
 	let schedule = map(groupedByDay, (offerings, day) => {
 		let timesFormatted = offerings.map((offering) => {
-			let start = moment.tz(offering.start, 'H:mm', timezone()).format('h:mm A')
-			let end = moment.tz(offering.end, 'H:mm', timezone()).format('h:mm A')
+			let start = format(
+				parseTimeToday(offering.start, timezone(), temporalNow(timezone())),
+				'h:mm A',
+			)
+			let end = format(
+				parseTimeToday(offering.end, timezone(), temporalNow(timezone())),
+				'h:mm A',
+			)
 			return `${start} – ${end}`
 		})
 		let locations = offerings.map((offering) => offering.location)

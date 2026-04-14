@@ -1,11 +1,11 @@
 import {expect, test} from '@jest/globals'
+import {Temporal} from 'temporal-polyfill'
 import {getScheduleForNow} from '../get-schedule-for-now'
 import {processBusSchedule} from '../process-bus-line'
-import moment from 'moment'
 import type {BusSchedule, UnprocessedBusSchedule} from '../../types'
 
 // prettier-ignore
-function buildBusSchedules(now: moment.Moment): Array<BusSchedule> {
+function buildBusSchedules(now: Temporal.ZonedDateTime): Array<BusSchedule> {
   const schedules: Array<UnprocessedBusSchedule> = [
     {
       days: ['Fr', 'Sa'],
@@ -21,8 +21,10 @@ function buildBusSchedules(now: moment.Moment): Array<BusSchedule> {
 }
 
 test('returns the bus schedule for today', () => {
-	// a saturday
-	let now = moment.utc('2017-11-18T13:14:00.000-06:00', moment.ISO_8601)
+	// a saturday (2017-11-18T13:14:00-06:00 = CST)
+	let now = Temporal.Instant.from(
+		'2017-11-18T13:14:00-06:00',
+	).toZonedDateTimeISO('America/Chicago')
 	let input = buildBusSchedules(now)
 	let actual = getScheduleForNow(input, now)
 
@@ -30,8 +32,10 @@ test('returns the bus schedule for today', () => {
 })
 
 test('returns an empty schedule if there is no schedule for today', () => {
-	// a sunday
-	let now = moment.utc('2017-11-12T13:14:00.000Z', moment.ISO_8601)
+	// a sunday (2017-11-12T13:14:00Z = UTC Sunday)
+	let now = Temporal.Instant.from('2017-11-12T13:14:00Z').toZonedDateTimeISO(
+		'America/Chicago',
+	)
 	let input = buildBusSchedules(now)
 	let actual = getScheduleForNow(input, now)
 

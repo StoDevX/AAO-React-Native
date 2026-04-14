@@ -19,7 +19,7 @@ import {FoodItemRow} from './food-item-row'
 import {chooseMeal} from './lib/choose-meal'
 import {buildFilters} from './lib/build-filters'
 import {useNavigation} from '@react-navigation/native'
-import type {Moment} from 'moment'
+import type {Temporal} from 'temporal-polyfill'
 
 type FilterFunc = (
 	filters: Array<FilterType<MenuItemType>>,
@@ -32,7 +32,7 @@ type ReactProps = {
 	meals: ProcessedMealType[]
 	menuCorIcons: MasterCorIconMapType
 	name: string
-	now: Moment
+	now: Temporal.ZonedDateTime
 	onRefresh?: () => void
 	refreshing?: boolean
 	applyFilters?: FilterFunc

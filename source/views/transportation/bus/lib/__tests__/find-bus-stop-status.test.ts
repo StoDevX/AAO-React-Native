@@ -1,14 +1,14 @@
 import {expect, test} from '@jest/globals'
+import {Temporal} from 'temporal-polyfill'
 import {findBusStopStatus} from '../find-bus-stop-status'
 import {getScheduleForNow} from '../get-schedule-for-now'
 import {getCurrentBusIteration} from '../get-current-bus-iteration'
 import {processBusSchedule} from '../process-bus-line'
-import {dayAndTime} from './moment.helper'
-import moment from 'moment'
+import {dayAndTime} from './temporal.helper'
 
 import type {BusSchedule, UnprocessedBusSchedule} from '../../types'
 
-function buildBusSchedules(now: moment.Moment): Array<BusSchedule> {
+function buildBusSchedules(now: Temporal.ZonedDateTime): Array<BusSchedule> {
 	// prettier-ignore
 	let schedules: Array<UnprocessedBusSchedule> = [
     {
@@ -30,7 +30,7 @@ function buildBusSchedules(now: moment.Moment): Array<BusSchedule> {
 	return schedules.map(processBusSchedule(now))
 }
 
-function makeSchedule(now: moment.Moment) {
+function makeSchedule(now: Temporal.ZonedDateTime) {
 	let schedule = getScheduleForNow(buildBusSchedules(now), now)
 	let {status, index} = getCurrentBusIteration(schedule, now)
 	return {schedule, busStatus: status, departureIndex: index}

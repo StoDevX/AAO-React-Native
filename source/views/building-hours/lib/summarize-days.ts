@@ -1,25 +1,39 @@
-import moment from 'moment-timezone'
 import sortBy from 'lodash/sortBy'
 import type {DayOfWeekEnumType, SingleBuildingScheduleType} from '../types'
 
 import {daysOfTheWeek} from './constants'
 import {formatDay} from '../../sis/course-search/lib/format-day'
 
+const FULL_DAY_NAMES: Record<string, string> = {
+	Su: 'Sunday',
+	Mo: 'Monday',
+	Tu: 'Tuesday',
+	We: 'Wednesday',
+	Th: 'Thursday',
+	Fr: 'Friday',
+	Sa: 'Saturday',
+}
+
+const SHORT_DAY_NAMES: Record<string, string> = {
+	Su: 'Sun',
+	Mo: 'Mon',
+	Tu: 'Tue',
+	We: 'Wed',
+	Th: 'Thu',
+	Fr: 'Fri',
+	Sa: 'Sat',
+}
+
+function twoLetterToDay(code: string, full: boolean): string {
+	return full ? (FULL_DAY_NAMES[code] ?? code) : (SHORT_DAY_NAMES[code] ?? code)
+}
+
 export function summarizeDays(
 	days: DayOfWeekEnumType[],
 	useFullDay = false,
 ): string {
-	// If one day is given: return the full name of that day.
-	//    ['Fr'] => 'Friday'
-	// If multiple contiguous days are given: return the bookended 3-letter days
-	//    ['Mo', 'Tu', 'We'] => 'Mon — Wed'
-	// If multiple non-contiguous days are given: return the 2-letter days, comma-separated
-	//    ['Fr', 'Sa'] => 'Fr, Sa'
-	// If the span has a common shorthand: return that shorthand
-	//    ['Mo', 'Tu', 'We', 'Th', Fr'] => "Weekdays"
-
 	if (days.length === 1) {
-		return moment(days[0], 'dd').format('dddd')
+		return twoLetterToDay(days[0], true)
 	}
 
 	// Sort the days so we have fewer edge-cases
@@ -51,11 +65,9 @@ export function summarizeDays(
 		return 'Every day'
 	}
 
-	let dayFormat = useFullDay ? 'dddd' : 'ddd'
-
 	// And if we don't find anything, we need to return the spanned-days format
-	let start = moment(startDay, 'dd').format(dayFormat)
-	let end = moment(endDay, 'dd').format(dayFormat)
+	let start = twoLetterToDay(startDay, useFullDay)
+	let end = twoLetterToDay(endDay, useFullDay)
 
 	return `${start} — ${end}`
 }
@@ -71,15 +83,6 @@ function formatFullDay(sortedDays: DayOfWeekEnumType[]) {
 		return formattedDay
 	})
 
-	/**
-	 * This targets timespans like [We, Fr] which are formatted as
-	 * "Wednesday, and Friday" so we can change those here to read
-	 * as "Wendesday and Friday".
-	 *
-	 * Consecutive timespans such as [We, Th] are formatted as
-	 * "Wednesday – Thursday", and while they meet the length
-	 * criteria to be returned below they should come out unmodified.
-	 */
 	if (formatted.length === 2) {
 		return formatted.join(' ')
 	}

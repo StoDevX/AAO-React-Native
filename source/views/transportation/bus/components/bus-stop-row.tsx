@@ -11,7 +11,7 @@ import {
 	findBusStopStatus as findStopStatus,
 	findRemainingDeparturesForStop as findRemainingDepartures,
 } from '../lib'
-import type {Moment} from 'moment'
+import type {Temporal} from 'temporal-polyfill'
 
 const styles = StyleSheet.create({
 	row: {
@@ -35,7 +35,7 @@ const styles = StyleSheet.create({
 type Props = {
 	stop: BusTimetableEntry
 	departureIndex: null | number
-	now: Moment
+	now: Temporal.ZonedDateTime
 	barColor: ColorValue
 	currentStopColor: ColorValue
 	isFirstRow: boolean

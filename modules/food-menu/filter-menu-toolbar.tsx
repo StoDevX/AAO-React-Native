@@ -1,6 +1,7 @@
 import * as React from 'react'
 import {StyleSheet, Text, View} from 'react-native'
-import type {Moment} from 'moment'
+import type {Temporal} from 'temporal-polyfill'
+import {format as temporalFormat} from '../../source/lib/temporal'
 import type {FilterType} from '@frogpond/filter'
 import {FilterToolbar, FilterToolbarButton} from '@frogpond/filter'
 import {Toolbar} from '@frogpond/toolbar'
@@ -22,7 +23,7 @@ const styles = StyleSheet.create({
 })
 
 type Props<T extends object> = {
-	date: Moment
+	date: Temporal.ZonedDateTime
 	isOpen: boolean
 	title?: string
 	onPopoverDismiss: (filter: FilterType<T>) => void
@@ -47,7 +48,9 @@ export function FilterMenuToolbar<T extends object>({
 		<>
 			<Toolbar>
 				<View style={[styles.toolbarSection, styles.today]}>
-					<Text style={styles.toolbarText}>{date.format('MMM Do')}</Text>
+					<Text style={styles.toolbarText}>
+						{temporalFormat(date, 'MMM Do')}
+					</Text>
 					{title ? <Text style={styles.toolbarText}> — {title}</Text> : null}
 				</View>
 				{mealFilter && multipleMeals ? (

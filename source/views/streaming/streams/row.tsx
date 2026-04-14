@@ -5,7 +5,7 @@ import {ListRow, Detail, Title} from '@frogpond/lists'
 import {Column, Row} from '@frogpond/layout'
 import {innerTextWithSpaces, parseHtml} from '@frogpond/html-lib'
 import {trackedOpenUrl} from '@frogpond/open-url'
-import moment from 'moment'
+import {format} from '../../../lib/temporal'
 import type {StreamType} from './types'
 
 const styles = StyleSheet.create({
@@ -31,7 +31,7 @@ function Info({item}: {item: StreamType}) {
 function Time({item}: {item: StreamType}) {
 	let showTime = item.status !== 'archived'
 	return showTime ? (
-		<Detail>{moment(item.date).format('h:mm A – ddd, MMM. Do, YYYY')}</Detail>
+		<Detail>{format(item.date, 'h:mm A – ddd, MMM. Do, YYYY')}</Detail>
 	) : null
 }
 

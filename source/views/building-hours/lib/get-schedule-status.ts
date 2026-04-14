@@ -1,27 +1,42 @@
-import type {Moment} from 'moment-timezone'
+import type {Temporal} from 'temporal-polyfill'
 import type {SingleBuildingScheduleType} from '../types'
+import {
+	isSameOrAfter,
+	isBetween,
+	isBefore,
+	relativeTo,
+} from '../../../lib/temporal'
 
 import {parseHours} from './parse-hours'
 
-function in30(start: Moment, end: Moment) {
-	return start.clone().add(30, 'minutes').isSameOrAfter(end)
+function in30(start: Temporal.ZonedDateTime, end: Temporal.ZonedDateTime) {
+	return isSameOrAfter(start.add({minutes: 30}), end)
 }
 
-function timeBetween(start: Moment, end: Moment) {
-	return start.clone().seconds(0).to(end)
+function timeBetween(
+	start: Temporal.ZonedDateTime,
+	end: Temporal.ZonedDateTime,
+) {
+	let startNoSeconds = start.with({
+		second: 0,
+		millisecond: 0,
+		microsecond: 0,
+		nanosecond: 0,
+	})
+	return relativeTo(startNoSeconds, end)
 }
 
 export function getScheduleStatusAtMoment(
 	schedule: SingleBuildingScheduleType,
-	m: Moment,
+	m: Temporal.ZonedDateTime,
 ): string {
 	let {open, close} = parseHours(schedule, m)
 
-	if (m.isBefore(open) && in30(m, open)) {
+	if (isBefore(m, open) && in30(m, open)) {
 		return `Opens ${timeBetween(m, open)}`
 	}
 
-	if (m.isBetween(open, close, 'minute', '[)')) {
+	if (isBetween(m, open, close, 'minute', '[)')) {
 		if (in30(m, close)) {
 			return `Closes ${timeBetween(m, close)}`
 		}

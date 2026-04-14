@@ -1,6 +1,6 @@
 import {expect, it} from '@jest/globals'
 import {getShortBuildingStatus} from '../get-short-status'
-import {dayMoment} from './moment.helper'
+import {dayMoment} from './temporal.helper'
 import {BuildingType} from '../../types'
 
 it('checks a list of schedules to see if any are open', () => {

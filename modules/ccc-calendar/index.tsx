@@ -1,7 +1,7 @@
 import {EventList, type PoweredBy} from '@frogpond/event-list'
 import type {EventType} from '@frogpond/event-type'
 import {NoticeView} from '@frogpond/notice'
-import {useMomentTimer} from '@frogpond/timer'
+import {useTemporalTimer} from '@frogpond/timer'
 import {UseQueryResult} from '@tanstack/react-query'
 import * as React from 'react'
 
@@ -19,7 +19,7 @@ type Props = {
 }
 
 export function CccCalendarView(props: Props): JSX.Element {
-	let {now} = useMomentTimer({intervalMs: 60000})
+	let {now} = useTemporalTimer({intervalMs: 60000})
 	let {isError, refetch, data = [], isRefetching} = props.query
 
 	if (isError) {

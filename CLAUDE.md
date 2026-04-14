@@ -18,7 +18,7 @@ All About Olaf is a React Native mobile app for the St. Olaf College community. 
 - `StyleSheet.create()` for all styles — no inline style objects
 - **Naming:** PascalCase components, kebab-case files, camelCase variables/functions, UPPER_SNAKE_CASE constants
 - **Imports:** React → React Native → third-party → local. Named imports preferred.
-- **No Moment.js** — use `date-fns` or `Day.js` for date/time
+- **No Moment.js** — use `Temporal` via `temporal-polyfill` for date/time (see `source/lib/temporal.ts` for helpers)
 - Colors from `@frogpond/colors` — follow existing color system
 - Prettier config in `package.json` (tabs, single quotes, no semis)
 

@@ -1,7 +1,8 @@
 import {client} from '@frogpond/api'
 import {EventType} from '@frogpond/event-type'
 import {queryOptions} from '@tanstack/react-query'
-import moment from 'moment'
+import {fromTimestamp} from '../../source/lib/temporal'
+import {timezone} from '@frogpond/constants'
 import {
 	GoogleCalendar,
 	IcsCalendar,
@@ -23,8 +24,14 @@ function convertEvents(
 	options: {eventMapper?: EventMapper},
 ): EventType[] {
 	let events = data.map((event) => {
-		const startTime = moment(event.startTime)
-		const endTime = moment(event.endTime)
+		const startTime = fromTimestamp(
+			event.startTime as unknown as string,
+			timezone(),
+		)
+		const endTime = fromTimestamp(
+			event.endTime as unknown as string,
+			timezone(),
+		)
 
 		return {
 			...event,

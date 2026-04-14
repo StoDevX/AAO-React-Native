@@ -1,6 +1,6 @@
 import {expect, it} from '@jest/globals'
 import {formatBuildingTimes} from '../format-times'
-import {dayMoment} from './moment.helper'
+import {dayMoment} from './temporal.helper'
 import {SingleBuildingScheduleType} from '../../types'
 
 it('formats the times', () => {

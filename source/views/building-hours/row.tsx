@@ -1,7 +1,7 @@
 import * as React from 'react'
 import {View, Text, StyleSheet} from 'react-native'
 import {OutlineBadge as Badge} from '@frogpond/badge'
-import type {Moment} from 'moment'
+import type {Temporal} from 'temporal-polyfill'
 import type {BuildingType} from './types'
 import * as c from '@frogpond/colors'
 import {Row} from '@frogpond/layout'
@@ -40,7 +40,7 @@ const styles = StyleSheet.create({
 
 type Props = {
 	info: BuildingType
-	now: Moment
+	now: Temporal.ZonedDateTime
 	onPress: () => void
 }
 

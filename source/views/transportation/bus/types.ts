@@ -1,4 +1,4 @@
-import type {Moment} from 'moment'
+import type {Temporal} from 'temporal-polyfill'
 import {ColorValue} from 'react-native'
 
 export type DayOfWeek = 'Su' | 'Mo' | 'Tu' | 'We' | 'Th' | 'Fr' | 'Sa'
@@ -10,7 +10,7 @@ export type BusLineColors = {
 }
 
 export type UnprocessedDepartureTimeList = Array<string | false>
-export type DepartureTimeList = Array<null | Moment>
+export type DepartureTimeList = Array<null | Temporal.ZonedDateTime>
 
 export type BusTimetableEntry = {
 	name: string

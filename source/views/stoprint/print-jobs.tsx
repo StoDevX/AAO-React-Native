@@ -20,13 +20,13 @@ import {getTimeRemaining} from './lib'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 import {useNavigation} from '@react-navigation/native'
 import {DebugNoticeButton} from '@frogpond/navigation-buttons'
-import {useMomentTimer} from '@frogpond/timer'
+import {useTemporalTimer} from '@frogpond/timer'
 import {printJobsOptions} from './query'
 import {credentialsOptions} from '../../lib/login'
 import {useQuery} from '@tanstack/react-query'
 
 export const PrintJobsView = (): JSX.Element => {
-	let {now} = useMomentTimer({intervalMs: 60000, timezone: timezone()})
+	let {now} = useTemporalTimer({intervalMs: 60000, timezone: timezone()})
 	let {data: credentials, isLoading: hasCredentialsLoading} =
 		useQuery(credentialsOptions)
 

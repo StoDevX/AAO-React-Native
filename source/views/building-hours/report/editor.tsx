@@ -6,8 +6,9 @@ import * as React from 'react'
 import {useCallback, useState} from 'react'
 import xor from 'lodash/xor'
 import {ScrollView, StyleSheet, Text} from 'react-native'
-import type {Moment} from 'moment-timezone'
-import moment from 'moment-timezone'
+import type {Temporal} from 'temporal-polyfill'
+import {now as temporalNow} from '../../../lib/temporal'
+import {timezone} from '@frogpond/constants'
 import {Cell, Section, TableView} from '@frogpond/tableview'
 import {DeleteButtonCell} from '@frogpond/tableview/cells'
 import type {DayOfWeekEnumType, SingleBuildingScheduleType} from '../types'
@@ -49,19 +50,25 @@ export function BuildingHoursScheduleEditorView(): JSX.Element {
 		params.onEditSet(newSet)
 	}
 
-	let onChangeOpen = (newDate: Moment) => {
-		let newSet = {...set, from: newDate.format('h:mma')}
+	let onChangeOpen = (newDate: Temporal.ZonedDateTime) => {
+		let h = newDate.hour > 12 ? newDate.hour - 12 : newDate.hour || 12
+		let m = String(newDate.minute).padStart(2, '0')
+		let ampm = newDate.hour < 12 ? 'am' : 'pm'
+		let newSet = {...set, from: `${h}:${m}${ampm}`}
 		setSet(newSet)
 		params.onEditSet(newSet)
 	}
 
-	let onChangeClose = (newDate: Moment) => {
-		let newSet = {...set, to: newDate.format('h:mma')}
+	let onChangeClose = (newDate: Temporal.ZonedDateTime) => {
+		let h = newDate.hour > 12 ? newDate.hour - 12 : newDate.hour || 12
+		let m = String(newDate.minute).padStart(2, '0')
+		let ampm = newDate.hour < 12 ? 'am' : 'pm'
+		let newSet = {...set, to: `${h}:${m}${ampm}`}
 		setSet(newSet)
 		params.onEditSet(newSet)
 	}
 
-	let {open, close} = parseHours(set, moment())
+	let {open, close} = parseHours(set, temporalNow(timezone()))
 
 	let summary = React.useMemo(() => {
 		if (!set.days.length) {
@@ -155,26 +162,28 @@ const ToggleButton = (props: ToggleButtonProps) => {
 }
 
 type DatePickerAccessoryProps = {
-	date: Moment
-	onChange: (date: Moment) => unknown
+	date: Temporal.ZonedDateTime
+	onChange: (date: Temporal.ZonedDateTime) => unknown
 }
 
 function DatePickerAccessory(props: DatePickerAccessoryProps) {
-	let format = 'h:mm A'
+	let fmt = 'h:mm A'
 	return (
 		<DatePicker
 			displayIos="inline"
-			format={format}
+			format={fmt}
 			initialDate={props.date}
 			minuteInterval={5}
 			mode="time"
-			onDateChange={(newDate: Moment) => {
-				let oldMoment = moment()
-
-				oldMoment.hours(newDate.hours())
-				oldMoment.minutes(newDate.minutes())
-
-				props.onChange(oldMoment)
+			onDateChange={(newDate: Temporal.ZonedDateTime) => {
+				let base = temporalNow(timezone())
+				let updated = base.with({
+					hour: newDate.hour,
+					minute: newDate.minute,
+					second: 0,
+					millisecond: 0,
+				})
+				props.onChange(updated)
 			}}
 			style={styles.datePicker}
 		/>

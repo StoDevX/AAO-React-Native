@@ -1,34 +1,36 @@
-import moment from 'moment-timezone'
-import type {Moment} from 'moment-timezone'
+import type {Temporal} from 'temporal-polyfill'
+import {
+	parseTimeToday,
+	isBefore,
+	dayOfYear as getDayOfYear,
+} from '../../../lib/temporal'
 import type {SingleBuildingScheduleType} from '../types'
 import {timezone} from '@frogpond/constants'
-
 import {TIME_FORMAT} from './constants'
 
-type HourPairType = {open: Moment; close: Moment}
+type HourPairType = {
+	open: Temporal.ZonedDateTime
+	close: Temporal.ZonedDateTime
+}
 
 // TODO: Do "dayOfYear" handling better so that we don't need to handle wrapping at
 // the 6 month mark. (See #3375 for why this function changed.)
 export function parseHours(
 	{from: fromTime, to: toTime}: SingleBuildingScheduleType,
-	m: Moment,
+	m: Temporal.ZonedDateTime,
 ): HourPairType {
-	let dayOfYear = m.dayOfYear()
+	// If the time is before 3am, treat it as still "yesterday"
+	let baseM = m.hour < 2 ? m.subtract({days: 1}) : m
 
-	// if the moment is before 3am
-	if (m.hour() < 2) {
-		dayOfYear -= 1
-	}
+	let open = parseTimeToday(fromTime, timezone(), baseM)
+	let close = parseTimeToday(toTime, timezone(), baseM)
 
-	let open = moment.tz(fromTime, TIME_FORMAT, true, timezone())
-	open.year(m.year()).month(m.month()).date(m.date()).dayOfYear(dayOfYear)
-
-	let close = moment.tz(toTime, TIME_FORMAT, true, timezone())
-	close.year(m.year()).month(m.month()).date(m.date()).dayOfYear(dayOfYear)
-
-	if (close.isBefore(open)) {
-		close.add(1, 'day')
+	if (isBefore(close, open)) {
+		close = close.add({days: 1})
 	}
 
 	return {open, close}
 }
+
+void TIME_FORMAT // used for type reference consistency
+void getDayOfYear

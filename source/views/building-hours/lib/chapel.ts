@@ -1,5 +1,6 @@
-import type {Moment} from 'moment-timezone'
+import type {Temporal} from 'temporal-polyfill'
 import type {SingleBuildingScheduleType} from '../types'
+import {relativeTo} from '../../../lib/temporal'
 
 import {getDayOfWeek} from './get-day-of-week'
 import {isScheduleReallyOpenAtMoment} from './is-schedule-really-open'
@@ -14,7 +15,7 @@ const chapelSchedule: SingleBuildingScheduleType[] = [
 ]
 
 export function isChapelTime(
-	m: Moment,
+	m: Temporal.ZonedDateTime,
 	schedules: SingleBuildingScheduleType[] = chapelSchedule,
 ): boolean {
 	let dayOfWeek = getDayOfWeek(m)
@@ -28,7 +29,7 @@ export function isChapelTime(
 }
 
 export function formatChapelTime(
-	m: Moment,
+	m: Temporal.ZonedDateTime,
 	schedules: SingleBuildingScheduleType[] = chapelSchedule,
 ): string {
 	let dayOfWeek = getDayOfWeek(m)
@@ -42,7 +43,7 @@ export function formatChapelTime(
 }
 
 export function getTimeUntilChapelCloses(
-	m: Moment,
+	m: Temporal.ZonedDateTime,
 	schedules: SingleBuildingScheduleType[] = chapelSchedule,
 ): string {
 	let dayOfWeek = getDayOfWeek(m)
@@ -53,6 +54,11 @@ export function getTimeUntilChapelCloses(
 	}
 
 	let {close} = parseHours(sched, m)
-
-	return m.clone().seconds(0).to(close)
+	let mNoSeconds = m.with({
+		second: 0,
+		millisecond: 0,
+		microsecond: 0,
+		nanosecond: 0,
+	})
+	return relativeTo(mNoSeconds, close)
 }

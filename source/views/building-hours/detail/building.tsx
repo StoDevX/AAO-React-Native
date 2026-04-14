@@ -2,7 +2,7 @@ import * as React from 'react'
 import {ScrollView, StyleSheet, Image} from 'react-native'
 import {images as buildingImages} from '../../../../images/spaces'
 import type {BuildingType} from '../types'
-import type {Moment} from 'moment-timezone'
+import type {Temporal} from 'temporal-polyfill'
 import {getShortBuildingStatus, hoursBackgroundColors} from '../lib'
 
 import {SolidBadge as Badge} from '@frogpond/badge'
@@ -20,7 +20,7 @@ const styles = StyleSheet.create({
 
 type Props = {
 	info: BuildingType
-	now: Moment
+	now: Temporal.ZonedDateTime
 	onProblemReport: () => void
 }
 

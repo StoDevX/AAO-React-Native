@@ -4,7 +4,7 @@ import 'react-native-gesture-handler'
 
 // initialization
 import './init/constants'
-import './init/moment'
+import './init/temporal'
 import * as sentryInit from './init/sentry'
 import './init/api'
 import './init/theme'

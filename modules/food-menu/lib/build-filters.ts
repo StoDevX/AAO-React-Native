@@ -1,4 +1,4 @@
-import type {Moment} from 'moment'
+import type {Temporal} from 'temporal-polyfill'
 import type {
 	MasterCorIconMapType,
 	MenuItemType,
@@ -17,7 +17,7 @@ export function buildFilters(
 	foodItems: MenuItemType[],
 	corIcons: MasterCorIconMapType,
 	meals: ProcessedMealType[],
-	now?: Moment,
+	now?: Temporal.ZonedDateTime,
 ): FilterType<MenuItemType>[] {
 	// Format the items for the stations filter
 	const stations = meals.flatMap((meal) => meal.stations)

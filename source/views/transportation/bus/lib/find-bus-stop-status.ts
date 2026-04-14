@@ -1,6 +1,7 @@
-import type {Moment} from 'moment'
+import type {Temporal} from 'temporal-polyfill'
 import type {BusTimetableEntry} from '../types'
 import type {BusStateEnum} from './get-current-bus-iteration'
+import {isAfter, isSame} from '../../../../lib/temporal'
 
 export type BusStopStatusEnum = 'at' | 'before' | 'after' | 'skip'
 
@@ -8,14 +9,14 @@ type Args = {
 	stop: BusTimetableEntry
 	busStatus: BusStateEnum
 	departureIndex: null | number
-	now: Moment
+	now: Temporal.ZonedDateTime
 }
 
 export function findBusStopStatus(args: Args): BusStopStatusEnum {
 	let {stop, busStatus, departureIndex, now} = args
 
 	let stopStatus: BusStopStatusEnum = 'skip'
-	let arrivalTime: null | Moment = null
+	let arrivalTime: null | Temporal.ZonedDateTime = null
 
 	switch (busStatus) {
 		case 'before-start': {
@@ -34,9 +35,9 @@ export function findBusStopStatus(args: Args): BusStopStatusEnum {
 			arrivalTime =
 				departureIndex === null ? null : stop.departures[departureIndex]
 
-			if (arrivalTime && now.isAfter(arrivalTime, 'minute')) {
+			if (arrivalTime && isAfter(now, arrivalTime, 'minute')) {
 				stopStatus = 'after'
-			} else if (arrivalTime && now.isSame(arrivalTime, 'minute')) {
+			} else if (arrivalTime && isSame(now, arrivalTime, 'minute')) {
 				stopStatus = 'at'
 			} else if (arrivalTime !== null) {
 				stopStatus = 'before'

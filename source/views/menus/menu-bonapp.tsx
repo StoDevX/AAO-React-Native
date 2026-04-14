@@ -14,7 +14,8 @@ import type {
 } from './types'
 import sample from 'lodash/sample'
 import {mapValues, reduce} from 'lodash'
-import moment, {type Moment} from 'moment-timezone'
+import {Temporal} from 'temporal-polyfill'
+import {now as temporalNow, format} from '../../lib/temporal'
 import {trimItemLabel, trimStationName} from './lib/trim-names'
 import {bonAppCafeOptions, bonAppMenuOptions} from './query'
 import {useQuery} from '@tanstack/react-query'
@@ -41,10 +42,13 @@ type Props = {
 	name: string
 }
 
-function findCafeMessage(cafeInfo: CafeInfoType, now: Moment): string | null {
+function findCafeMessage(
+	cafeInfo: CafeInfoType,
+	now: Temporal.ZonedDateTime,
+): string | null {
 	let actualCafeInfo = cafeInfo.cafe
 
-	let todayDate = now.format('YYYY-MM-DD')
+	let todayDate = format(now, 'YYYY-MM-DD')
 	let todayMenu = actualCafeInfo.days.find(({date}) => date === todayDate)
 
 	if (!todayMenu) {
@@ -161,7 +165,7 @@ function getErrorMessage(error: Error | undefined) {
 }
 
 export function BonAppHostedMenu(props: Props): JSX.Element {
-	let now = moment.tz(timezone())
+	let now = temporalNow(timezone())
 
 	let {
 		data: cafeMenu,

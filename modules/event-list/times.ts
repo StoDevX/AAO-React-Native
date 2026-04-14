@@ -1,31 +1,29 @@
-import moment from 'moment-timezone'
+import {diffInHours, dayOfYear, isSame, format} from '../../source/lib/temporal'
 import type {EventType} from '@frogpond/event-type'
 import type {EventDetailTime} from '@frogpond/event-list/types'
 
 export function times(event: EventType): EventDetailTime {
-	let eventLength = moment
-		.duration(event.endTime.diff(event.startTime))
-		.asHours()
+	let eventLength = diffInHours(event.endTime, event.startTime)
 
 	let allDay = eventLength === 24
-	let multiDay = event.startTime.dayOfYear() !== event.endTime.dayOfYear()
-	let sillyZeroLength = event.startTime.isSame(event.endTime, 'minute')
+	let multiDay = dayOfYear(event.startTime) !== dayOfYear(event.endTime)
+	let sillyZeroLength = isSame(event.startTime, event.endTime, 'minute')
 
-	let startTimeFormatted = event.startTime.format('h:mm A')
-	let endTimeFormatted = event.endTime.format('h:mm A')
+	let startTimeFormatted = format(event.startTime, 'h:mm A')
+	let endTimeFormatted = format(event.endTime, 'h:mm A')
 	let midnightTime = '12:00 AM'
 
 	let start, end
 	if (event.isOngoing) {
-		start = event.startTime.format('MMM. D')
-		end = event.endTime.format('MMM. D')
+		start = format(event.startTime, 'MMM. D')
+		end = format(event.endTime, 'MMM. D')
 	} else if (multiDay) {
 		// 12:00 PM to Jun. 25 3:00pm
 		// Midnight to Jun. 25 <-- assuming the end time is also midnight
 		start = startTimeFormatted
 		let endFormat =
 			endTimeFormatted === midnightTime ? 'MMM. D' : 'MMM. D h:mm A'
-		end = `to ${event.endTime.format(endFormat)}`
+		end = `to ${format(event.endTime, endFormat)}`
 	} else if (sillyZeroLength) {
 		start = startTimeFormatted
 		end = 'until ???'
@@ -41,31 +39,27 @@ export function times(event: EventType): EventDetailTime {
 }
 
 export function detailTimes(event: EventType): EventDetailTime {
-	let eventLength = moment
-		.duration(event.endTime.diff(event.startTime))
-		.asHours()
+	let eventLength = diffInHours(event.endTime, event.startTime)
 
 	let allDay = eventLength === 24
-	let multiDay = event.startTime.dayOfYear() !== event.endTime.dayOfYear()
-	let sillyZeroLength = event.startTime.isSame(event.endTime, 'minute')
-	let endsOnSameDay = event.startTime.isSame(event.endTime, 'day')
+	let multiDay = dayOfYear(event.startTime) !== dayOfYear(event.endTime)
+	let sillyZeroLength = isSame(event.startTime, event.endTime, 'minute')
+	let endsOnSameDay = isSame(event.startTime, event.endTime, 'day')
 
-	let endFormat = endsOnSameDay ? 'h:mm A' : 'MMM. D h:mm A'
-	let startTimeFormatted = event.startTime.format('MMM. D h:mm A')
-	let endTimeFormatted = event.endTime.format(endFormat)
+	let endFmt = endsOnSameDay ? 'h:mm A' : 'MMM. D h:mm A'
+	let startTimeFormatted = format(event.startTime, 'MMM. D h:mm A')
+	let endTimeFormatted = format(event.endTime, endFmt)
 	let midnightTime = '12:00 AM'
 
 	let start, end
 	if (event.isOngoing) {
-		start = event.startTime.format('MMM. D')
-		end = event.endTime.format('MMM. D')
+		start = format(event.startTime, 'MMM. D')
+		end = format(event.endTime, 'MMM. D')
 	} else if (multiDay) {
-		// 12:00 PM to Jun. 25 3:00pm
-		// Midnight to Jun. 25 <-- assuming the end time is also midnight
 		start = startTimeFormatted
 		let multiDayEndFormat =
 			endTimeFormatted === midnightTime ? 'MMM. D' : 'MMM. D h:mm A'
-		end = `${event.endTime.format(multiDayEndFormat)}`
+		end = `${format(event.endTime, multiDayEndFormat)}`
 	} else if (sillyZeroLength) {
 		start = `Starts on ${startTimeFormatted}`
 		end = ''

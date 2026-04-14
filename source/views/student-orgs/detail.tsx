@@ -1,6 +1,7 @@
 import * as React from 'react'
 import {ScrollView, Text, StyleSheet} from 'react-native'
-import moment from 'moment'
+import {parseDateFormat, calendar} from '../../lib/temporal'
+import {timezone} from '@frogpond/constants'
 import {Cell, Section, TableView} from '@frogpond/tableview'
 import {SelectableCell} from '@frogpond/tableview/cells'
 import * as c from '@frogpond/colors'
@@ -133,7 +134,13 @@ let StudentOrgsDetailView = (): JSX.Element => {
 
 				<Text selectable={true} style={[styles.footer, styles.lastUpdated]}>
 					Last updated:{' '}
-					{moment(orgLastUpdated, 'MMMM, DD YYYY HH:mm:ss').calendar()}
+					{calendar(
+						parseDateFormat(
+							orgLastUpdated,
+							'MMMM, DD YYYY HH:mm:ss',
+							timezone(),
+						),
+					)}
 				</Text>
 
 				<Text selectable={true} style={[styles.footer, styles.poweredBy]}>

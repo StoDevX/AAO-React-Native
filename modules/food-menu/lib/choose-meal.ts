@@ -1,4 +1,4 @@
-import type {Moment} from 'moment'
+import type {Temporal} from 'temporal-polyfill'
 import type {ProcessedMealType} from '../types'
 import type {FilterType, PickerType} from '@frogpond/filter'
 import {findMeal} from './find-menu'
@@ -13,7 +13,7 @@ export const EMPTY_MEAL: ProcessedMealType = {
 export function chooseMeal<T extends object>(
 	meals: ProcessedMealType[],
 	filters: FilterType<T>[],
-	now: Moment,
+	now: Temporal.ZonedDateTime,
 ): ProcessedMealType {
 	let mealChooserFilter = filters.find(
 		(f) => f.type === 'picker' && f.spec.title === "Today's Menus",

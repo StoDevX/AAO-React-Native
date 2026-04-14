@@ -1,4 +1,4 @@
-import type {Moment} from 'moment-timezone'
+import type {Temporal} from 'temporal-polyfill'
 import flatten from 'lodash/flatten'
 import type {BuildingType} from '../types'
 
@@ -15,18 +15,8 @@ export type BuildingStatus = {
 
 export function getDetailedBuildingStatus(
 	info: BuildingType,
-	m: Moment,
+	m: Temporal.ZonedDateTime,
 ): BuildingStatus[] {
-	// Friday: 9:00am – Midnight
-	// -- or --
-	// Friday Breakfast: 7:00am – 9:45am
-	// Friday Lunch: 10:30am – 2:00pm
-	// Friday Dinner: 4:30pm – 7:30pm
-	// -- alternately --
-	// Friday Faculty/Staff Swim: 7:00am – 9:45am
-	// Friday Lap Swim: 12:45pm – 2:00pm
-	// Friday Open Swim: 7:00am – 2:00pm
-
 	let dayOfWeek = getDayOfWeek(m)
 
 	let schedules = info.schedule || []

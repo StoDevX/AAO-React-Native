@@ -1,6 +1,6 @@
 import {expect, it} from '@jest/globals'
 import {isScheduleOpenAtMoment} from '../is-schedule-open'
-import {dayMoment} from './moment.helper'
+import {dayMoment} from './temporal.helper'
 import {SingleBuildingScheduleType} from '../../types'
 
 it('checks if a schedule is open at the provided moment', () => {

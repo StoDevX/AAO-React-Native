@@ -5,7 +5,8 @@ import {callPhone} from '../../../components/call-phone'
 import {Cell, Section, TableView} from '@frogpond/tableview'
 import {SelectableCell, PushButtonCell} from '@frogpond/tableview/cells'
 import {openUrl} from '@frogpond/open-url'
-import moment from 'moment'
+import {parseDateFormat, calendar} from '../../../lib/temporal'
+import {timezone} from '@frogpond/constants'
 import * as c from '@frogpond/colors'
 import type {JobType} from './types'
 import {ShareButton} from '@frogpond/navigation-buttons'
@@ -179,7 +180,8 @@ function HowToApply({job}: {job: JobType}) {
 function LastUpdated({when}: {when: string}) {
 	return when ? (
 		<Text selectable={true} style={[styles.footer, styles.lastUpdated]}>
-			Last updated: {moment(when, 'MMMM D, YYYY').calendar()}
+			Last updated:{' '}
+			{calendar(parseDateFormat(when, 'MMMM D, YYYY', timezone()))}
 			{'\n'}
 			Powered by St. Olaf Student Employment job postings
 		</Text>

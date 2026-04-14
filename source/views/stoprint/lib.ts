@@ -1,27 +1,29 @@
 const TIME_FORMAT = 'h:mm:ss A'
 import {timezone} from '@frogpond/constants'
-import moment from 'moment-timezone'
-import type {Moment} from 'moment-timezone'
+import type {Temporal} from 'temporal-polyfill'
+import {parseTimeToday, isBefore, fromNow} from '../../lib/temporal'
 
-const parseTime = (now: Moment, time: string): null | Moment => {
-	// interpret in Central time
-	let m = moment.tz(time, TIME_FORMAT, true, timezone())
-
-	// and set the date to today
-	m.dayOfYear(now.dayOfYear())
+const parseTime = (
+	now: Temporal.ZonedDateTime,
+	time: string,
+): null | Temporal.ZonedDateTime => {
+	let m = parseTimeToday(time, timezone(), now)
 
 	// if release time is before current time (regardless of day)
-	if (m.diff(now) < 0) {
+	if (isBefore(m, now)) {
 		// then it expires tomorrow
-		m.add(1, 'days')
+		m = m.add({days: 1})
 	}
 
 	return m
 }
 
 export const getTimeRemaining = (
-	now: Moment,
+	now: Temporal.ZonedDateTime,
 	time: string,
 ): undefined | string => {
-	return parseTime(now, time)?.fromNow()
+	let parsed = parseTime(now, time)
+	return parsed ? fromNow(parsed) : undefined
 }
+
+void TIME_FORMAT

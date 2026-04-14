@@ -1,5 +1,5 @@
 import type {EventType} from '@frogpond/event-type'
-import type {Moment} from 'moment-timezone'
+import type {Temporal} from 'temporal-polyfill'
 
 export interface PoweredBy {
 	title: string
@@ -23,7 +23,7 @@ export interface EventListProps {
 	message?: string
 	refreshing: boolean
 	onRefresh: (() => void) | null | undefined
-	now: Moment
+	now: Temporal.ZonedDateTime
 	poweredBy?: PoweredBy
 }
 

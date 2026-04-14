@@ -1,4 +1,4 @@
-import type {Moment} from 'moment-timezone'
+import type {Temporal} from 'temporal-polyfill'
 import flatten from 'lodash/flatten'
 import type {BuildingType} from '../types'
 
@@ -6,7 +6,10 @@ import {getDayOfWeek} from './get-day-of-week'
 import {isChapelTime} from './chapel'
 import {isScheduleOpenAtMoment} from './is-schedule-open'
 
-export function isBuildingOpen(info: BuildingType, m: Moment): boolean {
+export function isBuildingOpen(
+	info: BuildingType,
+	m: Temporal.ZonedDateTime,
+): boolean {
 	let dayOfWeek = getDayOfWeek(m)
 
 	let schedules = info.schedule || []
