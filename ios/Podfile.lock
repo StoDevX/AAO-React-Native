@@ -1808,8 +1808,6 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - RNSearchBar (3.5.1):
-    - React
   - RNSentry (8.7.0):
     - DoubleConversion
     - glog
@@ -1925,7 +1923,6 @@ DEPENDENCIES:
   - RNKeychain (from `../node_modules/react-native-keychain`)
   - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNScreens (from `../node_modules/react-native-screens`)
-  - RNSearchBar (from `../node_modules/react-native-search-bar`)
   - "RNSentry (from `../node_modules/@sentry/react-native`)"
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
@@ -2102,8 +2099,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-reanimated"
   RNScreens:
     :path: "../node_modules/react-native-screens"
-  RNSearchBar:
-    :path: "../node_modules/react-native-search-bar"
   RNSentry:
     :path: "../node_modules/@sentry/react-native"
   Yoga:
@@ -2193,7 +2188,6 @@ SPEC CHECKSUMS:
   RNKeychain: bbe2f6d5cc008920324acb49ef86ccc03d3b38e4
   RNReanimated: 9a9be32b5f0f613fa593dee04d1c992aafb85399
   RNScreens: f8a7e3cbee7eaac5613eecd89ecf719fdf8abfc5
-  RNSearchBar: feb1a3829c44d6ae1b96dc1397062b2fbfb95825
   RNSentry: 6aff72ada7ba9a8ec9937c9e9273e368cd0ab2ec
   Sentry: 88746bf877eff714bc45315a39ad1d1efea2cdda
   SocketRocket: d4aabe649be1e368d1318fdf28a022d714d65748
