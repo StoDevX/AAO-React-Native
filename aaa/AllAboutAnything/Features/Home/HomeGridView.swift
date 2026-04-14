@@ -11,32 +11,24 @@ struct HomeGridView: View {
 
 	var body: some View {
 		ScrollView {
-			VStack(spacing: 16) {
-				LazyVGrid(columns: columns, spacing: 12) {
-					ForEach(store.gridItems) { item in
-						if store.isEditing {
-							Button {
-								store.send(.hideItem(id: item.id))
-							} label: {
-								HomeItemCell(item: item, isEditing: true)
-							}
-							.buttonStyle(.plain)
-							.accessibilityLabel("Hide \(item.title)")
-						} else {
-							Button {
-								store.send(.itemTapped(id: item.id))
-							} label: {
-								HomeItemCell(item: item, isEditing: false)
-							}
-							.buttonStyle(.plain)
-							.accessibilityLabel(item.title)
+			LazyVGrid(columns: columns, spacing: 12) {
+				ForEach(store.gridItems) { item in
+					if store.isEditing {
+						Button {
+							store.send(.hideItem(id: item.id))
+						} label: {
+							HomeItemCell(item: item, isEditing: true)
 						}
-					}
-				}
-
-				if store.isEditing {
-					HiddenItemsSection(items: store.hiddenItems) { id in
-						store.send(.showItem(id: id))
+						.buttonStyle(.plain)
+						.accessibilityLabel("Hide \(item.title)")
+					} else {
+						Button {
+							store.send(.itemTapped(id: item.id))
+						} label: {
+							HomeItemCell(item: item, isEditing: false)
+						}
+						.buttonStyle(.plain)
+						.accessibilityLabel(item.title)
 					}
 				}
 			}
@@ -51,5 +43,21 @@ struct HomeGridView: View {
 			}
 		}
 		.onAppear { store.send(.onAppear) }
+		.sheet(
+			isPresented: Binding(
+				get: { store.isEditing },
+				set: { isPresented in
+					if !isPresented && store.isEditing {
+						store.send(.toggleEditMode)
+					}
+				}
+			)
+		) {
+			HiddenItemsDrawerView(items: store.hiddenItems) { id in
+				store.send(.showItem(id: id))
+			}
+			.presentationDetents([.medium, .large])
+			.presentationBackgroundInteraction(.enabled(upThrough: .medium))
+		}
 	}
 }
