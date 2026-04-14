@@ -11,7 +11,7 @@ import type {Moment} from 'moment-timezone'
 import type {DayOfWeek} from '../types'
 import * as c from '@frogpond/colors'
 import {ContextMenu} from '@frogpond/context-menu'
-import {Icon} from '@frogpond/icon'
+import {Ionicons as Icon} from '@react-native-vector-icons/ionicons'
 
 const styles = StyleSheet.create({
 	dayPickerContainer: {

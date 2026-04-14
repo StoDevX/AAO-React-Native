@@ -1,6 +1,6 @@
 import * as React from 'react'
 import {Alert, StyleSheet} from 'react-native'
-import Icon from 'react-native-vector-icons/Ionicons'
+import {Ionicons as Icon} from '@react-native-vector-icons/ionicons'
 import {Touchable} from '@frogpond/touchable'
 import * as c from '@frogpond/colors'
 import {rightButtonStyles as styles} from './styles'

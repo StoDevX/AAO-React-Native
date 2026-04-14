@@ -13,7 +13,7 @@
     "moment-timezone": "^0.6.1",
     "react": "^18.0.0",
     "react-native": "^0.76.0",
-    "react-native-vector-icons": "^9.2.0",
+    "@react-native-vector-icons/ionicons": "^12.5.0",
     "@react-navigation/native": "^6.1.18"
   },
   "dependencies": {

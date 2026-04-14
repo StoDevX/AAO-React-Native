@@ -85,4 +85,4 @@ describe('FaqBanner component', () => {
 		expect(mockNavigate).toHaveBeenCalledWith('Faq', {faqId: baseFaq.id})
 	})
 })
-jest.mock('react-native-vector-icons/Ionicons', () => 'Icon')
+jest.mock('@react-native-vector-icons/ionicons', () => ({Ionicons: 'Icon'}))

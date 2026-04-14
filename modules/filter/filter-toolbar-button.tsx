@@ -1,14 +1,7 @@
 import * as React from 'react'
 import {useRef, useState} from 'react'
-import {
-	Platform,
-	StyleProp,
-	StyleSheet,
-	Text,
-	View,
-	ViewStyle,
-} from 'react-native'
-import Icon from 'react-native-vector-icons/Ionicons'
+import {StyleProp, StyleSheet, Text, View, ViewStyle} from 'react-native'
+import {Ionicons as Icon} from '@react-native-vector-icons/ionicons'
 import type {FilterType} from './types'
 import {FilterPopover} from './filter-popover'
 import * as c from '@frogpond/colors'
@@ -33,12 +26,6 @@ const buttonStyles = StyleSheet.create({
 	textWithIcon: {
 		paddingRight: 8,
 	},
-})
-
-const ICON_NAME = Platform.select({
-	ios: 'ios-chevron-down',
-	android: 'md-chevron-down',
-	default: '',
 })
 
 type Props<T extends object> = {
@@ -82,15 +69,10 @@ export function FilterToolbarButton<T extends object>(
 				onPress={openPopover}
 				style={[buttonStyles.button, style]}
 			>
-				<Text
-					style={[
-						buttonStyles.text,
-						ICON_NAME ? buttonStyles.textWithIcon : null,
-					]}
-				>
+				<Text style={[buttonStyles.text, buttonStyles.textWithIcon]}>
 					{title}
 				</Text>
-				<Icon name={ICON_NAME} size={18} style={buttonStyles.text} />
+				<Icon name="chevron-down" size={18} style={buttonStyles.text} />
 			</Touchable>
 			{popoverVisible && (
 				<FilterPopover<T>
