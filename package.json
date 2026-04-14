@@ -136,7 +136,6 @@
     "js-yaml": "4.1.1",
     "junk": "4.0.1",
     "minimist": "1.2.8",
-    "mkdirp": "2.1.6",
     "prettier": "3.8.1",
     "pretty-quick": "4.2.2",
     "react-test-renderer": "18.3.1",

@@ -2,7 +2,6 @@
 import fs from 'node:fs'
 import {isNotJunk} from 'junk'
 import path from 'node:path'
-import mkdirp from 'mkdirp'
 import {bundleDataDir} from './bundle-data-dir.mjs'
 import {convertDataFile} from './convert-data-file.mjs'
 import {buildFaqs} from './build-faqs.mjs'
@@ -30,7 +29,7 @@ if (!fromDir || !toDir || fromDir === '-h' || fromDir === '--help') {
 	process.exit(1)
 }
 
-mkdirp.sync(toDir)
+fs.mkdirSync(toDir, {recursive: true})
 
 // Bundle each directory of yaml files into one big json file
 const dirs = findDirsIn(fromDir)
