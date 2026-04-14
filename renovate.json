@@ -64,6 +64,13 @@
       ]
     },
     {
+      "description": "group all @react-native-vector-icons/* packages together",
+      "groupName": "@react-native-vector-icons/*",
+      "matchPackageNames": [
+        "@react-native-vector-icons/*"
+      ]
+    },
+    {
       "description": "group all patch-level updates into a single weekly PR",
       "matchUpdateTypes": [
         "patch"
