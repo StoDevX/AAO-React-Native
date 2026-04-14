@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import fs from 'node:fs'
-import {isNotJunk} from 'junk'
+import {isNotJunk} from './junk.mjs'
 import path from 'node:path'
 import {bundleDataDir} from './bundle-data-dir.mjs'
 import {convertDataFile} from './convert-data-file.mjs'

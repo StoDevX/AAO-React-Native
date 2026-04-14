@@ -1,9 +1,8 @@
 #!/usr/bin/env node
 import yaml from 'js-yaml'
 import fs from 'node:fs'
-import {isNotJunk} from 'junk'
+import {isNotJunk} from './junk.mjs'
 import path from 'node:path'
-import natsort from 'string-natural-compare'
 
 // run cli
 // if (process.mainModule === module) {
@@ -30,7 +29,7 @@ export function bundleDataDir({fromDir, toFile}) {
 	}
 
 	// sort the files so that 9 comes before 10
-	files.sort(natsort)
+	files.sort(new Intl.Collator(undefined, {numeric: true}).compare)
 
 	let loaded = files.map((fpath) => {
 		console.log(fpath)
