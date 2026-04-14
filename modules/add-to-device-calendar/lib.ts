@@ -1,75 +1,73 @@
 import * as Sentry from '@sentry/react-native'
+import {encode as base64Encode} from 'base-64'
+import {Share} from 'react-native'
 import type {EventType} from '@frogpond/event-type'
-import RNCalendarEvents from 'react-native-calendar-events'
-import {Alert, Linking, Platform} from 'react-native'
 
-export async function addToCalendar(event: EventType): Promise<boolean> {
+function pad(n: number): string {
+	return String(n).padStart(2, '0')
+}
+
+function formatICSDate(date: Date): string {
+	return (
+		date.getUTCFullYear().toString() +
+		pad(date.getUTCMonth() + 1) +
+		pad(date.getUTCDate()) +
+		'T' +
+		pad(date.getUTCHours()) +
+		pad(date.getUTCMinutes()) +
+		pad(date.getUTCSeconds()) +
+		'Z'
+	)
+}
+
+function escapeICSText(text: string): string {
+	return text
+		.replace(/\\/gu, '\\\\')
+		.replace(/;/gu, '\\;')
+		.replace(/,/gu, '\\,')
+		.replace(/\r?\n/gu, '\\n')
+}
+
+export function buildICS(event: EventType): string {
+	let uid = `aao-${Date.now()}-${Math.random().toString(36).slice(2)}@stolaf.edu`
+	let lines = [
+		'BEGIN:VCALENDAR',
+		'VERSION:2.0',
+		'PRODID:-//St. Olaf College//All About Olaf//EN',
+		'CALSCALE:GREGORIAN',
+		'METHOD:PUBLISH',
+		'BEGIN:VEVENT',
+		`UID:${uid}`,
+		`DTSTAMP:${formatICSDate(new Date())}`,
+		`DTSTART:${formatICSDate(event.startTime.toDate())}`,
+		`DTEND:${formatICSDate(event.endTime.toDate())}`,
+		`SUMMARY:${escapeICSText(event.title)}`,
+		`DESCRIPTION:${escapeICSText(event.description)}`,
+		`LOCATION:${escapeICSText(event.location)}`,
+		'END:VEVENT',
+		'END:VCALENDAR',
+	]
+	return lines.join('\r\n')
+}
+
+export type AddToCalendarResult = 'saved' | 'cancelled' | 'error'
+
+export async function addToCalendar(
+	event: EventType,
+): Promise<AddToCalendarResult> {
 	try {
-		const authCode = await RNCalendarEvents.checkPermissions(false)
+		let ics = buildICS(event)
+		let dataUrl = `data:text/calendar;base64,${base64Encode(ics)}`
 
-		const authStatus =
-			authCode === 'authorized' ? true : await requestCalendarAccess()
+		let result = await Share.share({
+			url: dataUrl,
+			title: event.title,
+		})
 
-		if (!authStatus) {
-			return false
-		}
-
-		return await saveEventToCalendar(event)
+		return result.action === Share.sharedAction ? 'saved' : 'cancelled'
 	} catch (error) {
 		Sentry.captureException(error)
 		console.error(error)
-		return false
+		return 'error'
 	}
-}
-
-async function saveEventToCalendar(event: EventType): Promise<boolean> {
-	try {
-		await RNCalendarEvents.saveEvent(event.title, {
-			location: event.location,
-			startDate: event.startTime.toISOString(),
-			endDate: event.endTime.toISOString(),
-			description: event.description,
-			notes: event.description,
-		})
-
-		return true
-	} catch (err) {
-		Sentry.captureException(err)
-		console.error(err)
-		return false
-	}
-}
-
-function promptSettings(): Alert | void {
-	if (Platform.OS === 'ios') {
-		// Note: remember to change this text in the iOS plist, too.
-		return Alert.alert(
-			'"All About Olaf" Would Like to Access Your Calendar',
-			`We use your calendar to add events to your calendar so that you remember
-       what you wanted to attend.`,
-			[
-				{
-					text: "Don't Allow",
-					onPress: () => console.log('cancel pressed'),
-					style: 'cancel',
-				},
-				{text: 'Settings', onPress: () => Linking.openURL('app-settings:')},
-			],
-		)
-	}
-}
-
-async function requestCalendarAccess(): Promise<boolean> {
-	let status = null
-	try {
-		status = await RNCalendarEvents.requestPermissions(false)
-	} catch (_err) {
-		return false
-	}
-
-	if (status !== 'authorized') {
-		return promptSettings() === undefined
-	}
-
-	return true
 }
