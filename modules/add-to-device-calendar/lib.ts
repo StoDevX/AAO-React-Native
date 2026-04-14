@@ -4,15 +4,14 @@ import {Share} from 'react-native'
 import type {EventType} from '@frogpond/event-type'
 
 function formatICSDate(date: Date): string {
-	let pad = (n: number) => String(n).padStart(2, '0')
 	return (
 		date.getUTCFullYear().toString() +
-		pad(date.getUTCMonth() + 1) +
-		pad(date.getUTCDate()) +
+		String(date.getUTCMonth() + 1).padStart(2, '0') +
+		String(date.getUTCDate()).padStart(2, '0') +
 		'T' +
-		pad(date.getUTCHours()) +
-		pad(date.getUTCMinutes()) +
-		pad(date.getUTCSeconds()) +
+		String(date.getUTCHours()).padStart(2, '0') +
+		String(date.getUTCMinutes()).padStart(2, '0') +
+		String(date.getUTCSeconds()).padStart(2, '0') +
 		'Z'
 	)
 }
