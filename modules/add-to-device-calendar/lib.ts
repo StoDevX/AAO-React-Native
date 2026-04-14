@@ -28,8 +28,14 @@ function escapeICSText(text: string): string {
 		.replace(/\r?\n/gu, '\\n')
 }
 
+let uidCounter = 0
+
 export function buildICS(event: EventType): string {
-	let uid = `aao-${Date.now()}-${Math.random().toString(36).slice(2)}@stolaf.edu`
+	// UID just needs to be unique per-calendar-object per RFC 5545 — it's a
+	// dedupe hint, not a secret — so a timestamp plus a monotonic counter is
+	// sufficient.
+	uidCounter += 1
+	let uid = `aao-${Date.now()}-${uidCounter}@stolaf.edu`
 	let lines = [
 		'BEGIN:VCALENDAR',
 		'VERSION:2.0',
