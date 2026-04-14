@@ -41,3 +41,13 @@ targets:
         GENERATE_INFOPLIST_FILE: YES
     dependencies:
       - target: AllAboutAnything
+
+schemes:
+  AllAboutAnything:
+    build:
+      targets:
+        AllAboutAnything: all
+        AllAboutAnythingTests: [test]
+    test:
+      targets:
+        - AllAboutAnythingTests
