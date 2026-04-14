@@ -22,12 +22,3 @@ Seven refactors bundled into one plan: [`2026-04-13-code-quality-sweep.md`](../d
 - Batch `persistCustomizations` into a single transaction via new `replaceCustomizations` API
 - Move `HomeFeature.onAppear` DB calls off the main actor via `.run { send in ... }` effects
 
-## Unplanned (distribution prep)
-
-These need values or decisions that aren't code-generatable.
-
-### No development team set
-No `DEVELOPMENT_TEAM` in `project.yml`. Fine for local simulator builds; required before device or CI builds. Add via `.xcconfig` (not checked in) or environment variable.
-
-### No version numbers set
-`CURRENT_PROJECT_VERSION` / `MARKETING_VERSION` are unset. Add explicit values to `project.yml` before distribution.
