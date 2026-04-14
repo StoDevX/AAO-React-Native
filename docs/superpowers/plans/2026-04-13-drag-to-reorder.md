@@ -2,6 +2,8 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
+> **⚠️ OUTDATED — 2026-04-13:** This plan was written against a now-removed `isEditing` state. Post the edit-mode removal (see `2026-04-13-remove-edit-mode.md`), drag-and-drop should attach unconditionally to every cell, not gated on edit mode. Rewrite before executing.
+
 **Goal:** Add drag-to-reorder UI gesture for home grid items while in edit mode.
 
 **Architecture:** Make `HomeItem` conform to `Transferable`. Attach `.draggable(item)` + `.dropDestination(for: HomeItem.self)` to each cell when in edit mode. Drop handler computes source and target indices, sends existing `.moveItem(fromOffsets:toOffset:)` action to the reducer.
