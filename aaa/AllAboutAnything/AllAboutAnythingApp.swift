@@ -30,8 +30,10 @@ struct AppView: View {
 			switch store.case {
 			case let .placeholder(store):
 				PlaceholderView(store: store)
-			case .browser:
-				EmptyView()
+			case let .browser(store):
+				SafariBrowserView(url: store.url)
+					.ignoresSafeArea()
+					.navigationBarBackButtonHidden(true)
 			}
 		}
 	}
