@@ -55,6 +55,12 @@ jobs:
 
       - run: mise x -- pod repo update
 
+      # Delete the existing Podfile.lock so `pod install` resolves from
+      # scratch instead of trying to update the existing lockfile. This
+      # avoids resolver failures when dependencies have drifted far enough
+      # that an in-place update can't find a consistent graph.
+      - run: rm -f ios/Podfile.lock
+
       - run: mise run pod:install --verbose
 
       - name: push-on-podfile-change
