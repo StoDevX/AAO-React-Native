@@ -55,7 +55,7 @@
     "expo-asset": "11.1.7",
     "expo-font": "13.3.2",
     "expo-modules-core": "2.5.0",
-    "expo-web-browser": "14.0.2",
+    "expo-web-browser": "14.2.0",
     "keyword-search": "0.1.2",
     "ky": "1.14.3",
     "lodash": "4.18.1",
