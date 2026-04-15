@@ -17,7 +17,21 @@ function install() {
 
 		tracePropagationTargets: ['localhost', 'frogpond.tech', /^\//u],
 
-		integrations: [navigationIntegration],
+		// Session replay is opt-in per-error only; no blanket session recording.
+		replaysSessionSampleRate: 0,
+		replaysOnErrorSampleRate: 0.1,
+
+		integrations: [
+			navigationIntegration,
+			// All masking options default to `true` — text, images, and vector
+			// graphics are blurred in recordings. We pass the defaults
+			// explicitly so this choice is visible at the call site.
+			Sentry.mobileReplayIntegration({
+				maskAllText: true,
+				maskAllImages: true,
+				maskAllVectors: true,
+			}),
+		],
 	})
 }
 
