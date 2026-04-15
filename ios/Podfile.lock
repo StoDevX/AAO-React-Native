@@ -1336,9 +1336,9 @@ PODS:
     - React-Core
   - react-native-safe-area-context (5.7.0):
     - React-Core
-  - react-native-vector-icons-entypo (12.5.0)
-  - react-native-vector-icons-ionicons (12.5.0)
-  - react-native-vector-icons-material-design-icons (12.5.0)
+  - react-native-vector-icons-entypo (13.0.0)
+  - react-native-vector-icons-ionicons (13.0.0)
+  - react-native-vector-icons-material-design-icons (13.0.0)
   - react-native-webview (13.16.1):
     - DoubleConversion
     - glog
@@ -2171,9 +2171,9 @@ SPEC CHECKSUMS:
   react-native-netinfo: bed7e7b8f68e22e0862a77d7df28d31faa66375d
   react-native-restart: 0bc732f4461709022a742bb29bcccf6bbc5b4863
   react-native-safe-area-context: e89848fc12d32ccca63d0d7d16dd96918d07c730
-  react-native-vector-icons-entypo: 3cd60c5950ea9b2cf7f1fe4fe50fbcbcef2ba381
-  react-native-vector-icons-ionicons: 7e633927db6ab96e0255b5920c053777cacca505
-  react-native-vector-icons-material-design-icons: 95914f2f6b18e26e5c9563afe33184e110afe674
+  react-native-vector-icons-entypo: 9da6305812362779f61a5d337d78beab5d31a470
+  react-native-vector-icons-ionicons: 334801ca0211bf1f5673e3c791330639d47dc0e7
+  react-native-vector-icons-material-design-icons: 1955bd08457a8310e6a2d3c87c7f1ebaca159098
   react-native-webview: ff76bd483e879911c9ca6f5430b6143531bdfcfd
   React-nativeconfig: 8efdb1ef1e9158c77098a93085438f7e7b463678
   React-NativeModulesApple: cebca2e5320a3d66e123cade23bd90a167ffce5e
