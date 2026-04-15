@@ -49,7 +49,7 @@
     "@tanstack/react-query-persist-client": "5.99.0",
     "base-64": "1.0.0",
     "buffer": "6.0.3",
-    "delay": "6.0.0",
+    "delay": "7.0.0",
     "events": "3.3.0",
     "expo": "52.0.49",
     "expo-asset": "11.0.5",
