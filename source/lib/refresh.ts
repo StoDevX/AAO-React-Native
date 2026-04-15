@@ -1,5 +1,5 @@
 import {clearAsyncStorage} from './storage'
-import restart from 'react-native-restart'
+import restart from 'react-native-restart-newarch'
 import {SIS_LOGIN_KEY} from './login'
 import {getIcon, resetIcon} from 'react-native-change-icon'
 import {resetInternetCredentials} from 'react-native-keychain'
