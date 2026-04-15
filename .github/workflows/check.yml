@@ -238,17 +238,47 @@ jobs:
         run: |
           echo "matrix=$(python3 scripts/split-uitests.py --test-dir ios/AllAboutOlafUITests --shards 2)" >> "$GITHUB_OUTPUT"
 
-  uitest-udid:
-    # sometimes this can take up to 1.5min, so run it once and let's see if UDID are stable across VMs
-    name: Resolve device UUID for iOS
+  ios-uitest:
+    name: Native UITest for iOS (${{ matrix.shard }})
+    needs: [uitest-plan, ios-build, ios-bundle, ios-cache-check]
     runs-on: macos-15
-    needs: [jest, eslint]
-    if: ${{ !contains(github.event.pull_request.labels.*.name, 'ci/skip-e2e') }}
-    outputs:
-      udid: ${{ steps.udid.outputs.udid }}
+    if: |
+      !failure() && !cancelled() &&
+      !contains(github.event.pull_request.labels.*.name, 'ci/skip-e2e')
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.uitest-plan.outputs.matrix) }}
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - run: sudo xcode-select -s /Applications/${{ env.xcode_version }}.app
+
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Load the cached iOS app and UITest bundle
+        uses: actions/cache/restore@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
+        id: app-cache
+        with:
+          fail-on-cache-miss: true
+          path: ios/build/Build/Products/
+          key: ${{ needs.ios-cache-check.outputs.cache-key }}
+
+      - name: Load the cached iOS jsbundle
+        uses: actions/cache/restore@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
+        id: jsbundle-cache
+        with:
+          fail-on-cache-miss: true
+          path: |
+            ios/AllAboutOlaf/main.jsbundle
+            ios/AllAboutOlaf/main.jsbundle.map
+            ios/assets/
+          key: ${{ needs.ios-bundle.outputs.cache-key }}
+
+      - name: Move cached jsbundle into place
+        run: |
+          mkdir -p ios/build/Build/Products/Release-iphonesimulator/AllAboutOlaf.app/
+          mv ios/AllAboutOlaf/main.jsbundle ios/build/Build/Products/Release-iphonesimulator/AllAboutOlaf.app/
+          mv ios/AllAboutOlaf/main.jsbundle.map ios/build/Build/Products/Release-iphonesimulator/AllAboutOlaf.app/
+          rm -rf ios/build/Build/Products/Release-iphonesimulator/AllAboutOlaf.app/assets || true
+          mv ios/assets ios/build/Build/Products/Release-iphonesimulator/AllAboutOlaf.app/
 
       - name: Discover target simulator device
         id: simulator-device
@@ -294,53 +324,11 @@ jobs:
           set -o pipefail
           jq -rn --argjson devices "$DEVICES" '$devices | "udid=\(.udid)"' | tee "$GITHUB_OUTPUT"
 
-  ios-uitest:
-    name: Native UITest for iOS (${{ matrix.shard }})
-    needs: [uitest-plan, uitest-udid, ios-build, ios-bundle, ios-cache-check]
-    runs-on: macos-15
-    if: |
-      !failure() && !cancelled() &&
-      !contains(github.event.pull_request.labels.*.name, 'ci/skip-e2e')
-    strategy:
-      fail-fast: false
-      matrix: ${{ fromJSON(needs.uitest-plan.outputs.matrix) }}
-    steps:
-      - run: sudo xcode-select -s /Applications/${{ env.xcode_version }}.app
-
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-
-      - name: Load the cached iOS app and UITest bundle
-        uses: actions/cache/restore@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
-        id: app-cache
-        with:
-          fail-on-cache-miss: true
-          path: ios/build/Build/Products/
-          key: ${{ needs.ios-cache-check.outputs.cache-key }}
-
-      - name: Load the cached iOS jsbundle
-        uses: actions/cache/restore@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
-        id: jsbundle-cache
-        with:
-          fail-on-cache-miss: true
-          path: |
-            ios/AllAboutOlaf/main.jsbundle
-            ios/AllAboutOlaf/main.jsbundle.map
-            ios/assets/
-          key: ${{ needs.ios-bundle.outputs.cache-key }}
-
-      - name: Move cached jsbundle into place
-        run: |
-          mkdir -p ios/build/Build/Products/Release-iphonesimulator/AllAboutOlaf.app/
-          mv ios/AllAboutOlaf/main.jsbundle ios/build/Build/Products/Release-iphonesimulator/AllAboutOlaf.app/
-          mv ios/AllAboutOlaf/main.jsbundle.map ios/build/Build/Products/Release-iphonesimulator/AllAboutOlaf.app/
-          rm -rf ios/build/Build/Products/Release-iphonesimulator/AllAboutOlaf.app/assets || true
-          mv ios/assets ios/build/Build/Products/Release-iphonesimulator/AllAboutOlaf.app/
-
       - name: Boot the simulator
-        run: xcrun simctl boot "${{ needs.uitest-udid.outputs.udid }}"
+        run: xcrun simctl boot "${{ steps.udid.outputs.udid }}"
 
       - name: Wait for the simulator to be ready
-        run: xcrun simctl bootstatus "${{ needs.uitest-udid.outputs.udid }}" -b
+        run: xcrun simctl bootstatus "${{ steps.udid.outputs.udid }}" -b
 
       - name: Run UITests
         timeout-minutes: 25
@@ -348,7 +336,7 @@ jobs:
           set -o pipefail
           xcodebuild test-without-building \
             -xctestrun $(find ios/build/Build/Products -name '*.xctestrun' -print -quit) \
-            -destination "platform=iOS Simulator,id=${{ needs.uitest-udid.outputs.udid }}" \
+            -destination "platform=iOS Simulator,id=${{ steps.udid.outputs.udid }}" \
             ${{ matrix.tests }} \
             -resultBundlePath uitest-results \
             | xcbeautify --renderer github-actions
