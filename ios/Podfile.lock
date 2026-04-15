@@ -1665,8 +1665,27 @@ PODS:
     - Yoga
   - RNInAppBrowser (3.7.1):
     - React-Core
-  - RNKeychain (8.2.0):
+  - RNKeychain (10.0.0):
+    - DoubleConversion
+    - glog
+    - hermes-engine
+    - RCT-Folly (= 2024.10.14.00)
+    - RCTRequired
+    - RCTTypeSafety
     - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - Yoga
   - RNReanimated (3.18.2):
     - DoubleConversion
     - glog
@@ -2190,7 +2209,7 @@ SPEC CHECKSUMS:
   RNDeviceInfo: 900bd20e1fd3bfd894e7384cc4a83880c0341bd3
   RNGestureHandler: b1c06808f2eaf5c568e006ab3f34813d959ca1c8
   RNInAppBrowser: 904d24dc75e8e6c6c98a3160329192608946f9df
-  RNKeychain: bbe2f6d5cc008920324acb49ef86ccc03d3b38e4
+  RNKeychain: 6aa400162221d6c12e6b6a34722a85136e686f2b
   RNReanimated: 0c3a7040d5a646729fef882e82144b9bf64120fd
   RNScreens: f8a7e3cbee7eaac5613eecd89ecf719fdf8abfc5
   RNSearchBar: feb1a3829c44d6ae1b96dc1397062b2fbfb95825
