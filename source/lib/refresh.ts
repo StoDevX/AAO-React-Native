@@ -9,7 +9,7 @@ export async function refreshApp(): Promise<void> {
 	await clearAsyncStorage()
 
 	// Clear the Keychain items
-	await resetInternetCredentials(SIS_LOGIN_KEY)
+	await resetInternetCredentials({server: SIS_LOGIN_KEY})
 
 	// Reset the app icon
 	if ((await getIcon()) !== 'Default') {
