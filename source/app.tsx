@@ -65,20 +65,23 @@ function ErrorFallback({
 	)
 }
 
-export default function App(): JSX.Element {
+function App(): JSX.Element {
 	// Create a ref for the navigation container
 	const navigationRef = React.useRef()
 	const scheme = useColorScheme()
 	const theme = scheme === 'dark' ? CombinedDarkTheme : CombinedLightTheme
 	const statusBarStyle = scheme === 'dark' ? 'light-content' : 'dark-content'
 
-	const registerContainer = () => {
+	const onNavigationReady = () => {
 		if (!IS_PRODUCTION) {
 			return
 		}
 
 		// Register the navigation container with the integration
 		sentryInit.navigationIntegration.registerNavigationContainer(navigationRef)
+
+		// Signal to Sentry that the app has finished starting up
+		Sentry.appLoaded()
 	}
 
 	return (
@@ -94,7 +97,7 @@ export default function App(): JSX.Element {
 					>
 						<PaperProvider theme={theme}>
 							<ActionSheetProvider>
-								<NavigationContainer onReady={registerContainer} theme={theme}>
+								<NavigationContainer onReady={onNavigationReady} theme={theme}>
 									<StatusBar barStyle={statusBarStyle} />
 									<RootStack />
 								</NavigationContainer>
@@ -106,3 +109,7 @@ export default function App(): JSX.Element {
 		</Sentry.ErrorBoundary>
 	)
 }
+
+// Wrap the App with Sentry to enable touch-event breadcrumbs and
+// time-to-initial-display timing.
+export default Sentry.wrap(App)

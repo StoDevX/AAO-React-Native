@@ -14,10 +14,11 @@ function install() {
 		dsn: SENTRY_DSN,
 
 		tracesSampleRate: 0.2,
+		profilesSampleRate: 0.1,
 
 		tracePropagationTargets: ['localhost', 'frogpond.tech', /^\//u],
 
-		integrations: [navigationIntegration],
+		integrations: [navigationIntegration, Sentry.hermesProfilingIntegration()],
 	})
 }
 
