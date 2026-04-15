@@ -52,7 +52,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - ExpoWebBrowser (14.0.2):
+  - ExpoWebBrowser (14.2.0):
     - ExpoModulesCore
   - fast_float (6.1.4)
   - FBLazyVector (0.76.9)
@@ -2191,7 +2191,7 @@ SPEC CHECKSUMS:
   ExpoAsset: ef06e880126c375f580d4923fdd1cdf4ee6ee7d6
   ExpoFont: cf508bc2e6b70871e05386d71cab927c8524cc8e
   ExpoModulesCore: 238cf51c8006e94a076a548100ba9af25194c92f
-  ExpoWebBrowser: a212e6b480d8857d3e441fba51e0c968333803b3
+  ExpoWebBrowser: dc39a88485f007e61a3dff05d6a75f22ab4a2e92
   fast_float: 06eeec4fe712a76acc9376682e4808b05ce978b6
   FBLazyVector: 7605ea4810e0e10ae4815292433c09bf4324ba45
   fmt: 01b82d4ca6470831d1cc0852a1af644be019e8f6
