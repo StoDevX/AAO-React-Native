@@ -52,6 +52,7 @@ These patterns are especially important in this codebase:
 - Mock native modules and external APIs
 - Descriptive test names; group with `describe` blocks
 - `beforeEach`/`afterEach` for setup/cleanup
+- **XCUITest debugging:** iOS UI tests live in `ios/AllAboutOlafUITests/` and run as sharded CI jobs. When a test fails, two artifacts are uploaded per shard: `uitest-attachments-{shard}` (screenshots extracted via `xcrun xcresulttool export attachments`) and `uitest-results-{shard}.xcresult` (the full XCResult bundle). Start with the attachments for a quick look; open the `.xcresult` bundle in Xcode (or query via `xcrun xcresulttool get --format json --path uitest-results.xcresult`) for full logs, traces, and per-test activity.
 
 ## Development Commands
 
