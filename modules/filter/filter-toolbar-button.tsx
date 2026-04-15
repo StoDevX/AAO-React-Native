@@ -76,7 +76,10 @@ export function FilterToolbarButton<T extends object>(
 			</Touchable>
 			{popoverVisible && (
 				<FilterPopover<T>
-					anchor={touchable}
+					// React 19's useRef returns RefObject<View | null>; react-native-popover-view's
+					// types still require a non-null generic. The ref is never null when the popover
+					// is mounted (it's rendered as a child of the Touchable above).
+					anchor={touchable as React.RefObject<View>}
 					filter={filter}
 					onClosePopover={onClosePopover}
 					visible={true}

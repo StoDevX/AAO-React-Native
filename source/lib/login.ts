@@ -66,7 +66,10 @@ export async function performLogin(
 	formData.append('password', password)
 
 	const loginResponse = await ky.post(OLECARD_AUTH_URL, {
-		body: formData,
+		// React Native's global FormData class differs from the DOM/Node FormData
+		// shape that ky's RequestInit.body expects. The runtime is RN's FormData
+		// (via fetch polyfill); the cast reconciles the mismatched type layers.
+		body: formData as unknown as BodyInit_,
 		credentials: 'include',
 	})
 

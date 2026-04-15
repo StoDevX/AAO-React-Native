@@ -31,6 +31,17 @@ check_sentinel \
   "PropsWithChildren" \
   "0001-rn.patch" || FAILED=1
 
+# 0002-rn-abortsignal.patch: removes RN's custom AbortSignal/AbortController
+# declarations so @types/node's DOM-spec-compatible types can be used (required
+# for @tanstack/react-query + ky signal compatibility).
+if grep -q "class AbortSignal implements EventTarget" \
+    "node_modules/react-native/src/types/globals.d.ts"; then
+  echo "ERROR: sentinel check for 0002-rn-abortsignal.patch failed — RN's custom AbortSignal class is still present" >&2
+  FAILED=1
+else
+  echo "  ✓ 0002-rn-abortsignal.patch"
+fi
+
 if [ "$FAILED" -ne 0 ]; then
   echo "ERROR: one or more patch sentinels failed. See above." >&2
   exit 1
