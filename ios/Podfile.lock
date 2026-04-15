@@ -26,11 +26,11 @@ PODS:
     - ExpoModulesCore
   - Expo (52.0.49):
     - ExpoModulesCore
-  - ExpoAsset (11.0.5):
+  - ExpoAsset (11.1.7):
     - ExpoModulesCore
-  - ExpoFont (13.0.4):
+  - ExpoFont (13.3.2):
     - ExpoModulesCore
-  - ExpoModulesCore (2.2.3):
+  - ExpoModulesCore (2.5.0):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -45,7 +45,6 @@ PODS:
     - React-ImageManager
     - React-jsinspector
     - React-NativeModulesApple
-    - React-RCTAppDelegate
     - React-RCTFabric
     - React-rendererdebug
     - React-utils
@@ -2175,9 +2174,9 @@ SPEC CHECKSUMS:
   DoubleConversion: f16ae600a246532c4020132d54af21d0ddb2a385
   EXConstants: fcfc75800824ac2d5c592b5bc74130bad17b146b
   Expo: 4bb70893882e6382b41d1e910d7226c6a1b85f0a
-  ExpoAsset: 48386d40d53a8c1738929b3ed509bcad595b5516
-  ExpoFont: f354e926f8feae5e831ec8087f36652b44a0b188
-  ExpoModulesCore: 725faec070d590810d2ea5983d9f78f7cf6a38ec
+  ExpoAsset: ef06e880126c375f580d4923fdd1cdf4ee6ee7d6
+  ExpoFont: cf508bc2e6b70871e05386d71cab927c8524cc8e
+  ExpoModulesCore: 238cf51c8006e94a076a548100ba9af25194c92f
   fast_float: 06eeec4fe712a76acc9376682e4808b05ce978b6
   FBLazyVector: 7605ea4810e0e10ae4815292433c09bf4324ba45
   fmt: 01b82d4ca6470831d1cc0852a1af644be019e8f6
