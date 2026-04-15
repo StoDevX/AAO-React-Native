@@ -3,6 +3,12 @@ import {setTimezone} from '@frogpond/constants'
 
 setTimezone('America/Chicago')
 jest.mock('react-native/Libraries/EventEmitter/NativeEventEmitter')
+jest.mock('expo-web-browser', () => ({
+	openBrowserAsync: jest.fn(() => Promise.resolve({type: 'opened'})),
+	WebBrowserPresentationStyle: {
+		CURRENT_CONTEXT: 'currentContext',
+	},
+}))
 jest.mock('@react-native-clipboard/clipboard', () => ({
 	getString: jest.fn(() => Promise.resolve('')),
 	setString: jest.fn(),
