@@ -54,8 +54,10 @@ export class AddToCalendar extends React.Component<Props, State> {
 
 		const result = await addToCalendar(event)
 
-		if (result) {
+		if (result === 'saved') {
 			this.setState(() => ({message: MESSAGES.success, disabled: true}))
+		} else if (result === 'cancelled') {
+			this.setState(() => ({message: '', disabled: false}))
 		} else {
 			this.setState(() => ({message: MESSAGES.error, disabled: false}))
 		}

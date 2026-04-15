@@ -84,8 +84,6 @@
 			</dict>
 		</dict>
 	</dict>
-	<key>NSCalendarsUsageDescription</key>
-	<string>We use your calendar to add events to your calendar so that you remember what you wanted to attend.</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Entypo.ttf</string>
