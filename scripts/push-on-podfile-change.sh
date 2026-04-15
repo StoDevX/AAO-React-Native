@@ -2,17 +2,16 @@
 
 set -e -x -v -u -o pipefail
 
-PODFILE_LOCK=ios/Podfile.lock
-PBXPROJ=ios/AllAboutOlaf.xcodeproj/project.pbxproj
-
 git diff
 
-# Check if either file changed
-LOCK_CHANGED=$(git status -s -- "$PODFILE_LOCK")
-PBXPROJ_CHANGED=$(git status -s -- "$PBXPROJ")
+# Stage every change produced by `pod install`. Using `git add -A` picks up
+# edits to any tracked file (Podfile.lock, project.pbxproj, workspace files,
+# etc.) while .gitignore keeps ios/Pods/ and similar out of the commit.
+git add -A
 
-if [[ -z "$LOCK_CHANGED" ]] && [[ -z "$PBXPROJ_CHANGED" ]]; then
-    echo "No changes to $PODFILE_LOCK or $PBXPROJ; nothing to push"
+# Nothing to commit?
+if git diff --cached --quiet; then
+    echo "No changes after pod install; nothing to push"
     exit 0
 fi
 
@@ -28,7 +27,7 @@ fi
 echo "branch: $branch"
 echo "head_ref: $head_ref"
 
-# commit the file(s) that changed
+# commit the staged changes
 actor='github-actions[bot]'
 email="${actor}@users.noreply.github.com"
 author="""${actor}"" <${email}>"
@@ -36,14 +35,6 @@ author="""${actor}"" <${email}>"
 git config user.name "$actor"
 git config user.email "$email"
 
-if [[ -n "$LOCK_CHANGED" ]]; then
-    git add "$PODFILE_LOCK"
-fi
-
-if [[ -n "$PBXPROJ_CHANGED" ]]; then
-    git add "$PBXPROJ"
-fi
-
-git commit --author="$author" --message="chore: update Podfile.lock and project.pbxproj for ${branch}"
+git commit --author="$author" --message="chore: apply pod install changes for ${branch}"
 
 git push origin "$head_ref"
