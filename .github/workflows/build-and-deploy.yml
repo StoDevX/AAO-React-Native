@@ -36,8 +36,6 @@ jobs:
       - run: git fetch --prune --unshallow
       - run: npm ci
       - run: mise run pod:install --deployment
-      - run: brew tap wix/brew
-      - run: brew install applesimutils
       - run: bundle exec fastlane ios ci-run
         env:
           FASTLANE_PASSWORD: ${{ secrets.FASTLANE_PASSWORD }}
