@@ -1362,8 +1362,6 @@ PODS:
     - React-Core
   - react-native-netinfo (12.0.1):
     - React-Core
-  - react-native-restart (0.0.27):
-    - React-Core
   - react-native-safe-area-context (5.7.0):
     - React-Core
   - react-native-vector-icons-entypo (13.0.0)
@@ -1662,6 +1660,27 @@ PODS:
     - React-logger
     - React-perflogger
     - React-utils (= 0.76.9)
+  - RestartNewArch (1.0.85):
+    - DoubleConversion
+    - glog
+    - hermes-engine
+    - RCT-Folly (= 2024.10.14.00)
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - Yoga
   - RNCClipboard (1.16.3):
     - React-Core
   - RNCPicker (2.11.4):
@@ -1932,7 +1951,6 @@ DEPENDENCIES:
   - react-native-change-icon (from `../node_modules/react-native-change-icon`)
   - react-native-ios-context-menu (from `../node_modules/react-native-ios-context-menu`)
   - "react-native-netinfo (from `../node_modules/@react-native-community/netinfo`)"
-  - react-native-restart (from `../node_modules/react-native-restart`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
   - "react-native-vector-icons-entypo (from `../node_modules/@react-native-vector-icons/entypo`)"
   - "react-native-vector-icons-ionicons (from `../node_modules/@react-native-vector-icons/ionicons`)"
@@ -1965,6 +1983,7 @@ DEPENDENCIES:
   - React-utils (from `../node_modules/react-native/ReactCommon/react/utils`)
   - ReactCodegen (from `build/generated/ios`)
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
+  - RestartNewArch (from `../node_modules/react-native-restart-newarch`)
   - "RNCClipboard (from `../node_modules/@react-native-clipboard/clipboard`)"
   - "RNCPicker (from `../node_modules/@react-native-picker/picker`)"
   - "RNDateTimePicker (from `../node_modules/@react-native-community/datetimepicker`)"
@@ -2074,8 +2093,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-ios-context-menu"
   react-native-netinfo:
     :path: "../node_modules/@react-native-community/netinfo"
-  react-native-restart:
-    :path: "../node_modules/react-native-restart"
   react-native-safe-area-context:
     :path: "../node_modules/react-native-safe-area-context"
   react-native-vector-icons-entypo:
@@ -2140,6 +2157,8 @@ EXTERNAL SOURCES:
     :path: build/generated/ios
   ReactCommon:
     :path: "../node_modules/react-native/ReactCommon"
+  RestartNewArch:
+    :path: "../node_modules/react-native-restart-newarch"
   RNCClipboard:
     :path: "../node_modules/@react-native-clipboard/clipboard"
   RNCPicker:
@@ -2209,7 +2228,6 @@ SPEC CHECKSUMS:
   react-native-change-icon: 478a35dc77022479d2e203f349b98c2c4165d123
   react-native-ios-context-menu: 986da6dcba70094bcc2a8049f68410fe7d25aff1
   react-native-netinfo: bed7e7b8f68e22e0862a77d7df28d31faa66375d
-  react-native-restart: 0bc732f4461709022a742bb29bcccf6bbc5b4863
   react-native-safe-area-context: e89848fc12d32ccca63d0d7d16dd96918d07c730
   react-native-vector-icons-entypo: 9da6305812362779f61a5d337d78beab5d31a470
   react-native-vector-icons-ionicons: 334801ca0211bf1f5673e3c791330639d47dc0e7
@@ -2242,6 +2260,7 @@ SPEC CHECKSUMS:
   React-utils: ed818f19ab445000d6b5c4efa9d462449326cc9f
   ReactCodegen: f853a20cc9125c5521c8766b4b49375fec20648b
   ReactCommon: 300d8d9c5cb1a6cd79a67cf5d8f91e4d477195f9
+  RestartNewArch: 071361027fdbb9a77f0e39fdaa2f245ee957b1ee
   RNCClipboard: f6679d470d0da2bce2a37b0af7b9e0bf369ecda5
   RNCPicker: 7de564dce1f90b53e386a24001aafc3578233dfe
   RNDateTimePicker: a4679e6488003e5fb68502b50ffb1b74b8b31ca0
