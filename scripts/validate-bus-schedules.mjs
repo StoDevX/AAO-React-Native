@@ -1,6 +1,6 @@
 import fs from 'node:fs'
 import path from 'node:path'
-import {isNotJunk} from 'junk'
+import {isNotJunk} from './junk.mjs'
 import yaml from 'js-yaml'
 import moment from 'moment'
 import {DATA_BASE} from './paths.mjs'

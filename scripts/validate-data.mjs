@@ -3,8 +3,8 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import yaml from 'js-yaml'
-import {isNotJunk} from 'junk'
-import minimist from 'minimist'
+import {isNotJunk} from './junk.mjs'
+import {parseArgs} from 'node:util'
 import {validate} from './validate.mjs'
 import {SCHEMA_BASE, DATA_BASE} from './paths.mjs'
 
@@ -31,7 +31,7 @@ const readDir = (pth) =>
 /// MARK: program
 
 // get cli arguments
-const args = parseArgs(process.argv.slice(2))
+const args = getArgs(process.argv.slice(2))
 
 // allow either --data/--schema or automatic schema loading
 let iterator
@@ -61,24 +61,32 @@ for (const multitudes of iterator) {
 
 /// MARK: helpers
 
-function parseArgs(argv) {
+function getArgs(argv) {
 	let allSchemas = readDir(SCHEMA_BASE).map((f) => f.replace('.yaml', ''))
-	let args = minimist(argv, {
-		boolean: ['help', 'bail', 'quiet'],
-		string: ['data', 'schema'],
-		alias: {d: 'data', s: 'schema'},
-		default: {
-			bail: true,
-		},
-		unknown(arg) {
-			if (!arg.startsWith('-')) {
-				return
-			}
-			console.error('Usage: node validate-compiled-data.js [options] [args]')
-			console.error(`Unknown option "${arg}"`)
-			process.exit(1)
-		},
-	})
+
+	let values, positionals
+	try {
+		;({values, positionals} = parseArgs({
+			args: argv,
+			options: {
+				help: {type: 'boolean'},
+				bail: {type: 'boolean', default: true},
+				'no-bail': {type: 'boolean'},
+				quiet: {type: 'boolean'},
+				data: {type: 'string', short: 'd'},
+				schema: {type: 'string', short: 's'},
+			},
+			allowPositionals: true,
+			strict: true,
+		}))
+	} catch (err) {
+		console.error('Usage: node validate-compiled-data.js [options] [args]')
+		console.error(err.message)
+		process.exit(1)
+	}
+
+	let bail = values['no-bail'] ? false : (values.bail ?? true)
+	let args = {...values, bail, _: positionals}
 
 	if (args.help) {
 		console.error('Usage: node validate-compiled-data.js [options] [args]')
