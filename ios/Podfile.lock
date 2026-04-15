@@ -1334,8 +1334,11 @@ PODS:
     - React-Core
   - react-native-restart (0.0.27):
     - React-Core
-  - react-native-safe-area-context (4.14.1):
+  - react-native-safe-area-context (5.7.0):
     - React-Core
+  - react-native-vector-icons-entypo (13.0.0)
+  - react-native-vector-icons-ionicons (13.0.0)
+  - react-native-vector-icons-material-design-icons (13.0.0)
   - react-native-webview (13.16.1):
     - DoubleConversion
     - glog
@@ -1662,9 +1665,28 @@ PODS:
     - Yoga
   - RNInAppBrowser (3.7.1):
     - React-Core
-  - RNKeychain (8.2.0):
+  - RNKeychain (10.0.0):
+    - DoubleConversion
+    - glog
+    - hermes-engine
+    - RCT-Folly (= 2024.10.14.00)
+    - RCTRequired
+    - RCTTypeSafety
     - React-Core
-  - RNReanimated (3.17.5):
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - Yoga
+  - RNReanimated (3.18.2):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1686,10 +1708,10 @@ PODS:
     - ReactCodegen
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
-    - RNReanimated/reanimated (= 3.17.5)
-    - RNReanimated/worklets (= 3.17.5)
+    - RNReanimated/reanimated (= 3.18.2)
+    - RNReanimated/worklets (= 3.18.2)
     - Yoga
-  - RNReanimated/reanimated (3.17.5):
+  - RNReanimated/reanimated (3.18.2):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1711,9 +1733,9 @@ PODS:
     - ReactCodegen
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
-    - RNReanimated/reanimated/apple (= 3.17.5)
+    - RNReanimated/reanimated/apple (= 3.18.2)
     - Yoga
-  - RNReanimated/reanimated/apple (3.17.5):
+  - RNReanimated/reanimated/apple (3.18.2):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1736,7 +1758,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - RNReanimated/worklets (3.17.5):
+  - RNReanimated/worklets (3.18.2):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1758,9 +1780,9 @@ PODS:
     - ReactCodegen
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
-    - RNReanimated/worklets/apple (= 3.17.5)
+    - RNReanimated/worklets/apple (= 3.18.2)
     - Yoga
-  - RNReanimated/worklets/apple (3.17.5):
+  - RNReanimated/worklets/apple (3.18.2):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1805,8 +1827,6 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - RNSearchBar (3.5.1):
-    - React
   - RNSentry (8.7.0):
     - DoubleConversion
     - glog
@@ -1830,8 +1850,6 @@ PODS:
     - ReactCommon/turbomodule/core
     - Sentry (= 9.8.0)
     - Yoga
-  - RNVectorIcons (9.2.0):
-    - React-Core
   - Sentry (9.8.0):
     - Sentry/Core (= 9.8.0)
   - Sentry/Core (9.8.0)
@@ -1883,6 +1901,9 @@ DEPENDENCIES:
   - "react-native-netinfo (from `../node_modules/@react-native-community/netinfo`)"
   - react-native-restart (from `../node_modules/react-native-restart`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
+  - "react-native-vector-icons-entypo (from `../node_modules/@react-native-vector-icons/entypo`)"
+  - "react-native-vector-icons-ionicons (from `../node_modules/@react-native-vector-icons/ionicons`)"
+  - "react-native-vector-icons-material-design-icons (from `../node_modules/@react-native-vector-icons/material-design-icons`)"
   - react-native-webview (from `../node_modules/react-native-webview`)
   - React-nativeconfig (from `../node_modules/react-native/ReactCommon`)
   - React-NativeModulesApple (from `../node_modules/react-native/ReactCommon/react/nativemodule/core/platform/ios`)
@@ -1921,9 +1942,7 @@ DEPENDENCIES:
   - RNKeychain (from `../node_modules/react-native-keychain`)
   - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNScreens (from `../node_modules/react-native-screens`)
-  - RNSearchBar (from `../node_modules/react-native-search-bar`)
   - "RNSentry (from `../node_modules/@sentry/react-native`)"
-  - RNVectorIcons (from `../node_modules/react-native-vector-icons`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
 SPEC REPOS:
@@ -2017,6 +2036,12 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-restart"
   react-native-safe-area-context:
     :path: "../node_modules/react-native-safe-area-context"
+  react-native-vector-icons-entypo:
+    :path: "../node_modules/@react-native-vector-icons/entypo"
+  react-native-vector-icons-ionicons:
+    :path: "../node_modules/@react-native-vector-icons/ionicons"
+  react-native-vector-icons-material-design-icons:
+    :path: "../node_modules/@react-native-vector-icons/material-design-icons"
   react-native-webview:
     :path: "../node_modules/react-native-webview"
   React-nativeconfig:
@@ -2093,12 +2118,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-reanimated"
   RNScreens:
     :path: "../node_modules/react-native-screens"
-  RNSearchBar:
-    :path: "../node_modules/react-native-search-bar"
   RNSentry:
     :path: "../node_modules/@sentry/react-native"
-  RNVectorIcons:
-    :path: "../node_modules/react-native-vector-icons"
   Yoga:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
@@ -2144,7 +2165,10 @@ SPEC CHECKSUMS:
   react-native-ios-context-menu: 986da6dcba70094bcc2a8049f68410fe7d25aff1
   react-native-netinfo: bed7e7b8f68e22e0862a77d7df28d31faa66375d
   react-native-restart: 0bc732f4461709022a742bb29bcccf6bbc5b4863
-  react-native-safe-area-context: 758e894ca5a9bd1868d2a9cfbca7326a2b6bf9dc
+  react-native-safe-area-context: e89848fc12d32ccca63d0d7d16dd96918d07c730
+  react-native-vector-icons-entypo: 9da6305812362779f61a5d337d78beab5d31a470
+  react-native-vector-icons-ionicons: 334801ca0211bf1f5673e3c791330639d47dc0e7
+  react-native-vector-icons-material-design-icons: 1955bd08457a8310e6a2d3c87c7f1ebaca159098
   react-native-webview: ff76bd483e879911c9ca6f5430b6143531bdfcfd
   React-nativeconfig: 8efdb1ef1e9158c77098a93085438f7e7b463678
   React-NativeModulesApple: cebca2e5320a3d66e123cade23bd90a167ffce5e
@@ -2180,12 +2204,10 @@ SPEC CHECKSUMS:
   RNDeviceInfo: 900bd20e1fd3bfd894e7384cc4a83880c0341bd3
   RNGestureHandler: b1c06808f2eaf5c568e006ab3f34813d959ca1c8
   RNInAppBrowser: 904d24dc75e8e6c6c98a3160329192608946f9df
-  RNKeychain: bbe2f6d5cc008920324acb49ef86ccc03d3b38e4
-  RNReanimated: 9a9be32b5f0f613fa593dee04d1c992aafb85399
+  RNKeychain: 6aa400162221d6c12e6b6a34722a85136e686f2b
+  RNReanimated: 0c3a7040d5a646729fef882e82144b9bf64120fd
   RNScreens: f8a7e3cbee7eaac5613eecd89ecf719fdf8abfc5
-  RNSearchBar: feb1a3829c44d6ae1b96dc1397062b2fbfb95825
   RNSentry: 6aff72ada7ba9a8ec9937c9e9273e368cd0ab2ec
-  RNVectorIcons: 5784330be9dddb5474e8b378d5f6947996c84e55
   Sentry: 88746bf877eff714bc45315a39ad1d1efea2cdda
   SocketRocket: d4aabe649be1e368d1318fdf28a022d714d65748
   Yoga: feb4910aba9742cfedc059e2b2902e22ffe9954a

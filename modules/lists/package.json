@@ -11,7 +11,7 @@
   "peerDependencies": {
     "react": "^18.0.0",
     "react-native": "^0.76.0",
-    "react-native-vector-icons": "^9.2.0"
+    "@react-native-vector-icons/ionicons": "^13.0.0"
   },
   "dependencies": {
     "@callstack/react-theme-provider": "3.0.9",

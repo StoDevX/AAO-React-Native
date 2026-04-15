@@ -35,12 +35,12 @@ function PlayButton(props: PlayButtonProps): JSX.Element {
 	const {state, onPlay, onPause, onLink} = props
 
 	if (!ALLOW_INLINE_PLAYER) {
-		return <ActionButton icon="ios-planet" onPress={onLink} text="Open" />
+		return <ActionButton icon="planet" onPress={onLink} text="Open" />
 	}
 
 	switch (state) {
 		case 'paused':
-			return <ActionButton icon="ios-play" onPress={onPlay} text="Listen" />
+			return <ActionButton icon="play" onPress={onPlay} text="Listen" />
 
 		case 'checking':
 			return (
@@ -48,10 +48,10 @@ function PlayButton(props: PlayButtonProps): JSX.Element {
 			)
 
 		case 'playing':
-			return <ActionButton icon="ios-pause" onPress={onPlay} text="Pause" />
+			return <ActionButton icon="pause" onPress={onPlay} text="Pause" />
 
 		default:
-			return <ActionButton icon="ios-bug" onPress={noop} text="Error" />
+			return <ActionButton icon="bug" onPress={noop} text="Error" />
 	}
 }
 

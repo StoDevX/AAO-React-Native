@@ -1,12 +1,14 @@
 import * as React from 'react'
 import {Touchable} from '@frogpond/touchable'
-import {Icon, platformPrefixIconName} from '@frogpond/icon'
+import {Ionicons as Icon} from '@react-native-vector-icons/ionicons'
 import * as c from '@frogpond/colors'
 import {commonStyles, rightButtonStyles} from './styles'
 import {useNavigation} from '@react-navigation/native'
-import {HeaderBackButtonProps} from '@react-navigation/native-stack/lib/typescript/src/types'
+import type {NativeStackHeaderRightProps} from '@react-navigation/native-stack'
 
-export function OpenSettingsButton(_props: HeaderBackButtonProps): JSX.Element {
+export function OpenSettingsButton(
+	_props: NativeStackHeaderRightProps,
+): JSX.Element {
 	let navigation = useNavigation()
 
 	return (
@@ -20,7 +22,7 @@ export function OpenSettingsButton(_props: HeaderBackButtonProps): JSX.Element {
 			testID="button-open-settings"
 		>
 			<Icon
-				name={platformPrefixIconName('settings')}
+				name="settings"
 				style={[rightButtonStyles.icon, {color: c.label}]}
 			/>
 		</Touchable>

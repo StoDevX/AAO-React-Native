@@ -298,7 +298,9 @@ jobs:
     name: Native UITest for iOS (${{ matrix.shard }})
     needs: [uitest-plan, uitest-udid, ios-build, ios-bundle, ios-cache-check]
     runs-on: macos-15
-    if: ${{ !contains(github.event.pull_request.labels.*.name, 'ci/skip-e2e') }}
+    if: |
+      !failure() && !cancelled() &&
+      !contains(github.event.pull_request.labels.*.name, 'ci/skip-e2e')
     strategy:
       fail-fast: false
       matrix: ${{ fromJSON(needs.uitest-plan.outputs.matrix) }}

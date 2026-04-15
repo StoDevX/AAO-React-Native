@@ -12,7 +12,10 @@ import {
 import * as c from '@frogpond/colors'
 import {useNavigation} from '@react-navigation/native'
 import {NativeStackNavigationProp} from '@react-navigation/native-stack'
-import Icon from 'react-native-vector-icons/Ionicons'
+import {Ionicons as Icon} from '@react-native-vector-icons/ionicons'
+import type IoniconsGlyphs from '@react-native-vector-icons/ionicons/glyphmaps/Ionicons.json'
+
+type IoniconsGlyph = keyof typeof IoniconsGlyphs
 
 import {RootStackParamList} from '../../navigation/types'
 import {faqsOptions} from './query'
@@ -180,7 +183,7 @@ type Palette = {
 	text: ColorValue
 	secondaryText: ColorValue
 	link: ColorValue
-	icon: string
+	icon: IoniconsGlyph
 	iconColor: ColorValue
 	dismissBackground: ColorValue
 	dismissText: ColorValue
@@ -233,7 +236,7 @@ function buildPalette(faq: Faq): Palette {
 		secondaryText: faq.foregroundColor
 			? faq.foregroundColor
 			: base.secondaryText,
-		icon: faq.icon ?? base.icon,
+		icon: (faq.icon as IoniconsGlyph | undefined) ?? base.icon,
 	}
 }
 

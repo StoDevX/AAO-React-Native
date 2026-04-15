@@ -56,6 +56,21 @@
       ]
     },
     {
+      "description": "group all @react-native-community/cli packages together",
+      "groupName": "@react-native-community/cli",
+      "matchPackageNames": [
+        "@react-native-community/cli",
+        "@react-native-community/cli-*"
+      ]
+    },
+    {
+      "description": "group all @react-native-vector-icons/* packages together",
+      "groupName": "@react-native-vector-icons/*",
+      "matchPackageNames": [
+        "@react-native-vector-icons/*"
+      ]
+    },
+    {
       "description": "group all patch-level updates into a single weekly PR",
       "matchUpdateTypes": [
         "patch"

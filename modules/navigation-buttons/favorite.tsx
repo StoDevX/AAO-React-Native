@@ -1,6 +1,5 @@
 import * as React from 'react'
-import {Platform} from 'react-native'
-import Icon from 'react-native-vector-icons/Ionicons'
+import {Ionicons as Icon} from '@react-native-vector-icons/ionicons'
 import {Touchable} from '@frogpond/touchable'
 import {rightButtonStyles as styles} from './styles'
 
@@ -9,12 +8,8 @@ type Props = {
 	favorited: boolean
 }
 
-const filled = Platform.OS === 'ios' ? 'ios-heart' : 'md-heart'
-const outlined =
-	Platform.OS === 'ios' ? 'ios-heart-outline' : 'md-heart-outline'
-
 export function FavoriteButton(props: Props): JSX.Element {
-	const icon = props.favorited ? filled : outlined
+	const icon = props.favorited ? 'heart' : 'heart-outline'
 
 	return (
 		<Touchable
