@@ -17,6 +17,10 @@ const config = {
 			process.env.APP_MODE === 'mocked'
 				? ['mock.ts', ...defaultSourceExts]
 				: defaultSourceExts,
+		// Honor the package.json "exports" field so modern ESM packages with
+		// subpath exports (e.g. `entities/decode` used by htmlparser2 v12)
+		// resolve correctly. Metro ships this off-by-default in RN 0.76.
+		unstable_enablePackageExports: true,
 	},
 }
 
