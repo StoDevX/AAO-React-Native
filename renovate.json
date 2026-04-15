@@ -71,6 +71,21 @@
       ]
     },
     {
+      "description": "group fb55-authored packages (htmlparser2 & co) together so their tightly-coupled releases update in lockstep",
+      "groupName": "fb55 packages",
+      "matchPackageNames": [
+        "boolbase",
+        "css-select",
+        "css-what",
+        "domelementtype",
+        "domhandler",
+        "domutils",
+        "entities",
+        "htmlparser2",
+        "nth-check"
+      ]
+    },
+    {
       "description": "group all patch-level updates into a single weekly PR",
       "matchUpdateTypes": [
         "patch"

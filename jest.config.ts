@@ -24,6 +24,7 @@ const esmPackages = [
 	'dom-serializer',
 	'domelementtype',
 	'entities',
+	'htmlparser2',
 ]
 
 const config: Config = {
