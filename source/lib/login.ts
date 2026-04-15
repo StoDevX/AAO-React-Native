@@ -4,7 +4,7 @@ import {
 	getInternetCredentials,
 	resetInternetCredentials,
 	setInternetCredentials,
-	SharedWebCredentials,
+	UserCredentials,
 } from 'react-native-keychain'
 import {OLECARD_AUTH_URL} from './financials/urls'
 import {queryClient} from '../init/tanstack-query'
@@ -29,7 +29,7 @@ type Credentials = {
 	password: string
 }
 
-async function loadCredentials(): Promise<null | SharedWebCredentials> {
+async function loadCredentials(): Promise<null | UserCredentials> {
 	let credentials = await getInternetCredentials(SIS_LOGIN_KEY)
 	return credentials ? credentials : null
 }
@@ -49,7 +49,7 @@ export async function storeCredentials(
 }
 
 export function resetCredentials(): Promise<void> {
-	return resetInternetCredentials(SIS_LOGIN_KEY)
+	return resetInternetCredentials({server: SIS_LOGIN_KEY})
 }
 
 export async function performLogin(
