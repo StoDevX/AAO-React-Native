@@ -403,3 +403,323 @@ git push origin claude/expo-prebuild-pr2-cutover
 Task 2 is complete. The next tasks switch tooling and CI to drive the
 regenerated `ios/`.
 
+---
+
+## Task 3: Update `.mise.toml` for Expo CLI
+
+**Files:**
+- `.mise.toml`
+
+### 3.1 Replace RN CLI task bodies with Expo CLI
+
+- [ ] **Step 1: Update `tasks.ios`**
+
+Change:
+```toml
+[tasks.ios]
+description = "Run the iOS app"
+run = "react-native run-ios"
+```
+
+To:
+```toml
+[tasks.ios]
+description = "Run the iOS app"
+run = "npx expo run:ios"
+```
+
+- [ ] **Step 2: Update `tasks.start`**
+
+Change:
+```toml
+[tasks.start]
+description = "Start Metro bundler"
+run = "react-native start"
+```
+
+To:
+```toml
+[tasks.start]
+description = "Start Metro bundler"
+run = "npx expo start"
+```
+
+- [ ] **Step 3: Add `tasks.prebuild`**
+
+Insert a new task after `tasks.start` (keeping the existing
+`# --- App commands ---` grouping):
+
+```toml
+[tasks.prebuild]
+description = "Regenerate ios/ from app.config.ts via Expo prebuild"
+run = "npx expo prebuild --clean -p ios"
+```
+
+- [ ] **Step 4: Update `tasks.bundle:ios`**
+
+Replace the `react-native bundle` invocation. Two options; pick one
+(recorded below with a comment in the commit so it's defensible in
+review):
+
+**Option A (preferred): switch to `expo export`**
+
+```toml
+[tasks."bundle:ios"]
+description = "Generate iOS JS bundle"
+run = "npx expo export --platform ios --output-dir ios/AllAboutOlaf"
+```
+
+Then add a note that the output file layout is different (`expo export`
+produces `_expo/static/js/ios/*.hbc`); Fastlane/Sentry expect
+`main.jsbundle`, so check Task 9 for the corresponding Fastlane
+adjustment.
+
+**Option B: keep the `react-native bundle` body verbatim**
+
+Works if we re-install `react-native-cli` transitively as part of
+`react-native` (it's gone from the tree in Task 4). Because the
+community CLI is being removed, this option requires keeping a
+minimal shim via `npx react-native` which is still shipped by the
+`react-native` package.
+
+**Recommendation:** Option A. Simpler, fewer moving pieces, but
+requires Task 9 to re-thread the output path to Fastlane/Sentry.
+
+- [ ] **Step 5: Sanity-check each updated task**
+
+Run each task to confirm it at least starts (no typos, tool found on
+PATH):
+
+```bash
+mise tasks ls | grep -E "^(ios|start|prebuild|bundle:ios)\s"
+# Dry-run where possible:
+mise run start --help 2>&1 | head -5 || true
+mise run prebuild --help 2>&1 | head -5 || true
+```
+
+Full end-to-end verification happens in Task 10.
+
+### 3.2 Commit
+
+- [ ] **Step 6: Commit the `.mise.toml` change**
+
+```bash
+git add .mise.toml
+git commit -m "$(cat <<'EOF'
+chore(mise): switch ios/start/bundle tasks to Expo CLI
+
+Replaces `react-native run-ios`, `react-native start`, and the
+`react-native bundle` invocation with the Expo CLI equivalents:
+
+- `mise run ios` → `npx expo run:ios`
+- `mise run start` → `npx expo start`
+- `mise run bundle:ios` → `npx expo export --platform ios ...`
+
+Adds a new `mise run prebuild` task that runs
+`npx expo prebuild --clean -p ios`. This is the canonical way to
+regenerate ios/ from app.config.ts + plugins.
+
+The `react-native` CLI is removed entirely in Task 4.
+
+See docs/superpowers/specs/2026-04-16-expo-prebuild-migration-design.md
+EOF
+)"
+```
+
+---
+
+## Task 4: Delete `react-native.config.js` and remove RN CLI devDeps
+
+**Files:**
+- `react-native.config.js` (delete)
+- `package.json` (remove two devDeps)
+- `package-lock.json` (regenerated)
+
+### 4.1 Delete the config file
+
+- [ ] **Step 1: Delete `react-native.config.js`**
+
+```bash
+git rm react-native.config.js
+```
+
+The file currently says:
+
+```js
+module.exports = {
+	project: {
+		ios: {
+			sourceDir: 'ios',
+		},
+	},
+}
+```
+
+All this does is tell the RN CLI where the iOS project lives. The Expo
+CLI infers `ios/` from `app.config.ts` + the tree, so the file is
+obsolete.
+
+**Gate:** Task 0 (pre-flight) Step 0 #2 from the spec (verifying
+`use_native_modules!` autolinking works without the community CLI) must
+have landed in PR 1 as a documented finding. If that check wasn't
+completed, run it now before proceeding:
+
+```bash
+cd ios && pod install --deployment 2>&1 | grep -i autolink; cd ..
+```
+
+Expected: no autolinking errors.
+
+### 4.2 Remove devDeps
+
+- [ ] **Step 2: Remove `@react-native-community/cli` and `@react-native-community/cli-platform-ios` from `package.json`**
+
+Use `npm uninstall` so `package-lock.json` is regenerated atomically:
+
+```bash
+npm uninstall --save-dev @react-native-community/cli @react-native-community/cli-platform-ios
+```
+
+- [ ] **Step 3: Verify nothing else references them**
+
+```bash
+grep -rn "@react-native-community/cli" --exclude-dir=node_modules --exclude-dir=ios || true
+```
+
+Expected: no hits outside `node_modules/`. If any match shows up in
+`scripts/`, `fastlane/`, or a workflow file, fix it in the same
+commit. Likely culprits: a Fastlane lane calling
+`react-native bundle` directly (handled in Task 9), or a script that
+shells out to `react-native`.
+
+- [ ] **Step 4: Regenerate the lockfile cleanly**
+
+```bash
+rm -rf node_modules
+npm install
+mise run agent:pre-commit
+```
+
+All four pre-commit checks must pass. If `mise run tsc` or
+`mise run test` fail, a removed CLI was a transitive requirement for
+a type or test. Investigate and fix (most likely: add back a narrow
+transitive dep via a direct devDep, not the CLI).
+
+### 4.3 Commit
+
+- [ ] **Step 5: Commit the deletion**
+
+```bash
+git add package.json package-lock.json
+# react-native.config.js already staged by `git rm`
+git commit -m "$(cat <<'EOF'
+chore: remove react-native CLI in favor of Expo CLI
+
+- Deletes react-native.config.js; its only content (`project.ios.sourceDir`)
+  is inferred automatically by `npx expo`.
+- Removes `@react-native-community/cli` and
+  `@react-native-community/cli-platform-ios` from devDependencies. All
+  mise tasks now shell out to `npx expo` instead (Task 3).
+
+Verified pod install + autolinking still succeed without the community
+CLI present (pre-flight check from Task 0 / spec Step 0 #2).
+
+See docs/superpowers/specs/2026-04-16-expo-prebuild-migration-design.md
+EOF
+)"
+```
+
+---
+
+## Task 5: Update `ios/ci_scripts/ci_post_clone.sh` for Xcode Cloud
+
+**Files:**
+- `ios/ci_scripts/ci_post_clone.sh`
+
+Current state (see `ios/ci_scripts/ci_post_clone.sh`):
+
+```bash
+#!/bin.bash
+set -ex
+# ...
+cd ../../
+brew install mise
+mise install node
+npm ci
+mise run bundle-data
+mise run pod:install --deployment
+# if/when we go to Expo
+# npx expo prebuild
+```
+
+The commented-out line is the clue: this script was pre-wired for the
+migration. Time to uncomment it.
+
+### 5.1 Restructure the script
+
+- [ ] **Step 1: Edit `ios/ci_scripts/ci_post_clone.sh`**
+
+Replace the tail of the script (from `npm ci` onward) with:
+
+```bash
+# install node modules
+npm ci
+
+# build the data files
+mise run bundle-data
+
+# regenerate ios/ from app.config.ts + plugins
+#
+# --no-install tells expo prebuild to skip running `pod install` — we
+# do that ourselves on the next line so the `--deployment` flag is
+# passed through (Xcode Cloud's pod cache assumes deployment mode).
+npx expo prebuild --clean -p ios --no-install
+
+# install pods
+mise run pod:install --deployment
+```
+
+Intent: prebuild must happen **before** `pod install`, because prebuild
+rewrites `Podfile` and `project.pbxproj`. Running `pod install` first
+would install against the old Podfile and then the second prebuild
+would invalidate the installed pods.
+
+- [ ] **Step 2: Fix the shebang typo while here**
+
+Line 1 currently reads `#!/bin.bash` (typo). Fix to `#!/bin/bash`. This
+is a drive-by fix — mention it in the commit message.
+
+- [ ] **Step 3: Verify script is executable**
+
+```bash
+ls -l ios/ci_scripts/ci_post_clone.sh
+```
+
+Expected: `-rwxr-xr-x`. If not:
+
+```bash
+chmod +x ios/ci_scripts/ci_post_clone.sh
+```
+
+### 5.2 Commit
+
+- [ ] **Step 4: Commit**
+
+```bash
+git add ios/ci_scripts/ci_post_clone.sh
+git commit -m "$(cat <<'EOF'
+ci(xcode-cloud): prebuild before pod install in ci_post_clone.sh
+
+Uncomments the `npx expo prebuild --clean -p ios --no-install` line
+(which was pre-wired for exactly this migration) and reorders so
+prebuild runs before `pod install`. prebuild rewrites Podfile and
+project.pbxproj, so installing pods first would invalidate whatever
+just got installed.
+
+Drive-by: fix the `#!/bin.bash` typo on line 1 to `#!/bin/bash`.
+
+See docs/superpowers/specs/2026-04-16-expo-prebuild-migration-design.md
+EOF
+)"
+```
+
