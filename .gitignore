@@ -61,6 +61,7 @@ fastlane/test_output
 
 # generated files
 /docs/
+!/docs/superpowers/
 
 # Deployment keys
 android/app/signing.properties
