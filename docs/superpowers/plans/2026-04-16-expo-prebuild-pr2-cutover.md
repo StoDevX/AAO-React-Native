@@ -134,3 +134,272 @@ git push -u origin claude/expo-prebuild-pr2-cutover
 
 Empty-branch push creates the upstream tracking reference early so later pushes are one-flag operations.
 
+---
+
+## Task 2: Local prebuild iteration loop
+
+**Files:** entire `ios/` tree (regenerated), possibly `plugins/**` (fixes during convergence).
+
+This task is **open-ended iteration**: the number of loop cycles is not
+known in advance. Each cycle: run `prebuild`, diff, identify gaps, fix
+a plugin, repeat. Only when the output is correct and the acceptance
+checklist passes locally do we commit.
+
+**Guardrail:** nothing is committed until convergence. If iteration
+stalls (more than ~5 cycles without measurable progress), escalate to
+review rather than forcing a shipping commit — an incorrect
+regenerated `ios/` on `master` is worse than delaying the PR.
+
+### 2.1 Backup the existing `ios/`
+
+- [ ] **Step 1: Rename the live `ios/` to a scratch location**
+
+```bash
+mv ios ios.preexpo
+```
+
+This is never committed. Git will show `ios/` as deleted until Step 3
+(first prebuild) puts a new `ios/` in place. The backup is the diff
+baseline for the convergence loop.
+
+- [ ] **Step 2: Record the baseline build identity**
+
+Before regenerating, record the exact values that must match the
+regenerated output. From `ios.preexpo/AllAboutOlaf.xcodeproj/project.pbxproj`
+and `ios.preexpo/AllAboutOlaf/Info.plist`, capture:
+
+- `PRODUCT_BUNDLE_IDENTIFIER` (expected: `NFMTHAZVS9.com.drewvolz.stolaf`)
+- `MARKETING_VERSION` and `CURRENT_PROJECT_VERSION`
+- `CFBundleDisplayName` (expected: `All About Olaf`)
+- `CFBundleURLSchemes` (expected: `["AllAboutOlaf"]`)
+- `UIBackgroundModes` (expected: `["audio"]`)
+- The full list of entries under both `CFBundleIcons` and `CFBundleIcons~ipad`
+- `NSAppTransportSecurity` contents
+- The list of Swift files in `ios.preexpo/AllAboutOlafUITests/`
+
+Save this as a scratch markdown file outside the repo (not committed).
+It's the reference for Step 6 (convergence checklist).
+
+### 2.2 First prebuild
+
+- [ ] **Step 3: Install Expo CLI if not present**
+
+```bash
+npx expo --version
+```
+
+Expected: prints `0.x.y` (Expo CLI is bundled with the `expo` npm
+package, no separate install). If it prompts to install, accept.
+
+- [ ] **Step 4: Run `expo prebuild`**
+
+```bash
+npx expo prebuild --clean -p ios
+```
+
+`--clean` is required: it tells Expo to wipe any existing `ios/`
+directory before generating. `-p ios` restricts to iOS (no Android).
+
+Expected output: `ios/` created with a new `AllAboutOlaf.xcodeproj`,
+`AllAboutOlaf/AppDelegate.swift`, `AllAboutOlaf/Info.plist`, `Podfile`,
+and `AllAboutOlafUITests/**` (the latter courtesy of
+`with-xcuitest-target`).
+
+If prebuild fails before finishing, the plugin stack has a bug — jump
+to Step 7 and fix.
+
+- [ ] **Step 5: Run `pod install`**
+
+```bash
+cd ios && pod install && cd ..
+```
+
+Expected: `Podfile.lock` is written, `ios/Pods/` is populated, the
+`AllAboutOlafUITests` pod target is integrated (thanks to the nested
+target block from `with-xcuitest-target`).
+
+If `pod install` fails — most likely cause is a `with-xcuitest-target`
+regression that broke the Podfile. Jump to Step 7.
+
+### 2.3 Convergence checklist
+
+- [ ] **Step 6: Walk through the 16 acceptance items against the fresh `ios/`**
+
+This step is explicit evidence-gathering. For each item below, record
+PASS or FAIL in a scratch note, with evidence (file path + line, or
+test output).
+
+**Static (no build required):**
+
+6a. `ios/AllAboutOlaf/Info.plist` contains `CFBundleIdentifier = $(PRODUCT_BUNDLE_IDENTIFIER)` and the xcconfig-level `PRODUCT_BUNDLE_IDENTIFIER` equals the baseline from Step 2.
+
+6b. `CFBundleIcons.CFBundleAlternateIcons.icon_type_windmill` and
+`CFBundleIcons~ipad.CFBundleAlternateIcons.icon_type_windmill` both
+present with `CFBundleIconFiles: ["windmill"]` and
+`UIPrerenderedIcon: true`.
+
+6c. The four `windmill*.png` files are registered as bundle resources
+on the main app target in `project.pbxproj`.
+
+6d. `Podfile` starts with the `ExpoUITestsAutolinkingFix` module
+(wrapped in begin/end marker comments), then `require` lines, then
+`platform :ios`, then the main target block.
+
+6e. `Podfile` main target contains `target 'AllAboutOlafUITests' do;
+inherit! :none; end` (wrapped in marker comments).
+
+6f. `AllAboutOlafUITests` PBXNativeTarget exists with all 17 `.swift`
+files. Match them to the list captured in Step 2.
+
+6g. `AppDelegate.swift` contains the `BEGIN with-app-delegate-customizations`
+marker, the `--reset-state` handler, `URLCache` sizing (4 MiB / 20 MiB
+disk), and `AVAudioSession.sharedInstance().setCategory(.playback)`.
+
+6h. `AppDelegate.swift` has `import AVFoundation` at the top.
+
+6i. `NSAppTransportSecurity.NSAllowsArbitraryLoadsInWebContent = true`
+and the `localhost` ATS exception are present.
+
+**Dynamic (build required):**
+
+6j. `mise run pod:install --deployment` succeeds from a fresh clone.
+
+6k. Open `ios/AllAboutOlaf.xcworkspace` in Xcode; the app target
+builds for an iPhone 16 simulator.
+
+6l. Launch the built app on the simulator; it boots past the splash
+screen to the root view.
+
+6m. `xcodebuild test -workspace ios/AllAboutOlaf.xcworkspace -scheme AllAboutOlaf -destination 'platform=iOS Simulator,name=iPhone 16'`
+runs all 17 XCUITests. All pass.
+
+6n. In the booted app, swipe to the Settings screen → App Icon →
+choose "Windmill". Confirm the icon changes (visually) and
+`app-icon-cell-icon_type_windmill-selected` is shown.
+
+6o. Play a streaming audio source (e.g., KSTO radio) while the
+device's physical mute switch is on (use simulator menu Device →
+Toggle Silent Mode). Audio must continue to play.
+
+6p. Attach the debugger, evaluate `URLCache.shared.memoryCapacity` and
+`.diskCapacity` — must be `4_000_000` and `20_000_000` respectively.
+
+6q. Launch with `--reset-state`:
+
+```bash
+xcrun simctl launch --console 'booted' com.drewvolz.stolaf --reset-state
+```
+
+Inspect `~/Library/Developer/CoreSimulator/Devices/*/data/Containers/Data/Application/<uuid>/Library/Application Support/com.drewvolz.stolaf`
+— must be empty after the launch. Verify `UserDefaults` is also empty
+via `defaults read com.drewvolz.stolaf` inside the simulator.
+
+If **any** item fails, Step 7 handles the fix. If **all** pass, jump
+to Step 8.
+
+### 2.4 Iteration on plugin bugs
+
+- [ ] **Step 7: Fix → re-run**
+
+For each failing checklist item, identify which plugin is responsible
+and fix it. Typical failure modes:
+
+| Checklist failure | Likely plugin | Likely fix |
+|---|---|---|
+| 6a — bundle ID wrong | `app.config.ts` `ios.bundleIdentifier` | Edit the declarative field |
+| 6b or 6c — windmill missing | `with-alternate-icons` | Check marker-based idempotency; tighten helper |
+| 6d — autolinking fix missing | `with-xcuitest-target` (`insertAutolinkingFix`) | Re-examine `platform :ios` anchor detection |
+| 6e — nested target missing | `with-xcuitest-target` (`insertNestedTarget`) | Re-examine `target 'AllAboutOlaf' do` anchor detection |
+| 6f — UITests target missing | `with-xcuitest-target` (`ensureUITestTarget`) | Check xcode-npm `addTarget` shape |
+| 6g or 6h — AppDelegate wrong | `with-app-delegate-customizations` | Re-examine `self.moduleName` anchor detection |
+| 6i — ATS wrong | `app.config.ts` `ios.infoPlist.NSAppTransportSecurity` | Edit declarative field |
+
+For each fix:
+
+1. Modify the plugin or `app.config.ts`.
+2. Add a unit test that captures the bug in the plugin's
+   `__tests__/*.test.ts` (RED).
+3. Implement the fix in the plugin (GREEN).
+4. `npx jest plugins/__tests__` — all tests pass.
+5. `rm -rf ios && npx expo prebuild --clean -p ios && cd ios && pod install && cd ..`.
+6. Re-run the failing Step 6 item.
+
+**Do not** edit `ios/` directly to work around a plugin bug — that
+defeats the purpose of the migration. Every fix flows through a
+plugin.
+
+Commit each plugin fix as its own commit before running the next
+prebuild cycle:
+
+```bash
+git add plugins/with-<name>.ts plugins/__tests__/with-<name>.test.ts
+git commit -m "fix(plugins): <what the fix addresses>"
+```
+
+This way the convergence history is bisectable: if a later regression
+shows up, `git bisect` over the plugin-fix commits is the fastest
+path to root cause.
+
+### 2.5 Convergence + single `ios/` commit
+
+- [ ] **Step 8: Confirm two prebuild runs produce no diff (idempotency)**
+
+Once the checklist passes, prove the plugins are idempotent
+end-to-end:
+
+```bash
+git status ios/
+# expect: ios/ modified (all regenerated)
+rm -rf ios && npx expo prebuild --clean -p ios && cd ios && pod install && cd ..
+git status ios/
+# expect: no diff relative to the previous regeneration
+```
+
+If the second run produces a diff, a plugin is non-idempotent. Loop
+back to Step 7 — add an idempotency unit test, fix the plugin.
+
+- [ ] **Step 9: Delete the scratch backup**
+
+```bash
+rm -rf ios.preexpo
+```
+
+- [ ] **Step 10: Pre-commit, then commit regenerated `ios/`**
+
+```bash
+mise run agent:pre-commit
+git add ios/ plugins/ app.config.ts
+git commit -m "$(cat <<'EOF'
+chore: regenerate ios/ via expo prebuild
+
+First `expo prebuild --clean -p ios` run on this repo. The regenerated
+ios/ reflects app.config.ts + the five registered plugins
+(expo-build-properties, @react-native-vector-icons/common/plugin,
+with-app-delegate-customizations, with-alternate-icons,
+with-xcuitest-target).
+
+Verified against the 16-item acceptance checklist in the design spec
+(see PR description for pass/fail table). Running prebuild twice in a
+row produces no diff — plugins are idempotent end-to-end.
+
+The existing ios/ directory was never force-edited; all observable
+differences flow through app.config.ts or a plugin.
+
+See docs/superpowers/specs/2026-04-16-expo-prebuild-migration-design.md
+EOF
+)"
+```
+
+Note: `plugins/` and `app.config.ts` are included in this commit only
+if Step 7 iterations produced changes there. If no plugin changes were
+needed, the commit contains only `ios/`.
+
+- [ ] **Step 11: Push**
+
+```bash
+git push origin claude/expo-prebuild-pr2-cutover
+```
+
+Task 2 is complete. The next tasks switch tooling and CI to drive the
+regenerated `ios/`.
+
