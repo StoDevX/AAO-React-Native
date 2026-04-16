@@ -1,13 +1,7 @@
-import {Platform} from 'react-native'
+import * as React from 'react'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
-import {
-	MaterialIcon,
-	IosIcon,
-	createTabNavigator,
-	type Tab,
-} from '@frogpond/navigation-tabs'
+import {createNativeBottomTabNavigator} from '@react-navigation/bottom-tabs/unstable'
 
-import {WeeklyMovieView} from './movie'
 import {WebcamsView} from './webcams'
 import {StreamListView} from './streams'
 import {KstoStationView} from './radio/station-ksto'
@@ -20,60 +14,48 @@ type Params = {
 	LiveWebcamsView: undefined
 	KSTORadioView: undefined
 	KRLXRadioView: undefined
-	WeeklyMovieView: undefined
 }
 
-const tabs: Tab<Params>[] = [
-	{
-		name: 'StreamingView',
-		component: StreamListView,
-		tabBarLabel: 'Streaming',
-		tabBarIcon: Platform.select({
-			ios: IosIcon('recording'),
-			android: MaterialIcon('camcorder'),
-		}),
-	},
-	{
-		name: 'LiveWebcamsView',
-		component: WebcamsView,
-		tabBarLabel: 'Webcams',
-		tabBarIcon: Platform.select({
-			ios: IosIcon('videocam'),
-			android: MaterialIcon('webcam'),
-		}),
-	},
-	{
-		name: 'KSTORadioView',
-		component: KstoStationView,
-		tabBarLabel: 'KSTO',
-		tabBarIcon: Platform.select({
-			ios: IosIcon('radio'),
-			android: MaterialIcon('radio'),
-		}),
-	},
-	{
-		name: 'KRLXRadioView',
-		component: KrlxStationView,
-		tabBarLabel: 'KRLX',
-		tabBarIcon: Platform.select({
-			ios: IosIcon('mic'),
-			android: MaterialIcon('microphone'),
-		}),
-	},
-	{
-		enabled: false,
-		name: 'WeeklyMovieView',
-		component: WeeklyMovieView,
-		tabBarLabel: 'Weekly Movie',
-		tabBarIcon: Platform.select({
-			ios: IosIcon('film'),
-			android: MaterialIcon('film'),
-		}),
-	},
-]
+const Tab = createNativeBottomTabNavigator<Params>()
+
+export const View = (): JSX.Element => (
+	<Tab.Navigator screenOptions={{headerShown: false}}>
+		<Tab.Screen
+			component={StreamListView}
+			name="StreamingView"
+			options={{
+				tabBarLabel: 'Streaming',
+				tabBarIcon: {type: 'sfSymbol', name: 'recordingtape'},
+			}}
+		/>
+		<Tab.Screen
+			component={WebcamsView}
+			name="LiveWebcamsView"
+			options={{
+				tabBarLabel: 'Webcams',
+				tabBarIcon: {type: 'sfSymbol', name: 'web.camera.fill'},
+			}}
+		/>
+		<Tab.Screen
+			component={KstoStationView}
+			name="KSTORadioView"
+			options={{
+				tabBarLabel: 'KSTO',
+				tabBarIcon: {type: 'sfSymbol', name: 'radio.fill'},
+			}}
+		/>
+		<Tab.Screen
+			component={KrlxStationView}
+			name="KRLXRadioView"
+			options={{
+				tabBarLabel: 'KRLX',
+				tabBarIcon: {type: 'sfSymbol', name: 'mic.fill'},
+			}}
+		/>
+	</Tab.Navigator>
+)
 
 export type NavigationParams = undefined
-export const View = createTabNavigator<Params>(tabs)
 export const NavigationKey = 'Streaming Media'
 export const NavigationOptions: NativeStackNavigationOptions = {
 	title: 'Streaming Media',
