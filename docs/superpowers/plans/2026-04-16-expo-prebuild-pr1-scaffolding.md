@@ -1504,3 +1504,547 @@ See docs/superpowers/specs/2026-04-16-expo-prebuild-migration-design.md
 EOF
 )"
 ```
+
+---
+
+## Task 6: Author `plugins/with-xcuitest-target.ts`
+
+**Files:**
+- `plugins/with-xcuitest-target.ts` (new)
+- `plugins/__tests__/with-xcuitest-target.test.ts` (new)
+
+This is the most complex local plugin. It reproduces three existing
+customizations that would otherwise be lost when `expo prebuild`
+regenerates `ios/`:
+
+1. **Podfile: prepend `ExpoUITestsAutolinkingFix` monkey-patch**
+   (current Podfile lines 6–23). Without this, `expo-modules-autolinking`
+   adds `ExpoModulesProvider.swift` to the UITests target, which then
+   fails to link because the expo module static libraries aren't linked
+   into UITests.
+
+2. **Podfile: nest `target 'AllAboutOlafUITests' do; inherit! :none; end`**
+   inside `target 'AllAboutOlaf'` (current Podfile lines 51–53). Makes
+   CocoaPods install UITests as a separate pod target without inheriting
+   the main app's pods.
+
+3. **project.pbxproj: reinstate the `AllAboutOlafUITests` native target**
+   with all 17 existing `.swift` files (`ios/AllAboutOlafUITests/*.swift`)
+   and its `AllAboutOlaf.xctest` product reference. Expo's prebuild
+   template doesn't know about UI test targets, so prebuild would strip
+   this entirely.
+
+All three transformations are idempotent. Exposed as pure helpers:
+- `patchPodfileForUITests(source: string): string`
+- `ensureUITestTarget(project: XcodeProject, opts: UITestTargetOptions): XcodeProject`
+
+Wrapped by a thin `withXcuitestTarget` ConfigPlugin that wires the
+helpers via `withPodfile` and `withXcodeProject`.
+
+### 6.1 Scaffolding + marker constants
+
+- [ ] **Step 1: Create `plugins/with-xcuitest-target.ts` skeleton**
+
+```ts
+import {ConfigPlugin, withXcodeProject, withDangerousMod} from '@expo/config-plugins'
+import type {XcodeProject} from '@expo/config-plugins/build/ios/utils/Xcodeproj'
+import fs from 'node:fs'
+import path from 'node:path'
+
+export const UITEST_TARGET_NAME = 'AllAboutOlafUITests'
+export const MAIN_TARGET_NAME = 'AllAboutOlaf'
+
+export const AUTOLINKING_FIX_BEGIN = '# BEGIN with-xcuitest-target autolinking fix'
+export const AUTOLINKING_FIX_END = '# END with-xcuitest-target autolinking fix'
+export const NESTED_TARGET_BEGIN = '# BEGIN with-xcuitest-target nested target'
+export const NESTED_TARGET_END = '# END with-xcuitest-target nested target'
+
+export interface UITestTargetOptions {
+	sourceFiles: string[] // absolute or project-relative Swift file paths
+}
+
+export function patchPodfileForUITests(source: string): string {
+	throw new Error('not implemented')
+}
+
+export function ensureUITestTarget(
+	project: XcodeProject,
+	opts: UITestTargetOptions,
+): XcodeProject {
+	throw new Error('not implemented')
+}
+
+const withXcuitestTarget: ConfigPlugin = (config) => {
+	config = withDangerousMod(config, [
+		'ios',
+		async (config) => {
+			const podfilePath = path.join(
+				config.modRequest.platformProjectRoot,
+				'Podfile',
+			)
+			const podfile = fs.readFileSync(podfilePath, 'utf8')
+			fs.writeFileSync(podfilePath, patchPodfileForUITests(podfile))
+			return config
+		},
+	])
+	config = withXcodeProject(config, (config) => {
+		const swiftFiles = fs
+			.readdirSync(
+				path.join(config.modRequest.platformProjectRoot, UITEST_TARGET_NAME),
+			)
+			.filter((f) => f.endsWith('.swift'))
+			.map((f) => `${UITEST_TARGET_NAME}/${f}`)
+		config.modResults = ensureUITestTarget(config.modResults, {
+			sourceFiles: swiftFiles,
+		}) as typeof config.modResults
+		return config
+	})
+	return config
+}
+
+export default withXcuitestTarget
+```
+
+### 6.2 Podfile: prepend autolinking fix (idempotent)
+
+- [ ] **Step 2: Write failing test for `patchPodfileForUITests` (autolinking fix)**
+
+Create `plugins/__tests__/with-xcuitest-target.test.ts`:
+
+```ts
+import {describe, it, expect} from '@jest/globals'
+import {
+	patchPodfileForUITests,
+	AUTOLINKING_FIX_BEGIN,
+	AUTOLINKING_FIX_END,
+} from '../with-xcuitest-target'
+
+const BARE_PODFILE = `
+require File.join(File.dirname(\`node --print "require.resolve('expo/package.json')"\`), "scripts/autolinking")
+require '../node_modules/react-native/scripts/react_native_pods.rb'
+
+platform :ios, min_ios_version_supported
+prepare_react_native_project!
+
+target 'AllAboutOlaf' do
+	use_expo_modules!
+	config = use_native_modules!
+
+	use_react_native!(
+		:path => config[:reactNativePath],
+		:app_path => "#{Pod::Config.instance.installation_root}/.."
+	)
+end
+`.trimStart()
+
+describe('patchPodfileForUITests — autolinking fix', () => {
+	it('prepends the ExpoUITestsAutolinkingFix module wrapped in markers', () => {
+		const result = patchPodfileForUITests(BARE_PODFILE)
+
+		expect(result).toContain(AUTOLINKING_FIX_BEGIN)
+		expect(result).toContain(AUTOLINKING_FIX_END)
+		expect(result).toContain('module ExpoUITestsAutolinkingFix')
+		expect(result).toContain("return nil if name == 'AllAboutOlafUITests'")
+		expect(result).toContain(
+			'Pod::Podfile::TargetDefinition.prepend(ExpoUITestsAutolinkingFix)',
+		)
+	})
+
+	it('inserts the fix before `platform :ios`', () => {
+		const result = patchPodfileForUITests(BARE_PODFILE)
+		const fixIndex = result.indexOf(AUTOLINKING_FIX_BEGIN)
+		const platformIndex = result.indexOf('platform :ios')
+		expect(fixIndex).toBeLessThan(platformIndex)
+	})
+})
+```
+
+Run `npx jest plugins/__tests__/with-xcuitest-target.test.ts` → fails
+(RED).
+
+- [ ] **Step 3: Implement autolinking-fix insertion**
+
+Replace the `patchPodfileForUITests` stub:
+
+```ts
+const AUTOLINKING_FIX_BLOCK = `${AUTOLINKING_FIX_BEGIN}
+module ExpoUITestsAutolinkingFix
+  def autolinking_manager
+    return nil if name == 'AllAboutOlafUITests'
+    super
+  end
+end
+Pod::Podfile::TargetDefinition.prepend(ExpoUITestsAutolinkingFix)
+${AUTOLINKING_FIX_END}`
+
+const PLATFORM_ANCHOR = /^platform :ios/m
+
+function insertAutolinkingFix(source: string): string {
+	const existingPattern = new RegExp(
+		`${AUTOLINKING_FIX_BEGIN}[\\s\\S]*?${AUTOLINKING_FIX_END}\\n?`,
+	)
+	const stripped = source.replace(existingPattern, '')
+	if (!PLATFORM_ANCHOR.test(stripped)) {
+		throw new Error(
+			'with-xcuitest-target: could not find `platform :ios` anchor in Podfile.',
+		)
+	}
+	return stripped.replace(
+		PLATFORM_ANCHOR,
+		`${AUTOLINKING_FIX_BLOCK}\n\nplatform :ios`,
+	)
+}
+
+export function patchPodfileForUITests(source: string): string {
+	return insertAutolinkingFix(source)
+}
+```
+
+Run tests → passes (GREEN).
+
+- [ ] **Step 4: Add autolinking-fix idempotency test**
+
+```ts
+it('is idempotent — running patchPodfileForUITests twice yields the same Podfile', () => {
+	const once = patchPodfileForUITests(BARE_PODFILE)
+	const twice = patchPodfileForUITests(once)
+	expect(twice).toEqual(once)
+})
+
+it('only ever contains one copy of the fix block', () => {
+	const result = patchPodfileForUITests(
+		patchPodfileForUITests(patchPodfileForUITests(BARE_PODFILE)),
+	)
+	const matches = result.match(new RegExp(AUTOLINKING_FIX_BEGIN, 'g')) ?? []
+	expect(matches).toHaveLength(1)
+})
+```
+
+Run tests → passes.
+
+- [ ] **Step 5: Add missing-anchor error test**
+
+```ts
+it('throws a descriptive error if `platform :ios` anchor is missing', () => {
+	const noAnchor = BARE_PODFILE.replace(/platform :ios.*$/m, '')
+	expect(() => patchPodfileForUITests(noAnchor)).toThrow(
+		/could not find `platform :ios` anchor/,
+	)
+})
+```
+
+Run tests → passes.
+
+### 6.3 Podfile: nested UITests target (idempotent)
+
+- [ ] **Step 6: Write failing test for nested target insertion**
+
+```ts
+import {NESTED_TARGET_BEGIN, NESTED_TARGET_END} from '../with-xcuitest-target'
+
+describe('patchPodfileForUITests — nested UITests target', () => {
+	it('inserts `target "AllAboutOlafUITests" do; inherit! :none; end` inside the main target', () => {
+		const result = patchPodfileForUITests(BARE_PODFILE)
+
+		expect(result).toContain(NESTED_TARGET_BEGIN)
+		expect(result).toContain(NESTED_TARGET_END)
+		expect(result).toMatch(/target 'AllAboutOlafUITests' do\s+inherit! :none\s+end/)
+	})
+
+	it('places the nested target inside the main `target \\'AllAboutOlaf\\'` block', () => {
+		const result = patchPodfileForUITests(BARE_PODFILE)
+
+		const mainStart = result.indexOf("target 'AllAboutOlaf' do")
+		const mainEnd = result.indexOf('\nend\n', mainStart)
+		const nestedIndex = result.indexOf(NESTED_TARGET_BEGIN)
+
+		expect(nestedIndex).toBeGreaterThan(mainStart)
+		expect(nestedIndex).toBeLessThan(mainEnd)
+	})
+})
+```
+
+Run tests → one fails (nested target not yet inserted — currently RED
+for second assertion).
+
+- [ ] **Step 7: Implement nested-target insertion**
+
+Extend `with-xcuitest-target.ts`:
+
+```ts
+const NESTED_TARGET_BLOCK = `	${NESTED_TARGET_BEGIN}
+	target 'AllAboutOlafUITests' do
+		inherit! :none
+	end
+	${NESTED_TARGET_END}`
+
+const MAIN_TARGET_ANCHOR = /(target 'AllAboutOlaf' do\n)/
+
+function insertNestedTarget(source: string): string {
+	const existingPattern = new RegExp(
+		`[ \\t]*${NESTED_TARGET_BEGIN}[\\s\\S]*?${NESTED_TARGET_END}\\n?`,
+	)
+	const stripped = source.replace(existingPattern, '')
+	if (!MAIN_TARGET_ANCHOR.test(stripped)) {
+		throw new Error(
+			`with-xcuitest-target: could not find \`target 'AllAboutOlaf' do\` anchor in Podfile.`,
+		)
+	}
+	return stripped.replace(
+		MAIN_TARGET_ANCHOR,
+		`$1${NESTED_TARGET_BLOCK}\n\n`,
+	)
+}
+
+export function patchPodfileForUITests(source: string): string {
+	return insertNestedTarget(insertAutolinkingFix(source))
+}
+```
+
+Run tests → passes (GREEN).
+
+- [ ] **Step 8: Add nested-target idempotency test**
+
+```ts
+it('nested target insertion is idempotent', () => {
+	const once = patchPodfileForUITests(BARE_PODFILE)
+	const twice = patchPodfileForUITests(once)
+	expect(twice).toEqual(once)
+
+	const nestedMatches = twice.match(new RegExp(NESTED_TARGET_BEGIN, 'g')) ?? []
+	expect(nestedMatches).toHaveLength(1)
+})
+```
+
+Run tests → passes.
+
+- [ ] **Step 9: Add missing-main-target error test**
+
+```ts
+it('throws if the main `target \\'AllAboutOlaf\\' do` block is absent', () => {
+	const noMain = BARE_PODFILE.replace(/target 'AllAboutOlaf' do\n/, '')
+	expect(() => patchPodfileForUITests(noMain)).toThrow(
+		/could not find `target 'AllAboutOlaf' do` anchor/,
+	)
+})
+```
+
+Run tests → passes.
+
+### 6.4 pbxproj: reinstate the UITests native target
+
+- [ ] **Step 10: Write failing test for `ensureUITestTarget` (fixture-driven)**
+
+```ts
+import xcode from 'xcode'
+import path from 'node:path'
+import type {XcodeProject} from '@expo/config-plugins/build/ios/utils/Xcodeproj'
+import {
+	ensureUITestTarget,
+	UITEST_TARGET_NAME,
+} from '../with-xcuitest-target'
+
+function loadFixtureProject(): XcodeProject {
+	const fixturePath = path.join(
+		__dirname,
+		'../../ios/AllAboutOlaf.xcodeproj/project.pbxproj',
+	)
+	const project = xcode.project(fixturePath)
+	project.parseSync()
+	return project as unknown as XcodeProject
+}
+
+function stripUITestTarget(project: XcodeProject): void {
+	// Emulate an `expo prebuild` regeneration that doesn't know about the
+	// UITests target. Remove the PBXNativeTarget, its PBXSourcesBuildPhase,
+	// its product reference, and associated build files.
+	//
+	// Implementation detail: use project.removeTarget(targetUuid) — this
+	// handles nested build phases and references automatically.
+	const target = project.pbxTargetByName(UITEST_TARGET_NAME)
+	if (!target) return
+	;(project as any).removeTarget(target.uuid)
+}
+
+const SAMPLE_SOURCE_FILES = [
+	`${UITEST_TARGET_NAME}/ModuleSettingsTests.swift`,
+	`${UITEST_TARGET_NAME}/RootAllAboutOlafUITests.swift`,
+]
+
+describe('ensureUITestTarget', () => {
+	it('recreates the AllAboutOlafUITests PBXNativeTarget with its source files', () => {
+		const project = loadFixtureProject()
+		stripUITestTarget(project)
+		expect(project.pbxTargetByName(UITEST_TARGET_NAME)).toBeUndefined()
+
+		ensureUITestTarget(project, {sourceFiles: SAMPLE_SOURCE_FILES})
+
+		const target = project.pbxTargetByName(UITEST_TARGET_NAME)
+		expect(target).toBeDefined()
+		expect(target.productType).toBe('"com.apple.product-type.bundle.ui-testing"')
+	})
+})
+```
+
+Run tests → fails (RED).
+
+- [ ] **Step 11: Implement `ensureUITestTarget`**
+
+```ts
+const UITEST_PRODUCT_NAME = `${UITEST_TARGET_NAME}.xctest`
+const UITEST_PRODUCT_TYPE = '"com.apple.product-type.bundle.ui-testing"'
+
+export function ensureUITestTarget(
+	project: XcodeProject,
+	opts: UITestTargetOptions,
+): XcodeProject {
+	const existing = project.pbxTargetByName(UITEST_TARGET_NAME)
+	if (existing) {
+		// Already present — ensure its sources file list is in sync and return.
+		syncSourcesPhase(project, existing, opts.sourceFiles)
+		return project
+	}
+	const mainTarget = project.pbxTargetByName(MAIN_TARGET_NAME)
+	if (!mainTarget) {
+		throw new Error(
+			`with-xcuitest-target: main target "${MAIN_TARGET_NAME}" missing; cannot attach UITests as a dependency.`,
+		)
+	}
+	const target = (project as any).addTarget(
+		UITEST_TARGET_NAME,
+		'ui_testing_bundle', // xcode-npm target type shorthand
+		UITEST_TARGET_NAME,
+	)
+	;(project as any).addBuildPhase(
+		opts.sourceFiles,
+		'PBXSourcesBuildPhase',
+		'Sources',
+		target.uuid,
+	)
+	;(project as any).addTargetDependency(mainTarget.uuid, [target.uuid])
+	return project
+}
+
+function syncSourcesPhase(
+	project: XcodeProject,
+	target: {uuid: string},
+	sourceFiles: string[],
+): void {
+	// Remove existing file refs that aren't in sourceFiles, add missing ones.
+	// For PR 1 scaffolding: implementation is a straightforward
+	// removeSourceFile/addSourceFile loop; kept simple so tests can assert the
+	// end state.
+	for (const filename of sourceFiles) {
+		try {
+			;(project as any).addSourceFile(filename, {target: target.uuid})
+		} catch {
+			// Already present — xcode-npm throws if the ref exists.
+		}
+	}
+}
+```
+
+Run tests → passes (GREEN). Note: the `xcode` npm package's
+`addTarget` API and target-type shorthand are usage-dependent; the
+exact call signature will be validated by running the test, and
+adjusted if the API differs in practice.
+
+- [ ] **Step 12: Add idempotency test for `ensureUITestTarget`**
+
+```ts
+it('is idempotent — calling twice leaves one target with the expected sources', () => {
+	const project = loadFixtureProject()
+	stripUITestTarget(project)
+
+	ensureUITestTarget(project, {sourceFiles: SAMPLE_SOURCE_FILES})
+	ensureUITestTarget(project, {sourceFiles: SAMPLE_SOURCE_FILES})
+
+	const targets = project
+		.pbxNativeTargetSection
+		? Object.values((project as any).pbxNativeTargetSection())
+				.filter((t: any) => t?.name === UITEST_TARGET_NAME)
+		: []
+	expect(targets).toHaveLength(1)
+})
+```
+
+Run tests → passes.
+
+- [ ] **Step 13: Add "preserves existing target when already present" test**
+
+```ts
+it('leaves the checked-in UITests target untouched when already present', () => {
+	// The fixture already has the UITests target with its full source list.
+	const project = loadFixtureProject()
+	const beforeUuid = project.pbxTargetByName(UITEST_TARGET_NAME)?.uuid
+
+	ensureUITestTarget(project, {sourceFiles: SAMPLE_SOURCE_FILES})
+
+	const afterUuid = project.pbxTargetByName(UITEST_TARGET_NAME)?.uuid
+	expect(afterUuid).toBe(beforeUuid)
+})
+```
+
+Run tests → passes (the uuid is stable because we re-use, not recreate).
+
+- [ ] **Step 14: Add missing-main-target error test**
+
+```ts
+it('throws if the main AllAboutOlaf target is missing', () => {
+	const project = loadFixtureProject()
+	stripUITestTarget(project)
+	;(project as any).removeTarget(project.pbxTargetByName(MAIN_TARGET_NAME)!.uuid)
+
+	expect(() =>
+		ensureUITestTarget(project, {sourceFiles: SAMPLE_SOURCE_FILES}),
+	).toThrow(/main target "AllAboutOlaf" missing/)
+})
+```
+
+Run tests → passes.
+
+### 6.5 Pre-commit and commit
+
+- [ ] **Step 15: Run full pre-commit**
+
+```bash
+mise run agent:pre-commit
+```
+
+All four steps must pass. The test file contributes at least 10 unit
+tests across the three transformations.
+
+- [ ] **Step 16: Commit**
+
+```bash
+git add plugins/with-xcuitest-target.ts plugins/__tests__/with-xcuitest-target.test.ts
+git commit -m "$(cat <<'EOF'
+feat(plugins): add with-xcuitest-target config plugin
+
+Reproduces three customizations that must survive `expo prebuild`:
+
+1. Prepends the ExpoUITestsAutolinkingFix module to the Podfile so
+   expo-modules-autolinking skips AllAboutOlafUITests (otherwise adds
+   ExpoModulesProvider.swift to UITests, which then fails to link).
+
+2. Nests `target 'AllAboutOlafUITests' do; inherit! :none; end` inside
+   the main Podfile target so UITests gets its own pod integration
+   without inheriting the main app's pods.
+
+3. Reinstates the AllAboutOlafUITests PBXNativeTarget in
+   project.pbxproj with its Swift source files and a dependency from
+   the main target. Expo's prebuild template has no concept of UI test
+   targets, so without this they'd be stripped.
+
+All transformations are idempotent via begin/end marker comments
+(Podfile) or existence checks (pbxproj). Unit tests cover baseline
+insertion, idempotency, preservation, and missing-anchor errors.
+
+Plugin is registered with app.config.ts in Task 7. No behavior change
+yet.
+
+See docs/superpowers/specs/2026-04-16-expo-prebuild-migration-design.md
+EOF
+)"
+```
+
