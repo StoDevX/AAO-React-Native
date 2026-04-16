@@ -40,7 +40,20 @@ const config: ExpoConfig = {
 			},
 		},
 	},
-	plugins: [],
+	plugins: [
+		[
+			'expo-build-properties',
+			{
+				ios: {
+					deploymentTarget: '14.0',
+					newArchEnabled: false,
+				},
+			},
+		],
+		'@react-native-vector-icons/entypo',
+		'@react-native-vector-icons/ionicons',
+		'@react-native-vector-icons/material-design-icons',
+	],
 }
 
 export default config

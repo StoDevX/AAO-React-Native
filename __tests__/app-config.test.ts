@@ -66,7 +66,25 @@ describe('app.config.ts', () => {
 		])
 	})
 
-	it('starts with an empty plugins array (plugins added in later tasks)', () => {
-		expect(config.plugins).toEqual([])
+	it('registers expo-build-properties with old-arch + deployment target', () => {
+		const entry = config.plugins?.find(
+			(p) => Array.isArray(p) && p[0] === 'expo-build-properties',
+		) as [string, {ios: {deploymentTarget: string; newArchEnabled: boolean}}]
+		expect(entry).toBeDefined()
+		expect(entry[1].ios.deploymentTarget).toBe('14.0')
+		expect(entry[1].ios.newArchEnabled).toBe(false)
+	})
+
+	it('registers each vector-icons font package as its own plugin', () => {
+		const pluginRefs = (config.plugins ?? []).map((p) =>
+			Array.isArray(p) ? p[0] : p,
+		)
+		expect(pluginRefs).toEqual(
+			expect.arrayContaining([
+				'@react-native-vector-icons/entypo',
+				'@react-native-vector-icons/ionicons',
+				'@react-native-vector-icons/material-design-icons',
+			]),
+		)
 	})
 })
