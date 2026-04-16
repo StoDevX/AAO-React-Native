@@ -60,7 +60,7 @@ fastlane/screenshots
 fastlane/test_output
 
 # generated files
-/docs/
+/docs/*
 !/docs/superpowers/
 
 # Deployment keys
