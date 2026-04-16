@@ -1,8 +1,9 @@
 #!/bin.bash
-set -e
+set -ex
 echo "Running ci_post_clone.sh"
 
 export MISE_RUBY_COMPILE='false'
+export MISE_AUTO_INSTALL='false'
 
 export SENTRY_ORG='frog-pond-labs'
 export SENTRY_PROJECT='all-about-olaf'
@@ -11,8 +12,9 @@ export SENTRY_PROJECT='all-about-olaf'
 # cd out of ios/ci_scripts into main project directory
 cd ../../
 
-# install node and cocoapods
-brew install node cocoapods mise
+# install mise and tools
+brew install mise
+mise install node
 
 # install node modules
 npm ci
