@@ -733,3 +733,115 @@ EOF
 )"
 ```
 
+---
+
+## Task 7: Pre-commit and open PR
+
+**Files:** None (verification + GitHub MCP operation).
+
+### 7.1 Final verification
+
+- [ ] **Step 1: Run pre-commit on the full branch**
+
+```bash
+mise run agent:pre-commit
+```
+
+All four checks (prettier, eslint, tsc, jest) must pass. Markdown
+isn't covered by tsc/jest, but prettier formats markdown — confirm no
+diff.
+
+- [ ] **Step 2: Spot-check the markdown renders**
+
+```bash
+git diff master..HEAD -- '*.md' | head -100
+```
+
+Skim the diff for broken links, malformed code fences, or tables that
+need a header separator row.
+
+### 7.2 Push and open PR
+
+- [ ] **Step 3: Rebase + push**
+
+```bash
+git fetch origin master
+git rebase origin/master
+git push origin claude/expo-prebuild-pr3-docs
+```
+
+- [ ] **Step 4: Open PR via GitHub MCP**
+
+Use `mcp__github__create_pull_request` with:
+
+- **Base:** `master`
+- **Head:** `claude/expo-prebuild-pr3-docs`
+- **Draft:** `false`
+- **Title:** `Expo Prebuild: PR 3 — docs + Phase 2/3/4 stubs`
+- **Body:**
+
+  ```markdown
+  ## Summary
+
+  Closes out the Phase 1 Expo Prebuild migration:
+
+  - `CLAUDE.md`: new "Native iOS Configuration" section explaining
+    the prebuild workflow; *Development Commands* updated to list the
+    Expo-CLI-backed `mise` tasks.
+  - `CONTRIBUTING.md`: new "Native iOS Configuration" subsection with
+    the don't-hand-edit-`ios/` rule and the four-step "make a native
+    iOS change" workflow.
+  - Three new design stubs at `docs/superpowers/specs/`:
+    - `2026-04-16-expo-sdk-54-upgrade-design.md` (Phase 2)
+    - `2026-04-16-expo-sdk-55-newarch-upgrade-design.md` (Phase 3)
+    - `2026-04-16-expo-prebuild-cng-rehoming-design.md` (Phase 4)
+    Each captures the Phase 1 context relevant to that phase so the
+    analysis isn't lost between phases.
+
+  ## Test plan
+
+  - [x] `mise run agent:pre-commit` passes (markdown formatted by
+    prettier; no JS/TS or test changes).
+  - [x] Markdown renders correctly in GitHub's preview.
+
+  ## Phase 1 status
+
+  With this PR, all three Phase 1 PRs are merged:
+
+  - PR 1 (scaffolding) — `app.config.ts` + 5 plugins.
+  - PR 2 (cutover) — first prebuild + CI/Fastlane rewire.
+  - PR 3 (docs) — this PR.
+
+  Next: Phase 2, picked up against the SDK 54 stub when ready.
+
+  ## Related
+
+  - Spec: `docs/superpowers/specs/2026-04-16-expo-prebuild-migration-design.md`
+  - Plan: `docs/superpowers/plans/2026-04-16-expo-prebuild-pr3-docs.md`
+  ```
+
+- [ ] **Step 5: Hand off**
+
+PR 3 is ready for review. Phase 1 is complete once this merges.
+
+---
+
+## Completion Criteria
+
+- [ ] All 7 tasks checked off.
+- [ ] `CLAUDE.md` and `CONTRIBUTING.md` mention the prebuild workflow.
+- [ ] Three Phase-2/3/4 stubs exist under `docs/superpowers/specs/`.
+- [ ] PR open against `master` (non-draft).
+- [ ] CI green (markdown-only changes; should be trivial).
+
+---
+
+## Appendix: Phase rollout summary
+
+| Phase | Spec | Plan | Status |
+|---|---|---|---|
+| 1 (Prebuild adoption) | `2026-04-16-expo-prebuild-migration-design.md` | `2026-04-16-expo-prebuild-pr1-scaffolding.md`, `-pr2-cutover.md`, `-pr3-docs.md` | In progress |
+| 2 (SDK 54) | `2026-04-16-expo-sdk-54-upgrade-design.md` (stub, written in this PR) | TBD | Not started |
+| 3 (SDK 55 + New Arch) | `2026-04-16-expo-sdk-55-newarch-upgrade-design.md` (stub, written in this PR) | TBD | Not started |
+| 4 (CNG + XCUITest rehoming) | `2026-04-16-expo-prebuild-cng-rehoming-design.md` (stub, written in this PR) | TBD | Not started |
+
