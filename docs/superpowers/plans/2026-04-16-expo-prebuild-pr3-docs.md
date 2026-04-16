@@ -119,3 +119,103 @@ git checkout -b claude/expo-prebuild-pr3-docs
 git push -u origin claude/expo-prebuild-pr3-docs
 ```
 
+---
+
+## Task 2: Update `CLAUDE.md`
+
+**Files:**
+- `CLAUDE.md`
+
+Two changes: (1) update the *Development Commands* section so the
+listed `mise` tasks reflect the post-cutover state; (2) add a new
+"Native iOS configuration" section explaining the prebuild flow so
+future agent sessions don't try to hand-edit `ios/`.
+
+### 2.1 Update *Development Commands*
+
+- [ ] **Step 1: Add `prebuild` and clarify the iOS workflow**
+
+In the `## Development Commands` block, the current listing is:
+
+```bash
+mise run lint   # ESLint
+mise run pretty # Prettier; run `pretty:check` to validate instead
+mise run test   # Jest, unit tests
+mise run tsc    # Type check
+mise run pods   # Install cocoapods, even on Linux
+```
+
+Replace with:
+
+```bash
+mise run lint     # ESLint
+mise run pretty   # Prettier; run `pretty:check` to validate instead
+mise run test     # Jest, unit tests
+mise run tsc      # Type check
+mise run pods     # Install cocoapods (after `mise run prebuild`), even on Linux
+mise run prebuild # Regenerate ios/ from app.config.ts via `npx expo prebuild --clean -p ios`
+mise run ios      # Build + launch the iOS app via `npx expo run:ios`
+mise run start    # Start Metro bundler via `npx expo start`
+```
+
+Note the `pods` annotation: pods install must follow prebuild because
+prebuild rewrites the Podfile.
+
+### 2.2 Add "Native iOS configuration" section
+
+- [ ] **Step 2: Insert a new section after *Architecture & Patterns***
+
+Insert this section between `## Architecture & Patterns` and
+`## Mobile Priorities`:
+
+```markdown
+## Native iOS Configuration
+
+The iOS native project is **regenerated from declarative config**, not
+hand-edited:
+
+- `app.config.ts` — single source of truth for iOS metadata (bundle
+  identifier, scheme, ATS exceptions, `ios.infoPlist` overrides) and
+  the `plugins: [...]` array.
+- `plugins/` — local config plugins that patch `AppDelegate.swift`,
+  `Info.plist`, and `project.pbxproj` for customizations that don't
+  fit declarative fields. Each plugin has unit tests in
+  `plugins/__tests__/`.
+- `ios/` — checked into git, but treated as **regenerable output**.
+  Run `mise run prebuild` to recreate it from `app.config.ts` +
+  `plugins/`.
+
+**Do not hand-edit anything under `ios/`.** Native changes flow through
+`app.config.ts` (declarative fields), a library config plugin
+(`expo-build-properties`, `@react-native-vector-icons/common/plugin`),
+or a local plugin under `plugins/`. After editing, run
+`mise run prebuild && mise run pod:install --deployment` and commit
+the regenerated `ios/` diff alongside the source change.
+
+CI runs `mise run prebuild -- --no-install` before `pod install` on
+every iOS build (see `.github/workflows/{check,build-and-deploy,cocoapods}.yml`
+and `ios/ci_scripts/ci_post_clone.sh`), so a forgotten regeneration
+will be caught — but don't rely on that as the primary check.
+```
+
+### 2.3 Commit
+
+- [ ] **Step 3: Pre-commit + commit**
+
+```bash
+mise run agent:pre-commit
+git add CLAUDE.md
+git commit -m "$(cat <<'EOF'
+docs(claude): document Expo prebuild workflow
+
+Adds a "Native iOS Configuration" section explaining that ios/ is
+regenerable output, app.config.ts + plugins/ are the source of truth,
+and the don't-hand-edit-ios/ rule. Updates Development Commands with
+`mise run prebuild`, `mise run ios`, and `mise run start` and notes
+that `mise run pods` must follow prebuild.
+
+See docs/superpowers/specs/2026-04-16-expo-prebuild-migration-design.md
+EOF
+)"
+```
+
