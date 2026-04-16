@@ -55,3 +55,67 @@
 - **Task 7:** Pre-commit and open PR against `master`.
 
 Each task ends in one or more commits.
+
+---
+
+## Task 0: Pre-flight Verification
+
+**Files:** None.
+
+- [ ] **Step 1: Confirm PR 2 is merged to `master`**
+
+```bash
+git fetch origin master
+git log origin/master --oneline -10 | grep -iE "regenerate ios|expo prebuild|cut over"
+```
+
+Expected: at least one commit from PR 2 (e.g., "chore: regenerate ios/ via expo prebuild").
+
+- [ ] **Step 2: Confirm prebuild-era state is on `master`**
+
+```bash
+git show origin/master:.mise.toml | grep -E "expo (run|start|prebuild|export)"
+```
+
+Expected: hits for `expo run:ios`, `expo start`, `expo prebuild`, `expo export`.
+
+- [ ] **Step 3: Confirm RN CLI removed**
+
+```bash
+git show origin/master:package.json | grep -E "@react-native-community/cli"
+```
+
+Expected: no output (devDeps gone).
+
+- [ ] **Step 4: Confirm `react-native.config.js` removed**
+
+```bash
+git ls-tree origin/master react-native.config.js
+```
+
+Expected: no output.
+
+- [ ] **Step 5: Clean working tree**
+
+```bash
+git status
+```
+
+Expected: clean.
+
+## Task 1: Create implementation branch
+
+- [ ] **Step 1: Create + check out branch**
+
+```bash
+git checkout master
+git pull origin master
+git checkout -b claude/expo-prebuild-pr3-docs
+```
+
+- [ ] **Step 2: Push empty branch**
+
+```bash
+git push -u origin claude/expo-prebuild-pr3-docs
+```
+
