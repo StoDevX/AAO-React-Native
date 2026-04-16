@@ -633,3 +633,476 @@ See docs/superpowers/specs/2026-04-16-expo-prebuild-migration-design.md
 EOF
 )"
 ```
+
+---
+
+## Task 4: Author `plugins/with-app-delegate-customizations.ts`
+
+**Files:**
+- Create: `plugins/types.ts`
+- Create: `plugins/with-app-delegate-customizations.ts`
+- Create: `plugins/__tests__/with-app-delegate-customizations.test.ts`
+
+**Design:** The plugin exports a default `ConfigPlugin` that wraps `withAppDelegate` from `@expo/config-plugins`. Actual string transformation lives in two pure helpers (`patchAppDelegate`, `addImportIfMissing`) so the transformation logic can be unit-tested without stubbing the prebuild pipeline.
+
+Insertions are idempotent via begin/end marker comments: re-running the plugin replaces the block between markers rather than duplicating it. If the expected anchor (`self.moduleName = "..."`) is missing, the helper throws with a clear message so prebuild fails loudly rather than silently producing a wrong AppDelegate.
+
+### 4.1 Scaffolding: shared types and failing baseline test
+
+- [ ] **Step 1: Create `plugins/types.ts`**
+
+```ts
+import type {ConfigPlugin} from '@expo/config-plugins'
+
+export type {ConfigPlugin}
+```
+
+(This file exists so future plugins can add shared types without re-importing. Deliberately minimal.)
+
+- [ ] **Step 2: Write failing test for baseline insertion**
+
+Create `plugins/__tests__/with-app-delegate-customizations.test.ts`:
+
+```ts
+import {describe, expect, it} from '@jest/globals'
+import {patchAppDelegate} from '../with-app-delegate-customizations'
+
+const BASELINE_APP_DELEGATE = `import Expo
+import React
+import ReactAppDependencyProvider
+import UIKit
+
+@UIApplicationMain
+public class AppDelegate: ExpoAppDelegate {
+  public override func application(
+    _ application: UIApplication,
+    didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
+  ) -> Bool {
+    self.moduleName = "All About Olaf"
+    self.initialProps = [:]
+    return super.application(application, didFinishLaunchingWithOptions: launchOptions)
+  }
+}
+`
+
+describe('patchAppDelegate', () => {
+	it('inserts the customization block after moduleName assignment', () => {
+		const result = patchAppDelegate(BASELINE_APP_DELEGATE)
+
+		expect(result).toContain('// AAO_APP_DELEGATE_CUSTOMIZATIONS_BEGIN')
+		expect(result).toContain('// AAO_APP_DELEGATE_CUSTOMIZATIONS_END')
+
+		const moduleNameIdx = result.indexOf('self.moduleName')
+		const beginMarkerIdx = result.indexOf(
+			'// AAO_APP_DELEGATE_CUSTOMIZATIONS_BEGIN',
+		)
+		const superIdx = result.indexOf('return super.application')
+
+		expect(moduleNameIdx).toBeLessThan(beginMarkerIdx)
+		expect(beginMarkerIdx).toBeLessThan(superIdx)
+	})
+
+	it('includes all three customizations in the inserted block', () => {
+		const result = patchAppDelegate(BASELINE_APP_DELEGATE)
+
+		// --reset-state handler
+		expect(result).toContain(
+			'ProcessInfo.processInfo.arguments.contains("--reset-state")',
+		)
+		expect(result).toContain('RCTAsyncLocalStorage_V1')
+		expect(result).toContain('removePersistentDomain')
+
+		// URLCache sizing
+		expect(result).toContain(
+			'URLCache(memoryCapacity: 4 * 1024 * 1024, diskCapacity: 20 * 1024 * 1024)',
+		)
+		expect(result).toContain('URLCache.shared = urlCache')
+
+		// AVAudioSession
+		expect(result).toContain(
+			'AVAudioSession.sharedInstance().setCategory(.playback)',
+		)
+	})
+})
+```
+
+- [ ] **Step 3: Run test to verify it fails with "module not found"**
+
+Run:
+```bash
+npx jest plugins/__tests__/with-app-delegate-customizations.test.ts
+```
+
+Expected: FAIL with `Cannot find module '../with-app-delegate-customizations'`.
+
+- [ ] **Step 4: Create the plugin file with a stub `patchAppDelegate`**
+
+Create `plugins/with-app-delegate-customizations.ts`:
+
+```ts
+import {withAppDelegate} from '@expo/config-plugins'
+import type {ConfigPlugin} from './types'
+
+export function patchAppDelegate(source: string): string {
+	// Will be implemented in the next step.
+	return source
+}
+
+const withAppDelegateCustomizations: ConfigPlugin = (config) => {
+	return withAppDelegate(config, (appDelegateConfig) => {
+		appDelegateConfig.modResults.contents = patchAppDelegate(
+			appDelegateConfig.modResults.contents,
+		)
+		return appDelegateConfig
+	})
+}
+
+export default withAppDelegateCustomizations
+```
+
+- [ ] **Step 5: Re-run the tests — they should now fail with assertion errors (not resolution errors)**
+
+Run:
+```bash
+npx jest plugins/__tests__/with-app-delegate-customizations.test.ts
+```
+
+Expected: FAIL with `expect(received).toContain(expected)` assertion messages. The module loads but `patchAppDelegate` is a no-op.
+
+### 4.2 Implement the baseline insertion
+
+- [ ] **Step 6: Implement `patchAppDelegate` — insertion after the `moduleName` anchor**
+
+Replace the stub in `plugins/with-app-delegate-customizations.ts`:
+
+```ts
+import {withAppDelegate} from '@expo/config-plugins'
+import type {ConfigPlugin} from './types'
+
+const BEGIN_MARKER = '// AAO_APP_DELEGATE_CUSTOMIZATIONS_BEGIN'
+const END_MARKER = '// AAO_APP_DELEGATE_CUSTOMIZATIONS_END'
+
+const CUSTOMIZATIONS_BLOCK = `    ${BEGIN_MARKER}
+    if ProcessInfo.processInfo.arguments.contains("--reset-state") {
+      let fileManager = FileManager.default
+      if let libraryPath = fileManager.urls(for: .libraryDirectory, in: .userDomainMask).first {
+        let appSupportPath = libraryPath.appendingPathComponent("Application Support")
+        if let bundleId = Bundle.main.bundleIdentifier {
+          try? fileManager.removeItem(at: appSupportPath.appendingPathComponent(bundleId))
+        }
+        try? fileManager.removeItem(at: appSupportPath.appendingPathComponent("RCTAsyncLocalStorage_V1"))
+      }
+      if let bundleId = Bundle.main.bundleIdentifier {
+        UserDefaults.standard.removePersistentDomain(forName: bundleId)
+      }
+    }
+
+    let urlCache = URLCache(memoryCapacity: 4 * 1024 * 1024, diskCapacity: 20 * 1024 * 1024)
+    URLCache.shared = urlCache
+
+    try? AVAudioSession.sharedInstance().setCategory(.playback)
+    ${END_MARKER}`
+
+const MODULE_NAME_PATTERN = /(self\.moduleName\s*=\s*"[^"]*"\s*\n)/
+
+export function patchAppDelegate(source: string): string {
+	if (!MODULE_NAME_PATTERN.test(source)) {
+		throw new Error(
+			'with-app-delegate-customizations: could not find `self.moduleName = "..."` anchor in AppDelegate.swift. Expo\'s default template may have changed shape; update the plugin to match.',
+		)
+	}
+
+	return source.replace(
+		MODULE_NAME_PATTERN,
+		`$1\n${CUSTOMIZATIONS_BLOCK}\n`,
+	)
+}
+
+const withAppDelegateCustomizations: ConfigPlugin = (config) => {
+	return withAppDelegate(config, (appDelegateConfig) => {
+		appDelegateConfig.modResults.contents = patchAppDelegate(
+			appDelegateConfig.modResults.contents,
+		)
+		return appDelegateConfig
+	})
+}
+
+export default withAppDelegateCustomizations
+```
+
+- [ ] **Step 7: Run tests to verify baseline passes**
+
+Run:
+```bash
+npx jest plugins/__tests__/with-app-delegate-customizations.test.ts
+```
+
+Expected: PASS for the two baseline tests.
+
+### 4.3 Idempotency
+
+- [ ] **Step 8: Write failing idempotency test**
+
+Append to the test file:
+
+```ts
+describe('patchAppDelegate idempotency', () => {
+	it('produces identical output when applied twice', () => {
+		const once = patchAppDelegate(BASELINE_APP_DELEGATE)
+		const twice = patchAppDelegate(once)
+		expect(twice).toBe(once)
+	})
+
+	it('does not duplicate the customization block on re-application', () => {
+		const once = patchAppDelegate(BASELINE_APP_DELEGATE)
+		const twice = patchAppDelegate(once)
+
+		const beginCount = (
+			twice.match(/AAO_APP_DELEGATE_CUSTOMIZATIONS_BEGIN/g) ?? []
+		).length
+		const endCount = (
+			twice.match(/AAO_APP_DELEGATE_CUSTOMIZATIONS_END/g) ?? []
+		).length
+		expect(beginCount).toBe(1)
+		expect(endCount).toBe(1)
+	})
+})
+```
+
+- [ ] **Step 9: Run tests to verify they fail**
+
+Run:
+```bash
+npx jest plugins/__tests__/with-app-delegate-customizations.test.ts -t "idempotency"
+```
+
+Expected: FAIL — re-applying currently duplicates the block (second `moduleName` line triggers another insertion since the regex matches both).
+
+Actually the regex only matches `self.moduleName = "..."` which appears once in the *source* — but on a second application, the inserted block doesn't contain `self.moduleName`, so the regex still matches exactly once, causing the same insertion site. But the prior block is still there, so we'd get two blocks. Verify this in the failing output.
+
+- [ ] **Step 10: Update `patchAppDelegate` to detect and replace an existing block**
+
+Replace the body of `patchAppDelegate`:
+
+```ts
+export function patchAppDelegate(source: string): string {
+	if (!MODULE_NAME_PATTERN.test(source)) {
+		throw new Error(
+			'with-app-delegate-customizations: could not find `self.moduleName = "..."` anchor in AppDelegate.swift. Expo\'s default template may have changed shape; update the plugin to match.',
+		)
+	}
+
+	const existingBlockPattern = new RegExp(
+		`[ \\t]*${BEGIN_MARKER}[\\s\\S]*?${END_MARKER}\\n?`,
+		'g',
+	)
+	const stripped = source.replace(existingBlockPattern, '')
+
+	return stripped.replace(
+		MODULE_NAME_PATTERN,
+		`$1\n${CUSTOMIZATIONS_BLOCK}\n`,
+	)
+}
+```
+
+- [ ] **Step 11: Run tests to verify idempotency passes**
+
+Run:
+```bash
+npx jest plugins/__tests__/with-app-delegate-customizations.test.ts
+```
+
+Expected: all 4 tests pass.
+
+### 4.4 `import AVFoundation` handling
+
+The `AVAudioSession` API requires `import AVFoundation`, which Expo's default AppDelegate won't include. Add a helper that inserts the import after the last existing `import` line, idempotently.
+
+- [ ] **Step 12: Write failing tests for import handling**
+
+Append to the test file:
+
+```ts
+import {addImportIfMissing} from '../with-app-delegate-customizations'
+
+describe('addImportIfMissing', () => {
+	it('adds a missing import after the last import line', () => {
+		const source = `import React
+import UIKit
+
+@UIApplicationMain
+class Foo {}
+`
+		const result = addImportIfMissing(source, 'AVFoundation')
+		expect(result).toMatch(/import UIKit\nimport AVFoundation\n/)
+	})
+
+	it('does not duplicate an already-present import', () => {
+		const source = `import AVFoundation
+import React
+
+@UIApplicationMain
+class Foo {}
+`
+		const result = addImportIfMissing(source, 'AVFoundation')
+		expect((result.match(/import AVFoundation/g) ?? []).length).toBe(1)
+	})
+})
+
+describe('patchAppDelegate integration with imports', () => {
+	it('adds import AVFoundation when missing', () => {
+		const result = patchAppDelegate(BASELINE_APP_DELEGATE)
+		expect(result).toContain('import AVFoundation')
+	})
+})
+```
+
+- [ ] **Step 13: Run tests to verify they fail**
+
+Run:
+```bash
+npx jest plugins/__tests__/with-app-delegate-customizations.test.ts
+```
+
+Expected: FAIL — `addImportIfMissing` is not exported; integration test also fails because `patchAppDelegate` doesn't touch imports.
+
+- [ ] **Step 14: Implement `addImportIfMissing` and wire it into `patchAppDelegate`**
+
+Append to `plugins/with-app-delegate-customizations.ts` (before the default export):
+
+```ts
+export function addImportIfMissing(source: string, moduleName: string): string {
+	const importPattern = new RegExp(`^import\\s+${moduleName}\\s*$`, 'm')
+	if (importPattern.test(source)) {
+		return source
+	}
+
+	const lastImportPattern = /(^(?:import\s+\S+\s*\n)+)/m
+	const match = source.match(lastImportPattern)
+	if (!match) {
+		return `import ${moduleName}\n${source}`
+	}
+
+	const insertionPoint = match.index! + match[0].length
+	return (
+		source.slice(0, insertionPoint) +
+		`import ${moduleName}\n` +
+		source.slice(insertionPoint)
+	)
+}
+```
+
+Update `patchAppDelegate` to call it:
+
+```ts
+export function patchAppDelegate(source: string): string {
+	if (!MODULE_NAME_PATTERN.test(source)) {
+		throw new Error(
+			'with-app-delegate-customizations: could not find `self.moduleName = "..."` anchor in AppDelegate.swift. Expo\'s default template may have changed shape; update the plugin to match.',
+		)
+	}
+
+	const existingBlockPattern = new RegExp(
+		`[ \\t]*${BEGIN_MARKER}[\\s\\S]*?${END_MARKER}\\n?`,
+		'g',
+	)
+	const stripped = source.replace(existingBlockPattern, '')
+	const withImport = addImportIfMissing(stripped, 'AVFoundation')
+
+	return withImport.replace(
+		MODULE_NAME_PATTERN,
+		`$1\n${CUSTOMIZATIONS_BLOCK}\n`,
+	)
+}
+```
+
+- [ ] **Step 15: Run tests to verify all pass**
+
+Run:
+```bash
+npx jest plugins/__tests__/with-app-delegate-customizations.test.ts
+```
+
+Expected: all 7 tests pass.
+
+### 4.5 Missing-anchor error
+
+- [ ] **Step 16: Write failing test for missing-anchor case**
+
+Append to the test file:
+
+```ts
+describe('patchAppDelegate error handling', () => {
+	it('throws a descriptive error when the moduleName anchor is missing', () => {
+		const brokenSource = `import Expo
+class AppDelegate {
+  func foo() {}
+}
+`
+		expect(() => patchAppDelegate(brokenSource)).toThrow(
+			/self\.moduleName.*anchor.*AppDelegate/,
+		)
+	})
+})
+```
+
+- [ ] **Step 17: Run test to verify it passes (the error is already thrown by the implementation from Step 6)**
+
+Run:
+```bash
+npx jest plugins/__tests__/with-app-delegate-customizations.test.ts -t "anchor is missing"
+```
+
+Expected: PASS — `patchAppDelegate` already throws when the regex doesn't match.
+
+If it fails, adjust the error message to include the words "self.moduleName", "anchor", and "AppDelegate" so the regex matches.
+
+### 4.6 Full pre-commit and commit
+
+- [ ] **Step 18: Run full pre-commit**
+
+Run:
+```bash
+mise run agent:pre-commit
+```
+
+Expected: pretty, lint, tsc, jest all pass. The new test file adds 8 tests to the suite.
+
+- [ ] **Step 19: Commit**
+
+Run:
+```bash
+git add plugins/types.ts plugins/with-app-delegate-customizations.ts plugins/__tests__/with-app-delegate-customizations.test.ts
+git commit -m "$(cat <<'EOF'
+feat: add with-app-delegate-customizations config plugin
+
+Preserves three AppDelegate.swift customizations for the forthcoming
+Expo prebuild cutover:
+
+1. --reset-state launch argument handler: scrubs Library/Application
+   Support/{bundleId}, RCTAsyncLocalStorage_V1, and UserDefaults for
+   the bundle ID. Used by XCUITests to start from a clean slate.
+
+2. URLCache sizing: 4 MiB memory, 20 MiB disk. Tunes the shared URL
+   cache for the app's network traffic profile.
+
+3. AVAudioSession.playback category: ensures streaming audio plays
+   while the device's mute switch is engaged.
+
+Insertion is idempotent (bracketed by marker comments) and anchors on
+`self.moduleName = "..."` which Expo's template writes from app.config
+`expo.name`. Fails loudly if the anchor is missing rather than producing
+a silently-wrong AppDelegate.
+
+The transformation is expressed as a pure helper (`patchAppDelegate`)
+wrapped by a thin withAppDelegate adapter; 8 unit tests cover baseline
+insertion, idempotency, `import AVFoundation` handling, and the
+missing-anchor error case.
+
+Plugin is registered with app.config.ts in Task 7. No behavior change
+yet.
+
+See docs/superpowers/specs/2026-04-16-expo-prebuild-migration-design.md
+EOF
+)"
+```
