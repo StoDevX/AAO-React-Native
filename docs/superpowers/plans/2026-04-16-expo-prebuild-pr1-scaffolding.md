@@ -245,3 +245,391 @@ EOF
 ```
 
 Replace the `<Finding …>` placeholders with the actual findings from Task 0 before committing. This is the only place Task 0 findings are recorded; downstream tasks depend on them.
+
+---
+
+## Task 2: Create `app.config.ts` with Declarative iOS Fields
+
+**Files:**
+- Create: `app.config.ts`
+- Create: `__tests__/app-config.test.ts`
+
+This task creates the base config (no plugins yet) and writes a Jest test that asserts on the exported shape. The test serves as a living spec for the config contents.
+
+- [ ] **Step 1: Write the failing test**
+
+Create `__tests__/app-config.test.ts`:
+
+```ts
+import {describe, expect, it} from '@jest/globals'
+import appConfig from '../app.config'
+
+describe('app.config.ts', () => {
+	const config =
+		typeof appConfig === 'function' ? appConfig({config: {}} as never) : appConfig
+
+	it('declares app identity', () => {
+		expect(config.name).toBe('All About Olaf')
+		expect(config.slug).toBe('all-about-olaf')
+		expect(config.scheme).toBe('AllAboutOlaf')
+		expect(config.version).toBe('1.0.0')
+	})
+
+	it('declares iOS bundle identity', () => {
+		expect(config.ios?.bundleIdentifier).toBe(
+			'NFMTHAZVS9.com.drewvolz.stolaf',
+		)
+		expect(config.ios?.buildNumber).toBe('1')
+		expect(config.ios?.supportsTablet).toBe(true)
+	})
+
+	it('declares encryption and deployment', () => {
+		expect(config.ios?.config?.usesNonExemptEncryption).toBe(false)
+	})
+
+	it('preserves status bar style in Info.plist', () => {
+		expect(config.ios?.infoPlist?.UIStatusBarStyle).toBe(
+			'UIStatusBarStyleDarkContent',
+		)
+		expect(config.ios?.infoPlist?.UIViewControllerBasedStatusBarAppearance).toBe(
+			false,
+		)
+	})
+
+	it('preserves audio background mode', () => {
+		expect(config.ios?.infoPlist?.UIBackgroundModes).toEqual(['audio'])
+	})
+
+	it('preserves ATS exceptions', () => {
+		const ats = config.ios?.infoPlist?.NSAppTransportSecurity as
+			| Record<string, unknown>
+			| undefined
+		expect(ats?.NSAllowsArbitraryLoadsInWebContent).toBe(true)
+		expect(
+			(ats?.NSExceptionDomains as Record<string, unknown>)?.localhost,
+		).toEqual({NSTemporaryExceptionAllowsInsecureHTTPLoads: true})
+	})
+
+	it('preserves required device capabilities', () => {
+		expect(config.ios?.infoPlist?.UIRequiredDeviceCapabilities).toEqual([
+			'armv7',
+		])
+	})
+
+	it('preserves supported orientations', () => {
+		expect(config.ios?.infoPlist?.UISupportedInterfaceOrientations).toEqual([
+			'UIInterfaceOrientationPortrait',
+			'UIInterfaceOrientationLandscapeLeft',
+			'UIInterfaceOrientationLandscapeRight',
+		])
+		expect(
+			config.ios?.infoPlist?.['UISupportedInterfaceOrientations~ipad'],
+		).toEqual([
+			'UIInterfaceOrientationPortrait',
+			'UIInterfaceOrientationPortraitUpsideDown',
+			'UIInterfaceOrientationLandscapeLeft',
+			'UIInterfaceOrientationLandscapeRight',
+		])
+	})
+
+	it('starts with an empty plugins array (plugins added in later tasks)', () => {
+		expect(config.plugins).toEqual([])
+	})
+})
+```
+
+- [ ] **Step 2: Run test to verify it fails**
+
+Run:
+```bash
+npx jest __tests__/app-config.test.ts
+```
+
+Expected: FAIL with `Cannot find module '../app.config'` (or similar resolution error).
+
+- [ ] **Step 3: Create `app.config.ts`**
+
+Create `app.config.ts` at the repo root:
+
+```ts
+import type {ExpoConfig} from 'expo/config'
+
+const config: ExpoConfig = {
+	name: 'All About Olaf',
+	slug: 'all-about-olaf',
+	scheme: 'AllAboutOlaf',
+	version: '1.0.0',
+	orientation: 'default',
+	ios: {
+		bundleIdentifier: 'NFMTHAZVS9.com.drewvolz.stolaf',
+		buildNumber: '1',
+		supportsTablet: true,
+		config: {
+			usesNonExemptEncryption: false,
+		},
+		infoPlist: {
+			UIStatusBarStyle: 'UIStatusBarStyleDarkContent',
+			UIViewControllerBasedStatusBarAppearance: false,
+			UIStatusBarHidden: false,
+			UIBackgroundModes: ['audio'],
+			UIRequiredDeviceCapabilities: ['armv7'],
+			UISupportedInterfaceOrientations: [
+				'UIInterfaceOrientationPortrait',
+				'UIInterfaceOrientationLandscapeLeft',
+				'UIInterfaceOrientationLandscapeRight',
+			],
+			'UISupportedInterfaceOrientations~ipad': [
+				'UIInterfaceOrientationPortrait',
+				'UIInterfaceOrientationPortraitUpsideDown',
+				'UIInterfaceOrientationLandscapeLeft',
+				'UIInterfaceOrientationLandscapeRight',
+			],
+			NSAppTransportSecurity: {
+				NSAllowsArbitraryLoadsInWebContent: true,
+				NSExceptionDomains: {
+					localhost: {
+						NSTemporaryExceptionAllowsInsecureHTTPLoads: true,
+					},
+				},
+			},
+		},
+	},
+	plugins: [],
+}
+
+export default config
+```
+
+- [ ] **Step 4: Run test to verify it passes**
+
+Run:
+```bash
+npx jest __tests__/app-config.test.ts
+```
+
+Expected: PASS — 9 tests pass.
+
+- [ ] **Step 5: Type-check**
+
+Run:
+```bash
+mise run tsc
+```
+
+Expected: clean exit, no new errors. If `ExpoConfig` doesn't expose all the fields we use under `ios.infoPlist` (it types them as `Record<string, unknown>` in some versions), the test may need `as never` casts but the implementation should type-check cleanly.
+
+- [ ] **Step 6: Lint and format**
+
+Run:
+```bash
+mise run pretty && mise run lint
+```
+
+Expected: no diff from pretty (file already formatted); lint passes with zero warnings/errors.
+
+- [ ] **Step 7: Commit**
+
+Run:
+```bash
+git add app.config.ts __tests__/app-config.test.ts
+git commit -m "$(cat <<'EOF'
+feat: add app.config.ts with declarative iOS configuration
+
+Declares the 12 fields from the design spec (Section A of the Config
+Plugin Inventory) that previously lived in Info.plist, pbxproj, or as
+hand-managed constants. Plugins array is empty and wired up in
+subsequent commits.
+
+A Jest test at __tests__/app-config.test.ts asserts on the exported
+shape so this config can't silently drift.
+
+No behavior change: expo prebuild is not yet invoked, so app.config.ts
+has no effect on the build yet.
+
+See docs/superpowers/specs/2026-04-16-expo-prebuild-migration-design.md
+EOF
+)"
+```
+
+---
+
+## Task 3: Add Library-Provided Plugins to `app.config.ts`
+
+**Files:**
+- Modify: `app.config.ts`
+- Modify: `__tests__/app-config.test.ts`
+
+This task wires in the two library-provided plugins: `expo-build-properties` (for deployment target + old-arch opt-out) and the `@react-native-vector-icons/*` plugin (for font registration).
+
+### 3.1 Add `expo-build-properties`
+
+- [ ] **Step 1: Extend the failing test**
+
+Append to `__tests__/app-config.test.ts` (inside the outer `describe`):
+
+```ts
+it('registers expo-build-properties with old-arch + deployment target', () => {
+	const entry = config.plugins?.find(
+		(p) => Array.isArray(p) && p[0] === 'expo-build-properties',
+	) as [string, {ios: {deploymentTarget: string; newArchEnabled: boolean}}]
+	expect(entry).toBeDefined()
+	expect(entry[1].ios.deploymentTarget).toBe('14.0')
+	expect(entry[1].ios.newArchEnabled).toBe(false)
+})
+```
+
+- [ ] **Step 2: Run test to verify it fails**
+
+Run:
+```bash
+npx jest __tests__/app-config.test.ts -t "expo-build-properties"
+```
+
+Expected: FAIL — `entry` is `undefined` because `plugins` is `[]`.
+
+- [ ] **Step 3: Update `app.config.ts`**
+
+Change the `plugins` array in `app.config.ts`:
+
+```ts
+plugins: [
+	[
+		'expo-build-properties',
+		{
+			ios: {
+				deploymentTarget: '14.0',
+				newArchEnabled: false,
+			},
+		},
+	],
+],
+```
+
+Also update the earlier `expect(config.plugins).toEqual([])` assertion to reflect the new state:
+
+```ts
+it('starts with the library plugins registered (local plugins added later)', () => {
+	expect(config.plugins).toHaveLength(1)
+})
+```
+
+- [ ] **Step 4: Run tests to verify they pass**
+
+Run:
+```bash
+npx jest __tests__/app-config.test.ts
+```
+
+Expected: all tests pass (10 including the new one).
+
+### 3.2 Add the vector-icons plugin
+
+The exact plugin name and options shape come from Task 0.3's finding. The two common shapes are:
+
+- **Shape X (autodetect, most common):** Plugin lives at e.g. `@react-native-vector-icons/common/plugin` and autodetects installed font packages. Plugin entry is just the string: `'@react-native-vector-icons/common/plugin'`.
+- **Shape Y (explicit list):** Plugin takes a list of font packages. Plugin entry is the tuple: `['@react-native-vector-icons/common/plugin', {iconFontNames: ['Entypo', 'Ionicons', 'MaterialDesignIcons']}]`.
+
+Before this sub-task, confirm which shape the plugin uses (Task 0.3 finding). The steps below show Shape Y; adapt if Shape X applies.
+
+- [ ] **Step 1: Extend the test**
+
+Append:
+
+```ts
+it('registers the vector-icons config plugin', () => {
+	const entry = config.plugins?.find((p) =>
+		Array.isArray(p)
+			? p[0] === '@react-native-vector-icons/common/plugin'
+			: p === '@react-native-vector-icons/common/plugin',
+	)
+	expect(entry).toBeDefined()
+})
+```
+
+Also update the length assertion:
+
+```ts
+it('starts with the library plugins registered (local plugins added later)', () => {
+	expect(config.plugins).toHaveLength(2)
+})
+```
+
+- [ ] **Step 2: Run test to verify it fails**
+
+Run:
+```bash
+npx jest __tests__/app-config.test.ts -t "vector-icons"
+```
+
+Expected: FAIL.
+
+- [ ] **Step 3: Update `app.config.ts`**
+
+Extend the `plugins` array:
+
+```ts
+plugins: [
+	[
+		'expo-build-properties',
+		{
+			ios: {
+				deploymentTarget: '14.0',
+				newArchEnabled: false,
+			},
+		},
+	],
+	[
+		'@react-native-vector-icons/common/plugin',
+		{
+			iconFontNames: ['Entypo', 'Ionicons', 'MaterialDesignIcons'],
+		},
+	],
+],
+```
+
+(If Task 0.3 found Shape X, use the string form instead of the tuple.)
+
+- [ ] **Step 4: Run tests to verify they pass**
+
+Run:
+```bash
+npx jest __tests__/app-config.test.ts
+```
+
+Expected: all tests pass (11 total).
+
+- [ ] **Step 5: Full pre-commit**
+
+Run:
+```bash
+mise run agent:pre-commit
+```
+
+Expected: pretty, lint, tsc, jest all pass.
+
+- [ ] **Step 6: Commit**
+
+Run:
+```bash
+git add app.config.ts __tests__/app-config.test.ts
+git commit -m "$(cat <<'EOF'
+feat: register expo-build-properties and vector-icons config plugins
+
+Adds two library-provided config plugins to app.config.ts:
+
+- expo-build-properties: sets iOS deployment target to 14.0 and pins
+  newArchEnabled to false. Replaces the hand-edited Podfile that
+  currently sets `ENV['RCT_NEW_ARCH_ENABLED'] = '0'` at the top-level
+  (removed when ios/ is regenerated in PR 2).
+
+- @react-native-vector-icons/common/plugin: registers Entypo, Ionicons,
+  and MaterialDesignIcons .ttf files for Info.plist's UIAppFonts and
+  the Copy Files build phase. Replaces the hand-maintained build-phase
+  references to ${PODS_ROOT}/../../node_modules/...
+
+Still no behavior change: expo prebuild is not yet invoked.
+
+See docs/superpowers/specs/2026-04-16-expo-prebuild-migration-design.md
+EOF
+)"
+```
