@@ -219,3 +219,68 @@ EOF
 )"
 ```
 
+---
+
+## Task 3: Update `CONTRIBUTING.md`
+
+**Files:**
+- `CONTRIBUTING.md`
+
+The current `CONTRIBUTING.md` has stale references (Flow, CircleCI,
+TravisCI, `npm run flow`) but **don't fix those here** — that's
+unrelated cleanup. Scope the edit to a single new subsection about
+the prebuild workflow.
+
+### 3.1 Add "Native iOS Configuration" subsection
+
+- [ ] **Step 1: Insert a new subsection under *Keep It Running***
+
+After the "Whenever commits are pushed..." paragraph at the end of the
+*Keep It Running* section (currently around line 68), insert:
+
+```markdown
+### Native iOS Configuration
+
+The iOS native project (`ios/`) is regenerated from declarative config
+in `app.config.ts` and the `plugins/` directory.
+**Don't hand-edit anything under `ios/`** — your changes will be lost
+the next time CI (or another contributor) regenerates the directory.
+
+To make a native iOS change:
+
+1. Edit `app.config.ts` for declarative fields
+   (bundle identifier, ATS exceptions, `ios.infoPlist` overrides), or
+   author/extend a config plugin under `plugins/` for anything that
+   patches `AppDelegate.swift`, `project.pbxproj`, or the Podfile.
+2. Run `mise run prebuild` to regenerate `ios/`.
+3. Run `mise run pod:install --deployment` to refresh `Podfile.lock`.
+4. Commit `app.config.ts` / the plugin change **plus** the regenerated
+   `ios/` diff in the same PR.
+
+CI re-runs prebuild on every push, so it'll catch a forgotten
+regeneration — but reviewers find the diff easier to evaluate when the
+plugin change and its `ios/` output land together.
+```
+
+### 3.2 Commit
+
+- [ ] **Step 2: Pre-commit + commit**
+
+```bash
+mise run agent:pre-commit
+git add CONTRIBUTING.md
+git commit -m "$(cat <<'EOF'
+docs(contributing): document Expo prebuild workflow
+
+Adds a Native iOS Configuration subsection under Keep It Running with
+the don't-hand-edit-ios/ rule, the four-step "make a native iOS
+change" workflow, and a note that CI re-runs prebuild as a safety net.
+
+Stale references elsewhere in the file (Flow, CircleCI, TravisCI) are
+intentionally not touched here — out of scope for this PR.
+
+See docs/superpowers/specs/2026-04-16-expo-prebuild-migration-design.md
+EOF
+)"
+```
+
