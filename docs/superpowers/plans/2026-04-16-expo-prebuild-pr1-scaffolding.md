@@ -2048,3 +2048,315 @@ EOF
 )"
 ```
 
+---
+
+## Task 7: Wire all three local plugins into `app.config.ts`
+
+**Files:**
+- `app.config.ts` (modify — extend `plugins` array)
+- `__tests__/app-config.test.ts` (modify — assert new entries)
+
+Up to this point the three local plugins are authored and unit-tested
+but not referenced anywhere. This task attaches them to `app.config.ts`
+so a future `expo prebuild` invocation (PR 2) will run them. Because
+this PR never invokes `expo prebuild`, this wiring has no runtime
+effect in PR 1 — but it does mean the `app.config.ts` snapshot test
+must be updated in the same commit.
+
+### 7.1 Update `app.config.ts`
+
+- [ ] **Step 1: Register local plugins**
+
+Extend the `plugins: [...]` array in `app.config.ts`. Final shape
+(assuming Task 0.1 Finding C — no upstream plugin for change-icon):
+
+```ts
+plugins: [
+	[
+		'expo-build-properties',
+		{
+			ios: {
+				deploymentTarget: '14.0',
+				newArchEnabled: false,
+			},
+		},
+	],
+	[
+		'@react-native-vector-icons/common/plugin',
+		{iconFontNames: ['Entypo', 'Ionicons', 'MaterialDesignIcons']},
+	],
+	'./plugins/with-app-delegate-customizations',
+	'./plugins/with-alternate-icons',
+	'./plugins/with-xcuitest-target',
+],
+```
+
+> **If Task 0.1 returned Finding A or B:** replace
+> `'./plugins/with-alternate-icons'` with `'react-native-change-icon'`
+> (or whatever entry point the library's `app.plugin.js` exposes).
+
+Note: local plugin paths use `./plugins/...` relative to the project
+root. `@expo/config-plugins` resolves these via Node's `require` at
+prebuild time.
+
+- [ ] **Step 2: Update `__tests__/app-config.test.ts`**
+
+Extend the existing test (written in Task 2) with assertions for the
+three local plugin references:
+
+```ts
+it('registers the three local iOS config plugins', () => {
+	const pluginRefs = appConfig.plugins.map((p) =>
+		Array.isArray(p) ? p[0] : p,
+	)
+	expect(pluginRefs).toEqual(
+		expect.arrayContaining([
+			'./plugins/with-app-delegate-customizations',
+			'./plugins/with-alternate-icons',
+			'./plugins/with-xcuitest-target',
+		]),
+	)
+})
+
+it('preserves the library plugins added in Task 3', () => {
+	const pluginRefs = appConfig.plugins.map((p) =>
+		Array.isArray(p) ? p[0] : p,
+	)
+	expect(pluginRefs).toEqual(
+		expect.arrayContaining([
+			'expo-build-properties',
+			'@react-native-vector-icons/common/plugin',
+		]),
+	)
+})
+```
+
+Run `npx jest __tests__/app-config.test.ts` → passes (GREEN).
+
+### 7.2 Pre-commit and commit
+
+- [ ] **Step 3: Run full pre-commit**
+
+```bash
+mise run agent:pre-commit
+```
+
+All four steps must pass.
+
+- [ ] **Step 4: Commit**
+
+```bash
+git add app.config.ts __tests__/app-config.test.ts
+git commit -m "$(cat <<'EOF'
+feat: wire local config plugins into app.config.ts
+
+Registers the three local iOS config plugins authored in Tasks 4-6:
+
+- ./plugins/with-app-delegate-customizations
+- ./plugins/with-alternate-icons
+- ./plugins/with-xcuitest-target
+
+Snapshot test (__tests__/app-config.test.ts) asserts all five plugin
+references (2 library, 3 local) are present.
+
+Plugins are not invoked in PR 1 (`expo prebuild` is not run). Wiring
+takes effect when PR 2 lands.
+
+See docs/superpowers/specs/2026-04-16-expo-prebuild-migration-design.md
+EOF
+)"
+```
+
+---
+
+## Task 8: Verify `plugins/**` is covered by `tsconfig.json` and run full pre-commit
+
+**Files:**
+- `tsconfig.json` (verify / modify if needed)
+
+### 8.1 Verify plugins are type-checked
+
+- [ ] **Step 1: Confirm `tsconfig.json` includes `plugins/**`**
+
+The current `tsconfig.json` has:
+
+```json
+"include": [
+	"**/*.ts",
+	"**/*.tsx",
+	"**/*.js",
+	"**/*.jsx",
+	"**/*.mjs",
+	"**/*.cjs"
+]
+```
+
+The `**/*.ts` glob already covers `plugins/**/*.ts` (and their
+`__tests__/*.ts`). Verify by running:
+
+```bash
+mise run tsc 2>&1 | grep -c "plugins/"
+```
+
+Expected: > 0 (plugin files are being type-checked). If the count is 0,
+something is excluding `plugins/` — investigate (likely the
+`exclude: ["node_modules"]` is fine; no other excludes are present).
+
+- [ ] **Step 2: Fix if needed**
+
+If (and only if) the verification in Step 1 shows plugins are not being
+type-checked, add an explicit include line:
+
+```json
+"include": [
+	"**/*.ts",
+	...,
+	"plugins/**/*.ts"
+]
+```
+
+> Current expectation: no change needed. Document "no tsconfig change
+> required" in the Task 8 commit message if so.
+
+### 8.2 Full pre-commit verification
+
+- [ ] **Step 3: Run `mise run agent:pre-commit`**
+
+This runs prettier, eslint, tsc, and jest across the entire project.
+Every file added in Tasks 1-7 must pass all four steps.
+
+- [ ] **Step 4: Run targeted plugin tests one more time**
+
+```bash
+npx jest plugins/__tests__
+```
+
+Expected: ~25+ tests pass, covering:
+- 8 tests for `patchAppDelegate` (Task 4)
+- 7 tests for `addAlternateIcons` + `addWindmillResources` (Task 5)
+- 10 tests for `patchPodfileForUITests` + `ensureUITestTarget` (Task 6)
+
+### 8.3 Commit (only if tsconfig.json changed)
+
+- [ ] **Step 5: Commit tsconfig change if any**
+
+```bash
+# Only if Step 2 made a change:
+git add tsconfig.json
+git commit -m "chore(tsconfig): include plugins/**/*.ts in type-check set"
+```
+
+If no change was needed, skip the commit and note "tsconfig already
+covers plugins/" in the PR description.
+
+---
+
+## Task 9: Open draft PR against `master`
+
+**Files:** None (git operation).
+
+### 9.1 Push and open draft PR
+
+- [ ] **Step 1: Push the implementation branch**
+
+```bash
+git push -u origin claude/expo-prebuild-pr1-scaffolding
+```
+
+- [ ] **Step 2: Create draft PR**
+
+Use the GitHub MCP `create_pull_request` tool with:
+
+- **Base:** `master`
+- **Head:** `claude/expo-prebuild-pr1-scaffolding`
+- **Draft:** `true`
+- **Title:** `Expo Prebuild: PR 1 — scaffolding (app.config.ts + 2 library plugins + 3 local plugins)`
+- **Body:**
+
+  ```markdown
+  ## Summary
+
+  Lands the scaffolding layer for the Expo Prebuild migration. No
+  runtime behavior change: `expo prebuild` is **not** invoked in this
+  PR — existing `ios/` remains source-of-truth for builds.
+
+  - Adds `app.config.ts` declaring 12 iOS fields (bundle identifier,
+    scheme, orientation, ATS exceptions, audio background mode, …).
+  - Adds two library-provided config plugins: `expo-build-properties`
+    (pinned to `deploymentTarget: 14.0`, `newArchEnabled: false`) and
+    `@react-native-vector-icons/common/plugin` (for Entypo, Ionicons,
+    MaterialDesignIcons).
+  - Adds three local config plugins authored as pure helpers with
+    `@expo/config-plugins` adapters, each with full unit-test coverage:
+    - `with-app-delegate-customizations` — URLCache, AVAudioSession,
+      `--reset-state` handler
+    - `with-alternate-icons` — `icon_type_windmill` entry + 4 bundle
+      resources
+    - `with-xcuitest-target` — `ExpoUITestsAutolinkingFix` + nested
+      UITests Podfile target + UITests PBXNativeTarget
+  - `__tests__/app-config.test.ts` asserts the full plugin list.
+
+  ## Test plan
+
+  - [x] `mise run agent:pre-commit` passes locally
+  - [x] `npx jest plugins/__tests__` — ~25 unit tests pass
+  - [x] `npx jest __tests__/app-config.test.ts` — config snapshot asserted
+  - [ ] CI green on this PR
+  - [ ] iOS app builds and launches from `ios/` unchanged (no prebuild
+    invocation happens on this branch)
+
+  ## What's **not** in this PR
+
+  - `expo prebuild --no-install` invocation (PR 2)
+  - Mise / Fastlane / CI workflow updates (PR 2)
+  - `react-native.config.js` deletion (PR 2)
+  - `@react-native-community/cli` devDep removal (PR 2)
+  - Docs updates (PR 3)
+
+  ## Related
+
+  - Design spec: `docs/superpowers/specs/2026-04-16-expo-prebuild-migration-design.md`
+  - Plan: `docs/superpowers/plans/2026-04-16-expo-prebuild-pr1-scaffolding.md`
+  ```
+
+- [ ] **Step 3: Link the draft PR back in the planning branch**
+
+After the PR is created, post a one-line comment in the planning branch's
+PR (or add a note to the spec's "Related PRs" section if one exists)
+pointing to the implementation PR's URL for traceability.
+
+- [ ] **Step 4: Hand off**
+
+Implementation is complete. Next session should pick up PR 2 (cutover),
+which has its own plan (`docs/superpowers/plans/2026-04-??-expo-prebuild-pr2-cutover.md`,
+TBD). Mark this plan as complete in the session's task list and stop.
+
+---
+
+## Completion Criteria
+
+This plan is complete when **all** of the following are true:
+
+- [ ] All 9 tasks checked off.
+- [ ] Every task resulted in one or more commits on `claude/expo-prebuild-pr1-scaffolding`.
+- [ ] `mise run agent:pre-commit` passes on the tip of the branch.
+- [ ] Draft PR open against `master`.
+- [ ] The existing iOS app still builds unchanged (verified because
+      nothing in `ios/` was touched).
+- [ ] Implementation branch pushed to origin.
+
+---
+
+## Appendix: Test-count budget
+
+Cross-reference for verification-before-completion:
+
+| File | Test count (approx) |
+|---|---|
+| `__tests__/app-config.test.ts` | 8 (declarative fields + plugin list) |
+| `plugins/__tests__/with-app-delegate-customizations.test.ts` | 8 |
+| `plugins/__tests__/with-alternate-icons.test.ts` | 7 |
+| `plugins/__tests__/with-xcuitest-target.test.ts` | 10 |
+| **Total new tests** | **~33** |
+
+
