@@ -284,3 +284,117 @@ EOF
 )"
 ```
 
+---
+
+## Task 4: Author the Phase 2 stub (`expo-sdk-54-upgrade-design.md`)
+
+**Files:**
+- `docs/superpowers/specs/2026-04-16-expo-sdk-54-upgrade-design.md` (new)
+
+**Intent:** capture enough Phase 1 context that a future session can
+brainstorm + write a full design spec for the SDK 53 → 54 / RN 0.79 →
+0.81 bump without re-doing the analysis. This is a stub, not a
+finished spec — it explicitly punts on most decisions.
+
+### 4.1 Write the stub
+
+- [ ] **Step 1: Create the file with the following content**
+
+```markdown
+# Phase 2 — Expo SDK 53 → 54 / RN 0.79 → 0.81 (Stub)
+
+> **Status:** stub. Not yet brainstormed or designed. This file
+> captures the Phase 1 context that's relevant when Phase 2 starts so
+> the analysis isn't lost between phases.
+
+## What this phase does
+
+Bump:
+- Expo SDK 53.0.27 → 54.x (latest patch at start of work)
+- React Native 0.79.6 → 0.81.x
+
+Stays on the **Legacy Architecture**. SDK 54 is the last Expo SDK
+that supports it; SDK 55 makes the New Architecture mandatory.
+
+## Why this is its own phase
+
+The Phase 1 design spec decomposed the migration into four phases
+specifically so each version bump could be evaluated and shipped on
+its own. Doing SDK 53 → 55 in one step would conflate prebuild
+correctness with New-Architecture compatibility regressions.
+
+## Inherited from Phase 1
+
+- `app.config.ts` is the source of truth.
+- `plugins/with-app-delegate-customizations.ts`,
+  `plugins/with-alternate-icons.ts`,
+  `plugins/with-xcuitest-target.ts` are all unit-tested locally.
+- `expo-build-properties` carries `ios.deploymentTarget`,
+  `ios.newArchEnabled: false`, `ios.ccacheEnabled: true`.
+- CI runs `mise run prebuild -- --no-install` before `pod install`.
+- `react-native-vector-icons` ships its config plugin and is wired
+  via `@react-native-vector-icons/common/plugin`.
+
+## Open questions for Phase 2 brainstorming
+
+- **AppDelegate template shape.** SDK 54's prebuild template may
+  restructure `AppDelegate.swift`. The
+  `with-app-delegate-customizations` plugin anchors on
+  `self.moduleName = "AllAboutOlaf"`; verify that anchor still
+  exists in SDK 54's template, and update if the line moved.
+- **`expo-build-properties` schema.** Verify the `ios.ccacheEnabled`
+  + `ios.newArchEnabled` keys are still recognized in the SDK 54
+  release.
+- **Library compatibility audit.** For each library in
+  `package.json` that ships native code, check its SDK 54
+  compatibility note in the Expo SDK 54 changelog.
+- **iOS deployment target.** SDK 54 may bump the floor (current spec
+  pins to iOS 14). Decide whether to follow Expo's recommended
+  floor or hold at 14.
+- **Patches.** Re-validate `0001-rn.patch` and
+  `0002-rn-abortsignal.patch` against RN 0.81. Either re-base, drop
+  if upstream-fixed, or document why each is still needed.
+
+## Acceptance criteria sketch
+
+When this phase ships, the Phase 1 16-item acceptance checklist must
+still PASS unchanged. No new functional capability — just the
+upgrade itself.
+
+## Risks (placeholder)
+
+- **Library churn.** Several non-Expo libraries
+  (`@react-native-community/*`, `glamorous-native`, etc.) may need
+  upgrades or replacements at this step.
+- **Patch rebase.** If `0001-rn.patch` no longer applies, decide
+  whether to forward-port or drop.
+
+## When to start Phase 2
+
+After Phase 1 (PRs 1–3) is in production for at least one Fastlane
+release cycle and no prebuild-related regressions have been reported.
+
+## See also
+
+- Spec: `docs/superpowers/specs/2026-04-16-expo-prebuild-migration-design.md`
+- Expo SDK 54 changelog: https://expo.dev/changelog/sdk-54
+```
+
+### 4.2 Commit
+
+- [ ] **Step 2: Commit**
+
+```bash
+git add docs/superpowers/specs/2026-04-16-expo-sdk-54-upgrade-design.md
+git commit -m "$(cat <<'EOF'
+docs(spec): seed Phase 2 (Expo SDK 54) design stub
+
+Captures Phase 1 context relevant to the SDK 53 → 54 / RN 0.79 → 0.81
+bump: what the prebuild scaffold provides, the open questions a Phase 2
+brainstorm should chase (AppDelegate template shape, expo-build-properties
+schema, library compatibility audit, deployment target, patches), and
+risks. Explicitly a stub — not yet brainstormed or designed.
+EOF
+)"
+```
+
