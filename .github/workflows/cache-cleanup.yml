@@ -25,6 +25,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           gh cache list --ref "${{ github.ref }}" --limit 500 --json 'ref' -q '.[].ref' | while read ref; do
+            echo "Deleting caches for ref: $ref"
             gh cache delete --all --succeed-on-no-caches --ref "$ref"
           done
 
@@ -34,6 +35,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DELETED_REF: refs/heads/${{ github.event.ref }}
         run: |
+          echo "Deleting caches for ref: $DELETED_REF"
           gh cache delete --all --succeed-on-no-caches --ref "$DELETED_REF"
 
       - name: Delete PR caches for all branches without open PRs
@@ -47,6 +49,7 @@ jobs:
             | while read pr; do
               state="$(gh pr view "$pr" --json state -q .state 2>/dev/null)"
               case "$state" in MERGED|CLOSED)
+                echo "Deleting caches for PR ref: refs/pull/$pr/merge"
                 gh cache delete --all --succeed-on-no-caches --ref "refs/pull/$pr/merge";;
               esac
             done
@@ -62,6 +65,7 @@ jobs:
             | while read ref; do
               branch="${ref#refs/heads/}"
               if ! gh api "repos/${GITHUB_REPOSITORY}/git/ref/heads/${branch}" >/dev/null 2>&1; then
+                echo "Deleting caches for stale merge-queue ref: $ref"
                 gh cache delete --all --succeed-on-no-caches --ref "$ref"
               fi
             done
