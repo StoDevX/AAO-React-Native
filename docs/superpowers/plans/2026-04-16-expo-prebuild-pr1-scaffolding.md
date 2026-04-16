@@ -1106,3 +1106,401 @@ See docs/superpowers/specs/2026-04-16-expo-prebuild-migration-design.md
 EOF
 )"
 ```
+
+---
+
+## Task 5: Author `plugins/with-alternate-icons.ts`
+
+**Files:**
+- `plugins/with-alternate-icons.ts` (new)
+- `plugins/__tests__/with-alternate-icons.test.ts` (new)
+
+> **Conditional on Task 0.1 finding:**
+> - **Finding A or B:** Task 5 is **skipped entirely**. Instead, add the library's plugin to `app.config.ts` in Task 7 (e.g., `plugins: ['react-native-change-icon', ...]`). Record the pivot in the Task 7 commit message. A version bump (Finding B) is its own commit inside Task 1.
+> - **Finding C:** proceed with Task 5 as written below.
+
+This plugin reproduces the existing alternate-icons wiring that lives in
+`ios/AllAboutOlaf/Info.plist` (lines 11–40) and `ios/AllAboutOlaf.xcodeproj/project.pbxproj`
+(4 PBXBuildFile entries, 4 PBXFileReference entries, 4 PBXGroup entries, 4
+PBXResourcesBuildPhase entries). Two responsibilities:
+
+1. **Info.plist:** ensure both `CFBundleIcons` and `CFBundleIcons~ipad`
+   dicts contain a `CFBundleAlternateIcons.icon_type_windmill` entry
+   referencing the `windmill` icon file with `UIPrerenderedIcon: true`.
+2. **project.pbxproj:** ensure the four `windmill*.png` files under
+   `ios/../images/icons/` are registered as bundle resources on the main
+   app target.
+
+Both transformations are idempotent (running twice produces the same
+result as once) and pure-helper-first so they can be tested without
+standing up a full prebuild pipeline.
+
+### 5.1 Scaffolding + failing Info.plist test
+
+- [ ] **Step 1: Create `plugins/with-alternate-icons.ts` skeleton**
+
+```ts
+import {ConfigPlugin, withInfoPlist, withXcodeProject} from '@expo/config-plugins'
+
+export const ALTERNATE_ICON_KEY = 'icon_type_windmill'
+export const ALTERNATE_ICON_FILE = 'windmill'
+export const WINDMILL_RESOURCE_FILES = [
+	'windmill@2x.png',
+	'windmill@3x.png',
+	'windmill@2x~iPad.png',
+	'windmill@3x~iPad.png',
+] as const
+
+export function addAlternateIcons(plist: Record<string, unknown>): Record<string, unknown> {
+	throw new Error('not implemented')
+}
+
+export function addWindmillResources(project: unknown): unknown {
+	throw new Error('not implemented')
+}
+
+const withAlternateIcons: ConfigPlugin = (config) => {
+	config = withInfoPlist(config, (config) => {
+		config.modResults = addAlternateIcons(config.modResults) as typeof config.modResults
+		return config
+	})
+	config = withXcodeProject(config, (config) => {
+		config.modResults = addWindmillResources(config.modResults) as typeof config.modResults
+		return config
+	})
+	return config
+}
+
+export default withAlternateIcons
+```
+
+- [ ] **Step 2: Write failing test for `addAlternateIcons`**
+
+Create `plugins/__tests__/with-alternate-icons.test.ts`:
+
+```ts
+import {describe, it, expect} from '@jest/globals'
+import {
+	addAlternateIcons,
+	ALTERNATE_ICON_KEY,
+	ALTERNATE_ICON_FILE,
+} from '../with-alternate-icons'
+
+describe('addAlternateIcons', () => {
+	it('adds windmill entry to CFBundleIcons and CFBundleIcons~ipad when neither exists', () => {
+		const result = addAlternateIcons({CFBundleName: '$(PRODUCT_NAME)'})
+
+		const expectedEntry = {
+			CFBundleIconFiles: [ALTERNATE_ICON_FILE],
+			UIPrerenderedIcon: true,
+		}
+
+		expect((result.CFBundleIcons as any).CFBundleAlternateIcons[ALTERNATE_ICON_KEY])
+			.toEqual(expectedEntry)
+		expect((result['CFBundleIcons~ipad'] as any).CFBundleAlternateIcons[ALTERNATE_ICON_KEY])
+			.toEqual(expectedEntry)
+	})
+})
+```
+
+Run `npx jest plugins/__tests__/with-alternate-icons.test.ts` → fails
+with `not implemented` (RED).
+
+### 5.2 Implement Info.plist insertion (idempotent)
+
+- [ ] **Step 3: Implement `addAlternateIcons`**
+
+Replace the `addAlternateIcons` stub in `plugins/with-alternate-icons.ts`:
+
+```ts
+type AlternateIconEntry = {
+	CFBundleIconFiles: string[]
+	UIPrerenderedIcon: boolean
+}
+
+type IconsDict = {
+	CFBundleAlternateIcons?: Record<string, AlternateIconEntry>
+	[key: string]: unknown
+}
+
+const ALTERNATE_ICON_ENTRY: AlternateIconEntry = {
+	CFBundleIconFiles: [ALTERNATE_ICON_FILE],
+	UIPrerenderedIcon: true,
+}
+
+function ensureAlternateIconsOnKey(
+	plist: Record<string, unknown>,
+	key: 'CFBundleIcons' | 'CFBundleIcons~ipad',
+): void {
+	const existing = (plist[key] as IconsDict | undefined) ?? {}
+	const alternates = existing.CFBundleAlternateIcons ?? {}
+	plist[key] = {
+		...existing,
+		CFBundleAlternateIcons: {
+			...alternates,
+			[ALTERNATE_ICON_KEY]: ALTERNATE_ICON_ENTRY,
+		},
+	}
+}
+
+export function addAlternateIcons(
+	plist: Record<string, unknown>,
+): Record<string, unknown> {
+	const result = {...plist}
+	ensureAlternateIconsOnKey(result, 'CFBundleIcons')
+	ensureAlternateIconsOnKey(result, 'CFBundleIcons~ipad')
+	return result
+}
+```
+
+Run the test → passes (GREEN).
+
+- [ ] **Step 4: Add idempotency test**
+
+```ts
+it('is idempotent — running twice produces the same result', () => {
+	const input = {CFBundleName: '$(PRODUCT_NAME)'}
+	const once = addAlternateIcons(input)
+	const twice = addAlternateIcons(once)
+	expect(twice).toEqual(once)
+})
+```
+
+Run tests → passes (object-spread preserves the existing entry).
+
+- [ ] **Step 5: Add "preserves existing alternate icons" test**
+
+```ts
+it('preserves unrelated alternate icons on both keys', () => {
+	const input = {
+		CFBundleIcons: {
+			CFBundleAlternateIcons: {
+				other_icon: {CFBundleIconFiles: ['other'], UIPrerenderedIcon: false},
+			},
+		},
+	}
+	const result = addAlternateIcons(input)
+	expect((result.CFBundleIcons as any).CFBundleAlternateIcons.other_icon)
+		.toEqual({CFBundleIconFiles: ['other'], UIPrerenderedIcon: false})
+	expect((result.CFBundleIcons as any).CFBundleAlternateIcons[ALTERNATE_ICON_KEY])
+		.toEqual({CFBundleIconFiles: ['windmill'], UIPrerenderedIcon: true})
+})
+```
+
+Run tests → passes.
+
+- [ ] **Step 6: Add "preserves unrelated top-level keys" test**
+
+```ts
+it('does not mutate other top-level Info.plist keys', () => {
+	const input = {
+		CFBundleName: '$(PRODUCT_NAME)',
+		CFBundleDisplayName: 'All About Olaf',
+		NSAppTransportSecurity: {NSAllowsArbitraryLoads: false},
+	}
+	const result = addAlternateIcons(input)
+	expect(result.CFBundleName).toBe('$(PRODUCT_NAME)')
+	expect(result.CFBundleDisplayName).toBe('All About Olaf')
+	expect(result.NSAppTransportSecurity).toEqual({NSAllowsArbitraryLoads: false})
+})
+```
+
+Run tests → passes.
+
+### 5.3 Implement pbxproj resource registration
+
+- [ ] **Step 7: Write failing test for `addWindmillResources`**
+
+Append to `plugins/__tests__/with-alternate-icons.test.ts`:
+
+```ts
+import {XcodeProject} from '@expo/config-plugins/build/ios/utils/Xcodeproj'
+import xcode from 'xcode'
+import path from 'node:path'
+import {addWindmillResources, WINDMILL_RESOURCE_FILES} from '../with-alternate-icons'
+
+function loadFixtureProject(): XcodeProject {
+	const fixturePath = path.join(
+		__dirname,
+		'../../ios/AllAboutOlaf.xcodeproj/project.pbxproj',
+	)
+	const project = xcode.project(fixturePath)
+	project.parseSync()
+	return project as unknown as XcodeProject
+}
+
+describe('addWindmillResources', () => {
+	it('registers all four windmill PNGs on the main app target', () => {
+		// Start from a fresh copy of the checked-in project, then strip
+		// the existing windmill refs so we're testing insertion, not a no-op.
+		const project = loadFixtureProject()
+		stripExistingWindmillRefs(project)
+
+		const result = addWindmillResources(project) as XcodeProject
+
+		for (const filename of WINDMILL_RESOURCE_FILES) {
+			const added = findResourceBuildFile(result, filename)
+			expect(added).toBeDefined()
+		}
+	})
+})
+
+function stripExistingWindmillRefs(project: XcodeProject): void {
+	// Helper: remove PBXBuildFile + PBXFileReference + PBXResourcesBuildPhase
+	// entries whose names match WINDMILL_RESOURCE_FILES. Implementation uses
+	// `project.removeResourceFile(...)` on each filename.
+	for (const filename of WINDMILL_RESOURCE_FILES) {
+		try {
+			(project as any).removeResourceFile(filename)
+		} catch {
+			// not present — ignore
+		}
+	}
+}
+
+function findResourceBuildFile(project: XcodeProject, filename: string): object | undefined {
+	const buildFiles = (project as any).pbxBuildFileSection()
+	for (const key of Object.keys(buildFiles)) {
+		if (key.endsWith('_comment')) continue
+		if (buildFiles[key].fileRef_comment?.includes(filename)) {
+			return buildFiles[key]
+		}
+	}
+	return undefined
+}
+```
+
+Run the test → fails with `not implemented` (RED).
+
+Note: the test reads the real `ios/AllAboutOlaf.xcodeproj/project.pbxproj`
+as a fixture. This is intentional — it exercises the helper against the
+exact pbxproj shape we'll transform during prebuild. The file is never
+modified on disk; `xcode.project(...).parseSync()` returns an in-memory
+model.
+
+- [ ] **Step 8: Implement `addWindmillResources`**
+
+```ts
+import type {XcodeProject} from '@expo/config-plugins/build/ios/utils/Xcodeproj'
+
+const MAIN_TARGET_NAME = 'AllAboutOlaf'
+const WINDMILL_SOURCE_PREFIX = '../images/icons/'
+
+export function addWindmillResources(project: XcodeProject): XcodeProject {
+	const target = project.pbxTargetByName(MAIN_TARGET_NAME)
+	if (!target) {
+		throw new Error(
+			`with-alternate-icons: could not find target "${MAIN_TARGET_NAME}" in project.pbxproj. ` +
+			`Run \`expo prebuild\` first, or verify the target name matches expo.name in app.config.ts.`,
+		)
+	}
+	for (const filename of WINDMILL_RESOURCE_FILES) {
+		if (isResourceFileRegistered(project, filename)) continue
+		project.addResourceFile(
+			`${WINDMILL_SOURCE_PREFIX}${filename}`,
+			{target: target.uuid},
+		)
+	}
+	return project
+}
+
+function isResourceFileRegistered(project: XcodeProject, filename: string): boolean {
+	const fileRefs = project.pbxFileReferenceSection()
+	for (const key of Object.keys(fileRefs)) {
+		if (key.endsWith('_comment')) continue
+		const name = fileRefs[key].name
+		if (name === `"${filename}"` || name === filename) return true
+	}
+	return false
+}
+```
+
+Run tests → passes (GREEN).
+
+- [ ] **Step 9: Add idempotency test for `addWindmillResources`**
+
+```ts
+it('is idempotent — does not register duplicates on second run', () => {
+	const project = loadFixtureProject()
+	stripExistingWindmillRefs(project)
+
+	addWindmillResources(project)
+	const afterFirst = countWindmillBuildFiles(project)
+
+	addWindmillResources(project)
+	const afterSecond = countWindmillBuildFiles(project)
+
+	expect(afterFirst).toBe(WINDMILL_RESOURCE_FILES.length)
+	expect(afterSecond).toBe(WINDMILL_RESOURCE_FILES.length)
+})
+
+function countWindmillBuildFiles(project: XcodeProject): number {
+	const buildFiles = (project as any).pbxBuildFileSection()
+	let count = 0
+	for (const key of Object.keys(buildFiles)) {
+		if (key.endsWith('_comment')) continue
+		const ref = buildFiles[key].fileRef_comment
+		if (ref && WINDMILL_RESOURCE_FILES.some((f) => ref.includes(f))) count++
+	}
+	return count
+}
+```
+
+Run tests → passes.
+
+- [ ] **Step 10: Add missing-target error test**
+
+```ts
+it('throws a descriptive error if the main app target is absent', () => {
+	expect(() => {
+		addWindmillResources(
+			// @ts-expect-error — intentionally malformed
+			{pbxTargetByName: () => undefined, addResourceFile: jest.fn()},
+		)
+	}).toThrow(/could not find target "AllAboutOlaf"/)
+})
+```
+
+Run tests → passes.
+
+### 5.4 Pre-commit and commit
+
+- [ ] **Step 11: Run full pre-commit**
+
+```bash
+mise run agent:pre-commit
+```
+
+All four steps (prettier, eslint, tsc, jest) must pass. The new test
+file contributes at least 7 unit tests (4 for `addAlternateIcons`, 3 for
+`addWindmillResources`).
+
+- [ ] **Step 12: Commit**
+
+```bash
+git add plugins/with-alternate-icons.ts plugins/__tests__/with-alternate-icons.test.ts
+git commit -m "$(cat <<'EOF'
+feat(plugins): add with-alternate-icons config plugin
+
+Reproduces the existing `icon_type_windmill` alternate-icon wiring as a
+config plugin with two pure helpers:
+
+1. addAlternateIcons(plist): ensures CFBundleAlternateIcons on both
+   CFBundleIcons and CFBundleIcons~ipad contains the windmill entry
+   (CFBundleIconFiles: ["windmill"], UIPrerenderedIcon: true).
+
+2. addWindmillResources(project): registers the four windmill*.png
+   files (1x/2x/3x, phone + iPad) under ios/../images/icons/ as bundle
+   resources on the AllAboutOlaf target.
+
+Both transformations are idempotent. Unit tests cover baseline
+insertion, duplicate-avoidance, preservation of unrelated entries, and
+the missing-target error case.
+
+Plugin is registered with app.config.ts in Task 7. No behavior change
+yet.
+
+See docs/superpowers/specs/2026-04-16-expo-prebuild-migration-design.md
+EOF
+)"
+```
