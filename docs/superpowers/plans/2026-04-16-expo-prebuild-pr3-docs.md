@@ -562,3 +562,174 @@ EOF
 )"
 ```
 
+---
+
+## Task 6: Author the Phase 4 stub (`expo-prebuild-cng-rehoming-design.md`)
+
+**Files:**
+- `docs/superpowers/specs/2026-04-16-expo-prebuild-cng-rehoming-design.md` (new)
+
+**Intent:** capture the XCUITest-rehoming question that gates true CNG.
+Phase 1 explicitly kept `ios/` in git because XCUITests live inside it
+and would be wiped on every `--clean` regeneration. Phase 4 must solve
+that before gitignoring `ios/`.
+
+### 6.1 Write the stub
+
+- [ ] **Step 1: Create the file with the following content**
+
+```markdown
+# Phase 4 — CNG + XCUITest Rehoming (Stub)
+
+> **Status:** stub. Not yet brainstormed or designed. Captures the
+> XCUITest-rehoming question that's the prerequisite for switching
+> to true Continuous Native Generation.
+
+## What this phase does
+
+1. **Rehome XCUITests outside `ios/`** so they survive a
+   `--clean` regeneration without needing the
+   `with-xcuitest-target` config plugin.
+2. **Add `ios/` to `.gitignore`** — `ios/` is no longer tracked.
+3. **Delete `plugins/with-xcuitest-target.ts`** — its job is moot
+   once XCUITests live elsewhere.
+
+After this phase, `npx expo prebuild --clean -p ios` is the only
+way to materialize `ios/`, and the regenerated tree has no special
+contents from local plugins for the test target.
+
+## Why this is its own phase
+
+Doing CNG in Phase 1 would have meant either:
+- **Deleting all XCUITests** (unacceptable — they cover the
+  alternate-icon flow, audio playback, --reset-state, etc.), **or**
+- **Maintaining a brittle `with-xcuitest-target` plugin
+  indefinitely** (the spec calls this the highest single risk).
+
+Rehoming the tests buys long-term simplicity at the cost of one
+focused refactor.
+
+## Inherited from Phases 1–3
+
+- Prebuild scaffold with all plugins working.
+- SDK 55 + New Architecture (Phase 3).
+- 17 XCUITests passing under the new architecture.
+
+## XCUITest rehoming options
+
+To be brainstormed in Phase 4. Three candidates:
+
+### Option A: Detox / Maestro (cross-platform end-to-end)
+
+Rewrite the 17 XCUITests in
+[Maestro](https://maestro.dev) or
+[Detox](https://wix.github.io/Detox/) flows. They live under
+`e2e/` (or similar) at the repo root, untouched by prebuild.
+
+**Pros:**
+- Survives `--clean` trivially.
+- Tests run via `mise run e2e`, not `xcodebuild test`.
+- Cross-platform if Android is ever added.
+
+**Cons:**
+- Full rewrite of 17 tests in a different DSL.
+- Loses XCUITest's deep iOS integration (e.g., system alerts).
+
+### Option B: Standalone XCUITest project
+
+Move `ios/AllAboutOlafUITests/` to `xcuitests/AllAboutOlafUITests/`
+(or similar) at the repo root. Author a tiny separate
+`xcuitests/UITests.xcodeproj` that depends on the prebuild-generated
+`AllAboutOlaf.xcworkspace` at test time.
+
+**Pros:**
+- No rewrite — the 17 Swift files stay as-is.
+- XCUITests' deep iOS integration stays.
+
+**Cons:**
+- Two Xcode projects to maintain (the prebuild one + the test
+  project).
+- The test project must reference the test runner from the
+  prebuild output, which couples them at build time.
+
+### Option C: Plugin-based rehoming with seed sources
+
+Keep XCUITests under a top-level `xcuitests/` directory, and have a
+config plugin (descendant of the current
+`with-xcuitest-target.ts`) re-attach them to the prebuild-generated
+`AllAboutOlaf.xcodeproj` on every prebuild run.
+
+**Pros:**
+- Sources live outside `ios/`; prebuild can `--clean` freely.
+- The plugin is the only XCUITest-aware code.
+
+**Cons:**
+- Doesn't actually solve the brittleness — we still maintain the
+  plugin.
+
+**Recommendation (TBD in Phase 4 brainstorm):** Option B is the
+cleanest separation if XCUITest is the right testing tool; Option A
+if the team is willing to invest in a rewrite.
+
+## Open questions for Phase 4 brainstorming
+
+- **Which option above?** Decide upfront; rest of the phase
+  depends on it.
+- **CI restructuring.** Sharded XCUITest jobs in `check.yml`
+  reference the current path; rewrite the workflow to match the
+  new home.
+- **Xcode Cloud.** `ci_post_clone.sh` may need adjustment.
+- **Local dev loop.** How does `mise run test:e2e` (or whatever
+  the new task name is) work?
+
+## Acceptance criteria sketch
+
+- All 17 tests (or their replacements) pass on the new home.
+- `ios/` is gitignored; cloning a fresh checkout requires running
+  `mise run prebuild` before any iOS work.
+- `plugins/with-xcuitest-target.ts` is deleted.
+- CI workflows updated; sharded test job runs the new tests on
+  the new path.
+- PR 3 docs (`CLAUDE.md`, `CONTRIBUTING.md`) updated to reflect
+  the gitignored-`ios/` reality.
+
+## Risks
+
+- **High: Option A means rewriting 17 tests.** Estimate
+  effort honestly before committing.
+- **Medium: a bug in the rehoming triggers test loss.** Run the
+  old XCUITests and the new ones in parallel for one release
+  cycle.
+
+## When to start Phase 4
+
+After Phase 3 is in production for at least two Fastlane release
+cycles and the Phase 1 plugin set has not produced regressions for
+that time. CNG is a quality-of-life improvement, not a deadline
+item — defer if Phases 2/3 surface anything else that needs
+attention.
+
+## See also
+
+- Phase 1 spec: `docs/superpowers/specs/2026-04-16-expo-prebuild-migration-design.md`
+- CNG docs: https://docs.expo.dev/workflow/continuous-native-generation/#usage
+```
+
+### 6.2 Commit
+
+- [ ] **Step 2: Commit**
+
+```bash
+git add docs/superpowers/specs/2026-04-16-expo-prebuild-cng-rehoming-design.md
+git commit -m "$(cat <<'EOF'
+docs(spec): seed Phase 4 (CNG + XCUITest rehoming) design stub
+
+Captures the XCUITest-rehoming question as the prerequisite for true
+CNG, with three candidate options (cross-platform e2e via Maestro/Detox,
+standalone XCUITest project, plugin-based seed sources). Notes the
+acceptance criteria, risks, and the rationale for not doing this in
+Phase 1. Explicitly a stub.
+EOF
+)"
+```
+
