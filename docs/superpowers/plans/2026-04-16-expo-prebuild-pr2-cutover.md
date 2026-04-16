@@ -1190,3 +1190,467 @@ EOF
 )"
 ```
 
+---
+
+## Task 9: Update Fastlane
+
+**Files:**
+- `fastlane/lib/sourcemaps.rb`
+
+Fastlane doesn't need a prebuild hook at the lane level — Tasks 5 (Xcode
+Cloud `ci_post_clone.sh`) and 6 (`build-and-deploy.yml`) already run
+prebuild before `bundle exec fastlane` gets invoked. The one Fastlane
+touchpoint is in `fastlane/lib/sourcemaps.rb`, where `generate_sourcemap`
+still shells out to `npx react-native bundle` (line 31) — a command that
+doesn't exist once the RN CLI is removed in Task 4.
+
+### 9.1 Replace `react-native bundle` with `expo export`
+
+- [ ] **Step 1: Inspect the current `generate_sourcemap` function**
+
+```ruby
+cmd = [
+       'npx react-native bundle',
+       '--dev false',
+       "--platform '#{args[:platform]}'",
+       "--entry-file '#{args[:entry_file]}'",
+       "--bundle-output '#{args[:bundle_output]}'",
+       "--sourcemap-output '#{args[:sourcemap_output]}'",
+      ].join ' '
+```
+
+Inputs (from `sourcemap_args`):
+- `platform`: `'ios'` or `'android'`
+- `entry_file`: `'index.js'`
+- `bundle_output`: `'main.jsbundle'` (iOS) / `'index.android.bundle'` (Android)
+- `sourcemap_output`: `'main.jsbundle.map'` (iOS) / `'index.android.bundle.map'` (Android)
+
+The sourcemap is later uploaded to Sentry via `upload_sourcemap_to_sentry`
+(lines 62–81), which reads `args[:bundle_output]` and `args[:sourcemap_output]`
+as file paths to pass to `sentry-cli`. Both paths are relative to the
+Fastlane cwd (`/fastlane`).
+
+- [ ] **Step 2: Rewrite to use the Expo CLI**
+
+Replace `generate_sourcemap` with an `expo export` invocation. The
+canonical Expo one-liner for a single-platform JS bundle + sourcemap
+is:
+
+```ruby
+def generate_sourcemap
+	args = sourcemap_args
+
+	# `expo export --platform <p>` produces a bundle at
+	# <output-dir>/_expo/static/js/<p>/index-*.hbc plus a matching
+	# sourcemap. We force the legacy naming via `--output-dir` pointing
+	# at a temp directory and then `mv` the files into the locations
+	# Sentry expects, so upload_sourcemap_to_sentry keeps working
+	# unchanged.
+	output_dir = File.expand_path('../expo-export', __dir__)
+	FileUtils.rm_rf(output_dir)
+	FileUtils.mkdir_p(output_dir)
+
+	cmd = [
+	       'npx expo export',
+	       "--platform '#{args[:platform]}'",
+	       "--output-dir '#{output_dir}'",
+	       '--dump-sourcemap',
+	      ].join ' '
+
+	FastlaneCore::CommandExecutor.execute(command: cmd,
+	                                      print_all: true,
+	                                      print_command: true)
+
+	# Move the generated bundle + sourcemap to the filenames that
+	# upload_sourcemap_to_sentry expects (main.jsbundle /
+	# main.jsbundle.map on iOS).
+	platform_dir = File.join(output_dir, '_expo', 'static', 'js', args[:platform])
+	bundle = Dir["#{platform_dir}/*.hbc"].first || Dir["#{platform_dir}/*.js"].first
+	sourcemap = Dir["#{platform_dir}/*.map"].first
+
+	UI.user_error!("expo export produced no bundle in #{platform_dir}") unless bundle
+	UI.user_error!("expo export produced no sourcemap in #{platform_dir}") unless sourcemap
+
+	FileUtils.mv(bundle, args[:bundle_output])
+	FileUtils.mv(sourcemap, args[:sourcemap_output])
+end
+```
+
+Three caveats worth flagging in the commit message:
+
+1. **Hermes bytecode vs. plain JS.** `expo export` emits `.hbc`
+   (Hermes bytecode) when Hermes is enabled (RN 0.79 default), or
+   `.js` when not. The `Dir[...]` glob handles both. Sentry accepts
+   `.hbc`.
+2. **Sourcemap naming.** Expo's output is
+   `<hash>.map` adjacent to `<hash>.hbc`. After the `mv`, the Sentry
+   upload step sees `main.jsbundle.map` exactly as before.
+3. **--dump-sourcemap flag.** Verify against the installed Expo CLI:
+   `npx expo export --help | grep -i sourcemap`. If the flag name
+   changed, update it; document the version checked in the commit
+   message.
+
+- [ ] **Step 3: Run the updated lane end-to-end locally**
+
+```bash
+bundle exec fastlane ios generate_sourcemap
+ls -la main.jsbundle main.jsbundle.map
+```
+
+Expected: both files exist, non-zero size.
+
+- [ ] **Step 4: Verify Sentry upload still works**
+
+```bash
+bundle exec fastlane ios upload_sourcemap_to_sentry
+```
+
+Expected: Sentry CLI reports the upload succeeded. (If the credentials
+aren't available locally, skip to CI verification in Task 10.)
+
+### 9.2 Commit
+
+- [ ] **Step 5: Commit**
+
+```bash
+git add fastlane/lib/sourcemaps.rb
+git commit -m "$(cat <<'EOF'
+fastlane: generate iOS sourcemap via expo export
+
+Replaces `npx react-native bundle` (removed with the RN CLI in Task 4)
+with `npx expo export --dump-sourcemap`. Expo emits the bundle +
+sourcemap under `_expo/static/js/<platform>/`; we move the artifacts
+to `main.jsbundle` / `main.jsbundle.map` so
+`upload_sourcemap_to_sentry` keeps working unchanged.
+
+Hermes bytecode (.hbc) and plain JS (.js) outputs are both handled.
+
+See docs/superpowers/specs/2026-04-16-expo-prebuild-migration-design.md
+EOF
+)"
+```
+
+---
+
+## Task 10: Full acceptance-checklist verification
+
+**Files:** None (verification only; evidence captured for the PR description).
+
+This task walks every one of the 16 spec acceptance criteria against
+the final `claude/expo-prebuild-pr2-cutover` branch. Record PASS/FAIL
++ evidence (path, screenshot, test output) in a scratch markdown file
+that becomes the body of the PR description in Task 11.
+
+### 10.1 Functional equivalence (items 1–10)
+
+- [ ] **Step 1: Debug build (local, clean clone)**
+
+```bash
+cd /tmp && rm -rf AAO-React-Native-verify
+git clone git@github.com:StoDevX/AAO-React-Native.git AAO-React-Native-verify
+cd AAO-React-Native-verify
+git checkout claude/expo-prebuild-pr2-cutover
+mise run agent:setup
+mise run prebuild
+mise run pod:install --deployment
+mise run ios
+```
+
+Expected: the app launches on a simulator. Record PASS + simulator log
+excerpt.
+
+- [ ] **Step 2: Debug build (CI)**
+
+Push to the branch; verify `check.yml` → `ios-build` job passes.
+
+- [ ] **Step 3: Release build (Fastlane end-to-end)**
+
+```bash
+bundle exec fastlane ios build
+```
+
+Expected: `.ipa` produced in `ios/build/`. Record PASS.
+
+- [ ] **Step 4: All 17 XCUITests pass (local + CI)**
+
+Local:
+
+```bash
+xcodebuild test \
+  -workspace ios/AllAboutOlaf.xcworkspace \
+  -scheme AllAboutOlaf \
+  -destination 'platform=iOS Simulator,name=iPhone 16'
+```
+
+CI: `check.yml` sharded UITest jobs all pass.
+
+Record: `<17/17> tests passed` + link to the CI run.
+
+- [ ] **Step 5: Bundle identity matches (spec item 4)**
+
+Compare against the baseline captured in Task 2 Step 2:
+- Display name
+- Bundle identifier (`NFMTHAZVS9.com.drewvolz.stolaf`)
+- `MARKETING_VERSION`, `CURRENT_PROJECT_VERSION`
+- `AllAboutOlaf://` URL scheme
+- Entitlements
+
+Record diff output; expected: no diff.
+
+- [ ] **Step 6: Alternate app icon (spec item 5)**
+
+Launch the app, open Settings → App Icon → choose "Windmill". Confirm
+the home-screen icon changes on both iPhone and iPad simulators.
+Attach screenshot.
+
+- [ ] **Step 7: Custom fonts (spec item 6)**
+
+Visually verify glyphs from Entypo, Ionicons, and MaterialDesignIcons
+render on at least one screen for each font family. Attach screenshots.
+
+- [ ] **Step 8: ATS exceptions (spec item 7)**
+
+Open a WebView that hit `http://` content before the migration (check
+`source/` for any `http://` callers). Confirm content still loads.
+Attach screenshot or test log.
+
+- [ ] **Step 9: Audio playback on silent (spec item 8)**
+
+Play a streaming audio source with the simulator's silent mode
+toggled. Audio must continue. Record: PASS, plus a note on which
+audio source was used.
+
+- [ ] **Step 10: URL cache sized correctly (spec item 9)**
+
+Attach debugger, evaluate:
+
+```lldb
+po URLCache.shared.memoryCapacity
+po URLCache.shared.diskCapacity
+```
+
+Expected: `4000000` and `20000000`. Record the exact output.
+
+- [ ] **Step 11: `--reset-state` launch arg (spec item 10)**
+
+```bash
+xcrun simctl launch --console 'booted' com.drewvolz.stolaf --reset-state
+```
+
+Verify `~/Library/Developer/CoreSimulator/.../Library/Application Support/com.drewvolz.stolaf`
+is empty after launch, and `UserDefaults` is empty. Record PASS.
+
+### 10.2 Tooling equivalence (items 11–14)
+
+- [ ] **Step 12: All `mise` tasks pass (spec item 11)**
+
+```bash
+mise run lint
+mise run pretty:check
+mise run tsc
+mise run test
+mise run agent:pre-commit
+```
+
+All five pass. Record output tails.
+
+- [ ] **Step 13: App-lifecycle `mise` tasks succeed (spec item 12)**
+
+```bash
+mise run start   # Ctrl-C after Metro starts
+mise run ios     # Let it build + launch
+mise run prebuild
+mise run bundle:ios
+```
+
+All four succeed. Record.
+
+- [ ] **Step 14: `apply-patches.sh` still runs and patches apply (spec item 13)**
+
+```bash
+rm -rf node_modules
+npm install 2>&1 | grep -i patch
+```
+
+Expected: both sentinels (`0001-rn.patch` and
+`0002-rn-abortsignal.patch`) apply cleanly. Record.
+
+- [ ] **Step 15: Sentry release upload succeeds (spec item 14)**
+
+Run the release-build CI job; verify Sentry release is created and
+sourcemaps uploaded. Check the Sentry UI for the new release.
+
+### 10.3 Prebuild reproducibility (items 15–16)
+
+- [ ] **Step 16: Prebuild is idempotent (spec item 15)**
+
+```bash
+mise run prebuild
+git status ios/
+mise run prebuild
+git status ios/
+```
+
+Expected: after the second run, `git status ios/` shows no diff vs.
+the first run. Record diff output (should be empty).
+
+- [ ] **Step 17: Prebuild from a clean clone produces a buildable `ios/` (spec item 16)**
+
+Same clean-clone flow as Step 1, but additionally run all 17 UITests.
+They pass without any manual post-prebuild intervention.
+
+### 10.4 Probe: `CLANG_ENABLE_EXPLICIT_MODULES=NO` still needed?
+
+- [ ] **Step 18: Run one CI build without the explicit-modules
+  override**
+
+Spec note (risk section) and Task 6 Step 3 both flagged this. With
+`ccache_enabled: true` in the Podfile (via `expo-build-properties`),
+does ccache still fight Xcode 16's explicit modules?
+
+If Step 2 (debug build CI) and Step 4 (UITests CI) both pass, the
+answer is **no, not needed** — record the finding and don't add the
+override.
+
+If either step fails with a ccache/modules error, add
+`CLANG_ENABLE_EXPLICIT_MODULES=NO` to the xcodebuild call sites:
+
+- `.github/workflows/check.yml` — add to the
+  `xcodebuild build-for-testing` call.
+- `.github/workflows/build-and-deploy.yml` — add to `gym`-level
+  options in Fastlane (via `lib/commands.rb`).
+
+Commit separately as a clearly-labeled follow-up:
+
+```bash
+git commit -m "ci: set CLANG_ENABLE_EXPLICIT_MODULES=NO to work around Xcode 16 + ccache"
+```
+
+### 10.5 Compile the evidence file
+
+- [ ] **Step 19: Produce `./.verification-evidence.md` (not committed)**
+
+Gather all PASS/FAIL entries with evidence into a single markdown file.
+This file becomes the Task 11 PR body — do not commit it; it lives as
+a scratch note only.
+
+---
+
+## Task 11: Open the PR
+
+**Files:** None (git + GitHub MCP operation).
+
+### 11.1 Push final branch tip
+
+- [ ] **Step 1: Rebase onto latest `master`**
+
+```bash
+git fetch origin master
+git rebase origin/master
+```
+
+If conflicts, resolve and re-test locally; don't force through a
+conflict resolution without re-running Task 10 Step 1 at minimum.
+
+- [ ] **Step 2: Push**
+
+```bash
+git push origin claude/expo-prebuild-pr2-cutover
+```
+
+### 11.2 Open PR
+
+- [ ] **Step 3: Create PR via GitHub MCP**
+
+Use the `mcp__github__create_pull_request` tool with:
+
+- **Base:** `master`
+- **Head:** `claude/expo-prebuild-pr2-cutover`
+- **Draft:** `false` (this is not a draft — everything's been verified)
+- **Title:** `Expo Prebuild: PR 2 — cut over to expo prebuild`
+- **Body:** the contents of `.verification-evidence.md` plus:
+
+  ```markdown
+  ## Summary
+
+  Regenerates `ios/` via `expo prebuild`, switches mise tasks + CI
+  workflows from the React Native CLI to the Expo CLI, removes
+  `react-native.config.js` + `@react-native-community/cli*` devDeps.
+
+  **Rollout model:** prebuild-with-commit. `ios/` stays checked in; CI
+  regenerates it on every build and verifies it matches.
+
+  - See the 16-item acceptance-criteria table below for PASS/FAIL +
+    evidence on every functional, tooling, and reproducibility
+    requirement from the spec.
+
+  ## Acceptance criteria (from spec)
+
+  <!-- paste .verification-evidence.md table here -->
+
+  ## Changes by task
+
+  | Task | File(s) | Purpose |
+  |---|---|---|
+  | 2 | `ios/**` (regenerated), possibly `plugins/**` | First prebuild; convergence iterations |
+  | 3 | `.mise.toml` | Swap RN CLI → Expo CLI |
+  | 4 | `react-native.config.js` (del), `package.json`, `package-lock.json` | Remove RN CLI devDeps |
+  | 5 | `ios/ci_scripts/ci_post_clone.sh` | Xcode Cloud prebuild step |
+  | 6 | `.github/workflows/build-and-deploy.yml` | Prebuild + manual ccache |
+  | 7 | `.github/workflows/cocoapods.yml`, `scripts/push-on-podfile-change.sh` | Prebuild before pod install + broader auto-commit |
+  | 8 | `.github/workflows/check.yml`, `.github/workflows/copilot-setup-steps.yml` | Prebuild + drop USE_CCACHE env |
+  | 9 | `fastlane/lib/sourcemaps.rb` | Sourcemap gen via `expo export` |
+
+  ## Rollback plan
+
+  If a post-merge regression is discovered, `git revert` all commits
+  from Task 2 onward. Because PR 1 (the scaffolding) was a no-op,
+  reverting PR 2 fully restores the pre-migration state.
+
+  ## Related
+
+  - Design spec: `docs/superpowers/specs/2026-04-16-expo-prebuild-migration-design.md`
+  - Plan: `docs/superpowers/plans/2026-04-16-expo-prebuild-pr2-cutover.md`
+  ```
+
+- [ ] **Step 4: Hand off**
+
+This PR is ready for review. Subscribe to PR activity
+(`mcp__github__subscribe_pr_activity`) if the user wants automated
+response to CI failures or review comments. Otherwise stop and wait
+for review feedback.
+
+---
+
+## Completion Criteria
+
+This plan is complete when **all** of the following are true:
+
+- [ ] All 11 tasks checked off.
+- [ ] Every task resulted in one or more commits on `claude/expo-prebuild-pr2-cutover`.
+- [ ] All 16 acceptance-criteria items from the spec record PASS with evidence.
+- [ ] `mise run agent:pre-commit` passes on the tip of the branch.
+- [ ] CI passes on the PR (all workflows green).
+- [ ] PR open against `master` (non-draft).
+- [ ] `.verification-evidence.md` (not committed) is copy-pasted into the PR body.
+
+---
+
+## Appendix: Prebuild invocations across the repo
+
+Single-source-of-truth table for where `npx expo prebuild` runs:
+
+| Location | Invocation | Why |
+|---|---|---|
+| `.mise.toml` | `npx expo prebuild --clean -p ios` | `mise run prebuild` developer entry point |
+| `ios/ci_scripts/ci_post_clone.sh` | `npx expo prebuild --clean -p ios --no-install` | Xcode Cloud post-clone step, before `pod install` |
+| `.github/workflows/build-and-deploy.yml` | `mise run prebuild -- --no-install` | Nightly release build |
+| `.github/workflows/check.yml` | `mise run prebuild -- --no-install` | PR CI checks |
+| `.github/workflows/cocoapods.yml` | `mise run prebuild -- --no-install` | Renovate-triggered dependency PRs |
+| `.github/workflows/copilot-setup-steps.yml` | *(only if Task 8 Step 4 determines it's needed)* | Copilot agent sandbox |
+
+All five CI invocations use `--no-install` because `pod install`
+runs separately (with `--deployment` for reproducible lockfile
+enforcement).
+
+
