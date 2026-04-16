@@ -1,1 +1,7 @@
 *	@drewvolz @hawkrives kristofer.rye@gmail.com
+
+package.json
+package-lock.json
+pnpm-lock.yaml
+ios/Podfile
+ios/Podfile.lock
