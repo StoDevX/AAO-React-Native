@@ -1825,7 +1825,7 @@ PODS:
     - React-Core
   - RNDateTimePicker (9.1.0):
     - React-Core
-  - RNDeviceInfo (11.1.0):
+  - RNDeviceInfo (15.0.2):
     - React-Core
   - RNGestureHandler (2.31.0):
     - DoubleConversion
@@ -2441,7 +2441,7 @@ SPEC CHECKSUMS:
   RNCClipboard: f6679d470d0da2bce2a37b0af7b9e0bf369ecda5
   RNCPicker: 7de564dce1f90b53e386a24001aafc3578233dfe
   RNDateTimePicker: a4679e6488003e5fb68502b50ffb1b74b8b31ca0
-  RNDeviceInfo: 900bd20e1fd3bfd894e7384cc4a83880c0341bd3
+  RNDeviceInfo: 4c852998208b60dc192ae3529e5867817719ad1e
   RNGestureHandler: 30132bb49f18d3ed3ac391567131349419582197
   RNKeychain: b060a891b105741c67da179f4d88ed87960f22e7
   RNReanimated: 510c8d0f8b8b84ac33b46cfb7147f433f47b15b2
