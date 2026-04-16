@@ -1,12 +1,6 @@
 import * as React from 'react'
-import {Platform} from 'react-native'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
-import {
-	MaterialIcon,
-	IosIcon,
-	createTabNavigator,
-	type Tab,
-} from '@frogpond/navigation-tabs'
+import {createNativeBottomTabNavigator} from '@react-navigation/bottom-tabs/unstable'
 
 import {CccCalendarView, namedCalendarOptions} from '@frogpond/ccc-calendar'
 import {useQuery} from '@tanstack/react-query'
@@ -53,38 +47,38 @@ type Params = {
 	NorthfieldCalendarView: undefined
 }
 
-const tabs: Tab<Params>[] = [
-	{
-		name: 'StOlafCalendarView',
-		component: StOlafCalendarView,
-		tabBarLabel: 'St. Olaf',
-		tabBarIcon: Platform.select({
-			ios: IosIcon('school'),
-			android: MaterialIcon('school'),
-		}),
-	},
-	{
-		name: 'OlevilleCalendarView',
-		component: OlevilleCalendarView,
-		tabBarLabel: 'Oleville',
-		tabBarIcon: Platform.select({
-			ios: IosIcon('happy'),
-			android: MaterialIcon('emoticon-happy'),
-		}),
-	},
-	{
-		name: 'NorthfieldCalendarView',
-		component: NorthfieldCalendarView,
-		tabBarLabel: 'Northfield',
-		tabBarIcon: Platform.select({
-			ios: IosIcon('happy'),
-			android: MaterialIcon('emoticon-happy'),
-		}),
-	},
-]
+const Tab = createNativeBottomTabNavigator<Params>()
+
+export const View = (): JSX.Element => (
+	<Tab.Navigator screenOptions={{headerShown: false}}>
+		<Tab.Screen
+			component={StOlafCalendarView}
+			name="StOlafCalendarView"
+			options={{
+				tabBarLabel: 'St. Olaf',
+				tabBarIcon: {type: 'sfSymbol', name: 'graduationcap.fill'},
+			}}
+		/>
+		<Tab.Screen
+			component={OlevilleCalendarView}
+			name="OlevilleCalendarView"
+			options={{
+				tabBarLabel: 'Oleville',
+				tabBarIcon: {type: 'sfSymbol', name: 'face.smiling.fill'},
+			}}
+		/>
+		<Tab.Screen
+			component={NorthfieldCalendarView}
+			name="NorthfieldCalendarView"
+			options={{
+				tabBarLabel: 'Northfield',
+				tabBarIcon: {type: 'sfSymbol', name: 'face.smiling.fill'},
+			}}
+		/>
+	</Tab.Navigator>
+)
 
 export type NavigationParams = undefined
-export const View = createTabNavigator<Params>(tabs)
 export const NavigationKey = 'Calendar'
 export const NavigationOptions: NativeStackNavigationOptions = {
 	title: 'Calendar',

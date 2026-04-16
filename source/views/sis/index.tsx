@@ -1,11 +1,6 @@
-import {Platform} from 'react-native'
+import * as React from 'react'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
-import {
-	MaterialIcon,
-	IosIcon,
-	createTabNavigator,
-	type Tab,
-} from '@frogpond/navigation-tabs'
+import {createNativeBottomTabNavigator} from '@react-navigation/bottom-tabs/unstable'
 
 import {BalancesOrAcknowledgementView} from './balances-acknowledgement'
 import {View as StudentWorkView} from './student-work'
@@ -25,29 +20,30 @@ type Params = {
 	StudentWorkView: undefined
 }
 
-const tabs: Tab<Params>[] = [
-	{
-		name: 'BalancesView',
-		component: BalancesOrAcknowledgementView,
-		tabBarLabel: 'Balances',
-		tabBarIcon: Platform.select({
-			ios: IosIcon('card'),
-			android: MaterialIcon('credit-card'),
-		}),
-	},
-	{
-		name: 'StudentWorkView',
-		component: StudentWorkView,
-		tabBarLabel: 'Open Jobs',
-		tabBarIcon: Platform.select({
-			ios: IosIcon('briefcase'),
-			android: MaterialIcon('briefcase-search'),
-		}),
-	},
-]
+const Tab = createNativeBottomTabNavigator<Params>()
+
+export const View = (): JSX.Element => (
+	<Tab.Navigator screenOptions={{headerShown: false}}>
+		<Tab.Screen
+			component={BalancesOrAcknowledgementView}
+			name="BalancesView"
+			options={{
+				tabBarLabel: 'Balances',
+				tabBarIcon: {type: 'sfSymbol', name: 'creditcard.rewards.fill'},
+			}}
+		/>
+		<Tab.Screen
+			component={StudentWorkView}
+			name="StudentWorkView"
+			options={{
+				tabBarLabel: 'Open Jobs',
+				tabBarIcon: {type: 'sfSymbol', name: 'briefcase.fill'},
+			}}
+		/>
+	</Tab.Navigator>
+)
 
 export type NavigationParams = undefined
-export const View = createTabNavigator<Params>(tabs)
 export const NavigationKey = 'SIS'
 export const NavigationOptions: NativeStackNavigationOptions = {
 	title: 'SIS',

@@ -1,12 +1,6 @@
 import * as React from 'react'
-import {Platform} from 'react-native'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
-import {
-	MaterialIcon,
-	IosIcon,
-	createTabNavigator,
-	type Tab,
-} from '@frogpond/navigation-tabs'
+import {createNativeBottomTabNavigator} from '@react-navigation/bottom-tabs/unstable'
 
 import {BonAppHostedMenu} from './menu-bonapp'
 import {GitHubHostedMenu} from './menu-github'
@@ -69,47 +63,46 @@ type Params = {
 	CarletonMenuListView: undefined
 }
 
-const tabs: Tab<Params>[] = [
-	{
-		name: 'StavHallMenuView',
-		component: StavHallMenuView,
-		tabBarLabel: 'Stav Hall',
-		tabBarIcon: Platform.select({
-			ios: IosIcon('nutrition'),
-			android: MaterialIcon('food-apple'),
-		}),
-	},
-	{
-		name: 'TheCageMenuView',
-		component: TheCageMenuView,
-		tabBarLabel: 'The Cage',
-		tabBarIcon: Platform.select({
-			ios: IosIcon('cafe'),
-			android: MaterialIcon('coffee'),
-		}),
-	},
-	{
-		name: 'ThePauseMenuView',
-		component: ThePauseMenuView,
-		tabBarLabel: 'The Pause',
-		tabBarIcon: Platform.select({
-			ios: IosIcon('paw'),
-			android: MaterialIcon('paw'),
-		}),
-	},
-	{
-		name: 'CarletonMenuListView',
-		component: CarletonCafeIndex,
-		tabBarLabel: 'Carleton',
-		tabBarIcon: Platform.select({
-			ios: IosIcon('menu'),
-			android: MaterialIcon('menu'),
-		}),
-	},
-]
+const Tab = createNativeBottomTabNavigator<Params>()
+
+export const View = (): JSX.Element => (
+	<Tab.Navigator screenOptions={{headerShown: false}}>
+		<Tab.Screen
+			component={StavHallMenuView}
+			name="StavHallMenuView"
+			options={{
+				tabBarLabel: 'Stav Hall',
+				tabBarIcon: {type: 'sfSymbol', name: 'fork.knife'},
+			}}
+		/>
+		<Tab.Screen
+			component={TheCageMenuView}
+			name="TheCageMenuView"
+			options={{
+				tabBarLabel: 'The Cage',
+				tabBarIcon: {type: 'sfSymbol', name: 'cup.and.saucer.fill'},
+			}}
+		/>
+		<Tab.Screen
+			component={ThePauseMenuView}
+			name="ThePauseMenuView"
+			options={{
+				tabBarLabel: 'The Pause',
+				tabBarIcon: {type: 'sfSymbol', name: 'pawprint.fill'},
+			}}
+		/>
+		<Tab.Screen
+			component={CarletonCafeIndex}
+			name="CarletonMenuListView"
+			options={{
+				tabBarLabel: 'Carleton',
+				tabBarIcon: {type: 'sfSymbol', name: 'list.bullet'},
+			}}
+		/>
+	</Tab.Navigator>
+)
 
 export type NavigationParams = undefined
-export const View = createTabNavigator<Params>(tabs)
 export const NavigationKey = 'Menus'
 export const NavigationOptions: NativeStackNavigationOptions = {
 	title: 'Menus',
