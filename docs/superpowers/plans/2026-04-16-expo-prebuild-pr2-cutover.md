@@ -723,3 +723,420 @@ EOF
 )"
 ```
 
+---
+
+## Task 6: Update `.github/workflows/build-and-deploy.yml`
+
+**Files:**
+- `.github/workflows/build-and-deploy.yml`
+
+Two changes: (1) insert a prebuild step before `pod install`; (2)
+replace the implicit ccache handling (which currently relies on the
+Podfile's `USE_CCACHE` env branch) with an explicit ccache setup via
+the `hendrikmuhs/ccache-action` action.
+
+### 6.1 Ccache action reference (docs check)
+
+Inputs of `hendrikmuhs/ccache-action@v1` (verified at plan-writing
+time):
+
+| Input | Default | Used here? |
+|---|---|---|
+| `key` | *(none)* | Yes — appended to auto key for scope |
+| `restore-keys` | *(none)* | Yes — fallback hierarchy, mirrors current pattern |
+| `restore` | `true` | default |
+| `max-size` | `"500MB"` | Set to `2G` to match existing cap |
+| `variant` | `ccache` | default |
+| `create-symlink` | `false` | **Set to `true`** — symlinks cc/c++/clang in `/usr/local/bin` so Xcode's clang invocations route through ccache without PATH gymnastics |
+| `save` | `true` | default |
+| `install` | `detect` | default — uses Homebrew on macOS |
+| `evict-old-files` | empty | default |
+
+Behavior: the action installs ccache on macOS via Homebrew, manages
+the ccache cache directory (`~/Library/Caches/ccache`), handles
+restore + save via GitHub Actions cache. No separate
+`actions/cache` step needed for ccache.
+
+### 6.2 Rewire `build-and-deploy.yml`
+
+- [ ] **Step 1: Replace the `ios` job's steps**
+
+Current (from file read at plan-writing time):
+
+```yaml
+  ios:
+    name: Build for iOS
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151 # v4.0.1
+      - run: sudo xcode-select -s /Applications/Xcode_16.4.app
+      - run: git fetch --prune --unshallow
+      - run: npm ci
+      - run: mise run pod:install --deployment
+      - run: bundle exec fastlane ios ci-run
+        env:
+          # ...
+```
+
+Target:
+
+```yaml
+  ios:
+    name: Build for iOS
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151 # v4.0.1
+      - run: sudo xcode-select -s /Applications/Xcode_16.4.app
+      - run: git fetch --prune --unshallow
+      - run: npm ci
+
+      - name: Set up ccache
+        uses: hendrikmuhs/ccache-action@v1  # pin to a commit SHA in practice
+        with:
+          key: build-and-deploy/ios/xcode-16.4
+          max-size: 2G
+          create-symlink: true
+
+      - name: Regenerate ios/ via Expo prebuild
+        run: mise run prebuild -- --no-install
+
+      - run: mise run pod:install --deployment
+
+      - run: bundle exec fastlane ios ci-run
+        env:
+          # existing env block unchanged
+          FASTLANE_PASSWORD: ${{ secrets.FASTLANE_PASSWORD }}
+          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+          GIT_COMMIT_DESC: $(git log --format=oneline -n 1 $GITHUB_SHA)
+          FASTLANE_SKIP_UPDATE_CHECK: '1'
+          FASTLANE_DISABLE_ANIMATION: '1'
+          SENTRY_ORG: frog-pond-labs
+          SENTRY_PROJECT: all-about-olaf
+          SENTRY_AUTH_TOKEN: ${{ secrets.HOSTED_SENTRY_AUTH_TOKEN }}
+          GITHUB_KEYS_REPOSITORY_TOKEN: ${{ secrets.GITHUB_KEYS_REPOSITORY_TOKEN }}
+```
+
+Key differences:
+
+- New `Set up ccache` step replaces the old
+  (formerly-implicit-via-Podfile) ccache handling.
+- New `Regenerate ios/ via Expo prebuild` step runs before
+  `pod install`. `mise run prebuild -- --no-install` passes the
+  `--no-install` flag through to `npx expo prebuild` (so Expo doesn't
+  run `pod install` itself; we do it explicitly on the next step with
+  `--deployment`).
+- `USE_CCACHE: '1'` env variable is removed (it's no longer read
+  anywhere; `create-symlink: true` handles routing).
+
+- [ ] **Step 2: Pin the ccache-action to a commit SHA**
+
+Renovate config (if active) and the repo's existing hygiene (see the
+other actions already pinned to SHAs in workflows) call for pinning
+third-party actions to a specific commit. Look up the latest release
+SHA at the time of commit:
+
+```bash
+gh api repos/hendrikmuhs/ccache-action/commits/v1 --jq '.sha'
+```
+
+Substitute the result into the `uses:` line:
+
+```yaml
+uses: hendrikmuhs/ccache-action@<sha> # v1
+```
+
+- [ ] **Step 3: If react_native_post_install needs `CLANG_ENABLE_EXPLICIT_MODULES=NO`, pass it as an xcodebuild build setting**
+
+Spec Step 5 notes the Podfile no longer branches on `USE_CCACHE`; the
+`CLANG_ENABLE_EXPLICIT_MODULES = NO` that workaround formerly set
+needs to move to the build invocation (Xcode 16's explicit-modules
+feature fights with ccache's CC wrapper).
+
+Two sub-options:
+
+- **A:** pass it on every `xcodebuild` invocation in Fastlane lanes
+  (and in Task 8's `check.yml`) as `CLANG_ENABLE_EXPLICIT_MODULES=NO`
+  on the command line. Cleanest; scopes to CI only.
+- **B:** test whether Xcode 16.4 + the current ccache release actually
+  still needs this. Run one CI build without the setting; if it
+  works, drop the flag entirely.
+
+Recommendation: try B first in Task 10 verification. If it regresses,
+fall back to A. Capture the decision in the PR description.
+
+### 6.3 Commit
+
+- [ ] **Step 4: Commit**
+
+```bash
+git add .github/workflows/build-and-deploy.yml
+git commit -m "$(cat <<'EOF'
+ci: run expo prebuild and set up ccache in build-and-deploy.yml
+
+- Adds `mise run prebuild -- --no-install` before `pod install` so CI
+  regenerates ios/ from app.config.ts on every run.
+- Replaces the implicit ccache handling (which relied on the Podfile's
+  USE_CCACHE env branch) with `hendrikmuhs/ccache-action@<sha>` using
+  `create-symlink: true` so Xcode's clang routes through ccache
+  automatically. `max-size: 2G` matches the previous cap; the action
+  manages ~/Library/Caches/ccache + GitHub Actions cache save/restore.
+- Drops `USE_CCACHE: '1'` env from the fastlane step — no longer read.
+
+Task 10 verifies whether CLANG_ENABLE_EXPLICIT_MODULES=NO is still
+required on Xcode 16.4; if so, it'll land as a follow-up.
+
+See docs/superpowers/specs/2026-04-16-expo-prebuild-migration-design.md
+EOF
+)"
+```
+
+---
+
+## Task 7: Redesign `.github/workflows/cocoapods.yml`
+
+**Files:**
+- `.github/workflows/cocoapods.yml`
+
+Current behavior: on pushes to PR branches touching `package-lock.json`
+or `ios/Podfile`, run `pod install`, and if it changes
+`ios/Podfile.lock` or `ios/AllAboutOlaf.xcodeproj/project.pbxproj`,
+auto-commit those back to the PR branch.
+
+New behavior: dependency changes should flow through
+`expo prebuild`, which can rewrite more files than the old workflow
+expected. The workflow needs to:
+
+1. Trigger on the same events (renovate pushes, `/update-pods` command).
+2. Run `expo prebuild --clean -p ios` **first**, then `pod install`.
+3. Auto-commit **any** of: `ios/Podfile`, `ios/Podfile.lock`,
+   `ios/AllAboutOlaf.xcodeproj/project.pbxproj`,
+   `ios/AllAboutOlaf/Info.plist`.
+
+### 7.1 Rewire `cocoapods.yml`
+
+- [ ] **Step 1: Update the trigger paths**
+
+The `paths:` trigger block currently watches `package-lock.json`,
+`ios/Podfile`, and `.github/workflows/cocoapods.yml`. Add
+`app.config.ts` and `plugins/**` so plugin edits also re-run this
+workflow:
+
+```yaml
+on:
+  push:
+    paths:
+      - package-lock.json
+      - ios/Podfile
+      - app.config.ts
+      - plugins/**
+      - .github/workflows/cocoapods.yml
+  issue_comment:
+    types: [created]
+  workflow_dispatch:
+```
+
+- [ ] **Step 2: Insert prebuild before `pod install`**
+
+Between the existing "Delete the existing Podfile.lock" step and the
+`mise run pod:install` step, insert:
+
+```yaml
+      - name: Regenerate ios/ via Expo prebuild
+        run: mise run prebuild -- --no-install
+```
+
+- [ ] **Step 3: Broaden the auto-commit scope**
+
+The existing `push-on-podfile-change.sh` script (referenced in the
+final step of the workflow) decides which files to auto-commit.
+Read it:
+
+```bash
+cat scripts/push-on-podfile-change.sh
+```
+
+If it globs only `ios/Podfile.lock` and
+`ios/AllAboutOlaf.xcodeproj/project.pbxproj`, extend the glob list to:
+
+- `ios/Podfile`
+- `ios/Podfile.lock`
+- `ios/AllAboutOlaf.xcodeproj/project.pbxproj`
+- `ios/AllAboutOlaf/Info.plist`
+- any other file under `ios/` that `expo prebuild` touches
+
+Safer alternative: commit the full `ios/` diff (risk: pulls in
+one-off noise if a human touched something under `ios/`). The first
+option is more targeted and matches the spec.
+
+- [ ] **Step 4: Update the script**
+
+If `scripts/push-on-podfile-change.sh` needs to expand its glob, do so
+in the same commit. Include a comment in the script explaining the
+expanded scope maps to `expo prebuild` touching more files.
+
+### 7.2 Consider scope reduction
+
+The spec offers an alternative: "Or, reduce its scope to
+Renovate-triggered PRs only." If the workflow has been noisy for
+non-Renovate PRs in the past, scope it down here:
+
+- [ ] **Step 5 (optional): Scope to Renovate-triggered PRs only**
+
+Add to the job's `if:` guard:
+
+```yaml
+if: |
+  github.event_name == 'push' && github.actor == 'renovate[bot]'
+  || (github.event_name == 'issue_comment' && ...)
+```
+
+Skip this step unless there's a documented history of the workflow
+firing on unrelated PRs. Record the decision either way in the commit
+message.
+
+### 7.3 Commit
+
+- [ ] **Step 6: Commit**
+
+```bash
+git add .github/workflows/cocoapods.yml scripts/push-on-podfile-change.sh
+git commit -m "$(cat <<'EOF'
+ci(cocoapods): run expo prebuild before pod install; broaden auto-commit
+
+Dependency changes now flow through `expo prebuild`, which rewrites
+Podfile, Podfile.lock, project.pbxproj, and Info.plist. The auto-commit
+script is extended to cover all four of those files (plus any other
+ios/ file prebuild touches), not just Podfile.lock + project.pbxproj.
+
+Trigger paths now also include app.config.ts and plugins/** so plugin
+edits re-run this workflow (plugin output affects the same files).
+EOF
+)"
+```
+
+---
+
+## Task 8: Update `.github/workflows/check.yml` and `copilot-setup-steps.yml`
+
+**Files:**
+- `.github/workflows/check.yml`
+- `.github/workflows/copilot-setup-steps.yml`
+
+### 8.1 Update `check.yml`
+
+The `ios-build` job (check.yml lines 153–218) currently has
+a manual ccache flow:
+
+```yaml
+- name: Install and configure ccache
+  run: |
+    brew install ccache
+    ccache --set-config=max_size=2G
+    ccache --zero-stats
+
+- name: Restore/save ccache
+  uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
+  with:
+    path: ~/Library/Caches/ccache
+    key: ccache/...
+    restore-keys: |
+      ...
+```
+
+And the pod:install step passes `USE_CCACHE: '1'`.
+
+- [ ] **Step 1: Replace manual ccache steps with `hendrikmuhs/ccache-action`**
+
+Remove the two steps above and the `USE_CCACHE` env lines from `pod:install`
+and `xcodebuild` steps. Insert one new step after `Install npm dependencies`:
+
+```yaml
+- name: Set up ccache
+  uses: hendrikmuhs/ccache-action@<sha> # v1
+  with:
+    key: check/ios-build/xcode-${{ env.xcode_version }}
+    restore-keys: |
+      check/ios-build/xcode-${{ env.xcode_version }}/ref=master/
+    max-size: 2G
+    create-symlink: true
+```
+
+The action replaces both the manual `brew install` and the
+`actions/cache@v5.0.4` pair. `restore-keys` preserves the
+fall-back-to-master pattern from the current setup.
+
+- [ ] **Step 2: Insert prebuild before pod install**
+
+Before `Install CocoaPods`:
+
+```yaml
+- name: Regenerate ios/ via Expo prebuild
+  run: mise run prebuild -- --no-install
+```
+
+- [ ] **Step 3: Update the cache-check job's hash inputs**
+
+The `ios-cache-check` job (lines 140–151) hashes
+`**/project.pbxproj, ios/Podfile, **/Podfile.lock, ios/AllAboutOlaf/**, ios/AllAboutOlafUITests/**`.
+In the prebuild world, `project.pbxproj` and `ios/Podfile` are
+derived — so hashing them is reasonable but fragile
+(prebuild-run nondeterminism could invalidate the cache).
+
+Extend the hash to include the prebuild *inputs*:
+
+```yaml
+key: ios-app/e=${{ env.cache_epoch }}/host=macOS@15/target=ios/xcode=${{ env.xcode_version }}/ref=${{ github.head_ref || github.ref_name }}/hash=${{ hashFiles('app.config.ts', 'plugins/**', 'package-lock.json', 'ios/AllAboutOlaf/**', 'ios/AllAboutOlafUITests/**') }}
+```
+
+Rationale: the inputs to prebuild (`app.config.ts`, `plugins/**`,
+`package-lock.json` for library plugins) + the hand-authored content
+under `ios/AllAboutOlaf/**` + UI test sources are the true identity
+of a build. Dropping `project.pbxproj` and `ios/Podfile` from the hash
+avoids idempotency wobble invalidating the cache.
+
+Apply the same update to the `ccache` cache key pattern on line 179
+and its `restore-keys`.
+
+### 8.2 Update `copilot-setup-steps.yml`
+
+- [ ] **Step 4: Inspect `copilot-setup-steps.yml`**
+
+```bash
+cat .github/workflows/copilot-setup-steps.yml
+```
+
+If the workflow touches `ios/Pods/` or the main app target, add the
+same prebuild step before `pod install`. If it only does JS checks
+(tsc/test/lint), no change is needed.
+
+Record the finding in the Task 8 commit message ("copilot-setup-steps.yml:
+no change, JS-only workflow").
+
+### 8.3 Commit
+
+- [ ] **Step 5: Commit**
+
+```bash
+git add .github/workflows/check.yml .github/workflows/copilot-setup-steps.yml
+git commit -m "$(cat <<'EOF'
+ci(check): run expo prebuild before pod install; move ccache to action
+
+- Inserts `mise run prebuild -- --no-install` before pod install in
+  the `ios-build` job so CI regenerates ios/ from app.config.ts.
+- Replaces the manual ccache flow (`brew install ccache` +
+  `actions/cache@v5` + `USE_CCACHE: '1'` env) with
+  `hendrikmuhs/ccache-action@<sha>` using `create-symlink: true`.
+- Updates the `ios-cache-check` hash inputs from derived files
+  (project.pbxproj, Podfile) to prebuild inputs (app.config.ts,
+  plugins/**, package-lock.json) so prebuild idempotency wobble can't
+  invalidate the build cache.
+- copilot-setup-steps.yml: <JS-only, no change needed | updated with
+  the same prebuild step>.
+
+See docs/superpowers/specs/2026-04-16-expo-prebuild-migration-design.md
+EOF
+)"
+```
+
