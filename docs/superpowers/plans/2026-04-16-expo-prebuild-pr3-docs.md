@@ -398,3 +398,167 @@ EOF
 )"
 ```
 
+---
+
+## Task 5: Author the Phase 3 stub (`expo-sdk-55-newarch-upgrade-design.md`)
+
+**Files:**
+- `docs/superpowers/specs/2026-04-16-expo-sdk-55-newarch-upgrade-design.md` (new)
+
+**Intent:** capture the New-Architecture-specific context that makes
+Phase 3 fundamentally different from Phase 2. New Architecture is a
+hard requirement of SDK 55 and changes per-library compatibility
+requirements; the stub flags that work upfront so Phase 3 doesn't
+start from zero.
+
+### 5.1 Write the stub
+
+- [ ] **Step 1: Create the file with the following content**
+
+```markdown
+# Phase 3 — Expo SDK 54 → 55 / RN 0.81 → 0.83 + New Architecture (Stub)
+
+> **Status:** stub. Not yet brainstormed or designed. Captures the
+> Phase 1 + Phase 2 context relevant to enabling the New Architecture.
+
+## What this phase does
+
+Bump:
+- Expo SDK 54 → 55.x
+- React Native 0.81 → 0.83.x
+
+**And** flip:
+- `RCT_NEW_ARCH_ENABLED` from `0` to `1`
+  (currently expressed as `expo-build-properties` `ios.newArchEnabled: false`).
+- Remove `react-native-restart-newarch` if its sole purpose was
+  blocking the New Architecture.
+
+SDK 55 makes the New Architecture mandatory; there's no way to opt
+out at this version, so this phase has to land both the version bump
+and the architecture flip together.
+
+## Why this is its own phase
+
+Combined risk profile is fundamentally different from Phase 2:
+- Per-library compatibility audit must succeed for every native
+  library in the tree.
+- Bridgeless mode changes thread/event-loop semantics; some
+  components (Animated, GestureHandler, etc.) may behave subtly
+  differently.
+- Xcode 26+ requirement may require runner-image bumps in CI and
+  Xcode Cloud.
+
+## Inherited from Phases 1–2
+
+- Prebuild scaffold (Phase 1).
+- SDK 54 upgrade in production (Phase 2).
+- Plugin set updated for SDK 54 quirks (Phase 2).
+
+## Per-library New-Architecture compatibility audit
+
+Required upfront. Categories:
+
+1. **Expo modules:** all expo-* packages have first-class
+   New-Architecture support by SDK 55. Likely no action needed.
+2. **`react-native-*` from React Native core team:** check each
+   for an `interopLayer` flag in their podspec or a
+   "supports new arch" line in the README.
+3. **Community/third-party libraries:** the riskiest category.
+   For each library in `package.json` that ships native code,
+   verify either:
+   - it claims New-Architecture support in its README, **or**
+   - it can be loaded via the
+     [interop layer](https://reactnative.dev/docs/the-new-architecture/migration#enabling-the-interop-layer)
+     (which trades some performance for compatibility), **or**
+   - we replace it with an alternative.
+
+Audit checklist (to be filled in during Phase 3 brainstorming):
+
+| Library | Native code? | New-Arch ready? | Action |
+|---|---|---|---|
+| `glamorous-native` | TBD | TBD | TBD |
+| `react-native-change-icon` | TBD | TBD | TBD |
+| `react-native-track-player` | TBD | TBD | TBD |
+| `@react-native-clipboard/clipboard` | TBD | TBD | TBD |
+| `@react-native-community/datetimepicker` | TBD | TBD | TBD |
+| `@react-native-community/netinfo` | TBD | TBD | TBD |
+| `@react-native-community/slider` | TBD | TBD | TBD |
+| `@react-native-async-storage/async-storage` | TBD | TBD | TBD |
+| `react-native-safe-area-context` | TBD | TBD | TBD |
+| `react-native-screens` | TBD | TBD | TBD |
+| `react-native-svg` | TBD | TBD | TBD |
+| `react-native-webview` | TBD | TBD | TBD |
+| `react-native-reanimated` | TBD | TBD | TBD |
+| `react-native-gesture-handler` | TBD | TBD | TBD |
+| ... | ... | ... | ... |
+
+(Generated from `package.json` at Phase 3 start.)
+
+## Open questions for Phase 3 brainstorming
+
+- **Xcode version.** SDK 55 minimum is Xcode 26+. Verify
+  `macos-15` runner has it, or bump to `macos-16`.
+- **`react-native-restart-newarch`.** Was added specifically to
+  guard against accidental New-Arch opt-in. Drop it.
+- **Bridgeless mode.** Audit any code that touches
+  `NativeModules` directly (vs. via TurboModule wrappers).
+- **Animated / Reanimated coexistence.** If both libraries
+  are in use, double-check New-Arch behavior under Bridgeless.
+
+## Risks
+
+- **High: library incompatibility could block the upgrade
+  indefinitely.** Mitigation: do the audit *before* committing to
+  the upgrade. If a critical library can't be made New-Arch
+  compatible, defer or replace it.
+- **High: subtle runtime regressions under Bridgeless.** No
+  static check catches "this animation is 4 ms slower"; relies on
+  manual visual verification.
+- **Medium: XCUITest flake.** New Architecture changes some
+  timing characteristics. Some XCUITests may need
+  retry-on-flake or longer timeouts.
+
+## Acceptance criteria sketch
+
+- All Phase 1 functional acceptance items still PASS.
+- New-Architecture-specific:
+  - `RCT_NEW_ARCH_ENABLED=1` in the generated Podfile.
+  - App boots on a clean install with `NewArchitectureEnabled: YES`
+    visible in the launch logs.
+  - All XCUITests pass (no skipped tests due to New-Arch
+    incompatibility).
+
+## When to start Phase 3
+
+After Phase 2 (SDK 54) is in production for at least two Fastlane
+release cycles, the per-library audit is complete, and at least one
+team member has built a small New-Arch demo to confirm the toolchain
+works locally.
+
+## See also
+
+- Phase 1 spec: `docs/superpowers/specs/2026-04-16-expo-prebuild-migration-design.md`
+- Phase 2 stub: `docs/superpowers/specs/2026-04-16-expo-sdk-54-upgrade-design.md`
+- Expo SDK 55 changelog: https://expo.dev/changelog/sdk-55
+- New Architecture migration: https://reactnative.dev/docs/the-new-architecture/migration
+```
+
+### 5.2 Commit
+
+- [ ] **Step 2: Commit**
+
+```bash
+git add docs/superpowers/specs/2026-04-16-expo-sdk-55-newarch-upgrade-design.md
+git commit -m "$(cat <<'EOF'
+docs(spec): seed Phase 3 (SDK 55 + New Arch) design stub
+
+Captures the per-library New-Architecture compatibility audit as the
+single biggest risk for Phase 3, with a TBD table seeded from the
+current package.json's native-code libraries. Notes the SDK 55 hard
+constraints (Xcode 26+, no Legacy-Architecture opt-out), the
+Bridgeless-mode subtleties, and the Phase 1 + Phase 2 prerequisites.
+Explicitly a stub.
+EOF
+)"
+```
+
