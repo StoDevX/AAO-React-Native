@@ -1,6 +1,7 @@
 import AVFoundation
 import React
 import React_RCTAppDelegate
+import ReactAppDependencyProvider
 import UIKit
 
 @UIApplicationMain
@@ -9,6 +10,8 @@ class AppDelegate: RCTAppDelegate {
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
   ) -> Bool {
+    self.dependencyProvider = RCTAppDependencyProvider()
+
     if ProcessInfo.processInfo.arguments.contains("--reset-state") {
       let fileManager = FileManager.default
       if let libraryPath = fileManager.urls(for: .libraryDirectory, in: .userDomainMask).first {

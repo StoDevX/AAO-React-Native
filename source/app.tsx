@@ -67,7 +67,7 @@ function ErrorFallback({
 
 function App(): JSX.Element {
 	// Create a ref for the navigation container
-	const navigationRef = React.useRef()
+	const navigationRef = React.useRef(null)
 	const scheme = useColorScheme()
 	const theme = scheme === 'dark' ? CombinedDarkTheme : CombinedLightTheme
 	const statusBarStyle = scheme === 'dark' ? 'light-content' : 'dark-content'

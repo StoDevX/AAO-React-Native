@@ -1,0 +1,71 @@
+diff --git node_modules/react-native/src/types/globals.d.ts node_modules/react-native/src/types/globals.d.ts
+--- node_modules/react-native/src/types/globals.d.ts
++++ node_modules/react-native/src/types/globals.d.ts
+@@ -515,62 +515,11 @@
+ 
+   // #endregion
+   // #region Abort Controller
+-
+-  interface AbortEvent extends Event {
+-    type: 'abort';
+-  }
+-
+-  class AbortSignal implements EventTarget {
+-    /**
+-     * AbortSignal cannot be constructed directly.
+-     */
+-    constructor();
+-    /**
+-     * Returns `true` if this `AbortSignal`'s `AbortController` has signaled to abort, and `false` otherwise.
+-     */
+-    readonly aborted: boolean;
+-
+-    onabort: (event: AbortEvent) => void;
+-
+-    addEventListener: (
+-      type: 'abort',
+-      listener: (this: AbortSignal, event: any) => any,
+-      options?:
+-        | boolean
+-        | {
+-            capture?: boolean | undefined;
+-            once?: boolean | undefined;
+-            passive?: boolean | undefined;
+-          },
+-    ) => void;
+-
+-    dispatchEvent(event: Event): boolean;
+-
+-    removeEventListener: (
+-      type: 'abort',
+-      listener: (this: AbortSignal, event: any) => any,
+-      options?:
+-        | boolean
+-        | {
+-            capture?: boolean | undefined;
+-          },
+-    ) => void;
+-  }
+-
+-  class AbortController {
+-    /**
+-     * Initialize this controller.
+-     */
+-    constructor();
+-    /**
+-     * Returns the `AbortSignal` object associated with this object.
+-     */
+-    readonly signal: AbortSignal;
+-    /**
+-     * Abort and signal to any observers that the associated activity is to be aborted.
+-     */
+-    abort(): void;
+-  }
++  // Intentionally left empty: AbortSignal and AbortController are provided by
++  // @types/node's web-globals, which declare DOM-spec-compatible shapes that
++  // interoperate with @tanstack/react-query and ky. The upstream declarations
++  // in this file (non-nullable `onabort`, custom `AbortEvent`) conflict with
++  // those types. Patched by contrib/0002-rn-abortsignal.patch.
+ 
+   interface FileReaderEventMap {
+     abort: ProgressEvent<FileReader>;
