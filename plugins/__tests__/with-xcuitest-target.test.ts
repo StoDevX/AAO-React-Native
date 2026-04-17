@@ -6,11 +6,9 @@ import xcode from 'xcode'
 import type {XcodeProject} from '../with-xcuitest-target'
 import {
 	AUTOLINKING_FIX_BEGIN,
-	AUTOLINKING_FIX_END,
 	ensureUITestTarget,
 	MAIN_TARGET_NAME,
 	NESTED_TARGET_BEGIN,
-	NESTED_TARGET_END,
 	patchPodfileForUITests,
 	UITEST_TARGET_NAME,
 } from '../with-xcuitest-target'
@@ -71,24 +69,21 @@ const SAMPLE_SOURCE_FILES = [
 	`${UITEST_TARGET_NAME}/RootAllAboutOlafUITests.swift`,
 ]
 
-describe('patchPodfileForUITests — autolinking fix', () => {
-	it('prepends the ExpoUITestsAutolinkingFix module wrapped in markers', () => {
-		const result = patchPodfileForUITests(BARE_PODFILE)
-
-		expect(result).toContain(AUTOLINKING_FIX_BEGIN)
-		expect(result).toContain(AUTOLINKING_FIX_END)
-		expect(result).toContain('module ExpoUITestsAutolinkingFix')
-		expect(result).toContain("return nil if name == 'AllAboutOlafUITests'")
-		expect(result).toContain(
-			'Pod::Podfile::TargetDefinition.prepend(ExpoUITestsAutolinkingFix)',
-		)
+describe('patchPodfileForUITests', () => {
+	it('matches snapshot when applied to a bare Podfile', () => {
+		expect(patchPodfileForUITests(BARE_PODFILE)).toMatchSnapshot()
 	})
 
-	it('inserts the fix before `platform :ios`', () => {
-		const result = patchPodfileForUITests(BARE_PODFILE)
-		const fixIndex = result.indexOf(AUTOLINKING_FIX_BEGIN)
-		const platformIndex = result.indexOf('platform :ios')
-		expect(fixIndex).toBeLessThan(platformIndex)
+	it('is idempotent — applying three times leaves one copy of each marked block', () => {
+		const once = patchPodfileForUITests(BARE_PODFILE)
+		const thrice = patchPodfileForUITests(patchPodfileForUITests(once))
+		expect(thrice).toBe(once)
+		expect(
+			(thrice.match(new RegExp(AUTOLINKING_FIX_BEGIN, 'g')) ?? []).length,
+		).toBe(1)
+		expect(
+			(thrice.match(new RegExp(NESTED_TARGET_BEGIN, 'g')) ?? []).length,
+		).toBe(1)
 	})
 
 	it('throws a descriptive error if `platform :ios` anchor is missing', () => {
@@ -97,55 +92,12 @@ describe('patchPodfileForUITests — autolinking fix', () => {
 			/could not find `platform :ios` anchor/,
 		)
 	})
-})
-
-describe('patchPodfileForUITests — nested UITests target', () => {
-	it("inserts `target 'AllAboutOlafUITests' do; inherit! :none; end` inside the main target", () => {
-		const result = patchPodfileForUITests(BARE_PODFILE)
-
-		expect(result).toContain(NESTED_TARGET_BEGIN)
-		expect(result).toContain(NESTED_TARGET_END)
-		expect(result).toMatch(
-			/target 'AllAboutOlafUITests' do\s+inherit! :none\s+end/,
-		)
-	})
-
-	it("places the nested target inside the main `target 'AllAboutOlaf'` block", () => {
-		const result = patchPodfileForUITests(BARE_PODFILE)
-
-		const mainStart = result.indexOf("target 'AllAboutOlaf' do")
-		const nestedIndex = result.indexOf(NESTED_TARGET_BEGIN)
-		const mainEnd = result.indexOf('\nend\n', mainStart)
-
-		expect(nestedIndex).toBeGreaterThan(mainStart)
-		expect(nestedIndex).toBeLessThan(mainEnd)
-	})
 
 	it("throws if the main `target 'AllAboutOlaf' do` block is absent", () => {
 		const noMain = BARE_PODFILE.replace(/target 'AllAboutOlaf' do\n/, '')
 		expect(() => patchPodfileForUITests(noMain)).toThrow(
 			/could not find `target 'AllAboutOlaf' do` anchor/,
 		)
-	})
-})
-
-describe('patchPodfileForUITests — idempotency', () => {
-	it('produces identical output when applied twice', () => {
-		const once = patchPodfileForUITests(BARE_PODFILE)
-		const twice = patchPodfileForUITests(once)
-		expect(twice).toBe(once)
-	})
-
-	it('only ever contains one copy of each marked block', () => {
-		const result = patchPodfileForUITests(
-			patchPodfileForUITests(patchPodfileForUITests(BARE_PODFILE)),
-		)
-		expect(
-			(result.match(new RegExp(AUTOLINKING_FIX_BEGIN, 'g')) ?? []).length,
-		).toBe(1)
-		expect(
-			(result.match(new RegExp(NESTED_TARGET_BEGIN, 'g')) ?? []).length,
-		).toBe(1)
 	})
 })
 

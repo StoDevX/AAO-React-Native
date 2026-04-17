@@ -1,5 +1,5 @@
 import {withAppDelegate} from '@expo/config-plugins'
-import type {ConfigPlugin} from './types'
+import type {ConfigPlugin} from '@expo/config-plugins'
 
 const BEGIN_MARKER = '// AAO_APP_DELEGATE_CUSTOMIZATIONS_BEGIN'
 const END_MARKER = '// AAO_APP_DELEGATE_CUSTOMIZATIONS_END'

@@ -1,0 +1,36 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`patchPodfileForUITests matches snapshot when applied to a bare Podfile 1`] = `
+"require File.join(File.dirname(\`node --print "require.resolve('expo/package.json')"\`), "scripts/autolinking")
+require '../node_modules/react-native/scripts/react_native_pods.rb'
+
+# BEGIN with-xcuitest-target autolinking fix
+module ExpoUITestsAutolinkingFix
+  def autolinking_manager
+    return nil if name == 'AllAboutOlafUITests'
+    super
+  end
+end
+Pod::Podfile::TargetDefinition.prepend(ExpoUITestsAutolinkingFix)
+# END with-xcuitest-target autolinking fix
+
+platform :ios, min_ios_version_supported
+prepare_react_native_project!
+
+target 'AllAboutOlaf' do
+	# BEGIN with-xcuitest-target nested target
+	target 'AllAboutOlafUITests' do
+		inherit! :none
+	end
+	# END with-xcuitest-target nested target
+
+	use_expo_modules!
+	config = use_native_modules!
+
+	use_react_native!(
+		:path => config[:reactNativePath],
+		:app_path => "#{Pod::Config.instance.installation_root}/.."
+	)
+end
+"
+`;

@@ -68,26 +68,13 @@ function countWindmillBuildFiles(project: XcodeProject): number {
 }
 
 describe('addAlternateIcons', () => {
-	it('adds windmill entry to CFBundleIcons and CFBundleIcons~ipad when neither exists', () => {
-		const result = addAlternateIcons({CFBundleName: '$(PRODUCT_NAME)'})
-
-		const expectedEntry = {
-			CFBundleIconFiles: [ALTERNATE_ICON_FILE],
-			UIPrerenderedIcon: true,
+	it('matches snapshot when applied to a baseline Info.plist', () => {
+		const input = {
+			CFBundleName: '$(PRODUCT_NAME)',
+			CFBundleDisplayName: 'All About Olaf',
+			NSAppTransportSecurity: {NSAllowsArbitraryLoads: false},
 		}
-
-		const phoneIcons = result.CFBundleIcons as {
-			CFBundleAlternateIcons: Record<string, unknown>
-		}
-		const ipadIcons = result['CFBundleIcons~ipad'] as {
-			CFBundleAlternateIcons: Record<string, unknown>
-		}
-		expect(phoneIcons.CFBundleAlternateIcons[ALTERNATE_ICON_KEY]).toEqual(
-			expectedEntry,
-		)
-		expect(ipadIcons.CFBundleAlternateIcons[ALTERNATE_ICON_KEY]).toEqual(
-			expectedEntry,
-		)
+		expect(addAlternateIcons(input)).toMatchSnapshot()
 	})
 
 	it('is idempotent — running twice produces the same result', () => {
@@ -97,7 +84,7 @@ describe('addAlternateIcons', () => {
 		expect(twice).toEqual(once)
 	})
 
-	it('preserves unrelated alternate icons on both keys', () => {
+	it('preserves unrelated alternate icons already present on each key', () => {
 		const input = {
 			CFBundleIcons: {
 				CFBundleAlternateIcons: {
@@ -117,22 +104,8 @@ describe('addAlternateIcons', () => {
 			UIPrerenderedIcon: false,
 		})
 		expect(phoneIcons.CFBundleAlternateIcons[ALTERNATE_ICON_KEY]).toEqual({
-			CFBundleIconFiles: ['windmill'],
+			CFBundleIconFiles: [ALTERNATE_ICON_FILE],
 			UIPrerenderedIcon: true,
-		})
-	})
-
-	it('does not mutate other top-level Info.plist keys', () => {
-		const input = {
-			CFBundleName: '$(PRODUCT_NAME)',
-			CFBundleDisplayName: 'All About Olaf',
-			NSAppTransportSecurity: {NSAllowsArbitraryLoads: false},
-		}
-		const result = addAlternateIcons(input)
-		expect(result.CFBundleName).toBe('$(PRODUCT_NAME)')
-		expect(result.CFBundleDisplayName).toBe('All About Olaf')
-		expect(result.NSAppTransportSecurity).toEqual({
-			NSAllowsArbitraryLoads: false,
 		})
 	})
 })

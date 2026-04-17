@@ -23,39 +23,8 @@ public class AppDelegate: ExpoAppDelegate {
 `
 
 describe('patchAppDelegate', () => {
-	it('inserts the customization block after moduleName assignment', () => {
-		const result = patchAppDelegate(BASELINE_APP_DELEGATE)
-
-		expect(result).toContain('// AAO_APP_DELEGATE_CUSTOMIZATIONS_BEGIN')
-		expect(result).toContain('// AAO_APP_DELEGATE_CUSTOMIZATIONS_END')
-
-		const moduleNameIdx = result.indexOf('self.moduleName')
-		const beginMarkerIdx = result.indexOf(
-			'// AAO_APP_DELEGATE_CUSTOMIZATIONS_BEGIN',
-		)
-		const superIdx = result.indexOf('return super.application')
-
-		expect(moduleNameIdx).toBeLessThan(beginMarkerIdx)
-		expect(beginMarkerIdx).toBeLessThan(superIdx)
-	})
-
-	it('includes all three customizations in the inserted block', () => {
-		const result = patchAppDelegate(BASELINE_APP_DELEGATE)
-
-		expect(result).toContain(
-			'ProcessInfo.processInfo.arguments.contains("--reset-state")',
-		)
-		expect(result).toContain('RCTAsyncLocalStorage_V1')
-		expect(result).toContain('removePersistentDomain')
-
-		expect(result).toContain(
-			'URLCache(memoryCapacity: 4 * 1024 * 1024, diskCapacity: 20 * 1024 * 1024)',
-		)
-		expect(result).toContain('URLCache.shared = urlCache')
-
-		expect(result).toContain(
-			'AVAudioSession.sharedInstance().setCategory(.playback)',
-		)
+	it('matches snapshot when applied to the baseline AppDelegate', () => {
+		expect(patchAppDelegate(BASELINE_APP_DELEGATE)).toMatchSnapshot()
 	})
 })
 

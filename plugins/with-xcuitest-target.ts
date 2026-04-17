@@ -2,8 +2,7 @@ import fs from 'node:fs'
 import path from 'node:path'
 
 import {withDangerousMod, withXcodeProject} from '@expo/config-plugins'
-
-import type {ConfigPlugin} from './types'
+import type {ConfigPlugin} from '@expo/config-plugins'
 
 export type XcodeProject = {
 	pbxTargetByName: (name: string) => {name?: string} | null | undefined
