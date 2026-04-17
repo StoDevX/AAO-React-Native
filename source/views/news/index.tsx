@@ -1,12 +1,6 @@
 import * as React from 'react'
-import {Platform} from 'react-native'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
-import {
-	MaterialIcon,
-	IosIcon,
-	createTabNavigator,
-	type Tab,
-} from '@frogpond/navigation-tabs'
+import {createNativeBottomTabNavigator} from '@react-navigation/bottom-tabs/unstable'
 
 import * as newsImages from '../../../images/news-sources/index'
 import {NewsList} from './news-list'
@@ -38,38 +32,38 @@ type Params = {
 	OlevilleNewsView: undefined
 }
 
-const tabs: Tab<Params>[] = [
-	{
-		name: 'StOlafNewsView',
-		component: StOlafNewsView,
-		tabBarLabel: 'St. Olaf',
-		tabBarIcon: Platform.select({
-			ios: IosIcon('school'),
-			android: MaterialIcon('school'),
-		}),
-	},
-	{
-		name: 'MessNewsView',
-		component: MessNewsView,
-		tabBarLabel: 'The Mess',
-		tabBarIcon: Platform.select({
-			ios: IosIcon('newspaper'),
-			android: MaterialIcon('newspaper-variant'),
-		}),
-	},
-	{
-		name: 'OlevilleNewsView',
-		component: OlevilleNewsView,
-		tabBarLabel: 'Oleville',
-		tabBarIcon: Platform.select({
-			ios: IosIcon('happy'),
-			android: MaterialIcon('emoticon-happy'),
-		}),
-	},
-]
+const Tab = createNativeBottomTabNavigator<Params>()
+
+export const View = (): JSX.Element => (
+	<Tab.Navigator screenOptions={{headerShown: false}}>
+		<Tab.Screen
+			component={StOlafNewsView}
+			name="StOlafNewsView"
+			options={{
+				tabBarLabel: 'St. Olaf',
+				tabBarIcon: {type: 'sfSymbol', name: 'graduationcap.fill'},
+			}}
+		/>
+		<Tab.Screen
+			component={MessNewsView}
+			name="MessNewsView"
+			options={{
+				tabBarLabel: 'The Mess',
+				tabBarIcon: {type: 'sfSymbol', name: 'newspaper.fill'},
+			}}
+		/>
+		<Tab.Screen
+			component={OlevilleNewsView}
+			name="OlevilleNewsView"
+			options={{
+				tabBarLabel: 'Oleville',
+				tabBarIcon: {type: 'sfSymbol', name: 'face.smiling.fill'},
+			}}
+		/>
+	</Tab.Navigator>
+)
 
 export type NavigationParams = undefined
-export const View = createTabNavigator<Params>(tabs)
 export const NavigationKey = 'News'
 export const NavigationOptions: NativeStackNavigationOptions = {
 	title: 'News',
