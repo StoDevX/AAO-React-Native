@@ -87,4 +87,17 @@ describe('app.config.ts', () => {
 			]),
 		)
 	})
+
+	it('registers all three local config plugins', () => {
+		const pluginRefs = (config.plugins ?? []).map((p) =>
+			Array.isArray(p) ? p[0] : p,
+		)
+		expect(pluginRefs).toEqual(
+			expect.arrayContaining([
+				'./plugins/with-app-delegate-customizations',
+				'./plugins/with-alternate-icons',
+				'./plugins/with-xcuitest-target',
+			]),
+		)
+	})
 })

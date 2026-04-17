@@ -53,6 +53,9 @@ const config: ExpoConfig = {
 		'@react-native-vector-icons/entypo',
 		'@react-native-vector-icons/ionicons',
 		'@react-native-vector-icons/material-design-icons',
+		'./plugins/with-app-delegate-customizations',
+		'./plugins/with-alternate-icons',
+		'./plugins/with-xcuitest-target',
 	],
 }
 
