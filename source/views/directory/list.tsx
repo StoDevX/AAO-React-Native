@@ -1,12 +1,6 @@
 import React from 'react'
-import {
-	FlatList,
-	Image,
-	SafeAreaView,
-	StyleSheet,
-	Text,
-	View,
-} from 'react-native'
+import {FlatList, Image, StyleSheet, Text, View} from 'react-native'
+import {SafeAreaView} from 'react-native-safe-area-context'
 import {Column} from '@frogpond/layout'
 import {Detail, ListRow, ListSeparator, Title} from '@frogpond/lists'
 import * as c from '@frogpond/colors'

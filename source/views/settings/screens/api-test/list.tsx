@@ -1,5 +1,6 @@
 import React from 'react'
-import {View, SectionList, SafeAreaView, StyleSheet} from 'react-native'
+import {View, SectionList, StyleSheet} from 'react-native'
+import {SafeAreaView} from 'react-native-safe-area-context'
 
 import {ListRow, ListSectionHeader, ListSeparator, Title} from '@frogpond/lists'
 import {Column} from '@frogpond/layout'
