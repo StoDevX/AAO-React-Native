@@ -9,6 +9,6 @@
     "test": "jest"
   },
   "dependencies": {
-    "ky": "1.14.3"
+    "ky": "2.0.1"
   }
 }

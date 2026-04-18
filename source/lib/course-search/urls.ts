@@ -9,7 +9,7 @@ export const GE_DATA = `${BASE_URL}/course-data/data-lists/valid_gereqs.json`
 export const DEPT_DATA = `${BASE_URL}/course-data/data-lists/valid_departments.json`
 export const TIMES_DATA = `${BASE_URL}/course-data/data-lists/valid_times.json`
 
-export let client = ky.create({prefixUrl: COURSE_DATA_PAGE})
+export let client = ky.create({prefix: COURSE_DATA_PAGE})
 export let infoJson = (options?: Options): Promise<TermInfoType> =>
 	client.get('info.json', options).json()
 export let geData = (options?: Options): Promise<string[]> =>
