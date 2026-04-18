@@ -1,0 +1,5 @@
+#!/bin/sh
+# Linux shim: 'command' is a shell builtin not available as standalone binary.
+# This shim handles the 'command -v <prog>' invocation used by react-native's
+# cocoapods utils to detect ccache availability.
+exec /bin/sh -c "command $*"

@@ -84,6 +84,8 @@
 			</dict>
 		</dict>
 	</dict>
+	<key>RCTNewArchEnabled</key>
+	<false/>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Entypo.ttf</string>
