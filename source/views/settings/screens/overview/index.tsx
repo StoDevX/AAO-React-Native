@@ -4,7 +4,7 @@ import {TableView} from '@frogpond/tableview'
 import {CloseScreenButton} from '@frogpond/navigation-buttons'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 
-import {isDevMode} from '@frogpond/constants'
+import {useIsDevMode} from '../../../../lib/use-is-dev-mode'
 import {FaqBannerGroup} from '../../../faqs'
 import {FAQ_TARGETS} from '../../../faqs/constants'
 
@@ -24,27 +24,33 @@ const styles = StyleSheet.create({
 	},
 })
 
-const SettingsView = (): JSX.Element => (
-	<ScrollView
-		contentContainerStyle={styles.container}
-		keyboardDismissMode="on-drag"
-		keyboardShouldPersistTaps="always"
-	>
-		<FaqBannerGroup style={styles.banner} target={FAQ_TARGETS.SETTINGS_ROOT} />
+const SettingsView = (): JSX.Element => {
+	const isDev = useIsDevMode()
+	return (
+		<ScrollView
+			contentContainerStyle={styles.container}
+			keyboardDismissMode="on-drag"
+			keyboardShouldPersistTaps="always"
+		>
+			<FaqBannerGroup
+				style={styles.banner}
+				target={FAQ_TARGETS.SETTINGS_ROOT}
+			/>
 
-		<TableView>
-			<CredentialsLoginSection />
+			<TableView>
+				<CredentialsLoginSection />
 
-			<SupportSection />
+				<SupportSection />
 
-			<AppIconSection />
+				<AppIconSection />
 
-			<MiscellanySection />
+				<MiscellanySection />
 
-			{isDevMode() && <DeveloperSection />}
-		</TableView>
-	</ScrollView>
-)
+				{isDev && <DeveloperSection />}
+			</TableView>
+		</ScrollView>
+	)
+}
 
 export {SettingsView as View}
 

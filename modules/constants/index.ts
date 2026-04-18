@@ -34,8 +34,10 @@ export const isPre: () => typeof IS_PRE = () => IS_PRE
 let IS_RC: boolean
 export const isRc: () => typeof IS_RC = () => IS_RC
 
-// checks if the build should show debugging tools
-export const isDevMode: () => boolean = () =>
+// checks if the build should show debugging tools. build-time only — use
+// useIsDevMode() from source/lib for React-tree callers that should also
+// honor the runtime override.
+export const isDebugBuild: () => boolean = () =>
 	!IS_PRODUCTION || IS_ALPHA || IS_BETA || IS_PRE || IS_RC
 
 export const setVersionInfo: (s: string) => void = (versionStr: string) => {

@@ -17,6 +17,7 @@ interface ContextMenuProps {
 	onPress?: () => void
 	onPressMenuItem: (menuKey: string) => void | Promise<void>
 	selectedAction?: string
+	testID?: string
 	title: string
 }
 
@@ -33,6 +34,7 @@ export const ContextMenu = React.forwardRef<
 		onPress,
 		onPressMenuItem,
 		selectedAction,
+		testID,
 		title,
 	} = props
 
@@ -60,6 +62,7 @@ export const ContextMenu = React.forwardRef<
 				onPressMenuItem(nativeEvent.actionKey)
 			}}
 			style={buttonStyle}
+			testID={testID}
 		>
 			{onPress ? (
 				<Touchable highlight={false} onPress={onPress}>
