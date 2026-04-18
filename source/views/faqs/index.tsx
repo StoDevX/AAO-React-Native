@@ -44,7 +44,7 @@ const styles = StyleSheet.create({
 	},
 })
 
-function FaqView(): JSX.Element {
+function FaqView(): React.ReactNode {
 	let route = useRoute<FaqRoute>()
 	let {data, error, isLoading, isError, isRefetching, refetch} =
 		useQuery(faqsOptions)
@@ -108,7 +108,7 @@ type CardProps = {
 	isHighlighted: boolean
 }
 
-const FaqCard = ({faq, isHighlighted}: CardProps): JSX.Element => {
+const FaqCard = ({faq, isHighlighted}: CardProps): React.ReactNode => {
 	return (
 		<View
 			style={[styles.card, isHighlighted ? styles.cardHighlighted : null]}

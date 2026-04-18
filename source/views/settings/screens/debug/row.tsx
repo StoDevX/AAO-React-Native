@@ -6,7 +6,7 @@ type Props = {
 	onPress: (key: string | number) => void
 }
 
-export const DebugRow = (props: Props): JSX.Element => {
+export const DebugRow = (props: Props): React.ReactNode => {
 	let {data} = props
 
 	let rowDetail = '<unknown>'

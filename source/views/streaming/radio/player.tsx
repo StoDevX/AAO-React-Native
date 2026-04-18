@@ -120,7 +120,7 @@ function playerJs(selector: string): string {
 	`
 }
 
-export function StreamPlayer(props: Props): JSX.Element {
+export function StreamPlayer(props: Props): React.ReactNode {
 	let {playState, onWaiting, onEnded, onStalled, onPause, onPlay, onError} =
 		props
 

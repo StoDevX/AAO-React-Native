@@ -74,7 +74,7 @@ function PrinterInformation({printer}: {printer: Printer}) {
 	)
 }
 
-export const PrintJobReleaseView = (): JSX.Element => {
+export const PrintJobReleaseView = (): React.ReactNode => {
 	let navigation = useNavigation()
 
 	let route = useRoute<RouteProp<RootStackParamList, 'PrintJobRelease'>>()

@@ -21,7 +21,7 @@ type Args = {
 	style?: StyleProp<ViewStyle>
 }
 
-export function DietaryTags({corIcons, dietary, style}: Args): JSX.Element {
+export function DietaryTags({corIcons, dietary, style}: Args): React.ReactNode {
 	// filter the mapping of all icons by just the icons provided by this item
 	const dietaryKeys = new Set(Object.keys(dietary))
 	const filtered = Object.entries(corIcons).filter(([k]) => dietaryKeys.has(k))

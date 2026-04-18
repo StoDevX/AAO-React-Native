@@ -8,7 +8,7 @@ import type {NativeStackHeaderRightProps} from '@react-navigation/native-stack'
 
 export function OpenSettingsButton(
 	_props: NativeStackHeaderRightProps,
-): JSX.Element {
+): React.ReactNode {
 	let navigation = useNavigation()
 
 	return (

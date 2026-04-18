@@ -5,7 +5,7 @@ import {rightButtonStyles as styles} from './styles'
 
 export function ShareButton(
 	props: Pick<TouchableProps, 'onPress'>,
-): JSX.Element {
+): React.ReactNode {
 	return (
 		<Touchable highlight={false} onPress={props.onPress} style={styles.button}>
 			<Icon name="share-outline" style={styles.icon} />

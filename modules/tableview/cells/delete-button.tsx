@@ -16,7 +16,7 @@ export const DeleteButtonCell = ({
 	title: string
 	skipConfirm?: boolean
 	onPress?: () => void
-}): JSX.Element => {
+}): React.ReactNode => {
 	let onPressCallback = onPress ?? noop
 
 	let callback = !skipConfirm

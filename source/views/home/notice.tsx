@@ -33,7 +33,7 @@ const DEV_MESSAGES = [
 const RESTART_ACTION = 'Restart app'
 const DEV_MODE_ACTION = 'Enable dev mode'
 
-export function UnofficialAppNotice(): JSX.Element {
+export function UnofficialAppNotice(): React.ReactNode {
 	const dispatch = useDispatch()
 	const devModeOverride = useSelector(selectDevModeOverride)
 	const isDev = useIsDevMode()

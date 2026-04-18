@@ -17,6 +17,6 @@ type Props = {
 	style?: StyleProp<ViewStyle>
 }
 
-export function Bar(props: Props): JSX.Element {
+export function Bar(props: Props): React.ReactNode {
 	return <SolidBar {...props} />
 }

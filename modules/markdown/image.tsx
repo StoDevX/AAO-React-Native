@@ -5,6 +5,6 @@ const styles = StyleSheet.create({
 	image: {},
 })
 
-export const Image = (props: ImageProps): JSX.Element => (
+export const Image = (props: ImageProps): React.ReactNode => (
 	<RNImage {...props} style={[styles.image, props.style]} />
 )

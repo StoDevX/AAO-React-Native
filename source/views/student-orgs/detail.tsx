@@ -46,7 +46,7 @@ export const NavigationOptions = (props: {
 	}
 }
 
-let StudentOrgsDetailView = (): JSX.Element => {
+let StudentOrgsDetailView = (): React.ReactNode => {
 	let route = useRoute<RouteProp<RootStackParamList, typeof NavigationKey>>()
 
 	let {

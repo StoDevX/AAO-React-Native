@@ -23,7 +23,7 @@ export function ActiveFilterButton<T extends object>({
 	label,
 	onRemove,
 	style,
-}: Props<T>): JSX.Element {
+}: Props<T>): React.ReactNode {
 	return (
 		<TouchableWithoutFeedback onPress={() => onRemove(filter)}>
 			<View style={[styles.badge, style]}>

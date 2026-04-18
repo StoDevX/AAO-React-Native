@@ -8,7 +8,7 @@ type Props = {
 	textColor?: ColorValue
 }
 
-export function SolidBadge(props: Props): JSX.Element {
+export function SolidBadge(props: Props): React.ReactNode {
 	const {status, accentColor = c.systemYellow, textColor = c.label} = props
 
 	return (

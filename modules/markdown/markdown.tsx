@@ -57,7 +57,7 @@ export type MarkdownProps = {
 }
 
 export class Markdown extends React.PureComponent<MarkdownProps> {
-	render(): JSX.Element {
+	render(): React.ReactNode {
 		const {
 			styles = {
 				Heading: {color: c.label},

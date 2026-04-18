@@ -61,7 +61,7 @@ function updateListFilter<T extends object>(
 export function FilterToolbar<T extends object>({
 	filters,
 	onPopoverDismiss,
-}: Props<T>): JSX.Element {
+}: Props<T>): React.ReactNode {
 	let updateFilter = updateAnyFilter(onPopoverDismiss)
 
 	let filterToggles = filters.map((filter) => (

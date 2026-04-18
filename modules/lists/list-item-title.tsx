@@ -22,7 +22,7 @@ type Props = PropsWithChildren<{
 	lines?: number
 	bold?: boolean
 }>
-export function Title(props: Props): JSX.Element {
+export function Title(props: Props): React.ReactNode {
 	return (
 		<Text
 			numberOfLines={props.lines}

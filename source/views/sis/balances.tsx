@@ -20,7 +20,7 @@ import {FAQ_TARGETS} from '../faqs/constants'
 
 const DISCLAIMER = 'This data may be outdated or otherwise inaccurate.'
 
-export const BalancesView = (): JSX.Element => {
+export const BalancesView = (): React.ReactNode => {
 	let navigation = useNavigation()
 	let {data: username = ''} = useQuery({
 		...credentialsOptions,

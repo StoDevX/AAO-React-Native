@@ -25,7 +25,7 @@ const styles = StyleSheet.create({
 	},
 })
 
-export const BonAppPickerView = (): JSX.Element => {
+export const BonAppPickerView = (): React.ReactNode => {
 	let [cafeId, setCafeId] = React.useState('')
 
 	let chooseCafe = (selectedCafeId: string) => {

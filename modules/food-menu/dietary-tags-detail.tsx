@@ -33,7 +33,7 @@ export function DietaryTagsDetail({
 	corIcons,
 	dietary,
 	style,
-}: Props): JSX.Element {
+}: Props): React.ReactNode {
 	// filter the mapping of all icons by just the icons provided by this item
 	const dietaryKeys = new Set(Object.keys(dietary))
 	const filtered = Object.entries(corIcons).filter(([k]) => dietaryKeys.has(k))

@@ -196,7 +196,7 @@ export const NavigationOptions = (props: {
 	}
 }
 
-export const JobDetailView = (): JSX.Element => {
+export const JobDetailView = (): React.ReactNode => {
 	let route = useRoute<RouteProp<RootStackParamList, 'JobDetail'>>()
 	let {job} = route.params
 

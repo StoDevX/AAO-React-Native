@@ -112,7 +112,7 @@ function useBuildingEditor(
 	return {building, dispatch, openEditor, submit}
 }
 
-export let BuildingHoursProblemReportView = (): JSX.Element => {
+export let BuildingHoursProblemReportView = (): React.ReactNode => {
 	let navigation =
 		useNavigation<NativeStackNavigationProp<RootStackParamList>>()
 	let route = useRoute<RouteProp<RootStackParamList, typeof NavigationKey>>()

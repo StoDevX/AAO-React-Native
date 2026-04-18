@@ -10,7 +10,7 @@ type Props = {
 	style?: StyleProp<TextStyle>
 }
 
-export function ScheduleTimes({times, style}: Props): JSX.Element {
+export function ScheduleTimes({times, style}: Props): React.ReactNode {
 	return (
 		<Text style={style}>
 			{times

@@ -1,5 +1,6 @@
 import type {EventType} from '@frogpond/event-type'
 import type {Moment} from 'moment-timezone'
+import type React from 'react'
 
 export interface PoweredBy {
 	title: string
@@ -29,5 +30,5 @@ export interface EventListProps {
 
 export type NavigationHeaderProps = {
 	title: string
-	headerRight: JSX.Element
+	headerRight: React.ReactElement
 }

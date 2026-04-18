@@ -32,7 +32,7 @@ function ErrorFallback({
 }: {
 	error: unknown
 	componentStack: string
-}): JSX.Element {
+}): React.ReactElement {
 	const message = error instanceof Error ? error.message : String(error)
 	const stack = error instanceof Error ? error.stack : null
 	return (
@@ -65,7 +65,7 @@ function ErrorFallback({
 	)
 }
 
-function App(): JSX.Element {
+function App(): React.ReactNode {
 	// Create a ref for the navigation container
 	const navigationRef = React.useRef(null)
 	const scheme = useColorScheme()

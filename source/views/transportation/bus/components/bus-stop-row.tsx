@@ -43,7 +43,7 @@ type Props = {
 	status: BusStateEnum
 }
 
-export function BusStopRow(props: Props): JSX.Element {
+export function BusStopRow(props: Props): React.ReactNode {
 	let {
 		barColor,
 		currentStopColor,

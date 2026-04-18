@@ -48,7 +48,7 @@ const NewsItemSeparator = (thumbnail: Props['thumbnail']) => (
 	<ListSeparator spacing={{left: thumbnail === false ? undefined : 101}} />
 )
 
-export const NewsList = (props: Props): JSX.Element => {
+export const NewsList = (props: Props): React.ReactNode => {
 	let {
 		data = [],
 		error,

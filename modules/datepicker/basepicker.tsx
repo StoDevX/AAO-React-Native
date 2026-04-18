@@ -12,7 +12,7 @@ import {BaseDatetimePickerProps} from './types'
 
 export const BaseDateTimePicker = (
 	props: BaseDatetimePickerProps,
-): JSX.Element => {
+): React.ReactNode => {
 	let [date, setDate] = React.useState(props.initialDate)
 	let [timezone] = React.useState(props.initialDate.tz() || '')
 

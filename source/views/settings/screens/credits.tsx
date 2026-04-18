@@ -96,7 +96,7 @@ const acknowledgements = [
 	'William Seabrook',
 ]
 
-export let CreditsView = (): JSX.Element => (
+export let CreditsView = (): React.ReactNode => (
 	<ScrollView
 		contentContainerStyle={styles.contentContainer}
 		contentInsetAdjustmentBehavior="automatic"

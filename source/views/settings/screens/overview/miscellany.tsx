@@ -6,7 +6,7 @@ import {GH_BASE_URL} from '../../../../lib/constants'
 import * as storage from '../../../../lib/storage'
 import {useNavigation} from '@react-navigation/native'
 
-export let MiscellanySection = (): JSX.Element => {
+export let MiscellanySection = (): React.ReactNode => {
 	let navigation = useNavigation()
 
 	let onCreditsButton = () => navigation.navigate('Credits')

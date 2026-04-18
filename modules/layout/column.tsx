@@ -16,7 +16,7 @@ export const Column = ({
 	style,
 	flex,
 	...props
-}: PropsType): JSX.Element => {
+}: PropsType): React.ReactNode => {
 	let flexStyle = flex !== undefined && flex !== null ? {flex: flex} : null
 	return (
 		<View style={[styles.column, style, flexStyle]} {...props}>

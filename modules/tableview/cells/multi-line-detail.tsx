@@ -6,10 +6,10 @@ import * as c from '@frogpond/colors'
 type Props = {
 	title: string
 	leftDetail?: string
-	rightDetail?: JSX.Element[]
+	rightDetail?: React.ReactNode
 }
 
-export function MultiLineDetailCell(props: Props): JSX.Element {
+export function MultiLineDetailCell(props: Props): React.ReactNode {
 	let {title, rightDetail, leftDetail} = props
 	let cellContent = (
 		<View style={styles.cellContentView}>

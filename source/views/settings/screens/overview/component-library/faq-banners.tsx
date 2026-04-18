@@ -8,7 +8,7 @@ import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 import {FaqBanner} from '../../../../faqs'
 import {fallbackFaqs} from '../../../../faqs/local-faqs'
 
-export const FaqBannerLibrary = (): JSX.Element => (
+export const FaqBannerLibrary = (): React.ReactNode => (
 	<ScrollView contentContainerStyle={styles.container}>
 		{fallbackFaqs.map((banner) => (
 			<View key={banner.id} style={styles.example}>

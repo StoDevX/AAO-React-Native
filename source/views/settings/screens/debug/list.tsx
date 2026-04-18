@@ -14,7 +14,7 @@ type Props = {
 	state?: unknown
 }
 
-export const DebugRootView = (): JSX.Element => {
+export const DebugRootView = (): React.ReactNode => {
 	let reduxState = useAppSelector((state) => {
 		return state
 	})
@@ -22,7 +22,7 @@ export const DebugRootView = (): JSX.Element => {
 	return <DebugView state={reduxState} />
 }
 
-export const DebugView = (props: Props = {}): JSX.Element => {
+export const DebugView = (props: Props = {}): React.ReactNode => {
 	let {state} = props
 
 	if (state === null) {
@@ -52,7 +52,7 @@ export const DebugView = (props: Props = {}): JSX.Element => {
 	}
 }
 
-export const DebugSimpleItem = ({item}: {item: unknown}): JSX.Element => {
+export const DebugSimpleItem = ({item}: {item: unknown}): React.ReactNode => {
 	return (
 		<ScrollView>
 			<TableView style={styles.table}>
@@ -68,7 +68,7 @@ export const DebugSimpleItem = ({item}: {item: unknown}): JSX.Element => {
 	)
 }
 
-export const DebugToStringItem = ({item}: {item: unknown}): JSX.Element => {
+export const DebugToStringItem = ({item}: {item: unknown}): React.ReactNode => {
 	return (
 		<ScrollView>
 			<TableView style={styles.table}>
@@ -90,7 +90,7 @@ let useKeyPath = () => {
 	return route.params?.keyPath ?? []
 }
 
-export const DebugArrayItem = ({item}: {item: unknown[]}): JSX.Element => {
+export const DebugArrayItem = ({item}: {item: unknown[]}): React.ReactNode => {
 	let navigation = useNavigation()
 	let keyPath = useKeyPath()
 
@@ -119,7 +119,7 @@ export const DebugObjectItem = ({
 	item,
 }: {
 	item: Record<string, unknown>
-}): JSX.Element => {
+}): React.ReactNode => {
 	let navigation = useNavigation()
 	let keyPath = useKeyPath()
 

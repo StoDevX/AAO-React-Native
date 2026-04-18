@@ -14,7 +14,7 @@ type Props = {
 	statusMessage: string
 }
 
-export function StoPrintErrorView(props: Props): JSX.Element {
+export function StoPrintErrorView(props: Props): React.ReactNode {
 	return (
 		<ScrollView
 			contentContainerStyle={styles.content}

@@ -10,7 +10,7 @@ type Props = {
 	title?: string
 }
 
-export function SearchButton(props: Props): JSX.Element {
+export function SearchButton(props: Props): React.ReactNode {
 	let {colors} = useTheme()
 
 	return (

@@ -100,7 +100,7 @@ const useSelectedGE = (filters: FilterType<CourseType>[]) => {
 	return []
 }
 
-export const CourseSearchResultsView = (): JSX.Element => {
+export const CourseSearchResultsView = (): React.ReactNode => {
 	let dispatch = useAppDispatch()
 	let navigation = useNavigation()
 

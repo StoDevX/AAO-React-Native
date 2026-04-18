@@ -15,7 +15,7 @@ import {ChangeTextEvent} from '../../../../navigation/types'
 import {useNavigation} from '@react-navigation/native'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 
-export const APITestView = (): JSX.Element => {
+export const APITestView = (): React.ReactNode => {
 	let navigation = useNavigation()
 
 	let [filterPath, setFilterPath] = React.useState<string>('')

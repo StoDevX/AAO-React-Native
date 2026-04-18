@@ -25,7 +25,7 @@ import {printJobsOptions} from './query'
 import {credentialsOptions} from '../../lib/login'
 import {useQuery} from '@tanstack/react-query'
 
-export const PrintJobsView = (): JSX.Element => {
+export const PrintJobsView = (): React.ReactNode => {
 	let {now} = useMomentTimer({intervalMs: 60000, timezone: timezone()})
 	let {data: credentials, isLoading: hasCredentialsLoading} =
 		useQuery(credentialsOptions)
