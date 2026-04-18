@@ -29,9 +29,9 @@ PODS:
     - Yoga
   - boost (1.84.0)
   - DoubleConversion (1.1.6)
-  - EXConstants (18.0.13):
+  - EXConstants (55.0.14):
     - ExpoModulesCore
-  - Expo (54.0.33):
+  - Expo (55.0.15):
     - boost
     - DoubleConversion
     - ExpoModulesCore
@@ -62,17 +62,22 @@ PODS:
     - ReactCommon/turbomodule/core
     - SocketRocket
     - Yoga
-  - ExpoAsset (12.0.12):
+  - ExpoAsset (55.0.15):
     - ExpoModulesCore
-  - ExpoFileSystem (19.0.21):
+  - ExpoDomWebView (55.0.5):
     - ExpoModulesCore
-  - ExpoFont (14.0.11):
+  - ExpoFileSystem (55.0.16):
     - ExpoModulesCore
-  - ExpoKeepAwake (15.0.8):
+  - ExpoFont (55.0.6):
     - ExpoModulesCore
-  - ExpoModulesCore (3.0.29):
+  - ExpoKeepAwake (55.0.6):
+    - ExpoModulesCore
+  - ExpoLogBox (55.0.10):
+    - React-Core
+  - ExpoModulesCore (55.0.22):
     - boost
     - DoubleConversion
+    - ExpoModulesJSI
     - fast_float
     - fmt
     - glog
@@ -99,7 +104,12 @@ PODS:
     - ReactCommon/turbomodule/core
     - SocketRocket
     - Yoga
-  - ExpoWebBrowser (15.0.10):
+  - ExpoModulesJSI (55.0.22):
+    - hermes-engine
+    - React-Core
+    - React-runtimescheduler
+    - ReactCommon
+  - ExpoWebBrowser (55.0.14):
     - ExpoModulesCore
   - fast_float (8.0.0)
   - FBLazyVector (0.81.5)
@@ -2731,10 +2741,13 @@ DEPENDENCIES:
   - EXConstants (from `../node_modules/expo-constants/ios`)
   - Expo (from `../node_modules/expo`)
   - ExpoAsset (from `../node_modules/expo-asset/ios`)
+  - "ExpoDomWebView (from `../node_modules/expo/node_modules/@expo/log-box/node_modules/@expo/dom-webview/ios`)"
   - ExpoFileSystem (from `../node_modules/expo/node_modules/expo-file-system/ios`)
   - ExpoFont (from `../node_modules/expo-font/ios`)
   - ExpoKeepAwake (from `../node_modules/expo/node_modules/expo-keep-awake/ios`)
+  - "ExpoLogBox (from `../node_modules/expo/node_modules/@expo/log-box`)"
   - ExpoModulesCore (from `../node_modules/expo-modules-core`)
+  - ExpoModulesJSI (from `../node_modules/expo-modules-core`)
   - ExpoWebBrowser (from `../node_modules/expo-web-browser/ios`)
   - fast_float (from `../node_modules/react-native/third-party-podspecs/fast_float.podspec`)
   - FBLazyVector (from `../node_modules/react-native/Libraries/FBLazyVector`)
@@ -2844,13 +2857,19 @@ EXTERNAL SOURCES:
     :path: "../node_modules/expo"
   ExpoAsset:
     :path: "../node_modules/expo-asset/ios"
+  ExpoDomWebView:
+    :path: "../node_modules/expo/node_modules/@expo/log-box/node_modules/@expo/dom-webview/ios"
   ExpoFileSystem:
     :path: "../node_modules/expo/node_modules/expo-file-system/ios"
   ExpoFont:
     :path: "../node_modules/expo-font/ios"
   ExpoKeepAwake:
     :path: "../node_modules/expo/node_modules/expo-keep-awake/ios"
+  ExpoLogBox:
+    :path: "../node_modules/expo/node_modules/@expo/log-box"
   ExpoModulesCore:
+    :path: "../node_modules/expo-modules-core"
+  ExpoModulesJSI:
     :path: "../node_modules/expo-modules-core"
   ExpoWebBrowser:
     :path: "../node_modules/expo-web-browser/ios"
@@ -3034,14 +3053,17 @@ SPEC CHECKSUMS:
   AsyncStorage: 67d50e93a511a4e6ddf72e1eef21bb2baffb1a19
   boost: 7e761d76ca2ce687f7cc98e698152abd03a18f90
   DoubleConversion: cb417026b2400c8f53ae97020b2be961b59470cb
-  EXConstants: fce59a631a06c4151602843667f7cfe35f81e271
-  Expo: 78ceda23ec2990e8ec94980be4fce1aea9ffcdd5
-  ExpoAsset: f867e55ceb428aab99e1e8c082b5aee7c159ea18
-  ExpoFileSystem: 858a44267a3e6e9057e0888ad7c7cfbf55d52063
-  ExpoFont: f543ce20a228dd702813668b1a07b46f51878d47
-  ExpoKeepAwake: 55f75eca6499bb9e4231ebad6f3e9cb8f99c0296
-  ExpoModulesCore: 39c0aca5ee449ec315f1ded494cbdcc7ebe66aae
-  ExpoWebBrowser: 17b064c621789e41d4816c95c93f429b84971f52
+  EXConstants: bfe4ae4e5d882e2e0b130e049665d0af4f4cc1b8
+  Expo: a95cc2a49c79a21f714b054ad03808cef4036a3a
+  ExpoAsset: dc4f25f84886120f82b23233bba563ea7afa88f5
+  ExpoDomWebView: 2b2fbd9a07de8790569257cbf9dfdaa31cf95c70
+  ExpoFileSystem: 310d367cccbd30b9bda13c5865fe3d8d581dcf2a
+  ExpoFont: cdd7a1d574a376fa003c713eff49e0a4df8672c7
+  ExpoKeepAwake: a1baf9810a2dee1905aa9bdd336852598f7220e9
+  ExpoLogBox: a3de999775d423ac9cb85d24bd47628e5392761f
+  ExpoModulesCore: 989c33ca57c98999a46b35a645c36f4d0205db02
+  ExpoModulesJSI: 4f9a951679fdfbfca1e4feb5c1e10df045333a5a
+  ExpoWebBrowser: f88a3ba50a025b673236a46d2654a49b985953d6
   fast_float: b32c788ed9c6a8c584d114d0047beda9664e7cc6
   FBLazyVector: 5beb8028d5a2e75dd9634917f23e23d3a061d2aa
   fmt: a40bb5bd0294ea969aaaba240a927bd33d878cdd
