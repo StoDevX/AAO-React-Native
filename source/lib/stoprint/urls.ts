@@ -7,7 +7,7 @@ export const PAPERCUT_MOBILE_RELEASE_API = `${PAPERCUT_API}/mobilerelease/api`
 export const STOPRINT_HELP_PAGE = 'https://wp.stolaf.edu/it/stoprint/'
 
 export const papercutApi = ky.create({
-	prefixUrl: PAPERCUT_API,
+	prefix: PAPERCUT_API,
 	headers: new Headers({
 		'Content-Type': 'application/x-www-form-urlencoded',
 		Origin: PAPERCUT,
@@ -15,5 +15,5 @@ export const papercutApi = ky.create({
 })
 
 export const mobileReleaseApi = papercutApi.extend({
-	prefixUrl: PAPERCUT_MOBILE_RELEASE_API,
+	prefix: PAPERCUT_MOBILE_RELEASE_API,
 })
