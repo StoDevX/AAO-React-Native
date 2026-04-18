@@ -370,7 +370,7 @@ const ComponentLibraryStackScreens = () => {
 	)
 }
 
-export const RootStack = (): JSX.Element => (
+export const RootStack = (): React.ReactNode => (
 	<Stack.Navigator
 		initialRouteName="HomeRoot"
 		screenOptions={{headerShown: false}}

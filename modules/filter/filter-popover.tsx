@@ -14,7 +14,9 @@ type Props<T extends object> = {
 	visible: boolean
 }
 
-export function FilterPopover<T extends object>(props: Props<T>): JSX.Element {
+export function FilterPopover<T extends object>(
+	props: Props<T>,
+): React.ReactNode {
 	let {anchor, onClosePopover, visible} = props
 	let [filter, setFilter] = useState<FilterType<T>>(props.filter)
 	let insets = useSafeAreaInsets()

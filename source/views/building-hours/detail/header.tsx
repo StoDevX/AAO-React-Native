@@ -10,7 +10,7 @@ import * as c from '@frogpond/colors'
 
 type Props = {building: BuildingType}
 
-export const Header = (props: Props): JSX.Element => {
+export const Header = (props: Props): React.ReactNode => {
 	let {building} = props
 
 	let abbr = building.abbreviation ? ` (${building.abbreviation})` : ''

@@ -38,26 +38,26 @@ const styles = StyleSheet.create({
 	},
 })
 
-export const BaseText = (props: TextProps): JSX.Element => (
+export const BaseText = (props: TextProps): React.ReactNode => (
 	<Text {...props} style={[styles.text, props.style]} />
 )
 
 export const Paragraph = (
 	props: Parameters<typeof SelectableText>[0],
-): JSX.Element => (
+): React.ReactNode => (
 	<SelectableText {...props} style={[styles.paragraph, props.style]} />
 )
 
 export const BlockQuote = (
 	props: Parameters<typeof Paragraph>[0],
-): JSX.Element => (
+): React.ReactNode => (
 	<Paragraph {...props} style={[styles.blockQuote, props.style]} />
 )
 
-export const Strong = (props: TextProps): JSX.Element => (
+export const Strong = (props: TextProps): React.ReactNode => (
 	<Text {...props} style={[styles.strong, props.style]} />
 )
 
-export const Emph = (props: TextProps): JSX.Element => (
+export const Emph = (props: TextProps): React.ReactNode => (
 	<Text {...props} style={[styles.emph, props.style]} />
 )

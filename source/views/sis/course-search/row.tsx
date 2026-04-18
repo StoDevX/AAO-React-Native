@@ -10,7 +10,7 @@ type Props = {
 	onPress: (course: CourseType) => void
 }
 
-export const CourseRow = (props: Props): JSX.Element => {
+export const CourseRow = (props: Props): React.ReactNode => {
 	let {course} = props
 
 	let onPress = (): void => {

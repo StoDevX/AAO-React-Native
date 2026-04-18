@@ -52,7 +52,7 @@ type Props = {
 	stopStatus: BusStopStatusEnum
 }
 
-export function ProgressChunk(props: Props): JSX.Element {
+export function ProgressChunk(props: Props): React.ReactNode {
 	let {stopStatus, barColor, currentStopColor} = props
 
 	// To draw the bar, we draw a chunk of the bar, then we draw the dot, then

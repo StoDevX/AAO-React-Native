@@ -17,7 +17,7 @@ import {RootStackParamList} from '../../../navigation/types'
 // 	map: {...StyleSheet.absoluteFillObject},
 // })
 
-export function BusMap(): JSX.Element {
+export function BusMap(): React.ReactNode {
 	let {now} = useMomentTimer({intervalMs: 60000, timezone: timezone()})
 	let route = useRoute<RouteProp<RootStackParamList, 'BusMapView'>>()
 	let {line} = route.params

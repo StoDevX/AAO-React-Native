@@ -6,10 +6,10 @@ const styles = StyleSheet.create({
 	codeBlock: {},
 })
 
-export const Code = (props: TextProps): JSX.Element => (
+export const Code = (props: TextProps): React.ReactNode => (
 	<Text {...props} style={[styles.code, props.style]} />
 )
 
-export const CodeBlock = (props: TextProps): JSX.Element => (
+export const CodeBlock = (props: TextProps): React.ReactNode => (
 	<Text {...props} style={[styles.codeBlock, props.style]} />
 )

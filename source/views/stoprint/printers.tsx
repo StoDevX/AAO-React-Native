@@ -29,7 +29,7 @@ const styles = StyleSheet.create({
 	list: {},
 })
 
-export const PrinterListView = (): JSX.Element => {
+export const PrinterListView = (): React.ReactNode => {
 	let navigation = useNavigation()
 
 	let route = useRoute<RouteProp<RootStackParamList, 'PrinterList'>>()

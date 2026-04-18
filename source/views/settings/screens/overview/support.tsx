@@ -36,7 +36,7 @@ const getVersion = () => {
 	}
 }
 
-export const SupportSection = (): JSX.Element => {
+export const SupportSection = (): React.ReactNode => {
 	let navigation = useNavigation()
 
 	let onResetButton = () => {

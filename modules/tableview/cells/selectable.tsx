@@ -12,7 +12,7 @@ const styles = StyleSheet.create({
 	},
 })
 
-export const SelectableCell = ({text}: {text: string}): JSX.Element => (
+export const SelectableCell = ({text}: {text: string}): React.ReactNode => (
 	<TextInput
 		dataDetectorTypes="all"
 		editable={false}

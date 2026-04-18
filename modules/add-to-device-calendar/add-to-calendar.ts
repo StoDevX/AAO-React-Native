@@ -11,7 +11,7 @@ type Props = {
 		message: string
 		disabled: boolean
 		onPress: () => void
-	}) => JSX.Element
+	}) => React.ReactNode
 }
 
 type State = {
@@ -63,7 +63,7 @@ export class AddToCalendar extends React.Component<Props, State> {
 		}
 	}
 
-	render(): JSX.Element {
+	render(): React.ReactNode {
 		return this.props.render({
 			message: this.state.message,
 			disabled: this.state.disabled,

@@ -3,16 +3,16 @@ import {ScrollView, StyleProp, StyleSheet, ViewStyle} from 'react-native'
 import {TableView, Cell} from '@frogpond/tableview'
 
 interface WrapperProps {
-	children: JSX.Element
+	children: React.ReactNode
 }
 
 interface RowProps {
 	title: string
-	children: JSX.Element
+	children: React.ReactNode
 	contentContainerStyle?: StyleProp<ViewStyle>
 }
 
-export const LibraryWrapper = ({children}: WrapperProps): JSX.Element => (
+export const LibraryWrapper = ({children}: WrapperProps): React.ReactNode => (
 	<ScrollView contentContainerStyle={styles.container}>
 		<TableView>{children}</TableView>
 	</ScrollView>
@@ -22,7 +22,7 @@ export const Example = ({
 	title,
 	children,
 	contentContainerStyle,
-}: RowProps): JSX.Element => (
+}: RowProps): React.ReactNode => (
 	<Cell
 		cellAccessoryView={children}
 		cellStyle="Basic"

@@ -11,7 +11,7 @@ import {
 	selectAcknowledgement,
 } from '../../redux/parts/settings'
 
-export function BalancesOrAcknowledgementView(): JSX.Element {
+export function BalancesOrAcknowledgementView(): React.ReactNode {
 	let dispatch = useAppDispatch()
 	let alertSeen = useAppSelector(selectAcknowledgement)
 

@@ -13,7 +13,7 @@ import {TextInput} from 'react-native'
 import {useMutation, useQuery} from '@tanstack/react-query'
 import {sto} from '../../../../lib/colors'
 
-export const CredentialsLoginSection = (): JSX.Element => {
+export const CredentialsLoginSection = (): React.ReactNode => {
 	let [username, setUsername] = React.useState('')
 	let usernameInputRef = React.useRef<TextInput>(null)
 

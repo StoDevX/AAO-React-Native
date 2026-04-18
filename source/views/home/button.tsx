@@ -12,7 +12,7 @@ type Props = {
 	onPress: () => void
 }
 
-export function HomeScreenButton({view, onPress}: Props): JSX.Element {
+export function HomeScreenButton({view, onPress}: Props): React.ReactNode {
 	let foreground =
 		view.foreground === 'light' ? styles.lightForeground : styles.darkForeground
 

@@ -29,7 +29,7 @@ const RightButton: React.FC<{onPress: () => void}> = ({onPress}) => (
 	<SearchButton onPress={onPress} title="Browse" />
 )
 
-export const CourseSearchView = (): JSX.Element => {
+export const CourseSearchView = (): React.ReactNode => {
 	let navigation = useNavigation()
 
 	let {data: basicFilters = [], isLoading, error, refetch} = useFilters()

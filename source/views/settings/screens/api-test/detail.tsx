@@ -19,7 +19,7 @@ import {DebugView} from '../debug'
 
 type DisplayMode = 'raw' | 'parsed'
 
-export const APITestDetailView = (): JSX.Element => {
+export const APITestDetailView = (): React.ReactNode => {
 	let navigation = useNavigation()
 	let route = useRoute<RouteProp<SettingsStackParamList, 'APITestDetail'>>()
 
@@ -47,7 +47,7 @@ export const APITestDetailView = (): JSX.Element => {
 		})
 	}, [cleanedName, navigation])
 
-	const jsonViewContent = React.useMemo((): JSX.Element => {
+	const jsonViewContent = React.useMemo((): React.ReactNode => {
 		if (data === undefined) {
 			return <></>
 		}

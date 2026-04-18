@@ -35,7 +35,7 @@ export function FilterMenuToolbar<T extends object>({
 	title,
 	filters,
 	onPopoverDismiss,
-}: Props<T>): JSX.Element {
+}: Props<T>): React.ReactNode {
 	const mealFilter = filters.find((f) => f.type === 'picker')
 	const multipleMeals =
 		mealFilter && mealFilter.type === 'picker'

@@ -35,7 +35,7 @@ export function FaqBanner({
 	target,
 	faqId,
 	onPressOverride,
-}: Props): JSX.Element | null {
+}: Props): React.ReactNode {
 	let navigation =
 		useNavigation<NativeStackNavigationProp<RootStackParamList>>()
 	let {data, isError} = useQuery(faqsOptions)
@@ -147,10 +147,7 @@ type GroupProps = {
 	style?: StyleProp<ViewStyle>
 }
 
-export function FaqBannerGroup({
-	target,
-	style,
-}: GroupProps): JSX.Element | null {
+export function FaqBannerGroup({target, style}: GroupProps): React.ReactNode {
 	let {data, isError} = useQuery(faqsOptions)
 
 	if (!data || isError) {

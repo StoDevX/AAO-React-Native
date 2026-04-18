@@ -15,7 +15,7 @@ type Props = {
 	shouldShow: boolean
 }
 
-export const DebugNoticeButton = function (props: Props): JSX.Element {
+export const DebugNoticeButton = function (props: Props): React.ReactNode {
 	if (!props.shouldShow) {
 		return <></>
 	}

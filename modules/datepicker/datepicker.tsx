@@ -3,7 +3,7 @@ import {StyleSheet} from 'react-native'
 import {BaseDateTimePicker} from './basepicker'
 import {IosDatetimePickerProps} from './types'
 
-export const DatePicker = (props: IosDatetimePickerProps): JSX.Element => (
+export const DatePicker = (props: IosDatetimePickerProps): React.ReactNode => (
 	<BaseDateTimePicker
 		displayIos={props.displayIos}
 		initialDate={props.initialDate}

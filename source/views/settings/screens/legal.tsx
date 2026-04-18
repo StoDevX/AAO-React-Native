@@ -11,7 +11,7 @@ const styles = StyleSheet.create({
 	},
 })
 
-export let LegalView = (): JSX.Element => (
+export let LegalView = (): React.ReactNode => (
 	<ScrollView contentInsetAdjustmentBehavior="automatic" style={styles.scroll}>
 		<m.Heading level={2}>The MIT License (MIT)</m.Heading>
 

@@ -65,7 +65,7 @@ type Params = {
 
 const Tab = createNativeBottomTabNavigator<Params>()
 
-export const View = (): JSX.Element => (
+export const View = (): React.ReactNode => (
 	<Tab.Navigator screenOptions={{headerShown: false}}>
 		<Tab.Screen
 			component={StavHallMenuView}

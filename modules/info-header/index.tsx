@@ -32,7 +32,7 @@ type Props = {
 	title: string
 }
 
-export function InfoHeader(props: Props): JSX.Element {
+export function InfoHeader(props: Props): React.ReactNode {
 	return (
 		<View style={styles.content}>
 			<Text style={styles.title}>{props.title}</Text>

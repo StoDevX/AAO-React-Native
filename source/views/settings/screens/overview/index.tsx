@@ -24,7 +24,7 @@ const styles = StyleSheet.create({
 	},
 })
 
-const SettingsView = (): JSX.Element => {
+const SettingsView = (): React.ReactNode => {
 	const isDev = useIsDevMode()
 	return (
 		<ScrollView

@@ -20,7 +20,7 @@ const styles = StyleSheet.create({
 	},
 })
 
-export function BuildingHoursView(): JSX.Element {
+export function BuildingHoursView(): React.ReactNode {
 	let navigation = useNavigation()
 
 	let {now} = useMomentTimer({intervalMs: 60000, startOf: 'minute'})

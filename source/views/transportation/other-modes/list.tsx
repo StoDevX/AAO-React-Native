@@ -17,7 +17,7 @@ const styles = StyleSheet.create({
 	},
 })
 
-let OtherModesView = (): JSX.Element => {
+let OtherModesView = (): React.ReactNode => {
 	let {
 		data = [],
 		error,

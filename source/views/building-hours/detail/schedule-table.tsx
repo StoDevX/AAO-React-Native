@@ -15,7 +15,7 @@ type Props = {
 	onProblemReport: () => void
 }
 
-export const ScheduleTable = (props: Props): JSX.Element => {
+export const ScheduleTable = (props: Props): React.ReactNode => {
 	let {now, schedules, onProblemReport} = props
 	let dayOfWeek = getDayOfWeek(now)
 

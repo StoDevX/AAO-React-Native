@@ -9,7 +9,7 @@ import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 
 import {NavigationKey as ColorsLibrNavigationKey} from './colors'
 
-export const ComponentLibrary = (): JSX.Element => {
+export const ComponentLibrary = (): React.ReactNode => {
 	const navigation = useNavigation()
 
 	return (

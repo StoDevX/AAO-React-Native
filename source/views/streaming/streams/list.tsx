@@ -63,7 +63,7 @@ const filterStreams = <T extends object>(
 	return streams.filter((stream) => enabledCategories.includes(stream.category))
 }
 
-export const StreamListView = (): JSX.Element => {
+export const StreamListView = (): React.ReactNode => {
 	let {
 		data = [],
 		error,

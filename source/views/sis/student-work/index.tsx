@@ -19,7 +19,7 @@ const styles = StyleSheet.create({
 	},
 })
 
-const StudentWorkView = (): JSX.Element => {
+const StudentWorkView = (): React.ReactNode => {
 	let navigation = useNavigation()
 	let {
 		data = [],

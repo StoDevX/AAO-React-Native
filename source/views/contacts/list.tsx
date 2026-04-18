@@ -20,7 +20,7 @@ const styles = StyleSheet.create({
 	},
 })
 
-export let ContactsListView = (): JSX.Element => {
+export let ContactsListView = (): React.ReactNode => {
 	let navigation = useNavigation()
 
 	let {

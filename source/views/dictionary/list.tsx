@@ -54,7 +54,7 @@ const styles = StyleSheet.create({
 	},
 })
 
-function DictionaryView(): JSX.Element {
+function DictionaryView(): React.ReactNode {
 	let navigation = useNavigation()
 
 	let [query, setQuery] = React.useState('')

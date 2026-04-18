@@ -41,7 +41,7 @@ type Props = {
 	spacing?: {left?: number; right?: number}
 }
 
-export function ListSectionHeader(props: Props): JSX.Element {
+export function ListSectionHeader(props: Props): React.ReactNode {
 	const {
 		style,
 		title,

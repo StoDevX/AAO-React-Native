@@ -17,7 +17,7 @@ export function DisclosureArrow({
 	style,
 }: {
 	style?: StyleProp<ViewStyle>
-}): JSX.Element | null {
+}): React.ReactNode {
 	return (
 		<View style={[arrowStyles.wrapper, style]}>
 			<Icon name="chevron-forward-outline" style={arrowStyles.icon} />

@@ -10,7 +10,7 @@ type Props = {
 	buildingName: string
 }
 
-export const BuildingFavoriteButton = function (props: Props): JSX.Element {
+export const BuildingFavoriteButton = function (props: Props): React.ReactNode {
 	let dispatch = useAppDispatch()
 	let favorites = useAppSelector(selectFavoriteBuildings)
 

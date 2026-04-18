@@ -148,7 +148,7 @@ function deriveFromProps({line, now}: {line: UnprocessedBusLine; now: Moment}) {
 	}
 }
 
-export function BusLine(props: Props): JSX.Element {
+export function BusLine(props: Props): React.ReactNode {
 	let {line, now} = props
 	let navigation = useNavigation()
 

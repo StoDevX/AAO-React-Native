@@ -8,7 +8,7 @@ type Props = {
 	favorited: boolean
 }
 
-export function FavoriteButton(props: Props): JSX.Element {
+export function FavoriteButton(props: Props): React.ReactNode {
 	const icon = props.favorited ? 'heart' : 'heart-outline'
 
 	return (

@@ -22,7 +22,7 @@ export function FoodItemRow({
 	badgeSpecials = true,
 	onPress,
 	...props
-}: Props): JSX.Element {
+}: Props): React.ReactNode {
 	const {left = 0} = props.spacing
 	return (
 		<ListRow

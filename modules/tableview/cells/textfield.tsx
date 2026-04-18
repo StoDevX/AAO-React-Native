@@ -39,7 +39,7 @@ type Props = TextInputProps & {
 }
 
 export const CellTextField = React.forwardRef<TextInput, Props>(
-	(props, ref): JSX.Element => {
+	(props, ref): React.ReactElement => {
 		let {
 			placeholder = '',
 			returnKeyType = 'default',

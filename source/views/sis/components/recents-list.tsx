@@ -15,7 +15,7 @@ type Props = {
 	title: string
 }
 
-function RecentItemsList(props: Props): JSX.Element {
+function RecentItemsList(props: Props): React.ReactNode {
 	let {items, actionLabel, onAction, title, emptyHeader, emptyText} = props
 
 	let foreground = {color: c.link}
