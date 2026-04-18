@@ -118,6 +118,7 @@
     "@types/prop-types": "15.7.15",
     "@types/react": "19.2.14",
     "@types/react-native-button": "3.0.5",
+    "@types/react-test-renderer": "19.0.0",
     "@types/semver": "7.7.1",
     "@types/tinycolor2": "1.4.6",
     "@types/wordwrap": "1.0.3",
