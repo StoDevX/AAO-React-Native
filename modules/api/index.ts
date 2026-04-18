@@ -3,5 +3,7 @@ import ky from 'ky'
 export let client: typeof ky
 
 export function setApiRoot(url: URL): void {
-	client = ky.create({prefix: url})
+	let base = url.toString()
+	if (!base.endsWith('/')) base += '/'
+	client = ky.create({baseUrl: base})
 }
