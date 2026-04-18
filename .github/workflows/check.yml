@@ -16,6 +16,10 @@ concurrency:
 env:
   xcode_version: 'Xcode_16.4'
   cache_epoch: '1'
+  # On merge_group runs, salt cache keys with the run_id so reads always
+  # miss (forcing fresh builds) while in-run hand-off (e.g. ios-bundle →
+  # ios-uitest) still works. PR/push runs use the normal shared keys.
+  cache_bust: ${{ github.event_name == 'merge_group' && format('-{0}', github.run_id) || '' }}
   MISE_RUBY_COMPILE: 'false'
 
 jobs:
@@ -98,9 +102,9 @@ jobs:
             ios/AllAboutOlaf/main.jsbundle
             ios/AllAboutOlaf/main.jsbundle.map
             ios/assets/
-          key: jsbundle/e=${{ env.cache_epoch }}/host=ubuntu@24.04/target=ios/ref=${{ github.head_ref || github.ref_name }}/hash=${{ hashFiles('.mise.toml', 'package.json', 'package-lock.json', 'tsconfig.json', 'babel.config.js', 'index.js', 'data/**', 'images/**', 'modules/**.ts', 'modules/**.tsx', 'source/**.ts', 'source/**.tsx') }}
+          key: jsbundle/e=${{ env.cache_epoch }}${{ env.cache_bust }}/host=ubuntu@24.04/target=ios/ref=${{ github.head_ref || github.ref_name }}/hash=${{ hashFiles('.mise.toml', 'package.json', 'package-lock.json', 'tsconfig.json', 'babel.config.js', 'index.js', 'data/**', 'images/**', 'modules/**.ts', 'modules/**.tsx', 'source/**.ts', 'source/**.tsx') }}
           restore-keys: |
-            jsbundle/e=${{ env.cache_epoch }}/host=ubuntu@24.04/target=ios/ref=master/hash=${{ hashFiles('.mise.toml', 'package.json', 'package-lock.json', 'tsconfig.json', 'babel.config.js', 'index.js', 'data/**', 'images/**', 'modules/**.ts', 'modules/**.tsx', 'source/**.ts', 'source/**.tsx') }}
+            jsbundle/e=${{ env.cache_epoch }}${{ env.cache_bust }}/host=ubuntu@24.04/target=ios/ref=master/hash=${{ hashFiles('.mise.toml', 'package.json', 'package-lock.json', 'tsconfig.json', 'babel.config.js', 'index.js', 'data/**', 'images/**', 'modules/**.ts', 'modules/**.tsx', 'source/**.ts', 'source/**.tsx') }}
 
       - uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151 # v4.0.1
         if: steps.jsbundle-cache.outputs.cache-matched-key == ''
@@ -146,9 +150,9 @@ jobs:
         with:
           lookup-only: true
           path: ios/build/Build/Products/
-          key: ios-app/e=${{ env.cache_epoch }}/host=macOS@15/target=ios/xcode=${{ env.xcode_version }}/ref=${{ github.head_ref || github.ref_name }}/hash=${{ hashFiles('**/project.pbxproj', 'ios/Podfile', '**/Podfile.lock', 'ios/AllAboutOlaf/**', 'ios/AllAboutOlafUITests/**') }}
+          key: ios-app/e=${{ env.cache_epoch }}${{ env.cache_bust }}/host=macOS@15/target=ios/xcode=${{ env.xcode_version }}/ref=${{ github.head_ref || github.ref_name }}/hash=${{ hashFiles('**/project.pbxproj', 'ios/Podfile', '**/Podfile.lock', 'ios/AllAboutOlaf/**', 'ios/AllAboutOlafUITests/**') }}
           restore-keys: |
-            ios-app/e=${{ env.cache_epoch }}/host=macOS@15/target=ios/xcode=${{ env.xcode_version }}/ref=master/hash=${{ hashFiles('**/project.pbxproj', 'ios/Podfile', '**/Podfile.lock', 'ios/AllAboutOlaf/**', 'ios/AllAboutOlafUITests/**') }}
+            ios-app/e=${{ env.cache_epoch }}${{ env.cache_bust }}/host=macOS@15/target=ios/xcode=${{ env.xcode_version }}/ref=master/hash=${{ hashFiles('**/project.pbxproj', 'ios/Podfile', '**/Podfile.lock', 'ios/AllAboutOlaf/**', 'ios/AllAboutOlafUITests/**') }}
 
   ios-build:
     name: Build for iOS
@@ -176,11 +180,11 @@ jobs:
         uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
         with:
           path: ~/Library/Caches/ccache
-          key: ccache/e=${{ env.cache_epoch }}/host=macOS@15/target=ios/xcode=${{ env.xcode_version }}/ref=${{ github.head_ref || github.ref_name }}/hash=${{ hashFiles('**/project.pbxproj', 'ios/Podfile', '**/Podfile.lock', 'ios/AllAboutOlaf/**') }}
+          key: ccache/e=${{ env.cache_epoch }}${{ env.cache_bust }}/host=macOS@15/target=ios/xcode=${{ env.xcode_version }}/ref=${{ github.head_ref || github.ref_name }}/hash=${{ hashFiles('**/project.pbxproj', 'ios/Podfile', '**/Podfile.lock', 'ios/AllAboutOlaf/**') }}
           restore-keys: |
-            ccache/e=${{ env.cache_epoch }}/host=macOS@15/target=ios/xcode=${{ env.xcode_version }}/ref=${{ github.head_ref || github.ref_name }}/
-            ccache/e=${{ env.cache_epoch }}/host=macOS@15/target=ios/xcode=${{ env.xcode_version }}/ref=master/hash=${{ hashFiles('**/project.pbxproj', 'ios/Podfile', '**/Podfile.lock', 'ios/AllAboutOlaf/**') }}
-            ccache/e=${{ env.cache_epoch }}/host=macOS@15/target=ios/xcode=${{ env.xcode_version }}/ref=master/
+            ccache/e=${{ env.cache_epoch }}${{ env.cache_bust }}/host=macOS@15/target=ios/xcode=${{ env.xcode_version }}/ref=${{ github.head_ref || github.ref_name }}/
+            ccache/e=${{ env.cache_epoch }}${{ env.cache_bust }}/host=macOS@15/target=ios/xcode=${{ env.xcode_version }}/ref=master/hash=${{ hashFiles('**/project.pbxproj', 'ios/Podfile', '**/Podfile.lock', 'ios/AllAboutOlaf/**') }}
+            ccache/e=${{ env.cache_epoch }}${{ env.cache_bust }}/host=macOS@15/target=ios/xcode=${{ env.xcode_version }}/ref=master/
 
       - name: Install CocoaPods
         run: mise run pod:install --deployment
