@@ -16,5 +16,8 @@
     "@frogpond/colors": "^1.0.0",
     "@frogpond/button": "^1.0.0",
     "@frogpond/markdown": "^1.0.0"
+  },
+  "devDependencies": {
+    "@testing-library/react-native": "^12.9.0"
   }
 }
