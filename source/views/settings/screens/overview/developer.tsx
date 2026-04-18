@@ -3,13 +3,14 @@ import * as React from 'react'
 import {Alert} from 'react-native'
 import {Section} from '@frogpond/tableview'
 import {PushButtonCell} from '@frogpond/tableview/cells'
-import {isDevMode} from '@frogpond/constants'
+import {useIsDevMode} from '../../../../lib/use-is-dev-mode'
 import {ServerUrlSection} from './server-url'
 import {useNavigation} from '@react-navigation/native'
 import {NavigationKey as DebugKey} from '../debug'
 
 export const DeveloperSection = (): React.ReactElement => {
 	let navigation = useNavigation()
+	const isDev = useIsDevMode()
 
 	const onComponentsButton = () => navigation.navigate('ComponentLibrary')
 	const onAPIButton = () => navigation.navigate('APITest')
@@ -25,7 +26,7 @@ export const DeveloperSection = (): React.ReactElement => {
 		showSentryAlert()
 	}
 	const showSentryAlert = () => {
-		if (isDevMode()) {
+		if (isDev) {
 			Alert.alert(
 				'Sentry button pressed',
 				'Nothing will appear in the dashboard during development.',

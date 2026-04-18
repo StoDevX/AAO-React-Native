@@ -1,7 +1,11 @@
 import React from 'react'
 import {StyleProp, ViewStyle} from 'react-native'
 import {Touchable} from '@frogpond/touchable'
-import {ContextMenuButton, MenuState} from 'react-native-ios-context-menu'
+import {
+	ContextMenuButton,
+	MenuState,
+	OnPressMenuItemEvent,
+} from 'react-native-ios-context-menu'
 import {upperFirst} from 'lodash'
 
 interface ContextMenuProps {
@@ -13,6 +17,7 @@ interface ContextMenuProps {
 	onPress?: () => void
 	onPressMenuItem: (menuKey: string) => void | Promise<void>
 	selectedAction?: string
+	testID?: string
 	title: string
 }
 
@@ -29,6 +34,7 @@ export const ContextMenu = React.forwardRef<
 		onPress,
 		onPressMenuItem,
 		selectedAction,
+		testID,
 		title,
 	} = props
 
@@ -46,16 +52,17 @@ export const ContextMenu = React.forwardRef<
 	return (
 		<ContextMenuButton
 			ref={ref}
-			enableContextMenu={!disabled}
+			isContextMenuEnabled={!disabled}
 			isMenuPrimaryAction={isMenuPrimaryAction ?? false}
 			menuConfig={{
 				menuTitle: title ?? '',
 				menuItems,
 			}}
-			onPressMenuItem={({nativeEvent}) => {
+			onPressMenuItem={({nativeEvent}: Parameters<OnPressMenuItemEvent>[0]) => {
 				onPressMenuItem(nativeEvent.actionKey)
 			}}
 			style={buttonStyle}
+			testID={testID}
 		>
 			{onPress ? (
 				<Touchable highlight={false} onPress={onPress}>

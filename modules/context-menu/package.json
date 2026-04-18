@@ -15,6 +15,7 @@
   "dependencies": {
     "@frogpond/touchable": "^1.0.0",
     "lodash": "4.18.1",
-    "react-native-ios-context-menu": "1.15.3"
+    "react-native-ios-context-menu": "3.2.1",
+    "react-native-ios-utilities": "5.1.4"
   }
 }
