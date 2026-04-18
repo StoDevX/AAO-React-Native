@@ -1,5 +1,5 @@
 [tools]
-node = "22.22.2"
+node = "24.15.0"
 hk = "latest"
 ruby = "3.4.9"
 "gem:bundler" = "4.0.10"
