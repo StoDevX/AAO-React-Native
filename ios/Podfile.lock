@@ -1915,7 +1915,7 @@ PODS:
     - ReactCommon/turbomodule/core
     - SocketRocket
     - Yoga
-  - react-native-ios-utilities (5.2.0):
+  - react-native-ios-utilities (5.1.4):
     - boost
     - ComputableLayout (~> 0.7)
     - DGSwiftUtilities (~> 0.46)
@@ -1937,7 +1937,6 @@ PODS:
     - React-jsi
     - React-jsinspector
     - React-jsinspectortracing
-    - React-jsitooling
     - React-NativeModulesApple
     - React-RCTAppDelegate
     - React-RCTFabric
@@ -3162,7 +3161,7 @@ SPEC CHECKSUMS:
   React-microtasksnativemodule: 6c4ee39a36958c39c97b074d28f360246a335e84
   react-native-change-icon: 549a837b530819f53b799608a20320066ecac71a
   react-native-ios-context-menu: 6961c81d8854ff57f675c3c4da9982846507c94f
-  react-native-ios-utilities: 6a87f7d8ef62805f9a1eef3689d38e843f865b95
+  react-native-ios-utilities: 447dedc2dc170029d5dbc100a58f3e72d916db3f
   react-native-netinfo: bed7e7b8f68e22e0862a77d7df28d31faa66375d
   react-native-safe-area-context: e89848fc12d32ccca63d0d7d16dd96918d07c730
   react-native-vector-icons-entypo: 7e92008dc00814c7aa895ddd40e808e2e358a831
