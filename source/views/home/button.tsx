@@ -1,5 +1,6 @@
 import * as React from 'react'
-import {Platform, SafeAreaView, StyleSheet, Text, View} from 'react-native'
+import {Platform, StyleSheet, Text, View} from 'react-native'
+import {SafeAreaView} from 'react-native-safe-area-context'
 import {Entypo as Icon} from '@react-native-vector-icons/entypo'
 import type {ViewType} from '../views'
 import {Touchable} from '@frogpond/touchable'

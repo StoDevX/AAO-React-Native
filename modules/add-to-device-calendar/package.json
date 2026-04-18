@@ -11,8 +11,8 @@
   "peerDependencies": {
     "base-64": "^1.0.0",
     "delay": "^7.0.0",
-    "react": "^19.0.0",
-    "react-native": "^0.79.0"
+    "react": "^19.1.0",
+    "react-native": "^0.81.0"
   },
   "dependencies": {
     "@frogpond/event-type": "^1.0.0"
