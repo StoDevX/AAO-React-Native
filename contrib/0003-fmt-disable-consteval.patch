@@ -1,0 +1,14 @@
+--- ios/Pods/fmt/include/fmt/base.h
++++ ios/Pods/fmt/include/fmt/base.h
+@@ -124,9 +124,9 @@
+ #elif FMT_MSC_VERSION && FMT_MSC_VERSION < 1929
+ #  define FMT_USE_CONSTEVAL 0  // consteval is broken in MSVC VS2019 < 16.10.
+ #elif defined(__cpp_consteval)
+-#  define FMT_USE_CONSTEVAL 1
++#  define FMT_USE_CONSTEVAL 0  // Xcode 26 Clang rejects FMT_STRING in consteval (StoDevX patch)
+ #elif FMT_GCC_VERSION >= 1002 || FMT_CLANG_VERSION >= 1101
+-#  define FMT_USE_CONSTEVAL 1
++#  define FMT_USE_CONSTEVAL 0  // Xcode 26 Clang rejects FMT_STRING in consteval (StoDevX patch)
+ #else
+ #  define FMT_USE_CONSTEVAL 0
+ #endif
