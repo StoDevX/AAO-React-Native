@@ -21,7 +21,7 @@ class ModuleCampusMapTests: XCTestCase {
 		// iOS 18 did, so tapping immediately would miss it)
 		let doneButton = app.buttons["Done"]
 		XCTAssertTrue(
-			doneButton.waitForExistence(timeout: 30),
+			doneButton.waitForExistence(timeout: 10),
 			"Safari Done button should appear once the map loads")
 		doneButton.tap()
 
