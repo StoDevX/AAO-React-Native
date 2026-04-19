@@ -1,7 +1,5 @@
 import React from 'react'
 import {View, SectionList, StyleSheet} from 'react-native'
-import {SafeAreaView} from 'react-native-safe-area-context'
-
 import {ListRow, ListSectionHeader, ListSeparator, Title} from '@frogpond/lists'
 import {Column} from '@frogpond/layout'
 import {LoadingView, NoticeView} from '@frogpond/notice'
@@ -62,17 +60,15 @@ export const APITestView = (): React.ReactNode => {
 
 	const renderItem = React.useCallback(
 		(item: ServerRoute) => (
-			<SafeAreaView>
-				<ListRow
-					fullWidth={false}
-					onPress={() => navigation.navigate('APITestDetail', {query: item})}
-					style={styles.serverRouteRow}
-				>
-					<Column flex={1}>
-						<Title lines={1}>{item.displayName}</Title>
-					</Column>
-				</ListRow>
-			</SafeAreaView>
+			<ListRow
+				fullWidth={false}
+				onPress={() => navigation.navigate('APITestDetail', {query: item})}
+				style={styles.serverRouteRow}
+			>
+				<Column flex={1}>
+					<Title lines={1}>{item.displayName}</Title>
+				</Column>
+			</ListRow>
 		),
 		[navigation],
 	)
