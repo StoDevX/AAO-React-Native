@@ -74,6 +74,15 @@ target 'AllAboutOlaf' do
 				if ccache_enabled
 					config.build_settings['CLANG_ENABLE_EXPLICIT_MODULES'] = 'NO'
 				end
+
+				# fmt 11.0.2 (pinned by RN 0.81) trips Xcode 26's stricter
+				# consteval evaluation on FMT_STRING(). Fall back to constexpr
+				# until RN bumps to fmt >= 11.1.
+				if target.name == 'fmt'
+					existing = config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] || ['$(inherited)']
+					existing = [existing] unless existing.is_a?(Array)
+					config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] = existing + ['FMT_USE_CONSTEVAL=0']
+				end
 			end
 		end
 
