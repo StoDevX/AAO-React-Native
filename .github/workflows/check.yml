@@ -14,7 +14,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  xcode_version: 'Xcode_16.4'
+  xcode_version: 'Xcode_26.4'
   cache_epoch: '1'
   # On merge_group runs, salt cache keys with the run_id so reads always
   # miss (forcing fresh builds) while in-run hand-off (e.g. ios-bundle →
@@ -150,14 +150,14 @@ jobs:
         with:
           lookup-only: true
           path: ios/build/Build/Products/
-          key: ios-app/e=${{ env.cache_epoch }}${{ env.cache_bust }}/host=macOS@15/target=ios/xcode=${{ env.xcode_version }}/ref=${{ github.head_ref || github.ref_name }}/hash=${{ hashFiles('**/project.pbxproj', 'ios/Podfile', '**/Podfile.lock', 'ios/AllAboutOlaf/**', 'ios/AllAboutOlafUITests/**') }}
+          key: ios-app/e=${{ env.cache_epoch }}${{ env.cache_bust }}/host=macOS@26/target=ios/xcode=${{ env.xcode_version }}/ref=${{ github.head_ref || github.ref_name }}/hash=${{ hashFiles('**/project.pbxproj', 'ios/Podfile', '**/Podfile.lock', 'ios/AllAboutOlaf/**', 'ios/AllAboutOlafUITests/**') }}
           restore-keys: |
-            ios-app/e=${{ env.cache_epoch }}${{ env.cache_bust }}/host=macOS@15/target=ios/xcode=${{ env.xcode_version }}/ref=master/hash=${{ hashFiles('**/project.pbxproj', 'ios/Podfile', '**/Podfile.lock', 'ios/AllAboutOlaf/**', 'ios/AllAboutOlafUITests/**') }}
+            ios-app/e=${{ env.cache_epoch }}${{ env.cache_bust }}/host=macOS@26/target=ios/xcode=${{ env.xcode_version }}/ref=master/hash=${{ hashFiles('**/project.pbxproj', 'ios/Podfile', '**/Podfile.lock', 'ios/AllAboutOlaf/**', 'ios/AllAboutOlafUITests/**') }}
 
   ios-build:
     name: Build for iOS
     needs: [ios-cache-check]
-    runs-on: macos-15
+    runs-on: macos-26
     if: needs.ios-cache-check.outputs.cache-matched-key == ''
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
@@ -180,11 +180,11 @@ jobs:
         uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
         with:
           path: ~/Library/Caches/ccache
-          key: ccache/e=${{ env.cache_epoch }}${{ env.cache_bust }}/host=macOS@15/target=ios/xcode=${{ env.xcode_version }}/ref=${{ github.head_ref || github.ref_name }}/hash=${{ hashFiles('**/project.pbxproj', 'ios/Podfile', '**/Podfile.lock', 'ios/AllAboutOlaf/**') }}
+          key: ccache/e=${{ env.cache_epoch }}${{ env.cache_bust }}/host=macOS@26/target=ios/xcode=${{ env.xcode_version }}/ref=${{ github.head_ref || github.ref_name }}/hash=${{ hashFiles('**/project.pbxproj', 'ios/Podfile', '**/Podfile.lock', 'ios/AllAboutOlaf/**') }}
           restore-keys: |
-            ccache/e=${{ env.cache_epoch }}${{ env.cache_bust }}/host=macOS@15/target=ios/xcode=${{ env.xcode_version }}/ref=${{ github.head_ref || github.ref_name }}/
-            ccache/e=${{ env.cache_epoch }}${{ env.cache_bust }}/host=macOS@15/target=ios/xcode=${{ env.xcode_version }}/ref=master/hash=${{ hashFiles('**/project.pbxproj', 'ios/Podfile', '**/Podfile.lock', 'ios/AllAboutOlaf/**') }}
-            ccache/e=${{ env.cache_epoch }}${{ env.cache_bust }}/host=macOS@15/target=ios/xcode=${{ env.xcode_version }}/ref=master/
+            ccache/e=${{ env.cache_epoch }}${{ env.cache_bust }}/host=macOS@26/target=ios/xcode=${{ env.xcode_version }}/ref=${{ github.head_ref || github.ref_name }}/
+            ccache/e=${{ env.cache_epoch }}${{ env.cache_bust }}/host=macOS@26/target=ios/xcode=${{ env.xcode_version }}/ref=master/hash=${{ hashFiles('**/project.pbxproj', 'ios/Podfile', '**/Podfile.lock', 'ios/AllAboutOlaf/**') }}
+            ccache/e=${{ env.cache_epoch }}${{ env.cache_bust }}/host=macOS@26/target=ios/xcode=${{ env.xcode_version }}/ref=master/
 
       - name: Install CocoaPods
         run: mise run pod:install --deployment
@@ -245,7 +245,7 @@ jobs:
   ios-uitest:
     name: Native UITest for iOS (${{ matrix.shard }})
     needs: [uitest-plan, ios-build, ios-bundle, ios-cache-check]
-    runs-on: macos-15
+    runs-on: macos-26
     if: |
       !failure() && !cancelled() &&
       !contains(github.event.pull_request.labels.*.name, 'ci/skip-e2e')
@@ -289,7 +289,7 @@ jobs:
         run: |
           set -o pipefail
           OS_VERSION=$(grep -m1 'IPHONEOS_DEPLOYMENT_TARGET' ios/AllAboutOlaf.xcodeproj/project.pbxproj | sed 's/.*= \(.*\);/\1/' | tr -d '[:space:]')
-          echo "type=iPhone 16 Pro" | tee -a "$GITHUB_OUTPUT"
+          echo "type=iPhone 17e" | tee -a "$GITHUB_OUTPUT"
           echo "os=${OS_VERSION//./-}" | tee -a "$GITHUB_OUTPUT"
 
       - name: List available simulators
