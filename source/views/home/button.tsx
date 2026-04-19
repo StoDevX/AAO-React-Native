@@ -1,6 +1,5 @@
 import * as React from 'react'
 import {Platform, StyleSheet, Text, View} from 'react-native'
-import {SafeAreaView} from 'react-native-safe-area-context'
 import {Entypo as Icon} from '@react-native-vector-icons/entypo'
 import type {ViewType} from '../views'
 import {Touchable} from '@frogpond/touchable'
@@ -17,21 +16,19 @@ export function HomeScreenButton({view, onPress}: Props): React.ReactNode {
 		view.foreground === 'light' ? styles.lightForeground : styles.darkForeground
 
 	return (
-		<SafeAreaView>
-			<Touchable
-				accessibilityLabel={view.title}
-				accessibilityRole="button"
-				accessible={true}
-				highlight={false}
-				onPress={onPress}
-				style={[styles.button, {backgroundColor: view.tint}]}
-			>
-				<View style={styles.contents}>
-					<Icon name={view.icon} size={32} style={[foreground, styles.icon]} />
-					<Text style={[foreground, styles.text]}>{view.title}</Text>
-				</View>
-			</Touchable>
-		</SafeAreaView>
+		<Touchable
+			accessibilityLabel={view.title}
+			accessibilityRole="button"
+			accessible={true}
+			highlight={false}
+			onPress={onPress}
+			style={[styles.button, {backgroundColor: view.tint}]}
+		>
+			<View style={styles.contents}>
+				<Icon name={view.icon} size={32} style={[foreground, styles.icon]} />
+				<Text style={[foreground, styles.text]}>{view.title}</Text>
+			</View>
+		</Touchable>
 	)
 }
 
