@@ -1,0 +1,43 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`patchAppDelegate matches snapshot when applied to the baseline AppDelegate 1`] = `
+"import Expo
+import React
+import ReactAppDependencyProvider
+import UIKit
+import AVFoundation
+
+@UIApplicationMain
+public class AppDelegate: ExpoAppDelegate {
+  public override func application(
+    _ application: UIApplication,
+    didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
+  ) -> Bool {
+    self.moduleName = "All About Olaf"
+
+    // AAO_APP_DELEGATE_CUSTOMIZATIONS_BEGIN
+    if ProcessInfo.processInfo.arguments.contains("--reset-state") {
+      let fileManager = FileManager.default
+      if let libraryPath = fileManager.urls(for: .libraryDirectory, in: .userDomainMask).first {
+        let appSupportPath = libraryPath.appendingPathComponent("Application Support")
+        if let bundleId = Bundle.main.bundleIdentifier {
+          try? fileManager.removeItem(at: appSupportPath.appendingPathComponent(bundleId))
+        }
+        try? fileManager.removeItem(at: appSupportPath.appendingPathComponent("RCTAsyncLocalStorage_V1"))
+      }
+      if let bundleId = Bundle.main.bundleIdentifier {
+        UserDefaults.standard.removePersistentDomain(forName: bundleId)
+      }
+    }
+
+    let urlCache = URLCache(memoryCapacity: 4 * 1024 * 1024, diskCapacity: 20 * 1024 * 1024)
+    URLCache.shared = urlCache
+
+    try? AVAudioSession.sharedInstance().setCategory(.playback)
+    // AAO_APP_DELEGATE_CUSTOMIZATIONS_END
+    self.initialProps = [:]
+    return super.application(application, didFinishLaunchingWithOptions: launchOptions)
+  }
+}
+"
+`;
