@@ -38,7 +38,7 @@ export function DirectoryDetailView(): React.ReactNode {
 	} = route.params.contact
 
 	return (
-		<ScrollView>
+		<ScrollView contentInsetAdjustmentBehavior="automatic">
 			<Image
 				accessibilityIgnoresInvertColors={true}
 				resizeMode="cover"

@@ -191,7 +191,10 @@ export function RadioControllerView(props: Props): React.ReactNode {
 	let logoWrapper = [styles.logoWrapper, sideways && landscape.logoWrapper]
 
 	return (
-		<ScrollView contentContainerStyle={root}>
+		<ScrollView
+			contentContainerStyle={root}
+			contentInsetAdjustmentBehavior="automatic"
+		>
 			<View style={logoWrapper}>
 				<Image resizeMode="contain" source={image} style={logo} />
 			</View>

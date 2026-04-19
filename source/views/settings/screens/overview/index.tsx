@@ -29,6 +29,7 @@ const SettingsView = (): React.ReactNode => {
 	return (
 		<ScrollView
 			contentContainerStyle={styles.container}
+			contentInsetAdjustmentBehavior="automatic"
 			keyboardDismissMode="on-drag"
 			keyboardShouldPersistTaps="always"
 		>

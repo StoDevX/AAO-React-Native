@@ -13,7 +13,10 @@ interface RowProps {
 }
 
 export const LibraryWrapper = ({children}: WrapperProps): React.ReactNode => (
-	<ScrollView contentContainerStyle={styles.container}>
+	<ScrollView
+		contentContainerStyle={styles.container}
+		contentInsetAdjustmentBehavior="automatic"
+	>
 		<TableView>{children}</TableView>
 	</ScrollView>
 )

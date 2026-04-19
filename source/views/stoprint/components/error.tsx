@@ -18,6 +18,7 @@ export function StoPrintErrorView(props: Props): React.ReactNode {
 	return (
 		<ScrollView
 			contentContainerStyle={styles.content}
+			contentInsetAdjustmentBehavior="automatic"
 			refreshControl={
 				<RefreshControl
 					onRefresh={props.onRefresh}

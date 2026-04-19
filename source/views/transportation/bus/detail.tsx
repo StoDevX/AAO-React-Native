@@ -125,6 +125,7 @@ function BusStopDetailInternal(props: Props): React.ReactNode {
 			<FlatList
 				ListFooterComponent={<ListFooter title={BUS_FOOTER_MESSAGE} />}
 				ListHeaderComponent={headerElement}
+				contentInsetAdjustmentBehavior="automatic"
 				data={[emptyRowElement]}
 				keyExtractor={(item, index) => `${item.key}-${index}`}
 				renderItem={({item}) => item}
@@ -182,6 +183,7 @@ function BusStopDetailInternal(props: Props): React.ReactNode {
 			ItemSeparatorComponent={undefined}
 			ListFooterComponent={<ListFooter title={BUS_FOOTER_MESSAGE} />}
 			ListHeaderComponent={headerElement}
+			contentInsetAdjustmentBehavior="automatic"
 			data={timeRows}
 			keyExtractor={(item, index) => `${item.key}-${index}`}
 			renderItem={({item}) => item}

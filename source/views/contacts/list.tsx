@@ -56,6 +56,7 @@ export let ContactsListView = (): React.ReactNode => {
 				isLoading ? <LoadingView /> : <NoticeView text="No results found." />
 			}
 			contentContainerStyle={styles.contentContainer}
+			contentInsetAdjustmentBehavior="automatic"
 			keyExtractor={(item) => item.title}
 			onRefresh={refetch}
 			refreshing={isRefetching}

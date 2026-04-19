@@ -145,6 +145,7 @@ export const StreamListView = (): React.ReactNode => {
 			}
 			ListHeaderComponent={header}
 			contentContainerStyle={styles.contentContainer}
+			contentInsetAdjustmentBehavior="automatic"
 			keyExtractor={(item: StreamType) => item.eid}
 			onRefresh={refetch}
 			refreshing={isRefetching}

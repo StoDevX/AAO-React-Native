@@ -50,8 +50,8 @@ class ModuleSISTests: XCTestCase {
 			"I Agree acknowledgement should be visible")
 		iAgree.tap()
 
-		XCTAssertFalse(
-			iAgree.exists,
+		XCTAssertTrue(
+			iAgree.waitForNonExistence(timeout: 10),
 			"I Agree should be hidden after tapping")
 
 		let balances = app.staticTexts["BALANCES"].firstMatch

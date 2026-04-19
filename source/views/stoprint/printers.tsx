@@ -150,6 +150,7 @@ export const PrinterListView = (): React.ReactNode => {
 	return (
 		<SectionList
 			ItemSeparatorComponent={ListSeparator}
+			contentInsetAdjustmentBehavior="automatic"
 			keyExtractor={(item: Printer) => item.printerName}
 			onRefresh={refetchAll}
 			refreshing={isRefetching}

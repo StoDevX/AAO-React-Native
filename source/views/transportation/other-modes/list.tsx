@@ -44,6 +44,7 @@ let OtherModesView = (): React.ReactNode => {
 				isLoading ? <LoadingView /> : <ListEmpty mode="bug" />
 			}
 			contentContainerStyle={styles.contentContainer}
+			contentInsetAdjustmentBehavior="automatic"
 			keyExtractor={(item) => item.name}
 			onRefresh={refetch}
 			refreshing={isRefetching}

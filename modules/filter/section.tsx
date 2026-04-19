@@ -24,7 +24,7 @@ export function FilterSection<T extends object>({
 		}
 
 		return (
-			<ScrollView>
+			<ScrollView contentInsetAdjustmentBehavior="automatic">
 				<ListSection<T> filter={filter} onChange={onChange} />
 			</ScrollView>
 		)

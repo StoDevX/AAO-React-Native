@@ -41,15 +41,13 @@ class ModuleSettingsTests: XCTestCase {
 	}
 
 	func testChangesAppIconToBigOleAndBack() throws {
-		// Auto-dismiss the "You have changed the icon" system alert
-		addUIInterruptionMonitor(withDescription: "Icon change alert") { alert in
-			let okButton = alert.buttons["OK"]
-			if okButton.exists {
-				okButton.tap()
-				return true
-			}
-			return false
-		}
+		// The "You have changed the icon" alert is owned by SpringBoard. On
+		// iOS 26 it blocks the app from reaching idle, so UIInterruptionMonitor
+		// never fires (the handler only runs during synthesize, which
+		// app.tap()'s wait-for-idle never reaches). Dismiss directly via the
+		// SpringBoard UI instead.
+		let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
+		let iconChangeOK = springboard.buttons["OK"]
 
 		// Wait for the home screen to load before navigating
 		let settingsButton = app.buttons["button-open-settings"]
@@ -65,8 +63,11 @@ class ModuleSettingsTests: XCTestCase {
 			"Default icon should be selected initially")
 		app.element(matching: "app-icon-cell-icon_type_windmill").tap()
 
-		// Interact with the app to trigger the interruption monitor
-		app.tap()
+		// Dismiss the "You have changed the icon" system alert
+		XCTAssertTrue(
+			iconChangeOK.waitForExistence(timeout: 10),
+			"Icon change alert should appear after switching to windmill")
+		iconChangeOK.tap()
 
 		// Verify Big Ole is now selected
 		let windmillSelected = app.element(matching: "app-icon-cell-icon_type_windmill-selected")
@@ -76,7 +77,10 @@ class ModuleSettingsTests: XCTestCase {
 
 		// Tap default to switch back
 		app.element(matching: "app-icon-cell-default").tap()
-		app.tap()
+		XCTAssertTrue(
+			iconChangeOK.waitForExistence(timeout: 10),
+			"Icon change alert should appear after switching back to default")
+		iconChangeOK.tap()
 
 		// Verify default is selected again
 		let defaultReselected = app.element(matching: "app-icon-cell-default-selected")

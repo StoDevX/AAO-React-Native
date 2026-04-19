@@ -42,6 +42,17 @@ else
   echo "  ✓ 0002-rn-abortsignal.patch"
 fi
 
+# 0003-fmt-disable-consteval.patch: forces FMT_USE_CONSTEVAL=0 in fmt 11.0.2's
+# base.h so Xcode 26's stricter Clang doesn't reject FMT_STRING() calls inside
+# consteval contexts. Skip the check on hosts where pods aren't installed (e.g.
+# Linux CI / non-iOS workflows).
+if [ -f "ios/Pods/fmt/include/fmt/base.h" ]; then
+  check_sentinel \
+    "ios/Pods/fmt/include/fmt/base.h" \
+    "Xcode 26 Clang rejects FMT_STRING in consteval" \
+    "0003-fmt-disable-consteval.patch" || FAILED=1
+fi
+
 if [ "$FAILED" -ne 0 ]; then
   echo "ERROR: one or more patch sentinels failed. See above." >&2
   exit 1
