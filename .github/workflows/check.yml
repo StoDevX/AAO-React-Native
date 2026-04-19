@@ -288,7 +288,10 @@ jobs:
         id: simulator-device
         run: |
           set -o pipefail
-          OS_VERSION=$(grep -m1 'IPHONEOS_DEPLOYMENT_TARGET' ios/AllAboutOlaf.xcodeproj/project.pbxproj | sed 's/.*= \(.*\);/\1/' | tr -d '[:space:]')
+          # Pick the latest installed iOS runtime on the runner. IPHONEOS_DEPLOYMENT_TARGET
+          # is the minimum we support, not what's actually installed — on macos-26 the
+          # runner ships iOS 26.x runtimes, which don't match our 18.x deployment target.
+          OS_VERSION=$(xcrun simctl list runtimes iOS -j | jq -r '.runtimes | map(select(.isAvailable != false)) | sort_by(.version) | last | .version')
           echo "type=iPhone 17e" | tee -a "$GITHUB_OUTPUT"
           echo "os=${OS_VERSION//./-}" | tee -a "$GITHUB_OUTPUT"
 
