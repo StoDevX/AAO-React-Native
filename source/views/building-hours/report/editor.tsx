@@ -71,7 +71,7 @@ export function BuildingHoursScheduleEditorView(): React.ReactNode {
 	}, [set])
 
 	return (
-		<ScrollView>
+		<ScrollView contentInsetAdjustmentBehavior="automatic">
 			<TableView>
 				<Section footer={summary}>
 					<WeekToggles days={set.days} onChangeDays={onChangeDays} />

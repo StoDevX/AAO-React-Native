@@ -126,7 +126,7 @@ export let BuildingHoursProblemReportView = (): React.ReactNode => {
 	let {schedule: schedules = [], name} = building
 
 	return (
-		<ScrollView>
+		<ScrollView contentInsetAdjustmentBehavior="automatic">
 			<InfoHeader
 				message="If you could change what is incorrect and share it with us we&rsquo;d greatly appreciate it."
 				title="Thanks for spotting a problem!"

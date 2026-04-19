@@ -61,7 +61,7 @@ let StudentOrgsDetailView = (): React.ReactNode => {
 	} = route.params.org
 
 	return (
-		<ScrollView>
+		<ScrollView contentInsetAdjustmentBehavior="automatic">
 			<TableView>
 				<Text selectable={true} style={styles.name}>
 					{orgName}

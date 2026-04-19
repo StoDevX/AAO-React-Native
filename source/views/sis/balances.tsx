@@ -42,6 +42,7 @@ export const BalancesView = (): React.ReactNode => {
 	return (
 		<ScrollView
 			contentContainerStyle={styles.stage}
+			contentInsetAdjustmentBehavior="automatic"
 			refreshControl={refresh}
 			testID="balances-view"
 		>

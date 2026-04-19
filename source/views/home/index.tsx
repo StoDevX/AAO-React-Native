@@ -38,6 +38,7 @@ function HomePage(): React.ReactNode {
 	return (
 		<ScrollView
 			alwaysBounceHorizontal={false}
+			contentInsetAdjustmentBehavior="automatic"
 			showsHorizontalScrollIndicator={false}
 			showsVerticalScrollIndicator={false}
 			testID="screen-homescreen"

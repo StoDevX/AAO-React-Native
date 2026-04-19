@@ -110,6 +110,7 @@ export const PrintJobsView = (): React.ReactNode => {
 	return (
 		<SectionList
 			ItemSeparatorComponent={ListSeparator}
+			contentInsetAdjustmentBehavior="automatic"
 			keyExtractor={(item) => item.id.toString()}
 			onRefresh={jobsRefetch}
 			refreshing={jobsRefetching}

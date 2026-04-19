@@ -54,7 +54,7 @@ export const DebugView = (props: Props = {}): React.ReactNode => {
 
 export const DebugSimpleItem = ({item}: {item: unknown}): React.ReactNode => {
 	return (
-		<ScrollView>
+		<ScrollView contentInsetAdjustmentBehavior="automatic">
 			<TableView style={styles.table}>
 				<Section
 					header={typeof item}
@@ -70,7 +70,7 @@ export const DebugSimpleItem = ({item}: {item: unknown}): React.ReactNode => {
 
 export const DebugToStringItem = ({item}: {item: unknown}): React.ReactNode => {
 	return (
-		<ScrollView>
+		<ScrollView contentInsetAdjustmentBehavior="automatic">
 			<TableView style={styles.table}>
 				<Section
 					header={typeof item}
@@ -100,6 +100,7 @@ export const DebugArrayItem = ({item}: {item: unknown[]}): React.ReactNode => {
 		<FlatList
 			ItemSeparatorComponent={ListSeparator}
 			ListEmptyComponent={<NoticeView text="Nothing found." />}
+			contentInsetAdjustmentBehavior="automatic"
 			data={keyed}
 			renderItem={({item: debugItem}) => (
 				<DebugRow
@@ -129,6 +130,7 @@ export const DebugObjectItem = ({
 		<FlatList
 			ItemSeparatorComponent={ListSeparator}
 			ListEmptyComponent={<NoticeView text="Nothing found." />}
+			contentInsetAdjustmentBehavior="automatic"
 			data={keyed}
 			renderItem={({item: debugItem}) => (
 				<DebugRow

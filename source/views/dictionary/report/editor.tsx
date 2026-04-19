@@ -29,6 +29,7 @@ let DictionaryEditorView = (): React.ReactNode => {
 
 	return (
 		<ScrollView
+			contentInsetAdjustmentBehavior="automatic"
 			keyboardDismissMode="on-drag"
 			keyboardShouldPersistTaps="always"
 		>

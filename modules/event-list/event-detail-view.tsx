@@ -36,7 +36,7 @@ export function EventDetail(): React.ReactNode {
 	let {event, poweredBy} = route.params
 
 	return (
-		<ScrollView>
+		<ScrollView contentInsetAdjustmentBehavior="automatic">
 			<TableView>
 				<MaybeSection content={event.title.trim()} header="EVENT" />
 				<MaybeSection content={getTimes(event).trim()} header="TIME" />

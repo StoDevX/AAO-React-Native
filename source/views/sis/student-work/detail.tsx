@@ -201,7 +201,7 @@ export const JobDetailView = (): React.ReactNode => {
 	let {job} = route.params
 
 	return (
-		<ScrollView>
+		<ScrollView contentInsetAdjustmentBehavior="automatic">
 			<Title selectable={true}>{job.title}</Title>
 			<TableView>
 				<ContactInformation job={job} />

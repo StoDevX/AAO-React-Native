@@ -38,6 +38,7 @@ export let WebcamsView = (): React.ReactNode => {
 	return (
 		<ScrollView
 			contentContainerStyle={styles.container}
+			contentInsetAdjustmentBehavior="automatic"
 			refreshControl={
 				<RefreshControl onRefresh={refetch} refreshing={isRefetching} />
 			}

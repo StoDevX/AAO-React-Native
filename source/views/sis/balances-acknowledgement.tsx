@@ -64,7 +64,10 @@ function Ack(props: AcknowledgementProps) {
 	let {title, children, onPositive} = props
 
 	return (
-		<ScrollView contentContainerStyle={styles.container}>
+		<ScrollView
+			contentContainerStyle={styles.container}
+			contentInsetAdjustmentBehavior="automatic"
+		>
 			<Card header={title}>
 				<>
 					{children}

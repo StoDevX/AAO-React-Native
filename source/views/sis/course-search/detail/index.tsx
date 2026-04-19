@@ -28,7 +28,11 @@ import {RootStackParamList} from '../../../../navigation/types'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 
 const Container = (props: ScrollViewProps) => (
-	<ScrollView {...props} style={[styles.container, props.style]} />
+	<ScrollView
+		{...props}
+		contentInsetAdjustmentBehavior="automatic"
+		style={[styles.container, props.style]}
+	/>
 )
 
 const Header = (props: TextProps) => (

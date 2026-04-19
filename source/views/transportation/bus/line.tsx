@@ -235,6 +235,7 @@ export function BusLine(props: Props): React.ReactNode {
 			ListEmptyComponent={EMPTY_SCHEDULE_MESSAGE}
 			ListFooterComponent={footerElement}
 			ListHeaderComponent={headerElement}
+			contentInsetAdjustmentBehavior="automatic"
 			data={timetable}
 			keyExtractor={(item, index) => `${item.name}-${index}`}
 			renderItem={({item, index}) => (

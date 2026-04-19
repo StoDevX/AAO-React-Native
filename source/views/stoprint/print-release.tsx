@@ -155,7 +155,7 @@ export const PrintJobReleaseView = (): React.ReactNode => {
 
 	if (loadingUsername) {
 		return (
-			<ScrollView>
+			<ScrollView contentInsetAdjustmentBehavior="automatic">
 				<LoadingView />
 			</ScrollView>
 		)
@@ -192,7 +192,7 @@ export const PrintJobReleaseView = (): React.ReactNode => {
 	let actionAvailable = status !== 'complete' && printer
 
 	return (
-		<ScrollView>
+		<ScrollView contentInsetAdjustmentBehavior="automatic">
 			<Header>{job.documentName}</Header>
 			<TableView>
 				<JobInformation job={job} />
