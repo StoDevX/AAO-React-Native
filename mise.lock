@@ -9,7 +9,7 @@ version = "4.0.10"
 backend = "gem:bundler"
 
 [[tools."gem:fastlane"]]
-version = "2.232.2"
+version = "2.233.0"
 backend = "gem:fastlane"
 
 [[tools."gem:rubocop"]]
