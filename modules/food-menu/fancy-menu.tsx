@@ -170,6 +170,7 @@ export function FancyMenu(props: Props): React.ReactNode {
 			ListEmptyComponent={<NoticeView style={styles.message} text={message} />}
 			ListHeaderComponent={header}
 			contentContainerStyle={styles.contentContainer}
+			contentInsetAdjustmentBehavior="automatic"
 			extraData={filters}
 			keyExtractor={(item: MenuItemType) => item.id}
 			onRefresh={props.onRefresh}
