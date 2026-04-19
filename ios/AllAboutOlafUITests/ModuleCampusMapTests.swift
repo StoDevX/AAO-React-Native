@@ -16,12 +16,12 @@ class ModuleCampusMapTests: XCTestCase {
 		app.buttons["Campus Map"].firstMatch.tap()
 		XCTAssertTrue(homescreen.waitForNonExistence(timeout: 30))
 
-		// dismiss SFSafariViewController; wait for the Done button since
-		// Safari view load timing varies (iOS 26 sim renders it slower than
-		// iOS 18 did, so tapping immediately would miss it)
+		// dismiss SFSafariViewController. Safari + WebKit initialization
+		// under iOS 26 simulator load is highly variable (observed 1s to
+		// >10s in CI), so wait generously before tapping Done.
 		let doneButton = app.buttons["Done"]
 		XCTAssertTrue(
-			doneButton.waitForExistence(timeout: 10),
+			doneButton.waitForExistence(timeout: 30),
 			"Safari Done button should appear once the map loads")
 		doneButton.tap()
 
