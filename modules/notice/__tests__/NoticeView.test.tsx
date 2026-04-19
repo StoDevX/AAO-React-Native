@@ -2,33 +2,19 @@ import React from 'react'
 import {StyleSheet} from 'react-native'
 import {describe, expect, it} from '@jest/globals'
 
-import TestRenderer, {act} from 'react-test-renderer'
+import {render} from '@testing-library/react-native'
 import {NoticeView} from '../notice'
-
-// React 19 made the test renderer fully concurrent; TestRenderer.create no
-// longer commits synchronously, so the initial toJSON() returns null unless
-// the render is flushed through act().
-
-function renderToJSON(
-	element: React.ReactElement,
-): TestRenderer.ReactTestRendererJSON | null {
-	let renderer!: TestRenderer.ReactTestRenderer
-	act(() => {
-		renderer = TestRenderer.create(element)
-	})
-	return renderer.toJSON() as TestRenderer.ReactTestRendererJSON | null
-}
 
 describe('NoticeView', () => {
 	describe('when given no text to display', () => {
 		it('displays "Notice!" as its text', () => {
-			expect(renderToJSON(<NoticeView />)).toMatchSnapshot()
+			expect(render(<NoticeView />).toJSON()).toMatchSnapshot()
 		})
 	})
 
 	describe('when given text to display', () => {
 		it('displays the text', () => {
-			expect(renderToJSON(<NoticeView text="foo bar" />)).toMatchSnapshot()
+			expect(render(<NoticeView text="foo bar" />).toJSON()).toMatchSnapshot()
 		})
 	})
 
@@ -40,7 +26,9 @@ describe('NoticeView', () => {
 				},
 			})
 			expect(
-				renderToJSON(<NoticeView style={styleOverride.view} text="foo bar" />),
+				render(
+					<NoticeView style={styleOverride.view} text="foo bar" />,
+				).toJSON(),
 			).toMatchSnapshot()
 		})
 	})
@@ -48,7 +36,7 @@ describe('NoticeView', () => {
 	describe('when instructed to display a spinner', () => {
 		it('displays a spinner', () => {
 			expect(
-				renderToJSON(<NoticeView spinner={true} text="foo bar" />),
+				render(<NoticeView spinner={true} text="foo bar" />).toJSON(),
 			).toMatchSnapshot()
 		})
 	})
@@ -56,7 +44,7 @@ describe('NoticeView', () => {
 	describe('when header text is given', () => {
 		it('displays the header text', () => {
 			expect(
-				renderToJSON(<NoticeView header="blammo" text="foo bar" />),
+				render(<NoticeView header="blammo" text="foo bar" />).toJSON(),
 			).toMatchSnapshot()
 		})
 	})
@@ -64,7 +52,7 @@ describe('NoticeView', () => {
 	describe('when buttonText is given', () => {
 		it('displays a button with the buttonText in its title', () => {
 			expect(
-				renderToJSON(<NoticeView buttonText="button text" text="foo bar" />),
+				render(<NoticeView buttonText="button text" text="foo bar" />).toJSON(),
 			).toMatchSnapshot()
 		})
 	})
