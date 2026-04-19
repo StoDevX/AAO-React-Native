@@ -70,7 +70,7 @@ export const ContactsDetailView = (): React.ReactNode => {
 			: null
 
 	return (
-		<ScrollView>
+		<ScrollView contentInsetAdjustmentBehavior="automatic">
 			{headerImage ? (
 				<Image resizeMode="cover" source={headerImage} style={styles.image} />
 			) : null}

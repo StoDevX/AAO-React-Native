@@ -37,7 +37,7 @@ export const BuildingDetail = React.memo((props: Props): React.ReactNode => {
 	let links = info.links || []
 
 	return (
-		<ScrollView>
+		<ScrollView contentInsetAdjustmentBehavior="automatic">
 			{headerImage ? (
 				<Image
 					accessibilityIgnoresInvertColors={true}

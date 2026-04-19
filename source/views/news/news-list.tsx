@@ -128,6 +128,7 @@ export const NewsList = (props: Props): React.ReactNode => {
 			}
 			ListHeaderComponent={header}
 			contentContainerStyle={styles.contentContainer}
+			contentInsetAdjustmentBehavior="automatic"
 			data={filterStories(entries, filters)}
 			keyExtractor={(item: StoryType) => item.title}
 			onRefresh={refetch}

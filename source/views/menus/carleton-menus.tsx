@@ -50,7 +50,10 @@ export function CarletonCafeIndex(): React.ReactNode {
 	]
 
 	return (
-		<ScrollView style={styles.container}>
+		<ScrollView
+			contentInsetAdjustmentBehavior="automatic"
+			style={styles.container}
+		>
 			{carletonCafes.map((loc, i, collection) => (
 				<View key={i}>
 					<ListRow

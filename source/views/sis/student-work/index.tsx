@@ -51,6 +51,7 @@ const StudentWorkView = (): React.ReactNode => {
 				)
 			}
 			contentContainerStyle={styles.contentContainer}
+			contentInsetAdjustmentBehavior="automatic"
 			keyExtractor={(_item: JobType, index: number) => index.toString()}
 			onRefresh={refetch}
 			refreshing={isRefetching}

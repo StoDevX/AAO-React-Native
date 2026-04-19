@@ -57,6 +57,7 @@ export function BuildingHoursView(): React.ReactNode {
 				isLoading ? <LoadingView /> : <NoticeView text="No hours." />
 			}
 			contentContainerStyle={styles.container}
+			contentInsetAdjustmentBehavior="automatic"
 			keyExtractor={(item) => item.name}
 			onRefresh={refetch}
 			refreshing={isRefetching}

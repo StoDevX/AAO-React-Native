@@ -20,7 +20,7 @@ export const MenuItemDetailView = (): React.ReactNode => {
 	const {item, icons} = route.params
 
 	return (
-		<ScrollView>
+		<ScrollView contentInsetAdjustmentBehavior="automatic">
 			<Text selectable={true} style={styles.title}>
 				{item.label}
 			</Text>

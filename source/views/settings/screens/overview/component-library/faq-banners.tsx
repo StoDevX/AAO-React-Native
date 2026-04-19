@@ -9,7 +9,10 @@ import {FaqBanner} from '../../../../faqs'
 import {fallbackFaqs} from '../../../../faqs/local-faqs'
 
 export const FaqBannerLibrary = (): React.ReactNode => (
-	<ScrollView contentContainerStyle={styles.container}>
+	<ScrollView
+		contentContainerStyle={styles.container}
+		contentInsetAdjustmentBehavior="automatic"
+	>
 		{fallbackFaqs.map((banner) => (
 			<View key={banner.id} style={styles.example}>
 				<Text style={styles.exampleTitle}>

@@ -1,6 +1,5 @@
 import React from 'react'
 import {FlatList, Image, StyleSheet, Text, View} from 'react-native'
-import {SafeAreaView} from 'react-native-safe-area-context'
 import {Column} from '@frogpond/layout'
 import {Detail, ListRow, ListSeparator, Title} from '@frogpond/lists'
 import * as c from '@frogpond/colors'
@@ -134,15 +133,13 @@ type DirectoryItemRowProps = {
 
 function IosDirectoryItemRow({item, onPress}: DirectoryItemRowProps) {
 	return (
-		<SafeAreaView>
-			<ListRow fullWidth={true} onPress={onPress} style={styles.row}>
-				<Image source={{uri: item.thumbnail}} style={styles.image} />
-				<Column flex={1}>
-					<Title lines={1}>{item.displayName}</Title>
-					<Detail lines={1}>{item.description}</Detail>
-				</Column>
-			</ListRow>
-		</SafeAreaView>
+		<ListRow fullWidth={true} onPress={onPress} style={styles.row}>
+			<Image source={{uri: item.thumbnail}} style={styles.image} />
+			<Column flex={1}>
+				<Title lines={1}>{item.displayName}</Title>
+				<Detail lines={1}>{item.description}</Detail>
+			</Column>
+		</ListRow>
 	)
 }
 

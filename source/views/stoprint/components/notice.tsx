@@ -21,6 +21,7 @@ export const StoPrintNoticeView = (props: Props): React.ReactElement => {
 	return (
 		<ScrollView
 			contentContainerStyle={styles.content}
+			contentInsetAdjustmentBehavior="automatic"
 			refreshControl={
 				onRefresh && refreshing != null ? (
 					<RefreshControl onRefresh={onRefresh} refreshing={refreshing} />
