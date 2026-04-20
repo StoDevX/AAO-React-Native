@@ -1,6 +1,6 @@
 import XCTest
 
-class ModuleStoPrintTests: UITestCase {
+final class ModuleStoPrintTests: UITestCase {
 	func testIsReachableFromHomescreen() throws {
 		StoPrintScreen(app: app)
 			.navigate()

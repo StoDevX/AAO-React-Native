@@ -1,6 +1,6 @@
 import XCTest
 
-class ModuleMenusTests: UITestCase {
+final class ModuleMenusTests: UITestCase {
 	// MARK: - Navigation
 
 	func testIsReachableFromHomescreen() throws {

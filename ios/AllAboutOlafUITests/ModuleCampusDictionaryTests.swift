@@ -1,6 +1,6 @@
 import XCTest
 
-class ModuleCampusDictionaryTests: UITestCase {
+final class ModuleCampusDictionaryTests: UITestCase {
 	func testIsReachableFromHomescreen() throws {
 		CampusDictionaryScreen(app: app)
 			.navigate()
