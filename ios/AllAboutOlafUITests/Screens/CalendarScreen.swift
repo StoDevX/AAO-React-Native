@@ -15,15 +15,6 @@ struct CalendarScreen: Screen {
 
 	@discardableResult
 	func checkTabs() -> Self {
-		for tab in TestIdentifiers.Calendar.tabs {
-			XCTContext.runActivity(named: tab) { _ in
-				let tabButton = app.tabButton(tab)
-				XCTAssertTrue(
-					tabButton.waitForExistence(timeout: 30),
-					"\(tab) tab should be visible")
-				tabButton.tap()
-			}
-		}
-		return self
+		checkTabButtons(TestIdentifiers.Calendar.tabs, tap: true)
 	}
 }

@@ -1,6 +1,6 @@
 import XCTest
 
-class ModuleSISTests: UITestCase {
+final class ModuleSISTests: UITestCase {
 	func testIsReachableFromHomescreen() throws {
 		SISScreen(app: app)
 			.navigate()

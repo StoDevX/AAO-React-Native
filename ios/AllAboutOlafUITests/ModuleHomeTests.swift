@@ -1,6 +1,6 @@
 import XCTest
 
-class ModuleHomeTests: UITestCase {
+final class ModuleHomeTests: UITestCase {
 	func testShowsTheHomeScreen() throws {
 		HomeScreen(app: app)
 			.checkHomescreenExists()

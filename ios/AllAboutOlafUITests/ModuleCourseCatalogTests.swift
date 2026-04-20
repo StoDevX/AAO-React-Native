@@ -1,6 +1,6 @@
 import XCTest
 
-class ModuleCourseCatalogTests: UITestCase {
+final class ModuleCourseCatalogTests: UITestCase {
 	func testIsReachableFromHomescreen() throws {
 		CourseCatalogScreen(app: app)
 			.navigate()

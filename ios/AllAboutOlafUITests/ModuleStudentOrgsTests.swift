@@ -1,6 +1,6 @@
 import XCTest
 
-class ModuleStudentOrgsTests: UITestCase {
+final class ModuleStudentOrgsTests: UITestCase {
 	func testIsReachableFromHomescreen() throws {
 		StudentOrgsScreen(app: app)
 			.navigate()

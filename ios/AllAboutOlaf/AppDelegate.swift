@@ -12,11 +12,6 @@ class AppDelegate: RCTAppDelegate {
   ) -> Bool {
     self.dependencyProvider = RCTAppDependencyProvider()
 
-    if ProcessInfo.processInfo.arguments.contains("--uitesting") {
-      // Future: disable animations, skip onboarding, or set up
-      // any other test-only state here.
-    }
-
     if ProcessInfo.processInfo.arguments.contains("--reset-state") {
       let fileManager = FileManager.default
       if let libraryPath = fileManager.urls(for: .libraryDirectory, in: .userDomainMask).first {

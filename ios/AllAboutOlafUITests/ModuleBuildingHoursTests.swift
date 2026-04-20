@@ -1,6 +1,6 @@
 import XCTest
 
-class ModuleBuildingHoursTests: UITestCase {
+final class ModuleBuildingHoursTests: UITestCase {
 	func testIsReachableFromHomescreen() throws {
 		BuildingHoursScreen(app: app)
 			.navigate()
