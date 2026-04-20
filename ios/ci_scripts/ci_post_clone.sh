@@ -1,4 +1,4 @@
-#!/bin.bash
+#!/bin/zsh
 set -ex
 echo "Running ci_post_clone.sh"
 
@@ -15,6 +15,9 @@ cd ../../
 # install mise and tools
 brew install mise
 mise install node
+
+# activate mise so node/npm are on PATH
+eval "$(mise activate zsh)"
 
 # install node modules
 npm ci
