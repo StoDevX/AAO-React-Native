@@ -1,4 +1,4 @@
-#!/bin/zsh
+#!/bin/bash
 set -ex
 echo "Running ci_post_clone.sh"
 
