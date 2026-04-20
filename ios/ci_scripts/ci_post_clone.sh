@@ -16,8 +16,8 @@ cd ../../
 brew install mise
 mise install node
 
-# activate mise so node/npm are on PATH
-eval "$(mise activate zsh)"
+# activate mise shims so node/npm are on PATH in non-interactive scripts
+eval "$(mise activate bash --shims)"
 
 # install node modules
 npm ci
