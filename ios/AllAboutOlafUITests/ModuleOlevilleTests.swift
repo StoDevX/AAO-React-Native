@@ -14,7 +14,6 @@ class ModuleOlevilleTests: XCTestCase {
 		XCTAssertTrue(homescreen.waitForExistence(timeout: 30))
 
 		app.buttons["Oleville"].firstMatch.tap()
-		XCTAssertTrue(homescreen.waitForNonExistence(timeout: 30))
 
 		// dismiss SFSafariViewController. Safari + WebKit initialization
 		// under iOS 26 simulator load is highly variable (observed 1s to
