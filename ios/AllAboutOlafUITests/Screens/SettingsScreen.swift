@@ -80,7 +80,15 @@ struct SettingsScreen: Screen {
 
 	@discardableResult
 	func changeIconToDefault() -> Self {
-		app.element(matching: TestIdentifiers.AppIcon.cell("default")).tap()
+		// Wait for the cell to be accessible before tapping — the app briefly
+		// transitions back from SpringBoard after the icon-change alert and
+		// tapping without first waiting produces "Timed out while evaluating
+		// UI query".
+		let defaultIcon = app.element(matching: TestIdentifiers.AppIcon.cell("default"))
+		XCTAssertTrue(
+			defaultIcon.waitForExistence(timeout: 10),
+			"Default icon cell should be visible and tappable")
+		defaultIcon.tap()
 		return self
 	}
 
