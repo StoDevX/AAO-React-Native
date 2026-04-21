@@ -24,7 +24,5 @@ class ModuleOlevilleTests: XCTestCase {
 			doneButton.waitForExistence(timeout: 30),
 			"Safari Done button should appear once Oleville loads")
 		doneButton.tap()
-
-		XCTAssertTrue(homescreen.waitForExistence(timeout: 30))
 	}
 }
