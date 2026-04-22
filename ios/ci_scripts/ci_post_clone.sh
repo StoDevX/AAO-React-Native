@@ -33,7 +33,9 @@ mise run pod:install --deployment
 # paths now and bake them in. NODE_BINARY is the surefire fix for React Native's
 # bundling phase; prepending the shims dir to PATH covers every other mise tool.
 NODE_PATH="$(mise which node)"
-MISE_SHIMS="$(mise env --shell bash | awk -F'"' '/^export PATH=/{print $2}' | cut -d: -f1)"
+# mise shims live at $MISE_DATA_DIR/shims (default: ~/.local/share/mise/shims)
+# per https://mise.jdx.dev/dev-tools/shims.html
+MISE_SHIMS="${MISE_DATA_DIR:-$HOME/.local/share/mise}/shims"
 {
   printf 'export PATH="%s:$PATH"\n' "${MISE_SHIMS}"
   printf 'export NODE_BINARY=%s\n' "${NODE_PATH}"
