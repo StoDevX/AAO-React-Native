@@ -28,5 +28,10 @@ mise run bundle-data
 # install pods
 mise run pod:install --deployment
 
+# Write ios/.xcode.env.local so Xcode Cloud's build environment can find node.
+# PATH changes in this script don't carry over into xcodebuild, so we give
+# React Native's bundling phase an explicit path to the mise-managed binary.
+echo "export NODE_BINARY=$(mise which node)" > ios/.xcode.env.local
+
 # if/when we go to Expo
 # npx expo prebuild
