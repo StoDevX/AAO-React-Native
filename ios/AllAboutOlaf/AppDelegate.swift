@@ -42,6 +42,17 @@ class AppDelegate: RCTAppDelegate {
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
 
+  override func applicationDidBecomeActive(_ application: UIApplication) {
+    super.applicationDidBecomeActive(application)
+    if ProcessInfo.processInfo.arguments.contains("--uitesting") {
+      // Speed up animations so UI tests complete faster without affecting reliability.
+      application.connectedScenes
+        .compactMap { $0 as? UIWindowScene }
+        .flatMap { $0.windows }
+        .forEach { $0.layer.speed = 2.0 }
+    }
+  }
+
   override func sourceURL(for bridge: RCTBridge) -> URL? {
     return bundleURL()
   }
