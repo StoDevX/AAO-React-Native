@@ -1,6 +1,6 @@
 import XCTest
 
-final class ModuleDirectoryTests: UITestCase {
+class ModuleDirectoryTests: UITestCase {
 	func testIsReachableFromHomescreen() throws {
 		DirectoryScreen(app: app)
 			.navigate()

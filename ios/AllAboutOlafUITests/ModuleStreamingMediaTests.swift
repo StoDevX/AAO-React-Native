@@ -1,6 +1,6 @@
 import XCTest
 
-final class ModuleStreamingMediaTests: UITestCase {
+class ModuleStreamingMediaTests: UITestCase {
 	func testIsReachableFromHomescreen() throws {
 		StreamingMediaScreen(app: app)
 			.navigate()

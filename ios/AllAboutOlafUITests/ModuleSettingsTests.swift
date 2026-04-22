@@ -1,6 +1,6 @@
 import XCTest
 
-final class ModuleSettingsTests: UITestCase {
+class ModuleSettingsTests: UITestCase {
 	func testShowsSettingsScreenAfterTap() throws {
 		SettingsScreen(app: app)
 			.openSettings()

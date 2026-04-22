@@ -1,6 +1,6 @@
 import XCTest
 
-final class ModuleCalendarTests: UITestCase {
+class ModuleCalendarTests: UITestCase {
 	func testIsReachableFromHomescreen() throws {
 		CalendarScreen(app: app)
 			.navigate()

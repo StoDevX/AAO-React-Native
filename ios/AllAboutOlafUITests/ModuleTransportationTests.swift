@@ -1,6 +1,6 @@
 import XCTest
 
-final class ModuleTransportationTests: UITestCase {
+class ModuleTransportationTests: UITestCase {
 	func testIsReachableFromHomescreen() throws {
 		// we need more information about this before we can debug it, so go ahead and run the test
 		XCTExpectFailure(
