@@ -202,7 +202,7 @@ jobs:
           xcodebuild build-for-testing \
             -workspace ios/AllAboutOlaf.xcworkspace \
             -scheme AllAboutOlaf \
-            -configuration Release \
+            -configuration Debug \
             -sdk iphonesimulator \
             -derivedDataPath ios/build \
             -only-testing:AllAboutOlafUITests \
@@ -278,11 +278,11 @@ jobs:
 
       - name: Move cached jsbundle into place
         run: |
-          mkdir -p ios/build/Build/Products/Release-iphonesimulator/AllAboutOlaf.app/
-          mv ios/AllAboutOlaf/main.jsbundle ios/build/Build/Products/Release-iphonesimulator/AllAboutOlaf.app/
-          mv ios/AllAboutOlaf/main.jsbundle.map ios/build/Build/Products/Release-iphonesimulator/AllAboutOlaf.app/
-          rm -rf ios/build/Build/Products/Release-iphonesimulator/AllAboutOlaf.app/assets || true
-          mv ios/assets ios/build/Build/Products/Release-iphonesimulator/AllAboutOlaf.app/
+          mkdir -p ios/build/Build/Products/Debug-iphonesimulator/AllAboutOlaf.app/
+          mv ios/AllAboutOlaf/main.jsbundle ios/build/Build/Products/Debug-iphonesimulator/AllAboutOlaf.app/
+          mv ios/AllAboutOlaf/main.jsbundle.map ios/build/Build/Products/Debug-iphonesimulator/AllAboutOlaf.app/
+          rm -rf ios/build/Build/Products/Debug-iphonesimulator/AllAboutOlaf.app/assets || true
+          mv ios/assets ios/build/Build/Products/Debug-iphonesimulator/AllAboutOlaf.app/
 
       - name: Discover target simulator device
         id: simulator-device
