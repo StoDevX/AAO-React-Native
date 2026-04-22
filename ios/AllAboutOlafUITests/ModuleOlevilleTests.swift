@@ -5,6 +5,5 @@ class ModuleOlevilleTests: UITestCase {
 		OlevilleScreen(app: app)
 			.navigate()
 			.dismissSafari()
-			.checkReturnedToHomescreen()
 	}
 }

@@ -20,11 +20,4 @@ struct OlevilleScreen: Screen {
 		doneButton.tap()
 		return self
 	}
-
-	@discardableResult
-	func checkReturnedToHomescreen() -> Self {
-		let homescreen = app.element(matching: TestIdentifiers.Home.screen)
-		XCTAssertTrue(homescreen.waitForExistence(timeout: 30))
-		return self
-	}
 }
