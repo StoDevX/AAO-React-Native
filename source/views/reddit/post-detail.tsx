@@ -1,5 +1,13 @@
 import * as React from 'react'
-import {View, Text, FlatList, Image, StyleSheet} from 'react-native'
+import {
+	View,
+	Text,
+	FlatList,
+	Image,
+	Modal,
+	Pressable,
+	StyleSheet,
+} from 'react-native'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 import {useNavigation, useRoute, RouteProp} from '@react-navigation/native'
 import {useQuery} from '@tanstack/react-query'
@@ -62,6 +70,7 @@ export function PostDetailView(): React.ReactNode {
 	const [collapsedIds, setCollapsedIds] = React.useState<Set<string>>(
 		() => new Set(),
 	)
+	const [imageFullscreen, setImageFullscreen] = React.useState(false)
 
 	const {
 		data: comments = [],
@@ -118,13 +127,18 @@ export function PostDetailView(): React.ReactNode {
 				) : null}
 				<Text style={styles.title}>{title}</Text>
 				{thumbnail && !bodyText ? (
-					<Image
+					<Pressable
+						accessibilityHint="Double tap to view fullscreen"
 						accessibilityLabel={title}
-						accessible={true}
-						resizeMode="contain"
-						source={{uri: thumbnail}}
-						style={styles.postImage}
-					/>
+						accessibilityRole="imagebutton"
+						onPress={() => setImageFullscreen(true)}
+					>
+						<Image
+							resizeMode="contain"
+							source={{uri: thumbnail}}
+							style={styles.postImage}
+						/>
+					</Pressable>
 				) : null}
 				{bodyText ? (
 					<Text selectable={true} style={styles.body}>
@@ -132,6 +146,27 @@ export function PostDetailView(): React.ReactNode {
 					</Text>
 				) : null}
 			</View>
+			{thumbnail && !bodyText ? (
+				<Modal
+					animationType="fade"
+					onRequestClose={() => setImageFullscreen(false)}
+					transparent={true}
+					visible={imageFullscreen}
+				>
+					<Pressable
+						accessibilityLabel="Close fullscreen image"
+						accessibilityRole="button"
+						onPress={() => setImageFullscreen(false)}
+						style={styles.modalBackdrop}
+					>
+						<Image
+							resizeMode="contain"
+							source={{uri: thumbnail}}
+							style={styles.modalImage}
+						/>
+					</Pressable>
+				</Modal>
+			) : null}
 			<View style={styles.commentsSectionHeader}>
 				<Text style={styles.commentsLabelText}>Comments</Text>
 			</View>
@@ -198,6 +233,16 @@ const styles = StyleSheet.create({
 		marginTop: 12,
 		borderRadius: 8,
 		backgroundColor: c.secondarySystemBackground,
+	},
+	modalBackdrop: {
+		flex: 1,
+		backgroundColor: 'rgba(0,0,0,0.92)',
+		justifyContent: 'center',
+		alignItems: 'center',
+	},
+	modalImage: {
+		width: '100%',
+		height: '100%',
 	},
 	commentsSectionHeader: {
 		backgroundColor: c.secondarySystemBackground,
