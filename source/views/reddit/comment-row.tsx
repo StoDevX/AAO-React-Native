@@ -15,18 +15,20 @@ const DEPTH_COLORS = [
 type Props = {
 	comment: RedditCommentType
 	depth?: number
+	isOP?: boolean
 	testID?: string
 }
 
 export function CommentRow({
 	comment,
 	depth = 0,
+	isOP = false,
 	testID,
 }: Props): React.ReactNode {
 	const color = DEPTH_COLORS[depth % DEPTH_COLORS.length]
 	const body = htmlToFormattedText(comment.contentHtml)
 	const date = moment(comment.publishedAt)
-	const meta = `${comment.author} · ${date.isValid() ? date.fromNow() : ''}`
+	const relativeTime = date.isValid() ? date.fromNow() : ''
 
 	return (
 		<View
@@ -40,7 +42,17 @@ export function CommentRow({
 			]}
 			testID={testID}
 		>
-			<Text style={styles.meta}>{meta}</Text>
+			<View style={styles.metaRow}>
+				<Text style={styles.author}>{comment.author}</Text>
+				{isOP ? (
+					<View style={styles.opBadge}>
+						<Text style={styles.opBadgeText}>OP</Text>
+					</View>
+				) : null}
+				{relativeTime ? (
+					<Text style={styles.timestamp}>{` · ${relativeTime}`}</Text>
+				) : null}
+			</View>
 			<Text selectable={true} style={styles.body}>
 				{body}
 			</Text>
@@ -51,18 +63,40 @@ export function CommentRow({
 const styles = StyleSheet.create({
 	comment: {
 		paddingHorizontal: 12,
-		paddingVertical: 8,
+		paddingVertical: 12,
 		borderBottomWidth: StyleSheet.hairlineWidth,
 		borderBottomColor: c.separator,
 	},
-	meta: {
-		fontSize: 12,
+	metaRow: {
+		flexDirection: 'row',
+		alignItems: 'center',
+		marginBottom: 6,
+		flexWrap: 'wrap',
+	},
+	author: {
+		fontSize: 13,
+		fontWeight: '600',
+		color: c.label,
+	},
+	opBadge: {
+		backgroundColor: c.systemBlue,
+		borderRadius: 3,
+		paddingHorizontal: 5,
+		paddingVertical: 1,
+		marginLeft: 5,
+	},
+	opBadgeText: {
+		fontSize: 10,
+		fontWeight: '700',
+		color: '#fff',
+	},
+	timestamp: {
+		fontSize: 13,
 		color: c.secondaryLabel,
-		marginBottom: 4,
 	},
 	body: {
 		fontSize: 14,
-		color: c.label,
+		color: c.secondaryLabel,
 		lineHeight: 20,
 	},
 })

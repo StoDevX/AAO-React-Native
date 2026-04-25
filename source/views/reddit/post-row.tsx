@@ -16,12 +16,12 @@ export function PostRow({post, onPress}: Props): React.ReactNode {
 
 	return (
 		<ListRow
-			arrowPosition="top"
+			arrowPosition="center"
 			onPress={() => onPress(post)}
 			style={styles.row}
 		>
-			<Title lines={3}>{post.title}</Title>
 			<Detail lines={1}>{meta}</Detail>
+			<Title lines={3}>{post.title}</Title>
 		</ListRow>
 	)
 }

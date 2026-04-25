@@ -36,7 +36,15 @@ function flattenComments(
 export function PostDetailView(): React.ReactNode {
 	const navigation = useNavigation()
 	const route = useRoute<RouteType>()
-	const {postUrl, title, author, publishedAt, contentHtml} = route.params
+	const {
+		postUrl,
+		title,
+		author,
+		publishedAt,
+		contentHtml,
+		communityName,
+		postAuthor,
+	} = route.params
 
 	const {
 		data: comments = [],
@@ -53,6 +61,7 @@ export function PostDetailView(): React.ReactNode {
 
 	React.useLayoutEffect(() => {
 		navigation.setOptions({
+			title: communityName,
 			headerRight: () => (
 				<Touchable
 					highlight={false}
@@ -63,7 +72,7 @@ export function PostDetailView(): React.ReactNode {
 				</Touchable>
 			),
 		})
-	}, [navigation, postUrl])
+	}, [navigation, postUrl, communityName])
 
 	const date = moment(publishedAt)
 	const bodyText = contentHtml ? htmlToFormattedText(contentHtml) : ''
@@ -111,7 +120,11 @@ export function PostDetailView(): React.ReactNode {
 			data={flatComments}
 			keyExtractor={(item) => item.comment.id}
 			renderItem={({item}) => (
-				<CommentRow comment={item.comment} depth={item.depth} />
+				<CommentRow
+					comment={item.comment}
+					depth={item.depth}
+					isOP={item.comment.author === postAuthor}
+				/>
 			)}
 			style={styles.list}
 		/>

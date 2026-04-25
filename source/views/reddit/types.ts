@@ -24,4 +24,6 @@ export type RedditPostDetailParams = {
 	author: string
 	publishedAt: string
 	contentHtml: string
+	communityName: string
+	postAuthor: string
 }

@@ -33,6 +33,8 @@ function StOlafFeedScreen(): React.ReactNode {
 				author: post.author,
 				publishedAt: post.publishedAt,
 				contentHtml: post.contentHtml,
+				communityName: 'St. Olaf',
+				postAuthor: post.author,
 			})
 		},
 		[navigation],
@@ -53,6 +55,8 @@ function CarletonFeedScreen(): React.ReactNode {
 				author: post.author,
 				publishedAt: post.publishedAt,
 				contentHtml: post.contentHtml,
+				communityName: 'Carleton',
+				postAuthor: post.author,
 			})
 		},
 		[navigation],
