@@ -9,7 +9,7 @@ export const keys = {
 
 // TODO: move this behind the AAO proxy server
 const ATHLETICS_URL =
-	'http://athletics.stolaf.edu/services/scores_chris.aspx?format=json'
+	'https://athletics.stolaf.edu/services/scores_chris.aspx?format=json'
 
 export const athleticsOptions = queryOptions({
 	queryKey: keys.all,
