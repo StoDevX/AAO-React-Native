@@ -18,7 +18,7 @@ const makeComment = (
 describe('CommentRow', () => {
 	it('renders the author name', () => {
 		render(<CommentRow comment={makeComment({author: 'ole_fan'})} depth={0} />)
-		expect(screen.getByText(/ole_fan/)).toBeTruthy()
+		expect(screen.getByText(/ole_fan/u)).toBeTruthy()
 	})
 
 	it('renders stripped comment text', () => {
@@ -28,7 +28,7 @@ describe('CommentRow', () => {
 				depth={0}
 			/>,
 		)
-		expect(screen.getByText(/Hello world/)).toBeTruthy()
+		expect(screen.getByText(/Hello world/u)).toBeTruthy()
 	})
 
 	it('renders nested replies', () => {
@@ -42,8 +42,8 @@ describe('CommentRow', () => {
 			],
 		})
 		render(<CommentRow comment={comment} depth={0} />)
-		expect(screen.getByText(/child_user/)).toBeTruthy()
-		expect(screen.getByText(/Child reply/)).toBeTruthy()
+		expect(screen.getByText(/child_user/u)).toBeTruthy()
+		expect(screen.getByText(/Child reply/u)).toBeTruthy()
 	})
 
 	it('mounts at depth 2 without crashing', () => {
