@@ -9,6 +9,7 @@ import {AthleticsRow} from './row'
 import {TabBar} from './tabbar'
 import {AthleticsFilters} from './filters'
 import {useFilterStore} from './store'
+import {EmptyListNotice} from './empty-notice'
 import {Constants} from './constants'
 import {DateGroupedScores, DateSection, Score} from './types'
 import {formatDateString, parseGameDate} from './utils'
@@ -19,7 +20,7 @@ export function AthleticsListView(): React.ReactNode {
 	const [selectedSection, setSelectedSection] = React.useState<TabSection>(
 		Constants.TODAY,
 	)
-	const {selectedSports, setSelectedSports} = useFilterStore()
+	const {selectedSports, setSelectedSports, setTotalSports} = useFilterStore()
 	const insets = useSafeAreaInsets()
 
 	const {
@@ -50,6 +51,18 @@ export function AthleticsListView(): React.ReactNode {
 			setSelectedSports(sports.flatMap((s) => s.data))
 		}
 	}, [sports, selectedSports, setSelectedSports])
+
+	// Keep totalSports in sync so EmptyListNotice can detect filtered-out state
+	const uniqueSportCount = React.useMemo(
+		() =>
+			new Set(
+				data.flatMap((section) => section.data.map((score) => score.sport)),
+			).size,
+		[data],
+	)
+	React.useEffect(() => {
+		setTotalSports(uniqueSportCount)
+	}, [uniqueSportCount, setTotalSports])
 
 	// Apply the sport filter to the fetched data
 	const filteredData = React.useMemo<DateGroupedScores[]>(() => {
@@ -153,10 +166,7 @@ export function AthleticsListView(): React.ReactNode {
 			) : (
 				<SectionList
 					ListEmptyComponent={
-						<NoticeView
-							style={styles.emptyNotice}
-							text="No games available. Try changing the filters."
-						/>
+						<EmptyListNotice selectedSection={selectedSection as DateSection} />
 					}
 					contentContainerStyle={styles.sectionListContent}
 					contentInset={{top: 0, bottom: insets.bottom}}
@@ -191,8 +201,5 @@ const styles = StyleSheet.create({
 		color: c.label,
 		padding: 5,
 		paddingHorizontal: 10,
-	},
-	emptyNotice: {
-		backgroundColor: c.transparent,
 	},
 })
