@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {View, Text, FlatList, StyleSheet} from 'react-native'
+import {View, Text, FlatList, Image, StyleSheet} from 'react-native'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 import {useNavigation, useRoute, RouteProp} from '@react-navigation/native'
 import {useQuery} from '@tanstack/react-query'
@@ -54,6 +54,7 @@ export function PostDetailView(): React.ReactNode {
 		author,
 		publishedAt,
 		contentHtml,
+		thumbnail,
 		communityName,
 		postAuthor,
 	} = route.params
@@ -116,6 +117,15 @@ export function PostDetailView(): React.ReactNode {
 					</Text>
 				) : null}
 				<Text style={styles.title}>{title}</Text>
+				{thumbnail && !bodyText ? (
+					<Image
+						accessibilityLabel={title}
+						accessible={true}
+						resizeMode="contain"
+						source={{uri: thumbnail}}
+						style={styles.postImage}
+					/>
+				) : null}
 				{bodyText ? (
 					<Text selectable={true} style={styles.body}>
 						{bodyText}
@@ -181,6 +191,13 @@ const styles = StyleSheet.create({
 		fontSize: 15,
 		color: c.bodyText,
 		lineHeight: 22,
+	},
+	postImage: {
+		width: '100%',
+		aspectRatio: 1,
+		marginTop: 12,
+		borderRadius: 8,
+		backgroundColor: c.secondarySystemBackground,
 	},
 	commentsSectionHeader: {
 		backgroundColor: c.secondarySystemBackground,

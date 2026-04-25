@@ -25,6 +25,7 @@ export type RedditPostDetailParams = {
 	author: string
 	publishedAt: string
 	contentHtml: string
+	thumbnail: string | null
 	communityName: string
 	postAuthor: string
 }
