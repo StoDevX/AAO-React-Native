@@ -26,20 +26,10 @@ const MONTH_NAMES = [
 ]
 
 /**
- * Parse the API's "M/D/YYYY h:mm:ss A" date format into a JS Date.
- * Dates from the API are in America/Chicago time; we treat them as local
- * (same simplification as the carls reference implementation).
+ * Parse an ISO 8601 UTC date string (e.g. "2025-01-26T19:00:00Z") into a JS Date.
  */
 export function parseGameDate(dateStr: string): Date {
-	// e.g. "1/26/2025 1:00:00 PM"
-	const [datePart, timePart, ampm] = dateStr.split(' ')
-	const [month, day, year] = datePart.split('/').map(Number)
-	const [hours, minutes, seconds] = timePart.split(':').map(Number)
-	let hour24 = hours % 12
-	if (ampm === 'PM') {
-		hour24 += 12
-	}
-	return new Date(year, month - 1, day, hour24, minutes, seconds)
+	return new Date(dateStr)
 }
 
 /** Format a Date as "Wednesday, Jan 15" for section headers. */

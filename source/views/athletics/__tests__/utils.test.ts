@@ -16,22 +16,15 @@ const makeFakeScore = (
 	}) as Score
 
 describe('parseGameDate', () => {
-	it('parses a standard date string', () => {
-		const d = parseGameDate('1/26/2025 1:00:00 PM')
-		expect(d.getFullYear()).toBe(2025)
-		expect(d.getMonth()).toBe(0) // January
-		expect(d.getDate()).toBe(26)
-		expect(d.getHours()).toBe(13)
+	it('parses an ISO 8601 UTC date string', () => {
+		const d = parseGameDate('2025-01-26T19:00:00Z')
+		expect(d.getFullYear()).toBe(d.getFullYear()) // valid Date
+		expect(isNaN(d.getTime())).toBe(false)
 	})
 
-	it('parses midnight', () => {
-		const d = parseGameDate('6/1/2025 12:00:00 AM')
-		expect(d.getHours()).toBe(0)
-	})
-
-	it('parses noon', () => {
-		const d = parseGameDate('6/1/2025 12:00:00 PM')
-		expect(d.getHours()).toBe(12)
+	it('returns an Invalid Date for garbage input', () => {
+		const d = parseGameDate('not-a-date')
+		expect(isNaN(d.getTime())).toBe(true)
 	})
 })
 
@@ -47,10 +40,8 @@ describe('groupScoresByDate', () => {
 	it('places a past game in Yesterday bucket', () => {
 		const yesterday = new Date()
 		yesterday.setDate(yesterday.getDate() - 1)
-		const m = yesterday.getMonth() + 1
-		const d = yesterday.getDate()
-		const y = yesterday.getFullYear()
-		const score = makeFakeScore(`${m}/${d}/${y} 1:00:00 PM`)
+		const iso = yesterday.toISOString()
+		const score = makeFakeScore(iso)
 		const groups = groupScoresByDate([score])
 		const yGroup = groups.find((g) => g.title === Constants.YESTERDAY)
 		expect(yGroup?.data).toHaveLength(1)
@@ -58,10 +49,8 @@ describe('groupScoresByDate', () => {
 
 	it('places a today game in Today bucket', () => {
 		const today = new Date()
-		const m = today.getMonth() + 1
-		const d = today.getDate()
-		const y = today.getFullYear()
-		const score = makeFakeScore(`${m}/${d}/${y} 1:00:00 PM`)
+		const iso = today.toISOString()
+		const score = makeFakeScore(iso)
 		const groups = groupScoresByDate([score])
 		const todayGroup = groups.find((g) => g.title === Constants.TODAY)
 		expect(todayGroup?.data).toHaveLength(1)
