@@ -26,11 +26,23 @@ type RouteType = RouteProp<
 function flattenComments(
 	comments: RedditCommentType[],
 	depth = 0,
+	collapsedIds?: Set<string>,
 ): FlatComment[] {
-	return comments.flatMap((comment) => [
-		{comment, depth},
-		...flattenComments(comment.replies, depth + 1),
-	])
+	return comments.flatMap((comment) => {
+		const isCollapsed = collapsedIds?.has(comment.id) ?? false
+		return [
+			{comment, depth},
+			...(isCollapsed
+				? []
+				: flattenComments(comment.replies, depth + 1, collapsedIds)),
+		]
+	})
+}
+
+function sanitizeBodyText(raw: string): string {
+	const trimmed = raw.trimStart()
+	if (trimmed.toLowerCase().startsWith('submitted by')) return ''
+	return raw
 }
 
 export function PostDetailView(): React.ReactNode {
@@ -46,6 +58,10 @@ export function PostDetailView(): React.ReactNode {
 		postAuthor,
 	} = route.params
 
+	const [collapsedIds, setCollapsedIds] = React.useState<Set<string>>(
+		() => new Set(),
+	)
+
 	const {
 		data: comments = [],
 		isLoading,
@@ -55,8 +71,8 @@ export function PostDetailView(): React.ReactNode {
 	} = useQuery(redditCommentsOptions(postUrl))
 
 	const flatComments = React.useMemo(
-		() => flattenComments(comments),
-		[comments],
+		() => flattenComments(comments, 0, collapsedIds),
+		[comments, collapsedIds],
 	)
 
 	React.useLayoutEffect(() => {
@@ -75,14 +91,30 @@ export function PostDetailView(): React.ReactNode {
 	}, [navigation, postUrl, communityName])
 
 	const date = moment(publishedAt)
-	const bodyText = contentHtml ? htmlToFormattedText(contentHtml) : ''
+	const bodyText = sanitizeBodyText(
+		contentHtml ? htmlToFormattedText(contentHtml) : '',
+	)
+
+	const toggleCollapse = React.useCallback((id: string) => {
+		setCollapsedIds((prev) => {
+			const next = new Set(prev)
+			if (next.has(id)) {
+				next.delete(id)
+			} else {
+				next.add(id)
+			}
+			return next
+		})
+	}, [])
 
 	const header = (
 		<>
 			<View style={styles.headerBody}>
-				<Text style={styles.meta}>
-					{`${author} · ${date.isValid() ? date.fromNow() : ''}`}
-				</Text>
+				{bodyText ? (
+					<Text style={styles.meta}>
+						{`${author} · ${date.isValid() ? date.fromNow() : ''}`}
+					</Text>
+				) : null}
 				<Text style={styles.title}>{title}</Text>
 				{bodyText ? (
 					<Text selectable={true} style={styles.body}>
@@ -123,7 +155,13 @@ export function PostDetailView(): React.ReactNode {
 				<CommentRow
 					comment={item.comment}
 					depth={item.depth}
+					isCollapsed={collapsedIds.has(item.comment.id)}
 					isOP={item.comment.author === postAuthor}
+					onPress={
+						item.comment.replies.length > 0
+							? () => toggleCollapse(item.comment.id)
+							: undefined
+					}
 				/>
 			)}
 			style={styles.list}
@@ -141,7 +179,7 @@ const styles = StyleSheet.create({
 	meta: {fontSize: 13, color: c.secondaryLabel, marginBottom: 12},
 	body: {
 		fontSize: 15,
-		color: c.label,
+		color: c.bodyText,
 		lineHeight: 22,
 	},
 	commentsSectionHeader: {

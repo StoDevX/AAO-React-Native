@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {View, Text, StyleSheet} from 'react-native'
+import {View, Text, StyleSheet, TouchableOpacity} from 'react-native'
 import moment from 'moment'
 import * as c from '@frogpond/colors'
 import {htmlToFormattedText} from './html-to-text'
@@ -16,6 +16,8 @@ type Props = {
 	comment: RedditCommentType
 	depth?: number
 	isOP?: boolean
+	isCollapsed?: boolean
+	onPress?: () => void
 	testID?: string
 }
 
@@ -23,15 +25,21 @@ export function CommentRow({
 	comment,
 	depth = 0,
 	isOP = false,
+	isCollapsed = false,
+	onPress,
 	testID,
 }: Props): React.ReactNode {
 	const color = DEPTH_COLORS[depth % DEPTH_COLORS.length]
 	const body = htmlToFormattedText(comment.contentHtml)
 	const date = moment(comment.publishedAt)
 	const relativeTime = date.isValid() ? date.fromNow() : ''
+	const hasReplies = comment.replies.length > 0
 
 	return (
-		<View
+		<TouchableOpacity
+			activeOpacity={onPress ? 0.7 : 1}
+			disabled={!onPress}
+			onPress={onPress}
 			style={[
 				styles.comment,
 				{
@@ -52,14 +60,21 @@ export function CommentRow({
 				{relativeTime ? (
 					<Text style={styles.timestamp}>{` · ${relativeTime}`}</Text>
 				) : null}
-				{comment.score !== 0 ? (
+				{typeof comment.score === 'number' && comment.score !== 0 ? (
 					<Text style={styles.timestamp}>{` · ↑${comment.score}`}</Text>
 				) : null}
+				{hasReplies ? (
+					<Text style={styles.collapseIndicator}>
+						{isCollapsed ? ' ▶' : ' ▼'}
+					</Text>
+				) : null}
 			</View>
-			<Text selectable={true} style={styles.body}>
-				{body}
-			</Text>
-		</View>
+			{!isCollapsed ? (
+				<Text selectable={true} style={styles.body}>
+					{body}
+				</Text>
+			) : null}
+		</TouchableOpacity>
 	)
 }
 
@@ -97,9 +112,13 @@ const styles = StyleSheet.create({
 		fontSize: 13,
 		color: c.secondaryLabel,
 	},
+	collapseIndicator: {
+		fontSize: 11,
+		color: c.tertiaryLabel,
+	},
 	body: {
 		fontSize: 14,
-		color: c.secondaryLabel,
+		color: c.bodyText,
 		lineHeight: 20,
 	},
 })
