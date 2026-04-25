@@ -54,11 +54,7 @@ export type RootViewsParamList = {
 	More: undefined
 	PrintJobs: undefined
 	StudentOrgs: undefined
-}
-
-export type CafeMenuParamList = {
-	CarletonBurtonMenu: undefined
-	CarletonLDCMenu: undefined
+        Athletics: undefined
 	CarletonWeitzMenu: undefined
 	CarletonSaylesMenu: undefined
 }

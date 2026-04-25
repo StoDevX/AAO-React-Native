@@ -8,6 +8,8 @@ import {NavigationKey as calendar} from './calendar'
 import {NavigationKey as streaming} from './streaming'
 import {NavigationKey as news} from './news'
 import {NavigationKey as transportation} from './transportation'
+import {NavigationKey as athletics} from './athletics'
+import {NavigationKey as athletics} from './athletics'
 
 const hours: keyof RootViewsParamList = 'BuildingHours'
 const directory: keyof RootViewsParamList = 'Directory'
@@ -167,6 +169,14 @@ export const AllViews = (): Array<ViewType> => {
 			icon: 'browser',
 			foreground: 'dark',
 			tint: c.yellowToGoldMid[0],
+		},
+		{
+			type: 'view',
+			view: athletics,
+			title: 'Athletics',
+			icon: 'trophy',
+			foreground: 'light',
+			tint: c.navyToNavy[0],
 		},
 	]
 }
