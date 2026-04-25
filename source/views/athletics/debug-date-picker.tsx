@@ -5,18 +5,24 @@ import DateTimePicker, {
 import {useIsDevMode} from '../../lib/use-is-dev-mode'
 
 type Props = {
-	date: Date
+	initialDate?: Date
 	onDateChange: (date: Date) => void
 }
 
-export function DebugDatePicker({date, onDateChange}: Props): React.ReactNode {
+export function DebugDatePicker({
+	initialDate,
+	onDateChange,
+}: Props): React.ReactNode {
 	const isDev = useIsDevMode()
+	const [value, setValue] = React.useState(initialDate ?? new Date())
+
 	if (!isDev) {
 		return null
 	}
 
 	const handleChange = (_event: DateTimePickerEvent, selected?: Date) => {
 		if (selected) {
+			setValue(selected)
 			onDateChange(selected)
 		}
 	}
@@ -26,7 +32,7 @@ export function DebugDatePicker({date, onDateChange}: Props): React.ReactNode {
 			display="compact"
 			mode="datetime"
 			onChange={handleChange}
-			value={date}
+			value={value}
 		/>
 	)
 }
