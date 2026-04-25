@@ -6,6 +6,7 @@ import * as eventList from '@frogpond/event-list'
 import * as menus from '../views/menus'
 import * as calendar from '../views/calendar'
 import * as news from '../views/news'
+import * as reddit from '../views/reddit'
 import * as sis from '../views/sis'
 import * as streaming from '../views/streaming'
 import * as transportation from '../views/transportation'
@@ -39,6 +40,7 @@ export type RootViewsParamList = {
 	[calendar.NavigationKey]: calendar.NavigationParams
 	[menus.NavigationKey]: undefined
 	[news.NavigationKey]: undefined
+	[reddit.NavigationKey]: reddit.NavigationParams
 	[sis.NavigationKey]: undefined
 	[streaming.NavigationKey]: undefined
 	[transportation.NavigationKey]: undefined
@@ -96,6 +98,13 @@ export type MiscViewParamList = {
 	MenuItemDetail: {item: MenuItem; icons: MasterCorIconMapType}
 	PrinterList: {job: PrintJob}
 	PrintJobRelease: {job: PrintJob; printer?: Printer}
+	RedditPostDetail: {
+		postUrl: string
+		title: string
+		author: string
+		publishedAt: string
+		contentHtml: string
+	}
 }
 
 export type RootStackParamList = RootViewsParamList &

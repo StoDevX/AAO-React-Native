@@ -5,6 +5,7 @@ import {RootViewsParamList} from '../navigation/types'
 import {NavigationKey as menus} from './menus'
 import {NavigationKey as sis} from './sis'
 import {NavigationKey as calendar} from './calendar'
+import {NavigationKey as reddit} from './reddit'
 import {NavigationKey as streaming} from './streaming'
 import {NavigationKey as news} from './news'
 import {NavigationKey as transportation} from './transportation'
@@ -159,6 +160,14 @@ export const AllViews = (): Array<ViewType> => {
 			icon: 'graduation-cap',
 			foreground: 'light',
 			tint: c.lavender,
+		},
+		{
+			type: 'view',
+			view: reddit,
+			title: 'Communities',
+			icon: 'chat',
+			foreground: 'light',
+			tint: c.orangeToRed[0],
 		},
 		{
 			type: 'url',
