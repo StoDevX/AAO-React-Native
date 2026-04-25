@@ -80,10 +80,10 @@ export function PostDetailView(): React.ReactNode {
 	const header = (
 		<>
 			<View style={styles.headerBody}>
-				<Text style={styles.title}>{title}</Text>
 				<Text style={styles.meta}>
 					{`${author} · ${date.isValid() ? date.fromNow() : ''}`}
 				</Text>
+				<Text style={styles.title}>{title}</Text>
 				{bodyText ? (
 					<Text selectable={true} style={styles.body}>
 						{bodyText}

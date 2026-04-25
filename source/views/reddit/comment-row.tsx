@@ -52,6 +52,9 @@ export function CommentRow({
 				{relativeTime ? (
 					<Text style={styles.timestamp}>{` · ${relativeTime}`}</Text>
 				) : null}
+				{comment.score !== 0 ? (
+					<Text style={styles.timestamp}>{` · ↑${comment.score}`}</Text>
+				) : null}
 			</View>
 			<Text selectable={true} style={styles.body}>
 				{body}
@@ -79,16 +82,16 @@ const styles = StyleSheet.create({
 		color: c.label,
 	},
 	opBadge: {
-		backgroundColor: c.systemBlue,
-		borderRadius: 3,
+		backgroundColor: c.blue,
 		paddingHorizontal: 5,
-		paddingVertical: 1,
+		paddingVertical: 2,
 		marginLeft: 5,
+		borderRadius: 3,
 	},
 	opBadgeText: {
-		fontSize: 10,
+		fontSize: 11,
 		fontWeight: '700',
-		color: '#fff',
+		color: c.white,
 	},
 	timestamp: {
 		fontSize: 13,

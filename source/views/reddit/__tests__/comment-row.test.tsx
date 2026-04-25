@@ -11,6 +11,7 @@ const makeComment = (
 	author: 'test_author',
 	contentHtml: '<p>Hello world</p>',
 	publishedAt: '2024-01-15T12:00:00Z',
+	score: 0,
 	replies: [],
 	...overrides,
 })

@@ -57,3 +57,15 @@ test('no more than two consecutive newlines', () => {
 	const result = htmlToFormattedText('<p>One</p><p></p><p>Two</p>')
 	expect(result).not.toMatch(/\n{3,}/u)
 })
+
+test('table elements are completely ignored (no attribution leak)', () => {
+	const html =
+		'<div class="md"><p>Real content</p></div><table><tr><td> submitted by <a href="">/u/user</a> <a href="">[link]</a> <a href="">[comments]</a></td></tr></table>'
+	expect(htmlToFormattedText(html)).toBe('Real content')
+})
+
+test('standalone table with no md div produces empty string', () => {
+	const html =
+		'<table><tr><td> submitted by <a href="">/u/user</a> <a href="">[link]</a></td></tr></table>'
+	expect(htmlToFormattedText(html)).toBe('')
+})

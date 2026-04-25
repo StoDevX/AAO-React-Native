@@ -13,6 +13,7 @@ export type RedditCommentType = {
 	author: string
 	contentHtml: string
 	publishedAt: string
+	score: number
 	replies: RedditCommentType[]
 }
 

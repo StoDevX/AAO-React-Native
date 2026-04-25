@@ -50,6 +50,14 @@ function walkNodes(nodes: ChildNode[], listContext?: 'ul' | 'ol'): string {
 						.join('\n') + '\n'
 				break
 			}
+			case 'table':
+			case 'thead':
+			case 'tbody':
+			case 'tr':
+			case 'td':
+			case 'th':
+				// Skip Reddit's "submitted by" attribution table entirely
+				break
 			default:
 				result += walkNodes(children)
 		}

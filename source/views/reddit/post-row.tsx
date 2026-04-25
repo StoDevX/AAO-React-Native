@@ -1,7 +1,8 @@
 // source/views/reddit/post-row.tsx
 import * as React from 'react'
-import {StyleSheet} from 'react-native'
-import {ListRow, Title, Detail} from '@frogpond/lists'
+import {Text, StyleSheet, View} from 'react-native'
+import {ListRow} from '@frogpond/lists'
+import * as c from '@frogpond/colors'
 import moment from 'moment'
 import type {RedditPostType} from './types'
 
@@ -20,14 +21,34 @@ export function PostRow({post, onPress}: Props): React.ReactNode {
 			onPress={() => onPress(post)}
 			style={styles.row}
 		>
-			<Detail lines={1}>{meta}</Detail>
-			<Title lines={3}>{post.title}</Title>
+			<View style={styles.content}>
+				<Text numberOfLines={1} style={styles.meta}>
+					{meta}
+				</Text>
+				<Text numberOfLines={3} style={styles.title}>
+					{post.title}
+				</Text>
+			</View>
 		</ListRow>
 	)
 }
 
 const styles = StyleSheet.create({
 	row: {
-		paddingVertical: 10,
+		paddingVertical: 12,
+	},
+	content: {
+		flex: 1,
+	},
+	meta: {
+		fontSize: 12,
+		color: c.secondaryLabel,
+		marginBottom: 5,
+	},
+	title: {
+		fontSize: 15,
+		fontWeight: '500',
+		color: c.label,
+		lineHeight: 20,
 	},
 })
