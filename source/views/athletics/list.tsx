@@ -10,9 +10,10 @@ import {TabBar} from './tabbar'
 import {AthleticsFilters} from './filters'
 import {useFilterStore} from './store'
 import {EmptyListNotice} from './empty-notice'
+import {DebugDatePicker} from './debug-date-picker'
 import {Constants} from './constants'
 import {DateGroupedScores, DateSection, Score} from './types'
-import {formatDateString, parseGameDate} from './utils'
+import {formatDateString, groupScoresByDate, parseGameDate} from './utils'
 
 type TabSection = DateSection | typeof Constants.FILTER
 
@@ -20,6 +21,7 @@ export function AthleticsListView(): React.ReactNode {
 	const [selectedSection, setSelectedSection] = React.useState<TabSection>(
 		Constants.TODAY,
 	)
+	const [debugOffset, setDebugOffset] = React.useState(0)
 	const {selectedSports, setSelectedSports, setTotalSports} = useFilterStore()
 	const insets = useSafeAreaInsets()
 
@@ -64,16 +66,32 @@ export function AthleticsListView(): React.ReactNode {
 		setTotalSports(uniqueSportCount)
 	}, [uniqueSportCount, setTotalSports])
 
+	// When a debug offset is active, re-group all fetched scores relative to the
+	// shifted "today". Scores older than true-yesterday are already dropped by the
+	// query so the debug window is roughly ±N days from actual today.
+	const debugNow = React.useMemo(() => {
+		if (debugOffset === 0) return null
+		const d = new Date()
+		d.setDate(d.getDate() + debugOffset)
+		return d
+	}, [debugOffset])
+
+	const baseData = React.useMemo<DateGroupedScores[]>(() => {
+		if (!debugNow) return data
+		const allScores = data.flatMap((s) => s.data)
+		return groupScoresByDate(allScores, debugNow)
+	}, [data, debugNow])
+
 	// Apply the sport filter to the fetched data
 	const filteredData = React.useMemo<DateGroupedScores[]>(() => {
-		return data.map((section) => ({
+		return baseData.map((section) => ({
 			...section,
 			data: section.data.filter(
 				(score) =>
 					selectedSports.length === 0 || selectedSports.includes(score.sport),
 			),
 		}))
-	}, [data, selectedSports])
+	}, [baseData, selectedSports])
 
 	// Build sections to render depending on the selected tab
 	const sections = React.useMemo(() => {
@@ -161,6 +179,13 @@ export function AthleticsListView(): React.ReactNode {
 				onSelectSection={setSelectedSection}
 				selectedSection={selectedSection}
 			/>
+			{__DEV__ && (
+				<DebugDatePicker
+					offset={debugOffset}
+					onOffsetChange={setDebugOffset}
+					referenceDate={debugNow ?? new Date()}
+				/>
+			)}
 			{selectedSection === Constants.FILTER ? (
 				<AthleticsFilters sports={sports} />
 			) : (

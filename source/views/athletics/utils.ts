@@ -1,7 +1,7 @@
 import {DateGroupedScores, Score} from './types'
 import {Constants} from './constants'
 
-const DAY_NAMES = [
+export const DAY_NAMES = [
 	'Sunday',
 	'Monday',
 	'Tuesday',
@@ -10,7 +10,7 @@ const DAY_NAMES = [
 	'Friday',
 	'Saturday',
 ]
-const MONTH_NAMES = [
+export const MONTH_NAMES = [
 	'January',
 	'February',
 	'March',
@@ -63,8 +63,10 @@ function startOfDay(d: Date): Date {
 	return new Date(d.getFullYear(), d.getMonth(), d.getDate())
 }
 
-export function groupScoresByDate(scores: Score[]): DateGroupedScores[] {
-	const now = new Date()
+export function groupScoresByDate(
+	scores: Score[],
+	now: Date = new Date(),
+): DateGroupedScores[] {
 	const todayStart = startOfDay(now)
 	const yesterdayStart = new Date(todayStart)
 	yesterdayStart.setDate(yesterdayStart.getDate() - 1)
