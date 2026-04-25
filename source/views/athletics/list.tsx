@@ -1,5 +1,6 @@
 import * as React from 'react'
 import {SectionList, StyleSheet, Text, View} from 'react-native'
+import {useNavigation} from '@react-navigation/native'
 import {useSafeAreaInsets} from 'react-native-safe-area-context'
 import {useQuery} from '@tanstack/react-query'
 import {NoticeView, LoadingView} from '@frogpond/notice'
@@ -18,10 +19,22 @@ import {formatDateString, groupScoresByDate, parseGameDate} from './utils'
 type TabSection = DateSection | typeof Constants.FILTER
 
 export function AthleticsListView(): React.ReactNode {
+	const navigation = useNavigation()
 	const [selectedSection, setSelectedSection] = React.useState<TabSection>(
 		Constants.TODAY,
 	)
 	const [debugDate, setDebugDate] = React.useState<Date | null>(null)
+
+	React.useLayoutEffect(() => {
+		navigation.setOptions({
+			headerRight: () => (
+				<DebugDatePicker
+					date={debugDate ?? new Date()}
+					onDateChange={setDebugDate}
+				/>
+			),
+		})
+	}, [navigation, debugDate])
 	const {selectedSports, setSelectedSports, setTotalSports} = useFilterStore()
 	const insets = useSafeAreaInsets()
 
@@ -170,12 +183,6 @@ export function AthleticsListView(): React.ReactNode {
 			<TabBar
 				onSelectSection={setSelectedSection}
 				selectedSection={selectedSection}
-			/>
-			<DebugDatePicker
-				date={debugDate ?? new Date()}
-				isOverridden={debugDate !== null}
-				onDateChange={setDebugDate}
-				onReset={() => setDebugDate(null)}
 			/>
 			{selectedSection === Constants.FILTER ? (
 				<AthleticsFilters sports={sports} />
