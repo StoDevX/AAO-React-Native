@@ -61,14 +61,33 @@ describe('groupScoresByDate', () => {
 		expect(yGroup?.data).toHaveLength(1)
 	})
 
-	it('places a today game in Today bucket', () => {
+	it('places a today game in Today bucket when game time has passed', () => {
 		const today = new Date()
 		const m = today.getMonth() + 1
 		const d = today.getDate()
 		const y = today.getFullYear()
 		const score = makeFakeScore(`${m}/${d}/${y} 1:00:00 PM`)
-		const groups = groupScoresByDate([score])
+		// Use an explicit "now" after 1 PM so the game has already started
+		const now = new Date(y, today.getMonth(), d, 14, 0, 0) // 2 PM
+		const groups = groupScoresByDate([score], now)
 		const todayGroup = groups.find((g) => g.title === Constants.TODAY)
 		expect(todayGroup?.data).toHaveLength(1)
+	})
+
+	it('places a today game in Upcoming bucket when game time has not yet passed', () => {
+		const today = new Date()
+		const m = today.getMonth() + 1
+		const d = today.getDate()
+		const y = today.getFullYear()
+		const score = makeFakeScore(`${m}/${d}/${y} 4:00:00 PM`)
+		// Use an explicit "now" before 4 PM so the game is still upcoming
+		const now = new Date(y, today.getMonth(), d, 14, 0, 0) // 2 PM
+		const groups = groupScoresByDate([score], now)
+		const todayGroup = groups.find((g) => g.title === Constants.TODAY)
+		const upcomingGroups = groups.filter(
+			(g) => g.title !== Constants.TODAY && g.title !== Constants.YESTERDAY,
+		)
+		expect(todayGroup?.data).toHaveLength(0)
+		expect(upcomingGroups.some((g) => g.data.includes(score))).toBe(true)
 	})
 })

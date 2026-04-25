@@ -79,9 +79,11 @@ export function groupScoresByDate(
 		const date = parseGameDate(score.date_utc)
 		if (isSameDay(date, yesterdayStart)) {
 			yesterday.push(score)
-		} else if (isSameDay(date, todayStart)) {
+		} else if (isSameDay(date, todayStart) && date <= now) {
+			// Game is today and has already started/finished
 			today.push(score)
-		} else if (date > todayStart) {
+		} else if (date > now) {
+			// Game hasn't happened yet — includes later today and future days
 			const key = formatDateString(date)
 			if (!upcoming[key]) {
 				upcoming[key] = []

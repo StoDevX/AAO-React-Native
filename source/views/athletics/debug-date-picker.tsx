@@ -24,7 +24,7 @@ export function DebugDatePicker({date, onDateChange}: Props): React.ReactNode {
 	return (
 		<DateTimePicker
 			display="compact"
-			mode="date"
+			mode="datetime"
 			onChange={handleChange}
 			value={date}
 		/>
