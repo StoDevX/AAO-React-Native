@@ -1,14 +1,19 @@
 import {parseGameDate, groupScoresByDate, formatDateString} from '../utils'
 import {Constants} from '../constants'
+import {Score} from '../types'
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const makeFakeScore = (date_utc: string, extra: Partial<{sport: string; result: string}> = {}): any => ({
-	id: '1',
-	date_utc,
-	sport: extra.sport ?? 'Baseball',
-	result: extra.result ?? '',
-	// minimal fields — only what utils needs
-})
+const makeFakeScore = (
+	dateUtc: string,
+	extra: Partial<{sport: string; result: string}> = {},
+): Score =>
+	({
+		id: '1',
+		// eslint-disable-next-line camelcase
+		date_utc: dateUtc,
+		sport: extra.sport ?? 'Baseball',
+		result: extra.result ?? '',
+		// minimal fields — only what utils needs
+	}) as Score
 
 describe('parseGameDate', () => {
 	it('parses a standard date string', () => {

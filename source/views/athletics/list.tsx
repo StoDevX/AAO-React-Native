@@ -16,15 +16,25 @@ import {formatDateString, parseGameDate} from './utils'
 type TabSection = DateSection | typeof Constants.FILTER
 
 export function AthleticsListView(): React.ReactNode {
-	const [selectedSection, setSelectedSection] = React.useState<TabSection>(Constants.TODAY)
+	const [selectedSection, setSelectedSection] = React.useState<TabSection>(
+		Constants.TODAY,
+	)
 	const {selectedSports, setSelectedSports} = useFilterStore()
 	const insets = useSafeAreaInsets()
 
-	const {data = [], error, refetch, isLoading, isError} = useQuery(athleticsOptions)
+	const {
+		data = [],
+		error,
+		refetch,
+		isLoading,
+		isError,
+	} = useQuery(athleticsOptions)
 
 	// Derive the list of available sports from the data
 	const sports = React.useMemo(() => {
-		const allSports = data.flatMap((section) => section.data.map((score) => score.sport))
+		const allSports = data.flatMap((section) =>
+			section.data.map((score) => score.sport),
+		)
 		const uniqueSports = [...new Set(allSports)].sort()
 		const womenSports = uniqueSports.filter((s) => s.includes("Women's"))
 		const menSports = uniqueSports.filter((s) => s.includes("Men's"))
@@ -46,7 +56,8 @@ export function AthleticsListView(): React.ReactNode {
 		return data.map((section) => ({
 			...section,
 			data: section.data.filter(
-				(score) => selectedSports.length === 0 || selectedSports.includes(score.sport),
+				(score) =>
+					selectedSports.length === 0 || selectedSports.includes(score.sport),
 			),
 		}))
 	}, [data, selectedSports])
@@ -60,7 +71,9 @@ export function AthleticsListView(): React.ReactNode {
 		if (selectedSection === Constants.UPCOMING) {
 			// Combine all upcoming entries and sub-group by date
 			const upcomingScores = filteredData
-				.filter((s) => s.title !== Constants.YESTERDAY && s.title !== Constants.TODAY)
+				.filter(
+					(s) => s.title !== Constants.YESTERDAY && s.title !== Constants.TODAY,
+				)
 				.flatMap((s) => s.data)
 			const byDate: Record<string, Score[]> = {}
 			for (const score of upcomingScores) {
@@ -77,8 +90,11 @@ export function AthleticsListView(): React.ReactNode {
 		}
 
 		if (selectedSection === Constants.YESTERDAY) {
-			const yesterdaySection = filteredData.find((s) => s.title === Constants.YESTERDAY)
-			const finalized = yesterdaySection?.data.filter((score) => score.result !== '') ?? []
+			const yesterdaySection = filteredData.find(
+				(s) => s.title === Constants.YESTERDAY,
+			)
+			const finalized =
+				yesterdaySection?.data.filter((score) => score.result !== '') ?? []
 			return finalized.length ? [{title: '', data: finalized}] : []
 		}
 
@@ -86,14 +102,21 @@ export function AthleticsListView(): React.ReactNode {
 			const todaySection = filteredData.find((s) => s.title === Constants.TODAY)
 			const scores = todaySection?.data ?? []
 			return [
-				{title: Constants.ONGOING, data: scores.filter((s) => s.status.indicator === 'O')},
+				{
+					title: Constants.ONGOING,
+					data: scores.filter((s) => s.status.indicator === 'O'),
+				},
 				{
 					title: Constants.FINALIZED,
-					data: scores.filter((s) => s.status.indicator !== 'O' && s.result !== ''),
+					data: scores.filter(
+						(s) => s.status.indicator !== 'O' && s.result !== '',
+					),
 				},
 				{
 					title: Constants.UPCOMING,
-					data: scores.filter((s) => s.status.indicator !== 'O' && s.result === ''),
+					data: scores.filter(
+						(s) => s.status.indicator !== 'O' && s.result === '',
+					),
 				},
 			].filter((s) => s.data.length > 0)
 		}
@@ -121,20 +144,23 @@ export function AthleticsListView(): React.ReactNode {
 
 	return (
 		<View style={styles.container}>
-			<TabBar selectedSection={selectedSection} onSelectSection={setSelectedSection} />
+			<TabBar
+				onSelectSection={setSelectedSection}
+				selectedSection={selectedSection}
+			/>
 			{selectedSection === Constants.FILTER ? (
 				<AthleticsFilters sports={sports} />
 			) : (
 				<SectionList
-					contentContainerStyle={styles.sectionListContent}
-					contentInset={{top: 0, bottom: insets.bottom}}
-					keyExtractor={(item) => item.id}
 					ListEmptyComponent={
 						<NoticeView
 							style={styles.emptyNotice}
 							text="No games available. Try changing the filters."
 						/>
 					}
+					contentContainerStyle={styles.sectionListContent}
+					contentInset={{top: 0, bottom: insets.bottom}}
+					keyExtractor={(item) => item.id}
 					renderItem={({item}) => (
 						<AthleticsRow
 							data={[item]}

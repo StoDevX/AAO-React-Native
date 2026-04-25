@@ -14,7 +14,9 @@ const ATHLETICS_URL =
 export const athleticsOptions = queryOptions({
 	queryKey: keys.all,
 	queryFn: async ({signal}): Promise<DateGroupedScores[]> => {
-		const response = await ky.get(ATHLETICS_URL, {signal}).json<AthleticsResponse>()
+		const response = await ky
+			.get(ATHLETICS_URL, {signal})
+			.json<AthleticsResponse>()
 		return groupScoresByDate(response.scores)
 	},
 })

@@ -1,5 +1,11 @@
 import * as React from 'react'
-import {SectionList, StyleSheet, Text, TouchableOpacity, View} from 'react-native'
+import {
+	SectionList,
+	StyleSheet,
+	Text,
+	TouchableOpacity,
+	View,
+} from 'react-native'
 import * as c from '@frogpond/colors'
 import {useFilterStore} from './store'
 
@@ -7,14 +13,21 @@ interface AthleticsFiltersProps {
 	sports: {title: string; data: string[]}[]
 }
 
-export function AthleticsFilters({sports}: AthleticsFiltersProps): React.ReactNode {
+export function AthleticsFilters({
+	sports,
+}: AthleticsFiltersProps): React.ReactNode {
 	const {selectedSports, toggleSport, setSelectedSports} = useFilterStore()
 
 	const handleSelectAll = (sectionTitle: string) => {
-		const sectionSports = sports.find((s) => s.title === sectionTitle)?.data ?? []
-		const allSelected = sectionSports.every((sport) => selectedSports.includes(sport))
+		const sectionSports =
+			sports.find((s) => s.title === sectionTitle)?.data ?? []
+		const allSelected = sectionSports.every((sport) =>
+			selectedSports.includes(sport),
+		)
 		if (allSelected) {
-			setSelectedSports(selectedSports.filter((sport) => !sectionSports.includes(sport)))
+			setSelectedSports(
+				selectedSports.filter((sport) => !sectionSports.includes(sport)),
+			)
 		} else {
 			setSelectedSports([...new Set([...selectedSports, ...sectionSports])])
 		}
@@ -22,14 +35,14 @@ export function AthleticsFilters({sports}: AthleticsFiltersProps): React.ReactNo
 
 	return (
 		<SectionList
-			contentContainerStyle={styles.listContainer}
-			keyExtractor={(item) => item}
 			ListFooterComponent={
 				<Text style={styles.listFooterLabel}>
 					Filter preferences are saved locally to your device.
 				</Text>
 			}
 			ListFooterComponentStyle={styles.listFooter}
+			contentContainerStyle={styles.listContainer}
+			keyExtractor={(item) => item}
 			renderItem={({item}) => (
 				<TouchableOpacity
 					accessibilityLabel={item}
@@ -47,14 +60,15 @@ export function AthleticsFilters({sports}: AthleticsFiltersProps): React.ReactNo
 							selectedSports.includes(item) && styles.selectedFilterButtonText,
 						]}
 					>
-						{item.replace(/^(Men's|Women's)\s/, '')}
+						{item.replace(/^(Men's|Women's)\s/u, '')}
 					</Text>
 				</TouchableOpacity>
 			)}
 			renderSectionHeader={({section: {title}}) => {
 				const allSelected =
-					sports.find((s) => s.title === title)?.data.every((sport) => selectedSports.includes(sport)) ??
-					false
+					sports
+						.find((s) => s.title === title)
+						?.data.every((sport) => selectedSports.includes(sport)) ?? false
 				return (
 					<View>
 						<Text style={styles.sectionHeader}>{title}</Text>
@@ -63,7 +77,10 @@ export function AthleticsFilters({sports}: AthleticsFiltersProps): React.ReactNo
 							accessibilityRole="checkbox"
 							accessibilityState={{checked: allSelected}}
 							onPress={() => handleSelectAll(title)}
-							style={[styles.filterButton, allSelected && styles.selectedFilterButton]}
+							style={[
+								styles.filterButton,
+								allSelected && styles.selectedFilterButton,
+							]}
 						>
 							<Text
 								style={[

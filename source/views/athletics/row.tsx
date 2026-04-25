@@ -41,7 +41,9 @@ export function AthleticsRow({data}: Props): React.ReactNode {
 											<View style={styles.infoScorePanel}>
 												<Text style={styles.infoScore}>{item.team_score}</Text>
 												<View style={styles.infoDivider} />
-												<Text style={styles.infoScore}>{item.opponent_score}</Text>
+												<Text style={styles.infoScore}>
+													{item.opponent_score}
+												</Text>
 											</View>
 										)}
 									</>

@@ -9,7 +9,6 @@ import {NavigationKey as streaming} from './streaming'
 import {NavigationKey as news} from './news'
 import {NavigationKey as transportation} from './transportation'
 import {NavigationKey as athletics} from './athletics'
-import {NavigationKey as athletics} from './athletics'
 
 const hours: keyof RootViewsParamList = 'BuildingHours'
 const directory: keyof RootViewsParamList = 'Directory'
