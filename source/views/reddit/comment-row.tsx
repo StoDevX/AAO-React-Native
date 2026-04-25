@@ -2,7 +2,8 @@ import * as React from 'react'
 import {View, Text, StyleSheet, TouchableOpacity} from 'react-native'
 import moment from 'moment'
 import * as c from '@frogpond/colors'
-import {htmlToFormattedText} from './html-to-text'
+import {openUrl} from '@frogpond/open-url'
+import {htmlToSegments} from './html-to-text'
 import type {RedditCommentType} from './types'
 
 const DEPTH_COLORS = [
@@ -30,7 +31,7 @@ export function CommentRow({
 	testID,
 }: Props): React.ReactNode {
 	const color = DEPTH_COLORS[depth % DEPTH_COLORS.length]
-	const body = htmlToFormattedText(comment.contentHtml)
+	const segments = htmlToSegments(comment.contentHtml)
 	const date = moment(comment.publishedAt)
 	const relativeTime = date.isValid() ? date.fromNow() : ''
 	const hasReplies = comment.replies.length > 0
@@ -71,7 +72,19 @@ export function CommentRow({
 			</View>
 			{!isCollapsed ? (
 				<Text selectable={true} style={styles.body}>
-					{body}
+					{segments.map((seg, i) =>
+						seg.type === 'link' ? (
+							<Text
+								key={i}
+								onPress={() => openUrl(seg.url)}
+								style={styles.link}
+							>
+								{seg.text}
+							</Text>
+						) : (
+							seg.text
+						),
+					)}
 				</Text>
 			) : null}
 		</TouchableOpacity>
@@ -97,16 +110,14 @@ const styles = StyleSheet.create({
 		color: c.label,
 	},
 	opBadge: {
-		backgroundColor: c.blue,
-		paddingHorizontal: 5,
+		paddingHorizontal: 3,
 		paddingVertical: 2,
-		marginLeft: 5,
-		borderRadius: 3,
+		marginLeft: 3,
 	},
 	opBadgeText: {
-		fontSize: 11,
+		fontSize: 13,
 		fontWeight: '700',
-		color: c.white,
+		color: c.blue,
 	},
 	timestamp: {
 		fontSize: 13,
@@ -120,5 +131,9 @@ const styles = StyleSheet.create({
 		fontSize: 14,
 		color: c.bodyText,
 		lineHeight: 20,
+	},
+	link: {
+		color: c.link,
+		textDecorationLine: 'underline',
 	},
 })

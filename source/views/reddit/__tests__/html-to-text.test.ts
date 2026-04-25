@@ -1,4 +1,5 @@
 import {htmlToFormattedText} from '../html-to-text'
+import {htmlToSegments} from '../html-to-text'
 
 test('plain text passes through unchanged', () => {
 	expect(htmlToFormattedText('<p>Hello world</p>')).toBe('Hello world')
@@ -68,4 +69,49 @@ test('standalone table with no md div produces empty string', () => {
 	const html =
 		'<table><tr><td> submitted by <a href="">/u/user</a> <a href="">[link]</a></td></tr></table>'
 	expect(htmlToFormattedText(html)).toBe('')
+})
+
+// ── htmlToSegments ─────────────────────────────────────────────────────────
+
+describe('htmlToSegments', () => {
+	it('plain text produces a single text segment', () => {
+		const result = htmlToSegments('<p>Hello world</p>')
+		expect(result).toEqual([{type: 'text', text: 'Hello world'}])
+	})
+
+	it('anchor tag produces a link segment with url and display text', () => {
+		const result = htmlToSegments(
+			'<p>Visit <a href="https://example.com">example</a> today</p>',
+		)
+		expect(result).toEqual([
+			{type: 'text', text: 'Visit '},
+			{type: 'link', text: 'example', url: 'https://example.com'},
+			{type: 'text', text: ' today'},
+		])
+	})
+
+	it('bare URL in anchor href is preserved', () => {
+		const result = htmlToSegments('<a href="https://stolaf.edu">St. Olaf</a>')
+		expect(result).toEqual([
+			{type: 'link', text: 'St. Olaf', url: 'https://stolaf.edu'},
+		])
+	})
+
+	it('empty href anchor falls back to text segment', () => {
+		const result = htmlToSegments('<a href="">no url</a>')
+		expect(result).toEqual([{type: 'text', text: 'no url'}])
+	})
+
+	it('collapses adjacent text segments', () => {
+		const result = htmlToSegments('<p>one</p><p>two</p>')
+		expect(result).toEqual([{type: 'text', text: 'one\n\ntwo'}])
+	})
+
+	it('link sandwiched between text produces three segments', () => {
+		const result = htmlToSegments(
+			'<p>Before <a href="https://x.com">link</a> after</p>',
+		)
+		expect(result).toHaveLength(3)
+		expect(result[1]).toMatchObject({type: 'link', url: 'https://x.com'})
+	})
 })
