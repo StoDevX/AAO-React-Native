@@ -26,10 +26,24 @@ const MONTH_NAMES = [
 ]
 
 /**
- * Parse an ISO 8601 UTC date string (e.g. "2025-01-26T19:00:00Z") into a JS Date.
+ * Parse the API's "M/D/YYYY h:mm:ss AM/PM" date format into a JS Date.
+ * Uses explicit parsing to avoid relying on engine-specific Date.parse behaviour
+ * (Hermes does not support this non-standard format).
  */
 export function parseGameDate(dateStr: string): Date {
-	return new Date(dateStr)
+	// e.g. "4/26/2026 4:00:00 PM"
+	const parts = dateStr.split(' ')
+	if (parts.length !== 3) {
+		return new Date(NaN)
+	}
+	const [datePart, timePart, ampm] = parts
+	const [month, day, year] = datePart.split('/').map(Number)
+	const [hours, minutes, seconds] = timePart.split(':').map(Number)
+	let hour24 = hours % 12
+	if (ampm === 'PM') {
+		hour24 += 12
+	}
+	return new Date(year, month - 1, day, hour24, minutes, seconds)
 }
 
 /** Format a Date as "Wednesday, Jan 15" for section headers. */
