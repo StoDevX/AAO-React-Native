@@ -15,3 +15,13 @@ export type RedditCommentType = {
 	publishedAt: string
 	replies: RedditCommentType[]
 }
+
+export type FlatComment = {comment: RedditCommentType; depth: number}
+
+export type RedditPostDetailParams = {
+	postUrl: string
+	title: string
+	author: string
+	publishedAt: string
+	contentHtml: string
+}

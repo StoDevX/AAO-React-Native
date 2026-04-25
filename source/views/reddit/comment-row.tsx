@@ -1,10 +1,16 @@
 import * as React from 'react'
 import {View, Text, StyleSheet} from 'react-native'
-import {fastGetTrimmedText} from '@frogpond/html-lib'
+import {parseHtml, innerTextWithSpaces} from '@frogpond/html-lib'
 import moment from 'moment'
+import * as c from '@frogpond/colors'
 import type {RedditCommentType} from './types'
 
-const DEPTH_COLORS = ['#5C8BC9', '#5CAD8B', '#9B6CC9', '#C97A5C'] as const
+const DEPTH_COLORS = [
+	c.systemBlue,
+	c.systemGreen,
+	c.systemPurple,
+	c.systemOrange,
+] as const
 
 type Props = {
 	comment: RedditCommentType
@@ -18,29 +24,25 @@ export function CommentRow({
 	testID,
 }: Props): React.ReactNode {
 	const color = DEPTH_COLORS[depth % DEPTH_COLORS.length]
-	const body = fastGetTrimmedText(comment.contentHtml)
-	const meta = `u/${comment.author} · ${moment(comment.publishedAt).fromNow()}`
+	const body = innerTextWithSpaces(parseHtml(comment.contentHtml))
+	const date = moment(comment.publishedAt)
+	const meta = `${comment.author} · ${date.isValid() ? date.fromNow() : ''}`
 
 	return (
-		<>
-			<View
-				style={[
-					styles.comment,
-					{
-						marginLeft: depth * 14,
-						borderLeftWidth: depth > 0 ? 3 : 0,
-						borderLeftColor: color,
-					},
-				]}
-				testID={testID}
-			>
-				<Text style={styles.meta}>{meta}</Text>
-				<Text style={styles.body}>{body}</Text>
-			</View>
-			{comment.replies.map((reply) => (
-				<CommentRow key={reply.id} comment={reply} depth={depth + 1} />
-			))}
-		</>
+		<View
+			style={[
+				styles.comment,
+				{
+					marginLeft: depth * 14,
+					borderLeftWidth: depth > 0 ? 3 : 0,
+					borderLeftColor: color,
+				},
+			]}
+			testID={testID}
+		>
+			<Text style={styles.meta}>{meta}</Text>
+			<Text style={styles.body}>{body}</Text>
+		</View>
 	)
 }
 
@@ -49,16 +51,16 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 12,
 		paddingVertical: 8,
 		borderBottomWidth: StyleSheet.hairlineWidth,
-		borderBottomColor: '#e0e0e0',
+		borderBottomColor: c.separator,
 	},
 	meta: {
 		fontSize: 12,
-		color: '#888',
+		color: c.secondaryLabel,
 		marginBottom: 4,
 	},
 	body: {
 		fontSize: 14,
-		color: '#111',
+		color: c.label,
 		lineHeight: 20,
 	},
 })

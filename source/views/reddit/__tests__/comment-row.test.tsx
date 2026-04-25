@@ -31,7 +31,7 @@ describe('CommentRow', () => {
 		expect(screen.getByText(/Hello world/u)).toBeTruthy()
 	})
 
-	it('renders nested replies', () => {
+	it('does not render nested replies (PostDetailView owns threading)', () => {
 		const comment = makeComment({
 			replies: [
 				makeComment({
@@ -42,8 +42,9 @@ describe('CommentRow', () => {
 			],
 		})
 		render(<CommentRow comment={comment} depth={0} />)
-		expect(screen.getByText(/child_user/u)).toBeTruthy()
-		expect(screen.getByText(/Child reply/u)).toBeTruthy()
+		// CommentRow only renders its own comment; nested content is handled by
+		// PostDetailView via flattenComments + FlatList
+		expect(screen.queryByText(/child_user/u)).toBeNull()
 	})
 
 	it('mounts at depth 2 without crashing', () => {

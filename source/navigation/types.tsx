@@ -32,6 +32,7 @@ import {JobType} from '../views/sis/student-work/types'
 import {CourseType} from '../lib/course-search/types'
 import {DirectoryItem, DirectorySearchTypeEnum} from '../views/directory/types'
 import {ServerRoute} from '../views/settings/screens/api-test/query'
+import type {RedditPostDetailParams} from '../views/reddit/types'
 
 export type FaqRouteParams = {faqId?: string} | undefined
 
@@ -98,13 +99,7 @@ export type MiscViewParamList = {
 	MenuItemDetail: {item: MenuItem; icons: MasterCorIconMapType}
 	PrinterList: {job: PrintJob}
 	PrintJobRelease: {job: PrintJob; printer?: Printer}
-	RedditPostDetail: {
-		postUrl: string
-		title: string
-		author: string
-		publishedAt: string
-		contentHtml: string
-	}
+	RedditPostDetail: RedditPostDetailParams
 }
 
 export type RootStackParamList = RootViewsParamList &

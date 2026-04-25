@@ -3,38 +3,30 @@ import {View, Text, FlatList, StyleSheet} from 'react-native'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 import {useRoute, RouteProp} from '@react-navigation/native'
 import {useQuery} from '@tanstack/react-query'
-import {HtmlContent} from '@frogpond/html-content'
+import {parseHtml, innerTextWithSpaces} from '@frogpond/html-lib'
 import {LoadingView, NoticeView} from '@frogpond/notice'
 import * as c from '@frogpond/colors'
 import moment from 'moment'
 import {redditCommentsOptions} from './query'
 import {CommentRow} from './comment-row'
-import type {RedditCommentType} from './types'
-
-type RedditPostDetailParams = {
-	postUrl: string
-	title: string
-	author: string
-	publishedAt: string
-	contentHtml: string
-}
+import type {
+	RedditCommentType,
+	FlatComment,
+	RedditPostDetailParams,
+} from './types'
 
 type RouteType = RouteProp<
 	{RedditPostDetail: RedditPostDetailParams},
 	'RedditPostDetail'
 >
 
-// Flattens nested comment tree to a list while preserving depth info inline.
-// We render each node individually so FlatList can virtualise the scroll.
-type FlatComment = {comment: RedditCommentType; depth: number}
-
 function flattenComments(
 	comments: RedditCommentType[],
 	depth = 0,
 ): FlatComment[] {
-	return comments.flatMap((c) => [
-		{comment: c, depth},
-		...flattenComments(c.replies, depth + 1),
+	return comments.flatMap((comment) => [
+		{comment, depth},
+		...flattenComments(comment.replies, depth + 1),
 	])
 }
 
@@ -55,15 +47,18 @@ export function PostDetailView(): React.ReactNode {
 		[comments],
 	)
 
+	const date = moment(publishedAt)
+	const bodyText = contentHtml
+		? innerTextWithSpaces(parseHtml(contentHtml))
+		: ''
+
 	const header = (
 		<View style={styles.header}>
 			<Text style={styles.title}>{title}</Text>
 			<Text style={styles.meta}>
-				{`u/${author} · ${moment(publishedAt).fromNow()}`}
+				{`${author} · ${date.isValid() ? date.fromNow() : ''}`}
 			</Text>
-			{contentHtml ? (
-				<HtmlContent html={contentHtml} style={styles.body} />
-			) : null}
+			{bodyText ? <Text style={styles.body}>{bodyText}</Text> : null}
 			<View style={styles.commentsLabel}>
 				<Text style={styles.commentsLabelText}>Comments</Text>
 			</View>
@@ -107,20 +102,25 @@ const styles = StyleSheet.create({
 	header: {
 		padding: 16,
 		borderBottomWidth: StyleSheet.hairlineWidth,
-		borderBottomColor: '#e0e0e0',
+		borderBottomColor: c.separator,
 	},
-	title: {fontSize: 18, fontWeight: '600', marginBottom: 6},
-	meta: {fontSize: 13, color: '#888', marginBottom: 12},
-	body: {height: 200, marginBottom: 12},
+	title: {fontSize: 18, fontWeight: '600', marginBottom: 6, color: c.label},
+	meta: {fontSize: 13, color: c.secondaryLabel, marginBottom: 12},
+	body: {
+		fontSize: 15,
+		color: c.label,
+		lineHeight: 22,
+		marginBottom: 12,
+	},
 	commentsLabel: {
 		paddingTop: 12,
 		borderTopWidth: StyleSheet.hairlineWidth,
-		borderTopColor: '#e0e0e0',
+		borderTopColor: c.separator,
 	},
 	commentsLabelText: {
 		fontSize: 13,
 		fontWeight: '600',
-		color: '#666',
+		color: c.tertiaryLabel,
 		textTransform: 'uppercase',
 		letterSpacing: 0.5,
 	},
