@@ -1,7 +1,6 @@
 import ky from 'ky'
 import {queryOptions} from '@tanstack/react-query'
-import {AthleticsResponse, DateGroupedScores} from './types'
-import {groupScoresByDate} from './utils'
+import {AthleticsResponse, Score} from './types'
 
 export const keys = {
 	all: ['athletics', 'scores'] as const,
@@ -13,10 +12,10 @@ const ATHLETICS_URL =
 
 export const athleticsOptions = queryOptions({
 	queryKey: keys.all,
-	queryFn: async ({signal}): Promise<DateGroupedScores[]> => {
+	queryFn: async ({signal}): Promise<Score[]> => {
 		const response = await ky
 			.get(ATHLETICS_URL, {signal})
 			.json<AthleticsResponse>()
-		return groupScoresByDate(response.scores)
+		return response.scores
 	},
 })

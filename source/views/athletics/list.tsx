@@ -48,10 +48,7 @@ export function AthleticsListView(): React.ReactNode {
 
 	// Derive the list of available sports from the data
 	const sports = React.useMemo(() => {
-		const allSports = data.flatMap((section) =>
-			section.data.map((score) => score.sport),
-		)
-		const uniqueSports = [...new Set(allSports)].sort()
+		const uniqueSports = [...new Set(data.map((s) => s.sport))].sort()
 		const womenSports = uniqueSports.filter((s) => s.includes("Women's"))
 		const menSports = uniqueSports.filter((s) => s.includes("Men's"))
 		return [
@@ -69,22 +66,18 @@ export function AthleticsListView(): React.ReactNode {
 
 	// Keep totalSports in sync so EmptyListNotice can detect filtered-out state
 	const uniqueSportCount = React.useMemo(
-		() =>
-			new Set(
-				data.flatMap((section) => section.data.map((score) => score.sport)),
-			).size,
+		() => new Set(data.map((s) => s.sport)).size,
 		[data],
 	)
 	React.useEffect(() => {
 		setTotalSports(uniqueSportCount)
 	}, [uniqueSportCount, setTotalSports])
 
-	// When a debug date is set, re-group all fetched scores relative to that
-	// shifted "today" so all three tabs (Yesterday/Today/Upcoming) update.
+	// Group scores relative to the debug date (if set) or real current time.
+	// Because the query now returns raw Score[], we always have the full dataset
+	// and can shift "today" freely in either direction.
 	const baseData = React.useMemo<DateGroupedScores[]>(() => {
-		if (!debugDate) return data
-		const allScores = data.flatMap((s) => s.data)
-		return groupScoresByDate(allScores, debugDate)
+		return groupScoresByDate(data, debugDate ?? new Date())
 	}, [data, debugDate])
 
 	// Apply the sport filter to the fetched data
