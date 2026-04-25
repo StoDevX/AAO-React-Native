@@ -30,7 +30,7 @@ export function DebugDatePicker({
 	return (
 		<DateTimePicker
 			display="compact"
-			mode="datetime"
+			mode="date"
 			onChange={handleChange}
 			value={value}
 		/>

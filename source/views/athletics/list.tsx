@@ -123,7 +123,6 @@ export function AthleticsListView(): React.ReactNode {
 		}
 
 		if (selectedSection === Constants.TODAY) {
-			const now = debugDate ?? new Date()
 			const todaySection = filteredData.find((s) => s.title === Constants.TODAY)
 			const scores = todaySection?.data ?? []
 			return [
@@ -134,22 +133,20 @@ export function AthleticsListView(): React.ReactNode {
 				{
 					title: Constants.FINALIZED,
 					data: scores.filter(
-						(s) =>
-							s.status.indicator !== 'O' && parseGameDate(s.date_utc) <= now,
+						(s) => s.status.indicator !== 'O' && s.result !== '',
 					),
 				},
 				{
 					title: Constants.UPCOMING,
 					data: scores.filter(
-						(s) =>
-							s.status.indicator !== 'O' && parseGameDate(s.date_utc) > now,
+						(s) => s.status.indicator !== 'O' && s.result === '',
 					),
 				},
 			].filter((s) => s.data.length > 0)
 		}
 
 		return []
-	}, [selectedSection, filteredData, debugDate])
+	}, [selectedSection, filteredData])
 
 	if (isError) {
 		return (
