@@ -12,8 +12,12 @@ type Props = {
 	testID?: string
 }
 
-export function CommentRow({comment, depth = 0, testID}: Props): React.ReactNode {
-	const color = DEPTH_COLORS[depth % DEPTH_COLORS.length]!
+export function CommentRow({
+	comment,
+	depth = 0,
+	testID,
+}: Props): React.ReactNode {
+	const color = DEPTH_COLORS[depth % DEPTH_COLORS.length]
 	const body = fastGetTrimmedText(comment.contentHtml)
 	const meta = `u/${comment.author} · ${moment(comment.publishedAt).fromNow()}`
 
