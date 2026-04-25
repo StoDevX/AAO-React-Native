@@ -21,7 +21,7 @@ export function AthleticsListView(): React.ReactNode {
 	const [selectedSection, setSelectedSection] = React.useState<TabSection>(
 		Constants.TODAY,
 	)
-	const [debugOffset, setDebugOffset] = React.useState(0)
+	const [debugDate, setDebugDate] = React.useState<Date | null>(null)
 	const {selectedSports, setSelectedSports, setTotalSports} = useFilterStore()
 	const insets = useSafeAreaInsets()
 
@@ -66,21 +66,13 @@ export function AthleticsListView(): React.ReactNode {
 		setTotalSports(uniqueSportCount)
 	}, [uniqueSportCount, setTotalSports])
 
-	// When a debug offset is active, re-group all fetched scores relative to the
-	// shifted "today". Scores older than true-yesterday are already dropped by the
-	// query so the debug window is roughly ±N days from actual today.
-	const debugNow = React.useMemo(() => {
-		if (debugOffset === 0) return null
-		const d = new Date()
-		d.setDate(d.getDate() + debugOffset)
-		return d
-	}, [debugOffset])
-
+	// When a debug date is set, re-group all fetched scores relative to that
+	// shifted "today" so all three tabs (Yesterday/Today/Upcoming) update.
 	const baseData = React.useMemo<DateGroupedScores[]>(() => {
-		if (!debugNow) return data
+		if (!debugDate) return data
 		const allScores = data.flatMap((s) => s.data)
-		return groupScoresByDate(allScores, debugNow)
-	}, [data, debugNow])
+		return groupScoresByDate(allScores, debugDate)
+	}, [data, debugDate])
 
 	// Apply the sport filter to the fetched data
 	const filteredData = React.useMemo<DateGroupedScores[]>(() => {
@@ -179,13 +171,12 @@ export function AthleticsListView(): React.ReactNode {
 				onSelectSection={setSelectedSection}
 				selectedSection={selectedSection}
 			/>
-			{__DEV__ && (
-				<DebugDatePicker
-					offset={debugOffset}
-					onOffsetChange={setDebugOffset}
-					referenceDate={debugNow ?? new Date()}
-				/>
-			)}
+			<DebugDatePicker
+				date={debugDate ?? new Date()}
+				isOverridden={debugDate !== null}
+				onDateChange={setDebugDate}
+				onReset={() => setDebugDate(null)}
+			/>
 			{selectedSection === Constants.FILTER ? (
 				<AthleticsFilters sports={sports} />
 			) : (
