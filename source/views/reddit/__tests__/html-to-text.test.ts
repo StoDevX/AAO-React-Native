@@ -1,5 +1,5 @@
-import {htmlToFormattedText} from '../html-to-text'
-import {htmlToSegments} from '../html-to-text'
+import {htmlToFormattedText} from '../utils/html-to-text'
+import {htmlToSegments} from '../utils/html-to-text'
 
 test('plain text passes through unchanged', () => {
 	expect(htmlToFormattedText('<p>Hello world</p>')).toBe('Hello world')

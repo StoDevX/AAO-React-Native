@@ -19,12 +19,13 @@ import {openUrl} from '@frogpond/open-url'
 import moment from 'moment'
 import {redditCommentsOptions} from './query'
 import {CommentRow} from './comment-row'
-import {htmlToFormattedText} from './html-to-text'
+import {htmlToFormattedText} from './utils/html-to-text'
 import type {
 	RedditCommentType,
 	FlatComment,
 	RedditPostDetailParams,
 } from './types'
+import {formatCommentCount} from './utils/format-count'
 
 type RouteType = RouteProp<
 	{RedditPostDetail: RedditPostDetailParams},
@@ -168,7 +169,9 @@ export function PostDetailView(): React.ReactNode {
 				</Modal>
 			) : null}
 			<View style={styles.commentsSectionHeader}>
-				<Text style={styles.commentsLabelText}>Comments</Text>
+				<Text style={styles.commentsLabelText}>
+					{formatCommentCount(flatComments.length)}
+				</Text>
 			</View>
 		</>
 	)

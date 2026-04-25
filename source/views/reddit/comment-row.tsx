@@ -3,7 +3,7 @@ import {View, Text, StyleSheet, TouchableOpacity} from 'react-native'
 import moment from 'moment'
 import * as c from '@frogpond/colors'
 import {openUrl} from '@frogpond/open-url'
-import {htmlToSegments} from './html-to-text'
+import {htmlToSegments} from './utils/html-to-text'
 import type {RedditCommentType} from './types'
 
 const DEPTH_COLORS = [
