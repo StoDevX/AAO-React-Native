@@ -1,14 +1,17 @@
 import * as React from 'react'
 import {View, Text, FlatList, StyleSheet} from 'react-native'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
-import {useRoute, RouteProp} from '@react-navigation/native'
+import {useNavigation, useRoute, RouteProp} from '@react-navigation/native'
 import {useQuery} from '@tanstack/react-query'
-import {parseHtml, innerTextWithSpaces} from '@frogpond/html-lib'
+import {Ionicons as Icon} from '@react-native-vector-icons/ionicons'
+import {Touchable} from '@frogpond/touchable'
 import {LoadingView, NoticeView} from '@frogpond/notice'
 import * as c from '@frogpond/colors'
+import {openUrl} from '@frogpond/open-url'
 import moment from 'moment'
 import {redditCommentsOptions} from './query'
 import {CommentRow} from './comment-row'
+import {htmlToFormattedText} from './html-to-text'
 import type {
 	RedditCommentType,
 	FlatComment,
@@ -31,6 +34,7 @@ function flattenComments(
 }
 
 export function PostDetailView(): React.ReactNode {
+	const navigation = useNavigation()
 	const route = useRoute<RouteType>()
 	const {postUrl, title, author, publishedAt, contentHtml} = route.params
 
@@ -47,22 +51,40 @@ export function PostDetailView(): React.ReactNode {
 		[comments],
 	)
 
+	React.useLayoutEffect(() => {
+		navigation.setOptions({
+			headerRight: () => (
+				<Touchable
+					highlight={false}
+					onPress={() => openUrl(postUrl)}
+					style={styles.headerButton}
+				>
+					<Icon name="open-outline" style={styles.headerIcon} />
+				</Touchable>
+			),
+		})
+	}, [navigation, postUrl])
+
 	const date = moment(publishedAt)
-	const bodyText = contentHtml
-		? innerTextWithSpaces(parseHtml(contentHtml))
-		: ''
+	const bodyText = contentHtml ? htmlToFormattedText(contentHtml) : ''
 
 	const header = (
-		<View style={styles.header}>
-			<Text style={styles.title}>{title}</Text>
-			<Text style={styles.meta}>
-				{`${author} · ${date.isValid() ? date.fromNow() : ''}`}
-			</Text>
-			{bodyText ? <Text style={styles.body}>{bodyText}</Text> : null}
-			<View style={styles.commentsLabel}>
+		<>
+			<View style={styles.headerBody}>
+				<Text style={styles.title}>{title}</Text>
+				<Text style={styles.meta}>
+					{`${author} · ${date.isValid() ? date.fromNow() : ''}`}
+				</Text>
+				{bodyText ? (
+					<Text selectable={true} style={styles.body}>
+						{bodyText}
+					</Text>
+				) : null}
+			</View>
+			<View style={styles.commentsSectionHeader}>
 				<Text style={styles.commentsLabelText}>Comments</Text>
 			</View>
-		</View>
+		</>
 	)
 
 	if (isError) {
@@ -99,10 +121,8 @@ export function PostDetailView(): React.ReactNode {
 const styles = StyleSheet.create({
 	list: {backgroundColor: c.systemBackground},
 	contentContainer: {flexGrow: 1},
-	header: {
+	headerBody: {
 		padding: 16,
-		borderBottomWidth: StyleSheet.hairlineWidth,
-		borderBottomColor: c.separator,
 	},
 	title: {fontSize: 18, fontWeight: '600', marginBottom: 6, color: c.label},
 	meta: {fontSize: 13, color: c.secondaryLabel, marginBottom: 12},
@@ -110,19 +130,32 @@ const styles = StyleSheet.create({
 		fontSize: 15,
 		color: c.label,
 		lineHeight: 22,
-		marginBottom: 12,
 	},
-	commentsLabel: {
-		paddingTop: 12,
+	commentsSectionHeader: {
+		backgroundColor: c.secondarySystemBackground,
+		paddingHorizontal: 16,
+		paddingVertical: 8,
 		borderTopWidth: StyleSheet.hairlineWidth,
 		borderTopColor: c.separator,
+		borderBottomWidth: StyleSheet.hairlineWidth,
+		borderBottomColor: c.separator,
 	},
 	commentsLabelText: {
 		fontSize: 13,
 		fontWeight: '600',
-		color: c.tertiaryLabel,
+		color: c.secondaryLabel,
 		textTransform: 'uppercase',
 		letterSpacing: 0.5,
+	},
+	headerButton: {
+		flexDirection: 'row',
+		alignItems: 'center',
+		paddingLeft: 6,
+		paddingRight: 16,
+	},
+	headerIcon: {
+		color: c.link,
+		fontSize: 24,
 	},
 })
 
