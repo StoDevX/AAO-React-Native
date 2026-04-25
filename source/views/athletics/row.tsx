@@ -19,6 +19,7 @@ export function AthleticsRow({data}: Props): React.ReactNode {
 
 				return (
 					<View key={`${index}-${item.id}`} style={styles.rowContainer}>
+						<Text style={styles.sportName}>{item.sport}</Text>
 						<View style={styles.container}>
 							<View style={styles.teamLeft}>
 								{item.hometeam_logo ? (
@@ -102,6 +103,13 @@ const styles = StyleSheet.create({
 		height: 30,
 		marginVertical: 4,
 		width: 30,
+	},
+	sportName: {
+		color: c.systemGray,
+		fontSize: 11,
+		fontWeight: 'bold',
+		padding: 2,
+		textAlign: 'center',
 	},
 	teamName: {
 		color: c.label,
