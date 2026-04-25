@@ -44,7 +44,7 @@ describe('formatDateString', () => {
 	it('produces a human-readable day + date', () => {
 		const d = new Date(2025, 0, 26) // Jan 26 2025 Sunday
 		const result = formatDateString(d)
-		expect(result).toBe('Sunday, Jan 26')
+		expect(result).toBe('Sunday, January 26')
 	})
 })
 

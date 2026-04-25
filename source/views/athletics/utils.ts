@@ -11,18 +11,18 @@ const DAY_NAMES = [
 	'Saturday',
 ]
 const MONTH_NAMES = [
-	'Jan',
-	'Feb',
-	'Mar',
-	'Apr',
+	'January',
+	'February',
+	'March',
+	'April',
 	'May',
-	'Jun',
-	'Jul',
-	'Aug',
-	'Sep',
-	'Oct',
-	'Nov',
-	'Dec',
+	'June',
+	'July',
+	'August',
+	'September',
+	'October',
+	'November',
+	'December',
 ]
 
 /**
@@ -46,7 +46,7 @@ export function parseGameDate(dateStr: string): Date {
 	return new Date(year, month - 1, day, hour24, minutes, seconds)
 }
 
-/** Format a Date as "Wednesday, Jan 15" for section headers. */
+/** Format a Date as "Wednesday, January 15" for section headers. */
 export function formatDateString(date: Date): string {
 	return `${DAY_NAMES[date.getDay()]}, ${MONTH_NAMES[date.getMonth()]} ${date.getDate()}`
 }
