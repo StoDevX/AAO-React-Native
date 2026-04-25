@@ -175,7 +175,7 @@ export const AllViews = (): Array<ViewType> => {
 			title: 'Athletics',
 			icon: 'trophy',
 			foreground: 'light',
-			tint: c.navyToNavy[0],
+			tint: c.black,
 		},
 	]
 }

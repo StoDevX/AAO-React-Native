@@ -107,7 +107,7 @@ const styles = StyleSheet.create({
 	},
 	sectionHeader: {
 		backgroundColor: c.systemGroupedBackground,
-		color: c.navyToNavy[0],
+		color: c.label,
 		fontWeight: 'bold',
 		paddingTop: 15,
 	},

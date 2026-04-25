@@ -68,7 +68,7 @@ const styles = StyleSheet.create({
 		paddingVertical: 12,
 	},
 	selectedTab: {
-		borderBottomColor: c.navyToNavy[0],
+		borderBottomColor: c.label,
 		borderBottomWidth: 2,
 	},
 	tabText: {
@@ -76,7 +76,7 @@ const styles = StyleSheet.create({
 		fontSize: 14,
 	},
 	selectedTabText: {
-		color: c.navyToNavy[0],
+		color: c.label,
 		fontWeight: 'bold',
 	},
 })

@@ -105,7 +105,7 @@ const styles = StyleSheet.create({
 		width: 30,
 	},
 	sportName: {
-		color: c.systemGray,
+		color: c.label,
 		fontSize: 11,
 		fontWeight: 'bold',
 		padding: 2,
