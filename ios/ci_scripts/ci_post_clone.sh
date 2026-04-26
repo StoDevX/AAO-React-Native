@@ -25,6 +25,16 @@ npm ci
 # build the data files
 mise run bundle-data
 
+# Mapbox SDK download credentials (required by @rnmapbox/maps at pod-install time).
+# TODO: provision MAPBOX_DOWNLOADS_TOKEN as a secret env var in Xcode Cloud.
+if [ -n "${MAPBOX_DOWNLOADS_TOKEN:-}" ]; then
+  printf 'machine api.mapbox.com\n  login mapbox\n  password %s\n' \
+    "${MAPBOX_DOWNLOADS_TOKEN}" >> ~/.netrc
+  chmod 600 ~/.netrc
+else
+  echo "warning: MAPBOX_DOWNLOADS_TOKEN unset; pod install will fail for Mapbox" >&2
+fi
+
 # install pods
 mise run pod:install --deployment
 

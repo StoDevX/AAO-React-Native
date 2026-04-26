@@ -3,6 +3,8 @@ require File.join(File.dirname(`node --print "require.resolve('expo/package.json
 # This assumes node_modules is located at ../node_modules relative to ios/.
 require '../node_modules/react-native/scripts/react_native_pods.rb'
 
+$RNMapboxMapsImpl = 'mapbox'
+
 # expo-modules-autolinking patches UserProjectIntegrator#integrate_user_targets
 # so that it calls integrate_targets_in_project for every CocoaPods target whose
 # TargetDefinition has an autolinking_manager set. Because AllAboutOlafUITests is
