@@ -37,8 +37,11 @@ export function MapScreen(): React.ReactNode {
 			let hit = lookupBuildingByCoordinates(coords, buildings)
 			if (hit) {
 				selectBuilding(hit.id)
+				// Use `replace` (matching BuildingPicker) so a map-tap doesn't strand a stale
+				// picker beneath the info card. Without this, closing info shows the picker
+				// from before the tap; with `replace`, goBack returns to the map cleanly.
 				// eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-				navigation.navigate('MapBuildingInfo', {buildingId: hit.id})
+				navigation.replace('MapBuildingInfo', {buildingId: hit.id})
 			}
 		},
 		[buildings, selectBuilding, navigation],

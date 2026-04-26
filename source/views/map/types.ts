@@ -23,7 +23,7 @@ export type Building = {
 	name: string
 	nickname: string
 	offices: Array<LabelLinkString>
-	photos?: [string]
+	photos?: Array<string>
 }
 
 export type Longitude = number

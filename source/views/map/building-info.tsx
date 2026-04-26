@@ -54,7 +54,11 @@ export function BuildingInfo(): React.ReactNode {
 	}
 
 	return (
-		<ScrollView contentContainerStyle={styles.content} style={styles.container}>
+		<ScrollView
+			contentContainerStyle={styles.content}
+			contentInsetAdjustmentBehavior="automatic"
+			style={styles.container}
+		>
 			<Header building={building} onClose={handleClose} />
 			{building.properties.photos?.[0] ? (
 				<Image
@@ -159,13 +163,20 @@ function LinkSection({
 		<Section title={title}>
 			{items.map((raw) => {
 				let {label, href} = parseLinkString(raw)
+				if (!href) {
+					return (
+						<Text key={raw} style={styles.body}>
+							{label}
+						</Text>
+					)
+				}
 				return (
 					<TouchableOpacity
 						key={raw}
 						accessibilityRole="link"
-						onPress={() => (href ? Linking.openURL(href) : undefined)}
+						onPress={() => Linking.openURL(href)}
 					>
-						<Text style={href ? styles.link : styles.body}>{label}</Text>
+						<Text style={styles.link}>{label}</Text>
 					</TouchableOpacity>
 				)
 			})}
@@ -196,7 +207,7 @@ const styles = StyleSheet.create({
 	headerText: {flex: 1},
 	title: {fontSize: 22, fontWeight: '700', color: c.label},
 	subtitle: {fontSize: 15, color: c.secondaryLabel, marginTop: 2},
-	closeButton: {paddingHorizontal: 8, paddingVertical: 4},
+	closeButton: {paddingHorizontal: 20, paddingVertical: 12},
 	closeText: {color: c.systemBlue, fontSize: 15, fontWeight: '600'},
 	photo: {width: '100%', height: 180, marginBottom: 12},
 	section: {paddingHorizontal: 16, paddingVertical: 8},
