@@ -9,6 +9,7 @@ const esmPackages = [
 	'react-navigation',
 	'@reduxjs/toolkit',
 	'immer',
+	'react-redux',
 	'redux',
 	'redux-thunk',
 	'reselect',
