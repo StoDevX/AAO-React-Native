@@ -186,6 +186,18 @@ jobs:
             ccache/e=${{ env.cache_epoch }}${{ env.cache_bust }}/host=macOS@26/target=ios/xcode=${{ env.xcode_version }}/ref=master/hash=${{ hashFiles('**/project.pbxproj', 'ios/Podfile', '**/Podfile.lock', 'ios/AllAboutOlaf/**') }}
             ccache/e=${{ env.cache_epoch }}${{ env.cache_bust }}/host=macOS@26/target=ios/xcode=${{ env.xcode_version }}/ref=master/
 
+      - name: Write ~/.netrc for Mapbox SDK download
+        env:
+          MAPBOX_DOWNLOADS_TOKEN: ${{ secrets.MAPBOX_DOWNLOADS_TOKEN }}
+        run: |
+          if [ -n "${MAPBOX_DOWNLOADS_TOKEN:-}" ]; then
+            printf 'machine api.mapbox.com\n  login mapbox\n  password %s\n' \
+              "${MAPBOX_DOWNLOADS_TOKEN}" >> ~/.netrc
+            chmod 600 ~/.netrc
+          else
+            echo "::warning::MAPBOX_DOWNLOADS_TOKEN unset; pod install will fail for @rnmapbox/maps"
+          fi
+
       - name: Install CocoaPods
         run: mise run pod:install --deployment
         env:
