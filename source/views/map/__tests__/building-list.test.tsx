@@ -41,5 +41,5 @@ it('invokes onSelect with the building id when a row is pressed', () => {
 
 it('renders an empty state when given no buildings', () => {
 	render(<BuildingList buildings={[]} onSelect={jest.fn()} />)
-	expect(screen.getByText(/No buildings/i)).toBeTruthy()
+	expect(screen.getByText(/No buildings/iu)).toBeTruthy()
 })

@@ -45,11 +45,11 @@ export function BuildingList({buildings, onSelect}: Props): React.ReactNode {
 
 	return (
 		<FlatList
+			ItemSeparatorComponent={ListSeparator}
 			data={buildings}
 			keyExtractor={keyExtractor}
-			renderItem={renderItem}
-			ItemSeparatorComponent={ListSeparator}
 			keyboardShouldPersistTaps="handled"
+			renderItem={renderItem}
 		/>
 	)
 }
