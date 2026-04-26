@@ -17,7 +17,7 @@ import type {TileSize} from './types'
 
 type Props = {
 	view: ViewType
-	size?: TileSize
+	size: TileSize
 	onPress: () => void
 }
 
@@ -69,12 +69,9 @@ function variantFor(size: TileSize): Variant {
 	}
 }
 
-// TODO(task-9): drop the '1x2' default once HomePage wires HomeScreenGrid and
-// passes size from Redux. The default exists only to keep the legacy call site
-// in source/views/home/index.tsx tsc-clean during the multi-task migration.
 export function HomeScreenButton({
 	view,
-	size = '1x2',
+	size,
 	onPress,
 }: Props): React.ReactNode {
 	const foreground =
