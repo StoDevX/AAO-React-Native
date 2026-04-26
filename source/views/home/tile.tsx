@@ -55,16 +55,23 @@ export function HomeScreenTile({view}: Props): React.ReactElement {
 		[dispatch, view.id],
 	)
 
+	const tileTestID = `home-tile-${view.id}`
+
 	return (
 		<ContextMenu
 			actions={SIZE_ACTIONS}
 			buttonStyle={styles.contextMenu}
 			onPressMenuItem={onPressMenuItem}
 			selectedAction={size}
-			testID={`home-tile-${view.id}`}
+			testID={tileTestID}
 			title="Tile size"
 		>
-			<HomeScreenButton onPress={onPress} size={size} view={view} />
+			<HomeScreenButton
+				onPress={onPress}
+				size={size}
+				testID={tileTestID}
+				view={view}
+			/>
 		</ContextMenu>
 	)
 }

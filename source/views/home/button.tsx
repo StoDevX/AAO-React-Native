@@ -19,6 +19,7 @@ type Props = {
 	view: ViewType
 	size: TileSize
 	onPress: () => void
+	testID?: string
 }
 
 type Variant = {
@@ -77,6 +78,7 @@ export function HomeScreenButton({
 	view,
 	size,
 	onPress,
+	testID,
 }: Props): React.ReactNode {
 	const foreground =
 		view.foreground === 'light' ? styles.lightForeground : styles.darkForeground
@@ -91,6 +93,7 @@ export function HomeScreenButton({
 			highlight={false}
 			onPress={onPress}
 			style={[styles.button, {backgroundColor: view.tint}]}
+			testID={testID}
 		>
 			<View style={variant.containerStyle}>
 				<Icon
