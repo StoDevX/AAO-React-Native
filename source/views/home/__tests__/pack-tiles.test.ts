@@ -3,20 +3,19 @@ import {packTiles} from '../pack-tiles'
 import type {TileSize} from '../types'
 import type {ViewType} from '../../views'
 
-const v = (id: string): ViewType =>
-	({
-		id,
-		type: 'view',
-		view: 'Home',
-		title: id,
-		icon: 'home',
-		foreground: 'light',
-		tint: '#000',
-	}) as ViewType
+const v = (id: string): ViewType => ({
+	id,
+	type: 'view',
+	view: 'Home',
+	title: id,
+	icon: 'home',
+	foreground: 'light',
+	tint: '#000',
+})
 
 const fixedSize = (size: TileSize) => () => size
 const sizeMap = (sizes: Record<string, TileSize>) => (view: ViewType) =>
-	sizes[(view as unknown as {id: string}).id] ?? '1x2'
+	sizes[view.id] ?? '1x2'
 
 describe('packTiles', () => {
 	it('returns empty array for no views', () => {

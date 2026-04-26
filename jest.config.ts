@@ -4,6 +4,7 @@ import type {Config} from 'jest'
 const esmPackages = [
 	'(jest-)?react-native',
 	'@react-native',
+	'@react-navigation',
 	'@frogpond',
 	'glamorous-native',
 	'react-navigation',
