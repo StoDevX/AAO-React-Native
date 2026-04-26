@@ -8,7 +8,10 @@ export function lookupBuildingByCoordinates(
 	let searchPoint = {
 		type: 'Feature' as const,
 		properties: {},
-		geometry: {type: 'Point' as const, coordinates: [lng, lat] as [number, number]},
+		geometry: {
+			type: 'Point' as const,
+			coordinates: [lng, lat] as [number, number],
+		},
 	}
 
 	return features.find((feature) => {
