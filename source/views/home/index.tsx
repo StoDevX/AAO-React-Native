@@ -47,9 +47,9 @@ function HomePage(): React.ReactNode {
 			<FaqBannerGroup style={styles.banner} target={FAQ_TARGETS.HOME} />
 
 			<HomeScreenGrid
-				views={allViews}
-				sizeOf={sizeOf}
 				renderTile={(packed) => <HomeScreenTile view={packed.view} />}
+				sizeOf={sizeOf}
+				views={allViews}
 			/>
 
 			<UnofficialAppNotice />

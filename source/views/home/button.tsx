@@ -66,6 +66,10 @@ function variantFor(size: TileSize): Variant {
 				titleStyle: styles.title2x4,
 				titleNumberOfLines: 1,
 			}
+		default: {
+			const _exhaustive: never = size
+			throw new Error(`unhandled tile size: ${String(_exhaustive)}`)
+		}
 	}
 }
 
@@ -97,8 +101,8 @@ export function HomeScreenButton({
 					variant.layout === 'row' ? (
 						<View style={styles.textColumn}>
 							<Text
-								style={[foreground, styles.title, variant.titleStyle]}
 								numberOfLines={variant.titleNumberOfLines}
+								style={[foreground, styles.title, variant.titleStyle]}
 							>
 								{view.title}
 							</Text>
@@ -106,8 +110,8 @@ export function HomeScreenButton({
 						</View>
 					) : (
 						<Text
-							style={[foreground, styles.title, variant.titleStyle]}
 							numberOfLines={variant.titleNumberOfLines}
+							style={[foreground, styles.title, variant.titleStyle]}
 						>
 							{view.title}
 						</Text>

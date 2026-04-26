@@ -1,5 +1,5 @@
 import React from 'react'
-import {describe, it, expect} from '@jest/globals'
+import {describe, it, expect, jest} from '@jest/globals'
 import {render, screen} from '@testing-library/react-native'
 
 jest.mock('@react-native-vector-icons/entypo', () => ({
@@ -21,34 +21,34 @@ const baseView: ViewType = {
 
 describe('HomeScreenButton', () => {
 	it('renders the title text at size 1x2 (default)', () => {
-		render(<HomeScreenButton view={baseView} size="1x2" onPress={() => {}} />)
+		render(<HomeScreenButton onPress={jest.fn()} size="1x2" view={baseView} />)
 		expect(screen.getByText('Menus')).toBeTruthy()
 	})
 
 	it('renders the title text at size 2x2', () => {
-		render(<HomeScreenButton view={baseView} size="2x2" onPress={() => {}} />)
+		render(<HomeScreenButton onPress={jest.fn()} size="2x2" view={baseView} />)
 		expect(screen.getByText('Menus')).toBeTruthy()
 	})
 
 	it('renders the title text at size 2x4', () => {
-		render(<HomeScreenButton view={baseView} size="2x4" onPress={() => {}} />)
+		render(<HomeScreenButton onPress={jest.fn()} size="2x4" view={baseView} />)
 		expect(screen.getByText('Menus')).toBeTruthy()
 	})
 
 	it('hides the title text at size 1x1 (icon-only)', () => {
-		render(<HomeScreenButton view={baseView} size="1x1" onPress={() => {}} />)
+		render(<HomeScreenButton onPress={jest.fn()} size="1x1" view={baseView} />)
 		expect(screen.queryByText('Menus')).toBeNull()
 	})
 
 	it('always exposes the title via accessibilityLabel, including at 1x1', () => {
-		render(<HomeScreenButton view={baseView} size="1x1" onPress={() => {}} />)
+		render(<HomeScreenButton onPress={jest.fn()} size="1x1" view={baseView} />)
 		expect(screen.getByLabelText('Menus')).toBeTruthy()
 	})
 
 	it('uses row layout for 2x4 and column layout for other sizes', () => {
 		const renderTree = (size: '1x1' | '1x2' | '2x2' | '2x4') =>
 			render(
-				<HomeScreenButton view={baseView} size={size} onPress={() => {}} />,
+				<HomeScreenButton onPress={jest.fn()} size={size} view={baseView} />,
 			).toJSON()
 
 		const hasRowFlex = (json: unknown): boolean => {

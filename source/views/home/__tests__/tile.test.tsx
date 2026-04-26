@@ -25,7 +25,9 @@ jest.mock('@frogpond/open-url', () => ({
 // Stub the native iOS context menu — render its children inline so the
 // underlying button is still queryable, and capture the props for assertion.
 jest.mock('@frogpond/context-menu', () => ({
-	ContextMenu: jest.fn(({children}) => children),
+	ContextMenu: jest.fn(
+		({children}: {children: React.ReactNode}): React.ReactNode => children,
+	),
 }))
 
 const navView: ViewType = {

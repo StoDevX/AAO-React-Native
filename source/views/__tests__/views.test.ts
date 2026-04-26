@@ -11,7 +11,7 @@ jest.mock('../transportation', () => ({NavigationKey: 'Transportation'}))
 describe('AllViews()', () => {
 	it('every view has a non-empty kebab-case id', () => {
 		const views = AllViews()
-		const idPattern = /^[a-z0-9]+(-[a-z0-9]+)*$/
+		const idPattern = /^[a-z0-9]+(-[a-z0-9]+)*$/u
 		for (const view of views) {
 			expect(view.id).toMatch(idPattern)
 		}
