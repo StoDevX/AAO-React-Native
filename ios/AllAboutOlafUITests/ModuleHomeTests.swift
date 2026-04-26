@@ -9,10 +9,6 @@ class ModuleHomeTests: XCTestCase {
 		app.launch()
 	}
 
-	override func tearDownWithError() throws {
-		XCUIDevice.shared.orientation = .portrait
-	}
-
 	// MARK: - Helpers
 
 	/// Long-press the given home tile, then tap the menu item with the given title.
@@ -96,6 +92,10 @@ class ModuleHomeTests: XCTestCase {
 	// MARK: - Resizable tiles
 
 	func testLongPressTileChangesSize() throws {
+		addTeardownBlock { [weak self] in
+			self?.resetLayoutFromNoticeMenu()
+		}
+
 		let homescreen = app.element(matching: "screen-homescreen")
 		XCTAssertTrue(homescreen.waitForExistence(timeout: 30))
 
@@ -162,6 +162,10 @@ class ModuleHomeTests: XCTestCase {
 	}
 
 	func testGapBehaviorWithOrphanSmallTile() throws {
+		addTeardownBlock { [weak self] in
+			self?.resetLayoutFromNoticeMenu()
+		}
+
 		let homescreen = app.element(matching: "screen-homescreen")
 		XCTAssertTrue(homescreen.waitForExistence(timeout: 30))
 
@@ -179,11 +183,13 @@ class ModuleHomeTests: XCTestCase {
 			sis.frame.minY,
 			menus.frame.maxY,
 			"SIS (Wide) should drop below Menus (Small) since 1+4 > 4 cols")
-
-		resetLayoutFromNoticeMenu()
 	}
 
 	func testRotationReflowsLayout() throws {
+		addTeardownBlock {
+			XCUIDevice.shared.orientation = .portrait
+		}
+
 		let homescreen = app.element(matching: "screen-homescreen")
 		XCTAssertTrue(homescreen.waitForExistence(timeout: 30))
 

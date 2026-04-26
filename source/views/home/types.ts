@@ -13,3 +13,5 @@ export const TILE_DIMENSIONS: Record<TileSize, {rows: 1 | 2; cols: 1 | 2 | 4}> =
 	}
 
 export const GRID_COLUMNS = 4
+
+export const UNIT_HEIGHT = 80

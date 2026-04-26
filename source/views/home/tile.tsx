@@ -23,6 +23,9 @@ const SIZE_ACTIONS: Array<{key: TileSize; title: string}> = TILE_SIZES.map(
 	(size) => ({key: size, title: TILE_SIZE_LABELS[size]}),
 )
 
+const isTileSize = (key: string): key is TileSize =>
+	(TILE_SIZES as readonly string[]).includes(key)
+
 type Props = {
 	view: ViewType
 }
@@ -44,8 +47,8 @@ export function HomeScreenTile({view}: Props): React.ReactElement {
 
 	const onPressMenuItem = React.useCallback(
 		(key: string) => {
-			if ((TILE_SIZES as readonly string[]).includes(key)) {
-				dispatch(setHomescreenTileSize({id: view.id, size: key as TileSize}))
+			if (isTileSize(key)) {
+				dispatch(setHomescreenTileSize({id: view.id, size: key}))
 			}
 		},
 		[dispatch, view.id],
@@ -55,7 +58,6 @@ export function HomeScreenTile({view}: Props): React.ReactElement {
 		<ContextMenu
 			actions={SIZE_ACTIONS}
 			selectedAction={size}
-			onPress={onPress}
 			onPressMenuItem={onPressMenuItem}
 			title="Tile size"
 			testID={`home-tile-${view.id}`}

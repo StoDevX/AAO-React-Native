@@ -4,9 +4,12 @@ import {StyleSheet, View, useWindowDimensions} from 'react-native'
 import type {ViewType} from '../views'
 import {CELL_MARGIN} from './button'
 import {packTiles, type PackedTile} from './pack-tiles'
-import {GRID_COLUMNS, TILE_DIMENSIONS, type TileSize} from './types'
-
-const UNIT_HEIGHT = 80
+import {
+	GRID_COLUMNS,
+	TILE_DIMENSIONS,
+	UNIT_HEIGHT,
+	type TileSize,
+} from './types'
 
 type Props = {
 	views: ViewType[]
