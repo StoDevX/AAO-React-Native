@@ -13,8 +13,8 @@ import {useFilterStore} from './store'
 import {EmptyListNotice} from './empty-notice'
 import {DebugDatePicker} from './debug-date-picker'
 import {Constants} from './constants'
-import {DateGroupedScores, DateSection, Score} from './types'
-import {formatDateString, groupScoresByDate, parseGameDate} from './utils'
+import {DateGroupedScores, DateSection, ProcessedScore} from './types'
+import {formatDateString, groupScoresByDate} from './utils'
 
 type TabSection = DateSection | typeof Constants.FILTER
 
@@ -30,7 +30,8 @@ export function AthleticsListView(): React.ReactNode {
 			headerRight: () => <DebugDatePicker onDateChange={setDebugDate} />,
 		})
 	}, [navigation, setDebugDate])
-	const {selectedSports, setSelectedSports, setTotalSports} = useFilterStore()
+	const {selectedSports, setSelectedSports, setTotalSports, _hasHydrated} =
+		useFilterStore()
 	const insets = useSafeAreaInsets()
 
 	const {
@@ -52,12 +53,16 @@ export function AthleticsListView(): React.ReactNode {
 		]
 	}, [data])
 
-	// Seed the filter store with all sports on first load
+	// Seed the filter store with all sports on first load — only after
+	// hydration is complete so we don't overwrite a previously saved filter.
 	React.useEffect(() => {
+		if (!_hasHydrated) {
+			return
+		}
 		if (selectedSports.length === 0 && sports.some((s) => s.data.length > 0)) {
 			setSelectedSports(sports.flatMap((s) => s.data))
 		}
-	}, [sports, selectedSports, setSelectedSports])
+	}, [_hasHydrated, sports, selectedSports, setSelectedSports])
 
 	// Keep totalSports in sync so EmptyListNotice can detect filtered-out state
 	const uniqueSportCount = React.useMemo(
@@ -69,8 +74,7 @@ export function AthleticsListView(): React.ReactNode {
 	}, [uniqueSportCount, setTotalSports])
 
 	// Group scores relative to the debug date (if set) or real current time.
-	// Because the query now returns raw Score[], we always have the full dataset
-	// and can shift "today" freely in either direction.
+	// Because the query returns all scores, we can shift "today" freely.
 	const baseData = React.useMemo<DateGroupedScores[]>(() => {
 		return groupScoresByDate(data, debugDate ?? new Date())
 	}, [data, debugDate])
@@ -99,10 +103,9 @@ export function AthleticsListView(): React.ReactNode {
 					(s) => s.title !== Constants.YESTERDAY && s.title !== Constants.TODAY,
 				)
 				.flatMap((s) => s.data)
-			const byDate: Record<string, Score[]> = {}
+			const byDate: Record<string, ProcessedScore[]> = {}
 			for (const score of upcomingScores) {
-				const date = parseGameDate(score.date_utc)
-				const key = formatDateString(date)
+				const key = formatDateString(score.parsedDate)
 				if (!byDate[key]) {
 					byDate[key] = []
 				}

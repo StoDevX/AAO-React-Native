@@ -1,19 +1,20 @@
 import {parseGameDate, groupScoresByDate, formatDateString} from '../utils'
 import {Constants} from '../constants'
-import {Score} from '../types'
+import {ProcessedScore} from '../types'
 
 const makeFakeScore = (
 	dateUtc: string,
 	extra: Partial<{sport: string; result: string}> = {},
-): Score =>
+): ProcessedScore =>
 	({
 		id: '1',
 		// eslint-disable-next-line camelcase
 		date_utc: dateUtc,
 		sport: extra.sport ?? 'Baseball',
 		result: extra.result ?? '',
+		parsedDate: parseGameDate(dateUtc),
 		// minimal fields — only what utils needs
-	}) as Score
+	}) as ProcessedScore
 
 describe('parseGameDate', () => {
 	it('parses the API date format correctly', () => {

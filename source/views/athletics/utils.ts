@@ -1,4 +1,4 @@
-import {DateGroupedScores, Score} from './types'
+import {DateGroupedScores, ProcessedScore} from './types'
 import {Constants} from './constants'
 
 export const DAY_NAMES = [
@@ -64,19 +64,19 @@ function startOfDay(d: Date): Date {
 }
 
 export function groupScoresByDate(
-	scores: Score[],
+	scores: ProcessedScore[],
 	now: Date = new Date(),
 ): DateGroupedScores[] {
 	const todayStart = startOfDay(now)
 	const yesterdayStart = new Date(todayStart)
 	yesterdayStart.setDate(yesterdayStart.getDate() - 1)
 
-	const yesterday: Score[] = []
-	const today: Score[] = []
-	const upcoming: Record<string, Score[]> = {}
+	const yesterday: ProcessedScore[] = []
+	const today: ProcessedScore[] = []
+	const upcoming: Record<string, ProcessedScore[]> = {}
 
 	for (const score of scores) {
-		const date = parseGameDate(score.date_utc)
+		const date = score.parsedDate
 		if (isSameDay(date, yesterdayStart)) {
 			yesterday.push(score)
 		} else if (isSameDay(date, todayStart)) {

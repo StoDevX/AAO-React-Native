@@ -74,7 +74,9 @@ export type DateSection =
 	| typeof Constants.UPCOMING
 	| typeof Constants.FILTER
 
+export type ProcessedScore = Score & {parsedDate: Date}
+
 export interface DateGroupedScores {
 	title: DateSection
-	data: Score[]
+	data: ProcessedScore[]
 }
