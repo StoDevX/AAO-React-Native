@@ -291,7 +291,9 @@ jobs:
           # Pick the latest installed iOS runtime on the runner. IPHONEOS_DEPLOYMENT_TARGET
           # is the minimum we support, not what's actually installed — on macos-26 the
           # runner ships iOS 26.x runtimes, which don't match our 18.x deployment target.
-          OS_VERSION=$(xcrun simctl list runtimes iOS -j | jq -r '.runtimes | map(select(.isAvailable != false)) | sort_by(.version) | last | .version')
+          # `simctl list runtimes` reports the full version (e.g. 26.4.1), but `simctl list
+          # devices` keys runtimes as iOS-<major>-<minor> only, so strip the patch component.
+          OS_VERSION=$(xcrun simctl list runtimes iOS -j | jq -r '.runtimes | map(select(.isAvailable != false)) | sort_by(.version) | last | .version | split(".") | .[0:2] | join(".")')
           echo "type=iPhone 17e" | tee -a "$GITHUB_OUTPUT"
           echo "os=${OS_VERSION//./-}" | tee -a "$GITHUB_OUTPUT"
 
@@ -312,7 +314,9 @@ jobs:
           SIMULATOR_OS: '${{ steps.simulator-device.outputs.os }}'
         run: |
           set -o pipefail
-          jq -rn --argjson devices "$DEVICES" '$devices | to_entries[] | select(.key | endswith("iOS-\(env.SIMULATOR_OS)")) | .value | "devices=\(.)"' | tee "$GITHUB_OUTPUT"
+          # -e makes jq exit non-zero if no runtime key matches, instead of silently
+          # producing empty output and surfacing as an opaque JSON error downstream.
+          jq -ern --argjson devices "$DEVICES" '$devices | to_entries[] | select(.key | endswith("iOS-\(env.SIMULATOR_OS)")) | .value | "devices=\(.)"' | tee "$GITHUB_OUTPUT"
 
       - name: Filter simulators by device type
         id: devices-by-os-and-type
