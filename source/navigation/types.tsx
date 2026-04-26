@@ -51,6 +51,9 @@ export type RootViewsParamList = {
 		| undefined
 	Faq: FaqRouteParams
 	Help: undefined
+	Map: undefined
+	MapBuildingInfo: {buildingId: string}
+	MapBuildingPicker: undefined
 	More: undefined
 	PrintJobs: undefined
 	StudentOrgs: undefined

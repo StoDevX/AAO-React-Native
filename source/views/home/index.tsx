@@ -55,7 +55,7 @@ function HomePage(): React.ReactNode {
 									if (view.type === 'url') {
 										return openUrl(view.url)
 									} else if (view.type === 'view') {
-										return navigation.navigate(view.view)
+										return navigation.navigate(view.view as never)
 									} else {
 										throw new Error(`unexpected view type ${view.type}`)
 									}

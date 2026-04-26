@@ -28,6 +28,7 @@ import * as orgs from '../views/student-orgs'
 import * as transportation from '../views/transportation'
 import {BusRouteDetail} from '../views/transportation/bus/detail'
 import * as stoprint from '../views/stoprint'
+import * as map from '../views/map'
 import * as more from '../views/more'
 import * as directory from '../views/directory'
 
@@ -127,6 +128,41 @@ const HomeStackScreens = () => {
 					options={({route}) => ({
 						title: `${route.params.line.line} Schedule`,
 					})}
+				/>
+			</Stack.Group>
+			<Stack.Group
+				screenLayout={({children}) => (
+					<map.MapSelectionProvider>{children}</map.MapSelectionProvider>
+				)}
+			>
+				<Stack.Screen
+					component={map.MapScreen}
+					name="Map"
+					options={map.NavigationOptions}
+				/>
+				<Stack.Screen
+					component={map.BuildingPicker}
+					name="MapBuildingPicker"
+					options={{
+						presentation: 'formSheet',
+						sheetAllowedDetents: [0.5, 1.0],
+						sheetCornerRadius: 16,
+						sheetGrabberVisible: true,
+						sheetLargestUndimmedDetentIndex: 'last',
+						title: 'Buildings',
+					}}
+				/>
+				<Stack.Screen
+					component={map.BuildingInfo}
+					name="MapBuildingInfo"
+					options={{
+						headerShown: false,
+						presentation: 'formSheet',
+						sheetAllowedDetents: [0.5, 1.0],
+						sheetCornerRadius: 16,
+						sheetGrabberVisible: true,
+						sheetLargestUndimmedDetentIndex: 'last',
+					}}
 				/>
 			</Stack.Group>
 			<Stack.Group>
