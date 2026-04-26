@@ -60,7 +60,11 @@ fastlane/screenshots
 fastlane/test_output
 
 # generated files
-/docs/
+/docs/*
+!/docs/superpowers/
+
+# Superpowers brainstorm session files
+.superpowers/
 
 # Deployment keys
 android/app/signing.properties
