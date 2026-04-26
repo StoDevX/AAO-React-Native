@@ -44,6 +44,9 @@ const config: Config = {
 	],
 	setupFiles: ['./scripts/jest-setup.js'],
 	transformIgnorePatterns: [`node_modules/(?!${esmPackages.join('|')})`],
+	moduleNameMapper: {
+		'\\.(ttf|otf|jpg|jpeg|png|gif|svg)$': '<rootDir>/jest/file-mock.js',
+	},
 	reporters: [['github-actions', {silent: false}], 'summary'],
 }
 
