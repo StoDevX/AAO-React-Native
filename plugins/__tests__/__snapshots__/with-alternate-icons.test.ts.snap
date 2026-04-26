@@ -1,0 +1,31 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`addAlternateIcons matches snapshot when applied to a baseline Info.plist 1`] = `
+{
+  "CFBundleDisplayName": "All About Olaf",
+  "CFBundleIcons": {
+    "CFBundleAlternateIcons": {
+      "icon_type_windmill": {
+        "CFBundleIconFiles": [
+          "windmill",
+        ],
+        "UIPrerenderedIcon": true,
+      },
+    },
+  },
+  "CFBundleIcons~ipad": {
+    "CFBundleAlternateIcons": {
+      "icon_type_windmill": {
+        "CFBundleIconFiles": [
+          "windmill",
+        ],
+        "UIPrerenderedIcon": true,
+      },
+    },
+  },
+  "CFBundleName": "$(PRODUCT_NAME)",
+  "NSAppTransportSecurity": {
+    "NSAllowsArbitraryLoads": false,
+  },
+}
+`;
