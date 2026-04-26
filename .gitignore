@@ -76,3 +76,6 @@ fastlane/play-private-key.json
 
 # generated logs files in CI
 /logs
+
+# Superpowers brainstorming session files
+.superpowers/
