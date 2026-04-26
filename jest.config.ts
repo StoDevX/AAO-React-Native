@@ -14,6 +14,7 @@ const esmPackages = [
 	'reselect',
 	'expo',
 	'@expo',
+	'@rnmapbox/maps',
 	// css-select v7+ and its ESM-only transitive deps
 	'css-select',
 	'boolbase',

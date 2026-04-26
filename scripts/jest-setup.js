@@ -20,3 +20,6 @@ jest.mock('@react-native-clipboard/clipboard', () => ({
 		hasString: jest.fn(() => Promise.resolve(false)),
 	},
 }))
+
+// @rnmapbox/maps ships a setup-jest helper that mocks every MapboxGL.* export.
+import '@rnmapbox/maps/setup-jest'
