@@ -30,6 +30,7 @@ const slice = createSlice({
 			state,
 			{payload}: PayloadAction<{id: string; size: TileSize}>,
 		) {
+			state.homescreenSizes ??= {}
 			state.homescreenSizes[payload.id] = payload.size
 		},
 		resetHomescreenSizes(state) {
@@ -58,4 +59,4 @@ export const selectDevModeOverride = (
 export const selectHomescreenSize =
 	(id: string) =>
 	(state: RootState): TileSize =>
-		state.settings.homescreenSizes[id] ?? DEFAULT_TILE_SIZE
+		(state.settings.homescreenSizes ?? {})[id] ?? DEFAULT_TILE_SIZE

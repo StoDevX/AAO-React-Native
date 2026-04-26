@@ -87,6 +87,7 @@ export function HomeScreenButton({
 			accessibilityLabel={view.title}
 			accessibilityRole="button"
 			accessible={true}
+			containerStyle={styles.buttonContainer}
 			highlight={false}
 			onPress={onPress}
 			style={[styles.button, {backgroundColor: view.tint}]}
@@ -127,6 +128,9 @@ const cellVerticalPadding = 8
 const cellHorizontalPadding = 4
 
 const styles = StyleSheet.create({
+	buttonContainer: {
+		flex: 1,
+	},
 	button: {
 		elevation: 2,
 		borderRadius: 17,

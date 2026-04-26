@@ -10,8 +10,7 @@ import {HomeScreenTile} from './tile'
 import {DEFAULT_TILE_SIZE} from './types'
 import {OpenSettingsButton} from '@frogpond/navigation-buttons'
 import {UnofficialAppNotice} from './notice'
-import {useSelector} from 'react-redux'
-import type {RootState} from '../../redux/store'
+import {useAppSelector} from '../../redux'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 
 const styles = StyleSheet.create({
@@ -28,9 +27,7 @@ function HomePage(): React.ReactNode {
 		[],
 	)
 
-	const sizes = useSelector(
-		(state: RootState) => state.settings.homescreenSizes,
-	)
+	const sizes = useAppSelector((state) => state.settings.homescreenSizes ?? {})
 	const sizeOf = React.useCallback(
 		(view: ViewType) => sizes[view.id] ?? DEFAULT_TILE_SIZE,
 		[sizes],

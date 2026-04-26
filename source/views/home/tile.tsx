@@ -1,4 +1,5 @@
 import React from 'react'
+import {StyleSheet} from 'react-native'
 import {useNavigation} from '@react-navigation/native'
 import {useDispatch, useSelector} from 'react-redux'
 import {ContextMenu} from '@frogpond/context-menu'
@@ -57,6 +58,7 @@ export function HomeScreenTile({view}: Props): React.ReactElement {
 	return (
 		<ContextMenu
 			actions={SIZE_ACTIONS}
+			buttonStyle={styles.contextMenu}
 			onPressMenuItem={onPressMenuItem}
 			selectedAction={size}
 			testID={`home-tile-${view.id}`}
@@ -66,3 +68,9 @@ export function HomeScreenTile({view}: Props): React.ReactElement {
 		</ContextMenu>
 	)
 }
+
+const styles = StyleSheet.create({
+	contextMenu: {
+		flex: 1,
+	},
+})
