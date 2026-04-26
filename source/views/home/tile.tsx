@@ -36,7 +36,7 @@ export function HomeScreenTile({view}: Props): React.ReactElement {
 		if (view.type === 'url' || view.type === 'browser-url') {
 			openUrl(view.url)
 		} else if (view.type === 'view') {
-			;(navigation.navigate as (route: string) => void)(view.view)
+			navigation.navigate(view.view)
 		} else {
 			throw new Error(`unexpected view type ${(view as ViewType).type}`)
 		}
