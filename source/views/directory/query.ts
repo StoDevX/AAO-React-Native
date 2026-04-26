@@ -2,7 +2,7 @@ import ky from 'ky'
 import {queryOptions} from '@tanstack/react-query'
 import {DirectorySearchTypeEnum, SearchResults} from './types'
 
-let directory = ky.create({prefix: 'https://www.stolaf.edu/directory'})
+let directory = ky.create({baseUrl: 'https://www.stolaf.edu/directory/'})
 
 type GetDirectoryQueryArgs = {
 	query: string
