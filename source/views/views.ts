@@ -17,6 +17,7 @@ const studentOrgs: keyof RootViewsParamList = 'StudentOrgs'
 const more: keyof RootViewsParamList = 'More'
 const printJobs: keyof RootViewsParamList = 'PrintJobs'
 const courseSearch: keyof RootViewsParamList = 'CourseSearch'
+const carletonMap: keyof RootViewsParamList = 'Map'
 
 type CommonView = {
 	title: string
@@ -103,6 +104,14 @@ export const AllViews = (): Array<ViewType> => {
 			icon: 'map',
 			foreground: 'light',
 			tint: c.navyToNavy[0],
+		},
+		{
+			type: 'view',
+			view: carletonMap,
+			title: 'Carleton Map (Beta)',
+			icon: 'compass',
+			foreground: 'light',
+			tint: c.yellowToGoldLight[0],
 		},
 		{
 			type: 'view',
