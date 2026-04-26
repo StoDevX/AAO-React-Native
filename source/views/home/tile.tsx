@@ -1,0 +1,75 @@
+import React from 'react'
+import {StyleSheet} from 'react-native'
+import {useNavigation} from '@react-navigation/native'
+import {useDispatch, useSelector} from 'react-redux'
+import {ContextMenu} from '@frogpond/context-menu'
+import {openUrl} from '@frogpond/open-url'
+
+import type {ViewType} from '../views'
+import {HomeScreenButton} from './button'
+import {TILE_SIZES, type TileSize} from './types'
+import {
+	selectHomescreenSize,
+	setHomescreenTileSize,
+} from '../../redux/parts/settings'
+
+const TILE_SIZE_LABELS: Record<TileSize, string> = {
+	'1x1': 'Small',
+	'1x2': 'Medium',
+	'2x2': 'Large',
+	'2x4': 'Wide',
+}
+
+const SIZE_ACTIONS: Array<{key: TileSize; title: string}> = TILE_SIZES.map(
+	(size) => ({key: size, title: TILE_SIZE_LABELS[size]}),
+)
+
+const isTileSize = (key: string): key is TileSize =>
+	(TILE_SIZES as readonly string[]).includes(key)
+
+type Props = {
+	view: ViewType
+}
+
+export function HomeScreenTile({view}: Props): React.ReactElement {
+	const navigation = useNavigation()
+	const dispatch = useDispatch()
+	const size = useSelector(selectHomescreenSize(view.id))
+
+	const onPress = React.useCallback(() => {
+		if (view.type === 'url' || view.type === 'browser-url') {
+			openUrl(view.url)
+		} else if (view.type === 'view') {
+			navigation.navigate(view.view)
+		} else {
+			throw new Error(`unexpected view type ${(view as ViewType).type}`)
+		}
+	}, [navigation, view])
+
+	const onPressMenuItem = React.useCallback(
+		(key: string) => {
+			if (isTileSize(key)) {
+				dispatch(setHomescreenTileSize({id: view.id, size: key}))
+			}
+		},
+		[dispatch, view.id],
+	)
+
+	return (
+		<ContextMenu
+			actions={SIZE_ACTIONS}
+			buttonStyle={styles.contextMenu}
+			onPressMenuItem={onPressMenuItem}
+			selectedAction={size}
+			title="Tile size"
+		>
+			<HomeScreenButton onPress={onPress} size={size} view={view} />
+		</ContextMenu>
+	)
+}
+
+const styles = StyleSheet.create({
+	contextMenu: {
+		flex: 1,
+	},
+})

@@ -7,6 +7,7 @@ import {ContextMenu} from '@frogpond/context-menu'
 import {useDispatch, useSelector} from 'react-redux'
 import restart from 'react-native-restart-newarch'
 import {
+	resetHomescreenSizes,
 	selectDevModeOverride,
 	setDevModeOverride,
 } from '../../redux/parts/settings'
@@ -32,6 +33,7 @@ const DEV_MESSAGES = [
 
 const RESTART_ACTION = 'Restart app'
 const DEV_MODE_ACTION = 'Enable dev mode'
+const RESET_LAYOUT_ACTION = 'Reset home screen layout'
 
 export function UnofficialAppNotice(): React.ReactNode {
 	const dispatch = useDispatch()
@@ -48,12 +50,14 @@ export function UnofficialAppNotice(): React.ReactNode {
 			restart.Restart()
 		} else if (menuKey === DEV_MODE_ACTION) {
 			dispatch(setDevModeOverride(!devModeOverride))
+		} else if (menuKey === RESET_LAYOUT_ACTION) {
+			dispatch(resetHomescreenSizes())
 		}
 	}
 
 	return (
 		<ContextMenu
-			actions={[RESTART_ACTION, DEV_MODE_ACTION]}
+			actions={[RESTART_ACTION, DEV_MODE_ACTION, RESET_LAYOUT_ACTION]}
 			onPressMenuItem={onPressMenuItem}
 			selectedAction={devModeOverride ? DEV_MODE_ACTION : undefined}
 			testID="home-notice"

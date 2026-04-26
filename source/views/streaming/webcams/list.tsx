@@ -1,6 +1,7 @@
 import * as React from 'react'
 import {StyleSheet, ScrollView, useWindowDimensions} from 'react-native'
 import {Column} from '@frogpond/layout'
+import {GestureHandlerRootView} from 'react-native-gesture-handler'
 import {partitionByIndex} from '../../../lib/partition-by-index'
 import {StreamThumbnail} from './thumbnail'
 import {webcamsOptions} from './query'
@@ -36,26 +37,28 @@ export let WebcamsView = (): React.ReactNode => {
 	let columns = partitionByIndex(webcams)
 
 	return (
-		<ScrollView
-			contentContainerStyle={styles.container}
-			contentInsetAdjustmentBehavior="automatic"
-			refreshControl={
-				<RefreshControl onRefresh={refetch} refreshing={isRefetching} />
-			}
-			testID="screen-streaming-webcams"
-		>
-			{columns.map((contents, i) => (
-				<Column key={i} style={styles.column}>
-					{contents.map((webcam) => (
-						<StreamThumbnail
-							key={webcam.name}
-							viewportWidth={viewport.width}
-							webcam={webcam}
-						/>
-					))}
-				</Column>
-			))}
-		</ScrollView>
+		<GestureHandlerRootView style={{flex: 1}}>
+			<ScrollView
+				contentContainerStyle={styles.container}
+				contentInsetAdjustmentBehavior="automatic"
+				refreshControl={
+					<RefreshControl onRefresh={refetch} refreshing={isRefetching} />
+				}
+				testID="screen-streaming-webcams"
+			>
+				{columns.map((contents, i) => (
+					<Column key={i} style={styles.column}>
+						{contents.map((webcam) => (
+							<StreamThumbnail
+								key={webcam.name}
+								viewportWidth={viewport.width}
+								webcam={webcam}
+							/>
+						))}
+					</Column>
+				))}
+			</ScrollView>
+		</GestureHandlerRootView>
 	)
 }
 

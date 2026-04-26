@@ -1,16 +1,16 @@
 import * as React from 'react'
-import {ScrollView, View, StyleSheet} from 'react-native'
+import {ScrollView, StyleSheet} from 'react-native'
 
-import {AllViews} from '../views'
+import {AllViews, type ViewType} from '../views'
 import {FaqBannerGroup} from '../faqs'
 import {FAQ_TARGETS} from '../faqs/constants'
-import {Column} from '@frogpond/layout'
-import {partitionByIndex} from '../../lib/partition-by-index'
-import {HomeScreenButton, CELL_MARGIN} from './button'
-import {openUrl} from '@frogpond/open-url'
+import {CELL_MARGIN} from './button'
+import {HomeScreenGrid} from './grid'
+import {HomeScreenTile} from './tile'
+import {DEFAULT_TILE_SIZE} from './types'
 import {OpenSettingsButton} from '@frogpond/navigation-buttons'
 import {UnofficialAppNotice} from './notice'
-import {useNavigation} from '@react-navigation/native'
+import {useAppSelector} from '../../redux'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 
 const styles = StyleSheet.create({
@@ -19,21 +19,19 @@ const styles = StyleSheet.create({
 		marginTop: CELL_MARGIN,
 		marginBottom: CELL_MARGIN / 2,
 	},
-	cells: {
-		marginHorizontal: CELL_MARGIN / 2,
-		paddingTop: CELL_MARGIN,
-
-		flexDirection: 'row',
-	},
-	column: {
-		flex: 1,
-	},
 })
 
 function HomePage(): React.ReactNode {
-	let navigation = useNavigation()
-	let allViews = AllViews().filter((view) => !view.disabled)
-	let columns = partitionByIndex(allViews)
+	const allViews = React.useMemo(
+		() => AllViews().filter((view) => !view.disabled),
+		[],
+	)
+
+	const sizes = useAppSelector((state) => state.settings.homescreenSizes ?? {})
+	const sizeOf = React.useCallback(
+		(view: ViewType) => sizes[view.id] ?? DEFAULT_TILE_SIZE,
+		[sizes],
+	)
 
 	return (
 		<ScrollView
@@ -45,27 +43,11 @@ function HomePage(): React.ReactNode {
 		>
 			<FaqBannerGroup style={styles.banner} target={FAQ_TARGETS.HOME} />
 
-			<View style={styles.cells}>
-				{columns.map((contents, i) => (
-					<Column key={i} style={styles.column}>
-						{contents.map((view) => (
-							<HomeScreenButton
-								key={view.type === 'view' ? view.view : view.title}
-								onPress={() => {
-									if (view.type === 'url') {
-										return openUrl(view.url)
-									} else if (view.type === 'view') {
-										return navigation.navigate(view.view)
-									} else {
-										throw new Error(`unexpected view type ${view.type}`)
-									}
-								}}
-								view={view}
-							/>
-						))}
-					</Column>
-				))}
-			</View>
+			<HomeScreenGrid
+				renderTile={(packed) => <HomeScreenTile view={packed.view} />}
+				sizeOf={sizeOf}
+				views={allViews}
+			/>
 
 			<UnofficialAppNotice />
 		</ScrollView>

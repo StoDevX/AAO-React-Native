@@ -60,7 +60,11 @@ fastlane/screenshots
 fastlane/test_output
 
 # generated files
-/docs/
+/docs/*
+!/docs/superpowers/
+
+# Superpowers brainstorm session files
+.superpowers/
 
 # Deployment keys
 android/app/signing.properties
@@ -76,3 +80,6 @@ fastlane/play-private-key.json
 
 # generated logs files in CI
 /logs
+
+# Superpowers brainstorming session files
+.superpowers/

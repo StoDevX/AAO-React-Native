@@ -1,6 +1,6 @@
 import * as c from '@frogpond/colors'
 import type EntypoGlyphs from '@react-native-vector-icons/entypo/glyphmaps/Entypo.json'
-import {RootViewsParamList} from '../navigation/types'
+import type {RootViewsParamList} from '../navigation/types'
 
 import {NavigationKey as menus} from './menus'
 import {NavigationKey as sis} from './sis'
@@ -19,6 +19,7 @@ const printJobs: keyof RootViewsParamList = 'PrintJobs'
 const courseSearch: keyof RootViewsParamList = 'CourseSearch'
 
 type CommonView = {
+	id: string
 	title: string
 	icon: keyof typeof EntypoGlyphs
 	foreground: 'light' | 'dark'
@@ -41,6 +42,7 @@ export type ViewType = CommonView & (NativeView | WebLinkView)
 export const AllViews = (): Array<ViewType> => {
 	return [
 		{
+			id: 'menus',
 			type: 'view',
 			view: menus,
 			title: 'Menus',
@@ -49,6 +51,7 @@ export const AllViews = (): Array<ViewType> => {
 			tint: c.grassToLime[0],
 		},
 		{
+			id: 'sis',
 			type: 'view',
 			view: sis,
 			title: 'SIS',
@@ -57,6 +60,7 @@ export const AllViews = (): Array<ViewType> => {
 			tint: c.yellowToGoldDark[0],
 		},
 		{
+			id: 'building-hours',
 			type: 'view',
 			view: hours,
 			title: 'Building Hours',
@@ -65,6 +69,7 @@ export const AllViews = (): Array<ViewType> => {
 			tint: c.lightBlueToBlueDark[0],
 		},
 		{
+			id: 'calendar',
 			type: 'view',
 			view: calendar,
 			title: 'Calendar',
@@ -73,6 +78,7 @@ export const AllViews = (): Array<ViewType> => {
 			tint: c.magentaToPurple[0],
 		},
 		{
+			id: 'directory',
 			type: 'view',
 			view: directory,
 			title: 'Directory',
@@ -81,6 +87,7 @@ export const AllViews = (): Array<ViewType> => {
 			tint: c.redToPurple[0],
 		},
 		{
+			id: 'streaming-media',
 			type: 'view',
 			view: streaming,
 			title: 'Streaming Media',
@@ -89,6 +96,7 @@ export const AllViews = (): Array<ViewType> => {
 			tint: c.lightBlueToBlueLight[0],
 		},
 		{
+			id: 'news',
 			type: 'view',
 			view: news,
 			title: 'News',
@@ -97,6 +105,7 @@ export const AllViews = (): Array<ViewType> => {
 			tint: c.purpleToIndigo[0],
 		},
 		{
+			id: 'campus-map',
 			type: 'url',
 			url: 'https://www.myatlascms.com/map/index.php?id=294',
 			title: 'Campus Map',
@@ -105,6 +114,7 @@ export const AllViews = (): Array<ViewType> => {
 			tint: c.navyToNavy[0],
 		},
 		{
+			id: 'important-contacts',
 			type: 'view',
 			view: importantContacts,
 			title: 'Important Contacts',
@@ -113,6 +123,7 @@ export const AllViews = (): Array<ViewType> => {
 			tint: c.orangeToRed[0],
 		},
 		{
+			id: 'transportation',
 			type: 'view',
 			view: transportation,
 			title: 'Transportation',
@@ -121,6 +132,7 @@ export const AllViews = (): Array<ViewType> => {
 			tint: c.grayToDarkGray[0],
 		},
 		{
+			id: 'campus-dictionary',
 			type: 'view',
 			view: dictionary,
 			title: 'Campus Dictionary',
@@ -129,6 +141,7 @@ export const AllViews = (): Array<ViewType> => {
 			tint: c.pinkToHotpink[0],
 		},
 		{
+			id: 'student-orgs',
 			type: 'view',
 			view: studentOrgs,
 			title: 'Student Orgs',
@@ -137,6 +150,7 @@ export const AllViews = (): Array<ViewType> => {
 			tint: c.darkBlueToIndigo[0],
 		},
 		{
+			id: 'more',
 			type: 'view',
 			view: more,
 			title: 'More',
@@ -145,6 +159,7 @@ export const AllViews = (): Array<ViewType> => {
 			tint: c.seafoamToGrass[0],
 		},
 		{
+			id: 'stoprint',
 			type: 'view',
 			view: printJobs,
 			title: 'stoPrint',
@@ -153,6 +168,7 @@ export const AllViews = (): Array<ViewType> => {
 			tint: c.tealToSeafoam[0],
 		},
 		{
+			id: 'course-catalog',
 			type: 'view',
 			view: courseSearch,
 			title: 'Course Catalog',
@@ -161,6 +177,7 @@ export const AllViews = (): Array<ViewType> => {
 			tint: c.lavender,
 		},
 		{
+			id: 'oleville',
 			type: 'url',
 			url: 'https://oleville.com/',
 			title: 'Oleville',
