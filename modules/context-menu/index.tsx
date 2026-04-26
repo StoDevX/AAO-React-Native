@@ -8,8 +8,10 @@ import {
 } from 'react-native-ios-context-menu'
 import {upperFirst} from 'lodash'
 
+export type ContextMenuAction = string | {key: string; title: string}
+
 interface ContextMenuProps {
-	actions: string[]
+	actions: ContextMenuAction[]
 	buttonStyle?: StyleProp<ViewStyle>
 	children?: React.ReactElement
 	disabled?: boolean
@@ -20,6 +22,9 @@ interface ContextMenuProps {
 	testID?: string
 	title: string
 }
+
+const normalize = (action: ContextMenuAction): {key: string; title: string} =>
+	typeof action === 'string' ? {key: action, title: upperFirst(action)} : action
 
 export const ContextMenu = React.forwardRef<
 	ContextMenuButton,
@@ -39,11 +44,12 @@ export const ContextMenu = React.forwardRef<
 	} = props
 
 	let menuItems = React.useMemo(() => {
-		return actions.map((option) => {
-			const menuState: MenuState = selectedAction === option ? 'on' : 'off'
+		return actions.map((action) => {
+			const {key, title: actionTitle} = normalize(action)
+			const menuState: MenuState = selectedAction === key ? 'on' : 'off'
 			return {
-				actionKey: option,
-				actionTitle: upperFirst(option),
+				actionKey: key,
+				actionTitle,
 				menuState,
 			}
 		})
