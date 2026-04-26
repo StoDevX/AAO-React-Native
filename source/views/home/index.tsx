@@ -23,7 +23,10 @@ const styles = StyleSheet.create({
 })
 
 function HomePage(): React.ReactNode {
-	const allViews = AllViews().filter((view) => !view.disabled)
+	const allViews = React.useMemo(
+		() => AllViews().filter((view) => !view.disabled),
+		[],
+	)
 
 	const sizes = useSelector(
 		(state: RootState) => state.settings.homescreenSizes,
