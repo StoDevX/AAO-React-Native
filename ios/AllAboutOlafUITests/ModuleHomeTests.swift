@@ -11,16 +11,23 @@ class ModuleHomeTests: XCTestCase {
 
 	// MARK: - Helpers
 
-	/// Long-press the given home tile, then tap the menu item with the given title.
-	private func resizeTile(_ identifier: String, to label: String) {
-		let tile = app.element(matching: identifier)
-		XCTAssertTrue(tile.waitForExistence(timeout: 30), "\(identifier) should exist")
+	/// Long-press the home tile with the given accessibility label (= the tile's
+	/// title, e.g. "Menus" / "SIS"), then tap the menu item with the given size
+	/// label (e.g. "Small" / "Large" / "Wide"). Querying by accessibility label
+	/// works around an iOS quirk where testID set on react-native-ios-context-menu's
+	/// ContextMenuButton wrapper is collapsed/dropped from the accessibility tree
+	/// when the wrapped child is itself an accessible element.
+	private func resizeTile(_ tileLabel: String, to sizeLabel: String) {
+		let tile = app.buttons[tileLabel]
+		XCTAssertTrue(
+			tile.waitForExistence(timeout: 30),
+			"tile '\(tileLabel)' should exist")
 		tile.press(forDuration: 1.0)
 
-		let menuItem = app.buttons[label]
+		let menuItem = app.buttons[sizeLabel]
 		XCTAssertTrue(
 			menuItem.waitForExistence(timeout: 10),
-			"Menu item '\(label)' should appear on long-press of \(identifier)")
+			"Menu item '\(sizeLabel)' should appear on long-press of '\(tileLabel)'")
 		menuItem.tap()
 	}
 
@@ -99,18 +106,18 @@ class ModuleHomeTests: XCTestCase {
 		let homescreen = app.element(matching: "screen-homescreen")
 		XCTAssertTrue(homescreen.waitForExistence(timeout: 30))
 
-		let menusTileId = "home-tile-menus"
+		let menusLabel = "Menus"
 
 		var originalFrame: CGRect = .zero
 
 		XCTContext.runActivity(named: "resize tile via context menu") { _ in
-			let tile = app.element(matching: menusTileId)
+			let tile = app.buttons[menusLabel]
 			XCTAssertTrue(tile.waitForExistence(timeout: 10))
 			originalFrame = tile.frame
 
-			resizeTile(menusTileId, to: "Large")
+			resizeTile(menusLabel, to: "Large")
 
-			let resized = app.element(matching: menusTileId)
+			let resized = app.buttons[menusLabel]
 			XCTAssertTrue(resized.waitForExistence(timeout: 10))
 			XCTAssertGreaterThan(
 				resized.frame.height,
@@ -122,7 +129,7 @@ class ModuleHomeTests: XCTestCase {
 			app.terminate()
 			app.launch()
 
-			let tile = app.element(matching: menusTileId)
+			let tile = app.buttons[menusLabel]
 			XCTAssertTrue(tile.waitForExistence(timeout: 30))
 			tile.press(forDuration: 1.0)
 
@@ -137,16 +144,16 @@ class ModuleHomeTests: XCTestCase {
 		}
 
 		XCTContext.runActivity(named: "small tile preserves accessibility label") { _ in
-			resizeTile(menusTileId, to: "Small")
+			resizeTile(menusLabel, to: "Small")
 			XCTAssertTrue(
-				app.buttons["Menus"].exists,
+				app.buttons[menusLabel].exists,
 				"Even at Small (1x1) the 'Menus' accessibility label should remain announceable")
 		}
 
 		XCTContext.runActivity(named: "reset from notice menu restores defaults") { _ in
 			resetLayoutFromNoticeMenu()
 
-			let tile = app.element(matching: menusTileId)
+			let tile = app.buttons[menusLabel]
 			XCTAssertTrue(tile.waitForExistence(timeout: 10))
 			XCTAssertEqual(
 				tile.frame.height,
@@ -171,11 +178,11 @@ class ModuleHomeTests: XCTestCase {
 
 		// Menus → Small (1x1) at col 0; SIS → Wide (2x4) needs 4 cols and so
 		// drops to row 1 because only 3 cols remain on row 0.
-		resizeTile("home-tile-menus", to: "Small")
-		resizeTile("home-tile-sis", to: "Wide")
+		resizeTile("Menus", to: "Small")
+		resizeTile("SIS", to: "Wide")
 
-		let menus = app.element(matching: "home-tile-menus")
-		let sis = app.element(matching: "home-tile-sis")
+		let menus = app.buttons["Menus"]
+		let sis = app.buttons["SIS"]
 		XCTAssertTrue(menus.waitForExistence(timeout: 10))
 		XCTAssertTrue(sis.waitForExistence(timeout: 10))
 
@@ -193,7 +200,7 @@ class ModuleHomeTests: XCTestCase {
 		let homescreen = app.element(matching: "screen-homescreen")
 		XCTAssertTrue(homescreen.waitForExistence(timeout: 30))
 
-		let tile = app.element(matching: "home-tile-menus")
+		let tile = app.buttons["Menus"]
 		XCTAssertTrue(tile.waitForExistence(timeout: 10))
 		let portraitWidth = tile.frame.width
 
