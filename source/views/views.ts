@@ -2,6 +2,22 @@ import * as c from '@frogpond/colors'
 import type EntypoGlyphs from '@react-native-vector-icons/entypo/glyphmaps/Entypo.json'
 import type {RootViewsParamList} from '../navigation/types'
 
+import {NavigationKey as menus} from './menus'
+import {NavigationKey as sis} from './sis'
+import {NavigationKey as calendar} from './calendar'
+import {NavigationKey as streaming} from './streaming'
+import {NavigationKey as news} from './news'
+import {NavigationKey as transportation} from './transportation'
+
+const hours: keyof RootViewsParamList = 'BuildingHours'
+const directory: keyof RootViewsParamList = 'Directory'
+const importantContacts: keyof RootViewsParamList = 'Contacts'
+const dictionary: keyof RootViewsParamList = 'Dictionary'
+const studentOrgs: keyof RootViewsParamList = 'StudentOrgs'
+const more: keyof RootViewsParamList = 'More'
+const printJobs: keyof RootViewsParamList = 'PrintJobs'
+const courseSearch: keyof RootViewsParamList = 'CourseSearch'
+
 type CommonView = {
 	id: string
 	title: string
@@ -28,7 +44,7 @@ export const AllViews = (): Array<ViewType> => {
 		{
 			id: 'menus',
 			type: 'view',
-			view: 'Menus',
+			view: menus,
 			title: 'Menus',
 			icon: 'bowl',
 			foreground: 'light',
@@ -37,7 +53,7 @@ export const AllViews = (): Array<ViewType> => {
 		{
 			id: 'sis',
 			type: 'view',
-			view: 'SIS',
+			view: sis,
 			title: 'SIS',
 			icon: 'fingerprint',
 			foreground: 'light',
@@ -46,7 +62,7 @@ export const AllViews = (): Array<ViewType> => {
 		{
 			id: 'building-hours',
 			type: 'view',
-			view: 'BuildingHours',
+			view: hours,
 			title: 'Building Hours',
 			icon: 'clock',
 			foreground: 'light',
@@ -55,7 +71,7 @@ export const AllViews = (): Array<ViewType> => {
 		{
 			id: 'calendar',
 			type: 'view',
-			view: 'Calendar',
+			view: calendar,
 			title: 'Calendar',
 			icon: 'calendar',
 			foreground: 'light',
@@ -64,7 +80,7 @@ export const AllViews = (): Array<ViewType> => {
 		{
 			id: 'directory',
 			type: 'view',
-			view: 'Directory',
+			view: directory,
 			title: 'Directory',
 			icon: 'v-card',
 			foreground: 'light',
@@ -73,7 +89,7 @@ export const AllViews = (): Array<ViewType> => {
 		{
 			id: 'streaming-media',
 			type: 'view',
-			view: 'Streaming Media',
+			view: streaming,
 			title: 'Streaming Media',
 			icon: 'video',
 			foreground: 'light',
@@ -82,7 +98,7 @@ export const AllViews = (): Array<ViewType> => {
 		{
 			id: 'news',
 			type: 'view',
-			view: 'News',
+			view: news,
 			title: 'News',
 			icon: 'news',
 			foreground: 'light',
@@ -100,7 +116,7 @@ export const AllViews = (): Array<ViewType> => {
 		{
 			id: 'important-contacts',
 			type: 'view',
-			view: 'Contacts',
+			view: importantContacts,
 			title: 'Important Contacts',
 			icon: 'phone',
 			foreground: 'light',
@@ -109,7 +125,7 @@ export const AllViews = (): Array<ViewType> => {
 		{
 			id: 'transportation',
 			type: 'view',
-			view: 'Transportation',
+			view: transportation,
 			title: 'Transportation',
 			icon: 'address',
 			foreground: 'light',
@@ -118,7 +134,7 @@ export const AllViews = (): Array<ViewType> => {
 		{
 			id: 'campus-dictionary',
 			type: 'view',
-			view: 'Dictionary',
+			view: dictionary,
 			title: 'Campus Dictionary',
 			icon: 'open-book',
 			foreground: 'light',
@@ -127,7 +143,7 @@ export const AllViews = (): Array<ViewType> => {
 		{
 			id: 'student-orgs',
 			type: 'view',
-			view: 'StudentOrgs',
+			view: studentOrgs,
 			title: 'Student Orgs',
 			icon: 'globe',
 			foreground: 'light',
@@ -136,7 +152,7 @@ export const AllViews = (): Array<ViewType> => {
 		{
 			id: 'more',
 			type: 'view',
-			view: 'More',
+			view: more,
 			title: 'More',
 			icon: 'link',
 			foreground: 'light',
@@ -145,7 +161,7 @@ export const AllViews = (): Array<ViewType> => {
 		{
 			id: 'stoprint',
 			type: 'view',
-			view: 'PrintJobs',
+			view: printJobs,
 			title: 'stoPrint',
 			icon: 'print',
 			foreground: 'light',
@@ -154,7 +170,7 @@ export const AllViews = (): Array<ViewType> => {
 		{
 			id: 'course-catalog',
 			type: 'view',
-			view: 'CourseSearch',
+			view: courseSearch,
 			title: 'Course Catalog',
 			icon: 'graduation-cap',
 			foreground: 'light',
