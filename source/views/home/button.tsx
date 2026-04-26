@@ -1,5 +1,13 @@
 import * as React from 'react'
-import {Platform, StyleSheet, Text, View} from 'react-native'
+import {
+	Platform,
+	StyleSheet,
+	Text,
+	View,
+	type StyleProp,
+	type TextStyle,
+	type ViewStyle,
+} from 'react-native'
 import {Entypo as Icon} from '@react-native-vector-icons/entypo'
 import type {ViewType} from '../views'
 import {Touchable} from '@frogpond/touchable'
@@ -14,10 +22,11 @@ type Props = {
 }
 
 type Variant = {
-	containerStyle: object
+	layout: 'row' | 'column'
+	containerStyle: StyleProp<ViewStyle>
 	iconSize: number
 	showTitle: boolean
-	titleStyle?: object
+	titleStyle?: StyleProp<TextStyle>
 	titleNumberOfLines?: number
 }
 
@@ -25,12 +34,14 @@ function variantFor(size: TileSize): Variant {
 	switch (size) {
 		case '1x1':
 			return {
+				layout: 'column',
 				containerStyle: styles.contentColumn,
 				iconSize: 24,
 				showTitle: false,
 			}
 		case '1x2':
 			return {
+				layout: 'column',
 				containerStyle: styles.contentColumn,
 				iconSize: 32,
 				showTitle: true,
@@ -39,6 +50,7 @@ function variantFor(size: TileSize): Variant {
 			}
 		case '2x2':
 			return {
+				layout: 'column',
 				containerStyle: styles.contentColumn,
 				iconSize: 44,
 				showTitle: true,
@@ -47,6 +59,7 @@ function variantFor(size: TileSize): Variant {
 			}
 		case '2x4':
 			return {
+				layout: 'row',
 				containerStyle: styles.contentRow,
 				iconSize: 40,
 				showTitle: true,
@@ -56,6 +69,9 @@ function variantFor(size: TileSize): Variant {
 	}
 }
 
+// TODO(task-9): drop the '1x2' default once HomePage wires HomeScreenGrid and
+// passes size from Redux. The default exists only to keep the legacy call site
+// in source/views/home/index.tsx tsc-clean during the multi-task migration.
 export function HomeScreenButton({
 	view,
 	size = '1x2',
@@ -81,12 +97,24 @@ export function HomeScreenButton({
 					style={[foreground, styles.icon]}
 				/>
 				{variant.showTitle ? (
-					<Text
-						style={[foreground, styles.title, variant.titleStyle]}
-						numberOfLines={variant.titleNumberOfLines}
-					>
-						{view.title}
-					</Text>
+					variant.layout === 'row' ? (
+						<View style={styles.textColumn}>
+							<Text
+								style={[foreground, styles.title, variant.titleStyle]}
+								numberOfLines={variant.titleNumberOfLines}
+							>
+								{view.title}
+							</Text>
+							{/* Subtitle slot — populated by future live-preview work. */}
+						</View>
+					) : (
+						<Text
+							style={[foreground, styles.title, variant.titleStyle]}
+							numberOfLines={variant.titleNumberOfLines}
+						>
+							{view.title}
+						</Text>
+					)
 				) : null}
 			</View>
 		</Touchable>
@@ -120,6 +148,11 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		paddingHorizontal: 12,
 		gap: 12,
+	},
+	textColumn: {
+		flex: 1,
+		flexDirection: 'column',
+		justifyContent: 'center',
 	},
 	icon: {
 		backgroundColor: transparent,
