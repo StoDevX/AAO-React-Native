@@ -8,7 +8,6 @@ export const keys = {
 
 export const athleticsOptions = queryOptions({
 	queryKey: keys.all,
-	queryFn: async ({signal}): Promise<Score[]> => {
-		return client.get('athletics/scores', {signal}).json<Score[]>()
-	},
+	queryFn: ({signal}): Promise<Score[]> =>
+		client.get('athletics/scores', {signal}).json<Score[]>(),
 })
