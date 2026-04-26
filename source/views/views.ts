@@ -25,6 +25,7 @@ type CommonView = {
 	foreground: 'light' | 'dark'
 	tint: string
 	disabled?: boolean
+	devOnly?: boolean
 }
 
 type NativeView = {
@@ -168,6 +169,7 @@ export const AllViews = (): Array<ViewType> => {
 			icon: 'chat',
 			foreground: 'light',
 			tint: c.orangeToRed[0],
+			devOnly: true,
 		},
 		{
 			type: 'url',
