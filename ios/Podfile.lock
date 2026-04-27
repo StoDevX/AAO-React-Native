@@ -2758,7 +2758,7 @@ PODS:
     - ReactCommon/turbomodule/core
     - SocketRocket
     - Yoga
-  - RNSentry (8.8.0):
+  - RNSentry (8.9.1):
     - boost
     - DoubleConversion
     - fast_float
@@ -2785,12 +2785,12 @@ PODS:
     - ReactCodegen
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
-    - Sentry (= 9.10.0)
+    - Sentry (= 9.11.0)
     - SocketRocket
     - Yoga
-  - Sentry (9.10.0):
-    - Sentry/Core (= 9.10.0)
-  - Sentry/Core (9.10.0)
+  - Sentry (9.11.0):
+    - Sentry/Core (= 9.11.0)
+  - Sentry/Core (9.11.0)
   - SocketRocket (0.7.1)
   - Yoga (0.0.0)
 
@@ -3207,8 +3207,8 @@ SPEC CHECKSUMS:
   RNKeychain: d9571527e40c1616307e6d213628b266fee8485b
   RNReanimated: a0d1d8b8d8d38f504c7acc2e6019061eed29186d
   RNScreens: 7b22241a88a0cf57199389f8cf8053b9f3c735ba
-  RNSentry: d273b73b612a0d8ca8e89ad09a1b8b00b64d526b
-  Sentry: 4e85b40e4b0235853f40f959d315a6b28e3148d8
+  RNSentry: 4c3357bd5cc2c451f2607d591fdbfd9d42ab5037
+  Sentry: 7561357fd868b329d1aab8152449733b2191ed6c
   SocketRocket: d4aabe649be1e368d1318fdf28a022d714d65748
   Yoga: 728df40394d49f3f471688747cf558158b3a3bd1
 
