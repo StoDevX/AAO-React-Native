@@ -60,6 +60,7 @@ export function getInAppLinkPreference(): Promise<openLinksInAppType> {
 const serverAddressKey = 'settings:server-address'
 type serverAddressType = string
 export function setServerAddress(address: serverAddressType): Promise<void> {
+	if (address && !address.endsWith('/')) address += '/'
 	return setItem(serverAddressKey, address)
 }
 export function getServerAddress(): Promise<serverAddressType> {

@@ -59,6 +59,11 @@ class AppDelegate: RCTAppDelegate {
 
   override func bundleURL() -> URL? {
     #if DEBUG
+    // Prefer a pre-bundled jsbundle when it exists (e.g. CI UITest runs that inject
+    // the bundle into the app package). Falls back to Metro for normal local development.
+    if let bundled = Bundle.main.url(forResource: "main", withExtension: "jsbundle") {
+      return bundled
+    }
     return RCTBundleURLProvider.sharedSettings().jsBundleURL(forBundleRoot: "index")
     #else
     return Bundle.main.url(forResource: "main", withExtension: "jsbundle")
