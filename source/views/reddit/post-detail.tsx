@@ -32,6 +32,13 @@ type RouteType = RouteProp<
 	'RedditPostDetail'
 >
 
+function countAllComments(comments: RedditCommentType[]): number {
+	return comments.reduce(
+		(total, comment) => total + 1 + countAllComments(comment.replies),
+		0,
+	)
+}
+
 function flattenComments(
 	comments: RedditCommentType[],
 	depth = 0,
@@ -102,6 +109,9 @@ export function PostDetailView(): React.ReactNode {
 	}, [navigation, postUrl, communityName])
 
 	const date = moment(publishedAt)
+	const metaText = [author, date.isValid() ? date.fromNow() : null]
+		.filter((part): part is string => Boolean(part))
+		.join(' · ')
 	const bodyText = sanitizeBodyText(
 		contentHtml ? htmlToFormattedText(contentHtml) : '',
 	)
@@ -121,11 +131,7 @@ export function PostDetailView(): React.ReactNode {
 	const header = (
 		<>
 			<View style={styles.headerBody}>
-				{bodyText ? (
-					<Text style={styles.meta}>
-						{`${author} · ${date.isValid() ? date.fromNow() : ''}`}
-					</Text>
-				) : null}
+				{bodyText ? <Text style={styles.meta}>{metaText}</Text> : null}
 				<Text style={styles.title}>{title}</Text>
 				{thumbnail && !bodyText ? (
 					<Pressable
@@ -170,7 +176,7 @@ export function PostDetailView(): React.ReactNode {
 			) : null}
 			<View style={styles.commentsSectionHeader}>
 				<Text style={styles.commentsLabelText}>
-					{formatCommentCount(flatComments.length)}
+					{formatCommentCount(countAllComments(comments))}
 				</Text>
 			</View>
 		</>

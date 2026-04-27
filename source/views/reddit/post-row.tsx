@@ -13,7 +13,9 @@ type Props = {
 
 export function PostRow({post, onPress}: Props): React.ReactNode {
 	const date = moment(post.publishedAt)
-	const meta = `${post.author} · ${date.isValid() ? date.fromNow() : ''}`
+	const meta = [post.author, date.isValid() ? date.fromNow() : null]
+		.filter((part): part is string => Boolean(part))
+		.join(' · ')
 
 	return (
 		<ListRow

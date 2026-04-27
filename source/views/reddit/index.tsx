@@ -7,6 +7,7 @@ import {useQuery} from '@tanstack/react-query'
 import type {RedditPostType} from './types'
 import {redditPostsOptions} from './query'
 import {PostList} from './post-list'
+import {NavigationKey as PostDetailNavigationKey} from './post-detail'
 
 export {
 	PostDetailView,
@@ -27,7 +28,7 @@ function StOlafFeedScreen(): React.ReactNode {
 
 	const handlePressPost = React.useCallback(
 		(post: RedditPostType) => {
-			navigation.navigate('RedditPostDetail', {
+			navigation.navigate(PostDetailNavigationKey, {
 				postUrl: post.permalink,
 				title: post.title,
 				author: post.author,
@@ -50,7 +51,7 @@ function CarletonFeedScreen(): React.ReactNode {
 
 	const handlePressPost = React.useCallback(
 		(post: RedditPostType) => {
-			navigation.navigate('RedditPostDetail', {
+			navigation.navigate(PostDetailNavigationKey, {
 				postUrl: post.permalink,
 				title: post.title,
 				author: post.author,

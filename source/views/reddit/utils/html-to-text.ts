@@ -1,7 +1,140 @@
-import {parseDocument} from 'htmlparser2'
-import {isText, isTag} from 'domhandler'
-import type {ChildNode} from 'domhandler'
+type TextNode = {
+	type: 'text'
+	data: string
+}
 
+type TagNode = {
+	type: 'tag'
+	name: string
+	attribs: Record<string, string>
+	children: ChildNode[]
+}
+
+type DocumentNode = {
+	children: ChildNode[]
+}
+
+type ChildNode = TextNode | TagNode
+
+function isText(node: ChildNode): node is TextNode {
+	return node.type === 'text'
+}
+
+function isTag(node: ChildNode): node is TagNode {
+	return node.type === 'tag'
+}
+
+function decodeHtmlEntities(text: string): string {
+	const namedEntities: Record<string, string> = {
+		amp: '&',
+		lt: '<',
+		gt: '>',
+		quot: '"',
+		apos: "'",
+		nbsp: '\u00A0',
+	}
+
+	return text.replace(
+		/&(#x[0-9a-f]{1,8}|#[0-9]{1,7}|[a-z]{1,10});/giu,
+		(match, entity: string) => {
+			const normalized = entity.toLowerCase()
+
+			if (normalized.startsWith('#x')) {
+				const cp = Number.parseInt(normalized.slice(2), 16)
+				return Number.isNaN(cp) ? match : String.fromCodePoint(cp)
+			}
+
+			if (normalized.startsWith('#')) {
+				const cp = Number.parseInt(normalized.slice(1), 10)
+				return Number.isNaN(cp) ? match : String.fromCodePoint(cp)
+			}
+
+			return namedEntities[normalized] ?? match
+		},
+	)
+}
+
+function parseAttributes(attrString: string): Record<string, string> {
+	const attrs: Record<string, string> = {}
+	const pattern =
+		/([a-zA-Z][a-zA-Z0-9-]*)(?:\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]*)))?/gu
+	for (const m of attrString.matchAll(pattern)) {
+		attrs[m[1].toLowerCase()] = m[2] ?? m[3] ?? m[4] ?? ''
+	}
+	return attrs
+}
+
+function parseDocument(
+	html: string,
+	options?: {decodeEntities?: boolean},
+): DocumentNode {
+	const root: DocumentNode = {children: []}
+	const stack: TagNode[] = []
+	const voidTags = new Set([
+		'area',
+		'base',
+		'br',
+		'col',
+		'embed',
+		'hr',
+		'img',
+		'input',
+		'link',
+		'meta',
+		'param',
+		'source',
+		'track',
+		'wbr',
+	])
+
+	const append = (node: ChildNode): void => {
+		const parent = stack[stack.length - 1]
+		if (parent) {
+			parent.children.push(node)
+		} else {
+			root.children.push(node)
+		}
+	}
+
+	const tokenPattern = /<!--[\s\S]*?-->|<\/?[a-zA-Z][^>]*>|[^<]+/gu
+
+	for (const {0: token} of html.matchAll(tokenPattern)) {
+		if (token.startsWith('<!--')) continue
+
+		if (token.startsWith('</')) {
+			const name = token.slice(2, -1).trim().toLowerCase()
+			for (let i = stack.length - 1; i >= 0; i -= 1) {
+				if (stack[i].name === name) {
+					stack.length = i
+					break
+				}
+			}
+			continue
+		}
+
+		if (token.startsWith('<')) {
+			const inner = token.slice(1, -1).trim()
+			const selfClosing = inner.endsWith('/')
+			const nameMatch = inner.match(/^([^\s/]+)/u)
+			if (!nameMatch) continue
+			const name = nameMatch[1].toLowerCase()
+			const node: TagNode = {
+				type: 'tag',
+				name,
+				attribs: parseAttributes(inner.slice(nameMatch[0].length)),
+				children: [],
+			}
+			append(node)
+			if (!selfClosing && !voidTags.has(name)) stack.push(node)
+			continue
+		}
+
+		const text = options?.decodeEntities ? decodeHtmlEntities(token) : token
+		append({type: 'text', data: text})
+	}
+
+	return root
+}
 export type TextSegment = {type: 'text'; text: string}
 export type LinkSegment = {type: 'link'; text: string; url: string}
 export type Segment = TextSegment | LinkSegment
