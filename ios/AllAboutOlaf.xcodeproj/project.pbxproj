@@ -37,6 +37,26 @@
 		A20000000000000000000010 /* ModuleStreamingMediaTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000010 /* ModuleStreamingMediaTests.swift */; };
 		A20000000000000000000011 /* ModuleStudentOrgsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000011 /* ModuleStudentOrgsTests.swift */; };
 		A20000000000000000000012 /* ModuleTransportationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000012 /* ModuleTransportationTests.swift */; };
+		A20000000000000000000013 /* UITestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000013 /* UITestCase.swift */; };
+		A20000000000000000000014 /* Screen.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000014 /* Screen.swift */; };
+		A20000000000000000000015 /* TestIdentifiers.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000015 /* TestIdentifiers.swift */; };
+		A20000000000000000000016 /* HomeScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000016 /* HomeScreen.swift */; };
+		A20000000000000000000017 /* MenusScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000017 /* MenusScreen.swift */; };
+		A20000000000000000000018 /* SISScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000018 /* SISScreen.swift */; };
+		A20000000000000000000019 /* CalendarScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000019 /* CalendarScreen.swift */; };
+		A2000000000000000000001A /* SettingsScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000000000000000000001A /* SettingsScreen.swift */; };
+		A2000000000000000000001B /* StreamingMediaScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000000000000000000001B /* StreamingMediaScreen.swift */; };
+		A2000000000000000000001C /* BuildingHoursScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000000000000000000001C /* BuildingHoursScreen.swift */; };
+		A2000000000000000000001D /* CampusDictionaryScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000000000000000000001D /* CampusDictionaryScreen.swift */; };
+		A2000000000000000000001E /* CampusMapScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000000000000000000001E /* CampusMapScreen.swift */; };
+		A2000000000000000000001F /* CourseCatalogScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000000000000000000001F /* CourseCatalogScreen.swift */; };
+		A20000000000000000000020 /* DirectoryScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000020 /* DirectoryScreen.swift */; };
+		A20000000000000000000021 /* ImportantContactsScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000021 /* ImportantContactsScreen.swift */; };
+		A20000000000000000000022 /* MoreScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000022 /* MoreScreen.swift */; };
+		A20000000000000000000023 /* OlevilleScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000023 /* OlevilleScreen.swift */; };
+		A20000000000000000000024 /* StoPrintScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000024 /* StoPrintScreen.swift */; };
+		A20000000000000000000025 /* StudentOrgsScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000025 /* StudentOrgsScreen.swift */; };
+		A20000000000000000000026 /* TransportationScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000026 /* TransportationScreen.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -363,6 +383,26 @@
 		A10000000000000000000010 /* ModuleStreamingMediaTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModuleStreamingMediaTests.swift; sourceTree = "<group>"; };
 		A10000000000000000000011 /* ModuleStudentOrgsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModuleStudentOrgsTests.swift; sourceTree = "<group>"; };
 		A10000000000000000000012 /* ModuleTransportationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModuleTransportationTests.swift; sourceTree = "<group>"; };
+		A10000000000000000000013 /* UITestCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UITestCase.swift; sourceTree = "<group>"; };
+		A10000000000000000000014 /* Screen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Screen.swift; sourceTree = "<group>"; };
+		A10000000000000000000015 /* TestIdentifiers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestIdentifiers.swift; sourceTree = "<group>"; };
+		A10000000000000000000016 /* HomeScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeScreen.swift; sourceTree = "<group>"; };
+		A10000000000000000000017 /* MenusScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenusScreen.swift; sourceTree = "<group>"; };
+		A10000000000000000000018 /* SISScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SISScreen.swift; sourceTree = "<group>"; };
+		A10000000000000000000019 /* CalendarScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarScreen.swift; sourceTree = "<group>"; };
+		A1000000000000000000001A /* SettingsScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsScreen.swift; sourceTree = "<group>"; };
+		A1000000000000000000001B /* StreamingMediaScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamingMediaScreen.swift; sourceTree = "<group>"; };
+		A1000000000000000000001C /* BuildingHoursScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuildingHoursScreen.swift; sourceTree = "<group>"; };
+		A1000000000000000000001D /* CampusDictionaryScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CampusDictionaryScreen.swift; sourceTree = "<group>"; };
+		A1000000000000000000001E /* CampusMapScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CampusMapScreen.swift; sourceTree = "<group>"; };
+		A1000000000000000000001F /* CourseCatalogScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CourseCatalogScreen.swift; sourceTree = "<group>"; };
+		A10000000000000000000020 /* DirectoryScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectoryScreen.swift; sourceTree = "<group>"; };
+		A10000000000000000000021 /* ImportantContactsScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportantContactsScreen.swift; sourceTree = "<group>"; };
+		A10000000000000000000022 /* MoreScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoreScreen.swift; sourceTree = "<group>"; };
+		A10000000000000000000023 /* OlevilleScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OlevilleScreen.swift; sourceTree = "<group>"; };
+		A10000000000000000000024 /* StoPrintScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoPrintScreen.swift; sourceTree = "<group>"; };
+		A10000000000000000000025 /* StudentOrgsScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudentOrgsScreen.swift; sourceTree = "<group>"; };
+		A10000000000000000000026 /* TransportationScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransportationScreen.swift; sourceTree = "<group>"; };
 		A91038679F834707B769D282 /* RNKeychain.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNKeychain.xcodeproj; path = "../node_modules/react-native-keychain/RNKeychain.xcodeproj"; sourceTree = "<group>"; };
 		C9C62AB413DD5F2C979EB571 /* Pods-AllAboutOlaf.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AllAboutOlaf.release.xcconfig"; path = "Target Support Files/Pods-AllAboutOlaf/Pods-AllAboutOlaf.release.xcconfig"; sourceTree = "<group>"; };
 		C9E6DCA95CEF977DEA0D094A /* Pods-AllAboutOlafUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AllAboutOlafUITests.release.xcconfig"; path = "Target Support Files/Pods-AllAboutOlafUITests/Pods-AllAboutOlafUITests.release.xcconfig"; sourceTree = "<group>"; };
@@ -452,6 +492,9 @@
 				00D33BE31DDA58A8001E830E /* Info.plist */,
 				00D33C011DDA5958001E830E /* SnapshotHelper.swift */,
 				A10000000000000000000001 /* XCUITestHelpers.swift */,
+				A10000000000000000000013 /* UITestCase.swift */,
+				A10000000000000000000014 /* Screen.swift */,
+				A10000000000000000000015 /* TestIdentifiers.swift */,
 				A10000000000000000000002 /* ModuleHomeTests.swift */,
 				A10000000000000000000003 /* ModuleBuildingHoursTests.swift */,
 				A10000000000000000000004 /* ModuleCalendarTests.swift */,
@@ -469,10 +512,35 @@
 				A10000000000000000000010 /* ModuleStreamingMediaTests.swift */,
 				A10000000000000000000011 /* ModuleStudentOrgsTests.swift */,
 				A10000000000000000000012 /* ModuleTransportationTests.swift */,
+				A30000000000000000000001 /* Screens */,
 				00D33C001DDA5958001E830E /* AllAboutOlaf-Bridging-Header.h */,
 			);
 			name = "UI Tests";
 			path = AllAboutOlafUITests;
+			sourceTree = "<group>";
+		};
+		A30000000000000000000001 /* Screens */ = {
+			isa = PBXGroup;
+			children = (
+				A10000000000000000000016 /* HomeScreen.swift */,
+				A10000000000000000000017 /* MenusScreen.swift */,
+				A10000000000000000000018 /* SISScreen.swift */,
+				A10000000000000000000019 /* CalendarScreen.swift */,
+				A1000000000000000000001A /* SettingsScreen.swift */,
+				A1000000000000000000001B /* StreamingMediaScreen.swift */,
+				A1000000000000000000001C /* BuildingHoursScreen.swift */,
+				A1000000000000000000001D /* CampusDictionaryScreen.swift */,
+				A1000000000000000000001E /* CampusMapScreen.swift */,
+				A1000000000000000000001F /* CourseCatalogScreen.swift */,
+				A10000000000000000000020 /* DirectoryScreen.swift */,
+				A10000000000000000000021 /* ImportantContactsScreen.swift */,
+				A10000000000000000000022 /* MoreScreen.swift */,
+				A10000000000000000000023 /* OlevilleScreen.swift */,
+				A10000000000000000000024 /* StoPrintScreen.swift */,
+				A10000000000000000000025 /* StudentOrgsScreen.swift */,
+				A10000000000000000000026 /* TransportationScreen.swift */,
+			);
+			path = Screens;
 			sourceTree = "<group>";
 		};
 		139105B71AF99BAD00B5F7CC /* Products */ = {
@@ -1227,6 +1295,26 @@
 				A20000000000000000000010 /* ModuleStreamingMediaTests.swift in Sources */,
 				A20000000000000000000011 /* ModuleStudentOrgsTests.swift in Sources */,
 				A20000000000000000000012 /* ModuleTransportationTests.swift in Sources */,
+				A20000000000000000000013 /* UITestCase.swift in Sources */,
+				A20000000000000000000014 /* Screen.swift in Sources */,
+				A20000000000000000000015 /* TestIdentifiers.swift in Sources */,
+				A20000000000000000000016 /* HomeScreen.swift in Sources */,
+				A20000000000000000000017 /* MenusScreen.swift in Sources */,
+				A20000000000000000000018 /* SISScreen.swift in Sources */,
+				A20000000000000000000019 /* CalendarScreen.swift in Sources */,
+				A2000000000000000000001A /* SettingsScreen.swift in Sources */,
+				A2000000000000000000001B /* StreamingMediaScreen.swift in Sources */,
+				A2000000000000000000001C /* BuildingHoursScreen.swift in Sources */,
+				A2000000000000000000001D /* CampusDictionaryScreen.swift in Sources */,
+				A2000000000000000000001E /* CampusMapScreen.swift in Sources */,
+				A2000000000000000000001F /* CourseCatalogScreen.swift in Sources */,
+				A20000000000000000000020 /* DirectoryScreen.swift in Sources */,
+				A20000000000000000000021 /* ImportantContactsScreen.swift in Sources */,
+				A20000000000000000000022 /* MoreScreen.swift in Sources */,
+				A20000000000000000000023 /* OlevilleScreen.swift in Sources */,
+				A20000000000000000000024 /* StoPrintScreen.swift in Sources */,
+				A20000000000000000000025 /* StudentOrgsScreen.swift in Sources */,
+				A20000000000000000000026 /* TransportationScreen.swift in Sources */,
 				00D33C031DDA598B001E830E /* SnapshotHelper.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
