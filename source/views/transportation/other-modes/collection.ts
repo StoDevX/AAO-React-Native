@@ -14,7 +14,7 @@ const collectionOptions = queryCollectionOptions({
 	queryKey: ['transit', 'modes'],
 	queryClient,
 	getKey: (mode: OtherModeType): string => mode.name,
-	queryFn: async ({signal}) => {
+	queryFn: ({signal}) => {
 		return client.get('transit/modes', {signal}).json<{data: OtherModeType[]}>()
 	},
 	select: (response) => response.data,

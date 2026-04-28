@@ -16,6 +16,7 @@ const styles = StyleSheet.create({
 
 type UtilsSnapshot = {
 	isLoading: boolean
+	isRefetching: boolean
 	isError: boolean
 	error: unknown
 	refetch: () => void
@@ -24,6 +25,7 @@ type UtilsSnapshot = {
 function getUtilsSnapshot(): UtilsSnapshot {
 	return {
 		isLoading: otherModesCollection.utils.isLoading,
+		isRefetching: otherModesCollection.utils.isRefetching,
 		isError: otherModesCollection.utils.isError,
 		error: otherModesCollection.utils.lastError,
 		refetch: () => otherModesCollection.utils.refetch(),
@@ -72,7 +74,7 @@ let OtherModesView = (): React.ReactNode => {
 
 	let utils = React.useSyncExternalStore(subscribe, () => utilsRef.current)
 
-	let {isLoading, isError, error, refetch} = utils
+	let {isLoading, isRefetching, isError, error, refetch} = utils
 
 	// Group by category inline (replaces otherModesGroupedOptions select)
 	let grouped = toPairs(groupBy(modes, (m) => m.category)).map(
@@ -97,15 +99,15 @@ let OtherModesView = (): React.ReactNode => {
 			contentInsetAdjustmentBehavior="automatic"
 			keyExtractor={(item) => item.name}
 			onRefresh={refetch}
-			refreshing={isLoading}
-			sections={grouped}
-			style={styles.listContainer}
+			refreshing={isRefetching}
 			renderItem={({item}) => (
 				<OtherModesRow mode={item} onPress={(mode) => openUrl(mode.url)} />
 			)}
 			renderSectionHeader={({section: {title}}) => (
 				<ListSectionHeader title={title} />
 			)}
+			sections={grouped}
+			style={styles.listContainer}
 		/>
 	)
 }

@@ -5,7 +5,8 @@ import {
 	createReactNativeSQLitePersistence,
 } from '@tanstack/react-native-db-sqlite-persistence'
 
-let persistence: ReturnType<typeof createReactNativeSQLitePersistence> | null = null
+let persistence: ReturnType<typeof createReactNativeSQLitePersistence> | null =
+	null
 
 try {
 	// op-sqlite's DB type is structurally incompatible with OpSQLiteDatabaseLike despite
@@ -16,7 +17,10 @@ try {
 } catch (e) {
 	Sentry.captureException(e)
 	if (__DEV__) {
-		console.warn('[tanstack-db] SQLite init failed — collections will run without persistence:', e)
+		console.warn(
+			'[tanstack-db] SQLite init failed — collections will run without persistence:',
+			e,
+		)
 	}
 }
 

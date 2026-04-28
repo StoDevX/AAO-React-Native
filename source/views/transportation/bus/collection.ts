@@ -14,8 +14,10 @@ const collectionOptions = queryCollectionOptions({
 	queryKey: ['transit', 'bus-routes'],
 	queryClient,
 	getKey: (line: UnprocessedBusLine): string => line.line,
-	queryFn: async ({signal}) => {
-		return client.get('transit/bus', {signal}).json<{data: UnprocessedBusLine[]}>()
+	queryFn: ({signal}) => {
+		return client
+			.get('transit/bus', {signal})
+			.json<{data: UnprocessedBusLine[]}>()
 	},
 	select: (response) => response.data,
 	staleTime: 60 * 60 * 1000,

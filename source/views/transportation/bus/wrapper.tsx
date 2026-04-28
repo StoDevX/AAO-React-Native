@@ -64,15 +64,9 @@ let BusView = (props: Props): React.ReactNode => {
 		}
 	}, [])
 
-	let lines = React.useSyncExternalStore(
-		subscribe,
-		() => arrayRef.current,
-	)
+	let lines = React.useSyncExternalStore(subscribe, () => arrayRef.current)
 
-	let utils = React.useSyncExternalStore(
-		subscribe,
-		() => utilsRef.current,
-	)
+	let utils = React.useSyncExternalStore(subscribe, () => utilsRef.current)
 
 	let {isLoading, isError, lastError: error, refetch} = utils
 
