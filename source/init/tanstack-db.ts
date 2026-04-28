@@ -1,9 +1,21 @@
 import {open} from '@op-engineering/op-sqlite'
 import {
+	OpSQLiteDatabaseLike,
 	createReactNativeSQLitePersistence,
-	type OpSQLiteDatabaseLike,
 } from '@tanstack/react-native-db-sqlite-persistence'
 
-const database = open({name: 'aao.db'}) as unknown as OpSQLiteDatabaseLike
+let persistence: ReturnType<typeof createReactNativeSQLitePersistence> | null = null
 
-export const persistence = createReactNativeSQLitePersistence({database})
+try {
+	// op-sqlite's DB type is structurally incompatible with OpSQLiteDatabaseLike despite
+	// providing compatible methods at runtime. The persistence library detects execute methods
+	// duck-typed, so this cast is safe.
+	const database = open({name: 'aao.db'}) as unknown as OpSQLiteDatabaseLike
+	persistence = createReactNativeSQLitePersistence({database})
+} catch (e) {
+	if (__DEV__) {
+		console.warn('[tanstack-db] SQLite init failed — collections will run without persistence:', e)
+	}
+}
+
+export {persistence}
