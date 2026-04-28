@@ -58,9 +58,14 @@ let OtherModesView = (): React.ReactNode => {
 			onStoreChange()
 		})
 
-		let cacheUnsub = queryClient.getQueryCache().subscribe(() => {
-			utilsRef.current = getUtilsSnapshot()
-			onStoreChange()
+		// Filter to this collection's query key — the cache notifies on every
+		// query in the app (dining, calendar, etc.) and we only care about ours.
+		let cacheUnsub = queryClient.getQueryCache().subscribe((event) => {
+			const key = event.query.queryKey
+			if (key[0] === 'transit' && key[1] === 'modes') {
+				utilsRef.current = getUtilsSnapshot()
+				onStoreChange()
+			}
 		})
 
 		return () => {

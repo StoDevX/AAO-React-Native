@@ -1,3 +1,9 @@
+// ORDERING: this module must be imported before any collection module that
+// imports `persistence`. app.tsx imports this before the navigation tree.
+// If a collection module is ever imported from a module loaded before app.tsx,
+// the `persistence` export will be null due to SQLite not being initialized yet
+// (rather than an actual init failure). Check init ordering if persistence is
+// unexpectedly null in a non-error scenario.
 import {open} from '@op-engineering/op-sqlite'
 import * as Sentry from '@sentry/react-native'
 import {
