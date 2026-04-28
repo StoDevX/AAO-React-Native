@@ -14,10 +14,10 @@ const collectionOptions = queryCollectionOptions({
 	queryKey: ['transit', 'modes'],
 	queryClient,
 	getKey: (mode: OtherModeType): string => mode.name,
-	queryFn: async (): Promise<OtherModeType[]> => {
-		let response = await client.get('transit/modes').json()
-		return (response as {data: OtherModeType[]}).data
+	queryFn: async ({signal}) => {
+		return client.get('transit/modes', {signal}).json<{data: OtherModeType[]}>()
 	},
+	select: (response) => response.data,
 	staleTime: 60 * 60 * 1000,
 	refetchInterval: 60 * 60 * 1000,
 })
