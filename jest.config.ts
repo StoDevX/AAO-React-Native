@@ -28,6 +28,7 @@ const esmPackages = [
 	// TanStack DB
 	'@tanstack/db',
 	'@tanstack/react-native-db-sqlite-persistence',
+	'@tanstack/query-db-collection',
 ]
 
 const config: Config = {
