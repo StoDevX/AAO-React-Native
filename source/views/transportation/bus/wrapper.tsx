@@ -5,6 +5,7 @@ import {timezone} from '@frogpond/constants'
 import {useNavigation} from '@react-navigation/native'
 import {useMomentTimer} from '@frogpond/timer'
 import {busLinesCollection} from './collection'
+import {queryClient} from '../../../init/tanstack-query'
 
 type Props = {
 	line: string
@@ -34,11 +35,15 @@ let BusView = (props: Props): React.ReactNode => {
 	// Cache the utils snapshot for the same reason.
 	let utilsRef = React.useRef<UtilsSnapshot>(getUtilsSnapshot())
 
-	// Subscribe to both data changes and collection status changes so that
-	// loading → ready and loading → error transitions both trigger a re-render.
+	// Subscribe to data changes, collection status changes, and the query cache
+	// so that all loading/error transitions trigger a re-render. The query cache
+	// subscription catches background refetch errors that occur after the initial
+	// load — collection status stays 'ready' in that case so status:change never
+	// fires, but the QueryObserver state (isLoading, isError) still changes.
 	let subscribe = React.useCallback((onStoreChange: () => void) => {
 		let dataSub = busLinesCollection.subscribeChanges(() => {
 			arrayRef.current = busLinesCollection.toArray
+			utilsRef.current = getUtilsSnapshot()
 			onStoreChange()
 		})
 
@@ -47,9 +52,15 @@ let BusView = (props: Props): React.ReactNode => {
 			onStoreChange()
 		})
 
+		let cacheUnsub = queryClient.getQueryCache().subscribe(() => {
+			utilsRef.current = getUtilsSnapshot()
+			onStoreChange()
+		})
+
 		return () => {
 			dataSub.unsubscribe()
 			statusUnsub()
+			cacheUnsub()
 		}
 	}, [])
 
