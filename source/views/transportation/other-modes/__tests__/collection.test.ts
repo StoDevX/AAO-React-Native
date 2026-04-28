@@ -1,6 +1,8 @@
 import {describe, expect, test} from '@jest/globals'
 import {OtherModeType} from '../../types'
 
+// We test the getKey logic in isolation — the full collection requires
+// native SQLite which is not available in Jest.
 const getKey = (mode: OtherModeType): string => mode.name
 
 describe('otherModesCollection key extraction', () => {
