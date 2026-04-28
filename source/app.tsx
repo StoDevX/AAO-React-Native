@@ -9,6 +9,7 @@ import * as sentryInit from './init/sentry'
 import './init/api'
 import './init/theme'
 import {queryClient, persister} from './init/tanstack-query'
+import './init/tanstack-db'
 
 import * as React from 'react'
 import {PersistGate} from 'redux-persist/integration/react'
