@@ -25,6 +25,9 @@ const esmPackages = [
 	'domelementtype',
 	'entities',
 	'htmlparser2',
+	// TanStack DB
+	'@tanstack/db',
+	'@tanstack/react-native-db-sqlite-persistence',
 ]
 
 const config: Config = {

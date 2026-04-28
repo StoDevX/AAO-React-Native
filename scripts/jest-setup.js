@@ -20,3 +20,10 @@ jest.mock('@react-native-clipboard/clipboard', () => ({
 		hasString: jest.fn(() => Promise.resolve(false)),
 	},
 }))
+
+jest.mock('@op-engineering/op-sqlite', () => ({
+	open: jest.fn(() => ({
+		execute: jest.fn(),
+		close: jest.fn(),
+	})),
+}))
