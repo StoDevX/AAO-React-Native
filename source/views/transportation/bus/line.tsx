@@ -1,13 +1,8 @@
 import * as React from 'react'
 import {useEffect, useState} from 'react'
 import {FlatList, StyleSheet, Text, TouchableOpacity, View} from 'react-native'
-import type {BusSchedule, UnprocessedBusLine, DayOfWeek} from './types'
-import {
-	BusStateEnum,
-	getCurrentBusIteration,
-	getScheduleForNow,
-	processBusLine,
-} from './lib'
+import type {UnprocessedBusLine, DayOfWeek} from './types'
+import {getCurrentBusIteration, getScheduleForNow, processBusLine} from './lib'
 import type {Moment} from 'moment-timezone'
 import find from 'lodash/find'
 import findLast from 'lodash/findLast'
@@ -152,18 +147,13 @@ export function BusLine(props: Props): React.ReactNode {
 	let {line, now} = props
 	let navigation = useNavigation()
 
-	let [schedule, setSchedule] = useState<BusSchedule | null>(null)
-	let [subtitle, setSubtitle] = useState<string>('')
-	let [currentBusIteration, setCurrentBusIteration] = useState<number | null>(
-		null,
-	)
-	let [status, setStatus] = useState<BusStateEnum>('none')
 	let [selectedDay, setSelectedDay] = useState<DayOfWeek>(() =>
 		momentToDayOfWeek(now),
 	)
 
 	const currentDay = momentToDayOfWeek(now)
 
+	// Auto-advance selectedDay when the calendar date changes (e.g. at midnight)
 	useEffect(() => {
 		const newCurrentDay = momentToDayOfWeek(now)
 		if (selectedDay === currentDay && newCurrentDay !== currentDay) {
@@ -171,23 +161,12 @@ export function BusLine(props: Props): React.ReactNode {
 		}
 	}, [now, selectedDay, currentDay])
 
-	useEffect(() => {
-		const momentForSelectedDay = createMomentForDay(now, selectedDay)
-
-		let {
-			schedule: scheduleForToday,
-			subtitle: scheduleSubtitle,
-			currentBusIteration: busIteration,
-			status: currentStatus,
-		} = deriveFromProps({
-			line,
-			now: momentForSelectedDay,
-		})
-		setSchedule(scheduleForToday)
-		setSubtitle(scheduleSubtitle)
-		setStatus(currentStatus)
-		setCurrentBusIteration(busIteration)
-	}, [line, now, selectedDay])
+	// Derive schedule state inline — no intermediate state, no stale-state bugs
+	const momentForSelectedDay = createMomentForDay(now, selectedDay)
+	const {subtitle, status, schedule, currentBusIteration} = deriveFromProps({
+		line,
+		now: momentForSelectedDay,
+	})
 
 	let INFO_EL = (
 		<View style={styles.headerContainer}>
@@ -226,8 +205,6 @@ export function BusLine(props: Props): React.ReactNode {
 	)
 
 	let timetable = schedule?.timetable ?? []
-
-	const momentForSelectedDay = createMomentForDay(now, selectedDay)
 
 	return (
 		<FlatList
