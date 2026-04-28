@@ -3,9 +3,8 @@ import {BusLine} from './line'
 import {LoadingView, NoticeView} from '@frogpond/notice'
 import {timezone} from '@frogpond/constants'
 import {useNavigation} from '@react-navigation/native'
-import {busRoutesOptions} from './query'
-import {useQuery} from '@tanstack/react-query'
 import {useMomentTimer} from '@frogpond/timer'
+import {busLinesCollection} from './collection'
 
 type Props = {
 	line: string
@@ -13,16 +12,20 @@ type Props = {
 
 let BusView = (props: Props): React.ReactNode => {
 	let {now} = useMomentTimer({intervalMs: 1000 * 60, timezone: timezone()})
-	let {
-		data: busLines = [],
-		error,
-		refetch,
-		isError,
-		isLoading,
-	} = useQuery(busRoutesOptions)
 	let navigation = useNavigation()
 
-	let activeBusLine = busLines.find(({line}) => line === props.line)
+	// Subscribe to collection changes for reactivity
+	let toArray = React.useSyncExternalStore(
+		(onStoreChange) => {
+			let sub = busLinesCollection.subscribeChanges(onStoreChange)
+			return () => sub.unsubscribe()
+		},
+		() => busLinesCollection.toArray,
+	)
+
+	let {isLoading, isError, lastError, refetch} = busLinesCollection.utils
+
+	let activeBusLine = toArray.find(({line}) => line === props.line)
 
 	if (isLoading) {
 		return <LoadingView />
@@ -32,14 +35,14 @@ let BusView = (props: Props): React.ReactNode => {
 		return (
 			<NoticeView
 				buttonText="Try Again"
-				onPress={refetch}
-				text={`A problem occured while loading: ${error}`}
+				onPress={() => refetch()}
+				text={`A problem occured while loading: ${lastError}`}
 			/>
 		)
 	}
 
 	if (!activeBusLine) {
-		let lines = busLines.map(({line}) => line).join(', ')
+		let lines = toArray.map(({line}) => line).join(', ')
 		let msg = `The line "${props.line}" was not found among ${lines}`
 		return <NoticeView text={msg} />
 	}
