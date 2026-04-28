@@ -94,7 +94,9 @@ let OtherModesView = (): React.ReactNode => {
 	return (
 		<SectionList
 			ItemSeparatorComponent={ListSeparator}
-			ListEmptyComponent={isLoading ? <LoadingView /> : <ListEmpty mode="bug" />}
+			ListEmptyComponent={
+				isLoading ? <LoadingView /> : <ListEmpty mode="bug" />
+			}
 			contentContainerStyle={styles.contentContainer}
 			contentInsetAdjustmentBehavior="automatic"
 			keyExtractor={(item) => item.name}
