@@ -1,6 +1,7 @@
 import {open} from '@op-engineering/op-sqlite'
+import * as Sentry from '@sentry/react-native'
 import {
-	OpSQLiteDatabaseLike,
+	type OpSQLiteDatabaseLike,
 	createReactNativeSQLitePersistence,
 } from '@tanstack/react-native-db-sqlite-persistence'
 
@@ -13,6 +14,7 @@ try {
 	const database = open({name: 'aao.db'}) as unknown as OpSQLiteDatabaseLike
 	persistence = createReactNativeSQLitePersistence({database})
 } catch (e) {
+	Sentry.captureException(e)
 	if (__DEV__) {
 		console.warn('[tanstack-db] SQLite init failed — collections will run without persistence:', e)
 	}
