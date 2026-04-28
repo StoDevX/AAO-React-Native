@@ -23,7 +23,8 @@ jest.mock('@react-native-clipboard/clipboard', () => ({
 
 jest.mock('@op-engineering/op-sqlite', () => ({
 	open: jest.fn(() => ({
-		execute: jest.fn(),
-		close: jest.fn(),
+		execute: jest.fn(() => Promise.resolve({rows: [], rowsAffected: 0})),
+		executeAsync: jest.fn(() => Promise.resolve({rows: [], rowsAffected: 0})),
+		close: jest.fn(() => Promise.resolve()),
 	})),
 }))
