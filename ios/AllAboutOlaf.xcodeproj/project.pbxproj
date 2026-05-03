@@ -519,30 +519,6 @@
 			path = AllAboutOlafUITests;
 			sourceTree = "<group>";
 		};
-		A30000000000000000000001 /* Screens */ = {
-			isa = PBXGroup;
-			children = (
-				A10000000000000000000016 /* HomeScreen.swift */,
-				A10000000000000000000017 /* MenusScreen.swift */,
-				A10000000000000000000018 /* SISScreen.swift */,
-				A10000000000000000000019 /* CalendarScreen.swift */,
-				A1000000000000000000001A /* SettingsScreen.swift */,
-				A1000000000000000000001B /* StreamingMediaScreen.swift */,
-				A1000000000000000000001C /* BuildingHoursScreen.swift */,
-				A1000000000000000000001D /* CampusDictionaryScreen.swift */,
-				A1000000000000000000001E /* CampusMapScreen.swift */,
-				A1000000000000000000001F /* CourseCatalogScreen.swift */,
-				A10000000000000000000020 /* DirectoryScreen.swift */,
-				A10000000000000000000021 /* ImportantContactsScreen.swift */,
-				A10000000000000000000022 /* MoreScreen.swift */,
-				A10000000000000000000023 /* OlevilleScreen.swift */,
-				A10000000000000000000024 /* StoPrintScreen.swift */,
-				A10000000000000000000025 /* StudentOrgsScreen.swift */,
-				A10000000000000000000026 /* TransportationScreen.swift */,
-			);
-			path = Screens;
-			sourceTree = "<group>";
-		};
 		139105B71AF99BAD00B5F7CC /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -690,6 +666,30 @@
 			indentWidth = 2;
 			sourceTree = "<group>";
 			tabWidth = 2;
+		};
+		A30000000000000000000001 /* Screens */ = {
+			isa = PBXGroup;
+			children = (
+				A10000000000000000000016 /* HomeScreen.swift */,
+				A10000000000000000000017 /* MenusScreen.swift */,
+				A10000000000000000000018 /* SISScreen.swift */,
+				A10000000000000000000019 /* CalendarScreen.swift */,
+				A1000000000000000000001A /* SettingsScreen.swift */,
+				A1000000000000000000001B /* StreamingMediaScreen.swift */,
+				A1000000000000000000001C /* BuildingHoursScreen.swift */,
+				A1000000000000000000001D /* CampusDictionaryScreen.swift */,
+				A1000000000000000000001E /* CampusMapScreen.swift */,
+				A1000000000000000000001F /* CourseCatalogScreen.swift */,
+				A10000000000000000000020 /* DirectoryScreen.swift */,
+				A10000000000000000000021 /* ImportantContactsScreen.swift */,
+				A10000000000000000000022 /* MoreScreen.swift */,
+				A10000000000000000000023 /* OlevilleScreen.swift */,
+				A10000000000000000000024 /* StoPrintScreen.swift */,
+				A10000000000000000000025 /* StudentOrgsScreen.swift */,
+				A10000000000000000000026 /* TransportationScreen.swift */,
+			);
+			path = Screens;
+			sourceTree = "<group>";
 		};
 		A769180F26F9F7C00766031C /* Pods */ = {
 			isa = PBXGroup;
