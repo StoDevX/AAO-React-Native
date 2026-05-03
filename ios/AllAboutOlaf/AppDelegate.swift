@@ -12,11 +12,6 @@ class AppDelegate: RCTAppDelegate {
   ) -> Bool {
     self.dependencyProvider = RCTAppDependencyProvider()
 
-    if ProcessInfo.processInfo.arguments.contains("--uitesting") {
-      // Future: disable animations, skip onboarding, or set up
-      // any other test-only state here.
-    }
-
     if ProcessInfo.processInfo.arguments.contains("--reset-state") {
       let fileManager = FileManager.default
       if let libraryPath = fileManager.urls(for: .libraryDirectory, in: .userDomainMask).first {
@@ -45,6 +40,17 @@ class AppDelegate: RCTAppDelegate {
     try? AVAudioSession.sharedInstance().setCategory(.playback)
 
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
+  }
+
+  override func applicationDidBecomeActive(_ application: UIApplication) {
+    super.applicationDidBecomeActive(application)
+    if ProcessInfo.processInfo.arguments.contains("--uitesting") {
+      // Speed up animations so UI tests complete faster without affecting reliability.
+      application.connectedScenes
+        .compactMap { $0 as? UIWindowScene }
+        .flatMap { $0.windows }
+        .forEach { $0.layer.speed = 2.0 }
+    }
   }
 
   override func sourceURL(for bridge: RCTBridge) -> URL? {

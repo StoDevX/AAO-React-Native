@@ -11,7 +11,7 @@ struct StoPrintScreen: Screen {
 	@discardableResult
 	func checkNotLoggedIn() -> Self {
 		let notLoggedIn = app.staticTexts[TestIdentifiers.StoPrint.notLoggedIn].firstMatch
-		XCTAssertTrue(notLoggedIn.waitForExistence(timeout: 30))
+		assertExists(notLoggedIn, "Not logged in message should be visible")
 		return self
 	}
 }
