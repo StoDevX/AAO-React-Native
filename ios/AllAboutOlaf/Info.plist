@@ -77,11 +77,6 @@
 		<true/>
 		<key>NSExceptionDomains</key>
 		<dict>
-			<key>athletics.stolaf.edu</key>
-			<dict>
-				<key>NSTemporaryExceptionAllowsInsecureHTTPLoads</key>
-				<true/>
-			</dict>
 			<key>localhost</key>
 			<dict>
 				<key>NSTemporaryExceptionAllowsInsecureHTTPLoads</key>
