@@ -5,6 +5,8 @@ import cssSelect from 'css-select'
 
 export {textContent, cssSelect}
 export {encode, decode} from 'html-entities'
+export {isText, isTag} from 'domhandler'
+export type {ChildNode} from 'domhandler'
 
 export function parseHtml(string: string): Document {
 	return parseDocument(string, {

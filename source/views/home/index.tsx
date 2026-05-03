@@ -10,6 +10,7 @@ import {HomeScreenButton, CELL_MARGIN} from './button'
 import {openUrl} from '@frogpond/open-url'
 import {OpenSettingsButton} from '@frogpond/navigation-buttons'
 import {UnofficialAppNotice} from './notice'
+import {useIsDevMode} from '../../lib/use-is-dev-mode'
 import {useNavigation} from '@react-navigation/native'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 
@@ -32,7 +33,10 @@ const styles = StyleSheet.create({
 
 function HomePage(): React.ReactNode {
 	let navigation = useNavigation()
-	let allViews = AllViews().filter((view) => !view.disabled)
+	let isDev = useIsDevMode()
+	let allViews = AllViews().filter(
+		(view) => !view.disabled && (isDev || !view.devOnly),
+	)
 	let columns = partitionByIndex(allViews)
 
 	return (
