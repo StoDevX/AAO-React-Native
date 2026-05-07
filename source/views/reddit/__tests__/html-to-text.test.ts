@@ -1,5 +1,4 @@
-import {htmlToFormattedText} from '../utils/html-to-text'
-import {htmlToSegments} from '../utils/html-to-text'
+import {htmlToFormattedText, htmlToSegments} from '@frogpond/html-lib'
 
 test('plain text passes through unchanged', () => {
 	expect(htmlToFormattedText('<p>Hello world</p>')).toBe('Hello world')

@@ -19,7 +19,7 @@ import {openUrl} from '@frogpond/open-url'
 import moment from 'moment'
 import {redditCommentsOptions} from './query'
 import {CommentRow} from './comment-row'
-import {htmlToFormattedText} from './utils/html-to-text'
+import {htmlToFormattedText} from '@frogpond/html-lib'
 import type {
 	RedditCommentType,
 	FlatComment,
