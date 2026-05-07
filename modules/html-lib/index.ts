@@ -4,8 +4,6 @@ import {AnyNode, Document, isText, isTag, type ChildNode} from 'domhandler'
 import cssSelect from 'css-select'
 
 export {textContent, cssSelect}
-export {isText, isTag}
-export type {ChildNode}
 export {encode, decode} from 'html-entities'
 
 export function parseHtml(string: string): Document {
@@ -95,6 +93,16 @@ function walkNodes(nodes: ChildNode[], listContext?: 'ul' | 'ol'): string {
 	return result
 }
 
+/**
+ * Converts an HTML string to plain text, preserving block-level structure.
+ *
+ * - `<p>` blocks are separated by double newlines.
+ * - `<br>` becomes a single newline.
+ * - `<ul>` / `<ol>` list items become bullet or numbered lines.
+ * - `<blockquote>` content is indented by two spaces per level.
+ * - Table elements (`<table>`, `<tr>`, etc.) are stripped entirely.
+ * - Runs of 3+ newlines are collapsed to two; leading/trailing newlines are trimmed.
+ */
 export function htmlToFormattedText(html: string): string {
 	const doc = parseHtml(html)
 	const raw = walkNodes(doc.children)
@@ -221,6 +229,18 @@ function normalizeSegments(segments: Segment[]): Segment[] {
 		.filter((seg) => seg.type !== 'text' || seg.text !== '')
 }
 
+/**
+ * Converts an HTML string to an array of `Segment` objects suitable for
+ * rendering mixed text and tappable links in React Native.
+ *
+ * - Plain text nodes become `{type: 'text', text}` segments.
+ * - `<a href="…">` elements become `{type: 'link', text, url}` segments,
+ *   preserving the `href` so callers can open the URL on press.
+ *   Anchors without an `href` (or an empty `href`) fall back to plain text.
+ * - Block structure (`<p>`, `<ul>`, `<blockquote>`, etc.) is preserved the
+ *   same way as in `htmlToFormattedText`.
+ * - Adjacent text segments are automatically merged; empty segments are removed.
+ */
 export function htmlToSegments(html: string): Segment[] {
 	const doc = parseHtml(html)
 	const segments: Segment[] = []
