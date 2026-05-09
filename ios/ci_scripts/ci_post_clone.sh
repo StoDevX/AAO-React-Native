@@ -15,6 +15,7 @@ cd ../../
 # Install node via Homebrew. Homebrew is officially available on Xcode Cloud
 # and brew --prefix always returns an arch-aware absolute path, so we never
 # need to rely on PATH being configured correctly.
+# If this doesn't work, we'll have to fix pathing issues and hopefully mise shims.
 brew install node@24
 
 NODE_BREW_PREFIX="$(brew --prefix node@24)"
