@@ -42,7 +42,7 @@ function StOlafFeedScreen(): React.ReactNode {
 		[navigation],
 	)
 
-	return <PostList onPressPost={handlePressPost} query={query} />
+	return <PostList onPressPost={handlePressPost} query={query} variant="C" />
 }
 
 function CarletonFeedScreen(): React.ReactNode {
@@ -65,7 +65,7 @@ function CarletonFeedScreen(): React.ReactNode {
 		[navigation],
 	)
 
-	return <PostList onPressPost={handlePressPost} query={query} />
+	return <PostList onPressPost={handlePressPost} query={query} variant="C" />
 }
 
 export const View = (): React.ReactNode => (

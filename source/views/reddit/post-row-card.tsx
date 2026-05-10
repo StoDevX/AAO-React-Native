@@ -1,4 +1,4 @@
-// source/views/reddit/post-row.tsx
+// source/views/reddit/post-row-card.tsx
 import * as React from 'react'
 import {Text, StyleSheet, View, Image, Pressable} from 'react-native'
 import * as c from '@frogpond/colors'
@@ -10,7 +10,7 @@ type Props = {
 	onPress: (post: RedditPostType) => void
 }
 
-export function PostRow({post, onPress}: Props): React.ReactNode {
+export function PostRowCard({post, onPress}: Props): React.ReactNode {
 	const parsedDate = parseISO(post.publishedAt)
 	const timeAgo = isValid(parsedDate)
 		? formatDistanceToNow(parsedDate, {addSuffix: true})
@@ -22,9 +22,17 @@ export function PostRow({post, onPress}: Props): React.ReactNode {
 			accessibilityLabel={post.title}
 			accessibilityRole="button"
 			onPress={() => onPress(post)}
-			style={({pressed}) => [styles.row, pressed && styles.rowPressed]}
+			style={({pressed}) => [styles.card, pressed && styles.cardPressed]}
 		>
-			<View style={styles.content}>
+			{post.thumbnail ? (
+				<Image
+					accessibilityIgnoresInvertColors={true}
+					resizeMode="cover"
+					source={{uri: post.thumbnail}}
+					style={styles.banner}
+				/>
+			) : null}
+			<View style={styles.body}>
 				<Text numberOfLines={3} style={styles.title}>
 					{post.title}
 				</Text>
@@ -32,33 +40,33 @@ export function PostRow({post, onPress}: Props): React.ReactNode {
 					{meta}
 				</Text>
 			</View>
-			{post.thumbnail ? (
-				<Image
-					accessibilityIgnoresInvertColors={true}
-					resizeMode="cover"
-					source={{uri: post.thumbnail}}
-					style={styles.thumbnail}
-				/>
-			) : null}
 		</Pressable>
 	)
 }
 
 const styles = StyleSheet.create({
-	row: {
-		flexDirection: 'row',
-		alignItems: 'center',
-		paddingHorizontal: 16,
-		paddingVertical: 14,
+	card: {
 		backgroundColor: c.systemBackground,
-		gap: 12,
+		borderRadius: 12,
+		marginHorizontal: 16,
+		overflow: 'hidden',
+		shadowColor: '#000',
+		shadowOffset: {width: 0, height: 1},
+		shadowOpacity: 0.08,
+		shadowRadius: 4,
+		elevation: 2,
 	},
-	rowPressed: {
-		backgroundColor: c.systemGray6,
+	cardPressed: {
+		opacity: 0.85,
 	},
-	content: {
-		flex: 1,
-		gap: 5,
+	banner: {
+		width: '100%',
+		height: 160,
+		backgroundColor: c.secondarySystemBackground,
+	},
+	body: {
+		padding: 14,
+		gap: 6,
 	},
 	title: {
 		fontSize: 16,
@@ -69,12 +77,5 @@ const styles = StyleSheet.create({
 	meta: {
 		fontSize: 12,
 		color: c.secondaryLabel,
-	},
-	thumbnail: {
-		width: 64,
-		height: 64,
-		borderRadius: 8,
-		backgroundColor: c.secondarySystemBackground,
-		flexShrink: 0,
 	},
 })

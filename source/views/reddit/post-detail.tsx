@@ -16,7 +16,7 @@ import {Touchable} from '@frogpond/touchable'
 import {LoadingView, NoticeView} from '@frogpond/notice'
 import * as c from '@frogpond/colors'
 import {openUrl} from '@frogpond/open-url'
-import moment from 'moment'
+import {formatDistanceToNow, parseISO, isValid} from 'date-fns'
 import {redditCommentsOptions} from './query'
 import {CommentRow} from './comment-row'
 import {htmlToFormattedText} from '@frogpond/html-lib'
@@ -108,8 +108,13 @@ export function PostDetailView(): React.ReactNode {
 		})
 	}, [navigation, postUrl, communityName])
 
-	const date = moment(publishedAt)
-	const metaText = [author, date.isValid() ? date.fromNow() : null]
+	const parsedDate = parseISO(publishedAt)
+	const metaText = [
+		author,
+		isValid(parsedDate)
+			? formatDistanceToNow(parsedDate, {addSuffix: true})
+			: null,
+	]
 		.filter((part): part is string => Boolean(part))
 		.join(' · ')
 	const bodyText = sanitizeBodyText(
@@ -228,19 +233,20 @@ const styles = StyleSheet.create({
 	contentContainer: {flexGrow: 1},
 	headerBody: {
 		padding: 16,
+		gap: 8,
 	},
-	title: {fontSize: 18, fontWeight: '600', marginBottom: 6, color: c.label},
-	meta: {fontSize: 13, color: c.secondaryLabel, marginBottom: 12},
+	title: {fontSize: 20, fontWeight: '700', color: c.label, lineHeight: 26},
+	meta: {fontSize: 13, color: c.secondaryLabel},
 	body: {
 		fontSize: 15,
 		color: c.bodyText,
 		lineHeight: 22,
+		marginTop: 4,
 	},
 	postImage: {
 		width: '100%',
-		aspectRatio: 1,
-		marginTop: 12,
-		borderRadius: 8,
+		aspectRatio: 16 / 9,
+		borderRadius: 12,
 		backgroundColor: c.secondarySystemBackground,
 	},
 	modalBackdrop: {
