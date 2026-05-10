@@ -28,10 +28,9 @@ echo "node path: ${NODE_PATH}"
 # Add brew node's bin dir to PATH so npm is available for the rest of this script
 export PATH="${NODE_BREW_PREFIX}/bin:$PATH"
 
-# Install mise via curl (for task running: bundle-data, pod:install).
-# The curl installer puts mise at ~/.local/bin/mise — no Homebrew PATH dependence.
-curl https://mise.run | sh
-export PATH="$HOME/.local/bin:$PATH"
+# Install mise via Homebrew (for task running: bundle-data, pod:install).
+brew install mise
+export PATH="$(brew --prefix)/bin:$PATH"
 
 echo "mise version: $(mise --version)"
 
