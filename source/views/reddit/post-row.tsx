@@ -41,16 +41,6 @@ export function PostRow({post, onPress}: Props): React.ReactNode {
 			onPress={() => onPress(post)}
 			style={({pressed}) => [styles.row, pressed && styles.rowPressed]}
 		>
-			{post.thumbnail ? (
-				<Image
-					accessibilityIgnoresInvertColors={true}
-					resizeMode="cover"
-					source={{uri: post.thumbnail}}
-					style={styles.thumbnail}
-				/>
-			) : (
-				<View style={styles.thumbnailPlaceholder} />
-			)}
 			<View style={styles.content}>
 				<Text numberOfLines={3} style={styles.title}>
 					{post.title}
@@ -60,6 +50,14 @@ export function PostRow({post, onPress}: Props): React.ReactNode {
 				</Text>
 				{badge ? <Text style={styles.typeBadge}>{badge}</Text> : null}
 			</View>
+			{post.thumbnail ? (
+				<Image
+					accessibilityIgnoresInvertColors={true}
+					resizeMode="cover"
+					source={{uri: post.thumbnail}}
+					style={styles.thumbnail}
+				/>
+			) : null}
 		</Pressable>
 	)
 }

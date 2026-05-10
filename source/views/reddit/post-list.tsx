@@ -9,7 +9,7 @@ import {PostRow} from './post-row'
 import {PostRowCard} from './post-row-card'
 import {PostRowHero} from './post-row-hero'
 
-export type PostListVariant = 'A' | 'B' | 'C'
+export type PostListVariant = 'A' | 'C'
 
 type Props = {
 	query: UseQueryResult<RedditPostType[]>
@@ -18,7 +18,7 @@ type Props = {
 }
 
 function Separator({variant}: {variant: PostListVariant}): React.ReactNode {
-	if (variant === 'B' || variant === 'C') {
+	if (variant === 'C') {
 		return <View style={styles.cardGap} />
 	}
 	return <View style={styles.separator} />
@@ -41,7 +41,7 @@ export function PostList({
 		)
 	}
 
-	const isGrouped = variant === 'B' || variant === 'C'
+	const isGrouped = variant === 'C'
 
 	return (
 		<FlatList
@@ -58,10 +58,10 @@ export function PostList({
 			onRefresh={refetch}
 			refreshing={isRefetching}
 			renderItem={({item, index}) => {
-				if (variant === 'C' && index === 0) {
+				if (variant === 'C' && index === 0 && item.thumbnail) {
 					return <PostRowHero onPress={onPressPost} post={item} />
 				}
-				if (variant === 'B' || variant === 'C') {
+				if (variant === 'C') {
 					return <PostRowCard onPress={onPressPost} post={item} />
 				}
 				return <PostRow onPress={onPressPost} post={item} />

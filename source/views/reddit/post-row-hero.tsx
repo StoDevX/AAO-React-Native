@@ -40,16 +40,12 @@ export function PostRowHero({post, onPress}: Props): React.ReactNode {
 			onPress={() => onPress(post)}
 			style={({pressed}) => [styles.card, pressed && styles.cardPressed]}
 		>
-			{post.thumbnail ? (
-				<Image
-					accessibilityIgnoresInvertColors={true}
-					resizeMode="cover"
-					source={{uri: post.thumbnail}}
-					style={styles.image}
-				/>
-			) : (
-				<View style={[styles.image, styles.imagePlaceholder]} />
-			)}
+			<Image
+				accessibilityIgnoresInvertColors={true}
+				resizeMode="cover"
+				source={{uri: post.thumbnail ?? undefined}}
+				style={styles.image}
+			/>
 			<View style={styles.overlay} />
 			<View style={styles.textContainer}>
 				<View style={styles.pillRow}>
@@ -95,9 +91,6 @@ const styles = StyleSheet.create({
 		...StyleSheet.absoluteFillObject,
 		width: '100%',
 		height: '100%',
-	},
-	imagePlaceholder: {
-		backgroundColor: c.systemGray4,
 	},
 	overlay: {
 		...StyleSheet.absoluteFillObject,

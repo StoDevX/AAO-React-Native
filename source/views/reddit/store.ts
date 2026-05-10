@@ -19,7 +19,15 @@ export const useRedditPreferences = create<RedditPreferencesStore>()(
 		{
 			name: 'reddit-preferences',
 			storage: createJSONStorage(() => AsyncStorage),
-			version: 1,
+			version: 2,
+			migrate(state, version) {
+				const s = state as {variant?: string}
+				// v1 had variant 'B' (Card Feed) which merged into 'C'
+				if (version < 2 && s.variant === 'B') {
+					return {...s, variant: 'C'} as RedditPreferencesStore
+				}
+				return state as RedditPreferencesStore
+			},
 		},
 	),
 )

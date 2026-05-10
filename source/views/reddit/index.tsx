@@ -28,14 +28,12 @@ type TabParams = {
 const Tab = createNativeBottomTabNavigator<TabParams>()
 
 const VARIANT_LABELS: Record<PostListVariant, string> = {
-	A: 'Polished List',
-	B: 'Card Feed',
-	C: 'Hero + Cards',
+	A: 'Compact List',
+	C: 'Card Feed',
 }
 const LABEL_TO_VARIANT: Record<string, PostListVariant> = {
-	'Polished List': 'A',
-	'Card Feed': 'B',
-	'Hero + Cards': 'C',
+	'Compact List': 'A',
+	'Card Feed': 'C',
 }
 const VARIANT_ACTIONS = Object.keys(LABEL_TO_VARIANT)
 
