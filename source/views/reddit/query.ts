@@ -1,6 +1,6 @@
-import {client} from '@frogpond/api'
 import {queryOptions} from '@tanstack/react-query'
-import type {RedditPostType, RedditCommentType} from './types'
+import type {RedditCommentType, RedditPostType} from './types'
+import {fetchRedditComments, fetchRedditPosts} from './reddit-api'
 
 export const keys = {
 	posts: (subreddit: string) => ['reddit', 'posts', subreddit] as const,
@@ -11,11 +11,8 @@ export const keys = {
 export const redditPostsOptions = (subreddit: string) =>
 	queryOptions({
 		queryKey: keys.posts(subreddit),
-		queryFn: async ({queryKey, signal}) => {
-			const response = await client
-				.get(`reddit/posts/${queryKey[2]}`, {signal})
-				.json()
-			return response as RedditPostType[]
+		queryFn: ({queryKey, signal}): Promise<RedditPostType[]> => {
+			return fetchRedditPosts(queryKey[2], signal)
 		},
 	})
 
@@ -23,10 +20,7 @@ export const redditPostsOptions = (subreddit: string) =>
 export const redditCommentsOptions = (postUrl: string) =>
 	queryOptions({
 		queryKey: keys.comments(postUrl),
-		queryFn: async ({queryKey, signal}) => {
-			const response = await client
-				.get('reddit/comments', {signal, searchParams: {url: queryKey[2]}})
-				.json()
-			return response as RedditCommentType[]
+		queryFn: ({queryKey, signal}): Promise<RedditCommentType[]> => {
+			return fetchRedditComments(queryKey[2], signal)
 		},
 	})

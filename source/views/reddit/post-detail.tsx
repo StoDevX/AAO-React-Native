@@ -6,6 +6,7 @@ import {
 	Image,
 	Modal,
 	Pressable,
+	ScrollView,
 	StyleSheet,
 } from 'react-native'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
@@ -16,7 +17,7 @@ import {Touchable} from '@frogpond/touchable'
 import {LoadingView, NoticeView} from '@frogpond/notice'
 import * as c from '@frogpond/colors'
 import {openUrl} from '@frogpond/open-url'
-import moment from 'moment'
+import {formatDistanceToNow, parseISO, isValid} from 'date-fns'
 import {redditCommentsOptions} from './query'
 import {CommentRow} from './comment-row'
 import {htmlToFormattedText} from '@frogpond/html-lib'
@@ -73,12 +74,21 @@ export function PostDetailView(): React.ReactNode {
 		thumbnail,
 		communityName,
 		postAuthor,
+		postType,
+		imageUrl,
+		images = [],
+		linkUrl,
+		linkDomain,
+		crosspostParent,
+		pollData,
 	} = route.params
 
 	const [collapsedIds, setCollapsedIds] = React.useState<Set<string>>(
 		() => new Set(),
 	)
-	const [imageFullscreen, setImageFullscreen] = React.useState(false)
+	const [fullscreenIndex, setFullscreenIndex] = React.useState<number | null>(
+		null,
+	)
 
 	const {
 		data: comments = [],
@@ -108,13 +118,29 @@ export function PostDetailView(): React.ReactNode {
 		})
 	}, [navigation, postUrl, communityName])
 
-	const date = moment(publishedAt)
-	const metaText = [author, date.isValid() ? date.fromNow() : null]
+	const parsedDate = parseISO(publishedAt)
+	const metaText = [
+		author,
+		isValid(parsedDate)
+			? formatDistanceToNow(parsedDate, {addSuffix: true})
+			: null,
+	]
 		.filter((part): part is string => Boolean(part))
 		.join(' · ')
 	const bodyText = sanitizeBodyText(
 		contentHtml ? htmlToFormattedText(contentHtml) : '',
 	)
+
+	// Build the image list to display: prefer gallery images, then full-res imageUrl, then thumbnail
+	const displayImages: string[] = (() => {
+		if (images.length > 0) return images
+		if (imageUrl) return [imageUrl]
+		if (thumbnail) return [thumbnail]
+		return []
+	})()
+
+	const isCrosspost =
+		postType === 'crosspost' || (!bodyText && !thumbnail && !linkUrl)
 
 	const toggleCollapse = React.useCallback((id: string) => {
 		setCollapsedIds((prev) => {
@@ -131,49 +157,170 @@ export function PostDetailView(): React.ReactNode {
 	const header = (
 		<>
 			<View style={styles.headerBody}>
-				{bodyText ? <Text style={styles.meta}>{metaText}</Text> : null}
+				{metaText ? <Text style={styles.meta}>{metaText}</Text> : null}
 				<Text style={styles.title}>{title}</Text>
-				{thumbnail && !bodyText ? (
-					<Pressable
-						accessibilityHint="Double tap to view fullscreen"
-						accessibilityLabel={title}
-						accessibilityRole="imagebutton"
-						onPress={() => setImageFullscreen(true)}
-					>
-						<Image
-							resizeMode="contain"
-							source={{uri: thumbnail}}
-							style={styles.postImage}
-						/>
-					</Pressable>
+
+				{/* Image / Gallery */}
+				{displayImages.length > 0 ? (
+					displayImages.length === 1 ? (
+						<Pressable
+							accessibilityHint="Double tap to view fullscreen"
+							accessibilityLabel={title}
+							accessibilityRole="imagebutton"
+							onPress={() => setFullscreenIndex(0)}
+						>
+							<Image
+								resizeMode="cover"
+								source={{uri: displayImages[0]}}
+								style={styles.postImage}
+							/>
+						</Pressable>
+					) : (
+						<View>
+							<ScrollView
+								horizontal={true}
+								pagingEnabled={true}
+								showsHorizontalScrollIndicator={false}
+							>
+								{displayImages.map((uri, i) => (
+									<Pressable
+										key={uri}
+										accessibilityHint="Double tap to view fullscreen"
+										accessibilityLabel={`Photo ${i + 1} of ${displayImages.length}`}
+										accessibilityRole="imagebutton"
+										onPress={() => setFullscreenIndex(i)}
+									>
+										<Image
+											resizeMode="cover"
+											source={{uri}}
+											style={styles.galleryImage}
+										/>
+									</Pressable>
+								))}
+							</ScrollView>
+							<Text style={styles.galleryCount}>
+								{displayImages.length} photos · swipe to browse
+							</Text>
+						</View>
+					)
 				) : null}
+
+				{/* Body text */}
 				{bodyText ? (
 					<Text selectable={true} style={styles.body}>
 						{bodyText}
 					</Text>
 				) : null}
+
+				{/* Link card */}
+				{linkUrl ? (
+					<Pressable
+						accessibilityLabel={`Open link: ${linkDomain ?? linkUrl}`}
+						accessibilityRole="link"
+						onPress={() => openUrl(linkUrl)}
+						style={styles.linkCard}
+					>
+						<Icon name="globe-outline" style={styles.linkCardIcon} />
+						<Text numberOfLines={1} style={styles.linkCardDomain}>
+							{linkDomain ?? linkUrl}
+						</Text>
+						<Icon
+							name="chevron-forward-outline"
+							style={styles.linkCardChevron}
+						/>
+					</Pressable>
+				) : null}
+
+				{/* Crosspost card */}
+				{isCrosspost ? (
+					<Pressable
+						accessibilityLabel={
+							crosspostParent
+								? `View original post from r/${crosspostParent.subreddit}`
+								: 'View linked post on Reddit'
+						}
+						accessibilityRole="link"
+						onPress={() => openUrl(crosspostParent?.permalink ?? postUrl)}
+						style={styles.crosspostCard}
+					>
+						<View style={styles.crosspostIconRow}>
+							<Icon name="link-outline" style={styles.crosspostIcon} />
+							<Text style={styles.crosspostLabel}>
+								{crosspostParent
+									? `r/${crosspostParent.subreddit}`
+									: 'Crosspost'}
+							</Text>
+						</View>
+						<Text numberOfLines={2} style={styles.crosspostTitle}>
+							{crosspostParent?.title ?? title}
+						</Text>
+						{crosspostParent?.selftext ? (
+							<Text numberOfLines={3} style={styles.crosspostBody}>
+								{crosspostParent.selftext}
+							</Text>
+						) : null}
+						<Text style={styles.crosspostMeta}>
+							{crosspostParent
+								? `u/${crosspostParent.author} · Tap to view`
+								: 'Tap to view on Reddit'}
+						</Text>
+					</Pressable>
+				) : null}
+
+				{/* Poll */}
+				{pollData ? (
+					<View style={styles.pollContainer}>
+						<Text style={styles.pollHeader}>
+							{pollData.totalVotes.toLocaleString()} votes
+						</Text>
+						{pollData.options.map((opt, i) => {
+							const pct =
+								pollData.totalVotes > 0
+									? Math.round((opt.votes / pollData.totalVotes) * 100)
+									: 0
+							return (
+								<View key={i} style={styles.pollOption}>
+									<View style={[styles.pollBar, {width: `${pct}%`}]} />
+									<View style={styles.pollOptionRow}>
+										<Text style={styles.pollOptionText}>{opt.text}</Text>
+										<Text style={styles.pollOptionPct}>{pct}%</Text>
+									</View>
+								</View>
+							)
+						})}
+						<Pressable
+							accessibilityRole="link"
+							onPress={() => openUrl(postUrl)}
+						>
+							<Text style={styles.pollViewLink}>View poll on Reddit</Text>
+						</Pressable>
+					</View>
+				) : null}
 			</View>
-			{thumbnail && !bodyText ? (
+
+			{/* Fullscreen image modal */}
+			{fullscreenIndex !== null ? (
 				<Modal
 					animationType="fade"
-					onRequestClose={() => setImageFullscreen(false)}
+					onRequestClose={() => setFullscreenIndex(null)}
 					transparent={true}
-					visible={imageFullscreen}
+					visible={true}
 				>
 					<Pressable
 						accessibilityLabel="Close fullscreen image"
 						accessibilityRole="button"
-						onPress={() => setImageFullscreen(false)}
+						onPress={() => setFullscreenIndex(null)}
 						style={styles.modalBackdrop}
 					>
 						<Image
 							resizeMode="contain"
-							source={{uri: thumbnail}}
+							source={{uri: displayImages[fullscreenIndex]}}
 							style={styles.modalImage}
 						/>
 					</Pressable>
 				</Modal>
 			) : null}
+
 			<View style={styles.commentsSectionHeader}>
 				<Text style={styles.commentsLabelText}>
 					{formatCommentCount(countAllComments(comments))}
@@ -228,20 +375,58 @@ const styles = StyleSheet.create({
 	contentContainer: {flexGrow: 1},
 	headerBody: {
 		padding: 16,
+		gap: 8,
 	},
-	title: {fontSize: 18, fontWeight: '600', marginBottom: 6, color: c.label},
-	meta: {fontSize: 13, color: c.secondaryLabel, marginBottom: 12},
+	title: {fontSize: 20, fontWeight: '700', color: c.label, lineHeight: 26},
+	meta: {fontSize: 13, color: c.secondaryLabel},
 	body: {
 		fontSize: 15,
 		color: c.bodyText,
 		lineHeight: 22,
+		marginTop: 4,
 	},
 	postImage: {
 		width: '100%',
-		aspectRatio: 1,
-		marginTop: 12,
-		borderRadius: 8,
+		aspectRatio: 16 / 9,
+		borderRadius: 12,
 		backgroundColor: c.secondarySystemBackground,
+	},
+	galleryImage: {
+		width: 300,
+		aspectRatio: 3 / 4,
+		borderRadius: 12,
+		marginRight: 8,
+		backgroundColor: c.secondarySystemBackground,
+	},
+	galleryCount: {
+		fontSize: 12,
+		color: c.secondaryLabel,
+		textAlign: 'center',
+		marginTop: 6,
+	},
+	linkCard: {
+		flexDirection: 'row',
+		alignItems: 'center',
+		gap: 8,
+		borderWidth: StyleSheet.hairlineWidth,
+		borderColor: c.separator,
+		borderRadius: 10,
+		paddingVertical: 12,
+		paddingHorizontal: 14,
+		backgroundColor: c.secondarySystemBackground,
+	},
+	linkCardIcon: {
+		fontSize: 16,
+		color: c.link,
+	},
+	linkCardDomain: {
+		flex: 1,
+		fontSize: 14,
+		color: c.link,
+	},
+	linkCardChevron: {
+		fontSize: 14,
+		color: c.tertiaryLabel,
 	},
 	modalBackdrop: {
 		flex: 1,
@@ -278,6 +463,89 @@ const styles = StyleSheet.create({
 	headerIcon: {
 		color: c.link,
 		fontSize: 24,
+	},
+	crosspostCard: {
+		borderWidth: StyleSheet.hairlineWidth,
+		borderColor: c.separator,
+		borderRadius: 12,
+		padding: 14,
+		backgroundColor: c.secondarySystemBackground,
+		gap: 4,
+	},
+	crosspostIconRow: {
+		flexDirection: 'row',
+		alignItems: 'center',
+		gap: 6,
+		marginBottom: 4,
+	},
+	crosspostIcon: {
+		fontSize: 14,
+		color: c.secondaryLabel,
+	},
+	crosspostLabel: {
+		fontSize: 11,
+		fontWeight: '600',
+		color: c.secondaryLabel,
+		textTransform: 'uppercase',
+		letterSpacing: 0.5,
+	},
+	crosspostTitle: {
+		fontSize: 15,
+		fontWeight: '600',
+		color: c.label,
+		lineHeight: 20,
+	},
+	crosspostBody: {
+		fontSize: 13,
+		color: c.secondaryLabel,
+		lineHeight: 18,
+	},
+	crosspostMeta: {
+		fontSize: 12,
+		color: c.link,
+	},
+	pollContainer: {
+		gap: 8,
+	},
+	pollHeader: {
+		fontSize: 12,
+		color: c.secondaryLabel,
+		marginBottom: 4,
+	},
+	pollOption: {
+		height: 44,
+		borderRadius: 8,
+		overflow: 'hidden',
+		backgroundColor: c.secondarySystemBackground,
+		justifyContent: 'center',
+	},
+	pollBar: {
+		position: 'absolute',
+		top: 0,
+		left: 0,
+		bottom: 0,
+		backgroundColor: c.systemBlue,
+		opacity: 0.18,
+	},
+	pollOptionRow: {
+		flexDirection: 'row',
+		alignItems: 'center',
+		justifyContent: 'space-between',
+		paddingHorizontal: 12,
+	},
+	pollOptionText: {
+		fontSize: 14,
+		color: c.label,
+		flex: 1,
+	},
+	pollOptionPct: {
+		fontSize: 13,
+		fontWeight: '600',
+		color: c.secondaryLabel,
+	},
+	pollViewLink: {
+		fontSize: 12,
+		color: c.link,
 	},
 })
 

@@ -1,6 +1,6 @@
 import * as React from 'react'
 import {View, Text, StyleSheet, TouchableOpacity} from 'react-native'
-import moment from 'moment'
+import {formatDistanceToNow, parseISO, isValid} from 'date-fns'
 import * as c from '@frogpond/colors'
 import {openUrl} from '@frogpond/open-url'
 import {htmlToSegments} from '@frogpond/html-lib'
@@ -32,8 +32,10 @@ export function CommentRow({
 }: Props): React.ReactNode {
 	const color = DEPTH_COLORS[depth % DEPTH_COLORS.length]
 	const segments = htmlToSegments(comment.contentHtml)
-	const date = moment(comment.publishedAt)
-	const relativeTime = date.isValid() ? date.fromNow() : ''
+	const parsedDate = parseISO(comment.publishedAt)
+	const relativeTime = isValid(parsedDate)
+		? formatDistanceToNow(parsedDate, {addSuffix: true})
+		: ''
 	const hasReplies = comment.replies.length > 0
 
 	return (
