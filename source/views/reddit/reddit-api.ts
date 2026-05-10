@@ -98,13 +98,19 @@ function detectPostType(
 	return 'text'
 }
 
+const HTML_ENTITIES: Record<string, string> = {
+	'&amp;': '&',
+	'&lt;': '<',
+	'&gt;': '>',
+	'&quot;': '"',
+	'&#039;': "'",
+}
+
 function decodeHtmlEntities(str: string): string {
-	return str
-		.replace(/&amp;/gu, '&')
-		.replace(/&lt;/gu, '<')
-		.replace(/&gt;/gu, '>')
-		.replace(/&quot;/gu, '"')
-		.replace(/&#039;/gu, "'")
+	return str.replace(
+		/&(?:amp|lt|gt|quot|#039);/gu,
+		(entity) => HTML_ENTITIES[entity] ?? entity,
+	)
 }
 
 function extractGalleryImages(
