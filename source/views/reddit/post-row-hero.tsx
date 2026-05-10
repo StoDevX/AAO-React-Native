@@ -10,11 +10,28 @@ type Props = {
 	onPress: (post: RedditPostType) => void
 }
 
+function postTypeBadge(post: RedditPostType): string | null {
+	if (post.postType === 'gallery' || (post.images && post.images.length > 0)) {
+		return `📷 ${post.images?.length ?? 2} photos`
+	}
+	if (post.postType === 'link' && post.linkDomain) {
+		return `🔗 ${post.linkDomain}`
+	}
+	if (post.postType === 'crosspost') {
+		return '↗ Crosspost'
+	}
+	if (post.postType === 'poll') {
+		return '📊 Poll'
+	}
+	return null
+}
+
 export function PostRowHero({post, onPress}: Props): React.ReactNode {
 	const parsedDate = parseISO(post.publishedAt)
 	const timeAgo = isValid(parsedDate)
 		? formatDistanceToNow(parsedDate, {addSuffix: true})
 		: null
+	const badge = postTypeBadge(post)
 
 	return (
 		<Pressable
@@ -35,11 +52,18 @@ export function PostRowHero({post, onPress}: Props): React.ReactNode {
 			)}
 			<View style={styles.overlay} />
 			<View style={styles.textContainer}>
-				{timeAgo ? (
-					<View style={styles.pill}>
-						<Text style={styles.pillText}>{timeAgo}</Text>
-					</View>
-				) : null}
+				<View style={styles.pillRow}>
+					{timeAgo ? (
+						<View style={styles.pill}>
+							<Text style={styles.pillText}>{timeAgo}</Text>
+						</View>
+					) : null}
+					{badge ? (
+						<View style={styles.pill}>
+							<Text style={styles.pillText}>{badge}</Text>
+						</View>
+					) : null}
+				</View>
 				<Text numberOfLines={2} style={styles.title}>
 					{post.title}
 				</Text>
@@ -87,13 +111,18 @@ const styles = StyleSheet.create({
 		padding: 14,
 		gap: 4,
 	},
+	pillRow: {
+		flexDirection: 'row',
+		flexWrap: 'wrap',
+		gap: 6,
+		marginBottom: 4,
+	},
 	pill: {
 		alignSelf: 'flex-start',
 		backgroundColor: 'rgba(255,255,255,0.25)',
 		borderRadius: 100,
 		paddingHorizontal: 8,
 		paddingVertical: 3,
-		marginBottom: 4,
 	},
 	pillText: {
 		fontSize: 11,

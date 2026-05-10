@@ -10,12 +10,29 @@ type Props = {
 	onPress: (post: RedditPostType) => void
 }
 
+function postTypeBadge(post: RedditPostType): string | null {
+	if (post.postType === 'gallery' || (post.images && post.images.length > 0)) {
+		return `📷 ${post.images?.length ?? 2} photos`
+	}
+	if (post.postType === 'link' && post.linkDomain) {
+		return `🔗 ${post.linkDomain}`
+	}
+	if (post.postType === 'crosspost') {
+		return '↗ Crosspost'
+	}
+	if (post.postType === 'poll') {
+		return '📊 Poll'
+	}
+	return null
+}
+
 export function PostRow({post, onPress}: Props): React.ReactNode {
 	const parsedDate = parseISO(post.publishedAt)
 	const timeAgo = isValid(parsedDate)
 		? formatDistanceToNow(parsedDate, {addSuffix: true})
 		: null
 	const meta = [post.author, timeAgo].filter(Boolean).join(' · ')
+	const badge = postTypeBadge(post)
 
 	return (
 		<Pressable
@@ -41,6 +58,7 @@ export function PostRow({post, onPress}: Props): React.ReactNode {
 				<Text numberOfLines={1} style={styles.meta}>
 					{meta}
 				</Text>
+				{badge ? <Text style={styles.typeBadge}>{badge}</Text> : null}
 			</View>
 		</Pressable>
 	)
@@ -83,5 +101,9 @@ const styles = StyleSheet.create({
 		width: 64,
 		height: 64,
 		flexShrink: 0,
+	},
+	typeBadge: {
+		fontSize: 11,
+		color: c.secondaryLabel,
 	},
 })
