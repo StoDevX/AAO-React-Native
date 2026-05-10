@@ -120,6 +120,7 @@ export function PostDetailView(): React.ReactNode {
 	const bodyText = sanitizeBodyText(
 		contentHtml ? htmlToFormattedText(contentHtml) : '',
 	)
+	const isCrosspost = !bodyText && !thumbnail
 
 	const toggleCollapse = React.useCallback((id: string) => {
 		setCollapsedIds((prev) => {
@@ -136,9 +137,9 @@ export function PostDetailView(): React.ReactNode {
 	const header = (
 		<>
 			<View style={styles.headerBody}>
-				{bodyText ? <Text style={styles.meta}>{metaText}</Text> : null}
+				{metaText ? <Text style={styles.meta}>{metaText}</Text> : null}
 				<Text style={styles.title}>{title}</Text>
-				{thumbnail && !bodyText ? (
+				{thumbnail ? (
 					<Pressable
 						accessibilityHint="Double tap to view fullscreen"
 						accessibilityLabel={title}
@@ -146,7 +147,7 @@ export function PostDetailView(): React.ReactNode {
 						onPress={() => setImageFullscreen(true)}
 					>
 						<Image
-							resizeMode="contain"
+							resizeMode="cover"
 							source={{uri: thumbnail}}
 							style={styles.postImage}
 						/>
@@ -157,8 +158,25 @@ export function PostDetailView(): React.ReactNode {
 						{bodyText}
 					</Text>
 				) : null}
+				{isCrosspost ? (
+					<Pressable
+						accessibilityLabel="View linked post on Reddit"
+						accessibilityRole="link"
+						onPress={() => openUrl(postUrl)}
+						style={styles.crosspostCard}
+					>
+						<View style={styles.crosspostIconRow}>
+							<Icon name="link-outline" style={styles.crosspostIcon} />
+							<Text style={styles.crosspostLabel}>Linked Post</Text>
+						</View>
+						<Text numberOfLines={2} style={styles.crosspostTitle}>
+							{title}
+						</Text>
+						<Text style={styles.crosspostMeta}>Tap to view on Reddit</Text>
+					</Pressable>
+				) : null}
 			</View>
-			{thumbnail && !bodyText ? (
+			{thumbnail ? (
 				<Modal
 					animationType="fade"
 					onRequestClose={() => setImageFullscreen(false)}
@@ -284,6 +302,41 @@ const styles = StyleSheet.create({
 	headerIcon: {
 		color: c.link,
 		fontSize: 24,
+	},
+	crosspostCard: {
+		borderWidth: StyleSheet.hairlineWidth,
+		borderColor: c.separator,
+		borderRadius: 12,
+		padding: 14,
+		backgroundColor: c.secondarySystemBackground,
+		gap: 4,
+	},
+	crosspostIconRow: {
+		flexDirection: 'row',
+		alignItems: 'center',
+		gap: 6,
+		marginBottom: 4,
+	},
+	crosspostIcon: {
+		fontSize: 14,
+		color: c.secondaryLabel,
+	},
+	crosspostLabel: {
+		fontSize: 11,
+		fontWeight: '600',
+		color: c.secondaryLabel,
+		textTransform: 'uppercase',
+		letterSpacing: 0.5,
+	},
+	crosspostTitle: {
+		fontSize: 15,
+		fontWeight: '600',
+		color: c.label,
+		lineHeight: 20,
+	},
+	crosspostMeta: {
+		fontSize: 12,
+		color: c.link,
 	},
 })
 

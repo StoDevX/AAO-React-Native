@@ -24,6 +24,16 @@ export function PostRow({post, onPress}: Props): React.ReactNode {
 			onPress={() => onPress(post)}
 			style={({pressed}) => [styles.row, pressed && styles.rowPressed]}
 		>
+			{post.thumbnail ? (
+				<Image
+					accessibilityIgnoresInvertColors={true}
+					resizeMode="cover"
+					source={{uri: post.thumbnail}}
+					style={styles.thumbnail}
+				/>
+			) : (
+				<View style={styles.thumbnailPlaceholder} />
+			)}
 			<View style={styles.content}>
 				<Text numberOfLines={3} style={styles.title}>
 					{post.title}
@@ -32,14 +42,6 @@ export function PostRow({post, onPress}: Props): React.ReactNode {
 					{meta}
 				</Text>
 			</View>
-			{post.thumbnail ? (
-				<Image
-					accessibilityIgnoresInvertColors={true}
-					resizeMode="cover"
-					source={{uri: post.thumbnail}}
-					style={styles.thumbnail}
-				/>
-			) : null}
 		</Pressable>
 	)
 }
@@ -75,6 +77,11 @@ const styles = StyleSheet.create({
 		height: 64,
 		borderRadius: 8,
 		backgroundColor: c.secondarySystemBackground,
+		flexShrink: 0,
+	},
+	thumbnailPlaceholder: {
+		width: 64,
+		height: 64,
 		flexShrink: 0,
 	},
 })
