@@ -142,10 +142,6 @@ export function PostDetailView(): React.ReactNode {
 	const isCrosspost =
 		postType === 'crosspost' || (!bodyText && !thumbnail && !linkUrl)
 
-	// Link posts from old server (RSS) won't have linkUrl — show a Reddit fallback
-	const showRedditLinkFallback =
-		!bodyText && !isCrosspost && !linkUrl && displayImages.length === 0
-
 	const toggleCollapse = React.useCallback((id: string) => {
 		setCollapsedIds((prev) => {
 			const next = new Set(prev)
@@ -268,25 +264,6 @@ export function PostDetailView(): React.ReactNode {
 								? `u/${crosspostParent.author} · Tap to view`
 								: 'Tap to view on Reddit'}
 						</Text>
-					</Pressable>
-				) : null}
-
-				{/* Reddit fallback for link posts from old server (no linkUrl) */}
-				{showRedditLinkFallback ? (
-					<Pressable
-						accessibilityLabel="View linked content on Reddit"
-						accessibilityRole="link"
-						onPress={() => openUrl(postUrl)}
-						style={styles.linkCard}
-					>
-						<Icon name="globe-outline" style={styles.linkCardIcon} />
-						<Text style={styles.linkCardDomain}>
-							View linked content on Reddit
-						</Text>
-						<Icon
-							name="chevron-forward-outline"
-							style={styles.linkCardChevron}
-						/>
 					</Pressable>
 				) : null}
 
