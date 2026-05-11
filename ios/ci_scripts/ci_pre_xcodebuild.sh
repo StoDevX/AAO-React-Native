@@ -1,5 +1,5 @@
 #!/bin/bash
-set -ex
+set -exu
 echo "Running ci_pre_xcodebuild.sh"
 
 # Xcode Cloud sets CI_BUILD_NUMBER automatically (monotonically increasing per workflow).
