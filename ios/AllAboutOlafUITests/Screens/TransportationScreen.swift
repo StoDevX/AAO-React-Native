@@ -13,9 +13,7 @@ struct TransportationScreen: Screen {
 		for tab in TestIdentifiers.Transportation.tabs {
 			XCTContext.runActivity(named: tab) { _ in
 				let tabElement = app.staticTexts[tab].firstMatch
-				XCTAssertTrue(
-					tabElement.waitForExistence(timeout: 30),
-					"\(tab) tab should be visible")
+				assertExists(tabElement, "\(tab) tab should be visible")
 			}
 		}
 		return self

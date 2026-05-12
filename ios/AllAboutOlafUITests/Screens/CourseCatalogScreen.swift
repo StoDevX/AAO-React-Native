@@ -16,9 +16,7 @@ struct CourseCatalogScreen: Screen {
 	@discardableResult
 	func checkRecentSectionExists() -> Self {
 		let recent = app.staticTexts[TestIdentifiers.CourseCatalog.recent].firstMatch
-		XCTAssertTrue(
-			recent.waitForExistence(timeout: 30),
-			"Recent section should be visible")
+		assertExists(recent, "Recent section should be visible")
 		return self
 	}
 }

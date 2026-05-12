@@ -16,9 +16,7 @@ struct DirectoryScreen: Screen {
 	@discardableResult
 	func checkSearchPromptVisible() -> Self {
 		let searchPrompt = app.staticTexts[TestIdentifiers.Directory.searchPrompt].firstMatch
-		XCTAssertTrue(
-			searchPrompt.waitForExistence(timeout: 30),
-			"Search the Directory prompt should be visible")
+		assertExists(searchPrompt, "Search the Directory prompt should be visible")
 		return self
 	}
 }
