@@ -22,7 +22,7 @@ def discover_test_classes(test_dir: Path) -> list[tuple[str, int]]:
     Returns a list of (class_name, test_count) tuples sorted by test count
     descending (for optimal greedy packing).
     """
-    class_pattern = re.compile(r"class\s+(\w+)\s*:\s*XCTestCase")
+    class_pattern = re.compile(r"class\s+(\w+)\s*:\s*(?:XCTestCase|UITestCase)")
     method_pattern = re.compile(r"func\s+(test\w+)\s*\(")
 
     classes = []

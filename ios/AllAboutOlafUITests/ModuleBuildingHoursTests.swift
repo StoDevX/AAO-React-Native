@@ -1,24 +1,9 @@
 import XCTest
 
-class ModuleBuildingHoursTests: XCTestCase {
-	private var app: XCUIApplication!
-
-	override func setUpWithError() throws {
-		continueAfterFailure = false
-		app = XCUIApplication()
-		app.launch()
-	}
-
+class ModuleBuildingHoursTests: UITestCase {
 	func testIsReachableFromHomescreen() throws {
-		let homescreen = app.element(matching: "screen-homescreen")
-		XCTAssertTrue(homescreen.waitForExistence(timeout: 30))
-
-		app.buttons["Building Hours"].firstMatch.tap()
-		XCTAssertTrue(homescreen.waitForNonExistence(timeout: 30))
-
-		let title = app.staticTexts["Building Hours"].firstMatch
-		XCTAssertTrue(
-			title.waitForExistence(timeout: 30),
-			"Building Hours title should be visible")
+		BuildingHoursScreen(app: app)
+			.navigate()
+			.verifyBuildingHoursTitle()
 	}
 }
