@@ -12,11 +12,29 @@ export SENTRY_PROJECT='all-about-olaf'
 # cd out of ios/ci_scripts into main project directory
 cd ../../
 
-# install mise and tools
-brew install mise
-mise install node
+# Install node via Homebrew. Homebrew is officially available on Xcode Cloud
+# and brew --prefix always returns an arch-aware absolute path, so we never
+# need to rely on PATH being configured correctly.
+# If this doesn't work, we'll have to fix pathing issues and hopefully mise shims.
+brew install node@24
 
-# activate mise shims so node/npm are on PATH in non-interactive scripts
+NODE_BREW_PREFIX="$(brew --prefix node@24)"
+NODE_PATH="${NODE_BREW_PREFIX}/bin/node"
+
+# Confirm node works
+echo "node path: ${NODE_PATH}"
+"${NODE_PATH}" --version
+
+# Add brew node's bin dir to PATH so npm is available for the rest of this script
+export PATH="${NODE_BREW_PREFIX}/bin:$PATH"
+
+# Install mise via Homebrew (for task running: bundle-data, pod:install).
+brew install mise
+export PATH="$(brew --prefix)/bin:$PATH"
+
+echo "mise version: $(mise --version)"
+
+# Activate mise shims for ruby/cocoapods tools used in task runs
 eval "$(mise activate bash --shims)"
 
 # install node modules
@@ -28,18 +46,16 @@ mise run bundle-data
 # install pods
 mise run pod:install --deployment
 
-# Write ios/.xcode.env.local so Xcode Cloud's build environment can find mise-managed tools.
-# PATH changes in this script don't carry over into xcodebuild, so we resolve the
-# paths now and bake them in. NODE_BINARY is the surefire fix for React Native's
-# bundling phase; prepending the shims dir to PATH covers every other mise tool.
-NODE_PATH="$(mise which node)"
-# mise shims live at $MISE_DATA_DIR/shims (default: ~/.local/share/mise/shims)
-# per https://mise.jdx.dev/dev-tools/shims.html
-MISE_SHIMS="${MISE_DATA_DIR:-$HOME/.local/share/mise}/shims"
+# Write ios/.xcode.env.local so Xcode Cloud's xcodebuild can find node.
+# PATH changes in this script don't carry over into xcodebuild build phases,
+# so we bake in the absolute brew-managed path now.
+echo "Writing ios/.xcode.env.local with NODE_BINARY=${NODE_PATH}"
 {
-  printf 'export PATH="%s:$PATH"\n' "${MISE_SHIMS}"
   printf 'export NODE_BINARY=%s\n' "${NODE_PATH}"
 } > ios/.xcode.env.local
+
+echo "Contents of ios/.xcode.env.local:"
+cat ios/.xcode.env.local
 
 # if/when we go to Expo
 # npx expo prebuild

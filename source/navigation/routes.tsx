@@ -22,6 +22,7 @@ import {
 	MenuItemDetailView,
 } from '@frogpond/food-menu/food-item-detail'
 import * as news from '../views/news'
+import * as reddit from '../views/reddit'
 import * as settings from '../views/settings/'
 import * as streaming from '../views/streaming'
 import * as orgs from '../views/student-orgs'
@@ -195,6 +196,18 @@ const HomeStackScreens = () => {
 					component={news.View}
 					name={news.NavigationKey}
 					options={news.NavigationOptions}
+				/>
+			</Stack.Group>
+			<Stack.Group>
+				<Stack.Screen
+					component={reddit.View}
+					name={reddit.NavigationKey}
+					options={reddit.NavigationOptions}
+				/>
+				<Stack.Screen
+					component={reddit.PostDetailView}
+					name={reddit.PostDetailNavigationKey}
+					options={reddit.PostDetailNavigationOptions}
 				/>
 			</Stack.Group>
 			<Stack.Group>

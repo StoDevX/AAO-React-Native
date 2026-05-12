@@ -1,4 +1,4 @@
-import {PlatformColor} from 'react-native'
+import {DynamicColorIOS, PlatformColor} from 'react-native'
 
 // MARK: Label colors
 
@@ -310,3 +310,14 @@ export const systemGray6 = PlatformColor('systemGray6')
  * A color object with grayscale and alpha values that are both 0.0.
  */
 export const clear = PlatformColor('clear')
+
+// MARK: Custom adaptive colors
+
+/**
+ * A medium-weight text color for body/content text (post and comment bodies).
+ *
+ * Adapts to the current appearance:
+ * - Light mode: `#555555` — dark enough for readable body paragraphs on white
+ * - Dark mode:  `#DDDDDD` — light enough for readable body paragraphs on dark backgrounds
+ */
+export const bodyText = DynamicColorIOS({light: '#555555', dark: '#DDDDDD'})
