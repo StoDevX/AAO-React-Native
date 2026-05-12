@@ -64,7 +64,7 @@ export function PostRowCard({post, onPress}: Props): React.ReactNode {
 
 const styles = StyleSheet.create({
 	card: {
-		backgroundColor: c.systemBackground,
+		backgroundColor: c.secondarySystemGroupedBackground,
 		borderRadius: 12,
 		marginHorizontal: 16,
 		overflow: 'hidden',

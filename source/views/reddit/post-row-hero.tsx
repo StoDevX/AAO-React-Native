@@ -73,7 +73,7 @@ export function PostRowHero({post, onPress}: Props): React.ReactNode {
 
 const styles = StyleSheet.create({
 	card: {
-		backgroundColor: c.systemBackground,
+		backgroundColor: c.secondarySystemGroupedBackground,
 		borderRadius: 16,
 		marginHorizontal: 16,
 		overflow: 'hidden',
