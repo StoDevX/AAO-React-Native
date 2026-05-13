@@ -12,9 +12,12 @@ jest.mock('@tanstack/react-query', () => ({
 }))
 
 jest.mock('@react-navigation/bottom-tabs/unstable', () => {
+	const ReactActual = jest.requireActual<typeof import('react')>('react')
+
 	return {
 		createNativeBottomTabNavigator: () => ({
-			Navigator: ({children}: {children: React.ReactNode}) => children,
+			Navigator: ({children}: {children: React.ReactNode}) =>
+				ReactActual.createElement(ReactActual.Fragment, null, children),
 			Screen: (props: {options?: {tabBarLabel?: string}}) => {
 				screens.push(props)
 				return null
