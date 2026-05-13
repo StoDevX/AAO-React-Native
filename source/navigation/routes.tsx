@@ -47,7 +47,9 @@ const ComponentLibraryStack =
 
 const HomeStackScreens = () => {
 	return (
-		<Stack.Navigator screenOptions={{gestureEnabled: true}}>
+		<Stack.Navigator
+			screenOptions={{gestureEnabled: true, headerBackTitle: ''}}
+		>
 			<Stack.Screen
 				component={home.View}
 				name="Home"
@@ -292,7 +294,9 @@ const HomeStackScreens = () => {
 
 const SettingsStackScreens = () => {
 	return (
-		<SettingsStack.Navigator screenOptions={{gestureEnabled: true}}>
+		<SettingsStack.Navigator
+			screenOptions={{gestureEnabled: true, headerBackTitle: ''}}
+		>
 			{/* user */}
 			<SettingsStack.Group>
 				<SettingsStack.Screen
@@ -348,7 +352,9 @@ const SettingsStackScreens = () => {
 
 const ComponentLibraryStackScreens = () => {
 	return (
-		<ComponentLibraryStack.Navigator screenOptions={{gestureEnabled: true}}>
+		<ComponentLibraryStack.Navigator
+			screenOptions={{gestureEnabled: true, headerBackTitle: ''}}
+		>
 			<ComponentLibraryStack.Screen
 				component={settings.ComponentLibrary}
 				name="ComponentLibraryRoot"
