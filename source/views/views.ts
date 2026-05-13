@@ -100,7 +100,7 @@ export const AllViews = (): Array<ViewType> => {
 		},
 		{
 			type: 'url',
-			url: 'https://www.myatlascms.com/map/index.php?id=294',
+			url: 'https://map.stolaf.edu/',
 			title: 'Campus Map',
 			icon: 'map',
 			foreground: 'light',
@@ -170,14 +170,6 @@ export const AllViews = (): Array<ViewType> => {
 			foreground: 'light',
 			tint: c.orangeToRed[0],
 			devOnly: true,
-		},
-		{
-			type: 'url',
-			url: 'https://oleville.com/',
-			title: 'Oleville',
-			icon: 'browser',
-			foreground: 'dark',
-			tint: c.yellowToGoldMid[0],
 		},
 	]
 }

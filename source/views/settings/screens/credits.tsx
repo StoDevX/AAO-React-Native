@@ -114,9 +114,9 @@ export let CreditsView = (): React.ReactNode => (
 		<About>
 			Alumni of St. Olaf — Hawken Rives, Kris Rye, and Drew Volz — develop and
 			support the app in its current form. Rewritten from top to bottom in
-			Typescript, this is the version you see today in the iOS and Android app
-			stores. It remains self-published, open-source, cross-platform, and free
-			of trackers and data collection.
+			Typescript, this is the version you see today in the iOS App Store. It
+			remains self-published, open-source, and free of trackers and data
+			collection.
 		</About>
 
 		<Heading>🧱 July 2016 — September 2017</Heading>
