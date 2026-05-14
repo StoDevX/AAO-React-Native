@@ -26,4 +26,4 @@ Thank you for your interest in contributing to `AAO-React-Native`.
 First, whenever interacting with the team or in general, please adhere to our [Code of Conduct](/CODE_OF_CONDUCT.md).
 Next, see [CONTRIBUTING.md](CONTRIBUTING.md).
 
-<h6>Google Play and the Google Play logo are trademarks of Google LLC.<br>Apple, the Apple logo, iPhone, and iPad are trademarks of Apple Inc., registered in the U.S. and other countries.<br>App Store is a service mark of Apple Inc., registered in the U.S. and other countries.</h6>
+<h6>Apple, the Apple logo, iPhone, and iPad are trademarks of Apple Inc., registered in the U.S. and other countries.<br>App Store is a service mark of Apple Inc., registered in the U.S. and other countries.</h6>

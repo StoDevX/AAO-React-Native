@@ -19,17 +19,10 @@ const MessNewsView = () => (
 		thumbnail={newsImages.mess}
 	/>
 )
-const OlevilleNewsView = () => (
-	<NewsList
-		query={useQuery(namedNewsOptions('oleville'))}
-		thumbnail={newsImages.oleville}
-	/>
-)
 
 type Params = {
 	StOlafNewsView: undefined
 	MessNewsView: undefined
-	OlevilleNewsView: undefined
 }
 
 const Tab = createNativeBottomTabNavigator<Params>()
@@ -50,14 +43,6 @@ export const View = (): React.ReactNode => (
 			options={{
 				tabBarLabel: 'The Mess',
 				tabBarIcon: {type: 'sfSymbol', name: 'newspaper.fill'},
-			}}
-		/>
-		<Tab.Screen
-			component={OlevilleNewsView}
-			name="OlevilleNewsView"
-			options={{
-				tabBarLabel: 'Oleville',
-				tabBarIcon: {type: 'sfSymbol', name: 'face.smiling.fill'},
 			}}
 		/>
 	</Tab.Navigator>

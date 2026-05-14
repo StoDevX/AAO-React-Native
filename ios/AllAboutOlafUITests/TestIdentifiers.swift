@@ -50,7 +50,6 @@ struct TestIdentifiers {
 		static let directory = "Directory"
 		static let importantContacts = "Important Contacts"
 		static let more = "More"
-		static let oleville = "Oleville"
 		static let stoPrint = "stoPrint"
 		static let streamingMedia = "Streaming Media"
 		static let studentOrgs = "Student Orgs"
@@ -78,7 +77,7 @@ struct TestIdentifiers {
 	// MARK: - Calendar
 
 	enum Calendar {
-		static let tabs = ["St. Olaf", "Oleville", "Northfield"]
+		static let tabs = ["St. Olaf", "Northfield"]
 	}
 
 	// MARK: - Streaming Media

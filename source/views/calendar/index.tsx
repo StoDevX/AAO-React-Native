@@ -17,18 +17,6 @@ function StOlafCalendarView() {
 	)
 }
 
-function OlevilleCalendarView() {
-	return (
-		<CccCalendarView
-			poweredBy={{
-				title: 'Powered by the Oleville calendar',
-				href: 'https://oleville.com/events/',
-			}}
-			query={useQuery(namedCalendarOptions('oleville'))}
-		/>
-	)
-}
-
 function NorthfieldCalendarView() {
 	return (
 		<CccCalendarView
@@ -43,7 +31,6 @@ function NorthfieldCalendarView() {
 
 type Params = {
 	StOlafCalendarView: undefined
-	OlevilleCalendarView: undefined
 	NorthfieldCalendarView: undefined
 }
 
@@ -57,14 +44,6 @@ export const View = (): React.ReactNode => (
 			options={{
 				tabBarLabel: 'St. Olaf',
 				tabBarIcon: {type: 'sfSymbol', name: 'graduationcap.fill'},
-			}}
-		/>
-		<Tab.Screen
-			component={OlevilleCalendarView}
-			name="OlevilleCalendarView"
-			options={{
-				tabBarLabel: 'Oleville',
-				tabBarIcon: {type: 'sfSymbol', name: 'face.smiling.fill'},
 			}}
 		/>
 		<Tab.Screen
