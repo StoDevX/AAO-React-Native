@@ -57,6 +57,7 @@ export type RootViewsParamList = {
 	More: undefined
 	PrintJobs: undefined
 	StudentOrgs: undefined
+	Athletics: undefined
 }
 
 export type CafeMenuParamList = {
