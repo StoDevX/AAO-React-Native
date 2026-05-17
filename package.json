@@ -85,6 +85,7 @@
     "react-native-typography": "1.4.1",
     "react-native-url-polyfill": "3.0.0",
     "react-native-webview": "13.16.1",
+    "react-native-zeroconf": "0.14.0",
     "react-redux": "9.2.0",
     "redux-persist": "6.0.0",
     "semver": "7.7.4",
