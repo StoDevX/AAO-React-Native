@@ -8,6 +8,12 @@ declare module 'react' {
 	): (props: P & React.RefAttributes<T>) => React.ReactElement | null
 }
 
+// Register the background notifications task before the React tree mounts.
+// expo-task-manager requires TaskManager.defineTask to be called at the
+// module level (global scope), so this import must stay at the top of the
+// entry file.
+import './lib/background-task'
+
 import {AppRegistry} from 'react-native'
 import App from './app'
 
