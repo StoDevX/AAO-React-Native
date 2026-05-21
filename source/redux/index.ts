@@ -3,10 +3,3 @@ export {type AppDispatch, type RootState, store, persistor} from './store'
 export {selectFavoriteBuildings} from './parts/buildings'
 export {selectAcknowledgement} from './parts/settings'
 export {selectRecentFilters, selectRecentSearches} from './parts/courses'
-export {
-	setNotificationsEnabled,
-	setFeatureNotificationEnabled,
-	selectNotificationsEnabled,
-	selectFeatureNotificationEnabled,
-	selectEnabledFeatures,
-} from './parts/notifications'
