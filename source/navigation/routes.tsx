@@ -310,6 +310,11 @@ const SettingsStackScreens = () => {
 					options={faqs.NavigationOptions}
 				/>
 				<SettingsStack.Screen component={settings.CreditsView} name="Credits" />
+				<SettingsStack.Screen
+					component={settings.NotificationsView}
+					name="Notifications"
+					options={settings.NotificationsNavigationOptions}
+				/>
 				<SettingsStack.Screen component={settings.PrivacyView} name="Privacy" />
 				<SettingsStack.Screen component={settings.LegalView} name="Legal" />
 			</SettingsStack.Group>

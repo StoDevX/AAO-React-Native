@@ -117,6 +117,7 @@ export type SettingsStackParamList = {
 	IconSettings: undefined
 	Legal: undefined
 	NetworkLogger: undefined
+	Notifications: undefined
 	Privacy: undefined
 	Settings: undefined
 	SettingsRoot: undefined

@@ -6,6 +6,10 @@ export {
 export {IconSettingsView} from './screens/change-icon'
 export {CreditsView} from './screens/credits'
 export {LegalView} from './screens/legal'
+export {
+	NotificationsView,
+	NavigationOptions as NotificationsNavigationOptions,
+} from './screens/notifications'
 export {PrivacyView} from './screens/privacy'
 
 // Developer settings

@@ -10,6 +10,7 @@ import {FAQ_TARGETS} from '../../../faqs/constants'
 
 import {CredentialsLoginSection} from './login-credentials'
 import {MiscellanySection} from './miscellany'
+import {NotificationsSection} from './notifications-section'
 import {SupportSection} from './support'
 import {DeveloperSection} from './developer'
 import {AppIconSection} from './app-icon'
@@ -44,6 +45,8 @@ const SettingsView = (): React.ReactNode => {
 				<SupportSection />
 
 				<AppIconSection />
+
+				<NotificationsSection />
 
 				<MiscellanySection />
 
