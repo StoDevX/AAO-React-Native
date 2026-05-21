@@ -25,6 +25,8 @@ import {RootStack} from './navigation'
 import {LoadingView} from '@frogpond/notice'
 import {IS_PRODUCTION} from '@frogpond/constants'
 import {ScrollView, StatusBar, Text, useColorScheme} from 'react-native'
+import {useNotificationPreferences} from './lib/notification-preferences'
+import {registerBackgroundTaskAsync} from './lib/background-task'
 
 function ErrorFallback({
 	error,
@@ -71,6 +73,12 @@ function App(): React.ReactNode {
 	const scheme = useColorScheme()
 	const theme = scheme === 'dark' ? CombinedDarkTheme : CombinedLightTheme
 	const statusBarStyle = scheme === 'dark' ? 'light-content' : 'dark-content'
+
+	React.useEffect(() => {
+		if (useNotificationPreferences.getState().enabled) {
+			registerBackgroundTaskAsync()
+		}
+	}, [])
 
 	const onNavigationReady = () => {
 		if (!IS_PRODUCTION) {

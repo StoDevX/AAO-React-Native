@@ -39,14 +39,34 @@ jest.mock('../notification-preferences', () => ({
 	},
 }))
 
+jest.mock('@frogpond/api', () => ({
+	client: {get: jest.fn()},
+}))
+
+jest.mock('../notifications', () => ({
+	BACKGROUND_NOTIFICATIONS_TASK: 'com.drewvolz.stolaf.background-notifications',
+	hasContentChanged: jest.fn(),
+	scheduleLocalNotification: jest.fn(),
+	setStoredHash: jest.fn(),
+}))
+
 // ─── Imports (after mocks are in place) ──────────────────────────────────────
 
 import * as TaskManager from 'expo-task-manager'
 import * as BackgroundFetch from 'expo-background-fetch'
 import {useNotificationPreferences} from '../notification-preferences'
+import {client} from '@frogpond/api'
+import {
+	hasContentChanged,
+	scheduleLocalNotification,
+	setStoredHash,
+} from '../notifications'
 import {
 	registerBackgroundTaskAsync,
 	unregisterBackgroundTaskAsync,
+	checkMenusNotification,
+	checkCalendarNotification,
+	checkNewsNotification,
 } from '../background-task'
 
 // ─── Test helpers ─────────────────────────────────────────────────────────────
@@ -65,6 +85,18 @@ const mockUnregister =
 	BackgroundFetch.unregisterTaskAsync as jest.MockedFunction<
 		typeof BackgroundFetch.unregisterTaskAsync
 	>
+
+const mockClientGet = client.get as jest.MockedFunction<typeof client.get>
+const mockHasContentChanged = hasContentChanged as jest.MockedFunction<
+	typeof hasContentChanged
+>
+const mockScheduleLocalNotification =
+	scheduleLocalNotification as jest.MockedFunction<
+		typeof scheduleLocalNotification
+	>
+const mockSetStoredHash = setStoredHash as jest.MockedFunction<
+	typeof setStoredHash
+>
 
 // ─── Tests ────────────────────────────────────────────────────────────────────
 
@@ -86,6 +118,15 @@ describe('background-task: task executor', () => {
 			executionInfo: {eventId: 'test-event', taskName: 'test'},
 		}) as Promise<BackgroundFetchResult>
 	}
+
+	beforeEach(() => {
+		mockClientGet.mockReturnValue({
+			json: jest.fn().mockImplementation(() => Promise.resolve({})),
+		} as unknown as ReturnType<typeof client.get>)
+		mockHasContentChanged.mockResolvedValue({changed: false, newHash: 'abc'})
+		mockScheduleLocalNotification.mockResolvedValue('notif-id')
+		mockSetStoredHash.mockResolvedValue(undefined)
+	})
 
 	it('returns NoData when master toggle is off', async () => {
 		mockGetState.mockReturnValue({
@@ -111,7 +152,7 @@ describe('background-task: task executor', () => {
 		expect(result).toBe(BackgroundFetchResult.NoData)
 	})
 
-	it('returns NewData when enabled and at least one feature is opted in', async () => {
+	it('returns NewData when at least one feature handler returns true', async () => {
 		mockGetState.mockReturnValue({
 			enabled: true,
 			features: {menus: true},
@@ -119,8 +160,22 @@ describe('background-task: task executor', () => {
 			setFeatureEnabled: jest.fn(),
 			enabledFeatures: () => ['menus'],
 		})
+		mockHasContentChanged.mockResolvedValue({changed: true, newHash: 'new123'})
 		const result = await runTask()
 		expect(result).toBe(BackgroundFetchResult.NewData)
+	})
+
+	it('returns NoData when all feature handlers return false', async () => {
+		mockGetState.mockReturnValue({
+			enabled: true,
+			features: {menus: true},
+			setEnabled: jest.fn(),
+			setFeatureEnabled: jest.fn(),
+			enabledFeatures: () => ['menus'],
+		})
+		mockHasContentChanged.mockResolvedValue({changed: false, newHash: 'same'})
+		const result = await runTask()
+		expect(result).toBe(BackgroundFetchResult.NoData)
 	})
 
 	it('returns Failed when the executor throws', async () => {
@@ -129,6 +184,71 @@ describe('background-task: task executor', () => {
 		})
 		const result = await runTask()
 		expect(result).toBe(BackgroundFetchResult.Failed)
+	})
+})
+
+// ─── Per-feature handler tests ────────────────────────────────────────────────
+
+describe.each([
+	{
+		name: 'checkMenusNotification',
+		fn: () => checkMenusNotification(),
+		featureId: 'menus',
+		expectedPath: 'food/named/menu/ccc',
+		expectedTitle: "Today's Menu Updated",
+	},
+	{
+		name: 'checkCalendarNotification',
+		fn: () => checkCalendarNotification(),
+		featureId: 'calendar',
+		expectedPath: 'calendar/named/stolaf',
+		expectedTitle: 'Calendar Updated',
+	},
+	{
+		name: 'checkNewsNotification',
+		fn: () => checkNewsNotification(),
+		featureId: 'news',
+		expectedPath: 'news/named/stolaf',
+		expectedTitle: 'News Updated',
+	},
+])('$name', ({fn, featureId, expectedPath, expectedTitle}) => {
+	const fakeData = {item: 'value'}
+
+	beforeEach(() => {
+		mockClientGet.mockReturnValue({
+			json: jest.fn().mockImplementation(() => Promise.resolve(fakeData)),
+		} as unknown as ReturnType<typeof client.get>)
+		mockScheduleLocalNotification.mockClear()
+		mockScheduleLocalNotification.mockResolvedValue('notif-id')
+		mockSetStoredHash.mockClear()
+		mockSetStoredHash.mockResolvedValue(undefined)
+	})
+
+	it('fetches from the correct path', async () => {
+		mockHasContentChanged.mockResolvedValue({changed: false, newHash: 'h'})
+		await fn()
+		expect(mockClientGet).toHaveBeenCalledWith(expectedPath)
+	})
+
+	it('sends notification and stores hash when content changed, returns true', async () => {
+		mockHasContentChanged.mockResolvedValue({
+			changed: true,
+			newHash: 'newHash123',
+		})
+		const result = await fn()
+		expect(mockScheduleLocalNotification).toHaveBeenCalledWith(
+			expect.objectContaining({title: expectedTitle, identifier: featureId}),
+		)
+		expect(mockSetStoredHash).toHaveBeenCalledWith(featureId, 'newHash123')
+		expect(result).toBe(true)
+	})
+
+	it('does not send notification or store hash when content unchanged, returns false', async () => {
+		mockHasContentChanged.mockResolvedValue({changed: false, newHash: 'same'})
+		const result = await fn()
+		expect(mockScheduleLocalNotification).not.toHaveBeenCalled()
+		expect(mockSetStoredHash).not.toHaveBeenCalled()
+		expect(result).toBe(false)
 	})
 })
 
