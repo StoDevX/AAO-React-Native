@@ -34,7 +34,11 @@ PODS:
     - DGSwiftUtilities (~> 0.29)
   - DGSwiftUtilities (0.47.0)
   - DoubleConversion (1.1.6)
+  - EXApplication (7.0.8):
+    - ExpoModulesCore
   - EXConstants (18.0.13):
+    - ExpoModulesCore
+  - EXNotifications (0.32.17):
     - ExpoModulesCore
   - Expo (54.0.33):
     - boost
@@ -68,6 +72,8 @@ PODS:
     - SocketRocket
     - Yoga
   - ExpoAsset (12.0.12):
+    - ExpoModulesCore
+  - ExpoBackgroundFetch (14.0.9):
     - ExpoModulesCore
   - ExpoFileSystem (19.0.21):
     - ExpoModulesCore
@@ -106,6 +112,9 @@ PODS:
     - Yoga
   - ExpoWebBrowser (15.0.10):
     - ExpoModulesCore
+  - EXTaskManager (14.0.9):
+    - ExpoModulesCore
+    - UMAppLoader
   - fast_float (8.0.0)
   - FBLazyVector (0.81.5)
   - fmt (11.0.2)
@@ -2792,20 +2801,25 @@ PODS:
     - Sentry/Core (= 9.12.1)
   - Sentry/Core (9.12.1)
   - SocketRocket (0.7.1)
+  - UMAppLoader (6.0.8)
   - Yoga (0.0.0)
 
 DEPENDENCIES:
   - "AsyncStorage (from `../node_modules/@react-native-async-storage/async-storage`)"
   - boost (from `../node_modules/react-native/third-party-podspecs/boost.podspec`)
   - DoubleConversion (from `../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec`)
+  - EXApplication (from `../node_modules/expo-application/ios`)
   - EXConstants (from `../node_modules/expo-constants/ios`)
+  - EXNotifications (from `../node_modules/expo-notifications/ios`)
   - Expo (from `../node_modules/expo`)
   - ExpoAsset (from `../node_modules/expo-asset/ios`)
+  - ExpoBackgroundFetch (from `../node_modules/expo-background-fetch/ios`)
   - ExpoFileSystem (from `../node_modules/expo/node_modules/expo-file-system/ios`)
   - ExpoFont (from `../node_modules/expo-font/ios`)
   - ExpoKeepAwake (from `../node_modules/expo/node_modules/expo-keep-awake/ios`)
   - ExpoModulesCore (from `../node_modules/expo-modules-core`)
   - ExpoWebBrowser (from `../node_modules/expo-web-browser/ios`)
+  - EXTaskManager (from `../node_modules/expo-task-manager/ios`)
   - fast_float (from `../node_modules/react-native/third-party-podspecs/fast_float.podspec`)
   - FBLazyVector (from `../node_modules/react-native/Libraries/FBLazyVector`)
   - fmt (from `../node_modules/react-native/third-party-podspecs/fmt.podspec`)
@@ -2895,6 +2909,7 @@ DEPENDENCIES:
   - RNScreens (from `../node_modules/react-native-screens`)
   - "RNSentry (from `../node_modules/@sentry/react-native`)"
   - SocketRocket (~> 0.7.1)
+  - UMAppLoader (from `../node_modules/unimodules-app-loader/ios`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
 SPEC REPOS:
@@ -2912,12 +2927,18 @@ EXTERNAL SOURCES:
     :podspec: "../node_modules/react-native/third-party-podspecs/boost.podspec"
   DoubleConversion:
     :podspec: "../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec"
+  EXApplication:
+    :path: "../node_modules/expo-application/ios"
   EXConstants:
     :path: "../node_modules/expo-constants/ios"
+  EXNotifications:
+    :path: "../node_modules/expo-notifications/ios"
   Expo:
     :path: "../node_modules/expo"
   ExpoAsset:
     :path: "../node_modules/expo-asset/ios"
+  ExpoBackgroundFetch:
+    :path: "../node_modules/expo-background-fetch/ios"
   ExpoFileSystem:
     :path: "../node_modules/expo/node_modules/expo-file-system/ios"
   ExpoFont:
@@ -2928,6 +2949,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/expo-modules-core"
   ExpoWebBrowser:
     :path: "../node_modules/expo-web-browser/ios"
+  EXTaskManager:
+    :path: "../node_modules/expo-task-manager/ios"
   fast_float:
     :podspec: "../node_modules/react-native/third-party-podspecs/fast_float.podspec"
   FBLazyVector:
@@ -3103,6 +3126,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-screens"
   RNSentry:
     :path: "../node_modules/@sentry/react-native"
+  UMAppLoader:
+    :path: "../node_modules/unimodules-app-loader/ios"
   Yoga:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
@@ -3113,14 +3138,18 @@ SPEC CHECKSUMS:
   ContextMenuAuxiliaryPreview: 20be0be795b783b68f8792732eed4bed9f202c1c
   DGSwiftUtilities: 567f8d5ee618f0b7afb185b17aa45ff356315a0f
   DoubleConversion: cb417026b2400c8f53ae97020b2be961b59470cb
+  EXApplication: 1e98d4b1dccdf30627f92917f4b2c5a53c330e5f
   EXConstants: fce59a631a06c4151602843667f7cfe35f81e271
+  EXNotifications: c67e92b9fdfe785ff9dbdc5f4c0ff935de357da7
   Expo: 78ceda23ec2990e8ec94980be4fce1aea9ffcdd5
   ExpoAsset: f867e55ceb428aab99e1e8c082b5aee7c159ea18
+  ExpoBackgroundFetch: 1631d1fbf59e6ad98ca83b6780ae3a35f678f632
   ExpoFileSystem: 858a44267a3e6e9057e0888ad7c7cfbf55d52063
   ExpoFont: f543ce20a228dd702813668b1a07b46f51878d47
   ExpoKeepAwake: 55f75eca6499bb9e4231ebad6f3e9cb8f99c0296
   ExpoModulesCore: 39c0aca5ee449ec315f1ded494cbdcc7ebe66aae
   ExpoWebBrowser: 17b064c621789e41d4816c95c93f429b84971f52
+  EXTaskManager: 6f1a66e4c8cc6df6e24c3d90928704bc3013eae5
   fast_float: b32c788ed9c6a8c584d114d0047beda9664e7cc6
   FBLazyVector: 5beb8028d5a2e75dd9634917f23e23d3a061d2aa
   fmt: a40bb5bd0294ea969aaaba240a927bd33d878cdd
@@ -3210,6 +3239,7 @@ SPEC CHECKSUMS:
   RNSentry: 010bf0a6ada196e2c7c5e05e9578c72f6288609b
   Sentry: 49ca124994347ba8f89a70f99784bbeedabfa35e
   SocketRocket: d4aabe649be1e368d1318fdf28a022d714d65748
+  UMAppLoader: 145337733539f9af9b3dd97eeaa7f3bd97cacb23
   Yoga: 728df40394d49f3f471688747cf558158b3a3bd1
 
 PODFILE CHECKSUM: 5be4c8ddf5c6a78eeda76a924e5f6b83b202faf4
