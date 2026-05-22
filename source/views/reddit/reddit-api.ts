@@ -95,6 +95,9 @@ function detectPostType(
 	if (d.is_gallery) return 'gallery'
 	if (d.post_hint === 'image') return 'image'
 	if (d.post_hint === 'link') return 'link'
+	// Fallback: non-self posts with an external URL are link posts even when
+	// post_hint is absent (e.g. posts to news sites that omit the hint field)
+	if (!d.is_self && d.url_overridden_by_dest) return 'link'
 	return 'text'
 }
 
