@@ -21,6 +21,7 @@ import {RootStackParamList} from '../../navigation/types'
 import {faqsOptions} from './query'
 import {useQuery} from '@tanstack/react-query'
 import {getFaqVersion, useFaqBannerStore} from './store'
+import {useDevBannerStore} from './dev-banner-store'
 import type {Faq, FaqTarget, FaqSeverity} from './types'
 
 type Props = {
@@ -41,8 +42,24 @@ export function FaqBanner({
 	let {data, isError} = useQuery(faqsOptions)
 	let dismissFaq = useFaqBannerStore((state) => state.dismissFaq)
 	let dismissedMap = useFaqBannerStore((state) => state.dismissed)
+	let devBanners = useDevBannerStore((state) => state.devBanners)
+	let devEnabled = useDevBannerStore((state) => state.enabled)
 
 	let faq = React.useMemo(() => {
+		// Dev banners take priority when enabled
+		if (devEnabled && devBanners.length > 0) {
+			if (faqId) {
+				let devMatch = devBanners.find((entry) => entry.id === faqId)
+				if (devMatch) return devMatch
+			}
+			if (target) {
+				let devMatch = devBanners.find((entry) =>
+					entry.targets.includes(target),
+				)
+				if (devMatch) return devMatch
+			}
+		}
+
 		if (!data) {
 			return undefined
 		}
@@ -56,7 +73,7 @@ export function FaqBanner({
 		}
 
 		return undefined
-	}, [data, target, faqId])
+	}, [data, target, faqId, devBanners, devEnabled])
 
 	if (!faq || isError) {
 		return null
@@ -149,12 +166,24 @@ type GroupProps = {
 
 export function FaqBannerGroup({target, style}: GroupProps): React.ReactNode {
 	let {data, isError} = useQuery(faqsOptions)
+	let devBanners = useDevBannerStore((state) => state.devBanners)
+	let devEnabled = useDevBannerStore((state) => state.enabled)
 
 	if (!data || isError) {
 		return null
 	}
 
 	let matching = data.faqs.filter((entry) => entry.targets.includes(target))
+
+	// Merge dev banners targeting this screen
+	if (devEnabled && devBanners.length > 0) {
+		let devMatching = devBanners.filter(
+			(entry) =>
+				entry.targets.includes(target) &&
+				!matching.some((m) => m.id === entry.id),
+		)
+		matching = [...devMatching, ...matching]
+	}
 
 	if (!matching.length) {
 		return null

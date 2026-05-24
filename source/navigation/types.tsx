@@ -110,6 +110,7 @@ export type RootStackParamList = RootViewsParamList &
 export type SettingsStackParamList = {
 	APITest: undefined
 	APITestDetail: {query: ServerRoute}
+	BannerBuilder: undefined
 	BonAppPicker: undefined
 	Credits: undefined
 	[debug.NavigationKey]: {keyPath: string[]}
