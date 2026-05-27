@@ -7,20 +7,22 @@ import {
 	Modal,
 	Pressable,
 	ScrollView,
+	Share,
 	StyleSheet,
 } from 'react-native'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 import {useNavigation, useRoute, RouteProp} from '@react-navigation/native'
 import {useQuery} from '@tanstack/react-query'
 import {Ionicons as Icon} from '@react-native-vector-icons/ionicons'
-import {Touchable} from '@frogpond/touchable'
+import {ContextMenu} from '@frogpond/context-menu'
 import {LoadingView, NoticeView} from '@frogpond/notice'
 import * as c from '@frogpond/colors'
 import {openUrl} from '@frogpond/open-url'
 import {formatDistanceToNow, parseISO, isValid} from 'date-fns'
 import {redditCommentsOptions} from './query'
 import {CommentRow} from './comment-row'
-import {htmlToFormattedText} from '@frogpond/html-lib'
+import {htmlToSegments} from '@frogpond/html-lib'
+import type {Segment} from '@frogpond/html-lib'
 import type {
 	RedditCommentType,
 	FlatComment,
@@ -56,10 +58,10 @@ function flattenComments(
 	})
 }
 
-function sanitizeBodyText(raw: string): string {
-	const trimmed = raw.trimStart()
-	if (trimmed.toLowerCase().startsWith('submitted by')) return ''
-	return raw
+function sanitizeBodySegments(segments: Segment[]): Segment[] {
+	const firstText = segments.find((s) => s.type === 'text')?.text?.trimStart()
+	if (firstText?.toLowerCase().startsWith('submitted by')) return []
+	return segments
 }
 
 export function PostDetailView(): React.ReactNode {
@@ -103,20 +105,43 @@ export function PostDetailView(): React.ReactNode {
 		[comments, collapsedIds],
 	)
 
+	const handleMenuAction = React.useCallback(
+		(key: string) => {
+			if (key === 'Open in Browser') {
+				openUrl(postUrl)
+			} else if (key === 'Share') {
+				Share.share({url: postUrl}).catch((err) => console.warn(err))
+			}
+		},
+		[postUrl],
+	)
+
 	React.useLayoutEffect(() => {
 		navigation.setOptions({
 			title: communityName,
 			headerRight: () => (
-				<Touchable
-					highlight={false}
-					onPress={() => openUrl(postUrl)}
-					style={styles.headerButton}
+				<ContextMenu
+					actions={[
+						{
+							key: 'Open in Browser',
+							icon: {iconType: 'SYSTEM', iconValue: 'safari'},
+						},
+						{
+							key: 'Share',
+							icon: {iconType: 'SYSTEM', iconValue: 'square.and.arrow.up'},
+						},
+					]}
+					isMenuPrimaryAction={true}
+					onPressMenuItem={handleMenuAction}
+					title=""
 				>
-					<Icon name="open-outline" style={styles.headerIcon} />
-				</Touchable>
+					<View style={styles.headerButton}>
+						<Icon name="ellipsis-horizontal" style={styles.headerIcon} />
+					</View>
+				</ContextMenu>
 			),
 		})
-	}, [navigation, postUrl, communityName])
+	}, [navigation, communityName, handleMenuAction])
 
 	const parsedDate = parseISO(publishedAt)
 	const metaText = [
@@ -127,8 +152,8 @@ export function PostDetailView(): React.ReactNode {
 	]
 		.filter((part): part is string => Boolean(part))
 		.join(' · ')
-	const bodyText = sanitizeBodyText(
-		contentHtml ? htmlToFormattedText(contentHtml) : '',
+	const bodySegments = sanitizeBodySegments(
+		contentHtml ? htmlToSegments(contentHtml) : [],
 	)
 
 	// Build the image list to display: prefer gallery images, then full-res imageUrl, then thumbnail
@@ -140,7 +165,8 @@ export function PostDetailView(): React.ReactNode {
 	})()
 
 	const isCrosspost =
-		postType === 'crosspost' || (!bodyText && !thumbnail && !linkUrl)
+		postType === 'crosspost' ||
+		(bodySegments.length === 0 && !thumbnail && !linkUrl)
 
 	const toggleCollapse = React.useCallback((id: string) => {
 		setCollapsedIds((prev) => {
@@ -206,9 +232,21 @@ export function PostDetailView(): React.ReactNode {
 				) : null}
 
 				{/* Body text */}
-				{bodyText ? (
+				{bodySegments.length > 0 ? (
 					<Text selectable={true} style={styles.body}>
-						{bodyText}
+						{bodySegments.map((seg, i) =>
+							seg.type === 'link' ? (
+								<Text
+									key={i}
+									onPress={() => openUrl(seg.url)}
+									style={styles.link}
+								>
+									{seg.text}
+								</Text>
+							) : (
+								seg.text
+							),
+						)}
 					</Text>
 				) : null}
 
@@ -384,6 +422,10 @@ const styles = StyleSheet.create({
 		color: c.bodyText,
 		lineHeight: 22,
 		marginTop: 4,
+	},
+	link: {
+		color: c.link,
+		textDecorationLine: 'underline',
 	},
 	postImage: {
 		width: '100%',

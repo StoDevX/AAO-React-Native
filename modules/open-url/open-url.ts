@@ -18,7 +18,7 @@ function genericOpen(url: string): Promise<boolean> {
 async function launchBrowser(url: string): Promise<boolean> {
 	try {
 		await WebBrowser.openBrowserAsync(url, {
-			presentationStyle: WebBrowser.WebBrowserPresentationStyle.CURRENT_CONTEXT,
+			presentationStyle: WebBrowser.WebBrowserPresentationStyle.PAGE_SHEET,
 		})
 	} catch (error) {
 		console.warn(`Error when trying to call launchBrowser: ${error}`)

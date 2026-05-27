@@ -6,10 +6,17 @@ import {
 	MenuState,
 	OnPressMenuItemEvent,
 } from 'react-native-ios-context-menu'
+import type {IconConfig} from 'react-native-ios-context-menu/src/types/MenuIconConfig'
 import {upperFirst} from 'lodash'
 
+export type ContextMenuAction = {
+	key: string
+	title?: string
+	icon?: IconConfig
+}
+
 interface ContextMenuProps {
-	actions: string[]
+	actions: Array<string | ContextMenuAction>
 	buttonStyle?: StyleProp<ViewStyle>
 	children?: React.ReactElement
 	disabled?: boolean
@@ -39,12 +46,19 @@ export const ContextMenu = React.forwardRef<
 	} = props
 
 	let menuItems = React.useMemo(() => {
-		return actions.map((option) => {
-			const menuState: MenuState = selectedAction === option ? 'on' : 'off'
+		return actions.map((action) => {
+			const key = typeof action === 'string' ? action : action.key
+			const label =
+				typeof action === 'string'
+					? upperFirst(action)
+					: (action.title ?? upperFirst(action.key))
+			const icon = typeof action === 'string' ? undefined : action.icon
+			const menuState: MenuState = selectedAction === key ? 'on' : 'off'
 			return {
-				actionKey: option,
-				actionTitle: upperFirst(option),
+				actionKey: key,
+				actionTitle: label,
 				menuState,
+				...(icon ? {icon} : {}),
 			}
 		})
 	}, [actions, selectedAction])
