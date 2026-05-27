@@ -29,6 +29,7 @@ import type {
 	RedditPostDetailParams,
 } from './types'
 import {formatCommentCount} from './utils/format-count'
+import {useRedditLinkHandler} from './useRedditLinkHandler'
 
 type RouteType = RouteProp<
 	{RedditPostDetail: RedditPostDetailParams},
@@ -91,6 +92,8 @@ export function PostDetailView(): React.ReactNode {
 	const [fullscreenIndex, setFullscreenIndex] = React.useState<number | null>(
 		null,
 	)
+
+	const handleLinkPress = useRedditLinkHandler()
 
 	const {
 		data: comments = [],
@@ -164,9 +167,7 @@ export function PostDetailView(): React.ReactNode {
 		return []
 	})()
 
-	const isCrosspost =
-		postType === 'crosspost' ||
-		(bodySegments.length === 0 && !thumbnail && !linkUrl)
+	const isCrosspost = postType === 'crosspost' || crosspostParent != null
 
 	const toggleCollapse = React.useCallback((id: string) => {
 		setCollapsedIds((prev) => {
@@ -238,7 +239,7 @@ export function PostDetailView(): React.ReactNode {
 							seg.type === 'link' ? (
 								<Text
 									key={i}
-									onPress={() => openUrl(seg.url)}
+									onPress={() => handleLinkPress(seg.url)}
 									style={styles.link}
 								>
 									{seg.text}
@@ -255,7 +256,7 @@ export function PostDetailView(): React.ReactNode {
 					<Pressable
 						accessibilityLabel={`Open link: ${linkDomain ?? linkUrl}`}
 						accessibilityRole="link"
-						onPress={() => openUrl(linkUrl)}
+						onPress={() => handleLinkPress(linkUrl)}
 						style={styles.linkCard}
 					>
 						<Icon name="globe-outline" style={styles.linkCardIcon} />
@@ -278,7 +279,9 @@ export function PostDetailView(): React.ReactNode {
 								: 'View linked post on Reddit'
 						}
 						accessibilityRole="link"
-						onPress={() => openUrl(crosspostParent?.permalink ?? postUrl)}
+						onPress={() =>
+							handleLinkPress(crosspostParent?.permalink ?? postUrl)
+						}
 						style={styles.crosspostCard}
 					>
 						<View style={styles.crosspostIconRow}>
@@ -396,6 +399,7 @@ export function PostDetailView(): React.ReactNode {
 					depth={item.depth}
 					isCollapsed={collapsedIds.has(item.comment.id)}
 					isOP={item.comment.author === postAuthor}
+					onLinkPress={handleLinkPress}
 					onPress={
 						item.comment.replies.length > 0
 							? () => toggleCollapse(item.comment.id)
