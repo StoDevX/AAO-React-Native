@@ -19,6 +19,7 @@ type Props = {
 	isOP?: boolean
 	isCollapsed?: boolean
 	onPress?: () => void
+	onLinkPress?: (url: string) => void
 	testID?: string
 }
 
@@ -28,6 +29,7 @@ export function CommentRow({
 	isOP = false,
 	isCollapsed = false,
 	onPress,
+	onLinkPress,
 	testID,
 }: Props): React.ReactNode {
 	const color = DEPTH_COLORS[depth % DEPTH_COLORS.length]
@@ -78,7 +80,7 @@ export function CommentRow({
 						seg.type === 'link' ? (
 							<Text
 								key={i}
-								onPress={() => openUrl(seg.url)}
+								onPress={() => (onLinkPress ?? openUrl)(seg.url)}
 								style={styles.link}
 							>
 								{seg.text}
