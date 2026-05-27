@@ -167,9 +167,7 @@ export function PostDetailView(): React.ReactNode {
 		return []
 	})()
 
-	const isCrosspost =
-		postType === 'crosspost' ||
-		(bodySegments.length === 0 && !thumbnail && !linkUrl)
+	const isCrosspost = postType === 'crosspost' || crosspostParent != null
 
 	const toggleCollapse = React.useCallback((id: string) => {
 		setCollapsedIds((prev) => {
@@ -281,13 +279,9 @@ export function PostDetailView(): React.ReactNode {
 								: 'View linked post on Reddit'
 						}
 						accessibilityRole="link"
-						onPress={() => {
-							const raw = crosspostParent?.permalink ?? postUrl
-							const url = raw.startsWith('/')
-								? `https://www.reddit.com${raw}`
-								: raw
-							handleLinkPress(url)
-						}}
+						onPress={() =>
+							handleLinkPress(crosspostParent?.permalink ?? postUrl)
+						}
 						style={styles.crosspostCard}
 					>
 						<View style={styles.crosspostIconRow}>
