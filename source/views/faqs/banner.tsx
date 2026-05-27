@@ -10,7 +10,11 @@ import {
 	ColorValue,
 } from 'react-native'
 import * as c from '@frogpond/colors'
-import {useNavigation} from '@react-navigation/native'
+import {
+	useNavigation,
+	NavigationProp,
+	ParamListBase,
+} from '@react-navigation/native'
 import {NativeStackNavigationProp} from '@react-navigation/native-stack'
 import {Ionicons as Icon} from '@react-native-vector-icons/ionicons'
 import type IoniconsGlyphs from '@react-native-vector-icons/ionicons/glyphmaps/Ionicons.json'
@@ -29,6 +33,31 @@ type Props = {
 	target?: FaqTarget
 	faqId?: string
 	onPressOverride?: () => void
+}
+
+function findNavigatorWithRoute(
+	navigation: ReturnType<
+		typeof useNavigation<NativeStackNavigationProp<RootStackParamList>>
+	>,
+	routeName: string,
+) {
+	// Walk up the navigator hierarchy to find one that has the target route.
+	// This handles cases where the banner is rendered inside a nested tab
+	// navigator (e.g. SIS native bottom tabs) that doesn't bubble navigate
+	// actions to the parent stack.
+	let nav: NavigationProp<ParamListBase> | undefined = navigation
+	while (nav) {
+		try {
+			let state = nav.getState()
+			if (state.routeNames.includes(routeName)) {
+				return nav as typeof navigation
+			}
+		} catch {
+			// getState() may throw if navigator isn't ready
+		}
+		nav = nav.getParent?.()
+	}
+	return navigation
 }
 
 export function FaqBanner({
@@ -94,7 +123,10 @@ export function FaqBanner({
 
 	let onPress =
 		onPressOverride ??
-		(() => navigation.navigate('Faq', {faqId: resolvedFaq.id}))
+		(() => {
+			let nav = findNavigatorWithRoute(navigation, 'Faq')
+			nav.navigate('Faq', {faqId: resolvedFaq.id})
+		})
 	let onDismiss = (event?: GestureResponderEvent) => {
 		event?.stopPropagation?.()
 		dismissFaq(resolvedFaq.id, faqVersion)
