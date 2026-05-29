@@ -9,60 +9,46 @@ import {
 	ButtonCell,
 } from '@frogpond/tableview/cells'
 import * as c from '@frogpond/colors'
+import jsYaml from 'js-yaml'
 
 import {FaqBanner} from '../../../faqs/banner'
 import {useDevBannerStore} from '../../../faqs/dev-banner-store'
 import type {Faq, FaqSeverity, FaqTarget} from '../../../faqs/types'
+import {FAQ_TARGET_SCREENS} from '../../../faqs/types'
 
 const SEVERITY_OPTIONS: FaqSeverity[] = ['notice', 'info', 'alert']
 
-const TARGET_OPTIONS: FaqTarget[] = [
-	'Home',
-	'SIS',
-	'SettingsRoot',
-	'Faq',
-	'BuildingHours',
-	'Contacts',
-	'CourseSearch',
-	'Dictionary',
-	'Directory',
-	'PrintJobs',
-	'StudentOrgs',
-	'More',
-]
+const TARGET_OPTIONS = FAQ_TARGET_SCREENS
 
 function generateId(): string {
 	return `dev-${Date.now().toString(36)}`
 }
 
 function buildYamlEntry(faq: Faq): string {
-	let lines: string[] = []
-	lines.push(`  - id: ${faq.id}`)
-	lines.push(`    question: '${escapeYaml(faq.question)}'`)
-	lines.push(`    answer: '${escapeYaml(faq.answer)}'`)
-	lines.push(`    bannerTitle: ${escapeYaml(faq.bannerTitle)}`)
-	lines.push(`    bannerText: '${escapeYaml(faq.bannerText)}'`)
-	lines.push(`    targets:`)
-	for (let target of faq.targets) {
-		lines.push(`      - '${target}'`)
+	let entry: Record<string, unknown> = {
+		id: faq.id,
+		question: faq.question,
+		answer: faq.answer,
+		bannerTitle: faq.bannerTitle,
+		bannerText: faq.bannerText,
+		targets: faq.targets,
+		severity: faq.severity,
+		dismissable: faq.dismissable,
+		updatedAt: new Date().toISOString(),
 	}
-	lines.push(`    severity: ${faq.severity}`)
+	if (faq.bannerCta) {
+		entry.bannerCta = faq.bannerCta
+	}
 	if (faq.icon) {
-		lines.push(`    icon: ${faq.icon}`)
+		entry.icon = faq.icon
 	}
 	if (faq.backgroundColor) {
-		lines.push(`    backgroundColor: '${faq.backgroundColor}'`)
+		entry.backgroundColor = faq.backgroundColor
 	}
 	if (faq.foregroundColor) {
-		lines.push(`    foregroundColor: '${faq.foregroundColor}'`)
+		entry.foregroundColor = faq.foregroundColor
 	}
-	lines.push(`    dismissable: ${String(faq.dismissable)}`)
-	lines.push(`    updatedAt: '${new Date().toISOString()}'`)
-	return lines.join('\n')
-}
-
-function escapeYaml(value: string): string {
-	return value.replace(/'/gu, "''")
+	return jsYaml.dump({faqs: [entry]}, {lineWidth: -1})
 }
 
 export function BannerBuilderView(): React.ReactNode {
@@ -114,6 +100,8 @@ export function BannerBuilderView(): React.ReactNode {
 		],
 	)
 
+	let [applied, setApplied] = React.useState(false)
+
 	let toggleTarget = (target: FaqTarget) => {
 		setSelectedTargets((prev) =>
 			prev.includes(target)
@@ -124,9 +112,10 @@ export function BannerBuilderView(): React.ReactNode {
 
 	let applyToApp = () => {
 		upsertBanner(currentFaq)
+		setApplied(true)
 		Alert.alert(
 			'Banner Applied',
-			`Banner "${currentFaq.bannerTitle}" is now visible on: ${selectedTargets.join(', ')}`,
+			`Banner "${currentFaq.bannerTitle}" will persist on: ${selectedTargets.join(', ')}. Clear it from Settings > Dev > Dev Banner Overlay.`,
 		)
 	}
 
@@ -147,7 +136,7 @@ export function BannerBuilderView(): React.ReactNode {
 		>
 			<View style={styles.previewSection}>
 				<Text style={styles.previewLabel}>PREVIEW</Text>
-				<BannerPreview faq={currentFaq} />
+				<BannerPreview applied={applied} faq={currentFaq} />
 			</View>
 
 			<TableView>
@@ -256,16 +245,35 @@ export function BannerBuilderView(): React.ReactNode {
 	)
 }
 
-/** Inline preview that renders the banner directly from form state */
-function BannerPreview({faq}: {faq: Faq}): React.ReactNode {
-	// We render the banner by first putting it in the dev store temporarily
+/** Inline preview that renders the banner directly from local form state */
+function BannerPreview({
+	faq,
+	applied,
+}: {
+	faq: Faq
+	applied: boolean
+}): React.ReactNode {
+	let noop = React.useCallback(() => undefined, [])
+
+	// Temporarily inject the banner into the store for the preview FaqBanner,
+	// but clean up on unmount so it doesn't leak to other screens —
+	// unless the user explicitly applied it.
 	let upsertBanner = useDevBannerStore((state) => state.upsertBanner)
+	let removeBanner = useDevBannerStore((state) => state.removeBanner)
+	let appliedRef = React.useRef(applied)
+
+	React.useEffect(() => {
+		appliedRef.current = applied
+	}, [applied])
 
 	React.useEffect(() => {
 		upsertBanner(faq)
-	}, [faq, upsertBanner])
-
-	let noop = React.useCallback(() => undefined, [])
+		return () => {
+			if (!appliedRef.current) {
+				removeBanner(faq.id)
+			}
+		}
+	}, [faq, upsertBanner, removeBanner])
 
 	return (
 		<View style={styles.directPreview}>
