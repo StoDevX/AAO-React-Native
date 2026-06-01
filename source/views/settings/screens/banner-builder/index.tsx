@@ -11,7 +11,7 @@ import {
 import * as c from '@frogpond/colors'
 import jsYaml from 'js-yaml'
 
-import {FaqBanner} from '../../../faqs/banner'
+import {FaqBannerPresentation} from '../../../faqs/banner'
 import {useDevBannerStore} from '../../../faqs/dev-banner-store'
 import type {Faq, FaqSeverity, FaqTarget} from '../../../faqs/types'
 import {FAQ_TARGET_SCREENS} from '../../../faqs/types'
@@ -100,8 +100,6 @@ export function BannerBuilderView(): React.ReactNode {
 		],
 	)
 
-	let [applied, setApplied] = React.useState(false)
-
 	let toggleTarget = (target: FaqTarget) => {
 		setSelectedTargets((prev) =>
 			prev.includes(target)
@@ -112,7 +110,6 @@ export function BannerBuilderView(): React.ReactNode {
 
 	let applyToApp = () => {
 		upsertBanner(currentFaq)
-		setApplied(true)
 		Alert.alert(
 			'Banner Applied',
 			`Banner "${currentFaq.bannerTitle}" will persist on: ${selectedTargets.join(', ')}. Clear it from Settings > Dev > Dev Banner Overlay.`,
@@ -136,7 +133,7 @@ export function BannerBuilderView(): React.ReactNode {
 		>
 			<View style={styles.previewSection}>
 				<Text style={styles.previewLabel}>PREVIEW</Text>
-				<BannerPreview applied={applied} faq={currentFaq} />
+				<BannerPreview faq={currentFaq} />
 			</View>
 
 			<TableView>
@@ -246,38 +243,10 @@ export function BannerBuilderView(): React.ReactNode {
 }
 
 /** Inline preview that renders the banner directly from local form state */
-function BannerPreview({
-	faq,
-	applied,
-}: {
-	faq: Faq
-	applied: boolean
-}): React.ReactNode {
-	let noop = React.useCallback(() => undefined, [])
-
-	// Temporarily inject the banner into the store for the preview FaqBanner,
-	// but clean up on unmount so it doesn't leak to other screens —
-	// unless the user explicitly applied it.
-	let upsertBanner = useDevBannerStore((state) => state.upsertBanner)
-	let removeBanner = useDevBannerStore((state) => state.removeBanner)
-	let appliedRef = React.useRef(applied)
-
-	React.useEffect(() => {
-		appliedRef.current = applied
-	}, [applied])
-
-	React.useEffect(() => {
-		upsertBanner(faq)
-		return () => {
-			if (!appliedRef.current) {
-				removeBanner(faq.id)
-			}
-		}
-	}, [faq, upsertBanner, removeBanner])
-
+function BannerPreview({faq}: {faq: Faq}): React.ReactNode {
 	return (
 		<View style={styles.directPreview}>
-			<FaqBanner faqId={faq.id} onPressOverride={noop} />
+			<FaqBannerPresentation faq={faq} />
 		</View>
 	)
 }

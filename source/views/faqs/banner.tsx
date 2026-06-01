@@ -261,6 +261,76 @@ const SEVERITY_MAP: Record<FaqSeverity, Palette> = {
 	},
 }
 
+type PresentationProps = {
+	faq: Faq
+	style?: StyleProp<ViewStyle>
+	onPress?: () => void
+}
+
+/**
+ * A purely presentational banner component that renders a given Faq object
+ * without reading from any store. Useful for local previews.
+ */
+export function FaqBannerPresentation({
+	faq,
+	style,
+	onPress,
+}: PresentationProps): React.ReactNode {
+	let palette = buildPalette(faq)
+
+	return (
+		<Pressable
+			accessibilityRole="button"
+			onPress={onPress}
+			style={[
+				styles.container,
+				{
+					backgroundColor: palette.background,
+					borderColor: palette.border,
+				},
+				style,
+			]}
+			testID={`faq-banner-preview-${faq.id}`}
+		>
+			<View style={styles.header}>
+				<Icon
+					accessibilityElementsHidden={true}
+					color={palette.iconColor}
+					name={palette.icon}
+					size={18}
+					style={styles.icon}
+				/>
+				<Text style={[styles.title, {color: palette.text}]}>
+					{faq.bannerTitle ?? faq.question}
+				</Text>
+				{faq.dismissable ? (
+					<View
+						style={[
+							styles.dismissButton,
+							{backgroundColor: palette.dismissBackground},
+						]}
+					>
+						<Text style={[styles.dismissText, {color: palette.dismissText}]}>
+							×
+						</Text>
+					</View>
+				) : null}
+			</View>
+			{faq.bannerText ? (
+				<Text style={[styles.subtitle, {color: palette.secondaryText}]}>
+					{faq.bannerText}
+				</Text>
+			) : null}
+
+			<View style={styles.ctaRow}>
+				<Text style={[styles.cta, {color: palette.link}]}>
+					{faq.bannerCta ?? 'Learn more'}
+				</Text>
+			</View>
+		</Pressable>
+	)
+}
+
 function buildPalette(faq: Faq): Palette {
 	let severity = faq.severity ?? 'notice'
 	let base = SEVERITY_MAP[severity]
