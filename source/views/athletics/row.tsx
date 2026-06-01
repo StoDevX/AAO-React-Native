@@ -1,12 +1,10 @@
 import * as React from 'react'
 import {Image, PixelRatio, StyleSheet, Text, View} from 'react-native'
 import * as c from '@frogpond/colors'
-import {Score} from './types'
+import {ProcessedScore} from './types'
 
 type Props = {
-	data: Score[]
-	/** When true, show a date prefix above each game (used in Upcoming view). */
-	includePrefix?: boolean
+	data: ProcessedScore[]
 }
 
 export function AthleticsRow({data}: Props): React.ReactNode {
@@ -16,6 +14,11 @@ export function AthleticsRow({data}: Props): React.ReactNode {
 				if (item.prescore_info === 'No team scores') {
 					return null
 				}
+
+				// Show time only for games that haven't started yet (status A, no result).
+				// For ongoing (O) and finalized (result is W/L/N) games, show the score panel.
+				const showTime = item.status.indicator === 'A' && item.result === ''
+				const showScore = !showTime
 
 				return (
 					<View key={`${index}-${item.id}`} style={styles.rowContainer}>
@@ -33,12 +36,14 @@ export function AthleticsRow({data}: Props): React.ReactNode {
 							</View>
 
 							<View style={styles.gameInfo}>
-								{item.status.indicator === 'A' ? (
+								{showTime ? (
 									<Text style={styles.infoTime}>{item.time}</Text>
 								) : (
 									<>
-										<Text style={styles.infoProcess} />
-										{item.status.indicator === 'O' && (
+										{item.result !== '' && (
+											<Text style={styles.infoProcess}>{item.result}</Text>
+										)}
+										{showScore && (
 											<View style={styles.infoScorePanel}>
 												<Text style={styles.infoScore}>{item.team_score}</Text>
 												<View style={styles.infoDivider} />

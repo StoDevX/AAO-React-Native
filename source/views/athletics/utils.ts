@@ -29,6 +29,11 @@ export const MONTH_NAMES = [
  * Parse the API's "M/D/YYYY h:mm:ss AM/PM" date format into a JS Date.
  * Uses explicit parsing to avoid relying on engine-specific Date.parse behaviour
  * (Hermes does not support this non-standard format).
+ *
+ * Note: despite the source field being named `date_utc`, the values are treated
+ * as local (wall-clock) time here, which is how the athletics site displays them.
+ * Games near midnight UTC may appear in a different date bucket than their UTC
+ * calendar date for non-UTC users; this is intentional.
  */
 export function parseGameDate(dateStr: string): Date {
 	// e.g. "4/26/2026 4:00:00 PM"
@@ -91,10 +96,16 @@ export function groupScoresByDate(
 		// older games are omitted (same as carls behaviour)
 	}
 
-	const upcomingSections = Object.keys(upcoming).map((title) => ({
-		title: title as DateGroupedScores['title'],
-		data: upcoming[title],
-	}))
+	const upcomingSections = Object.keys(upcoming)
+		.sort(
+			(a, b) =>
+				upcoming[a][0].parsedDate.getTime() -
+				upcoming[b][0].parsedDate.getTime(),
+		)
+		.map((title) => ({
+			title: title as DateGroupedScores['title'],
+			data: upcoming[title],
+		}))
 
 	return [
 		{title: Constants.YESTERDAY, data: yesterday},

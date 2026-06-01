@@ -4,10 +4,10 @@ import {createJSONStorage, persist} from 'zustand/middleware'
 
 interface FilterState {
 	selectedSports: string[]
-	totalSports: number
+	availableSports: string[]
 	_hasHydrated: boolean
 	setSelectedSports: (sports: string[]) => void
-	setTotalSports: (count: number) => void
+	setAvailableSports: (sports: string[]) => void
 	toggleSport: (sport: string) => void
 	setHasHydrated: (value: boolean) => void
 }
@@ -16,10 +16,10 @@ export const useFilterStore = create<FilterState>()(
 	persist(
 		(set) => ({
 			selectedSports: [],
-			totalSports: 0,
+			availableSports: [],
 			_hasHydrated: false,
 			setSelectedSports: (sports) => set({selectedSports: sports}),
-			setTotalSports: (count) => set({totalSports: count}),
+			setAvailableSports: (sports) => set({availableSports: sports}),
 			setHasHydrated: (value) => set({_hasHydrated: value}),
 			toggleSport: (sport) =>
 				set((state) => {
@@ -43,7 +43,11 @@ export const useFilterStore = create<FilterState>()(
 )
 
 export function selectShowChangeFiltersMessage(state: FilterState): boolean {
-	const {selectedSports, totalSports} = state
-	const allFiltersSelected = selectedSports.length === totalSports
-	return selectedSports.length > 0 && !allFiltersSelected
+	const {selectedSports, availableSports} = state
+	// Show the hint when the user has explicitly selected some sports but at
+	// least one currently-available sport is excluded from their selection.
+	return (
+		selectedSports.length > 0 &&
+		!availableSports.every((s) => selectedSports.includes(s))
+	)
 }

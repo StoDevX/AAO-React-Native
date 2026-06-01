@@ -55,19 +55,6 @@ export interface Score {
 	coverage: Coverage
 }
 
-export interface AthleticsResponse {
-	timestamp: unknown
-	status: unknown
-	scores: Score[]
-}
-
-export type AthleticsData = Score[]
-
-export interface GroupedScores {
-	title: string
-	data: Score[]
-}
-
 export type DateSection =
 	| typeof Constants.YESTERDAY
 	| typeof Constants.TODAY

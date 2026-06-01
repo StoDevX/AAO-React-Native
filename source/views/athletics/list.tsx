@@ -13,8 +13,8 @@ import {useFilterStore} from './store'
 import {EmptyListNotice} from './empty-notice'
 import {DebugDatePicker} from './debug-date-picker'
 import {Constants} from './constants'
-import {DateGroupedScores, DateSection, ProcessedScore} from './types'
-import {formatDateString, groupScoresByDate} from './utils'
+import {DateGroupedScores, DateSection} from './types'
+import {groupScoresByDate} from './utils'
 
 type TabSection = DateSection | typeof Constants.FILTER
 
@@ -30,8 +30,7 @@ export function AthleticsListView(): React.ReactNode {
 			headerRight: () => <DebugDatePicker onDateChange={setDebugDate} />,
 		})
 	}, [navigation, setDebugDate])
-	const {selectedSports, setSelectedSports, setTotalSports, _hasHydrated} =
-		useFilterStore()
+	const {selectedSports, setAvailableSports} = useFilterStore()
 	const insets = useSafeAreaInsets()
 
 	const {
@@ -53,25 +52,10 @@ export function AthleticsListView(): React.ReactNode {
 		]
 	}, [data])
 
-	// Seed the filter store with all sports on first load — only after
-	// hydration is complete so we don't overwrite a previously saved filter.
+	// Keep availableSports in sync so the filter-hint selector can compare membership
 	React.useEffect(() => {
-		if (!_hasHydrated) {
-			return
-		}
-		if (selectedSports.length === 0 && sports.some((s) => s.data.length > 0)) {
-			setSelectedSports(sports.flatMap((s) => s.data))
-		}
-	}, [_hasHydrated, sports, selectedSports, setSelectedSports])
-
-	// Keep totalSports in sync so EmptyListNotice can detect filtered-out state
-	const uniqueSportCount = React.useMemo(
-		() => new Set(data.map((s) => s.sport)).size,
-		[data],
-	)
-	React.useEffect(() => {
-		setTotalSports(uniqueSportCount)
-	}, [uniqueSportCount, setTotalSports])
+		setAvailableSports(sports.flatMap((s) => s.data))
+	}, [sports, setAvailableSports])
 
 	// Group scores relative to the debug date (if set) or real current time.
 	// Because the query returns all scores, we can shift "today" freely.
@@ -97,22 +81,12 @@ export function AthleticsListView(): React.ReactNode {
 		}
 
 		if (selectedSection === Constants.UPCOMING) {
-			// Combine all upcoming entries and sub-group by date
-			const upcomingScores = filteredData
+			// groupScoresByDate already emits one sorted section per upcoming day;
+			// just strip the Yesterday/Today fixed buckets.
+			return filteredData
 				.filter(
 					(s) => s.title !== Constants.YESTERDAY && s.title !== Constants.TODAY,
 				)
-				.flatMap((s) => s.data)
-			const byDate: Record<string, ProcessedScore[]> = {}
-			for (const score of upcomingScores) {
-				const key = formatDateString(score.parsedDate)
-				if (!byDate[key]) {
-					byDate[key] = []
-				}
-				byDate[key].push(score)
-			}
-			return Object.keys(byDate)
-				.map((title) => ({title, data: byDate[title]}))
 				.filter((s) => s.data.length > 0)
 		}
 
@@ -185,12 +159,7 @@ export function AthleticsListView(): React.ReactNode {
 					contentContainerStyle={styles.sectionListContent}
 					contentInset={{top: 0, bottom: insets.bottom}}
 					keyExtractor={(item) => item.id}
-					renderItem={({item}) => (
-						<AthleticsRow
-							data={[item]}
-							includePrefix={selectedSection === Constants.UPCOMING}
-						/>
-					)}
+					renderItem={({item}) => <AthleticsRow data={[item]} />}
 					renderSectionHeader={({section: {title}}) =>
 						title ? <Text style={styles.sectionHeader}>{title}</Text> : null
 					}
