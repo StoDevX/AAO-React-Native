@@ -30,6 +30,7 @@ import type {
 } from './types'
 import {formatCommentCount} from './utils/format-count'
 import {useRedditLinkHandler} from './useRedditLinkHandler'
+import {SegmentedText} from './segmented-text'
 
 type RouteType = RouteProp<
 	{RedditPostDetail: RedditPostDetailParams},
@@ -60,8 +61,11 @@ function flattenComments(
 }
 
 function sanitizeBodySegments(segments: Segment[]): Segment[] {
-	const firstText = segments.find((s) => s.type === 'text')?.text?.trimStart()
-	if (firstText?.toLowerCase().startsWith('submitted by')) return []
+	const combined = segments
+		.map((s) => s.text)
+		.join('')
+		.trimStart()
+	if (combined.toLowerCase().startsWith('submitted by')) return []
 	return segments
 }
 
@@ -155,8 +159,9 @@ export function PostDetailView(): React.ReactNode {
 	]
 		.filter((part): part is string => Boolean(part))
 		.join(' · ')
-	const bodySegments = sanitizeBodySegments(
-		contentHtml ? htmlToSegments(contentHtml) : [],
+	const bodySegments = React.useMemo(
+		() => sanitizeBodySegments(contentHtml ? htmlToSegments(contentHtml) : []),
+		[contentHtml],
 	)
 
 	// Build the image list to display: prefer gallery images, then full-res imageUrl, then thumbnail
@@ -167,7 +172,7 @@ export function PostDetailView(): React.ReactNode {
 		return []
 	})()
 
-	const isCrosspost = postType === 'crosspost' || crosspostParent != null
+	const isCrosspost = postType === 'crosspost'
 
 	const toggleCollapse = React.useCallback((id: string) => {
 		setCollapsedIds((prev) => {
@@ -234,21 +239,11 @@ export function PostDetailView(): React.ReactNode {
 
 				{/* Body text */}
 				{bodySegments.length > 0 ? (
-					<Text selectable={true} style={styles.body}>
-						{bodySegments.map((seg, i) =>
-							seg.type === 'link' ? (
-								<Text
-									key={i}
-									onPress={() => handleLinkPress(seg.url)}
-									style={styles.link}
-								>
-									{seg.text}
-								</Text>
-							) : (
-								seg.text
-							),
-						)}
-					</Text>
+					<SegmentedText
+						onLinkPress={handleLinkPress}
+						segments={bodySegments}
+						style={styles.body}
+					/>
 				) : null}
 
 				{/* Link card */}
@@ -426,10 +421,6 @@ const styles = StyleSheet.create({
 		color: c.bodyText,
 		lineHeight: 22,
 		marginTop: 4,
-	},
-	link: {
-		color: c.link,
-		textDecorationLine: 'underline',
 	},
 	postImage: {
 		width: '100%',
