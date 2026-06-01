@@ -11,7 +11,6 @@ import * as storage from '../../../../lib/storage'
 import {DEFAULT_URL} from '../../../../lib/constants'
 import {useMutation, useQuery} from '@tanstack/react-query'
 import {serverUrlOptions} from './query'
-import {useIsDevMode} from '../../../../lib/use-is-dev-mode'
 import {useServerDiscovery} from './use-server-discovery'
 
 export const ServerUrlSection = (): React.ReactElement => {
@@ -20,7 +19,6 @@ export const ServerUrlSection = (): React.ReactElement => {
 	let serverUrlQuery = useQuery(serverUrlOptions)
 	let {isLoading} = serverUrlQuery
 
-	const isDevMode = useIsDevMode()
 	const discoveredServers = useServerDiscovery()
 
 	React.useEffect(() => {
@@ -65,7 +63,7 @@ export const ServerUrlSection = (): React.ReactElement => {
 					</>
 				)}
 			</Section>
-			{isDevMode && discoveredServers.length > 0 && (
+			{discoveredServers.length > 0 && (
 				<Section footer="Tap a server to use it." header="LOCAL SERVERS">
 					{discoveredServers.map((server) => (
 						<PushButtonCell
