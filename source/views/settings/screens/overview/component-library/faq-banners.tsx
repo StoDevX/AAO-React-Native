@@ -20,6 +20,7 @@ export const FaqBannerLibrary = (): React.ReactNode => (
 				</Text>
 				<FaqBanner
 					faqId={banner.id}
+					onPressOverride={() => undefined}
 					style={styles.banner}
 					target={banner.targets[0]}
 				/>

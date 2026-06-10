@@ -5,6 +5,22 @@ import type {
 
 export type FaqTarget = keyof (RootViewsParamList & SettingsStackParamList)
 
+/** Canonical list of screens that support FAQ banners. Type-checked against FaqTarget. */
+export const FAQ_TARGET_SCREENS: FaqTarget[] = [
+	'Home',
+	'SIS',
+	'SettingsRoot',
+	'Faq',
+	'BuildingHours',
+	'Contacts',
+	'CourseSearch',
+	'Dictionary',
+	'Directory',
+	'PrintJobs',
+	'StudentOrgs',
+	'More',
+] satisfies FaqTarget[]
+
 export type FaqSeverity = 'notice' | 'info' | 'alert'
 
 export type PlatformCondition = 'ios' | 'android' | 'native'

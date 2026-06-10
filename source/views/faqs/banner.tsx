@@ -21,7 +21,28 @@ import {RootStackParamList} from '../../navigation/types'
 import {faqsOptions} from './query'
 import {useQuery} from '@tanstack/react-query'
 import {getFaqVersion, useFaqBannerStore} from './store'
+import {useDevBannerStore} from './dev-banner-store'
 import type {Faq, FaqTarget, FaqSeverity} from './types'
+
+/** Shared helper to find a matching dev banner by faqId or target */
+export function findDevBanner(
+	devBanners: Faq[],
+	devEnabled: boolean,
+	faqId?: string,
+	target?: FaqTarget,
+): Faq | undefined {
+	if (!devEnabled || devBanners.length === 0) {
+		return undefined
+	}
+	if (faqId) {
+		let match = devBanners.find((entry) => entry.id === faqId)
+		if (match) return match
+	}
+	if (target) {
+		return devBanners.find((entry) => entry.targets.includes(target))
+	}
+	return undefined
+}
 
 type Props = {
 	style?: StyleProp<ViewStyle>
@@ -41,8 +62,14 @@ export function FaqBanner({
 	let {data, isError} = useQuery(faqsOptions)
 	let dismissFaq = useFaqBannerStore((state) => state.dismissFaq)
 	let dismissedMap = useFaqBannerStore((state) => state.dismissed)
+	let devBanners = useDevBannerStore((state) => state.devBanners)
+	let devEnabled = useDevBannerStore((state) => state.enabled)
 
 	let faq = React.useMemo(() => {
+		// Dev banners take priority when enabled
+		let devMatch = findDevBanner(devBanners, devEnabled, faqId, target)
+		if (devMatch) return devMatch
+
 		if (!data) {
 			return undefined
 		}
@@ -56,7 +83,7 @@ export function FaqBanner({
 		}
 
 		return undefined
-	}, [data, target, faqId])
+	}, [data, target, faqId, devBanners, devEnabled])
 
 	if (!faq || isError) {
 		return null
@@ -149,12 +176,24 @@ type GroupProps = {
 
 export function FaqBannerGroup({target, style}: GroupProps): React.ReactNode {
 	let {data, isError} = useQuery(faqsOptions)
+	let devBanners = useDevBannerStore((state) => state.devBanners)
+	let devEnabled = useDevBannerStore((state) => state.enabled)
 
 	if (!data || isError) {
 		return null
 	}
 
 	let matching = data.faqs.filter((entry) => entry.targets.includes(target))
+
+	// Merge dev banners targeting this screen
+	if (devEnabled && devBanners.length > 0) {
+		let devMatching = devBanners.filter(
+			(entry) =>
+				entry.targets.includes(target) &&
+				!matching.some((m) => m.id === entry.id),
+		)
+		matching = [...devMatching, ...matching]
+	}
 
 	if (!matching.length) {
 		return null
@@ -220,6 +259,76 @@ const SEVERITY_MAP: Record<FaqSeverity, Palette> = {
 		dismissBackground: '#fee2e2',
 		dismissText: '#b91c1c',
 	},
+}
+
+type PresentationProps = {
+	faq: Faq
+	style?: StyleProp<ViewStyle>
+	onPress?: () => void
+}
+
+/**
+ * A purely presentational banner component that renders a given Faq object
+ * without reading from any store. Useful for local previews.
+ */
+export function FaqBannerPresentation({
+	faq,
+	style,
+	onPress,
+}: PresentationProps): React.ReactNode {
+	let palette = buildPalette(faq)
+
+	return (
+		<Pressable
+			accessibilityRole="button"
+			onPress={onPress}
+			style={[
+				styles.container,
+				{
+					backgroundColor: palette.background,
+					borderColor: palette.border,
+				},
+				style,
+			]}
+			testID={`faq-banner-preview-${faq.id}`}
+		>
+			<View style={styles.header}>
+				<Icon
+					accessibilityElementsHidden={true}
+					color={palette.iconColor}
+					name={palette.icon}
+					size={18}
+					style={styles.icon}
+				/>
+				<Text style={[styles.title, {color: palette.text}]}>
+					{faq.bannerTitle ?? faq.question}
+				</Text>
+				{faq.dismissable ? (
+					<View
+						style={[
+							styles.dismissButton,
+							{backgroundColor: palette.dismissBackground},
+						]}
+					>
+						<Text style={[styles.dismissText, {color: palette.dismissText}]}>
+							×
+						</Text>
+					</View>
+				) : null}
+			</View>
+			{faq.bannerText ? (
+				<Text style={[styles.subtitle, {color: palette.secondaryText}]}>
+					{faq.bannerText}
+				</Text>
+			) : null}
+
+			<View style={styles.ctaRow}>
+				<Text style={[styles.cta, {color: palette.link}]}>
+					{faq.bannerCta ?? 'Learn more'}
+				</Text>
+			</View>
+		</Pressable>
+	)
 }
 
 function buildPalette(faq: Faq): Palette {

@@ -345,6 +345,11 @@ const SettingsStackScreens = () => {
 					name="NetworkLogger"
 					options={settings.NetworkLoggerNavigationOptions}
 				/>
+				<SettingsStack.Screen
+					component={settings.BannerBuilderView}
+					name="BannerBuilder"
+					options={settings.BannerBuilderNavigationOptions}
+				/>
 			</SettingsStack.Group>
 		</SettingsStack.Navigator>
 	)
