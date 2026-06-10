@@ -64,6 +64,17 @@ mise run tsc    # Type check
 mise run pods   # Install cocoapods, even on Linux
 ```
 
+### Local Server Discovery
+
+In dev mode (debug builds, or with the dev-mode override enabled in Settings), the Settings → Server URL screen will automatically discover a `ccc-server` instance running on the same network via mDNS. Discovered servers appear as tappable cells; tapping one fills the URL field.
+
+To use this:
+1. Start `ccc-server` with mDNS advertisement enabled: `mise run stolaf-college:mdns` (in the `ccc-server` repo)
+2. Run a debug build of the app on a device on the same network
+3. Navigate to Settings → Server URL — the server will appear automatically
+
+The feature uses `react-native-zeroconf` (native pod). If the pod hasn't been linked yet (`mise run pods`), discovery is silently skipped — the screen won't crash.
+
 ## Agent Workflow
 
 **Session startup:** Always run `mise run agent:setup` at the start of every session. This installs dependencies and bundles data files.
