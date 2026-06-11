@@ -2,9 +2,9 @@ import * as React from 'react'
 import {View, Text, StyleSheet, TouchableOpacity} from 'react-native'
 import {formatDistanceToNow, parseISO, isValid} from 'date-fns'
 import * as c from '@frogpond/colors'
-import {openUrl} from '@frogpond/open-url'
 import {htmlToSegments} from '@frogpond/html-lib'
 import type {RedditCommentType} from './types'
+import {SegmentedText} from './segmented-text'
 
 const DEPTH_COLORS = [
 	c.systemBlue,
@@ -19,6 +19,7 @@ type Props = {
 	isOP?: boolean
 	isCollapsed?: boolean
 	onPress?: () => void
+	onLinkPress?: (url: string) => void
 	testID?: string
 }
 
@@ -28,6 +29,7 @@ export function CommentRow({
 	isOP = false,
 	isCollapsed = false,
 	onPress,
+	onLinkPress,
 	testID,
 }: Props): React.ReactNode {
 	const color = DEPTH_COLORS[depth % DEPTH_COLORS.length]
@@ -73,21 +75,11 @@ export function CommentRow({
 				) : null}
 			</View>
 			{!isCollapsed ? (
-				<Text selectable={true} style={styles.body}>
-					{segments.map((seg, i) =>
-						seg.type === 'link' ? (
-							<Text
-								key={i}
-								onPress={() => openUrl(seg.url)}
-								style={styles.link}
-							>
-								{seg.text}
-							</Text>
-						) : (
-							seg.text
-						),
-					)}
-				</Text>
+				<SegmentedText
+					onLinkPress={onLinkPress}
+					segments={segments}
+					style={styles.body}
+				/>
 			) : null}
 		</TouchableOpacity>
 	)
@@ -133,9 +125,5 @@ const styles = StyleSheet.create({
 		fontSize: 14,
 		color: c.bodyText,
 		lineHeight: 20,
-	},
-	link: {
-		color: c.link,
-		textDecorationLine: 'underline',
 	},
 })

@@ -7,26 +7,30 @@ import {
 	Modal,
 	Pressable,
 	ScrollView,
+	Share,
 	StyleSheet,
 } from 'react-native'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 import {useNavigation, useRoute, RouteProp} from '@react-navigation/native'
 import {useQuery} from '@tanstack/react-query'
 import {Ionicons as Icon} from '@react-native-vector-icons/ionicons'
-import {Touchable} from '@frogpond/touchable'
+import {ContextMenu} from '@frogpond/context-menu'
 import {LoadingView, NoticeView} from '@frogpond/notice'
 import * as c from '@frogpond/colors'
 import {openUrl} from '@frogpond/open-url'
 import {formatDistanceToNow, parseISO, isValid} from 'date-fns'
 import {redditCommentsOptions} from './query'
 import {CommentRow} from './comment-row'
-import {htmlToFormattedText} from '@frogpond/html-lib'
+import {htmlToSegments} from '@frogpond/html-lib'
+import type {Segment} from '@frogpond/html-lib'
 import type {
 	RedditCommentType,
 	FlatComment,
 	RedditPostDetailParams,
 } from './types'
 import {formatCommentCount} from './utils/format-count'
+import {useRedditLinkHandler} from './useRedditLinkHandler'
+import {SegmentedText} from './segmented-text'
 
 type RouteType = RouteProp<
 	{RedditPostDetail: RedditPostDetailParams},
@@ -56,10 +60,13 @@ function flattenComments(
 	})
 }
 
-function sanitizeBodyText(raw: string): string {
-	const trimmed = raw.trimStart()
-	if (trimmed.toLowerCase().startsWith('submitted by')) return ''
-	return raw
+function sanitizeBodySegments(segments: Segment[]): Segment[] {
+	const combined = segments
+		.map((s) => s.text)
+		.join('')
+		.trimStart()
+	if (combined.toLowerCase().startsWith('submitted by')) return []
+	return segments
 }
 
 export function PostDetailView(): React.ReactNode {
@@ -90,6 +97,8 @@ export function PostDetailView(): React.ReactNode {
 		null,
 	)
 
+	const handleLinkPress = useRedditLinkHandler()
+
 	const {
 		data: comments = [],
 		isLoading,
@@ -103,20 +112,43 @@ export function PostDetailView(): React.ReactNode {
 		[comments, collapsedIds],
 	)
 
+	const handleMenuAction = React.useCallback(
+		(key: string) => {
+			if (key === 'Open in Browser') {
+				openUrl(postUrl)
+			} else if (key === 'Share') {
+				Share.share({url: postUrl}).catch((err) => console.warn(err))
+			}
+		},
+		[postUrl],
+	)
+
 	React.useLayoutEffect(() => {
 		navigation.setOptions({
 			title: communityName,
 			headerRight: () => (
-				<Touchable
-					highlight={false}
-					onPress={() => openUrl(postUrl)}
-					style={styles.headerButton}
+				<ContextMenu
+					actions={[
+						{
+							key: 'Open in Browser',
+							icon: {iconType: 'SYSTEM', iconValue: 'safari'},
+						},
+						{
+							key: 'Share',
+							icon: {iconType: 'SYSTEM', iconValue: 'square.and.arrow.up'},
+						},
+					]}
+					isMenuPrimaryAction={true}
+					onPressMenuItem={handleMenuAction}
+					title=""
 				>
-					<Icon name="open-outline" style={styles.headerIcon} />
-				</Touchable>
+					<View style={styles.headerButton}>
+						<Icon name="ellipsis-horizontal" style={styles.headerIcon} />
+					</View>
+				</ContextMenu>
 			),
 		})
-	}, [navigation, postUrl, communityName])
+	}, [navigation, communityName, handleMenuAction])
 
 	const parsedDate = parseISO(publishedAt)
 	const metaText = [
@@ -127,8 +159,9 @@ export function PostDetailView(): React.ReactNode {
 	]
 		.filter((part): part is string => Boolean(part))
 		.join(' · ')
-	const bodyText = sanitizeBodyText(
-		contentHtml ? htmlToFormattedText(contentHtml) : '',
+	const bodySegments = React.useMemo(
+		() => sanitizeBodySegments(contentHtml ? htmlToSegments(contentHtml) : []),
+		[contentHtml],
 	)
 
 	// Build the image list to display: prefer gallery images, then full-res imageUrl, then thumbnail
@@ -139,8 +172,7 @@ export function PostDetailView(): React.ReactNode {
 		return []
 	})()
 
-	const isCrosspost =
-		postType === 'crosspost' || (!bodyText && !thumbnail && !linkUrl)
+	const isCrosspost = postType === 'crosspost'
 
 	const toggleCollapse = React.useCallback((id: string) => {
 		setCollapsedIds((prev) => {
@@ -206,10 +238,12 @@ export function PostDetailView(): React.ReactNode {
 				) : null}
 
 				{/* Body text */}
-				{bodyText ? (
-					<Text selectable={true} style={styles.body}>
-						{bodyText}
-					</Text>
+				{bodySegments.length > 0 ? (
+					<SegmentedText
+						onLinkPress={handleLinkPress}
+						segments={bodySegments}
+						style={styles.body}
+					/>
 				) : null}
 
 				{/* Link card */}
@@ -217,7 +251,7 @@ export function PostDetailView(): React.ReactNode {
 					<Pressable
 						accessibilityLabel={`Open link: ${linkDomain ?? linkUrl}`}
 						accessibilityRole="link"
-						onPress={() => openUrl(linkUrl)}
+						onPress={() => handleLinkPress(linkUrl)}
 						style={styles.linkCard}
 					>
 						<Icon name="globe-outline" style={styles.linkCardIcon} />
@@ -240,7 +274,9 @@ export function PostDetailView(): React.ReactNode {
 								: 'View linked post on Reddit'
 						}
 						accessibilityRole="link"
-						onPress={() => openUrl(crosspostParent?.permalink ?? postUrl)}
+						onPress={() =>
+							handleLinkPress(crosspostParent?.permalink ?? postUrl)
+						}
 						style={styles.crosspostCard}
 					>
 						<View style={styles.crosspostIconRow}>
@@ -358,6 +394,7 @@ export function PostDetailView(): React.ReactNode {
 					depth={item.depth}
 					isCollapsed={collapsedIds.has(item.comment.id)}
 					isOP={item.comment.author === postAuthor}
+					onLinkPress={handleLinkPress}
 					onPress={
 						item.comment.replies.length > 0
 							? () => toggleCollapse(item.comment.id)

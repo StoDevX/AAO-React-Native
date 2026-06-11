@@ -229,6 +229,12 @@ export function parseRedditCommentsJson(
 
 // ── Fetch helpers ──────────────────────────────────────────────────────────
 
+function redditJsonUrl(postUrl: string): string {
+	const parsed = new URL(postUrl)
+	const jsonPath = parsed.pathname.replace(/\/$/u, '') + '.json'
+	return `https://www.reddit.com${jsonPath}?raw_json=1`
+}
+
 export async function fetchRedditPosts(
 	subreddit: string,
 	signal?: AbortSignal,
@@ -240,13 +246,26 @@ export async function fetchRedditPosts(
 	return parseRedditPostsJson(json)
 }
 
+export async function fetchRedditPost(
+	postUrl: string,
+	signal?: AbortSignal,
+): Promise<RedditPostType | null> {
+	const url = redditJsonUrl(postUrl)
+	const res = await fetch(url, {signal, headers: {'User-Agent': USER_AGENT}})
+	if (!res.ok) throw new Error(`Reddit post fetch failed: ${res.status}`)
+	const json = await res.json()
+	if (!Array.isArray(json) || json.length < 1) return null
+	const postListing = json[0] as RawRedditListing
+	const child = postListing?.data?.children?.[0]
+	if (!child) return null
+	return parsePost(child.kind, child.data)
+}
+
 export async function fetchRedditComments(
 	postUrl: string,
 	signal?: AbortSignal,
 ): Promise<RedditCommentType[]> {
-	const parsed = new URL(postUrl)
-	const jsonPath = parsed.pathname.replace(/\/$/u, '') + '.json'
-	const url = `https://www.reddit.com${jsonPath}?raw_json=1`
+	const url = redditJsonUrl(postUrl)
 	const res = await fetch(url, {signal, headers: {'User-Agent': USER_AGENT}})
 	if (!res.ok) throw new Error(`Reddit comments fetch failed: ${res.status}`)
 	const json = await res.json()
