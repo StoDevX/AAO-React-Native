@@ -5,7 +5,30 @@ struct CampusMapScreen: Screen {
 
 	@discardableResult
 	func navigate() -> Self {
-		navigateFromHome(to: TestIdentifiers.Buttons.campusMap)
+		selectBrowseTab()
+		let homescreen = app.element(matching: TestIdentifiers.Home.screen)
+		XCTAssertTrue(homescreen.waitForExistence(timeout: 30))
+
+		let tile = app.buttons[TestIdentifiers.Buttons.campusMap].firstMatch
+		XCTAssertTrue(
+			tile.waitForExistence(timeout: 30),
+			"Campus Map tile should be present on the home grid")
+
+		// Campus Map is a URL tile: tapping it opens an in-app browser *over* the
+		// grid instead of pushing a screen, so the grid stays in the hierarchy.
+		// Success is the browser appearing (its "Done" button), not the grid
+		// disappearing. Retry the tap for cold-start robustness.
+		let doneButton = app.buttons["Done"]
+		for _ in 0..<3 {
+			if tile.waitForHittable(timeout: 20) {
+				tile.tap()
+			}
+			if doneButton.waitForExistence(timeout: 30) {
+				return self
+			}
+		}
+		XCTFail("Campus Map did not open the in-app browser")
+		return self
 	}
 
 	/// Dismiss the SFSafariViewController that opens for the campus map.
