@@ -1,7 +1,13 @@
 import * as React from 'react'
+import {useState} from 'react'
+import {StyleSheet, View} from 'react-native'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
-import {createNativeBottomTabNavigator} from '@react-navigation/bottom-tabs/unstable'
 
+import * as c from '@frogpond/colors'
+import {
+	SegmentedSwitcher,
+	SwitcherSegment,
+} from '../../components/segmented-switcher'
 import {BonAppHostedMenu} from './menu-bonapp'
 import {GitHubHostedMenu} from './menu-github'
 import {CarletonCafeIndex} from './carleton-menus'
@@ -56,51 +62,57 @@ const ThePauseMenuView = () => (
 	/>
 )
 
-type Params = {
-	StavHallMenuView: undefined
-	TheCageMenuView: undefined
-	ThePauseMenuView: undefined
-	CarletonMenuListView: undefined
+type MenuSource = 'stav-hall' | 'the-cage' | 'the-pause' | 'carleton'
+
+const SEGMENTS: ReadonlyArray<SwitcherSegment<MenuSource>> = [
+	{value: 'stav-hall', label: 'Stav Hall'},
+	{value: 'the-cage', label: 'The Cage'},
+	{value: 'the-pause', label: 'The Pause'},
+	{value: 'carleton', label: 'Carleton'},
+]
+
+const styles = StyleSheet.create({
+	container: {
+		flex: 1,
+		backgroundColor: c.systemBackground,
+	},
+	menu: {
+		flex: 1,
+	},
+})
+
+function SelectedMenu({source}: {source: MenuSource}): React.ReactNode {
+	switch (source) {
+		case 'stav-hall':
+			return <StavHallMenuView />
+		case 'the-cage':
+			return <TheCageMenuView />
+		case 'the-pause':
+			return <ThePauseMenuView />
+		case 'carleton':
+		default:
+			return <CarletonCafeIndex />
+	}
 }
 
-const Tab = createNativeBottomTabNavigator<Params>()
+function MenusView(): React.ReactNode {
+	let [source, setSource] = useState<MenuSource>('stav-hall')
 
-export const View = (): React.ReactNode => (
-	<Tab.Navigator screenOptions={{headerShown: false}}>
-		<Tab.Screen
-			component={StavHallMenuView}
-			name="StavHallMenuView"
-			options={{
-				tabBarLabel: 'Stav Hall',
-				tabBarIcon: {type: 'sfSymbol', name: 'fork.knife'},
-			}}
-		/>
-		<Tab.Screen
-			component={TheCageMenuView}
-			name="TheCageMenuView"
-			options={{
-				tabBarLabel: 'The Cage',
-				tabBarIcon: {type: 'sfSymbol', name: 'cup.and.saucer.fill'},
-			}}
-		/>
-		<Tab.Screen
-			component={ThePauseMenuView}
-			name="ThePauseMenuView"
-			options={{
-				tabBarLabel: 'The Pause',
-				tabBarIcon: {type: 'sfSymbol', name: 'pawprint.fill'},
-			}}
-		/>
-		<Tab.Screen
-			component={CarletonCafeIndex}
-			name="CarletonMenuListView"
-			options={{
-				tabBarLabel: 'Carleton',
-				tabBarIcon: {type: 'sfSymbol', name: 'list.bullet'},
-			}}
-		/>
-	</Tab.Navigator>
-)
+	return (
+		<View style={styles.container}>
+			<SegmentedSwitcher
+				onChange={setSource}
+				segments={SEGMENTS}
+				value={source}
+			/>
+			<View style={styles.menu}>
+				<SelectedMenu source={source} />
+			</View>
+		</View>
+	)
+}
+
+export {MenusView as View}
 
 export type NavigationParams = undefined
 export const NavigationKey = 'Menus'

@@ -38,6 +38,8 @@ export type FaqRouteParams = {faqId?: string} | undefined
 
 export type RootViewsParamList = {
 	Home: undefined
+	Today: undefined
+	Radio: undefined
 	[calendar.NavigationKey]: calendar.NavigationParams
 	[menus.NavigationKey]: undefined
 	[news.NavigationKey]: undefined
@@ -54,9 +56,18 @@ export type RootViewsParamList = {
 		| undefined
 	Faq: FaqRouteParams
 	Help: undefined
+	Job: undefined
 	More: undefined
 	PrintJobs: undefined
 	StudentOrgs: undefined
+}
+
+export type MainTabParamList = {
+	TodayTab: undefined
+	MenusTab: undefined
+	SISTab: undefined
+	RadioTab: undefined
+	BrowseTab: undefined
 }
 
 export type CafeMenuParamList = {
@@ -83,7 +94,6 @@ export type MiscViewParamList = {
 	DictionaryDetail: {item: WordType}
 	DictionaryEditor: {item: WordType}
 	DirectoryDetail: {contact: DirectoryItem}
-	Job: undefined
 	JobDetail: {job: JobType}
 	CourseSearchResults:
 		| {initialQuery?: string; initialFilters?: FilterType<CourseType>[]}

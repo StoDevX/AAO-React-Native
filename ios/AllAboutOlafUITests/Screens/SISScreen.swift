@@ -73,6 +73,7 @@ struct SISScreen: Screen {
 
 	@discardableResult
 	func waitForHomescreenVisible() -> Self {
+		selectBrowseTab()
 		let homescreen = app.element(matching: TestIdentifiers.Home.screen)
 		XCTAssertTrue(homescreen.waitForExistence(timeout: 30))
 		return self
@@ -80,17 +81,18 @@ struct SISScreen: Screen {
 
 	@discardableResult
 	func navigateToSISAgain() -> Self {
+		selectBrowseTab()
 		let homescreen = app.element(matching: TestIdentifiers.Home.screen)
 		app.buttons[TestIdentifiers.Buttons.sis].firstMatch.tap()
 		XCTAssertTrue(homescreen.waitForNonExistence(timeout: 30))
 		return self
 	}
 
+	/// Open Jobs is no longer a tab within SIS; it is now a top-level entry in
+	/// the Browse grid that opens the student-work list.
 	@discardableResult
-	func openJobsTab() -> Self {
-		let openJobs = app.tabButton(TestIdentifiers.SIS.openJobs)
-		XCTAssertTrue(openJobs.waitForExistence(timeout: 30))
-		openJobs.tap()
+	func openJobs() -> Self {
+		navigateFromHome(to: TestIdentifiers.SIS.openJobs)
 		return self
 	}
 }

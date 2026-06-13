@@ -12,6 +12,7 @@ class UITestCase: XCTestCase {
 		app = XCUIApplication()
 		app.launchArguments.append(TestIdentifiers.LaunchArguments.uiTesting)
 		app.launch()
+		waitUntilReady()
 	}
 
 	/// Terminate and relaunch the app with `--reset-state` to clear persisted
@@ -23,5 +24,15 @@ class UITestCase: XCTestCase {
 			TestIdentifiers.LaunchArguments.resetState,
 		]
 		app.launch()
+		waitUntilReady()
+	}
+
+	/// Block until the app has finished its (sometimes slow) cold start and the
+	/// initial Today screen has rendered. Without this, the first navigation in
+	/// a freshly-booted simulator can race the JS thread — the home grid is
+	/// visible but taps are dropped while React Navigation finishes mounting.
+	private func waitUntilReady() {
+		let today = app.descendants(matching: .any)["screen-today"].firstMatch
+		_ = today.waitForExistence(timeout: 90)
 	}
 }
