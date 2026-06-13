@@ -46,7 +46,7 @@ export const MenusStackScreens = (): React.ReactNode => (
 )
 
 export const SISStackScreens = (): React.ReactNode => (
-	<Stack.Navigator screenOptions={screenOptions}>
+	<Stack.Navigator initialRouteName="SIS" screenOptions={screenOptions}>
 		{sisScreens()}
 	</Stack.Navigator>
 )

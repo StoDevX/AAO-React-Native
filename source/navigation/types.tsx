@@ -56,6 +56,7 @@ export type RootViewsParamList = {
 		| undefined
 	Faq: FaqRouteParams
 	Help: undefined
+	Job: undefined
 	More: undefined
 	PrintJobs: undefined
 	StudentOrgs: undefined
@@ -93,7 +94,6 @@ export type MiscViewParamList = {
 	DictionaryDetail: {item: WordType}
 	DictionaryEditor: {item: WordType}
 	DirectoryDetail: {contact: DirectoryItem}
-	Job: undefined
 	JobDetail: {job: JobType}
 	CourseSearchResults:
 		| {initialQuery?: string; initialFilters?: FilterType<CourseType>[]}

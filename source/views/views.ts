@@ -18,6 +18,7 @@ const studentOrgs: keyof RootViewsParamList = 'StudentOrgs'
 const more: keyof RootViewsParamList = 'More'
 const printJobs: keyof RootViewsParamList = 'PrintJobs'
 const courseSearch: keyof RootViewsParamList = 'CourseSearch'
+const openJobs: keyof RootViewsParamList = 'Job'
 
 type CommonView = {
 	title: string
@@ -161,6 +162,14 @@ export const AllViews = (): Array<ViewType> => {
 			icon: 'graduation-cap',
 			foreground: 'light',
 			tint: c.lavender,
+		},
+		{
+			type: 'view',
+			view: openJobs,
+			title: 'Open Jobs',
+			icon: 'briefcase',
+			foreground: 'light',
+			tint: c.tealToSeafoam[0],
 		},
 		{
 			type: 'view',
