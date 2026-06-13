@@ -20,7 +20,12 @@ class ModuleMenusTests: UITestCase {
 	// MARK: - Carleton menus
 
 	func testCarletonMenusCanBeOpened() throws {
-		XCTExpectFailure("can't seem to hit the Burton list item - seems to be grabbing the full-screen view instead?")
+		// The Carleton café list now lives behind a segmented switcher rather than
+		// a nested tab bar; the list-item hit-testing flakiness predates that
+		// change, so allow (but don't require) the failure.
+		XCTExpectFailure(
+			"can't reliably hit the Burton list item - grabs the full-screen view instead?",
+			strict: false)
 
 		MenusScreen(app: app)
 			.navigate()

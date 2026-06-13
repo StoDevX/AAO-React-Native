@@ -63,7 +63,7 @@ export function SegmentedSwitcher<T extends string>({
 		<Touchable
 			key={segment.value}
 			accessibilityLabel={segment.label}
-			accessibilityRole="tab"
+			accessibilityRole="button"
 			accessibilityState={{selected: value === segment.value}}
 			containerStyle={[
 				styles.segmentButton,

@@ -12,10 +12,10 @@ struct TransportationScreen: Screen {
 	func checkTabs() -> Self {
 		for tab in TestIdentifiers.Transportation.tabs {
 			XCTContext.runActivity(named: tab) { _ in
-				let tabElement = app.staticTexts[tab].firstMatch
+				let tabElement = app.tabButton(tab)
 				XCTAssertTrue(
 					tabElement.waitForExistence(timeout: 30),
-					"\(tab) tab should be visible")
+					"\(tab) segment should be visible")
 			}
 		}
 		return self

@@ -5,6 +5,7 @@ struct HomeScreen: Screen {
 
 	@discardableResult
 	func checkHomescreenExists() -> Self {
+		selectBrowseTab()
 		let homescreen = app.element(matching: TestIdentifiers.Home.screen)
 		XCTAssertTrue(
 			homescreen.waitForExistence(timeout: 30),

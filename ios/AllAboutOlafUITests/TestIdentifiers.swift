@@ -26,6 +26,16 @@ struct TestIdentifiers {
 		static let closeScreen = "button-close-screen"
 	}
 
+	// MARK: - Main tab bar
+
+	enum Tabs {
+		static let today = "Today"
+		static let menus = "Menus"
+		static let sis = "SIS"
+		static let radio = "Radio"
+		static let browse = "Browse"
+	}
+
 	enum Streaming {
 		static let list = "stream-list"
 		static let webcams = "screen-streaming-webcams"
@@ -62,7 +72,8 @@ struct TestIdentifiers {
 		static let iAgree = "I Agree"
 		static let balancesHeader = "BALANCES"
 		static let mealPlanHeader = "MEAL PLAN"
-		static let backButton = "All About Olaf"
+		// The grid is now the "Browse" tab, so the stack back button reads "Browse".
+		static let backButton = "Browse"
 		static let openJobs = "Open Jobs"
 	}
 

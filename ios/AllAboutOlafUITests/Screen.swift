@@ -7,9 +7,24 @@ protocol Screen {
 }
 
 extension Screen {
+	/// Select the Browse tab, where the home grid of every feature now lives.
+	/// The app launches into the Today tab, so any test that drives the grid
+	/// must switch to Browse first. Tapping an already-active tab is harmless
+	/// (it pops that tab's stack back to the grid), so this is safe to call
+	/// repeatedly.
+	@discardableResult
+	func selectBrowseTab() -> Self {
+		let browse = app.tabButton(TestIdentifiers.Tabs.browse)
+		if browse.waitForExistence(timeout: 30) {
+			browse.tap()
+		}
+		return self
+	}
+
 	/// Assert that the home screen is visible.
 	@discardableResult
 	func waitForHomescreen() -> Self {
+		selectBrowseTab()
 		let homescreen = app.element(matching: TestIdentifiers.Home.screen)
 		XCTAssertTrue(
 			homescreen.waitForExistence(timeout: 30),
@@ -20,6 +35,7 @@ extension Screen {
 	/// Tap a home-screen button and wait for the home screen to disappear.
 	@discardableResult
 	func navigateFromHome(to button: String) -> Self {
+		selectBrowseTab()
 		let homescreen = app.element(matching: TestIdentifiers.Home.screen)
 		XCTAssertTrue(homescreen.waitForExistence(timeout: 30))
 		app.buttons[button].firstMatch.tap()

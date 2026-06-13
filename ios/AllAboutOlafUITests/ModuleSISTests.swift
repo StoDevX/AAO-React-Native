@@ -41,11 +41,10 @@ class ModuleSISTests: UITestCase {
 			.navigateToSISAgain()
 	}
 
-	// MARK: - Tabs
+	// MARK: - Open Jobs
 
-	func testOpenJobsTabCanBeOpened() throws {
+	func testOpenJobsCanBeOpened() throws {
 		SISScreen(app: app)
-			.navigate()
-			.openJobsTab()
+			.openJobs()
 	}
 }
