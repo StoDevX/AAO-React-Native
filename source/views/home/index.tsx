@@ -81,7 +81,7 @@ export {HomePage as View}
 export const NavigationKey = 'Home'
 
 export const NavigationOptions: NativeStackNavigationOptions = {
-	title: 'All About Olaf',
+	title: 'Browse',
 	headerRight: (props) => <OpenSettingsButton {...props} />,
 }
 
