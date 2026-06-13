@@ -30,15 +30,17 @@ struct SettingsScreen: Screen {
 
 	@discardableResult
 	func checkSettingsDismissed() -> Self {
-		// Settings is presented as a pageSheet modal, so the home screen
-		// remains mounted in the view hierarchy beneath it. Verify the
-		// sheet actually dismissed by checking that the Settings content
+		// Verify the sheet actually dismissed by checking the Settings content
 		// is gone.
 		let signIn = app.staticTexts[TestIdentifiers.Settings.signIn].firstMatch
 		XCTAssertTrue(
 			signIn.waitForNonExistence(timeout: 30),
 			"Settings sheet should have dismissed")
 
+		// Settings opens from the Today tab's header, so closing it returns to
+		// Today. Switch to Browse to confirm the underlying app is interactive
+		// and the home grid is reachable.
+		selectBrowseTab()
 		let homescreen = app.element(matching: TestIdentifiers.Home.screen)
 		XCTAssertTrue(
 			homescreen.waitForExistence(timeout: 30),
