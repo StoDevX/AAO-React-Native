@@ -1,69 +1,67 @@
 import * as React from 'react'
+import {useState} from 'react'
+import {StyleSheet, View} from 'react-native'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
-import {createNativeBottomTabNavigator} from '@react-navigation/bottom-tabs/unstable'
 
+import * as c from '@frogpond/colors'
+import {
+	SegmentedSwitcher,
+	SwitcherSegment,
+} from '../../components/segmented-switcher'
 import {OtherModesView} from './other-modes'
 import {BusView} from './bus'
 
-type Params = {
-	ExpressLineBusView: undefined
-	RedLineBusView: undefined
-	BlueLineBusView: undefined
-	OlesGoView: undefined
-	TransportationOtherModesListView: undefined
+type TransportMode =
+	| 'Express Bus'
+	| 'Red Line'
+	| 'Blue Line'
+	| 'Oles Go'
+	| 'other'
+
+const SEGMENTS: ReadonlyArray<SwitcherSegment<TransportMode>> = [
+	{value: 'Express Bus', label: 'Express Bus'},
+	{value: 'Red Line', label: 'Red Line'},
+	{value: 'Blue Line', label: 'Blue Line'},
+	{value: 'Oles Go', label: 'Oles Go'},
+	{value: 'other', label: 'Other Modes'},
+]
+
+const styles = StyleSheet.create({
+	container: {
+		flex: 1,
+		backgroundColor: c.systemBackground,
+	},
+	mode: {
+		flex: 1,
+	},
+})
+
+function SelectedMode({mode}: {mode: TransportMode}): React.ReactNode {
+	if (mode === 'other') {
+		return <OtherModesView />
+	}
+	return <BusView line={mode} />
 }
 
-const ExpressLineBusView = () => <BusView line="Express Bus" />
-const RedLineBusView = () => <BusView line="Red Line" />
-const BlueLineBusView = () => <BusView line="Blue Line" />
-const OlesGoView = () => <BusView line="Oles Go" />
+function TransportationView(): React.ReactNode {
+	let [mode, setMode] = useState<TransportMode>('Express Bus')
 
-const Tab = createNativeBottomTabNavigator<Params>()
+	return (
+		<View style={styles.container}>
+			<SegmentedSwitcher
+				onChange={setMode}
+				scrollable={true}
+				segments={SEGMENTS}
+				value={mode}
+			/>
+			<View style={styles.mode}>
+				<SelectedMode mode={mode} />
+			</View>
+		</View>
+	)
+}
 
-export const View = (): React.ReactNode => (
-	<Tab.Navigator screenOptions={{headerShown: false}}>
-		<Tab.Screen
-			component={ExpressLineBusView}
-			name="ExpressLineBusView"
-			options={{
-				tabBarLabel: 'Express Bus',
-				tabBarIcon: {type: 'sfSymbol', name: 'bus.fill'},
-			}}
-		/>
-		<Tab.Screen
-			component={RedLineBusView}
-			name="RedLineBusView"
-			options={{
-				tabBarLabel: 'Red Line',
-				tabBarIcon: {type: 'sfSymbol', name: 'bus.fill'},
-			}}
-		/>
-		<Tab.Screen
-			component={BlueLineBusView}
-			name="BlueLineBusView"
-			options={{
-				tabBarLabel: 'Blue Line',
-				tabBarIcon: {type: 'sfSymbol', name: 'bus.fill'},
-			}}
-		/>
-		<Tab.Screen
-			component={OlesGoView}
-			name="OlesGoView"
-			options={{
-				tabBarLabel: 'Oles Go',
-				tabBarIcon: {type: 'sfSymbol', name: 'car.fill'},
-			}}
-		/>
-		<Tab.Screen
-			component={OtherModesView}
-			name="TransportationOtherModesListView"
-			options={{
-				tabBarLabel: 'Other Modes',
-				tabBarIcon: {type: 'sfSymbol', name: 'sailboat.fill'},
-			}}
-		/>
-	</Tab.Navigator>
-)
+export {TransportationView as View}
 
 export type NavigationParams = undefined
 export const NavigationKey = 'Transportation'
