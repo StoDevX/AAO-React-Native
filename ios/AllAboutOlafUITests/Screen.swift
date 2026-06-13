@@ -15,7 +15,7 @@ extension Screen {
 	@discardableResult
 	func selectBrowseTab() -> Self {
 		let browse = app.tabButton(TestIdentifiers.Tabs.browse)
-		if browse.waitForExistence(timeout: 30) {
+		if browse.waitForExistence(timeout: 30), browse.waitForHittable(timeout: 30) {
 			browse.tap()
 		}
 		return self
@@ -44,13 +44,16 @@ extension Screen {
 			tile.waitForExistence(timeout: 30),
 			"\(button) tile should be present on the home grid")
 
-		// On a cold start the JS thread can still be mounting the Browse stack
-		// when the grid first appears, so the first synthesized tap is
-		// occasionally dropped. Retry until the grid actually goes away.
-		for _ in 0..<3 {
-			tile.tap()
-			if homescreen.waitForNonExistence(timeout: 15) {
-				return self
+		// On a cold start the grid can render before it is hittable, and even
+		// once hittable the JS thread may still be mounting the Browse stack and
+		// drop the first synthesized tap. Wait for hittability (so tap() doesn't
+		// raise), then retry until the grid actually goes away.
+		for _ in 0..<4 {
+			if tile.waitForHittable(timeout: 20) {
+				tile.tap()
+				if homescreen.waitForNonExistence(timeout: 12) {
+					return self
+				}
 			}
 		}
 		XCTFail("Tapping \(button) did not navigate away from the home grid")

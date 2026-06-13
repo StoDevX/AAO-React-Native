@@ -25,3 +25,20 @@ extension XCUIApplication {
 			.firstMatch
 	}
 }
+
+extension XCUIElement {
+	/// Poll until the element is hittable (or the timeout elapses). XCUITest's
+	/// `waitForExistence` only checks existence, not interactability — on a slow
+	/// cold start an element can be on-screen but not yet hittable, and calling
+	/// `tap()` on it raises an unrecoverable failure. Waiting first avoids that.
+	@discardableResult
+	func waitForHittable(timeout: TimeInterval) -> Bool {
+		if isHittable { return true }
+		let deadline = Date().addingTimeInterval(timeout)
+		while Date() < deadline {
+			usleep(250_000)  // 0.25s
+			if isHittable { return true }
+		}
+		return isHittable
+	}
+}
