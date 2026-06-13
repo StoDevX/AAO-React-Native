@@ -349,6 +349,8 @@ jobs:
             -xctestrun $(find ios/build/Build/Products -name '*.xctestrun' -print -quit) \
             -destination "platform=iOS Simulator,id=${{ steps.udid.outputs.udid }}" \
             ${{ matrix.tests }} \
+            -retry-tests-on-failure \
+            -test-iterations 3 \
             -resultBundlePath uitest-results \
             | xcbeautify --renderer github-actions
 
