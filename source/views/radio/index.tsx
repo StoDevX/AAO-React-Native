@@ -55,12 +55,12 @@ export function RadioView(): React.ReactNode {
 						accessibilityLabel={id.toUpperCase()}
 						accessibilityRole="tab"
 						accessibilityState={{selected: station === id}}
-						highlight={false}
-						onPress={() => setStation(id)}
-						style={[
+						containerStyle={[
 							styles.segmentButton,
 							station === id && styles.segmentButtonActive,
 						]}
+						highlight={false}
+						onPress={() => setStation(id)}
 					>
 						<Text style={styles.segmentLabel}>{id.toUpperCase()}</Text>
 					</Touchable>
