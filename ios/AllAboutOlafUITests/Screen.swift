@@ -44,19 +44,23 @@ extension Screen {
 			tile.waitForExistence(timeout: 30),
 			"\(button) tile should be present on the home grid")
 
-		// On a cold start the grid can render before it is hittable, and even
-		// once hittable the JS thread may still be mounting the Browse stack and
-		// drop the first synthesized tap. Wait for hittability (so tap() doesn't
-		// raise), then retry until the grid actually goes away.
-		for _ in 0..<4 {
+		// Cold-start hardening. Three things can go wrong on a freshly booted
+		// simulator: the grid renders before it is hittable; the first tap is
+		// dropped while the JS thread finishes mounting the Browse stack; and
+		// URL tiles (e.g. Campus Map) open an SFSafariViewController that can
+		// take many seconds to cover the grid. Each attempt only taps once the
+		// tile is hittable, then waits generously for the grid to go away. If
+		// the tile is no longer hittable a screen is already covering it, so we
+		// just keep waiting for the grid to disappear.
+		for _ in 0..<3 {
 			if tile.waitForHittable(timeout: 20) {
 				tile.tap()
-				if homescreen.waitForNonExistence(timeout: 12) {
-					return self
-				}
+			}
+			if homescreen.waitForNonExistence(timeout: 30) {
+				return self
 			}
 		}
-		XCTFail("Tapping \(button) did not navigate away from the home grid")
+		XCTFail("Tapping \(button) did not leave the home grid")
 		return self
 	}
 
