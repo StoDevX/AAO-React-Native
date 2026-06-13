@@ -38,8 +38,22 @@ extension Screen {
 		selectBrowseTab()
 		let homescreen = app.element(matching: TestIdentifiers.Home.screen)
 		XCTAssertTrue(homescreen.waitForExistence(timeout: 30))
-		app.buttons[button].firstMatch.tap()
-		XCTAssertTrue(homescreen.waitForNonExistence(timeout: 30))
+
+		let tile = app.buttons[button].firstMatch
+		XCTAssertTrue(
+			tile.waitForExistence(timeout: 30),
+			"\(button) tile should be present on the home grid")
+
+		// On a cold start the JS thread can still be mounting the Browse stack
+		// when the grid first appears, so the first synthesized tap is
+		// occasionally dropped. Retry until the grid actually goes away.
+		for _ in 0..<3 {
+			tile.tap()
+			if homescreen.waitForNonExistence(timeout: 15) {
+				return self
+			}
+		}
+		XCTFail("Tapping \(button) did not navigate away from the home grid")
 		return self
 	}
 
