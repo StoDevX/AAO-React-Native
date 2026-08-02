@@ -78,6 +78,32 @@ describe('handles weird times', () => {
 
 		expect(now.isBetween(open, close)).toBe(true)
 	})
+
+	it('reports open at 2:30am for a building open until 3am', () => {
+		let time = '2018-11-11T02:30:00'
+		let now = plainMoment(time, 'YYYY-MM-DD[T]HH:mm:ss')
+		let input: SingleBuildingScheduleType = {
+			days: [],
+			from: '10:00pm',
+			to: '3:00am',
+		}
+		let {open, close} = parseHours(input, now)
+
+		expect(now.isBetween(open, close)).toBe(true)
+	})
+
+	it('reports closed at 4am after a 3am close', () => {
+		let time = '2018-11-11T04:00:00'
+		let now = plainMoment(time, 'YYYY-MM-DD[T]HH:mm:ss')
+		let input: SingleBuildingScheduleType = {
+			days: [],
+			from: '10:00pm',
+			to: '3:00am',
+		}
+		let {open, close} = parseHours(input, now)
+
+		expect(now.isBetween(open, close)).toBe(false)
+	})
 })
 
 xdescribe('checks a list of schedules to see if any are open', () => {
