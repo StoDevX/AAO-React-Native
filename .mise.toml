@@ -108,8 +108,14 @@ react-native bundle \
 
 [tasks."agent:setup"]
 description = "Set up the development environment for AI agents"
+# Apply contrib/*.patch explicitly rather than relying on npm's `prepare` hook.
+# A developer with `ignore-scripts=true` in ~/.npmrc — a common supply-chain
+# precaution — gets no lifecycle scripts at all, so the patches never land and
+# `mise run tsc` fails with ~38 AbortSignal type errors on a fresh checkout.
+# Calling the task directly makes setup independent of local npm config.
 run = """
 npm ci
+mise run prepare
 mise run bundle-data
 """
 
