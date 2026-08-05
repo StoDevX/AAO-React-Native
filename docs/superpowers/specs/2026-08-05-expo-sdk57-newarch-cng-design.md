@@ -103,11 +103,12 @@ support and currently runs on the legacy one. After A2, check whether upstream
 ### A0 — Disable the Campus Map UITest
 
 `ModuleCampusMapTests.testIsReachableFromHomescreen` fails roughly nine runs in
-ten. The cause is structural, not incidental: `CampusMapScreen.dismissSafari()`
-waits on the `SFSafariViewController` "Done" button, and its own comment records
-that Safari and WebKit initialisation under the iOS 26 simulator ranges from one
-second to over ten. A longer timeout cannot fix a test whose subject is another
-process's launch time.
+ten. The failure is the third assertion of `navigateFromHome`
+(`Screen.swift:26`): after the Campus Map button is tapped, the home screen does
+not leave the accessibility hierarchy within 30s. The test never reaches
+`dismissSafari()`. Since `SFSafariViewController` presents over the app rather
+than replacing it, `waitForNonExistence` may be the wrong assertion for this
+navigation rather than merely a slow one.
 
 Every later PR in this spec gates on green UITests. A test that fails 90% of the
 time makes that gate meaningless, so this comes first.
@@ -273,7 +274,8 @@ Resolve during the PR that first depends on each; none block writing the plan.
 
 ## Follow-up
 
-Re-enable `ModuleCampusMapTests`. The underlying problem is that the test asserts
-on another process's launch behaviour. A fix likely means asserting the app's own
-state — that the campus map link was opened — rather than driving Safari's UI.
-Tracked separately; not part of this spec's delivery.
+Re-enable `ModuleCampusMapTests` (#7611). The assertion that fails is
+`waitForNonExistence` on the home screen, which assumes navigation removes the
+previous screen. Opening the campus map presents Safari over the app instead, so
+the fix likely means asserting that Safari appeared rather than that the home
+screen vanished. Tracked separately; not part of this spec's delivery.
