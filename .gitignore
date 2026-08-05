@@ -59,8 +59,10 @@ fastlane/screenshots
 # scan's temporary files
 fastlane/test_output
 
-# generated files
-/docs/
+# generated files. Git cannot re-include a path whose parent directory is
+# excluded, so exclude the *contents* of docs/ and carve out superpowers/.
+/docs/*
+!/docs/superpowers/
 
 # Deployment keys
 android/app/signing.properties
