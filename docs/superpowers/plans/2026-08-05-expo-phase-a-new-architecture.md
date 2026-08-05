@@ -20,7 +20,8 @@
 - TypeScript for all new code; no `any`. Prettier config lives in `package.json` (tabs, single quotes, no semicolons).
 - Target versions, exact: Expo 57 → React Native 0.86.2, React 19.2.3, `react-native-reanimated` 4.5.1, `react-native-worklets` 0.10.1, `react-native-gesture-handler` ~2.32.0, `react-native-screens` ~4.26.0.
 - Intermediate rungs, exact: SDK 55 → RN 0.83.10, React 19.2.0, Reanimated 4.2.1, worklets 0.7.4, gesture-handler ~2.30.0, screens ~4.23.0. SDK 56 → RN 0.85.3, React 19.2.3, Reanimated 4.3.1, worklets 0.8.3, gesture-handler ~2.31.1, screens ~4.26.0.
-- `@react-native-async-storage/async-storage` (3.1.0) and `@sentry/react-native` (8.11.0) are intentionally **ahead** of Expo's pins. Do not let `expo install --fix` downgrade them; see Task 4 Step 4.
+- `@react-native-async-storage/async-storage` (3.1.0) and `@sentry/react-native` (8.11.0) are intentionally **ahead** of Expo's pins. Do not let `expo install --fix` downgrade them; see Task 4 Step 2.
+- Reanimated lands at **4.3.1** with `react-native-worklets` **0.8.3** in Task 3, not at SDK 57's 4.5.1: 4.4.x and 4.5.x both require `react-native: 0.83 - 0.86` and cannot install on RN 0.81.5. 4.3.1 spans `0.81 - 0.85`, so it survives Tasks 3 through 5 untouched. Do not let `expo install --fix` downgrade it to SDK 55's 4.2.1 in Task 4 — 4.3.1 already satisfies that SDK. It is bumped to 4.5.1/0.10.1 only in Task 6, where RN reaches 0.86.
 
 ## Prerequisites
 
@@ -262,10 +263,18 @@ Expected: no matches. If that holds, this task has no first-party API surface to
 - [ ] **Step 2: Install Reanimated 4 and worklets**
 
 ```bash
-npm install react-native-reanimated@4.5.1 react-native-worklets@0.10.1
+npm install react-native-reanimated@4.3.1 react-native-worklets@0.8.3
 ```
 
-These are SDK 57's pins. Installing the final versions now avoids churning this dependency on every later rung.
+**Not** SDK 57's pins. Reanimated 4.5.1 declares `react-native: 0.83 - 0.86` and cannot install on RN 0.81.5; 4.4.x is the same. 4.3.1 declares `0.81 - 0.85` and is the newest 4.x that runs here, and it requires `react-native-worklets` `0.8.x`.
+
+4.3.1 is also exactly SDK 56's pin, so it matches unchanged at Task 5 and needs bumping only at Task 6. Verify the constraint rather than trusting this note:
+
+```bash
+npm view react-native-reanimated@4.3.1 peerDependencies
+```
+
+Expected: `'react-native': '0.81 - 0.85'`, `'react-native-worklets': '0.8.x'`.
 
 - [ ] **Step 3: Update the Babel plugin**
 
