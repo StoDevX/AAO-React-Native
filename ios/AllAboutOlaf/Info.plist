@@ -91,7 +91,7 @@
 	<key>NSLocalNetworkUsageDescription</key>
 	<string>Used in development mode to discover a local ccc-server instance on the same network.</string>
 	<key>RCTNewArchEnabled</key>
-	<false/>
+	<true/>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Entypo.ttf</string>

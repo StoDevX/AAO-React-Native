@@ -22,10 +22,11 @@ module ExpoUITestsAutolinkingFix
 end
 Pod::Podfile::TargetDefinition.prepend(ExpoUITestsAutolinkingFix)
 
-# Opt out of the New Architecture (Fabric/TurboModules/Bridgeless).
-# The Old Architecture is fully supported through RN 0.76.
+# The New Architecture (Fabric/TurboModules/Bridgeless) is required from
+# React Native 0.82 onward, and enabled here ahead of that upgrade so the
+# runtime-model change stays separable from the version change.
 # See: https://github.com/StoDevX/AAO-React-Native/issues/7453
-ENV['RCT_NEW_ARCH_ENABLED'] = '0'
+ENV['RCT_NEW_ARCH_ENABLED'] = '1'
 
 platform :ios, min_ios_version_supported
 prepare_react_native_project!
