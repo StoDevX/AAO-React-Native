@@ -53,6 +53,18 @@ if [ -f "ios/Pods/fmt/include/fmt/base.h" ]; then
     "0003-fmt-disable-consteval.patch" || FAILED=1
 fi
 
+# 0004-change-icon-legacy-module.patch: strips the RCT_NEW_ARCH_ENABLED branch so
+# ChangeIcon stays a plain RCTBridgeModule. With the branch present the class
+# advertises RCTTurboModule, legacy interop skips it, nothing registers it, and
+# app-icon switching silently no-ops under the New Architecture.
+if grep -q "RCT_NEW_ARCH_ENABLED" \
+    "node_modules/react-native-change-icon/ios/ChangeIcon.h"; then
+  echo "ERROR: sentinel check for 0004-change-icon-legacy-module.patch failed — the RCT_NEW_ARCH_ENABLED branch is still present" >&2
+  FAILED=1
+else
+  echo "  ✓ 0004-change-icon-legacy-module.patch"
+fi
+
 if [ "$FAILED" -ne 0 ]; then
   echo "ERROR: one or more patch sentinels failed. See above." >&2
   exit 1

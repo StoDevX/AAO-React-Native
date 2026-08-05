@@ -12,6 +12,22 @@ layer rather than as TurboModules; both are already at their latest published
 version, so there is no upgrade that would change that. They are the subject of
 the manual checks in Task 2.
 
+> **Correction, added during Task 2.** This audit's central method was unsound.
+> It treated "declares `codegenConfig` in `package.json`" as meaning "supports
+> the New Architecture", and on that basis cleared `react-native-change-icon`
+> 5.0.0. That module in fact breaks under the New Architecture: its header
+> declares conformance to the generated `NativeChangeIconSpec`, which inherits
+> `RCTTurboModule`, so legacy interop skips the class — while nothing registers
+> it as a TurboModule either. It is never instantiated and app-icon switching
+> silently does nothing. See `contrib/0004-change-icon-legacy-module.patch`.
+>
+> No static signal separated it from the modules that work. Declaring
+> `codegenConfig` does not imply a conforming native implementation, and
+> counting `RCT_NEW_ARCH_ENABLED` occurrences does not either — async-storage,
+> gesture-handler, keychain, reanimated and webview have none and all work.
+> **Only running the code found this.** Treat the inventory below as a map of
+> what to test, never as evidence that anything works.
+
 ## Removed-API scan
 
 Fabric drops `findNodeHandle`, direct `UIManager` dispatch, and
@@ -83,10 +99,13 @@ compiled as a TurboModule or Fabric component. `legacy` means it does not.
 | `react-native-webview` | 13.16.1 | codegen |
 | `react-native-zeroconf` | 0.14.0 | legacy |
 
-Eighteen of twenty-one are codegen. The prerequisite upgrades tracked in #7453
-did their job: `react-native-ios-context-menu` 3.2.1, `react-native-ios-utilities`
-5.1.4, `react-native-change-icon` 5.0.0, and `react-native-keychain` 10.0.0 all
-support the New Architecture.
+Eighteen of twenty-one declare `codegenConfig`. Per the correction above, that is
+a statement about `package.json` and nothing more — `react-native-change-icon`
+5.0.0 appears in that eighteen and is the one module that actually broke.
+
+The prerequisite upgrades tracked in #7453 did hold up under runtime testing for
+`react-native-ios-context-menu` 3.2.1, `react-native-ios-utilities` 5.1.4, and
+`react-native-keychain` 10.0.0.
 
 ## The three `legacy` entries
 
