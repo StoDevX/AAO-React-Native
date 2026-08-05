@@ -222,8 +222,11 @@ Gitignore `ios/`. Rewire the build:
 5. **`scripts/split-uitests.py --test-dir ios/AllAboutOlafUITests`** → `uitests/`.
 6. **Fastlane.** `gym` points at `ios/AllAboutOlaf.xcworkspace` and `ios/build`,
    which survive prebuild unchanged; `fastlane/platforms/ios.rb` needs a prebuild
-   step ahead of `gym`. But `ios/AuthKey_WPMP*`, the App Store Connect API key,
-   lives inside `ios/` and would be deleted. Move it out.
+   step ahead of `gym`. Separately, `load_app_store_connect_api_token`
+   (`fastlane/platforms/ios.rb:142-160`) clones the `match` repo at runtime and
+   copies `AuthKey_WPMP85A826.p8` into `ios/`. The key is not tracked, so the
+   risk is ordering rather than deletion-on-checkout: a prebuild after the copy
+   destroys it. Point `token_dest` outside `ios/` instead.
 7. **`mise run bundle:ios`** still writes into `ios/`, which is fine for a build
    artifact, but the `ios-bundle` job's cache paths require prebuild to have run.
 
