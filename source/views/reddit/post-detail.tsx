@@ -14,7 +14,14 @@ import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 import {useNavigation, useRoute, RouteProp} from '@react-navigation/native'
 import {useQuery} from '@tanstack/react-query'
 import {Ionicons as Icon} from '@react-native-vector-icons/ionicons'
-import {ContextMenu} from '@frogpond/context-menu'
+import IoniconGlyphs from '@react-native-vector-icons/ionicons/glyphmaps/Ionicons.json'
+import {Button, Host, Menu, Text as SwiftUIText} from '@expo/ui/swift-ui'
+import {
+	accessibilityIdentifier,
+	font,
+	foregroundColor,
+	padding,
+} from '@expo/ui/swift-ui/modifiers'
 import {LoadingView, NoticeView} from '@frogpond/notice'
 import * as c from '@frogpond/colors'
 import {openUrl} from '@frogpond/open-url'
@@ -31,6 +38,13 @@ import type {
 import {formatCommentCount} from './utils/format-count'
 import {useRedditLinkHandler} from './useRedditLinkHandler'
 import {SegmentedText} from './segmented-text'
+
+/// The Ionicons glyphs come from the app-wide font registered through
+/// `UIAppFonts` in Info.plist; SwiftUI addresses it by its family name.
+const ICON_FONT_FAMILY = 'Ionicons'
+const HEADER_ICON_SIZE = 24
+/// Matches TestIdentifiers.Reddit in the XCUITest target.
+const POST_MENU_TEST_ID = 'reddit-post-menu'
 
 type RouteType = RouteProp<
 	{RedditPostDetail: RedditPostDetailParams},
@@ -127,25 +141,39 @@ export function PostDetailView(): React.ReactNode {
 		navigation.setOptions({
 			title: communityName,
 			headerRight: () => (
-				<ContextMenu
-					actions={[
-						{
-							key: 'Open in Browser',
-							icon: {iconType: 'SYSTEM', iconValue: 'safari'},
-						},
-						{
-							key: 'Share',
-							icon: {iconType: 'SYSTEM', iconValue: 'square.and.arrow.up'},
-						},
-					]}
-					isMenuPrimaryAction={true}
-					onPressMenuItem={handleMenuAction}
-					title=""
-				>
-					<View style={styles.headerButton}>
-						<Icon name="ellipsis-horizontal" style={styles.headerIcon} />
-					</View>
-				</ContextMenu>
+				// SwiftUI all the way down: hosting the React Native icon here
+				// would put the trigger behind a boundary the UI tests cannot
+				// address.
+				<Host matchContents={true}>
+					<Menu
+						label={
+							<SwiftUIText
+								modifiers={[
+									padding({leading: 6, trailing: 16}),
+									font({
+										family: ICON_FONT_FAMILY,
+										size: HEADER_ICON_SIZE,
+									}),
+									foregroundColor(c.link),
+									accessibilityIdentifier(POST_MENU_TEST_ID),
+								]}
+							>
+								{String.fromCodePoint(IoniconGlyphs['ellipsis-horizontal'])}
+							</SwiftUIText>
+						}
+					>
+						<Button
+							label="Open in Browser"
+							onPress={() => handleMenuAction('Open in Browser')}
+							systemImage="safari"
+						/>
+						<Button
+							label="Share"
+							onPress={() => handleMenuAction('Share')}
+							systemImage="square.and.arrow.up"
+						/>
+					</Menu>
+				</Host>
 			),
 		})
 	}, [navigation, communityName, handleMenuAction])

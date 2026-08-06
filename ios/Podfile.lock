@@ -21,11 +21,6 @@ PODS:
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
     - Yoga
-  - ComputableLayout (0.7.0):
-    - DGSwiftUtilities (~> 0.11)
-  - ContextMenuAuxiliaryPreview (0.5.2):
-    - DGSwiftUtilities (~> 0.29)
-  - DGSwiftUtilities (0.47.0)
   - EXApplication (57.0.2):
     - ExpoModulesCore
   - EXConstants (57.0.9):
@@ -1562,62 +1557,6 @@ PODS:
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
     - Yoga
-  - react-native-ios-context-menu (3.2.1):
-    - ContextMenuAuxiliaryPreview (~> 0.5)
-    - DGSwiftUtilities
-    - hermes-engine
-    - RCTRequired
-    - RCTTypeSafety
-    - React-Core
-    - React-Core-prebuilt
-    - React-debug
-    - React-Fabric
-    - React-featureflags
-    - React-graphics
-    - React-ImageManager
-    - React-jsi
-    - React-jsinspector
-    - React-jsinspectortracing
-    - react-native-ios-utilities
-    - React-NativeModulesApple
-    - React-RCTAppDelegate
-    - React-RCTFabric
-    - React-renderercss
-    - React-rendererdebug
-    - React-utils
-    - ReactCodegen
-    - ReactCommon/turbomodule/bridging
-    - ReactCommon/turbomodule/core
-    - ReactNativeDependencies
-    - Yoga
-  - react-native-ios-utilities (5.2.0):
-    - ComputableLayout (~> 0.7)
-    - DGSwiftUtilities (~> 0.46)
-    - hermes-engine
-    - RCTRequired
-    - RCTTypeSafety
-    - React-Core
-    - React-Core-prebuilt
-    - React-debug
-    - React-Fabric
-    - React-featureflags
-    - React-graphics
-    - React-ImageManager
-    - React-jsi
-    - React-jsinspector
-    - React-jsinspectortracing
-    - React-jsitooling
-    - React-NativeModulesApple
-    - React-RCTAppDelegate
-    - React-RCTFabric
-    - React-renderercss
-    - React-rendererdebug
-    - React-utils
-    - ReactCodegen
-    - ReactCommon/turbomodule/bridging
-    - ReactCommon/turbomodule/core
-    - ReactNativeDependencies
-    - Yoga
   - react-native-netinfo (12.0.1):
     - hermes-engine
     - RCTRequired
@@ -2549,8 +2488,6 @@ DEPENDENCIES:
   - React-microtasksnativemodule (from `../node_modules/react-native/ReactCommon/react/nativemodule/microtasks`)
   - React-mutationobservernativemodule (from `../node_modules/react-native/ReactCommon/react/nativemodule/mutationobserver`)
   - react-native-change-icon (from `../node_modules/react-native-change-icon`)
-  - react-native-ios-context-menu (from `../node_modules/react-native-ios-context-menu`)
-  - react-native-ios-utilities (from `../node_modules/react-native-ios-utilities`)
   - "react-native-netinfo (from `../node_modules/@react-native-community/netinfo`)"
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
   - "react-native-vector-icons-entypo (from `../node_modules/@react-native-vector-icons/entypo`)"
@@ -2606,9 +2543,6 @@ DEPENDENCIES:
 
 SPEC REPOS:
   trunk:
-    - ComputableLayout
-    - ContextMenuAuxiliaryPreview
-    - DGSwiftUtilities
     - Sentry
 
 EXTERNAL SOURCES:
@@ -2729,10 +2663,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/react/nativemodule/mutationobserver"
   react-native-change-icon:
     :path: "../node_modules/react-native-change-icon"
-  react-native-ios-context-menu:
-    :path: "../node_modules/react-native-ios-context-menu"
-  react-native-ios-utilities:
-    :path: "../node_modules/react-native-ios-utilities"
   react-native-netinfo:
     :path: "../node_modules/@react-native-community/netinfo"
   react-native-safe-area-context:
@@ -2840,9 +2770,6 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   AsyncStorage: 0d33446825169a2d78299ccc8e074e1536ae0fe6
-  ComputableLayout: c50faffac4ed9f8f05b0ce5e6f3a60df1f6042c8
-  ContextMenuAuxiliaryPreview: 20be0be795b783b68f8792732eed4bed9f202c1c
-  DGSwiftUtilities: 567f8d5ee618f0b7afb185b17aa45ff356315a0f
   EXApplication: bbd517d50878ca1d121fb3843392beb210181e28
   EXConstants: 05451cfe61c84dd2d840831d05bb0c115f96ec6a
   Expo: df0ee7c76ff52b8f559e4ac50e70c81d5d61d806
@@ -2861,7 +2788,7 @@ SPEC CHECKSUMS:
   ExpoUI: 9d39a0371d8abff2b79394c8d81239dce4ad3298
   ExpoWebBrowser: 9b98d939d5f1c5dd8f523f0a0683056fb1204434
   FBLazyVector: 3c3be9a019176b5699455f7f66c5444b78a411c6
-  hermes-engine: e9098dd470d39f79efd96afe47a223d9a2c1c8a4
+  hermes-engine: 0f27e900729c832064dd67c5f4afd0c1d07e5e1f
   RCTDeprecation: bccb6545c26db881ecddfd83a3f9ea82aba1605f
   RCTRequired: b2f74764d596fc0051f00fee94b49bf41a6f7f5a
   RCTSwiftUI: c6d6a31b849b9dfa64c33b55dc91ac15dd55774c
@@ -2900,8 +2827,6 @@ SPEC CHECKSUMS:
   React-microtasksnativemodule: f413ee411341fb3c34d20e85e9f6f524921fab15
   React-mutationobservernativemodule: 58f6d2adf7d98e72b241608dfa2ddce414d2a4e7
   react-native-change-icon: cc3539131bd3b8b6468489b8a8b48e077a68902b
-  react-native-ios-context-menu: eb1d70ab98aac8deb2bdc50f7d6f47079e1e368d
-  react-native-ios-utilities: a77276d1d690786de3916f4576d6660ca73d27d3
   react-native-netinfo: 2f906d5d9a639090ed1c079135d6485a95f749f1
   react-native-safe-area-context: 6b4966397ada0f7dd481e4486a2ef936834861a1
   react-native-vector-icons-entypo: 7e92008dc00814c7aa895ddd40e808e2e358a831

@@ -1,9 +1,13 @@
 import * as React from 'react'
-import {ContextMenu} from '@frogpond/context-menu'
+import {Button, Host, Menu, Section as SwiftUISection} from '@expo/ui/swift-ui'
+import {accessibilityIdentifier} from '@expo/ui/swift-ui/modifiers'
 import {Section} from '@frogpond/tableview'
-import {Button} from '@frogpond/button'
 import {Example, LibraryWrapper} from './base/library-wrapper'
 import {upperFirst} from 'lodash'
+
+const ANIMALS = ['bird', 'cat', 'cow', 'dog']
+/// Matches TestIdentifiers.ComponentLibrary in the XCUITest target.
+const ANIMAL_MENU_TEST_ID = 'component-library-context-menu'
 
 const SingleMenu = (): React.ReactNode => {
 	const [value, setValue] = React.useState('dog')
@@ -11,14 +15,25 @@ const SingleMenu = (): React.ReactNode => {
 	return (
 		<Section>
 			<Example title="Top-level menu">
-				<ContextMenu
-					actions={['bird', 'cat', 'cow', 'dog']}
-					isMenuPrimaryAction={true}
-					onPressMenuItem={setValue}
-					title="Select an animal."
-				>
-					<Button title={upperFirst(value)} />
-				</ContextMenu>
+				<Host matchContents={true}>
+					<Menu
+						label={upperFirst(value)}
+						modifiers={[accessibilityIdentifier(ANIMAL_MENU_TEST_ID)]}
+					>
+						<SwiftUISection title="Select an animal.">
+							{/* Plain buttons, not toggles: the previous implementation
+							    drew no checkmark here, and only the trigger's label
+							    reflects the selection. */}
+							{ANIMALS.map((animal) => (
+								<Button
+									key={animal}
+									label={upperFirst(animal)}
+									onPress={() => setValue(animal)}
+								/>
+							))}
+						</SwiftUISection>
+					</Menu>
+				</Host>
 			</Example>
 		</Section>
 	)

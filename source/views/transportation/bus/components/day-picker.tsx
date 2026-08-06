@@ -10,8 +10,42 @@ import {
 import type {Moment} from 'moment-timezone'
 import type {DayOfWeek} from '../types'
 import * as c from '@frogpond/colors'
-import {ContextMenu} from '@frogpond/context-menu'
-import {Ionicons as Icon} from '@react-native-vector-icons/ionicons'
+import {
+	HStack,
+	Host,
+	Menu,
+	Section,
+	Text as SwiftUIText,
+	Toggle,
+} from '@expo/ui/swift-ui'
+import {
+	accessibilityIdentifier,
+	background,
+	font,
+	foregroundColor,
+	padding,
+	shapes,
+	strokeBorder,
+} from '@expo/ui/swift-ui/modifiers'
+import IoniconGlyphs from '@react-native-vector-icons/ionicons/glyphmaps/Ionicons.json'
+
+/// Matches TestIdentifiers.Transportation in the XCUITest target.
+const DAY_PICKER_TEST_ID = 'bus-day-picker'
+
+/// The Ionicons glyphs come from the app-wide font registered through
+/// `UIAppFonts` in Info.plist; SwiftUI addresses it by its family name.
+const ICON_FONT_FAMILY = 'Ionicons'
+const ICON_SIZE = 16
+/// The label was a 14pt React Native Text, which scaled with Dynamic Type.
+/// A system font takes its size from the text style, so pick the style.
+const LABEL_TEXT_STYLE = 'subheadline'
+
+const HEADER_BUTTON_RADIUS = 6
+
+const headerButtonShape = shapes.roundedRectangle({
+	cornerRadius: HEADER_BUTTON_RADIUS,
+	roundedCornerStyle: 'circular',
+})
 
 const styles = StyleSheet.create({
 	dayPickerContainer: {
@@ -183,25 +217,64 @@ export const DayPickerHeader = ({
 	const isOverridden = selectedDay !== currentDay
 	const displayText = isOverridden ? selectedLabel : 'Today'
 
+	const onSelect = (label: string) => {
+		const selectedDayData = DAYS_OF_WEEK.find((d) => d.label === label)
+		if (selectedDayData) {
+			onDaySelect(selectedDayData.day)
+		}
+	}
+
+	// The trigger is built from SwiftUI views rather than hosting the React
+	// Native ones: a hosted view is measured and exposed to the accessibility
+	// tree differently, which leaves the trigger unfindable by the UI tests.
 	return (
-		<ContextMenu
-			actions={dayOptions}
-			isMenuPrimaryAction={true}
-			onPressMenuItem={(item: string) => {
-				const selectedDayData = DAYS_OF_WEEK.find(({label}) => label === item)
-				if (selectedDayData) {
-					onDaySelect(selectedDayData.day)
+		<Host matchContents={true}>
+			<Menu
+				label={
+					<HStack
+						modifiers={[
+							padding({horizontal: 8, vertical: 6}),
+							background(c.systemBackground, headerButtonShape),
+							strokeBorder({
+								color: accentColor,
+								cornerRadius: HEADER_BUTTON_RADIUS,
+								shape: 'roundedRectangle',
+								style: {lineWidth: 1},
+							}),
+							accessibilityIdentifier(DAY_PICKER_TEST_ID),
+						]}
+						spacing={6}
+					>
+						<SwiftUIText
+							modifiers={[
+								font({family: ICON_FONT_FAMILY, size: ICON_SIZE}),
+								foregroundColor(accentColor),
+							]}
+						>
+							{String.fromCodePoint(IoniconGlyphs.calendar)}
+						</SwiftUIText>
+						<SwiftUIText
+							modifiers={[
+								font({textStyle: LABEL_TEXT_STYLE, weight: 'medium'}),
+								foregroundColor(accentColor),
+							]}
+						>
+							{displayText}
+						</SwiftUIText>
+					</HStack>
 				}
-			}}
-			selectedAction={selectedLabel}
-			title="Pick a schedule"
-		>
-			<View style={[styles.headerButtonContainer, {borderColor: accentColor}]}>
-				<Icon color={accentColor} name="calendar" size={16} />
-				<Text style={[styles.headerButtonText, {color: accentColor}]}>
-					{displayText}
-				</Text>
-			</View>
-		</ContextMenu>
+			>
+				<Section title="Pick a schedule">
+					{dayOptions.map((label) => (
+						<Toggle
+							key={label}
+							isOn={label === selectedLabel}
+							label={label}
+							onIsOnChange={() => onSelect(label)}
+						/>
+					))}
+				</Section>
+			</Menu>
+		</Host>
 	)
 }

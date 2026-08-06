@@ -1,12 +1,30 @@
 import * as React from 'react'
-import {StyleSheet, View as RNView} from 'react-native'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 import {createNativeBottomTabNavigator} from '@react-navigation/bottom-tabs/unstable'
 import {useNavigation} from '@react-navigation/native'
 import {useQuery} from '@tanstack/react-query'
-import {Ionicons as Icon} from '@react-native-vector-icons/ionicons'
-import {ContextMenu} from '@frogpond/context-menu'
+import IoniconGlyphs from '@react-native-vector-icons/ionicons/glyphmaps/Ionicons.json'
+import {
+	Host,
+	Menu,
+	Section,
+	Text as SwiftUIText,
+	Toggle,
+} from '@expo/ui/swift-ui'
+import {
+	accessibilityIdentifier,
+	font,
+	foregroundColor,
+	padding,
+} from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
+
+/// The Ionicons glyphs come from the app-wide font registered through
+/// `UIAppFonts` in Info.plist; SwiftUI addresses it by its family name.
+const ICON_FONT_FAMILY = 'Ionicons'
+const VARIANT_ICON_SIZE = 22
+/// Matches TestIdentifiers.Reddit in the XCUITest target.
+const VARIANT_PICKER_TEST_ID = 'reddit-variant-picker'
 
 import type {RedditPostType} from './types'
 import {redditPostsOptions} from './query'
@@ -107,20 +125,38 @@ function VariantPickerButton(): React.ReactNode {
 	const {variant, setVariant} = useRedditPreferences()
 
 	return (
-		<ContextMenu
-			actions={VARIANT_ACTIONS}
-			isMenuPrimaryAction={true}
-			onPressMenuItem={(label) => {
-				const next = LABEL_TO_VARIANT[label]
-				if (next) setVariant(next)
-			}}
-			selectedAction={VARIANT_LABELS[variant]}
-			title="Feed Style"
-		>
-			<RNView style={styles.headerButton}>
-				<Icon color={c.link} name="grid-outline" size={22} />
-			</RNView>
-		</ContextMenu>
+		// SwiftUI all the way down: hosting the React Native icon here would put
+		// the trigger behind a boundary the UI tests cannot address.
+		<Host matchContents={true}>
+			<Menu
+				label={
+					<SwiftUIText
+						modifiers={[
+							padding({horizontal: 8, vertical: 4}),
+							font({family: ICON_FONT_FAMILY, size: VARIANT_ICON_SIZE}),
+							foregroundColor(c.link),
+							accessibilityIdentifier(VARIANT_PICKER_TEST_ID),
+						]}
+					>
+						{String.fromCodePoint(IoniconGlyphs['grid-outline'])}
+					</SwiftUIText>
+				}
+			>
+				<Section title="Feed Style">
+					{VARIANT_ACTIONS.map((label) => (
+						<Toggle
+							key={label}
+							isOn={label === VARIANT_LABELS[variant]}
+							label={label}
+							onIsOnChange={() => {
+								const next = LABEL_TO_VARIANT[label]
+								if (next) setVariant(next)
+							}}
+						/>
+					))}
+				</Section>
+			</Menu>
+		</Host>
 	)
 }
 
@@ -154,13 +190,6 @@ export const View = (): React.ReactNode => {
 		</Tab.Navigator>
 	)
 }
-
-const styles = StyleSheet.create({
-	headerButton: {
-		paddingHorizontal: 8,
-		paddingVertical: 4,
-	},
-})
 
 export type NavigationParams = undefined
 export const NavigationKey = 'Communities'

@@ -75,31 +75,6 @@ else
   echo "  ✓ 0004-change-icon-legacy-module.patch"
 fi
 
-# 0005-ios-utilities-drop-legacy-rootcontentview.patch: removes the reference to
-# RCTRootContentView, which React Native 0.85 compiles out under the New
-# Architecture (`#ifndef RCT_REMOVE_LEGACY_ARCH`). Without this the app fails to
-# link with an undefined _OBJC_CLASS_$_RCTRootContentView.
-if grep -q "RCTRootContentView" \
-    "node_modules/react-native-ios-utilities/ios/Sources/Extensions+Helpers/RCTView+Helpers.swift"; then
-  echo "ERROR: sentinel check for 0005-ios-utilities-drop-legacy-rootcontentview.patch failed — the RCTRootContentView reference is still present" >&2
-  FAILED=1
-else
-  echo "  ✓ 0005-ios-utilities-drop-legacy-rootcontentview.patch"
-fi
-
-# 0006-ios-utilities-repair-broken-publish.patch: 5.2.0 shipped without its lib/
-# build output while still pointing main/module/types at it. Repoints them at
-# src/ and drops the demo-component re-exports. Without this, tsc reports 17
-# TS2307s for react-native-ios-utilities in any environment where the package's
-# own prepare script ran (i.e. CI).
-if grep -q '"types": "lib/typescript' \
-    "node_modules/react-native-ios-utilities/package.json"; then
-  echo "ERROR: sentinel check for 0006-ios-utilities-repair-broken-publish.patch failed — types still points at the missing lib/ output" >&2
-  FAILED=1
-else
-  echo "  ✓ 0006-ios-utilities-repair-broken-publish.patch"
-fi
-
 if [ "$FAILED" -ne 0 ]; then
   echo "ERROR: one or more patch sentinels failed. See above." >&2
   exit 1
