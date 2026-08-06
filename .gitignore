@@ -87,3 +87,6 @@ fastlane/play-private-key.json
 
 # written by Xcode Cloud when it runs locally
 /ios/AllAboutOlaf.xcodeproj/xcshareddata/xcodecloud/
+
+# App Store Connect API key, copied in at runtime by fastlane from the match repo
+fastlane/AuthKey_*.p8

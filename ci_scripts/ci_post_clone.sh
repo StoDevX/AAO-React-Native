@@ -9,8 +9,8 @@ export SENTRY_ORG='frog-pond-labs'
 export SENTRY_PROJECT='all-about-olaf'
 # export SENTRY_AUTH_TOKEN='${{ secrets.HOSTED_SENTRY_AUTH_TOKEN }}'
 
-# cd out of ios/ci_scripts into main project directory
-cd ../../
+# cd out of ci_scripts into the main project directory
+cd ..
 
 # Install node via Homebrew. Homebrew is officially available on Xcode Cloud
 # and brew --prefix always returns an arch-aware absolute path, so we never

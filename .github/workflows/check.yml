@@ -255,7 +255,7 @@ jobs:
       - name: Split tests across shards
         id: split
         run: |
-          echo "matrix=$(python3 scripts/split-uitests.py --test-dir ios/AllAboutOlafUITests --shards 2)" >> "$GITHUB_OUTPUT"
+          echo "matrix=$(python3 scripts/split-uitests.py --test-dir uitests --shards 2)" >> "$GITHUB_OUTPUT"
 
   ios-uitest:
     name: Native UITest for iOS (${{ matrix.shard }})

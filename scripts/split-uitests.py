@@ -6,7 +6,7 @@ bin-packing to balance test counts across shards. Outputs a JSON matrix
 suitable for GitHub Actions `fromJSON()`.
 
 Usage:
-    python3 scripts/split-uitests.py --test-dir ios/AllAboutOlafUITests --shards 2
+    python3 scripts/split-uitests.py --test-dir uitests --shards 2
 """
 
 import argparse
