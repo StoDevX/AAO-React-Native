@@ -55,10 +55,10 @@ jobs:
 
       - run: npm ci
 
-      # push-on-podfile-change commits, which runs the hk pre-commit hook, whose
-      # tsc step resolves `docs/faqs.json`. That file is generated, so without
-      # this the hook fails with TS2307 and the job dies after a successful pod
-      # install. check.yml runs bundle-data before its checks for the same reason.
+      # The push-on-podfile-change commit runs the hk pre-commit hook. Its `tsc`
+      # step resolves `docs/faqs.json`; that file is generated, so without this
+      # the hook fails with TS2307 and the job dies after a successful pod install.
+      # check.yml runs bundle-data before its checks for the same reason.
       - run: mise run bundle-data
 
       - run: mise x -- pod repo update
