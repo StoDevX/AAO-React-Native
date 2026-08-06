@@ -47,6 +47,7 @@ run = "fastlane"
 [tasks.lint]
 description = "Run ESLint"
 run = "eslint --report-unused-disable-directives --max-warnings=0 --cache source/ modules/ scripts/ images/"
+depends = ["prepare"]
 
 [tasks.pretty]
 description = "Format code with Prettier"
@@ -63,10 +64,12 @@ run = "pretty-quick"
 [tasks.tsc]
 description = "Run TypeScript compiler"
 run = "tsc --noEmit"
+depends = ["prepare"]
 
 [tasks.test]
 description = "Run Jest tests"
 run = "jest"
+depends = ["prepare"]
 
 [tasks.prepare]
 description = "Apply patches"
@@ -108,8 +111,12 @@ react-native bundle \
 
 [tasks."agent:setup"]
 description = "Set up the development environment for AI agents"
+# npm does not run the `prepare` hook: .npmrc sets ignore-scripts=true, and a
+# developer may set it in ~/.npmrc too. Apply contrib/*.patch explicitly, or
+# `mise run tsc` fails with ~38 AbortSignal errors on a fresh checkout.
 run = """
 npm ci
+mise run prepare
 mise run bundle-data
 """
 
