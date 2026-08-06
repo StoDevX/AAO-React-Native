@@ -30,6 +30,7 @@ jobs:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151 # v4.0.1
       - run: npm ci
+      - run: mise run prepare
       - run: mise run bundle-data
       - run: hk check
 
@@ -40,6 +41,7 @@ jobs:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151 # v4.0.1
       - run: npm ci
+      - run: mise run prepare
       - run: mise run pretty:check
 
   eslint:
@@ -49,6 +51,7 @@ jobs:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151 # v4.0.1
       - run: npm ci
+      - run: mise run prepare
       - run: mise run bundle-data
       - run: mise run lint
 
@@ -59,6 +62,7 @@ jobs:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151 # v4.0.1
       - run: npm ci
+      - run: mise run prepare
       - name: Run tests
         run: mise run test -- --coverage
       - name: Upload coverage
@@ -71,6 +75,7 @@ jobs:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151 # v4.0.1
       - run: npm ci
+      - run: mise run prepare
       - run: mise run bundle-data
       - run: mise run tsc
 
@@ -81,6 +86,7 @@ jobs:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151 # v4.0.1
       - run: npm ci
+      - run: mise run prepare
       - run: mise run validate-data
       - run: mise run bundle-data
 
@@ -111,7 +117,9 @@ jobs:
 
       - name: Install npm dependencies
         if: steps.jsbundle-cache.outputs.cache-matched-key == ''
-        run: npm ci
+        run: |
+          npm ci
+          mise run prepare
 
       - name: Bundle data
         if: steps.jsbundle-cache.outputs.cache-matched-key == ''
@@ -168,7 +176,9 @@ jobs:
       - uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151 # v4.0.1
 
       - name: Install npm dependencies
-        run: npm ci
+        run: |
+          npm ci
+          mise run prepare
 
       - name: Install and configure ccache
         run: |
