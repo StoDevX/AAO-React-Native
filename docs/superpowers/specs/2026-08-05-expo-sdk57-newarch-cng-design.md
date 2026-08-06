@@ -177,7 +177,7 @@ its own verification. Cross-reference `claude/replace-deps-expo-KvQ1l`.
 declarative config and the plugins, under unit-test coverage.
 
 Declarative in `app.config.ts`: bundle identifier, display name, URL scheme,
-version, deployment target 14.0, ATS exceptions
+version, deployment target 18.6, ATS exceptions
 (`NSAllowsArbitraryLoadsInWebContent`, localhost), `NSBonjourServices` and
 `NSLocalNetworkUsageDescription`, `UIBackgroundModes: [audio]`, status bar style,
 supported orientations (phone and iPad), `UIAppFonts`, and

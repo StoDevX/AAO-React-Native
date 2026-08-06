@@ -28,7 +28,7 @@ const esmPackages = [
 ]
 
 const config: Config = {
-	preset: 'react-native',
+	preset: '@react-native/jest-preset',
 	testMatch: [
 		'**/__tests__/**/*.(spec|test).(js|ts|tsx)',
 		'!**/node_modules/**',

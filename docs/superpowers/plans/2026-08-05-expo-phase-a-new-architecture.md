@@ -73,7 +73,25 @@ rm -rf ios/Pods ios/Podfile.lock
 mise run pod:install
 ```
 
-4. **Re-apply and re-verify the contrib patches.** `npm install` reinstalls React Native and silently drops `0002-rn-abortsignal.patch`. Run `mise run prepare` and confirm all four sentinels pass. Check `0003-fmt-disable-consteval.patch` specifically: it targets fmt's `#elif` branches, and React Native changes fmt versions between releases (0.81 shipped 11.0.2, 0.83 ships 12.1.0). It survived that jump, but confirm rather than assume.
+4. **Respect `min-release-age`.** A developer with `min-release-age` set in `~/.npmrc` (a supply-chain precaution) cannot install anything published inside that window, and `expo install --fix` will happily write a version that then fails with `ETARGET ... with a date before <date>`. Compute the newest installable version instead of trusting the SDK's nominal pin:
+
+```bash
+CUTOFF=$(node -p "new Date(Date.now()-14*864e5).toISOString()")   # match your min-release-age
+npm view <pkg> time --json | node -e '
+  let s="";process.stdin.on("data",d=>s+=d).on("end",()=>{
+    const t=JSON.parse(s), cutoff=process.argv[1], major=process.argv[2];
+    const ok=Object.entries(t)
+      .filter(([v,d])=>/^\d+\.\d+\.\d+$/.test(v) && v.startsWith(major+".") && d < cutoff)
+      .sort((a,b)=>a[1]<b[1]?1:-1);
+    console.log(ok.length?ok[0][0]:"NONE");
+  });' "$CUTOFF" <major>
+```
+
+5. **Keep the `@react-native/*` devDependencies in lockstep with React Native.** `expo install --fix` does not touch them. Task 4 left `babel-preset`, `eslint-config` and `metro-config` on 0.81.6 against RN 0.83.10; Task 5 corrected all three to 0.85.3 and added `@react-native/jest-preset`. Check them on every rung.
+
+6. **Keep the Podfile's `platform :ios` equal to `IPHONEOS_DEPLOYMENT_TARGET`.** It is pinned to 18.6, not React Native's `min_ios_version_supported`. Expo SDK 56 requires 16.4 and, when the Podfile advertises less, refuses to link *every* Expo module with a `[!] ... was not linked` warning rather than an error — easy to miss in a long log.
+
+7. **Re-apply and re-verify the contrib patches.** `npm install` reinstalls React Native and silently drops `0002-rn-abortsignal.patch`. Run `mise run prepare` and confirm all four sentinels pass. Check `0003-fmt-disable-consteval.patch` specifically: it targets fmt's `#elif` branches, and React Native changes fmt versions between releases (0.81 shipped 11.0.2, 0.83 ships 12.1.0). It survived that jump, but confirm rather than assume.
 
 ---
 
