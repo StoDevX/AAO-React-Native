@@ -15,6 +15,6 @@
   },
   "dependencies": {
     "@frogpond/colors": "^1.0.0",
-    "react-native-tableview-simple": "4.4.1"
+    "react-native-tableview-simple": "^4.4.1"
   }
 }
