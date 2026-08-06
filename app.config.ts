@@ -118,6 +118,7 @@ const config: ExpoConfig = {
 		'./plugins/with-app-delegate-customizations',
 		'./plugins/with-alternate-icons',
 		'./plugins/with-xcuitest-target',
+		'./plugins/with-binary-stripping',
 	],
 }
 

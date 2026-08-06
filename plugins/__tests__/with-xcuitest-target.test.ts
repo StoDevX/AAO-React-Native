@@ -125,6 +125,8 @@ describe('ensureUITestTarget', () => {
 		expect(settings).toHaveLength(2)
 		for (let entry of settings) {
 			expect(entry.TEST_TARGET_NAME).toBe('AllAboutOlaf')
+			// An empty SWIFT_VERSION fails the build outright.
+			expect(entry.SWIFT_VERSION).toBe('5.0')
 			expect(entry.INFOPLIST_FILE).toBe(`${PROJECT_PATH}/Info.plist`)
 		}
 	})

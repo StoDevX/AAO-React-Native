@@ -96,6 +96,9 @@ function buildSettingsFor(projectPath: string): Record<string, string> {
 		LIBRARY_SEARCH_PATHS: '"$(SDKROOT)/usr/lib/swift$(inherited)"',
 		PRODUCT_BUNDLE_IDENTIFIER: `"${BUNDLE_ID}"`,
 		PRODUCT_NAME: '"$(TARGET_NAME)"',
+		// The generated project sets no project-level SWIFT_VERSION, and an
+		// empty one is a hard build error rather than a default.
+		SWIFT_VERSION: '5.0',
 		TEST_TARGET_NAME: APP_TARGET,
 	}
 }
@@ -103,6 +106,10 @@ function buildSettingsFor(projectPath: string): Record<string, string> {
 /**
  * Read one record out of a pbxproj section. Sections interleave records with
  * `<uuid>_comment` strings, so every lookup is `T | string` until narrowed.
+ *
+ * Duplicated rather than shared: Expo compiles each plugin file on its own, so
+ * a relative import of a sibling .ts does not resolve at prebuild time. Jest
+ * resolves it happily, which is why only a real prebuild catches it.
  */
 function entryIn<T>(
 	section: Record<string, T | string>,
@@ -111,9 +118,7 @@ function entryIn<T>(
 ): T {
 	let entry = section[key]
 	if (typeof entry === 'string' || entry === undefined) {
-		throw new Error(
-			`with-xcuitest-target: ${what} is missing from the project.`,
-		)
+		throw new Error(`${what} is missing from the Xcode project.`)
 	}
 	return entry
 }
