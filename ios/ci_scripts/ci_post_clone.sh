@@ -9,8 +9,9 @@ export SENTRY_ORG='frog-pond-labs'
 export SENTRY_PROJECT='all-about-olaf'
 # export SENTRY_AUTH_TOKEN='${{ secrets.HOSTED_SENTRY_AUTH_TOKEN }}'
 
-# cd out of ci_scripts into the main project directory
-cd ..
+# Xcode Cloud runs this with ci_scripts as the working directory, and it must
+# live beside the .xcworkspace, so the repository root is two levels up.
+cd ../../
 
 # Install node via Homebrew. Homebrew is officially available on Xcode Cloud
 # and brew --prefix always returns an arch-aware absolute path, so we never
@@ -48,8 +49,20 @@ mise run prepare
 # build the data files
 mise run bundle-data
 
-# generate ios/ from app.config.ts, which also installs the pods
+# Generate ios/ from app.config.ts, which also installs the pods.
+#
+# prebuild recreates ios/ from scratch, deleting ci_scripts along with
+# everything else -- including this script, which Xcode Cloud requires to sit
+# beside the .xcworkspace. Stash it and put it back, so any later script phase
+# still finds it and so this script is not running out of a deleted file.
+ci_scripts_backup="$(mktemp -d)"
+cp -R ios/ci_scripts/. "${ci_scripts_backup}/"
+
 mise run prebuild
+
+mkdir -p ios/ci_scripts
+cp -R "${ci_scripts_backup}/." ios/ci_scripts/
+rm -rf "${ci_scripts_backup}"
 
 # Write ios/.xcode.env.local so Xcode Cloud's xcodebuild can find node.
 # PATH changes in this script don't carry over into xcodebuild build phases,
