@@ -46,6 +46,9 @@ const NOTICE_RADIUS = 7
 const NOTICE_PADDING = 8
 /// React Native's default iOS font size, which the old StyleSheet relied on.
 const NOTICE_FONT_SIZE = 14
+/// Pairs with the size so the notice scales with Dynamic Type, as the React
+/// Native Text it replaced did. The style sets the scaling curve only.
+const NOTICE_TEXT_STYLE = 'footnote'
 
 const noticeShape = shapes.roundedRectangle({
 	cornerRadius: NOTICE_RADIUS,
@@ -67,7 +70,7 @@ export function UnofficialAppNotice(): React.ReactNode {
 			<ContextMenu.Trigger>
 				<Text
 					modifiers={[
-						font({size: NOTICE_FONT_SIZE}),
+						font({size: NOTICE_FONT_SIZE, textStyle: NOTICE_TEXT_STYLE}),
 						foregroundColor(c.secondaryLabel),
 						multilineTextAlignment('center'),
 						padding({all: NOTICE_PADDING}),

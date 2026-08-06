@@ -33,7 +33,16 @@ export const FILL_WIDTH = 10_000
 /// in Info.plist; SwiftUI addresses it by its family name.
 const ICON_FONT_FAMILY = 'Entypo'
 const ICON_SIZE = 32
-const TITLE_SIZE = 14
+// SwiftUI's .system(size:) is fixed; pairing a size with a text style makes the
+// font scale with Dynamic Type the way the React Native Text it replaced did.
+//
+// For the icon the family is a custom font, so this maps to
+// Font.custom(_:size:relativeTo:) and ICON_SIZE governs the rendered size. For
+// the title there is no family, so the text style's own size wins --
+// subheadline is 15pt. There is deliberately no title size constant: passing
+// one alongside a text style has no effect, so it would only mislead.
+const ICON_TEXT_STYLE = 'title'
+const TITLE_TEXT_STYLE = 'subheadline'
 
 /// `layer.cornerRadius` on iOS defaults to circular corners, which is what the
 /// React Native `borderRadius` produced.
@@ -73,14 +82,21 @@ export function HomeScreenButton({view, onPress}: Props): React.ReactNode {
 			>
 				<Text
 					modifiers={[
-						font({family: ICON_FONT_FAMILY, size: ICON_SIZE}),
+						font({
+							family: ICON_FONT_FAMILY,
+							size: ICON_SIZE,
+							textStyle: ICON_TEXT_STYLE,
+						}),
 						foregroundColor(foreground),
 					]}
 				>
 					{glyph}
 				</Text>
 				<Text
-					modifiers={[font({size: TITLE_SIZE}), foregroundColor(foreground)]}
+					modifiers={[
+						font({textStyle: TITLE_TEXT_STYLE}),
+						foregroundColor(foreground),
+					]}
 				>
 					{view.title}
 				</Text>
