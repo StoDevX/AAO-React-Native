@@ -1,0 +1,59 @@
+Drop react-native-ios-utilities' reference to RCTRootContentView.
+
+React Native 0.85 wraps RCTRootContentView's entire implementation in
+`#ifndef RCT_REMOVE_LEGACY_ARCH`. With the New Architecture enabled that define
+is set, so React/Base/RCTRootContentView.m compiles to an object file defining
+zero symbols and the class effectively does not exist. Linking the app then
+fails:
+
+    Undefined symbols for architecture arm64:
+      "_OBJC_CLASS_$_RCTRootContentView", referenced from:
+           in libreact-native-ios-utilities.a(RCTView+Helpers.o)
+
+This is not a build-configuration problem: it reproduces with both the prebuilt
+React-Core framework and a from-source build.
+
+The reference is dead code under the New Architecture. `closestParentReactContentView`
+exists solely as the last-resort fallback inside `closestParentReactTouchHandler`,
+whose only consumer is react-native-ios-context-menu calling `.cancel()` on an
+old-architecture RCTTouchHandler. Fabric does not install RCTTouchHandler on the
+view hierarchy, so that lookup already returns nil at runtime and the call is
+already a no-op. Removing it changes no behaviour; it only stops Swift emitting
+a reference to a class that is no longer compiled.
+
+The sibling `closestParentRootView` also names a legacy-guarded class
+(RCTRootView) but has no consumers, so the linker dead-strips it and it needs no
+change.
+
+Upstream cannot help here: react-native-ios-utilities 5.2.0 and
+react-native-ios-context-menu 3.2.1 are both the latest releases and both were
+published 2025-09-28.
+
+--- node_modules/react-native-ios-utilities/ios/Sources/Extensions+Helpers/RCTView+Helpers.swift
++++ node_modules/react-native-ios-utilities/ios/Sources/Extensions+Helpers/RCTView+Helpers.swift
+@@ -25,17 +25,6 @@
+     return rootView.recursivelyFindSubview(whereType: targetType);
+   };
+   
+-  var closestParentReactContentView: RCTRootContentView? {
+-    let targetType = RCTRootContentView.self;
+-  
+-    if let match = self.recursivelyFindParentView(whereType: targetType) {
+-      return match;
+-    };
+-    
+-    guard let rootView = self.rootViewForCurrentWindow else { return nil };
+-    return rootView.recursivelyFindSubview(whereType: targetType);
+-  };
+-  
+   var reactTouchHandlers: [RCTTouchHandler]? {
+     self.gestureRecognizers?.compactMap {
+       $0 as? RCTTouchHandler
+@@ -58,6 +47,6 @@
+       currentView = superview;
+     };
+     
+-    return closestParentReactContentView?.reactTouchHandlers?.first;
++    return nil;
+   };
+ };

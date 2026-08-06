@@ -28,7 +28,11 @@ Pod::Podfile::TargetDefinition.prepend(ExpoUITestsAutolinkingFix)
 # See: https://github.com/StoDevX/AAO-React-Native/issues/7453
 ENV['RCT_NEW_ARCH_ENABLED'] = '1'
 
-platform :ios, min_ios_version_supported
+# Match IPHONEOS_DEPLOYMENT_TARGET in the Xcode project rather than React
+# Native's `min_ios_version_supported`, which is 15.1 on 0.85. Expo SDK 56
+# requires 16.4 and silently refuses to link any of its modules when the
+# Podfile advertises less, so the two must not drift apart.
+platform :ios, '18.6'
 prepare_react_native_project!
 
 linkage = ENV['USE_FRAMEWORKS']
@@ -56,7 +60,6 @@ target 'AllAboutOlaf' do
 	post_install do |installer|
 		ccache_enabled = ENV['USE_CCACHE'] == '1'
 
-		# https://github.com/facebook/react-native/blob/main/packages/react-native/scripts/react_native_pods.rb#L197-L202
 		react_native_post_install(
 			installer,
 			config[:reactNativePath],
