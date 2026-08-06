@@ -51,24 +51,41 @@ const cellShape = shapes.roundedRectangle({
 	roundedCornerStyle: 'circular',
 })
 
+/// `view.icon` comes from the view data rather than from a literal, so a typo
+/// or a rename upstream reaches this as an undefined lookup. Fail with a
+/// message naming the icon instead of letting String.fromCodePoint throw a
+/// RangeError that takes the whole home screen down with it.
+function entypoGlyph(name: keyof typeof EntypoGlyphs): string {
+	let codepoint: number | undefined = EntypoGlyphs[name]
+	if (typeof codepoint !== 'number') {
+		throw new Error(
+			`Unknown Entypo icon "${String(name)}". It is not in the glyphmap at ` +
+				'@react-native-vector-icons/entypo/glyphmaps/Entypo.json.',
+		)
+	}
+	return String.fromCodePoint(codepoint)
+}
+
 export function HomeScreenButton({view, onPress}: Props): React.ReactNode {
 	let foreground =
 		view.foreground === 'light'
 			? homescreenForegroundLight
 			: homescreenForegroundDark
-	let glyph = String.fromCodePoint(EntypoGlyphs[view.icon])
+	let glyph = entypoGlyph(view.icon)
 
 	return (
 		<Button
 			modifiers={[
 				buttonStyle('plain'),
 				frame({maxWidth: FILL_WIDTH}),
-				background(view.tint, cellShape),
-				contentShape(cellShape),
 				accessibilityLabel(view.title),
 			]}
 			onPress={onPress}
 		>
+			{/* The fill, size and hit shape belong on the label, not the Button:
+			    SwiftUI derives a button's tappable region from its label, so
+			    putting contentShape on the Button leaves only the icon and title
+			    tappable rather than the whole tile. */}
 			<VStack
 				modifiers={[
 					padding({
@@ -77,6 +94,8 @@ export function HomeScreenButton({view, onPress}: Props): React.ReactNode {
 						horizontal: cellHorizontalPadding,
 					}),
 					frame({maxWidth: FILL_WIDTH}),
+					background(view.tint, cellShape),
+					contentShape(cellShape),
 				]}
 				spacing={0}
 			>

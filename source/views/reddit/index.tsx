@@ -13,9 +13,11 @@ import {
 } from '@expo/ui/swift-ui'
 import {
 	accessibilityIdentifier,
+	contentShape,
 	font,
 	foregroundColor,
 	padding,
+	shapes,
 } from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
 
@@ -133,6 +135,7 @@ function VariantPickerButton(): React.ReactNode {
 					<SwiftUIText
 						modifiers={[
 							padding({horizontal: 8, vertical: 4}),
+							contentShape(shapes.rectangle()),
 							font({family: ICON_FONT_FAMILY, size: VARIANT_ICON_SIZE}),
 							foregroundColor(c.link),
 							accessibilityIdentifier(VARIANT_PICKER_TEST_ID),

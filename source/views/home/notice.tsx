@@ -3,6 +3,7 @@ import {Button, ContextMenu, Text} from '@expo/ui/swift-ui'
 import {
 	accessibilityIdentifier,
 	background,
+	contentShape,
 	font,
 	foregroundColor,
 	frame,
@@ -76,6 +77,9 @@ export function UnofficialAppNotice(): React.ReactNode {
 						padding({all: NOTICE_PADDING}),
 						frame({maxWidth: FILL_WIDTH}),
 						background(c.secondarySystemFill, noticeShape),
+						// without this the long-press only lands on the glyphs
+						// themselves; the fill is painted behind, not hit-tested
+						contentShape(noticeShape),
 						accessibilityIdentifier('home-notice'),
 					]}
 				>

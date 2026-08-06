@@ -21,6 +21,7 @@ import {
 import {
 	accessibilityIdentifier,
 	background,
+	contentShape,
 	font,
 	foregroundColor,
 	padding,
@@ -235,6 +236,7 @@ export const DayPickerHeader = ({
 						modifiers={[
 							padding({horizontal: 8, vertical: 6}),
 							background(c.systemBackground, headerButtonShape),
+							contentShape(headerButtonShape),
 							strokeBorder({
 								color: accentColor,
 								cornerRadius: HEADER_BUTTON_RADIUS,

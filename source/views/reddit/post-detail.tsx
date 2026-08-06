@@ -18,9 +18,11 @@ import IoniconGlyphs from '@react-native-vector-icons/ionicons/glyphmaps/Ionicon
 import {Button, Host, Menu, Text as SwiftUIText} from '@expo/ui/swift-ui'
 import {
 	accessibilityIdentifier,
+	contentShape,
 	font,
 	foregroundColor,
 	padding,
+	shapes,
 } from '@expo/ui/swift-ui/modifiers'
 import {LoadingView, NoticeView} from '@frogpond/notice'
 import * as c from '@frogpond/colors'
@@ -150,6 +152,7 @@ export function PostDetailView(): React.ReactNode {
 							<SwiftUIText
 								modifiers={[
 									padding({leading: 6, trailing: 16}),
+									contentShape(shapes.rectangle()),
 									font({
 										family: ICON_FONT_FAMILY,
 										size: HEADER_ICON_SIZE,
