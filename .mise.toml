@@ -113,9 +113,6 @@ react-native bundle \
 
 [tasks."agent:setup"]
 description = "Set up the development environment for AI agents"
-# npm does not run the `prepare` hook: .npmrc sets ignore-scripts=true, and a
-# developer may set it in ~/.npmrc too. Apply contrib/*.patch explicitly, or
-# `mise run tsc` fails with ~38 AbortSignal errors on a fresh checkout.
 run = """
 npm ci
 mise run prepare
