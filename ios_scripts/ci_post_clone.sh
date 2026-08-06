@@ -1,0 +1,65 @@
+#!/bin/bash
+set -ex
+echo "Running ci_post_clone.sh"
+
+export MISE_RUBY_COMPILE='false'
+export MISE_AUTO_INSTALL='false'
+
+export SENTRY_ORG='frog-pond-labs'
+export SENTRY_PROJECT='all-about-olaf'
+# export SENTRY_AUTH_TOKEN='${{ secrets.HOSTED_SENTRY_AUTH_TOKEN }}'
+
+# Xcode Cloud runs this with ci_scripts as the working directory, and it must
+# live beside the .xcworkspace, so the repository root is two levels up.
+cd ../../
+
+# Install node via Homebrew. Homebrew is officially available on Xcode Cloud
+# and brew --prefix always returns an arch-aware absolute path, so we never
+# need to rely on PATH being configured correctly.
+# If this doesn't work, we'll have to fix pathing issues and hopefully mise shims.
+brew install node@24
+
+NODE_BREW_PREFIX="$(brew --prefix node@24)"
+NODE_PATH="${NODE_BREW_PREFIX}/bin/node"
+
+# Confirm node works
+echo "node path: ${NODE_PATH}"
+"${NODE_PATH}" --version
+
+# Add brew node's bin dir to PATH so npm is available for the rest of this script
+export PATH="${NODE_BREW_PREFIX}/bin:$PATH"
+
+# Install mise via Homebrew (for task running: bundle-data, pod:install).
+brew install mise
+export PATH="$(brew --prefix)/bin:$PATH"
+
+echo "mise version: $(mise --version)"
+
+# Activate mise shims for ruby/cocoapods tools used in task runs
+eval "$(mise activate bash --shims)"
+
+# install node modules
+npm ci
+
+# apply contrib/*.patch. npm won't: .npmrc sets ignore-scripts=true, and the
+# generated Podfile has no post_install hook calling apply-patches.sh. The mise
+# prebuild task also depends on prepare; this makes the ordering explicit.
+mise run prepare
+
+# build the data files
+mise run bundle-data
+
+# generate ios/ from app.config.ts, which also installs the pods.
+# The prebuild task preserves this directory across the regeneration.
+mise run prebuild
+
+# Write ios/.xcode.env.local so Xcode Cloud's xcodebuild can find node.
+# PATH changes in this script don't carry over into xcodebuild build phases,
+# so we bake in the absolute brew-managed path now.
+echo "Writing ios/.xcode.env.local with NODE_BINARY=${NODE_PATH}"
+{
+  printf 'export NODE_BINARY=%s\n' "${NODE_PATH}"
+} > ios/.xcode.env.local
+
+echo "Contents of ios/.xcode.env.local:"
+cat ios/.xcode.env.local

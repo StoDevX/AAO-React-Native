@@ -45,7 +45,20 @@ run = '''
 [tasks.prebuild]
 description = "Generate the native iOS project from app.config.ts"
 depends = ["prepare"]
-run = "expo prebuild --platform ios"
+# prebuild recreates ios/ from scratch, deleting the tracked ios/ci_scripts
+# shim with it. `--no-clean` does not help: it preserves an existing *valid*
+# project, but a fresh clone contains only ci_scripts, which prebuild treats as
+# malformed and clears anyway. So stash the shim and put it back. Doing it here
+# rather than in the script keeps every prebuild -- local, GitHub Actions,
+# Xcode Cloud -- leaving the same tree.
+run = '''
+shim="$(mktemp -d)"
+cp -R ios/ci_scripts/. "$shim/"
+expo prebuild --platform ios
+mkdir -p ios/ci_scripts
+cp -R "$shim/." ios/ci_scripts/
+rm -rf "$shim"
+'''
 
 [tasks.fastlane]
 description = "Run fastlane"
