@@ -11,6 +11,11 @@ class UITestCase: XCTestCase {
 
 		app = XCUIApplication()
 		app.launchArguments.append(TestIdentifiers.LaunchArguments.uiTesting)
+		// Reset persisted state for every test. Without this, UserDefaults and
+		// AsyncStorage carry over between tests in a run, so a test's result can
+		// depend on what ran before it -- testLongPressNoticeTogglesDevMode
+		// inverts if dev mode is already on, and failed only in long runs.
+		app.launchArguments.append(TestIdentifiers.LaunchArguments.resetState)
 		app.launch()
 	}
 

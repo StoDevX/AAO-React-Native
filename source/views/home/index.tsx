@@ -1,7 +1,11 @@
 import * as React from 'react'
-import {ScrollView, StyleSheet} from 'react-native'
-import {Host, HStack, VStack} from '@expo/ui/swift-ui'
-import {frame, padding} from '@expo/ui/swift-ui/modifiers'
+import {StyleSheet} from 'react-native'
+import {Host, HStack, RNHostView, ScrollView, VStack} from '@expo/ui/swift-ui'
+import {
+	accessibilityIdentifier,
+	frame,
+	padding,
+} from '@expo/ui/swift-ui/modifiers'
 
 import {AllViews} from '../views'
 import {FaqBannerGroup} from '../faqs'
@@ -21,6 +25,9 @@ const styles = StyleSheet.create({
 		marginTop: CELL_MARGIN,
 		marginBottom: CELL_MARGIN / 2,
 	},
+	host: {
+		flex: 1,
+	},
 })
 
 function HomePage(): React.ReactNode {
@@ -31,17 +38,16 @@ function HomePage(): React.ReactNode {
 	)
 	let columns = partitionByIndex(allViews)
 
+	// SwiftUI owns the scrolling. Wrapping this in a React Native ScrollView
+	// instead puts that scroll view between the touch and the SwiftUI buttons,
+	// and the tiles stop responding reliably on device.
 	return (
-		<ScrollView
-			alwaysBounceHorizontal={false}
-			contentInsetAdjustmentBehavior="automatic"
-			showsHorizontalScrollIndicator={false}
-			showsVerticalScrollIndicator={false}
-			testID="screen-homescreen"
+		<Host
+			matchContents={false}
+			modifiers={[accessibilityIdentifier('screen-homescreen')]}
+			style={styles.host}
 		>
-			<FaqBannerGroup style={styles.banner} target={FAQ_TARGETS.HOME} />
-
-			<Host matchContents={{horizontal: false, vertical: true}}>
+			<ScrollView>
 				<VStack
 					modifiers={[
 						padding({all: CELL_MARGIN}),
@@ -49,6 +55,12 @@ function HomePage(): React.ReactNode {
 					]}
 					spacing={CELL_MARGIN}
 				>
+					{/* The banner is still React Native, so it has to be hosted back
+					    into SwiftUI to scroll with the rest of the content. */}
+					<RNHostView matchContents={true}>
+						<FaqBannerGroup style={styles.banner} target={FAQ_TARGETS.HOME} />
+					</RNHostView>
+
 					<HStack alignment="top" spacing={CELL_MARGIN}>
 						{columns.map((contents, i) => (
 							<VStack
@@ -77,8 +89,8 @@ function HomePage(): React.ReactNode {
 
 					<UnofficialAppNotice />
 				</VStack>
-			</Host>
-		</ScrollView>
+			</ScrollView>
+		</Host>
 	)
 }
 
