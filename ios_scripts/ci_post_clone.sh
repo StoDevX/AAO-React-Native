@@ -13,27 +13,29 @@ export SENTRY_PROJECT='all-about-olaf'
 # live beside the .xcworkspace, so the repository root is two levels up.
 cd ../../
 
-# Install node via Homebrew. Homebrew is officially available on Xcode Cloud
-# and brew --prefix always returns an arch-aware absolute path, so we never
-# need to rely on PATH being configured correctly.
-# If this doesn't work, we'll have to fix pathing issues and hopefully mise shims.
-brew install node@24
-
-NODE_BREW_PREFIX="$(brew --prefix node@24)"
-NODE_PATH="${NODE_BREW_PREFIX}/bin/node"
-
-# Confirm node works
-echo "node path: ${NODE_PATH}"
-"${NODE_PATH}" --version
-
-# Add brew node's bin dir to PATH so npm is available for the rest of this script
-export PATH="${NODE_BREW_PREFIX}/bin:$PATH"
-
-# Install mise via Homebrew (for task running: bundle-data, pod:install).
+# Bootstrap mise via Homebrew, which is officially available on Xcode Cloud.
 brew install mise
 export PATH="$(brew --prefix)/bin:$PATH"
 
 echo "mise version: $(mise --version)"
+
+# Install node through mise so this build uses the version .mise.toml pins.
+# `brew install node@24` used to do this, but brew tracks the newest 24.x while
+# .mise.toml pins an exact patch, so the build that actually ships to TestFlight
+# could run a different node than every other environment.
+#
+# This is explicit because MISE_AUTO_INSTALL is off above; that stays off, so
+# nothing else gets installed as a side effect.
+mise install node
+
+# `mise which` returns an absolute path, which is what xcodebuild needs below.
+NODE_PATH="$(mise which node)"
+
+echo "node path: ${NODE_PATH}"
+"${NODE_PATH}" --version
+
+# Put node and npm on PATH for the rest of this script
+export PATH="$(dirname "${NODE_PATH}"):$PATH"
 
 # Activate mise shims for ruby/cocoapods tools used in task runs
 eval "$(mise activate bash --shims)"
@@ -55,7 +57,7 @@ mise run prebuild
 
 # Write ios/.xcode.env.local so Xcode Cloud's xcodebuild can find node.
 # PATH changes in this script don't carry over into xcodebuild build phases,
-# so we bake in the absolute brew-managed path now.
+# so we bake in the absolute mise-managed path now.
 echo "Writing ios/.xcode.env.local with NODE_BINARY=${NODE_PATH}"
 {
   printf 'export NODE_BINARY=%s\n' "${NODE_PATH}"
