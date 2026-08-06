@@ -53,10 +53,20 @@ depends = ["prepare"]
 # Xcode Cloud -- leaving the same tree.
 run = '''
 shim="$(mktemp -d)"
-cp -R ios/ci_scripts/. "$shim/"
+if [ -d ios/ci_scripts ]; then
+  cp -R ios/ci_scripts/. "$shim/"
+else
+  echo "warning: ios/ci_scripts is missing, so there is nothing to preserve." >&2
+  echo "         Xcode Cloud will not run any build script without it." >&2
+  echo "         Restore it with: jj restore ios/ci_scripts" >&2
+fi
+
 expo prebuild --platform ios
-mkdir -p ios/ci_scripts
-cp -R "$shim/." ios/ci_scripts/
+
+if [ -n "$(ls -A "$shim" 2>/dev/null)" ]; then
+  mkdir -p ios/ci_scripts
+  cp -R "$shim/." ios/ci_scripts/
+fi
 rm -rf "$shim"
 '''
 
