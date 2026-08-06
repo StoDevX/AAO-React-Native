@@ -79,3 +79,11 @@ fastlane/play-private-key.json
 # generated logs files in CI
 /logs
 .superpowers/
+
+# agent worktrees: multi-GB of node_modules, Pods and build output. Jujutsu
+# tracks new files automatically, so leaving these visible makes it try to
+# snapshot every worktree.
+/.claude/worktrees/
+
+# written by Xcode Cloud when it runs locally
+/ios/AllAboutOlaf.xcodeproj/xcshareddata/xcodecloud/

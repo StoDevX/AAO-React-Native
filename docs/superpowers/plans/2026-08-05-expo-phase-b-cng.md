@@ -65,6 +65,12 @@ PR #7544 (`claude/expo-prebuild-pr1-scaffolding`) contains an earlier, unmerged 
 
 ### Task 1: Replace third-party native modules with Expo equivalents (PR B1)
 
+> **Superseded.** This shipped as four PRs, not one — see
+> `2026-08-06-roadmap.md`. Step 9's context-menu swap was not possible until the
+> home screen became SwiftUI, because a React Native trigger hosted inside
+> SwiftUI is mis-measured and its `testID` never reaches the accessibility tree.
+> It landed in B1.3 (#7624) after B1.2 (#7623).
+
 Every native pod removed here is one less thing prebuild must reproduce. Each replacement is its own commit so a regression is bisectable.
 
 **Files:**
@@ -747,12 +753,21 @@ xcodebuild build-for-testing \
   -sdk iphonesimulator \
   -derivedDataPath ios/build \
   -only-testing:AllAboutOlafUITests \
-  CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO \
-  | xcbeautify
+  CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO
+
+# xcbeautify is installed by mise-action on CI only. Piping through it locally
+# fails the pipeline and reads as a build failure.
+
+# A Debug build contains no JavaScript, so inject the bundle the way CI does
+# before running the tests, or they run against whatever Metro is serving.
+mise run bundle:ios
+APP=ios/build/Build/Products/Debug-iphonesimulator/AllAboutOlaf.app
+cp ios/AllAboutOlaf/main.jsbundle "$APP/"
+rm -rf "$APP/assets" && cp -R ios/assets "$APP/"
+
 xcodebuild test-without-building \
   -xctestrun "$(find ios/build/Build/Products -name '*.xctestrun' -print -quit)" \
-  -destination 'platform=iOS Simulator,name=iPhone 17e' \
-  | xcbeautify
+  -destination 'platform=iOS Simulator,name=iPhone 17e'
 ```
 
 Expected: build succeeds; all suites pass; `ModuleCampusMapTests` skipped.

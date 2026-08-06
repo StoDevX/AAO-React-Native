@@ -110,6 +110,7 @@ Skills are located in `.claude/skills/`. Agents are in `.claude/agents/`. Comman
 | `finishing-a-development-branch` | Merge/PR decision workflow |
 | `writing-skills` | Create new skills |
 | `add-screen` | Scaffold and integrate a new screen into the app |
+| `build-to-device` | Put a build on a physical iPhone for manual checks |
 
 ### Available Agents
 
