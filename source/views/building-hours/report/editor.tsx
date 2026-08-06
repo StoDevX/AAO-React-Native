@@ -166,7 +166,6 @@ function DatePickerAccessory(props: DatePickerAccessoryProps) {
 			displayIos="inline"
 			format={format}
 			initialDate={props.date}
-			minuteInterval={5}
 			mode="time"
 			onDateChange={(newDate: Moment) => {
 				let oldMoment = moment()
