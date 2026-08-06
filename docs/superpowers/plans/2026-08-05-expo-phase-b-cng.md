@@ -22,7 +22,40 @@
 - Jest discovers `**/__tests__/**/*.(spec|test).(js|ts|tsx)`, so plugin tests belong at `plugins/__tests__/<name>.test.ts`. No Jest config change is needed.
 - `tsconfig.json` includes `**/*.ts`, so `app.config.ts` and `plugins/*.ts` are type-checked automatically. No tsconfig change is needed.
 - `mise run lint` covers `source/ modules/ scripts/ images/` only. Task 2 must add `plugins/`.
-- These five customizations are dropped deliberately and must NOT be reproduced: `STRIP_INSTALLED_PRODUCT`, `inhibit_all_warnings!`, the Podfile's `apply-patches.sh` call, the ccache Podfile branching (it moves into `expo-build-properties`), and `react-native.config.js`.
+- Four customizations are dropped deliberately and must NOT be reproduced: `STRIP_INSTALLED_PRODUCT`, `inhibit_all_warnings!`, the ccache Podfile branching (it moves into `expo-build-properties`), and `react-native.config.js`.
+- **The Podfile's `apply-patches.sh` call is a fifth candidate, but it cannot simply be dropped — see Task 3, Step 6.** `.npmrc` now sets `ignore-scripts=true`, so npm never runs the `prepare` hook, and the generated Podfile will not call it either. Something must apply `contrib/*.patch` before a pod install or a build, or `0003` (fmt) and `0004`–`0006` (change-icon, ios-utilities) silently stop being applied and the app builds subtly wrong.
+
+## What Phase A learned
+
+Phase A ran six rungs against this codebase and turned up things the original spec did not anticipate. They apply to Phase B too.
+
+1. **`min-release-age` in `~/.npmrc` caps every version choice.** A developer with it set cannot install anything published inside that window, and `expo install --fix` will happily write a version that then fails with `ETARGET ... with a date before <date>`. Compute the newest installable version rather than trusting a nominal pin. It also blocks security fixes, which are by nature new: `brace-expansion` and `postcss` both needed an explicit `--min-release-age=0` exception, agreed case by case.
+
+2. **Reject the downgrades `expo install --fix` proposes.** This repo runs ahead of the SDK's pins in ten packages. Diff `package.json` before and after and restore anything it lowered.
+
+3. **Sweep the workspace peer ranges.** 25 packages under `modules/` declare peers on `react-native`, and four on `@react-navigation/native`. A caret on a `0.x` version pins the minor, so `npm install` fails with ERESOLVE before anything else can run. `modules/open-url` also pins `expo-web-browser`.
+
+4. **`pod install` cannot cross a major React Native version in place.** `Podfile.lock` and `Pods/Local Podspecs` keep the old `RCT-Folly`/`fmt` pairing and CocoaPods aborts. Delete `ios/Pods` and `ios/Podfile.lock` and regenerate.
+
+5. **Keep derived data at `ios/build` exactly.** React Native's `set_RCTNewArchEnabled_in_info_plist` runs `find ios/ -name Info.plist` and skips paths containing the literal `"build/"`. Any other name — `ios/build-device`, `ios/build-oldarch` — makes it parse a built app's *binary* Info.plist and abort `pod install` with an opaque `invalid byte sequence in UTF-8`.
+
+6. **There are now six contrib patches, not three.** `0004` (change-icon), `0005` and `0006` (both ios-utilities) all postdate the original spec. Task 1 Step 9 deletes `0005` and `0006` along with the library.
+
+7. **Green unit tests and green UITests are not sufficient for native changes.** Both missed a broken app-icon feature and a tab-bar crash. Every task that touches native code ends with the device checklist below.
+
+## Device verification checklist
+
+Run on hardware, not the simulator, after any task that changes native dependencies or the Xcode project. Each item exists because something in Phase A broke it.
+
+| # | Check | Guards |
+| --- | --- | --- |
+| 1 | Tab bars: switch tabs, and tap an already-selected tab | `react-native-screens` `RNSTabBarController` crashed on repeated selection |
+| 2 | Context menus: Reddit post long-press, home notice, bus day-picker | `contrib/0005`, `0006`; removed by Task 1 Step 9 |
+| 3 | Alternate app icons: switch to windmill and back | `react-native-change-icon`; its UITest is skipped, so there is no automated coverage |
+| 4 | mDNS discovery: Settings → Server URL with `ccc-server` running | `react-native-zeroconf`, legacy interop |
+| 5 | Device info: compose a support email, check the fields | `react-native-device-info`, legacy interop; the Settings version cell does *not* exercise it |
+| 6 | Restart | `react-native-restart-newarch` |
+| 7 | Animations: navigation transitions, swipe-to-dismiss, Paper ripples | Reanimated 4 + worklets |
 
 ## Reference
 
@@ -581,7 +614,36 @@ description = "Generate the native iOS project from app.config.ts"
 run = "npx expo prebuild --platform ios"
 ```
 
-- [ ] **Step 6: Generate the project for the first time**
+- [ ] **Step 6: Keep the patches applying once the Podfile is generated**
+
+Do this *before* generating, because it is easy to miss afterwards: everything still builds, just from unpatched sources.
+
+Today `ios/Podfile:80` ends `post_install` with `system('cd .. && scripts/apply-patches.sh')`, and that is the only thing applying `contrib/*.patch` before a pod install or a build. The generated Podfile will not have it, and `.npmrc` sets `ignore-scripts=true` so npm's `prepare` hook never runs either.
+
+Losing it is silent and expensive: `0003` stops disabling fmt's consteval path, `0004` lets app-icon switching go back to a silent no-op, and `0005`/`0006` break `react-native-ios-utilities` — the exact failures Phase A spent days on.
+
+Make the mise tasks own it, the way `lint`, `tsc` and `test` already do:
+
+```toml
+[tasks."pod:install"]
+depends = ["prepare"]
+
+[tasks.prebuild]
+depends = ["prepare"]
+```
+
+Verify the dependency actually fires rather than assuming:
+
+```bash
+# put a patched file back to its upstream state, then run pod:install alone
+grep -c "RCT_NEW_ARCH_ENABLED" node_modules/react-native-change-icon/ios/ChangeIcon.h   # expect 1 (unpatched)
+mise run pod:install
+grep -c "RCT_NEW_ARCH_ENABLED" node_modules/react-native-change-icon/ios/ChangeIcon.h   # expect 0 (prepare ran)
+```
+
+If Task 1 Step 9 landed, `0005` and `0006` are already gone and only `0001`–`0004` remain.
+
+- [ ] **Step 7: Generate the project for the first time**
 
 ```bash
 rm -rf ios
@@ -590,7 +652,7 @@ mise run prebuild
 
 Expected: `ios/` is recreated, containing `AllAboutOlaf.xcodeproj`, `Podfile`, `AppDelegate.swift`, and the `AllAboutOlafUITests` target created by our plugin.
 
-- [ ] **Step 7: Diff the generated project against the baseline**
+- [ ] **Step 8: Diff the generated project against the baseline**
 
 The acceptance gate.
 
@@ -604,7 +666,7 @@ diff /tmp/cng-baseline/build-settings.txt /tmp/cng-generated-settings.txt
 
 Every difference must be either one of the five deliberate drops listed in Global Constraints, or a plugin bug to fix now. Paste both diffs into the PR description with a line-by-line verdict. Do not proceed past this step with an unexplained difference.
 
-- [ ] **Step 8: Confirm the UITest target actually exists**
+- [ ] **Step 9: Confirm the UITest target actually exists**
 
 ```bash
 xcodebuild -list -workspace ios/AllAboutOlaf.xcworkspace
@@ -612,7 +674,7 @@ xcodebuild -list -workspace ios/AllAboutOlaf.xcworkspace
 
 Expected: `AllAboutOlafUITests` appears. If it does not, `with-xcuitest-target` is broken — fix it in Task 2's plugin, not with a manual Xcode edit.
 
-- [ ] **Step 9: Stop tracking `ios/`**
+- [ ] **Step 10: Stop tracking `ios/`**
 
 Add to `.gitignore`:
 
@@ -627,7 +689,7 @@ Then remove the tracked copy:
 git rm -r --cached ios
 ```
 
-- [ ] **Step 10: Delete the now-dead config**
+- [ ] **Step 11: Delete the now-dead config**
 
 ```bash
 git rm react-native.config.js
@@ -635,7 +697,7 @@ git rm react-native.config.js
 
 The generated Podfile supersedes it.
 
-- [ ] **Step 11: Rewire the CI cache keys**
+- [ ] **Step 12: Rewire the CI cache keys**
 
 In `.github/workflows/check.yml`, the `ios-cache-check` and `ios-build` jobs hash `**/project.pbxproj`, `ios/Podfile`, `**/Podfile.lock`, `ios/AllAboutOlaf/**`, and `ios/AllAboutOlafUITests/**`. None of those are tracked any more, so the key would be constant and the cache permanently stale — worse than no cache.
 
@@ -647,7 +709,7 @@ npx @expo/fingerprint --help
 
 Add a `prebuild` step to `ios-build` before `mise run pod:install`.
 
-- [ ] **Step 12: Build and test locally**
+- [ ] **Step 13: Build and test locally**
 
 ```bash
 mise run pod:install
@@ -669,11 +731,11 @@ xcodebuild test-without-building \
 
 Expected: build succeeds; all suites pass; `ModuleCampusMapTests` skipped.
 
-- [ ] **Step 13: Rewire Fastlane**
+- [ ] **Step 14: Rewire Fastlane**
 
 `fastlane/platforms/ios.rb` points `gym` at `ios/AllAboutOlaf.xcworkspace` and `ios/build`, which prebuild recreates at the same paths — so those need no change. Add a prebuild invocation before `gym` so a clean checkout has a project to build. The `token_dest` change is already done in Step 3; confirm `load_app_store_connect_api_token` still resolves the key by running the lane.
 
-- [ ] **Step 14: Rewire the Xcode Cloud scripts**
+- [ ] **Step 15: Rewire the Xcode Cloud scripts**
 
 In `ci_scripts/ci_post_clone.sh`, replace the trailing placeholder:
 
@@ -686,11 +748,11 @@ with a real `mise run prebuild` call, placed after `npm ci` and `mise run bundle
 
 In `ci_pre_xcodebuild.sh`, delete the `agvtool new-version -all "$CI_BUILD_NUMBER"` call entirely. `app.config.ts` now reads `CI_BUILD_NUMBER` (Task 2 Step 21), so the build number is set at generation time. Keep the guard that fails when `CI_BUILD_NUMBER` is unset.
 
-- [ ] **Step 15: Confirm Xcode Cloud finds the relocated scripts**
+- [ ] **Step 16: Confirm Xcode Cloud finds the relocated scripts**
 
 Resolve the open item from the spec: Xcode Cloud discovers `ci_scripts/` at the repository root or alongside the Xcode project. Since the project no longer exists at checkout time, the root is the only workable location. Confirm against Apple's documentation and record the citation in the PR description. If the root is not supported, the scripts must instead be generated into `ios/ci_scripts/` by a plugin — say so rather than leaving it untested.
 
-- [ ] **Step 16: Verify regeneration from nothing**
+- [ ] **Step 17: Verify regeneration from nothing**
 
 The real test of CNG: a clean checkout must produce a working project.
 
@@ -703,17 +765,17 @@ xcodebuild -list -workspace ios/AllAboutOlaf.xcworkspace
 
 Expected: `AllAboutOlafUITests` present, pods resolve, no manual steps.
 
-- [ ] **Step 17: Verify the gate**
+- [ ] **Step 18: Verify the gate**
 
 ```bash
 mise run agent:pre-commit
 ```
 
-- [ ] **Step 18: Update CLAUDE.md**
+- [ ] **Step 19: Update CLAUDE.md**
 
 Document that `ios/` is generated and must not be hand-edited, that `mise run prebuild` regenerates it, that iOS customizations go in `app.config.ts` or `plugins/`, and that XCUITests live in `uitests/`. Update the XCUITest debugging section's path reference from `ios/AllAboutOlafUITests/` to `uitests/`.
 
-- [ ] **Step 19: Commit**
+- [ ] **Step 20: Commit**
 
 ```bash
 git add -A
