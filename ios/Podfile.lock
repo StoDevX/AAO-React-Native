@@ -2865,7 +2865,7 @@ SPEC CHECKSUMS:
   ExpoModulesWorkletsAdapter: 83cea5cd135067f047382f1ee1445601b2aed2fa
   ExpoWebBrowser: 9b98d939d5f1c5dd8f523f0a0683056fb1204434
   FBLazyVector: 3c3be9a019176b5699455f7f66c5444b78a411c6
-  hermes-engine: 0f27e900729c832064dd67c5f4afd0c1d07e5e1f
+  hermes-engine: e9098dd470d39f79efd96afe47a223d9a2c1c8a4
   RCTDeprecation: bccb6545c26db881ecddfd83a3f9ea82aba1605f
   RCTRequired: b2f74764d596fc0051f00fee94b49bf41a6f7f5a
   RCTSwiftUI: c6d6a31b849b9dfa64c33b55dc91ac15dd55774c
