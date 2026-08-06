@@ -40,6 +40,11 @@ eval "$(mise activate bash --shims)"
 # install node modules
 npm ci
 
+# apply contrib/*.patch. npm won't: .npmrc sets ignore-scripts=true. The Podfile's
+# post_install also runs apply-patches.sh, but that is later and only on the pod
+# path, so do it here where the dependency is obvious.
+mise run prepare
+
 # build the data files
 mise run bundle-data
 

@@ -16,7 +16,7 @@ The St. Olaf community, now in pocket size… rewritten in React Native.
 - [Install React Native](http://facebook.github.io/react-native/docs/getting-started.html#content)
 - Clone the repository
 - `cd` into your clone
-- Run `npm ci`
+- Run `npm ci && mise run prepare` (the second step applies `contrib/*.patch`; npm won't, because `.npmrc` sets `ignore-scripts=true`)
 - For iOS: `npm run ios`
 
 ## Contributing

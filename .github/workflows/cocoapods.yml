@@ -55,6 +55,8 @@ jobs:
 
       - run: npm ci
 
+      - run: mise run prepare
+
       - run: mise x -- pod repo update
 
       # Delete the existing Podfile.lock so `pod install` resolves from
