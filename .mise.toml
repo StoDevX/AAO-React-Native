@@ -34,9 +34,18 @@ flag "--repo-update" negate="--no-repo-update" help="Force running `pod repo upd
 flag "--verbose" help="Show more debugging information"
 '''
 dir = "{{ config_root }}/ios"
+# The generated Podfile has no post_install hook calling apply-patches.sh, and
+# .npmrc sets ignore-scripts=true so npm never runs `prepare` either. Without
+# this the contrib patches silently stop being applied.
+depends = ["prepare"]
 run = '''
 ../scripts/pod install {% if usage.deployment %}--deployment{% endif %} {% if usage.repo_update %}--repo-update{% endif %} {% if usage.verbose %}--verbose{% endif %}
 '''
+
+[tasks.prebuild]
+description = "Generate the native iOS project from app.config.ts"
+depends = ["prepare"]
+run = "expo prebuild --platform ios"
 
 [tasks.fastlane]
 description = "Run fastlane"
