@@ -16,6 +16,7 @@ jobs:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151 # v4.0.1
       - run: npm ci
+      - run: mise run prepare
       - run: mise run validate-data
       - run: mise run bundle-data
       - run: mise run pretty:check
@@ -34,6 +35,7 @@ jobs:
       - run: sudo xcode-select -s /Applications/Xcode_26.4.app
       - run: git fetch --prune --unshallow
       - run: npm ci
+      - run: mise run prepare
       - run: mise run pod:install --deployment
       - run: bundle exec fastlane ios ci-run
         env:
