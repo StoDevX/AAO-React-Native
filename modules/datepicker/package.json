@@ -10,7 +10,7 @@
   },
   "peerDependencies": {
     "react": "^19.1.0",
-    "react-native": "^0.85.0",
+    "react-native": "^0.86.0",
     "moment-timezone": "^0.6.1"
   },
   "dependencies": {
