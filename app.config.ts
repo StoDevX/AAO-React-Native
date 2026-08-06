@@ -119,6 +119,7 @@ const config: ExpoConfig = {
 		'./plugins/with-alternate-icons',
 		'./plugins/with-xcuitest-target',
 		'./plugins/with-binary-stripping',
+		'./plugins/with-inhibit-pod-warnings',
 	],
 }
 
