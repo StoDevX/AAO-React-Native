@@ -748,11 +748,43 @@ with a real `mise run prebuild` call, placed after `npm ci` and `mise run bundle
 
 In `ci_pre_xcodebuild.sh`, delete the `agvtool new-version -all "$CI_BUILD_NUMBER"` call entirely. `app.config.ts` now reads `CI_BUILD_NUMBER` (Task 2 Step 21), so the build number is set at generation time. Keep the guard that fails when `CI_BUILD_NUMBER` is unset.
 
-- [ ] **Step 16: Confirm Xcode Cloud finds the relocated scripts**
+- [ ] **Step 16: Confirm `.xcode.env.local` is finally being read**
+
+Deferred here from Phase A on purpose: prebuild fixes this for free, and hand-editing `project.pbxproj` before B3 would be discarded when `ios/` is regenerated.
+
+Until this step, `ci_post_clone.sh`'s `.xcode.env.local` write is **dead code**. The hand-maintained "Bundle React Native code and images" build phase is:
+
+```sh
+export NODE_BINARY=node
+../node_modules/react-native/scripts/react-native-xcode.sh
+```
+
+`react-native-xcode.sh` only consumes `$NODE_BINARY`; the script that *sources* `.xcode.env` and `.xcode.env.local` is `scripts/xcode/with-environment.sh`, which this phase never invokes. So the absolute Homebrew node path that `ci_post_clone.sh` computes has never reached any build, and Xcode Cloud has been relying on `node` being on `PATH` — the exact thing that script's own comment says it cannot rely on.
+
+Prebuild generates upstream's form, which does invoke it:
+
+```sh
+set -e
+WITH_ENVIRONMENT="$REACT_NATIVE_PATH/scripts/xcode/with-environment.sh"
+REACT_NATIVE_XCODE="$REACT_NATIVE_PATH/scripts/react-native-xcode.sh"
+/bin/sh -c "\"$WITH_ENVIRONMENT\" \"$REACT_NATIVE_XCODE\""
+```
+
+Verify after the first prebuild:
+
+```bash
+grep -c "with-environment.sh" ios/AllAboutOlaf.xcodeproj/project.pbxproj
+```
+
+Expected: at least 1. If it is 0, prebuild did not generate the standard bundle phase and the node resolution is still broken — investigate before proceeding.
+
+Then confirm the mitigation actually works end to end: `with-environment.sh` echoes `Node found at: <path>` when it sources a `NODE_BINARY`. Write a throwaway `ios/.xcode.env.local` pointing at a known-good absolute node path, build, and check that line appears in the log with that path rather than a bare `node`.
+
+- [ ] **Step 17: Confirm Xcode Cloud finds the relocated scripts**
 
 Resolve the open item from the spec: Xcode Cloud discovers `ci_scripts/` at the repository root or alongside the Xcode project. Since the project no longer exists at checkout time, the root is the only workable location. Confirm against Apple's documentation and record the citation in the PR description. If the root is not supported, the scripts must instead be generated into `ios/ci_scripts/` by a plugin — say so rather than leaving it untested.
 
-- [ ] **Step 17: Verify regeneration from nothing**
+- [ ] **Step 18: Verify regeneration from nothing**
 
 The real test of CNG: a clean checkout must produce a working project.
 
@@ -765,17 +797,17 @@ xcodebuild -list -workspace ios/AllAboutOlaf.xcworkspace
 
 Expected: `AllAboutOlafUITests` present, pods resolve, no manual steps.
 
-- [ ] **Step 18: Verify the gate**
+- [ ] **Step 19: Verify the gate**
 
 ```bash
 mise run agent:pre-commit
 ```
 
-- [ ] **Step 19: Update CLAUDE.md**
+- [ ] **Step 20: Update CLAUDE.md**
 
 Document that `ios/` is generated and must not be hand-edited, that `mise run prebuild` regenerates it, that iOS customizations go in `app.config.ts` or `plugins/`, and that XCUITests live in `uitests/`. Update the XCUITest debugging section's path reference from `ios/AllAboutOlafUITests/` to `uitests/`.
 
-- [ ] **Step 20: Commit**
+- [ ] **Step 21: Commit**
 
 ```bash
 git add -A
