@@ -163,7 +163,11 @@ function DatePickerAccessory(props: DatePickerAccessoryProps) {
 	let format = 'h:mm A'
 	return (
 		<DatePicker
-			displayIos="inline"
+			// "compact" is the tappable time field that expands into a wheel.
+			// Expo maps "inline" onto SwiftUI's graphical style, which is the
+			// calendar picker and does not make sense for an hour-and-minute
+			// picker: it renders oddly and will not open.
+			displayIos="compact"
 			format={format}
 			initialDate={props.date}
 			mode="time"
