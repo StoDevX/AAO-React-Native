@@ -40,16 +40,16 @@ eval "$(mise activate bash --shims)"
 # install node modules
 npm ci
 
-# apply contrib/*.patch. npm won't: .npmrc sets ignore-scripts=true. The Podfile's
-# post_install also runs apply-patches.sh, but that is later and only on the pod
-# path, so do it here where the dependency is obvious.
+# apply contrib/*.patch. npm won't: .npmrc sets ignore-scripts=true, and the
+# generated Podfile has no post_install hook calling apply-patches.sh. The mise
+# prebuild task also depends on prepare; this makes the ordering explicit.
 mise run prepare
 
 # build the data files
 mise run bundle-data
 
-# install pods
-mise run pod:install --deployment
+# generate ios/ from app.config.ts, which also installs the pods
+mise run prebuild
 
 # Write ios/.xcode.env.local so Xcode Cloud's xcodebuild can find node.
 # PATH changes in this script don't carry over into xcodebuild build phases,
@@ -61,6 +61,3 @@ echo "Writing ios/.xcode.env.local with NODE_BINARY=${NODE_PATH}"
 
 echo "Contents of ios/.xcode.env.local:"
 cat ios/.xcode.env.local
-
-# if/when we go to Expo
-# npx expo prebuild
