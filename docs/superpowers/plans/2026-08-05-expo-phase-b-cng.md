@@ -159,11 +159,37 @@ If they use anything `expo-secure-store` lacks, **keep `react-native-keychain`**
 
 If migrated: `mise run pod:install`, `mise run agent:pre-commit`, build, UITests, and manually verify credentials still save and load across an app restart. Then commit. If kept, there is nothing to commit for this step — say so.
 
-- [ ] **Step 9: Leave `react-native-zeroconf` alone**
+- [ ] **Step 9: Replace the context-menu stack with `@expo/ui`**
+
+The highest-value swap in this task, and the only one that also deletes a patch.
+
+`@expo/ui` ships with SDK 57 (`~57.0.9`) and documents `MenuView` as a drop-in replacement for `react-native-ios-context-menu`:
+
+```ts
+import {MenuView} from '@expo/ui/community/menu'
+```
+
+See <https://docs.expo.dev/versions/latest/sdk/ui/drop-in-replacements/menu/>.
+
+Removing it takes out **five pods** — `react-native-ios-context-menu`, `react-native-ios-utilities`, and their transitive `ComputableLayout`, `ContextMenuAuxiliaryPreview` and `DGSwiftUtilities` — and lets `contrib/0005-ios-utilities-drop-legacy-rootcontentview.patch` and its sentinel be deleted outright.
+
+That patch exists because `ios-utilities` references `RCTRootContentView`, which React Native compiles out under the New Architecture. Both libraries last published 2025-09-28, so the patch is otherwise permanent maintenance.
+
+The surface is 12 files, including the `@frogpond/context-menu` module:
+
+```bash
+rg -l "context-menu|ContextMenu" source/ modules/
+```
+
+Migrate `modules/context-menu/index.tsx` first — most call sites go through it, so a faithful wrapper keeps the blast radius small. Then check the direct consumers: `source/views/home/notice.tsx`, `source/views/reddit/post-detail.tsx`, `source/views/transportation/bus/components/day-picker.tsx`, and the component-library screen.
+
+Verify by exercising every context menu on device, not just in the UITests — menu presentation is exactly the kind of native interaction they do not assert on. Then delete `contrib/0005` and its sentinel block in `scripts/apply-patches.sh`, and confirm `mise run prepare` still reports the remaining four.
+
+- [ ] **Step 10: Leave `react-native-zeroconf` alone**
 
 Expo has no mDNS-browsing equivalent. It stays. It is dev-only, already fails silently when the pod is absent, and needs no plugin. Note this explicitly in the PR description so a reviewer does not ask.
 
-- [ ] **Step 10: Re-list the native surface and record the delta**
+- [ ] **Step 11: Re-list the native surface and record the delta**
 
 Re-run Step 1's command and put a before/after list in the PR description. This is the number Task 2's plugin inventory is sized against.
 
@@ -495,7 +521,7 @@ and read its README. If it exists, use it. If not, ccache needs another route in
 
 - [ ] **Step 21: Write `app.config.ts`**
 
-Port every declarative field from `ios/AllAboutOlaf/Info.plist` and the Xcode project. Anything without a first-class Expo field goes through `ios.infoPlist`. The full set: bundle identifier, display name `All About Olaf`, URL scheme `AllAboutOlaf`, version, deployment target 14.0 via `expo-build-properties`, `NSAppTransportSecurity` (`NSAllowsArbitraryLoadsInWebContent` plus the localhost exception), `NSBonjourServices: ['_ccc-server._tcp.']`, `NSLocalNetworkUsageDescription`, `UIBackgroundModes: ['audio']`, `UIStatusBarStyle: 'UIStatusBarStyleDarkContent'`, `UIViewControllerBasedStatusBarAppearance: false`, both orientation arrays, `UIAppFonts` (Entypo.ttf, Ionicons.ttf, MaterialDesignIcons.ttf), `ITSAppUsesNonExemptEncryption: false`, and `UIRequiredDeviceCapabilities: ['armv7']`.
+Port every declarative field from `ios/AllAboutOlaf/Info.plist` and the Xcode project. Anything without a first-class Expo field goes through `ios.infoPlist`. The full set: bundle identifier, display name `All About Olaf`, URL scheme `AllAboutOlaf`, version, deployment target 18.6 via `expo-build-properties`, `NSAppTransportSecurity` (`NSAllowsArbitraryLoadsInWebContent` plus the localhost exception), `NSBonjourServices: ['_ccc-server._tcp.']`, `NSLocalNetworkUsageDescription`, `UIBackgroundModes: ['audio']`, `UIStatusBarStyle: 'UIStatusBarStyleDarkContent'`, `UIViewControllerBasedStatusBarAppearance: false`, both orientation arrays, `UIAppFonts` (Entypo.ttf, Ionicons.ttf, MaterialDesignIcons.ttf), `ITSAppUsesNonExemptEncryption: false`, and `UIRequiredDeviceCapabilities: ['armv7']`.
 
 Set `ios.buildNumber` from the environment so Xcode Cloud's build number becomes an input to generation rather than a post-hoc `agvtool` edit:
 

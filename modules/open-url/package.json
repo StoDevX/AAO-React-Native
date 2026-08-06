@@ -9,8 +9,8 @@
     "test": "jest"
   },
   "peerDependencies": {
-    "expo-web-browser": "~15.0.10",
-    "react-native": "^0.81.0"
+    "expo-web-browser": "~57.0.2",
+    "react-native": "^0.86.0"
   },
   "dependencies": {}
 }

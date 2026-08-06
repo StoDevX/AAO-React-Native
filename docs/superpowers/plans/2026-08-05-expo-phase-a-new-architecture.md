@@ -20,11 +20,78 @@
 - TypeScript for all new code; no `any`. Prettier config lives in `package.json` (tabs, single quotes, no semicolons).
 - Target versions, exact: Expo 57 → React Native 0.86.2, React 19.2.3, `react-native-reanimated` 4.5.1, `react-native-worklets` 0.10.1, `react-native-gesture-handler` ~2.32.0, `react-native-screens` ~4.26.0.
 - Intermediate rungs, exact: SDK 55 → RN 0.83.10, React 19.2.0, Reanimated 4.2.1, worklets 0.7.4, gesture-handler ~2.30.0, screens ~4.23.0. SDK 56 → RN 0.85.3, React 19.2.3, Reanimated 4.3.1, worklets 0.8.3, gesture-handler ~2.31.1, screens ~4.26.0.
-- `@react-native-async-storage/async-storage` (3.1.0) and `@sentry/react-native` (8.11.0) are intentionally **ahead** of Expo's pins. Do not let `expo install --fix` downgrade them; see Task 4 Step 4.
+- `@react-native-async-storage/async-storage` (3.1.0) and `@sentry/react-native` (8.11.0) are intentionally **ahead** of Expo's pins. Do not let `expo install --fix` downgrade them; see Task 4 Step 2.
+- Reanimated lands at **4.3.1** with `react-native-worklets` **0.8.3** in Task 3, not at SDK 57's 4.5.1: 4.4.x and 4.5.x both require `react-native: 0.83 - 0.86` and cannot install on RN 0.81.5. 4.3.1 spans `0.81 - 0.85`, so it survives Tasks 3 through 5 untouched. Do not let `expo install --fix` downgrade it to SDK 55's 4.2.1 in Task 4 — 4.3.1 already satisfies that SDK. It is bumped to 4.5.1/0.10.1 only in Task 6, where RN reaches 0.86.
 
 ## Prerequisites
 
 PR #7612 (skip the flaky Campus Map UITest) must be merged to master. Without it the UITest gate fails ~90% of runs and every task below is unverifiable.
+
+## What every SDK rung needs (learned in Task 4)
+
+These four apply to Tasks 4, 5 and 6 alike. None were in the original plan.
+
+1. **Reject every downgrade `expo install --fix` proposes.** It aligns to the SDK's exact pins, and this repo runs ahead of them in ten packages. Diff `package.json` before and after, and restore anything it lowered. Downgrading to a rung we leave two PRs later is churn in both directions — and SDK 55's `@react-native-community/datetimepicker@8.6.0` is genuinely broken here, because `modules/datepicker` pins `9.1.0` and 8.6.0 drags in a `react-native-windows` peer wanting a different React Native.
+
+2. **Bump the workspace peer ranges.** 25 packages under `modules/` declare `peerDependencies: {"react-native": "^0.<minor>.0"}`. A caret on a 0.x version pins the minor, so RN 0.83 does not satisfy `^0.81.0` and `npm install` fails with ERESOLVE before anything else can run. Sweep them:
+
+```bash
+node -e '
+const fs=require("fs"); const to="^0.85.0";   // set to the new RN minor
+for (const f of fs.readdirSync("modules")) {
+  const p=`modules/${f}/package.json`;
+  if (!fs.existsSync(p)) continue;
+  const j=JSON.parse(fs.readFileSync(p,"utf8"));
+  if (j.peerDependencies?.["react-native"]) {
+    j.peerDependencies["react-native"] = to;
+    fs.writeFileSync(p, JSON.stringify(j,null,2)+"\n");
+  }
+}'
+```
+
+Then check every other workspace peer against the new root versions, which is how `modules/open-url`'s stale `expo-web-browser` pin surfaced:
+
+```bash
+node -e '
+const fs=require("fs"), semver=require("semver");
+const root=JSON.parse(fs.readFileSync("package.json","utf8")).dependencies;
+for (const f of fs.readdirSync("modules")) {
+  const p=`modules/${f}/package.json`;
+  if (!fs.existsSync(p)) continue;
+  const j=JSON.parse(fs.readFileSync(p,"utf8"));
+  for (const [dep,range] of Object.entries(j.peerDependencies||{})) {
+    if (root[dep] && !semver.satisfies(root[dep], range))
+      console.log(`${p} ${dep}: peer ${range} vs root ${root[dep]}`);
+  }
+}'
+```
+
+3. **Regenerate the pods from scratch.** `pod install` cannot cross a major React Native version in place: `Podfile.lock` and `Pods/Local Podspecs` keep the old `RCT-Folly`/`fmt` pairing and CocoaPods aborts with a `fmt` version conflict. `pod update fmt` only moves the conflict. Delete and rebuild — the lockfile is deterministic and git holds the previous one:
+
+```bash
+rm -rf ios/Pods ios/Podfile.lock
+mise run pod:install
+```
+
+4. **Respect `min-release-age`.** A developer with `min-release-age` set in `~/.npmrc` (a supply-chain precaution) cannot install anything published inside that window, and `expo install --fix` will happily write a version that then fails with `ETARGET ... with a date before <date>`. Compute the newest installable version instead of trusting the SDK's nominal pin:
+
+```bash
+CUTOFF=$(node -p "new Date(Date.now()-14*864e5).toISOString()")   # match your min-release-age
+npm view <pkg> time --json | node -e '
+  let s="";process.stdin.on("data",d=>s+=d).on("end",()=>{
+    const t=JSON.parse(s), cutoff=process.argv[1], major=process.argv[2];
+    const ok=Object.entries(t)
+      .filter(([v,d])=>/^\d+\.\d+\.\d+$/.test(v) && v.startsWith(major+".") && d < cutoff)
+      .sort((a,b)=>a[1]<b[1]?1:-1);
+    console.log(ok.length?ok[0][0]:"NONE");
+  });' "$CUTOFF" <major>
+```
+
+5. **Keep the `@react-native/*` devDependencies in lockstep with React Native.** `expo install --fix` does not touch them. Task 4 left `babel-preset`, `eslint-config` and `metro-config` on 0.81.6 against RN 0.83.10; Task 5 corrected all three to 0.85.3 and added `@react-native/jest-preset`. Check them on every rung.
+
+6. **Keep the Podfile's `platform :ios` equal to `IPHONEOS_DEPLOYMENT_TARGET`.** It is pinned to 18.6, not React Native's `min_ios_version_supported`. Expo SDK 56 requires 16.4 and, when the Podfile advertises less, refuses to link *every* Expo module with a `[!] ... was not linked` warning rather than an error — easy to miss in a long log.
+
+7. **Re-apply and re-verify the contrib patches.** `npm install` reinstalls React Native and silently drops `0002-rn-abortsignal.patch`. Run `mise run prepare` and confirm all four sentinels pass. Check `0003-fmt-disable-consteval.patch` specifically: it targets fmt's `#elif` branches, and React Native changes fmt versions between releases (0.81 shipped 11.0.2, 0.83 ships 12.1.0). It survived that jump, but confirm rather than assume.
 
 ---
 
@@ -262,10 +329,18 @@ Expected: no matches. If that holds, this task has no first-party API surface to
 - [ ] **Step 2: Install Reanimated 4 and worklets**
 
 ```bash
-npm install react-native-reanimated@4.5.1 react-native-worklets@0.10.1
+npm install react-native-reanimated@4.3.1 react-native-worklets@0.8.3
 ```
 
-These are SDK 57's pins. Installing the final versions now avoids churning this dependency on every later rung.
+**Not** SDK 57's pins. Reanimated 4.5.1 declares `react-native: 0.83 - 0.86` and cannot install on RN 0.81.5; 4.4.x is the same. 4.3.1 declares `0.81 - 0.85` and is the newest 4.x that runs here, and it requires `react-native-worklets` `0.8.x`.
+
+4.3.1 is also exactly SDK 56's pin, so it matches unchanged at Task 5 and needs bumping only at Task 6. Verify the constraint rather than trusting this note:
+
+```bash
+npm view react-native-reanimated@4.3.1 peerDependencies
+```
+
+Expected: `'react-native': '0.81 - 0.85'`, `'react-native-worklets': '0.8.x'`.
 
 - [ ] **Step 3: Update the Babel plugin**
 
