@@ -23,6 +23,35 @@ afterEach(() => {
 	delete process.env.APP_VARIANT
 })
 
+describe('app.config version', () => {
+	function loadWithVersion(version: string): ExpoConfig {
+		jest.resetModules()
+		jest.doMock('../package.json', () => ({version}))
+		// eslint-disable-next-line @typescript-eslint/no-require-imports
+		return require('../app.config').default as ExpoConfig
+	}
+
+	// CFBundleShortVersionString takes the config's `version` verbatim, and
+	// Apple rejects anything but dot-separated numbers -- so a prerelease tag
+	// has to be stripped before it reaches the Info.plist.
+	it.each([
+		['2.8.0', '2.8.0'],
+		['2.8.0-beta.3', '2.8.0'],
+		['2.7.0-rc.1', '2.7.0'],
+	])('turns %s into the shippable version %s', (input, shipped) => {
+		expect(loadWithVersion(input).version).toBe(shipped)
+	})
+
+	// The prerelease tag still has to reach the JS side: setVersionInfo parses
+	// it for the flags isDebugBuild reads.
+	it.each(['2.8.0', '2.8.0-beta.3', '2.7.0-rc.1'])(
+		'carries the full %s through for prerelease detection',
+		(input) => {
+			expect(loadWithVersion(input).extra?.fullVersion).toBe(input)
+		},
+	)
+})
+
 describe('app.config variants', () => {
 	it('ships the real identity when no variant is set', () => {
 		let config = loadConfig()
@@ -32,8 +61,8 @@ describe('app.config variants', () => {
 	})
 
 	// `name` also names the generated Xcode project, its target, its scheme and
-	// its directory. Varying it per variant produced AAODev.xcodeproj and broke
-	// every plugin that looks for the AllAboutOlaf target.
+	// its directory. It must not vary per variant: every plugin looks the
+	// AllAboutOlaf target up by name.
 	it.each(['production', 'development'])(
 		'keeps the Xcode project name fixed for %s',
 		(variant) => {

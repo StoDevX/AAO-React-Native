@@ -20,12 +20,12 @@ export PATH="$(brew --prefix)/bin:$PATH"
 echo "mise version: $(mise --version)"
 
 # Install node through mise so this build uses the version .mise.toml pins.
-# `brew install node@24` used to do this, but brew tracks the newest 24.x while
-# .mise.toml pins an exact patch, so the build that actually ships to TestFlight
-# could run a different node than every other environment.
+# Homebrew's node@24 tracks the newest 24.x while .mise.toml pins an exact
+# patch, so brew would let the build that ships to TestFlight run a different
+# node than every other environment.
 #
-# This is explicit because MISE_AUTO_INSTALL is off above; that stays off, so
-# nothing else gets installed as a side effect.
+# Explicit because MISE_AUTO_INSTALL is off above; that stays off, so nothing
+# else is installed as a side effect.
 mise install node
 
 # `mise which` returns an absolute path, which is what xcodebuild needs below.

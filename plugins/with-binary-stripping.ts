@@ -55,9 +55,8 @@ function buildSettingsFor(
 const APP_TARGET = 'AllAboutOlaf'
 
 /**
- * Strip symbols from the linked binary. Copied from the project as it stood
- * before the prebuild cutover; prebuild does not reproduce either setting, and
- * losing them only shows up as a larger download.
+ * Strip symbols from the linked binary. prebuild sets neither, and their
+ * absence shows up only as a larger download, never as a failure.
  *
  * `-rSTx` is strip's: keep relocation info, strip Swift symbols, strip
  * debugging entries, strip local symbols.

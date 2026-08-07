@@ -4,9 +4,9 @@
  * Kept free of native imports so it stays testable; the caller reads the values
  * from `expo-application`.
  *
- * `@frogpond/constants` reads package.json instead, and its `appBuild()` looks
- * for the part after a `+` in the version string. Our versions have never had
- * one, so the build number was always undefined and this cell never showed it.
+ * The build number comes from the app bundle, not from `@frogpond/constants`,
+ * whose `appBuild()` reads the part after a `+` in the package.json version --
+ * a separator our versions do not use, so it yields undefined.
  */
 export function formatVersion(
 	version: string | null,

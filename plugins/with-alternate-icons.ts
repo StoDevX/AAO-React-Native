@@ -75,7 +75,7 @@ const withAlternateIcons: ConfigPlugin = (config) => {
 			let source = join(projectRoot, SOURCE_DIR, filename)
 			if (!existsSync(source)) {
 				throw new Error(
-					`with-alternate-icons: ${SOURCE_DIR}/${filename} is missing. Alternate app icons fail silently at runtime, so this is a hard error.`,
+					`with-alternate-icons: ${SOURCE_DIR}/${filename} is missing. A missing alternate icon fails silently at runtime, so this is a hard error.`,
 				)
 			}
 

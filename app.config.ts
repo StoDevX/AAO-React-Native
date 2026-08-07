@@ -1,6 +1,14 @@
 import type {ExpoConfig} from 'expo/config'
 
-import {version} from './package.json'
+import {version as fullVersion} from './package.json'
+
+/**
+ * CFBundleShortVersionString takes this verbatim, and Apple accepts only
+ * dot-separated numbers there, so a prerelease tag cannot go through. The
+ * untouched string reaches the JS side as `extra.fullVersion`, where
+ * setVersionInfo parses it for the flags isDebugBuild reads.
+ */
+const shippableVersion = fullVersion.split('-')[0]
 
 const BUNDLE_ID = 'NFMTHAZVS9.com.drewvolz.stolaf'
 
@@ -54,7 +62,7 @@ const config: ExpoConfig = {
 	name: 'All About Olaf',
 	slug: 'all-about-olaf',
 	scheme: variant.scheme,
-	version,
+	version: shippableVersion,
 	platforms: ['ios'],
 	icon: variant.icon,
 	userInterfaceStyle: 'automatic',
@@ -143,6 +151,8 @@ const config: ExpoConfig = {
 			UIRequiredDeviceCapabilities: ['armv7'],
 		},
 	},
+
+	extra: {fullVersion},
 
 	plugins: [
 		[
