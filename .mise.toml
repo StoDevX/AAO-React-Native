@@ -26,22 +26,6 @@ run = "react-native run-ios"
 description = "Start Metro bundler"
 run = "react-native start"
 
-[tasks."pod:install"]
-description = "Install CocoaPods"
-usage = '''
-flag "--deployment" help="Disallow any changes to the Podfile or the Podfile.lock during installation"
-flag "--repo-update" negate="--no-repo-update" help="Force running `pod repo update` before install"
-flag "--verbose" help="Show more debugging information"
-'''
-dir = "{{ config_root }}/ios"
-# The generated Podfile has no post_install hook calling apply-patches.sh, and
-# .npmrc sets ignore-scripts=true so npm never runs `prepare` either. Without
-# this the contrib patches silently stop being applied.
-depends = ["prepare"]
-run = '''
-pod install {% if usage.deployment %}--deployment{% endif %} {% if usage.repo_update %}--repo-update{% endif %} {% if usage.verbose %}--verbose{% endif %}
-'''
-
 [tasks.prebuild]
 description = "Generate the native iOS project from app.config.ts"
 depends = ["prepare"]
