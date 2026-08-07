@@ -13,7 +13,13 @@ export const IS_PRODUCTION = process.env.NODE_ENV === 'production'
 let APP_VERSION: string
 export const appVersion: () => typeof APP_VERSION = () => APP_VERSION
 
-// Prerelease flags, read only by isDebugBuild below.
+// Set from a prerelease tag in the package.json version -- "2.8.0-beta.3" and
+// "2.7.0-rc.1" are both real releases of this app. They exist because
+// IS_PRODUCTION is only `NODE_ENV === 'production'`, which is true of any
+// release bundle, TestFlight beta and App Store alike. These are what let a
+// beta keep its debugging affordances while a store build does not.
+//
+// Read by isDebugBuild below, and by nothing else.
 let IS_BETA = false
 let IS_ALPHA = false
 let IS_PRE = false
