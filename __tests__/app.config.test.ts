@@ -52,6 +52,23 @@ describe('app.config version', () => {
 	)
 })
 
+describe('app.config runtimeVersion', () => {
+	// Fingerprint changes exactly when the native project does. The alternatives
+	// are both wrong here: appVersion holds across native changes, and
+	// nativeVersion moves on every build number.
+	it('ties the JS bundle to the native fingerprint', () => {
+		expect(loadConfig().runtimeVersion).toEqual({policy: 'fingerprint'})
+	})
+
+	it('keeps that contract for every variant', () => {
+		for (let variant of ['production', 'development']) {
+			expect(loadConfig(variant).runtimeVersion).toEqual({
+				policy: 'fingerprint',
+			})
+		}
+	})
+})
+
 describe('app.config variants', () => {
 	it('ships the real identity when no variant is set', () => {
 		let config = loadConfig()

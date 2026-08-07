@@ -63,6 +63,20 @@ const config: ExpoConfig = {
 	slug: 'all-about-olaf',
 	scheme: variant.scheme,
 	version: shippableVersion,
+
+	// The contract between a build's native code and the JS bundle it will
+	// load: a build only accepts bundles with a matching runtimeVersion.
+	//
+	// `fingerprint` hashes the native inputs, so it changes exactly when the
+	// native project does -- which is the right granularity here, where ios/ is
+	// generated from this file and plugins/. `appVersion` would hold at 2.8.0
+	// across native changes, and `nativeVersion` would change on every CI build
+	// number even when nothing native moved.
+	//
+	// Inert until expo-updates or expo-dev-client is installed: the policy is
+	// resolved by their tooling, and it is their config plugin that writes the
+	// value into the Info.plist.
+	runtimeVersion: {policy: 'fingerprint'},
 	platforms: ['ios'],
 	icon: variant.icon,
 	userInterfaceStyle: 'automatic',
