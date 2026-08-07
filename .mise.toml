@@ -36,22 +36,29 @@ depends = ["prepare"]
 # rather than in the script keeps every prebuild -- local, GitHub Actions,
 # Xcode Cloud -- leaving the same tree.
 run = '''
-shim="$(mktemp -d)"
-if [ -d ios/ci_scripts ]; then
-  cp -R ios/ci_scripts/. "$shim/"
-else
-  echo "warning: ios/ci_scripts is missing, so there is nothing to preserve." >&2
-  echo "         Xcode Cloud will not run any build script without it." >&2
-  echo "         Restore it with: jj restore ios/ci_scripts" >&2
+set -e
+
+if [ ! -d ios/ci_scripts ]; then
+  echo "error: ios/ci_scripts is missing, so there is nothing to preserve." >&2
+  echo "       Xcode Cloud finds build scripts only beside the .xcworkspace," >&2
+  echo "       so without it no Xcode Cloud build runs a script at all." >&2
+  echo "       Restore it with: jj restore ios/ci_scripts" >&2
+  exit 1
 fi
+
+shim="$(mktemp -d)"
+cp -R ios/ci_scripts/. "$shim/"
 
 expo prebuild --platform ios
 
-if [ -n "$(ls -A "$shim" 2>/dev/null)" ]; then
-  mkdir -p ios/ci_scripts
-  cp -R "$shim/." ios/ci_scripts/
-fi
+mkdir -p ios/ci_scripts
+cp -R "$shim/." ios/ci_scripts/
 rm -rf "$shim"
+
+if [ ! -f ios/ci_scripts/ci_post_clone.sh ]; then
+  echo "error: ios/ci_scripts was not restored after prebuild." >&2
+  exit 1
+fi
 '''
 
 [tasks.fastlane]
