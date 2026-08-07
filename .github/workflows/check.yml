@@ -155,40 +155,46 @@ jobs:
       cache-key: ${{ steps.app-cache.outputs.cache-matched-key || steps.app-cache.outputs.cache-primary-key }}
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151 # v4.0.1
 
-      # contrib/** and apply-patches.sh belong in this hash even though neither
-      # lives under ios/: the patches rewrite node_modules sources that CocoaPods
-      # copies into ios/Pods at build time, so they change the compiled binary
-      # without touching any tracked iOS file. Omitting them meant a patch-only
-      # change reused a cached app built without that patch.
+      # @expo/fingerprint hashes what prebuild would actually generate --
+      # app.config.ts, plugins/**, and (after `prepare` applies contrib/**'s
+      # patches below) the patched contents of any autolinked native module
+      # under node_modules, including package-lock.json-driven version bumps.
+      # That's a better proxy for "does the native project need to change"
+      # than a hand-picked glob list, and it already caught the exact bug the
+      # old list needed a special fix for: a patch that rewrites
+      # node_modules/react-native-change-icon/ios/ChangeIcon.h without
+      # touching any tracked iOS file.
+      - name: Compute native-project fingerprint
+        id: fingerprint
+        run: |
+          npm ci
+          mise run prepare
+          npx --no-install fingerprint fingerprint:generate --platform ios > /tmp/expo-fingerprint.json
+          hash=$(node -pe "JSON.parse(require('fs').readFileSync('/tmp/expo-fingerprint.json')).hash")
+          echo "hash=$hash" >> "$GITHUB_OUTPUT"
+
+      # expo-fingerprint has no notion of these, so they still need a manual
+      # hashFiles() alongside it:
+      #   - uitests/**: XCUITest sources built into the test target directly
+      #     by xcodebuild, not part of native project generation.
+      #   - .mise.toml: pins the Ruby/fastlane/etc. toolchain the build uses,
+      #     independent of what prebuild would generate.
+      #   - contrib/**, scripts/apply-patches.sh: 0003-fmt-disable-consteval
+      #     patches ios/Pods/fmt/include/fmt/base.h, a CocoaPods-generated
+      #     file that doesn't exist in node_modules for the fingerprint step
+      #     to see, applied or not. A change to that patch (or to how patches
+      #     are applied) would be invisible to expo-fingerprint entirely.
       - name: Check for cached iOS app
         id: app-cache
         uses: actions/cache/restore@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
         with:
           lookup-only: true
           path: ios/build/Build/Products/
-          key: ios-app/e=${{ env.cache_epoch }}${{ env.cache_bust }}/host=macOS@26/target=ios/xcode=${{ env.xcode_version }}/ref=${{ github.head_ref || github.ref_name }}/hash=${{ hashFiles('app.config.ts', 'plugins/**', 'uitests/**', 'package-lock.json', 'contrib/**', 'scripts/apply-patches.sh', '.mise.toml') }}
+          key: ios-app/e=${{ env.cache_epoch }}${{ env.cache_bust }}/host=macOS@26/target=ios/xcode=${{ env.xcode_version }}/ref=${{ github.head_ref || github.ref_name }}/hash=${{ steps.fingerprint.outputs.hash }}-${{ hashFiles('uitests/**', '.mise.toml', 'contrib/**', 'scripts/apply-patches.sh') }}
           restore-keys: |
-            ios-app/e=${{ env.cache_epoch }}${{ env.cache_bust }}/host=macOS@26/target=ios/xcode=${{ env.xcode_version }}/ref=master/hash=${{ hashFiles('app.config.ts', 'plugins/**', 'uitests/**', 'package-lock.json', 'contrib/**', 'scripts/apply-patches.sh', '.mise.toml') }}
-
-      # Spike: evaluate github.com/expo/expo-fingerprint as a replacement for
-      # the hand-maintained glob list above. Diagnostic only -- it logs its
-      # hash next to the hashFiles() key so the two can be compared across
-      # real PRs, and does not affect cache-matched-key or any downstream job.
-      # Remove this step once the comparison data is in.
-      - uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151 # v4.0.1
-      - name: Compute expo-fingerprint (spike, diagnostic only)
-        run: |
-          npm ci
-          mise run prepare
-          npx --no-install fingerprint fingerprint:generate --platform ios > /tmp/expo-fingerprint.json
-          expo_hash=$(node -pe "JSON.parse(require('fs').readFileSync('/tmp/expo-fingerprint.json')).hash")
-          manual_hash="${{ hashFiles('app.config.ts', 'plugins/**', 'uitests/**', 'package-lock.json', 'contrib/**', 'scripts/apply-patches.sh', '.mise.toml') }}"
-          {
-            echo "### expo-fingerprint spike"
-            echo "- manual (hashFiles) key: \`$manual_hash\`"
-            echo "- expo-fingerprint hash: \`$expo_hash\`"
-          } >> "$GITHUB_STEP_SUMMARY"
+            ios-app/e=${{ env.cache_epoch }}${{ env.cache_bust }}/host=macOS@26/target=ios/xcode=${{ env.xcode_version }}/ref=master/hash=${{ steps.fingerprint.outputs.hash }}-${{ hashFiles('uitests/**', '.mise.toml', 'contrib/**', 'scripts/apply-patches.sh') }}
 
   ios-build:
     name: Build for iOS
