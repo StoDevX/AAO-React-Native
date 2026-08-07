@@ -127,8 +127,17 @@ export type ExtendedSrgbComponents = [number, number, number, number]
 /// Converts a `color(display-p3 ...)` colour into the components that reproduce
 /// it. Values outside 0...1 are expected and must not be clamped:
 /// they are what carries a colour sRGB cannot otherwise reach.
-export function displayP3Components(css: string): ExtendedSrgbComponents {
-	let [p3, alpha] = parseDisplayP3(css)
+///
+/// `alphaOverride` replaces whatever alpha the string carries. It exists for
+/// colours that are derived from another rather than authored -- a card's
+/// shadow is its own gradient at a fraction of its opacity -- where writing the
+/// alpha into the literal would mean duplicating the colour to vary it.
+export function displayP3Components(
+	css: string,
+	alphaOverride?: number,
+): ExtendedSrgbComponents {
+	let [p3, parsedAlpha] = parseDisplayP3(css)
+	let alpha = alphaOverride ?? parsedAlpha
 	let linearP3 = p3.map(toLinear) as Triple
 	let [red, green, blue] = apply(XYZ_TO_SRGB, apply(P3_TO_XYZ, linearP3)).map(
 		fromLinear,
@@ -142,6 +151,6 @@ export function displayP3Components(css: string): ExtendedSrgbComponents {
 /// its *parser* accepts; the array form goes to the same place but is missing
 /// from the type. The cast is the one place that gap is papered over, rather
 /// than at each of the call sites.
-export function displayP3(css: string): ColorValue {
-	return displayP3Components(css) as unknown as ColorValue
+export function displayP3(css: string, alphaOverride?: number): ColorValue {
+	return displayP3Components(css, alphaOverride) as unknown as ColorValue
 }

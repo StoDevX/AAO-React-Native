@@ -18,6 +18,7 @@ import {
 	frame,
 	imageScale,
 	padding,
+	shadow,
 	shapes,
 } from '@expo/ui/swift-ui/modifiers'
 import {displayP3} from '@frogpond/colors'
@@ -54,6 +55,14 @@ const CELL_RADIUS = 27
 /// size because the alternative is plumbing the rendered card's bounds back out
 /// to JS, and a few points either way only shifts where the fade bottoms out.
 const CELL_GRADIENT_RADIUS = 129
+/// Shortcuts tints a card's shadow with the card's own colour rather than
+/// using a neutral one: measured below a gold card, the page reads #fff2cb
+/// against a neutral #fbfcf7 four pixels out and stays tinted about thirty
+/// pixels down. That is roughly a fifth of the card's colour once blurred,
+/// which this radius reaches from a rather stronger source alpha.
+const CELL_SHADOW_RADIUS = 8
+const CELL_SHADOW_Y = 2
+const CELL_SHADOW_ALPHA = 0.4
 const cellPadding = 16
 /// The vertical insets are not symmetric with the horizontal one, nor with each
 /// other. Both are written as whole pixels at 3x because that is how they were
@@ -144,6 +153,20 @@ export function HomeScreenButton({view, onPress}: Props): React.ReactNode {
 				<RoundedRectangle
 					cornerRadius={CELL_RADIUS}
 					modifiers={[
+						// Only in light mode. A shadow tinted with the card's own colour
+						// has nothing to darken against a black background, so it reads
+						// as the card glowing rather than sitting above the page --
+						// measured on Shortcuts' own dark grid, the gap between cards is
+						// #000000 to the pixel, with no halo at all.
+						...(dark
+							? []
+							: [
+									shadow({
+										radius: CELL_SHADOW_RADIUS,
+										y: CELL_SHADOW_Y,
+										color: displayP3(gradientOuter, CELL_SHADOW_ALPHA),
+									}),
+								]),
 						foregroundStyle({
 							type: 'radialGradient',
 							colors: [displayP3(gradientInner), displayP3(gradientOuter)],

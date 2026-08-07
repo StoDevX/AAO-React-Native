@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {StyleSheet} from 'react-native'
+import {PlatformColor, StyleSheet} from 'react-native'
 import {
 	Grid,
 	Host,
@@ -126,6 +126,35 @@ export const NavigationKey = 'Home'
 export const NavigationOptions: NativeStackNavigationOptions = {
 	title: 'All About Olaf',
 	headerRight: (props) => <OpenSettingsButton {...props} />,
+	// The cards carry their own colour and their own shadow, so the grouped grey
+	// the navigation theme gives every other screen reads as a panel behind them
+	// -- Shortcuts and Health both set their grid on the plain background. This
+	// is scoped to this screen rather than changed in the theme, which the rest
+	// of the app still wants. systemBackground rather than a literal, so it
+	// follows the appearance the way the theme's own colour would.
+	contentStyle: {backgroundColor: PlatformColor('systemBackground')},
+	// The separator under the bar draws a line across the top of that same
+	// background; neither app it copies has one.
+	headerShadowVisible: false,
+	// A large title that collapses as the grid scrolls, over a bar the cards
+	// show through rather than disappear behind.
+	//
+	// Deliberately no headerBlurEffect. It sets a UIBlurEffect material, which is
+	// how a bar was blurred before iOS 26, and asking for one on 26 or later
+	// replaces the glass the system would otherwise put there. Both ends of that
+	// ladder were tried on iOS 27 and both read as the older effect:
+	// systemChromeMaterial let 11/255 of the card behind it through and
+	// systemUltraThinMaterial looked plainly pre-glass, against 29/255 for asking
+	// for nothing and 63/255 for Shortcuts itself.
+	//
+	// That last gap looks like the limit of what is reachable from here rather
+	// than something left untuned: Shortcuts' bar lifts black to #1d2429 where
+	// ours leaves it at #060c0f, and that luminosity is the part of glass a blur
+	// material does not have. The other iOS 26 route, scrollEdgeEffects, needs a
+	// React Native ScrollView it can find in the screen's descendants, and this
+	// screen scrolls in SwiftUI.
+	headerLargeTitleEnabled: true,
+	headerTransparent: true,
 }
 
 export type NavigationParams = undefined

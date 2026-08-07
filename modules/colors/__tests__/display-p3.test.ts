@@ -57,6 +57,11 @@ describe('displayP3', () => {
 			expect(displayP3(`color(display-p3 1 1 1 / 50%)`)[3]).toBe(0.5)
 		})
 
+		test('lets an override replace the alpha in the string', () => {
+			expect(displayP3(`color(display-p3 1 1 1 / 0.79)`, 0.4)[3]).toBe(0.4)
+			expect(displayP3(WHITE, 0.4)[3]).toBe(0.4)
+		})
+
 		test('defaults alpha to opaque', () => {
 			expect(displayP3(WHITE)[3]).toBe(1)
 		})
