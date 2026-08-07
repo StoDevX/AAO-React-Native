@@ -39,7 +39,7 @@ dir = "{{ config_root }}/ios"
 # this the contrib patches silently stop being applied.
 depends = ["prepare"]
 run = '''
-../scripts/pod install {% if usage.deployment %}--deployment{% endif %} {% if usage.repo_update %}--repo-update{% endif %} {% if usage.verbose %}--verbose{% endif %}
+pod install {% if usage.deployment %}--deployment{% endif %} {% if usage.repo_update %}--repo-update{% endif %} {% if usage.verbose %}--verbose{% endif %}
 '''
 
 [tasks.prebuild]

@@ -61,7 +61,7 @@ mise run lint   # ESLint
 mise run pretty # Prettier; run `pretty:check` to validate instead
 mise run test   # Jest, unit tests
 mise run tsc    # Type check
-mise run pods   # Install cocoapods, even on Linux
+mise run prebuild # Generate ios/ from app.config.ts, and install pods
 ```
 
 ### Local Server Discovery
@@ -73,7 +73,7 @@ To use this:
 2. Run a debug build of the app on a device on the same network
 3. Navigate to Settings → Server URL — the server will appear automatically
 
-The feature uses `react-native-zeroconf` (native pod). If the pod hasn't been linked yet (`mise run pods`), discovery is silently skipped — the screen won't crash.
+The feature uses `react-native-zeroconf` (native pod). If the pod hasn't been linked yet (`mise run prebuild`), discovery is silently skipped — the screen won't crash.
 
 ## Agent Workflow
 
