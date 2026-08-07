@@ -78,10 +78,18 @@ overrides:
   # parse() (GHSA-395f-4hp3-45gv). No fix within 1.8.x; next fixed release is 1.10.0.
   'shell-quote@1.8': '1.10.0'
   # @xmldom/xmldom@0.8.12 (via @expo/plist, used by `expo prebuild` to
-  # read/write ios/Info.plist): four XML injection/DoS advisories
-  # (GHSA-j759-j44w-7fr8, GHSA-x6wf-f3px-wcqx, GHSA-f6ww-3ggp-fr8h,
-  # GHSA-2v35-w6hq-6mfw), all fixed in 0.9.x.
-  '@xmldom/xmldom@0.8': '0.9.10'
+  # read/write ios/Info.plist and ios/*.entitlements): NOT overridden. Four
+  # XML injection/DoS advisories (GHSA-j759-j44w-7fr8, GHSA-x6wf-f3px-wcqx,
+  # GHSA-f6ww-3ggp-fr8h, GHSA-2v35-w6hq-6mfw), all fixed in 0.9.x. Tried
+  # forcing 0.9.10 and it broke `expo prebuild` twice over: 0.9's
+  # DOMParser.parseFromString requires an explicit mimeType (patchable --
+  # @expo/plist@0.8.1 calls it with none), and separately its stricter XML
+  # declaration handling rejects ios/*.entitlements
+  # ("processing instruction at position 1 is an xml declaration which is
+  # only at the start of the document") in a way a single patch couldn't
+  # cleanly paper over. Neither surfaced in tsc/eslint/jest -- only a real
+  # `expo prebuild` run exercises this parsing path. See the allow-ghsas
+  # entries in .github/workflows/dependency-review.yml.
   # fast-uri@3.1.0 (via ajv, used by our own eslint/ajv-formats devDeps):
   # path-traversal and host-confusion advisories (GHSA-q3j6-qgpj-74h6,
   # GHSA-v39h-62p7-jpjc); fixed within the same 3.1.x line.
