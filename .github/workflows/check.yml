@@ -156,23 +156,18 @@ jobs:
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151 # v4.0.1
+      - run: npm ci
+      - run: mise run prepare
 
-      # @expo/fingerprint hashes what prebuild would actually generate --
+      # @expo/fingerprint hashes what prebuild would actually generate:
       # app.config.ts, plugins/**, and (after `prepare` applies contrib/**'s
-      # patches below) the patched contents of any autolinked native module
+      # patches, above) the patched contents of any autolinked native module
       # under node_modules, including package-lock.json-driven version bumps.
-      # That's a better proxy for "does the native project need to change"
-      # than a hand-picked glob list, and it already caught the exact bug the
-      # old list needed a special fix for: a patch that rewrites
-      # node_modules/react-native-change-icon/ios/ChangeIcon.h without
-      # touching any tracked iOS file.
       - name: Compute native-project fingerprint
         id: fingerprint
         run: |
-          npm ci
-          mise run prepare
           npx --no-install fingerprint fingerprint:generate --platform ios > /tmp/expo-fingerprint.json
-          hash=$(node -pe "JSON.parse(require('fs').readFileSync('/tmp/expo-fingerprint.json')).hash")
+          hash=$(jq -r .hash /tmp/expo-fingerprint.json)
           echo "hash=$hash" >> "$GITHUB_OUTPUT"
 
       # expo-fingerprint has no notion of these, so they still need a manual
