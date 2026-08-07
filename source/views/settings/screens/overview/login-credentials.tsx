@@ -4,10 +4,12 @@ import {
 	Section,
 	Text,
 	TextField,
+	type SecureFieldRef,
 	type TextFieldRef,
 	useNativeState,
 } from '@expo/ui/swift-ui'
 import {
+	disabled,
 	foregroundColor,
 	onSubmit,
 	submitLabel,
@@ -55,7 +57,7 @@ export const CredentialsLoginSection = (): React.ReactNode => {
 
 	let [password, setPassword] = React.useState('')
 	let passwordState = useNativeState('')
-	let passwordInputRef = React.useRef<TextFieldRef>(null)
+	let passwordInputRef = React.useRef<SecureFieldRef>(null)
 
 	let credentials = useQuery(credentialsOptions)
 
@@ -111,6 +113,7 @@ export const CredentialsLoginSection = (): React.ReactNode => {
 						modifiers={[
 							submitLabel('next'),
 							onSubmit(() => passwordInputRef.current?.focus()),
+							disabled(actionPending),
 						]}
 						onTextChange={setUsername}
 						placeholder="username"
@@ -119,7 +122,11 @@ export const CredentialsLoginSection = (): React.ReactNode => {
 
 					<SecureField
 						ref={passwordInputRef}
-						modifiers={[submitLabel('done'), onSubmit(() => logIn.mutate())]}
+						modifiers={[
+							submitLabel('done'),
+							onSubmit(() => logIn.mutate()),
+							disabled(actionPending),
+						]}
 						onTextChange={setPassword}
 						placeholder="password"
 						text={passwordState}
