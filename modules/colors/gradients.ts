@@ -4,15 +4,18 @@
 /// top/bottom or left/right pair.
 ///
 /// Both are Display P3, which is the space the screenshots they were sampled
-/// from are in and the space Shortcuts draws them in. They are *not* sRGB hex
-/// and must not be handed to anything that will read them as such: pass them
-/// through `displayP3` first. See display-p3.ts.
+/// from are in and the space Shortcuts draws them in, and both are written in
+/// the CSS Color 4 syntax that says so. Writing them as hex would make a P3
+/// value indistinguishable in source from an sRGB one, and passing one where
+/// the other is expected renders the wrong colour without erroring. Pass them
+/// through `displayP3` to get something a view can take. See display-p3.ts.
 export type Gradient = [string, string]
 
 // MARK: gradients
 //
-// Sampled from the Shortcuts cards themselves, on an iPhone 14 Pro. Every value
-// below is Display P3 -- see the note on Gradient.
+// Sampled from the Shortcuts cards themselves, on an iPhone 14 Pro. The
+// components are eighth-bit readings off those screenshots, written as
+// fractions -- so 0.9294 is 237/255, not a value measured to four places.
 //
 // The outer stop of every colour is the bottom edge of that colour's swatch in
 // the Shortcuts colour picker: measured against eight real cards, the two agree
@@ -35,32 +38,77 @@ export type Gradient = [string, string]
 // height.
 
 // measured: Directory
-export const redGradient: Gradient = ['#ed7c85', '#e66369']
+export const redGradient: Gradient = [
+	'color(display-p3 0.9294 0.4863 0.5216)',
+	'color(display-p3 0.902 0.3882 0.4118)',
+]
 // measured: Important Contacts
-export const orangeGradient: Gradient = ['#f1a083', '#ed8467']
+export const orangeGradient: Gradient = [
+	'color(display-p3 0.9451 0.6275 0.5137)',
+	'color(display-p3 0.9294 0.5176 0.4039)',
+]
 // measured: Important Contacts
-export const goldGradient: Gradient = ['#f8bb77', '#eba65a']
+export const goldGradient: Gradient = [
+	'color(display-p3 0.9725 0.7333 0.4667)',
+	'color(display-p3 0.9216 0.651 0.3529)',
+]
 // measured: SIS, Save To Reader
-export const yellowGradient: Gradient = ['#f8d94f', '#f0bd42']
+export const yellowGradient: Gradient = [
+	'color(display-p3 0.9725 0.851 0.3098)',
+	'color(display-p3 0.9412 0.7412 0.2588)',
+]
 // measured: Menus, Code Remotely
-export const greenGradient: Gradient = ['#7fe07e', '#67c263']
+export const greenGradient: Gradient = [
+	'color(display-p3 0.498 0.8784 0.4941)',
+	'color(display-p3 0.4039 0.7608 0.3882)',
+]
 // measured: Repeat with Each, GIF to MP4
-export const mintGradient: Gradient = ['#6ae6c7', '#5bc8a9']
+export const mintGradient: Gradient = [
+	'color(display-p3 0.4157 0.902 0.7804)',
+	'color(display-p3 0.3569 0.7843 0.6627)',
+]
 // measured: Streaming Media
-export const lightBlueGradient: Gradient = ['#5dcbf9', '#4eadf0']
+export const lightBlueGradient: Gradient = [
+	'color(display-p3 0.3647 0.7961 0.9765)',
+	'color(display-p3 0.3059 0.6784 0.9412)',
+]
 // measured: Hours
-export const blueGradient: Gradient = ['#539ef7', '#3c81f5']
+export const blueGradient: Gradient = [
+	'color(display-p3 0.3255 0.6196 0.9686)',
+	'color(display-p3 0.2353 0.5059 0.9608)',
+]
 // measured: Map
-export const indigoGradient: Gradient = ['#6079d6', '#445db8']
+export const indigoGradient: Gradient = [
+	'color(display-p3 0.3765 0.4745 0.8392)',
+	'color(display-p3 0.2667 0.3647 0.7216)',
+]
 // measured: News, Copy Article
-export const purpleGradient: Gradient = ['#966bd6', '#7950b7']
+export const purpleGradient: Gradient = [
+	'color(display-p3 0.5882 0.4196 0.8392)',
+	'color(display-p3 0.4745 0.3137 0.7176)',
+]
 // measured: Encode Media
-export const violetGradient: Gradient = ['#ca93f6', '#ac76dc']
+export const violetGradient: Gradient = [
+	'color(display-p3 0.7922 0.5765 0.9647)',
+	'color(display-p3 0.6745 0.4627 0.8627)',
+]
 // measured: Calendar
-export const pinkGradient: Gradient = ['#f1a6ed', '#e58bcd']
+export const pinkGradient: Gradient = [
+	'color(display-p3 0.9451 0.651 0.9294)',
+	'color(display-p3 0.898 0.5451 0.8039)',
+]
 // measured: Credit Cards
-export const grayGradient: Gradient = ['#9fa7b2', '#828a95']
+export const grayGradient: Gradient = [
+	'color(display-p3 0.6235 0.6549 0.698)',
+	'color(display-p3 0.5098 0.5412 0.5843)',
+]
 // measured: Campus Dictionary
-export const sageGradient: Gradient = ['#acc2ae', '#8ea490']
+export const sageGradient: Gradient = [
+	'color(display-p3 0.6745 0.7608 0.6824)',
+	'color(display-p3 0.5569 0.6431 0.5647)',
+]
 // measured: Map
-export const tanGradient: Gradient = ['#c1aa8e', '#a38c70']
+export const tanGradient: Gradient = [
+	'color(display-p3 0.7569 0.6667 0.5569)',
+	'color(display-p3 0.6392 0.549 0.4392)',
+]

@@ -1,5 +1,6 @@
 import {describe, expect, test} from '@jest/globals'
 
+import {displayP3} from '../display-p3'
 import * as gradients from '../gradients'
 
 const EXPECTED_NAMES = [
@@ -26,13 +27,17 @@ describe('gradients', () => {
 		expect(exportedNames.sort()).toEqual([...EXPECTED_NAMES].sort())
 	})
 
-	test('every gradient is a [left, right] pair of hex colors', () => {
+	test('every gradient is an [inner, outer] pair of Display P3 colors', () => {
 		for (let name of EXPECTED_NAMES) {
 			let value = (gradients as Record<string, unknown>)[name]
 			expect(Array.isArray(value)).toBe(true)
 			expect((value as string[]).length).toBe(2)
 			for (let color of value as string[]) {
-				expect(color).toMatch(/^#[0-9a-f]{6}$/iu)
+				// Parsing it is a stronger check than matching a shape: these have to
+				// survive the conversion that actually renders them, and a hex value
+				// that slipped in would be rejected rather than quietly treated as
+				// sRGB.
+				expect(() => displayP3(color)).not.toThrow()
 			}
 		}
 	})

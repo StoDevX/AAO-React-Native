@@ -13,8 +13,8 @@ import {displayP3} from '@frogpond/colors'
 /// White and black are the same colour in sRGB and Display P3, so unlike the
 /// card gradients these need no conversion -- but they go through the same
 /// helper so every colour on this screen reaches SwiftUI by one route.
-export const homescreenTitleLight = displayP3('#ffffff')
-export const homescreenIconLight = displayP3('#ffffff', 0.79)
+export const homescreenTitleLight = displayP3('color(display-p3 1 1 1)')
+export const homescreenIconLight = displayP3('color(display-p3 1 1 1 / 0.79)')
 
-export const homescreenTitleDark = displayP3('#000000')
-export const homescreenIconDark = displayP3('#000000', 0.81)
+export const homescreenTitleDark = displayP3('color(display-p3 0 0 0)')
+export const homescreenIconDark = displayP3('color(display-p3 0 0 0 / 0.81)')

@@ -63,30 +63,56 @@ function fromLinear(value: number): number {
 	return Math.sign(value) * encoded
 }
 
-function parseHex(hex: string): Triple {
-	let digits = hex.replace(/^#/u, '')
-	if (digits.length === 3) {
-		digits = [...digits].map((digit) => digit + digit).join('')
+/// Reads the CSS Color 4 `color(display-p3 r g b)` form, with an optional
+/// `/ alpha`. Components are 0...1 numbers or percentages.
+///
+/// Colours are written this way rather than as hex so that a P3 value cannot be
+/// mistaken for an sRGB one. They are different colours that would otherwise
+/// look identical in source, and passing one where the other is expected is a
+/// silently-wrong render rather than an error. React Native's own parser
+/// rejects this syntax, so the mistake fails loudly there too.
+///
+/// It is also the syntax React Native's own wide-gamut proposal uses, so if
+/// that ever lands on the JS side these values can be passed straight through
+/// and the conversion below deleted.
+const P3_PATTERN =
+	/^color\(\s*display-p3\s+(?<components>[^/)]+?)\s*(?:\/\s*(?<alpha>[^\s)]+)\s*)?\)$/iu
+
+function component(text: string): number {
+	let value = text.endsWith('%')
+		? Number(text.slice(0, -1)) / 100
+		: Number(text)
+	if (Number.isNaN(value)) {
+		throw new Error(`"${text}" is not a number or percentage`)
 	}
-	if (!/^[0-9a-f]{6}$/iu.test(digits)) {
-		throw new Error(`"${hex}" is not a six-digit hex colour`)
+	return value
+}
+
+function parseDisplayP3(css: string): [Triple, number] {
+	let match = P3_PATTERN.exec(css.trim())
+	if (!match?.groups) {
+		throw new Error(`"${css}" is not a color(display-p3 ...) colour`)
 	}
-	let channel = (index: number): number =>
-		parseInt(digits.slice(index * 2, index * 2 + 2), 16) / 255
-	return [channel(0), channel(1), channel(2)]
+	let parts = match.groups['components'].split(/\s+/u)
+	if (parts.length !== 3) {
+		throw new Error(
+			`color(display-p3 ...) takes three components, got ${parts.length}`,
+		)
+	}
+	let [red, green, blue] = parts.map(component) as Triple
+	let alpha = match.groups['alpha'] ? component(match.groups['alpha']) : 1
+	return [[red, green, blue], alpha]
 }
 
 /// The components of a Display P3 colour, expressed in extended sRGB.
 export type ExtendedSrgbComponents = [number, number, number, number]
 
-/// Converts a hex colour *measured in Display P3* into the components that
-/// reproduce it. Values outside 0...1 are expected and must not be clamped:
+/// Converts a `color(display-p3 ...)` colour into the components that reproduce
+/// it. Values outside 0...1 are expected and must not be clamped:
 /// they are what carries a colour sRGB cannot otherwise reach.
-export function displayP3Components(
-	hex: string,
-	alpha = 1,
-): ExtendedSrgbComponents {
-	let linearP3 = parseHex(hex).map(toLinear) as Triple
+export function displayP3Components(css: string): ExtendedSrgbComponents {
+	let [p3, alpha] = parseDisplayP3(css)
+	let linearP3 = p3.map(toLinear) as Triple
 	let [red, green, blue] = apply(XYZ_TO_SRGB, apply(P3_TO_XYZ, linearP3)).map(
 		fromLinear,
 	) as Triple
@@ -99,6 +125,6 @@ export function displayP3Components(
 /// its *parser* accepts; the array form goes to the same place but is missing
 /// from the type. The cast is the one place that gap is papered over, rather
 /// than at each of the call sites.
-export function displayP3(hex: string, alpha = 1): ColorValue {
-	return displayP3Components(hex, alpha) as unknown as ColorValue
+export function displayP3(css: string): ColorValue {
+	return displayP3Components(css) as unknown as ColorValue
 }
