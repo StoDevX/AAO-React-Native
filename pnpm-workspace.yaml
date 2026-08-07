@@ -67,11 +67,76 @@ overrides:
   'brace-expansion@2': '2.1.4'
   'brace-expansion@5': '5.0.9'
   'postcss@8': '8.5.25'
-  # shell-quote@1.8.3 (pulled in transitively via launch-editor, part of
-  # @react-native-community/cli-tools) has two known advisories: a critical
-  # newline-escaping bug (GHSA-w7jw-789q-3m8p) and a ReDoS in parse()
-  # (GHSA-395f-4hp3-45gv). Both are fixed upstream; force the patched version.
-  'shell-quote': '1.10.0'
+  # Known-vulnerable transitive deps, all pulled in by build/CLI tooling
+  # (never part of the shipped JS bundle). Each override is scoped to the
+  # currently-resolved major/minor so it can't clobber some other, unrelated
+  # future resolution of the same package (e.g. a hypothetical xmldom 0.10.x
+  # getting forced back down to 0.9.x).
+  #
+  # shell-quote@1.8.3 (via launch-editor, part of @react-native-community/cli-tools):
+  # critical newline-escaping bug (GHSA-w7jw-789q-3m8p) and a ReDoS in
+  # parse() (GHSA-395f-4hp3-45gv). No fix within 1.8.x; next fixed release is 1.10.0.
+  'shell-quote@1.8': '1.10.0'
+  # @xmldom/xmldom@0.8.12 (via @expo/plist, used by `expo prebuild` to
+  # read/write ios/Info.plist): four XML injection/DoS advisories
+  # (GHSA-j759-j44w-7fr8, GHSA-x6wf-f3px-wcqx, GHSA-f6ww-3ggp-fr8h,
+  # GHSA-2v35-w6hq-6mfw), all fixed in 0.9.x.
+  '@xmldom/xmldom@0.8': '0.9.10'
+  # fast-uri@3.1.0 (via ajv, used by our own eslint/ajv-formats devDeps):
+  # path-traversal and host-confusion advisories (GHSA-q3j6-qgpj-74h6,
+  # GHSA-v39h-62p7-jpjc); fixed within the same 3.1.x line.
+  'fast-uri@3.1': '3.1.5'
+  # fast-xml-builder@1.1.4 (via fast-xml-parser, via @react-native-community/cli
+  # platform tooling): lets attribute values bypass quoting (GHSA-5wm8-gmm8-39j9);
+  # fixed within the same 1.1.x line.
+  'fast-xml-builder@1.1': '1.1.7'
+  # fast-xml-parser@5.6.0 (via @react-native-community/cli platform tooling):
+  # separate advisory from fast-xml-builder (GHSA-gh4j-gqv2-49f6); no fix
+  # within 5.6.x, next fixed release is 5.7.0.
+  'fast-xml-parser@5.6': '5.7.0'
+  # undici@6.25.0 (via @sentry/cli, used for sourcemap upload): WebSocket
+  # DoS via fragment-count bypass (GHSA-vxpw-j846-p89q) plus several other
+  # DoS/pool advisories; no fix within 6.25.x, next fixed release is 6.28.0.
+  'undici@6.25': '6.28.0'
+  # ws@6.2.3 (via @react-native-community/cli-server-api, the local dev
+  # server): memory-exhaustion DoS from tiny fragments (GHSA-96hv-2xvq-fx4p);
+  # fixed within the same 6.2.x line. (react-native/expo also pull in
+  # ws@7.x/8.x elsewhere -- those are unaffected and untouched by this.)
+  'ws@6.2': '6.2.4'
+  # js-yaml, two separately-resolved lines both pulled in via cosmiconfig
+  # (@react-native-community/cli config loading): quadratic-CPU merge-key
+  # bug (GHSA-52cp-r559-cp3m) and prototype-adjacent parsing issue
+  # (GHSA-5p4m-2wfm-xmqj, GHSA-h67p-54hq-rp68). No fix within either
+  # resolved minor; next fixed releases are 3.15.1 and 4.3.1.
+  'js-yaml@3.14': '3.15.1'
+  'js-yaml@4.1': '4.3.1'
+  # qs@6.15.1 (via body-parser/express, the local dev server): fixed within
+  # the same 6.15.x line (GHSA-q8mj-m7cp-5q26).
+  'qs@6.15': '6.15.2'
+  # joi@17.13.3 (via @react-native-community/cli-server-api): fixed within
+  # the same 17.13.x line (GHSA-q7cg-457f-vx79).
+  'joi@17.13': '17.13.4'
+  # launch-editor@2.13.2 (via @react-native-community/cli-tools, "open in
+  # editor" support): fixed at 2.14.1 (GHSA-v6wh-96g9-6wx3); no fix within 2.13.x.
+  'launch-editor@2.13': '2.14.1'
+  # body-parser@2.2.2 (via @react-native-community/cli-server-api): fixed at
+  # 2.3.0 (GHSA-v422-hmwv-36x6); no fix within 2.2.x.
+  'body-parser@2.2': '2.3.0'
+  # uuid@7.0.3 (via the xcode package): NOT overridden. GHSA-w5hq-g745-h8pq
+  # (moderate) is a missing buffer-bounds check in v3/v5/v6 when an explicit
+  # output buffer is passed; xcode only calls the unaffected `uuid.v4()`
+  # with no buffer arg. Tried forcing 11.1.1 (the only fixed version, a
+  # major bump) and it broke: uuid@11's package.json "exports" field routes
+  # `require('uuid')` to dist/esm-browser under Jest's module resolution
+  # instead of dist/cjs, so xcode's `require('uuid')` in pbxProject.js gets
+  # back ES module syntax Jest can't parse -- fails to even load, breaking
+  # every plugins/__tests__ test that touches @expo/config-plugins. See the
+  # allow-ghsas entry in .github/workflows/dependency-review.yml.
+  # @babel/core resolves twice: our own devDependency (already bumped in
+  # package.json) and a separate transitive instance pulled in via Jest's
+  # babel-jest/istanbul instrumentation chain, which independently pinned
+  # 7.29.0 -- ReDoS in template literal parsing (GHSA-4x5r-pxfx-6jf8).
+  '@babel/core@7.29': '7.29.7'
   # react-dom is an optionalDependency of expo, @expo/ui, and @expo/router-server
   # -- all needed only for their web targets. This app is iOS-only and never
   # renders any of their web variants, so drop it rather than just pinning it.
