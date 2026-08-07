@@ -137,5 +137,6 @@ overrides:
 saveExact: true
 savePrefix: ''
 patchedDependencies:
+  '@expo/ui@57.0.9': patches/@expo__ui@57.0.9.patch
   react-native-change-icon@5.0.0: patches/react-native-change-icon@5.0.0.patch
   react-native@0.86.2: patches/react-native@0.86.2.patch
