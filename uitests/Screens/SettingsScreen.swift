@@ -47,8 +47,8 @@ struct SettingsScreen: Screen {
 	}
 
 	@discardableResult
-	func changeIconToWindmill() -> Self {
-		// Verify default icon is selected, tap Big Ole
+	func changeIconToOldMain() -> Self {
+		// The default is Big Ole; the alternate on offer is Old Main.
 		let defaultSelected = app.element(
 			matching: TestIdentifiers.AppIcon.cell("default", selected: true))
 		XCTAssertTrue(
@@ -69,12 +69,12 @@ struct SettingsScreen: Screen {
 	}
 
 	@discardableResult
-	func checkWindmillSelected() -> Self {
-		let windmillSelected = app.element(
+	func checkOldMainSelected() -> Self {
+		let oldMainSelected = app.element(
 			matching: TestIdentifiers.AppIcon.cell("icon_type_old_main", selected: true))
 		XCTAssertTrue(
-			windmillSelected.waitForExistence(timeout: 10),
-			"Windmill icon should be selected after tapping it")
+			oldMainSelected.waitForExistence(timeout: 10),
+			"Old Main icon should be selected after tapping it")
 		return self
 	}
 
