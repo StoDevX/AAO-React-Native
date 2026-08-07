@@ -54,13 +54,17 @@ export const ServerUrlSection = (): React.ReactElement => {
 				) : (
 					<>
 						<TextField
-							modifiers={[submitLabel('done'), onSubmit(reload)]}
+							modifiers={[
+								submitLabel('done'),
+								onSubmit(reload),
+								disabled(storeServerAddress.isPending),
+							]}
 							onTextChange={setServerAddress}
 							placeholder={DEFAULT_URL}
 							text={serverAddressState}
 						/>
 						<ActionRow
-							disabled={!isValid}
+							disabled={!isValid || storeServerAddress.isPending}
 							onPress={reload}
 							title={!isValid ? 'Invalid URL!' : 'Save'}
 						/>
