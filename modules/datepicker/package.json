@@ -16,6 +16,6 @@
   "dependencies": {
     "@frogpond/app-theme": "workspace:*",
     "@frogpond/colors": "workspace:*",
-    "@expo/ui": "^57.0.9"
+    "@expo/ui": "57.0.9"
   }
 }

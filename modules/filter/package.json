@@ -15,13 +15,13 @@
     "@react-native-vector-icons/ionicons": "^13.1.0"
   },
   "dependencies": {
-    "@callstack/react-theme-provider": "^3.0.9",
+    "@callstack/react-theme-provider": "3.0.9",
     "@frogpond/app-theme": "workspace:*",
     "@frogpond/colors": "workspace:*",
     "@frogpond/layout": "workspace:*",
     "@frogpond/tableview": "workspace:*",
     "@frogpond/touchable": "workspace:*",
     "@frogpond/viewport": "workspace:*",
-    "lodash": "^4.18.1"
+    "lodash": "4.18.1"
   }
 }
