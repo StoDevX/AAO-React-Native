@@ -18,16 +18,16 @@
   },
   "dependencies": {
     "@callstack/react-theme-provider": "^3.0.9",
-    "@frogpond/app-theme": "^1.0.0",
-    "@frogpond/colors": "^1.0.0",
-    "@frogpond/filter": "^1.0.0",
-    "@frogpond/html-lib": "^1.0.0",
-    "@frogpond/layout": "^1.0.0",
-    "@frogpond/lists": "^1.0.0",
-    "@frogpond/notice": "^1.0.0",
-    "@frogpond/tableview": "^1.0.0",
-    "@frogpond/toolbar": "^1.0.0",
-    "@frogpond/touchable": "^1.0.0",
+    "@frogpond/app-theme": "workspace:*",
+    "@frogpond/colors": "workspace:*",
+    "@frogpond/filter": "workspace:*",
+    "@frogpond/html-lib": "workspace:*",
+    "@frogpond/layout": "workspace:*",
+    "@frogpond/lists": "workspace:*",
+    "@frogpond/notice": "workspace:*",
+    "@frogpond/tableview": "workspace:*",
+    "@frogpond/toolbar": "workspace:*",
+    "@frogpond/touchable": "workspace:*",
     "lodash": "^4.18.1"
   }
 }

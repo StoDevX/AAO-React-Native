@@ -1,11 +1,11 @@
-diff --git node_modules/react-native/src/types/globals.d.ts node_modules/react-native/src/types/globals.d.ts
---- node_modules/react-native/src/types/globals.d.ts
-+++ node_modules/react-native/src/types/globals.d.ts
-@@ -515,62 +515,11 @@
- 
+diff --git a/src/types/globals.d.ts b/src/types/globals.d.ts
+index 52038e46887e845d1a56c21dc5a8a7103a23cf7d..5be7051efb28b5601edc540f56dcdf439187d3a2 100644
+--- a/src/types/globals.d.ts
++++ b/src/types/globals.d.ts
+@@ -587,61 +587,11 @@ declare global {
    // #endregion
    // #region Abort Controller
--
+ 
 -  interface AbortEvent extends Event {
 -    type: 'abort';
 -  }
@@ -65,7 +65,7 @@ diff --git node_modules/react-native/src/types/globals.d.ts node_modules/react-n
 +  // @types/node's web-globals, which declare DOM-spec-compatible shapes that
 +  // interoperate with @tanstack/react-query and ky. The upstream declarations
 +  // in this file (non-nullable `onabort`, custom `AbortEvent`) conflict with
-+  // those types. Patched by contrib/0002-rn-abortsignal.patch.
++  // those types. Patched by pnpm-workspace.yaml's patchedDependencies.
  
    interface FileReaderEventMap {
      abort: ProgressEvent<FileReader>;

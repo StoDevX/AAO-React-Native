@@ -1,0 +1,16 @@
+diff --git a/ios/ChangeIcon.h b/ios/ChangeIcon.h
+index 3624fe49d4a538c792ac5b8a373e2c9ee09e592d..35479155e2fe8660671525c92a0cdfd06ad6d387 100644
+--- a/ios/ChangeIcon.h
++++ b/ios/ChangeIcon.h
+@@ -1,11 +1,6 @@
+ #import <UIKit/UIKit.h>
+ 
+-#ifdef RCT_NEW_ARCH_ENABLED
+-#import "RNChangeIconSpec.h"
+-@interface ChangeIcon : NSObject <NativeChangeIconSpec, UIApplicationDelegate>
+-#else
+ #import <React/RCTBridgeModule.h>
+ @interface ChangeIcon : NSObject <RCTBridgeModule, UIApplicationDelegate>
+-#endif
+ 
+ @end

@@ -15,6 +15,6 @@
     "react-native": "^0.86.0"
   },
   "dependencies": {
-    "@frogpond/event-type": "^1.0.0"
+    "@frogpond/event-type": "workspace:*"
   }
 }

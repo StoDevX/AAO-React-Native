@@ -14,7 +14,7 @@
     "@react-native-vector-icons/ionicons": "^13.1.0"
   },
   "dependencies": {
-    "@frogpond/colors": "^1.0.0",
+    "@frogpond/colors": "workspace:*",
     "react-native-tableview-simple": "^4.4.1"
   }
 }

@@ -29,8 +29,7 @@ jobs:
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151 # v4.0.1
-      - run: npm ci
-      - run: mise run prepare
+      - run: pnpm install --frozen-lockfile
       - run: mise run bundle-data
       - run: hk check
 
@@ -40,8 +39,7 @@ jobs:
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151 # v4.0.1
-      - run: npm ci
-      - run: mise run prepare
+      - run: pnpm install --frozen-lockfile
       - run: mise run pretty:check
 
   eslint:
@@ -50,8 +48,7 @@ jobs:
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151 # v4.0.1
-      - run: npm ci
-      - run: mise run prepare
+      - run: pnpm install --frozen-lockfile
       - run: mise run bundle-data
       - run: mise run lint
 
@@ -61,8 +58,7 @@ jobs:
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151 # v4.0.1
-      - run: npm ci
-      - run: mise run prepare
+      - run: pnpm install --frozen-lockfile
       - name: Run tests
         run: mise run test -- --coverage
       - name: Upload coverage
@@ -74,8 +70,7 @@ jobs:
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151 # v4.0.1
-      - run: npm ci
-      - run: mise run prepare
+      - run: pnpm install --frozen-lockfile
       - run: mise run bundle-data
       - run: mise run tsc
 
@@ -85,8 +80,7 @@ jobs:
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151 # v4.0.1
-      - run: npm ci
-      - run: mise run prepare
+      - run: pnpm install --frozen-lockfile
       - run: mise run validate-data
       - run: mise run bundle-data
 
@@ -108,18 +102,16 @@ jobs:
             ios/AllAboutOlaf/main.jsbundle
             ios/AllAboutOlaf/main.jsbundle.map
             ios/assets/
-          key: jsbundle/e=${{ env.cache_epoch }}${{ env.cache_bust }}/host=ubuntu@24.04/target=ios/ref=${{ github.head_ref || github.ref_name }}/hash=${{ hashFiles('.mise.toml', 'package.json', 'package-lock.json', 'tsconfig.json', 'babel.config.js', 'index.js', 'data/**', 'images/**', 'modules/**.ts', 'modules/**.tsx', 'source/**.ts', 'source/**.tsx') }}
+          key: jsbundle/e=${{ env.cache_epoch }}${{ env.cache_bust }}/host=ubuntu@24.04/target=ios/ref=${{ github.head_ref || github.ref_name }}/hash=${{ hashFiles('mise.toml', 'package.json', 'pnpm-lock.yaml', 'tsconfig.json', 'babel.config.js', 'index.js', 'data/**', 'images/**', 'modules/**.ts', 'modules/**.tsx', 'source/**.ts', 'source/**.tsx') }}
           restore-keys: |
-            jsbundle/e=${{ env.cache_epoch }}${{ env.cache_bust }}/host=ubuntu@24.04/target=ios/ref=master/hash=${{ hashFiles('.mise.toml', 'package.json', 'package-lock.json', 'tsconfig.json', 'babel.config.js', 'index.js', 'data/**', 'images/**', 'modules/**.ts', 'modules/**.tsx', 'source/**.ts', 'source/**.tsx') }}
+            jsbundle/e=${{ env.cache_epoch }}${{ env.cache_bust }}/host=ubuntu@24.04/target=ios/ref=master/hash=${{ hashFiles('mise.toml', 'package.json', 'pnpm-lock.yaml', 'tsconfig.json', 'babel.config.js', 'index.js', 'data/**', 'images/**', 'modules/**.ts', 'modules/**.tsx', 'source/**.ts', 'source/**.tsx') }}
 
       - uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151 # v4.0.1
         if: steps.jsbundle-cache.outputs.cache-matched-key == ''
 
-      - name: Install npm dependencies
+      - name: Install pnpm dependencies
         if: steps.jsbundle-cache.outputs.cache-matched-key == ''
-        run: |
-          npm ci
-          mise run prepare
+        run: pnpm install --frozen-lockfile
 
       - name: Bundle data
         if: steps.jsbundle-cache.outputs.cache-matched-key == ''
@@ -156,20 +148,21 @@ jobs:
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
-      # contrib/** and apply-patches.sh belong in this hash even though neither
-      # lives under ios/: the patches rewrite node_modules sources that CocoaPods
-      # copies into ios/Pods at build time, so they change the compiled binary
-      # without touching any tracked iOS file. Omitting them meant a patch-only
-      # change reused a cached app built without that patch.
+      # pnpm-lock.yaml belongs in this hash even though it doesn't live under
+      # ios/: patched dependencies (patches/*.patch, applied by pnpm itself)
+      # rewrite node_modules sources that CocoaPods copies into ios/Pods at
+      # build time, so they change the compiled binary without touching any
+      # tracked iOS file, and pnpm-lock.yaml records each patch's checksum.
+      # Omitting it meant a patch-only change reused a cache built without it.
       - name: Check for cached iOS app
         id: app-cache
         uses: actions/cache/restore@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
         with:
           lookup-only: true
           path: ios/build/Build/Products/
-          key: ios-app/e=${{ env.cache_epoch }}${{ env.cache_bust }}/host=macOS@26/target=ios/xcode=${{ env.xcode_version }}/ref=${{ github.head_ref || github.ref_name }}/hash=${{ hashFiles('app.config.ts', 'plugins/**', 'uitests/**', 'images/**', 'package-lock.json', 'contrib/**', 'scripts/apply-patches.sh', '.mise.toml') }}
+          key: ios-app/e=${{ env.cache_epoch }}${{ env.cache_bust }}/host=macOS@26/target=ios/xcode=${{ env.xcode_version }}/ref=${{ github.head_ref || github.ref_name }}/hash=${{ hashFiles('app.config.ts', 'plugins/**', 'uitests/**', 'images/**', 'pnpm-lock.yaml', 'mise.toml') }}
           restore-keys: |
-            ios-app/e=${{ env.cache_epoch }}${{ env.cache_bust }}/host=macOS@26/target=ios/xcode=${{ env.xcode_version }}/ref=master/hash=${{ hashFiles('app.config.ts', 'plugins/**', 'uitests/**', 'images/**', 'package-lock.json', 'contrib/**', 'scripts/apply-patches.sh', '.mise.toml') }}
+            ios-app/e=${{ env.cache_epoch }}${{ env.cache_bust }}/host=macOS@26/target=ios/xcode=${{ env.xcode_version }}/ref=master/hash=${{ hashFiles('app.config.ts', 'plugins/**', 'uitests/**', 'images/**', 'pnpm-lock.yaml', 'mise.toml') }}
 
   ios-build:
     name: Build for iOS
@@ -184,10 +177,8 @@ jobs:
 
       - uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151 # v4.0.1
 
-      - name: Install npm dependencies
-        run: |
-          npm ci
-          mise run prepare
+      - name: Install pnpm dependencies
+        run: pnpm install --frozen-lockfile
 
       - name: Generate the native project
         run: mise run prebuild

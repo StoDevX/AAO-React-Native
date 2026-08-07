@@ -1,0 +1,141 @@
+ignoreWorkspaceRootCheck: true
+packages:
+  - './'
+  - 'modules/*'
+
+# don't run install scripts at all -- CocoaPods handles native builds, and
+# patchedDependencies below covers the patches this repo carries.
+ignoreScripts: true
+
+# matches npm's own peer dependency handling (auto-install, warn rather than
+# fail) since that's the behavior this dependency tree was actually built
+# and vetted under
+autoInstallPeers: true
+strictPeerDependencies: false
+# set peer dependency suffixes to use version-only identifiers (name@version) instead of full dep paths
+dedupePeers: true
+
+# theoretically, this configures pnpm to avoid installing optionalDependencies for
+# systems other than the current one
+supportedArchitectures:
+  os: [current]
+  cpu: [current]
+
+# we use mise to manage the pnpm version
+updateNotifier: false
+
+# mise manages the pnpm version, so skip pnpm's own devEngines.packageManager
+pmOnFail: ignore
+
+# resolutionMode=highest roughly matches npm's behavior, which is what this
+# lockfile was migrated from
+resolutionMode: highest
+
+# runs in a sh-compatible shell to avoid shell issues across the ubuntu/macOS CI matrix
+shellEmulator: true
+
+# When set to no-downgrade, pnpm will fail installation if a package's trust
+# level has decreased compared to previous releases — for example, if it was
+# previously published by a trusted publisher but now only has provenance or no
+# trust evidence.
+trustPolicy: no-downgrade
+# ignore the trust check for versions that were published more than 6 months ago (arbitrary)
+trustPolicyIgnoreAfter: 259200 # 6 months, in minutes
+
+# prevent pnpm from considering new package versions for 3 days, to allow the
+# ecosystem time to find and fix issues. Matches renovate.json's
+# security:minimumReleaseAgeNpm preset, so both tools apply the same gate.
+minimumReleaseAge: 4320 # 3 days, in minutes
+
+# already-pinned versions from the Expo SDK 57 release train, published days
+# apart from each other; excluded so the npm->pnpm migration can reproduce the
+# existing, already-shipped lockfile instead of waiting the gate out.
+# remove after 2026-08-10, once they clear the 3-day window on their own
+minimumReleaseAgeExclude:
+  - '@expo/cli@57.0.12'
+  - '@expo/config-plugins@57.0.7'
+  - '@expo/router-server@57.0.5'
+  - '@expo/ui@57.0.9'
+  - 'expo-build-properties@57.0.9'
+  - 'expo-constants@57.0.9'
+  - 'expo-modules-core@57.0.9'
+  - 'expo@57.0.10'
+
+# dependency version overrides (used to live in package.json)
+overrides:
+  'brace-expansion@1': '1.1.18'
+  'brace-expansion@2': '2.1.4'
+  'brace-expansion@5': '5.0.9'
+  'postcss@8': '8.5.25'
+  # Known-vulnerable transitive deps, all pulled in by build/CLI tooling
+  # (never part of the shipped JS bundle). Each override is scoped to the
+  # currently-resolved major/minor so it can't clobber some other, unrelated
+  # future resolution of the same package (e.g. a hypothetical xmldom 0.10.x
+  # getting forced back down to 0.9.x).
+  #
+  # shell-quote@1.8.3 (via react-devtools-core, a react-native dependency):
+  # critical newline-escaping bug (GHSA-w7jw-789q-3m8p) and a ReDoS in
+  # parse() (GHSA-395f-4hp3-45gv). No fix within 1.8.x; next fixed release is 1.10.0.
+  'shell-quote@1.8': '1.10.0'
+  # @xmldom/xmldom@0.8.12 (via @expo/plist, used by `expo prebuild` to
+  # read/write ios/Info.plist and ios/*.entitlements): NOT overridden. Four
+  # XML injection/DoS advisories (GHSA-j759-j44w-7fr8, GHSA-x6wf-f3px-wcqx,
+  # GHSA-f6ww-3ggp-fr8h, GHSA-2v35-w6hq-6mfw), all fixed in 0.9.x. Tried
+  # forcing 0.9.10 and it broke `expo prebuild` twice over: 0.9's
+  # DOMParser.parseFromString requires an explicit mimeType (patchable --
+  # @expo/plist@0.8.1 calls it with none), and separately its stricter XML
+  # declaration handling rejects ios/*.entitlements
+  # ("processing instruction at position 1 is an xml declaration which is
+  # only at the start of the document") in a way a single patch couldn't
+  # cleanly paper over. Neither surfaced in tsc/eslint/jest -- only a real
+  # `expo prebuild` run exercises this parsing path. See the allow-ghsas
+  # entries in .github/workflows/dependency-review.yml.
+  # fast-uri@3.1.0 (via ajv, used by our own eslint/ajv-formats devDeps):
+  # path-traversal and host-confusion advisories (GHSA-q3j6-qgpj-74h6,
+  # GHSA-v39h-62p7-jpjc); fixed within the same 3.1.x line.
+  'fast-uri@3.1': '3.1.5'
+  # undici@6.25.0 (via @sentry/cli, used for sourcemap upload): WebSocket
+  # DoS via fragment-count bypass (GHSA-vxpw-j846-p89q) plus several other
+  # DoS/pool advisories; no fix within 6.25.x, next fixed release is 6.28.0.
+  'undici@6.25': '6.28.0'
+  # js-yaml@3.14.2 (via @istanbuljs/load-nyc-config, Jest's coverage
+  # instrumentation): quadratic-CPU merge-key bug (GHSA-52cp-r559-cp3m) and
+  # a prototype-adjacent parsing issue (GHSA-h67p-54hq-rp68). No fix within
+  # 3.14.x; next fixed release is 3.15.1. (js-yaml@4.x is also a direct
+  # devDependency, already bumped to a patched version in package.json.)
+  'js-yaml@3.14': '3.15.1'
+  # qs@6.15.1 (via our own `url` polyfill devDependency): fixed within the
+  # same 6.15.x line (GHSA-q8mj-m7cp-5q26).
+  'qs@6.15': '6.15.2'
+  # uuid@7.0.3 (via the xcode package): NOT overridden. GHSA-w5hq-g745-h8pq
+  # (moderate) is a missing buffer-bounds check in v3/v5/v6 when an explicit
+  # output buffer is passed; xcode only calls the unaffected `uuid.v4()`
+  # with no buffer arg. Tried forcing 11.1.1 (the only fixed version, a
+  # major bump) and it broke: uuid@11's package.json "exports" field routes
+  # `require('uuid')` to dist/esm-browser under Jest's module resolution
+  # instead of dist/cjs, so xcode's `require('uuid')` in pbxProject.js gets
+  # back ES module syntax Jest can't parse -- fails to even load, breaking
+  # every plugins/__tests__ test that touches @expo/config-plugins. See the
+  # allow-ghsas entry in .github/workflows/dependency-review.yml.
+  # @babel/core resolves twice: our own devDependency (already bumped in
+  # package.json) and a separate transitive instance pulled in via Jest's
+  # babel-jest/istanbul instrumentation chain, which independently pinned
+  # 7.29.0 -- ReDoS in template literal parsing (GHSA-4x5r-pxfx-6jf8).
+  '@babel/core@7.29': '7.29.7'
+  # react-dom is an optionalDependency of expo, @expo/ui, and @expo/router-server
+  # -- all needed only for their web targets. This app is iOS-only and never
+  # renders any of their web variants, so drop it rather than just pinning it.
+  'react-dom': '-'
+  # vaul is a react-dom drawer component @expo/ui only needs for its web
+  # target; this app is iOS-only and never renders @expo/ui's web variant.
+  # Pinned to the major version so an @expo/ui SDK bump forces a re-check
+  # that vaul is still unused before silently dropping it again.
+  '@expo/ui@57>vaul': '-'
+
+# bind top-level dependencies to exact versions, so lockfile-maintenance MRs
+# can't bump them without us noticing
+saveExact: true
+savePrefix: ''
+patchedDependencies:
+  react-native-change-icon@5.0.0: patches/react-native-change-icon@5.0.0.patch
+  react-native@0.86.2: patches/react-native@0.86.2.patch

@@ -43,7 +43,13 @@ const config: Config = {
 		'!**/node_modules/**',
 	],
 	setupFiles: ['./scripts/jest-setup.js'],
-	transformIgnorePatterns: [`node_modules/(?!${esmPackages.join('|')})`],
+	// pnpm nests every package under node_modules/.pnpm/<name>@<version>/node_modules/<name>,
+	// so the first node_modules/ segment is followed by ".pnpm", not a package
+	// name -- without letting that through, the negative lookahead trips on
+	// ".pnpm" itself and every pnpm-installed package gets ignored, ESM or not.
+	transformIgnorePatterns: [
+		`node_modules/(?!\\.pnpm|${esmPackages.join('|')})`,
+	],
 	reporters: [['github-actions', {silent: false}], 'summary'],
 }
 
