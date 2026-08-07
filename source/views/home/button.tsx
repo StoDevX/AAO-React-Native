@@ -93,12 +93,10 @@ const ICON_BOX_HEIGHT = 86 / 3
 /// 17pt semibold, which is what Health's card titles measure at every text size
 /// captured.
 ///
-/// Titles have to fit on one line. Health wraps to two and grows the card to
-/// suit, but this version of @expo/ui's Text doesn't honor lineLimit(2) here
-/// whatever frame and multilineTextAlignment modifiers it's given, so anything
-/// too long truncates with an ellipsis instead. Every current title fits at the
-/// default text size; a longer one added later will need shortening rather than
-/// a smaller font, which would break the match with Health.
+/// Long titles wrap to a second line and the row grows to fit, as Health's do.
+/// That only works because the cards sit in a Grid: laid out as two independent
+/// columns they truncated with an ellipsis instead, whatever lineLimit and
+/// multilineTextAlignment modifiers they were given.
 const TITLE_TEXT_STYLE = 'headline'
 
 export function HomeScreenButton({view, onPress}: Props): React.ReactNode {
