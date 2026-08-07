@@ -23,15 +23,20 @@ export type Gradient = [string, string]
 // The inner stop can only be read off a real card, and there is now a capture of
 // all fifteen.
 //
-// Gold is the one colour whose only capture is a JPEG. Its outer stop still
-// comes from the picker, and its inner was derived by applying that card's own
-// measured outer-to-inner transform to the exact outer, so the compression's
-// colour shift largely cancels rather than being baked in. Orange, sage and tan
-// were read the same way at first and have since been re-measured from a
-// lossless capture: sage came back identical and tan within 2/255, which is the
-// best evidence available that the technique holds. Orange moved by 9 -- its
-// JPEG was shifted enough to throw the saturation ratio out of family -- so the
-// direct reading replaces it.
+// Every inner stop is now read off a lossless capture. Four of them were
+// derived from JPEGs first, by applying each card's own measured
+// outer-to-inner transform to the picker's outer so the compression's colour
+// shift would cancel rather than being baked in, and re-measuring them since
+// says how well that worked: sage came back identical and tan within 2/255,
+// while orange and gold each moved by 9. The two that moved were the two whose
+// captures were shifted enough to throw their saturation ratios out of the
+// range the others span -- which is the signal to distrust a reading, if this
+// ever has to be done from a JPEG again.
+//
+// The card named against each colour is whichever shortcut happened to be that
+// colour when it was captured, and is there to say where the reading came from
+// rather than to describe the app. One of them was recoloured between captures,
+// so it is named more than once.
 //
 // Health, not Shortcuts, is the reference for the card's *shape*: see button.tsx
 // for the padding and icon metrics that keep the cards at Health's compact
@@ -47,9 +52,9 @@ export const orangeGradient: Gradient = [
 	'color(display-p3 0.9451 0.6275 0.5137)',
 	'color(display-p3 0.9294 0.5176 0.4039)',
 ]
-// measured: Important Contacts
+// measured: Map
 export const goldGradient: Gradient = [
-	'color(display-p3 0.9725 0.7333 0.4667)',
+	'color(display-p3 0.9608 0.7686 0.451)',
 	'color(display-p3 0.9216 0.651 0.3529)',
 ]
 // measured: SIS, Save To Reader
