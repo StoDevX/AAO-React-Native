@@ -54,7 +54,7 @@ struct SettingsScreen: Screen {
 		XCTAssertTrue(
 			defaultSelected.waitForExistence(timeout: 10),
 			"Default icon should be selected initially")
-		app.element(matching: TestIdentifiers.AppIcon.cell("icon_type_windmill")).tap()
+		app.element(matching: TestIdentifiers.AppIcon.cell("icon_type_old_main")).tap()
 		return self
 	}
 
@@ -71,7 +71,7 @@ struct SettingsScreen: Screen {
 	@discardableResult
 	func checkWindmillSelected() -> Self {
 		let windmillSelected = app.element(
-			matching: TestIdentifiers.AppIcon.cell("icon_type_windmill", selected: true))
+			matching: TestIdentifiers.AppIcon.cell("icon_type_old_main", selected: true))
 		XCTAssertTrue(
 			windmillSelected.waitForExistence(timeout: 10),
 			"Windmill icon should be selected after tapping it")

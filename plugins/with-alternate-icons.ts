@@ -10,7 +10,7 @@ import {
 } from '@expo/config-plugins'
 
 /** The key `react-native-change-icon` asks UIKit for. */
-const ICON_NAME = 'icon_type_windmill'
+const ICON_NAME = 'icon_type_old_main'
 
 /**
  * Loose PNGs rather than an asset catalog, because UIKit only resolves
@@ -18,10 +18,10 @@ const ICON_NAME = 'icon_type_windmill'
  * device-specific artwork.
  */
 export const ALTERNATE_ICON_FILES = [
-	'windmill@2x.png',
-	'windmill@3x.png',
-	'windmill@2x~iPad.png',
-	'windmill@3x~iPad.png',
+	'old-main@2x.png',
+	'old-main@3x.png',
+	'old-main@2x~iPad.png',
+	'old-main@3x~iPad.png',
 ]
 
 /** Where the tracked copies live, relative to the repository root. */
@@ -45,7 +45,7 @@ function registerWindmill(existing: unknown): Required<AlternateIconSet> {
 		...current,
 		CFBundleAlternateIcons: {
 			...current.CFBundleAlternateIcons,
-			[ICON_NAME]: {CFBundleIconFiles: ['windmill'], UIPrerenderedIcon: true},
+			[ICON_NAME]: {CFBundleIconFiles: ['old-main'], UIPrerenderedIcon: true},
 		},
 	}
 }

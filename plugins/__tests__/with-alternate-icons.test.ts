@@ -1,18 +1,18 @@
 import {ALTERNATE_ICON_FILES, addAlternateIcons} from '../with-alternate-icons'
 
 describe('addAlternateIcons', () => {
-	it('registers the windmill icon for iPhone', () => {
+	it('registers the Old Main icon for iPhone', () => {
 		let result = addAlternateIcons({})
 		expect(
-			result.CFBundleIcons.CFBundleAlternateIcons.icon_type_windmill,
-		).toEqual({CFBundleIconFiles: ['windmill'], UIPrerenderedIcon: true})
+			result.CFBundleIcons.CFBundleAlternateIcons.icon_type_old_main,
+		).toEqual({CFBundleIconFiles: ['old-main'], UIPrerenderedIcon: true})
 	})
 
-	it('registers the windmill icon for iPad', () => {
+	it('registers the Old Main icon for iPad', () => {
 		let result = addAlternateIcons({})
 		expect(
-			result['CFBundleIcons~ipad'].CFBundleAlternateIcons.icon_type_windmill,
-		).toEqual({CFBundleIconFiles: ['windmill'], UIPrerenderedIcon: true})
+			result['CFBundleIcons~ipad'].CFBundleAlternateIcons.icon_type_old_main,
+		).toEqual({CFBundleIconFiles: ['old-main'], UIPrerenderedIcon: true})
 	})
 
 	it('preserves unrelated keys', () => {
@@ -29,10 +29,10 @@ describe('addAlternateIcons', () => {
 describe('ALTERNATE_ICON_FILES', () => {
 	it('names every scale UIKit looks for, including the iPad variants', () => {
 		expect(ALTERNATE_ICON_FILES).toEqual([
-			'windmill@2x.png',
-			'windmill@3x.png',
-			'windmill@2x~iPad.png',
-			'windmill@3x~iPad.png',
+			'old-main@2x.png',
+			'old-main@3x.png',
+			'old-main@2x~iPad.png',
+			'old-main@3x~iPad.png',
 		])
 	})
 })
