@@ -13,9 +13,27 @@ struct SettingsScreen: Screen {
 		return self
 	}
 
+	/// Scrolls the Settings form until `element` enters the accessibility tree.
+	///
+	/// SwiftUI's `Form` builds its rows lazily: anything below the fold is
+	/// absent from the tree entirely, not merely offscreen. The React Native
+	/// `ScrollView` this replaced mounted every row up front, so queries for
+	/// far-down rows used to resolve without scrolling first.
+	@discardableResult
+	func scrollUntilExists(_ element: XCUIElement, swipes: Int = 8) -> Self {
+		for _ in 0..<swipes {
+			if element.exists { break }
+			app.swipeUp()
+		}
+		return self
+	}
+
 	@discardableResult
 	func checkSignInVisible() -> Self {
-		let signIn = app.staticTexts[TestIdentifiers.Settings.signIn].firstMatch
+		// The sign-in row is a SwiftUI Button carrying its title as an
+		// accessibility label, so it surfaces as a button rather than the
+		// static text the React Native ButtonCell used to produce.
+		let signIn = app.buttons[TestIdentifiers.Settings.signIn].firstMatch
 		XCTAssertTrue(
 			signIn.waitForExistence(timeout: 30),
 			"Sign in to St. Olaf should be visible")
@@ -34,7 +52,7 @@ struct SettingsScreen: Screen {
 		// remains mounted in the view hierarchy beneath it. Verify the
 		// sheet actually dismissed by checking that the Settings content
 		// is gone.
-		let signIn = app.staticTexts[TestIdentifiers.Settings.signIn].firstMatch
+		let signIn = app.buttons[TestIdentifiers.Settings.signIn].firstMatch
 		XCTAssertTrue(
 			signIn.waitForNonExistence(timeout: 30),
 			"Settings sheet should have dismissed")
@@ -49,6 +67,7 @@ struct SettingsScreen: Screen {
 	@discardableResult
 	func tapCreditsRowInItsEmptySpace() -> Self {
 		let creditsRow = app.buttons["Credits"].firstMatch
+		scrollUntilExists(creditsRow)
 		XCTAssertTrue(
 			creditsRow.waitForExistence(timeout: 30),
 			"Credits row should be visible")
@@ -67,6 +86,7 @@ struct SettingsScreen: Screen {
 		// The default is Big Ole; the alternate on offer is Old Main.
 		let defaultSelected = app.element(
 			matching: TestIdentifiers.AppIcon.cell("default", selected: true))
+		scrollUntilExists(defaultSelected)
 		XCTAssertTrue(
 			defaultSelected.waitForExistence(timeout: 10),
 			"Default icon should be selected initially")
@@ -88,6 +108,7 @@ struct SettingsScreen: Screen {
 	func checkOldMainSelected() -> Self {
 		let oldMainSelected = app.element(
 			matching: TestIdentifiers.AppIcon.cell("icon_type_old_main", selected: true))
+		scrollUntilExists(oldMainSelected)
 		XCTAssertTrue(
 			oldMainSelected.waitForExistence(timeout: 10),
 			"Old Main icon should be selected after tapping it")
@@ -101,6 +122,7 @@ struct SettingsScreen: Screen {
 		// tapping without first waiting produces "Timed out while evaluating
 		// UI query".
 		let defaultIcon = app.element(matching: TestIdentifiers.AppIcon.cell("default"))
+		scrollUntilExists(defaultIcon)
 		XCTAssertTrue(
 			defaultIcon.waitForExistence(timeout: 10),
 			"Default icon cell should be visible and tappable")
@@ -112,6 +134,7 @@ struct SettingsScreen: Screen {
 	func checkDefaultSelected() -> Self {
 		let defaultReselected = app.element(
 			matching: TestIdentifiers.AppIcon.cell("default", selected: true))
+		scrollUntilExists(defaultReselected)
 		XCTAssertTrue(
 			defaultReselected.waitForExistence(timeout: 10),
 			"Default icon should be selected after switching back")

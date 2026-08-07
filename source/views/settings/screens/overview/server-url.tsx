@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {Section, TextField, useNativeState} from '@expo/ui/swift-ui'
+import {Section, Text, TextField, useNativeState} from '@expo/ui/swift-ui'
 import {disabled, onSubmit, submitLabel} from '@expo/ui/swift-ui/modifiers'
 import restart from 'react-native-restart-newarch'
 import * as storage from '../../../../lib/storage'
@@ -42,7 +42,7 @@ export const ServerUrlSection = (): React.ReactElement => {
 	return (
 		<>
 			<Section
-				footer="Empty means we will use the default URL."
+				footer={<Text>Empty means we will use the default URL.</Text>}
 				title="SERVER URL"
 			>
 				{isLoading ? (
@@ -72,7 +72,10 @@ export const ServerUrlSection = (): React.ReactElement => {
 				)}
 			</Section>
 			{discoveredServers.length > 0 && (
-				<Section footer="Tap a server to use it." title="LOCAL SERVERS">
+				<Section
+					footer={<Text>Tap a server to use it.</Text>}
+					title="LOCAL SERVERS"
+				>
 					{discoveredServers.map((server) => (
 						<NavigationRow
 							key={server.url}

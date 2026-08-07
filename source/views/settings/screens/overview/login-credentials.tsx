@@ -103,7 +103,7 @@ export const CredentialsLoginSection = (): React.ReactNode => {
 	let actionPending = logIn.isPending || logOut.isPending
 
 	return (
-		<Section footer={sectionFooter} title="ST. OLAF LOGIN">
+		<Section footer={<Text>{sectionFooter}</Text>} title="ST. OLAF LOGIN">
 			{isLoggedIn ? (
 				<Text>{`Logged in as ${username}.`}</Text>
 			) : (

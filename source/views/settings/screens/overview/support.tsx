@@ -1,6 +1,6 @@
 import * as React from 'react'
 import {Alert} from 'react-native'
-import {LabeledContent, Section} from '@expo/ui/swift-ui'
+import {LabeledContent, Section, Text} from '@expo/ui/swift-ui'
 import {sendEmail} from '../../../../components/send-email'
 import * as Application from 'expo-application'
 import * as Device from 'expo-device'
@@ -55,7 +55,9 @@ export const SupportSection = (): React.ReactNode => {
 			<NavigationRow onPress={() => navigation.navigate('Faq')} title="FAQs" />
 			<ActionRow onPress={openEmail} title="Contact Us" />
 			<ActionRow onPress={onResetButton} title="Reset Everything" />
-			<LabeledContent label="Version">{getVersion()}</LabeledContent>
+			<LabeledContent label="Version">
+				<Text>{getVersion()}</Text>
+			</LabeledContent>
 		</Section>
 	)
 }
