@@ -27,7 +27,7 @@ jobs:
     name: hk
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151 # v4.0.1
       - run: pnpm install --frozen-lockfile
       - run: mise run bundle-data
@@ -37,7 +37,7 @@ jobs:
     name: Prettier
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151 # v4.0.1
       - run: pnpm install --frozen-lockfile
       - run: mise run pretty:check
@@ -46,7 +46,7 @@ jobs:
     name: ESLint
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151 # v4.0.1
       - run: pnpm install --frozen-lockfile
       - run: mise run bundle-data
@@ -56,7 +56,7 @@ jobs:
     name: Jest
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151 # v4.0.1
       - run: pnpm install --frozen-lockfile
       - name: Run tests
@@ -68,7 +68,7 @@ jobs:
     name: TypeScript
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151 # v4.0.1
       - run: pnpm install --frozen-lockfile
       - run: mise run bundle-data
@@ -78,7 +78,7 @@ jobs:
     name: Data
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151 # v4.0.1
       - run: pnpm install --frozen-lockfile
       - run: mise run validate-data
@@ -91,7 +91,7 @@ jobs:
     outputs:
       cache-key: ${{ steps.jsbundle-cache.outputs.cache-matched-key || steps.jsbundle-cache.outputs.cache-primary-key }}
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Restore cached jsbundle
         uses: actions/cache/restore@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
@@ -146,7 +146,7 @@ jobs:
       cache-primary-key: ${{ steps.app-cache.outputs.cache-primary-key }}
       cache-key: ${{ steps.app-cache.outputs.cache-matched-key || steps.app-cache.outputs.cache-primary-key }}
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       # pnpm-lock.yaml belongs in this hash even though it doesn't live under
       # ios/: patched dependencies (patches/*.patch, applied by pnpm itself)
@@ -170,7 +170,7 @@ jobs:
     runs-on: macos-26
     if: needs.ios-cache-check.outputs.cache-matched-key == ''
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Select ${{ env.xcode_version }}
         run: sudo xcode-select -s /Applications/${{ env.xcode_version }}.app
@@ -223,7 +223,7 @@ jobs:
     outputs:
       matrix: ${{ steps.split.outputs.matrix }}
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Split tests across shards
         id: split
@@ -243,7 +243,7 @@ jobs:
     steps:
       - run: sudo xcode-select -s /Applications/${{ env.xcode_version }}.app
 
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Load the cached iOS app and UITest bundle
         uses: actions/cache/restore@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
