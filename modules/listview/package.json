@@ -14,8 +14,8 @@
   },
   "dependencies": {
     "@callstack/react-theme-provider": "^3.0.9",
-    "@frogpond/app-theme": "workspace:^1.0.0",
-    "@frogpond/colors": "workspace:^1.0.0",
+    "@frogpond/app-theme": "workspace:*",
+    "@frogpond/colors": "workspace:*",
     "lodash": "^4.18.1"
   }
 }

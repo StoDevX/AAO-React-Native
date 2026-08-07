@@ -15,12 +15,11 @@ strictPeerDependencies: false
 # set peer dependency suffixes to use version-only identifiers (name@version) instead of full dep paths
 dedupePeers: true
 
-# CI builds on both ubuntu-24.04 (linux/x64) and macos-26 (darwin/arm64), and
-# contributors develop on both Intel and Apple Silicon Macs, so the lockfile
-# needs optional dependencies (e.g. fsevents) for every platform we actually run on.
+# theoretically, this configures pnpm to avoid installing optionalDependencies for
+# systems other than the current one
 supportedArchitectures:
-  os: [darwin, linux]
-  cpu: [x64, arm64]
+  os: [current]
+  cpu: [current]
 
 # we use mise to manage the pnpm version
 updateNotifier: false
@@ -42,10 +41,6 @@ shellEmulator: true
 trustPolicy: no-downgrade
 # ignore the trust check for versions that were published more than 6 months ago (arbitrary)
 trustPolicyIgnoreAfter: 259200 # 6 months, in minutes
-trustPolicyExclude:
-  # false-positive in pnpm: it looks by date, not by semver. reselect@5.1.1
-  # lost provenance attestation on npm; see https://www.npmjs.com/package/reselect?activeTab=versions
-  - 'reselect@5.1.1'
 
 # prevent pnpm from considering new package versions for 3 days, to allow the
 # ecosystem time to find and fix issues. Matches renovate.json's
@@ -72,13 +67,20 @@ overrides:
   'brace-expansion@2': '2.1.4'
   'brace-expansion@5': '5.0.9'
   'postcss@8': '8.5.25'
-  'react-dom': '19.2.3'
+  # react-dom is an optionalDependency of expo, @expo/ui, and @expo/router-server
+  # -- all needed only for their web targets. This app is iOS-only and never
+  # renders any of their web variants, so drop it rather than just pinning it.
+  'react-dom': '-'
+  # vaul is a react-dom drawer component @expo/ui only needs for its web
+  # target; this app is iOS-only and never renders @expo/ui's web variant.
+  # Pinned to the major version so an @expo/ui SDK bump forces a re-check
+  # that vaul is still unused before silently dropping it again.
+  '@expo/ui@57>vaul': '-'
 
 # bind top-level dependencies to exact versions, so lockfile-maintenance MRs
 # can't bump them without us noticing
 saveExact: true
 savePrefix: ''
 patchedDependencies:
-  '@callstack/react-theme-provider@3.0.9': patches/@callstack__react-theme-provider@3.0.9.patch
   react-native-change-icon@5.0.0: patches/react-native-change-icon@5.0.0.patch
   react-native@0.86.2: patches/react-native@0.86.2.patch

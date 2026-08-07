@@ -14,6 +14,6 @@
     "@react-native-vector-icons/ionicons": "^13.1.0"
   },
   "dependencies": {
-    "@frogpond/colors": "workspace:^1.0.0"
+    "@frogpond/colors": "workspace:*"
   }
 }

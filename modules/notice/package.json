@@ -13,9 +13,9 @@
     "react-native": "^0.86.0"
   },
   "dependencies": {
-    "@frogpond/colors": "workspace:^1.0.0",
-    "@frogpond/button": "workspace:^1.0.0",
-    "@frogpond/markdown": "workspace:^1.0.0"
+    "@frogpond/colors": "workspace:*",
+    "@frogpond/button": "workspace:*",
+    "@frogpond/markdown": "workspace:*"
   },
   "devDependencies": {
     "@testing-library/react-native": "^12.9.0"

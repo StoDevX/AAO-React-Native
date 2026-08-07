@@ -14,8 +14,8 @@
     "moment-timezone": "^0.6.1"
   },
   "dependencies": {
-    "@frogpond/app-theme": "workspace:^1.0.0",
-    "@frogpond/colors": "workspace:^1.0.0",
+    "@frogpond/app-theme": "workspace:*",
+    "@frogpond/colors": "workspace:*",
     "@expo/ui": "^57.0.9"
   }
 }
