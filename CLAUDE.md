@@ -64,6 +64,47 @@ mise run tsc    # Type check
 mise run prebuild # Generate ios/ from app.config.ts, and install pods
 ```
 
+### App Variants
+
+A development build can sit alongside the shipping app on one device.
+`APP_VARIANT` selects the build at generation time; unset means production, so
+every default path is unchanged.
+
+| `APP_VARIANT` | Bundle identifier | Home screen | Icon |
+| --- | --- | --- | --- |
+| *(unset)* / `production` | `NFMTHAZVS9.com.drewvolz.stolaf` | All About Olaf | Old Main |
+| `development` | `…stolaf.dev` | AAO Dev | Old Main with a diagonal DEV ribbon across the top-right corner across the top-right corner |
+
+```bash
+APP_VARIANT=development mise run prebuild   # then build to your device
+```
+
+The URL scheme varies too — two apps claiming one scheme is undefined behaviour.
+
+TestFlight and App Store builds both ship the production identity, so a
+TestFlight build replaces the App Store app as it always has.
+
+The dev icon is generated rather than drawn by hand. To regenerate it after an
+app icon change:
+
+```bash
+magick -size 520x170 xc:none -gravity center \
+  -font '/System/Library/Fonts/Supplemental/Arial Bold.ttf' \
+  -pointsize 116 -kerning 10 -fill white -annotate +0+0 'DEV' \
+  -background none -rotate 45 -trim +repage /tmp/devtext.png
+magick images/icons/app-icon.png \
+  -fill '#D0021B' -draw 'polygon 1024,424 600,0 840,0 1024,184' /tmp/base.png
+magick /tmp/base.png /tmp/devtext.png -geometry +753+44 -composite \
+  -alpha off -strip images/icons/app-icon-development.png
+```
+
+[`HazAT/badge`](https://github.com/HazAT/badge) and its fastlane plugin automate
+this per build; it is not worth the dependency for one committed file.
+
+**Before the dev variant can go anywhere but a local device**, its bundle
+identifier needs its own App Store Connect record and `match` profiles. The
+config alone creates neither.
+
 ### Local Server Discovery
 
 In dev mode (debug builds, or with the dev-mode override enabled in Settings), the Settings → Server URL screen will automatically discover a `ccc-server` instance running on the same network via mDNS. Discovered servers appear as tappable cells; tapping one fills the URL field.

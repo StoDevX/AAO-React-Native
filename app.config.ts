@@ -21,16 +21,15 @@ const VARIANTS = {
 		displayName: 'All About Olaf',
 		bundleIdentifier: BUNDLE_ID,
 		scheme: 'AllAboutOlaf',
+		icon: './images/icons/app-icon.png',
 	},
 	development: {
 		displayName: 'AAO Dev',
 		bundleIdentifier: `${BUNDLE_ID}.dev`,
 		scheme: 'AllAboutOlafDev',
-	},
-	preview: {
-		displayName: 'AAO Preview',
-		bundleIdentifier: `${BUNDLE_ID}.preview`,
-		scheme: 'AllAboutOlafPreview',
+		// The shipping icon with a diagonal DEV ribbon across the top-right
+		// corner, which crosses sky rather than the building.
+		icon: './images/icons/app-icon-development.png',
 	},
 }
 
@@ -57,7 +56,7 @@ const config: ExpoConfig = {
 	scheme: variant.scheme,
 	version,
 	platforms: ['ios'],
-	icon: './images/icons/app-icon.png',
+	icon: variant.icon,
 	userInterfaceStyle: 'automatic',
 
 	// No `orientation` here. Its three presets are portrait

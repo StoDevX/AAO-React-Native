@@ -76,8 +76,10 @@ Copy `ios/assets/` too, not just the bundle — images resolve from it.
 ## Full sequence
 
 ```bash
-# 0. Generate ios/ if it is absent -- it is not tracked
-mise run prebuild
+# 0. Generate ios/ if it is absent -- it is not tracked.
+#    Use the development variant so this build installs alongside whatever the
+#    person already has from the App Store rather than replacing it.
+APP_VARIANT=development mise run prebuild
 
 # 1. Confirm the device is paired, and note its identifier
 xcrun devicectl list devices
