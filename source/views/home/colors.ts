@@ -6,7 +6,10 @@
 export const homescreenTitleLight = 'rgb(255, 255, 255)'
 export const homescreenIconLight = 'rgba(255, 255, 255, 0.79)'
 
-/// Dark mode is unmeasured -- there's no Health reference capture for it yet --
-/// so both keep the value the light pair used before it was split.
-export const homescreenTitleDark = 'rgba(0, 0, 0, 0.65)'
-export const homescreenIconDark = 'rgba(0, 0, 0, 0.65)'
+/// Dark mode mirrors it, measured the same way over four cards: the title is
+/// opaque black and the icon lands within a couple of points of the light
+/// mode's knock-back. Health keeps the same card gradients in both schemes --
+/// across the Heart card they differ by at most 6/255 -- so only these two
+/// colours change.
+export const homescreenTitleDark = 'rgb(0, 0, 0)'
+export const homescreenIconDark = 'rgba(0, 0, 0, 0.81)'
