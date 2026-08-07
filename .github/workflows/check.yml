@@ -192,14 +192,39 @@ jobs:
       - name: Install pnpm dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Install and configure ccache
+        run: |
+          brew install ccache
+          ccache --set-config=max_size=2G
+          ccache --zero-stats
+
+      # The hashless restore-keys are the point rather than a fallback: ccache
+      # addresses each object by its preprocessed source, compiler and flags, so
+      # a directory built from neighbouring sources still answers most of the
+      # compiles, and a stale entry is never wrong -- it is simply re-hashed.
+      # That is also why this cache wants restoring on the runs that build from
+      # scratch, which is where it pays for itself.
+      - name: Restore/save ccache
+        uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
+        with:
+          path: ~/Library/Caches/ccache
+          key: ccache/e=${{ env.cache_epoch }}/host=macOS@26/target=ios/xcode=${{ env.xcode_version }}/ref=${{ github.head_ref || github.ref_name }}/hash=${{ hashFiles('app.config.ts', 'plugins/**', 'uitests/**', 'images/**', 'pnpm-lock.yaml', 'mise.toml') }}
+          restore-keys: |
+            ccache/e=${{ env.cache_epoch }}/host=macOS@26/target=ios/xcode=${{ env.xcode_version }}/ref=${{ github.head_ref || github.ref_name }}/
+            ccache/e=${{ env.cache_epoch }}/host=macOS@26/target=ios/xcode=${{ env.xcode_version }}/ref=master/hash=${{ hashFiles('app.config.ts', 'plugins/**', 'uitests/**', 'images/**', 'pnpm-lock.yaml', 'mise.toml') }}
+            ccache/e=${{ env.cache_epoch }}/host=macOS@26/target=ios/xcode=${{ env.xcode_version }}/ref=master/
+
       - name: Generate the native project
         run: mise run prebuild
+        env:
+          USE_CCACHE: '1'
 
       - name: Build UITest bundle
         if: ${{ !contains(github.event.pull_request.labels.*.name, 'ci/skip-e2e') }}
         env:
           SKIP_BUNDLING: 'true'
           CODE_SIGNING_DISABLED: 'true'
+          USE_CCACHE: '1'
         run: |
           set -o pipefail
           xcodebuild build-for-testing \
@@ -213,6 +238,13 @@ jobs:
             CODE_SIGNING_REQUIRED=NO \
             CODE_SIGNING_ALLOWED=NO \
             | xcbeautify --renderer github-actions
+
+      # Read this to judge whether Xcode's explicit modules are bypassing the
+      # ccache compiler wrapper: a hit rate near zero on a warm cache is the
+      # symptom, and CLANG_ENABLE_EXPLICIT_MODULES = NO was the old remedy.
+      - name: Show ccache stats
+        if: always()
+        run: ccache --show-stats
 
       - name: Save iOS app to cache
         uses: actions/cache/save@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
