@@ -1,6 +1,11 @@
 import * as React from 'react'
 import {Platform, StyleSheet} from 'react-native'
-import {Form, Host, RNHostView} from '@expo/ui/swift-ui'
+import {Form, Host, RNHostView, VStack} from '@expo/ui/swift-ui'
+import {
+	listRowBackground,
+	listRowInsets,
+	listRowSeparator,
+} from '@expo/ui/swift-ui/modifiers'
 import {CloseScreenButton} from '@frogpond/navigation-buttons'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 
@@ -35,13 +40,24 @@ const SettingsView = (): React.ReactNode => {
 		<Host style={styles.host}>
 			<Form>
 				{/* The banner is a React Native view, so it has to be hosted into
-				    SwiftUI to scroll with the rest of the content. */}
-				<RNHostView matchContents={true}>
-					<FaqBannerGroup
-						style={styles.banner}
-						target={FAQ_TARGETS.SETTINGS_ROOT}
-					/>
-				</RNHostView>
+				    SwiftUI to scroll with the rest of the content. A Form dresses
+				    each child as a grouped row -- inset, on a filled rounded card,
+				    above a separator -- which would frame the banner a second time,
+				    so this row is stripped back to bare content. */}
+				<VStack
+					modifiers={[
+						listRowBackground('clear'),
+						listRowInsets({top: 0, leading: 0, bottom: 0, trailing: 0}),
+						listRowSeparator('hidden'),
+					]}
+				>
+					<RNHostView matchContents={true}>
+						<FaqBannerGroup
+							style={styles.banner}
+							target={FAQ_TARGETS.SETTINGS_ROOT}
+						/>
+					</RNHostView>
+				</VStack>
 
 				<CredentialsLoginSection />
 
