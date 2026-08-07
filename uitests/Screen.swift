@@ -1,5 +1,9 @@
 import XCTest
 
+// expo-fingerprint spike probe: uitests/**-only change, no native/config-plugin
+// impact, to see whether the manual hashFiles() key and the expo-fingerprint
+// hash diverge on this file as expected.
+
 /// A screen object wraps XCUIApplication interactions for a single screen,
 /// providing a fluent API for navigation and assertions.
 protocol Screen {
