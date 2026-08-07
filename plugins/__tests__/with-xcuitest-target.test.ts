@@ -113,6 +113,22 @@ describe('ensureUITestTarget', () => {
 		expect(target.productName).not.toMatch(/^"/u)
 	})
 
+	// The xcode package derives the product's extension from its file type and
+	// lands on .mdimporter for a wrapper.cfbundle. Xcode builds a real .xctest
+	// regardless, because PRODUCT_NAME is $(TARGET_NAME), so this is wrong
+	// metadata rather than a broken build -- and wrong metadata that any tool
+	// reading the project will believe.
+	it('names the product .xctest', () => {
+		let project = ensureUITestTarget(loadProject(), {
+			name: TARGET,
+			sourceDir: makeSourceDir(),
+			projectPath: PROJECT_PATH,
+		})
+		let written = project.writeSync()
+		expect(written).toContain(`${TARGET}.xctest`)
+		expect(written).not.toContain('.mdimporter')
+	})
+
 	it('marks the target as a UI test bundle, not a unit test bundle', () => {
 		let project = ensureUITestTarget(loadProject(), {
 			name: TARGET,

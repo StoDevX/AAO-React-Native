@@ -16,8 +16,9 @@ All About Olaf is a React Native mobile app for the St. Olaf College community. 
 No conventional-commit prefixes. Write `Drop the migration planning docs`, not
 `chore: drop the migration planning docs`.
 
-Use the imperative mood, capitalised, with no trailing full stop. Explain in the
-body why the change was needed, not what the diff already shows.
+Use the imperative mood, capitalised, with no trailing full stop. Most commits
+here are subject-only; when a body is warranted, use it to explain why the
+change was needed rather than restating the diff.
 
 ## Code Conventions
 
@@ -80,7 +81,7 @@ every default path is unchanged.
 
 | `APP_VARIANT` | Bundle identifier | Home screen | Icon |
 | --- | --- | --- | --- |
-| *(unset)* / `production` | `NFMTHAZVS9.com.drewvolz.stolaf` | All About Olaf | Old Main |
+| *(unset)* / `production` | `NFMTHAZVS9.com.drewvolz.stolaf` | All About Olaf | the windmill |
 | `development` | `…stolaf.dev` | AAO Dev | Old Main with a diagonal DEV ribbon across the top-right corner across the top-right corner |
 
 ```bash
@@ -105,6 +106,9 @@ magick images/icons/app-icon.png \
 magick /tmp/base.png /tmp/devtext.png -geometry +753+44 -composite \
   -alpha off -strip images/icons/app-icon-development.png
 ```
+
+Run the result through `oxipng -o max --strip safe --zopfli`; ImageMagick's own
+output is roughly a third larger.
 
 [`HazAT/badge`](https://github.com/HazAT/badge) and its fastlane plugin automate
 this per build; it is not worth the dependency for one committed file.
