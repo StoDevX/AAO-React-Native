@@ -11,12 +11,12 @@
   "peerDependencies": {
     "moment-timezone": "^0.6.1",
     "react": "^19.1.0",
-    "react-native": "^0.81.0",
+    "react-native": "^0.86.0",
     "@react-native-vector-icons/ionicons": "^13.1.0",
-    "@react-navigation/native": "^7.2.2"
+    "@react-navigation/native": "^7.3.13"
   },
   "dependencies": {
-    "@callstack/react-theme-provider": "3.0.9",
+    "@callstack/react-theme-provider": "^3.0.9",
     "@frogpond/add-to-device-calendar": "^1.0.0",
     "@frogpond/app-theme": "^1.0.0",
     "@frogpond/colors": "^1.0.0",
@@ -26,6 +26,6 @@
     "@frogpond/notice": "^1.0.0",
     "@frogpond/open-url": "^1.0.0",
     "@frogpond/tableview": "^1.0.0",
-    "lodash": "4.18.1"
+    "lodash": "^4.18.1"
   }
 }

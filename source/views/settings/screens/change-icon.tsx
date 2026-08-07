@@ -15,7 +15,7 @@ const styles = StyleSheet.create({
 	},
 })
 
-type IconTypeEnum = 'default' | 'icon_type_windmill'
+type IconTypeEnum = 'default' | 'icon_type_old_main'
 
 type Icon = {
 	src: ImageSourcePropType
@@ -25,14 +25,14 @@ type Icon = {
 
 export const icons: Array<Icon> = [
 	{
-		src: appIcons.oldMain,
-		title: 'Old Main',
+		src: appIcons.windmill,
+		title: 'Big Ole',
 		type: 'default',
 	},
 	{
-		src: appIcons.windmill,
-		title: 'Big Ole',
-		type: 'icon_type_windmill',
+		src: appIcons.oldMain,
+		title: 'Old Main',
+		type: 'icon_type_old_main',
 	},
 ]
 

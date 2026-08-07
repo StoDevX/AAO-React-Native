@@ -1,9 +1,19 @@
 import React from 'react'
-import {View, Text, StyleSheet} from 'react-native'
+import {Button, ContextMenu, Text} from '@expo/ui/swift-ui'
+import {
+	accessibilityIdentifier,
+	background,
+	contentShape,
+	font,
+	foregroundColor,
+	frame,
+	multilineTextAlignment,
+	padding,
+	shapes,
+} from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
 import sample from 'lodash/sample'
-import {CELL_MARGIN} from './button'
-import {ContextMenu} from '@frogpond/context-menu'
+import {FILL_WIDTH} from './button'
 import {useDispatch, useSelector} from 'react-redux'
 import restart from 'react-native-restart-newarch'
 import {
@@ -33,6 +43,19 @@ const DEV_MESSAGES = [
 const RESTART_ACTION = 'Restart app'
 const DEV_MODE_ACTION = 'Enable dev mode'
 
+const NOTICE_RADIUS = 7
+const NOTICE_PADDING = 8
+/// React Native's default iOS font size, which the old StyleSheet relied on.
+const NOTICE_FONT_SIZE = 14
+/// Pairs with the size so the notice scales with Dynamic Type, as the React
+/// Native Text it replaced did. The style sets the scaling curve only.
+const NOTICE_TEXT_STYLE = 'footnote'
+
+const noticeShape = shapes.roundedRectangle({
+	cornerRadius: NOTICE_RADIUS,
+	roundedCornerStyle: 'circular',
+})
+
 export function UnofficialAppNotice(): React.ReactNode {
 	const dispatch = useDispatch()
 	const devModeOverride = useSelector(selectDevModeOverride)
@@ -43,42 +66,41 @@ export function UnofficialAppNotice(): React.ReactNode {
 		return sample(messages)
 	}, [isDev])
 
-	const onPressMenuItem = (menuKey: string) => {
-		if (menuKey === RESTART_ACTION) {
-			restart.Restart()
-		} else if (menuKey === DEV_MODE_ACTION) {
-			dispatch(setDevModeOverride(!devModeOverride))
-		}
-	}
-
 	return (
-		<ContextMenu
-			actions={[RESTART_ACTION, DEV_MODE_ACTION]}
-			onPressMenuItem={onPressMenuItem}
-			selectedAction={devModeOverride ? DEV_MODE_ACTION : undefined}
-			testID="home-notice"
-			title=""
-		>
-			<View style={[styles.wrapper, styles.background]}>
-				<Text style={styles.text}>{message}</Text>
-			</View>
+		<ContextMenu>
+			<ContextMenu.Trigger>
+				<Text
+					modifiers={[
+						font({size: NOTICE_FONT_SIZE, textStyle: NOTICE_TEXT_STYLE}),
+						foregroundColor(c.secondaryLabel),
+						multilineTextAlignment('center'),
+						padding({all: NOTICE_PADDING}),
+						frame({maxWidth: FILL_WIDTH}),
+						background(c.secondarySystemFill, noticeShape),
+						// without this the long-press only lands on the glyphs
+						// themselves; the fill is painted behind, not hit-tested
+						contentShape(noticeShape),
+						accessibilityIdentifier('home-notice'),
+					]}
+				>
+					{message}
+				</Text>
+			</ContextMenu.Trigger>
+			<ContextMenu.Items>
+				<Button
+					label={RESTART_ACTION}
+					onPress={() => {
+						restart.Restart()
+					}}
+				/>
+				<Button
+					label={DEV_MODE_ACTION}
+					onPress={() => {
+						dispatch(setDevModeOverride(!devModeOverride))
+					}}
+					systemImage={devModeOverride ? 'checkmark' : undefined}
+				/>
+			</ContextMenu.Items>
 		</ContextMenu>
 	)
 }
-
-const styles = StyleSheet.create({
-	wrapper: {
-		justifyContent: 'center',
-		marginBottom: CELL_MARGIN,
-		marginHorizontal: CELL_MARGIN,
-	},
-	background: {
-		backgroundColor: c.secondarySystemFill,
-		borderRadius: 7,
-	},
-	text: {
-		color: c.secondaryLabel,
-		padding: 8,
-		textAlign: 'center',
-	},
-})

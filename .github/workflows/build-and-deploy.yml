@@ -36,7 +36,7 @@ jobs:
       - run: git fetch --prune --unshallow
       - run: npm ci
       - run: mise run prepare
-      - run: mise run pod:install --deployment
+      - run: mise run prebuild
       - run: bundle exec fastlane ios ci-run
         env:
           FASTLANE_PASSWORD: ${{ secrets.FASTLANE_PASSWORD }}

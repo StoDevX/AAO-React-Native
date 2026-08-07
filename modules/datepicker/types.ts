@@ -1,11 +1,10 @@
 import {StyleProp, ViewStyle} from 'react-native'
 import type {Moment} from 'moment-timezone'
-import type {IOSNativeProps} from '@react-native-community/datetimepicker'
+import type {DateTimePickerProps} from '@expo/ui/community/datetime-picker'
 
 export interface BaseDatetimePickerProps {
 	// dep-specific
 	initialDate: Moment
-	minuteInterval?: 1 | 2 | 3 | 4 | 5 | 6 | 10 | 12 | 15 | 20 | 30
 	mode: IOSProps['mode']
 	format?: string
 	onDateChange: (moment: Moment) => void
@@ -18,8 +17,8 @@ export interface BaseDatetimePickerProps {
 }
 
 interface IOSProps {
-	mode: NonNullable<IOSNativeProps['mode']>
-	display?: NonNullable<IOSNativeProps['display']>
+	mode: NonNullable<DateTimePickerProps['mode']>
+	display?: NonNullable<DateTimePickerProps['display']>
 }
 
 export type IosDatetimePickerProps = BaseDatetimePickerProps & IOSProps

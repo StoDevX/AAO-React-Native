@@ -4,12 +4,21 @@
 
 All About Olaf is a React Native mobile app for the St. Olaf College community. It provides students, faculty, and staff with access to campus info, dining menus, course catalogs, campus maps, and more.
 
-- **React Native 0.81.5** with **TypeScript**
-- **React Navigation 6** for navigation (typed via `source/navigation/types.ts`)
+- **React Native 0.86.2** with **TypeScript**
+- **React Navigation 7** for navigation (typed via `source/navigation/types.ts`)
 - **Redux Toolkit** for global state, **React Query 5** for server state
 - **Jest** + **React Native Testing Library** for testing
 - **Fastlane** for CI/CD
 - Monorepo with internal packages in `modules/`
+
+## Commit Messages
+
+No conventional-commit prefixes. Write `Drop the migration planning docs`, not
+`chore: drop the migration planning docs`.
+
+Use the imperative mood, capitalised, with no trailing full stop. Most commits
+here are subject-only; when a body is warranted, use it to explain why the
+change was needed rather than restating the diff.
 
 ## Code Conventions
 
@@ -52,7 +61,7 @@ These patterns are especially important in this codebase:
 - Mock native modules and external APIs
 - Descriptive test names; group with `describe` blocks
 - `beforeEach`/`afterEach` for setup/cleanup
-- **XCUITest debugging:** iOS UI tests live in `ios/AllAboutOlafUITests/` and run as sharded CI jobs. When a test fails, two artifacts are uploaded per shard: `uitest-attachments-{shard}` (screenshots extracted via `xcrun xcresulttool export attachments`) and `uitest-results-{shard}.xcresult` (the full XCResult bundle). Start with the attachments for a quick look; open the `.xcresult` bundle in Xcode (or query via `xcrun xcresulttool get --format json --path uitest-results.xcresult`) for full logs, traces, and per-test activity.
+- **XCUITest debugging:** iOS UI tests live in `uitests/` and run as sharded CI jobs. When a test fails, two artifacts are uploaded per shard: `uitest-attachments-{shard}` (screenshots extracted via `xcrun xcresulttool export attachments`) and `uitest-results-{shard}.xcresult` (the full XCResult bundle). Start with the attachments for a quick look; open the `.xcresult` bundle in Xcode (or query via `xcrun xcresulttool get --format json --path uitest-results.xcresult`) for full logs, traces, and per-test activity.
 
 ## Development Commands
 
@@ -61,8 +70,52 @@ mise run lint   # ESLint
 mise run pretty # Prettier; run `pretty:check` to validate instead
 mise run test   # Jest, unit tests
 mise run tsc    # Type check
-mise run pods   # Install cocoapods, even on Linux
+mise run prebuild # Generate ios/ from app.config.ts, and install pods
 ```
+
+### App Variants
+
+A development build can sit alongside the shipping app on one device.
+`APP_VARIANT` selects the build at generation time; unset means production, so
+every default path is unchanged.
+
+| `APP_VARIANT` | Bundle identifier | Home screen | Icon |
+| --- | --- | --- | --- |
+| *(unset)* / `production` | `NFMTHAZVS9.com.drewvolz.stolaf` | All About Olaf | the windmill |
+| `development` | `…stolaf.dev` | AAO Dev | Old Main with a diagonal DEV ribbon across the top-right corner across the top-right corner |
+
+```bash
+APP_VARIANT=development mise run prebuild   # then build to your device
+```
+
+The URL scheme varies too — two apps claiming one scheme is undefined behaviour.
+
+TestFlight and App Store builds both ship the production identity, so a
+TestFlight build replaces the App Store app as it always has.
+
+The dev icon is generated rather than drawn by hand. To regenerate it after an
+app icon change:
+
+```bash
+magick -size 520x170 xc:none -gravity center \
+  -font '/System/Library/Fonts/Supplemental/Arial Bold.ttf' \
+  -pointsize 116 -kerning 10 -fill white -annotate +0+0 'DEV' \
+  -background none -rotate 45 -trim +repage /tmp/devtext.png
+magick images/icons/app-icon.png \
+  -fill '#D0021B' -draw 'polygon 1024,424 600,0 840,0 1024,184' /tmp/base.png
+magick /tmp/base.png /tmp/devtext.png -geometry +753+44 -composite \
+  -alpha off -strip images/icons/app-icon-development.png
+```
+
+Run the result through `oxipng -o max --strip safe --zopfli`; ImageMagick's own
+output is roughly a third larger.
+
+[`HazAT/badge`](https://github.com/HazAT/badge) and its fastlane plugin automate
+this per build; it is not worth the dependency for one committed file.
+
+**Before the dev variant can go anywhere but a local device**, its bundle
+identifier needs its own App Store Connect record and `match` profiles. The
+config alone creates neither.
 
 ### Local Server Discovery
 
@@ -73,7 +126,7 @@ To use this:
 2. Run a debug build of the app on a device on the same network
 3. Navigate to Settings → Server URL — the server will appear automatically
 
-The feature uses `react-native-zeroconf` (native pod). If the pod hasn't been linked yet (`mise run pods`), discovery is silently skipped — the screen won't crash.
+The feature uses `react-native-zeroconf` (native pod). If the pod hasn't been linked yet (`mise run prebuild`), discovery is silently skipped — the screen won't crash.
 
 ## Agent Workflow
 
@@ -110,6 +163,7 @@ Skills are located in `.claude/skills/`. Agents are in `.claude/agents/`. Comman
 | `finishing-a-development-branch` | Merge/PR decision workflow |
 | `writing-skills` | Create new skills |
 | `add-screen` | Scaffold and integrate a new screen into the app |
+| `build-to-device` | Put a build on a physical iPhone for manual checks |
 
 ### Available Agents
 

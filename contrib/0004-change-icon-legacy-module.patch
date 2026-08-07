@@ -1,0 +1,41 @@
+Make react-native-change-icon a plain legacy bridge module.
+
+Under RCT_NEW_ARCH_ENABLED the shipped header declares conformance to the
+codegen-generated NativeChangeIconSpec, which inherits both RCTBridgeModule and
+RCTTurboModule. Advertising RCTTurboModule makes React Native's legacy-module
+interop scanner skip the class, but the module is never registered on the
+TurboModule side either -- it is absent from the generated RCTModuleProviders.mm.
+It therefore falls between the two systems and is never instantiated, so
+NativeModules.ChangeIcon is unusable and every call silently does nothing:
+the app icon never changes and no error reaches JavaScript.
+
+ChangeIcon.mm compounds the silence. It resolves the promise before calling
+setAlternateIconName: and its completion handler discards the NSError, so even a
+genuine failure looks like success.
+
+Dropping the #ifdef leaves ChangeIcon a plain RCTBridgeModule, which the interop
+layer picks up exactly as it does react-native-device-info and
+react-native-zeroconf -- both of which work under the New Architecture precisely
+because they declare no codegen spec.
+
+Verified with ModuleSettingsTests.testChangesAppIconToBigOleAndBack, which fails
+on the New Architecture without this patch and passes with it, matching the
+old-architecture control run.
+
+Upstream is unmaintained for this: 5.0.0 is the latest release and still ships
+the broken header.
+
+--- node_modules/react-native-change-icon/ios/ChangeIcon.h
++++ node_modules/react-native-change-icon/ios/ChangeIcon.h
+@@ -1,11 +1,6 @@
+ #import <UIKit/UIKit.h>
+
+-#ifdef RCT_NEW_ARCH_ENABLED
+-#import "RNChangeIconSpec.h"
+-@interface ChangeIcon : NSObject <NativeChangeIconSpec, UIApplicationDelegate>
+-#else
+ #import <React/RCTBridgeModule.h>
+ @interface ChangeIcon : NSObject <RCTBridgeModule, UIApplicationDelegate>
+-#endif
+
+ @end
