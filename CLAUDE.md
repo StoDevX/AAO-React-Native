@@ -81,7 +81,7 @@ every default path is unchanged.
 
 | `APP_VARIANT` | Bundle identifier | Home screen | Icon |
 | --- | --- | --- | --- |
-| *(unset)* / `production` | `NFMTHAZVS9.com.drewvolz.stolaf` | All About Olaf | Old Main |
+| *(unset)* / `production` | `NFMTHAZVS9.com.drewvolz.stolaf` | All About Olaf | the windmill |
 | `development` | `…stolaf.dev` | AAO Dev | Old Main with a diagonal DEV ribbon across the top-right corner across the top-right corner |
 
 ```bash
@@ -106,6 +106,9 @@ magick images/icons/app-icon.png \
 magick /tmp/base.png /tmp/devtext.png -geometry +753+44 -composite \
   -alpha off -strip images/icons/app-icon-development.png
 ```
+
+Run the result through `oxipng -o max --strip safe --zopfli`; ImageMagick's own
+output is roughly a third larger.
 
 [`HazAT/badge`](https://github.com/HazAT/badge) and its fastlane plugin automate
 this per build; it is not worth the dependency for one committed file.
