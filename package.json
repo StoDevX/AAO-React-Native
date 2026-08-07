@@ -99,7 +99,7 @@
     "zustand": "5.0.12"
   },
   "devDependencies": {
-    "@babel/core": "7.29.0",
+    "@babel/core": "7.29.6",
     "@babel/plugin-transform-private-methods": "7.29.7",
     "@babel/preset-typescript": "7.29.7",
     "@babel/runtime": "7.29.2",
