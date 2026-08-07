@@ -47,10 +47,19 @@ const ICON_SIZE = 32
 // For the icon the family is a custom font, so this maps to
 // Font.custom(_:size:relativeTo:) and ICON_SIZE governs the rendered size. For
 // the title there is no family, so the text style's own size wins --
-// subheadline is 15pt. There is deliberately no title size constant: passing
-// one alongside a text style has no effect, so it would only mislead.
+// headline is 17pt, matched by pixel-comparing rendered title text against
+// Health's own card titles (see button.tsx's git history for the
+// measurement). There is deliberately no title size constant: passing one
+// alongside a text style has no effect, so it would only mislead.
+//
+// At this size, the two longest current titles ("Important Contacts",
+// "Campus Dictionary") truncate with an ellipsis instead of wrapping: this
+// version of @expo/ui's Text doesn't honor lineLimit(2) here regardless of
+// the frame/multilineTextAlignment modifiers tried. Chosen deliberately --
+// pixel-matching Health's title size over avoiding truncation -- pending an
+// @expo/ui fix or update.
 const ICON_TEXT_STYLE = 'title'
-const TITLE_TEXT_STYLE = 'subheadline'
+const TITLE_TEXT_STYLE = 'headline'
 
 /// `view.icon` comes from the view data rather than from a literal, so a typo
 /// or a rename upstream reaches this as an undefined lookup. Fail with a
