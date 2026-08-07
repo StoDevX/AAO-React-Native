@@ -16,7 +16,7 @@ const BUNDLE_ID = 'hawkrives.All-About-Olaf-UI-Tests'
 export const UITEST_SOURCE_DIR = 'uitests'
 
 const APP_TARGET_ANCHOR = `target '${APP_TARGET}' do`
-const POST_INSTALL_ANCHOR = '  post_install do |installer|'
+const POST_INSTALL_ANCHOR = /^([ \t]*)post_install do \|installer\|/mu
 
 /**
  * expo-modules-autolinking adds ExpoModulesProvider.swift and the "[Expo]
@@ -34,11 +34,8 @@ end
 Pod::Podfile::TargetDefinition.prepend(ExpoUITestsAutolinkingFix)
 `
 
-const NESTED_TARGET = `  target '${UITEST_TARGET}' do
-    inherit! :none
-  end
-
-`
+const nestedTarget = (indent: string): string =>
+	`${indent}target '${UITEST_TARGET}' do\n${indent}${indent || '  '}inherit! :none\n${indent}end\n\n`
 
 function require_(contents: string, anchor: string, what: string): void {
 	if (!contents.includes(anchor)) {
@@ -61,11 +58,14 @@ export function patchPodfileForUITests(contents: string): string {
 	}
 
 	if (!result.includes(`target '${UITEST_TARGET}' do`)) {
-		require_(result, POST_INSTALL_ANCHOR, 'the post_install hook')
-		result = result.replace(
-			POST_INSTALL_ANCHOR,
-			`${NESTED_TARGET}${POST_INSTALL_ANCHOR}`,
-		)
+		let match = POST_INSTALL_ANCHOR.exec(result)
+		if (!match) {
+			throw new Error(
+				'with-xcuitest-target: could not find the post_install hook (`post_install do |installer|`). The Expo template moved it; update this plugin rather than losing the XCUITest target.',
+			)
+		}
+		let [line, indent] = match
+		result = result.replace(line, `${nestedTarget(indent)}${line}`)
 	}
 
 	return result
@@ -96,6 +96,9 @@ function buildSettingsFor(projectPath: string): Record<string, string> {
 		LIBRARY_SEARCH_PATHS: '"$(SDKROOT)/usr/lib/swift$(inherited)"',
 		PRODUCT_BUNDLE_IDENTIFIER: `"${BUNDLE_ID}"`,
 		PRODUCT_NAME: '"$(TARGET_NAME)"',
+		// The generated project sets no project-level SWIFT_VERSION, and an
+		// empty one is a hard build error rather than a default.
+		SWIFT_VERSION: '5.0',
 		TEST_TARGET_NAME: APP_TARGET,
 	}
 }
@@ -103,6 +106,10 @@ function buildSettingsFor(projectPath: string): Record<string, string> {
 /**
  * Read one record out of a pbxproj section. Sections interleave records with
  * `<uuid>_comment` strings, so every lookup is `T | string` until narrowed.
+ *
+ * Duplicated rather than shared: Expo compiles each plugin file on its own, so
+ * a relative import of a sibling .ts does not resolve at prebuild time. Jest
+ * resolves it happily, which is why only a real prebuild catches it.
  */
 function entryIn<T>(
 	section: Record<string, T | string>,
@@ -111,9 +118,7 @@ function entryIn<T>(
 ): T {
 	let entry = section[key]
 	if (typeof entry === 'string' || entry === undefined) {
-		throw new Error(
-			`with-xcuitest-target: ${what} is missing from the project.`,
-		)
+		throw new Error(`${what} is missing from the Xcode project.`)
 	}
 	return entry
 }

@@ -26,16 +26,32 @@ run = "react-native run-ios"
 description = "Start Metro bundler"
 run = "react-native start"
 
-[tasks."pod:install"]
-description = "Install CocoaPods"
-usage = '''
-flag "--deployment" help="Disallow any changes to the Podfile or the Podfile.lock during installation"
-flag "--repo-update" negate="--no-repo-update" help="Force running `pod repo update` before install"
-flag "--verbose" help="Show more debugging information"
-'''
-dir = "{{ config_root }}/ios"
+[tasks.prebuild]
+description = "Generate the native iOS project from app.config.ts"
+depends = ["prepare"]
+# prebuild recreates ios/ from scratch, deleting the tracked ios/ci_scripts
+# shim with it. `--no-clean` does not help: it preserves an existing *valid*
+# project, but a fresh clone contains only ci_scripts, which prebuild treats as
+# malformed and clears anyway. So stash the shim and put it back. Doing it here
+# rather than in the script keeps every prebuild -- local, GitHub Actions,
+# Xcode Cloud -- leaving the same tree.
 run = '''
-../scripts/pod install {% if usage.deployment %}--deployment{% endif %} {% if usage.repo_update %}--repo-update{% endif %} {% if usage.verbose %}--verbose{% endif %}
+shim="$(mktemp -d)"
+if [ -d ios/ci_scripts ]; then
+  cp -R ios/ci_scripts/. "$shim/"
+else
+  echo "warning: ios/ci_scripts is missing, so there is nothing to preserve." >&2
+  echo "         Xcode Cloud will not run any build script without it." >&2
+  echo "         Restore it with: jj restore ios/ci_scripts" >&2
+fi
+
+expo prebuild --platform ios
+
+if [ -n "$(ls -A "$shim" 2>/dev/null)" ]; then
+  mkdir -p ios/ci_scripts
+  cp -R "$shim/." ios/ci_scripts/
+fi
+rm -rf "$shim"
 '''
 
 [tasks.fastlane]

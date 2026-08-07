@@ -1,3 +1,8 @@
+---
+name: build-to-device
+description: Use when someone asks for a build on their physical iPhone - covers signing overrides that avoid rotating the shared match certificate, and injecting the JS bundle so a Debug build runs without Metro
+---
+
 # Build to a Physical Device
 
 How to get a build of the app onto a physical iPhone for manual verification,
@@ -13,10 +18,13 @@ alternate app icons, or mDNS discovery.
 
 Both have caught previous sessions out. Neither is obvious from the error.
 
-### 1. The committed provisioning profile is expired
+### 1. The provisioning profile is expired or unavailable
 
-The project commits `CODE_SIGN_STYLE = Manual` and expects a `match`-managed
-profile. That profile expires, and when it does a device build fails with:
+`expo prebuild` does not reproduce `CODE_SIGN_STYLE`, `DEVELOPMENT_TEAM` or
+`PROVISIONING_PROFILE_SPECIFIER`, so a generated project usually signs cleanly
+under automatic provisioning and this problem does not arise. It still can when
+Xcode picks up a stale `match`-managed profile, and it did every time before the
+project was generated. The failure looks like:
 
 ```
 error: Provisioning profile "match Development NFMTHAZVS9.com.drewvolz.stolaf"
@@ -68,6 +76,9 @@ Copy `ios/assets/` too, not just the bundle — images resolve from it.
 ## Full sequence
 
 ```bash
+# 0. Generate ios/ if it is absent -- it is not tracked
+mise run prebuild
+
 # 1. Confirm the device is paired, and note its identifier
 xcrun devicectl list devices
 

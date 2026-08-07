@@ -73,6 +73,18 @@ describe('patchPodfileForUITests', () => {
 		expect(patchPodfileForUITests(once)).toBe(once)
 	})
 
+	// A substring anchor survives *deeper* indentation by accident; it is a
+	// shallower template that breaks it.
+	it('tolerates a reindented post_install hook', () => {
+		let reindented = STOCK_PODFILE.replace(
+			'  post_install do |installer|',
+			'post_install do |installer|',
+		)
+		let result = patchPodfileForUITests(reindented)
+		expect(result).toContain(`target '${TARGET}' do`)
+		expect(result).toContain('inherit! :none')
+	})
+
 	it('throws when the app target is missing', () => {
 		expect(() => patchPodfileForUITests('# empty\n')).toThrow(
 			/target 'AllAboutOlaf'/u,
@@ -125,6 +137,8 @@ describe('ensureUITestTarget', () => {
 		expect(settings).toHaveLength(2)
 		for (let entry of settings) {
 			expect(entry.TEST_TARGET_NAME).toBe('AllAboutOlaf')
+			// An empty SWIFT_VERSION fails the build outright.
+			expect(entry.SWIFT_VERSION).toBe('5.0')
 			expect(entry.INFOPLIST_FILE).toBe(`${PROJECT_PATH}/Info.plist`)
 		}
 	})

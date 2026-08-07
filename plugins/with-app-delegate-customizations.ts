@@ -7,7 +7,9 @@ const MODULE_NAME = 'AllAboutOlaf'
 const BEGIN = '    // BEGIN aao customizations'
 const END = '    // END aao customizations'
 
-const LAUNCH_ANCHOR = '    let delegate = ReactNativeDelegate()'
+// Indentation-tolerant: only the anchor adapts. The injected Swift keeps its
+// own formatting rather than trying to reflow to a moved template.
+const LAUNCH_ANCHOR = /^[ \t]*let delegate = ReactNativeDelegate\(\)/mu
 
 const STARTUP_BLOCK = `${BEGIN}
     if ProcessInfo.processInfo.arguments.contains("--reset-state") {
@@ -72,8 +74,13 @@ export function patchAppDelegate(contents: string): string {
 
 	if (!result.includes(BEGIN)) {
 		require_(result, 'didFinishLaunchingWithOptions')
-		require_(result, LAUNCH_ANCHOR)
-		result = result.replace(LAUNCH_ANCHOR, `${STARTUP_BLOCK}\n${LAUNCH_ANCHOR}`)
+		let match = LAUNCH_ANCHOR.exec(result)
+		if (!match) {
+			throw new Error(
+				'with-app-delegate-customizations: could not find `let delegate = ReactNativeDelegate()` in AppDelegate.swift. The Expo template moved it; update this plugin rather than dropping the customization.',
+			)
+		}
+		result = result.replace(match[0], `${STARTUP_BLOCK}\n${match[0]}`)
 	}
 
 	if (!result.includes(`withModuleName: "${MODULE_NAME}"`)) {

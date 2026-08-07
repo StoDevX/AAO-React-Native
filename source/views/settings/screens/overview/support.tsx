@@ -5,9 +5,9 @@ import {PushButtonCell} from '@frogpond/tableview/cells'
 import {sendEmail} from '../../../../components/send-email'
 import * as Application from 'expo-application'
 import * as Device from 'expo-device'
-import {appVersion, appBuild} from '@frogpond/constants'
 import {refreshApp} from '../../../../lib/refresh'
 import {useNavigation} from '@react-navigation/native'
+import {formatVersion} from './version'
 
 const getDeviceInfo = () => `
 
@@ -26,16 +26,11 @@ export const openEmail = (): void => {
 	})
 }
 
-const getVersion = () => {
-	let version = appVersion()
-	let build = appBuild()
-
-	if (build) {
-		return `${version}+${build}`
-	} else {
-		return version
-	}
-}
+const getVersion = () =>
+	formatVersion(
+		Application.nativeApplicationVersion,
+		Application.nativeBuildVersion,
+	)
 
 export const SupportSection = (): React.ReactNode => {
 	let navigation = useNavigation()

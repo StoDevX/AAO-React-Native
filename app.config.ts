@@ -2,16 +2,59 @@ import type {ExpoConfig} from 'expo/config'
 
 import {version} from './package.json'
 
+const BUNDLE_ID = 'NFMTHAZVS9.com.drewvolz.stolaf'
+
+/**
+ * Which build this is. Set `APP_VARIANT=development` to get an app that
+ * installs alongside the real one instead of replacing it on your device.
+ *
+ * The identity has to differ in three places, not one: iOS keys installs on the
+ * bundle identifier, the home screen shows the name, and two apps claiming the
+ * same URL scheme is undefined behaviour — whichever iOS feels like wins.
+ *
+ * Defined inline rather than imported from a helper: Expo's config loader
+ * compiles this file on its own, so `import {x} from './somewhere'` throws
+ * `Cannot find module` at prebuild time. See __tests__/app.config.test.ts.
+ */
+const VARIANTS = {
+	production: {
+		displayName: 'All About Olaf',
+		bundleIdentifier: BUNDLE_ID,
+		scheme: 'AllAboutOlaf',
+	},
+	development: {
+		displayName: 'AAO Dev',
+		bundleIdentifier: `${BUNDLE_ID}.dev`,
+		scheme: 'AllAboutOlafDev',
+	},
+	preview: {
+		displayName: 'AAO Preview',
+		bundleIdentifier: `${BUNDLE_ID}.preview`,
+		scheme: 'AllAboutOlafPreview',
+	},
+}
+
+const requested = process.env.APP_VARIANT ?? 'production'
+
+if (!(requested in VARIANTS)) {
+	// Loudly, rather than quietly shipping production's identity under a typo.
+	throw new Error(
+		`APP_VARIANT="${requested}" is not one of ${Object.keys(VARIANTS).join(', ')}.`,
+	)
+}
+
+const variant = VARIANTS[requested as keyof typeof VARIANTS]
+
 /**
  * The declarative description of the iOS project.
- *
- * Nothing reads this yet — `ios/` is still tracked and authoritative. It
- * becomes the source of truth when `expo prebuild` takes over.
  */
 const config: ExpoConfig = {
+	// Constant across variants: this also names the generated Xcode project,
+	// its target, its scheme and its directory. The variant's own name goes to
+	// CFBundleDisplayName below, which is what the home screen shows.
 	name: 'All About Olaf',
 	slug: 'all-about-olaf',
-	scheme: 'AllAboutOlaf',
+	scheme: variant.scheme,
 	version,
 	platforms: ['ios'],
 	icon: './images/icons/app-icon.png',
@@ -25,7 +68,7 @@ const config: ExpoConfig = {
 	// `orientation` is also set — so setting both would only add noise.
 
 	ios: {
-		bundleIdentifier: 'NFMTHAZVS9.com.drewvolz.stolaf',
+		bundleIdentifier: variant.bundleIdentifier,
 		// Xcode Cloud's build number becomes an input to generation rather than
 		// something agvtool edits afterwards.
 		buildNumber: process.env.CI_BUILD_NUMBER ?? '17',
@@ -56,6 +99,8 @@ const config: ExpoConfig = {
 		},
 
 		infoPlist: {
+			CFBundleDisplayName: variant.displayName,
+
 			CADisableMinimumFrameDurationOnPhone: true,
 			ITSAppUsesNonExemptEncryption: false,
 
@@ -108,7 +153,6 @@ const config: ExpoConfig = {
 					// Expo SDK 57 needs at least 16.4; the project has run ahead of
 					// that since SDK 56, and the Podfile must not drift from it.
 					deploymentTarget: '18.6',
-					ccacheEnabled: process.env.USE_CCACHE === '1',
 				},
 			},
 		],
@@ -118,6 +162,8 @@ const config: ExpoConfig = {
 		'./plugins/with-app-delegate-customizations',
 		'./plugins/with-alternate-icons',
 		'./plugins/with-xcuitest-target',
+		'./plugins/with-binary-stripping',
+		'./plugins/with-inhibit-pod-warnings',
 	],
 }
 
