@@ -67,6 +67,11 @@ overrides:
   'brace-expansion@2': '2.1.4'
   'brace-expansion@5': '5.0.9'
   'postcss@8': '8.5.25'
+  # shell-quote@1.8.3 (pulled in transitively via launch-editor, part of
+  # @react-native-community/cli-tools) has two known advisories: a critical
+  # newline-escaping bug (GHSA-w7jw-789q-3m8p) and a ReDoS in parse()
+  # (GHSA-395f-4hp3-45gv). Both are fixed upstream; force the patched version.
+  'shell-quote': '1.10.0'
   # react-dom is an optionalDependency of expo, @expo/ui, and @expo/router-server
   # -- all needed only for their web targets. This app is iOS-only and never
   # renders any of their web variants, so drop it rather than just pinning it.
