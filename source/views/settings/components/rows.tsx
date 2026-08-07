@@ -50,8 +50,7 @@ export function NavigationRow(props: RowProps): React.ReactNode {
 
 /**
  * A row that fires an action (open a URL, show an alert, mutate) rather than
- * pushing a screen. Styled like the old `showLinkStyle` cells: tinted text,
- * no chevron.
+ * pushing a screen. Tinted text and no chevron, since there is nowhere to go.
  */
 export function ActionRow(props: RowProps): React.ReactNode {
 	let {title, onPress, disabled = false} = props

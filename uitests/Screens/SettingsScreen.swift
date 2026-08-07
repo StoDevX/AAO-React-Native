@@ -16,8 +16,7 @@ struct SettingsScreen: Screen {
 	@discardableResult
 	func checkSignInVisible() -> Self {
 		// The sign-in row is a SwiftUI Button carrying its title as an
-		// accessibility label, so it surfaces as a button rather than the
-		// static text the React Native ButtonCell used to produce.
+		// accessibility label, so it surfaces as a button, not static text.
 		let signIn = app.buttons[TestIdentifiers.Settings.signIn].firstMatch
 		XCTAssertTrue(
 			signIn.waitForExistence(timeout: 30),

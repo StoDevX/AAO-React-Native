@@ -34,8 +34,8 @@ const SettingsView = (): React.ReactNode => {
 	return (
 		<Host style={styles.host}>
 			<Form>
-				{/* The banner is still React Native, so it has to be hosted back
-				    into SwiftUI to scroll with the rest of the content. */}
+				{/* The banner is a React Native view, so it has to be hosted into
+				    SwiftUI to scroll with the rest of the content. */}
 				<RNHostView matchContents={true}>
 					<FaqBannerGroup
 						style={styles.banner}

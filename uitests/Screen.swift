@@ -57,9 +57,7 @@ extension Screen {
 	///
 	/// SwiftUI's `Form` builds its rows lazily: anything below the fold is
 	/// absent from the tree entirely, not merely offscreen, so a query for it
-	/// fails rather than returning something unhittable. The React Native
-	/// `ScrollView` these screens used to be built on mounted every row up
-	/// front, so queries for far-down rows used to resolve without scrolling.
+	/// fails outright rather than returning something unhittable.
 	@discardableResult
 	func scrollUntilExists(_ element: XCUIElement, swipes: Int = 8) -> Self {
 		for _ in 0..<swipes {
