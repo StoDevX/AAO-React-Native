@@ -123,6 +123,25 @@ function entryIn<T>(
 	return entry
 }
 
+/** Replace a product's name wherever the project echoes it into a comment. */
+function renameThroughout(node: unknown, from: string, to: string): void {
+	if (Array.isArray(node)) {
+		for (let entry of node) renameThroughout(entry, from, to)
+		return
+	}
+	if (typeof node !== 'object' || node === null) return
+
+	let record = node as Record<string, unknown>
+	for (let key of Object.keys(record)) {
+		let value = record[key]
+		if (typeof value === 'string' && value.includes(from)) {
+			record[key] = value.replaceAll(from, to)
+		} else {
+			renameThroughout(value, from, to)
+		}
+	}
+}
+
 interface UITestTargetOptions {
 	/** Target name, which is also the product name. */
 	name: string
@@ -165,6 +184,25 @@ export function ensureUITestTarget(
 	created.productName = name
 	created.productType = '"com.apple.product-type.bundle.ui-testing"'
 	nativeTargets[`${target.uuid}_comment`] = name
+
+	// The xcode package derives the product's extension from its file type and
+	// lands on .mdimporter for a wrapper.cfbundle. Xcode builds a real .xctest
+	// regardless, since PRODUCT_NAME is $(TARGET_NAME), but every tool that
+	// reads the project file believes the name written here.
+	let productName = `${name}.xctest`
+	let staleName = `${name}.mdimporter`
+	let product = entryIn(
+		project.pbxFileReferenceSection(),
+		created.productReference,
+		`the ${name} product reference`,
+	)
+	product.name = productName
+	product.path = productName
+
+	// The name is echoed into every comment that mentions the product -- the
+	// build file, the Copy Files phase, the Products group -- so rename it
+	// wherever it appears rather than in the file reference alone.
+	renameThroughout(project.hash.project.objects, staleName, productName)
 
 	project.addBuildPhase([], 'PBXSourcesBuildPhase', 'Sources', target.uuid)
 	project.addBuildPhase(

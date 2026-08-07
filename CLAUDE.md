@@ -16,8 +16,9 @@ All About Olaf is a React Native mobile app for the St. Olaf College community. 
 No conventional-commit prefixes. Write `Drop the migration planning docs`, not
 `chore: drop the migration planning docs`.
 
-Use the imperative mood, capitalised, with no trailing full stop. Explain in the
-body why the change was needed, not what the diff already shows.
+Use the imperative mood, capitalised, with no trailing full stop. Most commits
+here are subject-only; when a body is warranted, use it to explain why the
+change was needed rather than restating the diff.
 
 ## Code Conventions
 
