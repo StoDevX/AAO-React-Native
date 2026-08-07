@@ -153,7 +153,6 @@ const config: ExpoConfig = {
 					// Expo SDK 57 needs at least 16.4; the project has run ahead of
 					// that since SDK 56, and the Podfile must not drift from it.
 					deploymentTarget: '18.6',
-					ccacheEnabled: process.env.USE_CCACHE === '1',
 				},
 			},
 		],
