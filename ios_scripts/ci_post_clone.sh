@@ -19,8 +19,8 @@ export PATH="$(brew --prefix)/bin:$PATH"
 
 echo "mise version: $(mise --version)"
 
-# Install node through mise so this build uses the version .mise.toml pins.
-# Homebrew's node@24 tracks the newest 24.x while .mise.toml pins an exact
+# Install node through mise so this build uses the version mise.toml pins.
+# Homebrew's node@24 tracks the newest 24.x while mise.toml pins an exact
 # patch, so brew would let the build that ships to TestFlight run a different
 # node than every other environment.
 #
@@ -28,25 +28,25 @@ echo "mise version: $(mise --version)"
 # else is installed as a side effect.
 mise install node
 
+# Same reasoning for pnpm: install the version mise.toml pins, explicitly,
+# since MISE_AUTO_INSTALL is off.
+mise install pnpm
+
 # `mise which` returns an absolute path, which is what xcodebuild needs below.
 NODE_PATH="$(mise which node)"
 
 echo "node path: ${NODE_PATH}"
 "${NODE_PATH}" --version
 
-# Put node and npm on PATH for the rest of this script
+# Put node on PATH for the rest of this script
 export PATH="$(dirname "${NODE_PATH}"):$PATH"
 
-# Activate mise shims for ruby/cocoapods tools used in task runs
+# Activate mise shims for pnpm/ruby/cocoapods tools used in task runs
 eval "$(mise activate bash --shims)"
 
-# install node modules
-npm ci
-
-# apply contrib/*.patch. npm won't: .npmrc sets ignore-scripts=true, and the
-# generated Podfile has no post_install hook calling apply-patches.sh. The mise
-# prebuild task also depends on prepare; this makes the ordering explicit.
-mise run prepare
+# install node modules. Patches in patchedDependencies (pnpm-workspace.yaml)
+# are applied automatically as part of this.
+pnpm install --frozen-lockfile
 
 # build the data files
 mise run bundle-data

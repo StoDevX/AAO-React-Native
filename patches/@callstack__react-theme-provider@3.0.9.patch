@@ -1,7 +1,7 @@
-diff --git node_modules/@callstack/react-theme-provider/typings/index.d.ts node_modules/@callstack/react-theme-provider/typings/index.d.ts
-index c209bec..228fb92 100644
---- node_modules/@callstack/react-theme-provider/typings/index.d.ts
-+++ node_modules/@callstack/react-theme-provider/typings/index.d.ts
+diff --git a/typings/index.d.ts b/typings/index.d.ts
+index 91dc374c6f4cbd4462a9b7f0051b1b54b32c109f..b9746aa36f9837229f47f62c5d3b719d35535aaa 100644
+--- a/typings/index.d.ts
++++ b/typings/index.d.ts
 @@ -8,7 +8,7 @@ type $Without<T, K extends keyof any> = T extends any ? Pick<T, Exclude<keyof T,
  type $DeepPartial<T> = { [P in keyof T]?: $DeepPartial<T[P]> };
  

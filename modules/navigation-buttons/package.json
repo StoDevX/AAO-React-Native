@@ -9,7 +9,7 @@
     "test": "jest"
   },
   "peerDependencies": {
-    "@frogpond/app-theme": "^1.0.0",
+    "@frogpond/app-theme": "workspace:^1.0.0",
     "react": "^19.1.0",
     "react-native": "^0.86.0",
     "@react-native-vector-icons/ionicons": "^13.1.0",
