@@ -333,10 +333,20 @@ jobs:
         timeout-minutes: 25
         run: |
           set -o pipefail
+          # Every test cold-launches the app in setUp, and on hosted runners that
+          # launch sometimes outruns the 30s the screen objects allow the view tree
+          # to mount, so whichever test lands on a slow moment fails. Retry rather
+          # than wait longer -- a stalled launch is not a slow one, and setUp gives
+          # each attempt a fresh app.
+          #
+          # Leave -test-repetition-relaunch-enabled off. It repeats the whole bundle
+          # instead of just the failures, which would run every passing test three
+          # times over and take the shard past its timeout.
           xcodebuild test-without-building \
             -xctestrun $(find ios/build/Build/Products -name '*.xctestrun' -print -quit) \
             -destination "platform=iOS Simulator,id=${{ steps.udid.outputs.udid }}" \
             ${{ matrix.tests }} \
+            -retry-tests-on-failure \
             -resultBundlePath uitest-results \
             | xcbeautify --renderer github-actions
 
