@@ -109,7 +109,7 @@ export const AllViews = (): Array<ViewType> => {
 		{
 			type: 'view',
 			view: importantContacts,
-			title: 'Campus Help',
+			title: 'Important Contacts',
 			icon: 'phone.fill',
 			gradient: c.orangeGradient,
 		},
@@ -123,7 +123,7 @@ export const AllViews = (): Array<ViewType> => {
 		{
 			type: 'view',
 			view: dictionary,
-			title: 'Dictionary',
+			title: 'Campus Dictionary',
 			icon: 'character.book.closed.fill',
 			gradient: c.pinkGradient,
 		},
