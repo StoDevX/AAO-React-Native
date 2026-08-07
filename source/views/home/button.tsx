@@ -2,6 +2,7 @@ import * as React from 'react'
 import {useColorScheme} from 'react-native'
 import {
 	Button,
+	Circle,
 	Image,
 	RoundedRectangle,
 	Text,
@@ -16,12 +17,15 @@ import {
 	foregroundColor,
 	foregroundStyle,
 	frame,
+	imageScale,
 	padding,
 	shapes,
 } from '@expo/ui/swift-ui/modifiers'
 import {displayP3} from '@frogpond/colors'
 import type {ViewType} from '../views'
 import {
+	homescreenBadgeDark,
+	homescreenBadgeLight,
 	homescreenIconDark,
 	homescreenIconLight,
 	homescreenTitleDark,
@@ -71,18 +75,24 @@ const cellIconTitleGap = 10
 /// cap the frame at a width no phone reaches and let the stack divide the space.
 export const FILL_WIDTH = 10_000
 
-/// Health scales its card icons with Dynamic Type: measured across three text
-/// sizes its Heart glyph runs 72 -> 83 -> 106px while the title runs
-/// 108 -> 129 -> 169px, so the icon is sized by a text style and not by a fixed
-/// point size. @expo/ui ignores `Image`'s `size` prop whenever a `font` modifier
-/// carries a `textStyle`, which leaves the built-in styles as the only scalable
-/// sizes we can ask for.
+/// The icon's size has to survive Dynamic Type: Health's own glyph runs
+/// 72 -> 83 -> 106px across three text sizes while its title runs
+/// 108 -> 129 -> 169px, so it is sized by a text style rather than by a fixed
+/// point size. `Image`'s `size` prop is ignored whenever a `font` modifier
+/// carries a `textStyle`, so the text style is the only way in.
 ///
-/// `title` is the closest of them: it draws the glyph 82x75 against Health's
-/// 83x77. A fixed 28.67pt size matches Health exactly at the default text size,
-/// but is then 23px too small at 130%, so those two pixels buy a card that
-/// tracks Health across the whole Dynamic Type range.
-const ICON_TEXT_STYLE = 'title'
+/// Shortcuts, whose look these cards otherwise take, draws the same glyph
+/// smaller than Health: 72x67px against 83x76 on a Heart card in each, a ratio
+/// of 0.87. No text style lands there on its own -- `title` is 15% over and
+/// `title2` 10% under -- but `imageScale` multiplies whatever the style
+/// resolves to, and `title3` with it scaled up measures 0.906. That is as close
+/// as this gets while the icon still grows with the text.
+const ICON_TEXT_STYLE = 'title3'
+/// `imageScale` is an environment value, so it applies to a view's descendants
+/// and not to the view it is set on. Set on the Image it does nothing at all,
+/// which reads as the modifier being unsupported; it has to sit on an ancestor.
+/// `scaleEffect` is genuinely inert here either way.
+const ICON_IMAGE_SCALE = 'large'
 /// SF Symbols don't share a common height -- across Health's own cards the ink
 /// runs from 77px for `heart.fill` to 104px for its mobility glyph -- so a card
 /// that sizes to its icon comes out a different height for every view. Health
@@ -91,6 +101,12 @@ const ICON_TEXT_STYLE = 'title'
 /// land within a pixel and a half of each other, and every single-line card is
 /// exactly 283px tall. 86px at 3x puts that centre where Health has it.
 const ICON_BOX_HEIGHT = 86 / 3
+/// A corner badge saying what the card will do: Shortcuts puts a play button
+/// there, and the same spot can say whether a tile opens a screen in the app or
+/// hands off to the web. Measured off Shortcuts: a 29pt disc, inset from the
+/// top and trailing edges by the same amount as the card's own padding.
+const BADGE_DIAMETER = 88 / 3
+const BADGE_TEXT_STYLE = 'footnote'
 /// 17pt semibold, which is what Health's card titles measure at every text size
 /// captured.
 ///
@@ -105,7 +121,12 @@ export function HomeScreenButton({view, onPress}: Props): React.ReactNode {
 	let dark = scheme === 'dark'
 	let titleColor = dark ? homescreenTitleDark : homescreenTitleLight
 	let iconColor = dark ? homescreenIconDark : homescreenIconLight
+	let badgeFill = dark ? homescreenBadgeDark : homescreenBadgeLight
 	let [gradientInner, gradientOuter] = view.gradient
+	// A web link leaves the app; a native view does not, and the arrow is the
+	// same one a disclosure uses.
+	let badgeSymbol: ViewType['icon'] =
+		view.type === 'view' ? 'arrow.forward' : 'globe'
 
 	return (
 		<Button
@@ -157,14 +178,17 @@ export function HomeScreenButton({view, onPress}: Props): React.ReactNode {
 					]}
 					spacing={cellIconTitleGap}
 				>
-					<Image
-						color={iconColor}
-						modifiers={[
-							font({textStyle: ICON_TEXT_STYLE}),
-							frame({height: ICON_BOX_HEIGHT}),
-						]}
-						systemName={view.icon}
-					/>
+					{/* imageScale has to sit on an ancestor of the Image, not on it. */}
+					<ZStack modifiers={[imageScale(ICON_IMAGE_SCALE)]}>
+						<Image
+							color={iconColor}
+							modifiers={[
+								font({textStyle: ICON_TEXT_STYLE}),
+								frame({height: ICON_BOX_HEIGHT}),
+							]}
+							systemName={view.icon}
+						/>
+					</ZStack>
 					<Text
 						modifiers={[
 							font({
@@ -176,6 +200,27 @@ export function HomeScreenButton({view, onPress}: Props): React.ReactNode {
 					>
 						{view.title}
 					</Text>
+				</VStack>
+				<VStack
+					modifiers={[
+						frame({
+							maxWidth: FILL_WIDTH,
+							maxHeight: FILL_WIDTH,
+							alignment: 'topTrailing',
+						}),
+						padding({top: cellPadding, trailing: cellPadding}),
+					]}
+				>
+					<ZStack
+						modifiers={[frame({width: BADGE_DIAMETER, height: BADGE_DIAMETER})]}
+					>
+						<Circle modifiers={[foregroundStyle(badgeFill)]} />
+						<Image
+							color={titleColor}
+							modifiers={[font({textStyle: BADGE_TEXT_STYLE})]}
+							systemName={badgeSymbol}
+						/>
+					</ZStack>
 				</VStack>
 			</ZStack>
 		</Button>
