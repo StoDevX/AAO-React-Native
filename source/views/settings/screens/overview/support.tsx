@@ -51,7 +51,7 @@ export const SupportSection = (): React.ReactNode => {
 	}
 
 	return (
-		<Section title="SUPPORT">
+		<Section title="Support">
 			<NavigationRow onPress={() => navigation.navigate('Faq')} title="FAQs" />
 			<ActionRow onPress={openEmail} title="Contact Us" />
 			<ActionRow onPress={onResetButton} title="Reset Everything" />

@@ -43,7 +43,7 @@ export const ServerUrlSection = (): React.ReactElement => {
 		<>
 			<Section
 				footer={<Text>Empty means we will use the default URL.</Text>}
-				title="SERVER URL"
+				title="Server URL"
 			>
 				{isLoading ? (
 					<TextField
@@ -74,7 +74,7 @@ export const ServerUrlSection = (): React.ReactElement => {
 			{discoveredServers.length > 0 && (
 				<Section
 					footer={<Text>Tap a server to use it.</Text>}
-					title="LOCAL SERVERS"
+					title="Local Servers"
 				>
 					{discoveredServers.map((server) => (
 						<NavigationRow

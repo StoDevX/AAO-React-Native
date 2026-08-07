@@ -83,7 +83,7 @@ export let IconSettingsView = (): React.ReactNode => {
 	}
 
 	return (
-		<Section title="APP ICON">
+		<Section title="App Icon">
 			{icons.map((icon) => (
 				<IconCell
 					key={icon.type}

@@ -32,7 +32,7 @@ export let MiscellanySection = (): React.ReactNode => {
 	}, [])
 
 	return (
-		<Section title="MISCELLANY">
+		<Section title="Miscellany">
 			<Toggle
 				isOn={openInApplinkPreference}
 				label="Open links in-app"
