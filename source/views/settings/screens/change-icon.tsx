@@ -1,7 +1,22 @@
 import * as React from 'react'
-import {Image, ImageSourcePropType, StyleSheet} from 'react-native'
+import {Image as RNImage, ImageSourcePropType, StyleSheet} from 'react-native'
 import {changeIcon, getIcon, resetIcon} from 'react-native-change-icon'
-import {Cell, Section} from '@frogpond/tableview'
+import {
+	Button,
+	HStack,
+	Image,
+	RNHostView,
+	Section,
+	Spacer,
+	Text,
+} from '@expo/ui/swift-ui'
+import {
+	accessibilityIdentifier,
+	buttonStyle,
+	contentShape,
+	frame,
+	shapes,
+} from '@expo/ui/swift-ui/modifiers'
 import {icons as appIcons} from '../../../../images/icons'
 import * as c from '@frogpond/colors'
 
@@ -59,7 +74,7 @@ export let IconSettingsView = (): React.ReactNode => {
 	}
 
 	return (
-		<Section header="APP ICON" separatorInsetLeft={58}>
+		<Section title="APP ICON">
 			{icons.map((icon) => (
 				<IconCell
 					key={icon.type}
@@ -89,21 +104,29 @@ let IconCell = (props: IconCellProps) => {
 	}
 
 	return (
-		<Cell
-			key={icon.title}
-			accessory={isSelected ? 'Checkmark' : undefined}
-			cellStyle="RightDetail"
-			disableImageResize={false}
-			image={
-				<Image
-					accessibilityIgnoresInvertColors={true}
-					source={icon.src}
-					style={styles.icon}
-				/>
-			}
+		<Button
+			modifiers={[
+				buttonStyle('plain'),
+				accessibilityIdentifier(
+					`app-icon-cell-${icon.type}${isSelected ? '-selected' : ''}`,
+				),
+			]}
 			onPress={setIcon}
-			testID={`app-icon-cell-${icon.type}${isSelected ? '-selected' : ''}`}
-			title={icon.title}
-		/>
+		>
+			<HStack modifiers={[contentShape(shapes.rectangle())]} spacing={12}>
+				<HStack modifiers={[frame({width: 16, height: 16})]}>
+					<RNHostView matchContents={false}>
+						<RNImage
+							accessibilityIgnoresInvertColors={true}
+							source={icon.src}
+							style={styles.icon}
+						/>
+					</RNHostView>
+				</HStack>
+				<Text>{icon.title}</Text>
+				<Spacer />
+				{isSelected && <Image size={16} systemName="checkmark" />}
+			</HStack>
+		</Button>
 	)
 }
