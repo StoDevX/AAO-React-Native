@@ -26,7 +26,7 @@ describe('gradients', () => {
 		expect(exportedNames.sort()).toEqual([...EXPECTED_NAMES].sort())
 	})
 
-	test('every gradient is a [top, bottom] pair of hex colors', () => {
+	test('every gradient is a [left, right] pair of hex colors', () => {
 		for (let name of EXPECTED_NAMES) {
 			let value = (gradients as Record<string, unknown>)[name]
 			expect(Array.isArray(value)).toBe(true)
