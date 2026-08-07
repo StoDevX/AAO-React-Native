@@ -21,11 +21,11 @@ postinstall = "hk install --mise"
 
 [tasks.ios]
 description = "Run the iOS app"
-run = "react-native run-ios"
+run = "expo run:ios"
 
 [tasks.start]
 description = "Start Metro bundler"
-run = "react-native start"
+run = "expo start"
 
 [tasks.prebuild]
 description = "Generate the native iOS project from app.config.ts"
@@ -117,7 +117,7 @@ run = "gzip --keep docs/*.json"
 [tasks."bundle:ios"]
 description = "Generate iOS JS bundle"
 run = """
-react-native bundle \
+expo export:embed \
   --entry-file index.js \
   --dev false \
   --platform ios \

@@ -17,7 +17,7 @@ The St. Olaf community, now in pocket size… rewritten in React Native.
 - Clone the repository
 - `cd` into your clone
 - Run `pnpm install --frozen-lockfile`
-- For iOS: `npm run ios`
+- For iOS: `mise run ios`
 
 ## Contributing
 
