@@ -48,6 +48,26 @@ describe('displayP3', () => {
 		expect(g).toBeGreaterThan(b)
 	})
 
+	test('matches the extended sRGB coordinates of the P3 primaries', () => {
+		// The failure this guards against is handing P3 coordinates straight to an
+		// extended sRGB initializer without converting them. Greys and the whole
+		// neutral axis are identical in both spaces, so that mistake looks correct
+		// until a saturated colour goes through it -- hence primaries here, and a
+		// grey below to prove the neutral axis is *also* right.
+		let primaries: [string, [number, number, number]][] = [
+			['#ff0000', [1.0931, -0.2267, -0.1501]],
+			['#00ff00', [-0.5116, 1.0183, -0.3107]],
+			['#0000ff', [0.0, 0.0, 1.042]],
+			['#808080', [0.5019, 0.5019, 0.5019]],
+		]
+		for (let [hex, expected] of primaries) {
+			let got = displayP3(hex)
+			for (let channel of [0, 1, 2]) {
+				expect(got[channel]).toBeCloseTo(expected[channel], 2)
+			}
+		}
+	})
+
 	test('accepts three- and six-digit hex alike', () => {
 		expect(displayP3('#fff')).toEqual(displayP3('#ffffff'))
 	})

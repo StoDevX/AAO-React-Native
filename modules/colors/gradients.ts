@@ -20,14 +20,15 @@ export type Gradient = [string, string]
 // The inner stop can only be read off a real card, and there is now a capture of
 // all fifteen.
 //
-// Four of them (orange, gold, sage, tan) come from JPEGs rather than PNGs. Their
-// outer stops still come from the picker, and their inner stops were derived by
-// applying each card's own measured outer-to-inner transform to that exact
-// outer, so the compression's colour shift largely cancels rather than being
-// baked in. Orange needed one more step: its capture is shifted enough that the
-// outer read 24/255 off the picker and the saturation ratio came out at 0.974,
-// outside the 0.78-0.94 the other fourteen span, so it takes the fitted ratio
-// and keeps only its own (unremarkable) value term.
+// Gold is the one colour whose only capture is a JPEG. Its outer stop still
+// comes from the picker, and its inner was derived by applying that card's own
+// measured outer-to-inner transform to the exact outer, so the compression's
+// colour shift largely cancels rather than being baked in. Orange, sage and tan
+// were read the same way at first and have since been re-measured from a
+// lossless capture: sage came back identical and tan within 2/255, which is the
+// best evidence available that the technique holds. Orange moved by 9 -- its
+// JPEG was shifted enough to throw the saturation ratio out of family -- so the
+// direct reading replaces it.
 //
 // Health, not Shortcuts, is the reference for the card's *shape*: see button.tsx
 // for the padding and icon metrics that keep the cards at Health's compact
@@ -36,7 +37,7 @@ export type Gradient = [string, string]
 // measured: Directory
 export const redGradient: Gradient = ['#ed7c85', '#e66369']
 // measured: Important Contacts
-export const orangeGradient: Gradient = ['#f9977c', '#ed8467']
+export const orangeGradient: Gradient = ['#f1a083', '#ed8467']
 // measured: Important Contacts
 export const goldGradient: Gradient = ['#f8bb77', '#eba65a']
 // measured: SIS, Save To Reader
@@ -62,4 +63,4 @@ export const grayGradient: Gradient = ['#9fa7b2', '#828a95']
 // measured: Campus Dictionary
 export const sageGradient: Gradient = ['#acc2ae', '#8ea490']
 // measured: Map
-export const tanGradient: Gradient = ['#c3ac90', '#a38c70']
+export const tanGradient: Gradient = ['#c1aa8e', '#a38c70']
