@@ -18,10 +18,3 @@ export const homescreenIconLight = displayP3('color(display-p3 1 1 1 / 0.79)')
 
 export const homescreenTitleDark = displayP3('color(display-p3 0 0 0)')
 export const homescreenIconDark = displayP3('color(display-p3 0 0 0 / 0.81)')
-
-/// The disc behind the corner badge. Shortcuts sits its play button on a wash
-/// of the foreground colour rather than a solid fill -- measured off a gold
-/// card, the disc lifts the card's own colour by about a fifth of the way to
-/// white without changing its hue.
-export const homescreenBadgeLight = displayP3('color(display-p3 1 1 1 / 0.2)')
-export const homescreenBadgeDark = displayP3('color(display-p3 0 0 0 / 0.2)')

@@ -2,7 +2,6 @@ import * as React from 'react'
 import {useColorScheme} from 'react-native'
 import {
 	Button,
-	Circle,
 	Image,
 	RoundedRectangle,
 	Text,
@@ -24,8 +23,6 @@ import {
 import {displayP3} from '@frogpond/colors'
 import type {ViewType} from '../views'
 import {
-	homescreenBadgeDark,
-	homescreenBadgeLight,
 	homescreenIconDark,
 	homescreenIconLight,
 	homescreenTitleDark,
@@ -101,12 +98,6 @@ const ICON_IMAGE_SCALE = 'large'
 /// land within a pixel and a half of each other, and every single-line card is
 /// exactly 283px tall. 86px at 3x puts that centre where Health has it.
 const ICON_BOX_HEIGHT = 86 / 3
-/// A corner badge saying what the card will do: Shortcuts puts a play button
-/// there, and the same spot can say whether a tile opens a screen in the app or
-/// hands off to the web. Measured off Shortcuts: a 29pt disc, inset from the
-/// top and trailing edges by the same amount as the card's own padding.
-const BADGE_DIAMETER = 88 / 3
-const BADGE_TEXT_STYLE = 'footnote'
 /// 17pt semibold, which is what Health's card titles measure at every text size
 /// captured.
 ///
@@ -121,12 +112,7 @@ export function HomeScreenButton({view, onPress}: Props): React.ReactNode {
 	let dark = scheme === 'dark'
 	let titleColor = dark ? homescreenTitleDark : homescreenTitleLight
 	let iconColor = dark ? homescreenIconDark : homescreenIconLight
-	let badgeFill = dark ? homescreenBadgeDark : homescreenBadgeLight
 	let [gradientInner, gradientOuter] = view.gradient
-	// A web link leaves the app; a native view does not, and the arrow is the
-	// same one a disclosure uses.
-	let badgeSymbol: ViewType['icon'] =
-		view.type === 'view' ? 'arrow.forward' : 'globe'
 
 	return (
 		<Button
@@ -200,27 +186,6 @@ export function HomeScreenButton({view, onPress}: Props): React.ReactNode {
 					>
 						{view.title}
 					</Text>
-				</VStack>
-				<VStack
-					modifiers={[
-						frame({
-							maxWidth: FILL_WIDTH,
-							maxHeight: FILL_WIDTH,
-							alignment: 'topTrailing',
-						}),
-						padding({top: cellPadding, trailing: cellPadding}),
-					]}
-				>
-					<ZStack
-						modifiers={[frame({width: BADGE_DIAMETER, height: BADGE_DIAMETER})]}
-					>
-						<Circle modifiers={[foregroundStyle(badgeFill)]} />
-						<Image
-							color={titleColor}
-							modifiers={[font({textStyle: BADGE_TEXT_STYLE})]}
-							systemName={badgeSymbol}
-						/>
-					</ZStack>
 				</VStack>
 			</ZStack>
 		</Button>
