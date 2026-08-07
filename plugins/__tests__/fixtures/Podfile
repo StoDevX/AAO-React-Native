@@ -1,3 +1,19 @@
+# A copy of the Podfile `expo prebuild` generates, taken verbatim from
+# expo-template-bare-minimum with HelloWorld renamed to AllAboutOlaf.
+#
+# The plugins in plugins/ patch the generated Podfile for things Expo's config
+# does not express -- the nested XCUITest target, and silencing warnings from
+# pod sources -- and they anchor on this text. Keeping a copy here lets the
+# tests check those patches apply and stay idempotent without running prebuild
+# on every Jest run.
+#
+# Do not name the tokens those plugins search for: a plugin that treats its own
+# marker as "already applied" will skip its work on this fixture.
+#
+# Regenerate it after an SDK bump. A stale fixture passes while the real
+# template has moved, which hides exactly the broken anchor the tests exist to
+# catch.
+
 require File.join(File.dirname(`node --print "require.resolve('expo/package.json')"`), "scripts/autolinking")
 require File.join(File.dirname(`node --print "require.resolve('react-native/package.json')"`), "scripts/react_native_pods")
 
