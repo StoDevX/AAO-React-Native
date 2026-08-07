@@ -19,9 +19,8 @@ export type Gradient = [string, string]
 //
 // The outer stop of every colour is the bottom edge of that colour's swatch in
 // the Shortcuts colour picker, which agrees with a real card to within 3/255.
-// The inner stop can only be read off a card, so each names the shortcut it was
-// read from -- one shortcut carried several colours across the captures, so it
-// is named more than once.
+// The inner stop can only be read off a card, at the top edge's centre where
+// the radial starts.
 //
 // A colour sampled from a lossy capture cannot be trusted directly, but the
 // ratio between its two stops largely can: applying a card's own outer-to-inner
@@ -33,77 +32,62 @@ export type Gradient = [string, string]
 // for the padding and icon metrics that keep the cards at Health's compact
 // height.
 
-// read from Directory
 export const redGradient: Gradient = [
 	'color(display-p3 0.9294 0.4863 0.5216)',
 	'color(display-p3 0.902 0.3882 0.4118)',
 ]
-// read from Important Contacts
 export const orangeGradient: Gradient = [
 	'color(display-p3 0.9451 0.6275 0.5137)',
 	'color(display-p3 0.9294 0.5176 0.4039)',
 ]
-// read from Map
 export const goldGradient: Gradient = [
 	'color(display-p3 0.9608 0.7686 0.451)',
 	'color(display-p3 0.9216 0.651 0.3529)',
 ]
-// read from SIS, Save To Reader
 export const yellowGradient: Gradient = [
 	'color(display-p3 0.9725 0.851 0.3098)',
 	'color(display-p3 0.9412 0.7412 0.2588)',
 ]
-// read from Menus, Code Remotely
 export const greenGradient: Gradient = [
 	'color(display-p3 0.498 0.8784 0.4941)',
 	'color(display-p3 0.4039 0.7608 0.3882)',
 ]
-// read from Repeat with Each, GIF to MP4
 export const mintGradient: Gradient = [
 	'color(display-p3 0.4157 0.902 0.7804)',
 	'color(display-p3 0.3569 0.7843 0.6627)',
 ]
-// read from Streaming Media
 export const lightBlueGradient: Gradient = [
 	'color(display-p3 0.3647 0.7961 0.9765)',
 	'color(display-p3 0.3059 0.6784 0.9412)',
 ]
-// read from Hours
 export const blueGradient: Gradient = [
 	'color(display-p3 0.3255 0.6196 0.9686)',
 	'color(display-p3 0.2353 0.5059 0.9608)',
 ]
-// read from Map
 export const indigoGradient: Gradient = [
 	'color(display-p3 0.3765 0.4745 0.8392)',
 	'color(display-p3 0.2667 0.3647 0.7216)',
 ]
-// read from News, Copy Article
 export const purpleGradient: Gradient = [
 	'color(display-p3 0.5882 0.4196 0.8392)',
 	'color(display-p3 0.4745 0.3137 0.7176)',
 ]
-// read from Encode Media
 export const violetGradient: Gradient = [
 	'color(display-p3 0.7922 0.5765 0.9647)',
 	'color(display-p3 0.6745 0.4627 0.8627)',
 ]
-// read from Calendar
 export const pinkGradient: Gradient = [
 	'color(display-p3 0.9451 0.651 0.9294)',
 	'color(display-p3 0.898 0.5451 0.8039)',
 ]
-// read from Credit Cards
 export const grayGradient: Gradient = [
 	'color(display-p3 0.6235 0.6549 0.698)',
 	'color(display-p3 0.5098 0.5412 0.5843)',
 ]
-// read from Campus Dictionary
 export const sageGradient: Gradient = [
 	'color(display-p3 0.6745 0.7608 0.6824)',
 	'color(display-p3 0.5569 0.6431 0.5647)',
 ]
-// read from Map
 export const tanGradient: Gradient = [
 	'color(display-p3 0.7569 0.6667 0.5569)',
 	'color(display-p3 0.6392 0.549 0.4392)',
