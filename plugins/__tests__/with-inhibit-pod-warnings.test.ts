@@ -24,6 +24,15 @@ describe('inhibitPodWarnings', () => {
 		expect(inhibitPodWarnings(once)).toBe(once)
 	})
 
+	it('tolerates a reindented template', () => {
+		let reindented = STOCK_PODFILE.replace(
+			'  use_expo_modules!',
+			'    use_expo_modules!',
+		)
+		let result = inhibitPodWarnings(reindented)
+		expect(result).toContain('    inhibit_all_warnings!')
+	})
+
 	it('throws when its anchor is missing', () => {
 		expect(() => inhibitPodWarnings('# empty\n')).toThrow(/use_expo_modules!/u)
 	})

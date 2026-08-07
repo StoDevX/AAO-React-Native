@@ -16,7 +16,7 @@ const BUNDLE_ID = 'hawkrives.All-About-Olaf-UI-Tests'
 export const UITEST_SOURCE_DIR = 'uitests'
 
 const APP_TARGET_ANCHOR = `target '${APP_TARGET}' do`
-const POST_INSTALL_ANCHOR = '  post_install do |installer|'
+const POST_INSTALL_ANCHOR = /^([ \t]*)post_install do \|installer\|/mu
 
 /**
  * expo-modules-autolinking adds ExpoModulesProvider.swift and the "[Expo]
@@ -34,11 +34,8 @@ end
 Pod::Podfile::TargetDefinition.prepend(ExpoUITestsAutolinkingFix)
 `
 
-const NESTED_TARGET = `  target '${UITEST_TARGET}' do
-    inherit! :none
-  end
-
-`
+const nestedTarget = (indent: string): string =>
+	`${indent}target '${UITEST_TARGET}' do\n${indent}${indent || '  '}inherit! :none\n${indent}end\n\n`
 
 function require_(contents: string, anchor: string, what: string): void {
 	if (!contents.includes(anchor)) {
@@ -61,11 +58,14 @@ export function patchPodfileForUITests(contents: string): string {
 	}
 
 	if (!result.includes(`target '${UITEST_TARGET}' do`)) {
-		require_(result, POST_INSTALL_ANCHOR, 'the post_install hook')
-		result = result.replace(
-			POST_INSTALL_ANCHOR,
-			`${NESTED_TARGET}${POST_INSTALL_ANCHOR}`,
-		)
+		let match = POST_INSTALL_ANCHOR.exec(result)
+		if (!match) {
+			throw new Error(
+				'with-xcuitest-target: could not find the post_install hook (`post_install do |installer|`). The Expo template moved it; update this plugin rather than losing the XCUITest target.',
+			)
+		}
+		let [line, indent] = match
+		result = result.replace(line, `${nestedTarget(indent)}${line}`)
 	}
 
 	return result

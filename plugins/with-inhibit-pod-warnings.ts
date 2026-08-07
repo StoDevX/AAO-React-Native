@@ -3,8 +3,9 @@ import {join} from 'node:path'
 
 import {ConfigPlugin, withDangerousMod} from '@expo/config-plugins'
 
-const ANCHOR = '  use_expo_modules!'
-const INHIBIT = '  inhibit_all_warnings!'
+// Matched with tolerance for indentation, and the captured indentation is
+// reused, so a reflowed Expo template does not break this.
+const ANCHOR = /^([ \t]*)use_expo_modules!/mu
 
 /**
  * Silence compiler warnings from pod sources.
@@ -18,13 +19,15 @@ export function inhibitPodWarnings(contents: string): string {
 		return contents
 	}
 
-	if (!contents.includes(ANCHOR)) {
+	let match = ANCHOR.exec(contents)
+	if (!match) {
 		throw new Error(
-			`with-inhibit-pod-warnings: could not find \`${ANCHOR.trim()}\` in the Podfile. The Expo template moved it; update this plugin rather than silently letting pod warnings back in.`,
+			'with-inhibit-pod-warnings: could not find `use_expo_modules!` in the Podfile. The Expo template moved it; update this plugin rather than silently letting pod warnings back in.',
 		)
 	}
 
-	return contents.replace(ANCHOR, `${ANCHOR}\n${INHIBIT}`)
+	let [line, indent] = match
+	return contents.replace(line, `${line}\n${indent}inhibit_all_warnings!`)
 }
 
 const withInhibitPodWarnings: ConfigPlugin = (config) =>

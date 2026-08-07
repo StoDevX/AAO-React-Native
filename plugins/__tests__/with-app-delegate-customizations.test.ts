@@ -47,6 +47,16 @@ describe('patchAppDelegate', () => {
 		expect(patchAppDelegate(once)).toBe(once)
 	})
 
+	// A substring anchor survives *deeper* indentation by accident; it is a
+	// shallower template that breaks it.
+	it('tolerates a reindented launch anchor', () => {
+		let reindented = STOCK.replace(
+			'    let delegate = ReactNativeDelegate()',
+			'  let delegate = ReactNativeDelegate()',
+		)
+		expect(patchAppDelegate(reindented)).toContain('URLCache.shared = urlCache')
+	})
+
 	it('throws when the launch anchor is missing', () => {
 		let withoutLaunch = STOCK.replaceAll('didFinishLaunchingWithOptions', '')
 		expect(() => patchAppDelegate(withoutLaunch)).toThrow(
