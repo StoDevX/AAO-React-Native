@@ -94,10 +94,10 @@ function parseDisplayP3(css: string): [Triple, number] {
 	}
 
 	// Split on delimiters rather than matching with a regular expression. An
-	// expression general enough to allow whitespace anywhere ends up able to
-	// attribute the same run of spaces to more than one part of itself, which
-	// backtracks badly on input that never matches -- CodeQL flags it as a
-	// polynomial ReDoS, and it is one. Scanning is linear and says what it means.
+	// expression general enough to allow whitespace anywhere can attribute one
+	// run of spaces to several parts of itself, and backtracks polynomially on
+	// input that never matches: a ReDoS, and reachable, since this is exported.
+	// Scanning is linear in the length of the string.
 	let text = css.trim()
 	let open = text.indexOf('(')
 	if (open === -1 || !text.endsWith(')')) reject()

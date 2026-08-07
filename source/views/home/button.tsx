@@ -111,9 +111,9 @@ const ICON_BOX_HEIGHT = 86 / 3
 /// captured.
 ///
 /// Long titles wrap to a second line and the row grows to fit, as Health's do.
-/// That only works because the cards sit in a Grid: laid out as two independent
-/// columns they truncated with an ellipsis instead, whatever lineLimit and
-/// multilineTextAlignment modifiers they were given.
+/// That depends on the cards sitting in a Grid: in two independent columns they
+/// truncate to an ellipsis instead, whatever lineLimit and
+/// multilineTextAlignment modifiers they are given.
 const TITLE_TEXT_STYLE = 'headline'
 
 export function HomeScreenButton({view, onPress}: Props): React.ReactNode {
