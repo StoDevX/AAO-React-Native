@@ -47,6 +47,19 @@ struct SettingsScreen: Screen {
 	}
 
 	@discardableResult
+	func tapCreditsRowInItsEmptySpace() -> Self {
+		let creditsRow = app.buttons["Credits"].firstMatch
+		XCTAssertTrue(
+			creditsRow.waitForExistence(timeout: 30),
+			"Credits row should be visible")
+		// The row is title-left, chevron-right, with an empty Spacer between
+		// them -- exactly where a missing contentShape would leave the row
+		// untappable while center taps (landing on the label) still pass.
+		creditsRow.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
+		return self
+	}
+
+	@discardableResult
 	func changeIconToOldMain() -> Self {
 		// The default is Big Ole; the alternate on offer is Old Main.
 		let defaultSelected = app.element(
