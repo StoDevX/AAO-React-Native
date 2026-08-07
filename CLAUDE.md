@@ -11,6 +11,14 @@ All About Olaf is a React Native mobile app for the St. Olaf College community. 
 - **Fastlane** for CI/CD
 - Monorepo with internal packages in `modules/`
 
+## Commit Messages
+
+No conventional-commit prefixes. Write `Drop the migration planning docs`, not
+`chore: drop the migration planning docs`.
+
+Use the imperative mood, capitalised, with no trailing full stop. Explain in the
+body why the change was needed, not what the diff already shows.
+
 ## Code Conventions
 
 - TypeScript for all new code — no `any`
