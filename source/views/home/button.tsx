@@ -1,16 +1,8 @@
 import * as React from 'react'
 import {useColorScheme} from 'react-native'
-import {
-	Button,
-	RoundedRectangle,
-	Spacer,
-	Text,
-	VStack,
-	ZStack,
-} from '@expo/ui/swift-ui'
+import {Button, RoundedRectangle, Text, VStack, ZStack} from '@expo/ui/swift-ui'
 import {
 	accessibilityLabel,
-	aspectRatio,
 	buttonStyle,
 	contentShape,
 	font,
@@ -31,15 +23,15 @@ type Props = {
 
 export const CELL_MARGIN = 10
 
-/// Matched from the Apple Health category-card screenshot: a 525x346px
-/// (3x) card is a ~1.517:1 width:height ratio, with a corner radius of
-/// roughly 23% of the card's height (~80px at 3x, on a 346px-tall card).
-/// The radius is expressed as a point value tuned for a typical two-column
-/// card width on a standard iPhone, since @expo/ui has no way to compute a
-/// modifier value from the runtime-resolved card size.
-const CELL_ASPECT_RATIO = 1.517
+/// Health's category cards size to content, not a fixed aspect ratio --
+/// single-line titles (e.g. "Cycle Tracking", ~94pt tall) render noticeably
+/// shorter than two-line ones ("Body Measurements", ~115pt tall). Measured
+/// corner-inset profiles are identical between the two, confirming Health
+/// uses one fixed corner radius (~27pt) regardless of card height, not one
+/// proportional to it.
 const CELL_RADIUS = 27
 const cellPadding = 16
+const cellIconTitleGap = 10
 
 /// SwiftUI has no "fill the available width" constant reachable from JS, so we
 /// cap the frame at a width no phone reaches and let the stack divide the space.
@@ -87,7 +79,6 @@ export function HomeScreenButton({view, onPress}: Props): React.ReactNode {
 			modifiers={[
 				buttonStyle('plain'),
 				frame({maxWidth: FILL_WIDTH}),
-				aspectRatio({ratio: CELL_ASPECT_RATIO, contentMode: 'fit'}),
 				accessibilityLabel(view.title),
 			]}
 			onPress={onPress}
@@ -121,7 +112,7 @@ export function HomeScreenButton({view, onPress}: Props): React.ReactNode {
 				<VStack
 					alignment="leading"
 					modifiers={[padding({all: cellPadding})]}
-					spacing={4}
+					spacing={cellIconTitleGap}
 				>
 					<Text
 						modifiers={[
@@ -135,10 +126,13 @@ export function HomeScreenButton({view, onPress}: Props): React.ReactNode {
 					>
 						{glyph}
 					</Text>
-					<Spacer />
 					<Text
 						modifiers={[
-							font({textStyle: TITLE_TEXT_STYLE}),
+							font({
+								textStyle: TITLE_TEXT_STYLE,
+								weight: 'bold',
+								design: 'rounded',
+							}),
 							foregroundColor(foreground),
 						]}
 					>
