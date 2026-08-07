@@ -2,11 +2,17 @@
 /// radial gradient anchored at the top edge's centre, so these are the colour
 /// at that point and the colour it has faded to by the far corners -- not a
 /// top/bottom or left/right pair.
+///
+/// Both are Display P3, which is the space the screenshots they were sampled
+/// from are in and the space Shortcuts draws them in. They are *not* sRGB hex
+/// and must not be handed to anything that will read them as such: pass them
+/// through `displayP3` first. See display-p3.ts.
 export type Gradient = [string, string]
 
 // MARK: gradients
 //
-// Sampled from the Shortcuts cards themselves, on an iPhone 14 Pro.
+// Sampled from the Shortcuts cards themselves, on an iPhone 14 Pro. Every value
+// below is Display P3 -- see the note on Gradient.
 //
 // The outer stop of every colour is the bottom edge of that colour's swatch in
 // the Shortcuts colour picker: measured against eight real cards, the two agree

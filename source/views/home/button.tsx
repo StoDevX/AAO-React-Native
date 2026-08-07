@@ -19,6 +19,7 @@ import {
 	padding,
 	shapes,
 } from '@expo/ui/swift-ui/modifiers'
+import {displayP3} from '@frogpond/colors'
 import type {ViewType} from '../views'
 import {
 	homescreenIconDark,
@@ -138,7 +139,7 @@ export function HomeScreenButton({view, onPress}: Props): React.ReactNode {
 					modifiers={[
 						foregroundStyle({
 							type: 'radialGradient',
-							colors: [gradientInner, gradientOuter],
+							colors: [displayP3(gradientInner), displayP3(gradientOuter)],
 							center: {x: 0.5, y: 0},
 							startRadius: 0,
 							endRadius: CELL_GRADIENT_RADIUS,
