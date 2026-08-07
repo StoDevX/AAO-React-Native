@@ -14,6 +14,6 @@
   },
   "dependencies": {
     "@frogpond/colors": "workspace:*",
-    "react-native-typography": "^1.4.1"
+    "react-native-typography": "1.4.1"
   }
 }

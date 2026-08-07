@@ -187,22 +187,22 @@ importers:
         specifier: 57.0.10
         version: 57.0.10(@babel/core@7.29.7)(@expo/dom-webview@57.0.1)(react-dom@19.2.3)(react-native-webview@13.16.1)(react-native-worklets@0.10.1)(react-native@0.86.2)(react@19.2.3)(supports-color@8.1.1)(typescript@5.9.3)
       expo-application:
-        specifier: ~57.0.2
+        specifier: 57.0.2
         version: 57.0.2(expo@57.0.10)
       expo-asset:
         specifier: 57.0.8
         version: 57.0.8(expo@57.0.10)(react-native@0.86.2)(react@19.2.3)(supports-color@8.1.1)(typescript@5.9.3)
       expo-build-properties:
-        specifier: ~57.0.9
+        specifier: 57.0.9
         version: 57.0.9(expo@57.0.10)
       expo-clipboard:
-        specifier: ~57.0.1
+        specifier: 57.0.1
         version: 57.0.1(expo@57.0.10)(react-native@0.86.2)(react@19.2.3)
       expo-constants:
         specifier: 57.0.9
         version: 57.0.9(expo@57.0.10)(react-native@0.86.2)(supports-color@8.1.1)
       expo-device:
-        specifier: ~57.0.1
+        specifier: 57.0.1
         version: 57.0.1(expo@57.0.10)
       expo-font:
         specifier: 57.0.1
@@ -491,7 +491,7 @@ importers:
   modules/api:
     dependencies:
       ky:
-        specifier: ^2.0.1
+        specifier: 2.0.1
         version: 2.0.1
 
   modules/app-theme:
@@ -518,7 +518,7 @@ importers:
   modules/button:
     dependencies:
       '@callstack/react-theme-provider':
-        specifier: ^3.0.9
+        specifier: 3.0.9
         version: 3.0.9(react@19.2.3)
       '@frogpond/app-theme':
         specifier: workspace:*
@@ -527,7 +527,7 @@ importers:
         specifier: workspace:*
         version: link:../colors
       lodash:
-        specifier: ^4.18.1
+        specifier: 4.18.1
         version: 4.18.1
       react:
         specifier: ^19.1.0
@@ -536,10 +536,10 @@ importers:
         specifier: ^0.86.0
         version: 0.86.2(patch_hash=6ca2e1225f38672b073b92b9d13f24feebbe9e37ba67708a3f1569275ce99191)(@babel/core@7.29.7)(@react-native/jest-preset@0.86.2)(@react-native/metro-config@0.86.2)(@types/react@19.2.14)(react@19.2.3)(supports-color@8.1.1)
       react-native-button:
-        specifier: ^3.1.0
+        specifier: 3.1.0
         version: 3.1.0(react-native@0.86.2)
       react-native-typography:
-        specifier: ^1.4.1
+        specifier: 1.4.1
         version: 1.4.1(react-native@0.86.2)(react@19.2.3)
 
   modules/ccc-calendar:
@@ -580,7 +580,7 @@ importers:
   modules/datepicker:
     dependencies:
       '@expo/ui':
-        specifier: ^57.0.9
+        specifier: 57.0.9
         version: 57.0.9(@babel/core@7.29.7)(expo@57.0.10)(react-dom@19.2.3)(react-native-worklets@0.10.1)(react-native@0.86.2)(react@19.2.3)
       '@frogpond/app-theme':
         specifier: workspace:*
@@ -601,7 +601,7 @@ importers:
   modules/event-list:
     dependencies:
       '@callstack/react-theme-provider':
-        specifier: ^3.0.9
+        specifier: 3.0.9
         version: 3.0.9(react@19.2.3)
       '@frogpond/add-to-device-calendar':
         specifier: workspace:*
@@ -637,7 +637,7 @@ importers:
         specifier: ^7.3.13
         version: 7.3.13(react-native@0.86.2)(react@19.2.3)
       lodash:
-        specifier: ^4.18.1
+        specifier: 4.18.1
         version: 4.18.1
       moment-timezone:
         specifier: ^0.6.1
@@ -658,7 +658,7 @@ importers:
   modules/filter:
     dependencies:
       '@callstack/react-theme-provider':
-        specifier: ^3.0.9
+        specifier: 3.0.9
         version: 3.0.9(react@19.2.3)
       '@frogpond/app-theme':
         specifier: workspace:*
@@ -682,7 +682,7 @@ importers:
         specifier: ^13.1.0
         version: 13.1.0(@expo/config-plugins@57.0.7)(@react-native/assets-registry@0.86.2)(expo-font@57.0.1)(react-native@0.86.2)(react@19.2.3)
       lodash:
-        specifier: ^4.18.1
+        specifier: 4.18.1
         version: 4.18.1
       react:
         specifier: ^19.1.0
@@ -697,7 +697,7 @@ importers:
   modules/food-menu:
     dependencies:
       '@callstack/react-theme-provider':
-        specifier: ^3.0.9
+        specifier: 3.0.9
         version: 3.0.9(react@19.2.3)
       '@frogpond/app-theme':
         specifier: workspace:*
@@ -736,7 +736,7 @@ importers:
         specifier: ^7.3.13
         version: 7.3.13(react-native@0.86.2)(react@19.2.3)
       lodash:
-        specifier: ^4.18.1
+        specifier: 4.18.1
         version: 4.18.1
       moment:
         specifier: ^2.30.1
@@ -775,7 +775,7 @@ importers:
         specifier: ^4.0.2
         version: 4.0.2
       html-entities:
-        specifier: ^2.6.0
+        specifier: 2.6.0
         version: 2.6.0
       htmlparser2:
         specifier: ^12.0.0
@@ -805,7 +805,7 @@ importers:
   modules/lists:
     dependencies:
       '@callstack/react-theme-provider':
-        specifier: ^3.0.9
+        specifier: 3.0.9
         version: 3.0.9(react@19.2.3)
       '@frogpond/app-theme':
         specifier: workspace:*
@@ -823,7 +823,7 @@ importers:
         specifier: ^13.1.0
         version: 13.1.0(@expo/config-plugins@57.0.7)(@react-native/assets-registry@0.86.2)(expo-font@57.0.1)(react-native@0.86.2)(react@19.2.3)
       lodash:
-        specifier: ^4.18.1
+        specifier: 4.18.1
         version: 4.18.1
       react:
         specifier: ^19.1.0
@@ -835,7 +835,7 @@ importers:
   modules/listview:
     dependencies:
       '@callstack/react-theme-provider':
-        specifier: ^3.0.9
+        specifier: 3.0.9
         version: 3.0.9(react@19.2.3)
       '@frogpond/app-theme':
         specifier: workspace:*
@@ -844,7 +844,7 @@ importers:
         specifier: workspace:*
         version: link:../colors
       lodash:
-        specifier: ^4.18.1
+        specifier: 4.18.1
         version: 4.18.1
       react:
         specifier: ^19.1.0
@@ -856,7 +856,7 @@ importers:
   modules/markdown:
     dependencies:
       '@callstack/react-theme-provider':
-        specifier: ^3.0.9
+        specifier: 3.0.9
         version: 3.0.9(react@19.2.3)
       '@expo/react-native-action-sheet':
         specifier: ^4.1.1
@@ -871,7 +871,7 @@ importers:
         specifier: workspace:*
         version: link:../open-url
       lodash:
-        specifier: ^4.18.1
+        specifier: 4.18.1
         version: 4.18.1
       react:
         specifier: ^19.1.0
@@ -883,11 +883,11 @@ importers:
         specifier: ^0.86.0
         version: 0.86.2(patch_hash=6ca2e1225f38672b073b92b9d13f24feebbe9e37ba67708a3f1569275ce99191)(@babel/core@7.29.7)(@react-native/jest-preset@0.86.2)(@react-native/metro-config@0.86.2)(@types/react@19.2.14)(react@19.2.3)(supports-color@8.1.1)
       react-native-typography:
-        specifier: ^1.4.1
+        specifier: 1.4.1
         version: 1.4.1(react-native@0.86.2)(react@19.2.3)
     devDependencies:
       prop-types:
-        specifier: ^15.8.1
+        specifier: 15.8.1
         version: 15.8.1
 
   modules/navigation-buttons:
@@ -927,7 +927,7 @@ importers:
         version: 0.86.2(patch_hash=6ca2e1225f38672b073b92b9d13f24feebbe9e37ba67708a3f1569275ce99191)(@babel/core@7.29.7)(@react-native/jest-preset@0.86.2)(@react-native/metro-config@0.86.2)(@types/react@19.2.14)(react@19.2.3)(supports-color@8.1.1)
     devDependencies:
       '@testing-library/react-native':
-        specifier: ^12.9.0
+        specifier: 12.9.0
         version: 12.9.0(jest@29.7.0)(react-native@0.86.2)(react-test-renderer@19.1.0)(react@19.2.3)
 
   modules/open-url:
@@ -963,7 +963,7 @@ importers:
         specifier: ^0.86.0
         version: 0.86.2(patch_hash=6ca2e1225f38672b073b92b9d13f24feebbe9e37ba67708a3f1569275ce99191)(@babel/core@7.29.7)(@react-native/jest-preset@0.86.2)(@react-native/metro-config@0.86.2)(@types/react@19.2.14)(react@19.2.3)(supports-color@8.1.1)
       react-native-typography:
-        specifier: ^1.4.1
+        specifier: 1.4.1
         version: 1.4.1(react-native@0.86.2)(react@19.2.3)
 
   modules/storage:
@@ -987,7 +987,7 @@ importers:
         specifier: ^0.86.0
         version: 0.86.2(patch_hash=6ca2e1225f38672b073b92b9d13f24feebbe9e37ba67708a3f1569275ce99191)(@babel/core@7.29.7)(@react-native/jest-preset@0.86.2)(@react-native/metro-config@0.86.2)(@types/react@19.2.14)(react@19.2.3)(supports-color@8.1.1)
       react-native-tableview-simple:
-        specifier: ^4.4.1
+        specifier: 4.4.1
         version: 4.4.1(react-native@0.86.2)(react@19.2.3)
 
   modules/timer:
@@ -1026,7 +1026,7 @@ importers:
   modules/use-debounce:
     dependencies:
       lodash:
-        specifier: ^4.18.1
+        specifier: 4.18.1
         version: 4.18.1
       react:
         specifier: ^19.1.0
