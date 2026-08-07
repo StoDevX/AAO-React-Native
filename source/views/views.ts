@@ -1,4 +1,5 @@
 import * as c from '@frogpond/colors'
+import type {Gradient} from '@frogpond/colors'
 import type EntypoGlyphs from '@react-native-vector-icons/entypo/glyphmaps/Entypo.json'
 import {RootViewsParamList} from '../navigation/types'
 
@@ -22,8 +23,7 @@ const courseSearch: keyof RootViewsParamList = 'CourseSearch'
 type CommonView = {
 	title: string
 	icon: keyof typeof EntypoGlyphs
-	foreground: 'light' | 'dark'
-	tint: string
+	gradient: Gradient
 	disabled?: boolean
 	devOnly?: boolean
 }
@@ -47,128 +47,112 @@ export const AllViews = (): Array<ViewType> => {
 			view: menus,
 			title: 'Menus',
 			icon: 'bowl',
-			foreground: 'light',
-			tint: c.grassToLime[0],
+			gradient: c.greenGradient,
 		},
 		{
 			type: 'view',
 			view: sis,
 			title: 'SIS',
 			icon: 'fingerprint',
-			foreground: 'light',
-			tint: c.yellowToGoldDark[0],
+			gradient: c.goldGradient,
 		},
 		{
 			type: 'view',
 			view: hours,
 			title: 'Building Hours',
 			icon: 'clock',
-			foreground: 'light',
-			tint: c.lightBlueToBlueDark[0],
+			gradient: c.blueGradient,
 		},
 		{
 			type: 'view',
 			view: calendar,
 			title: 'Calendar',
 			icon: 'calendar',
-			foreground: 'light',
-			tint: c.magentaToPurple[0],
+			gradient: c.violetGradient,
 		},
 		{
 			type: 'view',
 			view: directory,
 			title: 'Directory',
 			icon: 'v-card',
-			foreground: 'light',
-			tint: c.redToPurple[0],
+			gradient: c.redGradient,
 		},
 		{
 			type: 'view',
 			view: streaming,
 			title: 'Streaming Media',
 			icon: 'video',
-			foreground: 'light',
-			tint: c.lightBlueToBlueLight[0],
+			gradient: c.lightBlueGradient,
 		},
 		{
 			type: 'view',
 			view: news,
 			title: 'News',
 			icon: 'news',
-			foreground: 'light',
-			tint: c.purpleToIndigo[0],
+			gradient: c.purpleGradient,
 		},
 		{
 			type: 'url',
 			url: 'https://map.stolaf.edu/',
 			title: 'Campus Map',
 			icon: 'map',
-			foreground: 'light',
-			tint: c.navyToNavy[0],
+			gradient: c.indigoGradient,
 		},
 		{
 			type: 'view',
 			view: importantContacts,
 			title: 'Important Contacts',
 			icon: 'phone',
-			foreground: 'light',
-			tint: c.orangeToRed[0],
+			gradient: c.orangeGradient,
 		},
 		{
 			type: 'view',
 			view: transportation,
 			title: 'Transportation',
 			icon: 'address',
-			foreground: 'light',
-			tint: c.grayToDarkGray[0],
+			gradient: c.grayGradient,
 		},
 		{
 			type: 'view',
 			view: dictionary,
 			title: 'Campus Dictionary',
 			icon: 'open-book',
-			foreground: 'light',
-			tint: c.pinkToHotpink[0],
+			gradient: c.pinkGradient,
 		},
 		{
 			type: 'view',
 			view: studentOrgs,
 			title: 'Student Orgs',
 			icon: 'globe',
-			foreground: 'light',
-			tint: c.darkBlueToIndigo[0],
+			gradient: c.sageGradient,
 		},
 		{
 			type: 'view',
 			view: more,
 			title: 'More',
 			icon: 'link',
-			foreground: 'light',
-			tint: c.seafoamToGrass[0],
+			gradient: c.mintGradient,
 		},
 		{
 			type: 'view',
 			view: printJobs,
 			title: 'stoPrint',
 			icon: 'print',
-			foreground: 'light',
-			tint: c.tealToSeafoam[0],
+			gradient: c.yellowGradient,
 		},
 		{
 			type: 'view',
 			view: courseSearch,
 			title: 'Course Catalog',
 			icon: 'graduation-cap',
-			foreground: 'light',
-			tint: c.lavender,
+			gradient: c.tanGradient,
 		},
 		{
 			type: 'view',
 			view: reddit,
 			title: 'Communities',
 			icon: 'chat',
-			foreground: 'light',
-			tint: c.orangeToRed[0],
+			gradient: c.orangeGradient,
 			devOnly: true,
 		},
 	]

@@ -1,12 +1,21 @@
 import * as React from 'react'
-import {Button, Text, VStack} from '@expo/ui/swift-ui'
+import {useColorScheme} from 'react-native'
+import {
+	Button,
+	RoundedRectangle,
+	Spacer,
+	Text,
+	VStack,
+	ZStack,
+} from '@expo/ui/swift-ui'
 import {
 	accessibilityLabel,
-	background,
+	aspectRatio,
 	buttonStyle,
 	contentShape,
 	font,
 	foregroundColor,
+	foregroundStyle,
 	frame,
 	padding,
 	shapes,
@@ -21,9 +30,16 @@ type Props = {
 }
 
 export const CELL_MARGIN = 10
-const CELL_RADIUS = 17
-const cellVerticalPadding = 8
-const cellHorizontalPadding = 4
+
+/// Matched from the Apple Health category-card screenshot: a 525x346px
+/// (3x) card is a ~1.517:1 width:height ratio, with a corner radius of
+/// roughly 23% of the card's height (~80px at 3x, on a 346px-tall card).
+/// The radius is expressed as a point value tuned for a typical two-column
+/// card width on a standard iPhone, since @expo/ui has no way to compute a
+/// modifier value from the runtime-resolved card size.
+const CELL_ASPECT_RATIO = 1.517
+const CELL_RADIUS = 27
+const cellPadding = 16
 
 /// SwiftUI has no "fill the available width" constant reachable from JS, so we
 /// cap the frame at a width no phone reaches and let the stack divide the space.
@@ -44,13 +60,6 @@ const ICON_SIZE = 32
 const ICON_TEXT_STYLE = 'title'
 const TITLE_TEXT_STYLE = 'subheadline'
 
-/// `layer.cornerRadius` on iOS defaults to circular corners, which is what the
-/// React Native `borderRadius` produced.
-const cellShape = shapes.roundedRectangle({
-	cornerRadius: CELL_RADIUS,
-	roundedCornerStyle: 'circular',
-})
-
 /// `view.icon` comes from the view data rather than from a literal, so a typo
 /// or a rename upstream reaches this as an undefined lookup. Fail with a
 /// message naming the icon instead of letting String.fromCodePoint throw a
@@ -67,17 +76,18 @@ function entypoGlyph(name: keyof typeof EntypoGlyphs): string {
 }
 
 export function HomeScreenButton({view, onPress}: Props): React.ReactNode {
+	let scheme = useColorScheme()
 	let foreground =
-		view.foreground === 'light'
-			? homescreenForegroundLight
-			: homescreenForegroundDark
+		scheme === 'dark' ? homescreenForegroundDark : homescreenForegroundLight
 	let glyph = entypoGlyph(view.icon)
+	let [gradientTop, gradientBottom] = view.gradient
 
 	return (
 		<Button
 			modifiers={[
 				buttonStyle('plain'),
 				frame({maxWidth: FILL_WIDTH}),
+				aspectRatio({ratio: CELL_ASPECT_RATIO, contentMode: 'fit'}),
 				accessibilityLabel(view.title),
 			]}
 			onPress={onPress}
@@ -86,40 +96,56 @@ export function HomeScreenButton({view, onPress}: Props): React.ReactNode {
 			    SwiftUI derives a button's tappable region from its label, so
 			    putting contentShape on the Button leaves only the icon and title
 			    tappable rather than the whole tile. */}
-			<VStack
+			<ZStack
+				alignment="topLeading"
 				modifiers={[
-					padding({
-						top: cellVerticalPadding,
-						bottom: cellVerticalPadding / 2,
-						horizontal: cellHorizontalPadding,
-					}),
-					frame({maxWidth: FILL_WIDTH}),
-					background(view.tint, cellShape),
-					contentShape(cellShape),
-				]}
-				spacing={0}
-			>
-				<Text
-					modifiers={[
-						font({
-							family: ICON_FONT_FAMILY,
-							size: ICON_SIZE,
-							textStyle: ICON_TEXT_STYLE,
+					contentShape(
+						shapes.roundedRectangle({
+							cornerRadius: CELL_RADIUS,
+							roundedCornerStyle: 'continuous',
 						}),
-						foregroundColor(foreground),
-					]}
-				>
-					{glyph}
-				</Text>
-				<Text
+					),
+				]}
+			>
+				<RoundedRectangle
+					cornerRadius={CELL_RADIUS}
 					modifiers={[
-						font({textStyle: TITLE_TEXT_STYLE}),
-						foregroundColor(foreground),
+						foregroundStyle({
+							type: 'linearGradient',
+							colors: [gradientTop, gradientBottom],
+							startPoint: {x: 0.5, y: 0},
+							endPoint: {x: 0.5, y: 1},
+						}),
 					]}
+				/>
+				<VStack
+					alignment="leading"
+					modifiers={[padding({all: cellPadding})]}
+					spacing={4}
 				>
-					{view.title}
-				</Text>
-			</VStack>
+					<Text
+						modifiers={[
+							font({
+								family: ICON_FONT_FAMILY,
+								size: ICON_SIZE,
+								textStyle: ICON_TEXT_STYLE,
+							}),
+							foregroundColor(foreground),
+						]}
+					>
+						{glyph}
+					</Text>
+					<Spacer />
+					<Text
+						modifiers={[
+							font({textStyle: TITLE_TEXT_STYLE}),
+							foregroundColor(foreground),
+						]}
+					>
+						{view.title}
+					</Text>
+				</VStack>
+			</ZStack>
 		</Button>
 	)
 }
