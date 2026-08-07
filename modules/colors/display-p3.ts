@@ -75,33 +75,50 @@ function fromLinear(value: number): number {
 /// It is also the syntax React Native's own wide-gamut proposal uses, so if
 /// that ever lands on the JS side these values can be passed straight through
 /// and the conversion below deleted.
-const P3_PATTERN =
-	/^color\(\s*display-p3\s+(?<components>[^/)]+?)\s*(?:\/\s*(?<alpha>[^\s)]+)\s*)?\)$/iu
+const FUNCTION_NAME = 'color'
+const COLOUR_SPACE = 'display-p3'
 
 function component(text: string): number {
 	let value = text.endsWith('%')
 		? Number(text.slice(0, -1)) / 100
 		: Number(text)
-	if (Number.isNaN(value)) {
+	if (Number.isNaN(value) || text === '') {
 		throw new Error(`"${text}" is not a number or percentage`)
 	}
 	return value
 }
 
 function parseDisplayP3(css: string): [Triple, number] {
-	let match = P3_PATTERN.exec(css.trim())
-	if (!match?.groups) {
+	let reject = (): never => {
 		throw new Error(`"${css}" is not a color(display-p3 ...) colour`)
 	}
-	let parts = match.groups['components'].split(/\s+/u)
+
+	// Split on delimiters rather than matching with a regular expression. An
+	// expression general enough to allow whitespace anywhere ends up able to
+	// attribute the same run of spaces to more than one part of itself, which
+	// backtracks badly on input that never matches -- CodeQL flags it as a
+	// polynomial ReDoS, and it is one. Scanning is linear and says what it means.
+	let text = css.trim()
+	let open = text.indexOf('(')
+	if (open === -1 || !text.endsWith(')')) reject()
+	if (text.slice(0, open).trim().toLowerCase() !== FUNCTION_NAME) reject()
+
+	let body = text.slice(open + 1, -1).trim()
+	let space = body.search(/\s/u)
+	if (space === -1) reject()
+	if (body.slice(0, space).toLowerCase() !== COLOUR_SPACE) reject()
+
+	let [components, alpha, ...rest] = body.slice(space).split('/')
+	if (rest.length > 0) reject()
+
+	let parts = components.trim().split(/\s+/u)
 	if (parts.length !== 3) {
 		throw new Error(
-			`color(display-p3 ...) takes three components, got ${parts.length}`,
+			`color(${COLOUR_SPACE} ...) takes three components, got ${parts.length}`,
 		)
 	}
 	let [red, green, blue] = parts.map(component) as Triple
-	let alpha = match.groups['alpha'] ? component(match.groups['alpha']) : 1
-	return [[red, green, blue], alpha]
+	return [[red, green, blue], alpha === undefined ? 1 : component(alpha.trim())]
 }
 
 /// The components of a Display P3 colour, expressed in extended sRGB.

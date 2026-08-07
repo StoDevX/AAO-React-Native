@@ -84,6 +84,18 @@ describe('displayP3', () => {
 			expect(() => displayP3('color(srgb 1 0 0)')).toThrow(/display-p3/iu)
 		})
 
+		test('rejects pathological whitespace without stalling', () => {
+			// The first parser matched with a regular expression permissive enough
+			// to attribute one run of spaces to several parts of itself, which
+			// backtracks polynomially on input that never matches. Parsing has to
+			// stay linear in the length of the string, so this rejects promptly
+			// rather than eventually.
+			let hostile = `color(display-p3 ${' '.repeat(50_000)}`
+			let started = Date.now()
+			expect(() => displayP3(hostile)).toThrow()
+			expect(Date.now() - started).toBeLessThan(1000)
+		})
+
 		test('rejects a component count it cannot use', () => {
 			expect(() => displayP3('color(display-p3 1 0)')).toThrow(/display-p3/iu)
 		})
