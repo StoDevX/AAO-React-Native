@@ -13,21 +13,6 @@ struct SettingsScreen: Screen {
 		return self
 	}
 
-	/// Scrolls the Settings form until `element` enters the accessibility tree.
-	///
-	/// SwiftUI's `Form` builds its rows lazily: anything below the fold is
-	/// absent from the tree entirely, not merely offscreen. The React Native
-	/// `ScrollView` this replaced mounted every row up front, so queries for
-	/// far-down rows used to resolve without scrolling first.
-	@discardableResult
-	func scrollUntilExists(_ element: XCUIElement, swipes: Int = 8) -> Self {
-		for _ in 0..<swipes {
-			if element.exists { break }
-			app.swipeUp()
-		}
-		return self
-	}
-
 	@discardableResult
 	func checkSignInVisible() -> Self {
 		// The sign-in row is a SwiftUI Button carrying its title as an

@@ -83,6 +83,9 @@ struct HomeScreen: Screen {
 	@discardableResult
 	func checkDeveloperSectionVisible() -> Self {
 		let developerSection = app.staticTexts[TestIdentifiers.Settings.developer]
+		// DEVELOPER is the last section in the Settings form, so it starts out
+		// unbuilt rather than merely offscreen.
+		scrollUntilExists(developerSection)
 		XCTAssertTrue(
 			developerSection.waitForExistence(timeout: 30),
 			"DEVELOPER section should be visible after enabling dev mode")
