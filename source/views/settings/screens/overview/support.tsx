@@ -8,6 +8,7 @@ import {refreshApp} from '../../../../lib/refresh'
 import {useNavigation} from '@react-navigation/native'
 import {formatVersion} from './version'
 import {ActionRow, NavigationRow} from '../../components/rows'
+import {openReportProblem} from './report-problem/gate'
 
 const getDeviceInfo = () => `
 
@@ -50,10 +51,14 @@ export const SupportSection = (): React.ReactNode => {
 		)
 	}
 
+	let onReportProblem = () =>
+		openReportProblem(() => navigation.navigate('ReportProblem'))
+
 	return (
 		<Section title="Support">
 			<NavigationRow onPress={() => navigation.navigate('Faq')} title="FAQs" />
-			<ActionRow onPress={openEmail} title="Contact Us" />
+			<ActionRow onPress={openEmail} title="Email Us" />
+			<NavigationRow onPress={onReportProblem} title="Report a Problem" />
 			<ActionRow onPress={onResetButton} title="Reset Everything" />
 			<LabeledContent label="Version">
 				<Text>{getVersion()}</Text>

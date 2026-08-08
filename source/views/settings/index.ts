@@ -7,6 +7,10 @@ export {IconSettingsView} from './screens/change-icon'
 export {CreditsView} from './screens/credits'
 export {LegalView} from './screens/legal'
 export {PrivacyView} from './screens/privacy'
+export {
+	ReportProblemView,
+	NavigationOptions as ReportProblemNavigationOptions,
+} from './screens/overview/report-problem/screen'
 
 // Developer settings
 export {DebugRootView} from './screens/debug'

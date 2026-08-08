@@ -312,6 +312,11 @@ const SettingsStackScreens = () => {
 				<SettingsStack.Screen component={settings.CreditsView} name="Credits" />
 				<SettingsStack.Screen component={settings.PrivacyView} name="Privacy" />
 				<SettingsStack.Screen component={settings.LegalView} name="Legal" />
+				<SettingsStack.Screen
+					component={settings.ReportProblemView}
+					name="ReportProblem"
+					options={settings.ReportProblemNavigationOptions}
+				/>
 			</SettingsStack.Group>
 
 			{/* developer */}
