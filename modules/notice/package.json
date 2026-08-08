@@ -14,8 +14,7 @@
   },
   "dependencies": {
     "@frogpond/colors": "workspace:*",
-    "@frogpond/button": "workspace:*",
-    "@frogpond/markdown": "workspace:*"
+    "@frogpond/button": "workspace:*"
   },
   "devDependencies": {
     "@testing-library/react-native": "12.9.0"

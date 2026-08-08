@@ -898,9 +898,6 @@ importers:
       '@frogpond/colors':
         specifier: workspace:*
         version: link:../colors
-      '@frogpond/markdown':
-        specifier: workspace:*
-        version: link:../markdown
       react:
         specifier: ^19.1.0
         version: 19.2.3

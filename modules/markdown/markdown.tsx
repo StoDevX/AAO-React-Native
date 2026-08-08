@@ -15,6 +15,9 @@ import {openUrl} from '@frogpond/open-url'
 // scheme automatically. The cast below only satisfies the narrower public type.
 const label = c.label as unknown as string
 const link = c.link as unknown as string
+const secondarySystemBackground =
+	c.secondarySystemBackground as unknown as string
+const separator = c.separator as unknown as string
 
 const baseMarkdownStyle: MarkdownStyle = {
 	paragraph: {color: label},
@@ -26,11 +29,27 @@ const baseMarkdownStyle: MarkdownStyle = {
 	h6: {color: label},
 	strong: {color: label},
 	em: {color: label},
-	blockquote: {color: label},
+	blockquote: {
+		color: label,
+		backgroundColor: secondarySystemBackground,
+		borderColor: separator,
+	},
 	list: {color: label},
-	code: {color: label},
+	code: {
+		color: label,
+		backgroundColor: secondarySystemBackground,
+		borderColor: separator,
+	},
 	link: {color: link},
 }
+
+// `react-native-enriched-markdown`'s parser pairs `$...$` as a math node by
+// default, even though the native math renderer is compiled out via the
+// `enableMath: false` Expo config plugin. With the renderer gone but the
+// parser still matching, text between `$` characters silently disappears
+// instead of rendering literally. Disabling `latexMath` keeps `$` as a plain
+// character, matching the renderer's compiled-out math support.
+const md4cFlags = {latexMath: false}
 
 function mergeMarkdownStyle(
 	base: MarkdownStyle,
@@ -65,6 +84,7 @@ export function Markdown({
 			flavor="github"
 			markdown={source}
 			markdownStyle={style}
+			md4cFlags={md4cFlags}
 			onLinkPress={handleLinkPress}
 		/>
 	)
