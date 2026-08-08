@@ -3,7 +3,7 @@ import merge from 'deepmerge'
 import {
 	DarkTheme as NavigationDarkTheme,
 	DefaultTheme as NavigationLightTheme,
-} from '@react-navigation/native'
+} from 'expo-router/react-navigation'
 
 import {
 	MD3DarkTheme as PaperDarkTheme,
