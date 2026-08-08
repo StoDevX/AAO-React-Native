@@ -17,28 +17,38 @@ version = "1.86.1"
 backend = "gem:rubocop"
 
 [[tools.hk]]
-version = "1.41.0"
+version = "1.54.1"
 backend = "aqua:jdx/hk"
 
 [tools.hk."platforms.linux-arm64"]
-checksum = "sha256:d67d3f870d37355fbb66011780113c70e9a70c505a4f0fe7d9b44639442b4fc7"
-url = "https://github.com/jdx/hk/releases/download/v1.41.0/hk-aarch64-unknown-linux-gnu.tar.gz"
-url_api = "https://api.github.com/repos/jdx/hk/releases/assets/389454826"
+checksum = "sha256:e00420ef742e2e222c2030253a8fa868033daf43fe670de17c2e6957dc577443"
+url = "https://github.com/jdx/hk/releases/download/v1.54.1/hk-aarch64-unknown-linux-gnu.tar.gz"
+url_api = "https://api.github.com/repos/jdx/hk/releases/assets/505018166"
+
+[tools.hk."platforms.linux-arm64-musl"]
+checksum = "sha256:a98f4e8d97bc4e07bef4528201f3dced2b2a9b3881ced92d0d38935a89b7ecfa"
+url = "https://github.com/jdx/hk/releases/download/v1.54.1/hk-aarch64-unknown-linux-musl.tar.gz"
+url_api = "https://api.github.com/repos/jdx/hk/releases/assets/505018162"
 
 [tools.hk."platforms.linux-x64"]
-checksum = "sha256:b49eebf571c3aa68bc02940114082b0bdf9e9828c8f224d478001fb7b865898b"
-url = "https://github.com/jdx/hk/releases/download/v1.41.0/hk-x86_64-unknown-linux-gnu.tar.gz"
-url_api = "https://api.github.com/repos/jdx/hk/releases/assets/389454825"
+checksum = "sha256:20775cfb4e8065aa25e790d888856d4d62cc2e688725c010f8a5fc112aa759b5"
+url = "https://github.com/jdx/hk/releases/download/v1.54.1/hk-x86_64-unknown-linux-gnu.tar.gz"
+url_api = "https://api.github.com/repos/jdx/hk/releases/assets/505018180"
+
+[tools.hk."platforms.linux-x64-musl"]
+checksum = "sha256:a78ee242f310d329843b36e41766df9b45ef29609c7424a6d84244b278f8cb3d"
+url = "https://github.com/jdx/hk/releases/download/v1.54.1/hk-x86_64-unknown-linux-musl.tar.gz"
+url_api = "https://api.github.com/repos/jdx/hk/releases/assets/505018181"
 
 [tools.hk."platforms.macos-arm64"]
-checksum = "sha256:25c9e973993c1607247e97ec558d747483ab4c48380485d69ea617161939544c"
-url = "https://github.com/jdx/hk/releases/download/v1.41.0/hk-aarch64-apple-darwin.tar.gz"
-url_api = "https://api.github.com/repos/jdx/hk/releases/assets/389454823"
+checksum = "sha256:8384262050e5f523c58af9e23cd92e2274e38cf95b4e72cf66f63545afa149b2"
+url = "https://github.com/jdx/hk/releases/download/v1.54.1/hk-aarch64-apple-darwin.tar.gz"
+url_api = "https://api.github.com/repos/jdx/hk/releases/assets/505018164"
 
 [tools.hk."platforms.windows-x64"]
-checksum = "sha256:b3851965af1c570ca670710a82e1cce85213dc0b182336c90d031cff8f2e0dd5"
-url = "https://github.com/jdx/hk/releases/download/v1.41.0/hk-x86_64-pc-windows-msvc.zip"
-url_api = "https://api.github.com/repos/jdx/hk/releases/assets/389454822"
+checksum = "sha256:32c28a6ec024ddfd59482334f0225f6e6c5202fdb3a5fdc74f3c987a1fd08007"
+url = "https://github.com/jdx/hk/releases/download/v1.54.1/hk-x86_64-pc-windows-msvc.zip"
+url_api = "https://api.github.com/repos/jdx/hk/releases/assets/505018165"
 
 [[tools.node]]
 version = "24.15.0"
