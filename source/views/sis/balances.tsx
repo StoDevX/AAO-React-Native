@@ -12,16 +12,17 @@ import {Cell, TableView, Section} from '@frogpond/tableview'
 import {BalancesShapeType, balancesOptions} from '../../lib/financials'
 import * as c from '@frogpond/colors'
 import {sto} from '../../lib/colors'
-import {useNavigation} from '@react-navigation/native'
+import {NavigationProp, useNavigation} from '@react-navigation/native'
 import {NoCredentialsError, credentialsOptions} from '../../lib/login'
 import {useQuery} from '@tanstack/react-query'
 import {FaqBannerGroup} from '../faqs'
 import {FAQ_TARGETS} from '../faqs/constants'
+import type {LegacyRootParamList} from '../../navigation/types'
 
 const DISCLAIMER = 'This data may be outdated or otherwise inaccurate.'
 
 export const BalancesView = (): React.ReactNode => {
-	let navigation = useNavigation()
+	let navigation = useNavigation<NavigationProp<LegacyRootParamList>>()
 	let {data: username = ''} = useQuery({
 		...credentialsOptions,
 		select: (data) => data?.username,

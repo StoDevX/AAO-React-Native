@@ -4,11 +4,19 @@ import {BuildingDetail} from './building'
 import {timezone} from '@frogpond/constants'
 import {BuildingFavoriteButton} from './toolbar-button'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
-import {RouteProp, useNavigation, useRoute} from '@react-navigation/native'
-import {RootStackParamList} from '../../../navigation/types'
+import {
+	NavigationProp,
+	RouteProp,
+	useNavigation,
+	useRoute,
+} from '@react-navigation/native'
+import {
+	LegacyRootParamList,
+	RootStackParamList,
+} from '../../../navigation/types'
 
 export function BuildingHoursDetailView(): React.ReactNode {
-	let navigation = useNavigation()
+	let navigation = useNavigation<NavigationProp<LegacyRootParamList>>()
 	let {now} = useMomentTimer({intervalMs: 60000, timezone: timezone()})
 	let route = useRoute<RouteProp<RootStackParamList, typeof NavigationKey>>()
 	let {building: info} = route.params

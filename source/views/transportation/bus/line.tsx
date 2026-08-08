@@ -16,7 +16,8 @@ import {BusStopRow} from './components/bus-stop-row'
 import {ListFooter, ListRow} from '@frogpond/lists'
 import {InfoHeader} from '@frogpond/info-header'
 import * as c from '@frogpond/colors'
-import {useNavigation} from '@react-navigation/native'
+import {NavigationProp, useNavigation} from '@react-navigation/native'
+import type {LegacyRootParamList} from '../../../navigation/types'
 import {BUS_FOOTER_MESSAGE} from './constants'
 import {
 	DayPickerHeader,
@@ -150,7 +151,7 @@ function deriveFromProps({line, now}: {line: UnprocessedBusLine; now: Moment}) {
 
 export function BusLine(props: Props): React.ReactNode {
 	let {line, now} = props
-	let navigation = useNavigation()
+	let navigation = useNavigation<NavigationProp<LegacyRootParamList>>()
 
 	let [schedule, setSchedule] = useState<BusSchedule | null>(null)
 	let [subtitle, setSubtitle] = useState<string>('')

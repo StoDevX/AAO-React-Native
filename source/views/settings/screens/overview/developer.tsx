@@ -4,12 +4,13 @@ import {Alert} from 'react-native'
 import {Section} from '@expo/ui/swift-ui'
 import {useIsDevMode} from '../../../../lib/use-is-dev-mode'
 import {ServerUrlSection} from './server-url'
-import {useNavigation} from '@react-navigation/native'
+import {NavigationProp, useNavigation} from '@react-navigation/native'
 import {NavigationKey as DebugKey} from '../debug'
 import {ActionRow, NavigationRow} from '../../components/rows'
+import type {LegacyRootParamList} from '../../../../navigation/types'
 
 export const DeveloperSection = (): React.ReactElement => {
-	let navigation = useNavigation()
+	let navigation = useNavigation<NavigationProp<LegacyRootParamList>>()
 	const isDev = useIsDevMode()
 
 	const onComponentsButton = () => navigation.navigate('ComponentLibrary')

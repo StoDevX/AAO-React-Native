@@ -19,9 +19,9 @@ import deburr from 'lodash/deburr'
 import type {StudentOrgType} from './types'
 import {useDebounce} from '@frogpond/use-debounce'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
-import {useNavigation} from '@react-navigation/native'
+import {NavigationProp, useNavigation} from '@react-navigation/native'
 import memoize from 'lodash/memoize'
-import {ChangeTextEvent} from '../../navigation/types'
+import {ChangeTextEvent, LegacyRootParamList} from '../../navigation/types'
 import {studentOrgsOptions} from './query'
 import {useQuery} from '@tanstack/react-query'
 
@@ -48,7 +48,7 @@ const styles = StyleSheet.create({
 })
 
 function StudentOrgsView(): React.ReactNode {
-	let navigation = useNavigation()
+	let navigation = useNavigation<NavigationProp<LegacyRootParamList>>()
 
 	let [query, setQuery] = React.useState('')
 	let searchQuery = useDebounce(query.toLowerCase(), 200)

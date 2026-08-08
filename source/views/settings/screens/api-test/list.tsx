@@ -9,12 +9,15 @@ import {NetworkLoggerButton} from '@frogpond/navigation-buttons'
 
 import {ServerRoute, serverRoutesOptions} from './query'
 import {useQuery} from '@tanstack/react-query'
-import {ChangeTextEvent} from '../../../../navigation/types'
-import {useNavigation} from '@react-navigation/native'
+import {
+	ChangeTextEvent,
+	LegacyRootParamList,
+} from '../../../../navigation/types'
+import {NavigationProp, useNavigation} from '@react-navigation/native'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 
 export const APITestView = (): React.ReactNode => {
-	let navigation = useNavigation()
+	let navigation = useNavigation<NavigationProp<LegacyRootParamList>>()
 
 	let [filterPath, setFilterPath] = React.useState<string>('')
 

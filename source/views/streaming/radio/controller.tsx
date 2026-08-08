@@ -18,8 +18,11 @@ import type {HtmlAudioError, PlayState} from './types'
 import {theming} from './theme'
 import {ActionButton, CallButton, ShowCalendarButton} from './buttons'
 import {openUrl} from '@frogpond/open-url'
-import {useNavigation} from '@react-navigation/native'
-import {RadioScheduleParamList} from '../../../navigation/types'
+import {NavigationProp, useNavigation} from '@react-navigation/native'
+import {
+	LegacyRootParamList,
+	RadioScheduleParamList,
+} from '../../../navigation/types'
 
 // If you want to fix the inline player, switch to `true`
 const ALLOW_INLINE_PLAYER = false
@@ -81,7 +84,7 @@ export function RadioControllerView(props: Props): React.ReactNode {
 		playerUrl,
 	} = props
 
-	let navigation = useNavigation()
+	let navigation = useNavigation<NavigationProp<LegacyRootParamList>>()
 
 	let [playState, setPlayState] = useState<PlayState>('paused')
 	let [streamError, setStreamError] = useState<HtmlAudioError | null>(null)

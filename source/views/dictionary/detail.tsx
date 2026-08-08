@@ -6,8 +6,13 @@ import {Button} from '@frogpond/button'
 import * as c from '@frogpond/colors'
 
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
-import {RouteProp, useNavigation, useRoute} from '@react-navigation/native'
-import {RootStackParamList} from '../../navigation/types'
+import {
+	NavigationProp,
+	RouteProp,
+	useNavigation,
+	useRoute,
+} from '@react-navigation/native'
+import {LegacyRootParamList, RootStackParamList} from '../../navigation/types'
 
 const paragraphMarkdownStyle: MarkdownStyle = {paragraph: {fontSize: 16}}
 
@@ -48,7 +53,7 @@ export let DictionaryDetailView = (): React.ReactNode => {
 	let route = useRoute<RouteProp<RootStackParamList, typeof NavigationKey>>()
 	let {item} = route.params
 
-	let navigation = useNavigation()
+	let navigation = useNavigation<NavigationProp<LegacyRootParamList>>()
 
 	let handleEditButtonPress = React.useCallback(
 		() => navigation.navigate('DictionaryEditor', {item}),

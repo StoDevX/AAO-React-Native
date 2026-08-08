@@ -10,8 +10,17 @@ import {useAppDispatch} from '../../../redux'
 import {applyFiltersToItem} from '@frogpond/filter'
 import {FilterType} from '@frogpond/filter'
 import {useFilters} from './lib/build-filters'
-import {RouteProp, useNavigation, useRoute} from '@react-navigation/native'
-import {ChangeTextEvent, RootStackParamList} from '../../../navigation/types'
+import {
+	NavigationProp,
+	RouteProp,
+	useNavigation,
+	useRoute,
+} from '@react-navigation/native'
+import {
+	ChangeTextEvent,
+	LegacyRootParamList,
+	RootStackParamList,
+} from '../../../navigation/types'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 import {useDebounce} from '@frogpond/use-debounce'
 import {ListSeparator, ListSectionHeader, largeListProps} from '@frogpond/lists'
@@ -102,7 +111,7 @@ const useSelectedGE = (filters: FilterType<CourseType>[]) => {
 
 export const CourseSearchResultsView = (): React.ReactNode => {
 	let dispatch = useAppDispatch()
-	let navigation = useNavigation()
+	let navigation = useNavigation<NavigationProp<LegacyRootParamList>>()
 
 	let route = useRoute<RouteProp<RootStackParamList, 'CourseSearchResults'>>()
 	let {initialFilters = [], initialQuery = ''} = route.params ?? {}

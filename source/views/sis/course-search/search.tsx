@@ -1,12 +1,12 @@
 import * as c from '@frogpond/colors'
 import {LoadingView, NoticeView} from '@frogpond/notice'
 import {SearchButton} from '@frogpond/navigation-buttons'
-import {useNavigation} from '@react-navigation/native'
+import {NavigationProp, useNavigation} from '@react-navigation/native'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 import {debounce, fromPairs} from 'lodash'
 import * as React from 'react'
 import {ScrollView, StyleSheet, View} from 'react-native'
-import {ChangeTextEvent} from '../../../navigation/types'
+import {ChangeTextEvent, LegacyRootParamList} from '../../../navigation/types'
 import {useAppSelector} from '../../../redux'
 import {
 	selectRecentFilters,
@@ -30,7 +30,7 @@ const RightButton: React.FC<{onPress: () => void}> = ({onPress}) => (
 )
 
 export const CourseSearchView = (): React.ReactNode => {
-	let navigation = useNavigation()
+	let navigation = useNavigation<NavigationProp<LegacyRootParamList>>()
 
 	let {data: basicFilters = [], isLoading, error, refetch} = useFilters()
 

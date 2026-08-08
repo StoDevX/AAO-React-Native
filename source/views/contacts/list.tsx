@@ -1,7 +1,7 @@
 import * as c from '@frogpond/colors'
 import {ListSectionHeader, ListSeparator} from '@frogpond/lists'
 import {LoadingView, NoticeView} from '@frogpond/notice'
-import {useNavigation} from '@react-navigation/native'
+import {NavigationProp, useNavigation} from '@react-navigation/native'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 import * as React from 'react'
 import {SectionList, StyleSheet} from 'react-native'
@@ -10,6 +10,7 @@ import {groupedContactsOptions} from './query'
 import {useQuery} from '@tanstack/react-query'
 import {ContactRow} from './row'
 import type {ContactType} from './types'
+import type {LegacyRootParamList} from '../../navigation/types'
 
 const styles = StyleSheet.create({
 	listContainer: {
@@ -21,7 +22,7 @@ const styles = StyleSheet.create({
 })
 
 export let ContactsListView = (): React.ReactNode => {
-	let navigation = useNavigation()
+	let navigation = useNavigation<NavigationProp<LegacyRootParamList>>()
 
 	let {
 		data = [],

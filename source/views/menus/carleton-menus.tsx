@@ -3,9 +3,9 @@ import {Platform, ScrollView, StyleSheet, View} from 'react-native'
 import {Row} from '@frogpond/layout'
 import {ListRow, ListSeparator, Title} from '@frogpond/lists'
 import {BonAppHostedMenu} from './menu-bonapp'
-import {useNavigation} from '@react-navigation/native'
+import {NavigationProp, useNavigation} from '@react-navigation/native'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
-import {CafeMenuParamList} from '../../navigation/types'
+import {CafeMenuParamList, LegacyRootParamList} from '../../navigation/types'
 
 export const CarletonBurtonMenuScreen = (): React.ReactNode => (
 	<BonAppHostedMenu
@@ -40,7 +40,7 @@ export const CarletonSaylesMenuScreen = (): React.ReactNode => (
 )
 
 export function CarletonCafeIndex(): React.ReactNode {
-	let navigation = useNavigation()
+	let navigation = useNavigation<NavigationProp<LegacyRootParamList>>()
 
 	let carletonCafes: Array<{id: keyof CafeMenuParamList; title: string}> = [
 		{id: 'CarletonBurtonMenu', title: 'Burton'},

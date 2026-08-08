@@ -7,9 +7,10 @@ import {BuildingType} from './types'
 import * as c from '@frogpond/colors'
 import {ListSeparator, ListSectionHeader} from '@frogpond/lists'
 import {LoadingView, NoticeView} from '@frogpond/notice'
-import {useNavigation} from '@react-navigation/native'
+import {NavigationProp, useNavigation} from '@react-navigation/native'
 import {useMomentTimer} from '@frogpond/timer'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+import type {LegacyRootParamList} from '../../navigation/types'
 
 export {BuildingHoursDetailView} from './detail'
 
@@ -21,7 +22,7 @@ const styles = StyleSheet.create({
 })
 
 export function BuildingHoursView(): React.ReactNode {
-	let navigation = useNavigation()
+	let navigation = useNavigation<NavigationProp<LegacyRootParamList>>()
 
 	let {now} = useMomentTimer({intervalMs: 60000, startOf: 'minute'})
 

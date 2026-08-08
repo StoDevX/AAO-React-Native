@@ -4,13 +4,14 @@ import {Platform} from 'react-native'
 import {CloseScreenButton} from '@frogpond/navigation-buttons'
 import {TableView, Section} from '@frogpond/tableview'
 import {PushButtonCell} from '@frogpond/tableview/cells'
-import {useNavigation} from '@react-navigation/native'
+import {NavigationProp, useNavigation} from '@react-navigation/native'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+import type {LegacyRootParamList} from '../../../../../navigation/types'
 
 import {NavigationKey as ColorsLibrNavigationKey} from './colors'
 
 export const ComponentLibrary = (): React.ReactNode => {
-	const navigation = useNavigation()
+	const navigation = useNavigation<NavigationProp<LegacyRootParamList>>()
 
 	return (
 		<TableView>

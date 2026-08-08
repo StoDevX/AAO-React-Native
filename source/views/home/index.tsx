@@ -28,8 +28,9 @@ import {openUrl} from '@frogpond/open-url'
 import {OpenSettingsButton} from '@frogpond/navigation-buttons'
 import {UnofficialAppNotice} from './notice'
 import {useIsDevMode} from '../../lib/use-is-dev-mode'
-import {useNavigation} from '@react-navigation/native'
+import {NavigationProp, useNavigation} from '@react-navigation/native'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+import type {LegacyRootParamList} from '../../navigation/types'
 
 const styles = StyleSheet.create({
 	banner: {
@@ -56,7 +57,7 @@ function inPairs(views: ViewType[]): ViewType[][] {
 }
 
 function HomePage(): React.ReactNode {
-	let navigation = useNavigation()
+	let navigation = useNavigation<NavigationProp<LegacyRootParamList>>()
 	let isDev = useIsDevMode()
 	let allViews = AllViews().filter(
 		(view) => !view.disabled && (isDev || !view.devOnly),

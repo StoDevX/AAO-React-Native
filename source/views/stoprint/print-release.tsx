@@ -14,8 +14,13 @@ import {
 	type PrintJob,
 } from '../../lib/stoprint'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
-import {RouteProp, useNavigation, useRoute} from '@react-navigation/native'
-import {RootStackParamList} from '../../navigation/types'
+import {
+	NavigationProp,
+	RouteProp,
+	useNavigation,
+	useRoute,
+} from '@react-navigation/native'
+import {LegacyRootParamList, RootStackParamList} from '../../navigation/types'
 import {DebugNoticeButton} from '@frogpond/navigation-buttons'
 import {heldJobsOptions} from './query'
 import {credentialsOptions} from '../../lib/login'
@@ -75,7 +80,7 @@ function PrinterInformation({printer}: {printer: Printer}) {
 }
 
 export const PrintJobReleaseView = (): React.ReactNode => {
-	let navigation = useNavigation()
+	let navigation = useNavigation<NavigationProp<LegacyRootParamList>>()
 
 	let route = useRoute<RouteProp<RootStackParamList, 'PrintJobRelease'>>()
 	let {job, printer} = route.params

@@ -1,6 +1,6 @@
 import * as React from 'react'
 import {SectionList, StyleSheet} from 'react-native'
-import {ChangeTextEvent} from '../../navigation/types'
+import {ChangeTextEvent, LegacyRootParamList} from '../../navigation/types'
 import {dictionaryOptions} from './query'
 import {useQuery} from '@tanstack/react-query'
 import type {WordType, DictionaryGroup} from './types'
@@ -17,7 +17,7 @@ import {LoadingView, NoticeView} from '@frogpond/notice'
 import {useDebounce} from '@frogpond/use-debounce'
 import * as c from '@frogpond/colors'
 
-import {useNavigation} from '@react-navigation/native'
+import {NavigationProp, useNavigation} from '@react-navigation/native'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 
 import deburr from 'lodash/deburr'
@@ -55,7 +55,7 @@ const styles = StyleSheet.create({
 })
 
 function DictionaryView(): React.ReactNode {
-	let navigation = useNavigation()
+	let navigation = useNavigation<NavigationProp<LegacyRootParamList>>()
 
 	let [query, setQuery] = React.useState('')
 	let searchQuery = useDebounce(query.toLowerCase(), 200)

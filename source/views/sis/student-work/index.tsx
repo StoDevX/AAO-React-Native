@@ -6,9 +6,10 @@ import {NoticeView, LoadingView} from '@frogpond/notice'
 import {JobRow} from './job-row'
 import type {JobType} from './types'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
-import {useNavigation} from '@react-navigation/native'
+import {NavigationProp, useNavigation} from '@react-navigation/native'
 import {studentWorkPostingsOptions} from './query'
 import {useQuery} from '@tanstack/react-query'
+import type {LegacyRootParamList} from '../../../navigation/types'
 
 const styles = StyleSheet.create({
 	listContainer: {
@@ -20,7 +21,7 @@ const styles = StyleSheet.create({
 })
 
 const StudentWorkView = (): React.ReactNode => {
-	let navigation = useNavigation()
+	let navigation = useNavigation<NavigationProp<LegacyRootParamList>>()
 	let {
 		data = [],
 		error,

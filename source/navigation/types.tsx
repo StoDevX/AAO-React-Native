@@ -142,14 +142,14 @@ export interface OnChangeTextHandler {
 	onChange: (event: ChangeTextEvent) => void
 }
 
-// this block sourced from https://reactnavigation.org/docs/typescript/#specifying-default-types-for-usenavigation-link-ref-etc
-declare global {
-	// eslint-disable-next-line @typescript-eslint/no-namespace
-	namespace ReactNavigation {
-		interface RootParamList
-			extends
-				RootStackParamList,
-				SettingsStackParamList,
-				ComponentLibraryStackParamList {}
-	}
-}
+// Explicit, non-ambient replacement for the old global ReactNavigation.RootParamList
+// augmentation: expo-router ships its own global `type RootParamList = {}`, which
+// cannot coexist with an `interface` of the same name (TypeScript does not merge a
+// type alias with an interface). Every useNavigation() call against the legacy
+// React Navigation stack now takes this as an explicit generic instead
+// (useNavigation<NavigationProp<LegacyRootParamList>>()) — see checkpoint 1's
+// Tasks 4c-4g. This type, and every file that imports it, goes away in checkpoint 7
+// once the legacy stack is fully replaced by expo-router's own typed routes.
+export type LegacyRootParamList = RootStackParamList &
+	SettingsStackParamList &
+	ComponentLibraryStackParamList

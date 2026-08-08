@@ -8,7 +8,8 @@ import type {Moment} from 'moment-timezone'
 import {FullWidthSeparator, ListSectionHeader} from '@frogpond/lists'
 import {NoticeView} from '@frogpond/notice'
 import EventRow from './event-row'
-import {useNavigation} from '@react-navigation/native'
+import {NavigationProp, useNavigation} from '@react-navigation/native'
+import type {LegacyRootParamList} from '../../source/navigation/types'
 import {PoweredBy} from './types'
 
 type Props = {
@@ -44,7 +45,7 @@ function groupEvents(
 }
 
 export function EventList(props: Props): React.ReactNode {
-	let navigation = useNavigation()
+	let navigation = useNavigation<NavigationProp<LegacyRootParamList>>()
 
 	let onPressEvent = React.useCallback(
 		(event: EventType) => {

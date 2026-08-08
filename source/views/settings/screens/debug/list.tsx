@@ -4,8 +4,16 @@ import {DebugRow} from './row'
 import {NoticeView} from '@frogpond/notice'
 import {ListSeparator} from '@frogpond/lists'
 import {useAppSelector} from '../../../../redux'
-import {RouteProp, useNavigation, useRoute} from '@react-navigation/core'
-import {SettingsStackParamList} from '../../../../navigation/types'
+import {
+	NavigationProp,
+	RouteProp,
+	useNavigation,
+	useRoute,
+} from '@react-navigation/core'
+import {
+	LegacyRootParamList,
+	SettingsStackParamList,
+} from '../../../../navigation/types'
 import {Section, TableView} from 'react-native-tableview-simple'
 
 export const NavigationKey = 'DebugView' as const
@@ -91,7 +99,7 @@ let useKeyPath = () => {
 }
 
 export const DebugArrayItem = ({item}: {item: unknown[]}): React.ReactNode => {
-	let navigation = useNavigation()
+	let navigation = useNavigation<NavigationProp<LegacyRootParamList>>()
 	let keyPath = useKeyPath()
 
 	let keyed = item.map((value, key) => ({key, value}))
@@ -121,7 +129,7 @@ export const DebugObjectItem = ({
 }: {
 	item: Record<string, unknown>
 }): React.ReactNode => {
-	let navigation = useNavigation()
+	let navigation = useNavigation<NavigationProp<LegacyRootParamList>>()
 	let keyPath = useKeyPath()
 
 	let keyed = Object.entries(item).map(([key, value]) => ({key, value}))

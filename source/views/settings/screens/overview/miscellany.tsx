@@ -3,11 +3,12 @@ import {Section, Toggle} from '@expo/ui/swift-ui'
 import {trackedOpenUrl} from '@frogpond/open-url'
 import {GH_BASE_URL} from '../../../../lib/constants'
 import * as storage from '../../../../lib/storage'
-import {useNavigation} from '@react-navigation/native'
+import {NavigationProp, useNavigation} from '@react-navigation/native'
 import {ActionRow, NavigationRow} from '../../components/rows'
+import type {LegacyRootParamList} from '../../../../navigation/types'
 
 export let MiscellanySection = (): React.ReactNode => {
-	let navigation = useNavigation()
+	let navigation = useNavigation<NavigationProp<LegacyRootParamList>>()
 
 	let onCreditsButton = () => navigation.navigate('Credits')
 	let onPrivacyButton = () => navigation.navigate('Privacy')

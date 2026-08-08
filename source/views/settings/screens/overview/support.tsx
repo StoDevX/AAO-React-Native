@@ -5,10 +5,11 @@ import {sendEmail} from '../../../../components/send-email'
 import * as Application from 'expo-application'
 import * as Device from 'expo-device'
 import {refreshApp} from '../../../../lib/refresh'
-import {useNavigation} from '@react-navigation/native'
+import {NavigationProp, useNavigation} from '@react-navigation/native'
 import {formatVersion} from './version'
 import {ActionRow, NavigationRow} from '../../components/rows'
 import {openReportProblem} from './report-problem/gate'
+import type {LegacyRootParamList} from '../../../../navigation/types'
 
 const getDeviceInfo = () => `
 
@@ -34,7 +35,7 @@ const getVersion = () =>
 	)
 
 export const SupportSection = (): React.ReactNode => {
-	let navigation = useNavigation()
+	let navigation = useNavigation<NavigationProp<LegacyRootParamList>>()
 
 	let onResetButton = () => {
 		Alert.alert(

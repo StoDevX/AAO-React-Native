@@ -1,7 +1,8 @@
 import * as React from 'react'
 import {Platform, StyleSheet, Text} from 'react-native'
 import {Touchable} from '@frogpond/touchable'
-import {useNavigation, useTheme} from '@react-navigation/native'
+import {NavigationProp, useNavigation, useTheme} from '@react-navigation/native'
+import type {LegacyRootParamList} from '../../source/navigation/types'
 import {commonStyles, rightButtonStyles as styles} from './styles'
 
 export const buttonStyles = StyleSheet.create({
@@ -18,7 +19,7 @@ export const buttonStyles = StyleSheet.create({
 })
 
 export const NetworkLoggerButton: React.FC = () => {
-	const navigation = useNavigation()
+	const navigation = useNavigation<NavigationProp<LegacyRootParamList>>()
 	let {colors} = useTheme()
 
 	return (

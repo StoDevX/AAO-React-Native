@@ -14,8 +14,13 @@ import {DebugNoticeButton} from '@frogpond/navigation-buttons'
 import groupBy from 'lodash/groupBy'
 import {StoPrintErrorView} from './components/error'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
-import {RouteProp, useNavigation, useRoute} from '@react-navigation/native'
-import {RootStackParamList} from '../../navigation/types'
+import {
+	NavigationProp,
+	RouteProp,
+	useNavigation,
+	useRoute,
+} from '@react-navigation/native'
+import {LegacyRootParamList, RootStackParamList} from '../../navigation/types'
 import {
 	allPrintersOptions,
 	colorPrintersOptions,
@@ -30,7 +35,7 @@ const styles = StyleSheet.create({
 })
 
 export const PrinterListView = (): React.ReactNode => {
-	let navigation = useNavigation()
+	let navigation = useNavigation<NavigationProp<LegacyRootParamList>>()
 
 	let route = useRoute<RouteProp<RootStackParamList, 'PrinterList'>>()
 	let {job} = route.params

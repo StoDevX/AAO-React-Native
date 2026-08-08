@@ -1,7 +1,7 @@
 import * as React from 'react'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 import {createNativeBottomTabNavigator} from '@react-navigation/bottom-tabs/unstable'
-import {useNavigation} from '@react-navigation/native'
+import {NavigationProp, useNavigation} from '@react-navigation/native'
 import {useQuery} from '@tanstack/react-query'
 import IoniconGlyphs from '@react-native-vector-icons/ionicons/glyphmaps/Ionicons.json'
 import {
@@ -33,6 +33,7 @@ import {redditPostsOptions} from './query'
 import {PostList, type PostListVariant} from './post-list'
 import {NavigationKey as PostDetailNavigationKey} from './post-detail'
 import {useRedditPreferences} from './store'
+import type {LegacyRootParamList} from '../../navigation/types'
 
 export {
 	PostDetailView,
@@ -58,7 +59,7 @@ const LABEL_TO_VARIANT: Record<string, PostListVariant> = {
 const VARIANT_ACTIONS = Object.keys(LABEL_TO_VARIANT)
 
 function StOlafFeedScreen(): React.ReactNode {
-	const navigation = useNavigation()
+	const navigation = useNavigation<NavigationProp<LegacyRootParamList>>()
 	const {variant} = useRedditPreferences()
 	const query = useQuery(redditPostsOptions('stolaf'))
 
@@ -91,7 +92,7 @@ function StOlafFeedScreen(): React.ReactNode {
 }
 
 function CarletonFeedScreen(): React.ReactNode {
-	const navigation = useNavigation()
+	const navigation = useNavigation<NavigationProp<LegacyRootParamList>>()
 	const {variant} = useRedditPreferences()
 	const query = useQuery(redditPostsOptions('carletoncollege'))
 
