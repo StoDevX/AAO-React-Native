@@ -98,8 +98,8 @@ Stack order, base to tip (after the scaffold work lands in checkpoint 1):
 
 | # | Group | Screens | `AllViews()` entry | Notes |
 |---|---|---|---|---|
-| 1 | News | 1 | `news` | Simplest — single screen, no internal navigation. Establishes the pattern. |
-| 2 | More | 1 | `more` | Single screen. |
+| 1 | More | 1 | `more` | Simplest, confirmed by reading the file — single screen, no `.navigate()` calls at all (its only `useNavigation()` use is `setOptions()` for a native search bar). Establishes the pattern. |
+| 2 | News | 1 (screen) but 2 internal tabs | `news` | **Corrected from the original draft, which wrongly called this the simplest group.** Reading the file found it's a nested `createNativeBottomTabNavigator` (St. Olaf / The Mess tabs) — same category as Menus and Streaming, not a plain single screen. Move this later, planned alongside those. |
 | 3 | Student Orgs | 2 | `studentOrgs` | List → detail, one internal nav call. |
 | 4 | Contacts | 2 | `importantContacts` | List → detail, same shape as Student Orgs. |
 | 5 | Directory | 2 | `directory` | List → detail. |
