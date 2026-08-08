@@ -8,7 +8,7 @@ import {refreshApp} from '../../../../lib/refresh'
 import {useNavigation} from '@react-navigation/native'
 import {formatVersion} from './version'
 import {ActionRow, NavigationRow} from '../../components/rows'
-import {IS_PRODUCTION} from '@frogpond/constants'
+import {openReportProblem} from './report-problem/gate'
 
 const getDeviceInfo = () => `
 
@@ -51,17 +51,8 @@ export const SupportSection = (): React.ReactNode => {
 		)
 	}
 
-	let onReportProblem = () => {
-		if (!IS_PRODUCTION) {
-			Alert.alert(
-				'Sentry is disabled',
-				'Problem reporting only works in production builds.',
-			)
-			return
-		}
-
-		navigation.navigate('ReportProblem')
-	}
+	let onReportProblem = () =>
+		openReportProblem(() => navigation.navigate('ReportProblem'))
 
 	return (
 		<Section title="Support">
