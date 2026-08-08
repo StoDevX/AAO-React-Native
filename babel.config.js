@@ -5,7 +5,6 @@ module.exports = {
 	],
 	plugins: [
 		'@babel/plugin-transform-export-namespace-from',
-		['@babel/plugin-transform-private-methods', {loose: true}],
 		// the worklets plugin must come last
 		'react-native-worklets/plugin',
 	],
