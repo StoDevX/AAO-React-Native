@@ -90,7 +90,7 @@ struct TestIdentifiers {
 
 	enum Settings {
 		static let signIn = "Sign in to St. Olaf"
-		static let developer = "DEVELOPER"
+		static let developer = "Developer"
 		static let enableDevMode = "Enable dev mode"
 	}
 

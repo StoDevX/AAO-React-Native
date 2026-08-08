@@ -53,6 +53,20 @@ extension Screen {
 		return self
 	}
 
+	/// Scrolls until `element` enters the accessibility tree.
+	///
+	/// SwiftUI's `Form` builds its rows lazily: anything below the fold is
+	/// absent from the tree entirely, not merely offscreen, so a query for it
+	/// fails outright rather than returning something unhittable.
+	@discardableResult
+	func scrollUntilExists(_ element: XCUIElement, swipes: Int = 8) -> Self {
+		for _ in 0..<swipes {
+			if element.exists { break }
+			app.swipeUp()
+		}
+		return self
+	}
+
 	/// Assert that a navigation-bar or section title is visible.
 	@discardableResult
 	func verifyTitle(_ title: String) -> Self {

@@ -20,6 +20,7 @@ overrides:
   '@expo/ui@57>vaul': '-'
 
 patchedDependencies:
+  '@expo/ui@57.0.9': dc11bfc5e4c86bf6ab7005269d8af06407c6e9a3b25420640dac26ccf47fe679
   react-native-change-icon@5.0.0: 7576d2a458dd256e90b703b84345bf87a19dfa2e3dea523e4691e395dfddfcff
   react-native@0.86.2: 6ca2e1225f38672b073b92b9d13f24feebbe9e37ba67708a3f1569275ce99191
 
@@ -35,7 +36,7 @@ importers:
         version: 4.1.1(@types/react@19.2.14)(react@19.2.3)
       '@expo/ui':
         specifier: 57.0.9
-        version: 57.0.9(@babel/core@7.29.7)(expo@57.0.10)(react-dom@19.2.3)(react-native-worklets@0.10.1)(react-native@0.86.2)(react@19.2.3)
+        version: 57.0.9(patch_hash=dc11bfc5e4c86bf6ab7005269d8af06407c6e9a3b25420640dac26ccf47fe679)(@babel/core@7.29.7)(expo@57.0.10)(react-dom@19.2.3)(react-native-worklets@0.10.1)(react-native@0.86.2)(react@19.2.3)
       '@frogpond/api':
         specifier: workspace:*
         version: link:modules/api
@@ -581,7 +582,7 @@ importers:
     dependencies:
       '@expo/ui':
         specifier: 57.0.9
-        version: 57.0.9(@babel/core@7.29.7)(expo@57.0.10)(react-dom@19.2.3)(react-native-worklets@0.10.1)(react-native@0.86.2)(react@19.2.3)
+        version: 57.0.9(patch_hash=dc11bfc5e4c86bf6ab7005269d8af06407c6e9a3b25420640dac26ccf47fe679)(@babel/core@7.29.7)(expo@57.0.10)(react-dom@19.2.3)(react-native-worklets@0.10.1)(react-native@0.86.2)(react@19.2.3)
       '@frogpond/app-theme':
         specifier: workspace:*
         version: link:../app-theme
@@ -6481,7 +6482,7 @@ snapshots:
 
   '@expo/sudo-prompt@9.3.2': {}
 
-  '@expo/ui@57.0.9(@babel/core@7.29.7)(expo@57.0.10)(react-dom@19.2.3)(react-native-worklets@0.10.1)(react-native@0.86.2)(react@19.2.3)':
+  '@expo/ui@57.0.9(patch_hash=dc11bfc5e4c86bf6ab7005269d8af06407c6e9a3b25420640dac26ccf47fe679)(@babel/core@7.29.7)(expo@57.0.10)(react-dom@19.2.3)(react-native-worklets@0.10.1)(react-native@0.86.2)(react@19.2.3)':
     dependencies:
       expo: 57.0.10(@babel/core@7.29.7)(@expo/dom-webview@57.0.1)(react-dom@19.2.3)(react-native-webview@13.16.1)(react-native-worklets@0.10.1)(react-native@0.86.2)(react@19.2.3)(supports-color@8.1.1)(typescript@5.9.3)
       react: 19.2.3
