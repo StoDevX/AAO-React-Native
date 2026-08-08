@@ -38,6 +38,11 @@ React Native SDK 8.11.0.
   Jest. The final verification step in this checkpoint is a manual simulator
   boot, per this project's own guidance that UI/boot changes need a real
   device/simulator check, not just green tests.
+- Task 4b removes `source/navigation/types.tsx`'s hand-rolled
+  `ReactNavigation.RootParamList` augmentation — required before ANY task
+  imports anything real from `expo-router` (it collides with expo-router's
+  own vendored global type of the same name). Task 4b must land before
+  Task 5 and Task 6; both depend on it.
 
 ---
 
@@ -334,6 +339,66 @@ Expected: exits 0, no throw from `app.config.ts` (this project's own
 ```bash
 git add app.config.ts
 git commit -m "Enable expo-router typed routes"
+```
+
+---
+
+### Task 4b: Remove the hand-rolled ReactNavigation.RootParamList augmentation
+
+**Files:**
+- Modify: `source/navigation/types.tsx`
+
+**Interfaces:**
+- Consumes: nothing.
+- Produces: an `expo-router`-importable program graph with no `TS2300` collision. Unblocks both Task 5 (`expo-router/react-navigation` import) and Task 6 (`expo-router` import for `Stack`) — both pull in `expo-router`'s own vendored `declare global { namespace ReactNavigation { type RootParamList = {} } }`, which cannot coexist with this file's `interface RootParamList` of the same name in the same namespace (TypeScript does not merge a `type` alias with an `interface`).
+
+**Why this exists:** Task 5's implementer discovered this collision while doing the plain two-line import swap the original Task 5 called for — it isn't specific to that swap, it's inherent to `expo-router` being a real dependency at all (Task 2) the moment anything imports from it for real. The migration spec already plans to delete this whole file in checkpoint 7, once every screen has moved off it; this task only pulls forward the removal of this one declaration, now, because the collision can't wait that long.
+
+**Trade-off, accepted by Wren:** the ~44 files that call `useNavigation()`/`.navigate()` against the old React Navigation stack lose compile-time param-list type-checking on those calls until each file is migrated in checkpoints 2-6. This is judged acceptable because those files become runtime-unreachable the moment Task 7 points the JS entry at `expo-router/entry` — nothing observably breaks, only static typing on code that no longer executes.
+
+- [ ] **Step 1: Remove the augmentation**
+
+In `source/navigation/types.tsx`, delete lines 144-154 in full — the comment, the `declare global` block, and everything inside it:
+
+```typescript
+// this block sourced from https://reactnavigation.org/docs/typescript/#specifying-default-types-for-usenavigation-link-ref-etc
+declare global {
+	// eslint-disable-next-line @typescript-eslint/no-namespace
+	namespace ReactNavigation {
+		interface RootParamList
+			extends
+				RootStackParamList,
+				SettingsStackParamList,
+				ComponentLibraryStackParamList {}
+	}
+}
+```
+
+Leave everything else in the file untouched — `RootStackParamList`, `SettingsStackParamList`, `ComponentLibraryStackParamList`, and every other exported type stay exactly as they are; only this one global augmentation goes.
+
+- [ ] **Step 2: Verify the collision is gone and nothing new broke**
+
+Run: `mise run tsc`
+Expected: the `TS2300: Duplicate identifier 'RootParamList'` error and its full cascade of `TS2345`/`TS2769` errors in unrelated files are gone. Compare the remaining error count/content against the Task 3 baseline (0 errors, per Task 3's report) — any error beyond that baseline is a real regression to investigate, not something to wave through.
+
+- [ ] **Step 3: Commit**
+
+```bash
+git add source/navigation/types.tsx
+git commit -m "Remove the hand-rolled ReactNavigation.RootParamList augmentation
+
+expo-router ships its own global ReactNavigation.RootParamList type
+alias, which cannot coexist with this file's interface of the same
+name once anything imports from expo-router for real (TypeScript
+does not merge a type alias with an interface). The migration
+already plans to delete this whole file in checkpoint 7; this pulls
+that one declaration forward since the collision can't wait.
+
+The ~44 files still calling useNavigation()/.navigate() against the
+old React Navigation stack lose compile-time param-list checking on
+those calls until each is migrated in checkpoints 2-6 — accepted
+because those files are runtime-unreachable once the JS entry points
+at expo-router/entry (checkpoint 1, task 7)."
 ```
 
 ---
