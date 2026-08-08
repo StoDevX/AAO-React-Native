@@ -3,6 +3,10 @@ name: Validate/Deploy Data
 on:
   push: {branches: [master]}
 
+# The final step force-pushes the bundled data to the gh-pages branch.
+permissions:
+  contents: write
+
 env:
   MISE_RUBY_COMPILE: 'false'
 
