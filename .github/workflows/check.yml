@@ -196,7 +196,6 @@ jobs:
         run: |
           brew install ccache
           ccache --set-config=max_size=2G
-          ccache --zero-stats
           # The wrapper React Native points CC at ends with
           # `exec $CCACHE_BINARY clang "$@"`, which reads the environment.
           # CocoaPods sets CCACHE_BINARY as an Xcode build setting, and a build
@@ -220,6 +219,13 @@ jobs:
             ccache/e=${{ env.cache_epoch }}/host=macOS@26/target=ios/xcode=${{ env.xcode_version }}/ref=${{ github.head_ref || github.ref_name }}/
             ccache/e=${{ env.cache_epoch }}/host=macOS@26/target=ios/xcode=${{ env.xcode_version }}/ref=master/hash=${{ hashFiles('app.config.ts', 'plugins/**', 'uitests/**', 'images/**', 'pnpm-lock.yaml', 'mise.toml') }}
             ccache/e=${{ env.cache_epoch }}/host=macOS@26/target=ios/xcode=${{ env.xcode_version }}/ref=master/
+
+      # After the restore, not before: ccache keeps its counters inside the
+      # cache directory, so zeroing them first only to restore the previous
+      # run's file leaves the two runs' figures added together -- a warm run
+      # that hit everything reads as 50% next to the cold run that filled it.
+      - name: Zero the ccache statistics
+        run: ccache --zero-stats
 
       - name: Generate the native project
         run: mise run prebuild
