@@ -210,14 +210,13 @@ jobs:
       # compiles, and a stale entry is never wrong -- it is simply re-hashed.
       # That is also why this cache wants restoring on the runs that build from
       # scratch, which is where it pays for itself.
-      - name: Restore/save ccache
-        uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
+      - name: Restore ccache
+        uses: actions/cache/restore@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
         with:
           path: ~/Library/Caches/ccache
-          key: ccache/e=${{ env.cache_epoch }}/host=macOS@26/target=ios/xcode=${{ env.xcode_version }}/ref=${{ github.head_ref || github.ref_name }}/hash=${{ hashFiles('app.config.ts', 'plugins/**', 'uitests/**', 'images/**', 'pnpm-lock.yaml', 'mise.toml') }}
+          key: ccache/e=${{ env.cache_epoch }}/host=macOS@26/target=ios/xcode=${{ env.xcode_version }}/ref=${{ github.head_ref || github.ref_name }}/hash=${{ hashFiles('app.config.ts', 'plugins/**', 'uitests/**', 'images/**', 'pnpm-lock.yaml', 'mise.toml') }}/run=${{ github.run_id }}
           restore-keys: |
             ccache/e=${{ env.cache_epoch }}/host=macOS@26/target=ios/xcode=${{ env.xcode_version }}/ref=${{ github.head_ref || github.ref_name }}/
-            ccache/e=${{ env.cache_epoch }}/host=macOS@26/target=ios/xcode=${{ env.xcode_version }}/ref=master/hash=${{ hashFiles('app.config.ts', 'plugins/**', 'uitests/**', 'images/**', 'pnpm-lock.yaml', 'mise.toml') }}
             ccache/e=${{ env.cache_epoch }}/host=macOS@26/target=ios/xcode=${{ env.xcode_version }}/ref=master/
 
       # After the restore, not before: ccache keeps its counters inside the
@@ -258,6 +257,19 @@ jobs:
       - name: Show ccache stats
         if: always()
         run: ccache --show-stats
+
+      # Saved under a key no read will ever match, so every build writes a new
+      # entry and the prefixes above restore the newest. actions/cache declines
+      # to save when the restore hit its primary key, which suits a cache of
+      # build output but not this one: ccache grows with every compile, so a
+      # single matching key would freeze it at whatever it held first. Ours had
+      # frozen at 19kB, written before the compiler wrapper worked.
+      - name: Save ccache
+        if: always()
+        uses: actions/cache/save@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
+        with:
+          path: ~/Library/Caches/ccache
+          key: ccache/e=${{ env.cache_epoch }}/host=macOS@26/target=ios/xcode=${{ env.xcode_version }}/ref=${{ github.head_ref || github.ref_name }}/hash=${{ hashFiles('app.config.ts', 'plugins/**', 'uitests/**', 'images/**', 'pnpm-lock.yaml', 'mise.toml') }}/run=${{ github.run_id }}
 
       - name: Save iOS app to cache
         uses: actions/cache/save@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
