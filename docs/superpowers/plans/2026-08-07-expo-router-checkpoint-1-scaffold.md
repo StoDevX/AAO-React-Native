@@ -44,14 +44,20 @@ React Native SDK 8.11.0.
   device/simulator check, not just green tests.
 - Task 4b replaces `source/navigation/types.tsx`'s hand-rolled
   `ReactNavigation.RootParamList` global augmentation with a named
-  `LegacyRootParamList` export — required before ANY task imports anything
-  real from `expo-router` (it collides with expo-router's own vendored
-  global type of the same name). Tasks 4c-4g then fix every call site that
-  relied on the old ambient typing (29 files, 47 `tsc` errors) with an
-  explicit `NavigationProp<LegacyRootParamList>` type argument, so `tsc`
-  returns to a clean baseline before Task 5. Tasks 4b-4g must land, in
-  order, before Task 5 and Task 6; both depend on the collision being fully
-  resolved, not just worked around.
+  `LegacyRootParamList` export, then fixes every call site that relied on
+  the old ambient typing (29 files, 47 `tsc` errors) with an explicit
+  `NavigationProp<LegacyRootParamList>` type argument — all as ONE commit,
+  since this repo's pre-commit hook checks the whole project on every
+  commit and nothing here compiles cleanly until all of it lands together.
+  Task 4b must fully complete before Task 5 and Task 6; both need the
+  `expo-router` global-type collision gone before they can import anything
+  from `expo-router` at all.
+- **Never bypass, skip, or disable the pre-commit hook to work around a
+  known/expected intermediate error state (e.g. `HK=0`, `--no-verify`).**
+  If a task's intermediate steps leave `tsc` non-clean on purpose, the task
+  is structured so the commit only happens once verification confirms a
+  clean state (see Task 4b) — finish the remaining steps, don't route
+  around the hook.
 
 ---
 
@@ -352,20 +358,27 @@ git commit -m "Enable expo-router typed routes"
 
 ---
 
-### Task 4b: Replace the global RootParamList augmentation with a named export
+### Task 4b: Replace the global RootParamList augmentation and re-type every affected call site
+
+**This task is unusually large (1 type file + 29 call-site files) and MUST land as ONE commit — not one commit per group.** This repo's pre-commit hook runs `tsc` across the entire project on every commit, with no scoping to staged files. Steps 2 through 6 below each leave a known, expected set of `tsc` errors in place until the next step — only after Step 6 does `tsc` return to 0 errors. Committing after any earlier step would fail the hook (correctly) and block every later commit in this checkpoint. **Do not commit until Step 7 confirms 0 errors. Do not use any mechanism to skip, disable, or bypass the pre-commit hook to work around this — if the hook blocks you before Step 7, that means you committed too early; back up and finish the remaining groups first.**
 
 **Files:**
 - Modify: `source/navigation/types.tsx`
+- Modify (group 1): `modules/event-list/event-list.tsx`, `modules/food-menu/fancy-menu.tsx`, `modules/navigation-buttons/network-logger.tsx`, `modules/navigation-buttons/open-settings.tsx`, `source/views/building-hours/detail/index.tsx`, `source/views/building-hours/list.tsx`
+- Modify (group 2): `source/views/contacts/list.tsx`, `source/views/dictionary/detail.tsx`, `source/views/dictionary/list.tsx`, `source/views/home/index.tsx`, `source/views/menus/carleton-menus.tsx`, `source/views/reddit/index.tsx`
+- Modify (group 3): `source/views/settings/screens/api-test/list.tsx`, `source/views/settings/screens/debug/list.tsx`, `source/views/settings/screens/overview/component-library/library.tsx`
+- Modify (group 4): `source/views/settings/screens/overview/developer.tsx`, `source/views/settings/screens/overview/miscellany.tsx`, `source/views/settings/screens/overview/support.tsx`
+- Modify (group 5): `source/views/sis/balances.tsx`, `source/views/sis/course-search/results.tsx`, `source/views/sis/course-search/search.tsx`, `source/views/sis/student-work/index.tsx`, `source/views/stoprint/print-jobs.tsx`, `source/views/stoprint/print-release.tsx`, `source/views/stoprint/printers.tsx`, `source/views/streaming/radio/controller.tsx`, `source/views/student-orgs/list.tsx`, `source/views/transportation/bus/line.tsx`, `source/views/transportation/bus/wrapper.tsx`
 
 **Interfaces:**
 - Consumes: nothing.
-- Produces: `export type LegacyRootParamList = RootStackParamList & SettingsStackParamList & ComponentLibraryStackParamList` — a plain named export, no `declare global`. Consumed explicitly by Tasks 4c-4g (`useNavigation<NavigationProp<LegacyRootParamList>>()` at each of the 29 affected call sites) instead of relying on ambient/global type inference.
+- Produces: `export type LegacyRootParamList = RootStackParamList & SettingsStackParamList & ComponentLibraryStackParamList` — a plain named export, no `declare global`, imported explicitly by every group-1-through-5 file (`useNavigation<NavigationProp<LegacyRootParamList>>()`) instead of relying on ambient/global type inference. Consumed by Task 5 and Task 6 in the sense that both need the `TS2300` collision gone before they can import anything from `expo-router` at all.
 
 **Why this exists, and why it's bigger than originally planned:** `expo-router` ships its own global `declare global { namespace ReactNavigation { type RootParamList = {} } }`. This collides (`TS2300`) with this file's `interface RootParamList` the moment anything imports from `expo-router` for real (Task 5's `expo-router/react-navigation`, Task 6's `expo-router`) — TypeScript does not merge a `type` alias with an `interface` of the same name.
 
-The plan originally assumed deleting the augmentation outright would only weaken typing on old `useNavigation()`/`.navigate()` calls. That assumption was wrong: without ANY augmentation, those calls fall back to expo-router's own empty `RootParamList = {}`, and `.navigate()` calls against an empty param list produce real `tsc` errors (`TS2345`/`TS2769`, argument not assignable to `never`) — confirmed empirically: 47 errors across 29 files. This repo's pre-commit hook runs `tsc` across the whole project on every commit, so those 47 errors would block every subsequent commit in this checkpoint (and beyond), not just this task's. There is no documented expo-router mechanism for keeping the old ambient-global pattern working alongside expo-router's own typed routes.
+The plan originally assumed deleting the augmentation outright would only weaken typing on old `useNavigation()`/`.navigate()` calls. That assumption was wrong: without ANY augmentation, those calls fall back to expo-router's own empty `RootParamList = {}`, and `.navigate()` calls against an empty param list produce real `tsc` errors (`TS2345`/`TS2769`, argument not assignable to `never`) — confirmed empirically: 47 errors across 29 files. There is no documented expo-router mechanism for keeping the old ambient-global pattern working alongside expo-router's own typed routes.
 
-Wren's decision: keep every affected call site fully type-checked, permanently, via an explicit (non-ambient) type argument at each call site, rather than patching `expo-router` itself or leaving the collision unresolved. This widens checkpoint 1 to include Tasks 4c-4g (the 29-file mechanical fix) — pulling forward part of what checkpoints 2-6 would otherwise have done screen-by-screen, but only the typing mechanics, not the `router.push()` rewrite or any behavior change.
+Wren's decision: keep every affected call site fully type-checked, permanently, via an explicit (non-ambient) type argument at each call site, rather than patching `expo-router` itself or leaving the collision unresolved. This widens checkpoint 1 — pulling forward part of what checkpoints 2-6 would otherwise have done screen-by-screen — but only the typing mechanics, not the `router.push()` rewrite or any behavior change. A first attempt at splitting this into six separately-committable tasks (4b-4g) ran into the pre-commit hook problem described above; this single-task, single-commit structure replaces that attempt.
 
 - [ ] **Step 1: Replace the augmentation with a named export**
 
@@ -406,47 +419,9 @@ Leave everything else in the file untouched — `RootStackParamList`, `SettingsS
 - [ ] **Step 2: Verify the collision is gone**
 
 Run: `mise run tsc`
-Expected: the `TS2300: Duplicate identifier 'RootParamList'` error is gone. The 47 `TS2345`/`TS2769` errors from the 29 affected files are EXPECTED at this point — Tasks 4c-4g fix those. Confirm no error beyond that known, closed set of 47 appears (compare file:line against the list in Task 4c's brief) — anything outside that set is a real regression to investigate.
+Expected: the `TS2300: Duplicate identifier 'RootParamList'` error is gone. The 47 `TS2345`/`TS2769` errors from the 29 affected files are EXPECTED at this point — Steps 3-6 fix those. Confirm no error beyond that known, closed set of 47 appears (compare file:line against the lists below) — anything outside that set is a real regression to investigate. **Do not commit yet.**
 
-- [ ] **Step 3: Commit**
-
-```bash
-git add source/navigation/types.tsx
-git commit -m "Replace the global RootParamList augmentation with a named export
-
-expo-router ships its own global ReactNavigation.RootParamList type
-alias, which cannot coexist with this file's interface of the same
-name once anything imports from expo-router for real (TypeScript
-does not merge a type alias with an interface).
-
-Deleting the augmentation outright (rather than replacing it) would
-leave 29 files' useNavigation()/.navigate() calls resolving against
-expo-router's own empty RootParamList, producing 47 real tsc errors
--- not just weaker typing. This repo's pre-commit hook runs tsc
-project-wide on every commit, so that would block every subsequent
-commit in this checkpoint. LegacyRootParamList is the explicit,
-non-ambient replacement each call site now takes as a type argument
-(Tasks 4c-4g) -- this file (and LegacyRootParamList with it) still
-goes away in checkpoint 7, once every screen has moved off it."
-```
-
----
-
-### Task 4c: Fix legacy navigation typing — group 1 (event-list, food-menu, navigation-buttons, building-hours)
-
-**Files:**
-- Modify: `modules/event-list/event-list.tsx`
-- Modify: `modules/food-menu/fancy-menu.tsx`
-- Modify: `modules/navigation-buttons/network-logger.tsx`
-- Modify: `modules/navigation-buttons/open-settings.tsx`
-- Modify: `source/views/building-hours/detail/index.tsx`
-- Modify: `source/views/building-hours/list.tsx`
-
-**Interfaces:**
-- Consumes: `LegacyRootParamList` from `source/navigation/types.tsx` (Task 4b), `NavigationProp` from `@react-navigation/native` (already a dependency).
-- Produces: nothing consumed by other tasks — this is a leaf fix.
-
-**The mechanical pattern, worked in full on one file (`modules/navigation-buttons/network-logger.tsx`):**
+**The mechanical pattern for every remaining step, worked in full on one file (`modules/navigation-buttons/network-logger.tsx`):**
 
 Before:
 ```typescript
@@ -467,9 +442,9 @@ export const NetworkLoggerButton: React.FC = () => {
 
 (Adjust the `LegacyRootParamList` import path to each file's actual relative path to `source/navigation/types.tsx` — the example above is for a file under `modules/navigation-buttons/`. Match each file's existing import style: if a file already imports other things from `@react-navigation/native`, add `NavigationProp` to that same import statement rather than a new one; if it imports types with `import type {...}` elsewhere in the file, follow that convention for the `LegacyRootParamList` import.)
 
-Apply this exact pattern — add `NavigationProp` to the file's existing `@react-navigation/native` import, import `LegacyRootParamList` as a type, and add the `<NavigationProp<LegacyRootParamList>>` generic to every no-argument `useNavigation()` call in the file — to each file below. Every error listed must be gone after your fix, and no other file's error count may change.
+Apply this exact pattern — add `NavigationProp` to the file's existing `@react-navigation/native` import, import `LegacyRootParamList` as a type (adjusting the relative path to `source/navigation/types.tsx` per file's location; match each file's existing import style — e.g. if it already imports other types with `import type {...}`, follow that convention), and add the `<NavigationProp<LegacyRootParamList>>` generic to every no-argument `useNavigation()` call — to every file in every group below. Every error listed must be gone after your fix, and no other file's error count may change.
 
-- [ ] **Step 1: Fix each file, verifying against its exact listed error(s)**
+- [ ] **Step 3: Fix group 1 (event-list, food-menu, navigation-buttons, building-hours) — do not commit yet**
 
 ```
 modules/event-list/event-list.tsx(51,24): error TS2345: Argument of type '[string, { event: EventType; poweredBy: PoweredBy; }]' is not assignable to parameter of type 'never'.
@@ -480,44 +455,9 @@ source/views/building-hours/detail/index.tsx(18,24): error TS2345: Argument of t
 source/views/building-hours/list.tsx(39,24): error TS2345: Argument of type '[string, { building: BuildingType; }]' is not assignable to parameter of type 'never'.
 ```
 
-For each file: read it, find its `useNavigation()` call(s), apply the pattern above.
+Fix each file, then run `mise run tsc` and confirm none of these 6 error lines appear anymore (41 should remain — the rest belong to the groups below, not yet fixed).
 
-- [ ] **Step 2: Verify**
-
-Run: `mise run tsc`
-Expected: none of the 6 error lines above appear anymore. Total remaining error count should be 41 (47 minus these 6) — the rest belong to Tasks 4d-4g, not yet fixed.
-
-- [ ] **Step 3: Commit**
-
-```bash
-git add modules/event-list/event-list.tsx modules/food-menu/fancy-menu.tsx modules/navigation-buttons/network-logger.tsx modules/navigation-buttons/open-settings.tsx source/views/building-hours/detail/index.tsx source/views/building-hours/list.tsx
-git commit -m "Type legacy useNavigation() calls explicitly (group 1)
-
-Part of resolving the RootParamList collision from Task 4b: each
-useNavigation() call that relied on the old ambient global type now
-takes an explicit NavigationProp<LegacyRootParamList> type argument
-instead."
-```
-
----
-
-### Task 4d: Fix legacy navigation typing — group 2 (contacts, dictionary, home, menus, reddit)
-
-**Files:**
-- Modify: `source/views/contacts/list.tsx`
-- Modify: `source/views/dictionary/detail.tsx`
-- Modify: `source/views/dictionary/list.tsx`
-- Modify: `source/views/home/index.tsx`
-- Modify: `source/views/menus/carleton-menus.tsx`
-- Modify: `source/views/reddit/index.tsx`
-
-**Interfaces:**
-- Consumes: `LegacyRootParamList` from `source/navigation/types.tsx` (Task 4b), `NavigationProp` from `@react-navigation/native`.
-- Produces: nothing consumed by other tasks.
-
-Apply the exact same mechanical pattern documented in Task 4c (add `NavigationProp` to the file's `@react-navigation/native` import, import `LegacyRootParamList` as a type from `source/navigation/types.tsx` — adjusting the relative path per file's location — and add `<NavigationProp<LegacyRootParamList>>` to every no-argument `useNavigation()` call).
-
-- [ ] **Step 1: Fix each file, verifying against its exact listed error(s)**
+- [ ] **Step 4: Fix group 2 (contacts, dictionary, home, menus, reddit) — do not commit yet**
 
 ```
 source/views/contacts/list.tsx(36,24): error TS2345: Argument of type '[string, { contact: ContactType; }]' is not assignable to parameter of type 'never'.
@@ -529,36 +469,9 @@ source/views/reddit/index.tsx(67,24): error TS2345: Argument of type '[string, {
 source/views/reddit/index.tsx(100,24): error TS2345: Argument of type '[string, { postUrl: string; title: string; author: string; publishedAt: string; contentHtml: string; thumbnail: string | null; communityName: string; postAuthor: string; postType: "link" | ... 5 more ... | undefined; ... 5 more ...; pollData: PollData | ... 1 more ... | undefined; }]' is not assignable to parameter of type 'never'.
 ```
 
-Note `source/views/reddit/index.tsx` has two errors from the same file/hook call — one fix covers both.
+Note `source/views/reddit/index.tsx` has two errors from the same hook call — one fix covers both. Fix each file, then run `mise run tsc` and confirm none of these 7 error lines appear anymore (34 should remain).
 
-- [ ] **Step 2: Verify**
-
-Run: `mise run tsc`
-Expected: none of the 7 error lines above appear anymore. Total remaining error count should be 34.
-
-- [ ] **Step 3: Commit**
-
-```bash
-git add source/views/contacts/list.tsx source/views/dictionary/detail.tsx source/views/dictionary/list.tsx source/views/home/index.tsx source/views/menus/carleton-menus.tsx source/views/reddit/index.tsx
-git commit -m "Type legacy useNavigation() calls explicitly (group 2)"
-```
-
----
-
-### Task 4e: Fix legacy navigation typing — group 3 (settings: api-test, debug, component-library)
-
-**Files:**
-- Modify: `source/views/settings/screens/api-test/list.tsx`
-- Modify: `source/views/settings/screens/debug/list.tsx`
-- Modify: `source/views/settings/screens/overview/component-library/library.tsx`
-
-**Interfaces:**
-- Consumes: `LegacyRootParamList` from `source/navigation/types.tsx` (Task 4b), `NavigationProp` from `@react-navigation/native`.
-- Produces: nothing consumed by other tasks.
-
-Apply the exact same mechanical pattern documented in Task 4c.
-
-- [ ] **Step 1: Fix each file, verifying against its exact listed error(s)**
+- [ ] **Step 5: Fix group 3 (settings: api-test, debug, component-library) — do not commit yet**
 
 ```
 source/views/settings/screens/api-test/list.tsx(48,23): error TS2345: Argument of type '[string, { query: { displayName: string; path: string; params: never[]; }; }]' is not assignable to parameter of type 'never'.
@@ -572,36 +485,11 @@ source/views/settings/screens/overview/component-library/library.tsx(31,41): err
 source/views/settings/screens/overview/component-library/library.tsx(35,41): error TS2769: No overload matches this call.
 ```
 
-Note `api-test/list.tsx` and `debug/list.tsx` each have two errors from the same hook call; `component-library/library.tsx` has five, likely from either one shared `useNavigation()` call used across multiple handlers, or several separate calls — read the file to confirm which, and fix every one.
+Note `api-test/list.tsx` and `debug/list.tsx` each have two errors from the same hook call; `component-library/library.tsx` has five, likely from either one shared `useNavigation()` call used across multiple handlers, or several separate calls — read the file to confirm which, and fix every one. Fix each file, then run `mise run tsc` and confirm none of these 9 error lines appear anymore (25 should remain).
 
-- [ ] **Step 2: Verify**
+- [ ] **Step 6: Fix group 4 (settings overview: developer, miscellany, support) — do not commit yet**
 
-Run: `mise run tsc`
-Expected: none of the 9 error lines above appear anymore. Total remaining error count should be 25.
-
-- [ ] **Step 3: Commit**
-
-```bash
-git add source/views/settings/screens/api-test/list.tsx source/views/settings/screens/debug/list.tsx source/views/settings/screens/overview/component-library/library.tsx
-git commit -m "Type legacy useNavigation() calls explicitly (group 3)"
-```
-
----
-
-### Task 4f: Fix legacy navigation typing — group 4 (settings overview: developer, miscellany, support)
-
-**Files:**
-- Modify: `source/views/settings/screens/overview/developer.tsx`
-- Modify: `source/views/settings/screens/overview/miscellany.tsx`
-- Modify: `source/views/settings/screens/overview/support.tsx`
-
-**Interfaces:**
-- Consumes: `LegacyRootParamList` from `source/navigation/types.tsx` (Task 4b), `NavigationProp` from `@react-navigation/native`.
-- Produces: nothing consumed by other tasks.
-
-Apply the exact same mechanical pattern documented in Task 4c. `developer.tsx` is shown in full in Task 4b's rationale section above — it has one `const navigation = useNavigation()` call (line 12) feeding six separate `.navigate(...)` calls in the handlers below it (lines 15-20); fixing that one `useNavigation()` call resolves all six listed errors for this file.
-
-- [ ] **Step 1: Fix each file, verifying against its exact listed error(s)**
+`developer.tsx` has one `const navigation = useNavigation()` call feeding six separate `.navigate(...)` calls in the handlers below it; fixing that one `useNavigation()` call resolves all six listed errors for this file.
 
 ```
 source/views/settings/screens/overview/developer.tsx(15,55): error TS2769: No overload matches this call.
@@ -616,42 +504,9 @@ source/views/settings/screens/overview/miscellany.tsx(14,48): error TS2769: No o
 source/views/settings/screens/overview/support.tsx(55,54): error TS2769: No overload matches this call.
 ```
 
-- [ ] **Step 2: Verify**
+Fix each file, then run `mise run tsc` and confirm none of these 10 error lines appear anymore (15 should remain).
 
-Run: `mise run tsc`
-Expected: none of the 10 error lines above appear anymore. Total remaining error count should be 15.
-
-- [ ] **Step 3: Commit**
-
-```bash
-git add source/views/settings/screens/overview/developer.tsx source/views/settings/screens/overview/miscellany.tsx source/views/settings/screens/overview/support.tsx
-git commit -m "Type legacy useNavigation() calls explicitly (group 4)"
-```
-
----
-
-### Task 4g: Fix legacy navigation typing — group 5 (sis, stoprint, streaming, student-orgs, transportation)
-
-**Files:**
-- Modify: `source/views/sis/balances.tsx`
-- Modify: `source/views/sis/course-search/results.tsx`
-- Modify: `source/views/sis/course-search/search.tsx`
-- Modify: `source/views/sis/student-work/index.tsx`
-- Modify: `source/views/stoprint/print-jobs.tsx`
-- Modify: `source/views/stoprint/print-release.tsx`
-- Modify: `source/views/stoprint/printers.tsx`
-- Modify: `source/views/streaming/radio/controller.tsx`
-- Modify: `source/views/student-orgs/list.tsx`
-- Modify: `source/views/transportation/bus/line.tsx`
-- Modify: `source/views/transportation/bus/wrapper.tsx`
-
-**Interfaces:**
-- Consumes: `LegacyRootParamList` from `source/navigation/types.tsx` (Task 4b), `NavigationProp` from `@react-navigation/native`.
-- Produces: nothing consumed by other tasks. This is the last of the mechanical-fix tasks — after this, `mise run tsc` must return to the Task 3 baseline (0 errors).
-
-Apply the exact same mechanical pattern documented in Task 4c.
-
-- [ ] **Step 1: Fix each file, verifying against its exact listed error(s)**
+- [ ] **Step 7: Fix group 5 (sis, stoprint, streaming, student-orgs, transportation) — verify full return to baseline**
 
 ```
 source/views/sis/balances.tsx(39,47): error TS2769: No overload matches this call.
@@ -671,21 +526,34 @@ source/views/transportation/bus/line.tsx(244,27): error TS2345: Argument of type
 source/views/transportation/bus/wrapper.tsx(53,26): error TS2345: Argument of type '[string, { line: UnprocessedBusLine; }]' is not assignable to parameter of type 'never'.
 ```
 
-- [ ] **Step 2: Verify — full return to baseline**
+Fix each file. Then run: `mise run tsc`
+Expected: **0 errors**, matching Task 3's original baseline exactly. This confirms the RootParamList collision (Step 1) and its full 47-error cascade (Steps 3-7) are completely resolved, permanently — not deferred, not suppressed.
 
-Run: `mise run tsc`
-Expected: **0 errors**, matching Task 3's original baseline exactly. This confirms the RootParamList collision (Task 4b) and its full 47-error cascade (Tasks 4c-4g) are completely resolved, permanently — not deferred, not suppressed.
+Also run: `mise run test` and `mise run lint`, to confirm nothing across this whole task introduced any other regression.
 
-Also run: `mise run test` and `mise run lint`, to confirm nothing across all of Tasks 4b-4g introduced any other regression.
-
-- [ ] **Step 3: Commit**
+- [ ] **Step 8: Commit everything as one commit**
 
 ```bash
-git add source/views/sis/balances.tsx source/views/sis/course-search/results.tsx source/views/sis/course-search/search.tsx source/views/sis/student-work/index.tsx source/views/stoprint/print-jobs.tsx source/views/stoprint/print-release.tsx source/views/stoprint/printers.tsx source/views/streaming/radio/controller.tsx source/views/student-orgs/list.tsx source/views/transportation/bus/line.tsx source/views/transportation/bus/wrapper.tsx
-git commit -m "Type legacy useNavigation() calls explicitly (group 5)
+git add source/navigation/types.tsx modules/event-list/event-list.tsx modules/food-menu/fancy-menu.tsx modules/navigation-buttons/network-logger.tsx modules/navigation-buttons/open-settings.tsx source/views/building-hours/detail/index.tsx source/views/building-hours/list.tsx source/views/contacts/list.tsx source/views/dictionary/detail.tsx source/views/dictionary/list.tsx source/views/home/index.tsx source/views/menus/carleton-menus.tsx source/views/reddit/index.tsx source/views/settings/screens/api-test/list.tsx source/views/settings/screens/debug/list.tsx source/views/settings/screens/overview/component-library/library.tsx source/views/settings/screens/overview/developer.tsx source/views/settings/screens/overview/miscellany.tsx source/views/settings/screens/overview/support.tsx source/views/sis/balances.tsx source/views/sis/course-search/results.tsx source/views/sis/course-search/search.tsx source/views/sis/student-work/index.tsx source/views/stoprint/print-jobs.tsx source/views/stoprint/print-release.tsx source/views/stoprint/printers.tsx source/views/streaming/radio/controller.tsx source/views/student-orgs/list.tsx source/views/transportation/bus/line.tsx source/views/transportation/bus/wrapper.tsx
+git commit -m "Replace the global RootParamList augmentation and re-type every affected call site
 
-Last of the mechanical RootParamList-collision fixes started in
-Task 4b. mise run tsc returns to a clean baseline (0 errors)."
+expo-router ships its own global ReactNavigation.RootParamList type
+alias, which cannot coexist with source/navigation/types.tsx's
+interface of the same name once anything imports from expo-router
+for real (TypeScript does not merge a type alias with an interface).
+
+Deleting the augmentation outright (rather than replacing it) would
+leave 29 files' useNavigation()/.navigate() calls resolving against
+expo-router's own empty RootParamList, producing 47 real tsc errors
+-- not just weaker typing. LegacyRootParamList is the explicit,
+non-ambient replacement each call site now takes as a type argument.
+This single commit covers the type replacement and all 29 call-site
+fixes together, since this repo's pre-commit hook checks the whole
+project on every commit and nothing here compiles cleanly until all
+of it lands together.
+
+source/navigation/types.tsx (and LegacyRootParamList with it) still
+goes away in checkpoint 7, once every screen has moved off it."
 ```
 
 ---
