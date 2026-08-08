@@ -58,7 +58,9 @@ function RootLayout(): React.ReactNode {
 						<ActionSheetProvider>
 							<ThemeProvider value={theme}>
 								<StatusBar barStyle={statusBarStyle} />
-								<Stack />
+								<Stack>
+									<Stack.Screen name="(home)" options={{headerShown: false}} />
+								</Stack>
 							</ThemeProvider>
 						</ActionSheetProvider>
 					</PaperProvider>
