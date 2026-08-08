@@ -128,6 +128,27 @@ proven on 13 ordinary groups first.
   process (fresh implementer, task review, fix loop) — the stack changes
   how PRs relate to each other, not how each one gets built.
 
+## Standing decision: list → detail params (every group with a detail screen)
+
+expo-router only accepts **string** route params (confirmed against Expo's
+own docs and migration guidance) — unlike React Navigation, which passes
+whatever JS value you hand it, including whole objects, by reference. Most
+of the remaining groups have exactly this shape: a list screen currently
+does `navigation.navigate('XDetail', {x: fullObject})`.
+
+**Decision (Wren, applies to every group with this shape): re-fetch by key,
+via the React Query cache.** The list screen passes a stable identifying
+field (whatever it already uses as its `keyExtractor`) as a string route
+param. The detail screen re-runs the *same* `useQuery(...)` the list
+screen uses — React Query dedupes by query key, so this resolves from
+cache instantly, no extra network round-trip — then finds the matching
+item client-side. This produces real, clean, shareable URLs (e.g.
+`/Contacts/John-Doe`) instead of a JSON blob in the query string, which
+Expo's own docs actively discourage. Each group's detail screen needs to
+handle a genuinely new state the old code never had to: "query still
+loading" and "item not found" (the old code always received the object
+directly, so these states were structurally impossible before).
+
 ## Standing requirement: screenshots as a PR comment (every group PR)
 
 Every group PR's plan must end with attaching visual evidence as a PR
