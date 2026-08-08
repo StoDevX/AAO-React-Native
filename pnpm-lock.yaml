@@ -877,7 +877,7 @@ importers:
         specifier: ^19.1.0
         version: 19.2.3
       react-markdown:
-        specifier: ^2.5.1
+        specifier: 2.5.1
         version: 2.5.1(react@19.2.3)
       react-native:
         specifier: ^0.86.0
