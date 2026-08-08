@@ -54,6 +54,61 @@ existing `@expo/ui/swift-ui` components `HomePage` already uses (unchanged).
 - Consumes: `AllViews()`, `ViewType` from `source/views/views.ts`; `HomeScreenButton`, `CELL_MARGIN`, `FILL_WIDTH`, `SCREEN_MARGIN` from `source/views/home/button.tsx`; `UnofficialAppNotice` from `source/views/home/notice.tsx`; `openUrl` from `@frogpond/open-url`; `useIsDevMode` from `source/lib/use-is-dev-mode`.
 - Produces: the app's real `/` route. Nothing else consumes this yet — later group PRs each flip one `AllViews()` entry's `disabled` field, which this task sets up.
 
+- [ ] **Step 0: Stop `views.ts` from transitively importing full screen modules**
+
+Discovered mid-execution: `app/(home)/index.tsx` importing `views.ts` (for
+`AllViews()`) transitively pulls in 7 groups' full screen implementations,
+because `views.ts` currently does `import {NavigationKey as calendar} from
+'./calendar'` (and identically for `menus`, `sis`, `reddit`, `streaming`,
+`news`, `transportation`) just to get a string constant. Several of those
+screen modules import `@react-navigation/bottom-tabs/unstable` or similar
+— and Metro refuses to bundle any `app/` route that transitively reaches a
+`@react-navigation/*` import (a hard rule since Expo SDK 56, not specific
+to this repo). This isn't a per-group problem to fix later; it blocks the
+very first group PR the moment it flips a `disabled` flag on a tile whose
+screen still imports its module this way, so fix it now, for all 7, before
+Step 1.
+
+The other 8 entries in this same file (`hours`, `directory`,
+`importantContacts`, `dictionary`, `studentOrgs`, `more`, `printJobs`,
+`courseSearch`) already avoid this — they're plain string-literal
+constants typed `keyof RootViewsParamList`, not imports. Match that
+existing pattern for the remaining 7. In `source/views/views.ts`, replace:
+
+```typescript
+import {NavigationKey as menus} from './menus'
+import {NavigationKey as sis} from './sis'
+import {NavigationKey as calendar} from './calendar'
+import {NavigationKey as reddit} from './reddit'
+import {NavigationKey as streaming} from './streaming'
+import {NavigationKey as news} from './news'
+import {NavigationKey as transportation} from './transportation'
+```
+
+with (placed alongside the file's existing `const hours: keyof
+RootViewsParamList = 'BuildingHours'`-style constants, in the same
+declaration block — exact values confirmed against each module's actual
+`export const NavigationKey`, not guessed):
+
+```typescript
+const menus: keyof RootViewsParamList = 'Menus'
+const sis: keyof RootViewsParamList = 'SIS'
+const calendar: keyof RootViewsParamList = 'Calendar'
+const reddit: keyof RootViewsParamList = 'Communities'
+const streaming: keyof RootViewsParamList = 'Streaming Media'
+const news: keyof RootViewsParamList = 'News'
+const transportation: keyof RootViewsParamList = 'Transportation'
+```
+
+Nothing else in the file changes — `AllViews()`'s object literals already
+reference these identifiers by name (`view: menus`, `view: calendar`,
+etc.), so no call site needs editing, only the declarations.
+
+Verify: `grep -rn "@react-navigation" source/views/views.ts` returns
+nothing (it currently returns nothing already — this confirms the file
+itself never imports react-navigation directly; the problem was always
+transitive, through the 7 screen-module imports being removed here).
+
 - [ ] **Step 1: Hide every group's home-grid entry**
 
 In `source/views/views.ts`, add `disabled: true` to all 15 `type: 'view'`
