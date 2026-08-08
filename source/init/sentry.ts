@@ -18,7 +18,11 @@ function install() {
 
 		tracePropagationTargets: ['localhost', 'frogpond.tech', /^\//u],
 
-		integrations: [navigationIntegration, Sentry.hermesProfilingIntegration()],
+		integrations: [
+			navigationIntegration,
+			Sentry.hermesProfilingIntegration(),
+			Sentry.feedbackIntegration(),
+		],
 	})
 }
 
