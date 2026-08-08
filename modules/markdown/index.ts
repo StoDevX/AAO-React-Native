@@ -1,5 +1,3 @@
-export {Heading} from './heading'
-export {Link} from './link'
-export {Paragraph, Strong, Emph, BlockQuote} from './formatting'
 export {Markdown} from './markdown'
 export type {MarkdownProps} from './markdown'
+export type {MarkdownStyle} from 'react-native-enriched-markdown'

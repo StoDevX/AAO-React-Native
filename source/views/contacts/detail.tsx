@@ -9,7 +9,7 @@ import {
 	ViewProps,
 } from 'react-native'
 import {images as contactImages} from '../../../images/contacts'
-import {Markdown} from '@frogpond/markdown'
+import {Markdown, type MarkdownStyle} from '@frogpond/markdown'
 import {ListFooter} from '@frogpond/lists'
 import * as c from '@frogpond/colors'
 import {callPhone} from '../../components/call-phone'
@@ -20,11 +20,9 @@ import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 import {RootStackParamList} from '../../navigation/types'
 import {RouteProp, useRoute} from '@react-navigation/native'
 
+const paragraphMarkdownStyle: MarkdownStyle = {paragraph: {fontSize: 16}}
+
 const styles = StyleSheet.create({
-	paragraph: {
-		color: c.label,
-		fontSize: 16,
-	},
 	image: {
 		width: undefined,
 		height: 100,
@@ -78,8 +76,8 @@ export const ContactsDetailView = (): React.ReactNode => {
 				<Title selectable={true}>{contact.title}</Title>
 
 				<Markdown
+					markdownStyle={paragraphMarkdownStyle}
 					source={contact.text}
-					styles={{Paragraph: styles.paragraph}}
 				/>
 
 				<Button onPress={onPress} title={contact.buttonText} />
