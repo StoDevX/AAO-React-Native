@@ -18,7 +18,11 @@ export function innerTextWithSpaces(elem: AnyNode): string {
 }
 
 function collectText(nodes: ChildNode[], out: string[]): void {
-	for (const node of nodes) {
+	// An explicit stack rather than recursion: the markup here is uncontrolled,
+	// and deeply nested input would otherwise overflow the call stack.
+	const stack: ChildNode[] = nodes.slice().reverse()
+
+	for (let node = stack.pop(); node !== undefined; node = stack.pop()) {
 		if (isText(node)) {
 			out.push(node.data)
 			continue
@@ -31,7 +35,11 @@ function collectText(nodes: ChildNode[], out: string[]): void {
 		const tag = node.name.toLowerCase()
 		if (tag === 'script' || tag === 'style') continue
 
-		collectText(node.children, out)
+		// Pushed in reverse so they pop back off in document order.
+		const {children} = node
+		for (let i = children.length - 1; i >= 0; i -= 1) {
+			stack.push(children[i])
+		}
 	}
 }
 

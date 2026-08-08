@@ -40,6 +40,12 @@ describe('removeHtml', () => {
 		expect(fastGetTrimmedText('  <p>a\n\n  b</p>  ')).toBe('a b')
 	})
 
+	it('handles deeply nested markup without overflowing the stack', () => {
+		const depth = 20_000
+		const input = `${'<div>'.repeat(depth)}deep${'</div>'.repeat(depth)}`
+		expect(fastGetTrimmedText(input)).toBe('deep')
+	})
+
 	it('runs in linear time on many unclosed angle brackets', () => {
 		// Guards the ReDoS the old `/<[^>]*>/gu` implementation was flagged for:
 		// a string of many '<' with no closing '>' made it backtrack.
