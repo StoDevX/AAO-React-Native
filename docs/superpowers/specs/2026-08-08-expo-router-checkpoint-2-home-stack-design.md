@@ -128,6 +128,30 @@ proven on 13 ordinary groups first.
   process (fresh implementer, task review, fix loop) — the stack changes
   how PRs relate to each other, not how each one gets built.
 
+## Findings from PR 1 (More), applicable to every later group PR
+
+- **Type fork between navigators.** Each group's existing `NavigationOptions`
+  export is typed against `@react-navigation/native-stack`'s
+  `NativeStackNavigationOptions`, still required by `source/navigation/routes.tsx`
+  (not deleted until checkpoint 7). expo-router forks its own,
+  structurally-different `NativeStackNavigationOptions`. Every wrapper route
+  file needs `NavigationOptions as React.ComponentProps<typeof
+  Stack.Screen>['options']` at the point it's passed to `Stack.Screen` — a
+  real cast to a concrete type, not `any`. This now has three group PRs'
+  worth of precedent (once Task 2 or 3 hits it again); consider hoisting it
+  into a one-line shared helper at that point rather than repeating the
+  multi-line inline comment + cast in every wrapper — not worth building
+  for a single use case, worth it by the second or third.
+- **Network-dependent screens can't be fully verified in a sandboxed
+  environment.** Any group whose screen fetches live data (most of them)
+  will hit this the same way More did — the sandbox has no outbound network
+  access, so a "Loading…" state is the most a sandboxed boot-verification
+  screenshot can show. The existing XCUITest suite (`uitests/`) is a
+  legitimate substitute for verifying the *navigation* path (real touch
+  events, not deep links), but not for verifying that fetched content
+  actually renders. Flag every group PR with a live data dependency for a
+  quick real-device spot-check before it's considered fully validated.
+
 ## Explicitly out of scope for checkpoint 2
 
 - The Settings stack and Component Library stack (checkpoints 4-5 per the
