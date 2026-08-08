@@ -17,12 +17,39 @@ export function innerTextWithSpaces(elem: AnyNode): string {
 	return textContent(elem).split(/\s+/u).join(' ').trim()
 }
 
-export function removeHtmlWithRegex(str: string): string {
-	return str.replace(/<[^>]*>/gu, ' ')
+function collectText(nodes: ChildNode[], out: string[]): void {
+	for (const node of nodes) {
+		if (isText(node)) {
+			out.push(node.data)
+			continue
+		}
+
+		if (!isTag(node)) continue
+
+		// `<script>` and `<style>` bodies are code, not prose; dropping them
+		// keeps stylesheets and JS out of what we render as text.
+		const tag = node.name.toLowerCase()
+		if (tag === 'script' || tag === 'style') continue
+
+		collectText(node.children, out)
+	}
+}
+
+/**
+ * Strips HTML tags from a string, leaving only its text content.
+ *
+ * Text runs separated by a tag are joined with a space, so `a<br>b` becomes
+ * `a b` rather than `ab`. Character entities are decoded — callers do not need
+ * to run the result through `decode`.
+ */
+export function removeHtml(str: string): string {
+	const parts: string[] = []
+	collectText(parseHtml(str).children, parts)
+	return parts.join(' ')
 }
 
 export function fastGetTrimmedText(str: string): string {
-	return removeHtmlWithRegex(str).replace(/\s+/gu, ' ').trim()
+	return removeHtml(str).replace(/\s+/gu, ' ').trim()
 }
 
 // ── Structured HTML-to-text utilities ─────────────────────────────────────
