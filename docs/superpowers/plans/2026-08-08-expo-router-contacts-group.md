@@ -54,6 +54,7 @@ second network request).
 - Modify: `source/views/contacts/list.tsx`
 - Modify: `source/views/contacts/detail.tsx`
 - Modify: `source/views/contacts/index.ts`
+- Modify: `source/views/contacts/query.ts`
 - Modify: `source/navigation/routes.tsx`
 - Modify: `source/views/views.ts`
 - Create: `app/(home)/Contacts/index.tsx`
@@ -63,8 +64,9 @@ second network request).
 - Consumes: `ContactsListView`, `NavigationOptions` from
   `source/views/contacts/list.tsx`; `ContactsDetailView` (new prop shape:
   `{contact: ContactType}`) from `source/views/contacts/detail.tsx`;
-  `groupedContactsOptions` from `source/views/contacts/query.ts`;
-  `ContactType` from `source/views/contacts/types.ts`.
+  `groupedContactsOptions`, `contactByTitleOptions` from
+  `source/views/contacts/query.ts`; `ContactType` from
+  `source/views/contacts/types.ts`.
 - Produces: the `/Contacts` and `/Contacts/[title]` routes.
 
 - [ ] **Step 1: Swap the list screen's navigation call**
@@ -295,7 +297,78 @@ export default function ContactsPage(): React.ReactNode {
 expo-router's own `Stack.Screen` options in every remaining group; see the
 design doc's "Findings from PR 1" section)
 
-- [ ] **Step 7: Create the detail route**
+- [ ] **Step 7: Add a `select`-based single-contact query to query.ts**
+
+This is the reference implementation the design doc's "Standing decision"
+section describes: a second query-options factory that shares the list
+query's exact `queryKey` (and its fetch logic, factored out so it isn't
+duplicated) but supplies a different `select`, deriving one contact
+instead of grouped sections. Because the `queryKey` matches
+`groupedContactsOptions`'s, this resolves from the same cache entry the
+list screen already populated — no extra network round-trip — and this
+approach is what every later group PR's own detail screen should copy
+(swap `contacts`/`Contact`/`title` for that group's own names).
+
+In `source/views/contacts/query.ts`, replace:
+
+```typescript
+import {client} from '@frogpond/api'
+import {queryOptions} from '@tanstack/react-query'
+import {groupBy, toPairs} from 'lodash'
+import {ContactType} from './types'
+
+export const keys = {
+	all: ['contacts'] as const,
+}
+
+export const groupedContactsOptions = queryOptions({
+	queryKey: keys.all,
+	queryFn: async ({signal}) => {
+		let response = await client.get('contacts', {signal}).json()
+		return (response as {data: ContactType[]}).data
+	},
+	select: (contacts) => {
+		let grouped = groupBy(contacts, (c) => c.category)
+		return toPairs(grouped).map(([key, value]) => ({title: key, data: value}))
+	},
+})
+```
+
+with:
+
+```typescript
+import {client} from '@frogpond/api'
+import {queryOptions} from '@tanstack/react-query'
+import {groupBy, toPairs} from 'lodash'
+import {ContactType} from './types'
+
+export const keys = {
+	all: ['contacts'] as const,
+}
+
+async function fetchContacts({signal}: {signal: AbortSignal}) {
+	let response = await client.get('contacts', {signal}).json()
+	return (response as {data: ContactType[]}).data
+}
+
+export const groupedContactsOptions = queryOptions({
+	queryKey: keys.all,
+	queryFn: fetchContacts,
+	select: (contacts) => {
+		let grouped = groupBy(contacts, (c) => c.category)
+		return toPairs(grouped).map(([key, value]) => ({title: key, data: value}))
+	},
+})
+
+export const contactByTitleOptions = (title: string) =>
+	queryOptions({
+		queryKey: keys.all,
+		queryFn: fetchContacts,
+		select: (contacts) => contacts.find((c) => c.title === title),
+	})
+```
+
+- [ ] **Step 8: Create the detail route**
 
 Create `app/(home)/Contacts/[title].tsx`:
 
@@ -305,16 +378,12 @@ import {Stack, useLocalSearchParams} from 'expo-router'
 import {useQuery} from '@tanstack/react-query'
 
 import {ContactsDetailView} from '../../../source/views/contacts'
-import {groupedContactsOptions} from '../../../source/views/contacts/query'
+import {contactByTitleOptions} from '../../../source/views/contacts/query'
 import {LoadingView, NoticeView} from '@frogpond/notice'
 
 export default function ContactsDetailPage(): React.ReactNode {
 	let {title} = useLocalSearchParams<{title: string}>()
-	let {data, isLoading} = useQuery(groupedContactsOptions)
-
-	let contact = data
-		?.flatMap((section) => section.data)
-		.find((item) => item.title === title)
+	let {data: contact, isLoading} = useQuery(contactByTitleOptions(title))
 
 	if (isLoading) {
 		return <LoadingView />
@@ -333,22 +402,19 @@ export default function ContactsDetailPage(): React.ReactNode {
 }
 ```
 
-This is the reference implementation the design doc's "Standing decision"
-section describes: `data` comes from the exact same `groupedContactsOptions`
-query key the list screen already populated, so this resolves from React
-Query's cache immediately in the common case (navigating from the list,
-data already loaded) — `isLoading` only shows if this screen is somehow
-the first thing to mount (e.g. a future deep link) before the list screen
-ever ran the query.
+`isLoading` only shows if this screen is somehow the first thing to mount
+(e.g. a future deep link) before the list screen ever ran the query — in
+the common case (navigating from the list), `contact` resolves
+synchronously from the already-populated cache.
 
-- [ ] **Step 8: Verify**
+- [ ] **Step 9: Verify**
 
 Run: `mise run tsc` — expect 0 errors.
 Run: `mise run lint` — expect clean.
 Run: `mise run test` — expect the same pass/fail counts as before this
 task (no test files are touched, but confirm nothing broke).
 
-- [ ] **Step 9: Manual boot verification**
+- [ ] **Step 10: Manual boot verification**
 
 Run: `mise run prebuild` then `mise run ios` (or development variant).
 Expected: the home screen shows three tiles now (Campus Map, More,
@@ -371,20 +437,25 @@ screenshot yourself.
 been uploaded via the `attach-github-assets` skill and posted as a comment
 on this PR.**
 
-- [ ] **Step 10: Commit**
+- [ ] **Step 11: Commit**
 
 ```bash
-git add source/views/contacts/list.tsx source/views/contacts/detail.tsx source/views/contacts/index.ts source/navigation/routes.tsx source/views/views.ts app/\(home\)/Contacts/index.tsx app/\(home\)/Contacts/\[title\].tsx
+git add source/views/contacts/list.tsx source/views/contacts/detail.tsx source/views/contacts/index.ts source/views/contacts/query.ts source/navigation/routes.tsx source/views/views.ts app/\(home\)/Contacts/index.tsx app/\(home\)/Contacts/\[title\].tsx
 git commit -m "Restore the Important Contacts home-grid tile
 
 Second group PR in checkpoint 2's stack, and the first with a detail
 screen. Establishes the list-detail pattern the design doc's
-\"Standing decision\" section describes: the detail screen re-runs
-the same groupedContactsOptions query the list screen already
-populated (React Query cache hit, no extra network call) and looks
-up the specific contact by its title, passed as a real URL param
-(app/(home)/Contacts/[title].tsx) -- expo-router only accepts string
-route params, unlike React Navigation's pass-anything-by-reference.
+\"Standing decision\" section describes: the detail screen uses a
+second query-options factory, contactByTitleOptions(title), that
+shares groupedContactsOptions's exact queryKey (and fetch function,
+factored out to avoid duplication) but supplies a different select
+-- deriving one contact instead of grouped sections. Same cache
+entry, no extra network call, and each detail screen gets a
+properly-typed single item straight out of useQuery instead of a
+raw list to search inline. The contact's title is passed as a real
+URL param (app/(home)/Contacts/[title].tsx) -- expo-router only
+accepts string route params, unlike React Navigation's
+pass-anything-by-reference.
 
 ContactsDetailView now takes contact as a plain prop instead of
 reading route.params via useRoute(), decoupling it from any specific
@@ -394,7 +465,7 @@ still type-checked) is removed in the same commit rather than left
 broken -- it was the only other consumer."
 ```
 
-- [ ] **Step 11: Attach screenshots to the PR**
+- [ ] **Step 12: Attach screenshots to the PR**
 
 Once the PR is open (via `gh stack submit`), use the `attach-github-assets`
 skill to upload each screenshot and post them as one PR comment, per the
