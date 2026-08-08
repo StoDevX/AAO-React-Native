@@ -43,6 +43,9 @@ const config: Config = {
 		'!**/node_modules/**',
 	],
 	setupFiles: ['./scripts/jest-setup.js'],
+	transform: {
+		'^.+\\.mjs$': 'babel-jest',
+	},
 	// pnpm nests every package under node_modules/.pnpm/<name>@<version>/node_modules/<name>,
 	// so the first node_modules/ segment is followed by ".pnpm", not a package
 	// name -- without letting that through, the negative lookahead trips on
