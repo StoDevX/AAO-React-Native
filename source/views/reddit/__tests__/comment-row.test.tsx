@@ -17,13 +17,15 @@ const makeComment = (
 })
 
 describe('CommentRow', () => {
-	it('renders the author name', () => {
-		render(<CommentRow comment={makeComment({author: 'ole_fan'})} depth={0} />)
+	it('renders the author name', async () => {
+		await render(
+			<CommentRow comment={makeComment({author: 'ole_fan'})} depth={0} />,
+		)
 		expect(screen.getByText(/ole_fan/u)).toBeTruthy()
 	})
 
-	it('renders stripped comment text', () => {
-		render(
+	it('renders stripped comment text', async () => {
+		await render(
 			<CommentRow
 				comment={makeComment({contentHtml: '<p>Hello world</p>'})}
 				depth={0}
@@ -32,7 +34,7 @@ describe('CommentRow', () => {
 		expect(screen.getByText(/Hello world/u)).toBeTruthy()
 	})
 
-	it('does not render nested replies (PostDetailView owns threading)', () => {
+	it('does not render nested replies (PostDetailView owns threading)', async () => {
 		const comment = makeComment({
 			replies: [
 				makeComment({
@@ -42,14 +44,14 @@ describe('CommentRow', () => {
 				}),
 			],
 		})
-		render(<CommentRow comment={comment} depth={0} />)
+		await render(<CommentRow comment={comment} depth={0} />)
 		// CommentRow only renders its own comment; nested content is handled by
 		// PostDetailView via flattenComments + FlatList
 		expect(screen.queryByText(/child_user/u)).toBeNull()
 	})
 
-	it('mounts at depth 2 without crashing', () => {
-		render(
+	it('mounts at depth 2 without crashing', async () => {
+		await render(
 			<CommentRow comment={makeComment()} depth={2} testID="comment-depth-2" />,
 		)
 		expect(screen.getByTestId('comment-depth-2')).toBeTruthy()

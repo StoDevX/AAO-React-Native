@@ -56,10 +56,10 @@ describe('useServerDiscovery', () => {
 		jest.clearAllMocks()
 	})
 
-	it('builds discovered server URLs from address and default /v1/ path', () => {
-		let {result} = renderHook(() => useServerDiscovery())
+	it('builds discovered server URLs from address and default /v1/ path', async () => {
+		let {result} = await renderHook(() => useServerDiscovery())
 
-		act(() => {
+		await act(() => {
 			handlers.resolved?.({
 				name: 'Gecko',
 				host: 'Gecko.local.',
@@ -74,10 +74,10 @@ describe('useServerDiscovery', () => {
 		])
 	})
 
-	it('removes only the matching discovered server', () => {
-		let {result} = renderHook(() => useServerDiscovery())
+	it('removes only the matching discovered server', async () => {
+		let {result} = await renderHook(() => useServerDiscovery())
 
-		act(() => {
+		await act(() => {
 			handlers.resolved?.({
 				name: 'Gecko',
 				host: 'Gecko.local.',
@@ -92,7 +92,7 @@ describe('useServerDiscovery', () => {
 			} as Service)
 		})
 
-		act(() => {
+		await act(() => {
 			handlers.remove?.('Gecko')
 		})
 
@@ -101,10 +101,10 @@ describe('useServerDiscovery', () => {
 		])
 	})
 
-	it('cleans up listeners on unmount', () => {
-		let {unmount} = renderHook(() => useServerDiscovery())
+	it('cleans up listeners on unmount', async () => {
+		let {unmount} = await renderHook(() => useServerDiscovery())
 
-		unmount()
+		await unmount()
 
 		expect(mockRemoveAllListeners).toHaveBeenCalledWith('resolved')
 		expect(mockRemoveAllListeners).toHaveBeenCalledWith('remove')

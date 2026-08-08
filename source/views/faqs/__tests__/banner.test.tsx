@@ -61,26 +61,26 @@ describe('FaqBanner component', () => {
 		mockNavigate.mockReset()
 	})
 
-	it('renders the banner title and text', () => {
-		let {getByText} = renderWithFaqs([baseFaq])
+	it('renders the banner title and text', async () => {
+		let {getByText} = await renderWithFaqs([baseFaq])
 
 		expect(getByText(baseFaq.bannerTitle)).toBeTruthy()
 		expect(getByText(baseFaq.bannerText)).toBeTruthy()
 	})
 
-	it('dismisses the banner when the close button is pressed', () => {
-		let {getByLabelText, queryByText} = renderWithFaqs([baseFaq])
+	it('dismisses the banner when the close button is pressed', async () => {
+		let {getByLabelText, queryByText} = await renderWithFaqs([baseFaq])
 
 		let button = getByLabelText('Dismiss FAQ banner')
-		fireEvent.press(button)
+		await fireEvent.press(button)
 
 		expect(queryByText(baseFaq.bannerTitle)).toBeNull()
 	})
 
-	it('navigates to FAQ screen when main pressable is tapped', () => {
-		let {getByText} = renderWithFaqs([baseFaq])
+	it('navigates to FAQ screen when main pressable is tapped', async () => {
+		let {getByText} = await renderWithFaqs([baseFaq])
 
-		fireEvent.press(getByText('Learn more'))
+		await fireEvent.press(getByText('Learn more'))
 
 		expect(mockNavigate).toHaveBeenCalledWith('Faq', {faqId: baseFaq.id})
 	})
