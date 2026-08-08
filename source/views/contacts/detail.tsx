@@ -16,9 +16,7 @@ import {callPhone} from '../../components/call-phone'
 import {Button} from '@frogpond/button'
 import {openUrl} from '@frogpond/open-url'
 import {GH_NEW_ISSUE_URL} from '../../lib/constants'
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
-import {RootStackParamList} from '../../navigation/types'
-import {RouteProp, useRoute} from '@react-navigation/native'
+import type {ContactType} from './types'
 
 const paragraphMarkdownStyle: MarkdownStyle = {paragraph: {fontSize: 16}}
 
@@ -48,11 +46,11 @@ export const Container = (props: ViewProps): React.ReactNode => (
 	<View {...props} style={[styles.container, props.style]} />
 )
 
-export const ContactsDetailView = (): React.ReactNode => {
-	let route =
-		useRoute<RouteProp<RootStackParamList, typeof DetailNavigationKey>>()
-	let {contact} = route.params
+type Props = {
+	contact: ContactType
+}
 
+export const ContactsDetailView = ({contact}: Props): React.ReactNode => {
 	let onPress = (): void => {
 		let {phoneNumber, buttonText, buttonLink} = contact
 		if (buttonLink) {
@@ -89,15 +87,4 @@ export const ContactsDetailView = (): React.ReactNode => {
 			</Container>
 		</ScrollView>
 	)
-}
-
-export const DetailNavigationKey = 'ContactsDetail'
-
-export const NavigationOptions = (props: {
-	route: RouteProp<RootStackParamList, typeof DetailNavigationKey>
-}): NativeStackNavigationOptions => {
-	let {title} = props.route.params.contact
-	return {
-		title: title,
-	}
 }

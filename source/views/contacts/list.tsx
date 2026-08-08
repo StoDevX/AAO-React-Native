@@ -1,16 +1,14 @@
 import * as c from '@frogpond/colors'
 import {ListSectionHeader, ListSeparator} from '@frogpond/lists'
 import {LoadingView, NoticeView} from '@frogpond/notice'
-import {NavigationProp, useNavigation} from '@react-navigation/native'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+import {useRouter} from 'expo-router'
 import * as React from 'react'
 import {SectionList, StyleSheet} from 'react-native'
-import {DetailNavigationKey} from './detail'
 import {groupedContactsOptions} from './query'
 import {useQuery} from '@tanstack/react-query'
 import {ContactRow} from './row'
 import type {ContactType} from './types'
-import type {LegacyRootParamList} from '../../navigation/types'
 
 const styles = StyleSheet.create({
 	listContainer: {
@@ -22,7 +20,7 @@ const styles = StyleSheet.create({
 })
 
 export let ContactsListView = (): React.ReactNode => {
-	let navigation = useNavigation<NavigationProp<LegacyRootParamList>>()
+	let router = useRouter()
 
 	let {
 		data = [],
@@ -34,8 +32,11 @@ export let ContactsListView = (): React.ReactNode => {
 
 	let onPressContact = React.useCallback(
 		(contactData: ContactType) =>
-			navigation.navigate(DetailNavigationKey, {contact: contactData}),
-		[navigation],
+			router.push({
+				pathname: '/Contacts/[title]',
+				params: {title: contactData.title},
+			}),
+		[router],
 	)
 
 	if (error) {
