@@ -148,6 +148,22 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
+      # The cache holds what ios-build produced, so a change to how that job
+      # builds has to invalidate it -- the compiler flags, the toolchain
+      # selection and the build command all live here rather than in any file
+      # the hash below covers, and editing them used to leave the old app in
+      # place. Fingerprint the one job instead of the whole workflow, so that
+      # touching Jest or Prettier doesn't throw away a twenty-minute build.
+      - name: Fingerprint the build job
+        id: build-job
+        run: |
+          set -o pipefail
+          yq -o=json '.jobs.ios-build' .github/workflows/check.yml \
+            | sha256sum \
+            | cut -d ' ' -f 1 \
+            | sed 's/^/fingerprint=/' \
+            | tee -a "$GITHUB_OUTPUT"
+
       # pnpm-lock.yaml belongs in this hash even though it doesn't live under
       # ios/: patched dependencies (patches/*.patch, applied by pnpm itself)
       # rewrite node_modules sources that CocoaPods copies into ios/Pods at
@@ -160,9 +176,9 @@ jobs:
         with:
           lookup-only: true
           path: ios/build/Build/Products/
-          key: ios-app/e=${{ env.cache_epoch }}${{ env.cache_bust }}/host=macOS@26/target=ios/xcode=${{ env.xcode_version }}/ref=${{ github.head_ref || github.ref_name }}/hash=${{ hashFiles('app.config.ts', 'plugins/**', 'uitests/**', 'images/**', 'pnpm-lock.yaml', 'pnpm-workspace.yaml', 'mise.toml') }}
+          key: ios-app/e=${{ env.cache_epoch }}${{ env.cache_bust }}/host=macOS@26/target=ios/xcode=${{ env.xcode_version }}/job=${{ steps.build-job.outputs.fingerprint }}/ref=${{ github.head_ref || github.ref_name }}/hash=${{ hashFiles('app.config.ts', 'plugins/**', 'uitests/**', 'images/**', 'pnpm-lock.yaml', 'pnpm-workspace.yaml', 'mise.toml') }}
           restore-keys: |
-            ios-app/e=${{ env.cache_epoch }}${{ env.cache_bust }}/host=macOS@26/target=ios/xcode=${{ env.xcode_version }}/ref=master/hash=${{ hashFiles('app.config.ts', 'plugins/**', 'uitests/**', 'images/**', 'pnpm-lock.yaml', 'pnpm-workspace.yaml', 'mise.toml') }}
+            ios-app/e=${{ env.cache_epoch }}${{ env.cache_bust }}/host=macOS@26/target=ios/xcode=${{ env.xcode_version }}/job=${{ steps.build-job.outputs.fingerprint }}/ref=master/hash=${{ hashFiles('app.config.ts', 'plugins/**', 'uitests/**', 'images/**', 'pnpm-lock.yaml', 'pnpm-workspace.yaml', 'mise.toml') }}
 
   ios-build:
     name: Build for iOS
