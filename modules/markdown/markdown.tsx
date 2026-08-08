@@ -1,119 +1,71 @@
 import * as React from 'react'
 import {
-	StyleProp,
-	TextProps,
-	TextStyle,
-	View,
-	ViewProps,
-	ViewStyle,
-	Text,
-	StyleSheet,
-	ImageStyle,
-} from 'react-native'
-import ReactMarkdown from 'react-markdown'
-
-import propTypes from 'prop-types'
-// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access
-;(ReactMarkdown as any).propTypes.containerTagName = propTypes.func
-
+	EnrichedMarkdownText,
+	type LinkPressEvent,
+	type MarkdownStyle,
+} from 'react-native-enriched-markdown'
 import * as c from '@frogpond/colors'
-import {Paragraph, Strong, Emph, BlockQuote} from './formatting'
-import {Code, CodeBlock} from './code'
-import {Heading} from './heading'
-import {Link} from './link'
-import {Image} from './image'
-import {List, ListItem} from './list'
+import {openUrl} from '@frogpond/open-url'
 
-const baseStyles = StyleSheet.create({
-	horizontalRule: {
-		width: '100%',
-		height: 1,
-		backgroundColor: c.separator,
-	},
-})
+// `c.label`/`c.link` are `PlatformColor(...)` objects. `MarkdownStyle`'s
+// public type declares `color?: string`, but the library's own
+// `normalizeMarkdownStyle` pipes colors through RN's `processColor()` into
+// the Fabric codegen schema, which types color props as real `ColorValue` —
+// so `PlatformColor` values work at runtime and adapt to the system color
+// scheme automatically. The cast below only satisfies the narrower public type.
+const label = c.label as unknown as string
+const link = c.link as unknown as string
 
-const Softbreak = (props: TextProps) => <Text {...props}> </Text>
-const Hardbreak = (props: TextProps) => <Text {...props}>{'\n'}</Text>
-const HorizontalRule = (props: ViewProps) => (
-	<View {...props} style={[baseStyles.horizontalRule, props.style]} />
-)
-
-export type MarkdownProps = {
-	styles?: {
-		BlockQuote?: StyleProp<TextStyle>
-		Code?: StyleProp<TextStyle>
-		CodeBlock?: StyleProp<TextStyle>
-		Emph?: StyleProp<TextStyle>
-		Heading?: StyleProp<TextStyle>
-		Image?: StyleProp<ImageStyle>
-		ListItem?: StyleProp<TextStyle>
-		Link?: StyleProp<TextStyle>
-		List?: StyleProp<ViewStyle>
-		Paragraph?: StyleProp<TextStyle>
-		Strong?: StyleProp<TextStyle>
-		ThematicBreak?: StyleProp<TextStyle>
-	}
-	source: string
+const baseMarkdownStyle: MarkdownStyle = {
+	paragraph: {color: label},
+	h1: {color: label},
+	h2: {color: label},
+	h3: {color: label},
+	h4: {color: label},
+	h5: {color: label},
+	h6: {color: label},
+	strong: {color: label},
+	em: {color: label},
+	blockquote: {color: label},
+	list: {color: label},
+	code: {color: label},
+	link: {color: link},
 }
 
-export class Markdown extends React.PureComponent<MarkdownProps> {
-	render(): React.ReactNode {
-		const {
-			styles = {
-				Heading: {color: c.label},
-				Paragraph: {color: c.label},
-			},
-			source,
-		} = this.props
-		return (
-			<ReactMarkdown
-				containerTagName={View as unknown as string}
-				renderers={{
-					BlockQuote: (props: Parameters<typeof BlockQuote>[0]) => (
-						<BlockQuote {...props} style={[styles.BlockQuote, props.style]} />
-					),
-					Code: (props: Parameters<typeof Code>[0]) => (
-						<Code style={[styles.Code, props.style]} />
-					),
-					CodeBlock: (props: Parameters<typeof CodeBlock>[0]) => (
-						<CodeBlock style={[styles.CodeBlock, props.style]} />
-					),
-					Emph: (props: Parameters<typeof Emph>[0]) => (
-						<Emph style={[styles.Emph, props.style]} />
-					),
-					Hardbreak,
-					Heading: (props: Parameters<typeof Heading>[0] & {level: number}) => (
-						<Heading {...props} style={[styles.Heading, props.style]} />
-					),
-					Image: (props: Parameters<typeof Image>[0]) => (
-						<Image {...props} style={[styles.Image, props.style]} />
-					),
-					Item: (props: Parameters<typeof ListItem>[0]) => (
-						<ListItem {...props} style={[styles.ListItem, props.style]} />
-					),
-					Link: (
-						props: Parameters<typeof Link>[0] & {href: string; title: string},
-					) => <Link {...props} style={[styles.Link, props.style]} />,
-					List: (props: Parameters<typeof List>[0]) => (
-						<List {...props} style={[styles.List, props.style]} />
-					),
-					Paragraph: (props: Parameters<typeof Paragraph>[0]) => (
-						<Paragraph {...props} style={[styles.Paragraph, props.style]} />
-					),
-					Softbreak,
-					Strong: (props: Parameters<typeof Strong>[0]) => (
-						<Strong {...props} style={[styles.Strong, props.style]} />
-					),
-					ThematicBreak: (props: Parameters<typeof HorizontalRule>[0]) => (
-						<HorizontalRule
-							{...props}
-							style={[styles.ThematicBreak, props.style]}
-						/>
-					),
-				}}
-				skipHtml={true}
-				source={source}
-			/>
-		)
+function mergeMarkdownStyle(
+	base: MarkdownStyle,
+	override: MarkdownStyle,
+): MarkdownStyle {
+	const merged: Record<string, object> = {...base}
+	for (const [key, value] of Object.entries(override) as [string, object][]) {
+		merged[key] = {...(base as Record<string, object>)[key], ...value}
 	}
+	return merged as MarkdownStyle
+}
+
+function handleLinkPress(event: LinkPressEvent): void {
+	openUrl(event.url)
+}
+
+export type MarkdownProps = {
+	source: string
+	markdownStyle?: MarkdownStyle
+}
+
+export function Markdown({
+	source,
+	markdownStyle,
+}: MarkdownProps): React.ReactNode {
+	let style = markdownStyle
+		? mergeMarkdownStyle(baseMarkdownStyle, markdownStyle)
+		: baseMarkdownStyle
+
+	return (
+		<EnrichedMarkdownText
+			flavor="github"
+			markdown={source}
+			markdownStyle={style}
+			onLinkPress={handleLinkPress}
+		/>
+	)
 }

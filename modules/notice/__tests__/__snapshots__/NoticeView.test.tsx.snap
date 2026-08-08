@@ -268,25 +268,17 @@ exports[`NoticeView when header text is given displays the header text 1`] = `
     style={
       [
         {
+          "color": {
+            "semantic": [
+              "label",
+            ],
+          },
+          "fontSize": 20,
+          "fontWeight": "600",
           "marginBottom": 4,
           "marginTop": 8,
         },
-        [
-          {
-            "backgroundColor": "transparent",
-            "color": {
-              "semantic": [
-                "label",
-              ],
-            },
-            "fontFamily": "System",
-            "fontSize": 20,
-            "fontWeight": "600",
-            "letterSpacing": 0.75,
-            "lineHeight": 25,
-          },
-          undefined,
-        ],
+        undefined,
       ]
     }
   >
