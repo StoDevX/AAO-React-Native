@@ -1,6 +1,5 @@
 import * as React from 'react'
-import {ScrollView, StyleSheet, View} from 'react-native'
-import {Paragraph} from '@frogpond/markdown'
+import {ScrollView, StyleSheet, Text, View} from 'react-native'
 import {Card} from '@frogpond/silly-card'
 import {Button} from '@frogpond/button'
 import {BalancesView} from './balances'
@@ -21,27 +20,27 @@ export function BalancesOrAcknowledgementView(): React.ReactNode {
 
 	let content = (
 		<>
-			<Paragraph style={styles.cardText}>
+			<Text selectable={true} style={[styles.paragraph, styles.cardText]}>
 				We want to make sure you have the most up-to-date information in the
 				app, but please keep in mind that there may be some inaccuracies.
-			</Paragraph>
-			<Paragraph style={styles.cardText}>
+			</Text>
+			<Text selectable={true} style={[styles.paragraph, styles.cardText]}>
 				With that in mind, before you can view your balances in the app, we ask
 				that you agree to the following.{'\n'}
-			</Paragraph>
+			</Text>
 
-			<Paragraph style={styles.bonappNotice}>
+			<Text selectable={true} style={[styles.paragraph, styles.bonappNotice]}>
 				The information in the app may not be completely accurate.{'\n'}
 				{'\n'}
 				Bon Appétit is always the final authority on any discrepancies.{'\n'}
 				{'\n'}
 				This app is not an official college app.{'\n'}
-			</Paragraph>
+			</Text>
 
-			<Paragraph style={styles.cardText}>
+			<Text selectable={true} style={[styles.paragraph, styles.cardText]}>
 				If you do not agree to these terms, you will not be able to see your
 				balances in the app, but you can still use the rest of the features.
-			</Paragraph>
+			</Text>
 		</>
 	)
 
@@ -84,6 +83,12 @@ function Ack(props: AcknowledgementProps) {
 let styles = StyleSheet.create({
 	container: {
 		marginVertical: 10,
+	},
+	paragraph: {
+		marginVertical: 3,
+		paddingRight: 4,
+		fontSize: 17,
+		color: c.label,
 	},
 	cardText: {
 		color: c.secondaryLabel,

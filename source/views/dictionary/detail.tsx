@@ -1,6 +1,6 @@
 import * as React from 'react'
 import {StyleSheet, TextProps, Text, View, ViewProps} from 'react-native'
-import {Markdown} from '@frogpond/markdown'
+import {Markdown, type MarkdownStyle} from '@frogpond/markdown'
 import {ListFooter} from '@frogpond/lists'
 import {Button} from '@frogpond/button'
 import * as c from '@frogpond/colors'
@@ -9,11 +9,9 @@ import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 import {RouteProp, useNavigation, useRoute} from '@react-navigation/native'
 import {RootStackParamList} from '../../navigation/types'
 
+const paragraphMarkdownStyle: MarkdownStyle = {paragraph: {fontSize: 16}}
+
 const styles = StyleSheet.create({
-	paragraph: {
-		color: c.label,
-		fontSize: 16,
-	},
 	container: {
 		paddingHorizontal: 18,
 		paddingVertical: 6,
@@ -61,8 +59,8 @@ export let DictionaryDetailView = (): React.ReactNode => {
 		<Container>
 			<Term selectable={true}>{item.word}</Term>
 			<Markdown
+				markdownStyle={paragraphMarkdownStyle}
 				source={item.definition}
-				styles={{Paragraph: styles.paragraph}}
 			/>
 
 			<Button onPress={handleEditButtonPress} title="Suggest an Edit" />
