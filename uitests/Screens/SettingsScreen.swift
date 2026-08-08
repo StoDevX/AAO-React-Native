@@ -65,6 +65,40 @@ struct SettingsScreen: Screen {
 		return self
 	}
 
+	/// Put the icon back to default if an earlier attempt left it changed.
+	///
+	/// The alternate icon belongs to SpringBoard, so it survives the
+	/// `--reset-state` launch that clears UserDefaults and AsyncStorage. A run
+	/// that failed between changing the icon and changing it back leaves the
+	/// next attempt looking at Old Main, and every retry then fails on the
+	/// initial-state assertion below rather than on anything it meant to check.
+	///
+	/// This test is the only one that reads the icon, so it heals itself here
+	/// instead of making the other twelve pay for a reset they do not need.
+	@discardableResult
+	func resetIconToDefaultIfNeeded(springboard: XCUIApplication) -> Self {
+		// A failure between the tap and its alert leaves the alert standing,
+		// and it stops the app reaching idle for every query after it.
+		let strayAlert = springboard.buttons["OK"]
+		if strayAlert.waitForExistence(timeout: 2) {
+			strayAlert.tap()
+		}
+
+		// Scroll first, as every other check here does: the icon cells sit far
+		// enough down Settings that `exists` is false for a cell that is merely
+		// out of view, and this read would then conclude the icon was already
+		// default and leave it changed.
+		let oldMainSelected = app.element(
+			matching: TestIdentifiers.AppIcon.cell("icon_type_old_main", selected: true))
+		scrollUntilExists(oldMainSelected)
+		guard oldMainSelected.waitForExistence(timeout: 2) else {
+			return self
+		}
+
+		return changeIconToDefault()
+			.dismissIconChangeAlert(springboard: springboard)
+	}
+
 	@discardableResult
 	func changeIconToOldMain() -> Self {
 		// The default is Big Ole; the alternate on offer is Old Main.

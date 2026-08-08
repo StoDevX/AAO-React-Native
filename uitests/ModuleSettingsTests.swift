@@ -27,6 +27,7 @@ class ModuleSettingsTests: UITestCase {
 
 		SettingsScreen(app: app)
 			.openSettings()
+			.resetIconToDefaultIfNeeded(springboard: springboard)
 			.changeIconToOldMain()
 			.dismissIconChangeAlert(springboard: springboard)
 			.checkOldMainSelected()
