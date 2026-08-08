@@ -214,7 +214,7 @@ jobs:
         uses: actions/cache/restore@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
         with:
           path: ~/Library/Caches/ccache
-          key: ccache/e=${{ env.cache_epoch }}/host=macOS@26/target=ios/xcode=${{ env.xcode_version }}/ref=${{ github.head_ref || github.ref_name }}/hash=${{ hashFiles('app.config.ts', 'plugins/**', 'uitests/**', 'images/**', 'pnpm-lock.yaml', 'mise.toml') }}/run=${{ github.run_id }}
+          key: ccache/e=${{ env.cache_epoch }}/host=macOS@26/target=ios/xcode=${{ env.xcode_version }}/ref=${{ github.head_ref || github.ref_name }}/hash=${{ hashFiles('app.config.ts', 'plugins/**', 'uitests/**', 'images/**', 'pnpm-lock.yaml', 'mise.toml') }}/run=${{ github.run_id }}-${{ github.run_attempt }}
           restore-keys: |
             ccache/e=${{ env.cache_epoch }}/host=macOS@26/target=ios/xcode=${{ env.xcode_version }}/ref=${{ github.head_ref || github.ref_name }}/
             ccache/e=${{ env.cache_epoch }}/host=macOS@26/target=ios/xcode=${{ env.xcode_version }}/ref=master/
@@ -269,7 +269,7 @@ jobs:
         uses: actions/cache/save@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
         with:
           path: ~/Library/Caches/ccache
-          key: ccache/e=${{ env.cache_epoch }}/host=macOS@26/target=ios/xcode=${{ env.xcode_version }}/ref=${{ github.head_ref || github.ref_name }}/hash=${{ hashFiles('app.config.ts', 'plugins/**', 'uitests/**', 'images/**', 'pnpm-lock.yaml', 'mise.toml') }}/run=${{ github.run_id }}
+          key: ccache/e=${{ env.cache_epoch }}/host=macOS@26/target=ios/xcode=${{ env.xcode_version }}/ref=${{ github.head_ref || github.ref_name }}/hash=${{ hashFiles('app.config.ts', 'plugins/**', 'uitests/**', 'images/**', 'pnpm-lock.yaml', 'mise.toml') }}/run=${{ github.run_id }}-${{ github.run_attempt }}
 
       - name: Save iOS app to cache
         uses: actions/cache/save@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
