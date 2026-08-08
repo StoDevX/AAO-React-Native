@@ -239,7 +239,14 @@ jobs:
           USE_CCACHE: '1'
         run: |
           set -o pipefail
-          xcodebuild build-for-testing \
+          # NSUnbufferedIO, because xcodebuild block-buffers as soon as its
+          # stdout is a pipe rather than a terminal, and xcbeautify is a pipe.
+          # Without it the whole log arrives in one burst when the build ends
+          # -- and a step killed at its timeout never ends, so its output is
+          # lost exactly when it would say what was hanging. 2>&1 so warnings
+          # and errors go through the formatter with everything else instead
+          # of interleaving raw.
+          NSUnbufferedIO=YES xcodebuild build-for-testing \
             -workspace ios/AllAboutOlaf.xcworkspace \
             -scheme AllAboutOlaf \
             -configuration Debug \
@@ -249,7 +256,7 @@ jobs:
             CODE_SIGN_IDENTITY="" \
             CODE_SIGNING_REQUIRED=NO \
             CODE_SIGNING_ALLOWED=NO \
-            | xcbeautify --renderer github-actions
+            2>&1 | xcbeautify --renderer github-actions
 
       # Read this to judge whether Xcode's explicit modules are bypassing the
       # ccache compiler wrapper: a hit rate near zero on a warm cache is the
@@ -411,13 +418,29 @@ jobs:
           # Leave -test-repetition-relaunch-enabled off. It repeats the whole bundle
           # instead of just the failures, which would run every passing test three
           # times over and take the shard past its timeout.
-          xcodebuild test-without-building \
+          #
+          # Both halves of the pipe buffer when they write to one another rather
+          # than to a terminal, and each needs its own answer. NSUnbufferedIO
+          # settles xcodebuild; xcbeautify holds its own output back until it
+          # exits, which script(1) settles by giving the pipeline a pty to write
+          # to. Without both, a shard's results land in one burst at the end --
+          # and this step is killed at 25 minutes, so a hung shard never reaches
+          # that burst and says nothing about what it hung on.
+          #
+          # script passes the command's exit status through, so a failing suite
+          # still fails the step. 2>&1 sends failures through the formatter
+          # rather than letting them interleave raw.
+          cat > "$RUNNER_TEMP/run-uitests.sh" <<'SCRIPT'
+          set -o pipefail
+          NSUnbufferedIO=YES xcodebuild test-without-building \
             -xctestrun $(find ios/build/Build/Products -name '*.xctestrun' -print -quit) \
             -destination "platform=iOS Simulator,id=${{ steps.udid.outputs.udid }}" \
             ${{ matrix.tests }} \
             -retry-tests-on-failure \
             -resultBundlePath uitest-results \
-            | xcbeautify --renderer github-actions
+            2>&1 | xcbeautify --renderer github-actions
+          SCRIPT
+          script -q /dev/null bash "$RUNNER_TEMP/run-uitests.sh" < /dev/null
 
       # `if: always()` because the failures worth reporting are the ones that
       # ran alongside a test that stayed red.
