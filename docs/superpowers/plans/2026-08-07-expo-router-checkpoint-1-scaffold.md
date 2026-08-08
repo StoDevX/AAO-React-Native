@@ -142,7 +142,7 @@ registry against expo SDK 57.0.10):
     "@expo/log-box": "57.0.2",
     "@expo/metro-runtime": "57.0.8",
 ```
-(insert right after `"@expo/react-native-action-sheet": "4.1.1",`, before `"@expo/ui": "57.0.9",`)
+(true alphabetical order: both sort before `"@expo/react-native-action-sheet": "4.1.1",` — insert right after `"@expo/config-plugins"`'s dependency-list neighbor or wherever `@expo/*` entries begin, immediately before `"@expo/react-native-action-sheet"`. If this plan's stated position elsewhere conflicts with true alphabetical order, true alphabetical order governs — this plan had the ordering wrong.)
 
 ```json
     "expo-linking": "57.0.5",
@@ -161,12 +161,35 @@ In `"devDependencies"`, bump the existing entry (expo-router's peer requires
     "@testing-library/react-native": "14.0.1",
 ```
 
+- [ ] **Step 1b: Add a temporary release-age exclusion**
+
+`expo-router@57.0.11` and its transitive dependency `expo-symbols@57.0.2`
+were published 2026-08-06, inside this repo's 3-day `minimumReleaseAge`
+supply-chain gate in `pnpm-workspace.yaml` — `pnpm install` will fail with
+`ERR_PNPM_NO_MATURE_MATCHING_VERSION` without this step. Add both to the
+existing `minimumReleaseAgeExclude` list in `pnpm-workspace.yaml`, following
+the exact pattern already there for other same-release-train Expo SDK 57
+packages:
+
+```yaml
+  - 'expo-router@57.0.11'
+  - 'expo-symbols@57.0.2'
+```
+
+Add a comment above the two new entries explaining why (same style as the
+existing block): these are part of the same Expo SDK 57 release train as
+the packages already listed, published within the same few days, and the
+exclusion should be removed once they clear the gate on their own
+(2026-08-09, ~3 days after publish — reuse the existing block's removal-date
+convention rather than inventing a new one).
+
 - [ ] **Step 2: Install**
 
 Run: `pnpm install`
-Expected: lockfile updates cleanly, no `ERR_PNPM_PEER_DEP_ISSUES` (this repo
-runs with `strictPeerDependencies: false`, so any *remaining* unmet peer —
-e.g. `react-dom`/`react-native-web`, which this iOS-only app deliberately
+Expected: lockfile updates cleanly, no `ERR_PNPM_NO_MATURE_MATCHING_VERSION`
+and no `ERR_PNPM_PEER_DEP_ISSUES` (this repo runs with
+`strictPeerDependencies: false`, so any *remaining* unmet peer — e.g.
+`react-dom`/`react-native-web`, which this iOS-only app deliberately
 excludes per the `overrides` block in `pnpm-workspace.yaml` — only warns, it
 does not fail the install).
 
