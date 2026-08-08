@@ -242,7 +242,7 @@ export async function fetchRedditPosts(
 	const url = `https://www.reddit.com/r/${subreddit}/new.json?limit=25&raw_json=1`
 	const res = await fetch(url, {signal, headers: {'User-Agent': USER_AGENT}})
 	if (!res.ok) throw new Error(`Reddit posts fetch failed: ${res.status}`)
-	const json = await res.json()
+	const json: unknown = await res.json()
 	return parseRedditPostsJson(json)
 }
 
@@ -253,7 +253,7 @@ export async function fetchRedditPost(
 	const url = redditJsonUrl(postUrl)
 	const res = await fetch(url, {signal, headers: {'User-Agent': USER_AGENT}})
 	if (!res.ok) throw new Error(`Reddit post fetch failed: ${res.status}`)
-	const json = await res.json()
+	const json: unknown = await res.json()
 	if (!Array.isArray(json) || json.length < 1) return null
 	const postListing = json[0] as RawRedditListing
 	const child = postListing?.data?.children?.[0]
@@ -268,6 +268,6 @@ export async function fetchRedditComments(
 	const url = redditJsonUrl(postUrl)
 	const res = await fetch(url, {signal, headers: {'User-Agent': USER_AGENT}})
 	if (!res.ok) throw new Error(`Reddit comments fetch failed: ${res.status}`)
-	const json = await res.json()
+	const json: unknown = await res.json()
 	return parseRedditCommentsJson(json)
 }

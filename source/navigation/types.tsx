@@ -148,7 +148,7 @@ export interface OnChangeTextHandler {
 // type alias with an interface). Every useNavigation() call against the legacy
 // React Navigation stack now takes this as an explicit generic instead
 // (useNavigation<NavigationProp<LegacyRootParamList>>()) — see checkpoint 1's
-// Tasks 4c-4g. This type, and every file that imports it, goes away in checkpoint 7
+// Task 4b. This type, and every file that imports it, goes away in checkpoint 7
 // once the legacy stack is fully replaced by expo-router's own typed routes.
 export type LegacyRootParamList = RootStackParamList &
 	SettingsStackParamList &

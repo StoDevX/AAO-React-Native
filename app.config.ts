@@ -188,6 +188,7 @@ const config: ExpoConfig = {
 				},
 			},
 		],
+		'expo-router',
 		'@react-native-vector-icons/entypo',
 		'@react-native-vector-icons/ionicons',
 		'@react-native-vector-icons/material-design-icons',

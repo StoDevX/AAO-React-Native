@@ -34,6 +34,9 @@ const config: Config = {
 		'!**/node_modules/**',
 	],
 	collectCoverageFrom: [
+		'app/**/*.js',
+		'app/**/*.ts',
+		'app/**/*.tsx',
 		'modules/**/*.js',
 		'modules/**/*.ts',
 		'modules/**/*.tsx',
