@@ -3,14 +3,13 @@ import type {Gradient} from '@frogpond/colors'
 import type {ImageProps} from '@expo/ui/swift-ui'
 import {RootViewsParamList} from '../navigation/types'
 
-import {NavigationKey as menus} from './menus'
-import {NavigationKey as sis} from './sis'
-import {NavigationKey as calendar} from './calendar'
-import {NavigationKey as reddit} from './reddit'
-import {NavigationKey as streaming} from './streaming'
-import {NavigationKey as news} from './news'
-import {NavigationKey as transportation} from './transportation'
-
+const menus: keyof RootViewsParamList = 'Menus'
+const sis: keyof RootViewsParamList = 'SIS'
+const calendar: keyof RootViewsParamList = 'Calendar'
+const reddit: keyof RootViewsParamList = 'Communities'
+const streaming: keyof RootViewsParamList = 'Streaming Media'
+const news: keyof RootViewsParamList = 'News'
+const transportation: keyof RootViewsParamList = 'Transportation'
 const hours: keyof RootViewsParamList = 'BuildingHours'
 const directory: keyof RootViewsParamList = 'Directory'
 const importantContacts: keyof RootViewsParamList = 'Contacts'
@@ -56,6 +55,7 @@ export const AllViews = (): Array<ViewType> => {
 			title: 'Menus',
 			icon: 'fork.knife',
 			gradient: c.greenGradient,
+			disabled: true,
 		},
 		{
 			type: 'view',
@@ -63,6 +63,7 @@ export const AllViews = (): Array<ViewType> => {
 			title: 'SIS',
 			icon: 'person.text.rectangle.fill',
 			gradient: c.goldGradient,
+			disabled: true,
 		},
 		{
 			type: 'view',
@@ -70,6 +71,7 @@ export const AllViews = (): Array<ViewType> => {
 			title: 'Building Hours',
 			icon: 'clock.fill',
 			gradient: c.blueGradient,
+			disabled: true,
 		},
 		{
 			type: 'view',
@@ -77,6 +79,7 @@ export const AllViews = (): Array<ViewType> => {
 			title: 'Calendar',
 			icon: 'calendar',
 			gradient: c.violetGradient,
+			disabled: true,
 		},
 		{
 			type: 'view',
@@ -84,6 +87,7 @@ export const AllViews = (): Array<ViewType> => {
 			title: 'Directory',
 			icon: 'person.crop.rectangle.fill',
 			gradient: c.redGradient,
+			disabled: true,
 		},
 		{
 			type: 'view',
@@ -91,6 +95,7 @@ export const AllViews = (): Array<ViewType> => {
 			title: 'Streaming Media',
 			icon: 'play.rectangle.fill',
 			gradient: c.lightBlueGradient,
+			disabled: true,
 		},
 		{
 			type: 'view',
@@ -98,6 +103,7 @@ export const AllViews = (): Array<ViewType> => {
 			title: 'News',
 			icon: 'newspaper.fill',
 			gradient: c.purpleGradient,
+			disabled: true,
 		},
 		{
 			type: 'url',
@@ -112,6 +118,7 @@ export const AllViews = (): Array<ViewType> => {
 			title: 'Important Contacts',
 			icon: 'phone.fill',
 			gradient: c.orangeGradient,
+			disabled: true,
 		},
 		{
 			type: 'view',
@@ -119,6 +126,7 @@ export const AllViews = (): Array<ViewType> => {
 			title: 'Transportation',
 			icon: 'bus.fill',
 			gradient: c.grayGradient,
+			disabled: true,
 		},
 		{
 			type: 'view',
@@ -126,6 +134,7 @@ export const AllViews = (): Array<ViewType> => {
 			title: 'Campus Dictionary',
 			icon: 'character.book.closed.fill',
 			gradient: c.pinkGradient,
+			disabled: true,
 		},
 		{
 			type: 'view',
@@ -133,6 +142,7 @@ export const AllViews = (): Array<ViewType> => {
 			title: 'Student Orgs',
 			icon: 'person.3.fill',
 			gradient: c.sageGradient,
+			disabled: true,
 		},
 		{
 			type: 'view',
@@ -140,6 +150,7 @@ export const AllViews = (): Array<ViewType> => {
 			title: 'More',
 			icon: 'ellipsis.circle.fill',
 			gradient: c.mintGradient,
+			disabled: true,
 		},
 		{
 			type: 'view',
@@ -147,6 +158,7 @@ export const AllViews = (): Array<ViewType> => {
 			title: 'stoPrint',
 			icon: 'printer.fill',
 			gradient: c.yellowGradient,
+			disabled: true,
 		},
 		{
 			type: 'view',
@@ -154,6 +166,7 @@ export const AllViews = (): Array<ViewType> => {
 			title: 'Course Catalog',
 			icon: 'graduationcap.fill',
 			gradient: c.tanGradient,
+			disabled: true,
 		},
 		{
 			type: 'view',
@@ -162,6 +175,7 @@ export const AllViews = (): Array<ViewType> => {
 			icon: 'bubble.left.and.bubble.right.fill',
 			gradient: c.orangeGradient,
 			devOnly: true,
+			disabled: true,
 		},
 	]
 }
