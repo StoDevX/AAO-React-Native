@@ -24,7 +24,6 @@ import * as news from '../views/news'
 import * as reddit from '../views/reddit'
 import * as settings from '../views/settings/'
 import * as streaming from '../views/streaming'
-import * as orgs from '../views/student-orgs'
 import * as transportation from '../views/transportation'
 import {BusRouteDetail} from '../views/transportation/bus/detail'
 import * as stoprint from '../views/stoprint'
@@ -166,18 +165,6 @@ const HomeStackScreens = () => {
 					component={streaming.KRLXScheduleView}
 					name="KRLXSchedule"
 					options={streaming.KRLXScheduleNavigationOptions}
-				/>
-			</Stack.Group>
-			<Stack.Group>
-				<Stack.Screen
-					component={orgs.StudentOrgsView}
-					name="StudentOrgs"
-					options={orgs.NavigationOptions}
-				/>
-				<Stack.Screen
-					component={orgs.StudentOrgsDetailView}
-					name="StudentOrgsDetail"
-					options={orgs.DetailNavigationOptions}
 				/>
 			</Stack.Group>
 			<Stack.Group>

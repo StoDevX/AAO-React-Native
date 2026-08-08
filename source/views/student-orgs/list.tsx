@@ -19,9 +19,9 @@ import deburr from 'lodash/deburr'
 import type {StudentOrgType} from './types'
 import {useDebounce} from '@frogpond/use-debounce'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
-import {NavigationProp, useNavigation} from '@react-navigation/native'
+import {useNavigation, useRouter} from 'expo-router'
 import memoize from 'lodash/memoize'
-import {ChangeTextEvent, LegacyRootParamList} from '../../navigation/types'
+import {ChangeTextEvent} from '../../navigation/types'
 import {studentOrgsOptions} from './query'
 import {useQuery} from '@tanstack/react-query'
 
@@ -48,7 +48,8 @@ const styles = StyleSheet.create({
 })
 
 function StudentOrgsView(): React.ReactNode {
-	let navigation = useNavigation<NavigationProp<LegacyRootParamList>>()
+	let navigation = useNavigation()
+	let router = useRouter()
 
 	let [query, setQuery] = React.useState('')
 	let searchQuery = useDebounce(query.toLowerCase(), 200)
@@ -93,8 +94,12 @@ function StudentOrgsView(): React.ReactNode {
 	}, [results])
 
 	let onPressOrg = React.useCallback(
-		(org: StudentOrgType) => navigation.navigate('StudentOrgsDetail', {org}),
-		[navigation],
+		(org: StudentOrgType) =>
+			router.push({
+				pathname: '/StudentOrgs/[name]',
+				params: {name: org.name},
+			}),
+		[router],
 	)
 
 	if (isError) {
