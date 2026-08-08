@@ -90,7 +90,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Restore cached jsbundle
-        uses: actions/cache/restore@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         id: jsbundle-cache
         with:
           lookup-only: true
@@ -124,7 +124,7 @@ jobs:
           APP_MODE: mocked
 
       - name: Save jsbundle to cache
-        uses: actions/cache/save@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         if: steps.jsbundle-cache.outputs.cache-matched-key == ''
         with:
           path: |
@@ -168,7 +168,7 @@ jobs:
       # Omitting it meant a patch-only change reused a cache built without it.
       - name: Check for cached iOS app
         id: app-cache
-        uses: actions/cache/restore@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           lookup-only: true
           path: ios/build/Build/Products/
@@ -279,7 +279,7 @@ jobs:
           key: ccache/e=${{ env.cache_epoch }}/host=macOS@26/target=ios/xcode=${{ env.xcode_version }}/ref=${{ github.head_ref || github.ref_name }}/hash=${{ hashFiles('app.config.ts', 'plugins/**', 'uitests/**', 'images/**', 'pnpm-lock.yaml', 'mise.toml') }}/run=${{ github.run_id }}-${{ github.run_attempt }}
 
       - name: Save iOS app to cache
-        uses: actions/cache/save@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         if: ${{ !contains(github.event.pull_request.labels.*.name, 'ci/skip-e2e') }}
         with:
           path: ios/build/Build/Products/
@@ -322,7 +322,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Load the cached iOS app and UITest bundle
-        uses: actions/cache/restore@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         id: app-cache
         with:
           fail-on-cache-miss: true
@@ -330,7 +330,7 @@ jobs:
           key: ${{ needs.ios-cache-check.outputs.cache-key }}
 
       - name: Load the cached iOS jsbundle
-        uses: actions/cache/restore@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         id: jsbundle-cache
         with:
           fail-on-cache-miss: true
