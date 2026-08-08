@@ -13,6 +13,13 @@ on:
   schedule:
     - cron: '0 */6 * * *'
 
+# actions: write to delete cache entries; pull-requests: read so `gh pr view`
+# can tell which PR refs are still open.
+permissions:
+  actions: write
+  contents: read
+  pull-requests: read
+
 jobs:
   cleanup:
     runs-on: ubuntu-latest
