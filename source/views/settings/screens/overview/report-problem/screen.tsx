@@ -1,7 +1,14 @@
 import * as React from 'react'
 import {StyleSheet} from 'react-native'
 import {Button, Form, Host, Section, TextField} from '@expo/ui/swift-ui'
-import {disabled} from '@expo/ui/swift-ui/modifiers'
+import {
+	autocorrectionDisabled,
+	disabled,
+	keyboardType,
+	lineLimit,
+	textContentType,
+	textInputAutocapitalization,
+} from '@expo/ui/swift-ui/modifiers'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 import {useNavigation} from '@react-navigation/native'
 import {CloseScreenButton} from '@frogpond/navigation-buttons'
@@ -41,13 +48,30 @@ export let ReportProblemView = (): React.ReactNode => {
 				<Section title="Description">
 					<TextField
 						axis="vertical"
+						modifiers={[lineLimit({min: 3, max: 8})]}
 						onTextChange={setMessage}
 						placeholder="What's the problem? What did you expect?"
 					/>
 				</Section>
 				<Section title="Contact (optional)">
-					<TextField onTextChange={setName} placeholder="Name" />
-					<TextField onTextChange={setEmail} placeholder="Email" />
+					<TextField
+						modifiers={[
+							textInputAutocapitalization('words'),
+							textContentType('name'),
+						]}
+						onTextChange={setName}
+						placeholder="Name"
+					/>
+					<TextField
+						modifiers={[
+							keyboardType('email-address'),
+							textContentType('emailAddress'),
+							textInputAutocapitalization('never'),
+							autocorrectionDisabled(),
+						]}
+						onTextChange={setEmail}
+						placeholder="Email"
+					/>
 				</Section>
 				<Section>
 					<Button
