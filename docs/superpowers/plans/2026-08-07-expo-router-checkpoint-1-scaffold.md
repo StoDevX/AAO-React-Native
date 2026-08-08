@@ -225,16 +225,22 @@ git commit -m "Add expo-router and its required peer dependencies"
 In `package.json`, `"devDependencies"`, insert alphabetically:
 
 ```json
-    "babel-preset-expo": "57.0.7",
+    "babel-preset-expo": "57.0.6",
 ```
-(insert after `"babel-plugin-transform-remove-console": "6.9.4",`, before `"babel-core": "7.0.0-bridge.0"` — actually alphabetically `babel-core` < `babel-jest` < `babel-plugin-transform-remove-console` < `babel-preset-expo`, so place it after `babel-plugin-transform-remove-console` and before `eslint`)
+(confirmed against the npm registry: `57.0.6` is `babel-preset-expo`'s current `latest` dist-tag, as of this plan's amendment — insert after `"babel-plugin-transform-remove-console": "6.9.4",`, before `"babel-core": "7.0.0-bridge.0"` — actually alphabetically `babel-core` < `babel-jest` < `babel-plugin-transform-remove-console` < `babel-preset-expo`, so place it after `babel-plugin-transform-remove-console` and before `eslint`)
 
-Verify the exact version against the npm registry before installing —
-`babel-preset-expo` ships on the same per-SDK release train as the other
-`57.0.x` Expo packages already pinned in this file; confirm the currently
-published `57.0.x` version matches what's actually on npm at install time
-rather than trusting this number blindly, the way every other version in
-this plan was checked against the registry.
+Re-verify the exact version against the npm registry before installing
+regardless — it may have moved again since this plan was last amended.
+
+**If `pnpm install` fails with `ERR_PNPM_NO_MATURE_MATCHING_VERSION`** on
+`babel-preset-expo` (the same `minimumReleaseAge` supply-chain gate that
+blocked Task 2's `expo-router`/`expo-symbols`): this exact situation is
+pre-authorized to resolve the same way Task 2's did — add a
+`minimumReleaseAgeExclude` entry to `pnpm-workspace.yaml` for the exact
+blocked version, with a comment matching the existing block's style
+(explaining it's the same Expo SDK 57 release train, published within days
+of the other excluded packages, remove once it clears the gate on its own).
+No need to stop and ask; proceed and note it in your report.
 
 - [ ] **Step 2: Update babel.config.js**
 
