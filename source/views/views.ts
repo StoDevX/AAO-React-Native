@@ -150,7 +150,6 @@ export const AllViews = (): Array<ViewType> => {
 			title: 'More',
 			icon: 'ellipsis.circle.fill',
 			gradient: c.mintGradient,
-			disabled: true,
 		},
 		{
 			type: 'view',

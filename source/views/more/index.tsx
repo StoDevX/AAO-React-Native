@@ -16,7 +16,7 @@ import {
 import {LinkValue} from './types'
 
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
-import {useNavigation} from '@react-navigation/native'
+import {useNavigation} from 'expo-router'
 import {ChangeTextEvent} from '../../navigation/types'
 import {deburr, words} from 'lodash'
 import {searchLinksOptions} from './query'
