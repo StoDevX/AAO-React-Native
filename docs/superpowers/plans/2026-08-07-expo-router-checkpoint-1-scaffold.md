@@ -923,3 +923,41 @@ verification-only. If Steps 1–4 all pass, checkpoint 1 is done; the branch
 is ready for checkpoint 2's plan to be written (migrating the `(home)`
 stack and its `Stack.Group` folders), per the migration spec's
 branch-and-checkpoint plan.
+
+**What actually happened:** Step 3 caught a real boot crash — `TypeError:
+Cannot assign to read-only property 'NONE'` in React Native's `Event.js`,
+triggered the first time the Metro dev WebSocket connection dispatched an
+event, which only happens once `expo-router/entry` (Task 7) is the real JS
+entry. Root cause, found via systematic debugging (not a guess): listing
+`@babel/plugin-transform-private-methods` in `babel.config.js`'s top-level
+`plugins` array (added long before this migration, for a third-party
+package's private class methods) ran class-feature lowering ahead of
+`babel-preset-expo`'s Flow type-stripping, so React Native's own
+`class Event { +NONE: 0; ... }` type-only field declarations survived as
+real fields and compiled (in the preset's loose mode) to `this.NONE = void 0`
+— an assignment over the non-writable `Event.prototype.NONE` that
+`Event.js` installs via `Object.defineProperty`. `babel-preset-expo`
+already lowers private methods on its own, so removing the redundant
+plugin entry costs nothing. Fixed in commit `d4fea8ae5`, verified with a
+full rebuild + screenshot after clearing Metro's stale transform cache.
+
+Two more side effects surfaced while chasing this down, both committed
+separately since they're real and unrelated to the crash itself:
+- `expo run:ios` also triggered Expo CLI's own first-run sync of
+  `.gitignore` (adds `expo-env.d.ts`) and `tsconfig.json` (adds
+  `.expo/types/**/*.ts` + `expo-env.d.ts` to `include`, extends
+  `expo/tsconfig.base`) — this was always going to happen the first time
+  anyone ran the app locally with typed routes enabled (Task 4); it just
+  hadn't happened yet before this task. Committed (`8671491b9`) rather than
+  left as permanent local drift.
+- Once `expo-env.d.ts` entered the `tsc` program, it widened React
+  Native's own style types enough to reveal a genuine pre-existing bug in
+  `modules/markdown/`: `ListItem`/`ThematicBreak` styles were typed as
+  `TextStyle` despite both wrapping a `View`. Fixed in commit `926862abd`.
+
+A debugging subagent handling this also briefly mishandled a stash
+(`git stash push`/`pop` collided with an already-obsolete stash from an
+earlier, superseded attempt at the Task 4b fix) — verified no data was
+lost (the stash's content was confirmed identical to the abandoned
+"delete" approach already superseded by the committed "replace" approach),
+and the stale stash was dropped for hygiene.
