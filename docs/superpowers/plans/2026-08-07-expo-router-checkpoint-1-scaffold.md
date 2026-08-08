@@ -842,17 +842,21 @@ replaces it with the real home screen."
 
 - [ ] **Step 1: Update index.js**
 
-```javascript
-// This declaration must be inside the app code, so that Typescript merges
-// it with the default react typings. If it is placed into a separate .d.ts
-// file, Typescript will instead replace the default typings.
-declare module 'react' {
-	// source: https://fettblog.eu/typescript-react-generic-forward-refs/
-	function forwardRef<T, P = object>(
-		render: (props: P, ref: React.RefObject<T>) => React.ReactElement | null,
-	): (props: P & React.RefAttributes<T>) => React.ReactElement | null
-}
+**Keep this file as `index.js` — do not rename it to `index.ts`.**
+`fastlane/lib/sourcemaps.rb:8,13` hardcodes `entry_file = 'index.js'` for
+Sentry release sourcemap generation (both the iOS and Android lanes); a
+rename silently breaks that. The `declare module 'react' {...}` block from
+the plan's earlier draft of this step is deliberately **not** included
+below — it was a copy-paste mistake, pulled from `source/root.tsx`'s
+content by mistake while writing this plan. `source/root.tsx` still exists
+in the tree (unreferenced until checkpoint 7 deletes it), and TypeScript
+module augmentations via `declare module` apply to the whole compiled
+program regardless of whether the file that declares them is actually
+imported at runtime — so that augmentation is already active globally.
+Duplicating it here would only be redundant, not necessary, and would force
+an unnecessary `.ts` rename this file doesn't need.
 
+```javascript
 import './source/polyfills/buffer'
 import 'text-encoding-polyfill'
 import 'react-native-url-polyfill/auto'
