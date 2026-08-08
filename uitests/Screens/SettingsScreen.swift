@@ -84,8 +84,13 @@ struct SettingsScreen: Screen {
 			strayAlert.tap()
 		}
 
+		// Scroll first, as every other check here does: the icon cells sit far
+		// enough down Settings that `exists` is false for a cell that is merely
+		// out of view, and this read would then conclude the icon was already
+		// default and leave it changed.
 		let oldMainSelected = app.element(
 			matching: TestIdentifiers.AppIcon.cell("icon_type_old_main", selected: true))
+		scrollUntilExists(oldMainSelected)
 		guard oldMainSelected.waitForExistence(timeout: 2) else {
 			return self
 		}
