@@ -698,7 +698,7 @@ import {store, persistor} from '../source/redux'
 import {CombinedLightTheme, CombinedDarkTheme} from '@frogpond/app-theme'
 import {ActionSheetProvider} from '@expo/react-native-action-sheet'
 import {ThemeProvider} from 'expo-router/react-navigation'
-import {Stack, useNavigationContainerRef, useRouter} from 'expo-router'
+import {Stack, useNavigationContainerRef} from 'expo-router'
 import * as Sentry from '@sentry/react-native'
 
 import {LoadingView} from '@frogpond/notice'
@@ -710,7 +710,6 @@ function RootLayout(): React.ReactNode {
 	const theme = scheme === 'dark' ? CombinedDarkTheme : CombinedLightTheme
 	const statusBarStyle = scheme === 'dark' ? 'light-content' : 'dark-content'
 	const navigationContainerRef = useNavigationContainerRef()
-	const router = useRouter()
 
 	React.useEffect(() => {
 		if (!IS_PRODUCTION) {
@@ -720,7 +719,6 @@ function RootLayout(): React.ReactNode {
 		sentryInit.navigationIntegration.registerNavigationContainer(
 			navigationContainerRef,
 		)
-		Sentry.wrapExpoRouter(router)
 		Sentry.appLoaded()
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
@@ -760,6 +758,24 @@ would violate this plan's no-placeholder rule; instead, it's tracked as
 follow-up scope for checkpoint 2 (the first checkpoint that mounts real
 screens under this layout) — note this explicitly in that checkpoint's plan
 when it's written.
+
+Note: `Sentry.wrapExpoRouter(router)` (from `useRouter()`) is intentionally
+**not** included, despite being in the original design spec as a "near-free"
+enhancement for `navigation.prefetch` span visibility. It isn't free:
+`@sentry/react-native@8.11.0`'s `wrapExpoRouter<T extends ExpoRouter>`
+generic constraint requires `ExpoRouter['prefetch']`'s parameter type
+(`pathname?: string`, optional) to be assignable *from*
+`expo-router@57.0.11`'s actual `ImperativeRouter['prefetch']` parameter type
+(`HrefObject`, `pathname: string`, required) — under this project's
+`strict: true`, a narrower-parameter function isn't assignable where a
+wider-parameter one is expected, so `useRouter()`'s return value fails the
+constraint. Confirmed this isn't a stale-version issue: `@sentry/react-native@8.22.0`
+(latest published) has the identical incompatible shape — this is a genuine
+upstream type drift between the two packages, not something a dependency
+bump fixes. The load-bearing Sentry wiring (`registerNavigationContainer`,
+`appLoaded`) is unaffected and stays; only the optional prefetch-span
+enhancement is dropped. Revisit once Sentry's and expo-router's types
+realign, not before.
 
 - [ ] **Step 2: Write app/index.tsx**
 
