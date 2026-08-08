@@ -128,6 +128,28 @@ proven on 13 ordinary groups first.
   process (fresh implementer, task review, fix loop) — the stack changes
   how PRs relate to each other, not how each one gets built.
 
+## Standing requirement: screenshots as a PR comment (every group PR)
+
+Every group PR's plan must end with attaching visual evidence as a PR
+comment, not just a local boot-verification screenshot the implementer
+looks at and discards:
+
+- A screenshot of the home screen showing that group's tile now present
+  (and no unrelated tile changes).
+- A screenshot of the group's own screen — one per tab, if the group is a
+  tabbed/nested-navigator case (News, Menus, Streaming).
+- Use the `attach-github-assets` skill (`upload.sh`) to upload each
+  screenshot and get a `user-attachments/assets` URL, then post them as one
+  PR comment via `gh pr comment <number> --body "..."` with each image as
+  `![...](url)`.
+- **Do not delete the SDD workspace (or otherwise clean up the
+  screenshots) until after they're attached to the PR.** This was missed
+  for PR 1 (More) — the workspace was deleted right after the task review,
+  before anyone asked for screenshots on the PR, and they had to be
+  regenerated from scratch. Every later group PR's plan should sequence
+  this explicitly: boot-verify → keep screenshots → open the PR → attach
+  screenshots → then clean up.
+
 ## Findings from PR 1 (More), applicable to every later group PR
 
 - **Type fork between navigators.** Each group's existing `NavigationOptions`
