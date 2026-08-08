@@ -16,10 +16,6 @@ concurrency:
 env:
   xcode_version: 'Xcode_26.4'
   cache_epoch: '1'
-  # On merge_group runs, salt cache keys with the run_id so reads always
-  # miss (forcing fresh builds) while in-run hand-off (e.g. ios-bundle →
-  # ios-uitest) still works. PR/push runs use the normal shared keys.
-  cache_bust: ${{ github.event_name == 'merge_group' && format('-{0}', github.run_id) || '' }}
   MISE_RUBY_COMPILE: 'false'
 
 jobs:
@@ -27,8 +23,8 @@ jobs:
     name: hk
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-      - uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151 # v4.0.1
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: jdx/mise-action@7e36c90d9ab29c415a2384db3006f3ec8a8cc654 # v4.2.4
       - run: pnpm install --frozen-lockfile
       - run: mise run bundle-data
       - run: hk check
@@ -37,8 +33,8 @@ jobs:
     name: Prettier
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-      - uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151 # v4.0.1
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: jdx/mise-action@7e36c90d9ab29c415a2384db3006f3ec8a8cc654 # v4.2.4
       - run: pnpm install --frozen-lockfile
       - run: mise run pretty:check
 
@@ -46,8 +42,8 @@ jobs:
     name: ESLint
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-      - uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151 # v4.0.1
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: jdx/mise-action@7e36c90d9ab29c415a2384db3006f3ec8a8cc654 # v4.2.4
       - run: pnpm install --frozen-lockfile
       - run: mise run bundle-data
       - run: mise run lint
@@ -56,20 +52,20 @@ jobs:
     name: Jest
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-      - uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151 # v4.0.1
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: jdx/mise-action@7e36c90d9ab29c415a2384db3006f3ec8a8cc654 # v4.2.4
       - run: pnpm install --frozen-lockfile
       - name: Run tests
         run: mise run test -- --coverage
       - name: Upload coverage
-        uses: codecov/codecov-action@57e3a136b779b570ffcdbf80b3bdc90e7fab3de2 # v6.0.0
+        uses: codecov/codecov-action@fb8b3582c8e4def4969c97caa2f19720cb33a72f # v7.0.0
 
   tsc:
     name: TypeScript
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-      - uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151 # v4.0.1
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: jdx/mise-action@7e36c90d9ab29c415a2384db3006f3ec8a8cc654 # v4.2.4
       - run: pnpm install --frozen-lockfile
       - run: mise run bundle-data
       - run: mise run tsc
@@ -78,8 +74,8 @@ jobs:
     name: Data
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-      - uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151 # v4.0.1
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: jdx/mise-action@7e36c90d9ab29c415a2384db3006f3ec8a8cc654 # v4.2.4
       - run: pnpm install --frozen-lockfile
       - run: mise run validate-data
       - run: mise run bundle-data
@@ -91,10 +87,10 @@ jobs:
     outputs:
       cache-key: ${{ steps.jsbundle-cache.outputs.cache-matched-key || steps.jsbundle-cache.outputs.cache-primary-key }}
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Restore cached jsbundle
-        uses: actions/cache/restore@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         id: jsbundle-cache
         with:
           lookup-only: true
@@ -102,11 +98,11 @@ jobs:
             ios/AllAboutOlaf/main.jsbundle
             ios/AllAboutOlaf/main.jsbundle.map
             ios/assets/
-          key: jsbundle/e=${{ env.cache_epoch }}${{ env.cache_bust }}/host=ubuntu@24.04/target=ios/ref=${{ github.head_ref || github.ref_name }}/hash=${{ hashFiles('mise.toml', 'package.json', 'pnpm-lock.yaml', 'tsconfig.json', 'babel.config.js', 'index.js', 'data/**', 'images/**', 'modules/**.ts', 'modules/**.tsx', 'source/**.ts', 'source/**.tsx') }}
+          key: jsbundle/e=${{ env.cache_epoch }}/host=ubuntu@24.04/target=ios/ref=${{ github.head_ref || github.ref_name }}/hash=${{ hashFiles('mise.toml', 'package.json', 'pnpm-lock.yaml', 'pnpm-workspace.yaml', 'tsconfig.json', 'babel.config.js', 'index.js', 'data/**', 'images/**', 'modules/**.ts', 'modules/**.tsx', 'source/**.ts', 'source/**.tsx') }}
           restore-keys: |
-            jsbundle/e=${{ env.cache_epoch }}${{ env.cache_bust }}/host=ubuntu@24.04/target=ios/ref=master/hash=${{ hashFiles('mise.toml', 'package.json', 'pnpm-lock.yaml', 'tsconfig.json', 'babel.config.js', 'index.js', 'data/**', 'images/**', 'modules/**.ts', 'modules/**.tsx', 'source/**.ts', 'source/**.tsx') }}
+            jsbundle/e=${{ env.cache_epoch }}/host=ubuntu@24.04/target=ios/ref=master/hash=${{ hashFiles('mise.toml', 'package.json', 'pnpm-lock.yaml', 'pnpm-workspace.yaml', 'tsconfig.json', 'babel.config.js', 'index.js', 'data/**', 'images/**', 'modules/**.ts', 'modules/**.tsx', 'source/**.ts', 'source/**.tsx') }}
 
-      - uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151 # v4.0.1
+      - uses: jdx/mise-action@7e36c90d9ab29c415a2384db3006f3ec8a8cc654 # v4.2.4
         if: steps.jsbundle-cache.outputs.cache-matched-key == ''
 
       - name: Install pnpm dependencies
@@ -128,7 +124,7 @@ jobs:
           APP_MODE: mocked
 
       - name: Save jsbundle to cache
-        uses: actions/cache/save@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         if: steps.jsbundle-cache.outputs.cache-matched-key == ''
         with:
           path: |
@@ -146,7 +142,23 @@ jobs:
       cache-primary-key: ${{ steps.app-cache.outputs.cache-primary-key }}
       cache-key: ${{ steps.app-cache.outputs.cache-matched-key || steps.app-cache.outputs.cache-primary-key }}
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      # The cache holds what ios-build produced, so a change to how that job
+      # builds has to invalidate it -- the compiler flags, the toolchain
+      # selection and the build command all live here rather than in any file
+      # the hash below covers, and editing them used to leave the old app in
+      # place. Fingerprint the one job instead of the whole workflow, so that
+      # touching Jest or Prettier doesn't throw away a twenty-minute build.
+      - name: Fingerprint the build job
+        id: build-job
+        run: |
+          set -o pipefail
+          yq -o=json '.jobs.ios-build' .github/workflows/check.yml \
+            | sha256sum \
+            | cut -d ' ' -f 1 \
+            | sed 's/^/fingerprint=/' \
+            | tee -a "$GITHUB_OUTPUT"
 
       # pnpm-lock.yaml belongs in this hash even though it doesn't live under
       # ios/: patched dependencies (patches/*.patch, applied by pnpm itself)
@@ -156,13 +168,13 @@ jobs:
       # Omitting it meant a patch-only change reused a cache built without it.
       - name: Check for cached iOS app
         id: app-cache
-        uses: actions/cache/restore@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           lookup-only: true
           path: ios/build/Build/Products/
-          key: ios-app/e=${{ env.cache_epoch }}${{ env.cache_bust }}/host=macOS@26/target=ios/xcode=${{ env.xcode_version }}/ref=${{ github.head_ref || github.ref_name }}/hash=${{ hashFiles('app.config.ts', 'plugins/**', 'uitests/**', 'images/**', 'pnpm-lock.yaml', 'mise.toml') }}
+          key: ios-app/e=${{ env.cache_epoch }}/host=macOS@26/target=ios/xcode=${{ env.xcode_version }}/job=${{ steps.build-job.outputs.fingerprint }}/ref=${{ github.head_ref || github.ref_name }}/hash=${{ hashFiles('app.config.ts', 'plugins/**', 'uitests/**', 'images/**', 'pnpm-lock.yaml', 'pnpm-workspace.yaml', 'mise.toml') }}
           restore-keys: |
-            ios-app/e=${{ env.cache_epoch }}${{ env.cache_bust }}/host=macOS@26/target=ios/xcode=${{ env.xcode_version }}/ref=master/hash=${{ hashFiles('app.config.ts', 'plugins/**', 'uitests/**', 'images/**', 'pnpm-lock.yaml', 'mise.toml') }}
+            ios-app/e=${{ env.cache_epoch }}/host=macOS@26/target=ios/xcode=${{ env.xcode_version }}/job=${{ steps.build-job.outputs.fingerprint }}/ref=master/hash=${{ hashFiles('app.config.ts', 'plugins/**', 'uitests/**', 'images/**', 'pnpm-lock.yaml', 'pnpm-workspace.yaml', 'mise.toml') }}
 
   ios-build:
     name: Build for iOS
@@ -170,27 +182,71 @@ jobs:
     runs-on: macos-26
     if: needs.ios-cache-check.outputs.cache-matched-key == ''
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Select ${{ env.xcode_version }}
         run: sudo xcode-select -s /Applications/${{ env.xcode_version }}.app
 
-      - uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151 # v4.0.1
+      - uses: jdx/mise-action@7e36c90d9ab29c415a2384db3006f3ec8a8cc654 # v4.2.4
 
       - name: Install pnpm dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Install and configure ccache
+        run: |
+          brew install ccache
+          ccache --set-config=max_size=2G
+          # The wrapper React Native points CC at ends with
+          # `exec $CCACHE_BINARY clang "$@"`, which reads the environment.
+          # CocoaPods sets CCACHE_BINARY as an Xcode build setting, and a build
+          # setting is not an environment variable at compile time -- so the
+          # wrapper expands to plain `clang`, silently, and caches nothing. The
+          # cache has come back empty since at least June for want of this line.
+          echo "CCACHE_BINARY=$(command -v ccache)" >> "$GITHUB_ENV"
+
+      # The hashless restore-keys are the point rather than a fallback: ccache
+      # addresses each object by its preprocessed source, compiler and flags, so
+      # a directory built from neighbouring sources still answers most of the
+      # compiles, and a stale entry is never wrong -- it is simply re-hashed.
+      # That is also why this cache wants restoring on the runs that build from
+      # scratch, which is where it pays for itself.
+      - name: Restore ccache
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/Library/Caches/ccache
+          key: ccache/e=${{ env.cache_epoch }}/host=macOS@26/target=ios/xcode=${{ env.xcode_version }}/ref=${{ github.head_ref || github.ref_name }}/hash=${{ hashFiles('app.config.ts', 'plugins/**', 'uitests/**', 'images/**', 'pnpm-lock.yaml', 'mise.toml') }}/run=${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: |
+            ccache/e=${{ env.cache_epoch }}/host=macOS@26/target=ios/xcode=${{ env.xcode_version }}/ref=${{ github.head_ref || github.ref_name }}/
+            ccache/e=${{ env.cache_epoch }}/host=macOS@26/target=ios/xcode=${{ env.xcode_version }}/ref=master/
+
+      # After the restore, not before: ccache keeps its counters inside the
+      # cache directory, so zeroing them first only to restore the previous
+      # run's file leaves the two runs' figures added together -- a warm run
+      # that hit everything reads as 50% next to the cold run that filled it.
+      - name: Zero the ccache statistics
+        run: ccache --zero-stats
+
       - name: Generate the native project
         run: mise run prebuild
+        env:
+          USE_CCACHE: '1'
 
       - name: Build UITest bundle
         if: ${{ !contains(github.event.pull_request.labels.*.name, 'ci/skip-e2e') }}
         env:
           SKIP_BUNDLING: 'true'
           CODE_SIGNING_DISABLED: 'true'
+          USE_CCACHE: '1'
         run: |
           set -o pipefail
-          xcodebuild build-for-testing \
+          # NSUnbufferedIO, because xcodebuild block-buffers as soon as its
+          # stdout is a pipe rather than a terminal, and xcbeautify is a pipe.
+          # Without it the whole log arrives in one burst when the build ends
+          # -- and a step killed at its timeout never ends, so its output is
+          # lost exactly when it would say what was hanging. 2>&1 so warnings
+          # and errors go through the formatter with everything else instead
+          # of interleaving raw.
+          NSUnbufferedIO=YES xcodebuild build-for-testing \
             -workspace ios/AllAboutOlaf.xcworkspace \
             -scheme AllAboutOlaf \
             -configuration Debug \
@@ -200,10 +256,30 @@ jobs:
             CODE_SIGN_IDENTITY="" \
             CODE_SIGNING_REQUIRED=NO \
             CODE_SIGNING_ALLOWED=NO \
-            | xcbeautify --renderer github-actions
+            2>&1 | xcbeautify --renderer github-actions
+
+      # Read this to judge whether Xcode's explicit modules are bypassing the
+      # ccache compiler wrapper: a hit rate near zero on a warm cache is the
+      # symptom, and CLANG_ENABLE_EXPLICIT_MODULES = NO was the old remedy.
+      - name: Show ccache stats
+        if: always()
+        run: ccache --show-stats
+
+      # Saved under a key no read will ever match, so every build writes a new
+      # entry and the prefixes above restore the newest. actions/cache declines
+      # to save when the restore hit its primary key, which suits a cache of
+      # build output but not this one: ccache grows with every compile, so a
+      # single matching key would freeze it at whatever it held first. Ours had
+      # frozen at 19kB, written before the compiler wrapper worked.
+      - name: Save ccache
+        if: always()
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/Library/Caches/ccache
+          key: ccache/e=${{ env.cache_epoch }}/host=macOS@26/target=ios/xcode=${{ env.xcode_version }}/ref=${{ github.head_ref || github.ref_name }}/hash=${{ hashFiles('app.config.ts', 'plugins/**', 'uitests/**', 'images/**', 'pnpm-lock.yaml', 'mise.toml') }}/run=${{ github.run_id }}-${{ github.run_attempt }}
 
       - name: Save iOS app to cache
-        uses: actions/cache/save@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         if: ${{ !contains(github.event.pull_request.labels.*.name, 'ci/skip-e2e') }}
         with:
           path: ios/build/Build/Products/
@@ -223,7 +299,7 @@ jobs:
     outputs:
       matrix: ${{ steps.split.outputs.matrix }}
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Split tests across shards
         id: split
@@ -243,10 +319,10 @@ jobs:
     steps:
       - run: sudo xcode-select -s /Applications/${{ env.xcode_version }}.app
 
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Load the cached iOS app and UITest bundle
-        uses: actions/cache/restore@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         id: app-cache
         with:
           fail-on-cache-miss: true
@@ -254,7 +330,7 @@ jobs:
           key: ${{ needs.ios-cache-check.outputs.cache-key }}
 
       - name: Load the cached iOS jsbundle
-        uses: actions/cache/restore@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         id: jsbundle-cache
         with:
           fail-on-cache-miss: true
@@ -333,15 +409,48 @@ jobs:
         timeout-minutes: 25
         run: |
           set -o pipefail
-          xcodebuild test-without-building \
+          # Every test cold-launches the app in setUp, and on hosted runners that
+          # launch sometimes outruns the 30s the screen objects allow the view tree
+          # to mount, so whichever test lands on a slow moment fails. Retry rather
+          # than wait longer -- a stalled launch is not a slow one, and setUp gives
+          # each attempt a fresh app.
+          #
+          # Leave -test-repetition-relaunch-enabled off. It repeats the whole bundle
+          # instead of just the failures, which would run every passing test three
+          # times over and take the shard past its timeout.
+          #
+          # Both halves of the pipe buffer when they write to one another rather
+          # than to a terminal, and each needs its own answer. NSUnbufferedIO
+          # settles xcodebuild; xcbeautify holds its own output back until it
+          # exits, which script(1) settles by giving the pipeline a pty to write
+          # to. Without both, a shard's results land in one burst at the end --
+          # and this step is killed at 25 minutes, so a hung shard never reaches
+          # that burst and says nothing about what it hung on.
+          #
+          # script passes the command's exit status through, so a failing suite
+          # still fails the step. 2>&1 sends failures through the formatter
+          # rather than letting them interleave raw.
+          cat > "$RUNNER_TEMP/run-uitests.sh" <<'SCRIPT'
+          set -o pipefail
+          NSUnbufferedIO=YES xcodebuild test-without-building \
             -xctestrun $(find ios/build/Build/Products -name '*.xctestrun' -print -quit) \
             -destination "platform=iOS Simulator,id=${{ steps.udid.outputs.udid }}" \
             ${{ matrix.tests }} \
+            -retry-tests-on-failure \
             -resultBundlePath uitest-results \
-            | xcbeautify --renderer github-actions
+            2>&1 | xcbeautify --renderer github-actions
+          SCRIPT
+          script -q /dev/null bash "$RUNNER_TEMP/run-uitests.sh" < /dev/null
+
+      # `if: always()` because the failures worth reporting are the ones that
+      # ran alongside a test that stayed red.
+      - name: Report flaky tests
+        id: flaky
+        if: always()
+        run: node scripts/report-flaky-uitests.mjs uitest-results.xcresult
 
       - name: Extract failure attachments
-        if: failure()
+        if: failure() || steps.flaky.outputs.flaky == 'true'
         run: |
           mkdir -p uitest-attachments
           xcrun xcresulttool export attachments \
@@ -352,7 +461,7 @@ jobs:
 
       - name: Upload failure attachments
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
-        if: failure()
+        if: failure() || steps.flaky.outputs.flaky == 'true'
         with:
           name: uitest-attachments-${{ matrix.shard }}
           path: uitest-attachments/
@@ -360,7 +469,7 @@ jobs:
 
       - name: Upload XCResult bundle
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
-        if: failure()
+        if: failure() || steps.flaky.outputs.flaky == 'true'
         with:
           name: uitest-results-${{ matrix.shard }}.xcresult
           path: uitest-results.xcresult/

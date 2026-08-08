@@ -1,12 +1,12 @@
 import * as Sentry from '@sentry/react-native'
 import * as React from 'react'
 import {Alert} from 'react-native'
-import {Section} from '@frogpond/tableview'
-import {PushButtonCell} from '@frogpond/tableview/cells'
+import {Section} from '@expo/ui/swift-ui'
 import {useIsDevMode} from '../../../../lib/use-is-dev-mode'
 import {ServerUrlSection} from './server-url'
 import {useNavigation} from '@react-navigation/native'
 import {NavigationKey as DebugKey} from '../debug'
+import {ActionRow, NavigationRow} from '../../components/rows'
 
 export const DeveloperSection = (): React.ReactElement => {
 	let navigation = useNavigation()
@@ -42,27 +42,16 @@ export const DeveloperSection = (): React.ReactElement => {
 
 	return (
 		<>
-			<Section header="DEVELOPER">
-				<PushButtonCell onPress={onComponentsButton} title="Components" />
-				<PushButtonCell onPress={onAPIButton} title="API Tester" />
-				<PushButtonCell onPress={onBonAppButton} title="Bon Appetit Picker" />
-				<PushButtonCell
-					onPress={onBannerBuilderButton}
-					title="Banner Builder"
-				/>
-				<PushButtonCell onPress={onDebugButton} title="Debug" />
-				<PushButtonCell
-					onPress={onNetworkLoggerButton}
-					title="Network Logger"
-				/>
-				<PushButtonCell
-					onPress={sendSentryMessage}
-					showLinkStyle={true}
-					title="Send a Sentry Message"
-				/>
-				<PushButtonCell
+			<Section title="Developer">
+				<NavigationRow onPress={onComponentsButton} title="Components" />
+				<NavigationRow onPress={onAPIButton} title="API Tester" />
+				<NavigationRow onPress={onBonAppButton} title="Bon Appetit Picker" />
+				<NavigationRow onPress={onBannerBuilderButton} title="Banner Builder" />
+				<NavigationRow onPress={onDebugButton} title="Debug" />
+				<NavigationRow onPress={onNetworkLoggerButton} title="Network Logger" />
+				<ActionRow onPress={sendSentryMessage} title="Send a Sentry Message" />
+				<ActionRow
 					onPress={sendSentryException}
-					showLinkStyle={true}
 					title="Send a Sentry Exception"
 				/>
 			</Section>

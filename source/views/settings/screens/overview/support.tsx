@@ -1,13 +1,14 @@
 import * as React from 'react'
 import {Alert} from 'react-native'
-import {Section, Cell} from '@frogpond/tableview'
-import {PushButtonCell} from '@frogpond/tableview/cells'
+import {LabeledContent, Section, Text} from '@expo/ui/swift-ui'
 import {sendEmail} from '../../../../components/send-email'
 import * as Application from 'expo-application'
 import * as Device from 'expo-device'
 import {refreshApp} from '../../../../lib/refresh'
 import {useNavigation} from '@react-navigation/native'
 import {formatVersion} from './version'
+import {ActionRow, NavigationRow} from '../../components/rows'
+import {openReportProblem} from './report-problem/gate'
 
 const getDeviceInfo = () => `
 
@@ -50,20 +51,18 @@ export const SupportSection = (): React.ReactNode => {
 		)
 	}
 
+	let onReportProblem = () =>
+		openReportProblem(() => navigation.navigate('ReportProblem'))
+
 	return (
-		<Section header="SUPPORT">
-			<PushButtonCell onPress={() => navigation.navigate('Faq')} title="FAQs" />
-			<PushButtonCell
-				onPress={openEmail}
-				showLinkStyle={true}
-				title="Contact Us"
-			/>
-			<PushButtonCell
-				onPress={onResetButton}
-				showLinkStyle={true}
-				title="Reset Everything"
-			/>
-			<Cell cellStyle="RightDetail" detail={getVersion()} title="Version" />
+		<Section title="Support">
+			<NavigationRow onPress={() => navigation.navigate('Faq')} title="FAQs" />
+			<ActionRow onPress={openEmail} title="Email Us" />
+			<NavigationRow onPress={onReportProblem} title="Report a Problem" />
+			<ActionRow onPress={onResetButton} title="Reset Everything" />
+			<LabeledContent label="Version">
+				<Text>{getVersion()}</Text>
+			</LabeledContent>
 		</Section>
 	)
 }

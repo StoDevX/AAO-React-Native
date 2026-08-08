@@ -1,10 +1,10 @@
 import * as React from 'react'
-import {Section} from '@frogpond/tableview'
-import {CellToggle, PushButtonCell} from '@frogpond/tableview/cells'
+import {Section, Toggle} from '@expo/ui/swift-ui'
 import {trackedOpenUrl} from '@frogpond/open-url'
 import {GH_BASE_URL} from '../../../../lib/constants'
 import * as storage from '../../../../lib/storage'
 import {useNavigation} from '@react-navigation/native'
+import {ActionRow, NavigationRow} from '../../components/rows'
 
 export let MiscellanySection = (): React.ReactNode => {
 	let navigation = useNavigation()
@@ -32,20 +32,16 @@ export let MiscellanySection = (): React.ReactNode => {
 	}, [])
 
 	return (
-		<Section header="MISCELLANY">
-			<CellToggle
+		<Section title="Miscellany">
+			<Toggle
+				isOn={openInApplinkPreference}
 				label="Open links in-app"
-				onChange={handleOpenLinkOnChange}
-				value={openInApplinkPreference}
+				onIsOnChange={handleOpenLinkOnChange}
 			/>
-			<PushButtonCell onPress={onCreditsButton} title="Credits" />
-			<PushButtonCell onPress={onPrivacyButton} title="Privacy Policy" />
-			<PushButtonCell onPress={onLegalButton} title="Legal" />
-			<PushButtonCell
-				onPress={onSourceButton}
-				showLinkStyle={true}
-				title="Contributing"
-			/>
+			<NavigationRow onPress={onCreditsButton} title="Credits" />
+			<NavigationRow onPress={onPrivacyButton} title="Privacy Policy" />
+			<NavigationRow onPress={onLegalButton} title="Legal" />
+			<ActionRow onPress={onSourceButton} title="Contributing" />
 		</Section>
 	)
 }

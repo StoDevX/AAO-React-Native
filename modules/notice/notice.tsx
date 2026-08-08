@@ -10,7 +10,6 @@ import {
 } from 'react-native'
 import * as c from '@frogpond/colors'
 import {Button} from '@frogpond/button'
-import {Heading} from '@frogpond/markdown'
 
 const styles = StyleSheet.create({
 	container: {
@@ -28,6 +27,13 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		justifyContent: 'center',
 		padding: 8,
+	},
+	header: {
+		marginTop: 8,
+		marginBottom: 4,
+		fontSize: 20,
+		fontWeight: '600',
+		color: c.label,
 	},
 })
 
@@ -52,9 +58,9 @@ export function NoticeView(props: Props): React.ReactNode {
 			{spinner ? <ActivityIndicator style={styles.spinner} /> : null}
 
 			{header ? (
-				<Heading level={1} style={textStyle}>
+				<Text selectable={true} style={[styles.header, textStyle]}>
 					{header}
-				</Heading>
+				</Text>
 			) : null}
 
 			<Text selectable={true} style={[styles.text, textStyle]}>
