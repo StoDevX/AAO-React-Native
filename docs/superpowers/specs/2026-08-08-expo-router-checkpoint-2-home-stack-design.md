@@ -1,0 +1,139 @@
+# React Navigation → expo-router migration: checkpoint 2 (home stack)
+
+## Goal
+
+Migrate the `(home)` stack — the app's main menu screen plus its 15
+`Stack.Group`s (41 screens total) — from the dead React Navigation code
+still sitting in `source/navigation/`/`source/views/` onto live expo-router
+routes under `app/(home)/`. Unlike checkpoint 1 (a single branch, merged as
+one unit), checkpoint 2 ships as a **stack of PRs**, managed with the
+`gh-stack` tool, where every PR in the stack is independently safe to merge
+on its own.
+
+## Baseline correction
+
+The original migration spec (`docs/superpowers/specs/2026-08-07-expo-router-migration-design.md`)
+said "11 `Stack.Group`s, ~54 screens" for this checkpoint. Direct inspection
+of `source/navigation/routes.tsx` found **15 `Stack.Group`s, 41 screens**
+(the 54/61 figure conflated the full `RootStackParamList` type union, which
+includes several dead/unused entries like `Help`, `Profile`, `Feed`,
+`BusMapView` with no matching `Stack.Screen`, with what's actually mounted).
+Treat this document's numbers as authoritative for checkpoint 2.
+
+## Why "independently functional per PR" matters here
+
+Checkpoint 1's Task 7 already pointed the JS entry at `expo-router/entry`.
+That means **all 41 home-stack screens are currently runtime-unreachable**
+right now — not "still working the old way." `source/navigation/`'s
+`HomeStackScreens` never mounts. Checkpoint 2 isn't a gradual migration of
+live screens; it's restoring functionality one group at a time. Given that,
+every PR in the stack must leave the app in a shippable state — no PR may
+expose a menu button that leads nowhere.
+
+## The `disabled` mechanism (already exists, no new code needed)
+
+`source/views/views.ts` defines `AllViews(): ViewType[]`, the data-driven
+list `source/views/home/index.tsx` renders as the home-screen grid.
+`CommonView` already has a `disabled?: boolean` field, and `HomePage`
+already filters `!view.disabled` before rendering. This is exactly the
+switch this checkpoint needs — no new mechanism required:
+
+- The scaffold step sets `disabled: true` on all 15 `type: 'view'` entries
+  in `AllViews()` (the one `type: 'url'` entry, Campus Map, isn't a route
+  at all — leave it untouched).
+- Each group's PR flips that one entry's `disabled` back to `false` (or
+  removes the field) as part of restoring that group.
+
+## Scaffold work (folds into checkpoint 1's existing PR #7656, not a separate PR)
+
+Per Wren's decision, this does not become its own stacked-PR entry — it's
+additional commits on the current branch (`worktree-bridge-cse_01AbV8NxWFTDXpFr8PkwUHb8`),
+extending checkpoint 1's scope from "boots to a placeholder" to "boots to a
+real (mostly-hidden) home screen." This is a strict improvement over the
+placeholder either way, so it's still safe to merge on its own.
+
+**What it does:**
+1. `app/(home)/_layout.tsx` — the home stack's layout. Since `Home` is the
+   root screen of the stack (not inside any `Stack.Group`), this is a
+   `Stack` with `Home` as its index route; the 15 groups get their own
+   subfolders in later PRs, each free to add its own nested layout if a
+   group's internal navigation needs one (most are flat).
+2. `app/(home)/index.tsx` (or `app/index.tsx` directly, replacing
+   checkpoint 1's placeholder — exact placement decided when this is
+   planned in detail) — the real `HomePage` component ported from
+   `source/views/home/index.tsx`, with its `useNavigation()` call
+   converted to expo-router's `useRouter()`/`router.push()` for the one
+   thing it still needs live: the FAQ banner and settings button, neither
+   of which route anywhere in this checkpoint's scope (FAQ banner opens a
+   modal/sheet in place; settings button is checkpoint 4/5's concern per
+   the original spec's checkpoint list — until then it can either be
+   hidden or left as a dead button, decided during that PR's planning).
+3. `source/views/views.ts` — add `disabled: true` to all 15 `type: 'view'`
+   entries.
+
+This needs its own full bite-sized plan (per-file, TDD where applicable) —
+not written yet. Write it next, execute it as an extension of checkpoint 1
+before that PR is considered done.
+
+## The 15 group PRs — stack order and per-group scope
+
+Each PR: create `app/(home)/<group>/` route file(s) for that group's
+screens, convert that group's internal `.navigate()`/`useNavigation()`
+calls to `router.push()`/`useRouter()`, flip that group's `AllViews()`
+entry's `disabled` to `false`. Same mechanical pattern every time — the
+first PR (News) gets a fully detailed plan; each subsequent PR gets planned
+just-in-time, immediately before it's executed, reusing News's plan as a
+template and adjusting for that group's actual screens.
+
+**Real risk per PR, not solvable up front:** a screen in one group can
+`.navigate('ScreenKeyInAnotherGroup')` by string key even though no group
+imports another group's code directly. If the target group isn't migrated
+yet, that one in-app link stays broken even though the source group is
+"done." Check for this at the start of each group's planning — grep the
+group's screens for `.navigate(`/`.push(` calls whose target isn't one of
+that same group's own screen keys — don't assume independence just because
+no shared imports exist.
+
+Stack order, base to tip (after the scaffold work lands in checkpoint 1):
+
+| # | Group | Screens | `AllViews()` entry | Notes |
+|---|---|---|---|---|
+| 1 | News | 1 | `news` | Simplest — single screen, no internal navigation. Establishes the pattern. |
+| 2 | More | 1 | `more` | Single screen. |
+| 3 | Student Orgs | 2 | `studentOrgs` | List → detail, one internal nav call. |
+| 4 | Contacts | 2 | `importantContacts` | List → detail, same shape as Student Orgs. |
+| 5 | Directory | 2 | `directory` | List → detail. |
+| 6 | Dictionary | 3 | `dictionary` | List, detail, editor. |
+| 7 | Stoprint | 3 | `printJobs` | Print jobs, printer list, release. |
+| 8 | Menus | 6 | `menus` | Includes `MenuItemDetail` from the shared `@frogpond/food-menu` package — first PR touching a Frogpond-package screen. |
+| 9 | Streaming | 3 | `streaming` | KSTO/KRLX schedules. |
+| 10 | Transportation | 2 | `transportation` | Bus route detail. |
+| 11 | Building Hours | 4 | `hours` | Includes a report/editor flow — check whether those screens are reachable from outside this group (they were modal-presented in the original navigation design spec). |
+| 12 | Reddit | 2 | `reddit` (marked `devOnly: true` in `AllViews()` — stays dev-only after migration unless told otherwise) | Largest by content (1943 lines). |
+| 13 | SIS + Student Work | 6 | `sis` and `courseSearch` (two separate `AllViews()` entries pointing into one group — both flip together) | Largest by screen count. |
+| 14 | Calendar | 2 | `calendar` | Screens live in the shared `@frogpond/event-list` package, not `source/views/` — different file layout than every other group, plan this one carefully. |
+| 15 | Faq | 1 | not in `AllViews()` (reached via the FAQ banner/settings, not a home-grid tile) | Also registered in `SettingsStackScreens` — this PR must not touch or break that second registration, which is out of checkpoint 2's scope (settings stack migration is a later checkpoint). |
+
+Calendar and Faq are deliberately last: both are special cases (shared
+Frogpond package; dual stack registration) and the pattern should be
+proven on 13 ordinary groups first.
+
+## Tooling
+
+- `gh-stack` manages the branch chain: each group PR branches from the
+  previous group's branch (or from the checkpoint-1 branch, for the first
+  group PR), so review happens incrementally and merging PR N doesn't
+  require PR N+1 to exist yet.
+- Each PR still goes through the existing subagent-driven-development
+  process (fresh implementer, task review, fix loop) — the stack changes
+  how PRs relate to each other, not how each one gets built.
+
+## Explicitly out of scope for checkpoint 2
+
+- The Settings stack and Component Library stack (checkpoints 4-5 per the
+  original migration spec) — Faq's dual registration there is left alone.
+- `Stack.Toolbar` + SF Symbol header buttons (checkpoint 1's spec deferred
+  this broadly; still deferred).
+- Any screen's actual behavior/UI changing — this is a routing-layer
+  migration only, screen components move, their contents don't change
+  beyond the navigation call-site swap.
