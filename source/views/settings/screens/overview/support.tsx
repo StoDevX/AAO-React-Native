@@ -2,13 +2,13 @@ import * as React from 'react'
 import {Alert} from 'react-native'
 import {LabeledContent, Section, Text} from '@expo/ui/swift-ui'
 import {sendEmail} from '../../../../components/send-email'
-import {openReportProblem} from './report-problem'
 import * as Application from 'expo-application'
 import * as Device from 'expo-device'
 import {refreshApp} from '../../../../lib/refresh'
 import {useNavigation} from '@react-navigation/native'
 import {formatVersion} from './version'
 import {ActionRow, NavigationRow} from '../../components/rows'
+import {IS_PRODUCTION} from '@frogpond/constants'
 
 const getDeviceInfo = () => `
 
@@ -51,11 +51,23 @@ export const SupportSection = (): React.ReactNode => {
 		)
 	}
 
+	let onReportProblem = () => {
+		if (!IS_PRODUCTION) {
+			Alert.alert(
+				'Sentry is disabled',
+				'Problem reporting only works in production builds.',
+			)
+			return
+		}
+
+		navigation.navigate('ReportProblem')
+	}
+
 	return (
 		<Section title="Support">
 			<NavigationRow onPress={() => navigation.navigate('Faq')} title="FAQs" />
 			<ActionRow onPress={openEmail} title="Email Us" />
-			<ActionRow onPress={openReportProblem} title="Report a Problem" />
+			<NavigationRow onPress={onReportProblem} title="Report a Problem" />
 			<ActionRow onPress={onResetButton} title="Reset Everything" />
 			<LabeledContent label="Version">
 				<Text>{getVersion()}</Text>
