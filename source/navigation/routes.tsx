@@ -28,7 +28,6 @@ import * as transportation from '../views/transportation'
 import {BusRouteDetail} from '../views/transportation/bus/detail'
 import * as stoprint from '../views/stoprint'
 import * as more from '../views/more'
-import * as directory from '../views/directory'
 
 import {
 	RootStackParamList,
@@ -241,18 +240,6 @@ const HomeStackScreens = () => {
 					component={more.View}
 					name="More"
 					options={more.NavigationOptions}
-				/>
-			</Stack.Group>
-			<Stack.Group>
-				<Stack.Screen
-					component={directory.DirectoryView}
-					name="Directory"
-					options={directory.NavigationOptions}
-				/>
-				<Stack.Screen
-					component={directory.DirectoryDetailView}
-					name="DirectoryDetail"
-					options={directory.DetailNavigationOptions}
 				/>
 			</Stack.Group>
 			<Stack.Group>

@@ -1,6 +1,7 @@
 import ky from 'ky'
 import {queryOptions} from '@tanstack/react-query'
 import {DirectorySearchTypeEnum, SearchResults} from './types'
+import {formatResults} from './helpers'
 
 let directory = ky.create({baseUrl: 'https://www.stolaf.edu/directory/'})
 
@@ -39,6 +40,18 @@ export const keys = {
 		['directory', query] as const,
 }
 
+const staleTime = 1000 * 60 // 1 minute
+
+async function fetchDirectoryEntries(
+	searchQuery: ReturnType<typeof getDirectoryQuery>,
+	signal?: AbortSignal,
+): Promise<SearchResults> {
+	let response = await directory
+		.get('search', {searchParams: searchQuery, signal})
+		.json()
+	return response as SearchResults
+}
+
 export const directoryEntriesOptions = (
 	query: string,
 	type: DirectorySearchTypeEnum,
@@ -46,11 +59,21 @@ export const directoryEntriesOptions = (
 ) =>
 	queryOptions({
 		queryKey: keys.all(getDirectoryQuery({query, type})),
-		queryFn: async ({queryKey: [_, searchQuery], signal}) => {
-			let response = await directory
-				.get('search', {searchParams: searchQuery, signal})
-				.json()
-			return response as SearchResults
-		},
-		staleTime: 1000 * 60, // 1 minute
+		queryFn: ({signal}) =>
+			fetchDirectoryEntries(getDirectoryQuery({query, type}), signal),
+		staleTime,
+	})
+
+export const directoryContactOptions = (
+	query: string,
+	type: DirectorySearchTypeEnum,
+	index: number,
+	// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+) =>
+	queryOptions({
+		queryKey: keys.all(getDirectoryQuery({query, type})),
+		queryFn: ({signal}) =>
+			fetchDirectoryEntries(getDirectoryQuery({query, type}), signal),
+		staleTime,
+		select: (data) => formatResults(data.results)[index],
 	})

@@ -10,23 +10,8 @@ import {directoryEntriesOptions} from './query'
 import {useQuery} from '@tanstack/react-query'
 import type {DirectoryItem, DirectorySearchTypeEnum} from './types'
 import {Ionicons as Icon} from '@react-native-vector-icons/ionicons'
-import {RouteProp, useNavigation, useRoute} from '@react-navigation/native'
-import {
-	NativeStackNavigationOptions,
-	NativeStackNavigationProp,
-} from '@react-navigation/native-stack'
-import {ChangeTextEvent, RootStackParamList} from '../../navigation/types'
-
-export const NavigationKey = 'Directory'
-
-export const NavigationOptions = (props: {
-	route: RouteProp<RootStackParamList, typeof NavigationKey>
-}): NativeStackNavigationOptions => {
-	let {params} = props.route
-	return {
-		title: params?.queryParam ?? 'Directory',
-	}
-}
+import {useLocalSearchParams, useNavigation, useRouter} from 'expo-router'
+import {ChangeTextEvent} from '../../navigation/types'
 
 export function DirectoryView(): React.ReactNode {
 	let [searchQueryType, setSearchQueryType] =
@@ -34,11 +19,13 @@ export function DirectoryView(): React.ReactNode {
 	let [typedQuery, setTypedQuery] = React.useState('')
 	let searchQuery = useDebounce(typedQuery, 500)
 
-	// typing useNavigation's props to inform typescript about `push`
-	let navigation =
-		useNavigation<NativeStackNavigationProp<RootStackParamList>>()
+	let navigation = useNavigation()
+	let router = useRouter()
 
-	let {params} = useRoute<RouteProp<RootStackParamList, typeof NavigationKey>>()
+	let params = useLocalSearchParams<{
+		queryType?: DirectorySearchTypeEnum
+		queryParam?: string
+	}>()
 
 	let {
 		data = {results: []},
@@ -97,11 +84,18 @@ export function DirectoryView(): React.ReactNode {
 					keyboardShouldPersistTaps="never"
 					onRefresh={refetch}
 					refreshing={isRefetching}
-					renderItem={({item}) => (
+					renderItem={({item, index}) => (
 						<DirectoryItemRow
 							item={item}
 							onPress={() =>
-								navigation.push('DirectoryDetail', {contact: item})
+								router.push({
+									pathname: '/Directory/[index]',
+									params: {
+										index: String(index),
+										query: searchQuery,
+										type: searchQueryType,
+									},
+								})
 							}
 						/>
 					)}
