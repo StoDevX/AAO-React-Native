@@ -35,7 +35,16 @@ export const ServerUrlSection = (): React.ReactElement => {
 	})
 
 	let reload = () => storeServerAddress.mutate()
+	const isHttpUrl = (value: string): boolean => {
+		try {
+			const parsedUrl = new URL(value)
+			return parsedUrl.protocol === 'http:' || parsedUrl.protocol === 'https:'
+		} catch {
+			return false
+		}
+	}
 
+	const isUrlValid = isHttpUrl(serverAddress)
 	const isUrlValid = /^(http|https):\/\/[^ "]+$/u.test(serverAddress)
 	const isValid = isUrlValid || serverAddress.length === 0
 
