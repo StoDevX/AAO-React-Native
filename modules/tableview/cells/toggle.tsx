@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {StyleSheet, Switch, View} from 'react-native'
+import {Switch} from 'react-native'
 import {Cell} from '@frogpond/tableview'
 import {useTheme} from '@frogpond/app-theme'
 
@@ -17,17 +17,15 @@ export function CellToggle(props: PropsType): React.ReactNode {
 	let {value, onChange, label, detail, disabled} = props
 
 	let toggle = (
-		<View style={styles.toggleContainer}>
-			<Switch
-				disabled={disabled}
-				onValueChange={onChange}
-				trackColor={{
-					true: colors.primary,
-					false: undefined,
-				}}
-				value={value}
-			/>
-		</View>
+		<Switch
+			disabled={disabled}
+			onValueChange={onChange}
+			trackColor={{
+				true: colors.primary,
+				false: undefined,
+			}}
+			value={value}
+		/>
 	)
 
 	return (
@@ -39,9 +37,3 @@ export function CellToggle(props: PropsType): React.ReactNode {
 		/>
 	)
 }
-
-const styles = StyleSheet.create({
-	toggleContainer: {
-		justifyContent: 'center',
-	},
-})
