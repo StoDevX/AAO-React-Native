@@ -158,8 +158,8 @@ importers:
         specifier: 2.11.2
         version: 2.11.2(react-redux@9.2.0)(react@19.2.3)
       '@sentry/react-native':
-        specifier: 8.21.0
-        version: 8.21.0(@expo/env@2.4.2)(dotenv@17.4.2)(expo@57.0.10)(react-native@0.86.2)(react@19.2.3)(supports-color@8.1.1)
+        specifier: 8.22.0
+        version: 8.22.0(@expo/env@2.4.2)(dotenv@17.4.2)(expo@57.0.10)(react-native@0.86.2)(react@19.2.3)(supports-color@8.1.1)
       '@tanstack/query-async-storage-persister':
         specifier: 5.99.0
         version: 5.99.0
@@ -2070,8 +2070,8 @@ packages:
     resolution: {integrity: sha512-+uuqVEeiDzYuAKjZLqsROKXvRTbl/QeH0gfGRtpYib1cud4rAFWRIkFmcR7Jb7JGFYwmReyQotiTj/hcDszTZg==}
     engines: {node: '>=18'}
 
-  '@sentry/expo-upload-sourcemaps@8.21.0':
-    resolution: {integrity: sha512-XQNXWamcvSE6+HWFwxnlKDTu+el1jSt4BUrkj+JpjHT1CnSx03kRbma1KNLgh5ja04NXbbsfr7DGqHAfp1djnw==}
+  '@sentry/expo-upload-sourcemaps@8.22.0':
+    resolution: {integrity: sha512-lLN3noVtKWWq3NwenYhsFixJt60EeE9ITfrE582IUK8nVuBY/X7RFE/oyaL99YXLVXKS71I0Kxd+E6NDiySFRA==}
     engines: {node: '>=18'}
     hasBin: true
     peerDependencies:
@@ -2087,8 +2087,8 @@ packages:
     resolution: {integrity: sha512-qrGz5Qaw93/IhMjlFN6uIaXeHwgHDaKGa6FkTAP6PonpkvSbGGqan6xfsENxzj9HUVoli1lZ6tMRDnt2qtSPhg==}
     engines: {node: '>=18'}
 
-  '@sentry/react-native@8.21.0':
-    resolution: {integrity: sha512-/aH7J55L0qy4XQxm4Aq2OlRNQO0WtAJYauK13D4c4XkCyiSIBlMemO/8ybBwuUD/fQNWkIhGA9SVRNR5BXYoVA==}
+  '@sentry/react-native@8.22.0':
+    resolution: {integrity: sha512-jAtcVqJkRdesioH/zdjNkDz+CU5YMQJiOkmn4PlvC9dfotp2Uc+zOMBiFEC5uipkaOSl2kk9so6bxPGFymlMow==}
     hasBin: true
     peerDependencies:
       expo: '>=49.0.0'
@@ -6971,7 +6971,7 @@ snapshots:
     dependencies:
       '@sentry/conventions': 0.16.0
 
-  '@sentry/expo-upload-sourcemaps@8.21.0(@expo/env@2.4.2)(dotenv@17.4.2)':
+  '@sentry/expo-upload-sourcemaps@8.22.0(@expo/env@2.4.2)(dotenv@17.4.2)':
     optionalDependencies:
       '@expo/env': 2.4.2(supports-color@8.1.1)
       dotenv: 17.4.2
@@ -6980,12 +6980,12 @@ snapshots:
     dependencies:
       '@sentry/core': 10.69.0
 
-  '@sentry/react-native@8.21.0(@expo/env@2.4.2)(dotenv@17.4.2)(expo@57.0.10)(react-native@0.86.2)(react@19.2.3)(supports-color@8.1.1)':
+  '@sentry/react-native@8.22.0(@expo/env@2.4.2)(dotenv@17.4.2)(expo@57.0.10)(react-native@0.86.2)(react@19.2.3)(supports-color@8.1.1)':
     dependencies:
       '@sentry/browser': 10.69.0
       '@sentry/bundler-plugins': 10.69.0(supports-color@8.1.1)
       '@sentry/core': 10.69.0
-      '@sentry/expo-upload-sourcemaps': 8.21.0(@expo/env@2.4.2)(dotenv@17.4.2)
+      '@sentry/expo-upload-sourcemaps': 8.22.0(@expo/env@2.4.2)(dotenv@17.4.2)
       '@sentry/react': 10.69.0(react@19.2.3)
       react: 19.2.3
       react-native: 0.86.2(patch_hash=6ca2e1225f38672b073b92b9d13f24feebbe9e37ba67708a3f1569275ce99191)(@babel/core@7.29.7)(@react-native/jest-preset@0.86.2)(@react-native/metro-config@0.86.2)(@types/react@19.2.14)(react@19.2.3)(supports-color@8.1.1)
