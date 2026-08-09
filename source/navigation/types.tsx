@@ -122,6 +122,11 @@ export type ComponentLibraryStackParamList = {
 	BadgeLibrary: undefined
 	ButtonLibrary: undefined
 	[settings.ColorsLibraryNavigationKey]: undefined
+	// The expo-router route file is named ColorsLibrary.tsx (matching its
+	// barrel export name), unlike the legacy stack's ColorsLibraryNavigationKey
+	// ('ColorsInfoView', still used by routes.tsx's dead legacy navigator
+	// until checkpoint 7). library.tsx navigates by this literal name.
+	ColorsLibrary: undefined
 	ContextMenuLibrary: undefined
 	FaqBannerLibrary: undefined
 }
