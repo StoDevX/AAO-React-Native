@@ -10,7 +10,7 @@ import {
 	textInputAutocapitalization,
 } from '@expo/ui/swift-ui/modifiers'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
-import {useNavigation} from '@react-navigation/native'
+import {useNavigation} from 'expo-router'
 import {CloseScreenButton} from '@frogpond/navigation-buttons'
 import {submitReport} from './submit'
 
