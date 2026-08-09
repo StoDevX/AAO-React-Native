@@ -39,6 +39,7 @@ import {
 } from './types'
 import {NavigationKey as Debug} from '../views/settings/screens/debug'
 import {toLaxTitleCase} from '@frogpond/titlecase'
+import {headerColorsFor} from './header-colors'
 
 const Stack = createNativeStackNavigator<RootStackParamList>()
 const SettingsStack = createNativeStackNavigator<SettingsStackParamList>()
@@ -59,76 +60,113 @@ const HomeStackScreens = () => {
 				<Stack.Screen
 					component={calendar.View}
 					name={calendar.NavigationKey}
-					options={calendar.NavigationOptions}
+					options={{
+						...calendar.NavigationOptions,
+						...headerColorsFor(calendar.NavigationKey),
+					}}
 				/>
 				<Stack.Screen
 					component={eventDetail.EventDetail}
 					name={eventDetail.NavigationKey}
-					options={eventDetail.EventDetailNavigationOptions}
+					options={{
+						...eventDetail.EventDetailNavigationOptions,
+						...headerColorsFor(calendar.NavigationKey),
+					}}
 				/>
 			</Stack.Group>
 			<Stack.Group>
 				<Stack.Screen
 					component={buildingHours.BuildingHoursDetailView}
 					name="BuildingHoursDetail"
-					options={buildingHours.DetailNavigationOptions}
+					options={{
+						...buildingHours.DetailNavigationOptions,
+						...headerColorsFor('BuildingHours'),
+					}}
 				/>
 				<Stack.Screen
 					component={buildingHours.BuildingHoursView}
 					name="BuildingHours"
-					options={buildingHours.NavigationOptions}
+					options={{
+						...buildingHours.NavigationOptions,
+						...headerColorsFor('BuildingHours'),
+					}}
 				/>
 				<Stack.Screen
 					component={buildingHours.BuildingHoursProblemReportView}
 					name={buildingHours.ReportNavigationKey}
-					options={buildingHours.ReportNavigationOptions}
+					options={{
+						...buildingHours.ReportNavigationOptions,
+						...headerColorsFor('BuildingHours'),
+					}}
 				/>
 				<Stack.Screen
 					component={buildingHours.BuildingHoursScheduleEditorView}
 					name="BuildingHoursScheduleEditor"
-					options={buildingHours.EditorNavigationOptions}
+					options={{
+						...buildingHours.EditorNavigationOptions,
+						...headerColorsFor('BuildingHours'),
+					}}
 				/>
 			</Stack.Group>
 			<Stack.Group>
 				<Stack.Screen
 					component={contacts.ContactsView}
 					name="Contacts"
-					options={contacts.NavigationOptions}
+					options={{
+						...contacts.NavigationOptions,
+						...headerColorsFor('Contacts'),
+					}}
 				/>
 				<Stack.Screen
 					component={contacts.ContactsDetailView}
 					name="ContactsDetail"
-					options={contacts.DetailNavigationOptions}
+					options={{
+						...contacts.DetailNavigationOptions,
+						...headerColorsFor('Contacts'),
+					}}
 				/>
 			</Stack.Group>
 			<Stack.Group>
 				<Stack.Screen
 					component={dictionary.DictionaryView}
 					name="Dictionary"
-					options={dictionary.NavigationOptions}
+					options={{
+						...dictionary.NavigationOptions,
+						...headerColorsFor('Dictionary'),
+					}}
 				/>
 				<Stack.Screen
 					component={dictionary.DictionaryDetailView}
 					name="DictionaryDetail"
-					options={dictionary.DetailNavigationOptions}
+					options={{
+						...dictionary.DetailNavigationOptions,
+						...headerColorsFor('Dictionary'),
+					}}
 				/>
 				<Stack.Screen
 					component={dictionary.DictionaryEditorView}
 					name="DictionaryEditor"
-					options={dictionary.EditorNavigationOptions}
+					options={{
+						...dictionary.EditorNavigationOptions,
+						...headerColorsFor('Dictionary'),
+					}}
 				/>
 			</Stack.Group>
 			<Stack.Group>
 				<Stack.Screen
 					component={transportation.View}
 					name={transportation.NavigationKey}
-					options={transportation.NavigationOptions}
+					options={{
+						...transportation.NavigationOptions,
+						...headerColorsFor(transportation.NavigationKey),
+					}}
 				/>
 				<Stack.Screen
 					component={BusRouteDetail}
 					name="BusRouteDetail"
 					options={({route}) => ({
 						title: `${route.params.line.line} Schedule`,
+						...headerColorsFor(transportation.NavigationKey),
 					})}
 				/>
 			</Stack.Group>
@@ -136,156 +174,237 @@ const HomeStackScreens = () => {
 				<Stack.Screen
 					component={menus.View}
 					name={menus.NavigationKey}
-					options={menus.NavigationOptions}
+					options={{
+						...menus.NavigationOptions,
+						...headerColorsFor(menus.NavigationKey),
+					}}
 				/>
 				<Stack.Screen
 					component={menus.CarletonBurtonMenuScreen}
 					name="CarletonBurtonMenu"
-					options={carletonmenus.BurtonNavigationOptions}
+					options={{
+						...carletonmenus.BurtonNavigationOptions,
+						...headerColorsFor(menus.NavigationKey),
+					}}
 				/>
 				<Stack.Screen
 					component={menus.CarletonLDCMenuScreen}
 					name="CarletonLDCMenu"
-					options={carletonmenus.LDCNavigationOptions}
+					options={{
+						...carletonmenus.LDCNavigationOptions,
+						...headerColorsFor(menus.NavigationKey),
+					}}
 				/>
 				<Stack.Screen
 					component={menus.CarletonSaylesMenuScreen}
 					name="CarletonSaylesMenu"
-					options={carletonmenus.SaylesNavigationOptions}
+					options={{
+						...carletonmenus.SaylesNavigationOptions,
+						...headerColorsFor(menus.NavigationKey),
+					}}
 				/>
 				<Stack.Screen
 					component={menus.CarletonWeitzMenuScreen}
 					name="CarletonWeitzMenu"
-					options={carletonmenus.WeitzNavigationOptions}
+					options={{
+						...carletonmenus.WeitzNavigationOptions,
+						...headerColorsFor(menus.NavigationKey),
+					}}
 				/>
 				<Stack.Screen
 					component={MenuItemDetailView}
 					name="MenuItemDetail"
-					options={DetailNavigationOptions}
+					options={{
+						...DetailNavigationOptions,
+						...headerColorsFor(menus.NavigationKey),
+					}}
 				/>
 			</Stack.Group>
 			<Stack.Group>
 				<Stack.Screen
 					component={streaming.View}
 					name={streaming.NavigationKey}
-					options={streaming.NavigationOptions}
+					options={{
+						...streaming.NavigationOptions,
+						...headerColorsFor(streaming.NavigationKey),
+					}}
 				/>
 				<Stack.Screen
 					component={streaming.KSTOScheduleView}
 					name="KSTOSchedule"
-					options={streaming.KSTOScheduleNavigationOptions}
+					options={{
+						...streaming.KSTOScheduleNavigationOptions,
+						...headerColorsFor(streaming.NavigationKey),
+					}}
 				/>
 				<Stack.Screen
 					component={streaming.KRLXScheduleView}
 					name="KRLXSchedule"
-					options={streaming.KRLXScheduleNavigationOptions}
+					options={{
+						...streaming.KRLXScheduleNavigationOptions,
+						...headerColorsFor(streaming.NavigationKey),
+					}}
 				/>
 			</Stack.Group>
 			<Stack.Group>
 				<Stack.Screen
 					component={orgs.StudentOrgsView}
 					name="StudentOrgs"
-					options={orgs.NavigationOptions}
+					options={{
+						...orgs.NavigationOptions,
+						...headerColorsFor('StudentOrgs'),
+					}}
 				/>
 				<Stack.Screen
 					component={orgs.StudentOrgsDetailView}
 					name="StudentOrgsDetail"
-					options={orgs.DetailNavigationOptions}
+					options={{
+						...orgs.DetailNavigationOptions,
+						...headerColorsFor('StudentOrgs'),
+					}}
 				/>
 			</Stack.Group>
 			<Stack.Group>
 				<Stack.Screen
 					component={news.View}
 					name={news.NavigationKey}
-					options={news.NavigationOptions}
+					options={{
+						...news.NavigationOptions,
+						...headerColorsFor(news.NavigationKey),
+					}}
 				/>
 			</Stack.Group>
 			<Stack.Group>
 				<Stack.Screen
 					component={reddit.View}
 					name={reddit.NavigationKey}
-					options={reddit.NavigationOptions}
+					options={{
+						...reddit.NavigationOptions,
+						...headerColorsFor(reddit.NavigationKey),
+					}}
 				/>
 				<Stack.Screen
 					component={reddit.PostDetailView}
 					name={reddit.PostDetailNavigationKey}
-					options={reddit.PostDetailNavigationOptions}
+					options={{
+						...reddit.PostDetailNavigationOptions,
+						...headerColorsFor(reddit.NavigationKey),
+					}}
 				/>
 			</Stack.Group>
 			<Stack.Group>
 				<Stack.Screen
 					component={studentwork.View}
 					name="Job"
-					options={studentwork.NavigationOptions}
+					options={{
+						...studentwork.NavigationOptions,
+						...headerColorsFor(sis.NavigationKey),
+					}}
 				/>
 				<Stack.Screen
 					component={studentworkdetail.View}
 					name="JobDetail"
-					options={studentworkdetail.NavigationOptions}
+					options={{
+						...studentworkdetail.NavigationOptions,
+						...headerColorsFor(sis.NavigationKey),
+					}}
 				/>
 				<Stack.Screen
 					component={sis.View}
 					name={sis.NavigationKey}
-					options={sis.NavigationOptions}
+					options={{
+						...sis.NavigationOptions,
+						...headerColorsFor(sis.NavigationKey),
+					}}
 				/>
 				<Stack.Screen
 					component={sis.CourseSearchView}
 					name="CourseSearch"
-					options={sis.CourseSearchViewNavigationOptions}
+					options={{
+						...sis.CourseSearchViewNavigationOptions,
+						...headerColorsFor(sis.NavigationKey),
+					}}
 				/>
 				<Stack.Screen
 					component={sis.CourseSearchResultsView}
 					initialParams={{initialFilters: [], initialQuery: ''}}
 					name="CourseSearchResults"
-					options={sis.CourseSearchNavigationOptions}
+					options={{
+						...sis.CourseSearchNavigationOptions,
+						...headerColorsFor(sis.NavigationKey),
+					}}
 				/>
 				<Stack.Screen
 					component={sis.CourseDetailView}
 					name="CourseDetail"
-					options={sis.CourseSearchDetailNavigationOptions}
+					options={{
+						...sis.CourseSearchDetailNavigationOptions,
+						...headerColorsFor(sis.NavigationKey),
+					}}
 				/>
 			</Stack.Group>
 			<Stack.Group>
 				<Stack.Screen
 					component={stoprint.PrintJobsView}
 					name="PrintJobs"
-					options={stoprint.PrintJobsNavigationOptions}
+					options={{
+						...stoprint.PrintJobsNavigationOptions,
+						...headerColorsFor('PrintJobs'),
+					}}
 				/>
 				<Stack.Screen
 					component={stoprint.PrinterListView}
 					name="PrinterList"
-					options={stoprint.PrinterListNavigationOptions}
+					options={{
+						...stoprint.PrinterListNavigationOptions,
+						...headerColorsFor('PrintJobs'),
+					}}
 				/>
 				<Stack.Screen
 					component={stoprint.PrintJobReleaseView}
 					name="PrintJobRelease"
-					options={stoprint.PrintJobReleaseNavigationOptions}
+					options={{
+						...stoprint.PrintJobReleaseNavigationOptions,
+						...headerColorsFor('PrintJobs'),
+					}}
 				/>
 			</Stack.Group>
 			<Stack.Group>
 				<Stack.Screen
 					component={more.View}
 					name="More"
-					options={more.NavigationOptions}
+					options={{
+						...more.NavigationOptions,
+						...headerColorsFor('More'),
+					}}
 				/>
 			</Stack.Group>
 			<Stack.Group>
 				<Stack.Screen
 					component={directory.DirectoryView}
 					name="Directory"
-					options={directory.NavigationOptions}
+					options={{
+						...directory.NavigationOptions,
+						...headerColorsFor('Directory'),
+					}}
 				/>
 				<Stack.Screen
 					component={directory.DirectoryDetailView}
 					name="DirectoryDetail"
-					options={directory.DetailNavigationOptions}
+					options={{
+						...directory.DetailNavigationOptions,
+						...headerColorsFor('Directory'),
+					}}
 				/>
 			</Stack.Group>
 			<Stack.Group>
 				<Stack.Screen
 					component={faqs.View}
 					name="Faq"
-					options={faqs.NavigationOptions}
+					options={{
+						...faqs.NavigationOptions,
+						...headerColorsFor('Faq'),
+					}}
 				/>
 			</Stack.Group>
 		</Stack.Navigator>
