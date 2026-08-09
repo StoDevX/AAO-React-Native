@@ -53,6 +53,7 @@ export const termByNumberOptions = (
 			return resp.files
 		},
 		select: (data) => data.find((t) => t.term === term && t.type === 'json'),
+		staleTime: ONE_DAY,
 	})
 
 export const courseDataOptions = (
@@ -81,6 +82,7 @@ export const courseByIdOptions = (
 		// The API sends clbid as a zero-padded string (e.g. '0000170131')
 		// despite CourseType declaring it a number -- Number() it before comparing.
 		select: (data) => data.find((c) => Number(c.clbid) === clbid),
+		staleTime: ONE_HOUR,
 	})
 
 export function useCourseData(

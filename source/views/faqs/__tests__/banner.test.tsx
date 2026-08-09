@@ -80,13 +80,15 @@ describe('FaqBanner component', () => {
 		expect(onPressOverride).toHaveBeenCalledTimes(1)
 	})
 
-	it('does not throw when the main pressable is tapped without an override', async () => {
+	it('renders as a non-interactive card with no CTA when no override is given', async () => {
 		// The FAQ detail screen hasn't been migrated to expo-router yet, so
-		// with no override this is a no-op fallback rather than a navigation
-		// call -- see the comment in ../banner.tsx.
-		let {getByText} = await renderWithFaqs([baseFaq])
+		// with no override there's nowhere to send a tap -- see the comment
+		// in ../banner.tsx. Rather than a button that silently does nothing,
+		// the banner drops its button role and "Learn more" CTA entirely.
+		let {queryByText, queryByRole} = await renderWithFaqs([baseFaq])
 
-		expect(() => fireEvent.press(getByText('Learn more'))).not.toThrow()
+		expect(queryByText('Learn more')).toBeNull()
+		expect(queryByRole('button', {name: baseFaq.bannerTitle})).toBeNull()
 	})
 })
 jest.mock('@react-native-vector-icons/ionicons', () => ({Ionicons: 'Icon'}))
