@@ -20,7 +20,7 @@ type DisplayMode = 'raw' | 'parsed'
 
 export const APITestDetailView = (): React.ReactNode => {
 	let navigation = useNavigation()
-	let {displayName = ''} = useLocalSearchParams<{displayName: string}>()
+	let {displayName = ''} = useLocalSearchParams<{displayName?: string}>()
 
 	const cleanedName = displayName.trim().toLowerCase()
 	let [displayMode, setDisplayMode] = React.useState<DisplayMode>('raw')
