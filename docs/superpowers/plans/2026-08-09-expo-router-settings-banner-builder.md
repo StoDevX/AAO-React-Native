@@ -161,3 +161,15 @@ not just the isolated screen.
 **Type consistency:** `BannerBuilderView`/`BannerBuilderNavigationOptions`
 used with their existing barrel-export names, matching
 `source/views/settings/index.ts`.
+
+## Followup (not this PR's scope)
+
+Investigate the missing-index / default-Menu issue: dismissing a
+cold-start deep-linked modal sheet lands on `app/(home)/Menus`, not the
+real Home tile grid (`app/(home)/index.tsx`). Root cause not yet found
+(a targeted `unstable_settings.anchor` fix on `app/(home)/_layout.tsx`
+was tried and verified NOT to change the outcome, then cleanly
+reverted). Doesn't block this PR or any of checkpoint 4's remaining
+PRs -- every Settings route is deep-link-only until PR 8 -- but needs a
+real fix before checkpoint 6 (deep linking) ships. Full detail already
+tracked in memory: `expo-router-modal-dismiss-lands-on-menus.md`.
