@@ -14,7 +14,6 @@ export {
 } from './query'
 
 type Props = {
-	detailView?: string
 	poweredBy: PoweredBy
 	query: UseQueryResult<EventType[]>
 	onPressEvent: (event: EventType) => void
@@ -36,7 +35,6 @@ export function CccCalendarView(props: Props): React.ReactNode {
 
 	return (
 		<EventList.EventList
-			detailView={props.detailView}
 			events={data}
 			now={now}
 			onPressEvent={props.onPressEvent}

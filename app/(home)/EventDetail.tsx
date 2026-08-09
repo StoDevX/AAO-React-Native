@@ -1,7 +1,6 @@
 import * as React from 'react'
 import {Stack, useLocalSearchParams} from 'expo-router'
 import {useQuery} from '@tanstack/react-query'
-import type {EventType} from '@frogpond/event-type'
 
 import {EventDetail, shareEvent} from '@frogpond/event-list'
 // `EventDetail` here is the namespace `export * as EventDetail from
@@ -11,43 +10,22 @@ import {EventDetail, shareEvent} from '@frogpond/event-list'
 import {namedCalendarEventOptions} from '@frogpond/ccc-calendar'
 import {ShareButton} from '@frogpond/navigation-buttons'
 import {LoadingView, NoticeView} from '@frogpond/notice'
+import {
+	STOLAF_POWERED_BY,
+	NORTHFIELD_POWERED_BY,
+} from '../../source/views/calendar'
+import {
+	KSTO_POWERED_BY,
+	KRLX_POWERED_BY,
+} from '../../source/views/streaming/radio/schedule'
 
 type EventSource = 'stolaf' | 'northfield' | 'ksto-schedule' | 'krlx-schedule'
 
-function scheduleEventMapper(event: EventType): EventType {
-	return {
-		...event,
-		config: {
-			...event.config,
-			subtitle: 'description',
-		},
-	}
-}
-
 const POWERED_BY: Record<EventSource, {title: string; href: string}> = {
-	stolaf: {
-		title: 'Powered by the St. Olaf calendar',
-		href: 'https://wp.stolaf.edu/calendar/',
-	},
-	northfield: {
-		title: 'Powered by VisitingNorthfield.com',
-		href: 'https://visitingnorthfield.com/events/calendar/',
-	},
-	'ksto-schedule': {
-		title: 'Powered by the KSTO team',
-		href: 'https://pages.stolaf.edu/ksto/',
-	},
-	'krlx-schedule': {
-		title: 'Powered by the KRLX team',
-		href: 'https://www.krlx.org/schedule/',
-	},
-}
-
-const EVENT_MAPPERS: Partial<
-	Record<EventSource, (event: EventType) => EventType>
-> = {
-	'ksto-schedule': scheduleEventMapper,
-	'krlx-schedule': scheduleEventMapper,
+	stolaf: STOLAF_POWERED_BY,
+	northfield: NORTHFIELD_POWERED_BY,
+	'ksto-schedule': KSTO_POWERED_BY,
+	'krlx-schedule': KRLX_POWERED_BY,
 }
 
 export default function EventDetailPage(): React.ReactNode {
@@ -56,35 +34,59 @@ export default function EventDetailPage(): React.ReactNode {
 		eventKey: string
 	}>()
 
+	// Detail lookups don't need the list's eventMapper: it only ever sets
+	// config.subtitle, which the detail view never reads (only event-row.tsx
+	// does) -- passing a mapper here would just be a second copy of that
+	// transform that has to stay byte-identical to the list's forever.
 	let {
 		data: event,
 		isLoading,
 		error,
 		refetch,
-	} = useQuery(
-		namedCalendarEventOptions(source, eventKey, {
-			eventMapper: EVENT_MAPPERS[source],
-		}),
-	)
+	} = useQuery(namedCalendarEventOptions(source, eventKey))
+
+	let poweredBy = source in POWERED_BY ? POWERED_BY[source] : undefined
+
+	if (!poweredBy) {
+		return (
+			<>
+				<Stack.Screen options={{title: 'Event'}} />
+				<NoticeView text="Unknown event source." />
+			</>
+		)
+	}
 
 	if (isLoading) {
-		return <LoadingView />
+		return (
+			<>
+				<Stack.Screen options={{title: 'Event'}} />
+				<LoadingView />
+			</>
+		)
 	}
 
 	if (error) {
 		return (
-			<NoticeView
-				buttonText="Try Again"
-				onPress={refetch}
-				text={`A problem occured while loading: ${
-					error instanceof Error ? error.message : 'Unknown error'
-				}`}
-			/>
+			<>
+				<Stack.Screen options={{title: 'Event'}} />
+				<NoticeView
+					buttonText="Try Again"
+					onPress={refetch}
+					text={`A problem occured while loading: ${
+						error instanceof Error ? error.message : 'Unknown error'
+					}`}
+				/>
+			</>
 		)
 	}
 
 	if (!event) {
-		return <NoticeView text="Could not find this event." />
+		return (
+			<>
+				<Stack.Screen options={{title: 'Event'}} />
+				<NoticeView text="Could not find this event." />
+			</>
+		)
 	}
 
 	return (
@@ -95,7 +97,7 @@ export default function EventDetailPage(): React.ReactNode {
 					headerRight: () => <ShareButton onPress={() => shareEvent(event)} />,
 				}}
 			/>
-			<EventDetail.EventDetail event={event} poweredBy={POWERED_BY[source]} />
+			<EventDetail.EventDetail event={event} poweredBy={poweredBy} />
 		</>
 	)
 }

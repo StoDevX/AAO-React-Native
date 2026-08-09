@@ -6,6 +6,16 @@ import {eventKey} from '@frogpond/event-list'
 import type {EventType} from '@frogpond/event-type'
 import {useQuery} from '@tanstack/react-query'
 
+export const STOLAF_POWERED_BY = {
+	title: 'Powered by the St. Olaf calendar',
+	href: 'https://wp.stolaf.edu/calendar/',
+}
+
+export const NORTHFIELD_POWERED_BY = {
+	title: 'Powered by VisitingNorthfield.com',
+	href: 'https://visitingnorthfield.com/events/calendar/',
+}
+
 export function StOlafCalendarView(): React.ReactNode {
 	let router = useRouter()
 
@@ -22,10 +32,7 @@ export function StOlafCalendarView(): React.ReactNode {
 	return (
 		<CccCalendarView
 			onPressEvent={onPressEvent}
-			poweredBy={{
-				title: 'Powered by the St. Olaf calendar',
-				href: 'https://wp.stolaf.edu/calendar/',
-			}}
+			poweredBy={STOLAF_POWERED_BY}
 			query={useQuery(namedCalendarOptions('stolaf'))}
 		/>
 	)
@@ -47,10 +54,7 @@ export function NorthfieldCalendarView(): React.ReactNode {
 	return (
 		<CccCalendarView
 			onPressEvent={onPressEvent}
-			poweredBy={{
-				title: 'Powered by VisitingNorthfield.com',
-				href: 'https://visitingnorthfield.com/events/calendar/',
-			}}
+			poweredBy={NORTHFIELD_POWERED_BY}
 			query={useQuery(namedCalendarOptions('northfield'))}
 		/>
 	)

@@ -11,7 +11,6 @@ import EventRow from './event-row'
 import {PoweredBy} from './types'
 
 type Props = {
-	detailView?: string
 	events: EventType[]
 	message?: string
 	refreshing: boolean

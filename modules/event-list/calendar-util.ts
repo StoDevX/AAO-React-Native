@@ -3,6 +3,11 @@ import {Share, ShareAction} from 'react-native'
 import type {EventType} from '@frogpond/event-type'
 import {detailTimes} from './times'
 
+/// EventType has no id field, so this stands in for one when selecting a
+/// single event out of a fetched list. Two events with the exact same
+/// start time and title would collide -- `.find()` just returns the
+/// first match, which is indistinguishable from correct behavior to the
+/// user, so this isn't guarded against further.
 export function eventKey(event: EventType): string {
 	return `${event.startTime.toISOString()}|${event.title}`
 }

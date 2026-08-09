@@ -15,6 +15,16 @@ function eventMapper(event: EventType): EventType {
 	}
 }
 
+export const KSTO_POWERED_BY = {
+	title: 'Powered by the KSTO team',
+	href: 'https://pages.stolaf.edu/ksto/',
+}
+
+export const KRLX_POWERED_BY = {
+	title: 'Powered by the KRLX team',
+	href: 'https://www.krlx.org/schedule/',
+}
+
 export function KSTOScheduleView(): React.ReactNode {
 	let router = useRouter()
 
@@ -31,10 +41,7 @@ export function KSTOScheduleView(): React.ReactNode {
 	return (
 		<CccCalendarView
 			onPressEvent={onPressEvent}
-			poweredBy={{
-				title: 'Powered by the KSTO team',
-				href: 'https://pages.stolaf.edu/ksto/',
-			}}
+			poweredBy={KSTO_POWERED_BY}
 			query={useQuery(namedCalendarOptions('ksto-schedule', {eventMapper}))}
 		/>
 	)
@@ -56,10 +63,7 @@ export function KRLXScheduleView(): React.ReactNode {
 	return (
 		<CccCalendarView
 			onPressEvent={onPressEvent}
-			poweredBy={{
-				title: 'Powered by the KRLX team',
-				href: 'https://www.krlx.org/schedule/',
-			}}
+			poweredBy={KRLX_POWERED_BY}
 			query={useQuery(namedCalendarOptions('krlx-schedule', {eventMapper}))}
 		/>
 	)
