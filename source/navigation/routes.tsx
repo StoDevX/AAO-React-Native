@@ -2,13 +2,6 @@ import React from 'react'
 import {createNativeStackNavigator} from '@react-navigation/native-stack'
 
 import * as home from '../views/home'
-import {
-	BuildingHoursProblemReportView,
-	BuildingHoursScheduleEditorView,
-	ReportNavigationKey,
-	ReportNavigationOptions,
-	EditorNavigationOptions,
-} from '../views/building-hours/report'
 import * as calendar from '../views/calendar'
 import {EventDetail as eventDetail} from '@frogpond/event-list'
 import * as faqs from '../views/faqs'
@@ -56,18 +49,6 @@ const HomeStackScreens = () => {
 					component={eventDetail.EventDetail}
 					name={eventDetail.NavigationKey}
 					options={eventDetail.EventDetailNavigationOptions}
-				/>
-			</Stack.Group>
-			<Stack.Group>
-				<Stack.Screen
-					component={BuildingHoursProblemReportView}
-					name={ReportNavigationKey}
-					options={ReportNavigationOptions}
-				/>
-				<Stack.Screen
-					component={BuildingHoursScheduleEditorView}
-					name="BuildingHoursScheduleEditor"
-					options={EditorNavigationOptions}
 				/>
 			</Stack.Group>
 			<Stack.Group>

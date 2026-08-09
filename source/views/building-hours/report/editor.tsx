@@ -3,62 +3,83 @@
  */
 
 import * as React from 'react'
-import {useCallback, useState} from 'react'
+import {useCallback} from 'react'
 import xor from 'lodash/xor'
 import {ScrollView, StyleSheet, Text} from 'react-native'
 import type {Moment} from 'moment-timezone'
 import moment from 'moment-timezone'
 import {Cell, Section, TableView} from '@frogpond/tableview'
 import {DeleteButtonCell} from '@frogpond/tableview/cells'
-import type {DayOfWeekEnumType, SingleBuildingScheduleType} from '../types'
+import type {DayOfWeekEnumType} from '../types'
 import {Row} from '@frogpond/layout'
 import {blankSchedule, parseHours, summarizeDaysAndHours} from '../lib'
 import * as c from '@frogpond/colors'
 import {DatePicker} from '@frogpond/datepicker'
 import {Touchable} from '@frogpond/touchable'
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
-import {CloseScreenButton} from '@frogpond/navigation-buttons'
-import {RouteProp, useNavigation, useRoute} from '@react-navigation/native'
-import {RootStackParamList} from '../../../navigation/types'
+import {useRouter} from 'expo-router'
+import {
+	applyBuildingAction,
+	selectReportDraft,
+	useAppDispatch,
+	useAppSelector,
+} from '../../../redux'
 
-export type RouteParams = {
-	set: SingleBuildingScheduleType | undefined
-	onEditSet: (set: SingleBuildingScheduleType) => unknown
-	onDeleteSet: () => unknown
+type Props = {
+	scheduleIndex: number
+	setIndex: number
 }
 
-export function BuildingHoursScheduleEditorView(): React.ReactNode {
-	let navigation = useNavigation()
+export function BuildingHoursScheduleEditorView({
+	scheduleIndex,
+	setIndex,
+}: Props): React.ReactNode {
+	let router = useRouter()
+	let dispatch = useAppDispatch()
 
-	let route =
-		useRoute<RouteProp<RootStackParamList, 'BuildingHoursScheduleEditor'>>()
-	let {params} = route
-
-	let [set, setSet] = useState<SingleBuildingScheduleType>(
-		params.set ?? blankSchedule(),
-	)
+	let draft = useAppSelector(selectReportDraft)
+	let set = draft?.schedule[scheduleIndex]?.hours[setIndex] ?? blankSchedule()
 
 	let deleteSet = () => {
-		params.onDeleteSet()
-		navigation.goBack()
+		dispatch(
+			applyBuildingAction({type: 'DELETE_HOURS', scheduleIndex, setIndex}),
+		)
+		router.back()
 	}
 
 	let onChangeDays = (newDays: DayOfWeekEnumType[]) => {
 		let newSet = {...set, days: newDays}
-		setSet(newSet)
-		params.onEditSet(newSet)
+		dispatch(
+			applyBuildingAction({
+				type: 'SET_HOURS',
+				scheduleIndex,
+				setIndex,
+				data: newSet,
+			}),
+		)
 	}
 
 	let onChangeOpen = (newDate: Moment) => {
 		let newSet = {...set, from: newDate.format('h:mma')}
-		setSet(newSet)
-		params.onEditSet(newSet)
+		dispatch(
+			applyBuildingAction({
+				type: 'SET_HOURS',
+				scheduleIndex,
+				setIndex,
+				data: newSet,
+			}),
+		)
 	}
 
 	let onChangeClose = (newDate: Moment) => {
 		let newSet = {...set, to: newDate.format('h:mma')}
-		setSet(newSet)
-		params.onEditSet(newSet)
+		dispatch(
+			applyBuildingAction({
+				type: 'SET_HOURS',
+				scheduleIndex,
+				setIndex,
+				data: newSet,
+			}),
+		)
 	}
 
 	let {open, close} = parseHours(set, moment())
@@ -221,11 +242,3 @@ const styles = StyleSheet.create({
 		marginHorizontal: 2,
 	},
 })
-
-export const NavigationKey = 'BuildingHoursProblemReportEditor'
-
-export const NavigationOptions: NativeStackNavigationOptions = {
-	title: 'Edit Schedule',
-	presentation: 'modal',
-	headerRight: () => <CloseScreenButton />,
-}
