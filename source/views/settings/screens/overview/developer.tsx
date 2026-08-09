@@ -2,23 +2,21 @@ import * as Sentry from '@sentry/react-native'
 import * as React from 'react'
 import {Alert} from 'react-native'
 import {Section} from '@expo/ui/swift-ui'
+import {useRouter} from 'expo-router'
 import {useIsDevMode} from '../../../../lib/use-is-dev-mode'
 import {ServerUrlSection} from './server-url'
-import {NavigationProp, useNavigation} from '@react-navigation/native'
-import {NavigationKey as DebugKey} from '../debug'
 import {ActionRow, NavigationRow} from '../../components/rows'
-import type {LegacyRootParamList} from '../../../../navigation/types'
 
 export const DeveloperSection = (): React.ReactElement => {
-	let navigation = useNavigation<NavigationProp<LegacyRootParamList>>()
+	let router = useRouter()
 	const isDev = useIsDevMode()
 
-	const onComponentsButton = () => navigation.navigate('ComponentLibrary')
-	const onAPIButton = () => navigation.navigate('APITest')
-	const onBonAppButton = () => navigation.navigate('BonAppPicker')
-	const onBannerBuilderButton = () => navigation.navigate('BannerBuilder')
-	const onDebugButton = () => navigation.navigate(DebugKey, {keyPath: ['Root']})
-	const onNetworkLoggerButton = () => navigation.navigate('NetworkLogger')
+	const onComponentsButton = () => router.push('/ComponentLibrary')
+	const onAPIButton = () => router.push('/APITest')
+	const onBonAppButton = () => router.push('/BonAppPicker')
+	const onBannerBuilderButton = () => router.push('/BannerBuilder')
+	const onDebugButton = () => router.push('/Debug')
+	const onNetworkLoggerButton = () => router.push('/NetworkLogger')
 	const sendSentryMessage = () => {
 		Sentry.captureMessage('A Sentry Message', {level: 'info'})
 		showSentryAlert()

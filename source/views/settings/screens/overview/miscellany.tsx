@@ -3,16 +3,15 @@ import {Section, Toggle} from '@expo/ui/swift-ui'
 import {trackedOpenUrl} from '@frogpond/open-url'
 import {GH_BASE_URL} from '../../../../lib/constants'
 import * as storage from '../../../../lib/storage'
-import {NavigationProp, useNavigation} from '@react-navigation/native'
+import {useRouter} from 'expo-router'
 import {ActionRow, NavigationRow} from '../../components/rows'
-import type {LegacyRootParamList} from '../../../../navigation/types'
 
 export let MiscellanySection = (): React.ReactNode => {
-	let navigation = useNavigation<NavigationProp<LegacyRootParamList>>()
+	let router = useRouter()
 
-	let onCreditsButton = () => navigation.navigate('Credits')
-	let onPrivacyButton = () => navigation.navigate('Privacy')
-	let onLegalButton = () => navigation.navigate('Legal')
+	let onCreditsButton = () => router.push('/Credits')
+	let onPrivacyButton = () => router.push('/Privacy')
+	let onLegalButton = () => router.push('/Legal')
 	let onSourceButton = () =>
 		trackedOpenUrl({url: GH_BASE_URL, id: 'ContributingView'})
 

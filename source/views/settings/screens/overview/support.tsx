@@ -5,12 +5,10 @@ import {sendEmail} from '../../../../components/send-email'
 import * as Application from 'expo-application'
 import * as Device from 'expo-device'
 import {refreshApp} from '../../../../lib/refresh'
-import type {NavigationProp} from '@react-navigation/native'
-import {useNavigation} from 'expo-router'
+import {useRouter} from 'expo-router'
 import {formatVersion} from './version'
 import {ActionRow, NavigationRow} from '../../components/rows'
 import {openReportProblem} from './report-problem/gate'
-import type {LegacyRootParamList} from '../../../../navigation/types'
 
 const getDeviceInfo = () => `
 
@@ -36,7 +34,7 @@ const getVersion = () =>
 	)
 
 export const SupportSection = (): React.ReactNode => {
-	let navigation = useNavigation<NavigationProp<LegacyRootParamList>>()
+	let router = useRouter()
 
 	let onResetButton = () => {
 		Alert.alert(
@@ -54,11 +52,11 @@ export const SupportSection = (): React.ReactNode => {
 	}
 
 	let onReportProblem = () =>
-		openReportProblem(() => navigation.navigate('ReportProblem'))
+		openReportProblem(() => router.push('/ReportProblem'))
 
 	return (
 		<Section title="Support">
-			<NavigationRow onPress={() => navigation.navigate('Faq')} title="FAQs" />
+			<NavigationRow onPress={() => router.push('/Faq')} title="FAQs" />
 			<ActionRow onPress={openEmail} title="Email Us" />
 			<NavigationRow onPress={onReportProblem} title="Report a Problem" />
 			<ActionRow onPress={onResetButton} title="Reset Everything" />
