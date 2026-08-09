@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {StyleSheet} from 'react-native'
+import {Alert, StyleSheet} from 'react-native'
 import {Form, Host, Section, TextField} from '@expo/ui/swift-ui'
 import {
 	autocorrectionDisabled,
@@ -25,12 +25,20 @@ export default function ReportProblemPage(): React.ReactNode {
 	let [email, setEmail] = React.useState('')
 
 	let submit = () => {
-		submitReport({
+		let submitted = submitReport({
 			message: message.trim(),
 			name: name.trim() || undefined,
 			email: email.trim() || undefined,
 		})
-		navigation.goBack()
+
+		if (submitted) {
+			navigation.goBack()
+		} else {
+			Alert.alert(
+				'Sentry is disabled',
+				'Problem reporting only works in production builds.',
+			)
+		}
 	}
 
 	return (
