@@ -65,6 +65,14 @@ function RootLayout(): React.ReactNode {
 											name="(home)"
 											options={{headerShown: false}}
 										/>
+										<Stack.Screen
+											name="(settings)"
+											options={{headerShown: false, presentation: 'modal'}}
+										/>
+										<Stack.Screen
+											name="(component-library)"
+											options={{headerShown: false, presentation: 'modal'}}
+										/>
 									</Stack>
 								</ThemeProvider>
 							</ActionSheetProvider>
