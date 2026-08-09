@@ -25,7 +25,6 @@ import * as settings from '../views/settings/'
 import * as streaming from '../views/streaming'
 import * as transportation from '../views/transportation'
 import {BusRouteDetail} from '../views/transportation/bus/detail'
-import * as stoprint from '../views/stoprint'
 import * as more from '../views/more'
 
 import {
@@ -198,23 +197,6 @@ const HomeStackScreens = () => {
 					component={sis.CourseDetailView}
 					name="CourseDetail"
 					options={sis.CourseSearchDetailNavigationOptions}
-				/>
-			</Stack.Group>
-			<Stack.Group>
-				<Stack.Screen
-					component={stoprint.PrintJobsView}
-					name="PrintJobs"
-					options={stoprint.PrintJobsNavigationOptions}
-				/>
-				<Stack.Screen
-					component={stoprint.PrinterListView}
-					name="PrinterList"
-					options={stoprint.PrinterListNavigationOptions}
-				/>
-				<Stack.Screen
-					component={stoprint.PrintJobReleaseView}
-					name="PrintJobRelease"
-					options={stoprint.PrintJobReleaseNavigationOptions}
 				/>
 			</Stack.Group>
 			<Stack.Group>

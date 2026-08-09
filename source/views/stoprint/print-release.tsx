@@ -14,13 +14,7 @@ import {
 	type PrintJob,
 } from '../../lib/stoprint'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
-import {
-	NavigationProp,
-	RouteProp,
-	useNavigation,
-	useRoute,
-} from '@react-navigation/native'
-import {LegacyRootParamList, RootStackParamList} from '../../navigation/types'
+import {useRouter} from 'expo-router'
 import {DebugNoticeButton} from '@frogpond/navigation-buttons'
 import {heldJobsOptions} from './query'
 import {credentialsOptions} from '../../lib/login'
@@ -79,11 +73,13 @@ function PrinterInformation({printer}: {printer: Printer}) {
 	)
 }
 
-export const PrintJobReleaseView = (): React.ReactNode => {
-	let navigation = useNavigation<NavigationProp<LegacyRootParamList>>()
+type Props = {
+	job: PrintJob
+	printer?: Printer
+}
 
-	let route = useRoute<RouteProp<RootStackParamList, 'PrintJobRelease'>>()
-	let {job, printer} = route.params
+export const PrintJobReleaseView = ({job, printer}: Props): React.ReactNode => {
+	let router = useRouter()
 
 	let {data: username = '', isLoading: loadingUsername} = useQuery({
 		...credentialsOptions,
@@ -97,8 +93,8 @@ export const PrintJobReleaseView = (): React.ReactNode => {
 	let heldJob = heldJobs.find((item) => item.id.startsWith(jobId))
 
 	const returnToJobsView = React.useCallback(() => {
-		navigation.navigate('PrintJobs')
-	}, [navigation])
+		router.push('/PrintJobs')
+	}, [router])
 
 	const releaseJob = useMutation({
 		mutationKey: ['printing', 'release', heldJob?.id],

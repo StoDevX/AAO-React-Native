@@ -18,7 +18,8 @@ import toPairs from 'lodash/toPairs'
 import sortBy from 'lodash/sortBy'
 import {getTimeRemaining} from './lib'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
-import {NavigationProp, useNavigation} from '@react-navigation/native'
+import type {NavigationProp} from '@react-navigation/native'
+import {useNavigation, useRouter} from 'expo-router'
 import {DebugNoticeButton} from '@frogpond/navigation-buttons'
 import {useMomentTimer} from '@frogpond/timer'
 import {printJobsOptions} from './query'
@@ -44,13 +45,15 @@ export const PrintJobsView = (): React.ReactNode => {
 	} = useQuery(printJobsOptions(username))
 
 	let navigation = useNavigation<NavigationProp<LegacyRootParamList>>()
+	let router = useRouter()
 	let openSettings = () => navigation.navigate('Settings')
 
 	let handleJobPress = (job: PrintJob) => {
+		let jobId = job.id.toString()
 		if (job.statusFormatted === 'Pending Release') {
-			navigation.navigate('PrinterList', {job: job})
+			router.push({pathname: '/PrintJobs/[jobId]/printers', params: {jobId}})
 		} else {
-			navigation.navigate('PrintJobRelease', {job: job})
+			router.push({pathname: '/PrintJobs/[jobId]/release', params: {jobId}})
 		}
 	}
 

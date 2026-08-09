@@ -39,8 +39,15 @@ straight through.
 
 **Settings button (decided by Wren):** `PrintJobsView`'s "Open Settings"
 button, shown in the not-logged-in empty state, keeps its existing
-`navigation.navigate('Settings')` call via `@react-navigation/native`'s
-`useNavigation()` — untouched, not swapped to expo-router. Settings itself
+`navigation.navigate('Settings')` call and behavior — untouched. The hook
+it comes from does change, though: `useNavigation` must be imported from
+`expo-router`, not as a runtime value from `@react-navigation/native`
+(that import alone trips Metro's SDK56+ react-navigation-incompatibility
+check — the same one the checkpoint-2 scaffold task already hit and
+fixed). `NavigationProp` stays a type-only import from
+`@react-navigation/native` — erased at compile time, so it never reaches
+that check — and expo-router's `useNavigation()` result is cast to it, so
+the call site and its behavior are identical to today. Settings itself
 hasn't been migrated (out of scope, a later checkpoint) and its old
 registration lives only in `source/navigation/routes.tsx`'s navigator,
 which is unmounted dead code since checkpoint 1 pointed the JS entry at
@@ -223,13 +230,25 @@ import {NavigationProp, useNavigation} from '@react-navigation/native'
 with:
 
 ```typescript
-import {NavigationProp, useNavigation} from '@react-navigation/native'
-import {useRouter} from 'expo-router'
+import type {NavigationProp} from '@react-navigation/native'
+import {useNavigation, useRouter} from 'expo-router'
 ```
 
-(the existing `@react-navigation/native` import for `openSettings` is kept
-exactly as-is — see the plan's "Settings button" section above. `useRouter`
-is added alongside it, not instead of it.)
+(`useNavigation` must come from `expo-router`, not `@react-navigation/native`
+— a runtime `import {useNavigation} from '@react-navigation/native'` trips
+Metro's SDK56+ "expo-router is no longer compatible with react-navigation"
+bundler check, the same failure the checkpoint-2 scaffold task already hit
+and fixed once. `NavigationProp` is kept as a **type-only** import — type
+imports are erased at compile time, so they never reach Metro's runtime
+scan; only value imports of `@react-navigation/native` do. expo-router's
+`useNavigation` is itself generic (`useNavigation<T = ...>()`), so it
+takes the same `<NavigationProp<LegacyRootParamList>>` type argument the
+`@react-navigation/native` version did — no cast needed, and
+`@typescript-eslint/no-unnecessary-type-assertion` would reject an `as`
+cast here since the type argument alone already narrows the return type.
+This preserves the exact `.navigate('Settings')` call this plan's
+"Settings button" section requires, without a runtime react-navigation
+import.)
 
 Replace:
 
