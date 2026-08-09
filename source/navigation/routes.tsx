@@ -16,7 +16,6 @@ import {
 import * as news from '../views/news'
 import * as reddit from '../views/reddit'
 import * as settings from '../views/settings/'
-import * as streaming from '../views/streaming'
 import * as transportation from '../views/transportation'
 import {BusRouteDetail} from '../views/transportation/bus/detail'
 import * as more from '../views/more'
@@ -90,23 +89,6 @@ const HomeStackScreens = () => {
 					options={({route}) => ({
 						title: `${route.params.line.line} Schedule`,
 					})}
-				/>
-			</Stack.Group>
-			<Stack.Group>
-				<Stack.Screen
-					component={streaming.View}
-					name={streaming.NavigationKey}
-					options={streaming.NavigationOptions}
-				/>
-				<Stack.Screen
-					component={streaming.KSTOScheduleView}
-					name="KSTOSchedule"
-					options={streaming.KSTOScheduleNavigationOptions}
-				/>
-				<Stack.Screen
-					component={streaming.KRLXScheduleView}
-					name="KRLXSchedule"
-					options={streaming.KRLXScheduleNavigationOptions}
 				/>
 			</Stack.Group>
 			<Stack.Group>

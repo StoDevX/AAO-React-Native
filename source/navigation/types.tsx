@@ -7,7 +7,6 @@ import * as calendar from '../views/calendar'
 import * as news from '../views/news'
 import * as reddit from '../views/reddit'
 import * as sis from '../views/sis'
-import * as streaming from '../views/streaming'
 import * as transportation from '../views/transportation'
 import * as debug from '../views/settings/screens/debug'
 import * as buildingHours from '../views/building-hours'
@@ -42,7 +41,7 @@ export type RootViewsParamList = {
 	[news.NavigationKey]: undefined
 	[reddit.NavigationKey]: reddit.NavigationParams
 	[sis.NavigationKey]: undefined
-	[streaming.NavigationKey]: undefined
+	'Streaming Media': undefined
 	[transportation.NavigationKey]: undefined
 	BuildingHours: undefined
 	Contacts: undefined

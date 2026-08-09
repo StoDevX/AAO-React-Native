@@ -11,6 +11,7 @@ import '../source/init/theme'
 import {queryClient, persister} from '../source/init/tanstack-query'
 
 import * as React from 'react'
+import {GestureHandlerRootView} from 'react-native-gesture-handler'
 import {PersistGate} from 'redux-persist/integration/react'
 import {Provider as ReduxProvider} from 'react-redux'
 import {Provider as PaperProvider} from 'react-native-paper'
@@ -24,7 +25,7 @@ import * as Sentry from '@sentry/react-native'
 
 import {LoadingView} from '@frogpond/notice'
 import {IS_PRODUCTION} from '@frogpond/constants'
-import {StatusBar, useColorScheme} from 'react-native'
+import {StatusBar, StyleSheet, useColorScheme} from 'react-native'
 
 function RootLayout(): React.ReactNode {
 	const scheme = useColorScheme()
@@ -45,29 +46,40 @@ function RootLayout(): React.ReactNode {
 	}, [])
 
 	return (
-		<ReduxProvider store={store}>
-			<PersistGate
-				loading={<LoadingView text="Loading App..." />}
-				persistor={persistor}
-			>
-				<PersistQueryClientProvider
-					client={queryClient}
-					persistOptions={{persister}}
+		<GestureHandlerRootView style={styles.root}>
+			<ReduxProvider store={store}>
+				<PersistGate
+					loading={<LoadingView text="Loading App..." />}
+					persistor={persistor}
 				>
-					<PaperProvider theme={theme}>
-						<ActionSheetProvider>
-							<ThemeProvider value={theme}>
-								<StatusBar barStyle={statusBarStyle} />
-								<Stack>
-									<Stack.Screen name="(home)" options={{headerShown: false}} />
-								</Stack>
-							</ThemeProvider>
-						</ActionSheetProvider>
-					</PaperProvider>
-				</PersistQueryClientProvider>
-			</PersistGate>
-		</ReduxProvider>
+					<PersistQueryClientProvider
+						client={queryClient}
+						persistOptions={{persister}}
+					>
+						<PaperProvider theme={theme}>
+							<ActionSheetProvider>
+								<ThemeProvider value={theme}>
+									<StatusBar barStyle={statusBarStyle} />
+									<Stack>
+										<Stack.Screen
+											name="(home)"
+											options={{headerShown: false}}
+										/>
+									</Stack>
+								</ThemeProvider>
+							</ActionSheetProvider>
+						</PaperProvider>
+					</PersistQueryClientProvider>
+				</PersistGate>
+			</ReduxProvider>
+		</GestureHandlerRootView>
 	)
 }
+
+const styles = StyleSheet.create({
+	root: {
+		flex: 1,
+	},
+})
 
 export default Sentry.wrap(RootLayout)
