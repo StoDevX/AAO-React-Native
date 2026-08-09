@@ -15,6 +15,11 @@ function install() {
 		tracesSampleRate: 0.2,
 		profilesSampleRate: 0.1,
 		enableMetricKit: true,
+		enableUserInteractionTracing: true,
+
+		attachScreenshot: true,
+		attachViewHierarchy: true,
+		enableCaptureFailedRequests: true,
 
 		tracePropagationTargets: ['localhost', 'frogpond.tech', /^\//u],
 
