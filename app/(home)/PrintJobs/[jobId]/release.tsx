@@ -2,10 +2,7 @@ import * as React from 'react'
 import {Stack, useLocalSearchParams} from 'expo-router'
 import {useQuery} from '@tanstack/react-query'
 
-import {
-	PrintJobReleaseView,
-	PrintJobReleaseNavigationOptions,
-} from '../../../../source/views/stoprint'
+import {PrintJobReleaseView} from '../../../../source/views/stoprint'
 import {
 	jobByIdOptions,
 	printerByNameOptions,
@@ -38,15 +35,7 @@ export default function PrintJobReleasePage(): React.ReactNode {
 		refetch: printerRefetch,
 	} = useQuery(printerByNameOptions(username, printerName))
 
-	let screen = (
-		<Stack.Screen
-			options={
-				PrintJobReleaseNavigationOptions as React.ComponentProps<
-					typeof Stack.Screen
-				>['options']
-			}
-		/>
-	)
+	let screen = <Stack.Title>Release job</Stack.Title>
 
 	if (credentialsLoading || jobLoading || printerLoading) {
 		return (

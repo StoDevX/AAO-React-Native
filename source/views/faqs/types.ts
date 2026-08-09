@@ -1,24 +1,26 @@
-import type {
-	RootViewsParamList,
-	SettingsStackParamList,
-} from '../../navigation/types'
+// import type {
+// 	RootViewsParamList,
+// 	SettingsStackParamList,
+// } from '../../navigation/types'
 
-export type FaqTarget = keyof (RootViewsParamList & SettingsStackParamList)
+// export type FaqTarget = keyof (RootViewsParamList & SettingsStackParamList)
+
+export type FaqTarget = 'Home' | 'SIS' | 'SettingsRoot'
 
 /** Canonical list of screens that support FAQ banners. Type-checked against FaqTarget. */
 export const FAQ_TARGET_SCREENS: FaqTarget[] = [
-	'Home',
-	'SIS',
-	'SettingsRoot',
-	'Faq',
-	'BuildingHours',
-	'Contacts',
-	'CourseSearch',
-	'Dictionary',
-	'Directory',
-	'PrintJobs',
-	'StudentOrgs',
-	'More',
+	// 'Home',
+	// 'SIS',
+	// 'SettingsRoot',
+	// 'Faq',
+	// 'BuildingHours',
+	// 'Contacts',
+	// 'CourseSearch',
+	// 'Dictionary',
+	// 'Directory',
+	// 'PrintJobs',
+	// 'StudentOrgs',
+	// 'More',
 ] satisfies FaqTarget[]
 
 export type FaqSeverity = 'notice' | 'info' | 'alert'

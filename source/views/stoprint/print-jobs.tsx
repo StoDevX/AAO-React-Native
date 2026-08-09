@@ -17,15 +17,11 @@ import groupBy from 'lodash/groupBy'
 import toPairs from 'lodash/toPairs'
 import sortBy from 'lodash/sortBy'
 import {getTimeRemaining} from './lib'
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
-import type {NavigationProp} from '@react-navigation/native'
-import {useNavigation, useRouter} from 'expo-router'
-import {DebugNoticeButton} from '@frogpond/navigation-buttons'
+import {useRouter} from 'expo-router'
 import {useMomentTimer} from '@frogpond/timer'
 import {printJobsOptions} from './query'
 import {credentialsOptions} from '../../lib/login'
 import {useQuery} from '@tanstack/react-query'
-import type {LegacyRootParamList} from '../../navigation/types'
 
 export const PrintJobsView = (): React.ReactNode => {
 	let {now} = useMomentTimer({intervalMs: 60000, timezone: timezone()})
@@ -44,9 +40,8 @@ export const PrintJobsView = (): React.ReactNode => {
 		isRefetching: jobsRefetching,
 	} = useQuery(printJobsOptions(username))
 
-	let navigation = useNavigation<NavigationProp<LegacyRootParamList>>()
 	let router = useRouter()
-	let openSettings = () => navigation.navigate('Settings')
+	let openSettings = () => router.push('/SettingsRoot')
 
 	let handleJobPress = (job: PrintJob) => {
 		let jobId = job.id.toString()
@@ -136,9 +131,4 @@ export const PrintJobsView = (): React.ReactNode => {
 			sections={sortedGroupedJobs}
 		/>
 	)
-}
-
-export const NavigationOptions: NativeStackNavigationOptions = {
-	title: 'Print Jobs',
-	headerRight: () => <DebugNoticeButton shouldShow={isStoprintMocked} />,
 }

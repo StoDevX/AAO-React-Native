@@ -97,9 +97,6 @@ importers:
       '@frogpond/markdown':
         specifier: workspace:*
         version: link:modules/markdown
-      '@frogpond/navigation-buttons':
-        specifier: workspace:*
-        version: link:modules/navigation-buttons
       '@frogpond/notice':
         specifier: workspace:*
         version: link:modules/notice
@@ -148,18 +145,6 @@ importers:
       '@react-native-vector-icons/material-design-icons':
         specifier: 13.1.0
         version: 13.1.0(@expo/config-plugins@57.0.7)(@react-native/assets-registry@0.86.2)(expo-font@57.0.1)(react-native@0.86.2)(react@19.2.3)
-      '@react-navigation/bottom-tabs':
-        specifier: 7.18.13
-        version: 7.18.13(@react-native-masked-view/masked-view@0.3.2)(@react-navigation/native@7.3.13)(react-native-safe-area-context@5.7.0)(react-native-screens@4.26.2)(react-native@0.86.2)(react@19.2.3)
-      '@react-navigation/core':
-        specifier: 7.21.10
-        version: 7.21.10(react@19.2.3)
-      '@react-navigation/native':
-        specifier: 7.3.13
-        version: 7.3.13(react-native@0.86.2)(react@19.2.3)
-      '@react-navigation/native-stack':
-        specifier: 7.18.5
-        version: 7.18.5(@react-native-masked-view/masked-view@0.3.2)(@react-navigation/native@7.3.13)(react-native-safe-area-context@5.7.0)(react-native-screens@4.26.2)(react-native@0.86.2)(react@19.2.3)
       '@reduxjs/toolkit':
         specifier: 2.11.2
         version: 2.11.2(react-redux@9.2.0)(react@19.2.3)
@@ -569,9 +554,6 @@ importers:
       '@frogpond/notice':
         specifier: workspace:*
         version: link:../notice
-      '@react-navigation/native':
-        specifier: ^7.3.13
-        version: 7.3.13(react-native@0.86.2)(react@19.2.3)
       delay:
         specifier: ^7.0.0
         version: 7.0.0
@@ -631,9 +613,6 @@ importers:
       '@frogpond/lists':
         specifier: workspace:*
         version: link:../lists
-      '@frogpond/navigation-buttons':
-        specifier: workspace:*
-        version: link:../navigation-buttons
       '@frogpond/notice':
         specifier: workspace:*
         version: link:../notice
@@ -742,9 +721,6 @@ importers:
       '@react-native-vector-icons/ionicons':
         specifier: ^13.1.0
         version: 13.1.0(@expo/config-plugins@57.0.7)(@react-native/assets-registry@0.86.2)(expo-font@57.0.1)(react-native@0.86.2)(react@19.2.3)
-      '@react-navigation/native':
-        specifier: ^7.3.13
-        version: 7.3.13(react-native@0.86.2)(react@19.2.3)
       lodash:
         specifier: 4.18.1
         version: 4.18.1
@@ -880,24 +856,6 @@ importers:
       react-native-enriched-markdown:
         specifier: 0.7.4
         version: 0.7.4(@expo/config-plugins@57.0.7)(react-native@0.86.2)(react@19.2.3)
-
-  modules/navigation-buttons:
-    dependencies:
-      '@frogpond/app-theme':
-        specifier: workspace:*
-        version: link:../app-theme
-      '@react-native-vector-icons/ionicons':
-        specifier: ^13.1.0
-        version: 13.1.0(@expo/config-plugins@57.0.7)(@react-native/assets-registry@0.86.2)(expo-font@57.0.1)(react-native@0.86.2)(react@19.2.3)
-      '@react-navigation/native':
-        specifier: ^7.3.13
-        version: 7.3.13(react-native@0.86.2)(react@19.2.3)
-      react:
-        specifier: ^19.1.0
-        version: 19.2.3
-      react-native:
-        specifier: ^0.86.0
-        version: 0.86.2(patch_hash=6ca2e1225f38672b073b92b9d13f24feebbe9e37ba67708a3f1569275ce99191)(@babel/core@7.29.7)(@react-native/jest-preset@0.86.2)(@react-native/metro-config@0.86.2)(@types/react@19.2.14)(react@19.2.3)(supports-color@8.1.1)
 
   modules/notice:
     dependencies:
@@ -2241,50 +2199,6 @@ packages:
     peerDependenciesMeta:
       '@types/react':
         optional: true
-
-  '@react-navigation/bottom-tabs@7.18.13':
-    resolution: {integrity: sha512-jXtBUvYCmboyQLR6BbftStgJyiWhZLUA1+6oY4oyBuMd57g5yqwh/GVvAyCALph+HGBkZsP2by+Q6VFE3U6TUA==}
-    peerDependencies:
-      '@react-navigation/native': ^7.3.13
-      react: '>= 18.2.0'
-      react-native: '*'
-      react-native-safe-area-context: '>= 4.0.0'
-      react-native-screens: '>= 4.0.0'
-
-  '@react-navigation/core@7.21.10':
-    resolution: {integrity: sha512-nDZsbhUnGT0rjfBSWqsWHjN9pA9qSH/O9CgiSDe9XgS/EcprS6KD5+sxpYbvh17BBiQs7Kls/VnEa4042fMtHw==}
-    peerDependencies:
-      react: '>= 18.2.0'
-
-  '@react-navigation/elements@2.9.36':
-    resolution: {integrity: sha512-+10x9s5v2Q7FwAYdSmPMgILtxZyC5e4hWJQu8g5o3u4p8DUToTBmGvys/UvmEr+h9xmm0Go42qw9Ff2ape53kQ==}
-    peerDependencies:
-      '@react-native-masked-view/masked-view': '>= 0.2.0'
-      '@react-navigation/native': ^7.3.14
-      react: '>= 18.2.0'
-      react-native: '*'
-      react-native-safe-area-context: '>= 4.0.0'
-    peerDependenciesMeta:
-      '@react-native-masked-view/masked-view':
-        optional: true
-
-  '@react-navigation/native-stack@7.18.5':
-    resolution: {integrity: sha512-zrmcOm8437zt5gMdqYjFXnM5axsTFEh63vVWdqhZZdfc9M1FkVrEXmrUjGYNLoAxxuBiw+jpvoYWTqyvJWILyA==}
-    peerDependencies:
-      '@react-navigation/native': ^7.3.13
-      react: '>= 18.2.0'
-      react-native: '*'
-      react-native-safe-area-context: '>= 4.0.0'
-      react-native-screens: '>= 4.0.0'
-
-  '@react-navigation/native@7.3.13':
-    resolution: {integrity: sha512-eiNUieNCJxCdHSVBUJWwoACspqlUGULHj36Z8CQRlymwPxOD8fXA23vXAqdWJ6VT3MmVh7akLLPvs9aKMArgxg==}
-    peerDependencies:
-      react: '>= 18.2.0'
-      react-native: '*'
-
-  '@react-navigation/routers@7.6.4':
-    resolution: {integrity: sha512-GI7eJm8/KsZUQaYcXvEExikKurRZRgEsSzyZ7faENfi65yqJBCXjDMwyN1pF6pNW1MoLH1ErDwDivFxY6BzD3w==}
 
   '@reduxjs/toolkit@2.11.2':
     resolution: {integrity: sha512-Kd6kAHTA6/nUpp8mySPqj3en3dm0tdMIgbttnQ1xFMVpufoj+ADi8pXLBsd4xzTRHQa7t/Jv8W5UnCuW4kuWMQ==}
@@ -5431,11 +5345,6 @@ packages:
   standard-navigation@0.0.5:
     resolution: {integrity: sha512-YAmzwAiiQVocZxO/VGPFiQHcu5pKiz09QIGC0MK6aRMoa3E0QkoTQgcqJr7ZZ3OMiNhu4DkaGElFI5htjOIDbw==}
 
-  standard-navigation@0.0.8:
-    resolution: {integrity: sha512-TyVbo7INUDWtsUWDFn8RR7kwR87U0S4xHfLfbbnyeC581TmmyqQ+eM+nPw8rQTSD8QitRVcYfPaSHr/QJiUy1g==}
-    peerDependencies:
-      react: '*'
-
   statuses@1.5.0:
     resolution: {integrity: sha512-OpZ3zP+jT1PI7I8nemJX4AKmAX070ZkYPVWV/AaKTJl+tXCTGyVdC1a4SL8RUQYEwk/f34ZX8UTykN68FwrqAA==}
     engines: {node: '>= 0.6'}
@@ -7597,72 +7506,6 @@ snapshots:
       react-native: 0.86.2(patch_hash=6ca2e1225f38672b073b92b9d13f24feebbe9e37ba67708a3f1569275ce99191)(@babel/core@7.29.7)(@react-native/jest-preset@0.86.2)(@react-native/metro-config@0.86.2)(@types/react@19.2.14)(react@19.2.3)(supports-color@8.1.1)
     optionalDependencies:
       '@types/react': 19.2.14
-
-  '@react-navigation/bottom-tabs@7.18.13(@react-native-masked-view/masked-view@0.3.2)(@react-navigation/native@7.3.13)(react-native-safe-area-context@5.7.0)(react-native-screens@4.26.2)(react-native@0.86.2)(react@19.2.3)':
-    dependencies:
-      '@react-navigation/elements': 2.9.36(@react-native-masked-view/masked-view@0.3.2)(@react-navigation/native@7.3.13)(react-native-safe-area-context@5.7.0)(react-native@0.86.2)(react@19.2.3)
-      '@react-navigation/native': 7.3.13(react-native@0.86.2)(react@19.2.3)
-      color: 4.2.3
-      react: 19.2.3
-      react-native: 0.86.2(patch_hash=6ca2e1225f38672b073b92b9d13f24feebbe9e37ba67708a3f1569275ce99191)(@babel/core@7.29.7)(@react-native/jest-preset@0.86.2)(@react-native/metro-config@0.86.2)(@types/react@19.2.14)(react@19.2.3)(supports-color@8.1.1)
-      react-native-safe-area-context: 5.7.0(react-native@0.86.2)(react@19.2.3)
-      react-native-screens: 4.26.2(react-native@0.86.2)(react@19.2.3)
-      sf-symbols-typescript: 2.2.0
-    transitivePeerDependencies:
-      - '@react-native-masked-view/masked-view'
-
-  '@react-navigation/core@7.21.10(react@19.2.3)':
-    dependencies:
-      '@react-navigation/routers': 7.6.4
-      escape-string-regexp: 4.0.0
-      fast-deep-equal: 3.1.3
-      nanoid: 3.3.17
-      query-string: 7.1.3
-      react: 19.2.3
-      react-is: 19.2.8
-      use-latest-callback: 0.2.6(react@19.2.3)
-      use-sync-external-store: 1.6.0(react@19.2.3)
-
-  '@react-navigation/elements@2.9.36(@react-native-masked-view/masked-view@0.3.2)(@react-navigation/native@7.3.13)(react-native-safe-area-context@5.7.0)(react-native@0.86.2)(react@19.2.3)':
-    dependencies:
-      '@react-navigation/native': 7.3.13(react-native@0.86.2)(react@19.2.3)
-      color: 4.2.3
-      react: 19.2.3
-      react-native: 0.86.2(patch_hash=6ca2e1225f38672b073b92b9d13f24feebbe9e37ba67708a3f1569275ce99191)(@babel/core@7.29.7)(@react-native/jest-preset@0.86.2)(@react-native/metro-config@0.86.2)(@types/react@19.2.14)(react@19.2.3)(supports-color@8.1.1)
-      react-native-safe-area-context: 5.7.0(react-native@0.86.2)(react@19.2.3)
-      use-latest-callback: 0.2.6(react@19.2.3)
-      use-sync-external-store: 1.6.0(react@19.2.3)
-    optionalDependencies:
-      '@react-native-masked-view/masked-view': 0.3.2(react-native@0.86.2)(react@19.2.3)
-
-  '@react-navigation/native-stack@7.18.5(@react-native-masked-view/masked-view@0.3.2)(@react-navigation/native@7.3.13)(react-native-safe-area-context@5.7.0)(react-native-screens@4.26.2)(react-native@0.86.2)(react@19.2.3)':
-    dependencies:
-      '@react-navigation/elements': 2.9.36(@react-native-masked-view/masked-view@0.3.2)(@react-navigation/native@7.3.13)(react-native-safe-area-context@5.7.0)(react-native@0.86.2)(react@19.2.3)
-      '@react-navigation/native': 7.3.13(react-native@0.86.2)(react@19.2.3)
-      color: 4.2.3
-      react: 19.2.3
-      react-native: 0.86.2(patch_hash=6ca2e1225f38672b073b92b9d13f24feebbe9e37ba67708a3f1569275ce99191)(@babel/core@7.29.7)(@react-native/jest-preset@0.86.2)(@react-native/metro-config@0.86.2)(@types/react@19.2.14)(react@19.2.3)(supports-color@8.1.1)
-      react-native-safe-area-context: 5.7.0(react-native@0.86.2)(react@19.2.3)
-      react-native-screens: 4.26.2(react-native@0.86.2)(react@19.2.3)
-      sf-symbols-typescript: 2.2.0
-      warn-once: 0.1.1
-    transitivePeerDependencies:
-      - '@react-native-masked-view/masked-view'
-
-  '@react-navigation/native@7.3.13(react-native@0.86.2)(react@19.2.3)':
-    dependencies:
-      '@react-navigation/core': 7.21.10(react@19.2.3)
-      escape-string-regexp: 4.0.0
-      fast-deep-equal: 3.1.3
-      nanoid: 3.3.17
-      react: 19.2.3
-      react-native: 0.86.2(patch_hash=6ca2e1225f38672b073b92b9d13f24feebbe9e37ba67708a3f1569275ce99191)(@babel/core@7.29.7)(@react-native/jest-preset@0.86.2)(@react-native/metro-config@0.86.2)(@types/react@19.2.14)(react@19.2.3)(supports-color@8.1.1)
-      standard-navigation: 0.0.8(react@19.2.3)
-      use-latest-callback: 0.2.6(react@19.2.3)
-
-  '@react-navigation/routers@7.6.4':
-    dependencies:
-      nanoid: 3.3.17
 
   '@reduxjs/toolkit@2.11.2(react-redux@9.2.0)(react@19.2.3)':
     dependencies:
@@ -11372,10 +11215,6 @@ snapshots:
       type-fest: 0.7.1
 
   standard-navigation@0.0.5: {}
-
-  standard-navigation@0.0.8(react@19.2.3):
-    dependencies:
-      react: 19.2.3
 
   statuses@1.5.0: {}
 

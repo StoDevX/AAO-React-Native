@@ -1,12 +1,11 @@
 import * as c from '@frogpond/colors'
 import {LoadingView, NoticeView} from '@frogpond/notice'
-import {SearchButton} from '@frogpond/navigation-buttons'
-import {useNavigation, useRouter} from 'expo-router'
+import {Stack, useRouter} from 'expo-router'
 import {debounce} from 'lodash'
-import * as React from 'react'
+import React, {useEffect} from 'react'
+import {useMemo} from 'react'
 import {ScrollView, StyleSheet, View} from 'react-native'
-import {ChangeTextEvent} from '../../../navigation/types'
-import {useAppSelector} from '../../../redux'
+import {useAppSelector} from '../../../redux/hooks'
 import {
 	selectRecentFilters,
 	selectRecentSearches,
@@ -24,12 +23,7 @@ export const NavigationOptions = {
 	title: 'Course Catalog',
 }
 
-const RightButton: React.FC<{onPress: () => void}> = ({onPress}) => (
-	<SearchButton onPress={onPress} title="Browse" />
-)
-
 export const CourseSearchView = (): React.ReactNode => {
-	let navigation = useNavigation()
 	let router = useRouter()
 
 	let {isLoading, error, refetch} = useFilters()
@@ -38,29 +32,6 @@ export const CourseSearchView = (): React.ReactNode => {
 	let recentSearches = useAppSelector(selectRecentSearches)
 
 	let [typedQuery, setTypedQuery] = React.useState('')
-
-	React.useLayoutEffect(() => {
-		const getRightButton = () => (
-			<RightButton
-				onPress={() =>
-					router.push({
-						pathname: '/CourseSearchResults',
-						params: {initialQuery: ''},
-					})
-				}
-			/>
-		)
-
-		navigation.setOptions({
-			headerRight: getRightButton,
-			headerSearchBarOptions: {
-				barTintColor: c.quaternarySystemFill,
-				onChangeText: (event: ChangeTextEvent) => {
-					setTypedQuery(event.nativeEvent.text)
-				},
-			},
-		})
-	}, [navigation, router, typedQuery])
 
 	let showSearchResult = React.useCallback(
 		(query: string) => {
@@ -72,20 +43,13 @@ export const CourseSearchView = (): React.ReactNode => {
 		[router],
 	)
 
-	React.useEffect(() => {
-		_debounce(typedQuery, () => {
-			showSearchResult(typedQuery)
-		})
+	useEffect(() => {
+		_debounce(typedQuery, () => showSearchResult(typedQuery))
 	}, [showSearchResult, typedQuery])
 
-	let onRecentFilterPress = React.useCallback(
-		(text: string) => {
-			router.push({
-				pathname: '/CourseSearchResults',
-				params: {filterDescription: text},
-			})
-		},
-		[router],
+	let recentFilterDescriptions = useMemo(
+		() => recentFilters.map((f) => f.description),
+		[recentFilters],
 	)
 
 	if (isLoading) {
@@ -102,32 +66,47 @@ export const CourseSearchView = (): React.ReactNode => {
 		)
 	}
 
-	let recentFilterDescriptions = recentFilters.map((f) => f.description)
-
 	return (
-		<View style={[styles.container, styles.common]}>
-			<ScrollView
-				// needed for handling native searchbar alignment
-				contentInsetAdjustmentBehavior="automatic"
-				keyboardDismissMode="interactive"
-				style={[styles.common, styles.bottomContainer]}
-			>
-				<RecentItemsList
-					emptyHeader="No recent searches"
-					emptyText="Your recent searches will appear here."
-					items={recentSearches}
-					onItemPress={showSearchResult}
-					title="Recent"
-				/>
-				<RecentItemsList
-					emptyHeader="No recent filter combinations"
-					emptyText="Your recent filter combinations will appear here."
-					items={recentFilterDescriptions}
-					onItemPress={onRecentFilterPress}
-					title="Browse"
-				/>
-			</ScrollView>
-		</View>
+		<>
+			<Stack.Toolbar placement="bottom">
+				<Stack.Toolbar.SearchBarSlot />
+			</Stack.Toolbar>
+
+			<Stack.SearchBar
+				onChangeText={(event) => {
+					setTypedQuery(event.nativeEvent.text)
+				}}
+			/>
+
+			<View style={[styles.container, styles.common]}>
+				<ScrollView
+					// needed for handling native searchbar alignment
+					contentInsetAdjustmentBehavior="automatic"
+					keyboardDismissMode="interactive"
+					style={[styles.common, styles.bottomContainer]}
+				>
+					<RecentItemsList
+						emptyHeader="No recent searches"
+						emptyText="Your recent searches will appear here."
+						items={recentSearches}
+						onItemPress={showSearchResult}
+						title="Recent"
+					/>
+					<RecentItemsList
+						emptyHeader="No recent filter combinations"
+						emptyText="Your recent filter combinations will appear here."
+						items={recentFilterDescriptions}
+						onItemPress={(text) => {
+							router.push({
+								pathname: '/CourseSearchResults',
+								params: {filterDescription: text},
+							})
+						}}
+						title="Browse"
+					/>
+				</ScrollView>
+			</View>
+		</>
 	)
 }
 

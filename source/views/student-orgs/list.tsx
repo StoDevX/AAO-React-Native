@@ -18,10 +18,8 @@ import words from 'lodash/words'
 import deburr from 'lodash/deburr'
 import type {StudentOrgType} from './types'
 import {useDebounce} from '@frogpond/use-debounce'
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
-import {useNavigation, useRouter} from 'expo-router'
+import {Stack, useRouter} from 'expo-router'
 import memoize from 'lodash/memoize'
-import {ChangeTextEvent} from '../../navigation/types'
 import {studentOrgsOptions} from './query'
 import {useQuery} from '@tanstack/react-query'
 
@@ -48,7 +46,6 @@ const styles = StyleSheet.create({
 })
 
 function StudentOrgsView(): React.ReactNode {
-	let navigation = useNavigation()
 	let router = useRouter()
 
 	let [query, setQuery] = React.useState('')
@@ -62,16 +59,6 @@ function StudentOrgsView(): React.ReactNode {
 		isRefetching,
 		isLoading,
 	} = useQuery(studentOrgsOptions)
-
-	React.useLayoutEffect(() => {
-		navigation.setOptions({
-			headerSearchBarOptions: {
-				barTintColor: c.systemFill,
-				onChangeText: (event: ChangeTextEvent) =>
-					setQuery(event.nativeEvent.text),
-			},
-		})
-	}, [navigation])
 
 	let results = React.useMemo(() => {
 		if (!orgs) {
@@ -113,44 +100,48 @@ function StudentOrgsView(): React.ReactNode {
 	}
 
 	return (
-		<SectionList
-			ItemSeparatorComponent={ListSeparator}
-			ListEmptyComponent={
-				searchQuery ? (
-					<NoticeView text={`No results found for "${searchQuery}"`} />
-				) : isLoading ? (
-					<LoadingView />
-				) : (
-					<NoticeView text="No organizations found." />
-				)
-			}
-			contentContainerStyle={styles.contentContainer}
-			contentInsetAdjustmentBehavior="automatic"
-			keyExtractor={(item) => item.name + item.category}
-			keyboardDismissMode="on-drag"
-			keyboardShouldPersistTaps="never"
-			onRefresh={refetch}
-			refreshing={isRefetching}
-			renderItem={({item}) => (
-				<ListRow arrowPosition="top" onPress={() => onPressOrg(item)}>
-					<Column flex={1}>
-						<Title lines={1}>{item.name}</Title>
-						<Detail lines={1}>{item.category}</Detail>
-					</Column>
-				</ListRow>
-			)}
-			renderSectionHeader={({section: {title}}) => (
-				<ListSectionHeader title={title} />
-			)}
-			sections={grouped}
-			style={styles.wrapper}
-			{...largeListProps}
-		/>
+		<>
+			<Stack.Toolbar placement="bottom">
+				<Stack.Toolbar.SearchBarSlot />
+			</Stack.Toolbar>
+
+			<Stack.SearchBar onChangeText={(ev) => setQuery(ev.nativeEvent.text)} />
+
+			<SectionList
+				ItemSeparatorComponent={ListSeparator}
+				ListEmptyComponent={
+					searchQuery ? (
+						<NoticeView text={`No results found for "${searchQuery}"`} />
+					) : isLoading ? (
+						<LoadingView />
+					) : (
+						<NoticeView text="No organizations found." />
+					)
+				}
+				contentContainerStyle={styles.contentContainer}
+				contentInsetAdjustmentBehavior="automatic"
+				keyExtractor={(item) => item.name + item.category}
+				keyboardDismissMode="on-drag"
+				keyboardShouldPersistTaps="never"
+				onRefresh={refetch}
+				refreshing={isRefetching}
+				renderItem={({item}) => (
+					<ListRow arrowPosition="top" onPress={() => onPressOrg(item)}>
+						<Column flex={1}>
+							<Title lines={1}>{item.name}</Title>
+							<Detail lines={1}>{item.category}</Detail>
+						</Column>
+					</ListRow>
+				)}
+				renderSectionHeader={({section: {title}}) => (
+					<ListSectionHeader title={title} />
+				)}
+				sections={grouped}
+				style={styles.wrapper}
+				{...largeListProps}
+			/>
+		</>
 	)
 }
 
 export {StudentOrgsView as View}
-
-export const NavigationOptions: NativeStackNavigationOptions = {
-	title: 'Student Orgs',
-}

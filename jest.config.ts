@@ -6,7 +6,6 @@ const esmPackages = [
 	'@react-native',
 	'@frogpond',
 	'glamorous-native',
-	'react-navigation',
 	'@reduxjs/toolkit',
 	'immer',
 	'redux',

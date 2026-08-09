@@ -4,7 +4,6 @@ import {Row} from '@frogpond/layout'
 import {ListRow, ListSeparator, Title} from '@frogpond/lists'
 import {BonAppHostedMenu} from './menu-bonapp'
 import {useRouter} from 'expo-router'
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 
 export const CarletonBurtonMenuScreen = (): React.ReactNode => (
 	<BonAppHostedMenu
@@ -77,19 +76,3 @@ const styles = StyleSheet.create({
 		paddingTop: Platform.OS === 'ios' ? 20 : 0,
 	},
 })
-
-export const BurtonNavigationOptions: NativeStackNavigationOptions = {
-	title: 'Burton',
-}
-
-export const LDCNavigationOptions: NativeStackNavigationOptions = {
-	title: 'LDC',
-}
-
-export const WeitzNavigationOptions: NativeStackNavigationOptions = {
-	title: 'Weitz Center',
-}
-
-export const SaylesNavigationOptions: NativeStackNavigationOptions = {
-	title: 'Sayles Hill',
-}

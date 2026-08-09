@@ -1,7 +1,6 @@
 import * as React from 'react'
 import {Stack, useLocalSearchParams} from 'expo-router'
 import {useQuery} from '@tanstack/react-query'
-import {ShareButton} from '@frogpond/navigation-buttons'
 
 import {JobDetailView} from '../../source/views/sis/student-work/detail'
 import {jobByIdOptions} from '../../source/views/sis/student-work/query'
@@ -14,33 +13,48 @@ export default function JobDetailPage(): React.ReactNode {
 	let {data: job, isLoading, error, refetch} = useQuery(jobByIdOptions(jobId))
 
 	if (isLoading) {
-		return <LoadingView />
+		return (
+			<>
+				<Stack.Title>Loading…</Stack.Title>
+				<LoadingView />
+			</>
+		)
 	}
 
 	if (error) {
 		return (
-			<NoticeView
-				buttonText="Try Again"
-				onPress={refetch}
-				text={`A problem occured while loading: ${
-					error instanceof Error ? error.message : 'Unknown error'
-				}`}
-			/>
+			<>
+				<Stack.Title>Error</Stack.Title>
+				<NoticeView
+					buttonText="Try Again"
+					onPress={refetch}
+					text={`A problem occured while loading: ${
+						error instanceof Error ? error.message : 'Unknown error'
+					}`}
+				/>
+			</>
 		)
 	}
 
 	if (!job) {
-		return <NoticeView text="Could not find this job posting." />
+		return (
+			<>
+				<Stack.Title>Unknown Job</Stack.Title>
+				<NoticeView text="Could not find this job posting." />
+			</>
+		)
 	}
 
 	return (
 		<>
-			<Stack.Screen
-				options={{
-					title: job.title,
-					headerRight: () => <ShareButton onPress={() => shareJob(job)} />,
-				}}
-			/>
+			<Stack.Title>{job.title}</Stack.Title>
+			<Stack.Toolbar>
+				<Stack.Toolbar.Button
+					accessibilityLabel="Share Job"
+					icon="square.and.arrow.up"
+					onPress={() => shareJob(job)}
+				/>
+			</Stack.Toolbar>
 			<JobDetailView job={job} />
 		</>
 	)

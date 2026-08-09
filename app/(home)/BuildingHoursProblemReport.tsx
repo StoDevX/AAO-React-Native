@@ -1,13 +1,12 @@
 import * as React from 'react'
-import {Stack, useLocalSearchParams} from 'expo-router'
+import {Stack, useLocalSearchParams, useNavigation} from 'expo-router'
 import {useQuery} from '@tanstack/react-query'
-import {CloseScreenButton} from '@frogpond/navigation-buttons'
 
 import {BuildingHoursProblemReportView} from '../../source/views/building-hours'
 import {buildingByNameOptions} from '../../source/views/building-hours/query'
 import {LoadingView, NoticeView} from '@frogpond/notice'
 
-export default function BuildingHoursProblemReportPage(): React.ReactNode {
+function InnerBuildingHoursProblemReportPage(): React.ReactNode {
 	let {name} = useLocalSearchParams<{name: string}>()
 	let {
 		data: building,
@@ -16,54 +15,43 @@ export default function BuildingHoursProblemReportPage(): React.ReactNode {
 		refetch,
 	} = useQuery(buildingByNameOptions(name))
 
-	let screen = (
-		<Stack.Screen
-			options={{
-				title: 'Report a Problem',
-				presentation: 'modal',
-				headerRight: () => <CloseScreenButton title="Discard" />,
-				gestureEnabled: false,
-			}}
-		/>
-	)
-
 	if (isLoading) {
-		return (
-			<>
-				{screen}
-				<LoadingView />
-			</>
-		)
+		return <LoadingView />
 	}
 
 	if (error) {
 		return (
-			<>
-				{screen}
-				<NoticeView
-					buttonText="Try Again"
-					onPress={refetch}
-					text={`A problem occured while loading: ${
-						error instanceof Error ? error.message : 'Unknown error'
-					}`}
-				/>
-			</>
+			<NoticeView
+				buttonText="Try Again"
+				onPress={refetch}
+				text={`A problem occured while loading: ${
+					error instanceof Error ? error.message : 'Unknown error'
+				}`}
+			/>
 		)
 	}
 
 	if (!building) {
-		return (
-			<>
-				{screen}
-				<NoticeView text={`Could not find the "${name}" building.`} />
-			</>
-		)
+		return <NoticeView text={`Could not find the "${name}" building.`} />
 	}
+
+	return <BuildingHoursProblemReportView initialBuilding={building} />
+}
+
+export default function BuildingHoursProblemReportPage(): React.ReactNode {
+	const navigation = useNavigation()
 
 	return (
 		<>
-			{screen}
-			<BuildingHoursProblemReportView initialBuilding={building} />
+			<Stack.Title>Report a Problem</Stack.Title>
+			<Stack.Toolbar placement="right">
+				<Stack.Toolbar.Button
+					icon="xmark"
+					onPress={() => navigation.goBack()}
+				/>
+			</Stack.Toolbar>
+
+			<InnerBuildingHoursProblemReportPage />
 		</>
 	)
 }

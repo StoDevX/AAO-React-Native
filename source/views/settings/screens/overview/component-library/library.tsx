@@ -1,46 +1,51 @@
-import * as React from 'react'
-import {Platform} from 'react-native'
+import React from 'react'
 
-import {CloseScreenButton} from '@frogpond/navigation-buttons'
 import {TableView, Section} from '@frogpond/tableview'
 import {PushButtonCell} from '@frogpond/tableview/cells'
-import type {NavigationProp} from '@react-navigation/native'
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
-import {useNavigation} from 'expo-router'
-import type {LegacyRootParamList} from '../../../../../navigation/types'
+import {Stack, useRouter} from 'expo-router'
 
 export const ComponentLibrary = (): React.ReactNode => {
-	const navigation = useNavigation<NavigationProp<LegacyRootParamList>>()
+	const router = useRouter()
 
 	return (
-		<TableView>
-			<Section>
-				<PushButtonCell
-					onPress={() => navigation.navigate('BadgeLibrary')}
-					title="Badges"
-				/>
-				<PushButtonCell
-					onPress={() => navigation.navigate('ButtonLibrary')}
-					title="Buttons"
-				/>
-				<PushButtonCell
-					onPress={() => navigation.navigate('ColorsLibrary')}
-					title="Colors"
-				/>
-				<PushButtonCell
-					onPress={() => navigation.navigate('ContextMenuLibrary')}
-					title="Context Menus"
-				/>
-				<PushButtonCell
-					onPress={() => navigation.navigate('FaqBannerLibrary')}
-					title="FAQ Banners"
-				/>
-			</Section>
-		</TableView>
-	)
-}
+		<>
+			<Stack.Title>Component Library</Stack.Title>
+			<Stack.Toolbar placement="right">
+				<Stack.Toolbar.Button icon="xmark" onPress={() => router.back()} />
+			</Stack.Toolbar>
 
-export const NavigationOptions: NativeStackNavigationOptions = {
-	title: 'Component Library',
-	headerRight: () => Platform.OS === 'ios' && <CloseScreenButton />,
+			<TableView>
+				<Section>
+					<PushButtonCell
+						onPress={() => router.navigate('/(component-library)/BadgeLibrary')}
+						title="Badges"
+					/>
+					<PushButtonCell
+						onPress={() =>
+							router.navigate('/(component-library)/ButtonLibrary')
+						}
+						title="Buttons"
+					/>
+					<PushButtonCell
+						onPress={() =>
+							router.navigate('/(component-library)/ColorsLibrary')
+						}
+						title="Colors"
+					/>
+					<PushButtonCell
+						onPress={() =>
+							router.navigate('/(component-library)/ContextMenuLibrary')
+						}
+						title="Context Menus"
+					/>
+					<PushButtonCell
+						onPress={() =>
+							router.navigate('/(component-library)/FaqBannerLibrary')
+						}
+						title="FAQ Banners"
+					/>
+				</Section>
+			</TableView>
+		</>
+	)
 }

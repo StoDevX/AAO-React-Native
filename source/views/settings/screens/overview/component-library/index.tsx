@@ -1,13 +1,6 @@
-export {
-	ComponentLibrary,
-	NavigationOptions as ComponentLibraryNavigationOptions,
-} from './library'
-
+export {ComponentLibrary} from './library'
 export {BadgeLibrary} from './badge'
 export {ButtonLibrary} from './button'
 export {ContextMenuLibrary} from './context-menu'
-export {FaqBannerLibrary, FaqBannerNavigationOptions} from './faq-banners'
-export {
-	ColorsLibrary,
-	NavigationKey as ColorsLibraryNavigationKey,
-} from './colors'
+export {FaqBannerLibrary} from './faq-banners'
+export {ColorsLibrary} from './colors'

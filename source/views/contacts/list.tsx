@@ -1,7 +1,6 @@
 import * as c from '@frogpond/colors'
 import {ListSectionHeader, ListSeparator} from '@frogpond/lists'
 import {LoadingView, NoticeView} from '@frogpond/notice'
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 import {useRouter} from 'expo-router'
 import * as React from 'react'
 import {SectionList, StyleSheet} from 'react-native'
@@ -72,8 +71,4 @@ export let ContactsListView = (): React.ReactNode => {
 			style={styles.listContainer}
 		/>
 	)
-}
-
-export const NavigationOptions: NativeStackNavigationOptions = {
-	title: 'Important Contacts',
 }

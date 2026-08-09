@@ -8,7 +8,6 @@ import {refreshApp} from '../../../../lib/refresh'
 import {useRouter} from 'expo-router'
 import {formatVersion} from './version'
 import {ActionRow, NavigationRow} from '../../components/rows'
-import {openReportProblem} from './report-problem/gate'
 
 const getDeviceInfo = () => `
 
@@ -51,14 +50,14 @@ export const SupportSection = (): React.ReactNode => {
 		)
 	}
 
-	let onReportProblem = () =>
-		openReportProblem(() => router.push('/ReportProblem'))
-
 	return (
 		<Section title="Support">
 			<NavigationRow onPress={() => router.push('/Faq')} title="FAQs" />
 			<ActionRow onPress={openEmail} title="Email Us" />
-			<NavigationRow onPress={onReportProblem} title="Report a Problem" />
+			<NavigationRow
+				onPress={() => router.push('/ReportProblem')}
+				title="Report a Problem"
+			/>
 			<ActionRow onPress={onResetButton} title="Reset Everything" />
 			<LabeledContent label="Version">
 				<Text>{getVersion()}</Text>

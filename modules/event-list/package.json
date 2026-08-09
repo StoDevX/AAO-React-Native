@@ -21,7 +21,6 @@
     "@frogpond/colors": "workspace:*",
     "@frogpond/event-type": "workspace:*",
     "@frogpond/lists": "workspace:*",
-    "@frogpond/navigation-buttons": "workspace:*",
     "@frogpond/notice": "workspace:*",
     "@frogpond/open-url": "workspace:*",
     "@frogpond/tableview": "workspace:*",

@@ -1,12 +1,12 @@
 import * as React from 'react'
 import {Stack} from 'expo-router'
 
-import {PrivacyView} from '../../source/views/settings'
+import {PrivacyView} from '../../source/views/settings/screens/privacy'
 
 export default function PrivacyPage(): React.ReactNode {
 	return (
 		<>
-			<Stack.Screen options={{title: 'Privacy'}} />
+			<Stack.Title>Privacy</Stack.Title>
 			<PrivacyView />
 		</>
 	)

@@ -9,10 +9,6 @@ export {
 	CarletonLDCMenuScreen,
 	CarletonWeitzMenuScreen,
 	CarletonSaylesMenuScreen,
-	BurtonNavigationOptions,
-	LDCNavigationOptions,
-	WeitzNavigationOptions,
-	SaylesNavigationOptions,
 } from './carleton-menus'
 
 export const StavHallMenuView = (): React.ReactNode => (
