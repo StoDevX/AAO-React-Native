@@ -18,7 +18,7 @@ import type {HtmlAudioError, PlayState} from './types'
 import {theming} from './theme'
 import {ActionButton, CallButton, ShowCalendarButton} from './buttons'
 import {openUrl} from '@frogpond/open-url'
-import {useRouter} from 'expo-router'
+import {useRouter, type Href} from 'expo-router'
 
 // If you want to fix the inline player, switch to `true`
 const ALLOW_INLINE_PLAYER = false
@@ -111,7 +111,12 @@ export function RadioControllerView(props: Props): React.ReactNode {
 	}
 
 	let openSchedule = useCallback(() => {
-		router.push(scheduleHref)
+		// KSTOSchedule/KRLXSchedule aren't wired into expo-router yet (deferred
+		// to Calendar's own group PR), so they're absent from the generated
+		// route union and router.push() needs a cast to accept them. Tapping
+		// this shows expo-router's built-in "Unmatched Route" screen until
+		// Calendar's group PR adds the real routes.
+		router.push(scheduleHref as Href)
 	}, [router, scheduleHref])
 
 	let callStation = useCallback(() => {
