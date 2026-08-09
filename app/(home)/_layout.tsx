@@ -1,5 +1,6 @@
 import * as React from 'react'
 import {Stack} from 'expo-router'
+import {VariantPickerButton} from '../../source/views/reddit'
 
 export default function HomeLayout(): React.ReactNode {
 	return (
@@ -19,6 +20,13 @@ export default function HomeLayout(): React.ReactNode {
 			<Stack.Screen
 				name="BuildingHoursScheduleEditor"
 				options={{presentation: 'modal'}}
+			/>
+			<Stack.Screen
+				name="Communities"
+				options={{
+					title: 'Communities',
+					headerRight: () => <VariantPickerButton />,
+				}}
 			/>
 		</Stack>
 	)

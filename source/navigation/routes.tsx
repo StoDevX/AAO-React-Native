@@ -12,7 +12,6 @@ import {
 	BonAppPickerView as DevBonAppPickerView,
 	DevBonAppNavigationOptions,
 } from '../views/menus/dev-bonapp-picker'
-import * as reddit from '../views/reddit'
 import * as settings from '../views/settings/'
 import * as more from '../views/more'
 
@@ -49,18 +48,6 @@ const HomeStackScreens = () => {
 					component={eventDetail.EventDetail}
 					name={eventDetail.NavigationKey}
 					options={eventDetail.EventDetailNavigationOptions}
-				/>
-			</Stack.Group>
-			<Stack.Group>
-				<Stack.Screen
-					component={reddit.View}
-					name={reddit.NavigationKey}
-					options={reddit.NavigationOptions}
-				/>
-				<Stack.Screen
-					component={reddit.PostDetailView}
-					name={reddit.PostDetailNavigationKey}
-					options={reddit.PostDetailNavigationOptions}
 				/>
 			</Stack.Group>
 			<Stack.Group>

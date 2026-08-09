@@ -10,8 +10,7 @@ import {
 	Share,
 	StyleSheet,
 } from 'react-native'
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
-import {useNavigation, useRoute, RouteProp} from '@react-navigation/native'
+import {useNavigation} from 'expo-router'
 import {useQuery} from '@tanstack/react-query'
 import {Ionicons as Icon} from '@react-native-vector-icons/ionicons'
 import IoniconGlyphs from '@react-native-vector-icons/ionicons/glyphmaps/Ionicons.json'
@@ -32,11 +31,7 @@ import {redditCommentsOptions} from './query'
 import {CommentRow} from './comment-row'
 import {htmlToSegments} from '@frogpond/html-lib'
 import type {Segment} from '@frogpond/html-lib'
-import type {
-	RedditCommentType,
-	FlatComment,
-	RedditPostDetailParams,
-} from './types'
+import type {RedditCommentType, FlatComment, RedditPostType} from './types'
 import {formatCommentCount} from './utils/format-count'
 import {useRedditLinkHandler} from './useRedditLinkHandler'
 import {SegmentedText} from './segmented-text'
@@ -47,11 +42,6 @@ const ICON_FONT_FAMILY = 'Ionicons'
 const HEADER_ICON_SIZE = 24
 /// Matches TestIdentifiers.Reddit in the XCUITest target.
 const POST_MENU_TEST_ID = 'reddit-post-menu'
-
-type RouteType = RouteProp<
-	{RedditPostDetail: RedditPostDetailParams},
-	'RedditPostDetail'
->
 
 function countAllComments(comments: RedditCommentType[]): number {
 	return comments.reduce(
@@ -85,18 +75,20 @@ function sanitizeBodySegments(segments: Segment[]): Segment[] {
 	return segments
 }
 
-export function PostDetailView(): React.ReactNode {
+type Props = {
+	post: RedditPostType
+	communityName: string
+}
+
+export function PostDetailView({post, communityName}: Props): React.ReactNode {
 	const navigation = useNavigation()
-	const route = useRoute<RouteType>()
 	const {
-		postUrl,
+		permalink: postUrl,
 		title,
 		author,
 		publishedAt,
 		contentHtml,
 		thumbnail,
-		communityName,
-		postAuthor,
 		postType,
 		imageUrl,
 		images = [],
@@ -104,7 +96,7 @@ export function PostDetailView(): React.ReactNode {
 		linkDomain,
 		crosspostParent,
 		pollData,
-	} = route.params
+	} = post
 
 	const [collapsedIds, setCollapsedIds] = React.useState<Set<string>>(
 		() => new Set(),
@@ -424,7 +416,7 @@ export function PostDetailView(): React.ReactNode {
 					comment={item.comment}
 					depth={item.depth}
 					isCollapsed={collapsedIds.has(item.comment.id)}
-					isOP={item.comment.author === postAuthor}
+					isOP={item.comment.author === author}
 					onLinkPress={handleLinkPress}
 					onPress={
 						item.comment.replies.length > 0
@@ -616,8 +608,3 @@ const styles = StyleSheet.create({
 		color: c.link,
 	},
 })
-
-export const NavigationKey = 'RedditPostDetail'
-export const NavigationOptions: NativeStackNavigationOptions = {
-	title: '',
-}

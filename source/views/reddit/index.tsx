@@ -1,7 +1,5 @@
 import * as React from 'react'
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
-import {createNativeBottomTabNavigator} from '@react-navigation/bottom-tabs/unstable'
-import {NavigationProp, useNavigation} from '@react-navigation/native'
+import {useRouter} from 'expo-router'
 import {useQuery} from '@tanstack/react-query'
 import IoniconGlyphs from '@react-native-vector-icons/ionicons/glyphmaps/Ionicons.json'
 import {
@@ -31,22 +29,9 @@ const VARIANT_PICKER_TEST_ID = 'reddit-variant-picker'
 import type {RedditPostType} from './types'
 import {redditPostsOptions} from './query'
 import {PostList, type PostListVariant} from './post-list'
-import {NavigationKey as PostDetailNavigationKey} from './post-detail'
 import {useRedditPreferences} from './store'
-import type {LegacyRootParamList} from '../../navigation/types'
 
-export {
-	PostDetailView,
-	NavigationKey as PostDetailNavigationKey,
-	NavigationOptions as PostDetailNavigationOptions,
-} from './post-detail'
-
-type TabParams = {
-	StOlafFeed: undefined
-	CarletonFeed: undefined
-}
-
-const Tab = createNativeBottomTabNavigator<TabParams>()
+export {PostDetailView} from './post-detail'
 
 const VARIANT_LABELS: Record<PostListVariant, string> = {
 	A: 'Compact List',
@@ -58,32 +43,19 @@ const LABEL_TO_VARIANT: Record<string, PostListVariant> = {
 }
 const VARIANT_ACTIONS = Object.keys(LABEL_TO_VARIANT)
 
-function StOlafFeedScreen(): React.ReactNode {
-	const navigation = useNavigation<NavigationProp<LegacyRootParamList>>()
+export function StOlafFeedScreen(): React.ReactNode {
+	const router = useRouter()
 	const {variant} = useRedditPreferences()
 	const query = useQuery(redditPostsOptions('stolaf'))
 
 	const handlePressPost = React.useCallback(
 		(post: RedditPostType) => {
-			navigation.navigate(PostDetailNavigationKey, {
-				postUrl: post.permalink,
-				title: post.title,
-				author: post.author,
-				publishedAt: post.publishedAt,
-				contentHtml: post.contentHtml,
-				thumbnail: post.thumbnail,
-				communityName: 'St. Olaf',
-				postAuthor: post.author,
-				postType: post.postType,
-				imageUrl: post.imageUrl,
-				images: post.images,
-				linkUrl: post.linkUrl,
-				linkDomain: post.linkDomain,
-				crosspostParent: post.crosspostParent,
-				pollData: post.pollData,
+			router.push({
+				pathname: '/RedditPostDetail',
+				params: {postUrl: post.permalink, communityName: 'St. Olaf'},
 			})
 		},
-		[navigation],
+		[router],
 	)
 
 	return (
@@ -91,32 +63,19 @@ function StOlafFeedScreen(): React.ReactNode {
 	)
 }
 
-function CarletonFeedScreen(): React.ReactNode {
-	const navigation = useNavigation<NavigationProp<LegacyRootParamList>>()
+export function CarletonFeedScreen(): React.ReactNode {
+	const router = useRouter()
 	const {variant} = useRedditPreferences()
 	const query = useQuery(redditPostsOptions('carletoncollege'))
 
 	const handlePressPost = React.useCallback(
 		(post: RedditPostType) => {
-			navigation.navigate(PostDetailNavigationKey, {
-				postUrl: post.permalink,
-				title: post.title,
-				author: post.author,
-				publishedAt: post.publishedAt,
-				contentHtml: post.contentHtml,
-				thumbnail: post.thumbnail,
-				communityName: 'Carleton',
-				postAuthor: post.author,
-				postType: post.postType,
-				imageUrl: post.imageUrl,
-				images: post.images,
-				linkUrl: post.linkUrl,
-				linkDomain: post.linkDomain,
-				crosspostParent: post.crosspostParent,
-				pollData: post.pollData,
+			router.push({
+				pathname: '/RedditPostDetail',
+				params: {postUrl: post.permalink, communityName: 'Carleton'},
 			})
 		},
-		[navigation],
+		[router],
 	)
 
 	return (
@@ -124,7 +83,7 @@ function CarletonFeedScreen(): React.ReactNode {
 	)
 }
 
-function VariantPickerButton(): React.ReactNode {
+export function VariantPickerButton(): React.ReactNode {
 	const {variant, setVariant} = useRedditPreferences()
 
 	return (
@@ -162,41 +121,4 @@ function VariantPickerButton(): React.ReactNode {
 			</Menu>
 		</Host>
 	)
-}
-
-export const View = (): React.ReactNode => {
-	const navigation = useNavigation()
-
-	React.useLayoutEffect(() => {
-		navigation.setOptions({
-			headerRight: () => <VariantPickerButton />,
-		})
-	}, [navigation])
-
-	return (
-		<Tab.Navigator screenOptions={{headerShown: false}}>
-			<Tab.Screen
-				component={StOlafFeedScreen}
-				name="StOlafFeed"
-				options={{
-					tabBarLabel: 'r/stolaf',
-					tabBarIcon: {type: 'sfSymbol', name: 'person.2.fill'},
-				}}
-			/>
-			<Tab.Screen
-				component={CarletonFeedScreen}
-				name="CarletonFeed"
-				options={{
-					tabBarLabel: 'r/carletoncollege',
-					tabBarIcon: {type: 'sfSymbol', name: 'building.columns.fill'},
-				}}
-			/>
-		</Tab.Navigator>
-	)
-}
-
-export type NavigationParams = undefined
-export const NavigationKey = 'Communities'
-export const NavigationOptions: NativeStackNavigationOptions = {
-	title: 'Communities',
 }
