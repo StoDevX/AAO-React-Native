@@ -107,7 +107,7 @@
     "react-native-tableview-simple": "4.4.1",
     "react-native-typography": "1.4.1",
     "react-native-url-polyfill": "3.0.0",
-    "react-native-webview": "13.16.1",
+    "react-native-webview": "13.17.0",
     "react-native-worklets": "0.10.1",
     "react-native-zeroconf": "0.14.0",
     "react-redux": "9.2.0",
