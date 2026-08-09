@@ -173,3 +173,15 @@ reverted). Doesn't block this PR or any of checkpoint 4's remaining
 PRs -- every Settings route is deep-link-only until PR 8 -- but needs a
 real fix before checkpoint 6 (deep linking) ships. Full detail already
 tracked in memory: `expo-router-modal-dismiss-lands-on-menus.md`.
+
+**Update (post-implementation):** Step 3's interactive tap-through --
+applying a banner and confirming it renders on the live home screen --
+was NOT performed. Automated simulator GUI control was stopped after
+an unscoped screenshot briefly exposed unrelated desktop content; the
+human then chose to skip manual verification for this PR rather than
+continue automated GUI driving. `tsc`/`lint`/`test` pass and the
+`/BannerBuilder` deep link resolves and boots, but the actual
+cross-cutting effect this PR exists for -- a banner applied via
+`upsertBanner` growing `app/(home)/index.tsx`'s `RNHostView`-hosted
+`FaqBannerGroup` from zero height at runtime -- remains unverified.
+Worth one manual pass before checkpoint 4 fully merges.
