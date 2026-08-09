@@ -40,3 +40,18 @@ export const studentWorkPostingsOptions = queryOptions({
 		}))
 	},
 })
+
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+export const jobByIdOptions = (jobId: string) =>
+	queryOptions({
+		queryKey: keys.all,
+		queryFn: async ({signal}) => {
+			let response = await client.get<JobType[]>('jobs', {signal}).json()
+
+			return response.map((job) => ({
+				...job,
+				type: titleCase(job.type),
+			})) as JobType[]
+		},
+		select: (data) => data.find((j) => j.id.toString() === jobId),
+	})

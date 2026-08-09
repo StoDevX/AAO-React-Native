@@ -12,17 +12,14 @@ import {Cell, TableView, Section} from '@frogpond/tableview'
 import {BalancesShapeType, balancesOptions} from '../../lib/financials'
 import * as c from '@frogpond/colors'
 import {sto} from '../../lib/colors'
-import {NavigationProp, useNavigation} from '@react-navigation/native'
 import {NoCredentialsError, credentialsOptions} from '../../lib/login'
 import {useQuery} from '@tanstack/react-query'
 import {FaqBannerGroup} from '../faqs'
 import {FAQ_TARGETS} from '../faqs/constants'
-import type {LegacyRootParamList} from '../../navigation/types'
 
 const DISCLAIMER = 'This data may be outdated or otherwise inaccurate.'
 
 export const BalancesView = (): React.ReactNode => {
-	let navigation = useNavigation<NavigationProp<LegacyRootParamList>>()
 	let {data: username = ''} = useQuery({
 		...credentialsOptions,
 		select: (data) => data?.username,
@@ -37,7 +34,12 @@ export const BalancesView = (): React.ReactNode => {
 		isRefetching,
 	} = useQuery(balancesOptions(username))
 
-	let openSettings = () => navigation.navigate('Settings')
+	// Settings hasn't been migrated to expo-router yet, so there's no route
+	// to send this to without landing on an "Unmatched Route" screen --
+	// leave it a no-op (matching today's actual behavior, since Settings is
+	// unreachable already) until that migration lands.
+	// eslint-disable-next-line @typescript-eslint/no-empty-function
+	let openSettings = () => {}
 	let refresh = <RefreshControl onRefresh={refetch} refreshing={isRefetching} />
 
 	return (
