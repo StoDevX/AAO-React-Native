@@ -14,9 +14,10 @@ export default function NetworkLoggerPage(): React.ReactNode {
 			    also consumes it (until checkpoint 7 deletes that file); expo-router's
 			    Stack.Screen expects its own forked -- structurally incompatible --
 			    NativeStackNavigationOptions type. presentation/gestureEnabled here are
-			    redundant with Step 1's _layout.tsx entry (the parent's copy is what
-			    actually takes effect) -- matching BuildingHoursProblemReport's own
-			    established precedent of listing modal flags in both places. */}
+			    redundant with the entry in app/(settings)/_layout.tsx (the parent's
+			    copy is what actually takes effect) -- matching
+			    BuildingHoursProblemReport's own established precedent of listing
+			    modal flags in both places. */}
 			<Stack.Screen
 				options={
 					NetworkLoggerNavigationOptions as React.ComponentProps<
