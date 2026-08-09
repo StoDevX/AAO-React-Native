@@ -12,15 +12,34 @@ needed.
 `createNativeBottomTabNavigator` from `@react-navigation/bottom-tabs/unstable`
 for its 4 tabs, same SDK56-tripping dependency Menus hit — convert to
 expo-router's file-based `NativeTabs`, flat structure confirmed correct by
-Menus (no wrapping Stack around the tab group; the 2 schedule screens are
-flat siblings of the tab group, not nested under it, matching their
-original registration as siblings in one `Stack.Group` in
-`routes.tsx`). Unlike Menus, there is no shared list-rendering component to
-decouple — `RadioControllerView`'s only navigation is one button
-("Open the schedule"), directly converted to `router.push()`, and neither
-`KSTOScheduleView` nor `KRLXScheduleView` take any props at all (each
-calls its own `useQuery` internally) — no `select`-based single-item
-lookup is needed anywhere in this group.
+Menus (no wrapping Stack around the tab group). Unlike Menus, there is no
+shared list-rendering component to decouple within this group's own
+files — `RadioControllerView`'s only navigation is one button ("Open the
+schedule"), directly converted to `router.push()`.
+
+**The 2 schedule screens are deliberately deferred, not wired in this
+PR (decided by Wren).** `KSTOScheduleView`/`KRLXScheduleView` render
+`CccCalendarView` from `@frogpond/ccc-calendar`, which depends on
+`modules/event-list/` (`event-list.tsx`, `event-detail-view.tsx`) — both
+of which have their own real, runtime `@react-navigation/native`
+imports, unrelated to anything in the `streaming` group itself. Wiring
+`app/(home)/KSTOSchedule.tsx`/`KRLXSchedule.tsx` into the route tree
+would make that import chain statically reachable from `app/`, tripping
+Metro's SDK56 check for the *entire app* (the same all-or-nothing
+failure mode stoPrint and Menus already hit) — not a bug confined to
+these two screens. Rather than patch `event-list`'s navigation with a
+quick import swap here, this dependency is real shared infrastructure
+that belongs with Calendar's own migration (already the last group in
+this whole 15-PR stack, specifically because Calendar's screens live in
+a shared package). This plan does **not** create
+`app/(home)/KSTOSchedule.tsx`/`KRLXSchedule.tsx`. `RadioControllerView`'s
+`scheduleHref` prop and `router.push()` call are still added (harmless,
+forward-looking, and required for the file to compile without a
+react-navigation import) — tapping "Open the schedule" will show
+expo-router's built-in "Unmatched Route" screen until Calendar's group
+PR adds the missing routes, the same "keep it broken as-is, don't
+silently patch around unrelated shared infrastructure" precedent
+already used for stoPrint's Settings button.
 
 **Route name has a space, by design — keep it.** `views.ts`'s existing
 identifier for this tile is the literal string `'Streaming Media'` (with
@@ -77,20 +96,24 @@ title is sufficient on its own — nothing for it to double up with.
 - Create: `app/(home)/Streaming Media/webcams.tsx`
 - Create: `app/(home)/Streaming Media/ksto.tsx`
 - Create: `app/(home)/Streaming Media/krlx.tsx`
-- Create: `app/(home)/KSTOSchedule.tsx`
-- Create: `app/(home)/KRLXSchedule.tsx`
+
+**Not created in this task (deferred to Calendar's own group PR):**
+`app/(home)/KSTOSchedule.tsx`, `app/(home)/KRLXSchedule.tsx` — see this
+plan's "2 schedule screens are deliberately deferred" section above.
 
 **Interfaces:**
 - Consumes: `StreamListView` from `source/views/streaming/streams`;
   `WebcamsView` from `source/views/streaming/webcams`; `KstoStationView`,
   `KrlxStationView` from `source/views/streaming/radio/station-ksto.tsx`/
-  `station-krlx.tsx`; `KSTOScheduleView`, `KRLXScheduleView`,
-  `RadioControllerView` from `source/views/streaming/radio`.
+  `station-krlx.tsx`; `RadioControllerView` from
+  `source/views/streaming/radio`.
 - Produces: `/Streaming Media` (tab group, default tab Streaming),
   `/Streaming Media/webcams`, `/Streaming Media/ksto`,
-  `/Streaming Media/krlx` (all within the tab bar, no per-tab header);
-  `/KSTOSchedule`, `/KRLXSchedule` (flat siblings of `Streaming Media/` at
-  the `(home)/` level, each with its own header, tab bar hidden).
+  `/Streaming Media/krlx` (all within the tab bar, no per-tab header).
+  `/KSTOSchedule`/`/KRLXSchedule` are NOT produced by this task —
+  `RadioControllerView`'s schedule button pushes to these paths, but no
+  matching route exists yet, so tapping it shows expo-router's built-in
+  "Unmatched Route" screen until a later Calendar-group PR adds them.
 
 - [ ] **Step 1: Swap `RadioControllerView`'s schedule button to `router.push()`**
 
@@ -413,50 +436,7 @@ export default function KrlxPage(): React.ReactNode {
 below it with no per-tab header, matching the original
 `Tab.Navigator screenOptions={{headerShown: false}}` behavior exactly.)
 
-- [ ] **Step 10: Create the 2 schedule routes**
-
-Create `app/(home)/KSTOSchedule.tsx` — a flat sibling of
-`Streaming Media/`, self-registering its own header the same way every
-prior group's detail screen does:
-
-```typescript
-import * as React from 'react'
-import {Stack} from 'expo-router'
-import {KSTOScheduleView} from '../../source/views/streaming'
-
-export default function KSTOSchedulePage(): React.ReactNode {
-	return (
-		<>
-			<Stack.Screen options={{title: 'KSTO Schedule'}} />
-			<KSTOScheduleView />
-		</>
-	)
-}
-```
-
-Create `app/(home)/KRLXSchedule.tsx`:
-
-```typescript
-import * as React from 'react'
-import {Stack} from 'expo-router'
-import {KRLXScheduleView} from '../../source/views/streaming'
-
-export default function KRLXSchedulePage(): React.ReactNode {
-	return (
-		<>
-			<Stack.Screen options={{title: 'KRLX Schedule'}} />
-			<KRLXScheduleView />
-		</>
-	)
-}
-```
-
-(these titles were plain static strings in the original
-`KSTOScheduleNavigationOptions`/`KRLXScheduleNavigationOptions` objects —
-inlined directly here rather than kept as separate exports, since nothing
-else needs them once `routes.tsx`'s registration is gone.)
-
-- [ ] **Step 11: Verify**
+- [ ] **Step 10: Verify**
 
 Run: `mise run tsc` — expect 0 errors.
 Run: `mise run lint` — expect clean.
@@ -464,7 +444,7 @@ Run: `mise run test` — expect the same pass/fail counts as before this
 task (rerun once if a failure looks like a flake; confirm via a clean
 rerun before treating a failure as real).
 
-- [ ] **Step 12: Manual boot verification**
+- [ ] **Step 11: Manual boot verification**
 
 Run: `mise run prebuild` then `mise run ios` (or development variant), in
 the FOREGROUND, genuinely waited on to completion.
@@ -477,43 +457,51 @@ native tab bar with 4 tabs (Streaming, Webcams, KSTO, KRLX), each with
 the correct SF Symbol icon, Streaming selected by default. Tapping
 between tabs switches content without losing the tab bar or the header.
 Tapping "Open" (or whichever control triggers `openSchedule`) on the KSTO
-or KRLX tab hides the tab bar and pushes to that station's schedule
-screen (title "KSTO Schedule"/"KRLX Schedule"), with a back button
-returning to the station tab. No crash anywhere in this flow.
+or KRLX tab shows expo-router's built-in "Unmatched Route" screen — this
+is expected and correct for this task (see this plan's "2 schedule
+screens are deliberately deferred" section); it is not a bug to
+investigate or fix. No crash anywhere in this flow — an unmatched route
+is a normal, graceful screen, not an error state.
 
-The streams list, webcams, and both radio schedules hit live network
-endpoints — note in the report whether real data was reachable in this
-sandboxed environment, and if not, confirm the loading/error states at
-minimum render correctly and non-crashing.
+The streams list and webcams hit live network endpoints — note in the
+report whether real data was reachable in this sandboxed environment,
+and if not, confirm the loading/error states at minimum render correctly
+and non-crashing.
 
 Screenshot: home screen (nine tiles, no others), the Streaming Media tab
-bar (Streaming selected, showing the header with back button), at least
-one other tab, and a schedule screen (KSTO or KRLX) — look at each
-yourself.
+bar (Streaming selected, showing the header with back button), and at
+least one other tab — look at each yourself.
 
 **Keep these screenshots until they're uploaded via `attach-github-assets`
 and posted as a PR comment — don't clean up the SDD workspace first.**
 
-- [ ] **Step 13: Commit**
+- [ ] **Step 12: Commit**
 
 ```bash
-git add source/views/streaming/index.tsx source/views/streaming/radio/controller.tsx source/views/streaming/radio/station-ksto.tsx source/views/streaming/radio/station-krlx.tsx source/navigation/routes.tsx source/navigation/types.tsx source/views/views.ts app/\(home\)/_layout.tsx app/\(home\)/Streaming\ Media/ app/\(home\)/KSTOSchedule.tsx app/\(home\)/KRLXSchedule.tsx
+git add source/views/streaming/index.tsx source/views/streaming/radio/controller.tsx source/views/streaming/radio/station-ksto.tsx source/views/streaming/radio/station-krlx.tsx source/navigation/routes.tsx source/navigation/types.tsx source/views/views.ts app/\(home\)/_layout.tsx app/\(home\)/Streaming\ Media/
 git commit -m "Restore the Streaming Media home-grid tile
 
 Eighth group PR in checkpoint 2's stack, and the second tab-bar
 group -- applies the exact flat-structure pattern Menus established
 after two live corrections: the tab group's own _layout.tsx is bare
-NativeTabs with no wrapping Stack, and the two schedule screens
-(KSTOSchedule/KRLXSchedule) are flat siblings of the tab group at
-the (home)/ level, not nested under it, matching their original
-flat Stack.Group registration in routes.tsx. app/(home)/_layout.tsx
-gets one added entry with a real title (not headerShown: false),
-the same lesson Menus' second correction round already paid for.
+NativeTabs with no wrapping Stack. app/(home)/_layout.tsx gets one
+added entry with a real title (not headerShown: false), the same
+lesson Menus' second correction round already paid for.
 
 RadioControllerView's scheduleViewName prop (a React Navigation
 route-name string requiring a navigate() lookup) becomes scheduleHref
 (a literal href string passed straight to router.push()) -- simpler
 than reintroducing a name-to-route mapping layer.
+
+The two schedule screens (KSTOSchedule/KRLXSchedule) are deliberately
+NOT wired into expo-router in this commit -- their shared
+CccCalendarView/@frogpond/ccc-calendar dependency chain (modules/event-list)
+has its own, unrelated runtime @react-navigation/native imports that
+would trip Metro's SDK56 check for the whole app if these routes
+existed. That's real shared infrastructure belonging with Calendar's
+own group PR (already last in this stack for the same reason), not a
+quick patch here. Tapping \"Open the schedule\" shows expo-router's
+built-in Unmatched Route screen until that PR lands.
 
 The route directory is literally named \"Streaming Media\" (with a
 space) to match views.ts's pre-existing RootViewsParamList key,
@@ -525,7 +513,7 @@ commit. source/views/streaming/movie.tsx (dead code, not registered
 anywhere before this change either) is untouched."
 ```
 
-- [ ] **Step 14: Attach screenshots to the PR**
+- [ ] **Step 13: Attach screenshots to the PR**
 
 Once the PR is open (via `gh stack submit`), use `attach-github-assets` to
 upload each screenshot and post them as one PR comment.
