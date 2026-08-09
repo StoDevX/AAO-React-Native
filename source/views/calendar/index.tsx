@@ -1,13 +1,27 @@
 import * as React from 'react'
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
-import {createNativeBottomTabNavigator} from '@react-navigation/bottom-tabs/unstable'
+import {useRouter} from 'expo-router'
 
 import {CccCalendarView, namedCalendarOptions} from '@frogpond/ccc-calendar'
+import {eventKey} from '@frogpond/event-list'
+import type {EventType} from '@frogpond/event-type'
 import {useQuery} from '@tanstack/react-query'
 
-function StOlafCalendarView() {
+export function StOlafCalendarView(): React.ReactNode {
+	let router = useRouter()
+
+	let onPressEvent = React.useCallback(
+		(event: EventType) => {
+			router.push({
+				pathname: '/EventDetail',
+				params: {source: 'stolaf', eventKey: eventKey(event)},
+			})
+		},
+		[router],
+	)
+
 	return (
 		<CccCalendarView
+			onPressEvent={onPressEvent}
 			poweredBy={{
 				title: 'Powered by the St. Olaf calendar',
 				href: 'https://wp.stolaf.edu/calendar/',
@@ -17,9 +31,22 @@ function StOlafCalendarView() {
 	)
 }
 
-function NorthfieldCalendarView() {
+export function NorthfieldCalendarView(): React.ReactNode {
+	let router = useRouter()
+
+	let onPressEvent = React.useCallback(
+		(event: EventType) => {
+			router.push({
+				pathname: '/EventDetail',
+				params: {source: 'northfield', eventKey: eventKey(event)},
+			})
+		},
+		[router],
+	)
+
 	return (
 		<CccCalendarView
+			onPressEvent={onPressEvent}
 			poweredBy={{
 				title: 'Powered by VisitingNorthfield.com',
 				href: 'https://visitingnorthfield.com/events/calendar/',
@@ -27,38 +54,4 @@ function NorthfieldCalendarView() {
 			query={useQuery(namedCalendarOptions('northfield'))}
 		/>
 	)
-}
-
-type Params = {
-	StOlafCalendarView: undefined
-	NorthfieldCalendarView: undefined
-}
-
-const Tab = createNativeBottomTabNavigator<Params>()
-
-export const View = (): React.ReactNode => (
-	<Tab.Navigator screenOptions={{headerShown: false}}>
-		<Tab.Screen
-			component={StOlafCalendarView}
-			name="StOlafCalendarView"
-			options={{
-				tabBarLabel: 'St. Olaf',
-				tabBarIcon: {type: 'sfSymbol', name: 'graduationcap.fill'},
-			}}
-		/>
-		<Tab.Screen
-			component={NorthfieldCalendarView}
-			name="NorthfieldCalendarView"
-			options={{
-				tabBarLabel: 'Northfield',
-				tabBarIcon: {type: 'sfSymbol', name: 'face.smiling.fill'},
-			}}
-		/>
-	</Tab.Navigator>
-)
-
-export type NavigationParams = undefined
-export const NavigationKey = 'Calendar'
-export const NavigationOptions: NativeStackNavigationOptions = {
-	title: 'Calendar',
 }

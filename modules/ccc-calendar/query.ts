@@ -1,4 +1,5 @@
 import {client} from '@frogpond/api'
+import {eventKey} from '@frogpond/event-list'
 import {EventType} from '@frogpond/event-type'
 import {queryOptions} from '@tanstack/react-query'
 import moment from 'moment'
@@ -54,6 +55,24 @@ export const namedCalendarOptions = (
 			return response as EventType[]
 		},
 		select: (events) => convertEvents(events, options),
+	})
+
+export const namedCalendarEventOptions = (
+	calendar: NamedCalendar,
+	key: string,
+	options: {eventMapper?: EventMapper} = {},
+	// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+) =>
+	queryOptions({
+		queryKey: keys.named(calendar),
+		queryFn: async ({queryKey, signal}) => {
+			let response = await client
+				.get(`calendar/named/${queryKey[2]}`, {signal})
+				.json()
+			return response as EventType[]
+		},
+		select: (events) =>
+			convertEvents(events, options).find((event) => eventKey(event) === key),
 	})
 
 export const googleCalendarOptions = (

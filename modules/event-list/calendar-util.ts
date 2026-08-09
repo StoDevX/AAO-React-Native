@@ -3,6 +3,10 @@ import {Share, ShareAction} from 'react-native'
 import type {EventType} from '@frogpond/event-type'
 import {detailTimes} from './times'
 
+export function eventKey(event: EventType): string {
+	return `${event.startTime.toISOString()}|${event.title}`
+}
+
 export function shareEvent(event: EventType): Promise<ShareAction | void> {
 	let title = event.title
 	let times = getTimes(event)

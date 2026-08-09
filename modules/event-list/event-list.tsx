@@ -8,8 +8,6 @@ import type {Moment} from 'moment-timezone'
 import {FullWidthSeparator, ListSectionHeader} from '@frogpond/lists'
 import {NoticeView} from '@frogpond/notice'
 import EventRow from './event-row'
-import {NavigationProp, useNavigation} from '@react-navigation/native'
-import type {LegacyRootParamList} from '../../source/navigation/types'
 import {PoweredBy} from './types'
 
 type Props = {
@@ -20,6 +18,7 @@ type Props = {
 	onRefresh: () => unknown
 	now: Moment
 	poweredBy: PoweredBy
+	onPressEvent: (event: EventType) => void
 }
 
 type EventSection = {readonly title: string; readonly data: EventType[]}
@@ -45,18 +44,6 @@ function groupEvents(
 }
 
 export function EventList(props: Props): React.ReactNode {
-	let navigation = useNavigation<NavigationProp<LegacyRootParamList>>()
-
-	let onPressEvent = React.useCallback(
-		(event: EventType) => {
-			navigation.navigate('EventDetail', {
-				event,
-				poweredBy: props.poweredBy,
-			})
-		},
-		[navigation, props.poweredBy],
-	)
-
 	if (props.message) {
 		return <NoticeView text={props.message} />
 	}
@@ -70,7 +57,9 @@ export function EventList(props: Props): React.ReactNode {
 			keyExtractor={(item, index) => index.toString()}
 			onRefresh={props.onRefresh}
 			refreshing={props.refreshing}
-			renderItem={({item}) => <EventRow event={item} onPress={onPressEvent} />}
+			renderItem={({item}) => (
+				<EventRow event={item} onPress={props.onPressEvent} />
+			)}
 			renderSectionHeader={({section}) => (
 				<ListSectionHeader spacing={{left: 10}} title={section.title} />
 			)}
