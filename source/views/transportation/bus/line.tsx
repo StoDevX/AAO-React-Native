@@ -16,8 +16,7 @@ import {BusStopRow} from './components/bus-stop-row'
 import {ListFooter, ListRow} from '@frogpond/lists'
 import {InfoHeader} from '@frogpond/info-header'
 import * as c from '@frogpond/colors'
-import {NavigationProp, useNavigation} from '@react-navigation/native'
-import type {LegacyRootParamList} from '../../../navigation/types'
+import {useRouter} from 'expo-router'
 import {BUS_FOOTER_MESSAGE} from './constants'
 import {
 	DayPickerHeader,
@@ -76,7 +75,6 @@ const EMPTY_SCHEDULE_MESSAGE = (
 type Props = {
 	line: UnprocessedBusLine
 	now: Moment
-	openMap: () => unknown
 }
 
 function startsIn(now: Moment, start?: Moment | null) {
@@ -88,7 +86,18 @@ function startsIn(now: Moment, start?: Moment | null) {
 	return `Starts ${nowCopy.seconds(0).to(start)}`
 }
 
-function deriveFromProps({line, now}: {line: UnprocessedBusLine; now: Moment}) {
+export function deriveFromProps({
+	line,
+	now,
+}: {
+	line: UnprocessedBusLine
+	now: Moment
+}): {
+	subtitle: string
+	status: BusStateEnum
+	schedule: BusSchedule
+	currentBusIteration: number | null
+} {
 	// Finds the stuff that's shared between FlatList and renderItem
 	let processedLine = processBusLine(line, now)
 
@@ -151,7 +160,7 @@ function deriveFromProps({line, now}: {line: UnprocessedBusLine; now: Moment}) {
 
 export function BusLine(props: Props): React.ReactNode {
 	let {line, now} = props
-	let navigation = useNavigation<NavigationProp<LegacyRootParamList>>()
+	let router = useRouter()
 
 	let [schedule, setSchedule] = useState<BusSchedule | null>(null)
 	let [subtitle, setSubtitle] = useState<string>('')
@@ -242,7 +251,10 @@ export function BusLine(props: Props): React.ReactNode {
 			renderItem={({item, index}) => (
 				<TouchableOpacity
 					onPress={() => {
-						navigation.navigate('BusRouteDetail', {stop: item, line, subtitle})
+						router.push({
+							pathname: '/BusRouteDetail',
+							params: {line: line.line, day: selectedDay, stopName: item.name},
+						})
 					}}
 				>
 					<BusStopRow

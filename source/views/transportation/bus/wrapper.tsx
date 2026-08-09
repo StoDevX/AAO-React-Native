@@ -2,8 +2,6 @@ import * as React from 'react'
 import {BusLine} from './line'
 import {LoadingView, NoticeView} from '@frogpond/notice'
 import {timezone} from '@frogpond/constants'
-import {NavigationProp, useNavigation} from '@react-navigation/native'
-import type {LegacyRootParamList} from '../../../navigation/types'
 import {busRoutesOptions} from './query'
 import {useQuery} from '@tanstack/react-query'
 import {useMomentTimer} from '@frogpond/timer'
@@ -21,7 +19,6 @@ let BusView = (props: Props): React.ReactNode => {
 		isError,
 		isLoading,
 	} = useQuery(busRoutesOptions)
-	let navigation = useNavigation<NavigationProp<LegacyRootParamList>>()
 
 	let activeBusLine = busLines.find(({line}) => line === props.line)
 
@@ -45,17 +42,7 @@ let BusView = (props: Props): React.ReactNode => {
 		return <NoticeView text={msg} />
 	}
 
-	return (
-		<BusLine
-			line={activeBusLine}
-			now={now}
-			openMap={() => {
-				if (activeBusLine) {
-					navigation.navigate('BusMapView', {line: activeBusLine})
-				}
-			}}
-		/>
-	)
+	return <BusLine line={activeBusLine} now={now} />
 }
 
 export {BusView as View}
