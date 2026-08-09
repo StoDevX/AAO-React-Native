@@ -3,24 +3,24 @@ import {Cell} from '@frogpond/tableview'
 
 type Props = {
 	data: {key: string | number; value: unknown}
-	onPress: (key: string | number) => void
+	onPress?: (key: string | number) => void
 }
 
 export const DebugRow = (props: Props): React.ReactNode => {
-	let {data} = props
+	let {data, onPress} = props
 
 	let rowDetail = '<unknown>'
-	let arrowPosition = 'none'
+	let isDrillable = false
 
 	if (Array.isArray(data.value)) {
 		// Array(0), Array(100), etc
 		rowDetail = `Array(${data.value.length})`
-		arrowPosition = 'center'
+		isDrillable = true
 	} else if (typeof data.value === 'object' && data.value !== null) {
 		// [object Object], [object Symbol], etc
 		// eslint-disable-next-line @typescript-eslint/no-base-to-string
 		rowDetail = data.value.toString()
-		arrowPosition = 'center'
+		isDrillable = true
 	} else if (typeof data.value === 'string') {
 		if (data.value.length > 20) {
 			rowDetail = `"${data.value.substring(0, 20)}…"`
@@ -31,16 +31,14 @@ export const DebugRow = (props: Props): React.ReactNode => {
 		rowDetail = JSON.stringify(data.value)
 	}
 
-	let onPress = (): void => {
-		return arrowPosition === 'none' ? undefined : props.onPress(data.key)
-	}
+	let showArrow = isDrillable && onPress != null
 
 	return (
 		<Cell
-			accessory={arrowPosition === 'none' ? false : 'DisclosureIndicator'}
+			accessory={showArrow ? 'DisclosureIndicator' : false}
 			cellStyle="RightDetail"
 			detail={rowDetail}
-			onPress={onPress}
+			onPress={showArrow ? () => onPress?.(data.key) : undefined}
 			title={data.key}
 		/>
 	)
