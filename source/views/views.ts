@@ -70,7 +70,6 @@ export const AllViews = (): Array<ViewType> => {
 			title: 'Building Hours',
 			icon: 'clock.fill',
 			gradient: c.blueGradient,
-			disabled: true,
 		},
 		{
 			type: 'view',

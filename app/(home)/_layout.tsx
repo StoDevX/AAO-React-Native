@@ -11,6 +11,7 @@ export default function HomeLayout(): React.ReactNode {
 			/>
 			<Stack.Screen name="News" options={{title: 'News'}} />
 			<Stack.Screen name="Transportation" options={{title: 'Transportation'}} />
+			<Stack.Screen name="BuildingHours" options={{title: 'Building Hours'}} />
 		</Stack>
 	)
 }

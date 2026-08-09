@@ -72,6 +72,7 @@ export type MiscViewParamList = {
 	Profile: {userId: string}
 	Feed: {sort: 'latest' | 'top'} | undefined
 	[eventList.EventDetail.NavigationKey]: eventList.EventDetail.ParamList
+	BuildingHours: undefined
 	BuildingHoursDetail: {building: BuildingType}
 	[buildingHours.ReportNavigationKey]: {initialBuilding: BuildingType}
 	BuildingHoursScheduleEditor: HoursEditorType
