@@ -172,9 +172,14 @@ export function FaqBanner({
 type GroupProps = {
 	target: FaqTarget
 	style?: StyleProp<ViewStyle>
+	onPressFaq?: (faqId: string) => void
 }
 
-export function FaqBannerGroup({target, style}: GroupProps): React.ReactNode {
+export function FaqBannerGroup({
+	target,
+	style,
+	onPressFaq,
+}: GroupProps): React.ReactNode {
 	let {data, isError} = useQuery(faqsOptions)
 	let devBanners = useDevBannerStore((state) => state.devBanners)
 	let devEnabled = useDevBannerStore((state) => state.enabled)
@@ -205,6 +210,7 @@ export function FaqBannerGroup({target, style}: GroupProps): React.ReactNode {
 				<FaqBanner
 					key={entry.id}
 					faqId={entry.id}
+					onPressOverride={onPressFaq ? () => onPressFaq(entry.id) : undefined}
 					style={styles.groupBanner}
 					target={target}
 				/>

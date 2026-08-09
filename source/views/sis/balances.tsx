@@ -12,6 +12,7 @@ import {Cell, TableView, Section} from '@frogpond/tableview'
 import {BalancesShapeType, balancesOptions} from '../../lib/financials'
 import * as c from '@frogpond/colors'
 import {sto} from '../../lib/colors'
+import {useRouter} from 'expo-router'
 import {NoCredentialsError, credentialsOptions} from '../../lib/login'
 import {useQuery} from '@tanstack/react-query'
 import {FaqBannerGroup} from '../faqs'
@@ -20,6 +21,8 @@ import {FAQ_TARGETS} from '../faqs/constants'
 const DISCLAIMER = 'This data may be outdated or otherwise inaccurate.'
 
 export const BalancesView = (): React.ReactNode => {
+	let router = useRouter()
+
 	let {data: username = ''} = useQuery({
 		...credentialsOptions,
 		select: (data) => data?.username,
@@ -49,7 +52,11 @@ export const BalancesView = (): React.ReactNode => {
 			refreshControl={refresh}
 			testID="balances-view"
 		>
-			<FaqBannerGroup style={styles.banner} target={FAQ_TARGETS.SIS} />
+			<FaqBannerGroup
+				onPressFaq={(faqId) => router.push({pathname: '/Faq', params: {faqId}})}
+				style={styles.banner}
+				target={FAQ_TARGETS.SIS}
+			/>
 			<TableView>
 				<Section footer={DISCLAIMER} header="BALANCES">
 					<View style={styles.balancesRow}>
