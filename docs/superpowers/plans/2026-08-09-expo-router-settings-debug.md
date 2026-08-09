@@ -531,3 +531,14 @@ is the exact same signature across `DebugView`, `DebugArrayItem`,
 matches `useLocalSearchParams<{keyPath?: string[]}>()`'s shape exactly
 (confirmed against expo-router's own source: catch-all params are
 always string arrays, never joined strings).
+
+## Followup (not this PR's scope)
+
+`api-test/detail.tsx`'s "Parse as JSON" toggle can no longer drill into
+nested objects/arrays at all -- Task 1's fix correctly stopped it from
+navigating to the wrong (Redux) data, but `DebugView` was left with no
+`onDrillDown` at that call site, so nested rows now render with no
+disclosure arrow and no way to expand them either. Worth a proper fix
+later: local in-place expand state inside `api-test/detail.tsx`, now
+trivial given `DebugView`'s new `onDrillDown` prop shape. Doesn't block
+this PR -- the wrong-data bug was worse than no expansion at all.
