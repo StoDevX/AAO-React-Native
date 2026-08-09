@@ -9,15 +9,13 @@ import {NetworkLoggerButton} from '@frogpond/navigation-buttons'
 
 import {ServerRoute, serverRoutesOptions} from './query'
 import {useQuery} from '@tanstack/react-query'
-import {
-	ChangeTextEvent,
-	LegacyRootParamList,
-} from '../../../../navigation/types'
-import {NavigationProp, useNavigation} from '@react-navigation/native'
+import {ChangeTextEvent} from '../../../../navigation/types'
+import {useNavigation, useRouter} from 'expo-router'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 
 export const APITestView = (): React.ReactNode => {
-	let navigation = useNavigation<NavigationProp<LegacyRootParamList>>()
+	let navigation = useNavigation()
+	let router = useRouter()
 
 	let [filterPath, setFilterPath] = React.useState<string>('')
 
@@ -48,14 +46,11 @@ export const APITestView = (): React.ReactNode => {
 	}, [navigation])
 
 	let showSearchResult = React.useCallback(() => {
-		navigation.navigate('APITestDetail', {
-			query: {
-				displayName: filterPath,
-				path: filterPath,
-				params: [],
-			},
+		router.push({
+			pathname: '/APITestDetail',
+			params: {displayName: filterPath},
 		})
-	}, [filterPath, navigation])
+	}, [filterPath, router])
 
 	React.useEffect(() => {
 		debounceSearch(filterPath, () => showSearchResult())
@@ -65,7 +60,12 @@ export const APITestView = (): React.ReactNode => {
 		(item: ServerRoute) => (
 			<ListRow
 				fullWidth={false}
-				onPress={() => navigation.navigate('APITestDetail', {query: item})}
+				onPress={() =>
+					router.push({
+						pathname: '/APITestDetail',
+						params: {displayName: item.displayName},
+					})
+				}
 				style={styles.serverRouteRow}
 			>
 				<Column flex={1}>
@@ -73,7 +73,7 @@ export const APITestView = (): React.ReactNode => {
 				</Column>
 			</ListRow>
 		),
-		[navigation],
+		[router],
 	)
 
 	return (

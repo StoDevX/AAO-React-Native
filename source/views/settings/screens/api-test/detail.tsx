@@ -4,9 +4,8 @@ import {View, StyleSheet, Platform, TextInput} from 'react-native'
 import {LoadingView, NoticeView} from '@frogpond/notice'
 import * as c from '@frogpond/colors'
 
-import {RouteProp, useNavigation, useRoute} from '@react-navigation/native'
+import {useLocalSearchParams, useNavigation} from 'expo-router'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
-import {SettingsStackParamList} from '../../../../navigation/types'
 import {useQuery} from '@tanstack/react-query'
 import {client} from '@frogpond/api'
 import {iOSUIKit, material} from 'react-native-typography'
@@ -21,9 +20,8 @@ type DisplayMode = 'raw' | 'parsed'
 
 export const APITestDetailView = (): React.ReactNode => {
 	let navigation = useNavigation()
-	let route = useRoute<RouteProp<SettingsStackParamList, 'APITestDetail'>>()
+	let {displayName = ''} = useLocalSearchParams<{displayName: string}>()
 
-	const {displayName} = route.params.query
 	const cleanedName = displayName.trim().toLowerCase()
 	let [displayMode, setDisplayMode] = React.useState<DisplayMode>('raw')
 
