@@ -6,15 +6,15 @@ import {IS_PRODUCTION} from '@frogpond/constants'
 export const navigationIntegration = Sentry.reactNavigationIntegration()
 
 function install() {
-	if (!IS_PRODUCTION) {
-		return
-	}
-
+	// Always init, even outside production, so that Sentry.wrap() in app.tsx
+	// has a client to attach to. `enabled` suppresses actual event reporting.
 	Sentry.init({
 		dsn: SENTRY_DSN,
+		enabled: IS_PRODUCTION,
 
 		tracesSampleRate: 0.2,
 		profilesSampleRate: 0.1,
+		enableMetricKit: true,
 
 		tracePropagationTargets: ['localhost', 'frogpond.tech', /^\//u],
 
