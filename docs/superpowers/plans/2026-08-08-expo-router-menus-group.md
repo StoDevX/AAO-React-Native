@@ -50,18 +50,45 @@ valid SF Symbol names and type-check against `expo-router`'s `SFSymbol`
 union as-is).
 
 **Navigation topology (confirmed from `source/navigation/routes.tsx`,
-unchanged by this plan): the tab bar only covers the 4 tab screens.**
-Tapping into a Carleton cafe, or tapping a food item on ANY of the 6
-menu-rendering screens, navigates to a screen registered as a *sibling*
-of `Menus` in the outer stack — not nested inside a sub-navigator. That
-means the tab bar disappears on those screens today, and this plan
-preserves that: `CarletonBurtonMenu`/`CarletonLDCMenu`/`CarletonWeitzMenu`/
-`CarletonSaylesMenu`/`MenuItemDetail` become route files that are
-siblings of the tab group, not children of it — pushed to via absolute
-paths (`router.push('/Menus/CarletonBurtonMenu')`, matching the
-"absolute path pushes out of a nested layout to a sibling of an
-ancestor" mechanism Directory's department drill-down already
-established, just one level deeper here).
+unchanged by this plan): the tab bar only covers the 4 tab screens.** In
+the original app, `Menus` (the whole 4-tab UI) and its 4 Carleton detail
+screens and `MenuItemDetail` were ALL flat siblings in one
+`Stack.Group` — there was never a second nested Stack wrapping just the
+tab UI's screen family. This plan mirrors that exactly, one level up
+from where an earlier draft of it mistakenly put an extra `Menus/_layout.tsx`
+Stack wrapper around everything (that produced a double header bar in
+testing — a `(tabs)` back button stacked above a real header — because
+`(home)`'s own Stack has no way to know a nested Stack's screen needs its
+header hidden without an explicit entry for it, the same reason the root
+`app/_layout.tsx` explicitly hides `(home)`'s own header). The corrected,
+flat structure: `app/(home)/Menus/` is *only* the tab group (its
+`_layout.tsx` is the bare `<NativeTabs>` itself, nothing wrapping it), and
+`CarletonBurtonMenu`/`CarletonLDCMenu`/`CarletonWeitzMenu`/
+`CarletonSaylesMenu`/`MenuItemDetail` are direct siblings of `Menus/` at
+the `app/(home)/` level — exactly the same flat shape every prior group's
+list+detail screens already use (e.g. `Contacts/` and `Contacts/[title].tsx`
+are both direct children of `(home)/`, not nested a level deeper). Each
+of those 5 sibling files self-registers its own header via
+`<Stack.Screen options={...}/>` inside its own render output, the same
+established pattern every prior detail screen in this migration uses —
+`(home)/_layout.tsx` needs exactly one added line,
+`<Stack.Screen name="Menus" options={{title: 'Menus'}}/>` (**not**
+`headerShown: false`, confirmed by re-checking the original: the
+`Tab.Navigator`'s own `screenOptions={{headerShown: false}}` only
+suppressed a header *inside* the tab navigator, for each tab's own
+content — the *outer* Stack still showed a real "Menus" header with a
+back button to Home, via `menus.NavigationOptions = {title: 'Menus'}` in
+the original `routes.tsx` registration. Since `Menus/_layout.tsx` is now
+just `<NativeTabs>` with no inner Stack of its own, there's nothing left
+to double up with `(home)`'s header — giving "Menus" a title there is
+enough on its own to both restore the back button on the tab screens
+*and* keep MenuItemDetail/Carleton screens' own headers from stacking a
+second row underneath it, since they're flat siblings in the same,
+single Stack rather than nested one level deeper). Every other route
+under `(home)/`, including the 5 new siblings, keeps auto-registering
+and self-configuring exactly as before. Pushes to the 5 sibling screens
+use flat absolute paths — `router.push('/MenuItemDetail')`,
+`router.push('/CarletonBurtonMenu')` — not nested under `/Menus/`.
 
 **`FancyMenu` (`modules/food-menu/fancy-menu.tsx`) gets decoupled from
 navigation entirely**, not patched. It currently imports `useNavigation`
@@ -138,17 +165,17 @@ cafe-param form, used only by this dev picker) is left exactly as-is.
 - Modify: `modules/food-menu/food-item-detail.tsx`
 - Modify: `source/navigation/routes.tsx`
 - Modify: `source/views/views.ts`
+- Modify: `app/(home)/_layout.tsx`
 - Create: `app/(home)/Menus/_layout.tsx`
-- Create: `app/(home)/Menus/(tabs)/_layout.tsx`
-- Create: `app/(home)/Menus/(tabs)/index.tsx`
-- Create: `app/(home)/Menus/(tabs)/the-cage.tsx`
-- Create: `app/(home)/Menus/(tabs)/the-pause.tsx`
-- Create: `app/(home)/Menus/(tabs)/carleton.tsx`
-- Create: `app/(home)/Menus/MenuItemDetail.tsx`
-- Create: `app/(home)/Menus/CarletonBurtonMenu.tsx`
-- Create: `app/(home)/Menus/CarletonLDCMenu.tsx`
-- Create: `app/(home)/Menus/CarletonWeitzMenu.tsx`
-- Create: `app/(home)/Menus/CarletonSaylesMenu.tsx`
+- Create: `app/(home)/Menus/index.tsx`
+- Create: `app/(home)/Menus/the-cage.tsx`
+- Create: `app/(home)/Menus/the-pause.tsx`
+- Create: `app/(home)/Menus/carleton.tsx`
+- Create: `app/(home)/MenuItemDetail.tsx`
+- Create: `app/(home)/CarletonBurtonMenu.tsx`
+- Create: `app/(home)/CarletonLDCMenu.tsx`
+- Create: `app/(home)/CarletonWeitzMenu.tsx`
+- Create: `app/(home)/CarletonSaylesMenu.tsx`
 
 **Interfaces:**
 - Consumes: `StavHallMenuView`, `TheCageMenuView`, `ThePauseMenuView`
@@ -161,11 +188,12 @@ cafe-param form, used only by this dev picker) is left exactly as-is.
   MenuItemType; icons: MasterCorIconMapType}`), `DetailNavigationOptions`
   from `modules/food-menu/food-item-detail.tsx`; `bonAppMenuItemOptions`,
   `pauseMenuItemOptions` from `source/views/menus/query.ts`.
-- Produces: `/Menus` (tab group, default tab Stav Hall),
-  `/Menus/the-cage`, `/Menus/the-pause`, `/Menus/carleton` (all within the
-  tab bar); `/Menus/MenuItemDetail`, `/Menus/CarletonBurtonMenu`,
-  `/Menus/CarletonLDCMenu`, `/Menus/CarletonWeitzMenu`,
-  `/Menus/CarletonSaylesMenu` (siblings of the tab group, tab bar hidden).
+- Produces: `/Menus` (tab group, default tab Stav Hall), `/Menus/the-cage`,
+  `/Menus/the-pause`, `/Menus/carleton` (all within the tab bar, no
+  per-tab header); `/MenuItemDetail`, `/CarletonBurtonMenu`,
+  `/CarletonLDCMenu`, `/CarletonWeitzMenu`, `/CarletonSaylesMenu` — flat
+  siblings of `Menus/` at the `(home)/` level, each with its own header,
+  tab bar hidden.
 
 - [ ] **Step 1: Decouple `FancyMenu` from navigation**
 
@@ -566,7 +594,7 @@ with:
 			now={now}
 			onItemPress={(item) =>
 				router.push({
-					pathname: '/Menus/MenuItemDetail',
+					pathname: '/MenuItemDetail',
 					params: {
 						source: 'bonapp',
 						cafe:
@@ -649,7 +677,7 @@ with:
 			now={moment.tz(dataUpdatedAt, timezone())}
 			onItemPress={(item) =>
 				router.push({
-					pathname: '/Menus/MenuItemDetail',
+					pathname: '/MenuItemDetail',
 					params: {source: 'pause', itemId: item.id},
 				})
 			}
@@ -697,10 +725,10 @@ export function CarletonCafeIndex(): React.ReactNode {
 	let router = useRouter()
 
 	let carletonCafes = [
-		{href: '/Menus/CarletonBurtonMenu', title: 'Burton'},
-		{href: '/Menus/CarletonLDCMenu', title: 'LDC'},
-		{href: '/Menus/CarletonWeitzMenu', title: 'Weitz Center'},
-		{href: '/Menus/CarletonSaylesMenu', title: 'Sayles Hill'},
+		{href: '/CarletonBurtonMenu', title: 'Burton'},
+		{href: '/CarletonLDCMenu', title: 'LDC'},
+		{href: '/CarletonWeitzMenu', title: 'Weitz Center'},
+		{href: '/CarletonSaylesMenu', title: 'Sayles Hill'},
 	] as const
 ```
 
@@ -864,88 +892,56 @@ in the file (out of scope, per this plan's Global Constraints).
 In `source/views/views.ts`, remove the `disabled: true` line from the
 `menus` entry.
 
-- [ ] **Step 10: Create the outer Menus layout (Stack: tab group + siblings)**
+- [ ] **Step 10: Give the outer "Menus" entry its title**
 
-Create `app/(home)/Menus/_layout.tsx`:
+In `app/(home)/_layout.tsx`, replace:
 
 ```typescript
 import * as React from 'react'
 import {Stack} from 'expo-router'
 
-import {
-	BurtonNavigationOptions,
-	LDCNavigationOptions,
-	WeitzNavigationOptions,
-	SaylesNavigationOptions,
-} from '../../../source/views/menus'
-import {DetailNavigationOptions as MenuItemDetailNavigationOptions} from '../../../modules/food-menu/food-item-detail'
+export default function HomeLayout(): React.ReactNode {
+	return <Stack />
+}
+```
 
-export default function MenusLayout(): React.ReactNode {
+with:
+
+```typescript
+import * as React from 'react'
+import {Stack} from 'expo-router'
+
+export default function HomeLayout(): React.ReactNode {
 	return (
 		<Stack>
-			<Stack.Screen name="(tabs)" options={{headerShown: false}} />
-			<Stack.Screen
-				name="MenuItemDetail"
-				options={
-					MenuItemDetailNavigationOptions as React.ComponentProps<
-						typeof Stack.Screen
-					>['options']
-				}
-			/>
-			<Stack.Screen
-				name="CarletonBurtonMenu"
-				options={
-					BurtonNavigationOptions as React.ComponentProps<
-						typeof Stack.Screen
-					>['options']
-				}
-			/>
-			<Stack.Screen
-				name="CarletonLDCMenu"
-				options={
-					LDCNavigationOptions as React.ComponentProps<
-						typeof Stack.Screen
-					>['options']
-				}
-			/>
-			<Stack.Screen
-				name="CarletonWeitzMenu"
-				options={
-					WeitzNavigationOptions as React.ComponentProps<
-						typeof Stack.Screen
-					>['options']
-				}
-			/>
-			<Stack.Screen
-				name="CarletonSaylesMenu"
-				options={
-					SaylesNavigationOptions as React.ComponentProps<
-						typeof Stack.Screen
-					>['options']
-				}
-			/>
+			<Stack.Screen name="Menus" options={{title: 'Menus'}} />
 		</Stack>
 	)
 }
 ```
 
-(`carleton-menus.tsx` has no `DetailNavigationOptions` export of its own —
-only `BurtonNavigationOptions`, `LDCNavigationOptions`,
-`WeitzNavigationOptions`, `SaylesNavigationOptions`. The `MenuItemDetail`
-screen's options come from `modules/food-menu`'s own
-`DetailNavigationOptions`, aliased on import to avoid a name collision
-with the differently-shaped one that would otherwise exist if this file
-also imported from `source/views/menus`.)
+(the original app's Menus screen had a real header — "Menus" with a back
+button to Home — provided by the *outer* Stack, not by the tab
+navigator. Do not use `headerShown: false` here; that would hide the
+back button entirely, which is a regression, not a fix. `NativeTabs`
+itself never draws a top header — only a bottom tab bar — so there's
+nothing for this outer header to visually collide with. Every other
+route under `(home)/` keeps auto-registering into this same `<Stack>`
+and self-configuring its own header via its own
+`<Stack.Screen options={...}/>`, unaffected by this one explicit entry.)
 
 - [ ] **Step 11: Create the native tab bar layout**
 
-Create `app/(home)/Menus/(tabs)/_layout.tsx`:
+Create `app/(home)/Menus/_layout.tsx` — this is the *entire* file, not a
+wrapper around anything else. There is no separate outer Stack for
+Menus; `NativeTabs` draws its own chrome and `(home)`'s Stack (Step 10)
+already hides its header for this whole subtree:
 
 ```typescript
 import * as React from 'react'
 import {NativeTabs} from 'expo-router/unstable-native-tabs'
 
-export default function MenusTabsLayout(): React.ReactNode {
+export default function MenusLayout(): React.ReactNode {
 	return (
 		<NativeTabs>
 			<NativeTabs.Trigger name="index">
@@ -971,44 +967,44 @@ export default function MenusTabsLayout(): React.ReactNode {
 
 - [ ] **Step 12: Create the 4 tab route files**
 
-Create `app/(home)/Menus/(tabs)/index.tsx`:
+Create `app/(home)/Menus/index.tsx`:
 
 ```typescript
 import * as React from 'react'
-import {StavHallMenuView} from '../../../../source/views/menus'
+import {StavHallMenuView} from '../../../source/views/menus'
 
 export default function StavHallPage(): React.ReactNode {
 	return <StavHallMenuView />
 }
 ```
 
-Create `app/(home)/Menus/(tabs)/the-cage.tsx`:
+Create `app/(home)/Menus/the-cage.tsx`:
 
 ```typescript
 import * as React from 'react'
-import {TheCageMenuView} from '../../../../source/views/menus'
+import {TheCageMenuView} from '../../../source/views/menus'
 
 export default function TheCagePage(): React.ReactNode {
 	return <TheCageMenuView />
 }
 ```
 
-Create `app/(home)/Menus/(tabs)/the-pause.tsx`:
+Create `app/(home)/Menus/the-pause.tsx`:
 
 ```typescript
 import * as React from 'react'
-import {ThePauseMenuView} from '../../../../source/views/menus'
+import {ThePauseMenuView} from '../../../source/views/menus'
 
 export default function ThePausePage(): React.ReactNode {
 	return <ThePauseMenuView />
 }
 ```
 
-Create `app/(home)/Menus/(tabs)/carleton.tsx`:
+Create `app/(home)/Menus/carleton.tsx`:
 
 ```typescript
 import * as React from 'react'
-import {CarletonCafeIndex} from '../../../../source/views/menus'
+import {CarletonCafeIndex} from '../../../source/views/menus'
 
 export default function CarletonPage(): React.ReactNode {
 	return <CarletonCafeIndex />
@@ -1022,18 +1018,23 @@ below it with no per-tab header, matching the original
 
 - [ ] **Step 13: Create the shared MenuItemDetail route**
 
-Create `app/(home)/Menus/MenuItemDetail.tsx`:
+Create `app/(home)/MenuItemDetail.tsx` — a flat sibling of `Menus/`, not
+nested under it, self-registering its own header the same way every
+prior group's detail screen does:
 
 ```typescript
 import * as React from 'react'
-import {useLocalSearchParams} from 'expo-router'
+import {Stack, useLocalSearchParams} from 'expo-router'
 import {useQuery} from '@tanstack/react-query'
 
-import {MenuItemDetailView} from '../../../modules/food-menu/food-item-detail'
+import {
+	MenuItemDetailView,
+	DetailNavigationOptions,
+} from '../../modules/food-menu/food-item-detail'
 import {
 	bonAppMenuItemOptions,
 	pauseMenuItemOptions,
-} from '../../../source/views/menus/query'
+} from '../../source/views/menus/query'
 import {LoadingView, NoticeView} from '@frogpond/notice'
 
 export default function MenuItemDetailPage(): React.ReactNode {
@@ -1056,27 +1057,55 @@ export default function MenuItemDetailPage(): React.ReactNode {
 	let {data, isLoading, error, refetch} =
 		source === 'bonapp' ? bonAppQuery : pauseQuery
 
+	let screen = (
+		<Stack.Screen
+			options={
+				DetailNavigationOptions as React.ComponentProps<
+					typeof Stack.Screen
+				>['options']
+			}
+		/>
+	)
+
 	if (isLoading) {
-		return <LoadingView />
+		return (
+			<>
+				{screen}
+				<LoadingView />
+			</>
+		)
 	}
 
 	if (error) {
 		return (
-			<NoticeView
-				buttonText="Try Again"
-				onPress={refetch}
-				text={`A problem occured while loading: ${
-					error instanceof Error ? error.message : 'Unknown error'
-				}`}
-			/>
+			<>
+				{screen}
+				<NoticeView
+					buttonText="Try Again"
+					onPress={refetch}
+					text={`A problem occured while loading: ${
+						error instanceof Error ? error.message : 'Unknown error'
+					}`}
+				/>
+			</>
 		)
 	}
 
 	if (!data?.item) {
-		return <NoticeView text="Could not find this menu item." />
+		return (
+			<>
+				{screen}
+				<NoticeView text="Could not find this menu item." />
+			</>
+		)
 	}
 
-	return <MenuItemDetailView icons={data.icons} item={data.item} />
+	return (
+		<>
+			{screen}
+			<MenuItemDetailView icons={data.icons} item={data.item} />
+		</>
+	)
 }
 ```
 
@@ -1089,47 +1118,109 @@ group's `printerByNameOptions`.)
 
 - [ ] **Step 14: Create the 4 Carleton detail routes**
 
-Create `app/(home)/Menus/CarletonBurtonMenu.tsx`:
+Create `app/(home)/CarletonBurtonMenu.tsx` — a flat sibling of `Menus/`,
+each self-registering its own header the same way every prior group's
+detail screen does:
 
 ```typescript
 import * as React from 'react'
-import {CarletonBurtonMenuScreen} from '../../../source/views/menus'
+import {Stack} from 'expo-router'
+import {
+	CarletonBurtonMenuScreen,
+	BurtonNavigationOptions,
+} from '../../source/views/menus'
 
 export default function CarletonBurtonMenuPage(): React.ReactNode {
-	return <CarletonBurtonMenuScreen />
+	return (
+		<>
+			<Stack.Screen
+				options={
+					BurtonNavigationOptions as React.ComponentProps<
+						typeof Stack.Screen
+					>['options']
+				}
+			/>
+			<CarletonBurtonMenuScreen />
+		</>
+	)
 }
 ```
 
-Create `app/(home)/Menus/CarletonLDCMenu.tsx`:
+Create `app/(home)/CarletonLDCMenu.tsx`:
 
 ```typescript
 import * as React from 'react'
-import {CarletonLDCMenuScreen} from '../../../source/views/menus'
+import {Stack} from 'expo-router'
+import {
+	CarletonLDCMenuScreen,
+	LDCNavigationOptions,
+} from '../../source/views/menus'
 
 export default function CarletonLDCMenuPage(): React.ReactNode {
-	return <CarletonLDCMenuScreen />
+	return (
+		<>
+			<Stack.Screen
+				options={
+					LDCNavigationOptions as React.ComponentProps<
+						typeof Stack.Screen
+					>['options']
+				}
+			/>
+			<CarletonLDCMenuScreen />
+		</>
+	)
 }
 ```
 
-Create `app/(home)/Menus/CarletonWeitzMenu.tsx`:
+Create `app/(home)/CarletonWeitzMenu.tsx`:
 
 ```typescript
 import * as React from 'react'
-import {CarletonWeitzMenuScreen} from '../../../source/views/menus'
+import {Stack} from 'expo-router'
+import {
+	CarletonWeitzMenuScreen,
+	WeitzNavigationOptions,
+} from '../../source/views/menus'
 
 export default function CarletonWeitzMenuPage(): React.ReactNode {
-	return <CarletonWeitzMenuScreen />
+	return (
+		<>
+			<Stack.Screen
+				options={
+					WeitzNavigationOptions as React.ComponentProps<
+						typeof Stack.Screen
+					>['options']
+				}
+			/>
+			<CarletonWeitzMenuScreen />
+		</>
+	)
 }
 ```
 
-Create `app/(home)/Menus/CarletonSaylesMenu.tsx`:
+Create `app/(home)/CarletonSaylesMenu.tsx`:
 
 ```typescript
 import * as React from 'react'
-import {CarletonSaylesMenuScreen} from '../../../source/views/menus'
+import {Stack} from 'expo-router'
+import {
+	CarletonSaylesMenuScreen,
+	SaylesNavigationOptions,
+} from '../../source/views/menus'
 
 export default function CarletonSaylesMenuPage(): React.ReactNode {
-	return <CarletonSaylesMenuScreen />
+	return (
+		<>
+			<Stack.Screen
+				options={
+					SaylesNavigationOptions as React.ComponentProps<
+						typeof Stack.Screen
+					>['options']
+				}
+			/>
+			<CarletonSaylesMenuScreen />
+		</>
+	)
 }
 ```
 
@@ -1177,7 +1268,7 @@ and posted as a PR comment — don't clean up the SDD workspace first.**
 - [ ] **Step 17: Commit**
 
 ```bash
-git add source/views/menus/index.tsx source/views/menus/carleton-menus.tsx source/views/menus/menu-bonapp.tsx source/views/menus/menu-github.tsx source/views/menus/query.ts modules/food-menu/fancy-menu.tsx modules/food-menu/food-item-detail.tsx source/navigation/routes.tsx source/views/views.ts app/\(home\)/Menus/
+git add source/views/menus/index.tsx source/views/menus/carleton-menus.tsx source/views/menus/menu-bonapp.tsx source/views/menus/menu-github.tsx source/views/menus/query.ts modules/food-menu/fancy-menu.tsx modules/food-menu/food-item-detail.tsx source/navigation/routes.tsx source/navigation/types.tsx source/views/views.ts app/\(home\)/_layout.tsx app/\(home\)/Menus/ app/\(home\)/MenuItemDetail.tsx app/\(home\)/CarletonBurtonMenu.tsx app/\(home\)/CarletonLDCMenu.tsx app/\(home\)/CarletonWeitzMenu.tsx app/\(home\)/CarletonSaylesMenu.tsx
 git commit -m "Restore the Menus home-grid tile
 
 Seventh group PR in checkpoint 2's stack, and the first tab-bar

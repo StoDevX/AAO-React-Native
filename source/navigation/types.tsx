@@ -3,7 +3,6 @@ import React from 'react'
 import {FilterType} from '@frogpond/filter/types'
 import * as eventList from '@frogpond/event-list'
 
-import * as menus from '../views/menus'
 import * as calendar from '../views/calendar'
 import * as news from '../views/news'
 import * as reddit from '../views/reddit'
@@ -39,7 +38,7 @@ export type FaqRouteParams = {faqId?: string} | undefined
 export type RootViewsParamList = {
 	Home: undefined
 	[calendar.NavigationKey]: calendar.NavigationParams
-	[menus.NavigationKey]: undefined
+	Menus: undefined
 	[news.NavigationKey]: undefined
 	[reddit.NavigationKey]: reddit.NavigationParams
 	[sis.NavigationKey]: undefined

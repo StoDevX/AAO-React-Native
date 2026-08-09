@@ -1,19 +1,21 @@
 import * as React from 'react'
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
-import {createNativeBottomTabNavigator} from '@react-navigation/bottom-tabs/unstable'
 
 import {BonAppHostedMenu} from './menu-bonapp'
 import {GitHubHostedMenu} from './menu-github'
-import {CarletonCafeIndex} from './carleton-menus'
 
 export {
+	CarletonCafeIndex,
 	CarletonBurtonMenuScreen,
 	CarletonLDCMenuScreen,
 	CarletonWeitzMenuScreen,
 	CarletonSaylesMenuScreen,
+	BurtonNavigationOptions,
+	LDCNavigationOptions,
+	WeitzNavigationOptions,
+	SaylesNavigationOptions,
 } from './carleton-menus'
 
-const StavHallMenuView = () => (
+export const StavHallMenuView = (): React.ReactNode => (
 	<BonAppHostedMenu
 		cafe="stav-hall"
 		loadingMessage={[
@@ -28,7 +30,7 @@ const StavHallMenuView = () => (
 	/>
 )
 
-const TheCageMenuView = () => (
+export const TheCageMenuView = (): React.ReactNode => (
 	<BonAppHostedMenu
 		cafe="the-cage"
 		ignoreProvidedMenus={true}
@@ -43,7 +45,7 @@ const TheCageMenuView = () => (
 	/>
 )
 
-const ThePauseMenuView = () => (
+export const ThePauseMenuView = (): React.ReactNode => (
 	<GitHubHostedMenu
 		loadingMessage={[
 			'Mixing up a shake…',
@@ -55,55 +57,3 @@ const ThePauseMenuView = () => (
 		name="The Pause"
 	/>
 )
-
-type Params = {
-	StavHallMenuView: undefined
-	TheCageMenuView: undefined
-	ThePauseMenuView: undefined
-	CarletonMenuListView: undefined
-}
-
-const Tab = createNativeBottomTabNavigator<Params>()
-
-export const View = (): React.ReactNode => (
-	<Tab.Navigator screenOptions={{headerShown: false}}>
-		<Tab.Screen
-			component={StavHallMenuView}
-			name="StavHallMenuView"
-			options={{
-				tabBarLabel: 'Stav Hall',
-				tabBarIcon: {type: 'sfSymbol', name: 'fork.knife'},
-			}}
-		/>
-		<Tab.Screen
-			component={TheCageMenuView}
-			name="TheCageMenuView"
-			options={{
-				tabBarLabel: 'The Cage',
-				tabBarIcon: {type: 'sfSymbol', name: 'cup.and.saucer.fill'},
-			}}
-		/>
-		<Tab.Screen
-			component={ThePauseMenuView}
-			name="ThePauseMenuView"
-			options={{
-				tabBarLabel: 'The Pause',
-				tabBarIcon: {type: 'sfSymbol', name: 'pawprint.fill'},
-			}}
-		/>
-		<Tab.Screen
-			component={CarletonCafeIndex}
-			name="CarletonMenuListView"
-			options={{
-				tabBarLabel: 'Carleton',
-				tabBarIcon: {type: 'sfSymbol', name: 'list.bullet'},
-			}}
-		/>
-	</Tab.Navigator>
-)
-
-export type NavigationParams = undefined
-export const NavigationKey = 'Menus'
-export const NavigationOptions: NativeStackNavigationOptions = {
-	title: 'Menus',
-}

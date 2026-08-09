@@ -55,7 +55,6 @@ export const AllViews = (): Array<ViewType> => {
 			title: 'Menus',
 			icon: 'fork.knife',
 			gradient: c.greenGradient,
-			disabled: true,
 		},
 		{
 			type: 'view',

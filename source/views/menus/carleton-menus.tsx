@@ -3,9 +3,8 @@ import {Platform, ScrollView, StyleSheet, View} from 'react-native'
 import {Row} from '@frogpond/layout'
 import {ListRow, ListSeparator, Title} from '@frogpond/lists'
 import {BonAppHostedMenu} from './menu-bonapp'
-import {NavigationProp, useNavigation} from '@react-navigation/native'
+import {useRouter} from 'expo-router'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
-import {CafeMenuParamList, LegacyRootParamList} from '../../navigation/types'
 
 export const CarletonBurtonMenuScreen = (): React.ReactNode => (
 	<BonAppHostedMenu
@@ -40,14 +39,14 @@ export const CarletonSaylesMenuScreen = (): React.ReactNode => (
 )
 
 export function CarletonCafeIndex(): React.ReactNode {
-	let navigation = useNavigation<NavigationProp<LegacyRootParamList>>()
+	let router = useRouter()
 
-	let carletonCafes: Array<{id: keyof CafeMenuParamList; title: string}> = [
-		{id: 'CarletonBurtonMenu', title: 'Burton'},
-		{id: 'CarletonLDCMenu', title: 'LDC'},
-		{id: 'CarletonWeitzMenu', title: 'Weitz Center'},
-		{id: 'CarletonSaylesMenu', title: 'Sayles Hill'},
-	]
+	let carletonCafes = [
+		{href: '/CarletonBurtonMenu', title: 'Burton'},
+		{href: '/CarletonLDCMenu', title: 'LDC'},
+		{href: '/CarletonWeitzMenu', title: 'Weitz Center'},
+		{href: '/CarletonSaylesMenu', title: 'Sayles Hill'},
+	] as const
 
 	return (
 		<ScrollView
@@ -56,10 +55,7 @@ export function CarletonCafeIndex(): React.ReactNode {
 		>
 			{carletonCafes.map((loc, i, collection) => (
 				<View key={i}>
-					<ListRow
-						arrowPosition="center"
-						onPress={() => navigation.navigate(loc.id)}
-					>
+					<ListRow arrowPosition="center" onPress={() => router.push(loc.href)}>
 						<Row alignItems="center">
 							<Title style={styles.rowText}>{loc.title}</Title>
 						</Row>
