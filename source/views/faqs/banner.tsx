@@ -97,11 +97,10 @@ export function FaqBanner({
 
 	let palette = buildPalette(resolvedFaq)
 
-	// Faq hasn't been migrated to expo-router yet -- it's planned to land
-	// near the end of checkpoint 2 since it's dual-registered inside the
-	// Settings stack too. Without an override there's nowhere to send a tap
-	// yet, so the banner renders as a plain, non-interactive card (no button
-	// role, no CTA row) instead of a button that silently does nothing.
+	// A banner is only interactive when its caller supplies somewhere to
+	// send the tap. Callers with nowhere to route yet get a plain,
+	// non-interactive card (no button role, no CTA row) instead of a
+	// button that silently does nothing.
 	let isInteractive = Boolean(onPressOverride)
 	let onDismiss = (event?: GestureResponderEvent) => {
 		event?.stopPropagation?.()
