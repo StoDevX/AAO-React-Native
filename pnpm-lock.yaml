@@ -144,7 +144,7 @@ importers:
         version: 13.1.0(@expo/config-plugins@57.0.7)(@react-native/assets-registry@0.86.2)(expo-font@57.0.1)(react-native@0.86.2)(react@19.2.3)
       '@react-navigation/bottom-tabs':
         specifier: 7.18.13
-        version: 7.18.13(@react-navigation/native@7.3.13)(react-native-safe-area-context@5.7.0)(react-native-screens@4.26.2)(react-native@0.86.2)(react@19.2.3)
+        version: 7.18.13(@react-navigation/native@7.3.13)(react-native-safe-area-context@5.8.1)(react-native-screens@4.26.2)(react-native@0.86.2)(react@19.2.3)
       '@react-navigation/core':
         specifier: 7.21.10
         version: 7.21.10(react@19.2.3)
@@ -153,7 +153,7 @@ importers:
         version: 7.3.13(react-native@0.86.2)(react@19.2.3)
       '@react-navigation/native-stack':
         specifier: 7.18.5
-        version: 7.18.5(@react-navigation/native@7.3.13)(react-native-safe-area-context@5.7.0)(react-native-screens@4.26.2)(react-native@0.86.2)(react@19.2.3)
+        version: 7.18.5(@react-navigation/native@7.3.13)(react-native-safe-area-context@5.8.1)(react-native-screens@4.26.2)(react-native@0.86.2)(react@19.2.3)
       '@reduxjs/toolkit':
         specifier: 2.11.2
         version: 2.11.2(react-redux@9.2.0)(react@19.2.3)
@@ -261,7 +261,7 @@ importers:
         version: 2.0.1(react-native@0.86.2)(react@19.2.3)
       react-native-paper:
         specifier: 5.15.0
-        version: 5.15.0(react-native-safe-area-context@5.7.0)(react-native@0.86.2)(react@19.2.3)
+        version: 5.15.0(react-native-safe-area-context@5.8.1)(react-native@0.86.2)(react@19.2.3)
       react-native-popover-view:
         specifier: 6.1.0
         version: 6.1.0
@@ -272,8 +272,8 @@ importers:
         specifier: 1.0.85
         version: 1.0.85(react-native@0.86.2)
       react-native-safe-area-context:
-        specifier: 5.7.0
-        version: 5.7.0(react-native@0.86.2)(react@19.2.3)
+        specifier: 5.8.1
+        version: 5.8.1(react-native@0.86.2)(react@19.2.3)
       react-native-screens:
         specifier: 4.26.2
         version: 4.26.2(react-native@0.86.2)(react@19.2.3)
@@ -4618,8 +4618,8 @@ packages:
     peerDependencies:
       react-native: '>=0.60.0'
 
-  react-native-safe-area-context@5.7.0:
-    resolution: {integrity: sha512-/9/MtQz8ODphjsLdZ+GZAIcC/RtoqW9EeShf7Uvnfgm/pzYrJ75y3PV/J1wuAV1T5Dye5ygq4EAW20RoBq0ABQ==}
+  react-native-safe-area-context@5.8.1:
+    resolution: {integrity: sha512-dDYVAJcW5LJlXAqTUFAaWvYJovqxrh6HdJlOkdTQ7dXCcKWhCq5vKoDXJc3n1q5rYcAUaIwmToKNPKibnogC4g==}
     peerDependencies:
       react: '*'
       react-native: '*'
@@ -6864,14 +6864,14 @@ snapshots:
     optionalDependencies:
       '@types/react': 19.2.14
 
-  '@react-navigation/bottom-tabs@7.18.13(@react-navigation/native@7.3.13)(react-native-safe-area-context@5.7.0)(react-native-screens@4.26.2)(react-native@0.86.2)(react@19.2.3)':
+  '@react-navigation/bottom-tabs@7.18.13(@react-navigation/native@7.3.13)(react-native-safe-area-context@5.8.1)(react-native-screens@4.26.2)(react-native@0.86.2)(react@19.2.3)':
     dependencies:
-      '@react-navigation/elements': 2.9.36(@react-navigation/native@7.3.13)(react-native-safe-area-context@5.7.0)(react-native@0.86.2)(react@19.2.3)
+      '@react-navigation/elements': 2.9.36(@react-navigation/native@7.3.13)(react-native-safe-area-context@5.8.1)(react-native@0.86.2)(react@19.2.3)
       '@react-navigation/native': 7.3.13(react-native@0.86.2)(react@19.2.3)
       color: 4.2.3
       react: 19.2.3
       react-native: 0.86.2(patch_hash=6ca2e1225f38672b073b92b9d13f24feebbe9e37ba67708a3f1569275ce99191)(@babel/core@7.29.7)(@react-native/jest-preset@0.86.2)(@react-native/metro-config@0.86.2)(@types/react@19.2.14)(react@19.2.3)(supports-color@8.1.1)
-      react-native-safe-area-context: 5.7.0(react-native@0.86.2)(react@19.2.3)
+      react-native-safe-area-context: 5.8.1(react-native@0.86.2)(react@19.2.3)
       react-native-screens: 4.26.2(react-native@0.86.2)(react@19.2.3)
       sf-symbols-typescript: 2.2.0
     transitivePeerDependencies:
@@ -6889,24 +6889,24 @@ snapshots:
       use-latest-callback: 0.2.6(react@19.2.3)
       use-sync-external-store: 1.6.0(react@19.2.3)
 
-  '@react-navigation/elements@2.9.36(@react-navigation/native@7.3.13)(react-native-safe-area-context@5.7.0)(react-native@0.86.2)(react@19.2.3)':
+  '@react-navigation/elements@2.9.36(@react-navigation/native@7.3.13)(react-native-safe-area-context@5.8.1)(react-native@0.86.2)(react@19.2.3)':
     dependencies:
       '@react-navigation/native': 7.3.13(react-native@0.86.2)(react@19.2.3)
       color: 4.2.3
       react: 19.2.3
       react-native: 0.86.2(patch_hash=6ca2e1225f38672b073b92b9d13f24feebbe9e37ba67708a3f1569275ce99191)(@babel/core@7.29.7)(@react-native/jest-preset@0.86.2)(@react-native/metro-config@0.86.2)(@types/react@19.2.14)(react@19.2.3)(supports-color@8.1.1)
-      react-native-safe-area-context: 5.7.0(react-native@0.86.2)(react@19.2.3)
+      react-native-safe-area-context: 5.8.1(react-native@0.86.2)(react@19.2.3)
       use-latest-callback: 0.2.6(react@19.2.3)
       use-sync-external-store: 1.6.0(react@19.2.3)
 
-  '@react-navigation/native-stack@7.18.5(@react-navigation/native@7.3.13)(react-native-safe-area-context@5.7.0)(react-native-screens@4.26.2)(react-native@0.86.2)(react@19.2.3)':
+  '@react-navigation/native-stack@7.18.5(@react-navigation/native@7.3.13)(react-native-safe-area-context@5.8.1)(react-native-screens@4.26.2)(react-native@0.86.2)(react@19.2.3)':
     dependencies:
-      '@react-navigation/elements': 2.9.36(@react-navigation/native@7.3.13)(react-native-safe-area-context@5.7.0)(react-native@0.86.2)(react@19.2.3)
+      '@react-navigation/elements': 2.9.36(@react-navigation/native@7.3.13)(react-native-safe-area-context@5.8.1)(react-native@0.86.2)(react@19.2.3)
       '@react-navigation/native': 7.3.13(react-native@0.86.2)(react@19.2.3)
       color: 4.2.3
       react: 19.2.3
       react-native: 0.86.2(patch_hash=6ca2e1225f38672b073b92b9d13f24feebbe9e37ba67708a3f1569275ce99191)(@babel/core@7.29.7)(@react-native/jest-preset@0.86.2)(@react-native/metro-config@0.86.2)(@types/react@19.2.14)(react@19.2.3)(supports-color@8.1.1)
-      react-native-safe-area-context: 5.7.0(react-native@0.86.2)(react@19.2.3)
+      react-native-safe-area-context: 5.8.1(react-native@0.86.2)(react@19.2.3)
       react-native-screens: 4.26.2(react-native@0.86.2)(react@19.2.3)
       sf-symbols-typescript: 2.2.0
       warn-once: 0.1.1
@@ -9980,13 +9980,13 @@ snapshots:
       react: 19.2.3
       react-native: 0.86.2(patch_hash=6ca2e1225f38672b073b92b9d13f24feebbe9e37ba67708a3f1569275ce99191)(@babel/core@7.29.7)(@react-native/jest-preset@0.86.2)(@react-native/metro-config@0.86.2)(@types/react@19.2.14)(react@19.2.3)(supports-color@8.1.1)
 
-  react-native-paper@5.15.0(react-native-safe-area-context@5.7.0)(react-native@0.86.2)(react@19.2.3):
+  react-native-paper@5.15.0(react-native-safe-area-context@5.8.1)(react-native@0.86.2)(react@19.2.3):
     dependencies:
       '@callstack/react-theme-provider': 3.0.9(react@19.2.3)
       color: 3.2.1
       react: 19.2.3
       react-native: 0.86.2(patch_hash=6ca2e1225f38672b073b92b9d13f24feebbe9e37ba67708a3f1569275ce99191)(@babel/core@7.29.7)(@react-native/jest-preset@0.86.2)(@react-native/metro-config@0.86.2)(@types/react@19.2.14)(react@19.2.3)(supports-color@8.1.1)
-      react-native-safe-area-context: 5.7.0(react-native@0.86.2)(react@19.2.3)
+      react-native-safe-area-context: 5.8.1(react-native@0.86.2)(react@19.2.3)
       use-latest-callback: 0.2.6(react@19.2.3)
 
   react-native-popover-view@6.1.0:
@@ -10006,7 +10006,7 @@ snapshots:
     dependencies:
       react-native: 0.86.2(patch_hash=6ca2e1225f38672b073b92b9d13f24feebbe9e37ba67708a3f1569275ce99191)(@babel/core@7.29.7)(@react-native/jest-preset@0.86.2)(@react-native/metro-config@0.86.2)(@types/react@19.2.14)(react@19.2.3)(supports-color@8.1.1)
 
-  react-native-safe-area-context@5.7.0(react-native@0.86.2)(react@19.2.3):
+  react-native-safe-area-context@5.8.1(react-native@0.86.2)(react@19.2.3):
     dependencies:
       react: 19.2.3
       react-native: 0.86.2(patch_hash=6ca2e1225f38672b073b92b9d13f24feebbe9e37ba67708a3f1569275ce99191)(@babel/core@7.29.7)(@react-native/jest-preset@0.86.2)(@react-native/metro-config@0.86.2)(@types/react@19.2.14)(react@19.2.3)(supports-color@8.1.1)
