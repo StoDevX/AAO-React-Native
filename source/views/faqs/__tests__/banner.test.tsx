@@ -10,14 +10,6 @@ import {FAQ_TARGETS} from '../constants'
 
 const FAQS_QUERY_KEY = ['faqs'] as const
 
-const mockNavigate = jest.fn()
-
-jest.mock('@react-navigation/native', () => ({
-	useNavigation: () => ({
-		navigate: mockNavigate,
-	}),
-}))
-
 jest.mock('../query', () => ({
 	faqsOptions: {
 		queryKey: FAQS_QUERY_KEY,
@@ -42,7 +34,10 @@ const buildResponse = (faqs: Faq[]): FaqQueryData => ({
 	legacyText: undefined,
 })
 
-const renderWithFaqs = (faqs: Faq[]) => {
+const renderWithFaqs = (
+	faqs: Faq[],
+	props?: {onPressOverride?: () => void},
+) => {
 	const queryClient = new QueryClient({
 		defaultOptions: {queries: {retry: false}},
 	})
@@ -50,7 +45,7 @@ const renderWithFaqs = (faqs: Faq[]) => {
 
 	return render(
 		<QueryClientProvider client={queryClient}>
-			<FaqBanner target={FAQ_TARGETS.HOME} />
+			<FaqBanner target={FAQ_TARGETS.HOME} {...props} />
 		</QueryClientProvider>,
 	)
 }
@@ -58,7 +53,6 @@ const renderWithFaqs = (faqs: Faq[]) => {
 describe('FaqBanner component', () => {
 	beforeEach(() => {
 		useFaqBannerStore.getState().resetAll()
-		mockNavigate.mockReset()
 	})
 
 	it('renders the banner title and text', async () => {
@@ -77,12 +71,22 @@ describe('FaqBanner component', () => {
 		expect(queryByText(baseFaq.bannerTitle)).toBeNull()
 	})
 
-	it('navigates to FAQ screen when main pressable is tapped', async () => {
-		let {getByText} = await renderWithFaqs([baseFaq])
+	it('calls onPressOverride when the main pressable is tapped', async () => {
+		let onPressOverride = jest.fn()
+		let {getByText} = await renderWithFaqs([baseFaq], {onPressOverride})
 
 		await fireEvent.press(getByText('Learn more'))
 
-		expect(mockNavigate).toHaveBeenCalledWith('Faq', {faqId: baseFaq.id})
+		expect(onPressOverride).toHaveBeenCalledTimes(1)
+	})
+
+	it('does not throw when the main pressable is tapped without an override', async () => {
+		// The FAQ detail screen hasn't been migrated to expo-router yet, so
+		// with no override this is a no-op fallback rather than a navigation
+		// call -- see the comment in ../banner.tsx.
+		let {getByText} = await renderWithFaqs([baseFaq])
+
+		expect(() => fireEvent.press(getByText('Learn more'))).not.toThrow()
 	})
 })
 jest.mock('@react-native-vector-icons/ionicons', () => ({Ionicons: 'Icon'}))
