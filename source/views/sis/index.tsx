@@ -6,14 +6,6 @@ import {BalancesOrAcknowledgementView} from './balances-acknowledgement'
 import {View as StudentWorkView} from './student-work'
 
 export * as studentwork from './student-work'
-export {
-	CourseSearchView,
-	CourseSearchResultsView,
-	CourseDetailView,
-	CourseSearchNavigationOptions,
-	CourseSearchViewNavigationOptions,
-	CourseSearchDetailNavigationOptions,
-} from './course-search'
 
 type Params = {
 	BalancesView: undefined

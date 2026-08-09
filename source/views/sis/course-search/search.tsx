@@ -1,12 +1,11 @@
 import * as c from '@frogpond/colors'
 import {LoadingView, NoticeView} from '@frogpond/notice'
 import {SearchButton} from '@frogpond/navigation-buttons'
-import {NavigationProp, useNavigation} from '@react-navigation/native'
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
-import {debounce, fromPairs} from 'lodash'
+import {useNavigation, useRouter} from 'expo-router'
+import {debounce} from 'lodash'
 import * as React from 'react'
 import {ScrollView, StyleSheet, View} from 'react-native'
-import {ChangeTextEvent, LegacyRootParamList} from '../../../navigation/types'
+import {ChangeTextEvent} from '../../../navigation/types'
 import {useAppSelector} from '../../../redux'
 import {
 	selectRecentFilters,
@@ -21,7 +20,7 @@ let _debounce = debounce((query: string, callback: () => void) => {
 	}
 }, 1500)
 
-export const NavigationOptions: NativeStackNavigationOptions = {
+export const NavigationOptions = {
 	title: 'Course Catalog',
 }
 
@@ -30,9 +29,10 @@ const RightButton: React.FC<{onPress: () => void}> = ({onPress}) => (
 )
 
 export const CourseSearchView = (): React.ReactNode => {
-	let navigation = useNavigation<NavigationProp<LegacyRootParamList>>()
+	let navigation = useNavigation()
+	let router = useRouter()
 
-	let {data: basicFilters = [], isLoading, error, refetch} = useFilters()
+	let {isLoading, error, refetch} = useFilters()
 
 	let recentFilters = useAppSelector(selectRecentFilters)
 	let recentSearches = useAppSelector(selectRecentSearches)
@@ -43,7 +43,10 @@ export const CourseSearchView = (): React.ReactNode => {
 		const getRightButton = () => (
 			<RightButton
 				onPress={() =>
-					navigation.navigate('CourseSearchResults', {initialQuery: ''})
+					router.push({
+						pathname: '/CourseSearchResults',
+						params: {initialQuery: ''},
+					})
 				}
 			/>
 		)
@@ -57,13 +60,16 @@ export const CourseSearchView = (): React.ReactNode => {
 				},
 			},
 		})
-	}, [navigation, typedQuery])
+	}, [navigation, router, typedQuery])
 
 	let showSearchResult = React.useCallback(
 		(query: string) => {
-			navigation.navigate('CourseSearchResults', {initialQuery: query})
+			router.push({
+				pathname: '/CourseSearchResults',
+				params: {initialQuery: query},
+			})
 		},
-		[navigation],
+		[router],
 	)
 
 	React.useEffect(() => {
@@ -74,23 +80,12 @@ export const CourseSearchView = (): React.ReactNode => {
 
 	let onRecentFilterPress = React.useCallback(
 		(text: string) => {
-			let selectedFilterCombo = recentFilters.find(
-				(f) => f.description === text,
-			)
-
-			let selectedFilters = basicFilters
-			if (selectedFilterCombo) {
-				let filterLookup = fromPairs(
-					selectedFilterCombo.filters.map((f) => [f.key, f]),
-				)
-				selectedFilters = basicFilters.map((f) => filterLookup[f.key] || f)
-			}
-
-			navigation.navigate('CourseSearchResults', {
-				initialFilters: selectedFilters,
+			router.push({
+				pathname: '/CourseSearchResults',
+				params: {filterDescription: text},
 			})
 		},
-		[basicFilters, navigation, recentFilters],
+		[router],
 	)
 
 	if (isLoading) {

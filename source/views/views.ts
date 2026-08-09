@@ -154,7 +154,6 @@ export const AllViews = (): Array<ViewType> => {
 			title: 'Course Catalog',
 			icon: 'graduationcap.fill',
 			gradient: c.tanGradient,
-			disabled: true,
 		},
 		{
 			type: 'view',

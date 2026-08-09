@@ -42,6 +42,19 @@ export const availableTermsOptions = queryOptions({
 	staleTime: ONE_DAY,
 })
 
+export const termByNumberOptions = (
+	term: number,
+	// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+) =>
+	queryOptions({
+		queryKey: keys.terms,
+		queryFn: async ({signal}) => {
+			const resp = await infoJson({signal})
+			return resp.files
+		},
+		select: (data) => data.find((t) => t.term === term && t.type === 'json'),
+	})
+
 export const courseDataOptions = (
 	term: TermType,
 	levels: Array<number>,
@@ -55,6 +68,19 @@ export const courseDataOptions = (
 			signal,
 		}) => coursesForTerm(termKey, levelsKey, gereqsKey, {signal}),
 		staleTime: ONE_HOUR,
+	})
+
+export const courseByIdOptions = (
+	term: TermType,
+	clbid: number,
+	// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+) =>
+	queryOptions({
+		queryKey: keys.courses(term, [], []),
+		queryFn: ({signal}) => coursesForTerm(term, [], [], {signal}),
+		// The API sends clbid as a zero-padded string (e.g. '0000170131')
+		// despite CourseType declaring it a number -- Number() it before comparing.
+		select: (data) => data.find((c) => Number(c.clbid) === clbid),
 	})
 
 export function useCourseData(
