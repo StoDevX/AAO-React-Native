@@ -13,6 +13,7 @@ export const FaqBannerLibrary = (): React.ReactNode => {
 		<>
 			<Stack.Toolbar placement="right">
 				<Stack.Toolbar.Button
+					accessibilityLabel="Close Screen"
 					icon="xmark"
 					onPress={() => navigation.goBack()}
 				/>

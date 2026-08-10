@@ -35,22 +35,17 @@ const SettingsView = (): React.ReactNode => {
 
 	return (
 		<>
-			<Stack.Screen options={{presentation: 'modal'}}>
-				<Stack.Title>Settings</Stack.Title>
-				<Stack.Toolbar placement="right">
-					<Stack.Toolbar.Button
-						icon="xmark"
-						onPress={() => navigation.goBack()}
-					/>
-				</Stack.Toolbar>
-			</Stack.Screen>
+			<Stack.Title>Settings</Stack.Title>
+			<Stack.Toolbar placement="right">
+				<Stack.Toolbar.Button
+					accessibilityLabel="Close Screen"
+					icon="xmark"
+					onPress={() => navigation.goBack()}
+				/>
+			</Stack.Toolbar>
+
 			<Host style={styles.host}>
 				<Form>
-					{/* The banner is a React Native view, so it has to be hosted into
-					SwiftUI to scroll with the rest of the content. A Form dresses
-					each child as a grouped row -- inset, on a filled rounded card,
-					above a separator -- which would frame the banner a second time,
-					so this row is stripped back to bare content. */}
 					<VStack
 						modifiers={[
 							listRowBackground('clear'),

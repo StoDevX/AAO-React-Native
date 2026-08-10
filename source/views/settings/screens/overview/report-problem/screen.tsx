@@ -39,12 +39,14 @@ export let ReportProblemView = (): React.ReactNode => {
 				<Stack.Title>Report a Problem</Stack.Title>
 				<Stack.Toolbar placement="left">
 					<Stack.Toolbar.Button
+						accessibilityLabel="Close Screen"
 						icon="xmark"
 						onPress={() => navigation.goBack()}
 					/>
 				</Stack.Toolbar>
 				<Stack.Toolbar placement="right">
 					<Stack.Toolbar.Button
+						accessibilityLabel="Submit"
 						disabled={message.trim().length === 0}
 						icon="paperplane"
 						onPress={submit}

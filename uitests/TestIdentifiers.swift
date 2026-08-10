@@ -22,8 +22,8 @@ struct TestIdentifiers {
 	}
 
 	enum Navigation {
-		static let openSettings = "button-open-settings"
-		static let closeScreen = "button-close-screen"
+		static let openSettings = "Open Settings"
+		static let closeScreen = "Close Screen"
 	}
 
 	enum Streaming {

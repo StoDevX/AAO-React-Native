@@ -42,7 +42,7 @@ export const APITestView = (): React.ReactNode => {
 
 	return (
 		<>
-			<Stack.Toolbar placement="right">
+			<Stack.Toolbar placement="left">
 				<Stack.Toolbar.Menu icon="ellipsis.circle">
 					<Stack.Toolbar.MenuAction
 						onPress={() => router.navigate('/NetworkLogger')}

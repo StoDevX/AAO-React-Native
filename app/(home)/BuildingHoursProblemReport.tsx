@@ -46,6 +46,7 @@ export default function BuildingHoursProblemReportPage(): React.ReactNode {
 			<Stack.Title>Report a Problem</Stack.Title>
 			<Stack.Toolbar placement="right">
 				<Stack.Toolbar.Button
+					accessibilityLabel="Close Screen"
 					icon="xmark"
 					onPress={() => navigation.goBack()}
 				/>

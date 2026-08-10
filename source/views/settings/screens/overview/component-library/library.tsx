@@ -11,7 +11,11 @@ export const ComponentLibrary = (): React.ReactNode => {
 		<>
 			<Stack.Title>Component Library</Stack.Title>
 			<Stack.Toolbar placement="right">
-				<Stack.Toolbar.Button icon="xmark" onPress={() => router.back()} />
+				<Stack.Toolbar.Button
+					accessibilityLabel="Close Screen"
+					icon="xmark"
+					onPress={() => router.back()}
+				/>
 			</Stack.Toolbar>
 
 			<TableView>

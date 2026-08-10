@@ -15,6 +15,7 @@ export default function BuildingHoursScheduleEditorPage(): React.ReactNode {
 			<Stack.Title>Edit Schedule</Stack.Title>
 			<Stack.Toolbar placement="right">
 				<Stack.Toolbar.Button
+					accessibilityLabel="Close Screen"
 					icon="xmark"
 					onPress={() => navigation.goBack()}
 				/>
