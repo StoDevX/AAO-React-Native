@@ -144,7 +144,7 @@ importers:
         version: 13.1.0(@expo/config-plugins@57.0.7)(@react-native/assets-registry@0.86.2)(expo-font@57.0.1)(react-native@0.86.2)(react@19.2.3)
       '@react-navigation/bottom-tabs':
         specifier: 7.18.13
-        version: 7.18.13(@react-navigation/native@7.3.13)(react-native-safe-area-context@5.8.1)(react-native-screens@4.26.2)(react-native@0.86.2)(react@19.2.3)
+        version: 7.18.13(@react-navigation/native@7.3.13)(react-native-safe-area-context@5.8.1)(react-native-screens@4.27.0)(react-native@0.86.2)(react@19.2.3)
       '@react-navigation/core':
         specifier: 7.21.10
         version: 7.21.10(react@19.2.3)
@@ -153,7 +153,7 @@ importers:
         version: 7.3.13(react-native@0.86.2)(react@19.2.3)
       '@react-navigation/native-stack':
         specifier: 7.18.5
-        version: 7.18.5(@react-navigation/native@7.3.13)(react-native-safe-area-context@5.8.1)(react-native-screens@4.26.2)(react-native@0.86.2)(react@19.2.3)
+        version: 7.18.5(@react-navigation/native@7.3.13)(react-native-safe-area-context@5.8.1)(react-native-screens@4.27.0)(react-native@0.86.2)(react@19.2.3)
       '@reduxjs/toolkit':
         specifier: 2.12.0
         version: 2.12.0(react-redux@9.3.0)(react@19.2.3)
@@ -275,8 +275,8 @@ importers:
         specifier: 5.8.1
         version: 5.8.1(react-native@0.86.2)(react@19.2.3)
       react-native-screens:
-        specifier: 4.26.2
-        version: 4.26.2(react-native@0.86.2)(react@19.2.3)
+        specifier: 4.27.0
+        version: 4.27.0(react-native@0.86.2)(react@19.2.3)
       react-native-tableview-simple:
         specifier: 4.4.1
         version: 4.4.1(react-native@0.86.2)(react@19.2.3)
@@ -4624,8 +4624,8 @@ packages:
       react: '*'
       react-native: '*'
 
-  react-native-screens@4.26.2:
-    resolution: {integrity: sha512-2XnWsZToKj76trGtEZzx5ELD/qOICFEprEeUntImmitQFVUkea27fiWdUSITArI356Y1qynpXZINW+Unbhky/A==}
+  react-native-screens@4.27.0:
+    resolution: {integrity: sha512-IUukKYilhKhdJqGh59BmxrAjgIO84CaOkdowEY20+RmapOAFpqS//xOIcq2iqDQ4xVoxuwCHGWhY/Tbz6lTblA==}
     peerDependencies:
       react: '*'
       react-native: '*'
@@ -6864,7 +6864,7 @@ snapshots:
     optionalDependencies:
       '@types/react': 19.2.14
 
-  '@react-navigation/bottom-tabs@7.18.13(@react-navigation/native@7.3.13)(react-native-safe-area-context@5.8.1)(react-native-screens@4.26.2)(react-native@0.86.2)(react@19.2.3)':
+  '@react-navigation/bottom-tabs@7.18.13(@react-navigation/native@7.3.13)(react-native-safe-area-context@5.8.1)(react-native-screens@4.27.0)(react-native@0.86.2)(react@19.2.3)':
     dependencies:
       '@react-navigation/elements': 2.9.36(@react-navigation/native@7.3.13)(react-native-safe-area-context@5.8.1)(react-native@0.86.2)(react@19.2.3)
       '@react-navigation/native': 7.3.13(react-native@0.86.2)(react@19.2.3)
@@ -6872,7 +6872,7 @@ snapshots:
       react: 19.2.3
       react-native: 0.86.2(patch_hash=6ca2e1225f38672b073b92b9d13f24feebbe9e37ba67708a3f1569275ce99191)(@babel/core@7.29.7)(@react-native/jest-preset@0.86.2)(@react-native/metro-config@0.86.2)(@types/react@19.2.14)(react@19.2.3)(supports-color@8.1.1)
       react-native-safe-area-context: 5.8.1(react-native@0.86.2)(react@19.2.3)
-      react-native-screens: 4.26.2(react-native@0.86.2)(react@19.2.3)
+      react-native-screens: 4.27.0(react-native@0.86.2)(react@19.2.3)
       sf-symbols-typescript: 2.2.0
     transitivePeerDependencies:
       - '@react-native-masked-view/masked-view'
@@ -6899,7 +6899,7 @@ snapshots:
       use-latest-callback: 0.2.6(react@19.2.3)
       use-sync-external-store: 1.6.0(react@19.2.3)
 
-  '@react-navigation/native-stack@7.18.5(@react-navigation/native@7.3.13)(react-native-safe-area-context@5.8.1)(react-native-screens@4.26.2)(react-native@0.86.2)(react@19.2.3)':
+  '@react-navigation/native-stack@7.18.5(@react-navigation/native@7.3.13)(react-native-safe-area-context@5.8.1)(react-native-screens@4.27.0)(react-native@0.86.2)(react@19.2.3)':
     dependencies:
       '@react-navigation/elements': 2.9.36(@react-navigation/native@7.3.13)(react-native-safe-area-context@5.8.1)(react-native@0.86.2)(react@19.2.3)
       '@react-navigation/native': 7.3.13(react-native@0.86.2)(react@19.2.3)
@@ -6907,7 +6907,7 @@ snapshots:
       react: 19.2.3
       react-native: 0.86.2(patch_hash=6ca2e1225f38672b073b92b9d13f24feebbe9e37ba67708a3f1569275ce99191)(@babel/core@7.29.7)(@react-native/jest-preset@0.86.2)(@react-native/metro-config@0.86.2)(@types/react@19.2.14)(react@19.2.3)(supports-color@8.1.1)
       react-native-safe-area-context: 5.8.1(react-native@0.86.2)(react@19.2.3)
-      react-native-screens: 4.26.2(react-native@0.86.2)(react@19.2.3)
+      react-native-screens: 4.27.0(react-native@0.86.2)(react@19.2.3)
       sf-symbols-typescript: 2.2.0
       warn-once: 0.1.1
     transitivePeerDependencies:
@@ -10011,7 +10011,7 @@ snapshots:
       react: 19.2.3
       react-native: 0.86.2(patch_hash=6ca2e1225f38672b073b92b9d13f24feebbe9e37ba67708a3f1569275ce99191)(@babel/core@7.29.7)(@react-native/jest-preset@0.86.2)(@react-native/metro-config@0.86.2)(@types/react@19.2.14)(react@19.2.3)(supports-color@8.1.1)
 
-  react-native-screens@4.26.2(react-native@0.86.2)(react@19.2.3):
+  react-native-screens@4.27.0(react-native@0.86.2)(react@19.2.3):
     dependencies:
       react: 19.2.3
       react-freeze: 1.0.4(react@19.2.3)
