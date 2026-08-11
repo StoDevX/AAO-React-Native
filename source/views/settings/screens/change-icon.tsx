@@ -1,24 +1,9 @@
 import * as React from 'react'
 import {Image as RNImage, ImageSourcePropType, StyleSheet} from 'react-native'
 import {changeIcon, getIcon, resetIcon} from 'react-native-change-icon'
+import {HStack, Picker, RNHostView, Section, Text} from '@expo/ui/swift-ui'
 import {
-	Button,
-	Group,
-	HStack,
-	Image,
-	Picker,
-	RNHostView,
-	Section,
-	Spacer,
-	Text,
-} from '@expo/ui/swift-ui'
-import {
-	accessibilityElement,
-	accessibilityIdentifier,
-	accessibilityLabel,
-	buttonStyle,
 	contentShape,
-	font,
 	frame,
 	pickerStyle,
 	shapes,
@@ -110,7 +95,6 @@ let IconCell = (props: IconCellProps) => {
 		<HStack
 			modifiers={[tag(icon.type), contentShape(shapes.rectangle())]}
 			spacing={ICON_LABEL_GAP}
-			testID={`app-icon-picker-cell-${icon.type}`}
 		>
 			<HStack modifiers={[frame({width: ICON_SIZE, height: ICON_SIZE})]}>
 				<RNHostView matchContents={false}>
