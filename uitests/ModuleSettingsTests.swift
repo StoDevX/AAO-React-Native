@@ -1,5 +1,7 @@
 import XCTest
 
+
+
 class ModuleSettingsTests: UITestCase {
 	func testShowsSettingsScreenAfterTap() throws {
 		SettingsScreen(app: app)
@@ -18,21 +20,37 @@ class ModuleSettingsTests: UITestCase {
 	}
 
 	func testChangesAppIconToOldMainAndBack() throws {
-		// The "You have changed the icon" alert is owned by SpringBoard. It
-		// blocks the app from reaching idle, so UIInterruptionMonitor never
-		// fires -- that handler only runs during synthesize, which
-		// app.tap()'s wait-for-idle never reaches. Dismiss it through the
-		// SpringBoard UI instead.
-		let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
+		// this is who owns the "You have changed the icon" alert
+//    let coreServicesUIAgent = XCUIApplication(bundleIdentifier: "com.apple.CoreServicesUIAgent")
+    let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
 
-		SettingsScreen(app: app)
-			.openSettings()
-			.resetIconToDefaultIfNeeded(springboard: springboard)
-			.changeIconToOldMain()
-			.dismissIconChangeAlert(springboard: springboard)
-			.checkOldMainSelected()
-			.changeIconToDefault()
-			.dismissIconChangeAlert(springboard: springboard)
-			.checkDefaultSelected()
+    let settings = SettingsScreen(app: app)
+    settings.openSettings()
+
+    settings.scrollUntilExists(app.staticTexts["App Icon"])
+    settings.verifyTitle("App Icon")
+
+    // there should be two icon settings available
+    settings.scrollUntilExists(app.staticTexts["Big Ole"])
+    XCTAssert(app.staticTexts["Big Ole"].exists)
+    settings.scrollUntilExists(app.staticTexts["Old Main"])
+    XCTAssert(app.staticTexts["Old Main"].exists)
+
+    // Big Ole is the default icon, so it should be marked by default
+    XCTAssert(app.staticTexts["Big Ole"].isSelected)
+    XCTAssertEqual(settings.getSelectedAppIcon(), "Big Ole")
+
+    // change to the other app icon
+    settings.selectAppIcon(iconName: "Old Main", springboard: springboard)
+
+    // now switch back to the default
+    settings.selectAppIcon(iconName: "Big Ole", springboard: springboard)
+    
+//    SettingsScreen(app: app)
+//      // precondition: verify the default icon
+//      .checkSelectedAppIcon(.BigOle)
+//      // now toggle the selected icon back and forth
+//      .selectAppIcon(.OldMain)
+//      .selectAppIcon(.BigOle)
 	}
 }

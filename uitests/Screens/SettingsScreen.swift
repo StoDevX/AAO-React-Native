@@ -90,7 +90,7 @@ struct SettingsScreen: Screen {
 		// default and leave it changed.
 		let oldMainSelected = app.element(
 			matching: TestIdentifiers.AppIcon.cell("icon_type_old_main", selected: true))
-		scrollUntilExists(oldMainSelected)
+    scrollUntilExists(oldMainSelected, swipes: 1)
 		guard oldMainSelected.waitForExistence(timeout: 2) else {
 			return self
 		}
@@ -103,8 +103,8 @@ struct SettingsScreen: Screen {
 	func changeIconToOldMain() -> Self {
 		// The default is Big Ole; the alternate on offer is Old Main.
 		let defaultSelected = app.element(
-			matching: TestIdentifiers.AppIcon.cell("default", selected: true))
-		scrollUntilExists(defaultSelected)
+			matching: TestIdentifiers.AppIcon.cell("icon_type_big_ole", selected: true))
+    scrollUntilExists(defaultSelected, swipes: 1)
 		XCTAssertTrue(
 			defaultSelected.waitForExistence(timeout: 10),
 			"Default icon should be selected initially")
@@ -122,11 +122,30 @@ struct SettingsScreen: Screen {
 		return self
 	}
 
+  func getSelectedAppIcon() -> String {
+    let selectedButton = app.buttons.matching(NSPredicate(format: "isSelected == true")).firstMatch
+    return selectedButton.label
+  }
+
+  @discardableResult
+  func selectAppIcon(iconName: String, springboard: XCUIApplication) -> Self {
+    // trigger the change to the icon
+    app.staticTexts[iconName].tap()
+
+    // dismiss the os-level dialog
+    dismissIconChangeAlert(springboard: springboard)
+
+    // ensure that the other icon is now enabled
+    XCTAssert(app.staticTexts[iconName].isSelected)
+
+    return self
+  }
+
 	@discardableResult
 	func checkOldMainSelected() -> Self {
 		let oldMainSelected = app.element(
 			matching: TestIdentifiers.AppIcon.cell("icon_type_old_main", selected: true))
-		scrollUntilExists(oldMainSelected)
+		scrollUntilExists(oldMainSelected, swipes: 1)
 		XCTAssertTrue(
 			oldMainSelected.waitForExistence(timeout: 10),
 			"Old Main icon should be selected after tapping it")
@@ -139,8 +158,8 @@ struct SettingsScreen: Screen {
 		// transitions back from SpringBoard after the icon-change alert and
 		// tapping without first waiting produces "Timed out while evaluating
 		// UI query".
-		let defaultIcon = app.element(matching: TestIdentifiers.AppIcon.cell("default"))
-		scrollUntilExists(defaultIcon)
+		let defaultIcon = app.element(matching: TestIdentifiers.AppIcon.cell("icon_type_big_ole"))
+		scrollUntilExists(defaultIcon, swipes: 1)
 		XCTAssertTrue(
 			defaultIcon.waitForExistence(timeout: 10),
 			"Default icon cell should be visible and tappable")
@@ -151,8 +170,8 @@ struct SettingsScreen: Screen {
 	@discardableResult
 	func checkDefaultSelected() -> Self {
 		let defaultReselected = app.element(
-			matching: TestIdentifiers.AppIcon.cell("default", selected: true))
-		scrollUntilExists(defaultReselected)
+			matching: TestIdentifiers.AppIcon.cell("icon_type_big_ole", selected: true))
+		scrollUntilExists(defaultReselected, swipes: 1)
 		XCTAssertTrue(
 			defaultReselected.waitForExistence(timeout: 10),
 			"Default icon should be selected after switching back")
