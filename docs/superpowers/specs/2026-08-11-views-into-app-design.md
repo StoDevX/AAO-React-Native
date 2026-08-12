@@ -72,15 +72,51 @@ rather than by name. Both steps matter: name-based counting reported
 re-export, and reported the `More` screen as having 161 consumers because it
 is exported under the name `View`, which collides with react-native's.
 
-**24 files inline**, each rendered by exactly one route and imported by nothing
-else.
+**75 files back routes**, of which 47 are rendered by exactly one route and
+imported by nothing else, so they inline directly.
+
+Counting only the files routes import *directly* gives 24 and is wrong: it
+misses every screen reached through a barrel, which shows up as imported by one
+non-route file and zero routes.
+
+**Hybrid files** both define a screen and re-export siblings:
+`faqs/index.tsx`, `menus/index.tsx`, `reddit/index.tsx`,
+`transportation/index.tsx`, `building-hours/list.tsx`. Their defined screen
+inlines like any other, and their re-export lines simply vanish — each
+re-exported screen inlines into its own route, and each re-exported support
+file gets imported directly by whoever still needs it. Re-export lines must not
+travel into a route file; a route exports one component and nothing else.
+
+Recognising hybrids matters: judging a file by whether some non-route file
+mentions its exports reports `building-hours/detail/index.tsx`,
+`menus/carleton-menus.tsx` and `reddit/post-detail.tsx` as blocked, when the
+only "consumer" in each case is a re-export in a file that is itself being
+emptied.
+
+**When inlining empties a file down to shared leftovers, the leftovers move to
+a named support file** rather than staying in a file named after the departed
+screen. Two cases, both attribution constants that two routes each need after
+the split:
+
+| leftover | from | to |
+| --- | --- | --- |
+| `STOLAF_POWERED_BY`, `NORTHFIELD_POWERED_BY` | `calendar/index.tsx` | `source/features/calendar/constants.ts` |
+| `KSTO_POWERED_BY`, `KRLX_POWERED_BY` | `streaming/radio/schedule.tsx` | `source/features/streaming/radio/constants.ts` |
+
+`constants.ts` follows `faqs/constants.ts`, which already holds `FAQ_TARGETS`
+in this role. The other four splitting files —
+`news/index.tsx`, `menus/index.tsx`, `reddit/index.tsx`,
+`transportation/index.tsx` — hold nothing but screens and re-exports, so they
+are deleted outright.
 
 **Eight barrels die**, having only ever re-exported: `building-hours/index.ts`,
 `contacts/index.ts`, `dictionary/index.ts`, `directory/index.ts`,
 `settings/screens/api-test/index.ts`, `stoprint/index.ts`,
 `streaming/index.tsx`, `student-orgs/index.ts`.
 
-**Six files split**, each defining several single-route screens:
+**Seven files back more than one route.** Six define several distinct
+single-route screens and split; the seventh, `debug/route-screen.tsx`, backs two
+routes with the *same* component and therefore stays:
 
 | file | inlines | stays |
 | --- | --- | --- |
