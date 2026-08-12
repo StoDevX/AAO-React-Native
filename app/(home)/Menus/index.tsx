@@ -1,6 +1,19 @@
 import * as React from 'react'
-import {StavHallMenuView} from '../../../source/views/menus'
+import {BonAppHostedMenu} from '../../../source/features/menus/menu-bonapp'
 
 export default function StavHallPage(): React.ReactNode {
-	return <StavHallMenuView />
+	return (
+		<BonAppHostedMenu
+			cafe="stav-hall"
+			loadingMessage={[
+				'Hunting Ferndale Turkey…',
+				'Tracking wild vegan burgers…',
+				'"Cooking" some lutefisk…',
+				'Finding more mugs…',
+				'Waiting for omelets…',
+				'Putting out more cookies…',
+			]}
+			name="Stav Hall"
+		/>
+	)
 }

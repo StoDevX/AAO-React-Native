@@ -1,13 +1,17 @@
 import * as React from 'react'
 import {Stack} from 'expo-router'
 
-import {CarletonBurtonMenuScreen} from '../../source/views/menus'
+import {BonAppHostedMenu} from '../../source/features/menus/menu-bonapp'
 
 export default function CarletonBurtonMenuPage(): React.ReactNode {
 	return (
 		<>
 			<Stack.Title>Burton</Stack.Title>
-			<CarletonBurtonMenuScreen />
+			<BonAppHostedMenu
+				cafe="burton"
+				loadingMessage={['Searching for Schiller…']}
+				name="Burton"
+			/>
 		</>
 	)
 }

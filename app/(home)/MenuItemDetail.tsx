@@ -6,7 +6,7 @@ import {MenuItemDetailView} from '../../modules/food-menu/food-item-detail'
 import {
 	bonAppMenuItemOptions,
 	pauseMenuItemOptions,
-} from '../../source/views/menus/query'
+} from '../../source/features/menus/query'
 import {LoadingView, NoticeView} from '@frogpond/notice'
 
 export default function MenuItemDetailPage(): React.ReactNode {
