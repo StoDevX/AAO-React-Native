@@ -129,7 +129,7 @@ overrides:
   # package.json) and a separate transitive instance pulled in via Jest's
   # babel-jest/istanbul instrumentation chain, which independently pinned
   # 7.29.0 -- ReDoS in template literal parsing (GHSA-4x5r-pxfx-6jf8).
-  '@babel/core@7.29': '7.29.7'
+  '@babel/core@7.29': '8.0.1'
   # react-dom is an optionalDependency of expo, @expo/ui, and @expo/router-server
   # -- all needed only for their web targets. This app is iOS-only and never
   # renders any of their web variants, so drop it rather than just pinning it.

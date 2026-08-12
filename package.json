@@ -122,9 +122,9 @@
     "zustand": "5.0.14"
   },
   "devDependencies": {
-    "@babel/core": "7.29.7",
-    "@babel/preset-typescript": "7.29.7",
-    "@babel/runtime": "7.29.7",
+    "@babel/core": "8.0.1",
+    "@babel/preset-typescript": "8.0.1",
+    "@babel/runtime": "8.0.0",
     "@eslint/js": "9.39.5",
     "@expo/config-plugins": "57.0.7",
     "@expo/metro-config": "57.0.7",
