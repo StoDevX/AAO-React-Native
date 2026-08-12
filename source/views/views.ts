@@ -153,7 +153,6 @@ export const AllViews = (): Array<ViewType> => {
 			title: 'stoPrint',
 			icon: 'printer.fill',
 			gradient: c.yellowGradient,
-			disabled: true,
 		},
 		{
 			type: 'view',

@@ -1,7 +1,8 @@
 import * as React from 'react'
 import {Platform, StyleSheet, Text} from 'react-native'
 import {Touchable} from '@frogpond/touchable'
-import {NavigationProp, useNavigation, useTheme} from '@react-navigation/native'
+import type {NavigationProp} from '@react-navigation/native'
+import {useNavigation, useTheme} from 'expo-router'
 import type {LegacyRootParamList} from '../../source/navigation/types'
 import {commonStyles, rightButtonStyles as styles} from './styles'
 

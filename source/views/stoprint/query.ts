@@ -22,20 +22,52 @@ export const keys = {
 	colorPrinters: ['printing', 'printers', 'color'] as const,
 }
 
+function fetchJobsForUser(username: string, signal?: AbortSignal) {
+	return fetchJobs(username, {signal})
+}
+
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export const printJobsOptions = (username: string) =>
 	queryOptions({
 		queryKey: keys.jobs(username),
 		enabled: Boolean(username),
-		queryFn: ({signal}) => fetchJobs(username, {signal}),
+		queryFn: ({signal}) => fetchJobsForUser(username, signal),
 	})
+
+export const jobByIdOptions = (
+	username: string,
+	jobId: string,
+	// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+) =>
+	queryOptions({
+		queryKey: keys.jobs(username),
+		enabled: Boolean(username),
+		queryFn: ({signal}) => fetchJobsForUser(username, signal),
+		select: (data) => data.jobs.find((j) => j.id.toString() === jobId),
+	})
+
+function fetchAllPrintersForUser(username: string, signal?: AbortSignal) {
+	return fetchAllPrinters(username, {signal})
+}
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export const allPrintersOptions = (username: string) =>
 	queryOptions({
 		queryKey: keys.printers(username),
 		enabled: Boolean(username),
-		queryFn: ({signal}) => fetchAllPrinters(username, {signal}),
+		queryFn: ({signal}) => fetchAllPrintersForUser(username, signal),
+	})
+
+export const printerByNameOptions = (
+	username: string,
+	printerName: string | undefined,
+	// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+) =>
+	queryOptions({
+		queryKey: keys.printers(username),
+		enabled: Boolean(username) && printerName !== undefined,
+		queryFn: ({signal}) => fetchAllPrintersForUser(username, signal),
+		select: (data) => data.find((p) => p.printerName === printerName),
 	})
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types

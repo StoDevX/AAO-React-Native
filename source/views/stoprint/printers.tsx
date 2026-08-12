@@ -1,6 +1,6 @@
 import * as React from 'react'
 import {SectionList, StyleSheet} from 'react-native'
-import type {Printer} from '../../lib/stoprint'
+import type {Printer, PrintJob} from '../../lib/stoprint'
 import {isStoprintMocked} from '../../lib/stoprint'
 import {
 	Detail,
@@ -14,13 +14,7 @@ import {DebugNoticeButton} from '@frogpond/navigation-buttons'
 import groupBy from 'lodash/groupBy'
 import {StoPrintErrorView} from './components/error'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
-import {
-	NavigationProp,
-	RouteProp,
-	useNavigation,
-	useRoute,
-} from '@react-navigation/native'
-import {LegacyRootParamList, RootStackParamList} from '../../navigation/types'
+import {useRouter} from 'expo-router'
 import {
 	allPrintersOptions,
 	colorPrintersOptions,
@@ -34,11 +28,12 @@ const styles = StyleSheet.create({
 	list: {},
 })
 
-export const PrinterListView = (): React.ReactNode => {
-	let navigation = useNavigation<NavigationProp<LegacyRootParamList>>()
+type Props = {
+	job: PrintJob
+}
 
-	let route = useRoute<RouteProp<RootStackParamList, 'PrinterList'>>()
-	let {job} = route.params
+export const PrinterListView = ({job}: Props): React.ReactNode => {
+	let router = useRouter()
 
 	let {data: username = ''} = useQuery({
 		...credentialsOptions,
@@ -76,8 +71,11 @@ export const PrinterListView = (): React.ReactNode => {
 
 	let openPrintRelease = React.useCallback(
 		(printer: Printer) =>
-			navigation.navigate('PrintJobRelease', {job, printer}),
-		[navigation, job],
+			router.push({
+				pathname: '/PrintJobs/[jobId]/release',
+				params: {jobId: job.id.toString(), printer: printer.printerName},
+			}),
+		[router, job],
 	)
 
 	let refetchAll = React.useCallback(() => {
