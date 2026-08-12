@@ -37,6 +37,13 @@ Three exceptions, each forced rather than chosen:
   duplicate it. (Three query-option exports are also multi-route —
   `buildingByNameOptions`, `wordByTermOptions`, `jobByIdOptions` — and are
   support, so they stay regardless.)
+- **A screen also imported by a non-route file stays in `source/features/`**,
+  even with only one route, because inlining it into that route would strand
+  the sibling that imports it. One screen qualifies: `OtherModesView`, which
+  backs `Transportation/other-modes.tsx` and is also imported by
+  `transportation/index.tsx`. (Five support exports are in the same position
+  and stay regardless: `FAQ_TARGETS`, `FILL_WIDTH`, `FaqBannerGroup`,
+  `createMomentForDay`, `useRedditPreferences`.)
 - **A file holding several single-route screens splits.** Each screen goes to
   its own route; whatever else the file exported stays behind.
   `streaming/radio/schedule.tsx` is the case: `KSTOScheduleView` and
@@ -108,7 +115,12 @@ so it is a two-route screen. `screens/debug/list.tsx` backs no route either —
 
 `app/(settings)/BonAppPicker.tsx` renders a screen from a different feature,
 `source/views/menus/dev-bonapp-picker`. It inlines when **menus** moves, not
-when settings does, so the settings commit leaves that one route untouched.
+when settings does, so the settings commit leaves that one route untouched and
+no path is edited twice. Afterwards the route imports `BonAppHostedMenu` from
+`source/features/menus/menu-bonapp` — a settings route reaching into menus
+support, which is what a BonApp preview tool inherently does. That import is
+safe because no route renders `BonAppHostedMenu` itself, so it is never
+inlined out from under this one.
 
 Its section components — `developer.tsx`, `miscellany.tsx`, `support.tsx`,
 `server-url.tsx`, `change-icon.tsx`, `login-credentials.tsx` — back no route.
