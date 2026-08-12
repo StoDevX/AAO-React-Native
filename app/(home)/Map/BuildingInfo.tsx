@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {useLocalSearchParams, useRouter} from 'expo-router'
+import {Stack, useLocalSearchParams, useRouter} from 'expo-router'
 import {useQuery} from '@tanstack/react-query'
 
 import {BuildingInfo} from '../../../source/features/map/building-info'
@@ -19,15 +19,24 @@ export default function BuildingInfoPage(): React.ReactNode {
 		[buildings, buildingId],
 	)
 
-	// On unmount rather than only in the Close handler: the sheet is
+	// On unmount rather than in a close handler: the sheet is
 	// swipe-dismissable, and that gesture pops the route without running any
 	// handler -- which would otherwise strand the marker and the zoomed-in
 	// camera on a building the user just dismissed.
 	React.useEffect(() => clearSelection, [clearSelection])
 
-	let handleClose = React.useCallback(() => {
-		router.back()
-	}, [router])
+	return (
+		<>
+			<Stack.Title>{building?.properties.name ?? 'Building'}</Stack.Title>
+			<Stack.Toolbar placement="right">
+				<Stack.Toolbar.Button
+					accessibilityLabel="Close"
+					icon="xmark"
+					onPress={() => router.back()}
+				/>
+			</Stack.Toolbar>
 
-	return <BuildingInfo building={building} onClose={handleClose} />
+			<BuildingInfo building={building} />
+		</>
+	)
 }

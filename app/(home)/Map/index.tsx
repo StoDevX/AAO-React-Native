@@ -3,8 +3,15 @@ import {StyleSheet, View} from 'react-native'
 import {useFocusEffect, useRouter} from 'expo-router'
 import MapboxGL from '@rnmapbox/maps'
 import {useQuery} from '@tanstack/react-query'
+import {Host, Label} from '@expo/ui/swift-ui'
+import {
+	background,
+	font,
+	foregroundColor,
+	padding,
+	shapes,
+} from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
-import {NoticeView} from '@frogpond/notice'
 
 import {lookupBuildingByCoordinates} from '../../../source/features/map/lib/lookup-building'
 import {mapDataOptions} from '../../../source/features/map/query'
@@ -21,6 +28,13 @@ const CAMERA_ANIMATION_MS = 500
 const MARKER_SIZE = 20
 const MIN_TOUCH_TARGET = 44
 const MARKER_HIT_SLOP = (MIN_TOUCH_TARGET - MARKER_SIZE) / 2
+const BANNER_PADDING = 10
+const BANNER_RADIUS = 10
+
+const bannerShape = shapes.roundedRectangle({
+	cornerRadius: BANNER_RADIUS,
+	roundedCornerStyle: 'circular',
+})
 
 export default function MapPage(): React.ReactNode {
 	let router = useRouter()
@@ -115,9 +129,18 @@ export default function MapPage(): React.ReactNode {
 				) : null}
 			</MapboxGL.MapView>
 			{error ? (
-				<View style={styles.banner}>
-					<NoticeView text="Couldn't load building data. Pan around the map; some features won't work." />
-				</View>
+				<Host matchContents={true} style={styles.banner}>
+					<Label
+						modifiers={[
+							font({textStyle: 'footnote'}),
+							foregroundColor(c.label),
+							padding({all: BANNER_PADDING}),
+							background(c.secondarySystemBackground, bannerShape),
+						]}
+						systemImage="exclamationmark.triangle.fill"
+						title="Couldn't load building data. Some features won't work."
+					/>
+				</Host>
 			) : null}
 		</View>
 	)
@@ -143,8 +166,8 @@ const styles = StyleSheet.create({
 	},
 	banner: {
 		position: 'absolute',
-		top: 0,
-		left: 0,
-		right: 0,
+		top: BANNER_PADDING,
+		left: BANNER_PADDING,
+		right: BANNER_PADDING,
 	},
 })

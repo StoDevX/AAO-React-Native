@@ -1,43 +1,50 @@
 import * as React from 'react'
+import {Image as RNImage, StyleSheet} from 'react-native'
 import {
-	Image,
-	Linking,
-	ScrollView,
-	StyleSheet,
+	Button,
+	ContentUnavailableView,
+	Form,
+	HStack,
+	Host,
+	LabeledContent,
+	Link,
+	RNHostView,
+	Section,
+	Spacer,
 	Text,
-	TouchableOpacity,
-	View,
-} from 'react-native'
+	VStack,
+} from '@expo/ui/swift-ui'
+import {
+	buttonStyle,
+	contentShape,
+	font,
+	foregroundColor,
+	listRowInsets,
+	shapes,
+} from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
-import {NoticeView} from '@frogpond/notice'
 import {openUrl} from '@frogpond/open-url'
 
 import {parseLinkString} from './lib/parse-link-string'
 import type {Building, Feature, LabelLinkString} from './types'
 
-/// The smallest square Apple's Human Interface Guidelines will accept, and
-/// what CLAUDE.md requires of every interactive element here.
-const MIN_TOUCH_TARGET = 44
+const PHOTO_HEIGHT = 180
+const ZERO_INSETS = {top: 0, leading: 0, bottom: 0, trailing: 0}
 
 type Props = {
 	building: Feature<Building> | undefined
-	onClose: () => void
 }
 
-export function BuildingInfo({building, onClose}: Props): React.ReactNode {
+export function BuildingInfo({building}: Props): React.ReactNode {
 	if (!building) {
 		return (
-			<View style={styles.container}>
-				<NoticeView text="Building not found." />
-				<TouchableOpacity
-					accessibilityLabel="Close"
-					accessibilityRole="button"
-					onPress={onClose}
-					style={styles.closeButton}
-				>
-					<Text style={styles.closeText}>Close</Text>
-				</TouchableOpacity>
-			</View>
+			<Host style={styles.host}>
+				<ContentUnavailableView
+					description="It may have been renamed, or removed from the campus data."
+					systemImage="mappin.slash"
+					title="Building not found"
+				/>
+			</Host>
 		)
 	}
 
@@ -48,103 +55,70 @@ export function BuildingInfo({building, onClose}: Props): React.ReactNode {
 		description,
 		floors,
 		name,
+		nickname,
 		offices,
 		photos,
 	} = building.properties
 
 	return (
-		<ScrollView
-			contentContainerStyle={styles.content}
-			contentInsetAdjustmentBehavior="automatic"
-			style={styles.container}
-		>
-			<Header building={building} onClose={onClose} />
-			{photos?.[0] ? (
-				<Image
-					accessibilityLabel={`Photo of ${name}`}
-					source={{uri: photos[0]}}
-					style={styles.photo}
-				/>
-			) : null}
-			{description ? (
-				<Section title="About">
-					<Text style={styles.body}>{description}</Text>
+		<Host style={styles.host}>
+			<Form>
+				{photos?.[0] ? (
+					// The one view that cannot be SwiftUI: @expo/ui's Image takes SF
+					// Symbols or a local file URI (which it reads synchronously, on
+					// the main thread), so a remote photo needs React Native's.
+					<VStack modifiers={[listRowInsets(ZERO_INSETS)]}>
+						<RNHostView matchContents={true}>
+							<RNImage
+								accessibilityLabel={`Photo of ${name}`}
+								source={{uri: photos[0]}}
+								style={styles.photo}
+							/>
+						</RNHostView>
+					</VStack>
+				) : null}
+
+				{nickname ? (
+					<Section>
+						<Text
+							modifiers={[
+								font({textStyle: 'subheadline'}),
+								foregroundColor(c.secondaryLabel),
+							]}
+						>
+							{nickname}
+						</Text>
+					</Section>
+				) : null}
+
+				{description ? (
+					<Section title="About">
+						<Text>{description}</Text>
+					</Section>
+				) : null}
+
+				{address ? (
+					<Section title="Address">
+						{/* A SwiftUI Link rather than a Button: maps.apple.com is a
+						    universal link, so the system hands it to Maps. */}
+						<Link
+							destination={`https://maps.apple.com/?q=${encodeURIComponent(address)}`}
+							label={address}
+						/>
+					</Section>
+				) : null}
+
+				<Section title="Accessibility">
+					<LabeledContent label="Wheelchair access">
+						<Text>{accessibilityCopy(accessibility)}</Text>
+					</LabeledContent>
 				</Section>
-			) : null}
-			{address ? (
-				<Section title="Address">
-					<AddressLink address={address} />
-				</Section>
-			) : null}
-			<Section title="Accessibility">
-				<Text style={styles.body}>{accessibilityCopy(accessibility)}</Text>
-			</Section>
-			<LinkSection items={departments} title="Departments" />
-			<LinkSection items={offices} title="Offices" />
-			<LinkSection items={floors} title="Floors" />
-		</ScrollView>
-	)
-}
 
-function Header({
-	building,
-	onClose,
-}: {
-	building: Feature<Building>
-	onClose: () => void
-}) {
-	let {name, nickname} = building.properties
-	return (
-		<View style={styles.header}>
-			<View style={styles.headerText}>
-				<Text style={styles.title}>{name}</Text>
-				{nickname ? <Text style={styles.subtitle}>{nickname}</Text> : null}
-			</View>
-			<TouchableOpacity
-				accessibilityLabel="Close"
-				accessibilityRole="button"
-				onPress={onClose}
-				style={styles.closeButton}
-			>
-				<Text style={styles.closeText}>Close</Text>
-			</TouchableOpacity>
-		</View>
-	)
-}
-
-function Section({
-	title,
-	children,
-}: {
-	title: string
-	children: React.ReactNode
-}) {
-	return (
-		<View style={styles.section}>
-			<Text style={styles.sectionTitle}>{title}</Text>
-			{children}
-		</View>
-	)
-}
-
-function AddressLink({address}: {address: string}) {
-	// Linking rather than openUrl: maps.apple.com is a universal link that iOS
-	// hands to Maps.app, and openUrl would offer to show it in the in-app
-	// browser instead, which lands on Apple's web fallback page.
-	let onPress = () => {
-		let url = `https://maps.apple.com/?q=${encodeURIComponent(address)}`
-		Linking.openURL(url).catch((err: unknown) => {
-			console.warn(`could not open ${url}`, err)
-		})
-	}
-	return (
-		<TouchableOpacity
-			accessibilityLabel={`Open ${address} in Maps`}
-			accessibilityRole="link"
-			onPress={onPress}
-		>
-			<Text style={styles.link}>{address}</Text>
-		</TouchableOpacity>
+				<LinkSection items={departments} title="Departments" />
+				<LinkSection items={offices} title="Offices" />
+				<LinkSection items={floors} title="Floors" />
+			</Form>
+		</Host>
 	)
 }
 
@@ -160,26 +134,30 @@ function LinkSection({
 	if (!items?.length) {
 		return null
 	}
+
 	return (
 		<Section title={title}>
 			{items.map((raw) => {
 				let {label, href} = parseLinkString(raw)
+
 				if (!href) {
-					return (
-						<Text key={raw} style={styles.body}>
-							{label}
-						</Text>
-					)
+					return <Text key={raw}>{label}</Text>
 				}
+
+				// A Button calling openUrl, not a SwiftUI Link: openUrl honours
+				// the in-app-browser preference from Settings, and a Link would
+				// always leave for Safari.
 				return (
-					<TouchableOpacity
+					<Button
 						key={raw}
-						accessibilityLabel={`Open ${label}`}
-						accessibilityRole="link"
+						modifiers={[buttonStyle('plain')]}
 						onPress={() => openUrl(href)}
 					>
-						<Text style={styles.link}>{label}</Text>
-					</TouchableOpacity>
+						<HStack modifiers={[contentShape(shapes.rectangle())]}>
+							<Text modifiers={[foregroundColor(c.systemBlue)]}>{label}</Text>
+							<Spacer />
+						</HStack>
+					</Button>
 				)
 			})}
 		</Section>
@@ -189,42 +167,15 @@ function LinkSection({
 function accessibilityCopy(value: Building['accessibility']): string {
 	switch (value) {
 		case 'wheelchair':
-			return 'Wheelchair-accessible.'
+			return 'Accessible'
 		case 'none':
-			return 'Not wheelchair-accessible.'
+			return 'Not accessible'
 		default:
-			return 'Accessibility information not available.'
+			return 'Unknown'
 	}
 }
 
 const styles = StyleSheet.create({
-	container: {flex: 1, backgroundColor: c.systemGroupedBackground},
-	content: {paddingBottom: 24},
-	header: {
-		flexDirection: 'row',
-		alignItems: 'flex-start',
-		paddingHorizontal: 16,
-		paddingVertical: 12,
-	},
-	headerText: {flex: 1},
-	title: {fontSize: 22, fontWeight: '700', color: c.label},
-	subtitle: {fontSize: 15, color: c.secondaryLabel, marginTop: 2},
-	/// 44pt tall around a 15pt line, which is the minimum touch target.
-	closeButton: {
-		paddingHorizontal: 20,
-		minHeight: MIN_TOUCH_TARGET,
-		justifyContent: 'center',
-	},
-	closeText: {color: c.systemBlue, fontSize: 15, fontWeight: '600'},
-	photo: {width: '100%', height: 180, marginBottom: 12},
-	section: {paddingHorizontal: 16, paddingVertical: 8},
-	sectionTitle: {
-		fontSize: 13,
-		fontWeight: '600',
-		color: c.secondaryLabel,
-		textTransform: 'uppercase',
-		marginBottom: 4,
-	},
-	body: {fontSize: 15, color: c.label, lineHeight: 20},
-	link: {fontSize: 15, color: c.systemBlue, lineHeight: 22},
+	host: {flex: 1},
+	photo: {width: '100%', height: PHOTO_HEIGHT},
 })

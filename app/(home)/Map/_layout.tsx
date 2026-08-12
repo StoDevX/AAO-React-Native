@@ -33,11 +33,17 @@ export default function MapLayout(): React.ReactNode {
 			    one, so this stack contributes chrome only for the sheets. */}
 			<Stack screenOptions={{headerShown: false}}>
 				<Stack.Screen name="index" />
+				{/* Both sheets keep a header: it carries the title and, on the
+				    info card, the close button -- the native place for it, and
+				    one less piece of chrome drawn by hand inside the content. */}
 				<Stack.Screen
 					name="BuildingPicker"
 					options={{...sheetOptions, headerShown: true, title: 'Buildings'}}
 				/>
-				<Stack.Screen name="BuildingInfo" options={sheetOptions} />
+				<Stack.Screen
+					name="BuildingInfo"
+					options={{...sheetOptions, headerShown: true}}
+				/>
 			</Stack>
 		</MapSelectionProvider>
 	)

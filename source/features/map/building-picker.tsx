@@ -1,8 +1,21 @@
 import * as React from 'react'
-import {StyleSheet, TextInput, View} from 'react-native'
+import {StyleSheet} from 'react-native'
+import {
+	Button,
+	ContentUnavailableView,
+	Host,
+	ProgressView,
+	TextField,
+	VStack,
+	useNativeState,
+} from '@expo/ui/swift-ui'
+import {
+	autocorrectionDisabled,
+	frame,
+	padding,
+	textFieldStyle,
+} from '@expo/ui/swift-ui/modifiers'
 import {useQuery} from '@tanstack/react-query'
-import * as c from '@frogpond/colors'
-import {LoadingView, NoticeView} from '@frogpond/notice'
 import {useDebounce} from '@frogpond/use-debounce'
 import fuzzyfind from 'fuzzyfind'
 
@@ -17,6 +30,8 @@ import type {Building, Feature} from './types'
 
 /// Matches the debounce every other search screen in the app uses.
 const SEARCH_DEBOUNCE_MS = 200
+const CHROME_PADDING = 12
+const FILL_WIDTH = Number.POSITIVE_INFINITY
 
 type Props = {
 	onSelect: (id: string) => void
@@ -25,6 +40,9 @@ type Props = {
 export function BuildingPicker({onSelect}: Props): React.ReactNode {
 	let [category, setCategory] = React.useState<CategoryLabel>('Buildings')
 	let [typedQuery, setTypedQuery] = React.useState('')
+	// The SwiftUI TextField owns its text; this is the handle for writing to it
+	// from JS. Nothing here needs to, but the prop is how the field is bound.
+	let queryState = useNativeState('')
 	let query = useDebounce(typedQuery.trim(), SEARCH_DEBOUNCE_MS)
 
 	let {
@@ -49,63 +67,95 @@ export function BuildingPicker({onSelect}: Props): React.ReactNode {
 		return buildings.filter((b) => b.properties.categories?.includes(key))
 	}, [buildings, category, query])
 
-	// Rendered in every branch so the field never disappears mid-typing.
-	let searchField = (
-		<TextInput
-			accessibilityLabel="Search for a place"
-			autoCorrect={false}
-			clearButtonMode="while-editing"
-			onChangeText={setTypedQuery}
-			placeholder="Search for a place"
-			placeholderTextColor={c.secondaryLabel}
-			style={styles.search}
-			value={typedQuery}
-		/>
-	)
+	return (
+		<Host style={styles.host}>
+			<VStack spacing={CHROME_PADDING}>
+				<VStack
+					modifiers={[
+						padding({horizontal: CHROME_PADDING, top: CHROME_PADDING}),
+					]}
+					spacing={CHROME_PADDING}
+				>
+					<TextField
+						modifiers={[
+							textFieldStyle('roundedBorder'),
+							autocorrectionDisabled(true),
+							frame({maxWidth: FILL_WIDTH}),
+						]}
+						onTextChange={setTypedQuery}
+						placeholder="Search for a place"
+						text={queryState}
+					/>
+					{query ? null : (
+						<CategoryPicker onChange={setCategory} selected={category} />
+					)}
+				</VStack>
 
+				<Results
+					buildings={visible}
+					error={error}
+					isError={isError}
+					isLoading={isLoading}
+					onRetry={refetch}
+					onSelect={onSelect}
+					searching={Boolean(query)}
+				/>
+			</VStack>
+		</Host>
+	)
+}
+
+function Results({
+	buildings,
+	error,
+	isError,
+	isLoading,
+	onRetry,
+	onSelect,
+	searching,
+}: {
+	buildings: Array<Feature<Building>>
+	error: unknown
+	isError: boolean
+	isLoading: boolean
+	onRetry: () => void
+	onSelect: (id: string) => void
+	searching: boolean
+}) {
 	if (isError) {
 		return (
-			<View style={styles.container}>
-				{searchField}
-				<NoticeView
-					buttonText="Try Again"
-					onPress={refetch}
-					text={`A problem occured while loading: ${error}`}
+			<VStack spacing={CHROME_PADDING}>
+				<ContentUnavailableView
+					description={String(error)}
+					systemImage="exclamationmark.triangle"
+					title="Couldn't load buildings"
 				/>
-			</View>
+				<Button label="Try Again" onPress={onRetry} />
+			</VStack>
 		)
 	}
 
 	if (isLoading) {
+		return <ProgressView />
+	}
+
+	if (buildings.length === 0) {
 		return (
-			<View style={styles.container}>
-				{searchField}
-				<LoadingView />
-			</View>
+			<ContentUnavailableView
+				description={
+					searching
+						? 'Try a different name or nickname.'
+						: 'Nothing is filed under this category.'
+				}
+				systemImage={searching ? 'magnifyingglass' : 'mappin.slash'}
+				title={searching ? 'No matches' : 'No buildings'}
+			/>
 		)
 	}
 
-	return (
-		<View style={styles.container}>
-			{searchField}
-			{query ? null : (
-				<CategoryPicker onChange={setCategory} selected={category} />
-			)}
-			<BuildingList buildings={visible} onSelect={onSelect} />
-		</View>
-	)
+	return <BuildingList buildings={buildings} onSelect={onSelect} />
 }
 
 const styles = StyleSheet.create({
-	container: {flex: 1, backgroundColor: c.systemGroupedBackground},
-	search: {
-		marginHorizontal: 12,
-		marginTop: 12,
-		paddingHorizontal: 12,
-		paddingVertical: 8,
-		borderRadius: 8,
-		backgroundColor: c.tertiarySystemFill,
-		color: c.label,
-		fontSize: 15,
-	},
+	host: {flex: 1},
 })

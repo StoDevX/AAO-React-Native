@@ -1,6 +1,15 @@
 import * as React from 'react'
-import {FlatList, StyleSheet, Text, View} from 'react-native'
-import {Detail, ListRow, ListSeparator, Title} from '@frogpond/lists'
+import {HStack, Image, List, Spacer, Text, VStack} from '@expo/ui/swift-ui'
+import {
+	accessibilityLabel,
+	buttonStyle,
+	contentShape,
+	font,
+	foregroundColor,
+	listStyle,
+	shapes,
+} from '@expo/ui/swift-ui/modifiers'
+import {Button} from '@expo/ui/swift-ui'
 import * as c from '@frogpond/colors'
 import type {Building, Feature} from './types'
 
@@ -9,7 +18,21 @@ type Props = {
 	onSelect: (id: string) => void
 }
 
-const Row = React.memo(function Row({
+/// A SwiftUI List realises its rows lazily, but the elements handed to it are
+/// built here on every render, so this is only reasonable while the collection
+/// stays in the hundreds -- which Carleton's building set is. A collection
+/// that could grow without bound wants a FlatList instead.
+export function BuildingList({buildings, onSelect}: Props): React.ReactNode {
+	return (
+		<List modifiers={[listStyle('plain')]}>
+			{buildings.map((building) => (
+				<Row key={building.id} building={building} onSelect={onSelect} />
+			))}
+		</List>
+	)
+}
+
+function Row({
 	building,
 	onSelect,
 }: {
@@ -17,44 +40,35 @@ const Row = React.memo(function Row({
 	onSelect: (id: string) => void
 }) {
 	let {name, nickname} = building.properties
-	return (
-		<ListRow arrowPosition="center" onPress={() => onSelect(building.id)}>
-			<Title>{name}</Title>
-			{nickname ? <Detail>{nickname}</Detail> : null}
-		</ListRow>
-	)
-})
-
-export function BuildingList({buildings, onSelect}: Props): React.ReactNode {
-	let renderItem = React.useCallback(
-		({item}: {item: Feature<Building>}) => (
-			<Row building={item} onSelect={onSelect} />
-		),
-		[onSelect],
-	)
-
-	let keyExtractor = React.useCallback((item: Feature<Building>) => item.id, [])
-
-	if (buildings.length === 0) {
-		return (
-			<View style={styles.empty}>
-				<Text style={styles.emptyText}>No buildings to show.</Text>
-			</View>
-		)
-	}
 
 	return (
-		<FlatList
-			ItemSeparatorComponent={ListSeparator}
-			data={buildings}
-			keyExtractor={keyExtractor}
-			keyboardShouldPersistTaps="handled"
-			renderItem={renderItem}
-		/>
+		<Button
+			modifiers={[
+				buttonStyle('plain'),
+				accessibilityLabel(nickname ? `${name}, ${nickname}` : name),
+			]}
+			onPress={() => onSelect(building.id)}
+		>
+			{/* contentShape on the label, not the Button: SwiftUI derives the
+			    tappable region from a button's label, so the whole row responds
+			    rather than just the glyphs. */}
+			<HStack modifiers={[contentShape(shapes.rectangle())]}>
+				<VStack alignment="leading" spacing={2}>
+					<Text modifiers={[foregroundColor(c.label)]}>{name}</Text>
+					{nickname ? (
+						<Text
+							modifiers={[
+								font({textStyle: 'footnote'}),
+								foregroundColor(c.secondaryLabel),
+							]}
+						>
+							{nickname}
+						</Text>
+					) : null}
+				</VStack>
+				<Spacer />
+				<Image color={c.tertiaryLabel} size={14} systemName="chevron.right" />
+			</HStack>
+		</Button>
 	)
 }
-
-const styles = StyleSheet.create({
-	empty: {padding: 24, alignItems: 'center'},
-	emptyText: {color: c.label, fontSize: 15},
-})
