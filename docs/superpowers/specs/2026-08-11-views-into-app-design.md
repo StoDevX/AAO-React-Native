@@ -31,9 +31,19 @@ internal layout.
 Three exceptions, each forced rather than chosen:
 
 - **A screen backing two or more routes stays in `source/features/`.**
-  `streaming/radio/schedule.tsx` exports both `KRLXScheduleView` and
-  `KSTOScheduleView` and is imported by `EventDetail.tsx` as well — one file
-  behind three routes. Inlining would duplicate it.
+  Counting per component rather than per file, exactly one screen qualifies:
+  `DebugKeyPathScreen` in `settings/screens/debug/route-screen.tsx`, rendered
+  by both `Debug/index.tsx` and `Debug/[...keyPath].tsx`. Inlining would
+  duplicate it. (Three query-option exports are also multi-route —
+  `buildingByNameOptions`, `wordByTermOptions`, `jobByIdOptions` — and are
+  support, so they stay regardless.)
+- **A file holding several single-route screens splits.** Each screen goes to
+  its own route; whatever else the file exported stays behind.
+  `streaming/radio/schedule.tsx` is the case: `KSTOScheduleView` and
+  `KRLXScheduleView` go to `Streaming Media/ksto.tsx`-adjacent routes
+  `KSTOSchedule.tsx` and `KRLXSchedule.tsx` respectively, while
+  `KSTO_POWERED_BY` and `KRLX_POWERED_BY` remain in
+  `source/features/streaming/radio/` for `EventDetail.tsx`.
 - **Anything with a test stays in `source/features/`.** Tests cannot live
   under `app/` (see below). All 38 existing test files target support code —
   `lib/` functions, the building reducer, the FAQ store, `comment-row` and
@@ -81,8 +91,6 @@ mapping is mechanical:
 | `screens/legal.tsx` | `app/(settings)/Legal.tsx` |
 | `screens/privacy.tsx` | `app/(settings)/Privacy.tsx` |
 | `screens/overview/index.tsx` | `app/(settings)/SettingsRoot.tsx` |
-| `screens/debug/list.tsx` | `app/(settings)/Debug/index.tsx` |
-| `screens/debug/route-screen.tsx` | `app/(settings)/Debug/[...keyPath].tsx` |
 | `screens/api-test/list.tsx` | `app/(settings)/APITest.tsx` |
 | `screens/api-test/detail.tsx` | `app/(settings)/APITestDetail.tsx` |
 | `screens/banner-builder/index.tsx` | `app/(settings)/BannerBuilder.tsx` |
@@ -92,6 +100,15 @@ mapping is mechanical:
 
 `component-library/library.tsx` and `component-library/base/library-wrapper.tsx`
 back no route and stay in `source/features/settings/`.
+
+`screens/debug/route-screen.tsx` stays in `source/features/settings/`: both
+`Debug/index.tsx` and `Debug/[...keyPath].tsx` render its `DebugKeyPathScreen`,
+so it is a two-route screen. `screens/debug/list.tsx` backs no route either —
+`route-screen.tsx` consumes it.
+
+`app/(settings)/BonAppPicker.tsx` renders a screen from a different feature,
+`source/views/menus/dev-bonapp-picker`. It inlines when **menus** moves, not
+when settings does, so the settings commit leaves that one route untouched.
 
 Its section components — `developer.tsx`, `miscellany.tsx`, `support.tsx`,
 `server-url.tsx`, `change-icon.tsx`, `login-credentials.tsx` — back no route.
