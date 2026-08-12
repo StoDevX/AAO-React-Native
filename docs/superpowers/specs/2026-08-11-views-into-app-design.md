@@ -37,13 +37,15 @@ Three exceptions, each forced rather than chosen:
   duplicate it. (Three query-option exports are also multi-route —
   `buildingByNameOptions`, `wordByTermOptions`, `jobByIdOptions` — and are
   support, so they stay regardless.)
-- **A screen also imported by a non-route file stays in `source/features/`**,
-  even with only one route, because inlining it into that route would strand
-  the sibling that imports it. One screen qualifies: `OtherModesView`, which
-  backs `Transportation/other-modes.tsx` and is also imported by
-  `transportation/index.tsx`. (Five support exports are in the same position
-  and stay regardless: `FAQ_TARGETS`, `FILL_WIDTH`, `FaqBannerGroup`,
-  `createMomentForDay`, `useRedditPreferences`.)
+- **A screen a non-route file actually *renders* stays in `source/features/`**,
+  even with only one route, since inlining would strand that consumer. No
+  screen currently qualifies. When checking this, distinguish a real consumer
+  from a pass-through barrel: `transportation/index.tsx` imports
+  `OtherModesView` only to `export {OtherModesView}` for the route's benefit,
+  which is a barrel to delete, not a dependency to respect. Five *support*
+  exports do have real non-route consumers and stay regardless:
+  `FaqBannerGroup` and `FAQ_TARGETS` (rendered by the settings overview and
+  `sis/balances`), `FILL_WIDTH`, `createMomentForDay`, `useRedditPreferences`.
 - **A file holding several single-route screens splits.** Each screen goes to
   its own route; whatever else the file exported stays behind.
   `streaming/radio/schedule.tsx` is the case: `KSTOScheduleView` and
@@ -60,6 +62,46 @@ Three exceptions, each forced rather than chosen:
 
 `source/views/views.ts`, the `AllViews` home-tile registry, is neither view
 nor screen and becomes `source/features/views.ts`.
+
+## The verified inventory
+
+Derived by resolving every route import through its barrel chain to the file
+that defines it, then listing that file's importers by resolved module path
+rather than by name. Both steps matter: name-based counting reported
+`OtherModesView` as shared when its only other mention is a pass-through
+re-export, and reported the `More` screen as having 161 consumers because it
+is exported under the name `View`, which collides with react-native's.
+
+**24 files inline**, each rendered by exactly one route and imported by nothing
+else.
+
+**Eight barrels die**, having only ever re-exported: `building-hours/index.ts`,
+`contacts/index.ts`, `dictionary/index.ts`, `directory/index.ts`,
+`settings/screens/api-test/index.ts`, `stoprint/index.ts`,
+`streaming/index.tsx`, `student-orgs/index.ts`.
+
+**Six files split**, each defining several single-route screens:
+
+| file | inlines | stays |
+| --- | --- | --- |
+| `calendar/index.tsx` | `StOlafCalendarView`, `NorthfieldCalendarView` | `STOLAF_POWERED_BY`, `NORTHFIELD_POWERED_BY` |
+| `news/index.tsx` | `StOlafNewsView`, `MessNewsView` | — |
+| `reddit/index.tsx` | `StOlafFeedScreen`, `CarletonFeedScreen` | re-export of `PostDetailView` dies |
+| `menus/index.tsx` | `StavHallMenuView`, `TheCageMenuView`, `ThePauseMenuView` | re-export block dies |
+| `transportation/index.tsx` | `ExpressLineBusView`, `RedLineBusView`, `BlueLineBusView`, `OlesGoView` | `BusView` stays support |
+| `streaming/radio/schedule.tsx` | `KSTOScheduleView`, `KRLXScheduleView` | `KSTO_POWERED_BY`, `KRLX_POWERED_BY` |
+
+**One file is genuinely shared and stays:**
+`settings/screens/debug/route-screen.tsx`.
+
+Every other file a route imports is support — `query.ts`, `types.ts`,
+`constants.ts`, `store.ts`, `views.ts`, `faqs/index.tsx`, `bus/line.tsx`,
+`bus/components/day-picker.tsx`, `home/button.tsx` — and stays by the rule.
+
+Four features alias a screen to `View` on the way out and back again
+(`export {MoreView as View}` in the file, `export {View as DictionaryView}` in
+the barrel): `dictionary`, `student-orgs`, `transportation/other-modes`,
+`more`. That indirection disappears with the barrels.
 
 ## Why not colocate everything under `app/`
 
