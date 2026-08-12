@@ -2,13 +2,11 @@ import * as React from 'react'
 import {useEffect, useState} from 'react'
 import {FlatList, StyleSheet, Text} from 'react-native'
 
-import {RouteProp, useRoute} from '@react-navigation/native'
 import type {Moment} from 'moment-timezone'
 
 import {ScheduleTimes} from './components/times'
 import {ProgressChunk} from './components/progress-chunk'
 import type {BusTimetableEntry, UnprocessedBusLine, BusSchedule} from './types'
-import {RootStackParamList} from '../../../navigation/types'
 import {
 	BusStateEnum,
 	getCurrentBusIteration,
@@ -192,10 +190,18 @@ function BusStopDetailInternal(props: Props): React.ReactNode {
 	)
 }
 
-export function BusRouteDetail(): React.ReactNode {
+type BusRouteDetailProps = {
+	stop: BusTimetableEntry
+	line: UnprocessedBusLine
+	subtitle: string
+}
+
+export function BusRouteDetail({
+	stop,
+	line,
+	subtitle,
+}: BusRouteDetailProps): React.ReactNode {
 	let {now} = useMomentTimer({intervalMs: 1000 * 60, timezone: timezone()})
-	let route = useRoute<RouteProp<RootStackParamList, 'BusRouteDetail'>>()
-	let {stop, line, subtitle} = route.params
 
 	return (
 		<BusStopDetailInternal

@@ -6,7 +6,6 @@ import * as eventList from '@frogpond/event-list'
 import * as calendar from '../views/calendar'
 import * as reddit from '../views/reddit'
 import * as sis from '../views/sis'
-import * as transportation from '../views/transportation'
 import * as debug from '../views/settings/screens/debug'
 import * as buildingHours from '../views/building-hours'
 import * as settings from '../views/settings'
@@ -41,7 +40,7 @@ export type RootViewsParamList = {
 	[reddit.NavigationKey]: reddit.NavigationParams
 	[sis.NavigationKey]: undefined
 	'Streaming Media': undefined
-	[transportation.NavigationKey]: undefined
+	Transportation: undefined
 	BuildingHours: undefined
 	Contacts: undefined
 	CourseSearch: undefined

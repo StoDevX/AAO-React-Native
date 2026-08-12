@@ -121,7 +121,6 @@ export const AllViews = (): Array<ViewType> => {
 			title: 'Transportation',
 			icon: 'bus.fill',
 			gradient: c.grayGradient,
-			disabled: true,
 		},
 		{
 			type: 'view',
