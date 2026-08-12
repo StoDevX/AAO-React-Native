@@ -11,10 +11,14 @@ import * as c from '@frogpond/colors'
 import jsYaml from 'js-yaml'
 import {Stack, useNavigation} from 'expo-router'
 
-import {FaqBannerPresentation} from '../../source/views/faqs/banner'
-import {useDevBannerStore} from '../../source/views/faqs/dev-banner-store'
-import type {Faq, FaqSeverity, FaqTarget} from '../../source/views/faqs/types'
-import {FAQ_TARGET_SCREENS} from '../../source/views/faqs/types'
+import {FaqBannerPresentation} from '../../source/features/faqs/banner'
+import {useDevBannerStore} from '../../source/features/faqs/dev-banner-store'
+import type {
+	Faq,
+	FaqSeverity,
+	FaqTarget,
+} from '../../source/features/faqs/types'
+import {FAQ_TARGET_SCREENS} from '../../source/features/faqs/types'
 
 const SEVERITY_OPTIONS: FaqSeverity[] = ['notice', 'info', 'alert']
 

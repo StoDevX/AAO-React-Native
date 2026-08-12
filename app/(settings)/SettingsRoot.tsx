@@ -9,8 +9,8 @@ import {
 import {Stack, useNavigation} from 'expo-router'
 
 import {useIsDevMode} from '../../source/lib/use-is-dev-mode'
-import {FaqBannerGroup} from '../../source/views/faqs'
-import {FAQ_TARGETS} from '../../source/views/faqs/constants'
+import {FaqBannerGroup} from '../../source/features/faqs/banner'
+import {FAQ_TARGETS} from '../../source/features/faqs/constants'
 
 import {CredentialsLoginSection} from '../../source/features/settings/screens/overview/login-credentials'
 import {MiscellanySection} from '../../source/features/settings/screens/overview/miscellany'

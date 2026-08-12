@@ -3,8 +3,8 @@ import {ScrollView, StyleSheet, Text, View} from 'react-native'
 import * as c from '@frogpond/colors'
 import {Stack, useNavigation} from 'expo-router'
 
-import {FaqBanner} from '../../source/views/faqs'
-import {fallbackFaqs} from '../../source/views/faqs/local-faqs'
+import {FaqBanner} from '../../source/features/faqs/banner'
+import {fallbackFaqs} from '../../source/features/faqs/local-faqs'
 
 export default function FaqBannerLibraryPage(): React.ReactNode {
 	const navigation = useNavigation()

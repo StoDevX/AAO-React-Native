@@ -15,8 +15,8 @@ import {sto} from '../../lib/colors'
 import {useRouter} from 'expo-router'
 import {NoCredentialsError, credentialsOptions} from '../../lib/login'
 import {useQuery} from '@tanstack/react-query'
-import {FaqBannerGroup} from '../faqs'
-import {FAQ_TARGETS} from '../faqs/constants'
+import {FaqBannerGroup} from '../../features/faqs/banner'
+import {FAQ_TARGETS} from '../../features/faqs/constants'
 
 const DISCLAIMER = 'This data may be outdated or otherwise inaccurate.'
 
