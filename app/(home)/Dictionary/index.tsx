@@ -83,17 +83,11 @@ function DictionaryView(): React.ReactNode {
 		return filteredData
 	}, [data, searchQuery])
 
-	if (isError) {
-		return (
-			<NoticeView
-				buttonText="Try Again"
-				onPress={refetch}
-				text={`A problem occured while loading: ${error}`}
-			/>
-		)
-	}
-
-	return (
+	// The search chrome is bound to component state (the change handler
+	// updates query), so it can't move to a static outer component.
+	// Compute it once and render it in every branch, so the user always
+	// has a search bar to type into or clear.
+	let searchChrome = (
 		<>
 			<Stack.Toolbar placement="bottom">
 				<Stack.Toolbar.SearchBarSlot />
@@ -102,6 +96,25 @@ function DictionaryView(): React.ReactNode {
 			<Stack.SearchBar
 				onChangeText={(event) => setQuery(event.nativeEvent.text)}
 			/>
+		</>
+	)
+
+	if (isError) {
+		return (
+			<>
+				{searchChrome}
+				<NoticeView
+					buttonText="Try Again"
+					onPress={refetch}
+					text={`A problem occured while loading: ${error}`}
+				/>
+			</>
+		)
+	}
+
+	return (
+		<>
+			{searchChrome}
 
 			<SectionList
 				ItemSeparatorComponent={ListSeparator}

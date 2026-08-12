@@ -44,17 +44,11 @@ function DirectoryView(): React.ReactNode {
 		}
 	}, [params?.queryType, params?.queryParam])
 
-	if (!searchQuery) {
-		return <NoSearchPerformed />
-	}
-
-	if (searchQuery.length < 2) {
-		return <NoticeView text="Your search is too short." />
-	}
-
-	const items = data.results ? formatResults(data.results) : []
-
-	return (
+	// The search chrome is bound to component state (the change handler
+	// updates typedQuery/searchQueryType), so it can't move to a static
+	// outer component. Compute it once and render it in every branch, so
+	// the user always has a search bar to type into or clear.
+	let searchChrome = (
 		<>
 			<Stack.Toolbar placement="bottom">
 				<Stack.Toolbar.SearchBarSlot />
@@ -66,6 +60,32 @@ function DirectoryView(): React.ReactNode {
 					setTypedQuery(event.nativeEvent.text)
 				}}
 			/>
+		</>
+	)
+
+	if (!searchQuery) {
+		return (
+			<>
+				{searchChrome}
+				<NoSearchPerformed />
+			</>
+		)
+	}
+
+	if (searchQuery.length < 2) {
+		return (
+			<>
+				{searchChrome}
+				<NoticeView text="Your search is too short." />
+			</>
+		)
+	}
+
+	const items = data.results ? formatResults(data.results) : []
+
+	return (
+		<>
+			{searchChrome}
 
 			<View style={styles.wrapper}>
 				{isLoading ? (
