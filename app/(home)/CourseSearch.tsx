@@ -126,13 +126,7 @@ let styles = StyleSheet.create({
 export default function CourseSearchPage(): React.ReactNode {
 	return (
 		<>
-			<Stack.Screen
-				options={
-					NavigationOptions as React.ComponentProps<
-						typeof Stack.Screen
-					>['options']
-				}
-			/>
+			<Stack.Screen options={NavigationOptions} />
 			<CourseSearchView />
 		</>
 	)

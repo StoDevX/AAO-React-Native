@@ -32,7 +32,7 @@ export let coursesForTerm = async (
 		}))
 		.filter((c) => {
 			return findMatches(c.level, levels, c.gereqs, gereqs)
-		}) as CourseType[]
+		})
 }
 
 const findMatches = (
