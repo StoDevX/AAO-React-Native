@@ -249,29 +249,46 @@ export default function CourseDetailPage(): React.ReactNode {
 		enabled: Boolean(resolvedTerm),
 	})
 
+	// The route param is a course id, meaningless to a user, so the title
+	// stays empty until the course loads rather than falling back to it.
+	let screen = <Stack.Screen options={{title: course?.name ?? ''}} />
+
 	if (termLoading || courseLoading) {
-		return <LoadingView />
+		return (
+			<>
+				{screen}
+				<LoadingView />
+			</>
+		)
 	}
 
 	if (error) {
 		return (
-			<NoticeView
-				buttonText="Try Again"
-				onPress={refetch}
-				text={`A problem occured while loading: ${
-					error instanceof Error ? error.message : 'Unknown error'
-				}`}
-			/>
+			<>
+				{screen}
+				<NoticeView
+					buttonText="Try Again"
+					onPress={refetch}
+					text={`A problem occured while loading: ${
+						error instanceof Error ? error.message : 'Unknown error'
+					}`}
+				/>
+			</>
 		)
 	}
 
 	if (!course) {
-		return <NoticeView text="Could not find this course." />
+		return (
+			<>
+				{screen}
+				<NoticeView text="Could not find this course." />
+			</>
+		)
 	}
 
 	return (
 		<>
-			<Stack.Screen options={{title: course.name}} />
+			{screen}
 			<CourseDetailView course={course} />
 		</>
 	)
