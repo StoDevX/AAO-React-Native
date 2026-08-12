@@ -27,6 +27,16 @@ import {LoadingView} from '@frogpond/notice'
 import {IS_PRODUCTION} from '@frogpond/constants'
 import {StatusBar, StyleSheet, useColorScheme} from 'react-native'
 
+// Without an anchor, a cold-start deep link into (settings) or
+// (component-library) -- both modal groups, siblings of (home) -- mounts
+// the root stack with nothing beneath the sheet: no Home to dismiss back
+// to. (home) is the app's real entry point regardless of which route a
+// deep link targets.
+// eslint-disable-next-line camelcase -- expo-router's own required export name
+export const unstable_settings = {
+	anchor: '(home)',
+}
+
 function RootLayout(): React.ReactNode {
 	const scheme = useColorScheme()
 	const theme = scheme === 'dark' ? CombinedDarkTheme : CombinedLightTheme
@@ -64,6 +74,14 @@ function RootLayout(): React.ReactNode {
 										<Stack.Screen
 											name="(home)"
 											options={{headerShown: false}}
+										/>
+										<Stack.Screen
+											name="(settings)"
+											options={{headerShown: false, presentation: 'modal'}}
+										/>
+										<Stack.Screen
+											name="(component-library)"
+											options={{headerShown: false, presentation: 'modal'}}
 										/>
 									</Stack>
 								</ThemeProvider>
