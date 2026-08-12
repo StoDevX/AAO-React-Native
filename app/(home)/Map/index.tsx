@@ -47,11 +47,9 @@ export default function MapPage(): React.ReactNode {
 	let handlePress = React.useCallback(
 		(event: NativeSyntheticEvent<PressEvent>) => {
 			// MapLibre hands back the coordinate directly, where @rnmapbox wrapped
-			// it in a GeoJSON point feature.
-			let hit = lookupBuildingByCoordinates(
-				event.nativeEvent.lngLat as Coordinate,
-				buildings,
-			)
+			// it in a GeoJSON point feature -- and its LngLat is structurally our
+			// Coordinate, so this needs no assertion either.
+			let hit = lookupBuildingByCoordinates(event.nativeEvent.lngLat, buildings)
 			if (!hit) {
 				return
 			}
