@@ -1,7 +1,14 @@
 import * as React from 'react'
-import {StyleSheet, View} from 'react-native'
+import {StyleSheet, View, type NativeSyntheticEvent} from 'react-native'
 import {useFocusEffect, useRouter} from 'expo-router'
-import MapboxGL from '@rnmapbox/maps'
+import {
+	Camera,
+	Map,
+	Marker,
+	UserLocation,
+	type CameraRef,
+	type PressEvent,
+} from '@maplibre/maplibre-react-native'
 import {useQuery} from '@tanstack/react-query'
 import * as c from '@frogpond/colors'
 import {NoticeView} from '@frogpond/notice'
@@ -10,7 +17,7 @@ import {lookupBuildingByCoordinates} from '../../../source/features/map/lib/look
 import {mapDataOptions} from '../../../source/features/map/query'
 import {useMapSelection} from '../../../source/features/map/selection-context'
 import type {Coordinate, Point} from '../../../source/features/map/types'
-import {MAPBOX_CARLETON_STYLE} from '../../../source/features/map/urls'
+import {MAP_STYLE_URL} from '../../../source/features/map/urls'
 
 const ORIGINAL_CENTER: Coordinate = [-93.15488752015, 44.460800862266]
 const DEFAULT_ZOOM = 15
@@ -24,7 +31,7 @@ const MARKER_HIT_SLOP = (MIN_TOUCH_TARGET - MARKER_SIZE) / 2
 
 export default function MapPage(): React.ReactNode {
 	let router = useRouter()
-	let cameraRef = React.useRef<MapboxGL.Camera>(null)
+	let cameraRef = React.useRef<CameraRef>(null)
 	let {selectedBuildingId, selectBuilding} = useMapSelection()
 	let {data: buildings = [], error} = useQuery(mapDataOptions)
 
@@ -38,9 +45,13 @@ export default function MapPage(): React.ReactNode {
 	)
 
 	let handlePress = React.useCallback(
-		(feature: GeoJSON.Feature<GeoJSON.Point>) => {
-			let coords = feature.geometry.coordinates as Coordinate
-			let hit = lookupBuildingByCoordinates(coords, buildings)
+		(event: NativeSyntheticEvent<PressEvent>) => {
+			// MapLibre hands back the coordinate directly, where @rnmapbox wrapped
+			// it in a GeoJSON point feature.
+			let hit = lookupBuildingByCoordinates(
+				event.nativeEvent.lngLat as Coordinate,
+				buildings,
+			)
 			if (!hit) {
 				return
 			}
@@ -74,34 +85,31 @@ export default function MapPage(): React.ReactNode {
 		if (!selectedPoint) {
 			return
 		}
-		cameraRef.current?.setCamera({
-			animationDuration: CAMERA_ANIMATION_MS,
-			centerCoordinate: selectedPoint.point.coordinates,
-			zoomLevel: SELECTION_ZOOM,
+		cameraRef.current?.easeTo({
+			center: selectedPoint.point.coordinates,
+			duration: CAMERA_ANIMATION_MS,
+			zoom: SELECTION_ZOOM,
 		})
 	}, [selectedPoint])
 
 	return (
 		<View style={StyleSheet.absoluteFill}>
-			<MapboxGL.MapView
-				logoEnabled={false}
+			<Map
+				logo={false}
+				mapStyle={MAP_STYLE_URL}
 				onPress={handlePress}
 				style={StyleSheet.absoluteFill}
-				styleURL={MAPBOX_CARLETON_STYLE}
 			>
-				<MapboxGL.Camera
+				<Camera
 					ref={cameraRef}
-					defaultSettings={{
-						centerCoordinate: ORIGINAL_CENTER,
-						zoomLevel: DEFAULT_ZOOM,
-					}}
+					initialViewState={{center: ORIGINAL_CENTER, zoom: DEFAULT_ZOOM}}
 				/>
-				<MapboxGL.UserLocation visible={true} />
+				<UserLocation />
 				{selectedPoint ? (
-					<MapboxGL.PointAnnotation
+					<Marker
 						key={selectedPoint.id}
-						coordinate={selectedPoint.point.coordinates}
 						id={selectedPoint.id}
+						lngLat={selectedPoint.point.coordinates}
 					>
 						<View
 							accessibilityLabel={`${selectedPoint.name} marker`}
@@ -111,9 +119,9 @@ export default function MapPage(): React.ReactNode {
 						>
 							<View style={styles.markerInner} />
 						</View>
-					</MapboxGL.PointAnnotation>
+					</Marker>
 				) : null}
-			</MapboxGL.MapView>
+			</Map>
 			{error ? (
 				<View style={styles.banner}>
 					<NoticeView text="Couldn't load building data. Pan around the map; some features won't work." />

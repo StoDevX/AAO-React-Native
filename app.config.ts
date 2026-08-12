@@ -205,11 +205,11 @@ const config: ExpoConfig = {
 			},
 		],
 		'expo-router',
-		// Adds the Mapbox Maps SDK pod and its post-install fixups to the
-		// generated Podfile. Neither `RNMapboxMapsImpl` nor
-		// `RNMapboxMapsDownloadToken` is passed: both are deprecated as of
-		// @rnmapbox/maps 10, and the SDK no longer needs download credentials.
-		'@rnmapbox/maps',
+		// Adds the MapLibre SDK to the generated project. On iOS that is a
+		// Swift Package pulling a prebuilt MapLibre.xcframework from
+		// maplibre-gl-native-distribution -- no pod source build, and no
+		// access token anywhere in the pipeline.
+		'@maplibre/maplibre-react-native',
 		'@react-native-vector-icons/entypo',
 		'@react-native-vector-icons/ionicons',
 		'@react-native-vector-icons/material-design-icons',

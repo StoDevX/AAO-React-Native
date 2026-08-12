@@ -1,5 +1,13 @@
-// Mapbox style URI for Carleton's campus tiles. Lives in Mapbox Studio under the
-// hawkrives account; carls-app/carls has used it since 2018.
-// TODO(map): replace with a St. Olaf-specific style when one is provisioned.
-export const MAPBOX_CARLETON_STYLE =
-	'mapbox://styles/hawkrives/cjelhf2kx5ezz2sp8jbgoj9gt'
+/**
+ * The MapLibre style JSON the campus map renders.
+ *
+ * TODO(map): point this at the self-hosted style on GitHub Pages once the tile
+ * repo exists. It needs to serve, as static files: the style JSON, the vector
+ * tiles it references, the glyph ranges (fonts) and the sprite sheet -- a
+ * style that names a font or icon it cannot fetch renders without labels
+ * rather than failing loudly.
+ *
+ * MapLibre's demo style is a global, low-zoom basemap: it proves the renderer
+ * is wired up, but it has nothing at campus zoom levels.
+ */
+export const MAP_STYLE_URL = 'https://demotiles.maplibre.org/style.json'
