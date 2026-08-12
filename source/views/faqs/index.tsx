@@ -3,6 +3,7 @@ import {RefreshControl, StyleSheet, ScrollView, View, Text} from 'react-native'
 import * as c from '@frogpond/colors'
 import {Markdown} from '@frogpond/markdown'
 import {LoadingView, NoticeView} from '@frogpond/notice'
+import {accent} from '../../lib/theme'
 import {useLocalSearchParams} from 'expo-router'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 import {faqsOptions, emptyFaqData} from './query'
@@ -29,7 +30,7 @@ const styles = StyleSheet.create({
 		padding: 16,
 	},
 	cardHighlighted: {
-		borderColor: c.tintColor,
+		borderColor: accent,
 	},
 	cardTitle: {
 		color: c.label,
