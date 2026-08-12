@@ -3,7 +3,7 @@ import {RefreshControl, ScrollView, StyleSheet} from 'react-native'
 import {Ionicons as Icon} from '@react-native-vector-icons/ionicons'
 import {NoticeView} from '@frogpond/notice'
 import * as c from '@frogpond/colors'
-import {openEmail} from '../../settings/screens/overview/support'
+import {openEmail} from '../../../features/settings/screens/overview/support'
 
 const ERROR_MESSAGE =
 	"Make sure you are connected to the St. Olaf Network via eduroam or the VPN. If you are, please report this so we can make sure it doesn't happen again."
