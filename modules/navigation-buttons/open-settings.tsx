@@ -3,15 +3,13 @@ import {Touchable} from '@frogpond/touchable'
 import {Ionicons as Icon} from '@react-native-vector-icons/ionicons'
 import * as c from '@frogpond/colors'
 import {commonStyles, rightButtonStyles} from './styles'
-import type {NavigationProp} from '@react-navigation/native'
-import {useNavigation} from 'expo-router'
+import {useRouter} from 'expo-router'
 import type {NativeStackHeaderRightProps} from '@react-navigation/native-stack'
-import type {LegacyRootParamList} from '../../source/navigation/types'
 
 export function OpenSettingsButton(
 	_props: NativeStackHeaderRightProps,
 ): React.ReactNode {
-	let navigation = useNavigation<NavigationProp<LegacyRootParamList>>()
+	let router = useRouter()
 
 	return (
 		<Touchable
@@ -19,7 +17,7 @@ export function OpenSettingsButton(
 			accessibilityRole="button"
 			accessible={true}
 			highlight={false}
-			onPress={() => navigation.navigate('Settings')}
+			onPress={() => router.push('/SettingsRoot')}
 			style={commonStyles.button}
 			testID="button-open-settings"
 		>

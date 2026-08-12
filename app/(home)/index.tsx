@@ -24,6 +24,7 @@ import {
 	SCREEN_MARGIN,
 } from '../../source/views/home/button'
 import {openUrl} from '@frogpond/open-url'
+import {OpenSettingsButton} from '@frogpond/navigation-buttons'
 import {UnofficialAppNotice} from '../../source/views/home/notice'
 import {useIsDevMode} from '../../source/lib/use-is-dev-mode'
 import {FaqBannerGroup} from '../../source/views/faqs'
@@ -70,6 +71,14 @@ export default function HomePage(): React.ReactNode {
 					headerShadowVisible: false,
 					headerLargeTitleEnabled: true,
 					headerTransparent: true,
+					// expo-router's Stack.Screen headerRight callback passes its own
+					// forked -- structurally incompatible -- header-item props type,
+					// same mismatch as the options cast in SettingsRoot.tsx.
+					headerRight: (props) => (
+						<OpenSettingsButton
+							{...(props as React.ComponentProps<typeof OpenSettingsButton>)}
+						/>
+					),
 				}}
 			/>
 			{/* SwiftUI owns the scrolling. Wrapping this in a React Native ScrollView
