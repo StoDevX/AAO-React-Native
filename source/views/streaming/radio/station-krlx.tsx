@@ -22,7 +22,7 @@ export function KrlxStationView(): React.ReactNode {
 			<RadioControllerView
 				image={logos.krlx}
 				playerUrl="https://live.krlx.org"
-				scheduleViewName="KRLXSchedule"
+				scheduleHref="/KRLXSchedule"
 				source={{
 					useEmbeddedPlayer: false,
 					embeddedPlayerUrl: 'https://live.krlx.org',

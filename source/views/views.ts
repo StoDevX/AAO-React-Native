@@ -93,7 +93,6 @@ export const AllViews = (): Array<ViewType> => {
 			title: 'Streaming Media',
 			icon: 'play.rectangle.fill',
 			gradient: c.lightBlueGradient,
-			disabled: true,
 		},
 		{
 			type: 'view',

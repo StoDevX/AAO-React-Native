@@ -25,7 +25,7 @@ export function KstoStationView(): React.ReactNode {
 			<RadioControllerView
 				image={logos.ksto}
 				playerUrl="https://www.stolaf.edu/multimedia/play/embed/ksto.html"
-				scheduleViewName="KSTOSchedule"
+				scheduleHref="/KSTOSchedule"
 				source={{
 					useEmbeddedPlayer: true,
 					embeddedPlayerUrl:

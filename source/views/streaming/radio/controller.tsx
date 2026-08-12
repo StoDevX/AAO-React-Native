@@ -18,11 +18,7 @@ import type {HtmlAudioError, PlayState} from './types'
 import {theming} from './theme'
 import {ActionButton, CallButton, ShowCalendarButton} from './buttons'
 import {openUrl} from '@frogpond/open-url'
-import {NavigationProp, useNavigation} from '@react-navigation/native'
-import {
-	LegacyRootParamList,
-	RadioScheduleParamList,
-} from '../../../navigation/types'
+import {useRouter, type Href} from 'expo-router'
 
 // If you want to fix the inline player, switch to `true`
 const ALLOW_INLINE_PLAYER = false
@@ -63,7 +59,7 @@ type Props = {
 	playerUrl: string
 	stationNumber: string
 	title: string
-	scheduleViewName: keyof RadioScheduleParamList
+	scheduleHref: '/KSTOSchedule' | '/KRLXSchedule'
 	stationName: string
 	source: {
 		useEmbeddedPlayer: boolean
@@ -79,12 +75,12 @@ export function RadioControllerView(props: Props): React.ReactNode {
 		title,
 		stationName,
 		image,
-		scheduleViewName,
+		scheduleHref,
 		stationNumber,
 		playerUrl,
 	} = props
 
-	let navigation = useNavigation<NavigationProp<LegacyRootParamList>>()
+	let router = useRouter()
 
 	let [playState, setPlayState] = useState<PlayState>('paused')
 	let [streamError, setStreamError] = useState<HtmlAudioError | null>(null)
@@ -115,8 +111,13 @@ export function RadioControllerView(props: Props): React.ReactNode {
 	}
 
 	let openSchedule = useCallback(() => {
-		navigation.navigate(scheduleViewName)
-	}, [navigation, scheduleViewName])
+		// KSTOSchedule/KRLXSchedule aren't wired into expo-router yet (deferred
+		// to Calendar's own group PR), so they're absent from the generated
+		// route union and router.push() needs a cast to accept them. Tapping
+		// this shows expo-router's built-in "Unmatched Route" screen until
+		// Calendar's group PR adds the real routes.
+		router.push(scheduleHref as Href)
+	}, [router, scheduleHref])
 
 	let callStation = useCallback(() => {
 		callPhone(stationNumber, {title: stationName})
