@@ -27,6 +27,7 @@ import type {Segment} from '@frogpond/html-lib'
 import type {
 	RedditCommentType,
 	FlatComment,
+	RedditPostType,
 } from '../../source/features/reddit/types'
 import {formatCommentCount} from '../../source/features/reddit/utils/format-count'
 import {useRedditLinkHandler} from '../../source/features/reddit/useRedditLinkHandler'
@@ -64,18 +65,27 @@ function sanitizeBodySegments(segments: Segment[]): Segment[] {
 	return segments
 }
 
-export default function RedditPostDetailPage(): React.ReactNode {
-	let {postUrl, communityName} = useLocalSearchParams<{
-		postUrl: string
-		communityName: string
-	}>()
+type BodyProps = {
+	post: RedditPostType
+	communityName: string
+}
 
-	let {
-		data: post,
-		isLoading: isPostLoading,
-		error: postError,
-		refetch: refetchPost,
-	} = useQuery(redditPostByUrlOptions(postUrl))
+function RedditPostDetailBody({post, communityName}: BodyProps): React.ReactNode {
+	const {
+		permalink: postUrl,
+		title,
+		author,
+		publishedAt,
+		contentHtml,
+		thumbnail,
+		postType,
+		imageUrl,
+		images = [],
+		linkUrl,
+		linkDomain,
+		crosspostParent,
+		pollData,
+	} = post
 
 	const [collapsedIds, setCollapsedIds] = React.useState<Set<string>>(
 		() => new Set(),
@@ -99,13 +109,29 @@ export default function RedditPostDetailPage(): React.ReactNode {
 		[comments, collapsedIds],
 	)
 
+	const parsedDate = parseISO(publishedAt)
+	const metaText = [
+		author,
+		isValid(parsedDate)
+			? formatDistanceToNow(parsedDate, {addSuffix: true})
+			: null,
+	]
+		.filter((part): part is string => Boolean(part))
+		.join(' · ')
 	const bodySegments = React.useMemo(
-		() =>
-			sanitizeBodySegments(
-				post?.contentHtml ? htmlToSegments(post.contentHtml) : [],
-			),
-		[post],
+		() => sanitizeBodySegments(contentHtml ? htmlToSegments(contentHtml) : []),
+		[contentHtml],
 	)
+
+	// Build the image list to display: prefer gallery images, then full-res imageUrl, then thumbnail
+	const displayImages: string[] = (() => {
+		if (images.length > 0) return images
+		if (imageUrl) return [imageUrl]
+		if (thumbnail) return [thumbnail]
+		return []
+	})()
+
+	const isCrosspost = postType === 'crosspost'
 
 	const toggleCollapse = React.useCallback((id: string) => {
 		setCollapsedIds((prev) => {
@@ -118,75 +144,6 @@ export default function RedditPostDetailPage(): React.ReactNode {
 			return next
 		})
 	}, [])
-
-	let screen = <Stack.Screen options={{title: communityName}} />
-
-	if (isPostLoading) {
-		return (
-			<>
-				{screen}
-				<LoadingView />
-			</>
-		)
-	}
-
-	if (postError) {
-		return (
-			<>
-				{screen}
-				<NoticeView
-					buttonText="Try Again"
-					onPress={refetchPost}
-					text={`A problem occured while loading: ${
-						postError instanceof Error ? postError.message : 'Unknown error'
-					}`}
-				/>
-			</>
-		)
-	}
-
-	if (!post) {
-		return (
-			<>
-				{screen}
-				<NoticeView text="Could not find this post." />
-			</>
-		)
-	}
-
-	const {
-		title,
-		author,
-		publishedAt,
-		thumbnail,
-		postType,
-		imageUrl,
-		images = [],
-		linkUrl,
-		linkDomain,
-		crosspostParent,
-		pollData,
-	} = post
-
-	const parsedDate = parseISO(publishedAt)
-	const metaText = [
-		author,
-		isValid(parsedDate)
-			? formatDistanceToNow(parsedDate, {addSuffix: true})
-			: null,
-	]
-		.filter((part): part is string => Boolean(part))
-		.join(' · ')
-
-	// Build the image list to display: prefer gallery images, then full-res imageUrl, then thumbnail
-	const displayImages: string[] = (() => {
-		if (images.length > 0) return images
-		if (imageUrl) return [imageUrl]
-		if (thumbnail) return [thumbnail]
-		return []
-	})()
-
-	const isCrosspost = postType === 'crosspost'
 
 	const header = (
 		<>
@@ -423,6 +380,53 @@ export default function RedditPostDetailPage(): React.ReactNode {
 				)}
 				style={styles.list}
 			/>
+		</>
+	)
+}
+
+function InnerRedditPostDetailPage(): React.ReactNode {
+	let {postUrl, communityName} = useLocalSearchParams<{
+		postUrl: string
+		communityName: string
+	}>()
+
+	let {
+		data: post,
+		isLoading,
+		error,
+		refetch,
+	} = useQuery(redditPostByUrlOptions(postUrl))
+
+	if (isLoading) {
+		return <LoadingView />
+	}
+
+	if (error) {
+		return (
+			<NoticeView
+				buttonText="Try Again"
+				onPress={refetch}
+				text={`A problem occured while loading: ${
+					error instanceof Error ? error.message : 'Unknown error'
+				}`}
+			/>
+		)
+	}
+
+	if (!post) {
+		return <NoticeView text="Could not find this post." />
+	}
+
+	return <RedditPostDetailBody communityName={communityName} post={post} />
+}
+
+export default function RedditPostDetailPage(): React.ReactNode {
+	let {communityName} = useLocalSearchParams<{communityName: string}>()
+
+	return (
+		<>
+			<Stack.Screen options={{title: communityName}} />
+			<InnerRedditPostDetailPage />
 		</>
 	)
 }
