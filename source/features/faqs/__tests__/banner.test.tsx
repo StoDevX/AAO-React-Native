@@ -34,14 +34,36 @@ const buildResponse = (faqs: Faq[]): FaqQueryData => ({
 	legacyText: undefined,
 })
 
+// Every query left without observers gets a garbage-collection timeout, and
+// React Query's default is five minutes -- long enough to outlive the run and
+// leave the Jest worker to be force-killed rather than exiting on its own.
+// Testing Library registers its unmounting afterEach when it is imported, and
+// Jest runs afterEach hooks in registration order, so by the time this one
+// runs the components are gone and every gc timeout has been armed.
+const trackedQueryClients: QueryClient[] = []
+
+const trackQueryClient = (queryClient: QueryClient): QueryClient => {
+	trackedQueryClients.push(queryClient)
+	return queryClient
+}
+
+afterEach(() => {
+	for (let queryClient of trackedQueryClients) {
+		queryClient.clear()
+	}
+	trackedQueryClients.length = 0
+})
+
 // Seeded data has to be fresh, not merely present: a stale entry makes the
 // query refetch the moment a component mounts, and the mocked queryFn's
 // rejection then lands mid-test and empties the banner out from under the
 // assertions.
 const buildQueryClient = (faqs: Faq[]): QueryClient => {
-	const queryClient = new QueryClient({
-		defaultOptions: {queries: {retry: false, staleTime: Infinity}},
-	})
+	const queryClient = trackQueryClient(
+		new QueryClient({
+			defaultOptions: {queries: {retry: false, staleTime: Infinity}},
+		}),
+	)
 	queryClient.setQueryData<FaqQueryData>(FAQS_QUERY_KEY, buildResponse(faqs))
 	return queryClient
 }
@@ -50,9 +72,11 @@ const buildQueryClient = (faqs: Faq[]): QueryClient => {
 /// refetch -- which the mocked queryFn then fails, driving the query into its
 /// error state while the cached faqs are still perfectly good.
 const buildStaleQueryClient = (faqs: Faq[]): QueryClient => {
-	const queryClient = new QueryClient({
-		defaultOptions: {queries: {retry: false}},
-	})
+	const queryClient = trackQueryClient(
+		new QueryClient({
+			defaultOptions: {queries: {retry: false}},
+		}),
+	)
 	queryClient.setQueryData<FaqQueryData>(FAQS_QUERY_KEY, buildResponse(faqs))
 	return queryClient
 }

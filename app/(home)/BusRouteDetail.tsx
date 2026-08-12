@@ -243,14 +243,14 @@ export default function BusRouteDetailPage(): React.ReactNode {
 		refetch,
 	} = useQuery(busLineOptions(lineName))
 
-	let screen = (
-		<Stack.Screen options={{title: line ? `${line.line} Schedule` : ''}} />
+	let screenTitle = (
+		<Stack.Title>{line ? `${line.line} Schedule` : ''}</Stack.Title>
 	)
 
 	if (isLoading) {
 		return (
 			<>
-				{screen}
+				{screenTitle}
 				<LoadingView />
 			</>
 		)
@@ -259,7 +259,7 @@ export default function BusRouteDetailPage(): React.ReactNode {
 	if (error) {
 		return (
 			<>
-				{screen}
+				{screenTitle}
 				<NoticeView
 					buttonText="Try Again"
 					onPress={refetch}
@@ -274,7 +274,7 @@ export default function BusRouteDetailPage(): React.ReactNode {
 	if (!line) {
 		return (
 			<>
-				{screen}
+				{screenTitle}
 				<NoticeView text={`Could not find the "${lineName}" bus line.`} />
 			</>
 		)
@@ -287,7 +287,7 @@ export default function BusRouteDetailPage(): React.ReactNode {
 	if (!stop) {
 		return (
 			<>
-				{screen}
+				{screenTitle}
 				<NoticeView text={`Could not find the stop "${stopName}".`} />
 			</>
 		)
@@ -295,7 +295,7 @@ export default function BusRouteDetailPage(): React.ReactNode {
 
 	return (
 		<>
-			{screen}
+			{screenTitle}
 			<BusRouteDetailView line={line} stop={stop} subtitle={subtitle} />
 		</>
 	)

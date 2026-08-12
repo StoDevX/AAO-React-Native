@@ -251,12 +251,12 @@ export default function CourseDetailPage(): React.ReactNode {
 
 	// The route param is a course id, meaningless to a user, so the title
 	// stays empty until the course loads rather than falling back to it.
-	let screen = <Stack.Screen options={{title: course?.name ?? ''}} />
+	let screenTitle = <Stack.Title>{course?.name ?? ''}</Stack.Title>
 
 	if (termLoading || courseLoading) {
 		return (
 			<>
-				{screen}
+				{screenTitle}
 				<LoadingView />
 			</>
 		)
@@ -265,7 +265,7 @@ export default function CourseDetailPage(): React.ReactNode {
 	if (error) {
 		return (
 			<>
-				{screen}
+				{screenTitle}
 				<NoticeView
 					buttonText="Try Again"
 					onPress={refetch}
@@ -280,7 +280,7 @@ export default function CourseDetailPage(): React.ReactNode {
 	if (!course) {
 		return (
 			<>
-				{screen}
+				{screenTitle}
 				<NoticeView text="Could not find this course." />
 			</>
 		)
@@ -288,7 +288,7 @@ export default function CourseDetailPage(): React.ReactNode {
 
 	return (
 		<>
-			{screen}
+			{screenTitle}
 			<CourseDetailView course={course} />
 		</>
 	)

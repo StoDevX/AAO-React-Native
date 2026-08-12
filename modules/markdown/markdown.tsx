@@ -59,7 +59,7 @@ function mergeMarkdownStyle(
 	for (const [key, value] of Object.entries(override) as [string, object][]) {
 		merged[key] = {...(base as Record<string, object>)[key], ...value}
 	}
-	return merged as MarkdownStyle
+	return merged
 }
 
 function handleLinkPress(event: LinkPressEvent): void {
