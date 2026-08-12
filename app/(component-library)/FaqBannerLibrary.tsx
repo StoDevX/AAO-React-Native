@@ -1,4 +1,4 @@
-import React from 'react'
+import * as React from 'react'
 import {ScrollView, StyleSheet, Text, View} from 'react-native'
 import * as c from '@frogpond/colors'
 import {Stack, useNavigation} from 'expo-router'

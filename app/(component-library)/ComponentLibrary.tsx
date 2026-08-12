@@ -1,4 +1,4 @@
-import React from 'react'
+import * as React from 'react'
 
 import {TableView, Section} from '@frogpond/tableview'
 import {PushButtonCell} from '@frogpond/tableview/cells'

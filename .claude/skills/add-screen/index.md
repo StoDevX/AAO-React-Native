@@ -1,13 +1,13 @@
 # Add Screen Skill
 
-This skill provides a comprehensive guide for adding new screens to the All About Olaf React Native application. It covers all necessary steps including component creation, navigation setup, TypeScript types, and integration with the app's existing architecture.
+This skill provides a comprehensive guide for adding new screens to the All About Olaf React Native application. It covers all necessary steps including component creation, routing, TypeScript types, and integration with the app's existing architecture.
 
 ## When to Use This Skill
 
 Use this skill when you need to add a new screen/view to the AAO React Native app. This includes:
 - Creating new top-level screens accessible from the home screen
 - Adding detail screens or sub-screens
-- Setting up proper navigation with React Navigation
+- Setting up proper routing with expo-router
 - Ensuring TypeScript type safety
 - Following the project's established patterns and conventions
 
@@ -24,117 +24,142 @@ Before using this skill, ensure you have:
 
 **Determine the screen requirements:**
 - Screen name and purpose
-- Navigation parameters (if any)
+- Route parameters (if any) — a dynamic segment like `[name]` or `[jobId]`
 - Whether it needs to be in the home screen menu
-- Icon and colors for home screen button (if applicable)
+- Icon and gradient for the home screen tile (if applicable)
 - Any sub-screens or related components
 
-**Choose appropriate navigation type:**
-- Stack navigation for hierarchical screens
-- Tab navigation for peer screens
-- Modal presentation for overlays
+**Determine which route group it belongs in:**
+- `app/(home)/` for the main navigator's screens
+- `app/(settings)/` for the settings navigator's screens
+- `app/(component-library)/` for the dev-only component library
 
-### Step 2: Create the View Directory and Component
+### Step 2: Create the Route File
 
-**Create the view directory structure:**
+The app uses expo-router 57's file-based routing. **The route file IS the
+screen** — there is no separate view directory and no wrapper component to
+register elsewhere.
+
+**A screen with no parameters** is a single file directly under the group:
+
 ```
-source/views/[screen-name]/
-├── index.tsx          # Main component export
-├── types.ts          # TypeScript types (if needed)
-└── [other-components].tsx  # Additional components
+app/(home)/ScreenName.tsx
 ```
 
-**Implement the main component following the pattern:**
-- Export `View` as the main component
-- Export `NavigationKey` as a string identifier
-- Export `NavigationOptions` for navigation configuration
-- Export `NavigationParams` type (usually `undefined` for simple screens)
+**A screen with sub-screens or a dynamic parameter** is a directory:
 
-**Example component structure:**
+```
+app/(home)/ScreenName/index.tsx     # list / entry screen
+app/(home)/ScreenName/[param].tsx   # detail screen, one dynamic segment
+```
+
+**Router chrome goes in an outer component; screen logic goes in an inner
+one.** If the screen has no early returns (loading/error/not-found), one
+component is enough — the chrome and the body both go in the default export:
+
 ```tsx
 import * as React from 'react'
-import {View, Text, StyleSheet} from 'react-native'
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+import {Stack} from 'expo-router'
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-})
+export default function ScreenNamePage(): React.ReactNode {
+	return (
+		<>
+			<Stack.Title>Screen Title</Stack.Title>
+			{/* screen content */}
+		</>
+	)
+}
+```
 
-function MyScreen(): JSX.Element {
-  return (
-    <View style={styles.container}>
-      <Text>My New Screen</Text>
-    </View>
-  )
+If the screen has early returns (a loading state, an error state, a
+not-found state), split it into two components so the chrome renders once,
+outside the branching, and no branch can omit it:
+
+```tsx
+function ScreenNameView(): React.ReactNode {
+	// data logic and early returns, each returning BARE content
+	if (isLoading) return <LoadingView />
+	return <TheContent />
 }
 
-export {MyScreen as View}
-
-export const NavigationKey = 'MyScreen'
-
-export const NavigationOptions: NativeStackNavigationOptions = {
-  title: 'My Screen',
+export default function ScreenNamePage(): React.ReactNode {
+	return (
+		<>
+			<Stack.Title>Screen Title</Stack.Title>
+			<ScreenNameView />
+		</>
+	)
 }
-
-export type NavigationParams = undefined
 ```
 
-### Step 3: Add Navigation Types
+A third component — `ScreenNamePage` (chrome), `ScreenNameLoader` (the
+route's query and its early returns), `ScreenNameView` (the screen itself) —
+is required, not stylistic, when flattening the loader into the screen would
+change behaviour: a `useState` initialiser seeded from loaded data (React
+only evaluates it on first mount), or the screen's own ungated `useQuery`
+calls that must not fire until the loader's data resolves. See
+`app/(home)/BuildingHoursProblemReport.tsx` for the reference three-component
+shape, and `app/(settings)/Credits.tsx` for the simple chrome-plus-body shape.
 
-**Update `source/navigation/types.tsx`:**
-- Import the new view module
-- Add the screen to `RootViewsParamList` or appropriate param list
-- Define navigation parameters if needed
+**Nothing may be added to `app/` that is not a route.** Every `.ts`/`.tsx`
+file under `app/` becomes a route in expo-router 57 — no test files, no
+helpers, no types there, even ones that feel private to one screen.
 
-**Example additions:**
+### Step 3: Add Support Code to `source/features/`
+
+Anything the route does not render directly — queries, types, row
+components, reducers, shared constants, helpers — goes in
+`source/features/<feature>/`, imported by relative path from the route file.
+There is no barrel/index file requirement; route files import straight from
+the file that defines what they need.
+
+**Example:**
+
 ```tsx
-import * as myScreen from '../views/my-screen'
-
-// In RootViewsParamList
-MyScreen: myScreen.NavigationParams
+import {groupedContactsOptions} from '../../../source/features/contacts/query'
+import {ContactRow} from '../../../source/features/contacts/row'
+import type {ContactType} from '../../../source/features/contacts/types'
 ```
 
-### Step 4: Add the Route
+### Step 4: Wire Up Route Parameters (if applicable)
 
-**Update `source/navigation/routes.tsx`:**
-- Import the new view
-- Add a `Stack.Screen` component in the appropriate navigator
-- Configure the screen with component, name, and options
+A dynamic segment file, e.g. `app/(home)/Contacts/[title].tsx`, receives its
+parameter via `useLocalSearchParams`:
 
-**Example route addition:**
 ```tsx
-import * as myScreen from '../views/my-screen'
+import {useLocalSearchParams} from 'expo-router'
 
-// In the appropriate Stack.Navigator
-<Stack.Screen
-  component={myScreen.View}
-  name={myScreen.NavigationKey}
-  options={myScreen.NavigationOptions}
-/>
+let {title} = useLocalSearchParams<{title: string}>()
 ```
+
+Navigate to it with `useRouter`:
+
+```tsx
+import {useRouter} from 'expo-router'
+
+let router = useRouter()
+router.push({pathname: '/Contacts/[title]', params: {title: contactTitle}})
+```
+
+Any `.navigate(literal)` call site needs
+`useNavigation<NavigationProp<LegacyRootParamList>>()` for its typed generic;
+`router.push()` call sites don't need one.
 
 ### Step 5: Add to Home Screen Menu (if applicable)
 
-**Update `source/views/views.ts`:**
-- Import the NavigationKey
-- Add an entry to the `AllViews()` array with appropriate metadata
+**Update `source/features/views.ts`:**
+- Add an entry to the `AllViews()` array whose `view` is the route's path
+  (e.g. `'/ScreenName'`), matching the file/folder name under `app/(home)/`.
 
 **Example view addition:**
-```tsx
-import {NavigationKey as myScreen} from './my-screen'
 
-// In AllViews() array
+```tsx
 {
-  type: 'view',
-  view: myScreen,
-  title: 'My Screen',
-  icon: 'star', // Choose appropriate icon
-  foreground: 'light',
-  tint: c.blueToNavy[0], // Choose appropriate color
+	type: 'view',
+	view: '/ScreenName',
+	title: 'Screen Name',
+	icon: 'star', // an SF Symbol name
+	gradient: c.blueGradient,
 },
 ```
 
@@ -155,19 +180,23 @@ import {NavigationKey as myScreen} from './my-screen'
 ## Common Patterns and Best Practices
 
 ### Screen Naming Conventions
-- Use PascalCase for component names
-- Use camelCase for file names
-- Use descriptive, specific names
+- Route files are PascalCase, matching the screen title (`Credits.tsx`,
+  `BuildingHoursProblemReport.tsx`)
+- Support files under `source/features/` are kebab-case
+- Component names inside a route file follow the `ScreenNamePage` /
+  `ScreenNameView` / `ScreenNameLoader` convention from Step 2
 
-### Navigation Options
-- Always set a meaningful `title`
-- Consider `headerBackTitle` for custom back button text
-- Use `headerRight` for action buttons when appropriate
+### Router Chrome
+- Always set a meaningful `<Stack.Title>`
+- Use `<Stack.Toolbar>` / `<Stack.Toolbar.Button>` for header actions (a
+  close button, a menu) — see `app/(settings)/Credits.tsx`
+- Where the chrome's title depends on loaded data, compute it once (e.g.
+  `let screen = <Stack.Screen options={{title: …}} />`) and splice it into
+  every branch, so no branch can omit it
 
 ### Type Safety
-- Define specific parameter types when screens need data
-- Use `undefined` for screens that don't need parameters
-- Export types for use in navigation calls
+- Define specific parameter types for dynamic routes
+- No `any`
 
 ### Component Organization
 - Keep components focused and single-responsibility
@@ -183,37 +212,40 @@ import {NavigationKey as myScreen} from './my-screen'
 
 ### Common Issues
 
-**Screen not appearing in navigation:**
-- Check that NavigationKey matches between types, routes, and views
-- Verify imports are correct
-- Ensure screen is added to the correct navigator
+**Screen not appearing in the home menu:**
+- Check that the `view` path in `source/features/views.ts` matches the route
+  file's path exactly
+- Verify the route file is directly under the correct group
+
+**A stray file broke the build:**
+- Any `.ts`/`.tsx` file added under `app/` becomes a route. A test file, a
+  helper, or a types-only file placed there registers as a broken route —
+  move it to `source/features/<feature>/` instead.
 
 **TypeScript errors:**
 - Check parameter type definitions
-- Verify navigation type imports
+- Verify import paths into `source/features/`
 - Ensure component exports match expected interface
-
-**Styling issues:**
-- Follow existing StyleSheet patterns
-- Use platform-specific styles when needed
-- Test on both iOS and Android
 
 ### Getting Help
 
 If you encounter issues:
 1. Check existing screens for reference patterns
-2. Review the navigation setup in similar screens
+2. Review a screen of similar shape (simple, chrome+view, or chrome+loader+view)
 3. Test incrementally - add one piece at a time
 4. Run the app frequently to catch issues early
 
 ## Examples
 
-See existing screens in `source/views/` for reference implementations:
-- `home/` - Main screen with navigation buttons
-- `menus/` - Screen with sub-navigation
-- `settings/` - Settings screen with multiple sub-screens
+See existing routes for reference implementations:
+- `app/(settings)/Credits.tsx` — simple chrome-plus-body screen, no data loading
+- `app/(home)/Contacts/index.tsx` — chrome plus an inner `…View` with a query
+- `app/(home)/BuildingHoursProblemReport.tsx` — the full three-component shape (chrome, loader, view)
+- `source/features/home/` — the home screen's support components
+- `source/features/menus/` — a feature with several routes sharing support code
+- `source/features/settings/` — a feature with many sub-screens
 
-Each example demonstrates different navigation patterns and component structures.
+Each example demonstrates a different chrome/data pattern.
 
 ---
 
@@ -221,35 +253,31 @@ Each example demonstrates different navigation patterns and component structures
 
 Use this checklist to ensure you've completed all necessary steps when adding a new screen.
 
-## Component Creation
-- [ ] Created `source/views/[screen-name]/` directory
-- [ ] Created `index.tsx` with main component
-- [ ] Exported `View`, `NavigationKey`, `NavigationOptions`, `NavigationParams`
+## Route Creation
+- [ ] Created the route file directly under `app/(home)/`, `app/(settings)/`, or `app/(component-library)/`
+- [ ] The route file's default export is the only exported component
+- [ ] Chrome (`Stack.Title` / `Stack.Screen` / `Stack.Toolbar`) is in an outer component if the screen has early returns
+- [ ] A third (`…Loader`) component is used if a `useState` initialiser is seeded from loaded data, or the screen has ungated queries
 - [ ] Component follows React Native and project patterns
 - [ ] Added proper TypeScript types
-- [ ] Created additional component files if needed
-- [ ] Added `types.ts` file if screen has complex types
+- [ ] No test files, helpers, or non-route files added under `app/`
 
-## Navigation Setup
-- [ ] Added import to `source/navigation/types.tsx`
-- [ ] Added screen to appropriate ParamList in `types.tsx`
-- [ ] Added import to `source/navigation/routes.tsx`
-- [ ] Added `Stack.Screen` to appropriate navigator in `routes.tsx`
-- [ ] Verified NavigationKey matches between files
+## Support Code
+- [ ] Non-route code (queries, types, row components, helpers) lives in `source/features/<feature>/`
+- [ ] Route file imports support code by relative path
 
 ## Home Screen Integration (if applicable)
-- [ ] Added NavigationKey import to `source/views/views.ts`
-- [ ] Added entry to `AllViews()` array
-- [ ] Chose appropriate icon from available icons
-- [ ] Selected appropriate color from `@frogpond/colors`
-- [ ] Set correct foreground (light/dark) for icon contrast
+- [ ] Added an entry to `AllViews()` in `source/features/views.ts`
+- [ ] The entry's `view` path matches the route file's path
+- [ ] Chose appropriate SF Symbol for `icon`
+- [ ] Selected appropriate `gradient` from `@frogpond/colors`
 
 ## Testing & Validation
 - [ ] App builds without TypeScript errors
 - [ ] Screen appears in home menu (if added)
 - [ ] Navigation to screen works correctly
 - [ ] Back navigation works properly
-- [ ] Screen displays correctly on iOS and Android
+- [ ] Screen displays correctly on iOS
 - [ ] No linting errors
 - [ ] Follows accessibility guidelines
 
@@ -263,20 +291,20 @@ Use this checklist to ensure you've completed all necessary steps when adding a 
 
 ## Common Issues to Check
 
-### Navigation Issues
-- NavigationKey string matches exactly across all files
-- ParamList type matches NavigationParams export
-- Screen is added to correct navigator (Root vs Settings vs Component Library)
+### Routing Issues
+- The route's `view` path in `source/features/views.ts` matches the file path under `app/`
+- Dynamic segments (`[param].tsx`) match the params used in `useLocalSearchParams` and `router.push`
+- Screen is in the correct group (`(home)` vs `(settings)` vs `(component-library)`)
 
 ### TypeScript Issues
 - All imports are correct and exist
-- Navigation parameter types match usage
+- Route parameter types match usage
 - Component props are properly typed
 
 ### Display Issues
 - Screen title is user-friendly
-- Back button text is appropriate
-- Colors and icons follow design system
+- Toolbar actions are appropriate
+- Colors and icons follow the design system
 - Layout works on different screen sizes
 
 ### Integration Issues
@@ -289,79 +317,67 @@ Use this checklist to ensure you've completed all necessary steps when adding a 
 
 # Screen Component Template
 
-Use this template as a starting point for new screen components. Replace placeholders with your specific implementation.
+Use this template as a starting point for new route files. Replace placeholders with your specific implementation.
 
 ```tsx
 import * as React from 'react'
-import {View, Text, StyleSheet} from 'react-native'
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+import {Stack} from 'expo-router'
+import {StyleSheet, Text, View} from 'react-native'
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 20,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
-  },
-  content: {
-    flex: 1,
-  },
+	container: {
+		flex: 1,
+		padding: 20,
+	},
+	content: {
+		flex: 1,
+	},
 })
 
-function [ScreenName]Page(): JSX.Element {
-  return (
-    <View style={styles.container}>
-      <Text style={styles.title}>[Screen Title]</Text>
-      <View style={styles.content}>
-        {/* Your screen content here */}
-        <Text>[Screen content goes here]</Text>
-      </View>
-    </View>
-  )
+export default function ScreenNamePage(): React.ReactNode {
+	return (
+		<>
+			<Stack.Title>Screen Title</Stack.Title>
+
+			<View style={styles.container}>
+				<View style={styles.content}>
+					{/* Your screen content here */}
+					<Text>Screen content goes here</Text>
+				</View>
+			</View>
+		</>
+	)
 }
-
-export {[ScreenName]Page as View}
-
-export const NavigationKey = '[ScreenName]'
-
-export const NavigationOptions: NativeStackNavigationOptions = {
-  title: '[Screen Title]',
-  headerBackTitle: '[Back Title]',
-}
-
-export type NavigationParams = undefined
 ```
 
 ## Template Usage
 
-1. Replace `[ScreenName]` with your actual screen name (e.g., `Settings`, `Profile`)
-2. Replace `[Screen Title]` with the display title
-3. Replace `[Back Title]` with appropriate back button text
-4. Add your screen-specific content in the `content` View
-5. Modify styles as needed following the project's patterns
+1. Replace `ScreenName` with your actual screen name (e.g., `Profile`)
+2. Replace `Screen Title` with the display title
+3. Add your screen-specific content in place of the placeholder `Text`
+4. Modify styles as needed following the project's patterns
+5. If the screen loads data and has early returns, split it per Step 2 into an
+   outer `…Page` (chrome) and an inner `…View` (or `…Loader` + `…View`)
 
-## With Navigation Parameters
+## With Route Parameters
 
-If your screen needs parameters, modify the template:
+If your screen needs a dynamic segment, name the file accordingly and read
+the parameter with `useLocalSearchParams`:
 
 ```tsx
-export type NavigationParams = {
-  itemId: string
-  title?: string
-}
+// app/(home)/ScreenName/[itemId].tsx
+import * as React from 'react'
+import {Stack, useLocalSearchParams} from 'expo-router'
+import {Text} from 'react-native'
 
-function [ScreenName]Page({route}: {route: {params: NavigationParams}}): JSX.Element {
-  const {itemId, title} = route.params
+export default function ScreenNameDetailPage(): React.ReactNode {
+	let {itemId} = useLocalSearchParams<{itemId: string}>()
 
-  // Use parameters in your component
-  return (
-    <View style={styles.container}>
-      <Text style={styles.title}>{title || '[Screen Title]'}</Text>
-      <Text>Item ID: {itemId}</Text>
-    </View>
-  )
+	return (
+		<>
+			<Stack.Title>Item {itemId}</Stack.Title>
+			<Text>Item ID: {itemId}</Text>
+		</>
+	)
 }
 ```

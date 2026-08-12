@@ -5,17 +5,10 @@ import {eventKey} from '@frogpond/event-list'
 import {useQuery} from '@tanstack/react-query'
 import {EventType} from '@frogpond/event-type'
 
-import {KRLX_POWERED_BY} from '../../source/features/streaming/radio/constants'
-
-function eventMapper(event: EventType): EventType {
-	return {
-		...event,
-		config: {
-			...event.config,
-			subtitle: 'description',
-		},
-	}
-}
+import {
+	eventMapper,
+	KRLX_POWERED_BY,
+} from '../../source/features/streaming/radio/constants'
 
 export default function KRLXSchedulePage(): React.ReactNode {
 	let router = useRouter()

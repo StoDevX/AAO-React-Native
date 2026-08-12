@@ -33,7 +33,7 @@ change was needed rather than restating the diff.
 
 ## Architecture & Patterns
 
-- `source/views/` organized by feature (e.g., `dining/`, `directory/`, `calendar/`)
+- `source/features/` holds each feature's non-route code (e.g., `dining/`, `directory/`, `calendar/`); `app/` route files are the screens themselves
 - Barrel exports (`index.ts`) for clean imports
 - State: React Query for server state, Redux Toolkit for global app state, `useState` for component-local
 - iOS is the only supported platform
