@@ -164,13 +164,13 @@ export default function HomePage(): React.ReactNode {
 		<>
 			<Stack.Screen
 				options={{
-					title: 'All About Olaf',
 					contentStyle: {backgroundColor: PlatformColor('systemBackground')},
 					headerShadowVisible: false,
 					headerLargeTitleEnabled: true,
 					headerTransparent: true,
 				}}
 			/>
+			<Stack.Title>All About Olaf</Stack.Title>
 			<Stack.Toolbar placement="right">
 				<Stack.Toolbar.Button
 					accessibilityLabel="Open Settings"

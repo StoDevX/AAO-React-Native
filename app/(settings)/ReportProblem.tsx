@@ -43,24 +43,22 @@ export default function ReportProblemPage(): React.ReactNode {
 
 	return (
 		<>
-			<Stack.Screen>
-				<Stack.Title>Report a Problem</Stack.Title>
-				<Stack.Toolbar placement="left">
-					<Stack.Toolbar.Button
-						accessibilityLabel="Close Screen"
-						icon="xmark"
-						onPress={() => navigation.goBack()}
-					/>
-				</Stack.Toolbar>
-				<Stack.Toolbar placement="right">
-					<Stack.Toolbar.Button
-						accessibilityLabel="Submit"
-						disabled={message.trim().length === 0}
-						icon="paperplane"
-						onPress={submit}
-					/>
-				</Stack.Toolbar>
-			</Stack.Screen>
+			<Stack.Title>Report a Problem</Stack.Title>
+			<Stack.Toolbar placement="left">
+				<Stack.Toolbar.Button
+					accessibilityLabel="Close Screen"
+					icon="xmark"
+					onPress={() => navigation.goBack()}
+				/>
+			</Stack.Toolbar>
+			<Stack.Toolbar placement="right">
+				<Stack.Toolbar.Button
+					accessibilityLabel="Submit"
+					disabled={message.trim().length === 0}
+					icon="paperplane"
+					onPress={submit}
+				/>
+			</Stack.Toolbar>
 
 			<Host style={styles.host}>
 				<Form>

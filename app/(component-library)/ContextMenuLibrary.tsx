@@ -46,7 +46,7 @@ const SingleMenu = (): React.ReactNode => {
 export default function ContextMenuLibraryPage(): React.ReactNode {
 	return (
 		<>
-			<Stack.Screen options={{title: 'Context Menus'}} />
+			<Stack.Title>Context Menus</Stack.Title>
 			<LibraryWrapper>
 				<SingleMenu />
 			</LibraryWrapper>
