@@ -9,16 +9,10 @@ import * as faqs from '../views/faqs'
 import * as sis from '../views/sis'
 import * as studentwork from '../views/sis/student-work'
 import * as studentworkdetail from '../views/sis/student-work/detail'
-import * as menus from '../views/menus'
-import * as carletonmenus from '../views/menus/carleton-menus'
 import {
 	BonAppPickerView as DevBonAppPickerView,
 	DevBonAppNavigationOptions,
 } from '../views/menus/dev-bonapp-picker'
-import {
-	DetailNavigationOptions,
-	MenuItemDetailView,
-} from '@frogpond/food-menu/food-item-detail'
 import * as news from '../views/news'
 import * as reddit from '../views/reddit'
 import * as settings from '../views/settings/'
@@ -96,38 +90,6 @@ const HomeStackScreens = () => {
 					options={({route}) => ({
 						title: `${route.params.line.line} Schedule`,
 					})}
-				/>
-			</Stack.Group>
-			<Stack.Group>
-				<Stack.Screen
-					component={menus.View}
-					name={menus.NavigationKey}
-					options={menus.NavigationOptions}
-				/>
-				<Stack.Screen
-					component={menus.CarletonBurtonMenuScreen}
-					name="CarletonBurtonMenu"
-					options={carletonmenus.BurtonNavigationOptions}
-				/>
-				<Stack.Screen
-					component={menus.CarletonLDCMenuScreen}
-					name="CarletonLDCMenu"
-					options={carletonmenus.LDCNavigationOptions}
-				/>
-				<Stack.Screen
-					component={menus.CarletonSaylesMenuScreen}
-					name="CarletonSaylesMenu"
-					options={carletonmenus.SaylesNavigationOptions}
-				/>
-				<Stack.Screen
-					component={menus.CarletonWeitzMenuScreen}
-					name="CarletonWeitzMenu"
-					options={carletonmenus.WeitzNavigationOptions}
-				/>
-				<Stack.Screen
-					component={MenuItemDetailView}
-					name="MenuItemDetail"
-					options={DetailNavigationOptions}
 				/>
 			</Stack.Group>
 			<Stack.Group>

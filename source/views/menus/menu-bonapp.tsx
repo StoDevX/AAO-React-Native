@@ -13,12 +13,11 @@ import type {
 	StationMenuType,
 } from './types'
 import sample from 'lodash/sample'
-import {mapValues, reduce} from 'lodash'
+import {reduce} from 'lodash'
 import moment, {type Moment} from 'moment-timezone'
-import {trimItemLabel, trimStationName} from './lib/trim-names'
-import {bonAppCafeOptions, bonAppMenuOptions} from './query'
+import {bonAppCafeOptions, bonAppMenuOptions, prepareFood} from './query'
 import {useQuery} from '@tanstack/react-query'
-import {decode, innerTextWithSpaces, parseHtml} from '@frogpond/html-lib'
+import {useRouter} from 'expo-router'
 import {toLaxTitleCase} from '@frogpond/titlecase'
 
 const BONAPP_HTML_ERROR_CODE = 'bonapp-html'
@@ -139,15 +138,6 @@ function getMeals(
 	)
 }
 
-function prepareFood(cafeMenu: MenuInfoType) {
-	return mapValues(cafeMenu.items, (item) => ({
-		...item, // we want to edit the item, not replace it
-		station: decode(toLaxTitleCase(trimStationName(item.station))), // <b>@station names</b> are a mess
-		label: decode(trimItemLabel(item.label)), // clean up the titles
-		description: innerTextWithSpaces(parseHtml(item.description || '')), // clean up the descriptions
-	}))
-}
-
 function getErrorMessage(error: Error | undefined) {
 	if (!(error instanceof Error)) {
 		return 'Unknown Error: Not an Error'
@@ -162,6 +152,7 @@ function getErrorMessage(error: Error | undefined) {
 
 export function BonAppHostedMenu(props: Props): React.ReactNode {
 	let now = moment.tz(timezone())
+	let router = useRouter()
 
 	let {
 		data: cafeMenu,
@@ -243,6 +234,16 @@ export function BonAppHostedMenu(props: Props): React.ReactNode {
 			menuCorIcons={cafeMenu.cor_icons}
 			name={props.name}
 			now={now}
+			onItemPress={(item) =>
+				router.push({
+					pathname: '/MenuItemDetail',
+					params: {
+						source: 'bonapp',
+						cafe: typeof props.cafe === 'string' ? props.cafe : props.cafe.id,
+						itemId: item.id,
+					},
+				})
+			}
 			onRefresh={() => {
 				cafeReload()
 				menuReload()

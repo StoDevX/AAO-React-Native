@@ -7,18 +7,19 @@ import map from 'lodash/map'
 import {DietaryTagsDetail} from './dietary-tags-detail'
 import {calculateAmount} from './lib/calculate-amount'
 import size from 'lodash/size'
-import {RouteProp, useRoute} from '@react-navigation/native'
-import {RootStackParamList} from '../../source/navigation/types'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+import type {MenuItemType, MasterCorIconMapType} from './types'
 
 export const DetailNavigationOptions: NativeStackNavigationOptions = {
 	title: 'Nutrition',
 }
 
-export const MenuItemDetailView = (): React.ReactNode => {
-	let route = useRoute<RouteProp<RootStackParamList, 'MenuItemDetail'>>()
-	const {item, icons} = route.params
+type Props = {
+	item: MenuItemType
+	icons: MasterCorIconMapType
+}
 
+export const MenuItemDetailView = ({item, icons}: Props): React.ReactNode => {
 	return (
 		<ScrollView contentInsetAdjustmentBehavior="automatic">
 			<Text selectable={true} style={styles.title}>

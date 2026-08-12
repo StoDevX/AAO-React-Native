@@ -2,5 +2,9 @@ import * as React from 'react'
 import {Stack} from 'expo-router'
 
 export default function HomeLayout(): React.ReactNode {
-	return <Stack />
+	return (
+		<Stack>
+			<Stack.Screen name="Menus" options={{title: 'Menus'}} />
+		</Stack>
+	)
 }

@@ -6,6 +6,7 @@ import moment from 'moment-timezone'
 import sample from 'lodash/sample'
 import {pauseMenuOptions} from './query'
 import {useQuery} from '@tanstack/react-query'
+import {useRouter} from 'expo-router'
 
 type Props = {
 	name: string
@@ -13,6 +14,8 @@ type Props = {
 }
 
 export function GitHubHostedMenu(props: Props): React.ReactNode {
+	let router = useRouter()
+
 	let {
 		data = {foodItems: {}, meals: [], corIcons: {}},
 		error,
@@ -44,6 +47,12 @@ export function GitHubHostedMenu(props: Props): React.ReactNode {
 			menuCorIcons={data.corIcons}
 			name={props.name}
 			now={moment.tz(dataUpdatedAt, timezone())}
+			onItemPress={(item) =>
+				router.push({
+					pathname: '/MenuItemDetail',
+					params: {source: 'pause', itemId: item.id},
+				})
+			}
 			onRefresh={refetch}
 			refreshing={isRefetching}
 		/>
