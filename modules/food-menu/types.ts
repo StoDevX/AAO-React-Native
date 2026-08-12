@@ -80,8 +80,7 @@ export type MenuItemContainerType = {
 	[key: ItemIdReferenceStringType]: MenuItemType
 }
 export type ItemCorIconMapType =
-	| {[key: NumericStringType]: string}
-	| Array<void>
+	{[key: NumericStringType]: string} | Array<void>
 export type MasterCorIconMapType = {[key: NumericStringType]: CorIconType}
 
 export type ProcessedMealType = {
