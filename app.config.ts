@@ -99,9 +99,23 @@ const config: ExpoConfig = {
 		buildNumber: process.env.CI_BUILD_NUMBER ?? '17',
 		supportsTablet: true,
 
-		// Only NSPrivacyAccessedAPITypes is declared, which is all the current
-		// PrivacyInfo.xcprivacy holds. Expo's schema covers it, so no plugin.
+		// Expo's schema covers both keys the PrivacyInfo.xcprivacy needs, so no
+		// plugin.
 		privacyManifests: {
+			// The map shows where you are on campus and nothing else: the
+			// coordinate never leaves the device, is not tied to an account,
+			// and is not used for tracking.
+			NSPrivacyCollectedDataTypes: [
+				{
+					NSPrivacyCollectedDataType:
+						'NSPrivacyCollectedDataTypePreciseLocation',
+					NSPrivacyCollectedDataTypeLinked: false,
+					NSPrivacyCollectedDataTypeTracking: false,
+					NSPrivacyCollectedDataTypePurposes: [
+						'NSPrivacyCollectedDataTypePurposeAppFunctionality',
+					],
+				},
+			],
 			NSPrivacyAccessedAPITypes: [
 				{
 					NSPrivacyAccessedAPIType: 'NSPrivacyAccessedAPICategoryFileTimestamp',
@@ -140,6 +154,8 @@ const config: ExpoConfig = {
 			NSBonjourServices: ['_ccc-server._tcp.'],
 			NSLocalNetworkUsageDescription:
 				'Used in development mode to discover a local ccc-server instance on the same network.',
+			NSLocationWhenInUseUsageDescription:
+				'Shows your location on the campus map.',
 
 			// Radio playback continues when the screen locks, and ignores the
 			// silent switch — see the AppDelegate plugin for the other half.
@@ -189,6 +205,11 @@ const config: ExpoConfig = {
 			},
 		],
 		'expo-router',
+		// Adds the Mapbox Maps SDK pod and its post-install fixups to the
+		// generated Podfile. Neither `RNMapboxMapsImpl` nor
+		// `RNMapboxMapsDownloadToken` is passed: both are deprecated as of
+		// @rnmapbox/maps 10, and the SDK no longer needs download credentials.
+		'@rnmapbox/maps',
 		'@react-native-vector-icons/entypo',
 		'@react-native-vector-icons/ionicons',
 		'@react-native-vector-icons/material-design-icons',

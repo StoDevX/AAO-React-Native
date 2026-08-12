@@ -15,6 +15,7 @@ export default function HomeLayout(): React.ReactNode {
 			<Stack.Screen name="BuildingHoursProblemReport" />
 			<Stack.Screen name="BuildingHoursScheduleEditor" />
 			<Stack.Screen name="Communities" />
+			<Stack.Screen name="Map" options={{title: 'Carleton Map'}} />
 			<Stack.Screen name="SIS" options={{title: 'SIS'}} />
 			<Stack.Screen name="Calendar" options={{title: 'Calendar'}} />
 		</Stack>

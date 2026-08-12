@@ -86,6 +86,13 @@ export const AllViews = (): Array<ViewType> => {
 		},
 		{
 			type: 'view',
+			view: '/Map',
+			title: 'Carleton Map (Beta)',
+			icon: 'map.circle.fill',
+			gradient: c.blueGradient,
+		},
+		{
+			type: 'view',
 			view: '/Contacts',
 			title: 'Important Contacts',
 			icon: 'phone.fill',

@@ -7,6 +7,7 @@ import '../source/init/constants'
 import '../source/init/moment'
 import * as sentryInit from '../source/init/sentry'
 import '../source/init/api'
+import '../source/lib/mapbox'
 import '../source/init/theme'
 import {queryClient, persister} from '../source/init/tanstack-query'
 

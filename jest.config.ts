@@ -13,6 +13,8 @@ const esmPackages = [
 	'reselect',
 	'expo',
 	'@expo',
+	'@rnmapbox/maps',
+	'ky',
 	// css-select v7+ and its ESM-only transitive deps
 	'css-select',
 	'boolbase',
@@ -51,6 +53,12 @@ const config: Config = {
 	// this is the one tool that has to be told.
 	modulePathIgnorePatterns: ['<rootDir>/.claude/worktrees/'],
 	setupFiles: ['./scripts/jest-setup.js'],
+	// Merged with the preset's own mapping rather than replacing it. The
+	// preset transforms image assets but leaves fonts alone, and the
+	// @react-native-vector-icons packages import their .ttf directly.
+	moduleNameMapper: {
+		'\\.(ttf|otf)$': '<rootDir>/scripts/jest-font-mock.js',
+	},
 	transform: {
 		'^.+\\.mjs$': 'babel-jest',
 	},
