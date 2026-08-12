@@ -9,6 +9,6 @@
     "test": "jest"
   },
   "dependencies": {
-    "deepmerge": "3.3.0"
+    "deepmerge": "4.3.1"
   }
 }
