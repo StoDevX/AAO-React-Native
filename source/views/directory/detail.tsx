@@ -7,24 +7,16 @@ import {Title, Detail} from '@frogpond/lists'
 import {TableView, Section, Cell} from '@frogpond/tableview'
 import {MultiLineLeftDetailCell} from '@frogpond/tableview/cells'
 import * as c from '@frogpond/colors'
-import type {Department, CampusLocation} from './types'
-import {RouteProp, useRoute, useNavigation} from '@react-navigation/native'
-import {
-	NativeStackNavigationOptions,
-	NativeStackNavigationProp,
-} from '@react-navigation/native-stack'
-import {RootStackParamList} from '../../../source/navigation/types'
+import type {Department, CampusLocation, DirectoryItem} from './types'
+import {useRouter} from 'expo-router'
 
-export const DetailNavigationOptions: NativeStackNavigationOptions = {
-	title: 'Contact',
+type Props = {
+	contact: DirectoryItem
 }
 
-export function DirectoryDetailView(): React.ReactNode {
-	// typing useNavigation's props to inform typescript about `push`
-	let navigation =
-		useNavigation<NativeStackNavigationProp<RootStackParamList>>()
+export function DirectoryDetailView({contact}: Props): React.ReactNode {
+	let router = useRouter()
 
-	let route = useRoute<RouteProp<RootStackParamList, 'DirectoryDetail'>>()
 	const {
 		displayName,
 		campusLocations,
@@ -35,7 +27,7 @@ export function DirectoryDetailView(): React.ReactNode {
 		email,
 		departments,
 		pronouns,
-	} = route.params.contact
+	} = contact
 
 	return (
 		<ScrollView contentInsetAdjustmentBehavior="automatic">
@@ -128,9 +120,12 @@ export function DirectoryDetailView(): React.ReactNode {
 								cellStyle="Basic"
 								detail="Department"
 								onPress={() => {
-									navigation.push('Directory', {
-										queryType: 'department',
-										queryParam: dept.name,
+									router.push({
+										pathname: '/Directory',
+										params: {
+											queryType: 'department',
+											queryParam: dept.name,
+										},
 									})
 								}}
 								title={dept.name}

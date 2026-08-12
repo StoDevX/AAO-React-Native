@@ -87,7 +87,6 @@ export const AllViews = (): Array<ViewType> => {
 			title: 'Directory',
 			icon: 'person.crop.rectangle.fill',
 			gradient: c.redGradient,
-			disabled: true,
 		},
 		{
 			type: 'view',
