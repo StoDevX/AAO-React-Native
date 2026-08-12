@@ -1,6 +1,7 @@
 import * as React from 'react'
 import {StyleSheet, View} from 'react-native'
-import SegmentedControl from '@react-native-segmented-control/segmented-control'
+import {Host, Picker, Text} from '@expo/ui/swift-ui'
+import {pickerStyle, tag} from '@expo/ui/swift-ui/modifiers'
 import type {Category} from './types'
 
 export const CATEGORY_LABELS = [
@@ -25,25 +26,23 @@ type Props = {
 }
 
 export function CategoryPicker({selected, onChange}: Props): React.ReactNode {
-	let selectedIndex = CATEGORY_LABELS.indexOf(selected)
-
-	let handleChange = React.useCallback(
-		(event: {nativeEvent: {selectedSegmentIndex: number}}) => {
-			let label = CATEGORY_LABELS[event.nativeEvent.selectedSegmentIndex]
-			if (label) {
-				onChange(label)
-			}
-		},
-		[onChange],
-	)
-
+	// The label is its own tag, so the selection the picker reports back is
+	// already a CategoryLabel and there is no index to keep in step.
 	return (
 		<View style={styles.container}>
-			<SegmentedControl
-				onChange={handleChange}
-				selectedIndex={selectedIndex}
-				values={[...CATEGORY_LABELS]}
-			/>
+			<Host matchContents={true}>
+				<Picker<CategoryLabel>
+					modifiers={[pickerStyle('segmented')]}
+					onSelectionChange={onChange}
+					selection={selected}
+				>
+					{CATEGORY_LABELS.map((label) => (
+						<Text key={label} modifiers={[tag(label)]}>
+							{label}
+						</Text>
+					))}
+				</Picker>
+			</Host>
 		</View>
 	)
 }

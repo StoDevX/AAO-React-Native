@@ -136,9 +136,6 @@ importers:
       '@react-native-community/netinfo':
         specifier: 12.0.1
         version: 12.0.1(react-native@0.86.2)(react@19.2.3)
-      '@react-native-segmented-control/segmented-control':
-        specifier: 2.5.7
-        version: 2.5.7(react-native@0.86.2)(react@19.2.3)
       '@react-native-vector-icons/entypo':
         specifier: 13.1.0
         version: 13.1.0(@expo/config-plugins@57.0.7)(@react-native/assets-registry@0.86.2)(expo-font@57.0.1)(react-native@0.86.2)(react@19.2.3)
@@ -2075,12 +2072,6 @@ packages:
     peerDependencies:
       react: '>=16'
       react-native: '>=0.57'
-
-  '@react-native-segmented-control/segmented-control@2.5.7':
-    resolution: {integrity: sha512-l84YeVX8xAU3lvOJSvV4nK/NbGhIm2gBfveYolwaoCbRp+/SLXtc6mYrQmM9ScXNwU14mnzjQTpTHWl5YPnkzQ==}
-    peerDependencies:
-      react: '>=16.0'
-      react-native: '>=0.62'
 
   '@react-native-vector-icons/common@13.0.1':
     resolution: {integrity: sha512-UPC6L3tW5rXCjBn4kgw9RPURUILIg8tFpEY2uaYwU8aCjEHkywNCMcAO8+PvMCDkR6aICPeHYA0OXvMgrjsF4g==}
@@ -7369,11 +7360,6 @@ snapshots:
       react-native: 0.86.2(patch_hash=6ca2e1225f38672b073b92b9d13f24feebbe9e37ba67708a3f1569275ce99191)(@babel/core@7.29.7)(@react-native/jest-preset@0.86.2)(@react-native/metro-config@0.86.2)(@types/react@19.2.14)(react@19.2.3)(supports-color@8.1.1)
 
   '@react-native-masked-view/masked-view@0.3.2(react-native@0.86.2)(react@19.2.3)':
-    dependencies:
-      react: 19.2.3
-      react-native: 0.86.2(patch_hash=6ca2e1225f38672b073b92b9d13f24feebbe9e37ba67708a3f1569275ce99191)(@babel/core@7.29.7)(@react-native/jest-preset@0.86.2)(@react-native/metro-config@0.86.2)(@types/react@19.2.14)(react@19.2.3)(supports-color@8.1.1)
-
-  '@react-native-segmented-control/segmented-control@2.5.7(react-native@0.86.2)(react@19.2.3)':
     dependencies:
       react: 19.2.3
       react-native: 0.86.2(patch_hash=6ca2e1225f38672b073b92b9d13f24feebbe9e37ba67708a3f1569275ce99191)(@babel/core@7.29.7)(@react-native/jest-preset@0.86.2)(@react-native/metro-config@0.86.2)(@types/react@19.2.14)(react@19.2.3)(supports-color@8.1.1)

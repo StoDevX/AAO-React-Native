@@ -3,9 +3,13 @@ import {fireEvent, render, screen} from '@testing-library/react-native'
 
 import {CATEGORY_LABELS, CategoryPicker} from '../category-picker'
 
-jest.mock('@react-native-segmented-control/segmented-control', () => {
+jest.mock('@expo/ui/swift-ui', () => {
 	// eslint-disable-next-line @typescript-eslint/no-require-imports
-	return require('./segmented-control-mock') as typeof import('./segmented-control-mock')
+	return require('./expo-ui-mock') as typeof import('./expo-ui-mock')
+})
+jest.mock('@expo/ui/swift-ui/modifiers', () => {
+	// eslint-disable-next-line @typescript-eslint/no-require-imports
+	return require('./expo-ui-mock') as typeof import('./expo-ui-mock')
 })
 
 describe('CategoryPicker', () => {
