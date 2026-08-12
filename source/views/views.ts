@@ -100,7 +100,6 @@ export const AllViews = (): Array<ViewType> => {
 			title: 'News',
 			icon: 'newspaper.fill',
 			gradient: c.purpleGradient,
-			disabled: true,
 		},
 		{
 			type: 'url',

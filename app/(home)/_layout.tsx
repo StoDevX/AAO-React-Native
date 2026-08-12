@@ -9,6 +9,7 @@ export default function HomeLayout(): React.ReactNode {
 				name="Streaming Media"
 				options={{title: 'Streaming Media'}}
 			/>
+			<Stack.Screen name="News" options={{title: 'News'}} />
 		</Stack>
 	)
 }

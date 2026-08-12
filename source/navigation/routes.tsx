@@ -13,7 +13,6 @@ import {
 	BonAppPickerView as DevBonAppPickerView,
 	DevBonAppNavigationOptions,
 } from '../views/menus/dev-bonapp-picker'
-import * as news from '../views/news'
 import * as reddit from '../views/reddit'
 import * as settings from '../views/settings/'
 import * as transportation from '../views/transportation'
@@ -89,13 +88,6 @@ const HomeStackScreens = () => {
 					options={({route}) => ({
 						title: `${route.params.line.line} Schedule`,
 					})}
-				/>
-			</Stack.Group>
-			<Stack.Group>
-				<Stack.Screen
-					component={news.View}
-					name={news.NavigationKey}
-					options={news.NavigationOptions}
 				/>
 			</Stack.Group>
 			<Stack.Group>
