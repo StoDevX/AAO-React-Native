@@ -19,16 +19,10 @@ type Props = {
 }
 
 type HtmlAudioState =
-	| 'waiting'
-	| 'ended'
-	| 'stalled'
-	| 'playing'
-	| 'play'
-	| 'pause'
+	'waiting' | 'ended' | 'stalled' | 'playing' | 'play' | 'pause'
 
 type HtmlAudioEvent =
-	| {type: HtmlAudioState}
-	| {type: 'error'; error: HtmlAudioError}
+	{type: HtmlAudioState} | {type: 'error'; error: HtmlAudioError}
 
 function playerHtml(url: string): string {
 	return `

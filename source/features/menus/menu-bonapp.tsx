@@ -77,18 +77,16 @@ function buildCustomStationMenu(
 	// then we make our own StationMenus list
 	let paired: Array<[string, Array<string>]> =
 		Object.entries(idsGroupedByStation)
-	return paired.map(
-		([name, items], i): StationMenuType => ({
-			// eslint-disable-next-line camelcase
-			order_id: String(i),
-			id: String(i),
-			label: name,
-			price: '',
-			note: '',
-			soup: false,
-			items: items,
-		}),
-	)
+	return paired.map(([name, items], i): StationMenuType => ({
+		// eslint-disable-next-line camelcase
+		order_id: String(i),
+		id: String(i),
+		label: name,
+		price: '',
+		note: '',
+		soup: false,
+		items: items,
+	}))
 }
 
 function prepareSingleMenu(

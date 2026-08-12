@@ -13,8 +13,7 @@ export const SENTRY_DSN =
  * build time and passes only this string through.
  */
 const fullVersion = Constants.expoConfig?.extra?.fullVersion as
-	| string
-	| undefined
+	string | undefined
 
 setVersionInfo(fullVersion ?? '0.0.0')
 setTimezone('America/Chicago')

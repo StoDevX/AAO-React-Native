@@ -7,11 +7,7 @@ import type {BusSchedule, DepartureTimeList} from '../types'
 const isTruthy = (x: unknown) => Boolean(x)
 
 export type BusStateEnum =
-	| 'none'
-	| 'before-start'
-	| 'after-end'
-	| 'running'
-	| 'between-rounds'
+	'none' | 'before-start' | 'after-end' | 'running' | 'between-rounds'
 type ReturnVal = {
 	status: BusStateEnum
 	times: DepartureTimeList
