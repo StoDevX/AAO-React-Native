@@ -49,10 +49,10 @@ Three exceptions, each forced rather than chosen:
 - **A file holding several single-route screens splits.** Each screen goes to
   its own route; whatever else the file exported stays behind.
   `streaming/radio/schedule.tsx` is the case: `KSTOScheduleView` and
-  `KRLXScheduleView` go to `Streaming Media/ksto.tsx`-adjacent routes
-  `KSTOSchedule.tsx` and `KRLXSchedule.tsx` respectively, while
-  `KSTO_POWERED_BY` and `KRLX_POWERED_BY` remain in
-  `source/features/streaming/radio/` for `EventDetail.tsx`.
+  `KRLXScheduleView` go to `app/(home)/KSTOSchedule.tsx` and
+  `app/(home)/KRLXSchedule.tsx`, while `KSTO_POWERED_BY` and `KRLX_POWERED_BY`
+  move to `source/features/streaming/radio/constants.ts` — see the leftovers
+  table below.
 - **Anything with a test stays in `source/features/`.** Tests cannot live
   under `app/` (see below). All 38 existing test files target support code —
   `lib/` functions, the building reducer, the FAQ store, `comment-row` and
@@ -131,8 +131,12 @@ routes with the *same* component and therefore stays:
 `settings/screens/debug/route-screen.tsx`.
 
 Every other file a route imports is support — `query.ts`, `types.ts`,
-`constants.ts`, `store.ts`, `views.ts`, `faqs/index.tsx`, `bus/line.tsx`,
+`constants.ts`, `store.ts`, `views.ts`, `faqs/banner.tsx`, `bus/line.tsx`,
 `bus/components/day-picker.tsx`, `home/button.tsx` — and stays by the rule.
+(`faqs/index.tsx` is a hybrid, not support: its `FaqView` inlines into
+`app/(home)/Faq.tsx` and its banner re-exports die, leaving `banner.tsx` to be
+imported directly by the settings overview, `sis/balances` and the banner
+builder.)
 
 Four features alias a screen to `View` on the way out and back again
 (`export {MoreView as View}` in the file, `export {View as DictionaryView}` in
