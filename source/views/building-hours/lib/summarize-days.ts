@@ -3,7 +3,7 @@ import sortBy from 'lodash/sortBy'
 import type {DayOfWeekEnumType, SingleBuildingScheduleType} from '../types'
 
 import {daysOfTheWeek} from './constants'
-import {formatDay} from '../../sis/course-search/lib/format-day'
+import {formatDay} from '../../../features/sis/course-search/lib/format-day'
 
 export function summarizeDays(
 	days: DayOfWeekEnumType[],
