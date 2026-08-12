@@ -5,14 +5,8 @@ import {ListFooter} from '@frogpond/lists'
 import {Button} from '@frogpond/button'
 import * as c from '@frogpond/colors'
 
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
-import {
-	NavigationProp,
-	RouteProp,
-	useNavigation,
-	useRoute,
-} from '@react-navigation/native'
-import {LegacyRootParamList, RootStackParamList} from '../../navigation/types'
+import {useRouter} from 'expo-router'
+import type {WordType} from './types'
 
 const paragraphMarkdownStyle: MarkdownStyle = {paragraph: {fontSize: 16}}
 
@@ -38,26 +32,20 @@ export const Container = (props: ViewProps): React.ReactNode => (
 	<View {...props} style={[styles.container, props.style]} />
 )
 
-export const NavigationKey = 'DictionaryDetail' as const
-
-export const DetailNavigationOptions = (props: {
-	route: RouteProp<RootStackParamList, typeof NavigationKey>
-}): NativeStackNavigationOptions => {
-	let {word} = props.route.params.item
-	return {
-		title: word,
-	}
+type Props = {
+	word: WordType
 }
 
-export let DictionaryDetailView = (): React.ReactNode => {
-	let route = useRoute<RouteProp<RootStackParamList, typeof NavigationKey>>()
-	let {item} = route.params
-
-	let navigation = useNavigation<NavigationProp<LegacyRootParamList>>()
+export let DictionaryDetailView = ({word: item}: Props): React.ReactNode => {
+	let router = useRouter()
 
 	let handleEditButtonPress = React.useCallback(
-		() => navigation.navigate('DictionaryEditor', {item}),
-		[item, navigation],
+		() =>
+			router.push({
+				pathname: '/Dictionary/[word]/edit',
+				params: {word: item.word},
+			}),
+		[item.word, router],
 	)
 
 	return (

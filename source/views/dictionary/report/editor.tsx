@@ -4,19 +4,14 @@ import {InfoHeader} from '@frogpond/info-header'
 import {TableView, Section} from '@frogpond/tableview'
 import {CellTextField, ButtonCell} from '@frogpond/tableview/cells'
 import {submitReport} from './submit'
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
-import {RouteProp, useRoute} from '@react-navigation/native'
-import {RootStackParamList} from '../../../navigation/types'
+import type {WordType} from '../types'
 import noop from 'lodash/noop'
 
-export const NavigationOptions: NativeStackNavigationOptions = {
-	title: 'Suggest an edit',
+type Props = {
+	word: WordType
 }
 
-let DictionaryEditorView = (): React.ReactNode => {
-	let route = useRoute<RouteProp<RootStackParamList, 'DictionaryEditor'>>()
-	let {item} = route.params
-
+let DictionaryEditorView = ({word: item}: Props): React.ReactNode => {
 	let [term, setTerm] = React.useState(item.word)
 	let [definition, setDefinition] = React.useState(item.definition)
 

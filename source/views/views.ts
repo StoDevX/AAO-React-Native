@@ -132,7 +132,6 @@ export const AllViews = (): Array<ViewType> => {
 			title: 'Campus Dictionary',
 			icon: 'character.book.closed.fill',
 			gradient: c.pinkGradient,
-			disabled: true,
 		},
 		{
 			type: 'view',

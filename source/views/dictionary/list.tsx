@@ -1,6 +1,6 @@
 import * as React from 'react'
 import {SectionList, StyleSheet} from 'react-native'
-import {ChangeTextEvent, LegacyRootParamList} from '../../navigation/types'
+import {ChangeTextEvent} from '../../navigation/types'
 import {dictionaryOptions} from './query'
 import {useQuery} from '@tanstack/react-query'
 import type {WordType, DictionaryGroup} from './types'
@@ -17,8 +17,7 @@ import {LoadingView, NoticeView} from '@frogpond/notice'
 import {useDebounce} from '@frogpond/use-debounce'
 import * as c from '@frogpond/colors'
 
-import {NavigationProp, useNavigation} from '@react-navigation/native'
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+import {useNavigation, useRouter} from 'expo-router'
 
 import deburr from 'lodash/deburr'
 import groupBy from 'lodash/groupBy'
@@ -55,7 +54,8 @@ const styles = StyleSheet.create({
 })
 
 function DictionaryView(): React.ReactNode {
-	let navigation = useNavigation<NavigationProp<LegacyRootParamList>>()
+	let navigation = useNavigation()
+	let router = useRouter()
 
 	let [query, setQuery] = React.useState('')
 	let searchQuery = useDebounce(query.toLowerCase(), 200)
@@ -126,7 +126,12 @@ function DictionaryView(): React.ReactNode {
 				return (
 					<ListRow
 						arrowPosition="top"
-						onPress={() => navigation.navigate('DictionaryDetail', {item})}
+						onPress={() =>
+							router.push({
+								pathname: '/Dictionary/[word]',
+								params: {word: item.word},
+							})
+						}
 					>
 						<Title lines={1}>{item.word}</Title>
 						<Detail lines={2} style={styles.rowDetailText}>
@@ -146,7 +151,3 @@ function DictionaryView(): React.ReactNode {
 }
 
 export {DictionaryView as View}
-
-export const NavigationOptions: NativeStackNavigationOptions = {
-	title: 'Campus Dictionary',
-}
