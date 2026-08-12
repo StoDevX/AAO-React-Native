@@ -1,7 +1,14 @@
 import * as React from 'react'
 import {PlatformColor, StyleSheet} from 'react-native'
 import {Stack, useRouter} from 'expo-router'
-import {Grid, Host, ScrollView, Spacer, VStack} from '@expo/ui/swift-ui'
+import {
+	Grid,
+	Host,
+	RNHostView,
+	ScrollView,
+	Spacer,
+	VStack,
+} from '@expo/ui/swift-ui'
 import {
 	accessibilityIdentifier,
 	frame,
@@ -19,10 +26,17 @@ import {
 import {openUrl} from '@frogpond/open-url'
 import {UnofficialAppNotice} from '../../source/views/home/notice'
 import {useIsDevMode} from '../../source/lib/use-is-dev-mode'
+import {FaqBannerGroup} from '../../source/views/faqs'
+import {FAQ_TARGETS} from '../../source/views/faqs/constants'
 
 const styles = StyleSheet.create({
 	host: {
 		flex: 1,
+	},
+	banner: {
+		marginHorizontal: SCREEN_MARGIN,
+		marginTop: CELL_MARGIN,
+		marginBottom: CELL_MARGIN / 2,
 	},
 })
 
@@ -74,6 +88,19 @@ export default function HomePage(): React.ReactNode {
 						]}
 						spacing={CELL_MARGIN}
 					>
+						{/* FaqBannerGroup is still React Native, so it has to be hosted
+						    back into SwiftUI to scroll with the rest of the content --
+						    same construct the legacy source/views/home/index.tsx used. */}
+						<RNHostView matchContents={true}>
+							<FaqBannerGroup
+								onPressFaq={(faqId) =>
+									router.push({pathname: '/Faq', params: {faqId}})
+								}
+								style={styles.banner}
+								target={FAQ_TARGETS.HOME}
+							/>
+						</RNHostView>
+
 						<Grid horizontalSpacing={CELL_MARGIN} verticalSpacing={CELL_MARGIN}>
 							{rows.map((row, i) => (
 								<Grid.Row key={i}>
