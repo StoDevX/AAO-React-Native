@@ -149,7 +149,7 @@ function transformPauseMenu(data: GithubMenuResponse): GithubMenuType {
 		foodItems: upgradedFoodItemsMap,
 		corIcons: corIcons,
 		meals,
-	} as GithubMenuType
+	}
 }
 
 export const pauseMenuOptions = queryOptions({

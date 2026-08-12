@@ -66,7 +66,7 @@ describe('useServerDiscovery', () => {
 				port: 3000,
 				addresses: ['192.168.0.10'],
 				txt: {path: ''},
-			} as Service)
+			} satisfies Service)
 		})
 
 		expect(result.current).toEqual([
@@ -83,13 +83,13 @@ describe('useServerDiscovery', () => {
 				host: 'Gecko.local.',
 				port: 3000,
 				addresses: ['192.168.0.10'],
-			} as Service)
+			} satisfies Service)
 			handlers.resolved?.({
 				name: 'Otter',
 				host: 'Otter.local.',
 				port: 3000,
 				addresses: ['192.168.0.11'],
-			} as Service)
+			} satisfies Service)
 		})
 
 		await act(() => {

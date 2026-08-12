@@ -29,7 +29,7 @@ export const studentWorkPostingsOptions = queryOptions({
 		return response.map((job) => ({
 			...job,
 			type: titleCase(job.type),
-		})) as JobType[]
+		}))
 	},
 	select: (data) => {
 		let sorted = orderBy(data, sorters, ordered)
@@ -51,7 +51,7 @@ export const jobByIdOptions = (jobId: string) =>
 			return response.map((job) => ({
 				...job,
 				type: titleCase(job.type),
-			})) as JobType[]
+			}))
 		},
 		select: (data) => data.find((j) => j.id.toString() === jobId),
 	})
