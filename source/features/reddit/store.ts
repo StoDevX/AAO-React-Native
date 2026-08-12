@@ -23,9 +23,9 @@ export const useRedditPreferences = create<RedditPreferencesStore>()(
 				const s = state as {variant?: string}
 				// v1 had variant 'B' (Card Feed) which merged into 'C'
 				if (version < 2 && s.variant === 'B') {
-					return {...s, variant: 'C'} as RedditPreferencesStore
+					return {...s, variant: 'C'}
 				}
-				return state as RedditPreferencesStore
+				return state
 			},
 		},
 	),
