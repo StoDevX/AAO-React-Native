@@ -97,11 +97,10 @@ export function FaqBanner({
 
 	let palette = buildPalette(resolvedFaq)
 
-	// Faq hasn't been migrated to expo-router yet -- it's planned to land
-	// near the end of checkpoint 2 since it's dual-registered inside the
-	// Settings stack too. Without an override there's nowhere to send a tap
-	// yet, so the banner renders as a plain, non-interactive card (no button
-	// role, no CTA row) instead of a button that silently does nothing.
+	// A banner is only interactive when its caller supplies somewhere to
+	// send the tap. Callers with nowhere to route yet get a plain,
+	// non-interactive card (no button role, no CTA row) instead of a
+	// button that silently does nothing.
 	let isInteractive = Boolean(onPressOverride)
 	let onDismiss = (event?: GestureResponderEvent) => {
 		event?.stopPropagation?.()
@@ -172,9 +171,14 @@ export function FaqBanner({
 type GroupProps = {
 	target: FaqTarget
 	style?: StyleProp<ViewStyle>
+	onPressFaq?: (faqId: string) => void
 }
 
-export function FaqBannerGroup({target, style}: GroupProps): React.ReactNode {
+export function FaqBannerGroup({
+	target,
+	style,
+	onPressFaq,
+}: GroupProps): React.ReactNode {
 	let {data, isError} = useQuery(faqsOptions)
 	let devBanners = useDevBannerStore((state) => state.devBanners)
 	let devEnabled = useDevBannerStore((state) => state.enabled)
@@ -205,6 +209,7 @@ export function FaqBannerGroup({target, style}: GroupProps): React.ReactNode {
 				<FaqBanner
 					key={entry.id}
 					faqId={entry.id}
+					onPressOverride={onPressFaq ? () => onPressFaq(entry.id) : undefined}
 					style={styles.groupBanner}
 					target={target}
 				/>

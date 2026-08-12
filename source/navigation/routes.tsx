@@ -40,13 +40,6 @@ const HomeStackScreens = () => {
 					options={more.NavigationOptions}
 				/>
 			</Stack.Group>
-			<Stack.Group>
-				<Stack.Screen
-					component={faqs.View}
-					name="Faq"
-					options={faqs.NavigationOptions}
-				/>
-			</Stack.Group>
 		</Stack.Navigator>
 	)
 }

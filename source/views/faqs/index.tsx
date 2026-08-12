@@ -3,13 +3,11 @@ import {RefreshControl, StyleSheet, ScrollView, View, Text} from 'react-native'
 import * as c from '@frogpond/colors'
 import {Markdown} from '@frogpond/markdown'
 import {LoadingView, NoticeView} from '@frogpond/notice'
-import {ParamListBase, RouteProp, useRoute} from '@react-navigation/native'
+import {useLocalSearchParams} from 'expo-router'
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 import {faqsOptions, emptyFaqData} from './query'
 import {useQuery} from '@tanstack/react-query'
 import type {Faq, FaqQueryData} from './types'
-
-type FaqRoute = RouteProp<ParamListBase & {Faq: {faqId?: string}}, 'Faq'>
 
 const styles = StyleSheet.create({
 	container: {
@@ -45,11 +43,10 @@ const styles = StyleSheet.create({
 })
 
 function FaqView(): React.ReactNode {
-	let route = useRoute<FaqRoute>()
+	let {faqId: highlightId} = useLocalSearchParams<{faqId?: string}>()
 	let {data, error, isLoading, isError, isRefetching, refetch} =
 		useQuery(faqsOptions)
 	let faqData: FaqQueryData = data ?? emptyFaqData
-	let highlightId = route.params?.faqId
 	let hasFaqs = faqData.faqs.length > 0
 	let hasLegacy = Boolean(faqData.legacyText && !hasFaqs)
 

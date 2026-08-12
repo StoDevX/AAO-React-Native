@@ -3,7 +3,7 @@ import {fireEvent, render} from '@testing-library/react-native'
 
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query'
 
-import {FaqBanner} from '../banner'
+import {FaqBanner, FaqBannerGroup} from '../banner'
 import {useFaqBannerStore} from '../store'
 import type {Faq, FaqQueryData} from '../types'
 import {FAQ_TARGETS} from '../constants'
@@ -81,14 +81,47 @@ describe('FaqBanner component', () => {
 	})
 
 	it('renders as a non-interactive card with no CTA when no override is given', async () => {
-		// The FAQ detail screen hasn't been migrated to expo-router yet, so
-		// with no override there's nowhere to send a tap -- see the comment
-		// in ../banner.tsx. Rather than a button that silently does nothing,
-		// the banner drops its button role and "Learn more" CTA entirely.
+		// Rather than a button that silently does nothing, a banner with no
+		// tap target drops its button role and "Learn more" CTA entirely --
+		// see the comment in ../banner.tsx.
 		let {queryByText, queryByRole} = await renderWithFaqs([baseFaq])
 
 		expect(queryByText('Learn more')).toBeNull()
 		expect(queryByRole('button', {name: baseFaq.bannerTitle})).toBeNull()
+	})
+})
+
+describe('FaqBannerGroup component', () => {
+	beforeEach(() => {
+		useFaqBannerStore.getState().resetAll()
+	})
+
+	it("calls onPressFaq with each banner's own id, not a shared/stale one", async () => {
+		let secondFaq: Faq = {
+			...baseFaq,
+			id: 'second-faq',
+			bannerTitle: 'Second banner',
+		}
+		let onPressFaq = jest.fn()
+
+		let queryClient = new QueryClient({
+			defaultOptions: {queries: {retry: false}},
+		})
+		queryClient.setQueryData<FaqQueryData>(
+			FAQS_QUERY_KEY,
+			buildResponse([baseFaq, secondFaq]),
+		)
+
+		let {getByTestId} = await render(
+			<QueryClientProvider client={queryClient}>
+				<FaqBannerGroup onPressFaq={onPressFaq} target={FAQ_TARGETS.HOME} />
+			</QueryClientProvider>,
+		)
+
+		await fireEvent.press(getByTestId(`faq-banner-${secondFaq.id}`))
+
+		expect(onPressFaq).toHaveBeenCalledWith(secondFaq.id)
+		expect(onPressFaq).not.toHaveBeenCalledWith(baseFaq.id)
 	})
 })
 jest.mock('@react-native-vector-icons/ionicons', () => ({Ionicons: 'Icon'}))
