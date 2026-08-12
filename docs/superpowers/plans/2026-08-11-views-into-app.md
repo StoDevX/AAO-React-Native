@@ -44,6 +44,48 @@ Redux Toolkit, Jest + React Native Testing Library, jj for version control.
 - Out of scope: screens in `modules/` (`@frogpond/*`), including
   `MenuItemDetail`.
 
+## Router chrome goes in a wrapper component
+
+When a route's `Stack.Title` / `Stack.Screen` / `Stack.Toolbar` was rendered
+unconditionally by the wrapper, and the screen being inlined has early returns,
+put the chrome in an outer component and the screen in an inner one — both in
+the route file. `app/(home)/BuildingHoursProblemReport.tsx` is the reference:
+
+```tsx
+function InnerXPage(): React.ReactNode {
+	// data logic and early returns, each returning BARE content
+	if (isLoading) return <LoadingView />
+	return <TheContent />
+}
+
+export default function XPage(): React.ReactNode {
+	return (
+		<>
+			<Stack.Title>…</Stack.Title>
+			<InnerXPage />
+		</>
+	)
+}
+```
+
+The chrome then renders once, outside the branching, and no branch can omit
+it. The alternative — computing the chrome into a variable and splicing it into
+every return — puts an obligation on each branch, and Task 10 shipped a
+regression that way: five branches, two of which dropped the title.
+
+This also keeps the original component boundaries. Flattening a route and its
+screen into one function forces hooks above every early return, forces renames
+where destructurings collide, changes when queries fire, and can trip the React
+Compiler's `preserve-manual-memoization` rule. Keeping an inner component
+avoids all four, and is closer to a pure move.
+
+Where the screen itself has its own hooks and branches, use three components in
+the file: chrome, the route's data logic, and the screen body. Reproduce the
+chrome exactly as the pre-merge tree rendered it — including chrome that only
+appeared in the success branch. Do not "improve" it by hoisting title elements
+into branches that never had them; that is as much a behaviour change as
+dropping them.
+
 ## The recipe
 
 Every task is the same five moves. The per-task sections below give the exact
