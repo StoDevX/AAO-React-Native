@@ -16,7 +16,7 @@ import {
 import {
 	KSTO_POWERED_BY,
 	KRLX_POWERED_BY,
-} from '../../source/views/streaming/radio/schedule'
+} from '../../source/features/streaming/radio/constants'
 
 type EventSource = 'stolaf' | 'northfield' | 'ksto-schedule' | 'krlx-schedule'
 
