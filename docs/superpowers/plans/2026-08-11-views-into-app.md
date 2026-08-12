@@ -79,12 +79,34 @@ where destructurings collide, changes when queries fire, and can trip the React
 Compiler's `preserve-manual-memoization` rule. Keeping an inner component
 avoids all four, and is closer to a pure move.
 
-Where the screen itself has its own hooks and branches, use three components in
-the file: chrome, the route's data logic, and the screen body. Reproduce the
-chrome exactly as the pre-merge tree rendered it — including chrome that only
-appeared in the success branch. Do not "improve" it by hoisting title elements
-into branches that never had them; that is as much a behaviour change as
-dropping them.
+Reproduce the chrome exactly as the pre-merge tree rendered it — including
+chrome that only appeared in the success branch. Do not "improve" it by hoisting
+title elements into branches that never had them; that is as much a behaviour
+change as dropping them.
+
+### Naming, and when a third component is needed
+
+Two components: `BlahPage` for the chrome, `BlahView` for the screen — the name
+the screen had before it was inlined, so `git log -S` still traces it.
+
+Three components, named `BlahPage` (chrome), `BlahLoader` (the route's query and
+its early returns), `BlahView` (the screen itself, keeping its original name).
+The screen keeps `…View`; the loader is the layer that gets the new name.
+
+A third component is **required** — not stylistic — when flattening the loader
+into the screen would change behaviour. Two causes, both seen in this refactor:
+
+- **A `useState` initialiser seeded from loaded data.** React evaluates a
+  `useState` initial argument only on first mount. Hoisting such a hook into a
+  component that mounts while the query is still loading freezes the value at
+  its pre-load state forever. `app/(home)/Dictionary/[word]/edit.tsx`.
+- **The screen's own queries are ungated.** If the screen calls `useQuery`
+  without an `enabled` guard, it must not mount until the loader's data
+  resolves, or those requests fire earlier and more often than before.
+  `app/(home)/PrintJobs/[jobId]/printers.tsx`, whose printer-list options carry
+  no `enabled` gate.
+
+Where neither applies, two components are enough.
 
 ## The recipe
 
