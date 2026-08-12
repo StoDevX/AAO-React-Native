@@ -77,7 +77,7 @@ function DictionaryView(): React.ReactNode {
 				termToArray(item).some((value) => value.includes(searchQuery)),
 			)
 			if (filteredItems.length) {
-				filteredData.push({title, data: items})
+				filteredData.push({title, data: filteredItems})
 			}
 		}
 		return filteredData
