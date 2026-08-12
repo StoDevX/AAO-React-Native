@@ -37,13 +37,13 @@ const DefinitionCell = ({text, onChange = noop}: TextFieldProps) => (
 	/>
 )
 
-type DictionaryEditorBodyProps = {
+type DictionaryEditorViewProps = {
 	word: WordType
 }
 
-function DictionaryEditorBody({
+function DictionaryEditorView({
 	word: item,
-}: DictionaryEditorBodyProps): React.ReactNode {
+}: DictionaryEditorViewProps): React.ReactNode {
 	let [term, setTerm] = React.useState(item.word)
 	let [definition, setDefinition] = React.useState(item.definition)
 
@@ -82,7 +82,7 @@ function DictionaryEditorBody({
 	)
 }
 
-function DictionaryEditorView(): React.ReactNode {
+function DictionaryEditorLoader(): React.ReactNode {
 	let {word} = useLocalSearchParams<{word: string}>()
 	let {
 		data: entry,
@@ -111,14 +111,14 @@ function DictionaryEditorView(): React.ReactNode {
 		return <NoticeView text={`Could not find the word "${word}".`} />
 	}
 
-	return <DictionaryEditorBody word={entry} />
+	return <DictionaryEditorView word={entry} />
 }
 
 export default function DictionaryEditorPage(): React.ReactNode {
 	return (
 		<>
 			<Stack.Screen options={{title: 'Suggest an edit'}} />
-			<DictionaryEditorView />
+			<DictionaryEditorLoader />
 		</>
 	)
 }

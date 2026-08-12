@@ -2,11 +2,11 @@ import * as React from 'react'
 import {Stack, useLocalSearchParams, useNavigation} from 'expo-router'
 import {useQuery} from '@tanstack/react-query'
 
-import {BuildingHoursProblemReportView as BuildingHoursProblemReportBody} from '../../source/views/building-hours'
+import {BuildingHoursProblemReportView} from '../../source/views/building-hours'
 import {buildingByNameOptions} from '../../source/views/building-hours/query'
 import {LoadingView, NoticeView} from '@frogpond/notice'
 
-function BuildingHoursProblemReportView(): React.ReactNode {
+function BuildingHoursProblemReportLoader(): React.ReactNode {
 	let {name} = useLocalSearchParams<{name: string}>()
 	let {
 		data: building,
@@ -35,7 +35,7 @@ function BuildingHoursProblemReportView(): React.ReactNode {
 		return <NoticeView text={`Could not find the "${name}" building.`} />
 	}
 
-	return <BuildingHoursProblemReportBody initialBuilding={building} />
+	return <BuildingHoursProblemReportView initialBuilding={building} />
 }
 
 export default function BuildingHoursProblemReportPage(): React.ReactNode {
@@ -52,7 +52,7 @@ export default function BuildingHoursProblemReportPage(): React.ReactNode {
 				/>
 			</Stack.Toolbar>
 
-			<BuildingHoursProblemReportView />
+			<BuildingHoursProblemReportLoader />
 		</>
 	)
 }

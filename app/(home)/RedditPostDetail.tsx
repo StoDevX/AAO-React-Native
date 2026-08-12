@@ -65,15 +65,15 @@ function sanitizeBodySegments(segments: Segment[]): Segment[] {
 	return segments
 }
 
-type BodyProps = {
+type ViewProps = {
 	post: RedditPostType
 	communityName: string
 }
 
-function RedditPostDetailBody({
+function RedditPostDetailView({
 	post,
 	communityName,
-}: BodyProps): React.ReactNode {
+}: ViewProps): React.ReactNode {
 	const {
 		permalink: postUrl,
 		title,
@@ -387,7 +387,7 @@ function RedditPostDetailBody({
 	)
 }
 
-function RedditPostDetailView(): React.ReactNode {
+function RedditPostDetailLoader(): React.ReactNode {
 	let {postUrl, communityName} = useLocalSearchParams<{
 		postUrl: string
 		communityName: string
@@ -420,7 +420,7 @@ function RedditPostDetailView(): React.ReactNode {
 		return <NoticeView text="Could not find this post." />
 	}
 
-	return <RedditPostDetailBody communityName={communityName} post={post} />
+	return <RedditPostDetailView communityName={communityName} post={post} />
 }
 
 export default function RedditPostDetailPage(): React.ReactNode {
@@ -429,7 +429,7 @@ export default function RedditPostDetailPage(): React.ReactNode {
 	return (
 		<>
 			<Stack.Screen options={{title: communityName}} />
-			<RedditPostDetailView />
+			<RedditPostDetailLoader />
 		</>
 	)
 }
