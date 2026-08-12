@@ -45,7 +45,7 @@ const styles = StyleSheet.create({
 	},
 })
 
-export default function StudentOrgsPage(): React.ReactNode {
+function StudentOrgsView(): React.ReactNode {
 	let router = useRouter()
 
 	let [query, setQuery] = React.useState('')
@@ -89,24 +89,18 @@ export default function StudentOrgsPage(): React.ReactNode {
 		[router],
 	)
 
-	let title = <Stack.Title>Student Orgs</Stack.Title>
-
 	if (isError) {
 		return (
-			<>
-				{title}
-				<NoticeView
-					buttonText="Try Again"
-					onPress={refetch}
-					text={`A problem occured while loading: ${error}`}
-				/>
-			</>
+			<NoticeView
+				buttonText="Try Again"
+				onPress={refetch}
+				text={`A problem occured while loading: ${error}`}
+			/>
 		)
 	}
 
 	return (
 		<>
-			{title}
 			<Stack.Toolbar placement="bottom">
 				<Stack.Toolbar.SearchBarSlot />
 			</Stack.Toolbar>
@@ -146,6 +140,15 @@ export default function StudentOrgsPage(): React.ReactNode {
 				style={styles.wrapper}
 				{...largeListProps}
 			/>
+		</>
+	)
+}
+
+export default function StudentOrgsPage(): React.ReactNode {
+	return (
+		<>
+			<Stack.Title>Student Orgs</Stack.Title>
+			<StudentOrgsView />
 		</>
 	)
 }

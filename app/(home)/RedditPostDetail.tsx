@@ -70,7 +70,10 @@ type BodyProps = {
 	communityName: string
 }
 
-function RedditPostDetailBody({post, communityName}: BodyProps): React.ReactNode {
+function RedditPostDetailBody({
+	post,
+	communityName,
+}: BodyProps): React.ReactNode {
 	const {
 		permalink: postUrl,
 		title,
@@ -384,7 +387,7 @@ function RedditPostDetailBody({post, communityName}: BodyProps): React.ReactNode
 	)
 }
 
-function InnerRedditPostDetailPage(): React.ReactNode {
+function RedditPostDetailView(): React.ReactNode {
 	let {postUrl, communityName} = useLocalSearchParams<{
 		postUrl: string
 		communityName: string
@@ -426,7 +429,7 @@ export default function RedditPostDetailPage(): React.ReactNode {
 	return (
 		<>
 			<Stack.Screen options={{title: communityName}} />
-			<InnerRedditPostDetailPage />
+			<RedditPostDetailView />
 		</>
 	)
 }

@@ -62,8 +62,7 @@ const FaqCard = ({faq, isHighlighted}: CardProps): React.ReactNode => {
 	)
 }
 
-export default function FaqPage(): React.ReactNode {
-	const navigation = useNavigation()
+function FaqView(): React.ReactNode {
 	let {faqId: highlightId} = useLocalSearchParams<{faqId?: string}>()
 	let {data, error, isLoading, isError, isRefetching, refetch} =
 		useQuery(faqsOptions)
@@ -71,7 +70,60 @@ export default function FaqPage(): React.ReactNode {
 	let hasFaqs = faqData.faqs.length > 0
 	let hasLegacy = Boolean(faqData.legacyText && !hasFaqs)
 
-	const header = (
+	if (isLoading) {
+		return <LoadingView />
+	}
+
+	if (isError) {
+		return (
+			<NoticeView
+				buttonText="Try Again"
+				onPress={refetch}
+				text={`A problem occured while loading: ${error}`}
+			/>
+		)
+	}
+
+	if (!hasLegacy && !hasFaqs) {
+		return (
+			<NoticeView
+				buttonText="Try Again"
+				onPress={refetch}
+				text="There aren't any FAQs to show right now."
+			/>
+		)
+	}
+
+	return (
+		<ScrollView
+			contentContainerStyle={styles.container}
+			contentInsetAdjustmentBehavior="automatic"
+			refreshControl={
+				<RefreshControl onRefresh={refetch} refreshing={isRefetching} />
+			}
+			style={styles.scrollView}
+		>
+			{hasLegacy ? (
+				<View style={styles.legacy}>
+					<Markdown source={faqData.legacyText ?? ''} />
+				</View>
+			) : null}
+
+			{faqData.faqs.map((faq) => (
+				<FaqCard
+					key={faq.id}
+					faq={faq}
+					isHighlighted={faq.id === highlightId}
+				/>
+			))}
+		</ScrollView>
+	)
+}
+
+export default function FaqPage(): React.ReactNode {
+	const navigation = useNavigation()
+
+	return (
 		<>
 			<Stack.Title>FAQs</Stack.Title>
 			<Stack.Toolbar placement="right">
@@ -81,69 +133,8 @@ export default function FaqPage(): React.ReactNode {
 					onPress={() => navigation.goBack()}
 				/>
 			</Stack.Toolbar>
-		</>
-	)
 
-	if (isLoading) {
-		return (
-			<>
-				{header}
-				<LoadingView />
-			</>
-		)
-	}
-
-	if (isError) {
-		return (
-			<>
-				{header}
-				<NoticeView
-					buttonText="Try Again"
-					onPress={refetch}
-					text={`A problem occured while loading: ${error}`}
-				/>
-			</>
-		)
-	}
-
-	if (!hasLegacy && !hasFaqs) {
-		return (
-			<>
-				{header}
-				<NoticeView
-					buttonText="Try Again"
-					onPress={refetch}
-					text="There aren't any FAQs to show right now."
-				/>
-			</>
-		)
-	}
-
-	return (
-		<>
-			{header}
-			<ScrollView
-				contentContainerStyle={styles.container}
-				contentInsetAdjustmentBehavior="automatic"
-				refreshControl={
-					<RefreshControl onRefresh={refetch} refreshing={isRefetching} />
-				}
-				style={styles.scrollView}
-			>
-				{hasLegacy ? (
-					<View style={styles.legacy}>
-						<Markdown source={faqData.legacyText ?? ''} />
-					</View>
-				) : null}
-
-				{faqData.faqs.map((faq) => (
-					<FaqCard
-						key={faq.id}
-						faq={faq}
-						isHighlighted={faq.id === highlightId}
-					/>
-				))}
-			</ScrollView>
+			<FaqView />
 		</>
 	)
 }

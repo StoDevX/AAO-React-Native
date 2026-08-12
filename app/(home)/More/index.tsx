@@ -39,7 +39,7 @@ function linkToArray(data: LinkValue) {
 	return Array.from(new Set([...splitToArray(data.label)]))
 }
 
-export default function MorePage(): React.ReactNode {
+function MoreView(): React.ReactNode {
 	let [query, setQuery] = React.useState('')
 	let searchQuery = useDebounce(query.toLowerCase(), 200)
 
@@ -65,25 +65,18 @@ export default function MorePage(): React.ReactNode {
 		return filteredData
 	}, [data, searchQuery])
 
-	let header = <Stack.Title>More</Stack.Title>
-
 	if (isError) {
 		return (
-			<>
-				{header}
-				<NoticeView
-					buttonText="Try Again"
-					onPress={refetch}
-					text={`A problem occured while loading: ${error}`}
-				/>
-			</>
+			<NoticeView
+				buttonText="Try Again"
+				onPress={refetch}
+				text={`A problem occured while loading: ${error}`}
+			/>
 		)
 	}
 
 	return (
 		<>
-			{header}
-
 			<Stack.Toolbar placement="bottom">
 				<Stack.Toolbar.SearchBarSlot />
 			</Stack.Toolbar>
@@ -126,6 +119,15 @@ export default function MorePage(): React.ReactNode {
 				style={styles.wrapper}
 				{...largeListProps}
 			/>
+		</>
+	)
+}
+
+export default function MorePage(): React.ReactNode {
+	return (
+		<>
+			<Stack.Title>More</Stack.Title>
+			<MoreView />
 		</>
 	)
 }

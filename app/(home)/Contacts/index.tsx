@@ -18,7 +18,7 @@ const styles = StyleSheet.create({
 	},
 })
 
-export default function ContactsPage(): React.ReactNode {
+function ContactsView(): React.ReactNode {
 	let router = useRouter()
 
 	let {
@@ -38,45 +38,46 @@ export default function ContactsPage(): React.ReactNode {
 		[router],
 	)
 
-	let title = <Stack.Title>Important Contacts</Stack.Title>
-
 	if (error) {
 		return (
-			<>
-				{title}
-				<NoticeView
-					buttonText="Try Again"
-					onPress={refetch}
-					text={`A problem occured while loading: ${
-						error instanceof Error ? error.message : 'Unknown error'
-					}`}
-				/>
-			</>
+			<NoticeView
+				buttonText="Try Again"
+				onPress={refetch}
+				text={`A problem occured while loading: ${
+					error instanceof Error ? error.message : 'Unknown error'
+				}`}
+			/>
 		)
 	}
 
 	return (
+		<SectionList
+			ItemSeparatorComponent={ListSeparator}
+			ListEmptyComponent={
+				isLoading ? <LoadingView /> : <NoticeView text="No results found." />
+			}
+			contentContainerStyle={styles.contentContainer}
+			contentInsetAdjustmentBehavior="automatic"
+			keyExtractor={(item) => item.title}
+			onRefresh={refetch}
+			refreshing={isRefetching}
+			renderItem={({item}) => (
+				<ContactRow contact={item} onPress={onPressContact} />
+			)}
+			renderSectionHeader={({section: {title}}) => (
+				<ListSectionHeader title={title} />
+			)}
+			sections={data}
+			style={styles.listContainer}
+		/>
+	)
+}
+
+export default function ContactsPage(): React.ReactNode {
+	return (
 		<>
-			{title}
-			<SectionList
-				ItemSeparatorComponent={ListSeparator}
-				ListEmptyComponent={
-					isLoading ? <LoadingView /> : <NoticeView text="No results found." />
-				}
-				contentContainerStyle={styles.contentContainer}
-				contentInsetAdjustmentBehavior="automatic"
-				keyExtractor={(item) => item.title}
-				onRefresh={refetch}
-				refreshing={isRefetching}
-				renderItem={({item}) => (
-					<ContactRow contact={item} onPress={onPressContact} />
-				)}
-				renderSectionHeader={({section: {title}}) => (
-					<ListSectionHeader title={title} />
-				)}
-				sections={data}
-				style={styles.listContainer}
-			/>
+			<Stack.Title>Important Contacts</Stack.Title>
+			<ContactsView />
 		</>
 	)
 }

@@ -15,7 +15,7 @@ import type {
 } from '../../../source/features/directory/types'
 import {Ionicons as Icon} from '@react-native-vector-icons/ionicons'
 
-export default function DirectoryPage(): React.ReactNode {
+function DirectoryView(): React.ReactNode {
 	let [searchQueryType, setSearchQueryType] =
 		React.useState<DirectorySearchTypeEnum>('query')
 	let [typedQuery, setTypedQuery] = React.useState('')
@@ -44,33 +44,18 @@ export default function DirectoryPage(): React.ReactNode {
 		}
 	}, [params?.queryType, params?.queryParam])
 
-	let title = (
-		<Stack.Screen options={{title: params.queryParam ?? 'Directory'}} />
-	)
-
 	if (!searchQuery) {
-		return (
-			<>
-				{title}
-				<NoSearchPerformed />
-			</>
-		)
+		return <NoSearchPerformed />
 	}
 
 	if (searchQuery.length < 2) {
-		return (
-			<>
-				{title}
-				<NoticeView text="Your search is too short." />
-			</>
-		)
+		return <NoticeView text="Your search is too short." />
 	}
 
 	const items = data.results ? formatResults(data.results) : []
 
 	return (
 		<>
-			{title}
 			<Stack.Toolbar placement="bottom">
 				<Stack.Toolbar.SearchBarSlot />
 			</Stack.Toolbar>
@@ -117,6 +102,17 @@ export default function DirectoryPage(): React.ReactNode {
 					/>
 				)}
 			</View>
+		</>
+	)
+}
+
+export default function DirectoryPage(): React.ReactNode {
+	let params = useLocalSearchParams<{queryParam?: string}>()
+
+	return (
+		<>
+			<Stack.Screen options={{title: params.queryParam ?? 'Directory'}} />
+			<DirectoryView />
 		</>
 	)
 }
