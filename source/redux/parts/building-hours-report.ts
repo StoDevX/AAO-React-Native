@@ -1,11 +1,11 @@
 import {createSlice} from '@reduxjs/toolkit'
 import type {PayloadAction} from '@reduxjs/toolkit'
 import type {RootState} from '../store'
-import type {BuildingType} from '../../views/building-hours/types'
+import type {BuildingType} from '../../features/building-hours/types'
 import {
 	buildingReducer,
 	type BuildingAction,
-} from '../../views/building-hours/report/building-reducer'
+} from '../../features/building-hours/report/building-reducer'
 
 export type State = {
 	building: BuildingType | null
