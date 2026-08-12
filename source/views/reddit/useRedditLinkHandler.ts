@@ -1,8 +1,6 @@
 import * as React from 'react'
-import {useNavigation} from '@react-navigation/native'
-import type {NativeStackNavigationProp} from '@react-navigation/native-stack'
+import {useRouter} from 'expo-router'
 import {openUrl} from '@frogpond/open-url'
-import type {RootStackParamList} from '../../navigation/types'
 import {fetchRedditPost} from './reddit-api'
 
 /**
@@ -36,8 +34,7 @@ function parseRedditPostUrl(
  * after the screen is gone.
  */
 export function useRedditLinkHandler(): (url: string) => void {
-	const navigation =
-		useNavigation<NativeStackNavigationProp<RootStackParamList>>()
+	const router = useRouter()
 	const controllerRef = React.useRef<AbortController | null>(null)
 
 	React.useEffect(() => {
@@ -69,22 +66,12 @@ export function useRedditLinkHandler(): (url: string) => void {
 					openUrl(url)
 					return
 				}
-				navigation.push('RedditPostDetail', {
-					postUrl: post.permalink,
-					title: post.title,
-					author: post.author,
-					publishedAt: post.publishedAt,
-					contentHtml: post.contentHtml,
-					thumbnail: post.thumbnail,
-					communityName: `r/${redditMatch.subreddit}`,
-					postAuthor: post.author,
-					postType: post.postType,
-					imageUrl: post.imageUrl,
-					images: post.images,
-					linkUrl: post.linkUrl,
-					linkDomain: post.linkDomain,
-					crosspostParent: post.crosspostParent,
-					pollData: post.pollData,
+				router.push({
+					pathname: '/RedditPostDetail',
+					params: {
+						postUrl: post.permalink,
+						communityName: `r/${redditMatch.subreddit}`,
+					},
 				})
 			} catch {
 				if (!controller.signal.aborted) {
@@ -92,6 +79,6 @@ export function useRedditLinkHandler(): (url: string) => void {
 				}
 			}
 		},
-		[navigation],
+		[router],
 	)
 }

@@ -164,7 +164,6 @@ export const AllViews = (): Array<ViewType> => {
 			icon: 'bubble.left.and.bubble.right.fill',
 			gradient: c.orangeGradient,
 			devOnly: true,
-			disabled: true,
 		},
 	]
 }

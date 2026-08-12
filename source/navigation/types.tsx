@@ -4,7 +4,6 @@ import {FilterType} from '@frogpond/filter/types'
 import * as eventList from '@frogpond/event-list'
 
 import * as calendar from '../views/calendar'
-import * as reddit from '../views/reddit'
 import * as sis from '../views/sis'
 import * as debug from '../views/settings/screens/debug'
 import * as settings from '../views/settings'
@@ -35,7 +34,7 @@ export type RootViewsParamList = {
 	[calendar.NavigationKey]: calendar.NavigationParams
 	Menus: undefined
 	News: undefined
-	[reddit.NavigationKey]: reddit.NavigationParams
+	Communities: undefined
 	[sis.NavigationKey]: undefined
 	'Streaming Media': undefined
 	Transportation: undefined
