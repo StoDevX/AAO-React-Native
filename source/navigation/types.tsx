@@ -7,13 +7,11 @@ import * as calendar from '../views/calendar'
 import * as reddit from '../views/reddit'
 import * as sis from '../views/sis'
 import * as debug from '../views/settings/screens/debug'
-import * as buildingHours from '../views/building-hours'
 import * as settings from '../views/settings'
 
 import {BuildingType} from '../views/building-hours/types'
 import {ContactType} from '../views/contacts/types'
 import {StudentOrgType} from '../views/student-orgs/types'
-import {RouteParams as HoursEditorType} from '../views/building-hours/report/editor'
 import {WordType} from '../views/dictionary/types'
 import {
 	UnprocessedBusLine,
@@ -72,9 +70,10 @@ export type MiscViewParamList = {
 	Profile: {userId: string}
 	Feed: {sort: 'latest' | 'top'} | undefined
 	[eventList.EventDetail.NavigationKey]: eventList.EventDetail.ParamList
+	BuildingHours: undefined
 	BuildingHoursDetail: {building: BuildingType}
-	[buildingHours.ReportNavigationKey]: {initialBuilding: BuildingType}
-	BuildingHoursScheduleEditor: HoursEditorType
+	BuildingHoursProblemReport: {initialBuilding: BuildingType}
+	BuildingHoursScheduleEditor: undefined
 	ContactsDetail: {contact: ContactType}
 	DictionaryDetail: {item: WordType}
 	DictionaryEditor: {item: WordType}

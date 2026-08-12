@@ -2,46 +2,29 @@ import * as React from 'react'
 import {useMomentTimer} from '@frogpond/timer'
 import {BuildingDetail} from './building'
 import {timezone} from '@frogpond/constants'
-import {BuildingFavoriteButton} from './toolbar-button'
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
-import {
-	NavigationProp,
-	RouteProp,
-	useNavigation,
-	useRoute,
-} from '@react-navigation/native'
-import {
-	LegacyRootParamList,
-	RootStackParamList,
-} from '../../../navigation/types'
+import {useRouter} from 'expo-router'
+import type {BuildingType} from '../types'
 
-export function BuildingHoursDetailView(): React.ReactNode {
-	let navigation = useNavigation<NavigationProp<LegacyRootParamList>>()
+type Props = {
+	building: BuildingType
+}
+
+export function BuildingHoursDetailView({
+	building: info,
+}: Props): React.ReactNode {
+	let router = useRouter()
 	let {now} = useMomentTimer({intervalMs: 60000, timezone: timezone()})
-	let route = useRoute<RouteProp<RootStackParamList, typeof NavigationKey>>()
-	let {building: info} = route.params
 
 	let reportProblem = React.useCallback(
 		() =>
-			navigation.navigate('BuildingHoursProblemReport', {
-				initialBuilding: info,
+			router.push({
+				pathname: '/BuildingHoursProblemReport',
+				params: {name: info.name},
 			}),
-		[info, navigation],
+		[info.name, router],
 	)
 
 	return (
 		<BuildingDetail info={info} now={now} onProblemReport={reportProblem} />
 	)
-}
-
-export const NavigationKey = 'BuildingHoursDetail'
-
-export const NavigationOptions = (props: {
-	route: RouteProp<RootStackParamList, typeof NavigationKey>
-}): NativeStackNavigationOptions => {
-	let {name} = props.route.params.building
-	return {
-		title: name,
-		headerRight: (p) => <BuildingFavoriteButton {...p} buildingName={name} />,
-	}
 }

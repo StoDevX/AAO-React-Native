@@ -22,33 +22,27 @@ import type {
 } from '../types'
 import {summarizeDays, formatBuildingTimes} from '../lib'
 import {submitReport} from './submit'
-import {buildingReducer, type BuildingAction} from './building-reducer'
+import type {BuildingAction} from './building-reducer'
 import {
-	NativeStackNavigationOptions,
-	NativeStackNavigationProp,
-} from '@react-navigation/native-stack'
-import {RouteProp, useNavigation, useRoute} from '@react-navigation/native'
-import {CloseScreenButton} from '@frogpond/navigation-buttons'
-import {RootStackParamList} from '../../../navigation/types'
+	applyBuildingAction,
+	clearReport,
+	selectReportDraft,
+	selectReportHasUnsavedChanges,
+	startReport,
+	useAppDispatch,
+	useAppSelector,
+} from '../../../redux'
+import {useNavigation, useRouter} from 'expo-router'
 
-function useBuildingEditor(
-	initialBuilding: BuildingType,
-	navigation: NativeStackNavigationProp<RootStackParamList>,
-) {
-	let [building, dispatch] = React.useReducer(buildingReducer, initialBuilding)
+function useBuildingEditor(initialBuilding: BuildingType) {
+	let dispatch = useAppDispatch()
+	let router = useRouter()
+	let navigation = useNavigation()
+
+	let building = useAppSelector(selectReportDraft) ?? initialBuilding
+	let hasUnsavedChanges = useAppSelector(selectReportHasUnsavedChanges)
+
 	let [submitted, setSubmitted] = React.useState(false)
-
-	let initialBuildingJson = React.useMemo(
-		() => JSON.stringify(initialBuilding),
-		[initialBuilding],
-	)
-
-	let hasDiff = React.useMemo(
-		() => JSON.stringify(building) !== initialBuildingJson,
-		[building, initialBuildingJson],
-	)
-
-	let hasUnsavedChanges = hasDiff && !submitted
 
 	/**
 	 * checking for unsaved edits
@@ -60,7 +54,7 @@ function useBuildingEditor(
 	React.useEffect(
 		() =>
 			navigation.addListener('beforeRemove', (event) => {
-				if (!hasUnsavedChanges) {
+				if (!hasUnsavedChanges || submitted) {
 					return
 				}
 
@@ -79,49 +73,53 @@ function useBuildingEditor(
 					],
 				)
 			}),
-		[navigation, hasUnsavedChanges],
+		[navigation, hasUnsavedChanges, submitted],
+	)
+
+	let dispatchAction = React.useCallback(
+		(action: BuildingAction) => dispatch(applyBuildingAction(action)),
+		[dispatch],
 	)
 
 	let openEditor = React.useCallback(
-		(scheduleIdx: number, setIdx: number, set?: SingleBuildingScheduleType) =>
-			navigation.navigate('BuildingHoursScheduleEditor', {
-				set: set,
-				onEditSet: (editedData: SingleBuildingScheduleType) =>
-					dispatch({
-						type: 'SET_HOURS',
-						scheduleIndex: scheduleIdx,
-						setIndex: setIdx,
-						data: editedData,
-					}),
-				onDeleteSet: () =>
-					dispatch({
-						type: 'DELETE_HOURS',
-						scheduleIndex: scheduleIdx,
-						setIndex: setIdx,
-					}),
+		(scheduleIdx: number, setIdx: number) =>
+			router.push({
+				pathname: '/BuildingHoursScheduleEditor',
+				params: {
+					scheduleIndex: String(scheduleIdx),
+					setIndex: String(setIdx),
+				},
 			}),
-		[navigation],
+		[router],
 	)
 
 	let submit = React.useCallback((): void => {
-		console.log(JSON.stringify(building))
 		setSubmitted(true)
 		submitReport(initialBuilding, building)
 	}, [building, initialBuilding])
 
-	return {building, dispatch, openEditor, submit}
+	return {building, dispatch: dispatchAction, openEditor, submit}
 }
 
-export let BuildingHoursProblemReportView = (): React.ReactNode => {
-	let navigation =
-		useNavigation<NativeStackNavigationProp<RootStackParamList>>()
-	let route = useRoute<RouteProp<RootStackParamList, typeof NavigationKey>>()
-	let {initialBuilding} = route.params
+type Props = {
+	initialBuilding: BuildingType
+}
 
-	let {building, dispatch, openEditor, submit} = useBuildingEditor(
-		initialBuilding,
-		navigation,
-	)
+export let BuildingHoursProblemReportView = ({
+	initialBuilding,
+}: Props): React.ReactNode => {
+	let appDispatch = useAppDispatch()
+
+	React.useEffect(() => {
+		appDispatch(startReport(initialBuilding))
+		return () => {
+			appDispatch(clearReport())
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [])
+
+	let {building, dispatch, openEditor, submit} =
+		useBuildingEditor(initialBuilding)
 
 	let {schedule: schedules = [], name} = building
 
@@ -306,21 +304,4 @@ const TimesCell = (props: TimesCellProps) => {
 			title={set.days.length ? summarizeDays(set.days) : 'Days'}
 		/>
 	)
-}
-
-export const NavigationKey = 'BuildingHoursProblemReport'
-
-export const NavigationOptions: NativeStackNavigationOptions = {
-	title: 'Report a Problem',
-	presentation: 'modal',
-	headerRight: () => <CloseScreenButton title="Discard" />,
-	/**
-	 * Explicility setting `gestureEnabled` to false otherwise we can end up with a
-	 * a screen that gets removed natively but did not get removed from JS state.
-	 *
-	 * This happens if the action was prevented in a `beforeRemove` listener which:
-	 * (1) we are currently doing, and
-	 * (2) is not fully supported in native-stack.
-	 */
-	gestureEnabled: false,
 }

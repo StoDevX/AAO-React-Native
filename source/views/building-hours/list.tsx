@@ -7,10 +7,8 @@ import {BuildingType} from './types'
 import * as c from '@frogpond/colors'
 import {ListSeparator, ListSectionHeader} from '@frogpond/lists'
 import {LoadingView, NoticeView} from '@frogpond/notice'
-import {NavigationProp, useNavigation} from '@react-navigation/native'
+import {useRouter} from 'expo-router'
 import {useMomentTimer} from '@frogpond/timer'
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
-import type {LegacyRootParamList} from '../../navigation/types'
 
 export {BuildingHoursDetailView} from './detail'
 
@@ -22,7 +20,7 @@ const styles = StyleSheet.create({
 })
 
 export function BuildingHoursView(): React.ReactNode {
-	let navigation = useNavigation<NavigationProp<LegacyRootParamList>>()
+	let router = useRouter()
 
 	let {now} = useMomentTimer({intervalMs: 60000, startOf: 'minute'})
 
@@ -37,8 +35,11 @@ export function BuildingHoursView(): React.ReactNode {
 
 	let onPressRow = React.useCallback(
 		(building: BuildingType) =>
-			navigation.navigate('BuildingHoursDetail', {building}),
-		[navigation],
+			router.push({
+				pathname: '/BuildingHours/[name]',
+				params: {name: building.name},
+			}),
+		[router],
 	)
 
 	if (isError) {
@@ -71,9 +72,4 @@ export function BuildingHoursView(): React.ReactNode {
 			sections={data}
 		/>
 	)
-}
-
-export const NavigationOptions: NativeStackNavigationOptions = {
-	title: 'Building Hours',
-	headerBackTitle: 'Back',
 }

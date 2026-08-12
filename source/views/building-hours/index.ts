@@ -1,14 +1,8 @@
-export {BuildingHoursView, NavigationOptions} from './list'
+export {BuildingHoursView} from './list'
 
-export {
-	BuildingHoursDetailView,
-	NavigationOptions as DetailNavigationOptions,
-} from './detail'
+export {BuildingHoursDetailView} from './detail'
 
 export {
 	BuildingHoursProblemReportView,
 	BuildingHoursScheduleEditorView,
-	ReportNavigationOptions,
-	EditorNavigationOptions,
-	ReportNavigationKey,
 } from './report'
