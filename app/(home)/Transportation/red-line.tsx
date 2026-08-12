@@ -1,6 +1,6 @@
 import * as React from 'react'
-import {RedLineBusView} from '../../../source/views/transportation'
+import {BusView} from '../../../source/features/transportation/bus'
 
 export default function RedLineBusPage(): React.ReactNode {
-	return <RedLineBusView />
+	return <BusView line="Red Line" />
 }
