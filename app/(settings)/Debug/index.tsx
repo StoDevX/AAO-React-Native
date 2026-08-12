@@ -8,7 +8,7 @@ export default function DebugPage(): React.ReactNode {
 
 	return (
 		<>
-			<Stack.Screen options={{title: 'Debug'}} />
+			<Stack.Title>Debug</Stack.Title>
 			<Stack.Toolbar placement="right">
 				<Stack.Toolbar.Button
 					accessibilityLabel="Close Screen"

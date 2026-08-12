@@ -90,7 +90,7 @@ const ButtonExample = (): React.ReactNode => {
 export default function ButtonLibraryPage(): React.ReactNode {
 	return (
 		<>
-			<Stack.Screen options={{title: 'Buttons'}} />
+			<Stack.Title>Buttons</Stack.Title>
 			<LibraryWrapper>
 				<>
 					<Section header="@frogpond/tableview/cells">

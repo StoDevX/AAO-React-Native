@@ -117,7 +117,7 @@ function DictionaryEditorLoader(): React.ReactNode {
 export default function DictionaryEditorPage(): React.ReactNode {
 	return (
 		<>
-			<Stack.Screen options={{title: 'Suggest an edit'}} />
+			<Stack.Title>Suggest an edit</Stack.Title>
 			<DictionaryEditorLoader />
 		</>
 	)

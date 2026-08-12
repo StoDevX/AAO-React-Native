@@ -25,7 +25,7 @@ export default function KSTOSchedulePage(): React.ReactNode {
 
 	return (
 		<>
-			<Stack.Screen options={{title: 'KSTO Schedule'}} />
+			<Stack.Title>KSTO Schedule</Stack.Title>
 			<CccCalendarView
 				onPressEvent={onPressEvent}
 				poweredBy={KSTO_POWERED_BY}

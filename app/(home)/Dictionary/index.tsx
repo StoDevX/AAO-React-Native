@@ -166,7 +166,7 @@ function DictionaryView(): React.ReactNode {
 export default function DictionaryPage(): React.ReactNode {
 	return (
 		<>
-			<Stack.Screen options={{title: 'Campus Dictionary'}} />
+			<Stack.Title>Campus Dictionary</Stack.Title>
 			<DictionaryView />
 		</>
 	)

@@ -39,14 +39,14 @@ export default function DirectoryDetailPage(): React.ReactNode {
 		),
 	)
 
-	let screen = (
-		<Stack.Screen options={{title: contact?.displayName ?? 'Contact'}} />
+	let screenTitle = (
+		<Stack.Title>{contact?.displayName ?? 'Contact'}</Stack.Title>
 	)
 
 	if (isLoading) {
 		return (
 			<>
-				{screen}
+				{screenTitle}
 				<LoadingView />
 			</>
 		)
@@ -55,7 +55,7 @@ export default function DirectoryDetailPage(): React.ReactNode {
 	if (error) {
 		return (
 			<>
-				{screen}
+				{screenTitle}
 				<NoticeView
 					buttonText="Try Again"
 					onPress={refetch}
@@ -70,7 +70,7 @@ export default function DirectoryDetailPage(): React.ReactNode {
 	if (!contact) {
 		return (
 			<>
-				{screen}
+				{screenTitle}
 				<NoticeView text="Could not find this directory entry." />
 			</>
 		)
@@ -90,7 +90,7 @@ export default function DirectoryDetailPage(): React.ReactNode {
 
 	return (
 		<>
-			{screen}
+			{screenTitle}
 			<ScrollView contentInsetAdjustmentBehavior="automatic">
 				<Image
 					accessibilityIgnoresInvertColors={true}

@@ -44,12 +44,12 @@ export default function DictionaryDetailPage(): React.ReactNode {
 		refetch,
 	} = useQuery(wordByTermOptions(word))
 
-	let screen = <Stack.Screen options={{title: entry?.word ?? word}} />
+	let screenTitle = <Stack.Title>{entry?.word ?? word}</Stack.Title>
 
 	if (isLoading) {
 		return (
 			<>
-				{screen}
+				{screenTitle}
 				<LoadingView />
 			</>
 		)
@@ -58,7 +58,7 @@ export default function DictionaryDetailPage(): React.ReactNode {
 	if (error) {
 		return (
 			<>
-				{screen}
+				{screenTitle}
 				<NoticeView
 					buttonText="Try Again"
 					onPress={refetch}
@@ -73,7 +73,7 @@ export default function DictionaryDetailPage(): React.ReactNode {
 	if (!entry) {
 		return (
 			<>
-				{screen}
+				{screenTitle}
 				<NoticeView text={`Could not find the word "${word}".`} />
 			</>
 		)
@@ -87,7 +87,7 @@ export default function DictionaryDetailPage(): React.ReactNode {
 
 	return (
 		<>
-			{screen}
+			{screenTitle}
 			<Container>
 				<Term selectable={true}>{entry.word}</Term>
 				<Markdown

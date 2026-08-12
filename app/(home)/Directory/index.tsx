@@ -131,7 +131,7 @@ export default function DirectoryPage(): React.ReactNode {
 
 	return (
 		<>
-			<Stack.Screen options={{title: params.queryParam ?? 'Directory'}} />
+			<Stack.Title>{params.queryParam ?? 'Directory'}</Stack.Title>
 			<DirectoryView />
 		</>
 	)
