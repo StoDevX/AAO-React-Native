@@ -66,7 +66,7 @@ const SolidBadgeExamples = (): React.ReactNode => (
 export default function BadgeLibraryPage(): React.ReactNode {
 	return (
 		<>
-			<Stack.Screen options={{title: 'Badges'}} />
+			<Stack.Title>Badges</Stack.Title>
 			<LibraryWrapper>
 				<>
 					<OutlineBadgeExamples />

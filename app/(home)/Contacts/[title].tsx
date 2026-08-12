@@ -62,12 +62,12 @@ export default function ContactsDetailPage(): React.ReactNode {
 	// Set from the route param immediately, then from the resolved contact
 	// once it loads -- so the header never falls back to the raw route name
 	// while loading, erroring, or failing to find the contact.
-	let screen = <Stack.Screen options={{title: contact?.title ?? title}} />
+	let screenTitle = <Stack.Title>{contact?.title ?? title}</Stack.Title>
 
 	if (isLoading) {
 		return (
 			<>
-				{screen}
+				{screenTitle}
 				<LoadingView />
 			</>
 		)
@@ -76,7 +76,7 @@ export default function ContactsDetailPage(): React.ReactNode {
 	if (error) {
 		return (
 			<>
-				{screen}
+				{screenTitle}
 				<NoticeView
 					buttonText="Try Again"
 					onPress={refetch}
@@ -91,7 +91,7 @@ export default function ContactsDetailPage(): React.ReactNode {
 	if (!contact) {
 		return (
 			<>
-				{screen}
+				{screenTitle}
 				<NoticeView text={`Could not find contact "${title}".`} />
 			</>
 		)
@@ -113,7 +113,7 @@ export default function ContactsDetailPage(): React.ReactNode {
 
 	return (
 		<>
-			{screen}
+			{screenTitle}
 			<ScrollView contentInsetAdjustmentBehavior="automatic">
 				{headerImage ? (
 					<Image resizeMode="cover" source={headerImage} style={styles.image} />

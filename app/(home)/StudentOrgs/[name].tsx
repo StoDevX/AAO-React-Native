@@ -40,12 +40,12 @@ export default function StudentOrgsDetailPage(): React.ReactNode {
 	let {name} = useLocalSearchParams<{name: string}>()
 	let {data: org, isLoading, error, refetch} = useQuery(orgByNameOptions(name))
 
-	let screen = <Stack.Screen options={{title: org?.name ?? name}} />
+	let screenTitle = <Stack.Title>{org?.name ?? name}</Stack.Title>
 
 	if (isLoading) {
 		return (
 			<>
-				{screen}
+				{screenTitle}
 				<LoadingView />
 			</>
 		)
@@ -54,7 +54,7 @@ export default function StudentOrgsDetailPage(): React.ReactNode {
 	if (error) {
 		return (
 			<>
-				{screen}
+				{screenTitle}
 				<NoticeView
 					buttonText="Try Again"
 					onPress={refetch}
@@ -69,7 +69,7 @@ export default function StudentOrgsDetailPage(): React.ReactNode {
 	if (!org) {
 		return (
 			<>
-				{screen}
+				{screenTitle}
 				<NoticeView text={`Could not find student org "${name}".`} />
 			</>
 		)
@@ -88,7 +88,7 @@ export default function StudentOrgsDetailPage(): React.ReactNode {
 
 	return (
 		<>
-			{screen}
+			{screenTitle}
 			<ScrollView contentInsetAdjustmentBehavior="automatic">
 				<TableView>
 					<Text selectable={true} style={styles.name}>

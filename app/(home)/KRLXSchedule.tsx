@@ -25,7 +25,7 @@ export default function KRLXSchedulePage(): React.ReactNode {
 
 	return (
 		<>
-			<Stack.Screen options={{title: 'KRLX Schedule'}} />
+			<Stack.Title>KRLX Schedule</Stack.Title>
 			<CccCalendarView
 				onPressEvent={onPressEvent}
 				poweredBy={KRLX_POWERED_BY}

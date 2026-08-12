@@ -430,7 +430,7 @@ export default function RedditPostDetailPage(): React.ReactNode {
 
 	return (
 		<>
-			<Stack.Screen options={{title: communityName}} />
+			<Stack.Title>{communityName}</Stack.Title>
 			<RedditPostDetailLoader />
 		</>
 	)

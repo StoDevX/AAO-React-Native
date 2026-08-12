@@ -289,7 +289,7 @@ let styles = StyleSheet.create({
 export default function CourseSearchResultsPage(): React.ReactNode {
 	return (
 		<>
-			<Stack.Screen options={{title: 'Course Catalog'}} />
+			<Stack.Title>Course Catalog</Stack.Title>
 			<CourseSearchResultsView />
 		</>
 	)
