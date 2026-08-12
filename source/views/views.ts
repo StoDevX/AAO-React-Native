@@ -141,7 +141,6 @@ export const AllViews = (): Array<ViewType> => {
 			title: 'Student Orgs',
 			icon: 'person.3.fill',
 			gradient: c.sageGradient,
-			disabled: true,
 		},
 		{
 			type: 'view',

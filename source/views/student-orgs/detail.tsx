@@ -8,9 +8,6 @@ import {openUrl} from '@frogpond/open-url'
 import {sendEmail} from '../../components/send-email'
 import {showNameOrEmail} from './util'
 import {decode} from '@frogpond/html-lib'
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
-import {RouteProp, useRoute} from '@react-navigation/native'
-import {RootStackParamList} from '../../navigation/types'
 
 const styles = StyleSheet.create({
 	name: {
@@ -35,20 +32,13 @@ const styles = StyleSheet.create({
 	},
 })
 
-export const NavigationKey = 'StudentOrgsDetail' as const
+import type {StudentOrgType} from './types'
 
-export const NavigationOptions = (props: {
-	route: RouteProp<RootStackParamList, typeof NavigationKey>
-}): NativeStackNavigationOptions => {
-	let {name} = props.route.params.org
-	return {
-		title: name,
-	}
+type Props = {
+	org: StudentOrgType
 }
 
-let StudentOrgsDetailView = (): React.ReactNode => {
-	let route = useRoute<RouteProp<RootStackParamList, typeof NavigationKey>>()
-
+let StudentOrgsDetailView = ({org}: Props): React.ReactNode => {
 	let {
 		name: orgName,
 		category,
@@ -58,7 +48,7 @@ let StudentOrgsDetailView = (): React.ReactNode => {
 		advisors,
 		description,
 		lastUpdated: orgLastUpdated,
-	} = route.params.org
+	} = org
 
 	return (
 		<ScrollView contentInsetAdjustmentBehavior="automatic">
