@@ -163,9 +163,6 @@ importers:
       '@tanstack/react-query-persist-client':
         specifier: 5.101.4
         version: 5.101.4(@tanstack/react-query@5.101.4)(react@19.2.3)
-      '@turf/boolean-point-in-polygon':
-        specifier: 7.4.0
-        version: 7.4.0
       base-64:
         specifier: 1.0.0
         version: 1.0.0
@@ -2404,9 +2401,6 @@ packages:
 
   '@tsconfig/react-native@3.0.9':
     resolution: {integrity: sha512-+PuvMuxb0OTHo/o04vEQI7LfUoiPH33pePvAH+qxf5ZPsRAVwtespj7LqysOTAYcsmRvjLPjik7V8pIcm84dEQ==}
-
-  '@turf/boolean-point-in-polygon@7.4.0':
-    resolution: {integrity: sha512-GQrHc6WSDHhf32GB/b9AGyOeC05AQ3nGN7ooWTrlCYefKn7X9/2wG9BNexF47AuyDq5jPdOvITVR26BLFWV+mA==}
 
   '@turf/distance@7.4.0':
     resolution: {integrity: sha512-ODkopQDG1m/U6Mx7OMmShncaCvneomwX3lZY1CDA7x40bhDdTTRYP/n/6LicZVyIO4/oK+aXkov4NOtWYthA2g==}
@@ -4775,9 +4769,6 @@ packages:
     resolution: {integrity: sha512-NCrCHhWmnQklfH4MtJMRjZ2a8c80qXeMlQMv2uVp9ISJMTt562SbGd6n2oq0PaPgKm7Z6pL9E2UlLIhC+SHL3w==}
     engines: {node: '>=4.0.0'}
 
-  point-in-polygon-hao@1.2.4:
-    resolution: {integrity: sha512-x2pcvXeqhRHlNRdhLs/tgFapAbSSe86wa/eqmj1G6pWftbEs5aVRJhRGM6FYSUERKu0PjekJzMq0gsI2XyiclQ==}
-
   possible-typed-array-names@1.1.0:
     resolution: {integrity: sha512-/+5VFTchJDoVj3bhoqi6UeymcD00DAwb1nJwamzPvHEszJ4FpF6SNNbUbOS8yI56qHzdV8eK0qEfOSiodkTdxg==}
     engines: {node: '>= 0.4'}
@@ -5184,9 +5175,6 @@ packages:
   restore-cursor@2.0.0:
     resolution: {integrity: sha512-6IzJLuGi4+R14vwagDHX+JrXmPVtPpn4mffDJ1UdR7/Edm87fl6yi8mMBIVvFtJaNTUvjughmW4hwLhRG7gC1Q==}
     engines: {node: '>=4'}
-
-  robust-predicates@3.0.3:
-    resolution: {integrity: sha512-NS3levdsRIUOmiJ8FZWCP7LG3QpJyrs/TE0Zpf1yvZu8cAJJ6QMW92H1c7kWpdIHo8RvmLxN/o2JXTKHp74lUA==}
 
   safe-array-concat@1.1.4:
     resolution: {integrity: sha512-wtZlHyOje6OZTGqAoaDKxFkgRtkF9CnHAVnCHKfuj200wAgL+bSJhdsCD2l0Qx/2ekEXjPWcyKkfGb5CPboslg==}
@@ -7710,14 +7698,6 @@ snapshots:
   '@tsconfig/node16@1.0.4': {}
 
   '@tsconfig/react-native@3.0.9': {}
-
-  '@turf/boolean-point-in-polygon@7.4.0':
-    dependencies:
-      '@turf/helpers': 7.4.0
-      '@turf/invariant': 7.4.0
-      '@types/geojson': 7946.0.16
-      point-in-polygon-hao: 1.2.4
-      tslib: 2.8.1
 
   '@turf/distance@7.4.0':
     dependencies:
@@ -10607,10 +10587,6 @@ snapshots:
 
   pngjs@3.4.0: {}
 
-  point-in-polygon-hao@1.2.4:
-    dependencies:
-      robust-predicates: 3.0.3
-
   possible-typed-array-names@1.1.0: {}
 
   postcss@8.5.25:
@@ -11051,8 +11027,6 @@ snapshots:
     dependencies:
       onetime: 2.0.1
       signal-exit: 3.0.7
-
-  robust-predicates@3.0.3: {}
 
   safe-array-concat@1.1.4:
     dependencies:

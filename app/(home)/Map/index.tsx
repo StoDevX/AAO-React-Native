@@ -3,17 +3,19 @@ import {StyleSheet, View, type NativeSyntheticEvent} from 'react-native'
 import {useFocusEffect, useRouter} from 'expo-router'
 import {
 	Camera,
+	GeoJSONSource,
+	Layer,
 	Map,
 	Marker,
 	UserLocation,
 	type CameraRef,
-	type PressEvent,
+	type PressEventWithFeatures,
 } from '@maplibre/maplibre-react-native'
 import {useQuery} from '@tanstack/react-query'
 import * as c from '@frogpond/colors'
 import {NoticeView} from '@frogpond/notice'
 
-import {lookupBuildingByCoordinates} from '../../../source/features/map/lib/lookup-building'
+import {toBuildingFootprints} from '../../../source/features/map/lib/building-footprints'
 import {mapDataOptions} from '../../../source/features/map/query'
 import {useMapSelection} from '../../../source/features/map/selection-context'
 import type {Coordinate, Point} from '../../../source/features/map/types'
@@ -29,11 +31,22 @@ const MARKER_SIZE = 20
 const MIN_TOUCH_TARGET = 44
 const MARKER_HIT_SLOP = (MIN_TOUCH_TARGET - MARKER_SIZE) / 2
 
+/// Enough to read as "these are the campus buildings" over whatever the
+/// basemap draws, without burying it.
+const FOOTPRINT_OPACITY = 0.15
+const FOOTPRINT_SELECTED_OPACITY = 0.45
+const FOOTPRINT_LINE_WIDTH = 1
+
 export default function MapPage(): React.ReactNode {
 	let router = useRouter()
 	let cameraRef = React.useRef<CameraRef>(null)
 	let {selectedBuildingId, selectBuilding} = useMapSelection()
 	let {data: buildings = [], error} = useQuery(mapDataOptions)
+
+	let footprints = React.useMemo(
+		() => toBuildingFootprints(buildings),
+		[buildings],
+	)
 
 	// useFocusEffect, not useEffect: the picker is the map's default companion,
 	// so dismissing the info card should land the user back on the picker
@@ -44,25 +57,27 @@ export default function MapPage(): React.ReactNode {
 		}, [router]),
 	)
 
-	let handlePress = React.useCallback(
-		(event: NativeSyntheticEvent<PressEvent>) => {
-			// MapLibre hands back the coordinate directly, where @rnmapbox wrapped
-			// it in a GeoJSON point feature -- and its LngLat is structurally our
-			// Coordinate, so this needs no assertion either.
-			let hit = lookupBuildingByCoordinates(event.nativeEvent.lngLat, buildings)
-			if (!hit) {
+	// The source hands back whichever footprint was under the touch, so the
+	// tap resolves against exactly the geometry the user can see. MapLibre also
+	// applies a 44pt hitbox to it by default.
+	let handleBuildingPress = React.useCallback(
+		(event: NativeSyntheticEvent<PressEventWithFeatures>) => {
+			// GeoJSON properties are typed as `any` by the spec's types, so this
+			// is the boundary where that gets narrowed back to something real.
+			let id: unknown = event.nativeEvent.features[0]?.properties?.buildingId
+			if (typeof id !== 'string') {
 				return
 			}
-			selectBuilding(hit.id)
+			selectBuilding(id)
 			// `replace`, so a map tap doesn't strand a stale picker beneath the
 			// info card: with `push`, closing the card would show the picker as
 			// it was before the tap.
 			router.replace({
 				pathname: '/Map/BuildingInfo',
-				params: {buildingId: hit.id},
+				params: {buildingId: id},
 			})
 		},
-		[buildings, router, selectBuilding],
+		[router, selectBuilding],
 	)
 
 	let selectedPoint = React.useMemo(() => {
@@ -95,7 +110,6 @@ export default function MapPage(): React.ReactNode {
 			<Map
 				logo={false}
 				mapStyle={MAP_STYLE_URL}
-				onPress={handlePress}
 				style={StyleSheet.absoluteFill}
 			>
 				<Camera
@@ -103,6 +117,37 @@ export default function MapPage(): React.ReactNode {
 					initialViewState={{center: ORIGINAL_CENTER, zoom: DEFAULT_ZOOM}}
 				/>
 				<UserLocation />
+
+				<GeoJSONSource
+					data={footprints}
+					id="campus-buildings"
+					onPress={handleBuildingPress}
+				>
+					<Layer
+						id="campus-buildings-fill"
+						style={{fillColor: c.gold, fillOpacity: FOOTPRINT_OPACITY}}
+						type="fill"
+					/>
+					<Layer
+						id="campus-buildings-outline"
+						style={{lineColor: c.gold, lineWidth: FOOTPRINT_LINE_WIDTH}}
+						type="line"
+					/>
+					{/* A second fill rather than a data-driven expression on the first:
+					    the filter is one comparison against one id, and reading it as
+					    "the selected building is painted like this" beats decoding a
+					    nested case expression. */}
+					<Layer
+						filter={['==', ['get', 'buildingId'], selectedBuildingId ?? '']}
+						id="campus-buildings-selected"
+						style={{
+							fillColor: c.goldenrod,
+							fillOpacity: FOOTPRINT_SELECTED_OPACITY,
+						}}
+						type="fill"
+					/>
+				</GeoJSONSource>
+
 				{selectedPoint ? (
 					<Marker
 						key={selectedPoint.id}
