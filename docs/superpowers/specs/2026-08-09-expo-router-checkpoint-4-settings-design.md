@@ -152,4 +152,8 @@ object/array params in the URL.
   checkpoint 2 left them.
 - Any screen's actual behavior/UI changing beyond the navigation
   call-site swap and the new gear-icon entry point — this is a
-  routing-layer migration, same ground rule as checkpoint 2.
+  routing-layer migration, same ground rule as checkpoint 2. PR 6
+  (Debug) is a human-approved exception: it fixes two pre-existing
+  bugs, real Redux keyPath slicing and API Test's wrong-data
+  drill-down, tracked in
+  `docs/superpowers/plans/2026-08-09-expo-router-settings-debug.md`.
