@@ -1,13 +1,17 @@
 import * as React from 'react'
 import {Stack} from 'expo-router'
 
-import {CarletonLDCMenuScreen} from '../../source/views/menus'
+import {BonAppHostedMenu} from '../../source/features/menus/menu-bonapp'
 
 export default function CarletonLDCMenuPage(): React.ReactNode {
 	return (
 		<>
 			<Stack.Title>LDC</Stack.Title>
-			<CarletonLDCMenuScreen />
+			<BonAppHostedMenu
+				cafe="ldc"
+				loadingMessage={['Tracking down empty seats…']}
+				name="LDC"
+			/>
 		</>
 	)
 }

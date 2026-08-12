@@ -86,7 +86,7 @@ run = "pretty-quick"
 [tasks.tsc]
 description = "Run TypeScript compiler"
 run = "tsc --noEmit"
-# source/views/faqs/local-faqs.ts imports docs/faqs.json, which bundle-data
+# source/features/faqs/local-faqs.ts imports docs/faqs.json, which bundle-data
 # generates, so tsc cannot run against a clean checkout without it.
 depends = ["bundle-data"]
 

@@ -1,9 +1,11 @@
 import * as React from 'react'
-import {Stack, useLocalSearchParams} from 'expo-router'
+import {Stack, useLocalSearchParams, useRouter} from 'expo-router'
 import {useQuery} from '@tanstack/react-query'
+import {useMomentTimer} from '@frogpond/timer'
+import {timezone} from '@frogpond/constants'
 
-import {BuildingHoursDetailView} from '../../../source/views/building-hours'
-import {buildingByNameOptions} from '../../../source/views/building-hours/query'
+import {BuildingDetail} from '../../../source/features/building-hours/detail/building'
+import {buildingByNameOptions} from '../../../source/features/building-hours/query'
 import {LoadingView, NoticeView} from '@frogpond/notice'
 import {useAppDispatch, useAppSelector} from '../../../source/redux/hooks'
 import {
@@ -13,6 +15,7 @@ import {
 
 export default function BuildingHoursDetailPage(): React.ReactNode {
 	let dispatch = useAppDispatch()
+	let router = useRouter()
 
 	let {name} = useLocalSearchParams<{name: string}>()
 	let {
@@ -24,9 +27,20 @@ export default function BuildingHoursDetailPage(): React.ReactNode {
 
 	let favorites = useAppSelector(selectFavoriteBuildings)
 
+	let {now} = useMomentTimer({intervalMs: 60000, timezone: timezone()})
+
 	let onFavorite = React.useCallback(
 		() => dispatch(toggleFavoriteBuilding(name)),
 		[dispatch, name],
+	)
+
+	let reportProblem = React.useCallback(
+		() =>
+			router.push({
+				pathname: '/BuildingHoursProblemReport',
+				params: {name},
+			}),
+		[name, router],
 	)
 
 	let favorited = favorites.includes(name)
@@ -79,7 +93,11 @@ export default function BuildingHoursDetailPage(): React.ReactNode {
 	return (
 		<>
 			{screen}
-			<BuildingHoursDetailView building={building} />
+			<BuildingDetail
+				info={building}
+				now={now}
+				onProblemReport={reportProblem}
+			/>
 		</>
 	)
 }

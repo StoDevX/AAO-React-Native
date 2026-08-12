@@ -12,11 +12,11 @@ import {LoadingView, NoticeView} from '@frogpond/notice'
 import {
 	STOLAF_POWERED_BY,
 	NORTHFIELD_POWERED_BY,
-} from '../../source/views/calendar'
+} from '../../source/features/calendar/constants'
 import {
 	KSTO_POWERED_BY,
 	KRLX_POWERED_BY,
-} from '../../source/views/streaming/radio/schedule'
+} from '../../source/features/streaming/radio/constants'
 
 type EventSource = 'stolaf' | 'northfield' | 'ksto-schedule' | 'krlx-schedule'
 

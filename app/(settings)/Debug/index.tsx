@@ -1,7 +1,7 @@
 import * as React from 'react'
 import {Stack, useNavigation} from 'expo-router'
 
-import {DebugKeyPathScreen} from '../../../source/views/settings/screens/debug/route-screen'
+import {DebugKeyPathScreen} from '../../../source/features/settings/screens/debug/route-screen'
 
 export default function DebugPage(): React.ReactNode {
 	const navigation = useNavigation()
