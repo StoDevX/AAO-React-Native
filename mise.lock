@@ -5,7 +5,7 @@ version = "1.17.0"
 backend = "gem:cocoapods"
 
 [[tools."gem:bundler"]]
-version = "4.0.10"
+version = "4.0.18"
 backend = "gem:bundler"
 
 [[tools."gem:fastlane"]]
@@ -123,15 +123,7 @@ url_api = "https://api.github.com/repos/pnpm/pnpm/releases/assets/500142371"
 provenance = "github-attestations"
 
 [[tools.ruby]]
-version = "3.4.9"
-backend = "core:ruby"
-
-[tools.ruby."platforms.windows-x64"]
-checksum = "sha256:4375268618b61dadf53bf8e54beaca74ea30580c90d3c47ea9f2a134bd3e494e"
-url = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-3.4.9-1/rubyinstaller-3.4.9-1-x64.7z"
-
-[[tools.ruby]]
-version = "3.4.9"
+version = "3.4.10"
 backend = "core:ruby"
 
 [tools.ruby.options]
@@ -141,33 +133,41 @@ ruby_build_repo = "https://github.com/rbenv/ruby-build.git"
 ruby_install = "false"
 
 [tools.ruby."platforms.linux-arm64"]
-checksum = "sha256:a8692a4ee561da41cc546998515c85ee863204b3898e326fb8ddb0e0f9e9f08b"
-url = "https://github.com/jdx/ruby/releases/download/3.4.9-5/ruby-3.4.9.arm64_linux.tar.gz"
+checksum = "sha256:c0a3e9f1d7847e66b044aeeab394ba5d41f63c3da7ad99017c4b2578e31b205a"
+url = "https://github.com/jdx/ruby/releases/download/3.4.10-2/ruby-3.4.10.arm64_linux.tar.gz"
 provenance = "github-attestations"
 
 [tools.ruby."platforms.linux-arm64-musl"]
-checksum = "sha256:a8692a4ee561da41cc546998515c85ee863204b3898e326fb8ddb0e0f9e9f08b"
-url = "https://github.com/jdx/ruby/releases/download/3.4.9-5/ruby-3.4.9.arm64_linux.tar.gz"
+checksum = "sha256:c0a3e9f1d7847e66b044aeeab394ba5d41f63c3da7ad99017c4b2578e31b205a"
+url = "https://github.com/jdx/ruby/releases/download/3.4.10-2/ruby-3.4.10.arm64_linux.tar.gz"
 provenance = "github-attestations"
 
 [tools.ruby."platforms.linux-x64"]
-checksum = "sha256:737594aed0caa74c4a79c578619f5b2d6ded4e5960ce19c3ac0c299a99ac7fe2"
-url = "https://github.com/jdx/ruby/releases/download/3.4.9-5/ruby-3.4.9.x86_64_linux.tar.gz"
+checksum = "sha256:81ce58b056ee2765e46785b4c6befb9852d9c3e50ff9385e7eb1cf3e0314d0bd"
+url = "https://github.com/jdx/ruby/releases/download/3.4.10-2/ruby-3.4.10.x86_64_linux.tar.gz"
 provenance = "github-attestations"
 
 [tools.ruby."platforms.linux-x64-musl"]
-checksum = "sha256:737594aed0caa74c4a79c578619f5b2d6ded4e5960ce19c3ac0c299a99ac7fe2"
-url = "https://github.com/jdx/ruby/releases/download/3.4.9-5/ruby-3.4.9.x86_64_linux.tar.gz"
+checksum = "sha256:81ce58b056ee2765e46785b4c6befb9852d9c3e50ff9385e7eb1cf3e0314d0bd"
+url = "https://github.com/jdx/ruby/releases/download/3.4.10-2/ruby-3.4.10.x86_64_linux.tar.gz"
 provenance = "github-attestations"
 
 [tools.ruby."platforms.macos-arm64"]
-checksum = "sha256:1633218d718e30f154eeb73697409558abbc34eb7408d64277a62a1da33e4652"
-url = "https://github.com/jdx/ruby/releases/download/3.4.9-5/ruby-3.4.9.macos.tar.gz"
+checksum = "sha256:5aac8b6e16b0938a14f6d23346b5487020d1fea6b5856a33392e5eb37fa1ef62"
+url = "https://github.com/jdx/ruby/releases/download/3.4.10-2/ruby-3.4.10.macos.tar.gz"
 provenance = "github-attestations"
 
 [tools.ruby."platforms.macos-x64"]
-checksum = "sha256:7bb4d4f5e807cc27251d14d9d6086d182c5b25875191e44ab15b709cd7a7dd9c"
-url = "https://cache.ruby-lang.org/pub/ruby/3.4/ruby-3.4.9.tar.gz"
+checksum = "sha256:ecee2d072a14f2d14347dd56dfd8fe5c3130abf5117bfaacbda0f4ef9cc429ec"
+url = "https://cache.ruby-lang.org/pub/ruby/3.4/ruby-3.4.10.tar.gz"
+
+[[tools.ruby]]
+version = "3.4.10"
+backend = "core:ruby"
+
+[tools.ruby."platforms.windows-x64"]
+checksum = "sha256:89e3c5e235ac88b9b7e8daaf639eaaab74d7c470667354f6bf0f7432f3191ebb"
+url = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-3.4.10-1/rubyinstaller-3.4.10-1-x64.7z"
 
 [[tools.sentry]]
 version = "3.6.2"
