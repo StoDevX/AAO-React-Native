@@ -128,6 +128,73 @@ proven on 13 ordinary groups first.
   process (fresh implementer, task review, fix loop) — the stack changes
   how PRs relate to each other, not how each one gets built.
 
+## Standing decision: list → detail params (every group with a detail screen)
+
+expo-router only accepts **string** route params (confirmed against Expo's
+own docs and migration guidance) — unlike React Navigation, which passes
+whatever JS value you hand it, including whole objects, by reference. Most
+of the remaining groups have exactly this shape: a list screen currently
+does `navigation.navigate('XDetail', {x: fullObject})`.
+
+**Decision (Wren, applies to every group with this shape): re-fetch by key,
+via the React Query cache.** The list screen passes a stable identifying
+field (whatever it already uses as its `keyExtractor`) as a string route
+param. The detail screen re-runs the *same* `useQuery(...)` the list
+screen uses — React Query dedupes by query key, so this resolves from
+cache instantly, no extra network round-trip — then finds the matching
+item client-side. This produces real, clean, shareable URLs (e.g.
+`/Contacts/John-Doe`) instead of a JSON blob in the query string, which
+Expo's own docs actively discourage. Each group's detail screen needs to
+handle a genuinely new state the old code never had to: "query still
+loading" and "item not found" (the old code always received the object
+directly, so these states were structurally impossible before).
+
+## Standing requirement: screenshots as a PR comment (every group PR)
+
+Every group PR's plan must end with attaching visual evidence as a PR
+comment, not just a local boot-verification screenshot the implementer
+looks at and discards:
+
+- A screenshot of the home screen showing that group's tile now present
+  (and no unrelated tile changes).
+- A screenshot of the group's own screen — one per tab, if the group is a
+  tabbed/nested-navigator case (News, Menus, Streaming).
+- Use the `attach-github-assets` skill (`upload.sh`) to upload each
+  screenshot and get a `user-attachments/assets` URL, then post them as one
+  PR comment via `gh pr comment <number> --body "..."` with each image as
+  `![...](url)`.
+- **Do not delete the SDD workspace (or otherwise clean up the
+  screenshots) until after they're attached to the PR.** This was missed
+  for PR 1 (More) — the workspace was deleted right after the task review,
+  before anyone asked for screenshots on the PR, and they had to be
+  regenerated from scratch. Every later group PR's plan should sequence
+  this explicitly: boot-verify → keep screenshots → open the PR → attach
+  screenshots → then clean up.
+
+## Findings from PR 1 (More), applicable to every later group PR
+
+- **Type fork between navigators.** Each group's existing `NavigationOptions`
+  export is typed against `@react-navigation/native-stack`'s
+  `NativeStackNavigationOptions`, still required by `source/navigation/routes.tsx`
+  (not deleted until checkpoint 7). expo-router forks its own,
+  structurally-different `NativeStackNavigationOptions`. Every wrapper route
+  file needs `NavigationOptions as React.ComponentProps<typeof
+  Stack.Screen>['options']` at the point it's passed to `Stack.Screen` — a
+  real cast to a concrete type, not `any`. This now has three group PRs'
+  worth of precedent (once Task 2 or 3 hits it again); consider hoisting it
+  into a one-line shared helper at that point rather than repeating the
+  multi-line inline comment + cast in every wrapper — not worth building
+  for a single use case, worth it by the second or third.
+- **Network-dependent screens can't be fully verified in a sandboxed
+  environment.** Any group whose screen fetches live data (most of them)
+  will hit this the same way More did — the sandbox has no outbound network
+  access, so a "Loading…" state is the most a sandboxed boot-verification
+  screenshot can show. The existing XCUITest suite (`uitests/`) is a
+  legitimate substitute for verifying the *navigation* path (real touch
+  events, not deep links), but not for verifying that fetched content
+  actually renders. Flag every group PR with a live data dependency for a
+  quick real-device spot-check before it's considered fully validated.
+
 ## Explicitly out of scope for checkpoint 2
 
 - The Settings stack and Component Library stack (checkpoints 4-5 per the
