@@ -238,37 +238,37 @@ type Palette = {
 
 const SEVERITY_MAP: Record<FaqSeverity, Palette> = {
 	notice: {
-		background: c.white as ColorValue,
+		background: c.secondarySystemGroupedBackground as ColorValue,
 		border: c.separator as ColorValue,
 		text: c.label as ColorValue,
 		secondaryText: c.secondaryLabel as ColorValue,
 		link: c.link as ColorValue,
 		icon: 'information-circle',
 		iconColor: c.systemBlue as ColorValue,
-		dismissBackground: c.secondarySystemBackground as ColorValue,
+		dismissBackground: c.tertiarySystemGroupedBackground as ColorValue,
 		dismissText: c.systemBlue as ColorValue,
 	},
 	info: {
-		background: '#f0f9ff',
-		border: '#b6e0fe',
-		text: '#0f172a',
-		secondaryText: '#0f172a',
-		link: '#075985',
+		background: c.secondarySystemGroupedBackground as ColorValue,
+		border: c.systemBlue as ColorValue,
+		text: c.label as ColorValue,
+		secondaryText: c.secondaryLabel as ColorValue,
+		link: c.link as ColorValue,
 		icon: 'help-circle',
-		iconColor: '#075985',
-		dismissBackground: '#dbeafe',
-		dismissText: '#1d4ed8',
+		iconColor: c.systemBlue as ColorValue,
+		dismissBackground: c.tertiarySystemGroupedBackground as ColorValue,
+		dismissText: c.systemBlue as ColorValue,
 	},
 	alert: {
-		background: '#fef2f2',
-		border: '#fecaca',
-		text: '#7f1d1d',
-		secondaryText: '#7f1d1d',
-		link: '#b91c1c',
+		background: c.secondarySystemGroupedBackground as ColorValue,
+		border: c.systemRed as ColorValue,
+		text: c.label as ColorValue,
+		secondaryText: c.secondaryLabel as ColorValue,
+		link: c.systemRed as ColorValue,
 		icon: 'alert-circle',
-		iconColor: '#b91c1c',
-		dismissBackground: '#fee2e2',
-		dismissText: '#b91c1c',
+		iconColor: c.systemRed as ColorValue,
+		dismissBackground: c.tertiarySystemGroupedBackground as ColorValue,
+		dismissText: c.systemRed as ColorValue,
 	},
 }
 
@@ -276,6 +276,7 @@ type PresentationProps = {
 	faq: Faq
 	style?: StyleProp<ViewStyle>
 	onPress?: () => void
+	onDismiss?: () => void
 }
 
 /**
@@ -286,6 +287,7 @@ export function FaqBannerPresentation({
 	faq,
 	style,
 	onPress,
+	onDismiss,
 }: PresentationProps): React.ReactNode {
 	let palette = buildPalette(faq)
 
@@ -315,7 +317,18 @@ export function FaqBannerPresentation({
 					{faq.bannerTitle ?? faq.question}
 				</Text>
 				{faq.dismissable ? (
-					<View
+					<Pressable
+						accessibilityElementsHidden={!onDismiss}
+						accessibilityLabel={onDismiss ? 'Dismiss FAQ banner' : undefined}
+						accessibilityRole={onDismiss ? 'button' : undefined}
+						hitSlop={8}
+						importantForAccessibility={
+							onDismiss ? 'yes' : 'no-hide-descendants'
+						}
+						onPress={(e: GestureResponderEvent) => {
+							e.stopPropagation()
+							onDismiss?.()
+						}}
 						style={[
 							styles.dismissButton,
 							{backgroundColor: palette.dismissBackground},
@@ -324,7 +337,7 @@ export function FaqBannerPresentation({
 						<Text style={[styles.dismissText, {color: palette.dismissText}]}>
 							×
 						</Text>
-					</View>
+					</Pressable>
 				) : null}
 			</View>
 			{faq.bannerText ? (

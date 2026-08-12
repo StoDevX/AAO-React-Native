@@ -1,6 +1,7 @@
 import * as Sentry from '@sentry/react-native'
 import * as Application from 'expo-application'
 import * as Device from 'expo-device'
+import {IS_PRODUCTION} from '@frogpond/constants'
 
 type SubmitReportArgs = {
 	message: string
@@ -8,7 +9,11 @@ type SubmitReportArgs = {
 	email?: string
 }
 
-export function submitReport(args: SubmitReportArgs): void {
+export function submitReport(args: SubmitReportArgs): boolean {
+	if (!IS_PRODUCTION) {
+		return false
+	}
+
 	let {message, name, email} = args
 
 	Sentry.captureFeedback({
@@ -25,4 +30,6 @@ export function submitReport(args: SubmitReportArgs): void {
 			buildNumber: Application.nativeBuildVersion,
 		},
 	})
+
+	return true
 }

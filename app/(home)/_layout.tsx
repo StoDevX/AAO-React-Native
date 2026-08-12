@@ -3,7 +3,7 @@ import {Stack} from 'expo-router'
 
 export default function HomeLayout(): React.ReactNode {
 	return (
-		<Stack>
+		<Stack screenOptions={{headerBackButtonDisplayMode: 'minimal'}}>
 			<Stack.Screen name="Menus" options={{title: 'Menus'}} />
 			<Stack.Screen
 				name="Streaming Media"
