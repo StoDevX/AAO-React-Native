@@ -15,6 +15,9 @@ strictPeerDependencies: false
 # set peer dependency suffixes to use version-only identifiers (name@version) instead of full dep paths
 dedupePeers: true
 
+publicHoistPattern:
+  - expo-module-scripts
+
 # theoretically, this configures pnpm to avoid installing optionalDependencies for
 # systems other than the current one
 supportedArchitectures:
@@ -60,6 +63,15 @@ minimumReleaseAgeExclude:
   - 'expo-constants@57.0.9'
   - 'expo-modules-core@57.0.9'
   - 'expo@57.0.10'
+  # same Expo SDK 57 release train as the block above, published within
+  # days of them (2026-08-06); excluded for the same reason.
+  # remove after 2026-08-09, once they clear the 3-day window on their own
+  - 'expo-router@57.0.11'
+  - 'expo-symbols@57.0.2'
+  # same Expo SDK 57 release train as the block above, published within
+  # days of them (2026-08-06); excluded for the same reason.
+  # remove once it clears the minimumReleaseAge window on its own
+  - 'babel-preset-expo@57.0.6'
 
 # dependency version overrides (used to live in package.json)
 overrides:

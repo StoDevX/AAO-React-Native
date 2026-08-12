@@ -81,6 +81,10 @@ const config: ExpoConfig = {
 	icon: variant.icon,
 	userInterfaceStyle: 'automatic',
 
+	experiments: {
+		typedRoutes: true,
+	},
+
 	// No `orientation` here. Its three presets are portrait
 	// (portrait + upside-down), landscape (both landscapes) and default (all
 	// four); we allow all four *except* upside-down, which none of them
@@ -184,6 +188,7 @@ const config: ExpoConfig = {
 				},
 			},
 		],
+		'expo-router',
 		'@react-native-vector-icons/entypo',
 		'@react-native-vector-icons/ionicons',
 		'@react-native-vector-icons/material-design-icons',

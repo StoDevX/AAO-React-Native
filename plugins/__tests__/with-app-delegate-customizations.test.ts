@@ -30,9 +30,8 @@ describe('patchAppDelegate', () => {
 		expect(patchAppDelegate(STOCK)).toContain('--reset-state')
 	})
 
-	it('registers the module name the JS side registers', () => {
-		expect(patchAppDelegate(STOCK)).toContain('withModuleName: "AllAboutOlaf"')
-		expect(patchAppDelegate(STOCK)).not.toContain('withModuleName: "main"')
+	it('leaves the default module name alone, matching what expo-router registers', () => {
+		expect(patchAppDelegate(STOCK)).toContain('withModuleName: "main"')
 	})
 
 	it('prefers an injected jsbundle over Metro in debug builds', () => {
@@ -67,11 +66,6 @@ describe('patchAppDelegate', () => {
 	it('throws when the import anchor is missing', () => {
 		let withoutImport = STOCK.replace('internal import Expo', '')
 		expect(() => patchAppDelegate(withoutImport)).toThrow(/import Expo/u)
-	})
-
-	it('throws when the module-name anchor is missing', () => {
-		let withoutModuleName = STOCK.replace('withModuleName: "main"', '')
-		expect(() => patchAppDelegate(withoutModuleName)).toThrow(/withModuleName/u)
 	})
 
 	it('throws when the bundleURL anchor is missing', () => {

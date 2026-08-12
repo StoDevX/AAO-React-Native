@@ -98,9 +98,9 @@ jobs:
             ios/AllAboutOlaf/main.jsbundle
             ios/AllAboutOlaf/main.jsbundle.map
             ios/assets/
-          key: jsbundle/e=${{ env.cache_epoch }}/host=ubuntu@24.04/target=ios/ref=${{ github.head_ref || github.ref_name }}/hash=${{ hashFiles('mise.toml', 'package.json', 'pnpm-lock.yaml', 'pnpm-workspace.yaml', 'tsconfig.json', 'babel.config.js', 'index.js', 'data/**', 'images/**', 'modules/**.ts', 'modules/**.tsx', 'source/**.ts', 'source/**.tsx') }}
+          key: jsbundle/e=${{ env.cache_epoch }}/host=ubuntu@24.04/target=ios/ref=${{ github.head_ref || github.ref_name }}/hash=${{ hashFiles('mise.toml', 'package.json', 'pnpm-lock.yaml', 'pnpm-workspace.yaml', 'tsconfig.json', 'babel.config.js', 'index.js', 'data/**', 'images/**', 'modules/**.ts', 'modules/**.tsx', 'source/**.ts', 'source/**.tsx', 'app/**.ts', 'app/**.tsx') }}
           restore-keys: |
-            jsbundle/e=${{ env.cache_epoch }}/host=ubuntu@24.04/target=ios/ref=master/hash=${{ hashFiles('mise.toml', 'package.json', 'pnpm-lock.yaml', 'pnpm-workspace.yaml', 'tsconfig.json', 'babel.config.js', 'index.js', 'data/**', 'images/**', 'modules/**.ts', 'modules/**.tsx', 'source/**.ts', 'source/**.tsx') }}
+            jsbundle/e=${{ env.cache_epoch }}/host=ubuntu@24.04/target=ios/ref=master/hash=${{ hashFiles('mise.toml', 'package.json', 'pnpm-lock.yaml', 'pnpm-workspace.yaml', 'tsconfig.json', 'babel.config.js', 'index.js', 'data/**', 'images/**', 'modules/**.ts', 'modules/**.tsx', 'source/**.ts', 'source/**.tsx', 'app/**.ts', 'app/**.tsx') }}
 
       - uses: jdx/mise-action@7e36c90d9ab29c415a2384db3006f3ec8a8cc654 # v4.2.4
         if: steps.jsbundle-cache.outputs.cache-matched-key == ''

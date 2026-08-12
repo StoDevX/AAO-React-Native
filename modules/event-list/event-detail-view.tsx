@@ -2,14 +2,11 @@ import * as React from 'react'
 import {ScrollView} from 'react-native'
 import {Section, TableView} from '@frogpond/tableview'
 import {ButtonCell, SelectableCell} from '@frogpond/tableview/cells'
-import {ShareButton} from '@frogpond/navigation-buttons'
 import {ListFooter} from '@frogpond/lists'
-import {getTimes, shareEvent} from './calendar-util'
+import {getTimes} from './calendar-util'
 import {AddToCalendar} from '@frogpond/add-to-device-calendar'
-import {RouteProp, useRoute} from '@react-navigation/native'
-import {RootStackParamList} from '../../source/navigation/types'
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
-import {NavigationKey} from './event-detail-base'
+import type {EventType} from '@frogpond/event-type'
+import type {PoweredBy} from './types'
 
 function MaybeSection({header, content}: {header: string; content: string}) {
 	return content ? (
@@ -19,22 +16,12 @@ function MaybeSection({header, content}: {header: string; content: string}) {
 	) : null
 }
 
-export const NavigationOptions = (props: {
-	route: RouteProp<RootStackParamList, typeof NavigationKey>
-}): NativeStackNavigationOptions => {
-	let {event} = props.route.params
-	return {
-		title: event.title,
-		headerRight: (p) => (
-			<ShareButton {...p} onPress={() => shareEvent(event)} />
-		),
-	}
+type Props = {
+	event: EventType
+	poweredBy: PoweredBy
 }
 
-export function EventDetail(): React.ReactNode {
-	let route = useRoute<RouteProp<RootStackParamList, typeof NavigationKey>>()
-	let {event, poweredBy} = route.params
-
+export function EventDetail({event, poweredBy}: Props): React.ReactNode {
 	return (
 		<ScrollView contentInsetAdjustmentBehavior="automatic">
 			<TableView>

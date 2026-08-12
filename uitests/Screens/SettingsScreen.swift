@@ -65,53 +65,6 @@ struct SettingsScreen: Screen {
 		return self
 	}
 
-	/// Put the icon back to default if an earlier attempt left it changed.
-	///
-	/// The alternate icon belongs to SpringBoard, so it survives the
-	/// `--reset-state` launch that clears UserDefaults and AsyncStorage. A run
-	/// that failed between changing the icon and changing it back leaves the
-	/// next attempt looking at Old Main, and every retry then fails on the
-	/// initial-state assertion below rather than on anything it meant to check.
-	///
-	/// This test is the only one that reads the icon, so it heals itself here
-	/// instead of making the other twelve pay for a reset they do not need.
-	@discardableResult
-	func resetIconToDefaultIfNeeded(springboard: XCUIApplication) -> Self {
-		// A failure between the tap and its alert leaves the alert standing,
-		// and it stops the app reaching idle for every query after it.
-		let strayAlert = springboard.buttons["OK"]
-		if strayAlert.waitForExistence(timeout: 2) {
-			strayAlert.tap()
-		}
-
-		// Scroll first, as every other check here does: the icon cells sit far
-		// enough down Settings that `exists` is false for a cell that is merely
-		// out of view, and this read would then conclude the icon was already
-		// default and leave it changed.
-		let oldMainSelected = app.element(
-			matching: TestIdentifiers.AppIcon.cell("icon_type_old_main", selected: true))
-		scrollUntilExists(oldMainSelected)
-		guard oldMainSelected.waitForExistence(timeout: 2) else {
-			return self
-		}
-
-		return changeIconToDefault()
-			.dismissIconChangeAlert(springboard: springboard)
-	}
-
-	@discardableResult
-	func changeIconToOldMain() -> Self {
-		// The default is Big Ole; the alternate on offer is Old Main.
-		let defaultSelected = app.element(
-			matching: TestIdentifiers.AppIcon.cell("default", selected: true))
-		scrollUntilExists(defaultSelected)
-		XCTAssertTrue(
-			defaultSelected.waitForExistence(timeout: 10),
-			"Default icon should be selected initially")
-		app.element(matching: TestIdentifiers.AppIcon.cell("icon_type_old_main")).tap()
-		return self
-	}
-
 	@discardableResult
 	func dismissIconChangeAlert(springboard: XCUIApplication) -> Self {
 		let iconChangeOK = springboard.buttons["OK"]
@@ -122,40 +75,53 @@ struct SettingsScreen: Screen {
 		return self
 	}
 
-	@discardableResult
-	func checkOldMainSelected() -> Self {
-		let oldMainSelected = app.element(
-			matching: TestIdentifiers.AppIcon.cell("icon_type_old_main", selected: true))
-		scrollUntilExists(oldMainSelected)
-		XCTAssertTrue(
-			oldMainSelected.waitForExistence(timeout: 10),
-			"Old Main icon should be selected after tapping it")
-		return self
+	/// The title of the icon the picker currently marks as chosen.
+	func getSelectedAppIcon() -> String {
+		let selectedButton = app.buttons.matching(NSPredicate(format: "isSelected == true"))
+			.firstMatch
+		return selectedButton.label
 	}
 
 	@discardableResult
-	func changeIconToDefault() -> Self {
-		// Wait for the cell to be accessible before tapping — the app briefly
-		// transitions back from SpringBoard after the icon-change alert and
-		// tapping without first waiting produces "Timed out while evaluating
-		// UI query".
-		let defaultIcon = app.element(matching: TestIdentifiers.AppIcon.cell("default"))
-		scrollUntilExists(defaultIcon)
+	func selectAppIcon(iconName: String, springboard: XCUIApplication) -> Self {
+		let row = app.buttons[iconName]
 		XCTAssertTrue(
-			defaultIcon.waitForExistence(timeout: 10),
-			"Default icon cell should be visible and tappable")
-		defaultIcon.tap()
+			row.waitForExistence(timeout: 10),
+			"\(iconName) row should be on screen before tapping it")
+		// A coordinate tap goes to a screen point and asks no questions, so it
+		// would happily land on whatever covers a row that is present in the
+		// tree but not actually reachable. Tapping the element checks this for
+		// us; tapping a point does not.
+		XCTAssertTrue(row.isHittable, "\(iconName) row should be hittable")
+
+		// Tap the row's screen point through SpringBoard rather than tapping the
+		// row itself. A tap on our own app does not return until that app
+		// signals it has gone quiet, and the icon-change alert this tap raises
+		// stops it doing so -- so the tap costs a full 60s quiescence timeout
+		// after having already landed. SpringBoard is quiet, and the point is
+		// the same point, so going through it skips the wait entirely.
+		//
+		// Read the frame first, while the app is still quiet and the query is
+		// cheap.
+		let target = row.frame
+		springboard.coordinate(withNormalizedOffset: .zero)
+			.withOffset(CGVector(dx: target.midX, dy: target.midY))
+			.tap()
+
+		// dismiss the os-level dialog
+		dismissIconChangeAlert(springboard: springboard)
+
+		// Wait rather than read once: the screen learns the new icon back from
+		// the system asynchronously, so the trait lands a moment after the alert
+		// is gone.
+		let selected = app.buttons
+			.matching(NSPredicate(format: "label == %@ AND isSelected == true", iconName))
+			.firstMatch
+		XCTAssertTrue(
+			selected.waitForExistence(timeout: 10),
+			"\(iconName) should be selected after tapping it")
+
 		return self
 	}
 
-	@discardableResult
-	func checkDefaultSelected() -> Self {
-		let defaultReselected = app.element(
-			matching: TestIdentifiers.AppIcon.cell("default", selected: true))
-		scrollUntilExists(defaultReselected)
-		XCTAssertTrue(
-			defaultReselected.waitForExistence(timeout: 10),
-			"Default icon should be selected after switching back")
-		return self
-	}
 }
