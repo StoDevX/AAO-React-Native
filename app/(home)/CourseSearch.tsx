@@ -1,7 +1,6 @@
 import * as c from '@frogpond/colors'
 import {LoadingView, NoticeView} from '@frogpond/notice'
 import {Stack, useRouter} from 'expo-router'
-import {debounce} from 'lodash'
 import * as React from 'react'
 import {useEffect} from 'react'
 import {useMemo} from 'react'
@@ -14,15 +13,8 @@ import {
 import {RecentItemsList} from '../../source/features/sis/components/recents-list'
 import {useFilters} from '../../source/features/sis/course-search/lib/build-filters'
 
-let _debounce = debounce((query: string, callback: () => void) => {
-	if (query.length >= 2) {
-		callback()
-	}
-}, 1500)
-
-const NavigationOptions = {
-	title: 'Course Catalog',
-}
+const SEARCH_DEBOUNCE_MS = 1500
+const MIN_QUERY_LENGTH = 2
 
 function CourseSearchView(): React.ReactNode {
 	let router = useRouter()
@@ -44,8 +36,20 @@ function CourseSearchView(): React.ReactNode {
 		[router],
 	)
 
+	// Re-running on every keystroke clears the previous timer, which is the
+	// debounce; the cleanup also cancels a pending search on unmount, so
+	// navigating away mid-type cannot push a results screen afterwards.
 	useEffect(() => {
-		_debounce(typedQuery, () => showSearchResult(typedQuery))
+		if (typedQuery.length < MIN_QUERY_LENGTH) {
+			return
+		}
+
+		let timer = setTimeout(
+			() => showSearchResult(typedQuery),
+			SEARCH_DEBOUNCE_MS,
+		)
+
+		return () => clearTimeout(timer)
 	}, [showSearchResult, typedQuery])
 
 	let recentFilterDescriptions = useMemo(
@@ -126,7 +130,7 @@ let styles = StyleSheet.create({
 export default function CourseSearchPage(): React.ReactNode {
 	return (
 		<>
-			<Stack.Screen options={NavigationOptions} />
+			<Stack.Title>Course Catalog</Stack.Title>
 			<CourseSearchView />
 		</>
 	)
