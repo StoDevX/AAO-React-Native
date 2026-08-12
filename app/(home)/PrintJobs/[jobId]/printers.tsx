@@ -2,10 +2,7 @@ import * as React from 'react'
 import {Stack, useLocalSearchParams} from 'expo-router'
 import {useQuery} from '@tanstack/react-query'
 
-import {
-	PrinterListView,
-	PrinterListNavigationOptions,
-} from '../../../../source/views/stoprint'
+import {PrinterListView} from '../../../../source/views/stoprint'
 import {jobByIdOptions} from '../../../../source/views/stoprint/query'
 import {credentialsOptions} from '../../../../source/lib/login'
 import {LoadingView, NoticeView} from '@frogpond/notice'
@@ -25,15 +22,7 @@ export default function PrinterListPage(): React.ReactNode {
 		refetch: jobRefetch,
 	} = useQuery(jobByIdOptions(username, jobId))
 
-	let screen = (
-		<Stack.Screen
-			options={
-				PrinterListNavigationOptions as React.ComponentProps<
-					typeof Stack.Screen
-				>['options']
-			}
-		/>
-	)
+	let screen = <Stack.Title>Select Printer</Stack.Title>
 
 	if (credentialsLoading || jobLoading) {
 		return (

@@ -1,38 +1,44 @@
-import * as React from 'react'
+import React from 'react'
 import {ScrollView, StyleSheet, Text, View} from 'react-native'
 import * as c from '@frogpond/colors'
-
-import {CloseScreenButton} from '@frogpond/navigation-buttons'
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+import {Stack} from 'expo-router'
 
 import {FaqBanner} from '../../../../faqs'
 import {fallbackFaqs} from '../../../../faqs/local-faqs'
+import {useNavigation} from 'expo-router'
 
-export const FaqBannerLibrary = (): React.ReactNode => (
-	<ScrollView
-		contentContainerStyle={styles.container}
-		contentInsetAdjustmentBehavior="automatic"
-	>
-		{fallbackFaqs.map((banner) => (
-			<View key={banner.id} style={styles.example}>
-				<Text style={styles.exampleTitle}>
-					Targets: {banner.targets.join(', ')}
-				</Text>
-				<FaqBanner
-					faqId={banner.id}
-					onPressOverride={() => undefined}
-					style={styles.banner}
-					target={banner.targets[0]}
+export const FaqBannerLibrary = (): React.ReactNode => {
+	const navigation = useNavigation()
+	return (
+		<>
+			<Stack.Toolbar placement="right">
+				<Stack.Toolbar.Button
+					accessibilityLabel="Close Screen"
+					icon="xmark"
+					onPress={() => navigation.goBack()}
 				/>
-			</View>
-		))}
-	</ScrollView>
-)
+			</Stack.Toolbar>
 
-export const FaqBannerNavigationOptions: NativeStackNavigationOptions = {
-	title: 'FAQ Banners',
-	presentation: 'card',
-	headerRight: () => <CloseScreenButton />,
+			<ScrollView
+				contentContainerStyle={styles.container}
+				contentInsetAdjustmentBehavior="automatic"
+			>
+				{fallbackFaqs.map((banner) => (
+					<View key={banner.id} style={styles.example}>
+						<Text style={styles.exampleTitle}>
+							Targets: {banner.targets.join(', ')}
+						</Text>
+						<FaqBanner
+							faqId={banner.id}
+							onPressOverride={() => undefined}
+							style={styles.banner}
+							target={banner.targets[0]}
+						/>
+					</View>
+				))}
+			</ScrollView>
+		</>
+	)
 }
 
 const styles = StyleSheet.create({

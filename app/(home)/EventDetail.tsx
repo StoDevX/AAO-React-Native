@@ -8,7 +8,6 @@ import {EventDetail, shareEvent} from '@frogpond/event-list'
 // elsewhere in this package) -- the component itself is
 // `EventDetail.EventDetail`, used below.
 import {namedCalendarEventOptions} from '@frogpond/ccc-calendar'
-import {ShareButton} from '@frogpond/navigation-buttons'
 import {LoadingView, NoticeView} from '@frogpond/notice'
 import {
 	STOLAF_POWERED_BY,
@@ -50,7 +49,7 @@ export default function EventDetailPage(): React.ReactNode {
 	if (!poweredBy) {
 		return (
 			<>
-				<Stack.Screen options={{title: 'Event'}} />
+				<Stack.Title>Error</Stack.Title>
 				<NoticeView text="Unknown event source." />
 			</>
 		)
@@ -59,7 +58,7 @@ export default function EventDetailPage(): React.ReactNode {
 	if (isLoading) {
 		return (
 			<>
-				<Stack.Screen options={{title: 'Event'}} />
+				<Stack.Title>Loading…</Stack.Title>
 				<LoadingView />
 			</>
 		)
@@ -68,7 +67,7 @@ export default function EventDetailPage(): React.ReactNode {
 	if (error) {
 		return (
 			<>
-				<Stack.Screen options={{title: 'Event'}} />
+				<Stack.Title>Error</Stack.Title>
 				<NoticeView
 					buttonText="Try Again"
 					onPress={refetch}
@@ -83,7 +82,7 @@ export default function EventDetailPage(): React.ReactNode {
 	if (!event) {
 		return (
 			<>
-				<Stack.Screen options={{title: 'Event'}} />
+				<Stack.Title>Unknown Event</Stack.Title>
 				<NoticeView text="Could not find this event." />
 			</>
 		)
@@ -91,12 +90,14 @@ export default function EventDetailPage(): React.ReactNode {
 
 	return (
 		<>
-			<Stack.Screen
-				options={{
-					title: event.title,
-					headerRight: () => <ShareButton onPress={() => shareEvent(event)} />,
-				}}
-			/>
+			<Stack.Title>{event.title}</Stack.Title>
+			<Stack.Toolbar placement="right">
+				<Stack.Toolbar.Button
+					accessibilityLabel="Share Event"
+					icon="square.and.arrow.up"
+					onPress={() => shareEvent(event)}
+				/>
+			</Stack.Toolbar>
 			<EventDetail.EventDetail event={event} poweredBy={poweredBy} />
 		</>
 	)

@@ -11,8 +11,7 @@ import {useAppDispatch} from '../../../redux'
 import {applyFiltersToItem} from '@frogpond/filter'
 import {FilterType} from '@frogpond/filter'
 import {useFilters} from './lib/build-filters'
-import {useLocalSearchParams, useNavigation, useRouter} from 'expo-router'
-import {ChangeTextEvent} from '../../../navigation/types'
+import {Stack, useLocalSearchParams, useRouter} from 'expo-router'
 import {fromPairs} from 'lodash'
 import {useAppSelector} from '../../../redux'
 import {useDebounce} from '@frogpond/use-debounce'
@@ -104,7 +103,6 @@ const useSelectedGE = (filters: FilterType<CourseType>[]) => {
 
 export const CourseSearchResultsView = (): React.ReactNode => {
 	let dispatch = useAppDispatch()
-	let navigation = useNavigation()
 	let router = useRouter()
 
 	let {initialQuery = '', filterDescription} = useLocalSearchParams<{
@@ -152,16 +150,6 @@ export const CourseSearchResultsView = (): React.ReactNode => {
 	)
 	let areCoursesLoading = allCoursesByTerm.some((r) => r.isLoading)
 	let areCoursesInError = allCoursesByTerm.some((r) => r.isError)
-
-	React.useLayoutEffect(() => {
-		navigation.setOptions({
-			headerSearchBarOptions: {
-				barTintColor: c.systemFill,
-				onChangeText: (event: ChangeTextEvent) =>
-					setSearchQuery(event.nativeEvent.text),
-			},
-		})
-	}, [initialQuery, navigation, searchQuery])
 
 	let handlePress = React.useCallback(
 		(data: CourseType) => {
@@ -249,21 +237,34 @@ export const CourseSearchResultsView = (): React.ReactNode => {
 	let messageView = <NoticeView style={styles.message} text={message} />
 
 	return (
-		<SectionList
-			ItemSeparatorComponent={ListSeparator}
-			ListEmptyComponent={messageView}
-			ListHeaderComponent={header}
-			contentContainerStyle={styles.contentContainer}
-			contentInsetAdjustmentBehavior="automatic"
-			keyExtractor={(item: CourseType) => item.clbid.toString()}
-			keyboardDismissMode="interactive"
-			renderItem={({item}) => <CourseRow course={item} onPress={handlePress} />}
-			renderSectionHeader={({section: {title}}) => (
-				<ListSectionHeader title={parseTerm(title)} />
-			)}
-			sections={results}
-			{...largeListProps}
-		/>
+		<>
+			<Stack.Toolbar placement="bottom">
+				<Stack.Toolbar.SearchBarSlot />
+			</Stack.Toolbar>
+
+			<Stack.SearchBar
+				onChangeText={(event) => setSearchQuery(event.nativeEvent.text)}
+				placeholder="Search for a course"
+			/>
+
+			<SectionList
+				ItemSeparatorComponent={ListSeparator}
+				ListEmptyComponent={messageView}
+				ListHeaderComponent={header}
+				contentContainerStyle={styles.contentContainer}
+				contentInsetAdjustmentBehavior="automatic"
+				keyExtractor={(item: CourseType) => item.clbid.toString()}
+				keyboardDismissMode="interactive"
+				renderItem={({item}) => (
+					<CourseRow course={item} onPress={handlePress} />
+				)}
+				renderSectionHeader={({section: {title}}) => (
+					<ListSectionHeader title={parseTerm(title)} />
+				)}
+				sections={results}
+				{...largeListProps}
+			/>
+		</>
 	)
 }
 

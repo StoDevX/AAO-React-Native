@@ -6,7 +6,6 @@ const esmPackages = [
 	'@react-native',
 	'@frogpond',
 	'glamorous-native',
-	'react-navigation',
 	'@reduxjs/toolkit',
 	'immer',
 	'redux',
@@ -45,6 +44,12 @@ const config: Config = {
 		'source/**/*.tsx',
 		'!**/node_modules/**',
 	],
+	// Agent worktrees under .claude/ are whole checkouts of this repo, so every
+	// package in modules/ turns up once per worktree and jest-haste-map rejects
+	// the duplicate names -- taking down every suite, not just the copies.
+	// Prettier reads .gitignore and eslint runs against named directories, so
+	// this is the one tool that has to be told.
+	modulePathIgnorePatterns: ['<rootDir>/.claude/worktrees/'],
 	setupFiles: ['./scripts/jest-setup.js'],
 	transform: {
 		'^.+\\.mjs$': 'babel-jest',

@@ -2,10 +2,7 @@ import * as React from 'react'
 import {Stack, useLocalSearchParams} from 'expo-router'
 import {useQuery} from '@tanstack/react-query'
 
-import {
-	MenuItemDetailView,
-	DetailNavigationOptions,
-} from '../../modules/food-menu/food-item-detail'
+import {MenuItemDetailView} from '../../modules/food-menu/food-item-detail'
 import {
 	bonAppMenuItemOptions,
 	pauseMenuItemOptions,
@@ -32,15 +29,7 @@ export default function MenuItemDetailPage(): React.ReactNode {
 	let {data, isLoading, error, refetch} =
 		source === 'bonapp' ? bonAppQuery : pauseQuery
 
-	let screen = (
-		<Stack.Screen
-			options={
-				DetailNavigationOptions as React.ComponentProps<
-					typeof Stack.Screen
-				>['options']
-			}
-		/>
-	)
+	let screen = <Stack.Title>Nutrition</Stack.Title>
 
 	if (isLoading) {
 		return (

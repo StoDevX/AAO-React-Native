@@ -1,6 +1,5 @@
 import * as React from 'react'
 import {Alert, ScrollView, Share, StyleSheet, Text, View} from 'react-native'
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 import {Cell, Section, TableView} from '@frogpond/tableview'
 import {
 	CellTextField,
@@ -137,7 +136,7 @@ export function BannerBuilderView(): React.ReactNode {
 			</View>
 
 			<TableView>
-				<Section header="CONTENT">
+				<Section header="Content">
 					<CellTextField
 						label="Title"
 						labelWidth={110}
@@ -177,7 +176,7 @@ export function BannerBuilderView(): React.ReactNode {
 					/>
 				</Section>
 
-				<Section header="APPEARANCE">
+				<Section header="Appearance">
 					{SEVERITY_OPTIONS.map((opt) => (
 						<Cell
 							key={opt}
@@ -188,7 +187,7 @@ export function BannerBuilderView(): React.ReactNode {
 					))}
 				</Section>
 
-				<Section header="COLORS & ICON">
+				<Section header="Colors & Icon">
 					<CellTextField
 						label="Icon"
 						labelWidth={110}
@@ -212,7 +211,7 @@ export function BannerBuilderView(): React.ReactNode {
 					/>
 				</Section>
 
-				<Section header="BEHAVIOR">
+				<Section header="Behavior">
 					<CellToggle
 						label="Dismissable"
 						onChange={setDismissable}
@@ -220,7 +219,7 @@ export function BannerBuilderView(): React.ReactNode {
 					/>
 				</Section>
 
-				<Section header="TARGET SCREENS">
+				<Section header="Target Screens">
 					{TARGET_OPTIONS.map((target) => (
 						<Cell
 							key={target}
@@ -233,7 +232,7 @@ export function BannerBuilderView(): React.ReactNode {
 					))}
 				</Section>
 
-				<Section header="ACTIONS">
+				<Section header="Actions">
 					<ButtonCell onPress={applyToApp} title="Apply Banner to App" />
 					<PushButtonCell onPress={exportYaml} title="Export as YAML" />
 				</Section>
@@ -249,10 +248,6 @@ function BannerPreview({faq}: {faq: Faq}): React.ReactNode {
 			<FaqBannerPresentation faq={faq} />
 		</View>
 	)
-}
-
-export const BannerBuilderNavigationOptions: NativeStackNavigationOptions = {
-	title: 'Banner Builder',
 }
 
 const styles = StyleSheet.create({

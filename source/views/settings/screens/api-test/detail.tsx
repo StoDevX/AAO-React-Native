@@ -1,17 +1,14 @@
 import React from 'react'
-import {View, StyleSheet, Platform, TextInput} from 'react-native'
+import {View, StyleSheet, TextInput} from 'react-native'
 
 import {LoadingView, NoticeView} from '@frogpond/notice'
 import * as c from '@frogpond/colors'
 
-import {useLocalSearchParams, useNavigation} from 'expo-router'
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+import {Stack, useLocalSearchParams, useRouter} from 'expo-router'
 import {useQuery} from '@tanstack/react-query'
 import {client} from '@frogpond/api'
-import {iOSUIKit, material} from 'react-native-typography'
+import {iOSUIKit} from 'react-native-typography'
 import {HtmlContent} from '@frogpond/html-content'
-import {CellToggle} from '@frogpond/tableview/cells'
-import {NetworkLoggerButton} from '@frogpond/navigation-buttons'
 import {CSS_CODE_STYLES} from './util/highlight-styles'
 import {syntaxHighlight} from './util/highlight'
 import {DebugView} from '../debug'
@@ -19,7 +16,7 @@ import {DebugView} from '../debug'
 type DisplayMode = 'raw' | 'parsed'
 
 export const APITestDetailView = (): React.ReactNode => {
-	let navigation = useNavigation()
+	let router = useRouter()
 	let {displayName = ''} = useLocalSearchParams<{displayName?: string}>()
 
 	const cleanedName = displayName.trim().toLowerCase()
@@ -36,14 +33,6 @@ export const APITestDetailView = (): React.ReactNode => {
 		staleTime: 0,
 		gcTime: 0,
 	})
-
-	React.useLayoutEffect(() => {
-		const rightButton = () => <NetworkLoggerButton />
-		navigation.setOptions({
-			title: cleanedName,
-			headerRight: rightButton,
-		})
-	}, [cleanedName, navigation])
 
 	const jsonViewContent = React.useMemo((): React.ReactNode => {
 		if (data === undefined) {
@@ -67,38 +56,50 @@ export const APITestDetailView = (): React.ReactNode => {
 		)
 	}, [data])
 
-	let APIResponse =
-		error !== null ? (
-			<TextInput
-				editable={false}
-				// this aligns the text to the top on iOS, and centers it on Android
-				multiline={true}
-				scrollEnabled={true}
-				style={[styles.output, styles.error]}
-				// use multiline with textAlignVertical="top" for the same behavior in both platforms
-				textAlignVertical="top"
-				value={String(error)}
-			/>
-		) : !isLoading && !cleanedName ? (
-			<NoticeView text="No route was found." />
-		) : isLoading ? (
-			<LoadingView />
-		) : displayMode === 'raw' ? (
-			jsonViewContent
-		) : (
-			<DebugView state={JSON.parse(data || '{}') as unknown} />
-		)
-
 	return (
-		<View style={styles.container}>
-			<CellToggle
-				label="Parse as JSON"
-				onChange={(val) => setDisplayMode(val ? 'parsed' : 'raw')}
-				value={displayMode === 'parsed'}
-			/>
+		<>
+			<Stack.Title>{cleanedName}</Stack.Title>
+			<Stack.Toolbar placement="right">
+				<Stack.Toolbar.Menu icon="ellipsis.circle">
+					<Stack.Toolbar.MenuAction
+						onPress={() => router.navigate('/NetworkLogger')}
+					>
+						Network Logger
+					</Stack.Toolbar.MenuAction>
+					<Stack.Toolbar.MenuAction
+						isOn={displayMode === 'parsed'}
+						onPress={() =>
+							setDisplayMode(displayMode === 'parsed' ? 'raw' : 'parsed')
+						}
+					>
+						Parse as JSON
+					</Stack.Toolbar.MenuAction>
+				</Stack.Toolbar.Menu>
+			</Stack.Toolbar>
 
-			{APIResponse}
-		</View>
+			<View style={styles.container}>
+				{error !== null ? (
+					<TextInput
+						editable={false}
+						// this aligns the text to the top on iOS, and centers it on Android
+						multiline={true}
+						scrollEnabled={true}
+						style={[styles.output, styles.error]}
+						// use multiline with textAlignVertical="top" for the same behavior in both platforms
+						textAlignVertical="top"
+						value={String(error)}
+					/>
+				) : !isLoading && !cleanedName ? (
+					<NoticeView text="No route was found." />
+				) : isLoading ? (
+					<LoadingView />
+				) : displayMode === 'raw' ? (
+					jsonViewContent
+				) : (
+					<DebugView state={JSON.parse(data || '{}') as unknown} />
+				)}
+			</View>
+		</>
 	)
 }
 
@@ -114,11 +115,6 @@ const styles = StyleSheet.create({
 	output: {
 		marginVertical: 3,
 		paddingRight: 4,
-		...Platform.select({
-			ios: iOSUIKit.bodyObject,
-			android: material.body1Object,
-		}),
+		...iOSUIKit.bodyObject,
 	},
 })
-
-export const NavigationOptions: NativeStackNavigationOptions = {}

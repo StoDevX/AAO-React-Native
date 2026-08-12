@@ -7,15 +7,8 @@ import {
 	cancelPrintJobForUser,
 	releasePrintJobToPrinterForUser,
 } from '../../lib/stoprint/api'
-import {
-	isStoprintMocked,
-	showGeneralError,
-	type Printer,
-	type PrintJob,
-} from '../../lib/stoprint'
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+import {showGeneralError, type Printer, type PrintJob} from '../../lib/stoprint'
 import {useRouter} from 'expo-router'
-import {DebugNoticeButton} from '@frogpond/navigation-buttons'
 import {heldJobsOptions} from './query'
 import {credentialsOptions} from '../../lib/login'
 import {useMutation, useQuery} from '@tanstack/react-query'
@@ -219,9 +212,4 @@ export const PrintJobReleaseView = ({job, printer}: Props): React.ReactNode => {
 			</TableView>
 		</ScrollView>
 	)
-}
-
-export const NavigationOptions: NativeStackNavigationOptions = {
-	title: 'Release job',
-	headerRight: () => <DebugNoticeButton shouldShow={isStoprintMocked} />,
 }

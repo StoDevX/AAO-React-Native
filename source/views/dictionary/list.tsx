@@ -1,6 +1,5 @@
 import * as React from 'react'
 import {SectionList, StyleSheet} from 'react-native'
-import {ChangeTextEvent} from '../../navigation/types'
 import {dictionaryOptions} from './query'
 import {useQuery} from '@tanstack/react-query'
 import type {WordType, DictionaryGroup} from './types'
@@ -15,9 +14,8 @@ import {
 } from '@frogpond/lists'
 import {LoadingView, NoticeView} from '@frogpond/notice'
 import {useDebounce} from '@frogpond/use-debounce'
-import * as c from '@frogpond/colors'
 
-import {useNavigation, useRouter} from 'expo-router'
+import {Stack, useRouter} from 'expo-router'
 
 import deburr from 'lodash/deburr'
 import groupBy from 'lodash/groupBy'
@@ -54,7 +52,6 @@ const styles = StyleSheet.create({
 })
 
 function DictionaryView(): React.ReactNode {
-	let navigation = useNavigation()
 	let router = useRouter()
 
 	let [query, setQuery] = React.useState('')
@@ -68,16 +65,6 @@ function DictionaryView(): React.ReactNode {
 		isError,
 		isRefetching,
 	} = useQuery(dictionaryOptions)
-
-	React.useLayoutEffect(() => {
-		navigation.setOptions({
-			headerSearchBarOptions: {
-				barTintColor: c.quaternarySystemFill,
-				onChangeText: (event: ChangeTextEvent) =>
-					setQuery(event.nativeEvent.text),
-			},
-		})
-	}, [navigation])
 
 	let filtered = React.useMemo(() => {
 		let grouped = groupWords(data)
@@ -104,49 +91,59 @@ function DictionaryView(): React.ReactNode {
 	}
 
 	return (
-		<SectionList
-			ItemSeparatorComponent={ListSeparator}
-			ListEmptyComponent={
-				searchQuery ? (
-					<NoticeView text={`No results found for "${searchQuery}"`} />
-				) : isLoading ? (
-					<LoadingView />
-				) : (
-					<NoticeView text="No results found." />
-				)
-			}
-			contentContainerStyle={styles.contentContainer}
-			contentInsetAdjustmentBehavior="automatic"
-			keyExtractor={(item, index) => item.word + index}
-			keyboardDismissMode="on-drag"
-			keyboardShouldPersistTaps="never"
-			onRefresh={refetch}
-			refreshing={isRefetching}
-			renderItem={({item}) => {
-				return (
-					<ListRow
-						arrowPosition="top"
-						onPress={() =>
-							router.push({
-								pathname: '/Dictionary/[word]',
-								params: {word: item.word},
-							})
-						}
-					>
-						<Title lines={1}>{item.word}</Title>
-						<Detail lines={2} style={styles.rowDetailText}>
-							{item.definition}
-						</Detail>
-					</ListRow>
-				)
-			}}
-			renderSectionHeader={({section: {title}}) => (
-				<ListSectionHeader title={title} />
-			)}
-			sections={filtered}
-			style={styles.wrapper}
-			{...largeListProps}
-		/>
+		<>
+			<Stack.Toolbar placement="bottom">
+				<Stack.Toolbar.SearchBarSlot />
+			</Stack.Toolbar>
+
+			<Stack.SearchBar
+				onChangeText={(event) => setQuery(event.nativeEvent.text)}
+			/>
+
+			<SectionList
+				ItemSeparatorComponent={ListSeparator}
+				ListEmptyComponent={
+					searchQuery ? (
+						<NoticeView text={`No results found for "${searchQuery}"`} />
+					) : isLoading ? (
+						<LoadingView />
+					) : (
+						<NoticeView text="No results found." />
+					)
+				}
+				contentContainerStyle={styles.contentContainer}
+				contentInsetAdjustmentBehavior="automatic"
+				keyExtractor={(item, index) => item.word + index}
+				keyboardDismissMode="on-drag"
+				keyboardShouldPersistTaps="never"
+				onRefresh={refetch}
+				refreshing={isRefetching}
+				renderItem={({item}) => {
+					return (
+						<ListRow
+							arrowPosition="top"
+							onPress={() =>
+								router.push({
+									pathname: '/Dictionary/[word]',
+									params: {word: item.word},
+								})
+							}
+						>
+							<Title lines={1}>{item.word}</Title>
+							<Detail lines={2} style={styles.rowDetailText}>
+								{item.definition}
+							</Detail>
+						</ListRow>
+					)
+				}}
+				renderSectionHeader={({section: {title}}) => (
+					<ListSectionHeader title={title} />
+				)}
+				sections={filtered}
+				style={styles.wrapper}
+				{...largeListProps}
+			/>
+		</>
 	)
 }
 

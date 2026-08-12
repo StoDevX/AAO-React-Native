@@ -15,6 +15,9 @@ strictPeerDependencies: false
 # set peer dependency suffixes to use version-only identifiers (name@version) instead of full dep paths
 dedupePeers: true
 
+publicHoistPattern:
+  - expo-module-scripts
+
 # theoretically, this configures pnpm to avoid installing optionalDependencies for
 # systems other than the current one
 supportedArchitectures:

@@ -25,11 +25,11 @@ describe('FAQ banner store', () => {
 		expect(v1).toEqual(v2)
 	})
 
-	it('dismisses and restores a banner version', () => {
+	it('dismisses and restores a banner version', async () => {
 		let faq = fallbackFaqs[0]
 		let version = getFaqVersion(faq)
 
-		act(() => {
+		await act(() => {
 			useFaqBannerStore.getState().dismissFaq(faq.id, version)
 		})
 
@@ -37,15 +37,15 @@ describe('FAQ banner store', () => {
 			expect.objectContaining({version}),
 		)
 
-		act(() => {
+		await act(() => {
 			useFaqBannerStore.getState().resetFaq(faq.id)
 		})
 
 		expect(useFaqBannerStore.getState().dismissed[faq.id]).toBeUndefined()
 	})
 
-	it('resets all banners', () => {
-		act(() => {
+	it('resets all banners', async () => {
+		await act(() => {
 			useFaqBannerStore.getState().dismissFaq('a', '1')
 			useFaqBannerStore.getState().dismissFaq('b', '2')
 		})
@@ -53,7 +53,7 @@ describe('FAQ banner store', () => {
 		expect(useFaqBannerStore.getState().dismissed.a?.version).toEqual('1')
 		expect(useFaqBannerStore.getState().dismissed.b?.version).toEqual('2')
 
-		act(() => {
+		await act(() => {
 			useFaqBannerStore.getState().resetAll()
 		})
 

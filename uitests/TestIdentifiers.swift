@@ -22,19 +22,13 @@ struct TestIdentifiers {
 	}
 
 	enum Navigation {
-		static let openSettings = "button-open-settings"
-		static let closeScreen = "button-close-screen"
+		static let openSettings = "Open Settings"
+		static let closeScreen = "Close Screen"
 	}
 
 	enum Streaming {
 		static let list = "stream-list"
 		static let webcams = "screen-streaming-webcams"
-	}
-
-	enum AppIcon {
-		static func cell(_ type: String, selected: Bool = false) -> String {
-			"app-icon-cell-\(type)\(selected ? "-selected" : "")"
-		}
 	}
 
 	// MARK: - Home screen button labels

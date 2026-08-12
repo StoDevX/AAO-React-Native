@@ -1,17 +1,14 @@
 import * as React from 'react'
 import {StyleSheet} from 'react-native'
-import {Button, Form, Host, Section, TextField} from '@expo/ui/swift-ui'
+import {Form, Host, Section, TextField} from '@expo/ui/swift-ui'
 import {
 	autocorrectionDisabled,
-	disabled,
 	keyboardType,
 	lineLimit,
 	textContentType,
 	textInputAutocapitalization,
 } from '@expo/ui/swift-ui/modifiers'
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
-import {useNavigation} from 'expo-router'
-import {CloseScreenButton} from '@frogpond/navigation-buttons'
+import {Stack, useNavigation} from 'expo-router'
 import {submitReport} from './submit'
 
 const styles = StyleSheet.create({
@@ -19,12 +16,6 @@ const styles = StyleSheet.create({
 		flex: 1,
 	},
 })
-
-export const NavigationOptions: NativeStackNavigationOptions = {
-	title: 'Report a Problem',
-	presentation: 'modal',
-	headerLeft: () => <CloseScreenButton title="Cancel" />,
-}
 
 export let ReportProblemView = (): React.ReactNode => {
 	let navigation = useNavigation()
@@ -43,44 +34,58 @@ export let ReportProblemView = (): React.ReactNode => {
 	}
 
 	return (
-		<Host style={styles.host}>
-			<Form>
-				<Section title="Description">
-					<TextField
-						axis="vertical"
-						modifiers={[lineLimit({min: 3, max: 8})]}
-						onTextChange={setMessage}
-						placeholder="What's the problem? What did you expect?"
+		<>
+			<Stack.Screen>
+				<Stack.Title>Report a Problem</Stack.Title>
+				<Stack.Toolbar placement="left">
+					<Stack.Toolbar.Button
+						accessibilityLabel="Close Screen"
+						icon="xmark"
+						onPress={() => navigation.goBack()}
 					/>
-				</Section>
-				<Section title="Contact (optional)">
-					<TextField
-						modifiers={[
-							textInputAutocapitalization('words'),
-							textContentType('name'),
-						]}
-						onTextChange={setName}
-						placeholder="Name"
-					/>
-					<TextField
-						modifiers={[
-							keyboardType('email-address'),
-							textContentType('emailAddress'),
-							textInputAutocapitalization('never'),
-							autocorrectionDisabled(),
-						]}
-						onTextChange={setEmail}
-						placeholder="Email"
-					/>
-				</Section>
-				<Section>
-					<Button
-						label="Send"
-						modifiers={[disabled(message.trim().length === 0)]}
+				</Stack.Toolbar>
+				<Stack.Toolbar placement="right">
+					<Stack.Toolbar.Button
+						accessibilityLabel="Submit"
+						disabled={message.trim().length === 0}
+						icon="paperplane"
 						onPress={submit}
 					/>
-				</Section>
-			</Form>
-		</Host>
+				</Stack.Toolbar>
+			</Stack.Screen>
+
+			<Host style={styles.host}>
+				<Form>
+					<Section title="Contact (optional)">
+						<TextField
+							modifiers={[
+								textInputAutocapitalization('words'),
+								textContentType('name'),
+							]}
+							onTextChange={setName}
+							placeholder="Name"
+						/>
+						<TextField
+							modifiers={[
+								keyboardType('email-address'),
+								textContentType('emailAddress'),
+								textInputAutocapitalization('never'),
+								autocorrectionDisabled(),
+							]}
+							onTextChange={setEmail}
+							placeholder="Email"
+						/>
+					</Section>
+					<Section title="Description">
+						<TextField
+							axis="vertical"
+							modifiers={[lineLimit({min: 3, max: 80})]}
+							onTextChange={setMessage}
+							placeholder="What's the problem? What did you expect?"
+						/>
+					</Section>
+				</Form>
+			</Host>
+		</>
 	)
 }

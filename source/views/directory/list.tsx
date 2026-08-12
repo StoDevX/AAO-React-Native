@@ -10,8 +10,7 @@ import {directoryEntriesOptions} from './query'
 import {useQuery} from '@tanstack/react-query'
 import type {DirectoryItem, DirectorySearchTypeEnum} from './types'
 import {Ionicons as Icon} from '@react-native-vector-icons/ionicons'
-import {useLocalSearchParams, useNavigation, useRouter} from 'expo-router'
-import {ChangeTextEvent} from '../../navigation/types'
+import {Stack, useLocalSearchParams, useRouter} from 'expo-router'
 
 export function DirectoryView(): React.ReactNode {
 	let [searchQueryType, setSearchQueryType] =
@@ -19,7 +18,6 @@ export function DirectoryView(): React.ReactNode {
 	let [typedQuery, setTypedQuery] = React.useState('')
 	let searchQuery = useDebounce(typedQuery, 500)
 
-	let navigation = useNavigation()
 	let router = useRouter()
 
 	let params = useLocalSearchParams<{
@@ -35,19 +33,6 @@ export function DirectoryView(): React.ReactNode {
 		isRefetching,
 		isLoading,
 	} = useQuery(directoryEntriesOptions(searchQuery, searchQueryType))
-
-	React.useLayoutEffect(() => {
-		navigation.setOptions({
-			headerSearchBarOptions: {
-				// forcibly pretend that OpaqueColorValue is a string
-				barTintColor: c.systemFill as unknown as string,
-				onChangeText: (event: ChangeTextEvent) => {
-					setSearchQueryType('query')
-					setTypedQuery(event.nativeEvent.text)
-				},
-			},
-		})
-	}, [navigation])
 
 	React.useEffect(() => {
 		if (params?.queryType === 'department' && params?.queryParam) {
@@ -67,41 +52,54 @@ export function DirectoryView(): React.ReactNode {
 	const items = data.results ? formatResults(data.results) : []
 
 	return (
-		<View style={styles.wrapper}>
-			{isLoading ? (
-				<LoadingView />
-			) : isError && error instanceof Error ? (
-				<NoticeView text={String(error)} />
-			) : !items.length ? (
-				<NoticeView text={`No results found for "${searchQuery}".`} />
-			) : (
-				<FlatList
-					ItemSeparatorComponent={IndentedListSeparator}
-					contentInsetAdjustmentBehavior="automatic"
-					data={items}
-					keyExtractor={(_item, index) => String(index)}
-					keyboardDismissMode="on-drag"
-					keyboardShouldPersistTaps="never"
-					onRefresh={refetch}
-					refreshing={isRefetching}
-					renderItem={({item, index}) => (
-						<DirectoryItemRow
-							item={item}
-							onPress={() =>
-								router.push({
-									pathname: '/Directory/[index]',
-									params: {
-										index: String(index),
-										query: searchQuery,
-										type: searchQueryType,
-									},
-								})
-							}
-						/>
-					)}
-				/>
-			)}
-		</View>
+		<>
+			<Stack.Toolbar placement="bottom">
+				<Stack.Toolbar.SearchBarSlot />
+			</Stack.Toolbar>
+
+			<Stack.SearchBar
+				onChangeText={(event) => {
+					setSearchQueryType('query')
+					setTypedQuery(event.nativeEvent.text)
+				}}
+			/>
+
+			<View style={styles.wrapper}>
+				{isLoading ? (
+					<LoadingView />
+				) : isError && error instanceof Error ? (
+					<NoticeView text={String(error)} />
+				) : !items.length ? (
+					<NoticeView text={`No results found for "${searchQuery}".`} />
+				) : (
+					<FlatList
+						ItemSeparatorComponent={IndentedListSeparator}
+						contentInsetAdjustmentBehavior="automatic"
+						data={items}
+						keyExtractor={(_item, index) => String(index)}
+						keyboardDismissMode="on-drag"
+						keyboardShouldPersistTaps="never"
+						onRefresh={refetch}
+						refreshing={isRefetching}
+						renderItem={({item, index}) => (
+							<DirectoryItemRow
+								item={item}
+								onPress={() =>
+									router.push({
+										pathname: '/Directory/[index]',
+										params: {
+											index: String(index),
+											query: searchQuery,
+											type: searchQueryType,
+										},
+									})
+								}
+							/>
+						)}
+					/>
+				)}
+			</View>
+		</>
 	)
 }
 

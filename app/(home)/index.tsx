@@ -24,7 +24,6 @@ import {
 	SCREEN_MARGIN,
 } from '../../source/views/home/button'
 import {openUrl} from '@frogpond/open-url'
-import {OpenSettingsButton} from '@frogpond/navigation-buttons'
 import {UnofficialAppNotice} from '../../source/views/home/notice'
 import {useIsDevMode} from '../../source/lib/use-is-dev-mode'
 import {FaqBannerGroup} from '../../source/views/faqs'
@@ -71,19 +70,15 @@ export default function HomePage(): React.ReactNode {
 					headerShadowVisible: false,
 					headerLargeTitleEnabled: true,
 					headerTransparent: true,
-					// expo-router's Stack.Screen headerRight callback passes its own
-					// forked -- structurally incompatible -- header-item props type,
-					// same mismatch as the options cast in SettingsRoot.tsx.
-					headerRight: (props) => (
-						<OpenSettingsButton
-							{...(props as React.ComponentProps<typeof OpenSettingsButton>)}
-						/>
-					),
 				}}
 			/>
-			{/* SwiftUI owns the scrolling. Wrapping this in a React Native ScrollView
-			    instead puts that scroll view between the touch and the SwiftUI buttons,
-			    and the tiles stop responding reliably on device. */}
+			<Stack.Toolbar placement="right">
+				<Stack.Toolbar.Button
+					accessibilityLabel="Open Settings"
+					icon="gear"
+					onPress={() => router.push('/SettingsRoot')}
+				/>
+			</Stack.Toolbar>
 			<Host
 				matchContents={false}
 				modifiers={[accessibilityIdentifier('screen-homescreen')]}
@@ -97,9 +92,6 @@ export default function HomePage(): React.ReactNode {
 						]}
 						spacing={CELL_MARGIN}
 					>
-						{/* FaqBannerGroup is still React Native, so it has to be hosted
-						    back into SwiftUI to scroll with the rest of the content --
-						    same construct the legacy source/views/home/index.tsx used. */}
 						<RNHostView matchContents={true}>
 							<FaqBannerGroup
 								onPressFaq={(faqId) =>
@@ -115,12 +107,12 @@ export default function HomePage(): React.ReactNode {
 								<Grid.Row key={i}>
 									{row.map((view) => (
 										<HomeScreenButton
-											key={view.type === 'view' ? view.view : view.title}
+											key={view.title}
 											onPress={() => {
 												if (view.type === 'url') {
 													return openUrl(view.url)
 												} else if (view.type === 'view') {
-													return router.push(`/${view.view}` as never)
+													return router.push(view.view)
 												} else {
 													throw new Error(`unexpected view type ${view.type}`)
 												}

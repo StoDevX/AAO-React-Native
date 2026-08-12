@@ -5,7 +5,6 @@ import {Markdown} from '@frogpond/markdown'
 import {LoadingView, NoticeView} from '@frogpond/notice'
 import {accent} from '../../lib/theme'
 import {useLocalSearchParams} from 'expo-router'
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 import {faqsOptions, emptyFaqData} from './query'
 import {useQuery} from '@tanstack/react-query'
 import type {Faq, FaqQueryData} from './types'
@@ -123,7 +122,3 @@ const FaqCard = ({faq, isHighlighted}: CardProps): React.ReactNode => {
 
 export {FaqView as View}
 export {FaqBanner, FaqBannerGroup} from './banner'
-
-export const NavigationOptions: NativeStackNavigationOptions = {
-	title: 'FAQs',
-}

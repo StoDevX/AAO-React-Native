@@ -1,22 +1,21 @@
 import * as React from 'react'
-import {Stack} from 'expo-router'
+import {Stack, useNavigation} from 'expo-router'
 
-import {View as FaqView, NavigationOptions} from '../../source/views/faqs'
+import {View as FaqView} from '../../source/views/faqs'
 
 export default function FaqPage(): React.ReactNode {
+	const navigation = useNavigation()
+
 	return (
 		<>
-			{/* NavigationOptions is still typed against @react-navigation/native-stack
-			    because source/navigation/routes.tsx also consumes it (until checkpoint 7
-			    deletes that file); expo-router's Stack.Screen expects its own forked --
-			    structurally incompatible -- NativeStackNavigationOptions type. */}
-			<Stack.Screen
-				options={
-					NavigationOptions as React.ComponentProps<
-						typeof Stack.Screen
-					>['options']
-				}
-			/>
+			<Stack.Title>FAQs</Stack.Title>
+			<Stack.Toolbar placement="right">
+				<Stack.Toolbar.Button
+					accessibilityLabel="Close Screen"
+					icon="xmark"
+					onPress={() => navigation.goBack()}
+				/>
+			</Stack.Toolbar>
 			<FaqView />
 		</>
 	)

@@ -1,5 +1,5 @@
 import React from 'react'
-import {fireEvent, render} from '@testing-library/react-native'
+import {act, fireEvent, render} from '@testing-library/react-native'
 
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query'
 
@@ -34,14 +34,41 @@ const buildResponse = (faqs: Faq[]): FaqQueryData => ({
 	legacyText: undefined,
 })
 
-const renderWithFaqs = (
-	faqs: Faq[],
-	props?: {onPressOverride?: () => void},
-) => {
+// Seeded data has to be fresh, not merely present: a stale entry makes the
+// query refetch the moment a component mounts, and the mocked queryFn's
+// rejection then lands mid-test and empties the banner out from under the
+// assertions.
+const buildQueryClient = (faqs: Faq[]): QueryClient => {
+	const queryClient = new QueryClient({
+		defaultOptions: {queries: {retry: false, staleTime: Infinity}},
+	})
+	queryClient.setQueryData<FaqQueryData>(FAQS_QUERY_KEY, buildResponse(faqs))
+	return queryClient
+}
+
+/// Seeds the same data, but leaves it stale so that mounting kicks off a
+/// refetch -- which the mocked queryFn then fails, driving the query into its
+/// error state while the cached faqs are still perfectly good.
+const buildStaleQueryClient = (faqs: Faq[]): QueryClient => {
 	const queryClient = new QueryClient({
 		defaultOptions: {queries: {retry: false}},
 	})
 	queryClient.setQueryData<FaqQueryData>(FAQS_QUERY_KEY, buildResponse(faqs))
+	return queryClient
+}
+
+/// Runs the queued refetch and its rejection to completion.
+const settlePendingRefetch = async (): Promise<void> => {
+	await act(async () => {
+		await new Promise((resolve) => setTimeout(resolve, 0))
+	})
+}
+
+const renderWithFaqs = (
+	faqs: Faq[],
+	props?: {onPressOverride?: () => void},
+) => {
+	const queryClient = buildQueryClient(faqs)
 
 	return render(
 		<QueryClientProvider client={queryClient}>
@@ -75,6 +102,10 @@ describe('FaqBanner component', () => {
 		let onPressOverride = jest.fn()
 		let {getByText} = await renderWithFaqs([baseFaq], {onPressOverride})
 
+		// Letting queued async work run first keeps a stray refetch from
+		// hiding behind a lucky race -- see buildQueryClient.
+		await settlePendingRefetch()
+
 		await fireEvent.press(getByText('Learn more'))
 
 		expect(onPressOverride).toHaveBeenCalledTimes(1)
@@ -88,6 +119,18 @@ describe('FaqBanner component', () => {
 
 		expect(queryByText('Learn more')).toBeNull()
 		expect(queryByRole('button', {name: baseFaq.bannerTitle})).toBeNull()
+	})
+
+	it('keeps showing a cached banner when a background refetch fails', async () => {
+		let {getByText} = await render(
+			<QueryClientProvider client={buildStaleQueryClient([baseFaq])}>
+				<FaqBanner target={FAQ_TARGETS.HOME} />
+			</QueryClientProvider>,
+		)
+
+		await settlePendingRefetch()
+
+		expect(getByText(baseFaq.bannerTitle)).toBeTruthy()
 	})
 })
 
@@ -104,13 +147,7 @@ describe('FaqBannerGroup component', () => {
 		}
 		let onPressFaq = jest.fn()
 
-		let queryClient = new QueryClient({
-			defaultOptions: {queries: {retry: false}},
-		})
-		queryClient.setQueryData<FaqQueryData>(
-			FAQS_QUERY_KEY,
-			buildResponse([baseFaq, secondFaq]),
-		)
+		let queryClient = buildQueryClient([baseFaq, secondFaq])
 
 		let {getByTestId} = await render(
 			<QueryClientProvider client={queryClient}>
@@ -122,6 +159,18 @@ describe('FaqBannerGroup component', () => {
 
 		expect(onPressFaq).toHaveBeenCalledWith(secondFaq.id)
 		expect(onPressFaq).not.toHaveBeenCalledWith(baseFaq.id)
+	})
+
+	it('keeps showing cached banners when a background refetch fails', async () => {
+		let {getByTestId} = await render(
+			<QueryClientProvider client={buildStaleQueryClient([baseFaq])}>
+				<FaqBannerGroup target={FAQ_TARGETS.HOME} />
+			</QueryClientProvider>,
+		)
+
+		await settlePendingRefetch()
+
+		expect(getByTestId(`faq-banner-${baseFaq.id}`)).toBeTruthy()
 	})
 })
 jest.mock('@react-native-vector-icons/ionicons', () => ({Ionicons: 'Icon'}))

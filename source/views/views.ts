@@ -1,34 +1,13 @@
 import * as c from '@frogpond/colors'
 import type {Gradient} from '@frogpond/colors'
 import type {ImageProps} from '@expo/ui/swift-ui'
-import {RootViewsParamList} from '../navigation/types'
+import {useRouter} from 'expo-router'
 
-const menus: keyof RootViewsParamList = 'Menus'
-const sis: keyof RootViewsParamList = 'SIS'
-const calendar: keyof RootViewsParamList = 'Calendar'
-const reddit: keyof RootViewsParamList = 'Communities'
-const streaming: keyof RootViewsParamList = 'Streaming Media'
-const news: keyof RootViewsParamList = 'News'
-const transportation: keyof RootViewsParamList = 'Transportation'
-const hours: keyof RootViewsParamList = 'BuildingHours'
-const directory: keyof RootViewsParamList = 'Directory'
-const importantContacts: keyof RootViewsParamList = 'Contacts'
-const dictionary: keyof RootViewsParamList = 'Dictionary'
-const studentOrgs: keyof RootViewsParamList = 'StudentOrgs'
-const more: keyof RootViewsParamList = 'More'
-const printJobs: keyof RootViewsParamList = 'PrintJobs'
-const courseSearch: keyof RootViewsParamList = 'CourseSearch'
+type r = typeof useRouter extends () => infer T ? T : never
+type href = r extends {push: (href: infer H) => void} ? H : never
 
 type CommonView = {
 	title: string
-	/// An SF Symbol name. Health builds its category cards from SF Symbols, so
-	/// matching its glyph weight and Dynamic Type behaviour means drawing from
-	/// the same set rather than from an icon font.
-	///
-	/// Taken from `Image` rather than from `sf-symbols-typescript` directly: the
-	/// names this accepts should be exactly the names the component can render,
-	/// and that package is only reachable here as one of @expo/ui's own
-	/// dependencies.
 	icon: NonNullable<ImageProps['systemName']>
 	gradient: Gradient
 	disabled?: boolean
@@ -37,7 +16,7 @@ type CommonView = {
 
 type NativeView = {
 	type: 'view'
-	view: keyof RootViewsParamList
+	view: href
 }
 
 type WebLinkView = {
@@ -51,49 +30,49 @@ export const AllViews = (): Array<ViewType> => {
 	return [
 		{
 			type: 'view',
-			view: menus,
+			view: '/Menus',
 			title: 'Menus',
 			icon: 'fork.knife',
 			gradient: c.greenGradient,
 		},
 		{
 			type: 'view',
-			view: sis,
+			view: '/SIS',
 			title: 'SIS',
 			icon: 'person.text.rectangle.fill',
 			gradient: c.goldGradient,
 		},
 		{
 			type: 'view',
-			view: hours,
+			view: '/BuildingHours',
 			title: 'Building Hours',
 			icon: 'clock.fill',
 			gradient: c.blueGradient,
 		},
 		{
 			type: 'view',
-			view: calendar,
+			view: '/Calendar',
 			title: 'Calendar',
 			icon: 'calendar',
 			gradient: c.violetGradient,
 		},
 		{
 			type: 'view',
-			view: directory,
+			view: '/Directory',
 			title: 'Directory',
 			icon: 'person.crop.rectangle.fill',
 			gradient: c.redGradient,
 		},
 		{
 			type: 'view',
-			view: streaming,
+			view: '/Streaming Media',
 			title: 'Streaming Media',
 			icon: 'play.rectangle.fill',
 			gradient: c.lightBlueGradient,
 		},
 		{
 			type: 'view',
-			view: news,
+			view: '/News',
 			title: 'News',
 			icon: 'newspaper.fill',
 			gradient: c.purpleGradient,
@@ -107,56 +86,56 @@ export const AllViews = (): Array<ViewType> => {
 		},
 		{
 			type: 'view',
-			view: importantContacts,
+			view: '/Contacts',
 			title: 'Important Contacts',
 			icon: 'phone.fill',
 			gradient: c.orangeGradient,
 		},
 		{
 			type: 'view',
-			view: transportation,
+			view: '/Transportation',
 			title: 'Transportation',
 			icon: 'bus.fill',
 			gradient: c.grayGradient,
 		},
 		{
 			type: 'view',
-			view: dictionary,
+			view: '/Dictionary',
 			title: 'Campus Dictionary',
 			icon: 'character.book.closed.fill',
 			gradient: c.pinkGradient,
 		},
 		{
 			type: 'view',
-			view: studentOrgs,
+			view: '/StudentOrgs',
 			title: 'Student Orgs',
 			icon: 'person.3.fill',
 			gradient: c.sageGradient,
 		},
 		{
 			type: 'view',
-			view: more,
+			view: '/More',
 			title: 'More',
 			icon: 'ellipsis.circle.fill',
 			gradient: c.mintGradient,
 		},
 		{
 			type: 'view',
-			view: printJobs,
+			view: '/PrintJobs',
 			title: 'stoPrint',
 			icon: 'printer.fill',
 			gradient: c.yellowGradient,
 		},
 		{
 			type: 'view',
-			view: courseSearch,
+			view: '/CourseSearch',
 			title: 'Course Catalog',
 			icon: 'graduationcap.fill',
 			gradient: c.tanGradient,
 		},
 		{
 			type: 'view',
-			view: reddit,
+			view: '/Communities',
 			title: 'Communities',
 			icon: 'bubble.left.and.bubble.right.fill',
 			gradient: c.orangeGradient,

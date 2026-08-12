@@ -10,19 +10,9 @@ import {
 	Share,
 	StyleSheet,
 } from 'react-native'
-import {useNavigation} from 'expo-router'
+import {Stack} from 'expo-router'
 import {useQuery} from '@tanstack/react-query'
 import {Ionicons as Icon} from '@react-native-vector-icons/ionicons'
-import IoniconGlyphs from '@react-native-vector-icons/ionicons/glyphmaps/Ionicons.json'
-import {Button, Host, Menu, Text as SwiftUIText} from '@expo/ui/swift-ui'
-import {
-	accessibilityIdentifier,
-	contentShape,
-	font,
-	foregroundColor,
-	padding,
-	shapes,
-} from '@expo/ui/swift-ui/modifiers'
 import {LoadingView, NoticeView} from '@frogpond/notice'
 import * as c from '@frogpond/colors'
 import {openUrl} from '@frogpond/open-url'
@@ -35,13 +25,6 @@ import type {RedditCommentType, FlatComment, RedditPostType} from './types'
 import {formatCommentCount} from './utils/format-count'
 import {useRedditLinkHandler} from './useRedditLinkHandler'
 import {SegmentedText} from './segmented-text'
-
-/// The Ionicons glyphs come from the app-wide font registered through
-/// `UIAppFonts` in Info.plist; SwiftUI addresses it by its family name.
-const ICON_FONT_FAMILY = 'Ionicons'
-const HEADER_ICON_SIZE = 24
-/// Matches TestIdentifiers.Reddit in the XCUITest target.
-const POST_MENU_TEST_ID = 'reddit-post-menu'
 
 function countAllComments(comments: RedditCommentType[]): number {
 	return comments.reduce(
@@ -81,7 +64,6 @@ type Props = {
 }
 
 export function PostDetailView({post, communityName}: Props): React.ReactNode {
-	const navigation = useNavigation()
 	const {
 		permalink: postUrl,
 		title,
@@ -119,59 +101,6 @@ export function PostDetailView({post, communityName}: Props): React.ReactNode {
 		() => flattenComments(comments, 0, collapsedIds),
 		[comments, collapsedIds],
 	)
-
-	const handleMenuAction = React.useCallback(
-		(key: string) => {
-			if (key === 'Open in Browser') {
-				openUrl(postUrl)
-			} else if (key === 'Share') {
-				Share.share({url: postUrl}).catch((err) => console.warn(err))
-			}
-		},
-		[postUrl],
-	)
-
-	React.useLayoutEffect(() => {
-		navigation.setOptions({
-			title: communityName,
-			headerRight: () => (
-				// SwiftUI all the way down: hosting the React Native icon here
-				// would put the trigger behind a boundary the UI tests cannot
-				// address.
-				<Host matchContents={true}>
-					<Menu
-						label={
-							<SwiftUIText
-								modifiers={[
-									padding({leading: 6, trailing: 16}),
-									contentShape(shapes.rectangle()),
-									font({
-										family: ICON_FONT_FAMILY,
-										size: HEADER_ICON_SIZE,
-									}),
-									foregroundColor(c.link),
-									accessibilityIdentifier(POST_MENU_TEST_ID),
-								]}
-							>
-								{String.fromCodePoint(IoniconGlyphs['ellipsis-horizontal'])}
-							</SwiftUIText>
-						}
-					>
-						<Button
-							label="Open in Browser"
-							onPress={() => handleMenuAction('Open in Browser')}
-							systemImage="safari"
-						/>
-						<Button
-							label="Share"
-							onPress={() => handleMenuAction('Share')}
-							systemImage="square.and.arrow.up"
-						/>
-					</Menu>
-				</Host>
-			),
-		})
-	}, [navigation, communityName, handleMenuAction])
 
 	const parsedDate = parseISO(publishedAt)
 	const metaText = [
@@ -402,31 +331,49 @@ export function PostDetailView({post, communityName}: Props): React.ReactNode {
 	}
 
 	return (
-		<FlatList
-			ListEmptyComponent={
-				isLoading ? <LoadingView /> : <NoticeView text="No comments yet." />
-			}
-			ListHeaderComponent={header}
-			contentContainerStyle={styles.contentContainer}
-			contentInsetAdjustmentBehavior="automatic"
-			data={flatComments}
-			keyExtractor={(item) => item.comment.id}
-			renderItem={({item}) => (
-				<CommentRow
-					comment={item.comment}
-					depth={item.depth}
-					isCollapsed={collapsedIds.has(item.comment.id)}
-					isOP={item.comment.author === author}
-					onLinkPress={handleLinkPress}
-					onPress={
-						item.comment.replies.length > 0
-							? () => toggleCollapse(item.comment.id)
-							: undefined
-					}
-				/>
-			)}
-			style={styles.list}
-		/>
+		<>
+			<Stack.Title>{communityName}</Stack.Title>
+			<Stack.Toolbar.Menu icon="ellipsis.circle">
+				<Stack.Toolbar.MenuAction
+					icon="safari"
+					onPress={() => openUrl(postUrl)}
+				>
+					Open in Browser
+				</Stack.Toolbar.MenuAction>
+				<Stack.Toolbar.MenuAction
+					icon="square.and.arrow.up"
+					onPress={() => Share.share({url: postUrl})}
+				>
+					Share
+				</Stack.Toolbar.MenuAction>
+			</Stack.Toolbar.Menu>
+
+			<FlatList
+				ListEmptyComponent={
+					isLoading ? <LoadingView /> : <NoticeView text="No comments yet." />
+				}
+				ListHeaderComponent={header}
+				contentContainerStyle={styles.contentContainer}
+				contentInsetAdjustmentBehavior="automatic"
+				data={flatComments}
+				keyExtractor={(item) => item.comment.id}
+				renderItem={({item}) => (
+					<CommentRow
+						comment={item.comment}
+						depth={item.depth}
+						isCollapsed={collapsedIds.has(item.comment.id)}
+						isOP={item.comment.author === author}
+						onLinkPress={handleLinkPress}
+						onPress={
+							item.comment.replies.length > 0
+								? () => toggleCollapse(item.comment.id)
+								: undefined
+						}
+					/>
+				)}
+				style={styles.list}
+			/>
+		</>
 	)
 }
 
