@@ -241,7 +241,7 @@ export const NavigationKey = 'ColorsInfoView'
 export default function ColorsLibraryPage(): React.ReactNode {
 	return (
 		<>
-			<Stack.Screen options={{title: 'Colors'}} />
+			<Stack.Title>Colors</Stack.Title>
 			<LibraryWrapper>
 				<>
 					<Section header="Platform Colors">

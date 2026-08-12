@@ -20,10 +20,6 @@ let _debounce = debounce((query: string, callback: () => void) => {
 	}
 }, 1500)
 
-const NavigationOptions = {
-	title: 'Course Catalog',
-}
-
 function CourseSearchView(): React.ReactNode {
 	let router = useRouter()
 
@@ -126,7 +122,7 @@ let styles = StyleSheet.create({
 export default function CourseSearchPage(): React.ReactNode {
 	return (
 		<>
-			<Stack.Screen options={NavigationOptions} />
+			<Stack.Title>Course Catalog</Stack.Title>
 			<CourseSearchView />
 		</>
 	)
