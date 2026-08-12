@@ -106,10 +106,6 @@ overrides:
   # path-traversal and host-confusion advisories (GHSA-q3j6-qgpj-74h6,
   # GHSA-v39h-62p7-jpjc); fixed within the same 3.1.x line.
   'fast-uri@3.1': '3.1.5'
-  # undici@6.25.0 (via @sentry/cli, used for sourcemap upload): WebSocket
-  # DoS via fragment-count bypass (GHSA-vxpw-j846-p89q) plus several other
-  # DoS/pool advisories; no fix within 6.25.x, next fixed release is 6.28.0.
-  'undici@6.25': '6.28.0'
   # js-yaml@3.14.2 (via @istanbuljs/load-nyc-config, Jest's coverage
   # instrumentation): quadratic-CPU merge-key bug (GHSA-52cp-r559-cp3m) and
   # a prototype-adjacent parsing issue (GHSA-h67p-54hq-rp68). No fix within
@@ -143,6 +139,14 @@ overrides:
   # Pinned to the major version so an @expo/ui SDK bump forces a re-check
   # that vaul is still unused before silently dropping it again.
   '@expo/ui@57>vaul': '-'
+  # @sentry/cli is a dependency of both @sentry/react-native and
+  # @sentry/expo-upload-sourcemaps, but neither is wired into a build phase
+  # here: the Xcode "Bundle React Native code and images" step runs plain
+  # react-native-xcode.sh (not Sentry's wrapper), and
+  # fastlane/lib/sourcemaps.rb uploads sourcemaps through mise's own
+  # sentry-cli, not this npm package. Drop it -- it's dead weight that costs
+  # every install a platform-specific CLI binary download for nothing.
+  '@sentry/cli': '-'
 
 # bind top-level dependencies to exact versions, so lockfile-maintenance MRs
 # can't bump them without us noticing

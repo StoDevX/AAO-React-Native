@@ -12,12 +12,12 @@ overrides:
   postcss@8: 8.5.25
   shell-quote@1.8: 1.10.0
   fast-uri@3.1: 3.1.5
-  undici@6.25: 6.28.0
   js-yaml@3.14: 3.15.1
   qs@6.15: 6.15.2
   '@babel/core@7.29': 7.29.7
   react-dom: '-'
   '@expo/ui@57>vaul': '-'
+  '@sentry/cli': '-'
 
 patchedDependencies:
   '@expo/ui@57.0.9': dc11bfc5e4c86bf6ab7005269d8af06407c6e9a3b25420640dac26ccf47fe679
@@ -146,20 +146,20 @@ importers:
         specifier: 13.1.0
         version: 13.1.0(@expo/config-plugins@57.0.7)(@react-native/assets-registry@0.86.2)(expo-font@57.0.1)(react-native@0.86.2)(react@19.2.3)
       '@reduxjs/toolkit':
-        specifier: 2.11.2
-        version: 2.11.2(react-redux@9.2.0)(react@19.2.3)
+        specifier: 2.12.0
+        version: 2.12.0(react-redux@9.3.0)(react@19.2.3)
       '@sentry/react-native':
-        specifier: 8.11.0
-        version: 8.11.0(@expo/env@2.4.2)(expo@57.0.10)(react-native@0.86.2)(react@19.2.3)
+        specifier: 8.22.0
+        version: 8.22.0(@expo/env@2.4.2)(dotenv@17.4.2)(expo@57.0.10)(react-native@0.86.2)(react@19.2.3)(supports-color@8.1.1)
       '@tanstack/query-async-storage-persister':
-        specifier: 5.99.0
-        version: 5.99.0
+        specifier: 5.101.4
+        version: 5.101.4
       '@tanstack/react-query':
-        specifier: 5.99.0
-        version: 5.99.0(react@19.2.3)
+        specifier: 5.101.4
+        version: 5.101.4(react@19.2.3)
       '@tanstack/react-query-persist-client':
-        specifier: 5.99.0
-        version: 5.99.0(@tanstack/react-query@5.99.0)(react@19.2.3)
+        specifier: 5.101.4
+        version: 5.101.4(@tanstack/react-query@5.101.4)(react@19.2.3)
       base-64:
         specifier: 1.0.0
         version: 1.0.0
@@ -207,7 +207,7 @@ importers:
         version: 57.0.9(react-native-worklets@0.10.1)(react-native@0.86.2)(react@19.2.3)
       expo-router:
         specifier: 57.0.11
-        version: 57.0.11(@babel/core@7.29.7)(@expo/log-box@57.0.2)(@expo/metro-runtime@57.0.8)(@testing-library/dom@10.4.1)(@testing-library/react-native@14.0.1)(@types/react@19.2.14)(expo-constants@57.0.9)(expo-font@57.0.1)(expo-linking@57.0.5)(expo@57.0.10)(react-dom@19.2.3)(react-native-gesture-handler@2.32.0)(react-native-reanimated@4.5.1)(react-native-safe-area-context@5.7.0)(react-native-screens@4.26.2)(react-native-worklets@0.10.1)(react-native@0.86.2)(react@19.2.3)(supports-color@8.1.1)
+        version: 57.0.11(@babel/core@7.29.7)(@expo/log-box@57.0.2)(@expo/metro-runtime@57.0.8)(@testing-library/dom@10.4.1)(@testing-library/react-native@14.0.1)(@types/react@19.2.14)(expo-constants@57.0.9)(expo-font@57.0.1)(expo-linking@57.0.5)(expo@57.0.10)(react-dom@19.2.3)(react-native-gesture-handler@2.32.0)(react-native-reanimated@4.5.1)(react-native-safe-area-context@5.8.1)(react-native-screens@4.27.0)(react-native-worklets@0.10.1)(react-native@0.86.2)(react@19.2.3)(supports-color@8.1.1)
       expo-web-browser:
         specifier: 57.0.2
         version: 57.0.2(expo@57.0.10)(react-native@0.86.2)
@@ -258,7 +258,7 @@ importers:
         version: 2.0.1(react-native@0.86.2)(react@19.2.3)
       react-native-paper:
         specifier: 5.15.0
-        version: 5.15.0(react-native-safe-area-context@5.7.0)(react-native@0.86.2)(react@19.2.3)
+        version: 5.15.0(react-native-safe-area-context@5.8.1)(react-native@0.86.2)(react@19.2.3)
       react-native-popover-view:
         specifier: 6.1.0
         version: 6.1.0
@@ -269,11 +269,11 @@ importers:
         specifier: 1.0.85
         version: 1.0.85(react-native@0.86.2)
       react-native-safe-area-context:
-        specifier: 5.7.0
-        version: 5.7.0(react-native@0.86.2)(react@19.2.3)
+        specifier: 5.8.1
+        version: 5.8.1(react-native@0.86.2)(react@19.2.3)
       react-native-screens:
-        specifier: 4.26.2
-        version: 4.26.2(react-native@0.86.2)(react@19.2.3)
+        specifier: 4.27.0
+        version: 4.27.0(react-native@0.86.2)(react@19.2.3)
       react-native-tableview-simple:
         specifier: 4.4.1
         version: 4.4.1(react-native@0.86.2)(react@19.2.3)
@@ -293,14 +293,14 @@ importers:
         specifier: 0.14.0
         version: 0.14.0(react-native@0.86.2)
       react-redux:
-        specifier: 9.2.0
-        version: 9.2.0(@types/react@19.2.14)(react@19.2.3)(redux@5.0.1)
+        specifier: 9.3.0
+        version: 9.3.0(@types/react@19.2.14)(react@19.2.3)(redux@5.0.1)
       redux-persist:
         specifier: 6.0.0
         version: 6.0.0(react@19.2.3)(redux@5.0.1)
       semver:
-        specifier: 7.7.4
-        version: 7.7.4
+        specifier: 7.8.5
+        version: 7.8.5
       stream:
         specifier: 0.0.3
         version: 0.0.3
@@ -320,8 +320,8 @@ importers:
         specifier: 1.0.0
         version: 1.0.0
       zod:
-        specifier: 4.3.6
-        version: 4.3.6
+        specifier: 4.4.3
+        version: 4.4.3
       zustand:
         specifier: 5.0.12
         version: 5.0.12(@types/react@19.2.14)(immer@11.1.16)(react@19.2.3)(use-sync-external-store@1.6.0)
@@ -354,8 +354,8 @@ importers:
         specifier: 0.86.2
         version: 0.86.2(@babel/core@7.29.7)(react@19.2.3)(supports-color@8.1.1)
       '@tanstack/eslint-plugin-query':
-        specifier: 5.99.0
-        version: 5.99.0(eslint@9.39.4)(supports-color@8.1.1)(typescript@5.9.3)
+        specifier: 5.101.4
+        version: 5.101.4(eslint@9.39.4)(supports-color@8.1.1)(typescript@5.9.3)
       '@testing-library/react-native':
         specifier: 14.0.1
         version: 14.0.1(jest@29.7.0)(react-native@0.86.2)(react@19.2.3)(test-renderer@1.2.0)
@@ -390,8 +390,8 @@ importers:
         specifier: 19.0.0
         version: 19.0.0
       '@types/semver':
-        specifier: 7.7.1
-        version: 7.7.1
+        specifier: 7.8.0
+        version: 7.8.0
       '@types/tinycolor2':
         specifier: 1.4.6
         version: 1.4.6
@@ -435,8 +435,8 @@ importers:
         specifier: 7.0.1
         version: 7.0.1(eslint@9.39.4)(supports-color@8.1.1)
       globals:
-        specifier: 17.6.0
-        version: 17.6.0
+        specifier: 17.9.0
+        version: 17.9.0
       jest:
         specifier: 29.7.0
         version: 29.7.0(@types/node@26.1.2)(supports-color@8.1.1)(ts-node@10.9.2)
@@ -2200,8 +2200,8 @@ packages:
       '@types/react':
         optional: true
 
-  '@reduxjs/toolkit@2.11.2':
-    resolution: {integrity: sha512-Kd6kAHTA6/nUpp8mySPqj3en3dm0tdMIgbttnQ1xFMVpufoj+ADi8pXLBsd4xzTRHQa7t/Jv8W5UnCuW4kuWMQ==}
+  '@reduxjs/toolkit@2.12.0':
+    resolution: {integrity: sha512-KiT+RzZbp6mQET+Mg+h2c97+9j1sNflUxQkIHI7Yuzf6Peu+OYpmkn6nbHWmLLWj+1ZODUJFwGZ7gx3L9R9EOw==}
     peerDependencies:
       react: ^16.9.0 || ^17.0.0 || ^18 || ^19
       react-redux: ^7.2.1 || ^8.1.3 || ^9.0.0
@@ -2211,88 +2211,36 @@ packages:
       react-redux:
         optional: true
 
-  '@sentry-internal/browser-utils@10.51.0':
-    resolution: {integrity: sha512-lNKBS4P7RUvf1niojXQWe9bU3gnBUCbST4Dj0pSiyat1N96cXVyHkeE+uGxowD0RrVWhs+kGHiVX3FcmRWF6sA==}
+  '@sentry/browser-utils@10.69.0':
+    resolution: {integrity: sha512-e/u1Abj0zRPwR/deGZAP3GOULrsx67/XXnM5Skniqs4uxTsdNtPek1Nef0tpxwaQJYxwh6pWdhswLPPbbPOgBQ==}
     engines: {node: '>=18'}
 
-  '@sentry-internal/feedback@10.51.0':
-    resolution: {integrity: sha512-bCM95bcpphx28e6aU0bwRLxOgwosYsdNzezM1sM0pVOkb0TB3hDFRamramVDK+/Hp1o8qmRxS4c5w/A7YBZGkA==}
+  '@sentry/browser@10.69.0':
+    resolution: {integrity: sha512-8391tnm96YbR7b8SYfEA/NEIZuyb2r3SZrtAT0bhZtjlujcYWjo7gugQvk8sWLU9cAa/euD00eJoIoJvNfpd7Q==}
     engines: {node: '>=18'}
 
-  '@sentry-internal/replay-canvas@10.51.0':
-    resolution: {integrity: sha512-8PW1Pp+Yl3lPwYqhBCr5SgkuhDanu9ZLzUqD2bPKL/ElqbM2eDVIWxq4z4ZzePrmZa6IcCjTv6sVQJ7Z4dLyLA==}
-    engines: {node: '>=18'}
-
-  '@sentry-internal/replay@10.51.0':
-    resolution: {integrity: sha512-jCpI5HXSwK6ZT2HX70+mDRciAocHzSiDk4DTgvzV69Wvd+Ei5WLgE+d39eaEPsm8lUC0Ydntb5sJIB6uG9D4bw==}
-    engines: {node: '>=18'}
-
-  '@sentry/babel-plugin-component-annotate@5.2.1':
-    resolution: {integrity: sha512-QQ9AL5EXIbSK26ObLVtiU6l3tCUdpGSJ/6VwDkPhC3qvtoksSlcoU9Yzm7XC0NBcvu1N2abL5R7gckKGZ4JewQ==}
+  '@sentry/bundler-plugins@10.69.0':
+    resolution: {integrity: sha512-I1otnSJIH4IOugLp+kcBbT0Kcex+J8xnHuUyzMAwCYSpZ0FMVvA723uNmkMdW0PxRRw0oEhe0qDB+t+ZjHxUiA==}
     engines: {node: '>= 18'}
+    peerDependencies:
+      rollup: '>=3.2.0'
+      webpack: '>=5.0.0'
+    peerDependenciesMeta:
+      rollup:
+        optional: true
+      webpack:
+        optional: true
 
-  '@sentry/browser@10.51.0':
-    resolution: {integrity: sha512-Zdc0sKfenxUtW/OGhtJ7xHFN44bXR7YqxJ1zBDzlZfW0nTbeTTUZBq9z5NUw6qdS0Vs/i3V4qzAKTbRKWfqSEA==}
+  '@sentry/conventions@0.16.0':
+    resolution: {integrity: sha512-fO9PLmHdVURcSPUpWCItWAtgKiMwGdJHbovoSEyLplX5sxs2ugvI4CBPTrkkgqhObnZOD0CnWBKDzSVQYBKEyQ==}
+    engines: {node: '>=14'}
+
+  '@sentry/core@10.69.0':
+    resolution: {integrity: sha512-+uuqVEeiDzYuAKjZLqsROKXvRTbl/QeH0gfGRtpYib1cud4rAFWRIkFmcR7Jb7JGFYwmReyQotiTj/hcDszTZg==}
     engines: {node: '>=18'}
 
-  '@sentry/cli-darwin@3.4.1':
-    resolution: {integrity: sha512-44foor4g/nfFaOaEZYQnxBrAW7TOMO4LatYsRjPI8dAoqXNVsl+P77FIk0gGAFnTwbt5gREXeeOn6j8DA9NyZg==}
-    engines: {node: '>=18'}
-    os: [darwin]
-
-  '@sentry/cli-linux-arm64@3.4.1':
-    resolution: {integrity: sha512-rYWeBxVEiYMZ5hUe16qkpCmJQBc+lxT50sls/CqO5WTN3VlrSRlJsd+jMTKUNesM0j4PMEi82Xy7rovD8a+2tA==}
-    engines: {node: '>=18'}
-    cpu: [arm64]
-    os: [linux, freebsd, android]
-
-  '@sentry/cli-linux-arm@3.4.1':
-    resolution: {integrity: sha512-XIT4ICA86vwrZWfbvKRiY9HgMg1aJNv1VJgNuiWu/3ysk0H4U7U4rJl6SQNbthgNGpcxvFdXmHbujKv7VZdv5w==}
-    engines: {node: '>=18'}
-    cpu: [arm]
-    os: [linux, freebsd, android]
-
-  '@sentry/cli-linux-i686@3.4.1':
-    resolution: {integrity: sha512-yirtGGummlarcrPmIm4cg5vEA5gYnL/GJ6FLV6yfq1zAeMzEWnl7kaWIVsoTZ8qBi7vmHpy0APlH5LXxK4QXNw==}
-    engines: {node: '>=18'}
-    cpu: [x86, ia32]
-    os: [linux, freebsd, android]
-
-  '@sentry/cli-linux-x64@3.4.1':
-    resolution: {integrity: sha512-r2wJq9Bt1eRFtnAo3vWACfAN3IdV5gRfLnH8rbtDsg7pqdM0MP7tgAjzJDLptLGP02ndPhJfeJ1mXjcDY1MqqQ==}
-    engines: {node: '>=18'}
-    cpu: [x64]
-    os: [linux, freebsd, android]
-
-  '@sentry/cli-win32-arm64@3.4.1':
-    resolution: {integrity: sha512-IWg2FeB9OzxDky3q885MqepN2QEujyGdbcCB0VbHB3zRpT2D2fbk87FIy64JGoZkPVmoI4d7Mbxa+XKFS4jlrw==}
-    engines: {node: '>=18'}
-    cpu: [arm64]
-    os: [win32]
-
-  '@sentry/cli-win32-i686@3.4.1':
-    resolution: {integrity: sha512-RlKYU1Cdyk0uqRa9llKA6yVxg2QK0CXX0bogv89lIfABgZ4o1o45zcwVmEQLrD5rrIQmUcIJHWysQVnSyydJkA==}
-    engines: {node: '>=18'}
-    cpu: [x86, ia32]
-    os: [win32]
-
-  '@sentry/cli-win32-x64@3.4.1':
-    resolution: {integrity: sha512-MgKSglGeD+zOIEdbZrt+P9v9ExkMrHKwlIK8hnJA8qNVjmPuOW9yR4khzdVIYd3cdujAQQhLcV3gEB9ceR4PxQ==}
-    engines: {node: '>=18'}
-    cpu: [x64]
-    os: [win32]
-
-  '@sentry/cli@3.4.1':
-    resolution: {integrity: sha512-xY9WcIg+/B/bJxY1KbP0XrDZGPQaFNjIOVJbXNbwVtRujiG6DEwVHqGJhADjPa8rilLQVDOUumVMwLbAUCmh6A==}
-    engines: {node: '>= 18'}
-    hasBin: true
-
-  '@sentry/core@10.51.0':
-    resolution: {integrity: sha512-Y45V/YXvVLEXmOdkbD1oG1gkRWFi9guCEGg3PlIlIpRjAbZUrvLGgjRJIc1E7XpSzmOnWbs5BbUxMv4PDaPj2w==}
-    engines: {node: '>=18'}
-
-  '@sentry/expo-upload-sourcemaps@8.11.0':
-    resolution: {integrity: sha512-KECCEY//0aGCGNYswLxJfZN1pCb11GvUz5CGLTKg9sXNfo26RGtZwxEWXnbiM1yHhZhpMoCQjPY9nDmKlvZHnQ==}
+  '@sentry/expo-upload-sourcemaps@8.22.0':
+    resolution: {integrity: sha512-lLN3noVtKWWq3NwenYhsFixJt60EeE9ITfrE582IUK8nVuBY/X7RFE/oyaL99YXLVXKS71I0Kxd+E6NDiySFRA==}
     engines: {node: '>=18'}
     hasBin: true
     peerDependencies:
@@ -2304,8 +2252,12 @@ packages:
       dotenv:
         optional: true
 
-  '@sentry/react-native@8.11.0':
-    resolution: {integrity: sha512-cLksJuM5lR447kifAsVgNrY3s6cG2mWEP1ZMPuYKJ0NCtRvpeA09/QmwN9YXbViSftHxyDf+hDvE6bI444chdg==}
+  '@sentry/feedback@10.69.0':
+    resolution: {integrity: sha512-qrGz5Qaw93/IhMjlFN6uIaXeHwgHDaKGa6FkTAP6PonpkvSbGGqan6xfsENxzj9HUVoli1lZ6tMRDnt2qtSPhg==}
+    engines: {node: '>=18'}
+
+  '@sentry/react-native@8.22.0':
+    resolution: {integrity: sha512-jAtcVqJkRdesioH/zdjNkDz+CU5YMQJiOkmn4PlvC9dfotp2Uc+zOMBiFEC5uipkaOSl2kk9so6bxPGFymlMow==}
     hasBin: true
     peerDependencies:
       expo: '>=49.0.0'
@@ -2315,14 +2267,18 @@ packages:
       expo:
         optional: true
 
-  '@sentry/react@10.51.0':
-    resolution: {integrity: sha512-RRHHqjNvjji6ebIqdlAr453AkST8Vm4cxdu1vWm772IgbzTO7Jx46Cj6Bt2/GjMyH0YLE5euDaAOQhFMmpvAOw==}
+  '@sentry/react@10.69.0':
+    resolution: {integrity: sha512-f0Il/JMteHjdWPNZQB3rtp1Pcj2Leb3p0KSZuv3rh0EUril9CbWtQVy5zJhoAppi+MWWmgRWa+6BpHbQf+ABQA==}
     engines: {node: '>=18'}
     peerDependencies:
       react: ^16.14.0 || 17.x || 18.x || 19.x
 
-  '@sentry/types@10.51.0':
-    resolution: {integrity: sha512-/0nTcXk82RKtGGv0mxmY56o+BE85lBuSWG9chtSEfeypvxHFyWn3D7td9rPmjboDMtytC24cYbUzx55jb2OjQA==}
+  '@sentry/replay-canvas@10.69.0':
+    resolution: {integrity: sha512-VF6nXvSninHcc7dC1Zme0RjkC7VgRMCixs6jKaQX5zTNeqTW3dZGSefSOVv+ZteRi3hJvVORq985VjUC9Z/0+A==}
+    engines: {node: '>=18'}
+
+  '@sentry/replay@10.69.0':
+    resolution: {integrity: sha512-uRhmNhtFGPOlM0iniVmWKAX3KVXI0le41yYK/iKdPjinT9jA3ZrmykO/Fv1v/KI5znOtwa9D6eHRnDTTMRxFrg==}
     engines: {node: '>=18'}
 
   '@sinclair/typebox@0.27.12':
@@ -2343,8 +2299,8 @@ packages:
   '@standard-schema/utils@0.3.0':
     resolution: {integrity: sha512-e7Mew686owMaPJVNNLs55PUvgz371nKgwsc4vxE49zsODpJEnxgxRo2y/OKrqueavXgZNMDVj3DdHFlaSAeU8g==}
 
-  '@tanstack/eslint-plugin-query@5.99.0':
-    resolution: {integrity: sha512-jVp1AEL7S7BeuQvH5SN1F5UdrNW/AbryKDeWUUMeAKNzh9C+Ik/bRSa/HeuJLlmaN+WOUkdDFbtCK0go7BxnUQ==}
+  '@tanstack/eslint-plugin-query@5.101.4':
+    resolution: {integrity: sha512-jqAZJWXGd5PthJYH9wmC2O5Ry5xAN2/7zxi9qcANQ+Xix8V5JkqNRjZ8Fh+rYzqzVYGiHqbrHekt+uh38OZVpw==}
     peerDependencies:
       eslint: ^8.57.0 || ^9.0.0 || ^10.0.0
       typescript: ^5.4.0 || ^6.0.0
@@ -2352,23 +2308,23 @@ packages:
       typescript:
         optional: true
 
-  '@tanstack/query-async-storage-persister@5.99.0':
-    resolution: {integrity: sha512-RUG++yZf8RoRK1Yz83WHHYJ6EF8DqKIF/UNNUUDEw/cY9SLKhAeEd4a0+kDzNRdb4RGXXeF5UIuzoEFJ7elLwQ==}
+  '@tanstack/query-async-storage-persister@5.101.4':
+    resolution: {integrity: sha512-ROenNOVvxIZ1zKsBAiIvvslLo2xD8Me/vFz/tChdmuI7ciU+ET63yRrQ01W899Tx1ayQXdsGQJqYqjjVZk+OBQ==}
 
-  '@tanstack/query-core@5.99.0':
-    resolution: {integrity: sha512-3Jv3WQG0BCcH7G+7lf/bP8QyBfJOXeY+T08Rin3GZ1bshvwlbPt7NrDHMEzGdKIOmOzvIQmxjk28YEQX60k7pQ==}
+  '@tanstack/query-core@5.101.4':
+    resolution: {integrity: sha512-gNwcvOJcRbLWPOLG/2OBm+zM+Yv+MKsXKEOWC57USuZDEsI71hEErQsiEGx5wX9rzWWkfwM0fVSPoiIFSsxfiw==}
 
-  '@tanstack/query-persist-client-core@5.99.0':
-    resolution: {integrity: sha512-FzXoxqGYa+ozGNGBIPHJT06rJD4geiHGbVXNS8K7cwN34te64LXlO5Ep+roQYvZjXJFNrLa4W48DIYITpMxzuA==}
+  '@tanstack/query-persist-client-core@5.101.4':
+    resolution: {integrity: sha512-Bmu+RfWhwYEyYZEwSeKC0gX4+KTkiEB3yO8oz9BfAY/Jfe3ndz9EnYVhihIZPmWIr8NXayF7JuraNQcrXQQCCg==}
 
-  '@tanstack/react-query-persist-client@5.99.0':
-    resolution: {integrity: sha512-A3TTaaYZOy6dFUNJj3r10rwmUBWaXqc2N71a7jzpFXilYAYWLKJf9ivT5n5bhXsJnSkdvv1RLifUg/GdvDGaDw==}
+  '@tanstack/react-query-persist-client@5.101.4':
+    resolution: {integrity: sha512-CY5i7PPKS/5B8OR2zAs9nCbLpgqI4jN8eBhtAxKRMNHyGcQhmyOy4PkkJrAAXT+ecGj++fBJTgQw6OpyCt/2SQ==}
     peerDependencies:
-      '@tanstack/react-query': ^5.99.0
+      '@tanstack/react-query': ^5.101.4
       react: ^18 || ^19
 
-  '@tanstack/react-query@5.99.0':
-    resolution: {integrity: sha512-OY2bCqPemT1LlqJ8Y2CUau4KELnIhhG9Ol3ZndPbdnB095pRbPo1cHuXTndg8iIwtoHTgwZjyaDnQ0xD0mYwAw==}
+  '@tanstack/react-query@5.101.4':
+    resolution: {integrity: sha512-yRg2pfOCxIs4ZJW3XYYHU/WgtD04FHSnfHlpRT7h7pR77hwkdRG4wxbKe4aq6P0RvXUTBSQpQeadS1SUYUe+KA==}
     peerDependencies:
       react: ^18 || ^19
 
@@ -2492,8 +2448,8 @@ packages:
   '@types/react@19.2.14':
     resolution: {integrity: sha512-ilcTH/UniCkMdtexkoCN0bI7pMcJDvmQFPvuPvmEaYA/NSfFTAgdUSLAoVjaRJm7+6PvcM+q1zYOwS4wTYMF9w==}
 
-  '@types/semver@7.7.1':
-    resolution: {integrity: sha512-FmgJfu+MOcQ370SD0ev7EI8TlCAfKYU+B4m5T3yXc1CiRN94g/SZPtsCkk506aUDtlMnFZvasDwHHUcZUEaYuA==}
+  '@types/semver@7.8.0':
+    resolution: {integrity: sha512-1mAINjtQCXXeLkJ9ehXkwOcBpqtLxiVtKhpUf83DdRNdQKV0iXZpaHYqRr7nj+wvxuJzoAmAwXI+sCNMv1CzLQ==}
 
   '@types/stack-utils@2.0.3':
     resolution: {integrity: sha512-9aEbYZ3TbYMznPdcdr3SmIrLXwC/AKZXQeCf9Pgao5CKb8CyHuEX5jzWPTkvregvhRJHcpRO6BFoGW9ycaOkYw==}
@@ -3234,6 +3190,10 @@ packages:
     resolution: {integrity: sha512-qI4JLRKnSzqFqr7hAlS5xQDusBCjKSEG4t4+7aNrIQMHBcsC2TGEhuyABJdYkgSewL57PNLYEiibY2iPKhKpaA==}
     engines: {node: '>=20.19.0'}
 
+  dotenv@17.4.2:
+    resolution: {integrity: sha512-nI4U3TottKAcAD9LLud4Cb7b2QztQMUEfHbvhTH09bqXTxnSie8WnjPALV/WMCrJZ6UV/qHJ6L03OqO3LcdYZw==}
+    engines: {node: '>=12'}
+
   dunder-proto@1.0.1:
     resolution: {integrity: sha512-KIN/nDJBQRcXw0MLVhZE9iQHmG68qAVIBg9CqmUYjmQIhgij9U5MFvrqkUL5FbtyyzZuOeOt0zdeRe4UY7ct+A==}
     engines: {node: '>= 0.4'}
@@ -3734,8 +3694,8 @@ packages:
     resolution: {integrity: sha512-oahGvuMGQlPw/ivIYBjVSrWAfWLBeku5tpPE2fOPLi+WHffIWbuh2tCjhyQhTBPMf5E9jDEH4FOmTYgYwbKwtQ==}
     engines: {node: '>=18'}
 
-  globals@17.6.0:
-    resolution: {integrity: sha512-sepffkT8stwnIYbsMBpoCHJuJM5l98FUF2AnE07hfvE0m/qp3R586hw4jF4uadbhvg1ooIdzuu7CsfD2jzCaNA==}
+  globals@17.9.0:
+    resolution: {integrity: sha512-m/MvAW61QVU5VDNF1Vj8axt016h8w7L5TU1e9zlab7XIttAT2YAlCwl75K1fOqvMM9apmD7lbCIRhpfkhmxhCg==}
     engines: {node: '>=18'}
 
   globalthis@1.0.4:
@@ -4401,6 +4361,9 @@ packages:
     resolution: {integrity: sha512-h5bgJWpxJNswbU7qCrV0tIKQCaS3blPDrqKWx+QxzuzL1zGUzij9XCWLrSLsJPu5t+eWA/ycetzYAO5IOMcWAQ==}
     hasBin: true
 
+  magic-string@0.30.21:
+    resolution: {integrity: sha512-vd2F4YUyEXKGcLHoq+TEyCjxueSeHnFxyyjNp80yg0XV4vUhnDer/lvvlqM/arB5bXQN5K2/3oinyCRyx8T2CQ==}
+
   make-dir@4.0.0:
     resolution: {integrity: sha512-hXdUTZYIVOt1Ex//jAQi+wTZZpUpwBj/0QsOzqegb3rGMMeJiSEu5xLHnYfBrRV4RH2+OCSOO95Is/7x1WJ4bw==}
     engines: {node: '>=10'}
@@ -4837,9 +4800,6 @@ packages:
   prop-types@15.8.1:
     resolution: {integrity: sha512-oj87CgZICdulUohogVAR7AjlC0327U4el4L6eAvOqCeudMDVU0NThNaV+b9Df4dXgSP1gXMTnPdhfe/2qDH5cg==}
 
-  proxy-from-env@1.1.0:
-    resolution: {integrity: sha512-D+zkORCbA9f1tdWRK0RaCR3GPv50cMxcrz4X8k5LTSUD1Dkw47mKJEZQNunItRTkWwgtaUSo1RVFRIG9ZXiFYg==}
-
   punycode@1.4.1:
     resolution: {integrity: sha512-jmYNElW7yvO7TV33CjSmvSiE2yco3bV2czu/OzDKdMNVZQWfxCblURLhf+47syQRBntjfLdd/H0egrzIG+oaFQ==}
 
@@ -4978,14 +4938,14 @@ packages:
     peerDependencies:
       react-native: '>=0.60.0'
 
-  react-native-safe-area-context@5.7.0:
-    resolution: {integrity: sha512-/9/MtQz8ODphjsLdZ+GZAIcC/RtoqW9EeShf7Uvnfgm/pzYrJ75y3PV/J1wuAV1T5Dye5ygq4EAW20RoBq0ABQ==}
+  react-native-safe-area-context@5.8.1:
+    resolution: {integrity: sha512-dDYVAJcW5LJlXAqTUFAaWvYJovqxrh6HdJlOkdTQ7dXCcKWhCq5vKoDXJc3n1q5rYcAUaIwmToKNPKibnogC4g==}
     peerDependencies:
       react: '*'
       react-native: '*'
 
-  react-native-screens@4.26.2:
-    resolution: {integrity: sha512-2XnWsZToKj76trGtEZzx5ELD/qOICFEprEeUntImmitQFVUkea27fiWdUSITArI356Y1qynpXZINW+Unbhky/A==}
+  react-native-screens@4.27.0:
+    resolution: {integrity: sha512-IUukKYilhKhdJqGh59BmxrAjgIO84CaOkdowEY20+RmapOAFpqS//xOIcq2iqDQ4xVoxuwCHGWhY/Tbz6lTblA==}
     peerDependencies:
       react: '*'
       react-native: '*'
@@ -5046,8 +5006,8 @@ packages:
     peerDependencies:
       react: ^19.2.0
 
-  react-redux@9.2.0:
-    resolution: {integrity: sha512-ROY9fvHhwOD9ySfrF0wmvu//bKCQ6AeZZq1nJNtbDC+kk5DuSuNX/n6YWYF/SYy7bSba4D4FSz8DJeKY/S/r+g==}
+  react-redux@9.3.0:
+    resolution: {integrity: sha512-KQopgqFo/p/fgmAs5qz6p5RWaNAzq40WAu7fJIXnQpYxFPbJYtsJPWvGeF2rOBaY/kEuV77AVsX8TsQzKm+A/g==}
     peerDependencies:
       '@types/react': ^18.2.25 || ^19
       react: ^18.0 || ^19
@@ -5216,8 +5176,8 @@ packages:
     resolution: {integrity: sha512-BR7VvDCVHO+q2xBEWskxS6DJE1qRnb7DxzUrogb71CWoSficBxYsiAGd+Kl0mmq/MprG9yArRkyrQxTO6XjMzA==}
     hasBin: true
 
-  semver@7.7.4:
-    resolution: {integrity: sha512-vFKC2IEtQnVhpT78h1Yp8wzwrf8CM+MzKMHGJZfBtzhZNycRFnXsHk6E5TxIkkMsgNS7mdX3AGB7x2QM2di4lA==}
+  semver@7.8.5:
+    resolution: {integrity: sha512-Y7/KDsb8LjooZpwaqGyulO6DQlksgCncchHGk+sZIY4SBvUocMBEFH5Ur1fI4dV+Jvl0w6cjvucaIi40puRioA==}
     engines: {node: '>=10'}
     hasBin: true
 
@@ -5607,10 +5567,6 @@ packages:
   undici-types@8.3.0:
     resolution: {integrity: sha512-j375ScV60dom+YkPFIfTLcOiPxkN/buHz5GobjLhixFuANaNs3C9l4GmrWqejgXWJ7BbJcFYpTEUkS1Ge8bpZQ==}
 
-  undici@6.28.0:
-    resolution: {integrity: sha512-LIY910g9TI13YS95lrMFrs8Rm/u/irgHeTWoKCoteeJ04CUJ92eEfj0rVn+7VKMPBpUPiUoBKfhNyLI23EE/KA==}
-    engines: {node: '>=18.17'}
-
   unicode-canonical-property-names-ecmascript@2.0.1:
     resolution: {integrity: sha512-dA8WbNeb2a6oQzAQ55YlT5vQAWGV9WXOsi3SskE3bcCdM0P4SDd+24zS/OCacdRq5BkdsRj9q3Pg6YyQoxIGqg==}
     engines: {node: '>=4'}
@@ -5857,8 +5813,8 @@ packages:
   zod@3.25.76:
     resolution: {integrity: sha512-gzUt/qt81nXsFGKIFcC3YnfEAx5NkunCfnDlvuBSSFS02bcXu4Lmea0AFIUwbLWxWPx3d9p8S5QoaujKcNQxcQ==}
 
-  zod@4.3.6:
-    resolution: {integrity: sha512-rftlrkhHZOcjDwkGlnUtZZkvaPHCsDATp4pGpuOOMDaTdDDXF91wuVDJoWoPsKX/3YPQ5fHuF3STjcYyKr+Qhg==}
+  zod@4.4.3:
+    resolution: {integrity: sha512-ytENFjIJFl2UwYglde2jchW2Hwm4GJFLDiSXWdTrJQBIN9Fcyp7n4DhxJEiWNAJMV1/BqWfW/kkg71UDcHJyTQ==}
 
   zustand@5.0.12:
     resolution: {integrity: sha512-i77ae3aZq4dhMlRhJVCYgMLKuSiZAaUPAct2AksxQ+gOtimhGMdXljRT21P5BNpeT4kXlLIckvkPM029OljD7g==}
@@ -6546,7 +6502,7 @@ snapshots:
       progress: 2.0.3
       prompts: 2.4.2
       resolve-from: 5.0.0
-      semver: 7.7.4
+      semver: 7.8.5
       send: 0.19.2(supports-color@8.1.1)
       slugify: 1.6.9
       stacktrace-parser: 0.1.11
@@ -6557,7 +6513,7 @@ snapshots:
       ws: 8.21.2
       zod: 3.25.76
     optionalDependencies:
-      expo-router: 57.0.11(@babel/core@7.29.7)(@expo/log-box@57.0.2)(@expo/metro-runtime@57.0.8)(@testing-library/dom@10.4.1)(@testing-library/react-native@14.0.1)(@types/react@19.2.14)(expo-constants@57.0.9)(expo-font@57.0.1)(expo-linking@57.0.5)(expo@57.0.10)(react-dom@19.2.3)(react-native-gesture-handler@2.32.0)(react-native-reanimated@4.5.1)(react-native-safe-area-context@5.7.0)(react-native-screens@4.26.2)(react-native-worklets@0.10.1)(react-native@0.86.2)(react@19.2.3)(supports-color@8.1.1)
+      expo-router: 57.0.11(@babel/core@7.29.7)(@expo/log-box@57.0.2)(@expo/metro-runtime@57.0.8)(@testing-library/dom@10.4.1)(@testing-library/react-native@14.0.1)(@types/react@19.2.14)(expo-constants@57.0.9)(expo-font@57.0.1)(expo-linking@57.0.5)(expo@57.0.10)(react-dom@19.2.3)(react-native-gesture-handler@2.32.0)(react-native-reanimated@4.5.1)(react-native-safe-area-context@5.8.1)(react-native-screens@4.27.0)(react-native-worklets@0.10.1)(react-native@0.86.2)(react@19.2.3)(supports-color@8.1.1)
       react-native: 0.86.2(patch_hash=6ca2e1225f38672b073b92b9d13f24feebbe9e37ba67708a3f1569275ce99191)(@babel/core@7.29.7)(@react-native/jest-preset@0.86.2)(@react-native/metro-config@0.86.2)(@types/react@19.2.14)(react@19.2.3)(supports-color@8.1.1)
     transitivePeerDependencies:
       - '@expo/dom-webview'
@@ -6587,7 +6543,7 @@ snapshots:
       debug: 4.4.3(supports-color@8.1.1)
       getenv: 2.0.0
       glob: 13.0.6
-      semver: 7.7.4
+      semver: 7.8.5
       slugify: 1.6.9
       xcode: 3.0.1
       xml2js: 0.6.0
@@ -6607,7 +6563,7 @@ snapshots:
       getenv: 2.0.0
       glob: 13.0.6
       resolve-workspace-root: 2.0.1
-      semver: 7.7.4
+      semver: 7.8.5
       slugify: 1.6.9
     transitivePeerDependencies:
       - supports-color
@@ -6655,7 +6611,7 @@ snapshots:
       ignore: 5.3.2
       minimatch: 10.2.6
       resolve-from: 5.0.0
-      semver: 7.7.4
+      semver: 7.8.5
     transitivePeerDependencies:
       - supports-color
 
@@ -6667,7 +6623,7 @@ snapshots:
       getenv: 2.0.0
       jimp-compact: 0.16.1
       parse-png: 2.1.0
-      semver: 7.7.4
+      semver: 7.8.5
     transitivePeerDependencies:
       - supports-color
       - typescript
@@ -6809,7 +6765,7 @@ snapshots:
       debug: 4.4.3(supports-color@8.1.1)
       expo-modules-autolinking: 57.0.9(supports-color@8.1.1)(typescript@5.9.3)
       resolve-from: 5.0.0
-      semver: 7.7.4
+      semver: 7.8.5
     transitivePeerDependencies:
       - supports-color
       - typescript
@@ -6842,7 +6798,7 @@ snapshots:
       react: 19.2.3
     optionalDependencies:
       '@expo/metro-runtime': 57.0.8(@expo/log-box@57.0.2)(expo@57.0.10)(react-dom@19.2.3)(react-native@0.86.2)(react@19.2.3)
-      expo-router: 57.0.11(@babel/core@7.29.7)(@expo/log-box@57.0.2)(@expo/metro-runtime@57.0.8)(@testing-library/dom@10.4.1)(@testing-library/react-native@14.0.1)(@types/react@19.2.14)(expo-constants@57.0.9)(expo-font@57.0.1)(expo-linking@57.0.5)(expo@57.0.10)(react-dom@19.2.3)(react-native-gesture-handler@2.32.0)(react-native-reanimated@4.5.1)(react-native-safe-area-context@5.7.0)(react-native-screens@4.26.2)(react-native-worklets@0.10.1)(react-native@0.86.2)(react@19.2.3)(supports-color@8.1.1)
+      expo-router: 57.0.11(@babel/core@7.29.7)(@expo/log-box@57.0.2)(@expo/metro-runtime@57.0.8)(@testing-library/dom@10.4.1)(@testing-library/react-native@14.0.1)(@types/react@19.2.14)(expo-constants@57.0.9)(expo-font@57.0.1)(expo-linking@57.0.5)(expo@57.0.10)(react-dom@19.2.3)(react-native-gesture-handler@2.32.0)(react-native-reanimated@4.5.1)(react-native-safe-area-context@5.8.1)(react-native-screens@4.27.0)(react-native-worklets@0.10.1)(react-native@0.86.2)(react@19.2.3)(supports-color@8.1.1)
       react-dom: 19.2.3(react@19.2.3)
     transitivePeerDependencies:
       - supports-color
@@ -7420,7 +7376,7 @@ snapshots:
       metro: 0.84.4(supports-color@8.1.1)
       metro-config: 0.84.4(supports-color@8.1.1)
       metro-core: 0.84.4
-      semver: 7.7.4
+      semver: 7.8.5
     optionalDependencies:
       '@react-native/metro-config': 0.86.2(@babel/core@7.29.7)(supports-color@8.1.1)
     transitivePeerDependencies:
@@ -7507,7 +7463,7 @@ snapshots:
     optionalDependencies:
       '@types/react': 19.2.14
 
-  '@reduxjs/toolkit@2.11.2(react-redux@9.2.0)(react@19.2.3)':
+  '@reduxjs/toolkit@2.12.0(react-redux@9.3.0)(react@19.2.3)':
     dependencies:
       '@standard-schema/spec': 1.1.0
       '@standard-schema/utils': 0.3.0
@@ -7517,93 +7473,55 @@ snapshots:
       reselect: 5.2.0
     optionalDependencies:
       react: 19.2.3
-      react-redux: 9.2.0(@types/react@19.2.14)(react@19.2.3)(redux@5.0.1)
+      react-redux: 9.3.0(@types/react@19.2.14)(react@19.2.3)(redux@5.0.1)
 
-  '@sentry-internal/browser-utils@10.51.0':
+  '@sentry/browser-utils@10.69.0':
     dependencies:
-      '@sentry/core': 10.51.0
+      '@sentry/conventions': 0.16.0
+      '@sentry/core': 10.69.0
 
-  '@sentry-internal/feedback@10.51.0':
+  '@sentry/browser@10.69.0':
     dependencies:
-      '@sentry/core': 10.51.0
+      '@sentry/browser-utils': 10.69.0
+      '@sentry/conventions': 0.16.0
+      '@sentry/core': 10.69.0
+      '@sentry/feedback': 10.69.0
+      '@sentry/replay': 10.69.0
+      '@sentry/replay-canvas': 10.69.0
 
-  '@sentry-internal/replay-canvas@10.51.0':
+  '@sentry/bundler-plugins@10.69.0(supports-color@8.1.1)':
     dependencies:
-      '@sentry-internal/replay': 10.51.0
-      '@sentry/core': 10.51.0
+      '@babel/core': 7.29.7(supports-color@8.1.1)
+      '@sentry/core': 10.69.0
+      dotenv: 17.4.2
+      find-up: 5.0.0
+      glob: 13.0.6
+      magic-string: 0.30.21
+    transitivePeerDependencies:
+      - supports-color
 
-  '@sentry-internal/replay@10.51.0':
+  '@sentry/conventions@0.16.0': {}
+
+  '@sentry/core@10.69.0':
     dependencies:
-      '@sentry-internal/browser-utils': 10.51.0
-      '@sentry/core': 10.51.0
+      '@sentry/conventions': 0.16.0
 
-  '@sentry/babel-plugin-component-annotate@5.2.1': {}
-
-  '@sentry/browser@10.51.0':
-    dependencies:
-      '@sentry-internal/browser-utils': 10.51.0
-      '@sentry-internal/feedback': 10.51.0
-      '@sentry-internal/replay': 10.51.0
-      '@sentry-internal/replay-canvas': 10.51.0
-      '@sentry/core': 10.51.0
-
-  '@sentry/cli-darwin@3.4.1':
-    optional: true
-
-  '@sentry/cli-linux-arm64@3.4.1':
-    optional: true
-
-  '@sentry/cli-linux-arm@3.4.1':
-    optional: true
-
-  '@sentry/cli-linux-i686@3.4.1':
-    optional: true
-
-  '@sentry/cli-linux-x64@3.4.1':
-    optional: true
-
-  '@sentry/cli-win32-arm64@3.4.1':
-    optional: true
-
-  '@sentry/cli-win32-i686@3.4.1':
-    optional: true
-
-  '@sentry/cli-win32-x64@3.4.1':
-    optional: true
-
-  '@sentry/cli@3.4.1':
-    dependencies:
-      progress: 2.0.3
-      proxy-from-env: 1.1.0
-      undici: 6.28.0
-      which: 2.0.2
-    optionalDependencies:
-      '@sentry/cli-darwin': 3.4.1
-      '@sentry/cli-linux-arm': 3.4.1
-      '@sentry/cli-linux-arm64': 3.4.1
-      '@sentry/cli-linux-i686': 3.4.1
-      '@sentry/cli-linux-x64': 3.4.1
-      '@sentry/cli-win32-arm64': 3.4.1
-      '@sentry/cli-win32-i686': 3.4.1
-      '@sentry/cli-win32-x64': 3.4.1
-
-  '@sentry/core@10.51.0': {}
-
-  '@sentry/expo-upload-sourcemaps@8.11.0(@expo/env@2.4.2)':
-    dependencies:
-      '@sentry/cli': 3.4.1
+  '@sentry/expo-upload-sourcemaps@8.22.0(@expo/env@2.4.2)(dotenv@17.4.2)':
     optionalDependencies:
       '@expo/env': 2.4.2(supports-color@8.1.1)
+      dotenv: 17.4.2
 
-  '@sentry/react-native@8.11.0(@expo/env@2.4.2)(expo@57.0.10)(react-native@0.86.2)(react@19.2.3)':
+  '@sentry/feedback@10.69.0':
     dependencies:
-      '@sentry/babel-plugin-component-annotate': 5.2.1
-      '@sentry/browser': 10.51.0
-      '@sentry/cli': 3.4.1
-      '@sentry/core': 10.51.0
-      '@sentry/expo-upload-sourcemaps': 8.11.0(@expo/env@2.4.2)
-      '@sentry/react': 10.51.0(react@19.2.3)
-      '@sentry/types': 10.51.0
+      '@sentry/core': 10.69.0
+
+  '@sentry/react-native@8.22.0(@expo/env@2.4.2)(dotenv@17.4.2)(expo@57.0.10)(react-native@0.86.2)(react@19.2.3)(supports-color@8.1.1)':
+    dependencies:
+      '@sentry/browser': 10.69.0
+      '@sentry/bundler-plugins': 10.69.0(supports-color@8.1.1)
+      '@sentry/core': 10.69.0
+      '@sentry/expo-upload-sourcemaps': 8.22.0(@expo/env@2.4.2)(dotenv@17.4.2)
+      '@sentry/react': 10.69.0(react@19.2.3)
       react: 19.2.3
       react-native: 0.86.2(patch_hash=6ca2e1225f38672b073b92b9d13f24feebbe9e37ba67708a3f1569275ce99191)(@babel/core@7.29.7)(@react-native/jest-preset@0.86.2)(@react-native/metro-config@0.86.2)(@types/react@19.2.14)(react@19.2.3)(supports-color@8.1.1)
     optionalDependencies:
@@ -7611,16 +7529,26 @@ snapshots:
     transitivePeerDependencies:
       - '@expo/env'
       - dotenv
+      - rollup
+      - supports-color
+      - webpack
 
-  '@sentry/react@10.51.0(react@19.2.3)':
+  '@sentry/react@10.69.0(react@19.2.3)':
     dependencies:
-      '@sentry/browser': 10.51.0
-      '@sentry/core': 10.51.0
+      '@sentry/browser': 10.69.0
+      '@sentry/conventions': 0.16.0
+      '@sentry/core': 10.69.0
       react: 19.2.3
 
-  '@sentry/types@10.51.0':
+  '@sentry/replay-canvas@10.69.0':
     dependencies:
-      '@sentry/core': 10.51.0
+      '@sentry/core': 10.69.0
+      '@sentry/replay': 10.69.0
+
+  '@sentry/replay@10.69.0':
+    dependencies:
+      '@sentry/browser-utils': 10.69.0
+      '@sentry/core': 10.69.0
 
   '@sinclair/typebox@0.27.12': {}
 
@@ -7638,7 +7566,7 @@ snapshots:
 
   '@standard-schema/utils@0.3.0': {}
 
-  '@tanstack/eslint-plugin-query@5.99.0(eslint@9.39.4)(supports-color@8.1.1)(typescript@5.9.3)':
+  '@tanstack/eslint-plugin-query@5.101.4(eslint@9.39.4)(supports-color@8.1.1)(typescript@5.9.3)':
     dependencies:
       '@typescript-eslint/utils': 8.66.0(eslint@9.39.4)(supports-color@8.1.1)(typescript@5.9.3)
       eslint: 9.39.4(supports-color@8.1.1)
@@ -7647,26 +7575,26 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@tanstack/query-async-storage-persister@5.99.0':
+  '@tanstack/query-async-storage-persister@5.101.4':
     dependencies:
-      '@tanstack/query-core': 5.99.0
-      '@tanstack/query-persist-client-core': 5.99.0
+      '@tanstack/query-core': 5.101.4
+      '@tanstack/query-persist-client-core': 5.101.4
 
-  '@tanstack/query-core@5.99.0': {}
+  '@tanstack/query-core@5.101.4': {}
 
-  '@tanstack/query-persist-client-core@5.99.0':
+  '@tanstack/query-persist-client-core@5.101.4':
     dependencies:
-      '@tanstack/query-core': 5.99.0
+      '@tanstack/query-core': 5.101.4
 
-  '@tanstack/react-query-persist-client@5.99.0(@tanstack/react-query@5.99.0)(react@19.2.3)':
+  '@tanstack/react-query-persist-client@5.101.4(@tanstack/react-query@5.101.4)(react@19.2.3)':
     dependencies:
-      '@tanstack/query-persist-client-core': 5.99.0
-      '@tanstack/react-query': 5.99.0(react@19.2.3)
+      '@tanstack/query-persist-client-core': 5.101.4
+      '@tanstack/react-query': 5.101.4(react@19.2.3)
       react: 19.2.3
 
-  '@tanstack/react-query@5.99.0(react@19.2.3)':
+  '@tanstack/react-query@5.101.4(react@19.2.3)':
     dependencies:
-      '@tanstack/query-core': 5.99.0
+      '@tanstack/query-core': 5.101.4
       react: 19.2.3
 
   '@testing-library/dom@10.4.1':
@@ -7812,7 +7740,7 @@ snapshots:
     dependencies:
       csstype: 3.2.3
 
-  '@types/semver@7.7.1': {}
+  '@types/semver@7.8.0': {}
 
   '@types/stack-utils@2.0.3': {}
 
@@ -7918,7 +7846,7 @@ snapshots:
       '@typescript-eslint/visitor-keys': 8.58.1
       debug: 4.4.3(supports-color@8.1.1)
       minimatch: 10.2.6
-      semver: 7.7.4
+      semver: 7.8.5
       tinyglobby: 0.2.17
       ts-api-utils: 2.5.0(typescript@5.9.3)
       typescript: 5.9.3
@@ -7933,7 +7861,7 @@ snapshots:
       '@typescript-eslint/visitor-keys': 8.66.0
       debug: 4.4.3(supports-color@8.1.1)
       minimatch: 10.2.6
-      semver: 7.7.4
+      semver: 7.8.5
       tinyglobby: 0.2.17
       ts-api-utils: 2.5.0(typescript@5.9.3)
       typescript: 5.9.3
@@ -8678,6 +8606,8 @@ snapshots:
       domelementtype: 3.0.0
       domhandler: 6.0.1
 
+  dotenv@17.4.2: {}
+
   dunder-proto@1.0.1:
     dependencies:
       call-bind-apply-helpers: 1.0.2
@@ -8837,8 +8767,8 @@ snapshots:
       '@babel/parser': 7.29.8
       eslint: 9.39.4(supports-color@8.1.1)
       hermes-parser: 0.25.1
-      zod: 4.3.6
-      zod-validation-error: 4.0.2(zod@4.3.6)
+      zod: 4.4.3
+      zod-validation-error: 4.0.2(zod@4.4.3)
     transitivePeerDependencies:
       - supports-color
 
@@ -8982,7 +8912,7 @@ snapshots:
       '@expo/schema-utils': 57.0.2
       expo: 57.0.10(@babel/core@7.29.7)(@expo/dom-webview@57.0.1)(@expo/metro-runtime@57.0.8)(expo-router@57.0.11)(react-dom@19.2.3)(react-native-webview@13.16.1)(react-native-worklets@0.10.1)(react-native@0.86.2)(react@19.2.3)(supports-color@8.1.1)(typescript@5.9.3)
       resolve-from: 5.0.0
-      semver: 7.7.4
+      semver: 7.8.5
 
   expo-clipboard@57.0.1(expo@57.0.10)(react-native@0.86.2)(react@19.2.3):
     dependencies:
@@ -9060,7 +8990,7 @@ snapshots:
     dependencies:
       react-native: 0.86.2(patch_hash=6ca2e1225f38672b073b92b9d13f24feebbe9e37ba67708a3f1569275ce99191)(@babel/core@7.29.7)(@react-native/jest-preset@0.86.2)(@react-native/metro-config@0.86.2)(@types/react@19.2.14)(react@19.2.3)(supports-color@8.1.1)
 
-  expo-router@57.0.11(@babel/core@7.29.7)(@expo/log-box@57.0.2)(@expo/metro-runtime@57.0.8)(@testing-library/dom@10.4.1)(@testing-library/react-native@14.0.1)(@types/react@19.2.14)(expo-constants@57.0.9)(expo-font@57.0.1)(expo-linking@57.0.5)(expo@57.0.10)(react-dom@19.2.3)(react-native-gesture-handler@2.32.0)(react-native-reanimated@4.5.1)(react-native-safe-area-context@5.7.0)(react-native-screens@4.26.2)(react-native-worklets@0.10.1)(react-native@0.86.2)(react@19.2.3)(supports-color@8.1.1):
+  expo-router@57.0.11(@babel/core@7.29.7)(@expo/log-box@57.0.2)(@expo/metro-runtime@57.0.8)(@testing-library/dom@10.4.1)(@testing-library/react-native@14.0.1)(@types/react@19.2.14)(expo-constants@57.0.9)(expo-font@57.0.1)(expo-linking@57.0.5)(expo@57.0.10)(react-dom@19.2.3)(react-native-gesture-handler@2.32.0)(react-native-reanimated@4.5.1)(react-native-safe-area-context@5.8.1)(react-native-screens@4.27.0)(react-native-worklets@0.10.1)(react-native@0.86.2)(react@19.2.3)(supports-color@8.1.1):
     dependencies:
       '@expo/log-box': 57.0.2(@expo/dom-webview@57.0.1)(expo@57.0.10)(react-native@0.86.2)(react@19.2.3)
       '@expo/metro-runtime': 57.0.8(@expo/log-box@57.0.2)(expo@57.0.10)(react-dom@19.2.3)(react-native@0.86.2)(react@19.2.3)
@@ -9090,8 +9020,8 @@ snapshots:
       react-is: 19.2.8
       react-native: 0.86.2(patch_hash=6ca2e1225f38672b073b92b9d13f24feebbe9e37ba67708a3f1569275ce99191)(@babel/core@7.29.7)(@react-native/jest-preset@0.86.2)(@react-native/metro-config@0.86.2)(@types/react@19.2.14)(react@19.2.3)(supports-color@8.1.1)
       react-native-drawer-layout: 4.2.10(react-native-gesture-handler@2.32.0)(react-native-reanimated@4.5.1)(react-native@0.86.2)(react@19.2.3)
-      react-native-safe-area-context: 5.7.0(react-native@0.86.2)(react@19.2.3)
-      react-native-screens: 4.26.2(react-native@0.86.2)(react@19.2.3)
+      react-native-safe-area-context: 5.8.1(react-native@0.86.2)(react@19.2.3)
+      react-native-screens: 4.27.0(react-native@0.86.2)(react@19.2.3)
       server-only: 0.0.1
       sf-symbols-typescript: 2.2.0
       shallowequal: 1.1.0
@@ -9325,7 +9255,7 @@ snapshots:
 
   globals@14.0.0: {}
 
-  globals@17.6.0: {}
+  globals@17.9.0: {}
 
   globalthis@1.0.4:
     dependencies:
@@ -9628,7 +9558,7 @@ snapshots:
       '@babel/parser': 7.29.8
       '@istanbuljs/schema': 0.1.6
       istanbul-lib-coverage: 3.2.2
-      semver: 7.7.4
+      semver: 7.8.5
     transitivePeerDependencies:
       - supports-color
 
@@ -9931,7 +9861,7 @@ snapshots:
       jest-util: 29.7.0
       natural-compare: 1.4.0
       pretty-format: 29.7.0
-      semver: 7.7.4
+      semver: 7.8.5
     transitivePeerDependencies:
       - supports-color
 
@@ -10138,9 +10068,13 @@ snapshots:
 
   lz-string@1.5.0: {}
 
+  magic-string@0.30.21:
+    dependencies:
+      '@jridgewell/sourcemap-codec': 1.5.5
+
   make-dir@4.0.0:
     dependencies:
-      semver: 7.7.4
+      semver: 7.8.5
 
   make-error@1.3.6: {}
 
@@ -10414,7 +10348,7 @@ snapshots:
     dependencies:
       hosted-git-info: 7.0.2
       proc-log: 4.2.0
-      semver: 7.7.4
+      semver: 7.8.5
       validate-npm-package-name: 5.0.1
 
   npm-run-path@4.0.1:
@@ -10662,8 +10596,6 @@ snapshots:
       object-assign: 4.1.1
       react-is: 16.13.1
 
-  proxy-from-env@1.1.0: {}
-
   punycode@1.4.1: {}
 
   punycode@2.3.1: {}
@@ -10766,13 +10698,13 @@ snapshots:
       react: 19.2.3
       react-native: 0.86.2(patch_hash=6ca2e1225f38672b073b92b9d13f24feebbe9e37ba67708a3f1569275ce99191)(@babel/core@7.29.7)(@react-native/jest-preset@0.86.2)(@react-native/metro-config@0.86.2)(@types/react@19.2.14)(react@19.2.3)(supports-color@8.1.1)
 
-  react-native-paper@5.15.0(react-native-safe-area-context@5.7.0)(react-native@0.86.2)(react@19.2.3):
+  react-native-paper@5.15.0(react-native-safe-area-context@5.8.1)(react-native@0.86.2)(react@19.2.3):
     dependencies:
       '@callstack/react-theme-provider': 3.0.9(react@19.2.3)
       color: 3.2.1
       react: 19.2.3
       react-native: 0.86.2(patch_hash=6ca2e1225f38672b073b92b9d13f24feebbe9e37ba67708a3f1569275ce99191)(@babel/core@7.29.7)(@react-native/jest-preset@0.86.2)(@react-native/metro-config@0.86.2)(@types/react@19.2.14)(react@19.2.3)(supports-color@8.1.1)
-      react-native-safe-area-context: 5.7.0(react-native@0.86.2)(react@19.2.3)
+      react-native-safe-area-context: 5.8.1(react-native@0.86.2)(react@19.2.3)
       use-latest-callback: 0.2.6(react@19.2.3)
 
   react-native-popover-view@6.1.0:
@@ -10786,18 +10718,18 @@ snapshots:
       react-native: 0.86.2(patch_hash=6ca2e1225f38672b073b92b9d13f24feebbe9e37ba67708a3f1569275ce99191)(@babel/core@7.29.7)(@react-native/jest-preset@0.86.2)(@react-native/metro-config@0.86.2)(@types/react@19.2.14)(react@19.2.3)(supports-color@8.1.1)
       react-native-is-edge-to-edge: 1.3.1(react-native@0.86.2)(react@19.2.3)
       react-native-worklets: 0.10.1(@babel/core@7.29.7)(@react-native/metro-config@0.86.2)(react-native@0.86.2)(react@19.2.3)(supports-color@8.1.1)
-      semver: 7.7.4
+      semver: 7.8.5
 
   react-native-restart-newarch@1.0.85(react-native@0.86.2):
     dependencies:
       react-native: 0.86.2(patch_hash=6ca2e1225f38672b073b92b9d13f24feebbe9e37ba67708a3f1569275ce99191)(@babel/core@7.29.7)(@react-native/jest-preset@0.86.2)(@react-native/metro-config@0.86.2)(@types/react@19.2.14)(react@19.2.3)(supports-color@8.1.1)
 
-  react-native-safe-area-context@5.7.0(react-native@0.86.2)(react@19.2.3):
+  react-native-safe-area-context@5.8.1(react-native@0.86.2)(react@19.2.3):
     dependencies:
       react: 19.2.3
       react-native: 0.86.2(patch_hash=6ca2e1225f38672b073b92b9d13f24feebbe9e37ba67708a3f1569275ce99191)(@babel/core@7.29.7)(@react-native/jest-preset@0.86.2)(@react-native/metro-config@0.86.2)(@types/react@19.2.14)(react@19.2.3)(supports-color@8.1.1)
 
-  react-native-screens@4.26.2(react-native@0.86.2)(react@19.2.3):
+  react-native-screens@4.27.0(react-native@0.86.2)(react@19.2.3):
     dependencies:
       react: 19.2.3
       react-freeze: 1.0.4(react@19.2.3)
@@ -10843,7 +10775,7 @@ snapshots:
       convert-source-map: 2.0.0
       react: 19.2.3
       react-native: 0.86.2(patch_hash=6ca2e1225f38672b073b92b9d13f24feebbe9e37ba67708a3f1569275ce99191)(@babel/core@7.29.7)(@react-native/jest-preset@0.86.2)(@react-native/metro-config@0.86.2)(@types/react@19.2.14)(react@19.2.3)(supports-color@8.1.1)
-      semver: 7.7.4
+      semver: 7.8.5
     transitivePeerDependencies:
       - supports-color
 
@@ -10881,7 +10813,7 @@ snapshots:
       react-refresh: 0.14.2
       regenerator-runtime: 0.13.11
       scheduler: 0.27.0
-      semver: 7.7.4
+      semver: 7.8.5
       stacktrace-parser: 0.1.11
       tinyglobby: 0.2.17
       whatwg-fetch: 3.6.20
@@ -10903,7 +10835,7 @@ snapshots:
       react: 19.2.3
       scheduler: 0.27.0
 
-  react-redux@9.2.0(@types/react@19.2.14)(react@19.2.3)(redux@5.0.1):
+  react-redux@9.3.0(@types/react@19.2.14)(react@19.2.3)(redux@5.0.1):
     dependencies:
       '@types/use-sync-external-store': 0.0.6
       react: 19.2.3
@@ -11069,7 +11001,7 @@ snapshots:
 
   semver@6.3.1: {}
 
-  semver@7.7.4: {}
+  semver@7.8.5: {}
 
   send@0.19.2(supports-color@8.1.1):
     dependencies:
@@ -11392,7 +11324,7 @@ snapshots:
       json5: 2.2.3
       lodash.memoize: 4.1.2
       make-error: 1.3.6
-      semver: 7.7.4
+      semver: 7.8.5
       type-fest: 4.41.0
       typescript: 5.9.3
       yargs-parser: 21.1.1
@@ -11494,8 +11426,6 @@ snapshots:
       which-boxed-primitive: 1.1.1
 
   undici-types@8.3.0: {}
-
-  undici@6.28.0: {}
 
   unicode-canonical-property-names-ecmascript@2.0.1: {}
 
@@ -11704,13 +11634,13 @@ snapshots:
 
   yocto-queue@1.2.2: {}
 
-  zod-validation-error@4.0.2(zod@4.3.6):
+  zod-validation-error@4.0.2(zod@4.4.3):
     dependencies:
-      zod: 4.3.6
+      zod: 4.4.3
 
   zod@3.25.76: {}
 
-  zod@4.3.6: {}
+  zod@4.4.3: {}
 
   zustand@5.0.12(@types/react@19.2.14)(immer@11.1.16)(react@19.2.3)(use-sync-external-store@1.6.0):
     optionalDependencies:
