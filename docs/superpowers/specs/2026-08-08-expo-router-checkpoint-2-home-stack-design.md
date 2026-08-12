@@ -137,17 +137,25 @@ of the remaining groups have exactly this shape: a list screen currently
 does `navigation.navigate('XDetail', {x: fullObject})`.
 
 **Decision (Wren, applies to every group with this shape): re-fetch by key,
-via the React Query cache.** The list screen passes a stable identifying
-field (whatever it already uses as its `keyExtractor`) as a string route
-param. The detail screen re-runs the *same* `useQuery(...)` the list
-screen uses — React Query dedupes by query key, so this resolves from
-cache instantly, no extra network round-trip — then finds the matching
-item client-side. This produces real, clean, shareable URLs (e.g.
-`/Contacts/John-Doe`) instead of a JSON blob in the query string, which
-Expo's own docs actively discourage. Each group's detail screen needs to
-handle a genuinely new state the old code never had to: "query still
-loading" and "item not found" (the old code always received the object
-directly, so these states were structurally impossible before).
+via the React Query cache, using a `select`-based query-options factory —
+not a manual flatMap+find in the route component.** The list screen passes
+a stable identifying field (whatever it already uses as its
+`keyExtractor`) as a string route param. The detail screen uses a second
+`queryOptions(...)` factory, colocated in the same group's `query.ts`,
+that shares the list query's exact `queryKey` (and its underlying fetch
+function, factored out so it isn't duplicated) but supplies a different
+`select` that derives the single matching item directly — e.g.
+`contactByTitleOptions(title)` alongside `groupedContactsOptions` in
+`source/views/contacts/query.ts`. Because the `queryKey` matches, this
+resolves from the same cache entry the list query already populated — no
+extra network round-trip — and each detail screen gets a properly-typed
+single item straight out of `useQuery`, not a raw list to search inline.
+This produces real, clean, shareable URLs (e.g. `/Contacts/John-Doe`)
+instead of a JSON blob in the query string, which Expo's own docs actively
+discourage. Each group's detail screen needs to handle a genuinely new
+state the old code never had to: "query still loading" and "item not
+found" (the old code always received the object directly, so these states
+were structurally impossible before).
 
 ## Standing requirement: screenshots as a PR comment (every group PR)
 

@@ -5,7 +5,6 @@ import * as home from '../views/home'
 import * as buildingHours from '../views/building-hours'
 import * as calendar from '../views/calendar'
 import {EventDetail as eventDetail} from '@frogpond/event-list'
-import * as contacts from '../views/contacts'
 import * as dictionary from '../views/dictionary'
 import * as faqs from '../views/faqs'
 import * as sis from '../views/sis'
@@ -87,18 +86,6 @@ const HomeStackScreens = () => {
 					component={buildingHours.BuildingHoursScheduleEditorView}
 					name="BuildingHoursScheduleEditor"
 					options={buildingHours.EditorNavigationOptions}
-				/>
-			</Stack.Group>
-			<Stack.Group>
-				<Stack.Screen
-					component={contacts.ContactsView}
-					name="Contacts"
-					options={contacts.NavigationOptions}
-				/>
-				<Stack.Screen
-					component={contacts.ContactsDetailView}
-					name="ContactsDetail"
-					options={contacts.DetailNavigationOptions}
 				/>
 			</Stack.Group>
 			<Stack.Group>

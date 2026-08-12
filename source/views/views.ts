@@ -118,7 +118,6 @@ export const AllViews = (): Array<ViewType> => {
 			title: 'Important Contacts',
 			icon: 'phone.fill',
 			gradient: c.orangeGradient,
-			disabled: true,
 		},
 		{
 			type: 'view',
