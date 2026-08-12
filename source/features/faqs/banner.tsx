@@ -276,6 +276,7 @@ type PresentationProps = {
 	faq: Faq
 	style?: StyleProp<ViewStyle>
 	onPress?: () => void
+	onDismiss?: () => void
 }
 
 /**
@@ -286,6 +287,7 @@ export function FaqBannerPresentation({
 	faq,
 	style,
 	onPress,
+	onDismiss,
 }: PresentationProps): React.ReactNode {
 	let palette = buildPalette(faq)
 
@@ -316,10 +318,17 @@ export function FaqBannerPresentation({
 				</Text>
 				{faq.dismissable ? (
 					<Pressable
-						accessibilityLabel="Dismiss FAQ banner"
-						accessibilityRole="button"
+						accessibilityElementsHidden={!onDismiss}
+						accessibilityLabel={onDismiss ? 'Dismiss FAQ banner' : undefined}
+						accessibilityRole={onDismiss ? 'button' : undefined}
 						hitSlop={8}
-						onPress={(e) => e.stopPropagation()}
+						importantForAccessibility={
+							onDismiss ? 'yes' : 'no-hide-descendants'
+						}
+						onPress={(e: GestureResponderEvent) => {
+							e.stopPropagation()
+							onDismiss?.()
+						}}
 						style={[
 							styles.dismissButton,
 							{backgroundColor: palette.dismissBackground},
