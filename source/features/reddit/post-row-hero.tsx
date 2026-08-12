@@ -1,4 +1,3 @@
-// source/views/reddit/post-row-hero.tsx
 import * as React from 'react'
 import {Text, StyleSheet, View, Image, Pressable} from 'react-native'
 import * as c from '@frogpond/colors'

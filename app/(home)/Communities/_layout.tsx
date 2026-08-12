@@ -1,7 +1,7 @@
 import React from 'react'
 import {NativeTabs} from 'expo-router/unstable-native-tabs'
 import {Stack} from 'expo-router'
-import {useRedditPreferences} from '../../../source/views/reddit/store'
+import {useRedditPreferences} from '../../../source/features/reddit/store'
 
 export default function CommunitiesLayout(): React.ReactNode {
 	const {variant, setVariant} = useRedditPreferences()

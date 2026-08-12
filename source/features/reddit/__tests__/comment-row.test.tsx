@@ -1,4 +1,3 @@
-// source/views/reddit/__tests__/comment-row.test.tsx
 import React from 'react'
 import {render, screen} from '@testing-library/react-native'
 import {CommentRow} from '../comment-row'

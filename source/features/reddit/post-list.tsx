@@ -1,4 +1,3 @@
-// source/views/reddit/post-list.tsx
 import * as React from 'react'
 import {FlatList, StyleSheet, View} from 'react-native'
 import {LoadingView, NoticeView} from '@frogpond/notice'
