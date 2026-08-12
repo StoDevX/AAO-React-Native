@@ -29,6 +29,7 @@ export default function HomeLayout(): React.ReactNode {
 				}}
 			/>
 			<Stack.Screen name="SIS" options={{title: 'SIS'}} />
+			<Stack.Screen name="Calendar" options={{title: 'Calendar'}} />
 		</Stack>
 	)
 }

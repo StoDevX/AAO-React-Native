@@ -2,8 +2,6 @@ import React from 'react'
 import {createNativeStackNavigator} from '@react-navigation/native-stack'
 
 import * as home from '../views/home'
-import * as calendar from '../views/calendar'
-import {EventDetail as eventDetail} from '@frogpond/event-list'
 import * as faqs from '../views/faqs'
 import {
 	BonAppPickerView as DevBonAppPickerView,
@@ -35,18 +33,6 @@ const HomeStackScreens = () => {
 				name="Home"
 				options={home.NavigationOptions}
 			/>
-			<Stack.Group>
-				<Stack.Screen
-					component={calendar.View}
-					name={calendar.NavigationKey}
-					options={calendar.NavigationOptions}
-				/>
-				<Stack.Screen
-					component={eventDetail.EventDetail}
-					name={eventDetail.NavigationKey}
-					options={eventDetail.EventDetailNavigationOptions}
-				/>
-			</Stack.Group>
 			<Stack.Group>
 				<Stack.Screen
 					component={more.View}

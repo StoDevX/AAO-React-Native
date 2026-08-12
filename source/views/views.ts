@@ -76,7 +76,6 @@ export const AllViews = (): Array<ViewType> => {
 			title: 'Calendar',
 			icon: 'calendar',
 			gradient: c.violetGradient,
-			disabled: true,
 		},
 		{
 			type: 'view',

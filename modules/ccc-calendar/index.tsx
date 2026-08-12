@@ -7,15 +7,16 @@ import * as React from 'react'
 
 export {
 	namedCalendarOptions,
+	namedCalendarEventOptions,
 	googleCalendarOptions,
 	reasonCalendarOptions,
 	icsCalendarOptions,
 } from './query'
 
 type Props = {
-	detailView?: string
 	poweredBy: PoweredBy
 	query: UseQueryResult<EventType[]>
+	onPressEvent: (event: EventType) => void
 }
 
 export function CccCalendarView(props: Props): React.ReactNode {
@@ -34,9 +35,9 @@ export function CccCalendarView(props: Props): React.ReactNode {
 
 	return (
 		<EventList.EventList
-			detailView={props.detailView}
 			events={data}
 			now={now}
+			onPressEvent={props.onPressEvent}
 			onRefresh={refetch}
 			poweredBy={props.poweredBy}
 			refreshing={isRefetching}

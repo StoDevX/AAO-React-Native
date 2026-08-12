@@ -19,7 +19,6 @@ export interface EventDetailTime {
 }
 
 export interface EventListProps {
-	detailView?: string
 	events: EventType[]
 	message?: string
 	refreshing: boolean
