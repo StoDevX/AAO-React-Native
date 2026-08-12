@@ -54,7 +54,7 @@ export function FaqBanner({
 	faqId,
 	onPressOverride,
 }: Props): React.ReactNode {
-	let {data, isError} = useQuery(faqsOptions)
+	let {data} = useQuery(faqsOptions)
 	let dismissFaq = useFaqBannerStore((state) => state.dismissFaq)
 	let dismissedMap = useFaqBannerStore((state) => state.dismissed)
 	let devBanners = useDevBannerStore((state) => state.devBanners)
@@ -80,7 +80,11 @@ export function FaqBanner({
 		return undefined
 	}, [data, target, faqId, devBanners, devEnabled])
 
-	if (!faq || isError) {
+	// No error check here on purpose. A refetch that fails leaves the last good
+	// faqs in the cache, and a banner that vanishes on a network hiccup is
+	// worse than one showing content a few minutes stale. Nothing to show is
+	// already covered: a query that has never succeeded has no data, so no faq.
+	if (!faq) {
 		return null
 	}
 
@@ -179,11 +183,13 @@ export function FaqBannerGroup({
 	style,
 	onPressFaq,
 }: GroupProps): React.ReactNode {
-	let {data, isError} = useQuery(faqsOptions)
+	let {data} = useQuery(faqsOptions)
 	let devBanners = useDevBannerStore((state) => state.devBanners)
 	let devEnabled = useDevBannerStore((state) => state.enabled)
 
-	if (!data || isError) {
+	// As in FaqBanner: cached faqs outlive a failed refetch, and `!data` alone
+	// already covers a query that has never succeeded.
+	if (!data) {
 		return null
 	}
 

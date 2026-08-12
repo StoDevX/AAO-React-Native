@@ -46,6 +46,24 @@ const buildQueryClient = (faqs: Faq[]): QueryClient => {
 	return queryClient
 }
 
+/// Seeds the same data, but leaves it stale so that mounting kicks off a
+/// refetch -- which the mocked queryFn then fails, driving the query into its
+/// error state while the cached faqs are still perfectly good.
+const buildStaleQueryClient = (faqs: Faq[]): QueryClient => {
+	const queryClient = new QueryClient({
+		defaultOptions: {queries: {retry: false}},
+	})
+	queryClient.setQueryData<FaqQueryData>(FAQS_QUERY_KEY, buildResponse(faqs))
+	return queryClient
+}
+
+/// Runs the queued refetch and its rejection to completion.
+const settlePendingRefetch = async (): Promise<void> => {
+	await act(async () => {
+		await new Promise((resolve) => setTimeout(resolve, 0))
+	})
+}
+
 const renderWithFaqs = (
 	faqs: Faq[],
 	props?: {onPressOverride?: () => void},
@@ -86,9 +104,7 @@ describe('FaqBanner component', () => {
 
 		// Letting queued async work run first keeps a stray refetch from
 		// hiding behind a lucky race -- see buildQueryClient.
-		await act(async () => {
-			await new Promise((resolve) => setTimeout(resolve, 0))
-		})
+		await settlePendingRefetch()
 
 		await fireEvent.press(getByText('Learn more'))
 
@@ -103,6 +119,18 @@ describe('FaqBanner component', () => {
 
 		expect(queryByText('Learn more')).toBeNull()
 		expect(queryByRole('button', {name: baseFaq.bannerTitle})).toBeNull()
+	})
+
+	it('keeps showing a cached banner when a background refetch fails', async () => {
+		let {getByText} = await render(
+			<QueryClientProvider client={buildStaleQueryClient([baseFaq])}>
+				<FaqBanner target={FAQ_TARGETS.HOME} />
+			</QueryClientProvider>,
+		)
+
+		await settlePendingRefetch()
+
+		expect(getByText(baseFaq.bannerTitle)).toBeTruthy()
 	})
 })
 
@@ -131,6 +159,18 @@ describe('FaqBannerGroup component', () => {
 
 		expect(onPressFaq).toHaveBeenCalledWith(secondFaq.id)
 		expect(onPressFaq).not.toHaveBeenCalledWith(baseFaq.id)
+	})
+
+	it('keeps showing cached banners when a background refetch fails', async () => {
+		let {getByTestId} = await render(
+			<QueryClientProvider client={buildStaleQueryClient([baseFaq])}>
+				<FaqBannerGroup target={FAQ_TARGETS.HOME} />
+			</QueryClientProvider>,
+		)
+
+		await settlePendingRefetch()
+
+		expect(getByTestId(`faq-banner-${baseFaq.id}`)).toBeTruthy()
 	})
 })
 jest.mock('@react-native-vector-icons/ionicons', () => ({Ionicons: 'Icon'}))
