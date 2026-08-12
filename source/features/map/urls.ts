@@ -1,13 +1,23 @@
 /**
- * The MapLibre style JSON the campus map renders.
+ * The MapLibre style JSON the campus map renders, self-hosted from
+ * carls-app/map-tiles: OSM-derived vector tiles covering Northfield, plus the
+ * glyph ranges and sprite sheet the style references.
  *
- * TODO(map): point this at the self-hosted style on GitHub Pages once the tile
- * repo exists. It needs to serve, as static files: the style JSON, the vector
- * tiles it references, the glyph ranges (fonts) and the sprite sheet -- a
- * style that names a font or icon it cannot fetch renders without labels
- * rather than failing loudly.
- *
- * MapLibre's demo style is a global, low-zoom basemap: it proves the renderer
- * is wired up, but it has nothing at campus zoom levels.
+ * This is the z/x/y variant. It asks nothing special of the renderer, which is
+ * why it is the default.
  */
-export const MAP_STYLE_URL = 'https://demotiles.maplibre.org/style.json'
+export const MAP_STYLE_URL = 'https://carls-app.github.io/map-tiles/style.json'
+
+/**
+ * The same tileset as a single PMTiles archive, which MapLibre resolves over
+ * HTTP range requests instead of a request per tile.
+ *
+ * Not the default because it is unproven here: PMTiles support in MapLibre
+ * Native is the compile-time `MLN_WITH_PMTILES` flag rather than a registered
+ * protocol, and iOS consumes a prebuilt MapLibre.xcframework over Swift Package
+ * Manager -- so nothing in this repo can turn it on, and whether the shipped
+ * binary already has it is unknown. Point MAP_STYLE_URL here on a device to
+ * find out; if tiles draw, this is the better URL.
+ */
+export const MAP_STYLE_URL_PMTILES =
+	'https://carls-app.github.io/map-tiles/style-pmtiles.json'
