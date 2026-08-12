@@ -1,5 +1,5 @@
 import React from 'react'
-import {fireEvent, render} from '@testing-library/react-native'
+import {act, fireEvent, render} from '@testing-library/react-native'
 
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query'
 
@@ -34,14 +34,23 @@ const buildResponse = (faqs: Faq[]): FaqQueryData => ({
 	legacyText: undefined,
 })
 
+// Seeded data has to be fresh, not merely present: a stale entry makes the
+// query refetch the moment a component mounts, and the mocked queryFn's
+// rejection then lands mid-test and empties the banner out from under the
+// assertions.
+const buildQueryClient = (faqs: Faq[]): QueryClient => {
+	const queryClient = new QueryClient({
+		defaultOptions: {queries: {retry: false, staleTime: Infinity}},
+	})
+	queryClient.setQueryData<FaqQueryData>(FAQS_QUERY_KEY, buildResponse(faqs))
+	return queryClient
+}
+
 const renderWithFaqs = (
 	faqs: Faq[],
 	props?: {onPressOverride?: () => void},
 ) => {
-	const queryClient = new QueryClient({
-		defaultOptions: {queries: {retry: false}},
-	})
-	queryClient.setQueryData<FaqQueryData>(FAQS_QUERY_KEY, buildResponse(faqs))
+	const queryClient = buildQueryClient(faqs)
 
 	return render(
 		<QueryClientProvider client={queryClient}>
@@ -75,6 +84,12 @@ describe('FaqBanner component', () => {
 		let onPressOverride = jest.fn()
 		let {getByText} = await renderWithFaqs([baseFaq], {onPressOverride})
 
+		// Letting queued async work run first keeps a stray refetch from
+		// hiding behind a lucky race -- see buildQueryClient.
+		await act(async () => {
+			await new Promise((resolve) => setTimeout(resolve, 0))
+		})
+
 		await fireEvent.press(getByText('Learn more'))
 
 		expect(onPressOverride).toHaveBeenCalledTimes(1)
@@ -104,13 +119,7 @@ describe('FaqBannerGroup component', () => {
 		}
 		let onPressFaq = jest.fn()
 
-		let queryClient = new QueryClient({
-			defaultOptions: {queries: {retry: false}},
-		})
-		queryClient.setQueryData<FaqQueryData>(
-			FAQS_QUERY_KEY,
-			buildResponse([baseFaq, secondFaq]),
-		)
+		let queryClient = buildQueryClient([baseFaq, secondFaq])
 
 		let {getByTestId} = await render(
 			<QueryClientProvider client={queryClient}>
