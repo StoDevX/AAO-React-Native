@@ -20,37 +20,55 @@ class ModuleSettingsTests: UITestCase {
 	}
 
 	func testChangesAppIconToOldMainAndBack() throws {
-		// this is who owns the "You have changed the icon" alert
-//    let coreServicesUIAgent = XCUIApplication(bundleIdentifier: "com.apple.CoreServicesUIAgent")
-    let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
+		// The "You have changed the icon" alert belongs to SpringBoard. It blocks
+		// the app from reaching idle, so UIInterruptionMonitor never fires --
+		// that handler only runs during synthesize, which app.tap()'s
+		// wait-for-idle never reaches. Dismiss it through SpringBoard instead.
+		let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
 
-    let settings = SettingsScreen(app: app)
-    settings.openSettings()
+		let settings = SettingsScreen(app: app)
+		settings.openSettings()
 
-    settings.scrollUntilExists(app.staticTexts["App Icon"])
-    settings.verifyTitle("App Icon")
+		settings.scrollUntilExists(app.staticTexts["App Icon"])
+		settings.verifyTitle("App Icon")
 
-    // there should be two icon settings available
-    settings.scrollUntilExists(app.staticTexts["Big Ole"])
-    XCTAssert(app.staticTexts["Big Ole"].exists)
-    settings.scrollUntilExists(app.staticTexts["Old Main"])
-    XCTAssert(app.staticTexts["Old Main"].exists)
+		// A picker row is a button labelled with the icon's title, and it is the
+		// button that carries the selected trait -- the title text nested inside
+		// it carries neither the trait nor the tap target.
+		let bigOle = app.buttons["Big Ole"]
+		let oldMain = app.buttons["Old Main"]
 
-    // Big Ole is the default icon, so it should be marked by default
-    XCTAssert(app.staticTexts["Big Ole"].isSelected)
-    XCTAssertEqual(settings.getSelectedAppIcon(), "Big Ole")
+		// there should be two icon settings available
+		settings.scrollUntilExists(bigOle)
+		XCTAssertTrue(bigOle.exists, "Big Ole should be offered as an icon")
+		settings.scrollUntilExists(oldMain)
+		XCTAssertTrue(oldMain.exists, "Old Main should be offered as an icon")
 
-    // change to the other app icon
-    settings.selectAppIcon(iconName: "Old Main", springboard: springboard)
+		// The alternate icon belongs to SpringBoard, so it survives the
+		// `--reset-state` launch that clears UserDefaults and AsyncStorage. A run
+		// that failed between changing the icon and changing it back leaves this
+		// one inheriting Old Main, and every retry then fails on the
+		// initial-state assertion below rather than on anything it meant to
+		// check. Heal that here: this is the only test that reads the icon, so
+		// the other twelve need not pay for a reset.
+		let strayAlert = springboard.buttons["OK"]
+		if strayAlert.waitForExistence(timeout: 2) {
+			// A failure between the tap and its alert leaves the alert standing,
+			// and it stops the app reaching idle for every query after it.
+			strayAlert.tap()
+		}
+		if oldMain.isSelected {
+			settings.selectAppIcon(iconName: "Big Ole", springboard: springboard)
+		}
 
-    // now switch back to the default
-    settings.selectAppIcon(iconName: "Big Ole", springboard: springboard)
-    
-//    SettingsScreen(app: app)
-//      // precondition: verify the default icon
-//      .checkSelectedAppIcon(.BigOle)
-//      // now toggle the selected icon back and forth
-//      .selectAppIcon(.OldMain)
-//      .selectAppIcon(.BigOle)
+		// Big Ole is the default icon, so it should be marked by default
+		XCTAssertTrue(bigOle.isSelected, "Big Ole should be selected by default")
+		XCTAssertEqual(settings.getSelectedAppIcon(), "Big Ole")
+
+		// change to the other app icon
+		settings.selectAppIcon(iconName: "Old Main", springboard: springboard)
+
+		// now switch back to the default
+		settings.selectAppIcon(iconName: "Big Ole", springboard: springboard)
 	}
 }

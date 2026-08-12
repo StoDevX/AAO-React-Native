@@ -31,12 +31,6 @@ struct TestIdentifiers {
 		static let webcams = "screen-streaming-webcams"
 	}
 
-	enum AppIcon {
-		static func cell(_ type: String, selected: Bool = false) -> String {
-			"app-icon-cell-\(type)\(selected ? "-selected" : "")"
-		}
-	}
-
 	// MARK: - Home screen button labels
 
 	enum Buttons {
