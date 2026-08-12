@@ -45,7 +45,6 @@ export const ServerUrlSection = (): React.ReactElement => {
 	}
 
 	const isUrlValid = isHttpUrl(serverAddress)
-	const isUrlValid = /^(http|https):\/\/[^ "]+$/u.test(serverAddress)
 	const isValid = isUrlValid || serverAddress.length === 0
 
 	return (
