@@ -1,3 +1,0 @@
-export {View as DictionaryView} from './list'
-export {DictionaryDetailView} from './detail'
-export {DictionaryEditorView} from './report'
