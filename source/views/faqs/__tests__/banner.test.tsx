@@ -10,14 +10,6 @@ import {FAQ_TARGETS} from '../constants'
 
 const FAQS_QUERY_KEY = ['faqs'] as const
 
-const mockNavigate = jest.fn()
-
-jest.mock('@react-navigation/native', () => ({
-	useNavigation: () => ({
-		navigate: mockNavigate,
-	}),
-}))
-
 jest.mock('../query', () => ({
 	faqsOptions: {
 		queryKey: FAQS_QUERY_KEY,
@@ -42,7 +34,10 @@ const buildResponse = (faqs: Faq[]): FaqQueryData => ({
 	legacyText: undefined,
 })
 
-const renderWithFaqs = (faqs: Faq[]) => {
+const renderWithFaqs = (
+	faqs: Faq[],
+	props?: {onPressOverride?: () => void},
+) => {
 	const queryClient = new QueryClient({
 		defaultOptions: {queries: {retry: false}},
 	})
@@ -50,7 +45,7 @@ const renderWithFaqs = (faqs: Faq[]) => {
 
 	return render(
 		<QueryClientProvider client={queryClient}>
-			<FaqBanner target={FAQ_TARGETS.HOME} />
+			<FaqBanner target={FAQ_TARGETS.HOME} {...props} />
 		</QueryClientProvider>,
 	)
 }
@@ -58,7 +53,6 @@ const renderWithFaqs = (faqs: Faq[]) => {
 describe('FaqBanner component', () => {
 	beforeEach(() => {
 		useFaqBannerStore.getState().resetAll()
-		mockNavigate.mockReset()
 	})
 
 	it('renders the banner title and text', async () => {
@@ -77,12 +71,24 @@ describe('FaqBanner component', () => {
 		expect(queryByText(baseFaq.bannerTitle)).toBeNull()
 	})
 
-	it('navigates to FAQ screen when main pressable is tapped', async () => {
-		let {getByText} = await renderWithFaqs([baseFaq])
+	it('calls onPressOverride when the main pressable is tapped', async () => {
+		let onPressOverride = jest.fn()
+		let {getByText} = await renderWithFaqs([baseFaq], {onPressOverride})
 
 		await fireEvent.press(getByText('Learn more'))
 
-		expect(mockNavigate).toHaveBeenCalledWith('Faq', {faqId: baseFaq.id})
+		expect(onPressOverride).toHaveBeenCalledTimes(1)
+	})
+
+	it('renders as a non-interactive card with no CTA when no override is given', async () => {
+		// The FAQ detail screen hasn't been migrated to expo-router yet, so
+		// with no override there's nowhere to send a tap -- see the comment
+		// in ../banner.tsx. Rather than a button that silently does nothing,
+		// the banner drops its button role and "Learn more" CTA entirely.
+		let {queryByText, queryByRole} = await renderWithFaqs([baseFaq])
+
+		expect(queryByText('Learn more')).toBeNull()
+		expect(queryByRole('button', {name: baseFaq.bannerTitle})).toBeNull()
 	})
 })
 jest.mock('@react-native-vector-icons/ionicons', () => ({Ionicons: 'Icon'}))

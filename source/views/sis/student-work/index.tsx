@@ -5,11 +5,9 @@ import {ListSeparator, ListSectionHeader} from '@frogpond/lists'
 import {NoticeView, LoadingView} from '@frogpond/notice'
 import {JobRow} from './job-row'
 import type {JobType} from './types'
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
-import {NavigationProp, useNavigation} from '@react-navigation/native'
+import {useRouter} from 'expo-router'
 import {studentWorkPostingsOptions} from './query'
 import {useQuery} from '@tanstack/react-query'
-import type {LegacyRootParamList} from '../../../navigation/types'
 
 const styles = StyleSheet.create({
 	listContainer: {
@@ -21,7 +19,7 @@ const styles = StyleSheet.create({
 })
 
 const StudentWorkView = (): React.ReactNode => {
-	let navigation = useNavigation<NavigationProp<LegacyRootParamList>>()
+	let router = useRouter()
 	let {
 		data = [],
 		error,
@@ -59,7 +57,12 @@ const StudentWorkView = (): React.ReactNode => {
 			renderItem={({item}) => (
 				<JobRow
 					job={item}
-					onPress={(job: JobType) => navigation.navigate('JobDetail', {job})}
+					onPress={(job: JobType) =>
+						router.push({
+							pathname: '/JobDetail',
+							params: {jobId: job.id.toString()},
+						})
+					}
 				/>
 			)}
 			renderSectionHeader={({section: {title}}) => (
@@ -72,8 +75,4 @@ const StudentWorkView = (): React.ReactNode => {
 	)
 }
 
-export {StudentWorkView as View}
-
-export const NavigationOptions: NativeStackNavigationOptions = {
-	title: 'Open Jobs',
-}
+export {StudentWorkView, StudentWorkView as View}

@@ -8,12 +8,7 @@ import {openUrl} from '@frogpond/open-url'
 import moment from 'moment'
 import * as c from '@frogpond/colors'
 import type {JobType} from './types'
-import {ShareButton} from '@frogpond/navigation-buttons'
-import {shareJob} from './lib'
 import {decode} from '@frogpond/html-lib'
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
-import {RouteProp, useRoute} from '@react-navigation/native'
-import {RootStackParamList} from '../../../navigation/types'
 
 const styles = StyleSheet.create({
 	lastUpdated: {
@@ -186,20 +181,11 @@ function LastUpdated({when}: {when: string}) {
 	) : null
 }
 
-export const NavigationOptions = (props: {
-	route: RouteProp<RootStackParamList, 'JobDetail'>
-}): NativeStackNavigationOptions => {
-	let {job} = props.route.params
-	return {
-		title: job.title,
-		headerRight: () => <ShareButton onPress={() => shareJob(job)} />,
-	}
+type Props = {
+	job: JobType
 }
 
-export const JobDetailView = (): React.ReactNode => {
-	let route = useRoute<RouteProp<RootStackParamList, 'JobDetail'>>()
-	let {job} = route.params
-
+export const JobDetailView = ({job}: Props): React.ReactNode => {
 	return (
 		<ScrollView contentInsetAdjustmentBehavior="automatic">
 			<Title selectable={true}>{job.title}</Title>

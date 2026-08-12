@@ -23,9 +23,6 @@ import {deptNum} from '../lib/format-dept-num'
 import groupBy from 'lodash/groupBy'
 import map from 'lodash/map'
 import zip from 'lodash/zip'
-import {RouteProp, useRoute} from '@react-navigation/native'
-import {RootStackParamList} from '../../../../navigation/types'
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
 
 const Container = (props: ScrollViewProps) => (
 	<ScrollView
@@ -202,19 +199,11 @@ const BGCOLORS = {
 	Closed: c.salmon,
 } as const
 
-export const NavigationOptions = (props: {
-	route: RouteProp<RootStackParamList, 'CourseDetail'>
-}): NativeStackNavigationOptions => {
-	let {name} = props.route.params.course
-	return {
-		title: name,
-	}
+type Props = {
+	course: CourseType
 }
 
-export const CourseDetailView = (): React.ReactNode => {
-	let route = useRoute<RouteProp<RootStackParamList, 'CourseDetail'>>()
-	let {course} = route.params
-
+export const CourseDetailView = ({course}: Props): React.ReactNode => {
 	let status = course.status === 'O' ? ('Open' as const) : ('Closed' as const)
 
 	return (

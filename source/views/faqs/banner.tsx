@@ -10,14 +10,11 @@ import {
 	ColorValue,
 } from 'react-native'
 import * as c from '@frogpond/colors'
-import {useNavigation} from '@react-navigation/native'
-import {NativeStackNavigationProp} from '@react-navigation/native-stack'
 import {Ionicons as Icon} from '@react-native-vector-icons/ionicons'
 import type IoniconsGlyphs from '@react-native-vector-icons/ionicons/glyphmaps/Ionicons.json'
 
 type IoniconsGlyph = keyof typeof IoniconsGlyphs
 
-import {RootStackParamList} from '../../navigation/types'
 import {faqsOptions} from './query'
 import {useQuery} from '@tanstack/react-query'
 import {getFaqVersion, useFaqBannerStore} from './store'
@@ -57,8 +54,6 @@ export function FaqBanner({
 	faqId,
 	onPressOverride,
 }: Props): React.ReactNode {
-	let navigation =
-		useNavigation<NativeStackNavigationProp<RootStackParamList>>()
 	let {data, isError} = useQuery(faqsOptions)
 	let dismissFaq = useFaqBannerStore((state) => state.dismissFaq)
 	let dismissedMap = useFaqBannerStore((state) => state.dismissed)
@@ -102,9 +97,12 @@ export function FaqBanner({
 
 	let palette = buildPalette(resolvedFaq)
 
-	let onPress =
-		onPressOverride ??
-		(() => navigation.navigate('Faq', {faqId: resolvedFaq.id}))
+	// Faq hasn't been migrated to expo-router yet -- it's planned to land
+	// near the end of checkpoint 2 since it's dual-registered inside the
+	// Settings stack too. Without an override there's nowhere to send a tap
+	// yet, so the banner renders as a plain, non-interactive card (no button
+	// role, no CTA row) instead of a button that silently does nothing.
+	let isInteractive = Boolean(onPressOverride)
 	let onDismiss = (event?: GestureResponderEvent) => {
 		event?.stopPropagation?.()
 		dismissFaq(resolvedFaq.id, faqVersion)
@@ -112,8 +110,8 @@ export function FaqBanner({
 
 	return (
 		<Pressable
-			accessibilityRole="button"
-			onPress={onPress}
+			accessibilityRole={isInteractive ? 'button' : undefined}
+			onPress={isInteractive ? onPressOverride : undefined}
 			style={[
 				styles.container,
 				{
@@ -160,11 +158,13 @@ export function FaqBanner({
 				</Text>
 			) : null}
 
-			<View style={styles.ctaRow}>
-				<Text style={[styles.cta, {color: palette.link}]}>
-					{resolvedFaq.bannerCta ?? 'Learn more'}
-				</Text>
-			</View>
+			{isInteractive ? (
+				<View style={styles.ctaRow}>
+					<Text style={[styles.cta, {color: palette.link}]}>
+						{resolvedFaq.bannerCta ?? 'Learn more'}
+					</Text>
+				</View>
+			) : null}
 		</Pressable>
 	)
 }

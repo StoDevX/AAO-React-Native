@@ -62,7 +62,6 @@ export const AllViews = (): Array<ViewType> => {
 			title: 'SIS',
 			icon: 'person.text.rectangle.fill',
 			gradient: c.goldGradient,
-			disabled: true,
 		},
 		{
 			type: 'view',
@@ -155,7 +154,6 @@ export const AllViews = (): Array<ViewType> => {
 			title: 'Course Catalog',
 			icon: 'graduationcap.fill',
 			gradient: c.tanGradient,
-			disabled: true,
 		},
 		{
 			type: 'view',

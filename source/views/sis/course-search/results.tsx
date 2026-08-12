@@ -3,6 +3,7 @@ import {StyleSheet, SectionList, ActivityIndicator, Text} from 'react-native'
 import {
 	updateRecentSearches,
 	updateRecentFilters,
+	selectRecentFilters,
 } from '../../../redux/parts/courses'
 import {LoadingView} from '@frogpond/notice'
 import type {CourseType} from '../../../lib/course-search'
@@ -10,18 +11,10 @@ import {useAppDispatch} from '../../../redux'
 import {applyFiltersToItem} from '@frogpond/filter'
 import {FilterType} from '@frogpond/filter'
 import {useFilters} from './lib/build-filters'
-import {
-	NavigationProp,
-	RouteProp,
-	useNavigation,
-	useRoute,
-} from '@react-navigation/native'
-import {
-	ChangeTextEvent,
-	LegacyRootParamList,
-	RootStackParamList,
-} from '../../../navigation/types'
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
+import {useLocalSearchParams, useNavigation, useRouter} from 'expo-router'
+import {ChangeTextEvent} from '../../../navigation/types'
+import {fromPairs} from 'lodash'
+import {useAppSelector} from '../../../redux'
 import {useDebounce} from '@frogpond/use-debounce'
 import {ListSeparator, ListSectionHeader, largeListProps} from '@frogpond/lists'
 import * as c from '@frogpond/colors'
@@ -111,16 +104,35 @@ const useSelectedGE = (filters: FilterType<CourseType>[]) => {
 
 export const CourseSearchResultsView = (): React.ReactNode => {
 	let dispatch = useAppDispatch()
-	let navigation = useNavigation<NavigationProp<LegacyRootParamList>>()
+	let navigation = useNavigation()
+	let router = useRouter()
 
-	let route = useRoute<RouteProp<RootStackParamList, 'CourseSearchResults'>>()
-	let {initialFilters = [], initialQuery = ''} = route.params ?? {}
+	let {initialQuery = '', filterDescription} = useLocalSearchParams<{
+		initialQuery?: string
+		filterDescription?: string
+	}>()
 
 	let {
 		data: basicFilters = [],
 		error: filterError,
 		isLoading: filtersLoading,
 	} = useFilters()
+
+	let recentFilters = useAppSelector(selectRecentFilters)
+
+	let initialFilters = React.useMemo(() => {
+		let selectedFilterCombo = filterDescription
+			? recentFilters.find((f) => f.description === filterDescription)
+			: undefined
+		if (!selectedFilterCombo) {
+			return []
+		}
+		let filterLookup = fromPairs(
+			selectedFilterCombo.filters.map((f) => [f.key, f]),
+		)
+		return basicFilters.map((f) => filterLookup[f.key] || f)
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [filterDescription])
 
 	let [filters, setFilters] = React.useState<FilterType<CourseType>[]>(
 		initialFilters.length ? initialFilters : basicFilters,
@@ -160,9 +172,12 @@ export const CourseSearchResultsView = (): React.ReactNode => {
 				// if there is at least one active filter, add the filter set to the Recent Filters list
 				dispatch(updateRecentFilters(filters))
 			}
-			navigation.navigate('CourseDetail', {course: data})
+			router.push({
+				pathname: '/CourseDetail',
+				params: {clbid: data.clbid.toString(), term: data.term.toString()},
+			})
 		},
-		[navigation, dispatch, delayedQuery, filters],
+		[router, dispatch, delayedQuery, filters],
 	)
 
 	let updateFilter = React.useCallback(
@@ -250,10 +265,6 @@ export const CourseSearchResultsView = (): React.ReactNode => {
 			{...largeListProps}
 		/>
 	)
-}
-
-export const NavigationOptions: NativeStackNavigationOptions = {
-	title: 'Course Catalog',
 }
 
 let styles = StyleSheet.create({

@@ -28,6 +28,7 @@ export default function HomeLayout(): React.ReactNode {
 					headerRight: () => <VariantPickerButton />,
 				}}
 			/>
+			<Stack.Screen name="SIS" options={{title: 'SIS'}} />
 		</Stack>
 	)
 }

@@ -5,9 +5,6 @@ import * as home from '../views/home'
 import * as calendar from '../views/calendar'
 import {EventDetail as eventDetail} from '@frogpond/event-list'
 import * as faqs from '../views/faqs'
-import * as sis from '../views/sis'
-import * as studentwork from '../views/sis/student-work'
-import * as studentworkdetail from '../views/sis/student-work/detail'
 import {
 	BonAppPickerView as DevBonAppPickerView,
 	DevBonAppNavigationOptions,
@@ -48,39 +45,6 @@ const HomeStackScreens = () => {
 					component={eventDetail.EventDetail}
 					name={eventDetail.NavigationKey}
 					options={eventDetail.EventDetailNavigationOptions}
-				/>
-			</Stack.Group>
-			<Stack.Group>
-				<Stack.Screen
-					component={studentwork.View}
-					name="Job"
-					options={studentwork.NavigationOptions}
-				/>
-				<Stack.Screen
-					component={studentworkdetail.View}
-					name="JobDetail"
-					options={studentworkdetail.NavigationOptions}
-				/>
-				<Stack.Screen
-					component={sis.View}
-					name={sis.NavigationKey}
-					options={sis.NavigationOptions}
-				/>
-				<Stack.Screen
-					component={sis.CourseSearchView}
-					name="CourseSearch"
-					options={sis.CourseSearchViewNavigationOptions}
-				/>
-				<Stack.Screen
-					component={sis.CourseSearchResultsView}
-					initialParams={{initialFilters: [], initialQuery: ''}}
-					name="CourseSearchResults"
-					options={sis.CourseSearchNavigationOptions}
-				/>
-				<Stack.Screen
-					component={sis.CourseDetailView}
-					name="CourseDetail"
-					options={sis.CourseSearchDetailNavigationOptions}
 				/>
 			</Stack.Group>
 			<Stack.Group>
