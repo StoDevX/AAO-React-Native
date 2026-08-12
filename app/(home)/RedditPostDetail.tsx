@@ -343,20 +343,22 @@ function RedditPostDetailView({
 	return (
 		<>
 			<Stack.Title>{communityName}</Stack.Title>
-			<Stack.Toolbar.Menu icon="ellipsis.circle">
-				<Stack.Toolbar.MenuAction
-					icon="safari"
-					onPress={() => openUrl(postUrl)}
-				>
-					Open in Browser
-				</Stack.Toolbar.MenuAction>
-				<Stack.Toolbar.MenuAction
-					icon="square.and.arrow.up"
-					onPress={() => Share.share({url: postUrl})}
-				>
-					Share
-				</Stack.Toolbar.MenuAction>
-			</Stack.Toolbar.Menu>
+			<Stack.Toolbar placement="right">
+				<Stack.Toolbar.Menu icon="ellipsis.circle">
+					<Stack.Toolbar.MenuAction
+						icon="safari"
+						onPress={() => openUrl(postUrl)}
+					>
+						Open in Browser
+					</Stack.Toolbar.MenuAction>
+					<Stack.Toolbar.MenuAction
+						icon="square.and.arrow.up"
+						onPress={() => Share.share({url: postUrl})}
+					>
+						Share
+					</Stack.Toolbar.MenuAction>
+				</Stack.Toolbar.Menu>
+			</Stack.Toolbar>
 
 			<FlatList
 				ListEmptyComponent={
