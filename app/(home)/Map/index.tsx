@@ -16,6 +16,11 @@ const ORIGINAL_CENTER: Coordinate = [-93.15488752015, 44.460800862266]
 const DEFAULT_ZOOM = 15
 const SELECTION_ZOOM = 17
 const CAMERA_ANIMATION_MS = 500
+/// The dot itself is small enough to read as a pin rather than a blob; hitSlop
+/// pads the tap area out to the 44pt minimum without growing the artwork.
+const MARKER_SIZE = 20
+const MIN_TOUCH_TARGET = 44
+const MARKER_HIT_SLOP = (MIN_TOUCH_TARGET - MARKER_SIZE) / 2
 
 export default function MapPage(): React.ReactNode {
 	let router = useRouter()
@@ -101,6 +106,7 @@ export default function MapPage(): React.ReactNode {
 						<View
 							accessibilityLabel={`${selectedPoint.name} marker`}
 							accessibilityRole="image"
+							hitSlop={MARKER_HIT_SLOP}
 							style={styles.markerOuter}
 						>
 							<View style={styles.markerInner} />
@@ -119,9 +125,9 @@ export default function MapPage(): React.ReactNode {
 
 const styles = StyleSheet.create({
 	markerOuter: {
-		width: 20,
-		height: 20,
-		borderRadius: 10,
+		width: MARKER_SIZE,
+		height: MARKER_SIZE,
+		borderRadius: MARKER_SIZE / 2,
 		alignItems: 'center',
 		justifyContent: 'center',
 		backgroundColor: c.white,

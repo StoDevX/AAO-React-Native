@@ -1,5 +1,10 @@
 import * as React from 'react'
 import {Stack} from 'expo-router'
+// Here rather than in the root layout: expo-router loads a route's module the
+// first time that route renders, so the Mapbox SDK and its one bridge call to
+// set the access token stay off the cold-start path for everyone who never
+// opens the map. This layout mounts before the map screen it wraps.
+import '../../../source/lib/mapbox'
 import {MapSelectionProvider} from '../../../source/features/map/selection-context'
 
 /// react-navigation's option types reach this project only through

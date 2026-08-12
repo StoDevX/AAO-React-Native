@@ -63,6 +63,40 @@ it('skips features that have no polygon geometry', () => {
 	expect(result?.id).toBe('A')
 })
 
+it('matches a polygon that is not the first in the collection', () => {
+	let twoWings: Feature<Building>['geometry'] = {
+		type: 'GeometryCollection',
+		geometries: [
+			{
+				type: 'Polygon',
+				coordinates: [
+					[
+						[0, 0],
+						[1, 0],
+						[1, 1],
+						[0, 1],
+						[0, 0],
+					],
+				],
+			},
+			{
+				type: 'Polygon',
+				coordinates: [
+					[
+						[10, 10],
+						[20, 10],
+						[20, 20],
+						[10, 20],
+						[10, 10],
+					],
+				],
+			},
+		],
+	}
+	let result = lookupBuildingByCoordinates([15, 15], [make('wings', twoWings)])
+	expect(result?.id).toBe('wings')
+})
+
 it('returns the first matching feature when multiple polygons overlap', () => {
 	let result = lookupBuildingByCoordinates(
 		[5, 5],

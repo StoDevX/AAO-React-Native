@@ -15,6 +15,10 @@ import {openUrl} from '@frogpond/open-url'
 import {parseLinkString} from './lib/parse-link-string'
 import type {Building, Feature, LabelLinkString} from './types'
 
+/// The smallest square Apple's Human Interface Guidelines will accept, and
+/// what CLAUDE.md requires of every interactive element here.
+const MIN_TOUCH_TARGET = 44
+
 type Props = {
 	building: Feature<Building> | undefined
 	onClose: () => void
@@ -129,7 +133,9 @@ function AddressLink({address}: {address: string}) {
 	// browser instead, which lands on Apple's web fallback page.
 	let onPress = () => {
 		let url = `https://maps.apple.com/?q=${encodeURIComponent(address)}`
-		Linking.openURL(url)
+		Linking.openURL(url).catch((err: unknown) => {
+			console.warn(`could not open ${url}`, err)
+		})
 	}
 	return (
 		<TouchableOpacity
@@ -147,9 +153,11 @@ function LinkSection({
 	items,
 }: {
 	title: string
-	items: Array<LabelLinkString>
+	// The server is not schema-validated at the boundary, so a record that
+	// omits the field arrives as undefined rather than as an empty array.
+	items: Array<LabelLinkString> | undefined
 }) {
-	if (items.length === 0) {
+	if (!items?.length) {
 		return null
 	}
 	return (
@@ -201,7 +209,12 @@ const styles = StyleSheet.create({
 	headerText: {flex: 1},
 	title: {fontSize: 22, fontWeight: '700', color: c.label},
 	subtitle: {fontSize: 15, color: c.secondaryLabel, marginTop: 2},
-	closeButton: {paddingHorizontal: 20, paddingVertical: 12},
+	/// 44pt tall around a 15pt line, which is the minimum touch target.
+	closeButton: {
+		paddingHorizontal: 20,
+		minHeight: MIN_TOUCH_TARGET,
+		justifyContent: 'center',
+	},
 	closeText: {color: c.systemBlue, fontSize: 15, fontWeight: '600'},
 	photo: {width: '100%', height: 180, marginBottom: 12},
 	section: {paddingHorizontal: 16, paddingVertical: 8},

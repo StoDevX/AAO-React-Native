@@ -90,6 +90,9 @@ export const AllViews = (): Array<ViewType> => {
 			title: 'Carleton Map (Beta)',
 			icon: 'map.circle.fill',
 			gradient: c.blueGradient,
+			// Renders a blank map until the real Mapbox public token replaces
+			// the placeholder in source/lib/mapbox.ts. Drop this line then.
+			devOnly: true,
 		},
 		{
 			type: 'view',

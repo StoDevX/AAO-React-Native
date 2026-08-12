@@ -14,17 +14,18 @@ export function lookupBuildingByCoordinates(
 		},
 	}
 
-	return features.find((feature) => {
-		let polygon = feature.geometry.geometries.find(
-			(geo): geo is Polygon => geo.type === 'Polygon',
-		)
-		if (!polygon) {
-			return false
-		}
-		return booleanPointInPolygon(searchPoint, {
-			type: 'Feature',
-			properties: {},
-			geometry: polygon,
-		})
-	})
+	// Every polygon, not just the first: a building with wings is stored as
+	// several polygons in one GeometryCollection, and stopping at the first
+	// would leave every wing but one untappable.
+	return features.find((feature) =>
+		feature.geometry.geometries
+			.filter((geo): geo is Polygon => geo.type === 'Polygon')
+			.some((polygon) =>
+				booleanPointInPolygon(searchPoint, {
+					type: 'Feature',
+					properties: {},
+					geometry: polygon,
+				}),
+			),
+	)
 }

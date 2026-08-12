@@ -8,20 +8,26 @@ import {useMapSelection} from '../../../source/features/map/selection-context'
 
 export default function BuildingInfoPage(): React.ReactNode {
 	let router = useRouter()
+	// The route param is the single source of truth for *this* screen; the
+	// context exists so the map underneath can draw the marker.
 	let {buildingId} = useLocalSearchParams<{buildingId?: string}>()
-	let {selectedBuildingId, clearSelection} = useMapSelection()
+	let {clearSelection} = useMapSelection()
 	let {data: buildings = []} = useQuery(mapDataOptions)
 
-	let id = selectedBuildingId ?? buildingId ?? null
 	let building = React.useMemo(
-		() => buildings.find((b) => b.id === id),
-		[buildings, id],
+		() => buildings.find((b) => b.id === buildingId),
+		[buildings, buildingId],
 	)
 
+	// On unmount rather than only in the Close handler: the sheet is
+	// swipe-dismissable, and that gesture pops the route without running any
+	// handler -- which would otherwise strand the marker and the zoomed-in
+	// camera on a building the user just dismissed.
+	React.useEffect(() => clearSelection, [clearSelection])
+
 	let handleClose = React.useCallback(() => {
-		clearSelection()
 		router.back()
-	}, [clearSelection, router])
+	}, [router])
 
 	return <BuildingInfo building={building} onClose={handleClose} />
 }

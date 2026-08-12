@@ -1,5 +1,5 @@
 import React from 'react'
-import {fireEvent, render, screen} from '@testing-library/react-native'
+import {fireEvent, render, screen, waitFor} from '@testing-library/react-native'
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query'
 
 import {BuildingPicker} from '../building-picker'
@@ -51,8 +51,21 @@ describe('BuildingPicker', () => {
 			screen.getByLabelText('Search for a place'),
 			'gamma',
 		)
-		expect(screen.queryByText('Outdoors')).toBeNull()
+		await waitFor(() => {
+			expect(screen.queryByText('Outdoors')).toBeNull()
+		})
 		expect(screen.getByText('Gamma Field')).toBeTruthy()
+	})
+
+	it('still matches when the query carries leading whitespace', async () => {
+		await renderPicker()
+		await fireEvent.changeText(
+			screen.getByLabelText('Search for a place'),
+			' gamma',
+		)
+		await waitFor(() => {
+			expect(screen.getByText('Gamma Field')).toBeTruthy()
+		})
 	})
 
 	it('reports the tapped building to its caller', async () => {
