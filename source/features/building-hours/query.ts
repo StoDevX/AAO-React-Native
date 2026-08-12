@@ -1,0 +1,62 @@
+import {client} from '@frogpond/api'
+import {queryOptions, useQuery, UseQueryResult} from '@tanstack/react-query'
+import {groupBy} from 'lodash'
+import {selectFavoriteBuildings, useAppSelector} from '../../redux'
+import {BuildingType} from './types'
+
+export const keys = {
+	all: ['buildings'] as const,
+}
+
+async function fetchBuildings({
+	signal,
+}: {
+	signal: AbortSignal
+}): Promise<BuildingType[]> {
+	let response = await client.get('spaces/hours', {signal}).json()
+	return (response as {data: BuildingType[]}).data
+}
+
+export const buildingsOptions = queryOptions({
+	queryKey: keys.all,
+	queryFn: fetchBuildings,
+})
+
+export const buildingByNameOptions = (
+	name: string,
+	// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+) =>
+	queryOptions({
+		queryKey: keys.all,
+		queryFn: fetchBuildings,
+		select: (buildings) => buildings.find((b) => b.name === name),
+	})
+
+export function useGroupedBuildings(): UseQueryResult<
+	Array<{title: string; data: BuildingType[]}>,
+	unknown
+> {
+	let favoriteBuildings = useAppSelector(selectFavoriteBuildings)
+
+	return useQuery({
+		...buildingsOptions,
+		select: (buildings) => {
+			let favoritesGroup = {
+				title: 'Favorites',
+				data: buildings.filter((b) => favoriteBuildings.includes(b.name)),
+			}
+
+			let grouped = groupBy(buildings, (b) => b.category || 'Other')
+			let groupedBuildings = Object.entries(grouped).map(([key, value]) => ({
+				title: key,
+				data: value,
+			}))
+
+			if (favoritesGroup.data.length > 0) {
+				groupedBuildings = [favoritesGroup, ...groupedBuildings]
+			}
+
+			return groupedBuildings
+		},
+	})
+}

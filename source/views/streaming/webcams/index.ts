@@ -1,1 +1,0 @@
-export {WebcamsView} from './list'

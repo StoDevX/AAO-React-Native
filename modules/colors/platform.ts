@@ -103,13 +103,6 @@ export const quaternarySystemFill = PlatformColor('quaternarySystemFill')
  */
 export const placeholderText = PlatformColor('placeholderText')
 
-// MARK: Tint color
-
-/**
- * A color value that resolves at runtime based on the current tint color of the app or trait hierarchy.
- */
-export const tintColor = PlatformColor('tintColor')
-
 // MARK: Standard content background colors
 
 /**

@@ -1,9 +1,5 @@
 import {ConfigPlugin, withAppDelegate} from '@expo/config-plugins'
 
-// The JS side calls AppRegistry.registerComponent with this name; the template
-// hardcodes "main".
-const MODULE_NAME = 'AllAboutOlaf'
-
 const BEGIN = '    // BEGIN aao customizations'
 const END = '    // END aao customizations'
 
@@ -57,7 +53,7 @@ function require_(contents: string, anchor: string): void {
 }
 
 /**
- * Reapply the four things our AppDelegate does that the Expo template does not.
+ * Reapply the three things our AppDelegate does that the Expo template does not.
  * Idempotent: prebuild runs this on an already-patched file whenever the native
  * project is regenerated in place.
  */
@@ -81,14 +77,6 @@ export function patchAppDelegate(contents: string): string {
 			)
 		}
 		result = result.replace(match[0], `${STARTUP_BLOCK}\n${match[0]}`)
-	}
-
-	if (!result.includes(`withModuleName: "${MODULE_NAME}"`)) {
-		require_(result, 'withModuleName: "main"')
-		result = result.replace(
-			'withModuleName: "main"',
-			`withModuleName: "${MODULE_NAME}"`,
-		)
 	}
 
 	if (!result.includes('forBundleRoot: "index"')) {
