@@ -38,7 +38,13 @@ const MARKER_HIT_SLOP = (MIN_TOUCH_TARGET - MARKER_SIZE) / 2
 /// above zero is the fix -- zero opacity should still hit-test, since it is
 /// `visibility: none` rather than opacity that drops a layer from the tree.
 const FOOTPRINT_OPACITY = 0
-const FOOTPRINT_SELECTED_OPACITY = 0.45
+/// Nearly opaque, because what it covers is opaque. The tileset paints every
+/// building #dcd8d1 at full opacity, so a half-transparent gold lands around
+/// #dac38a -- a warm tint on a warm grey, and every neighbouring building is
+/// the same grey, so the tint is the only thing marking the selection. At 0.9
+/// it resolves to roughly #d7af43 and reads as a different colour rather than
+/// a different shade.
+const FOOTPRINT_SELECTED_OPACITY = 0.9
 
 export default function MapPage(): React.ReactNode {
 	let router = useRouter()
