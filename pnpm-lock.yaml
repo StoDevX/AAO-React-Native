@@ -28,6 +28,9 @@ importers:
 
   .:
     dependencies:
+      '@babel/runtime':
+        specifier: 7.29.7
+        version: 7.29.7
       '@callstack/react-theme-provider':
         specifier: 3.0.9
         version: 3.0.9(react@19.2.8)
@@ -332,9 +335,6 @@ importers:
       '@babel/preset-typescript':
         specifier: 7.29.7
         version: 7.29.7(@babel/core@7.29.7)(supports-color@8.1.1)
-      '@babel/runtime':
-        specifier: 7.29.7
-        version: 7.29.7
       '@eslint/js':
         specifier: 9.39.5
         version: 9.39.5
@@ -347,9 +347,6 @@ importers:
       '@jest/globals':
         specifier: 29.7.0
         version: 29.7.0(supports-color@8.1.1)
-      '@react-native/babel-preset':
-        specifier: 0.86.2
-        version: 0.86.2(@babel/core@7.29.7)(supports-color@8.1.1)
       '@react-native/jest-preset':
         specifier: 0.86.2
         version: 0.86.2(@babel/core@7.29.7)(react@19.2.8)(supports-color@8.1.1)
@@ -410,9 +407,6 @@ importers:
       ajv-keywords:
         specifier: 5.1.0
         version: 5.1.0(ajv@8.20.0)
-      babel-core:
-        specifier: 7.0.0-bridge.0
-        version: 7.0.0-bridge.0(@babel/core@7.29.7)
       babel-jest:
         specifier: 29.7.0
         version: 29.7.0(@babel/core@7.29.7)(supports-color@8.1.1)
@@ -2725,11 +2719,6 @@ packages:
   available-typed-arrays@1.0.7:
     resolution: {integrity: sha512-wvUjBtSGN7+7SjNpq/9M2Tg350UZD3q62IFZLbRAR1bSMlCo1ZaeW+BJ+D090e4hIIZLBcTDWe4Mh4jvUDajzQ==}
     engines: {node: '>= 0.4'}
-
-  babel-core@7.0.0-bridge.0:
-    resolution: {integrity: sha512-poPX9mZH/5CSanm50Q+1toVci6pv5KSRv/5TWCwtzQS5XEwn40BcCrgIeMFWP9CKKIniKXNxoIOnOq4VVlGXhg==}
-    peerDependencies:
-      '@babel/core': 7.29.7
 
   babel-jest@29.7.0:
     resolution: {integrity: sha512-BrvGY3xZSwEcCzKvKsCi2GgHqDqsYkOP4/by5xCgIwGXQxIEh+8ew3gmrE1y7XRR6LHZIj6yLYnUi/mm2KXKBg==}
@@ -8072,10 +8061,6 @@ snapshots:
   available-typed-arrays@1.0.7:
     dependencies:
       possible-typed-array-names: 1.1.0
-
-  babel-core@7.0.0-bridge.0(@babel/core@7.29.7):
-    dependencies:
-      '@babel/core': 7.29.7(supports-color@8.1.1)
 
   babel-jest@29.7.0(@babel/core@7.29.7)(supports-color@8.1.1):
     dependencies:

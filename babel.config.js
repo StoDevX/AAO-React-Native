@@ -4,7 +4,6 @@ module.exports = {
 		'@babel/preset-typescript',
 	],
 	plugins: [
-		'@babel/plugin-transform-export-namespace-from',
 		// the worklets plugin must come last
 		'react-native-worklets/plugin',
 	],
