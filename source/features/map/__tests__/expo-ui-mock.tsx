@@ -54,7 +54,7 @@ export const contentShape = (shape: unknown): Modifier => ({
 	shape,
 })
 
-export const shapes = {rectangle: () => ({$type: 'rectangle'})}
+export const shapes = {rectangle: (): Modifier => ({$type: 'rectangle'})}
 
 export const buttonStyle = (style: string): Modifier => ({
 	$type: 'buttonStyle',
