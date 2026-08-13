@@ -1,8 +1,6 @@
 import * as React from 'react'
-import {StyleSheet} from 'react-native'
 import {
 	Button,
-	Host,
 	HStack,
 	Image,
 	List,
@@ -19,7 +17,6 @@ import {
 	foregroundStyle,
 } from '@expo/ui/swift-ui/modifiers'
 import {useQuery} from '@tanstack/react-query'
-import * as c from '@frogpond/colors'
 import {useDebounce} from '@frogpond/use-debounce'
 import fuzzyfind from 'fuzzyfind'
 
@@ -38,14 +35,8 @@ type Props = {
 	onSelect: (id: string) => void
 }
 
-/// SwiftUI rather than React Native views, and the whole sheet is one `Host`.
-///
-/// The sheet is presented by react-native-screens as a `formSheet`, which does
-/// not report its full-detent bounds to Yoga: laid out as React Native views,
-/// the search field, the category tabs and the list all resolved to the top of
-/// the sheet and drew over each other, while `onLayout` insisted they were
-/// stacked correctly. One SwiftUI view filling the sheet has nothing to stack
-/// wrongly -- SwiftUI lays its own contents out against the bounds it is given.
+/// The picker's contents, as SwiftUI. The sheet that presents them, and the
+/// `Host` they render into, both belong to the map screen.
 export function BuildingPicker({onSelect}: Props): React.ReactNode {
 	let [category, setCategory] = React.useState<CategoryLabel>('Buildings')
 	let [typedQuery, setTypedQuery] = React.useState('')
@@ -74,48 +65,46 @@ export function BuildingPicker({onSelect}: Props): React.ReactNode {
 	}, [buildings, category, query])
 
 	return (
-		<Host style={styles.host}>
-			<List>
-				<Section>
-					<TextField
-						modifiers={[autocorrectionDisabled(true)]}
-						onTextChange={setTypedQuery}
-						placeholder="Search for a place"
-					/>
-				</Section>
+		<List>
+			<Section>
+				<TextField
+					modifiers={[autocorrectionDisabled(true)]}
+					onTextChange={setTypedQuery}
+					placeholder="Search for a place"
+				/>
+			</Section>
 
-				{query ? null : (
-					<Section>
-						<CategoryPicker onChange={setCategory} selected={category} />
-					</Section>
+			{query ? null : (
+				<Section>
+					<CategoryPicker onChange={setCategory} selected={category} />
+				</Section>
+			)}
+
+			<Section>
+				{isError ? (
+					<Button onPress={() => void refetch()}>
+						<VStack alignment="leading" spacing={2}>
+							<Text>{`A problem occured while loading: ${error}`}</Text>
+							<Text>Tap to try again.</Text>
+						</VStack>
+					</Button>
+				) : isLoading ? (
+					<Text>Loading…</Text>
+				) : visible.length === 0 ? (
+					<Text>No buildings to show.</Text>
+				) : (
+					<List.ForEach>
+						{visible.map((building) => (
+							<BuildingRow
+								key={building.id}
+								building={building}
+								onSelect={onSelect}
+							/>
+						))}
+					</List.ForEach>
 				)}
-
-				<Section>
-					{isError ? (
-						<Button onPress={() => void refetch()}>
-							<VStack alignment="leading" spacing={2}>
-								<Text>{`A problem occured while loading: ${error}`}</Text>
-								<Text>Tap to try again.</Text>
-							</VStack>
-						</Button>
-					) : isLoading ? (
-						<Text>Loading…</Text>
-					) : visible.length === 0 ? (
-						<Text>No buildings to show.</Text>
-					) : (
-						<List.ForEach>
-							{visible.map((building) => (
-								<BuildingRow
-									key={building.id}
-									building={building}
-									onSelect={onSelect}
-								/>
-							))}
-						</List.ForEach>
-					)}
-				</Section>
-			</List>
-		</Host>
+			</Section>
+		</List>
 	)
 }
 
@@ -168,7 +157,3 @@ function BuildingRow({
 		</Button>
 	)
 }
-
-const styles = StyleSheet.create({
-	host: {flex: 1, backgroundColor: c.systemGroupedBackground},
-})

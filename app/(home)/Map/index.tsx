@@ -5,7 +5,15 @@ import {
 	View,
 	type NativeSyntheticEvent,
 } from 'react-native'
-import {useFocusEffect, useRouter} from 'expo-router'
+import {BottomSheet, Group, Host} from '@expo/ui/swift-ui'
+import {
+	background,
+	interactiveDismissDisabled,
+	presentationBackgroundInteraction,
+	presentationDetents,
+	presentationDragIndicator,
+	type PresentationDetent,
+} from '@expo/ui/swift-ui/modifiers'
 import {
 	Camera,
 	GeoJSONSource,
@@ -20,9 +28,10 @@ import {useQuery} from '@tanstack/react-query'
 import * as c from '@frogpond/colors'
 import {NoticeView} from '@frogpond/notice'
 
+import {BuildingInfo} from '../../../source/features/map/building-info'
+import {BuildingPicker} from '../../../source/features/map/building-picker'
 import {toBuildingFootprints} from '../../../source/features/map/lib/building-footprints'
 import {mapDataOptions} from '../../../source/features/map/query'
-import {useMapSelection} from '../../../source/features/map/selection-context'
 import type {Coordinate, Point} from '../../../source/features/map/types'
 import {MAP_STYLE_URL} from '../../../source/features/map/urls'
 
@@ -42,39 +51,45 @@ const FOOTPRINT_OPACITY = 0.15
 const FOOTPRINT_SELECTED_OPACITY = 0.45
 const FOOTPRINT_LINE_WIDTH = 1
 
-/// The smallest detent the picker and info sheets are allowed, from the Map
-/// layout's `sheetAllowedDetents`. The map keeps the strip above it clear.
-const SHEET_SMALLEST_DETENT = 0.5
+/// Apple Maps' three stops, and the sheet never dismisses: the search field
+/// alone, half the screen, and `large`.
+/// Leaves 34pt above the search field and 20pt below it. Not symmetric, and
+/// not freely tunable: the gap below only grows by moving the sheet up, and by
+/// the time it matches the 34pt above, the category tabs below have risen into
+/// view. Symmetry here needs the tabs section'"'"'s margins moved too.
+const SHEET_COLLAPSED_HEIGHT = 100
+const COLLAPSED_DETENT: PresentationDetent = {height: SHEET_COLLAPSED_HEIGHT}
+const SHEET_DETENTS: PresentationDetent[] = [
+	COLLAPSED_DETENT,
+	'medium',
+	'large',
+]
 
 export default function MapPage(): React.ReactNode {
-	let router = useRouter()
 	let cameraRef = React.useRef<CameraRef>(null)
-	let {selectedBuildingId, selectBuilding} = useMapSelection()
+	// The sheet is the map's, not a route's, so its selection is the map's too.
+	let [selectedBuildingId, setSelectedBuildingId] = React.useState<
+		string | null
+	>(null)
 	let {data: buildings = [], error} = useQuery(mapDataOptions)
 	let {height: windowHeight} = useWindowDimensions()
-	let sheetHeight = windowHeight * SHEET_SMALLEST_DETENT
+	let [sheetPresented, setSheetPresented] = React.useState(true)
+	// Which stop the sheet rests at. Driven by selecting a building, and by the
+	// user dragging it, which is why it is state rather than derived.
+	let [detent, setDetent] = React.useState<PresentationDetent>(COLLAPSED_DETENT)
+
+	// The sheet has no dismissed state. `interactiveDismissDisabled` should keep
+	// it up, but if the system ever reports otherwise, present it again rather
+	// than leaving the user on a bare map with no way to search.
+	React.useEffect(() => {
+		if (!sheetPresented) {
+			setSheetPresented(true)
+		}
+	}, [sheetPresented])
 
 	let footprints = React.useMemo(
 		() => toBuildingFootprints(buildings),
 		[buildings],
-	)
-
-	// useFocusEffect, not useEffect: the picker is the map's default companion,
-	// so dismissing the info card should land the user back on the picker
-	// rather than on a bare map.
-	//
-	// `navigate`, not `push`: focus fires more than once for a single arrival at
-	// the map, and `push` presented a second picker on top of the first every
-	// time. Two identical sheets stacked read as one broken sheet -- the lower
-	// one's list showed through above the upper one's search field, a swipe-down
-	// revealed its twin rather than the map, and the second presentation
-	// animated in while the first was still transitioning. `navigate` reuses the
-	// picker already on the stack, so the effect is idempotent however often it
-	// runs.
-	useFocusEffect(
-		React.useCallback(() => {
-			router.navigate('/Map/BuildingPicker')
-		}, [router]),
 	)
 
 	// The source hands back whichever footprint was under the touch, so the
@@ -88,25 +103,16 @@ export default function MapPage(): React.ReactNode {
 			if (typeof id !== 'string') {
 				return
 			}
-			// Tapping a second building while the card is already up only needs
-			// the card to say something different. Replacing the route instead
-			// dismissed the sheet and presented a new one, so a tap-to-tap
-			// comparison flickered the card away and back.
-			if (selectedBuildingId) {
-				selectBuilding(id)
-				router.setParams({buildingId: id})
-				return
-			}
-			selectBuilding(id)
-			// `replace`, so a map tap doesn't strand a stale picker beneath the
-			// info card: with `push`, closing the card would show the picker as
-			// it was before the tap.
-			router.replace({
-				pathname: '/Map/BuildingInfo',
-				params: {buildingId: id},
-			})
+			// One sheet, whose contents swap. Tapping a second building while the
+			// card is up is a state change, not a presentation.
+			setSelectedBuildingId(id)
 		},
-		[router, selectBuilding, selectedBuildingId],
+		[],
+	)
+
+	let selectedBuilding = React.useMemo(
+		() => buildings.find((b) => b.id === selectedBuildingId),
+		[buildings, selectedBuildingId],
 	)
 
 	let selectedPoint = React.useMemo(() => {
@@ -130,14 +136,13 @@ export default function MapPage(): React.ReactNode {
 		cameraRef.current?.easeTo({
 			center: selectedPoint.point.coordinates,
 			duration: CAMERA_ANIMATION_MS,
-			// The sheet covers the lower half of the map, so centring on the
-			// building put the thing the user just selected underneath it. Padding
-			// the bottom by the sheet's smallest detent centres it in the strip
-			// that stays visible.
-			padding: {bottom: sheetHeight},
+			// The sheet sits over the bottom of the map, so centring on the
+			// building put the thing just selected underneath it. A selection
+			// settles at `medium`, which is half the screen.
+			padding: {bottom: windowHeight / 2},
 			zoom: SELECTION_ZOOM,
 		})
-	}, [selectedPoint, sheetHeight])
+	}, [selectedPoint, windowHeight])
 
 	return (
 		<View style={StyleSheet.absoluteFill}>
@@ -199,6 +204,54 @@ export default function MapPage(): React.ReactNode {
 					</Marker>
 				) : null}
 			</Map>
+			{/* Zero-sized on purpose. The sheet is presented rather than laid out,
+			    so the Host only has to exist -- and a Host stretched over the map
+			    swallows the taps that select a building. */}
+			<Host style={styles.sheetHost}>
+				<BottomSheet
+					isPresented={sheetPresented}
+					onIsPresentedChange={setSheetPresented}
+				>
+					<Group
+						modifiers={[
+							// The sheet's own chrome is a translucent material, and the
+							// map read straight through the list. A PlatformColor rather
+							// than the hex `presentationBackground` wants, so the sheet
+							// still follows the system appearance.
+							background(c.systemGroupedBackground),
+							presentationDetents(SHEET_DETENTS, {
+								selection: detent,
+								onSelectionChange: setDetent,
+							}),
+							presentationDragIndicator('visible'),
+							// The map behind the sheet stays live at every stop, which is
+							// the whole point of a sheet rather than a pushed screen.
+							presentationBackgroundInteraction('enabled'),
+							// Apple Maps' sheet has no dismissed state, and neither has
+							// this one: the collapsed stop is as small as it goes.
+							interactiveDismissDisabled(true),
+						]}
+					>
+						{selectedBuildingId ? (
+							<BuildingInfo
+								building={selectedBuilding}
+								onClose={() => {
+									setSelectedBuildingId(null)
+									setDetent(COLLAPSED_DETENT)
+								}}
+							/>
+						) : (
+							<BuildingPicker
+								onSelect={(id) => {
+									setSelectedBuildingId(id)
+									setDetent('medium')
+								}}
+							/>
+						)}
+					</Group>
+				</BottomSheet>
+			</Host>
+
 			{error ? (
 				<View style={styles.banner}>
 					<NoticeView text="Couldn't load building data. Pan around the map; some features won't work." />
@@ -226,6 +279,7 @@ const styles = StyleSheet.create({
 		borderRadius: 6,
 		backgroundColor: c.gold,
 	},
+	sheetHost: {width: 0, height: 0},
 	banner: {
 		position: 'absolute',
 		top: 0,

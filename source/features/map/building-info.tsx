@@ -2,7 +2,6 @@ import * as React from 'react'
 import {Image as RNImage, Linking, StyleSheet} from 'react-native'
 import {
 	Button,
-	Host,
 	HStack,
 	List,
 	RNHostView,
@@ -16,7 +15,6 @@ import {
 	font,
 	foregroundStyle,
 } from '@expo/ui/swift-ui/modifiers'
-import * as c from '@frogpond/colors'
 import {openUrl} from '@frogpond/open-url'
 
 import {parseLinkString} from './lib/parse-link-string'
@@ -28,22 +26,19 @@ type Props = {
 	onClose: () => void
 }
 
-/// SwiftUI, for the same reason the picker is: this renders inside a
-/// react-native-screens `formSheet`, whose full-detent bounds React Native does
-/// not lay out correctly. See `building-picker.tsx`.
+/// The info card's contents, as SwiftUI. The sheet that presents them belongs
+/// to the map screen, which swaps between this and the picker.
 export function BuildingInfo({building, onClose}: Props): React.ReactNode {
 	if (!building) {
 		return (
-			<Host style={styles.host}>
-				<List>
-					<Section>
-						<Text>Building not found.</Text>
-						<Button modifiers={[accessibilityLabel('Close')]} onPress={onClose}>
-							<Text>Close</Text>
-						</Button>
-					</Section>
-				</List>
-			</Host>
+			<List>
+				<Section>
+					<Text>Building not found.</Text>
+					<Button modifiers={[accessibilityLabel('Close')]} onPress={onClose}>
+						<Text>Close</Text>
+					</Button>
+				</Section>
+			</List>
 		)
 	}
 
@@ -60,70 +55,68 @@ export function BuildingInfo({building, onClose}: Props): React.ReactNode {
 	} = building.properties
 
 	return (
-		<Host style={styles.host}>
-			<List>
-				<Section>
-					{/* `center`, so the name sits on the same axis as Close rather than
+		<List>
+			<Section>
+				{/* `center`, so the name sits on the same axis as Close rather than
 					    riding up against the top of the row. */}
-					<HStack alignment="center" spacing={12}>
-						<VStack alignment="leading" spacing={2}>
-							<Text modifiers={[font({textStyle: 'title2', weight: 'bold'})]}>
-								{name}
+				<HStack alignment="center" spacing={12}>
+					<VStack alignment="leading" spacing={2}>
+						<Text modifiers={[font({textStyle: 'title2', weight: 'bold'})]}>
+							{name}
+						</Text>
+						{nickname ? (
+							<Text
+								modifiers={[
+									font({textStyle: 'subheadline'}),
+									foregroundStyle({type: 'hierarchical', style: 'secondary'}),
+								]}
+							>
+								{nickname}
 							</Text>
-							{nickname ? (
-								<Text
-									modifiers={[
-										font({textStyle: 'subheadline'}),
-										foregroundStyle({type: 'hierarchical', style: 'secondary'}),
-									]}
-								>
-									{nickname}
-								</Text>
-							) : null}
-						</VStack>
-						<Spacer />
-						<Button modifiers={[accessibilityLabel('Close')]} onPress={onClose}>
-							<Text>Close</Text>
-						</Button>
-					</HStack>
-				</Section>
+						) : null}
+					</VStack>
+					<Spacer />
+					<Button modifiers={[accessibilityLabel('Close')]} onPress={onClose}>
+						<Text>Close</Text>
+					</Button>
+				</HStack>
+			</Section>
 
-				{photos?.[0] ? (
-					<Section>
-						{/* SwiftUI's Image reads a local file synchronously; these are
+			{photos?.[0] ? (
+				<Section>
+					{/* SwiftUI's Image reads a local file synchronously; these are
 						    remote, so the React Native image loader does the work and
 						    SwiftUI hosts the result. */}
-						<RNHostView matchContents={true}>
-							<RNImage
-								accessibilityLabel={`Photo of ${name}`}
-								source={{uri: buildingPhotoUrl(photos[0])}}
-								style={styles.photo}
-							/>
-						</RNHostView>
-					</Section>
-				) : null}
-
-				{description ? (
-					<Section title="About">
-						<Text>{description}</Text>
-					</Section>
-				) : null}
-
-				{address ? (
-					<Section title="Address">
-						<AddressLink address={address} />
-					</Section>
-				) : null}
-
-				<Section title="Accessibility">
-					<Text>{accessibilityCopy(accessibility)}</Text>
+					<RNHostView matchContents={true}>
+						<RNImage
+							accessibilityLabel={`Photo of ${name}`}
+							source={{uri: buildingPhotoUrl(photos[0])}}
+							style={styles.photo}
+						/>
+					</RNHostView>
 				</Section>
+			) : null}
 
-				<LinkSection items={departments} title="Departments" />
-				<LinkSection items={offices} title="Offices" />
-				<LinkSection items={floors} title="Floors" />
-			</List>
-		</Host>
+			{description ? (
+				<Section title="About">
+					<Text>{description}</Text>
+				</Section>
+			) : null}
+
+			{address ? (
+				<Section title="Address">
+					<AddressLink address={address} />
+				</Section>
+			) : null}
+
+			<Section title="Accessibility">
+				<Text>{accessibilityCopy(accessibility)}</Text>
+			</Section>
+
+			<LinkSection items={departments} title="Departments" />
+			<LinkSection items={offices} title="Offices" />
+			<LinkSection items={floors} title="Floors" />
+		</List>
 	)
 }
 
@@ -192,6 +185,5 @@ function accessibilityCopy(value: Building['accessibility']): string {
 }
 
 const styles = StyleSheet.create({
-	host: {flex: 1, backgroundColor: c.systemGroupedBackground},
 	photo: {width: '100%', height: 180},
 })
