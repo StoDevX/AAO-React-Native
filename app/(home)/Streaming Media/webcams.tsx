@@ -1,12 +1,16 @@
 import * as React from 'react'
-import {StyleSheet, ScrollView, useWindowDimensions} from 'react-native'
+import {
+	StyleSheet,
+	ScrollView,
+	useWindowDimensions,
+	RefreshControl,
+} from 'react-native'
 import {Column} from '@frogpond/layout'
 import {partitionByIndex} from '../../../source/lib/partition-by-index'
 import {StreamThumbnail} from '../../../source/features/streaming/webcams/thumbnail'
 import {webcamsOptions} from '../../../source/features/streaming/webcams/query'
 import {useQuery} from '@tanstack/react-query'
 import {LoadingView, NoticeView} from '@frogpond/notice'
-import {RefreshControl} from 'react-native-gesture-handler'
 
 export default function WebcamsPage(): React.ReactNode {
 	let viewport = useWindowDimensions()

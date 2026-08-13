@@ -1,7 +1,3 @@
-// TODO Check on https://github.com/kmagiera/react-native-gesture-handler/issues/320,
-// and remove this if/when it is no longer necessary
-import 'react-native-gesture-handler'
-
 // initialization
 import '../source/init/constants'
 import '../source/init/moment'
@@ -11,21 +7,19 @@ import '../source/init/theme'
 import {queryClient, persister} from '../source/init/tanstack-query'
 
 import * as React from 'react'
-import {GestureHandlerRootView} from 'react-native-gesture-handler'
 import {PersistGate} from 'redux-persist/integration/react'
 import {Provider as ReduxProvider} from 'react-redux'
 import {Provider as PaperProvider} from 'react-native-paper'
 import {PersistQueryClientProvider} from '@tanstack/react-query-persist-client'
 import {store, persistor} from '../source/redux'
 import {CombinedLightTheme, CombinedDarkTheme} from '@frogpond/app-theme'
-import {ActionSheetProvider} from '@expo/react-native-action-sheet'
 import {ThemeProvider} from 'expo-router/react-navigation'
 import {Stack, useNavigationContainerRef} from 'expo-router'
 import * as Sentry from '@sentry/react-native'
 
 import {LoadingView} from '@frogpond/notice'
 import {IS_PRODUCTION} from '@frogpond/constants'
-import {StatusBar, StyleSheet, useColorScheme} from 'react-native'
+import {StatusBar, useColorScheme} from 'react-native'
 
 // Without an anchor, a cold-start deep link into (settings) or
 // (component-library) -- both modal groups, siblings of (home) -- mounts
@@ -56,48 +50,35 @@ function RootLayout(): React.ReactNode {
 	}, [])
 
 	return (
-		<GestureHandlerRootView style={styles.root}>
-			<ReduxProvider store={store}>
-				<PersistGate
-					loading={<LoadingView text="Loading App..." />}
-					persistor={persistor}
+		<ReduxProvider store={store}>
+			<PersistGate
+				loading={<LoadingView text="Loading App..." />}
+				persistor={persistor}
+			>
+				<PersistQueryClientProvider
+					client={queryClient}
+					persistOptions={{persister}}
 				>
-					<PersistQueryClientProvider
-						client={queryClient}
-						persistOptions={{persister}}
-					>
-						<PaperProvider theme={theme}>
-							<ActionSheetProvider>
-								<ThemeProvider value={theme}>
-									<StatusBar barStyle={statusBarStyle} />
-									<Stack>
-										<Stack.Screen
-											name="(home)"
-											options={{headerShown: false}}
-										/>
-										<Stack.Screen
-											name="(settings)"
-											options={{headerShown: false, presentation: 'modal'}}
-										/>
-										<Stack.Screen
-											name="(component-library)"
-											options={{headerShown: false, presentation: 'modal'}}
-										/>
-									</Stack>
-								</ThemeProvider>
-							</ActionSheetProvider>
-						</PaperProvider>
-					</PersistQueryClientProvider>
-				</PersistGate>
-			</ReduxProvider>
-		</GestureHandlerRootView>
+					<PaperProvider theme={theme}>
+						<ThemeProvider value={theme}>
+							<StatusBar barStyle={statusBarStyle} />
+							<Stack>
+								<Stack.Screen name="(home)" options={{headerShown: false}} />
+								<Stack.Screen
+									name="(settings)"
+									options={{headerShown: false, presentation: 'modal'}}
+								/>
+								<Stack.Screen
+									name="(component-library)"
+									options={{headerShown: false, presentation: 'modal'}}
+								/>
+							</Stack>
+						</ThemeProvider>
+					</PaperProvider>
+				</PersistQueryClientProvider>
+			</PersistGate>
+		</ReduxProvider>
 	)
 }
-
-const styles = StyleSheet.create({
-	root: {
-		flex: 1,
-	},
-})
 
 export default Sentry.wrap(RootLayout)
