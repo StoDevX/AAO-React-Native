@@ -3,7 +3,13 @@ import * as React from 'react'
 type MapSelection = {
 	selectedBuildingId: string | null
 	selectBuilding: (id: string) => void
-	clearSelection: () => void
+	/// Clears the selection only if it is still `id`.
+	///
+	/// The info sheet clears on unmount, and tapping a second building unmounts
+	/// the first sheet *after* the second has already selected its building --
+	/// so an unconditional clear wiped a selection that belonged to the screen
+	/// replacing it, and the new building drew unhighlighted.
+	clearSelectionOf: (id: string) => void
 }
 
 const MapSelectionContext = React.createContext<MapSelection | null>(null)
@@ -27,13 +33,13 @@ export function MapSelectionProvider({
 		setSelectedBuildingId(id)
 	}, [])
 
-	let clearSelection = React.useCallback(() => {
-		setSelectedBuildingId(null)
+	let clearSelectionOf = React.useCallback((id: string) => {
+		setSelectedBuildingId((current) => (current === id ? null : current))
 	}, [])
 
 	let value = React.useMemo<MapSelection>(
-		() => ({selectedBuildingId, selectBuilding, clearSelection}),
-		[selectedBuildingId, selectBuilding, clearSelection],
+		() => ({selectedBuildingId, selectBuilding, clearSelectionOf}),
+		[selectedBuildingId, selectBuilding, clearSelectionOf],
 	)
 
 	return (

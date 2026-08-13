@@ -1,43 +1,49 @@
 import * as React from 'react'
+import {Image as RNImage, Linking, StyleSheet} from 'react-native'
 import {
-	Image,
-	Linking,
-	ScrollView,
-	StyleSheet,
+	Button,
+	Host,
+	HStack,
+	List,
+	RNHostView,
+	Section,
+	Spacer,
 	Text,
-	TouchableOpacity,
-	View,
-} from 'react-native'
+	VStack,
+} from '@expo/ui/swift-ui'
+import {
+	accessibilityLabel,
+	font,
+	foregroundStyle,
+} from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
-import {NoticeView} from '@frogpond/notice'
 import {openUrl} from '@frogpond/open-url'
 
 import {parseLinkString} from './lib/parse-link-string'
 import type {Building, Feature, LabelLinkString} from './types'
-
-/// The smallest square Apple's Human Interface Guidelines will accept, and
-/// what CLAUDE.md requires of every interactive element here.
-const MIN_TOUCH_TARGET = 44
+import {buildingPhotoUrl} from './urls'
 
 type Props = {
 	building: Feature<Building> | undefined
 	onClose: () => void
 }
 
+/// SwiftUI, for the same reason the picker is: this renders inside a
+/// react-native-screens `formSheet`, whose full-detent bounds React Native does
+/// not lay out correctly. See `building-picker.tsx`.
 export function BuildingInfo({building, onClose}: Props): React.ReactNode {
 	if (!building) {
 		return (
-			<View style={styles.container}>
-				<NoticeView text="Building not found." />
-				<TouchableOpacity
-					accessibilityLabel="Close"
-					accessibilityRole="button"
-					onPress={onClose}
-					style={styles.closeButton}
-				>
-					<Text style={styles.closeText}>Close</Text>
-				</TouchableOpacity>
-			</View>
+			<Host style={styles.host}>
+				<List>
+					<Section>
+						<Text>Building not found.</Text>
+						<Button modifiers={[accessibilityLabel('Close')]} onPress={onClose}>
+							<Text>Close</Text>
+						</Button>
+					</Section>
+				</List>
+			</Host>
 		)
 	}
 
@@ -48,86 +54,80 @@ export function BuildingInfo({building, onClose}: Props): React.ReactNode {
 		description,
 		floors,
 		name,
+		nickname,
 		offices,
 		photos,
 	} = building.properties
 
 	return (
-		<ScrollView
-			contentContainerStyle={styles.content}
-			contentInsetAdjustmentBehavior="automatic"
-			style={styles.container}
-		>
-			<Header building={building} onClose={onClose} />
-			{photos?.[0] ? (
-				<Image
-					accessibilityLabel={`Photo of ${name}`}
-					source={{uri: photos[0]}}
-					style={styles.photo}
-				/>
-			) : null}
-			{description ? (
-				<Section title="About">
-					<Text style={styles.body}>{description}</Text>
+		<Host style={styles.host}>
+			<List>
+				<Section>
+					{/* `center`, so the name sits on the same axis as Close rather than
+					    riding up against the top of the row. */}
+					<HStack alignment="center" spacing={12}>
+						<VStack alignment="leading" spacing={2}>
+							<Text modifiers={[font({textStyle: 'title2', weight: 'bold'})]}>
+								{name}
+							</Text>
+							{nickname ? (
+								<Text
+									modifiers={[
+										font({textStyle: 'subheadline'}),
+										foregroundStyle({type: 'hierarchical', style: 'secondary'}),
+									]}
+								>
+									{nickname}
+								</Text>
+							) : null}
+						</VStack>
+						<Spacer />
+						<Button modifiers={[accessibilityLabel('Close')]} onPress={onClose}>
+							<Text>Close</Text>
+						</Button>
+					</HStack>
 				</Section>
-			) : null}
-			{address ? (
-				<Section title="Address">
-					<AddressLink address={address} />
+
+				{photos?.[0] ? (
+					<Section>
+						{/* SwiftUI's Image reads a local file synchronously; these are
+						    remote, so the React Native image loader does the work and
+						    SwiftUI hosts the result. */}
+						<RNHostView matchContents={true}>
+							<RNImage
+								accessibilityLabel={`Photo of ${name}`}
+								source={{uri: buildingPhotoUrl(photos[0])}}
+								style={styles.photo}
+							/>
+						</RNHostView>
+					</Section>
+				) : null}
+
+				{description ? (
+					<Section title="About">
+						<Text>{description}</Text>
+					</Section>
+				) : null}
+
+				{address ? (
+					<Section title="Address">
+						<AddressLink address={address} />
+					</Section>
+				) : null}
+
+				<Section title="Accessibility">
+					<Text>{accessibilityCopy(accessibility)}</Text>
 				</Section>
-			) : null}
-			<Section title="Accessibility">
-				<Text style={styles.body}>{accessibilityCopy(accessibility)}</Text>
-			</Section>
-			<LinkSection items={departments} title="Departments" />
-			<LinkSection items={offices} title="Offices" />
-			<LinkSection items={floors} title="Floors" />
-		</ScrollView>
+
+				<LinkSection items={departments} title="Departments" />
+				<LinkSection items={offices} title="Offices" />
+				<LinkSection items={floors} title="Floors" />
+			</List>
+		</Host>
 	)
 }
 
-function Header({
-	building,
-	onClose,
-}: {
-	building: Feature<Building>
-	onClose: () => void
-}) {
-	let {name, nickname} = building.properties
-	return (
-		<View style={styles.header}>
-			<View style={styles.headerText}>
-				<Text style={styles.title}>{name}</Text>
-				{nickname ? <Text style={styles.subtitle}>{nickname}</Text> : null}
-			</View>
-			<TouchableOpacity
-				accessibilityLabel="Close"
-				accessibilityRole="button"
-				onPress={onClose}
-				style={styles.closeButton}
-			>
-				<Text style={styles.closeText}>Close</Text>
-			</TouchableOpacity>
-		</View>
-	)
-}
-
-function Section({
-	title,
-	children,
-}: {
-	title: string
-	children: React.ReactNode
-}) {
-	return (
-		<View style={styles.section}>
-			<Text style={styles.sectionTitle}>{title}</Text>
-			{children}
-		</View>
-	)
-}
-
-function AddressLink({address}: {address: string}) {
+function AddressLink({address}: {address: string}): React.ReactNode {
 	// Linking rather than openUrl: maps.apple.com is a universal link that iOS
 	// hands to Maps.app, and openUrl would offer to show it in the in-app
 	// browser instead, which lands on Apple's web fallback page.
@@ -138,13 +138,12 @@ function AddressLink({address}: {address: string}) {
 		})
 	}
 	return (
-		<TouchableOpacity
-			accessibilityLabel={`Open ${address} in Maps`}
-			accessibilityRole="link"
+		<Button
+			modifiers={[accessibilityLabel(`Open ${address} in Maps`)]}
 			onPress={onPress}
 		>
-			<Text style={styles.link}>{address}</Text>
-		</TouchableOpacity>
+			<Text>{address}</Text>
+		</Button>
 	)
 }
 
@@ -156,7 +155,7 @@ function LinkSection({
 	// The server is not schema-validated at the boundary, so a record that
 	// omits the field arrives as undefined rather than as an empty array.
 	items: Array<LabelLinkString> | undefined
-}) {
+}): React.ReactNode {
 	if (!items?.length) {
 		return null
 	}
@@ -165,21 +164,16 @@ function LinkSection({
 			{items.map((raw) => {
 				let {label, href} = parseLinkString(raw)
 				if (!href) {
-					return (
-						<Text key={raw} style={styles.body}>
-							{label}
-						</Text>
-					)
+					return <Text key={raw}>{label}</Text>
 				}
 				return (
-					<TouchableOpacity
+					<Button
 						key={raw}
-						accessibilityLabel={`Open ${label}`}
-						accessibilityRole="link"
+						modifiers={[accessibilityLabel(`Open ${label}`)]}
 						onPress={() => openUrl(href)}
 					>
-						<Text style={styles.link}>{label}</Text>
-					</TouchableOpacity>
+						<Text>{label}</Text>
+					</Button>
 				)
 			})}
 		</Section>
@@ -198,33 +192,6 @@ function accessibilityCopy(value: Building['accessibility']): string {
 }
 
 const styles = StyleSheet.create({
-	container: {flex: 1, backgroundColor: c.systemGroupedBackground},
-	content: {paddingBottom: 24},
-	header: {
-		flexDirection: 'row',
-		alignItems: 'flex-start',
-		paddingHorizontal: 16,
-		paddingVertical: 12,
-	},
-	headerText: {flex: 1},
-	title: {fontSize: 22, fontWeight: '700', color: c.label},
-	subtitle: {fontSize: 15, color: c.secondaryLabel, marginTop: 2},
-	/// 44pt tall around a 15pt line, which is the minimum touch target.
-	closeButton: {
-		paddingHorizontal: 20,
-		minHeight: MIN_TOUCH_TARGET,
-		justifyContent: 'center',
-	},
-	closeText: {color: c.systemBlue, fontSize: 15, fontWeight: '600'},
-	photo: {width: '100%', height: 180, marginBottom: 12},
-	section: {paddingHorizontal: 16, paddingVertical: 8},
-	sectionTitle: {
-		fontSize: 13,
-		fontWeight: '600',
-		color: c.secondaryLabel,
-		textTransform: 'uppercase',
-		marginBottom: 4,
-	},
-	body: {fontSize: 15, color: c.label, lineHeight: 20},
-	link: {fontSize: 15, color: c.systemBlue, lineHeight: 22},
+	host: {flex: 1, backgroundColor: c.systemGroupedBackground},
+	photo: {width: '100%', height: 180},
 })

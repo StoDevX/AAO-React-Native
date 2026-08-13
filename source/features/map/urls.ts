@@ -21,3 +21,17 @@ export const MAP_STYLE_URL = 'https://carls-app.github.io/map-tiles/style.json'
  */
 export const MAP_STYLE_URL_PMTILES =
 	'https://carls-app.github.io/map-tiles/style-pmtiles.json'
+
+/**
+ * Where a building's photos live.
+ *
+ * ccc-server stores `photos` as bare filenames -- `leighton.jpg` -- rather than
+ * URLs, so a record is useless without this prefix. The images are carls-app/
+ * map-data's scrape of Carleton's map, published to the same GitHub Pages site
+ * as the tiles.
+ */
+const BUILDING_PHOTO_ROOT = 'https://carls-app.github.io/map-data/cache/img'
+
+export function buildingPhotoUrl(filename: string): string {
+	return `${BUILDING_PHOTO_ROOT}/${filename}`
+}

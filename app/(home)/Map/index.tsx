@@ -1,5 +1,10 @@
 import * as React from 'react'
-import {StyleSheet, View, type NativeSyntheticEvent} from 'react-native'
+import {
+	StyleSheet,
+	useWindowDimensions,
+	View,
+	type NativeSyntheticEvent,
+} from 'react-native'
 import {useFocusEffect, useRouter} from 'expo-router'
 import {
 	Camera,
@@ -37,11 +42,17 @@ const FOOTPRINT_OPACITY = 0.15
 const FOOTPRINT_SELECTED_OPACITY = 0.45
 const FOOTPRINT_LINE_WIDTH = 1
 
+/// The smallest detent the picker and info sheets are allowed, from the Map
+/// layout's `sheetAllowedDetents`. The map keeps the strip above it clear.
+const SHEET_SMALLEST_DETENT = 0.5
+
 export default function MapPage(): React.ReactNode {
 	let router = useRouter()
 	let cameraRef = React.useRef<CameraRef>(null)
 	let {selectedBuildingId, selectBuilding} = useMapSelection()
 	let {data: buildings = [], error} = useQuery(mapDataOptions)
+	let {height: windowHeight} = useWindowDimensions()
+	let sheetHeight = windowHeight * SHEET_SMALLEST_DETENT
 
 	let footprints = React.useMemo(
 		() => toBuildingFootprints(buildings),
@@ -51,9 +62,18 @@ export default function MapPage(): React.ReactNode {
 	// useFocusEffect, not useEffect: the picker is the map's default companion,
 	// so dismissing the info card should land the user back on the picker
 	// rather than on a bare map.
+	//
+	// `navigate`, not `push`: focus fires more than once for a single arrival at
+	// the map, and `push` presented a second picker on top of the first every
+	// time. Two identical sheets stacked read as one broken sheet -- the lower
+	// one's list showed through above the upper one's search field, a swipe-down
+	// revealed its twin rather than the map, and the second presentation
+	// animated in while the first was still transitioning. `navigate` reuses the
+	// picker already on the stack, so the effect is idempotent however often it
+	// runs.
 	useFocusEffect(
 		React.useCallback(() => {
-			router.push('/Map/BuildingPicker')
+			router.navigate('/Map/BuildingPicker')
 		}, [router]),
 	)
 
@@ -68,6 +88,15 @@ export default function MapPage(): React.ReactNode {
 			if (typeof id !== 'string') {
 				return
 			}
+			// Tapping a second building while the card is already up only needs
+			// the card to say something different. Replacing the route instead
+			// dismissed the sheet and presented a new one, so a tap-to-tap
+			// comparison flickered the card away and back.
+			if (selectedBuildingId) {
+				selectBuilding(id)
+				router.setParams({buildingId: id})
+				return
+			}
 			selectBuilding(id)
 			// `replace`, so a map tap doesn't strand a stale picker beneath the
 			// info card: with `push`, closing the card would show the picker as
@@ -77,7 +106,7 @@ export default function MapPage(): React.ReactNode {
 				params: {buildingId: id},
 			})
 		},
-		[router, selectBuilding],
+		[router, selectBuilding, selectedBuildingId],
 	)
 
 	let selectedPoint = React.useMemo(() => {
@@ -101,9 +130,14 @@ export default function MapPage(): React.ReactNode {
 		cameraRef.current?.easeTo({
 			center: selectedPoint.point.coordinates,
 			duration: CAMERA_ANIMATION_MS,
+			// The sheet covers the lower half of the map, so centring on the
+			// building put the thing the user just selected underneath it. Padding
+			// the bottom by the sheet's smallest detent centres it in the strip
+			// that stays visible.
+			padding: {bottom: sheetHeight},
 			zoom: SELECTION_ZOOM,
 		})
-	}, [selectedPoint])
+	}, [selectedPoint, sheetHeight])
 
 	return (
 		<View style={StyleSheet.absoluteFill}>

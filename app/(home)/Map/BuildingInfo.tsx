@@ -11,7 +11,7 @@ export default function BuildingInfoPage(): React.ReactNode {
 	// The route param is the single source of truth for *this* screen; the
 	// context exists so the map underneath can draw the marker.
 	let {buildingId} = useLocalSearchParams<{buildingId?: string}>()
-	let {clearSelection} = useMapSelection()
+	let {clearSelectionOf} = useMapSelection()
 	let {data: buildings = []} = useQuery(mapDataOptions)
 
 	let building = React.useMemo(
@@ -23,7 +23,15 @@ export default function BuildingInfoPage(): React.ReactNode {
 	// swipe-dismissable, and that gesture pops the route without running any
 	// handler -- which would otherwise strand the marker and the zoomed-in
 	// camera on a building the user just dismissed.
-	React.useEffect(() => clearSelection, [clearSelection])
+	//
+	// Scoped to this screen's own building, because tapping a second building
+	// unmounts this screen after that tap has already selected its own.
+	React.useEffect(() => {
+		if (!buildingId) {
+			return
+		}
+		return () => clearSelectionOf(buildingId)
+	}, [buildingId, clearSelectionOf])
 
 	let handleClose = React.useCallback(() => {
 		router.back()

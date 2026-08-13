@@ -28,10 +28,13 @@ export default function MapLayout(): React.ReactNode {
 			    one, so this stack contributes chrome only for the sheets. */}
 			<Stack screenOptions={{headerShown: false}}>
 				<Stack.Screen name="index" />
-				<Stack.Screen
-					name="BuildingPicker"
-					options={{...sheetOptions, headerShown: true, title: 'Buildings'}}
-				/>
+				{/* No header. A formSheet header is not laid out against the sheet's
+				    detents: at the half detent it sits clear of the content, and at
+				    the full detent it draws over the top of it -- the search field
+				    and the first two rows of the list ended up behind a translucent
+				    `Buildings` title. The sheet keeps its grabber, and the title said
+				    only what the selected category tab already says. */}
+				<Stack.Screen name="BuildingPicker" options={sheetOptions} />
 				<Stack.Screen name="BuildingInfo" options={sheetOptions} />
 			</Stack>
 		</MapSelectionProvider>

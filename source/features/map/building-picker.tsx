@@ -1,12 +1,28 @@
 import * as React from 'react'
-import {StyleSheet, TextInput, View} from 'react-native'
+import {StyleSheet} from 'react-native'
+import {
+	Button,
+	Host,
+	HStack,
+	Image,
+	List,
+	Section,
+	Spacer,
+	Text,
+	TextField,
+	VStack,
+} from '@expo/ui/swift-ui'
+import {
+	autocorrectionDisabled,
+	buttonStyle,
+	font,
+	foregroundStyle,
+} from '@expo/ui/swift-ui/modifiers'
 import {useQuery} from '@tanstack/react-query'
 import * as c from '@frogpond/colors'
-import {LoadingView, NoticeView} from '@frogpond/notice'
 import {useDebounce} from '@frogpond/use-debounce'
 import fuzzyfind from 'fuzzyfind'
 
-import {BuildingList} from './building-list'
 import {
 	CategoryPicker,
 	LABEL_TO_CATEGORY,
@@ -22,6 +38,14 @@ type Props = {
 	onSelect: (id: string) => void
 }
 
+/// SwiftUI rather than React Native views, and the whole sheet is one `Host`.
+///
+/// The sheet is presented by react-native-screens as a `formSheet`, which does
+/// not report its full-detent bounds to Yoga: laid out as React Native views,
+/// the search field, the category tabs and the list all resolved to the top of
+/// the sheet and drew over each other, while `onLayout` insisted they were
+/// stacked correctly. One SwiftUI view filling the sheet has nothing to stack
+/// wrongly -- SwiftUI lays its own contents out against the bounds it is given.
 export function BuildingPicker({onSelect}: Props): React.ReactNode {
 	let [category, setCategory] = React.useState<CategoryLabel>('Buildings')
 	let [typedQuery, setTypedQuery] = React.useState('')
@@ -49,63 +73,102 @@ export function BuildingPicker({onSelect}: Props): React.ReactNode {
 		return buildings.filter((b) => b.properties.categories?.includes(key))
 	}, [buildings, category, query])
 
-	// Rendered in every branch so the field never disappears mid-typing.
-	let searchField = (
-		<TextInput
-			accessibilityLabel="Search for a place"
-			autoCorrect={false}
-			clearButtonMode="while-editing"
-			onChangeText={setTypedQuery}
-			placeholder="Search for a place"
-			placeholderTextColor={c.secondaryLabel}
-			style={styles.search}
-			value={typedQuery}
-		/>
-	)
-
-	if (isError) {
-		return (
-			<View style={styles.container}>
-				{searchField}
-				<NoticeView
-					buttonText="Try Again"
-					onPress={refetch}
-					text={`A problem occured while loading: ${error}`}
-				/>
-			</View>
-		)
-	}
-
-	if (isLoading) {
-		return (
-			<View style={styles.container}>
-				{searchField}
-				<LoadingView />
-			</View>
-		)
-	}
-
 	return (
-		<View style={styles.container}>
-			{searchField}
-			{query ? null : (
-				<CategoryPicker onChange={setCategory} selected={category} />
-			)}
-			<BuildingList buildings={visible} onSelect={onSelect} />
-		</View>
+		<Host style={styles.host}>
+			<List>
+				<Section>
+					<TextField
+						modifiers={[autocorrectionDisabled(true)]}
+						onTextChange={setTypedQuery}
+						placeholder="Search for a place"
+					/>
+				</Section>
+
+				{query ? null : (
+					<Section>
+						<CategoryPicker onChange={setCategory} selected={category} />
+					</Section>
+				)}
+
+				<Section>
+					{isError ? (
+						<Button onPress={() => void refetch()}>
+							<VStack alignment="leading" spacing={2}>
+								<Text>{`A problem occured while loading: ${error}`}</Text>
+								<Text>Tap to try again.</Text>
+							</VStack>
+						</Button>
+					) : isLoading ? (
+						<Text>Loading…</Text>
+					) : visible.length === 0 ? (
+						<Text>No buildings to show.</Text>
+					) : (
+						<List.ForEach>
+							{visible.map((building) => (
+								<BuildingRow
+									key={building.id}
+									building={building}
+									onSelect={onSelect}
+								/>
+							))}
+						</List.ForEach>
+					)}
+				</Section>
+			</List>
+		</Host>
+	)
+}
+
+function BuildingRow({
+	building,
+	onSelect,
+}: {
+	building: Feature<Building>
+	onSelect: (id: string) => void
+}): React.ReactNode {
+	let {name, nickname} = building.properties
+	return (
+		<Button
+			// Without `plain`, SwiftUI tints a Button's whole label with the accent
+			// colour and every building name reads as a link.
+			modifiers={[buttonStyle('plain')]}
+			onPress={() => onSelect(building.id)}
+		>
+			<HStack spacing={8}>
+				<VStack alignment="leading" spacing={2}>
+					<Text
+						modifiers={[
+							foregroundStyle({type: 'hierarchical', style: 'primary'}),
+						]}
+					>
+						{name}
+					</Text>
+					{nickname ? (
+						<Text
+							modifiers={[
+								font({textStyle: 'footnote'}),
+								foregroundStyle({type: 'hierarchical', style: 'secondary'}),
+							]}
+						>
+							{nickname}
+						</Text>
+					) : null}
+				</VStack>
+				<Spacer />
+				{/* A Button is not a NavigationLink, so the disclosure chevron the
+				    rest of the app's rows get from the platform has to be drawn. */}
+				<Image
+					modifiers={[
+						foregroundStyle({type: 'hierarchical', style: 'tertiary'}),
+					]}
+					size={13}
+					systemName="chevron.right"
+				/>
+			</HStack>
+		</Button>
 	)
 }
 
 const styles = StyleSheet.create({
-	container: {flex: 1, backgroundColor: c.systemGroupedBackground},
-	search: {
-		marginHorizontal: 12,
-		marginTop: 12,
-		paddingHorizontal: 12,
-		paddingVertical: 8,
-		borderRadius: 8,
-		backgroundColor: c.tertiarySystemFill,
-		color: c.label,
-		fontSize: 15,
-	},
+	host: {flex: 1, backgroundColor: c.systemGroupedBackground},
 })

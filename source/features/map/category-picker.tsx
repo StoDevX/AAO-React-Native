@@ -1,6 +1,5 @@
 import * as React from 'react'
-import {StyleSheet, View} from 'react-native'
-import {Host, Picker, Text} from '@expo/ui/swift-ui'
+import {Picker, Text} from '@expo/ui/swift-ui'
 import {pickerStyle, tag} from '@expo/ui/swift-ui/modifiers'
 import type {Category} from './types'
 
@@ -28,25 +27,20 @@ type Props = {
 export function CategoryPicker({selected, onChange}: Props): React.ReactNode {
 	// The label is its own tag, so the selection the picker reports back is
 	// already a CategoryLabel and there is no index to keep in step.
+	// No `Host` of its own: this renders inside the picker sheet's single Host,
+	// and a nested Host would hand the segments back to React Native's layout --
+	// which is what the sheet was rebuilt in SwiftUI to get away from.
 	return (
-		<View style={styles.container}>
-			<Host matchContents={true}>
-				<Picker<CategoryLabel>
-					modifiers={[pickerStyle('segmented')]}
-					onSelectionChange={onChange}
-					selection={selected}
-				>
-					{CATEGORY_LABELS.map((label) => (
-						<Text key={label} modifiers={[tag(label)]}>
-							{label}
-						</Text>
-					))}
-				</Picker>
-			</Host>
-		</View>
+		<Picker<CategoryLabel>
+			modifiers={[pickerStyle('segmented')]}
+			onSelectionChange={onChange}
+			selection={selected}
+		>
+			{CATEGORY_LABELS.map((label) => (
+				<Text key={label} modifiers={[tag(label)]}>
+					{label}
+				</Text>
+			))}
+		</Picker>
 	)
 }
-
-const styles = StyleSheet.create({
-	container: {paddingHorizontal: 12, paddingVertical: 8},
-})
