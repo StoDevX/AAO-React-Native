@@ -13,7 +13,6 @@ import {Provider as PaperProvider} from 'react-native-paper'
 import {PersistQueryClientProvider} from '@tanstack/react-query-persist-client'
 import {store, persistor} from '../source/redux'
 import {CombinedLightTheme, CombinedDarkTheme} from '@frogpond/app-theme'
-import {ActionSheetProvider} from '@expo/react-native-action-sheet'
 import {ThemeProvider} from 'expo-router/react-navigation'
 import {Stack, useNavigationContainerRef} from 'expo-router'
 import * as Sentry from '@sentry/react-native'
@@ -61,22 +60,20 @@ function RootLayout(): React.ReactNode {
 					persistOptions={{persister}}
 				>
 					<PaperProvider theme={theme}>
-						<ActionSheetProvider>
-							<ThemeProvider value={theme}>
-								<StatusBar barStyle={statusBarStyle} />
-								<Stack>
-									<Stack.Screen name="(home)" options={{headerShown: false}} />
-									<Stack.Screen
-										name="(settings)"
-										options={{headerShown: false, presentation: 'modal'}}
-									/>
-									<Stack.Screen
-										name="(component-library)"
-										options={{headerShown: false, presentation: 'modal'}}
-									/>
-								</Stack>
-							</ThemeProvider>
-						</ActionSheetProvider>
+						<ThemeProvider value={theme}>
+							<StatusBar barStyle={statusBarStyle} />
+							<Stack>
+								<Stack.Screen name="(home)" options={{headerShown: false}} />
+								<Stack.Screen
+									name="(settings)"
+									options={{headerShown: false, presentation: 'modal'}}
+								/>
+								<Stack.Screen
+									name="(component-library)"
+									options={{headerShown: false, presentation: 'modal'}}
+								/>
+							</Stack>
+						</ThemeProvider>
 					</PaperProvider>
 				</PersistQueryClientProvider>
 			</PersistGate>

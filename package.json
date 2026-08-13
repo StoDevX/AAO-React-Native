@@ -24,7 +24,6 @@
     "@callstack/react-theme-provider": "3.0.9",
     "@expo/log-box": "57.0.2",
     "@expo/metro-runtime": "57.0.8",
-    "@expo/react-native-action-sheet": "4.1.1",
     "@expo/ui": "57.0.9",
     "@frogpond/api": "workspace:*",
     "@frogpond/app-theme": "workspace:*",

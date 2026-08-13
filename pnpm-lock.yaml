@@ -37,9 +37,6 @@ importers:
       '@expo/metro-runtime':
         specifier: 57.0.8
         version: 57.0.8(@expo/log-box@57.0.2)(expo@57.0.11)(react-dom@19.2.3)(react-native@0.86.2)(react@19.2.8)
-      '@expo/react-native-action-sheet':
-        specifier: 4.1.1
-        version: 4.1.1(@types/react@19.2.18)(react@19.2.8)
       '@expo/ui':
         specifier: 57.0.9
         version: 57.0.9(patch_hash=dc11bfc5e4c86bf6ab7005269d8af06407c6e9a3b25420640dac26ccf47fe679)(@babel/core@7.29.7)(expo@57.0.11)(react-dom@19.2.3)(react-native-worklets@0.10.1)(react-native@0.86.2)(react@19.2.8)
@@ -1616,11 +1613,6 @@ packages:
   '@expo/prebuild-config@57.0.10':
     resolution: {integrity: sha512-myrS5NolFAQWD8g7QuqkettnkyJx3GRl603N6rlmqAMxmO5EU7sZu4EX2EsIKkva8QtpX84B0E17PsM9xXMsTQ==}
 
-  '@expo/react-native-action-sheet@4.1.1':
-    resolution: {integrity: sha512-4KRaba2vhqDRR7ObBj6nrD5uJw8ePoNHdIOMETTpgGTX7StUbrF4j/sfrP1YUyaPEa1P8FXdwG6pB+2WtrJd1A==}
-    peerDependencies:
-      react: '>=18.0.0'
-
   '@expo/require-utils@57.0.4':
     resolution: {integrity: sha512-e7xbg/9BTQcsZE/oErafZXtI7kh5IgfasLJ97J5sFSzX2cA74pDvdlhW1KHVSaDkQyQv6h1LSLhsY7dEeOk7hw==}
     peerDependencies:
@@ -2392,11 +2384,6 @@ packages:
 
   '@types/hammerjs@2.0.46':
     resolution: {integrity: sha512-ynRvcq6wvqexJ9brDMS4BnBLzmr0e14d6ZJTEShTBWKymQiHwlAyGu0ZPEFI2Fh1U53F7tN9ufClWM5KvqkKOw==}
-
-  '@types/hoist-non-react-statics@3.3.7':
-    resolution: {integrity: sha512-PQTyIulDkIDro8P+IHbKCsw7U2xxBYflVzW/FgWdCAePD9xGSidgA76/GeJ6lBKoblyhf9pBY763gbrN+1dI8g==}
-    peerDependencies:
-      '@types/react': '*'
 
   '@types/http-cache-semantics@4.2.0':
     resolution: {integrity: sha512-L3LgimLHXtGkWikKnsPg0/VFx9OGZaC+eN1u4r+OB1XRqH3meBIAVC2zr1WdMH+RHmnRkqliQAOHNJ/E0j/e0Q==}
@@ -6732,14 +6719,6 @@ snapshots:
       - supports-color
       - typescript
 
-  '@expo/react-native-action-sheet@4.1.1(@types/react@19.2.18)(react@19.2.8)':
-    dependencies:
-      '@types/hoist-non-react-statics': 3.3.7(@types/react@19.2.18)
-      hoist-non-react-statics: 3.3.2
-      react: 19.2.8
-    transitivePeerDependencies:
-      - '@types/react'
-
   '@expo/require-utils@57.0.4(supports-color@8.1.1)(typescript@5.9.3)':
     dependencies:
       '@babel/code-frame': 7.29.7
@@ -7637,11 +7616,6 @@ snapshots:
       '@types/node': 26.1.2
 
   '@types/hammerjs@2.0.46': {}
-
-  '@types/hoist-non-react-statics@3.3.7(@types/react@19.2.18)':
-    dependencies:
-      '@types/react': 19.2.18
-      hoist-non-react-statics: 3.3.2
 
   '@types/http-cache-semantics@4.2.0': {}
 
