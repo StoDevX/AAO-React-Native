@@ -231,6 +231,28 @@ jobs:
         env:
           USE_CCACHE: '1'
 
+      # Xcode Cloud resolves Swift packages with automatic resolution off, so
+      # it insists on a Package.resolved inside the .xcworkspace. That path is
+      # under the generated ios/, which nothing commits, so ci_post_clone.sh
+      # copies ios_scripts/Package.resolved into place -- and a copy is only
+      # ever as good as the day it was taken. Resolve from scratch here and
+      # compare, so a bump to @maplibre/maplibre-react-native (whose podspec
+      # pins the exact MapLibre version) fails this job rather than surfacing
+      # as an Xcode Cloud build that never reaches the compiler. Such a bump
+      # rewrites pnpm-lock.yaml, which the iOS cache key covers, so this job
+      # does run for it.
+      - name: Check the committed Package.resolved is current
+        run: |
+          xcodebuild -resolvePackageDependencies \
+            -workspace ios/AllAboutOlaf.xcworkspace \
+            -scheme AllAboutOlaf \
+            -derivedDataPath ios/build
+          resolved=ios/AllAboutOlaf.xcworkspace/xcshareddata/swiftpm/Package.resolved
+          if ! diff -u ios_scripts/Package.resolved "$resolved"; then
+            echo "::error file=ios_scripts/Package.resolved::Stale. Refresh it with: mise run prebuild && xcodebuild -resolvePackageDependencies -workspace ios/AllAboutOlaf.xcworkspace -scheme AllAboutOlaf && cp $resolved ios_scripts/Package.resolved"
+            exit 1
+          fi
+
       - name: Build UITest bundle
         if: ${{ !contains(github.event.pull_request.labels.*.name, 'ci/skip-e2e') }}
         env:

@@ -55,6 +55,20 @@ mise run bundle-data
 # The prebuild task preserves this directory across the regeneration.
 mise run prebuild
 
+# @maplibre/maplibre-react-native ships MapLibre over SPM rather than as a pod,
+# and its podspec pins an exact version. Xcode Cloud resolves Swift packages
+# with automatic resolution turned off, so it demands a Package.resolved inside
+# the .xcworkspace -- a path that lives under the generated ios/ and so can
+# never be committed. Keep the file beside this script and put it in place
+# instead. The ios-build job in check.yml resolves from scratch and diffs
+# against it, so a MapLibre version bump fails there rather than here.
+resolved_dir='ios/AllAboutOlaf.xcworkspace/xcshareddata/swiftpm'
+mkdir -p "${resolved_dir}"
+cp ios_scripts/Package.resolved "${resolved_dir}/Package.resolved"
+
+echo "Contents of ${resolved_dir}/Package.resolved:"
+cat "${resolved_dir}/Package.resolved"
+
 # Write ios/.xcode.env.local so Xcode Cloud's xcodebuild can find node.
 # PATH changes in this script don't carry over into xcodebuild build phases,
 # so we bake in the absolute mise-managed path now.
