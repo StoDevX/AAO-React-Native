@@ -12,6 +12,11 @@ import globals from 'globals'
 export default defineConfig([
 	// Ignore patterns (replaces .eslintignore)
 	{ignores: ['**/*.min.js', '**/*-min.js']},
+	// `warn` rather than `error`: a stale disable directive is worth removing,
+	// not worth a red squiggle. `--max-warnings=0` still fails the build on it,
+	// which is the one ESLint setting that cannot move out of the CLI -- the
+	// flat config's linterOptions takes only this and `noInlineConfig`.
+	{linterOptions: {reportUnusedDisableDirectives: 'warn'}},
 	// base eslint rules
 	eslint.configs.recommended,
 	// @typescript-eslint

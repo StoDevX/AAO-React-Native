@@ -40,6 +40,7 @@ struct TestIdentifiers {
 		static let buildingHours = "Building Hours"
 		static let campusDictionary = "Campus Dictionary"
 		static let campusMap = "Campus Map"
+		static let carletonMap = "Carleton Map (Beta)"
 		static let courseCatalog = "Course Catalog"
 		static let directory = "Directory"
 		static let importantContacts = "Important Contacts"
@@ -48,6 +49,18 @@ struct TestIdentifiers {
 		static let streamingMedia = "Streaming Media"
 		static let studentOrgs = "Student Orgs"
 		static let transportation = "Transportation"
+	}
+
+	// MARK: - Carleton Map
+
+	enum CarletonMap {
+		/// The sheet's search field. Its placeholder is its accessibility label,
+		/// which is what a SwiftUI TextField reports when it has no other.
+		static let search = "Search for a place"
+		static let close = "Close"
+		/// A building near the top of the alphabetical list, so the expanded
+		/// sheet shows it without scrolling.
+		static let aBuilding = "Allen House"
 	}
 
 	// MARK: - SIS
