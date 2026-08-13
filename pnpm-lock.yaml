@@ -28,6 +28,9 @@ importers:
 
   .:
     dependencies:
+      '@babel/runtime':
+        specifier: 7.29.7
+        version: 7.29.7
       '@callstack/react-theme-provider':
         specifier: 3.0.9
         version: 3.0.9(react@19.2.8)
@@ -332,9 +335,6 @@ importers:
       '@babel/preset-typescript':
         specifier: 7.29.7
         version: 7.29.7(@babel/core@7.29.7)(supports-color@8.1.1)
-      '@babel/runtime':
-        specifier: 7.29.7
-        version: 7.29.7
       '@eslint/js':
         specifier: 9.39.5
         version: 9.39.5
