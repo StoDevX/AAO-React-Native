@@ -69,7 +69,7 @@ run = "fastlane"
 
 [tasks.lint]
 description = "Run ESLint"
-run = "eslint --report-unused-disable-directives --max-warnings=0 --cache app/ source/ modules/ scripts/ images/ plugins/"
+run = "eslint --max-warnings=0 --cache app/ source/ modules/ scripts/ images/ plugins/"
 
 [tasks.pretty]
 description = "Format code with Prettier"
