@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import fs from 'node:fs'
-import {load, YAML11_SCHEMA} from 'js-yaml'
+import {load} from 'js-yaml'
 
 // run cli
 // if (process.mainModule === module) {
@@ -49,7 +49,7 @@ export function convertDataFile({fromFile, toFile, toFileType = 'json'}) {
 }
 
 function processYaml(fileContents) {
-	let loaded = load(fileContents, {schema: YAML11_SCHEMA})
+	let loaded = load(fileContents)
 	return JSON.stringify({data: loaded})
 }
 

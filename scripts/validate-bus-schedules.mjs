@@ -1,7 +1,7 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import {isNotJunk} from './junk.mjs'
-import {load, YAML11_SCHEMA} from 'js-yaml'
+import {load} from 'js-yaml'
 import moment from 'moment'
 import {DATA_BASE} from './paths.mjs'
 
@@ -69,9 +69,7 @@ function main() {
 	for (let filepath of files) {
 		let fileHadError = false
 		process.stdout.write(filepath)
-		let errors = validate(
-			load(fs.readFileSync(filepath, 'utf-8'), {schema: YAML11_SCHEMA}),
-		)
+		let errors = validate(load(fs.readFileSync(filepath, 'utf-8')))
 		for (let error of errors) {
 			process.stdout.write('\n')
 			fileHadError = true

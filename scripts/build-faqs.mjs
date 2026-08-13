@@ -1,11 +1,10 @@
 #!/usr/bin/env node
 import fs from 'node:fs'
 import path from 'node:path'
-import {load, YAML11_SCHEMA} from 'js-yaml'
+import {load} from 'js-yaml'
 
 export function buildFaqs({sourceFile, outputFile}) {
-	let raw =
-		load(fs.readFileSync(sourceFile, 'utf-8'), {schema: YAML11_SCHEMA}) ?? {}
+	let raw = load(fs.readFileSync(sourceFile, 'utf-8')) ?? {}
 	let faqs = Array.isArray(raw.faqs) ? raw.faqs : []
 	let legacyText =
 		typeof raw.legacyText === 'string'
