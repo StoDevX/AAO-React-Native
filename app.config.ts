@@ -140,6 +140,30 @@ const config: ExpoConfig = {
 		infoPlist: {
 			CFBundleDisplayName: variant.displayName,
 
+			// iOS 27 traps at launch in
+			// `__UIApplicationEvaluateRuntimeIssueForNoSceneLifecycleAdoption`
+			// for any app that has not adopted the UIScene lifecycle -- what was
+			// a runtime warning through iOS 26 is now EXC_BREAKPOINT before
+			// React Native starts, so the app dies with no JS error and no
+			// usable console output.
+			//
+			// Declaring the manifest is the adoption UIKit checks for. There is
+			// deliberately no `UISceneConfigurations`: without one UIKit creates
+			// a default scene and the window AppDelegate already builds keeps
+			// working, so this stays a plist change rather than a rewrite of how
+			// the root view is hosted.
+			UIApplicationSceneManifest: {
+				UIApplicationSupportsMultipleScenes: false,
+				UISceneConfigurations: {
+					UIWindowSceneSessionRoleApplication: [
+						{
+							UISceneConfigurationName: 'Default Configuration',
+							UISceneDelegateClassName: '$(PRODUCT_MODULE_NAME).SceneDelegate',
+						},
+					],
+				},
+			},
+
 			CADisableMinimumFrameDurationOnPhone: true,
 			ITSAppUsesNonExemptEncryption: false,
 

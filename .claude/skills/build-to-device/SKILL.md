@@ -92,6 +92,64 @@ xcrun devicectl list devices
 xcrun devicectl device install app --device <DEVICE UDID> "$APP"
 ```
 
+## Verifying it worked, without touching the phone
+
+`devicectl` can install, launch, screenshot and report processes, which is
+enough to confirm a build runs before handing it over. Do that -- an install
+that succeeds says nothing about whether the app survives launch.
+
+```bash
+xcrun devicectl device process launch --device <UDID> \
+  --activate --terminate-existing <BUNDLE ID>
+# alive? a count of 1 means it is still up a moment later
+xcrun devicectl device info processes --device <UDID> | grep -c AllAboutOlaf
+xcrun devicectl device capture screenshot --device <UDID> --destination shot.png
+```
+
+**A screenshot of a sleeping phone is black, not blank.** The status bar and
+home indicator still composite, so the result looks exactly like a running app
+that renders nothing -- and it will have you debugging a rendering fault that
+does not exist. Ask for the screen to be woken, or trust the process count over
+the picture.
+
+Note `--destination` on `capture screenshot`; `--output` is not a flag, and
+`--activate` matters because a launch without it can leave the app backgrounded.
+
+## Where the crash log actually is
+
+Device crash reports do **not** sync to `~/Library/Logs/CrashReporter/`. Looking
+there and finding nothing means nothing.
+
+`--console` is no better for an early crash: it only forwards stdout, so a
+process that dies before React Native starts prints not one line and reports
+`exit code 0`, which reads as a clean exit rather than a trap.
+
+The reports are in a sysdiagnose, one per launch attempt:
+
+```bash
+xcrun devicectl device sysdiagnose --device <UDID> --destination /tmp/sysdiag
+# ~190 MB; list first, extract only what you need
+tar -tzf /tmp/sysdiag/*.tar.gz | grep AllAboutOlaf
+tar -xzf /tmp/sysdiag/*.tar.gz '<path>/crashes_and_spins/Retired/AllAboutOlaf-*.ips'
+```
+
+An `.ips` is JSON with a one-line header. `termination`, `exception` and the
+triggered thread's frames name the fault directly -- which is how the iOS 27
+UIScene trap was found after several wrong guesses at signing, entitlements and
+bundle format.
+
+## Two things that are not the problem
+
+Both look plausible when a device build misbehaves, and both were measured not
+to matter here:
+
+- **The JS bundle does not need Hermes bytecode.** `mise run bundle:ios` emits
+  plain JavaScript and a device runs it. Do not "fix" that task: CI feeds its
+  output to simulator UITests and is correct as it stands.
+- **The app does not need re-signing after injection.** Copying files in breaks
+  the seal -- `codesign -v` says `a sealed resource is missing or invalid` --
+  and it installs and runs anyway.
+
 ## Notes
 
 - Keep derived data at `ios/build`. React Native's
