@@ -90,6 +90,48 @@ export function patchAppDelegate(contents: string): string {
 	return result
 }
 
+/// iOS 27 traps at launch for any app that has not adopted the UIScene
+/// lifecycle, so the app declares a scene manifest -- and once it does, UIKit
+/// owns the scene and stops presenting the window AppDelegate builds. The app
+/// launched to a black screen until something handed that window to the scene.
+///
+/// This keeps React Native's startup where it already is, in
+/// `didFinishLaunchingWithOptions`, and only adopts the window that startup
+/// produced. Moving the whole of it into the scene delegate would be the more
+/// thorough adoption and a much larger change to generated code.
+///
+/// Appended to AppDelegate.swift rather than written as its own file: a new
+/// source file would have to be threaded into the generated Xcode project,
+/// and Swift does not care which file a class lives in.
+const SCENE_DELEGATE = `
+class SceneDelegate: UIResponder, UIWindowSceneDelegate {
+  var window: UIWindow?
+
+  func scene(
+    _ scene: UIScene,
+    willConnectTo session: UISceneSession,
+    options connectionOptions: UIScene.ConnectionOptions
+  ) {
+    guard let windowScene = scene as? UIWindowScene else { return }
+    guard
+      let appDelegate = UIApplication.shared.delegate as? AppDelegate,
+      let existing = appDelegate.window
+    else { return }
+
+    existing.windowScene = windowScene
+    self.window = existing
+    existing.makeKeyAndVisible()
+  }
+}
+`
+
+export function appendSceneDelegate(contents: string): string {
+	if (contents.includes('class SceneDelegate')) {
+		return contents
+	}
+	return `${contents.trimEnd()}\n${SCENE_DELEGATE}`
+}
+
 const withAppDelegateCustomizations: ConfigPlugin = (config) =>
 	withAppDelegate(config, (mod) => {
 		if (mod.modResults.language !== 'swift') {
@@ -98,7 +140,9 @@ const withAppDelegateCustomizations: ConfigPlugin = (config) =>
 			)
 		}
 
-		mod.modResults.contents = patchAppDelegate(mod.modResults.contents)
+		mod.modResults.contents = appendSceneDelegate(
+			patchAppDelegate(mod.modResults.contents),
+		)
 		return mod
 	})
 
