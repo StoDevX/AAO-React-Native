@@ -31,11 +31,14 @@ const MARKER_SIZE = 20
 const MIN_TOUCH_TARGET = 44
 const MARKER_HIT_SLOP = (MIN_TOUCH_TARGET - MARKER_SIZE) / 2
 
-/// Enough to read as "these are the campus buildings" over whatever the
-/// basemap draws, without burying it.
-const FOOTPRINT_OPACITY = 0.15
+/// The footprints are drawn by the tileset now, so this layer paints nothing.
+/// It stays because it is the tap target: MapLibre resolves a source press
+/// against a *rendered* child layer, and the only other child is filtered down
+/// to the selected building. If a device shows taps landing nowhere, a hair
+/// above zero is the fix -- zero opacity should still hit-test, since it is
+/// `visibility: none` rather than opacity that drops a layer from the tree.
+const FOOTPRINT_OPACITY = 0
 const FOOTPRINT_SELECTED_OPACITY = 0.45
-const FOOTPRINT_LINE_WIDTH = 1
 
 export default function MapPage(): React.ReactNode {
 	let router = useRouter()
@@ -118,25 +121,24 @@ export default function MapPage(): React.ReactNode {
 				/>
 				<UserLocation />
 
+				{/* carls-app/map-tiles serves the footprints and their labels as
+				    `campus_buildings`, so this source no longer draws them -- a
+				    second copy on top would double every outline. What it still
+				    owns is the selection, which a tileset cannot express, and the
+				    tap target. Keeping both here also keeps three tile-query
+				    quirks out of the tap path: features repeat across tile
+				    boundaries, the 28 places with no polygon are absent, and the
+				    layer floors out at z14. A GeoJSON source has none of those. */}
 				<GeoJSONSource
 					data={footprints}
 					id="campus-buildings"
 					onPress={handleBuildingPress}
 				>
 					<Layer
-						id="campus-buildings-fill"
+						id="campus-buildings-hit"
 						style={{fillColor: c.gold, fillOpacity: FOOTPRINT_OPACITY}}
 						type="fill"
 					/>
-					<Layer
-						id="campus-buildings-outline"
-						style={{lineColor: c.gold, lineWidth: FOOTPRINT_LINE_WIDTH}}
-						type="line"
-					/>
-					{/* A second fill rather than a data-driven expression on the first:
-					    the filter is one comparison against one id, and reading it as
-					    "the selected building is painted like this" beats decoding a
-					    nested case expression. */}
 					<Layer
 						filter={['==', ['get', 'buildingId'], selectedBuildingId ?? '']}
 						id="campus-buildings-selected"
