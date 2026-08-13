@@ -2,7 +2,7 @@
 
 import fs from 'node:fs'
 import path from 'node:path'
-import yaml from 'js-yaml'
+import {load as loadYaml} from 'js-yaml'
 import {isNotJunk} from './junk.mjs'
 import {parseArgs} from 'node:util'
 import {validate} from './validate.mjs'
@@ -11,13 +11,13 @@ import {SCHEMA_BASE, DATA_BASE} from './paths.mjs'
 const isDir = (pth) => tryBoolean(() => fs.statSync(pth).isDirectory())
 const readYaml = (pth) =>
 	JSON.parse(
-		JSON.stringify(yaml.load(fs.readFileSync(pth, 'utf-8'), {filename: pth})),
+		JSON.stringify(loadYaml(fs.readFileSync(pth, 'utf-8'), {filename: pth})),
 	)
 
 /*
 const readYamlPipe = (pth) =>
 	fs.readFileSync(pth, 'utf-8')
-		|> yaml.load(%, {filename: pth})
+		|> loadYaml(%, {filename: pth})
 		|> JSON.stringify(%)
 		|> JSON.parse(%)
 */
