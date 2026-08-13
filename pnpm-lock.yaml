@@ -247,9 +247,6 @@ importers:
       react-native-enriched-markdown:
         specifier: 0.7.4
         version: 0.7.4(@expo/config-plugins@57.0.7)(react-native@0.86.2)(react@19.2.8)
-      react-native-gesture-handler:
-        specifier: 2.32.0
-        version: 2.32.0(react-native@0.86.2)(react@19.2.8)
       react-native-keychain:
         specifier: 10.0.0
         version: 10.0.0
@@ -1266,7 +1263,7 @@ packages:
     resolution: {integrity: sha512-qV0OGGBVacduzQHE649JyCneOFI/maT+YKsO+K4Yi3xv2wTPNjM/W2o2gdzMwEAZz7fXNTHAe0NcSg30bIN69g==}
     engines: {node: '>=6.9.0'}
     peerDependencies:
-      '@babel/core': 8.0.1
+      '@babel/core': 7.29.7
 
   '@babel/plugin-transform-destructuring@7.29.7':
     resolution: {integrity: sha512-iPX8aD6H9zV5s7ZsqTdNocPN/MGQ5sSMnElKrktxjJRMnB2jN/1p2+R7GkfD6CAYoVFqy5A4XnSIUeGgJzIWpg==}
