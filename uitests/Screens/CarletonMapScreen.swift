@@ -16,10 +16,6 @@ struct CarletonMapScreen: Screen {
 	/// `testLongPressNoticeTogglesDevMode` walks.
 	@discardableResult
 	func navigate() -> Self {
-		HomeScreen(app: app)
-			.checkHomescreenExists()
-			.longPressNotice()
-			.tapEnableDevMode()
 		navigateFromHome(to: TestIdentifiers.Buttons.carletonMap)
 		return self
 	}
@@ -63,16 +59,11 @@ struct CarletonMapScreen: Screen {
 
 		let close = app.buttons[TestIdentifiers.CarletonMap.close].firstMatch
 		for attempt in 1...3 {
-			// Over the name, not the row's centre. A SwiftUI button's hit region
-			// comes from what its label draws, and this label is a name, a
-			// Spacer and a chevron -- so the empty middle of the row, which is
-			// most of its width, does not respond. `tap()` uses the reported
-			// centre and lands there, which is why it never opened the card.
-			//
-			// That gap is the app's, not the test's: a `contentShape` on the row
-			// is the fix and does not currently take effect through @expo/ui.
-			// Tapping the name is what a user does anyway.
-			row.coordinate(withNormalizedOffset: CGVector(dx: 0.15, dy: 0.5)).tap()
+			// The row's centre on purpose. It falls on the Spacer between the
+			// name and the chevron, which is outside what a SwiftUI button's
+			// label draws -- the row carries a contentShape so the whole of it
+			// responds, and tapping over the name would pass either way.
+			row.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
 			if close.waitForExistence(timeout: 10) {
 				return self
 			}

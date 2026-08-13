@@ -13,8 +13,10 @@ import {
 import {
 	autocorrectionDisabled,
 	buttonStyle,
+	contentShape,
 	font,
 	foregroundStyle,
+	shapes,
 } from '@expo/ui/swift-ui/modifiers'
 import {useQuery} from '@tanstack/react-query'
 import {useDebounce} from '@frogpond/use-debounce'
@@ -123,7 +125,11 @@ function BuildingRow({
 			modifiers={[buttonStyle('plain')]}
 			onPress={() => onSelect(building.id)}
 		>
-			<HStack spacing={8}>
+			{/* contentShape belongs on the label (this HStack), not the Button:
+			    SwiftUI derives a button's tappable region from its label, so the
+			    Spacer's width -- most of the row -- was dead to taps. The same
+			    note is on Settings' NavigationRow. */}
+			<HStack modifiers={[contentShape(shapes.rectangle())]} spacing={8}>
 				<VStack alignment="leading" spacing={2}>
 					<Text
 						modifiers={[
