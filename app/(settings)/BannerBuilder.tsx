@@ -8,7 +8,7 @@ import {
 	ButtonCell,
 } from '@frogpond/tableview/cells'
 import * as c from '@frogpond/colors'
-import jsYaml from 'js-yaml'
+import {dump} from 'js-yaml'
 import {Stack, useNavigation} from 'expo-router'
 
 import {FaqBannerPresentation} from '../../source/features/faqs/banner'
@@ -52,7 +52,7 @@ function buildYamlEntry(faq: Faq): string {
 	if (faq.foregroundColor) {
 		entry.foregroundColor = faq.foregroundColor
 	}
-	return jsYaml.dump({faqs: [entry]}, {lineWidth: -1})
+	return dump({faqs: [entry]}, {lineWidth: -1})
 }
 
 export default function BannerBuilderPage(): React.ReactNode {
