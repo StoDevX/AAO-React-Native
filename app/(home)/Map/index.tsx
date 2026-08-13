@@ -65,7 +65,7 @@ const FOOTPRINT_SELECTED_OPACITY = 0.9
 /// Leaves 34pt above the search field and 20pt below it. Not symmetric, and
 /// not freely tunable: the gap below only grows by moving the sheet up, and by
 /// the time it matches the 34pt above, the category tabs below have risen into
-/// view. Symmetry here needs the tabs section'"'"'s margins moved too.
+/// view. Symmetry here needs the tabs section's margins moved too.
 const SHEET_COLLAPSED_HEIGHT = 100
 const COLLAPSED_DETENT: PresentationDetent = {height: SHEET_COLLAPSED_HEIGHT}
 const SHEET_DETENTS: PresentationDetent[] = [

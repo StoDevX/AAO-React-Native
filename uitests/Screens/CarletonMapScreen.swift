@@ -9,8 +9,17 @@ struct CarletonMapScreen: Screen {
 		app.textFields[TestIdentifiers.CarletonMap.search].firstMatch
 	}
 
+	/// The map's home tile is `devOnly`, so it is absent from the home screen
+	/// until the dev-mode override is set -- and `--reset-state` clears that
+	/// override before every test, so it has to be set here rather than once.
+	/// The notice's context menu is the same path
+	/// `testLongPressNoticeTogglesDevMode` walks.
 	@discardableResult
 	func navigate() -> Self {
+		HomeScreen(app: app)
+			.checkHomescreenExists()
+			.longPressNotice()
+			.tapEnableDevMode()
 		navigateFromHome(to: TestIdentifiers.Buttons.carletonMap)
 		return self
 	}
