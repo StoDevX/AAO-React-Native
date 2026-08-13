@@ -254,8 +254,8 @@ importers:
         specifier: 10.0.0
         version: 10.0.0
       react-native-network-logger:
-        specifier: 2.0.1
-        version: 2.0.1(react-native@0.86.2)(react@19.2.8)
+        specifier: 3.0.0
+        version: 3.0.0(react-native@0.86.2)(react@19.2.8)
       react-native-paper:
         specifier: 5.15.3
         version: 5.15.3(react-native-safe-area-context@5.8.1)(react-native@0.86.2)(react@19.2.8)
@@ -4867,8 +4867,8 @@ packages:
     resolution: {integrity: sha512-YzPKSAnSzGEJ12IK6CctNLU79T1W15WDrElRQ+1/FsOazGX9ucFPTQwgYe8Dy8jiSEDJKM4wkVa3g4lD2Z+Pnw==}
     engines: {node: '>=16'}
 
-  react-native-network-logger@2.0.1:
-    resolution: {integrity: sha512-qR03Uvk2ihmII0hX128UOu+ykl7QH2XOqbj3YEcV4pMxj2JA7CvfuasAoLl8FZe0C8JQFHCHX0zo00/RcJdk0g==}
+  react-native-network-logger@3.0.0:
+    resolution: {integrity: sha512-GZY0CWZhTzS4FTIVmib1ro/SloCeVmbPg803kf+zQEWudQnwX4jQG7V/ASi3u0kHGKyhbDqrd0jxsuEZTFxvdA==}
     peerDependencies:
       react: '*'
       react-native: '*'
@@ -10590,7 +10590,7 @@ snapshots:
 
   react-native-keychain@10.0.0: {}
 
-  react-native-network-logger@2.0.1(react-native@0.86.2)(react@19.2.8):
+  react-native-network-logger@3.0.0(react-native@0.86.2)(react@19.2.8):
     dependencies:
       react: 19.2.8
       react-native: 0.86.2(patch_hash=6ca2e1225f38672b073b92b9d13f24feebbe9e37ba67708a3f1569275ce99191)(@babel/core@7.29.7)(@react-native/jest-preset@0.86.2)(@react-native/metro-config@0.86.2)(@types/react@19.2.18)(react@19.2.8)(supports-color@8.1.1)

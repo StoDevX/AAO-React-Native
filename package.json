@@ -96,7 +96,7 @@
     "react-native-enriched-markdown": "0.7.4",
     "react-native-gesture-handler": "2.32.0",
     "react-native-keychain": "10.0.0",
-    "react-native-network-logger": "2.0.1",
+    "react-native-network-logger": "3.0.0",
     "react-native-paper": "5.15.3",
     "react-native-popover-view": "6.1.0",
     "react-native-reanimated": "4.5.3",
