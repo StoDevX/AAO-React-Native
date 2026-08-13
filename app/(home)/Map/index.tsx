@@ -79,6 +79,25 @@ export default function MapPage(): React.ReactNode {
 	// Which stop the sheet rests at. Driven by selecting a building, and by the
 	// user dragging it, which is why it is state rather than derived.
 	let [detent, setDetent] = React.useState<PresentationDetent>(COLLAPSED_DETENT)
+	// Bumped only when we move the sheet ourselves, and used to key the Group.
+	// See `moveSheet`.
+	let [sheetNonce, setSheetNonce] = React.useState(0)
+
+	/// Moves the sheet, which takes more than setting the detent.
+	///
+	/// `presentationDetents`' `selection` is honoured when the SwiftUI view is
+	/// first built -- it seeds an `@State` -- but not when it changes after:
+	/// the new value never reaches the modifier instance, so its `onChange`
+	/// never fires. Remounting the Group rebuilds the modifier and the seed
+	/// path runs again with the value we want.
+	///
+	/// Keyed on a nonce rather than on the detent itself, because the detent
+	/// also changes when the user drags the sheet, and remounting then would
+	/// throw away their search text and scroll position mid-gesture.
+	let moveSheet = React.useCallback((to: PresentationDetent) => {
+		setDetent(to)
+		setSheetNonce((n) => n + 1)
+	}, [])
 
 	// The sheet has no dismissed state. `interactiveDismissDisabled` should keep
 	// it up, but if the system ever reports otherwise, present it again rather
@@ -117,8 +136,11 @@ export default function MapPage(): React.ReactNode {
 			// One sheet, whose contents swap. Tapping a second building while the
 			// card is up is a state change, not a presentation.
 			setSelectedBuildingId(id)
+			// Apple Maps raises its sheet to half height when you pick a place,
+			// which is also the stop the camera pads for.
+			moveSheet('medium')
 		},
-		[],
+		[moveSheet],
 	)
 
 	let selectedBuilding = React.useMemo(
@@ -219,6 +241,7 @@ export default function MapPage(): React.ReactNode {
 					onIsPresentedChange={setSheetPresented}
 				>
 					<Group
+						key={sheetNonce}
 						modifiers={[
 							// The sheet's own chrome is a translucent material, and the
 							// map read straight through the list. A PlatformColor rather
@@ -243,14 +266,14 @@ export default function MapPage(): React.ReactNode {
 								building={selectedBuilding}
 								onClose={() => {
 									setSelectedBuildingId(null)
-									setDetent(COLLAPSED_DETENT)
+									moveSheet(COLLAPSED_DETENT)
 								}}
 							/>
 						) : (
 							<BuildingPicker
 								onSelect={(id) => {
 									setSelectedBuildingId(id)
-									setDetent('medium')
+									moveSheet('medium')
 								}}
 							/>
 						)}
