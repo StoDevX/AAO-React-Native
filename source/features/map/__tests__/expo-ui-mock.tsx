@@ -45,6 +45,10 @@ export const autocorrectionDisabled = (disabled = true): Modifier => ({
 	disabled,
 })
 
+export const listRowInsets = (
+	params: Record<string, number> = {},
+): Modifier => ({$type: 'listRowInsets', ...params})
+
 export const buttonStyle = (style: string): Modifier => ({
 	$type: 'buttonStyle',
 	style,

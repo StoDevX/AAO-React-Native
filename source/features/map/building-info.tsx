@@ -3,6 +3,7 @@ import {Image as RNImage, Linking, StyleSheet} from 'react-native'
 import {
 	Button,
 	HStack,
+	Image,
 	List,
 	RNHostView,
 	Section,
@@ -12,6 +13,8 @@ import {
 } from '@expo/ui/swift-ui'
 import {
 	accessibilityLabel,
+	buttonStyle,
+	listRowInsets,
 	font,
 	foregroundStyle,
 } from '@expo/ui/swift-ui/modifiers'
@@ -20,6 +23,9 @@ import {openUrl} from '@frogpond/open-url'
 import {parseLinkString} from './lib/parse-link-string'
 import type {Building, Feature, LabelLinkString} from './types'
 import {buildingPhotoUrl} from './urls'
+
+/// Matches the glyph Apple uses to close a sheet.
+const CLOSE_GLYPH_SIZE = 26
 
 type Props = {
 	building: Feature<Building> | undefined
@@ -34,8 +40,19 @@ export function BuildingInfo({building, onClose}: Props): React.ReactNode {
 			<List>
 				<Section>
 					<Text>Building not found.</Text>
-					<Button modifiers={[accessibilityLabel('Close')]} onPress={onClose}>
-						<Text>Close</Text>
+					<Button
+						modifiers={[accessibilityLabel('Close'), buttonStyle('plain')]}
+						onPress={onClose}
+					>
+						{/* The filled xmark Apple's sheets close with now, rather than a
+						    text button. */}
+						<Image
+							modifiers={[
+								foregroundStyle({type: 'hierarchical', style: 'secondary'}),
+							]}
+							size={CLOSE_GLYPH_SIZE}
+							systemName="xmark.circle.fill"
+						/>
 					</Button>
 				</Section>
 			</List>
@@ -76,14 +93,31 @@ export function BuildingInfo({building, onClose}: Props): React.ReactNode {
 						) : null}
 					</VStack>
 					<Spacer />
-					<Button modifiers={[accessibilityLabel('Close')]} onPress={onClose}>
-						<Text>Close</Text>
+					<Button
+						modifiers={[accessibilityLabel('Close'), buttonStyle('plain')]}
+						onPress={onClose}
+					>
+						{/* The filled xmark Apple's sheets close with now, rather than a
+						    text button. */}
+						<Image
+							modifiers={[
+								foregroundStyle({type: 'hierarchical', style: 'secondary'}),
+							]}
+							size={CLOSE_GLYPH_SIZE}
+							systemName="xmark.circle.fill"
+						/>
 					</Button>
 				</HStack>
 			</Section>
 
 			{photos?.[0] ? (
-				<Section>
+				<Section
+					modifiers={[
+						// A List row insets its content, which framed the photograph in
+						// white on all four sides. Here the photo is the row.
+						listRowInsets({top: 0, leading: 0, bottom: 0, trailing: 0}),
+					]}
+				>
 					{/* SwiftUI's Image reads a local file synchronously; these are
 						    remote, so the React Native image loader does the work and
 						    SwiftUI hosts the result. */}
