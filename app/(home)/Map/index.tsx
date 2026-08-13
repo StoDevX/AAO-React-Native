@@ -222,10 +222,15 @@ export default function MapPage(): React.ReactNode {
 					</Marker>
 				) : null}
 			</Map>
-			{/* Zero-sized on purpose. The sheet is presented rather than laid out,
-			    so the Host only has to exist -- and a Host stretched over the map
-			    swallows the taps that select a building. */}
-			<Host style={styles.sheetHost}>
+			{/* Covers the map, and lets every touch through. The sheet is
+			    presented rather than laid out, so the Host needs no size of its
+			    own -- but the info card hosts a React Native image through
+			    RNHostView, and a zero-sized Host gives that image no bounds to
+			    draw into, so the photo came out blank. Full-bleed and
+			    `pointerEvents="none"` satisfies both: the image gets a box, and
+			    the taps that select a building still reach the map. The sheet is
+			    presented in its own window, so it stays interactive. */}
+			<Host pointerEvents="none" style={StyleSheet.absoluteFill}>
 				<BottomSheet
 					isPresented={sheetPresented}
 					onIsPresentedChange={setSheetPresented}
@@ -297,7 +302,6 @@ const styles = StyleSheet.create({
 		borderRadius: 6,
 		backgroundColor: c.gold,
 	},
-	sheetHost: {width: 0, height: 0},
 	banner: {
 		position: 'absolute',
 		top: 0,

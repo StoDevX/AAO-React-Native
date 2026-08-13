@@ -90,11 +90,6 @@ export const AllViews = (): Array<ViewType> => {
 			title: 'Carleton Map (Beta)',
 			icon: 'map.circle.fill',
 			gradient: c.blueGradient,
-			// MAP_STYLE_URL now points at real campus tiles, but nobody has yet
-			// seen this screen draw on a device -- the MapLibre swap and the
-			// tileset both arrived without one. Drop this line after a build on
-			// hardware shows the map.
-			devOnly: true,
 		},
 		{
 			type: 'view',
