@@ -87,6 +87,15 @@ export default function MapPage(): React.ReactNode {
 		}
 	}, [sheetPresented])
 
+	// How much of the map the sheet is covering right now, which is what the
+	// camera has to keep clear.
+	let sheetHeight =
+		detent === 'medium'
+			? windowHeight / 2
+			: detent === 'large'
+				? windowHeight
+				: SHEET_COLLAPSED_HEIGHT
+
 	let footprints = React.useMemo(
 		() => toBuildingFootprints(buildings),
 		[buildings],
@@ -137,12 +146,13 @@ export default function MapPage(): React.ReactNode {
 			center: selectedPoint.point.coordinates,
 			duration: CAMERA_ANIMATION_MS,
 			// The sheet sits over the bottom of the map, so centring on the
-			// building put the thing just selected underneath it. A selection
-			// settles at `medium`, which is half the screen.
-			padding: {bottom: windowHeight / 2},
+			// building put the thing just selected underneath it. Pad by where
+			// the sheet actually is: a hardcoded half-screen lifted the building
+			// far too high whenever the sheet was resting collapsed.
+			padding: {bottom: sheetHeight},
 			zoom: SELECTION_ZOOM,
 		})
-	}, [selectedPoint, windowHeight])
+	}, [selectedPoint, sheetHeight])
 
 	return (
 		<View style={StyleSheet.absoluteFill}>
