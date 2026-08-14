@@ -1,5 +1,3 @@
-import type {Config} from 'jest'
-
 // Packages that ship as ESM-only and need Babel transformation for Jest
 const esmPackages = [
 	'(jest-)?react-native',
@@ -28,7 +26,8 @@ const esmPackages = [
 	'htmlparser2',
 ]
 
-const config: Config = {
+/** @type {import('jest').Config} */
+const config = {
 	preset: '@react-native/jest-preset',
 	testMatch: [
 		'**/__tests__/**/*.(spec|test).(js|ts|tsx)',
@@ -72,4 +71,4 @@ const config: Config = {
 	reporters: [['github-actions', {silent: false}], 'summary'],
 }
 
-export default config
+module.exports = config

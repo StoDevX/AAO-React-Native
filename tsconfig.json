@@ -15,7 +15,10 @@
     "skipLibCheck": true,
     "strict": true,
     "resolveJsonModule": true,
-    "target": "esnext"
+    "target": "esnext",
+    "types": [
+      "jest"
+    ]
   },
   "include": [
     "**/*.ts",
