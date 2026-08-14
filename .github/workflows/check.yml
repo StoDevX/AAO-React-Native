@@ -30,7 +30,7 @@ jobs:
       - run: hk check
 
   prettier:
-    name: Prettier
+    name: oxfmt
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -39,7 +39,7 @@ jobs:
       - run: mise run format:check
 
   eslint:
-    name: ESLint
+    name: oxlint
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
