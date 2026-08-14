@@ -47,7 +47,7 @@ export function EventList(props: Props): React.ReactNode {
 	return (
 		<SectionList<EventType, EventSection>
 			ItemSeparatorComponent={FullWidthSeparator}
-			ListEmptyComponent=<NoticeView text="No events." />
+			ListEmptyComponent={<NoticeView text="No events." />}
 			contentContainerStyle={styles.contentContainer}
 			contentInsetAdjustmentBehavior="automatic"
 			keyExtractor={(item, index) => index.toString()}

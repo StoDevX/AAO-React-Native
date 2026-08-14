@@ -113,7 +113,15 @@
     "react/exhaustive-deps": "warn",
     // React rules
     "react/display-name": "off",
-    "react/jsx-curly-brace-presence": ["warn", "never"],
+    // `propElementValues: "always"` per the rule's own docs -- the bare
+    // "never" string applies to prop-element-values too, which lets JSX
+    // element props drop their braces (`foo=<Bar />`); oxlint's own schema
+    // comment calls that "obscure ... intentionally undocumented ... should
+    // not be relied upon".
+    "react/jsx-curly-brace-presence": [
+      "warn",
+      {"props": "never", "children": "never", "propElementValues": "always"}
+    ],
     "react/jsx-key": "warn",
     "react/no-did-mount-set-state": "error",
     "react/no-did-update-set-state": "error",

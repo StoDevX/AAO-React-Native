@@ -38,7 +38,7 @@ export default function WebcamsPage(): React.ReactNode {
 		<ScrollView
 			contentContainerStyle={styles.container}
 			contentInsetAdjustmentBehavior="automatic"
-			refreshControl=<RefreshControl onRefresh={refetch} refreshing={isRefetching} />
+			refreshControl={<RefreshControl onRefresh={refetch} refreshing={isRefetching} />}
 			testID="screen-streaming-webcams"
 		>
 			{columns.map((contents, i) => (

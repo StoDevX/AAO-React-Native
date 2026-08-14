@@ -87,7 +87,7 @@ export const DebugArrayItem = ({
 	return (
 		<FlatList
 			ItemSeparatorComponent={ListSeparator}
-			ListEmptyComponent=<NoticeView text="Nothing found." />
+			ListEmptyComponent={<NoticeView text="Nothing found." />}
 			contentInsetAdjustmentBehavior="automatic"
 			data={keyed}
 			renderItem={({item: debugItem}) => <DebugRow data={debugItem} onPress={onDrillDown} />}
@@ -107,7 +107,7 @@ export const DebugObjectItem = ({
 	return (
 		<FlatList
 			ItemSeparatorComponent={ListSeparator}
-			ListEmptyComponent=<NoticeView text="Nothing found." />
+			ListEmptyComponent={<NoticeView text="Nothing found." />}
 			contentInsetAdjustmentBehavior="automatic"
 			data={keyed}
 			renderItem={({item: debugItem}) => <DebugRow data={debugItem} onPress={onDrillDown} />}

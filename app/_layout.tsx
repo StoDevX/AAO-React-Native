@@ -48,7 +48,7 @@ function RootLayout(): React.ReactNode {
 
 	return (
 		<ReduxProvider store={store}>
-			<PersistGate loading=<LoadingView text="Loading App..." /> persistor={persistor}>
+			<PersistGate loading={<LoadingView text="Loading App..." />} persistor={persistor}>
 				<PersistQueryClientProvider client={queryClient} persistOptions={{persister}}>
 					<PaperProvider theme={theme}>
 						<ThemeProvider value={theme}>

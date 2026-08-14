@@ -124,7 +124,7 @@ function BusStopDetailInternal(props: Props): React.ReactNode {
 
 		return (
 			<FlatList
-				ListFooterComponent=<ListFooter title={BUS_FOOTER_MESSAGE} />
+				ListFooterComponent={<ListFooter title={BUS_FOOTER_MESSAGE} />}
 				ListHeaderComponent={headerElement}
 				contentInsetAdjustmentBehavior="automatic"
 				data={[emptyRowElement]}
@@ -177,7 +177,7 @@ function BusStopDetailInternal(props: Props): React.ReactNode {
 	return (
 		<FlatList
 			ItemSeparatorComponent={undefined}
-			ListFooterComponent=<ListFooter title={BUS_FOOTER_MESSAGE} />
+			ListFooterComponent={<ListFooter title={BUS_FOOTER_MESSAGE} />}
 			ListHeaderComponent={headerElement}
 			contentInsetAdjustmentBehavior="automatic"
 			data={timeRows}

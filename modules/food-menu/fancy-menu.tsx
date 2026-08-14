@@ -157,7 +157,7 @@ export function FancyMenu(props: Props): React.ReactNode {
 	return (
 		<SectionList
 			ItemSeparatorComponent={Separator}
-			ListEmptyComponent=<NoticeView style={styles.message} text={message} />
+			ListEmptyComponent={<NoticeView style={styles.message} text={message} />}
 			ListHeaderComponent={header}
 			contentContainerStyle={styles.contentContainer}
 			contentInsetAdjustmentBehavior="automatic"
