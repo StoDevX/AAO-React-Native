@@ -1,8 +1,9 @@
 {
   "$schema": "./node_modules/oxlint/configuration_schema.json",
   // Plugins: typescript + react cover this codebase's TS/React rules;
-  // oxlint-plugin-query (below, via jsPlugins) covers TanStack Query. unicorn
-  // and oxc are oxlint's own bundled plugins, left on.
+  // @tanstack/eslint-plugin-query (below, via jsPlugins -- oxlint's plugin
+  // API is ESLint v9+ compatible, so this loads directly) covers TanStack
+  // Query. unicorn and oxc are oxlint's own bundled plugins, left on.
   //
   // The following rules have no oxlint equivalent at all (checked against
   // `oxlint --rules --format=json`, no name match in any scope): camelcase,
@@ -21,7 +22,7 @@
   // formatting concerns covered by oxfmt's endOfLine/singleQuote/semi config
   // (.oxfmtrc.json) instead.
   "plugins": ["typescript", "react", "unicorn", "oxc"],
-  "jsPlugins": ["./node_modules/oxlint-plugin-query/dist/index.js"],
+  "jsPlugins": ["@tanstack/eslint-plugin-query"],
   "categories": {
     "correctness": "error"
   },
@@ -122,13 +123,15 @@
     "react/self-closing-comp": "warn",
     "react/jsx-boolean-value": ["error", "always"],
 
-    // TanStack Query rules (oxlint-plugin-query's own `recommended` severities)
-    "oxlint-plugin-query/exhaustive-deps": "error",
-    "oxlint-plugin-query/no-rest-destructuring": "warn",
-    "oxlint-plugin-query/stable-query-client": "error",
-    "oxlint-plugin-query/no-unstable-deps": "error",
-    "oxlint-plugin-query/infinite-query-property-order": "error",
-    "oxlint-plugin-query/mutation-property-order": "error"
+    // TanStack Query rules (@tanstack/eslint-plugin-query's own
+    // `flat/recommended` severities)
+    "@tanstack/query/exhaustive-deps": "error",
+    "@tanstack/query/no-rest-destructuring": "warn",
+    "@tanstack/query/stable-query-client": "error",
+    "@tanstack/query/no-unstable-deps": "error",
+    "@tanstack/query/infinite-query-property-order": "error",
+    "@tanstack/query/no-void-query-fn": "error",
+    "@tanstack/query/mutation-property-order": "error"
   },
   "overrides": [
     {
