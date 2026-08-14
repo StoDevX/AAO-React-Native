@@ -20,6 +20,7 @@ import {
 	summarizeDaysAndHours,
 } from '../../source/features/building-hours/lib'
 import * as c from '@frogpond/colors'
+import {timezone} from '@frogpond/constants'
 import {DatePicker} from '@frogpond/datepicker'
 import {Touchable} from '@frogpond/touchable'
 import {
@@ -88,7 +89,7 @@ export default function BuildingHoursScheduleEditorPage(): React.ReactNode {
 		)
 	}
 
-	let {open, close} = parseHours(set, moment())
+	let {open, close} = parseHours(set, moment.tz(timezone()))
 
 	let summary = React.useMemo(() => {
 		if (!set.days.length) {
@@ -210,7 +211,7 @@ function DatePickerAccessory(props: DatePickerAccessoryProps) {
 			initialDate={props.date}
 			mode="time"
 			onDateChange={(newDate: Moment) => {
-				let oldMoment = moment()
+				let oldMoment = moment.tz(timezone())
 
 				oldMoment.hours(newDate.hours())
 				oldMoment.minutes(newDate.minutes())
