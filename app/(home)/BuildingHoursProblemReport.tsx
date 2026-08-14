@@ -10,6 +10,7 @@ import {Alert, ScrollView, View} from 'react-native'
 import moment from 'moment-timezone'
 import type {Moment} from 'moment-timezone'
 import noop from 'lodash/noop'
+import {timezone} from '@frogpond/constants'
 import {InfoHeader} from '@frogpond/info-header'
 import {TableView, Section, Cell} from '@frogpond/tableview'
 import {
@@ -228,7 +229,7 @@ const EditableSchedule = (props: EditableScheduleProps) => {
 		props.editRow(scheduleIndex, setIndex, hoursSet)
 	}
 
-	let now = moment()
+	let now = moment.tz(timezone())
 
 	return (
 		<View>
