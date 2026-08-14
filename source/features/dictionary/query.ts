@@ -23,10 +23,8 @@ export const dictionaryOptions = queryOptions({
 	staleTime,
 })
 
-export const wordByTermOptions = (
-	word: string,
-	// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-) =>
+// oxlint-disable-next-line typescript/explicit-module-boundary-types
+export const wordByTermOptions = (word: string) =>
 	queryOptions({
 		queryKey: keys.all,
 		queryFn: fetchDictionary,

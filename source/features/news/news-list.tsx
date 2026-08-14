@@ -38,9 +38,7 @@ let filterStories = (entries: StoryType[], filters: ListType<StoryType>[]) => {
 			return entries
 		}
 
-		return getStoryCategories(story).some((category) =>
-			enabledCategories.includes(category),
-		)
+		return getStoryCategories(story).some((category) => enabledCategories.includes(category))
 	})
 }
 
@@ -49,14 +47,7 @@ const NewsItemSeparator = (thumbnail: Props['thumbnail']) => (
 )
 
 export const NewsList = (props: Props): React.ReactNode => {
-	let {
-		data = [],
-		error,
-		refetch,
-		isRefetching,
-		isError,
-		isLoading,
-	} = props.query
+	let {data = [], error, refetch, isRefetching, isError, isLoading} = props.query
 
 	let entries = React.useMemo(() => cleanEntries(data), [data])
 
@@ -106,9 +97,7 @@ export const NewsList = (props: Props): React.ReactNode => {
 		<FilterToolbar
 			filters={filters}
 			onPopoverDismiss={(newFilter) => {
-				let edited = filters.map((f) =>
-					f.key === newFilter.key ? newFilter : f,
-				)
+				let edited = filters.map((f) => (f.key === newFilter.key ? newFilter : f))
 				setFilters(edited as ListType<StoryType>[])
 			}}
 		/>
@@ -134,11 +123,7 @@ export const NewsList = (props: Props): React.ReactNode => {
 			onRefresh={refetch}
 			refreshing={isRefetching}
 			renderItem={({item}) => (
-				<NewsRow
-					onPress={(url: string) => openUrl(url)}
-					story={item}
-					thumbnail={props.thumbnail}
-				/>
+				<NewsRow onPress={(url: string) => openUrl(url)} story={item} thumbnail={props.thumbnail} />
 			)}
 			style={styles.listContainer}
 		/>

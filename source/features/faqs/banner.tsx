@@ -48,12 +48,7 @@ type Props = {
 	onPressOverride?: () => void
 }
 
-export function FaqBanner({
-	style,
-	target,
-	faqId,
-	onPressOverride,
-}: Props): React.ReactNode {
+export function FaqBanner({style, target, faqId, onPressOverride}: Props): React.ReactNode {
 	let {data} = useQuery(faqsOptions)
 	let dismissFaq = useFaqBannerStore((state) => state.dismissFaq)
 	let dismissedMap = useFaqBannerStore((state) => state.dismissed)
@@ -92,8 +87,7 @@ export function FaqBanner({
 	let faqVersion = getFaqVersion(resolvedFaq)
 	let dismissal = dismissedMap[resolvedFaq.id]
 	let isDismissed =
-		dismissal?.version === faqVersion &&
-		!shouldShowAfterDelay(resolvedFaq, dismissal.dismissedAt)
+		dismissal?.version === faqVersion && !shouldShowAfterDelay(resolvedFaq, dismissal.dismissedAt)
 
 	if (isDismissed) {
 		return null
@@ -149,9 +143,7 @@ export function FaqBanner({
 							},
 						]}
 					>
-						<Text style={[styles.dismissText, {color: palette.dismissText}]}>
-							×
-						</Text>
+						<Text style={[styles.dismissText, {color: palette.dismissText}]}>×</Text>
 					</Pressable>
 				) : null}
 			</View>
@@ -178,11 +170,7 @@ type GroupProps = {
 	onPressFaq?: (faqId: string) => void
 }
 
-export function FaqBannerGroup({
-	target,
-	style,
-	onPressFaq,
-}: GroupProps): React.ReactNode {
+export function FaqBannerGroup({target, style, onPressFaq}: GroupProps): React.ReactNode {
 	let {data} = useQuery(faqsOptions)
 	let devBanners = useDevBannerStore((state) => state.devBanners)
 	let devEnabled = useDevBannerStore((state) => state.enabled)
@@ -198,9 +186,7 @@ export function FaqBannerGroup({
 	// Merge dev banners targeting this screen
 	if (devEnabled && devBanners.length > 0) {
 		let devMatching = devBanners.filter(
-			(entry) =>
-				entry.targets.includes(target) &&
-				!matching.some((m) => m.id === entry.id),
+			(entry) => entry.targets.includes(target) && !matching.some((m) => m.id === entry.id),
 		)
 		matching = [...devMatching, ...matching]
 	}
@@ -313,43 +299,30 @@ export function FaqBannerPresentation({
 					size={18}
 					style={styles.icon}
 				/>
-				<Text style={[styles.title, {color: palette.text}]}>
-					{faq.bannerTitle ?? faq.question}
-				</Text>
+				<Text style={[styles.title, {color: palette.text}]}>{faq.bannerTitle ?? faq.question}</Text>
 				{faq.dismissable ? (
 					<Pressable
 						accessibilityElementsHidden={!onDismiss}
 						accessibilityLabel={onDismiss ? 'Dismiss FAQ banner' : undefined}
 						accessibilityRole={onDismiss ? 'button' : undefined}
 						hitSlop={8}
-						importantForAccessibility={
-							onDismiss ? 'yes' : 'no-hide-descendants'
-						}
+						importantForAccessibility={onDismiss ? 'yes' : 'no-hide-descendants'}
 						onPress={(e: GestureResponderEvent) => {
 							e.stopPropagation()
 							onDismiss?.()
 						}}
-						style={[
-							styles.dismissButton,
-							{backgroundColor: palette.dismissBackground},
-						]}
+						style={[styles.dismissButton, {backgroundColor: palette.dismissBackground}]}
 					>
-						<Text style={[styles.dismissText, {color: palette.dismissText}]}>
-							×
-						</Text>
+						<Text style={[styles.dismissText, {color: palette.dismissText}]}>×</Text>
 					</Pressable>
 				) : null}
 			</View>
 			{faq.bannerText ? (
-				<Text style={[styles.subtitle, {color: palette.secondaryText}]}>
-					{faq.bannerText}
-				</Text>
+				<Text style={[styles.subtitle, {color: palette.secondaryText}]}>{faq.bannerText}</Text>
 			) : null}
 
 			<View style={styles.ctaRow}>
-				<Text style={[styles.cta, {color: palette.link}]}>
-					{faq.bannerCta ?? 'Learn more'}
-				</Text>
+				<Text style={[styles.cta, {color: palette.link}]}>{faq.bannerCta ?? 'Learn more'}</Text>
 			</View>
 		</Pressable>
 	)
@@ -363,9 +336,7 @@ function buildPalette(faq: Faq): Palette {
 		...base,
 		background: faq.backgroundColor ?? base.background,
 		text: faq.foregroundColor ?? base.text,
-		secondaryText: faq.foregroundColor
-			? faq.foregroundColor
-			: base.secondaryText,
+		secondaryText: faq.foregroundColor ? faq.foregroundColor : base.secondaryText,
 		icon: (faq.icon as IoniconsGlyph | undefined) ?? base.icon,
 	}
 }

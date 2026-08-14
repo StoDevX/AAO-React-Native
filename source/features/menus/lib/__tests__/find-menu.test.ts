@@ -6,9 +6,9 @@ import uniqueId from 'lodash/uniqueId'
 
 const CENTRAL_TZ = 'America/Chicago'
 
-const generateDayparts: (
-	...parts: {start: string; end: string}[]
-) => DayPartsCollectionType = (...times) => {
+const generateDayparts: (...parts: {start: string; end: string}[]) => DayPartsCollectionType = (
+	...times
+) => {
 	let dayparts = times.map(({start, end}) => ({
 		starttime: start,
 		endtime: end,
@@ -35,20 +35,14 @@ it('should return the station list if only one is given', () => {
 
 it('should return the first menu, if `now` is before any open', () => {
 	let now = moment.tz('8:00', 'H:mm', true, CENTRAL_TZ)
-	let dayparts = generateDayparts(
-		{start: '10:00', end: '11:00'},
-		{start: '12:00', end: '13:00'},
-	)
+	let dayparts = generateDayparts({start: '10:00', end: '11:00'}, {start: '12:00', end: '13:00'})
 
 	expect(findMenu(dayparts, now)).toBe(dayparts[0][0])
 })
 
 it('should return the last menu, if `now` is after all close', () => {
 	let now = moment.tz('18:00', 'H:mm', true, CENTRAL_TZ)
-	let dayparts = generateDayparts(
-		{start: '10:00', end: '11:00'},
-		{start: '12:00', end: '13:00'},
-	)
+	let dayparts = generateDayparts({start: '10:00', end: '11:00'}, {start: '12:00', end: '13:00'})
 
 	expect(findMenu(dayparts, now)).toBe(dayparts[0][1])
 })

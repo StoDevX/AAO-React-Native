@@ -1,4 +1,3 @@
-/* eslint-disable camelcase */
 import type {MenuItemType, StationMenuType} from '../types'
 
 type BasicMenuItemType = {
@@ -12,10 +11,7 @@ type BasicStationMenuType = {
 	label: string
 }
 
-export function upgradeMenuItem(
-	item: BasicMenuItemType,
-	index: number,
-): MenuItemType {
+export function upgradeMenuItem(item: BasicMenuItemType, index: number): MenuItemType {
 	return {
 		connector: '',
 		cor_icon: {},
@@ -40,10 +36,7 @@ export function upgradeMenuItem(
 	}
 }
 
-export function upgradeStation(
-	station: BasicStationMenuType,
-	index: number,
-): StationMenuType {
+export function upgradeStation(station: BasicStationMenuType, index: number): StationMenuType {
 	return {
 		soup: false,
 		price: '',

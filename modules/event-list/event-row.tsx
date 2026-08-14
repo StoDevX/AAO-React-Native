@@ -74,13 +74,7 @@ export default class EventRow extends React.PureComponent<Props> {
 	}
 }
 
-function CalendarTimes({
-	event,
-	style,
-}: {
-	event: EventType
-	style: StyleProp<ViewStyle>
-}) {
+function CalendarTimes({event, style}: {event: EventType; style: StyleProp<ViewStyle>}) {
 	let {allDay, start, end} = times(event)
 
 	if (allDay) {
@@ -93,12 +87,8 @@ function CalendarTimes({
 
 	return (
 		<Column style={style}>
-			{event.config.startTime ? (
-				<Text style={[styles.time, styles.start]}>{start}</Text>
-			) : null}
-			{event.config.endTime ? (
-				<Text style={[styles.time, styles.end]}>{end}</Text>
-			) : null}
+			{event.config.startTime ? <Text style={[styles.time, styles.start]}>{start}</Text> : null}
+			{event.config.endTime ? <Text style={[styles.time, styles.end]}>{end}</Text> : null}
 		</Column>
 	)
 }

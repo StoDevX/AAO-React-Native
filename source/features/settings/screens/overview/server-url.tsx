@@ -25,7 +25,7 @@ export const ServerUrlSection = (): React.ReactElement => {
 		}
 		// serverAddressState is stable for the component's lifetime; only
 		// serverUrlQuery.data should re-trigger this.
-		// eslint-disable-next-line react-hooks/exhaustive-deps
+		// oxlint-disable-next-line react/exhaustive-deps
 	}, [serverUrlQuery.data])
 
 	let storeServerAddress = useMutation({
@@ -49,10 +49,7 @@ export const ServerUrlSection = (): React.ReactElement => {
 
 	return (
 		<>
-			<Section
-				footer={<Text>Empty means we will use the default URL.</Text>}
-				title="Server URL"
-			>
+			<Section footer={<Text>Empty means we will use the default URL.</Text>} title="Server URL">
 				{isLoading ? (
 					<TextField
 						modifiers={[disabled(true)]}
@@ -80,10 +77,7 @@ export const ServerUrlSection = (): React.ReactElement => {
 				)}
 			</Section>
 			{discoveredServers.length > 0 && (
-				<Section
-					footer={<Text>Tap a server to use it.</Text>}
-					title="Local Servers"
-				>
+				<Section footer={<Text>Tap a server to use it.</Text>} title="Local Servers">
 					{discoveredServers.map((server) => (
 						<NavigationRow
 							key={server.url}

@@ -16,12 +16,8 @@ export function applySearch(query: string, course: Course): boolean {
 		return true
 	}
 
-	let {instructors = []} = course
-	if (
-		instructors.some((instructorName) =>
-			keywordSearch(query, instructorName.toLowerCase(), 1),
-		)
-	) {
+	let {instructors} = course
+	if (instructors.some((instructorName) => keywordSearch(query, instructorName.toLowerCase(), 1))) {
 		return true
 	}
 
@@ -52,10 +48,7 @@ export function sortAndGroupResults(results: Array<Course>): SortedAgainType[] {
 		data: value,
 	}))
 
-	let sortedAgain: SortedAgainType[] = sortBy(
-		forSectionList,
-		(course) => course.title,
-	)
+	let sortedAgain: SortedAgainType[] = sortBy(forSectionList, (course) => course.title)
 
 	sortedAgain.reverse()
 

@@ -14,9 +14,7 @@ type Props<T extends object> = {
 	visible: boolean
 }
 
-export function FilterPopover<T extends object>(
-	props: Props<T>,
-): React.ReactNode {
+export function FilterPopover<T extends object>(props: Props<T>): React.ReactNode {
 	let {anchor, onClosePopover, visible} = props
 	let [filter, setFilter] = useState<FilterType<T>>(props.filter)
 	let insets = useSafeAreaInsets()
@@ -31,10 +29,7 @@ export function FilterPopover<T extends object>(
 			popoverStyle={styles.container}
 		>
 			<TableView>
-				<FilterSection<T>
-					filter={filter}
-					onChange={(updatedFilter) => setFilter(updatedFilter)}
-				/>
+				<FilterSection<T> filter={filter} onChange={(updatedFilter) => setFilter(updatedFilter)} />
 			</TableView>
 		</Popover>
 	)

@@ -12,8 +12,7 @@ export const SENTRY_DSN =
  * every dependency name and script in the bundle. app.config.ts reads it at
  * build time and passes only this string through.
  */
-const fullVersion = Constants.expoConfig?.extra?.fullVersion as
-	string | undefined
+const fullVersion = Constants.expoConfig?.extra?.fullVersion as string | undefined
 
 setVersionInfo(fullVersion ?? '0.0.0')
 setTimezone('America/Chicago')

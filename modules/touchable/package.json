@@ -2,9 +2,9 @@
   "name": "@frogpond/touchable",
   "version": "1.0.0",
   "description": "",
-  "main": "index.tsx",
-  "author": "",
   "license": "ISC",
+  "author": "",
+  "main": "index.tsx",
   "scripts": {
     "test": "jest"
   },

@@ -72,18 +72,13 @@ function BusStopDetailInternal(props: Props): React.ReactNode {
 	let {stop, line, now, subtitle} = props
 
 	let [_, setSchedule] = useState<BusSchedule | null>(null)
-	let [currentBusIteration, setCurrentBusIteration] = useState<number | null>(
-		null,
-	)
+	let [currentBusIteration, setCurrentBusIteration] = useState<number | null>(null)
 	let [status, setStatus] = useState<BusStateEnum>('none')
 
 	useEffect(() => {
 		let processedLine = processBusLine(line, now)
 		let scheduleForToday = getScheduleForNow(processedLine.schedules, now)
-		let {index, status: currentStatus} = getCurrentBusIteration(
-			scheduleForToday,
-			now,
-		)
+		let {index, status: currentStatus} = getCurrentBusIteration(scheduleForToday, now)
 
 		setSchedule(scheduleForToday)
 		setStatus(currentStatus)
@@ -98,9 +93,7 @@ function BusStopDetailInternal(props: Props): React.ReactNode {
 		now,
 	})
 
-	let headerElement = (
-		<ListSectionHeader subtitle={subtitle} title={stop.name} />
-	)
+	let headerElement = <ListSectionHeader subtitle={subtitle} title={stop.name} />
 
 	let rowTextStyle = [
 		stopStatus === 'skip' && styles.skippingStopTitle,
@@ -131,7 +124,7 @@ function BusStopDetailInternal(props: Props): React.ReactNode {
 
 		return (
 			<FlatList
-				ListFooterComponent={<ListFooter title={BUS_FOOTER_MESSAGE} />}
+				ListFooterComponent=<ListFooter title={BUS_FOOTER_MESSAGE} />
 				ListHeaderComponent={headerElement}
 				contentInsetAdjustmentBehavior="automatic"
 				data={[emptyRowElement]}
@@ -164,12 +157,7 @@ function BusStopDetailInternal(props: Props): React.ReactNode {
 		]
 
 		return (
-			<ListRow
-				key={index}
-				fullHeight={true}
-				fullWidth={true}
-				style={styles.timeRow}
-			>
+			<ListRow key={index} fullHeight={true} fullWidth={true} style={styles.timeRow}>
 				<ProgressChunk
 					barColor={line.colors.bar}
 					currentStopColor={line.colors.dot}
@@ -189,7 +177,7 @@ function BusStopDetailInternal(props: Props): React.ReactNode {
 	return (
 		<FlatList
 			ItemSeparatorComponent={undefined}
-			ListFooterComponent={<ListFooter title={BUS_FOOTER_MESSAGE} />}
+			ListFooterComponent=<ListFooter title={BUS_FOOTER_MESSAGE} />
 			ListHeaderComponent={headerElement}
 			contentInsetAdjustmentBehavior="automatic"
 			data={timeRows}
@@ -206,21 +194,10 @@ type BusRouteDetailProps = {
 	subtitle: string
 }
 
-function BusRouteDetailView({
-	stop,
-	line,
-	subtitle,
-}: BusRouteDetailProps): React.ReactNode {
+function BusRouteDetailView({stop, line, subtitle}: BusRouteDetailProps): React.ReactNode {
 	let {now} = useMomentTimer({intervalMs: 1000 * 60, timezone: timezone()})
 
-	return (
-		<BusStopDetailInternal
-			line={line}
-			now={now}
-			stop={stop}
-			subtitle={subtitle}
-		/>
-	)
+	return <BusStopDetailInternal line={line} now={now} stop={stop} subtitle={subtitle} />
 }
 
 export default function BusRouteDetailPage(): React.ReactNode {
@@ -236,16 +213,9 @@ export default function BusRouteDetailPage(): React.ReactNode {
 
 	let {now} = useMomentTimer({intervalMs: 1000 * 60, timezone: timezone()})
 
-	let {
-		data: line,
-		isLoading,
-		error,
-		refetch,
-	} = useQuery(busLineOptions(lineName))
+	let {data: line, isLoading, error, refetch} = useQuery(busLineOptions(lineName))
 
-	let screenTitle = (
-		<Stack.Title>{line ? `${line.line} Schedule` : ''}</Stack.Title>
-	)
+	let screenTitle = <Stack.Title>{line ? `${line.line} Schedule` : ''}</Stack.Title>
 
 	if (isLoading) {
 		return (

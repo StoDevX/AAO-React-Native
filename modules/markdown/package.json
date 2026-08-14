@@ -2,19 +2,19 @@
   "name": "@frogpond/markdown",
   "version": "1.0.0",
   "description": "",
-  "main": "index.ts",
-  "author": "",
   "license": "ISC",
+  "author": "",
+  "main": "index.ts",
   "scripts": {
     "test": "jest"
-  },
-  "peerDependencies": {
-    "react": "^19.1.0",
-    "react-native": "^0.86.2"
   },
   "dependencies": {
     "@frogpond/colors": "workspace:*",
     "@frogpond/open-url": "workspace:*",
     "react-native-enriched-markdown": "0.7.4"
+  },
+  "peerDependencies": {
+    "react": "^19.1.0",
+    "react-native": "^0.86.2"
   }
 }

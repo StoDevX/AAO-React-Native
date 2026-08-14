@@ -1,11 +1,7 @@
 import {readFileSync, readdirSync, writeFileSync} from 'node:fs'
 import {join, relative} from 'node:path'
 
-import {
-	ConfigPlugin,
-	withDangerousMod,
-	withXcodeProject,
-} from '@expo/config-plugins'
+import {ConfigPlugin, withDangerousMod, withXcodeProject} from '@expo/config-plugins'
 import type {XcodeProject} from 'xcode'
 
 const APP_TARGET = 'AllAboutOlaf'
@@ -51,10 +47,7 @@ export function patchPodfileForUITests(contents: string): string {
 
 	if (!result.includes('ExpoUITestsAutolinkingFix')) {
 		require_(result, APP_TARGET_ANCHOR, 'the app target')
-		result = result.replace(
-			APP_TARGET_ANCHOR,
-			`${AUTOLINKING_FIX}\n${APP_TARGET_ANCHOR}`,
-		)
+		result = result.replace(APP_TARGET_ANCHOR, `${AUTOLINKING_FIX}\n${APP_TARGET_ANCHOR}`)
 	}
 
 	if (!result.includes(`target '${UITEST_TARGET}' do`)) {
@@ -111,11 +104,7 @@ function buildSettingsFor(projectPath: string): Record<string, string> {
  * a relative import of a sibling .ts does not resolve at prebuild time. Jest
  * resolves it happily, which is why only a real prebuild catches it.
  */
-function entryIn<T>(
-	section: Record<string, T | string>,
-	key: string,
-	what: string,
-): T {
+function entryIn<T>(section: Record<string, T | string>, key: string, what: string): T {
 	let entry = section[key]
 	if (typeof entry === 'string' || entry === undefined) {
 		throw new Error(`${what} is missing from the Xcode project.`)
@@ -205,12 +194,7 @@ export function ensureUITestTarget(
 	renameThroughout(project.hash.project.objects, staleName, productName)
 
 	project.addBuildPhase([], 'PBXSourcesBuildPhase', 'Sources', target.uuid)
-	project.addBuildPhase(
-		[],
-		'PBXFrameworksBuildPhase',
-		'Frameworks',
-		target.uuid,
-	)
+	project.addBuildPhase([], 'PBXFrameworksBuildPhase', 'Frameworks', target.uuid)
 	project.addBuildPhase([], 'PBXResourcesBuildPhase', 'Resources', target.uuid)
 
 	let group = project.addPbxGroup([], name, projectPath)
@@ -218,11 +202,7 @@ export function ensureUITestTarget(
 	project.addToPbxGroup(group.uuid, mainGroup)
 
 	for (let source of swiftSourcesIn(sourceDir)) {
-		project.addSourceFile(
-			`${projectPath}/${source}`,
-			{target: target.uuid},
-			group.uuid,
-		)
+		project.addSourceFile(`${projectPath}/${source}`, {target: target.uuid}, group.uuid)
 	}
 
 	let settings = buildSettingsFor(projectPath)
@@ -233,11 +213,7 @@ export function ensureUITestTarget(
 		'the build configuration list',
 	)
 	for (let entry of list.buildConfigurations) {
-		let configuration = entryIn(
-			configurations,
-			entry.value,
-			`build configuration ${entry.comment}`,
-		)
+		let configuration = entryIn(configurations, entry.value, `build configuration ${entry.comment}`)
 		Object.assign(configuration.buildSettings, settings)
 	}
 
@@ -295,10 +271,7 @@ const withXcuitestTarget: ConfigPlugin = (config) => {
 		'ios',
 		(mod) => {
 			let podfile = join(mod.modRequest.platformProjectRoot, 'Podfile')
-			writeFileSync(
-				podfile,
-				patchPodfileForUITests(readFileSync(podfile, 'utf8')),
-			)
+			writeFileSync(podfile, patchPodfileForUITests(readFileSync(podfile, 'utf8')))
 			return mod
 		},
 	])

@@ -54,9 +54,7 @@ function buildCafePath(cafeParam: string | {id: string}) {
 // list screen (BonAppHostedMenu) and the single-item lookup below, so a
 // tapped item's detail page renders identically to how it appeared in the
 // list it was tapped from.
-export function prepareFood(
-	cafeMenu: EditedBonAppMenuInfoType,
-): MenuItemContainerType {
+export function prepareFood(cafeMenu: EditedBonAppMenuInfoType): MenuItemContainerType {
 	return mapValues(cafeMenu.items, (item) => ({
 		...item,
 		station: decode(toLaxTitleCase(trimStationName(item.station))),
@@ -73,7 +71,7 @@ async function fetchBonAppMenu(
 	return response as EditedBonAppMenuInfoType
 }
 
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+// oxlint-disable-next-line typescript/explicit-module-boundary-types
 export const bonAppCafeOptions = (cafeParam: string | {id: string}) =>
 	queryOptions({
 		queryKey: cafeKeys.bonAppCcc(buildCafePath(cafeParam)),
@@ -84,7 +82,7 @@ export const bonAppCafeOptions = (cafeParam: string | {id: string}) =>
 		staleTime: 1000 * 60 * 60, // 1 hour
 	})
 
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+// oxlint-disable-next-line typescript/explicit-module-boundary-types
 export const bonAppMenuOptions = (cafeParam: string | {id: string}) =>
 	queryOptions({
 		queryKey: menuKeys.bonAppCcc(buildMenuPath(cafeParam)),
@@ -92,11 +90,8 @@ export const bonAppMenuOptions = (cafeParam: string | {id: string}) =>
 		staleTime: 1000 * 60 * 60, // 1 hour
 	})
 
-export const bonAppMenuItemOptions = (
-	cafeParam: string | {id: string},
-	itemId: string,
-	// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-) =>
+// oxlint-disable-next-line typescript/explicit-module-boundary-types
+export const bonAppMenuItemOptions = (cafeParam: string | {id: string}, itemId: string) =>
 	queryOptions({
 		queryKey: menuKeys.bonAppCcc(buildMenuPath(cafeParam)),
 		queryFn: ({signal}) => fetchBonAppMenu(cafeParam, signal),
@@ -111,11 +106,7 @@ export const bonAppMenuItemOptions = (
 // The Pause
 //
 
-async function fetchPauseMenu({
-	signal,
-}: {
-	signal: AbortSignal
-}): Promise<GithubMenuResponse> {
+async function fetchPauseMenu({signal}: {signal: AbortSignal}): Promise<GithubMenuResponse> {
 	let response = await client.get('food/named/menu/the-pause', {signal}).json()
 	return (response as {data: GithubMenuResponse}).data
 }
@@ -126,9 +117,7 @@ function transformPauseMenu(data: GithubMenuResponse): GithubMenuType {
 	let corIcons: MasterCorIconMapType = data?.corIcons || {}
 
 	let upgradedFoodItems = foodItems.map(upgradeMenuItem)
-	let upgradedFoodItemsMap = Object.fromEntries(
-		upgradedFoodItems.map((item) => [item.id, item]),
-	)
+	let upgradedFoodItemsMap = Object.fromEntries(upgradedFoodItems.map((item) => [item.id, item]))
 	let foodItemsByStation = groupBy(upgradedFoodItems, (item) => item.station)
 
 	stationMenus = stationMenus.map((menu, index) => ({
@@ -158,7 +147,7 @@ export const pauseMenuOptions = queryOptions({
 	select: transformPauseMenu,
 })
 
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+// oxlint-disable-next-line typescript/explicit-module-boundary-types
 export const pauseMenuItemOptions = (itemId: string) =>
 	queryOptions({
 		queryKey: menuKeys.hosted('food/named/menu/the-pause'),

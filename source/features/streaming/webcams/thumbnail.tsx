@@ -28,9 +28,7 @@ export const StreamThumbnail = (props: Props): React.ReactNode => {
 	let cellRatio = 2.15625
 	let height = width / cellRatio
 
-	let img = thumbnailUrl
-		? {uri: thumbnailUrl}
-		: (webcamImages.get(thumbnail) ?? transparentPixel)
+	let img = thumbnailUrl ? {uri: thumbnailUrl} : (webcamImages.get(thumbnail) ?? transparentPixel)
 
 	return (
 		// do not remove this View; it is needed to prevent extra highlighting

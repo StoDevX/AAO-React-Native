@@ -1,10 +1,5 @@
 import * as React from 'react'
-import {
-	Stack,
-	useLocalSearchParams,
-	useNavigation,
-	useRouter,
-} from 'expo-router'
+import {Stack, useLocalSearchParams, useNavigation, useRouter} from 'expo-router'
 import {useQuery} from '@tanstack/react-query'
 import {Alert, ScrollView, View} from 'react-native'
 import moment from 'moment-timezone'
@@ -13,12 +8,7 @@ import noop from 'lodash/noop'
 import {timezone} from '@frogpond/constants'
 import {InfoHeader} from '@frogpond/info-header'
 import {TableView, Section, Cell} from '@frogpond/tableview'
-import {
-	CellTextField,
-	CellToggle,
-	DeleteButtonCell,
-	ButtonCell,
-} from '@frogpond/tableview/cells'
+import {CellTextField, CellToggle, DeleteButtonCell, ButtonCell} from '@frogpond/tableview/cells'
 
 import {buildingByNameOptions} from '../../source/features/building-hours/query'
 import type {
@@ -26,10 +16,7 @@ import type {
 	NamedBuildingScheduleType,
 	SingleBuildingScheduleType,
 } from '../../source/features/building-hours/types'
-import {
-	summarizeDays,
-	formatBuildingTimes,
-} from '../../source/features/building-hours/lib'
+import {summarizeDays, formatBuildingTimes} from '../../source/features/building-hours/lib'
 import {submitReport} from '../../source/features/building-hours/report/submit'
 import type {BuildingAction} from '../../source/features/building-hours/report/building-reducer'
 import {
@@ -114,9 +101,7 @@ type Props = {
 	initialBuilding: BuildingType
 }
 
-let BuildingHoursProblemReportView = ({
-	initialBuilding,
-}: Props): React.ReactNode => {
+let BuildingHoursProblemReportView = ({initialBuilding}: Props): React.ReactNode => {
 	let appDispatch = useAppDispatch()
 
 	React.useEffect(() => {
@@ -124,13 +109,12 @@ let BuildingHoursProblemReportView = ({
 		return () => {
 			appDispatch(clearReport())
 		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
+		// oxlint-disable-next-line react/exhaustive-deps
 	}, [])
 
-	let {building, dispatch, openEditor, submit} =
-		useBuildingEditor(initialBuilding)
+	let {building, dispatch, openEditor, submit} = useBuildingEditor(initialBuilding)
 
-	let {schedule: schedules = [], name} = building
+	let {schedule: schedules, name} = building
 
 	return (
 		<ScrollView contentInsetAdjustmentBehavior="automatic">
@@ -142,9 +126,7 @@ let BuildingHoursProblemReportView = ({
 			<TableView>
 				<Section header="NAME">
 					<TitleCell
-						onChange={(newName) =>
-							dispatch({type: 'SET_BUILDING_NAME', name: newName})
-						}
+						onChange={(newName) => dispatch({type: 'SET_BUILDING_NAME', name: newName})}
 						text={name || ''}
 					/>
 				</Section>
@@ -168,11 +150,7 @@ let BuildingHoursProblemReportView = ({
 				</Section>
 
 				<Section footer="Thanks for reporting!">
-					<ButtonCell
-						accessoryIcon="send"
-						onPress={submit}
-						title="Submit Report"
-					/>
+					<ButtonCell accessoryIcon="send" onPress={submit} title="Submit Report" />
 				</Section>
 			</TableView>
 		</ScrollView>
@@ -183,11 +161,7 @@ type EditableScheduleProps = {
 	schedule: NamedBuildingScheduleType
 	scheduleIndex: number
 	dispatch: React.Dispatch<BuildingAction>
-	editRow: (
-		schedIdx: number,
-		setIdx: number,
-		set: SingleBuildingScheduleType,
-	) => void
+	editRow: (schedIdx: number, setIdx: number, set: SingleBuildingScheduleType) => void
 }
 
 const EditableSchedule = (props: EditableScheduleProps) => {
@@ -244,20 +218,10 @@ const EditableSchedule = (props: EditableScheduleProps) => {
 				/>
 
 				{schedule.hours.map((set, i) => (
-					<TimesCell
-						key={i}
-						now={now}
-						onPress={openEditor}
-						set={set}
-						setIndex={i}
-					/>
+					<TimesCell key={i} now={now} onPress={openEditor} set={set} setIndex={i} />
 				))}
 
-				<Cell
-					accessory="DisclosureIndicator"
-					onPress={addHoursRow}
-					title="Add More Hours"
-				/>
+				<Cell accessory="DisclosureIndicator" onPress={addHoursRow} title="Add More Hours" />
 
 				<DeleteButtonCell onPress={deleteSchedule} title="Delete Schedule" />
 			</Section>
@@ -317,12 +281,7 @@ const TimesCell = (props: TimesCellProps) => {
 
 function BuildingHoursProblemReportLoader(): React.ReactNode {
 	let {name} = useLocalSearchParams<{name: string}>()
-	let {
-		data: building,
-		isLoading,
-		error,
-		refetch,
-	} = useQuery(buildingByNameOptions(name))
+	let {data: building, isLoading, error, refetch} = useQuery(buildingByNameOptions(name))
 
 	if (isLoading) {
 		return <LoadingView />

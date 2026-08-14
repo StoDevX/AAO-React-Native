@@ -2,23 +2,11 @@ import * as React from 'react'
 import {timezone} from '@frogpond/constants'
 import {SectionList} from 'react-native'
 import type {PrintJob} from '../../../source/lib/stoprint'
-import {
-	STOPRINT_HELP_PAGE,
-	isStoprintMocked,
-} from '../../../source/lib/stoprint'
-import {
-	Detail,
-	ListRow,
-	ListSectionHeader,
-	ListSeparator,
-	Title,
-} from '@frogpond/lists'
+import {STOPRINT_HELP_PAGE, isStoprintMocked} from '../../../source/lib/stoprint'
+import {Detail, ListRow, ListSectionHeader, ListSeparator, Title} from '@frogpond/lists'
 import {LoadingView} from '@frogpond/notice'
 import {openUrl} from '@frogpond/open-url'
-import {
-	StoPrintErrorView,
-	StoPrintNoticeView,
-} from '../../../source/features/stoprint/components'
+import {StoPrintErrorView, StoPrintNoticeView} from '../../../source/features/stoprint/components'
 import groupBy from 'lodash/groupBy'
 import toPairs from 'lodash/toPairs'
 import sortBy from 'lodash/sortBy'
@@ -31,8 +19,7 @@ import {useQuery} from '@tanstack/react-query'
 
 function PrintJobsView(): React.ReactNode {
 	let {now} = useMomentTimer({intervalMs: 60000, timezone: timezone()})
-	let {data: credentials, isLoading: hasCredentialsLoading} =
-		useQuery(credentialsOptions)
+	let {data: credentials, isLoading: hasCredentialsLoading} = useQuery(credentialsOptions)
 
 	let hasCredentials = Boolean(credentials)
 	let username = credentials?.username ?? ''
@@ -131,9 +118,7 @@ function PrintJobsView(): React.ReactNode {
 					</Detail>
 				</ListRow>
 			)}
-			renderSectionHeader={({section: {title}}) => (
-				<ListSectionHeader title={title} />
-			)}
+			renderSectionHeader={({section: {title}}) => <ListSectionHeader title={title} />}
 			sections={sortedGroupedJobs}
 		/>
 	)

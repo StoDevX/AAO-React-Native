@@ -8,12 +8,7 @@ import {
 	type TextFieldRef,
 	useNativeState,
 } from '@expo/ui/swift-ui'
-import {
-	disabled,
-	foregroundColor,
-	onSubmit,
-	submitLabel,
-} from '@expo/ui/swift-ui/modifiers'
+import {disabled, foregroundColor, onSubmit, submitLabel} from '@expo/ui/swift-ui/modifiers'
 import {
 	performLogin,
 	credentialsOptions,
@@ -41,13 +36,7 @@ function LoginButton(props: {
 		message = loggedIn ? `Sign out of ${label}` : `Sign in to ${label}`
 	}
 
-	return (
-		<ActionRow
-			disabled={loading || disabled}
-			onPress={onPress}
-			title={message}
-		/>
-	)
+	return <ActionRow disabled={loading || disabled} onPress={onPress} title={message} />
 }
 
 export const CredentialsLoginSection = (): React.ReactNode => {
@@ -71,7 +60,7 @@ export const CredentialsLoginSection = (): React.ReactNode => {
 		// usernameState/passwordState are stable for the component's lifetime
 		// (useNativeState captures its initial value once); only credentials.data
 		// should re-trigger this.
-		// eslint-disable-next-line react-hooks/exhaustive-deps
+		// oxlint-disable-next-line react/exhaustive-deps
 	}, [credentials.data])
 
 	let logIn = useMutation({
@@ -143,9 +132,7 @@ export const CredentialsLoginSection = (): React.ReactNode => {
 			/>
 
 			{!actionPending && logIn.isError && logIn.error instanceof Error && (
-				<Text modifiers={[foregroundColor(sto.red)]}>
-					{logIn.error.message}
-				</Text>
+				<Text modifiers={[foregroundColor(sto.red)]}>{logIn.error.message}</Text>
 			)}
 		</Section>
 	)

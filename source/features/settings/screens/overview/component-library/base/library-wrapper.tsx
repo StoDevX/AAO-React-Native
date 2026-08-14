@@ -13,19 +13,12 @@ interface RowProps {
 }
 
 export const LibraryWrapper = ({children}: WrapperProps): React.ReactNode => (
-	<ScrollView
-		contentContainerStyle={styles.container}
-		contentInsetAdjustmentBehavior="automatic"
-	>
+	<ScrollView contentContainerStyle={styles.container} contentInsetAdjustmentBehavior="automatic">
 		<TableView>{children}</TableView>
 	</ScrollView>
 )
 
-export const Example = ({
-	title,
-	children,
-	contentContainerStyle,
-}: RowProps): React.ReactNode => (
+export const Example = ({title, children, contentContainerStyle}: RowProps): React.ReactNode => (
 	<Cell
 		cellAccessoryView={children}
 		cellStyle="Basic"

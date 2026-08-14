@@ -3,23 +3,15 @@ import {sto} from '../../../source/lib/colors'
 import * as logos from '../../../images/streaming'
 import {RadioControllerView} from '../../../source/features/streaming/radio'
 import tinycolor from 'tinycolor2'
-import {
-	PlayerTheme,
-	theming,
-} from '../../../source/features/streaming/radio/theme'
+import {PlayerTheme, theming} from '../../../source/features/streaming/radio/theme'
 
 let tintColor = '#37a287'
 const colors: PlayerTheme = {
 	tintColor,
-	buttonTextColor: tinycolor
-		.mostReadable(tintColor, [sto.white, sto.black])
-		.toRgbString(),
+	buttonTextColor: tinycolor.mostReadable(tintColor, [sto.white, sto.black]).toRgbString(),
 	textColor: tintColor,
 	imageBorderColor: 'transparent',
-	imageBackgroundColor: tinycolor(tintColor)
-		.complement()
-		.setAlpha(0.2)
-		.toRgbString(),
+	imageBackgroundColor: tinycolor(tintColor).complement().setAlpha(0.2).toRgbString(),
 }
 
 export default function KstoPage(): React.ReactNode {
@@ -31,8 +23,7 @@ export default function KstoPage(): React.ReactNode {
 				scheduleHref="/KSTOSchedule"
 				source={{
 					useEmbeddedPlayer: true,
-					embeddedPlayerUrl:
-						'https://www.stolaf.edu/multimedia/play/embed/ksto.html',
+					embeddedPlayerUrl: 'https://www.stolaf.edu/multimedia/play/embed/ksto.html',
 					streamSourceUrl: '',
 				}}
 				stationName="KSTO 93.1 FM"

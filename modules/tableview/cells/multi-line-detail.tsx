@@ -23,9 +23,7 @@ export function MultiLineDetailCell(props: Props): React.ReactNode {
 					</Text>
 				)}
 			</View>
-			{Boolean(rightDetail) && (
-				<View style={styles.cellRightDetail}>{rightDetail}</View>
-			)}
+			{Boolean(rightDetail) && <View style={styles.cellRightDetail}>{rightDetail}</View>}
 		</View>
 	)
 	return <Cell cellContentView={cellContent} />

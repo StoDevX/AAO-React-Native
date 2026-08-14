@@ -2,14 +2,14 @@
   "name": "@frogpond/constants",
   "version": "1.0.0",
   "description": "",
-  "main": "index.ts",
-  "author": "",
   "license": "ISC",
+  "author": "",
+  "main": "index.ts",
   "scripts": {
     "test": "jest"
   },
+  "dependencies": {},
   "peerDependencies": {
     "react-native": "^0.86.2"
-  },
-  "dependencies": {}
+  }
 }

@@ -18,7 +18,7 @@ export const DebugRow = (props: Props): React.ReactNode => {
 		isDrillable = true
 	} else if (typeof data.value === 'object' && data.value !== null) {
 		// [object Object], [object Symbol], etc
-		// eslint-disable-next-line @typescript-eslint/no-base-to-string
+		// oxlint-disable-next-line typescript/no-base-to-string
 		rowDetail = data.value.toString()
 		isDrillable = true
 	} else if (typeof data.value === 'string') {

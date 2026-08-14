@@ -29,10 +29,7 @@ const esmPackages = [
 /** @type {import('jest').Config} */
 const config = {
 	preset: '@react-native/jest-preset',
-	testMatch: [
-		'**/__tests__/**/*.(spec|test).(js|ts|tsx)',
-		'!**/node_modules/**',
-	],
+	testMatch: ['**/__tests__/**/*.(spec|test).(js|ts|tsx)', '!**/node_modules/**'],
 	collectCoverageFrom: [
 		'app/**/*.js',
 		'app/**/*.ts',
@@ -65,9 +62,7 @@ const config = {
 	// so the first node_modules/ segment is followed by ".pnpm", not a package
 	// name -- without letting that through, the negative lookahead trips on
 	// ".pnpm" itself and every pnpm-installed package gets ignored, ESM or not.
-	transformIgnorePatterns: [
-		`node_modules/(?!\\.pnpm|${esmPackages.join('|')})`,
-	],
+	transformIgnorePatterns: [`node_modules/(?!\\.pnpm|${esmPackages.join('|')})`],
 	reporters: [['github-actions', {silent: false}], 'summary'],
 }
 

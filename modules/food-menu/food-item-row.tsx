@@ -23,7 +23,7 @@ export function FoodItemRow({
 	onPress,
 	...props
 }: Props): React.ReactNode {
-	const {left = 0} = props.spacing
+	const {left} = props.spacing
 	return (
 		<ListRow
 			arrowPosition="center"
@@ -33,9 +33,7 @@ export function FoodItemRow({
 		>
 			<Row alignItems="center">
 				<View style={[styles.badge, {width: left}]}>
-					{badgeSpecials && data.special ? (
-						<Icon name="star" style={styles.badgeIcon} />
-					) : null}
+					{badgeSpecials && data.special ? <Icon name="star" style={styles.badgeIcon} /> : null}
 				</View>
 
 				<Column flex={1}>
@@ -43,11 +41,7 @@ export function FoodItemRow({
 					{data.description ? <Detail>{data.description}</Detail> : null}
 				</Column>
 
-				<DietaryTags
-					corIcons={corIcons}
-					dietary={data.cor_icon}
-					style={styles.iconContainer}
-				/>
+				<DietaryTags corIcons={corIcons} dietary={data.cor_icon} style={styles.iconContainer} />
 			</Row>
 		</ListRow>
 	)

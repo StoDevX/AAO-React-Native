@@ -7,11 +7,11 @@ import {BuildingInfo} from '../building-info'
 import {makeBuilding} from './fixtures'
 
 jest.mock('@expo/ui/swift-ui', () => {
-	// eslint-disable-next-line @typescript-eslint/no-require-imports
+	// oxlint-disable-next-line typescript/no-require-imports
 	return require('./expo-ui-mock') as typeof import('./expo-ui-mock')
 })
 jest.mock('@expo/ui/swift-ui/modifiers', () => {
-	// eslint-disable-next-line @typescript-eslint/no-require-imports
+	// oxlint-disable-next-line typescript/no-require-imports
 	return require('./expo-ui-mock') as typeof import('./expo-ui-mock')
 })
 jest.mock('@frogpond/open-url', () => ({openUrl: jest.fn()}))
@@ -44,9 +44,7 @@ describe('BuildingInfo', () => {
 
 		await fireEvent.press(screen.getByText('1520 St Olaf Ave'))
 
-		expect(mockOpenURL).toHaveBeenCalledWith(
-			'https://maps.apple.com/?q=1520%20St%20Olaf%20Ave',
-		)
+		expect(mockOpenURL).toHaveBeenCalledWith('https://maps.apple.com/?q=1520%20St%20Olaf%20Ave')
 	})
 
 	it('opens a parsed department link', async () => {
@@ -80,9 +78,7 @@ describe('BuildingInfo', () => {
 
 		// ccc-server stores a bare filename, not a URL; the images live in
 		// carls-app/map-data.
-		expect(
-			screen.getByLabelText('Photo of Leighton Hall').props.source,
-		).toEqual({
+		expect(screen.getByLabelText('Photo of Leighton Hall').props.source).toEqual({
 			uri: 'https://carls-app.github.io/map-data/cache/img/leighton.jpg',
 		})
 	})

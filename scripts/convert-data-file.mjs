@@ -37,9 +37,7 @@ export function convertDataFile({fromFile, toFile, toFileType = 'json'}) {
 			}
 			break
 		default:
-			throw new Error(
-				`unexpected filetype "${fileType}; expected "md", "yaml", or "css"`,
-			)
+			throw new Error(`unexpected filetype "${fileType}; expected "md", "yaml", or "css"`)
 	}
 
 	output = output + '\n'

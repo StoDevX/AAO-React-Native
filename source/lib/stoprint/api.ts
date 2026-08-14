@@ -55,10 +55,7 @@ export async function logIn(
 	return
 }
 
-export function fetchJobs(
-	username: string,
-	options: Options,
-): Promise<PrintJobsResponse> {
+export function fetchJobs(username: string, options: Options): Promise<PrintJobsResponse> {
 	if (isStoprintMocked) {
 		return mockFetchJobs(username)
 	}
@@ -68,10 +65,7 @@ export function fetchJobs(
 		.json()
 }
 
-export function fetchAllPrinters(
-	username: string,
-	options: Options,
-): Promise<AllPrintersResponse> {
+export function fetchAllPrinters(username: string, options: Options): Promise<AllPrintersResponse> {
 	if (isStoprintMocked) {
 		return mockFetchAllPrinters(username)
 	}
@@ -101,9 +95,7 @@ export function fetchRecentPrinters(
 }
 
 export async function fetchColorPrinters(options: Options): Promise<string[]> {
-	let response = await client
-		.get<ColorPrintersResponse>('color-printers', options)
-		.json()
+	let response = await client.get<ColorPrintersResponse>('color-printers', options).json()
 	return response.data.colorPrinters
 }
 

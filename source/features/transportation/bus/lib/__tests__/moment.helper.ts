@@ -17,11 +17,7 @@ export const dayAndTime = (timeToFormat: string): moment.Moment => {
 
 	let dayOfWeek = parsed.day()
 
-	parsed
-		.year(baseTime.year())
-		.month(baseTime.month())
-		.date(baseTime.date())
-		.day(dayOfWeek)
+	parsed.year(baseTime.year()).month(baseTime.month()).date(baseTime.date()).day(dayOfWeek)
 
 	return parsed
 }

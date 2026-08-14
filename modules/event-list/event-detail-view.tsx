@@ -34,18 +34,12 @@ export function EventDetail({event, poweredBy}: Props): React.ReactNode {
 					event={event}
 					render={({message, disabled, onPress}) => (
 						<Section footer={message}>
-							<ButtonCell
-								disabled={disabled}
-								onPress={onPress}
-								title="Add to calendar"
-							/>
+							<ButtonCell disabled={disabled} onPress={onPress} title="Add to calendar" />
 						</Section>
 					)}
 				/>
 
-				{poweredBy.title ? (
-					<ListFooter href={poweredBy.href} title={poweredBy.title} />
-				) : null}
+				{poweredBy.title ? <ListFooter href={poweredBy.href} title={poweredBy.title} /> : null}
 			</TableView>
 		</ScrollView>
 	)

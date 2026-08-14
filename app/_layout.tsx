@@ -26,7 +26,6 @@ import {StatusBar, useColorScheme} from 'react-native'
 // the root stack with nothing beneath the sheet: no Home to dismiss back
 // to. (home) is the app's real entry point regardless of which route a
 // deep link targets.
-// eslint-disable-next-line camelcase -- expo-router's own required export name
 export const unstable_settings = {
 	anchor: '(home)',
 }
@@ -42,23 +41,15 @@ function RootLayout(): React.ReactNode {
 			return
 		}
 
-		sentryInit.navigationIntegration.registerNavigationContainer(
-			navigationContainerRef,
-		)
+		sentryInit.navigationIntegration.registerNavigationContainer(navigationContainerRef)
 		Sentry.appLoaded()
-		// eslint-disable-next-line react-hooks/exhaustive-deps
+		// oxlint-disable-next-line react/exhaustive-deps
 	}, [])
 
 	return (
 		<ReduxProvider store={store}>
-			<PersistGate
-				loading={<LoadingView text="Loading App..." />}
-				persistor={persistor}
-			>
-				<PersistQueryClientProvider
-					client={queryClient}
-					persistOptions={{persister}}
-				>
+			<PersistGate loading=<LoadingView text="Loading App..." /> persistor={persistor}>
+				<PersistQueryClientProvider client={queryClient} persistOptions={{persister}}>
 					<PaperProvider theme={theme}>
 						<ThemeProvider value={theme}>
 							<StatusBar barStyle={statusBarStyle} />

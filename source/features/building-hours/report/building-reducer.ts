@@ -1,8 +1,4 @@
-import type {
-	BuildingType,
-	NamedBuildingScheduleType,
-	SingleBuildingScheduleType,
-} from '../types'
+import type {BuildingType, NamedBuildingScheduleType, SingleBuildingScheduleType} from '../types'
 import {blankSchedule} from '../lib'
 
 export type BuildingAction =
@@ -23,10 +19,7 @@ export type BuildingAction =
 	  }
 	| {type: 'DELETE_HOURS'; scheduleIndex: number; setIndex: number}
 
-export function buildingReducer(
-	state: BuildingType,
-	action: BuildingAction,
-): BuildingType {
+export function buildingReducer(state: BuildingType, action: BuildingAction): BuildingType {
 	switch (action.type) {
 		case 'SET_BUILDING_NAME':
 			return {...state, name: action.name}
@@ -34,10 +27,7 @@ export function buildingReducer(
 		case 'ADD_SCHEDULE':
 			return {
 				...state,
-				schedule: [
-					...state.schedule,
-					{title: 'Hours', hours: [blankSchedule()]},
-				],
+				schedule: [...state.schedule, {title: 'Hours', hours: [blankSchedule()]}],
 			}
 
 		case 'UPDATE_SCHEDULE': {
@@ -88,9 +78,7 @@ export function buildingReducer(
 
 		default: {
 			let _exhaustive: never = action
-			throw new Error(
-				`Unhandled building action: ${JSON.stringify(_exhaustive)}`,
-			)
+			throw new Error(`Unhandled building action: ${JSON.stringify(_exhaustive)}`)
 		}
 	}
 }

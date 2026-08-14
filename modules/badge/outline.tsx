@@ -1,13 +1,5 @@
 import * as React from 'react'
-import {
-	ColorValue,
-	StyleProp,
-	StyleSheet,
-	Text,
-	TextStyle,
-	View,
-	ViewStyle,
-} from 'react-native'
+import {ColorValue, StyleProp, StyleSheet, Text, TextStyle, View, ViewStyle} from 'react-native'
 import * as c from '@frogpond/colors'
 
 type Props = {
@@ -46,9 +38,7 @@ export function OutlineBadge({
 				style,
 			]}
 		>
-			<Text style={[styles.accessoryBadgeText, {color: textColor}, textStyle]}>
-				{text}
-			</Text>
+			<Text style={[styles.accessoryBadgeText, {color: textColor}, textStyle]}>{text}</Text>
 		</View>
 	)
 }

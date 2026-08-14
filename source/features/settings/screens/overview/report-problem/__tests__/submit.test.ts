@@ -64,10 +64,10 @@ describe('submitReport in non-production', () => {
 		jest.doMock('@frogpond/constants', () => ({IS_PRODUCTION: false}))
 		jest.doMock('@sentry/react-native', () => ({captureFeedback: jest.fn()}))
 		const SentryDev =
-			// eslint-disable-next-line @typescript-eslint/no-require-imports -- re-require after jest.doMock to pick up the mocked deps
+			// oxlint-disable-next-line typescript/no-require-imports -- re-require after jest.doMock to pick up the mocked deps
 			require('@sentry/react-native') as typeof import('@sentry/react-native')
 		const {submitReport: submitReportDev} =
-			// eslint-disable-next-line @typescript-eslint/no-require-imports -- re-require after jest.doMock to pick up the mocked deps
+			// oxlint-disable-next-line typescript/no-require-imports -- re-require after jest.doMock to pick up the mocked deps
 			require('../submit') as typeof import('../submit')
 
 		let result = submitReportDev({message: 'it crashed'})

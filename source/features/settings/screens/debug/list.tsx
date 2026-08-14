@@ -33,12 +33,7 @@ export const DebugView = (props: Props = {}): React.ReactNode => {
 			if (Array.isArray(state)) {
 				return <DebugArrayItem item={state} onDrillDown={onDrillDown} />
 			} else {
-				return (
-					<DebugObjectItem
-						item={state as Record<string, unknown>}
-						onDrillDown={onDrillDown}
-					/>
-				)
+				return <DebugObjectItem item={state as Record<string, unknown>} onDrillDown={onDrillDown} />
 			}
 		}
 		case 'function':
@@ -60,11 +55,7 @@ export const DebugSimpleItem = ({item}: {item: unknown}): React.ReactNode => {
 	return (
 		<ScrollView contentInsetAdjustmentBehavior="automatic">
 			<TableView style={styles.table}>
-				<Section
-					header={typeof item}
-					hideSurroundingSeparators={true}
-					roundedCorners={true}
-				>
+				<Section header={typeof item} hideSurroundingSeparators={true} roundedCorners={true}>
 					<Text>{String(item)}</Text>
 				</Section>
 			</TableView>
@@ -76,11 +67,7 @@ export const DebugToStringItem = ({item}: {item: unknown}): React.ReactNode => {
 	return (
 		<ScrollView contentInsetAdjustmentBehavior="automatic">
 			<TableView style={styles.table}>
-				<Section
-					header={typeof item}
-					hideSurroundingSeparators={true}
-					roundedCorners={true}
-				>
+				<Section header={typeof item} hideSurroundingSeparators={true} roundedCorners={true}>
 					<Text>{String(item)}</Text>
 				</Section>
 			</TableView>
@@ -100,12 +87,10 @@ export const DebugArrayItem = ({
 	return (
 		<FlatList
 			ItemSeparatorComponent={ListSeparator}
-			ListEmptyComponent={<NoticeView text="Nothing found." />}
+			ListEmptyComponent=<NoticeView text="Nothing found." />
 			contentInsetAdjustmentBehavior="automatic"
 			data={keyed}
-			renderItem={({item: debugItem}) => (
-				<DebugRow data={debugItem} onPress={onDrillDown} />
-			)}
+			renderItem={({item: debugItem}) => <DebugRow data={debugItem} onPress={onDrillDown} />}
 		/>
 	)
 }
@@ -122,12 +107,10 @@ export const DebugObjectItem = ({
 	return (
 		<FlatList
 			ItemSeparatorComponent={ListSeparator}
-			ListEmptyComponent={<NoticeView text="Nothing found." />}
+			ListEmptyComponent=<NoticeView text="Nothing found." />
 			contentInsetAdjustmentBehavior="automatic"
 			data={keyed}
-			renderItem={({item: debugItem}) => (
-				<DebugRow data={debugItem} onPress={onDrillDown} />
-			)}
+			renderItem={({item: debugItem}) => <DebugRow data={debugItem} onPress={onDrillDown} />}
 		/>
 	)
 }

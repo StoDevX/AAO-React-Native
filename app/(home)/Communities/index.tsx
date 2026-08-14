@@ -22,7 +22,5 @@ export default function StOlafFeedPage(): React.ReactNode {
 		[router],
 	)
 
-	return (
-		<PostList onPressPost={handlePressPost} query={query} variant={variant} />
-	)
+	return <PostList onPressPost={handlePressPost} query={query} variant={variant} />
 }

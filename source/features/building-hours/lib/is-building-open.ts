@@ -22,16 +22,12 @@ export function isBuildingOpen(info: BuildingType, m: Moment): boolean {
 			return false
 		}
 
-		let filteredSchedules = set.hours.filter((sched) =>
-			sched.days.includes(dayOfWeek),
-		)
+		let filteredSchedules = set.hours.filter((sched) => sched.days.includes(dayOfWeek))
 		if (!filteredSchedules.length) {
 			return false
 		}
 
-		return filteredSchedules.map((schedule) =>
-			isScheduleOpenAtMoment(schedule, m),
-		)
+		return filteredSchedules.map((schedule) => isScheduleOpenAtMoment(schedule, m))
 	})
 
 	return flatten(results).find((status) => status !== false) || false

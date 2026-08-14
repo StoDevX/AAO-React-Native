@@ -19,10 +19,7 @@ function setTimeOnDay(base: Moment, time: string): Moment {
 	})
 }
 
-export function parseHours(
-	schedule: SingleBuildingScheduleType,
-	m: Moment,
-): HourPairType {
+export function parseHours(schedule: SingleBuildingScheduleType, m: Moment): HourPairType {
 	let {from: fromTime, to: toTime} = schedule
 
 	// Build the window that *starts* on m's own calendar day. If the close

@@ -1,13 +1,6 @@
 import * as React from 'react'
 import type {FilterType} from './types'
-import {
-	StyleProp,
-	StyleSheet,
-	Text,
-	TouchableWithoutFeedback,
-	View,
-	ViewStyle,
-} from 'react-native'
+import {StyleProp, StyleSheet, Text, TouchableWithoutFeedback, View, ViewStyle} from 'react-native'
 import {Ionicons as Icon} from '@react-native-vector-icons/ionicons'
 import * as c from '@frogpond/colors'
 

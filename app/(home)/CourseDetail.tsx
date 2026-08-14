@@ -2,14 +2,7 @@ import * as React from 'react'
 import {Stack, useLocalSearchParams} from 'expo-router'
 import {useQuery} from '@tanstack/react-query'
 import {timezone} from '@frogpond/constants'
-import {
-	StyleSheet,
-	Text,
-	Platform,
-	ScrollViewProps,
-	ScrollView,
-	TextProps,
-} from 'react-native'
+import {StyleSheet, Text, Platform, ScrollViewProps, ScrollView, TextProps} from 'react-native'
 import type {CourseType} from '../../source/lib/course-search'
 import {SolidBadge as Badge} from '@frogpond/badge'
 import moment from 'moment-timezone'
@@ -26,10 +19,7 @@ import groupBy from 'lodash/groupBy'
 import map from 'lodash/map'
 import zip from 'lodash/zip'
 
-import {
-	courseByIdOptions,
-	termByNumberOptions,
-} from '../../source/features/sis/course-search/query'
+import {courseByIdOptions, termByNumberOptions} from '../../source/features/sis/course-search/query'
 import {LoadingView, NoticeView} from '@frogpond/notice'
 import type {TermType} from '../../source/lib/course-search'
 
@@ -43,12 +33,8 @@ const Container = (props: ScrollViewProps) => (
 	/>
 )
 
-const Header = (props: TextProps) => (
-	<Text {...props} style={[styles.header, props.style]} />
-)
-const SubHeader = (props: TextProps) => (
-	<Text {...props} style={[styles.subHeader, props.style]} />
-)
+const Header = (props: TextProps) => <Text {...props} style={[styles.header, props.style]} />
+const SubHeader = (props: TextProps) => <Text {...props} style={[styles.subHeader, props.style]} />
 
 const styles = StyleSheet.create({
 	chunk: {
@@ -88,26 +74,16 @@ function Information({course}: {course: CourseType}) {
 			{course.instructors ? (
 				<Cell
 					cellStyle="LeftDetail"
-					detail={
-						course.instructors.length === 1 ? 'Instructor' : 'Instructors'
-					}
+					detail={course.instructors.length === 1 ? 'Instructor' : 'Instructors'}
 					title={course.instructors.join(', ')}
 				/>
 			) : null}
 			<Cell cellStyle="LeftDetail" detail="Type" title={course.type} />
 			{course.gereqs ? (
-				<Cell
-					cellStyle="LeftDetail"
-					detail="GEs"
-					title={course.gereqs.join(', ')}
-				/>
+				<Cell cellStyle="LeftDetail" detail="GEs" title={course.gereqs.join(', ')} />
 			) : null}
 			{course.pn ? (
-				<Cell
-					cellStyle="LeftDetail"
-					detail="Pass/Fail"
-					title={course.pn ? 'Yes' : 'No'}
-				/>
+				<Cell cellStyle="LeftDetail" detail="Pass/Fail" title={course.pn ? 'Yes' : 'No'} />
 			) : null}
 			<MultiLineLeftDetailCell
 				detail="Prerequisites"
@@ -124,10 +100,7 @@ function Schedule({course}: {course: CourseType}) {
 	if (!course.offerings) {
 		return null
 	}
-	let groupedByDay = groupBy(
-		course.offerings,
-		(courseOffering) => courseOffering.day,
-	)
+	let groupedByDay = groupBy(course.offerings, (courseOffering) => courseOffering.day)
 	let schedule = map(groupedByDay, (offerings, day) => {
 		let timesFormatted = offerings.map((offering) => {
 			let start = moment.tz(offering.start, 'H:mm', timezone()).format('h:mm A')
@@ -147,13 +120,7 @@ function Schedule({course}: {course: CourseType}) {
 			</Text>
 		))
 
-		return (
-			<MultiLineDetailCell
-				key={day}
-				rightDetail={rightDetail}
-				title={formatDay(day)}
-			/>
-		)
+		return <MultiLineDetailCell key={day} rightDetail={rightDetail} title={formatDay(day)} />
 	})
 
 	return <Section header="SCHEDULE">{schedule}</Section>
@@ -235,9 +202,7 @@ function CourseDetailView({course}: Props): React.ReactNode {
 export default function CourseDetailPage(): React.ReactNode {
 	let {clbid, term} = useLocalSearchParams<{clbid: string; term: string}>()
 
-	let {data: resolvedTerm, isLoading: termLoading} = useQuery(
-		termByNumberOptions(Number(term)),
-	)
+	let {data: resolvedTerm, isLoading: termLoading} = useQuery(termByNumberOptions(Number(term)))
 
 	let {
 		data: course,

@@ -51,17 +51,13 @@ const styles = StyleSheet.create({
 	},
 })
 
-const Title = (props: TextProps) => (
-	<Text {...props} style={[styles.title, props.style]} />
-)
+const Title = (props: TextProps) => <Text {...props} style={[styles.title, props.style]} />
 
 const Heading = (props: Parameters<typeof Title>[0]) => (
 	<Title {...props} style={[styles.heading, props.style]} />
 )
 
-const About = (props: TextProps) => (
-	<Text {...props} style={[styles.about, props.style]} />
-)
+const About = (props: TextProps) => <Text {...props} style={[styles.about, props.style]} />
 
 const Contributors = (props: TextProps) => (
 	<Text {...props} style={[styles.contributors, props.style]} />
@@ -119,32 +115,29 @@ export default function CreditsPage(): React.ReactNode {
 
 				<Title>All About Olaf</Title>
 				<About>
-					All About Olaf is a collaborative application created by alumni of St.
-					Olaf College in Northfield, MN under the name StoDevX.
+					All About Olaf is a collaborative application created by alumni of St. Olaf College in
+					Northfield, MN under the name StoDevX.
 				</About>
 
 				<Heading>🏡 October 2017 — Today</Heading>
 				<About>
-					Alumni of St. Olaf — Hawken Rives, Kris Rye, and Drew Volz — develop
-					and support the app in its current form. Rewritten from top to bottom
-					in Typescript, this is the version you see today in the iOS App Store.
-					It remains self-published, open-source, and free of trackers and data
-					collection.
+					Alumni of St. Olaf — Hawken Rives, Kris Rye, and Drew Volz — develop and support the app
+					in its current form. Rewritten from top to bottom in Typescript, this is the version you
+					see today in the iOS App Store. It remains self-published, open-source, and free of
+					trackers and data collection.
 				</About>
 
 				<Heading>🧱 July 2016 — September 2017</Heading>
 				<About>
-					This version was written in the summer of 2016, led by Elijah Verdoorn
-					and assisted by Hawken Rives and Drew Volz. The app was supported and
-					published by the Student Government Association (SGA) web team, called
-					the Oleville Development Team.
+					This version was written in the summer of 2016, led by Elijah Verdoorn and assisted by
+					Hawken Rives and Drew Volz. The app was supported and published by the Student Government
+					Association (SGA) web team, called the Oleville Development Team.
 				</About>
 
 				<Heading>🏗 2014</Heading>
 				<About>
-					The first version of All About Olaf was an iOS app created by Drew
-					Volz as an independent project, self-published and written in
-					Objective-C.
+					The first version of All About Olaf was an iOS app created by Drew Volz as an independent
+					project, self-published and written in Objective-C.
 				</About>
 
 				<Heading>Contributors</Heading>

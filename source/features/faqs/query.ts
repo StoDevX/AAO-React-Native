@@ -64,10 +64,7 @@ function normalizeFaq(value: unknown, index: number): Faq | null {
 		return null
 	}
 
-	let id =
-		readString(value, ['id', 'slug']) ??
-		slugify(question) ??
-		`faq-${index.toString()}`
+	let id = readString(value, ['id', 'slug']) ?? slugify(question) ?? `faq-${index.toString()}`
 
 	let metadata = parseFaqMetadata(value)
 	let bannerTitle = metadata.bannerTitle || question
@@ -95,10 +92,7 @@ function normalizeFaq(value: unknown, index: number): Faq | null {
 	}
 }
 
-function readString(
-	record: UnknownRecord,
-	fields: string[],
-): string | undefined {
+function readString(record: UnknownRecord, fields: string[]): string | undefined {
 	for (let key of fields) {
 		let raw = record[key]
 
@@ -144,9 +138,9 @@ function normalizeTargets(record: UnknownRecord): FaqTarget[] {
 function slugify(value: string): string | undefined {
 	let slug = value
 		.toLowerCase()
-		// eslint-disable-next-line require-unicode-regexp
+		// oxlint-disable-next-line require-unicode-regexp
 		.replace(/[^a-z0-9]+/g, '-')
-		// eslint-disable-next-line require-unicode-regexp
+		// oxlint-disable-next-line require-unicode-regexp
 		.replace(/(^-|-$)+/g, '')
 
 	return slug || undefined

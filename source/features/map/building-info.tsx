@@ -40,16 +40,11 @@ export function BuildingInfo({building, onClose}: Props): React.ReactNode {
 			<List>
 				<Section>
 					<Text>Building not found.</Text>
-					<Button
-						modifiers={[accessibilityLabel('Close'), buttonStyle('plain')]}
-						onPress={onClose}
-					>
+					<Button modifiers={[accessibilityLabel('Close'), buttonStyle('plain')]} onPress={onClose}>
 						{/* The filled xmark Apple's sheets close with now, rather than a
 						    text button. */}
 						<Image
-							modifiers={[
-								foregroundStyle({type: 'hierarchical', style: 'secondary'}),
-							]}
+							modifiers={[foregroundStyle({type: 'hierarchical', style: 'secondary'})]}
 							size={CLOSE_GLYPH_SIZE}
 							systemName="xmark.circle.fill"
 						/>
@@ -59,17 +54,8 @@ export function BuildingInfo({building, onClose}: Props): React.ReactNode {
 		)
 	}
 
-	let {
-		accessibility,
-		address,
-		departments,
-		description,
-		floors,
-		name,
-		nickname,
-		offices,
-		photos,
-	} = building.properties
+	let {accessibility, address, departments, description, floors, name, nickname, offices, photos} =
+		building.properties
 
 	return (
 		<List>
@@ -78,9 +64,7 @@ export function BuildingInfo({building, onClose}: Props): React.ReactNode {
 					    riding up against the top of the row. */}
 				<HStack alignment="center" spacing={12}>
 					<VStack alignment="leading" spacing={2}>
-						<Text modifiers={[font({textStyle: 'title2', weight: 'bold'})]}>
-							{name}
-						</Text>
+						<Text modifiers={[font({textStyle: 'title2', weight: 'bold'})]}>{name}</Text>
 						{nickname ? (
 							<Text
 								modifiers={[
@@ -93,16 +77,11 @@ export function BuildingInfo({building, onClose}: Props): React.ReactNode {
 						) : null}
 					</VStack>
 					<Spacer />
-					<Button
-						modifiers={[accessibilityLabel('Close'), buttonStyle('plain')]}
-						onPress={onClose}
-					>
+					<Button modifiers={[accessibilityLabel('Close'), buttonStyle('plain')]} onPress={onClose}>
 						{/* The filled xmark Apple's sheets close with now, rather than a
 						    text button. */}
 						<Image
-							modifiers={[
-								foregroundStyle({type: 'hierarchical', style: 'secondary'}),
-							]}
+							modifiers={[foregroundStyle({type: 'hierarchical', style: 'secondary'})]}
 							size={CLOSE_GLYPH_SIZE}
 							systemName="xmark.circle.fill"
 						/>
@@ -165,10 +144,7 @@ function AddressLink({address}: {address: string}): React.ReactNode {
 		})
 	}
 	return (
-		<Button
-			modifiers={[accessibilityLabel(`Open ${address} in Maps`)]}
-			onPress={onPress}
-		>
+		<Button modifiers={[accessibilityLabel(`Open ${address} in Maps`)]} onPress={onPress}>
 			<Text>{address}</Text>
 		</Button>
 	)

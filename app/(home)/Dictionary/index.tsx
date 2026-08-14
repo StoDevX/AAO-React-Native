@@ -4,10 +4,7 @@ import {useQuery} from '@tanstack/react-query'
 import {Stack, useRouter} from 'expo-router'
 
 import {dictionaryOptions} from '../../../source/features/dictionary/query'
-import type {
-	WordType,
-	DictionaryGroup,
-} from '../../../source/features/dictionary/types'
+import type {WordType, DictionaryGroup} from '../../../source/features/dictionary/types'
 
 import {
 	Detail,
@@ -29,9 +26,7 @@ function splitToArray(str: string) {
 }
 
 function termToArray(term: WordType) {
-	return Array.from(
-		new Set([...splitToArray(term.word), ...splitToArray(term.definition)]),
-	)
+	return Array.from(new Set([...splitToArray(term.word), ...splitToArray(term.definition)]))
 }
 
 function groupWords(wordsToGroup: WordType[]): DictionaryGroup[] {
@@ -60,14 +55,7 @@ function DictionaryView(): React.ReactNode {
 	let [query, setQuery] = React.useState('')
 	let searchQuery = useDebounce(query.toLowerCase(), 200)
 
-	let {
-		data = [],
-		error,
-		refetch,
-		isLoading,
-		isError,
-		isRefetching,
-	} = useQuery(dictionaryOptions)
+	let {data = [], error, refetch, isLoading, isError, isRefetching} = useQuery(dictionaryOptions)
 
 	let filtered = React.useMemo(() => {
 		let grouped = groupWords(data)
@@ -93,9 +81,7 @@ function DictionaryView(): React.ReactNode {
 				<Stack.Toolbar.SearchBarSlot />
 			</Stack.Toolbar>
 
-			<Stack.SearchBar
-				onChangeText={(event) => setQuery(event.nativeEvent.text)}
-			/>
+			<Stack.SearchBar onChangeText={(event) => setQuery(event.nativeEvent.text)} />
 		</>
 	)
 
@@ -152,9 +138,7 @@ function DictionaryView(): React.ReactNode {
 						</ListRow>
 					)
 				}}
-				renderSectionHeader={({section: {title}}) => (
-					<ListSectionHeader title={title} />
-				)}
+				renderSectionHeader={({section: {title}}) => <ListSectionHeader title={title} />}
 				sections={filtered}
 				style={styles.wrapper}
 				{...largeListProps}

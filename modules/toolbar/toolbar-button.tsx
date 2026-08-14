@@ -36,9 +36,7 @@ type Props = {
 export function ToolbarButton({title, iconName}: Props): React.ReactElement {
 	return (
 		<View style={[styles.button]}>
-			<Text style={[styles.text, iconName ? styles.textWithIcon : null]}>
-				{title}
-			</Text>
+			<Text style={[styles.text, iconName ? styles.textWithIcon : null]}>{title}</Text>
 			{iconName ? <Icon name={iconName} size={18} style={styles.text} /> : null}
 		</View>
 	)

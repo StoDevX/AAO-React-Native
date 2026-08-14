@@ -10,8 +10,6 @@ const styles = StyleSheet.create({
 	},
 })
 
-export function Separator(props: {
-	style?: StyleProp<ViewStyle>
-}): React.ReactNode {
+export function Separator(props: {style?: StyleProp<ViewStyle>}): React.ReactNode {
 	return <View style={[styles.separator, props.style]} />
 }

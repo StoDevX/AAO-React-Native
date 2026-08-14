@@ -21,12 +21,12 @@ export default function SISBalancesPage(): React.ReactNode {
 	let content = (
 		<>
 			<Text selectable={true} style={[styles.paragraph, styles.cardText]}>
-				We want to make sure you have the most up-to-date information in the
-				app, but please keep in mind that there may be some inaccuracies.
+				We want to make sure you have the most up-to-date information in the app, but please keep in
+				mind that there may be some inaccuracies.
 			</Text>
 			<Text selectable={true} style={[styles.paragraph, styles.cardText]}>
-				With that in mind, before you can view your balances in the app, we ask
-				that you agree to the following.{'\n'}
+				With that in mind, before you can view your balances in the app, we ask that you agree to
+				the following.{'\n'}
 			</Text>
 
 			<Text selectable={true} style={[styles.paragraph, styles.bonappNotice]}>
@@ -38,8 +38,8 @@ export default function SISBalancesPage(): React.ReactNode {
 			</Text>
 
 			<Text selectable={true} style={[styles.paragraph, styles.cardText]}>
-				If you do not agree to these terms, you will not be able to see your
-				balances in the app, but you can still use the rest of the features.
+				If you do not agree to these terms, you will not be able to see your balances in the app,
+				but you can still use the rest of the features.
 			</Text>
 		</>
 	)
@@ -63,10 +63,7 @@ function Ack(props: AcknowledgementProps) {
 	let {title, children, onPositive} = props
 
 	return (
-		<ScrollView
-			contentContainerStyle={styles.container}
-			contentInsetAdjustmentBehavior="automatic"
-		>
+		<ScrollView contentContainerStyle={styles.container} contentInsetAdjustmentBehavior="automatic">
 			<Card header={title}>
 				<>
 					{children}

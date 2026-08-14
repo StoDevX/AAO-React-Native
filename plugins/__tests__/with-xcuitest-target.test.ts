@@ -48,9 +48,7 @@ function makeSourceDir(): string {
 
 describe('patchPodfileForUITests', () => {
 	it('disables expo autolinking for the UITests target', () => {
-		expect(patchPodfileForUITests(STOCK_PODFILE)).toContain(
-			`return nil if name == '${TARGET}'`,
-		)
+		expect(patchPodfileForUITests(STOCK_PODFILE)).toContain(`return nil if name == '${TARGET}'`)
 	})
 
 	it('nests the UITests target with inherit! :none', () => {
@@ -86,9 +84,7 @@ describe('patchPodfileForUITests', () => {
 	})
 
 	it('throws when the app target is missing', () => {
-		expect(() => patchPodfileForUITests('# empty\n')).toThrow(
-			/target 'AllAboutOlaf'/u,
-		)
+		expect(() => patchPodfileForUITests('# empty\n')).toThrow(/target 'AllAboutOlaf'/u)
 	})
 })
 
@@ -135,9 +131,7 @@ describe('ensureUITestTarget', () => {
 			sourceDir: makeSourceDir(),
 			projectPath: PROJECT_PATH,
 		})
-		expect(uiTestTarget(project).productType).toBe(
-			'"com.apple.product-type.bundle.ui-testing"',
-		)
+		expect(uiTestTarget(project).productType).toBe('"com.apple.product-type.bundle.ui-testing"')
 	})
 
 	it('points the target at the app under test', () => {
@@ -176,9 +170,7 @@ describe('ensureUITestTarget', () => {
 			sourceDir: makeSourceDir(),
 			projectPath: PROJECT_PATH,
 		})
-		let phase = project.pbxSourcesBuildPhaseObj(
-			project.findTargetKey(TARGET) as string,
-		)
+		let phase = project.pbxSourcesBuildPhaseObj(project.findTargetKey(TARGET) as string)
 		let sources = (phase?.files ?? []).map((file) => file.comment)
 		expect(sources.join(' ')).not.toContain('Info.plist')
 	})
@@ -234,8 +226,6 @@ describe('addTestableToScheme', () => {
 	})
 
 	it('throws when there is no Testables element', () => {
-		expect(() => addTestableToScheme('<Scheme/>', options)).toThrow(
-			/Testables/u,
-		)
+		expect(() => addTestableToScheme('<Scheme/>', options)).toThrow(/Testables/u)
 	})
 })

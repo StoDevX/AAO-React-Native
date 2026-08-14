@@ -18,17 +18,9 @@ const ButtonCellExample = (): React.ReactNode => {
 
 			<ButtonCell disabled={true} onPress={() => undefined} title="Disabled" />
 
-			<ButtonCell
-				indeterminate={true}
-				onPress={() => undefined}
-				title="Indeterminate"
-			/>
+			<ButtonCell indeterminate={true} onPress={() => undefined} title="Indeterminate" />
 
-			<ButtonCell
-				accessoryIcon="school"
-				onPress={() => undefined}
-				title="Accessory"
-			/>
+			<ButtonCell accessoryIcon="school" onPress={() => undefined} title="Accessory" />
 
 			<ButtonCell
 				accessoryIcon="school"
@@ -70,10 +62,7 @@ const ButtonExample = (): React.ReactNode => {
 			</Example>
 
 			<Example title="Callback">
-				<Button
-					onPress={() => Alert.alert('You tapped the button!')}
-					title="Tap me"
-				/>
+				<Button onPress={() => Alert.alert('You tapped the button!')} title="Tap me" />
 			</Example>
 
 			<Example title="Inverted (fix me)">

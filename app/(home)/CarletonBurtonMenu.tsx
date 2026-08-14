@@ -7,11 +7,7 @@ export default function CarletonBurtonMenuPage(): React.ReactNode {
 	return (
 		<>
 			<Stack.Title>Burton</Stack.Title>
-			<BonAppHostedMenu
-				cafe="burton"
-				loadingMessage={['Searching for Schiller…']}
-				name="Burton"
-			/>
+			<BonAppHostedMenu cafe="burton" loadingMessage={['Searching for Schiller…']} name="Burton" />
 		</>
 	)
 }

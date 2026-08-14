@@ -1,23 +1,9 @@
 import * as React from 'react'
-import {
-	ColorValue,
-	ScrollView,
-	StyleSheet,
-	Text,
-	TouchableOpacity,
-	View,
-} from 'react-native'
+import {ColorValue, ScrollView, StyleSheet, Text, TouchableOpacity, View} from 'react-native'
 import type {Moment} from 'moment-timezone'
 import type {DayOfWeek} from '../types'
 import * as c from '@frogpond/colors'
-import {
-	HStack,
-	Host,
-	Menu,
-	Section,
-	Text as SwiftUIText,
-	Toggle,
-} from '@expo/ui/swift-ui'
+import {HStack, Host, Menu, Section, Text as SwiftUIText, Toggle} from '@expo/ui/swift-ui'
 import {
 	accessibilityIdentifier,
 	background,
@@ -143,12 +129,7 @@ export const DayPicker = ({
 							onPress={() => onDaySelect(day)}
 							style={[styles.dayButton, isSelected && styles.dayButtonSelected]}
 						>
-							<Text
-								style={[
-									styles.dayButtonText,
-									isSelected && styles.dayButtonTextSelected,
-								]}
-							>
+							<Text style={[styles.dayButtonText, isSelected && styles.dayButtonTextSelected]}>
 								{label}
 							</Text>
 						</TouchableOpacity>
@@ -177,10 +158,7 @@ export const momentToDayOfWeek = (moment: Moment): DayOfWeek => {
 	return dayMap[moment.day()]
 }
 
-export const createMomentForDay = (
-	baseMoment: Moment,
-	targetDay: DayOfWeek,
-): Moment => {
+export const createMomentForDay = (baseMoment: Moment, targetDay: DayOfWeek): Moment => {
 	const dayMap: Record<DayOfWeek, number> = {
 		Su: 0,
 		Mo: 1,

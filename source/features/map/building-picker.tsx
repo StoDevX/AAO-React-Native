@@ -22,11 +22,7 @@ import {useQuery} from '@tanstack/react-query'
 import {useDebounce} from '@frogpond/use-debounce'
 import fuzzyfind from 'fuzzyfind'
 
-import {
-	CategoryPicker,
-	LABEL_TO_CATEGORY,
-	type CategoryLabel,
-} from './category-picker'
+import {CategoryPicker, LABEL_TO_CATEGORY, type CategoryLabel} from './category-picker'
 import {mapDataOptions} from './query'
 import type {Building, Feature} from './types'
 
@@ -44,13 +40,7 @@ export function BuildingPicker({onSelect}: Props): React.ReactNode {
 	let [typedQuery, setTypedQuery] = React.useState('')
 	let query = useDebounce(typedQuery.trim(), SEARCH_DEBOUNCE_MS)
 
-	let {
-		data: buildings = [],
-		error,
-		isError,
-		isLoading,
-		refetch,
-	} = useQuery(mapDataOptions)
+	let {data: buildings = [], error, isError, isLoading, refetch} = useQuery(mapDataOptions)
 
 	let visible = React.useMemo(() => {
 		// fuzzyfind is subsequence-based and lowercases both sides itself, so
@@ -58,8 +48,7 @@ export function BuildingPicker({onSelect}: Props): React.ReactNode {
 		// have to appear in the name before any of the typed letters.
 		if (query) {
 			return fuzzyfind(query, buildings, {
-				accessor: (b: Feature<Building>) =>
-					`${b.properties.name} ${b.properties.nickname ?? ''}`,
+				accessor: (b: Feature<Building>) => `${b.properties.name} ${b.properties.nickname ?? ''}`,
 			})
 		}
 		let key = LABEL_TO_CATEGORY[category]
@@ -97,11 +86,7 @@ export function BuildingPicker({onSelect}: Props): React.ReactNode {
 				) : (
 					<List.ForEach>
 						{visible.map((building) => (
-							<BuildingRow
-								key={building.id}
-								building={building}
-								onSelect={onSelect}
-							/>
+							<BuildingRow key={building.id} building={building} onSelect={onSelect} />
 						))}
 					</List.ForEach>
 				)}
@@ -131,11 +116,7 @@ function BuildingRow({
 			    note is on Settings' NavigationRow. */}
 			<HStack modifiers={[contentShape(shapes.rectangle())]} spacing={8}>
 				<VStack alignment="leading" spacing={2}>
-					<Text
-						modifiers={[
-							foregroundStyle({type: 'hierarchical', style: 'primary'}),
-						]}
-					>
+					<Text modifiers={[foregroundStyle({type: 'hierarchical', style: 'primary'})]}>
 						{name}
 					</Text>
 					{nickname ? (
@@ -153,9 +134,7 @@ function BuildingRow({
 				{/* A Button is not a NavigationLink, so the disclosure chevron the
 				    rest of the app's rows get from the platform has to be drawn. */}
 				<Image
-					modifiers={[
-						foregroundStyle({type: 'hierarchical', style: 'tertiary'}),
-					]}
+					modifiers={[foregroundStyle({type: 'hierarchical', style: 'tertiary'})]}
 					size={13}
 					systemName="chevron.right"
 				/>

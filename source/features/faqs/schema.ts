@@ -10,11 +10,7 @@ const severitySchema = z
 	.union([z.literal('notice'), z.literal('info'), z.literal('alert')])
 	.default('notice')
 
-const platformSchema = z.union([
-	z.literal('ios'),
-	z.literal('android'),
-	z.literal('native'),
-])
+const platformSchema = z.union([z.literal('ios'), z.literal('android'), z.literal('native')])
 
 const dateTimeString = z
 	.string()
@@ -62,10 +58,7 @@ const conditionNodeSchema: z.ZodType<ConditionInput> = z.lazy(() =>
 	]),
 )
 
-const conditionsSchema = z.union([
-	conditionNodeSchema,
-	z.array(conditionNodeSchema).min(1),
-])
+const conditionsSchema = z.union([conditionNodeSchema, z.array(conditionNodeSchema).min(1)])
 
 const metadataSchema = z
 	.object({
@@ -162,10 +155,7 @@ function parseRepeatString(value: string): RepeatRule | undefined {
 }
 
 function parseSimpleDuration(value: string): number | undefined {
-	let match =
-		/^(\d+)\s*(minute|minutes|min|hour|hours|day|days|week|weeks|m|h|d|w)$/iu.exec(
-			value,
-		)
+	let match = /^(\d+)\s*(minute|minutes|min|hour|hours|day|days|week|weeks|m|h|d|w)$/iu.exec(value)
 
 	if (!match) {
 		return undefined
@@ -198,9 +188,7 @@ function parseSimpleDuration(value: string): number | undefined {
 }
 
 function parseIsoDuration(value: string): number | undefined {
-	let match = /^P(?:(\d+)D)?(?:T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?)?$/iu.exec(
-		value,
-	)
+	let match = /^P(?:(\d+)D)?(?:T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?)?$/iu.exec(value)
 
 	if (!match) {
 		return undefined
@@ -212,10 +200,7 @@ function parseIsoDuration(value: string): number | undefined {
 	let seconds = Number(match[4] ?? 0)
 
 	let totalMs =
-		days * 24 * 60 * 60 * 1000 +
-		hours * 60 * 60 * 1000 +
-		minutes * 60 * 1000 +
-		seconds * 1000
+		days * 24 * 60 * 60 * 1000 + hours * 60 * 60 * 1000 + minutes * 60 * 1000 + seconds * 1000
 
 	return totalMs > 0 ? totalMs : undefined
 }

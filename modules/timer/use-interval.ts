@@ -2,7 +2,7 @@
 
 import {useCallback, useEffect, useRef} from 'react'
 
-// eslint-disable-next-line @typescript-eslint/no-empty-function
+// oxlint-disable-next-line typescript/no-empty-function
 const noop = (): void => {}
 
 type EmptyCallback = () => void
@@ -60,7 +60,7 @@ export function useInterval(
 			savedCallback.current()
 		}
 
-		// eslint-disable-next-line react-hooks/exhaustive-deps
+		// oxlint-disable-next-line react/exhaustive-deps
 	}, [interval])
 
 	const set = useCallback(
@@ -128,7 +128,7 @@ export function useInterval(
 		void (autoStart && start())
 
 		return stop
-		// eslint-disable-next-line react-hooks/exhaustive-deps
+		// oxlint-disable-next-line react/exhaustive-deps
 	}, [])
 
 	return {start, stop, isActive}

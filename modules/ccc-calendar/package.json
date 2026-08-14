@@ -2,21 +2,21 @@
   "name": "@frogpond/ccc-calendar",
   "version": "1.0.0",
   "description": "",
-  "main": "index.tsx",
-  "author": "",
   "license": "ISC",
+  "author": "",
+  "main": "index.tsx",
   "scripts": {
     "test": "jest"
-  },
-  "peerDependencies": {
-    "react": "^19.1.0",
-    "moment-timezone": "^0.6.3",
-    "delay": "^7.0.0"
   },
   "dependencies": {
     "@frogpond/api": "workspace:*",
     "@frogpond/event-list": "workspace:*",
     "@frogpond/event-type": "workspace:*",
     "@frogpond/notice": "workspace:*"
+  },
+  "peerDependencies": {
+    "delay": "^7.0.0",
+    "moment-timezone": "^0.6.3",
+    "react": "^19.1.0"
   }
 }

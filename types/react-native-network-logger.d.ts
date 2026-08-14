@@ -25,9 +25,7 @@ declare module 'react-native-network-logger' {
 	const NetworkLogger: React.FC<NetworkLoggerProps>
 	export default NetworkLogger
 
-	export const startNetworkLogging: (
-		options?: StartNetworkLoggingOptions,
-	) => void
+	export const startNetworkLogging: (options?: StartNetworkLoggingOptions) => void
 	export const stopNetworkLogging: () => void
 	export const getBackHandler: (backHandler: () => void) => () => void
 	export const clearRequests: () => void

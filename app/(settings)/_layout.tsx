@@ -8,10 +8,7 @@ export default function SettingsLayout(): React.ReactNode {
 			<Stack.Screen name="Privacy" />
 			<Stack.Screen name="Legal" />
 			<Stack.Screen name="ReportProblem" options={{presentation: 'modal'}} />
-			<Stack.Screen
-				name="NetworkLogger"
-				options={{presentation: 'modal', gestureEnabled: false}}
-			/>
+			<Stack.Screen name="NetworkLogger" options={{presentation: 'modal', gestureEnabled: false}} />
 		</Stack>
 	)
 }

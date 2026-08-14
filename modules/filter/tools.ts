@@ -1,8 +1,6 @@
 import type {FilterType, ListType, PickerType, ToggleType} from './types'
 
-export function filterListSpecs<T extends object>(
-	specs: Array<FilterType<T>>,
-): Array<ListType<T>> {
+export function filterListSpecs<T extends object>(specs: Array<FilterType<T>>): Array<ListType<T>> {
 	return specs.filter((f) => f.type === 'list')
 }
 

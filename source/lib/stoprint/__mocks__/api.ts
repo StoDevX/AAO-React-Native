@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
+/* oxlint-disable typescript/no-unused-vars */
 /* stoprint and papercut api mock data */
 
 import {mockAllPrinters} from './data/all-printers'
@@ -27,16 +27,13 @@ export function logIn(
 	return Promise.resolve()
 }
 
-export const fetchJobs = (username: string): Promise<PrintJobsResponse> =>
-	Promise.resolve(mockJobs)
+export const fetchJobs = (username: string): Promise<PrintJobsResponse> => Promise.resolve(mockJobs)
 
-export const fetchAllPrinters = (
-	username: string,
-): Promise<AllPrintersResponse> => Promise.resolve(mockAllPrinters)
+export const fetchAllPrinters = (username: string): Promise<AllPrintersResponse> =>
+	Promise.resolve(mockAllPrinters)
 
-export const fetchRecentPrinters = (
-	username: string,
-): Promise<RecentPopularPrintersResponse> => Promise.resolve(mockRecent)
+export const fetchRecentPrinters = (username: string): Promise<RecentPopularPrintersResponse> =>
+	Promise.resolve(mockRecent)
 
 export const heldJobsAvailableAtPrinterForUser = (
 	printerName: string,

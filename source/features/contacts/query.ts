@@ -31,10 +31,8 @@ export const groupedContactsOptions = queryOptions({
 	staleTime,
 })
 
-export const contactByTitleOptions = (
-	title: string,
-	// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-) =>
+// oxlint-disable-next-line typescript/explicit-module-boundary-types
+export const contactByTitleOptions = (title: string) =>
 	queryOptions({
 		queryKey: keys.all,
 		queryFn: fetchContacts,

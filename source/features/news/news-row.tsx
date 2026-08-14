@@ -1,10 +1,5 @@
 import * as React from 'react'
-import {
-	StyleSheet,
-	Image,
-	Alert,
-	type ImageResolvedAssetSource,
-} from 'react-native'
+import {StyleSheet, Image, Alert, type ImageResolvedAssetSource} from 'react-native'
 import {Column, Row} from '@frogpond/layout'
 import * as c from '@frogpond/colors'
 import {ListRow, Detail, Title} from '@frogpond/lists'
@@ -38,11 +33,7 @@ export const NewsRow = (props: Props): React.ReactNode => {
 		<ListRow arrowPosition="top" onPress={_onPress}>
 			<Row alignItems="center">
 				{thumb !== null ? (
-					<Image
-						accessibilityIgnoresInvertColors={true}
-						source={thumb}
-						style={styles.image}
-					/>
+					<Image accessibilityIgnoresInvertColors={true} source={thumb} style={styles.image} />
 				) : null}
 				<Column flex={1}>
 					<Title lines={2}>{story.title}</Title>

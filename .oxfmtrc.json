@@ -1,0 +1,29 @@
+{
+  "$schema": "./node_modules/oxfmt/configuration_schema.json",
+  // Spike: replaces prettier's config in package.json (useTabs, singleQuote,
+  // trailingComma, bracketSpacing, semi). `oxfmt --migrate=prettier`
+  // mis-migrates useTabs (silently defaults to false regardless of the
+  // source value -- verified against oxfmt 0.63.0), so this is hand-authored
+  // instead. It also can't migrate the JSON override at all
+  // (https://github.com/oxc-project/oxc/issues/18215); the equivalent below
+  // is hand-written, but note it isn't a full equivalent: Prettier's
+  // "json-stringify" parser always expands every array/object one item per
+  // line, while oxfmt's JSON formatter collapses onto one line whenever it
+  // fits under printWidth (verified against renovate.json's rule arrays,
+  // which all collapsed on the first `oxfmt --write .` run here). Expect a
+  // real, one-time reformatting diff across the repo's tracked JSON files.
+  "useTabs": true,
+  "singleQuote": true,
+  "trailingComma": "all",
+  "bracketSpacing": false,
+  "semi": false,
+  "overrides": [
+    {
+      "files": ["**/{*,.*}.json"],
+      "options": {
+        "useTabs": false,
+        "tabWidth": 2
+      }
+    }
+  ]
+}

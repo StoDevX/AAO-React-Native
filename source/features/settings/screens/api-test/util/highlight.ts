@@ -8,18 +8,15 @@
 export function syntaxHighlight(json: string): string {
 	if (!json) return ''
 
-	json = json
-		.replace(/&/gu, '&amp;')
-		.replace(/</gu, '&lt;')
-		.replace(/>/gu, '&gt;')
+	json = json.replace(/&/gu, '&amp;').replace(/</gu, '&lt;').replace(/>/gu, '&gt;')
 
 	const replaceRegex =
 		/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+-]?\d+)?)/gu
 
 	return json.replace(replaceRegex, function (match) {
 		let cls = 'number'
-		if (/^"/u.test(match)) {
-			if (/:$/u.test(match)) {
+		if (match.startsWith('"')) {
+			if (match.endsWith(':')) {
 				cls = 'key'
 			} else {
 				cls = 'string'

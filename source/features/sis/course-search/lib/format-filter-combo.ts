@@ -8,25 +8,16 @@ export type FilterComboType = {
 	description: string
 }
 
-export function formatFilterCombo(
-	filters: FilterType<CourseType>[],
-): FilterComboType {
+export function formatFilterCombo(filters: FilterType<CourseType>[]): FilterComboType {
 	let filterCombo = filters.filter((filter) => filter.enabled)
-	let comboDescription = filterCombo
-		.map((filter) => describeFilter(filter, filters))
-		.join(', ')
+	let comboDescription = filterCombo.map((filter) => describeFilter(filter, filters)).join(', ')
 	return {filters: filterCombo, description: comboDescription}
 }
 
-function describeFilter(
-	filter: FilterType<CourseType>,
-	filters: FilterType<CourseType>[],
-) {
+function describeFilter(filter: FilterType<CourseType>, filters: FilterType<CourseType>[]) {
 	switch (filter.key) {
 		case 'level': {
-			let levelFilter = filterListSpecs(filters).find(
-				(specFilter) => specFilter.key === 'level',
-			)
+			let levelFilter = filterListSpecs(filters).find((specFilter) => specFilter.key === 'level')
 			let selectedLevels = levelFilter ? levelFilter.spec.selected : []
 			return selectedLevels.map((level) => level.title).join('/') + ' Level'
 		}
@@ -40,17 +31,13 @@ function describeFilter(
 			return 'Labs Only'
 		}
 		case 'term': {
-			let termFilter = filterListSpecs(filters).find(
-				(specFilter) => specFilter.key === 'term',
-			)
+			let termFilter = filterListSpecs(filters).find((specFilter) => specFilter.key === 'term')
 			let selectedTerms = termFilter ? termFilter.spec.selected : []
 			let terms = selectedTerms.map((t) => parseInt(t.title, 10))
 			return formatTerms(terms)
 		}
 		case 'gereqs': {
-			let geFilter = filterListSpecs(filters).find(
-				(specFilter) => specFilter.key === 'gereqs',
-			)
+			let geFilter = filterListSpecs(filters).find((specFilter) => specFilter.key === 'gereqs')
 			let selectedGEs = geFilter ? geFilter.spec.selected : []
 			return selectedGEs.map((ge) => ge.title).join('/')
 		}

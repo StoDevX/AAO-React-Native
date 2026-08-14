@@ -27,37 +27,27 @@ export const openEmail = (): void => {
 }
 
 const getVersion = () =>
-	formatVersion(
-		Application.nativeApplicationVersion,
-		Application.nativeBuildVersion,
-	)
+	formatVersion(Application.nativeApplicationVersion, Application.nativeBuildVersion)
 
 export const SupportSection = (): React.ReactNode => {
 	let router = useRouter()
 
 	let onResetButton = () => {
-		Alert.alert(
-			'Reset Everything',
-			'Are you sure you want to clear everything?',
-			[
-				{text: 'Nope!', style: 'cancel'},
-				{
-					text: 'Reset it!',
-					style: 'destructive',
-					onPress: () => refreshApp(),
-				},
-			],
-		)
+		Alert.alert('Reset Everything', 'Are you sure you want to clear everything?', [
+			{text: 'Nope!', style: 'cancel'},
+			{
+				text: 'Reset it!',
+				style: 'destructive',
+				onPress: () => refreshApp(),
+			},
+		])
 	}
 
 	return (
 		<Section title="Support">
 			<NavigationRow onPress={() => router.push('/Faq')} title="FAQs" />
 			<ActionRow onPress={openEmail} title="Email Us" />
-			<NavigationRow
-				onPress={() => router.push('/ReportProblem')}
-				title="Report a Problem"
-			/>
+			<NavigationRow onPress={() => router.push('/ReportProblem')} title="Report a Problem" />
 			<ActionRow onPress={onResetButton} title="Reset Everything" />
 			<LabeledContent label="Version">
 				<Text>{getVersion()}</Text>

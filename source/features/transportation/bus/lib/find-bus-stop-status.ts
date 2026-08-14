@@ -31,8 +31,7 @@ export function findBusStopStatus(args: Args): BusStopStatusEnum {
 		}
 
 		default: {
-			arrivalTime =
-				departureIndex === null ? null : stop.departures[departureIndex]
+			arrivalTime = departureIndex === null ? null : stop.departures[departureIndex]
 
 			if (arrivalTime && now.isAfter(arrivalTime, 'minute')) {
 				stopStatus = 'after'

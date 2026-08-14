@@ -14,10 +14,7 @@ function formatSingleTime(time: Moment): string {
 	return time.format(RESULT_FORMAT)
 }
 
-export function formatBuildingTimes(
-	schedule: SingleBuildingScheduleType,
-	m: Moment,
-): string {
+export function formatBuildingTimes(schedule: SingleBuildingScheduleType, m: Moment): string {
 	let {open, close} = parseHours(schedule, m)
 	return `${formatSingleTime(open)} — ${formatSingleTime(close)}`
 }

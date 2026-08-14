@@ -71,5 +71,4 @@ export type ListType<T extends object> = {
 	apply: ListFilterFunctionType<T>
 }
 
-export type FilterType<T extends object> =
-	ToggleType<T> | PickerType<T> | ListType<T>
+export type FilterType<T extends object> = ToggleType<T> | PickerType<T> | ListType<T>

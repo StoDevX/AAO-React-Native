@@ -7,16 +7,9 @@ import {FAB} from 'react-native-paper'
 // We can pull unexported props out with the built-in type utility from react
 // and flatten the array into just the object underneath
 type Flatten<Type> = Type extends Array<infer Item> ? Item : Type
-type RNPaperFABGroupAction = Flatten<
-	ComponentProps<(typeof FAB)['Group']>['actions']
->
+type RNPaperFABGroupAction = Flatten<ComponentProps<(typeof FAB)['Group']>['actions']>
 
-import type {
-	CampusLocation,
-	DirectoryItem,
-	OfficeHours,
-	SearchResults,
-} from './types'
+import type {CampusLocation, DirectoryItem, OfficeHours, SearchResults} from './types'
 
 export const buildPhoneActions = (
 	loc: CampusLocation,
@@ -24,15 +17,12 @@ export const buildPhoneActions = (
 ): RNPaperFABGroupAction => {
 	return {
 		icon: 'phone',
-		label:
-			locationsCount === 1 ? 'Call' : `Call ${loc.buildingabbr} ${loc.room}`,
+		label: locationsCount === 1 ? 'Call' : `Call ${loc.buildingabbr} ${loc.room}`,
 		onPress: () => callPhone(loc.phone),
 	}
 }
 
-export const buildEmailAction = (
-	email: DirectoryItem['email'],
-): Array<RNPaperFABGroupAction> => {
+export const buildEmailAction = (email: DirectoryItem['email']): Array<RNPaperFABGroupAction> => {
 	if (!email) return []
 
 	return [
@@ -60,21 +50,13 @@ const descriptionText = (
 	item: DirectoryItem,
 ): string | null => {
 	const description =
-		shortRoom && item.title
-			? `${shortRoom} • ${item.title}`
-			: shortRoom
-				? shortRoom
-				: item.title
+		shortRoom && item.title ? `${shortRoom} • ${item.title}` : shortRoom ? shortRoom : item.title
 
 	return description && decode(description)
 }
 
-const shortRoomText = (
-	campusLocations: DirectoryItem['campusLocations'],
-): string => {
-	return campusLocations
-		.map((loc) => `${loc.buildingabbr} ${loc.room}`.trim())
-		.join(' / ')
+const shortRoomText = (campusLocations: DirectoryItem['campusLocations']): string => {
+	return campusLocations.map((loc) => `${loc.buildingabbr} ${loc.room}`.trim()).join(' / ')
 }
 
 const shortRoomDetail = (loc: CampusLocation): string => {
@@ -82,9 +64,7 @@ const shortRoomDetail = (loc: CampusLocation): string => {
 	return `${shortRoom ? `${shortRoom} • ` : ''}${loc.phone}`
 }
 
-export const formatResults = (
-	results: SearchResults['results'],
-): SearchResults['results'] => {
+export const formatResults = (results: SearchResults['results']): SearchResults['results'] => {
 	return results.map((item: DirectoryItem) => {
 		const {campusLocations, displayTitle, officeHours} = item
 		const shortRoom = shortRoomText(campusLocations)

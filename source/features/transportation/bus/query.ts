@@ -6,11 +6,7 @@ export const keys = {
 	all: ['transit', 'bus-routes'] as const,
 }
 
-async function fetchBusRoutes({
-	signal,
-}: {
-	signal: AbortSignal
-}): Promise<UnprocessedBusLine[]> {
+async function fetchBusRoutes({signal}: {signal: AbortSignal}): Promise<UnprocessedBusLine[]> {
 	let response = await client.get('transit/bus', {signal}).json()
 	return (response as {data: UnprocessedBusLine[]}).data
 }
@@ -20,10 +16,8 @@ export const busRoutesOptions = queryOptions({
 	queryFn: fetchBusRoutes,
 })
 
-export const busLineOptions = (
-	lineName: string,
-	// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-) =>
+// oxlint-disable-next-line typescript/explicit-module-boundary-types
+export const busLineOptions = (lineName: string) =>
 	queryOptions({
 		queryKey: keys.all,
 		queryFn: fetchBusRoutes,

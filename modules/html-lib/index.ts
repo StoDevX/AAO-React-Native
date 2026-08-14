@@ -164,11 +164,7 @@ function mergeSegments(target: Segment[], source: Segment[]): void {
 	}
 }
 
-function walkSegments(
-	nodes: ChildNode[],
-	segments: Segment[],
-	listContext?: 'ul' | 'ol',
-): void {
+function walkSegments(nodes: ChildNode[], segments: Segment[], listContext?: 'ul' | 'ol'): void {
 	let olCounter = 0
 
 	for (const node of nodes) {

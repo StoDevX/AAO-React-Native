@@ -1,10 +1,6 @@
 import {queryOptions} from '@tanstack/react-query'
 import type {RedditCommentType, RedditPostType} from './types'
-import {
-	fetchRedditComments,
-	fetchRedditPost,
-	fetchRedditPosts,
-} from './reddit-api'
+import {fetchRedditComments, fetchRedditPost, fetchRedditPosts} from './reddit-api'
 
 export const keys = {
 	posts: (subreddit: string) => ['reddit', 'posts', subreddit] as const,
@@ -12,7 +8,7 @@ export const keys = {
 	comments: (postUrl: string) => ['reddit', 'comments', postUrl] as const,
 }
 
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+// oxlint-disable-next-line typescript/explicit-module-boundary-types
 export const redditPostsOptions = (subreddit: string) =>
 	queryOptions({
 		queryKey: keys.posts(subreddit),
@@ -21,16 +17,14 @@ export const redditPostsOptions = (subreddit: string) =>
 		},
 	})
 
-export const redditPostByUrlOptions = (
-	postUrl: string,
-	// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-) =>
+// oxlint-disable-next-line typescript/explicit-module-boundary-types
+export const redditPostByUrlOptions = (postUrl: string) =>
 	queryOptions({
 		queryKey: keys.post(postUrl),
 		queryFn: ({queryKey, signal}) => fetchRedditPost(queryKey[2], signal),
 	})
 
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+// oxlint-disable-next-line typescript/explicit-module-boundary-types
 export const redditCommentsOptions = (postUrl: string) =>
 	queryOptions({
 		queryKey: keys.comments(postUrl),

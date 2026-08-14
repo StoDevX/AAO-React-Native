@@ -48,12 +48,7 @@ export default function APITestDetailPage(): React.ReactNode {
 			<pre>${highlighted}</pre>
 		`
 
-		return (
-			<HtmlContent
-				html={HTML_CONTENT}
-				style={{backgroundColor: c.systemBackground}}
-			/>
-		)
+		return <HtmlContent html={HTML_CONTENT} style={{backgroundColor: c.systemBackground}} />
 	}, [data])
 
 	return (
@@ -61,16 +56,12 @@ export default function APITestDetailPage(): React.ReactNode {
 			<Stack.Title>{cleanedName}</Stack.Title>
 			<Stack.Toolbar placement="right">
 				<Stack.Toolbar.Menu icon="ellipsis.circle">
-					<Stack.Toolbar.MenuAction
-						onPress={() => router.navigate('/NetworkLogger')}
-					>
+					<Stack.Toolbar.MenuAction onPress={() => router.navigate('/NetworkLogger')}>
 						Network Logger
 					</Stack.Toolbar.MenuAction>
 					<Stack.Toolbar.MenuAction
 						isOn={displayMode === 'parsed'}
-						onPress={() =>
-							setDisplayMode(displayMode === 'parsed' ? 'raw' : 'parsed')
-						}
+						onPress={() => setDisplayMode(displayMode === 'parsed' ? 'raw' : 'parsed')}
 					>
 						Parse as JSON
 					</Stack.Toolbar.MenuAction>

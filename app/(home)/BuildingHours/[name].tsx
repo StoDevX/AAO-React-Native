@@ -18,21 +18,13 @@ export default function BuildingHoursDetailPage(): React.ReactNode {
 	let router = useRouter()
 
 	let {name} = useLocalSearchParams<{name: string}>()
-	let {
-		data: building,
-		isLoading,
-		error,
-		refetch,
-	} = useQuery(buildingByNameOptions(name))
+	let {data: building, isLoading, error, refetch} = useQuery(buildingByNameOptions(name))
 
 	let favorites = useAppSelector(selectFavoriteBuildings)
 
 	let {now} = useMomentTimer({intervalMs: 60000, timezone: timezone()})
 
-	let onFavorite = React.useCallback(
-		() => dispatch(toggleFavoriteBuilding(name)),
-		[dispatch, name],
-	)
+	let onFavorite = React.useCallback(() => dispatch(toggleFavoriteBuilding(name)), [dispatch, name])
 
 	let reportProblem = React.useCallback(
 		() =>
@@ -49,10 +41,7 @@ export default function BuildingHoursDetailPage(): React.ReactNode {
 		<>
 			<Stack.Title>{building?.name ?? name}</Stack.Title>
 			<Stack.Toolbar placement="right">
-				<Stack.Toolbar.Button
-					icon={favorited ? 'heart.fill' : 'heart'}
-					onPress={onFavorite}
-				/>
+				<Stack.Toolbar.Button icon={favorited ? 'heart.fill' : 'heart'} onPress={onFavorite} />
 			</Stack.Toolbar>
 		</>
 	)
@@ -93,11 +82,7 @@ export default function BuildingHoursDetailPage(): React.ReactNode {
 	return (
 		<>
 			{screen}
-			<BuildingDetail
-				info={building}
-				now={now}
-				onProblemReport={reportProblem}
-			/>
+			<BuildingDetail info={building} now={now} onProblemReport={reportProblem} />
 		</>
 	)
 }

@@ -21,7 +21,7 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: mise run validate-data
       - run: mise run bundle-data
-      - run: mise run pretty:check
+      - run: mise run format:check
       - run: mise run tsc
       - run: mise run lint
       - name: Run tests

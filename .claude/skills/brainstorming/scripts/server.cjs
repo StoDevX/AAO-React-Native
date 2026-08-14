@@ -76,17 +76,13 @@ function decodeFrame(buffer) {
 
 // ========== Configuration ==========
 
-const PORT =
-	process.env.BRAINSTORM_PORT || 49152 + Math.floor(Math.random() * 16383)
+const PORT = process.env.BRAINSTORM_PORT || 49152 + Math.floor(Math.random() * 16383)
 const HOST = process.env.BRAINSTORM_HOST || '127.0.0.1'
-const URL_HOST =
-	process.env.BRAINSTORM_URL_HOST || (HOST === '127.0.0.1' ? 'localhost' : HOST)
+const URL_HOST = process.env.BRAINSTORM_URL_HOST || (HOST === '127.0.0.1' ? 'localhost' : HOST)
 const SESSION_DIR = process.env.BRAINSTORM_DIR || '/tmp/brainstorm'
 const CONTENT_DIR = path.join(SESSION_DIR, 'content')
 const STATE_DIR = path.join(SESSION_DIR, 'state')
-let ownerPid = process.env.BRAINSTORM_OWNER_PID
-	? Number(process.env.BRAINSTORM_OWNER_PID)
-	: null
+let ownerPid = process.env.BRAINSTORM_OWNER_PID ? Number(process.env.BRAINSTORM_OWNER_PID) : null
 
 const MIME_TYPES = {
 	'.html': 'text/html',
@@ -111,10 +107,7 @@ h1 { color: #333; } p { color: #666; }</style>
 <body><h1>Brainstorm Companion</h1>
 <p>Waiting for the agent to push a screen...</p></body></html>`
 
-const frameTemplate = fs.readFileSync(
-	path.join(__dirname, 'frame-template.html'),
-	'utf-8',
-)
+const frameTemplate = fs.readFileSync(path.join(__dirname, 'frame-template.html'), 'utf-8')
 const helperScript = fs.readFileSync(path.join(__dirname, 'helper.js'), 'utf-8')
 const helperInjection = '<script>\n' + helperScript + '\n</script>'
 
@@ -294,9 +287,7 @@ function startServer() {
 	// Track known files to distinguish new screens from updates.
 	// macOS fs.watch reports 'rename' for both new files and overwrites,
 	// so we can't rely on eventType alone.
-	const knownFiles = new Set(
-		fs.readdirSync(CONTENT_DIR).filter((f) => f.endsWith('.html')),
-	)
+	const knownFiles = new Set(fs.readdirSync(CONTENT_DIR).filter((f) => f.endsWith('.html')))
 
 	const server = http.createServer(handleRequest)
 	server.on('upgrade', handleUpgrade)
@@ -355,8 +346,7 @@ function startServer() {
 	// Check every 60s: exit if owner process died or idle for 30 minutes
 	const lifecycleCheck = setInterval(() => {
 		if (!ownerAlive()) shutdown('owner process exited')
-		else if (Date.now() - lastActivity > IDLE_TIMEOUT_MS)
-			shutdown('idle timeout')
+		else if (Date.now() - lastActivity > IDLE_TIMEOUT_MS) shutdown('idle timeout')
 	}, 60 * 1000)
 	lifecycleCheck.unref()
 

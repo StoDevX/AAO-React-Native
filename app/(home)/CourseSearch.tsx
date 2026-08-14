@@ -6,10 +6,7 @@ import {useEffect} from 'react'
 import {useMemo} from 'react'
 import {ScrollView, StyleSheet, View} from 'react-native'
 import {useAppSelector} from '../../source/redux/hooks'
-import {
-	selectRecentFilters,
-	selectRecentSearches,
-} from '../../source/redux/parts/courses'
+import {selectRecentFilters, selectRecentSearches} from '../../source/redux/parts/courses'
 import {RecentItemsList} from '../../source/features/sis/components/recents-list'
 import {useFilters} from '../../source/features/sis/course-search/lib/build-filters'
 
@@ -44,10 +41,7 @@ function CourseSearchView(): React.ReactNode {
 			return
 		}
 
-		let timer = setTimeout(
-			() => showSearchResult(typedQuery),
-			SEARCH_DEBOUNCE_MS,
-		)
+		let timer = setTimeout(() => showSearchResult(typedQuery), SEARCH_DEBOUNCE_MS)
 
 		return () => clearTimeout(timer)
 	}, [showSearchResult, typedQuery])

@@ -3,17 +3,12 @@ import * as c from '@frogpond/colors'
 import * as logos from '../../../images/streaming'
 import {RadioControllerView} from '../../../source/features/streaming/radio'
 import tinycolor from 'tinycolor2'
-import {
-	PlayerTheme,
-	theming,
-} from '../../../source/features/streaming/radio/theme'
+import {PlayerTheme, theming} from '../../../source/features/streaming/radio/theme'
 
 let tintColor = '#33348e'
 const colors: PlayerTheme = {
 	tintColor,
-	buttonTextColor: tinycolor
-		.mostReadable(tintColor, [c.white, c.black])
-		.toRgbString(),
+	buttonTextColor: tinycolor.mostReadable(tintColor, [c.white, c.black]).toRgbString(),
 	textColor: tintColor,
 	imageBorderColor: tintColor,
 	imageBackgroundColor: 'transparent',

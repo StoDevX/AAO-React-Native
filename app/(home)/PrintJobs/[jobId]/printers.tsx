@@ -3,13 +3,7 @@ import {Stack, useLocalSearchParams, useRouter} from 'expo-router'
 import {useQuery} from '@tanstack/react-query'
 import {SectionList, StyleSheet} from 'react-native'
 import type {Printer, PrintJob} from '../../../../source/lib/stoprint'
-import {
-	Detail,
-	ListRow,
-	ListSectionHeader,
-	ListSeparator,
-	Title,
-} from '@frogpond/lists'
+import {Detail, ListRow, ListSectionHeader, ListSeparator, Title} from '@frogpond/lists'
 import {LoadingView, NoticeView} from '@frogpond/notice'
 import groupBy from 'lodash/groupBy'
 import {StoPrintErrorView} from '../../../../source/features/stoprint/components/error'
@@ -62,10 +56,8 @@ function PrinterListView({job}: PrinterListViewProps): React.ReactNode {
 		isRefetching: colorPrintersRefetching,
 	} = useQuery(colorPrintersOptions)
 
-	let isLoading =
-		allPrintersLoading || recentPrintersLoading || colorPrintersLoading
-	let isRefetching =
-		allPrintersRefetching || recentPrintersRefetching || colorPrintersRefetching
+	let isLoading = allPrintersLoading || recentPrintersLoading || colorPrintersLoading
+	let isRefetching = allPrintersRefetching || recentPrintersRefetching || colorPrintersRefetching
 
 	let openPrintRelease = React.useCallback(
 		(printer: Printer) =>
@@ -161,9 +153,7 @@ function PrinterListView({job}: PrinterListViewProps): React.ReactNode {
 					<Detail>{item.location}</Detail>
 				</ListRow>
 			)}
-			renderSectionHeader={({section: {title}}) => (
-				<ListSectionHeader title={title} />
-			)}
+			renderSectionHeader={({section: {title}}) => <ListSectionHeader title={title} />}
 			sections={availableGrouped}
 			style={styles.list}
 		/>

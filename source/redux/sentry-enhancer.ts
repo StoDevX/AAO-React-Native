@@ -23,9 +23,7 @@ export const sentryReduxEnhancer = Sentry.createReduxEnhancer({
 
 		return {
 			...state,
-			courses: state.courses
-				? {...state.courses, recentSearches: '[Redacted]'}
-				: state.courses,
+			courses: state.courses ? {...state.courses, recentSearches: '[Redacted]'} : state.courses,
 		}
 	},
 

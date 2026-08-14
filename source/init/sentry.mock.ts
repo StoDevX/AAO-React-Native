@@ -1,6 +1,6 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
-/* eslint-disable @typescript-eslint/no-empty-function */
+/* oxlint-disable typescript/no-unused-vars */
+/* oxlint-disable typescript/explicit-module-boundary-types */
+/* oxlint-disable typescript/no-empty-function */
 
 /**
  * Mocked sentry.ts functionality goes in this file
@@ -23,7 +23,5 @@ export * from './sentry'
 export const install = (): void => {}
 
 export const navigationIntegration = {
-	registerNavigationContainer: (
-		navigationRef: React.MutableRefObject<undefined>,
-	) => {},
+	registerNavigationContainer: (navigationRef: React.MutableRefObject<undefined>) => {},
 }

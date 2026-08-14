@@ -21,11 +21,7 @@ export const MenuItemDetailView = ({item, icons}: Props): React.ReactNode => {
 				{item.label}
 			</Text>
 
-			<DietaryTagsDetail
-				corIcons={icons}
-				dietary={item.cor_icon}
-				style={styles.iconContainer}
-			/>
+			<DietaryTagsDetail corIcons={icons} dietary={item.cor_icon} style={styles.iconContainer} />
 
 			{item.description ? (
 				<React.Fragment>

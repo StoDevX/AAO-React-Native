@@ -23,8 +23,7 @@ export function buildFaqs({sourceFile, outputFile}) {
 }
 
 const isMain =
-	process.argv[1] &&
-	path.resolve(process.argv[1]) === new URL(import.meta.url).pathname
+	process.argv[1] && path.resolve(process.argv[1]) === new URL(import.meta.url).pathname
 
 if (isMain) {
 	let [, , sourceFile, outputFile] = process.argv

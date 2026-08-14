@@ -10,9 +10,7 @@ it('parses a well-formed label-and-url string', () => {
 })
 
 it('handles a label containing spaces and punctuation', () => {
-	let result = parseLinkString(
-		"Dean's Office <https://wp.stolaf.edu/dean's-office>",
-	)
+	let result = parseLinkString("Dean's Office <https://wp.stolaf.edu/dean's-office>")
 	expect(result).toEqual({
 		label: "Dean's Office",
 		href: "https://wp.stolaf.edu/dean's-office",

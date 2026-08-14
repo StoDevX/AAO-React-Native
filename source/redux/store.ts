@@ -45,8 +45,7 @@ export const store = configureStore({
 				ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
 			},
 		}),
-	enhancers: (getDefaultEnhancers) =>
-		getDefaultEnhancers().concat(sentryReduxEnhancer),
+	enhancers: (getDefaultEnhancers) => getDefaultEnhancers().concat(sentryReduxEnhancer),
 })
 
 export const persistor = persistStore(store)

@@ -1,10 +1,5 @@
 import * as React from 'react'
-import {
-	StyleSheet,
-	useWindowDimensions,
-	View,
-	type NativeSyntheticEvent,
-} from 'react-native'
+import {StyleSheet, useWindowDimensions, View, type NativeSyntheticEvent} from 'react-native'
 import {BottomSheet, Group, Host} from '@expo/ui/swift-ui'
 import {
 	background,
@@ -61,18 +56,12 @@ const FOOTPRINT_OPACITY = 0
 /// view. Symmetry here needs the tabs section's margins moved too.
 const SHEET_COLLAPSED_HEIGHT = 100
 const COLLAPSED_DETENT: PresentationDetent = {height: SHEET_COLLAPSED_HEIGHT}
-const SHEET_DETENTS: PresentationDetent[] = [
-	COLLAPSED_DETENT,
-	'medium',
-	'large',
-]
+const SHEET_DETENTS: PresentationDetent[] = [COLLAPSED_DETENT, 'medium', 'large']
 
 export default function MapPage(): React.ReactNode {
 	let cameraRef = React.useRef<CameraRef>(null)
 	// The sheet is the map's, not a route's, so its selection is the map's too.
-	let [selectedBuildingId, setSelectedBuildingId] = React.useState<
-		string | null
-	>(null)
+	let [selectedBuildingId, setSelectedBuildingId] = React.useState<string | null>(null)
 	let {data: buildings = [], error} = useQuery(mapDataOptions)
 	let {height: windowHeight} = useWindowDimensions()
 	let [sheetPresented, setSheetPresented] = React.useState(true)
@@ -117,10 +106,7 @@ export default function MapPage(): React.ReactNode {
 				? windowHeight
 				: SHEET_COLLAPSED_HEIGHT
 
-	let footprints = React.useMemo(
-		() => toBuildingFootprints(buildings),
-		[buildings],
-	)
+	let footprints = React.useMemo(() => toBuildingFootprints(buildings), [buildings])
 
 	// The source hands back whichever footprint was under the touch, so the
 	// tap resolves against exactly the geometry the user can see. MapLibre also
@@ -156,9 +142,7 @@ export default function MapPage(): React.ReactNode {
 		if (!match) {
 			return null
 		}
-		let point = match.geometry.geometries.find(
-			(geo): geo is Point => geo.type === 'Point',
-		)
+		let point = match.geometry.geometries.find((geo): geo is Point => geo.type === 'Point')
 		return point ? {id: match.id, name: match.properties.name, point} : null
 	}, [selectedBuildingId, buildings])
 
@@ -180,15 +164,8 @@ export default function MapPage(): React.ReactNode {
 
 	return (
 		<View style={StyleSheet.absoluteFill}>
-			<Map
-				logo={false}
-				mapStyle={MAP_STYLE_URL}
-				style={StyleSheet.absoluteFill}
-			>
-				<Camera
-					ref={cameraRef}
-					initialViewState={{center: ORIGINAL_CENTER, zoom: DEFAULT_ZOOM}}
-				/>
+			<Map logo={false} mapStyle={MAP_STYLE_URL} style={StyleSheet.absoluteFill}>
+				<Camera ref={cameraRef} initialViewState={{center: ORIGINAL_CENTER, zoom: DEFAULT_ZOOM}} />
 				<UserLocation />
 
 				{/* carls-app/map-tiles serves the footprints and their labels as
@@ -198,11 +175,7 @@ export default function MapPage(): React.ReactNode {
 				    quirks out of the tap path: features repeat across tile
 				    boundaries, the 28 places with no polygon are absent, and the
 				    layer floors out at z14. A GeoJSON source has none of those. */}
-				<GeoJSONSource
-					data={footprints}
-					id="campus-buildings"
-					onPress={handleBuildingPress}
-				>
+				<GeoJSONSource data={footprints} id="campus-buildings" onPress={handleBuildingPress}>
 					<Layer
 						id="campus-buildings-hit"
 						style={{fillColor: c.gold, fillOpacity: FOOTPRINT_OPACITY}}
@@ -236,10 +209,7 @@ export default function MapPage(): React.ReactNode {
 			    the taps that select a building still reach the map. The sheet is
 			    presented in its own window, so it stays interactive. */}
 			<Host pointerEvents="none" style={StyleSheet.absoluteFill}>
-				<BottomSheet
-					isPresented={sheetPresented}
-					onIsPresentedChange={setSheetPresented}
-				>
+				<BottomSheet isPresented={sheetPresented} onIsPresentedChange={setSheetPresented}>
 					<Group
 						key={sheetNonce}
 						modifiers={[

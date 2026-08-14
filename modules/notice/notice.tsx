@@ -68,11 +68,7 @@ export function NoticeView(props: Props): React.ReactNode {
 			</Text>
 
 			{buttonText ? (
-				<Button
-					disabled={buttonDisabled}
-					onPress={onPress}
-					title={buttonText}
-				/>
+				<Button disabled={buttonDisabled} onPress={onPress} title={buttonText} />
 			) : null}
 		</View>
 	)

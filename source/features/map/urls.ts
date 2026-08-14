@@ -19,8 +19,7 @@ export const MAP_STYLE_URL = 'https://carls-app.github.io/map-tiles/style.json'
  * binary already has it is unknown. Point MAP_STYLE_URL here on a device to
  * find out; if tiles draw, this is the better URL.
  */
-export const MAP_STYLE_URL_PMTILES =
-	'https://carls-app.github.io/map-tiles/style-pmtiles.json'
+export const MAP_STYLE_URL_PMTILES = 'https://carls-app.github.io/map-tiles/style-pmtiles.json'
 
 /**
  * Where a building's photos live.

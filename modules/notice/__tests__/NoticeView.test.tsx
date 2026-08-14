@@ -14,9 +14,7 @@ describe('NoticeView', () => {
 
 	describe('when given text to display', () => {
 		it('displays the text', async () => {
-			expect(
-				(await render(<NoticeView text="foo bar" />)).toJSON(),
-			).toMatchSnapshot()
+			expect((await render(<NoticeView text="foo bar" />)).toJSON()).toMatchSnapshot()
 		})
 	})
 
@@ -28,9 +26,7 @@ describe('NoticeView', () => {
 				},
 			})
 			expect(
-				(
-					await render(<NoticeView style={styleOverride.view} text="foo bar" />)
-				).toJSON(),
+				(await render(<NoticeView style={styleOverride.view} text="foo bar" />)).toJSON(),
 			).toMatchSnapshot()
 		})
 	})
@@ -54,9 +50,7 @@ describe('NoticeView', () => {
 	describe('when buttonText is given', () => {
 		it('displays a button with the buttonText in its title', async () => {
 			expect(
-				(
-					await render(<NoticeView buttonText="button text" text="foo bar" />)
-				).toJSON(),
+				(await render(<NoticeView buttonText="button text" text="foo bar" />)).toJSON(),
 			).toMatchSnapshot()
 		})
 	})

@@ -8,31 +8,27 @@ export const keys = {
 	wpJson: (url: string) => ['news', 'wp-json', url] as const,
 }
 
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+// oxlint-disable-next-line typescript/explicit-module-boundary-types
 export const namedNewsOptions = (source: string) =>
 	queryOptions({
 		queryKey: keys.named(source),
 		queryFn: async ({queryKey, signal}) => {
-			let response = await client
-				.get(`news/named/${queryKey[2]}`, {signal})
-				.json()
+			let response = await client.get(`news/named/${queryKey[2]}`, {signal}).json()
 			return response as StoryType[]
 		},
 	})
 
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+// oxlint-disable-next-line typescript/explicit-module-boundary-types
 export const rssNewsOptions = (url: string) =>
 	queryOptions({
 		queryKey: keys.rss(url),
 		queryFn: async ({queryKey, signal}) => {
-			let response = await client
-				.get('news/rss', {signal, searchParams: {url: queryKey[2]}})
-				.json()
+			let response = await client.get('news/rss', {signal, searchParams: {url: queryKey[2]}}).json()
 			return response as StoryType[]
 		},
 	})
 
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+// oxlint-disable-next-line typescript/explicit-module-boundary-types
 export const wpJsonNewsOptions = (url: string) =>
 	queryOptions({
 		queryKey: keys.wpJson(url),

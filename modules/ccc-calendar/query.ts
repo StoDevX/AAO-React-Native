@@ -3,12 +3,7 @@ import {eventKey} from '@frogpond/event-list'
 import {EventType} from '@frogpond/event-type'
 import {queryOptions} from '@tanstack/react-query'
 import moment from 'moment'
-import {
-	GoogleCalendar,
-	IcsCalendar,
-	NamedCalendar,
-	ReasonCalendar,
-} from './types'
+import {GoogleCalendar, IcsCalendar, NamedCalendar, ReasonCalendar} from './types'
 
 export const keys = {
 	named: (name: string) => ['calendar', 'named', name] as const,
@@ -19,10 +14,7 @@ export const keys = {
 
 type EventMapper = (event: EventType) => EventType
 
-function convertEvents(
-	data: EventType[],
-	options: {eventMapper?: EventMapper},
-): EventType[] {
+function convertEvents(data: EventType[], options: {eventMapper?: EventMapper}): EventType[] {
 	let events = data.map((event) => {
 		const startTime = moment(event.startTime)
 		const endTime = moment(event.endTime)
@@ -41,44 +33,39 @@ function convertEvents(
 	return events
 }
 
+// oxlint-disable-next-line typescript/explicit-module-boundary-types
 export const namedCalendarOptions = (
 	calendar: NamedCalendar,
 	options: {eventMapper?: EventMapper} = {},
-	// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 ) =>
 	queryOptions({
 		queryKey: keys.named(calendar),
 		queryFn: async ({queryKey, signal}) => {
-			let response = await client
-				.get(`calendar/named/${queryKey[2]}`, {signal})
-				.json()
+			let response = await client.get(`calendar/named/${queryKey[2]}`, {signal}).json()
 			return response as EventType[]
 		},
 		select: (events) => convertEvents(events, options),
 	})
 
+// oxlint-disable-next-line typescript/explicit-module-boundary-types
 export const namedCalendarEventOptions = (
 	calendar: NamedCalendar,
 	key: string,
 	options: {eventMapper?: EventMapper} = {},
-	// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 ) =>
 	queryOptions({
 		queryKey: keys.named(calendar),
 		queryFn: async ({queryKey, signal}) => {
-			let response = await client
-				.get(`calendar/named/${queryKey[2]}`, {signal})
-				.json()
+			let response = await client.get(`calendar/named/${queryKey[2]}`, {signal}).json()
 			return response as EventType[]
 		},
-		select: (events) =>
-			convertEvents(events, options).find((event) => eventKey(event) === key),
+		select: (events) => convertEvents(events, options).find((event) => eventKey(event) === key),
 	})
 
+// oxlint-disable-next-line typescript/explicit-module-boundary-types
 export const googleCalendarOptions = (
 	calendar: GoogleCalendar,
 	options: {eventMapper?: EventMapper} = {},
-	// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 ) =>
 	queryOptions({
 		queryKey: keys.google(calendar.id),
@@ -91,10 +78,10 @@ export const googleCalendarOptions = (
 		select: (events) => convertEvents(events, options),
 	})
 
+// oxlint-disable-next-line typescript/explicit-module-boundary-types
 export const reasonCalendarOptions = (
 	calendar: ReasonCalendar,
 	options: {eventMapper?: EventMapper} = {},
-	// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 ) =>
 	queryOptions({
 		queryKey: keys.reason(calendar.url),
@@ -107,10 +94,10 @@ export const reasonCalendarOptions = (
 		select: (events) => convertEvents(events, options),
 	})
 
+// oxlint-disable-next-line typescript/explicit-module-boundary-types
 export const icsCalendarOptions = (
 	calendar: IcsCalendar,
 	options: {eventMapper?: EventMapper} = {},
-	// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 ) =>
 	queryOptions({
 		queryKey: keys.ics(calendar.url),

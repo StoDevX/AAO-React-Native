@@ -1,11 +1,5 @@
 import React from 'react'
-import {
-	StyleProp,
-	ImageStyle,
-	Image,
-	StyleSheet,
-	ImageProps,
-} from 'react-native'
+import {StyleProp, ImageStyle, Image, StyleSheet, ImageProps} from 'react-native'
 import {getIcon} from 'react-native-change-icon'
 import {lookup as getAppIcon} from '../../../../images/icons/index'
 
@@ -34,11 +28,5 @@ export let AppLogo = (props: Props): React.ReactNode => {
 		})
 	}, [])
 
-	return (
-		<LogoImage
-			accessibilityIgnoresInvertColors={true}
-			source={icon}
-			style={props.style}
-		/>
-	)
+	return <LogoImage accessibilityIgnoresInvertColors={true} source={icon} style={props.style} />
 }

@@ -49,10 +49,7 @@ export const DeveloperSection = (): React.ReactElement => {
 				<NavigationRow onPress={onDebugButton} title="Debug" />
 				<NavigationRow onPress={onNetworkLoggerButton} title="Network Logger" />
 				<ActionRow onPress={sendSentryMessage} title="Send a Sentry Message" />
-				<ActionRow
-					onPress={sendSentryException}
-					title="Send a Sentry Exception"
-				/>
+				<ActionRow onPress={sendSentryException} title="Send a Sentry Exception" />
 			</Section>
 
 			<ServerUrlSection />

@@ -22,14 +22,7 @@ function BuildingHoursView(): React.ReactNode {
 
 	let {now} = useMomentTimer({intervalMs: 60000, startOf: 'minute'})
 
-	let {
-		data = [],
-		error,
-		refetch,
-		isLoading,
-		isError,
-		isRefetching,
-	} = useGroupedBuildings()
+	let {data = [], error, refetch, isLoading, isError, isRefetching} = useGroupedBuildings()
 
 	let onPressRow = React.useCallback(
 		(building: BuildingType) =>
@@ -53,9 +46,7 @@ function BuildingHoursView(): React.ReactNode {
 	return (
 		<SectionList
 			ItemSeparatorComponent={ListSeparator}
-			ListEmptyComponent={
-				isLoading ? <LoadingView /> : <NoticeView text="No hours." />
-			}
+			ListEmptyComponent={isLoading ? <LoadingView /> : <NoticeView text="No hours." />}
 			contentContainerStyle={styles.container}
 			contentInsetAdjustmentBehavior="automatic"
 			keyExtractor={(item) => item.name}
@@ -64,9 +55,7 @@ function BuildingHoursView(): React.ReactNode {
 			renderItem={({item}) => (
 				<BuildingRow info={item} now={now} onPress={() => onPressRow(item)} />
 			)}
-			renderSectionHeader={({section: {title}}) => (
-				<ListSectionHeader title={title} />
-			)}
+			renderSectionHeader={({section: {title}}) => <ListSectionHeader title={title} />}
 			sections={data}
 		/>
 	)

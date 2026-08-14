@@ -23,9 +23,7 @@ export function findFlakyTests(testNodes) {
 
 	const visit = (node) => {
 		if (node.nodeType === 'Test Case') {
-			const repetitions = (node.children ?? []).filter(
-				(child) => child.nodeType === 'Repetition',
-			)
+			const repetitions = (node.children ?? []).filter((child) => child.nodeType === 'Repetition')
 			const failed = repetitions.filter((rep) => rep.result === 'Failed')
 
 			if (node.result === 'Passed' && failed.length > 0) {
@@ -148,9 +146,6 @@ function main() {
 
 // A literal `import.meta` in this file would fail Jest's CommonJS transform
 // of it, so the entry-point check goes by argv instead.
-if (
-	process.argv[1] &&
-	path.basename(process.argv[1]) === 'report-flaky-uitests.mjs'
-) {
+if (process.argv[1] && path.basename(process.argv[1]) === 'report-flaky-uitests.mjs') {
 	main()
 }

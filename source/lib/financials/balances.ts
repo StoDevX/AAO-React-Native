@@ -8,7 +8,7 @@ export const queryKeys = {
 	default: (username: string | undefined) => ['balances', username] as const,
 } as const
 
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+// oxlint-disable-next-line typescript/explicit-module-boundary-types
 export const balancesOptions = (username: string | undefined) =>
 	queryOptions({
 		queryKey: queryKeys.default(username),
@@ -20,9 +20,7 @@ export async function getBalances(): Promise<BalancesShapeType> {
 	await performLogin()
 
 	const url = OLECARD_DATA_ENDPOINT
-	const resp: OleCardBalancesType = await ky
-		.get(url, {credentials: 'include'})
-		.json()
+	const resp: OleCardBalancesType = await ky.get(url, {credentials: 'include'}).json()
 
 	return getBalancesFromData(resp)
 }

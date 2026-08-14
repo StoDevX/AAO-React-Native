@@ -6,10 +6,5 @@ import {namedNewsOptions} from '../../../source/features/news/query'
 import {useQuery} from '@tanstack/react-query'
 
 export default function MessNewsPage(): React.ReactNode {
-	return (
-		<NewsList
-			query={useQuery(namedNewsOptions('mess'))}
-			thumbnail={newsImages.mess}
-		/>
-	)
+	return <NewsList query={useQuery(namedNewsOptions('mess'))} thumbnail={newsImages.mess} />
 }

@@ -34,10 +34,7 @@ export default function ReportProblemPage(): React.ReactNode {
 		if (submitted) {
 			navigation.goBack()
 		} else {
-			Alert.alert(
-				'Sentry is disabled',
-				'Problem reporting only works in production builds.',
-			)
+			Alert.alert('Sentry is disabled', 'Problem reporting only works in production builds.')
 		}
 	}
 
@@ -64,10 +61,7 @@ export default function ReportProblemPage(): React.ReactNode {
 				<Form>
 					<Section title="Contact (optional)">
 						<TextField
-							modifiers={[
-								textInputAutocapitalization('words'),
-								textContentType('name'),
-							]}
+							modifiers={[textInputAutocapitalization('words'), textContentType('name')]}
 							onTextChange={setName}
 							placeholder="Name"
 						/>

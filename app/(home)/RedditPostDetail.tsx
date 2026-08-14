@@ -17,10 +17,7 @@ import {LoadingView, NoticeView} from '@frogpond/notice'
 import * as c from '@frogpond/colors'
 import {openUrl} from '@frogpond/open-url'
 import {formatDistanceToNow, parseISO, isValid} from 'date-fns'
-import {
-	redditPostByUrlOptions,
-	redditCommentsOptions,
-} from '../../source/features/reddit/query'
+import {redditPostByUrlOptions, redditCommentsOptions} from '../../source/features/reddit/query'
 import {CommentRow} from '../../source/features/reddit/comment-row'
 import {htmlToSegments} from '@frogpond/html-lib'
 import type {Segment} from '@frogpond/html-lib'
@@ -34,10 +31,7 @@ import {useRedditLinkHandler} from '../../source/features/reddit/useRedditLinkHa
 import {SegmentedText} from '../../source/features/reddit/segmented-text'
 
 function countAllComments(comments: RedditCommentType[]): number {
-	return comments.reduce(
-		(total, comment) => total + 1 + countAllComments(comment.replies),
-		0,
-	)
+	return comments.reduce((total, comment) => total + 1 + countAllComments(comment.replies), 0)
 }
 
 function flattenComments(
@@ -49,9 +43,7 @@ function flattenComments(
 		const isCollapsed = collapsedIds?.has(comment.id) ?? false
 		return [
 			{comment, depth},
-			...(isCollapsed
-				? []
-				: flattenComments(comment.replies, depth + 1, collapsedIds)),
+			...(isCollapsed ? [] : flattenComments(comment.replies, depth + 1, collapsedIds)),
 		]
 	})
 }
@@ -70,10 +62,7 @@ type ViewProps = {
 	communityName: string
 }
 
-function RedditPostDetailView({
-	post,
-	communityName,
-}: ViewProps): React.ReactNode {
+function RedditPostDetailView({post, communityName}: ViewProps): React.ReactNode {
 	const {
 		permalink: postUrl,
 		title,
@@ -90,12 +79,8 @@ function RedditPostDetailView({
 		pollData,
 	} = post
 
-	const [collapsedIds, setCollapsedIds] = React.useState<Set<string>>(
-		() => new Set(),
-	)
-	const [fullscreenIndex, setFullscreenIndex] = React.useState<number | null>(
-		null,
-	)
+	const [collapsedIds, setCollapsedIds] = React.useState<Set<string>>(() => new Set())
+	const [fullscreenIndex, setFullscreenIndex] = React.useState<number | null>(null)
 
 	const handleLinkPress = useRedditLinkHandler()
 
@@ -115,9 +100,7 @@ function RedditPostDetailView({
 	const parsedDate = parseISO(publishedAt)
 	const metaText = [
 		author,
-		isValid(parsedDate)
-			? formatDistanceToNow(parsedDate, {addSuffix: true})
-			: null,
+		isValid(parsedDate) ? formatDistanceToNow(parsedDate, {addSuffix: true}) : null,
 	]
 		.filter((part): part is string => Boolean(part))
 		.join(' · ')
@@ -163,11 +146,7 @@ function RedditPostDetailView({
 							accessibilityRole="imagebutton"
 							onPress={() => setFullscreenIndex(0)}
 						>
-							<Image
-								resizeMode="cover"
-								source={{uri: displayImages[0]}}
-								style={styles.postImage}
-							/>
+							<Image resizeMode="cover" source={{uri: displayImages[0]}} style={styles.postImage} />
 						</Pressable>
 					) : (
 						<View>
@@ -184,11 +163,7 @@ function RedditPostDetailView({
 										accessibilityRole="imagebutton"
 										onPress={() => setFullscreenIndex(i)}
 									>
-										<Image
-											resizeMode="cover"
-											source={{uri}}
-											style={styles.galleryImage}
-										/>
+										<Image resizeMode="cover" source={{uri}} style={styles.galleryImage} />
 									</Pressable>
 								))}
 							</ScrollView>
@@ -220,10 +195,7 @@ function RedditPostDetailView({
 						<Text numberOfLines={1} style={styles.linkCardDomain}>
 							{linkDomain ?? linkUrl}
 						</Text>
-						<Icon
-							name="chevron-forward-outline"
-							style={styles.linkCardChevron}
-						/>
+						<Icon name="chevron-forward-outline" style={styles.linkCardChevron} />
 					</Pressable>
 				) : null}
 
@@ -236,17 +208,13 @@ function RedditPostDetailView({
 								: 'View linked post on Reddit'
 						}
 						accessibilityRole="link"
-						onPress={() =>
-							handleLinkPress(crosspostParent?.permalink ?? postUrl)
-						}
+						onPress={() => handleLinkPress(crosspostParent?.permalink ?? postUrl)}
 						style={styles.crosspostCard}
 					>
 						<View style={styles.crosspostIconRow}>
 							<Icon name="link-outline" style={styles.crosspostIcon} />
 							<Text style={styles.crosspostLabel}>
-								{crosspostParent
-									? `r/${crosspostParent.subreddit}`
-									: 'Crosspost'}
+								{crosspostParent ? `r/${crosspostParent.subreddit}` : 'Crosspost'}
 							</Text>
 						</View>
 						<Text numberOfLines={2} style={styles.crosspostTitle}>
@@ -268,14 +236,10 @@ function RedditPostDetailView({
 				{/* Poll */}
 				{pollData ? (
 					<View style={styles.pollContainer}>
-						<Text style={styles.pollHeader}>
-							{pollData.totalVotes.toLocaleString()} votes
-						</Text>
+						<Text style={styles.pollHeader}>{pollData.totalVotes.toLocaleString()} votes</Text>
 						{pollData.options.map((opt, i) => {
 							const pct =
-								pollData.totalVotes > 0
-									? Math.round((opt.votes / pollData.totalVotes) * 100)
-									: 0
+								pollData.totalVotes > 0 ? Math.round((opt.votes / pollData.totalVotes) * 100) : 0
 							return (
 								<View key={i} style={styles.pollOption}>
 									<View style={[styles.pollBar, {width: `${pct}%`}]} />
@@ -286,10 +250,7 @@ function RedditPostDetailView({
 								</View>
 							)
 						})}
-						<Pressable
-							accessibilityRole="link"
-							onPress={() => openUrl(postUrl)}
-						>
+						<Pressable accessibilityRole="link" onPress={() => openUrl(postUrl)}>
 							<Text style={styles.pollViewLink}>View poll on Reddit</Text>
 						</Pressable>
 					</View>
@@ -345,10 +306,7 @@ function RedditPostDetailView({
 			<Stack.Title>{communityName}</Stack.Title>
 			<Stack.Toolbar placement="right">
 				<Stack.Toolbar.Menu icon="ellipsis.circle">
-					<Stack.Toolbar.MenuAction
-						icon="safari"
-						onPress={() => openUrl(postUrl)}
-					>
+					<Stack.Toolbar.MenuAction icon="safari" onPress={() => openUrl(postUrl)}>
 						Open in Browser
 					</Stack.Toolbar.MenuAction>
 					<Stack.Toolbar.MenuAction
@@ -361,9 +319,7 @@ function RedditPostDetailView({
 			</Stack.Toolbar>
 
 			<FlatList
-				ListEmptyComponent={
-					isLoading ? <LoadingView /> : <NoticeView text="No comments yet." />
-				}
+				ListEmptyComponent={isLoading ? <LoadingView /> : <NoticeView text="No comments yet." />}
 				ListHeaderComponent={header}
 				contentContainerStyle={styles.contentContainer}
 				contentInsetAdjustmentBehavior="automatic"
@@ -377,9 +333,7 @@ function RedditPostDetailView({
 						isOP={item.comment.author === author}
 						onLinkPress={handleLinkPress}
 						onPress={
-							item.comment.replies.length > 0
-								? () => toggleCollapse(item.comment.id)
-								: undefined
+							item.comment.replies.length > 0 ? () => toggleCollapse(item.comment.id) : undefined
 						}
 					/>
 				)}
@@ -395,12 +349,7 @@ function RedditPostDetailLoader(): React.ReactNode {
 		communityName: string
 	}>()
 
-	let {
-		data: post,
-		isLoading,
-		error,
-		refetch,
-	} = useQuery(redditPostByUrlOptions(postUrl))
+	let {data: post, isLoading, error, refetch} = useQuery(redditPostByUrlOptions(postUrl))
 
 	if (isLoading) {
 		return <LoadingView />

@@ -2,13 +2,7 @@ import * as React from 'react'
 import {Image as RNImage, ImageSourcePropType, StyleSheet} from 'react-native'
 import {changeIcon, getIcon, resetIcon} from 'react-native-change-icon'
 import {HStack, Picker, RNHostView, Section, Text} from '@expo/ui/swift-ui'
-import {
-	contentShape,
-	frame,
-	pickerStyle,
-	shapes,
-	tag,
-} from '@expo/ui/swift-ui/modifiers'
+import {contentShape, frame, pickerStyle, shapes, tag} from '@expo/ui/swift-ui/modifiers'
 import {icons as appIcons} from '../../../../images/icons'
 import * as c from '@frogpond/colors'
 
@@ -44,14 +38,11 @@ export const icons: Array<Icon> = [
 ]
 
 export let IconSettingsView = (): React.ReactNode => {
-	let [iconType, setIconType] =
-		React.useState<IconTypeEnum>('icon_type_big_ole')
+	let [iconType, setIconType] = React.useState<IconTypeEnum>('icon_type_big_ole')
 
 	let loadCurrentIcon = async () => {
 		let name = await getIcon()
-		setIconType(
-			(name === 'Default' ? 'icon_type_big_ole' : name) as IconTypeEnum,
-		)
+		setIconType((name === 'Default' ? 'icon_type_big_ole' : name) as IconTypeEnum)
 	}
 
 	React.useEffect(() => {
@@ -92,17 +83,10 @@ let IconCell = (props: IconCellProps) => {
 	let {icon} = props
 
 	return (
-		<HStack
-			modifiers={[tag(icon.type), contentShape(shapes.rectangle())]}
-			spacing={ICON_LABEL_GAP}
-		>
+		<HStack modifiers={[tag(icon.type), contentShape(shapes.rectangle())]} spacing={ICON_LABEL_GAP}>
 			<HStack modifiers={[frame({width: ICON_SIZE, height: ICON_SIZE})]}>
 				<RNHostView matchContents={false}>
-					<RNImage
-						accessibilityIgnoresInvertColors={true}
-						source={icon.src}
-						style={styles.icon}
-					/>
+					<RNImage accessibilityIgnoresInvertColors={true} source={icon.src} style={styles.icon} />
 				</RNHostView>
 			</HStack>
 			<Text>{icon.title}</Text>

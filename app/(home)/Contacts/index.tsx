@@ -21,13 +21,7 @@ const styles = StyleSheet.create({
 function ContactsView(): React.ReactNode {
 	let router = useRouter()
 
-	let {
-		data = [],
-		error,
-		refetch,
-		isRefetching,
-		isLoading,
-	} = useQuery(groupedContactsOptions)
+	let {data = [], error, refetch, isRefetching, isLoading} = useQuery(groupedContactsOptions)
 
 	let onPressContact = React.useCallback(
 		(contactData: ContactType) =>
@@ -53,20 +47,14 @@ function ContactsView(): React.ReactNode {
 	return (
 		<SectionList
 			ItemSeparatorComponent={ListSeparator}
-			ListEmptyComponent={
-				isLoading ? <LoadingView /> : <NoticeView text="No results found." />
-			}
+			ListEmptyComponent={isLoading ? <LoadingView /> : <NoticeView text="No results found." />}
 			contentContainerStyle={styles.contentContainer}
 			contentInsetAdjustmentBehavior="automatic"
 			keyExtractor={(item) => item.title}
 			onRefresh={refetch}
 			refreshing={isRefetching}
-			renderItem={({item}) => (
-				<ContactRow contact={item} onPress={onPressContact} />
-			)}
-			renderSectionHeader={({section: {title}}) => (
-				<ListSectionHeader title={title} />
-			)}
+			renderItem={({item}) => <ContactRow contact={item} onPress={onPressContact} />}
+			renderSectionHeader={({section: {title}}) => <ListSectionHeader title={title} />}
 			sections={data}
 			style={styles.listContainer}
 		/>

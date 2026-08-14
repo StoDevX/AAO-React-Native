@@ -11,9 +11,7 @@ export default function CommunitiesLayout(): React.ReactNode {
 			<Stack.Title>Communities</Stack.Title>
 			<Stack.Toolbar placement="right">
 				<Stack.Toolbar.Menu title="Display Mode">
-					<Stack.Toolbar.Icon
-						sf={variant === 'A' ? 'list.bullet' : 'rectangle.grid.1x2'}
-					/>
+					<Stack.Toolbar.Icon sf={variant === 'A' ? 'list.bullet' : 'rectangle.grid.1x2'} />
 					<Stack.Toolbar.MenuAction
 						icon="list.bullet"
 						isOn={variant === 'A'}

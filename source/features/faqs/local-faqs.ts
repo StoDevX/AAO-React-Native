@@ -3,8 +3,7 @@ import type {Faq} from './types'
 
 const docsFaqs = Array.isArray(faqsData?.faqs) ? (faqsData.faqs as Faq[]) : []
 
-export const fallbackLegacyText =
-	typeof faqsData?.text === 'string' ? faqsData.text : ''
+export const fallbackLegacyText = typeof faqsData?.text === 'string' ? faqsData.text : ''
 
 export const fallbackFaqs: Faq[] = docsFaqs.map((faq) => ({
 	...faq,

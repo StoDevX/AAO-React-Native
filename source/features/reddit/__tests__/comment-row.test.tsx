@@ -3,9 +3,7 @@ import {render, screen} from '@testing-library/react-native'
 import {CommentRow} from '../comment-row'
 import type {RedditCommentType} from '../types'
 
-const makeComment = (
-	overrides: Partial<RedditCommentType> = {},
-): RedditCommentType => ({
+const makeComment = (overrides: Partial<RedditCommentType> = {}): RedditCommentType => ({
 	id: 'test-id',
 	author: 'test_author',
 	contentHtml: '<p>Hello world</p>',
@@ -17,18 +15,13 @@ const makeComment = (
 
 describe('CommentRow', () => {
 	it('renders the author name', async () => {
-		await render(
-			<CommentRow comment={makeComment({author: 'ole_fan'})} depth={0} />,
-		)
+		await render(<CommentRow comment={makeComment({author: 'ole_fan'})} depth={0} />)
 		expect(screen.getByText(/ole_fan/u)).toBeTruthy()
 	})
 
 	it('renders stripped comment text', async () => {
 		await render(
-			<CommentRow
-				comment={makeComment({contentHtml: '<p>Hello world</p>'})}
-				depth={0}
-			/>,
+			<CommentRow comment={makeComment({contentHtml: '<p>Hello world</p>'})} depth={0} />,
 		)
 		expect(screen.getByText(/Hello world/u)).toBeTruthy()
 	})
@@ -50,9 +43,7 @@ describe('CommentRow', () => {
 	})
 
 	it('mounts at depth 2 without crashing', async () => {
-		await render(
-			<CommentRow comment={makeComment()} depth={2} testID="comment-depth-2" />,
-		)
+		await render(<CommentRow comment={makeComment()} depth={2} testID="comment-depth-2" />)
 		expect(screen.getByTestId('comment-depth-2')).toBeTruthy()
 	})
 })

@@ -45,9 +45,10 @@ export const autocorrectionDisabled = (disabled = true): Modifier => ({
 	disabled,
 })
 
-export const listRowInsets = (
-	params: Record<string, number> = {},
-): Modifier => ({$type: 'listRowInsets', ...params})
+export const listRowInsets = (params: Record<string, number> = {}): Modifier => ({
+	$type: 'listRowInsets',
+	...params,
+})
 
 export const contentShape = (shape: unknown): Modifier => ({
 	$type: 'contentShape',
@@ -80,16 +81,11 @@ export function List({children}: WithModifiers): React.ReactNode {
 	return <View>{children}</View>
 }
 
-List.ForEach = function ListForEach({
-	children,
-}: WithModifiers): React.ReactNode {
+List.ForEach = function ListForEach({children}: WithModifiers): React.ReactNode {
 	return <View>{children}</View>
 }
 
-export function Section({
-	children,
-	title,
-}: WithModifiers & {title?: string}): React.ReactNode {
+export function Section({children, title}: WithModifiers & {title?: string}): React.ReactNode {
 	return (
 		<View>
 			{title ? <RNText>{title}</RNText> : null}

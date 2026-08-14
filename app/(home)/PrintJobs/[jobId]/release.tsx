@@ -9,11 +9,7 @@ import {
 	cancelPrintJobForUser,
 	releasePrintJobToPrinterForUser,
 } from '../../../../source/lib/stoprint/api'
-import {
-	showGeneralError,
-	type Printer,
-	type PrintJob,
-} from '../../../../source/lib/stoprint'
+import {showGeneralError, type Printer, type PrintJob} from '../../../../source/lib/stoprint'
 import {
 	heldJobsOptions,
 	jobByIdOptions,
@@ -38,9 +34,7 @@ const styles = StyleSheet.create({
 	},
 })
 
-const Header = (props: TextProps) => (
-	<Text {...props} style={[styles.header, props.style]} />
-)
+const Header = (props: TextProps) => <Text {...props} style={[styles.header, props.style]} />
 
 function LeftDetailCell({detail, title}: {detail: string; title: string}) {
 	return <Cell cellStyle="LeftDetail" detail={detail} title={title} />
@@ -56,9 +50,7 @@ function JobInformation({job}: {job: PrintJob}) {
 			<LeftDetailCell detail="Cost" title={job.usageCostFormatted} />
 			<LeftDetailCell detail="Grayscale" title={job.grayscaleFormatted} />
 			<LeftDetailCell detail="Paper Size" title={job.paperSizeFormatted} />
-			{wasPrintedAlready && (
-				<LeftDetailCell detail="Printer" title={job.printerName} />
-			)}
+			{wasPrintedAlready && <LeftDetailCell detail="Printer" title={job.printerName} />}
 		</Section>
 	)
 }
@@ -79,10 +71,7 @@ type PrintJobReleaseViewProps = {
 	printer?: Printer
 }
 
-function PrintJobReleaseView({
-	job,
-	printer,
-}: PrintJobReleaseViewProps): React.ReactNode {
+function PrintJobReleaseView({job, printer}: PrintJobReleaseViewProps): React.ReactNode {
 	let router = useRouter()
 
 	let {data: username = '', isLoading: loadingUsername} = useQuery({
@@ -90,9 +79,7 @@ function PrintJobReleaseView({
 		select: (data) => data?.username,
 	})
 
-	let {data: heldJobs = []} = useQuery(
-		heldJobsOptions(username, printer?.printerName),
-	)
+	let {data: heldJobs = []} = useQuery(heldJobsOptions(username, printer?.printerName))
 	let jobId = job.id.toString()
 	let heldJob = heldJobs.find((item) => item.id.startsWith(jobId))
 

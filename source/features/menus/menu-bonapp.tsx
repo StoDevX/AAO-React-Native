@@ -55,13 +55,8 @@ function findCafeMessage(cafeInfo: CafeInfoType, now: Moment): string | null {
 	return null
 }
 
-function buildCustomStationMenu(
-	foodItems: MenuItemContainerType,
-): Array<StationMenuType> {
-	let groupByStation = (
-		grouped: Record<string, MenuItemType['id'][]>,
-		item: MenuItemType,
-	) => {
+function buildCustomStationMenu(foodItems: MenuItemContainerType): Array<StationMenuType> {
+	let groupByStation = (grouped: Record<string, MenuItemType['id'][]>, item: MenuItemType) => {
 		if (item.station in grouped) {
 			grouped[item.station].push(item.id)
 		} else {
@@ -75,10 +70,8 @@ function buildCustomStationMenu(
 	let idsGroupedByStation = reduce(foodItems, groupByStation, {})
 
 	// then we make our own StationMenus list
-	let paired: Array<[string, Array<string>]> =
-		Object.entries(idsGroupedByStation)
+	let paired: Array<[string, Array<string>]> = Object.entries(idsGroupedByStation)
 	return paired.map(([name, items], i): StationMenuType => ({
-		// eslint-disable-next-line camelcase
 		order_id: String(i),
 		id: String(i),
 		label: name,
@@ -131,9 +124,7 @@ function getMeals(
 
 	let ignoreMenus = dayparts[0]?.length ? ignoreProvidedMenus : true
 
-	return mealInfoItems.map((mealInfo) =>
-		prepareSingleMenu(mealInfo, foodItems, ignoreMenus),
-	)
+	return mealInfoItems.map((mealInfo) => prepareSingleMenu(mealInfo, foodItems, ignoreMenus))
 }
 
 function getErrorMessage(error: Error | undefined) {
@@ -180,8 +171,7 @@ export function BonAppHostedMenu(props: Props): React.ReactNode {
 		let errorMessage = getErrorMessage(menuError)
 		let msg = `Error: ${errorMessage}`
 		if (errorMessage === BONAPP_HTML_ERROR_CODE) {
-			msg =
-				'Something between you and BonApp is having problems. Try again in a minute or two?'
+			msg = 'Something between you and BonApp is having problems. Try again in a minute or two?'
 		}
 		return <NoticeView buttonText="Again!" onPress={menuReload} text={msg} />
 	}
@@ -190,8 +180,7 @@ export function BonAppHostedMenu(props: Props): React.ReactNode {
 		let errorMessage = getErrorMessage(cafeError)
 		let msg = `Error: ${errorMessage}`
 		if (errorMessage === BONAPP_HTML_ERROR_CODE) {
-			msg =
-				'Something between you and BonApp is having problems. Try again in a minute or two?'
+			msg = 'Something between you and BonApp is having problems. Try again in a minute or two?'
 		}
 		return <NoticeView buttonText="Again!" onPress={cafeReload} text={msg} />
 	}

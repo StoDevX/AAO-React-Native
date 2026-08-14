@@ -54,9 +54,7 @@ export function buildICS(event: EventType): string {
 
 export type AddToCalendarResult = 'saved' | 'cancelled' | 'error'
 
-export async function addToCalendar(
-	event: EventType,
-): Promise<AddToCalendarResult> {
+export async function addToCalendar(event: EventType): Promise<AddToCalendarResult> {
 	try {
 		let ics = buildICS(event)
 		let dataUrl = `data:text/calendar;base64,${base64Encode(ics)}`

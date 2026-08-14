@@ -10,9 +10,7 @@ import {SCHEMA_BASE, DATA_BASE} from './paths.mjs'
 
 const isDir = (pth) => tryBoolean(() => fs.statSync(pth).isDirectory())
 const readYaml = (pth) =>
-	JSON.parse(
-		JSON.stringify(loadYaml(fs.readFileSync(pth, 'utf-8'), {filename: pth})),
-	)
+	JSON.parse(JSON.stringify(loadYaml(fs.readFileSync(pth, 'utf-8'), {filename: pth})))
 
 /*
 const readYamlPipe = (pth) =>
@@ -93,26 +91,20 @@ function getArgs(argv) {
 		console.error()
 		console.error('Arguments:')
 		console.error('  <blank>: validates all schemas and data')
-		console.error(
-			'  [schema-name]+: validates the schema and data for the given schema',
-		)
+		console.error('  [schema-name]+: validates the schema and data for the given schema')
 		console.error()
 		console.error('Options:')
 		console.error('  --no-bail: continue past the first error')
 		console.error('  -d, --data: use this as the data file (requires --schema)')
 		console.error('  -s, --schema: use this as the schema (requires --data)')
 		console.error()
-		console.error(
-			`By default, the program looks for schema files in ${SCHEMA_BASE}`,
-		)
+		console.error(`By default, the program looks for schema files in ${SCHEMA_BASE}`)
 		process.exit(1)
 	}
 
 	if ((args.data && !args.schema) || (args.schema && !args.data)) {
 		console.error('Usage: node validate-compiled-data.js [options] [args]')
-		console.error(
-			'If either --data or --schema are provided, both are required',
-		)
+		console.error('If either --data or --schema are provided, both are required')
 		process.exit(1)
 	}
 

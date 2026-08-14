@@ -2,19 +2,19 @@
   "name": "@frogpond/tableview",
   "version": "1.0.0",
   "description": "",
-  "main": "index.tsx",
-  "author": "",
   "license": "ISC",
+  "author": "",
+  "main": "index.tsx",
   "scripts": {
     "test": "jest"
-  },
-  "peerDependencies": {
-    "react": "^19.1.0",
-    "react-native": "^0.86.2",
-    "@react-native-vector-icons/ionicons": "^13.1.2"
   },
   "dependencies": {
     "@frogpond/colors": "workspace:*",
     "react-native-tableview-simple": "4.4.1"
+  },
+  "peerDependencies": {
+    "@react-native-vector-icons/ionicons": "^13.1.2",
+    "react": "^19.1.0",
+    "react-native": "^0.86.2"
   }
 }

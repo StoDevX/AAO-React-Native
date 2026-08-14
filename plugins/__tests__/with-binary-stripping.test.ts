@@ -52,9 +52,7 @@ describe('applyStripping', () => {
 	})
 
 	it('throws when the target is missing', () => {
-		expect(() => applyStripping(loadProject(), 'NoSuchTarget')).toThrow(
-			/NoSuchTarget/u,
-		)
+		expect(() => applyStripping(loadProject(), 'NoSuchTarget')).toThrow(/NoSuchTarget/u)
 	})
 })
 

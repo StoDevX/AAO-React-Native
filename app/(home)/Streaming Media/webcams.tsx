@@ -1,10 +1,5 @@
 import * as React from 'react'
-import {
-	StyleSheet,
-	ScrollView,
-	useWindowDimensions,
-	RefreshControl,
-} from 'react-native'
+import {StyleSheet, ScrollView, useWindowDimensions, RefreshControl} from 'react-native'
 import {Column} from '@frogpond/layout'
 import {partitionByIndex} from '../../../source/lib/partition-by-index'
 import {StreamThumbnail} from '../../../source/features/streaming/webcams/thumbnail'
@@ -43,19 +38,13 @@ export default function WebcamsPage(): React.ReactNode {
 		<ScrollView
 			contentContainerStyle={styles.container}
 			contentInsetAdjustmentBehavior="automatic"
-			refreshControl={
-				<RefreshControl onRefresh={refetch} refreshing={isRefetching} />
-			}
+			refreshControl=<RefreshControl onRefresh={refetch} refreshing={isRefetching} />
 			testID="screen-streaming-webcams"
 		>
 			{columns.map((contents, i) => (
 				<Column key={i} style={styles.column}>
 					{contents.map((webcam) => (
-						<StreamThumbnail
-							key={webcam.name}
-							viewportWidth={viewport.width}
-							webcam={webcam}
-						/>
+						<StreamThumbnail key={webcam.name} viewportWidth={viewport.width} webcam={webcam} />
 					))}
 				</Column>
 			))}

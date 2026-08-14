@@ -6,8 +6,7 @@ import type {BusSchedule, DepartureTimeList} from '../types'
 
 const isTruthy = (x: unknown) => Boolean(x)
 
-export type BusStateEnum =
-	'none' | 'before-start' | 'after-end' | 'running' | 'between-rounds'
+export type BusStateEnum = 'none' | 'before-start' | 'after-end' | 'running' | 'between-rounds'
 type ReturnVal = {
 	status: BusStateEnum
 	times: DepartureTimeList
@@ -15,10 +14,7 @@ type ReturnVal = {
 	nextStart?: Moment | null
 }
 
-export function getCurrentBusIteration(
-	schedule: BusSchedule,
-	now: Moment,
-): ReturnVal {
+export function getCurrentBusIteration(schedule: BusSchedule, now: Moment): ReturnVal {
 	// If the schedule is empty
 	if (schedule.times.length === 0) {
 		return {status: 'none', times: [], index: null, nextStart: null}

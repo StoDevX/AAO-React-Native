@@ -6,10 +6,5 @@ import {namedNewsOptions} from '../../../source/features/news/query'
 import {useQuery} from '@tanstack/react-query'
 
 export default function StOlafNewsPage(): React.ReactNode {
-	return (
-		<NewsList
-			query={useQuery(namedNewsOptions('stolaf'))}
-			thumbnail={newsImages.stolaf}
-		/>
-	)
+	return <NewsList query={useQuery(namedNewsOptions('stolaf'))} thumbnail={newsImages.stolaf} />
 }
