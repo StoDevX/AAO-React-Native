@@ -1,10 +1,5 @@
 {
   "$schema": "./node_modules/oxfmt/configuration_schema.json",
-  // `oxfmt --migrate=prettier` mis-migrates useTabs (silently defaults to
-  // false regardless of the source value -- verified against oxfmt 0.63.0)
-  // and can't migrate the JSON override below at all
-  // (https://github.com/oxc-project/oxc/issues/18215), so don't regenerate
-  // this file with it -- it's hand-authored.
   "useTabs": true,
   "singleQuote": true,
   "trailingComma": "all",
