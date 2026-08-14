@@ -10,6 +10,7 @@ import {
 	getDetailedBuildingStatus,
 	getShortBuildingStatus,
 	getAccentBackgroundColor,
+	getAccentTextColor,
 } from './lib'
 
 const styles = StyleSheet.create({
@@ -72,6 +73,7 @@ export function BuildingRow(props: Props): React.ReactNode {
 						accentColor={getAccentBackgroundColor(openStatus)}
 						style={styles.accessoryBadge}
 						text={openStatus}
+						textColor={getAccentTextColor(openStatus)}
 					/>
 				) : null}
 			</Row>
