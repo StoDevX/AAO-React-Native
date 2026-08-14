@@ -1,29 +1,25 @@
 {
   "$schema": "./node_modules/oxlint/configuration_schema.json",
-  // Spike: replaces eslint.config.mjs. Mirrors that config's plugin set
-  // (typescript, react/react-hooks, tanstack query) plus oxlint's own
-  // batteries-included plugins (unicorn, oxc) which have no ESLint
-  // equivalent in this project today -- left on to see what they surface.
+  // Plugins: typescript + react cover this codebase's TS/React rules;
+  // oxlint-plugin-query (below, via jsPlugins) covers TanStack Query. unicorn
+  // and oxc are oxlint's own bundled plugins, left on.
   //
-  // A handful of previously-configured rules have no oxlint equivalent at
-  // all (checked against `oxlint --rules --format=json`, no name match in
-  // any scope): camelcase, consistent-this, no-restricted-syntax (only used
-  // here to ban the `with` statement, already a SyntaxError in strict-mode/
-  // ESM code), require-atomic-updates, react/jsx-no-bind, react/jsx-sort-props,
+  // The following rules have no oxlint equivalent at all (checked against
+  // `oxlint --rules --format=json`, no name match in any scope): camelcase,
+  // consistent-this, no-restricted-syntax (only used here to ban the `with`
+  // statement, already a SyntaxError in strict-mode/ESM code),
+  // require-atomic-updates, react/jsx-no-bind, react/jsx-sort-props,
   // react/no-access-state-in-setstate, react/no-typos, react/sort-comp,
   // react/sort-prop-types. Most are stylistic (prop/method ordering) or only
-  // meaningful for class components, which CLAUDE.md already steers this
-  // codebase away from (functional components with hooks only) -- two class
+  // meaningful for class components, which CLAUDE.md steers this codebase
+  // away from (functional components with hooks only) -- two class
   // components remain (modules/add-to-device-calendar/add-to-calendar.ts,
   // modules/event-list/event-row.tsx), so no-typos/no-access-state-in-setstate
-  // losing coverage there is a real, if narrow, gap.
+  // leave a real, if narrow, gap there.
   //
-  // linebreak-style/quotes/semi are dropped as lint rules because they're
-  // formatting concerns -- oxfmt's endOfLine/singleQuote/semi config
-  // (.oxfmtrc.json) covers them instead, same as eslint-config-prettier did
-  // for ESLint. no-new-symbol is superseded by no-new-native-nonconstructor
-  // (kept below). no-return-await is superseded by the type-aware
-  // typescript/return-await (kept below, and stricter than the original).
+  // linebreak-style/quotes/semi aren't lint rules here because they're
+  // formatting concerns covered by oxfmt's endOfLine/singleQuote/semi config
+  // (.oxfmtrc.json) instead.
   "plugins": ["typescript", "react", "unicorn", "oxc"],
   "jsPlugins": ["./node_modules/oxlint-plugin-query/dist/index.js"],
   "categories": {
@@ -49,8 +45,7 @@
     }
   },
   "rules": {
-    // General rules (ported 1:1 from eslint.config.mjs where a same-named
-    // oxlint rule exists; see file header for the ones that don't)
+    // General rules
     "array-callback-return": "error",
     "curly": ["warn", "multi-line"],
     "default-case": "error",
@@ -95,14 +90,11 @@
     "typescript/no-require-imports": "error",
     "typescript/no-empty-function": "warn",
     "typescript/no-explicit-any": "warn",
-    // Off for the same reason the ESLint config this replaces had them off
-    // (a temporary carryover from the ESLint v9 upgrade, never re-enabled):
-    // tried turning them on during this spike and it surfaced ~140 findings,
-    // almost all `no-misused-promises`/`no-floating-promises` on async event
-    // handlers (`onPress={async () => ...}` and similar) -- a real, pervasive
-    // pattern in this codebase, not new bugs. Re-enabling these is a
-    // legitimate follow-up, but it's a large, separate cleanup, not part of
-    // a tool-swap spike.
+    // Off: the codebase has ~140 places where an async function is passed
+    // directly to a handler expecting a void return (`onPress={async () =>
+    // ...}` and similar) -- a widespread, deliberate pattern, not bugs.
+    // Enabling these three rules is a legitimate goal, but a large, separate
+    // cleanup on its own.
     "typescript/no-misused-promises": "off",
     "typescript/restrict-template-expressions": "off",
     "typescript/no-floating-promises": "off",
