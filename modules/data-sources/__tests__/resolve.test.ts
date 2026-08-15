@@ -1,5 +1,6 @@
+import {onlineManager, QueryClient} from '@tanstack/react-query'
 import bundled from '../bundled.json'
-import {resolveSource, resolveSources} from '../resolve'
+import {fetchManifest, resolveSource, resolveSources} from '../resolve'
 import {ID_PROPERTY, JrdSchema, REL_A_TO_Z, REL_NEWS} from '../types'
 
 const ALL_NEWS_TYPES = [
@@ -63,9 +64,96 @@ test('an unknown rel and id throws rather than returning a wrong source', () => 
 	expect(() => resolveSource(manifest, REL_NEWS, 'nonesuch', ALL_NEWS_TYPES)).toThrow(/nonesuch/u)
 })
 
-test('resolveSources drops unsupported entries rather than failing', () => {
-	const ids = resolveSources(manifest, REL_NEWS, ['application/vnd.frogpond.feed-items+json']).map(
+test('resolveSources drops an entry whose fetched and bundled types are both unsupported', () => {
+	const edited = JrdSchema.parse({
+		...manifest,
+		links: manifest.links.map((link) =>
+			link.properties[ID_PROPERTY] === 'stolaf' && link.rel === REL_NEWS
+				? {...link, type: 'application/vnd.example.future+json'}
+				: link,
+		),
+	})
+
+	// 'stolaf' is unsupported here (both its fetched type and its bundled
+	// type -- the real wordpress type -- are excluded), so it must be
+	// dropped rather than thrown for the whole list or returned unusable.
+	const ids = resolveSources(edited, REL_NEWS, ['application/vnd.frogpond.feed-items+json']).map(
 		(s) => s.id,
 	)
+	expect(ids).toStrictEqual(['mess', 'oleville'])
+})
+
+test('resolveSources: an id missing from the fetched document still appears, from the bundled entry', () => {
+	const edited = JrdSchema.parse({
+		...manifest,
+		links: manifest.links.filter(
+			(link) => !(link.rel === REL_NEWS && link.properties[ID_PROPERTY] === 'stolaf'),
+		),
+	})
+
+	const sources = resolveSources(edited, REL_NEWS, ALL_NEWS_TYPES)
+	const stolaf = sources.find((s) => s.id === 'stolaf')
+	expect(stolaf?.href).toContain('wp.stolaf.edu')
+})
+
+test('resolveSources: an id present with an unsupported type still appears, from the bundled entry', () => {
+	const edited = JrdSchema.parse({
+		...manifest,
+		links: manifest.links.map((link) =>
+			link.properties[ID_PROPERTY] === 'stolaf' && link.rel === REL_NEWS
+				? {...link, href: 'https://example.test/new', type: 'application/vnd.example.future+json'}
+				: link,
+		),
+	})
+
+	const sources = resolveSources(edited, REL_NEWS, ALL_NEWS_TYPES)
+	const stolaf = sources.find((s) => s.id === 'stolaf')
+	expect(stolaf?.href).toContain('wp.stolaf.edu')
+})
+
+test('resolveSources: a fetched-only id with an unsupported type is dropped', () => {
+	const edited = JrdSchema.parse({
+		...manifest,
+		links: [
+			...manifest.links,
+			{
+				rel: REL_NEWS,
+				href: 'https://example.test/new-source',
+				type: 'application/vnd.example.future+json',
+				titles: {und: 'A brand-new source'},
+				properties: {[ID_PROPERTY]: 'brand-new'},
+			},
+		],
+	})
+
+	// 'brand-new' has no bundled entry to fall back to, so it must be
+	// dropped rather than thrown for the whole list.
+	const ids = resolveSources(edited, REL_NEWS, ALL_NEWS_TYPES).map((s) => s.id)
 	expect(ids).toStrictEqual(['stolaf', 'mess', 'oleville'])
+})
+
+test('fetchManifest resolves to the bundled document rather than hanging while offline', async () => {
+	const wasOnline = onlineManager.isOnline()
+	onlineManager.setOnline(false)
+
+	// gcTime: 0 keeps QueryClient from scheduling a cache-eviction timer that
+	// would otherwise hold the test process open well past this test.
+	const queryClient = new QueryClient({defaultOptions: {queries: {gcTime: 0}}})
+
+	try {
+		const TIMED_OUT = Symbol('timed out')
+		let timer: ReturnType<typeof setTimeout> | undefined
+		const timeout = new Promise((resolve) => {
+			timer = setTimeout(() => resolve(TIMED_OUT), 2000)
+		})
+
+		const result = await Promise.race([fetchManifest(queryClient), timeout])
+		clearTimeout(timer)
+
+		expect(result).not.toBe(TIMED_OUT)
+		expect(result).toStrictEqual(manifest)
+	} finally {
+		queryClient.clear()
+		onlineManager.setOnline(wasOnline)
+	}
 })

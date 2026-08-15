@@ -16,6 +16,16 @@ export const keys = {
 export const manifestOptions = queryOptions({
 	queryKey: keys.manifest,
 	staleTime: ONE_DAY_IN_MS,
+	// Default `networkMode: 'online'` pauses the fetch (rather than rejecting
+	// it) while `onlineManager` reports offline, so `fetchManifest`'s catch
+	// below would never run and the promise would never settle. 'offlineFirst'
+	// still runs the queryFn once even while offline, so ky can fail fast and
+	// rule 1's fallback actually takes effect. Retries are paused the same
+	// way a first attempt would be under 'online', so they're disabled here
+	// too -- a single failed attempt should fall back to the bundled copy
+	// immediately rather than wait offline for a retry that can't run.
+	networkMode: 'offlineFirst',
+	retry: false,
 	queryFn: async ({signal}): Promise<Jrd> => {
 		let response = await client.get('sources', {signal}).json()
 		return JrdSchema.parse(response)
@@ -50,7 +60,11 @@ function find(manifest: Jrd, rel: string, id: string): ResolvedSource | undefine
 
 /// Rules 2 and 3. A source that is missing, or that names a format this build
 /// has no parser for, falls back to its bundled entry — so publishing a new
-/// format tag cannot break installs that predate the parser.
+/// format tag cannot break installs that predate the parser. Rule 3 also
+/// applies to the bundled entry itself: if this build can't parse that
+/// either, that's a programming error (a shipped bundle using a type this
+/// build doesn't support), and it should throw rather than hand back a
+/// source the caller can't use.
 export function resolveSource(
 	manifest: Jrd,
 	rel: string,
@@ -64,8 +78,8 @@ export function resolveSource(
 	}
 
 	let fallback = find(bundled, rel, id)
-	if (!fallback) {
-		throw new Error(`no source for rel "${rel}" and id "${id}"`)
+	if (!fallback || !supportedTypes.includes(fallback.type)) {
+		throw new Error(`no supported source for rel "${rel}" and id "${id}"`)
 	}
 
 	return fallback
