@@ -15,6 +15,7 @@
     "@frogpond/ccc-calendar": "workspace:*",
     "@frogpond/colors": "workspace:*",
     "@frogpond/constants": "workspace:*",
+    "@frogpond/data-sources": "workspace:*",
     "@frogpond/datepicker": "workspace:*",
     "@frogpond/event-list": "workspace:*",
     "@frogpond/event-type": "workspace:*",
