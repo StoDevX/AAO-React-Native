@@ -449,12 +449,12 @@ importers:
       '@frogpond/event-type':
         specifier: workspace:*
         version: link:../event-type
-      base-64:
-        specifier: ^1.0.0
-        version: 1.0.0
       delay:
         specifier: ^7.0.0
         version: 7.0.0
+      expo-calendar:
+        specifier: ~57.0.1
+        version: 57.0.1(expo@57.0.11)(react-native@0.86.2)
       react:
         specifier: ^19.1.0
         version: 19.2.8
