@@ -13,6 +13,8 @@ import {parseIcalEvents} from '../parsers/ical'
 // possible gap between two real UTC offsets (-12 to +14, i.e. up to 26
 // hours), so these assertions hold no matter which time zone runs them.
 const fixture = readFileSync(join(__dirname, 'fixtures/ical.ics'), 'utf8')
+const outlookFixture = readFileSync(join(__dirname, 'fixtures/ical-microsoft-outlook.ics'), 'utf8')
+const appleFixture = readFileSync(join(__dirname, 'fixtures/ical-apple-calendar.ics'), 'utf8')
 
 const NOW = new Date('2026-08-15T12:00:00Z')
 
@@ -982,4 +984,52 @@ END:VEVENT`),
 	// definition.
 	const expected = new Date(2026, 8, 1, 13, 0, 0)
 	expect(new Date(event.startTime).getTime()).toBe(expected.getTime())
+})
+
+// The committed KSTO fixture is a Google Calendar export. Real feeds from
+// other producers format meaningfully differently -- different VTIMEZONE
+// conventions, different (or absent) SUMMARY handling, quoted parameter
+// values -- so a parser that only ever sees Google's shape could have
+// producer-specific bugs no test here would catch.
+
+test('parses a real Microsoft Outlook/Exchange export', () => {
+	// Captured, not hand-written: `Ical.Net.Tests/Calendars/Recurrence/
+	// Bug2966236.ics` from the ical.net project (github.com/ical-org/
+	// ical.net), a real Outlook 11.0 MIMEDIR export attached to a bug
+	// report. Kept byte-for-byte as fetched. Notable real-world shapes it
+	// exercises that the Google fixture doesn't: a VTIMEZONE with only a
+	// STANDARD sub-component (Shanghai hasn't observed DST since 1991, so
+	// Outlook emitted no DAYLIGHT block at all), a `TZID` parameter value
+	// wrapped in double quotes (legal but unusual), and a VEVENT with no
+	// SUMMARY property at all (some Exchange exports omit it).
+	const events = parseIcalEvents(outlookFixture, new Date('2026-08-15T12:00:00Z'))
+
+	// FREQ=DAILY;INTERVAL=7 from 2010-01-19 -- weekly-spaced daily
+	// occurrences -- landing inside the 90-day window from NOW. Computed
+	// directly against this fixture: 13 occurrences, every Tuesday
+	// 2026-08-18 through 2026-11-10.
+	expect(events.length).toBeGreaterThanOrEqual(12)
+	expect(events.length).toBeLessThanOrEqual(14)
+	// No SUMMARY in the fixture -- title falls back to '', same as the
+	// existing "missing description" test's handling of an absent property.
+	expect(events.every((event) => event.title === '')).toBe(true)
+	expect(events[0].startTime).toBe('2026-08-18T00:00:00.000Z')
+})
+
+test('parses a real Apple Calendar (macOS) export', () => {
+	// Captured, not hand-written: from ics.py's own test fixtures
+	// (github.com/m42e/ics.py, tests/fixture.py, `cal1`), a real macOS 10.9
+	// Calendar.app export -- `X-APPLE-CALENDAR-COLOR`, `X-WR-CALNAME`, and a
+	// VTIMEZONE using macOS's own "UTC+2"/"UTC+1" `TZNAME`s rather than
+	// "CEST"/"CET". The DESCRIPTION text (unrelated to what this test
+	// checks) is trimmed from the original multi-paragraph lorem ipsum;
+	// every other property is unmodified.
+	const [event] = parseIcalEvents(appleFixture, new Date('2013-10-25T12:00:00Z'))
+
+	// Europe/Brussels is CET (UTC+1) on 2013-10-29 -- DST in the fixture's
+	// own embedded VTIMEZONE ended 2013-10-27 -- so 10:30 local is 09:30Z.
+	expect(event.startTime).toBe('2013-10-29T09:30:00.000Z')
+	expect(event.endTime).toBe('2013-10-29T10:30:00.000Z')
+	expect(event.title).toBe('dfqsdfjqkshflqsjdfhqs fqsfhlqs dfkqsldfkqsdfqsfqsfqsfs')
+	expect(event.description).toBe('Lorem ipsum dolor sit amet, consectetur adipiscing elit.')
 })
