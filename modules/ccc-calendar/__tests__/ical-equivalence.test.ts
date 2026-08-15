@@ -1135,17 +1135,32 @@ function expectEquivalentOrBothCeilinged(
 	let actual: WireEvent[] | undefined
 	let actualCause: unknown
 	try {
-		// `maxOccurrences` is given explicitly, and at least as large as
-		// `maxIterations`, so it can never be the thing that truncates a
-		// result -- the count of occurrences an event can produce is bounded
-		// by the count of iterations it took to find them, so a cap this
-		// generous is only ever reached after `maxIterations` already would
-		// be. Left to its production default (`windowDays * 24 * 2`, sized
-		// for an HOURLY-scale rule), a dense `MINUTELY` rule in this corpus
-		// would hit *that* cap first -- a real production behaviour, but not
-		// the one this comparison means to exercise, and not one the
-		// reference walk (which has no occurrence cap at all) can agree with.
-		actual = parseIcalEvents(body, now, {windowDays, maxIterations, maxOccurrences: maxIterations})
+		// `maxOccurrences` is given explicitly, and strictly larger than
+		// `maxIterations`, so it can never be the thing that throws first --
+		// the count of occurrences an event can push is bounded by the count
+		// of iterations it took to find them (`tryPush` is called at most once
+		// per iteration), and the iteration loop's own ceiling check runs
+		// *before* that iteration's `tryPush` call, so it fires at
+		// `iterations === maxIterations`, one iteration before a push could
+		// ever bring the occurrence count up to that same number. `+ 1` here
+		// (not `maxIterations` itself, which this comparison used to pass)
+		// closes that off exactly rather than by margin: at
+		// `maxOccurrences === maxIterations`, a rule where literally every
+		// iteration produces a push reaches the occurrence count on the very
+		// iteration that would otherwise have hit the iteration ceiling next,
+		// so the two ceilings race -- `parseIcalEvents` would throw
+		// `RecurrenceOccurrenceCeilingError` while the reference walk (which
+		// has no occurrence cap at all) keeps going, diverging on error type
+		// alone. Left to its production default (`windowDays * 24 * 2`, sized
+		// for an HOURLY-scale rule) instead of either injected value, a dense
+		// `MINUTELY` rule in this corpus would hit *that* cap first -- a real
+		// production behaviour, but not the one this comparison means to
+		// exercise.
+		actual = parseIcalEvents(body, now, {
+			windowDays,
+			maxIterations,
+			maxOccurrences: maxIterations + 1,
+		})
 	} catch (error) {
 		actualCause = (error as Error).cause
 	}

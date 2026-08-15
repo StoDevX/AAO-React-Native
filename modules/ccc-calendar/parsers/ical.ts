@@ -165,7 +165,8 @@ interface ExpansionLimits {
 /// way the flat `2000` it replaced did. An HOURLY rule has at most
 /// `windowDays * 24` occurrences inside the window, and this leaves 2x
 /// headroom above that so an hourly series doesn't lose its final stretch to
-/// the cap.
+/// the cap -- and, past that headroom, throws (see
+/// `RecurrenceOccurrenceCeilingError`) rather than silently truncating.
 ///
 /// All three are overridable (only by tests, currently -- `parseIcalEvents`
 /// doesn't expose this as public API beyond the default). Exercising the
@@ -197,6 +198,19 @@ function resolveLimits(limits?: {
 /// blanket-swallowing any exception, which would hide a real regression
 /// behind an unrelated throw. Not part of the module's public parsing API.
 export class RecurrenceIterationCeilingError extends Error {}
+
+/// A dedicated error class for hitting the occurrence ceiling (`maxOccurrences`
+/// in `ExpansionLimits`), distinct from `RecurrenceIterationCeilingError`
+/// above. Before this existed, hitting `maxOccurrences` didn't throw at all --
+/// it just stopped `expandOccurrences`'s walk early and returned whatever had
+/// been collected so far, which looks exactly like a legitimately partial (or,
+/// for a sparser window, complete) calendar. That is the same "plausible-
+/// looking wrong calendar" failure mode `RecurrenceIterationCeilingError`
+/// exists to turn loud; giving the occurrence ceiling its own throw, and its
+/// own error class, does the same for it, and keeps the two distinguishable
+/// from each other (in Sentry, or in a test asserting on `.cause`) rather than
+/// collapsing them into one generic "something was capped" error.
+export class RecurrenceOccurrenceCeilingError extends Error {}
 
 /// `RecurExpansion` only ever emits `DTSTART` itself as an occurrence when
 /// the series has an `RRULE` -- an `RDATE`-only series (RFC 5545 permits
@@ -440,15 +454,22 @@ function expandOccurrences(event: ICAL.Event, now: Date, limits: ExpansionLimits
 	let occurrences: WireEvent[] = []
 
 	/// Resolves `occurrenceTime` to its (possibly overridden) details and
-	/// pushes it if it belongs in the window. Returns whether the
-	/// `maxOccurrences` cap was just reached, so callers know to stop.
-	function tryPush(occurrenceTime: ICAL.Time): boolean {
+	/// pushes it if it belongs in the window. Throws
+	/// `RecurrenceOccurrenceCeilingError` the moment a push reaches
+	/// `maxOccurrences` -- mirroring `maxIterations`, below, hitting this
+	/// ceiling must not look like a legitimately partial calendar (see that
+	/// error class's own comment).
+	function tryPush(occurrenceTime: ICAL.Time): void {
 		let details = event.getOccurrenceDetails(occurrenceTime)
-		if (isAfter(toInstant(details.startDate), windowEnd)) return false
-		if (!isAfter(toInstant(details.endDate), endOfToday)) return false
+		if (isAfter(toInstant(details.startDate), windowEnd)) return
+		if (!isAfter(toInstant(details.endDate), endOfToday)) return
 
 		occurrences.push(toWireEvent(details.item, details.startDate, details.endDate, now))
-		return occurrences.length >= limits.maxOccurrences
+		if (occurrences.length >= limits.maxOccurrences) {
+			throw new RecurrenceOccurrenceCeilingError(
+				`ical event exceeded ${limits.maxOccurrences} occurrences inside the expansion window`,
+			)
+		}
 	}
 
 	if (needsInjectedDtstart(event.component)) {
@@ -457,7 +478,7 @@ function expandOccurrences(event: ICAL.Event, now: Date, limits: ExpansionLimits
 			!isAlreadyInRdate(event.component, dtstart) &&
 			!isExcludedByExdate(event.component, dtstart)
 		) {
-			if (tryPush(dtstart)) return occurrences
+			tryPush(dtstart)
 		}
 	}
 
@@ -499,7 +520,7 @@ function expandOccurrences(event: ICAL.Event, now: Date, limits: ExpansionLimits
 	for (let exception of Object.values(event.exceptions)) {
 		if (!isAfter(toInstant(exception.recurrenceId), windowEnd)) continue
 		if (isExcludedByExdate(event.component, exception.recurrenceId)) continue
-		if (tryPush(exception.recurrenceId)) return occurrences
+		tryPush(exception.recurrenceId)
 	}
 
 	for (let iterations = 0; ; iterations += 1) {
@@ -530,7 +551,7 @@ function expandOccurrences(event: ICAL.Event, now: Date, limits: ExpansionLimits
 
 		if (isAfter(toInstant(occurrence), windowEnd)) break
 
-		if (tryPush(occurrence)) break
+		tryPush(occurrence)
 	}
 
 	return occurrences
@@ -562,10 +583,11 @@ function uidOf(component: ICAL.Component): string | undefined {
 /// legitimate "nothing to show" and stays empty. A calendar with no masters
 /// at all is likewise a legitimate "no events."
 ///
-/// A master that hits the iteration ceiling is dropped the same way any
-/// other malformed master is -- its siblings are unaffected, whether it
-/// throws `RecurrenceIterationCeilingError` or fails for some ordinary
-/// reason (a missing `DTSTART`, say). But when *every* master fails and the
+/// A master that hits the iteration or occurrence ceiling is dropped the
+/// same way any other malformed master is -- its siblings are unaffected,
+/// whether it throws `RecurrenceIterationCeilingError`,
+/// `RecurrenceOccurrenceCeilingError`, or fails for some ordinary reason (a
+/// missing `DTSTART`, say). But when *every* master fails and the
 /// guard above throws, the generic "every ical event was malformed" message
 /// alone would send a debugging developer straight past the actual cause.
 /// The most recently caught error -- ceiling or otherwise -- is attached as

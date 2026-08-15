@@ -807,14 +807,11 @@ END:VEVENT`),
 	expect(events).toStrictEqual([])
 })
 
-test('MAX_OCCURRENCES_PER_EVENT derives exactly from windowDays, not an independent number', () => {
-	// A FREQ=MINUTELY rule inside a window this small produces far more raw
-	// occurrences than any plausible cap (2 days = 2880 minutes, 3 days =
-	// 4320), so the count returned is entirely determined by
-	// `windowDays * 24 * 2` -- this pins the derivation itself, rather than
-	// just showing one number exceeds another the way the HOURLY-since-2000
-	// test above does.
-	const rule = `BEGIN:VEVENT
+// A FREQ=MINUTELY rule inside a window this small produces far more raw
+// occurrences than any plausible cap (2 days = 2880 minutes, 3 days = 4320),
+// so hitting `maxOccurrences` (windowDays * 24 * 2, derived below) is
+// guaranteed regardless of which windowDays a given test picks.
+const DENSE_RULE = `BEGIN:VEVENT
 UID:dense@test
 DTSTART:20260815T120000Z
 DTEND:20260815T121000Z
@@ -822,11 +819,101 @@ RRULE:FREQ=MINUTELY
 SUMMARY:Dense
 END:VEVENT`
 
-	const twoDayWindow = parseIcalEvents(calendar(rule), NOW, {windowDays: 2})
-	const threeDayWindow = parseIcalEvents(calendar(rule), NOW, {windowDays: 3})
+test('MAX_OCCURRENCES_PER_EVENT derives exactly from windowDays, not an independent number', () => {
+	// Before the occurrence ceiling threw, this pinned the *count returned*
+	// (windowDays * 24 * 2) directly. Now that hitting it throws instead of
+	// silently truncating (see the finding this fixes: a FREQ=MINUTELY rule
+	// running since 2000 used to return exactly 4320 events -- three days of
+	// a 90-day window -- with no signal that anything had been cut), the
+	// derivation is pinned the same way the iteration ceiling's own message
+	// is: by asserting the thrown message names the exact derived number for
+	// two different windowDays, not just that a throw happened at all.
+	expect.assertions(2)
+	try {
+		parseIcalEvents(calendar(DENSE_RULE), NOW, {windowDays: 2})
+	} catch (error) {
+		expect(((error as Error).cause as Error | undefined)?.message).toMatch(
+			/exceeded 96 occurrences/u,
+		)
+	}
 
-	expect(twoDayWindow).toHaveLength(2 * 24 * 2)
-	expect(threeDayWindow).toHaveLength(3 * 24 * 2)
+	try {
+		parseIcalEvents(calendar(DENSE_RULE), NOW, {windowDays: 3})
+	} catch (error) {
+		expect(((error as Error).cause as Error | undefined)?.message).toMatch(
+			/exceeded 144 occurrences/u,
+		)
+	}
+})
+
+test('hitting the occurrence ceiling is dropped, not rendered as an empty calendar', () => {
+	// Mirrors the iteration ceiling's own "dropped, not silently empty" test:
+	// with a healthy sibling in the calendar, the dense event contributes
+	// nothing to the result either way -- what this actually proves is that
+	// the healthy sibling still comes through once the dense one throws and
+	// is caught by `parseIcalEvents`'s own per-master handling.
+	const events = parseIcalEvents(
+		calendar(`${DENSE_RULE}
+BEGIN:VEVENT
+UID:healthy@test
+DTSTART:20260901T130000Z
+DTEND:20260901T140000Z
+SUMMARY:Healthy
+END:VEVENT`),
+		NOW,
+		{windowDays: 2},
+	)
+
+	expect(events.map((event) => event.title)).toStrictEqual(['Healthy'])
+})
+
+test('the occurrence ceiling throws when it is the only event, instead of returning an empty calendar', () => {
+	// Same distinction the iteration ceiling's own version of this test
+	// draws: alone, "silently give up" and "throw" both produce an empty
+	// calendar unless the throw is actually observed. The distinct error
+	// class (`RecurrenceOccurrenceCeilingError`, not
+	// `RecurrenceIterationCeilingError`) is what a debugging developer needs
+	// to tell "this rule is too dense for the window" apart from "this rule
+	// took too many steps to reach the window" -- both survive as `.cause`
+	// rather than being swallowed by the generic outer message.
+	expect.assertions(3)
+	try {
+		parseIcalEvents(calendar(DENSE_RULE), NOW, {windowDays: 2})
+	} catch (error) {
+		expect(error).toBeInstanceOf(Error)
+		expect((error as Error).message).toBe('every ical event was malformed')
+		expect(((error as Error).cause as Error | undefined)?.message).toMatch(
+			/exceeded 96 occurrences/u,
+		)
+	}
+})
+
+test('a FREQ=MINUTELY rule old enough to be seeded hits the occurrence ceiling loudly, not silently truncated', () => {
+	// The regression case from the report this fix answers: with the real,
+	// un-injected default limits, a FREQ=MINUTELY rule running since 2000
+	// (old enough to be seeded -- see `seekableRule` -- so this reaches the
+	// window cheaply rather than paying for the multi-decade gap) used to
+	// return exactly 4320 events, three days of the 90-day window, with
+	// nothing in the result distinguishing "the window only had three days
+	// of events" from "the cap silently cut off the other 87." Now it throws
+	// instead.
+	expect.assertions(1)
+	try {
+		parseIcalEvents(
+			calendar(`BEGIN:VEVENT
+UID:minutely-since-2000@test
+DTSTART:20000101T130000Z
+DTEND:20000101T130100Z
+RRULE:FREQ=MINUTELY
+SUMMARY:Minutely since 2000
+END:VEVENT`),
+			NOW,
+		)
+	} catch (error) {
+		expect(((error as Error).cause as Error | undefined)?.message).toMatch(
+			/exceeded 4320 occurrences/u,
+		)
+	}
 })
 
 test('trims a trailing paren only when it is not part of a balanced URL', () => {
