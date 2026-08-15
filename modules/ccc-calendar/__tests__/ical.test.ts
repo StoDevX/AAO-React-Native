@@ -459,3 +459,136 @@ END:VEVENT`),
 	expect(events.map((event) => event.startTime)).not.toContain('2026-09-01T13:00:00.000Z')
 	expect(events[events.length - 1].startTime).toBe('2026-11-10T13:00:00.000Z')
 })
+
+test('an HOURLY rule fills the entire 90-day window, not just its first stretch', () => {
+	// A 90-day window holds 90 * 24 = 2160 hourly occurrences. The old
+	// MAX_OCCURRENCES_PER_EVENT = 2000 -- smaller than that -- silently
+	// dropped the window's last few days for exactly this shape of rule.
+	// This test genuinely walks ~235,000 iterations (from 2000-01-01 to the
+	// window), so it is one of the slower tests in this file by design --
+	// there's no way to prove the real cap holds without actually reaching it.
+	const events = parseIcalEvents(
+		calendar(`BEGIN:VEVENT
+UID:hourly@test
+DTSTART:20000101T130000Z
+DTEND:20000101T140000Z
+RRULE:FREQ=HOURLY
+SUMMARY:Hourly
+END:VEVENT`),
+		NOW,
+	)
+
+	// Computed directly against this rule and NOW: 2138-2159 across every
+	// time zone from UTC-12 to UTC+14 (hourly granularity means the
+	// today/window-edge boundaries this file's other tests keep clear of are
+	// unavoidable here). Well above the old 2000 cap either way, and nowhere
+	// near the new cap (4320), so this is squarely "the whole window", not
+	// "still truncated, just less obviously".
+	expect(events.length).toBeGreaterThanOrEqual(2130)
+	expect(events.length).toBeLessThanOrEqual(2160)
+
+	// The window runs through ~2026-11-13; the old cap's last occurrence was
+	// 2026-11-07. This one should reach within a day of the real edge.
+	const lastStart = new Date(events[events.length - 1].startTime)
+	expect(lastStart.getTime()).toBeGreaterThan(new Date('2026-11-11T00:00:00Z').getTime())
+})
+
+const PATHOLOGICAL_MINUTELY_VEVENT = `BEGIN:VEVENT
+UID:pathological@test
+DTSTART:20000101T130000Z
+DTEND:20000101T140000Z
+RRULE:FREQ=MINUTELY
+SUMMARY:Pathological
+END:VEVENT`
+
+test('a rule that exhausts the iteration ceiling is dropped, not rendered as an empty calendar', () => {
+	// FREQ=MINUTELY since 2000 needs on the order of 13 million iterations to
+	// reach the window -- it hits MAX_ITERATIONS_PER_EVENT and throws, which
+	// parseIcalEvents's existing per-master try/catch treats the same as any
+	// other malformed event: dropped, without disturbing its sibling.
+	const events = parseIcalEvents(
+		calendar(`${PATHOLOGICAL_MINUTELY_VEVENT}
+BEGIN:VEVENT
+UID:healthy@test
+DTSTART:20260901T130000Z
+DTEND:20260901T140000Z
+SUMMARY:Healthy
+END:VEVENT`),
+		NOW,
+	)
+
+	expect(events.map((event) => event.title)).toStrictEqual(['Healthy'])
+})
+
+test('a rule that exhausts the iteration ceiling throws when it is the only event, instead of returning an empty calendar', () => {
+	// This is what actually distinguishes "hitting the ceiling throws" from
+	// "hitting the ceiling silently gives up and returns whatever was found
+	// so far" -- with a healthy sibling in the calendar (previous test),
+	// both designs produce the same visible result (the pathological event
+	// contributes nothing either way), so that test alone doesn't prove the
+	// ceiling throws rather than merely returning empty. Alone, the two
+	// diverge: a silent give-up looks like `successCount` stayed 1 and the
+	// calendar legitimately has nothing upcoming; only an actual throw hits
+	// the all-malformed guard and surfaces this loudly.
+	expect(() => parseIcalEvents(calendar(PATHOLOGICAL_MINUTELY_VEVENT), NOW)).toThrow()
+})
+
+test('trims a trailing paren only when it is not part of a balanced URL', () => {
+	// The round-2 fix stripped every trailing ")" unconditionally, which
+	// broke URLs that legitimately end in one -- a Wikipedia-style article
+	// name, or a query string. The usual autolinker rule (keep a trailing
+	// ")" if the parens inside the match are balanced) distinguishes those
+	// from a ")" that's actually closing the surrounding sentence.
+	const [event] = parseIcalEvents(
+		calendar(`BEGIN:VEVENT
+UID:balanced@test
+DTSTART:20260901T130000Z
+DTEND:20260901T140000Z
+SUMMARY:Balanced parens
+DESCRIPTION:See https://en.wikipedia.org/wiki/Foo_(bar) and https://stolaf.edu/s?q=1&x=(2)
+END:VEVENT`),
+		NOW,
+	)
+
+	expect(event.links).toStrictEqual([
+		'https://en.wikipedia.org/wiki/Foo_(bar)',
+		'https://stolaf.edu/s?q=1&x=(2)',
+	])
+})
+
+test('does not pay the description-parsing cost for occurrences the future-only filter would discard anyway', () => {
+	// Before this fix, toWireEvent (HTML-stripping + link-scanning the
+	// description) ran for every occurrence walked from DTSTART, including
+	// the thousands already in the past, only for parseIcalEvents's own
+	// future-only filter to throw almost all of that work away moments
+	// later. Checking the today-or-later condition before building the wire
+	// event, not after, means only the ~90 occurrences actually inside the
+	// window ever reach that cost.
+	//
+	// A wall-clock assertion is inherently a little machine-dependent, so
+	// DTSTART is 2000 rather than 2015 (~9700 candidate occurrences instead
+	// of ~4200) to widen the gap this measures: on ordinary dev hardware this
+	// reliably lands around 230ms fixed, versus roughly 600ms with the old
+	// per-occurrence-regardless-of-date-conversion order restored -- the
+	// 400ms ceiling sits comfortably between the two rather than close to
+	// either.
+	const description =
+		'<p>Join us for chapel featuring a guest speaker. See <a href="https://stolaf.edu/chapel">the schedule</a> for details.</p>'
+
+	const start = Date.now()
+	const events = parseIcalEvents(
+		calendar(`BEGIN:VEVENT
+UID:chapel@test
+DTSTART:20000101T130000Z
+DTEND:20000101T140000Z
+RRULE:FREQ=DAILY
+SUMMARY:Daily chapel
+DESCRIPTION:${description}
+END:VEVENT`),
+		NOW,
+	)
+	const elapsedMs = Date.now() - start
+
+	expect(events.length).toBeGreaterThan(0)
+	expect(elapsedMs).toBeLessThan(400)
+})
