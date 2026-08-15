@@ -12,8 +12,8 @@
     "@frogpond/event-type": "workspace:*"
   },
   "peerDependencies": {
-    "base-64": "^1.0.0",
     "delay": "^7.0.0",
+    "expo-calendar": "~57.0.1",
     "react": "^19.1.0",
     "react-native": "^0.86.2"
   }
