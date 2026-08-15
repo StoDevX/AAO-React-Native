@@ -86,6 +86,27 @@ test('falls back to the description for content when content:encoded is absent',
 	expect(story.content).toBe(story.excerpt)
 })
 
+test('falls back to a truncated content:encoded for the excerpt when description is absent', () => {
+	// Mirrors the Atom parser's own fallback (see atom.test.ts): a feed
+	// configured for full text only -- no <description>, just
+	// <content:encoded> -- must not render a blank excerpt just because it
+	// skipped the dedicated excerpt field.
+	const longContent = 'x'.repeat(250)
+	const stories = parseRssFeed(
+		feed(`
+		<item>
+			<title>No description</title>
+			<link>https://content.krlx.org/longcontent/</link>
+			<dc:creator><![CDATA[Someone]]></dc:creator>
+			<content:encoded><![CDATA[${longContent}]]></content:encoded>
+		</item>
+	`),
+	)
+
+	expect(stories[0].excerpt).toHaveLength(201)
+	expect(stories[0].excerpt).toBe('x'.repeat(200) + '…')
+})
+
 test('falls back to Unknown Author when dc:creator is absent', () => {
 	const stories = parseRssFeed(
 		feed(`

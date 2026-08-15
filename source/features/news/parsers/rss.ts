@@ -6,6 +6,7 @@ import {
 	textContent,
 } from '@frogpond/html-lib'
 import {z} from 'zod'
+import {EXCERPT_LENGTH, truncate} from '../lib/util'
 import {StoryType} from '../types'
 
 function firstText(item: Element, tagName: string): string | undefined {
@@ -50,7 +51,7 @@ function toStory(item: Element): StoryType {
 	}
 
 	let descriptionText = firstText(item, 'description')
-	let excerpt = descriptionText ? fastGetTrimmedText(descriptionText) : ''
+	let excerptFromDescription = descriptionText ? fastGetTrimmedText(descriptionText) : ''
 
 	let encodedText = firstText(item, 'content:encoded')
 	let content = encodedText
@@ -58,6 +59,13 @@ function toStory(item: Element): StoryType {
 		: descriptionText
 			? fastGetTrimmedText(descriptionText)
 			: '(no content)'
+
+	// Mirrors the Atom parser's own excerpt fallback: a feed with no
+	// `<description>` (full text delivered only via `content:encoded`, say)
+	// still gets a non-empty excerpt, truncated from `content`, rather than a
+	// blank one -- otherwise an RSS feed configured this way renders a news
+	// list with blank excerpt rows while the equivalent Atom feed does not.
+	let excerpt = excerptFromDescription || truncate(content, EXCERPT_LENGTH)
 
 	let featuredImage: string | undefined
 	let [enclosure] = getElementsByTagName('enclosure', item)

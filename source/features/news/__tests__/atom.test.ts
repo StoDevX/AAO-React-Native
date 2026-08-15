@@ -125,6 +125,27 @@ test('falls back to (no content) when content is external and summary is absent'
 	expect(stories[0].content).toBe('(no content)')
 })
 
+test('falls back to a truncated content when summary is absent', () => {
+	// Mirrors the RSS parser's own fallback (see rss.test.ts): a feed
+	// configured for full text only -- no <summary>, just <content> -- must
+	// not render a blank excerpt just because it skipped the dedicated
+	// excerpt field.
+	const longContent = 'x'.repeat(250)
+	const stories = parseAtomFeed(
+		feed(`
+		<entry>
+			<title>No summary</title>
+			<id>https://content.krlx.org/longcontent/</id>
+			<updated>2025-04-22T10:43:56Z</updated>
+			<content type="text">${longContent}</content>
+		</entry>
+	`),
+	)
+
+	expect(stories[0].excerpt).toHaveLength(201)
+	expect(stories[0].excerpt).toBe('x'.repeat(200) + '…')
+})
+
 test('reads categories from the term attribute, not element text', () => {
 	const stories = parseAtomFeed(
 		feed(`

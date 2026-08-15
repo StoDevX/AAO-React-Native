@@ -6,9 +6,8 @@ import {
 	textContent,
 } from '@frogpond/html-lib'
 import {z} from 'zod'
+import {EXCERPT_LENGTH, truncate} from '../lib/util'
 import {StoryType} from '../types'
-
-const EXCERPT_LENGTH = 200
 
 function firstElement(entry: Element, tagName: string): Element | undefined {
 	let [el] = getElementsByTagName(tagName, entry)
@@ -40,11 +39,6 @@ function imageEnclosureLink(entry: Element): string | undefined {
 		(el) => el.attribs.rel === 'enclosure' && (el.attribs.type ?? '').startsWith('image/'),
 	)
 	return link?.attribs.href || undefined
-}
-
-function truncate(text: string, length: number): string {
-	if (text.length <= length) return text
-	return text.slice(0, length).trimEnd() + '…'
 }
 
 /// `<title>`, `<summary>` and `<content>` may carry `type="html"`,

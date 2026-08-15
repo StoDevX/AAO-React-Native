@@ -17,3 +17,14 @@ export const trimStoryCateogry = (label: string): string => {
 	let evenedWhitespace = label.replace(/\s+/gu, ' ')
 	return toLaxTitleCase(decode(evenedWhitespace))
 }
+
+export const EXCERPT_LENGTH = 200
+
+/// Shared between the RSS and Atom parsers, which both fall back to a
+/// truncated `content` for `excerpt` when the feed carries no dedicated
+/// excerpt field (`<description>`/`<summary>`) of its own -- keeping this in
+/// one place is what keeps that fallback identical on both sides.
+export function truncate(text: string, length: number): string {
+	if (text.length <= length) return text
+	return text.slice(0, length).trimEnd() + '…'
+}
