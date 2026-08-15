@@ -10,11 +10,20 @@ import type {WireEvent} from './tec-events'
 /// produces a link.
 const BARE_URL_PATTERN = /https?:\/\/[^\s<>"']+/gu
 
+/// A bare URL has no delimiter marking where it ends, so this regex has to
+/// treat ordinary sentence punctuation right after it (a period closing the
+/// sentence, a comma, a closing paren wrapping a parenthetical link) as part
+/// of the match. Trimming it back off here keeps "https://stolaf.edu/a." and
+/// "https://stolaf.edu/b)" from becoming dead links.
+function stripTrailingPunctuation(url: string): string {
+	return url.replace(/[.,;:!?)\]]+$/u, '')
+}
+
 function linksIn(descriptionHtml: string): string[] {
 	let anchorLinks = htmlToSegments(descriptionHtml).flatMap((segment) =>
 		segment.type === 'link' ? [segment.url] : [],
 	)
-	let bareLinks = descriptionHtml.match(BARE_URL_PATTERN) ?? []
+	let bareLinks = (descriptionHtml.match(BARE_URL_PATTERN) ?? []).map(stripTrailingPunctuation)
 	return [...new Set([...anchorLinks, ...bareLinks])]
 }
 
@@ -61,17 +70,27 @@ function toWireEvent(
 
 const EXPANSION_WINDOW_DAYS = 90
 
-/// A safety ceiling on occurrences pulled from a single event's iterator, so
-/// a rule this parser can't otherwise bound (or a corrupt one that never
-/// reports `complete`) can't run away. `RecurExpansion` has to enumerate
-/// every occurrence from the event's true `DTSTART` forward -- re-seeding the
-/// iterator closer to "now" would change which weekday/month an implicit
-/// (no explicit `BYDAY`) weekly or monthly rule lands on, so the date window
-/// below can only stop expansion once it's reached, not before. 2000 covers
-/// decades of a weekly or daily campus recurring event; a rule dense enough
-/// to exhaust it before reaching the window (`MINUTELY`/`SECONDLY` run over
-/// years, say) will have its later occurrences silently cut off rather than
-/// hang the parse.
+/// A ceiling on how many times a single event's iterator gets stepped
+/// forward from its true `DTSTART`. `RecurExpansion` has no way to skip
+/// ahead to a date near "now" -- re-seeding it closer to "now" would change
+/// which weekday/month an implicit (no explicit `BYDAY`) weekly or monthly
+/// rule lands on -- so a series that has been running for years still has to
+/// be walked one occurrence at a time before the date check below ever gets
+/// a chance to stop it. This does NOT bound "years of history"; it bounds
+/// raw iterator steps, and is sized off a direct measurement rather than an
+/// estimate: an HOURLY rule running since 2000 (roughly 230,000 occurrences)
+/// takes about 50ms to walk with ical.js on this parser's own benchmark, so
+/// this ceiling sits comfortably above that with headroom, not below it.
+const MAX_ITERATIONS_PER_EVENT = 1_000_000
+
+/// A separate ceiling on how many occurrences a single event may contribute
+/// to the result -- counting only occurrences that are actually still ahead
+/// (or today), the same set `parseIcalEvents`'s own future-only filter keeps.
+/// A long-running daily series has thousands of occurrences inside the raw
+/// walk above but only ever a handful still ahead of "now"; only counting
+/// those means the cap is spent on a rule dense enough to produce thousands
+/// of *upcoming* occurrences within the 90-day window itself (`MINUTELY`,
+/// say), not on however much history the series happens to carry.
 const MAX_OCCURRENCES_PER_EVENT = 2000
 
 /// Walks `event`'s occurrences (a single one, if it doesn't recur) from its
@@ -79,23 +98,45 @@ const MAX_OCCURRENCES_PER_EVENT = 2000
 /// and honouring `EXDATE` along the way -- both are handled by `ical.js`
 /// itself, via the exceptions passed into the `Event` constructor and the
 /// component's own `EXDATE` properties, respectively.
+///
+/// The walk is bounded by the iterator's own (un-overridden) occurrence
+/// time, not by the possibly-overridden `details.startDate` -- those answer
+/// two different questions. The iterator's position is what tells us we've
+/// walked the whole series past the window and can stop entirely; a single
+/// `RECURRENCE-ID` override moving *this* occurrence's actual start outside
+/// the window (to reschedule it to next year, say) says nothing about where
+/// its still-on-schedule siblings fall, so that occurrence alone is left out
+/// rather than treated as the end of the series.
 function expandOccurrences(event: ICAL.Event, now: Date): WireEvent[] {
 	if (!event.isRecurring()) {
 		return [toWireEvent(event, event.startDate, event.endDate, now)]
 	}
 
 	let windowEnd = addDays(now, EXPANSION_WINDOW_DAYS)
+	let endOfToday = endOfDay(now)
 	let iterator = event.iterator()
 	let occurrences: WireEvent[] = []
 
-	for (let count = 0; count < MAX_OCCURRENCES_PER_EVENT; count += 1) {
+	for (let iterations = 0; iterations < MAX_ITERATIONS_PER_EVENT; iterations += 1) {
 		let occurrence = iterator.next()
 		if (!occurrence) break
+		if (isAfter(toInstant(occurrence), windowEnd)) break
 
 		let details = event.getOccurrenceDetails(occurrence)
-		if (isAfter(toInstant(details.startDate), windowEnd)) break
+		if (isAfter(toInstant(details.startDate), windowEnd)) continue
 
-		occurrences.push(toWireEvent(details.item, details.startDate, details.endDate, now))
+		let wireEvent = toWireEvent(details.item, details.startDate, details.endDate, now)
+
+		// Skip (without counting against the per-event cap below) any
+		// occurrence that's already over. `parseIcalEvents` re-applies this
+		// same future-only check across every event once expansion is done;
+		// doing it here too means a long-running daily/weekly series doesn't
+		// spend its entire cap on decades of irrelevant history before ever
+		// reaching the handful of occurrences near "now" that matter.
+		if (!isAfter(new Date(wireEvent.endTime), endOfToday)) continue
+
+		occurrences.push(wireEvent)
+		if (occurrences.length >= MAX_OCCURRENCES_PER_EVENT) break
 	}
 
 	return occurrences

@@ -199,6 +199,25 @@ END:VEVENT`),
 	expect(event.links).toStrictEqual(['https://stolaf.edu/tickets'])
 })
 
+test('trims sentence punctuation and a wrapping parenthesis off bare URLs', () => {
+	// A bare URL has no delimiter marking where it ends, so a period closing
+	// the sentence or a paren wrapping a parenthetical link reads as part of
+	// the match unless it's explicitly trimmed back off -- and a URL with a
+	// trailing "." or ")" is a dead link when tapped.
+	const [event] = parseIcalEvents(
+		calendar(`BEGIN:VEVENT
+UID:punctuation@test
+DTSTART:20260901T130000Z
+DTEND:20260901T140000Z
+SUMMARY:Punctuated links
+DESCRIPTION:Go to https://stolaf.edu/a. Or (https://stolaf.edu/b)
+END:VEVENT`),
+		NOW,
+	)
+
+	expect(event.links).toStrictEqual(['https://stolaf.edu/a', 'https://stolaf.edu/b'])
+})
+
 test('filters out a past event', () => {
 	const events = parseIcalEvents(
 		calendar(`BEGIN:VEVENT
@@ -381,4 +400,62 @@ END:VEVENT`),
 		['Override title', '2026-08-29T15:00:00.000Z'],
 		['Base title', '2026-09-05T13:00:00.000Z'],
 	])
+})
+
+test('a daily rule running since long before any reasonable iteration cap still fills the window', () => {
+	// A rule this old (started over a decade before NOW) is exactly the shape
+	// that exhausted the old per-event occurrence cap before its walk ever
+	// reached the 90-day window: the cap counted every occurrence pulled off
+	// the iterator, not just the ones that landed inside the window, so a
+	// long-running daily series like a chapel service or a weekday class
+	// block converted "successfully" and silently produced zero events.
+	const events = parseIcalEvents(
+		calendar(`BEGIN:VEVENT
+UID:longrunning@test
+DTSTART:20150101T130000Z
+DTEND:20150101T140000Z
+RRULE:FREQ=DAILY
+SUMMARY:Daily chapel
+END:VEVENT`),
+		NOW,
+	)
+
+	// ~90 days of daily occurrences, give or take the one or two whose
+	// "is this today or already past" classification is time-zone-sensitive
+	// (see the note on `NOW` above).
+	expect(events.length).toBeGreaterThanOrEqual(85)
+	expect(events.length).toBeLessThanOrEqual(91)
+})
+
+test('a RECURRENCE-ID override moved outside the window drops only that occurrence, not the rest of the series', () => {
+	// The override's own DTSTART is a year out -- well past the 90-day
+	// window -- while the series it belongs to would otherwise still be
+	// producing occurrences every week through mid-November. Only the moved
+	// occurrence should disappear from the results.
+	const events = parseIcalEvents(
+		calendar(`BEGIN:VEVENT
+UID:moved@test
+DTSTART:20260818T130000Z
+DTEND:20260818T140000Z
+RRULE:FREQ=WEEKLY;BYDAY=TU;COUNT=13
+SUMMARY:Base
+END:VEVENT
+BEGIN:VEVENT
+UID:moved@test
+RECURRENCE-ID:20260901T130000Z
+DTSTART:20270901T130000Z
+DTEND:20270901T140000Z
+SUMMARY:Moved far out
+END:VEVENT`),
+		NOW,
+	)
+
+	// Computed directly against this rule and NOW, stable across every time
+	// zone from UTC-12 to UTC+14: the 12 occurrences that stayed on schedule
+	// (2026-08-18 through 2026-11-10, skipping the moved 2026-09-01), and
+	// none of them titled after the moved-away occurrence.
+	expect(events).toHaveLength(12)
+	expect(events.map((event) => event.title)).not.toContain('Moved far out')
+	expect(events.map((event) => event.startTime)).not.toContain('2026-09-01T13:00:00.000Z')
+	expect(events[events.length - 1].startTime).toBe('2026-11-10T13:00:00.000Z')
 })
