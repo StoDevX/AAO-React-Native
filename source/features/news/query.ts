@@ -12,25 +12,30 @@ const FEED_ITEMS = 'application/vnd.frogpond.feed-items+json'
 const RSS = 'application/rss+xml'
 const ATOM = 'application/atom+xml'
 
-export const NEWS_TYPES = [WP_V2_POSTS, FEED_ITEMS, RSS, ATOM] as const
+interface NewsParser {
+	format: 'json' | 'text'
+	parse: (body: unknown) => StoryType[]
+}
+
+// One entry per media type, so its wire format and its parser can't drift
+// apart the way a separate switch and ternary could.
+const NEWS_PARSERS: Record<string, NewsParser> = {
+	[WP_V2_POSTS]: {format: 'json', parse: parseWpV2Posts},
+	[FEED_ITEMS]: {format: 'json', parse: parseFeedItems},
+	[RSS]: {format: 'text', parse: parseRssFeed},
+	[ATOM]: {format: 'text', parse: parseAtomFeed},
+}
+
+export const NEWS_TYPES = Object.keys(NEWS_PARSERS)
 
 export const keys = {
 	named: (name: string) => ['news', 'named', name] as const,
 }
 
-function parse(type: string, body: unknown): StoryType[] {
-	switch (type) {
-		case WP_V2_POSTS:
-			return parseWpV2Posts(body)
-		case FEED_ITEMS:
-			return parseFeedItems(body)
-		case RSS:
-			return parseRssFeed(body)
-		case ATOM:
-			return parseAtomFeed(body)
-		default:
-			throw new Error(`no news parser for "${type}"`)
-	}
+function parserFor(type: string): NewsParser {
+	let parser = NEWS_PARSERS[type]
+	if (!parser) throw new Error(`no news parser for "${type}"`)
+	return parser
 }
 
 // oxlint-disable-next-line typescript/explicit-module-boundary-types
@@ -41,13 +46,9 @@ export const namedNewsOptions = (source: string) =>
 			let manifest = await fetchManifest(queryClient)
 			let resolved = resolveSource(manifest, REL_NEWS, queryKey[2], NEWS_TYPES)
 
-			let body = await fetchSourceBody(
-				resolved.href,
-				signal,
-				'News',
-				resolved.type === RSS || resolved.type === ATOM ? 'text' : 'json',
-			)
+			let parser = parserFor(resolved.type)
+			let body = await fetchSourceBody(resolved.href, signal, 'News', parser.format)
 
-			return parse(resolved.type, body)
+			return parser.parse(body)
 		},
 	})
