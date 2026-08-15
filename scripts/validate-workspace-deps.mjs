@@ -17,11 +17,15 @@ import {MODULES_BASE} from './paths.mjs'
 
 const SOURCE_EXTENSIONS = new Set(['.ts', '.tsx', '.js', '.jsx', '.mjs'])
 
-// `from '@frogpond/x'`, `require('@frogpond/x')`, `import('@frogpond/x')`.
-// Deliberately not a bare substring match — a package named in a comment or a
+// `from '@frogpond/x'`, `require('@frogpond/x')`, `import('@frogpond/x')`, and
+// the side-effect form `import '@frogpond/x'` — which has no `from` and would
+// otherwise read as an unused declaration, tempting someone to delete a real
+// dependency.
+//
+// Deliberately not a bare substring match: a package named in a comment or a
 // doc string is not an import.
 const IMPORT_PATTERN =
-	/(?:\bfrom\s*|\brequire\s*\(\s*|\bimport\s*\(\s*)['"](@frogpond\/[a-z0-9-]+)['"]/gu
+	/(?:\bfrom\s*|\brequire\s*\(\s*|\bimport\s*\(\s*|\bimport\s+)['"](@frogpond\/[a-z0-9-]+)['"]/gu
 
 function* sourceFilesIn(dir) {
 	for (let entry of fs.readdirSync(dir, {withFileTypes: true})) {

@@ -10,7 +10,6 @@
   },
   "dependencies": {
     "@callstack/react-theme-provider": "3.0.9",
-    "@frogpond/app-theme": "workspace:*",
     "@frogpond/colors": "workspace:*",
     "@frogpond/constants": "workspace:*",
     "@frogpond/filter": "workspace:*",
@@ -18,9 +17,7 @@
     "@frogpond/layout": "workspace:*",
     "@frogpond/lists": "workspace:*",
     "@frogpond/notice": "workspace:*",
-    "@frogpond/tableview": "workspace:*",
     "@frogpond/toolbar": "workspace:*",
-    "@frogpond/touchable": "workspace:*",
     "lodash": "4.18.1"
   },
   "peerDependencies": {

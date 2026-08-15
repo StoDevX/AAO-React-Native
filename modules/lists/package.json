@@ -10,7 +10,6 @@
   },
   "dependencies": {
     "@callstack/react-theme-provider": "3.0.9",
-    "@frogpond/app-theme": "workspace:*",
     "@frogpond/colors": "workspace:*",
     "@frogpond/notice": "workspace:*",
     "@frogpond/separator": "workspace:*",
