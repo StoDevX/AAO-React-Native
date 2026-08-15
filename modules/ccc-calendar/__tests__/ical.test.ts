@@ -1,7 +1,7 @@
 import {readFileSync} from 'node:fs'
 import {join} from 'node:path'
 import ICAL from 'ical.js'
-import {parseIcalEvents, seekableRule} from '../parsers/ical'
+import {IcalBodyParseError, parseIcalEvents, seekableRule} from '../parsers/ical'
 
 // `parseIcalEvents` buckets occurrences by calendar day (via date-fns'
 // `startOfDay`/`endOfDay`), which reads the process's local time zone --
@@ -368,6 +368,59 @@ test('returns an empty list when the calendar legitimately has no events', () =>
 
 test('throws when the response is not a string', () => {
 	expect(() => parseIcalEvents({not: 'a string'})).toThrow()
+})
+
+// A mistyped manifest entry -- a calendar `rel` pointed at a JSON or RSS/Atom
+// source, say -- hands `parseIcalEvents` a body that is a string, so
+// `z.string().parse` above doesn't catch it, but isn't iCalendar. `ical.js`
+// doesn't fail uniformly on that: some shapes are rejected immediately by its
+// own line parser with an already-clean `ParserError` (an HTML document, and,
+// it turns out, RSS/Atom too -- their leading `<?xml ...?>` prologue isn't a
+// valid content line either); others parse just well enough to build a
+// malformed internal tree and only fail later, inside `ical.js` internals, as
+// an anonymous `TypeError` that says nothing about iCalendar at all. Every
+// case here should surface as the same attributable `IcalBodyParseError`
+// regardless of which of those two shapes the underlying failure took.
+describe('a body that is a string but is not iCalendar', () => {
+	function expectIcalBodyParseError(body: string): void {
+		expect.assertions(2)
+		try {
+			parseIcalEvents(body)
+		} catch (error) {
+			expect(error).toBeInstanceOf(IcalBodyParseError)
+			expect((error as Error).cause).toBeInstanceOf(Error)
+		}
+	}
+
+	test('JSON', () => {
+		expectIcalBodyParseError(JSON.stringify({items: [{title: 'Not a calendar'}]}, null, 2))
+	})
+
+	test('an RSS document', () => {
+		expectIcalBodyParseError(`<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+<channel>
+<title>Not a calendar</title>
+<item><title>Item</title></item>
+</channel>
+</rss>`)
+	})
+
+	test('an Atom document', () => {
+		expectIcalBodyParseError(`<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+<title>Not a calendar</title>
+<entry><title>Entry</title></entry>
+</feed>`)
+	})
+
+	test('an empty string', () => {
+		expectIcalBodyParseError('')
+	})
+
+	test('whitespace only', () => {
+		expectIcalBodyParseError('   \n\t\n  ')
+	})
 })
 
 test('sorts events by start time', () => {

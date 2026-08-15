@@ -557,20 +557,60 @@ function expandOccurrences(event: ICAL.Event, now: Date, limits: ExpansionLimits
 	return occurrences
 }
 
+/// A dedicated error class for a body that doesn't parse as iCalendar at all
+/// -- as opposed to one that parses fine but describes an event this parser
+/// can't expand (a missing `DTSTART`, an exhausted ceiling, and so on).
+///
+/// `ICAL.Component.fromString` doesn't fail uniformly on bad input. An HTML
+/// body, or one where the very first line already can't be read as an
+/// iCalendar content line (an RSS or Atom document's `<?xml ...?>` prologue,
+/// say), is rejected by `ical.js`'s own line parser with a clean,
+/// already-attributable `ParserError`. But some inputs parse as a sequence of
+/// content lines just well enough to produce a malformed internal `jCal`
+/// tree, and the failure only surfaces later, inside `ical.js` internals, as
+/// an anonymous `TypeError: Cannot read properties of undefined (reading
+/// 'propertyGroups')` -- reproduced directly against a JSON body (an
+/// easy mistake for a manifest entry pointing at the wrong source). That
+/// message says nothing about iCalendar at all, so in Sentry it's
+/// indistinguishable from a real bug in this parser's own code. Catching
+/// both failure shapes here and re-throwing as this one error, with the
+/// original attached as `cause`, makes every "this body isn't iCalendar"
+/// case attributable the same way, without losing the underlying detail.
+export class IcalBodyParseError extends Error {}
+
+/// Parses `text` and returns its `VEVENT`s directly, forcing -- in the same
+/// try/catch -- the one other call (`getAllSubcomponents`) that can still
+/// throw on a body that isn't really iCalendar. An empty or whitespace-only
+/// body parses via `ICAL.Component.fromString` without error (there's no
+/// content line to reject), but leaves the component's internal `jCal` tree
+/// without the shape `getAllSubcomponents` expects, so the same anonymous
+/// `TypeError` surfaces one call later instead. Both calls are wrapped
+/// together so neither failure shape can leak past this function
+/// unattributed.
+function parseVevents(text: string): ICAL.Component[] {
+	try {
+		return ICAL.Component.fromString(text).getAllSubcomponents('vevent')
+	} catch (error) {
+		throw new IcalBodyParseError('ical body is not valid iCalendar', {cause: error})
+	}
+}
+
 function uidOf(component: ICAL.Component): string | undefined {
 	let uid = component.getFirstPropertyValue('uid')
 	return typeof uid === 'string' && uid ? uid : undefined
 }
 
-/// The outer shape stays strict: a body that isn't a string at all, or isn't
-/// parseable iCalendar, means the source is wrong, and that should throw.
-/// Each master `VEVENT` (one without its own `RECURRENCE-ID` -- i.e. not
-/// itself an override) is then converted on its own, so one event this feed
-/// can't fully describe (a missing `DTSTART`, for instance) doesn't blank
-/// the rest of the calendar. `RECURRENCE-ID` overrides are matched to their
-/// master by `UID` and passed in explicitly, rather than relying on
-/// `ical.js`'s own automatic matching, which does not consider `UID` at all
-/// and would relate every override in the calendar to every master.
+/// The outer shape stays strict: a body that isn't a string at all (rejected
+/// by `z.string().parse`), or isn't parseable iCalendar (rejected by
+/// `parseVevents`, as `IcalBodyParseError`), means the source is wrong, and
+/// that should throw. Each master `VEVENT` (one without its own
+/// `RECURRENCE-ID` -- i.e. not itself an override) is then converted on its
+/// own, so one event this feed can't fully describe (a missing `DTSTART`,
+/// for instance) doesn't blank the rest of the calendar. `RECURRENCE-ID`
+/// overrides are matched to their master by `UID` and passed in explicitly,
+/// rather than relying on `ical.js`'s own automatic matching, which does not
+/// consider `UID` at all and would relate every override in the calendar to
+/// every master.
 ///
 /// A master's success is tracked independently of how many (if any)
 /// occurrences it produced -- a valid, non-malformed recurring event can
@@ -603,8 +643,7 @@ export function parseIcalEvents(
 ): WireEvent[] {
 	let resolvedLimits = resolveLimits(limits)
 	let text = z.string().parse(body)
-	let calendar = ICAL.Component.fromString(text)
-	let vevents = calendar.getAllSubcomponents('vevent')
+	let vevents = parseVevents(text)
 
 	let masters = vevents.filter((vevent) => !vevent.hasProperty('recurrence-id'))
 
