@@ -276,11 +276,18 @@ const SEED_MARGIN_PERIODS = 2
 ///
 /// This is deliberately conservative otherwise too: every fix this file has
 /// been through was a case of a "should be safe" shortcut turning out not to
-/// be for some rule shape the original fix didn't consider. Only the shapes
-/// actually covered by the equivalence harness (`ical-equivalence.test.ts`)
-/// are treated as seekable; every other shape keeps paying the unseeded
-/// walk's cost rather than risk a wrong one.
-function seekableRule(component: ICAL.Component): ICAL.Recur | undefined {
+/// be for some rule shape the original fix didn't consider. Widening this
+/// predicate to accept MONTHLY or YEARLY, in particular, has been checked
+/// directly against the equivalence harness and does *not* hold -- both
+/// diverge from the reference walk -- so that exclusion is load-bearing, not
+/// just cautious.
+///
+/// Exported (alongside `computeSeedTime`) only so `ical-equivalence.test.ts`
+/// can assert its own coverage against the real predicate -- calling this
+/// directly rather than keeping a second, hand-maintained copy in the test
+/// file that could silently drift from what this function actually does.
+/// Not part of the module's public parsing API.
+export function seekableRule(component: ICAL.Component): ICAL.Recur | undefined {
 	let rrules = component.getAllProperties('rrule')
 	if (rrules.length !== 1) return undefined
 
@@ -307,13 +314,34 @@ function seekableRule(component: ICAL.Component): ICAL.Recur | undefined {
 /// steps would -- DST included, since both are wall-clock field arithmetic,
 /// not absolute-instant arithmetic.
 ///
+/// `durationSeconds` -- the event's own `DTEND - DTSTART` (or `RDATE`'s
+/// shared duration; every occurrence of one `VEVENT`, `RRULE`- or
+/// `RDATE`-produced alike, uses the same span) -- is subtracted from the
+/// elapsed time *before* it's floored into periods. Without it, an
+/// occurrence that started before the seed but is still ongoing at `now` (a
+/// multi-day event, say) would be skipped entirely: the seed becomes both
+/// `RecurExpansion`'s own walk position and the start position for the
+/// binary search it runs over `RDATE`/`EXDATE`, so anything -- RRULE-stepped
+/// or RDATE-listed -- that starts earlier than the seed is never reached,
+/// regardless of how long it runs past that point. Pulling the seed back by
+/// the occurrence's own duration keeps any occurrence still in progress at
+/// `now` on the reachable side of the seed. Caught directly: an unpadded
+/// seed against a multi-day-occurrence `DAILY` rule silently dropped every
+/// occurrence still running at `now`, the exact case `parseIcalEvents`'s own
+/// `isOngoing` and `endTime > endOfToday` handling exist to keep.
+///
 /// Returns `undefined` when there's nothing to gain -- `DTSTART` is already
 /// within a few periods of `now` -- since the unseeded walk from `DTSTART` is
 /// already cheap in that case, and skipping the seed avoids any risk of
 /// landing it wrong for no benefit.
-function computeSeedTime(dtstart: ICAL.Time, rule: ICAL.Recur, now: Date): ICAL.Time | undefined {
+export function computeSeedTime(
+	dtstart: ICAL.Time,
+	rule: ICAL.Recur,
+	now: Date,
+	durationSeconds: number,
+): ICAL.Time | undefined {
 	let periodSeconds = FIXED_PERIOD_SECONDS[rule.freq] * (rule.interval || 1)
-	let elapsedSeconds = (now.getTime() - toInstant(dtstart).getTime()) / 1000
+	let elapsedSeconds = (now.getTime() - toInstant(dtstart).getTime()) / 1000 - durationSeconds
 	let periodsElapsed = Math.floor(elapsedSeconds / periodSeconds)
 	let periodsToJump = periodsElapsed - SEED_MARGIN_PERIODS
 	if (periodsToJump <= 0) return undefined
@@ -375,7 +403,9 @@ function expandOccurrences(event: ICAL.Event, now: Date, limits: ExpansionLimits
 	let windowEnd = addDays(now, limits.windowDays)
 	let endOfToday = endOfDay(now)
 	let rule = seekableRule(event.component)
-	let seedTime = rule ? computeSeedTime(event.startDate, rule, now) : undefined
+	let durationSeconds =
+		(toInstant(event.endDate).getTime() - toInstant(event.startDate).getTime()) / 1000
+	let seedTime = rule ? computeSeedTime(event.startDate, rule, now, durationSeconds) : undefined
 	let iterator = event.iterator(seedTime)
 	let occurrences: WireEvent[] = []
 

@@ -1,6 +1,7 @@
 import {readFileSync} from 'node:fs'
 import {join} from 'node:path'
-import {parseIcalEvents} from '../parsers/ical'
+import ICAL from 'ical.js'
+import {parseIcalEvents, seekableRule} from '../parsers/ical'
 
 // `parseIcalEvents` buckets occurrences by calendar day (via date-fns'
 // `startOfDay`/`endOfDay`), which reads the process's local time zone --
@@ -854,6 +855,14 @@ ${withDescription ? `DESCRIPTION:${description}\n` : ''}END:VEVENT`)
 		}
 		return best
 	}
+
+	// Asserted directly, not just relied on in a comment: if `BYHOUR` (or
+	// `seekableRule` itself) is ever widened enough to accept this rule, this
+	// fails immediately instead of leaving the timing assertion below to
+	// silently degrade into noise-chasing.
+	let chapelComponent = ICAL.Component.fromString(chapelCalendar(false))
+	let chapelVevent = chapelComponent.getFirstSubcomponent('vevent')
+	expect(chapelVevent && seekableRule(chapelVevent)).toBeUndefined()
 
 	parseIcalEvents(chapelCalendar(false), NOW)
 	parseIcalEvents(chapelCalendar(true), NOW)
