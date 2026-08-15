@@ -200,9 +200,12 @@ function compareWithDateTruncation(a: ICAL.Time, b: ICAL.Time): number {
 	return a.compare(b)
 }
 
-/// Whether `time` is named by one of `component`'s own `EXDATE` values. Only
-/// used for the injected-`DTSTART` case below -- everywhere else, `EXDATE`
-/// exclusion is `ical.js`'s own job.
+/// Whether `time` is named by one of `component`'s own `EXDATE` values. Used
+/// for the two occurrences below that `ical.js` never itself evaluates
+/// `EXDATE` against -- the injected `DTSTART` of an `RDATE`-only series, and
+/// a beyond-window override found by its own `RECURRENCE-ID` rather than by
+/// the walk reaching it. Everywhere else (any occurrence the walk itself
+/// produces), `EXDATE` exclusion is `ical.js`'s own job.
 function isExcludedByExdate(component: ICAL.Component, time: ICAL.Time): boolean {
 	return component
 		.getAllProperties('exdate')
@@ -295,8 +298,37 @@ function expandOccurrences(event: ICAL.Event, now: Date, limits: ExpansionLimits
 	// here; one within the window is reached normally by the walk below,
 	// which already applies to it whatever `getOccurrenceDetails` returns
 	// (its moved-to start, if this is an override at all).
+	//
+	// The `EXDATE` check keeps this loop agreeing with the walk below on an
+	// EXDATE'd `RECURRENCE-ID`: the walk never reaches (and so never
+	// overrides) an EXDATE'd position when it's inside the window, since
+	// `RecurExpansion` excludes it from the occurrence stream entirely --
+	// without the same check here, that exact position, if beyond the
+	// window, would apply anyway, purely as an accident of which side of
+	// `windowEnd` it happened to fall on.
+	//
+	// There's one thing this loop still can't agree with the walk on: a
+	// `RECURRENCE-ID` that names a time the base rule never actually
+	// produces at all -- past a `COUNT`/`UNTIL` boundary, or not matching a
+	// `BYDAY`/`BYMONTH` restriction, say. Inside the window, the walk simply
+	// never reaches that position, so no override applies; here, with no
+	// membership test, a beyond-window `RECURRENCE-ID` in that same
+	// situation is taken at face value and its override still fires,
+	// producing a phantom occurrence the base rule never actually
+	// schedules. Closing that gap needs the same recurrence-set membership
+	// logic `RecurExpansion` itself runs internally (evaluating `BYDAY`/
+	// `BYMONTH`/`COUNT`/`UNTIL` against an arbitrary candidate `Time`,
+	// nothing this parser has a cheap way to do without walking the
+	// iterator there, which is the exact cost this loop exists to avoid).
+	// RFC 5545 requires a `RECURRENCE-ID` to name an actual instance of the
+	// recurrence set in the first place, so this situation only arises from
+	// a calendar that's already violating the spec -- deliberately left
+	// unhandled rather than reintroducing an iterator walk to guard against
+	// malformed input, but noted here (and pinned by a test) rather than
+	// silently accepted.
 	for (let exception of Object.values(event.exceptions)) {
 		if (!isAfter(toInstant(exception.recurrenceId), windowEnd)) continue
+		if (isExcludedByExdate(event.component, exception.recurrenceId)) continue
 		if (tryPush(exception.recurrenceId)) return occurrences
 	}
 

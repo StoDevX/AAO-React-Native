@@ -495,49 +495,122 @@ END:VEVENT`),
 	expect(events.map((event) => event.startTime)).not.toContain('2026-12-01T13:00:00.000Z')
 })
 
+test('a beyond-window override at an EXDATE-excluded position is suppressed the same as one inside the window would be', () => {
+	// If this override's RECURRENCE-ID sat inside the window instead, the
+	// walk would never reach it in the first place -- RecurExpansion drops
+	// an EXDATE'd position from the occurrence stream entirely, so no
+	// override ever gets a chance to apply there. A beyond-window
+	// RECURRENCE-ID has to agree with that: found directly rather than by
+	// the walk reaching it, it still shouldn't apply just because it
+	// happens to fall on the other side of windowEnd from an otherwise
+	// identical in-window case.
+	const events = parseIcalEvents(
+		calendar(`BEGIN:VEVENT
+UID:exdatedoverride@test
+DTSTART:20260818T130000Z
+DTEND:20260818T140000Z
+RRULE:FREQ=WEEKLY;BYDAY=TU
+EXDATE:20261201T130000Z
+SUMMARY:Base
+END:VEVENT
+BEGIN:VEVENT
+UID:exdatedoverride@test
+RECURRENCE-ID:20261201T130000Z
+DTSTART:20260920T150000Z
+DTEND:20260920T160000Z
+SUMMARY:Should not appear
+END:VEVENT`),
+		NOW,
+	)
+
+	expect(events.map((event) => event.title)).not.toContain('Should not appear')
+	expect(events.map((event) => event.startTime)).not.toContain('2026-09-20T15:00:00.000Z')
+})
+
+test('a RECURRENCE-ID naming a time outside the base rule entirely still applies when beyond the window (documented limitation)', () => {
+	// Pinning current, deliberate behaviour rather than an incidental one:
+	// this override's RECURRENCE-ID (2030) names a time a COUNT=3 rule
+	// never actually produces (its last real occurrence is 2026-09-01) --
+	// RFC 5545 requires a RECURRENCE-ID to name an actual instance of the
+	// recurrence set, so a real producer wouldn't emit this. If the
+	// RECURRENCE-ID were inside the window instead, the walk would simply
+	// never reach it (the rule is already exhausted by then), so no
+	// override would apply; found directly here, beyond the window, this
+	// parser has no cheap way to tell it isn't a real occurrence, so its
+	// override still fires. See the comment above the override loop in
+	// ical.ts for why this asymmetry is left as-is rather than fixed.
+	const events = parseIcalEvents(
+		calendar(`BEGIN:VEVENT
+UID:phantomoverride@test
+DTSTART:20260818T130000Z
+DTEND:20260818T140000Z
+RRULE:FREQ=WEEKLY;BYDAY=TU;COUNT=3
+SUMMARY:Base
+END:VEVENT
+BEGIN:VEVENT
+UID:phantomoverride@test
+RECURRENCE-ID:20300101T130000Z
+DTSTART:20260920T150000Z
+DTEND:20260920T160000Z
+SUMMARY:Phantom occurrence
+END:VEVENT`),
+		NOW,
+	)
+
+	expect(events.map((event) => event.title)).toContain('Phantom occurrence')
+	expect(events.map((event) => event.startTime)).toContain('2026-09-20T15:00:00.000Z')
+})
+
 test('a far-future override does not blow the iteration ceiling on a long-running dense rule', () => {
 	// The regression this guards: an earlier version of the pulled-in-window
 	// fix discovered a beyond-window override by extending the walk *past*
 	// windowEnd, following the iterator out to the override's own
 	// RECURRENCE-ID position -- which, on a rule dense and old enough, could
-	// need more steps than the 300,000-iteration ceiling allows just to get
-	// there, regardless of whether the override was ever going to land in
-	// the window. An HOURLY rule since 2000 (this file's own "closest thing
-	// to a plausible real feed" canary) needs ~235,500 steps to reach `now`
-	// on its own; walking on another ~35 years to an override dated 2035
-	// would need roughly 306,000 more on top of that -- past the ceiling.
-	// The fixed version never walks the iterator to find an override at all:
-	// it checks the override's own already-known startDate directly. The
-	// point of this test is that call returning at all, with the full
-	// window intact, rather than throwing -- not a timing bound. (This same
-	// shape, run without the fix, threw `exceeded 300000 recurrence
-	// iterations` here rather than merely running slowly; an absolute
-	// wall-clock assertion would also be hardware-dependent, the same
-	// reasoning the description-parsing-cost test above already documents.)
+	// need more steps than the iteration ceiling allows just to get there,
+	// regardless of whether the override was ever going to land in the
+	// window. The fixed version never walks the iterator to find an override
+	// at all: it checks the override's own already-known startDate directly,
+	// so a beyond-window override costs zero iterations no matter how far
+	// out its RECURRENCE-ID is.
+	//
+	// This doesn't need the real 300,000-iteration ceiling or an
+	// HOURLY-since-2000 rule to prove that -- this file already keeps one
+	// such real-scale canary (below) for the ceiling's own headroom, and a
+	// second one here would be both redundant (a fixed beyond-window
+	// override contributes no iterations to spend against that headroom at
+	// all) and the single largest cost in this file, at zero additional
+	// regression coverage. A small injected `maxIterations` reproduces the
+	// identical mechanism and failure mode (the walk-based approach throwing
+	// `RecurrenceIterationCeilingError`, discarding the whole event) far
+	// more cheaply: a WEEKLY rule with no COUNT, an override dated nine
+	// years out, and a ceiling small enough that walking the iterator to
+	// there would exceed it long before a fixed, non-walking lookup would
+	// even notice.
 	const events = parseIcalEvents(
 		calendar(`BEGIN:VEVENT
-UID:hourlyoverride@test
-DTSTART:20000101T130000Z
-DTEND:20000101T140000Z
-RRULE:FREQ=HOURLY
-SUMMARY:Hourly
+UID:weeklyoverride@test
+DTSTART:20260818T130000Z
+DTEND:20260818T140000Z
+RRULE:FREQ=WEEKLY;BYDAY=TU
+SUMMARY:Weekly
 END:VEVENT
 BEGIN:VEVENT
-UID:hourlyoverride@test
+UID:weeklyoverride@test
 RECURRENCE-ID:20350101T130000Z
-DTSTART:20260101T130000Z
-DTEND:20260101T140000Z
-SUMMARY:Moved way in from 2035
+DTSTART:20260920T130000Z
+DTEND:20260920T140000Z
+SUMMARY:Pulled in from 2035
 END:VEVENT`),
 		NOW,
+		{maxIterations: 50},
 	)
 
-	// Same shape and expected count as the HOURLY-since-2000 canary below --
-	// the override's own moved-to date (2026-01-01) is in the past relative
-	// to NOW, so it doesn't itself appear, but every normal in-window
-	// occurrence must still be there.
-	expect(events.length).toBeGreaterThanOrEqual(2130)
-	expect(events.length).toBeLessThanOrEqual(2160)
+	// 13 occurrences of the base WEEKLY;BYDAY=TU rule inside the 90-day
+	// window (matching the "expands a weekly recurrence" test above, same
+	// DTSTART and rule) plus the pulled-in override.
+	expect(events).toHaveLength(14)
+	expect(events.map((event) => event.title)).toContain('Pulled in from 2035')
+	expect(events.map((event) => event.startTime)).toContain('2026-09-20T13:00:00.000Z')
 })
 
 test('an HOURLY rule fills the entire 90-day window, not just its first stretch', () => {
