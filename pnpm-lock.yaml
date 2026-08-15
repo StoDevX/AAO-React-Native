@@ -220,6 +220,9 @@ importers:
       fuzzyfind:
         specifier: 2.1.0
         version: 2.1.0
+      ical.js:
+        specifier: 2.2.1
+        version: 2.2.1
       keyword-search:
         specifier: 0.1.2
         version: 0.1.2
@@ -536,6 +539,9 @@ importers:
       delay:
         specifier: ^7.0.0
         version: 7.0.0
+      ical.js:
+        specifier: 2.2.1
+        version: 2.2.1
       moment-timezone:
         specifier: ^0.6.3
         version: 0.6.3
@@ -3965,6 +3971,9 @@ packages:
   human-signals@2.1.0:
     resolution: {integrity: sha512-B4FFZ6q/T2jhhksgkbEW3HBvWIfDW85snkQgawt07S7J5QXTk6BkNV+0yAeZrM5QpMAdYlocGoljn0sJ/WQkFw==}
     engines: {node: '>=10.17.0'}
+
+  ical.js@2.2.1:
+    resolution: {integrity: sha512-yK/UlPbEs316igb/tjRgbFA8ZV75rCsBJp/hWOatpyaPNlgw0dGDmU+FoicOcwX4xXkeXOkYiOmCqNPFpNPkQg==}
 
   idb@8.0.3:
     resolution: {integrity: sha512-LtwtVyVYO5BqRvcsKuB2iUMnHwPVByPCXFXOpuU96IZPPoPN6xjOGxZQ74pgSVVLQWtUOYgyeL4GE98BY5D3wg==}
@@ -9122,6 +9131,8 @@ snapshots:
       - supports-color
 
   human-signals@2.1.0: {}
+
+  ical.js@2.2.1: {}
 
   idb@8.0.3: {}
 

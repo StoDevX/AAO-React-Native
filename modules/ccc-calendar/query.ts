@@ -5,6 +5,7 @@ import {queryOptions} from '@tanstack/react-query'
 import moment from 'moment'
 import {queryClient} from '../../source/init/tanstack-query'
 import {parseEvents} from './parsers/events'
+import {parseIcalEvents} from './parsers/ical'
 import {parseTecEvents, type WireEvent} from './parsers/tec-events'
 import {NamedCalendar} from './types'
 
@@ -30,8 +31,9 @@ function convertEvents(data: WireEvent[], options: {eventMapper?: EventMapper}):
 
 const TEC_EVENTS = 'application/vnd.tribe.events.v1+json'
 const FROGPOND_EVENTS = 'application/vnd.frogpond.events+json'
+const ICAL_EVENTS = 'text/calendar'
 
-export const CALENDAR_TYPES = [TEC_EVENTS, FROGPOND_EVENTS] as const
+export const CALENDAR_TYPES = [TEC_EVENTS, FROGPOND_EVENTS, ICAL_EVENTS] as const
 
 function parse(type: string, body: unknown): WireEvent[] {
 	switch (type) {
@@ -39,6 +41,8 @@ function parse(type: string, body: unknown): WireEvent[] {
 			return parseTecEvents(body)
 		case FROGPOND_EVENTS:
 			return parseEvents(body)
+		case ICAL_EVENTS:
+			return parseIcalEvents(body)
 		default:
 			throw new Error(`no calendar parser for "${type}"`)
 	}
@@ -48,7 +52,8 @@ async function fetchCalendar(calendar: NamedCalendar, signal: AbortSignal): Prom
 	let manifest = await fetchManifest(queryClient)
 	let resolved = resolveSource(manifest, REL_CALENDAR, calendar, CALENDAR_TYPES)
 
-	let body = await fetchSourceBody(resolved.href, signal, 'Calendar')
+	let format: 'json' | 'text' = resolved.type === ICAL_EVENTS ? 'text' : 'json'
+	let body = await fetchSourceBody(resolved.href, signal, 'Calendar', format)
 	return parse(resolved.type, body)
 }
 

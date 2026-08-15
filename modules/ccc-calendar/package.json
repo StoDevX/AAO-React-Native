@@ -14,7 +14,8 @@
     "@frogpond/event-type": "workspace:*",
     "@frogpond/html-lib": "workspace:*",
     "@frogpond/notice": "workspace:*",
-    "@frogpond/timer": "workspace:*"
+    "@frogpond/timer": "workspace:*",
+    "ical.js": "2.2.1"
   },
   "peerDependencies": {
     "delay": "^7.0.0",
