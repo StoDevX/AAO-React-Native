@@ -190,6 +190,9 @@ importers:
       expo-build-properties:
         specifier: 57.0.9
         version: 57.0.9(expo@57.0.11)
+      expo-calendar:
+        specifier: 57.0.1
+        version: 57.0.1(expo@57.0.11)(react-native@0.86.2)
       expo-clipboard:
         specifier: 57.0.1
         version: 57.0.1(expo@57.0.11)(react-native@0.86.2)(react@19.2.8)
@@ -3609,6 +3612,12 @@ packages:
     resolution: {integrity: sha512-IX8Nz85yNDZyqBK7zbLEfn4ijMGaF6TmLjCY2KE0UKltUoV78DhgN6ksPZbDbPDvqLpU2fMY/5OD4CbYB7hHwg==}
     peerDependencies:
       expo: '*'
+
+  expo-calendar@57.0.1:
+    resolution: {integrity: sha512-f07ZrBRfZ+J1r+b0pHlo8Qbg4o3E97q4nx7Ce/aW6XQNKgBEpV1oJS1zGnxtWVBFnSO49hb92+fZGrieYj1Yzg==}
+    peerDependencies:
+      expo: '*'
+      react-native: '*'
 
   expo-clipboard@57.0.1:
     resolution: {integrity: sha512-HWICri4+1ao7S6QEfcorxVumXDiDnx1guGGewjZgGJWLGxFYs0RgH8ujBs+lkTzBkMmlwADaWSlaesR+nDJt5Q==}
@@ -8732,6 +8741,11 @@ snapshots:
       expo: 57.0.11(@babel/core@7.29.7)(@expo/dom-webview@57.0.1)(@expo/metro-runtime@57.0.8)(expo-router@57.0.11)(react-dom@19.2.3)(react-native-webview@13.16.1)(react-native-worklets@0.10.1)(react-native@0.86.2)(react@19.2.8)(supports-color@8.1.1)(typescript@7.0.2)
       resolve-from: 5.0.0
       semver: 7.8.5
+
+  expo-calendar@57.0.1(expo@57.0.11)(react-native@0.86.2):
+    dependencies:
+      expo: 57.0.11(@babel/core@7.29.7)(@expo/dom-webview@57.0.1)(@expo/metro-runtime@57.0.8)(expo-router@57.0.11)(react-dom@19.2.3)(react-native-webview@13.16.1)(react-native-worklets@0.10.1)(react-native@0.86.2)(react@19.2.8)(supports-color@8.1.1)(typescript@7.0.2)
+      react-native: 0.86.2(patch_hash=6ca2e1225f38672b073b92b9d13f24feebbe9e37ba67708a3f1569275ce99191)(@babel/core@7.29.7)(@react-native/jest-preset@0.86.2)(@react-native/metro-config@0.86.2)(@types/react@19.2.18)(react@19.2.8)(supports-color@8.1.1)
 
   expo-clipboard@57.0.1(expo@57.0.11)(react-native@0.86.2)(react@19.2.8):
     dependencies:

@@ -170,6 +170,10 @@ const config: ExpoConfig = {
 				},
 			},
 			NSBonjourServices: ['_ccc-server._tcp.'],
+			// Note: remember to change this text in add-to-device-calendar's
+			// lib.ts Settings-redirect alert, too.
+			NSCalendarsUsageDescription:
+				'We use your calendar to add events to your calendar so that you remember what you wanted to attend.',
 			NSLocalNetworkUsageDescription:
 				'Used in development mode to discover a local ccc-server instance on the same network.',
 			NSLocationWhenInUseUsageDescription: 'Shows your location on the campus map.',
