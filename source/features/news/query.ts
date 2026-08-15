@@ -1,4 +1,4 @@
-import {fetchManifest, REL_NEWS, resolveSource} from '@frogpond/data-sources'
+import {fetchManifest, fetchSourceBody, REL_NEWS, resolveSource} from '@frogpond/data-sources'
 import {queryOptions} from '@tanstack/react-query'
 import {queryClient} from '../../init/tanstack-query'
 import {parseFeedItems} from './parsers/feed-items'
@@ -33,11 +33,8 @@ export const namedNewsOptions = (source: string) =>
 			let manifest = await fetchManifest(queryClient)
 			let resolved = resolveSource(manifest, REL_NEWS, queryKey[2], NEWS_TYPES)
 
-			let response = await fetch(resolved.href, {signal})
-			if (!response.ok) {
-				throw new Error(`News fetch failed: ${response.status}`)
-			}
+			let body = await fetchSourceBody(resolved.href, signal, 'News')
 
-			return parse(resolved.type, await response.json())
+			return parse(resolved.type, body)
 		},
 	})

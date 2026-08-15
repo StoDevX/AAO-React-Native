@@ -1,4 +1,4 @@
-import {fetchManifest, REL_A_TO_Z, resolveSources} from '@frogpond/data-sources'
+import {fetchManifest, fetchSourceBody, REL_A_TO_Z, resolveSources} from '@frogpond/data-sources'
 import {queryOptions} from '@tanstack/react-query'
 import {queryClient} from '../../init/tanstack-query'
 import {parseAToZExtras, parseStolafAToZ} from './parsers/a-z-extras'
@@ -14,14 +14,20 @@ export const keys = {
 	all: ['a-z'] as const,
 }
 
-async function fetchGroups(href: string, type: string, signal: AbortSignal): Promise<LinkGroup[]> {
-	let response = await fetch(href, {signal})
-	if (!response.ok) {
-		throw new Error(`A–Z fetch failed: ${response.status}`)
+function parse(type: string, body: unknown): LinkGroup[] {
+	switch (type) {
+		case STOLAF_A_Z:
+			return parseStolafAToZ(body)
+		case A_Z_EXTRAS:
+			return parseAToZExtras(body)
+		default:
+			throw new Error(`no A–Z parser for "${type}"`)
 	}
+}
 
-	let body: unknown = await response.json()
-	return type === STOLAF_A_Z ? parseStolafAToZ(body) : parseAToZExtras(body)
+async function fetchGroups(href: string, type: string, signal: AbortSignal): Promise<LinkGroup[]> {
+	let body = await fetchSourceBody(href, signal, 'A–Z')
+	return parse(type, body)
 }
 
 export const searchLinksOptions = queryOptions({

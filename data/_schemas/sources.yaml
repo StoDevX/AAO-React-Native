@@ -17,7 +17,7 @@ definitions:
     required: [rel, href, type, properties]
     properties:
       rel: {type: string, format: uri}
-      href: {type: string, format: uri}
+      href: {type: string, format: uri-reference}
       type: {type: string, minLength: 1}
       titles:
         type: object

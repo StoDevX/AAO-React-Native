@@ -1,4 +1,4 @@
-import {fetchManifest, REL_CALENDAR, resolveSource} from '@frogpond/data-sources'
+import {fetchManifest, fetchSourceBody, REL_CALENDAR, resolveSource} from '@frogpond/data-sources'
 import {eventKey} from '@frogpond/event-list'
 import {EventType} from '@frogpond/event-type'
 import {queryOptions} from '@tanstack/react-query'
@@ -33,17 +33,23 @@ const FROGPOND_EVENTS = 'application/vnd.frogpond.events+json'
 
 export const CALENDAR_TYPES = [TEC_EVENTS, FROGPOND_EVENTS] as const
 
+function parse(type: string, body: unknown): WireEvent[] {
+	switch (type) {
+		case TEC_EVENTS:
+			return parseTecEvents(body)
+		case FROGPOND_EVENTS:
+			return parseEvents(body)
+		default:
+			throw new Error(`no calendar parser for "${type}"`)
+	}
+}
+
 async function fetchCalendar(calendar: NamedCalendar, signal: AbortSignal): Promise<WireEvent[]> {
 	let manifest = await fetchManifest(queryClient)
 	let resolved = resolveSource(manifest, REL_CALENDAR, calendar, CALENDAR_TYPES)
 
-	let response = await fetch(resolved.href, {signal})
-	if (!response.ok) {
-		throw new Error(`Calendar fetch failed: ${response.status}`)
-	}
-
-	let body: unknown = await response.json()
-	return resolved.type === TEC_EVENTS ? parseTecEvents(body) : parseEvents(body)
+	let body = await fetchSourceBody(resolved.href, signal, 'Calendar')
+	return parse(resolved.type, body)
 }
 
 // oxlint-disable-next-line typescript/explicit-module-boundary-types

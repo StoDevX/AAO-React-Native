@@ -32,7 +32,13 @@ test('rejects a document with no links array', () => {
 	expect(() => JrdSchema.parse({subject: 'https://stolaf.edu'})).toThrow()
 })
 
-test('rejects a non-url href', () => {
+test('rejects an href containing whitespace', () => {
 	const link = {...valid.links[0], href: 'not a url'}
 	expect(() => JrdSchema.parse({...valid, links: [link]})).toThrow()
+})
+
+test('accepts a relative href, for a proxied source resolved against the api root', () => {
+	const link = {...valid.links[0], href: 'news/named/mess'}
+	const parsed = JrdSchema.parse({...valid, links: [link]})
+	expect(parsed.links[0].href).toBe('news/named/mess')
 })

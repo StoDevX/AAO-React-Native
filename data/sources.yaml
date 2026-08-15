@@ -8,13 +8,13 @@ links:
     properties: {'https://frogpond.tech/ns/id': stolaf}
 
   - rel: https://frogpond.tech/rel/news
-    href: 'https://stolaf.api.frogpond.tech/v1/news/named/mess'
+    href: 'news/named/mess'
     type: application/vnd.frogpond.feed-items+json
     titles: {und: The Manitou Messenger}
     properties: {'https://frogpond.tech/ns/id': mess}
 
   - rel: https://frogpond.tech/rel/news
-    href: 'https://stolaf.api.frogpond.tech/v1/news/named/oleville'
+    href: 'news/named/oleville'
     type: application/vnd.frogpond.feed-items+json
     titles: {und: Oleville}
     properties: {'https://frogpond.tech/ns/id': oleville}
@@ -38,19 +38,19 @@ links:
     properties: {'https://frogpond.tech/ns/id': stolaf}
 
   - rel: https://frogpond.tech/rel/calendar
-    href: 'https://stolaf.api.frogpond.tech/v1/calendar/named/northfield'
+    href: 'calendar/named/northfield'
     type: application/vnd.frogpond.events+json
     titles: {und: Northfield}
     properties: {'https://frogpond.tech/ns/id': northfield}
 
   - rel: https://frogpond.tech/rel/calendar
-    href: 'https://stolaf.api.frogpond.tech/v1/calendar/named/krlx-schedule'
+    href: 'calendar/named/krlx-schedule'
     type: application/vnd.frogpond.events+json
     titles: {und: KRLX Schedule}
     properties: {'https://frogpond.tech/ns/id': krlx-schedule}
 
   - rel: https://frogpond.tech/rel/calendar
-    href: 'https://stolaf.api.frogpond.tech/v1/calendar/named/ksto-schedule'
+    href: 'calendar/named/ksto-schedule'
     type: application/vnd.frogpond.events+json
     titles: {und: KSTO Schedule}
     properties: {'https://frogpond.tech/ns/id': ksto-schedule}
