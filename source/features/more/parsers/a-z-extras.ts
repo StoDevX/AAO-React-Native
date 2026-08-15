@@ -39,17 +39,32 @@ function normalizeValues(values: {label: string; url: string}[]): LinkValue[] {
 /// changed out from under us, not that one entry was malformed — that must
 /// throw rather than render a silently blank index. A genuinely empty list
 /// is a legitimate response and stays empty.
+///
+/// `normalizeValues` drops individual values the same way, with no guard of
+/// its own -- a payload where every group parses but every value inside it
+/// fails validation would otherwise sail through as N groups of `data: []`,
+/// which renders as a silent "No results found." rather than an error. The
+/// same rule applies at the value level: input values present, output values
+/// zero, throw.
 function toGroups(raw: unknown[]): LinkGroup[] {
+	let totalInputValues = 0
+
 	let groups = raw.flatMap((item) => {
 		let parsed = RawGroupSchema.safeParse(item)
 		if (!parsed.success) return []
 
 		let {letter, values} = parsed.data
+		totalInputValues += values.length
 		return [{title: letter[0] ?? '', data: normalizeValues(values)}]
 	})
 
 	if (raw.length > 0 && groups.length === 0) {
 		throw new Error('every A–Z group was malformed')
+	}
+
+	let totalOutputValues = groups.reduce((sum, group) => sum + group.data.length, 0)
+	if (totalInputValues > 0 && totalOutputValues === 0) {
+		throw new Error('every A–Z value was malformed')
 	}
 
 	return groups

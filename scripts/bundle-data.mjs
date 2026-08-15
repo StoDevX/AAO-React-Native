@@ -69,8 +69,8 @@ for (let [file, builder] of specialFiles.entries()) {
 	}
 
 	let output = path.join(toDir, file).replace(/\.(.*)$/u, '.json')
-	console.log(`build-faqs ${source} ${output}`)
-	console.time(`build-faqs ${source} ${output}`)
+	console.log(`${builder.name} ${source} ${output}`)
+	console.time(`${builder.name} ${source} ${output}`)
 	builder({sourceFile: source, outputFile: output})
-	console.timeEnd(`build-faqs ${source} ${output}`)
+	console.timeEnd(`${builder.name} ${source} ${output}`)
 }

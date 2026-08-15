@@ -380,9 +380,9 @@ Four details the live payload requires:
   rather than rendering as 00:00–23:59. This is a deliberate improvement on the
   Google parser, which always sent `true`.
 
-The request passes `per_page=50` and a `start_date` of now, matching the 50-event
-upcoming window the Google fetch used. Without `start_date` TEC defaults to a
-two-year range.
+The request passes only `per_page=50`. TEC defaults `start_date` to today at
+00:00 and returns events in ascending order, so the first 50 are already the
+upcoming window the Google fetch used — an explicit `start_date` is redundant.
 
 ## ccc-server changes
 
