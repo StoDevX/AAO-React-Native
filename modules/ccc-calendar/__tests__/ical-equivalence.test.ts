@@ -1,6 +1,6 @@
 import {readdirSync, readFileSync} from 'node:fs'
 import {join} from 'node:path'
-import {fastGetTrimmedText, htmlToSegments} from '@frogpond/html-lib'
+import {decode, htmlToSegments} from '@frogpond/html-lib'
 import {addDays, endOfDay, isAfter, isBefore, startOfDay} from 'date-fns'
 import ICAL from 'ical.js'
 import {
@@ -104,7 +104,7 @@ function referenceToWireEvent(
 		startTime: startIso,
 		endTime: endIso,
 		title: item.summary ?? '',
-		description: fastGetTrimmedText(descriptionHtml),
+		description: decode(descriptionHtml).replace(/\s+/gu, ' ').trim(),
 		location: item.location ?? '',
 		isOngoing: isBefore(new Date(startIso), startOfDay(now)),
 		links: referenceLinksIn(descriptionHtml),
@@ -372,6 +372,22 @@ interface SyntheticCase {
 }
 
 const SYNTHETIC_CASES: SyntheticCase[] = [
+	{
+		// RFC 5545 DESCRIPTION is plain text, so angle brackets are content,
+		// not markup. Without a case carrying them, the parser and the
+		// reference could drift apart on this field and nothing here would
+		// notice -- which is how the field came to be HTML-stripped in the
+		// first place.
+		name: 'description containing angle brackets and entities',
+		body: calendar(`BEGIN:VEVENT
+UID:plain-text-description@test
+DTSTART:20260818T130000Z
+DTEND:20260818T140000Z
+SUMMARY:Plain text description
+DESCRIPTION:Email <alice@x.edu> or see <https://stolaf.edu/x> -- a < b &amp; c
+END:VEVENT`),
+		expectedSeededMasters: 0,
+	},
 	{
 		name: 'weekly with BYDAY',
 		body: calendar(`BEGIN:VEVENT
