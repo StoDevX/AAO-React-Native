@@ -1,4 +1,4 @@
-import {fastGetTrimmedText, htmlToSegments} from '@frogpond/html-lib'
+import {decode, htmlToSegments} from '@frogpond/html-lib'
 import {addDays, endOfDay, isAfter, isBefore, startOfDay} from 'date-fns'
 import ICAL from 'ical.js'
 import {z} from 'zod'
@@ -41,6 +41,28 @@ function linksIn(descriptionHtml: string): string[] {
 	)
 	let bareLinks = (descriptionHtml.match(BARE_URL_PATTERN) ?? []).map(stripTrailingPunctuation)
 	return [...new Set([...anchorLinks, ...bareLinks])]
+}
+
+/// RFC 5545 `DESCRIPTION` is plain text, not HTML (see the module comment
+/// above). Running it through an HTML tag-stripping parser reads any
+/// angle-bracketed text in it as markup and discards it -- an email address
+/// written `<alice@x.edu>`, or a bare URL in its RFC 3986 delimiter form
+/// `<https://...>`, both vanish silently, along with anything else that
+/// happens to parse as a tag. The correct plain-text treatment is to decode
+/// character entities (a producer can still legally write `&amp;`) and
+/// normalise whitespace, without touching angle brackets at all.
+///
+/// A producer that puts real markup in `DESCRIPTION` anyway -- against the
+/// spec, but seen in practice -- will now have that markup show up literally
+/// rather than be silently stripped. Sniffing the text to decide whether it
+/// "looks like" real markup before choosing how to treat it was considered
+/// and rejected: it's exactly the kind of heuristic this file's own history
+/// (seven review rounds, each finding a "plausible-looking wrong calendar"
+/// bug) argues against. `linksIn`, just above, still finds an anchor's
+/// `href` when one is actually present, so a link embedded in real markup is
+/// not lost -- only the field's own tag-stripping is removed.
+function plainTextDescription(description: string): string {
+	return decode(description).replace(/\s+/gu, ' ').trim()
 }
 
 /// `Time#toJSDate()` resolves a zoned time (one with a `TZID`, backed by the
@@ -89,7 +111,7 @@ function toWireEvent(
 		startTime: startIso,
 		endTime: endIso,
 		title: item.summary ?? '',
-		description: fastGetTrimmedText(descriptionHtml),
+		description: plainTextDescription(descriptionHtml),
 		location: item.location ?? '',
 		isOngoing: isBefore(new Date(startIso), startOfDay(now)),
 		links: linksIn(descriptionHtml),

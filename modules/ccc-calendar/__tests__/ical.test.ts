@@ -165,7 +165,13 @@ END:VEVENT`),
 	expect(event.links).toStrictEqual([])
 })
 
-test('strips html from the description and keeps its anchor links', () => {
+test('keeps literal markup in the description (RFC 5545 DESCRIPTION is plain text, not HTML) while still finding the anchor link', () => {
+	// A producer that puts real HTML in DESCRIPTION anyway is not the common
+	// case -- most feeds don't -- but it does happen, and the field is not
+	// stripped for it: the raw text is what a plain-text field means, tags
+	// and all. `linksIn` still finds the anchor's `href` independently of
+	// the description field's own text (see the bare-URL tests below for the
+	// other half of that split).
 	const [event] = parseIcalEvents(
 		calendar(`BEGIN:VEVENT
 UID:link@test
@@ -178,10 +184,77 @@ END:VEVENT`),
 		NOW,
 	)
 
-	expect(event.description).not.toContain('<')
-	expect(event.description).toContain('See this for details.')
+	expect(event.description).toBe('See <a href="https://stolaf.edu/x">this</a> for details.')
 	expect(event.links).toStrictEqual(['https://stolaf.edu/x'])
 	expect(event.location).toBe('Somewhere')
+})
+
+test('keeps a bare, angle-bracketed email address in the description instead of reading it as an HTML tag', () => {
+	// `<alice@x.edu>` looks exactly like an (invalid) HTML tag to a
+	// tag-stripping parser -- treating DESCRIPTION as plain text means it
+	// survives untouched instead of being silently discarded.
+	const [event] = parseIcalEvents(
+		calendar(`BEGIN:VEVENT
+UID:bareemail@test
+DTSTART:20260901T130000Z
+DTEND:20260901T140000Z
+SUMMARY:Bare email
+DESCRIPTION:Email <alice@x.edu> to sign up
+END:VEVENT`),
+		NOW,
+	)
+
+	expect(event.description).toBe('Email <alice@x.edu> to sign up')
+})
+
+test('keeps a bare URL in its RFC 3986 angle-bracket delimiter form, and still finds it as a link', () => {
+	const [event] = parseIcalEvents(
+		calendar(`BEGIN:VEVENT
+UID:bareurldelim@test
+DTSTART:20260901T130000Z
+DTEND:20260901T140000Z
+SUMMARY:Delimited bare URL
+DESCRIPTION:Tickets at <https://example.com/x> today
+END:VEVENT`),
+		NOW,
+	)
+
+	expect(event.description).toBe('Tickets at <https://example.com/x> today')
+	expect(event.links).toStrictEqual(['https://example.com/x'])
+})
+
+test('keeps a bare "<" that is not part of any tag', () => {
+	const [event] = parseIcalEvents(
+		calendar(`BEGIN:VEVENT
+UID:barelt@test
+DTSTART:20260901T130000Z
+DTEND:20260901T140000Z
+SUMMARY:Bare less-than
+DESCRIPTION:a < b
+END:VEVENT`),
+		NOW,
+	)
+
+	expect(event.description).toBe('a < b')
+})
+
+test('decodes a character entity in the description without stripping surrounding text', () => {
+	// RFC 5545 plain text still legally carries HTML-style character
+	// entities in the wild (some producers escape "&" this way even outside
+	// real markup) -- decoding is still correct even though tags themselves
+	// are left alone.
+	const [event] = parseIcalEvents(
+		calendar(`BEGIN:VEVENT
+UID:entity@test
+DTSTART:20260901T130000Z
+DTEND:20260901T140000Z
+SUMMARY:Entity
+DESCRIPTION:Cost: $5 &amp; up
+END:VEVENT`),
+		NOW,
+	)
+
+	expect(event.description).toBe('Cost: $5 & up')
 })
 
 test('finds a bare URL in a plain-text description, not just anchor hrefs', () => {
