@@ -186,13 +186,22 @@ import fs from 'node:fs'
 import path from 'node:path'
 import {load} from 'js-yaml'
 
+/// The app ships a copy of the manifest as its offline fallback. Nothing else
+/// in `data/` is embedded in the binary, so this is generated here rather than
+/// copied by hand — `mise run bundle-data` keeps the two in step.
+const BUNDLED_COPY = 'modules/data-sources/bundled.json'
+
 // The manifest is a JRD document (RFC 7033 §4.4), which must be the root
 // object. convertDataFile would wrap it in {data: …}, so it gets a builder.
 export function buildSources({sourceFile, outputFile}) {
 	let manifest = load(fs.readFileSync(sourceFile, 'utf-8'))
+	let serialized = JSON.stringify(manifest) + '\n'
 
 	fs.mkdirSync(path.dirname(outputFile), {recursive: true})
-	fs.writeFileSync(outputFile, JSON.stringify(manifest) + '\n')
+	fs.writeFileSync(outputFile, serialized)
+
+	fs.mkdirSync(path.dirname(BUNDLED_COPY), {recursive: true})
+	fs.writeFileSync(BUNDLED_COPY, serialized)
 }
 
 const isMain =
@@ -231,17 +240,30 @@ const specialFiles = new Map([
 Run: `mise run bundle-data && node -e "const d=require('./docs/sources.json'); console.log(Object.keys(d).join(',')); console.log('links:', d.links.length)"`
 Expected: `subject,links` and `links: 9`. If you see `data` in the keys, the builder is not registered.
 
-- [ ] **Step 7: Create the bundled copy**
+- [ ] **Step 7: Verify the bundled copy was generated**
 
-Run: `cp docs/sources.json modules/data-sources/bundled.json`
+Run: `git status --short modules/data-sources/bundled.json && diff <(cat docs/sources.json) modules/data-sources/bundled.json && echo IN SYNC`
+Expected: the file is listed as new/modified, and `IN SYNC`.
 
-`docs/` is gitignored except `docs/superpowers/` (`.gitignore:59-61`), so the published artifact is not committed — CI regenerates it. `modules/data-sources/bundled.json` **is** committed, and must be regenerated with this same command whenever `data/sources.yaml` changes.
+`docs/` is gitignored except `docs/superpowers/` (`.gitignore:59-61`), so the published artifact is not committed — CI regenerates it. `modules/data-sources/bundled.json` **is** committed, because the app needs it at build time as the offline fallback.
 
-- [ ] **Step 8: Commit**
+- [ ] **Step 8: Guard against drift in CI**
+
+In `.github/workflows/check.yml`, immediately after the existing `- run: mise run validate-data` step (line 80), add:
+
+```yaml
+      # bundled.json is generated from data/sources.yaml and committed, since
+      # the app needs it at build time. Fail if someone edited one and not
+      # the other.
+      - run: mise run bundle-data
+      - run: git diff --exit-code modules/data-sources/bundled.json
+```
+
+- [ ] **Step 9: Commit**
 
 ```bash
 mise run agent:pre-commit
-git add data/sources.yaml data/_schemas/sources.yaml scripts/build-sources.mjs scripts/bundle-data.mjs modules/data-sources/bundled.json
+git add data/sources.yaml data/_schemas/sources.yaml scripts/build-sources.mjs scripts/bundle-data.mjs modules/data-sources/bundled.json .github/workflows/check.yml
 git commit -m "Publish a JRD source manifest"
 ```
 
@@ -789,14 +811,41 @@ Expected: 5 passing.
 Create `source/features/news/parsers/feed-items.ts`:
 
 ```ts
+import {z} from 'zod'
 import {StoryType} from '../types'
 
-/// ccc-server already emits our normalised shape, so proxied sources need no
-/// transform — only the type tag that says so.
+/// ccc-server emits our normalised shape already, so this is a shape check
+/// rather than a transform. It still validates: the server is as capable of
+/// serving a bad payload as any other host, and every other parser here
+/// validates.
+const FeedItemSchema = z.object({
+	authors: z.array(z.string()),
+	categories: z.array(z.string()),
+	content: z.string(),
+	datePublished: z.string().nullable().optional(),
+	excerpt: z.string().nullable(),
+	featuredImage: z.string().nullable().optional(),
+	link: z.string().nullable().optional(),
+	title: z.string(),
+})
+
+const FeedItemsSchema = z.array(FeedItemSchema)
+
 export function parseFeedItems(body: unknown): StoryType[] {
-	return body as StoryType[]
+	return FeedItemsSchema.parse(body).map((item) => ({
+		authors: item.authors,
+		categories: item.categories,
+		content: item.content,
+		datePublished: item.datePublished ?? undefined,
+		excerpt: item.excerpt ?? '',
+		featuredImage: item.featuredImage ?? undefined,
+		link: item.link ?? undefined,
+		title: item.title,
+	}))
 }
 ```
+
+The nullable fields come from the server's `FeedItemSchema` in `source/feeds/types.ts`, which emits `null` where `StoryType` uses optional. The mapping reconciles the two.
 
 - [ ] **Step 7: Rewire the query**
 
@@ -1351,14 +1400,34 @@ Expected: 7 passing.
 Create `modules/ccc-calendar/parsers/events.ts`:
 
 ```ts
+import {z} from 'zod'
 import {WireEvent} from './tec-events'
 
-/// ccc-server already emits the wire event shape; proxied calendars need only
-/// the type tag that says so.
+/// ccc-server emits the wire event shape already, so this is a shape check
+/// rather than a transform — but it still validates, like every other parser
+/// here.
+const WireEventSchema = z.object({
+	dataSource: z.string(),
+	startTime: z.string(),
+	endTime: z.string(),
+	title: z.string(),
+	description: z.string(),
+	location: z.string().default(''),
+	isOngoing: z.boolean(),
+	links: z.array(z.string()),
+	config: z.object({
+		startTime: z.boolean(),
+		endTime: z.boolean(),
+		subtitle: z.union([z.literal('location'), z.literal('description')]),
+	}),
+})
+
 export function parseEvents(body: unknown): WireEvent[] {
-	return body as WireEvent[]
+	return z.array(WireEventSchema).parse(body)
 }
 ```
+
+The server's `EventSchema` (`source/calendar/types.ts`) types `links` as `z.array(z.unknown())`, but every producer fills it with URL strings, so `z.array(z.string())` is the honest type. If a real payload fails this, widen it rather than casting.
 
 - [ ] **Step 7: Rewire the query**
 
@@ -1370,7 +1439,7 @@ const FROGPOND_EVENTS = 'application/vnd.frogpond.events+json'
 
 export const CALENDAR_TYPES = [TEC_EVENTS, FROGPOND_EVENTS] as const
 
-async function fetchCalendar(calendar: NamedCalendar, signal: AbortSignal): Promise<EventType[]> {
+async function fetchCalendar(calendar: NamedCalendar, signal: AbortSignal): Promise<WireEvent[]> {
 	let manifest = await fetchManifest(queryClient)
 	let resolved = resolveSource(manifest, REL_CALENDAR, calendar, CALENDAR_TYPES)
 
@@ -1380,9 +1449,7 @@ async function fetchCalendar(calendar: NamedCalendar, signal: AbortSignal): Prom
 	}
 
 	let body: unknown = await response.json()
-	let events = resolved.type === TEC_EVENTS ? parseTecEvents(body) : parseEvents(body)
-
-	return events as unknown as EventType[]
+	return resolved.type === TEC_EVENTS ? parseTecEvents(body) : parseEvents(body)
 }
 
 // oxlint-disable-next-line typescript/explicit-module-boundary-types
@@ -1415,8 +1482,28 @@ Update the imports at the top of the file: drop `client` from `@frogpond/api`, a
 import {fetchManifest, REL_CALENDAR, resolveSource} from '@frogpond/data-sources'
 import {queryClient} from '../../source/init/tanstack-query'
 import {parseEvents} from './parsers/events'
-import {parseTecEvents} from './parsers/tec-events'
+import {parseTecEvents, type WireEvent} from './parsers/tec-events'
 ```
+
+Also change `convertEvents` (line 17) to declare the type it actually handles. It is called on freshly fetched data whose times are ISO strings, and it is the thing that turns them into Moments — so its parameter was never really `EventType[]`:
+
+```ts
+function convertEvents(data: WireEvent[], options: {eventMapper?: EventMapper}): EventType[] {
+	let events = data.map((event) => ({
+		...event,
+		startTime: moment(event.startTime),
+		endTime: moment(event.endTime),
+	}))
+
+	if (options.eventMapper) {
+		events = events.map(options.eventMapper)
+	}
+
+	return events
+}
+```
+
+This replaces the plan's earlier double cast. The old signature claimed `EventType[]` in and out while calling `moment()` on its inputs, which only type-checked because the caller cast the response. Naming the wire type makes the conversion honest and removes the cast entirely.
 
 Trim `keys` to just `named` — the `google`, `reason` and `ics` entries go with their options.
 
@@ -1623,4 +1710,8 @@ The `application/rss+xml` and `text/calendar` parsers get their own plan once PR
 
 **Type consistency.** `ResolvedSource` is defined in Task 2 and consumed in Tasks 3–6 with the same four fields. `WireEvent` is defined in Task 6's `tec-events.ts` and imported by `events.ts` in the same task. `parseWpV2Posts`, `parseFeedItems`, `parseStolafAToZ`, `parseAToZExtras`, `mergeAToZ`, `parseTecEvents` and `parseEvents` are each named identically where defined and where called.
 
-**Known rough edge.** Task 6 casts `WireEvent[]` to `EventType[]` through `unknown`, because `EventType.startTime` is a `Moment` while the wire shape carries an ISO string, and `convertEvents` performs the conversion in `select`. The pre-existing code had the same gap, hidden behind `response as EventType[]`. Fixing it properly means splitting `EventType` into wire and view types, which is worth doing and is not this change.
+**Pre-flight decisions.** Three points where the plan as first written mandated something a reviewer would flag were settled before execution:
+
+1. The pass-through parsers validate with zod rather than casting. ccc-server can serve a bad payload like any other host, and every neighbouring parser validates.
+2. `convertEvents` takes `WireEvent[]` instead of `EventType[]`, which removes the `as unknown as` cast. The old signature was already a lie — it called `moment()` on its inputs and only type-checked because the caller cast.
+3. `modules/data-sources/bundled.json` is generated by `build-sources.mjs`, not hand-copied, with a CI step asserting it stays in sync. Nothing else in `data/` is embedded in the binary, so this is a new kind of artifact for the repo and worth guarding.
