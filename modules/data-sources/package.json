@@ -1,0 +1,11 @@
+{
+  "name": "@frogpond/data-sources",
+  "version": "1.0.0",
+  "description": "",
+  "license": "ISC",
+  "author": "",
+  "main": "index.ts",
+  "scripts": {
+    "test": "jest"
+  }
+}
