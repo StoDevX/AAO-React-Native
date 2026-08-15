@@ -14,6 +14,7 @@
     "@frogpond/app-theme": "workspace:*",
     "@frogpond/colors": "workspace:*",
     "@frogpond/event-type": "workspace:*",
+    "@frogpond/layout": "workspace:*",
     "@frogpond/lists": "workspace:*",
     "@frogpond/notice": "workspace:*",
     "@frogpond/open-url": "workspace:*",

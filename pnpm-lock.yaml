@@ -598,6 +598,9 @@ importers:
       '@frogpond/event-type':
         specifier: workspace:*
         version: link:../event-type
+      '@frogpond/layout':
+        specifier: workspace:*
+        version: link:../layout
       '@frogpond/lists':
         specifier: workspace:*
         version: link:../lists
@@ -649,6 +652,9 @@ importers:
       '@frogpond/tableview':
         specifier: workspace:*
         version: link:../tableview
+      '@frogpond/toolbar':
+        specifier: workspace:*
+        version: link:../toolbar
       '@frogpond/touchable':
         specifier: workspace:*
         version: link:../touchable
@@ -682,6 +688,9 @@ importers:
       '@frogpond/colors':
         specifier: workspace:*
         version: link:../colors
+      '@frogpond/constants':
+        specifier: workspace:*
+        version: link:../constants
       '@frogpond/filter':
         specifier: workspace:*
         version: link:../filter
@@ -787,6 +796,9 @@ importers:
       '@frogpond/colors':
         specifier: workspace:*
         version: link:../colors
+      '@frogpond/notice':
+        specifier: workspace:*
+        version: link:../notice
       '@frogpond/separator':
         specifier: workspace:*
         version: link:../separator
@@ -908,6 +920,9 @@ importers:
 
   modules/tableview:
     dependencies:
+      '@frogpond/app-theme':
+        specifier: workspace:*
+        version: link:../app-theme
       '@frogpond/colors':
         specifier: workspace:*
         version: link:../colors
@@ -950,6 +965,9 @@ importers:
 
   modules/touchable:
     dependencies:
+      '@frogpond/colors':
+        specifier: workspace:*
+        version: link:../colors
       react:
         specifier: ^19.1.0
         version: 19.2.8
