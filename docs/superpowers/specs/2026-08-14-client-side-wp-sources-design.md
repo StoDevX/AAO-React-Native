@@ -66,7 +66,12 @@ Each `links` entry describes one source:
 - **`rel`** — the kind of source. Must be a registered relation or a URI; no
   registered relation means "the news feed", so we mint URIs under
   `https://frogpond.tech/rel/`.
-- **`href`** — where to fetch it.
+- **`href`** — where to fetch it. Absolute for sources the app fetches directly;
+  a relative reference for sources still proxied by ccc-server, resolved against
+  the configured api root so the Settings server-URL override and mDNS local
+  server discovery keep working. Relative entries go through the `ky` client and
+  inherit its 10-second timeout; absolute ones use `fetch` with an equivalent
+  timeout applied by hand.
 - **`type`** — the format, as a media type. Registered types where they exist
   (`application/rss+xml`, `text/calendar`); the vendor tree otherwise.
 - **`titles`** — human-readable label, keyed by language tag. `und` is the
@@ -100,14 +105,14 @@ identifiers.
     },
     {
       "rel": "https://frogpond.tech/rel/news",
-      "href": "https://stolaf.api.frogpond.tech/v1/news/named/mess",
+      "href": "news/named/mess",
       "type": "application/vnd.frogpond.feed-items+json",
       "titles": {"und": "The Manitou Messenger"},
       "properties": {"https://frogpond.tech/ns/id": "mess"}
     },
     {
       "rel": "https://frogpond.tech/rel/news",
-      "href": "https://stolaf.api.frogpond.tech/v1/news/named/oleville",
+      "href": "news/named/oleville",
       "type": "application/vnd.frogpond.feed-items+json",
       "titles": {"und": "Oleville"},
       "properties": {"https://frogpond.tech/ns/id": "oleville"}
@@ -135,21 +140,21 @@ identifiers.
     },
     {
       "rel": "https://frogpond.tech/rel/calendar",
-      "href": "https://stolaf.api.frogpond.tech/v1/calendar/named/northfield",
+      "href": "calendar/named/northfield",
       "type": "application/vnd.frogpond.events+json",
       "titles": {"und": "Northfield"},
       "properties": {"https://frogpond.tech/ns/id": "northfield"}
     },
     {
       "rel": "https://frogpond.tech/rel/calendar",
-      "href": "https://stolaf.api.frogpond.tech/v1/calendar/named/krlx-schedule",
+      "href": "calendar/named/krlx-schedule",
       "type": "application/vnd.frogpond.events+json",
       "titles": {"und": "KRLX Schedule"},
       "properties": {"https://frogpond.tech/ns/id": "krlx-schedule"}
     },
     {
       "rel": "https://frogpond.tech/rel/calendar",
-      "href": "https://stolaf.api.frogpond.tech/v1/calendar/named/ksto-schedule",
+      "href": "calendar/named/ksto-schedule",
       "type": "application/vnd.frogpond.events+json",
       "titles": {"und": "KSTO Schedule"},
       "properties": {"https://frogpond.tech/ns/id": "ksto-schedule"}
