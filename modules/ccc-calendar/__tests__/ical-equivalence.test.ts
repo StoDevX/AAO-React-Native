@@ -399,6 +399,41 @@ END:VEVENT`),
 		expectedSeededMasters: 1,
 	},
 	{
+		// `seekableRule` only accepts a WEEKLY rule whose sole `BY*` part is a
+		// single `BYDAY` -- any other part (here, `BYHOUR`) makes it
+		// unseekable regardless of age, because the seed jumps forward by
+		// whole weeks of wall-clock field arithmetic without ever considering
+		// which hours within a week `BYHOUR` restricts the walk to. Aged so
+		// this would take the seeded path if that guard were ever removed
+		// (see `seekableRule`'s own comment on the corpus's WEEKLY-plus-BY*
+		// coverage gap) -- `expectedSeededMasters: 0` pins that it does not.
+		name: 'weekly with BYDAY and BYHOUR, old enough that a missing guard would seed it',
+		body: calendar(`BEGIN:VEVENT
+UID:weekly-byday-byhour@test
+DTSTART:20190305T130000Z
+DTEND:20190305T140000Z
+RRULE:FREQ=WEEKLY;BYDAY=TU;BYHOUR=9,17
+SUMMARY:Weekly byday byhour
+END:VEVENT`),
+		expectedSeededMasters: 0,
+	},
+	{
+		// Same guard, a different extra `BY*` part: `BYSETPOS` picks one
+		// occurrence out of each period's candidate set by position, which a
+		// seed that jumps forward by whole weeks (assuming every week
+		// produces exactly the occurrences `BYDAY` alone would) does not
+		// account for either.
+		name: 'weekly with BYDAY and BYSETPOS, old enough that a missing guard would seed it',
+		body: calendar(`BEGIN:VEVENT
+UID:weekly-byday-bysetpos@test
+DTSTART:20190305T130000Z
+DTEND:20190305T140000Z
+RRULE:FREQ=WEEKLY;BYDAY=TU;BYSETPOS=1
+SUMMARY:Weekly byday bysetpos
+END:VEVENT`),
+		expectedSeededMasters: 0,
+	},
+	{
 		name: 'daily, too recent to be seeded',
 		body: calendar(`BEGIN:VEVENT
 UID:daily-recent@test
