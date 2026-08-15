@@ -3,11 +3,7 @@ import {ScrollView, StyleSheet, Image} from 'react-native'
 import {images as buildingImages} from '../../../../images/spaces'
 import type {BuildingType} from '../types'
 import type {Moment} from 'moment-timezone'
-import {
-	getShortBuildingStatus,
-	hoursBackgroundColors,
-	getAccentTextColor,
-} from '../lib'
+import {getShortBuildingStatus, hoursBackgroundColors, getAccentTextColor} from '../lib'
 
 import {SolidBadge as Badge} from '@frogpond/badge'
 import {Header} from './header'
@@ -32,9 +28,7 @@ export const BuildingDetail = React.memo((props: Props): React.ReactNode => {
 	let {info, now, onProblemReport} = props
 
 	let headerImage =
-		info.image && buildingImages.has(info.image)
-			? buildingImages.get(info.image)
-			: null
+		info.image && buildingImages.has(info.image) ? buildingImages.get(info.image) : null
 
 	let openStatus = getShortBuildingStatus(info, now)
 	let schedules = info.schedule || []
@@ -57,11 +51,7 @@ export const BuildingDetail = React.memo((props: Props): React.ReactNode => {
 				status={openStatus}
 				textColor={getAccentTextColor(openStatus)}
 			/>
-			<ScheduleTable
-				now={now}
-				onProblemReport={onProblemReport}
-				schedules={schedules}
-			/>
+			<ScheduleTable now={now} onProblemReport={onProblemReport} schedules={schedules} />
 
 			{links.length ? <LinkTable links={links} /> : null}
 

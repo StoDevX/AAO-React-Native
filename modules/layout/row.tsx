@@ -12,13 +12,7 @@ const styles = StyleSheet.create({
 	},
 })
 
-export const Row = ({
-	children,
-	style,
-	flex,
-	alignItems,
-	...props
-}: PropsType): React.ReactNode => {
+export const Row = ({children, style, flex, alignItems, ...props}: PropsType): React.ReactNode => {
 	let flexStyle = flex != null ? {flex: flex} : null
 	let alignItemsStyle = alignItems != null ? {alignItems: alignItems} : null
 	return (

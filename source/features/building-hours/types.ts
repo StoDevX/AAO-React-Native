@@ -1,5 +1,4 @@
-export type BuildingStatusType =
-	'Open' | 'Closed' | 'Almost Closed' | 'Almost Open' | 'Chapel'
+export type BuildingStatusType = 'Open' | 'Closed' | 'Almost Closed' | 'Almost Open' | 'Chapel'
 
 export type DayOfWeekEnumType = 'Mo' | 'Tu' | 'We' | 'Th' | 'Fr' | 'Sa' | 'Su'
 
@@ -27,10 +26,7 @@ export type NamedBuildingScheduleType = {
 	hours: SingleBuildingScheduleType[]
 }
 
-export type BreakScheduleContainerType = Record<
-	BreakNameEnumType,
-	NamedBuildingScheduleType[]
->
+export type BreakScheduleContainerType = Record<BreakNameEnumType, NamedBuildingScheduleType[]>
 
 export type BuildingLinkType = {
 	title: string

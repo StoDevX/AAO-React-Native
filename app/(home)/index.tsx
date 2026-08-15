@@ -37,10 +37,7 @@ import {
 	SCREEN_MARGIN,
 } from '../../source/features/home/button'
 import {openUrl} from '@frogpond/open-url'
-import {
-	selectDevModeOverride,
-	setDevModeOverride,
-} from '../../source/redux/parts/settings'
+import {selectDevModeOverride, setDevModeOverride} from '../../source/redux/parts/settings'
 import {useIsDevMode} from '../../source/lib/use-is-dev-mode'
 import {FaqBannerGroup} from '../../source/features/faqs/banner'
 import {FAQ_TARGETS} from '../../source/features/faqs/constants'
@@ -155,9 +152,7 @@ function inPairs(views: ViewType[]): ViewType[][] {
 export default function HomePage(): React.ReactNode {
 	let router = useRouter()
 	let isDev = useIsDevMode()
-	let allViews = AllViews().filter(
-		(view) => !view.disabled && (isDev || !view.devOnly),
-	)
+	let allViews = AllViews().filter((view) => !view.disabled && (isDev || !view.devOnly))
 	let rows = inPairs(allViews)
 
 	return (
@@ -185,17 +180,12 @@ export default function HomePage(): React.ReactNode {
 			>
 				<ScrollView>
 					<VStack
-						modifiers={[
-							padding({all: SCREEN_MARGIN}),
-							frame({maxWidth: FILL_WIDTH}),
-						]}
+						modifiers={[padding({all: SCREEN_MARGIN}), frame({maxWidth: FILL_WIDTH})]}
 						spacing={CELL_MARGIN}
 					>
 						<RNHostView matchContents={true}>
 							<FaqBannerGroup
-								onPressFaq={(faqId) =>
-									router.push({pathname: '/Faq', params: {faqId}})
-								}
+								onPressFaq={(faqId) => router.push({pathname: '/Faq', params: {faqId}})}
 								style={styles.banner}
 								target={FAQ_TARGETS.HOME}
 							/>

@@ -16,9 +16,7 @@ type LeftDetailProps = {
 		| undefined
 }
 
-export function MultiLineLeftDetailCell(
-	props: LeftDetailProps,
-): React.ReactNode {
+export function MultiLineLeftDetailCell(props: LeftDetailProps): React.ReactNode {
 	const {detail, title, onPress, accessory} = props
 	const cellContent = (
 		<View style={styles.cellContentView}>
@@ -30,13 +28,7 @@ export function MultiLineLeftDetailCell(
 			</Text>
 		</View>
 	)
-	return (
-		<Cell
-			accessory={accessory}
-			cellContentView={cellContent}
-			onPress={onPress}
-		/>
-	)
+	return <Cell accessory={accessory} cellContentView={cellContent} onPress={onPress} />
 }
 
 const styles = StyleSheet.create({

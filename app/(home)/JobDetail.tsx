@@ -34,9 +34,7 @@ const styles = StyleSheet.create({
 	},
 })
 
-const Title = (props: TextProps) => (
-	<Text {...props} style={[styles.title, props.style]} />
-)
+const Title = (props: TextProps) => <Text {...props} style={[styles.title, props.style]} />
 
 function ContactInformation({job}: {job: JobType}) {
 	let office = job.office ? (
@@ -44,9 +42,7 @@ function ContactInformation({job}: {job: JobType}) {
 	) : null
 
 	let name = job.contactName
-	let contactName = name ? (
-		<Cell cellStyle="LeftDetail" detail="Contact" title={name} />
-	) : null
+	let contactName = name ? <Cell cellStyle="LeftDetail" detail="Contact" title={name} /> : null
 
 	let email = job.contactEmail
 	let contactEmail = name ? (
@@ -54,9 +50,7 @@ function ContactInformation({job}: {job: JobType}) {
 			accessory={email ? 'DisclosureIndicator' : undefined}
 			cellStyle="LeftDetail"
 			detail="Email"
-			onPress={() =>
-				email ? sendEmail({to: [email], subject: job.title, body: ''}) : false
-			}
+			onPress={() => (email ? sendEmail({to: [email], subject: job.title, body: ''}) : false)}
 			title={email}
 		/>
 	) : null
@@ -67,9 +61,7 @@ function ContactInformation({job}: {job: JobType}) {
 			accessory={contactNumber ? 'DisclosureIndicator' : undefined}
 			cellStyle="LeftDetail"
 			detail="Phone"
-			onPress={() =>
-				contactNumber ? callPhone(contactNumber, {title: name}) : false
-			}
+			onPress={() => (contactNumber ? callPhone(contactNumber, {title: name}) : false)}
 			title={contactNumber}
 		/>
 	) : null
@@ -87,11 +79,7 @@ function ContactInformation({job}: {job: JobType}) {
 function JobInformation({job}: {job: JobType}) {
 	let ending = job.hoursPerWeek === 'Full-time' ? '' : ' hrs/week'
 	let hours = job.hoursPerWeek ? (
-		<Cell
-			cellStyle="LeftDetail"
-			detail="Hours"
-			title={job.hoursPerWeek + ending}
-		/>
+		<Cell cellStyle="LeftDetail" detail="Hours" title={job.hoursPerWeek + ending} />
 	) : null
 
 	let amount = job.timeOfHours ? (
@@ -106,9 +94,7 @@ function JobInformation({job}: {job: JobType}) {
 		<Cell cellStyle="LeftDetail" detail="Positions" title={job.openPositions} />
 	) : null
 
-	let year = job.year ? (
-		<Cell cellStyle="LeftDetail" detail="Time Period" title={job.year} />
-	) : null
+	let year = job.year ? <Cell cellStyle="LeftDetail" detail="Time Period" title={job.year} /> : null
 
 	return (
 		<Section header="JOB INFORMATION">

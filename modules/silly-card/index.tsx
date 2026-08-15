@@ -1,12 +1,5 @@
 import * as React from 'react'
-import {
-	View,
-	Text,
-	StyleSheet,
-	Platform,
-	StyleProp,
-	ViewStyle,
-} from 'react-native'
+import {View, Text, StyleSheet, Platform, StyleProp, ViewStyle} from 'react-native'
 import {material, iOSUIKit} from 'react-native-typography'
 import * as c from '@frogpond/colors'
 
@@ -51,12 +44,7 @@ type Props = React.PropsWithChildren<{
 	style?: StyleProp<ViewStyle>
 }>
 
-export function Card({
-	header,
-	footer,
-	children,
-	style,
-}: Props): React.ReactNode {
+export function Card({header, footer, children, style}: Props): React.ReactNode {
 	return (
 		<View style={[cardStyles.card, style]}>
 			{header ? (

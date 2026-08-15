@@ -48,14 +48,8 @@ type Props = {
 export function BuildingRow(props: Props): React.ReactNode {
 	let {info, now, onPress} = props
 
-	let openStatus = React.useMemo(
-		() => getShortBuildingStatus(info, now),
-		[now, info],
-	)
-	let hours = React.useMemo(
-		() => getDetailedBuildingStatus(info, now),
-		[now, info],
-	)
+	let openStatus = React.useMemo(() => getShortBuildingStatus(info, now), [now, info])
+	let hours = React.useMemo(() => getDetailedBuildingStatus(info, now), [now, info])
 
 	return (
 		<ListRow arrowPosition="center" onPress={onPress}>
@@ -63,9 +57,7 @@ export function BuildingRow(props: Props): React.ReactNode {
 				<Title lines={1} style={styles.titleText}>
 					<Text>{info.name}</Text>
 					{info.abbreviation ? <Text> ({info.abbreviation})</Text> : null}
-					{info.subtitle ? (
-						<Text style={styles.subtitleText}> {info.subtitle}</Text>
-					) : null}
+					{info.subtitle ? <Text style={styles.subtitleText}> {info.subtitle}</Text> : null}
 				</Title>
 
 				{!info.isNotice ? (
@@ -79,9 +71,7 @@ export function BuildingRow(props: Props): React.ReactNode {
 			</Row>
 
 			<View style={styles.detailWrapper}>
-				{info.noticeMessage ? (
-					<Detail style={styles.detailRow}>{info.noticeMessage}</Detail>
-				) : null}
+				{info.noticeMessage ? <Detail style={styles.detailRow}>{info.noticeMessage}</Detail> : null}
 				{!(info.noticeMessage && info.isNotice)
 					? hours.map(({isActive, label, status}, i) => (
 							<Detail key={i} style={styles.detailRow}>
@@ -110,9 +100,7 @@ const BuildingTimeSlot = (props: BuildingTimeSlotProps) => {
 
 	return (
 		<Text>
-			{showLabel ? (
-				<Text style={props.highlight && styles.bold}>{props.label}: </Text>
-			) : null}
+			{showLabel ? <Text style={props.highlight && styles.bold}>{props.label}: </Text> : null}
 			<Text style={props.highlight && styles.bold}>{props.status}</Text>
 		</Text>
 	)

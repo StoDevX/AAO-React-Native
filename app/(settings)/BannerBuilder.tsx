@@ -1,23 +1,14 @@
 import * as React from 'react'
 import {Alert, ScrollView, Share, StyleSheet, Text, View} from 'react-native'
 import {Cell, Section, TableView} from '@frogpond/tableview'
-import {
-	CellTextField,
-	CellToggle,
-	PushButtonCell,
-	ButtonCell,
-} from '@frogpond/tableview/cells'
+import {CellTextField, CellToggle, PushButtonCell, ButtonCell} from '@frogpond/tableview/cells'
 import * as c from '@frogpond/colors'
 import {dump} from 'js-yaml'
 import {Stack, useNavigation} from 'expo-router'
 
 import {FaqBannerPresentation} from '../../source/features/faqs/banner'
 import {useDevBannerStore} from '../../source/features/faqs/dev-banner-store'
-import type {
-	Faq,
-	FaqSeverity,
-	FaqTarget,
-} from '../../source/features/faqs/types'
+import type {Faq, FaqSeverity, FaqTarget} from '../../source/features/faqs/types'
 import {FAQ_TARGET_SCREENS} from '../../source/features/faqs/types'
 
 const SEVERITY_OPTIONS: FaqSeverity[] = ['notice', 'info', 'alert']
@@ -71,9 +62,7 @@ export default function BannerBuilderPage(): React.ReactNode {
 	let [foregroundColor, setForegroundColor] = React.useState('')
 	let [dismissable, setDismissable] = React.useState(true)
 	let [bannerCta, setBannerCta] = React.useState('')
-	let [selectedTargets, setSelectedTargets] = React.useState<FaqTarget[]>([
-		'Home',
-	])
+	let [selectedTargets, setSelectedTargets] = React.useState<FaqTarget[]>(['Home'])
 
 	let currentFaq: Faq = React.useMemo(
 		() => ({
@@ -108,9 +97,7 @@ export default function BannerBuilderPage(): React.ReactNode {
 
 	let toggleTarget = (target: FaqTarget) => {
 		setSelectedTargets((prev) =>
-			prev.includes(target)
-				? prev.filter((t) => t !== target)
-				: [...prev, target],
+			prev.includes(target) ? prev.filter((t) => t !== target) : [...prev, target],
 		)
 	}
 
@@ -229,20 +216,14 @@ export default function BannerBuilderPage(): React.ReactNode {
 					</Section>
 
 					<Section header="Behavior">
-						<CellToggle
-							label="Dismissable"
-							onChange={setDismissable}
-							value={dismissable}
-						/>
+						<CellToggle label="Dismissable" onChange={setDismissable} value={dismissable} />
 					</Section>
 
 					<Section header="Target Screens">
 						{TARGET_OPTIONS.map((target) => (
 							<Cell
 								key={target}
-								accessory={
-									selectedTargets.includes(target) ? 'Checkmark' : undefined
-								}
+								accessory={selectedTargets.includes(target) ? 'Checkmark' : undefined}
 								onPress={() => toggleTarget(target)}
 								title={target}
 							/>

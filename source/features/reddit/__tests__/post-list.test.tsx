@@ -37,19 +37,14 @@ describe('PostList', () => {
 			makePost({id: 'p1', title: 'First post about Olaf'}),
 			makePost({id: 'p2', title: 'Second post about Carleton'}),
 		]
-		await render(
-			<PostList onPressPost={jest.fn()} query={makeQuery({data: posts})} />,
-		)
+		await render(<PostList onPressPost={jest.fn()} query={makeQuery({data: posts})} />)
 		expect(screen.getByText('First post about Olaf')).toBeTruthy()
 		expect(screen.getByText('Second post about Carleton')).toBeTruthy()
 	})
 
 	it('renders loading indicator while loading', async () => {
 		await render(
-			<PostList
-				onPressPost={jest.fn()}
-				query={makeQuery({isLoading: true, data: undefined})}
-			/>,
+			<PostList onPressPost={jest.fn()} query={makeQuery({isLoading: true, data: undefined})} />,
 		)
 		expect(screen.getByText('Loading…')).toBeTruthy()
 	})

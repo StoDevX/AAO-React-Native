@@ -2,17 +2,17 @@
   "name": "@frogpond/html-content",
   "version": "1.0.0",
   "description": "",
-  "main": "index.tsx",
-  "author": "",
   "license": "ISC",
+  "author": "",
+  "main": "index.tsx",
   "scripts": {
     "test": "jest"
+  },
+  "dependencies": {
+    "@frogpond/open-url": "workspace:*"
   },
   "peerDependencies": {
     "react": "^19.1.0",
     "react-native": "^0.86.2"
-  },
-  "dependencies": {
-    "@frogpond/open-url": "workspace:*"
   }
 }

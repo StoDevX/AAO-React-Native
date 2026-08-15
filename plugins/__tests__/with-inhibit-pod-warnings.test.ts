@@ -25,10 +25,7 @@ describe('inhibitPodWarnings', () => {
 	})
 
 	it('tolerates a reindented template', () => {
-		let reindented = STOCK_PODFILE.replace(
-			'  use_expo_modules!',
-			'    use_expo_modules!',
-		)
+		let reindented = STOCK_PODFILE.replace('  use_expo_modules!', '    use_expo_modules!')
 		let result = inhibitPodWarnings(reindented)
 		expect(result).toContain('    inhibit_all_warnings!')
 	})

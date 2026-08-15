@@ -31,17 +31,9 @@ export default function DirectoryDetailPage(): React.ReactNode {
 		isLoading,
 		error,
 		refetch,
-	} = useQuery(
-		directoryContactOptions(
-			query,
-			type as DirectorySearchTypeEnum,
-			Number(index),
-		),
-	)
+	} = useQuery(directoryContactOptions(query, type as DirectorySearchTypeEnum, Number(index)))
 
-	let screenTitle = (
-		<Stack.Title>{contact?.displayName ?? 'Contact'}</Stack.Title>
-	)
+	let screenTitle = <Stack.Title>{contact?.displayName ?? 'Contact'}</Stack.Title>
 
 	if (isLoading) {
 		return (
@@ -99,9 +91,7 @@ export default function DirectoryDetailPage(): React.ReactNode {
 					style={styles.image}
 				/>
 				<Title style={[styles.header, styles.headerName]}>{displayName}</Title>
-				<Detail style={[styles.header, styles.headerTitle]}>
-					{displayTitle}
-				</Detail>
+				<Detail style={[styles.header, styles.headerTitle]}>{displayTitle}</Detail>
 
 				<TableView>
 					{officeHours || email || profileUrl || pronouns ? (
@@ -119,18 +109,14 @@ export default function DirectoryDetailPage(): React.ReactNode {
 									accessory="DisclosureIndicator"
 									cellStyle="LeftDetail"
 									detail="Email"
-									onPress={() =>
-										sendEmail({to: [email], subject: '', body: ''})
-									}
+									onPress={() => sendEmail({to: [email], subject: '', body: ''})}
 									title={email}
 								/>
 							) : null}
 
 							{officeHours && (
 								<MultiLineLeftDetailCell
-									accessory={
-										officeHours.href ? 'DisclosureIndicator' : undefined
-									}
+									accessory={officeHours.href ? 'DisclosureIndicator' : undefined}
 									detail={officeHours.title}
 									onPress={
 										officeHours.href
@@ -156,11 +142,7 @@ export default function DirectoryDetailPage(): React.ReactNode {
 					{campusLocations.map((loc: CampusLocation, i: number) => (
 						<Section key={i} header="OFFICE">
 							{Boolean(loc.display) && (
-								<Cell
-									cellStyle="LeftDetail"
-									detail="Location"
-									title={loc.display}
-								/>
+								<Cell cellStyle="LeftDetail" detail="Location" title={loc.display} />
 							)}
 							{Boolean(loc.phone) && (
 								<Cell
@@ -175,9 +157,7 @@ export default function DirectoryDetailPage(): React.ReactNode {
 					))}
 
 					{departments.length ? (
-						<Section
-							header={departments.length !== 1 ? 'DEPARTMENTS' : 'DEPARTMENT'}
-						>
+						<Section header={departments.length !== 1 ? 'DEPARTMENTS' : 'DEPARTMENT'}>
 							{departments.map((dept: Department, key: number) => (
 								<Cell
 									key={key}

@@ -31,19 +31,11 @@ let Section = (props: SectionInterface): React.ReactNode => (
 )
 
 let TableView = (props: TableViewInterface): React.ReactNode => (
-	<RNTableView.TableView
-		appearance="auto"
-		style={styles.tableview}
-		{...props}
-	/>
+	<RNTableView.TableView appearance="auto" style={styles.tableview} {...props} />
 )
 
 let Cell = (props: CellInterfaceModifiedType): React.ReactNode => (
-	<RNTableView.Cell
-		backgroundColor={c.systemBackground}
-		titleTextColor={c.label}
-		{...props}
-	/>
+	<RNTableView.Cell backgroundColor={c.systemBackground} titleTextColor={c.label} {...props} />
 )
 
 const styles = StyleSheet.create({

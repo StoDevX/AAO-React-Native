@@ -13,7 +13,7 @@ export function SingleToggleSection<T extends object>({
 	onChange,
 }: Props<T>): React.ReactNode {
 	let {spec, enabled} = filter
-	let {title = '', caption, label} = spec
+	let {title, caption, label} = spec
 	return (
 		<Section footer={caption} header={title.toUpperCase()}>
 			<CellToggle

@@ -7,9 +7,7 @@ import {fetchRedditPost} from './reddit-api'
  * Matches Reddit post URLs across www, old, and bare reddit.com domains.
  * Extracts the subreddit name for use as the communityName.
  */
-function parseRedditPostUrl(
-	url: string,
-): {postUrl: string; subreddit: string} | null {
+function parseRedditPostUrl(url: string): {postUrl: string; subreddit: string} | null {
 	try {
 		const parsed = new URL(url)
 		if (!/(^|\.)reddit\.com$/u.test(parsed.hostname)) return null
@@ -57,10 +55,7 @@ export function useRedditLinkHandler(): (url: string) => void {
 			controllerRef.current = controller
 
 			try {
-				const post = await fetchRedditPost(
-					redditMatch.postUrl,
-					controller.signal,
-				)
+				const post = await fetchRedditPost(redditMatch.postUrl, controller.signal)
 				if (controller.signal.aborted) return
 				if (!post) {
 					openUrl(url)

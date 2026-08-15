@@ -42,9 +42,7 @@ function PlayButton(props: PlayButtonProps): React.ReactNode {
 			return <ActionButton icon="play" onPress={onPlay} text="Listen" />
 
 		case 'checking':
-			return (
-				<ActionButton icon="code-working" onPress={onPause} text="Starting" />
-			)
+			return <ActionButton icon="code-working" onPress={onPause} text="Starting" />
 
 		case 'playing':
 			return <ActionButton icon="pause" onPress={onPlay} text="Pause" />
@@ -70,15 +68,7 @@ type Props = {
 
 export function RadioControllerView(props: Props): React.ReactNode {
 	const theme = theming.useTheme()
-	const {
-		source,
-		title,
-		stationName,
-		image,
-		scheduleHref,
-		stationNumber,
-		playerUrl,
-	} = props
+	const {source, title, stationName, image, scheduleHref, stationNumber, playerUrl} = props
 
 	let router = useRouter()
 
@@ -144,12 +134,7 @@ export function RadioControllerView(props: Props): React.ReactNode {
 
 	let controlsBlock = (
 		<Row>
-			<PlayButton
-				onLink={openStreamWebsite}
-				onPause={pause}
-				onPlay={play}
-				state={playState}
-			/>
+			<PlayButton onLink={openStreamWebsite} onPause={pause} onPlay={play} state={playState} />
 			<View style={styles.spacer} />
 			<CallButton onPress={callStation} />
 			<View style={styles.spacer} />
@@ -190,10 +175,7 @@ export function RadioControllerView(props: Props): React.ReactNode {
 	let logoWrapper = [styles.logoWrapper, sideways && landscape.logoWrapper]
 
 	return (
-		<ScrollView
-			contentContainerStyle={root}
-			contentInsetAdjustmentBehavior="automatic"
-		>
+		<ScrollView contentContainerStyle={root} contentInsetAdjustmentBehavior="automatic">
 			<View style={logoWrapper}>
 				<Image resizeMode="contain" source={image} style={logo} />
 			</View>

@@ -1,0 +1,165 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  // Plugins: typescript + react cover this codebase's TS/React rules;
+  // @tanstack/eslint-plugin-query (below, via jsPlugins -- oxlint's plugin
+  // API is ESLint v9+ compatible, so this loads directly) covers TanStack
+  // Query. unicorn and oxc are oxlint's own bundled plugins, left on.
+  //
+  // The following rules have no oxlint equivalent at all (checked against
+  // `oxlint --rules --format=json`, no name match in any scope): camelcase,
+  // consistent-this, no-restricted-syntax (only used here to ban the `with`
+  // statement, already a SyntaxError in strict-mode/ESM code),
+  // require-atomic-updates, react/jsx-no-bind, react/jsx-sort-props,
+  // react/no-access-state-in-setstate, react/no-typos, react/sort-comp,
+  // react/sort-prop-types. Most are stylistic (prop/method ordering) or only
+  // meaningful for class components, which CLAUDE.md steers this codebase
+  // away from (functional components with hooks only) -- two class
+  // components remain (modules/add-to-device-calendar/add-to-calendar.ts,
+  // modules/event-list/event-row.tsx), so no-typos/no-access-state-in-setstate
+  // leave a real, if narrow, gap there.
+  //
+  // linebreak-style/quotes/semi aren't lint rules here because they're
+  // formatting concerns covered by oxfmt's endOfLine/singleQuote/semi config
+  // (.oxfmtrc.json) instead.
+  "plugins": ["typescript", "react", "unicorn", "oxc"],
+  "jsPlugins": ["@tanstack/eslint-plugin-query"],
+  "categories": {
+    "correctness": "error"
+  },
+  "options": {
+    "typeAware": true,
+    "denyWarnings": true,
+    "reportUnusedDisableDirectives": "warn"
+  },
+  "env": {
+    "builtin": true
+  },
+  "globals": {
+    "JSX": "readonly",
+    "React": "readonly",
+    "NodeJS": "readonly"
+  },
+  "ignorePatterns": ["**/*.min.js", "**/*-min.js"],
+  "settings": {
+    "react": {
+      "version": "19.2.8"
+    }
+  },
+  "rules": {
+    // General rules
+    "array-callback-return": "error",
+    "curly": ["warn", "multi-line"],
+    "default-case": "error",
+    "guard-for-in": "error",
+    "eqeqeq": ["error", "smart"],
+    "new-cap": "off",
+    "no-await-in-loop": "warn",
+    "no-case-declarations": "error",
+    "no-console": "off",
+    "no-div-regex": "error",
+    "no-extra-label": "error",
+    "no-implicit-coercion": ["error", {"boolean": true, "number": true, "string": true}],
+    "no-implicit-globals": "error",
+    "no-multi-assign": "error",
+    "no-new-native-nonconstructor": "error",
+    "no-throw-literal": "error",
+    "no-underscore-dangle": "off",
+    "no-unmodified-loop-condition": "error",
+    "no-unused-vars": [
+      "warn",
+      {
+        "args": "after-used",
+        "argsIgnorePattern": "^_",
+        "varsIgnorePattern": "^_",
+        "caughtErrorsIgnorePattern": "^_"
+      }
+    ],
+    "no-useless-constructor": "error",
+    "no-var": "error",
+    "prefer-const": "off",
+    "prefer-promise-reject-errors": "error",
+    "prefer-spread": "error",
+    "require-await": "warn",
+    "no-misleading-character-class": "warn",
+    "no-async-promise-executor": "error",
+    "require-unicode-regexp": "error",
+
+    // TypeScript rules
+    "typescript/explicit-module-boundary-types": "warn",
+    "typescript/no-inferrable-types": "warn",
+    "typescript/no-non-null-assertion": "warn",
+    "typescript/no-require-imports": "error",
+    "typescript/no-empty-function": "warn",
+    "typescript/no-explicit-any": "warn",
+    // Off: the codebase has ~140 places where an async function is passed
+    // directly to a handler expecting a void return (`onPress={async () =>
+    // ...}` and similar) -- a widespread, deliberate pattern, not bugs.
+    // Enabling these three rules is a legitimate goal, but a large, separate
+    // cleanup on its own.
+    "typescript/no-misused-promises": "off",
+    "typescript/restrict-template-expressions": "off",
+    "typescript/no-floating-promises": "off",
+    "typescript/return-await": "error",
+
+    // React Hooks rules
+    "react/rules-of-hooks": "error",
+    "react/exhaustive-deps": "warn",
+    // React rules
+    "react/display-name": "off",
+    // `propElementValues: "always"` per the rule's own docs -- the bare
+    // "never" string applies to prop-element-values too, which lets JSX
+    // element props drop their braces (`foo=<Bar />`); oxlint's own schema
+    // comment calls that "obscure ... intentionally undocumented ... should
+    // not be relied upon".
+    "react/jsx-curly-brace-presence": [
+      "warn",
+      {"props": "never", "children": "never", "propElementValues": "always"}
+    ],
+    "react/jsx-key": "warn",
+    "react/no-did-mount-set-state": "error",
+    "react/no-did-update-set-state": "error",
+    "react/no-multi-comp": "off",
+    "react/no-redundant-should-component-update": "warn",
+    "react/self-closing-comp": "warn",
+    "react/jsx-boolean-value": ["error", "always"],
+
+    // TanStack Query rules (@tanstack/eslint-plugin-query's own
+    // `flat/recommended` severities)
+    "@tanstack/query/exhaustive-deps": "error",
+    "@tanstack/query/no-rest-destructuring": "warn",
+    "@tanstack/query/stable-query-client": "error",
+    "@tanstack/query/no-unstable-deps": "error",
+    "@tanstack/query/infinite-query-property-order": "error",
+    "@tanstack/query/no-void-query-fn": "error",
+    "@tanstack/query/mutation-property-order": "error"
+  },
+  "overrides": [
+    {
+      "files": ["images/**/*.ts"],
+      "rules": {
+        "typescript/no-require-imports": "off"
+      }
+    },
+    {
+      "files": ["scripts/**/*.mjs"],
+      "rules": {
+        "typescript/no-unsafe-assignment": "off",
+        "typescript/no-unsafe-member-access": "off",
+        "typescript/no-unsafe-call": "off",
+        "typescript/no-unsafe-argument": "off",
+        "typescript/no-unsafe-return": "off",
+        "typescript/unbound-method": "off",
+        "no-unused-expressions": "off",
+        "typescript/explicit-module-boundary-types": "off",
+        "no-unused-vars": "off"
+      }
+    },
+    {
+      "files": ["images/**/index.ts", "images/transparent.ts"],
+      "rules": {
+        "typescript/no-unsafe-member-access": "off",
+        "typescript/no-unsafe-return": "off"
+      }
+    }
+  ]
+}

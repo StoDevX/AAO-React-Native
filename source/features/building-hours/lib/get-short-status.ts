@@ -22,16 +22,12 @@ export function getShortBuildingStatus(info: BuildingType, m: Moment): string {
 			return 'Chapel'
 		}
 
-		let filteredSchedules = set.hours.filter((sched) =>
-			sched.days.includes(dayOfWeek),
-		)
+		let filteredSchedules = set.hours.filter((sched) => sched.days.includes(dayOfWeek))
 		if (!filteredSchedules.length) {
 			return 'Closed'
 		}
 
-		return filteredSchedules.map((schedule) =>
-			getScheduleStatusAtMoment(schedule, m),
-		)
+		return filteredSchedules.map((schedule) => getScheduleStatusAtMoment(schedule, m))
 	})
 
 	return statuses.find((status) => status !== 'Closed') ?? 'Closed'

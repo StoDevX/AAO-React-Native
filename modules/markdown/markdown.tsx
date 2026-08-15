@@ -15,8 +15,7 @@ import {openUrl} from '@frogpond/open-url'
 // scheme automatically. The cast below only satisfies the narrower public type.
 const label = c.label as unknown as string
 const link = c.link as unknown as string
-const secondarySystemBackground =
-	c.secondarySystemBackground as unknown as string
+const secondarySystemBackground = c.secondarySystemBackground as unknown as string
 const separator = c.separator as unknown as string
 
 const baseMarkdownStyle: MarkdownStyle = {
@@ -51,10 +50,7 @@ const baseMarkdownStyle: MarkdownStyle = {
 // character, matching the renderer's compiled-out math support.
 const md4cFlags = {latexMath: false}
 
-function mergeMarkdownStyle(
-	base: MarkdownStyle,
-	override: MarkdownStyle,
-): MarkdownStyle {
+function mergeMarkdownStyle(base: MarkdownStyle, override: MarkdownStyle): MarkdownStyle {
 	const merged: Record<string, object> = {...base}
 	for (const [key, value] of Object.entries(override) as [string, object][]) {
 		merged[key] = {...(base as Record<string, object>)[key], ...value}
@@ -71,10 +67,7 @@ export type MarkdownProps = {
 	markdownStyle?: MarkdownStyle
 }
 
-export function Markdown({
-	source,
-	markdownStyle,
-}: MarkdownProps): React.ReactNode {
+export function Markdown({source, markdownStyle}: MarkdownProps): React.ReactNode {
 	let style = markdownStyle
 		? mergeMarkdownStyle(baseMarkdownStyle, markdownStyle)
 		: baseMarkdownStyle

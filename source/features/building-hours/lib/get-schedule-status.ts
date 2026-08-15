@@ -11,10 +11,7 @@ function timeBetween(start: Moment, end: Moment) {
 	return start.clone().seconds(0).to(end)
 }
 
-export function getScheduleStatusAtMoment(
-	schedule: SingleBuildingScheduleType,
-	m: Moment,
-): string {
+export function getScheduleStatusAtMoment(schedule: SingleBuildingScheduleType, m: Moment): string {
 	let {open, close} = parseHours(schedule, m)
 
 	if (m.isBefore(open) && in30(m, open)) {

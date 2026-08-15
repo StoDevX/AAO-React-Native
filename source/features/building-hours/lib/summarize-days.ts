@@ -5,10 +5,7 @@ import type {DayOfWeekEnumType, SingleBuildingScheduleType} from '../types'
 import {daysOfTheWeek} from './constants'
 import {formatDay} from '../../../features/sis/course-search/lib/format-day'
 
-export function summarizeDays(
-	days: DayOfWeekEnumType[],
-	useFullDay = false,
-): string {
+export function summarizeDays(days: DayOfWeekEnumType[], useFullDay = false): string {
 	// If one day is given: return the full name of that day.
 	//    ['Fr'] => 'Friday'
 	// If multiple contiguous days are given: return the bookended 3-letter days
@@ -87,9 +84,7 @@ function formatFullDay(sortedDays: DayOfWeekEnumType[]) {
 	return formatted.join(', ')
 }
 
-export function summarizeDaysAndHours(
-	schedule: SingleBuildingScheduleType,
-): string {
+export function summarizeDaysAndHours(schedule: SingleBuildingScheduleType): string {
 	let daySummary = summarizeDays(schedule.days, true)
 
 	if (daySummary === 'Weekdays' || daySummary === 'Weekends') {

@@ -13,25 +13,20 @@ export const accent = sto.gold
 // <color key="backgroundColor"/> and <color key="tintColor"/> in <view>,
 // and <color key="tintColor"/> and <color key="barTintColor"/> in <navigationBar/>.
 export const navigationBackground = accent
-export const navigationForeground = firstReadable(navigationBackground, [
-	sto.black,
-	sto.white,
-])
+export const navigationForeground = firstReadable(navigationBackground, [sto.black, sto.white])
 
 export const buttonBackground = accent
-export const buttonForeground = firstReadable(buttonBackground, [
-	sto.black,
-	sto.white,
-])
+export const buttonForeground = firstReadable(buttonBackground, [sto.black, sto.white])
 
 export const toolbarButtonBackground = buttonBackground
 export const toolbarButtonForeground = buttonForeground
 
 export const iosPushButtonCellBackground = sto.white
-export const iosPushButtonCellForeground = firstReadable(
-	iosPushButtonCellBackground,
-	[accent, sto.black, sto.white],
-)
+export const iosPushButtonCellForeground = firstReadable(iosPushButtonCellBackground, [
+	accent,
+	sto.black,
+	sto.white,
+])
 
 // Background color when the switch is turned on.
 export const switchTintOn = accent
@@ -42,10 +37,12 @@ export const switchTintOff = undefined
 const iosTabBarBackground = '#F7F7F7'
 export const iosTabBarActiveColor = sto.purple
 
-export const statusBarStyle: 'dark-content' | 'light-content' =
-	tinycolor.isReadable('#000', navigationBackground)
-		? 'dark-content'
-		: 'light-content'
+export const statusBarStyle: 'dark-content' | 'light-content' = tinycolor.isReadable(
+	'#000',
+	navigationBackground,
+)
+	? 'dark-content'
+	: 'light-content'
 
 export const themeObject: AppTheme = {
 	accent,

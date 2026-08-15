@@ -28,10 +28,7 @@ export const ALTERNATE_ICON_FILES = [
 const SOURCE_DIR = join('images', 'icons')
 
 interface AlternateIconSet {
-	CFBundleAlternateIcons?: Record<
-		string,
-		{CFBundleIconFiles: string[]; UIPrerenderedIcon: boolean}
-	>
+	CFBundleAlternateIcons?: Record<string, {CFBundleIconFiles: string[]; UIPrerenderedIcon: boolean}>
 }
 
 export type InfoPlistWithAlternateIcons = InfoPlist & {
@@ -51,9 +48,7 @@ function registerWindmill(existing: unknown): Required<AlternateIconSet> {
 }
 
 /** Declare the alternate icon for both idioms, leaving every other key alone. */
-export function addAlternateIcons(
-	infoPlist: InfoPlist,
-): InfoPlistWithAlternateIcons {
+export function addAlternateIcons(infoPlist: InfoPlist): InfoPlistWithAlternateIcons {
 	return {
 		...infoPlist,
 		CFBundleIcons: registerWindmill(infoPlist.CFBundleIcons),

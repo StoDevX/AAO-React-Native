@@ -16,10 +16,7 @@ type ResolvedService = {
 	txt?: Record<string, string>
 }
 
-const formatHost = ({
-	addresses,
-	host,
-}: Pick<ResolvedService, 'addresses' | 'host'>) => {
+const formatHost = ({addresses, host}: Pick<ResolvedService, 'addresses' | 'host'>) => {
 	const rawHost = addresses?.[0] || host.replace(/\.$/u, '')
 	return rawHost.includes(':') ? `[${rawHost}]` : rawHost
 }
@@ -42,8 +39,7 @@ export const useServerDiscovery = (): DiscoveredServer[] => {
 		const zeroconf = new Zeroconf()
 
 		const onResolved = (service: ResolvedService) => {
-			const path =
-				service.txt?.path && service.txt.path !== '' ? service.txt.path : '/v1/'
+			const path = service.txt?.path && service.txt.path !== '' ? service.txt.path : '/v1/'
 			const url = `http://${formatHost(service)}:${service.port}${path}`
 			setServers((prev) => {
 				const already = prev.some((s) => s.url === url)

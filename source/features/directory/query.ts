@@ -36,8 +36,7 @@ const getDirectoryQuery = ({query, type}: GetDirectoryQueryArgs) => {
 }
 
 export const keys = {
-	all: (query: ReturnType<typeof getDirectoryQuery>) =>
-		['directory', query] as const,
+	all: (query: ReturnType<typeof getDirectoryQuery>) => ['directory', query] as const,
 }
 
 const staleTime = 1000 * 60 // 1 minute
@@ -46,34 +45,27 @@ async function fetchDirectoryEntries(
 	searchQuery: ReturnType<typeof getDirectoryQuery>,
 	signal?: AbortSignal,
 ): Promise<SearchResults> {
-	let response = await directory
-		.get('search', {searchParams: searchQuery, signal})
-		.json()
+	let response = await directory.get('search', {searchParams: searchQuery, signal}).json()
 	return response as SearchResults
 }
 
-export const directoryEntriesOptions = (
-	query: string,
-	type: DirectorySearchTypeEnum,
-	// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-) =>
+// oxlint-disable-next-line typescript/explicit-module-boundary-types
+export const directoryEntriesOptions = (query: string, type: DirectorySearchTypeEnum) =>
 	queryOptions({
 		queryKey: keys.all(getDirectoryQuery({query, type})),
-		queryFn: ({signal}) =>
-			fetchDirectoryEntries(getDirectoryQuery({query, type}), signal),
+		queryFn: ({signal}) => fetchDirectoryEntries(getDirectoryQuery({query, type}), signal),
 		staleTime,
 	})
 
+// oxlint-disable-next-line typescript/explicit-module-boundary-types
 export const directoryContactOptions = (
 	query: string,
 	type: DirectorySearchTypeEnum,
 	index: number,
-	// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 ) =>
 	queryOptions({
 		queryKey: keys.all(getDirectoryQuery({query, type})),
-		queryFn: ({signal}) =>
-			fetchDirectoryEntries(getDirectoryQuery({query, type}), signal),
+		queryFn: ({signal}) => fetchDirectoryEntries(getDirectoryQuery({query, type}), signal),
 		staleTime,
 		select: (data) => formatResults(data.results)[index],
 	})

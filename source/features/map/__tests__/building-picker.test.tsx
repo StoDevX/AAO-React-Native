@@ -7,11 +7,11 @@ import {keys} from '../query'
 import {makeBuilding} from './fixtures'
 
 jest.mock('@expo/ui/swift-ui', () => {
-	// eslint-disable-next-line @typescript-eslint/no-require-imports
+	// oxlint-disable-next-line typescript/no-require-imports
 	return require('./expo-ui-mock') as typeof import('./expo-ui-mock')
 })
 jest.mock('@expo/ui/swift-ui/modifiers', () => {
-	// eslint-disable-next-line @typescript-eslint/no-require-imports
+	// oxlint-disable-next-line typescript/no-require-imports
 	return require('./expo-ui-mock') as typeof import('./expo-ui-mock')
 })
 
@@ -67,10 +67,7 @@ describe('BuildingPicker', () => {
 
 	it('hides the category picker and searches across every category while typing', async () => {
 		await renderPicker()
-		await fireEvent.changeText(
-			screen.getByLabelText('Search for a place'),
-			'gamma',
-		)
+		await fireEvent.changeText(screen.getByLabelText('Search for a place'), 'gamma')
 		await waitFor(() => {
 			expect(screen.queryByText('Outdoors')).toBeNull()
 		})
@@ -79,10 +76,7 @@ describe('BuildingPicker', () => {
 
 	it('still matches when the query carries leading whitespace', async () => {
 		await renderPicker()
-		await fireEvent.changeText(
-			screen.getByLabelText('Search for a place'),
-			' gamma',
-		)
+		await fireEvent.changeText(screen.getByLabelText('Search for a place'), ' gamma')
 		await waitFor(() => {
 			expect(screen.getByText('Gamma Field')).toBeTruthy()
 		})

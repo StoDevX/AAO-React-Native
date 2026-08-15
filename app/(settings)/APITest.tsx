@@ -57,9 +57,7 @@ export default function APITestPage(): React.ReactNode {
 
 			<Stack.Toolbar placement="left">
 				<Stack.Toolbar.Menu icon="ellipsis.circle">
-					<Stack.Toolbar.MenuAction
-						onPress={() => router.navigate('/NetworkLogger')}
-					>
+					<Stack.Toolbar.MenuAction onPress={() => router.navigate('/NetworkLogger')}>
 						Network Logger
 					</Stack.Toolbar.MenuAction>
 				</Stack.Toolbar.Menu>
@@ -102,9 +100,7 @@ export default function APITestPage(): React.ReactNode {
 						onRefresh={routesRefetch}
 						refreshing={isRoutesLoading}
 						renderItem={({item}) => renderItem(item)}
-						renderSectionHeader={({section: {title}}) => (
-							<ListSectionHeader title={title} />
-						)}
+						renderSectionHeader={({section: {title}}) => <ListSectionHeader title={title} />}
 						sections={groupedRoutes}
 					/>
 				)}

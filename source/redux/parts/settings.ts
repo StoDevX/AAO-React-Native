@@ -29,11 +29,8 @@ const slice = createSlice({
 export const {acknowledgeAcknowledgement, setDevModeOverride} = slice.actions
 export const reducer = slice.reducer
 
-export const selectAcknowledgement = (
-	state: RootState,
-): State['unofficialityAcknowledged'] =>
+export const selectAcknowledgement = (state: RootState): State['unofficialityAcknowledged'] =>
 	state.settings.unofficialityAcknowledged
 
-export const selectDevModeOverride = (
-	state: RootState,
-): State['devModeOverride'] => state.settings.devModeOverride
+export const selectDevModeOverride = (state: RootState): State['devModeOverride'] =>
+	state.settings.devModeOverride

@@ -28,10 +28,7 @@ const mockRemoveAllListeners = jest.fn()
 
 jest.mock('react-native-zeroconf', () =>
 	jest.fn().mockImplementation(() => ({
-		on: (
-			event: 'resolved' | 'remove',
-			callback: (...args: unknown[]) => void,
-		) => {
+		on: (event: 'resolved' | 'remove', callback: (...args: unknown[]) => void) => {
 			if (event === 'resolved') {
 				handlers.resolved = callback
 				return
@@ -50,9 +47,7 @@ describe('useServerDiscovery', () => {
 	beforeEach(() => {
 		mockUseIsDevMode.mockReturnValue(true)
 		NativeModules['RNZeroconf'] = {}
-		Object.keys(handlers).forEach(
-			(key) => delete handlers[key as keyof typeof handlers],
-		)
+		Object.keys(handlers).forEach((key) => delete handlers[key as keyof typeof handlers])
 		jest.clearAllMocks()
 	})
 
@@ -69,9 +64,7 @@ describe('useServerDiscovery', () => {
 			} satisfies Service)
 		})
 
-		expect(result.current).toEqual([
-			{name: 'Gecko', url: 'http://192.168.0.10:3000/v1/'},
-		])
+		expect(result.current).toEqual([{name: 'Gecko', url: 'http://192.168.0.10:3000/v1/'}])
 	})
 
 	it('removes only the matching discovered server', async () => {
@@ -96,9 +89,7 @@ describe('useServerDiscovery', () => {
 			handlers.remove?.('Gecko')
 		})
 
-		expect(result.current).toEqual([
-			{name: 'Otter', url: 'http://192.168.0.11:3000/v1/'},
-		])
+		expect(result.current).toEqual([{name: 'Otter', url: 'http://192.168.0.11:3000/v1/'}])
 	})
 
 	it('cleans up listeners on unmount', async () => {

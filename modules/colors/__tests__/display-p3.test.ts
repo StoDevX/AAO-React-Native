@@ -73,9 +73,7 @@ describe('displayP3', () => {
 		})
 
 		test('is insensitive to case and extra whitespace', () => {
-			expect(displayP3('COLOR( Display-P3   1  1   1 )')).toEqual(
-				displayP3(WHITE),
-			)
+			expect(displayP3('COLOR( Display-P3   1  1   1 )')).toEqual(displayP3(WHITE))
 		})
 
 		test('rejects a bare hex colour', () => {

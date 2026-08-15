@@ -41,7 +41,7 @@ export const BalancesView = (): React.ReactNode => {
 	// to send this to without landing on an "Unmatched Route" screen --
 	// leave it a no-op (matching today's actual behavior, since Settings is
 	// unreachable already) until that migration lands.
-	// eslint-disable-next-line @typescript-eslint/no-empty-function
+	// oxlint-disable-next-line typescript/no-empty-function
 	let openSettings = () => {}
 	let refresh = <RefreshControl onRefresh={refetch} refreshing={isRefetching} />
 
@@ -60,17 +60,9 @@ export const BalancesView = (): React.ReactNode => {
 			<TableView>
 				<Section footer={DISCLAIMER} header="BALANCES">
 					<View style={styles.balancesRow}>
-						<FormattedValueCell
-							indeterminate={isLoading}
-							label="Flex"
-							value={data.flex}
-						/>
+						<FormattedValueCell indeterminate={isLoading} label="Flex" value={data.flex} />
 
-						<FormattedValueCell
-							indeterminate={isLoading}
-							label="Ole"
-							value={data.ole}
-						/>
+						<FormattedValueCell indeterminate={isLoading} label="Ole" value={data.ole} />
 
 						<FormattedValueCell
 							indeterminate={isLoading}
@@ -111,11 +103,7 @@ export const BalancesView = (): React.ReactNode => {
 								title="Log in with St. Olaf"
 							/>
 						) : (
-							<Cell
-								cellStyle="Basic"
-								title={error.message}
-								titleTextColor={sto.red}
-							/>
+							<Cell cellStyle="Basic" title={error.message} titleTextColor={sto.red} />
 						)}
 					</Section>
 				)}

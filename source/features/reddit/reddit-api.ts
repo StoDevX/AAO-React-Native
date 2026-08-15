@@ -1,9 +1,4 @@
-import type {
-	CrosspostParent,
-	PollData,
-	RedditCommentType,
-	RedditPostType,
-} from './types'
+import type {CrosspostParent, PollData, RedditCommentType, RedditPostType} from './types'
 
 const USER_AGENT = 'AAO-React-Native/1.0 (by /u/StoDevX)'
 
@@ -68,14 +63,7 @@ interface RawCommentChild {
 
 // ── Helpers ────────────────────────────────────────────────────────────────
 
-const REDDIT_SPECIAL_THUMBNAILS = new Set([
-	'self',
-	'default',
-	'nsfw',
-	'spoiler',
-	'image',
-	'',
-])
+const REDDIT_SPECIAL_THUMBNAILS = new Set(['self', 'default', 'nsfw', 'spoiler', 'image', ''])
 
 function normalizeThumbnail(raw: string | null | undefined): string | null {
 	if (!raw || REDDIT_SPECIAL_THUMBNAILS.has(raw)) return null
@@ -110,20 +98,13 @@ const HTML_ENTITIES: Record<string, string> = {
 }
 
 function decodeHtmlEntities(str: string): string {
-	return str.replace(
-		/&(?:amp|lt|gt|quot|#039);/gu,
-		(entity) => HTML_ENTITIES[entity] ?? entity,
-	)
+	return str.replace(/&(?:amp|lt|gt|quot|#039);/gu, (entity) => HTML_ENTITIES[entity] ?? entity)
 }
 
-function extractGalleryImages(
-	metadata: RawRedditPost['media_metadata'],
-): string[] {
+function extractGalleryImages(metadata: RawRedditPost['media_metadata']): string[] {
 	if (!metadata) return []
 	return Object.values(metadata)
-		.filter(
-			(item) => item.status === 'valid' && item.e === 'Image' && item.s?.u,
-		)
+		.filter((item) => item.status === 'valid' && item.e === 'Image' && item.s?.u)
 		.map((item) => decodeHtmlEntities(item.s?.u ?? ''))
 		.filter((url) => url.length > 0)
 }
@@ -148,16 +129,13 @@ function parsePost(kind: string, d: RawRedditPost): RedditPostType | null {
 				}
 			: null
 
-	const images =
-		postType === 'gallery' ? extractGalleryImages(d.media_metadata) : []
+	const images = postType === 'gallery' ? extractGalleryImages(d.media_metadata) : []
 
 	const externalUrl = d.url_overridden_by_dest ?? null
 	const imageUrl = postType === 'image' ? externalUrl : null
 	const linkUrl = postType === 'link' ? externalUrl : null
 	const linkDomain =
-		postType === 'link' && d.domain && !d.domain.startsWith('self.')
-			? d.domain
-			: null
+		postType === 'link' && d.domain && !d.domain.startsWith('self.') ? d.domain : null
 
 	const pollData: PollData | null = d.poll_data
 		? {
@@ -204,8 +182,7 @@ export function parseRedditPostsJson(response: unknown): RedditPostType[] {
 function parseCommentChild(child: RawCommentChild): RedditCommentType[] {
 	if (child.kind !== 't1') return []
 	const d = child.data
-	const repliesChildren =
-		d.replies && typeof d.replies === 'object' ? d.replies.data.children : []
+	const repliesChildren = d.replies && typeof d.replies === 'object' ? d.replies.data.children : []
 
 	return [
 		{
@@ -219,9 +196,7 @@ function parseCommentChild(child: RawCommentChild): RedditCommentType[] {
 	]
 }
 
-export function parseRedditCommentsJson(
-	response: unknown,
-): RedditCommentType[] {
+export function parseRedditCommentsJson(response: unknown): RedditCommentType[] {
 	if (!Array.isArray(response) || response.length < 2) return []
 	const commentListing = response[1] as {data: {children: RawCommentChild[]}}
 	return commentListing.data.children.flatMap(parseCommentChild)

@@ -13,11 +13,7 @@ const arrowStyles = StyleSheet.create({
 	},
 })
 
-export function DisclosureArrow({
-	style,
-}: {
-	style?: StyleProp<ViewStyle>
-}): React.ReactNode {
+export function DisclosureArrow({style}: {style?: StyleProp<ViewStyle>}): React.ReactNode {
 	return (
 		<View style={[arrowStyles.wrapper, style]}>
 			<Icon name="chevron-forward-outline" style={arrowStyles.icon} />

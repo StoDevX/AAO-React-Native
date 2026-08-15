@@ -88,10 +88,7 @@ const settlePendingRefetch = async (): Promise<void> => {
 	})
 }
 
-const renderWithFaqs = (
-	faqs: Faq[],
-	props?: {onPressOverride?: () => void},
-) => {
+const renderWithFaqs = (faqs: Faq[], props?: {onPressOverride?: () => void}) => {
 	const queryClient = buildQueryClient(faqs)
 
 	return render(

@@ -2,14 +2,14 @@
   "name": "@frogpond/timer",
   "version": "1.0.0",
   "description": "",
-  "main": "index.ts",
-  "author": "",
   "license": "ISC",
+  "author": "",
+  "main": "index.ts",
   "scripts": {
     "test": "jest"
   },
   "peerDependencies": {
-    "react": "^19.1.0",
-    "moment-timezone": "^0.6.3"
+    "moment-timezone": "^0.6.3",
+    "react": "^19.1.0"
   }
 }

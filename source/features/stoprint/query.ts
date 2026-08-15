@@ -9,16 +9,10 @@ import {
 
 export const keys = {
 	jobs: (username: string) => ['printing', 'jobs', 'all', username] as const,
-	heldJobs: ({
-		username,
-		printerName,
-	}: {
-		username: string
-		printerName: string
-	}) => ['printing', 'jobs', 'held', username, printerName] as const,
+	heldJobs: ({username, printerName}: {username: string; printerName: string}) =>
+		['printing', 'jobs', 'held', username, printerName] as const,
 	printers: (username: string) => ['printing', 'printers', username] as const,
-	recentPrinters: (username: string) =>
-		['printing', 'printers', 'recent', username] as const,
+	recentPrinters: (username: string) => ['printing', 'printers', 'recent', username] as const,
 	colorPrinters: ['printing', 'printers', 'color'] as const,
 }
 
@@ -26,7 +20,7 @@ function fetchJobsForUser(username: string, signal?: AbortSignal) {
 	return fetchJobs(username, {signal})
 }
 
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+// oxlint-disable-next-line typescript/explicit-module-boundary-types
 export const printJobsOptions = (username: string) =>
 	queryOptions({
 		queryKey: keys.jobs(username),
@@ -34,11 +28,8 @@ export const printJobsOptions = (username: string) =>
 		queryFn: ({signal}) => fetchJobsForUser(username, signal),
 	})
 
-export const jobByIdOptions = (
-	username: string,
-	jobId: string,
-	// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-) =>
+// oxlint-disable-next-line typescript/explicit-module-boundary-types
+export const jobByIdOptions = (username: string, jobId: string) =>
 	queryOptions({
 		queryKey: keys.jobs(username),
 		enabled: Boolean(username),
@@ -50,7 +41,7 @@ function fetchAllPrintersForUser(username: string, signal?: AbortSignal) {
 	return fetchAllPrinters(username, {signal})
 }
 
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+// oxlint-disable-next-line typescript/explicit-module-boundary-types
 export const allPrintersOptions = (username: string) =>
 	queryOptions({
 		queryKey: keys.printers(username),
@@ -58,11 +49,8 @@ export const allPrintersOptions = (username: string) =>
 		queryFn: ({signal}) => fetchAllPrintersForUser(username, signal),
 	})
 
-export const printerByNameOptions = (
-	username: string,
-	printerName: string | undefined,
-	// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-) =>
+// oxlint-disable-next-line typescript/explicit-module-boundary-types
+export const printerByNameOptions = (username: string, printerName: string | undefined) =>
 	queryOptions({
 		queryKey: keys.printers(username),
 		enabled: Boolean(username) && printerName !== undefined,
@@ -70,7 +58,7 @@ export const printerByNameOptions = (
 		select: (data) => data.find((p) => p.printerName === printerName),
 	})
 
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+// oxlint-disable-next-line typescript/explicit-module-boundary-types
 export const recentPrintersOptions = (username: string) =>
 	queryOptions({
 		queryKey: keys.recentPrinters(username),
@@ -83,16 +71,12 @@ export const colorPrintersOptions = queryOptions({
 	queryFn: ({signal}) => fetchColorPrinters({signal}),
 })
 
-export const heldJobsOptions = (
-	username: string,
-	printerName: string | undefined,
-	// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-) => {
+// oxlint-disable-next-line typescript/explicit-module-boundary-types
+export const heldJobsOptions = (username: string, printerName: string | undefined) => {
 	let usablePrinterName = printerName || 'undefined'
 	return queryOptions({
 		enabled: Boolean(username) && printerName !== undefined,
 		queryKey: keys.heldJobs({username, printerName: usablePrinterName}),
-		queryFn: ({signal}) =>
-			heldJobsAvailableAtPrinterForUser(usablePrinterName, username, {signal}),
+		queryFn: ({signal}) => heldJobsAvailableAtPrinterForUser(usablePrinterName, username, {signal}),
 	})
 }

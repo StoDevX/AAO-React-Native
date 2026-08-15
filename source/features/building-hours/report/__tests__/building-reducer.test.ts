@@ -7,9 +7,7 @@ const baseBuilding: BuildingType = {
 	schedule: [
 		{
 			title: 'Regular Hours',
-			hours: [
-				{days: ['Mo', 'Tu', 'We', 'Th', 'Fr'], from: '8:00am', to: '5:00pm'},
-			],
+			hours: [{days: ['Mo', 'Tu', 'We', 'Th', 'Fr'], from: '8:00am', to: '5:00pm'}],
 		},
 	],
 }
@@ -94,9 +92,7 @@ describe('buildingReducer', () => {
 	})
 
 	it('does not mutate the original state', () => {
-		let original: BuildingType = JSON.parse(
-			JSON.stringify(baseBuilding),
-		) as BuildingType
+		let original: BuildingType = JSON.parse(JSON.stringify(baseBuilding)) as BuildingType
 		buildingReducer(baseBuilding, {type: 'SET_BUILDING_NAME', name: 'Changed'})
 		expect(baseBuilding).toEqual(original)
 	})

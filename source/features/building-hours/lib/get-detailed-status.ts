@@ -13,10 +13,7 @@ export type BuildingStatus = {
 	status: string
 }
 
-export function getDetailedBuildingStatus(
-	info: BuildingType,
-	m: Moment,
-): BuildingStatus[] {
+export function getDetailedBuildingStatus(info: BuildingType, m: Moment): BuildingStatus[] {
 	// Friday: 9:00am – Midnight
 	// -- or --
 	// Friday Breakfast: 7:00am – 9:45am
@@ -46,9 +43,7 @@ export function getDetailedBuildingStatus(
 			]
 		}
 
-		let filteredSchedules = set.hours.filter((sched) =>
-			sched.days.includes(dayOfWeek),
-		)
+		let filteredSchedules = set.hours.filter((sched) => sched.days.includes(dayOfWeek))
 		if (!filteredSchedules.length) {
 			return [{isActive: false, label, status: 'Closed today'}]
 		}

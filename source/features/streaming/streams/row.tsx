@@ -22,9 +22,7 @@ function Name({item}: {item: StreamType}) {
 }
 
 function Info({item}: {item: StreamType}) {
-	let detail = innerTextWithSpaces(
-		parseHtml(item.subtitle || item.performer || ''),
-	)
+	let detail = innerTextWithSpaces(parseHtml(item.subtitle || item.performer || ''))
 	return detail ? <Detail>{detail}</Detail> : null
 }
 

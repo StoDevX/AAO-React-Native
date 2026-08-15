@@ -3,10 +3,7 @@ import {Stack, useLocalSearchParams} from 'expo-router'
 import {useQuery} from '@tanstack/react-query'
 
 import {MenuItemDetailView} from '../../modules/food-menu/food-item-detail'
-import {
-	bonAppMenuItemOptions,
-	pauseMenuItemOptions,
-} from '../../source/features/menus/query'
+import {bonAppMenuItemOptions, pauseMenuItemOptions} from '../../source/features/menus/query'
 import {LoadingView, NoticeView} from '@frogpond/notice'
 
 export default function MenuItemDetailPage(): React.ReactNode {
@@ -26,8 +23,7 @@ export default function MenuItemDetailPage(): React.ReactNode {
 		enabled: source === 'pause',
 	})
 
-	let {data, isLoading, error, refetch} =
-		source === 'bonapp' ? bonAppQuery : pauseQuery
+	let {data, isLoading, error, refetch} = source === 'bonapp' ? bonAppQuery : pauseQuery
 
 	let screen = <Stack.Title>Nutrition</Stack.Title>
 

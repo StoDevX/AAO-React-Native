@@ -18,11 +18,9 @@ type Props = {
 	streamSourceUrl: string
 }
 
-type HtmlAudioState =
-	'waiting' | 'ended' | 'stalled' | 'playing' | 'play' | 'pause'
+type HtmlAudioState = 'waiting' | 'ended' | 'stalled' | 'playing' | 'play' | 'pause'
 
-type HtmlAudioEvent =
-	{type: HtmlAudioState} | {type: 'error'; error: HtmlAudioError}
+type HtmlAudioEvent = {type: HtmlAudioState} | {type: 'error'; error: HtmlAudioError}
 
 function playerHtml(url: string): string {
 	return `
@@ -115,8 +113,7 @@ function playerJs(selector: string): string {
 }
 
 export function StreamPlayer(props: Props): React.ReactNode {
-	let {playState, onWaiting, onEnded, onStalled, onPause, onPlay, onError} =
-		props
+	let {playState, onWaiting, onEnded, onStalled, onPause, onPlay, onError} = props
 
 	let webview = useRef<WebView | null>(null)
 

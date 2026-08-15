@@ -16,9 +16,7 @@ describe('removeHtml', () => {
 	})
 
 	it('does not treat a decoded entity as markup', () => {
-		expect(fastGetTrimmedText('&lt;b&gt;not bold&lt;/b&gt;')).toBe(
-			'<b>not bold</b>',
-		)
+		expect(fastGetTrimmedText('&lt;b&gt;not bold&lt;/b&gt;')).toBe('<b>not bold</b>')
 	})
 
 	it('drops script and style bodies', () => {

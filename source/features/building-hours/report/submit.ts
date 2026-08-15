@@ -3,10 +3,7 @@ import type {BuildingType} from '../types'
 import {sendEmail} from '../../../components/send-email'
 import {GH_NEW_ISSUE_URL, SUPPORT_EMAIL} from '../../../lib/constants'
 
-export function submitReport(
-	current: BuildingType,
-	suggestion: BuildingType,
-): void {
+export function submitReport(current: BuildingType, suggestion: BuildingType): void {
 	// calling trim() on these to remove the trailing newlines
 	let before = stringifyBuilding(current).trim()
 	let after = stringifyBuilding(suggestion).trim()

@@ -49,10 +49,7 @@ export function ListRow(props: PropsType): React.ReactNode {
 	const arrowPositionStyle: ViewStyle = {
 		alignSelf: arrowPosition === 'center' ? 'center' : 'flex-start',
 	}
-	const arrow =
-		arrowPosition === 'none' ? null : (
-			<DisclosureArrow style={arrowPositionStyle} />
-		)
+	const arrow = arrowPosition === 'none' ? null : <DisclosureArrow style={arrowPositionStyle} />
 
 	const wrapperStyle = [
 		styles.container,

@@ -6,12 +6,7 @@ import {htmlToSegments} from '@frogpond/html-lib'
 import type {RedditCommentType} from './types'
 import {SegmentedText} from './segmented-text'
 
-const DEPTH_COLORS = [
-	c.systemBlue,
-	c.systemGreen,
-	c.systemPurple,
-	c.systemOrange,
-] as const
+const DEPTH_COLORS = [c.systemBlue, c.systemGreen, c.systemPurple, c.systemOrange] as const
 
 type Props = {
 	comment: RedditCommentType
@@ -35,9 +30,7 @@ export function CommentRow({
 	const color = DEPTH_COLORS[depth % DEPTH_COLORS.length]
 	const segments = htmlToSegments(comment.contentHtml)
 	const parsedDate = parseISO(comment.publishedAt)
-	const relativeTime = isValid(parsedDate)
-		? formatDistanceToNow(parsedDate, {addSuffix: true})
-		: ''
+	const relativeTime = isValid(parsedDate) ? formatDistanceToNow(parsedDate, {addSuffix: true}) : ''
 	const hasReplies = comment.replies.length > 0
 
 	return (
@@ -62,24 +55,16 @@ export function CommentRow({
 						<Text style={styles.opBadgeText}>OP</Text>
 					</View>
 				) : null}
-				{relativeTime ? (
-					<Text style={styles.timestamp}>{` · ${relativeTime}`}</Text>
-				) : null}
+				{relativeTime ? <Text style={styles.timestamp}>{` · ${relativeTime}`}</Text> : null}
 				{typeof comment.score === 'number' && comment.score !== 0 ? (
 					<Text style={styles.timestamp}>{` · ↑${comment.score}`}</Text>
 				) : null}
 				{hasReplies ? (
-					<Text style={styles.collapseIndicator}>
-						{isCollapsed ? ' ▶' : ' ▼'}
-					</Text>
+					<Text style={styles.collapseIndicator}>{isCollapsed ? ' ▶' : ' ▼'}</Text>
 				) : null}
 			</View>
 			{!isCollapsed ? (
-				<SegmentedText
-					onLinkPress={onLinkPress}
-					segments={segments}
-					style={styles.body}
-				/>
+				<SegmentedText onLinkPress={onLinkPress} segments={segments} style={styles.body} />
 			) : null}
 		</TouchableOpacity>
 	)

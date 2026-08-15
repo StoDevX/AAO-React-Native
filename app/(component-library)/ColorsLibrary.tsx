@@ -10,13 +10,7 @@
  */
 
 import * as React from 'react'
-import {
-	DynamicColorIOS,
-	PlatformColor,
-	StyleSheet,
-	Text,
-	View,
-} from 'react-native'
+import {DynamicColorIOS, PlatformColor, StyleSheet, Text, View} from 'react-native'
 import {Section} from '@frogpond/tableview'
 import {Stack} from 'expo-router'
 import {LibraryWrapper} from '../../source/features/settings/screens/overview/component-library/base/library-wrapper'
@@ -211,9 +205,7 @@ function VariantColorsExample() {
 	return (
 		<View style={styles.column}>
 			<View style={styles.row}>
-				<Text style={styles.labelCell}>
-					{"DynamicColorIOS({light: 'red', dark: 'blue'})"}
-				</Text>
+				<Text style={styles.labelCell}>{"DynamicColorIOS({light: 'red', dark: 'blue'})"}</Text>
 				<View
 					style={{
 						...styles.colorCell,

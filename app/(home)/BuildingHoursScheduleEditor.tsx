@@ -4,12 +4,7 @@ import xor from 'lodash/xor'
 import {ScrollView, StyleSheet, Text} from 'react-native'
 import type {Moment} from 'moment-timezone'
 import moment from 'moment-timezone'
-import {
-	Stack,
-	useLocalSearchParams,
-	useNavigation,
-	useRouter,
-} from 'expo-router'
+import {Stack, useLocalSearchParams, useNavigation, useRouter} from 'expo-router'
 import {Cell, Section, TableView} from '@frogpond/tableview'
 import {DeleteButtonCell} from '@frogpond/tableview/cells'
 import type {DayOfWeekEnumType} from '../../source/features/building-hours/types'
@@ -32,11 +27,10 @@ import {
 
 export default function BuildingHoursScheduleEditorPage(): React.ReactNode {
 	const navigation = useNavigation()
-	let {scheduleIndex: scheduleIndexParam, setIndex: setIndexParam} =
-		useLocalSearchParams<{
-			scheduleIndex: string
-			setIndex: string
-		}>()
+	let {scheduleIndex: scheduleIndexParam, setIndex: setIndexParam} = useLocalSearchParams<{
+		scheduleIndex: string
+		setIndex: string
+	}>()
 	let scheduleIndex = Number(scheduleIndexParam)
 	let setIndex = Number(setIndexParam)
 
@@ -47,9 +41,7 @@ export default function BuildingHoursScheduleEditorPage(): React.ReactNode {
 	let set = draft?.schedule[scheduleIndex]?.hours[setIndex] ?? blankSchedule()
 
 	let deleteSet = () => {
-		dispatch(
-			applyBuildingAction({type: 'DELETE_HOURS', scheduleIndex, setIndex}),
-		)
+		dispatch(applyBuildingAction({type: 'DELETE_HOURS', scheduleIndex, setIndex}))
 		router.back()
 	}
 
@@ -154,12 +146,7 @@ function WeekToggles(props: WeekTogglesProps) {
 	return (
 		<Row style={styles.iOSweekToggles}>
 			{allDays.map((day) => (
-				<ToggleButton
-					key={day}
-					active={props.days.includes(day)}
-					onPress={toggleDay}
-					text={day}
-				/>
+				<ToggleButton key={day} active={props.days.includes(day)} onPress={toggleDay} text={day} />
 			))}
 		</Row>
 	)
@@ -186,9 +173,7 @@ const ToggleButton = (props: ToggleButtonProps) => {
 			highlight={false}
 			onPress={onPress}
 		>
-			<Text style={[styles.dayText, active && styles.activeDayText]}>
-				{text}
-			</Text>
+			<Text style={[styles.dayText, active && styles.activeDayText]}>{text}</Text>
 		</Touchable>
 	)
 }

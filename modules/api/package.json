@@ -2,9 +2,9 @@
   "name": "@frogpond/api",
   "version": "1.0.0",
   "description": "",
-  "main": "index.ts",
-  "author": "",
   "license": "ISC",
+  "author": "",
+  "main": "index.ts",
   "scripts": {
     "test": "jest"
   },

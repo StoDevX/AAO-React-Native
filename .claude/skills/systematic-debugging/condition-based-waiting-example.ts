@@ -33,11 +33,7 @@ export function waitForEvent(
 			if (event) {
 				resolve(event)
 			} else if (Date.now() - startTime > timeoutMs) {
-				reject(
-					new Error(
-						`Timeout waiting for ${eventType} event after ${timeoutMs}ms`,
-					),
-				)
+				reject(new Error(`Timeout waiting for ${eventType} event after ${timeoutMs}ms`))
 			} else {
 				setTimeout(check, 10) // Poll every 10ms for efficiency
 			}
@@ -129,9 +125,7 @@ export function waitForEventMatch(
 			if (event) {
 				resolve(event)
 			} else if (Date.now() - startTime > timeoutMs) {
-				reject(
-					new Error(`Timeout waiting for ${description} after ${timeoutMs}ms`),
-				)
+				reject(new Error(`Timeout waiting for ${description} after ${timeoutMs}ms`))
 			} else {
 				setTimeout(check, 10)
 			}

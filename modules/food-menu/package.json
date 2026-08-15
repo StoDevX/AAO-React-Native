@@ -2,18 +2,11 @@
   "name": "@frogpond/food-menu",
   "version": "1.0.0",
   "description": "",
-  "main": "index.ts",
-  "author": "",
   "license": "ISC",
+  "author": "",
+  "main": "index.ts",
   "scripts": {
     "test": "jest"
-  },
-  "peerDependencies": {
-    "moment": "^2.30.1",
-    "moment-timezone": "^0.6.3",
-    "react": "^19.1.0",
-    "react-native": "^0.86.2",
-    "@react-native-vector-icons/ionicons": "^13.1.2"
   },
   "dependencies": {
     "@callstack/react-theme-provider": "3.0.9",
@@ -28,5 +21,12 @@
     "@frogpond/toolbar": "workspace:*",
     "@frogpond/touchable": "workspace:*",
     "lodash": "4.18.1"
+  },
+  "peerDependencies": {
+    "@react-native-vector-icons/ionicons": "^13.1.2",
+    "moment": "^2.30.1",
+    "moment-timezone": "^0.6.3",
+    "react": "^19.1.0",
+    "react-native": "^0.86.2"
   }
 }

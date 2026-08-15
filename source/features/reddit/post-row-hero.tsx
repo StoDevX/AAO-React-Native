@@ -27,9 +27,7 @@ function postTypeBadge(post: RedditPostType): string | null {
 
 export function PostRowHero({post, onPress}: Props): React.ReactNode {
 	const parsedDate = parseISO(post.publishedAt)
-	const timeAgo = isValid(parsedDate)
-		? formatDistanceToNow(parsedDate, {addSuffix: true})
-		: null
+	const timeAgo = isValid(parsedDate) ? formatDistanceToNow(parsedDate, {addSuffix: true}) : null
 	const badge = postTypeBadge(post)
 
 	return (

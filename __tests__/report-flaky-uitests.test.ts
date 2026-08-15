@@ -49,9 +49,7 @@ describe('findFlakyTests', () => {
 	})
 
 	it('reports a test that passed after a failed attempt', () => {
-		const nodes = tree(
-			testCase('testPassesOnRetry()', 'Passed', ['Failed', 'Passed']),
-		)
+		const nodes = tree(testCase('testPassesOnRetry()', 'Passed', ['Failed', 'Passed']))
 
 		expect(findFlakyTests(nodes)).toEqual([
 			{
@@ -62,17 +60,13 @@ describe('findFlakyTests', () => {
 	})
 
 	it('does not report a test that failed every attempt', () => {
-		const nodes = tree(
-			testCase('testAlwaysFails()', 'Failed', ['Failed', 'Failed', 'Failed']),
-		)
+		const nodes = tree(testCase('testAlwaysFails()', 'Failed', ['Failed', 'Failed', 'Failed']))
 
 		expect(findFlakyTests(nodes)).toEqual([])
 	})
 
 	it('does not report a test whose repetitions all passed', () => {
-		const nodes = tree(
-			testCase('testPassesEveryTime()', 'Passed', ['Passed', 'Passed']),
-		)
+		const nodes = tree(testCase('testPassesEveryTime()', 'Passed', ['Passed', 'Passed']))
 
 		expect(findFlakyTests(nodes)).toEqual([])
 	})

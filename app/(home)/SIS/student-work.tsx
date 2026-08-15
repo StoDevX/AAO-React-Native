@@ -43,11 +43,7 @@ export default function SISStudentWorkPage(): React.ReactNode {
 		<SectionList
 			ItemSeparatorComponent={ListSeparator}
 			ListEmptyComponent={
-				isLoading ? (
-					<LoadingView />
-				) : (
-					<NoticeView text="There are no open job postings." />
-				)
+				isLoading ? <LoadingView /> : <NoticeView text="There are no open job postings." />
 			}
 			contentContainerStyle={styles.contentContainer}
 			contentInsetAdjustmentBehavior="automatic"
@@ -65,9 +61,7 @@ export default function SISStudentWorkPage(): React.ReactNode {
 					}
 				/>
 			)}
-			renderSectionHeader={({section: {title}}) => (
-				<ListSectionHeader title={title} />
-			)}
+			renderSectionHeader={({section: {title}}) => <ListSectionHeader title={title} />}
 			sections={data}
 			style={styles.listContainer}
 			testID="student-work-list"

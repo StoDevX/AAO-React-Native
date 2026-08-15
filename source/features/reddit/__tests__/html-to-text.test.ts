@@ -25,9 +25,7 @@ test('ordered list items become numbered points', () => {
 })
 
 test('blockquote content is indented', () => {
-	const result = htmlToFormattedText(
-		'<blockquote><p>Quoted text</p></blockquote>',
-	)
+	const result = htmlToFormattedText('<blockquote><p>Quoted text</p></blockquote>')
 	expect(result).toBe('  Quoted text')
 })
 
@@ -37,9 +35,7 @@ test('inline tags like strong and em are stripped but text kept', () => {
 })
 
 test('anchor tags show only their text', () => {
-	const result = htmlToFormattedText(
-		'<p>Visit <a href="https://example.com">example</a> today</p>',
-	)
+	const result = htmlToFormattedText('<p>Visit <a href="https://example.com">example</a> today</p>')
 	expect(result).toBe('Visit example today')
 })
 
@@ -79,9 +75,7 @@ describe('htmlToSegments', () => {
 	})
 
 	it('anchor tag produces a link segment with url and display text', () => {
-		const result = htmlToSegments(
-			'<p>Visit <a href="https://example.com">example</a> today</p>',
-		)
+		const result = htmlToSegments('<p>Visit <a href="https://example.com">example</a> today</p>')
 		expect(result).toEqual([
 			{type: 'text', text: 'Visit '},
 			{type: 'link', text: 'example', url: 'https://example.com'},
@@ -91,9 +85,7 @@ describe('htmlToSegments', () => {
 
 	it('bare URL in anchor href is preserved', () => {
 		const result = htmlToSegments('<a href="https://stolaf.edu">St. Olaf</a>')
-		expect(result).toEqual([
-			{type: 'link', text: 'St. Olaf', url: 'https://stolaf.edu'},
-		])
+		expect(result).toEqual([{type: 'link', text: 'St. Olaf', url: 'https://stolaf.edu'}])
 	})
 
 	it('empty href anchor falls back to text segment', () => {
@@ -107,9 +99,7 @@ describe('htmlToSegments', () => {
 	})
 
 	it('link sandwiched between text produces three segments', () => {
-		const result = htmlToSegments(
-			'<p>Before <a href="https://x.com">link</a> after</p>',
-		)
+		const result = htmlToSegments('<p>Before <a href="https://x.com">link</a> after</p>')
 		expect(result).toHaveLength(3)
 		expect(result[1]).toMatchObject({type: 'link', url: 'https://x.com'})
 	})

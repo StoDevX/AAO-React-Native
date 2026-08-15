@@ -128,9 +128,7 @@ export default function StudentOrgsDetailPage(): React.ReactNode {
 									accessory="DisclosureIndicator"
 									cellStyle={contact.title ? 'Subtitle' : 'Basic'}
 									detail={contact.title}
-									onPress={() =>
-										sendEmail({to: [contact.email], subject: orgName})
-									}
+									onPress={() => sendEmail({to: [contact.email], subject: orgName})}
 									title={showNameOrEmail(contact)}
 								/>
 							))}
@@ -144,9 +142,7 @@ export default function StudentOrgsDetailPage(): React.ReactNode {
 									key={i}
 									accessory="DisclosureIndicator"
 									cellStyle="Basic"
-									onPress={() =>
-										sendEmail({to: [contact.email], subject: orgName})
-									}
+									onPress={() => sendEmail({to: [contact.email], subject: orgName})}
 									title={contact.name}
 								/>
 							))}
@@ -160,8 +156,7 @@ export default function StudentOrgsDetailPage(): React.ReactNode {
 					) : null}
 
 					<Text selectable={true} style={[styles.footer, styles.lastUpdated]}>
-						Last updated:{' '}
-						{moment(orgLastUpdated, 'MMMM, DD YYYY HH:mm:ss').calendar()}
+						Last updated: {moment(orgLastUpdated, 'MMMM, DD YYYY HH:mm:ss').calendar()}
 					</Text>
 
 					<Text selectable={true} style={[styles.footer, styles.poweredBy]}>

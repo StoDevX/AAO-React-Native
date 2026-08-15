@@ -15,10 +15,7 @@ export default function CarletonPage(): React.ReactNode {
 	] as const
 
 	return (
-		<ScrollView
-			contentInsetAdjustmentBehavior="automatic"
-			style={styles.container}
-		>
+		<ScrollView contentInsetAdjustmentBehavior="automatic" style={styles.container}>
 			{carletonCafes.map((loc, i, collection) => (
 				<View key={i}>
 					<ListRow arrowPosition="center" onPress={() => router.push(loc.href)}>
@@ -26,9 +23,7 @@ export default function CarletonPage(): React.ReactNode {
 							<Title style={styles.rowText}>{loc.title}</Title>
 						</Row>
 					</ListRow>
-					{i < collection.length - 1 ? (
-						<ListSeparator spacing={{left: 15}} />
-					) : null}
+					{i < collection.length - 1 ? <ListSeparator spacing={{left: 15}} /> : null}
 				</View>
 			))}
 		</ScrollView>

@@ -64,8 +64,7 @@ const FaqCard = ({faq, isHighlighted}: CardProps): React.ReactNode => {
 
 function FaqView(): React.ReactNode {
 	let {faqId: highlightId} = useLocalSearchParams<{faqId?: string}>()
-	let {data, error, isLoading, isError, isRefetching, refetch} =
-		useQuery(faqsOptions)
+	let {data, error, isLoading, isError, isRefetching, refetch} = useQuery(faqsOptions)
 	let faqData: FaqQueryData = data ?? emptyFaqData
 	let hasFaqs = faqData.faqs.length > 0
 	let hasLegacy = Boolean(faqData.legacyText && !hasFaqs)
@@ -98,9 +97,7 @@ function FaqView(): React.ReactNode {
 		<ScrollView
 			contentContainerStyle={styles.container}
 			contentInsetAdjustmentBehavior="automatic"
-			refreshControl={
-				<RefreshControl onRefresh={refetch} refreshing={isRefetching} />
-			}
+			refreshControl={<RefreshControl onRefresh={refetch} refreshing={isRefetching} />}
 			style={styles.scrollView}
 		>
 			{hasLegacy ? (
@@ -110,11 +107,7 @@ function FaqView(): React.ReactNode {
 			) : null}
 
 			{faqData.faqs.map((faq) => (
-				<FaqCard
-					key={faq.id}
-					faq={faq}
-					isHighlighted={faq.id === highlightId}
-				/>
+				<FaqCard key={faq.id} faq={faq} isHighlighted={faq.id === highlightId} />
 			))}
 		</ScrollView>
 	)

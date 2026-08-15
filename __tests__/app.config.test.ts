@@ -80,12 +80,9 @@ describe('app.config variants', () => {
 	// `name` also names the generated Xcode project, its target, its scheme and
 	// its directory. It must not vary per variant: every plugin looks the
 	// AllAboutOlaf target up by name.
-	it.each(['production', 'development'])(
-		'keeps the Xcode project name fixed for %s',
-		(variant) => {
-			expect(loadConfig(variant).name).toBe('All About Olaf')
-		},
-	)
+	it.each(['production', 'development'])('keeps the Xcode project name fixed for %s', (variant) => {
+		expect(loadConfig(variant).name).toBe('All About Olaf')
+	})
 
 	it('is identical when the production variant is named explicitly', () => {
 		expect(loadConfig('production')).toEqual(loadConfig())
@@ -95,9 +92,7 @@ describe('app.config variants', () => {
 		'gives %s its own identity',
 		(variant, suffix, displayName, scheme) => {
 			let config = loadConfig(variant)
-			expect(config.ios?.bundleIdentifier).toBe(
-				`NFMTHAZVS9.com.drewvolz.stolaf${suffix}`,
-			)
+			expect(config.ios?.bundleIdentifier).toBe(`NFMTHAZVS9.com.drewvolz.stolaf${suffix}`)
 			expect(config.ios?.infoPlist?.CFBundleDisplayName).toBe(displayName)
 			expect(config.scheme).toBe(scheme)
 		},
@@ -118,9 +113,7 @@ describe('app.config variants', () => {
 	})
 
 	it('keeps every variant installable alongside the others', () => {
-		let ids = ['production', 'development'].map(
-			(v) => loadConfig(v).ios?.bundleIdentifier,
-		)
+		let ids = ['production', 'development'].map((v) => loadConfig(v).ios?.bundleIdentifier)
 		expect(new Set(ids).size).toBe(2)
 	})
 

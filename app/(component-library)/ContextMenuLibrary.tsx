@@ -29,11 +29,7 @@ const SingleMenu = (): React.ReactNode => {
 							    drew no checkmark here, and only the trigger's label
 							    reflects the selection. */}
 							{ANIMALS.map((animal) => (
-								<Button
-									key={animal}
-									label={upperFirst(animal)}
-									onPress={() => setValue(animal)}
-								/>
+								<Button key={animal} label={upperFirst(animal)} onPress={() => setValue(animal)} />
 							))}
 						</SwiftUISection>
 					</Menu>

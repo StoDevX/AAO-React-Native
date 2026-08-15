@@ -6,7 +6,6 @@ import {InfoHeader} from '@frogpond/info-header'
 import {TableView, Section} from '@frogpond/tableview'
 import {CellTextField, ButtonCell} from '@frogpond/tableview/cells'
 import {LoadingView, NoticeView} from '@frogpond/notice'
-import noop from 'lodash/noop'
 
 import {wordByTermOptions} from '../../../../source/features/dictionary/query'
 import {submitReport} from '../../../../source/features/dictionary/report/submit'
@@ -14,7 +13,7 @@ import type {WordType} from '../../../../source/features/dictionary/types'
 
 type TextFieldProps = {text: string; onChange: (text: string) => void}
 
-const TitleCell = ({text, onChange = noop}: TextFieldProps) => (
+const TitleCell = ({text, onChange}: TextFieldProps) => (
 	<CellTextField
 		autoCapitalize="words"
 		onChangeText={onChange}
@@ -25,7 +24,7 @@ const TitleCell = ({text, onChange = noop}: TextFieldProps) => (
 	/>
 )
 
-const DefinitionCell = ({text, onChange = noop}: TextFieldProps) => (
+const DefinitionCell = ({text, onChange}: TextFieldProps) => (
 	<CellTextField
 		autoCapitalize="sentences"
 		multiline={true}
@@ -41,9 +40,7 @@ type DictionaryEditorViewProps = {
 	word: WordType
 }
 
-function DictionaryEditorView({
-	word: item,
-}: DictionaryEditorViewProps): React.ReactNode {
+function DictionaryEditorView({word: item}: DictionaryEditorViewProps): React.ReactNode {
 	let [term, setTerm] = React.useState(item.word)
 	let [definition, setDefinition] = React.useState(item.definition)
 
@@ -84,12 +81,7 @@ function DictionaryEditorView({
 
 function DictionaryEditorLoader(): React.ReactNode {
 	let {word} = useLocalSearchParams<{word: string}>()
-	let {
-		data: entry,
-		isLoading,
-		error,
-		refetch,
-	} = useQuery(wordByTermOptions(word))
+	let {data: entry, isLoading, error, refetch} = useQuery(wordByTermOptions(word))
 
 	if (isLoading) {
 		return <LoadingView />

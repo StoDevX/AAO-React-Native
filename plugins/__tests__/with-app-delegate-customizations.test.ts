@@ -6,10 +6,7 @@ import {patchAppDelegate} from '../with-app-delegate-customizations'
 // The stock file expo prebuild writes, taken verbatim from
 // expo-template-bare-minimum. Regenerate it after an SDK bump: the transform
 // anchors on this text and throws when the anchors move.
-const STOCK = readFileSync(
-	join(__dirname, 'fixtures/AppDelegate.swift'),
-	'utf8',
-)
+const STOCK = readFileSync(join(__dirname, 'fixtures/AppDelegate.swift'), 'utf8')
 
 describe('patchAppDelegate', () => {
 	it('imports AVFoundation', () => {
@@ -58,9 +55,7 @@ describe('patchAppDelegate', () => {
 
 	it('throws when the launch anchor is missing', () => {
 		let withoutLaunch = STOCK.replaceAll('didFinishLaunchingWithOptions', '')
-		expect(() => patchAppDelegate(withoutLaunch)).toThrow(
-			/didFinishLaunchingWithOptions/u,
-		)
+		expect(() => patchAppDelegate(withoutLaunch)).toThrow(/didFinishLaunchingWithOptions/u)
 	})
 
 	it('throws when the import anchor is missing', () => {
@@ -69,10 +64,7 @@ describe('patchAppDelegate', () => {
 	})
 
 	it('throws when the bundleURL anchor is missing', () => {
-		let withoutBundleRoot = STOCK.replace(
-			'forBundleRoot: ".expo/.virtual-metro-entry"',
-			'',
-		)
+		let withoutBundleRoot = STOCK.replace('forBundleRoot: ".expo/.virtual-metro-entry"', '')
 		expect(() => patchAppDelegate(withoutBundleRoot)).toThrow(/forBundleRoot/u)
 	})
 })

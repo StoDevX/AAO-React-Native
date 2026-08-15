@@ -9,15 +9,11 @@ import {useDebounce} from '@frogpond/use-debounce'
 import {LoadingView, NoticeView} from '@frogpond/notice'
 import {formatResults} from '../../../source/features/directory/helpers'
 import {directoryEntriesOptions} from '../../../source/features/directory/query'
-import type {
-	DirectoryItem,
-	DirectorySearchTypeEnum,
-} from '../../../source/features/directory/types'
+import type {DirectoryItem, DirectorySearchTypeEnum} from '../../../source/features/directory/types'
 import {Ionicons as Icon} from '@react-native-vector-icons/ionicons'
 
 function DirectoryView(): React.ReactNode {
-	let [searchQueryType, setSearchQueryType] =
-		React.useState<DirectorySearchTypeEnum>('query')
+	let [searchQueryType, setSearchQueryType] = React.useState<DirectorySearchTypeEnum>('query')
 	let [typedQuery, setTypedQuery] = React.useState('')
 	let searchQuery = useDebounce(typedQuery, 500)
 
@@ -138,9 +134,7 @@ export default function DirectoryPage(): React.ReactNode {
 }
 
 function IndentedListSeparator() {
-	return (
-		<ListSeparator spacing={{left: leftMargin + imageSize + imageMargin}} />
-	)
+	return <ListSeparator spacing={{left: leftMargin + imageSize + imageMargin}} />
 }
 
 function NoSearchPerformed() {

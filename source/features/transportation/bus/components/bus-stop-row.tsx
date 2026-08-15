@@ -65,12 +65,7 @@ export function BusStopRow(props: Props): React.ReactNode {
 	]
 
 	return (
-		<ListRow
-			arrowPosition="center"
-			fullHeight={true}
-			fullWidth={true}
-			style={styles.row}
-		>
+		<ListRow arrowPosition="center" fullHeight={true} fullWidth={true} style={styles.row}>
 			<ProgressChunk
 				barColor={barColor}
 				currentStopColor={currentStopColor}
@@ -84,10 +79,7 @@ export function BusStopRow(props: Props): React.ReactNode {
 					{stop.name}
 				</Title>
 				<Detail lines={1}>
-					<ScheduleTimes
-						style={stopStatus === 'skip' && styles.skippingStopDetail}
-						times={times}
-					/>
+					<ScheduleTimes style={stopStatus === 'skip' && styles.skippingStopDetail} times={times} />
 				</Detail>
 			</Column>
 		</ListRow>

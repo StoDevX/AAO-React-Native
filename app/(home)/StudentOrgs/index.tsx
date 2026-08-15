@@ -69,9 +69,7 @@ function StudentOrgsView(): React.ReactNode {
 			return orgs
 		}
 
-		return orgs.filter((org) =>
-			orgToArray(org).some((word) => word.startsWith(searchQuery)),
-		)
+		return orgs.filter((org) => orgToArray(org).some((word) => word.startsWith(searchQuery)))
 	}, [orgs, searchQuery])
 
 	let grouped = React.useMemo(() => {
@@ -146,9 +144,7 @@ function StudentOrgsView(): React.ReactNode {
 						</Column>
 					</ListRow>
 				)}
-				renderSectionHeader={({section: {title}}) => (
-					<ListSectionHeader title={title} />
-				)}
+				renderSectionHeader={({section: {title}}) => <ListSectionHeader title={title} />}
 				sections={grouped}
 				style={styles.wrapper}
 				{...largeListProps}

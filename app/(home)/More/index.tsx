@@ -5,13 +5,7 @@ import {useDebounce} from '@frogpond/use-debounce'
 import {LoadingView, NoticeView} from '@frogpond/notice'
 import {openUrl} from '@frogpond/open-url'
 import {Row} from '@frogpond/layout'
-import {
-	ListSeparator,
-	ListSectionHeader,
-	largeListProps,
-	Title,
-	ListRow,
-} from '@frogpond/lists'
+import {ListSeparator, ListSectionHeader, largeListProps, Title, ListRow} from '@frogpond/lists'
 import {LinkValue} from '../../../source/features/more/types'
 
 import {Stack} from 'expo-router'
@@ -36,21 +30,14 @@ function splitToArray(str: string) {
 }
 
 function linkToArray(data: LinkValue) {
-	return Array.from(new Set([...splitToArray(data.label)]))
+	return Array.from(new Set(splitToArray(data.label)))
 }
 
 function MoreView(): React.ReactNode {
 	let [query, setQuery] = React.useState('')
 	let searchQuery = useDebounce(query.toLowerCase(), 200)
 
-	let {
-		data = [],
-		error,
-		refetch,
-		isLoading,
-		isError,
-		isRefetching,
-	} = useQuery(searchLinksOptions)
+	let {data = [], error, refetch, isLoading, isError, isRefetching} = useQuery(searchLinksOptions)
 
 	let filtered = React.useMemo(() => {
 		let filteredData = []
@@ -81,9 +68,7 @@ function MoreView(): React.ReactNode {
 				<Stack.Toolbar.SearchBarSlot />
 			</Stack.Toolbar>
 
-			<Stack.SearchBar
-				onChangeText={(event) => setQuery(event.nativeEvent.text)}
-			/>
+			<Stack.SearchBar onChangeText={(event) => setQuery(event.nativeEvent.text)} />
 
 			<SectionList
 				ItemSeparatorComponent={ListSeparator}
@@ -112,9 +97,7 @@ function MoreView(): React.ReactNode {
 						</ListRow>
 					)
 				}}
-				renderSectionHeader={({section: {title}}) => (
-					<ListSectionHeader title={title} />
-				)}
+				renderSectionHeader={({section: {title}}) => <ListSectionHeader title={title} />}
 				sections={filtered}
 				style={styles.wrapper}
 				{...largeListProps}

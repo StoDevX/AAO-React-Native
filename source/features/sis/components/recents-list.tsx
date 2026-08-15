@@ -48,19 +48,13 @@ function RecentItemsList(props: Props): React.ReactNode {
 							onPress={() => props.onItemPress(item)}
 						>
 							<ListRow arrowPosition="none">
-								<Text
-									numberOfLines={1}
-									selectable={true}
-									style={[foreground, styles.listItem]}
-								>
+								<Text numberOfLines={1} selectable={true} style={[foreground, styles.listItem]}>
 									{item}
 								</Text>
 							</ListRow>
 						</Pressable>
 
-						{i < items.length - 1 ? (
-							<ListSeparator spacing={{left: 17, right: 17}} />
-						) : null}
+						{i < items.length - 1 ? <ListSeparator spacing={{left: 17, right: 17}} /> : null}
 					</>
 				))
 			)}

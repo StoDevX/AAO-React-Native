@@ -3,9 +3,7 @@ import type {EventType} from '@frogpond/event-type'
 import type {EventDetailTime} from '@frogpond/event-list/types'
 
 export function times(event: EventType): EventDetailTime {
-	let eventLength = moment
-		.duration(event.endTime.diff(event.startTime))
-		.asHours()
+	let eventLength = moment.duration(event.endTime.diff(event.startTime)).asHours()
 
 	let allDay = eventLength === 24
 	let multiDay = event.startTime.dayOfYear() !== event.endTime.dayOfYear()
@@ -23,8 +21,7 @@ export function times(event: EventType): EventDetailTime {
 		// 12:00 PM to Jun. 25 3:00pm
 		// Midnight to Jun. 25 <-- assuming the end time is also midnight
 		start = startTimeFormatted
-		let endFormat =
-			endTimeFormatted === midnightTime ? 'MMM. D' : 'MMM. D h:mm A'
+		let endFormat = endTimeFormatted === midnightTime ? 'MMM. D' : 'MMM. D h:mm A'
 		end = `to ${event.endTime.format(endFormat)}`
 	} else if (sillyZeroLength) {
 		start = startTimeFormatted
@@ -41,9 +38,7 @@ export function times(event: EventType): EventDetailTime {
 }
 
 export function detailTimes(event: EventType): EventDetailTime {
-	let eventLength = moment
-		.duration(event.endTime.diff(event.startTime))
-		.asHours()
+	let eventLength = moment.duration(event.endTime.diff(event.startTime)).asHours()
 
 	let allDay = eventLength === 24
 	let multiDay = event.startTime.dayOfYear() !== event.endTime.dayOfYear()
@@ -63,8 +58,7 @@ export function detailTimes(event: EventType): EventDetailTime {
 		// 12:00 PM to Jun. 25 3:00pm
 		// Midnight to Jun. 25 <-- assuming the end time is also midnight
 		start = startTimeFormatted
-		let multiDayEndFormat =
-			endTimeFormatted === midnightTime ? 'MMM. D' : 'MMM. D h:mm A'
+		let multiDayEndFormat = endTimeFormatted === midnightTime ? 'MMM. D' : 'MMM. D h:mm A'
 		end = `${event.endTime.format(multiDayEndFormat)}`
 	} else if (sillyZeroLength) {
 		start = `Starts on ${startTimeFormatted}`

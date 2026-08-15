@@ -61,10 +61,7 @@ describe('ongoing events', () => {
 	}
 
 	test('should be formatted', () => {
-		const event = generateOngoingEvent(
-			'2018-08-07T12:00:00Z',
-			'2018-08-07T15:00:00Z',
-		)
+		const event = generateOngoingEvent('2018-08-07T12:00:00Z', '2018-08-07T15:00:00Z')
 		expect(times(event)).toMatchSnapshot()
 		expect(detailTimes(event)).toMatchSnapshot()
 	})

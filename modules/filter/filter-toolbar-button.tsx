@@ -36,9 +36,7 @@ type Props<T extends object> = {
 	title: string
 }
 
-export function FilterToolbarButton<T extends object>(
-	props: Props<T>,
-): React.ReactNode {
+export function FilterToolbarButton<T extends object>(props: Props<T>): React.ReactNode {
 	let {onPopoverDismiss, filter, style, title} = props
 
 	let [popoverVisible, setPopoverVisible] = useState(false)
@@ -69,9 +67,7 @@ export function FilterToolbarButton<T extends object>(
 				onPress={openPopover}
 				style={[buttonStyles.button, style]}
 			>
-				<Text style={[buttonStyles.text, buttonStyles.textWithIcon]}>
-					{title}
-				</Text>
+				<Text style={[buttonStyles.text, buttonStyles.textWithIcon]}>{title}</Text>
 				<Icon name="chevron-down" size={18} style={buttonStyles.text} />
 			</Touchable>
 			{popoverVisible && (

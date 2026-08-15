@@ -17,9 +17,7 @@ function formatError(err, data) {
 		case 'enum': {
 			let value = get(data, dataPath)
 			let params = err.params
-			let allowed = (params.allowedValues || [])
-				.map((v) => JSON.stringify(v))
-				.join(', ')
+			let allowed = (params.allowedValues || []).map((v) => JSON.stringify(v)).join(', ')
 			contents = `Given value "${JSON.stringify(value)}" ${
 				err.message || 'is not valid'
 			} [${allowed}]`

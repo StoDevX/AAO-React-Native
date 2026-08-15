@@ -62,10 +62,7 @@ export function patchAppDelegate(contents: string): string {
 
 	if (!result.includes('import AVFoundation')) {
 		require_(result, 'internal import Expo')
-		result = result.replace(
-			'internal import Expo',
-			'import AVFoundation\ninternal import Expo',
-		)
+		result = result.replace('internal import Expo', 'import AVFoundation\ninternal import Expo')
 	}
 
 	if (!result.includes(BEGIN)) {
@@ -81,9 +78,7 @@ export function patchAppDelegate(contents: string): string {
 
 	if (!result.includes('forBundleRoot: "index"')) {
 		require_(result, METRO_ANCHOR)
-		let metroLine = result
-			.split('\n')
-			.find((line) => line.includes(METRO_ANCHOR)) as string
+		let metroLine = result.split('\n').find((line) => line.includes(METRO_ANCHOR)) as string
 		result = result.replace(metroLine, BUNDLE_URL_BODY)
 	}
 
@@ -140,9 +135,7 @@ const withAppDelegateCustomizations: ConfigPlugin = (config) =>
 			)
 		}
 
-		mod.modResults.contents = appendSceneDelegate(
-			patchAppDelegate(mod.modResults.contents),
-		)
+		mod.modResults.contents = appendSceneDelegate(patchAppDelegate(mod.modResults.contents))
 		return mod
 	})
 

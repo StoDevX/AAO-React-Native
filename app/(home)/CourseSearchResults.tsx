@@ -55,20 +55,12 @@ function isError(e: unknown): e is Error {
 	return e instanceof Error
 }
 
-function queriesToCourses(
-	queries: UseQueryResult<CourseType[]>[],
-): CourseType[] {
+function queriesToCourses(queries: UseQueryResult<CourseType[]>[]): CourseType[] {
 	return queries.flatMap((q) => q.data).filter((data) => data !== undefined)
 }
 
-const useSelectedFilter = (
-	filterKey: string,
-	filters: FilterType<CourseType>[],
-) => {
-	return React.useMemo(
-		() => filters.find((f) => f.key === filterKey),
-		[filterKey, filters],
-	)
+const useSelectedFilter = (filterKey: string, filters: FilterType<CourseType>[]) => {
+	return React.useMemo(() => filters.find((f) => f.key === filterKey), [filterKey, filters])
 }
 
 const useSelectedTerm = (filters: FilterType<CourseType>[]) => {
@@ -113,11 +105,7 @@ function CourseSearchResultsView(): React.ReactNode {
 		filterDescription?: string
 	}>()
 
-	let {
-		data: basicFilters = [],
-		error: filterError,
-		isLoading: filtersLoading,
-	} = useFilters()
+	let {data: basicFilters, error: filterError, isLoading: filtersLoading} = useFilters()
 
 	let recentFilters = useAppSelector(selectRecentFilters)
 
@@ -128,11 +116,9 @@ function CourseSearchResultsView(): React.ReactNode {
 		if (!selectedFilterCombo) {
 			return []
 		}
-		let filterLookup = fromPairs(
-			selectedFilterCombo.filters.map((f) => [f.key, f]),
-		)
+		let filterLookup = fromPairs(selectedFilterCombo.filters.map((f) => [f.key, f]))
 		return basicFilters.map((f) => filterLookup[f.key] || f)
-		// eslint-disable-next-line react-hooks/exhaustive-deps
+		// oxlint-disable-next-line react/exhaustive-deps
 	}, [filterDescription])
 
 	let [filters, setFilters] = React.useState<FilterType<CourseType>[]>(
@@ -146,11 +132,7 @@ function CourseSearchResultsView(): React.ReactNode {
 	let selectedLevels = useSelectedLevel(filters)
 	let selectedGEs = useSelectedGE(filters)
 
-	let allCoursesByTerm = useCourseData(
-		selectedTerms,
-		selectedLevels,
-		selectedGEs,
-	)
+	let allCoursesByTerm = useCourseData(selectedTerms, selectedLevels, selectedGEs)
 	let areCoursesLoading = allCoursesByTerm.some((r) => r.isLoading)
 	let areCoursesInError = allCoursesByTerm.some((r) => r.isError)
 
@@ -221,9 +203,7 @@ function CourseSearchResultsView(): React.ReactNode {
 
 	let header =
 		filterError instanceof Error ? (
-			<Text>
-				There was a problem loading the filters: {filterError.message}
-			</Text>
+			<Text>There was a problem loading the filters: {filterError.message}</Text>
 		) : filtersLoading ? (
 			<ActivityIndicator style={styles.spinner} />
 		) : (
@@ -258,12 +238,8 @@ function CourseSearchResultsView(): React.ReactNode {
 				contentInsetAdjustmentBehavior="automatic"
 				keyExtractor={(item: CourseType) => item.clbid.toString()}
 				keyboardDismissMode="interactive"
-				renderItem={({item}) => (
-					<CourseRow course={item} onPress={handlePress} />
-				)}
-				renderSectionHeader={({section: {title}}) => (
-					<ListSectionHeader title={parseTerm(title)} />
-				)}
+				renderItem={({item}) => <CourseRow course={item} onPress={handlePress} />}
+				renderSectionHeader={({section: {title}}) => <ListSectionHeader title={parseTerm(title)} />}
 				sections={results}
 				{...largeListProps}
 			/>

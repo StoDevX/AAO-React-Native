@@ -27,21 +27,14 @@ export function evaluateConditions(
 	return conditions.some((node) => evaluateConditionNode(node, context))
 }
 
-function evaluateConditionNode(
-	node: ConditionNode,
-	context: ConditionContext,
-): boolean {
+function evaluateConditionNode(node: ConditionNode, context: ConditionContext): boolean {
 	switch (node.type) {
 		case 'rule':
 			return evaluateConditionRule(node.rule, context)
 		case 'and':
-			return node.children.every((child) =>
-				evaluateConditionNode(child, context),
-			)
+			return node.children.every((child) => evaluateConditionNode(child, context))
 		case 'or':
-			return node.children.some((child) =>
-				evaluateConditionNode(child, context),
-			)
+			return node.children.some((child) => evaluateConditionNode(child, context))
 		case 'not':
 			return !evaluateConditionNode(node.child, context)
 		default:
@@ -49,10 +42,7 @@ function evaluateConditionNode(
 	}
 }
 
-function evaluateConditionRule(
-	rule: ConditionRule,
-	context: ConditionContext,
-): boolean {
+function evaluateConditionRule(rule: ConditionRule, context: ConditionContext): boolean {
 	if (rule.platforms && rule.platforms.length > 0) {
 		let matchesPlatform = rule.platforms.some((platform) =>
 			platformMatches(platform, context.platform),
@@ -88,9 +78,7 @@ function evaluateConditionRule(
 	return true
 }
 
-export function parseConditionInput(
-	value: unknown,
-): ConditionNode[] | undefined {
+export function parseConditionInput(value: unknown): ConditionNode[] | undefined {
 	if (!value) {
 		return undefined
 	}
@@ -175,9 +163,7 @@ function readPlatforms(value: unknown): PlatformCondition[] | undefined {
 	}
 
 	let entries = toArray(value)
-		.map((item) =>
-			typeof item === 'string' ? item.toLowerCase().trim() : null,
-		)
+		.map((item) => (typeof item === 'string' ? item.toLowerCase().trim() : null))
 		.filter(Boolean) as string[]
 
 	let valid = entries
@@ -229,10 +215,7 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 	return typeof value === 'object' && value !== null
 }
 
-function platformMatches(
-	expected: PlatformCondition,
-	actual: PlatformCondition,
-) {
+function platformMatches(expected: PlatformCondition, actual: PlatformCondition) {
 	if (expected === 'native') {
 		return actual === 'ios' || actual === 'android'
 	}

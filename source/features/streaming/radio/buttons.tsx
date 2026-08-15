@@ -43,17 +43,13 @@ type ShowCalendarButtonProps = {
 	onPress: () => unknown
 }
 
-export function ShowCalendarButton({
-	onPress,
-}: ShowCalendarButtonProps): React.ReactNode {
+export function ShowCalendarButton({onPress}: ShowCalendarButtonProps): React.ReactNode {
 	return <SmallActionButton icon="calendar" onPress={onPress} />
 }
 
 type SmallActionButtonProps = Omit<ActionButtonProps, 'text'>
 
-export function SmallActionButton(
-	props: SmallActionButtonProps,
-): React.ReactNode {
+export function SmallActionButton(props: SmallActionButtonProps): React.ReactNode {
 	let theme = theming.useTheme()
 	let {icon, onPress} = props
 	let bg = {backgroundColor: theme.tintColor}

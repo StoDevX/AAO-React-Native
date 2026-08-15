@@ -26,19 +26,11 @@ const OutlineBadgeExamples = (): React.ReactNode => (
 		</Example>
 
 		<Example title="Hours open">
-			<OutlineBadge
-				accentColor={c.systemGreen}
-				text="Open"
-				textColor={c.label}
-			/>
+			<OutlineBadge accentColor={c.systemGreen} text="Open" textColor={c.label} />
 		</Example>
 
 		<Example title="Hours closed">
-			<OutlineBadge
-				accentColor={c.systemRed}
-				text="Closed"
-				textColor={c.label}
-			/>
+			<OutlineBadge accentColor={c.systemRed} text="Closed" textColor={c.label} />
 		</Example>
 	</Section>
 )
@@ -54,11 +46,7 @@ const SolidBadgeExamples = (): React.ReactNode => (
 		</Example>
 
 		<Example title="Accent and text color">
-			<SolidBadge
-				accentColor={c.systemRed}
-				status="Closed"
-				textColor={c.systemBlue}
-			/>
+			<SolidBadge accentColor={c.systemRed} status="Closed" textColor={c.systemBlue} />
 		</Example>
 	</Section>
 )

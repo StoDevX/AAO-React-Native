@@ -13,15 +13,11 @@ export const icons = {
 export const defaultIcon = icons.windmill
 
 export const iosToNamedIconsMap: {[key: string]: keyof typeof icons} = {
-	// eslint-disable-next-line camelcase
 	icon_type_old_main: 'oldMain',
-	// eslint-disable-next-line camelcase
 	icon_type_big_ole: 'windmill',
 }
 
-export function lookup(
-	iosIconName: keyof typeof iosToNamedIconsMap,
-): ImageResolvedAssetSource {
+export function lookup(iosIconName: keyof typeof iosToNamedIconsMap): ImageResolvedAssetSource {
 	let iconName = iosToNamedIconsMap[iosIconName]
 	if (!iconName) {
 		return defaultIcon

@@ -70,14 +70,8 @@ export function ProgressChunk(props: Props): React.ReactNode {
 						styles.passedStop,
 						{borderColor: barColor, backgroundColor: barColor},
 					],
-					stopStatus === 'before' && [
-						styles.beforeStop,
-						{borderColor: barColor},
-					],
-					stopStatus === 'at' && [
-						styles.atStop,
-						{borderColor: currentStopColor},
-					],
+					stopStatus === 'before' && [styles.beforeStop, {borderColor: barColor}],
+					stopStatus === 'at' && [styles.atStop, {borderColor: currentStopColor}],
 					stopStatus === 'skip' && styles.skippingStop,
 				]}
 			/>

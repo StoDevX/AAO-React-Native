@@ -12,9 +12,7 @@ type Props<T extends object> = {
 	onPopoverDismiss: (filter: FilterType<T>) => unknown
 }
 
-function updateAnyFilter<T extends object>(
-	callback: (filter: FilterType<T>) => unknown,
-) {
+function updateAnyFilter<T extends object>(callback: (filter: FilterType<T>) => unknown) {
 	return (filter: FilterType<T>, option?: ListItemSpecType) => {
 		if (filter.type === 'toggle') {
 			filter = updateToggleFilter(filter)
@@ -27,9 +25,7 @@ function updateAnyFilter<T extends object>(
 	}
 }
 
-function updateToggleFilter<T extends object>(
-	filter: ToggleType<T>,
-): ToggleType<T> {
+function updateToggleFilter<T extends object>(filter: ToggleType<T>): ToggleType<T> {
 	return {...filter, enabled: false}
 }
 
@@ -43,9 +39,7 @@ function updateListFilter<T extends object>(
 	// if no option is given, then the "No Terms" button was pressed
 	if (option) {
 		let optionTitle = option.title
-		newFilter.spec.selected = filter.spec.selected.filter(
-			(item) => item.title !== optionTitle,
-		)
+		newFilter.spec.selected = filter.spec.selected.filter((item) => item.title !== optionTitle)
 	}
 
 	if (newFilter.spec.selected.length === 0) {

@@ -62,9 +62,7 @@ describe('returns the provided days if non-contiguous', () => {
 	})
 	test('handles a six-day set (full)', () => {
 		let actual = summarizeDays(['Mo', 'We', 'Th', 'Fr', 'Sa', 'Su'], true)
-		expect(actual).toEqual(
-			'Monday, Wednesday, Thursday, Friday, Saturday, and Sunday',
-		)
+		expect(actual).toEqual('Monday, Wednesday, Thursday, Friday, Saturday, and Sunday')
 	})
 })
 
@@ -171,9 +169,7 @@ describe('returns summary for combination days and hours', () => {
 			from: '9:00am',
 			to: '5:00pm',
 		})
-		expect(actual).toEqual(
-			'Opens at 9:00am and closes at 5:00pm every Monday — Thursday.',
-		)
+		expect(actual).toEqual('Opens at 9:00am and closes at 5:00pm every Monday — Thursday.')
 	})
 
 	test('handles "non-consecutive days"', () => {

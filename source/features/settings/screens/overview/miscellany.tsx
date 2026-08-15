@@ -12,11 +12,9 @@ export let MiscellanySection = (): React.ReactNode => {
 	let onCreditsButton = () => router.push('/Credits')
 	let onPrivacyButton = () => router.push('/Privacy')
 	let onLegalButton = () => router.push('/Legal')
-	let onSourceButton = () =>
-		trackedOpenUrl({url: GH_BASE_URL, id: 'ContributingView'})
+	let onSourceButton = () => trackedOpenUrl({url: GH_BASE_URL, id: 'ContributingView'})
 
-	let [openInApplinkPreference, setOpenInAppLinkPreference] =
-		React.useState(true)
+	let [openInApplinkPreference, setOpenInAppLinkPreference] = React.useState(true)
 
 	const handleOpenLinkOnChange = async (preference: boolean) => {
 		await storage.setLinkPreference(preference)

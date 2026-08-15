@@ -10,10 +10,7 @@ type Props<T extends object> = {
 	onChange: (filter: FilterType<T>) => unknown
 }
 
-export function FilterSection<T extends object>({
-	filter,
-	onChange,
-}: Props<T>): React.ReactNode {
+export function FilterSection<T extends object>({filter, onChange}: Props<T>): React.ReactNode {
 	if (filter.type === 'toggle') {
 		return <SingleToggleSection<T> filter={filter} onChange={onChange} />
 	}

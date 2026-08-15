@@ -43,10 +43,7 @@ export default function LegalPage(): React.ReactNode {
 				/>
 			</Stack.Toolbar>
 
-			<ScrollView
-				contentInsetAdjustmentBehavior="automatic"
-				style={styles.scroll}
-			>
+			<ScrollView contentInsetAdjustmentBehavior="automatic" style={styles.scroll}>
 				<Markdown source={legalMarkdown} />
 			</ScrollView>
 		</>

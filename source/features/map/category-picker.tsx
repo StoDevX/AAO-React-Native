@@ -3,12 +3,7 @@ import {Picker, Text} from '@expo/ui/swift-ui'
 import {pickerStyle, tag} from '@expo/ui/swift-ui/modifiers'
 import type {Category} from './types'
 
-export const CATEGORY_LABELS = [
-	'Buildings',
-	'Outdoors',
-	'Parking',
-	'Athletics',
-] as const
+export const CATEGORY_LABELS = ['Buildings', 'Outdoors', 'Parking', 'Athletics'] as const
 
 export type CategoryLabel = (typeof CATEGORY_LABELS)[number]
 

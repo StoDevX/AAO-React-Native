@@ -50,10 +50,7 @@ const getEnabledCategories = <T extends object>(filters: ListType<T>[]) => {
 	})
 }
 
-const filterStreams = <T extends object>(
-	streams: StreamType[],
-	filters: ListType<T>[],
-) => {
+const filterStreams = <T extends object>(streams: StreamType[], filters: ListType<T>[]) => {
 	let enabledCategories = getEnabledCategories(filters)
 
 	if (enabledCategories.length === 0) {
@@ -64,14 +61,7 @@ const filterStreams = <T extends object>(
 }
 
 export default function StreamingPage(): React.ReactNode {
-	let {
-		data = [],
-		error,
-		refetch,
-		isLoading,
-		isRefetching,
-		isError,
-	} = useQuery(streamsOptionsFor())
+	let {data = [], error, refetch, isLoading, isRefetching, isError} = useQuery(streamsOptionsFor())
 
 	let [filters, setFilters] = React.useState<ListType<StreamType>[]>([])
 
@@ -123,9 +113,7 @@ export default function StreamingPage(): React.ReactNode {
 		<FilterToolbar
 			filters={filters}
 			onPopoverDismiss={(newFilter) => {
-				let edited = filters.map((f) =>
-					f.key === newFilter.key ? newFilter : f,
-				)
+				let edited = filters.map((f) => (f.key === newFilter.key ? newFilter : f))
 				setFilters(edited as ListType<StreamType>[])
 			}}
 		/>
@@ -150,9 +138,7 @@ export default function StreamingPage(): React.ReactNode {
 			onRefresh={refetch}
 			refreshing={isRefetching}
 			renderItem={({item}) => <StreamRow stream={item} />}
-			renderSectionHeader={({section: {title}}) => (
-				<ListSectionHeader title={title} />
-			)}
+			renderSectionHeader={({section: {title}}) => <ListSectionHeader title={title} />}
 			sections={groupStreams(filterStreams(entries, filters))}
 			style={styles.listContainer}
 			testID="stream-list"

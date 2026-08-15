@@ -49,12 +49,7 @@ export async function openUrl(url: string): Promise<boolean> {
 	return genericOpen(url)
 }
 
-export function trackedOpenUrl({
-	url,
-}: {
-	url: string
-	id?: string
-}): Promise<boolean> {
+export function trackedOpenUrl({url}: {url: string; id?: string}): Promise<boolean> {
 	return openUrl(url)
 }
 

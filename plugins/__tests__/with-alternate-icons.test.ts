@@ -3,16 +3,18 @@ import {ALTERNATE_ICON_FILES, addAlternateIcons} from '../with-alternate-icons'
 describe('addAlternateIcons', () => {
 	it('registers the Old Main icon for iPhone', () => {
 		let result = addAlternateIcons({})
-		expect(
-			result.CFBundleIcons.CFBundleAlternateIcons.icon_type_old_main,
-		).toEqual({CFBundleIconFiles: ['old-main'], UIPrerenderedIcon: true})
+		expect(result.CFBundleIcons.CFBundleAlternateIcons.icon_type_old_main).toEqual({
+			CFBundleIconFiles: ['old-main'],
+			UIPrerenderedIcon: true,
+		})
 	})
 
 	it('registers the Old Main icon for iPad', () => {
 		let result = addAlternateIcons({})
-		expect(
-			result['CFBundleIcons~ipad'].CFBundleAlternateIcons.icon_type_old_main,
-		).toEqual({CFBundleIconFiles: ['old-main'], UIPrerenderedIcon: true})
+		expect(result['CFBundleIcons~ipad'].CFBundleAlternateIcons.icon_type_old_main).toEqual({
+			CFBundleIconFiles: ['old-main'],
+			UIPrerenderedIcon: true,
+		})
 	})
 
 	it('preserves unrelated keys', () => {

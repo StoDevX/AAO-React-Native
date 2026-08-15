@@ -8,10 +8,7 @@
  * whose `appBuild()` reads the part after a `+` in the package.json version --
  * a separator our versions do not use, so it yields undefined.
  */
-export function formatVersion(
-	version: string | null,
-	build: string | null,
-): string {
+export function formatVersion(version: string | null, build: string | null): string {
 	if (!version) {
 		return 'unknown'
 	}

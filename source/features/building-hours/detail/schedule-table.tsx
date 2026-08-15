@@ -22,11 +22,7 @@ export const ScheduleTable = (props: Props): React.ReactNode => {
 	return (
 		<TableView>
 			{schedules.map((schedule) => (
-				<Section
-					key={schedule.title}
-					footer={schedule.notes}
-					header={schedule.title.toUpperCase()}
-				>
+				<Section key={schedule.title} footer={schedule.notes} header={schedule.title.toUpperCase()}>
 					{schedule.hours.map((set, i) => (
 						<ScheduleRow
 							key={i}
@@ -43,11 +39,7 @@ export const ScheduleTable = (props: Props): React.ReactNode => {
 			))}
 
 			<Section>
-				<Cell
-					accessory="DisclosureIndicator"
-					onPress={onProblemReport}
-					title="Suggest an Edit"
-				/>
+				<Cell accessory="DisclosureIndicator" onPress={onProblemReport} title="Suggest an Edit" />
 			</Section>
 		</TableView>
 	)

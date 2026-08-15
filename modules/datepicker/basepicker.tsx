@@ -2,16 +2,11 @@ import * as React from 'react'
 
 import moment from 'moment-timezone'
 
-import {
-	DateTimePicker,
-	type DateTimePickerEvent,
-} from '@expo/ui/community/datetime-picker'
+import {DateTimePicker, type DateTimePickerEvent} from '@expo/ui/community/datetime-picker'
 
 import {BaseDatetimePickerProps} from './types'
 
-export const BaseDateTimePicker = (
-	props: BaseDatetimePickerProps,
-): React.ReactNode => {
+export const BaseDateTimePicker = (props: BaseDatetimePickerProps): React.ReactNode => {
 	let [date, setDate] = React.useState(props.initialDate)
 	let [timezone] = React.useState(props.initialDate.tz() || '')
 

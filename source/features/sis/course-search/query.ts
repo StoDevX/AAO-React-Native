@@ -1,16 +1,6 @@
-import {
-	queryOptions,
-	useQueries,
-	useQuery,
-	UseQueryResult,
-} from '@tanstack/react-query'
+import {queryOptions, useQueries, useQuery, UseQueryResult} from '@tanstack/react-query'
 import {CourseType, TermType} from '../../../lib/course-search'
-import {
-	coursesForTerm,
-	deptData,
-	geData,
-	infoJson,
-} from '../../../lib/course-search/urls'
+import {coursesForTerm, deptData, geData, infoJson} from '../../../lib/course-search/urls'
 
 const ONE_SECOND = 1000
 const ONE_MINUTE = ONE_SECOND * 60
@@ -35,17 +25,13 @@ export const availableTermsOptions = queryOptions({
 	},
 	select: (data) => {
 		const thisYear = new Date().getFullYear()
-		return data.filter(
-			(file) => file.type === 'json' && file.year > thisYear - 5,
-		)
+		return data.filter((file) => file.type === 'json' && file.year > thisYear - 5)
 	},
 	staleTime: ONE_DAY,
 })
 
-export const termByNumberOptions = (
-	term: number,
-	// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-) =>
+// oxlint-disable-next-line typescript/explicit-module-boundary-types
+export const termByNumberOptions = (term: number) =>
 	queryOptions({
 		queryKey: keys.terms,
 		queryFn: async ({signal}) => {
@@ -56,26 +42,17 @@ export const termByNumberOptions = (
 		staleTime: ONE_DAY,
 	})
 
-export const courseDataOptions = (
-	term: TermType,
-	levels: Array<number>,
-	gereqs: Array<string>,
-	// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-) =>
+// oxlint-disable-next-line typescript/explicit-module-boundary-types
+export const courseDataOptions = (term: TermType, levels: Array<number>, gereqs: Array<string>) =>
 	queryOptions({
 		queryKey: keys.courses(term, levels, gereqs),
-		queryFn: ({
-			queryKey: [_group, _courses, termKey, levelsKey, gereqsKey],
-			signal,
-		}) => coursesForTerm(termKey, levelsKey, gereqsKey, {signal}),
+		queryFn: ({queryKey: [_group, _courses, termKey, levelsKey, gereqsKey], signal}) =>
+			coursesForTerm(termKey, levelsKey, gereqsKey, {signal}),
 		staleTime: ONE_HOUR,
 	})
 
-export const courseByIdOptions = (
-	term: TermType,
-	clbid: number,
-	// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-) =>
+// oxlint-disable-next-line typescript/explicit-module-boundary-types
+export const courseByIdOptions = (term: TermType, clbid: number) =>
 	queryOptions({
 		queryKey: keys.courses(term, [], []),
 		queryFn: ({signal}) => coursesForTerm(term, [], [], {signal}),

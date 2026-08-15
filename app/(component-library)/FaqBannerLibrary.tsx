@@ -26,9 +26,7 @@ export default function FaqBannerLibraryPage(): React.ReactNode {
 			>
 				{fallbackFaqs.map((banner) => (
 					<View key={banner.id} style={styles.example}>
-						<Text style={styles.exampleTitle}>
-							Targets: {banner.targets.join(', ')}
-						</Text>
+						<Text style={styles.exampleTitle}>Targets: {banner.targets.join(', ')}</Text>
 						<FaqBanner
 							faqId={banner.id}
 							onPressOverride={() => undefined}

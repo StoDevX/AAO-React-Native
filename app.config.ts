@@ -45,9 +45,7 @@ const requested = process.env.APP_VARIANT ?? 'production'
 
 if (!(requested in VARIANTS)) {
 	// Loudly, rather than quietly shipping production's identity under a typo.
-	throw new Error(
-		`APP_VARIANT="${requested}" is not one of ${Object.keys(VARIANTS).join(', ')}.`,
-	)
+	throw new Error(`APP_VARIANT="${requested}" is not one of ${Object.keys(VARIANTS).join(', ')}.`)
 }
 
 const variant = VARIANTS[requested as keyof typeof VARIANTS]
@@ -107,13 +105,10 @@ const config: ExpoConfig = {
 			// and is not used for tracking.
 			NSPrivacyCollectedDataTypes: [
 				{
-					NSPrivacyCollectedDataType:
-						'NSPrivacyCollectedDataTypePreciseLocation',
+					NSPrivacyCollectedDataType: 'NSPrivacyCollectedDataTypePreciseLocation',
 					NSPrivacyCollectedDataTypeLinked: false,
 					NSPrivacyCollectedDataTypeTracking: false,
-					NSPrivacyCollectedDataTypePurposes: [
-						'NSPrivacyCollectedDataTypePurposeAppFunctionality',
-					],
+					NSPrivacyCollectedDataTypePurposes: ['NSPrivacyCollectedDataTypePurposeAppFunctionality'],
 				},
 			],
 			NSPrivacyAccessedAPITypes: [
@@ -126,8 +121,7 @@ const config: ExpoConfig = {
 					NSPrivacyAccessedAPITypeReasons: ['CA92.1'],
 				},
 				{
-					NSPrivacyAccessedAPIType:
-						'NSPrivacyAccessedAPICategorySystemBootTime',
+					NSPrivacyAccessedAPIType: 'NSPrivacyAccessedAPICategorySystemBootTime',
 					NSPrivacyAccessedAPITypeReasons: ['35F9.1'],
 				},
 				{
@@ -178,8 +172,7 @@ const config: ExpoConfig = {
 			NSBonjourServices: ['_ccc-server._tcp.'],
 			NSLocalNetworkUsageDescription:
 				'Used in development mode to discover a local ccc-server instance on the same network.',
-			NSLocationWhenInUseUsageDescription:
-				'Shows your location on the campus map.',
+			NSLocationWhenInUseUsageDescription: 'Shows your location on the campus map.',
 
 			// Radio playback continues when the screen locks, and ignores the
 			// silent switch — see the AppDelegate plugin for the other half.

@@ -24,14 +24,10 @@ export const CourseRow = (props: Props): React.ReactNode => {
 			<Row>
 				<Detail style={styles.bold}>{deptNum(course)}</Detail>
 
-				{course.gereqs && (
-					<Detail style={styles.ges}>({course.gereqs.join(', ')})</Detail>
-				)}
+				{course.gereqs && <Detail style={styles.ges}>({course.gereqs.join(', ')})</Detail>}
 			</Row>
 
-			{course.instructors && (
-				<Detail style={styles.row}>{course.instructors.join(', ')}</Detail>
-			)}
+			{course.instructors && <Detail style={styles.row}>{course.instructors.join(', ')}</Detail>}
 
 			{course.notes && (
 				<Detail lines={1} style={[styles.italics, styles.row]}>

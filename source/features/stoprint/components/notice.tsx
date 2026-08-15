@@ -15,8 +15,7 @@ type Props = {
 }
 
 export const StoPrintNoticeView = (props: Props): React.ReactElement => {
-	let {buttonText, description, header, onPress, text, onRefresh, refreshing} =
-		props
+	let {buttonText, description, header, onPress, text, onRefresh, refreshing} = props
 
 	return (
 		<ScrollView
@@ -38,9 +37,7 @@ export const StoPrintNoticeView = (props: Props): React.ReactElement => {
 				style={styles.notice}
 				text={text}
 			/>
-			{description ? (
-				<Text style={styles.description}>{description}</Text>
-			) : null}
+			{description ? <Text style={styles.description}>{description}</Text> : null}
 		</ScrollView>
 	)
 }

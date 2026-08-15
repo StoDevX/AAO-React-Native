@@ -27,10 +27,7 @@ export default function PrivacyPage(): React.ReactNode {
 				/>
 			</Stack.Toolbar>
 
-			<ScrollView
-				contentInsetAdjustmentBehavior="automatic"
-				style={styles.scrollView}
-			>
+			<ScrollView contentInsetAdjustmentBehavior="automatic" style={styles.scrollView}>
 				<Markdown source={privacyData.text} />
 			</ScrollView>
 		</>

@@ -2,20 +2,20 @@
   "name": "@frogpond/datepicker",
   "version": "1.0.0",
   "description": "",
-  "main": "index.tsx",
-  "author": "鲜果FE",
   "license": "MIT",
+  "author": "鲜果FE",
+  "main": "index.tsx",
   "scripts": {
     "test": "jest"
   },
-  "peerDependencies": {
-    "react": "^19.1.0",
-    "react-native": "^0.86.2",
-    "moment-timezone": "^0.6.3"
-  },
   "dependencies": {
+    "@expo/ui": "57.0.9",
     "@frogpond/app-theme": "workspace:*",
-    "@frogpond/colors": "workspace:*",
-    "@expo/ui": "57.0.9"
+    "@frogpond/colors": "workspace:*"
+  },
+  "peerDependencies": {
+    "moment-timezone": "^0.6.3",
+    "react": "^19.1.0",
+    "react-native": "^0.86.2"
   }
 }

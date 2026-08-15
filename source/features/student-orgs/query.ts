@@ -23,10 +23,8 @@ export const studentOrgsOptions = queryOptions({
 	staleTime,
 })
 
-export const orgByNameOptions = (
-	name: string,
-	// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-) =>
+// oxlint-disable-next-line typescript/explicit-module-boundary-types
+export const orgByNameOptions = (name: string) =>
 	queryOptions({
 		queryKey: keys.all,
 		queryFn: fetchStudentOrgs,

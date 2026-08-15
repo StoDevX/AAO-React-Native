@@ -2,12 +2,7 @@ import * as React from 'react'
 import {useEffect, useState} from 'react'
 import {FlatList, StyleSheet, Text, TouchableOpacity, View} from 'react-native'
 import type {BusSchedule, UnprocessedBusLine, DayOfWeek} from './types'
-import {
-	BusStateEnum,
-	getCurrentBusIteration,
-	getScheduleForNow,
-	processBusLine,
-} from './lib'
+import {BusStateEnum, getCurrentBusIteration, getScheduleForNow, processBusLine} from './lib'
 import type {Moment} from 'moment-timezone'
 import find from 'lodash/find'
 import findLast from 'lodash/findLast'
@@ -18,11 +13,7 @@ import {InfoHeader} from '@frogpond/info-header'
 import * as c from '@frogpond/colors'
 import {useRouter} from 'expo-router'
 import {BUS_FOOTER_MESSAGE} from './constants'
-import {
-	DayPickerHeader,
-	momentToDayOfWeek,
-	createMomentForDay,
-} from './components/day-picker'
+import {DayPickerHeader, momentToDayOfWeek, createMomentForDay} from './components/day-picker'
 
 const styles = StyleSheet.create({
 	container: {
@@ -86,13 +77,7 @@ function startsIn(now: Moment, start?: Moment | null) {
 	return `Starts ${nowCopy.seconds(0).to(start)}`
 }
 
-export function deriveFromProps({
-	line,
-	now,
-}: {
-	line: UnprocessedBusLine
-	now: Moment
-}): {
+export function deriveFromProps({line, now}: {line: UnprocessedBusLine; now: Moment}): {
 	subtitle: string
 	status: BusStateEnum
 	schedule: BusSchedule
@@ -102,10 +87,7 @@ export function deriveFromProps({
 	let processedLine = processBusLine(line, now)
 
 	let scheduleForToday = getScheduleForNow(processedLine.schedules, now)
-	let {times, status, index, nextStart} = getCurrentBusIteration(
-		scheduleForToday,
-		now,
-	)
+	let {times, status, index, nextStart} = getCurrentBusIteration(scheduleForToday, now)
 
 	let isLastBus = index === scheduleForToday.times.length - 1
 
@@ -164,13 +146,9 @@ export function BusLine(props: Props): React.ReactNode {
 
 	let [schedule, setSchedule] = useState<BusSchedule | null>(null)
 	let [subtitle, setSubtitle] = useState<string>('')
-	let [currentBusIteration, setCurrentBusIteration] = useState<number | null>(
-		null,
-	)
+	let [currentBusIteration, setCurrentBusIteration] = useState<number | null>(null)
 	let [status, setStatus] = useState<BusStateEnum>('none')
-	let [selectedDay, setSelectedDay] = useState<DayOfWeek>(() =>
-		momentToDayOfWeek(now),
-	)
+	let [selectedDay, setSelectedDay] = useState<DayOfWeek>(() => momentToDayOfWeek(now))
 
 	const currentDay = momentToDayOfWeek(now)
 

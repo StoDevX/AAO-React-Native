@@ -31,27 +31,19 @@ export default function ComponentLibraryRootPage(): React.ReactNode {
 						title="Badges"
 					/>
 					<PushButtonCell
-						onPress={() =>
-							router.navigate('/(component-library)/ButtonLibrary')
-						}
+						onPress={() => router.navigate('/(component-library)/ButtonLibrary')}
 						title="Buttons"
 					/>
 					<PushButtonCell
-						onPress={() =>
-							router.navigate('/(component-library)/ColorsLibrary')
-						}
+						onPress={() => router.navigate('/(component-library)/ColorsLibrary')}
 						title="Colors"
 					/>
 					<PushButtonCell
-						onPress={() =>
-							router.navigate('/(component-library)/ContextMenuLibrary')
-						}
+						onPress={() => router.navigate('/(component-library)/ContextMenuLibrary')}
 						title="Context Menus"
 					/>
 					<PushButtonCell
-						onPress={() =>
-							router.navigate('/(component-library)/FaqBannerLibrary')
-						}
+						onPress={() => router.navigate('/(component-library)/FaqBannerLibrary')}
 						title="FAQ Banners"
 					/>
 				</Section>

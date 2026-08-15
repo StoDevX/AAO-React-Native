@@ -47,19 +47,13 @@ function apply(matrix: Matrix, [x, y, z]: Triple): Triple {
 /// sRGB gamut lands on the negative side of it.
 function toLinear(value: number): number {
 	let magnitude = Math.abs(value)
-	let linear =
-		magnitude <= 0.04045
-			? magnitude / 12.92
-			: ((magnitude + 0.055) / 1.055) ** 2.4
+	let linear = magnitude <= 0.04045 ? magnitude / 12.92 : ((magnitude + 0.055) / 1.055) ** 2.4
 	return Math.sign(value) * linear
 }
 
 function fromLinear(value: number): number {
 	let magnitude = Math.abs(value)
-	let encoded =
-		magnitude <= 0.0031308
-			? magnitude * 12.92
-			: 1.055 * magnitude ** (1 / 2.4) - 0.055
+	let encoded = magnitude <= 0.0031308 ? magnitude * 12.92 : 1.055 * magnitude ** (1 / 2.4) - 0.055
 	return Math.sign(value) * encoded
 }
 
@@ -79,9 +73,7 @@ const FUNCTION_NAME = 'color'
 const COLOUR_SPACE = 'display-p3'
 
 function component(text: string): number {
-	let value = text.endsWith('%')
-		? Number(text.slice(0, -1)) / 100
-		: Number(text)
+	let value = text.endsWith('%') ? Number(text.slice(0, -1)) / 100 : Number(text)
 	if (Number.isNaN(value) || text === '') {
 		throw new Error(`"${text}" is not a number or percentage`)
 	}
@@ -113,9 +105,7 @@ function parseDisplayP3(css: string): [Triple, number] {
 
 	let parts = components.trim().split(/\s+/u)
 	if (parts.length !== 3) {
-		throw new Error(
-			`color(${COLOUR_SPACE} ...) takes three components, got ${parts.length}`,
-		)
+		throw new Error(`color(${COLOUR_SPACE} ...) takes three components, got ${parts.length}`)
 	}
 	let [red, green, blue] = parts.map(component) as Triple
 	return [[red, green, blue], alpha === undefined ? 1 : component(alpha.trim())]
@@ -132,16 +122,11 @@ export type ExtendedSrgbComponents = [number, number, number, number]
 /// colours that are derived from another rather than authored -- a card's
 /// shadow is its own gradient at a fraction of its opacity -- where writing the
 /// alpha into the literal would mean duplicating the colour to vary it.
-export function displayP3Components(
-	css: string,
-	alphaOverride?: number,
-): ExtendedSrgbComponents {
+export function displayP3Components(css: string, alphaOverride?: number): ExtendedSrgbComponents {
 	let [p3, parsedAlpha] = parseDisplayP3(css)
 	let alpha = alphaOverride ?? parsedAlpha
 	let linearP3 = p3.map(toLinear) as Triple
-	let [red, green, blue] = apply(XYZ_TO_SRGB, apply(P3_TO_XYZ, linearP3)).map(
-		fromLinear,
-	) as Triple
+	let [red, green, blue] = apply(XYZ_TO_SRGB, apply(P3_TO_XYZ, linearP3)).map(fromLinear) as Triple
 	return [red, green, blue, alpha]
 }
 

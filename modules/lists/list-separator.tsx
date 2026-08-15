@@ -15,10 +15,7 @@ type Props = {
 }
 
 export function ListSeparator(props: Props): React.ReactNode {
-	const {
-		fullWidth,
-		spacing: {left: leftSpacing = 15, right: rightSpacing} = {},
-	} = props
+	const {fullWidth, spacing: {left: leftSpacing = 15, right: rightSpacing} = {}} = props
 
 	const spacing = {
 		marginLeft: leftSpacing,
@@ -33,8 +30,6 @@ export function ListSeparator(props: Props): React.ReactNode {
 	return <Separator style={[styles.separator, spacing, props.styles]} />
 }
 
-export function FullWidthSeparator<T extends Record<string, unknown>>(
-	props: T,
-): React.ReactNode {
+export function FullWidthSeparator<T extends Record<string, unknown>>(props: T): React.ReactNode {
 	return <ListSeparator fullWidth={true} {...props} />
 }

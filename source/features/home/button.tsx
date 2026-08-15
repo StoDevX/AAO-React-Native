@@ -1,13 +1,6 @@
 import * as React from 'react'
 import {useColorScheme} from 'react-native'
-import {
-	Button,
-	Image,
-	RoundedRectangle,
-	Text,
-	VStack,
-	ZStack,
-} from '@expo/ui/swift-ui'
+import {Button, Image, RoundedRectangle, Text, VStack, ZStack} from '@expo/ui/swift-ui'
 import {
 	accessibilityLabel,
 	buttonStyle,
@@ -191,10 +184,7 @@ export function HomeScreenButton({view, onPress}: Props): React.ReactNode {
 					<ZStack modifiers={[imageScale(ICON_IMAGE_SCALE)]}>
 						<Image
 							color={iconColor}
-							modifiers={[
-								font({textStyle: ICON_TEXT_STYLE}),
-								frame({height: ICON_BOX_HEIGHT}),
-							]}
+							modifiers={[font({textStyle: ICON_TEXT_STYLE}), frame({height: ICON_BOX_HEIGHT})]}
 							systemName={view.icon}
 						/>
 					</ZStack>

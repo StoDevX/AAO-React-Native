@@ -2,16 +2,9 @@ import type {Moment} from 'moment'
 import moment from 'moment-timezone'
 import findIndex from 'lodash/findIndex'
 import {timezone} from '@frogpond/constants'
-import type {
-	DayPartMenuType,
-	DayPartsCollectionType,
-	ProcessedMealType,
-} from '../types'
+import type {DayPartMenuType, DayPartsCollectionType, ProcessedMealType} from '../types'
 
-export function findMenu(
-	dayparts: DayPartsCollectionType,
-	now: Moment,
-): void | DayPartMenuType {
+export function findMenu(dayparts: DayPartsCollectionType, now: Moment): void | DayPartMenuType {
 	// `dayparts` is, conceptually, a collection of bonapp menus for a
 	// location. It's a single-element array of arrays, so we first check
 	// to see if either dimension is empty.
@@ -27,10 +20,7 @@ export function findMenu(
 	return daypart[menuIndex]
 }
 
-export function findMeal(
-	meals: ProcessedMealType[],
-	now: Moment,
-): ProcessedMealType | undefined {
+export function findMeal(meals: ProcessedMealType[], now: Moment): ProcessedMealType | undefined {
 	if (!meals.length) {
 		return
 	}
@@ -59,12 +49,8 @@ function findMenuIndex(dayparts: DayPartMenuType[], now: Moment): number {
 	// can query times relative to `now`. Also make sure to set dayOfYear to
 	// `now`, so that we don't have our days wandering all over the place.
 	const times = dayparts.map(({starttime, endtime}) => ({
-		start: moment
-			.tz(starttime, 'H:mm', true, timezone())
-			.dayOfYear(now.dayOfYear()),
-		end: moment
-			.tz(endtime, 'H:mm', true, timezone())
-			.dayOfYear(now.dayOfYear()),
+		start: moment.tz(starttime, 'H:mm', true, timezone()).dayOfYear(now.dayOfYear()),
+		end: moment.tz(endtime, 'H:mm', true, timezone()).dayOfYear(now.dayOfYear()),
 	}))
 
 	// We grab the first meal that ends sometime after `now`. The only time

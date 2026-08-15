@@ -41,7 +41,7 @@ export const studentWorkPostingsOptions = queryOptions({
 	},
 })
 
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+// oxlint-disable-next-line typescript/explicit-module-boundary-types
 export const jobByIdOptions = (jobId: string) =>
 	queryOptions({
 		queryKey: keys.all,

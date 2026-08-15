@@ -23,11 +23,7 @@ function Separator({variant}: {variant: PostListVariant}): React.ReactNode {
 	return <View style={styles.separator} />
 }
 
-export function PostList({
-	query,
-	onPressPost,
-	variant = 'C',
-}: Props): React.ReactNode {
+export function PostList({query, onPressPost, variant = 'C'}: Props): React.ReactNode {
 	const {data = [], error, refetch, isRefetching, isError, isLoading} = query
 
 	if (isError) {
@@ -45,9 +41,7 @@ export function PostList({
 	return (
 		<FlatList
 			ItemSeparatorComponent={() => <Separator variant={variant} />}
-			ListEmptyComponent={
-				isLoading ? <LoadingView /> : <NoticeView text="No posts found." />
-			}
+			ListEmptyComponent={isLoading ? <LoadingView /> : <NoticeView text="No posts found." />}
 			ListFooterComponent={isGrouped ? <View style={styles.cardGap} /> : null}
 			ListHeaderComponent={isGrouped ? <View style={styles.cardGap} /> : null}
 			contentContainerStyle={styles.contentContainer}
@@ -68,9 +62,7 @@ export function PostList({
 			style={[
 				styles.list,
 				{
-					backgroundColor: isGrouped
-						? c.systemGroupedBackground
-						: c.systemBackground,
+					backgroundColor: isGrouped ? c.systemGroupedBackground : c.systemBackground,
 				},
 			]}
 		/>

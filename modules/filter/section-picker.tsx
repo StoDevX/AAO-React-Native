@@ -10,12 +10,9 @@ type Props<T extends object> = {
 	onChange: (filter: PickerType<T>) => void
 }
 
-export function PickerSection<T extends object>({
-	filter,
-	onChange,
-}: Props<T>): React.ReactNode {
+export function PickerSection<T extends object>({filter, onChange}: Props<T>): React.ReactNode {
 	let {spec} = filter
-	let {title = '', caption = '', options, selected} = spec
+	let {title, caption = '', options, selected} = spec
 
 	return (
 		<Section footer={caption} header={title.toUpperCase()}>

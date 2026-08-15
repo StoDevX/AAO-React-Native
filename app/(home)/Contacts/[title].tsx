@@ -1,13 +1,5 @@
 import * as React from 'react'
-import {
-	StyleSheet,
-	ScrollView,
-	Image,
-	View,
-	Text,
-	TextProps,
-	ViewProps,
-} from 'react-native'
+import {StyleSheet, ScrollView, Image, View, Text, TextProps, ViewProps} from 'react-native'
 import {Stack, useLocalSearchParams} from 'expo-router'
 import {useQuery} from '@tanstack/react-query'
 
@@ -52,12 +44,7 @@ const Container = (props: ViewProps): React.ReactNode => (
 
 export default function ContactsDetailPage(): React.ReactNode {
 	let {title} = useLocalSearchParams<{title: string}>()
-	let {
-		data: contact,
-		error,
-		isLoading,
-		refetch,
-	} = useQuery(contactByTitleOptions(title))
+	let {data: contact, error, isLoading, refetch} = useQuery(contactByTitleOptions(title))
 
 	// Set from the route param immediately, then from the resolved contact
 	// once it loads -- so the header never falls back to the raw route name
@@ -107,9 +94,7 @@ export default function ContactsDetailPage(): React.ReactNode {
 	}
 
 	let headerImage =
-		contact.image && contactImages.has(contact.image)
-			? contactImages.get(contact.image)
-			: null
+		contact.image && contactImages.has(contact.image) ? contactImages.get(contact.image) : null
 
 	return (
 		<>
@@ -121,17 +106,11 @@ export default function ContactsDetailPage(): React.ReactNode {
 				<Container>
 					<Title selectable={true}>{contact.title}</Title>
 
-					<Markdown
-						markdownStyle={paragraphMarkdownStyle}
-						source={contact.text}
-					/>
+					<Markdown markdownStyle={paragraphMarkdownStyle} source={contact.text} />
 
 					<Button onPress={onPress} title={contact.buttonText} />
 
-					<ListFooter
-						href={GH_NEW_ISSUE_URL}
-						title="Collected by the humans of All About Olaf"
-					/>
+					<ListFooter href={GH_NEW_ISSUE_URL} title="Collected by the humans of All About Olaf" />
 				</Container>
 			</ScrollView>
 		</>

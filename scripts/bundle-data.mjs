@@ -15,11 +15,9 @@ const readDir = (pth) =>
 		.filter(isNotJunk)
 		.filter((entry) => !entry.startsWith('_'))
 
-const findDirsIn = (pth) =>
-	readDir(pth).filter((entry) => isDir(path.join(pth, entry)))
+const findDirsIn = (pth) => readDir(pth).filter((entry) => isDir(path.join(pth, entry)))
 
-const findFilesIn = (pth) =>
-	readDir(pth).filter((entry) => isFile(path.join(pth, entry)))
+const findFilesIn = (pth) => readDir(pth).filter((entry) => isFile(path.join(pth, entry)))
 
 const args = process.argv.slice(2)
 const fromDir = args[0]

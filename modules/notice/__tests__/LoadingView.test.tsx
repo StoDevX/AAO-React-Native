@@ -10,8 +10,6 @@ describe('LoadingView', () => {
 	})
 
 	test('it displays text when text is supplied', async () => {
-		expect(
-			(await render(<LoadingView text="foo bar" />)).toJSON(),
-		).toMatchSnapshot()
+		expect((await render(<LoadingView text="foo bar" />)).toJSON()).toMatchSnapshot()
 	})
 })

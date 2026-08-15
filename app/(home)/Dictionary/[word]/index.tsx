@@ -37,12 +37,7 @@ const Container = (props: ViewProps): React.ReactNode => (
 export default function DictionaryDetailPage(): React.ReactNode {
 	let router = useRouter()
 	let {word} = useLocalSearchParams<{word: string}>()
-	let {
-		data: entry,
-		isLoading,
-		error,
-		refetch,
-	} = useQuery(wordByTermOptions(word))
+	let {data: entry, isLoading, error, refetch} = useQuery(wordByTermOptions(word))
 
 	let screenTitle = <Stack.Title>{entry?.word ?? word}</Stack.Title>
 
@@ -90,10 +85,7 @@ export default function DictionaryDetailPage(): React.ReactNode {
 			{screenTitle}
 			<Container>
 				<Term selectable={true}>{entry.word}</Term>
-				<Markdown
-					markdownStyle={paragraphMarkdownStyle}
-					source={entry.definition}
-				/>
+				<Markdown markdownStyle={paragraphMarkdownStyle} source={entry.definition} />
 
 				<Button onPress={handleEditButtonPress} title="Suggest an Edit" />
 

@@ -28,11 +28,7 @@ export function NavigationRow(props: RowProps): React.ReactNode {
 
 	return (
 		<Button
-			modifiers={[
-				buttonStyle('plain'),
-				accessibilityLabel(title),
-				disabledModifier(disabled),
-			]}
+			modifiers={[buttonStyle('plain'), accessibilityLabel(title), disabledModifier(disabled)]}
 			onPress={onPress}
 		>
 			{/* contentShape belongs on the label (this HStack), not the Button:
@@ -57,11 +53,7 @@ export function ActionRow(props: RowProps): React.ReactNode {
 
 	return (
 		<Button
-			modifiers={[
-				buttonStyle('plain'),
-				accessibilityLabel(title),
-				disabledModifier(disabled),
-			]}
+			modifiers={[buttonStyle('plain'), accessibilityLabel(title), disabledModifier(disabled)]}
 			onPress={onPress}
 		>
 			<HStack modifiers={[contentShape(shapes.rectangle())]}>

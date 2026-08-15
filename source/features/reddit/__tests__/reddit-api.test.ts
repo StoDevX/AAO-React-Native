@@ -1,4 +1,3 @@
-/* eslint-disable camelcase */
 import {parseRedditPostsJson} from '../reddit-api'
 
 // Minimal raw post shape — only the fields parseRedditPostsJson cares about
@@ -54,8 +53,7 @@ describe('parseRedditPostsJson – link post detection', () => {
 			...BASE_POST,
 			is_self: true,
 			selftext_html: '<p>Text content</p>',
-			url_overridden_by_dest:
-				'https://www.reddit.com/r/TestSub/comments/abc123/test_post/',
+			url_overridden_by_dest: 'https://www.reddit.com/r/TestSub/comments/abc123/test_post/',
 			domain: 'self.TestSub',
 		})
 		const [post] = parseRedditPostsJson(listing)

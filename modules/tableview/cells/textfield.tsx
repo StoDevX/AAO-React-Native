@@ -56,10 +56,7 @@ export const CellTextField = React.forwardRef<TextInput, Props>(
 		let labelWidthStyle = labelWidth != null ? {width: labelWidth} : null
 
 		let labelEl = label ? (
-			<Text
-				onPress={() => ref?.current?.focus()}
-				style={[styles.label, labelWidthStyle]}
-			>
+			<Text onPress={() => ref?.current?.focus()} style={[styles.label, labelWidthStyle]}>
 				{label}
 			</Text>
 		) : (
@@ -89,11 +86,7 @@ export const CellTextField = React.forwardRef<TextInput, Props>(
 		let style = multiline ? styles.multilineCell : styles.singlelineCell
 
 		return (
-			<Cell
-				cellAccessoryView={input}
-				cellContentView={labelEl}
-				contentContainerStyle={style}
-			/>
+			<Cell cellAccessoryView={input} cellContentView={labelEl} contentContainerStyle={style} />
 		)
 	},
 )
