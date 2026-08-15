@@ -518,18 +518,24 @@ importers:
 
   modules/ccc-calendar:
     dependencies:
-      '@frogpond/api':
+      '@frogpond/data-sources':
         specifier: workspace:*
-        version: link:../api
+        version: link:../data-sources
       '@frogpond/event-list':
         specifier: workspace:*
         version: link:../event-list
       '@frogpond/event-type':
         specifier: workspace:*
         version: link:../event-type
+      '@frogpond/html-lib':
+        specifier: workspace:*
+        version: link:../html-lib
       '@frogpond/notice':
         specifier: workspace:*
         version: link:../notice
+      '@frogpond/timer':
+        specifier: workspace:*
+        version: link:../timer
       delay:
         specifier: ^7.0.0
         version: 7.0.0

@@ -9,10 +9,12 @@
     "test": "jest"
   },
   "dependencies": {
-    "@frogpond/api": "workspace:*",
+    "@frogpond/data-sources": "workspace:*",
     "@frogpond/event-list": "workspace:*",
     "@frogpond/event-type": "workspace:*",
-    "@frogpond/notice": "workspace:*"
+    "@frogpond/html-lib": "workspace:*",
+    "@frogpond/notice": "workspace:*",
+    "@frogpond/timer": "workspace:*"
   },
   "peerDependencies": {
     "delay": "^7.0.0",
