@@ -88,10 +88,9 @@ for (let entry of entries) {
 	let result = inspect(path.join(MODULES_BASE, entry.name))
 	if (!result) continue
 
-	// Unused declarations are harmless — they cost an entry in a manifest and
-	// nothing else — so they are reported without failing the run.
 	for (let name of result.unused) {
-		console.log(`warning: ${result.name} declares ${name} but does not import it`)
+		console.log(`error: ${result.name} declares ${name} but does not import it`)
+		failed = true
 	}
 
 	for (let name of result.undeclared) {
@@ -102,7 +101,8 @@ for (let entry of entries) {
 
 if (failed) {
 	console.log('')
-	console.log('Add the missing packages to the module\'s package.json as "workspace:*",')
-	console.log('then run `pnpm install` so the workspace links are created.')
+	console.log('A module must declare exactly the @frogpond packages it imports.')
+	console.log('Add missing ones as "workspace:*", drop the ones nothing imports,')
+	console.log('then run `pnpm install` so the workspace links match.')
 	process.exit(1)
 }
