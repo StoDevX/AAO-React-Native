@@ -372,7 +372,7 @@ Four details the live payload requires:
 - `utc_start_date` is `"2026-08-17 13:00:00"` — space separator, no zone marker.
   It must be converted to `2026-08-17T13:00:00Z` explicitly or it will be read as
   local time and shift by five hours.
-- `venue` is **absent entirely** on some events, not present-but-null.
+- `venue` is sent as an empty array `[]` when the event has no venue — the key is always present. An `z.object(...).optional()` schema rejects it.
 - `description` can be `<div data-modular-content-collection></div>`, which
   strips to an empty string. Empty descriptions are normal and are not a parse
   failure.

@@ -3,7 +3,7 @@ import {parseWpV2Posts} from '../parsers/wp-v2-posts'
 
 test('parses the live fixture into stories', () => {
 	const stories = parseWpV2Posts(fixture)
-	expect(stories.length).toBeGreaterThan(0)
+	expect(stories).toHaveLength(fixture.length)
 })
 
 test('strips html from titles and excerpts', () => {

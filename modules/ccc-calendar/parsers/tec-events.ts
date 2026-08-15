@@ -13,6 +13,11 @@ export interface WireEvent {
 	config: {startTime: boolean; endTime: boolean; subtitle: 'location' | 'description'}
 }
 
+// The key is always present. A venued event carries an object; a venue-less
+// one carries an empty array `[]` rather than omitting the key or nulling
+// it out — TEC's REST API represents "no venue" as an empty collection.
+const VenueSchema = z.union([z.object({venue: z.string().optional()}), z.tuple([])]).optional()
+
 const TecEventSchema = z.object({
 	title: z.string(),
 	description: z.string(),
@@ -20,9 +25,12 @@ const TecEventSchema = z.object({
 	all_day: z.boolean(),
 	utc_start_date: z.string(),
 	utc_end_date: z.string(),
-	// Absent entirely on events with no venue, not present-and-null.
-	venue: z.object({venue: z.string().optional()}).optional(),
+	venue: VenueSchema,
 })
+
+function venueName(venue: z.infer<typeof VenueSchema>): string {
+	return Array.isArray(venue) ? '' : (venue?.venue ?? '')
+}
 
 const TecEventsSchema = z.object({events: z.array(z.unknown())})
 
@@ -50,7 +58,7 @@ function toWireEvent(event: z.infer<typeof TecEventSchema>, now: Date): WireEven
 		endTime: toIsoString(event.utc_end_date),
 		title: decode(event.title),
 		description,
-		location: event.venue?.venue ?? '',
+		location: venueName(event.venue),
 		isOngoing: new Date(startTime) < startOfToday,
 		links: [...descriptionLinks, event.url],
 		config: {

@@ -2,7 +2,7 @@ import fixture from './fixtures/tec-events.json'
 import {parseTecEvents} from '../parsers/tec-events'
 
 test('parses the live fixture', () => {
-	expect(parseTecEvents(fixture).length).toBeGreaterThan(0)
+	expect(parseTecEvents(fixture)).toHaveLength(fixture.events.length)
 })
 
 test('treats the naive utc timestamp as utc', () => {
@@ -54,6 +54,56 @@ test('tolerates an event with no venue at all', () => {
 		],
 	})
 	expect(event.location).toBe('')
+})
+
+test('treats an empty venue array as no venue', () => {
+	// TEC's own representation of "no venue": the key is always present, and
+	// a venue-less event carries `venue: []` rather than omitting the key.
+	const [event] = parseTecEvents({
+		events: [
+			{
+				title: 'A',
+				description: '',
+				url: 'https://wp.stolaf.edu/calendar/event/a/',
+				all_day: true,
+				utc_start_date: '2026-08-17 00:00:00',
+				utc_end_date: '2026-08-17 23:59:59',
+				venue: [],
+			},
+		],
+	})
+	expect(event.location).toBe('')
+})
+
+test('treats an empty venue object as no venue', () => {
+	const [event] = parseTecEvents({
+		events: [
+			{
+				title: 'A',
+				description: '',
+				url: 'https://wp.stolaf.edu/calendar/event/a/',
+				all_day: true,
+				utc_start_date: '2026-08-17 00:00:00',
+				utc_end_date: '2026-08-17 23:59:59',
+				venue: {},
+			},
+		],
+	})
+	expect(event.location).toBe('')
+})
+
+test('drops an event whose venue is structurally wrong, keeping its siblings', () => {
+	const good = {
+		title: 'Good',
+		description: '',
+		url: 'https://wp.stolaf.edu/calendar/event/good/',
+		all_day: false,
+		utc_start_date: '2026-08-17 13:00:00',
+		utc_end_date: '2026-08-17 14:00:00',
+	}
+	const bad = {...good, title: 'Bad', venue: 'a string'}
+	const events = parseTecEvents({events: [good, bad]})
+	expect(events.map((event) => event.title)).toStrictEqual(['Good'])
 })
 
 test('hides the times on an all-day event', () => {
