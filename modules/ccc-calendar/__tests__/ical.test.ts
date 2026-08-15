@@ -465,9 +465,11 @@ END:VEVENT`),
 test('a RECURRENCE-ID override moved into the window from beyond it still appears', () => {
 	// The mirror of the previous test: here the override's own DTSTART pulls
 	// a raw occurrence that would otherwise land well past the 90-day window
-	// back into it. The base rule has no COUNT, so the walk has to keep
-	// going past `windowEnd` -- following the override's own (un-overridden)
-	// RECURRENCE-ID position -- to ever reach that occurrence at all.
+	// back into it. The override's RECURRENCE-ID (2026-12-01) is itself
+	// beyond the window, so the walk below -- which never runs past
+	// `windowEnd` -- never reaches that raw position on its own; this
+	// override is found and pushed directly, from its own already-known
+	// startDate, before the walk even starts.
 	const events = parseIcalEvents(
 		calendar(`BEGIN:VEVENT
 UID:pulledin@test
@@ -491,6 +493,51 @@ END:VEVENT`),
 	// The occurrence's un-overridden position (2026-12-01) must not also
 	// show up under the base title -- it was replaced, not duplicated.
 	expect(events.map((event) => event.startTime)).not.toContain('2026-12-01T13:00:00.000Z')
+})
+
+test('a far-future override does not blow the iteration ceiling on a long-running dense rule', () => {
+	// The regression this guards: an earlier version of the pulled-in-window
+	// fix discovered a beyond-window override by extending the walk *past*
+	// windowEnd, following the iterator out to the override's own
+	// RECURRENCE-ID position -- which, on a rule dense and old enough, could
+	// need more steps than the 300,000-iteration ceiling allows just to get
+	// there, regardless of whether the override was ever going to land in
+	// the window. An HOURLY rule since 2000 (this file's own "closest thing
+	// to a plausible real feed" canary) needs ~235,500 steps to reach `now`
+	// on its own; walking on another ~35 years to an override dated 2035
+	// would need roughly 306,000 more on top of that -- past the ceiling.
+	// The fixed version never walks the iterator to find an override at all:
+	// it checks the override's own already-known startDate directly. The
+	// point of this test is that call returning at all, with the full
+	// window intact, rather than throwing -- not a timing bound. (This same
+	// shape, run without the fix, threw `exceeded 300000 recurrence
+	// iterations` here rather than merely running slowly; an absolute
+	// wall-clock assertion would also be hardware-dependent, the same
+	// reasoning the description-parsing-cost test above already documents.)
+	const events = parseIcalEvents(
+		calendar(`BEGIN:VEVENT
+UID:hourlyoverride@test
+DTSTART:20000101T130000Z
+DTEND:20000101T140000Z
+RRULE:FREQ=HOURLY
+SUMMARY:Hourly
+END:VEVENT
+BEGIN:VEVENT
+UID:hourlyoverride@test
+RECURRENCE-ID:20350101T130000Z
+DTSTART:20260101T130000Z
+DTEND:20260101T140000Z
+SUMMARY:Moved way in from 2035
+END:VEVENT`),
+		NOW,
+	)
+
+	// Same shape and expected count as the HOURLY-since-2000 canary below --
+	// the override's own moved-to date (2026-01-01) is in the past relative
+	// to NOW, so it doesn't itself appear, but every normal in-window
+	// occurrence must still be there.
+	expect(events.length).toBeGreaterThanOrEqual(2130)
+	expect(events.length).toBeLessThanOrEqual(2160)
 })
 
 test('an HOURLY rule fills the entire 90-day window, not just its first stretch', () => {
@@ -828,6 +875,90 @@ END:VEVENT`),
 	])
 })
 
+test('an EXDATE naming the DTSTART of an RDATE-only series excludes it, day-truncated the same as any other EXDATE', () => {
+	// A `DATE`-valued EXDATE against a `DATE-TIME` occurrence excludes by
+	// calendar day, not exact instant -- `ical.js` applies this truncation
+	// itself for every occurrence it evaluates EXDATE against (an RDATE
+	// value, say). The injected DTSTART above is the one occurrence `ical.js`
+	// never evaluates EXDATE against at all, so without the same truncation
+	// here, a `DATE`-valued EXDATE naming DTSTART's day would exclude an
+	// RDATE occurrence on that day but leave DTSTART itself untouched --
+	// two different rules for what should be the same EXDATE.
+	const events = parseIcalEvents(
+		calendar(`BEGIN:VEVENT
+UID:exdatetruncatesdtstart@test
+DTSTART:20260901T130000Z
+DTEND:20260901T140000Z
+RDATE:20260908T130000Z,20260915T130000Z
+EXDATE;VALUE=DATE:20260901
+SUMMARY:Exdate excludes DTSTART
+END:VEVENT`),
+		NOW,
+	)
+
+	expect(events.map((event) => event.startTime)).toStrictEqual([
+		'2026-09-08T13:00:00.000Z',
+		'2026-09-15T13:00:00.000Z',
+	])
+})
+
+test('an RDATE that repeats DTSTART does not duplicate it', () => {
+	// Some producers list DTSTART in RDATE explicitly, even though RFC 5545
+	// already counts it as part of the recurrence set on its own. Without
+	// checking for this, the DTSTART-injection fix above would add a second,
+	// duplicate occurrence at the same instant `ical.js`'s own RDATE walk
+	// already produces.
+	const events = parseIcalEvents(
+		calendar(`BEGIN:VEVENT
+UID:rdaterepeatsdtstart@test
+DTSTART:20260901T130000Z
+DTEND:20260901T140000Z
+RDATE:20260901T130000Z,20260908T130000Z
+SUMMARY:Rdate repeats dtstart
+END:VEVENT`),
+		NOW,
+	)
+
+	expect(events.map((event) => event.startTime)).toStrictEqual([
+		'2026-09-01T13:00:00.000Z',
+		'2026-09-08T13:00:00.000Z',
+	])
+})
+
+test('an RDATE;VALUE=PERIOD occurrence is dropped without losing the rest of its own event or its siblings', () => {
+	// RDATE is the one date-valued property RFC 5545 allows a VALUE=PERIOD
+	// form for -- an explicit (start, duration) pair rather than a single
+	// instant. ical.js's RecurExpansion happily mixes the resulting
+	// ICAL.Period values into the same occurrence stream as ICAL.Time values,
+	// but this parser only handles Time (toInstant, getOccurrenceDetails, and
+	// toWireEvent all expect Time-only methods). Full PERIOD support is out
+	// of scope here; what matters is that hitting one doesn't crash the walk
+	// and take the rest of the event's own occurrences (its injected DTSTART,
+	// here) or an unrelated sibling event down with it.
+	const events = parseIcalEvents(
+		calendar(`BEGIN:VEVENT
+UID:perioddate@test
+DTSTART:20260901T130000Z
+DTEND:20260901T140000Z
+RDATE;VALUE=PERIOD:20260908T130000Z/PT2H
+SUMMARY:Period rdate
+END:VEVENT
+BEGIN:VEVENT
+UID:sibling@test
+DTSTART:20260910T130000Z
+DTEND:20260910T140000Z
+SUMMARY:Unaffected sibling
+END:VEVENT`),
+		NOW,
+	)
+
+	expect(events.map((event) => event.title)).toStrictEqual(['Period rdate', 'Unaffected sibling'])
+	expect(events.map((event) => event.startTime)).toStrictEqual([
+		'2026-09-01T13:00:00.000Z',
+		'2026-09-10T13:00:00.000Z',
+	])
+})
+
 test('RDATE alongside an RRULE adds an extra occurrence on top of the rule', () => {
 	// Already correct: `RecurExpansion` merges its `ruleDates` (from RDATE)
 	// with its rule iterators' output, in date order, without special-casing
@@ -1017,13 +1148,18 @@ test('parses a real Microsoft Outlook/Exchange export', () => {
 })
 
 test('parses a real Apple Calendar (macOS) export', () => {
-	// Captured, not hand-written: from ics.py's own test fixtures
-	// (github.com/m42e/ics.py, tests/fixture.py, `cal1`), a real macOS 10.9
+	// Captured, not hand-written: from `tests/fixture.py`'s `cal1`
+	// (github.com/m42e/ics.py, a fork of the canonical ics.py project --
+	// github.com/C4ptainCrunch/ics.py, now hosted at github.com/ics-py/ics-py
+	// -- which is where this fixture actually originates), a real macOS 10.9
 	// Calendar.app export -- `X-APPLE-CALENDAR-COLOR`, `X-WR-CALNAME`, and a
 	// VTIMEZONE using macOS's own "UTC+2"/"UTC+1" `TZNAME`s rather than
-	// "CEST"/"CET". The DESCRIPTION text (unrelated to what this test
-	// checks) is trimmed from the original multi-paragraph lorem ipsum;
-	// every other property is unmodified.
+	// "CEST"/"CET". The DESCRIPTION is truncated to its first sentence (the
+	// original ran another five sentences of the same lorem ipsum) at an
+	// exact prefix of the captured text, so its unescaped comma -- a real,
+	// technically RFC 5545-noncompliant quirk of this producer's own output,
+	// not something introduced here -- is unchanged. Every other property is
+	// unmodified from the captured source.
 	const [event] = parseIcalEvents(appleFixture, new Date('2013-10-25T12:00:00Z'))
 
 	// Europe/Brussels is CET (UTC+1) on 2013-10-29 -- DST in the fixture's

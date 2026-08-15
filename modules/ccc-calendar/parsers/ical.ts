@@ -57,6 +57,23 @@ function toInstant(time: ICAL.Time): Date {
 	return time.toJSDate()
 }
 
+/// `RDATE` (unlike every other date-valued property this parser touches) is
+/// allowed a `VALUE=PERIOD` form -- an explicit (start, duration) pair rather
+/// than a single instant. `RecurExpansion` happily mixes `ICAL.Period`
+/// values into the same occurrence stream as `ICAL.Time` values (both
+/// implement `.compare()`, which is all it needs internally), but every
+/// occurrence this parser was written to expect is a `Time` -- `toInstant`,
+/// `getOccurrenceDetails`, and everything downstream call `Time`-only
+/// methods that don't exist on `Period`. Narrowing at the one place a
+/// `Period` can enter the walk (see `expandOccurrences`) turns what would
+/// otherwise be an uncaught `TypeError` -- and, via `expandOccurrences`'s own
+/// per-master `try`/`catch`, the silent loss of every *other* occurrence that
+/// master would have produced -- into just that one occurrence going
+/// unsupported.
+function isIcalTime(value: ICAL.Time | ICAL.Period): value is ICAL.Time {
+	return !(value instanceof ICAL.Period)
+}
+
 function toWireEvent(
 	item: ICAL.Event,
 	startTime: ICAL.Time,
@@ -163,19 +180,55 @@ function needsInjectedDtstart(component: ICAL.Component): boolean {
 	return component.hasProperty('rdate') && !component.hasProperty('rrule')
 }
 
-/// Whether `time` is named by one of `component`'s own `EXDATE` values.
-/// Only used for the injected-`DTSTART` case above -- everywhere else,
-/// `EXDATE` exclusion is `ical.js`'s own job (via `RecurExpansion`). Compares
-/// by resolved instant rather than replicating `RecurExpansion`'s internal
-/// DATE-vs-DATE-TIME truncation, since the case this exists for (an `EXDATE`
-/// naming the literal `DTSTART` of an `RDATE`-only series) is narrow enough
-/// that an exact-instant match covers what a real feed would actually do.
+/// Mirrors `RecurExpansion#_compare_special`: a `DATE`-valued `EXDATE`
+/// excludes a `DATE-TIME` occurrence that falls on the same calendar day,
+/// not only an exact instant match. `ical.js` applies this truncation for
+/// every `EXDATE` it evaluates itself (any occurrence the walk below reaches
+/// normally); this parser only needs its own copy for the one occurrence
+/// `ical.js` never evaluates `EXDATE` against at all -- the injected
+/// `DTSTART` of an `RDATE`-only series, below. Without it, that same
+/// `EXDATE;VALUE=DATE` would exclude an `RDATE` occurrence on that day but
+/// not a `DTSTART` occurrence on that day: two different rules for what
+/// should be the same property.
+function compareWithDateTruncation(a: ICAL.Time, b: ICAL.Time): number {
+	if (!a.isDate && b.isDate) {
+		return new ICAL.Time(
+			{year: a.year, month: a.month, day: a.day},
+			ICAL.Timezone.localTimezone,
+		).compare(b)
+	}
+	return a.compare(b)
+}
+
+/// Whether `time` is named by one of `component`'s own `EXDATE` values. Only
+/// used for the injected-`DTSTART` case below -- everywhere else, `EXDATE`
+/// exclusion is `ical.js`'s own job.
 function isExcludedByExdate(component: ICAL.Component, time: ICAL.Time): boolean {
-	let instant = toInstant(time).getTime()
 	return component
 		.getAllProperties('exdate')
 		.some((property) =>
-			property.getValues().some((value) => toInstant(value as ICAL.Time).getTime() === instant),
+			property
+				.getValues()
+				.some((value) => compareWithDateTruncation(time, value as ICAL.Time) === 0),
+		)
+}
+
+/// Whether `time` already appears as one of `component`'s own `RDATE`
+/// values. Some producers list `DTSTART` in `RDATE` explicitly, even though
+/// RFC 5545 already counts it as part of the recurrence set on its own --
+/// without this check, the injected-`DTSTART` case below would duplicate it.
+/// A `VALUE=PERIOD` `RDATE` entry can never equal a `DTSTART` this way (its
+/// value is a start/duration pair, not an instant `DTSTART` could match), so
+/// `isIcalTime` simply excludes those entries rather than needing its own
+/// comparison.
+function isAlreadyInRdate(component: ICAL.Component, time: ICAL.Time): boolean {
+	let instant = toInstant(time).getTime()
+	return component
+		.getAllProperties('rdate')
+		.some((property) =>
+			property
+				.getValues()
+				.some((value) => isIcalTime(value) && toInstant(value).getTime() === instant),
 		)
 }
 
@@ -185,14 +238,17 @@ function isExcludedByExdate(component: ICAL.Component, time: ICAL.Time): boolean
 /// itself, via the exceptions passed into the `Event` constructor and the
 /// component's own `EXDATE` properties, respectively.
 ///
-/// The walk keeps going past `windowEnd` as long as some override's own
-/// (un-overridden) `RECURRENCE-ID` position hasn't been reached yet -- an
-/// override can move an occurrence's actual start either out of the window
-/// (to reschedule it to next year, say) or *into* it from beyond it (to pull
-/// a far-future occurrence forward), and only the iterator's own walk to
-/// that `RECURRENCE-ID` position can discover which. Once the walk is both
-/// past `windowEnd` and past every known override's `RECURRENCE-ID`, nothing
-/// further can still land in the window, and it's safe to stop.
+/// The walk itself is bounded strictly by `windowEnd`, exactly as before
+/// overrides were considered at all -- it never runs past it. An override
+/// whose own (un-overridden) `RECURRENCE-ID` sits beyond `windowEnd` is
+/// handled separately, below, without walking the iterator out to find it:
+/// every override is already a fully-built `ICAL.Event` before this function
+/// runs, so its own moved-to `startDate` is known up front. Walking the
+/// iterator out to an arbitrary `RECURRENCE-ID` to discover the same thing
+/// would be unbounded -- a `RECURRENCE-ID` can be any distance in the future
+/// -- and, depending on the rule's frequency, can burn through the entire
+/// iteration ceiling just covering that distance, discarding every
+/// occurrence the event would otherwise have produced along the way.
 ///
 /// `toWireEvent` (HTML-stripping the description, scanning it for links) is
 /// the expensive part of processing an occurrence, so the today-or-later
@@ -224,21 +280,25 @@ function expandOccurrences(event: ICAL.Event, now: Date, limits: ExpansionLimits
 
 	if (needsInjectedDtstart(event.component)) {
 		let dtstart = event.startDate
-		if (!isAfter(toInstant(dtstart), windowEnd) && !isExcludedByExdate(event.component, dtstart)) {
+		if (
+			!isAlreadyInRdate(event.component, dtstart) &&
+			!isExcludedByExdate(event.component, dtstart)
+		) {
 			if (tryPush(dtstart)) return occurrences
 		}
 	}
 
 	// `Event#exceptions` is typed as `Event[]` but is actually keyed by
 	// occurrence-id string internally (`ical.js`'s own JSDoc-derived .d.ts is
-	// wrong here) -- `Object.values` reads correctly either way.
-	let overrideRecurrenceInstants = Object.values(event.exceptions).map((exception) =>
-		toInstant(exception.recurrenceId),
-	)
-	let latestOverrideInstant =
-		overrideRecurrenceInstants.length > 0
-			? new Date(Math.max(...overrideRecurrenceInstants.map((instant) => instant.getTime())))
-			: null
+	// wrong here) -- `Object.values` reads correctly either way. Only
+	// overrides whose raw RECURRENCE-ID sits beyond the window are handled
+	// here; one within the window is reached normally by the walk below,
+	// which already applies to it whatever `getOccurrenceDetails` returns
+	// (its moved-to start, if this is an override at all).
+	for (let exception of Object.values(event.exceptions)) {
+		if (!isAfter(toInstant(exception.recurrenceId), windowEnd)) continue
+		if (tryPush(exception.recurrenceId)) return occurrences
+	}
 
 	for (let iterations = 0; ; iterations += 1) {
 		let occurrence = iterator.next()
@@ -261,11 +321,12 @@ function expandOccurrences(event: ICAL.Event, now: Date, limits: ExpansionLimits
 			)
 		}
 
-		let occurrenceInstant = toInstant(occurrence)
-		let pastWindow = isAfter(occurrenceInstant, windowEnd)
-		let pastEveryOverride =
-			!latestOverrideInstant || isAfter(occurrenceInstant, latestOverrideInstant)
-		if (pastWindow && pastEveryOverride) break
+		// RDATE;VALUE=PERIOD is the one shape that can put a non-Time value
+		// into this stream -- see isIcalTime. Unsupported, but only for this
+		// one occurrence: skip it and keep walking the rest of the series.
+		if (!isIcalTime(occurrence)) continue
+
+		if (isAfter(toInstant(occurrence), windowEnd)) break
 
 		if (tryPush(occurrence)) break
 	}
