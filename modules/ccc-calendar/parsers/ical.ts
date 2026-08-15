@@ -166,7 +166,15 @@ function resolveLimits(limits?: {
 
 /// A dedicated error class for hitting the iteration ceiling, rather than a
 /// plain `Error` -- see `parseIcalEvents` for why that distinction matters.
-class RecurrenceIterationCeilingError extends Error {}
+///
+/// Exported (alongside `seekableRule` and `computeSeedTime`) only so
+/// `ical-equivalence.test.ts` can assert that a divergence between the
+/// parser and its naive reference walk is specifically a ceiling hit --
+/// which, for a genuinely dense, uncapped rule (`SECONDLY`, some
+/// `MINUTELY`), is correct behaviour on both sides, not a bug -- rather than
+/// blanket-swallowing any exception, which would hide a real regression
+/// behind an unrelated throw. Not part of the module's public parsing API.
+export class RecurrenceIterationCeilingError extends Error {}
 
 /// `RecurExpansion` only ever emits `DTSTART` itself as an occurrence when
 /// the series has an `RRULE` -- an `RDATE`-only series (RFC 5545 permits

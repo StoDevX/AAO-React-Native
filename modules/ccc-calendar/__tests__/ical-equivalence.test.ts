@@ -1,9 +1,14 @@
-import {readFileSync} from 'node:fs'
+import {readdirSync, readFileSync} from 'node:fs'
 import {join} from 'node:path'
 import {fastGetTrimmedText, htmlToSegments} from '@frogpond/html-lib'
 import {addDays, endOfDay, isAfter, isBefore, startOfDay} from 'date-fns'
 import ICAL from 'ical.js'
-import {computeSeedTime, parseIcalEvents, seekableRule} from '../parsers/ical'
+import {
+	computeSeedTime,
+	parseIcalEvents,
+	RecurrenceIterationCeilingError,
+	seekableRule,
+} from '../parsers/ical'
 import type {WireEvent} from '../parsers/tec-events'
 
 // This file is the safety net for `ical.ts`'s performance work, not a
@@ -111,10 +116,30 @@ function referenceToWireEvent(
 	}
 }
 
+/// The reference walk's own analogue of `RecurrenceIterationCeilingError`,
+/// thrown when `maxIterations` is supplied and exceeded -- see
+/// `expectEquivalentOrBothCeilinged` for why the corpus tests need a
+/// distinguishable error here rather than letting an unbounded `SECONDLY` or
+/// `MINUTELY` walk simply run to whatever wall-clock cost it wants.
+class ReferenceIterationCeilingError extends Error {}
+
 /// Walks every occurrence of `event` from its true `DTSTART` -- never seeded
-/// closer to `now`, never iteration-capped -- applying overrides and EXDATE
-/// along the way, and keeping whatever lands inside the window.
-function referenceExpandOccurrences(event: ICAL.Event, now: Date, windowDays: number): WireEvent[] {
+/// closer to `now` -- applying overrides and EXDATE along the way, and
+/// keeping whatever lands inside the window.
+///
+/// `maxIterations`, when given, throws `ReferenceIterationCeilingError` once
+/// exceeded, exactly where `ical.ts`'s own `RecurrenceIterationCeilingError`
+/// would fire -- both walk the same candidates in the same order, so the two
+/// ceilings are hit at the same iteration count. Undefined by default (no
+/// cap at all), preserving this file's original fixture/synthetic-case
+/// behaviour untouched; only the corpus tests below, which run real
+/// `SECONDLY`/`MINUTELY` rules that are legitimately unbounded, pass one.
+function referenceExpandOccurrences(
+	event: ICAL.Event,
+	now: Date,
+	windowDays: number,
+	maxIterations?: number,
+): WireEvent[] {
 	if (!event.isRecurring()) {
 		return [referenceToWireEvent(event, event.startDate, event.endDate, now)]
 	}
@@ -160,12 +185,18 @@ function referenceExpandOccurrences(event: ICAL.Event, now: Date, windowDays: nu
 		tryPush(exception.recurrenceId)
 	}
 
-	// The naive part: no seed, no cap. Every candidate occurrence from
-	// DTSTART is walked and thrown away until the window is reached.
+	// The naive part: no seed. Every candidate occurrence from DTSTART is
+	// walked and thrown away until the window is reached, or (corpus tests
+	// only) `maxIterations` is.
 	let iterator = event.iterator()
-	for (;;) {
+	for (let iterations = 0; ; iterations += 1) {
 		let occurrence = iterator.next()
 		if (!occurrence) break
+		if (maxIterations !== undefined && iterations >= maxIterations) {
+			throw new ReferenceIterationCeilingError(
+				`reference walk exceeded ${maxIterations} recurrence iterations without reaching the expansion window`,
+			)
+		}
 		if (!referenceIsIcalTime(occurrence)) continue
 		if (isAfter(referenceToInstant(occurrence), windowEnd)) break
 		tryPush(occurrence)
@@ -174,7 +205,21 @@ function referenceExpandOccurrences(event: ICAL.Event, now: Date, windowDays: nu
 	return occurrences
 }
 
-function referenceParseIcalEvents(body: string, now: Date, windowDays: number): WireEvent[] {
+/// `maxIterations`, when given, is threaded into `referenceExpandOccurrences`
+/// and this function's own per-master success/failure accounting mirrors
+/// `parseIcalEvents`'s -- a master that hits the ceiling is dropped, like any
+/// other malformed master, and only a non-empty calendar where *every* master
+/// fails throws (with the most recent failure attached as `cause`). Without
+/// this mirroring, a corpus file mixing one ceiling-hitting master with
+/// otherwise-fine ones (there are two -- `Bug2912657.ics`, `Bug2916581.ics`)
+/// would diverge from `parseIcalEvents` on that aggregation behaviour alone,
+/// not on anything about recurrence itself.
+function referenceParseIcalEvents(
+	body: string,
+	now: Date,
+	windowDays: number,
+	maxIterations?: number,
+): WireEvent[] {
 	let calendar = ICAL.Component.fromString(body)
 	let vevents = calendar.getAllSubcomponents('vevent')
 	let masters = vevents.filter((vevent) => !vevent.hasProperty('recurrence-id'))
@@ -187,15 +232,28 @@ function referenceParseIcalEvents(body: string, now: Date, windowDays: number): 
 		overridesByUid.set(uid, [...(overridesByUid.get(uid) ?? []), vevent])
 	}
 
+	let successCount = 0
+	let lastError: unknown
 	let events = masters.flatMap((vevent) => {
-		let uid = vevent.getFirstPropertyValue('uid')
-		let overrides = (typeof uid === 'string' && overridesByUid.get(uid)) || []
-		let event = new ICAL.Event(vevent, {
-			exceptions: overrides.map((override) => new ICAL.Event(override)),
-			strictExceptions: true,
-		})
-		return referenceExpandOccurrences(event, now, windowDays)
+		try {
+			let uid = vevent.getFirstPropertyValue('uid')
+			let overrides = (typeof uid === 'string' && overridesByUid.get(uid)) || []
+			let event = new ICAL.Event(vevent, {
+				exceptions: overrides.map((override) => new ICAL.Event(override)),
+				strictExceptions: true,
+			})
+			let occurrences = referenceExpandOccurrences(event, now, windowDays, maxIterations)
+			successCount += 1
+			return occurrences
+		} catch (error) {
+			lastError = error
+			return []
+		}
 	})
+
+	if (masters.length > 0 && successCount === 0) {
+		throw new Error('every ical event was malformed', {cause: lastError})
+	}
 
 	let endOfToday = endOfDay(now)
 	let future = events.filter((event) => isAfter(new Date(event.endTime), endOfToday))
@@ -901,4 +959,217 @@ test('enough synthetic cases actually take the seeded path to make the harness m
 		0,
 	)
 	expect(totalSeeded).toBeGreaterThanOrEqual(15)
+})
+
+// --- Third-party corpus: ical-org/ical.net's Recurrence test suite --------
+//
+// See `fixtures/ical-corpus/README.md` for provenance, licence, and what was
+// excluded from the upstream 71 files. Where the cases above are synthetic
+// shapes chosen to exercise one thing each, this corpus is 70 real,
+// independently-authored recurrence documents -- every `RRULE` frequency,
+// and every rule part (`BYDAY`, `BYMONTH`, `INTERVAL`, `COUNT`,
+// `BYMONTHDAY`, `WKST`, `UNTIL`, `BYHOUR`, `BYWEEKNO`, `BYSETPOS`,
+// `BYMINUTE`, `BYYEARDAY`) that matters to this parser.
+//
+// History between DTSTART and "now" is exactly what makes the naive
+// reference walk expensive, but it's also the only thing that makes seeding
+// engage at all -- so each file below runs twice:
+//
+//   - once with `now` at the file's own earliest DTSTART: no history to
+//     walk, so this is fast on both sides regardless of frequency, and
+//     checks shape correctness on the unseeded path (`computeSeedTime`
+//     never engages when there's nothing to seed past);
+//   - once with `now` `CORPUS_SEED_GAP_PERIODS` periods later: old enough
+//     that every structurally-seekable rule in the file actually gets
+//     seeded, so this checks that the seeded and unseeded paths agree, not
+//     just that the unseeded path works on its own.
+//
+// Both passes share one small, explicit `windowDays`/`maxIterations`
+// budget -- injected, not the production defaults -- chosen so the naive
+// reference walk (which never seeds, on either pass) stays cheap enough to
+// run 140 times inside this suite's time budget. Seeding only skips the
+// *gap* between DTSTART and `now`; it never skips the window itself, so a
+// `SECONDLY` or uncapped `MINUTELY` rule pays the same per-second cost
+// inside the window whether or not it's seeded, and that cost alone
+// exceeds this budget regardless of which pass is running. That's this
+// corpus's real "both sides fail" case: not a bug, but treated
+// deliberately below (both threw, and specifically from hitting the shared
+// iteration ceiling) rather than caught and silently accepted.
+
+const CORPUS_DIR = join(__dirname, 'fixtures/ical-corpus')
+const CORPUS_FILES = readdirSync(CORPUS_DIR)
+	.filter((name) => name.endsWith('.ics'))
+	.sort()
+
+const CORPUS_WINDOW_DAYS = 2
+const CORPUS_MAX_ITERATIONS = 1000
+const CORPUS_SEED_GAP_PERIODS = 500
+
+/// Not `FIXED_PERIOD_SECONDS` from `ical.ts` -- that map deliberately
+/// excludes MONTHLY/YEARLY (their step isn't a fixed span of time, see that
+/// map's own comment), and this one deliberately doesn't add them back in.
+/// `seekableRule` never accepts MONTHLY or YEARLY, so `CORPUS_SEED_GAP_PERIODS`
+/// past DTSTART buys nothing for them -- no seeding will engage regardless of
+/// how far out `now` lands. Falling back to `DAILY`'s period keeps their
+/// "seeded" pass's `now` a modest, cheap distance past DTSTART instead: a
+/// YEARLY rule with several `BYDAY`/`BYMONTH` matches a year, projected out
+/// `CORPUS_SEED_GAP_PERIODS` *years* instead of days, is exactly the naive
+/// reference walk this file exists to keep affordable -- caught directly,
+/// this was the corpus run's single biggest cost before the fallback did.
+const NOMINAL_PERIOD_SECONDS: Record<string, number> = {
+	SECONDLY: 1,
+	MINUTELY: 60,
+	HOURLY: 60 * 60,
+	DAILY: 24 * 60 * 60,
+	WEEKLY: 7 * 24 * 60 * 60,
+}
+
+/// The fastest-changing `RRULE` frequency among `masters`, or `DAILY`'s
+/// nominal period if none of them has an `RRULE` at all (an `RDATE`-only or
+/// non-recurring master) -- the seeded pass's `now` is placed this many
+/// `CORPUS_SEED_GAP_PERIODS` past DTSTART, so the fastest rule in a
+/// multi-master file (there are two -- `Bug2912657.ics`, `Bug2916581.ics`)
+/// is what sizes the gap, keeping the reference walk's cost bounded
+/// regardless of which master is slowest.
+function fastestNominalPeriodSeconds(masters: ICAL.Component[]): number {
+	let periods = masters.flatMap((master) =>
+		master
+			.getAllProperties('rrule')
+			.map((property) => (property.getFirstValue() as ICAL.Recur).freq)
+			.map((freq) => NOMINAL_PERIOD_SECONDS[freq] ?? NOMINAL_PERIOD_SECONDS.DAILY),
+	)
+	return periods.length > 0 ? Math.min(...periods) : NOMINAL_PERIOD_SECONDS.DAILY
+}
+
+function earliestDtstart(masters: ICAL.Component[]): Date {
+	let instants = masters.map((master) => referenceToInstant(new ICAL.Event(master).startDate))
+	return new Date(Math.min(...instants.map((instant) => instant.getTime())))
+}
+
+/// The longest `DTEND - DTSTART` among `masters` -- `computeSeedTime`
+/// subtracts an occurrence's own duration from the elapsed time before
+/// flooring it into periods (so an occurrence still running at `now` isn't
+/// skipped past), which means a gap that's merely `CORPUS_SEED_GAP_PERIODS`
+/// periods past DTSTART can still net out non-positive once a long duration
+/// is subtracted back off -- `computeSeedTime` then correctly declines to
+/// seed at all. Caught directly: `Minutely1.ics`/`Secondly1.ics` (a 9-hour
+/// occurrence) and `MinutelyInterval1.ics` (24-hour) all failed to seed with
+/// no duration padding, even though their frequency is exactly what this
+/// corpus most wants to exercise seeding on.
+function longestDurationSeconds(masters: ICAL.Component[]): number {
+	let durations = masters.map((master) => {
+		let event = new ICAL.Event(master)
+		return (
+			(referenceToInstant(event.endDate).getTime() -
+				referenceToInstant(event.startDate).getTime()) /
+			1000
+		)
+	})
+	return durations.length > 0 ? Math.max(...durations) : 0
+}
+
+/// Compares `parseIcalEvents` against the reference walk, treating "both
+/// threw specifically because they hit the shared iteration ceiling" as
+/// equivalent to deep equality on the results. Any other divergence -- one
+/// side throwing while the other doesn't, or either throwing for an
+/// unrelated reason -- still fails the test; this only recognises the one
+/// failure mode the corpus's genuinely-unbounded `SECONDLY`/`MINUTELY` rules
+/// are expected to hit.
+function expectEquivalentOrBothCeilinged(
+	body: string,
+	now: Date,
+	windowDays: number,
+	maxIterations: number,
+): void {
+	let actual: WireEvent[] | undefined
+	let actualCause: unknown
+	try {
+		// `maxOccurrences` is given explicitly, and at least as large as
+		// `maxIterations`, so it can never be the thing that truncates a
+		// result -- the count of occurrences an event can produce is bounded
+		// by the count of iterations it took to find them, so a cap this
+		// generous is only ever reached after `maxIterations` already would
+		// be. Left to its production default (`windowDays * 24 * 2`, sized
+		// for an HOURLY-scale rule), a dense `MINUTELY` rule in this corpus
+		// would hit *that* cap first -- a real production behaviour, but not
+		// the one this comparison means to exercise, and not one the
+		// reference walk (which has no occurrence cap at all) can agree with.
+		actual = parseIcalEvents(body, now, {windowDays, maxIterations, maxOccurrences: maxIterations})
+	} catch (error) {
+		actualCause = (error as Error).cause
+	}
+
+	let expected: WireEvent[] | undefined
+	let expectedCause: unknown
+	try {
+		expected = referenceParseIcalEvents(body, now, windowDays, maxIterations)
+	} catch (error) {
+		expectedCause = (error as Error).cause
+	}
+
+	if (actual === undefined || expected === undefined) {
+		expect(actual).toBeUndefined()
+		expect(expected).toBeUndefined()
+		expect(actualCause).toBeInstanceOf(RecurrenceIterationCeilingError)
+		expect(expectedCause).toBeInstanceOf(ReferenceIterationCeilingError)
+		return
+	}
+
+	expect(actual).toStrictEqual(expected)
+}
+
+interface CorpusCase {
+	file: string
+	body: string
+	masters: ICAL.Component[]
+}
+
+const CORPUS_CASES: CorpusCase[] = CORPUS_FILES.map((file) => {
+	let body = readFileSync(join(CORPUS_DIR, file), 'utf8')
+	let masters = ICAL.Component.fromString(body)
+		.getAllSubcomponents('vevent')
+		.filter((vevent) => !vevent.hasProperty('recurrence-id'))
+	return {file, body, masters}
+})
+
+function seededNowFor({masters}: CorpusCase): Date {
+	let gapSeconds =
+		CORPUS_SEED_GAP_PERIODS * fastestNominalPeriodSeconds(masters) + longestDurationSeconds(masters)
+	return new Date(earliestDtstart(masters).getTime() + gapSeconds * 1000)
+}
+
+describe.each(CORPUS_CASES)('corpus: $file', ({file, body, masters}) => {
+	test('matches the naive reference walk, unseeded (now at the file’s own DTSTART)', () => {
+		expectEquivalentOrBothCeilinged(
+			body,
+			earliestDtstart(masters),
+			CORPUS_WINDOW_DAYS,
+			CORPUS_MAX_ITERATIONS,
+		)
+	})
+
+	test('matches the naive reference walk, seeded (now well past DTSTART)', () => {
+		expectEquivalentOrBothCeilinged(
+			body,
+			seededNowFor({file, body, masters}),
+			CORPUS_WINDOW_DAYS,
+			CORPUS_MAX_ITERATIONS,
+		)
+	})
+})
+
+// Same rationale as the synthetic cases' own version of this test: a
+// deep-equality pass proves the seeded and unseeded paths agree, not that
+// any given corpus file actually reached the seeded path at all. This
+// counts, across the whole corpus, how many master VEVENTs the seeded
+// pass's own `now` actually seeds (via the real `seekableRule`/
+// `computeSeedTime`, not a re-implementation) -- so a future change that
+// narrows `seekableRule` enough to stop qualifying most of this corpus
+// shows up here as a falling count, not as a silently-still-green suite.
+test('a meaningful share of the corpus actually takes the seeded path', () => {
+	let totalSeeded = CORPUS_CASES.reduce(
+		(sum, corpusCase) => sum + seededMasterCount(corpusCase.body, seededNowFor(corpusCase)),
+		0,
+	)
+	expect(totalSeeded).toBeGreaterThanOrEqual(19)
 })
