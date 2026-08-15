@@ -1136,8 +1136,14 @@ function earliestDtstart(masters: ICAL.Component[]): Date {
 /// to exercise. The one-day pull-back exists to fix a same-day filtering
 /// artefact right at `DTSTART`, which only the unseeded pass is close enough
 /// to `DTSTART` to ever hit.
+///
+/// Two days rather than one: host offsets span roughly +14 to -12, so a
+/// single day is not enough to clear the whole range, and a one-day pull-back
+/// left the corpus-depth counts short of their floor anywhere east of about
+/// UTC+10 -- a red suite on a correct parser, depending only on the
+/// developer's clock.
 function unseededNowFor(masters: ICAL.Component[]): Date {
-	return new Date(earliestDtstart(masters).getTime() - 24 * 60 * 60 * 1000)
+	return new Date(earliestDtstart(masters).getTime() - 2 * 24 * 60 * 60 * 1000)
 }
 
 /// Frequencies dense enough that widening the window to chase a real
