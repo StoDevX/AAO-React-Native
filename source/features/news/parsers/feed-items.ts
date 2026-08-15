@@ -16,10 +16,8 @@ const FeedItemSchema = z.object({
 	title: z.string(),
 })
 
-const FeedItemsSchema = z.array(FeedItemSchema)
-
-export function parseFeedItems(body: unknown): StoryType[] {
-	return FeedItemsSchema.parse(body).map((item) => ({
+function toStory(item: z.infer<typeof FeedItemSchema>): StoryType {
+	return {
 		authors: item.authors,
 		categories: item.categories,
 		content: item.content,
@@ -28,5 +26,20 @@ export function parseFeedItems(body: unknown): StoryType[] {
 		featuredImage: item.featuredImage ?? undefined,
 		link: item.link ?? undefined,
 		title: item.title,
-	}))
+	}
+}
+
+/// The outer shape stays strict — a response that isn't an array means the
+/// source is wrong. Each element is parsed on its own so one malformed item
+/// doesn't blank the rest of the feed, matching `parseWpV2Posts`.
+export function parseFeedItems(body: unknown): StoryType[] {
+	let items = z.array(z.unknown()).parse(body)
+
+	return items.flatMap((raw) => {
+		try {
+			return [toStory(FeedItemSchema.parse(raw))]
+		} catch {
+			return []
+		}
+	})
 }

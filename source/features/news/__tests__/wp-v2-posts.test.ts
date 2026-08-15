@@ -46,3 +46,56 @@ test('falls back to Unknown Author when the embed is absent', () => {
 	])
 	expect(stories[0].authors).toStrictEqual(['Unknown Author'])
 })
+
+test('parses a post whose featured-media embed is a WordPress error object, with no image', () => {
+	const stories = parseWpV2Posts([
+		{
+			author: 1,
+			content: {rendered: 'body'},
+			date_gmt: '2026-08-14T20:26:51Z',
+			excerpt: {rendered: 'hi'},
+			featured_media: 42,
+			link: 'https://wp.stolaf.edu/a',
+			title: {rendered: 'Title'},
+			_embedded: {
+				'wp:featuredmedia': [
+					{code: 'rest_post_invalid_id', message: 'Invalid attachment ID.', data: {status: 404}},
+				],
+			},
+		},
+	])
+	expect(stories).toHaveLength(1)
+	expect(stories[0].featuredImage).toBeUndefined()
+})
+
+test('skips a post that cannot be parsed while its siblings still come through', () => {
+	const stories = parseWpV2Posts([
+		{
+			author: 1,
+			content: {rendered: 'first'},
+			date_gmt: '2026-08-14T20:26:51Z',
+			excerpt: {rendered: 'first excerpt'},
+			featured_media: 0,
+			link: 'https://wp.stolaf.edu/a',
+			title: {rendered: 'First'},
+		},
+		{
+			// missing required fields (content, excerpt, title, date_gmt, link)
+			author: 1,
+		},
+		{
+			author: 1,
+			content: {rendered: 'third'},
+			date_gmt: '2026-08-14T20:26:51Z',
+			excerpt: {rendered: 'third excerpt'},
+			featured_media: 0,
+			link: 'https://wp.stolaf.edu/c',
+			title: {rendered: 'Third'},
+		},
+	])
+	expect(stories.map((s) => s.title)).toStrictEqual(['First', 'Third'])
+})
+
+test('throws when the response is not an array', () => {
+	expect(() => parseWpV2Posts({not: 'an array'})).toThrow()
+})
