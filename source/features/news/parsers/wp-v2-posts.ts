@@ -85,14 +85,25 @@ function toStory(item: z.infer<typeof WpV2PostSchema>): StoryType {
 /// the source is wrong, and that should throw. Each element is then parsed
 /// on its own, so one post WordPress can't fully describe doesn't blank the
 /// rest of the feed the way an all-or-nothing `z.array(...).parse()` would.
+///
+/// But a non-empty response that drops down to zero stories means the shape
+/// changed out from under us, not that one post was malformed — that must
+/// throw rather than render a silently blank feed. A genuinely empty
+/// response is a legitimate "no posts" and stays empty.
 export function parseWpV2Posts(body: unknown): StoryType[] {
 	let items = z.array(z.unknown()).parse(body)
 
-	return items.flatMap((raw) => {
+	let stories = items.flatMap((raw) => {
 		try {
 			return [toStory(WpV2PostSchema.parse(raw))]
 		} catch {
 			return []
 		}
 	})
+
+	if (items.length > 0 && stories.length === 0) {
+		throw new Error('every WordPress post was malformed')
+	}
+
+	return stories
 }

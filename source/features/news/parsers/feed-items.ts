@@ -32,14 +32,25 @@ function toStory(item: z.infer<typeof FeedItemSchema>): StoryType {
 /// The outer shape stays strict — a response that isn't an array means the
 /// source is wrong. Each element is parsed on its own so one malformed item
 /// doesn't blank the rest of the feed, matching `parseWpV2Posts`.
+///
+/// A non-empty response that drops down to zero items means the shape
+/// changed out from under us, not that one item was malformed — that must
+/// throw rather than render a silently blank feed. A genuinely empty
+/// response is a legitimate "no items" and stays empty.
 export function parseFeedItems(body: unknown): StoryType[] {
 	let items = z.array(z.unknown()).parse(body)
 
-	return items.flatMap((raw) => {
+	let stories = items.flatMap((raw) => {
 		try {
 			return [toStory(FeedItemSchema.parse(raw))]
 		} catch {
 			return []
 		}
 	})
+
+	if (items.length > 0 && stories.length === 0) {
+		throw new Error('every feed item was malformed')
+	}
+
+	return stories
 }

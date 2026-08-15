@@ -34,14 +34,25 @@ function normalizeValues(values: {label: string; url: string}[]): LinkValue[] {
 /// group is then parsed on its own, so one letter group WordPress can't fully
 /// describe doesn't blank the rest of the index the way an all-or-nothing
 /// `z.array(...).parse()` would.
+///
+/// But a non-empty list that drops down to zero groups means the shape
+/// changed out from under us, not that one entry was malformed — that must
+/// throw rather than render a silently blank index. A genuinely empty list
+/// is a legitimate response and stays empty.
 function toGroups(raw: unknown[]): LinkGroup[] {
-	return raw.flatMap((item) => {
+	let groups = raw.flatMap((item) => {
 		let parsed = RawGroupSchema.safeParse(item)
 		if (!parsed.success) return []
 
 		let {letter, values} = parsed.data
 		return [{title: letter[0] ?? '', data: normalizeValues(values)}]
 	})
+
+	if (raw.length > 0 && groups.length === 0) {
+		throw new Error('every A–Z group was malformed')
+	}
+
+	return groups
 }
 
 export function parseStolafAToZ(body: unknown): LinkGroup[] {
