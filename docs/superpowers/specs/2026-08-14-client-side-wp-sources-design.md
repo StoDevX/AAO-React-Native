@@ -309,6 +309,15 @@ port directly from `normalizeAndValidateAzValues` in the server's `v1/a-z.ts`:
 trim label and url, drop entries where both are empty, resolve `/`-relative urls
 against `https://stolaf.edu`, and drop entries whose url still fails validation.
 
+The merge fixes a bug rather than porting it. `combineResponses` in the server's
+`v1/a-z.ts` only merges an extras group into a letter that already exists
+upstream, and silently discards it otherwise. St. Olaf currently publishes
+`A`–`W` with no `Q`, so extras under `Q`, `X`, `Y` or `Z` would pass
+`validate-data`, bundle, deploy, and never appear — with nothing reporting a
+problem. The app instead creates the missing letter group and inserts it in
+sorted position. A test covers an extras entry under a letter the upstream does
+not provide.
+
 If the extras fetch fails, the St. Olaf list renders alone rather than the whole
 screen failing. Today ccc-server 500s if either half fails; a decorative
 supplement should not take down the index.
