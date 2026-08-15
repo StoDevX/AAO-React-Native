@@ -494,9 +494,6 @@ importers:
       '@callstack/react-theme-provider':
         specifier: 3.0.9
         version: 3.0.9(react@19.2.8)
-      '@frogpond/app-theme':
-        specifier: workspace:*
-        version: link:../app-theme
       '@frogpond/colors':
         specifier: workspace:*
         version: link:../colors
@@ -565,12 +562,6 @@ importers:
       '@expo/ui':
         specifier: 57.0.9
         version: 57.0.9(patch_hash=dc11bfc5e4c86bf6ab7005269d8af06407c6e9a3b25420640dac26ccf47fe679)(@babel/core@7.29.7)(expo@57.0.11)(react-dom@19.2.3)(react-native-worklets@0.10.1)(react-native@0.86.2)(react@19.2.8)
-      '@frogpond/app-theme':
-        specifier: workspace:*
-        version: link:../app-theme
-      '@frogpond/colors':
-        specifier: workspace:*
-        version: link:../colors
       moment-timezone:
         specifier: ^0.6.3
         version: 0.6.3
@@ -589,24 +580,21 @@ importers:
       '@frogpond/add-to-device-calendar':
         specifier: workspace:*
         version: link:../add-to-device-calendar
-      '@frogpond/app-theme':
-        specifier: workspace:*
-        version: link:../app-theme
       '@frogpond/colors':
         specifier: workspace:*
         version: link:../colors
       '@frogpond/event-type':
         specifier: workspace:*
         version: link:../event-type
+      '@frogpond/layout':
+        specifier: workspace:*
+        version: link:../layout
       '@frogpond/lists':
         specifier: workspace:*
         version: link:../lists
       '@frogpond/notice':
         specifier: workspace:*
         version: link:../notice
-      '@frogpond/open-url':
-        specifier: workspace:*
-        version: link:../open-url
       '@frogpond/tableview':
         specifier: workspace:*
         version: link:../tableview
@@ -637,9 +625,6 @@ importers:
       '@callstack/react-theme-provider':
         specifier: 3.0.9
         version: 3.0.9(react@19.2.8)
-      '@frogpond/app-theme':
-        specifier: workspace:*
-        version: link:../app-theme
       '@frogpond/colors':
         specifier: workspace:*
         version: link:../colors
@@ -649,12 +634,12 @@ importers:
       '@frogpond/tableview':
         specifier: workspace:*
         version: link:../tableview
+      '@frogpond/toolbar':
+        specifier: workspace:*
+        version: link:../toolbar
       '@frogpond/touchable':
         specifier: workspace:*
         version: link:../touchable
-      '@frogpond/viewport':
-        specifier: workspace:*
-        version: link:../viewport
       '@react-native-vector-icons/ionicons':
         specifier: ^13.1.2
         version: 13.1.2(@expo/config-plugins@57.0.7)(@react-native/assets-registry@0.86.2)(expo-font@57.0.1)(react-native@0.86.2)(react@19.2.8)
@@ -676,12 +661,12 @@ importers:
       '@callstack/react-theme-provider':
         specifier: 3.0.9
         version: 3.0.9(react@19.2.8)
-      '@frogpond/app-theme':
-        specifier: workspace:*
-        version: link:../app-theme
       '@frogpond/colors':
         specifier: workspace:*
         version: link:../colors
+      '@frogpond/constants':
+        specifier: workspace:*
+        version: link:../constants
       '@frogpond/filter':
         specifier: workspace:*
         version: link:../filter
@@ -697,15 +682,9 @@ importers:
       '@frogpond/notice':
         specifier: workspace:*
         version: link:../notice
-      '@frogpond/tableview':
-        specifier: workspace:*
-        version: link:../tableview
       '@frogpond/toolbar':
         specifier: workspace:*
         version: link:../toolbar
-      '@frogpond/touchable':
-        specifier: workspace:*
-        version: link:../touchable
       '@react-native-vector-icons/ionicons':
         specifier: ^13.1.2
         version: 13.1.2(@expo/config-plugins@57.0.7)(@react-native/assets-registry@0.86.2)(expo-font@57.0.1)(react-native@0.86.2)(react@19.2.8)
@@ -781,12 +760,12 @@ importers:
       '@callstack/react-theme-provider':
         specifier: 3.0.9
         version: 3.0.9(react@19.2.8)
-      '@frogpond/app-theme':
-        specifier: workspace:*
-        version: link:../app-theme
       '@frogpond/colors':
         specifier: workspace:*
         version: link:../colors
+      '@frogpond/notice':
+        specifier: workspace:*
+        version: link:../notice
       '@frogpond/separator':
         specifier: workspace:*
         version: link:../separator
@@ -811,12 +790,6 @@ importers:
       '@callstack/react-theme-provider':
         specifier: 3.0.9
         version: 3.0.9(react@19.2.8)
-      '@frogpond/app-theme':
-        specifier: workspace:*
-        version: link:../app-theme
-      '@frogpond/colors':
-        specifier: workspace:*
-        version: link:../colors
       lodash:
         specifier: 4.18.1
         version: 4.18.1
@@ -908,6 +881,9 @@ importers:
 
   modules/tableview:
     dependencies:
+      '@frogpond/app-theme':
+        specifier: workspace:*
+        version: link:../app-theme
       '@frogpond/colors':
         specifier: workspace:*
         version: link:../colors
@@ -950,6 +926,9 @@ importers:
 
   modules/touchable:
     dependencies:
+      '@frogpond/colors':
+        specifier: workspace:*
+        version: link:../colors
       react:
         specifier: ^19.1.0
         version: 19.2.8

@@ -104,6 +104,10 @@ run = "node scripts/validate-bus-schedules.mjs"
 description = "Validate data files"
 run = "node scripts/validate-data.mjs"
 
+[tasks."validate-deps"]
+description = "Check that modules declare the @frogpond packages they import"
+run = "node scripts/validate-workspace-deps.mjs"
+
 [tasks."compress-data"]
 description = "Compress data files"
 run = "gzip --keep docs/*.json"
