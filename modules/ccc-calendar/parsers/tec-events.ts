@@ -1,0 +1,90 @@
+import {decode, fastGetTrimmedText, htmlToSegments} from '@frogpond/html-lib'
+import {z} from 'zod'
+
+export interface WireEvent {
+	dataSource: string
+	startTime: string
+	endTime: string
+	title: string
+	description: string
+	location: string
+	isOngoing: boolean
+	links: string[]
+	config: {startTime: boolean; endTime: boolean; subtitle: 'location' | 'description'}
+}
+
+const TecEventSchema = z.object({
+	title: z.string(),
+	description: z.string(),
+	url: z.string(),
+	all_day: z.boolean(),
+	utc_start_date: z.string(),
+	utc_end_date: z.string(),
+	// Absent entirely on events with no venue, not present-and-null.
+	venue: z.object({venue: z.string().optional()}).optional(),
+})
+
+const TecEventsSchema = z.object({events: z.array(z.unknown())})
+
+/// TEC reports `utc_start_date` as "2026-08-17 13:00:00" — UTC, but with a
+/// space separator and no zone marker. Left alone it would be read as local
+/// time and shift by the offset.
+function toIsoString(utcDate: string): string {
+	return new Date(`${utcDate.replace(' ', 'T')}Z`).toISOString()
+}
+
+function toWireEvent(event: z.infer<typeof TecEventSchema>, now: Date): WireEvent {
+	let startTime = toIsoString(event.utc_start_date)
+	let description = fastGetTrimmedText(event.description)
+
+	let descriptionLinks = htmlToSegments(event.description).flatMap((segment) =>
+		segment.type === 'link' ? [segment.url] : [],
+	)
+
+	let startOfToday = new Date(now)
+	startOfToday.setHours(0, 0, 0, 0)
+
+	return {
+		dataSource: 'tribe',
+		startTime,
+		endTime: toIsoString(event.utc_end_date),
+		title: decode(event.title),
+		description,
+		location: event.venue?.venue ?? '',
+		isOngoing: new Date(startTime) < startOfToday,
+		links: [...descriptionLinks, event.url],
+		config: {
+			startTime: !event.all_day,
+			endTime: !event.all_day,
+			subtitle: 'location',
+		},
+	}
+}
+
+/// The outer shape stays strict: a response that isn't `{events: [...]}` at
+/// all means the source is wrong, and that should throw. Each element is
+/// then parsed on its own, so one event TEC can't fully describe doesn't
+/// blank the rest of the calendar the way an all-or-nothing
+/// `z.array(...).parse()` would.
+///
+/// But a non-empty response that drops down to zero events means the shape
+/// changed out from under us, not that one event was malformed — that must
+/// throw rather than render a silently blank calendar. A genuinely empty
+/// response (no upcoming events) is legitimate and stays empty.
+export function parseTecEvents(body: unknown, now = new Date()): WireEvent[] {
+	let {events: items} = TecEventsSchema.parse(body)
+
+	let events = items.flatMap((raw) => {
+		try {
+			return [toWireEvent(TecEventSchema.parse(raw), now)]
+		} catch {
+			return []
+		}
+	})
+
+	if (items.length > 0 && events.length === 0) {
+		throw new Error('every TEC event was malformed')
+	}
+
+	return events
+}
