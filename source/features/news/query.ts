@@ -1,6 +1,7 @@
 import {fetchManifest, fetchSourceBody, REL_NEWS, resolveSource} from '@frogpond/data-sources'
 import {queryOptions} from '@tanstack/react-query'
 import {queryClient} from '../../init/tanstack-query'
+import {parseAtomFeed} from './parsers/atom'
 import {parseFeedItems} from './parsers/feed-items'
 import {parseRssFeed} from './parsers/rss'
 import {parseWpV2Posts} from './parsers/wp-v2-posts'
@@ -9,8 +10,9 @@ import {StoryType} from './types'
 const WP_V2_POSTS = 'application/vnd.wordpress.v2.posts+json'
 const FEED_ITEMS = 'application/vnd.frogpond.feed-items+json'
 const RSS = 'application/rss+xml'
+const ATOM = 'application/atom+xml'
 
-export const NEWS_TYPES = [WP_V2_POSTS, FEED_ITEMS, RSS] as const
+export const NEWS_TYPES = [WP_V2_POSTS, FEED_ITEMS, RSS, ATOM] as const
 
 export const keys = {
 	named: (name: string) => ['news', 'named', name] as const,
@@ -24,6 +26,8 @@ function parse(type: string, body: unknown): StoryType[] {
 			return parseFeedItems(body)
 		case RSS:
 			return parseRssFeed(body)
+		case ATOM:
+			return parseAtomFeed(body)
 		default:
 			throw new Error(`no news parser for "${type}"`)
 	}
@@ -41,7 +45,7 @@ export const namedNewsOptions = (source: string) =>
 				resolved.href,
 				signal,
 				'News',
-				resolved.type === RSS ? 'text' : 'json',
+				resolved.type === RSS || resolved.type === ATOM ? 'text' : 'json',
 			)
 
 			return parse(resolved.type, body)
