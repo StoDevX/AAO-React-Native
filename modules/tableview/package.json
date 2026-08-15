@@ -9,6 +9,7 @@
     "test": "jest"
   },
   "dependencies": {
+    "@frogpond/app-theme": "workspace:*",
     "@frogpond/colors": "workspace:*",
     "react-native-tableview-simple": "4.4.1"
   },

@@ -1,0 +1,2537 @@
+{
+  "events": [
+    {
+      "id": 115369,
+      "global_id": "wp.stolaf.edu\/calendar?id=115369",
+      "global_id_lineage": ["wp.stolaf.edu\/calendar?id=115369"],
+      "author": "2198",
+      "status": "publish",
+      "date": "2026-07-21 09:07:38",
+      "date_utc": "2026-07-21 14:07:38",
+      "modified": "2026-07-21 09:07:38",
+      "modified_utc": "2026-07-21 14:07:38",
+      "url": "https:\/\/wp.stolaf.edu\/calendar\/event\/new-faculty-orientation\/",
+      "rest_url": "https:\/\/wp.stolaf.edu\/calendar\/wp-json\/tribe\/events\/v1\/events\/115369",
+      "title": "New Faculty Orientation",
+      "description": "<div data-modular-content-collection><p>New faculty orientation throughout the week. Seminars and meetings across campus and disciplines.<\/p>\n<\/div>",
+      "excerpt": "",
+      "slug": "new-faculty-orientation",
+      "image": false,
+      "all_day": false,
+      "start_date": "2026-08-17 08:00:00",
+      "start_date_details": {
+        "year": "2026",
+        "month": "08",
+        "day": "17",
+        "hour": "08",
+        "minutes": "00",
+        "seconds": "00"
+      },
+      "end_date": "2026-08-20 17:00:00",
+      "end_date_details": {
+        "year": "2026",
+        "month": "08",
+        "day": "20",
+        "hour": "17",
+        "minutes": "00",
+        "seconds": "00"
+      },
+      "utc_start_date": "2026-08-17 13:00:00",
+      "utc_start_date_details": {
+        "year": "2026",
+        "month": "08",
+        "day": "17",
+        "hour": "13",
+        "minutes": "00",
+        "seconds": "00"
+      },
+      "utc_end_date": "2026-08-20 22:00:00",
+      "utc_end_date_details": {
+        "year": "2026",
+        "month": "08",
+        "day": "20",
+        "hour": "22",
+        "minutes": "00",
+        "seconds": "00"
+      },
+      "timezone": "America\/Chicago",
+      "timezone_abbr": "CDT",
+      "cost": "",
+      "cost_details": {
+        "currency_symbol": "$",
+        "currency_code": "USD",
+        "currency_position": "prefix",
+        "values": []
+      },
+      "website": "",
+      "show_map": true,
+      "show_map_link": true,
+      "hide_from_listings": false,
+      "sticky": false,
+      "featured": false,
+      "categories": [
+        {
+          "name": "Academic Year",
+          "slug": "academic-year",
+          "term_group": 0,
+          "term_taxonomy_id": 29,
+          "taxonomy": "tribe_events_cat",
+          "description": "",
+          "parent": 0,
+          "count": 184,
+          "filter": "raw",
+          "id": 29,
+          "urls": {
+            "self": "https:\/\/wp.stolaf.edu\/calendar\/wp-json\/tribe\/events\/v1\/categories\/29",
+            "collection": "https:\/\/wp.stolaf.edu\/calendar\/wp-json\/tribe\/events\/v1\/categories"
+          }
+        }
+      ],
+      "tags": [],
+      "venue": {
+        "id": 67376,
+        "status": "publish",
+        "date": "2023-04-20 15:10:28",
+        "date_utc": "2023-04-20 20:10:28",
+        "modified": "2023-04-20 15:10:28",
+        "modified_utc": "2023-04-20 20:10:28",
+        "url": "https:\/\/wp.stolaf.edu\/calendar\/venue\/kings-dining\/",
+        "venue": "Kings Dining",
+        "description": "<div data-modular-content-collection><\/div>",
+        "slug": "kings-dining",
+        "show_map": false,
+        "show_map_link": false,
+        "global_id": "wp.stolaf.edu\/calendar?id=67376",
+        "global_id_lineage": ["wp.stolaf.edu\/calendar?id=67376"]
+      },
+      "organizer": [
+        {
+          "id": 72957,
+          "author": "2198",
+          "status": "publish",
+          "date": "2023-10-23 12:15:38",
+          "date_utc": "0000-00-00 00:00:00",
+          "modified": "2023-10-23 12:15:38",
+          "modified_utc": "0000-00-00 00:00:00",
+          "url": "https:\/\/wp.stolaf.edu\/calendar\/organizer\/college-events\/",
+          "organizer": "college events",
+          "description": "<div data-modular-content-collection><\/div>",
+          "slug": "college-events",
+          "email": "events@stolaf.edu",
+          "global_id": "wp.stolaf.edu\/calendar?id=72957",
+          "global_id_lineage": ["wp.stolaf.edu\/calendar?id=72957"]
+        }
+      ],
+      "custom_fields": [],
+      "is_virtual": false,
+      "virtual_url": null,
+      "virtual_video_source": ""
+    },
+    {
+      "id": 98529,
+      "global_id": "wp.stolaf.edu\/calendar?id=98529",
+      "global_id_lineage": ["wp.stolaf.edu\/calendar?id=98529"],
+      "author": "1",
+      "status": "publish",
+      "date": "2025-03-07 08:56:52",
+      "date_utc": "2025-03-07 14:56:52",
+      "modified": "2026-08-10 10:05:49",
+      "modified_utc": "2026-08-10 15:05:49",
+      "url": "https:\/\/wp.stolaf.edu\/calendar\/event\/last-day-of-class-for-summer-session-2-2\/",
+      "rest_url": "https:\/\/wp.stolaf.edu\/calendar\/wp-json\/tribe\/events\/v1\/events\/98529",
+      "title": "Last day of class for Summer Session 2",
+      "description": "<div data-modular-content-collection><\/div>",
+      "excerpt": "",
+      "slug": "last-day-of-class-for-summer-session-2-2",
+      "image": false,
+      "all_day": true,
+      "start_date": "2026-08-19 00:00:00",
+      "start_date_details": {
+        "year": "2026",
+        "month": "08",
+        "day": "19",
+        "hour": "00",
+        "minutes": "00",
+        "seconds": "00"
+      },
+      "end_date": "2026-08-19 23:59:59",
+      "end_date_details": {
+        "year": "2026",
+        "month": "08",
+        "day": "19",
+        "hour": "23",
+        "minutes": "59",
+        "seconds": "59"
+      },
+      "utc_start_date": "2026-08-19 05:00:00",
+      "utc_start_date_details": {
+        "year": "2026",
+        "month": "08",
+        "day": "19",
+        "hour": "05",
+        "minutes": "00",
+        "seconds": "00"
+      },
+      "utc_end_date": "2026-08-20 04:59:59",
+      "utc_end_date_details": {
+        "year": "2026",
+        "month": "08",
+        "day": "20",
+        "hour": "04",
+        "minutes": "59",
+        "seconds": "59"
+      },
+      "timezone": "America\/Chicago",
+      "timezone_abbr": "CDT",
+      "cost": "",
+      "cost_details": {
+        "currency_symbol": "",
+        "currency_code": "",
+        "currency_position": "",
+        "values": []
+      },
+      "website": "",
+      "show_map": false,
+      "show_map_link": false,
+      "hide_from_listings": false,
+      "sticky": false,
+      "featured": false,
+      "categories": [
+        {
+          "name": "Academic Year",
+          "slug": "academic-year",
+          "term_group": 0,
+          "term_taxonomy_id": 29,
+          "taxonomy": "tribe_events_cat",
+          "description": "",
+          "parent": 0,
+          "count": 184,
+          "filter": "raw",
+          "id": 29,
+          "urls": {
+            "self": "https:\/\/wp.stolaf.edu\/calendar\/wp-json\/tribe\/events\/v1\/categories\/29",
+            "collection": "https:\/\/wp.stolaf.edu\/calendar\/wp-json\/tribe\/events\/v1\/categories"
+          }
+        }
+      ],
+      "tags": [],
+      "venue": [],
+      "organizer": [],
+      "custom_fields": [],
+      "is_virtual": false,
+      "virtual_url": null,
+      "virtual_video_source": ""
+    },
+    {
+      "id": 10037957,
+      "global_id": "wp.stolaf.edu\/calendar?id=10037957",
+      "global_id_lineage": ["wp.stolaf.edu\/calendar?id=10037957"],
+      "author": "10038",
+      "status": "publish",
+      "date": "2026-06-12 10:40:26",
+      "date_utc": "2026-06-12 15:40:26",
+      "modified": "2026-06-12 10:42:12",
+      "modified_utc": "2026-06-12 15:42:12",
+      "url": "https:\/\/wp.stolaf.edu\/calendar\/event\/staff-and-faculty-communitea\/2026-08-19\/",
+      "rest_url": "https:\/\/wp.stolaf.edu\/calendar\/wp-json\/tribe\/events\/v1\/events\/10037957",
+      "title": "Staff and Faculty CommuniTEA",
+      "description": "<div data-modular-content-collection><p>Staff and faculty are invited to attend CommuniTEA. Every Wednesday during the summer, the Lutheran Center hosts CommuniTEA. This is a chance for you to unwind, color, relax, and drink tea \u2014 the space is yours to come and just be. The Lutheran Center will provide the tea.<\/p>\n<p>CommuniTea will take place between Tomson and the wind chimes. During inclement weather, it will be held in the Lutheran Center.<\/p>\n<\/div>",
+      "excerpt": "",
+      "slug": "staff-and-faculty-communitea",
+      "image": false,
+      "all_day": false,
+      "start_date": "2026-08-19 14:00:00",
+      "start_date_details": {
+        "year": "2026",
+        "month": "08",
+        "day": "19",
+        "hour": "14",
+        "minutes": "00",
+        "seconds": "00"
+      },
+      "end_date": "2026-08-19 15:00:00",
+      "end_date_details": {
+        "year": "2026",
+        "month": "08",
+        "day": "19",
+        "hour": "15",
+        "minutes": "00",
+        "seconds": "00"
+      },
+      "utc_start_date": "2026-08-19 19:00:00",
+      "utc_start_date_details": {
+        "year": "2026",
+        "month": "08",
+        "day": "19",
+        "hour": "19",
+        "minutes": "00",
+        "seconds": "00"
+      },
+      "utc_end_date": "2026-08-19 20:00:00",
+      "utc_end_date_details": {
+        "year": "2026",
+        "month": "08",
+        "day": "19",
+        "hour": "20",
+        "minutes": "00",
+        "seconds": "00"
+      },
+      "timezone": "America\/Chicago",
+      "timezone_abbr": "CDT",
+      "cost": "",
+      "cost_details": {
+        "currency_symbol": "$",
+        "currency_code": "USD",
+        "currency_position": "prefix",
+        "values": []
+      },
+      "website": "",
+      "show_map": true,
+      "show_map_link": true,
+      "hide_from_listings": false,
+      "sticky": false,
+      "featured": false,
+      "categories": [
+        {
+          "name": "Recreation",
+          "slug": "recreation",
+          "term_group": 0,
+          "term_taxonomy_id": 120,
+          "taxonomy": "tribe_events_cat",
+          "description": "",
+          "parent": 0,
+          "count": 11,
+          "filter": "raw",
+          "id": 120,
+          "urls": {
+            "self": "https:\/\/wp.stolaf.edu\/calendar\/wp-json\/tribe\/events\/v1\/categories\/120",
+            "collection": "https:\/\/wp.stolaf.edu\/calendar\/wp-json\/tribe\/events\/v1\/categories"
+          }
+        },
+        {
+          "name": "Vocation and Career",
+          "slug": "vocation-and-career",
+          "term_group": 0,
+          "term_taxonomy_id": 24,
+          "taxonomy": "tribe_events_cat",
+          "description": "",
+          "parent": 0,
+          "count": 40,
+          "filter": "raw",
+          "id": 24,
+          "urls": {
+            "self": "https:\/\/wp.stolaf.edu\/calendar\/wp-json\/tribe\/events\/v1\/categories\/24",
+            "collection": "https:\/\/wp.stolaf.edu\/calendar\/wp-json\/tribe\/events\/v1\/categories"
+          }
+        }
+      ],
+      "tags": [],
+      "venue": [],
+      "organizer": [
+        {
+          "id": 30737,
+          "author": "2684",
+          "status": "publish",
+          "date": "2019-09-19 19:55:10",
+          "date_utc": "2019-09-20 00:55:10",
+          "modified": "2019-09-19 19:55:10",
+          "modified_utc": "2019-09-20 00:55:10",
+          "url": "https:\/\/wp.stolaf.edu\/calendar\/organizer\/the-lutheran-center-for-faith-values-and-community\/",
+          "organizer": "The Lutheran Center for Faith, Values, and Community",
+          "description": "<div data-modular-content-collection><\/div>",
+          "slug": "the-lutheran-center-for-faith-values-and-community",
+          "global_id": "wp.stolaf.edu\/calendar?id=30737",
+          "global_id_lineage": ["wp.stolaf.edu\/calendar?id=30737"]
+        }
+      ],
+      "custom_fields": [],
+      "is_virtual": false,
+      "virtual_url": null,
+      "virtual_video_source": ""
+    },
+    {
+      "id": 115750,
+      "global_id": "wp.stolaf.edu\/calendar?id=115750",
+      "global_id_lineage": ["wp.stolaf.edu\/calendar?id=115750"],
+      "author": "12764",
+      "status": "publish",
+      "date": "2026-08-06 11:05:02",
+      "date_utc": "2026-08-06 16:05:02",
+      "modified": "2026-08-06 11:05:02",
+      "modified_utc": "2026-08-06 16:05:02",
+      "url": "https:\/\/wp.stolaf.edu\/calendar\/event\/stringwood-music-performance\/",
+      "rest_url": "https:\/\/wp.stolaf.edu\/calendar\/wp-json\/tribe\/events\/v1\/events\/115750",
+      "title": "Stringwood Music Performance",
+      "description": "<div data-modular-content-collection><p><span style=\"font-weight: 400;\">This performance will feature classical chamber music pieces from master composers of the 18th &#8211; 21st century. The event is open to all.\u00a0<\/span><\/p>\n<\/div>",
+      "excerpt": "",
+      "slug": "stringwood-music-performance",
+      "image": false,
+      "all_day": false,
+      "start_date": "2026-08-21 19:00:00",
+      "start_date_details": {
+        "year": "2026",
+        "month": "08",
+        "day": "21",
+        "hour": "19",
+        "minutes": "00",
+        "seconds": "00"
+      },
+      "end_date": "2026-08-21 20:30:00",
+      "end_date_details": {
+        "year": "2026",
+        "month": "08",
+        "day": "21",
+        "hour": "20",
+        "minutes": "30",
+        "seconds": "00"
+      },
+      "utc_start_date": "2026-08-22 00:00:00",
+      "utc_start_date_details": {
+        "year": "2026",
+        "month": "08",
+        "day": "22",
+        "hour": "00",
+        "minutes": "00",
+        "seconds": "00"
+      },
+      "utc_end_date": "2026-08-22 01:30:00",
+      "utc_end_date_details": {
+        "year": "2026",
+        "month": "08",
+        "day": "22",
+        "hour": "01",
+        "minutes": "30",
+        "seconds": "00"
+      },
+      "timezone": "America\/Chicago",
+      "timezone_abbr": "CDT",
+      "cost": "",
+      "cost_details": {
+        "currency_symbol": "$",
+        "currency_code": "USD",
+        "currency_position": "prefix",
+        "values": []
+      },
+      "website": "",
+      "show_map": true,
+      "show_map_link": true,
+      "hide_from_listings": false,
+      "sticky": false,
+      "featured": false,
+      "categories": [
+        {
+          "name": "Music",
+          "slug": "music",
+          "term_group": 0,
+          "term_taxonomy_id": 54,
+          "taxonomy": "tribe_events_cat",
+          "description": "",
+          "parent": 0,
+          "count": 234,
+          "filter": "raw",
+          "id": 54,
+          "urls": {
+            "self": "https:\/\/wp.stolaf.edu\/calendar\/wp-json\/tribe\/events\/v1\/categories\/54",
+            "collection": "https:\/\/wp.stolaf.edu\/calendar\/wp-json\/tribe\/events\/v1\/categories"
+          }
+        }
+      ],
+      "tags": [
+        {
+          "name": "Music",
+          "slug": "music",
+          "term_group": 0,
+          "term_taxonomy_id": 135,
+          "taxonomy": "post_tag",
+          "description": "",
+          "parent": 0,
+          "count": 40,
+          "filter": "raw",
+          "id": 135,
+          "urls": {
+            "self": "https:\/\/wp.stolaf.edu\/calendar\/wp-json\/tribe\/events\/v1\/tags\/135",
+            "collection": "https:\/\/wp.stolaf.edu\/calendar\/wp-json\/tribe\/events\/v1\/tags"
+          }
+        },
+        {
+          "name": "performance",
+          "slug": "performance",
+          "term_group": 0,
+          "term_taxonomy_id": 136,
+          "taxonomy": "post_tag",
+          "description": "",
+          "parent": 0,
+          "count": 8,
+          "filter": "raw",
+          "id": 136,
+          "urls": {
+            "self": "https:\/\/wp.stolaf.edu\/calendar\/wp-json\/tribe\/events\/v1\/tags\/136",
+            "collection": "https:\/\/wp.stolaf.edu\/calendar\/wp-json\/tribe\/events\/v1\/tags"
+          }
+        }
+      ],
+      "venue": {
+        "id": 240,
+        "status": "publish",
+        "date": "2017-09-18 11:39:43",
+        "date_utc": "2017-09-18 16:39:43",
+        "modified": "2017-10-18 12:16:44",
+        "modified_utc": "2017-10-18 17:16:44",
+        "url": "https:\/\/wp.stolaf.edu\/calendar\/venue\/christiansen-hall-of-music-100-urness-recital-hall\/",
+        "venue": "Christiansen Hall of Music 100 Urness Recital Hall",
+        "description": "<div data-modular-content-collection><\/div>",
+        "slug": "christiansen-hall-of-music-100-urness-recital-hall",
+        "geo_lat": 44.458298300000003,
+        "geo_lng": -93.161603999999997,
+        "show_map": true,
+        "show_map_link": true,
+        "global_id": "wp.stolaf.edu\/calendar?id=240",
+        "global_id_lineage": ["wp.stolaf.edu\/calendar?id=240"]
+      },
+      "organizer": [
+        {
+          "id": 48894,
+          "author": "176",
+          "status": "publish",
+          "date": "2021-07-21 10:31:13",
+          "date_utc": "2021-07-21 15:31:13",
+          "modified": "2021-07-21 10:31:13",
+          "modified_utc": "2021-07-21 15:31:13",
+          "url": "https:\/\/wp.stolaf.edu\/calendar\/organizer\/ray-shows\/",
+          "organizer": "Ray Shows",
+          "description": "<div data-modular-content-collection><\/div>",
+          "slug": "ray-shows",
+          "phone": "5077863924",
+          "email": "shows@stolaf.edu",
+          "global_id": "wp.stolaf.edu\/calendar?id=48894",
+          "global_id_lineage": ["wp.stolaf.edu\/calendar?id=48894"]
+        }
+      ],
+      "custom_fields": [],
+      "is_virtual": false,
+      "virtual_url": null,
+      "virtual_video_source": ""
+    },
+    {
+      "id": 115515,
+      "global_id": "wp.stolaf.edu\/calendar?id=115515",
+      "global_id_lineage": ["wp.stolaf.edu\/calendar?id=115515"],
+      "author": "12764",
+      "status": "publish",
+      "date": "2026-08-05 12:06:17",
+      "date_utc": "2026-08-05 17:06:17",
+      "modified": "2026-08-05 13:31:03",
+      "modified_utc": "2026-08-05 18:31:03",
+      "url": "https:\/\/wp.stolaf.edu\/calendar\/event\/bridge-chamber-music-festival\/",
+      "rest_url": "https:\/\/wp.stolaf.edu\/calendar\/wp-json\/tribe\/events\/v1\/events\/115515",
+      "title": "Bridge Chamber Music Festival",
+      "description": "<div data-modular-content-collection><div>The Bridge Chamber Music Festival hosts tap dancer, Sarah Reich, with local jazz musicians.<\/div>\n<div><\/div>\n<div>This event is open to the public, $5 admission fee.<\/div>\n<div><\/div>\n<\/div>",
+      "excerpt": "",
+      "slug": "bridge-chamber-music-festival",
+      "image": false,
+      "all_day": false,
+      "start_date": "2026-08-22 19:00:00",
+      "start_date_details": {
+        "year": "2026",
+        "month": "08",
+        "day": "22",
+        "hour": "19",
+        "minutes": "00",
+        "seconds": "00"
+      },
+      "end_date": "2026-08-22 21:00:00",
+      "end_date_details": {
+        "year": "2026",
+        "month": "08",
+        "day": "22",
+        "hour": "21",
+        "minutes": "00",
+        "seconds": "00"
+      },
+      "utc_start_date": "2026-08-23 00:00:00",
+      "utc_start_date_details": {
+        "year": "2026",
+        "month": "08",
+        "day": "23",
+        "hour": "00",
+        "minutes": "00",
+        "seconds": "00"
+      },
+      "utc_end_date": "2026-08-23 02:00:00",
+      "utc_end_date_details": {
+        "year": "2026",
+        "month": "08",
+        "day": "23",
+        "hour": "02",
+        "minutes": "00",
+        "seconds": "00"
+      },
+      "timezone": "America\/Chicago",
+      "timezone_abbr": "CDT",
+      "cost": "$5",
+      "cost_details": {
+        "currency_symbol": "$",
+        "currency_code": "USD",
+        "currency_position": "prefix",
+        "values": ["5"]
+      },
+      "website": "https:\/\/bridgechambermusicfestival.com\/",
+      "show_map": true,
+      "show_map_link": true,
+      "hide_from_listings": false,
+      "sticky": false,
+      "featured": false,
+      "categories": [
+        {
+          "name": "Music",
+          "slug": "music",
+          "term_group": 0,
+          "term_taxonomy_id": 54,
+          "taxonomy": "tribe_events_cat",
+          "description": "",
+          "parent": 0,
+          "count": 234,
+          "filter": "raw",
+          "id": 54,
+          "urls": {
+            "self": "https:\/\/wp.stolaf.edu\/calendar\/wp-json\/tribe\/events\/v1\/categories\/54",
+            "collection": "https:\/\/wp.stolaf.edu\/calendar\/wp-json\/tribe\/events\/v1\/categories"
+          }
+        },
+        {
+          "name": "Performing and Visual Arts",
+          "slug": "performing-and-visual-arts",
+          "term_group": 0,
+          "term_taxonomy_id": 19,
+          "taxonomy": "tribe_events_cat",
+          "description": "",
+          "parent": 0,
+          "count": 191,
+          "filter": "raw",
+          "id": 19,
+          "urls": {
+            "self": "https:\/\/wp.stolaf.edu\/calendar\/wp-json\/tribe\/events\/v1\/categories\/19",
+            "collection": "https:\/\/wp.stolaf.edu\/calendar\/wp-json\/tribe\/events\/v1\/categories"
+          }
+        }
+      ],
+      "tags": [
+        {
+          "name": "Dance",
+          "slug": "dance",
+          "term_group": 0,
+          "term_taxonomy_id": 62,
+          "taxonomy": "post_tag",
+          "description": "",
+          "parent": 0,
+          "count": 13,
+          "filter": "raw",
+          "id": 62,
+          "urls": {
+            "self": "https:\/\/wp.stolaf.edu\/calendar\/wp-json\/tribe\/events\/v1\/tags\/62",
+            "collection": "https:\/\/wp.stolaf.edu\/calendar\/wp-json\/tribe\/events\/v1\/tags"
+          }
+        },
+        {
+          "name": "Music",
+          "slug": "music",
+          "term_group": 0,
+          "term_taxonomy_id": 135,
+          "taxonomy": "post_tag",
+          "description": "",
+          "parent": 0,
+          "count": 40,
+          "filter": "raw",
+          "id": 135,
+          "urls": {
+            "self": "https:\/\/wp.stolaf.edu\/calendar\/wp-json\/tribe\/events\/v1\/tags\/135",
+            "collection": "https:\/\/wp.stolaf.edu\/calendar\/wp-json\/tribe\/events\/v1\/tags"
+          }
+        }
+      ],
+      "venue": {
+        "id": 47249,
+        "author": "1",
+        "status": "publish",
+        "date": "2021-04-30 14:21:51",
+        "date_utc": "2021-04-30 19:21:51",
+        "modified": "2021-04-30 14:21:51",
+        "modified_utc": "2021-04-30 19:21:51",
+        "url": "https:\/\/wp.stolaf.edu\/calendar\/venue\/bc031-the-pause-main-stage\/",
+        "venue": "BC031 the Pause main Stage",
+        "description": "<div data-modular-content-collection><\/div>",
+        "slug": "bc031-the-pause-main-stage",
+        "show_map": false,
+        "show_map_link": false,
+        "global_id": "wp.stolaf.edu\/calendar?id=47249",
+        "global_id_lineage": ["wp.stolaf.edu\/calendar?id=47249"]
+      },
+      "organizer": [
+        {
+          "id": 103286,
+          "author": "176",
+          "status": "publish",
+          "date": "2025-08-12 08:21:42",
+          "date_utc": "0000-00-00 00:00:00",
+          "modified": "2025-08-12 08:21:42",
+          "modified_utc": "0000-00-00 00:00:00",
+          "url": "https:\/\/wp.stolaf.edu\/calendar\/organizer\/aileen-razey\/",
+          "organizer": "Aileen Razey",
+          "description": "<div data-modular-content-collection><\/div>",
+          "slug": "aileen-razey",
+          "phone": "507-786-3893",
+          "email": "razey1@stolaf.edu",
+          "global_id": "wp.stolaf.edu\/calendar?id=103286",
+          "global_id_lineage": ["wp.stolaf.edu\/calendar?id=103286"]
+        }
+      ],
+      "custom_fields": [],
+      "is_virtual": false,
+      "virtual_url": null,
+      "virtual_video_source": ""
+    },
+    {
+      "id": 98530,
+      "global_id": "wp.stolaf.edu\/calendar?id=98530",
+      "global_id_lineage": ["wp.stolaf.edu\/calendar?id=98530"],
+      "author": "1",
+      "status": "publish",
+      "date": "2025-03-07 08:56:52",
+      "date_utc": "2025-03-07 14:56:52",
+      "modified": "2026-08-10 10:05:50",
+      "modified_utc": "2026-08-10 15:05:50",
+      "url": "https:\/\/wp.stolaf.edu\/calendar\/event\/summer-session-2-grades-due-2\/",
+      "rest_url": "https:\/\/wp.stolaf.edu\/calendar\/wp-json\/tribe\/events\/v1\/events\/98530",
+      "title": "Summer Session 2 grades due",
+      "description": "<div data-modular-content-collection><\/div>",
+      "excerpt": "",
+      "slug": "summer-session-2-grades-due-2",
+      "image": false,
+      "all_day": true,
+      "start_date": "2026-08-26 00:00:00",
+      "start_date_details": {
+        "year": "2026",
+        "month": "08",
+        "day": "26",
+        "hour": "00",
+        "minutes": "00",
+        "seconds": "00"
+      },
+      "end_date": "2026-08-26 23:59:59",
+      "end_date_details": {
+        "year": "2026",
+        "month": "08",
+        "day": "26",
+        "hour": "23",
+        "minutes": "59",
+        "seconds": "59"
+      },
+      "utc_start_date": "2026-08-26 05:00:00",
+      "utc_start_date_details": {
+        "year": "2026",
+        "month": "08",
+        "day": "26",
+        "hour": "05",
+        "minutes": "00",
+        "seconds": "00"
+      },
+      "utc_end_date": "2026-08-27 04:59:59",
+      "utc_end_date_details": {
+        "year": "2026",
+        "month": "08",
+        "day": "27",
+        "hour": "04",
+        "minutes": "59",
+        "seconds": "59"
+      },
+      "timezone": "America\/Chicago",
+      "timezone_abbr": "CDT",
+      "cost": "",
+      "cost_details": {
+        "currency_symbol": "",
+        "currency_code": "",
+        "currency_position": "",
+        "values": []
+      },
+      "website": "",
+      "show_map": false,
+      "show_map_link": false,
+      "hide_from_listings": false,
+      "sticky": false,
+      "featured": false,
+      "categories": [
+        {
+          "name": "Academic Year",
+          "slug": "academic-year",
+          "term_group": 0,
+          "term_taxonomy_id": 29,
+          "taxonomy": "tribe_events_cat",
+          "description": "",
+          "parent": 0,
+          "count": 184,
+          "filter": "raw",
+          "id": 29,
+          "urls": {
+            "self": "https:\/\/wp.stolaf.edu\/calendar\/wp-json\/tribe\/events\/v1\/categories\/29",
+            "collection": "https:\/\/wp.stolaf.edu\/calendar\/wp-json\/tribe\/events\/v1\/categories"
+          }
+        }
+      ],
+      "tags": [],
+      "venue": [],
+      "organizer": [],
+      "custom_fields": [],
+      "is_virtual": false,
+      "virtual_url": null,
+      "virtual_video_source": ""
+    },
+    {
+      "id": 10037958,
+      "global_id": "wp.stolaf.edu\/calendar?id=10037958",
+      "global_id_lineage": ["wp.stolaf.edu\/calendar?id=10037958"],
+      "author": "10038",
+      "status": "publish",
+      "date": "2026-06-12 10:40:26",
+      "date_utc": "2026-06-12 15:40:26",
+      "modified": "2026-06-12 10:42:12",
+      "modified_utc": "2026-06-12 15:42:12",
+      "url": "https:\/\/wp.stolaf.edu\/calendar\/event\/staff-and-faculty-communitea\/2026-08-26\/",
+      "rest_url": "https:\/\/wp.stolaf.edu\/calendar\/wp-json\/tribe\/events\/v1\/events\/10037958",
+      "title": "Staff and Faculty CommuniTEA",
+      "description": "<div data-modular-content-collection><p>Staff and faculty are invited to attend CommuniTEA. Every Wednesday during the summer, the Lutheran Center hosts CommuniTEA. This is a chance for you to unwind, color, relax, and drink tea \u2014 the space is yours to come and just be. The Lutheran Center will provide the tea.<\/p>\n<p>CommuniTea will take place between Tomson and the wind chimes. During inclement weather, it will be held in the Lutheran Center.<\/p>\n<\/div>",
+      "excerpt": "",
+      "slug": "staff-and-faculty-communitea",
+      "image": false,
+      "all_day": false,
+      "start_date": "2026-08-26 14:00:00",
+      "start_date_details": {
+        "year": "2026",
+        "month": "08",
+        "day": "26",
+        "hour": "14",
+        "minutes": "00",
+        "seconds": "00"
+      },
+      "end_date": "2026-08-26 15:00:00",
+      "end_date_details": {
+        "year": "2026",
+        "month": "08",
+        "day": "26",
+        "hour": "15",
+        "minutes": "00",
+        "seconds": "00"
+      },
+      "utc_start_date": "2026-08-26 19:00:00",
+      "utc_start_date_details": {
+        "year": "2026",
+        "month": "08",
+        "day": "26",
+        "hour": "19",
+        "minutes": "00",
+        "seconds": "00"
+      },
+      "utc_end_date": "2026-08-26 20:00:00",
+      "utc_end_date_details": {
+        "year": "2026",
+        "month": "08",
+        "day": "26",
+        "hour": "20",
+        "minutes": "00",
+        "seconds": "00"
+      },
+      "timezone": "America\/Chicago",
+      "timezone_abbr": "CDT",
+      "cost": "",
+      "cost_details": {
+        "currency_symbol": "$",
+        "currency_code": "USD",
+        "currency_position": "prefix",
+        "values": []
+      },
+      "website": "",
+      "show_map": true,
+      "show_map_link": true,
+      "hide_from_listings": false,
+      "sticky": false,
+      "featured": false,
+      "categories": [
+        {
+          "name": "Recreation",
+          "slug": "recreation",
+          "term_group": 0,
+          "term_taxonomy_id": 120,
+          "taxonomy": "tribe_events_cat",
+          "description": "",
+          "parent": 0,
+          "count": 11,
+          "filter": "raw",
+          "id": 120,
+          "urls": {
+            "self": "https:\/\/wp.stolaf.edu\/calendar\/wp-json\/tribe\/events\/v1\/categories\/120",
+            "collection": "https:\/\/wp.stolaf.edu\/calendar\/wp-json\/tribe\/events\/v1\/categories"
+          }
+        },
+        {
+          "name": "Vocation and Career",
+          "slug": "vocation-and-career",
+          "term_group": 0,
+          "term_taxonomy_id": 24,
+          "taxonomy": "tribe_events_cat",
+          "description": "",
+          "parent": 0,
+          "count": 40,
+          "filter": "raw",
+          "id": 24,
+          "urls": {
+            "self": "https:\/\/wp.stolaf.edu\/calendar\/wp-json\/tribe\/events\/v1\/categories\/24",
+            "collection": "https:\/\/wp.stolaf.edu\/calendar\/wp-json\/tribe\/events\/v1\/categories"
+          }
+        }
+      ],
+      "tags": [],
+      "venue": [],
+      "organizer": [
+        {
+          "id": 30737,
+          "author": "2684",
+          "status": "publish",
+          "date": "2019-09-19 19:55:10",
+          "date_utc": "2019-09-20 00:55:10",
+          "modified": "2019-09-19 19:55:10",
+          "modified_utc": "2019-09-20 00:55:10",
+          "url": "https:\/\/wp.stolaf.edu\/calendar\/organizer\/the-lutheran-center-for-faith-values-and-community\/",
+          "organizer": "The Lutheran Center for Faith, Values, and Community",
+          "description": "<div data-modular-content-collection><\/div>",
+          "slug": "the-lutheran-center-for-faith-values-and-community",
+          "global_id": "wp.stolaf.edu\/calendar?id=30737",
+          "global_id_lineage": ["wp.stolaf.edu\/calendar?id=30737"]
+        }
+      ],
+      "custom_fields": [],
+      "is_virtual": false,
+      "virtual_url": null,
+      "virtual_video_source": ""
+    },
+    {
+      "id": 115005,
+      "global_id": "wp.stolaf.edu\/calendar?id=115005",
+      "global_id_lineage": ["wp.stolaf.edu\/calendar?id=115005"],
+      "author": "616",
+      "status": "publish",
+      "date": "2026-06-24 15:56:00",
+      "date_utc": "2026-06-24 20:56:00",
+      "modified": "2026-06-24 15:56:00",
+      "modified_utc": "2026-06-24 20:56:00",
+      "url": "https:\/\/wp.stolaf.edu\/calendar\/event\/summer-sports-series-minnesota-united-vs-orlando-city-sc\/",
+      "rest_url": "https:\/\/wp.stolaf.edu\/calendar\/wp-json\/tribe\/events\/v1\/events\/115005",
+      "title": "Summer Sports Series: Minnesota United vs. Orlando City SC",
+      "description": "<div data-modular-content-collection><p>As part of the St. Olaf Summer Sports Series, all Oles are invited to\u00a0watch The Minnesota Loons will take on the Orlando City SC at the Allianz Stadium.<\/p>\n<\/div>",
+      "excerpt": "",
+      "slug": "summer-sports-series-minnesota-united-vs-orlando-city-sc",
+      "image": false,
+      "all_day": false,
+      "start_date": "2026-08-29 19:30:00",
+      "start_date_details": {
+        "year": "2026",
+        "month": "08",
+        "day": "29",
+        "hour": "19",
+        "minutes": "30",
+        "seconds": "00"
+      },
+      "end_date": "2026-08-29 22:30:00",
+      "end_date_details": {
+        "year": "2026",
+        "month": "08",
+        "day": "29",
+        "hour": "22",
+        "minutes": "30",
+        "seconds": "00"
+      },
+      "utc_start_date": "2026-08-30 00:30:00",
+      "utc_start_date_details": {
+        "year": "2026",
+        "month": "08",
+        "day": "30",
+        "hour": "00",
+        "minutes": "30",
+        "seconds": "00"
+      },
+      "utc_end_date": "2026-08-30 03:30:00",
+      "utc_end_date_details": {
+        "year": "2026",
+        "month": "08",
+        "day": "30",
+        "hour": "03",
+        "minutes": "30",
+        "seconds": "00"
+      },
+      "timezone": "America\/Chicago",
+      "timezone_abbr": "CDT",
+      "cost": "",
+      "cost_details": {
+        "currency_symbol": "$",
+        "currency_code": "USD",
+        "currency_position": "prefix",
+        "values": []
+      },
+      "website": "https:\/\/wp.stolaf.edu\/alumni\/summer-sport-series\/",
+      "show_map": true,
+      "show_map_link": true,
+      "hide_from_listings": false,
+      "sticky": false,
+      "featured": false,
+      "categories": [
+        {
+          "name": "Alumni",
+          "slug": "alumni",
+          "term_group": 0,
+          "term_taxonomy_id": 5,
+          "taxonomy": "tribe_events_cat",
+          "description": "",
+          "parent": 0,
+          "count": 44,
+          "filter": "raw",
+          "id": 5,
+          "urls": {
+            "self": "https:\/\/wp.stolaf.edu\/calendar\/wp-json\/tribe\/events\/v1\/categories\/5",
+            "collection": "https:\/\/wp.stolaf.edu\/calendar\/wp-json\/tribe\/events\/v1\/categories"
+          }
+        }
+      ],
+      "tags": [
+        {
+          "name": "Alumni",
+          "slug": "alumni",
+          "term_group": 0,
+          "term_taxonomy_id": 111,
+          "taxonomy": "post_tag",
+          "description": "",
+          "parent": 0,
+          "count": 56,
+          "filter": "raw",
+          "id": 111,
+          "urls": {
+            "self": "https:\/\/wp.stolaf.edu\/calendar\/wp-json\/tribe\/events\/v1\/tags\/111",
+            "collection": "https:\/\/wp.stolaf.edu\/calendar\/wp-json\/tribe\/events\/v1\/tags"
+          }
+        }
+      ],
+      "venue": {
+        "id": 69972,
+        "status": "publish",
+        "date": "2023-08-21 17:04:37",
+        "date_utc": "2023-08-21 22:04:37",
+        "modified": "2023-08-21 17:04:37",
+        "modified_utc": "2023-08-21 22:04:37",
+        "url": "https:\/\/wp.stolaf.edu\/calendar\/venue\/allianz-field\/",
+        "venue": "Allianz Field",
+        "description": "<div data-modular-content-collection><\/div>",
+        "slug": "allianz-field",
+        "show_map": false,
+        "show_map_link": false,
+        "global_id": "wp.stolaf.edu\/calendar?id=69972",
+        "global_id_lineage": ["wp.stolaf.edu\/calendar?id=69972"]
+      },
+      "organizer": [
+        {
+          "id": 5323,
+          "status": "publish",
+          "date": "2017-10-17 15:26:50",
+          "date_utc": "2017-10-17 20:26:50",
+          "modified": "2017-10-17 15:26:50",
+          "modified_utc": "2017-10-17 20:26:50",
+          "url": "https:\/\/wp.stolaf.edu\/calendar\/organizer\/alumni-and-parent-relations\/",
+          "organizer": "Alumni and Parent Relations",
+          "description": "<div data-modular-content-collection><\/div>",
+          "slug": "alumni-and-parent-relations",
+          "phone": "888-865-6537",
+          "website": "https:\/\/wp.stolaf.edu\/alumni\/",
+          "email": "alum-office@stolaf.edu",
+          "global_id": "wp.stolaf.edu\/calendar?id=5323",
+          "global_id_lineage": ["wp.stolaf.edu\/calendar?id=5323"]
+        }
+      ],
+      "custom_fields": [],
+      "is_virtual": false,
+      "virtual_url": null,
+      "virtual_video_source": ""
+    },
+    {
+      "id": 114653,
+      "global_id": "wp.stolaf.edu\/calendar?id=114653",
+      "global_id_lineage": ["wp.stolaf.edu\/calendar?id=114653"],
+      "author": "1",
+      "status": "publish",
+      "date": "2026-05-07 16:12:35",
+      "date_utc": "2026-05-07 21:12:35",
+      "modified": "2026-08-10 10:05:50",
+      "modified_utc": "2026-08-10 15:05:50",
+      "url": "https:\/\/wp.stolaf.edu\/calendar\/event\/new-international-students-arrive-2\/",
+      "rest_url": "https:\/\/wp.stolaf.edu\/calendar\/wp-json\/tribe\/events\/v1\/events\/114653",
+      "title": "New International Students Arrive",
+      "description": "<div data-modular-content-collection><\/div>",
+      "excerpt": "",
+      "slug": "new-international-students-arrive-2",
+      "image": false,
+      "all_day": true,
+      "start_date": "2026-09-01 00:00:00",
+      "start_date_details": {
+        "year": "2026",
+        "month": "09",
+        "day": "01",
+        "hour": "00",
+        "minutes": "00",
+        "seconds": "00"
+      },
+      "end_date": "2026-09-01 23:59:59",
+      "end_date_details": {
+        "year": "2026",
+        "month": "09",
+        "day": "01",
+        "hour": "23",
+        "minutes": "59",
+        "seconds": "59"
+      },
+      "utc_start_date": "2026-09-01 05:00:00",
+      "utc_start_date_details": {
+        "year": "2026",
+        "month": "09",
+        "day": "01",
+        "hour": "05",
+        "minutes": "00",
+        "seconds": "00"
+      },
+      "utc_end_date": "2026-09-02 04:59:59",
+      "utc_end_date_details": {
+        "year": "2026",
+        "month": "09",
+        "day": "02",
+        "hour": "04",
+        "minutes": "59",
+        "seconds": "59"
+      },
+      "timezone": "America\/Chicago",
+      "timezone_abbr": "CDT",
+      "cost": "",
+      "cost_details": {
+        "currency_symbol": "",
+        "currency_code": "",
+        "currency_position": "",
+        "values": []
+      },
+      "website": "",
+      "show_map": false,
+      "show_map_link": false,
+      "hide_from_listings": false,
+      "sticky": false,
+      "featured": false,
+      "categories": [
+        {
+          "name": "Academic Year",
+          "slug": "academic-year",
+          "term_group": 0,
+          "term_taxonomy_id": 29,
+          "taxonomy": "tribe_events_cat",
+          "description": "",
+          "parent": 0,
+          "count": 184,
+          "filter": "raw",
+          "id": 29,
+          "urls": {
+            "self": "https:\/\/wp.stolaf.edu\/calendar\/wp-json\/tribe\/events\/v1\/categories\/29",
+            "collection": "https:\/\/wp.stolaf.edu\/calendar\/wp-json\/tribe\/events\/v1\/categories"
+          }
+        }
+      ],
+      "tags": [],
+      "venue": [],
+      "organizer": [],
+      "custom_fields": [],
+      "is_virtual": false,
+      "virtual_url": null,
+      "virtual_video_source": ""
+    },
+    {
+      "id": 10037765,
+      "global_id": "wp.stolaf.edu\/calendar?id=10037765",
+      "global_id_lineage": ["wp.stolaf.edu\/calendar?id=10037765"],
+      "author": "12763",
+      "status": "publish",
+      "date": "2026-04-24 10:51:01",
+      "date_utc": "2026-04-24 15:51:01",
+      "modified": "2026-04-24 10:51:01",
+      "modified_utc": "2026-04-24 15:51:01",
+      "url": "https:\/\/wp.stolaf.edu\/calendar\/event\/academic-year-kickoff-for-faculty-and-staff\/2026-09-02\/",
+      "rest_url": "https:\/\/wp.stolaf.edu\/calendar\/wp-json\/tribe\/events\/v1\/events\/10037765",
+      "title": "Academic Year Kickoff for Faculty and Staff",
+      "description": "<div data-modular-content-collection><p>Faculty and staff are welcome to kick off the 26-2027 academic year.<\/p>\n<\/div>",
+      "excerpt": "<p>Faculty and staff are welcome to kick off the 26-2027 academic year.<\/p>",
+      "slug": "academic-year-kickoff-for-faculty-and-staff",
+      "image": false,
+      "all_day": false,
+      "start_date": "2026-09-02 08:00:00",
+      "start_date_details": {
+        "year": "2026",
+        "month": "09",
+        "day": "02",
+        "hour": "08",
+        "minutes": "00",
+        "seconds": "00"
+      },
+      "end_date": "2026-09-02 12:00:00",
+      "end_date_details": {
+        "year": "2026",
+        "month": "09",
+        "day": "02",
+        "hour": "12",
+        "minutes": "00",
+        "seconds": "00"
+      },
+      "utc_start_date": "2026-09-02 13:00:00",
+      "utc_start_date_details": {
+        "year": "2026",
+        "month": "09",
+        "day": "02",
+        "hour": "13",
+        "minutes": "00",
+        "seconds": "00"
+      },
+      "utc_end_date": "2026-09-02 17:00:00",
+      "utc_end_date_details": {
+        "year": "2026",
+        "month": "09",
+        "day": "02",
+        "hour": "17",
+        "minutes": "00",
+        "seconds": "00"
+      },
+      "timezone": "America\/Chicago",
+      "timezone_abbr": "CDT",
+      "cost": "",
+      "cost_details": {
+        "currency_symbol": "$",
+        "currency_code": "USD",
+        "currency_position": "prefix",
+        "values": []
+      },
+      "website": "",
+      "show_map": true,
+      "show_map_link": true,
+      "hide_from_listings": false,
+      "sticky": false,
+      "featured": false,
+      "categories": [
+        {
+          "name": "Academic Year",
+          "slug": "academic-year",
+          "term_group": 0,
+          "term_taxonomy_id": 29,
+          "taxonomy": "tribe_events_cat",
+          "description": "",
+          "parent": 0,
+          "count": 184,
+          "filter": "raw",
+          "id": 29,
+          "urls": {
+            "self": "https:\/\/wp.stolaf.edu\/calendar\/wp-json\/tribe\/events\/v1\/categories\/29",
+            "collection": "https:\/\/wp.stolaf.edu\/calendar\/wp-json\/tribe\/events\/v1\/categories"
+          }
+        }
+      ],
+      "tags": [],
+      "venue": {
+        "id": 32059,
+        "status": "publish",
+        "date": "2019-09-27 12:13:29",
+        "date_utc": "2019-09-27 17:13:29",
+        "modified": "2022-09-21 12:20:34",
+        "modified_utc": "2022-09-21 17:20:34",
+        "url": "https:\/\/wp.stolaf.edu\/calendar\/venue\/tomson-280\/",
+        "venue": "Tomson 280",
+        "description": "<div data-modular-content-collection><\/div>",
+        "slug": "tomson-280",
+        "show_map": true,
+        "show_map_link": true,
+        "global_id": "wp.stolaf.edu\/calendar?id=32059",
+        "global_id_lineage": ["wp.stolaf.edu\/calendar?id=32059"]
+      },
+      "organizer": [
+        {
+          "id": 75370,
+          "author": "10383",
+          "status": "publish",
+          "date": "2023-11-28 08:38:05",
+          "date_utc": "0000-00-00 00:00:00",
+          "modified": "2023-11-28 08:38:05",
+          "modified_utc": "0000-00-00 00:00:00",
+          "url": "https:\/\/wp.stolaf.edu\/calendar\/organizer\/college-events\/",
+          "organizer": "College Events",
+          "description": "<div data-modular-content-collection><\/div>",
+          "slug": "college-events",
+          "email": "events@stolaf.edu",
+          "global_id": "wp.stolaf.edu\/calendar?id=75370",
+          "global_id_lineage": ["wp.stolaf.edu\/calendar?id=75370"]
+        }
+      ],
+      "custom_fields": [],
+      "is_virtual": false,
+      "virtual_url": null,
+      "virtual_video_source": ""
+    },
+    {
+      "id": 10037959,
+      "global_id": "wp.stolaf.edu\/calendar?id=10037959",
+      "global_id_lineage": ["wp.stolaf.edu\/calendar?id=10037959"],
+      "author": "10038",
+      "status": "publish",
+      "date": "2026-06-12 10:40:26",
+      "date_utc": "2026-06-12 15:40:26",
+      "modified": "2026-06-12 10:42:12",
+      "modified_utc": "2026-06-12 15:42:12",
+      "url": "https:\/\/wp.stolaf.edu\/calendar\/event\/staff-and-faculty-communitea\/2026-09-02\/",
+      "rest_url": "https:\/\/wp.stolaf.edu\/calendar\/wp-json\/tribe\/events\/v1\/events\/10037959",
+      "title": "Staff and Faculty CommuniTEA",
+      "description": "<div data-modular-content-collection><p>Staff and faculty are invited to attend CommuniTEA. Every Wednesday during the summer, the Lutheran Center hosts CommuniTEA. This is a chance for you to unwind, color, relax, and drink tea \u2014 the space is yours to come and just be. The Lutheran Center will provide the tea.<\/p>\n<p>CommuniTea will take place between Tomson and the wind chimes. During inclement weather, it will be held in the Lutheran Center.<\/p>\n<\/div>",
+      "excerpt": "",
+      "slug": "staff-and-faculty-communitea",
+      "image": false,
+      "all_day": false,
+      "start_date": "2026-09-02 14:00:00",
+      "start_date_details": {
+        "year": "2026",
+        "month": "09",
+        "day": "02",
+        "hour": "14",
+        "minutes": "00",
+        "seconds": "00"
+      },
+      "end_date": "2026-09-02 15:00:00",
+      "end_date_details": {
+        "year": "2026",
+        "month": "09",
+        "day": "02",
+        "hour": "15",
+        "minutes": "00",
+        "seconds": "00"
+      },
+      "utc_start_date": "2026-09-02 19:00:00",
+      "utc_start_date_details": {
+        "year": "2026",
+        "month": "09",
+        "day": "02",
+        "hour": "19",
+        "minutes": "00",
+        "seconds": "00"
+      },
+      "utc_end_date": "2026-09-02 20:00:00",
+      "utc_end_date_details": {
+        "year": "2026",
+        "month": "09",
+        "day": "02",
+        "hour": "20",
+        "minutes": "00",
+        "seconds": "00"
+      },
+      "timezone": "America\/Chicago",
+      "timezone_abbr": "CDT",
+      "cost": "",
+      "cost_details": {
+        "currency_symbol": "$",
+        "currency_code": "USD",
+        "currency_position": "prefix",
+        "values": []
+      },
+      "website": "",
+      "show_map": true,
+      "show_map_link": true,
+      "hide_from_listings": false,
+      "sticky": false,
+      "featured": false,
+      "categories": [
+        {
+          "name": "Recreation",
+          "slug": "recreation",
+          "term_group": 0,
+          "term_taxonomy_id": 120,
+          "taxonomy": "tribe_events_cat",
+          "description": "",
+          "parent": 0,
+          "count": 11,
+          "filter": "raw",
+          "id": 120,
+          "urls": {
+            "self": "https:\/\/wp.stolaf.edu\/calendar\/wp-json\/tribe\/events\/v1\/categories\/120",
+            "collection": "https:\/\/wp.stolaf.edu\/calendar\/wp-json\/tribe\/events\/v1\/categories"
+          }
+        },
+        {
+          "name": "Vocation and Career",
+          "slug": "vocation-and-career",
+          "term_group": 0,
+          "term_taxonomy_id": 24,
+          "taxonomy": "tribe_events_cat",
+          "description": "",
+          "parent": 0,
+          "count": 40,
+          "filter": "raw",
+          "id": 24,
+          "urls": {
+            "self": "https:\/\/wp.stolaf.edu\/calendar\/wp-json\/tribe\/events\/v1\/categories\/24",
+            "collection": "https:\/\/wp.stolaf.edu\/calendar\/wp-json\/tribe\/events\/v1\/categories"
+          }
+        }
+      ],
+      "tags": [],
+      "venue": [],
+      "organizer": [
+        {
+          "id": 30737,
+          "author": "2684",
+          "status": "publish",
+          "date": "2019-09-19 19:55:10",
+          "date_utc": "2019-09-20 00:55:10",
+          "modified": "2019-09-19 19:55:10",
+          "modified_utc": "2019-09-20 00:55:10",
+          "url": "https:\/\/wp.stolaf.edu\/calendar\/organizer\/the-lutheran-center-for-faith-values-and-community\/",
+          "organizer": "The Lutheran Center for Faith, Values, and Community",
+          "description": "<div data-modular-content-collection><\/div>",
+          "slug": "the-lutheran-center-for-faith-values-and-community",
+          "global_id": "wp.stolaf.edu\/calendar?id=30737",
+          "global_id_lineage": ["wp.stolaf.edu\/calendar?id=30737"]
+        }
+      ],
+      "custom_fields": [],
+      "is_virtual": false,
+      "virtual_url": null,
+      "virtual_video_source": ""
+    },
+    {
+      "id": 115567,
+      "global_id": "wp.stolaf.edu\/calendar?id=115567",
+      "global_id_lineage": ["wp.stolaf.edu\/calendar?id=115567"],
+      "author": "8121",
+      "status": "publish",
+      "date": "2026-07-29 15:15:56",
+      "date_utc": "2026-07-29 20:15:56",
+      "modified": "2026-07-29 15:16:13",
+      "modified_utc": "2026-07-29 20:16:13",
+      "url": "https:\/\/wp.stolaf.edu\/calendar\/event\/faculty-meeting-9\/",
+      "rest_url": "https:\/\/wp.stolaf.edu\/calendar\/wp-json\/tribe\/events\/v1\/events\/115567",
+      "title": "Faculty Meeting",
+      "description": "<div data-modular-content-collection><p>This is the first Faculty Meeting of the academic year. This meeting is longer and starts at a different time than the standard meeting.<\/p>\n<p>Faculty meetings are open to all voting members of the faculty. See this webpage for more details regarding the voting <a href=\"https:\/\/wp.stolaf.edu\/provost\/faculty-voting-franchise\/\">franchise.<\/a><\/p>\n<\/div>",
+      "excerpt": "",
+      "slug": "faculty-meeting-9",
+      "image": false,
+      "all_day": false,
+      "start_date": "2026-09-03 10:45:00",
+      "start_date_details": {
+        "year": "2026",
+        "month": "09",
+        "day": "03",
+        "hour": "10",
+        "minutes": "45",
+        "seconds": "00"
+      },
+      "end_date": "2026-09-03 12:15:00",
+      "end_date_details": {
+        "year": "2026",
+        "month": "09",
+        "day": "03",
+        "hour": "12",
+        "minutes": "15",
+        "seconds": "00"
+      },
+      "utc_start_date": "2026-09-03 15:45:00",
+      "utc_start_date_details": {
+        "year": "2026",
+        "month": "09",
+        "day": "03",
+        "hour": "15",
+        "minutes": "45",
+        "seconds": "00"
+      },
+      "utc_end_date": "2026-09-03 17:15:00",
+      "utc_end_date_details": {
+        "year": "2026",
+        "month": "09",
+        "day": "03",
+        "hour": "17",
+        "minutes": "15",
+        "seconds": "00"
+      },
+      "timezone": "America\/Chicago",
+      "timezone_abbr": "CDT",
+      "cost": "",
+      "cost_details": {
+        "currency_symbol": "$",
+        "currency_code": "USD",
+        "currency_position": "prefix",
+        "values": []
+      },
+      "website": "https:\/\/wp.stolaf.edu\/provost\/faculty-meetings-and-minutes\/",
+      "show_map": true,
+      "show_map_link": true,
+      "hide_from_listings": false,
+      "sticky": false,
+      "featured": false,
+      "categories": [
+        {
+          "name": "Meetings\/Workshops",
+          "slug": "meetingsworkshops",
+          "term_group": 0,
+          "term_taxonomy_id": 18,
+          "taxonomy": "tribe_events_cat",
+          "description": "",
+          "parent": 0,
+          "count": 143,
+          "filter": "raw",
+          "id": 18,
+          "urls": {
+            "self": "https:\/\/wp.stolaf.edu\/calendar\/wp-json\/tribe\/events\/v1\/categories\/18",
+            "collection": "https:\/\/wp.stolaf.edu\/calendar\/wp-json\/tribe\/events\/v1\/categories"
+          }
+        }
+      ],
+      "tags": [],
+      "venue": {
+        "id": 61006,
+        "status": "publish",
+        "date": "2022-09-30 10:11:11",
+        "date_utc": "2022-09-30 15:11:11",
+        "modified": "2022-09-30 10:11:11",
+        "modified_utc": "2022-09-30 15:11:11",
+        "url": "https:\/\/wp.stolaf.edu\/calendar\/venue\/ballrooms-in-buntrock-commons\/",
+        "venue": "Ballrooms in Buntrock Commons",
+        "description": "<div data-modular-content-collection><\/div>",
+        "slug": "ballrooms-in-buntrock-commons",
+        "show_map": true,
+        "show_map_link": true,
+        "global_id": "wp.stolaf.edu\/calendar?id=61006",
+        "global_id_lineage": ["wp.stolaf.edu\/calendar?id=61006"]
+      },
+      "organizer": [
+        {
+          "id": 30391,
+          "author": "172",
+          "status": "publish",
+          "date": "2019-09-04 13:02:35",
+          "date_utc": "2019-09-04 18:02:35",
+          "modified": "2024-12-20 13:06:32",
+          "modified_utc": "2024-12-20 19:06:32",
+          "url": "https:\/\/wp.stolaf.edu\/calendar\/organizer\/college-event-office-of-the-provost-kathee-hanscom\/",
+          "organizer": "College Event\/Office of the Provost",
+          "description": "<div data-modular-content-collection><\/div>",
+          "slug": "college-event-office-of-the-provost-kathee-hanscom",
+          "phone": "507-786-6799",
+          "website": "https:\/\/wp.stolaf.edu\/doc\/",
+          "email": "hanscom@stolaf.edu",
+          "global_id": "wp.stolaf.edu\/calendar?id=30391",
+          "global_id_lineage": ["wp.stolaf.edu\/calendar?id=30391"]
+        }
+      ],
+      "custom_fields": [],
+      "is_virtual": false,
+      "virtual_url": null,
+      "virtual_video_source": ""
+    },
+    {
+      "id": 114655,
+      "global_id": "wp.stolaf.edu\/calendar?id=114655",
+      "global_id_lineage": ["wp.stolaf.edu\/calendar?id=114655"],
+      "author": "1",
+      "status": "publish",
+      "date": "2026-05-07 16:12:35",
+      "date_utc": "2026-05-07 21:12:35",
+      "modified": "2026-08-10 10:05:50",
+      "modified_utc": "2026-08-10 15:05:50",
+      "url": "https:\/\/wp.stolaf.edu\/calendar\/event\/orientation-for-new-students-2\/",
+      "rest_url": "https:\/\/wp.stolaf.edu\/calendar\/wp-json\/tribe\/events\/v1\/events\/114655",
+      "title": "Orientation for new students",
+      "description": "<div data-modular-content-collection><\/div>",
+      "excerpt": "",
+      "slug": "orientation-for-new-students-2",
+      "image": false,
+      "all_day": true,
+      "start_date": "2026-09-04 00:00:00",
+      "start_date_details": {
+        "year": "2026",
+        "month": "09",
+        "day": "04",
+        "hour": "00",
+        "minutes": "00",
+        "seconds": "00"
+      },
+      "end_date": "2026-09-09 23:59:59",
+      "end_date_details": {
+        "year": "2026",
+        "month": "09",
+        "day": "09",
+        "hour": "23",
+        "minutes": "59",
+        "seconds": "59"
+      },
+      "utc_start_date": "2026-09-04 05:00:00",
+      "utc_start_date_details": {
+        "year": "2026",
+        "month": "09",
+        "day": "04",
+        "hour": "05",
+        "minutes": "00",
+        "seconds": "00"
+      },
+      "utc_end_date": "2026-09-10 04:59:59",
+      "utc_end_date_details": {
+        "year": "2026",
+        "month": "09",
+        "day": "10",
+        "hour": "04",
+        "minutes": "59",
+        "seconds": "59"
+      },
+      "timezone": "America\/Chicago",
+      "timezone_abbr": "CDT",
+      "cost": "",
+      "cost_details": {
+        "currency_symbol": "",
+        "currency_code": "",
+        "currency_position": "",
+        "values": []
+      },
+      "website": "",
+      "show_map": false,
+      "show_map_link": false,
+      "hide_from_listings": false,
+      "sticky": false,
+      "featured": false,
+      "categories": [
+        {
+          "name": "Academic Year",
+          "slug": "academic-year",
+          "term_group": 0,
+          "term_taxonomy_id": 29,
+          "taxonomy": "tribe_events_cat",
+          "description": "",
+          "parent": 0,
+          "count": 184,
+          "filter": "raw",
+          "id": 29,
+          "urls": {
+            "self": "https:\/\/wp.stolaf.edu\/calendar\/wp-json\/tribe\/events\/v1\/categories\/29",
+            "collection": "https:\/\/wp.stolaf.edu\/calendar\/wp-json\/tribe\/events\/v1\/categories"
+          }
+        }
+      ],
+      "tags": [],
+      "venue": [],
+      "organizer": [],
+      "custom_fields": [],
+      "is_virtual": false,
+      "virtual_url": null,
+      "virtual_video_source": ""
+    },
+    {
+      "id": 114654,
+      "global_id": "wp.stolaf.edu\/calendar?id=114654",
+      "global_id_lineage": ["wp.stolaf.edu\/calendar?id=114654"],
+      "author": "1",
+      "status": "publish",
+      "date": "2026-05-07 16:12:35",
+      "date_utc": "2026-05-07 21:12:35",
+      "modified": "2026-08-10 10:05:50",
+      "modified_utc": "2026-08-10 15:05:50",
+      "url": "https:\/\/wp.stolaf.edu\/calendar\/event\/new-students-arrive-3\/",
+      "rest_url": "https:\/\/wp.stolaf.edu\/calendar\/wp-json\/tribe\/events\/v1\/events\/114654",
+      "title": "New students arrive",
+      "description": "<div data-modular-content-collection><\/div>",
+      "excerpt": "",
+      "slug": "new-students-arrive-3",
+      "image": false,
+      "all_day": true,
+      "start_date": "2026-09-04 00:00:00",
+      "start_date_details": {
+        "year": "2026",
+        "month": "09",
+        "day": "04",
+        "hour": "00",
+        "minutes": "00",
+        "seconds": "00"
+      },
+      "end_date": "2026-09-04 23:59:59",
+      "end_date_details": {
+        "year": "2026",
+        "month": "09",
+        "day": "04",
+        "hour": "23",
+        "minutes": "59",
+        "seconds": "59"
+      },
+      "utc_start_date": "2026-09-04 05:00:00",
+      "utc_start_date_details": {
+        "year": "2026",
+        "month": "09",
+        "day": "04",
+        "hour": "05",
+        "minutes": "00",
+        "seconds": "00"
+      },
+      "utc_end_date": "2026-09-05 04:59:59",
+      "utc_end_date_details": {
+        "year": "2026",
+        "month": "09",
+        "day": "05",
+        "hour": "04",
+        "minutes": "59",
+        "seconds": "59"
+      },
+      "timezone": "America\/Chicago",
+      "timezone_abbr": "CDT",
+      "cost": "",
+      "cost_details": {
+        "currency_symbol": "",
+        "currency_code": "",
+        "currency_position": "",
+        "values": []
+      },
+      "website": "",
+      "show_map": false,
+      "show_map_link": false,
+      "hide_from_listings": false,
+      "sticky": false,
+      "featured": false,
+      "categories": [
+        {
+          "name": "Academic Year",
+          "slug": "academic-year",
+          "term_group": 0,
+          "term_taxonomy_id": 29,
+          "taxonomy": "tribe_events_cat",
+          "description": "",
+          "parent": 0,
+          "count": 184,
+          "filter": "raw",
+          "id": 29,
+          "urls": {
+            "self": "https:\/\/wp.stolaf.edu\/calendar\/wp-json\/tribe\/events\/v1\/categories\/29",
+            "collection": "https:\/\/wp.stolaf.edu\/calendar\/wp-json\/tribe\/events\/v1\/categories"
+          }
+        }
+      ],
+      "tags": [],
+      "venue": [],
+      "organizer": [],
+      "custom_fields": [],
+      "is_virtual": false,
+      "virtual_url": null,
+      "virtual_video_source": ""
+    },
+    {
+      "id": 10037960,
+      "global_id": "wp.stolaf.edu\/calendar?id=10037960",
+      "global_id_lineage": ["wp.stolaf.edu\/calendar?id=10037960"],
+      "author": "10038",
+      "status": "publish",
+      "date": "2026-06-12 10:40:26",
+      "date_utc": "2026-06-12 15:40:26",
+      "modified": "2026-06-12 10:42:12",
+      "modified_utc": "2026-06-12 15:42:12",
+      "url": "https:\/\/wp.stolaf.edu\/calendar\/event\/staff-and-faculty-communitea\/2026-09-09\/",
+      "rest_url": "https:\/\/wp.stolaf.edu\/calendar\/wp-json\/tribe\/events\/v1\/events\/10037960",
+      "title": "Staff and Faculty CommuniTEA",
+      "description": "<div data-modular-content-collection><p>Staff and faculty are invited to attend CommuniTEA. Every Wednesday during the summer, the Lutheran Center hosts CommuniTEA. This is a chance for you to unwind, color, relax, and drink tea \u2014 the space is yours to come and just be. The Lutheran Center will provide the tea.<\/p>\n<p>CommuniTea will take place between Tomson and the wind chimes. During inclement weather, it will be held in the Lutheran Center.<\/p>\n<\/div>",
+      "excerpt": "",
+      "slug": "staff-and-faculty-communitea",
+      "image": false,
+      "all_day": false,
+      "start_date": "2026-09-09 14:00:00",
+      "start_date_details": {
+        "year": "2026",
+        "month": "09",
+        "day": "09",
+        "hour": "14",
+        "minutes": "00",
+        "seconds": "00"
+      },
+      "end_date": "2026-09-09 15:00:00",
+      "end_date_details": {
+        "year": "2026",
+        "month": "09",
+        "day": "09",
+        "hour": "15",
+        "minutes": "00",
+        "seconds": "00"
+      },
+      "utc_start_date": "2026-09-09 19:00:00",
+      "utc_start_date_details": {
+        "year": "2026",
+        "month": "09",
+        "day": "09",
+        "hour": "19",
+        "minutes": "00",
+        "seconds": "00"
+      },
+      "utc_end_date": "2026-09-09 20:00:00",
+      "utc_end_date_details": {
+        "year": "2026",
+        "month": "09",
+        "day": "09",
+        "hour": "20",
+        "minutes": "00",
+        "seconds": "00"
+      },
+      "timezone": "America\/Chicago",
+      "timezone_abbr": "CDT",
+      "cost": "",
+      "cost_details": {
+        "currency_symbol": "$",
+        "currency_code": "USD",
+        "currency_position": "prefix",
+        "values": []
+      },
+      "website": "",
+      "show_map": true,
+      "show_map_link": true,
+      "hide_from_listings": false,
+      "sticky": false,
+      "featured": false,
+      "categories": [
+        {
+          "name": "Recreation",
+          "slug": "recreation",
+          "term_group": 0,
+          "term_taxonomy_id": 120,
+          "taxonomy": "tribe_events_cat",
+          "description": "",
+          "parent": 0,
+          "count": 11,
+          "filter": "raw",
+          "id": 120,
+          "urls": {
+            "self": "https:\/\/wp.stolaf.edu\/calendar\/wp-json\/tribe\/events\/v1\/categories\/120",
+            "collection": "https:\/\/wp.stolaf.edu\/calendar\/wp-json\/tribe\/events\/v1\/categories"
+          }
+        },
+        {
+          "name": "Vocation and Career",
+          "slug": "vocation-and-career",
+          "term_group": 0,
+          "term_taxonomy_id": 24,
+          "taxonomy": "tribe_events_cat",
+          "description": "",
+          "parent": 0,
+          "count": 40,
+          "filter": "raw",
+          "id": 24,
+          "urls": {
+            "self": "https:\/\/wp.stolaf.edu\/calendar\/wp-json\/tribe\/events\/v1\/categories\/24",
+            "collection": "https:\/\/wp.stolaf.edu\/calendar\/wp-json\/tribe\/events\/v1\/categories"
+          }
+        }
+      ],
+      "tags": [],
+      "venue": [],
+      "organizer": [
+        {
+          "id": 30737,
+          "author": "2684",
+          "status": "publish",
+          "date": "2019-09-19 19:55:10",
+          "date_utc": "2019-09-20 00:55:10",
+          "modified": "2019-09-19 19:55:10",
+          "modified_utc": "2019-09-20 00:55:10",
+          "url": "https:\/\/wp.stolaf.edu\/calendar\/organizer\/the-lutheran-center-for-faith-values-and-community\/",
+          "organizer": "The Lutheran Center for Faith, Values, and Community",
+          "description": "<div data-modular-content-collection><\/div>",
+          "slug": "the-lutheran-center-for-faith-values-and-community",
+          "global_id": "wp.stolaf.edu\/calendar?id=30737",
+          "global_id_lineage": ["wp.stolaf.edu\/calendar?id=30737"]
+        }
+      ],
+      "custom_fields": [],
+      "is_virtual": false,
+      "virtual_url": null,
+      "virtual_video_source": ""
+    },
+    {
+      "id": 114656,
+      "global_id": "wp.stolaf.edu\/calendar?id=114656",
+      "global_id_lineage": ["wp.stolaf.edu\/calendar?id=114656"],
+      "author": "1",
+      "status": "publish",
+      "date": "2026-05-07 16:12:35",
+      "date_utc": "2026-05-07 21:12:35",
+      "modified": "2026-08-10 10:05:50",
+      "modified_utc": "2026-08-10 15:05:50",
+      "url": "https:\/\/wp.stolaf.edu\/calendar\/event\/first-day-of-class-for-fall-semester\/",
+      "rest_url": "https:\/\/wp.stolaf.edu\/calendar\/wp-json\/tribe\/events\/v1\/events\/114656",
+      "title": "First day of class for Fall Semester",
+      "description": "<div data-modular-content-collection><\/div>",
+      "excerpt": "",
+      "slug": "first-day-of-class-for-fall-semester",
+      "image": false,
+      "all_day": true,
+      "start_date": "2026-09-10 00:00:00",
+      "start_date_details": {
+        "year": "2026",
+        "month": "09",
+        "day": "10",
+        "hour": "00",
+        "minutes": "00",
+        "seconds": "00"
+      },
+      "end_date": "2026-09-10 23:59:59",
+      "end_date_details": {
+        "year": "2026",
+        "month": "09",
+        "day": "10",
+        "hour": "23",
+        "minutes": "59",
+        "seconds": "59"
+      },
+      "utc_start_date": "2026-09-10 05:00:00",
+      "utc_start_date_details": {
+        "year": "2026",
+        "month": "09",
+        "day": "10",
+        "hour": "05",
+        "minutes": "00",
+        "seconds": "00"
+      },
+      "utc_end_date": "2026-09-11 04:59:59",
+      "utc_end_date_details": {
+        "year": "2026",
+        "month": "09",
+        "day": "11",
+        "hour": "04",
+        "minutes": "59",
+        "seconds": "59"
+      },
+      "timezone": "America\/Chicago",
+      "timezone_abbr": "CDT",
+      "cost": "",
+      "cost_details": {
+        "currency_symbol": "",
+        "currency_code": "",
+        "currency_position": "",
+        "values": []
+      },
+      "website": "",
+      "show_map": false,
+      "show_map_link": false,
+      "hide_from_listings": false,
+      "sticky": false,
+      "featured": false,
+      "categories": [
+        {
+          "name": "Academic Year",
+          "slug": "academic-year",
+          "term_group": 0,
+          "term_taxonomy_id": 29,
+          "taxonomy": "tribe_events_cat",
+          "description": "",
+          "parent": 0,
+          "count": 184,
+          "filter": "raw",
+          "id": 29,
+          "urls": {
+            "self": "https:\/\/wp.stolaf.edu\/calendar\/wp-json\/tribe\/events\/v1\/categories\/29",
+            "collection": "https:\/\/wp.stolaf.edu\/calendar\/wp-json\/tribe\/events\/v1\/categories"
+          }
+        }
+      ],
+      "tags": [],
+      "venue": [],
+      "organizer": [],
+      "custom_fields": [],
+      "is_virtual": false,
+      "virtual_url": null,
+      "virtual_video_source": ""
+    },
+    {
+      "id": 114155,
+      "global_id": "wp.stolaf.edu\/calendar?id=114155",
+      "global_id_lineage": ["wp.stolaf.edu\/calendar?id=114155"],
+      "author": "12763",
+      "status": "publish",
+      "date": "2026-04-24 10:51:32",
+      "date_utc": "2026-04-24 15:51:32",
+      "modified": "2026-08-11 09:54:44",
+      "modified_utc": "2026-08-11 14:54:44",
+      "url": "https:\/\/wp.stolaf.edu\/calendar\/event\/opening-convocation-2\/",
+      "rest_url": "https:\/\/wp.stolaf.edu\/calendar\/wp-json\/tribe\/events\/v1\/events\/114155",
+      "title": "Opening Convocation",
+      "description": "<div data-modular-content-collection><p data-pm-slice=\"1 1 []\">All students, families, faculty, and staff are welcome to attend Opening Convocation at Boe Chapel to start the new school year. <span data-sheets-root=\"1\">The St. Olaf Band, conducted by Assistant Professor of Music Henry L. Dorn, will perform.<\/span><\/p>\n<p data-pm-slice=\"1 1 []\">\n<\/div>",
+      "excerpt": "",
+      "slug": "opening-convocation-2",
+      "image": false,
+      "all_day": false,
+      "start_date": "2026-09-10 11:00:00",
+      "start_date_details": {
+        "year": "2026",
+        "month": "09",
+        "day": "10",
+        "hour": "11",
+        "minutes": "00",
+        "seconds": "00"
+      },
+      "end_date": "2026-09-10 12:00:00",
+      "end_date_details": {
+        "year": "2026",
+        "month": "09",
+        "day": "10",
+        "hour": "12",
+        "minutes": "00",
+        "seconds": "00"
+      },
+      "utc_start_date": "2026-09-10 16:00:00",
+      "utc_start_date_details": {
+        "year": "2026",
+        "month": "09",
+        "day": "10",
+        "hour": "16",
+        "minutes": "00",
+        "seconds": "00"
+      },
+      "utc_end_date": "2026-09-10 17:00:00",
+      "utc_end_date_details": {
+        "year": "2026",
+        "month": "09",
+        "day": "10",
+        "hour": "17",
+        "minutes": "00",
+        "seconds": "00"
+      },
+      "timezone": "America\/Chicago",
+      "timezone_abbr": "CDT",
+      "cost": "",
+      "cost_details": {
+        "currency_symbol": "$",
+        "currency_code": "USD",
+        "currency_position": "prefix",
+        "values": []
+      },
+      "website": "",
+      "show_map": true,
+      "show_map_link": true,
+      "hide_from_listings": false,
+      "sticky": false,
+      "featured": false,
+      "categories": [
+        {
+          "name": "Special Events\/Celebrations",
+          "slug": "special-eventscelebrations",
+          "term_group": 0,
+          "term_taxonomy_id": 22,
+          "taxonomy": "tribe_events_cat",
+          "description": "",
+          "parent": 0,
+          "count": 91,
+          "filter": "raw",
+          "id": 22,
+          "urls": {
+            "self": "https:\/\/wp.stolaf.edu\/calendar\/wp-json\/tribe\/events\/v1\/categories\/22",
+            "collection": "https:\/\/wp.stolaf.edu\/calendar\/wp-json\/tribe\/events\/v1\/categories"
+          }
+        }
+      ],
+      "tags": [],
+      "venue": {
+        "id": 25457,
+        "status": "publish",
+        "date": "2019-04-19 13:10:59",
+        "date_utc": "2019-04-19 18:10:59",
+        "modified": "2022-09-09 10:49:30",
+        "modified_utc": "2022-09-09 15:49:30",
+        "url": "https:\/\/wp.stolaf.edu\/calendar\/venue\/boe-chapel\/",
+        "venue": "Boe Chapel",
+        "description": "<div data-modular-content-collection><\/div>",
+        "slug": "boe-chapel",
+        "show_map": true,
+        "show_map_link": true,
+        "global_id": "wp.stolaf.edu\/calendar?id=25457",
+        "global_id_lineage": ["wp.stolaf.edu\/calendar?id=25457"]
+      },
+      "organizer": [
+        {
+          "id": 75370,
+          "author": "10383",
+          "status": "publish",
+          "date": "2023-11-28 08:38:05",
+          "date_utc": "0000-00-00 00:00:00",
+          "modified": "2023-11-28 08:38:05",
+          "modified_utc": "0000-00-00 00:00:00",
+          "url": "https:\/\/wp.stolaf.edu\/calendar\/organizer\/college-events\/",
+          "organizer": "College Events",
+          "description": "<div data-modular-content-collection><\/div>",
+          "slug": "college-events",
+          "email": "events@stolaf.edu",
+          "global_id": "wp.stolaf.edu\/calendar?id=75370",
+          "global_id_lineage": ["wp.stolaf.edu\/calendar?id=75370"]
+        }
+      ],
+      "custom_fields": [],
+      "is_virtual": false,
+      "virtual_url": null,
+      "virtual_video_source": ""
+    },
+    {
+      "id": 114116,
+      "global_id": "wp.stolaf.edu\/calendar?id=114116",
+      "global_id_lineage": ["wp.stolaf.edu\/calendar?id=114116"],
+      "author": "12763",
+      "status": "publish",
+      "date": "2026-04-24 10:53:31",
+      "date_utc": "2026-04-24 15:53:31",
+      "modified": "2026-04-24 10:54:04",
+      "modified_utc": "2026-04-24 15:54:04",
+      "url": "https:\/\/wp.stolaf.edu\/calendar\/event\/first-day-of-classes-garden-party\/",
+      "rest_url": "https:\/\/wp.stolaf.edu\/calendar\/wp-json\/tribe\/events\/v1\/events\/114116",
+      "title": "First Day of Classes Garden Party",
+      "description": "<div data-modular-content-collection><p>Faculty and staff are invited to President Susan Rundell Singer\u2019s residence, the St. Olaf House, to celebrate the first day of classes of the 2026\u201327 academic year. Beverages and hors d\u2019oeuvres will be provided.<\/p>\n<p>** In the case of inclement weather, this event will be held in the Buntrock Commons Ballrooms **<\/p>\n<\/div>",
+      "excerpt": "",
+      "slug": "first-day-of-classes-garden-party",
+      "image": false,
+      "all_day": false,
+      "start_date": "2026-09-10 15:30:00",
+      "start_date_details": {
+        "year": "2026",
+        "month": "09",
+        "day": "10",
+        "hour": "15",
+        "minutes": "30",
+        "seconds": "00"
+      },
+      "end_date": "2026-09-10 17:30:00",
+      "end_date_details": {
+        "year": "2026",
+        "month": "09",
+        "day": "10",
+        "hour": "17",
+        "minutes": "30",
+        "seconds": "00"
+      },
+      "utc_start_date": "2026-09-10 20:30:00",
+      "utc_start_date_details": {
+        "year": "2026",
+        "month": "09",
+        "day": "10",
+        "hour": "20",
+        "minutes": "30",
+        "seconds": "00"
+      },
+      "utc_end_date": "2026-09-10 22:30:00",
+      "utc_end_date_details": {
+        "year": "2026",
+        "month": "09",
+        "day": "10",
+        "hour": "22",
+        "minutes": "30",
+        "seconds": "00"
+      },
+      "timezone": "America\/Chicago",
+      "timezone_abbr": "CDT",
+      "cost": "",
+      "cost_details": {
+        "currency_symbol": "$",
+        "currency_code": "USD",
+        "currency_position": "prefix",
+        "values": []
+      },
+      "website": "",
+      "show_map": true,
+      "show_map_link": true,
+      "hide_from_listings": false,
+      "sticky": false,
+      "featured": false,
+      "categories": [
+        {
+          "name": "Special Events\/Celebrations",
+          "slug": "special-eventscelebrations",
+          "term_group": 0,
+          "term_taxonomy_id": 22,
+          "taxonomy": "tribe_events_cat",
+          "description": "",
+          "parent": 0,
+          "count": 91,
+          "filter": "raw",
+          "id": 22,
+          "urls": {
+            "self": "https:\/\/wp.stolaf.edu\/calendar\/wp-json\/tribe\/events\/v1\/categories\/22",
+            "collection": "https:\/\/wp.stolaf.edu\/calendar\/wp-json\/tribe\/events\/v1\/categories"
+          }
+        }
+      ],
+      "tags": [],
+      "venue": {
+        "id": 102785,
+        "author": "125",
+        "status": "publish",
+        "date": "2025-08-07 08:22:01",
+        "date_utc": "2025-08-07 13:22:01",
+        "modified": "2025-08-07 08:22:01",
+        "modified_utc": "2025-08-07 13:22:01",
+        "url": "https:\/\/wp.stolaf.edu\/calendar\/venue\/st-olaf-house\/",
+        "venue": "St. Olaf House",
+        "description": "<div data-modular-content-collection><\/div>",
+        "slug": "st-olaf-house",
+        "show_map": true,
+        "show_map_link": true,
+        "global_id": "wp.stolaf.edu\/calendar?id=102785",
+        "global_id_lineage": ["wp.stolaf.edu\/calendar?id=102785"]
+      },
+      "organizer": [
+        {
+          "id": 75370,
+          "author": "10383",
+          "status": "publish",
+          "date": "2023-11-28 08:38:05",
+          "date_utc": "0000-00-00 00:00:00",
+          "modified": "2023-11-28 08:38:05",
+          "modified_utc": "0000-00-00 00:00:00",
+          "url": "https:\/\/wp.stolaf.edu\/calendar\/organizer\/college-events\/",
+          "organizer": "College Events",
+          "description": "<div data-modular-content-collection><\/div>",
+          "slug": "college-events",
+          "email": "events@stolaf.edu",
+          "global_id": "wp.stolaf.edu\/calendar?id=75370",
+          "global_id_lineage": ["wp.stolaf.edu\/calendar?id=75370"]
+        }
+      ],
+      "custom_fields": [],
+      "is_virtual": false,
+      "virtual_url": null,
+      "virtual_video_source": ""
+    },
+    {
+      "id": 114898,
+      "global_id": "wp.stolaf.edu\/calendar?id=114898",
+      "global_id_lineage": ["wp.stolaf.edu\/calendar?id=114898"],
+      "author": "11414",
+      "status": "publish",
+      "date": "2026-06-01 09:39:27",
+      "date_utc": "2026-06-01 14:39:27",
+      "modified": "2026-06-01 09:39:27",
+      "modified_utc": "2026-06-01 14:39:27",
+      "url": "https:\/\/wp.stolaf.edu\/calendar\/event\/michon-weeks-mystic-topographies\/",
+      "rest_url": "https:\/\/wp.stolaf.edu\/calendar\/wp-json\/tribe\/events\/v1\/events\/114898",
+      "title": "Michon Weeks: Mystic Topographies",
+      "description": "<div data-modular-content-collection><p>Flaten Art Museum Exhibition &#8211; Michon Weeks: Mystic Topographies<\/p>\n<\/div>",
+      "excerpt": "",
+      "slug": "michon-weeks-mystic-topographies",
+      "image": false,
+      "all_day": true,
+      "start_date": "2026-09-11 00:00:00",
+      "start_date_details": {
+        "year": "2026",
+        "month": "09",
+        "day": "11",
+        "hour": "00",
+        "minutes": "00",
+        "seconds": "00"
+      },
+      "end_date": "2026-12-06 23:59:59",
+      "end_date_details": {
+        "year": "2026",
+        "month": "12",
+        "day": "06",
+        "hour": "23",
+        "minutes": "59",
+        "seconds": "59"
+      },
+      "utc_start_date": "2026-09-11 05:00:00",
+      "utc_start_date_details": {
+        "year": "2026",
+        "month": "09",
+        "day": "11",
+        "hour": "05",
+        "minutes": "00",
+        "seconds": "00"
+      },
+      "utc_end_date": "2026-12-07 05:59:59",
+      "utc_end_date_details": {
+        "year": "2026",
+        "month": "12",
+        "day": "07",
+        "hour": "05",
+        "minutes": "59",
+        "seconds": "59"
+      },
+      "timezone": "America\/Chicago",
+      "timezone_abbr": "CDT",
+      "cost": "Free",
+      "cost_details": {
+        "currency_symbol": "$",
+        "currency_code": "USD",
+        "currency_position": "prefix",
+        "values": ["0"]
+      },
+      "website": "",
+      "show_map": true,
+      "show_map_link": true,
+      "hide_from_listings": false,
+      "sticky": false,
+      "featured": false,
+      "categories": [
+        {
+          "name": "Performing and Visual Arts",
+          "slug": "performing-and-visual-arts",
+          "term_group": 0,
+          "term_taxonomy_id": 19,
+          "taxonomy": "tribe_events_cat",
+          "description": "",
+          "parent": 0,
+          "count": 191,
+          "filter": "raw",
+          "id": 19,
+          "urls": {
+            "self": "https:\/\/wp.stolaf.edu\/calendar\/wp-json\/tribe\/events\/v1\/categories\/19",
+            "collection": "https:\/\/wp.stolaf.edu\/calendar\/wp-json\/tribe\/events\/v1\/categories"
+          }
+        }
+      ],
+      "tags": [
+        {
+          "name": "Art",
+          "slug": "art",
+          "term_group": 0,
+          "term_taxonomy_id": 60,
+          "taxonomy": "post_tag",
+          "description": "",
+          "parent": 0,
+          "count": 34,
+          "filter": "raw",
+          "id": 60,
+          "urls": {
+            "self": "https:\/\/wp.stolaf.edu\/calendar\/wp-json\/tribe\/events\/v1\/tags\/60",
+            "collection": "https:\/\/wp.stolaf.edu\/calendar\/wp-json\/tribe\/events\/v1\/tags"
+          }
+        },
+        {
+          "name": "Flaten Art Museum",
+          "slug": "flaten-art-museum",
+          "term_group": 0,
+          "term_taxonomy_id": 52,
+          "taxonomy": "post_tag",
+          "description": "",
+          "parent": 0,
+          "count": 25,
+          "filter": "raw",
+          "id": 52,
+          "urls": {
+            "self": "https:\/\/wp.stolaf.edu\/calendar\/wp-json\/tribe\/events\/v1\/tags\/52",
+            "collection": "https:\/\/wp.stolaf.edu\/calendar\/wp-json\/tribe\/events\/v1\/tags"
+          }
+        }
+      ],
+      "venue": {
+        "id": 284,
+        "author": "1",
+        "status": "publish",
+        "date": "2017-09-21 16:47:27",
+        "date_utc": "2017-09-21 21:47:27",
+        "modified": "2017-10-18 12:03:15",
+        "modified_utc": "2017-10-18 17:03:15",
+        "url": "https:\/\/wp.stolaf.edu\/calendar\/venue\/center-for-art-and-dance\/",
+        "venue": "Center for Art and Dance",
+        "description": "<div data-modular-content-collection><\/div>",
+        "slug": "center-for-art-and-dance",
+        "geo_lat": 44.458298300000003,
+        "geo_lng": -93.161603999999997,
+        "show_map": true,
+        "show_map_link": true,
+        "global_id": "wp.stolaf.edu\/calendar?id=284",
+        "global_id_lineage": ["wp.stolaf.edu\/calendar?id=284"]
+      },
+      "organizer": [
+        {
+          "id": 15767,
+          "author": "275",
+          "status": "publish",
+          "date": "2018-06-20 17:41:25",
+          "date_utc": "2018-06-20 22:41:25",
+          "modified": "2018-06-20 17:41:25",
+          "modified_utc": "2018-06-20 22:41:25",
+          "url": "https:\/\/wp.stolaf.edu\/calendar\/organizer\/flaten-art-museum\/",
+          "organizer": "Flaten Art Museum",
+          "description": "<div data-modular-content-collection><\/div>",
+          "slug": "flaten-art-museum",
+          "phone": "5077863556",
+          "website": "stolaf.edu\/flaten",
+          "email": "beckerj@stolaf.edu",
+          "global_id": "wp.stolaf.edu\/calendar?id=15767",
+          "global_id_lineage": ["wp.stolaf.edu\/calendar?id=15767"]
+        }
+      ],
+      "custom_fields": [],
+      "is_virtual": false,
+      "virtual_url": null,
+      "virtual_video_source": ""
+    },
+    {
+      "id": 114906,
+      "global_id": "wp.stolaf.edu\/calendar?id=114906",
+      "global_id_lineage": ["wp.stolaf.edu\/calendar?id=114906"],
+      "author": "11414",
+      "status": "publish",
+      "date": "2026-06-01 09:39:48",
+      "date_utc": "2026-06-01 14:39:48",
+      "modified": "2026-06-01 09:41:55",
+      "modified_utc": "2026-06-01 14:41:55",
+      "url": "https:\/\/wp.stolaf.edu\/calendar\/event\/conversation-michon-weeks-mystic-topographies\/",
+      "rest_url": "https:\/\/wp.stolaf.edu\/calendar\/wp-json\/tribe\/events\/v1\/events\/114906",
+      "title": "Conversation &#8211; Michon Weeks: Mystic Topographies",
+      "description": "<div data-modular-content-collection><p>Flaten Art Museum &#8211; Screening and Conversation with Associate Professor of Practice in Art and Art History Michon Weeks and Associate Professor of Practice in Religion Trish Zimmerman.<\/p>\n<\/div>",
+      "excerpt": "",
+      "slug": "conversation-michon-weeks-mystic-topographies",
+      "image": false,
+      "all_day": false,
+      "start_date": "2026-09-11 17:00:00",
+      "start_date_details": {
+        "year": "2026",
+        "month": "09",
+        "day": "11",
+        "hour": "17",
+        "minutes": "00",
+        "seconds": "00"
+      },
+      "end_date": "2026-09-11 17:45:00",
+      "end_date_details": {
+        "year": "2026",
+        "month": "09",
+        "day": "11",
+        "hour": "17",
+        "minutes": "45",
+        "seconds": "00"
+      },
+      "utc_start_date": "2026-09-11 22:00:00",
+      "utc_start_date_details": {
+        "year": "2026",
+        "month": "09",
+        "day": "11",
+        "hour": "22",
+        "minutes": "00",
+        "seconds": "00"
+      },
+      "utc_end_date": "2026-09-11 22:45:00",
+      "utc_end_date_details": {
+        "year": "2026",
+        "month": "09",
+        "day": "11",
+        "hour": "22",
+        "minutes": "45",
+        "seconds": "00"
+      },
+      "timezone": "America\/Chicago",
+      "timezone_abbr": "CDT",
+      "cost": "Free",
+      "cost_details": {
+        "currency_symbol": "$",
+        "currency_code": "USD",
+        "currency_position": "prefix",
+        "values": ["0"]
+      },
+      "website": "",
+      "show_map": true,
+      "show_map_link": true,
+      "hide_from_listings": false,
+      "sticky": false,
+      "featured": false,
+      "categories": [
+        {
+          "name": "Performing and Visual Arts",
+          "slug": "performing-and-visual-arts",
+          "term_group": 0,
+          "term_taxonomy_id": 19,
+          "taxonomy": "tribe_events_cat",
+          "description": "",
+          "parent": 0,
+          "count": 191,
+          "filter": "raw",
+          "id": 19,
+          "urls": {
+            "self": "https:\/\/wp.stolaf.edu\/calendar\/wp-json\/tribe\/events\/v1\/categories\/19",
+            "collection": "https:\/\/wp.stolaf.edu\/calendar\/wp-json\/tribe\/events\/v1\/categories"
+          }
+        }
+      ],
+      "tags": [
+        {
+          "name": "Art",
+          "slug": "art",
+          "term_group": 0,
+          "term_taxonomy_id": 60,
+          "taxonomy": "post_tag",
+          "description": "",
+          "parent": 0,
+          "count": 34,
+          "filter": "raw",
+          "id": 60,
+          "urls": {
+            "self": "https:\/\/wp.stolaf.edu\/calendar\/wp-json\/tribe\/events\/v1\/tags\/60",
+            "collection": "https:\/\/wp.stolaf.edu\/calendar\/wp-json\/tribe\/events\/v1\/tags"
+          }
+        },
+        {
+          "name": "Flaten Art Museum",
+          "slug": "flaten-art-museum",
+          "term_group": 0,
+          "term_taxonomy_id": 52,
+          "taxonomy": "post_tag",
+          "description": "",
+          "parent": 0,
+          "count": 25,
+          "filter": "raw",
+          "id": 52,
+          "urls": {
+            "self": "https:\/\/wp.stolaf.edu\/calendar\/wp-json\/tribe\/events\/v1\/tags\/52",
+            "collection": "https:\/\/wp.stolaf.edu\/calendar\/wp-json\/tribe\/events\/v1\/tags"
+          }
+        }
+      ],
+      "venue": {
+        "id": 112047,
+        "status": "publish",
+        "date": "2026-02-25 14:21:27",
+        "date_utc": "0000-00-00 00:00:00",
+        "modified": "2026-02-25 14:21:27",
+        "modified_utc": "0000-00-00 00:00:00",
+        "url": "https:\/\/wp.stolaf.edu\/calendar\/venue\/buntrock-commons-viking-theater\/",
+        "venue": "Buntrock Commons &#8211; Viking Theater",
+        "description": "<div data-modular-content-collection><\/div>",
+        "slug": "buntrock-commons-viking-theater",
+        "show_map": false,
+        "show_map_link": false,
+        "global_id": "wp.stolaf.edu\/calendar?id=112047",
+        "global_id_lineage": ["wp.stolaf.edu\/calendar?id=112047"]
+      },
+      "organizer": [
+        {
+          "id": 15767,
+          "author": "275",
+          "status": "publish",
+          "date": "2018-06-20 17:41:25",
+          "date_utc": "2018-06-20 22:41:25",
+          "modified": "2018-06-20 17:41:25",
+          "modified_utc": "2018-06-20 22:41:25",
+          "url": "https:\/\/wp.stolaf.edu\/calendar\/organizer\/flaten-art-museum\/",
+          "organizer": "Flaten Art Museum",
+          "description": "<div data-modular-content-collection><\/div>",
+          "slug": "flaten-art-museum",
+          "phone": "5077863556",
+          "website": "stolaf.edu\/flaten",
+          "email": "beckerj@stolaf.edu",
+          "global_id": "wp.stolaf.edu\/calendar?id=15767",
+          "global_id_lineage": ["wp.stolaf.edu\/calendar?id=15767"]
+        }
+      ],
+      "custom_fields": [],
+      "is_virtual": false,
+      "virtual_url": null,
+      "virtual_video_source": ""
+    }
+  ],
+  "rest_url": "https:\/\/wp.stolaf.edu\/calendar\/wp-json\/tribe\/events\/v1\/events\/?page=1&per_page=20&start_date=2026-08-14 00:00:00&end_date=2028-08-15 23:59:59&status=publish",
+  "next_rest_url": "https:\/\/wp.stolaf.edu\/calendar\/wp-json\/tribe\/events\/v1\/events\/?per_page=20&start_date=2026-08-14+00%3A00%3A00&end_date=2028-08-15+23%3A59%3A59&status=publish&page=2",
+  "total": 223,
+  "total_pages": 12
+}

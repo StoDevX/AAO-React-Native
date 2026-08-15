@@ -2,6 +2,7 @@
 node_modules/
 /flow-typed/
 /docs/
+/modules/data-sources/bundled.json
 /data/bus-times/*.yaml
 /android/
 /ios/

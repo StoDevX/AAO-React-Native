@@ -1,0 +1,52 @@
+# Where the app gets each of its data sources. Publishing this separately from
+# the app means a source can move without an App Store release.
+#
+# Every entry describes one source:
+#
+#   rel         what kind of source it is. Several entries share a rel — that is
+#               how the document says "here are all the news sources".
+#   href        where to fetch it. Absolute for sources the app reads directly;
+#               relative for ones ccc-server still proxies, so that the Settings
+#               server-URL override keeps applying to them.
+#   type        the format, as a media type, so the app can pick a parser.
+#               Registered types where they exist; the vendor tree for our own
+#               shapes.
+#   properties  keyed by URI. The source's id lives under .../ns/id and is what
+#               the app looks it up by.
+#   titles      a human-readable label per language tag. `und` is the tag for
+#               "undetermined", which is what to use for a label that is not in
+#               any particular language.
+#
+# The structure is RFC 7033's JSON Resource Descriptor, so those field names and
+# their meanings are defined there rather than invented here.
+
+$schema: http://json-schema.org/draft-07/schema#
+
+type: object
+additionalProperties: false
+required: [subject, links]
+properties:
+  subject: {type: string, format: uri}
+  links:
+    type: array
+    minItems: 1
+    items: {$ref: '#/definitions/link'}
+
+definitions:
+  link:
+    type: object
+    additionalProperties: false
+    required: [rel, href, type, properties]
+    properties:
+      rel: {type: string, format: uri}
+      href: {type: string, format: uri-reference}
+      type: {type: string, minLength: 1}
+      titles:
+        type: object
+        additionalProperties: {type: string}
+      properties:
+        type: object
+        additionalProperties: false
+        required: ['https://frogpond.tech/ns/id']
+        properties:
+          'https://frogpond.tech/ns/id': {type: string, minLength: 1}

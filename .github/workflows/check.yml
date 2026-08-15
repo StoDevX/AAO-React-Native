@@ -78,7 +78,14 @@ jobs:
       - uses: jdx/mise-action@7e36c90d9ab29c415a2384db3006f3ec8a8cc654 # v4.2.4
       - run: pnpm install --frozen-lockfile
       - run: mise run validate-data
+      # A module that imports a @frogpond package without declaring it still
+      # resolves, via the root node_modules hoist, until it doesn't.
+      - run: mise run validate-deps
+      # bundled.json is generated from data/sources.yaml and committed, since
+      # the app needs it at build time. Fail if someone edited one and not
+      # the other.
       - run: mise run bundle-data
+      - run: git diff --exit-code modules/data-sources/bundled.json
 
   ios-bundle:
     name: iOS Bundle

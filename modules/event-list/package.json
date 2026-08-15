@@ -11,12 +11,11 @@
   "dependencies": {
     "@callstack/react-theme-provider": "3.0.9",
     "@frogpond/add-to-device-calendar": "workspace:*",
-    "@frogpond/app-theme": "workspace:*",
     "@frogpond/colors": "workspace:*",
     "@frogpond/event-type": "workspace:*",
+    "@frogpond/layout": "workspace:*",
     "@frogpond/lists": "workspace:*",
     "@frogpond/notice": "workspace:*",
-    "@frogpond/open-url": "workspace:*",
     "@frogpond/tableview": "workspace:*",
     "lodash": "4.18.1"
   },

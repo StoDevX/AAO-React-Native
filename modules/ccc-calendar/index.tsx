@@ -5,13 +5,7 @@ import {useMomentTimer} from '@frogpond/timer'
 import {UseQueryResult} from '@tanstack/react-query'
 import * as React from 'react'
 
-export {
-	namedCalendarOptions,
-	namedCalendarEventOptions,
-	googleCalendarOptions,
-	reasonCalendarOptions,
-	icsCalendarOptions,
-} from './query'
+export {namedCalendarOptions, namedCalendarEventOptions} from './query'
 
 type Props = {
 	poweredBy: PoweredBy
