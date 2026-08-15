@@ -465,8 +465,12 @@ test('an HOURLY rule fills the entire 90-day window, not just its first stretch'
 	// MAX_OCCURRENCES_PER_EVENT = 2000 -- smaller than that -- silently
 	// dropped the window's last few days for exactly this shape of rule.
 	// This test genuinely walks ~235,000 iterations (from 2000-01-01 to the
-	// window), so it is one of the slower tests in this file by design --
-	// there's no way to prove the real cap holds without actually reaching it.
+	// window) with the *real*, un-injected default limits -- it's kept as
+	// this file's one deliberately-real-scale canary, the closest thing here
+	// to a plausible real feed, even though every other ceiling/cap test
+	// below now runs at a tiny injected scale instead. There's no way to
+	// prove the real constants are well chosen without actually reaching
+	// them at least once.
 	const events = parseIcalEvents(
 		calendar(`BEGIN:VEVENT
 UID:hourly@test
@@ -493,19 +497,23 @@ END:VEVENT`),
 	expect(lastStart.getTime()).toBeGreaterThan(new Date('2026-11-11T00:00:00Z').getTime())
 })
 
+// DTSTART close to NOW: with an injected `maxIterations` this small, even a
+// FREQ=MINUTELY rule starting essentially "now" needs vastly more than that
+// many steps to reach the (default, un-overridden) 90-day window, so the
+// ceiling fires almost immediately regardless of what DTSTART actually is.
 const PATHOLOGICAL_MINUTELY_VEVENT = `BEGIN:VEVENT
 UID:pathological@test
-DTSTART:20000101T130000Z
-DTEND:20000101T140000Z
+DTSTART:20260815T120000Z
+DTEND:20260815T121000Z
 RRULE:FREQ=MINUTELY
 SUMMARY:Pathological
 END:VEVENT`
 
 test('a rule that exhausts the iteration ceiling is dropped, not rendered as an empty calendar', () => {
-	// FREQ=MINUTELY since 2000 needs on the order of 13 million iterations to
-	// reach the window -- it hits MAX_ITERATIONS_PER_EVENT and throws, which
-	// parseIcalEvents's existing per-master try/catch treats the same as any
-	// other malformed event: dropped, without disturbing its sibling.
+	// A tiny injected `maxIterations` (100, versus the real default 300,000)
+	// tests the throw-vs-silently-empty *routing* this fix is actually about
+	// without needing a genuinely pathological rule and the real ceiling's
+	// scale to prove it -- see `parseIcalEvents`'s `limits` parameter.
 	const events = parseIcalEvents(
 		calendar(`${PATHOLOGICAL_MINUTELY_VEVENT}
 BEGIN:VEVENT
@@ -515,6 +523,7 @@ DTEND:20260901T140000Z
 SUMMARY:Healthy
 END:VEVENT`),
 		NOW,
+		{maxIterations: 100},
 	)
 
 	expect(events.map((event) => event.title)).toStrictEqual(['Healthy'])
@@ -530,7 +539,44 @@ test('a rule that exhausts the iteration ceiling throws when it is the only even
 	// diverge: a silent give-up looks like `successCount` stayed 1 and the
 	// calendar legitimately has nothing upcoming; only an actual throw hits
 	// the all-malformed guard and surfaces this loudly.
-	expect(() => parseIcalEvents(calendar(PATHOLOGICAL_MINUTELY_VEVENT), NOW)).toThrow()
+	//
+	// The thrown error's own message is swallowed by the per-master catch in
+	// favour of the generic "every ical event was malformed" -- otherwise
+	// exactly the kind of message a debugging developer needs would be lost.
+	// It survives as `.cause`, so this checks that rather than a bare
+	// `.toThrow()`.
+	expect.assertions(3)
+	try {
+		parseIcalEvents(calendar(PATHOLOGICAL_MINUTELY_VEVENT), NOW, {maxIterations: 100})
+	} catch (error) {
+		expect(error).toBeInstanceOf(Error)
+		expect((error as Error).message).toBe('every ical event was malformed')
+		expect(((error as Error).cause as Error | undefined)?.message).toMatch(
+			/exceeded 100 recurrence iterations/u,
+		)
+	}
+})
+
+test('MAX_OCCURRENCES_PER_EVENT derives exactly from windowDays, not an independent number', () => {
+	// A FREQ=MINUTELY rule inside a window this small produces far more raw
+	// occurrences than any plausible cap (2 days = 2880 minutes, 3 days =
+	// 4320), so the count returned is entirely determined by
+	// `windowDays * 24 * 2` -- this pins the derivation itself, rather than
+	// just showing one number exceeds another the way the HOURLY-since-2000
+	// test above does.
+	const rule = `BEGIN:VEVENT
+UID:dense@test
+DTSTART:20260815T120000Z
+DTEND:20260815T121000Z
+RRULE:FREQ=MINUTELY
+SUMMARY:Dense
+END:VEVENT`
+
+	const twoDayWindow = parseIcalEvents(calendar(rule), NOW, {windowDays: 2})
+	const threeDayWindow = parseIcalEvents(calendar(rule), NOW, {windowDays: 3})
+
+	expect(twoDayWindow).toHaveLength(2 * 24 * 2)
+	expect(threeDayWindow).toHaveLength(3 * 24 * 2)
 })
 
 test('trims a trailing paren only when it is not part of a balanced URL', () => {
@@ -565,30 +611,54 @@ test('does not pay the description-parsing cost for occurrences the future-only 
 	// event, not after, means only the ~90 occurrences actually inside the
 	// window ever reach that cost.
 	//
-	// A wall-clock assertion is inherently a little machine-dependent, so
-	// DTSTART is 2000 rather than 2015 (~9700 candidate occurrences instead
-	// of ~4200) to widen the gap this measures: on ordinary dev hardware this
-	// reliably lands around 230ms fixed, versus roughly 600ms with the old
-	// per-occurrence-regardless-of-date-conversion order restored -- the
-	// 400ms ceiling sits comfortably between the two rather than close to
-	// either.
+	// An absolute wall-clock ceiling is hardware-dependent: a CI runner
+	// meaningfully slower than the machine this was tuned on could fail a
+	// passing implementation. Comparing against a same-shape baseline
+	// (the identical rule with DESCRIPTION removed) measured in the same run
+	// instead makes the assertion relative to whatever this machine's speed
+	// actually is -- if the fix holds, the two cost about the same (only the
+	// ~90 occurrences inside the window ever reach `toWireEvent` either way);
+	// broken, the with-description run pays for parsing all ~9700 candidate
+	// occurrences instead of just the ~90 that survive.
+	//
+	// Both shapes are run twice, discarding the first result, before either
+	// is timed: Jest's JIT has not warmed up `ical.js`'s hot paths yet on the
+	// very first `parseIcalEvents` call in a test, so an unwarmed comparison
+	// mostly measures "which one ran first" rather than the cost difference
+	// this test cares about -- confirmed directly (reversing which shape ran
+	// first flipped which one looked "faster").
+	//
+	// Measured directly, warmed up, several runs each: fixed lands at
+	// roughly 1.0-1.03x its own baseline; the pre-fix ordering (every
+	// occurrence converted regardless of date) lands at roughly 2.3-2.4x.
+	// 1.8x sits with clear margin on both sides of that gap on this machine,
+	// well under the review's own suggested 2.5x -- kept lower deliberately,
+	// since 2.5x left as little as ~0.1x of headroom above the broken
+	// measurement here.
 	const description =
 		'<p>Join us for chapel featuring a guest speaker. See <a href="https://stolaf.edu/chapel">the schedule</a> for details.</p>'
 
-	const start = Date.now()
-	const events = parseIcalEvents(
-		calendar(`BEGIN:VEVENT
+	function chapelCalendar(withDescription: boolean): string {
+		return calendar(`BEGIN:VEVENT
 UID:chapel@test
 DTSTART:20000101T130000Z
 DTEND:20000101T140000Z
 RRULE:FREQ=DAILY
 SUMMARY:Daily chapel
-DESCRIPTION:${description}
-END:VEVENT`),
-		NOW,
-	)
+${withDescription ? `DESCRIPTION:${description}\n` : ''}END:VEVENT`)
+	}
+
+	parseIcalEvents(chapelCalendar(false), NOW)
+	parseIcalEvents(chapelCalendar(true), NOW)
+
+	const baselineStart = Date.now()
+	parseIcalEvents(chapelCalendar(false), NOW)
+	const baselineMs = Date.now() - baselineStart
+
+	const start = Date.now()
+	const events = parseIcalEvents(chapelCalendar(true), NOW)
 	const elapsedMs = Date.now() - start
 
 	expect(events.length).toBeGreaterThan(0)
-	expect(elapsedMs).toBeLessThan(400)
+	expect(elapsedMs).toBeLessThan(baselineMs * 1.8)
 })
