@@ -20,6 +20,7 @@ describe('fetchSourceBody', () => {
 
 	afterEach(() => {
 		global.fetch = originalFetch
+		jest.useRealTimers()
 	})
 
 	test('a relative href resolves through client, honouring the configured api root', async () => {
@@ -52,5 +53,50 @@ describe('fetchSourceBody', () => {
 
 		expect(body).toEqual({ok: true})
 		expect(fetchMock).toHaveBeenCalledTimes(1)
+	})
+
+	// This app's `AbortSignal` comes from react-native's `abort-controller`
+	// polyfill, which has no `AbortSignal.any`/`AbortSignal.timeout` statics
+	// (Node's own `AbortSignal` does, so a test using those would pass under
+	// Jest and then never fire on device). This proves the manual
+	// controller-plus-timer fallback actually aborts.
+	test('an absolute fetch that never resolves is aborted after ten seconds', async () => {
+		jest.useFakeTimers()
+
+		let fetchMock = jest.fn(
+			(_url: string, init?: {signal?: AbortSignal}) =>
+				new Promise((_resolve, reject) => {
+					init?.signal?.addEventListener('abort', () => {
+						reject(new DOMException('The operation was aborted', 'AbortError'))
+					})
+				}),
+		)
+		global.fetch = fetchMock as unknown as typeof fetch
+
+		let controller = new AbortController()
+		let promise = fetchSourceBody('https://wp.stolaf.edu/hangs', controller.signal, 'News')
+		let assertion = expect(promise).rejects.toThrow(/aborted/iu)
+
+		await jest.advanceTimersByTimeAsync(10_000)
+		await assertion
+	})
+
+	test('unmounting (the caller signal aborting) aborts the fetch without waiting for the timeout', async () => {
+		let fetchMock = jest.fn(
+			(_url: string, init?: {signal?: AbortSignal}) =>
+				new Promise((_resolve, reject) => {
+					init?.signal?.addEventListener('abort', () => {
+						reject(new DOMException('The operation was aborted', 'AbortError'))
+					})
+				}),
+		)
+		global.fetch = fetchMock as unknown as typeof fetch
+
+		let controller = new AbortController()
+		let promise = fetchSourceBody('https://wp.stolaf.edu/hangs', controller.signal, 'News')
+		let assertion = expect(promise).rejects.toThrow(/aborted/iu)
+
+		controller.abort()
+		await assertion
 	})
 })
