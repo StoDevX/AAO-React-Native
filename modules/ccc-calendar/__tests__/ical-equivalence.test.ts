@@ -1026,35 +1026,49 @@ test('enough synthetic cases actually take the seeded path to make the harness m
 // reference walk expensive, but it's also the only thing that makes seeding
 // engage at all -- so each file below runs twice:
 //
-//   - once with `now` at the file's own earliest DTSTART: no history to
-//     walk, so this is fast on both sides regardless of frequency, and
-//     checks shape correctness on the unseeded path (`computeSeedTime`
+//   - once with `now` the day before the file's own earliest DTSTART: as
+//     close to "no history to walk" as this parser's own future-only filter
+//     allows (see `earliestDtstart`'s own comment on why exactly-at-DTSTART
+//     doesn't work), so this is fast on both sides regardless of frequency,
+//     and checks shape correctness on the unseeded path (`computeSeedTime`
 //     never engages when there's nothing to seed past);
 //   - once with `now` `CORPUS_SEED_GAP_PERIODS` periods later: old enough
 //     that every structurally-seekable rule in the file actually gets
 //     seeded, so this checks that the seeded and unseeded paths agree, not
 //     just that the unseeded path works on its own.
 //
-// Both passes share one small, explicit `windowDays`/`maxIterations`
-// budget -- injected, not the production defaults -- chosen so the naive
-// reference walk (which never seeds, on either pass) stays cheap enough to
-// run 140 times inside this suite's time budget. Seeding only skips the
-// *gap* between DTSTART and `now`; it never skips the window itself, so a
-// `SECONDLY` or uncapped `MINUTELY` rule pays the same per-second cost
-// inside the window whether or not it's seeded, and that cost alone
-// exceeds this budget regardless of which pass is running. That's this
-// corpus's real "both sides fail" case: not a bug, but treated
-// deliberately below (both threw, and specifically from hitting the shared
-// iteration ceiling) rather than caught and silently accepted.
+// A fixed, small `windowDays` -- 2, for every file and every pass -- was
+// this suite's original design: cheap, but it made the vast majority of the
+// corpus vacuous. Roughly 40 of the 70 files are MONTHLY or YEARLY, whose
+// own period is longer than a 2-day window could ever observe a second
+// occurrence within; a 2-day window run against a `now` sitting exactly on
+// `DTSTART` also excludes `DTSTART`'s own occurrence for any event whose
+// duration doesn't cross a calendar-day boundary (this parser's
+// "not already over" filter operates on whole days -- see `toWireEvent`'s
+// `isOngoing`/`endOfToday` handling in `ical.ts`). Combined, a full count
+// (see the assertions at the bottom of this section) showed 95 of the 140
+// file/pass combinations were comparing `[] === []`: two empty arrays agree
+// trivially, proving nothing about whether the parser and the reference walk
+// actually agree on any real content.
+//
+// `windowDaysFor`, below, replaces the fixed constant with a per-file,
+// per-pass window: wide enough to observe a real occurrence for whatever
+// that file's own rule actually needs (probed directly against `ical.js`'s
+// own iterator, rather than hand-computing period math for every `BY*`
+// combination the corpus exercises), while staying at the original narrow 2
+// days for any file dense enough (`SECONDLY`/`MINUTELY`/`HOURLY`) that
+// widening it would just trade a vacuous-empty comparison for a
+// ceiling-race one instead (see that function's own comment).
 
 const CORPUS_DIR = join(__dirname, 'fixtures/ical-corpus')
 const CORPUS_FILES = readdirSync(CORPUS_DIR)
 	.filter((name) => name.endsWith('.ics'))
 	.sort()
 
-const CORPUS_WINDOW_DAYS = 2
+const NARROW_CORPUS_WINDOW_DAYS = 2
 const CORPUS_MAX_ITERATIONS = 1000
 const CORPUS_SEED_GAP_PERIODS = 500
+const WINDOW_PROBE_MAX_STEPS = 2000
 
 /// Not `FIXED_PERIOD_SECONDS` from `ical.ts` -- that map deliberately
 /// excludes MONTHLY/YEARLY (their step isn't a fixed span of time, see that
@@ -1095,6 +1109,104 @@ function fastestNominalPeriodSeconds(masters: ICAL.Component[]): number {
 function earliestDtstart(masters: ICAL.Component[]): Date {
 	let instants = masters.map((master) => referenceToInstant(new ICAL.Event(master).startDate))
 	return new Date(Math.min(...instants.map((instant) => instant.getTime())))
+}
+
+/// One calendar day before `earliestDtstart(masters)` -- not that instant
+/// itself. `parseIcalEvents`'s "not already over" filter (`endOfToday` in
+/// `ical.ts`) operates on whole calendar days: an occurrence that starts and
+/// ends within the same day as `now` is excluded regardless of `now`'s own
+/// time-of-day, because that day is already the "today" the filter is
+/// comparing against. Several corpus files' every occurrence sits within a
+/// single day of `DTSTART` (`MinutelyCount1.ics`'s six 15-minute-interval
+/// occurrences, all inside one hour, say) -- using `DTSTART` itself as `now`
+/// made every one of those files vacuous regardless of window, because
+/// `DTSTART`'s own occurrence was excluded before the window even mattered.
+/// Backing `now` up to the *previous* day sidesteps that: `DTSTART` now falls
+/// on a later calendar day than `now`, so it (and anything else that day)
+/// survives the filter like a real future event would.
+///
+/// Only the *unseeded* pass uses this -- `seededNowFor`, below, still anchors
+/// its own gap math on `earliestDtstart` itself, unshifted. That gap was
+/// tuned (see `longestDurationSeconds`'s own comment) to land a duration-
+/// padded seed exactly `SEED_MARGIN_PERIODS` past a borderline case like
+/// `Minutely1.ics`'s 9-hour occurrence; subtracting a further day from the
+/// anchor before adding that same gap ate directly into that margin and
+/// pushed three such files (`Minutely1.ics`, `MinutelyInterval1.ics`,
+/// `Secondly1.ics`) back below it, undoing the seeding this corpus most wants
+/// to exercise. The one-day pull-back exists to fix a same-day filtering
+/// artefact right at `DTSTART`, which only the unseeded pass is close enough
+/// to `DTSTART` to ever hit.
+function unseededNowFor(masters: ICAL.Component[]): Date {
+	return new Date(earliestDtstart(masters).getTime() - 24 * 60 * 60 * 1000)
+}
+
+/// Frequencies dense enough that widening the window to chase a real
+/// occurrence for some *other*, slower master in the same file would change
+/// this master's own behaviour for the worse: at the original narrow 2-day
+/// window, an `HOURLY` file already produces a real (non-ceiling) comparison
+/// -- 48 raw candidates, comfortably under `CORPUS_MAX_ITERATIONS`. Widen
+/// that same file's window to the ~370 days a `YEARLY` companion master might
+/// need, and the same `HOURLY` master now needs ~8,880 iterations to reach
+/// the window edge, blowing the iteration ceiling and turning a real,
+/// content-comparing test into a ceiling-race one instead -- trading one
+/// shallow-comparison problem (vacuous-empty) for another (ceiling-only).
+/// Kept narrow for exactly the files where this trade would fire.
+const FAST_FREQUENCIES = new Set(['SECONDLY', 'MINUTELY', 'HOURLY'])
+
+function rruleFreqs(masters: ICAL.Component[]): string[] {
+	return masters.flatMap((master) =>
+		master
+			.getAllProperties('rrule')
+			.map((property) => (property.getFirstValue() as ICAL.Recur).freq),
+	)
+}
+
+/// Wide enough to include a real occurrence, sized directly against the
+/// file's own rule rather than a hand-derived period formula. A period
+/// formula (period-length × `INTERVAL`) covers a plain `FREQ=YEARLY` or
+/// `FREQ=MONTHLY` rule, but not one further restricted by `BY*` parts this
+/// corpus specifically exercises: `MonthlyByMonthDay1.ics`
+/// (`BYDAY=FR;BYMONTHDAY=13` -- "the next Friday the 13th", which is 164
+/// days after this file's own `DTSTART`, not ~31) and `YearlyByMonthDay1.ics`
+/// (`INTERVAL=4` combined with a `BYDAY`/`BYMONTHDAY` intersection, whose
+/// next match is 4 calendar years out) both need more than their nominal
+/// period predicts. Probing `ical.js`'s own iterator directly -- walking
+/// forward from `DTSTART` until a candidate lands after `now`, bounded by
+/// `WINDOW_PROBE_MAX_STEPS` -- gets this right for any `BY*` combination
+/// without reimplementing RFC 5545's own matching rules a second time here.
+///
+/// A probe that finds nothing within the step budget (an `UNTIL`/`COUNT`-
+/// limited master already exhausted by `now`, or -- `YearlyByWeekNo2.ics`/
+/// `YearlyByWeekNo3.ics` -- a `BYWEEKNO` rule `ical.js`'s own recurrence
+/// engine in this version never produces *any* occurrence for at all, a
+/// genuine upstream limitation rather than anything this parser controls)
+/// falls back to the narrow window: widening further wouldn't help a rule
+/// that has nothing left to find, or that `ical.js` can't expand regardless
+/// of how far the window reaches.
+function windowDaysFor(masters: ICAL.Component[], now: Date): number {
+	if (rruleFreqs(masters).some((freq) => FAST_FREQUENCIES.has(freq))) {
+		return NARROW_CORPUS_WINDOW_DAYS
+	}
+
+	let widest = NARROW_CORPUS_WINDOW_DAYS
+	for (let master of masters) {
+		let event = new ICAL.Event(master)
+		if (!event.isRecurring()) continue
+
+		let iterator = event.iterator()
+		for (let step = 0; step < WINDOW_PROBE_MAX_STEPS; step += 1) {
+			let occurrence = iterator.next()
+			if (!occurrence) break
+
+			let instant = referenceToInstant(occurrence)
+			if (instant.getTime() <= now.getTime()) continue
+
+			let daysUntil = Math.ceil((instant.getTime() - now.getTime()) / (24 * 60 * 60 * 1000))
+			widest = Math.max(widest, daysUntil + 5)
+			break
+		}
+	}
+	return widest
 }
 
 /// The longest `DTEND - DTSTART` among `masters` -- `computeSeedTime`
@@ -1198,29 +1310,43 @@ const CORPUS_CASES: CorpusCase[] = CORPUS_FILES.map((file) => {
 	return {file, body, masters}
 })
 
+/// Whether any master in `masters` would actually take the seeded fast path
+/// for *some* `now` -- i.e. `seekableRule` accepts its shape at all, which
+/// (unlike `computeSeedTime`'s own age check) doesn't depend on `now`.
+/// `seededNowFor` uses this to decide whether pushing `now` out by
+/// `CORPUS_SEED_GAP_PERIODS` periods is worth what it costs: for a file with
+/// no seekable master (every rule is `COUNT`-limited, or `MONTHLY`/`YEARLY`,
+/// or there's no `RRULE` at all), no `now` makes seeding engage, so pushing
+/// `now` out that far buys nothing -- and, for a small-`COUNT` rule
+/// especially, actively costs something: `CORPUS_SEED_GAP_PERIODS` periods
+/// out is almost certainly past that rule's own last occurrence, making an
+/// otherwise-comparable file vacuous for no reason. `DailyCount1.ics`
+/// (`COUNT=10;INTERVAL=2`, exhausted 18 days after `DTSTART`) was exactly
+/// this case before this check existed.
+function anySeekable(masters: ICAL.Component[]): boolean {
+	return masters.some((master) => {
+		let event = new ICAL.Event(master)
+		return event.isRecurring() && seekableRule(event.component) !== undefined
+	})
+}
+
 function seededNowFor({masters}: CorpusCase): Date {
+	if (!anySeekable(masters)) return unseededNowFor(masters)
+
 	let gapSeconds =
 		CORPUS_SEED_GAP_PERIODS * fastestNominalPeriodSeconds(masters) + longestDurationSeconds(masters)
 	return new Date(earliestDtstart(masters).getTime() + gapSeconds * 1000)
 }
 
 describe.each(CORPUS_CASES)('corpus: $file', ({file, body, masters}) => {
-	test('matches the naive reference walk, unseeded (now at the file’s own DTSTART)', () => {
-		expectEquivalentOrBothCeilinged(
-			body,
-			earliestDtstart(masters),
-			CORPUS_WINDOW_DAYS,
-			CORPUS_MAX_ITERATIONS,
-		)
+	test('matches the naive reference walk, unseeded (now the day before the file’s own DTSTART)', () => {
+		let now = unseededNowFor(masters)
+		expectEquivalentOrBothCeilinged(body, now, windowDaysFor(masters, now), CORPUS_MAX_ITERATIONS)
 	})
 
 	test('matches the naive reference walk, seeded (now well past DTSTART)', () => {
-		expectEquivalentOrBothCeilinged(
-			body,
-			seededNowFor({file, body, masters}),
-			CORPUS_WINDOW_DAYS,
-			CORPUS_MAX_ITERATIONS,
-		)
+		let now = seededNowFor({file, body, masters})
+		expectEquivalentOrBothCeilinged(body, now, windowDaysFor(masters, now), CORPUS_MAX_ITERATIONS)
 	})
 })
 
@@ -1238,4 +1364,106 @@ test('a meaningful share of the corpus actually takes the seeded path', () => {
 		0,
 	)
 	expect(totalSeeded).toBeGreaterThanOrEqual(19)
+})
+
+// --- Corpus depth: policing against a return to vacuous comparisons -------
+//
+// `totalSeeded`, just above, counts master VEVENTs that take the seeded
+// path -- it says nothing about whether the *comparison* those masters take
+// part in ever produces real content. Before `windowDaysFor` and the
+// `earliestDtstart`/`seededNowFor` changes above this section, a direct
+// count showed 95 of these 140 file/pass combinations compared `[] === []`:
+// two empty arrays agree trivially, so a regression that broke real content
+// entirely (while leaving both sides equally, silently empty) would have
+// passed every assertion in this file. Only 8 combinations both engaged
+// seeding *and* compared non-empty output -- the rest of "a meaningful share
+//... takes the seeded path" was seeding with nothing behind it to prove that
+// seeding agrees with anything.
+//
+// This block recomputes both counts against the fixed windowing and asserts
+// them directly, the same way `totalSeeded` above is asserted rather than
+// just relied on in a comment -- so a future change that quietly widens
+// `NARROW_CORPUS_WINDOW_DAYS`'s reach, narrows `windowDaysFor`'s probe, or
+// otherwise regresses coverage back toward vacuous comparisons fails here,
+// rather than leaving a still-green suite that no longer proves anything.
+
+interface CorpusDepth {
+	nonEmptyCount: number
+	seededAndNonEmptyCount: number
+}
+
+function measureCorpusDepth(): CorpusDepth {
+	let nonEmptyCount = 0
+	let seededAndNonEmptyCount = 0
+
+	for (let corpusCase of CORPUS_CASES) {
+		for (let now of [unseededNowFor(corpusCase.masters), seededNowFor(corpusCase)]) {
+			let windowDays = windowDaysFor(corpusCase.masters, now)
+			let seeded = seededMasterCount(corpusCase.body, now)
+
+			let result: WireEvent[] | undefined
+			try {
+				result = parseIcalEvents(corpusCase.body, now, {
+					windowDays,
+					maxIterations: CORPUS_MAX_ITERATIONS,
+					maxOccurrences: CORPUS_MAX_ITERATIONS + 1,
+				})
+			} catch {
+				// A ceiling throw (or any other failure) contributes nothing to
+				// "non-empty" -- already policed as pass/fail by
+				// `expectEquivalentOrBothCeilinged` in the `describe.each` above;
+				// this block only measures depth among the comparisons that
+				// actually produce a result.
+				continue
+			}
+
+			if (result.length === 0) continue
+			nonEmptyCount += 1
+			if (seeded > 0) seededAndNonEmptyCount += 1
+		}
+	}
+
+	return {nonEmptyCount, seededAndNonEmptyCount}
+}
+
+// The 12 combinations that stay vacuous even after `windowDaysFor` and the
+// `now` fixes above, and why -- each is a genuine "nothing to compare"
+// rather than a coverage gap this file could still close cheaply:
+//
+//   - `Secondly1.ics` (both passes): an uncapped `SECONDLY` rule hits the
+//     shared iteration ceiling before reaching either window edge, on both
+//     the parser and the reference walk -- the corpus's documented "both
+//     sides fail the same way" case (see the section comment up top), not a
+//     vacuous comparison; `expectEquivalentOrBothCeilinged` already asserts
+//     the two ceiling errors match, so this is real coverage, just not
+//     content coverage.
+//   - `YearlyByWeekNo2.ics`/`YearlyByWeekNo3.ics` (both passes): confirmed
+//     directly against `ical.js`'s own `Recur#iterator` -- a bare
+//     `FREQ=YEARLY;BYWEEKNO=N` rule never produces a single occurrence in
+//     this version of the library, for any `DTSTART`. Both this parser and
+//     the reference walk sit on the same `ical.js` recurrence engine, so
+//     both agree the series is empty -- correctly, given the dependency's
+//     own behaviour, even though that behaviour is itself an upstream gap.
+//   - `Bug2912657.ics`, `DailyUntil1.ics`, `HourlyUntil1.ics`,
+//     `WeeklyUntil1.ics` (seeded pass only): each rule is genuinely
+//     exhausted (past its own `UNTIL`, or -- `Bug2912657.ics` -- a small
+//     `COUNT`) well before `CORPUS_SEED_GAP_PERIODS` periods past `DTSTART`.
+//     `windowDaysFor`'s probe correctly finds nothing to widen the window
+//     for, because there is nothing left: this is what "the rule really has
+//     no more occurrences" looks like, not what "the window missed one"
+//     looks like. The *unseeded* pass for the same files still compares real
+//     content, so this isn't a coverage gap for the file overall -- only for
+//     a `now` deliberately placed past where these particular rules end.
+test('the corpus compares real, non-empty content far more often than it did before windowDaysFor', () => {
+	let {nonEmptyCount, seededAndNonEmptyCount} = measureCorpusDepth()
+
+	// 140 total combinations; 12 stay vacuous for the documented reasons
+	// above, so 128 is the ceiling this could reach without addressing one of
+	// those (an upstream `ical.js` fix, or accepting `SECONDLY`'s ceiling
+	// race as a passing "non-empty" case, which it deliberately isn't).
+	expect(nonEmptyCount).toBeGreaterThanOrEqual(120)
+
+	// Measured at 11, up from 8 before `windowDaysFor` -- every seekable
+	// master's seeded comparison should, now, actually be checking something.
+	expect(seededAndNonEmptyCount).toBeGreaterThanOrEqual(10)
 })
