@@ -151,24 +151,48 @@ function resolveLimits(limits?: {
 /// plain `Error` -- see `parseIcalEvents` for why that distinction matters.
 class RecurrenceIterationCeilingError extends Error {}
 
+/// `RecurExpansion` only ever emits `DTSTART` itself as an occurrence when
+/// the series has an `RRULE` -- an `RDATE`-only series (RFC 5545 permits
+/// this: `RDATE` alone is a valid, if unusual, recurrence mechanism) never
+/// gets it, even though RFC 5545 3.8.5.2/3.8.5.3 count `DTSTART` as always
+/// being part of the recurrence set. Reproduced directly against ical.js:
+/// `DTSTART:20260901T130000Z` plus `RDATE:20260908T130000Z,20260915T130000Z`
+/// and no `RRULE` walks to exactly the two `RDATE` values, silently dropping
+/// the series' own first occurrence.
+function needsInjectedDtstart(component: ICAL.Component): boolean {
+	return component.hasProperty('rdate') && !component.hasProperty('rrule')
+}
+
+/// Whether `time` is named by one of `component`'s own `EXDATE` values.
+/// Only used for the injected-`DTSTART` case above -- everywhere else,
+/// `EXDATE` exclusion is `ical.js`'s own job (via `RecurExpansion`). Compares
+/// by resolved instant rather than replicating `RecurExpansion`'s internal
+/// DATE-vs-DATE-TIME truncation, since the case this exists for (an `EXDATE`
+/// naming the literal `DTSTART` of an `RDATE`-only series) is narrow enough
+/// that an exact-instant match covers what a real feed would actually do.
+function isExcludedByExdate(component: ICAL.Component, time: ICAL.Time): boolean {
+	let instant = toInstant(time).getTime()
+	return component
+		.getAllProperties('exdate')
+		.some((property) =>
+			property.getValues().some((value) => toInstant(value as ICAL.Time).getTime() === instant),
+		)
+}
+
 /// Walks `event`'s occurrences (a single one, if it doesn't recur) from its
 /// `DTSTART` up to `now + windowDays`, applying any `RECURRENCE-ID` overrides
 /// and honouring `EXDATE` along the way -- both are handled by `ical.js`
 /// itself, via the exceptions passed into the `Event` constructor and the
 /// component's own `EXDATE` properties, respectively.
 ///
-/// The walk is bounded by the iterator's own (un-overridden) occurrence
-/// time, not by the possibly-overridden `details.startDate` -- those answer
-/// two different questions. The iterator's position is what tells us we've
-/// walked the whole series past the window and can stop entirely; a single
-/// `RECURRENCE-ID` override moving *this* occurrence's actual start outside
-/// the window (to reschedule it to next year, say) says nothing about where
-/// its still-on-schedule siblings fall, so that occurrence alone is left out
-/// rather than treated as the end of the series. (The mirror case -- an
-/// override moving an occurrence *into* the window from beyond it -- is not
-/// handled: the walk has already stopped by the time that occurrence's own
-/// position would be reached. Not expected to come up in practice; noted
-/// rather than fixed.)
+/// The walk keeps going past `windowEnd` as long as some override's own
+/// (un-overridden) `RECURRENCE-ID` position hasn't been reached yet -- an
+/// override can move an occurrence's actual start either out of the window
+/// (to reschedule it to next year, say) or *into* it from beyond it (to pull
+/// a far-future occurrence forward), and only the iterator's own walk to
+/// that `RECURRENCE-ID` position can discover which. Once the walk is both
+/// past `windowEnd` and past every known override's `RECURRENCE-ID`, nothing
+/// further can still land in the window, and it's safe to stop.
 ///
 /// `toWireEvent` (HTML-stripping the description, scanning it for links) is
 /// the expensive part of processing an occurrence, so the today-or-later
@@ -186,7 +210,40 @@ function expandOccurrences(event: ICAL.Event, now: Date, limits: ExpansionLimits
 	let iterator = event.iterator()
 	let occurrences: WireEvent[] = []
 
+	/// Resolves `occurrenceTime` to its (possibly overridden) details and
+	/// pushes it if it belongs in the window. Returns whether the
+	/// `maxOccurrences` cap was just reached, so callers know to stop.
+	function tryPush(occurrenceTime: ICAL.Time): boolean {
+		let details = event.getOccurrenceDetails(occurrenceTime)
+		if (isAfter(toInstant(details.startDate), windowEnd)) return false
+		if (!isAfter(toInstant(details.endDate), endOfToday)) return false
+
+		occurrences.push(toWireEvent(details.item, details.startDate, details.endDate, now))
+		return occurrences.length >= limits.maxOccurrences
+	}
+
+	if (needsInjectedDtstart(event.component)) {
+		let dtstart = event.startDate
+		if (!isAfter(toInstant(dtstart), windowEnd) && !isExcludedByExdate(event.component, dtstart)) {
+			if (tryPush(dtstart)) return occurrences
+		}
+	}
+
+	// `Event#exceptions` is typed as `Event[]` but is actually keyed by
+	// occurrence-id string internally (`ical.js`'s own JSDoc-derived .d.ts is
+	// wrong here) -- `Object.values` reads correctly either way.
+	let overrideRecurrenceInstants = Object.values(event.exceptions).map((exception) =>
+		toInstant(exception.recurrenceId),
+	)
+	let latestOverrideInstant =
+		overrideRecurrenceInstants.length > 0
+			? new Date(Math.max(...overrideRecurrenceInstants.map((instant) => instant.getTime())))
+			: null
+
 	for (let iterations = 0; ; iterations += 1) {
+		let occurrence = iterator.next()
+		if (!occurrence) break
+
 		if (iterations >= limits.maxIterations) {
 			// Hitting this should not look like a legitimately empty or
 			// partial calendar -- it means the walk gave up, not that the
@@ -194,22 +251,23 @@ function expandOccurrences(event: ICAL.Event, now: Date, limits: ExpansionLimits
 			// `parseIcalEvents`'s existing per-event failure handling: this
 			// event drops out (its siblings are unaffected), or, if every
 			// event in the calendar hits it, the all-malformed guard throws
-			// visibly instead of silently rendering blank.
+			// visibly instead of silently rendering blank. Checked only once
+			// an occurrence has actually been produced -- not before calling
+			// `iterator.next()` -- so a finite rule whose last occurrence
+			// lands exactly on the ceiling still completes normally instead
+			// of throwing on the walk's final, otherwise-unremarkable step.
 			throw new RecurrenceIterationCeilingError(
 				`ical event exceeded ${limits.maxIterations} recurrence iterations without reaching the expansion window`,
 			)
 		}
 
-		let occurrence = iterator.next()
-		if (!occurrence) break
-		if (isAfter(toInstant(occurrence), windowEnd)) break
+		let occurrenceInstant = toInstant(occurrence)
+		let pastWindow = isAfter(occurrenceInstant, windowEnd)
+		let pastEveryOverride =
+			!latestOverrideInstant || isAfter(occurrenceInstant, latestOverrideInstant)
+		if (pastWindow && pastEveryOverride) break
 
-		let details = event.getOccurrenceDetails(occurrence)
-		if (isAfter(toInstant(details.startDate), windowEnd)) continue
-		if (!isAfter(toInstant(details.endDate), endOfToday)) continue
-
-		occurrences.push(toWireEvent(details.item, details.startDate, details.endDate, now))
-		if (occurrences.length >= limits.maxOccurrences) break
+		if (tryPush(occurrence)) break
 	}
 
 	return occurrences

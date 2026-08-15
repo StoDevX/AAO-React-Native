@@ -460,6 +460,37 @@ END:VEVENT`),
 	expect(events[events.length - 1].startTime).toBe('2026-11-10T13:00:00.000Z')
 })
 
+test('a RECURRENCE-ID override moved into the window from beyond it still appears', () => {
+	// The mirror of the previous test: here the override's own DTSTART pulls
+	// a raw occurrence that would otherwise land well past the 90-day window
+	// back into it. The base rule has no COUNT, so the walk has to keep
+	// going past `windowEnd` -- following the override's own (un-overridden)
+	// RECURRENCE-ID position -- to ever reach that occurrence at all.
+	const events = parseIcalEvents(
+		calendar(`BEGIN:VEVENT
+UID:pulledin@test
+DTSTART:20260818T130000Z
+DTEND:20260818T140000Z
+RRULE:FREQ=WEEKLY;BYDAY=TU
+SUMMARY:Base
+END:VEVENT
+BEGIN:VEVENT
+UID:pulledin@test
+RECURRENCE-ID:20261201T130000Z
+DTSTART:20260920T150000Z
+DTEND:20260920T160000Z
+SUMMARY:Pulled in
+END:VEVENT`),
+		NOW,
+	)
+
+	expect(events.map((event) => event.title)).toContain('Pulled in')
+	expect(events.map((event) => event.startTime)).toContain('2026-09-20T15:00:00.000Z')
+	// The occurrence's un-overridden position (2026-12-01) must not also
+	// show up under the base title -- it was replaced, not duplicated.
+	expect(events.map((event) => event.startTime)).not.toContain('2026-12-01T13:00:00.000Z')
+})
+
 test('an HOURLY rule fills the entire 90-day window, not just its first stretch', () => {
 	// A 90-day window holds 90 * 24 = 2160 hourly occurrences. The old
 	// MAX_OCCURRENCES_PER_EVENT = 2000 -- smaller than that -- silently
@@ -557,6 +588,29 @@ test('a rule that exhausts the iteration ceiling throws when it is the only even
 	}
 })
 
+test('a finite rule whose occurrence count exactly equals the iteration ceiling still returns cleanly', () => {
+	// The ceiling used to be checked before calling `iterator.next()`, so a
+	// COUNT-bounded rule needing exactly `maxIterations` steps to exhaust
+	// itself hit the ceiling check one call early and threw, even though the
+	// very next `iterator.next()` would have returned null (the rule is
+	// genuinely finished, not still going). All 5 occurrences here are in
+	// 2020 -- long past `now` -- so this is also a legitimately empty
+	// result, not merely "some events dropped."
+	const events = parseIcalEvents(
+		calendar(`BEGIN:VEVENT
+UID:exactceiling@test
+DTSTART:20200101T130000Z
+DTEND:20200101T140000Z
+RRULE:FREQ=DAILY;COUNT=5
+SUMMARY:Exactly at the ceiling
+END:VEVENT`),
+		NOW,
+		{maxIterations: 5},
+	)
+
+	expect(events).toStrictEqual([])
+})
+
 test('MAX_OCCURRENCES_PER_EVENT derives exactly from windowDays, not an independent number', () => {
 	// A FREQ=MINUTELY rule inside a window this small produces far more raw
 	// occurrences than any plausible cap (2 days = 2880 minutes, 3 days =
@@ -635,6 +689,16 @@ test('does not pay the description-parsing cost for occurrences the future-only 
 	// well under the review's own suggested 2.5x -- kept lower deliberately,
 	// since 2.5x left as little as ~0.1x of headroom above the broken
 	// measurement here.
+	//
+	// A single sample of each side is still noisy on a shared/loaded CI
+	// runner -- a GC pause landing in just the baseline call, say, inflates
+	// the ratio with nothing to do with this fix. Taking the best (lowest)
+	// of several timed runs per side, after the same warm-up, keeps a single
+	// unlucky pause from failing an otherwise-passing implementation while
+	// still measuring the real per-occurrence cost this test exists to
+	// catch: a regression back to converting every candidate makes *every*
+	// with-description run slower, so the best of several still lands near
+	// 2.3x, not down near 1.0x.
 	const description =
 		'<p>Join us for chapel featuring a guest speaker. See <a href="https://stolaf.edu/chapel">the schedule</a> for details.</p>'
 
@@ -648,17 +712,274 @@ SUMMARY:Daily chapel
 ${withDescription ? `DESCRIPTION:${description}\n` : ''}END:VEVENT`)
 	}
 
+	function bestOf(runs: number, run: () => void): number {
+		let best = Infinity
+		for (let i = 0; i < runs; i += 1) {
+			let start = Date.now()
+			run()
+			best = Math.min(best, Date.now() - start)
+		}
+		return best
+	}
+
 	parseIcalEvents(chapelCalendar(false), NOW)
 	parseIcalEvents(chapelCalendar(true), NOW)
 
-	const baselineStart = Date.now()
-	parseIcalEvents(chapelCalendar(false), NOW)
-	const baselineMs = Date.now() - baselineStart
-
-	const start = Date.now()
-	const events = parseIcalEvents(chapelCalendar(true), NOW)
-	const elapsedMs = Date.now() - start
+	const RUNS_PER_SIDE = 3
+	const baselineMs = bestOf(RUNS_PER_SIDE, () => parseIcalEvents(chapelCalendar(false), NOW))
+	let events: ReturnType<typeof parseIcalEvents> = []
+	const elapsedMs = bestOf(RUNS_PER_SIDE, () => {
+		events = parseIcalEvents(chapelCalendar(true), NOW)
+	})
 
 	expect(events.length).toBeGreaterThan(0)
 	expect(elapsedMs).toBeLessThan(baselineMs * 1.8)
+})
+
+// The tests below establish behaviour for RFC 5545 shapes the fixture and
+// the tests above never exercise -- a Google Calendar export doesn't use
+// DURATION, RDATE, or floating times, and none of the existing EXDATE/
+// all-day/straddling-window tests combine those particular ways. Each one
+// was run against the parser *before* any fix was made, specifically to
+// find out whether ical.js already handles the shape correctly (most do) or
+// silently drops something (the RDATE-only case did).
+
+test('DTSTART plus DURATION computes the same end time as an equivalent DTEND', () => {
+	// Standard in Exchange/Outlook exports, which favour DURATION over an
+	// explicit DTEND. Already correct: ical.js's own `Event#endDate` getter
+	// falls back to `dtstart + duration` when there's no `DTEND` property.
+	const [event] = parseIcalEvents(
+		calendar(`BEGIN:VEVENT
+UID:duration@test
+DTSTART:20260901T130000Z
+DURATION:PT2H
+SUMMARY:Duration event
+END:VEVENT`),
+		NOW,
+	)
+
+	expect(event.startTime).toBe('2026-09-01T13:00:00.000Z')
+	expect(event.endTime).toBe('2026-09-01T15:00:00.000Z')
+})
+
+test('DTSTART with neither DTEND nor DURATION is zero-length for a DATE-TIME', () => {
+	// RFC 5545 3.6.1: with neither property present, a DATE-TIME DTSTART
+	// implies the same instant (zero duration). Already correct: ical.js's
+	// `endDate` getter falls back to `startDate.clone()` unmodified when
+	// there's no DURATION and the start isn't a DATE.
+	const [event] = parseIcalEvents(
+		calendar(`BEGIN:VEVENT
+UID:noduration@test
+DTSTART:20260901T130000Z
+SUMMARY:No duration
+END:VEVENT`),
+		NOW,
+	)
+
+	expect(event.startTime).toBe(event.endTime)
+	expect(event.startTime).toBe('2026-09-01T13:00:00.000Z')
+})
+
+test('DTSTART with neither DTEND nor DURATION implies one day for an all-day DATE', () => {
+	// RFC 5545 3.6.1: with neither property present, a DATE-valued DTSTART
+	// implies a one-day event. Already correct: ical.js's `endDate` getter
+	// adds a day to the clone when the start `isDate` and there's no
+	// DURATION.
+	const [event] = parseIcalEvents(
+		calendar(`BEGIN:VEVENT
+UID:nodurationallday@test
+DTSTART;VALUE=DATE:20260901
+SUMMARY:No duration, all day
+END:VEVENT`),
+		NOW,
+	)
+
+	expect(event.startTime).toBe('2026-09-01T00:00:00.000Z')
+	expect(event.endTime).toBe('2026-09-02T00:00:00.000Z')
+})
+
+test('RDATE alone (no RRULE) still includes DTSTART itself as an occurrence', () => {
+	// This one was genuinely broken: `Event#isRecurring()` does treat an
+	// RDATE-only event as recurring (it checks for either `rrule` or
+	// `rdate`), so the two RDATE-named occurrences were never at risk of
+	// being silently dropped. But `ical.js`'s `RecurExpansion` only ever
+	// emits DTSTART itself as an occurrence when the series has an RRULE --
+	// an RDATE-only series walked straight to the two RDATE values and
+	// skipped the series' own first (DTSTART) occurrence entirely, even
+	// though RFC 5545 3.8.5.2/3.8.5.3 count DTSTART as always being part of
+	// the recurrence set. `needsInjectedDtstart` in the parser compensates.
+	const events = parseIcalEvents(
+		calendar(`BEGIN:VEVENT
+UID:rdateonly@test
+DTSTART:20260901T130000Z
+DTEND:20260901T140000Z
+RDATE:20260908T130000Z,20260915T130000Z
+SUMMARY:RDATE only
+END:VEVENT`),
+		NOW,
+	)
+
+	expect(events.map((event) => event.startTime)).toStrictEqual([
+		'2026-09-01T13:00:00.000Z',
+		'2026-09-08T13:00:00.000Z',
+		'2026-09-15T13:00:00.000Z',
+	])
+})
+
+test('RDATE alongside an RRULE adds an extra occurrence on top of the rule', () => {
+	// Already correct: `RecurExpansion` merges its `ruleDates` (from RDATE)
+	// with its rule iterators' output, in date order, without special-casing
+	// either source.
+	const events = parseIcalEvents(
+		calendar(`BEGIN:VEVENT
+UID:rdatewithrule@test
+DTSTART:20260818T130000Z
+DTEND:20260818T140000Z
+RRULE:FREQ=WEEKLY;BYDAY=TU;COUNT=3
+RDATE:20260825T180000Z
+SUMMARY:RDATE plus rule
+END:VEVENT`),
+		NOW,
+	)
+
+	expect(events.map((event) => event.startTime)).toStrictEqual([
+		'2026-08-18T13:00:00.000Z',
+		'2026-08-25T13:00:00.000Z',
+		'2026-08-25T18:00:00.000Z',
+		'2026-09-01T13:00:00.000Z',
+	])
+})
+
+test('EXDATE with a TZID excludes the matching occurrence', () => {
+	// The existing EXDATE test uses a plain UTC date-time only. Already
+	// correct: `RecurExpansion` extracts EXDATE the same way regardless of
+	// whether it carries a TZID, and `Time#compare` resolves both sides to
+	// the same absolute instant before comparing.
+	const events = parseIcalEvents(
+		calendar(`BEGIN:VTIMEZONE
+TZID:America/Chicago
+X-LIC-LOCATION:America/Chicago
+BEGIN:DAYLIGHT
+TZOFFSETFROM:-0600
+TZOFFSETTO:-0500
+TZNAME:CDT
+DTSTART:19700308T020000
+RRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=2SU
+END:DAYLIGHT
+BEGIN:STANDARD
+TZOFFSETFROM:-0500
+TZOFFSETTO:-0600
+TZNAME:CST
+DTSTART:19701101T020000
+RRULE:FREQ=YEARLY;BYMONTH=11;BYDAY=1SU
+END:STANDARD
+END:VTIMEZONE
+BEGIN:VEVENT
+UID:exdatetzid@test
+DTSTART;TZID=America/Chicago:20260822T080000
+DTEND;TZID=America/Chicago:20260822T090000
+RRULE:FREQ=WEEKLY;BYDAY=SA;COUNT=4
+EXDATE;TZID=America/Chicago:20260829T080000
+SUMMARY:Exdate with TZID
+END:VEVENT`),
+		NOW,
+	)
+
+	expect(events).toHaveLength(3)
+	expect(events.map((event) => event.startTime)).not.toContain('2026-08-29T13:00:00.000Z')
+})
+
+test('an EXDATE with a DATE value excludes the matching occurrence of an all-day series', () => {
+	// Already correct: `RecurExpansion`'s `_compare_special` truncates a
+	// DATE-TIME occurrence to its calendar date before comparing against a
+	// DATE-valued EXDATE, but here both sides are already DATE-valued (the
+	// series is all-day), so it's a plain date compare either way.
+	const events = parseIcalEvents(
+		calendar(`BEGIN:VEVENT
+UID:exdateallday@test
+DTSTART;VALUE=DATE:20260822
+DTEND;VALUE=DATE:20260823
+RRULE:FREQ=WEEKLY;BYDAY=SA;COUNT=4
+EXDATE;VALUE=DATE:20260829
+SUMMARY:Exdate allday
+END:VEVENT`),
+		NOW,
+	)
+
+	expect(events.map((event) => event.startTime)).toStrictEqual([
+		'2026-08-22T00:00:00.000Z',
+		'2026-09-05T00:00:00.000Z',
+		'2026-09-12T00:00:00.000Z',
+	])
+})
+
+test('an all-day series recurs correctly, one whole day per occurrence', () => {
+	// Already correct: `toInstant`'s all-day branch (UTC midnight from the
+	// calendar-date fields) applies uniformly to every occurrence the
+	// iterator produces, not just to a non-recurring event's own DTSTART.
+	const events = parseIcalEvents(
+		calendar(`BEGIN:VEVENT
+UID:alldayrecur@test
+DTSTART;VALUE=DATE:20260822
+DTEND;VALUE=DATE:20260823
+RRULE:FREQ=WEEKLY;BYDAY=SA;COUNT=4
+SUMMARY:Allday recur
+END:VEVENT`),
+		NOW,
+	)
+
+	expect(events.map((event) => [event.startTime, event.endTime])).toStrictEqual([
+		['2026-08-22T00:00:00.000Z', '2026-08-23T00:00:00.000Z'],
+		['2026-08-29T00:00:00.000Z', '2026-08-30T00:00:00.000Z'],
+		['2026-09-05T00:00:00.000Z', '2026-09-06T00:00:00.000Z'],
+		['2026-09-12T00:00:00.000Z', '2026-09-13T00:00:00.000Z'],
+	])
+})
+
+test('a multi-day event that starts before now and ends inside the window still appears', () => {
+	// Already correct: a non-recurring event has no "starts before the
+	// window" filter at all in `expandOccurrences` -- only
+	// `parseIcalEvents`'s own future-only filter (keyed on `endTime`, not
+	// `startTime`) applies, and this event's `endTime` is comfortably in
+	// the future.
+	const events = parseIcalEvents(
+		calendar(`BEGIN:VEVENT
+UID:straddle@test
+DTSTART:20260801T130000Z
+DTEND:20260901T140000Z
+SUMMARY:Straddling the window edge
+END:VEVENT`),
+		NOW,
+	)
+
+	expect(events).toHaveLength(1)
+	expect(events[0].startTime).toBe('2026-08-01T13:00:00.000Z')
+	expect(events[0].endTime).toBe('2026-09-01T14:00:00.000Z')
+	expect(events[0].isOngoing).toBe(true)
+})
+
+test('a floating DTSTART (no TZID, no trailing Z) resolves in the host process time zone', () => {
+	// Already correct, by design rather than accident: `ICAL.Time#toJSDate`
+	// resolves a floating time (zone === Timezone.localTimezone) against the
+	// host's own local wall-clock fields -- which is the RFC 5545-correct
+	// reading of a floating time for a viewer in that zone. `toInstant` only
+	// special-cases the all-day (`VALUE=DATE`) case; a floating DATE-TIME
+	// falls through to this same `toJSDate` behaviour.
+	const [event] = parseIcalEvents(
+		calendar(`BEGIN:VEVENT
+UID:floating@test
+DTSTART:20260901T130000
+DTEND:20260901T140000
+SUMMARY:Floating
+END:VEVENT`),
+		NOW,
+	)
+
+	// The floating wall-clock time (13:00) read as the test runner's own
+	// local zone, then converted to UTC -- i.e. whatever `new Date(2026, 8,
+	// 1, 13, 0, 0)` produces on this machine. Not asserting a fixed UTC
+	// offset here since that's the point: it's host-zone-dependent by
+	// definition.
+	const expected = new Date(2026, 8, 1, 13, 0, 0)
+	expect(new Date(event.startTime).getTime()).toBe(expected.getTime())
 })
