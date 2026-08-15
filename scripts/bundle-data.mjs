@@ -5,6 +5,7 @@ import path from 'node:path'
 import {bundleDataDir} from './bundle-data-dir.mjs'
 import {convertDataFile} from './convert-data-file.mjs'
 import {buildFaqs} from './build-faqs.mjs'
+import {buildSources} from './build-sources.mjs'
 
 const isDir = (pth) => fs.statSync(pth).isDirectory()
 const isFile = (pth) => fs.statSync(pth).isFile()
@@ -41,7 +42,10 @@ dirs.forEach((dirname) => {
 })
 
 // Convert these files into JSON equivalents
-const specialFiles = new Map([['faqs.yaml', buildFaqs]])
+const specialFiles = new Map([
+	['faqs.yaml', buildFaqs],
+	['sources.yaml', buildSources],
+])
 
 const files = findFilesIn(fromDir).filter((file) => !specialFiles.has(file))
 files.forEach((file) => {

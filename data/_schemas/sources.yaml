@@ -1,0 +1,30 @@
+$schema: http://json-schema.org/draft-07/schema#
+
+type: object
+additionalProperties: false
+required: [subject, links]
+properties:
+  subject: {type: string, format: uri}
+  links:
+    type: array
+    minItems: 1
+    items: {$ref: '#/definitions/link'}
+
+definitions:
+  link:
+    type: object
+    additionalProperties: false
+    required: [rel, href, type, properties]
+    properties:
+      rel: {type: string, format: uri}
+      href: {type: string, format: uri}
+      type: {type: string, minLength: 1}
+      titles:
+        type: object
+        additionalProperties: {type: string}
+      properties:
+        type: object
+        additionalProperties: false
+        required: ['https://frogpond.tech/ns/id']
+        properties:
+          'https://frogpond.tech/ns/id': {type: string, minLength: 1}
