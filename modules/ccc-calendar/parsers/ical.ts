@@ -235,6 +235,108 @@ function isAlreadyInRdate(component: ICAL.Component, time: ICAL.Time): boolean {
 		)
 }
 
+/// Frequencies whose recurrence step is a fixed span of time. Unlike MONTHLY
+/// and YEARLY -- where the implicit anchor (day-of-month, or Feb 29) can land
+/// on a date that doesn't exist in every target period -- stepping any of
+/// these by a whole number of periods is exact: it's the same day/hour/
+/// minute/second field arithmetic `RecurIterator` itself performs one period
+/// at a time (see `computeSeedTime`), just done once instead of N times.
+const FIXED_PERIOD_SECONDS: Record<string, number> = {
+	SECONDLY: 1,
+	MINUTELY: 60,
+	HOURLY: 60 * 60,
+	DAILY: 24 * 60 * 60,
+	WEEKLY: 7 * 24 * 60 * 60,
+}
+
+/// How many whole periods of margin to keep a seed behind `now`. Not
+/// load-bearing for correctness by itself -- `expandOccurrences`'s walk below
+/// still evaluates every candidate from the seed forward exactly as it would
+/// from `DTSTART` -- but keeps the seed comfortably clear of `now` even if a
+/// rule's own within-period alignment shifts the first post-seed occurrence
+/// forward by close to a full period.
+const SEED_MARGIN_PERIODS = 2
+
+/// Whether `component`'s `RRULE` can be seeded safely: exactly one rule, on a
+/// fixed-period frequency (see `FIXED_PERIOD_SECONDS`), with no `BY*` part
+/// beyond a single `BYDAY` -- the ordinary "every Tuesday" shape this
+/// parser's real feed is built from (79 WEEKLY rules, one `BYDAY` each).
+/// Anything else -- MONTHLY or YEARLY, a multi-day `BYDAY` list, or any other
+/// `BY*` part -- falls back to walking unseeded from `DTSTART` below.
+///
+/// A `COUNT`-limited rule is excluded regardless of shape: `RecurIterator`
+/// enforces `COUNT` by counting occurrences from wherever *it* started
+/// (`occurrence_number`, incremented from 0 at the first value it returns),
+/// not from the true `DTSTART`. Seeding it near `now` would restart that
+/// count from the seed instead of from the series' real first occurrence,
+/// so a rule whose true occurrences are long exhausted could still produce
+/// phantom ones from the seeded position. `UNTIL` has no such problem -- it
+/// stops the walk by comparing directly against an absolute time, which
+/// holds regardless of where the walk began -- so it's left alone.
+///
+/// This is deliberately conservative otherwise too: every fix this file has
+/// been through was a case of a "should be safe" shortcut turning out not to
+/// be for some rule shape the original fix didn't consider. Only the shapes
+/// actually covered by the equivalence harness (`ical-equivalence.test.ts`)
+/// are treated as seekable; every other shape keeps paying the unseeded
+/// walk's cost rather than risk a wrong one.
+function seekableRule(component: ICAL.Component): ICAL.Recur | undefined {
+	let rrules = component.getAllProperties('rrule')
+	if (rrules.length !== 1) return undefined
+
+	let rule = rrules[0].getFirstValue() as ICAL.Recur
+	if (rule.count) return undefined
+	if (!(rule.freq in FIXED_PERIOD_SECONDS)) return undefined
+
+	let byParts = Object.keys(rule.parts)
+	if (rule.freq === 'WEEKLY') {
+		if (byParts.some((part) => part !== 'BYDAY')) return undefined
+		if ((rule.parts.BYDAY?.length ?? 0) > 1) return undefined
+		return rule
+	}
+
+	return byParts.length === 0 ? rule : undefined
+}
+
+/// Builds a seed time for `event.iterator()` that lands close to (but, minus
+/// `SEED_MARGIN_PERIODS`, no later than) `now`, while preserving `DTSTART`'s
+/// exact wall-clock time, zone, and weekday/day-of-month alignment.
+/// `Time#addDuration` adds directly to the same day/hour/minute/second fields
+/// `RecurIterator` itself steps one period at a time, so jumping by N whole
+/// periods in a single call produces the identical field state N individual
+/// steps would -- DST included, since both are wall-clock field arithmetic,
+/// not absolute-instant arithmetic.
+///
+/// Returns `undefined` when there's nothing to gain -- `DTSTART` is already
+/// within a few periods of `now` -- since the unseeded walk from `DTSTART` is
+/// already cheap in that case, and skipping the seed avoids any risk of
+/// landing it wrong for no benefit.
+function computeSeedTime(dtstart: ICAL.Time, rule: ICAL.Recur, now: Date): ICAL.Time | undefined {
+	let periodSeconds = FIXED_PERIOD_SECONDS[rule.freq] * (rule.interval || 1)
+	let elapsedSeconds = (now.getTime() - toInstant(dtstart).getTime()) / 1000
+	let periodsElapsed = Math.floor(elapsedSeconds / periodSeconds)
+	let periodsToJump = periodsElapsed - SEED_MARGIN_PERIODS
+	if (periodsToJump <= 0) return undefined
+
+	let seed = dtstart.clone()
+	seed.addDuration(ICAL.Duration.fromSeconds(periodsToJump * periodSeconds))
+
+	// `addDuration` deliberately defers normalising day/month/year overflow
+	// (its own comment: "we don't actually normalize until we need it"), so a
+	// large jump like this one leaves `seed.day` holding a raw, un-normalised
+	// count rather than a real calendar day. `RecurIterator.init()` reads
+	// that raw field directly to seed its own day/month/year, and its
+	// carry-the-overflow-into-the-next-month stepping logic assumes a
+	// starting value close to normalised already -- fed a large raw day
+	// count instead, it lands a day off. `adjust(0, 0, 0, 0)` is `ICAL.Time`'s
+	// own public no-op-offset call that forces exactly this normalisation
+	// (confirmed directly against this fixture: without it, a seeded WEEKLY
+	// rule landed one day off every occurrence; the equivalence harness
+	// caught it immediately).
+	seed.adjust(0, 0, 0, 0)
+	return seed
+}
+
 /// Walks `event`'s occurrences (a single one, if it doesn't recur) from its
 /// `DTSTART` up to `now + windowDays`, applying any `RECURRENCE-ID` overrides
 /// and honouring `EXDATE` along the way -- both are handled by `ical.js`
@@ -259,6 +361,12 @@ function isAlreadyInRdate(component: ICAL.Component, time: ICAL.Time): boolean {
 /// otherwise every already-past occurrence on the way to "now" pays that
 /// cost only to be thrown away by `parseIcalEvents`'s own future-only filter
 /// moments later.
+///
+/// For a `seekableRule` shape, the walk starts from a seed near `now`
+/// (`computeSeedTime`) instead of the true `DTSTART` -- this is where a
+/// years-old daily/weekly series stops paying for every already-past
+/// occurrence between `DTSTART` and the window. Every other shape still
+/// walks from `DTSTART` unseeded, exactly as before.
 function expandOccurrences(event: ICAL.Event, now: Date, limits: ExpansionLimits): WireEvent[] {
 	if (!event.isRecurring()) {
 		return [toWireEvent(event, event.startDate, event.endDate, now)]
@@ -266,7 +374,9 @@ function expandOccurrences(event: ICAL.Event, now: Date, limits: ExpansionLimits
 
 	let windowEnd = addDays(now, limits.windowDays)
 	let endOfToday = endOfDay(now)
-	let iterator = event.iterator()
+	let rule = seekableRule(event.component)
+	let seedTime = rule ? computeSeedTime(event.startDate, rule, now) : undefined
+	let iterator = event.iterator(seedTime)
 	let occurrences: WireEvent[] = []
 
 	/// Resolves `occurrenceTime` to its (possibly overridden) details and

@@ -821,6 +821,17 @@ test('does not pay the description-parsing cost for occurrences the future-only 
 	// catch: a regression back to converting every candidate makes *every*
 	// with-description run slower, so the best of several still lands near
 	// 2.3x, not down near 1.0x.
+	//
+	// `BYHOUR=13` is a no-op against this rule's own occurrences -- DTSTART is
+	// already 13:00, so every occurrence lands exactly where it would without
+	// it -- but it keeps this rule off `expandOccurrences`'s seeded fast path
+	// (see `seekableRule` in ical.ts), which requires no `BY*` part at all for
+	// a `DAILY` rule. Seeding a plain `FREQ=DAILY` rule this old would walk
+	// straight to the ~90 in-window candidates instead of the ~9700 this test
+	// means to walk past, collapsing both sides of the comparison down to a
+	// few milliseconds each -- at that scale the ratio is dominated by timer
+	// noise, not by whether `toWireEvent` runs early or late, and stops
+	// measuring the thing this test exists to catch.
 	const description =
 		'<p>Join us for chapel featuring a guest speaker. See <a href="https://stolaf.edu/chapel">the schedule</a> for details.</p>'
 
@@ -829,7 +840,7 @@ test('does not pay the description-parsing cost for occurrences the future-only 
 UID:chapel@test
 DTSTART:20000101T130000Z
 DTEND:20000101T140000Z
-RRULE:FREQ=DAILY
+RRULE:FREQ=DAILY;BYHOUR=13
 SUMMARY:Daily chapel
 ${withDescription ? `DESCRIPTION:${description}\n` : ''}END:VEVENT`)
 	}

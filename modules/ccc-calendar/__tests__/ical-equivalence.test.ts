@@ -461,6 +461,23 @@ SUMMARY:Count limited
 END:VEVENT`),
 	},
 	{
+		// DTSTART is old enough to be a seeding candidate, but the rule's own
+		// COUNT is small enough that its real occurrences are long exhausted
+		// by NOW. `RecurIterator` enforces COUNT by counting from wherever it
+		// started, not from the true DTSTART -- seeding this rule near `now`
+		// would restart that count and manufacture occurrences the real,
+		// unseeded series never has. `seekableRule` in ical.ts excludes any
+		// COUNT-limited rule for exactly this reason.
+		name: 'COUNT-limited rule old enough to be a seeding candidate',
+		body: calendar(`BEGIN:VEVENT
+UID:count-limited-old@test
+DTSTART:20150101T130000Z
+DTEND:20150101T140000Z
+RRULE:FREQ=WEEKLY;BYDAY=TU;COUNT=5
+SUMMARY:Count limited, long exhausted
+END:VEVENT`),
+	},
+	{
 		name: 'UNTIL-limited rule',
 		body: calendar(`BEGIN:VEVENT
 UID:until-limited@test
