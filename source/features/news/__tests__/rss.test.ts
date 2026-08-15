@@ -101,6 +101,23 @@ test('falls back to Unknown Author when dc:creator is absent', () => {
 	expect(stories[0].authors).toStrictEqual(['Unknown Author'])
 })
 
+test('collects every dc:creator when an item has more than one', () => {
+	const stories = parseRssFeed(
+		feed(`
+		<item>
+			<title>Two creators</title>
+			<link>https://content.krlx.org/d/</link>
+			<pubDate>Tue, 22 Apr 2025 10:42:59 +0000</pubDate>
+			<description><![CDATA[body]]></description>
+			<dc:creator><![CDATA[Ada Lovelace]]></dc:creator>
+			<dc:creator><![CDATA[Grace Hopper]]></dc:creator>
+		</item>
+	`),
+	)
+
+	expect(stories[0].authors).toStrictEqual(['Ada Lovelace', 'Grace Hopper'])
+})
+
 test('ignores an enclosure whose type is not an image', () => {
 	const stories = parseRssFeed(
 		feed(`
