@@ -313,6 +313,24 @@ If the extras fetch fails, the St. Olaf list renders alone rather than the whole
 screen failing. Today ccc-server 500s if either half fails; a decorative
 supplement should not take down the index.
 
+#### Schemas
+
+The extras already have a published schema: `data/_schemas/a-to-z.yaml`, JSON
+Schema draft-07, enforced by AJV in `scripts/validate.mjs` and run in CI through
+`mise run validate-data`. The extras are authored as `data/a-to-z/*.yaml` and
+bundled to `docs/a-to-z.json`. No change is needed there.
+
+The app's zod schema for the same shape is deliberately kept separate rather than
+generated from the draft-07 one. They are different contracts: the draft-07
+schema validates authoring and stays strict, with `additionalProperties: false`
+to catch typos in hand-edited YAML; the zod schema validates untrusted network
+input and stays lenient, dropping malformed entries rather than throwing so one
+bad upstream link cannot blank the index. Unifying them would force one of those
+to compromise, which is not worth saving eight lines.
+
+The St. Olaf half has no schema and cannot be given one — `az_nav.menu_items` is
+whatever their WordPress plugin emits. Validation there is defensive only.
+
 The app already fetches `github.io` URLs directly for map data, so this follows
 an existing pattern.
 
