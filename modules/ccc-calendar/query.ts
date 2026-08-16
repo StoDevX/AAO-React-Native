@@ -9,10 +9,11 @@ import {queryOptions} from '@tanstack/react-query'
 import * as Calendar from 'expo-calendar'
 import moment from 'moment'
 import {queryClient} from '../../source/init/tanstack-query'
+import {listDeviceEvents} from './device-calendar'
 import {parseEvents} from './parsers/events'
 import {parseIcalEvents} from './parsers/ical'
 import {parseTecEvents, type WireEvent} from './parsers/tec-events'
-import {toDeviceSource} from './sources'
+import {deviceSourceId, toDeviceSource, type SourcedEvent} from './sources'
 import {NamedCalendar} from './types'
 
 export const keys = {
@@ -77,7 +78,14 @@ export const namedCalendarOptions = (
 	queryOptions({
 		queryKey: keys.named(calendar),
 		queryFn: ({queryKey, signal}) => fetchCalendar(queryKey[2], signal),
-		select: (events) => convertEvents(events, options),
+		// A remote calendar's name IS its source id, so tagging needs no new
+		// argument.
+		select: (events): SourcedEvent[] =>
+			convertEvents(events, options).map((event) => ({
+				sourceId: calendar,
+				key: eventKey(event),
+				event,
+			})),
 	})
 
 // oxlint-disable-next-line typescript/explicit-module-boundary-types
@@ -103,4 +111,26 @@ export const deviceCalendarsOptions = () =>
 			let calendars = await Calendar.getCalendars(Calendar.EntityTypes.EVENT)
 			return calendars.map((calendar) => toDeviceSource(calendar))
 		},
+	})
+
+/// A month from today. EventKit will return years of events, and the list draws
+/// a section per day with no pagination behind it.
+// oxlint-disable-next-line typescript/explicit-module-boundary-types
+export const deviceCalendarOptions = (calendarId: string) =>
+	queryOptions({
+		queryKey: ['calendar', 'device', calendarId] as const,
+		queryFn: async () => {
+			let start = moment().startOf('day').toDate()
+			let end = moment().startOf('day').add(1, 'month').toDate()
+			let events = await listDeviceEvents(start, end)
+			return events.filter((entry) => entry.calendarId === calendarId)
+		},
+		// EventKit gives a real event id; better than `startTime|title`, and it is
+		// what the detail screen looks the event back up by.
+		select: (events): SourcedEvent[] =>
+			events.map((entry) => ({
+				sourceId: deviceSourceId(calendarId),
+				key: entry.id,
+				event: entry.event,
+			})),
 	})

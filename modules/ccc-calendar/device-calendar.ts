@@ -18,6 +18,7 @@ export function getFullCalendarAccess(): Promise<Calendar.PermissionResponse> {
 /// event -- so the id is kept alongside the converted event.
 export type DeviceEvent = {
 	calendarId: string
+	id: string
 	event: EventType
 }
 
@@ -57,6 +58,7 @@ export async function listDeviceEvents(start: Date, end: Date): Promise<DeviceEv
 
 	return events.map((event) => ({
 		calendarId: event.calendarId,
+		id: event.id,
 		event: toEventType(event),
 	}))
 }
