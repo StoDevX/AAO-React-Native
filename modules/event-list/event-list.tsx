@@ -88,21 +88,29 @@ export function EventList(props: Props): React.ReactNode {
 	}
 
 	if (props.sources.length === 0) {
+		// No retry: there is nothing to reload, and the way out is the Calendars
+		// button rather than another attempt.
 		return <NoticeView text="No calendars are showing. Choose some from the toolbar." />
 	}
 
 	if (props.events.length === 0) {
+		// Each notice replaces the list, and the list is what carries
+		// pull-to-refresh -- so each has to offer the retry itself, or a failed
+		// load leaves the screen with no way back but the back button.
+		//
 		// A calendar that failed to load is worth naming even when it left
 		// nothing else to show -- otherwise "every source errored" and "nothing
 		// is on today" read as the identical bare "No events."
 		if (props.failed.length > 0) {
 			return (
 				<NoticeView
+					buttonText="Try Again"
+					onPress={props.onRefresh}
 					text={`Could not load ${props.failed.map((source) => source.title).join(', ')}.`}
 				/>
 			)
 		}
-		return <NoticeView text="No events." />
+		return <NoticeView buttonText="Try Again" onPress={props.onRefresh} text="No events." />
 	}
 
 	let sections = groupEvents(props.events, props.now)

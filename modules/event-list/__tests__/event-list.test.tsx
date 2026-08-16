@@ -417,6 +417,71 @@ describe('EventList', () => {
 		expect(screen.queryByText('No events.')).toBeNull()
 	})
 
+	// The notice replaces the list, and the list is what carries
+	// pull-to-refresh -- so without a button of its own there is no way back
+	// from "aeroplane mode, one calendar, and it failed" short of leaving the
+	// screen.
+	test('the every-calendar-failed notice can be retried', async () => {
+		let source = {id: 'stolaf', title: 'St. Olaf', color: 'blue', kind: 'remote' as const}
+		let onRefresh = jest.fn()
+
+		await render(
+			<EventList
+				events={[]}
+				failed={[source]}
+				now={NOW}
+				onPressEvent={jest.fn()}
+				onRefresh={onRefresh}
+				poweredBy={POWERED_BY}
+				refreshing={false}
+				sources={[source]}
+			/>,
+		)
+
+		await fireEvent.press(screen.getByText('Try Again'))
+
+		expect(onRefresh).toHaveBeenCalled()
+	})
+
+	test('the empty notice can be retried', async () => {
+		let onRefresh = jest.fn()
+
+		await render(
+			<EventList
+				events={[]}
+				failed={[]}
+				now={NOW}
+				onPressEvent={jest.fn()}
+				onRefresh={onRefresh}
+				poweredBy={POWERED_BY}
+				refreshing={false}
+				sources={[STOLAF_SOURCE]}
+			/>,
+		)
+
+		await fireEvent.press(screen.getByText('Try Again'))
+
+		expect(onRefresh).toHaveBeenCalled()
+	})
+
+	// Nothing to reload -- the way out is the picker, not a retry.
+	test('the no-calendars notice offers no retry', async () => {
+		await render(
+			<EventList
+				events={[]}
+				failed={[]}
+				now={NOW}
+				onPressEvent={jest.fn()}
+				onRefresh={jest.fn()}
+				poweredBy={POWERED_BY}
+				refreshing={false}
+				sources={[]}
+			/>,
+		)
+
+		expect(screen.queryByText('Try Again')).toBeNull()
+	})
+
 	// "Nothing is on" and "nothing is happening" look identical if both say
 	// "No events."
 	test('turning every calendar off says so, rather than looking empty', async () => {
