@@ -173,15 +173,24 @@ screen instead.
 
 ### Detail
 
-A SwiftUI `Form` from `@expo/ui/swift-ui`, following `source/features/map/building-info.tsx`:
+A React Native `ScrollView` holding a SwiftUI `Form` and then the description:
 
 1. A section of real Oracle fields: title, category, `JobSchedule`, `PrimaryLocation`,
    posted date.
 2. A section of the five scraped fields, each row omitted when its label is absent.
-3. The body, as markdown, in an `RNHostView matchContents` so the native
-   `@frogpond/markdown` view sizes itself inside the Form.
-4. A "View on the St. Olaf jobs site" button opening `{site href}/job/{id}`; the share
+3. A "View on the St. Olaf jobs site" button opening `{site href}/job/{id}`; the share
    action uses the same URL.
+4. The body, as markdown, below the form.
+
+The form goes in a `Host` with `matchContents={{vertical: true}}` and
+`useViewportSizeMeasurement` — a SwiftUI `Form` has no intrinsic height, so without the
+viewport as its proposed size it collapses to nothing inside a content-sized host.
+
+The obvious arrangement — markdown hosted *inside* the form via `RNHostView` — was built
+and rejected on device. That host's `matchContents` is boolean-only and set once at mount,
+so it keeps whatever height the markdown view reported before laying its text out, and the
+last paragraphs of a long posting clip away. They remain in the accessibility tree with
+zero frames, so nothing but looking at the screen catches it.
 
 The email and phone cells go away — no address exists in the data to put in them. New date
 formatting uses `date-fns`, not the `moment` import the current screen carries.
