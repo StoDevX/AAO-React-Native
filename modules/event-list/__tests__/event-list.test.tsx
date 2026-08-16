@@ -249,6 +249,38 @@ describe('EventList', () => {
 		expect(onPressEvent).toHaveBeenCalledWith(entry)
 	})
 
+	// SwiftUI hit-tests only the drawn parts of a button's label, so without a
+	// content shape a row whose title stops early -- an all-day event with no
+	// trailing time -- is dead to the right of its own words. Verified on the
+	// simulator: an all-day device event could not be opened before this.
+	test('the whole row is tappable, not just the words in it', async () => {
+		await render(
+			<EventList
+				events={[
+					makeEntry({
+						title: 'Labor Day',
+						location: '',
+						config: {startTime: false, endTime: false, subtitle: 'location'},
+					}),
+				]}
+				failed={[]}
+				now={NOW}
+				onPressEvent={jest.fn()}
+				onRefresh={jest.fn()}
+				poweredBy={POWERED_BY}
+				refreshing={false}
+				sources={[STOLAF_SOURCE]}
+			/>,
+		)
+
+		let button = screen.getByLabelText('Labor Day')
+		let content = button.children[0] as {props: {modifiers?: unknown[]}}
+		expect(content.props.modifiers).toContainEqual({
+			$type: 'contentShape',
+			value: {type: 'rectangle'},
+		})
+	})
+
 	test('pull-to-refresh calls onRefresh', async () => {
 		let onRefresh = jest.fn()
 

@@ -6,12 +6,14 @@ import {
 	background,
 	buttonStyle,
 	clipShape,
+	contentShape,
 	font,
 	foregroundColor,
 	frame,
 	lineLimit,
 	listRowSeparator,
 	padding,
+	shapes,
 	truncationMode,
 } from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
@@ -116,7 +118,11 @@ export function EventListRow({event, onPress, isLastInSection, color}: Props): R
 			]}
 			onPress={() => onPress(event)}
 		>
-			<HStack alignment="top">
+			{/* Without `contentShape`, SwiftUI hit-tests only the drawn parts of the
+			    label -- the `Spacer` and the empty run to the right of a short title
+			    are dead. A row whose title stops early, an all-day event with no
+			    trailing time, is then only tappable on the words themselves. */}
+			<HStack alignment="top" modifiers={[contentShape(shapes.rectangle())]}>
 				{/* Same fixed-width-via-min/maxWidth trick as the detail header's bar --
 				    `frame`'s native side ignores min/max once width or height is set. */}
 				<VStack

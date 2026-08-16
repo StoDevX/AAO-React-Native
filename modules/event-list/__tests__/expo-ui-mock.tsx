@@ -41,6 +41,14 @@ export const refreshable = modifier('refreshable')
 export const scrollContentBackground = modifier('scrollContentBackground')
 export const lineLimit = modifier('lineLimit')
 export const truncationMode = modifier('truncationMode')
+export const contentShape = modifier('contentShape')
+
+/// Shape builders, not modifiers: `contentShape(shapes.rectangle())` passes one
+/// in. Only the shape this module uses is here, matching the mock's habit of
+/// exporting what is imported and nothing more.
+export const shapes = {
+	rectangle: () => ({type: 'rectangle'}) as const,
+}
 
 export const accessibilityLabel = (label: string): Modifier => ({
 	$type: 'accessibilityLabel',
@@ -93,8 +101,19 @@ export function VStack({
 	)
 }
 
-export function HStack({children}: WithModifiers): React.ReactNode {
-	return <View>{children}</View>
+/// Forwards `modifiers` for the same reason `VStack` does -- the row's tappable
+/// area is a `contentShape(…)` on an `HStack`, and a test has to be able to read
+/// it back.
+export function HStack({
+	children,
+	modifiers,
+	testID,
+}: WithModifiers & {testID?: string}): React.ReactNode {
+	return (
+		<ViewWithModifiers modifiers={modifiers} testID={testID}>
+			{children}
+		</ViewWithModifiers>
+	)
 }
 
 /// `List` renders its `refreshable(…)` handler as a pressable trigger --
