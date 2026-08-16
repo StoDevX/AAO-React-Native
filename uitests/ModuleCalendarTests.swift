@@ -7,9 +7,10 @@ class ModuleCalendarTests: UITestCase {
 			.verifyCalendarTitle()
 	}
 
-	func testCalendarTabsCanBeOpened() throws {
+	func testCalendarPickerOffersEveryCalendar() throws {
 		CalendarScreen(app: app)
 			.navigate()
-			.checkTabs()
+			.openPicker()
+			.checkCalendarsListed()
 	}
 }

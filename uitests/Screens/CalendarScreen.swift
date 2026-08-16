@@ -13,15 +13,25 @@ struct CalendarScreen: Screen {
 		verifyTitle(TestIdentifiers.Buttons.calendar)
 	}
 
+	/// Open the toolbar menu that chooses which calendars the list merges.
 	@discardableResult
-	func checkTabs() -> Self {
-		for tab in TestIdentifiers.Calendar.tabs {
-			XCTContext.runActivity(named: tab) { _ in
-				let tabButton = app.tabButton(tab)
+	func openPicker() -> Self {
+		let picker = app.buttons[TestIdentifiers.Calendar.picker]
+		XCTAssertTrue(
+			picker.waitForExistence(timeout: 30),
+			"Calendar picker should be in the toolbar")
+		picker.tap()
+		return self
+	}
+
+	/// Every calendar is a menu item, so a UIMenu action is a button.
+	@discardableResult
+	func checkCalendarsListed() -> Self {
+		for calendar in TestIdentifiers.Calendar.calendars {
+			XCTContext.runActivity(named: calendar) { _ in
 				XCTAssertTrue(
-					tabButton.waitForExistence(timeout: 30),
-					"\(tab) tab should be visible")
-				tabButton.tap()
+					app.buttons[calendar].waitForExistence(timeout: 30),
+					"\(calendar) should be offered in the picker")
 			}
 		}
 		return self

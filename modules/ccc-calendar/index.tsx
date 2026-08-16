@@ -1,56 +1,6 @@
-import {EventList, type CalendarSource, type PoweredBy} from '@frogpond/event-list'
-import type {EventType} from '@frogpond/event-type'
-import {NoticeView} from '@frogpond/notice'
-import {useMomentTimer} from '@frogpond/timer'
-import {UseQueryResult} from '@tanstack/react-query'
-import * as c from '@frogpond/colors'
-import * as React from 'react'
-import type {SourcedEvent} from './sources'
-
 export {namedCalendarOptions, namedCalendarEventOptions} from './query'
+export {CalendarPicker} from './calendar-picker'
 export {ScheduleView} from './schedule-view'
-
-type Props = {
-	poweredBy: PoweredBy
-	query: UseQueryResult<SourcedEvent[]>
-	onPressEvent: (event: EventType) => void
-}
-
-// A single mandatory calendar, with no picker to turn it off -- so it always
-// reports exactly one source. The id is a placeholder rather than the query's
-// real source id: EventList only needs a non-empty `sources` list to avoid
-// its picker-oriented "every calendar turned off" state, and it tints
-// unmatched rows blue by default regardless. This view is on its way out --
-// a later task replaces it with the merged picker view -- so it isn't worth
-// teaching it to track a real source id for its one remaining release.
-const SOURCES: CalendarSource[] = [
-	{id: 'ccc-calendar', title: '', color: c.systemBlue, kind: 'remote'},
-]
-
-export function CccCalendarView(props: Props): React.ReactNode {
-	let {now} = useMomentTimer({intervalMs: 60000})
-	let {isError, refetch, data = [], isRefetching} = props.query
-
-	if (isError) {
-		return (
-			<NoticeView
-				buttonText="Try Again"
-				onPress={refetch}
-				text={`A problem occured while loading: ${props.query.error}`}
-			/>
-		)
-	}
-
-	return (
-		<EventList.EventList
-			events={data}
-			failed={[]}
-			now={now}
-			onPressEvent={(entry) => props.onPressEvent(entry.event)}
-			onRefresh={refetch}
-			poweredBy={props.poweredBy}
-			refreshing={isRefetching}
-			sources={SOURCES}
-		/>
-	)
-}
+export {useCalendarSource, useCalendarSources} from './use-calendar-sources'
+export {useMergedEvents} from './use-merged-events'
+export type {CalendarSource, SourcedEvent} from './sources'

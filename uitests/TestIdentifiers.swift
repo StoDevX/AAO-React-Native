@@ -84,7 +84,8 @@ struct TestIdentifiers {
 	// MARK: - Calendar
 
 	enum Calendar {
-		static let tabs = ["St. Olaf", "Northfield"]
+		static let picker = "Choose calendars"
+		static let calendars = ["St. Olaf", "Northfield"]
 	}
 
 	// MARK: - Streaming Media
