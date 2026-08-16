@@ -13,6 +13,7 @@
     "@frogpond/badge": "workspace:*",
     "@frogpond/button": "workspace:*",
     "@frogpond/ccc-calendar": "workspace:*",
+    "@frogpond/ccc-jobs": "workspace:*",
     "@frogpond/colors": "workspace:*",
     "@frogpond/constants": "workspace:*",
     "@frogpond/data-sources": "workspace:*",

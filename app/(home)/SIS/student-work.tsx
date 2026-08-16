@@ -4,9 +4,8 @@ import * as c from '@frogpond/colors'
 import {ListSeparator, ListSectionHeader} from '@frogpond/lists'
 import {NoticeView, LoadingView} from '@frogpond/notice'
 import {JobRow} from '../../../source/features/sis/student-work/job-row'
-import type {JobType} from '../../../source/features/sis/student-work/types'
+import {jobPostingsOptions, type JobSummary} from '@frogpond/ccc-jobs'
 import {useRouter} from 'expo-router'
-import {studentWorkPostingsOptions} from '../../../source/features/sis/student-work/query'
 import {useQuery} from '@tanstack/react-query'
 
 const styles = StyleSheet.create({
@@ -20,14 +19,15 @@ const styles = StyleSheet.create({
 
 export default function SISStudentWorkPage(): React.ReactNode {
 	let router = useRouter()
-	let {
-		data = [],
-		error,
-		isError,
-		refetch,
-		isRefetching,
-		isLoading,
-	} = useQuery(studentWorkPostingsOptions)
+	let {data = [], error, isError, refetch, isRefetching, isLoading} = useQuery(jobPostingsOptions)
+
+	let sections = React.useMemo(
+		() =>
+			data
+				.filter((category) => category.jobs.length > 0)
+				.map((category) => ({title: category.name, data: category.jobs})),
+		[data],
+	)
 
 	if (isError) {
 		return (
@@ -47,22 +47,19 @@ export default function SISStudentWorkPage(): React.ReactNode {
 			}
 			contentContainerStyle={styles.contentContainer}
 			contentInsetAdjustmentBehavior="automatic"
-			keyExtractor={(_item: JobType, index: number) => index.toString()}
+			keyExtractor={(item: JobSummary) => item.id}
 			onRefresh={refetch}
 			refreshing={isRefetching}
 			renderItem={({item}) => (
 				<JobRow
 					job={item}
-					onPress={(job: JobType) =>
-						router.push({
-							pathname: '/JobDetail',
-							params: {jobId: job.id.toString()},
-						})
+					onPress={(job: JobSummary) =>
+						router.push({pathname: '/JobDetail', params: {jobId: job.id}})
 					}
 				/>
 			)}
 			renderSectionHeader={({section: {title}}) => <ListSectionHeader title={title} />}
-			sections={data}
+			sections={sections}
 			style={styles.listContainer}
 			testID="student-work-list"
 		/>

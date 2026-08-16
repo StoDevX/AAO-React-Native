@@ -1,32 +1,31 @@
 import * as React from 'react'
 import {Column, Row} from '@frogpond/layout'
 import {ListRow, Detail, Title} from '@frogpond/lists'
-import {fastGetTrimmedText} from '@frogpond/html-lib'
-import type {JobType} from './types'
+import type {JobSummary} from '@frogpond/ccc-jobs'
+import {format, isValid, parseISO} from 'date-fns'
 
 type Props = {
-	onPress: (job: JobType) => void
-	job: JobType
+	onPress: (job: JobSummary) => void
+	job: JobSummary
+}
+
+/// `PostedDate` is a plain `YYYY-MM-DD` with no zone, parsed as local time so
+/// the date a student sees is the date Oracle published.
+function postedOn(postedDate: string): string | undefined {
+	let parsed = parseISO(postedDate)
+	return isValid(parsed) ? `Posted ${format(parsed, 'MMMM d, yyyy')}` : undefined
 }
 
 export const JobRow = (props: Props): React.ReactNode => {
-	let _onPress = () => props.onPress(props.job)
-
 	let {job} = props
-	let title = fastGetTrimmedText(job.title)
-	let office = fastGetTrimmedText(job.office)
-	let hours = fastGetTrimmedText(job.hoursPerWeek)
-	let ending = hours === 'Full-time' ? '' : 'hrs/week'
+	let posted = postedOn(job.postedDate)
 
 	return (
-		<ListRow arrowPosition="top" onPress={_onPress}>
+		<ListRow arrowPosition="top" onPress={() => props.onPress(job)}>
 			<Row alignItems="center">
 				<Column flex={1}>
-					<Title lines={1}>{title}</Title>
-					<Detail lines={1}>{office}</Detail>
-					<Detail lines={1}>
-						{hours} {ending}
-					</Detail>
+					<Title lines={2}>{job.title}</Title>
+					{posted ? <Detail lines={1}>{posted}</Detail> : null}
 				</Column>
 			</Row>
 		</ListRow>

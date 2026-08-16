@@ -1,7 +1,7 @@
 import {onlineManager, QueryClient} from '@tanstack/react-query'
 import bundled from '../bundled.json'
 import {fetchManifest, resolveSource, resolveSources} from '../resolve'
-import {ID_PROPERTY, JrdSchema, REL_A_TO_Z, REL_NEWS} from '../types'
+import {ID_PROPERTY, JrdSchema, REL_A_TO_Z, REL_JOBS, REL_NEWS} from '../types'
 
 const ALL_NEWS_TYPES = [
 	'application/vnd.wordpress.v2.posts+json',
@@ -24,6 +24,17 @@ test('resolves a source by rel and id', () => {
 test('lists every source under a rel', () => {
 	const ids = resolveSources(manifest, REL_NEWS, ALL_NEWS_TYPES).map((s) => s.id)
 	expect(ids).toStrictEqual(['stolaf', 'mess', 'oleville'])
+})
+
+test('the bundled manifest carries the St. Olaf jobs site', () => {
+	const source = resolveSource(manifest, REL_JOBS, 'stolaf', [
+		'application/vnd.oracle.recruiting-ce+json',
+	])
+	expect(source.href).toBe(
+		'https://fa-ewur-saasfaprod1.fa.ocs.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_1',
+	)
+	expect(source.type).toBe('application/vnd.oracle.recruiting-ce+json')
+	expect(source.title).toBe('Student Work')
 })
 
 test('a-to-z has both the upstream and the extras', () => {
