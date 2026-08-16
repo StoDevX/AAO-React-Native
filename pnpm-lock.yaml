@@ -58,6 +58,9 @@ importers:
       '@frogpond/ccc-calendar':
         specifier: workspace:*
         version: link:modules/ccc-calendar
+      '@frogpond/ccc-jobs':
+        specifier: workspace:*
+        version: link:modules/ccc-jobs
       '@frogpond/colors':
         specifier: workspace:*
         version: link:modules/colors
