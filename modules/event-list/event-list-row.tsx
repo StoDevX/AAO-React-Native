@@ -24,6 +24,19 @@ import {listTimeLines} from './times'
 /// matching the event detail header's bar.
 const BAR_OVERSHOOT = 3
 
+/// The gap between the accent bar and the text beside it.
+///
+/// Stated rather than left to the HStack's default, because the default is
+/// derived from the contents and so is not the same on every row. A row with an
+/// end time but no location draws a second line whose leading content is
+/// nothing, so that line begins with the `Spacer` -- and a leading `Spacer`
+/// takes the whole stack's default spacing to zero. Measured on the simulator:
+/// bar to the first pixel of the title was 40px on rows with a location and
+/// 15px on "Staff and Faculty CommuniTEA", which has an end time and no
+/// location. 8pt is what the default already resolved to on every other row, so
+/// naming it moves nothing else.
+const BAR_GAP = 8
+
 /// Calendar.app truncates a long title or location to one line with a
 /// trailing ellipsis rather than wrapping -- wrapping pushes the row tall and,
 /// with a long location, can push the title out of line with the start time.
@@ -122,7 +135,7 @@ export function EventListRow({event, onPress, isLastInSection, color}: Props): R
 			    label -- the `Spacer` and the empty run to the right of a short title
 			    are dead. A row whose title stops early, an all-day event with no
 			    trailing time, is then only tappable on the words themselves. */}
-			<HStack alignment="top" modifiers={[contentShape(shapes.rectangle())]}>
+			<HStack alignment="top" modifiers={[contentShape(shapes.rectangle())]} spacing={BAR_GAP}>
 				{/* Same fixed-width-via-min/maxWidth trick as the detail header's bar --
 				    `frame`'s native side ignores min/max once width or height is set. */}
 				<VStack

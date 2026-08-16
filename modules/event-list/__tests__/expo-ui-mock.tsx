@@ -17,7 +17,9 @@ type WithModifiers = {modifiers?: Modifier[]; children?: React.ReactNode}
 /// `View` doesn't have a `modifiers` prop -- nothing native does -- so this
 /// widens just enough to let the mock stash the array on the rendered
 /// element for a test to read back, without reaching for `any`.
-const ViewWithModifiers = View as unknown as React.ComponentType<WithModifiers & {testID?: string}>
+const ViewWithModifiers = View as unknown as React.ComponentType<
+	WithModifiers & {spacing?: number; testID?: string}
+>
 
 const modifier =
 	($type: string) =>
@@ -103,14 +105,18 @@ export function VStack({
 
 /// Forwards `modifiers` for the same reason `VStack` does -- the row's tappable
 /// area is a `contentShape(…)` on an `HStack`, and a test has to be able to read
-/// it back.
+/// it back. `spacing` comes along too: left unstated, SwiftUI derives it from
+/// the stack's contents, and a row whose second line begins with a `Spacer`
+/// derived zero. Only the simulator shows the pixels, but a test can at least
+/// hold the number to a stated one.
 export function HStack({
 	children,
 	modifiers,
+	spacing,
 	testID,
-}: WithModifiers & {testID?: string}): React.ReactNode {
+}: WithModifiers & {spacing?: number; testID?: string}): React.ReactNode {
 	return (
-		<ViewWithModifiers modifiers={modifiers} testID={testID}>
+		<ViewWithModifiers modifiers={modifiers} spacing={spacing} testID={testID}>
 			{children}
 		</ViewWithModifiers>
 	)

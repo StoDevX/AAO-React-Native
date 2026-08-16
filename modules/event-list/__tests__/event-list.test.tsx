@@ -318,6 +318,30 @@ describe('EventList', () => {
 		})
 	})
 
+	// An HStack's default spacing is derived from its contents, and a row with
+	// an end time but no location draws a second line that begins with a
+	// `Spacer` -- which took the whole stack's spacing to zero and left the
+	// title against the bar. Only the simulator can show the pixels; this holds
+	// the spacing to a stated number so it cannot go back to being inferred.
+	test('the gap between the bar and the text is a fixed number, not the default', async () => {
+		await render(
+			<EventList
+				events={[makeEntry({location: ''})]}
+				failed={[]}
+				now={NOW}
+				onPressEvent={jest.fn()}
+				onRefresh={jest.fn()}
+				poweredBy={POWERED_BY}
+				refreshing={false}
+				sources={[STOLAF_SOURCE]}
+			/>,
+		)
+
+		let button = screen.getByLabelText('New Faculty Orientation')
+		let content = button.children[0] as {props: {spacing?: number}}
+		expect(content.props.spacing).toBe(8)
+	})
+
 	test('pull-to-refresh calls onRefresh', async () => {
 		let onRefresh = jest.fn()
 
