@@ -1,0 +1,1 @@
+{"data":[{"key":"app-support","enabled":true,"hidden":false,"title":"Have an App Question?","body":"If you've got a question about the app, or a new feature idea, let us know!\n","buttons":[{"title":"Email Us","action":"send-email","params":{"to":"allaboutolaf@frogpond.tech","subject":"A Thing","body":"Idea? Question? Comment? Concern?\n\nLet us know!\n"}}]}]}
