@@ -16,12 +16,12 @@ jest.mock('@expo/ui/swift-ui/modifiers', () => {
 describe('EventDetailHeader', () => {
 	// The event's name is not here -- it is the screen's native large title, set
 	// by the route -- so this component is only the date range and its bar.
-	test('it shows a line per date, meridiem included', async () => {
+	test('it shows a line per date, meridiem included in time', async () => {
 		await render(
 			<EventDetailHeader
 				lines={[
-					{prefix: 'From', time: '9', meridiem: 'AM', date: 'Monday, August 17, 2026'},
-					{prefix: 'to', time: '6', meridiem: 'PM', date: 'Thursday, August 20, 2026'},
+					{prefix: 'From', time: '9 AM', date: 'Monday, August 17, 2026'},
+					{prefix: 'to', time: '6 PM', date: 'Thursday, August 20, 2026'},
 				]}
 			/>,
 		)

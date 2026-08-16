@@ -84,52 +84,59 @@ export function detailTimes(event: EventType): EventDetailTime {
 }
 
 /// One line of the event detail's date range, e.g. `From 7:45 AM Monday,
-/// August 17, 2026`. `time`/`meridiem` are split out so a component can
-/// render the meridiem in a smaller nested `Text`, matching Calendar.app's
-/// small-caps AM/PM.
+/// August 17, 2026`. There is no separate `meridiem` field: `Intl` folds the
+/// meridiem into `time` itself, and in a 24-hour locale there is none to
+/// split out.
 export interface EventTimeLine {
 	prefix: string
 	time: string
-	meridiem: string
 	date: string
 }
 
-const DETAIL_LINE_DATE_FORMAT = 'dddd, MMMM D, YYYY'
-
-/// `6 PM`, not `6:00 PM` -- Calendar.app drops `:00` on the hour.
-function timeLineParts(value: Moment): {time: string; meridiem: string} {
-	return {
-		time: value.minutes() === 0 ? value.format('h') : value.format('h:mm'),
-		meridiem: value.format('A'),
-	}
+const DETAIL_LINE_DATE_OPTIONS: Intl.DateTimeFormatOptions = {
+	weekday: 'long',
+	month: 'long',
+	day: 'numeric',
+	year: 'numeric',
 }
 
-export function detailTimeLines(event: EventType): EventTimeLine[] {
+function formatDetailDate(value: Moment, locale: string | undefined): string {
+	return new Intl.DateTimeFormat(locale, DETAIL_LINE_DATE_OPTIONS).format(value.toDate())
+}
+
+/// `6 PM`, not `6:00 PM` -- Calendar.app drops `:00` on the hour. In a
+/// 24-hour locale this naturally becomes `18` with no meridiem, which is
+/// correct for that locale.
+function formatDetailTime(value: Moment, locale: string | undefined): string {
+	let options: Intl.DateTimeFormatOptions =
+		value.minutes() === 0 ? {hour: 'numeric'} : {hour: 'numeric', minute: '2-digit'}
+	return new Intl.DateTimeFormat(locale, options).format(value.toDate())
+}
+
+/// `locale` defaults to the device's own locale -- `undefined` tells `Intl`
+/// to use the system default rather than hardcoding one.
+export function detailTimeLines(event: EventType, locale?: string): EventTimeLine[] {
 	let {allDay, sillyZeroLength} = classify(event)
-	let startDate = event.startTime.format(DETAIL_LINE_DATE_FORMAT)
-	let endDate = event.endTime.format(DETAIL_LINE_DATE_FORMAT)
+	let startDate = formatDetailDate(event.startTime, locale)
+	let endDate = formatDetailDate(event.endTime, locale)
 
 	if (allDay) {
-		return [{prefix: 'All day', time: '', meridiem: '', date: startDate}]
+		return [{prefix: 'All day', time: '', date: startDate}]
 	}
 
 	if (sillyZeroLength) {
-		let {time, meridiem} = timeLineParts(event.startTime)
-		return [{prefix: '', time, meridiem, date: startDate}]
+		return [{prefix: '', time: formatDetailTime(event.startTime, locale), date: startDate}]
 	}
 
 	if (event.isOngoing) {
 		return [
-			{prefix: 'From', time: '', meridiem: '', date: startDate},
-			{prefix: 'to', time: '', meridiem: '', date: endDate},
+			{prefix: 'From', time: '', date: startDate},
+			{prefix: 'to', time: '', date: endDate},
 		]
 	}
 
-	let start = timeLineParts(event.startTime)
-	let end = timeLineParts(event.endTime)
-
 	return [
-		{prefix: 'From', time: start.time, meridiem: start.meridiem, date: startDate},
-		{prefix: 'to', time: end.time, meridiem: end.meridiem, date: endDate},
+		{prefix: 'From', time: formatDetailTime(event.startTime, locale), date: startDate},
+		{prefix: 'to', time: formatDetailTime(event.endTime, locale), date: endDate},
 	]
 }

@@ -105,51 +105,71 @@ describe('detailTimeLines', () => {
 		}
 	}
 
-	test('an ordinary event gets a From line and a to line', () => {
+	test('an ordinary event gets a From line and a to line (en-US, 12-hour)', () => {
 		let event = generateEvent('2026-08-17T07:45:00', '2026-08-20T18:00:00')
 
-		expect(detailTimeLines(event)).toEqual([
-			{prefix: 'From', time: '7:45', meridiem: 'AM', date: 'Monday, August 17, 2026'},
-			{prefix: 'to', time: '6', meridiem: 'PM', date: 'Thursday, August 20, 2026'},
+		expect(detailTimeLines(event, 'en-US')).toEqual([
+			{prefix: 'From', time: '7:45 AM', date: 'Monday, August 17, 2026'},
+			{prefix: 'to', time: '6 PM', date: 'Thursday, August 20, 2026'},
 		])
 	})
 
-	test('drops :00 when the minutes are zero', () => {
-		let event = generateEvent('2026-08-17T06:00:00', '2026-08-17T07:00:00')
+	test('an ordinary event gets a From line and a to line (en-GB, 24-hour)', () => {
+		let event = generateEvent('2026-08-17T07:45:00', '2026-08-20T18:00:00')
 
-		let [start] = detailTimeLines(event)
-		expect(start.time).toBe('6')
+		expect(detailTimeLines(event, 'en-GB')).toEqual([
+			{prefix: 'From', time: '7:45', date: 'Monday, 17 August 2026'},
+			{prefix: 'to', time: '18', date: 'Thursday, 20 August 2026'},
+		])
 	})
 
-	test('keeps :mm when the minutes are non-zero', () => {
+	test('drops the minutes when they are zero, in both clocks', () => {
+		let event = generateEvent('2026-08-17T06:00:00', '2026-08-17T07:00:00')
+
+		let [start] = detailTimeLines(event, 'en-US')
+		expect(start.time).toBe('6 AM')
+
+		let [startGB] = detailTimeLines(event, 'en-GB')
+		expect(startGB.time).toBe('06')
+	})
+
+	test('keeps the minutes when they are non-zero', () => {
 		let event = generateEvent('2026-08-17T07:45:00', '2026-08-17T08:00:00')
 
-		let [start] = detailTimeLines(event)
-		expect(start.time).toBe('7:45')
+		let [start] = detailTimeLines(event, 'en-US')
+		expect(start.time).toBe('7:45 AM')
 	})
 
 	test('an all-day event gets a single All day line with no time', () => {
 		let event = generateEvent('2026-08-17T00:00:00', '2026-08-18T00:00:00')
 
-		expect(detailTimeLines(event)).toEqual([
-			{prefix: 'All day', time: '', meridiem: '', date: 'Monday, August 17, 2026'},
+		expect(detailTimeLines(event, 'en-US')).toEqual([
+			{prefix: 'All day', time: '', date: 'Monday, August 17, 2026'},
 		])
 	})
 
 	test('an ongoing event gets dates without times', () => {
 		let event = generateEvent('2026-08-17T07:45:00', '2026-08-20T18:00:00', {isOngoing: true})
 
-		expect(detailTimeLines(event)).toEqual([
-			{prefix: 'From', time: '', meridiem: '', date: 'Monday, August 17, 2026'},
-			{prefix: 'to', time: '', meridiem: '', date: 'Thursday, August 20, 2026'},
+		expect(detailTimeLines(event, 'en-US')).toEqual([
+			{prefix: 'From', time: '', date: 'Monday, August 17, 2026'},
+			{prefix: 'to', time: '', date: 'Thursday, August 20, 2026'},
 		])
 	})
 
 	test('a zero-length event gets a single line with no to', () => {
 		let event = generateEvent('2026-08-17T07:45:00', '2026-08-17T07:45:00')
 
-		expect(detailTimeLines(event)).toEqual([
-			{prefix: '', time: '7:45', meridiem: 'AM', date: 'Monday, August 17, 2026'},
+		expect(detailTimeLines(event, 'en-US')).toEqual([
+			{prefix: '', time: '7:45 AM', date: 'Monday, August 17, 2026'},
 		])
+	})
+
+	test('defaults to the device locale when none is passed', () => {
+		let event = generateEvent('2026-08-17T07:45:00', '2026-08-17T08:00:00')
+
+		// Node's default locale in this test environment is en-US.
+		let [start] = detailTimeLines(event)
+		expect(start.time).toBe('7:45 AM')
 	})
 })
