@@ -26,6 +26,9 @@ export const background = modifier('background')
 export const multilineTextAlignment = modifier('multilineTextAlignment')
 export const buttonStyle = modifier('buttonStyle')
 export const disabled = modifier('disabled')
+export const listRowBackground = modifier('listRowBackground')
+export const listRowInsets = modifier('listRowInsets')
+export const listRowSeparator = modifier('listRowSeparator')
 
 export const accessibilityLabel = (label: string): Modifier => ({
 	$type: 'accessibilityLabel',

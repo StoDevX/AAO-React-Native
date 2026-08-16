@@ -1,12 +1,14 @@
 import * as React from 'react'
 import {StyleSheet} from 'react-native'
-import {Button, Form, Host, Link, Section, Text} from '@expo/ui/swift-ui'
+import {Button, Form, Host, Link, Section, Text, VStack} from '@expo/ui/swift-ui'
 import {
 	accessibilityLabel,
 	buttonStyle,
 	disabled as disabledModifier,
 	font,
 	foregroundColor,
+	listRowBackground,
+	listRowSeparator,
 	multilineTextAlignment,
 	textSelection,
 } from '@expo/ui/swift-ui/modifiers'
@@ -77,8 +79,13 @@ export function EventDetail({event, poweredBy}: Props): React.ReactNode {
 					)}
 				/>
 
+				{/* The attribution is a caption on the form, not a row of it, so the
+				    row's background and separator are cleared. Its insets are left
+				    alone deliberately: zeroing them pulls the text flush left, out of
+				    line with every section header, and leaves `multilineTextAlignment`
+				    only the text's own width to centre within. */}
 				{poweredBy.title ? (
-					<Section>
+					<VStack modifiers={[listRowBackground('clear'), listRowSeparator('hidden')]}>
 						<Text
 							modifiers={[
 								font({size: 10}),
@@ -89,7 +96,7 @@ export function EventDetail({event, poweredBy}: Props): React.ReactNode {
 						>
 							{poweredBy.title}
 						</Text>
-					</Section>
+					</VStack>
 				) : null}
 			</Form>
 		</Host>
