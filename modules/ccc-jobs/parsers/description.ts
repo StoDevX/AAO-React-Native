@@ -5,7 +5,8 @@ import {
 	parseHtml,
 	type ChildNode,
 } from '@frogpond/html-lib'
-import type {JobField} from '../types'
+import {z} from 'zod'
+import type {JobDetail, JobField} from '../types'
 
 /// The labels worth a row of their own, keyed by their normalised form.
 const PROMOTED = new Map<string, string>([
@@ -170,4 +171,38 @@ export function parseDescription(html: string): {fields: JobField[]; body: strin
 		.join('\n\n')
 
 	return {fields, body}
+}
+
+const DetailSchema = z.object({
+	Id: z.string(),
+	Title: z.string(),
+	Category: z.string().nullish(),
+	JobSchedule: z.string().nullish(),
+	PrimaryLocation: z.string().nullish(),
+	ExternalPostedStartDate: z.string().nullish(),
+	ExternalDescriptionStr: z.string().nullish(),
+})
+
+const DetailResponseSchema = z.object({
+	items: z.array(DetailSchema).min(1),
+})
+
+export function parseDetail(body: unknown, url: string): JobDetail {
+	let {items} = DetailResponseSchema.parse(body)
+	let posting = items[0]
+	if (!posting) throw new Error('no posting in the detail response')
+
+	let {fields, body: markdown} = parseDescription(posting.ExternalDescriptionStr ?? '')
+
+	return {
+		id: posting.Id,
+		title: posting.Title,
+		category: posting.Category ?? undefined,
+		schedule: posting.JobSchedule ?? undefined,
+		location: posting.PrimaryLocation ?? undefined,
+		postedDate: posting.ExternalPostedStartDate ?? undefined,
+		fields,
+		body: markdown,
+		url,
+	}
 }

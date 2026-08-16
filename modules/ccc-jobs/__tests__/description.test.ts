@@ -1,7 +1,8 @@
-import {parseDescription} from '../parsers/description'
+import {parseDescription, parseDetail} from '../parsers/description'
 import standard from './fixtures/detail-standard.json'
 import romanNumerals from './fixtures/detail-roman-numerals.json'
 import brSeparated from './fixtures/detail-no-description-label.json'
+import summer from './fixtures/detail-summer.json'
 
 function descriptionOf(fixture: unknown): string {
 	const item = (fixture as {items: Array<{ExternalDescriptionStr: string}>}).items[0]
@@ -97,5 +98,41 @@ describe('parseDescription', () => {
 
 	test('an empty description yields nothing', () => {
 		expect(parseDescription('')).toEqual({fields: [], body: ''})
+	})
+})
+
+describe('parseDetail', () => {
+	const URL = 'https://example.test/job/1'
+
+	test('reads the header fields Oracle actually populates', () => {
+		const detail = parseDetail(standard, URL)
+
+		expect(detail.id).toMatch(/^\d+$/u)
+		expect(detail.title).not.toBe('')
+		expect(detail.category).toBe('Student Work')
+		expect(detail.schedule).not.toBe('')
+		expect(detail.url).toBe(URL)
+	})
+
+	test('reads the summer posting as its own category', () => {
+		expect(parseDetail(summer, URL).category).toBe('Summer Student Work')
+	})
+
+	test('carries the scraped fields and body through', () => {
+		const detail = parseDetail(standard, URL)
+
+		expect(detail.fields.length).toBeGreaterThan(0)
+		expect(detail.body).not.toBe('')
+	})
+
+	test('a posting with no description still parses', () => {
+		const detail = parseDetail({items: [{Id: '1', Title: 'A job'}]}, URL)
+
+		expect(detail.body).toBe('')
+		expect(detail.fields).toEqual([])
+	})
+
+	test('an empty collection throws', () => {
+		expect(() => parseDetail({items: []}, URL)).toThrow()
 	})
 })
