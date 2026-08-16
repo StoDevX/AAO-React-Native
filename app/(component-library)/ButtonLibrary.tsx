@@ -20,17 +20,17 @@ const ButtonCellExample = (): React.ReactNode => {
 
 			<ButtonCell indeterminate={true} onPress={() => undefined} title="Indeterminate" />
 
-			<ButtonCell accessoryIcon="school" onPress={() => undefined} title="Accessory" />
+			<ButtonCell accessoryIcon="graduationcap.fill" onPress={() => undefined} title="Accessory" />
 
 			<ButtonCell
-				accessoryIcon="school"
+				accessoryIcon="graduationcap.fill"
 				onPress={() => undefined}
 				textStyle={{color: c.red}}
 				title="Accessory, textstyle"
 			/>
 
 			<ButtonCell
-				accessoryIcon="school"
+				accessoryIcon="graduationcap.fill"
 				disabled={true}
 				onPress={() => undefined}
 				textStyle={{color: c.red}}
