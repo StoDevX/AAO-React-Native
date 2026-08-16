@@ -2,7 +2,7 @@ import {describe, expect, test} from '@jest/globals'
 
 import type {EventType} from '@frogpond/event-type'
 import moment from 'moment'
-import {detailTimes, times} from '../times'
+import {detailTimes, detailTimeLines, times} from '../times'
 
 describe('allDay', () => {
 	function generateEvent(start: string, end: string): EventType {
@@ -81,3 +81,75 @@ describe('ongoing events', () => {
 
 // and they can all test times and detailTimes right next to each other -
 // no need for separate testcases.
+
+describe('detailTimeLines', () => {
+	function generateEvent(
+		start: string,
+		end: string,
+		overrides: Partial<EventType> = {},
+	): EventType {
+		return {
+			title: 'title',
+			description: 'description',
+			startTime: moment(start),
+			endTime: moment(end),
+			location: 'location',
+			isOngoing: false,
+			links: [],
+			config: {
+				startTime: false,
+				endTime: false,
+				subtitle: 'description',
+			},
+			...overrides,
+		}
+	}
+
+	test('an ordinary event gets a From line and a to line', () => {
+		let event = generateEvent('2026-08-17T07:45:00', '2026-08-20T18:00:00')
+
+		expect(detailTimeLines(event)).toEqual([
+			{prefix: 'From', time: '7:45', meridiem: 'AM', date: 'Monday, August 17, 2026'},
+			{prefix: 'to', time: '6', meridiem: 'PM', date: 'Thursday, August 20, 2026'},
+		])
+	})
+
+	test('drops :00 when the minutes are zero', () => {
+		let event = generateEvent('2026-08-17T06:00:00', '2026-08-17T07:00:00')
+
+		let [start] = detailTimeLines(event)
+		expect(start.time).toBe('6')
+	})
+
+	test('keeps :mm when the minutes are non-zero', () => {
+		let event = generateEvent('2026-08-17T07:45:00', '2026-08-17T08:00:00')
+
+		let [start] = detailTimeLines(event)
+		expect(start.time).toBe('7:45')
+	})
+
+	test('an all-day event gets a single All day line with no time', () => {
+		let event = generateEvent('2026-08-17T00:00:00', '2026-08-18T00:00:00')
+
+		expect(detailTimeLines(event)).toEqual([
+			{prefix: 'All day', time: '', meridiem: '', date: 'Monday, August 17, 2026'},
+		])
+	})
+
+	test('an ongoing event gets dates without times', () => {
+		let event = generateEvent('2026-08-17T07:45:00', '2026-08-20T18:00:00', {isOngoing: true})
+
+		expect(detailTimeLines(event)).toEqual([
+			{prefix: 'From', time: '', meridiem: '', date: 'Monday, August 17, 2026'},
+			{prefix: 'to', time: '', meridiem: '', date: 'Thursday, August 20, 2026'},
+		])
+	})
+
+	test('a zero-length event gets a single line with no to', () => {
+		let event = generateEvent('2026-08-17T07:45:00', '2026-08-17T07:45:00')
+
+		expect(detailTimeLines(event)).toEqual([
+			{prefix: '', time: '7:45', meridiem: 'AM', date: 'Monday, August 17, 2026'},
+		])
+	})
+})

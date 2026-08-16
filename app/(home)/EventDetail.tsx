@@ -103,8 +103,11 @@ export default function EventDetailPage(): React.ReactNode {
 			{/* With no title to separate from the content, the bar's fill and hairline
 			    only cut the masthead off from the screen it sits on. A `transparent`
 			    background is what `Stack.Header` keys the absolutely-positioned mode
-			    off, so the form scrolls under the buttons as it does in Calendar.app. */}
-			<Stack.Header style={TRANSPARENT_HEADER} />
+			    off, so the form scrolls under the buttons as it does in Calendar.app.
+			    `blurEffect` is a separate prop from `style` -- it puts a material
+			    behind the floating back/share buttons as content scrolls under them,
+			    matching Calendar.app, without giving the bar back its opaque fill. */}
+			<Stack.Header blurEffect="systemChromeMaterial" style={TRANSPARENT_HEADER} />
 			<Stack.Toolbar placement="right">
 				<Stack.Toolbar.Button
 					accessibilityLabel="Share Event"

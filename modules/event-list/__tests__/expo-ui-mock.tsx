@@ -22,6 +22,7 @@ export const font = modifier('font')
 export const foregroundColor = modifier('foregroundColor')
 export const textSelection = modifier('textSelection')
 export const frame = modifier('frame')
+export const clipShape = modifier('clipShape')
 export const background = modifier('background')
 export const multilineTextAlignment = modifier('multilineTextAlignment')
 export const buttonStyle = modifier('buttonStyle')
@@ -58,8 +59,8 @@ export function Form({children}: WithModifiers): React.ReactNode {
 	return <View>{children}</View>
 }
 
-export function VStack({children}: WithModifiers): React.ReactNode {
-	return <View>{children}</View>
+export function VStack({children, testID}: WithModifiers & {testID?: string}): React.ReactNode {
+	return <View testID={testID}>{children}</View>
 }
 
 export function HStack({children}: WithModifiers): React.ReactNode {

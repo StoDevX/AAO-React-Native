@@ -56,6 +56,7 @@ describe('EventDetail', () => {
 
 		expect(screen.getByText('New Faculty Orientation')).toBeTruthy()
 		expect(screen.getByTestId('event-detail-times')).toBeTruthy()
+		expect(screen.getByText('Monday, August 17, 2026', {exact: false})).toBeTruthy()
 		expect(screen.getByText('Location')).toBeTruthy()
 		expect(screen.getByText('Kings Dining')).toBeTruthy()
 		expect(screen.getByText('Description')).toBeTruthy()

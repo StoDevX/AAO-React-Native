@@ -17,17 +17,22 @@ describe('EventDetailHeader', () => {
 	test('it shows the title and the date range', async () => {
 		await render(
 			<EventDetailHeader
-				times="Aug. 17 9:00 AM to Aug. 20 6:00 PM"
+				lines={[
+					{prefix: 'From', time: '9', meridiem: 'AM', date: 'Monday, August 17, 2026'},
+					{prefix: 'to', time: '6', meridiem: 'PM', date: 'Thursday, August 20, 2026'},
+				]}
 				title="New Faculty Orientation"
 			/>,
 		)
 
 		expect(screen.getByText('New Faculty Orientation')).toBeTruthy()
-		expect(screen.getByText('Aug. 17 9:00 AM to Aug. 20 6:00 PM')).toBeTruthy()
+		expect(screen.getByTestId('event-detail-times')).toBeTruthy()
+		expect(screen.getByText('Monday, August 17, 2026', {exact: false})).toBeTruthy()
+		expect(screen.getByText('Thursday, August 20, 2026', {exact: false})).toBeTruthy()
 	})
 
-	test('it omits the date range when there is none', async () => {
-		await render(<EventDetailHeader times="" title="All-Day Thing" />)
+	test('it omits the date range when there are no lines', async () => {
+		await render(<EventDetailHeader lines={[]} title="All-Day Thing" />)
 
 		expect(screen.getByText('All-Day Thing')).toBeTruthy()
 		expect(screen.queryByTestId('event-detail-times')).toBeNull()

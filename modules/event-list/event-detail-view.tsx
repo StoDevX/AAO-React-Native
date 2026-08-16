@@ -17,7 +17,7 @@ import {AddToCalendar} from '@frogpond/add-to-device-calendar'
 import type {EventType} from '@frogpond/event-type'
 
 import {EventDetailHeader} from './event-detail-header'
-import {getTimes} from './calendar-util'
+import {detailTimeLines} from './times'
 import type {PoweredBy} from './types'
 
 const styles = StyleSheet.create({
@@ -40,7 +40,7 @@ type Props = {
 }
 
 export function EventDetail({event, poweredBy}: Props): React.ReactNode {
-	let times = getTimes(event).trim()
+	let lines = detailTimeLines(event)
 
 	return (
 		<Host style={styles.host}>
@@ -48,7 +48,7 @@ export function EventDetail({event, poweredBy}: Props): React.ReactNode {
 				{/* The header is a masthead rather than a row, so it loses the
 				    grouped-row card the way the attribution below does. */}
 				<VStack modifiers={[listRowBackground('clear'), listRowSeparator('hidden')]}>
-					<EventDetailHeader times={times} title={event.title.trim()} />
+					<EventDetailHeader lines={lines} title={event.title.trim()} />
 				</VStack>
 
 				<TextSection content={event.location.trim()} header="Location" />
