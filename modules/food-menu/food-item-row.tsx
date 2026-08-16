@@ -5,7 +5,7 @@ import {Column, Row} from '@frogpond/layout'
 import {Detail, ListRow, Title} from '@frogpond/lists'
 import type {MasterCorIconMapType, MenuItemType} from './types'
 import * as c from '@frogpond/colors'
-import {Ionicons as Icon} from '@react-native-vector-icons/ionicons'
+import {SymbolView} from 'expo-symbols'
 
 type Props = {
 	corIcons: MasterCorIconMapType
@@ -33,7 +33,9 @@ export function FoodItemRow({
 		>
 			<Row alignItems="center">
 				<View style={[styles.badge, {width: left}]}>
-					{badgeSpecials && data.special ? <Icon name="star" style={styles.badgeIcon} /> : null}
+					{badgeSpecials && data.special ? (
+						<SymbolView name="star.fill" size={16} tintColor={c.secondaryLabel} />
+					) : null}
 				</View>
 
 				<Column flex={1}>
@@ -56,10 +58,6 @@ const styles = StyleSheet.create({
 	badge: {
 		alignItems: 'center',
 		justifyContent: 'center',
-	},
-	badgeIcon: {
-		fontSize: 16,
-		color: c.secondaryLabel,
 	},
 	iconContainer: {
 		marginLeft: 10,
