@@ -21,6 +21,21 @@ const POWERED_BY: Record<EventSource, {title: string; href: string}> = {
 	'krlx-schedule': KRLX_POWERED_BY,
 }
 
+/// Not `StyleSheet.create`: this is header configuration rather than a view
+/// style, and `shadowColor` is typed as the literal `'transparent'`, which
+/// `StyleSheet.create` widens to `string`.
+///
+/// Only the large-title area is cleared. The standard bar keeps its native
+/// appearance, which is the whole point of using a real large title: UIKit
+/// gives it a transparent scroll-edge and fades in a blurred background as the
+/// title collapses. `Stack.Header` exposes one appearance for both states, so
+/// setting it by hand -- as this screen previously did -- can only ever pick
+/// one of them.
+const CLEAR_LARGE_TITLE = {
+	backgroundColor: 'transparent',
+	shadowColor: 'transparent',
+} as const
+
 export default function EventDetailPage(): React.ReactNode {
 	let {source, eventKey} = useLocalSearchParams<{
 		source: EventSource
@@ -28,8 +43,8 @@ export default function EventDetailPage(): React.ReactNode {
 	}>()
 
 	// Detail lookups don't need the list's eventMapper: it only ever sets
-	// config.subtitle, which the detail view never reads (only event-row.tsx
-	// does) -- passing a mapper here would just be a second copy of that
+	// config.subtitle, which the detail view never reads (only the list's
+	// row does) -- passing a mapper here would just be a second copy of that
 	// transform that has to stay byte-identical to the list's forever.
 	let {
 		data: event,
@@ -84,7 +99,8 @@ export default function EventDetailPage(): React.ReactNode {
 
 	return (
 		<>
-			<Stack.Title>{event.title}</Stack.Title>
+			<Stack.Title large={true}>{event.title}</Stack.Title>
+			<Stack.Header largeStyle={CLEAR_LARGE_TITLE} />
 			<Stack.Toolbar placement="right">
 				<Stack.Toolbar.Button
 					accessibilityLabel="Share Event"

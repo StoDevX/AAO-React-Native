@@ -18,8 +18,6 @@
  *    process.env.APP_MODE='mocked'
  */
 
-export * from './sentry'
-
 export const install = (): void => {}
 
 export const navigationIntegration = {

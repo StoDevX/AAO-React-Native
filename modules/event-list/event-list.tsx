@@ -1,13 +1,22 @@
 import * as React from 'react'
-import {StyleSheet, SectionList} from 'react-native'
+import {StyleSheet} from 'react-native'
+import {Host, List, Section, Text} from '@expo/ui/swift-ui'
+import {
+	background,
+	font,
+	foregroundColor,
+	listStyle,
+	refreshable,
+	scrollContentBackground,
+} from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
 import toPairs from 'lodash/toPairs'
 import type {EventType} from '@frogpond/event-type'
 import groupBy from 'lodash/groupBy'
 import type {Moment} from 'moment-timezone'
-import {FullWidthSeparator, ListSectionHeader} from '@frogpond/lists'
 import {NoticeView} from '@frogpond/notice'
-import EventRow from './event-row'
+import {EventListRow} from './event-list-row'
+import {formatSectionHeader} from './times'
 import {PoweredBy} from './types'
 
 type Props = {
@@ -20,8 +29,18 @@ type Props = {
 	onPressEvent: (event: EventType) => void
 }
 
-type EventSection = {readonly title: string; readonly data: EventType[]}
+type EventSection = {
+	readonly key: string
+	readonly title: string
+	readonly isToday: boolean
+	readonly data: EventType[]
+}
 
+/// Groups events the way the list has always grouped them -- an `Ongoing`
+/// group, and today's events grouped together regardless of the timezone
+/// quirks in `event.startTime` -- but keys the day groups on an
+/// unambiguous ISO date rather than a formatted string, since the display
+/// title is now locale-aware and computed separately below.
 function groupEvents(events: readonly EventType[], now: Moment): Array<EventSection> {
 	let grouped = groupBy(events, (event) => {
 		if (event.isOngoing) {
@@ -30,13 +49,31 @@ function groupEvents(events: readonly EventType[], now: Moment): Array<EventSect
 		if (event.startTime.isSame(now, 'day')) {
 			return 'Today'
 		}
-		return event.startTime.format('ddd  MMM Do') // google returns events in CST
+		return event.startTime.format('YYYY-MM-DD') // google returns events in CST
 	})
 
-	return toPairs(grouped).map(([key, value]) => ({
-		title: key,
-		data: value,
-	}))
+	return toPairs(grouped).map(([key, data]) => {
+		if (key === 'Ongoing') {
+			return {key, title: 'Ongoing', isToday: false, data}
+		}
+		if (key === 'Today') {
+			return {key, title: formatSectionHeader(now), isToday: true, data}
+		}
+		return {key, title: formatSectionHeader(data[0].startTime), isToday: false, data}
+	})
+}
+
+/// Plain, leading-aligned section header text on the list background --
+/// Calendar.app has no card behind it. Today's is tinted red; every other
+/// day uses the normal label colour, matching the reference screenshot.
+function SectionHeader({title, isToday}: {title: string; isToday: boolean}): React.ReactNode {
+	return (
+		<Text
+			modifiers={[font({textStyle: 'headline'}), foregroundColor(isToday ? c.systemRed : c.label)]}
+		>
+			{title}
+		</Text>
+	)
 }
 
 export function EventList(props: Props): React.ReactNode {
@@ -44,32 +81,51 @@ export function EventList(props: Props): React.ReactNode {
 		return <NoticeView text={props.message} />
 	}
 
+	if (props.events.length === 0) {
+		return <NoticeView text="No events." />
+	}
+
+	let sections = groupEvents(props.events, props.now)
+
 	return (
-		<SectionList<EventType, EventSection>
-			ItemSeparatorComponent={FullWidthSeparator}
-			ListEmptyComponent={<NoticeView text="No events." />}
-			contentContainerStyle={styles.contentContainer}
-			contentInsetAdjustmentBehavior="automatic"
-			keyExtractor={(item, index) => index.toString()}
-			onRefresh={props.onRefresh}
-			refreshing={props.refreshing}
-			renderItem={({item}) => <EventRow event={item} onPress={props.onPressEvent} />}
-			renderSectionHeader={({section}) => (
-				<ListSectionHeader spacing={{left: 10}} title={section.title} />
-			)}
-			sections={groupEvents(props.events, props.now)}
-			showsVerticalScrollIndicator={false}
-			style={styles.container}
-		/>
+		<Host style={styles.host}>
+			<List
+				modifiers={[
+					listStyle('plain'),
+					// A plain list's own background is transparent by default,
+					// leaving the grouped grey of the screen behind it showing
+					// through the gaps between sections and behind the headers.
+					// Painting it explicitly is what makes the list read as flat
+					// white like Calendar.app's, with no card behind anything.
+					scrollContentBackground('hidden'),
+					background(c.systemBackground),
+					refreshable(async () => {
+						await props.onRefresh()
+					}),
+				]}
+			>
+				{sections.map((section) => (
+					<Section
+						header={<SectionHeader isToday={section.isToday} title={section.title} />}
+						key={section.key}
+					>
+						{section.data.map((event, index) => (
+							<EventListRow
+								event={event}
+								isLastInSection={index === section.data.length - 1}
+								key={index}
+								onPress={props.onPressEvent}
+							/>
+						))}
+					</Section>
+				))}
+			</List>
+		</Host>
 	)
 }
 
 const styles = StyleSheet.create({
-	container: {
+	host: {
 		flex: 1,
-		backgroundColor: c.secondarySystemBackground,
-	},
-	contentContainer: {
-		flexGrow: 1,
 	},
 })

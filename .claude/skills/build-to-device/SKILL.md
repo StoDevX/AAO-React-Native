@@ -14,6 +14,25 @@ Use this when someone asks you to put a build on their phone — usually to chec
 something the UI tests cannot, such as native rendering, menu presentation,
 alternate app icons, or mDNS discovery.
 
+## The development variant signs on its own
+
+Use `APP_VARIANT=development`. CLAUDE.md warns that the dev bundle identifier
+has no App Store Connect record and no `match` profiles, which reads as though a
+device build needs that groundwork first. It does not: with
+`CODE_SIGN_STYLE=Automatic` and `-allowProvisioningUpdates`, Xcode mints a
+development profile for `NFMTHAZVS9.com.drewvolz.stolaf.dev` against the signed-in
+Apple ID, first try, with no portal record and no `match` involvement.
+
+That warning is about TestFlight and the App Store, where a bundle identifier
+does need its own record. A development build to a paired phone is a different
+path, so do not set up provisioning you will not use, and do not fall back to
+the production identity — that one *replaces* the person's App Store app.
+
+Confirmed 2026-08-16 on an iPhone 14 Pro. The installed app reports
+`CFBundleDisplayName = AAO Dev` and `CFBundleIdentifier =
+NFMTHAZVS9.com.drewvolz.stolaf.dev`; check both after injecting, since it is the
+cheapest way to prove you built the variant you meant to.
+
 ## The two problems you will hit
 
 Both have caught previous sessions out. Neither is obvious from the error.
@@ -101,8 +120,11 @@ that succeeds says nothing about whether the app survives launch.
 ```bash
 xcrun devicectl device process launch --device <UDID> \
   --activate --terminate-existing <BUNDLE ID>
-# alive? a count of 1 means it is still up a moment later
-xcrun devicectl device info processes --device <UDID> | grep -c AllAboutOlaf
+# alive? a count of 1 means it is still up a moment later.
+# Grep the executable name, NOT the bundle id: the process list prints the
+# path to the binary, so `grep -c stolaf.dev` returns 0 for a running app and
+# reads exactly like a launch crash.
+xcrun devicectl device info processes --device <UDID> | grep -ci olaf
 xcrun devicectl device capture screenshot --device <UDID> --destination shot.png
 ```
 
