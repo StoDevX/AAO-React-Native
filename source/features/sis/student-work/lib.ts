@@ -1,7 +1,7 @@
 import {Platform, Share} from 'react-native'
-import type {JobType} from './types'
+import type {JobDetail} from '@frogpond/ccc-jobs'
 
-export function shareJob(job: JobType): void {
+export function shareJob(job: JobDetail): void {
 	if (Platform.OS === 'ios') {
 		Share.share({
 			url: job.url,
