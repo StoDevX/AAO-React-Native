@@ -1,6 +1,6 @@
 import * as React from 'react'
 import {Stack, useRouter} from 'expo-router'
-import {CccCalendarView, namedCalendarOptions} from '@frogpond/ccc-calendar'
+import {namedCalendarOptions, ScheduleView} from '@frogpond/ccc-calendar'
 import {eventKey} from '@frogpond/event-list'
 import {useQuery} from '@tanstack/react-query'
 import {EventType} from '@frogpond/event-type'
@@ -23,7 +23,7 @@ export default function KSTOSchedulePage(): React.ReactNode {
 	return (
 		<>
 			<Stack.Title>KSTO Schedule</Stack.Title>
-			<CccCalendarView
+			<ScheduleView
 				onPressEvent={onPressEvent}
 				poweredBy={KSTO_POWERED_BY}
 				query={useQuery(namedCalendarOptions('ksto-schedule', {eventMapper}))}

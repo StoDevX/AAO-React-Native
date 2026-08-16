@@ -1,4 +1,5 @@
 import * as React from 'react'
+import type {ColorValue} from 'react-native'
 import {Button, HStack, Image, Spacer, Text, VStack} from '@expo/ui/swift-ui'
 import {
 	accessibilityLabel,
@@ -34,6 +35,8 @@ type Props = {
 	/// hairline of its own and Calendar.app's list has only one line between
 	/// a section's last row and the next header, not two.
 	isLastInSection: boolean
+	/// The accent bar's colour -- the calendar this event came from.
+	color: ColorValue
 }
 
 /// The trailing text for each of the row's two lines.
@@ -99,7 +102,7 @@ function RowLine({
 /// location line under it, and the start/end times trailing. Matches
 /// Calendar.app's list -- see the reference screenshot in the task brief --
 /// rather than the old left-hand time column this replaces.
-export function EventListRow({event, onPress, isLastInSection}: Props): React.ReactNode {
+export function EventListRow({event, onPress, isLastInSection, color}: Props): React.ReactNode {
 	let title = event.title
 	let subtitle = event[event.config.subtitle]?.trim()
 	let {first, second, firstIsTime} = trailingText(event)
@@ -119,7 +122,7 @@ export function EventListRow({event, onPress, isLastInSection}: Props): React.Re
 				<VStack
 					modifiers={[
 						frame({minWidth: 4, maxWidth: 4, maxHeight: Infinity}),
-						background(c.systemBlue),
+						background(color),
 						clipShape('capsule'),
 					]}
 				>

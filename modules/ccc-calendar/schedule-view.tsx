@@ -7,27 +7,20 @@ import * as c from '@frogpond/colors'
 import * as React from 'react'
 import type {SourcedEvent} from './sources'
 
-export {namedCalendarOptions, namedCalendarEventOptions} from './query'
-export {ScheduleView} from './schedule-view'
-
 type Props = {
 	poweredBy: PoweredBy
 	query: UseQueryResult<SourcedEvent[]>
 	onPressEvent: (event: EventType) => void
 }
 
-// A single mandatory calendar, with no picker to turn it off -- so it always
-// reports exactly one source. The id is a placeholder rather than the query's
-// real source id: EventList only needs a non-empty `sources` list to avoid
-// its picker-oriented "every calendar turned off" state, and it tints
-// unmatched rows blue by default regardless. This view is on its way out --
-// a later task replaces it with the merged picker view -- so it isn't worth
-// teaching it to track a real source id for its one remaining release.
-const SOURCES: CalendarSource[] = [
-	{id: 'ccc-calendar', title: '', color: c.systemBlue, kind: 'remote'},
-]
+// KSTO's and KRLX's schedules are broadcast schedules, not campus calendars --
+// they aren't part of the calendar picker and never will be. This is a
+// single query with one accent colour, no picker, no merge, and no
+// per-source failure list, rather than reusing the picker-shaped
+// `CccCalendarView`.
+const SOURCES: CalendarSource[] = [{id: 'schedule', title: '', color: c.systemBlue, kind: 'remote'}]
 
-export function CccCalendarView(props: Props): React.ReactNode {
+export function ScheduleView(props: Props): React.ReactNode {
 	let {now} = useMomentTimer({intervalMs: 60000})
 	let {isError, refetch, data = [], isRefetching} = props.query
 

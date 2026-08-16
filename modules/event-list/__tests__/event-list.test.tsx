@@ -19,6 +19,8 @@ jest.mock('@expo/ui/swift-ui/modifiers', () => {
 const POWERED_BY = {title: 'Powered by the St. Olaf calendar', href: 'https://example.com'}
 const NOW = moment('2026-08-17T12:00:00Z')
 
+const STOLAF_SOURCE = {id: 'stolaf', title: 'St. Olaf', color: 'blue', kind: 'remote' as const}
+
 function makeEvent(overrides: Partial<EventType> = {}): EventType {
 	return {
 		title: 'New Faculty Orientation',
@@ -33,16 +35,22 @@ function makeEvent(overrides: Partial<EventType> = {}): EventType {
 	}
 }
 
+function makeEntry(overrides: Partial<EventType> = {}) {
+	return {sourceId: 'stolaf', key: 'a', event: makeEvent(overrides)}
+}
+
 describe('EventList', () => {
 	test('renders a section header for the event’s day', async () => {
 		await render(
 			<EventList
-				events={[makeEvent()]}
+				events={[makeEntry()]}
+				failed={[]}
 				now={NOW}
 				onPressEvent={jest.fn()}
 				onRefresh={jest.fn()}
 				poweredBy={POWERED_BY}
 				refreshing={false}
+				sources={[STOLAF_SOURCE]}
 			/>,
 		)
 
@@ -52,12 +60,14 @@ describe('EventList', () => {
 	test('renders a row with its title and trailing start/end times', async () => {
 		await render(
 			<EventList
-				events={[makeEvent()]}
+				events={[makeEntry()]}
+				failed={[]}
 				now={NOW}
 				onPressEvent={jest.fn()}
 				onRefresh={jest.fn()}
 				poweredBy={POWERED_BY}
 				refreshing={false}
+				sources={[STOLAF_SOURCE]}
 			/>,
 		)
 
@@ -66,19 +76,21 @@ describe('EventList', () => {
 	})
 
 	test('an all-day row shows all-day instead of times', async () => {
-		let event = makeEvent({
+		let entry = makeEntry({
 			startTime: moment('2026-08-17T00:00:00Z'),
 			endTime: moment('2026-08-18T00:00:00Z'),
 		})
 
 		await render(
 			<EventList
-				events={[event]}
+				events={[entry]}
+				failed={[]}
 				now={NOW}
 				onPressEvent={jest.fn()}
 				onRefresh={jest.fn()}
 				poweredBy={POWERED_BY}
 				refreshing={false}
+				sources={[STOLAF_SOURCE]}
 			/>,
 		)
 
@@ -86,17 +98,19 @@ describe('EventList', () => {
 	})
 
 	test('hides the start time when config.startTime is false', async () => {
-		let event = makeEvent({config: {startTime: false, endTime: true, subtitle: 'location'}})
-		let {start, end} = listTimeLines(event)
+		let entry = makeEntry({config: {startTime: false, endTime: true, subtitle: 'location'}})
+		let {start, end} = listTimeLines(entry.event)
 
 		await render(
 			<EventList
-				events={[event]}
+				events={[entry]}
+				failed={[]}
 				now={NOW}
 				onPressEvent={jest.fn()}
 				onRefresh={jest.fn()}
 				poweredBy={POWERED_BY}
 				refreshing={false}
+				sources={[STOLAF_SOURCE]}
 			/>,
 		)
 
@@ -105,17 +119,19 @@ describe('EventList', () => {
 	})
 
 	test('hides the end time when config.endTime is false', async () => {
-		let event = makeEvent({config: {startTime: true, endTime: false, subtitle: 'location'}})
-		let {start, end} = listTimeLines(event)
+		let entry = makeEntry({config: {startTime: true, endTime: false, subtitle: 'location'}})
+		let {start, end} = listTimeLines(entry.event)
 
 		await render(
 			<EventList
-				events={[event]}
+				events={[entry]}
+				failed={[]}
 				now={NOW}
 				onPressEvent={jest.fn()}
 				onRefresh={jest.fn()}
 				poweredBy={POWERED_BY}
 				refreshing={false}
+				sources={[STOLAF_SOURCE]}
 			/>,
 		)
 
@@ -128,20 +144,22 @@ describe('EventList', () => {
 	// with no end time therefore still shows its location, on a line whose full
 	// width is its own -- which is the point of the pairing.
 	test('still shows the location when there is no end time', async () => {
-		let event = makeEvent({
+		let entry = makeEntry({
 			location: 'Middendorf Animal Hospital And Laser Centre',
 			config: {startTime: true, endTime: false, subtitle: 'location'},
 		})
-		let {start, end} = listTimeLines(event)
+		let {start, end} = listTimeLines(entry.event)
 
 		await render(
 			<EventList
-				events={[event]}
+				events={[entry]}
+				failed={[]}
 				now={NOW}
 				onPressEvent={jest.fn()}
 				onRefresh={jest.fn()}
 				poweredBy={POWERED_BY}
 				refreshing={false}
+				sources={[STOLAF_SOURCE]}
 			/>,
 		)
 
@@ -151,7 +169,7 @@ describe('EventList', () => {
 	})
 
 	test('shows an all-day row’s location too', async () => {
-		let event = makeEvent({
+		let entry = makeEntry({
 			startTime: moment('2026-08-17T00:00:00'),
 			endTime: moment('2026-08-18T00:00:00'),
 			location: 'Downtown Northfield, MN',
@@ -159,12 +177,14 @@ describe('EventList', () => {
 
 		await render(
 			<EventList
-				events={[event]}
+				events={[entry]}
+				failed={[]}
 				now={NOW}
 				onPressEvent={jest.fn()}
 				onRefresh={jest.fn()}
 				poweredBy={POWERED_BY}
 				refreshing={false}
+				sources={[STOLAF_SOURCE]}
 			/>,
 		)
 
@@ -176,11 +196,13 @@ describe('EventList', () => {
 		await render(
 			<EventList
 				events={[]}
+				failed={[]}
 				now={NOW}
 				onPressEvent={jest.fn()}
 				onRefresh={jest.fn()}
 				poweredBy={POWERED_BY}
 				refreshing={false}
+				sources={[STOLAF_SOURCE]}
 			/>,
 		)
 
@@ -191,12 +213,14 @@ describe('EventList', () => {
 		await render(
 			<EventList
 				events={[]}
+				failed={[]}
 				message="Something went wrong"
 				now={NOW}
 				onPressEvent={jest.fn()}
 				onRefresh={jest.fn()}
 				poweredBy={POWERED_BY}
 				refreshing={false}
+				sources={[STOLAF_SOURCE]}
 			/>,
 		)
 
@@ -204,23 +228,25 @@ describe('EventList', () => {
 	})
 
 	test('tapping a row calls onPressEvent with that event', async () => {
-		let event = makeEvent()
+		let entry = makeEntry()
 		let onPressEvent = jest.fn()
 
 		await render(
 			<EventList
-				events={[event]}
+				events={[entry]}
+				failed={[]}
 				now={NOW}
 				onPressEvent={onPressEvent}
 				onRefresh={jest.fn()}
 				poweredBy={POWERED_BY}
 				refreshing={false}
+				sources={[STOLAF_SOURCE]}
 			/>,
 		)
 
 		await fireEvent.press(screen.getByText('New Faculty Orientation'))
 
-		expect(onPressEvent).toHaveBeenCalledWith(event)
+		expect(onPressEvent).toHaveBeenCalledWith(entry)
 	})
 
 	test('pull-to-refresh calls onRefresh', async () => {
@@ -228,17 +254,86 @@ describe('EventList', () => {
 
 		await render(
 			<EventList
-				events={[makeEvent()]}
+				events={[makeEntry()]}
+				failed={[]}
 				now={NOW}
 				onPressEvent={jest.fn()}
 				onRefresh={onRefresh}
 				poweredBy={POWERED_BY}
 				refreshing={false}
+				sources={[STOLAF_SOURCE]}
 			/>,
 		)
 
 		await fireEvent.press(screen.getByTestId('list-refresh-trigger'))
 
 		expect(onRefresh).toHaveBeenCalled()
+	})
+
+	test('a row is tinted with its own calendar’s colour', async () => {
+		let sources = [
+			{id: 'stolaf', title: 'St. Olaf', color: 'blue', kind: 'remote' as const},
+			{id: 'northfield', title: 'Northfield', color: 'indigo', kind: 'remote' as const},
+		]
+		let events = [
+			{sourceId: 'stolaf', key: 'a', event: makeEvent({title: 'Olaf thing'})},
+			{sourceId: 'northfield', key: 'b', event: makeEvent({title: 'Northfield thing'})},
+		]
+
+		await render(
+			<EventList
+				events={events}
+				failed={[]}
+				now={NOW}
+				onPressEvent={jest.fn()}
+				onRefresh={jest.fn()}
+				poweredBy={POWERED_BY}
+				refreshing={false}
+				sources={sources}
+			/>,
+		)
+
+		expect(screen.getByText('Olaf thing')).toBeTruthy()
+		expect(screen.getByText('Northfield thing')).toBeTruthy()
+	})
+
+	test('a failed calendar is named while the others still render', async () => {
+		let sources = [{id: 'stolaf', title: 'St. Olaf', color: 'blue', kind: 'remote' as const}]
+		let failed = [{id: 'northfield', title: 'Northfield', color: 'indigo', kind: 'remote' as const}]
+
+		await render(
+			<EventList
+				events={[{sourceId: 'stolaf', key: 'a', event: makeEvent({title: 'Olaf thing'})}]}
+				failed={failed}
+				now={NOW}
+				onPressEvent={jest.fn()}
+				onRefresh={jest.fn()}
+				poweredBy={POWERED_BY}
+				refreshing={false}
+				sources={sources}
+			/>,
+		)
+
+		expect(screen.getByText('Olaf thing')).toBeTruthy()
+		expect(screen.getByText(/Northfield/u)).toBeTruthy()
+	})
+
+	// "Nothing is on" and "nothing is happening" look identical if both say
+	// "No events."
+	test('turning every calendar off says so, rather than looking empty', async () => {
+		await render(
+			<EventList
+				events={[]}
+				failed={[]}
+				now={NOW}
+				onPressEvent={jest.fn()}
+				onRefresh={jest.fn()}
+				poweredBy={POWERED_BY}
+				refreshing={false}
+				sources={[]}
+			/>,
+		)
+
+		expect(screen.getByText(/No calendars/u)).toBeTruthy()
 	})
 })

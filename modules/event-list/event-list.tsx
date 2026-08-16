@@ -11,29 +11,30 @@ import {
 } from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
 import toPairs from 'lodash/toPairs'
-import type {EventType} from '@frogpond/event-type'
 import groupBy from 'lodash/groupBy'
 import type {Moment} from 'moment-timezone'
 import {NoticeView} from '@frogpond/notice'
 import {EventListRow} from './event-list-row'
 import {formatSectionHeader} from './times'
-import {PoweredBy} from './types'
+import {CalendarSource, PoweredBy, SourcedEvent} from './types'
 
 type Props = {
-	events: EventType[]
+	events: SourcedEvent[]
+	sources: CalendarSource[]
+	failed: CalendarSource[]
 	message?: string
 	refreshing: boolean
 	onRefresh: () => unknown
 	now: Moment
 	poweredBy: PoweredBy
-	onPressEvent: (event: EventType) => void
+	onPressEvent: (entry: SourcedEvent) => void
 }
 
 type EventSection = {
 	readonly key: string
 	readonly title: string
 	readonly isToday: boolean
-	readonly data: EventType[]
+	readonly data: SourcedEvent[]
 }
 
 /// Groups events the way the list has always grouped them -- an `Ongoing`
@@ -41,15 +42,15 @@ type EventSection = {
 /// quirks in `event.startTime` -- but keys the day groups on an
 /// unambiguous ISO date rather than a formatted string, since the display
 /// title is now locale-aware and computed separately below.
-function groupEvents(events: readonly EventType[], now: Moment): Array<EventSection> {
-	let grouped = groupBy(events, (event) => {
-		if (event.isOngoing) {
+function groupEvents(events: readonly SourcedEvent[], now: Moment): Array<EventSection> {
+	let grouped = groupBy(events, (entry) => {
+		if (entry.event.isOngoing) {
 			return 'Ongoing'
 		}
-		if (event.startTime.isSame(now, 'day')) {
+		if (entry.event.startTime.isSame(now, 'day')) {
 			return 'Today'
 		}
-		return event.startTime.format('YYYY-MM-DD') // google returns events in CST
+		return entry.event.startTime.format('YYYY-MM-DD') // google returns events in CST
 	})
 
 	return toPairs(grouped).map(([key, data]) => {
@@ -59,7 +60,7 @@ function groupEvents(events: readonly EventType[], now: Moment): Array<EventSect
 		if (key === 'Today') {
 			return {key, title: formatSectionHeader(now), isToday: true, data}
 		}
-		return {key, title: formatSectionHeader(data[0].startTime), isToday: false, data}
+		return {key, title: formatSectionHeader(data[0].event.startTime), isToday: false, data}
 	})
 }
 
@@ -77,8 +78,17 @@ function SectionHeader({title, isToday}: {title: string; isToday: boolean}): Rea
 }
 
 export function EventList(props: Props): React.ReactNode {
+	let colorFor = React.useMemo(() => {
+		let table = new Map(props.sources.map((source) => [source.id, source.color]))
+		return (sourceId: string) => table.get(sourceId) ?? c.systemBlue
+	}, [props.sources])
+
 	if (props.message) {
 		return <NoticeView text={props.message} />
+	}
+
+	if (props.sources.length === 0) {
+		return <NoticeView text="No calendars are showing. Choose some from the toolbar." />
 	}
 
 	if (props.events.length === 0) {
@@ -104,17 +114,25 @@ export function EventList(props: Props): React.ReactNode {
 					}),
 				]}
 			>
+				{props.failed.length > 0 ? (
+					<Section>
+						<Text modifiers={[foregroundColor(c.secondaryLabel), font({textStyle: 'footnote'})]}>
+							{`Could not load ${props.failed.map((source) => source.title).join(', ')}.`}
+						</Text>
+					</Section>
+				) : null}
 				{sections.map((section) => (
 					<Section
 						header={<SectionHeader isToday={section.isToday} title={section.title} />}
 						key={section.key}
 					>
-						{section.data.map((event, index) => (
+						{section.data.map((entry, index) => (
 							<EventListRow
-								event={event}
+								color={colorFor(entry.sourceId)}
+								event={entry.event}
 								isLastInSection={index === section.data.length - 1}
-								key={index}
-								onPress={props.onPressEvent}
+								key={entry.key}
+								onPress={() => props.onPressEvent(entry)}
 							/>
 						))}
 					</Section>
