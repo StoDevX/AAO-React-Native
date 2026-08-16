@@ -1,8 +1,18 @@
 import * as React from 'react'
 import {HStack, Text, VStack} from '@expo/ui/swift-ui'
-import {background, clipShape, font, foregroundColor, frame} from '@expo/ui/swift-ui/modifiers'
+import {
+	background,
+	clipShape,
+	font,
+	foregroundColor,
+	frame,
+	padding,
+} from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
 import type {EventTimeLine} from './times'
+
+/// How far the accent bar clears the type at each end, as Calendar.app's does.
+const BAR_OVERSHOOT = 3
 
 type Props = {
 	title: string
@@ -50,8 +60,11 @@ export function EventDetailHeader({title, lines}: Props): React.ReactNode {
 				{null}
 			</VStack>
 			{/* Calendar.app sets the date in the same primary colour as the title
-			    rather than a muted caption, so it reads as part of the masthead. */}
-			<VStack alignment="leading">
+			    rather than a muted caption, so it reads as part of the masthead.
+			    The vertical padding is what makes the bar overshoot the text: it
+			    grows the `HStack`, and the bar matches the stack rather than the
+			    text, so the two ends clear the type by `BAR_OVERSHOOT` points. */}
+			<VStack alignment="leading" modifiers={[padding({vertical: BAR_OVERSHOOT})]}>
 				<Text modifiers={[font({textStyle: 'title', weight: 'bold'}), foregroundColor(c.label)]}>
 					{title}
 				</Text>
