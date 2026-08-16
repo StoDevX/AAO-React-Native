@@ -4,8 +4,16 @@ import type {EventType} from '@frogpond/event-type'
 import moment from 'moment'
 import {detailTimes, detailTimeLines, formatSectionHeader, listTimeLines, times} from '../times'
 
+/// What every parser writes for an all-day event: neither edge carries a
+/// meaningful time.
+const ALL_DAY = {startTime: false, endTime: false, subtitle: 'description'} as const
+
+/// All-day is whatever the source said, through `config`. A remote all-day
+/// event says so with both edges false and a midnight-to-midnight span; an
+/// EventKit one says so with both edges false and a 00:00:00-23:59:59 span.
+/// The duration differs, the statement does not.
 describe('allDay', () => {
-	function generateEvent(start: string, end: string): EventType {
+	function generateEvent(start: string, end: string, config: Partial<EventType['config']> = {}) {
 		return {
 			title: 'title',
 			description: 'description',
@@ -17,26 +25,58 @@ describe('allDay', () => {
 			config: {
 				startTime: false,
 				endTime: false,
-				subtitle: 'description',
+				subtitle: 'description' as const,
+				...config,
 			},
-		}
+		} satisfies EventType
 	}
 
-	test('should be true for a midnight-to-midnight event', () => {
+	test('should be true for a remote midnight-to-midnight event', () => {
 		const event = generateEvent('2018-08-07T00:00:00Z', '2018-08-08T00:00:00Z')
 
 		expect(times(event).allDay).toBe(true)
 		expect(detailTimes(event).allDay).toBe(true)
 	})
 
-	test('should be true for a noon-to-noon event', () => {
+	test('should be true for a noon-to-noon event whose source called it all-day', () => {
 		const event = generateEvent('2018-08-07T12:00:00Z', '2018-08-08T12:00:00Z')
 		expect(times(event).allDay).toBe(true)
 		expect(detailTimes(event).allDay).toBe(true)
 	})
 
-	test('should be false for a non-24 hour event', () => {
-		const event = generateEvent('2018-08-07T12:00:00Z', '2018-08-08T12:30:00Z')
+	// EventKit's own all-day span, which is 23.9997 hours rather than 24. The
+	// duration heuristic this replaced read it as an ordinary timed event.
+	test('should be true for an EventKit all-day event ending at 23:59:59', () => {
+		const event = generateEvent('2026-09-07T00:00:00', '2026-09-07T23:59:59')
+		expect(times(event).allDay).toBe(true)
+		expect(detailTimes(event).allDay).toBe(true)
+	})
+
+	test('should be false when the source gave the event real times', () => {
+		const event = generateEvent('2018-08-07T12:00:00Z', '2018-08-08T12:30:00Z', {
+			startTime: true,
+			endTime: true,
+		})
+		expect(times(event).allDay).toBe(false)
+		expect(detailTimes(event).allDay).toBe(false)
+	})
+
+	// A full 24 hours is not all-day if the source gave both edges a time --
+	// the heuristic this replaced said otherwise.
+	test('should be false for a timed event that happens to run 24 hours', () => {
+		const event = generateEvent('2018-08-07T12:00:00Z', '2018-08-08T12:00:00Z', {
+			startTime: true,
+			endTime: true,
+		})
+		expect(times(event).allDay).toBe(false)
+		expect(detailTimes(event).allDay).toBe(false)
+	})
+
+	// One meaningful edge is not the same as neither.
+	test('should be false when only one edge is meaningless', () => {
+		const event = generateEvent('2018-08-07T12:00:00Z', '2018-08-08T12:00:00Z', {
+			startTime: true,
+		})
 		expect(times(event).allDay).toBe(false)
 		expect(detailTimes(event).allDay).toBe(false)
 	})
@@ -53,8 +93,8 @@ describe('ongoing events', () => {
 			isOngoing: true,
 			links: [],
 			config: {
-				startTime: false,
-				endTime: false,
+				startTime: true,
+				endTime: true,
 				subtitle: 'description',
 			},
 		}
@@ -96,9 +136,11 @@ describe('detailTimeLines', () => {
 			location: 'location',
 			isOngoing: false,
 			links: [],
+			// An ordinary event, with both edges meaningful. The all-day cases
+			// override `config`, which is what says all-day.
 			config: {
-				startTime: false,
-				endTime: false,
+				startTime: true,
+				endTime: true,
 				subtitle: 'description',
 			},
 			...overrides,
@@ -143,10 +185,34 @@ describe('detailTimeLines', () => {
 	})
 
 	test('an all-day event gets a single All day line with no time', () => {
-		let event = generateEvent('2026-08-17T00:00:00', '2026-08-18T00:00:00')
+		let event = generateEvent('2026-08-17T00:00:00', '2026-08-18T00:00:00', {config: ALL_DAY})
 
 		expect(detailTimeLines(event, 'en-US')).toEqual([
 			{prefix: 'All day', time: '', date: 'Monday, August 17, 2026'},
+		])
+	})
+
+	// The bug this replaced: EventKit's 00:00:00-23:59:59 span fell past the
+	// all-day branch and rendered `From 12 AM ... to 11:59 PM ...`.
+	test('an EventKit all-day event gets the same single All day line', () => {
+		let event = generateEvent('2026-09-07T00:00:00', '2026-09-07T23:59:59', {config: ALL_DAY})
+
+		expect(detailTimeLines(event, 'en-US')).toEqual([
+			{prefix: 'All day', time: '', date: 'Monday, September 7, 2026'},
+		])
+	})
+
+	// An all-day event's end is exclusive on the web and inclusive from
+	// EventKit, so both of these cover Sep 7 through Sep 9 and must read alike.
+	test.each([
+		['a remote', '2026-09-10T00:00:00'],
+		['an EventKit', '2026-09-09T23:59:59'],
+	])('%s multi-day all-day event names both of its days', (_label, end) => {
+		let event = generateEvent('2026-09-07T00:00:00', end, {config: ALL_DAY})
+
+		expect(detailTimeLines(event, 'en-US')).toEqual([
+			{prefix: 'All day from', time: '', date: 'Monday, September 7, 2026'},
+			{prefix: 'to', time: '', date: 'Wednesday, September 9, 2026'},
 		])
 	})
 
@@ -190,9 +256,11 @@ describe('listTimeLines', () => {
 			location: 'location',
 			isOngoing: false,
 			links: [],
+			// An ordinary event, with both edges meaningful. The all-day cases
+			// override `config`, which is what says all-day.
 			config: {
-				startTime: false,
-				endTime: false,
+				startTime: true,
+				endTime: true,
 				subtitle: 'description',
 			},
 			...overrides,
@@ -240,7 +308,15 @@ describe('listTimeLines', () => {
 	})
 
 	test('an all-day event has no start or end text', () => {
-		let event = generateEvent('2026-08-17T00:00:00', '2026-08-18T00:00:00')
+		let event = generateEvent('2026-08-17T00:00:00', '2026-08-18T00:00:00', {config: ALL_DAY})
+
+		expect(listTimeLines(event, 'en-US')).toEqual({start: '', end: '', allDay: true})
+	})
+
+	// What the list row turns into its `all-day` label. EventKit's span used to
+	// fall through here as an ordinary timed event.
+	test('an EventKit all-day event is all-day here too', () => {
+		let event = generateEvent('2026-09-07T00:00:00', '2026-09-07T23:59:59', {config: ALL_DAY})
 
 		expect(listTimeLines(event, 'en-US')).toEqual({start: '', end: '', allDay: true})
 	})

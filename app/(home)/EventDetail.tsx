@@ -65,8 +65,12 @@ export default function EventDetailPage(): React.ReactNode {
 	// config.subtitle, which the detail view never reads (only the list's
 	// row does) -- passing a mapper here would just be a second copy of that
 	// transform that has to stay byte-identical to the list's forever.
+	//
+	// `deviceCalendarIdFrom` only means anything for a device id -- run on a
+	// remote one it slices the prefix off a name that never had it, so the idle
+	// query would carry a key built from nonsense.
 	let deviceQuery = useQuery({
-		...deviceCalendarEventOptions(deviceCalendarIdFrom(source), eventKey),
+		...deviceCalendarEventOptions(deviceSource ? deviceCalendarIdFrom(source) : '', eventKey),
 		enabled: deviceSource,
 	})
 	let namedQuery = useQuery({

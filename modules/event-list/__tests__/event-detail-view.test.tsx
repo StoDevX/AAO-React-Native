@@ -65,6 +65,24 @@ describe('EventDetail', () => {
 		expect(screen.getByText('Seminars across campus.')).toBeTruthy()
 	})
 
+	// A device all-day event as EventKit hands it over: 00:00:00 to 23:59:59,
+	// both edges flagged meaningless. While all-day was decided by a 24-hour
+	// duration this rendered as `From 12 AM ... to 11:59 PM ...`.
+	test('an EventKit all-day event reads as all day, not as a midnight range', async () => {
+		let event = makeEvent({
+			title: 'Labor Day',
+			startTime: moment('2026-09-07T00:00:00'),
+			endTime: moment('2026-09-07T23:59:59'),
+			config: {startTime: false, endTime: false, subtitle: 'location'},
+		})
+
+		await render(<EventDetail color="#ff0000" event={event} poweredBy={POWERED_BY} />)
+
+		expect(screen.getByText('All day Monday, September 7, 2026')).toBeTruthy()
+		expect(screen.queryByText(/12 AM/u)).toBeNull()
+		expect(screen.queryByText(/11:59 PM/u)).toBeNull()
+	})
+
 	test('it omits a section whose field is empty', async () => {
 		await render(
 			<EventDetail color="#ff0000" event={makeEvent({location: ''})} poweredBy={POWERED_BY} />,

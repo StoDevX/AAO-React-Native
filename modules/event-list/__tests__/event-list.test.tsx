@@ -21,6 +21,10 @@ const NOW = moment('2026-08-17T12:00:00Z')
 
 const STOLAF_SOURCE = {id: 'stolaf', title: 'St. Olaf', color: 'blue', kind: 'remote' as const}
 
+/// What every parser writes for an all-day event, and what `times.ts` reads to
+/// decide one: neither edge carries a meaningful time.
+const ALL_DAY = {startTime: false, endTime: false, subtitle: 'location'} as const
+
 function makeEvent(overrides: Partial<EventType> = {}): EventType {
 	return {
 		title: 'New Faculty Orientation',
@@ -79,6 +83,7 @@ describe('EventList', () => {
 		let entry = makeEntry({
 			startTime: moment('2026-08-17T00:00:00Z'),
 			endTime: moment('2026-08-18T00:00:00Z'),
+			config: ALL_DAY,
 		})
 
 		await render(
@@ -168,11 +173,43 @@ describe('EventList', () => {
 		expect(screen.queryByText(end)).toBeNull()
 	})
 
+	// A device all-day event, exactly as EventKit hands it over: 00:00:00 to
+	// 23:59:59, both edges flagged meaningless. Its row lost the `all-day`
+	// label entirely while all-day was decided by a 24-hour duration.
+	test('an EventKit all-day row shows all-day too', async () => {
+		let entry = makeEntry({
+			title: 'Labor Day',
+			location: '',
+			startTime: moment('2026-09-07T00:00:00'),
+			endTime: moment('2026-09-07T23:59:59'),
+			config: ALL_DAY,
+		})
+
+		await render(
+			<EventList
+				events={[entry]}
+				failed={[]}
+				now={NOW}
+				onPressEvent={jest.fn()}
+				onRefresh={jest.fn()}
+				poweredBy={POWERED_BY}
+				refreshing={false}
+				sources={[STOLAF_SOURCE]}
+			/>,
+		)
+
+		expect(screen.getByText('Labor Day')).toBeTruthy()
+		expect(screen.getByText('all-day')).toBeTruthy()
+		expect(screen.queryByText('12 AM')).toBeNull()
+		expect(screen.queryByText('11:59 PM')).toBeNull()
+	})
+
 	test('shows an all-day row’s location too', async () => {
 		let entry = makeEntry({
 			startTime: moment('2026-08-17T00:00:00'),
 			endTime: moment('2026-08-18T00:00:00'),
 			location: 'Downtown Northfield, MN',
+			config: ALL_DAY,
 		})
 
 		await render(

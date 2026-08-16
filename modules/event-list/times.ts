@@ -1,19 +1,26 @@
-import moment from 'moment-timezone'
 import type {Moment} from 'moment-timezone'
 import type {EventType} from '@frogpond/event-type'
 import type {EventDetailTime} from '@frogpond/event-list/types'
 
 /// Shared by `times`, `detailTimes`, and `detailTimeLines` so the three agree
 /// on what counts as all-day, multi-day, or a same-instant event.
+///
+/// All-day is the source's own statement rather than a duration.
+/// `config.startTime` and `config.endTime` say which of an event's edges carry
+/// a meaningful time, and every parser sets them from the upstream flag --
+/// `parsers/tec-events.ts` from `all_day`, `ccc-calendar/device-calendar.ts`
+/// from EventKit's `allDay`. Both edges meaningless is what all-day means.
+///
+/// A duration test cannot serve both sources: EventKit spans an all-day event
+/// 00:00:00 to 23:59:59, which is 23.9997 hours rather than a round 24, and a
+/// web event that genuinely runs a full 24 hours is not all-day at all.
 function classify(event: EventType): {
 	allDay: boolean
 	multiDay: boolean
 	sillyZeroLength: boolean
 } {
-	let eventLength = moment.duration(event.endTime.diff(event.startTime)).asHours()
-
 	return {
-		allDay: eventLength === 24,
+		allDay: !event.config.startTime && !event.config.endTime,
 		multiDay: event.startTime.dayOfYear() !== event.endTime.dayOfYear(),
 		sillyZeroLength: event.startTime.isSame(event.endTime, 'minute'),
 	}
@@ -186,7 +193,22 @@ export function detailTimeLines(event: EventType, locale?: string): EventTimeLin
 	let endDate = formatDetailDate(event.endTime, locale)
 
 	if (allDay) {
-		return [{prefix: 'All day', time: '', date: startDate}]
+		// The two sources disagree about where an all-day event ends: the web
+		// calendars end it exclusively, at midnight the following day, while
+		// EventKit ends it inclusively, at 23:59:59 the same day. The last day it
+		// actually covers is the instant before its end under either convention.
+		let lastDay = event.endTime.isAfter(event.startTime)
+			? event.endTime.clone().subtract(1, 'millisecond')
+			: event.startTime
+
+		if (lastDay.isSame(event.startTime, 'day')) {
+			return [{prefix: 'All day', time: '', date: startDate}]
+		}
+
+		return [
+			{prefix: 'All day from', time: '', date: startDate},
+			{prefix: 'to', time: '', date: formatDetailDate(lastDay, locale)},
+		]
 	}
 
 	if (sillyZeroLength) {
