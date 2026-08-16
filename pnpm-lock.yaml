@@ -564,7 +564,7 @@ importers:
         specifier: workspace:*
         version: link:../html-lib
       '@tanstack/react-query':
-        specifier: ^5.0.0
+        specifier: ^5.101.4
         version: 5.101.4(react@19.2.8)
       react:
         specifier: ^19.1.0
