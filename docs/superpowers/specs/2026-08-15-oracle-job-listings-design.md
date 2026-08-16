@@ -140,13 +140,28 @@ postings. Five labels are promoted to cells and removed from the rendered body:
 | Contact Person/Supervisor | Contact |
 | Classification | Classification |
 
-Three reliable labels are deliberately skipped as useless to a student: *Job Title*
+Three reliable labels are dropped outright, as useless to a student: *Job Title*
 (duplicates the requisition title), *Unit Number* (HR accounting), and *Name and Address of
-Employer* (the same college address every time). Everything unpromoted stays in the body
-HTML in its original order.
+Employer* (the same college address every time). Every other block stays, in its original
+order, as the body.
 
 The scraper degrades rather than fails: a label it cannot find means one missing cell, and
-a description that matches nothing renders whole as HTML.
+a description that matches nothing becomes the body whole.
+
+### `htmlToMarkdown` in `@frogpond/html-lib`
+
+The body renders through `@frogpond/markdown`, so the kept blocks convert to markdown
+first. `@frogpond/html-lib` already owns HTML parsing and its htmlparser2 DOM, so the
+converter lives there: `htmlToMarkdown(html)` and `nodeToMarkdown(node)`.
+
+Handing the raw HTML to the markdown renderer instead is not an option — md4c passes
+unknown tags through, so students would read `<span style="font-weight:700">`. A
+third-party converter is not one either: turndown needs a real DOM (it ships domino for
+Node), which this app does not have and should not bundle for eight tag types.
+
+The converter covers what these descriptions actually contain — `p`, `div`, `br`, `ul`,
+`ol`, `li`, `a`, and the `font-weight:700` spans that stand in for `<strong>` — and escapes
+markdown punctuation in text so a `*` or `_` in a posting renders literally.
 
 ## Screens
 
@@ -158,15 +173,23 @@ screen instead.
 
 ### Detail
 
-1. Header from real Oracle fields: title, category, `JobSchedule`, `PrimaryLocation`,
+A SwiftUI `Form` from `@expo/ui/swift-ui`, following `source/features/map/building-info.tsx`:
+
+1. A section of real Oracle fields: title, category, `JobSchedule`, `PrimaryLocation`,
    posted date.
-2. The five scraped cells, each omitted when its label is absent.
-3. The remaining description via `@frogpond/html-content`.
-4. A "View on the St. Olaf jobs site" push button opening `{site href}/job/{id}`; the share
+2. A section of the five scraped fields, each row omitted when its label is absent.
+3. The body, as markdown, in an `RNHostView matchContents` so the native
+   `@frogpond/markdown` view sizes itself inside the Form.
+4. A "View on the St. Olaf jobs site" button opening `{site href}/job/{id}`; the share
    action uses the same URL.
 
 The email and phone cells go away — no address exists in the data to put in them. New date
 formatting uses `date-fns`, not the `moment` import the current screen carries.
+
+Two `@expo/ui` hazards apply. A bare string in a `ReactNode` prop crashes at mount, which
+neither tsc nor Jest catches, so every string goes inside a `<Text>`. And ported rows
+become buttons in the accessibility tree, so any UI test assertions come from dumping the
+real tree rather than from guessing.
 
 ## Types
 
@@ -187,8 +210,11 @@ Parser tests assert:
 - the promoted labels parse to the right values
 - an absent label yields no cell rather than an empty one
 - a promoted label is not also left in the body
-- an unrecognised description shape still renders as plain HTML
+- an unrecognised description shape still becomes the body whole
 - the list parser rejects a malformed response rather than yielding partial rows
+
+`htmlToMarkdown` is tested in `@frogpond/html-lib` against each tag it supports, nested
+lists, and markdown punctuation appearing in text.
 
 ## Companion change: ccc-server
 
