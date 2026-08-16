@@ -1,6 +1,6 @@
 import * as React from 'react'
-import {afterEach, describe, expect, jest, test} from '@jest/globals'
-import {act, renderHook} from '@testing-library/react-native'
+import {afterEach, beforeEach, describe, expect, jest, test} from '@jest/globals'
+import {act, renderHook, waitFor} from '@testing-library/react-native'
 import {Provider} from 'react-redux'
 import {configureStore} from '@reduxjs/toolkit'
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query'
@@ -16,13 +16,26 @@ jest.mock('@react-native-community/netinfo', () =>
 	require('@react-native-community/netinfo/jest/netinfo-mock'),
 )
 
+// Named `mock*` so the `jest.mock` factories below -- which close over them --
+// pass Jest's out-of-scope-variable check, and so each test can assert on
+// calls rather than only on the values these resolve to.
+const mockGetFullCalendarAccess = jest.fn(() =>
+	Promise.resolve({status: 'undetermined', granted: false}),
+)
+const mockRequestFullCalendarAccess = jest.fn(() =>
+	Promise.resolve({status: 'granted', granted: true}),
+)
+const mockGetCalendars = jest.fn(() =>
+	Promise.resolve([{id: 'ABC', title: 'Birthdays', color: '#34C759'}]),
+)
+
 jest.mock('../device-calendar', () => ({
-	getFullCalendarAccess: jest.fn(() => Promise.resolve({status: 'undetermined', granted: false})),
-	requestFullCalendarAccess: jest.fn(() => Promise.resolve({status: 'granted', granted: true})),
+	getFullCalendarAccess: () => mockGetFullCalendarAccess(),
+	requestFullCalendarAccess: () => mockRequestFullCalendarAccess(),
 }))
 jest.mock('expo-calendar', () => ({
 	EntityTypes: {EVENT: 'event'},
-	getCalendars: jest.fn(() => Promise.resolve([{id: 'ABC', title: 'Birthdays', color: '#34C759'}])),
+	getCalendars: () => mockGetCalendars(),
 }))
 
 const mockUseIsDevMode = jest.fn(() => false)
@@ -34,6 +47,12 @@ jest.mock('../../../source/lib/use-is-dev-mode', () => ({
 // React Query's default is five minutes -- long enough to outlive the run and
 // leave the Jest worker to be force-killed rather than exiting on its own.
 const trackedQueryClients: QueryClient[] = []
+
+beforeEach(() => {
+	mockGetFullCalendarAccess.mockClear()
+	mockRequestFullCalendarAccess.mockClear()
+	mockGetCalendars.mockClear()
+})
 
 afterEach(() => {
 	for (let client of trackedQueryClients) {
@@ -70,6 +89,33 @@ describe('useCalendarSources', () => {
 		expect(result.current.canOfferDevice).toBe(true)
 		expect(result.current.deviceAvailable).toBe(false)
 		expect(result.current.device).toEqual([])
+		expect(mockGetCalendars).not.toHaveBeenCalled()
+	})
+
+	test('requesting the device in dev mode surfaces its calendars as sources', async () => {
+		mockUseIsDevMode.mockReturnValue(true)
+		let {result} = await renderHook(() => useCalendarSources(), {wrapper})
+
+		expect(result.current.deviceAvailable).toBe(false)
+
+		await act(async () => {
+			await result.current.requestDevice()
+		})
+
+		await waitFor(() => {
+			expect(result.current.device).toEqual([
+				{id: 'device:ABC', title: 'Birthdays', color: '#34C759', kind: 'device'},
+			])
+		})
+		expect(result.current.deviceAvailable).toBe(true)
+		expect(mockGetCalendars).toHaveBeenCalled()
+	})
+
+	test('outside dev mode, requesting the device is never offered a chance to prompt', async () => {
+		mockUseIsDevMode.mockReturnValue(false)
+		await renderHook(() => useCalendarSources(), {wrapper})
+
+		expect(mockRequestFullCalendarAccess).not.toHaveBeenCalled()
 	})
 
 	test('only St. Olaf is enabled to begin with', async () => {
