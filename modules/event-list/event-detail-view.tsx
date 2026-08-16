@@ -1,17 +1,33 @@
 import * as React from 'react'
-import {ScrollView} from 'react-native'
-import {Section, TableView} from '@frogpond/tableview'
-import {ButtonCell, SelectableCell} from '@frogpond/tableview/cells'
-import {ListFooter} from '@frogpond/lists'
-import {getTimes} from './calendar-util'
+import {StyleSheet} from 'react-native'
+import {Button, Form, Host, Link, Section, Text} from '@expo/ui/swift-ui'
+import {
+	accessibilityLabel,
+	buttonStyle,
+	disabled as disabledModifier,
+	font,
+	foregroundColor,
+	multilineTextAlignment,
+	textSelection,
+} from '@expo/ui/swift-ui/modifiers'
+import * as c from '@frogpond/colors'
 import {AddToCalendar} from '@frogpond/add-to-device-calendar'
 import type {EventType} from '@frogpond/event-type'
+
+import {EventDetailHeader} from './event-detail-header'
+import {getTimes} from './calendar-util'
 import type {PoweredBy} from './types'
 
-function MaybeSection({header, content}: {header: string; content: string}) {
+const styles = StyleSheet.create({
+	host: {
+		flex: 1,
+	},
+})
+
+function TextSection({header, content}: {header: string; content: string}) {
 	return content ? (
-		<Section header={header}>
-			<SelectableCell text={content} />
+		<Section title={header}>
+			<Text modifiers={[foregroundColor(c.label), textSelection(true)]}>{content}</Text>
 		</Section>
 	) : null
 }
@@ -22,25 +38,59 @@ type Props = {
 }
 
 export function EventDetail({event, poweredBy}: Props): React.ReactNode {
+	let times = getTimes(event).trim()
+
 	return (
-		<ScrollView contentInsetAdjustmentBehavior="automatic">
-			<TableView>
-				<MaybeSection content={event.title.trim()} header="EVENT" />
-				<MaybeSection content={getTimes(event).trim()} header="TIME" />
-				<MaybeSection content={event.location.trim()} header="LOCATION" />
-				<MaybeSection content={event.description.trim()} header="DESCRIPTION" />
+		<Host style={styles.host}>
+			<Form>
+				<Section>
+					<EventDetailHeader times={times} title={event.title.trim()} />
+				</Section>
+
+				<TextSection content={event.location.trim()} header="Location" />
+				<TextSection content={event.description.trim()} header="Description" />
+
+				{event.links.length > 0 ? (
+					<Section title="Links">
+						{event.links.map((href) => (
+							<Link destination={href} key={href} label={href} />
+						))}
+					</Section>
+				) : null}
 
 				<AddToCalendar
 					event={event}
 					render={({message, disabled, onPress}) => (
-						<Section footer={message}>
-							<ButtonCell disabled={disabled} onPress={onPress} title="Add to calendar" />
+						// `footer` is a SwiftUI slot: a bare string here crashes at mount.
+						<Section footer={message ? <Text>{message}</Text> : undefined}>
+							<Button
+								modifiers={[
+									buttonStyle('plain'),
+									accessibilityLabel('Add to calendar'),
+									disabledModifier(disabled),
+								]}
+								onPress={onPress}
+							>
+								<Text modifiers={[foregroundColor(c.systemBlue)]}>Add to calendar</Text>
+							</Button>
 						</Section>
 					)}
 				/>
 
-				{poweredBy.title ? <ListFooter href={poweredBy.href} title={poweredBy.title} /> : null}
-			</TableView>
-		</ScrollView>
+				{poweredBy.title ? (
+					<Section>
+						<Text
+							modifiers={[
+								font({size: 10}),
+								foregroundColor(c.secondaryLabel),
+								multilineTextAlignment('center'),
+							]}
+						>
+							{poweredBy.title}
+						</Text>
+					</Section>
+				) : null}
+			</Form>
+		</Host>
 	)
 }

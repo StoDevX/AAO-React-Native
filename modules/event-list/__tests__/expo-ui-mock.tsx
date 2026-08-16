@@ -25,6 +25,7 @@ export const frame = modifier('frame')
 export const background = modifier('background')
 export const multilineTextAlignment = modifier('multilineTextAlignment')
 export const buttonStyle = modifier('buttonStyle')
+export const disabled = modifier('disabled')
 
 export const accessibilityLabel = (label: string): Modifier => ({
 	$type: 'accessibilityLabel',
@@ -36,6 +37,14 @@ export const accessibilityLabel = (label: string): Modifier => ({
 function labelOf(modifiers?: Modifier[]): string | undefined {
 	let found = modifiers?.find((m) => m.$type === 'accessibilityLabel')
 	return typeof found?.label === 'string' ? found.label : undefined
+}
+
+/// Whether a `disabled(…)` modifier is present and true, matching SwiftUI's
+/// `.disabled()` -- there is no `disabled` prop on the real `Button`.
+function disabledOf(modifiers?: Modifier[]): boolean {
+	let found = modifiers?.find((m) => m.$type === 'disabled')
+	if (!found) return false
+	return found.value !== false
 }
 
 export function Host({children}: WithModifiers): React.ReactNode {
@@ -91,9 +100,13 @@ export function Button({
 	children,
 	onPress,
 	modifiers,
-}: WithModifiers & {onPress?: () => void; disabled?: boolean}): React.ReactNode {
+}: WithModifiers & {onPress?: () => void}): React.ReactNode {
 	return (
-		<Pressable accessibilityLabel={labelOf(modifiers)} onPress={onPress}>
+		<Pressable
+			accessibilityLabel={labelOf(modifiers)}
+			disabled={disabledOf(modifiers)}
+			onPress={onPress}
+		>
 			{children}
 		</Pressable>
 	)
