@@ -28,6 +28,14 @@ const POWERED_BY: Record<EventSource, {title: string; href: string}> = {
 /// name, putting "EventDetail" in the bar.
 const NO_NAV_TITLE = ''
 
+/// Not `StyleSheet.create`: this is header configuration rather than a view
+/// style, and `shadowColor` is typed as the literal `'transparent'`, which
+/// `StyleSheet.create` widens to `string`.
+const TRANSPARENT_HEADER = {
+	backgroundColor: 'transparent',
+	shadowColor: 'transparent',
+} as const
+
 export default function EventDetailPage(): React.ReactNode {
 	let {source, eventKey} = useLocalSearchParams<{
 		source: EventSource
@@ -92,6 +100,11 @@ export default function EventDetailPage(): React.ReactNode {
 	return (
 		<>
 			<Stack.Title>{NO_NAV_TITLE}</Stack.Title>
+			{/* With no title to separate from the content, the bar's fill and hairline
+			    only cut the masthead off from the screen it sits on. A `transparent`
+			    background is what `Stack.Header` keys the absolutely-positioned mode
+			    off, so the form scrolls under the buttons as it does in Calendar.app. */}
+			<Stack.Header style={TRANSPARENT_HEADER} />
 			<Stack.Toolbar placement="right">
 				<Stack.Toolbar.Button
 					accessibilityLabel="Share Event"
