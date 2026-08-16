@@ -36,35 +36,62 @@ type Props = {
 	isLastInSection: boolean
 }
 
+/// The trailing text for each of the row's two lines.
+///
 /// `config.startTime`/`config.endTime` mark a start or end that is not
 /// meaningful for this event (e.g. imported data with only one real edge) --
 /// the old left-column row hid the line rather than show a nonsense time, and
-/// this trailing column does the same.
-function TrailingTimes({event}: {event: EventType}): React.ReactNode {
+/// these do the same, which also hands that line's width back to the title or
+/// the location.
+function trailingText(event: EventType): {first: string; second: string; firstIsTime: boolean} {
 	let {start, end, allDay} = listTimeLines(event)
 
 	if (allDay) {
-		return (
-			<Text modifiers={[font({textStyle: 'body'}), foregroundColor(c.secondaryLabel)]}>
-				all-day
-			</Text>
-		)
+		return {first: 'all-day', second: '', firstIsTime: false}
 	}
 
-	let showStart = event.config.startTime
-	let showEnd = event.config.endTime && end
+	return {
+		first: event.config.startTime ? start : '',
+		second: event.config.endTime ? end : '',
+		firstIsTime: true,
+	}
+}
 
+/// One line of the row: leading text, then its own trailing text pushed to the
+/// right edge.
+///
+/// Calendar.app pairs them line by line rather than setting two columns side by
+/// side -- the title truncates against the start time, and the location against
+/// the end time. So a row with no end time lets its location run the full width,
+/// past where the title above it had to stop. Two columns would truncate both at
+/// the same x, which is what this replaced.
+function RowLine({
+	trailing,
+	prominent = false,
+	children,
+}: {
+	trailing: string
+	/// The start time reads in the primary label colour, as Calendar.app has it;
+	/// the end time and `all-day` are secondary.
+	prominent?: boolean
+	children: React.ReactNode
+}): React.ReactNode {
 	return (
-		<VStack alignment="trailing">
-			{showStart ? (
-				<Text modifiers={[font({textStyle: 'body'}), foregroundColor(c.label)]}>{start}</Text>
-			) : null}
-			{showEnd ? (
-				<Text modifiers={[font({textStyle: 'body'}), foregroundColor(c.secondaryLabel)]}>
-					{end}
+		<HStack spacing={8}>
+			{children}
+			<Spacer />
+			{trailing ? (
+				<Text
+					modifiers={[
+						font({textStyle: 'body'}),
+						foregroundColor(prominent ? c.label : c.secondaryLabel),
+						lineLimit(1),
+					]}
+				>
+					{trailing}
 				</Text>
 			) : null}
-		</VStack>
+		</HStack>
 	)
 }
 
@@ -75,6 +102,7 @@ function TrailingTimes({event}: {event: EventType}): React.ReactNode {
 export function EventListRow({event, onPress, isLastInSection}: Props): React.ReactNode {
 	let title = event.title
 	let subtitle = event[event.config.subtitle]?.trim()
+	let {first, second, firstIsTime} = trailingText(event)
 
 	return (
 		<Button
@@ -85,9 +113,6 @@ export function EventListRow({event, onPress, isLastInSection}: Props): React.Re
 			]}
 			onPress={() => onPress(event)}
 		>
-			{/* `top`, not the default `center`: a one-line title next to a two-line
-			    trailing time column (start over end) would otherwise float to the
-			    row's vertical centre instead of sitting level with the start time. */}
 			<HStack alignment="top">
 				{/* Same fixed-width-via-min/maxWidth trick as the detail header's bar --
 				    `frame`'s native side ignores min/max once width or height is set. */}
@@ -102,34 +127,37 @@ export function EventListRow({event, onPress, isLastInSection}: Props): React.Re
 				</VStack>
 
 				<VStack alignment="leading" modifiers={[padding({vertical: BAR_OVERSHOOT})]}>
-					<Text
-						modifiers={[
-							font({textStyle: 'body', weight: 'semibold'}),
-							foregroundColor(c.label),
-							...SINGLE_LINE,
-						]}
-					>
-						{title}
-					</Text>
-					{subtitle ? (
-						<HStack spacing={4}>
-							<Image color={c.secondaryLabel} size={12} systemName="mappin" />
-							<Text
-								modifiers={[
-									font({textStyle: 'footnote'}),
-									foregroundColor(c.secondaryLabel),
-									...SINGLE_LINE,
-								]}
-							>
-								{subtitle}
-							</Text>
-						</HStack>
+					<RowLine prominent={firstIsTime} trailing={first}>
+						<Text
+							modifiers={[
+								font({textStyle: 'body', weight: 'semibold'}),
+								foregroundColor(c.label),
+								...SINGLE_LINE,
+							]}
+						>
+							{title}
+						</Text>
+					</RowLine>
+
+					{subtitle || second ? (
+						<RowLine trailing={second}>
+							{subtitle ? (
+								<HStack spacing={4}>
+									<Image color={c.secondaryLabel} size={12} systemName="mappin" />
+									<Text
+										modifiers={[
+											font({textStyle: 'footnote'}),
+											foregroundColor(c.secondaryLabel),
+											...SINGLE_LINE,
+										]}
+									>
+										{subtitle}
+									</Text>
+								</HStack>
+							) : null}
+						</RowLine>
 					) : null}
 				</VStack>
-
-				<Spacer />
-
-				<TrailingTimes event={event} />
 			</HStack>
 		</Button>
 	)

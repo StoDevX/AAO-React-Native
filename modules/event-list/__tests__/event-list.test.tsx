@@ -123,6 +123,55 @@ describe('EventList', () => {
 		expect(screen.queryByText(end)).toBeNull()
 	})
 
+	// Calendar.app pairs leading and trailing text line by line: the title
+	// truncates against the start time, the location against the end time. A row
+	// with no end time therefore still shows its location, on a line whose full
+	// width is its own -- which is the point of the pairing.
+	test('still shows the location when there is no end time', async () => {
+		let event = makeEvent({
+			location: 'Middendorf Animal Hospital And Laser Centre',
+			config: {startTime: true, endTime: false, subtitle: 'location'},
+		})
+		let {start, end} = listTimeLines(event)
+
+		await render(
+			<EventList
+				events={[event]}
+				now={NOW}
+				onPressEvent={jest.fn()}
+				onRefresh={jest.fn()}
+				poweredBy={POWERED_BY}
+				refreshing={false}
+			/>,
+		)
+
+		expect(screen.getByText('Middendorf Animal Hospital And Laser Centre')).toBeTruthy()
+		expect(screen.getByText(start)).toBeTruthy()
+		expect(screen.queryByText(end)).toBeNull()
+	})
+
+	test('shows an all-day row’s location too', async () => {
+		let event = makeEvent({
+			startTime: moment('2026-08-17T00:00:00'),
+			endTime: moment('2026-08-18T00:00:00'),
+			location: 'Downtown Northfield, MN',
+		})
+
+		await render(
+			<EventList
+				events={[event]}
+				now={NOW}
+				onPressEvent={jest.fn()}
+				onRefresh={jest.fn()}
+				poweredBy={POWERED_BY}
+				refreshing={false}
+			/>,
+		)
+
+		expect(screen.getByText('all-day')).toBeTruthy()
+		expect(screen.getByText('Downtown Northfield, MN')).toBeTruthy()
+	})
+
 	test('shows the empty state when there are no events', async () => {
 		await render(
 			<EventList
