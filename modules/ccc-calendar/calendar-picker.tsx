@@ -13,6 +13,12 @@ import {useCalendarSources} from './use-calendar-sources'
 /// warns about -- selecting an action on iOS recreates the menu. The toggle
 /// itself still lands, so turning on a second calendar means reopening the menu.
 /// The prop stays because it costs nothing and states the intent.
+///
+/// The button sits in the bottom bar the way Calendar.app's own calendar picker
+/// does. A flexible `Spacer` after it takes the rest of the bar, which is what
+/// leaves the button at the left end. `Stack.Toolbar.Menu` has no `label` prop;
+/// the button's text comes from a `Stack.Toolbar.Label` child, and `title`
+/// deliberately goes unused so the menu gets no header of its own.
 export function CalendarPicker(): React.ReactNode {
 	let {remote, device, enabled, canOfferDevice, deviceAvailable, toggle, requestDevice} =
 		useCalendarSources()
@@ -31,8 +37,10 @@ export function CalendarPicker(): React.ReactNode {
 	))
 
 	return (
-		<Stack.Toolbar placement="right">
-			<Stack.Toolbar.Menu accessibilityLabel="Choose calendars" icon="calendar">
+		<Stack.Toolbar placement="bottom">
+			<Stack.Toolbar.Menu accessibilityLabel="Calendars">
+				<Stack.Toolbar.Label>Calendars</Stack.Toolbar.Label>
+
 				{canOfferDevice ? (
 					<Stack.Toolbar.Menu inline={true} title="All About Olaf">
 						{remoteActions}
@@ -62,6 +70,7 @@ export function CalendarPicker(): React.ReactNode {
 					</Stack.Toolbar.Menu>
 				) : null}
 			</Stack.Toolbar.Menu>
+			<Stack.Toolbar.Spacer />
 		</Stack.Toolbar>
 	)
 }

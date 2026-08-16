@@ -84,7 +84,7 @@ struct TestIdentifiers {
 	// MARK: - Calendar
 
 	enum Calendar {
-		static let picker = "Choose calendars"
+		static let picker = "Calendars"
 		static let calendars = ["St. Olaf", "Northfield"]
 		/// Only the event detail screen carries this, so it is how a test knows
 		/// the push landed.

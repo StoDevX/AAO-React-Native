@@ -41,10 +41,14 @@ jest.mock('expo-router', () => {
 	}) =>
 		react.createElement(Text, {accessibilityState: {selected: Boolean(isOn)}, onPress}, children)
 
+	let Label = ({children}: {children?: string}) => react.createElement(Text, null, children)
+
+	let Spacer = () => react.createElement(View, {testID: 'toolbar-spacer'})
+
 	let Toolbar = Object.assign(
-		({children}: {children?: React.ReactNode}) =>
-			react.createElement(View, {testID: 'toolbar'}, children),
-		{Menu, MenuAction},
+		({children, placement}: {children?: React.ReactNode; placement?: string}) =>
+			react.createElement(View, {testID: `toolbar-${placement ?? 'bottom'}`}, children),
+		{Label, Menu, MenuAction, Spacer},
 	)
 
 	return {Stack: {Toolbar}}
@@ -105,6 +109,21 @@ function isChecked(name: string): boolean {
 }
 
 describe('CalendarPicker', () => {
+	test('the button reads Calendars and sits in the bottom bar, pinned left', async () => {
+		mockUseIsDevMode.mockReturnValue(false)
+		await render(<CalendarPicker />, {wrapper})
+
+		let toolbar = screen.getByTestId('toolbar-bottom')
+
+		expect(within(toolbar).getByText('Calendars')).toBeTruthy()
+
+		// A flexible spacer after the button is what pushes it to the left end
+		// of the bar, so the order of the two is the placement.
+		expect(
+			toolbar.children.map((child) => (typeof child === 'string' ? child : child.props.testID)),
+		).toEqual(['menu', 'toolbar-spacer'])
+	})
+
 	test('outside dev mode it lists the app’s calendars with no groups', async () => {
 		mockUseIsDevMode.mockReturnValue(false)
 		await render(<CalendarPicker />, {wrapper})

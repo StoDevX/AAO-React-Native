@@ -55,11 +55,12 @@ struct CalendarScreen: Screen {
 	}
 
 	/// Close the menu by tapping well away from it -- the toolbar button is at
-	/// the top right, so the bottom left is clear of both it and the menu.
+	/// the bottom left and the menu opens upward from it, so the top right is
+	/// clear of both.
 	@discardableResult
 	func dismissMenu() -> Self {
 		if menuIsPresented() {
-			app.coordinate(withNormalizedOffset: CGVector(dx: 0.1, dy: 0.9)).tap()
+			app.coordinate(withNormalizedOffset: CGVector(dx: 0.9, dy: 0.2)).tap()
 			_ = app.buttons[TestIdentifiers.Calendar.calendars[0]].waitForNonExistence(timeout: 10)
 		}
 		return self
@@ -78,23 +79,72 @@ struct CalendarScreen: Screen {
 		return self
 	}
 
-	/// Open the first event in the list.
+	/// The event rows currently on screen.
 	///
-	/// Rows are found by elimination rather than by name: their titles come from
-	/// the live calendars, so there is nothing fixed to ask for. The toolbar sits
-	/// above `listTop`, which is what keeps the picker and the back button out.
+	/// Found by elimination rather than by name: their titles come from the live
+	/// calendars, so there is nothing fixed to ask for. `listTop` keeps the header
+	/// out, and the picker is excluded by its label since it now sits below the
+	/// list rather than above it.
+	private func rows(listTop: CGFloat) -> [XCUIElement] {
+		app.buttons.allElementsBoundByIndex.filter {
+			$0.exists && $0.isHittable && $0.frame.minY > listTop
+				&& $0.label != TestIdentifiers.Calendar.picker
+		}
+	}
+
+	/// Scroll to the end of the list.
+	///
+	/// The end is where two swipes running leave the bottom-most row in the same
+	/// place; the list is finite, so this terminates well inside `limit`.
+	@discardableResult
+	func scrollToEnd(listTop: CGFloat = 150, limit: Int = 25) -> Self {
+		var previous = rows(listTop: listTop).last?.frame.maxY
+		for _ in 1...limit {
+			app.swipeUp()
+			let current = rows(listTop: listTop).last?.frame.maxY
+			if current == previous {
+				return self
+			}
+			previous = current
+		}
+		XCTFail("The list never stopped scrolling after \(limit) swipes")
+		return self
+	}
+
+	/// The bottom bar floats over the list, so the list needs an inset for it:
+	/// once scrolled to the end, the last row should stop above the Calendars
+	/// button rather than under it.
+	@discardableResult
+	func verifyLastRowClearsToolbar(listTop: CGFloat = 150) -> Self {
+		let picker = app.buttons[TestIdentifiers.Calendar.picker]
+		XCTAssertTrue(
+			picker.waitForExistence(timeout: 30),
+			"The Calendars button should be in the bottom bar")
+
+		guard let last = rows(listTop: listTop).max(by: { $0.frame.maxY < $1.frame.maxY }) else {
+			XCTFail("The list should still have rows at its end")
+			return self
+		}
+
+		XCTContext.runActivity(
+			named: "Last row \"\(last.label)\" ends at \(last.frame.maxY);"
+				+ " the Calendars button starts at \(picker.frame.minY)"
+		) { _ in }
+
+		XCTAssertLessThanOrEqual(
+			last.frame.maxY, picker.frame.minY,
+			"The bottom bar should not cover the last row of the list")
+		return self
+	}
+
+	/// Open the first event in the list.
 	@discardableResult
 	func openFirstEvent(listTop: CGFloat = 150) -> Self {
 		XCTAssertTrue(
 			app.buttons[TestIdentifiers.Calendar.picker].waitForExistence(timeout: 30),
 			"The calendar screen should be up before looking for a row")
 
-		let rows = app.buttons.allElementsBoundByIndex.filter {
-			$0.exists && $0.isHittable && $0.frame.minY > listTop
-				&& $0.label != TestIdentifiers.Calendar.picker
-		}
-
-		guard let row = rows.first else {
+		guard let row = rows(listTop: listTop).first else {
 			XCTFail("The list should have an event to open")
 			return self
 		}

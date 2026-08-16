@@ -66,6 +66,18 @@ class ModuleCalendarTests: UITestCase {
 		}
 	}
 
+	/// The Calendars button floats over the end of the list, so the list has to
+	/// be inset for it. Scrolled all the way down, the last row should sit above
+	/// the button rather than behind it.
+	func testBottomBarClearsTheEndOfTheList() throws {
+		CalendarScreen(app: app)
+			.navigate()
+			.capture("15-list-bottom-bar")
+			.scrollToEnd()
+			.capture("16-list-scrolled-to-end")
+			.verifyLastRowClearsToolbar()
+	}
+
 	/// The detail screen for an event opened out of the merged list: its
 	/// masthead bar should carry the calendar's colour, not a fixed blue.
 	func testEventDetailFromMergedList() throws {
