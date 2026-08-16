@@ -118,19 +118,21 @@ describe('detailTimeLines', () => {
 		let event = generateEvent('2026-08-17T07:45:00', '2026-08-20T18:00:00')
 
 		expect(detailTimeLines(event, 'en-GB')).toEqual([
-			{prefix: 'From', time: '7:45', date: 'Monday, 17 August 2026'},
-			{prefix: 'to', time: '18', date: 'Thursday, 20 August 2026'},
+			{prefix: 'From', time: '07:45', date: 'Monday, 17 August 2026'},
+			{prefix: 'to', time: '18:00', date: 'Thursday, 20 August 2026'},
 		])
 	})
 
-	test('drops the minutes when they are zero, in both clocks', () => {
+	// Only where a meridiem carries the hour. `From 15 Wednesday, 19 August`
+	// does not read as a time, so 24-hour locales keep the `:00`.
+	test('drops the minutes on the hour only where there is a meridiem', () => {
 		let event = generateEvent('2026-08-17T06:00:00', '2026-08-17T07:00:00')
 
 		let [start] = detailTimeLines(event, 'en-US')
 		expect(start.time).toBe('6 AM')
 
 		let [startGB] = detailTimeLines(event, 'en-GB')
-		expect(startGB.time).toBe('06')
+		expect(startGB.time).toBe('06:00')
 	})
 
 	test('keeps the minutes when they are non-zero', () => {

@@ -104,12 +104,28 @@ function formatDetailDate(value: Moment, locale: string | undefined): string {
 	return new Intl.DateTimeFormat(locale, DETAIL_LINE_DATE_OPTIONS).format(value.toDate())
 }
 
-/// `6 PM`, not `6:00 PM` -- Calendar.app drops `:00` on the hour. In a
-/// 24-hour locale this naturally becomes `18` with no meridiem, which is
-/// correct for that locale.
+/// Whether the locale writes a meridiem, which is also what makes an
+/// hour-only time readable: `6 PM` stands on its own, `18` does not.
+function hasMeridiem(locale: string | undefined): boolean {
+	return new Intl.DateTimeFormat(locale, {hour: 'numeric'})
+		.formatToParts(new Date(0))
+		.some((part) => part.type === 'dayPeriod')
+}
+
+/// `6 PM`, not `6:00 PM` -- Calendar.app drops `:00` on the hour.
+///
+/// Only where there is a meridiem, though. Dropping the minutes in a 24-hour
+/// locale leaves a bare `15`, and `From 15 Wednesday, 19 August` does not read
+/// as a time at all; those locales keep `15:00`.
 function formatDetailTime(value: Moment, locale: string | undefined): string {
+	let meridiem = hasMeridiem(locale)
+
+	// A 24-hour clock pads the hour -- `06:00`, not `6:00` -- while a 12-hour
+	// one does not: `06 AM` is wrong wherever `6 AM` is right.
+	let hour = meridiem ? ('numeric' as const) : ('2-digit' as const)
 	let options: Intl.DateTimeFormatOptions =
-		value.minutes() === 0 ? {hour: 'numeric'} : {hour: 'numeric', minute: '2-digit'}
+		value.minutes() === 0 && meridiem ? {hour} : {hour, minute: '2-digit'}
+
 	return new Intl.DateTimeFormat(locale, options).format(value.toDate())
 }
 
