@@ -14,10 +14,8 @@ type Props = {
 	onPressEvent: (event: EventType) => void
 }
 
-// `namedCalendarOptions` now tags every event with its source (Task 4, in
-// service of the merged multi-calendar list landing in a later task). This
-// single-query view doesn't tint or merge anything yet, so it just unwraps
-// the tag back off before handing events to `EventList`.
+// Events carry their source id; this single-query view doesn't tint or
+// merge, so it drops the tag.
 export function CccCalendarView(props: Props): React.ReactNode {
 	let {now} = useMomentTimer({intervalMs: 60000})
 	let {isError, refetch, data = [], isRefetching} = props.query

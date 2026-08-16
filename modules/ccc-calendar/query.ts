@@ -119,11 +119,10 @@ export const deviceCalendarsOptions = () =>
 export const deviceCalendarOptions = (calendarId: string) =>
 	queryOptions({
 		queryKey: ['calendar', 'device', calendarId] as const,
-		queryFn: async () => {
+		queryFn: () => {
 			let start = moment().startOf('day').toDate()
 			let end = moment().startOf('day').add(1, 'month').toDate()
-			let events = await listDeviceEvents(start, end)
-			return events.filter((entry) => entry.calendarId === calendarId)
+			return listDeviceEvents(start, end, [calendarId])
 		},
 		// EventKit gives a real event id; better than `startTime|title`, and it is
 		// what the detail screen looks the event back up by.

@@ -46,6 +46,12 @@ const NORTHFIELD: CalendarSource = {
 	color: 'indigo',
 	kind: 'remote',
 }
+const DEVICE_CAL_1: CalendarSource = {
+	id: 'device:cal-1',
+	title: 'Birthdays',
+	color: '#34C759',
+	kind: 'device',
+}
 
 function wrapper({children}: {children: React.ReactNode}) {
 	let client = new QueryClient({defaultOptions: {queries: {retry: false}}})
@@ -74,6 +80,17 @@ describe('useMergedEvents', () => {
 		let {result} = await renderHook(() => useMergedEvents([]), {wrapper})
 
 		expect(result.current.events).toEqual([])
+		expect(result.current.failed).toEqual([])
+	})
+
+	// `isDeviceSourceId`/`deviceCalendarIdFrom` route a device source to
+	// `deviceCalendarOptions` instead of `namedCalendarOptions` -- the only
+	// branch in the hook, and otherwise untested.
+	test('a device source is routed to deviceCalendarOptions, tagged with its own id', async () => {
+		let {result} = await renderHook(() => useMergedEvents([DEVICE_CAL_1]), {wrapper})
+
+		await waitFor(() => expect(result.current.events).toHaveLength(1))
+		expect(result.current.events[0]?.sourceId).toBe('device:cal-1')
 		expect(result.current.failed).toEqual([])
 	})
 })
