@@ -1,7 +1,7 @@
 import * as React from 'react'
 import {Section, Text, TextField, useNativeState} from '@expo/ui/swift-ui'
 import {disabled, onSubmit, submitLabel} from '@expo/ui/swift-ui/modifiers'
-import restart from 'react-native-restart-newarch'
+import {Restart} from 'react-native-restart-newarch'
 import * as storage from '../../../../lib/storage'
 import {DEFAULT_URL} from '../../../../lib/constants'
 import {useMutation, useQuery} from '@tanstack/react-query'
@@ -31,7 +31,7 @@ export const ServerUrlSection = (): React.ReactElement => {
 	let storeServerAddress = useMutation({
 		mutationKey: ['settings', 'server-url'],
 		mutationFn: () => storage.setServerAddress(serverAddress),
-		onSuccess: () => restart.Restart(),
+		onSuccess: () => Restart(),
 	})
 
 	let reload = () => storeServerAddress.mutate()

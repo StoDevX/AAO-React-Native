@@ -3,7 +3,7 @@ import {Stack, useLocalSearchParams} from 'expo-router'
 import {useQuery} from '@tanstack/react-query'
 import {timezone} from '@frogpond/constants'
 import {StyleSheet, Text, Platform, ScrollViewProps, ScrollView, TextProps} from 'react-native'
-import type {CourseType} from '../../source/lib/course-search'
+import type {CourseType, TermType} from '../../source/lib/course-search'
 import {SolidBadge as Badge} from '@frogpond/badge'
 import moment from 'moment-timezone'
 import {formatDay} from '../../source/features/sis/course-search/lib/format-day'
@@ -21,7 +21,6 @@ import zip from 'lodash/zip'
 
 import {courseByIdOptions, termByNumberOptions} from '../../source/features/sis/course-search/query'
 import {LoadingView, NoticeView} from '@frogpond/notice'
-import type {TermType} from '../../source/lib/course-search'
 
 const PENDING_TERM: TermType = {hash: '', path: '', term: 0, type: '', year: 0}
 

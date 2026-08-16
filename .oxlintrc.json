@@ -18,10 +18,18 @@
   // modules/event-list/event-row.tsx), so no-typos/no-access-state-in-setstate
   // leave a real, if narrow, gap there.
   //
+  // eslint-plugin-import's `order` rule -- the rule #7093 actually asked
+  // for, to enforce the external/internal/relative import grouping this
+  // file's CLAUDE.md documents under "Imports" -- has no oxlint port either;
+  // neither does `no-unresolved` (module resolution is instead covered here
+  // by the typescript plugin's typeAware type-checking). The rest of
+  // eslint-plugin-import's `recommended` ruleset does have oxlint
+  // equivalents and is enabled below.
+  //
   // linebreak-style/quotes/semi aren't lint rules here because they're
   // formatting concerns covered by oxfmt's endOfLine/singleQuote/semi config
   // (.oxfmtrc.json) instead.
-  "plugins": ["typescript", "react", "unicorn", "oxc"],
+  "plugins": ["typescript", "react", "unicorn", "oxc", "import"],
   "jsPlugins": ["@tanstack/eslint-plugin-query"],
   "categories": {
     "correctness": "error"
@@ -131,7 +139,17 @@
     "@tanstack/query/no-unstable-deps": "error",
     "@tanstack/query/infinite-query-property-order": "error",
     "@tanstack/query/no-void-query-fn": "error",
-    "@tanstack/query/mutation-property-order": "error"
+    "@tanstack/query/mutation-property-order": "error",
+
+    // Import rules (eslint-plugin-import's own `recommended` severities).
+    // `import/default` and `import/namespace` are correctness-category and
+    // so are already enabled via the "categories" block above; listed here
+    // only in this comment for visibility, not duplicated in "rules".
+    "import/named": "error",
+    "import/export": "error",
+    "import/no-named-as-default": "warn",
+    "import/no-named-as-default-member": "warn",
+    "import/no-duplicates": "warn"
   },
   "overrides": [
     {

@@ -5,23 +5,19 @@ import {
 	updateRecentFilters,
 	selectRecentFilters,
 } from '../../source/redux/parts/courses'
-import {LoadingView} from '@frogpond/notice'
+import {LoadingView, NoticeView} from '@frogpond/notice'
 import type {CourseType} from '../../source/lib/course-search'
-import {useAppDispatch} from '../../source/redux'
-import {applyFiltersToItem} from '@frogpond/filter'
-import {FilterType} from '@frogpond/filter'
+import {useAppDispatch, useAppSelector} from '../../source/redux'
+import {applyFiltersToItem, FilterType, FilterToolbar} from '@frogpond/filter'
 import {useFilters} from '../../source/features/sis/course-search/lib/build-filters'
 import {Stack, useLocalSearchParams, useRouter} from 'expo-router'
 import {fromPairs} from 'lodash'
-import {useAppSelector} from '../../source/redux'
 import {useDebounce} from '@frogpond/use-debounce'
 import {ListSeparator, ListSectionHeader, largeListProps} from '@frogpond/lists'
 import * as c from '@frogpond/colors'
 import {CourseRow} from '../../source/features/sis/course-search/row'
 import memoize from 'lodash/memoize'
 import {parseTerm} from '../../source/lib/course-search'
-import {NoticeView} from '@frogpond/notice'
-import {FilterToolbar} from '@frogpond/filter'
 import {ListSpecType} from '@frogpond/filter/types'
 import {
 	applySearch,
