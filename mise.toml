@@ -67,6 +67,72 @@ if [ ! -f ios/ci_scripts/ci_post_clone.sh ]; then
 fi
 '''
 
+[tasks."build:ios"]
+description = "Build the app with xcodebuild for iOS"
+wait_for = ["prebuild"]
+usage = '''
+  arg "<device>" help="The device to build for" default="simulator" env="DEVICE"
+'''
+run = '''
+xcodebuild build \
+  -workspace ios/AllAboutOlaf.xcworkspace \
+  -scheme AllAboutOlaf \
+  -configuration Debug \
+  -destination "platform=iOS,name=${usage_device?}" \
+  -derivedDataPath ios/build \
+  -allowProvisioningUpdates \
+  CODE_SIGN_STYLE=Automatic \
+  DEVELOPMENT_TEAM=TMK6S7TPX2 \
+  PROVISIONING_PROFILE_SPECIFIER=""
+'''
+
+[tasks."embed-jsbundle:ios"]
+hide = true
+description = "Embed the .jsbundle into the ios app package"
+wait_for = ["bundle:ios", "build:ios"]
+env.APP = "ios/build/Build/Products/Debug-iphoneos/AllAboutOlaf.app"
+run = [
+	'''cp ios/AllAboutOlaf/main.jsbundle "$APP/"''',
+	'''rm -rf "$APP/assets" && cp -R ios/assets "$APP/"''',
+]
+
+[tasks."device:find-udid"]
+hide = true
+description = "Find the UDID of a device, or exit 1 if no device found"
+usage = '''
+  arg "<device>" help="The device to build for" default="simulator" env="DEVICE"
+'''
+run = '''
+  xcrun devicectl list devices --filter "Name = '${usage_device?}'" --omit-deprecated-fields-in-json --json-output=- 2>/dev/null | jq --raw-output --exit-status .result.devices[0].properties.hardware.udid
+'''
+
+[tasks."device:deploy"]
+hide = true
+description = "Deploy the app to a physical device"
+usage = '''
+  arg "<device>" help="The device to target" default="simulator" env="DEVICE"
+'''
+env.APP = "ios/build/Build/Products/Debug-iphoneos/AllAboutOlaf.app"
+run = '''
+  xcrun devicectl device install app --device "$(mise run device:find-udid "${usage_device?}")" "$APP"
+'''
+
+[tasks.device]
+description = "Build and deploy the app to a physical device"
+usage = '''
+  arg "<device>" help="The device to build for" default="simulator" env="DEVICE"
+'''
+depends = [
+	{ task = "pnpm:install:frozen" },
+	{ task = "prebuild", env.APP_VARIANT = "development" },
+	{ task = 'build:ios', args = [
+		"{{usage.device}}",
+	] },
+	{ task = "bundle:ios" },
+	{ task = "embed-jsbundle:ios" },
+]
+run = [{ task = 'device:deploy', args = ["{{usage.device}}"] }]
+
 [tasks.fastlane]
 description = "Run fastlane"
 run = "fastlane"
