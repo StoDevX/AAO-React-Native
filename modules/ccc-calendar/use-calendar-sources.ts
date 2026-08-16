@@ -4,8 +4,8 @@ import {useDispatch, useSelector} from 'react-redux'
 
 import {useIsDevMode} from '../../source/lib/use-is-dev-mode'
 import {selectEnabledCalendarSources, toggleCalendarSource} from '../../source/redux/parts/settings'
-import {getFullCalendarAccess, requestFullCalendarAccess} from './device-calendar'
-import {deviceCalendarsOptions} from './query'
+import {requestFullCalendarAccess} from './device-calendar'
+import {calendarAccessOptions, deviceCalendarsOptions} from './query'
 import {type CalendarSource, REMOTE_SOURCES} from './sources'
 
 type CalendarSourcesState = {
@@ -19,31 +19,15 @@ type CalendarSourcesState = {
 	requestDevice: () => Promise<void>
 }
 
-/// Whether a grant already exists. Only ever *checks* -- asking is
-/// `requestDevice`, called from an explicit tap, so no build prompts on its own.
-function useDeviceGranted(devMode: boolean): [boolean, (granted: boolean) => void] {
-	let [granted, setGranted] = React.useState(false)
-
-	React.useEffect(() => {
-		if (!devMode) {
-			setGranted(false)
-			return
-		}
-		void (async () => {
-			let current = await getFullCalendarAccess()
-			setGranted(current.granted)
-		})()
-	}, [devMode])
-
-	return [granted, setGranted]
-}
-
 export function useCalendarSources(): CalendarSourcesState {
 	let devMode = useIsDevMode()
 	let dispatch = useDispatch()
 	let client = useQueryClient()
 	let enabledIds = useSelector(selectEnabledCalendarSources)
-	let [granted, setGranted] = useDeviceGranted(devMode)
+
+	// Outside dev mode this stays disabled, so nothing here so much as asks
+	// EventKit what it has already granted.
+	let {data: granted = false} = useQuery({...calendarAccessOptions(), enabled: devMode})
 
 	let {data: device = []} = useQuery({
 		...deviceCalendarsOptions(),
@@ -57,10 +41,12 @@ export function useCalendarSources(): CalendarSourcesState {
 
 		let response = await requestFullCalendarAccess()
 		if (response.granted) {
-			setGranted(true)
+			// Written into the shared cache rather than local state: every other
+			// component holding this hook has to learn about the grant too.
+			client.setQueryData(calendarAccessOptions().queryKey, true)
 			await client.invalidateQueries({queryKey: deviceCalendarsOptions().queryKey})
 		}
-	}, [devMode, client, setGranted])
+	}, [devMode, client])
 
 	let all = React.useMemo(() => [...REMOTE_SOURCES, ...device], [device])
 	let enabled = React.useMemo(

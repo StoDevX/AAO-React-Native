@@ -80,6 +80,9 @@ describe('useCalendarSources', () => {
 		expect(result.current.remote.map((s) => s.id)).toEqual(['stolaf', 'northfield'])
 		expect(result.current.canOfferDevice).toBe(false)
 		expect(result.current.device).toEqual([])
+		// The branch's central invariant: a production build must not so much as
+		// ask EventKit what it already granted.
+		expect(mockGetFullCalendarAccess).not.toHaveBeenCalled()
 	})
 
 	test('in dev mode the device can be offered, but nothing is read before a grant', async () => {
@@ -109,6 +112,32 @@ describe('useCalendarSources', () => {
 		})
 		expect(result.current.deviceAvailable).toBe(true)
 		expect(mockGetCalendars).toHaveBeenCalled()
+	})
+
+	// Three components call this hook on the calendar screen -- the picker, the
+	// list, and the detail screen -- and the grant is won in the picker. If each
+	// instance kept its own answer, the list would go on filtering the newly
+	// enabled device sources back out until the screen remounted.
+	test('a grant won in one instance reaches the others', async () => {
+		mockUseIsDevMode.mockReturnValue(true)
+		let {result} = await renderHook(
+			() => ({picker: useCalendarSources(), list: useCalendarSources()}),
+			{wrapper},
+		)
+
+		expect(result.current.list.deviceAvailable).toBe(false)
+
+		await act(async () => {
+			await result.current.picker.requestDevice()
+		})
+
+		await waitFor(() => {
+			expect(result.current.list.device).toEqual([
+				{id: 'device:ABC', title: 'Birthdays', color: '#34C759', kind: 'device'},
+			])
+		})
+		expect(result.current.list.deviceAvailable).toBe(true)
+		expect(result.current.list.all.map((s) => s.id)).toContain('device:ABC')
 	})
 
 	test('outside dev mode, requestDevice never prompts', async () => {

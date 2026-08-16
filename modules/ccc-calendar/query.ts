@@ -9,7 +9,7 @@ import {queryOptions} from '@tanstack/react-query'
 import * as Calendar from 'expo-calendar'
 import moment from 'moment'
 import {queryClient} from '../../source/init/tanstack-query'
-import {listDeviceEvents} from './device-calendar'
+import {getFullCalendarAccess, listDeviceEvents} from './device-calendar'
 import {parseEvents} from './parsers/events'
 import {parseIcalEvents} from './parsers/ical'
 import {parseTecEvents, type WireEvent} from './parsers/tec-events'
@@ -113,6 +113,26 @@ export const deviceCalendarEventOptions = (calendarId: string, eventId: string) 
 			let end = moment().startOf('day').add(1, 'month').toDate()
 			let events = await listDeviceEvents(start, end, [calendarId])
 			return events.find((entry) => entry.id === eventId)?.event
+		},
+	})
+
+/// Whether EventKit has already granted full calendar access. A query, so that
+/// the three components asking for calendar sources on one screen -- the
+/// picker, the list, and the detail screen -- read a single answer: the grant
+/// is won inside the picker, and per-component state leaves the other two
+/// believing there is still no access. React Query also drops a stale in-flight
+/// check rather than letting it land on newer state.
+///
+/// Only ever *checks*. Asking is `requestFullCalendarAccess`, called from an
+/// explicit tap, and the caller leaves this query disabled outside dev mode, so
+/// a production build never reaches EventKit at all.
+// oxlint-disable-next-line typescript/explicit-module-boundary-types
+export const calendarAccessOptions = () =>
+	queryOptions({
+		queryKey: ['calendar', 'device-access'] as const,
+		queryFn: async () => {
+			let access = await getFullCalendarAccess()
+			return access.granted
 		},
 	})
 
