@@ -521,6 +521,9 @@ importers:
 
   modules/ccc-calendar:
     dependencies:
+      '@frogpond/colors':
+        specifier: workspace:*
+        version: link:../colors
       '@frogpond/data-sources':
         specifier: workspace:*
         version: link:../data-sources
