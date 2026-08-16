@@ -3,6 +3,7 @@ import {z} from 'zod'
 export const REL_NEWS = 'https://frogpond.tech/rel/news'
 export const REL_A_TO_Z = 'https://frogpond.tech/rel/a-to-z'
 export const REL_CALENDAR = 'https://frogpond.tech/rel/calendar'
+export const REL_JOBS = 'https://frogpond.tech/rel/jobs'
 
 /// JRD `properties` member names are URIs (RFC 7033 §4.4.4.5), so the source
 /// id is keyed by one rather than a bare string.
