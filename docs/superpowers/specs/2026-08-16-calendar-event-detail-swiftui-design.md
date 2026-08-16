@@ -22,7 +22,7 @@ A `Host` wrapping a `Form`, following `app/(settings)/SettingsRoot.tsx`.
 | `Section("Description")` | `Text(event.description)` with `textSelection(true)` |
 | `Section("Links")` | One `Link` per entry in `event.links` |
 | `Section` | A `Button` labelled "Add to calendar", with the status message as the section footer |
-| Footer | The existing "Powered by…" `ListFooter`, inside an `RNHostView` |
+| Footer | The "Powered by…" line as a plain `Text`, centred and in `secondaryLabel` |
 
 The accent bar takes a fixed tint. `EventType` carries no per-event colour, and
 the list's `Bar` is `c.separator` rather than anything event-specific.
@@ -100,4 +100,4 @@ Dump the real tree before rewriting the assertions rather than guessing at them.
 
 - **Text truncation.** `Form` rows size differently from the current table view; a long description may clip where it previously wrapped. Check with a real multi-paragraph event.
 - **Dynamic Type.** The settings icon tile still does not scale, so `@expo/ui` layout at large sizes deserves a look rather than an assumption.
-- **`RNHostView` for the footer.** `SettingsRoot` uses it for the FAQ banner, so the pattern is proven, but it needs `listRowInsets` and `listRowBackground` zeroed to avoid a stray inset.
+- **The footer's link.** `ListFooter` takes an `href` but never uses it — it renders title text only. Replacing it with a `Text` therefore loses nothing, but if the intent was always for it to be tappable, this is the moment to say so.
