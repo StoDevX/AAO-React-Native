@@ -76,16 +76,23 @@ export function Text({
 }
 
 /// `title` renders as text so a test can assert a section is present, and
-/// `footer` renders its slot content so the "Add to calendar" status message is
-/// queryable.
+/// `header`/`footer` render their slot content -- both are real `SwiftUIContent`
+/// slots on the native component, so a bare string handed to either crashes
+/// at mount; rendering them here is what would catch that in a test.
 export function Section({
 	children,
 	title,
+	header,
 	footer,
-}: WithModifiers & {title?: string; footer?: React.ReactNode}): React.ReactNode {
+}: WithModifiers & {
+	title?: string
+	header?: React.ReactNode
+	footer?: React.ReactNode
+}): React.ReactNode {
 	return (
 		<View>
 			{title ? <RNText>{title}</RNText> : null}
+			{header}
 			{children}
 			{footer}
 		</View>
@@ -98,16 +105,17 @@ export function Link({label, destination}: {label?: string; destination: string}
 
 export function Button({
 	children,
+	label,
 	onPress,
 	modifiers,
-}: WithModifiers & {onPress?: () => void}): React.ReactNode {
+}: WithModifiers & {label?: string; onPress?: () => void}): React.ReactNode {
 	return (
 		<Pressable
 			accessibilityLabel={labelOf(modifiers)}
 			disabled={disabledOf(modifiers)}
 			onPress={onPress}
 		>
-			{children}
+			{children ?? (label ? <RNText>{label}</RNText> : null)}
 		</Pressable>
 	)
 }

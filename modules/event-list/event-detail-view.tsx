@@ -84,6 +84,7 @@ export function EventDetail({event, poweredBy}: Props): React.ReactNode {
 								font({size: 10}),
 								foregroundColor(c.secondaryLabel),
 								multilineTextAlignment('center'),
+								textSelection(true),
 							]}
 						>
 							{poweredBy.title}

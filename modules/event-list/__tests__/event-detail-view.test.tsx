@@ -1,7 +1,7 @@
 import React from 'react'
 import moment from 'moment-timezone'
 import {describe, expect, test} from '@jest/globals'
-import {fireEvent, render, screen} from '@testing-library/react-native'
+import {fireEvent, render, screen, waitFor} from '@testing-library/react-native'
 import type {EventType} from '@frogpond/event-type'
 
 import {EventDetail} from '../event-detail-view'
@@ -76,7 +76,9 @@ describe('EventDetail', () => {
 	test('it offers an add-to-calendar button', async () => {
 		await render(<EventDetail event={makeEvent()} poweredBy={POWERED_BY} />)
 
-		fireEvent.press(screen.getByLabelText('Add to calendar'))
-		expect(screen.getByLabelText('Add to calendar')).toBeTruthy()
+		await fireEvent.press(screen.getByLabelText('Add to calendar'))
+		await waitFor(() =>
+			expect(screen.getByText('Event has been added to your calendar')).toBeTruthy(),
+		)
 	})
 })
