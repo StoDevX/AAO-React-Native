@@ -552,6 +552,24 @@ importers:
         specifier: ^19.1.0
         version: 19.2.8
 
+  modules/ccc-jobs:
+    dependencies:
+      '@frogpond/data-sources':
+        specifier: workspace:*
+        version: link:../data-sources
+      '@frogpond/html-lib':
+        specifier: workspace:*
+        version: link:../html-lib
+      '@tanstack/react-query':
+        specifier: ^5.0.0
+        version: 5.101.4(react@19.2.8)
+      react:
+        specifier: ^19.1.0
+        version: 19.2.8
+      zod:
+        specifier: 4.4.3
+        version: 4.4.3
+
   modules/colors: {}
 
   modules/constants:
