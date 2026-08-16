@@ -12,7 +12,7 @@ import {
 } from 'react-native'
 import {Stack, useLocalSearchParams} from 'expo-router'
 import {useQuery} from '@tanstack/react-query'
-import {Ionicons as Icon} from '@react-native-vector-icons/ionicons'
+import {SymbolView} from 'expo-symbols'
 import {LoadingView, NoticeView} from '@frogpond/notice'
 import * as c from '@frogpond/colors'
 import {openUrl} from '@frogpond/open-url'
@@ -191,11 +191,11 @@ function RedditPostDetailView({post, communityName}: ViewProps): React.ReactNode
 						onPress={() => handleLinkPress(linkUrl)}
 						style={styles.linkCard}
 					>
-						<Icon name="globe-outline" style={styles.linkCardIcon} />
+						<SymbolView name="globe" size={16} tintColor={c.link} />
 						<Text numberOfLines={1} style={styles.linkCardDomain}>
 							{linkDomain ?? linkUrl}
 						</Text>
-						<Icon name="chevron-forward-outline" style={styles.linkCardChevron} />
+						<SymbolView name="chevron.right" size={14} tintColor={c.tertiaryLabel} />
 					</Pressable>
 				) : null}
 
@@ -212,7 +212,7 @@ function RedditPostDetailView({post, communityName}: ViewProps): React.ReactNode
 						style={styles.crosspostCard}
 					>
 						<View style={styles.crosspostIconRow}>
-							<Icon name="link-outline" style={styles.crosspostIcon} />
+							<SymbolView name="link" size={14} tintColor={c.secondaryLabel} />
 							<Text style={styles.crosspostLabel}>
 								{crosspostParent ? `r/${crosspostParent.subreddit}` : 'Crosspost'}
 							</Text>
@@ -430,18 +430,10 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 14,
 		backgroundColor: c.secondarySystemBackground,
 	},
-	linkCardIcon: {
-		fontSize: 16,
-		color: c.link,
-	},
 	linkCardDomain: {
 		flex: 1,
 		fontSize: 14,
 		color: c.link,
-	},
-	linkCardChevron: {
-		fontSize: 14,
-		color: c.tertiaryLabel,
 	},
 	modalBackdrop: {
 		flex: 1,
@@ -492,10 +484,6 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		gap: 6,
 		marginBottom: 4,
-	},
-	crosspostIcon: {
-		fontSize: 14,
-		color: c.secondaryLabel,
 	},
 	crosspostLabel: {
 		fontSize: 11,
