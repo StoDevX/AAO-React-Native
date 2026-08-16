@@ -1,14 +1,29 @@
 import {parseDocument} from 'htmlparser2'
-import {textContent} from 'domutils'
-import {AnyNode, Document, isText, isTag, type ChildNode} from 'domhandler'
+import {getElementsByTagName, textContent} from 'domutils'
+import {AnyNode, Document, Element, isText, isTag, type ChildNode} from 'domhandler'
 import cssSelect from 'css-select'
 
-export {textContent, cssSelect}
+export {textContent, cssSelect, getElementsByTagName}
 export {encode, decode} from 'html-entities'
+export type {Element}
 
 export function parseHtml(string: string): Document {
 	return parseDocument(string, {
 		xmlMode: false,
+		decodeEntities: true,
+	})
+}
+
+/// RSS and other XML feeds use namespaced tag names (`dc:creator`,
+/// `content:encoded`) that `parseHtml`'s HTML mode does not preserve
+/// faithfully, and XML has its own rules for self-closing tags and CDATA
+/// sections that HTML mode does not apply. `xmlMode: true` treats those
+/// names as ordinary (colon-containing) tag names rather than attempting
+/// namespace resolution, so callers can find them with `getElementsByTagName`
+/// without a namespace-aware selector.
+export function parseXml(string: string): Document {
+	return parseDocument(string, {
+		xmlMode: true,
 		decodeEntities: true,
 	})
 }

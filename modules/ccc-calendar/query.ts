@@ -5,6 +5,7 @@ import {queryOptions} from '@tanstack/react-query'
 import moment from 'moment'
 import {queryClient} from '../../source/init/tanstack-query'
 import {parseEvents} from './parsers/events'
+import {parseIcalEvents} from './parsers/ical'
 import {parseTecEvents, type WireEvent} from './parsers/tec-events'
 import {NamedCalendar} from './types'
 
@@ -30,26 +31,36 @@ function convertEvents(data: WireEvent[], options: {eventMapper?: EventMapper}):
 
 const TEC_EVENTS = 'application/vnd.tribe.events.v1+json'
 const FROGPOND_EVENTS = 'application/vnd.frogpond.events+json'
+const ICAL_EVENTS = 'text/calendar'
 
-export const CALENDAR_TYPES = [TEC_EVENTS, FROGPOND_EVENTS] as const
+interface CalendarParser {
+	format: 'json' | 'text'
+	parse: (body: unknown) => WireEvent[]
+}
 
-function parse(type: string, body: unknown): WireEvent[] {
-	switch (type) {
-		case TEC_EVENTS:
-			return parseTecEvents(body)
-		case FROGPOND_EVENTS:
-			return parseEvents(body)
-		default:
-			throw new Error(`no calendar parser for "${type}"`)
-	}
+// One entry per media type, so its wire format and its parser can't drift
+// apart the way a separate switch and ternary could.
+const CALENDAR_PARSERS: Record<string, CalendarParser> = {
+	[TEC_EVENTS]: {format: 'json', parse: parseTecEvents},
+	[FROGPOND_EVENTS]: {format: 'json', parse: parseEvents},
+	[ICAL_EVENTS]: {format: 'text', parse: parseIcalEvents},
+}
+
+export const CALENDAR_TYPES = Object.keys(CALENDAR_PARSERS)
+
+function parserFor(type: string): CalendarParser {
+	let parser = CALENDAR_PARSERS[type]
+	if (!parser) throw new Error(`no calendar parser for "${type}"`)
+	return parser
 }
 
 async function fetchCalendar(calendar: NamedCalendar, signal: AbortSignal): Promise<WireEvent[]> {
 	let manifest = await fetchManifest(queryClient)
 	let resolved = resolveSource(manifest, REL_CALENDAR, calendar, CALENDAR_TYPES)
 
-	let body = await fetchSourceBody(resolved.href, signal, 'Calendar')
-	return parse(resolved.type, body)
+	let parser = parserFor(resolved.type)
+	let body = await fetchSourceBody(resolved.href, signal, 'Calendar', parser.format)
+	return parser.parse(body)
 }
 
 // oxlint-disable-next-line typescript/explicit-module-boundary-types

@@ -99,4 +99,37 @@ describe('fetchSourceBody', () => {
 		controller.abort()
 		await assertion
 	})
+
+	test('a relative href in text format resolves through client as text, not json', async () => {
+		let fetchMock = jest.fn((request: Request) => {
+			expect(request.url).toBe('https://example.test/news/named/rss-feed')
+			return Promise.resolve(new Response('<rss>not json</rss>', {status: 200}))
+		})
+		global.fetch = fetchMock as unknown as typeof fetch
+
+		let controller = new AbortController()
+		let body = await fetchSourceBody('news/named/rss-feed', controller.signal, 'News', 'text')
+
+		expect(body).toBe('<rss>not json</rss>')
+		expect(fetchMock).toHaveBeenCalledTimes(1)
+	})
+
+	test('an absolute href in text format does not go through the configured api root', async () => {
+		let fetchMock = jest.fn((url: string) => {
+			expect(url).toBe('https://content.krlx.org/feed/')
+			return new Response('<rss>not json</rss>', {status: 200})
+		})
+		global.fetch = fetchMock as unknown as typeof fetch
+
+		let controller = new AbortController()
+		let body = await fetchSourceBody(
+			'https://content.krlx.org/feed/',
+			controller.signal,
+			'News',
+			'text',
+		)
+
+		expect(body).toBe('<rss>not json</rss>')
+		expect(fetchMock).toHaveBeenCalledTimes(1)
+	})
 })

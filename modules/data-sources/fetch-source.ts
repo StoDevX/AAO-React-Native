@@ -46,13 +46,19 @@ async function fetchWithTimeout(href: string, signal: AbortSignal): Promise<Resp
 /// server-URL override and mDNS discovery) and already carries ky's 10-second
 /// default timeout. An absolute href bypasses the api root by design, so it
 /// gets the same 10-second timeout applied manually.
+///
+/// `format` picks the body parser: `'json'` (the default) for sources like
+/// WordPress's REST API, `'text'` for sources whose media type is not JSON —
+/// RSS (`application/rss+xml`), for instance.
 export async function fetchSourceBody(
 	href: string,
 	signal: AbortSignal,
 	label: string,
+	format: 'json' | 'text' = 'json',
 ): Promise<unknown> {
 	if (!isAbsoluteHref(href)) {
-		return client.get(href, {signal}).json()
+		let request = client.get(href, {signal})
+		return format === 'text' ? request.text() : request.json()
 	}
 
 	let response = await fetchWithTimeout(href, signal)
@@ -60,5 +66,5 @@ export async function fetchSourceBody(
 		throw new Error(`${label} fetch failed: ${response.status}`)
 	}
 
-	return response.json()
+	return format === 'text' ? response.text() : response.json()
 }
