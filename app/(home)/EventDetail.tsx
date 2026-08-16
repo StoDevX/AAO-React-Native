@@ -21,6 +21,15 @@ const POWERED_BY: Record<EventSource, {title: string; href: string}> = {
 	'krlx-schedule': KRLX_POWERED_BY,
 }
 
+/// The body header now carries the event's title, so the bar shows which
+/// calendar the event came from instead of repeating it.
+const CALENDAR_NAME: Record<EventSource, string> = {
+	stolaf: 'St. Olaf',
+	northfield: 'Northfield',
+	'ksto-schedule': 'KSTO',
+	'krlx-schedule': 'KRLX',
+}
+
 export default function EventDetailPage(): React.ReactNode {
 	let {source, eventKey} = useLocalSearchParams<{
 		source: EventSource
@@ -84,7 +93,7 @@ export default function EventDetailPage(): React.ReactNode {
 
 	return (
 		<>
-			<Stack.Title>{event.title}</Stack.Title>
+			<Stack.Title>{CALENDAR_NAME[source]}</Stack.Title>
 			<Stack.Toolbar placement="right">
 				<Stack.Toolbar.Button
 					accessibilityLabel="Share Event"

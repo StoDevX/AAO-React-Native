@@ -81,4 +81,19 @@ describe('EventDetail', () => {
 			expect(screen.getByText('Event has been added to your calendar')).toBeTruthy(),
 		)
 	})
+
+	test('it lists each event link', async () => {
+		let links = ['https://example.com/one', 'https://example.com/two']
+		await render(<EventDetail event={makeEvent({links})} poweredBy={POWERED_BY} />)
+
+		expect(screen.getByText('Links')).toBeTruthy()
+		expect(screen.getByText('https://example.com/one')).toBeTruthy()
+		expect(screen.getByText('https://example.com/two')).toBeTruthy()
+	})
+
+	test('it omits the links section when there are none', async () => {
+		await render(<EventDetail event={makeEvent({links: []})} poweredBy={POWERED_BY} />)
+
+		expect(screen.queryByText('Links')).toBeNull()
+	})
 })
