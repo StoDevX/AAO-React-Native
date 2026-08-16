@@ -9,6 +9,7 @@
     "test": "jest"
   },
   "dependencies": {
+    "@frogpond/colors": "workspace:*",
     "@frogpond/data-sources": "workspace:*",
     "@frogpond/event-list": "workspace:*",
     "@frogpond/event-type": "workspace:*",
