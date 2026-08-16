@@ -34,7 +34,7 @@ function PlayButton(props: PlayButtonProps): React.ReactNode {
 	const {state, onPlay, onPause, onLink} = props
 
 	if (!ALLOW_INLINE_PLAYER) {
-		return <ActionButton icon="planet" onPress={onLink} text="Open" />
+		return <ActionButton icon="globe" onPress={onLink} text="Open" />
 	}
 
 	switch (state) {
@@ -42,13 +42,13 @@ function PlayButton(props: PlayButtonProps): React.ReactNode {
 			return <ActionButton icon="play" onPress={onPlay} text="Listen" />
 
 		case 'checking':
-			return <ActionButton icon="code-working" onPress={onPause} text="Starting" />
+			return <ActionButton icon="ellipsis" onPress={onPause} text="Starting" />
 
 		case 'playing':
 			return <ActionButton icon="pause" onPress={onPlay} text="Pause" />
 
 		default:
-			return <ActionButton icon="bug" onPress={noop} text="Error" />
+			return <ActionButton icon="ladybug" onPress={noop} text="Error" />
 	}
 }
 

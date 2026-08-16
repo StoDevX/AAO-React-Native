@@ -1,15 +1,13 @@
 import * as React from 'react'
 import {StyleSheet, Text, View} from 'react-native'
 import * as c from '@frogpond/colors'
-import {Ionicons as Icon} from '@react-native-vector-icons/ionicons'
-import type IoniconsGlyphs from '@react-native-vector-icons/ionicons/glyphmaps/Ionicons.json'
+import {SymbolView} from 'expo-symbols'
+import type {SFSymbol} from 'sf-symbols-typescript'
 import {Touchable} from '@frogpond/touchable'
-
-type IoniconsGlyph = keyof typeof IoniconsGlyphs
 import {theming} from './theme'
 
 type ActionButtonProps = {
-	icon: IoniconsGlyph
+	icon: SFSymbol
 	text: string
 	onPress: () => unknown
 }
@@ -24,7 +22,7 @@ export function ActionButton(props: ActionButtonProps): React.ReactNode {
 	return (
 		<Touchable highlight={false} onPress={onPress} style={style}>
 			<View style={styles.wrapper}>
-				<Icon name={icon} style={[styles.icon, fg]} />
+				<SymbolView name={icon} size={30} tintColor={theme.buttonTextColor} />
 				<Text style={[styles.action, fg]}>{text}</Text>
 			</View>
 		</Touchable>
@@ -36,7 +34,7 @@ type CallButtonProps = {
 }
 
 export function CallButton({onPress}: CallButtonProps): React.ReactNode {
-	return <SmallActionButton icon="call" onPress={onPress} />
+	return <SmallActionButton icon="phone.fill" onPress={onPress} />
 }
 
 type ShowCalendarButtonProps = {
@@ -53,12 +51,11 @@ export function SmallActionButton(props: SmallActionButtonProps): React.ReactNod
 	let theme = theming.useTheme()
 	let {icon, onPress} = props
 	let bg = {backgroundColor: theme.tintColor}
-	let fg = {color: theme.buttonTextColor}
 	let style = [styles.button, styles.smallButton, bg]
 
 	return (
 		<Touchable highlight={false} onPress={onPress} style={style}>
-			<Icon name={icon} style={[styles.icon, fg]} />
+			<SymbolView name={icon} size={30} tintColor={theme.buttonTextColor} />
 		</Touchable>
 	)
 }
@@ -80,10 +77,6 @@ const styles = StyleSheet.create({
 	},
 	smallButton: {
 		width: 50,
-	},
-	icon: {
-		color: c.label,
-		fontSize: 30,
 	},
 	action: {
 		color: c.label,
