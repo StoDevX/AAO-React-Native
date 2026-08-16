@@ -14,27 +14,26 @@ jest.mock('@expo/ui/swift-ui/modifiers', () => {
 })
 
 describe('EventDetailHeader', () => {
-	test('it shows the title and the date range', async () => {
+	// The event's name is not here -- it is the screen's native large title, set
+	// by the route -- so this component is only the date range and its bar.
+	test('it shows a line per date, meridiem included', async () => {
 		await render(
 			<EventDetailHeader
 				lines={[
 					{prefix: 'From', time: '9', meridiem: 'AM', date: 'Monday, August 17, 2026'},
 					{prefix: 'to', time: '6', meridiem: 'PM', date: 'Thursday, August 20, 2026'},
 				]}
-				title="New Faculty Orientation"
 			/>,
 		)
 
-		expect(screen.getByText('New Faculty Orientation')).toBeTruthy()
 		expect(screen.getByTestId('event-detail-times')).toBeTruthy()
-		expect(screen.getByText('Monday, August 17, 2026', {exact: false})).toBeTruthy()
-		expect(screen.getByText('Thursday, August 20, 2026', {exact: false})).toBeTruthy()
+		expect(screen.getByText('From 9 AM Monday, August 17, 2026')).toBeTruthy()
+		expect(screen.getByText('to 6 PM Thursday, August 20, 2026')).toBeTruthy()
 	})
 
-	test('it omits the date range when there are no lines', async () => {
-		await render(<EventDetailHeader lines={[]} title="All-Day Thing" />)
+	test('it renders nothing when there are no lines', async () => {
+		await render(<EventDetailHeader lines={[]} />)
 
-		expect(screen.getByText('All-Day Thing')).toBeTruthy()
 		expect(screen.queryByTestId('event-detail-times')).toBeNull()
 	})
 })

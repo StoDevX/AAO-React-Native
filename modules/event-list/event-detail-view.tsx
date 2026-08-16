@@ -45,10 +45,11 @@ export function EventDetail({event, poweredBy}: Props): React.ReactNode {
 	return (
 		<Host style={styles.host}>
 			<Form>
-				{/* The header is a masthead rather than a row, so it loses the
-				    grouped-row card the way the attribution below does. */}
+				{/* The date block is a masthead rather than a row, so it loses the
+				    grouped-row card the way the attribution below does. It sits under
+				    the screen's native large title, which carries the event's name. */}
 				<VStack modifiers={[listRowBackground('clear'), listRowSeparator('hidden')]}>
-					<EventDetailHeader lines={lines} title={event.title.trim()} />
+					<EventDetailHeader lines={lines} />
 				</VStack>
 
 				<TextSection content={event.location.trim()} header="Location" />

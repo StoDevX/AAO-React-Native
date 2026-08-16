@@ -21,17 +21,17 @@ const POWERED_BY: Record<EventSource, {title: string; href: string}> = {
 	'krlx-schedule': KRLX_POWERED_BY,
 }
 
-/// An empty title, not a missing one. The body header carries the event's name,
-/// so the bar keeps just the back chevron and the share button -- the shape
-/// Calendar.app's own event detail uses. Omitting `Stack.Title` altogether
-/// leaves `title` undefined, and React Navigation then falls back to the route
-/// name, putting "EventDetail" in the bar.
-const NO_NAV_TITLE = ''
-
 /// Not `StyleSheet.create`: this is header configuration rather than a view
 /// style, and `shadowColor` is typed as the literal `'transparent'`, which
 /// `StyleSheet.create` widens to `string`.
-const TRANSPARENT_HEADER = {
+///
+/// Only the large-title area is cleared. The standard bar keeps its native
+/// appearance, which is the whole point of using a real large title: UIKit
+/// gives it a transparent scroll-edge and fades in a blurred background as the
+/// title collapses. `Stack.Header` exposes one appearance for both states, so
+/// setting it by hand -- as this screen previously did -- can only ever pick
+/// one of them.
+const CLEAR_LARGE_TITLE = {
 	backgroundColor: 'transparent',
 	shadowColor: 'transparent',
 } as const
@@ -99,15 +99,8 @@ export default function EventDetailPage(): React.ReactNode {
 
 	return (
 		<>
-			<Stack.Title>{NO_NAV_TITLE}</Stack.Title>
-			{/* With no title to separate from the content, the bar's fill and hairline
-			    only cut the masthead off from the screen it sits on. A `transparent`
-			    background is what `Stack.Header` keys the absolutely-positioned mode
-			    off, so the form scrolls under the buttons as it does in Calendar.app.
-			    `blurEffect` is a separate prop from `style` -- it puts a material
-			    behind the floating back/share buttons as content scrolls under them,
-			    matching Calendar.app, without giving the bar back its opaque fill. */}
-			<Stack.Header blurEffect="systemChromeMaterial" style={TRANSPARENT_HEADER} />
+			<Stack.Title large={true}>{event.title}</Stack.Title>
+			<Stack.Header largeStyle={CLEAR_LARGE_TITLE} />
 			<Stack.Toolbar placement="right">
 				<Stack.Toolbar.Button
 					accessibilityLabel="Share Event"

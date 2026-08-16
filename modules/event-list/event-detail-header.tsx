@@ -15,7 +15,6 @@ import type {EventTimeLine} from './times'
 const BAR_OVERSHOOT = 3
 
 type Props = {
-	title: string
 	lines: EventTimeLine[]
 }
 
@@ -30,9 +29,17 @@ function TimeLine({line}: {line: EventTimeLine}): React.ReactNode {
 	return <Text modifiers={[font({textStyle: 'body'}), foregroundColor(c.label)]}>{text}</Text>
 }
 
-/// The accent bar is a fixed tint rather than an event colour: `EventType`
-/// carries none, and the list's own bar is a plain separator.
-export function EventDetailHeader({title, lines}: Props): React.ReactNode {
+/// The date range, flanked by an accent bar. The event's name is not here: it
+/// is the screen's native large title, so UIKit can collapse it into the bar on
+/// scroll and manage the bar's appearance for both states.
+///
+/// The bar is a fixed tint rather than an event colour: `EventType` carries
+/// none, and the list's own bar is a plain separator.
+export function EventDetailHeader({lines}: Props): React.ReactNode {
+	if (lines.length === 0) {
+		return null
+	}
+
 	return (
 		<HStack>
 			{/* `frame`'s native implementation ignores min/max fields whenever `width` or
@@ -56,17 +63,14 @@ export function EventDetailHeader({title, lines}: Props): React.ReactNode {
 			    The vertical padding is what makes the bar overshoot the text: it
 			    grows the `HStack`, and the bar matches the stack rather than the
 			    text, so the two ends clear the type by `BAR_OVERSHOOT` points. */}
-			<VStack alignment="leading" modifiers={[padding({vertical: BAR_OVERSHOOT})]}>
-				<Text modifiers={[font({textStyle: 'title', weight: 'bold'}), foregroundColor(c.label)]}>
-					{title}
-				</Text>
-				{lines.length > 0 ? (
-					<VStack alignment="leading" testID="event-detail-times">
-						{lines.map((line, index) => (
-							<TimeLine key={`${line.prefix}-${index}`} line={line} />
-						))}
-					</VStack>
-				) : null}
+			<VStack
+				alignment="leading"
+				modifiers={[padding({vertical: BAR_OVERSHOOT})]}
+				testID="event-detail-times"
+			>
+				{lines.map((line, index) => (
+					<TimeLine key={`${line.prefix}-${index}`} line={line} />
+				))}
 			</VStack>
 		</HStack>
 	)

@@ -54,7 +54,9 @@ describe('EventDetail', () => {
 	test('it shows the location and description sections', async () => {
 		await render(<EventDetail event={makeEvent()} poweredBy={POWERED_BY} />)
 
-		expect(screen.getByText('New Faculty Orientation')).toBeTruthy()
+		// No assertion on the event's name: it is the screen's native large title,
+		// set by the route, not something this component renders. The date block
+		// is what proves the header is still wired in.
 		expect(screen.getByTestId('event-detail-times')).toBeTruthy()
 		expect(screen.getByText('Monday, August 17, 2026', {exact: false})).toBeTruthy()
 		expect(screen.getByText('Location')).toBeTruthy()
