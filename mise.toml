@@ -17,6 +17,11 @@ HK_MISE = "1"
 [hooks]
 postinstall = "hk install --mise"
 
+# --- General commands ---
+[tasks."pnpm:install:frozen"]
+description = "install pnpm dependencies"
+run = "pnpm install --frozen-lockfile"
+
 # --- App commands ---
 
 [tasks.ios]
@@ -29,6 +34,7 @@ run = "expo start"
 
 [tasks.prebuild]
 description = "Generate the native iOS project from app.config.ts"
+wait_for = ["pnpm:install:*"]
 # prebuild recreates ios/ from scratch, deleting the tracked ios/ci_scripts
 # shim with it. `--no-clean` does not help: it preserves an existing *valid*
 # project, but a fresh clone contains only ci_scripts, which prebuild treats as
@@ -81,10 +87,10 @@ run = "oxfmt --check ."
 
 [tasks.tsc]
 description = "Run TypeScript compiler"
-run = "tsc --noEmit"
 # source/features/faqs/local-faqs.ts imports docs/faqs.json, which bundle-data
 # generates, so tsc cannot run against a clean checkout without it.
 depends = ["bundle-data"]
+run = "tsc --noEmit"
 
 [tasks.test]
 description = "Run Jest tests"
@@ -94,6 +100,7 @@ run = "jest"
 
 [tasks."bundle-data"]
 description = "Bundle data files"
+wait_for = ["pnpm:install:*"]
 run = "node scripts/bundle-data.mjs data/ docs/"
 
 [tasks."validate-bus-data"]
@@ -116,6 +123,8 @@ run = "gzip --keep docs/*.json"
 
 [tasks."bundle:ios"]
 description = "Generate iOS JS bundle"
+depends = ["bundle-data"]
+wait_for = ["prebuild"]
 run = """
 expo export:embed \
   --entry-file index.js \
@@ -130,10 +139,7 @@ expo export:embed \
 
 [tasks."agent:setup"]
 description = "Set up the development environment for AI agents"
-run = """
-pnpm install --frozen-lockfile
-mise run bundle-data
-"""
+depends = ["pnpm:install:frozen", "bundle-data"]
 
 [tasks."agent:pre-commit"]
 description = "Run pre-commit checks: format, lint, typecheck, test"
