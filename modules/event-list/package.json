@@ -13,8 +13,6 @@
     "@frogpond/add-to-device-calendar": "workspace:*",
     "@frogpond/colors": "workspace:*",
     "@frogpond/event-type": "workspace:*",
-    "@frogpond/layout": "workspace:*",
-    "@frogpond/lists": "workspace:*",
     "@frogpond/notice": "workspace:*",
     "lodash": "4.18.1"
   },

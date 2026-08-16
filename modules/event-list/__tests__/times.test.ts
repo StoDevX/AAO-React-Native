@@ -2,7 +2,7 @@ import {describe, expect, test} from '@jest/globals'
 
 import type {EventType} from '@frogpond/event-type'
 import moment from 'moment'
-import {detailTimes, detailTimeLines, times} from '../times'
+import {detailTimes, detailTimeLines, formatSectionHeader, listTimeLines, times} from '../times'
 
 describe('allDay', () => {
 	function generateEvent(start: string, end: string): EventType {
@@ -173,5 +173,123 @@ describe('detailTimeLines', () => {
 		// Node's default locale in this test environment is en-US.
 		let [start] = detailTimeLines(event)
 		expect(start.time).toBe('7:45 AM')
+	})
+})
+
+describe('listTimeLines', () => {
+	function generateEvent(
+		start: string,
+		end: string,
+		overrides: Partial<EventType> = {},
+	): EventType {
+		return {
+			title: 'title',
+			description: 'description',
+			startTime: moment(start),
+			endTime: moment(end),
+			location: 'location',
+			isOngoing: false,
+			links: [],
+			config: {
+				startTime: false,
+				endTime: false,
+				subtitle: 'description',
+			},
+			...overrides,
+		}
+	}
+
+	test('an ordinary event gets a start and an end (en-US, 12-hour)', () => {
+		let event = generateEvent('2026-08-17T07:45:00', '2026-08-17T11:30:00')
+
+		expect(listTimeLines(event, 'en-US')).toEqual({
+			start: '7:45 AM',
+			end: '11:30 AM',
+			allDay: false,
+		})
+	})
+
+	test('an ordinary event gets a start and an end (en-GB, 24-hour)', () => {
+		let event = generateEvent('2026-08-17T07:45:00', '2026-08-17T11:30:00')
+
+		expect(listTimeLines(event, 'en-GB')).toEqual({
+			start: '07:45',
+			end: '11:30',
+			allDay: false,
+		})
+	})
+
+	test('keeps the minutes on the hour in a 24-hour locale', () => {
+		let event = generateEvent('2026-08-17T10:00:00', '2026-08-17T11:00:00')
+
+		expect(listTimeLines(event, 'en-GB')).toEqual({
+			start: '10:00',
+			end: '11:00',
+			allDay: false,
+		})
+	})
+
+	test('drops the minutes on the hour in a 12-hour locale', () => {
+		let event = generateEvent('2026-08-17T06:00:00', '2026-08-17T07:00:00')
+
+		expect(listTimeLines(event, 'en-US')).toEqual({
+			start: '6 AM',
+			end: '7 AM',
+			allDay: false,
+		})
+	})
+
+	test('an all-day event has no start or end text', () => {
+		let event = generateEvent('2026-08-17T00:00:00', '2026-08-18T00:00:00')
+
+		expect(listTimeLines(event, 'en-US')).toEqual({start: '', end: '', allDay: true})
+	})
+
+	test('an ongoing event gets dates, not times', () => {
+		let event = generateEvent('2026-08-17T07:45:00', '2026-08-20T18:00:00', {isOngoing: true})
+
+		expect(listTimeLines(event, 'en-US')).toEqual({
+			start: 'Aug 17',
+			end: 'Aug 20',
+			allDay: false,
+		})
+	})
+
+	test('a multi-day event gets a start time and an end date with a time', () => {
+		let event = generateEvent('2026-08-17T07:45:00', '2026-08-20T18:00:00')
+
+		expect(listTimeLines(event, 'en-US')).toEqual({
+			start: '7:45 AM',
+			end: 'Aug 20, 6 PM',
+			allDay: false,
+		})
+	})
+
+	test('a multi-day event gets a start time and an end date with a time (en-GB, 24-hour)', () => {
+		let event = generateEvent('2026-08-17T07:45:00', '2026-08-20T18:00:00')
+
+		expect(listTimeLines(event, 'en-GB')).toEqual({
+			start: '07:45',
+			end: '20 Aug, 18:00',
+			allDay: false,
+		})
+	})
+
+	test('a zero-length event has a start and no end', () => {
+		let event = generateEvent('2026-08-17T07:45:00', '2026-08-17T07:45:00')
+
+		expect(listTimeLines(event, 'en-US')).toEqual({start: '7:45 AM', end: '', allDay: false})
+	})
+})
+
+describe('formatSectionHeader', () => {
+	test('weekday and short date, en dash separated (en-US)', () => {
+		let date = moment('2026-08-16T00:00:00')
+		expect(formatSectionHeader(date, 'en-US')).toBe('Sunday – Aug 16')
+	})
+
+	test('weekday and short date, en dash separated (en-GB)', () => {
+		let date = moment('2026-08-16T00:00:00')
+		expect(formatSectionHeader(date, 'en-GB')).toBe('Sunday – 16 Aug')
 	})
 })

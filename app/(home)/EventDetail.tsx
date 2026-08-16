@@ -43,8 +43,8 @@ export default function EventDetailPage(): React.ReactNode {
 	}>()
 
 	// Detail lookups don't need the list's eventMapper: it only ever sets
-	// config.subtitle, which the detail view never reads (only event-row.tsx
-	// does) -- passing a mapper here would just be a second copy of that
+	// config.subtitle, which the detail view never reads (only the list's
+	// row does) -- passing a mapper here would just be a second copy of that
 	// transform that has to stay byte-identical to the list's forever.
 	let {
 		data: event,

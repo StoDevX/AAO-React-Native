@@ -129,6 +129,55 @@ function formatDetailTime(value: Moment, locale: string | undefined): string {
 	return new Intl.DateTimeFormat(locale, options).format(value.toDate())
 }
 
+const LIST_SECTION_DATE_OPTIONS: Intl.DateTimeFormatOptions = {month: 'short', day: 'numeric'}
+
+/// A section header's date, e.g. `Aug 20` -- short, unlike the detail
+/// screen's `August 20, 2026`, since this sits next to a weekday on one line.
+function formatListDate(value: Moment, locale: string | undefined): string {
+	return new Intl.DateTimeFormat(locale, LIST_SECTION_DATE_OPTIONS).format(value.toDate())
+}
+
+/// `Sunday – Aug 16`, matching Calendar.app's list section headers. The
+/// weekday and the date are formatted separately because their relative
+/// order is locale-specific (`Aug 16` in en-US, `16 Aug` in en-GB) while the
+/// weekday always leads.
+export function formatSectionHeader(value: Moment, locale?: string): string {
+	let weekday = new Intl.DateTimeFormat(locale, {weekday: 'long'}).format(value.toDate())
+	return `${weekday} – ${formatListDate(value, locale)}`
+}
+
+/// The list row's trailing time column: a start and an end, locale-aware via
+/// the same hour-cycle logic `detailTimeLines` uses, rather than duplicating
+/// it. Unlike `detailTimeLines`, there is no prefix -- Calendar.app's list
+/// puts the start above the end with no words between them -- and an all-day
+/// event carries no text at all, since the row shows `all-day` in its place.
+export function listTimeLines(event: EventType, locale?: string): EventDetailTime {
+	let {allDay, multiDay, sillyZeroLength} = classify(event)
+
+	if (allDay) {
+		return {start: '', end: '', allDay: true}
+	}
+
+	let start, end
+	if (event.isOngoing) {
+		start = formatListDate(event.startTime, locale)
+		end = formatListDate(event.endTime, locale)
+	} else if (multiDay) {
+		start = formatDetailTime(event.startTime, locale)
+		// A multi-day event's end needs both a date and a time -- the date
+		// alone drops when it ends, and the old list showed both.
+		end = `${formatListDate(event.endTime, locale)}, ${formatDetailTime(event.endTime, locale)}`
+	} else if (sillyZeroLength) {
+		start = formatDetailTime(event.startTime, locale)
+		end = ''
+	} else {
+		start = formatDetailTime(event.startTime, locale)
+		end = formatDetailTime(event.endTime, locale)
+	}
+
+	return {start, end, allDay: false}
+}
+
 /// `locale` defaults to the device's own locale -- `undefined` tells `Intl`
 /// to use the system default rather than hardcoding one.
 export function detailTimeLines(event: EventType, locale?: string): EventTimeLine[] {

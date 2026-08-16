@@ -31,6 +31,9 @@ export const disabled = modifier('disabled')
 export const listRowBackground = modifier('listRowBackground')
 export const listRowInsets = modifier('listRowInsets')
 export const listRowSeparator = modifier('listRowSeparator')
+export const listStyle = modifier('listStyle')
+export const refreshable = modifier('refreshable')
+export const scrollContentBackground = modifier('scrollContentBackground')
 
 export const accessibilityLabel = (label: string): Modifier => ({
 	$type: 'accessibilityLabel',
@@ -52,6 +55,13 @@ function disabledOf(modifiers?: Modifier[]): boolean {
 	return found.value !== false
 }
 
+/// The handler a `refreshable(…)` modifier carries, so a test can trigger it
+/// the way a native pull-to-refresh gesture would.
+function refreshableOf(modifiers?: Modifier[]): (() => Promise<void>) | undefined {
+	let found = modifiers?.find((m) => m.$type === 'refreshable')
+	return typeof found?.value === 'function' ? (found.value as () => Promise<void>) : undefined
+}
+
 export function Host({children}: WithModifiers): React.ReactNode {
 	return <View>{children}</View>
 }
@@ -66,6 +76,42 @@ export function VStack({children, testID}: WithModifiers & {testID?: string}): R
 
 export function HStack({children}: WithModifiers): React.ReactNode {
 	return <View>{children}</View>
+}
+
+/// `List` renders its `refreshable(…)` handler as a pressable trigger --
+/// `testID="list-refresh-trigger"` -- since react-test-renderer has no way to
+/// simulate SwiftUI's own pull-to-refresh gesture.
+export function List({
+	children,
+	modifiers,
+}: WithModifiers & {selection?: (string | number)[]}): React.ReactNode {
+	let onRefresh = refreshableOf(modifiers)
+
+	return (
+		<View>
+			{onRefresh ? (
+				<Pressable
+					accessibilityLabel="Refresh"
+					onPress={() => {
+						void onRefresh()
+					}}
+					testID="list-refresh-trigger"
+				/>
+			) : null}
+			{children}
+		</View>
+	)
+}
+
+/// Decorative in every call site this module has -- the subtitle's location
+/// pin -- so the mock renders nothing rather than a text node that would
+/// confuse a query for the subtitle text next to it.
+export function Image(): React.ReactNode {
+	return null
+}
+
+export function Spacer(): React.ReactNode {
+	return null
 }
 
 export function Text({
