@@ -28,8 +28,11 @@ const TecEventSchema = z.object({
 	venue: VenueSchema,
 })
 
+/// Decoded like the title is: TEC sends venue names HTML-escaped, so an
+/// apostrophe arrives as `&#8217;` and reaches the screen verbatim otherwise --
+/// `Buntrock Commons Lion&#8217;s Pause`.
 function venueName(venue: z.infer<typeof VenueSchema>): string {
-	return Array.isArray(venue) ? '' : (venue?.venue ?? '')
+	return decode(Array.isArray(venue) ? '' : (venue?.venue ?? ''))
 }
 
 const TecEventsSchema = z.object({events: z.array(z.unknown())})

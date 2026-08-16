@@ -40,6 +40,23 @@ test('uses the venue name as the location', () => {
 	expect(event.location).toBe('Kings Dining')
 })
 
+test('decodes HTML entities in the venue name', () => {
+	const [event] = parseTecEvents({
+		events: [
+			{
+				title: 'A',
+				description: '',
+				url: 'https://wp.stolaf.edu/calendar/event/a/',
+				all_day: false,
+				utc_start_date: '2026-08-17 13:00:00',
+				utc_end_date: '2026-08-17 14:00:00',
+				venue: {venue: 'Buntrock Commons Lion&#8217;s Pause'},
+			},
+		],
+	})
+	expect(event.location).toBe('Buntrock Commons Lion\u2019s Pause')
+})
+
 test('tolerates an event with no venue at all', () => {
 	const [event] = parseTecEvents({
 		events: [
