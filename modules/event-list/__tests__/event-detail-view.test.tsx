@@ -52,7 +52,7 @@ function makeEvent(overrides: Partial<EventType> = {}): EventType {
 
 describe('EventDetail', () => {
 	test('it shows the location and description sections', async () => {
-		await render(<EventDetail event={makeEvent()} poweredBy={POWERED_BY} />)
+		await render(<EventDetail color="#ff0000" event={makeEvent()} poweredBy={POWERED_BY} />)
 
 		// No assertion on the event's name: it is the screen's native large title,
 		// set by the route, not something this component renders. The date block
@@ -66,20 +66,22 @@ describe('EventDetail', () => {
 	})
 
 	test('it omits a section whose field is empty', async () => {
-		await render(<EventDetail event={makeEvent({location: ''})} poweredBy={POWERED_BY} />)
+		await render(
+			<EventDetail color="#ff0000" event={makeEvent({location: ''})} poweredBy={POWERED_BY} />,
+		)
 
 		expect(screen.queryByText('Location')).toBeNull()
 		expect(screen.getByText('Description')).toBeTruthy()
 	})
 
 	test('it shows the powered-by footer', async () => {
-		await render(<EventDetail event={makeEvent()} poweredBy={POWERED_BY} />)
+		await render(<EventDetail color="#ff0000" event={makeEvent()} poweredBy={POWERED_BY} />)
 
 		expect(screen.getByText('Powered by the St. Olaf calendar')).toBeTruthy()
 	})
 
 	test('it offers an add-to-calendar button', async () => {
-		await render(<EventDetail event={makeEvent()} poweredBy={POWERED_BY} />)
+		await render(<EventDetail color="#ff0000" event={makeEvent()} poweredBy={POWERED_BY} />)
 
 		await fireEvent.press(screen.getByLabelText('Add to calendar'))
 		await waitFor(() =>
@@ -89,7 +91,7 @@ describe('EventDetail', () => {
 
 	test('it lists each event link', async () => {
 		let links = ['https://example.com/one', 'https://example.com/two']
-		await render(<EventDetail event={makeEvent({links})} poweredBy={POWERED_BY} />)
+		await render(<EventDetail color="#ff0000" event={makeEvent({links})} poweredBy={POWERED_BY} />)
 
 		expect(screen.getByText('Links')).toBeTruthy()
 		expect(screen.getByText('https://example.com/one')).toBeTruthy()
@@ -97,7 +99,9 @@ describe('EventDetail', () => {
 	})
 
 	test('it omits the links section when there are none', async () => {
-		await render(<EventDetail event={makeEvent({links: []})} poweredBy={POWERED_BY} />)
+		await render(
+			<EventDetail color="#ff0000" event={makeEvent({links: []})} poweredBy={POWERED_BY} />,
+		)
 
 		expect(screen.queryByText('Links')).toBeNull()
 	})

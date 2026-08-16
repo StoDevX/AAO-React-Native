@@ -100,6 +100,22 @@ export const namedCalendarEventOptions = (
 		select: (events) => convertEvents(events, options).find((event) => eventKey(event) === key),
 	})
 
+/// One device event, by EventKit id. Reaches a month either side of today
+/// rather than the list's forward-only month: a deep link, or a list still
+/// showing yesterday's section, can name an event the forward window has
+/// already passed.
+// oxlint-disable-next-line typescript/explicit-module-boundary-types
+export const deviceCalendarEventOptions = (calendarId: string, eventId: string) =>
+	queryOptions({
+		queryKey: ['calendar', 'device', calendarId, eventId] as const,
+		queryFn: async () => {
+			let start = moment().startOf('day').subtract(1, 'month').toDate()
+			let end = moment().startOf('day').add(1, 'month').toDate()
+			let events = await listDeviceEvents(start, end, [calendarId])
+			return events.find((entry) => entry.id === eventId)?.event
+		},
+	})
+
 /// The device's calendars, as sources. A query rather than component state:
 /// it is read from the device like anything else here, and both the picker and
 /// the detail screen need it, so neither should own it.

@@ -7,7 +7,14 @@ import {EventDetail, shareEvent} from '@frogpond/event-list'
 // './event-detail'` produces (matching `EventList.EventList`'s shape
 // elsewhere in this package) -- the component itself is
 // `EventDetail.EventDetail`, used below.
-import {namedCalendarEventOptions} from '@frogpond/ccc-calendar'
+import * as c from '@frogpond/colors'
+import {
+	deviceCalendarEventOptions,
+	deviceCalendarIdFrom,
+	isDeviceSourceId,
+	namedCalendarEventOptions,
+	useCalendarSource,
+} from '@frogpond/ccc-calendar'
 import {LoadingView, NoticeView} from '@frogpond/notice'
 import {STOLAF_POWERED_BY, NORTHFIELD_POWERED_BY} from '../../source/features/calendar/constants'
 import {KSTO_POWERED_BY, KRLX_POWERED_BY} from '../../source/features/streaming/radio/constants'
@@ -20,6 +27,10 @@ const POWERED_BY: Record<EventSource, {title: string; href: string}> = {
 	'ksto-schedule': KSTO_POWERED_BY,
 	'krlx-schedule': KRLX_POWERED_BY,
 }
+
+/// A calendar on the phone has no upstream to credit, so the attribution
+/// caption is empty -- `EventDetail` omits it entirely when the title is.
+const NO_ATTRIBUTION = {title: '', href: ''} as const
 
 /// Not `StyleSheet.create`: this is header configuration rather than a view
 /// style, and `shadowColor` is typed as the literal `'transparent'`, which
@@ -38,22 +49,44 @@ const CLEAR_LARGE_TITLE = {
 
 export default function EventDetailPage(): React.ReactNode {
 	let {source, eventKey} = useLocalSearchParams<{
-		source: EventSource
+		source: string
 		eventKey: string
 	}>()
 
+	let deviceSource = isDeviceSourceId(source)
+
+	// Two queries, one of them switched off, rather than one `useQuery` over a
+	// ternary: the two option objects have different key tuples and different
+	// fetched shapes, so their union does not satisfy `useQuery` -- and picking
+	// the query inside the call would still leave the hook count stable but the
+	// types unresolvable. The idle one never fetches.
+	//
 	// Detail lookups don't need the list's eventMapper: it only ever sets
 	// config.subtitle, which the detail view never reads (only the list's
 	// row does) -- passing a mapper here would just be a second copy of that
 	// transform that has to stay byte-identical to the list's forever.
-	let {
-		data: event,
-		isLoading,
-		error,
-		refetch,
-	} = useQuery(namedCalendarEventOptions(source, eventKey))
+	let deviceQuery = useQuery({
+		...deviceCalendarEventOptions(deviceCalendarIdFrom(source), eventKey),
+		enabled: deviceSource,
+	})
+	let namedQuery = useQuery({
+		...namedCalendarEventOptions(source as EventSource, eventKey),
+		enabled: !deviceSource,
+	})
 
-	let poweredBy = source in POWERED_BY ? POWERED_BY[source] : undefined
+	let {data: event, isLoading, error, refetch} = deviceSource ? deviceQuery : namedQuery
+
+	// The same cached device-calendar query the picker reads, so a device
+	// event's masthead is the colour its row had without any colour crossing
+	// the route. The fallback is only for an id nothing recognises -- a stale
+	// deep link to a calendar since deleted from the phone.
+	let color = useCalendarSource(source)?.color ?? c.systemBlue
+
+	let poweredBy = deviceSource
+		? NO_ATTRIBUTION
+		: source in POWERED_BY
+			? POWERED_BY[source as EventSource]
+			: undefined
 
 	if (!poweredBy) {
 		return (
@@ -108,7 +141,7 @@ export default function EventDetailPage(): React.ReactNode {
 					onPress={() => shareEvent(event)}
 				/>
 			</Stack.Toolbar>
-			<EventDetail.EventDetail event={event} poweredBy={poweredBy} />
+			<EventDetail.EventDetail color={color} event={event} poweredBy={poweredBy} />
 		</>
 	)
 }

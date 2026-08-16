@@ -1,4 +1,5 @@
 import * as React from 'react'
+import type {ColorValue} from 'react-native'
 import {HStack, Text, VStack} from '@expo/ui/swift-ui'
 import {
 	background,
@@ -16,6 +17,9 @@ const BAR_OVERSHOOT = 3
 
 type Props = {
 	lines: EventTimeLine[]
+	/// The accent bar's colour -- the calendar this event came from, so the
+	/// masthead matches the tint the event's row had in the list.
+	color: ColorValue
 }
 
 /// One line of the date range, e.g. `From 7:45 AM Monday, August 17, 2026`.
@@ -32,9 +36,9 @@ function TimeLine({line}: {line: EventTimeLine}): React.ReactNode {
 /// is the screen's native large title, so UIKit can collapse it into the bar on
 /// scroll and manage the bar's appearance for both states.
 ///
-/// The bar is a fixed tint rather than an event colour: `EventType` carries
-/// none, and the list's own bar is a plain separator.
-export function EventDetailHeader({lines}: Props): React.ReactNode {
+/// The bar takes the calendar's colour rather than the event's: `EventType`
+/// carries none, and the list's row bar is tinted the same way.
+export function EventDetailHeader({lines, color}: Props): React.ReactNode {
 	if (lines.length === 0) {
 		return null
 	}
@@ -51,9 +55,10 @@ export function EventDetailHeader({lines}: Props): React.ReactNode {
 			<VStack
 				modifiers={[
 					frame({minWidth: 4, maxWidth: 4, maxHeight: Infinity}),
-					background(c.systemBlue),
+					background(color),
 					clipShape('capsule'),
 				]}
+				testID="event-detail-bar"
 			>
 				{null}
 			</VStack>

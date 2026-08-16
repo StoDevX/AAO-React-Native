@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {StyleSheet} from 'react-native'
+import {StyleSheet, type ColorValue} from 'react-native'
 import {Button, Form, Host, Link, Section, Text, VStack} from '@expo/ui/swift-ui'
 import {
 	accessibilityLabel,
@@ -37,9 +37,13 @@ function TextSection({header, content}: {header: string; content: string}) {
 type Props = {
 	event: EventType
 	poweredBy: PoweredBy
+	/// The calendar's colour, for the masthead bar. Passed through rather than
+	/// derived here: this component knows an event, not which calendar it
+	/// came from.
+	color: ColorValue
 }
 
-export function EventDetail({event, poweredBy}: Props): React.ReactNode {
+export function EventDetail({event, poweredBy, color}: Props): React.ReactNode {
 	let lines = detailTimeLines(event)
 
 	return (
@@ -49,7 +53,7 @@ export function EventDetail({event, poweredBy}: Props): React.ReactNode {
 				    grouped-row card the way the attribution below does. It sits under
 				    the screen's native large title, which carries the event's name. */}
 				<VStack modifiers={[listRowBackground('clear'), listRowSeparator('hidden')]}>
-					<EventDetailHeader lines={lines} />
+					<EventDetailHeader color={color} lines={lines} />
 				</VStack>
 
 				<TextSection content={event.location.trim()} header="Location" />
