@@ -54,3 +54,9 @@ links:
     type: application/vnd.frogpond.events+json
     titles: {und: KSTO Schedule}
     properties: {'https://frogpond.tech/ns/id': ksto-schedule}
+
+  - rel: https://frogpond.tech/rel/jobs
+    href: 'https://fa-ewur-saasfaprod1.fa.ocs.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_1'
+    type: application/vnd.oracle.recruiting-ce+json
+    titles: {und: Student Work}
+    properties: {'https://frogpond.tech/ns/id': stolaf}

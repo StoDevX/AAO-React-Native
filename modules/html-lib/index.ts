@@ -3,9 +3,9 @@ import {getElementsByTagName, textContent} from 'domutils'
 import {AnyNode, Document, Element, isText, isTag, type ChildNode} from 'domhandler'
 import cssSelect from 'css-select'
 
-export {textContent, cssSelect, getElementsByTagName}
+export {textContent, cssSelect, getElementsByTagName, isTag, isText}
 export {encode, decode} from 'html-entities'
-export type {Element}
+export type {AnyNode, ChildNode, Document, Element} from 'domhandler'
 
 export function parseHtml(string: string): Document {
 	return parseDocument(string, {
@@ -292,4 +292,172 @@ export function htmlToSegments(html: string): Segment[] {
 	const segments: Segment[] = []
 	walkSegments(doc.children, segments)
 	return normalizeSegments(segments)
+}
+
+// ── HTML-to-markdown ──────────────────────────────────────────────────────
+
+/** Markdown's inline punctuation, escaped wherever text appears so that a
+ * posting reading "10*12 per hour" does not render as emphasis. */
+const INLINE_PUNCTUATION = /([\\`*_[\]])/gu
+
+function escapeInline(text: string): string {
+	// A non-breaking space is a space as far as markdown is concerned, and
+	// leaving it in defeats every trim downstream.
+	return text.replace(/\u00a0/gu, ' ').replace(INLINE_PUNCTUATION, '\\$1')
+}
+
+/** Escapes punctuation that only means something at the start of a line, so
+ * that prose hyphens elsewhere do not grow backslashes. */
+function escapeBlockStart(text: string): string {
+	if (/^\d+\./u.test(text)) {
+		return text.replace('.', '\\.')
+	}
+	return text.replace(/^([#>+-])/u, '\\$1')
+}
+
+const BOLD_TAGS = new Set(['b', 'strong'])
+const BOLD_STYLE = /font-weight:\s*(?:700|800|900|bold)/iu
+
+function isBold(node: Element): boolean {
+	if (BOLD_TAGS.has(node.name.toLowerCase())) return true
+	return BOLD_STYLE.test(node.attribs['style'] ?? '')
+}
+
+const ITALIC_TAGS = new Set(['i', 'em'])
+const ITALIC_STYLE = /font-style:\s*italic/iu
+
+function isItalic(node: Element): boolean {
+	if (ITALIC_TAGS.has(node.name.toLowerCase())) return true
+	return ITALIC_STYLE.test(node.attribs['style'] ?? '')
+}
+
+/** Wraps text in emphasis markers, keeping whitespace outside them — `**bold: **`
+ * is literal asterisks in markdown, not emphasis. */
+function emphasise(inner: string, marker: string): string {
+	const trimmed = inner.trim()
+	if (!trimmed) return inner
+
+	const leading = inner.slice(0, inner.length - inner.trimStart().length)
+	const trailing = inner.slice(inner.trimEnd().length)
+	return `${leading}${marker}${trimmed}${marker}${trailing}`
+}
+
+function renderInline(nodes: ChildNode[]): string {
+	let result = ''
+
+	for (const node of nodes) {
+		if (isText(node)) {
+			result += escapeInline(node.data)
+			continue
+		}
+
+		if (!isTag(node)) continue
+
+		const tag = node.name.toLowerCase()
+		if (tag === 'script' || tag === 'style') continue
+
+		if (tag === 'br') {
+			// Two trailing spaces: markdown's hard line break, which breaks the
+			// line without starting a new paragraph.
+			result += '  \n'
+			continue
+		}
+
+		if (tag === 'a') {
+			const href = node.attribs['href']
+			const text = renderInline(node.children)
+			result += href ? `[${text}](${href})` : text
+			continue
+		}
+
+		const inner = renderInline(node.children)
+		if (isBold(node)) {
+			result += emphasise(inner, '**')
+		} else if (isItalic(node)) {
+			result += emphasise(inner, '_')
+		} else {
+			result += inner
+		}
+	}
+
+	return result
+}
+
+const BLOCK_CONTAINERS = new Set(['p', 'div', 'section', 'article', 'header', 'footer'])
+
+function renderList(list: Element, depth: number): string {
+	const ordered = list.name.toLowerCase() === 'ol'
+	const indent = '\t'.repeat(depth)
+	const items: string[] = []
+
+	for (const child of list.children) {
+		if (!isTag(child) || child.name.toLowerCase() !== 'li') continue
+
+		const marker = ordered ? `${items.length + 1}. ` : '- '
+		// A nested list already carries its own indentation, so its blocks join
+		// in as they are. A `<p>` sibling inside an `<li>` would not be indented.
+		const [first = '', ...rest] = renderBlocks(child.children, depth + 1)
+		items.push([`${indent}${marker}${first}`, ...rest].join('\n'))
+	}
+
+	return items.join('\n')
+}
+
+function renderBlocks(nodes: ChildNode[], depth: number): string[] {
+	const blocks: string[] = []
+	let pending: ChildNode[] = []
+
+	const flush = (): void => {
+		if (pending.length === 0) return
+
+		const text = renderInline(pending).trim()
+		pending = []
+		if (text) blocks.push(escapeBlockStart(text))
+	}
+
+	for (const node of nodes) {
+		if (isTag(node)) {
+			const tag = node.name.toLowerCase()
+
+			if (tag === 'ul' || tag === 'ol') {
+				flush()
+				const list = renderList(node, depth)
+				if (list) blocks.push(list)
+				continue
+			}
+
+			if (BLOCK_CONTAINERS.has(tag)) {
+				flush()
+				blocks.push(...renderBlocks(node.children, depth))
+				continue
+			}
+		}
+
+		pending.push(node)
+	}
+
+	flush()
+	return blocks
+}
+
+/**
+ * Converts a parsed HTML node to markdown.
+ *
+ * Covers the tags real-world prose actually uses — paragraphs, divs, `<br>`,
+ * lists, links, and both tag-based and inline-styled bold and italic — and
+ * escapes markdown punctuation appearing in text so it renders literally.
+ */
+export function nodeToMarkdown(node: AnyNode): string {
+	const children = 'children' in node ? (node.children as ChildNode[]) : []
+	return nodesToMarkdown(children)
+}
+
+/** Converts a run of sibling nodes to markdown. See `nodeToMarkdown`. */
+export function nodesToMarkdown(nodes: ChildNode[]): string {
+	return renderBlocks(nodes, 0).join('\n\n').trim()
+}
+
+/** Converts an HTML string to markdown. See `nodeToMarkdown`. */
+export function htmlToMarkdown(html: string): string {
+	return nodeToMarkdown(parseHtml(html))
 }

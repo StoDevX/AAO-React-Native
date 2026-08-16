@@ -5,6 +5,7 @@ export {
 	JrdSchema,
 	REL_A_TO_Z,
 	REL_CALENDAR,
+	REL_JOBS,
 	REL_NEWS,
 	type Jrd,
 	type ResolvedSource,

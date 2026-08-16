@@ -49,12 +49,6 @@ const config = {
 	// this is the one tool that has to be told.
 	modulePathIgnorePatterns: ['<rootDir>/.claude/worktrees/'],
 	setupFiles: ['./scripts/jest-setup.js'],
-	// Merged with the preset's own mapping rather than replacing it. The
-	// preset transforms image assets but leaves fonts alone, and the
-	// @react-native-vector-icons packages import their .ttf directly.
-	moduleNameMapper: {
-		'\\.(ttf|otf)$': '<rootDir>/scripts/jest-font-mock.js',
-	},
 	transform: {
 		'^.+\\.mjs$': 'babel-jest',
 	},
