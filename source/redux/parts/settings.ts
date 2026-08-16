@@ -27,9 +27,14 @@ const slice = createSlice({
 			state.devModeOverride = payload
 		},
 		toggleCalendarSource(state, {payload}: PayloadAction<string>) {
-			state.enabledCalendarSources = state.enabledCalendarSources.includes(payload)
-				? state.enabledCalendarSources.filter((id) => id !== payload)
-				: [...state.enabledCalendarSources, payload]
+			// `autoMergeLevel1` (the default redux-persist reconciler) swaps this
+			// whole slice in from storage rather than merging field-by-field, so
+			// state persisted before this field existed rehydrates without it.
+			const enabledCalendarSources =
+				state.enabledCalendarSources ?? initialState.enabledCalendarSources
+			state.enabledCalendarSources = enabledCalendarSources.includes(payload)
+				? enabledCalendarSources.filter((id) => id !== payload)
+				: [...enabledCalendarSources, payload]
 		},
 	},
 })
@@ -44,4 +49,4 @@ export const selectDevModeOverride = (state: RootState): State['devModeOverride'
 	state.settings.devModeOverride
 
 export const selectEnabledCalendarSources = (state: RootState): State['enabledCalendarSources'] =>
-	state.settings.enabledCalendarSources
+	state.settings.enabledCalendarSources ?? initialState.enabledCalendarSources

@@ -1,6 +1,7 @@
 import {describe, expect, test} from '@jest/globals'
 
-import {reducer, toggleCalendarSource} from '../settings'
+import {reducer, selectEnabledCalendarSources, toggleCalendarSource} from '../settings'
+import type {RootState} from '../../store'
 
 function initial() {
 	return reducer(undefined, {type: '@@INIT'})
@@ -31,5 +32,30 @@ describe('calendar source selection', () => {
 		let state = reducer(initial(), toggleCalendarSource('stolaf'))
 
 		expect(state.enabledCalendarSources).toEqual([])
+	})
+
+	// redux-persist's default reconciler (autoMergeLevel1) swaps the whole
+	// `settings` slice in from storage rather than merging field-by-field, so
+	// an install that persisted `settings` before this field existed
+	// rehydrates to exactly this shape -- not a hand-built stand-in for it.
+	describe('rehydrating settings persisted before this field existed', () => {
+		const staleRehydratedState = {
+			unofficialityAcknowledged: true,
+			devModeOverride: false,
+		} as ReturnType<typeof reducer>
+
+		test('the selector falls back to St. Olaf alone', () => {
+			let rootState = {settings: staleRehydratedState} as RootState
+
+			expect(selectEnabledCalendarSources(rootState)).toEqual(['stolaf'])
+		})
+
+		test('toggling does not throw, and starts from St. Olaf alone', () => {
+			expect(() => reducer(staleRehydratedState, toggleCalendarSource('northfield'))).not.toThrow()
+
+			let state = reducer(staleRehydratedState, toggleCalendarSource('northfield'))
+
+			expect(state.enabledCalendarSources).toEqual(['stolaf', 'northfield'])
+		})
 	})
 })
