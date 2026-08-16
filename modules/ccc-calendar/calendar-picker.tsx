@@ -7,10 +7,12 @@ import {useCalendarSources} from './use-calendar-sources'
 /// native: `isOn` draws the tick, and a nested menu with `inline` renders as a
 /// titled group rather than a submenu you have to open.
 ///
-/// `unstable_keepPresented` is meant to let two calendars be turned on without
-/// the menu closing in between. It is unproven here: expo-router warns that
-/// selecting an action on iOS recreates the menu, which closes any open
-/// submenu. Worth checking on a device before relying on it.
+/// `unstable_keepPresented` asks for the menu to stay up so two calendars can be
+/// turned on in one go. On the simulator (iOS 26.5, expo-router 57.0.11) it does
+/// not: the menu closes on every selection, which is the behaviour expo-router
+/// warns about -- selecting an action on iOS recreates the menu. The toggle
+/// itself still lands, so turning on a second calendar means reopening the menu.
+/// The prop stays because it costs nothing and states the intent.
 export function CalendarPicker(): React.ReactNode {
 	let {remote, device, enabled, canOfferDevice, deviceAvailable, toggle, requestDevice} =
 		useCalendarSources()

@@ -19,7 +19,8 @@ export default function HomeLayout(): React.ReactNode {
 			<Stack.Screen name="SIS" options={{title: 'SIS'}} />
 			{/* `headerLargeTitle` was tried and reverted while this screen still had
 			    a tab bar under the header -- the tabs were what it collided with.
-			    With them gone the title collapses on scroll the way it should. */}
+			    With them gone it behaves: verified on the simulator that the title
+			    collapses into the bar on scroll. */}
 			<Stack.Screen
 				name="Calendar"
 				options={{title: 'Calendar', headerShadowVisible: false, headerLargeTitle: true}}

@@ -86,6 +86,12 @@ struct TestIdentifiers {
 	enum Calendar {
 		static let picker = "Choose calendars"
 		static let calendars = ["St. Olaf", "Northfield"]
+		/// Only the event detail screen carries this, so it is how a test knows
+		/// the push landed.
+		static let shareEvent = "Share Event"
+		/// A calendar every simulator ships with, and one that actually has
+		/// events in the window the list reads.
+		static let deviceCalendar = "US Holidays"
 	}
 
 	// MARK: - Streaming Media
