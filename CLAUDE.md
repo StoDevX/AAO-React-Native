@@ -65,6 +65,9 @@ These patterns are especially important in this codebase:
 
 ## Development Commands
 
+pnpm is the package manager. npm and yarn both choke on the `workspace:*`
+protocol the modules use.
+
 ```bash
 mise run lint   # oxlint
 mise run format # oxfmt; run `format:check` to validate instead
