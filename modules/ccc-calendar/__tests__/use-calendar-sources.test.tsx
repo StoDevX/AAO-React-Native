@@ -111,9 +111,13 @@ describe('useCalendarSources', () => {
 		expect(mockGetCalendars).toHaveBeenCalled()
 	})
 
-	test('outside dev mode, requesting the device is never offered a chance to prompt', async () => {
+	test('outside dev mode, requestDevice never prompts', async () => {
 		mockUseIsDevMode.mockReturnValue(false)
-		await renderHook(() => useCalendarSources(), {wrapper})
+		let {result} = await renderHook(() => useCalendarSources(), {wrapper})
+
+		await act(async () => {
+			await result.current.requestDevice()
+		})
 
 		expect(mockRequestFullCalendarAccess).not.toHaveBeenCalled()
 	})

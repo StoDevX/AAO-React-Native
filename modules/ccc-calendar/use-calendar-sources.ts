@@ -51,12 +51,16 @@ export function useCalendarSources(): CalendarSourcesState {
 	})
 
 	let requestDevice = React.useCallback(async () => {
+		// A production build must never prompt for calendar access -- this can't
+		// rely on callers only rendering the opt-in row in dev mode.
+		if (!devMode) return
+
 		let response = await requestFullCalendarAccess()
 		if (response.granted) {
 			setGranted(true)
 			await client.invalidateQueries({queryKey: deviceCalendarsOptions().queryKey})
 		}
-	}, [client, setGranted])
+	}, [devMode, client, setGranted])
 
 	let all = React.useMemo(() => [...REMOTE_SOURCES, ...device], [device])
 	let enabled = React.useMemo(
