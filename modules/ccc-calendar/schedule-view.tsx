@@ -14,10 +14,9 @@ type Props = {
 }
 
 // KSTO's and KRLX's schedules are broadcast schedules, not campus calendars --
-// they aren't part of the calendar picker and never will be. This is a
-// single query with one accent colour, no picker, no merge, and no
-// per-source failure list, rather than reusing the picker-shaped
-// `CccCalendarView`.
+// they aren't part of the calendar picker and never will be. So this screen
+// draws one query in one accent colour: no picker, no merge, and no per-source
+// failure list.
 const SOURCES: CalendarSource[] = [{id: 'schedule', title: '', color: c.systemBlue, kind: 'remote'}]
 
 export function ScheduleView(props: Props): React.ReactNode {
