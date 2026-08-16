@@ -194,4 +194,4 @@ describe('FaqBannerGroup component', () => {
 		expect(getByTestId(`faq-banner-${baseFaq.id}`)).toBeTruthy()
 	})
 })
-jest.mock('@react-native-vector-icons/ionicons', () => ({Ionicons: 'Icon'}))
+jest.mock('expo-symbols', () => ({SymbolView: 'SymbolView'}))
