@@ -138,27 +138,3 @@ mise run bundle-data
 [tasks."agent:pre-commit"]
 description = "Run pre-commit checks: format, lint, typecheck, test"
 depends = ["format", "lint", "tsc", "test"]
-
-# --- Diagnostics (from Makefile) ---
-
-[tasks.tsc-errors]
-description = "Generate TypeScript error report"
-run = 'tsc 2>&1 | sed "s:$(git rev-parse --show-toplevel):.:g" | tee tsc-errors || true'
-
-[tasks.tsc-counts]
-description = "Count TypeScript errors by code"
-depends = ["tsc-errors"]
-run = "cat tsc-errors | rg -or '$1' 'error \\b(TS\\d+)\\b' | sort | uniq -c | sort -nr | sed 's/^ *//' | tee tsc-counts || true"
-
-[tasks.eslint-problems]
-description = "Generate ESLint problem report"
-run = 'mise run lint 2>&1 | sed "s:$(git rev-parse --show-toplevel):.:g" | tee eslint-problems || true'
-
-[tasks.files]
-description = "Generate all diagnostic reports"
-depends = ["tsc-errors", "tsc-counts", "eslint-problems"]
-
-[tasks.verify]
-description = "Verify no diagnostic changes"
-depends = ["files"]
-run = "git diff --exit-code"
