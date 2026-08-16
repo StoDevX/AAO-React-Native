@@ -449,7 +449,12 @@ function renderBlocks(nodes: ChildNode[], depth: number): string[] {
  */
 export function nodeToMarkdown(node: AnyNode): string {
 	const children = 'children' in node ? (node.children as ChildNode[]) : []
-	return renderBlocks(children, 0).join('\n\n').trim()
+	return nodesToMarkdown(children)
+}
+
+/** Converts a run of sibling nodes to markdown. See `nodeToMarkdown`. */
+export function nodesToMarkdown(nodes: ChildNode[]): string {
+	return renderBlocks(nodes, 0).join('\n\n').trim()
 }
 
 /** Converts an HTML string to markdown. See `nodeToMarkdown`. */
