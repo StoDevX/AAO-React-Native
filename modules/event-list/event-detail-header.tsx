@@ -20,22 +20,14 @@ type Props = {
 }
 
 /// One line of the date range, e.g. `From 7:45 AM Monday, August 17, 2026`.
-/// The meridiem renders in its own smaller nested `Text`, matching
-/// Calendar.app's small-caps AM/PM -- `@expo/ui`'s `Text` accepts nested
-/// `Text` elements as children alongside plain strings.
+///
+/// The meridiem sets in plain caps at the line's own size. Calendar.app uses
+/// small caps, but `@expo/ui`'s `font` exposes no `smallCaps`, and faking it
+/// with a smaller nested `Text` reads as undersized rather than as small caps.
 function TimeLine({line}: {line: EventTimeLine}): React.ReactNode {
-	return (
-		<Text modifiers={[font({textStyle: 'body'}), foregroundColor(c.label)]}>
-			{line.prefix ? `${line.prefix} ` : ''}
-			{line.time ? `${line.time} ` : ''}
-			{line.meridiem ? (
-				<Text modifiers={[font({size: 11, weight: 'semibold'}), foregroundColor(c.label)]}>
-					{`${line.meridiem} `}
-				</Text>
-			) : null}
-			{line.date}
-		</Text>
-	)
+	let text = [line.prefix, line.time, line.meridiem, line.date].filter(Boolean).join(' ')
+
+	return <Text modifiers={[font({textStyle: 'body'}), foregroundColor(c.label)]}>{text}</Text>
 }
 
 /// The accent bar is a fixed tint rather than an event colour: `EventType`
