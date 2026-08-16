@@ -3,6 +3,8 @@ import {render, screen, fireEvent} from '@testing-library/react-native'
 import {JobRow} from '../job-row'
 import type {JobSummary} from '@frogpond/ccc-jobs'
 
+jest.mock('expo-symbols', () => ({SymbolView: 'SymbolView'}))
+
 const JOB: JobSummary = {
 	id: '2841',
 	title: 'AY Athletic Events Student Worker (WS-ST1)',

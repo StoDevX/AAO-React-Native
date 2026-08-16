@@ -10,10 +10,8 @@ import {
 	ColorValue,
 } from 'react-native'
 import * as c from '@frogpond/colors'
-import {Ionicons as Icon} from '@react-native-vector-icons/ionicons'
-import type IoniconsGlyphs from '@react-native-vector-icons/ionicons/glyphmaps/Ionicons.json'
-
-type IoniconsGlyph = keyof typeof IoniconsGlyphs
+import {SymbolView} from 'expo-symbols'
+import type {SFSymbol} from 'sf-symbols-typescript'
 
 import {faqsOptions} from './query'
 import {useQuery} from '@tanstack/react-query'
@@ -120,12 +118,12 @@ export function FaqBanner({style, target, faqId, onPressOverride}: Props): React
 			testID={`faq-banner-${faqId ?? target ?? 'unknown'}`}
 		>
 			<View style={styles.header}>
-				<Icon
+				<SymbolView
 					accessibilityElementsHidden={true}
-					color={palette.iconColor}
 					name={palette.icon}
 					size={18}
 					style={styles.icon}
+					tintColor={palette.iconColor}
 				/>
 				<Text style={[styles.title, {color: palette.text}]}>
 					{resolvedFaq.bannerTitle ?? resolvedFaq.question}
@@ -216,7 +214,7 @@ type Palette = {
 	text: ColorValue
 	secondaryText: ColorValue
 	link: ColorValue
-	icon: IoniconsGlyph
+	icon: SFSymbol
 	iconColor: ColorValue
 	dismissBackground: ColorValue
 	dismissText: ColorValue
@@ -229,7 +227,7 @@ const SEVERITY_MAP: Record<FaqSeverity, Palette> = {
 		text: c.label,
 		secondaryText: c.secondaryLabel,
 		link: c.link,
-		icon: 'information-circle',
+		icon: 'info.circle',
 		iconColor: c.systemBlue,
 		dismissBackground: c.tertiarySystemGroupedBackground,
 		dismissText: c.systemBlue,
@@ -240,7 +238,7 @@ const SEVERITY_MAP: Record<FaqSeverity, Palette> = {
 		text: c.label,
 		secondaryText: c.secondaryLabel,
 		link: c.link,
-		icon: 'help-circle',
+		icon: 'questionmark.circle',
 		iconColor: c.systemBlue,
 		dismissBackground: c.tertiarySystemGroupedBackground,
 		dismissText: c.systemBlue,
@@ -251,7 +249,7 @@ const SEVERITY_MAP: Record<FaqSeverity, Palette> = {
 		text: c.label,
 		secondaryText: c.secondaryLabel,
 		link: c.systemRed,
-		icon: 'alert-circle',
+		icon: 'exclamationmark.circle',
 		iconColor: c.systemRed,
 		dismissBackground: c.tertiarySystemGroupedBackground,
 		dismissText: c.systemRed,
@@ -292,12 +290,12 @@ export function FaqBannerPresentation({
 			testID={`faq-banner-preview-${faq.id}`}
 		>
 			<View style={styles.header}>
-				<Icon
+				<SymbolView
 					accessibilityElementsHidden={true}
-					color={palette.iconColor}
 					name={palette.icon}
 					size={18}
 					style={styles.icon}
+					tintColor={palette.iconColor}
 				/>
 				<Text style={[styles.title, {color: palette.text}]}>{faq.bannerTitle ?? faq.question}</Text>
 				{faq.dismissable ? (
@@ -337,7 +335,7 @@ function buildPalette(faq: Faq): Palette {
 		background: faq.backgroundColor ?? base.background,
 		text: faq.foregroundColor ?? base.text,
 		secondaryText: faq.foregroundColor ? faq.foregroundColor : base.secondaryText,
-		icon: (faq.icon as IoniconsGlyph | undefined) ?? base.icon,
+		icon: (faq.icon as SFSymbol | undefined) ?? base.icon,
 	}
 }
 

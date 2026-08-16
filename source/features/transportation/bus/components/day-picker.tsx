@@ -3,7 +3,7 @@ import {ColorValue, ScrollView, StyleSheet, Text, TouchableOpacity, View} from '
 import type {Moment} from 'moment-timezone'
 import type {DayOfWeek} from '../types'
 import * as c from '@frogpond/colors'
-import {HStack, Host, Menu, Section, Text as SwiftUIText, Toggle} from '@expo/ui/swift-ui'
+import {HStack, Host, Image, Menu, Section, Text as SwiftUIText, Toggle} from '@expo/ui/swift-ui'
 import {
 	accessibilityIdentifier,
 	background,
@@ -14,14 +14,10 @@ import {
 	shapes,
 	strokeBorder,
 } from '@expo/ui/swift-ui/modifiers'
-import IoniconGlyphs from '@react-native-vector-icons/ionicons/glyphmaps/Ionicons.json'
 
 /// Matches TestIdentifiers.Transportation in the XCUITest target.
 const DAY_PICKER_TEST_ID = 'bus-day-picker'
 
-/// The Ionicons glyphs come from the app-wide font registered through
-/// `UIAppFonts` in Info.plist; SwiftUI addresses it by its family name.
-const ICON_FONT_FAMILY = 'Ionicons'
 const ICON_SIZE = 16
 /// The label was a 14pt React Native Text, which scaled with Dynamic Type.
 /// A system font takes its size from the text style, so pick the style.
@@ -225,14 +221,7 @@ export const DayPickerHeader = ({
 						]}
 						spacing={6}
 					>
-						<SwiftUIText
-							modifiers={[
-								font({family: ICON_FONT_FAMILY, size: ICON_SIZE}),
-								foregroundColor(accentColor),
-							]}
-						>
-							{String.fromCodePoint(IoniconGlyphs.calendar)}
-						</SwiftUIText>
+						<Image color={accentColor} size={ICON_SIZE} systemName="calendar" />
 						<SwiftUIText
 							modifiers={[
 								font({textStyle: LABEL_TEXT_STYLE, weight: 'medium'}),

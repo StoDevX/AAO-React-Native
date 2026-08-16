@@ -10,7 +10,7 @@ import {LoadingView, NoticeView} from '@frogpond/notice'
 import {formatResults} from '../../../source/features/directory/helpers'
 import {directoryEntriesOptions} from '../../../source/features/directory/query'
 import type {DirectoryItem, DirectorySearchTypeEnum} from '../../../source/features/directory/types'
-import {Ionicons as Icon} from '@react-native-vector-icons/ionicons'
+import {SymbolView} from 'expo-symbols'
 
 function DirectoryView(): React.ReactNode {
 	let [searchQueryType, setSearchQueryType] = React.useState<DirectorySearchTypeEnum>('query')
@@ -140,7 +140,7 @@ function IndentedListSeparator() {
 function NoSearchPerformed() {
 	return (
 		<View style={styles.emptySearch}>
-			<Icon color={c.secondaryLabel} name="people-circle-outline" size={64} />
+			<SymbolView name="person.2.circle" size={64} tintColor={c.secondaryLabel} />
 			<Text style={styles.emptySearchText}>Search the Directory</Text>
 		</View>
 	)

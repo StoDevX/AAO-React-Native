@@ -4,7 +4,7 @@ import type {UseQueryResult} from '@tanstack/react-query'
 import {PostList} from '../post-list'
 import type {RedditPostType} from '../types'
 
-jest.mock('@react-native-vector-icons/ionicons', () => ({Ionicons: 'Icon'}))
+jest.mock('expo-symbols', () => ({SymbolView: 'SymbolView'}))
 
 const makePost = (overrides: Partial<RedditPostType> = {}): RedditPostType => ({
 	id: 'post-1',

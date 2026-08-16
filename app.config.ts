@@ -182,9 +182,6 @@ const config: ExpoConfig = {
 			// silent switch — see the AppDelegate plugin for the other half.
 			UIBackgroundModes: ['audio'],
 
-			// No UIAppFonts: each @react-native-vector-icons plugin adds its own
-			// font to the list, and their podspecs ship the .ttf as a resource.
-
 			UIStatusBarHidden: false,
 			UIStatusBarStyle: 'UIStatusBarStyleDarkContent',
 			UIViewControllerBasedStatusBarAppearance: false,
@@ -231,9 +228,6 @@ const config: ExpoConfig = {
 		// maplibre-gl-native-distribution -- no pod source build, and no
 		// access token anywhere in the pipeline.
 		'@maplibre/maplibre-react-native',
-		'@react-native-vector-icons/entypo',
-		'@react-native-vector-icons/ionicons',
-		'@react-native-vector-icons/material-design-icons',
 		['react-native-enriched-markdown', {enableMath: false}],
 		'./plugins/with-app-delegate-customizations',
 		'./plugins/with-alternate-icons',

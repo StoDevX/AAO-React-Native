@@ -2,10 +2,8 @@ import * as React from 'react'
 import {StyleProp, StyleSheet, Text, TextStyle} from 'react-native'
 import {Cell} from '@frogpond/tableview'
 import * as c from '@frogpond/colors'
-import {Ionicons as Icon} from '@react-native-vector-icons/ionicons'
-import type IoniconsGlyphs from '@react-native-vector-icons/ionicons/glyphmaps/Ionicons.json'
-
-type IoniconsGlyph = keyof typeof IoniconsGlyphs
+import {SymbolView} from 'expo-symbols'
+import type {SFSymbol} from 'sf-symbols-typescript'
 
 const styles = StyleSheet.create({
 	title: {
@@ -25,7 +23,7 @@ type ButtonCellProps = {
 	onPress: () => void
 	textStyle?: StyleProp<TextStyle>
 	title: string
-	accessoryIcon?: IoniconsGlyph
+	accessoryIcon?: SFSymbol
 }
 
 export function ButtonCell({
@@ -40,10 +38,10 @@ export function ButtonCell({
 		<Cell
 			cellAccessoryView={
 				accessoryIcon ? (
-					<Icon
-						color={disabled ? styles.disabled.color : styles.active.color}
+					<SymbolView
 						name={accessoryIcon}
 						size={26}
+						tintColor={disabled ? styles.disabled.color : styles.active.color}
 					/>
 				) : null
 			}

@@ -1,6 +1,6 @@
 import * as React from 'react'
 import {RefreshControl, ScrollView, StyleSheet, Text} from 'react-native'
-import {Ionicons as Icon} from '@react-native-vector-icons/ionicons'
+import {SymbolView} from 'expo-symbols'
 import {NoticeView} from '@frogpond/notice'
 import * as c from '@frogpond/colors'
 
@@ -29,7 +29,7 @@ export const StoPrintNoticeView = (props: Props): React.ReactElement => {
 			showsVerticalScrollIndicator={false}
 			style={styles.container}
 		>
-			<Icon color={c.systemFill} name="print" size={100} />
+			<SymbolView name="printer" size={100} tintColor={c.systemFill} />
 			<NoticeView
 				buttonText={buttonText}
 				header={header}
