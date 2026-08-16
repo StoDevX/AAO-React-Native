@@ -589,12 +589,6 @@ importers:
       '@frogpond/event-type':
         specifier: workspace:*
         version: link:../event-type
-      '@frogpond/layout':
-        specifier: workspace:*
-        version: link:../layout
-      '@frogpond/lists':
-        specifier: workspace:*
-        version: link:../lists
       '@frogpond/notice':
         specifier: workspace:*
         version: link:../notice
