@@ -8,8 +8,10 @@ import {
 	font,
 	foregroundColor,
 	frame,
+	lineLimit,
 	listRowSeparator,
 	padding,
+	truncationMode,
 } from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
 import type {EventType} from '@frogpond/event-type'
@@ -18,6 +20,11 @@ import {listTimeLines} from './times'
 /// How far the accent bar clears the title/subtitle block at each end,
 /// matching the event detail header's bar.
 const BAR_OVERSHOOT = 3
+
+/// Calendar.app truncates a long title or location to one line with a
+/// trailing ellipsis rather than wrapping -- wrapping pushes the row tall and,
+/// with a long location, can push the title out of line with the start time.
+const SINGLE_LINE = [lineLimit(1), truncationMode('tail')]
 
 type Props = {
 	event: EventType
@@ -96,14 +103,24 @@ export function EventListRow({event, onPress, isLastInSection}: Props): React.Re
 
 				<VStack alignment="leading" modifiers={[padding({vertical: BAR_OVERSHOOT})]}>
 					<Text
-						modifiers={[font({textStyle: 'body', weight: 'semibold'}), foregroundColor(c.label)]}
+						modifiers={[
+							font({textStyle: 'body', weight: 'semibold'}),
+							foregroundColor(c.label),
+							...SINGLE_LINE,
+						]}
 					>
 						{title}
 					</Text>
 					{subtitle ? (
 						<HStack spacing={4}>
 							<Image color={c.secondaryLabel} size={12} systemName="mappin" />
-							<Text modifiers={[font({textStyle: 'footnote'}), foregroundColor(c.secondaryLabel)]}>
+							<Text
+								modifiers={[
+									font({textStyle: 'footnote'}),
+									foregroundColor(c.secondaryLabel),
+									...SINGLE_LINE,
+								]}
+							>
 								{subtitle}
 							</Text>
 						</HStack>

@@ -34,6 +34,8 @@ export const listRowSeparator = modifier('listRowSeparator')
 export const listStyle = modifier('listStyle')
 export const refreshable = modifier('refreshable')
 export const scrollContentBackground = modifier('scrollContentBackground')
+export const lineLimit = modifier('lineLimit')
+export const truncationMode = modifier('truncationMode')
 
 export const accessibilityLabel = (label: string): Modifier => ({
 	$type: 'accessibilityLabel',
