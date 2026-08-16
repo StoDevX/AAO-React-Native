@@ -129,7 +129,7 @@ export default function JobDetailPage(): React.ReactNode {
 	return (
 		<>
 			<Stack.Title>{job.title}</Stack.Title>
-			<Stack.Toolbar>
+			<Stack.Toolbar placement="right">
 				<Stack.Toolbar.Button
 					accessibilityLabel="Share Job"
 					icon="square.and.arrow.up"
