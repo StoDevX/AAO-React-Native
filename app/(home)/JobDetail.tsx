@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {StyleSheet} from 'react-native'
+import {StyleSheet, useWindowDimensions, View} from 'react-native'
 import {Stack, useLocalSearchParams} from 'expo-router'
 import {useQuery} from '@tanstack/react-query'
 import {Button, Form, HStack, Host, RNHostView, Section, Spacer, Text} from '@expo/ui/swift-ui'
@@ -15,7 +15,19 @@ const styles = StyleSheet.create({
 	host: {
 		flex: 1,
 	},
+	body: {
+		paddingVertical: 4,
+	},
 })
+
+/// `RNHostView`'s `matchContents` sizes the hosted view to its content on both
+/// axes, and a block of text's own width is its longest line -- so the markdown
+/// spills past the row and clips at both edges unless it is told how wide the
+/// row will be. SwiftUI's inset-grouped `Form` insets each section by 20pt and
+/// each row by a further 16pt.
+const FORM_SECTION_INSET = 20
+const FORM_ROW_INSET = 16
+const FORM_HORIZONTAL_INSET = (FORM_SECTION_INSET + FORM_ROW_INSET) * 2
 
 function FieldRow({label, value}: JobField): React.ReactNode {
 	return (
@@ -36,6 +48,7 @@ function postedOn(postedDate: string | undefined): string | undefined {
 
 function JobDetailView({job}: {job: JobDetail}): React.ReactNode {
 	let posted = postedOn(job.postedDate)
+	let {width} = useWindowDimensions()
 
 	return (
 		<Host style={styles.host}>
@@ -61,7 +74,9 @@ function JobDetailView({job}: {job: JobDetail}): React.ReactNode {
 						{/* `matchContents`, so the native markdown view sizes itself inside
 						    the Form rather than collapsing to nothing. */}
 						<RNHostView matchContents={true}>
-							<Markdown source={job.body} />
+							<View style={[styles.body, {width: width - FORM_HORIZONTAL_INSET}]}>
+								<Markdown source={job.body} />
+							</View>
 						</RNHostView>
 					</Section>
 				) : null}
