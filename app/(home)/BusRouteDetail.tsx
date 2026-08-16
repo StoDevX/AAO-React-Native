@@ -11,8 +11,8 @@ import type {Moment} from 'moment-timezone'
 import {busLineOptions} from '../../source/features/transportation/bus/query'
 import {deriveFromProps} from '../../source/features/transportation/bus/line'
 import {createMomentForDay} from '../../source/features/transportation/bus/components/day-picker'
-import type {DayOfWeek} from '../../source/features/transportation/bus/types'
 import type {
+	DayOfWeek,
 	BusTimetableEntry,
 	UnprocessedBusLine,
 	BusSchedule,
@@ -29,10 +29,9 @@ import {ScheduleTimes} from '../../source/features/transportation/bus/components
 import {ProgressChunk} from '../../source/features/transportation/bus/components/progress-chunk'
 import {BUS_FOOTER_MESSAGE} from '../../source/features/transportation/bus/constants'
 import {LoadingView, NoticeView} from '@frogpond/notice'
-import {ListFooter, ListRow, ListSectionHeader} from '@frogpond/lists'
+import {ListFooter, ListRow, ListSectionHeader, Detail, Title} from '@frogpond/lists'
 import * as c from '@frogpond/colors'
 import {Column} from '@frogpond/layout'
-import {Detail, Title} from '@frogpond/lists'
 
 const styles = StyleSheet.create({
 	container: {

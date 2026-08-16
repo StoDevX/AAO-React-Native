@@ -26,7 +26,7 @@ import {
 import * as c from '@frogpond/colors'
 import sample from 'lodash/sample'
 import {useDispatch, useSelector} from 'react-redux'
-import restart from 'react-native-restart-newarch'
+import {Restart} from 'react-native-restart-newarch'
 
 import {AllViews} from '../../source/features/views'
 import type {ViewType} from '../../source/features/views'
@@ -121,7 +121,7 @@ function UnofficialAppNotice(): React.ReactNode {
 				<Button
 					label={RESTART_ACTION}
 					onPress={() => {
-						restart.Restart()
+						Restart()
 					}}
 				/>
 				<Button
