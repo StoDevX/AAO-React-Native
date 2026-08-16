@@ -125,6 +125,7 @@ export function EventListRow({event, onPress, isLastInSection, color}: Props): R
 						background(color),
 						clipShape('capsule'),
 					]}
+					testID={`event-list-row-bar-${title}`}
 				>
 					{null}
 				</VStack>

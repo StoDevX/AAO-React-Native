@@ -92,6 +92,16 @@ export function EventList(props: Props): React.ReactNode {
 	}
 
 	if (props.events.length === 0) {
+		// A calendar that failed to load is worth naming even when it left
+		// nothing else to show -- otherwise "every source errored" and "nothing
+		// is on today" read as the identical bare "No events."
+		if (props.failed.length > 0) {
+			return (
+				<NoticeView
+					text={`Could not load ${props.failed.map((source) => source.title).join(', ')}.`}
+				/>
+			)
+		}
 		return <NoticeView text="No events." />
 	}
 
@@ -131,7 +141,10 @@ export function EventList(props: Props): React.ReactNode {
 								color={colorFor(entry.sourceId)}
 								event={entry.event}
 								isLastInSection={index === section.data.length - 1}
-								key={entry.key}
+								// `entry.key` alone (start time + title) collides once two
+								// merged calendars can hold the same event at the same
+								// time -- the source tag is what tells them apart.
+								key={`${entry.sourceId}|${entry.key}`}
 								onPress={() => props.onPressEvent(entry)}
 							/>
 						))}

@@ -1,25 +1,13 @@
-import type {ColorValue} from 'react-native'
 import * as c from '@frogpond/colors'
-import type {EventType} from '@frogpond/event-type'
+import type {CalendarSource, SourcedEvent} from '@frogpond/event-list'
 
-/// An event, and which calendar it came from. Declared here rather than beside
-/// the merge because both `query.ts` and `use-merged-events.ts` need it, and
-/// this module is the leaf they already share -- putting it with the merge
-/// would make those two import each other.
-export type SourcedEvent = {
-	sourceId: string
-	key: string
-	event: EventType
-}
-
-/// Anything that can contribute events to the calendar. The picker, the merge,
-/// and the tint on a row all work from this and do not care which kind it is.
-export type CalendarSource = {
-	id: string
-	title: string
-	color: ColorValue
-	kind: 'remote' | 'device'
-}
+/// `SourcedEvent` (an event tagged with the calendar it came from) and
+/// `CalendarSource` (the picker, the merge, and the row tint all work from
+/// this, and do not care which kind it is) are event-list's types --
+/// event-list is the lower, reusable layer, so it owns the definitions, and
+/// this module re-exports them rather than keeping a second, structurally-
+/// duplicated copy that could silently drift.
+export type {CalendarSource, SourcedEvent}
 
 /// The app's own calendars. Their colours are ours to pick -- unlike a device
 /// calendar, which arrives with one.

@@ -14,6 +14,11 @@ import {Pressable, Text as RNText, View} from 'react-native'
 type Modifier = {$type: string; [key: string]: unknown}
 type WithModifiers = {modifiers?: Modifier[]; children?: React.ReactNode}
 
+/// `View` doesn't have a `modifiers` prop -- nothing native does -- so this
+/// widens just enough to let the mock stash the array on the rendered
+/// element for a test to read back, without reaching for `any`.
+const ViewWithModifiers = View as unknown as React.ComponentType<WithModifiers & {testID?: string}>
+
 const modifier =
 	($type: string) =>
 	(value?: unknown): Modifier => ({$type, value})
@@ -72,8 +77,20 @@ export function Form({children}: WithModifiers): React.ReactNode {
 	return <View>{children}</View>
 }
 
-export function VStack({children, testID}: WithModifiers & {testID?: string}): React.ReactNode {
-	return <View testID={testID}>{children}</View>
+/// Forwards `modifiers` onto the underlying `View` as a plain prop -- not a
+/// real React Native prop, but react-test-renderer keeps whatever it's given,
+/// so a test can read a row's `background(…)` value back off it by `testID`
+/// without the mock needing to interpret modifiers itself.
+export function VStack({
+	children,
+	modifiers,
+	testID,
+}: WithModifiers & {testID?: string}): React.ReactNode {
+	return (
+		<ViewWithModifiers modifiers={modifiers} testID={testID}>
+			{children}
+		</ViewWithModifiers>
+	)
 }
 
 export function HStack({children}: WithModifiers): React.ReactNode {

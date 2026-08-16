@@ -7,10 +7,10 @@ export interface PoweredBy {
 	href: string
 }
 
-/// An event, tagged with the calendar it came from. Structurally identical to
-/// `@frogpond/ccc-calendar`'s `SourcedEvent` -- that package's callers pass
-/// its values straight through, but event-list is the lower, reusable layer
-/// and must not take a dependency on a domain package above it.
+/// An event, tagged with the calendar it came from. Declared here, in the
+/// lower, reusable layer, rather than in `@frogpond/ccc-calendar` -- that
+/// package already depends on event-list and re-exports this rather than
+/// keeping its own copy, so there is exactly one definition to drift.
 export interface SourcedEvent {
 	sourceId: string
 	key: string
@@ -18,8 +18,8 @@ export interface SourcedEvent {
 }
 
 /// Anything that can contribute events to the list, and how to tint its rows.
-/// Structurally identical to `@frogpond/ccc-calendar`'s `CalendarSource`, for
-/// the same reason as `SourcedEvent` above.
+/// Same reasoning as `SourcedEvent` above -- owned here, re-exported by
+/// `@frogpond/ccc-calendar`.
 export interface CalendarSource {
 	id: string
 	title: string

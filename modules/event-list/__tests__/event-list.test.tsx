@@ -295,6 +295,12 @@ describe('EventList', () => {
 
 		expect(screen.getByText('Olaf thing')).toBeTruthy()
 		expect(screen.getByText('Northfield thing')).toBeTruthy()
+
+		let olafBar = screen.getByTestId('event-list-row-bar-Olaf thing')
+		let northfieldBar = screen.getByTestId('event-list-row-bar-Northfield thing')
+
+		expect(olafBar.props.modifiers).toContainEqual({$type: 'background', value: 'blue'})
+		expect(northfieldBar.props.modifiers).toContainEqual({$type: 'background', value: 'indigo'})
 	})
 
 	test('a failed calendar is named while the others still render', async () => {
@@ -316,6 +322,30 @@ describe('EventList', () => {
 
 		expect(screen.getByText('Olaf thing')).toBeTruthy()
 		expect(screen.getByText(/Northfield/u)).toBeTruthy()
+	})
+
+	// If every enabled calendar errors, `events` is empty exactly like the
+	// ordinary "nothing is on today" case -- the failure has to say so rather
+	// than fall through to the same bare "No events."
+	test('names the failed calendars when every one of them failed', async () => {
+		let sources = [{id: 'stolaf', title: 'St. Olaf', color: 'blue', kind: 'remote' as const}]
+		let failed = [{id: 'stolaf', title: 'St. Olaf', color: 'blue', kind: 'remote' as const}]
+
+		await render(
+			<EventList
+				events={[]}
+				failed={failed}
+				now={NOW}
+				onPressEvent={jest.fn()}
+				onRefresh={jest.fn()}
+				poweredBy={POWERED_BY}
+				refreshing={false}
+				sources={sources}
+			/>,
+		)
+
+		expect(screen.getByText(/Could not load St\. Olaf/u)).toBeTruthy()
+		expect(screen.queryByText('No events.')).toBeNull()
 	})
 
 	// "Nothing is on" and "nothing is happening" look identical if both say
