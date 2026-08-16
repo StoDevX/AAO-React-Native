@@ -1,12 +1,18 @@
 import {fetchManifest, fetchSourceBody, REL_CALENDAR, resolveSource} from '@frogpond/data-sources'
-import {eventKey} from '@frogpond/event-list'
+// The barrel (`@frogpond/event-list`) also re-exports the SwiftUI event list
+// and detail screens, which reach `@sentry/react-native` and `@expo/ui/swift-ui`
+// -- neither loadable under Jest. This module only needs the pure key
+// function, so it imports the leaf directly rather than dragging in the UI.
+import {eventKey} from '@frogpond/event-list/calendar-util'
 import {EventType} from '@frogpond/event-type'
 import {queryOptions} from '@tanstack/react-query'
+import * as Calendar from 'expo-calendar'
 import moment from 'moment'
 import {queryClient} from '../../source/init/tanstack-query'
 import {parseEvents} from './parsers/events'
 import {parseIcalEvents} from './parsers/ical'
 import {parseTecEvents, type WireEvent} from './parsers/tec-events'
+import {toDeviceSource} from './sources'
 import {NamedCalendar} from './types'
 
 export const keys = {
@@ -84,4 +90,17 @@ export const namedCalendarEventOptions = (
 		queryKey: keys.named(calendar),
 		queryFn: ({queryKey, signal}) => fetchCalendar(queryKey[2], signal),
 		select: (events) => convertEvents(events, options).find((event) => eventKey(event) === key),
+	})
+
+/// The device's calendars, as sources. A query rather than component state:
+/// it is read from the device like anything else here, and both the picker and
+/// the detail screen need it, so neither should own it.
+// oxlint-disable-next-line typescript/explicit-module-boundary-types
+export const deviceCalendarsOptions = () =>
+	queryOptions({
+		queryKey: ['calendar', 'device-calendars'] as const,
+		queryFn: async () => {
+			let calendars = await Calendar.getCalendars(Calendar.EntityTypes.EVENT)
+			return calendars.map((calendar) => toDeviceSource(calendar))
+		},
 	})
