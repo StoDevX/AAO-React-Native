@@ -21,13 +21,15 @@ export function EventDetailHeader({title, times}: Props): React.ReactNode {
 			>
 				{null}
 			</VStack>
+			{/* Calendar.app sets the date in the same primary colour as the title
+			    rather than a muted caption, so it reads as part of the masthead. */}
 			<VStack alignment="leading">
-				<Text modifiers={[font({textStyle: 'title2', weight: 'bold'}), foregroundColor(c.label)]}>
+				<Text modifiers={[font({textStyle: 'title', weight: 'bold'}), foregroundColor(c.label)]}>
 					{title}
 				</Text>
 				{times ? (
 					<Text
-						modifiers={[font({textStyle: 'subheadline'}), foregroundColor(c.secondaryLabel)]}
+						modifiers={[font({textStyle: 'body'}), foregroundColor(c.label)]}
 						testID="event-detail-times"
 					>
 						{times}

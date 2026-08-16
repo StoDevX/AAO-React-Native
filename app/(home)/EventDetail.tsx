@@ -21,14 +21,12 @@ const POWERED_BY: Record<EventSource, {title: string; href: string}> = {
 	'krlx-schedule': KRLX_POWERED_BY,
 }
 
-/// The body header now carries the event's title, so the bar shows which
-/// calendar the event came from instead of repeating it.
-const CALENDAR_NAME: Record<EventSource, string> = {
-	stolaf: 'St. Olaf',
-	northfield: 'Northfield',
-	'ksto-schedule': 'KSTO',
-	'krlx-schedule': 'KRLX',
-}
+/// An empty title, not a missing one. The body header carries the event's name,
+/// so the bar keeps just the back chevron and the share button -- the shape
+/// Calendar.app's own event detail uses. Omitting `Stack.Title` altogether
+/// leaves `title` undefined, and React Navigation then falls back to the route
+/// name, putting "EventDetail" in the bar.
+const NO_NAV_TITLE = ''
 
 export default function EventDetailPage(): React.ReactNode {
 	let {source, eventKey} = useLocalSearchParams<{
@@ -93,7 +91,7 @@ export default function EventDetailPage(): React.ReactNode {
 
 	return (
 		<>
-			<Stack.Title>{CALENDAR_NAME[source]}</Stack.Title>
+			<Stack.Title>{NO_NAV_TITLE}</Stack.Title>
 			<Stack.Toolbar placement="right">
 				<Stack.Toolbar.Button
 					accessibilityLabel="Share Event"
