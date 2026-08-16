@@ -90,7 +90,9 @@ export function EventList(props: Props): React.ReactNode {
 	if (props.sources.length === 0) {
 		// No retry: there is nothing to reload, and the way out is the Calendars
 		// button rather than another attempt.
-		return <NoticeView text="No calendars are showing. Choose some from the toolbar." />
+		return (
+			<NoticeView text="No calendars are showing. Choose some from the Calendars button below." />
+		)
 	}
 
 	if (props.events.length === 0) {
