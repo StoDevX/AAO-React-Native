@@ -260,8 +260,8 @@ importers:
         specifier: 5.0.0
         version: 5.0.0(patch_hash=7576d2a458dd256e90b703b84345bf87a19dfa2e3dea523e4691e395dfddfcff)(react-native@0.86.2)
       react-native-enriched-markdown:
-        specifier: 0.7.4
-        version: 0.7.4(@expo/config-plugins@57.0.7)(react-native@0.86.2)(react@19.2.8)
+        specifier: 1.0.1
+        version: 1.0.1(@expo/config-plugins@57.0.7)(react-native@0.86.2)(react@19.2.8)
       react-native-keychain:
         specifier: 10.0.0
         version: 10.0.0
@@ -824,8 +824,8 @@ importers:
         specifier: ^0.86.2
         version: 0.86.2(patch_hash=6ca2e1225f38672b073b92b9d13f24feebbe9e37ba67708a3f1569275ce99191)(@babel/core@7.29.7)(@react-native/jest-preset@0.86.2)(@react-native/metro-config@0.86.2)(@types/react@19.2.18)(react@19.2.8)(supports-color@8.1.1)
       react-native-enriched-markdown:
-        specifier: 0.7.4
-        version: 0.7.4(@expo/config-plugins@57.0.7)(react-native@0.86.2)(react@19.2.8)
+        specifier: 1.0.1
+        version: 1.0.1(@expo/config-plugins@57.0.7)(react-native@0.86.2)(react@19.2.8)
 
   modules/notice:
     dependencies:
@@ -4927,8 +4927,8 @@ packages:
       react-native-gesture-handler: '>= 2.0.0'
       react-native-reanimated: '>= 2.0.0'
 
-  react-native-enriched-markdown@0.7.4:
-    resolution: {integrity: sha512-NXkqZL4d5vM6wOBwYwx0r1Xyw2h+E8SyobrS8nKnbpjYOyKZj6zIdOq1KJFrlenJNu/tXpbJ8jtQagaA4Wj4cg==}
+  react-native-enriched-markdown@1.0.1:
+    resolution: {integrity: sha512-Wh23zYIjZmrJ5/dbezS1Ldc2k0tp++Y3cZrhJ4aRBfsfQpyxBtRNgvkfkWYFSlCCwX9RlCf/iyCDcG1Okp7F6g==}
     peerDependencies:
       '@expo/config-plugins': '>=50.0.0'
       katex: '>=0.16.0'
@@ -10299,7 +10299,7 @@ snapshots:
       react-native-reanimated: 4.5.3(react-native-worklets@0.10.1)(react-native@0.86.2)(react@19.2.8)
       use-latest-callback: 0.2.6(react@19.2.8)
 
-  react-native-enriched-markdown@0.7.4(@expo/config-plugins@57.0.7)(react-native@0.86.2)(react@19.2.8):
+  react-native-enriched-markdown@1.0.1(@expo/config-plugins@57.0.7)(react-native@0.86.2)(react@19.2.8):
     dependencies:
       react: 19.2.8
       react-native: 0.86.2(patch_hash=6ca2e1225f38672b073b92b9d13f24feebbe9e37ba67708a3f1569275ce99191)(@babel/core@7.29.7)(@react-native/jest-preset@0.86.2)(@react-native/metro-config@0.86.2)(@types/react@19.2.18)(react@19.2.8)(supports-color@8.1.1)
