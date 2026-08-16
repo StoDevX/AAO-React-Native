@@ -75,10 +75,11 @@ export function Text({
 	)
 }
 
-/// `title` renders as text so a test can assert a section is present, and
-/// `header`/`footer` render their slot content -- both are real `SwiftUIContent`
-/// slots on the native component, so a bare string handed to either crashes
-/// at mount; rendering them here is what would catch that in a test.
+/// `title` renders as text so a test can assert a section is present.
+/// `header`/`footer` are real `SwiftUIContent` slots on the native component --
+/// a bare string handed to either crashes at mount -- but react-test-renderer
+/// happily accepts a raw string child of `View`, so rendering them wouldn't
+/// catch that. The explicit throw below is what earns the claim.
 export function Section({
 	children,
 	title,
@@ -89,6 +90,10 @@ export function Section({
 	header?: React.ReactNode
 	footer?: React.ReactNode
 }): React.ReactNode {
+	if (typeof header === 'string' || typeof footer === 'string') {
+		throw new Error('Section header/footer are SwiftUI slots; a bare string crashes at mount')
+	}
+
 	return (
 		<View>
 			{title ? <RNText>{title}</RNText> : null}
@@ -103,12 +108,19 @@ export function Link({label, destination}: {label?: string; destination: string}
 	return <RNText accessibilityLabel={destination}>{label ?? destination}</RNText>
 }
 
+/// `ButtonProps` documents that children must be nested elements, not plain
+/// strings; the throw below mirrors that constraint instead of silently
+/// accepting what the real component would reject.
 export function Button({
 	children,
 	label,
 	onPress,
 	modifiers,
 }: WithModifiers & {label?: string; onPress?: () => void}): React.ReactNode {
+	if (typeof children === 'string') {
+		throw new Error('Button children must be nested elements, not a plain string')
+	}
+
 	return (
 		<Pressable
 			accessibilityLabel={labelOf(modifiers)}

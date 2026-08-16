@@ -54,6 +54,8 @@ describe('EventDetail', () => {
 	test('it shows the location and description sections', async () => {
 		await render(<EventDetail event={makeEvent()} poweredBy={POWERED_BY} />)
 
+		expect(screen.getByText('New Faculty Orientation')).toBeTruthy()
+		expect(screen.getByTestId('event-detail-times')).toBeTruthy()
 		expect(screen.getByText('Location')).toBeTruthy()
 		expect(screen.getByText('Kings Dining')).toBeTruthy()
 		expect(screen.getByText('Description')).toBeTruthy()

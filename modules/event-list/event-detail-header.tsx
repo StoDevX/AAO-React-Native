@@ -12,7 +12,7 @@ type Props = {
 /// carries none, and the list's own bar is a plain separator.
 export function EventDetailHeader({title, times}: Props): React.ReactNode {
 	return (
-		<HStack modifiers={[frame({height: undefined})]}>
+		<HStack>
 			{/* `frame`'s native implementation ignores min/max fields whenever `width` or
 			`height` is also set (it switches to the exact-size overload), so the fixed
 			width has to come from `minWidth`/`maxWidth` for `minHeight` to take effect. */}
@@ -22,12 +22,12 @@ export function EventDetailHeader({title, times}: Props): React.ReactNode {
 				{null}
 			</VStack>
 			<VStack alignment="leading">
-				<Text modifiers={[font({size: 22, weight: 'bold'}), foregroundColor(c.label)]}>
+				<Text modifiers={[font({textStyle: 'title2', weight: 'bold'}), foregroundColor(c.label)]}>
 					{title}
 				</Text>
 				{times ? (
 					<Text
-						modifiers={[font({size: 15}), foregroundColor(c.secondaryLabel)]}
+						modifiers={[font({textStyle: 'subheadline'}), foregroundColor(c.secondaryLabel)]}
 						testID="event-detail-times"
 					>
 						{times}

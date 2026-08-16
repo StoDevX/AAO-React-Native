@@ -598,9 +598,6 @@ importers:
       '@frogpond/notice':
         specifier: workspace:*
         version: link:../notice
-      '@frogpond/tableview':
-        specifier: workspace:*
-        version: link:../tableview
       '@react-native-vector-icons/ionicons':
         specifier: ^13.1.2
         version: 13.1.2(@expo/config-plugins@57.0.7)(@react-native/assets-registry@0.86.2)(expo-font@57.0.1)(react-native@0.86.2)(react@19.2.8)
