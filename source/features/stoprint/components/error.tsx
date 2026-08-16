@@ -1,6 +1,6 @@
 import * as React from 'react'
 import {RefreshControl, ScrollView, StyleSheet} from 'react-native'
-import {Ionicons as Icon} from '@react-native-vector-icons/ionicons'
+import {SymbolView} from 'expo-symbols'
 import {NoticeView} from '@frogpond/notice'
 import * as c from '@frogpond/colors'
 import {openEmail} from '../../../features/settings/screens/overview/support'
@@ -23,7 +23,7 @@ export function StoPrintErrorView(props: Props): React.ReactNode {
 			showsVerticalScrollIndicator={false}
 			style={styles.container}
 		>
-			<Icon color={c.systemFill} name="bug" size={100} />
+			<SymbolView name="ladybug" size={100} tintColor={c.systemFill} />
 			<NoticeView
 				buttonText="Report"
 				header="Connection Issue"
