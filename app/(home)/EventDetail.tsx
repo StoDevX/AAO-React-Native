@@ -191,8 +191,8 @@ export default function EventDetailPage(): React.ReactNode {
 
 			    `compactMessages` is what keeps the label short enough for a bar item:
 			    the button carries its own state as its title, `Add to Calendar` ->
-			    `Saving…` -> `Saved`, and then disables. That is why losing the section
-			    footer the message used to sit in costs nothing.
+			    `Saving…` -> `Saved`, and then disables. The message needs nowhere of
+			    its own to sit, because the title is where it shows.
 
 			    Label-only and per-item tint are both real on iOS: `RouterToolbarItemView`
 			    sets `item.title` with `item.image = nil` when no icon is given, and
