@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {describe, expect, jest, test} from '@jest/globals'
+import {afterEach, describe, expect, jest, test} from '@jest/globals'
 import {renderHook, waitFor} from '@testing-library/react-native'
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query'
 import moment from 'moment-timezone'
@@ -53,8 +53,21 @@ const DEVICE_CAL_1: CalendarSource = {
 	kind: 'device',
 }
 
+// Every query left without observers gets a garbage-collection timeout, and
+// React Query's default is five minutes -- long enough to outlive the run and
+// leave the Jest worker to be force-killed rather than exiting on its own.
+const trackedQueryClients: QueryClient[] = []
+
+afterEach(() => {
+	for (let client of trackedQueryClients) {
+		client.clear()
+	}
+	trackedQueryClients.length = 0
+})
+
 function wrapper({children}: {children: React.ReactNode}) {
 	let client = new QueryClient({defaultOptions: {queries: {retry: false}}})
+	trackedQueryClients.push(client)
 	return <QueryClientProvider client={client}>{children}</QueryClientProvider>
 }
 

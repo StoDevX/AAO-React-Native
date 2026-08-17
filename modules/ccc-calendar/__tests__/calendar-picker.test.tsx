@@ -161,11 +161,27 @@ describe('CalendarPicker', () => {
 
 	test('in dev mode the two groups are titled, and the device is only offered', async () => {
 		mockUseIsDevMode.mockReturnValue(true)
-		await render(<CalendarPicker />, {wrapper})
+		// The access check settles to the same falsy grant it started with, so
+		// nothing on screen changes when it lands. A `Profiler` around the picker
+		// is the only honest way to wait for that settling: without it, the
+		// query's notification of that settling arrives after the test has
+		// already finished, leaking its timer and updating a torn-down renderer.
+		let commits = 0
+		await render(
+			<React.Profiler id="picker" onRender={() => (commits += 1)}>
+				<CalendarPicker />
+			</React.Profiler>,
+			{wrapper},
+		)
 
 		expect(within(screen.getByTestId('All About Olaf')).getByText('St. Olaf')).toBeTruthy()
 		expect(within(screen.getByTestId('Device')).getByText('Show device calendars…')).toBeTruthy()
 		expect(mockGetCalendars).not.toHaveBeenCalled()
+
+		await waitFor(() => {
+			expect(mockGetFullCalendarAccess).toHaveBeenCalled()
+			expect(commits).toBeGreaterThan(1)
+		})
 	})
 
 	test('accepting the prompt lists the device’s calendars', async () => {

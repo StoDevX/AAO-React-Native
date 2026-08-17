@@ -87,12 +87,29 @@ describe('useCalendarSources', () => {
 
 	test('in dev mode the device can be offered, but nothing is read before a grant', async () => {
 		mockUseIsDevMode.mockReturnValue(true)
-		let {result} = await renderHook(() => useCalendarSources(), {wrapper})
+		// The access check settles to the same falsy `granted` it started with, so
+		// nothing about `result.current` changes when it lands. Counting renders is
+		// the only way to wait for that settling honestly: without it, the query's
+		// notification to this hook arrives after the test has already finished,
+		// leaking its timer and firing a state update against a torn-down renderer.
+		let renders = 0
+		let {result} = await renderHook(
+			() => {
+				renders += 1
+				return useCalendarSources()
+			},
+			{wrapper},
+		)
 
 		expect(result.current.canOfferDevice).toBe(true)
 		expect(result.current.deviceAvailable).toBe(false)
 		expect(result.current.device).toEqual([])
 		expect(mockGetCalendars).not.toHaveBeenCalled()
+
+		await waitFor(() => {
+			expect(mockGetFullCalendarAccess).toHaveBeenCalled()
+			expect(renders).toBeGreaterThan(1)
+		})
 	})
 
 	test('requesting the device in dev mode surfaces its calendars as sources', async () => {
