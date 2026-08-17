@@ -42,15 +42,22 @@ type Props = {
 	 */
 	color: ColorValue
 	/**
-	 * The event's neighbours, already positioned. Absent for a source with no
+	 * The event's neighbours, already positioned, and the colour lookup their
+	 * blocks are tinted by. One optional bundling both rather than two
+	 * separate ones: `colorFor` means nothing without `blocks` to tint, and a
+	 * timeline with no `colorFor` would silently draw nothing, so the two
+	 * cannot be passed independently. Absent for a source with no
 	 * surrounding-events query behind it -- the radio schedules -- and for an
 	 * all-day event, which has no position to draw.
 	 */
-	timeline?: {window: TimelineWindow; blocks: TimelineBlock[]}
-	colorFor?: (sourceId: string) => ColorValue
+	timeline?: {
+		window: TimelineWindow
+		blocks: TimelineBlock[]
+		colorFor: (sourceId: string) => ColorValue
+	}
 }
 
-export function EventDetail({event, poweredBy, color, timeline, colorFor}: Props): React.ReactNode {
+export function EventDetail({event, poweredBy, color, timeline}: Props): React.ReactNode {
 	let lines = detailTimeLines(event)
 
 	return (
@@ -66,9 +73,13 @@ export function EventDetail({event, poweredBy, color, timeline, colorFor}: Props
 				<TextSection content={event.location.trim()} header="Location" />
 				<TextSection content={event.description.trim()} header="Description" />
 
-				{timeline && colorFor ? (
+				{timeline ? (
 					<Section>
-						<EventTimeline blocks={timeline.blocks} colorFor={colorFor} window={timeline.window} />
+						<EventTimeline
+							blocks={timeline.blocks}
+							colorFor={timeline.colorFor}
+							window={timeline.window}
+						/>
 					</Section>
 				) : null}
 

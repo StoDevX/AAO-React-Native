@@ -114,6 +114,7 @@ export default function EventDetailPage(): React.ReactNode {
 						timelineEntries({sourceId: source, key: eventKey, event}, neighbours),
 						`${source}|${eventKey}`,
 					),
+					colorFor,
 				}
 			: undefined
 
@@ -213,7 +214,6 @@ export default function EventDetailPage(): React.ReactNode {
 			/>
 			<EventDetail.EventDetail
 				color={color}
-				colorFor={colorFor}
 				event={event}
 				poweredBy={poweredBy}
 				timeline={timeline}
