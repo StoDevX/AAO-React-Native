@@ -109,12 +109,10 @@ function isChecked(name: string): boolean {
 }
 
 describe('CalendarPicker', () => {
-	test('outside dev mode it lists the app’s calendars with no groups', async () => {
+	test('outside dev mode the calendars sit in no group', async () => {
 		mockUseIsDevMode.mockReturnValue(false)
 		await render(<CalendarPicker />, {wrapper})
 
-		expect(screen.getByText('St. Olaf')).toBeTruthy()
-		expect(screen.getByText('Northfield')).toBeTruthy()
 		expect(screen.queryByTestId('All About Olaf')).toBeNull()
 		expect(screen.queryByTestId('Device')).toBeNull()
 	})

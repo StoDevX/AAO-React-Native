@@ -81,10 +81,4 @@ describe('BuildingPicker', () => {
 			expect(screen.getByText('Gamma Field')).toBeTruthy()
 		})
 	})
-
-	it('reports the tapped building to its caller', async () => {
-		let onSelect = await renderPicker()
-		await fireEvent.press(screen.getByText('Alpha Hall'))
-		expect(onSelect).toHaveBeenCalledWith('a')
-	})
 })

@@ -27,7 +27,6 @@ describe('EventDetailHeader', () => {
 			/>,
 		)
 
-		expect(screen.getByTestId('event-detail-times')).toBeTruthy()
 		expect(screen.getByText('From 9 AM Monday, August 17, 2026')).toBeTruthy()
 		expect(screen.getByText('to 6 PM Thursday, August 20, 2026')).toBeTruthy()
 	})

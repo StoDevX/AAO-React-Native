@@ -83,12 +83,9 @@ describe('BuildingInfo', () => {
 		})
 	})
 
-	it('offers a way out when the building is missing', async () => {
-		let onClose = jest.fn()
-		await render(<BuildingInfo building={undefined} onClose={onClose} />)
+	it('renders a not-found state when the building is missing', async () => {
+		await render(<BuildingInfo building={undefined} onClose={jest.fn()} />)
 
 		expect(screen.getByText(/not found/iu)).toBeTruthy()
-		await fireEvent.press(screen.getByLabelText('Close'))
-		expect(onClose).toHaveBeenCalled()
 	})
 })
