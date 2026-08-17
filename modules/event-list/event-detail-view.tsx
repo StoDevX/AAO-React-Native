@@ -51,9 +51,9 @@ export function EventDetail({event, poweredBy, color}: Props): React.ReactNode {
 	return (
 		<Host style={styles.host}>
 			<Form>
-				{/* The date block is a masthead rather than a row, so it loses the
-				    grouped-row card the way the attribution below does. It sits under
-				    the screen's native large title, which carries the event's name. */}
+				{/* The masthead is not a row of the form, so it loses the grouped-row
+				    card the way the attribution below does. It carries the event's name
+				    and dates together, flanked by one accent bar. */}
 				<VStack modifiers={[listRowBackground('clear'), listRowSeparator('hidden')]}>
 					<EventDetailHeader color={color} lines={lines} title={event.title} />
 				</VStack>
