@@ -140,9 +140,9 @@ enough surrounding context and a long one doesn't stretch the card past
 reason. An event starting exactly on the hour backs the window off by an
 hour first, so its block isn't flush against the window's top edge.
 
-40pt per hour. Hour gridlines run the block area's full width, inset by a
-lead so a stub of each line's start still shows behind the blocks. Labels in
-`caption`.
+40pt per hour. Hour gridlines run the block area's full width; the blocks are
+inset by a lead, so a stub of each line's start shows before the block that
+otherwise covers it. Labels in `caption`.
 
 A multi-day neighbour is dropped from the block sweep for the same reason a
 multi-day event gets no window at all: clamped top to foot, it would wash
