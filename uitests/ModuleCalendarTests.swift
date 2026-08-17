@@ -66,6 +66,26 @@ class ModuleCalendarTests: UITestCase {
 		}
 	}
 
+	/// The point of the branch, in one frame: both remote calendars on at once,
+	/// so a single timeline carries St. Olaf's blue and Northfield's indigo side
+	/// by side, under the icon-and-label Calendars button.
+	///
+	/// St. Olaf is on by default, so one toggle turns Northfield on too. The menu
+	/// is reopened afterwards to check both ticks, because a calendar that
+	/// silently failed to switch on would leave a screenshot that looks merely
+	/// uneventful rather than wrong.
+	func testTwoCalendarsMergedIntoOneTimeline() throws {
+		CalendarScreen(app: app)
+			.navigate()
+			.openPicker()
+			.toggle(TestIdentifiers.Calendar.calendars[1])
+			.openPicker()
+			.verifyChecked(TestIdentifiers.Calendar.calendars[0])
+			.verifyChecked(TestIdentifiers.Calendar.calendars[1])
+			.dismissMenu()
+			.capture("20-two-calendars")
+	}
+
 	/// The Calendars button floats over the end of the list, so the list has to
 	/// be inset for it. Scrolled all the way down, the last row should sit above
 	/// the button rather than behind it.

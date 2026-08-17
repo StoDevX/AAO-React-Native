@@ -48,6 +48,22 @@ struct CalendarScreen: Screen {
 		return self
 	}
 
+	/// Assert a calendar is ticked in the open menu.
+	///
+	/// A screenshot of a merged list is only worth keeping if both calendars
+	/// really are on -- one that quietly failed to switch on looks the same as a
+	/// day that happened to hold no events from it.
+	@discardableResult
+	func verifyChecked(_ calendar: String) -> Self {
+		let item = app.buttons.matching(
+			NSPredicate(format: "label == %@ AND isSelected == true", calendar)
+		).firstMatch
+		XCTAssertTrue(
+			item.waitForExistence(timeout: 30),
+			"\(calendar) should be ticked in the picker")
+		return self
+	}
+
 	/// Whether the menu is still on screen, which is what `unstable_keepPresented`
 	/// is meant to buy: a UIMenu's items only exist in the tree while it is open.
 	func menuIsPresented() -> Bool {

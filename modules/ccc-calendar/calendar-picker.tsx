@@ -14,11 +14,22 @@ import {useCalendarSources} from './use-calendar-sources'
 /// itself still lands, so turning on a second calendar means reopening the menu.
 /// The prop stays because it costs nothing and states the intent.
 ///
-/// The button sits in the bottom bar the way Calendar.app's own calendar picker
-/// does. A flexible `Spacer` after it takes the rest of the bar, which is what
-/// leaves the button at the left end. `Stack.Toolbar.Menu` has no `label` prop;
-/// the button's text comes from a `Stack.Toolbar.Label` child, and `title`
-/// deliberately goes unused so the menu gets no header of its own.
+/// The button sits in the bottom bar, at the left, where Calendar.app keeps its
+/// own calendar picker. A flexible `Spacer` after it takes the rest of the bar,
+/// which is what leaves the button at that end.
+///
+/// The button shows its label and no icon, because in this placement it cannot
+/// show both. `Stack.Toolbar.Menu` has no `label` prop -- the text comes from a
+/// `Stack.Toolbar.Label` child -- and `title` stays unused so the menu gets no
+/// header of its own.
+///
+/// Adding `icon` does not add an icon beside the text; it replaces the text.
+/// expo-router builds the bar item as
+/// `UIBarButtonItem(title:image:primaryAction:menu:)`
+/// (`ios/Toolbar/RouterToolbarHostView.swift`), and UIKit draws only the image
+/// when a bar item is given both, collapsing this button from 101x38 to a 38x38
+/// circle with no text. Nothing in JavaScript can override that, so an icon here
+/// costs the word "Calendars".
 export function CalendarPicker(): React.ReactNode {
 	let {remote, device, enabled, canOfferDevice, deviceAvailable, toggle, requestDevice} =
 		useCalendarSources()
