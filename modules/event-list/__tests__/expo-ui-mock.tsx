@@ -29,7 +29,6 @@ export const padding = modifier('padding')
 export const background = modifier('background')
 export const multilineTextAlignment = modifier('multilineTextAlignment')
 export const buttonStyle = modifier('buttonStyle')
-export const disabled = modifier('disabled')
 export const listRowBackground = modifier('listRowBackground')
 export const listRowInsets = modifier('listRowInsets')
 export const listRowSeparator = modifier('listRowSeparator')
@@ -62,16 +61,6 @@ export const accessibilityLabel = (label: string): Modifier => ({
 function labelOf(modifiers?: Modifier[]): string | undefined {
 	let found = modifiers?.find((m) => m.$type === 'accessibilityLabel')
 	return typeof found?.label === 'string' ? found.label : undefined
-}
-
-/**
- * Whether a `disabled(…)` modifier is present and true, matching SwiftUI's
- * `.disabled()` -- there is no `disabled` prop on the real `Button`.
- */
-function disabledOf(modifiers?: Modifier[]): boolean {
-	let found = modifiers?.find((m) => m.$type === 'disabled')
-	if (!found) return false
-	return found.value !== false
 }
 
 /**
@@ -213,11 +202,7 @@ export function Button({
 	}
 
 	return (
-		<Pressable
-			accessibilityLabel={labelOf(modifiers)}
-			disabled={disabledOf(modifiers)}
-			onPress={onPress}
-		>
+		<Pressable accessibilityLabel={labelOf(modifiers)} onPress={onPress}>
 			{children ?? (label ? <RNText>{label}</RNText> : null)}
 		</Pressable>
 	)

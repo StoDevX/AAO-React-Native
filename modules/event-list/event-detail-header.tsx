@@ -41,9 +41,8 @@ function TimeLine({line}: {line: EventTimeLine}): React.ReactNode {
 
 /**
  * The event's name leads the masthead, with the date range beneath it and an
- * accent bar flanking both -- Calendar.app's sheet shape. The name sat in the
- * screen's native large title until the screen became a sheet, which has no
- * bar to carry one.
+ * accent bar flanking both -- Calendar.app's sheet shape. A sheet has no
+ * navigation bar to carry a large title, so the name leads the body instead.
  *
  * `title` is measured from Calendar.app: a 59px cap height on a 3x screen is
  * 28pt, which is SwiftUI's `.title`.

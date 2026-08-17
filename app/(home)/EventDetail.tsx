@@ -203,12 +203,7 @@ export default function EventDetailPage(): React.ReactNode {
 				render={({message, disabled, onPress}) => (
 					<Stack.Toolbar placement="bottom">
 						<Stack.Toolbar.Spacer />
-						<Stack.Toolbar.Button
-							accessibilityLabel="Add to Calendar"
-							disabled={disabled}
-							onPress={onPress}
-							tintColor={color}
-						>
+						<Stack.Toolbar.Button disabled={disabled} onPress={onPress} tintColor={color}>
 							{message || 'Add to Calendar'}
 						</Stack.Toolbar.Button>
 						<Stack.Toolbar.Spacer />
