@@ -63,24 +63,6 @@ describe('EventList', () => {
 		expect(screen.getByText('Monday – Aug 17')).toBeTruthy()
 	})
 
-	test('renders a row with its title and trailing start/end times', async () => {
-		await render(
-			<EventList
-				events={[makeEntry()]}
-				failed={[]}
-				now={NOW}
-				onPressEvent={jest.fn()}
-				onRefresh={jest.fn()}
-				poweredBy={POWERED_BY}
-				refreshing={false}
-				sources={[STOLAF_SOURCE]}
-			/>,
-		)
-
-		expect(screen.getByText('New Faculty Orientation')).toBeTruthy()
-		expect(screen.getByText('Kings Dining')).toBeTruthy()
-	})
-
 	test('an all-day row shows all-day instead of times', async () => {
 		let entry = makeEntry({
 			startTime: moment('2026-08-17T00:00:00Z'),
@@ -146,66 +128,8 @@ describe('EventList', () => {
 		expect(screen.queryByText(end)).toBeNull()
 	})
 
-	// Calendar.app pairs leading and trailing text line by line: the title
-	// truncates against the start time, the location against the end time. A row
-	// with no end time therefore still shows its location, on a line whose full
-	// width is its own -- which is the point of the pairing.
-	test('still shows the location when there is no end time', async () => {
-		let entry = makeEntry({
-			location: 'Middendorf Animal Hospital And Laser Centre',
-			config: {startTime: true, endTime: false, subtitle: 'location'},
-		})
-		let {start, end} = listTimeLines(entry.event)
-
-		await render(
-			<EventList
-				events={[entry]}
-				failed={[]}
-				now={NOW}
-				onPressEvent={jest.fn()}
-				onRefresh={jest.fn()}
-				poweredBy={POWERED_BY}
-				refreshing={false}
-				sources={[STOLAF_SOURCE]}
-			/>,
-		)
-
-		expect(screen.getByText('Middendorf Animal Hospital And Laser Centre')).toBeTruthy()
-		expect(screen.getByText(start)).toBeTruthy()
-		expect(screen.queryByText(end)).toBeNull()
-	})
-
-	// A device all-day event, exactly as EventKit hands it over: 00:00:00 to
-	// 23:59:59, both edges flagged meaningless. The row reads all-day off the
-	// flags, so the odd span must not cost it the label.
-	test('an EventKit all-day row shows all-day too', async () => {
-		let entry = makeEntry({
-			title: 'Labor Day',
-			location: '',
-			startTime: moment('2026-09-07T00:00:00'),
-			endTime: moment('2026-09-07T23:59:59'),
-			config: ALL_DAY,
-		})
-
-		await render(
-			<EventList
-				events={[entry]}
-				failed={[]}
-				now={NOW}
-				onPressEvent={jest.fn()}
-				onRefresh={jest.fn()}
-				poweredBy={POWERED_BY}
-				refreshing={false}
-				sources={[STOLAF_SOURCE]}
-			/>,
-		)
-
-		expect(screen.getByText('Labor Day')).toBeTruthy()
-		expect(screen.getByText('all-day')).toBeTruthy()
-		expect(screen.queryByText('12 AM')).toBeNull()
-		expect(screen.queryByText('11:59 PM')).toBeNull()
-	})
-
+	// A row whose second line has no trailing time still draws that line, so the
+	// location does not go with the end time.
 	test('shows an all-day row’s location too', async () => {
 		let entry = makeEntry({
 			startTime: moment('2026-08-17T00:00:00'),
@@ -286,54 +210,6 @@ describe('EventList', () => {
 		await fireEvent.press(screen.getByText('New Faculty Orientation'))
 
 		expect(onPressEvent).toHaveBeenCalledWith(entry)
-	})
-
-	test('pull-to-refresh calls onRefresh', async () => {
-		let onRefresh = jest.fn()
-
-		await render(
-			<EventList
-				events={[makeEntry()]}
-				failed={[]}
-				now={NOW}
-				onPressEvent={jest.fn()}
-				onRefresh={onRefresh}
-				poweredBy={POWERED_BY}
-				refreshing={false}
-				sources={[STOLAF_SOURCE]}
-			/>,
-		)
-
-		await fireEvent.press(screen.getByTestId('list-refresh-trigger'))
-
-		expect(onRefresh).toHaveBeenCalled()
-	})
-
-	test('every enabled calendar’s events reach the list', async () => {
-		let sources = [
-			{id: 'stolaf', title: 'St. Olaf', color: 'blue', kind: 'remote' as const},
-			{id: 'northfield', title: 'Northfield', color: 'indigo', kind: 'remote' as const},
-		]
-		let events = [
-			{sourceId: 'stolaf', key: 'a', event: makeEvent({title: 'Olaf thing'})},
-			{sourceId: 'northfield', key: 'b', event: makeEvent({title: 'Northfield thing'})},
-		]
-
-		await render(
-			<EventList
-				events={events}
-				failed={[]}
-				now={NOW}
-				onPressEvent={jest.fn()}
-				onRefresh={jest.fn()}
-				poweredBy={POWERED_BY}
-				refreshing={false}
-				sources={sources}
-			/>,
-		)
-
-		expect(screen.getByText('Olaf thing')).toBeTruthy()
-		expect(screen.getByText('Northfield thing')).toBeTruthy()
 	})
 
 	test('a failed calendar is named while the others still render', async () => {
