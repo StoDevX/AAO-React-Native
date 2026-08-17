@@ -27,11 +27,21 @@ export type DeviceEvent = {
 }
 
 /**
+ * The fields of an EventKit event that an `EventType` is built from.
+ * `Calendar.ExpoCalendarEvent` is a class, so naming the fields is what lets a
+ * plain object stand in for one.
+ */
+export type DeviceEventFields = Pick<
+	Calendar.ExpoCalendarEvent,
+	'title' | 'location' | 'notes' | 'url' | 'startDate' | 'endDate' | 'allDay'
+>
+
+/**
  * `EventType.config` describes which of an event's edges are meaningful.
  * EventKit says so directly with `allDay`, where the web calendars have to
  * infer it from a 24-hour duration.
  */
-function toEventType(event: Calendar.ExpoCalendarEvent): EventType {
+export function toEventType(event: DeviceEventFields): EventType {
 	let startTime = moment(event.startDate)
 	let endTime = moment(event.endDate)
 
