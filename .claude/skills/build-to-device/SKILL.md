@@ -1,152 +1,93 @@
 ---
 name: build-to-device
-description: Use when someone asks for a build on their physical iPhone - covers signing overrides that avoid rotating the shared match certificate, and injecting the JS bundle so a Debug build runs without Metro
+description: Use when someone asks for a build on their physical iPhone - covers the mise device task, verifying the build survives launch, and finding a crash report when it does not
 ---
 
 # Build to a Physical Device
 
-How to get a build of the app onto a physical iPhone for manual verification,
-without touching shared signing infrastructure.
+Getting a build onto someone's iPhone for the manual checks UI tests cannot make
+— native rendering, menu presentation, alternate app icons, mDNS discovery.
 
-## When to Use This Skill
-
-Use this when someone asks you to put a build on their phone — usually to check
-something the UI tests cannot, such as native rendering, menu presentation,
-alternate app icons, or mDNS discovery.
-
-## The development variant signs on its own
-
-Use `APP_VARIANT=development`. CLAUDE.md warns that the dev bundle identifier
-has no App Store Connect record and no `match` profiles, which reads as though a
-device build needs that groundwork first. It does not: with
-`CODE_SIGN_STYLE=Automatic` and `-allowProvisioningUpdates`, Xcode mints a
-development profile for `NFMTHAZVS9.com.drewvolz.stolaf.dev` against the signed-in
-Apple ID, first try, with no portal record and no `match` involvement.
-
-That warning is about TestFlight and the App Store, where a bundle identifier
-does need its own record. A development build to a paired phone is a different
-path, so do not set up provisioning you will not use, and do not fall back to
-the production identity — that one *replaces* the person's App Store app.
-
-Confirmed 2026-08-16 on an iPhone 14 Pro. The installed app reports
-`CFBundleDisplayName = AAO Dev` and `CFBundleIdentifier =
-NFMTHAZVS9.com.drewvolz.stolaf.dev`; check both after injecting, since it is the
-cheapest way to prove you built the variant you meant to.
-
-## The two problems you will hit
-
-Both have caught previous sessions out. Neither is obvious from the error.
-
-### 1. The provisioning profile is expired or unavailable
-
-`expo prebuild` does not reproduce `CODE_SIGN_STYLE`, `DEVELOPMENT_TEAM` or
-`PROVISIONING_PROFILE_SPECIFIER`, so a generated project usually signs cleanly
-under automatic provisioning and this problem does not arise. It still can when
-Xcode picks up a stale `match`-managed profile, and it did every time before the
-project was generated. The failure looks like:
-
-```
-error: Provisioning profile "match Development NFMTHAZVS9.com.drewvolz.stolaf"
-       expired on <date>
-error: ...doesn't include signing certificate "Apple Development: <name>"
-```
-
-**Do not reach for `match` first.** `fastlane match development --force` rotates
-a *shared* certificate in `https://github.com/hawkrives/aao-keys` and on the
-Apple Developer Portal. That invalidates it for every other developer and for CI
-until they re-run `match`, and it usually needs an interactive 2FA code, so it
-will not complete unattended.
-
-Instead, override the signing style on the command line. This leaves the
-committed configuration and the match repo untouched, and lets Xcode mint a
-development profile for whichever Apple ID is signed into Xcode:
+## One command
 
 ```bash
-xcodebuild build \
-  -workspace ios/AllAboutOlaf.xcworkspace -scheme AllAboutOlaf \
-  -configuration Debug -destination 'platform=iOS,name=<DEVICE NAME>' \
-  -derivedDataPath ios/build -allowProvisioningUpdates \
-  CODE_SIGN_STYLE=Automatic DEVELOPMENT_TEAM=TMK6S7TPX2 \
-  PROVISIONING_PROFILE_SPECIFIER=""
+mise run device "<DEVICE NAME>"
 ```
 
-Only escalate to rotating the shared certificate if this fails *and* the person
-explicitly approves that specific action — "you can regenerate certs" in general
-is not the same as agreeing to rotate a credential their colleagues share.
+The name is what `xcrun devicectl list devices` prints, quoted. The task chains
+`pnpm:install:frozen`, `prebuild` under `APP_VARIANT=development`, `build:ios`,
+`bundle:ios`, `embed-jsbundle:ios` and `device:deploy`, each cached on its own
+`sources`. It transfers an app to someone's phone, so **ask before running it**,
+even when a plan already calls for it.
 
-### 2. A Debug build contains no JavaScript
+`mise run device:find-udid "<DEVICE NAME>"` exits 1 when the phone is not
+paired, which tells a typo from a cable problem. Reach for `mise run --force`
+when a step skips and should have run; editing `mise.toml` invalidates every
+task in it.
 
-`react-native-xcode.sh` skips bundling for Debug, so the app it produces expects
-Metro on `localhost:8081`. Handed over as-is, it shows a red screen the moment
-your machine sleeps or the terminal closes.
+The rest of this file is why those steps look the way they do. Read it when one
+fails, not to reassemble the sequence by hand.
 
-`AppDelegate.bundleURL()` prefers an injected bundle and only falls back to
-Metro, so inject one and the build runs standalone:
+## The build signs itself
 
-```bash
-mise run bundle:ios
-APP=$(find ios/build/Build/Products -name 'AllAboutOlaf.app' -path '*iphoneos*' -print -quit)
-cp ios/AllAboutOlaf/main.jsbundle "$APP/"
-rm -rf "$APP/assets" && cp -R ios/assets "$APP/"
-```
+`APP_VARIANT=development` builds `NFMTHAZVS9.com.drewvolz.stolaf.dev`, which
+installs alongside whatever the person already has from the App Store; the
+production identity would replace it. `build:ios` signs against whichever Apple
+ID is signed into Xcode, so a paired phone and a logged-in Xcode are the whole
+prerequisite.
 
-Copy `ios/assets/` too, not just the bundle — images resolve from it.
+Confirmed 2026-08-16 on an iPhone 14 Pro. Check `CFBundleDisplayName = AAO Dev`
+and `CFBundleIdentifier = NFMTHAZVS9.com.drewvolz.stolaf.dev` on the installed
+app — the cheapest proof you built the variant you meant to.
 
-## Full sequence
+**If signing fails, stop and hand it back.** Every remedy touches credentials
+shared with other developers and with CI; regenerating one breaks their builds
+until they re-sync, and it needs an interactive approval step you cannot
+complete anyway. That call belongs to the person whose phone this is.
 
-```bash
-# 0. Generate ios/ if it is absent -- it is not tracked.
-#    Use the development variant so this build installs alongside whatever the
-#    person already has from the App Store rather than replacing it.
-APP_VARIANT=development mise run prebuild
+## The JS bundle travels inside the .app
 
-# 1. Confirm the device is paired, and note its identifier
-xcrun devicectl list devices
+`react-native-xcode.sh` skips bundling for Debug, so the app looks for Metro on
+`localhost:8081` and shows a red screen once your machine sleeps.
+`AppDelegate.bundleURL()` prefers an injected bundle, so `bundle:ios` builds one
+and `embed-jsbundle:ios` copies it in, along with `ios/assets/` — images resolve
+from there.
 
-# 2. Build (see the signing override above)
+Two steps you can skip:
 
-# 3. Bundle the JS and inject it into the .app
-
-# 4. Install
-xcrun devicectl device install app --device <DEVICE UDID> "$APP"
-```
+- **Hermes bytecode.** `bundle:ios` emits plain JavaScript and a device runs it.
+  Leave that task as it is; CI feeds its output to simulator UITests.
+- **Re-signing after injection.** Copying files in breaks the seal — `codesign
+  -v` reports `a sealed resource is missing or invalid` — and it installs and
+  runs regardless.
 
 ## Verifying it worked, without touching the phone
 
-`devicectl` can install, launch, screenshot and report processes, which is
-enough to confirm a build runs before handing it over. Do that -- an install
-that succeeds says nothing about whether the app survives launch.
+An install that succeeds says nothing about whether the app survives launch, so
+launch it and count the process.
 
 ```bash
 xcrun devicectl device process launch --device <UDID> \
   --activate --terminate-existing <BUNDLE ID>
 # alive? a count of 1 means it is still up a moment later.
-# Grep the executable name, NOT the bundle id: the process list prints the
-# path to the binary, so `grep -c stolaf.dev` returns 0 for a running app and
-# reads exactly like a launch crash.
+# Grep the executable name rather than the bundle id: the process list prints
+# the path to the binary, so `grep -c stolaf.dev` returns 0 for a running app
+# and reads exactly like a launch crash.
 xcrun devicectl device info processes --device <UDID> | grep -ci olaf
 xcrun devicectl device capture screenshot --device <UDID> --destination shot.png
 ```
 
-**A screenshot of a sleeping phone is black, not blank.** The status bar and
-home indicator still composite, so the result looks exactly like a running app
-that renders nothing -- and it will have you debugging a rendering fault that
-does not exist. Ask for the screen to be woken, or trust the process count over
-the picture.
+`--activate` keeps the app foregrounded, and `capture screenshot` takes
+`--destination`.
 
-Note `--destination` on `capture screenshot`; `--output` is not a flag, and
-`--activate` matters because a launch without it can leave the app backgrounded.
+Ask for the screen to be woken before capturing, or trust the process count over
+the picture: **a screenshot of a sleeping phone is black, not blank.** The status
+bar and home indicator still composite, so it looks exactly like a running app
+that renders nothing, and it will have you debugging a fault that does not exist.
 
 ## Where the crash log actually is
 
-Device crash reports do **not** sync to `~/Library/Logs/CrashReporter/`. Looking
-there and finding nothing means nothing.
-
-`--console` is no better for an early crash: it only forwards stdout, so a
-process that dies before React Native starts prints not one line and reports
-`exit code 0`, which reads as a clean exit rather than a trap.
-
-The reports are in a sysdiagnose, one per launch attempt:
+In a sysdiagnose, one report per launch attempt:
 
 ```bash
 xcrun devicectl device sysdiagnose --device <UDID> --destination /tmp/sysdiag
@@ -156,21 +97,14 @@ tar -xzf /tmp/sysdiag/*.tar.gz '<path>/crashes_and_spins/Retired/AllAboutOlaf-*.
 ```
 
 An `.ips` is JSON with a one-line header. `termination`, `exception` and the
-triggered thread's frames name the fault directly -- which is how the iOS 27
+triggered thread's frames name the fault directly — which is how the iOS 27
 UIScene trap was found after several wrong guesses at signing, entitlements and
 bundle format.
 
-## Two things that are not the problem
-
-Both look plausible when a device build misbehaves, and both were measured not
-to matter here:
-
-- **The JS bundle does not need Hermes bytecode.** `mise run bundle:ios` emits
-  plain JavaScript and a device runs it. Do not "fix" that task: CI feeds its
-  output to simulator UITests and is correct as it stands.
-- **The app does not need re-signing after injection.** Copying files in breaks
-  the seal -- `codesign -v` says `a sealed resource is missing or invalid` --
-  and it installs and runs anyway.
+Two places that look authoritative and stay silent: `~/Library/Logs/
+CrashReporter/`, which device reports never sync to, and `--console`, which
+forwards only stdout — a process that dies before React Native starts prints
+nothing and reports `exit code 0`, reading as a clean exit rather than a trap.
 
 ## Notes
 
@@ -178,9 +112,9 @@ to matter here:
   `set_RCTNewArchEnabled_in_info_plist` skips paths containing the literal
   `"build/"`; any other name makes a later `pod install` parse a built app's
   binary Info.plist and fail with an opaque UTF-8 error.
-- Do not run a device build while a simulator build or test run is using
-  `ios/build` — they contend for the same `build.db` and the loser reports
-  `database is locked`, which reads like a real build failure.
+- Let a simulator build or test run finish before starting a device build. They
+  share `ios/build`'s `build.db`, and the loser reports `database is locked`,
+  which reads like a real build failure.
 - Tell the person what to check, and be specific about what has automated
   coverage and what does not, so their time goes to the parts a test cannot
   reach.

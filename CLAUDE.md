@@ -113,9 +113,10 @@ output is roughly a third larger.
 [`HazAT/badge`](https://github.com/HazAT/badge) and its fastlane plugin automate
 this per build; it is not worth the dependency for one committed file.
 
-**Before the dev variant can go anywhere but a local device**, its bundle
-identifier needs its own App Store Connect record and `match` profiles. The
-config alone creates neither.
+**A build to a local device needs nothing beyond `mise run device "<DEVICE
+NAME>"`.** Sending the dev variant through TestFlight or the App Store is a
+different matter: that bundle identifier would need its own App Store Connect
+record, which this config does not create.
 
 ### Local Server Discovery
 

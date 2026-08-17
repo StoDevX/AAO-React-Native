@@ -44,7 +44,7 @@ wait_for = ["pnpm:install:*"]
 run = '''
 set -e
 
-if [ ! -d ios/ci_scripts ]; then
+if test ! -d ios/ci_scripts; then
   echo "error: ios/ci_scripts is missing, so there is nothing to preserve." >&2
   echo "       Xcode Cloud finds build scripts only beside the .xcworkspace," >&2
   echo "       so without it no Xcode Cloud build runs a script at all." >&2
@@ -61,7 +61,7 @@ mkdir -p ios/ci_scripts
 cp -R "$shim/." ios/ci_scripts/
 rm -rf "$shim"
 
-if [ ! -f ios/ci_scripts/ci_post_clone.sh ]; then
+if test ! -f ios/ci_scripts/ci_post_clone.sh; then
   echo "error: ios/ci_scripts was not restored after prebuild." >&2
   exit 1
 fi
