@@ -39,6 +39,7 @@ export const scrollContentBackground = modifier('scrollContentBackground')
 export const lineLimit = modifier('lineLimit')
 export const truncationMode = modifier('truncationMode')
 export const contentShape = modifier('contentShape')
+export const labelStyle = modifier('labelStyle')
 
 /**
  * Shape builders, not modifiers: `contentShape(shapes.rectangle())` passes one
@@ -143,6 +144,18 @@ export function Image(): React.ReactNode {
 
 export function Spacer(): React.ReactNode {
 	return null
+}
+
+export function Label({
+	title,
+	systemImage: _systemImage,
+	children,
+}: {
+	title?: string
+	systemImage?: string
+	children?: React.ReactNode
+}): React.ReactNode {
+	return <View>{children ?? <RNText>{title}</RNText>}</View>
 }
 
 export function Text({
