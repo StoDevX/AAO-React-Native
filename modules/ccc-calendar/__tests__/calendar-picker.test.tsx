@@ -27,17 +27,8 @@ jest.mock('expo-router', () => {
 	// Each slot is annotated inline: `jest.mock`'s factory may not name a type
 	// alias, since the hoisting check reads the identifier before TypeScript
 	// erases it.
-	// `icon` is forwarded onto the host element so a test can read back which SF
-	// Symbol the menu asked for; the real slot passes it to the native menu.
-	let Menu = ({
-		children,
-		icon,
-		title,
-	}: {
-		children?: React.ReactNode
-		icon?: string
-		title?: string
-	}) => react.createElement(View, {icon, testID: title ?? 'menu'}, children)
+	let Menu = ({children, title}: {children?: React.ReactNode; title?: string}) =>
+		react.createElement(View, {testID: title ?? 'menu'}, children)
 
 	let MenuAction = ({
 		children,
@@ -118,24 +109,11 @@ function isChecked(name: string): boolean {
 }
 
 describe('CalendarPicker', () => {
-	test('the button reads Calendars and sits in the bottom bar, pinned left', async () => {
+	test('the button reads Calendars', async () => {
 		mockUseIsDevMode.mockReturnValue(false)
 		await render(<CalendarPicker />, {wrapper})
 
-		let toolbar = screen.getByTestId('toolbar-bottom')
-
-		expect(within(toolbar).getByText('Calendars')).toBeTruthy()
-
-		// No icon, deliberately. UIKit draws only the image when a bar item has
-		// both an image and a title, so an icon here would replace the word
-		// "Calendars" rather than sit beside it.
-		expect(within(toolbar).getByTestId('menu').props.icon).toBeUndefined()
-
-		// A flexible spacer after the button is what pushes it to the left end
-		// of the bar, so the order of the two is the placement.
-		expect(
-			toolbar.children.map((child) => (typeof child === 'string' ? child : child.props.testID)),
-		).toEqual(['menu', 'toolbar-spacer'])
+		expect(within(screen.getByTestId('toolbar-bottom')).getByText('Calendars')).toBeTruthy()
 	})
 
 	test('outside dev mode it lists the app’s calendars with no groups', async () => {

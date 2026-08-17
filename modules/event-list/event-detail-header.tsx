@@ -58,7 +58,6 @@ export function EventDetailHeader({lines, color}: Props): React.ReactNode {
 					background(color),
 					clipShape('capsule'),
 				]}
-				testID="event-detail-bar"
 			>
 				{null}
 			</VStack>

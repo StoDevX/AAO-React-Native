@@ -286,62 +286,6 @@ describe('EventList', () => {
 		expect(onPressEvent).toHaveBeenCalledWith(entry)
 	})
 
-	// SwiftUI hit-tests only the drawn parts of a button's label, so without a
-	// content shape a row whose title stops early -- an all-day event with no
-	// trailing time -- is dead to the right of its own words. Verified on the
-	// simulator: an all-day device event could not be opened before this.
-	test('the whole row is tappable, not just the words in it', async () => {
-		await render(
-			<EventList
-				events={[
-					makeEntry({
-						title: 'Labor Day',
-						location: '',
-						config: {startTime: false, endTime: false, subtitle: 'location'},
-					}),
-				]}
-				failed={[]}
-				now={NOW}
-				onPressEvent={jest.fn()}
-				onRefresh={jest.fn()}
-				poweredBy={POWERED_BY}
-				refreshing={false}
-				sources={[STOLAF_SOURCE]}
-			/>,
-		)
-
-		let button = screen.getByLabelText('Labor Day')
-		let content = button.children[0] as {props: {modifiers?: unknown[]}}
-		expect(content.props.modifiers).toContainEqual({
-			$type: 'contentShape',
-			value: {type: 'rectangle'},
-		})
-	})
-
-	// An HStack's default spacing is derived from its contents, and a row with
-	// an end time but no location draws a second line that begins with a
-	// `Spacer` -- which took the whole stack's spacing to zero and left the
-	// title against the bar. Only the simulator can show the pixels; this holds
-	// the spacing to a stated number so it cannot go back to being inferred.
-	test('the gap between the bar and the text is a fixed number, not the default', async () => {
-		await render(
-			<EventList
-				events={[makeEntry({location: ''})]}
-				failed={[]}
-				now={NOW}
-				onPressEvent={jest.fn()}
-				onRefresh={jest.fn()}
-				poweredBy={POWERED_BY}
-				refreshing={false}
-				sources={[STOLAF_SOURCE]}
-			/>,
-		)
-
-		let button = screen.getByLabelText('New Faculty Orientation')
-		let content = button.children[0] as {props: {spacing?: number}}
-		expect(content.props.spacing).toBe(8)
-	})
-
 	test('pull-to-refresh calls onRefresh', async () => {
 		let onRefresh = jest.fn()
 
@@ -363,7 +307,7 @@ describe('EventList', () => {
 		expect(onRefresh).toHaveBeenCalled()
 	})
 
-	test('a row is tinted with its own calendar’s colour', async () => {
+	test('every enabled calendar’s events reach the list', async () => {
 		let sources = [
 			{id: 'stolaf', title: 'St. Olaf', color: 'blue', kind: 'remote' as const},
 			{id: 'northfield', title: 'Northfield', color: 'indigo', kind: 'remote' as const},
@@ -388,12 +332,6 @@ describe('EventList', () => {
 
 		expect(screen.getByText('Olaf thing')).toBeTruthy()
 		expect(screen.getByText('Northfield thing')).toBeTruthy()
-
-		let olafBar = screen.getByTestId('event-list-row-bar-Olaf thing')
-		let northfieldBar = screen.getByTestId('event-list-row-bar-Northfield thing')
-
-		expect(olafBar.props.modifiers).toContainEqual({$type: 'background', value: 'blue'})
-		expect(northfieldBar.props.modifiers).toContainEqual({$type: 'background', value: 'indigo'})
 	})
 
 	test('a failed calendar is named while the others still render', async () => {

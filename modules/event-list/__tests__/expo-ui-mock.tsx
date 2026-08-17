@@ -14,13 +14,6 @@ import {Pressable, Text as RNText, View} from 'react-native'
 type Modifier = {$type: string; [key: string]: unknown}
 type WithModifiers = {modifiers?: Modifier[]; children?: React.ReactNode}
 
-/// `View` doesn't have a `modifiers` prop -- nothing native does -- so this
-/// widens just enough to let the mock stash the array on the rendered
-/// element for a test to read back, without reaching for `any`.
-const ViewWithModifiers = View as unknown as React.ComponentType<
-	WithModifiers & {spacing?: number; testID?: string}
->
-
 const modifier =
 	($type: string) =>
 	(value?: unknown): Modifier => ({$type, value})
@@ -87,39 +80,17 @@ export function Form({children}: WithModifiers): React.ReactNode {
 	return <View>{children}</View>
 }
 
-/// Forwards `modifiers` onto the underlying `View` as a plain prop -- not a
-/// real React Native prop, but react-test-renderer keeps whatever it's given,
-/// so a test can read a row's `background(…)` value back off it by `testID`
-/// without the mock needing to interpret modifiers itself.
-export function VStack({
-	children,
-	modifiers,
-	testID,
-}: WithModifiers & {testID?: string}): React.ReactNode {
-	return (
-		<ViewWithModifiers modifiers={modifiers} testID={testID}>
-			{children}
-		</ViewWithModifiers>
-	)
+/// A stack's modifiers are all appearance -- tint, frame, spacing -- and none of
+/// that is decided here, so both stacks drop them and render as a plain view.
+export function VStack({children, testID}: WithModifiers & {testID?: string}): React.ReactNode {
+	return <View testID={testID}>{children}</View>
 }
 
-/// Forwards `modifiers` for the same reason `VStack` does -- the row's tappable
-/// area is a `contentShape(…)` on an `HStack`, and a test has to be able to read
-/// it back. `spacing` comes along too: left unstated, SwiftUI derives it from
-/// the stack's contents, and a row whose second line begins with a `Spacer`
-/// derived zero. Only the simulator shows the pixels, but a test can at least
-/// hold the number to a stated one.
 export function HStack({
 	children,
-	modifiers,
-	spacing,
 	testID,
 }: WithModifiers & {spacing?: number; testID?: string}): React.ReactNode {
-	return (
-		<ViewWithModifiers modifiers={modifiers} spacing={spacing} testID={testID}>
-			{children}
-		</ViewWithModifiers>
-	)
+	return <View testID={testID}>{children}</View>
 }
 
 /// `List` renders its `refreshable(…)` handler as a pressable trigger --

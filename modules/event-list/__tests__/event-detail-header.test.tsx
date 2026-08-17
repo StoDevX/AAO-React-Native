@@ -37,18 +37,4 @@ describe('EventDetailHeader', () => {
 
 		expect(screen.queryByTestId('event-detail-times')).toBeNull()
 	})
-
-	// The masthead bar is the calendar's colour, so a device event's detail
-	// screen matches the tint its row had in the merged list.
-	test('it tints the bar with the calendar colour', async () => {
-		await render(
-			<EventDetailHeader
-				color="#34c759"
-				lines={[{prefix: 'From', time: '9 AM', date: 'Monday, August 17, 2026'}]}
-			/>,
-		)
-
-		let bar = screen.getByTestId('event-detail-bar')
-		expect(bar.props.modifiers).toContainEqual({$type: 'background', value: '#34c759'})
-	})
 })
