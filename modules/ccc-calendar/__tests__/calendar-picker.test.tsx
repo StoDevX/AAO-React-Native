@@ -109,7 +109,7 @@ function isChecked(name: string): boolean {
 }
 
 describe('CalendarPicker', () => {
-	test('the button reads Calendars', async () => {
+	test('the button is named Calendars', async () => {
 		mockUseIsDevMode.mockReturnValue(false)
 		await render(<CalendarPicker />, {wrapper})
 

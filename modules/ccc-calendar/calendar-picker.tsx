@@ -18,18 +18,18 @@ import {useCalendarSources} from './use-calendar-sources'
 /// own calendar picker. A flexible `Spacer` after it takes the rest of the bar,
 /// which is what leaves the button at that end.
 ///
-/// The button shows its label and no icon, because in this placement it cannot
-/// show both. `Stack.Toolbar.Menu` has no `label` prop -- the text comes from a
-/// `Stack.Toolbar.Label` child -- and `title` stays unused so the menu gets no
-/// header of its own.
-///
-/// Adding `icon` does not add an icon beside the text; it replaces the text.
-/// expo-router builds the bar item as
+/// The button is a 38x38 circle carrying the `calendar` SF Symbol and no text.
+/// A bar item can only show one of the two: expo-router builds it as
 /// `UIBarButtonItem(title:image:primaryAction:menu:)`
 /// (`ios/Toolbar/RouterToolbarHostView.swift`), and UIKit draws only the image
-/// when a bar item is given both, collapsing this button from 101x38 to a 38x38
-/// circle with no text. Nothing in JavaScript can override that, so an icon here
-/// costs the word "Calendars".
+/// when given both. The symbol says "calendars" in the same space a word would
+/// take three times over, and matches how Calendar.app marks the same control.
+///
+/// The title UIKit declines to draw still names the button, so the
+/// `Stack.Toolbar.Label` child stays: it is what a bar item falls back to for
+/// its accessible name. `accessibilityLabel` sets that name outright, which is
+/// what VoiceOver speaks and what the UI tests query the button by.
+/// `title` stays unused so the menu gets no header of its own.
 export function CalendarPicker(): React.ReactNode {
 	let {remote, device, enabled, canOfferDevice, deviceAvailable, toggle, requestDevice} =
 		useCalendarSources()
@@ -49,7 +49,7 @@ export function CalendarPicker(): React.ReactNode {
 
 	return (
 		<Stack.Toolbar placement="bottom">
-			<Stack.Toolbar.Menu accessibilityLabel="Calendars">
+			<Stack.Toolbar.Menu accessibilityLabel="Calendars" icon="calendar">
 				<Stack.Toolbar.Label>Calendars</Stack.Toolbar.Label>
 
 				{canOfferDevice ? (
