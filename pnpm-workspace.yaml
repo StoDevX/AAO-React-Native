@@ -54,24 +54,7 @@ minimumReleaseAge: 4320 # 3 days, in minutes
 # apart from each other; excluded so the npm->pnpm migration can reproduce the
 # existing, already-shipped lockfile instead of waiting the gate out.
 # remove after 2026-08-10, once they clear the 3-day window on their own
-minimumReleaseAgeExclude:
-  - '@expo/cli@57.0.12'
-  - '@expo/config-plugins@57.0.7'
-  - '@expo/router-server@57.0.5'
-  - '@expo/ui@57.0.9'
-  - 'expo-build-properties@57.0.9'
-  - 'expo-constants@57.0.9'
-  - 'expo-modules-core@57.0.9'
-  - 'expo@57.0.10'
-  # same Expo SDK 57 release train as the block above, published within
-  # days of them (2026-08-06); excluded for the same reason.
-  # remove after 2026-08-09, once they clear the 3-day window on their own
-  - 'expo-router@57.0.11'
-  - 'expo-symbols@57.0.2'
-  # same Expo SDK 57 release train as the block above, published within
-  # days of them (2026-08-06); excluded for the same reason.
-  # remove once it clears the minimumReleaseAge window on its own
-  - 'babel-preset-expo@57.0.6'
+minimumReleaseAgeExclude: []
 
 # dependency version overrides (used to live in package.json)
 overrides:
@@ -153,6 +136,5 @@ overrides:
 saveExact: true
 savePrefix: ''
 patchedDependencies:
-  '@expo/ui@57.0.9': patches/@expo__ui@57.0.9.patch
   react-native-change-icon@5.0.0: patches/react-native-change-icon@5.0.0.patch
   react-native@0.86.2: patches/react-native@0.86.2.patch
