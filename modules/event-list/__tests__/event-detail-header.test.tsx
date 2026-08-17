@@ -14,8 +14,6 @@ jest.mock('@expo/ui/swift-ui/modifiers', () => {
 })
 
 describe('EventDetailHeader', () => {
-	// The event's name is not here -- it is the screen's native large title, set
-	// by the route -- so this component is only the date range and its bar.
 	test('it shows a line per date, meridiem included in time', async () => {
 		await render(
 			<EventDetailHeader
@@ -24,6 +22,7 @@ describe('EventDetailHeader', () => {
 					{prefix: 'From', time: '9 AM', date: 'Monday, August 17, 2026'},
 					{prefix: 'to', time: '6 PM', date: 'Thursday, August 20, 2026'},
 				]}
+				title="New Faculty Orientation"
 			/>,
 		)
 
@@ -31,9 +30,21 @@ describe('EventDetailHeader', () => {
 		expect(screen.getByText('to 6 PM Thursday, August 20, 2026')).toBeTruthy()
 	})
 
-	test('it renders nothing when there are no lines', async () => {
-		await render(<EventDetailHeader color="#ff0000" lines={[]} />)
+	test('it shows the event’s title above the dates', async () => {
+		await render(
+			<EventDetailHeader
+				color="#ff0000"
+				lines={[{prefix: 'From', time: '7:45 AM', date: 'Monday, August 17, 2026'}]}
+				title="New Faculty Orientation"
+			/>,
+		)
 
-		expect(screen.queryByTestId('event-detail-times')).toBeNull()
+		expect(screen.getByText('New Faculty Orientation')).toBeOnTheScreen()
+	})
+
+	test('it shows the title even when there are no dates', async () => {
+		await render(<EventDetailHeader color="#ff0000" lines={[]} title="Laundry Day" />)
+
+		expect(screen.getByText('Laundry Day')).toBeOnTheScreen()
 	})
 })

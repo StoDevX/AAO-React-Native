@@ -55,7 +55,7 @@ export function EventDetail({event, poweredBy, color}: Props): React.ReactNode {
 				    grouped-row card the way the attribution below does. It sits under
 				    the screen's native large title, which carries the event's name. */}
 				<VStack modifiers={[listRowBackground('clear'), listRowSeparator('hidden')]}>
-					<EventDetailHeader color={color} lines={lines} />
+					<EventDetailHeader color={color} lines={lines} title={event.title} />
 				</VStack>
 
 				<TextSection content={event.location.trim()} header="Location" />
