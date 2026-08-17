@@ -6,7 +6,7 @@ import {
 	buttonStyle,
 	disabled as disabledModifier,
 	font,
-	foregroundColor,
+	foregroundStyle,
 	listRowBackground,
 	listRowSeparator,
 	multilineTextAlignment,
@@ -29,7 +29,7 @@ const styles = StyleSheet.create({
 function TextSection({header, content}: {header: string; content: string}) {
 	return content ? (
 		<Section title={header}>
-			<Text modifiers={[foregroundColor(c.label), textSelection(true)]}>{content}</Text>
+			<Text modifiers={[foregroundStyle(c.label), textSelection(true)]}>{content}</Text>
 		</Section>
 	) : null
 }
@@ -82,7 +82,7 @@ export function EventDetail({event, poweredBy, color}: Props): React.ReactNode {
 								]}
 								onPress={onPress}
 							>
-								<Text modifiers={[foregroundColor(c.systemBlue)]}>Add to calendar</Text>
+								<Text modifiers={[foregroundStyle(c.systemBlue)]}>Add to calendar</Text>
 							</Button>
 						</Section>
 					)}
@@ -98,7 +98,7 @@ export function EventDetail({event, poweredBy, color}: Props): React.ReactNode {
 						<Text
 							modifiers={[
 								font({size: 10}),
-								foregroundColor(c.secondaryLabel),
+								foregroundStyle(c.secondaryLabel),
 								multilineTextAlignment('center'),
 								textSelection(true),
 							]}

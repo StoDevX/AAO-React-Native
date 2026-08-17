@@ -5,7 +5,7 @@ import {
 	background,
 	clipShape,
 	font,
-	foregroundColor,
+	foregroundStyle,
 	frame,
 	padding,
 } from '@expo/ui/swift-ui/modifiers'
@@ -35,7 +35,7 @@ type Props = {
 function TimeLine({line}: {line: EventTimeLine}): React.ReactNode {
 	let text = [line.prefix, line.time, line.date].filter(Boolean).join(' ')
 
-	return <Text modifiers={[font({textStyle: 'body'}), foregroundColor(c.label)]}>{text}</Text>
+	return <Text modifiers={[font({textStyle: 'body'}), foregroundStyle(c.label)]}>{text}</Text>
 }
 
 /**

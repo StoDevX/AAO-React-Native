@@ -4,7 +4,7 @@ import {Host, List, Section, Text} from '@expo/ui/swift-ui'
 import {
 	background,
 	font,
-	foregroundColor,
+	foregroundStyle,
 	listStyle,
 	refreshable,
 	scrollContentBackground,
@@ -74,7 +74,7 @@ function groupEvents(events: readonly SourcedEvent[], now: Moment): Array<EventS
 function SectionHeader({title, isToday}: {title: string; isToday: boolean}): React.ReactNode {
 	return (
 		<Text
-			modifiers={[font({textStyle: 'headline'}), foregroundColor(isToday ? c.systemRed : c.label)]}
+			modifiers={[font({textStyle: 'headline'}), foregroundStyle(isToday ? c.systemRed : c.label)]}
 		>
 			{title}
 		</Text>
@@ -140,7 +140,7 @@ export function EventList(props: Props): React.ReactNode {
 			>
 				{props.failed.length > 0 ? (
 					<Section>
-						<Text modifiers={[foregroundColor(c.secondaryLabel), font({textStyle: 'footnote'})]}>
+						<Text modifiers={[foregroundStyle(c.secondaryLabel), font({textStyle: 'footnote'})]}>
 							{`Could not load ${props.failed.map((source) => source.title).join(', ')}.`}
 						</Text>
 					</Section>

@@ -21,7 +21,7 @@ const modifier =
 	(value?: unknown): Modifier => ({$type, value})
 
 export const font = modifier('font')
-export const foregroundColor = modifier('foregroundColor')
+export const foregroundStyle = modifier('foregroundStyle')
 export const textSelection = modifier('textSelection')
 export const frame = modifier('frame')
 export const clipShape = modifier('clipShape')

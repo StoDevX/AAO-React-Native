@@ -8,7 +8,7 @@ import {
 	clipShape,
 	contentShape,
 	font,
-	foregroundColor,
+	foregroundStyle,
 	frame,
 	lineLimit,
 	listRowSeparator,
@@ -116,7 +116,7 @@ function RowLine({
 				<Text
 					modifiers={[
 						font({textStyle: 'body'}),
-						foregroundColor(prominent ? c.label : c.secondaryLabel),
+						foregroundStyle(prominent ? c.label : c.secondaryLabel),
 						lineLimit(1),
 					]}
 				>
@@ -168,7 +168,7 @@ export function EventListRow({event, onPress, isLastInSection, color}: Props): R
 						<Text
 							modifiers={[
 								font({textStyle: 'body', weight: 'semibold'}),
-								foregroundColor(c.label),
+								foregroundStyle(c.label),
 								...SINGLE_LINE,
 							]}
 						>
@@ -184,7 +184,7 @@ export function EventListRow({event, onPress, isLastInSection, color}: Props): R
 									<Text
 										modifiers={[
 											font({textStyle: 'footnote'}),
-											foregroundColor(c.secondaryLabel),
+											foregroundStyle(c.secondaryLabel),
 											...SINGLE_LINE,
 										]}
 									>

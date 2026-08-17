@@ -17,7 +17,7 @@ import {
 	background,
 	contentShape,
 	font,
-	foregroundColor,
+	foregroundStyle,
 	frame,
 	multilineTextAlignment,
 	padding,
@@ -103,7 +103,7 @@ function UnofficialAppNotice(): React.ReactNode {
 				<Text
 					modifiers={[
 						font({size: NOTICE_FONT_SIZE, textStyle: NOTICE_TEXT_STYLE}),
-						foregroundColor(c.secondaryLabel),
+						foregroundStyle(c.secondaryLabel),
 						multilineTextAlignment('center'),
 						padding({all: NOTICE_PADDING}),
 						frame({maxWidth: FILL_WIDTH}),
