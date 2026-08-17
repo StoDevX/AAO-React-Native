@@ -15,7 +15,7 @@ const platformSchema = z.union([z.literal('ios'), z.literal('android'), z.litera
 const dateTimeString = z
 	.string()
 	.trim()
-	.pipe(z.string().datetime({offset: true}))
+	.pipe(z.iso.datetime({offset: true}))
 
 const conditionRuleSchema = z
 	.object({
@@ -74,7 +74,7 @@ const metadataSchema = z
 		repeatInterval: optionalTrimmedString,
 		conditions: conditionsSchema.optional(),
 	})
-	.passthrough()
+	.loose()
 
 type MetadataInput = z.infer<typeof metadataSchema>
 

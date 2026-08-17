@@ -21,5 +21,5 @@
 export const install = (): void => {}
 
 export const navigationIntegration = {
-	registerNavigationContainer: (navigationRef: React.MutableRefObject<undefined>) => {},
+	registerNavigationContainer: (navigationRef: React.RefObject<undefined>) => {},
 }
