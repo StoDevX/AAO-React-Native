@@ -46,8 +46,6 @@ export async function addToCalendar(event: EventType): Promise<AddToCalendarResu
 			return 'cancelled'
 		}
 
-		// Synchronous, and throws when the device has no default calendar --
-		// the surrounding try/catch is what turns that into an 'error' result.
 		let defaultCalendar = Calendar.getDefaultCalendarSync()
 
 		await defaultCalendar.createEvent({

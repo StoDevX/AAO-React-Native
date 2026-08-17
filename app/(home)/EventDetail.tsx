@@ -9,10 +9,6 @@ import {
 	timelineEntries,
 	timelineWindow,
 } from '@frogpond/event-list'
-// `EventDetail` here is the namespace `export * as EventDetail from
-// './event-detail'` produces (matching `EventList.EventList`'s shape
-// elsewhere in this package) -- the component itself is
-// `EventDetail.EventDetail`, used below.
 import * as c from '@frogpond/colors'
 import {AddToCalendar} from '@frogpond/add-to-device-calendar'
 import {
@@ -168,10 +164,6 @@ export default function EventDetailPage(): React.ReactNode {
 
 	return (
 		<>
-			{/* Calendar.app's sheet has no bar: the close and share controls float
-			    over content that scrolls under them, each in its own glass pill.
-			    `separateBackground` is what gives them a pill apiece rather than
-			    one shared bar background. */}
 			<Stack.Toolbar placement="left">
 				<Stack.Toolbar.Button
 					accessibilityLabel="Close"
@@ -188,17 +180,6 @@ export default function EventDetailPage(): React.ReactNode {
 					separateBackground={true}
 				/>
 			</Stack.Toolbar>
-			{/* `AddToCalendar` is headless -- its render prop returns whatever chrome we
-			    want, so the toolbar goes here rather than the module changing.
-
-			    `compactMessages` is what keeps the label short enough for a bar item:
-			    the button carries its own state as its title, `Add to Calendar` ->
-			    `Saving…` -> `Saved`, and then disables. The message needs nowhere of
-			    its own to sit, because the title is where it shows.
-
-			    Label-only and per-item tint are both real on iOS: `RouterToolbarItemView`
-			    sets `item.title` with `item.image = nil` when no icon is given, and
-			    applies `customTintColor` per item. */}
 			<AddToCalendar
 				compactMessages={true}
 				event={event}
