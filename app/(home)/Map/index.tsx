@@ -178,7 +178,7 @@ export default function MapPage(): React.ReactNode {
 				<GeoJSONSource data={footprints} id="campus-buildings" onPress={handleBuildingPress}>
 					<Layer
 						id="campus-buildings-hit"
-						style={{fillColor: c.gold, fillOpacity: FOOTPRINT_OPACITY}}
+						paint={{'fill-color': c.gold, 'fill-opacity': FOOTPRINT_OPACITY}}
 						type="fill"
 					/>
 				</GeoJSONSource>
