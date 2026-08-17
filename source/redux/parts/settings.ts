@@ -12,7 +12,8 @@ type State = {
 const initialState = {
 	unofficialityAcknowledged: false,
 	devModeOverride: false,
-	// St. Olaf alone, matching the tab the app used to land on.
+	// St. Olaf alone: the college whose app this is, and the only calendar most
+	// people want on by default.
 	enabledCalendarSources: ['stolaf'],
 } as State
 

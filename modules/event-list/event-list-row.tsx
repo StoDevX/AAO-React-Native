@@ -57,10 +57,9 @@ type Props = {
 /// The trailing text for each of the row's two lines.
 ///
 /// `config.startTime`/`config.endTime` mark a start or end that is not
-/// meaningful for this event (e.g. imported data with only one real edge) --
-/// the old left-column row hid the line rather than show a nonsense time, and
-/// these do the same, which also hands that line's width back to the title or
-/// the location.
+/// meaningful for this event (e.g. imported data with only one real edge). Such
+/// a line is left empty rather than showing a nonsense time, which also hands
+/// that line's width back to the title or the location.
 function trailingText(event: EventType): {first: string; second: string; firstIsTime: boolean} {
 	let {start, end, allDay} = listTimeLines(event)
 
@@ -82,7 +81,7 @@ function trailingText(event: EventType): {first: string; second: string; firstIs
 /// side -- the title truncates against the start time, and the location against
 /// the end time. So a row with no end time lets its location run the full width,
 /// past where the title above it had to stop. Two columns would truncate both at
-/// the same x, which is what this replaced.
+/// the same x.
 function RowLine({
 	trailing,
 	prominent = false,
@@ -115,8 +114,7 @@ function RowLine({
 
 /// A single event row: a blue accent bar, the title and (when present) a
 /// location line under it, and the start/end times trailing. Matches
-/// Calendar.app's list -- see the reference screenshot in the task brief --
-/// rather than the old left-hand time column this replaces.
+/// Calendar.app's list -- see the reference screenshot in the task brief.
 export function EventListRow({event, onPress, isLastInSection, color}: Props): React.ReactNode {
 	let title = event.title
 	let subtitle = event[event.config.subtitle]?.trim()

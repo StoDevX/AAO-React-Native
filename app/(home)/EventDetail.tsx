@@ -40,8 +40,7 @@ const NO_ATTRIBUTION = {title: '', href: ''} as const
 /// appearance, which is the whole point of using a real large title: UIKit
 /// gives it a transparent scroll-edge and fades in a blurred background as the
 /// title collapses. `Stack.Header` exposes one appearance for both states, so
-/// setting it by hand -- as this screen previously did -- can only ever pick
-/// one of them.
+/// setting it by hand can only ever pick one of them.
 const CLEAR_LARGE_TITLE = {
 	backgroundColor: 'transparent',
 	shadowColor: 'transparent',

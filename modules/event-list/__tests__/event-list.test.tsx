@@ -174,8 +174,8 @@ describe('EventList', () => {
 	})
 
 	// A device all-day event, exactly as EventKit hands it over: 00:00:00 to
-	// 23:59:59, both edges flagged meaningless. Its row lost the `all-day`
-	// label entirely while all-day was decided by a 24-hour duration.
+	// 23:59:59, both edges flagged meaningless. The row reads all-day off the
+	// flags, so the odd span must not cost it the label.
 	test('an EventKit all-day row shows all-day too', async () => {
 		let entry = makeEntry({
 			title: 'Labor Day',

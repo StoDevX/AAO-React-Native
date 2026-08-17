@@ -68,7 +68,7 @@ class ModuleCalendarTests: UITestCase {
 
 	/// The point of the branch, in one frame: both remote calendars on at once,
 	/// so a single timeline carries St. Olaf's blue and Northfield's indigo side
-	/// by side, under the icon-and-label Calendars button.
+	/// by side, under the Calendars button.
 	///
 	/// St. Olaf is on by default, so one toggle turns Northfield on too. The menu
 	/// is reopened afterwards to check both ticks, because a calendar that

@@ -44,8 +44,8 @@ describe('allDay', () => {
 		expect(detailTimes(event).allDay).toBe(true)
 	})
 
-	// EventKit's own all-day span, which is 23.9997 hours rather than 24. The
-	// duration heuristic this replaced read it as an ordinary timed event.
+	// EventKit's own all-day span, which is 23.9997 hours rather than 24 -- so
+	// nothing may read all-day off the duration.
 	test('should be true for an EventKit all-day event ending at 23:59:59', () => {
 		const event = generateEvent('2026-09-07T00:00:00', '2026-09-07T23:59:59')
 		expect(times(event).allDay).toBe(true)
@@ -61,8 +61,7 @@ describe('allDay', () => {
 		expect(detailTimes(event).allDay).toBe(false)
 	})
 
-	// A full 24 hours is not all-day if the source gave both edges a time --
-	// the heuristic this replaced said otherwise.
+	// A full 24 hours is not all-day if the source gave both edges a time.
 	test('should be false for a timed event that happens to run 24 hours', () => {
 		const event = generateEvent('2018-08-07T12:00:00Z', '2018-08-08T12:00:00Z', {
 			startTime: true,
@@ -192,8 +191,8 @@ describe('detailTimeLines', () => {
 		])
 	})
 
-	// The bug this replaced: EventKit's 00:00:00-23:59:59 span fell past the
-	// all-day branch and rendered `From 12 AM ... to 11:59 PM ...`.
+	// EventKit's 00:00:00-23:59:59 span must reach the all-day branch: falling
+	// past it renders `From 12 AM ... to 11:59 PM ...`.
 	test('an EventKit all-day event gets the same single All day line', () => {
 		let event = generateEvent('2026-09-07T00:00:00', '2026-09-07T23:59:59', {config: ALL_DAY})
 
@@ -313,8 +312,8 @@ describe('listTimeLines', () => {
 		expect(listTimeLines(event, 'en-US')).toEqual({start: '', end: '', allDay: true})
 	})
 
-	// What the list row turns into its `all-day` label. EventKit's span used to
-	// fall through here as an ordinary timed event.
+	// What the list row turns into its `all-day` label, so EventKit's span has
+	// to be recognised here as well as in the detail lines.
 	test('an EventKit all-day event is all-day here too', () => {
 		let event = generateEvent('2026-09-07T00:00:00', '2026-09-07T23:59:59', {config: ALL_DAY})
 

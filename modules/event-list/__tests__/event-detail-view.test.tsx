@@ -66,8 +66,8 @@ describe('EventDetail', () => {
 	})
 
 	// A device all-day event as EventKit hands it over: 00:00:00 to 23:59:59,
-	// both edges flagged meaningless. While all-day was decided by a 24-hour
-	// duration this rendered as `From 12 AM ... to 11:59 PM ...`.
+	// both edges flagged meaningless. Anything that reads all-day off the
+	// duration instead renders `From 12 AM ... to 11:59 PM ...`.
 	test('an EventKit all-day event reads as all day, not as a midnight range', async () => {
 		let event = makeEvent({
 			title: 'Labor Day',

@@ -79,8 +79,8 @@ describe('useMergedEvents', () => {
 		expect(result.current.events[0]?.sourceId).toBe('stolaf')
 	})
 
-	// The screen used to blank out entirely on one error. With several sources
-	// that would let a flaky feed hide the working ones.
+	// One failing feed must not blank the screen: with several sources, a flaky
+	// one would take the working ones down with it.
 	test('a failing source is named without hiding the ones that loaded', async () => {
 		let {result} = await renderHook(() => useMergedEvents([STOLAF, NORTHFIELD]), {wrapper})
 

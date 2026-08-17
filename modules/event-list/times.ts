@@ -171,8 +171,8 @@ export function listTimeLines(event: EventType, locale?: string): EventDetailTim
 		end = formatListDate(event.endTime, locale)
 	} else if (multiDay) {
 		start = formatDetailTime(event.startTime, locale)
-		// A multi-day event's end needs both a date and a time -- the date
-		// alone drops when it ends, and the old list showed both.
+		// A multi-day event's end needs both a date and a time -- the date alone
+		// drops when it ends.
 		end = `${formatListDate(event.endTime, locale)}, ${formatDetailTime(event.endTime, locale)}`
 	} else if (sillyZeroLength) {
 		start = formatDetailTime(event.startTime, locale)
