@@ -4,11 +4,12 @@ import type {EventType} from '@frogpond/event-type'
 
 import {
 	HOUR_HEIGHT,
+	MAX_WINDOW_HOURS,
 	MIN_BLOCK_HEIGHT,
+	MIN_WINDOW_HOURS,
 	timelineBlocks,
 	timelineEntries,
 	timelineWindow,
-	WINDOW_HEIGHT,
 } from '../timeline'
 
 /**
@@ -41,15 +42,62 @@ describe('timelineWindow', () => {
 		expect(window?.start.format('HH:mm')).toBe('07:00')
 	})
 
-	test('it spans four hourly gridlines', () => {
+	test('the window runs from the floored start to the ceiled end, inclusive', () => {
+		// Measured from Calendar.app: a 12:40-13:40 event draws a 12:00-14:00
+		// window with three hour labels and a 113pt card.
+		let window = timelineWindow(
+			makeEvent({
+				startTime: moment('2026-08-17T12:40:00'),
+				endTime: moment('2026-08-17T13:40:00'),
+			}),
+		)
+
+		expect(window?.hours.map((hour) => hour.format('HH:mm'))).toEqual(['12:00', '13:00', '14:00'])
+	})
+
+	test('a two-hour window is 80pt tall', () => {
 		let window = timelineWindow(makeEvent())
 
-		expect(window?.hours.map((hour) => hour.format('HH:mm'))).toEqual([
-			'07:00',
-			'08:00',
-			'09:00',
-			'10:00',
-		])
+		expect(window?.height).toBe(2 * HOUR_HEIGHT)
+	})
+
+	test('a four-hour window is 160pt tall', () => {
+		let window = timelineWindow(
+			makeEvent({
+				startTime: moment('2026-08-17T07:45:00'),
+				endTime: moment('2026-08-17T11:30:00'),
+			}),
+		)
+
+		expect(window?.height).toBe(4 * HOUR_HEIGHT)
+	})
+
+	test('a span over four hours is capped at the max', () => {
+		let window = timelineWindow(
+			makeEvent({
+				startTime: moment('2026-08-17T07:45:00'),
+				endTime: moment('2026-08-17T13:00:00'),
+			}),
+		)
+
+		expect(window?.end.format('HH:mm')).toBe('11:00')
+		expect(window?.hours).toHaveLength(MAX_WINDOW_HOURS + 1)
+	})
+
+	test('a span under two hours is floored to the min, having too little context otherwise', () => {
+		// A fifteen-minute event would otherwise get a 1-hour window in which it
+		// fills a quarter of the height with almost no surrounding context, and a
+		// card barely taller than a single row.
+		let window = timelineWindow(
+			makeEvent({
+				startTime: moment('2026-08-17T12:10:00'),
+				endTime: moment('2026-08-17T12:25:00'),
+			}),
+		)
+
+		expect(window?.start.format('HH:mm')).toBe('12:00')
+		expect(window?.end.format('HH:mm')).toBe('14:00')
+		expect(window?.hours).toHaveLength(MIN_WINDOW_HOURS + 1)
 	})
 
 	test('an all-day event has no window, having no position', () => {
@@ -69,8 +117,12 @@ describe('timelineWindow', () => {
 			startTime: moment('2026-08-17T09:00:00'),
 			endTime: moment('2026-08-17T10:00:00'),
 		})
+		let window = timelineWindow(onTheHour)
 
-		expect(timelineWindow(onTheHour)?.start.format('HH:mm')).toBe('08:00')
+		// The lead-in rule applies first; the resulting 08:00-10:00 span already
+		// meets the two-hour floor, so nothing further stretches it.
+		expect(window?.start.format('HH:mm')).toBe('08:00')
+		expect(window?.end.format('HH:mm')).toBe('10:00')
 	})
 
 	test('an event past the hour anchors to the hour holding it', () => {
@@ -97,7 +149,7 @@ describe('timelineBlocks', () => {
 		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 		let [block] = timelineBlocks(window!, [long])
 
-		expect(block.top + block.height).toBe(WINDOW_HEIGHT)
+		expect(block.top + block.height).toBe(window?.height)
 	})
 
 	test('an event starting before the window is clipped at its head', () => {
@@ -160,7 +212,11 @@ describe('timelineBlocks', () => {
 	})
 
 	test('events that do not overlap share one column', () => {
-		let window = timelineWindow(makeEvent())
+		// A window sized to the default 07:45-08:45 event would end at 09:00,
+		// clipping the second entry's own hour -- widen it to the four-hour cap
+		// so both events land fully inside, which is what this test means to
+		// exercise.
+		let window = timelineWindow(makeEvent({endTime: moment('2026-08-17T13:00:00')}))
 		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 		let blocks = timelineBlocks(window!, [
 			entry('stolaf', 'a'),
@@ -210,7 +266,10 @@ describe('timelineBlocks', () => {
 	})
 
 	test('a block near the window foot is pulled up rather than overflowing', () => {
-		let window = timelineWindow(makeEvent())
+		// Widened to the four-hour cap, as above, so the window's foot lands at
+		// 11:00 -- otherwise the default event's own window would end at 09:00,
+		// long before the late entry even starts.
+		let window = timelineWindow(makeEvent({endTime: moment('2026-08-17T13:00:00')}))
 		// Starts one minute before the window ends and runs for days: the
 		// min-height floor would otherwise push its foot past the container.
 		let late = entry('stolaf', 'a', {
@@ -220,11 +279,13 @@ describe('timelineBlocks', () => {
 		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 		let [block] = timelineBlocks(window!, [late])
 
-		expect(block.top + block.height).toBeLessThanOrEqual(WINDOW_HEIGHT)
+		expect(block.top + block.height).toBeLessThanOrEqual(window?.height ?? 0)
 		expect(block.height).toBe(MIN_BLOCK_HEIGHT)
 	})
 
-	test('no block ever starts above the window top', () => {
+	test('no block ever starts above the window top, even in a short window', () => {
+		// The default event's window floors to two hours -- the invariant has to
+		// hold against that dynamic height, not just the old fixed one.
 		let window = timelineWindow(makeEvent())
 		let early = entry('stolaf', 'a', {
 			startTime: moment('2026-08-16T22:00:00'),
@@ -234,7 +295,7 @@ describe('timelineBlocks', () => {
 		let [block] = timelineBlocks(window!, [early])
 
 		expect(block.top).toBeGreaterThanOrEqual(0)
-		expect(block.top + block.height).toBeLessThanOrEqual(WINDOW_HEIGHT)
+		expect(block.top + block.height).toBeLessThanOrEqual(window?.height ?? 0)
 	})
 })
 

@@ -10,12 +10,17 @@ import type {SourcedEvent} from './types'
 export const HOUR_HEIGHT = 40
 
 /**
- * Calendar.app draws four hourly gridlines, the first at the top of the hour
- * holding the event's start -- so an event never shows the hour before it.
+ * Calendar.app never shows more than four hourly gridlines, whatever the
+ * event's own length.
  */
-export const WINDOW_HOURS = 4
+export const MAX_WINDOW_HOURS = 4
 
-export const WINDOW_HEIGHT = WINDOW_HOURS * HOUR_HEIGHT
+/**
+ * Below this a fifteen-minute event would get a 1-hour window in which it
+ * fills a quarter of the height with almost no surrounding context, and a
+ * card barely taller than a single row.
+ */
+export const MIN_WINDOW_HOURS = 2
 
 /**
  * Below this a block cannot carry its own title, so a fifteen-minute event
@@ -27,6 +32,7 @@ export interface TimelineWindow {
 	start: Moment
 	end: Moment
 	hours: Moment[]
+	height: number
 }
 
 export interface TimelineBlock {
@@ -40,10 +46,20 @@ export interface TimelineBlock {
 }
 
 /**
- * The four-hour span an event's timeline covers, or `null` for an all-day or
- * multi-day event -- neither has a position to draw. A multi-day block would
- * fill the window end to end and convey nothing about where the event sits,
- * the same degenerate case an all-day event already is.
+ * `time` rounded up to the next hour, or itself if already on the hour --
+ * `startOf('hour')` alone always rounds down, which would drop a trailing
+ * partial hour off the end of the window instead of keeping it in view.
+ */
+function ceilToHour(time: Moment): Moment {
+	let floored = time.clone().startOf('hour')
+	return floored.isSame(time) ? floored : floored.add(1, 'hour')
+}
+
+/**
+ * The span an event's timeline covers, sized to the event and capped, or
+ * `null` for an all-day or multi-day event -- neither has a position to draw.
+ * A multi-day block would fill the window end to end and convey nothing about
+ * where the event sits, the same degenerate case an all-day event already is.
  */
 export function timelineWindow(event: EventType): TimelineWindow | null {
 	if (isAllDay(event) || isMultiDay(event)) {
@@ -64,9 +80,18 @@ export function timelineWindow(event: EventType): TimelineWindow | null {
 		start.subtract(1, 'hour')
 	}
 
-	let hours = Array.from({length: WINDOW_HOURS}, (_, index) => start.clone().add(index, 'hours'))
+	let end = ceilToHour(event.endTime)
 
-	return {start, end: start.clone().add(WINDOW_HOURS, 'hours'), hours}
+	if (end.diff(start, 'hours') > MAX_WINDOW_HOURS) {
+		end = start.clone().add(MAX_WINDOW_HOURS, 'hours')
+	} else if (end.diff(start, 'hours') < MIN_WINDOW_HOURS) {
+		end = start.clone().add(MIN_WINDOW_HOURS, 'hours')
+	}
+
+	let span = end.diff(start, 'hours')
+	let hours = Array.from({length: span + 1}, (_, index) => start.clone().add(index, 'hours'))
+
+	return {start, end, hours, height: span * HOUR_HEIGHT}
 }
 
 function offsetIn(window: TimelineWindow, time: Moment): number {
@@ -127,13 +152,13 @@ export function timelineBlocks(
 			return startTime.isBefore(window.end) && overlapsWindow
 		})
 		.map((entry) => {
-			let top = clamp(offsetIn(window, entry.event.startTime), 0, WINDOW_HEIGHT)
-			let foot = clamp(offsetIn(window, entry.event.endTime), 0, WINDOW_HEIGHT)
+			let top = clamp(offsetIn(window, entry.event.startTime), 0, window.height)
+			let foot = clamp(offsetIn(window, entry.event.endTime), 0, window.height)
 			let height = Math.max(foot - top, MIN_BLOCK_HEIGHT)
 
 			// Ensure the block doesn't overflow the window's foot. If the
 			// min-height floor would push it past, pull the block up instead.
-			let overflow = top + height - WINDOW_HEIGHT
+			let overflow = top + height - window.height
 			if (overflow > 0) {
 				top = Math.max(0, top - overflow)
 			}

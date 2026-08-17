@@ -12,7 +12,7 @@ import {
 } from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
 
-import {HOUR_HEIGHT, type TimelineBlock, type TimelineWindow, WINDOW_HEIGHT} from './timeline'
+import {HOUR_HEIGHT, type TimelineBlock, type TimelineWindow} from './timeline'
 import {formatHourLabel, listTimeLines} from './times'
 
 /**
@@ -143,7 +143,11 @@ export function EventTimeline({window, blocks, colorFor}: Props): React.ReactNod
 	let blockWidth = (BLOCK_AREA_WIDTH - BLOCK_GAP * (columnCount - 1)) / columnCount
 
 	return (
-		<HStack alignment="top" spacing={8}>
+		// The first and last hour labels sit exactly on the window's top and
+		// bottom edges, so half their text would fall outside the card without
+		// room to spill into. Measured from Calendar.app: 18pt above the first
+		// label, 15pt below the last.
+		<HStack alignment="top" spacing={8} modifiers={[padding({top: 18, bottom: 15})]}>
 			{/* `offset` is a post-layout transform: it moves a view after the view
 			has already been placed, it does not choose where the view is placed.
 			Placement is the stack's own alignment, and both `ZStack` and `frame`
@@ -157,8 +161,8 @@ export function EventTimeline({window, blocks, colorFor}: Props): React.ReactNod
 					frame({
 						minWidth: LABEL_COLUMN,
 						maxWidth: LABEL_COLUMN,
-						minHeight: WINDOW_HEIGHT,
-						maxHeight: WINDOW_HEIGHT,
+						minHeight: window.height,
+						maxHeight: window.height,
 						alignment: 'topLeading',
 					}),
 				]}
@@ -178,8 +182,8 @@ export function EventTimeline({window, blocks, colorFor}: Props): React.ReactNod
 					frame({
 						minWidth: BLOCK_AREA_WIDTH,
 						maxWidth: BLOCK_AREA_WIDTH,
-						minHeight: WINDOW_HEIGHT,
-						maxHeight: WINDOW_HEIGHT,
+						minHeight: window.height,
+						maxHeight: window.height,
 						alignment: 'topLeading',
 					}),
 				]}
