@@ -15,9 +15,10 @@ import {useCalendarSources} from './use-calendar-sources'
  * itself still lands, so turning on a second calendar means reopening the menu.
  * The prop stays because it costs nothing and states the intent.
  *
- * The button sits in the bottom bar, at the left, where Calendar.app keeps its
- * own calendar picker. A flexible `Spacer` after it takes the rest of the bar,
- * which is what leaves the button at that end.
+ * The button sits at the trailing end of the bottom bar, where Calendar.app
+ * keeps its own calendar picker -- `Today` holds the leading end there. A
+ * flexible `Spacer` before it takes the rest of the bar, which is what pushes
+ * the button to that end.
  *
  * The button is a 38x38 circle carrying the `calendar` SF Symbol and no text.
  * A bar item can only show one of the two: expo-router builds it as
@@ -51,6 +52,7 @@ export function CalendarPicker(): React.ReactNode {
 
 	return (
 		<Stack.Toolbar placement="bottom">
+			<Stack.Toolbar.Spacer />
 			<Stack.Toolbar.Menu accessibilityLabel="Calendars" icon="calendar">
 				<Stack.Toolbar.Label>Calendars</Stack.Toolbar.Label>
 
@@ -83,7 +85,6 @@ export function CalendarPicker(): React.ReactNode {
 					</Stack.Toolbar.Menu>
 				) : null}
 			</Stack.Toolbar.Menu>
-			<Stack.Toolbar.Spacer />
 		</Stack.Toolbar>
 	)
 }

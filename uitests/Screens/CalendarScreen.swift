@@ -71,12 +71,12 @@ struct CalendarScreen: Screen {
 	}
 
 	/// Close the menu by tapping well away from it -- the toolbar button is at
-	/// the bottom left and the menu opens upward from it, so the top right is
+	/// the bottom right and the menu opens upward from it, so the top left is
 	/// clear of both.
 	@discardableResult
 	func dismissMenu() -> Self {
 		if menuIsPresented() {
-			app.coordinate(withNormalizedOffset: CGVector(dx: 0.9, dy: 0.2)).tap()
+			app.coordinate(withNormalizedOffset: CGVector(dx: 0.1, dy: 0.2)).tap()
 			_ = app.buttons[TestIdentifiers.Calendar.calendars[0]].waitForNonExistence(timeout: 10)
 		}
 		return self
