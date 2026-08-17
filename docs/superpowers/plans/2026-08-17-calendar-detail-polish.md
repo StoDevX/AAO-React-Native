@@ -1068,6 +1068,15 @@ const LABEL_COLUMN = 56
 
 const BLOCK_GAP = 2
 
+/**
+ * The width the blocks share, beside the label column.
+ *
+ * A constant because there is nothing to measure against: `@expo/ui` exposes
+ * no `GeometryReader`, so the card's usable width cannot be read at runtime.
+ * Tuned on the simulator against a grouped `Form`'s content width.
+ */
+const BLOCK_AREA_WIDTH = 200
+
 type Props = {
 	window: TimelineWindow
 	blocks: TimelineBlock[]
@@ -1141,7 +1150,8 @@ function Block({
  * here is verified on the simulator.
  */
 export function EventTimeline({window, blocks, colorFor}: Props): React.ReactNode {
-	let blockWidth = 200 / Math.max(blocks[0]?.columnCount ?? 1, 1)
+	let columnCount = Math.max(blocks[0]?.columnCount ?? 1, 1)
+	let blockWidth = (BLOCK_AREA_WIDTH - BLOCK_GAP * (columnCount - 1)) / columnCount
 
 	return (
 		<HStack alignment="top" spacing={8}>
@@ -1304,7 +1314,7 @@ git commit -m "Show where an event falls among its neighbours"
 
 ## Notes for the implementer
 
-**`blockWidth` in Task 8 is a guess.** `200` is a placeholder for the card's usable width, which cannot be measured without a `GeometryReader`. Check it on the simulator in Task 8 Step 8 and adjust the constant; if two columns overflow the card, that is the number to change. Say so in the commit if you change it.
+**`BLOCK_AREA_WIDTH` in Task 8 is tuned, not derived.** 200 is a starting value for the card's usable width, which cannot be measured without a `GeometryReader`. Check it on the simulator in Task 8 Step 8 and adjust; if two columns overflow the card, that is the number to change. Say so in the commit message if you change it.
 
 **Do not add tests that assert appearance.** Several steps above are verified only on the simulator. That is deliberate, and matches what the `audit-mocked-tests` merge established. If you find yourself writing `expect(...modifiers...)`, stop.
 
