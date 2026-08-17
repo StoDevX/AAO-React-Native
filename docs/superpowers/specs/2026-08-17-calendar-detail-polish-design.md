@@ -170,10 +170,24 @@ That splits the work cleanly:
 
 ## Risks
 
-A bottom toolbar inside a pageSheet is not a shape this codebase has used, and
-the type definitions do not settle whether it renders. This needs checking on
-the simulator before the shape is committed to. If it does not render, the
-fallback is a prominent button pinned in the body.
+A bottom toolbar inside a pageSheet renders. Checked on the simulator before
+anything was built on it: the sheet arrives as an inset card with rounded top
+corners, and a label-only bar button sits centred in a floating glass pill
+below the form. So change 5 needs no fallback.
+
+Two things that check turned up, both worth knowing:
+
+`RouterToolbarHostView.swift:116` mounts the bar with
+`controller.navigationController?.setToolbarHidden(false)`, inside
+`if #available(iOS 18.0, *)` with no `else`. A screen whose controller has no
+navigation controller, or an OS below 18, gets no bar and no error -- silence
+is the failure mode to watch for.
+
+The XCUITests do not run against Metro. CI bakes `main.jsbundle` into the
+`.app` first, so a local run without that step launches whatever bundle the
+simulator last cached and reports passes against code that is not the code
+under test. Bake the bundle, and grep it for a marker before believing a
+screenshot.
 
 Making `/EventDetail` a modal moves it into the blast radius of the open
 cold-start-deep-link dismiss bug, where dismissing a deep-linked sheet lands on
