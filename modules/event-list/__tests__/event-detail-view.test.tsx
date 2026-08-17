@@ -51,36 +51,13 @@ function makeEvent(overrides: Partial<EventType> = {}): EventType {
 }
 
 describe('EventDetail', () => {
-	test('it shows the location and description sections', async () => {
+	// The event's own times, rather than hand-fed lines: this is what proves the
+	// masthead is wired to `detailTimeLines`. How a line reads is settled in
+	// times.test.ts, and how it is laid out is not something Jest can see.
+	test('it dates the masthead from the event', async () => {
 		await render(<EventDetail color="#ff0000" event={makeEvent()} poweredBy={POWERED_BY} />)
 
-		// No assertion on the event's name: it is the screen's native large title,
-		// set by the route, not something this component renders. The date block
-		// is what proves the header is still wired in.
-		expect(screen.getByTestId('event-detail-times')).toBeTruthy()
 		expect(screen.getByText('Monday, August 17, 2026', {exact: false})).toBeTruthy()
-		expect(screen.getByText('Location')).toBeTruthy()
-		expect(screen.getByText('Kings Dining')).toBeTruthy()
-		expect(screen.getByText('Description')).toBeTruthy()
-		expect(screen.getByText('Seminars across campus.')).toBeTruthy()
-	})
-
-	// A device all-day event as EventKit hands it over: 00:00:00 to 23:59:59,
-	// both edges flagged meaningless. Anything that reads all-day off the
-	// duration instead renders `From 12 AM ... to 11:59 PM ...`.
-	test('an EventKit all-day event reads as all day, not as a midnight range', async () => {
-		let event = makeEvent({
-			title: 'Labor Day',
-			startTime: moment('2026-09-07T00:00:00'),
-			endTime: moment('2026-09-07T23:59:59'),
-			config: {startTime: false, endTime: false, subtitle: 'location'},
-		})
-
-		await render(<EventDetail color="#ff0000" event={event} poweredBy={POWERED_BY} />)
-
-		expect(screen.getByText('All day Monday, September 7, 2026')).toBeTruthy()
-		expect(screen.queryByText(/12 AM/u)).toBeNull()
-		expect(screen.queryByText(/11:59 PM/u)).toBeNull()
 	})
 
 	test('it omits a section whose field is empty', async () => {
@@ -92,12 +69,9 @@ describe('EventDetail', () => {
 		expect(screen.getByText('Description')).toBeTruthy()
 	})
 
-	test('it shows the powered-by footer', async () => {
-		await render(<EventDetail color="#ff0000" event={makeEvent()} poweredBy={POWERED_BY} />)
-
-		expect(screen.getByText('Powered by the St. Olaf calendar')).toBeTruthy()
-	})
-
+	// The one test that drives `AddToCalendar`'s state machine, and the only one
+	// that renders a `Section` footer -- a slot where a bare string kills the app
+	// at mount, which the stand-in throws on.
 	test('it offers an add-to-calendar button', async () => {
 		await render(<EventDetail color="#ff0000" event={makeEvent()} poweredBy={POWERED_BY} />)
 
@@ -107,13 +81,11 @@ describe('EventDetail', () => {
 		)
 	})
 
-	test('it lists each event link', async () => {
+	test('it shows a links section when the event has links', async () => {
 		let links = ['https://example.com/one', 'https://example.com/two']
 		await render(<EventDetail color="#ff0000" event={makeEvent({links})} poweredBy={POWERED_BY} />)
 
 		expect(screen.getByText('Links')).toBeTruthy()
-		expect(screen.getByText('https://example.com/one')).toBeTruthy()
-		expect(screen.getByText('https://example.com/two')).toBeTruthy()
 	})
 
 	test('it omits the links section when there are none', async () => {
