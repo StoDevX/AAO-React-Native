@@ -198,18 +198,6 @@ export function Link({label, destination}: {label?: string; destination: string}
 }
 
 /**
- * The icon `Label` takes as `systemImage` has no counterpart in
- * react-test-renderer, so the mock renders only the title text -- the part a
- * query can reach.
- */
-export function Label({
-	title,
-	modifiers,
-}: WithModifiers & {title?: string; systemImage?: string}): React.ReactNode {
-	return <RNText accessibilityLabel={labelOf(modifiers)}>{title}</RNText>
-}
-
-/**
  * `ButtonProps` documents that children must be nested elements, not plain
  * strings; the throw below mirrors that constraint instead of silently
  * accepting what the real component would reject.

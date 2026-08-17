@@ -1,6 +1,6 @@
 import * as React from 'react'
 import type {ColorValue} from 'react-native'
-import {HStack, Label, Text, VStack, ZStack} from '@expo/ui/swift-ui'
+import {HStack, Image, Text, VStack, ZStack} from '@expo/ui/swift-ui'
 import {
 	background,
 	clipShape,
@@ -85,11 +85,10 @@ function Block({
 				{block.event.title}
 			</Text>
 			{location ? (
-				<Label
-					modifiers={[font({textStyle: 'caption2'})]}
-					systemImage="location.circle"
-					title={location}
-				/>
+				<HStack alignment="firstTextBaseline" spacing={4}>
+					<Image modifiers={[font({textStyle: 'caption2'})]} systemName="location.circle" />
+					<Text modifiers={[font({textStyle: 'caption2'})]}>{location}</Text>
+				</HStack>
 			) : null}
 			<Text modifiers={[font({textStyle: 'caption2'})]}>{start}</Text>
 		</VStack>

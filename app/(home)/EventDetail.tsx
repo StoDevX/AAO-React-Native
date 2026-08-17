@@ -102,13 +102,13 @@ export default function EventDetailPage(): React.ReactNode {
 	// `useCalendarSources` -- so there are no neighbours to draw and no timeline.
 	// `timelineWindow` rules out all-day events on its own, by returning null.
 	let isCalendarSource = deviceSource || REMOTE_SOURCE_IDS.has(source)
-	let window = event && isCalendarSource ? timelineWindow(event) : null
+	let windowRange = event && isCalendarSource ? timelineWindow(event) : null
 	let timeline =
-		window && event
+		windowRange && event
 			? {
-					window,
+					window: windowRange,
 					blocks: timelineBlocks(
-						window,
+						windowRange,
 						// `eventKey` here is the route param destructured at the top of
 						// the component, not the `eventKey` helper event-list exports.
 						timelineEntries({sourceId: source, key: eventKey, event}, neighbours),
