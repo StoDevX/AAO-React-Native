@@ -12,6 +12,14 @@ export function isAllDay(event: EventType): boolean {
 }
 
 /**
+ * A day-of-year comparison, not a duration one -- see `classify` below for
+ * why. Exported because the timeline needs the same answer.
+ */
+export function isMultiDay(event: EventType): boolean {
+	return event.startTime.dayOfYear() !== event.endTime.dayOfYear()
+}
+
+/**
  * Shared by `times`, `detailTimes`, and `detailTimeLines` so the three agree
  * on what counts as all-day, multi-day, or a same-instant event.
  *
@@ -32,7 +40,7 @@ function classify(event: EventType): {
 } {
 	return {
 		allDay: isAllDay(event),
-		multiDay: event.startTime.dayOfYear() !== event.endTime.dayOfYear(),
+		multiDay: isMultiDay(event),
 		sillyZeroLength: event.startTime.isSame(event.endTime, 'minute'),
 	}
 }
@@ -149,6 +157,19 @@ function formatDetailTime(value: Moment, locale: string | undefined): string {
 	let hour = meridiem ? ('numeric' as const) : ('2-digit' as const)
 	let options: Intl.DateTimeFormatOptions =
 		value.minutes() === 0 && meridiem ? {hour} : {hour, minute: '2-digit'}
+
+	return new Intl.DateTimeFormat(locale, options).format(value.toDate())
+}
+
+/**
+ * A timeline's hour label, e.g. `9 AM` or `09:00`. An hour label is always
+ * on the hour, so a 12-hour locale needs no minutes at all -- unlike
+ * `formatDetailTime`, which keeps them for a time that might not be.
+ */
+export function formatHourLabel(value: Moment, locale: string | undefined): string {
+	let meridiem = hasMeridiem(locale)
+	let hour = meridiem ? ('numeric' as const) : ('2-digit' as const)
+	let options: Intl.DateTimeFormatOptions = meridiem ? {hour} : {hour, minute: '2-digit'}
 
 	return new Intl.DateTimeFormat(locale, options).format(value.toDate())
 }

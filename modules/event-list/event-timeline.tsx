@@ -1,5 +1,5 @@
 import * as React from 'react'
-import type {ColorValue} from 'react-native'
+import {StyleSheet, type ColorValue} from 'react-native'
 import {HStack, Image, Text, VStack, ZStack} from '@expo/ui/swift-ui'
 import {
 	background,
@@ -13,7 +13,7 @@ import {
 import * as c from '@frogpond/colors'
 
 import {HOUR_HEIGHT, type TimelineBlock, type TimelineWindow, WINDOW_HEIGHT} from './timeline'
-import {listTimeLines} from './times'
+import {formatHourLabel, listTimeLines} from './times'
 
 /**
  * The width the hour labels take, leaving the rest for blocks. Fixed, because
@@ -64,6 +64,28 @@ function HourLabel({hour, index}: {hour: string; index: number}): React.ReactNod
 		>
 			{hour}
 		</Text>
+	)
+}
+
+function Gridline({index}: {index: number}): React.ReactNode {
+	return (
+		<VStack
+			modifiers={[
+				// Same fixed-size-via-min/max idiom the accent bars use elsewhere in
+				// this feature -- the native `frame` ignores min/max once width or
+				// height is set.
+				frame({
+					minWidth: BLOCK_AREA_WIDTH,
+					maxWidth: BLOCK_AREA_WIDTH,
+					minHeight: StyleSheet.hairlineWidth,
+					maxHeight: StyleSheet.hairlineWidth,
+				}),
+				background(c.separator),
+				offset({y: index * HOUR_HEIGHT}),
+			]}
+		>
+			{null}
+		</VStack>
 	)
 }
 
@@ -142,7 +164,11 @@ export function EventTimeline({window, blocks, colorFor}: Props): React.ReactNod
 				]}
 			>
 				{window.hours.map((hour, index) => (
-					<HourLabel hour={hour.format('h A')} index={index} key={hour.toISOString()} />
+					<HourLabel
+						hour={formatHourLabel(hour, undefined)}
+						index={index}
+						key={hour.toISOString()}
+					/>
 				))}
 			</ZStack>
 
@@ -158,6 +184,9 @@ export function EventTimeline({window, blocks, colorFor}: Props): React.ReactNod
 					}),
 				]}
 			>
+				{window.hours.map((hour, index) => (
+					<Gridline index={index} key={hour.toISOString()} />
+				))}
 				{blocks.map((block) => (
 					<Block
 						block={block}

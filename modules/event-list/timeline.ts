@@ -1,7 +1,7 @@
 import type {Moment} from 'moment-timezone'
 import type {EventType} from '@frogpond/event-type'
 
-import {isAllDay} from './times'
+import {isAllDay, isMultiDay} from './times'
 import type {SourcedEvent} from './types'
 
 /**
@@ -40,15 +40,30 @@ export interface TimelineBlock {
 }
 
 /**
- * The four-hour span an event's timeline covers, or `null` for an all-day
- * event -- which has no position to draw.
+ * The four-hour span an event's timeline covers, or `null` for an all-day or
+ * multi-day event -- neither has a position to draw. A multi-day block would
+ * fill the window end to end and convey nothing about where the event sits,
+ * the same degenerate case an all-day event already is.
  */
 export function timelineWindow(event: EventType): TimelineWindow | null {
-	if (isAllDay(event)) {
+	if (isAllDay(event) || isMultiDay(event)) {
 		return null
 	}
 
 	let start = event.startTime.clone().startOf('hour')
+
+	// A block flush against the window's top reads as clipped rather than
+	// positioned. An event starting exactly on the hour -- the common case for
+	// campus events, not a rare one -- would otherwise get no lead-in at all,
+	// so it borrows the hour before it instead.
+	let onTheHour =
+		event.startTime.minutes() === 0 &&
+		event.startTime.seconds() === 0 &&
+		event.startTime.milliseconds() === 0
+	if (onTheHour) {
+		start.subtract(1, 'hour')
+	}
+
 	let hours = Array.from({length: WINDOW_HOURS}, (_, index) => start.clone().add(index, 'hours'))
 
 	return {start, end: start.clone().add(WINDOW_HOURS, 'hours'), hours}

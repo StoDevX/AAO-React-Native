@@ -57,6 +57,27 @@ describe('timelineWindow', () => {
 
 		expect(timelineWindow(allDay)).toBeNull()
 	})
+
+	test('a multi-day event has no window, filling it end to end', () => {
+		let long = makeEvent({endTime: moment('2026-08-20T18:00:00')})
+
+		expect(timelineWindow(long)).toBeNull()
+	})
+
+	test('an event starting exactly on the hour gets an hour of lead-in', () => {
+		let onTheHour = makeEvent({
+			startTime: moment('2026-08-17T09:00:00'),
+			endTime: moment('2026-08-17T10:00:00'),
+		})
+
+		expect(timelineWindow(onTheHour)?.start.format('HH:mm')).toBe('08:00')
+	})
+
+	test('an event past the hour anchors to the hour holding it', () => {
+		let window = timelineWindow(makeEvent())
+
+		expect(window?.start.format('HH:mm')).toBe('07:00')
+	})
 })
 
 describe('timelineBlocks', () => {

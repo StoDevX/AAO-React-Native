@@ -2,7 +2,14 @@ import {describe, expect, test} from '@jest/globals'
 
 import type {EventType} from '@frogpond/event-type'
 import moment from 'moment'
-import {detailTimes, detailTimeLines, formatSectionHeader, listTimeLines, times} from '../times'
+import {
+	detailTimes,
+	detailTimeLines,
+	formatHourLabel,
+	formatSectionHeader,
+	listTimeLines,
+	times,
+} from '../times'
 
 /**
  * What every parser writes for an all-day event: neither edge carries a
@@ -358,6 +365,18 @@ describe('listTimeLines', () => {
 		let event = generateEvent('2026-08-17T07:45:00', '2026-08-17T07:45:00')
 
 		expect(listTimeLines(event, 'en-US')).toEqual({start: '7:45 AM', end: '', allDay: false})
+	})
+})
+
+describe('formatHourLabel', () => {
+	test('a 12-hour locale gets a bare hour and meridiem (en-US)', () => {
+		let hour = moment('2026-08-17T09:00:00')
+		expect(formatHourLabel(hour, 'en-US')).toBe('9 AM')
+	})
+
+	test('a 24-hour locale gets a padded, minute-bearing hour (en-GB)', () => {
+		let hour = moment('2026-08-17T09:00:00')
+		expect(formatHourLabel(hour, 'en-GB')).toBe('09:00')
 	})
 })
 
