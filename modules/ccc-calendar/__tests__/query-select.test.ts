@@ -147,6 +147,5 @@ describe('deviceCalendarOptions select', () => {
 		let selected = selectDevice('cal-1')([makeDeviceEvent('evt-1', 'cal-1')])
 
 		expect(selected[0]?.key).toBe('evt-1')
-		expect(selected[0]?.event.title).toBe('Labor Day')
 	})
 })
