@@ -21,8 +21,14 @@ export default function HomeLayout(): React.ReactNode {
 			    `RNSScreen.mm` maps `modal` to `UIModalPresentationAutomatic` and only
 			    `pageSheet` to `UIModalPresentationPageSheet`. UIKit resolves automatic to
 			    a page sheet on iPhone today, so the two look alike -- but the inset card
-			    Calendar.app uses is worth stating outright rather than inheriting. */}
-			<Stack.Screen name="EventDetail" options={{presentation: 'pageSheet'}} />
+			    Calendar.app uses is worth stating outright rather than inheriting.
+			    `title: ''` is defined-but-empty, so react-navigation uses it rather
+			    than falling back to the route filename -- the sheet already carries
+			    the event's name in its body, so a bar title would state it twice. */}
+			<Stack.Screen
+				name="EventDetail"
+				options={{presentation: 'pageSheet', title: '', headerTransparent: true}}
+			/>
 			{/* `headerLargeTitle` collides with a tab bar under the header. This
 			    screen has none, so it behaves: verified on the simulator that the
 			    title collapses into the bar on scroll. */}
