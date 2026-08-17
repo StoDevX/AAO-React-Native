@@ -20,10 +20,7 @@ export default function HomeLayout(): React.ReactNode {
 			{/* `headerLargeTitle` collides with a tab bar under the header. This
 			    screen has none, so it behaves: verified on the simulator that the
 			    title collapses into the bar on scroll. */}
-			<Stack.Screen
-				name="Calendar"
-				options={{title: 'Calendar', headerShadowVisible: false, headerLargeTitle: true}}
-			/>
+			<Stack.Screen name="Calendar" options={{title: 'Calendar', headerLargeTitle: true}} />
 		</Stack>
 	)
 }

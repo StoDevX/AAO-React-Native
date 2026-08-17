@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {PlatformColor, StyleSheet} from 'react-native'
+import {StyleSheet} from 'react-native'
 import {Stack, useRouter} from 'expo-router'
 import {
 	Button,
@@ -157,14 +157,7 @@ export default function HomePage(): React.ReactNode {
 
 	return (
 		<>
-			<Stack.Screen
-				options={{
-					contentStyle: {backgroundColor: PlatformColor('systemBackground')},
-					headerShadowVisible: false,
-					headerLargeTitleEnabled: true,
-					headerTransparent: true,
-				}}
-			/>
+			<Stack.Screen options={{headerLargeTitleEnabled: true}} />
 			<Stack.Title>All About Olaf</Stack.Title>
 			<Stack.Toolbar placement="right">
 				<Stack.Toolbar.Button
