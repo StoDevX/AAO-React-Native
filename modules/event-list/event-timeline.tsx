@@ -28,10 +28,15 @@ const BLOCK_GAP = 2
  * The width the blocks share, beside the label column.
  *
  * A constant because there is nothing to measure against: `@expo/ui` exposes
- * no `GeometryReader`, so the card's usable width cannot be read at runtime.
- * Tuned on the simulator against a grouped `Form`'s content width.
+ * no `GeometryReader`, so the card's usable width cannot be read at runtime,
+ * and cannot adapt to the device it runs on. Bounded by the narrowest phone
+ * this app supports -- a 375pt iPhone SE -- rather than by the widest: at
+ * this width the row totals roughly 230 + 56 (label column) + 8 (spacing) +
+ * insets ≈ 344pt, comfortably inside 375pt. A wider value would fill more of
+ * a 393pt iPhone 15 Pro's card but clip on the SE, and clipping on the
+ * smallest screen costs more than a few empty points on the largest.
  */
-const BLOCK_AREA_WIDTH = 200
+const BLOCK_AREA_WIDTH = 230
 
 type Props = {
 	window: TimelineWindow
