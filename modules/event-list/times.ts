@@ -1,20 +1,46 @@
-import moment from 'moment-timezone'
 import type {Moment} from 'moment-timezone'
 import type {EventType} from '@frogpond/event-type'
 import type {EventDetailTime} from '@frogpond/event-list/types'
 
-/// Shared by `times`, `detailTimes`, and `detailTimeLines` so the three agree
-/// on what counts as all-day, multi-day, or a same-instant event.
+/**
+ * All-day is the source's own statement rather than a duration -- see
+ * `classify` below for why a duration test cannot serve both EventKit and the
+ * web sources. Exported because the timeline needs the same answer.
+ */
+export function isAllDay(event: EventType): boolean {
+	return !event.config.startTime && !event.config.endTime
+}
+
+/**
+ * A day-of-year comparison, not a duration one -- see `classify` below for
+ * why. Exported because the timeline needs the same answer.
+ */
+export function isMultiDay(event: EventType): boolean {
+	return event.startTime.dayOfYear() !== event.endTime.dayOfYear()
+}
+
+/**
+ * Shared by `times`, `detailTimes`, and `detailTimeLines` so the three agree
+ * on what counts as all-day, multi-day, or a same-instant event.
+ *
+ * All-day is the source's own statement rather than a duration.
+ * `config.startTime` and `config.endTime` say which of an event's edges carry
+ * a meaningful time, and every parser sets them from the upstream flag --
+ * `parsers/tec-events.ts` from `all_day`, `ccc-calendar/device-calendar.ts`
+ * from EventKit's `allDay`. Both edges meaningless is what all-day means.
+ *
+ * A duration test cannot serve both sources: EventKit spans an all-day event
+ * 00:00:00 to 23:59:59, which is 23.9997 hours rather than a round 24, and a
+ * web event that genuinely runs a full 24 hours is not all-day at all.
+ */
 function classify(event: EventType): {
 	allDay: boolean
 	multiDay: boolean
 	sillyZeroLength: boolean
 } {
-	let eventLength = moment.duration(event.endTime.diff(event.startTime)).asHours()
-
 	return {
-		allDay: eventLength === 24,
-		multiDay: event.startTime.dayOfYear() !== event.endTime.dayOfYear(),
+		allDay: isAllDay(event),
+		multiDay: isMultiDay(event),
 		sillyZeroLength: event.startTime.isSame(event.endTime, 'minute'),
 	}
 }
@@ -83,10 +109,12 @@ export function detailTimes(event: EventType): EventDetailTime {
 	return {start, end, allDay}
 }
 
-/// One line of the event detail's date range, e.g. `From 7:45 AM Monday,
-/// August 17, 2026`. There is no separate `meridiem` field: `Intl` folds the
-/// meridiem into `time` itself, and in a 24-hour locale there is none to
-/// split out.
+/**
+ * One line of the event detail's date range, e.g. `From 7:45 AM Monday,
+ * August 17, 2026`. There is no separate `meridiem` field: `Intl` folds the
+ * meridiem into `time` itself, and in a 24-hour locale there is none to
+ * split out.
+ */
 export interface EventTimeLine {
 	prefix: string
 	time: string
@@ -104,19 +132,23 @@ function formatDetailDate(value: Moment, locale: string | undefined): string {
 	return new Intl.DateTimeFormat(locale, DETAIL_LINE_DATE_OPTIONS).format(value.toDate())
 }
 
-/// Whether the locale writes a meridiem, which is also what makes an
-/// hour-only time readable: `6 PM` stands on its own, `18` does not.
+/**
+ * Whether the locale writes a meridiem, which is also what makes an
+ * hour-only time readable: `6 PM` stands on its own, `18` does not.
+ */
 function hasMeridiem(locale: string | undefined): boolean {
 	return new Intl.DateTimeFormat(locale, {hour: 'numeric'})
 		.formatToParts(new Date(0))
 		.some((part) => part.type === 'dayPeriod')
 }
 
-/// `6 PM`, not `6:00 PM` -- Calendar.app drops `:00` on the hour.
-///
-/// Only where there is a meridiem, though. Dropping the minutes in a 24-hour
-/// locale leaves a bare `15`, and `From 15 Wednesday, 19 August` does not read
-/// as a time at all; those locales keep `15:00`.
+/**
+ * `6 PM`, not `6:00 PM` -- Calendar.app drops `:00` on the hour.
+ *
+ * Only where there is a meridiem, though. Dropping the minutes in a 24-hour
+ * locale leaves a bare `15`, and `From 15 Wednesday, 19 August` does not read
+ * as a time at all; those locales keep `15:00`.
+ */
 function formatDetailTime(value: Moment, locale: string | undefined): string {
 	let meridiem = hasMeridiem(locale)
 
@@ -129,28 +161,47 @@ function formatDetailTime(value: Moment, locale: string | undefined): string {
 	return new Intl.DateTimeFormat(locale, options).format(value.toDate())
 }
 
+/**
+ * A timeline's hour label, e.g. `9 AM` or `09:00`. An hour label is always
+ * on the hour, so a 12-hour locale needs no minutes at all -- unlike
+ * `formatDetailTime`, which keeps them for a time that might not be.
+ */
+export function formatHourLabel(value: Moment, locale: string | undefined): string {
+	let meridiem = hasMeridiem(locale)
+	let hour = meridiem ? ('numeric' as const) : ('2-digit' as const)
+	let options: Intl.DateTimeFormatOptions = meridiem ? {hour} : {hour, minute: '2-digit'}
+
+	return new Intl.DateTimeFormat(locale, options).format(value.toDate())
+}
+
 const LIST_SECTION_DATE_OPTIONS: Intl.DateTimeFormatOptions = {month: 'short', day: 'numeric'}
 
-/// A section header's date, e.g. `Aug 20` -- short, unlike the detail
-/// screen's `August 20, 2026`, since this sits next to a weekday on one line.
+/**
+ * A section header's date, e.g. `Aug 20` -- short, unlike the detail
+ * screen's `August 20, 2026`, since this sits next to a weekday on one line.
+ */
 function formatListDate(value: Moment, locale: string | undefined): string {
 	return new Intl.DateTimeFormat(locale, LIST_SECTION_DATE_OPTIONS).format(value.toDate())
 }
 
-/// `Sunday – Aug 16`, matching Calendar.app's list section headers. The
-/// weekday and the date are formatted separately because their relative
-/// order is locale-specific (`Aug 16` in en-US, `16 Aug` in en-GB) while the
-/// weekday always leads.
+/**
+ * `Sunday – Aug 16`, matching Calendar.app's list section headers. The
+ * weekday and the date are formatted separately because their relative
+ * order is locale-specific (`Aug 16` in en-US, `16 Aug` in en-GB) while the
+ * weekday always leads.
+ */
 export function formatSectionHeader(value: Moment, locale?: string): string {
 	let weekday = new Intl.DateTimeFormat(locale, {weekday: 'long'}).format(value.toDate())
 	return `${weekday} – ${formatListDate(value, locale)}`
 }
 
-/// The list row's trailing time column: a start and an end, locale-aware via
-/// the same hour-cycle logic `detailTimeLines` uses, rather than duplicating
-/// it. Unlike `detailTimeLines`, there is no prefix -- Calendar.app's list
-/// puts the start above the end with no words between them -- and an all-day
-/// event carries no text at all, since the row shows `all-day` in its place.
+/**
+ * The list row's trailing time column: a start and an end, locale-aware via
+ * the same hour-cycle logic `detailTimeLines` uses, rather than duplicating
+ * it. Unlike `detailTimeLines`, there is no prefix -- Calendar.app's list
+ * puts the start above the end with no words between them -- and an all-day
+ * event carries no text at all, since the row shows `all-day` in its place.
+ */
 export function listTimeLines(event: EventType, locale?: string): EventDetailTime {
 	let {allDay, multiDay, sillyZeroLength} = classify(event)
 
@@ -164,8 +215,8 @@ export function listTimeLines(event: EventType, locale?: string): EventDetailTim
 		end = formatListDate(event.endTime, locale)
 	} else if (multiDay) {
 		start = formatDetailTime(event.startTime, locale)
-		// A multi-day event's end needs both a date and a time -- the date
-		// alone drops when it ends, and the old list showed both.
+		// A multi-day event's end needs both a date and a time -- the date alone
+		// drops when it ends.
 		end = `${formatListDate(event.endTime, locale)}, ${formatDetailTime(event.endTime, locale)}`
 	} else if (sillyZeroLength) {
 		start = formatDetailTime(event.startTime, locale)
@@ -178,15 +229,32 @@ export function listTimeLines(event: EventType, locale?: string): EventDetailTim
 	return {start, end, allDay: false}
 }
 
-/// `locale` defaults to the device's own locale -- `undefined` tells `Intl`
-/// to use the system default rather than hardcoding one.
+/**
+ * `locale` defaults to the device's own locale -- `undefined` tells `Intl`
+ * to use the system default rather than hardcoding one.
+ */
 export function detailTimeLines(event: EventType, locale?: string): EventTimeLine[] {
 	let {allDay, sillyZeroLength} = classify(event)
 	let startDate = formatDetailDate(event.startTime, locale)
 	let endDate = formatDetailDate(event.endTime, locale)
 
 	if (allDay) {
-		return [{prefix: 'All day', time: '', date: startDate}]
+		// The two sources disagree about where an all-day event ends: the web
+		// calendars end it exclusively, at midnight the following day, while
+		// EventKit ends it inclusively, at 23:59:59 the same day. The last day it
+		// actually covers is the instant before its end under either convention.
+		let lastDay = event.endTime.isAfter(event.startTime)
+			? event.endTime.clone().subtract(1, 'millisecond')
+			: event.startTime
+
+		if (lastDay.isSame(event.startTime, 'day')) {
+			return [{prefix: 'All day', time: '', date: startDate}]
+		}
+
+		return [
+			{prefix: 'All day from', time: '', date: startDate},
+			{prefix: 'to', time: '', date: formatDetailDate(lastDay, locale)},
+		]
 	}
 
 	if (sillyZeroLength) {

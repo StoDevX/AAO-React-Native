@@ -1,44 +1,56 @@
 import * as React from 'react'
+import type {ColorValue} from 'react-native'
 import {HStack, Text, VStack} from '@expo/ui/swift-ui'
 import {
 	background,
 	clipShape,
 	font,
-	foregroundColor,
+	foregroundStyle,
 	frame,
 	padding,
 } from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
 import type {EventTimeLine} from './times'
 
-/// How far the accent bar clears the type at each end, as Calendar.app's does.
+/**
+ * How far the accent bar clears the type at each end, as Calendar.app's does.
+ */
 const BAR_OVERSHOOT = 3
 
 type Props = {
 	lines: EventTimeLine[]
+	/**
+	 * The accent bar's colour -- the calendar this event came from, so the
+	 * masthead matches the tint the event's row had in the list.
+	 */
+	color: ColorValue
+	title: string
 }
 
-/// One line of the date range, e.g. `From 7:45 AM Monday, August 17, 2026`.
-/// The meridiem, when the locale has one, is already part of `line.time` --
-/// `Intl` folds it into the formatted string rather than exposing it
-/// separately.
+/**
+ * One line of the date range, e.g. `From 7:45 AM Monday, August 17, 2026`.
+ * The meridiem, when the locale has one, is already part of `line.time` --
+ * `Intl` folds it into the formatted string rather than exposing it
+ * separately.
+ */
 function TimeLine({line}: {line: EventTimeLine}): React.ReactNode {
 	let text = [line.prefix, line.time, line.date].filter(Boolean).join(' ')
 
-	return <Text modifiers={[font({textStyle: 'body'}), foregroundColor(c.label)]}>{text}</Text>
+	return <Text modifiers={[font({textStyle: 'body'}), foregroundStyle(c.label)]}>{text}</Text>
 }
 
-/// The date range, flanked by an accent bar. The event's name is not here: it
-/// is the screen's native large title, so UIKit can collapse it into the bar on
-/// scroll and manage the bar's appearance for both states.
-///
-/// The bar is a fixed tint rather than an event colour: `EventType` carries
-/// none, and the list's own bar is a plain separator.
-export function EventDetailHeader({lines}: Props): React.ReactNode {
-	if (lines.length === 0) {
-		return null
-	}
-
+/**
+ * The event's name leads the masthead, with the date range beneath it and an
+ * accent bar flanking both -- Calendar.app's sheet shape. A sheet has no
+ * navigation bar to carry a large title, so the name leads the body instead.
+ *
+ * `title` is measured from Calendar.app: a 59px cap height on a 3x screen is
+ * 28pt, which is SwiftUI's `.title`.
+ *
+ * The bar takes the calendar's colour rather than the event's: `EventType`
+ * carries none, and the list's row bar is tinted the same way.
+ */
+export function EventDetailHeader({lines, color, title}: Props): React.ReactNode {
 	return (
 		<HStack>
 			{/* `frame`'s native implementation ignores min/max fields whenever `width` or
@@ -51,7 +63,7 @@ export function EventDetailHeader({lines}: Props): React.ReactNode {
 			<VStack
 				modifiers={[
 					frame({minWidth: 4, maxWidth: 4, maxHeight: Infinity}),
-					background(c.systemBlue),
+					background(color),
 					clipShape('capsule'),
 				]}
 			>
@@ -67,6 +79,9 @@ export function EventDetailHeader({lines}: Props): React.ReactNode {
 				modifiers={[padding({vertical: BAR_OVERSHOOT})]}
 				testID="event-detail-times"
 			>
+				<Text modifiers={[font({textStyle: 'title', weight: 'bold'}), foregroundStyle(c.label)]}>
+					{title}
+				</Text>
 				{lines.map((line, index) => (
 					<TimeLine key={`${line.prefix}-${index}`} line={line} />
 				))}

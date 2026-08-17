@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {PlatformColor, StyleSheet} from 'react-native'
+import {StyleSheet} from 'react-native'
 import {Stack, useRouter} from 'expo-router'
 import {
 	Button,
@@ -17,7 +17,7 @@ import {
 	background,
 	contentShape,
 	font,
-	foregroundColor,
+	foregroundStyle,
 	frame,
 	multilineTextAlignment,
 	padding,
@@ -103,7 +103,7 @@ function UnofficialAppNotice(): React.ReactNode {
 				<Text
 					modifiers={[
 						font({size: NOTICE_FONT_SIZE, textStyle: NOTICE_TEXT_STYLE}),
-						foregroundColor(c.secondaryLabel),
+						foregroundStyle(c.secondaryLabel),
 						multilineTextAlignment('center'),
 						padding({all: NOTICE_PADDING}),
 						frame({maxWidth: FILL_WIDTH}),
@@ -157,14 +157,7 @@ export default function HomePage(): React.ReactNode {
 
 	return (
 		<>
-			<Stack.Screen
-				options={{
-					contentStyle: {backgroundColor: PlatformColor('systemBackground')},
-					headerShadowVisible: false,
-					headerLargeTitleEnabled: true,
-					headerTransparent: true,
-				}}
-			/>
+			<Stack.Screen options={{headerLargeTitleEnabled: true}} />
 			<Stack.Title>All About Olaf</Stack.Title>
 			<Stack.Toolbar placement="right">
 				<Stack.Toolbar.Button

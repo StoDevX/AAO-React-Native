@@ -8,6 +8,7 @@
     "@expo/log-box": "57.0.2",
     "@expo/metro-runtime": "57.0.9",
     "@expo/ui": "57.0.10",
+    "@frogpond/add-to-device-calendar": "workspace:*",
     "@frogpond/api": "workspace:*",
     "@frogpond/app-theme": "workspace:*",
     "@frogpond/badge": "workspace:*",

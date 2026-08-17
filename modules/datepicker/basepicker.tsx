@@ -2,7 +2,7 @@ import * as React from 'react'
 
 import moment from 'moment-timezone'
 
-import {DateTimePicker, type DateTimePickerEvent} from '@expo/ui/community/datetime-picker'
+import {DateTimePicker, type DateTimePickerChangeEvent} from '@expo/ui/community/datetime-picker'
 
 import {BaseDatetimePickerProps} from './types'
 
@@ -10,12 +10,12 @@ export const BaseDateTimePicker = (props: BaseDatetimePickerProps): React.ReactN
 	let [date, setDate] = React.useState(props.initialDate)
 	let [timezone] = React.useState(props.initialDate.tz() || '')
 
-	const onChange = (_event: DateTimePickerEvent, selectedDate?: Date) => {
+	// `onValueChange` fires only on selection and always carries a date, where
+	// the `onChange` it replaces also fired on dismissal with none. Only the
+	// iOS picker is rendered below, and iOS never dismisses, so the two
+	// behave alike here.
+	const onValueChange = (_event: DateTimePickerChangeEvent, selectedDate: Date) => {
 		props.onChange?.()
-
-		if (!selectedDate) {
-			return
-		}
 
 		setDate(moment(selectedDate))
 		props.onDateChange(moment.tz(selectedDate, timezone))
@@ -23,7 +23,7 @@ export const BaseDateTimePicker = (props: BaseDatetimePickerProps): React.ReactN
 
 	let sharedPlatformProps = {
 		mode: props.mode,
-		onChange: onChange,
+		onValueChange: onValueChange,
 		style: props.style,
 		testID: 'datepicker',
 		// The picker takes an IANA zone name directly, so the wrapper no longer

@@ -8,7 +8,7 @@ import {
 	type TextFieldRef,
 	useNativeState,
 } from '@expo/ui/swift-ui'
-import {disabled, foregroundColor, onSubmit, submitLabel} from '@expo/ui/swift-ui/modifiers'
+import {disabled, foregroundStyle, onSubmit, submitLabel} from '@expo/ui/swift-ui/modifiers'
 import {
 	performLogin,
 	credentialsOptions,
@@ -132,7 +132,7 @@ export const CredentialsLoginSection = (): React.ReactNode => {
 			/>
 
 			{!actionPending && logIn.isError && logIn.error instanceof Error && (
-				<Text modifiers={[foregroundColor(sto.red)]}>{logIn.error.message}</Text>
+				<Text modifiers={[foregroundStyle(sto.red)]}>{logIn.error.message}</Text>
 			)}
 		</Section>
 	)

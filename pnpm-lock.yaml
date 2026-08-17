@@ -42,6 +42,9 @@ importers:
       '@expo/ui':
         specifier: 57.0.10
         version: 57.0.10(@babel/core@7.29.7)(expo@57.0.12)(react-dom@19.2.3)(react-native-worklets@0.11.4)(react-native@0.86.2)(react@19.2.8)
+      '@frogpond/add-to-device-calendar':
+        specifier: workspace:*
+        version: link:modules/add-to-device-calendar
       '@frogpond/api':
         specifier: workspace:*
         version: link:modules/api
@@ -520,6 +523,9 @@ importers:
 
   modules/ccc-calendar:
     dependencies:
+      '@frogpond/colors':
+        specifier: workspace:*
+        version: link:../colors
       '@frogpond/data-sources':
         specifier: workspace:*
         version: link:../data-sources
@@ -541,6 +547,9 @@ importers:
       delay:
         specifier: ^7.0.0
         version: 7.0.0
+      expo-calendar:
+        specifier: ~57.0.1
+        version: 57.0.1(expo@57.0.12)(react-native@0.86.2)
       ical.js:
         specifier: 2.2.1
         version: 2.2.1
@@ -603,9 +612,6 @@ importers:
       '@callstack/react-theme-provider':
         specifier: 3.0.9
         version: 3.0.9(react@19.2.8)
-      '@frogpond/add-to-device-calendar':
-        specifier: workspace:*
-        version: link:../add-to-device-calendar
       '@frogpond/colors':
         specifier: workspace:*
         version: link:../colors
@@ -4184,10 +4190,6 @@ packages:
 
   js-yaml@4.3.1:
     resolution: {integrity: sha512-CY6crGq313MX8GkwvB7tzgp99vjQxY1++5y10/BKN/GUfHqWaOGQMNZkBvqSzsZKWk/ijwHlWzzkLulsGHhjWQ==}
-    hasBin: true
-
-  js-yaml@5.2.3:
-    resolution: {integrity: sha512-n+mUVyUX5bVv7G/G2zyIHOhdxfuU1dY2NOFzTQUWiMUbFss8b57NFlgCCaggU78wSw5KVS9cllzeLyzyR+n5nw==}
     hasBin: true
 
   js-yaml@5.3.0:
@@ -9442,10 +9444,6 @@ snapshots:
   js-tokens@4.0.0: {}
 
   js-yaml@4.3.1:
-    dependencies:
-      argparse: 2.0.1
-
-  js-yaml@5.2.3:
     dependencies:
       argparse: 2.0.1
 

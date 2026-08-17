@@ -8,6 +8,7 @@ const esmPackages = [
 	'immer',
 	'redux',
 	'redux-thunk',
+	'react-redux',
 	'reselect',
 	'expo',
 	'@expo',

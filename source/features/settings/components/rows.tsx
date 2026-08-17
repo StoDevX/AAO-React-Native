@@ -5,7 +5,7 @@ import {
 	buttonStyle,
 	contentShape,
 	disabled as disabledModifier,
-	foregroundColor,
+	foregroundStyle,
 	shapes,
 } from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
@@ -36,7 +36,7 @@ export function NavigationRow(props: RowProps): React.ReactNode {
 			    putting contentShape on the Button leaves only the text and
 			    chevron tappable rather than the whole row. */}
 			<HStack modifiers={[contentShape(shapes.rectangle())]}>
-				<Text modifiers={[foregroundColor(c.label)]}>{title}</Text>
+				<Text modifiers={[foregroundStyle(c.label)]}>{title}</Text>
 				<Spacer />
 				<Image color={c.tertiaryLabel} size={14} systemName="chevron.right" />
 			</HStack>
@@ -57,7 +57,7 @@ export function ActionRow(props: RowProps): React.ReactNode {
 			onPress={onPress}
 		>
 			<HStack modifiers={[contentShape(shapes.rectangle())]}>
-				<Text modifiers={[foregroundColor(c.systemBlue)]}>{title}</Text>
+				<Text modifiers={[foregroundStyle(c.systemBlue)]}>{title}</Text>
 				<Spacer />
 			</HStack>
 		</Button>

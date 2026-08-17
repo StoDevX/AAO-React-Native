@@ -181,6 +181,19 @@ run = "node scripts/validate-data.mjs"
 description = "Check that modules declare the @frogpond packages they import"
 run = "node scripts/validate-workspace-deps.mjs"
 
+# A package.json edited without regenerating the lockfile passes format, lint,
+# tsc and test -- node_modules is already installed locally -- and then fails
+# every CI job at install.
+#
+# `--lockfile-only` resolves without touching node_modules, and
+# `--trust-lockfile` skips pnpm's supply-chain re-verification, which reaches
+# the registry and takes over a minute on a cold cache. That check belongs in
+# CI, where the network is a given; here the question is only whether the
+# lockfile still describes the package.json files.
+[tasks."validate-lockfile"]
+description = "Check that pnpm-lock.yaml matches the package.json files"
+run = "pnpm install --frozen-lockfile --lockfile-only --trust-lockfile"
+
 [tasks."compress-data"]
 description = "Compress data files"
 run = "gzip --keep docs/*.json"
@@ -208,5 +221,5 @@ description = "Set up the development environment for AI agents"
 depends = ["pnpm:install:frozen", "bundle-data"]
 
 [tasks."agent:pre-commit"]
-description = "Run pre-commit checks: format, lint, typecheck, test"
-depends = ["format", "lint", "tsc", "test"]
+description = "Run pre-commit checks: format, lint, typecheck, test, lockfile"
+depends = ["format", "lint", "tsc", "test", "validate-lockfile"]

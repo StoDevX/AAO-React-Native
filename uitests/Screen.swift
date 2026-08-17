@@ -67,6 +67,20 @@ extension Screen {
 		return self
 	}
 
+	/// Attach a screenshot of the whole screen to the test report.
+	///
+	/// `.keepAlways` rather than the default `.deleteOnSuccess`: these are taken
+	/// to be looked at, and a run that passes is exactly the run whose
+	/// screenshots are worth keeping.
+	@discardableResult
+	func capture(_ name: String) -> Self {
+		let attachment = XCTAttachment(screenshot: app.screenshot())
+		attachment.name = name
+		attachment.lifetime = .keepAlways
+		XCTContext.runActivity(named: name) { $0.add(attachment) }
+		return self
+	}
+
 	/// Assert that a navigation-bar or section title is visible.
 	@discardableResult
 	func verifyTitle(_ title: String) -> Self {

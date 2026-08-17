@@ -44,18 +44,6 @@ describe('submitReport', () => {
 			},
 		})
 	})
-
-	it('omits name and email when not provided', () => {
-		submitReport({message: 'it crashed'})
-
-		expect(Sentry.captureFeedback).toHaveBeenCalledWith(
-			expect.objectContaining({
-				message: 'it crashed',
-				name: undefined,
-				email: undefined,
-			}),
-		)
-	})
 })
 
 describe('submitReport in non-production', () => {

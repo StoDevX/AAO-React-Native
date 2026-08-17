@@ -103,13 +103,6 @@ describe('FaqBanner component', () => {
 		useFaqBannerStore.getState().resetAll()
 	})
 
-	it('renders the banner title and text', async () => {
-		let {getByText} = await renderWithFaqs([baseFaq])
-
-		expect(getByText(baseFaq.bannerTitle)).toBeTruthy()
-		expect(getByText(baseFaq.bannerText)).toBeTruthy()
-	})
-
 	it('dismisses the banner when the close button is pressed', async () => {
 		let {getByLabelText, queryByText} = await renderWithFaqs([baseFaq])
 

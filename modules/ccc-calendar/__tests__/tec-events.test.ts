@@ -157,6 +157,22 @@ test('strips html from the description and keeps its links', () => {
 	expect(event.links).toContain('https://wp.stolaf.edu/calendar/event/a/')
 })
 
+test('drops a description link that duplicates the event url', () => {
+	const [event] = parseTecEvents({
+		events: [
+			{
+				title: 'A',
+				description: '<p>See <a href="https://wp.stolaf.edu/calendar/event/a/">this event</a>.</p>',
+				url: 'https://wp.stolaf.edu/calendar/event/a/',
+				all_day: false,
+				utc_start_date: '2026-08-17 13:00:00',
+				utc_end_date: '2026-08-17 14:00:00',
+			},
+		],
+	})
+	expect(event.links).toStrictEqual(['https://wp.stolaf.edu/calendar/event/a/'])
+})
+
 test('treats an empty modular-content description as empty, not a failure', () => {
 	const [event] = parseTecEvents({
 		events: [

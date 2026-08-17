@@ -1,23 +1,21 @@
 import * as React from 'react'
-import {StyleSheet} from 'react-native'
-import {Button, Form, Host, Link, Section, Text, VStack} from '@expo/ui/swift-ui'
+import {StyleSheet, type ColorValue} from 'react-native'
+import {Form, Host, Link, Section, Text, VStack} from '@expo/ui/swift-ui'
 import {
-	accessibilityLabel,
-	buttonStyle,
-	disabled as disabledModifier,
 	font,
-	foregroundColor,
+	foregroundStyle,
 	listRowBackground,
 	listRowSeparator,
 	multilineTextAlignment,
 	textSelection,
 } from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
-import {AddToCalendar} from '@frogpond/add-to-device-calendar'
 import type {EventType} from '@frogpond/event-type'
 
 import {EventDetailHeader} from './event-detail-header'
+import {EventTimeline} from './event-timeline'
 import {detailTimeLines} from './times'
+import type {TimelineBlock, TimelineWindow} from './timeline'
 import type {PoweredBy} from './types'
 
 const styles = StyleSheet.create({
@@ -29,7 +27,7 @@ const styles = StyleSheet.create({
 function TextSection({header, content}: {header: string; content: string}) {
 	return content ? (
 		<Section title={header}>
-			<Text modifiers={[foregroundColor(c.label), textSelection(true)]}>{content}</Text>
+			<Text modifiers={[foregroundStyle(c.label), textSelection(true)]}>{content}</Text>
 		</Section>
 	) : null
 }
@@ -37,23 +35,53 @@ function TextSection({header, content}: {header: string; content: string}) {
 type Props = {
 	event: EventType
 	poweredBy: PoweredBy
+	/**
+	 * The calendar's colour, for the masthead bar. Passed through rather than
+	 * derived here: this component knows an event, not which calendar it
+	 * came from.
+	 */
+	color: ColorValue
+	/**
+	 * The event's neighbours, already positioned, and the colour lookup their
+	 * blocks are tinted by. One optional bundling both rather than two
+	 * separate ones: `colorFor` means nothing without `blocks` to tint, and a
+	 * timeline with no `colorFor` would silently draw nothing, so the two
+	 * cannot be passed independently. Absent for a source with no
+	 * surrounding-events query behind it -- the radio schedules -- and for an
+	 * all-day event, which has no position to draw.
+	 */
+	timeline?: {
+		window: TimelineWindow
+		blocks: TimelineBlock[]
+		colorFor: (sourceId: string) => ColorValue
+	}
 }
 
-export function EventDetail({event, poweredBy}: Props): React.ReactNode {
+export function EventDetail({event, poweredBy, color, timeline}: Props): React.ReactNode {
 	let lines = detailTimeLines(event)
 
 	return (
 		<Host style={styles.host}>
 			<Form>
-				{/* The date block is a masthead rather than a row, so it loses the
-				    grouped-row card the way the attribution below does. It sits under
-				    the screen's native large title, which carries the event's name. */}
+				{/* The masthead is not a row of the form, so it loses the grouped-row
+				    card the way the attribution below does. It carries the event's name
+				    and dates together, flanked by one accent bar. */}
 				<VStack modifiers={[listRowBackground('clear'), listRowSeparator('hidden')]}>
-					<EventDetailHeader lines={lines} />
+					<EventDetailHeader color={color} lines={lines} title={event.title} />
 				</VStack>
 
 				<TextSection content={event.location.trim()} header="Location" />
 				<TextSection content={event.description.trim()} header="Description" />
+
+				{timeline ? (
+					<Section>
+						<EventTimeline
+							blocks={timeline.blocks}
+							colorFor={timeline.colorFor}
+							window={timeline.window}
+						/>
+					</Section>
+				) : null}
 
 				{event.links.length > 0 ? (
 					<Section title="Links">
@@ -62,25 +90,6 @@ export function EventDetail({event, poweredBy}: Props): React.ReactNode {
 						))}
 					</Section>
 				) : null}
-
-				<AddToCalendar
-					event={event}
-					render={({message, disabled, onPress}) => (
-						// `footer` is a SwiftUI slot: a bare string here crashes at mount.
-						<Section footer={message ? <Text>{message}</Text> : undefined}>
-							<Button
-								modifiers={[
-									buttonStyle('plain'),
-									accessibilityLabel('Add to calendar'),
-									disabledModifier(disabled),
-								]}
-								onPress={onPress}
-							>
-								<Text modifiers={[foregroundColor(c.systemBlue)]}>Add to calendar</Text>
-							</Button>
-						</Section>
-					)}
-				/>
 
 				{/* The attribution is a caption on the form, not a row of it, so the
 				    row's background and separator are cleared. Its insets are left
@@ -92,7 +101,7 @@ export function EventDetail({event, poweredBy}: Props): React.ReactNode {
 						<Text
 							modifiers={[
 								font({size: 10}),
-								foregroundColor(c.secondaryLabel),
+								foregroundStyle(c.secondaryLabel),
 								multilineTextAlignment('center'),
 								textSelection(true),
 							]}
