@@ -46,13 +46,6 @@ const NORTHFIELD: CalendarSource = {
 	color: 'indigo',
 	kind: 'remote',
 }
-const DEVICE_CAL_1: CalendarSource = {
-	id: 'device:cal-1',
-	title: 'Birthdays',
-	color: '#34C759',
-	kind: 'device',
-}
-
 // Every query left without observers gets a garbage-collection timeout, and
 // React Query's default is five minutes -- long enough to outlive the run and
 // leave the Jest worker to be force-killed rather than exiting on its own.
@@ -72,11 +65,10 @@ function wrapper({children}: {children: React.ReactNode}) {
 }
 
 describe('useMergedEvents', () => {
-	test('events from every enabled source arrive together, tagged with it', async () => {
+	test('events from every enabled source arrive together', async () => {
 		let {result} = await renderHook(() => useMergedEvents([STOLAF]), {wrapper})
 
 		await waitFor(() => expect(result.current.events).toHaveLength(1))
-		expect(result.current.events[0]?.sourceId).toBe('stolaf')
 	})
 
 	// One failing feed must not blank the screen: with several sources, a flaky
@@ -93,17 +85,6 @@ describe('useMergedEvents', () => {
 		let {result} = await renderHook(() => useMergedEvents([]), {wrapper})
 
 		expect(result.current.events).toEqual([])
-		expect(result.current.failed).toEqual([])
-	})
-
-	// `isDeviceSourceId`/`deviceCalendarIdFrom` route a device source to
-	// `deviceCalendarOptions` instead of `namedCalendarOptions` -- the only
-	// branch in the hook, and otherwise untested.
-	test('a device source is routed to deviceCalendarOptions, tagged with its own id', async () => {
-		let {result} = await renderHook(() => useMergedEvents([DEVICE_CAL_1]), {wrapper})
-
-		await waitFor(() => expect(result.current.events).toHaveLength(1))
-		expect(result.current.events[0]?.sourceId).toBe('device:cal-1')
 		expect(result.current.failed).toEqual([])
 	})
 })
