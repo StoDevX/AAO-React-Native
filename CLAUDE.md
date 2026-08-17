@@ -160,6 +160,7 @@ Skills are located in `.claude/skills/`. Agents are in `.claude/agents/`. Comman
 | `requesting-code-review` | Pre-review checklist |
 | `receiving-code-review` | Responding to feedback |
 | `using-git-worktrees` | Parallel development branches |
+| `auditing-a-finished-branch` | Test-value and comment audit before review |
 | `finishing-a-development-branch` | Merge/PR decision workflow |
 | `writing-skills` | Create new skills |
 | `add-screen` | Scaffold and integrate a new screen into the app |
