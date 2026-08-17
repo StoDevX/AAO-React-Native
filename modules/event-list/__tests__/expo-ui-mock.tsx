@@ -39,6 +39,7 @@ export const lineLimit = modifier('lineLimit')
 export const truncationMode = modifier('truncationMode')
 export const contentShape = modifier('contentShape')
 export const offset = modifier('offset')
+export const opacity = modifier('opacity')
 
 /**
  * Shape builders, not modifiers: `contentShape(shapes.rectangle())` passes one

@@ -146,7 +146,7 @@ describe('timelineBlocks', () => {
 
 	test('an event running past the window is clipped at its foot', () => {
 		let window = timelineWindow(makeEvent())
-		let long = entry('stolaf', 'a', {endTime: moment('2026-08-20T18:00:00')})
+		let long = entry('stolaf', 'a', {endTime: moment('2026-08-17T18:00:00')})
 		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 		let [block] = timelineBlocks(window!, [long], 'stolaf|a')
 
@@ -185,6 +185,17 @@ describe('timelineBlocks', () => {
 
 		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 		expect(timelineBlocks(window!, [allDay], 'stolaf|b')).toEqual([])
+	})
+
+	test('a multi-day neighbour is dropped, since it would fill the window', () => {
+		let window = timelineWindow(makeEvent())
+		let spanning = entry('northfield', 'b', {
+			startTime: moment('2026-08-16T09:00:00'),
+			endTime: moment('2026-08-19T09:00:00'),
+		})
+
+		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+		expect(timelineBlocks(window!, [spanning], 'nobody|home')).toEqual([])
 	})
 
 	test('a very short event keeps a legible height', () => {
@@ -251,6 +262,20 @@ describe('timelineBlocks', () => {
 		)
 
 		expect(blocks.map((block) => block.depth)).toEqual([0, 1])
+	})
+
+	test('the current event does not consume a depth slot from an overlapping neighbour', () => {
+		let window = timelineWindow(makeEvent())
+		let neighbour = entry('northfield', 'b')
+		let blocks = timelineBlocks(
+			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+			window!,
+			[entry('stolaf', 'a'), neighbour],
+			'stolaf|a',
+		)
+
+		let neighbourBlock = blocks.find((block) => block.key === 'northfield|b')
+		expect(neighbourBlock?.depth).toBe(0)
 	})
 
 	test('two non-overlapping neighbours both get depth 0', () => {
@@ -334,11 +359,11 @@ describe('timelineBlocks', () => {
 		// 11:00 -- otherwise the default event's own window would end at 09:00,
 		// long before the late entry even starts.
 		let window = timelineWindow(makeEvent({endTime: moment('2026-08-17T13:00:00')}))
-		// Starts one minute before the window ends and runs for days: the
+		// Starts one minute before the window ends and runs long past it: the
 		// min-height floor would otherwise push its foot past the container.
 		let late = entry('stolaf', 'a', {
 			startTime: moment('2026-08-17T10:59:00'),
-			endTime: moment('2026-08-20T18:00:00'),
+			endTime: moment('2026-08-17T23:59:00'),
 		})
 		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 		let [block] = timelineBlocks(window!, [late], 'stolaf|a')
@@ -349,10 +374,10 @@ describe('timelineBlocks', () => {
 
 	test('no block ever starts above the window top, even in a short window', () => {
 		// The default event's window floors to two hours -- the invariant has to
-		// hold against that dynamic height, not just the old fixed one.
+		// hold against that dynamic height.
 		let window = timelineWindow(makeEvent())
 		let early = entry('stolaf', 'a', {
-			startTime: moment('2026-08-16T22:00:00'),
+			startTime: moment('2026-08-17T00:00:00'),
 			endTime: moment('2026-08-17T07:05:00'),
 		})
 		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion

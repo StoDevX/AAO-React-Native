@@ -117,22 +117,37 @@ export const GRIDLINE_LEAD = 8
  */
 const NEIGHBOUR_OPACITY = 0.45
 
+/**
+ * White rather than a computed contrast colour: the block fill is always a
+ * saturated calendar colour, and `firstReadable` takes a string background,
+ * which cannot work for the `PlatformColor` values the remote sources use.
+ * Apple draws white on these blocks in both appearances -- `.primary` would
+ * follow the colour scheme instead of the fill it sits on, going black on a
+ * saturated `systemBlue` block in light mode.
+ */
 function titleText(block: TimelineBlock): React.ReactNode {
 	let {start} = listTimeLines(block.event)
 	let location = block.event[block.event.config.subtitle]?.trim()
 
 	return (
 		<>
-			<Text modifiers={[font({textStyle: 'caption', weight: 'semibold'})]}>
+			<Text
+				modifiers={[font({textStyle: 'caption', weight: 'semibold'}), foregroundStyle(c.white)]}
+			>
 				{block.event.title}
 			</Text>
 			{location ? (
 				<HStack alignment="firstTextBaseline" spacing={4}>
-					<Image modifiers={[font({textStyle: 'caption2'})]} systemName="location.circle" />
-					<Text modifiers={[font({textStyle: 'caption2'})]}>{location}</Text>
+					<Image
+						modifiers={[font({textStyle: 'caption2'}), foregroundStyle(c.white)]}
+						systemName="location.circle"
+					/>
+					<Text modifiers={[font({textStyle: 'caption2'}), foregroundStyle(c.white)]}>
+						{location}
+					</Text>
 				</HStack>
 			) : null}
-			<Text modifiers={[font({textStyle: 'caption2'})]}>{start}</Text>
+			<Text modifiers={[font({textStyle: 'caption2'}), foregroundStyle(c.white)]}>{start}</Text>
 		</>
 	)
 }
@@ -154,7 +169,13 @@ function CurrentBlock({block, color}: {block: TimelineBlock; color: ColorValue})
 				// wraps everything before it, so padding placed after a
 				// height-locked frame grows past the height `timeline.ts` computed.
 				padding({all: 4}),
-				frame({minWidth: width, maxWidth: width, minHeight: block.height, maxHeight: block.height}),
+				frame({
+					minWidth: width,
+					maxWidth: width,
+					minHeight: block.height,
+					maxHeight: block.height,
+					alignment: 'topLeading',
+				}),
 				background(color),
 				clipShape('roundedRectangle'),
 				offset({x: offsetX, y: block.top}),
@@ -170,10 +191,9 @@ function CurrentBlock({block, color}: {block: TimelineBlock; color: ColorValue})
  * depth and layered behind whatever came before it, dimmed as a whole --
  * fill and text both -- so the current event reads as the one in focus.
  *
- * A single layer, not the nested bar/fill/text stack this once was: each
- * nested frame was another place for a size to go wrong, and a uniformly
- * recessed block reads correctly against the solid current block without
- * needing a separate accent bar to make the point.
+ * A single layer: a uniformly recessed block reads correctly against the
+ * solid current block without needing a separate accent bar to make the
+ * point, and there is only one frame's size to get right.
  */
 function NeighbourBlock({
 	block,

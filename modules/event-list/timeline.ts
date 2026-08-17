@@ -145,7 +145,10 @@ export function timelineBlocks(
 	currentKey: string,
 ): TimelineBlock[] {
 	let positioned = entries
-		.filter((entry) => !isAllDay(entry.event))
+		// A multi-day neighbour clamped to the window's top and foot would wash
+		// the whole block area behind everything else, the same degenerate case
+		// `timelineWindow` already refuses for the current event.
+		.filter((entry) => !isAllDay(entry.event) && !isMultiDay(entry.event))
 		.filter((entry) => {
 			let {startTime, endTime} = entry.event
 			// A zero-length event (`sillyZeroLength` in `times.ts`) has
@@ -185,12 +188,12 @@ export function timelineBlocks(
 		})
 		.sort((one, two) => one.top - two.top)
 
-	// The greedy sweep below assigns neighbours a depth by the same logic the
-	// old column sweep used -- each block takes the first slot free at its top
-	// edge, and a block that doesn't overlap anything still visible resets to
-	// depth 0. The current event skips it entirely: it does not take part in
-	// the stagger, drawing instead in its own lane at a fixed offset the
-	// renderer applies from `isCurrent`, so it always gets depth 0.
+	// The greedy sweep below assigns neighbours a depth by interval graph
+	// colouring: each block takes the first slot free at its top edge, and a
+	// block that doesn't overlap anything still visible resets to depth 0. The
+	// current event skips it entirely: it does not take part in the stagger,
+	// drawing instead in its own lane at a fixed offset the renderer applies
+	// from `isCurrent`, so it always gets depth 0.
 	let neighbourFeet: number[] = []
 	let current: TimelineBlock | undefined
 	let neighbours: TimelineBlock[] = []
