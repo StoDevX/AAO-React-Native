@@ -7,10 +7,11 @@ description: Use when a branch is implementation-complete and about to be review
 
 ## Overview
 
-Work that passes review can still leave two kinds of debris behind: tests that
-look like coverage and aren't, and comments that document the branch's history
-instead of the code. Both pass every gate — tsc, lint, and a green suite — so
-nothing catches them but a deliberate pass.
+Work that passes review can still leave debris behind: tests that look like
+coverage and aren't, planning documents that were only ever scaffolding, and
+comments that document the branch's history instead of the code. All three pass
+every gate — tsc, lint, and a green suite — so nothing catches them but a
+deliberate pass.
 
 Do this after the last task is reviewed and before
 `finishing-a-development-branch`.
@@ -42,6 +43,36 @@ Jest is actually good at.
 
 Verify a kept test earns its place by breaking the code it covers and watching
 it fail. A test nobody has ever seen fail is a guess.
+
+## The planning-document audit
+
+Specs, plans, task briefs and progress notes are scaffolding for building the
+branch, not part of what it ships. Delete any the branch introduced.
+
+Deleting them from the working tree is not enough — a file removed in a later
+commit is still in every earlier one, and still lands in the repository when the
+branch merges. Check the history:
+
+```bash
+git log --oneline origin/master..HEAD -- docs/superpowers/
+```
+
+Anything that lists has to come out of the commits, not just off disk. When
+those commits contain nothing else, dropping them is clean; when the documents
+are mixed in with real changes, strip the paths from the range:
+
+```bash
+git filter-branch -f --index-filter \
+  'git rm -r --cached --ignore-unmatch docs/superpowers/' \
+  --prune-empty origin/master..HEAD
+```
+
+Then confirm the log is empty for those paths, and that the only difference from
+the branch's previous tip is the documents themselves. Rewriting history means a
+force-push, so do this before review rather than after.
+
+Keep documentation that describes the shipped system — a README, an architecture
+note, a comment in the code. It is the planning trail that goes.
 
 ## The comment audit
 
@@ -81,3 +112,4 @@ Grep finds candidates, not verdicts — read each one.
 | "I'll reword the comment instead of deleting it" | If its only content is what changed, it has nothing to say. |
 | "The test passes, so it's fine" | Every test on the branch passes. That is the problem. |
 | "Deleting tests needs permission" | Deleting *assertions that cannot fail* is cleanup. Say what you removed and why. |
+| "I deleted the plan, so it's gone" | A file deleted in the last commit is still in every earlier one, and still merges. Check the log. |
