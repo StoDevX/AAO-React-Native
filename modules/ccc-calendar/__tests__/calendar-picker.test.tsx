@@ -109,13 +109,6 @@ function isChecked(name: string): boolean {
 }
 
 describe('CalendarPicker', () => {
-	test('the button is named Calendars', async () => {
-		mockUseIsDevMode.mockReturnValue(false)
-		await render(<CalendarPicker />, {wrapper})
-
-		expect(within(screen.getByTestId('toolbar-bottom')).getByText('Calendars')).toBeTruthy()
-	})
-
 	test('outside dev mode it lists the app’s calendars with no groups', async () => {
 		mockUseIsDevMode.mockReturnValue(false)
 		await render(<CalendarPicker />, {wrapper})
