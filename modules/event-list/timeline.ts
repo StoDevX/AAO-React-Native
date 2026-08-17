@@ -41,9 +41,19 @@ export interface TimelineBlock {
 	event: EventType
 	top: number
 	height: number
-	column: number
-	columnCount: number
+	/**
+	 * How many overlapping neighbours precede this one, driving its stagger
+	 * indent. Always 0 for the current event -- see `timelineBlocks`.
+	 */
+	depth: number
+	isCurrent: boolean
 }
+
+/**
+ * Beyond this many staggered neighbours, the indent would consume the whole
+ * block area, leaving no room for a neighbour's own content.
+ */
+export const MAX_DEPTH = 3
 
 /**
  * `time` rounded up to the next hour, or itself if already on the hour --
@@ -120,17 +130,19 @@ export function timelineEntries(
 }
 
 /**
- * Every entry that shows in the window, positioned and assigned a column.
- * All blocks are confined to the window — none start above or extend past its bounds.
+ * Every entry that shows in the window, positioned and depth-assigned for a
+ * Calendar.app-style stagger. All blocks are confined to the window — none
+ * start above or extend past its bounds.
  *
- * Columns come from a greedy sweep in start order: each block takes the first
- * column free at its top edge. `columnCount` is the widest the window ever
- * gets rather than per-cluster, so every block in one timeline is the same
- * width -- simpler, and indistinguishable over a span this short.
+ * `currentKey` is the `sourceId|key` of the event being viewed, the same
+ * string this function builds for `block.key`. The current event is returned
+ * last, so a renderer painting in array order draws it on top of every
+ * neighbour behind it.
  */
 export function timelineBlocks(
 	window: TimelineWindow,
 	entries: readonly SourcedEvent[],
+	currentKey: string,
 ): TimelineBlock[] {
 	let positioned = entries
 		.filter((entry) => !isAllDay(entry.event))
@@ -173,16 +185,32 @@ export function timelineBlocks(
 		})
 		.sort((one, two) => one.top - two.top)
 
-	let columnFeet: number[] = []
-	let assigned = positioned.map((block) => {
-		let column = columnFeet.findIndex((foot) => foot <= block.top)
-		if (column === -1) {
-			column = columnFeet.length
+	// The greedy sweep below assigns neighbours a depth by the same logic the
+	// old column sweep used -- each block takes the first slot free at its top
+	// edge, and a block that doesn't overlap anything still visible resets to
+	// depth 0. The current event skips it entirely: it does not take part in
+	// the stagger, drawing instead in its own lane at a fixed offset the
+	// renderer applies from `isCurrent`, so it always gets depth 0.
+	let neighbourFeet: number[] = []
+	let current: TimelineBlock | undefined
+	let neighbours: TimelineBlock[] = []
+	for (let block of positioned) {
+		if (block.key === currentKey) {
+			current = {...block, isCurrent: true, depth: 0}
+			continue
 		}
-		columnFeet[column] = block.top + block.height
-		return {...block, column}
-	})
 
-	let columnCount = Math.max(columnFeet.length, 1)
-	return assigned.map((block) => ({...block, columnCount}))
+		let column = neighbourFeet.findIndex((foot) => foot <= block.top)
+		if (column === -1) {
+			column = neighbourFeet.length
+		}
+		neighbourFeet[column] = block.top + block.height
+
+		// Capped so the indent can't run off the block area's right edge --
+		// beyond MAX_DEPTH neighbours there is no more room to stagger into.
+		let depth = Math.min(column, MAX_DEPTH)
+		neighbours.push({...block, isCurrent: false, depth})
+	}
+
+	return current ? [...neighbours, current] : neighbours
 }

@@ -4,6 +4,7 @@ import type {EventType} from '@frogpond/event-type'
 
 import {
 	HOUR_HEIGHT,
+	MAX_DEPTH,
 	MAX_WINDOW_HOURS,
 	MIN_BLOCK_HEIGHT,
 	MIN_WINDOW_HOURS,
@@ -136,7 +137,7 @@ describe('timelineBlocks', () => {
 	test('a block sits proportionally below the window top', () => {
 		let window = timelineWindow(makeEvent())
 		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-		let [block] = timelineBlocks(window!, [entry('stolaf', 'a')])
+		let [block] = timelineBlocks(window!, [entry('stolaf', 'a')], 'stolaf|a')
 
 		// 07:45 is three quarters of an hour past the 07:00 window top.
 		expect(block.top).toBe(0.75 * HOUR_HEIGHT)
@@ -147,7 +148,7 @@ describe('timelineBlocks', () => {
 		let window = timelineWindow(makeEvent())
 		let long = entry('stolaf', 'a', {endTime: moment('2026-08-20T18:00:00')})
 		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-		let [block] = timelineBlocks(window!, [long])
+		let [block] = timelineBlocks(window!, [long], 'stolaf|a')
 
 		expect(block.top + block.height).toBe(window?.height)
 	})
@@ -159,7 +160,7 @@ describe('timelineBlocks', () => {
 			endTime: moment('2026-08-17T07:45:00'),
 		})
 		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-		let [block] = timelineBlocks(window!, [early])
+		let [block] = timelineBlocks(window!, [early], 'stolaf|a')
 
 		expect(block.top).toBe(0)
 		expect(block.height).toBe(0.75 * HOUR_HEIGHT)
@@ -173,7 +174,7 @@ describe('timelineBlocks', () => {
 		})
 
 		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-		expect(timelineBlocks(window!, [later])).toEqual([])
+		expect(timelineBlocks(window!, [later], 'stolaf|b')).toEqual([])
 	})
 
 	test('an all-day event is dropped, having no position', () => {
@@ -183,51 +184,104 @@ describe('timelineBlocks', () => {
 		})
 
 		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-		expect(timelineBlocks(window!, [allDay])).toEqual([])
+		expect(timelineBlocks(window!, [allDay], 'stolaf|b')).toEqual([])
 	})
 
 	test('a very short event keeps a legible height', () => {
 		let window = timelineWindow(makeEvent())
 		let brief = entry('stolaf', 'a', {endTime: moment('2026-08-17T07:50:00')})
 		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-		let [block] = timelineBlocks(window!, [brief])
+		let [block] = timelineBlocks(window!, [brief], 'stolaf|a')
 
 		// Five minutes is 3.3pt at 40pt/hour, too short to read.
 		expect(block.height).toBe(20)
 	})
 
-	test('overlapping events split into side-by-side columns', () => {
+	test('the current event is marked isCurrent and every other block is not', () => {
 		let window = timelineWindow(makeEvent())
-		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-		let blocks = timelineBlocks(window!, [
-			entry('stolaf', 'a'),
-			entry('northfield', 'b', {
-				startTime: moment('2026-08-17T08:00:00'),
-				endTime: moment('2026-08-17T09:00:00'),
-			}),
-		])
+		let neighbour = entry('northfield', 'b', {
+			startTime: moment('2026-08-17T08:00:00'),
+			endTime: moment('2026-08-17T09:00:00'),
+		})
+		let blocks = timelineBlocks(
+			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+			window!,
+			[entry('stolaf', 'a'), neighbour],
+			'stolaf|a',
+		)
 
-		expect(blocks.map((block) => block.column)).toEqual([0, 1])
-		expect(blocks.every((block) => block.columnCount === 2)).toBe(true)
+		let current = blocks.find((block) => block.key === 'stolaf|a')
+		let others = blocks.filter((block) => block.key !== 'stolaf|a')
+
+		expect(current?.isCurrent).toBe(true)
+		expect(others.every((block) => !block.isCurrent)).toBe(true)
 	})
 
-	test('events that do not overlap share one column', () => {
+	test('the current event is last in the returned array, so it paints on top', () => {
+		let window = timelineWindow(makeEvent())
+		let neighbour = entry('northfield', 'b', {
+			startTime: moment('2026-08-17T08:00:00'),
+			endTime: moment('2026-08-17T09:00:00'),
+		})
+		let blocks = timelineBlocks(
+			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+			window!,
+			[entry('stolaf', 'a'), neighbour],
+			'stolaf|a',
+		)
+
+		expect(blocks.at(-1)?.key).toBe('stolaf|a')
+	})
+
+	test('two overlapping neighbours get depths 0 and 1', () => {
+		let window = timelineWindow(makeEvent())
+		let blocks = timelineBlocks(
+			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+			window!,
+			[
+				entry('stolaf', 'a'),
+				entry('northfield', 'b', {
+					startTime: moment('2026-08-17T08:00:00'),
+					endTime: moment('2026-08-17T09:00:00'),
+				}),
+			],
+			// Neither entry is the current event here -- this exercises the
+			// neighbour sweep on its own.
+			'nobody|home',
+		)
+
+		expect(blocks.map((block) => block.depth)).toEqual([0, 1])
+	})
+
+	test('two non-overlapping neighbours both get depth 0', () => {
 		// A window sized to the default 07:45-08:45 event would end at 09:00,
 		// clipping the second entry's own hour -- widen it to the four-hour cap
 		// so both events land fully inside, which is what this test means to
 		// exercise.
 		let window = timelineWindow(makeEvent({endTime: moment('2026-08-17T13:00:00')}))
-		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-		let blocks = timelineBlocks(window!, [
-			entry('stolaf', 'a'),
-			entry('northfield', 'b', {
-				startTime: moment('2026-08-17T09:00:00'),
-				endTime: moment('2026-08-17T10:00:00'),
-			}),
-		])
+		let blocks = timelineBlocks(
+			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+			window!,
+			[
+				entry('stolaf', 'a'),
+				entry('northfield', 'b', {
+					startTime: moment('2026-08-17T09:00:00'),
+					endTime: moment('2026-08-17T10:00:00'),
+				}),
+			],
+			'nobody|home',
+		)
 
-		expect(blocks.map((block) => block.column)).toEqual([0, 0])
-		expect(blocks.every((block) => block.columnCount === 1)).toBe(true)
+		expect(blocks.map((block) => block.depth)).toEqual([0, 0])
+	})
+
+	test('depth is clamped at MAX_DEPTH with five overlapping neighbours', () => {
+		let window = timelineWindow(makeEvent())
+		let overlapping = ['a', 'b', 'c', 'd', 'e'].map((key) => entry('stolaf', key))
+		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+		let blocks = timelineBlocks(window!, overlapping, 'nobody|home')
+
+		expect(blocks.map((block) => block.depth)).toEqual([0, 1, 2, MAX_DEPTH, MAX_DEPTH])
 	})
 
 	test('a zero-length event on the hour still draws', () => {
@@ -237,7 +291,7 @@ describe('timelineBlocks', () => {
 			endTime: moment('2026-08-17T07:00:00'),
 		})
 		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-		let [block] = timelineBlocks(window!, [instant])
+		let [block] = timelineBlocks(window!, [instant], 'stolaf|a')
 
 		expect(block).toBeDefined()
 		expect(block.top).toBe(0)
@@ -252,17 +306,27 @@ describe('timelineBlocks', () => {
 		})
 
 		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-		expect(timelineBlocks(window!, [before])).toEqual([])
+		expect(timelineBlocks(window!, [before], 'stolaf|b')).toEqual([])
 	})
 
 	test('a block is keyed by source and event together', () => {
 		let window = timelineWindow(makeEvent())
 		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-		let [block] = timelineBlocks(window!, [entry('stolaf', 'a')])
+		let [block] = timelineBlocks(window!, [entry('stolaf', 'a')], 'stolaf|a')
 
 		// The same event can reach the list from two merged calendars, so the
 		// event key alone collides -- as it does in the list's rows.
 		expect(block.key).toBe('stolaf|a')
+	})
+
+	test('an entry list holding only the current event yields one block, current, at depth 0', () => {
+		let window = timelineWindow(makeEvent())
+		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+		let blocks = timelineBlocks(window!, [entry('stolaf', 'a')], 'stolaf|a')
+
+		expect(blocks).toHaveLength(1)
+		expect(blocks[0].isCurrent).toBe(true)
+		expect(blocks[0].depth).toBe(0)
 	})
 
 	test('a block near the window foot is pulled up rather than overflowing', () => {
@@ -277,7 +341,7 @@ describe('timelineBlocks', () => {
 			endTime: moment('2026-08-20T18:00:00'),
 		})
 		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-		let [block] = timelineBlocks(window!, [late])
+		let [block] = timelineBlocks(window!, [late], 'stolaf|a')
 
 		expect(block.top + block.height).toBeLessThanOrEqual(window?.height ?? 0)
 		expect(block.height).toBe(MIN_BLOCK_HEIGHT)
@@ -292,7 +356,7 @@ describe('timelineBlocks', () => {
 			endTime: moment('2026-08-17T07:05:00'),
 		})
 		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-		let [block] = timelineBlocks(window!, [early])
+		let [block] = timelineBlocks(window!, [early], 'stolaf|a')
 
 		expect(block.top).toBeGreaterThanOrEqual(0)
 		expect(block.top + block.height).toBeLessThanOrEqual(window?.height ?? 0)

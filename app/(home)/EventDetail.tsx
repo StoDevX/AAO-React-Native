@@ -112,6 +112,7 @@ export default function EventDetailPage(): React.ReactNode {
 						// `eventKey` here is the route param destructured at the top of
 						// the component, not the `eventKey` helper event-list exports.
 						timelineEntries({sourceId: source, key: eventKey, event}, neighbours),
+						`${source}|${eventKey}`,
 					),
 				}
 			: undefined
