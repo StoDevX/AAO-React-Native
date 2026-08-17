@@ -4,6 +4,7 @@ import type {EventType} from '@frogpond/event-type'
 
 import {
 	HOUR_HEIGHT,
+	MIN_BLOCK_HEIGHT,
 	timelineBlocks,
 	timelineEntries,
 	timelineWindow,
@@ -82,13 +83,13 @@ describe('timelineBlocks', () => {
 		let window = timelineWindow(makeEvent())
 		let early = entry('stolaf', 'a', {
 			startTime: moment('2026-08-17T05:00:00'),
-			endTime: moment('2026-08-17T07:30:00'),
+			endTime: moment('2026-08-17T07:45:00'),
 		})
 		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 		let [block] = timelineBlocks(window!, [early])
 
 		expect(block.top).toBe(0)
-		expect(block.height).toBe(0.5 * HOUR_HEIGHT)
+		expect(block.height).toBe(0.75 * HOUR_HEIGHT)
 	})
 
 	test('an event outside the window is dropped', () => {
@@ -161,6 +162,34 @@ describe('timelineBlocks', () => {
 		// event key alone collides -- as it does in the list's rows.
 		expect(block.key).toBe('stolaf|a')
 	})
+
+	test('a block near the window foot is pulled up rather than overflowing', () => {
+		let window = timelineWindow(makeEvent())
+		// Starts one minute before the window ends and runs for days: the
+		// min-height floor would otherwise push its foot past the container.
+		let late = entry('stolaf', 'a', {
+			startTime: moment('2026-08-17T10:59:00'),
+			endTime: moment('2026-08-20T18:00:00'),
+		})
+		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+		let [block] = timelineBlocks(window!, [late])
+
+		expect(block.top + block.height).toBeLessThanOrEqual(WINDOW_HEIGHT)
+		expect(block.height).toBe(MIN_BLOCK_HEIGHT)
+	})
+
+	test('no block ever starts above the window top', () => {
+		let window = timelineWindow(makeEvent())
+		let early = entry('stolaf', 'a', {
+			startTime: moment('2026-08-16T22:00:00'),
+			endTime: moment('2026-08-17T07:05:00'),
+		})
+		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+		let [block] = timelineBlocks(window!, [early])
+
+		expect(block.top).toBeGreaterThanOrEqual(0)
+		expect(block.top + block.height).toBeLessThanOrEqual(WINDOW_HEIGHT)
+	})
 })
 
 describe('timelineEntries', () => {
@@ -176,8 +205,8 @@ describe('timelineEntries', () => {
 
 		// The merged list holds the current event already whenever its calendar
 		// is switched on, which is the usual case.
-		expect(timelineEntries(current, [entry('stolaf', 'a'), entry('northfield', 'b')])).toHaveLength(
-			2,
-		)
+		let result = timelineEntries(current, [entry('stolaf', 'a'), entry('northfield', 'b')])
+		expect(result).toHaveLength(2)
+		expect(result[0]).toBe(current)
 	})
 })

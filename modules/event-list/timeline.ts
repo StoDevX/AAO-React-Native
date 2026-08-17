@@ -81,6 +81,7 @@ export function timelineEntries(
 
 /**
  * Every entry that shows in the window, positioned and assigned a column.
+ * All blocks are confined to the window — none start above or extend past its bounds.
  *
  * Columns come from a greedy sweep in start order: each block takes the first
  * column free at its top edge. `columnCount` is the widest the window ever
@@ -100,13 +101,25 @@ export function timelineBlocks(
 		.map((entry) => {
 			let top = clamp(offsetIn(window, entry.event.startTime), 0, WINDOW_HEIGHT)
 			let foot = clamp(offsetIn(window, entry.event.endTime), 0, WINDOW_HEIGHT)
+			let height = Math.max(foot - top, MIN_BLOCK_HEIGHT)
+
+			// Ensure the block doesn't overflow the window's foot. If the
+			// min-height floor would push it past, pull the block up instead.
+			let overflow = top + height - WINDOW_HEIGHT
+			if (overflow > 0) {
+				top = Math.max(0, top - overflow)
+			}
+
+			// Cap height at the window height so blocks can never be taller
+			// than the container itself.
+			height = Math.min(height, WINDOW_HEIGHT)
 
 			return {
 				key: `${entry.sourceId}|${entry.key}`,
 				sourceId: entry.sourceId,
 				event: entry.event,
 				top,
-				height: Math.max(foot - top, MIN_BLOCK_HEIGHT),
+				height,
 			}
 		})
 		.sort((one, two) => one.top - two.top)
