@@ -63,6 +63,27 @@ These patterns are especially important in this codebase:
 - `beforeEach`/`afterEach` for setup/cleanup
 - **XCUITest debugging:** iOS UI tests live in `uitests/` and run as sharded CI jobs. When a test fails, two artifacts are uploaded per shard: `uitest-attachments-{shard}` (screenshots extracted via `xcrun xcresulttool export attachments`) and `uitest-results-{shard}.xcresult` (the full XCResult bundle). Start with the attachments for a quick look; open the `.xcresult` bundle in Xcode (or query via `xcrun xcresulttool get --format json --path uitest-results.xcresult`) for full logs, traces, and per-test activity.
 
+**Jest cannot see what a view looks like.** The test environment has no layout
+pass, no compositor, and no hit testing. A rendered view there is a tree of the
+props we passed — sometimes through stand-ins for components that cannot load at
+all. So a test asserting a colour, a size, a spacing, a truncation, or a tap
+target is asserting our own input, not the result a user gets, and it will keep
+passing while the screen is broken on a device. A row once shipped untappable
+because its button style hit-tested only drawn content; every test around it
+passed.
+
+In Jest, assert what is genuinely decided in JavaScript: pure functions,
+reducers, parsers, data shaping, hooks, and **which branch a component chose** —
+the empty state versus the error state versus the list. Those are real decisions
+with real logic behind them.
+
+Appearance and interaction — tint, spacing, alignment, truncation, hit targets,
+menu and sheet presentation, safe-area behaviour — belong in an XCUITest under
+`uitests/`, verified against a screenshot someone actually opens.
+
+If something cannot be checked on the simulator, say so. The failure mode is not
+a weak test; it is a weak test that makes a broken feature look covered.
+
 ## Development Commands
 
 pnpm is the package manager. npm and yarn both choke on the `workspace:*`
