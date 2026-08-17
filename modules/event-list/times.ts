@@ -3,6 +3,15 @@ import type {EventType} from '@frogpond/event-type'
 import type {EventDetailTime} from '@frogpond/event-list/types'
 
 /**
+ * All-day is the source's own statement rather than a duration -- see
+ * `classify` below for why a duration test cannot serve both EventKit and the
+ * web sources. Exported because the timeline needs the same answer.
+ */
+export function isAllDay(event: EventType): boolean {
+	return !event.config.startTime && !event.config.endTime
+}
+
+/**
  * Shared by `times`, `detailTimes`, and `detailTimeLines` so the three agree
  * on what counts as all-day, multi-day, or a same-instant event.
  *
@@ -22,7 +31,7 @@ function classify(event: EventType): {
 	sillyZeroLength: boolean
 } {
 	return {
-		allDay: !event.config.startTime && !event.config.endTime,
+		allDay: isAllDay(event),
 		multiDay: event.startTime.dayOfYear() !== event.endTime.dayOfYear(),
 		sillyZeroLength: event.startTime.isSame(event.endTime, 'minute'),
 	}
