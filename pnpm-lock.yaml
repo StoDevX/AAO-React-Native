@@ -612,9 +612,6 @@ importers:
       '@callstack/react-theme-provider':
         specifier: 3.0.9
         version: 3.0.9(react@19.2.8)
-      '@frogpond/add-to-device-calendar':
-        specifier: workspace:*
-        version: link:../add-to-device-calendar
       '@frogpond/colors':
         specifier: workspace:*
         version: link:../colors
