@@ -17,6 +17,12 @@ export default function HomeLayout(): React.ReactNode {
 			<Stack.Screen name="Communities" />
 			<Stack.Screen name="Map" options={{title: 'Carleton Map'}} />
 			<Stack.Screen name="SIS" options={{title: 'SIS'}} />
+			{/* `pageSheet` rather than the `modal` the rest of this layout uses.
+			    `RNSScreen.mm` maps `modal` to `UIModalPresentationAutomatic` and only
+			    `pageSheet` to `UIModalPresentationPageSheet`. UIKit resolves automatic to
+			    a page sheet on iPhone today, so the two look alike -- but the inset card
+			    Calendar.app uses is worth stating outright rather than inheriting. */}
+			<Stack.Screen name="EventDetail" options={{presentation: 'pageSheet'}} />
 			{/* `headerLargeTitle` collides with a tab bar under the header. This
 			    screen has none, so it behaves: verified on the simulator that the
 			    title collapses into the bar on scroll. */}

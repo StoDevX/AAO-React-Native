@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {Stack, useLocalSearchParams} from 'expo-router'
+import {router, Stack, useLocalSearchParams} from 'expo-router'
 import {useQuery} from '@tanstack/react-query'
 
 import {EventDetail, shareEvent} from '@frogpond/event-list'
@@ -33,22 +33,6 @@ const POWERED_BY: Record<EventSource, {title: string; href: string}> = {
  * caption is empty -- `EventDetail` omits it entirely when the title is.
  */
 const NO_ATTRIBUTION = {title: '', href: ''} as const
-
-/**
- * Not `StyleSheet.create`: this is header configuration rather than a view
- * style, and `shadowColor` is typed as the literal `'transparent'`, which
- * `StyleSheet.create` widens to `string`.
- *
- * Only the large-title area is cleared. The standard bar keeps its native
- * appearance, which is the whole point of using a real large title: UIKit
- * gives it a transparent scroll-edge and fades in a blurred background as the
- * title collapses. `Stack.Header` exposes one appearance for both states, so
- * setting it by hand can only ever pick one of them.
- */
-const CLEAR_LARGE_TITLE = {
-	backgroundColor: 'transparent',
-	shadowColor: 'transparent',
-} as const
 
 export default function EventDetailPage(): React.ReactNode {
 	let {source, eventKey} = useLocalSearchParams<{
@@ -139,13 +123,24 @@ export default function EventDetailPage(): React.ReactNode {
 
 	return (
 		<>
-			<Stack.Title large={true}>{event.title}</Stack.Title>
-			<Stack.Header largeStyle={CLEAR_LARGE_TITLE} />
+			{/* Calendar.app's sheet has no bar: the close and share controls float
+			    over content that scrolls under them, each in its own glass pill.
+			    `separateBackground` is what gives them a pill apiece rather than
+			    one shared bar background. */}
+			<Stack.Toolbar placement="left">
+				<Stack.Toolbar.Button
+					accessibilityLabel="Close"
+					icon="xmark"
+					onPress={() => router.back()}
+					separateBackground={true}
+				/>
+			</Stack.Toolbar>
 			<Stack.Toolbar placement="right">
 				<Stack.Toolbar.Button
 					accessibilityLabel="Share Event"
 					icon="square.and.arrow.up"
 					onPress={() => shareEvent(event)}
+					separateBackground={true}
 				/>
 			</Stack.Toolbar>
 			<EventDetail.EventDetail color={color} event={event} poweredBy={poweredBy} />
