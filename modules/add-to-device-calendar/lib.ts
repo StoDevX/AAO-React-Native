@@ -17,8 +17,14 @@ function promptSettings(): void {
 	)
 }
 
+/**
+ * Asks for full calendar access rather than the write-only access iOS 17 split
+ * out: `getDefaultCalendarSync` reads the device's calendars, which write-only
+ * access does not cover. `writeOnly` defaults to false, so no argument is the
+ * full-access ask.
+ */
 async function requestCalendarAccess(): Promise<boolean> {
-	let {status, canAskAgain} = await Calendar.getCalendarPermissionsAsync()
+	let {status, canAskAgain} = await Calendar.getCalendarPermissions()
 
 	if (status === 'granted') {
 		return true
@@ -29,7 +35,7 @@ async function requestCalendarAccess(): Promise<boolean> {
 		return false
 	}
 
-	let requested = await Calendar.requestCalendarPermissionsAsync()
+	let requested = await Calendar.requestCalendarPermissions()
 	return requested.status === 'granted'
 }
 
@@ -40,9 +46,11 @@ export async function addToCalendar(event: EventType): Promise<AddToCalendarResu
 			return 'cancelled'
 		}
 
-		let defaultCalendar = await Calendar.getDefaultCalendarAsync()
+		// Synchronous, and throws when the device has no default calendar --
+		// the surrounding try/catch is what turns that into an 'error' result.
+		let defaultCalendar = Calendar.getDefaultCalendarSync()
 
-		await Calendar.createEventAsync(defaultCalendar.id, {
+		await defaultCalendar.createEvent({
 			title: event.title,
 			startDate: event.startTime.toDate(),
 			endDate: event.endTime.toDate(),

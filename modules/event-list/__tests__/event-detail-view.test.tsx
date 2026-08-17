@@ -20,12 +20,12 @@ jest.mock('@expo/ui/swift-ui/modifiers', () => {
 // `modules/add-to-device-calendar/__tests__/lib.test.ts` mocks both.
 jest.mock('@sentry/react-native', () => ({captureException: jest.fn()}))
 jest.mock('expo-calendar', () => ({
-	getCalendarPermissionsAsync: jest.fn(() =>
-		Promise.resolve({status: 'granted', canAskAgain: true}),
-	),
-	requestCalendarPermissionsAsync: jest.fn(() => Promise.resolve({status: 'granted'})),
-	getDefaultCalendarAsync: jest.fn(() => Promise.resolve({id: 'cal-1'})),
-	createEventAsync: jest.fn(() => Promise.resolve('event-1')),
+	getCalendarPermissions: jest.fn(() => Promise.resolve({status: 'granted', canAskAgain: true})),
+	requestCalendarPermissions: jest.fn(() => Promise.resolve({status: 'granted'})),
+	getDefaultCalendarSync: jest.fn(() => ({
+		id: 'cal-1',
+		createEvent: jest.fn(() => Promise.resolve({id: 'event-1'})),
+	})),
 }))
 // `AddToCalendar`'s own component (not `lib.ts`) also pulls in `delay`, an
 // ESM-only package outside jest.config.js's transform allowlist.
