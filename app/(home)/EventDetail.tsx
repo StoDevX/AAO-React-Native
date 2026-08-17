@@ -204,14 +204,7 @@ export default function EventDetailPage(): React.ReactNode {
 				render={({message, disabled, onPress}) => (
 					<Stack.Toolbar placement="bottom">
 						<Stack.Toolbar.Spacer />
-						{/* `variant="prominent"` is what puts the calendar's colour on the
-						    button's fill rather than just its label -- it needs iOS 26. */}
-						<Stack.Toolbar.Button
-							disabled={disabled}
-							onPress={onPress}
-							tintColor={color}
-							variant="prominent"
-						>
+						<Stack.Toolbar.Button disabled={disabled} onPress={onPress} tintColor={color}>
 							{message || 'Add to Calendar'}
 						</Stack.Toolbar.Button>
 						<Stack.Toolbar.Spacer />
