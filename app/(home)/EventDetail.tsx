@@ -8,6 +8,7 @@ import {EventDetail, shareEvent} from '@frogpond/event-list'
 // elsewhere in this package) -- the component itself is
 // `EventDetail.EventDetail`, used below.
 import * as c from '@frogpond/colors'
+import {AddToCalendar} from '@frogpond/add-to-device-calendar'
 import {
 	deviceCalendarEventOptions,
 	deviceCalendarIdFrom,
@@ -143,6 +144,35 @@ export default function EventDetailPage(): React.ReactNode {
 					separateBackground={true}
 				/>
 			</Stack.Toolbar>
+			{/* `AddToCalendar` is headless -- its render prop returns whatever chrome we
+			    want, so the toolbar goes here rather than the module changing.
+
+			    `compactMessages` is what keeps the label short enough for a bar item:
+			    the button carries its own state as its title, `Add to Calendar` ->
+			    `Saving…` -> `Saved`, and then disables. That is why losing the section
+			    footer the message used to sit in costs nothing.
+
+			    Label-only and per-item tint are both real on iOS: `RouterToolbarItemView`
+			    sets `item.title` with `item.image = nil` when no icon is given, and
+			    applies `customTintColor` per item. */}
+			<AddToCalendar
+				compactMessages={true}
+				event={event}
+				render={({message, disabled, onPress}) => (
+					<Stack.Toolbar placement="bottom">
+						<Stack.Toolbar.Spacer />
+						<Stack.Toolbar.Button
+							accessibilityLabel="Add to calendar"
+							disabled={disabled}
+							onPress={onPress}
+							tintColor={color}
+						>
+							{message || 'Add to Calendar'}
+						</Stack.Toolbar.Button>
+						<Stack.Toolbar.Spacer />
+					</Stack.Toolbar>
+				)}
+			/>
 			<EventDetail.EventDetail color={color} event={event} poweredBy={poweredBy} />
 		</>
 	)

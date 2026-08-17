@@ -189,4 +189,15 @@ struct CalendarScreen: Screen {
 		XCTFail("Tapping \(row.label) never opened the event detail screen")
 		return self
 	}
+
+	/// The event detail's bottom-bar action. A bar item, so it is a button, and
+	/// it carries no icon -- the title is all there is to find it by.
+	@discardableResult
+	func verifyAddToCalendarButton() -> Self {
+		let button = app.buttons[TestIdentifiers.Calendar.addToCalendar]
+		XCTAssertTrue(
+			button.waitForExistence(timeout: 30),
+			"The event detail should offer Add to calendar in its bottom bar")
+		return self
+	}
 }

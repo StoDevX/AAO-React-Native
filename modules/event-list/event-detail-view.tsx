@@ -1,10 +1,7 @@
 import * as React from 'react'
 import {StyleSheet, type ColorValue} from 'react-native'
-import {Button, Form, Host, Link, Section, Text, VStack} from '@expo/ui/swift-ui'
+import {Form, Host, Link, Section, Text, VStack} from '@expo/ui/swift-ui'
 import {
-	accessibilityLabel,
-	buttonStyle,
-	disabled as disabledModifier,
 	font,
 	foregroundStyle,
 	listRowBackground,
@@ -13,7 +10,6 @@ import {
 	textSelection,
 } from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
-import {AddToCalendar} from '@frogpond/add-to-device-calendar'
 import type {EventType} from '@frogpond/event-type'
 
 import {EventDetailHeader} from './event-detail-header'
@@ -68,25 +64,6 @@ export function EventDetail({event, poweredBy, color}: Props): React.ReactNode {
 						))}
 					</Section>
 				) : null}
-
-				<AddToCalendar
-					event={event}
-					render={({message, disabled, onPress}) => (
-						// `footer` is a SwiftUI slot: a bare string here crashes at mount.
-						<Section footer={message ? <Text>{message}</Text> : undefined}>
-							<Button
-								modifiers={[
-									buttonStyle('plain'),
-									accessibilityLabel('Add to calendar'),
-									disabledModifier(disabled),
-								]}
-								onPress={onPress}
-							>
-								<Text modifiers={[foregroundStyle(c.systemBlue)]}>Add to calendar</Text>
-							</Button>
-						</Section>
-					)}
-				/>
 
 				{/* The attribution is a caption on the form, not a row of it, so the
 				    row's background and separator are cleared. Its insets are left

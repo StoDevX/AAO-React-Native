@@ -165,4 +165,15 @@ class ModuleCalendarTests: UITestCase {
 			.openFirstEvent()
 			.capture("14-device-event-detail")
 	}
+
+	/// The add-to-calendar action moved out of the form and into the sheet's
+	/// bottom bar, so this is the only thing that asserts it exists at all --
+	/// the component test that used to went with the button.
+	func testEventDetailOffersAddToCalendar() throws {
+		CalendarScreen(app: app)
+			.navigate()
+			.openFirstEvent()
+			.verifyAddToCalendarButton()
+			.capture("17-event-detail-add-to-calendar")
+	}
 }

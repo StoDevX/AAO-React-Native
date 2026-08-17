@@ -92,6 +92,10 @@ struct TestIdentifiers {
 		/// A calendar every simulator ships with, and one that actually has
 		/// events in the window the list reads.
 		static let deviceCalendar = "US Holidays"
+		/// The bottom-bar action on the event detail sheet. This is the
+		/// `accessibilityLabel`, which differs in case from the visible title
+		/// -- VoiceOver and XCUITest both read the label.
+		static let addToCalendar = "Add to calendar"
 	}
 
 	// MARK: - Streaming Media
