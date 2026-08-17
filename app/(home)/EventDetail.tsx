@@ -28,19 +28,23 @@ const POWERED_BY: Record<EventSource, {title: string; href: string}> = {
 	'krlx-schedule': KRLX_POWERED_BY,
 }
 
-/// A calendar on the phone has no upstream to credit, so the attribution
-/// caption is empty -- `EventDetail` omits it entirely when the title is.
+/**
+ * A calendar on the phone has no upstream to credit, so the attribution
+ * caption is empty -- `EventDetail` omits it entirely when the title is.
+ */
 const NO_ATTRIBUTION = {title: '', href: ''} as const
 
-/// Not `StyleSheet.create`: this is header configuration rather than a view
-/// style, and `shadowColor` is typed as the literal `'transparent'`, which
-/// `StyleSheet.create` widens to `string`.
-///
-/// Only the large-title area is cleared. The standard bar keeps its native
-/// appearance, which is the whole point of using a real large title: UIKit
-/// gives it a transparent scroll-edge and fades in a blurred background as the
-/// title collapses. `Stack.Header` exposes one appearance for both states, so
-/// setting it by hand can only ever pick one of them.
+/**
+ * Not `StyleSheet.create`: this is header configuration rather than a view
+ * style, and `shadowColor` is typed as the literal `'transparent'`, which
+ * `StyleSheet.create` widens to `string`.
+ *
+ * Only the large-title area is cleared. The standard bar keeps its native
+ * appearance, which is the whole point of using a real large title: UIKit
+ * gives it a transparent scroll-edge and fades in a blurred background as the
+ * title collapses. `Stack.Header` exposes one appearance for both states, so
+ * setting it by hand can only ever pick one of them.
+ */
 const CLEAR_LARGE_TITLE = {
 	backgroundColor: 'transparent',
 	shadowColor: 'transparent',

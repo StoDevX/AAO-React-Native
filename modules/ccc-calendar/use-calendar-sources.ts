@@ -73,8 +73,10 @@ export function useCalendarSources(): CalendarSourcesState {
 	}
 }
 
-/// For a screen that knows only a source id -- the detail screen arrives with
-/// one in its route params -- and needs the source behind it.
+/**
+ * For a screen that knows only a source id -- the detail screen arrives with
+ * one in its route params -- and needs the source behind it.
+ */
 export function useCalendarSource(sourceId: string): CalendarSource | undefined {
 	let {all} = useCalendarSources()
 	return all.find((source) => source.id === sourceId)

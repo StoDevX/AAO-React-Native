@@ -100,10 +100,12 @@ export const namedCalendarEventOptions = (
 		select: (events) => convertEvents(events, options).find((event) => eventKey(event) === key),
 	})
 
-/// One device event, by EventKit id. Reaches a month either side of today
-/// rather than the list's forward-only month: a deep link, or a list still
-/// showing yesterday's section, can name an event the forward window has
-/// already passed.
+/**
+ * One device event, by EventKit id. Reaches a month either side of today
+ * rather than the list's forward-only month: a deep link, or a list still
+ * showing yesterday's section, can name an event the forward window has
+ * already passed.
+ */
 // oxlint-disable-next-line typescript/explicit-module-boundary-types
 export const deviceCalendarEventOptions = (calendarId: string, eventId: string) =>
 	queryOptions({
@@ -116,16 +118,18 @@ export const deviceCalendarEventOptions = (calendarId: string, eventId: string) 
 		},
 	})
 
-/// Whether EventKit has already granted full calendar access. A query, so that
-/// the three components asking for calendar sources on one screen -- the
-/// picker, the list, and the detail screen -- read a single answer: the grant
-/// is won inside the picker, and per-component state leaves the other two
-/// believing there is still no access. React Query also drops a stale in-flight
-/// check rather than letting it land on newer state.
-///
-/// Only ever *checks*. Asking is `requestFullCalendarAccess`, called from an
-/// explicit tap, and the caller leaves this query disabled outside dev mode, so
-/// a production build never reaches EventKit at all.
+/**
+ * Whether EventKit has already granted full calendar access. A query, so that
+ * the three components asking for calendar sources on one screen -- the
+ * picker, the list, and the detail screen -- read a single answer: the grant
+ * is won inside the picker, and per-component state leaves the other two
+ * believing there is still no access. React Query also drops a stale in-flight
+ * check rather than letting it land on newer state.
+ *
+ * Only ever *checks*. Asking is `requestFullCalendarAccess`, called from an
+ * explicit tap, and the caller leaves this query disabled outside dev mode, so
+ * a production build never reaches EventKit at all.
+ */
 // oxlint-disable-next-line typescript/explicit-module-boundary-types
 export const calendarAccessOptions = () =>
 	queryOptions({
@@ -136,9 +140,11 @@ export const calendarAccessOptions = () =>
 		},
 	})
 
-/// The device's calendars, as sources. A query rather than component state:
-/// it is read from the device like anything else here, and both the picker and
-/// the detail screen need it, so neither should own it.
+/**
+ * The device's calendars, as sources. A query rather than component state:
+ * it is read from the device like anything else here, and both the picker and
+ * the detail screen need it, so neither should own it.
+ */
 // oxlint-disable-next-line typescript/explicit-module-boundary-types
 export const deviceCalendarsOptions = () =>
 	queryOptions({
@@ -149,8 +155,10 @@ export const deviceCalendarsOptions = () =>
 		},
 	})
 
-/// A month from today. EventKit will return years of events, and the list draws
-/// a section per day with no pagination behind it.
+/**
+ * A month from today. EventKit will return years of events, and the list draws
+ * a section per day with no pagination behind it.
+ */
 // oxlint-disable-next-line typescript/explicit-module-boundary-types
 export const deviceCalendarOptions = (calendarId: string) =>
 	queryOptions({

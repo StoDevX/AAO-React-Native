@@ -30,6 +30,8 @@ change was needed rather than restating the diff.
 - **No Moment.js** — use `date-fns` or `Day.js` for date/time
 - Colors from `@frogpond/colors` — follow existing color system
 - oxfmt config in `.oxfmtrc.json` (tabs, single quotes, no semis)
+- **Comments:** JSDoc (`/** … */`) to annotate a declaration — a function, component, type, prop, or exported constant. Plain `//` for a step or a reason inside a function body.
+- Comments say what the code does and why, never what it used to do or what changed
 
 ## Architecture & Patterns
 

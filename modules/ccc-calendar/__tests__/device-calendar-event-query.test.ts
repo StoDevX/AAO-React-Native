@@ -36,9 +36,11 @@ jest.mock('@frogpond/data-sources', () => ({
 }))
 jest.mock('../../../source/init/tanstack-query', () => ({queryClient: {}}))
 
-/// `queryOptions` types `queryFn` as React Query's `QueryFunction`, which takes
-/// a context argument. This query never reads one, so the tests call it with a
-/// stand-in rather than assembling a whole `QueryFunctionContext`.
+/**
+ * `queryOptions` types `queryFn` as React Query's `QueryFunction`, which takes
+ * a context argument. This query never reads one, so the tests call it with a
+ * stand-in rather than assembling a whole `QueryFunctionContext`.
+ */
 function runQueryFn<T>(options: {queryFn?: QueryFunction<T, never, never>}): Promise<T> {
 	if (typeof options.queryFn !== 'function') {
 		throw new Error('these options carry no queryFn')

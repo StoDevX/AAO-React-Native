@@ -37,9 +37,11 @@ function TextSection({header, content}: {header: string; content: string}) {
 type Props = {
 	event: EventType
 	poweredBy: PoweredBy
-	/// The calendar's colour, for the masthead bar. Passed through rather than
-	/// derived here: this component knows an event, not which calendar it
-	/// came from.
+	/**
+	 * The calendar's colour, for the masthead bar. Passed through rather than
+	 * derived here: this component knows an event, not which calendar it
+	 * came from.
+	 */
 	color: ColorValue
 }
 

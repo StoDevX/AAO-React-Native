@@ -28,18 +28,22 @@ const TecEventSchema = z.object({
 	venue: VenueSchema,
 })
 
-/// Decoded like the title is: TEC sends venue names HTML-escaped, so an
-/// apostrophe arrives as `&#8217;` and reaches the screen verbatim otherwise --
-/// `Buntrock Commons Lion&#8217;s Pause`.
+/**
+ * Decoded like the title is: TEC sends venue names HTML-escaped, so an
+ * apostrophe arrives as `&#8217;` and reaches the screen verbatim otherwise --
+ * `Buntrock Commons Lion&#8217;s Pause`.
+ */
 function venueName(venue: z.infer<typeof VenueSchema>): string {
 	return decode(Array.isArray(venue) ? '' : (venue?.venue ?? ''))
 }
 
 const TecEventsSchema = z.object({events: z.array(z.unknown())})
 
-/// TEC reports `utc_start_date` as "2026-08-17 13:00:00" — UTC, but with a
-/// space separator and no zone marker. Left alone it would be read as local
-/// time and shift by the offset.
+/**
+ * TEC reports `utc_start_date` as "2026-08-17 13:00:00" — UTC, but with a
+ * space separator and no zone marker. Left alone it would be read as local
+ * time and shift by the offset.
+ */
 function toIsoString(utcDate: string): string {
 	return new Date(`${utcDate.replace(' ', 'T')}Z`).toISOString()
 }
@@ -74,16 +78,18 @@ function toWireEvent(event: z.infer<typeof TecEventSchema>, now: Date): WireEven
 	}
 }
 
-/// The outer shape stays strict: a response that isn't `{events: [...]}` at
-/// all means the source is wrong, and that should throw. Each element is
-/// then parsed on its own, so one event TEC can't fully describe doesn't
-/// blank the rest of the calendar the way an all-or-nothing
-/// `z.array(...).parse()` would.
-///
-/// But a non-empty response that drops down to zero events means the shape
-/// changed out from under us, not that one event was malformed — that must
-/// throw rather than render a silently blank calendar. A genuinely empty
-/// response (no upcoming events) is legitimate and stays empty.
+/**
+ * The outer shape stays strict: a response that isn't `{events: [...]}` at
+ * all means the source is wrong, and that should throw. Each element is
+ * then parsed on its own, so one event TEC can't fully describe doesn't
+ * blank the rest of the calendar the way an all-or-nothing
+ * `z.array(...).parse()` would.
+ *
+ * But a non-empty response that drops down to zero events means the shape
+ * changed out from under us, not that one event was malformed — that must
+ * throw rather than render a silently blank calendar. A genuinely empty
+ * response (no upcoming events) is legitimate and stays empty.
+ */
 export function parseTecEvents(body: unknown, now = new Date()): WireEvent[] {
 	let {events: items} = TecEventsSchema.parse(body)
 

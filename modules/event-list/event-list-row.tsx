@@ -20,46 +20,57 @@ import * as c from '@frogpond/colors'
 import type {EventType} from '@frogpond/event-type'
 import {listTimeLines} from './times'
 
-/// How far the accent bar clears the title/subtitle block at each end,
-/// matching the event detail header's bar.
+/**
+ * How far the accent bar clears the title/subtitle block at each end,
+ * matching the event detail header's bar.
+ */
 const BAR_OVERSHOOT = 3
 
-/// The gap between the accent bar and the text beside it.
-///
-/// Stated rather than left to the HStack's default, because the default is
-/// derived from the contents and so is not the same on every row. A row with an
-/// end time but no location draws a second line whose leading content is
-/// nothing, so that line begins with the `Spacer` -- and a leading `Spacer`
-/// takes the whole stack's default spacing to zero. Measured on the simulator:
-/// bar to the first pixel of the title was 40px on rows with a location and
-/// 15px on "Staff and Faculty CommuniTEA", which has an end time and no
-/// location. 8pt is what the default already resolved to on every other row, so
-/// naming it moves nothing else.
+/**
+ * The gap between the accent bar and the text beside it.
+ *
+ * Stated rather than left to the HStack's default, because the default is
+ * derived from the contents and so is not the same on every row. A row with an
+ * end time but no location draws a second line whose leading content is
+ * nothing, so that line begins with the `Spacer` -- and a leading `Spacer`
+ * takes the whole stack's default spacing to zero. Measured on the simulator,
+ * bar to the first pixel of the title was 40px on rows with a location and
+ * 15px on a row with an end time and no location; 8pt is what the default
+ * resolves to on the rows that do get it.
+ */
 const BAR_GAP = 8
 
-/// Calendar.app truncates a long title or location to one line with a
-/// trailing ellipsis rather than wrapping -- wrapping pushes the row tall and,
-/// with a long location, can push the title out of line with the start time.
+/**
+ * Calendar.app truncates a long title or location to one line with a
+ * trailing ellipsis rather than wrapping -- wrapping pushes the row tall and,
+ * with a long location, can push the title out of line with the start time.
+ */
 const SINGLE_LINE = [lineLimit(1), truncationMode('tail')]
 
 type Props = {
 	event: EventType
 	onPress: (event: EventType) => void
-	/// Whether this is the last row in its section -- hides that row's own
-	/// bottom separator, since the section header below already draws a
-	/// hairline of its own and Calendar.app's list has only one line between
-	/// a section's last row and the next header, not two.
+	/**
+	 * Whether this is the last row in its section -- hides that row's own
+	 * bottom separator, since the section header below already draws a
+	 * hairline of its own and Calendar.app's list has only one line between
+	 * a section's last row and the next header, not two.
+	 */
 	isLastInSection: boolean
-	/// The accent bar's colour -- the calendar this event came from.
+	/**
+	 * The accent bar's colour -- the calendar this event came from.
+	 */
 	color: ColorValue
 }
 
-/// The trailing text for each of the row's two lines.
-///
-/// `config.startTime`/`config.endTime` mark a start or end that is not
-/// meaningful for this event (e.g. imported data with only one real edge). Such
-/// a line is left empty rather than showing a nonsense time, which also hands
-/// that line's width back to the title or the location.
+/**
+ * The trailing text for each of the row's two lines.
+ *
+ * `config.startTime`/`config.endTime` mark a start or end that is not
+ * meaningful for this event (e.g. imported data with only one real edge). Such
+ * a line is left empty rather than showing a nonsense time, which also hands
+ * that line's width back to the title or the location.
+ */
 function trailingText(event: EventType): {first: string; second: string; firstIsTime: boolean} {
 	let {start, end, allDay} = listTimeLines(event)
 
@@ -74,22 +85,26 @@ function trailingText(event: EventType): {first: string; second: string; firstIs
 	}
 }
 
-/// One line of the row: leading text, then its own trailing text pushed to the
-/// right edge.
-///
-/// Calendar.app pairs them line by line rather than setting two columns side by
-/// side -- the title truncates against the start time, and the location against
-/// the end time. So a row with no end time lets its location run the full width,
-/// past where the title above it had to stop. Two columns would truncate both at
-/// the same x.
+/**
+ * One line of the row: leading text, then its own trailing text pushed to the
+ * right edge.
+ *
+ * Calendar.app pairs them line by line rather than setting two columns side by
+ * side -- the title truncates against the start time, and the location against
+ * the end time. So a row with no end time lets its location run the full width,
+ * past where the title above it had to stop. Two columns would truncate both at
+ * the same x.
+ */
 function RowLine({
 	trailing,
 	prominent = false,
 	children,
 }: {
 	trailing: string
-	/// The start time reads in the primary label colour, as Calendar.app has it;
-	/// the end time and `all-day` are secondary.
+	/**
+	 * The start time reads in the primary label colour, as Calendar.app has it;
+	 * the end time and `all-day` are secondary.
+	 */
 	prominent?: boolean
 	children: React.ReactNode
 }): React.ReactNode {
@@ -112,9 +127,11 @@ function RowLine({
 	)
 }
 
-/// A single event row: a blue accent bar, the title and (when present) a
-/// location line under it, and the start/end times trailing. Matches
-/// Calendar.app's list -- see the reference screenshot in the task brief.
+/**
+ * A single event row: an accent bar in the calendar's colour, the title and
+ * (when present) a location line under it, and the start/end times trailing,
+ * as Calendar.app's list has them.
+ */
 export function EventListRow({event, onPress, isLastInSection, color}: Props): React.ReactNode {
 	let title = event.title
 	let subtitle = event[event.config.subtitle]?.trim()

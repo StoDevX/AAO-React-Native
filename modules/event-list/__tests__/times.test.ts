@@ -4,14 +4,18 @@ import type {EventType} from '@frogpond/event-type'
 import moment from 'moment'
 import {detailTimes, detailTimeLines, formatSectionHeader, listTimeLines, times} from '../times'
 
-/// What every parser writes for an all-day event: neither edge carries a
-/// meaningful time.
+/**
+ * What every parser writes for an all-day event: neither edge carries a
+ * meaningful time.
+ */
 const ALL_DAY = {startTime: false, endTime: false, subtitle: 'description'} as const
 
-/// All-day is whatever the source said, through `config`. A remote all-day
-/// event says so with both edges false and a midnight-to-midnight span; an
-/// EventKit one says so with both edges false and a 00:00:00-23:59:59 span.
-/// The duration differs, the statement does not.
+/**
+ * All-day is whatever the source said, through `config`. A remote all-day
+ * event says so with both edges false and a midnight-to-midnight span; an
+ * EventKit one says so with both edges false and a 00:00:00-23:59:59 span.
+ * The duration differs, the statement does not.
+ */
 describe('allDay', () => {
 	function generateEvent(start: string, end: string, config: Partial<EventType['config']> = {}) {
 		return {

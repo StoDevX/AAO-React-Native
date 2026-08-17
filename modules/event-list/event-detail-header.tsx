@@ -12,32 +12,40 @@ import {
 import * as c from '@frogpond/colors'
 import type {EventTimeLine} from './times'
 
-/// How far the accent bar clears the type at each end, as Calendar.app's does.
+/**
+ * How far the accent bar clears the type at each end, as Calendar.app's does.
+ */
 const BAR_OVERSHOOT = 3
 
 type Props = {
 	lines: EventTimeLine[]
-	/// The accent bar's colour -- the calendar this event came from, so the
-	/// masthead matches the tint the event's row had in the list.
+	/**
+	 * The accent bar's colour -- the calendar this event came from, so the
+	 * masthead matches the tint the event's row had in the list.
+	 */
 	color: ColorValue
 }
 
-/// One line of the date range, e.g. `From 7:45 AM Monday, August 17, 2026`.
-/// The meridiem, when the locale has one, is already part of `line.time` --
-/// `Intl` folds it into the formatted string rather than exposing it
-/// separately.
+/**
+ * One line of the date range, e.g. `From 7:45 AM Monday, August 17, 2026`.
+ * The meridiem, when the locale has one, is already part of `line.time` --
+ * `Intl` folds it into the formatted string rather than exposing it
+ * separately.
+ */
 function TimeLine({line}: {line: EventTimeLine}): React.ReactNode {
 	let text = [line.prefix, line.time, line.date].filter(Boolean).join(' ')
 
 	return <Text modifiers={[font({textStyle: 'body'}), foregroundColor(c.label)]}>{text}</Text>
 }
 
-/// The date range, flanked by an accent bar. The event's name is not here: it
-/// is the screen's native large title, so UIKit can collapse it into the bar on
-/// scroll and manage the bar's appearance for both states.
-///
-/// The bar takes the calendar's colour rather than the event's: `EventType`
-/// carries none, and the list's row bar is tinted the same way.
+/**
+ * The date range, flanked by an accent bar. The event's name is not here: it
+ * is the screen's native large title, so UIKit can collapse it into the bar on
+ * scroll and manage the bar's appearance for both states.
+ *
+ * The bar takes the calendar's colour rather than the event's: `EventType`
+ * carries none, and the list's row bar is tinted the same way.
+ */
 export function EventDetailHeader({lines, color}: Props): React.ReactNode {
 	if (lines.length === 0) {
 		return null

@@ -21,8 +21,10 @@ const NOW = moment('2026-08-17T12:00:00Z')
 
 const STOLAF_SOURCE = {id: 'stolaf', title: 'St. Olaf', color: 'blue', kind: 'remote' as const}
 
-/// What every parser writes for an all-day event, and what `times.ts` reads to
-/// decide one: neither edge carries a meaningful time.
+/**
+ * What every parser writes for an all-day event, and what `times.ts` reads to
+ * decide one: neither edge carries a meaningful time.
+ */
 const ALL_DAY = {startTime: false, endTime: false, subtitle: 'location'} as const
 
 function makeEvent(overrides: Partial<EventType> = {}): EventType {

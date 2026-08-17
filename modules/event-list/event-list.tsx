@@ -37,11 +37,13 @@ type EventSection = {
 	readonly data: SourcedEvent[]
 }
 
-/// Groups events the way the list has always grouped them -- an `Ongoing`
-/// group, and today's events grouped together regardless of the timezone
-/// quirks in `event.startTime` -- but keys the day groups on an
-/// unambiguous ISO date rather than a formatted string, since the display
-/// title is now locale-aware and computed separately below.
+/**
+ * Groups events into an `Ongoing` group and one group per day, with today's
+ * events together regardless of the timezone quirks in `event.startTime`.
+ *
+ * Day groups are keyed on an unambiguous ISO date rather than on their
+ * display title, which is locale-aware and computed separately below.
+ */
 function groupEvents(events: readonly SourcedEvent[], now: Moment): Array<EventSection> {
 	let grouped = groupBy(events, (entry) => {
 		if (entry.event.isOngoing) {
@@ -64,9 +66,11 @@ function groupEvents(events: readonly SourcedEvent[], now: Moment): Array<EventS
 	})
 }
 
-/// Plain, leading-aligned section header text on the list background --
-/// Calendar.app has no card behind it. Today's is tinted red; every other
-/// day uses the normal label colour, matching the reference screenshot.
+/**
+ * Plain, leading-aligned section header text on the list background --
+ * Calendar.app has no card behind it. Today's is tinted red; every other
+ * day uses the normal label colour, as Calendar.app has it.
+ */
 function SectionHeader({title, isToday}: {title: string; isToday: boolean}): React.ReactNode {
 	return (
 		<Text

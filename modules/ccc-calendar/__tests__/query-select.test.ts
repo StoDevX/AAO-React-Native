@@ -42,9 +42,11 @@ function makeWireEvent(overrides: Partial<WireEvent> = {}): WireEvent {
 	}
 }
 
-/// Where an event's `sourceId` and `key` are actually assigned. A wrong
-/// `sourceId` puts an event under another calendar's name and tint; a wrong
-/// `key` sends the detail screen looking up an event that isn't there.
+/**
+ * Where an event's `sourceId` and `key` are actually assigned. A wrong
+ * `sourceId` puts an event under another calendar's name and tint; a wrong
+ * `key` sends the detail screen looking up an event that isn't there.
+ */
 describe('namedCalendarOptions select', () => {
 	test('every event is tagged with the calendar it was fetched from', () => {
 		let events = [makeWireEvent({title: 'One'}), makeWireEvent({title: 'Two'})]

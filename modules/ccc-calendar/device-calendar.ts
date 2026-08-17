@@ -2,9 +2,11 @@ import * as Calendar from 'expo-calendar'
 import moment from 'moment-timezone'
 import type {EventType} from '@frogpond/event-type'
 
-/// iOS 17 split EventKit's calendar permission into write-only and full
-/// access. `add-to-device-calendar` only ever needs to write, so it asks for
-/// the narrower one; reading the device's events needs this.
+/**
+ * iOS 17 split EventKit's calendar permission into write-only and full
+ * access. `add-to-device-calendar` only ever needs to write, so it asks for
+ * the narrower one; reading the device's events needs this.
+ */
 export function requestFullCalendarAccess(): Promise<Calendar.PermissionResponse> {
 	return Calendar.requestCalendarPermissions(false)
 }
@@ -13,18 +15,22 @@ export function getFullCalendarAccess(): Promise<Calendar.PermissionResponse> {
 	return Calendar.getCalendarPermissions(false)
 }
 
-/// A device event carries a calendar id rather than a source name, and the
-/// colour a merged list would tint it with comes from the calendar, not the
-/// event -- so the id is kept alongside the converted event.
+/**
+ * A device event carries a calendar id rather than a source name, and the
+ * colour a merged list would tint it with comes from the calendar, not the
+ * event -- so the id is kept alongside the converted event.
+ */
 export type DeviceEvent = {
 	calendarId: string
 	id: string
 	event: EventType
 }
 
-/// `EventType.config` describes which of an event's edges are meaningful.
-/// EventKit says so directly with `allDay`, where the web calendars have to
-/// infer it from a 24-hour duration.
+/**
+ * `EventType.config` describes which of an event's edges are meaningful.
+ * EventKit says so directly with `allDay`, where the web calendars have to
+ * infer it from a 24-hour duration.
+ */
 function toEventType(event: Calendar.ExpoCalendarEvent): EventType {
 	let startTime = moment(event.startDate)
 	let endTime = moment(event.endDate)
@@ -45,14 +51,16 @@ function toEventType(event: Calendar.ExpoCalendarEvent): EventType {
 	}
 }
 
-/// Reads a window rather than the whole device calendar: EventKit will happily
-/// return years of events, and the list renders a section per day with no
-/// pagination behind it.
-///
-/// `calendarIds`, when given, narrows the sweep to those calendars rather
-/// than reading every calendar on the device and discarding the rest --
-/// `deviceCalendarOptions` asks for one calendar at a time, and N enabled
-/// device calendars would otherwise mean N full-device sweeps.
+/**
+ * Reads a window rather than the whole device calendar: EventKit will happily
+ * return years of events, and the list renders a section per day with no
+ * pagination behind it.
+ *
+ * `calendarIds`, when given, narrows the sweep to those calendars rather
+ * than reading every calendar on the device and discarding the rest --
+ * `deviceCalendarOptions` asks for one calendar at a time, and N enabled
+ * device calendars would otherwise mean N full-device sweeps.
+ */
 export async function listDeviceEvents(
 	start: Date,
 	end: Date,

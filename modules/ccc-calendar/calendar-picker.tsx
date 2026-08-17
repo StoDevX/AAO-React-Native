@@ -3,33 +3,35 @@ import {Stack} from 'expo-router'
 
 import {useCalendarSources} from './use-calendar-sources'
 
-/// `Stack.Toolbar.Menu` is a real UIMenu, so the checkmarks and the grouping are
-/// native: `isOn` draws the tick, and a nested menu with `inline` renders as a
-/// titled group rather than a submenu you have to open.
-///
-/// `unstable_keepPresented` asks for the menu to stay up so two calendars can be
-/// turned on in one go. On the simulator (iOS 26.5, expo-router 57.0.11) it does
-/// not: the menu closes on every selection, which is the behaviour expo-router
-/// warns about -- selecting an action on iOS recreates the menu. The toggle
-/// itself still lands, so turning on a second calendar means reopening the menu.
-/// The prop stays because it costs nothing and states the intent.
-///
-/// The button sits in the bottom bar, at the left, where Calendar.app keeps its
-/// own calendar picker. A flexible `Spacer` after it takes the rest of the bar,
-/// which is what leaves the button at that end.
-///
-/// The button is a 38x38 circle carrying the `calendar` SF Symbol and no text.
-/// A bar item can only show one of the two: expo-router builds it as
-/// `UIBarButtonItem(title:image:primaryAction:menu:)`
-/// (`ios/Toolbar/RouterToolbarHostView.swift`), and UIKit draws only the image
-/// when given both. The symbol says "calendars" in the same space a word would
-/// take three times over, and matches how Calendar.app marks the same control.
-///
-/// The title UIKit declines to draw still names the button, so the
-/// `Stack.Toolbar.Label` child stays: it is what a bar item falls back to for
-/// its accessible name. `accessibilityLabel` sets that name outright, which is
-/// what VoiceOver speaks and what the UI tests query the button by.
-/// `title` stays unused so the menu gets no header of its own.
+/**
+ * `Stack.Toolbar.Menu` is a real UIMenu, so the checkmarks and the grouping are
+ * native: `isOn` draws the tick, and a nested menu with `inline` renders as a
+ * titled group rather than a submenu you have to open.
+ *
+ * `unstable_keepPresented` asks for the menu to stay up so two calendars can be
+ * turned on in one go. On the simulator (iOS 26.5, expo-router 57.0.11) it does
+ * not: the menu closes on every selection, which is the behaviour expo-router
+ * warns about -- selecting an action on iOS recreates the menu. The toggle
+ * itself still lands, so turning on a second calendar means reopening the menu.
+ * The prop stays because it costs nothing and states the intent.
+ *
+ * The button sits in the bottom bar, at the left, where Calendar.app keeps its
+ * own calendar picker. A flexible `Spacer` after it takes the rest of the bar,
+ * which is what leaves the button at that end.
+ *
+ * The button is a 38x38 circle carrying the `calendar` SF Symbol and no text.
+ * A bar item can only show one of the two: expo-router builds it as
+ * `UIBarButtonItem(title:image:primaryAction:menu:)`
+ * (`ios/Toolbar/RouterToolbarHostView.swift`), and UIKit draws only the image
+ * when given both. The symbol says "calendars" in the same space a word would
+ * take three times over, and matches how Calendar.app marks the same control.
+ *
+ * The title UIKit declines to draw still names the button, which is why the
+ * `Stack.Toolbar.Label` child is here: it is what a bar item falls back to for
+ * its accessible name. `accessibilityLabel` sets that name outright, which is
+ * what VoiceOver speaks and what the UI tests query the button by.
+ * `title` is left unset so the menu gets no header of its own.
+ */
 export function CalendarPicker(): React.ReactNode {
 	let {remote, device, enabled, canOfferDevice, deviceAvailable, toggle, requestDevice} =
 		useCalendarSources()
