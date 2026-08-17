@@ -27,7 +27,10 @@ export default function CalendarPage(): React.ReactNode {
 
 	return (
 		<>
-			<CalendarPicker />
+			{/* The list comes first because the navigation controller takes the
+			    screen's first scroll view as the one to track. Behind the toolbar it
+			    is not found, and the large title stops collapsing while the header
+			    loses its blur -- rows then scroll unobscured under the title. */}
 			<EventList.EventList
 				events={events}
 				failed={failed}
@@ -38,6 +41,7 @@ export default function CalendarPage(): React.ReactNode {
 				refreshing={isRefetching}
 				sources={enabled}
 			/>
+			<CalendarPicker />
 		</>
 	)
 }
