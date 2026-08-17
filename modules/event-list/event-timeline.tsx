@@ -55,6 +55,10 @@ function HourLabel({hour, index}: {hour: string; index: number}): React.ReactNod
 			modifiers={[
 				font({textStyle: 'caption'}),
 				foregroundStyle(c.secondaryLabel),
+				// `trailing` puts every label's near edge on the same line, the
+				// edge nearest the grid -- so `9 AM` and `10 AM` share an edge,
+				// matching Calendar.app, instead of centring in the 56pt column.
+				frame({minWidth: LABEL_COLUMN, maxWidth: LABEL_COLUMN, alignment: 'trailing'}),
 				offset({y: index * HOUR_HEIGHT}),
 			]}
 		>
@@ -79,8 +83,11 @@ function Block({
 		<VStack
 			alignment="leading"
 			modifiers={[
-				frame({minWidth: width, maxWidth: width, minHeight: block.height, maxHeight: block.height}),
+				// `padding` has to sit inside `frame`, not after it: a modifier
+				// wraps everything before it, so padding placed after a
+				// height-locked frame grows past the height `timeline.ts` computed.
 				padding({all: 4}),
+				frame({minWidth: width, maxWidth: width, minHeight: block.height, maxHeight: block.height}),
 				background(color),
 				clipShape('roundedRectangle'),
 				offset({x: block.column * (width + BLOCK_GAP), y: block.top}),
@@ -115,13 +122,42 @@ export function EventTimeline({window, blocks, colorFor}: Props): React.ReactNod
 
 	return (
 		<HStack alignment="top" spacing={8}>
-			<ZStack modifiers={[frame({minWidth: LABEL_COLUMN, maxWidth: LABEL_COLUMN})]}>
+			{/* `offset` is a post-layout transform: it moves a view after the view
+			has already been placed, it does not choose where the view is placed.
+			Placement is the stack's own alignment, and both `ZStack` and `frame`
+			default to centre -- so without an explicit `topLeading` alignment
+			here, every offset below is measured from the stack's centre instead
+			of its top-left corner, and a block far from filling the stack lands
+			far from where its `top`/`left` values say it should. */}
+			<ZStack
+				alignment="topLeading"
+				modifiers={[
+					frame({
+						minWidth: LABEL_COLUMN,
+						maxWidth: LABEL_COLUMN,
+						minHeight: WINDOW_HEIGHT,
+						maxHeight: WINDOW_HEIGHT,
+						alignment: 'topLeading',
+					}),
+				]}
+			>
 				{window.hours.map((hour, index) => (
-					<HourLabel hour={hour.format('HH:mm')} index={index} key={hour.toISOString()} />
+					<HourLabel hour={hour.format('h A')} index={index} key={hour.toISOString()} />
 				))}
 			</ZStack>
 
-			<ZStack modifiers={[frame({minHeight: WINDOW_HEIGHT, maxHeight: WINDOW_HEIGHT})]}>
+			<ZStack
+				alignment="topLeading"
+				modifiers={[
+					frame({
+						minWidth: BLOCK_AREA_WIDTH,
+						maxWidth: BLOCK_AREA_WIDTH,
+						minHeight: WINDOW_HEIGHT,
+						maxHeight: WINDOW_HEIGHT,
+						alignment: 'topLeading',
+					}),
+				]}
+			>
 				{blocks.map((block) => (
 					<Block
 						block={block}

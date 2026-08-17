@@ -94,10 +94,23 @@ export function timelineBlocks(
 ): TimelineBlock[] {
 	let positioned = entries
 		.filter((entry) => !isAllDay(entry.event))
-		.filter(
-			(entry) =>
-				entry.event.startTime.isBefore(window.end) && entry.event.endTime.isAfter(window.start),
-		)
+		.filter((entry) => {
+			let {startTime, endTime} = entry.event
+			// A zero-length event (`sillyZeroLength` in `times.ts`) has
+			// `endTime === startTime`, so the ordinary overlap test --
+			// `endTime.isAfter(window.start)` -- is false for one sitting right
+			// on the window's top edge, and it drops out of its own timeline.
+			// It is kept here as long as its instant falls in the window; an
+			// event with real duration still needs to end after the window
+			// starts, so one ending exactly at the window start is still
+			// excluded, having genuinely not overlapped it.
+			let isZeroLength = startTime.isSame(endTime)
+			let overlapsWindow = isZeroLength
+				? !startTime.isBefore(window.start)
+				: endTime.isAfter(window.start)
+
+			return startTime.isBefore(window.end) && overlapsWindow
+		})
 		.map((entry) => {
 			let top = clamp(offsetIn(window, entry.event.startTime), 0, WINDOW_HEIGHT)
 			let foot = clamp(offsetIn(window, entry.event.endTime), 0, WINDOW_HEIGHT)
@@ -109,10 +122,6 @@ export function timelineBlocks(
 			if (overflow > 0) {
 				top = Math.max(0, top - overflow)
 			}
-
-			// Cap height at the window height so blocks can never be taller
-			// than the container itself.
-			height = Math.min(height, WINDOW_HEIGHT)
 
 			return {
 				key: `${entry.sourceId}|${entry.key}`,

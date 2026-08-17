@@ -153,6 +153,31 @@ describe('timelineBlocks', () => {
 		expect(blocks.every((block) => block.columnCount === 1)).toBe(true)
 	})
 
+	test('a zero-length event on the hour still draws', () => {
+		let window = timelineWindow(makeEvent())
+		let instant = entry('stolaf', 'a', {
+			startTime: moment('2026-08-17T07:00:00'),
+			endTime: moment('2026-08-17T07:00:00'),
+		})
+		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+		let [block] = timelineBlocks(window!, [instant])
+
+		expect(block).toBeDefined()
+		expect(block.top).toBe(0)
+		expect(block.height).toBe(MIN_BLOCK_HEIGHT)
+	})
+
+	test('an event ending exactly at the window start is excluded', () => {
+		let window = timelineWindow(makeEvent())
+		let before = entry('stolaf', 'b', {
+			startTime: moment('2026-08-17T06:00:00'),
+			endTime: moment('2026-08-17T07:00:00'),
+		})
+
+		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+		expect(timelineBlocks(window!, [before])).toEqual([])
+	})
+
 	test('a block is keyed by source and event together', () => {
 		let window = timelineWindow(makeEvent())
 		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
