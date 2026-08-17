@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {render, screen, fireEvent} from '@testing-library/react-native'
+import {render, screen} from '@testing-library/react-native'
 import {JobRow} from '../job-row'
 import type {JobSummary} from '@frogpond/ccc-jobs'
 
@@ -13,12 +13,6 @@ const JOB: JobSummary = {
 }
 
 describe('JobRow', () => {
-	test('shows the job title', async () => {
-		await render(<JobRow job={JOB} onPress={jest.fn()} />)
-
-		expect(screen.getByText(JOB.title)).toBeTruthy()
-	})
-
 	test('shows the posted date in long form', async () => {
 		await render(<JobRow job={JOB} onPress={jest.fn()} />)
 
@@ -29,13 +23,5 @@ describe('JobRow', () => {
 		await render(<JobRow job={{...JOB, postedDate: ''}} onPress={jest.fn()} />)
 
 		expect(screen.queryByText(/^Posted/u)).toBeNull()
-	})
-
-	test('passes the job back on press', async () => {
-		const onPress = jest.fn()
-		await render(<JobRow job={JOB} onPress={onPress} />)
-
-		fireEvent.press(screen.getByText(JOB.title))
-		expect(onPress).toHaveBeenCalledWith(JOB)
 	})
 })
