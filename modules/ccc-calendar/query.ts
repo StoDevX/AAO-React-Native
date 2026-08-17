@@ -1,8 +1,4 @@
 import {fetchManifest, fetchSourceBody, REL_CALENDAR, resolveSource} from '@frogpond/data-sources'
-// The barrel (`@frogpond/event-list`) also re-exports the SwiftUI event list
-// and detail screens, which reach `@sentry/react-native` and `@expo/ui/swift-ui`
-// -- neither loadable under Jest. This module only needs the pure key
-// function, so it imports the leaf directly rather than dragging in the UI.
 import {eventKey} from '@frogpond/event-list/calendar-util'
 import {EventType} from '@frogpond/event-type'
 import {queryOptions} from '@tanstack/react-query'
