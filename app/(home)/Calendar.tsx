@@ -18,15 +18,12 @@ export default function CalendarPage(): React.ReactNode {
 	let {enabled} = useCalendarSources()
 	let {events, failed, isRefetching, refetchAll} = useMergedEvents(enabled)
 
-	let onPressEvent = React.useCallback(
-		(entry: SourcedEvent) => {
-			router.push({
-				pathname: '/EventDetail',
-				params: {source: entry.sourceId, eventKey: entry.key},
-			})
-		},
-		[router],
-	)
+	let onPressEvent = (entry: SourcedEvent) => {
+		router.push({
+			pathname: '/EventDetail',
+			params: {source: entry.sourceId, eventKey: entry.key},
+		})
+	}
 
 	return (
 		<>
