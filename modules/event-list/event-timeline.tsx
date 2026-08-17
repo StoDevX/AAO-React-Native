@@ -102,39 +102,28 @@ const CURRENT_LANE_FRACTION = 0.45
 export const DEPTH_INDENT = 11
 
 /**
- * Width of a neighbour's full-brightness accent bar -- the same width the
- * list row's and detail header's accent bars use.
+ * Opacity of a neighbour's whole block, text included. Dimmed rather than
+ * full-strength so the event being viewed -- drawn on top, undimmed -- is the
+ * one that's findable at a glance among the others behind it.
  */
-const ACCENT_BAR_WIDTH = 4
+const NEIGHBOUR_OPACITY = 0.45
 
-/**
- * Opacity of a neighbour's fill. Approximates the screenshot's dimmed blue
- * against the open event's solid one; the exact ratio isn't recoverable from
- * a screenshot alone without knowing what's layered behind it, and colour is
- * unassertable in Jest besides -- verify by eye on the simulator.
- */
-const NEIGHBOUR_FILL_OPACITY = 0.35
-
-function titleText(block: TimelineBlock, color?: ColorValue): React.ReactNode {
+function titleText(block: TimelineBlock): React.ReactNode {
 	let {start} = listTimeLines(block.event)
 	let location = block.event[block.event.config.subtitle]?.trim()
-	let textColor = color ? [foregroundStyle(color)] : []
 
 	return (
 		<>
-			<Text modifiers={[font({textStyle: 'caption', weight: 'semibold'}), ...textColor]}>
+			<Text modifiers={[font({textStyle: 'caption', weight: 'semibold'})]}>
 				{block.event.title}
 			</Text>
 			{location ? (
 				<HStack alignment="firstTextBaseline" spacing={4}>
-					<Image
-						modifiers={[font({textStyle: 'caption2'}), ...textColor]}
-						systemName="location.circle"
-					/>
-					<Text modifiers={[font({textStyle: 'caption2'}), ...textColor]}>{location}</Text>
+					<Image modifiers={[font({textStyle: 'caption2'})]} systemName="location.circle" />
+					<Text modifiers={[font({textStyle: 'caption2'})]}>{location}</Text>
 				</HStack>
 			) : null}
-			<Text modifiers={[font({textStyle: 'caption2'}), ...textColor]}>{start}</Text>
+			<Text modifiers={[font({textStyle: 'caption2'})]}>{start}</Text>
 		</>
 	)
 }
@@ -169,10 +158,13 @@ function CurrentBlock({block, color}: {block: TimelineBlock; color: ColorValue})
 
 /**
  * An overlapping event other than the one being viewed: indented by its
- * depth and layered behind whatever came before it, dimmed so the current
- * event reads as the one in focus. Its accent bar stays full-brightness --
- * `opacity` sits only on the fill layer behind the text, not on the block as
- * a whole, or the bar and text would dim along with it.
+ * depth and layered behind whatever came before it, dimmed as a whole --
+ * fill and text both -- so the current event reads as the one in focus.
+ *
+ * A single layer, not the nested bar/fill/text stack this once was: each
+ * nested frame was another place for a size to go wrong, and a uniformly
+ * recessed block reads correctly against the solid current block without
+ * needing a separate accent bar to make the point.
  */
 function NeighbourBlock({
 	block,
@@ -183,68 +175,30 @@ function NeighbourBlock({
 }): React.ReactNode {
 	let offsetX = block.depth * DEPTH_INDENT
 	let width = BLOCK_AREA_WIDTH - offsetX
-	let contentWidth = width - ACCENT_BAR_WIDTH
 
 	return (
-		<HStack
-			spacing={0}
+		<VStack
+			alignment="leading"
 			modifiers={[
-				frame({minWidth: width, maxWidth: width, minHeight: block.height, maxHeight: block.height}),
+				// `padding` has to sit inside `frame`, not after it: a modifier
+				// wraps everything before it, so padding placed after a
+				// height-locked frame grows past the height `timeline.ts` computed.
+				padding({all: 4}),
+				frame({
+					minWidth: width,
+					maxWidth: width,
+					minHeight: block.height,
+					maxHeight: block.height,
+					alignment: 'topLeading',
+				}),
+				background(color),
 				clipShape('roundedRectangle'),
+				opacity(NEIGHBOUR_OPACITY),
 				offset({x: offsetX, y: block.top}),
 			]}
 		>
-			{/* Same fixed-width-via-min/max idiom the list row's and detail
-			header's accent bars use -- the native `frame` ignores min/max once
-			width or height is set. */}
-			<VStack
-				modifiers={[
-					frame({
-						minWidth: ACCENT_BAR_WIDTH,
-						maxWidth: ACCENT_BAR_WIDTH,
-						minHeight: block.height,
-						maxHeight: block.height,
-					}),
-					background(color),
-					clipShape('capsule'),
-				]}
-			>
-				{null}
-			</VStack>
-			<ZStack
-				alignment="topLeading"
-				modifiers={[
-					frame({
-						minWidth: contentWidth,
-						maxWidth: contentWidth,
-						minHeight: block.height,
-						maxHeight: block.height,
-						alignment: 'topLeading',
-					}),
-				]}
-			>
-				{/* The dimmed fill, alone -- `opacity` here doesn't reach the text
-				stacked on top of it, since that text is a sibling layer rather
-				than a child of this view. */}
-				<VStack
-					modifiers={[
-						frame({
-							minWidth: contentWidth,
-							maxWidth: contentWidth,
-							minHeight: block.height,
-							maxHeight: block.height,
-						}),
-						background(color),
-						opacity(NEIGHBOUR_FILL_OPACITY),
-					]}
-				>
-					{null}
-				</VStack>
-				<VStack alignment="leading" modifiers={[padding({all: 4})]}>
-					{titleText(block, color)}
-				</VStack>
-			</ZStack>
-		</HStack>
+			{titleText(block)}
+		</VStack>
 	)
 }
 
