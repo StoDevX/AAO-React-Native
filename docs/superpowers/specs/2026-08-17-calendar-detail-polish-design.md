@@ -115,9 +115,11 @@ same hooks the Calendar screen uses, so arriving from the list is a cache read
 with no fetch. Events overlapping the window are drawn, each tinted by its
 source as the list's rows are.
 
-Two cases draw no timeline:
+Three cases draw no timeline:
 
 - All-day events, which have no position.
+- Multi-day events, which would fill the window end to end and convey
+  nothing about where they sit.
 - Events whose source is not a calendar source — the radio schedules, whose
   events never enter `useCalendarSources()`.
 
@@ -131,25 +133,39 @@ events do not ship yet.
 
 ### Geometry
 
-40pt per hour. Four hourly gridlines, the first at the top of the hour
-containing the event's start. Labels in `caption`. Blocks positioned linearly
-and clipped at the card's bottom edge, so a multi-day event runs off it.
+The window is sized to the event rather than fixed: the start floors to the
+top of its hour and the end ceils to the top of its hour, the span then
+capped at four hours and floored at two, so a fifteen-minute event still gets
+enough surrounding context and a long one doesn't stretch the card past
+reason. An event starting exactly on the hour backs the window off by an
+hour first, so its block isn't flush against the window's top edge.
+
+40pt per hour. Hour gridlines run the block area's full width, inset by a
+lead so a stub of each line's start still shows behind the blocks. Labels in
+`caption`.
+
+A multi-day neighbour is dropped from the block sweep for the same reason a
+multi-day event gets no window at all: clamped top to foot, it would wash
+the whole block area behind everything else. Every other overlapping
+neighbour staggers rightward by depth rather than splitting into equal-width
+columns, dimmed as a whole — fill and text together — so the viewed event,
+solid and undimmed in its own lane, reads as the one in focus.
 
 `@expo/ui` has no `GeometryReader`, so layout is fixed-point throughout: an
 `HStack` of a fixed-width label column beside a `ZStack` of gridlines and
-blocks, positioned with `offset`. Overlapping events split into equal-width
-columns computed in JavaScript rather than measured.
+blocks, positioned with `offset`.
 
 ### Structure
 
 Two files, so the testable half is separable from the half that is not:
 
 - `modules/event-list/timeline.ts` — pure. Window bounds, event-to-offset, and
-  the column assignment for overlapping events (interval graph colouring).
+  the depth assignment for overlapping events (interval graph colouring).
 - `modules/event-list/event-timeline.tsx` — a thin renderer over it.
 
-Each block shows title, location, and start time, reusing the `Label` and
-`location.circle` from change 2.
+Each block shows title, location, and start time. The location line is an
+`HStack` of a `location.circle` `Image` and a `font`-styled `Text`, the same
+icon-and-label shape as the list row's own location line.
 
 ## Testing
 
