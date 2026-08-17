@@ -204,7 +204,7 @@ export default function EventDetailPage(): React.ReactNode {
 					<Stack.Toolbar placement="bottom">
 						<Stack.Toolbar.Spacer />
 						<Stack.Toolbar.Button
-							accessibilityLabel="Add to calendar"
+							accessibilityLabel="Add to Calendar"
 							disabled={disabled}
 							onPress={onPress}
 							tintColor={color}
