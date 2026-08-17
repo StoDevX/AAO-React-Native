@@ -102,6 +102,15 @@ const CURRENT_LANE_FRACTION = 0.45
 export const DEPTH_INDENT = 11
 
 /**
+ * How far a block's leading edge sits from the gridline's own origin. A block
+ * starting flush at that origin covers the gridline completely -- nothing of
+ * it would ever be visible -- while Calendar.app leaves a short stub of each
+ * line showing before the blocks begin. Gridlines themselves keep spanning
+ * the full `BLOCK_AREA_WIDTH`; only the blocks are inset by this much.
+ */
+export const GRIDLINE_LEAD = 8
+
+/**
  * Opacity of a neighbour's whole block, text included. Dimmed rather than
  * full-strength so the event being viewed -- drawn on top, undimmed -- is the
  * one that's findable at a glance among the others behind it.
@@ -134,7 +143,7 @@ function titleText(block: TimelineBlock): React.ReactNode {
  * array that way.
  */
 function CurrentBlock({block, color}: {block: TimelineBlock; color: ColorValue}): React.ReactNode {
-	let offsetX = CURRENT_LANE_FRACTION * BLOCK_AREA_WIDTH
+	let offsetX = GRIDLINE_LEAD + CURRENT_LANE_FRACTION * (BLOCK_AREA_WIDTH - GRIDLINE_LEAD)
 	let width = BLOCK_AREA_WIDTH - offsetX
 
 	return (
@@ -173,7 +182,7 @@ function NeighbourBlock({
 	block: TimelineBlock
 	color: ColorValue
 }): React.ReactNode {
-	let offsetX = block.depth * DEPTH_INDENT
+	let offsetX = GRIDLINE_LEAD + block.depth * DEPTH_INDENT
 	let width = BLOCK_AREA_WIDTH - offsetX
 
 	return (
