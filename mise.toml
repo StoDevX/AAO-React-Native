@@ -17,6 +17,11 @@ HK_MISE = "1"
 [hooks]
 postinstall = "hk install --mise"
 
+# --- General commands ---
+[tasks."pnpm:install:frozen"]
+description = "install pnpm dependencies"
+run = "pnpm install --frozen-lockfile"
+
 # --- App commands ---
 
 [tasks.ios]
@@ -29,6 +34,7 @@ run = "expo start"
 
 [tasks.prebuild]
 description = "Generate the native iOS project from app.config.ts"
+wait_for = ["pnpm:install:*"]
 # prebuild recreates ios/ from scratch, deleting the tracked ios/ci_scripts
 # shim with it. `--no-clean` does not help: it preserves an existing *valid*
 # project, but a fresh clone contains only ci_scripts, which prebuild treats as
@@ -38,7 +44,7 @@ description = "Generate the native iOS project from app.config.ts"
 run = '''
 set -e
 
-if [ ! -d ios/ci_scripts ]; then
+if test ! -d ios/ci_scripts; then
   echo "error: ios/ci_scripts is missing, so there is nothing to preserve." >&2
   echo "       Xcode Cloud finds build scripts only beside the .xcworkspace," >&2
   echo "       so without it no Xcode Cloud build runs a script at all." >&2
@@ -55,11 +61,77 @@ mkdir -p ios/ci_scripts
 cp -R "$shim/." ios/ci_scripts/
 rm -rf "$shim"
 
-if [ ! -f ios/ci_scripts/ci_post_clone.sh ]; then
+if test ! -f ios/ci_scripts/ci_post_clone.sh; then
   echo "error: ios/ci_scripts was not restored after prebuild." >&2
   exit 1
 fi
 '''
+
+[tasks."build:ios"]
+description = "Build the app with xcodebuild for iOS"
+wait_for = ["prebuild"]
+usage = '''
+  arg "<device>" help="The device to build for" default="simulator" env="DEVICE"
+'''
+run = '''
+xcodebuild build \
+  -workspace ios/AllAboutOlaf.xcworkspace \
+  -scheme AllAboutOlaf \
+  -configuration Debug \
+  -destination "platform=iOS,name=${usage_device?}" \
+  -derivedDataPath ios/build \
+  -allowProvisioningUpdates \
+  CODE_SIGN_STYLE=Automatic \
+  DEVELOPMENT_TEAM=TMK6S7TPX2 \
+  PROVISIONING_PROFILE_SPECIFIER=""
+'''
+
+[tasks."embed-jsbundle:ios"]
+hide = true
+description = "Embed the .jsbundle into the ios app package"
+wait_for = ["bundle:ios", "build:ios"]
+env.APP = "ios/build/Build/Products/Debug-iphoneos/AllAboutOlaf.app"
+run = [
+	'''cp ios/AllAboutOlaf/main.jsbundle "$APP/"''',
+	'''rm -rf "$APP/assets" && cp -R ios/assets "$APP/"''',
+]
+
+[tasks."device:find-udid"]
+hide = true
+description = "Find the UDID of a device, or exit 1 if no device found"
+usage = '''
+  arg "<device>" help="The device to build for" default="simulator" env="DEVICE"
+'''
+run = '''
+  xcrun devicectl list devices --filter "Name = '${usage_device?}'" --omit-deprecated-fields-in-json --json-output=- 2>/dev/null | jq --raw-output --exit-status .result.devices[0].properties.hardware.udid
+'''
+
+[tasks."device:deploy"]
+hide = true
+description = "Deploy the app to a physical device"
+usage = '''
+  arg "<device>" help="The device to target" default="simulator" env="DEVICE"
+'''
+env.APP = "ios/build/Build/Products/Debug-iphoneos/AllAboutOlaf.app"
+run = '''
+  xcrun devicectl device install app --device "$(mise run device:find-udid "${usage_device?}")" "$APP"
+'''
+
+[tasks.device]
+description = "Build and deploy the app to a physical device"
+usage = '''
+  arg "<device>" help="The device to build for" default="simulator" env="DEVICE"
+'''
+depends = [
+	{ task = "pnpm:install:frozen" },
+	{ task = "prebuild", env.APP_VARIANT = "development" },
+	{ task = 'build:ios', args = [
+		"{{usage.device}}",
+	] },
+	{ task = "bundle:ios" },
+	{ task = "embed-jsbundle:ios" },
+]
+run = [{ task = 'device:deploy', args = ["{{usage.device}}"] }]
 
 [tasks.fastlane]
 description = "Run fastlane"
@@ -81,10 +153,10 @@ run = "oxfmt --check ."
 
 [tasks.tsc]
 description = "Run TypeScript compiler"
-run = "tsc --noEmit"
 # source/features/faqs/local-faqs.ts imports docs/faqs.json, which bundle-data
 # generates, so tsc cannot run against a clean checkout without it.
 depends = ["bundle-data"]
+run = "tsc --noEmit"
 
 [tasks.test]
 description = "Run Jest tests"
@@ -94,6 +166,7 @@ run = "jest"
 
 [tasks."bundle-data"]
 description = "Bundle data files"
+wait_for = ["pnpm:install:*"]
 run = "node scripts/bundle-data.mjs data/ docs/"
 
 [tasks."validate-bus-data"]
@@ -116,6 +189,8 @@ run = "gzip --keep docs/*.json"
 
 [tasks."bundle:ios"]
 description = "Generate iOS JS bundle"
+depends = ["bundle-data"]
+wait_for = ["prebuild"]
 run = """
 expo export:embed \
   --entry-file index.js \
@@ -130,35 +205,8 @@ expo export:embed \
 
 [tasks."agent:setup"]
 description = "Set up the development environment for AI agents"
-run = """
-pnpm install --frozen-lockfile
-mise run bundle-data
-"""
+depends = ["pnpm:install:frozen", "bundle-data"]
 
 [tasks."agent:pre-commit"]
 description = "Run pre-commit checks: format, lint, typecheck, test"
 depends = ["format", "lint", "tsc", "test"]
-
-# --- Diagnostics (from Makefile) ---
-
-[tasks.tsc-errors]
-description = "Generate TypeScript error report"
-run = 'tsc 2>&1 | sed "s:$(git rev-parse --show-toplevel):.:g" | tee tsc-errors || true'
-
-[tasks.tsc-counts]
-description = "Count TypeScript errors by code"
-depends = ["tsc-errors"]
-run = "cat tsc-errors | rg -or '$1' 'error \\b(TS\\d+)\\b' | sort | uniq -c | sort -nr | sed 's/^ *//' | tee tsc-counts || true"
-
-[tasks.eslint-problems]
-description = "Generate ESLint problem report"
-run = 'mise run lint 2>&1 | sed "s:$(git rev-parse --show-toplevel):.:g" | tee eslint-problems || true'
-
-[tasks.files]
-description = "Generate all diagnostic reports"
-depends = ["tsc-errors", "tsc-counts", "eslint-problems"]
-
-[tasks.verify]
-description = "Verify no diagnostic changes"
-depends = ["files"]
-run = "git diff --exit-code"
