@@ -1,6 +1,6 @@
 import * as React from 'react'
 import type {ColorValue} from 'react-native'
-import {Button, HStack, Label, Spacer, Text, VStack} from '@expo/ui/swift-ui'
+import {Button, HStack, Image, Spacer, Text, VStack} from '@expo/ui/swift-ui'
 import {
 	accessibilityLabel,
 	background,
@@ -10,7 +10,6 @@ import {
 	font,
 	foregroundStyle,
 	frame,
-	labelStyle,
 	lineLimit,
 	listRowSeparator,
 	padding,
@@ -180,26 +179,34 @@ export function EventListRow({event, onPress, isLastInSection, color}: Props): R
 					{subtitle || second ? (
 						<RowLine trailing={second}>
 							{subtitle ? (
-								/* A `Label` rather than an `HStack` of `Image` and `Text`: SwiftUI sizes the
-								   glyph from the label's own font and sits it on the text's baseline, which
-								   is what `Image`'s `size` prop cannot do. `@expo/ui` documents `size` as
-								   not scaling with Dynamic Type and as ignored once a `font` modifier is
-								   supplied, so a fixed 12pt pin was both oversized against `subheadline`
-								   and off its baseline.
+								/* The glyph takes its size from a `font` modifier rather than a fixed
+								   `size` prop: `@expo/ui` documents `size` as not scaling with Dynamic
+								   Type and as ignored once a `font` modifier is supplied, so matching
+								   `subheadline` here is what lets the glyph track the text next to it.
+								   `firstTextBaseline` is what sits it on that text's baseline rather
+								   than centred against the line's full height.
 
-								   `subheadline` is measured, not chosen: Calendar.app's location line has a
-								   32px cap height on a 3x screen against our 28px, which is 15pt to our
-								   13pt. */
-								<Label
-									modifiers={[
-										labelStyle('titleAndIcon'),
-										font({textStyle: 'subheadline'}),
-										foregroundStyle(c.secondaryLabel),
-										...SINGLE_LINE,
-									]}
-									systemImage="location.circle"
-									title={subtitle}
-								/>
+								   4pt of layout spacing is measured, not guessed: `location.circle`
+								   fills its box edge to edge, and 4pt of layout gap lands close to
+								   Calendar.app's 5pt of ink gap between glyph and text. */
+								<HStack alignment="firstTextBaseline" spacing={4}>
+									<Image
+										modifiers={[
+											font({textStyle: 'subheadline'}),
+											foregroundStyle(c.secondaryLabel),
+										]}
+										systemName="location.circle"
+									/>
+									<Text
+										modifiers={[
+											font({textStyle: 'subheadline'}),
+											foregroundStyle(c.secondaryLabel),
+											...SINGLE_LINE,
+										]}
+									>
+										{subtitle}
+									</Text>
+								</HStack>
 							) : null}
 						</RowLine>
 					) : null}
