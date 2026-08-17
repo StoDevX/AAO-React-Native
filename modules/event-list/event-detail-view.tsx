@@ -13,7 +13,9 @@ import * as c from '@frogpond/colors'
 import type {EventType} from '@frogpond/event-type'
 
 import {EventDetailHeader} from './event-detail-header'
+import {EventTimeline} from './event-timeline'
 import {detailTimeLines} from './times'
+import type {TimelineBlock, TimelineWindow} from './timeline'
 import type {PoweredBy} from './types'
 
 const styles = StyleSheet.create({
@@ -39,9 +41,16 @@ type Props = {
 	 * came from.
 	 */
 	color: ColorValue
+	/**
+	 * The event's neighbours, already positioned. Absent for a source with no
+	 * surrounding-events query behind it -- the radio schedules -- and for an
+	 * all-day event, which has no position to draw.
+	 */
+	timeline?: {window: TimelineWindow; blocks: TimelineBlock[]}
+	colorFor?: (sourceId: string) => ColorValue
 }
 
-export function EventDetail({event, poweredBy, color}: Props): React.ReactNode {
+export function EventDetail({event, poweredBy, color, timeline, colorFor}: Props): React.ReactNode {
 	let lines = detailTimeLines(event)
 
 	return (
@@ -56,6 +65,12 @@ export function EventDetail({event, poweredBy, color}: Props): React.ReactNode {
 
 				<TextSection content={event.location.trim()} header="Location" />
 				<TextSection content={event.description.trim()} header="Description" />
+
+				{timeline && colorFor ? (
+					<Section>
+						<EventTimeline blocks={timeline.blocks} colorFor={colorFor} window={timeline.window} />
+					</Section>
+				) : null}
 
 				{event.links.length > 0 ? (
 					<Section title="Links">

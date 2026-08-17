@@ -2,7 +2,13 @@ import * as React from 'react'
 import {router, Stack, useLocalSearchParams} from 'expo-router'
 import {useQuery} from '@tanstack/react-query'
 
-import {EventDetail, shareEvent} from '@frogpond/event-list'
+import {
+	EventDetail,
+	shareEvent,
+	timelineBlocks,
+	timelineEntries,
+	timelineWindow,
+} from '@frogpond/event-list'
 // `EventDetail` here is the namespace `export * as EventDetail from
 // './event-detail'` produces (matching `EventList.EventList`'s shape
 // elsewhere in this package) -- the component itself is
@@ -15,6 +21,8 @@ import {
 	isDeviceSourceId,
 	namedCalendarEventOptions,
 	useCalendarSource,
+	useCalendarSources,
+	useMergedEvents,
 } from '@frogpond/ccc-calendar'
 import {LoadingView, NoticeView} from '@frogpond/notice'
 import {STOLAF_POWERED_BY, NORTHFIELD_POWERED_BY} from '../../source/features/calendar/constants'
@@ -34,6 +42,12 @@ const POWERED_BY: Record<EventSource, {title: string; href: string}> = {
  * caption is empty -- `EventDetail` omits it entirely when the title is.
  */
 const NO_ATTRIBUTION = {title: '', href: ''} as const
+
+/**
+ * The sources that contribute to the merged calendar, and so have neighbours
+ * to show. KSTO's and KRLX's broadcast schedules do not.
+ */
+const REMOTE_SOURCE_IDS = new Set(['stolaf', 'northfield'])
 
 export default function EventDetailPage(): React.ReactNode {
 	let {source, eventKey} = useLocalSearchParams<{
@@ -73,6 +87,34 @@ export default function EventDetailPage(): React.ReactNode {
 	// the route. The fallback is only for an id nothing recognises -- a stale
 	// deep link to a calendar since deleted from the phone.
 	let color = useCalendarSource(source)?.color ?? c.systemBlue
+
+	// The same cached month the list reads, under the same query keys, so
+	// arriving from the list costs no fetch.
+	let {enabled} = useCalendarSources()
+	let {events: neighbours} = useMergedEvents(enabled)
+
+	let colorFor = React.useMemo(() => {
+		let table = new Map(enabled.map((source) => [source.id, source.color]))
+		return (sourceId: string) => table.get(sourceId) ?? c.systemBlue
+	}, [enabled])
+
+	// The radio schedules route here too, and their events never enter
+	// `useCalendarSources` -- so there are no neighbours to draw and no timeline.
+	// `timelineWindow` rules out all-day events on its own, by returning null.
+	let isCalendarSource = deviceSource || REMOTE_SOURCE_IDS.has(source)
+	let window = event && isCalendarSource ? timelineWindow(event) : null
+	let timeline =
+		window && event
+			? {
+					window,
+					blocks: timelineBlocks(
+						window,
+						// `eventKey` here is the route param destructured at the top of
+						// the component, not the `eventKey` helper event-list exports.
+						timelineEntries({sourceId: source, key: eventKey, event}, neighbours),
+					),
+				}
+			: undefined
 
 	let poweredBy = deviceSource
 		? NO_ATTRIBUTION
@@ -173,7 +215,13 @@ export default function EventDetailPage(): React.ReactNode {
 					</Stack.Toolbar>
 				)}
 			/>
-			<EventDetail.EventDetail color={color} event={event} poweredBy={poweredBy} />
+			<EventDetail.EventDetail
+				color={color}
+				colorFor={colorFor}
+				event={event}
+				poweredBy={poweredBy}
+				timeline={timeline}
+			/>
 		</>
 	)
 }

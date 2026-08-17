@@ -39,6 +39,7 @@ export const scrollContentBackground = modifier('scrollContentBackground')
 export const lineLimit = modifier('lineLimit')
 export const truncationMode = modifier('truncationMode')
 export const contentShape = modifier('contentShape')
+export const offset = modifier('offset')
 
 /**
  * Shape builders, not modifiers: `contentShape(shapes.rectangle())` passes one
@@ -103,6 +104,10 @@ export function HStack({
 	testID,
 }: WithModifiers & {spacing?: number; testID?: string}): React.ReactNode {
 	return <View testID={testID}>{children}</View>
+}
+
+export function ZStack({children}: WithModifiers): React.ReactNode {
+	return <View>{children}</View>
 }
 
 /**
@@ -190,6 +195,18 @@ export function Section({
 
 export function Link({label, destination}: {label?: string; destination: string}): React.ReactNode {
 	return <RNText accessibilityLabel={destination}>{label ?? destination}</RNText>
+}
+
+/**
+ * The icon `Label` takes as `systemImage` has no counterpart in
+ * react-test-renderer, so the mock renders only the title text -- the part a
+ * query can reach.
+ */
+export function Label({
+	title,
+	modifiers,
+}: WithModifiers & {title?: string; systemImage?: string}): React.ReactNode {
+	return <RNText accessibilityLabel={labelOf(modifiers)}>{title}</RNText>
 }
 
 /**
