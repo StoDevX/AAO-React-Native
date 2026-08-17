@@ -141,19 +141,41 @@ Replace it with:
  * the button to that end.
 ```
 
-- [ ] **Step 3: Run the tests**
+- [ ] **Step 3: Move the uitest's dismiss tap away from the menu**
+
+`uitests/Screens/CalendarScreen.swift` has `dismissMenu()`, which taps the top **right** of the screen to close the picker menu. Its comment states why that spot: "the toolbar button is at the bottom left and the menu opens upward from it, so the top right is clear of both." That reasoning inverts with the button. The menu now opens upward on the right, and the tap can land on it instead of dismissing it.
+
+Four tests call `dismissMenu()`, so this is not optional. Change the coordinate to the top left and correct the comment:
+
+```swift
+	/// Close the menu by tapping well away from it -- the toolbar button is at
+	/// the bottom right and the menu opens upward from it, so the top left is
+	/// clear of both.
+	@discardableResult
+	func dismissMenu() -> Self {
+		if menuIsPresented() {
+			app.coordinate(withNormalizedOffset: CGVector(dx: 0.1, dy: 0.2)).tap()
+			_ = app.buttons[TestIdentifiers.Calendar.calendars[0]].waitForNonExistence(timeout: 10)
+		}
+		return self
+	}
+```
+
+- [ ] **Step 4: Run the Jest tests**
 
 ```bash
 mise run test -- calendar-picker
 ```
 
-Expected: PASS. `modules/ccc-calendar/__tests__/calendar-picker.test.tsx` queries the button by its accessibility label, which does not change, so it should be unaffected. If it asserts child order, update it to match — order is behaviour here, not appearance.
+Expected: PASS. `modules/ccc-calendar/__tests__/calendar-picker.test.tsx` queries the button by its accessibility label, which does not change. If it asserts child order, update it to match — order is behaviour here, not appearance.
 
-- [ ] **Step 4: Commit**
+The XCUITest change cannot be verified locally; the controller runs it on the simulator before this task is marked complete.
+
+- [ ] **Step 5: Commit**
 
 ```bash
 mise run agent:pre-commit
-git add modules/ccc-calendar/calendar-picker.tsx modules/ccc-calendar/__tests__/calendar-picker.test.tsx
+git add modules/ccc-calendar/calendar-picker.tsx modules/ccc-calendar/__tests__/calendar-picker.test.tsx uitests/Screens/CalendarScreen.swift
 git commit -m "Move the Calendars button to the trailing end of the bar"
 ```
 
@@ -525,9 +547,48 @@ In `event-detail-view.tsx`, remove the whole `<AddToCalendar ... />` block and i
 
 Leave `Section`, `Text`, `Link`, `Form`, `Host`, `VStack` — the other sections still use them.
 
-- [ ] **Step 2: Update the view's test**
+- [ ] **Step 2: Move the coverage rather than dropping it**
 
-`event-detail-view.test.tsx` has `it offers an add-to-calendar button`. The button no longer lives in this component, so the test belongs with it. Delete that test from this file. Do not replace it with an assertion that the button is absent — that asserts nothing about where it went.
+`event-detail-view.test.tsx` has `it offers an add-to-calendar button`. The button no longer lives in this component, so the Jest test goes — but the coverage follows it to the level the button now lives at, rather than being lost. Do not replace it with an assertion that the button is absent; that asserts nothing about where it went.
+
+Delete the Jest test, then add an identifier in `uitests/TestIdentifiers.swift`, inside `enum Calendar`:
+
+```swift
+		/// The bottom-bar action on the event detail sheet. This is the
+		/// `accessibilityLabel`, which differs in case from the visible title
+		/// -- VoiceOver and XCUITest both read the label.
+		static let addToCalendar = "Add to calendar"
+```
+
+Add to `uitests/Screens/CalendarScreen.swift`:
+
+```swift
+	/// The event detail's bottom-bar action. A bar item, so it is a button, and
+	/// it carries no icon -- the title is all there is to find it by.
+	@discardableResult
+	func verifyAddToCalendarButton() -> Self {
+		let button = app.buttons[TestIdentifiers.Calendar.addToCalendar]
+		XCTAssertTrue(
+			button.waitForExistence(timeout: 30),
+			"The event detail should offer Add to calendar in its bottom bar")
+		return self
+	}
+```
+
+Add to `uitests/ModuleCalendarTests.swift`:
+
+```swift
+	/// The add-to-calendar action moved out of the form and into the sheet's
+	/// bottom bar, so this is the only thing that asserts it exists at all --
+	/// the component test that used to went with the button.
+	func testEventDetailOffersAddToCalendar() throws {
+		CalendarScreen(app: app)
+			.navigate()
+			.openFirstEvent()
+			.verifyAddToCalendarButton()
+			.capture("17-event-detail-add-to-calendar")
+	}
+```
 
 - [ ] **Step 3: Run the view's tests**
 
@@ -607,7 +668,7 @@ Open an event. The bar should hold one centred, text-only button tinted the same
 
 ```bash
 mise run agent:pre-commit
-git add modules/event-list/event-detail-view.tsx modules/event-list/__tests__/event-detail-view.test.tsx app/\(home\)/EventDetail.tsx
+git add modules/event-list/event-detail-view.tsx modules/event-list/__tests__/event-detail-view.test.tsx app/\(home\)/EventDetail.tsx uitests/TestIdentifiers.swift uitests/Screens/CalendarScreen.swift uitests/ModuleCalendarTests.swift
 git commit -m "Put Add to Calendar in the sheet's bottom bar"
 ```
 
