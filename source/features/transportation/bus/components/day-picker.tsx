@@ -9,7 +9,7 @@ import {
 	background,
 	contentShape,
 	font,
-	foregroundColor,
+	foregroundStyle,
 	padding,
 	shapes,
 	strokeBorder,
@@ -225,7 +225,7 @@ export const DayPickerHeader = ({
 						<SwiftUIText
 							modifiers={[
 								font({textStyle: LABEL_TEXT_STYLE, weight: 'medium'}),
-								foregroundColor(accentColor),
+								foregroundStyle(accentColor),
 							]}
 						>
 							{displayText}

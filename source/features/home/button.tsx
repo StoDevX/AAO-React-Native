@@ -6,7 +6,6 @@ import {
 	buttonStyle,
 	contentShape,
 	font,
-	foregroundColor,
 	foregroundStyle,
 	frame,
 	imageScale,
@@ -194,7 +193,7 @@ export function HomeScreenButton({view, onPress}: Props): React.ReactNode {
 								textStyle: TITLE_TEXT_STYLE,
 								weight: 'semibold',
 							}),
-							foregroundColor(titleColor),
+							foregroundStyle(titleColor),
 						]}
 					>
 						{view.title}

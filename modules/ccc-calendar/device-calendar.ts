@@ -4,8 +4,9 @@ import type {EventType} from '@frogpond/event-type'
 
 /**
  * iOS 17 split EventKit's calendar permission into write-only and full
- * access. `add-to-device-calendar` only ever needs to write, so it asks for
- * the narrower one; reading the device's events needs this.
+ * access. Both this module and `add-to-device-calendar` need the full one --
+ * reading the device's events here, reading the default calendar there -- so
+ * these wrappers exist to name that ask rather than to narrow it.
  */
 export function requestFullCalendarAccess(): Promise<Calendar.PermissionResponse> {
 	return Calendar.requestCalendarPermissions(false)
