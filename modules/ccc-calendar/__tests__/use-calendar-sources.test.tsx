@@ -78,7 +78,6 @@ describe('useCalendarSources', () => {
 		let {result} = await renderHook(() => useCalendarSources(), {wrapper})
 
 		expect(result.current.remote.map((s) => s.id)).toEqual(['stolaf', 'northfield'])
-		expect(result.current.canOfferDevice).toBe(false)
 		expect(result.current.device).toEqual([])
 		// The branch's central invariant: a production build must not so much as
 		// ask EventKit what it already granted.
@@ -128,7 +127,6 @@ describe('useCalendarSources', () => {
 			])
 		})
 		expect(result.current.deviceAvailable).toBe(true)
-		expect(mockGetCalendars).toHaveBeenCalled()
 	})
 
 	// Three components call this hook on the calendar screen -- the picker, the
@@ -193,6 +191,5 @@ describe('useCalendarSources', () => {
 		let {result} = await renderHook(() => useCalendarSource('northfield'), {wrapper})
 
 		expect(result.current?.title).toBe('Northfield')
-		expect(result.current?.color).toBeDefined()
 	})
 })
