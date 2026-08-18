@@ -132,7 +132,7 @@ export function FaqBanner({style, target, faqId, onPressOverride}: Props): React
 					<Pressable
 						accessibilityLabel="Dismiss FAQ banner"
 						accessibilityRole="button"
-						hitSlop={8}
+						hitSlop={DISMISS_HIT_SLOP}
 						onPress={onDismiss}
 						style={[
 							styles.dismissButton,
@@ -303,7 +303,7 @@ export function FaqBannerPresentation({
 						accessibilityElementsHidden={!onDismiss}
 						accessibilityLabel={onDismiss ? 'Dismiss FAQ banner' : undefined}
 						accessibilityRole={onDismiss ? 'button' : undefined}
-						hitSlop={8}
+						hitSlop={DISMISS_HIT_SLOP}
 						importantForAccessibility={onDismiss ? 'yes' : 'no-hide-descendants'}
 						onPress={(e: GestureResponderEvent) => {
 							e.stopPropagation()
@@ -346,6 +346,9 @@ function shouldShowAfterDelay(faq: Faq, dismissedAt?: number): boolean {
 
 	return Date.now() - dismissedAt >= faq.repeatRule.intervalMs
 }
+
+/** Pads the 24pt dismiss button out to the 44pt minimum touch target. */
+const DISMISS_HIT_SLOP = 10
 
 const styles = StyleSheet.create({
 	container: {
