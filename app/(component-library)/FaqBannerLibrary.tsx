@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {StyleSheet} from 'react-native'
+import {Alert, StyleSheet} from 'react-native'
 import {Section} from '@frogpond/tableview'
 import {Stack} from 'expo-router'
 
@@ -128,7 +128,17 @@ const BannerSection = ({header, faqs}: {header: string; faqs: Faq[]}): React.Rea
 	// section drops the cell chrome that would clip and divide them.
 	<Section header={header} hideSeparator={true} roundedCorners={false}>
 		{faqs.map((faq) => (
-			<FaqBannerPresentation key={faq.id} faq={faq} style={styles.banner} />
+			// Both handlers report which banner fired them, so a dismiss tap that
+			// leaks through to the card shows up as the wrong alert. Passing
+			// onDismiss also puts the dismiss control back in the accessibility
+			// tree, which is how it renders in the app.
+			<FaqBannerPresentation
+				key={faq.id}
+				faq={faq}
+				onDismiss={() => Alert.alert('Dismissed', faq.id)}
+				onPress={() => Alert.alert('Tapped', faq.id)}
+				style={styles.banner}
+			/>
 		))}
 	</Section>
 )
