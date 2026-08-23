@@ -40,6 +40,8 @@ export const truncationMode = modifier('truncationMode')
 export const contentShape = modifier('contentShape')
 export const offset = modifier('offset')
 export const opacity = modifier('opacity')
+export const scrollPosition = modifier('scrollPosition')
+export const id = modifier('id')
 
 /**
  * Shape builders, not modifiers: `contentShape(shapes.rectangle())` passes one
@@ -48,6 +50,11 @@ export const opacity = modifier('opacity')
  */
 export const shapes = {
 	rectangle: () => ({type: 'rectangle'}) as const,
+}
+
+export function useNativeState<T>(initial: T): {value: T} {
+	let ref = React.useRef({value: initial})
+	return ref.current
 }
 
 export const accessibilityLabel = (label: string): Modifier => ({
