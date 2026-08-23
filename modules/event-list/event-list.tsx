@@ -1,19 +1,22 @@
 import * as React from 'react'
 import {StyleSheet} from 'react-native'
-import {Host, List, Section, Text} from '@expo/ui/swift-ui'
+import {Host, List, Section, Text, useNativeState} from '@expo/ui/swift-ui'
 import {
 	background,
 	font,
 	foregroundStyle,
+	id,
 	listStyle,
 	refreshable,
 	scrollContentBackground,
+	scrollPosition,
 } from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
 import toPairs from 'lodash/toPairs'
 import groupBy from 'lodash/groupBy'
 import type {Moment} from 'moment-timezone'
 import {NoticeView} from '@frogpond/notice'
+import {DayPickerStrip, deriveDays} from './day-picker-strip'
 import {EventListRow} from './event-list-row'
 import {formatSectionHeader} from './times'
 import {CalendarSource, PoweredBy, SourcedEvent} from './types'
@@ -87,6 +90,23 @@ export function EventList(props: Props): React.ReactNode {
 		return (sourceId: string) => table.get(sourceId) ?? c.systemBlue
 	}, [props.sources])
 
+	let scrollTarget = useNativeState<string | null>(null)
+
+	let days = React.useMemo(() => deriveDays(props.events, props.now), [props.events, props.now])
+
+	let [selectedDay, setSelectedDay] = React.useState<Moment | null>(() => {
+		return days.length > 0 ? days[0] : null
+	})
+
+	let handleSelectDay = React.useCallback(
+		(day: Moment) => {
+			setSelectedDay(day)
+			let sectionKey = day.isSame(props.now, 'day') ? 'Today' : day.format('YYYY-MM-DD')
+			scrollTarget.value = sectionKey
+		},
+		[props.now, scrollTarget],
+	)
+
 	if (props.message) {
 		return <NoticeView text={props.message} />
 	}
@@ -123,6 +143,12 @@ export function EventList(props: Props): React.ReactNode {
 
 	return (
 		<Host style={styles.host}>
+			<DayPickerStrip
+				days={days}
+				now={props.now}
+				onSelectDay={handleSelectDay}
+				selectedDay={selectedDay}
+			/>
 			<List
 				modifiers={[
 					listStyle('plain'),
@@ -135,6 +161,18 @@ export function EventList(props: Props): React.ReactNode {
 					background(c.systemBackground),
 					refreshable(async () => {
 						await props.onRefresh()
+					}),
+					scrollPosition(scrollTarget, {
+						onChange: (sectionKey) => {
+							if (!sectionKey) return
+							let matchingDay = days.find((d) => {
+								let key = d.isSame(props.now, 'day') ? 'Today' : d.format('YYYY-MM-DD')
+								return key === sectionKey
+							})
+							if (matchingDay && (!selectedDay || !matchingDay.isSame(selectedDay, 'day'))) {
+								setSelectedDay(matchingDay)
+							}
+						},
 					}),
 				]}
 			>
@@ -149,6 +187,7 @@ export function EventList(props: Props): React.ReactNode {
 					<Section
 						header={<SectionHeader isToday={section.isToday} title={section.title} />}
 						key={section.key}
+						modifiers={[id(section.key)]}
 					>
 						{section.data.map((entry, index) => (
 							<EventListRow
