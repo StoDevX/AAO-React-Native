@@ -136,7 +136,13 @@ describe('DayPickerStrip', () => {
 		]
 
 		await render(
-			<DayPickerStrip days={days} now={NOW} onSelectDay={jest.fn()} selectedDay={days[0]} />,
+			<DayPickerStrip
+				days={days}
+				now={NOW}
+				onScrollSettle={jest.fn()}
+				onSelectDay={jest.fn()}
+				selectedDay={days[0]}
+			/>,
 		)
 
 		expect(screen.getByText('23')).toBeTruthy()
@@ -148,7 +154,13 @@ describe('DayPickerStrip', () => {
 		let days = [moment('2026-08-23T12:00:00Z')] // Sunday
 
 		await render(
-			<DayPickerStrip days={days} now={NOW} onSelectDay={jest.fn()} selectedDay={days[0]} />,
+			<DayPickerStrip
+				days={days}
+				now={NOW}
+				onScrollSettle={jest.fn()}
+				onSelectDay={jest.fn()}
+				selectedDay={days[0]}
+			/>,
 		)
 
 		expect(screen.getByText('S')).toBeTruthy()
@@ -160,7 +172,13 @@ describe('DayPickerStrip', () => {
 		let onSelectDay = jest.fn()
 
 		await render(
-			<DayPickerStrip days={days} now={NOW} onSelectDay={onSelectDay} selectedDay={days[0]} />,
+			<DayPickerStrip
+				days={days}
+				now={NOW}
+				onScrollSettle={jest.fn()}
+				onSelectDay={onSelectDay}
+				selectedDay={days[0]}
+			/>,
 		)
 
 		fireEvent.press(screen.getByText('24'))
@@ -172,7 +190,13 @@ describe('DayPickerStrip', () => {
 
 	test('renders nothing when days is empty', async () => {
 		let result = await render(
-			<DayPickerStrip days={[]} now={NOW} onSelectDay={jest.fn()} selectedDay={null} />,
+			<DayPickerStrip
+				days={[]}
+				now={NOW}
+				onScrollSettle={jest.fn()}
+				onSelectDay={jest.fn()}
+				selectedDay={null}
+			/>,
 		)
 
 		expect(result.toJSON()).toBeNull()

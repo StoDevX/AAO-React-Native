@@ -107,28 +107,75 @@ export let EventList = React.forwardRef<EventListHandle, Props>(function EventLi
 
 	let days = React.useMemo(() => deriveDays(props.events, props.now), [props.events, props.now])
 
+	let sections = React.useMemo(
+		() => groupEvents(props.events, props.now),
+		[props.events, props.now],
+	)
+
 	let [selectedDay, setSelectedDay] = React.useState<Moment | null>(() => {
 		return days.length > 0 ? days[0] : null
 	})
 
-	let handleSelectDay = React.useCallback(
-		(day: Moment) => {
-			setSelectedDay(day)
-			let sectionKey = day.isSame(props.now, 'day') ? 'Today' : day.format('YYYY-MM-DD')
-			scrollTarget.value = sectionKey
-			stripRef.current?.scrollToDay(day)
-		},
-		[props.now, scrollTarget],
+	let sectionKeyFor = React.useCallback(
+		(day: Moment) => (day.isSame(props.now, 'day') ? 'Today' : day.format('YYYY-MM-DD')),
+		[props.now],
 	)
 
+	let sectionKeys = React.useMemo(() => new Set(sections.map((section) => section.key)), [sections])
+
+	/**
+	 * The first day from `day` onwards that the list holds a section for.
+	 *
+	 * The strip fills the gaps between events so it reads as a continuous
+	 * calendar, which leaves it offering days the list cannot scroll to. The
+	 * range ends on a day that has events, so looking forward always lands
+	 * somewhere.
+	 */
+	let dayWithEventsFrom = React.useCallback(
+		(day: Moment) =>
+			days.find((d) => !d.isBefore(day, 'day') && sectionKeys.has(sectionKeyFor(d))) ?? day,
+		[days, sectionKeys, sectionKeyFor],
+	)
+
+	let handleSelectDay = React.useCallback(
+		(day: Moment) => {
+			let target = dayWithEventsFrom(day)
+			setSelectedDay(target)
+			scrollTarget.value = sectionKeyFor(target)
+			stripRef.current?.scrollToDay(target)
+		},
+		[scrollTarget, sectionKeyFor, dayWithEventsFrom],
+	)
+
+	// The strip has already come to rest where the drag left it, so this moves
+	// the list alone.
+	let handleStripSettle = React.useCallback(
+		(day: Moment) => {
+			let target = dayWithEventsFrom(day)
+			setSelectedDay(target)
+			scrollTarget.value = sectionKeyFor(target)
+		},
+		[scrollTarget, sectionKeyFor, dayWithEventsFrom],
+	)
+
+	/**
+	 * Returns the list to the top. The topmost section is whatever sorts first
+	 * -- `Ongoing` when something spans today, otherwise the earliest day -- and
+	 * naming it beats naming `Today`, which has no section at all on a day with
+	 * no events.
+	 */
 	let scrollToToday = React.useCallback(() => {
-		scrollTarget.value = 'Ongoing'
 		let today = days.find((d) => d.isSame(props.now, 'day'))
 		if (today) {
 			setSelectedDay(today)
 			stripRef.current?.scrollToDay(today)
 		}
-	}, [days, props.now, scrollTarget])
+
+		let topSection = sections[0]?.key
+		if (topSection) {
+			scrollTarget.value = topSection
+		}
+	}, [days, props.now, scrollTarget, sections])
 
 	React.useImperativeHandle(
 		ref,
@@ -170,8 +217,6 @@ export let EventList = React.forwardRef<EventListHandle, Props>(function EventLi
 		return <NoticeView buttonText="Try Again" onPress={props.onRefresh} text="No events." />
 	}
 
-	let sections = groupEvents(props.events, props.now)
-
 	return (
 		<Host style={styles.host}>
 			<VStack>
@@ -180,6 +225,7 @@ export let EventList = React.forwardRef<EventListHandle, Props>(function EventLi
 						ref={stripRef}
 						days={days}
 						now={props.now}
+						onScrollSettle={handleStripSettle}
 						onSelectDay={handleSelectDay}
 						selectedDay={selectedDay}
 					/>
