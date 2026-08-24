@@ -1,22 +1,30 @@
 import * as React from 'react'
 import {StyleSheet} from 'react-native'
-import {Host, List, Section, Text, useNativeState} from '@expo/ui/swift-ui'
+import {
+	Host,
+	LazyVStack,
+	RNHostView,
+	ScrollView as SwiftUIScrollView,
+	Text,
+	useNativeState,
+	VStack,
+} from '@expo/ui/swift-ui'
 import {
 	background,
 	font,
 	foregroundStyle,
 	id,
-	listStyle,
+	padding,
 	refreshable,
-	scrollContentBackground,
 	scrollPosition,
+	scrollTargetLayout,
 } from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
 import toPairs from 'lodash/toPairs'
 import groupBy from 'lodash/groupBy'
 import type {Moment} from 'moment-timezone'
 import {NoticeView} from '@frogpond/notice'
-import {DayPickerStrip, deriveDays} from './day-picker-strip'
+import {DayPickerStrip, deriveDays, type DayPickerStripHandle} from './day-picker-strip'
 import {EventListRow} from './event-list-row'
 import {formatSectionHeader} from './times'
 import {CalendarSource, PoweredBy, SourcedEvent} from './types'
@@ -31,6 +39,10 @@ type Props = {
 	now: Moment
 	poweredBy: PoweredBy
 	onPressEvent: (entry: SourcedEvent) => void
+}
+
+export type EventListHandle = {
+	scrollToToday: () => void
 }
 
 type EventSection = {
@@ -84,13 +96,14 @@ function SectionHeader({title, isToday}: {title: string; isToday: boolean}): Rea
 	)
 }
 
-export function EventList(props: Props): React.ReactNode {
+export let EventList = React.forwardRef<EventListHandle, Props>(function EventList(props, ref) {
 	let colorFor = React.useMemo(() => {
 		let table = new Map(props.sources.map((source) => [source.id, source.color]))
 		return (sourceId: string) => table.get(sourceId) ?? c.systemBlue
 	}, [props.sources])
 
 	let scrollTarget = useNativeState<string | null>(null)
+	let stripRef = React.useRef<DayPickerStripHandle>(null)
 
 	let days = React.useMemo(() => deriveDays(props.events, props.now), [props.events, props.now])
 
@@ -103,8 +116,26 @@ export function EventList(props: Props): React.ReactNode {
 			setSelectedDay(day)
 			let sectionKey = day.isSame(props.now, 'day') ? 'Today' : day.format('YYYY-MM-DD')
 			scrollTarget.value = sectionKey
+			stripRef.current?.scrollToDay(day)
 		},
 		[props.now, scrollTarget],
+	)
+
+	let scrollToToday = React.useCallback(() => {
+		scrollTarget.value = 'Ongoing'
+		let today = days.find((d) => d.isSame(props.now, 'day'))
+		if (today) {
+			setSelectedDay(today)
+			stripRef.current?.scrollToDay(today)
+		}
+	}, [days, props.now, scrollTarget])
+
+	React.useImperativeHandle(
+		ref,
+		() => ({
+			scrollToToday,
+		}),
+		[scrollToToday],
 	)
 
 	if (props.message) {
@@ -143,70 +174,71 @@ export function EventList(props: Props): React.ReactNode {
 
 	return (
 		<Host style={styles.host}>
-			<DayPickerStrip
-				days={days}
-				now={props.now}
-				onSelectDay={handleSelectDay}
-				selectedDay={selectedDay}
-			/>
-			<List
-				modifiers={[
-					listStyle('plain'),
-					// A plain list's own background is transparent by default,
-					// leaving the grouped grey of the screen behind it showing
-					// through the gaps between sections and behind the headers.
-					// Painting it explicitly is what makes the list read as flat
-					// white like Calendar.app's, with no card behind anything.
-					scrollContentBackground('hidden'),
-					background(c.systemBackground),
-					refreshable(async () => {
-						await props.onRefresh()
-					}),
-					scrollPosition(scrollTarget, {
-						onChange: (sectionKey) => {
-							if (!sectionKey) return
-							let matchingDay = days.find((d) => {
-								let key = d.isSame(props.now, 'day') ? 'Today' : d.format('YYYY-MM-DD')
-								return key === sectionKey
-							})
-							if (matchingDay && (!selectedDay || !matchingDay.isSame(selectedDay, 'day'))) {
-								setSelectedDay(matchingDay)
-							}
-						},
-					}),
-				]}
-			>
-				{props.failed.length > 0 ? (
-					<Section>
-						<Text modifiers={[foregroundStyle(c.secondaryLabel), font({textStyle: 'footnote'})]}>
-							{`Could not load ${props.failed.map((source) => source.title).join(', ')}.`}
-						</Text>
-					</Section>
-				) : null}
-				{sections.map((section) => (
-					<Section
-						header={<SectionHeader isToday={section.isToday} title={section.title} />}
-						key={section.key}
-						modifiers={[id(section.key)]}
-					>
-						{section.data.map((entry, index) => (
-							<EventListRow
-								color={colorFor(entry.sourceId)}
-								event={entry.event}
-								isLastInSection={index === section.data.length - 1}
-								// `entry.key` alone (start time + title) collides once two
-								// merged calendars can hold the same event at the same
-								// time -- the source tag is what tells them apart.
-								key={`${entry.sourceId}|${entry.key}`}
-								onPress={() => props.onPressEvent(entry)}
-							/>
+			<VStack>
+				<RNHostView matchContents={true}>
+					<DayPickerStrip
+						ref={stripRef}
+						days={days}
+						now={props.now}
+						onSelectDay={handleSelectDay}
+						selectedDay={selectedDay}
+					/>
+				</RNHostView>
+				<SwiftUIScrollView
+					modifiers={[
+						background(c.systemBackground),
+						refreshable(async () => {
+							await props.onRefresh()
+						}),
+						scrollPosition(scrollTarget, {
+							anchor: 'top',
+							onChange: (sectionKey) => {
+								if (!sectionKey) return
+								let matchingDay = days.find((d) => {
+									let key = d.isSame(props.now, 'day') ? 'Today' : d.format('YYYY-MM-DD')
+									return key === sectionKey
+								})
+								if (matchingDay && (!selectedDay || !matchingDay.isSame(selectedDay, 'day'))) {
+									setSelectedDay(matchingDay)
+									stripRef.current?.scrollToDay(matchingDay)
+								}
+							},
+						}),
+					]}
+				>
+					<LazyVStack alignment="leading" modifiers={[scrollTargetLayout()]}>
+						{props.failed.length > 0 ? (
+							<Text modifiers={[foregroundStyle(c.secondaryLabel), font({textStyle: 'footnote'})]}>
+								{`Could not load ${props.failed.map((source) => source.title).join(', ')}.`}
+							</Text>
+						) : null}
+						{sections.map((section) => (
+							<VStack
+								key={section.key}
+								alignment="leading"
+								modifiers={[
+									id(section.key),
+									padding({leading: 16, trailing: 16, top: 12, bottom: 8}),
+								]}
+							>
+								<SectionHeader isToday={section.isToday} title={section.title} />
+								{section.data.map((entry, index) => (
+									<EventListRow
+										color={colorFor(entry.sourceId)}
+										event={entry.event}
+										isLastInSection={index === section.data.length - 1}
+										key={`${entry.sourceId}|${entry.key}`}
+										onPress={() => props.onPressEvent(entry)}
+									/>
+								))}
+							</VStack>
 						))}
-					</Section>
-				))}
-			</List>
+					</LazyVStack>
+				</SwiftUIScrollView>
+			</VStack>
 		</Host>
 	)
-}
+})
 
 const styles = StyleSheet.create({
 	host: {

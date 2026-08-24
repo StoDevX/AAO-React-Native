@@ -104,6 +104,27 @@ describe('deriveDays', () => {
 		let result = deriveDays(events as unknown as SourcedEvent[], NOW)
 		expect(result).toHaveLength(1)
 	})
+
+	test('fills in gap days between events', () => {
+		let events = [
+			{
+				sourceId: 'a',
+				key: '1',
+				event: {startTime: moment('2026-08-23T10:00:00Z'), isOngoing: false},
+			},
+			{
+				sourceId: 'a',
+				key: '2',
+				event: {startTime: moment('2026-08-26T10:00:00Z'), isOngoing: false},
+			},
+		]
+		let result = deriveDays(events as unknown as SourcedEvent[], NOW)
+		expect(result).toHaveLength(4)
+		expect(result[0].format('YYYY-MM-DD')).toBe('2026-08-23')
+		expect(result[1].format('YYYY-MM-DD')).toBe('2026-08-24')
+		expect(result[2].format('YYYY-MM-DD')).toBe('2026-08-25')
+		expect(result[3].format('YYYY-MM-DD')).toBe('2026-08-26')
+	})
 })
 
 describe('DayPickerStrip', () => {

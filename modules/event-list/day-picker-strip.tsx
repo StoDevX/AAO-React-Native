@@ -1,17 +1,34 @@
 import * as React from 'react'
-import {Pressable, ScrollView, StyleSheet, Text, View} from 'react-native'
+import {
+	DynamicColorIOS,
+	Pressable,
+	ScrollView,
+	StyleSheet,
+	Text,
+	View,
+	type LayoutChangeEvent,
+} from 'react-native'
 import type {Moment} from 'moment-timezone'
 import * as c from '@frogpond/colors'
 
+const selectionCircleFill = DynamicColorIOS({light: '#000000', dark: '#FFFFFF'})
+const selectionTextColor = DynamicColorIOS({light: '#FFFFFF', dark: '#000000'})
+
 import type {SourcedEvent} from './types'
 
+const CELL_WIDTH = 44
+const CELL_MARGIN = 4
+const CELL_TOTAL_WIDTH = CELL_WIDTH + CELL_MARGIN * 2
+const PADDING_HORIZONTAL = 8
+const CIRCLE_SIZE = 32
+
 /**
- * Extracts unique days from events, starting from today, sorted chronologically.
- * Excludes ongoing events (they appear in their own section, not a date).
+ * Generates a continuous range of days from today through the last event day.
+ * Returns an empty array if there are no future events.
  */
 export function deriveDays(events: readonly SourcedEvent[], now: Moment): Moment[] {
-	let seen = new Set<string>()
-	let days: Moment[] = []
+	let today = now.clone().startOf('day')
+	let lastDay: Moment | null = null
 
 	for (let entry of events) {
 		if (entry.event.isOngoing) {
@@ -19,19 +36,29 @@ export function deriveDays(events: readonly SourcedEvent[], now: Moment): Moment
 		}
 
 		let day = entry.event.startTime.clone().startOf('day')
-		let key = day.format('YYYY-MM-DD')
 
-		if (day.isBefore(now, 'day')) {
+		if (day.isBefore(today, 'day')) {
 			continue
 		}
 
-		if (!seen.has(key)) {
-			seen.add(key)
-			days.push(day)
+		if (!lastDay || day.isAfter(lastDay, 'day')) {
+			lastDay = day
 		}
 	}
 
-	return days.sort((a, b) => a.valueOf() - b.valueOf())
+	if (!lastDay) {
+		return []
+	}
+
+	let days: Moment[] = []
+	let current = today.clone()
+
+	while (current.isSameOrBefore(lastDay, 'day')) {
+		days.push(current.clone())
+		current.add(1, 'day')
+	}
+
+	return days
 }
 
 type Props = {
@@ -39,6 +66,10 @@ type Props = {
 	selectedDay: Moment | null
 	onSelectDay: (day: Moment) => void
 	now: Moment
+}
+
+export type DayPickerStripHandle = {
+	scrollToDay: (day: Moment) => void
 }
 
 function DayCell({
@@ -55,9 +86,9 @@ function DayCell({
 	let weekdayLetter = day.format('dd').charAt(0).toUpperCase()
 	let dateNumber = day.format('D')
 
-	let circleColor = isToday ? c.systemRed : c.systemBlue
-	let showCircle = isSelected
-	let textColor = isSelected ? '#FFFFFF' : c.label
+	let showTodayCircle = isToday
+	let showSelectionCircle = isSelected && !isToday
+	let textColor = isToday ? '#FFFFFF' : showSelectionCircle ? selectionTextColor : c.label
 	let weekdayColor = isToday ? c.systemRed : c.secondaryLabel
 
 	return (
@@ -70,23 +101,58 @@ function DayCell({
 		>
 			<Text style={[styles.weekday, {color: weekdayColor}]}>{weekdayLetter}</Text>
 			<View style={styles.dateContainer}>
-				{showCircle ? <View style={[styles.circle, {backgroundColor: circleColor}]} /> : null}
+				{showTodayCircle ? <View style={[styles.circle, {backgroundColor: c.systemRed}]} /> : null}
+				{showSelectionCircle ? (
+					<View style={[styles.circle, {backgroundColor: selectionCircleFill}]} />
+				) : null}
 				<Text style={[styles.date, {color: textColor}]}>{dateNumber}</Text>
 			</View>
 		</Pressable>
 	)
 }
 
-export function DayPickerStrip({days, selectedDay, onSelectDay, now}: Props): React.ReactNode {
+export let DayPickerStrip = React.forwardRef<DayPickerStripHandle, Props>(function DayPickerStrip(
+	{days, selectedDay, onSelectDay, now},
+	ref,
+) {
+	let scrollRef = React.useRef<ScrollView>(null)
+	let [containerWidth, setContainerWidth] = React.useState(0)
+
+	let handleLayout = React.useCallback((event: LayoutChangeEvent) => {
+		setContainerWidth(event.nativeEvent.layout.width)
+	}, [])
+
+	let scrollToDay = React.useCallback(
+		(day: Moment) => {
+			if (!scrollRef.current || containerWidth === 0) {
+				return
+			}
+
+			let sundayOfWeek = day.clone().startOf('week')
+			let sundayIndex = days.findIndex((d) => d.isSame(sundayOfWeek, 'day'))
+			let scrollToIndex = sundayIndex >= 0 ? sundayIndex : 0
+
+			let scrollX = PADDING_HORIZONTAL + scrollToIndex * CELL_TOTAL_WIDTH - CELL_MARGIN
+			let maxScroll = PADDING_HORIZONTAL * 2 + days.length * CELL_TOTAL_WIDTH - containerWidth
+			scrollX = Math.max(0, Math.min(scrollX, maxScroll))
+
+			scrollRef.current.scrollTo({x: scrollX, animated: true})
+		},
+		[days, containerWidth],
+	)
+
+	React.useImperativeHandle(ref, () => ({scrollToDay}), [scrollToDay])
+
 	if (days.length === 0) {
 		return null
 	}
 
 	return (
-		<View style={styles.container}>
+		<View style={styles.container} onLayout={handleLayout}>
 			<ScrollView
 				contentContainerStyle={styles.scrollContent}
 				horizontal={true}
+				ref={scrollRef}
 				showsHorizontalScrollIndicator={false}
 			>
 				{days.map((day) => {
@@ -106,9 +172,7 @@ export function DayPickerStrip({days, selectedDay, onSelectDay, now}: Props): Re
 			</ScrollView>
 		</View>
 	)
-}
-
-const CELL_SIZE = 44
+})
 
 const styles = StyleSheet.create({
 	container: {
@@ -116,13 +180,13 @@ const styles = StyleSheet.create({
 		borderBottomWidth: StyleSheet.hairlineWidth,
 	},
 	scrollContent: {
-		paddingHorizontal: 8,
+		paddingHorizontal: PADDING_HORIZONTAL,
 		paddingVertical: 8,
 	},
 	cell: {
-		width: CELL_SIZE,
+		width: CELL_WIDTH,
 		alignItems: 'center',
-		marginHorizontal: 4,
+		marginHorizontal: CELL_MARGIN,
 	},
 	weekday: {
 		fontSize: 11,
@@ -130,16 +194,16 @@ const styles = StyleSheet.create({
 		marginBottom: 4,
 	},
 	dateContainer: {
-		width: 32,
-		height: 32,
+		width: CIRCLE_SIZE,
+		height: CIRCLE_SIZE,
 		alignItems: 'center',
 		justifyContent: 'center',
 	},
 	circle: {
 		position: 'absolute',
-		width: 32,
-		height: 32,
-		borderRadius: 16,
+		width: CIRCLE_SIZE,
+		height: CIRCLE_SIZE,
+		borderRadius: CIRCLE_SIZE / 2,
 	},
 	date: {
 		fontSize: 17,
