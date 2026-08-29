@@ -37,6 +37,7 @@ const styles = StyleSheet.create({
 		zIndex: 2,
 	},
 	busIconAtStop: {
+		marginVertical: -10,
 		zIndex: 2,
 	},
 	dot: {
@@ -150,11 +151,10 @@ export function ProgressChunk(props: Props): React.ReactNode {
 					stopStatus === 'before' && [styles.beforeStop, {borderColor: barColor}],
 					stopStatus === 'at' && [styles.atStop, {borderColor: currentStopColor}],
 					stopStatus === 'skip' && styles.skippingStop,
-					showBusAtDot && {opacity: 0},
 				]}
 			/>
 			{showBusAtDot && (
-				<View style={[styles.busIcon, styles.busIconAtStop, {position: 'absolute'}]}>
+				<View style={[styles.busIconAtStop]}>
 					<SymbolView
 						name="bus.fill"
 						size={18}
