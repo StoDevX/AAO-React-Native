@@ -50,6 +50,8 @@ type Props = {
 	isFirstChunk: boolean
 	isLastChunk: boolean
 	stopStatus: BusStopStatusEnum
+	busProgress?: number | null
+	busAtStop?: boolean
 }
 
 export function ProgressChunk(props: Props): React.ReactNode {
