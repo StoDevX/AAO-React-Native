@@ -59,8 +59,12 @@ export function deriveDays(events: readonly SourcedEvent[], now: Moment): Moment
 		return []
 	}
 
+	// Start from Sunday of the current week so the strip always opens on a
+	// week boundary.
+	let sunday = today.clone().startOf('week')
+
 	let days: Moment[] = []
-	let current = today.clone()
+	let current = sunday.clone()
 
 	while (current.isSameOrBefore(lastDay, 'day')) {
 		days.push(current.clone())

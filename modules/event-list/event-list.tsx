@@ -112,9 +112,25 @@ export let EventList = React.forwardRef<EventListHandle, Props>(function EventLi
 		[props.events, props.now],
 	)
 
-	let [selectedDay, setSelectedDay] = React.useState<Moment | null>(() => {
-		return days.length > 0 ? days[0] : null
-	})
+	let [selectedDay, setSelectedDay] = React.useState<Moment | null>(null)
+
+	// Sync the selection to the list's top section once data loads. The section
+	// key is 'Today', 'Ongoing', or an ISO date.
+	React.useEffect(() => {
+		if (selectedDay !== null || sections.length === 0) {
+			return
+		}
+		let topKey = sections[0].key
+		let target: Moment | null = null
+		if (topKey === 'Ongoing' || topKey === 'Today') {
+			target = days.find((d) => d.isSame(props.now, 'day')) ?? null
+		} else {
+			target = days.find((d) => d.format('YYYY-MM-DD') === topKey) ?? null
+		}
+		if (target) {
+			setSelectedDay(target)
+		}
+	}, [days, sections, props.now, selectedDay])
 
 	let sectionKeyFor = React.useCallback(
 		(day: Moment) => (day.isSame(props.now, 'day') ? 'Today' : day.format('YYYY-MM-DD')),

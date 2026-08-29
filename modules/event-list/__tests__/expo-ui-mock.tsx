@@ -72,6 +72,11 @@ export const accessibilityLabel = (label: string): Modifier => ({
 	label,
 })
 
+export const accessibilityIdentifier = (identifier: string): Modifier => ({
+	$type: 'accessibilityIdentifier',
+	identifier,
+})
+
 /**
  * The label an `accessibilityLabel(…)` modifier asks for, which is what
  * VoiceOver -- and therefore `getByLabelText` -- would report natively.
