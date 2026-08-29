@@ -14,6 +14,7 @@ import find from 'lodash/find'
 import findLast from 'lodash/findLast'
 import {Separator} from '@frogpond/separator'
 import {BusStopRow} from './components/bus-stop-row'
+import type {BusSegment} from './components/progress-chunk'
 import {ListFooter, ListRow} from '@frogpond/lists'
 import {InfoHeader} from '@frogpond/info-header'
 import * as c from '@frogpond/colors'
@@ -83,11 +84,13 @@ function startsIn(now: Moment, start?: Moment | null) {
 	return `Starts ${nowCopy.seconds(0).to(start)}`
 }
 
+type BusTarget = {targetIndex: number; progress: number; atStop: boolean}
+
 function findBusTarget(
 	schedule: BusSchedule,
 	currentBusIteration: number | null,
 	now: Moment,
-): {targetIndex: number; progress: number; atStop: boolean} | null {
+): BusTarget | null {
 	if (currentBusIteration === null) {
 		return null
 	}
@@ -132,6 +135,42 @@ function findBusTarget(
 	let progress = calculateBusProgress(previousTime, nextTime, now)
 
 	return {targetIndex, progress, atStop: false}
+}
+
+/** The point in a stop-to-stop gap where the drawing crosses a row boundary. */
+const SEGMENT_SPLIT = 0.5
+
+/**
+ * Maps a bus's position onto one row's bar. The gap between two stops spans two
+ * rows -- the bar below the stop the bus left, then the bar above the stop it is
+ * heading to -- so the first half of the trip is drawn by the departed stop's
+ * row and the second half by the destination's.
+ */
+function busPropsForRow(
+	busTarget: BusTarget | null,
+	index: number,
+): {busProgress?: number; busSegment?: BusSegment; busAtStop?: boolean} {
+	if (!busTarget) {
+		return {}
+	}
+
+	if (busTarget.atStop) {
+		return index === busTarget.targetIndex ? {busAtStop: true} : {}
+	}
+
+	let hasDepartedRow = busTarget.targetIndex > 0
+	if (busTarget.progress < SEGMENT_SPLIT && hasDepartedRow) {
+		return index === busTarget.targetIndex - 1
+			? {busProgress: busTarget.progress / SEGMENT_SPLIT, busSegment: 'below'}
+			: {}
+	}
+
+	if (index !== busTarget.targetIndex) {
+		return {}
+	}
+
+	let progressAboveStop = (busTarget.progress - SEGMENT_SPLIT) / SEGMENT_SPLIT
+	return {busProgress: Math.max(0, progressAboveStop), busSegment: 'above'}
 }
 
 export function deriveFromProps({line, now}: {line: UnprocessedBusLine; now: Moment}): {
@@ -206,11 +245,7 @@ export function BusLine(props: Props): React.ReactNode {
 	let [currentBusIteration, setCurrentBusIteration] = useState<number | null>(null)
 	let [status, setStatus] = useState<BusStateEnum>('none')
 	let [selectedDay, setSelectedDay] = useState<DayOfWeek>(() => momentToDayOfWeek(now))
-	let [busTarget, setBusTarget] = useState<{
-		targetIndex: number
-		progress: number
-		atStop: boolean
-	} | null>(null)
+	let [busTarget, setBusTarget] = useState<BusTarget | null>(null)
 
 	const currentDay = momentToDayOfWeek(now)
 
@@ -295,7 +330,6 @@ export function BusLine(props: Props): React.ReactNode {
 			data={timetable}
 			keyExtractor={(item, index) => `${item.name}-${index}`}
 			renderItem={({item, index}) => {
-				let isBusTarget = busTarget?.targetIndex === index
 				return (
 					<TouchableOpacity
 						onPress={() => {
@@ -307,8 +341,7 @@ export function BusLine(props: Props): React.ReactNode {
 					>
 						<BusStopRow
 							barColor={line.colors.bar}
-							busAtStop={isBusTarget && busTarget ? busTarget.atStop : undefined}
-							busProgress={isBusTarget && busTarget ? busTarget.progress : undefined}
+							{...busPropsForRow(busTarget, index)}
 							currentStopColor={line.colors.dot}
 							departureIndex={currentBusIteration}
 							isFirstRow={index === 0}

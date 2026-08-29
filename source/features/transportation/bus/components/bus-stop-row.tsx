@@ -4,7 +4,7 @@ import {Column} from '@frogpond/layout'
 import {Detail, ListRow, Title} from '@frogpond/lists'
 import type {BusTimetableEntry} from '../types'
 import * as c from '@frogpond/colors'
-import {ProgressChunk} from './progress-chunk'
+import {BusSegment, ProgressChunk} from './progress-chunk'
 import {ScheduleTimes} from './times'
 import {
 	BusStateEnum,
@@ -42,6 +42,7 @@ type Props = {
 	isLastRow: boolean
 	status: BusStateEnum
 	busProgress?: number | null
+	busSegment?: BusSegment
 	busAtStop?: boolean
 }
 
@@ -56,6 +57,7 @@ export function BusStopRow(props: Props): React.ReactNode {
 		stop,
 		status: busStatus,
 		busProgress,
+		busSegment,
 		busAtStop,
 	} = props
 
@@ -74,6 +76,7 @@ export function BusStopRow(props: Props): React.ReactNode {
 				barColor={barColor}
 				busAtStop={busAtStop}
 				busProgress={busProgress}
+				busSegment={busSegment}
 				currentStopColor={currentStopColor}
 				isFirstChunk={isFirstRow}
 				isLastChunk={isLastRow}
