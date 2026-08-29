@@ -2,7 +2,13 @@ import * as React from 'react'
 import {useEffect, useState} from 'react'
 import {FlatList, StyleSheet, Text, TouchableOpacity, View} from 'react-native'
 import type {BusSchedule, UnprocessedBusLine, DayOfWeek} from './types'
-import {BusStateEnum, getCurrentBusIteration, getScheduleForNow, processBusLine} from './lib'
+import {
+	BusStateEnum,
+	calculateBusProgress,
+	getCurrentBusIteration,
+	getScheduleForNow,
+	processBusLine,
+} from './lib'
 import type {Moment} from 'moment-timezone'
 import find from 'lodash/find'
 import findLast from 'lodash/findLast'
@@ -77,6 +83,74 @@ function startsIn(now: Moment, start?: Moment | null) {
 	return `Starts ${nowCopy.seconds(0).to(start)}`
 }
 
+type BusTarget = {targetIndex: number; progress: number; atStop: boolean}
+
+function findBusTarget(
+	schedule: BusSchedule,
+	currentBusIteration: number | null,
+	now: Moment,
+): BusTarget | null {
+	if (currentBusIteration === null) {
+		return null
+	}
+
+	let times = schedule.times[currentBusIteration]
+	if (!times) {
+		return null
+	}
+
+	let targetIndex: number | null = null
+	let previousIndex: number | null = null
+
+	for (let i = 0; i < times.length; i++) {
+		let time = times[i]
+		if (time === null) {
+			continue
+		}
+
+		if (now.isSame(time, 'minute')) {
+			return {targetIndex: i, progress: 1, atStop: true}
+		}
+
+		if (now.isBefore(time, 'minute')) {
+			targetIndex = i
+			break
+		}
+
+		previousIndex = i
+	}
+
+	if (targetIndex === null || previousIndex === null) {
+		return null
+	}
+
+	let previousTime = times[previousIndex]
+	let nextTime = times[targetIndex]
+
+	if (!previousTime || !nextTime) {
+		return null
+	}
+
+	let progress = calculateBusProgress(previousTime, nextTime, now)
+
+	return {targetIndex, progress, atStop: false}
+}
+
+/**
+ * Hands the bus to the row it is heading for, which draws the whole leg from the
+ * stop above down to its own.
+ */
+function busPropsForRow(
+	busTarget: BusTarget | null,
+	index: number,
+): {busProgress?: number; busAtStop?: boolean} {
+	if (!busTarget || index !== busTarget.targetIndex) {
+		return {}
+	}
+
+	return busTarget.atStop ? {busAtStop: true} : {busProgress: busTarget.progress}
+}
+
 export function deriveFromProps({line, now}: {line: UnprocessedBusLine; now: Moment}): {
 	subtitle: string
 	status: BusStateEnum
@@ -149,6 +223,7 @@ export function BusLine(props: Props): React.ReactNode {
 	let [currentBusIteration, setCurrentBusIteration] = useState<number | null>(null)
 	let [status, setStatus] = useState<BusStateEnum>('none')
 	let [selectedDay, setSelectedDay] = useState<DayOfWeek>(() => momentToDayOfWeek(now))
+	let [busTarget, setBusTarget] = useState<BusTarget | null>(null)
 
 	const currentDay = momentToDayOfWeek(now)
 
@@ -175,6 +250,12 @@ export function BusLine(props: Props): React.ReactNode {
 		setSubtitle(scheduleSubtitle)
 		setStatus(currentStatus)
 		setCurrentBusIteration(busIteration)
+
+		if (currentStatus === 'running') {
+			setBusTarget(findBusTarget(scheduleForToday, busIteration, momentForSelectedDay))
+		} else {
+			setBusTarget(null)
+		}
 	}, [line, now, selectedDay])
 
 	let INFO_EL = (
@@ -226,27 +307,30 @@ export function BusLine(props: Props): React.ReactNode {
 			contentInsetAdjustmentBehavior="automatic"
 			data={timetable}
 			keyExtractor={(item, index) => `${item.name}-${index}`}
-			renderItem={({item, index}) => (
-				<TouchableOpacity
-					onPress={() => {
-						router.push({
-							pathname: '/BusRouteDetail',
-							params: {line: line.line, day: selectedDay, stopName: item.name},
-						})
-					}}
-				>
-					<BusStopRow
-						barColor={line.colors.bar}
-						currentStopColor={line.colors.dot}
-						departureIndex={currentBusIteration}
-						isFirstRow={index === 0}
-						isLastRow={timetable.length === 0 || index === timetable.length - 1}
-						now={momentForSelectedDay}
-						status={status}
-						stop={item}
-					/>
-				</TouchableOpacity>
-			)}
+			renderItem={({item, index}) => {
+				return (
+					<TouchableOpacity
+						onPress={() => {
+							router.push({
+								pathname: '/BusRouteDetail',
+								params: {line: line.line, day: selectedDay, stopName: item.name},
+							})
+						}}
+					>
+						<BusStopRow
+							barColor={line.colors.bar}
+							{...busPropsForRow(busTarget, index)}
+							currentStopColor={line.colors.dot}
+							departureIndex={currentBusIteration}
+							isFirstRow={index === 0}
+							isLastRow={timetable.length === 0 || index === timetable.length - 1}
+							now={momentForSelectedDay}
+							status={status}
+							stop={item}
+						/>
+					</TouchableOpacity>
+				)
+			}}
 			style={styles.container}
 		/>
 	)

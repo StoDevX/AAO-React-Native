@@ -41,6 +41,8 @@ type Props = {
 	isFirstRow: boolean
 	isLastRow: boolean
 	status: BusStateEnum
+	busProgress?: number | null
+	busAtStop?: boolean
 }
 
 export function BusStopRow(props: Props): React.ReactNode {
@@ -53,6 +55,8 @@ export function BusStopRow(props: Props): React.ReactNode {
 		now,
 		stop,
 		status: busStatus,
+		busProgress,
+		busAtStop,
 	} = props
 
 	let stopStatus = findStopStatus({stop, busStatus, departureIndex, now})
@@ -68,6 +72,8 @@ export function BusStopRow(props: Props): React.ReactNode {
 		<ListRow arrowPosition="center" fullHeight={true} fullWidth={true} style={styles.row}>
 			<ProgressChunk
 				barColor={barColor}
+				busAtStop={busAtStop}
+				busProgress={busProgress}
 				currentStopColor={currentStopColor}
 				isFirstChunk={isFirstRow}
 				isLastChunk={isLastRow}
