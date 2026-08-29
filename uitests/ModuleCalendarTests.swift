@@ -46,10 +46,10 @@ class ModuleCalendarTests: UITestCase {
 			.capture("06-list-after-both-toggles")
 	}
 
-	/// Both remote calendars on, so one timeline carries two bar colours; then
+	/// Both remote calendars on, so one timeline carries two bar colors; then
 	/// scrolled, which is what a large title collapses against and what a pinned
 	/// section header sits over.
-	func testMergedListColoursAndScrolling() throws {
+	func testMergedListColorsAndScrolling() throws {
 		let screen = CalendarScreen(app: app)
 			.navigate()
 			.openPicker()
@@ -99,7 +99,7 @@ class ModuleCalendarTests: UITestCase {
 	}
 
 	/// The detail screen for an event opened out of the merged list: its
-	/// masthead bar should carry the calendar's colour, not a fixed blue.
+	/// masthead bar should carry the calendar's color, not a fixed blue.
 	func testEventDetailFromMergedList() throws {
 		CalendarScreen(app: app)
 			.navigate()
@@ -164,6 +164,86 @@ class ModuleCalendarTests: UITestCase {
 			.capture("13-device-only-list")
 			.openFirstEvent()
 			.capture("14-device-event-detail")
+	}
+
+	// MARK: - Day picker strip
+
+	/// The strip leads with Sunday — the leftmost cell is Sunday of the current
+	/// week, not today.
+	func testDayPickerStripLeadsWithSunday() throws {
+		CalendarScreen(app: app)
+			.navigate()
+			.verifyStripIsPresent()
+			.verifySundayLeadsTheStrip()
+			.capture("21-day-picker-strip")
+	}
+
+	/// Nothing in Jest can measure a rendered frame, so this is the only place
+	/// the cells are checked against the 44pt minimum.
+	func testDayCellsMeetTheMinimumTapTarget() throws {
+		CalendarScreen(app: app)
+			.navigate()
+			.verifyDayCellsAreTappable()
+	}
+
+	/// Scrolling the list moves the strip's selection to whichever day the list
+	/// settled on. The two views drive each other, so this is the direction that
+	/// a naive fix breaks first.
+	func testScrollingTheListMovesTheStripSelection() throws {
+		let screen = CalendarScreen(app: app).navigate()
+		screen.verifyStripIsPresent()
+
+		// Scroll once to trigger an initial selection sync.
+		screen.nudgeList()
+
+		guard let startingDay = screen.selectedDay() else {
+			XCTFail("A day should be selected after the first scroll")
+			return
+		}
+		screen.capture("22-after-first-scroll")
+
+		for _ in 1...4 {
+			screen.nudgeList()
+		}
+		screen.capture("23-after-more-scrolling")
+
+		// Without this the assertion below could pass on a list too short to
+		// have scrolled anywhere.
+		XCTAssertNotEqual(
+			screen.selectedDay(), startingDay,
+			"Scrolling the list should move the strip's selection off \(startingDay)")
+	}
+
+	/// Today returns the list to the top from wherever it has been scrolled.
+	///
+	/// The button aimed at an `Ongoing` section that only exists while some
+	/// event spans today, so on a day with nothing ongoing it silently scrolled
+	/// nowhere. It aims at the first section rendered now, which always exists.
+	func testTodayReturnsTheListToTheTop() throws {
+		let screen = CalendarScreen(app: app).navigate()
+		screen.verifyStripIsPresent()
+
+		guard let topAtLaunch = screen.topRowLabel() else {
+			XCTFail("The list should have rows to scroll")
+			return
+		}
+
+		for _ in 1...6 {
+			screen.nudgeList()
+		}
+		screen.capture("24-scrolled-away-from-today")
+
+		// The list has to have actually moved, or tapping Today proves nothing.
+		XCTAssertNotEqual(
+			screen.topRowLabel(), topAtLaunch,
+			"The list should have scrolled before Today is tested")
+
+		screen.tapToday()
+		screen.capture("25-after-tapping-today")
+
+		XCTAssertEqual(
+			screen.topRowLabel(), topAtLaunch,
+			"Today should return the list to the row it started on")
 	}
 
 	/// The add-to-calendar action is a bottom-bar item, which no component test

@@ -95,6 +95,25 @@ struct TestIdentifiers {
 		/// The bottom-bar action on the event detail sheet. A bar item's
 		/// identifier is its title, which is what XCUITest matches on.
 		static let addToCalendar = "Add to Calendar"
+		/// Returns the list to the top. A bar item, so its title is its
+		/// identifier.
+		static let today = "Today"
+		/// Each day-picker cell is identified by `day-cell-<ISO date>`.
+		/// Mirrored by `DAY_CELL_PREFIX` in `modules/event-list/day-picker-strip.tsx`.
+		static let dayCellPrefix = "day-cell-"
+
+		/// Each event row is identified by `event-row-<title>`.
+		/// Mirrored by `EVENT_ROW_PREFIX` in `modules/event-list/event-list-row.tsx`.
+		static let eventRowPrefix = "event-row-"
+
+		/// The identifier of the cell for a given day.
+		static func dayCell(_ date: Date) -> String {
+			let formatter = DateFormatter()
+			formatter.calendar = Foundation.Calendar(identifier: .gregorian)
+			formatter.locale = Locale(identifier: "en_US_POSIX")
+			formatter.dateFormat = "yyyy-MM-dd"
+			return dayCellPrefix + formatter.string(from: date)
+		}
 	}
 
 	// MARK: - Streaming Media

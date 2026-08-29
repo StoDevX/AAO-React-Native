@@ -2,6 +2,7 @@ import * as React from 'react'
 import type {ColorValue} from 'react-native'
 import {Button, HStack, Image, Spacer, Text, VStack} from '@expo/ui/swift-ui'
 import {
+	accessibilityIdentifier,
 	accessibilityLabel,
 	background,
 	buttonStyle,
@@ -16,6 +17,12 @@ import {
 	shapes,
 	truncationMode,
 } from '@expo/ui/swift-ui/modifiers'
+
+/**
+ * Every event row carries this prefix so XCUITest can query them directly
+ * without iterating all buttons. Mirrored by `TestIdentifiers.Calendar.eventRowPrefix`.
+ */
+export const EVENT_ROW_PREFIX = 'event-row-'
 import * as c from '@frogpond/colors'
 import type {EventType} from '@frogpond/event-type'
 import {listTimeLines} from './times'
@@ -141,6 +148,7 @@ export function EventListRow({event, onPress, isLastInSection, color}: Props): R
 		<Button
 			modifiers={[
 				buttonStyle('plain'),
+				accessibilityIdentifier(`${EVENT_ROW_PREFIX}${title}`),
 				accessibilityLabel(title),
 				...(isLastInSection ? [listRowSeparator('hidden', 'bottom')] : []),
 			]}

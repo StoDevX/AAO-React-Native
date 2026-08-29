@@ -17,6 +17,7 @@ export default function CalendarPage(): React.ReactNode {
 	let {now} = useMomentTimer({intervalMs: 60000})
 	let {enabled} = useCalendarSources()
 	let {events, failed, isRefetching, refetchAll} = useMergedEvents(enabled)
+	let eventListRef = React.useRef<EventList.EventListHandle>(null)
 
 	let onPressEvent = (entry: SourcedEvent) => {
 		router.push({
@@ -25,9 +26,14 @@ export default function CalendarPage(): React.ReactNode {
 		})
 	}
 
+	let onTodayPress = React.useCallback(() => {
+		eventListRef.current?.scrollToToday()
+	}, [])
+
 	return (
 		<>
 			<EventList.EventList
+				ref={eventListRef}
 				events={events}
 				failed={failed}
 				now={now}
@@ -37,7 +43,7 @@ export default function CalendarPage(): React.ReactNode {
 				refreshing={isRefetching}
 				sources={enabled}
 			/>
-			<CalendarPicker />
+			<CalendarPicker onTodayPress={onTodayPress} />
 		</>
 	)
 }

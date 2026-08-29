@@ -33,7 +33,11 @@ import {useCalendarSources} from './use-calendar-sources'
  * what VoiceOver speaks and what the UI tests query the button by.
  * `title` is left unset so the menu gets no header of its own.
  */
-export function CalendarPicker(): React.ReactNode {
+type Props = {
+	onTodayPress?: () => void
+}
+
+export function CalendarPicker({onTodayPress}: Props): React.ReactNode {
 	let {remote, device, enabled, canOfferDevice, deviceAvailable, toggle, requestDevice} =
 		useCalendarSources()
 
@@ -52,6 +56,11 @@ export function CalendarPicker(): React.ReactNode {
 
 	return (
 		<Stack.Toolbar placement="bottom">
+			{onTodayPress ? (
+				<Stack.Toolbar.Button accessibilityLabel="Today" onPress={onTodayPress}>
+					Today
+				</Stack.Toolbar.Button>
+			) : null}
 			<Stack.Toolbar.Spacer />
 			<Stack.Toolbar.Menu accessibilityLabel="Calendars" icon="calendar">
 				<Stack.Toolbar.Label>Calendars</Stack.Toolbar.Label>

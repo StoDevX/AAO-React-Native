@@ -40,6 +40,9 @@ export const truncationMode = modifier('truncationMode')
 export const contentShape = modifier('contentShape')
 export const offset = modifier('offset')
 export const opacity = modifier('opacity')
+export const scrollPosition = modifier('scrollPosition')
+export const id = modifier('id')
+export const scrollTargetLayout = modifier('scrollTargetLayout')
 
 /**
  * Shape builders, not modifiers: `contentShape(shapes.rectangle())` passes one
@@ -50,9 +53,28 @@ export const shapes = {
 	rectangle: () => ({type: 'rectangle'}) as const,
 }
 
+export function useNativeState<T>(initial: T): {value: T} {
+	let ref = React.useRef({value: initial})
+	return ref.current
+}
+
+export function RNHostView({
+	children,
+}: {
+	children: React.ReactNode
+	matchContents?: boolean
+}): React.ReactNode {
+	return <View>{children}</View>
+}
+
 export const accessibilityLabel = (label: string): Modifier => ({
 	$type: 'accessibilityLabel',
 	label,
+})
+
+export const accessibilityIdentifier = (identifier: string): Modifier => ({
+	$type: 'accessibilityIdentifier',
+	identifier,
 })
 
 /**
@@ -98,6 +120,29 @@ export function HStack({
 
 export function ZStack({children}: WithModifiers): React.ReactNode {
 	return <View>{children}</View>
+}
+
+export function LazyVStack({children}: WithModifiers & {alignment?: string}): React.ReactNode {
+	return <View>{children}</View>
+}
+
+export function ScrollView({children, modifiers}: WithModifiers): React.ReactNode {
+	let onRefresh = refreshableOf(modifiers)
+
+	return (
+		<View>
+			{onRefresh ? (
+				<Pressable
+					accessibilityLabel="Refresh"
+					onPress={() => {
+						void onRefresh()
+					}}
+					testID="list-refresh-trigger"
+				/>
+			) : null}
+			{children}
+		</View>
+	)
 }
 
 /**
