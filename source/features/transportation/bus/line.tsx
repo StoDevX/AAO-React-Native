@@ -14,7 +14,6 @@ import find from 'lodash/find'
 import findLast from 'lodash/findLast'
 import {Separator} from '@frogpond/separator'
 import {BusStopRow} from './components/bus-stop-row'
-import type {BusSegment} from './components/progress-chunk'
 import {ListFooter, ListRow} from '@frogpond/lists'
 import {InfoHeader} from '@frogpond/info-header'
 import * as c from '@frogpond/colors'
@@ -137,40 +136,19 @@ function findBusTarget(
 	return {targetIndex, progress, atStop: false}
 }
 
-/** The point in a stop-to-stop gap where the drawing crosses a row boundary. */
-const SEGMENT_SPLIT = 0.5
-
 /**
- * Maps a bus's position onto one row's bar. The gap between two stops spans two
- * rows -- the bar below the stop the bus left, then the bar above the stop it is
- * heading to -- so the first half of the trip is drawn by the departed stop's
- * row and the second half by the destination's.
+ * Hands the bus to the row it is heading for, which draws the whole leg from the
+ * stop above down to its own.
  */
 function busPropsForRow(
 	busTarget: BusTarget | null,
 	index: number,
-): {busProgress?: number; busSegment?: BusSegment; busAtStop?: boolean} {
-	if (!busTarget) {
+): {busProgress?: number; busAtStop?: boolean} {
+	if (!busTarget || index !== busTarget.targetIndex) {
 		return {}
 	}
 
-	if (busTarget.atStop) {
-		return index === busTarget.targetIndex ? {busAtStop: true} : {}
-	}
-
-	let hasDepartedRow = busTarget.targetIndex > 0
-	if (busTarget.progress < SEGMENT_SPLIT && hasDepartedRow) {
-		return index === busTarget.targetIndex - 1
-			? {busProgress: busTarget.progress / SEGMENT_SPLIT, busSegment: 'below'}
-			: {}
-	}
-
-	if (index !== busTarget.targetIndex) {
-		return {}
-	}
-
-	let progressAboveStop = (busTarget.progress - SEGMENT_SPLIT) / SEGMENT_SPLIT
-	return {busProgress: Math.max(0, progressAboveStop), busSegment: 'above'}
+	return busTarget.atStop ? {busAtStop: true} : {busProgress: busTarget.progress}
 }
 
 export function deriveFromProps({line, now}: {line: UnprocessedBusLine; now: Moment}): {

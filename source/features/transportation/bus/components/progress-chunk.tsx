@@ -24,6 +24,8 @@ const DOT_OVERLAP = 10
 const BUS_ICON_LEFT = BAR_WIDTH / 2 - BUS_ICON_SIZE / 2
 /** Distance from a segment's top edge to the centre of the dot beneath it. */
 const DOT_CENTER_OFFSET = DOT_SIZE / 2 - DOT_OVERLAP
+/** What the dot adds to the column's height, once its overlap is counted. */
+const DOT_FLOW_HEIGHT = DOT_SIZE - DOT_OVERLAP * 2
 
 const styles = StyleSheet.create({
 	barContainer: {
@@ -89,12 +91,6 @@ const styles = StyleSheet.create({
 	},
 })
 
-/**
- * Which half of a stop-to-stop gap this row draws the bus in: the bar below the
- * stop the bus has left, or the bar above the stop it is heading to.
- */
-export type BusSegment = 'above' | 'below'
-
 type Props = {
 	barColor: ColorValue
 	currentStopColor: ColorValue
@@ -102,12 +98,11 @@ type Props = {
 	isLastChunk: boolean
 	stopStatus: BusStopStatusEnum
 	busProgress?: number | null
-	busSegment?: BusSegment
 	busAtStop?: boolean
 }
 
 export function ProgressChunk(props: Props): React.ReactNode {
-	let {stopStatus, barColor, currentStopColor, busProgress, busSegment, busAtStop} = props
+	let {stopStatus, barColor, currentStopColor, busProgress, busAtStop} = props
 
 	// To draw the bar, we draw a chunk of the bar, then we draw the dot, then
 	// we draw the last chunk of the bar.
@@ -125,9 +120,16 @@ export function ProgressChunk(props: Props): React.ReactNode {
 		setBelowHeight(event.nativeEvent.layout.height)
 	}, [])
 
-	let segmentHeight = busSegment === 'below' ? belowHeight : aboveHeight
-	let showBusOnBar = busProgress != null && !busAtStop && segmentHeight > 0
+	let isMeasured = aboveHeight > 0 && belowHeight > 0
+	let showBusOnBar = busProgress != null && !busAtStop && isMeasured
 	let showBusAtDot = busAtStop === true
+
+	// This row draws the whole leg from the previous stop to its own, reaching up
+	// past its top edge to start. Rows paint in order, so that overhang lands on
+	// top of the row above; a row reaching *down* would be painted over by the
+	// next row's opaque background and lose half the bus at the boundary.
+	let ownDotY = aboveHeight + DOT_CENTER_OFFSET
+	let dotToDotDistance = aboveHeight + belowHeight + DOT_FLOW_HEIGHT
 
 	let animatedPosition = useRef(new Animated.Value(0)).current
 	let reducedMotion = useRef(false)
@@ -145,10 +147,10 @@ export function ProgressChunk(props: Props): React.ReactNode {
 			return
 		}
 
-		let targetPosition = busProgress * segmentHeight
+		let targetPosition = ownDotY - dotToDotDistance * (1 - busProgress)
 
-		// The first placement in a row is a jump, not a slide: animating it would
-		// send the bus down from the row's top edge every time it crosses a stop.
+		// The first placement in a row is a jump, not a slide: the bus arrives here
+		// already partway along the leg, having been drawn by the row it just left.
 		if (reducedMotion.current || !hasPositioned.current) {
 			animatedPosition.setValue(targetPosition)
 			hasPositioned.current = true
@@ -161,7 +163,7 @@ export function ProgressChunk(props: Props): React.ReactNode {
 			damping: 15,
 			stiffness: 100,
 		}).start()
-	}, [showBusOnBar, busProgress, segmentHeight, animatedPosition])
+	}, [showBusOnBar, busProgress, ownDotY, dotToDotDistance, animatedPosition])
 
 	let busIcon = (
 		<SymbolView
@@ -182,7 +184,7 @@ export function ProgressChunk(props: Props): React.ReactNode {
 		<View style={styles.barContainer}>
 			<View onLayout={onAboveLayout} style={styles.barSegment}>
 				<View style={[styles.bar, {backgroundColor: startBarColor}]} />
-				{showBusOnBar && busSegment !== 'below' ? animatedBusIcon : null}
+				{showBusOnBar ? animatedBusIcon : null}
 			</View>
 			<View
 				style={[
@@ -206,7 +208,6 @@ export function ProgressChunk(props: Props): React.ReactNode {
 			) : null}
 			<View onLayout={onBelowLayout} style={styles.barSegment}>
 				<View style={[styles.bar, {backgroundColor: endBarColor}]} />
-				{showBusOnBar && busSegment === 'below' ? animatedBusIcon : null}
 			</View>
 		</View>
 	)
