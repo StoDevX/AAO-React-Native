@@ -14,6 +14,27 @@ const styles = StyleSheet.create({
 		flex: 1,
 		width: 5,
 	},
+	topBarWrapper: {
+		flex: 1,
+		width: 5,
+		position: 'relative',
+	},
+	topBar: {
+		flex: 1,
+		width: 5,
+	},
+	busIcon: {
+		position: 'absolute',
+		left: -6.5,
+		width: 18,
+		height: 18,
+		alignItems: 'center',
+		justifyContent: 'center',
+		zIndex: 2,
+	},
+	busIconAtStop: {
+		zIndex: 2,
+	},
 	dot: {
 		height: 15,
 		width: 15,
