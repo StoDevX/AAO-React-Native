@@ -61,6 +61,11 @@ const styles = StyleSheet.create({
 		justifyContent: 'center',
 		zIndex: 3,
 	},
+	busIconShadow: {
+		shadowOffset: {width: 0, height: 1},
+		shadowOpacity: 0.2,
+		shadowRadius: 2,
+	},
 	dot: {
 		height: DOT_SIZE,
 		width: DOT_SIZE,
@@ -78,16 +83,17 @@ const styles = StyleSheet.create({
 	},
 	beforeStop: {
 		borderWidth: 3,
-		backgroundColor: c.systemFill,
+		// The row's own background, so an unvisited stop reads as a hole punched
+		// in the bar. A systemFill is translucent by design and lets it through.
+		backgroundColor: c.secondarySystemGroupedBackground,
 		height: BUS_ICON_SIZE,
 		width: BUS_ICON_SIZE,
 	},
 	atStop: {
 		height: 20,
 		width: 20,
-		borderColor: c.systemFill,
 		borderWidth: 3,
-		backgroundColor: c.systemFill,
+		backgroundColor: c.secondarySystemGroupedBackground,
 	},
 })
 
@@ -169,7 +175,7 @@ export function ProgressChunk(props: Props): React.ReactNode {
 		<SymbolView
 			name="bus.fill"
 			size={BUS_ICON_SIZE}
-			style={{shadowOffset: {width: 0, height: 1}, shadowOpacity: 0.2, shadowRadius: 2}}
+			style={styles.busIconShadow}
 			tintColor={currentStopColor as string}
 		/>
 	)
