@@ -235,7 +235,7 @@ export let EventList = React.forwardRef<EventListHandle, Props>(function EventLi
 
 	return (
 		<Host style={styles.host}>
-			<VStack>
+			<VStack spacing={0}>
 				<RNHostView matchContents={true}>
 					<DayPickerStrip
 						ref={stripRef}
