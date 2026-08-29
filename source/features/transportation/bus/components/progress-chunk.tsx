@@ -1,7 +1,11 @@
 import * as React from 'react'
+import {useEffect, useRef} from 'react'
 import * as c from '@frogpond/colors'
-import {ColorValue, StyleSheet, View} from 'react-native'
+import {AccessibilityInfo, Animated, ColorValue, StyleSheet, View} from 'react-native'
+import {SymbolView} from 'expo-symbols'
 import type {BusStopStatusEnum} from '../lib'
+
+const TOP_BAR_HEIGHT = 20
 
 const styles = StyleSheet.create({
 	barContainer: {
@@ -76,16 +80,66 @@ type Props = {
 }
 
 export function ProgressChunk(props: Props): React.ReactNode {
-	let {stopStatus, barColor, currentStopColor} = props
+	let {stopStatus, barColor, currentStopColor, busProgress, busAtStop} = props
 
 	// To draw the bar, we draw a chunk of the bar, then we draw the dot, then
 	// we draw the last chunk of the bar.
 	let startBarColor = barColor
 	let endBarColor = barColor
 
+	let animatedPosition = useRef(new Animated.Value(0)).current
+	let reducedMotion = useRef(false)
+
+	useEffect(() => {
+		AccessibilityInfo.isReduceMotionEnabled().then((enabled) => {
+			reducedMotion.current = enabled
+		})
+	}, [])
+
+	useEffect(() => {
+		if (busProgress == null) {
+			return
+		}
+
+		let targetPosition = busProgress * TOP_BAR_HEIGHT
+
+		if (reducedMotion.current) {
+			animatedPosition.setValue(targetPosition)
+		} else {
+			Animated.spring(animatedPosition, {
+				toValue: targetPosition,
+				useNativeDriver: true,
+				damping: 15,
+				stiffness: 100,
+			}).start()
+		}
+	}, [busProgress, animatedPosition])
+
+	let showBusOnBar = busProgress != null && !busAtStop
+	let showBusAtDot = busAtStop === true
+
 	return (
 		<View style={styles.barContainer}>
-			<View style={[styles.bar, {backgroundColor: startBarColor}]} />
+			<View style={styles.topBarWrapper}>
+				<View style={[styles.topBar, {backgroundColor: startBarColor}]} />
+				{showBusOnBar && (
+					<Animated.View
+						style={[
+							styles.busIcon,
+							{
+								transform: [{translateY: animatedPosition}],
+							},
+						]}
+					>
+						<SymbolView
+							name="bus.fill"
+							size={18}
+							style={{shadowOffset: {width: 0, height: 1}, shadowOpacity: 0.2, shadowRadius: 2}}
+							tintColor={currentStopColor as string}
+						/>
+					</Animated.View>
+				)}
+			</View>
 			<View
 				style={[
 					styles.dot,
@@ -96,8 +150,19 @@ export function ProgressChunk(props: Props): React.ReactNode {
 					stopStatus === 'before' && [styles.beforeStop, {borderColor: barColor}],
 					stopStatus === 'at' && [styles.atStop, {borderColor: currentStopColor}],
 					stopStatus === 'skip' && styles.skippingStop,
+					showBusAtDot && {opacity: 0},
 				]}
 			/>
+			{showBusAtDot && (
+				<View style={[styles.busIcon, styles.busIconAtStop, {position: 'absolute'}]}>
+					<SymbolView
+						name="bus.fill"
+						size={18}
+						style={{shadowOffset: {width: 0, height: 1}, shadowOpacity: 0.2, shadowRadius: 2}}
+						tintColor={currentStopColor as string}
+					/>
+				</View>
+			)}
 			<View style={[styles.bar, {backgroundColor: endBarColor}]} />
 		</View>
 	)
