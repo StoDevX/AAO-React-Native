@@ -19,6 +19,9 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		alignItems: 'center',
 	},
+	bars: {
+		backgroundColor: c.systemGroupedBackground,
+	},
 })
 
 type Props<T extends object> = {
@@ -41,8 +44,11 @@ export function FilterMenuToolbar<T extends object>({
 		mealFilter && mealFilter.type === 'picker' ? mealFilter.spec.options.length > 1 : false
 	const nonPickerFilters = filters.filter((f) => f.type !== 'picker')
 
+	// One view, not a fragment: `RNHostView` measures `children.first.uiView`,
+	// so a fragment of two bars sizes to the first and leaves the second in
+	// dead space with the SwiftUI host showing through the gap.
 	return (
-		<>
+		<View style={styles.bars}>
 			<Toolbar>
 				<View style={[styles.toolbarSection, styles.today]}>
 					<Text style={styles.toolbarText}>{date.format('MMM Do')}</Text>
@@ -60,6 +66,6 @@ export function FilterMenuToolbar<T extends object>({
 			{isOpen && (
 				<FilterToolbar<T> filters={nonPickerFilters} onPopoverDismiss={onPopoverDismiss} />
 			)}
-		</>
+		</View>
 	)
 }

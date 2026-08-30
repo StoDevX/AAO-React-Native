@@ -14,6 +14,7 @@ class ModuleMenusTests: UITestCase {
 	func testStOlafMenusCanBeOpened() throws {
 		MenusScreen(app: app)
 			.navigate()
+			.verifyFoodRowsAppear()
 			.checkStOlafCafes()
 	}
 

@@ -1,7 +1,19 @@
 import * as React from 'react'
 import {useMemo, useState} from 'react'
-import {SectionList, StyleSheet} from 'react-native'
+import {StyleSheet} from 'react-native'
+import {Host, List, RNHostView, Section, Text, VStack} from '@expo/ui/swift-ui'
+import {font, foregroundStyle, listStyle, padding, refreshable} from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
+import type {FilterType} from '@frogpond/filter'
+import {applyFiltersToItem} from '@frogpond/filter'
+import type {Moment} from 'moment'
+
+import {FilterMenuToolbar as FilterToolbar} from './filter-menu-toolbar'
+import {FoodItemRow} from './food-item-row'
+import {buildFilters} from './lib/build-filters'
+import {chooseMeal} from './lib/choose-meal'
+import {emptyMessage} from './lib/empty-message'
+import {useLocalCorIcons} from './lib/use-local-cor-icons'
 import type {
 	MasterCorIconMapType,
 	MenuItemContainerType,
@@ -9,20 +21,10 @@ import type {
 	ProcessedMealType,
 	StationMenuType,
 } from './types'
-import size from 'lodash/size'
-import {ListSectionHeader, ListSeparator, largeListProps} from '@frogpond/lists'
-import type {FilterType} from '@frogpond/filter'
-import {applyFiltersToItem} from '@frogpond/filter'
-import {NoticeView} from '@frogpond/notice'
-import {FilterMenuToolbar as FilterToolbar} from './filter-menu-toolbar'
-import {FoodItemRow} from './food-item-row'
-import {chooseMeal} from './lib/choose-meal'
-import {buildFilters} from './lib/build-filters'
-import type {Moment} from 'moment'
 
 type FilterFunc = (filters: Array<FilterType<MenuItemType>>, item: MenuItemType) => boolean
 
-type ReactProps = {
+type Props = {
 	cafeMessage?: string | null
 	foodItems: MenuItemContainerType
 	meals: ProcessedMealType[]
@@ -30,27 +32,12 @@ type ReactProps = {
 	name: string
 	now: Moment
 	onItemPress: (item: MenuItemType) => void
-	onRefresh?: () => void
-	refreshing?: boolean
+	// `unknown` rather than `void`: the real callers (menu-bonapp.tsx,
+	// menu-github.tsx's `refetch`) return a promise, and `refreshable` below
+	// needs to await that promise to keep the spinner up until it resolves.
+	onRefresh?: () => unknown
 	applyFilters?: FilterFunc
 }
-
-type Props = ReactProps
-
-const styles = StyleSheet.create({
-	inner: {
-		backgroundColor: c.systemBackground,
-	},
-	message: {
-		paddingVertical: 16,
-	},
-	contentContainer: {
-		flexGrow: 1,
-	},
-})
-
-const LEFT_MARGIN = 28
-const Separator = () => <ListSeparator spacing={{left: LEFT_MARGIN}} />
 
 const areSpecialsFiltered = (filters: Array<FilterType<MenuItemType>>): boolean =>
 	Boolean(filters.find(isSpecialsFilter))
@@ -100,9 +87,41 @@ const groupMenuData = (args: {
 		.map(([title, data]) => ({title, data}))
 }
 
+/**
+ * A station's header. Most stations are just a name, which `Section`'s own
+ * `title` renders in the system's section-header style -- preferred, so the
+ * screen looks like a system list rather than a bespoke one. Only a station
+ * carrying a `note` needs a custom node, and even then the name keeps the
+ * system's own treatment.
+ *
+ * A bare string may never be passed as a `ReactNode` prop: `@expo/ui` crashes
+ * at mount, and neither tsc nor Jest catches it.
+ */
+export function sectionHeaderProps(
+	title: string,
+	note: string | undefined,
+): {title: string} | {header: React.ReactNode} {
+	if (!note) {
+		return {title}
+	}
+
+	return {
+		header: (
+			<VStack alignment="leading" spacing={2}>
+				<Text>{title}</Text>
+				<Text modifiers={[font({textStyle: 'footnote'}), foregroundStyle(c.secondaryLabel)]}>
+					{note}
+				</Text>
+			</VStack>
+		),
+	}
+}
+
 export function FancyMenu(props: Props): React.ReactNode {
 	const {now, meals, cafeMessage, foodItems, menuCorIcons, onItemPress} = props
 	const applyFilters = props.applyFilters ?? applyFiltersToItem
+
+	const localIcons = useLocalCorIcons(menuCorIcons)
 
 	// Built from the menu once, then owned by the user. `now` picks the meal
 	// selected to begin with and nothing after: the screens above build a fresh
@@ -114,72 +133,119 @@ export function FancyMenu(props: Props): React.ReactNode {
 
 	const meal = chooseMeal(meals, filters, now)
 	const {label: mealName, stations} = meal
-	const stationsByLabel = new Map(stations.map((station) => [station.label, station]))
+
+	// Showing only the specials is the useful default -- the full list carries
+	// every condiment and salad dressing the location stocks. But the toggle is
+	// seeded once, from whichever meal was showing when the filters were built,
+	// and the meal moves: the clock rolls into the next one, or the user picks
+	// another. A meal with no specials of its own -- Brunch, most days -- would
+	// then keep the filter applied and render nothing at all, behind a control
+	// the reader has to find and undo.
+	//
+	// So the toggle is offered against the meal actually on screen, and a meal
+	// with nothing special does not offer it.
+	// Depends on the meal, not on the filters, so it is not rebuilt every time
+	// the user toggles something unrelated.
+	const mealHasSpecials = useMemo(
+		() => stations.some((station) => station.items.some((id) => foodItems[id]?.special)),
+		[stations, foodItems],
+	)
+
+	const appliedFilters = useMemo(
+		() => (mealHasSpecials ? filters : filters.filter((f) => f.key !== 'specials')),
+		[filters, mealHasSpecials],
+	)
 
 	const groupedMenuData = useMemo(
-		() => groupMenuData({stations, filters, applyFilters, foodItems}),
-		[stations, filters, applyFilters, foodItems],
+		() => groupMenuData({stations, filters: appliedFilters, applyFilters, foodItems}),
+		[stations, appliedFilters, applyFilters, foodItems],
 	)
 
-	const anyFiltersEnabled = filters.some((f) => f.enabled)
-	const specialsFilterEnabled = areSpecialsFiltered(filters)
+	// Resolving each section's note here rather than inside the `.map()` that
+	// builds the JSX: a `Map.get()` read from within that map reads as a
+	// possible mutation of `stations` to the compiler, and it responds by
+	// giving up on `groupedMenuData`'s memoization above.
+	const sectionsWithNotes = useMemo(() => {
+		const stationsByLabel = new Map(stations.map((station) => [station.label, station]))
+		return groupedMenuData.map((section) => ({
+			...section,
+			note: stationsByLabel.get(section.title)?.note,
+		}))
+	}, [groupedMenuData, stations])
 
-	let message = 'No items to show.'
-	if (cafeMessage) {
-		message = cafeMessage
-	} else if (specialsFilterEnabled && stations.length === 0) {
-		message = 'No items to show. There may be no specials today. Try changing the filters.'
-	} else if (anyFiltersEnabled && !size(groupedMenuData)) {
-		message = 'No items to show. Try changing the filters.'
-	}
+	const specialsFilterEnabled = areSpecialsFiltered(appliedFilters)
+	const message = emptyMessage({
+		cafeMessage,
+		specialsOnly: specialsFilterEnabled,
+		anyFilters: appliedFilters.some((f) => f.enabled),
+		sectionCount: groupedMenuData.length,
+		stationCount: stations.length,
+	})
 
-	// If the requested menu has no food items, that location is closed
+	// If the requested menu has no food items, that location is closed.
 	const isOpen = Object.keys(foodItems).length !== 0
 
-	const header = (
-		<FilterToolbar
-			date={now}
-			filters={filters}
-			isOpen={isOpen}
-			onPopoverDismiss={(newFilter) => {
-				let edited = filters.map((f) => (f.key === newFilter.key ? newFilter : f))
-				setFilters(edited)
-			}}
-			title={mealName}
-		/>
-	)
-
 	return (
-		<SectionList
-			ItemSeparatorComponent={Separator}
-			ListEmptyComponent={<NoticeView style={styles.message} text={message} />}
-			ListHeaderComponent={header}
-			contentContainerStyle={styles.contentContainer}
-			contentInsetAdjustmentBehavior="automatic"
-			extraData={filters}
-			keyExtractor={(item: MenuItemType) => item.id}
-			onRefresh={props.onRefresh}
-			refreshing={props.refreshing}
-			renderItem={({item}) => {
-				return (
-					<FoodItemRow
-						badgeSpecials={!specialsFilterEnabled}
-						corIcons={menuCorIcons}
-						data={item}
-						onPress={() => onItemPress(item)}
-						spacing={{left: LEFT_MARGIN}}
+		<Host style={styles.host}>
+			<VStack spacing={0}>
+				{/* Still React Native until #7804 replaces the filter popovers. */}
+				<RNHostView matchContents={true}>
+					<FilterToolbar
+						date={now}
+						filters={appliedFilters}
+						isOpen={isOpen}
+						onPopoverDismiss={(newFilter) => {
+							setFilters(filters.map((f) => (f.key === newFilter.key ? newFilter : f)))
+						}}
+						title={mealName}
 					/>
-				)
-			}}
-			renderSectionHeader={(info) => {
-				const title = info.section.title
-				const note = stationsByLabel.get(title)?.note ?? ''
+				</RNHostView>
 
-				return <ListSectionHeader spacing={{left: LEFT_MARGIN}} subtitle={note} title={title} />
-			}}
-			sections={groupedMenuData}
-			style={styles.inner}
-			{...largeListProps}
-		/>
+				<List
+					modifiers={[
+						// Inset groups, as Settings has them: cards on the grouped
+						// background rather than full-bleed rows. Section headers do
+						// not pin in this style, and `plain` -- which does pin them --
+						// is full-bleed; SwiftUI offers no style that is both.
+						listStyle('insetGrouped'),
+						...(props.onRefresh
+							? [
+									refreshable(async () => {
+										await props.onRefresh?.()
+									}),
+								]
+							: []),
+					]}
+				>
+					{sectionsWithNotes.length === 0 ? (
+						<Text modifiers={[foregroundStyle(c.secondaryLabel), padding({vertical: 16})]}>
+							{message}
+						</Text>
+					) : (
+						sectionsWithNotes.map((section) => (
+							<Section key={section.title} {...sectionHeaderProps(section.title, section.note)}>
+								{section.data.map((item) => (
+									<FoodItemRow
+										key={item.id}
+										badgeSpecials={!specialsFilterEnabled}
+										corIcons={menuCorIcons}
+										data={item}
+										localIcons={localIcons}
+										onPress={() => onItemPress(item)}
+									/>
+								))}
+							</Section>
+						))
+					)}
+				</List>
+			</VStack>
+		</Host>
 	)
 }
+
+const styles = StyleSheet.create({
+	host: {
+		flex: 1,
+		backgroundColor: c.systemGroupedBackground,
+	},
+})
