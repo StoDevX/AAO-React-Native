@@ -37,6 +37,23 @@ describe('toProcessedScores', () => {
 		expect(result.parsedDate.getTime()).toBe(Date.UTC(2026, 7, 31, 17, 0, 0))
 	})
 
+	it("resolves an 'M/D/YYYY' date_utc string to local midnight on that day", () => {
+		// Checked via getFullYear/getMonth/getDate rather than by comparing
+		// against another `new Date(string)` call: Hermes returns Invalid Date
+		// for this format even though the engine running this test doesn't, so
+		// a test relying on the engine's own parsing would pass here and stay
+		// broken on device.
+		const [result] = toProcessedScores([makeFakeApiScore({date_utc: '9/5/2026'})])
+		expect(result.parsedDate.getFullYear()).toBe(2026)
+		expect(result.parsedDate.getMonth()).toBe(8) // September
+		expect(result.parsedDate.getDate()).toBe(5)
+	})
+
+	it("keeps an all-day record ('M/D/YYYY' date_utc) instead of dropping it", () => {
+		const result = toProcessedScores([makeFakeApiScore({date_utc: '9/5/2026'})])
+		expect(result).toHaveLength(1)
+	})
+
 	it('excludes a record with an unparseable date_utc', () => {
 		const result = toProcessedScores([makeFakeApiScore({date_utc: 'not-a-date'})])
 		expect(result).toHaveLength(0)

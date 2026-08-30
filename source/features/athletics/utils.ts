@@ -1,16 +1,8 @@
 import {DateGroupedScores, DateSection, ProcessedScore, Score, SportSection} from './types'
 import {Constants} from './constants'
 
-export const DAY_NAMES = [
-	'Sunday',
-	'Monday',
-	'Tuesday',
-	'Wednesday',
-	'Thursday',
-	'Friday',
-	'Saturday',
-]
-export const MONTH_NAMES = [
+const DAY_NAMES = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+const MONTH_NAMES = [
 	'January',
 	'February',
 	'March',
@@ -25,12 +17,38 @@ export const MONTH_NAMES = [
 	'December',
 ]
 
+const MDY_DATE = /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/u
+
+/**
+ * The feed sends two `date_utc` shapes: timed events as ISO 8601, and
+ * all-day/multi-day events as `M/D/YYYY` with an empty `time`. Dispatch on
+ * shape rather than trying one format and falling back to the other.
+ *
+ * `M/D/YYYY` is parsed into its numeric parts and built as local midnight,
+ * rather than handed to `new Date()`, for two reasons: the engine that ships
+ * in the app (Hermes) returns Invalid Date for that string even though the
+ * engine tests run on doesn't, and a date-only value has no instant of its
+ * own — local midnight is the reading a calendar day means.
+ */
+function parseFeedDate(dateUtc: string): Date {
+	if (dateUtc.includes('T')) {
+		return new Date(dateUtc)
+	}
+
+	const match = MDY_DATE.exec(dateUtc)
+	if (!match) {
+		return new Date(NaN)
+	}
+
+	const [, month, day, year] = match
+	return new Date(Number(year), Number(month) - 1, Number(day))
+}
+
 /**
  * A record belongs on screen only if its `date_utc` parsed to a real
- * instant — ruling out a feed format change, which would otherwise surface
- * as missing rows rather than a blank screen — and it isn't a placeholder
- * with no scores yet ("No team scores"), which the row component has
- * nothing to render for.
+ * instant, and it isn't a placeholder with no scores yet ("No team
+ * scores"), which the feed sends for a fixture that hasn't started
+ * reporting anything.
  */
 function isDisplayableScore(score: ProcessedScore): boolean {
 	return !Number.isNaN(score.parsedDate.getTime()) && score.prescore_info !== 'No team scores'
@@ -39,7 +57,7 @@ function isDisplayableScore(score: ProcessedScore): boolean {
 /** Parse each record's `date_utc` and drop the ones with nothing to show. */
 export function toProcessedScores(scores: Score[]): ProcessedScore[] {
 	return scores
-		.map((score) => ({...score, parsedDate: new Date(score.date_utc)}))
+		.map((score) => ({...score, parsedDate: parseFeedDate(score.date_utc)}))
 		.filter(isDisplayableScore)
 }
 
@@ -89,7 +107,8 @@ export function groupScoresByDate(
 			}
 			upcoming[key].push(score)
 		}
-		// older games are omitted (same as carls behaviour)
+		// There's no bucket for anything older than Yesterday, so those games
+		// have nowhere to render and are dropped.
 	}
 
 	yesterday.sort(byParsedDateAscending)
