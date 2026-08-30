@@ -46,12 +46,25 @@ export function Text({children}: WithModifiers): React.ReactNode {
 export function RNHostView({children}: WithModifiers): React.ReactNode {
 	return <View>{children}</View>
 }
+/**
+ * `title` renders as text so a test can assert a section is present. `header`
+ * is a real `SwiftUIContent` slot on the native component -- a bare string
+ * handed to it crashes at mount -- but react-test-renderer happily accepts a
+ * raw string child of `View`, so rendering it wouldn't catch that. The throw
+ * below is what earns the claim.
+ */
 export function Section({
+	title,
 	header,
 	children,
-}: WithModifiers & {header?: React.ReactNode}): React.ReactNode {
+}: WithModifiers & {title?: string; header?: React.ReactNode}): React.ReactNode {
+	if (typeof header === 'string') {
+		throw new Error('Section header is a SwiftUI slot; a bare string crashes at mount')
+	}
+
 	return (
 		<View>
+			{title ? <RNText>{title}</RNText> : null}
 			{header}
 			{children}
 		</View>
@@ -60,11 +73,20 @@ export function Section({
 export function List({children}: WithModifiers): React.ReactNode {
 	return <View>{children}</View>
 }
+/**
+ * `children` must be nested elements, not a plain string: the throw below
+ * mirrors that constraint instead of silently accepting what the real
+ * component would reject.
+ */
 export function Button({
 	children,
 	modifiers,
 	onPress,
 }: WithModifiers & {onPress?: () => void}): React.ReactNode {
+	if (typeof children === 'string') {
+		throw new Error('Button children must be nested elements, not a plain string')
+	}
+
 	return (
 		<Pressable accessibilityLabel={labelOf(modifiers)} onPress={onPress}>
 			{children}

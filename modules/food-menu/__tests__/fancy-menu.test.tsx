@@ -3,7 +3,7 @@ import moment from 'moment-timezone'
 import {describe, expect, jest, test} from '@jest/globals'
 import {fireEvent, render, screen} from '@testing-library/react-native'
 
-import {FancyMenu} from '../fancy-menu'
+import {FancyMenu, sectionHeaderProps} from '../fancy-menu'
 import type {
 	MasterCorIconMapType,
 	MenuItemContainerType,
@@ -33,7 +33,9 @@ jest.mock('@expo/ui/swift-ui/modifiers', () => {
 	return require('./expo-ui-mock') as typeof import('./expo-ui-mock')
 })
 jest.mock('expo-asset', () => ({
-	Asset: {fromURI: () => ({downloadAsync: () => ({localUri: 'file:///cache/v.png'})})},
+	Asset: {
+		fromURI: () => ({downloadAsync: () => Promise.resolve({localUri: 'file:///cache/v.png'})}),
+	},
 }))
 
 jest.mock('../filter-menu-toolbar', () => {
@@ -163,6 +165,20 @@ describe('FancyMenu', () => {
 		)
 
 		expect(screen.getByText('No items to show. Try changing the filters.')).toBeTruthy()
-		expect(screen.queryByText('Grill')).toBeNull()
+		expect(screen.queryByText('Pancakes')).toBeNull()
+	})
+})
+
+describe('sectionHeaderProps', () => {
+	// A note-less station -- every fixture above -- takes `Section`'s own
+	// `title`, which renders in the system's section-header style.
+	test('a station with no note takes the title prop', () => {
+		expect(sectionHeaderProps('Grill', undefined)).toEqual({title: 'Grill'})
+	})
+
+	// A station with a note gets a custom header node instead, carrying both
+	// the name and the note.
+	test('a station with a note takes a custom header', () => {
+		expect('header' in sectionHeaderProps('Grill', 'closes at 2')).toBe(true)
 	})
 })

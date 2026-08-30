@@ -22,7 +22,6 @@ export function GitHubHostedMenu(props: Props): React.ReactNode {
 		isError,
 		isLoading,
 		refetch,
-		isRefetching,
 		dataUpdatedAt,
 	} = useQuery(pauseMenuOptions)
 
@@ -54,7 +53,6 @@ export function GitHubHostedMenu(props: Props): React.ReactNode {
 				})
 			}
 			onRefresh={refetch}
-			refreshing={isRefetching}
 		/>
 	)
 }

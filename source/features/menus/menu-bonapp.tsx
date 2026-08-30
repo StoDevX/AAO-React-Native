@@ -148,7 +148,6 @@ export function BonAppHostedMenu(props: Props): React.ReactNode {
 		error: menuError,
 		refetch: menuReload,
 		isError: isMenuError,
-		isRefetching: isMenuRefetching,
 		isLoading: isMenuLoading,
 	} = useQuery(bonAppMenuOptions(props.cafe))
 
@@ -157,11 +156,8 @@ export function BonAppHostedMenu(props: Props): React.ReactNode {
 		error: cafeError,
 		refetch: cafeReload,
 		isError: isCafeError,
-		isRefetching: isCafeRefetching,
 		isLoading: isCafeLoading,
 	} = useQuery(bonAppCafeOptions(props.cafe))
-
-	let refetching = isMenuRefetching || isCafeRefetching
 
 	if (isMenuLoading || isCafeLoading) {
 		return <LoadingView text={sample(props.loadingMessage)} />
@@ -231,11 +227,7 @@ export function BonAppHostedMenu(props: Props): React.ReactNode {
 					},
 				})
 			}
-			onRefresh={() => {
-				cafeReload()
-				menuReload()
-			}}
-			refreshing={refetching}
+			onRefresh={() => Promise.all([cafeReload(), menuReload()])}
 		/>
 	)
 }
