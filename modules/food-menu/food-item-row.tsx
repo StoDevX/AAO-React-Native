@@ -18,7 +18,7 @@ import {dietaryIconKeys} from './lib/dietary-icon-keys'
 import {foodRowLabel} from './lib/food-row-label'
 import type {MasterCorIconMapType, MenuItemType} from './types'
 
-/** Matches the 15pt icons the previous React Native row drew. */
+/** Dietary icons are 15pt square, with 6pt between them. */
 const ICON_SIDE = 15
 const ICON_GAP = 6
 
@@ -89,7 +89,7 @@ export function FoodItemRow({
 	return (
 		<Button
 			// Without `plain`, SwiftUI tints the whole label with the accent colour
-			// and every dish name reads as a link. Same note as BuildingRow.
+			// and every dish name reads as a link.
 			modifiers={[
 				PLAIN_BUTTON,
 				accessibilityIdentifier(`${FOOD_ROW_PREFIX}${data.label}`),

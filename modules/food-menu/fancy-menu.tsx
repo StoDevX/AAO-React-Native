@@ -161,12 +161,10 @@ export function FancyMenu(props: Props): React.ReactNode {
 		[stations, appliedFilters, applyFilters, foodItems],
 	)
 
-	// Reading a station's note straight from a `.map()` that builds JSX
-	// children -- rather than from a prop callback, as `renderSectionHeader`
-	// used to -- reads as a possible mutation of `stations` to the compiler
-	// and makes it give up on `groupedMenuData`'s memoization above. Building
-	// the lookup and resolving every section's note here, once, keeps that
-	// read out of the render tree.
+	// Resolving each section's note here rather than inside the `.map()` that
+	// builds the JSX: a `Map.get()` read from within that map reads as a
+	// possible mutation of `stations` to the compiler, and it responds by
+	// giving up on `groupedMenuData`'s memoization above.
 	const sectionsWithNotes = useMemo(() => {
 		const stationsByLabel = new Map(stations.map((station) => [station.label, station]))
 		return groupedMenuData.map((section) => ({
@@ -207,8 +205,8 @@ export function FancyMenu(props: Props): React.ReactNode {
 					modifiers={[
 						// Inset groups, as Settings has them: cards on the grouped
 						// background rather than full-bleed rows. Section headers do
-						// not pin in this style -- see
-						// docs/superpowers/spikes/menus-swiftui/container-check.md.
+						// not pin in this style, and `plain` -- which does pin them --
+						// is full-bleed; SwiftUI offers no style that is both.
 						listStyle('insetGrouped'),
 						...(props.onRefresh
 							? [
