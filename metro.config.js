@@ -5,7 +5,12 @@
  * @type {import('metro-config').MetroConfig}
  */
 
-const {getDefaultConfig, mergeConfig} = require('@react-native/metro-config')
+// @expo/metro-config, not @react-native/metro-config: the `expo` CLI (used
+// for `expo start`/`run:ios`/`export:embed`) expects its own serializer
+// output shape and errors ("Serializer did not return expected format")
+// against the bare React Native config.
+const {getDefaultConfig} = require('@expo/metro-config')
+const {mergeConfig} = require('metro-config')
 
 const defaultConfig = getDefaultConfig(__dirname)
 

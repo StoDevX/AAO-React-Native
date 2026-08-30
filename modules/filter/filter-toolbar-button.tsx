@@ -1,7 +1,7 @@
 import * as React from 'react'
 import {useRef, useState} from 'react'
 import {StyleProp, StyleSheet, Text, View, ViewStyle} from 'react-native'
-import {Ionicons as Icon} from '@react-native-vector-icons/ionicons'
+import {SymbolView} from 'expo-symbols'
 import type {FilterType} from './types'
 import {FilterPopover} from './filter-popover'
 import * as c from '@frogpond/colors'
@@ -36,9 +36,7 @@ type Props<T extends object> = {
 	title: string
 }
 
-export function FilterToolbarButton<T extends object>(
-	props: Props<T>,
-): React.ReactNode {
+export function FilterToolbarButton<T extends object>(props: Props<T>): React.ReactNode {
 	let {onPopoverDismiss, filter, style, title} = props
 
 	let [popoverVisible, setPopoverVisible] = useState(false)
@@ -69,10 +67,8 @@ export function FilterToolbarButton<T extends object>(
 				onPress={openPopover}
 				style={[buttonStyles.button, style]}
 			>
-				<Text style={[buttonStyles.text, buttonStyles.textWithIcon]}>
-					{title}
-				</Text>
-				<Icon name="chevron-down" size={18} style={buttonStyles.text} />
+				<Text style={[buttonStyles.text, buttonStyles.textWithIcon]}>{title}</Text>
+				<SymbolView name="chevron.down" size={18} tintColor={c.label} />
 			</Touchable>
 			{popoverVisible && (
 				<FilterPopover<T>

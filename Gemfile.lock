@@ -2,9 +2,9 @@ GEM
   remote: https://rubygems.org/
   specs:
     abbrev (0.1.2)
-    json (2.19.3)
+    json (2.21.2)
     netrc (0.11.0)
-    nkf (0.2.0)
+    nkf (0.3.0)
 
 PLATFORMS
   aarch64-linux-gnu
@@ -21,9 +21,9 @@ PLATFORMS
 
 DEPENDENCIES
   abbrev (= 0.1.2)
-  json (= 2.19.3)
+  json (= 2.21.2)
   netrc (= 0.11.0)
-  nkf (= 0.2.0)
+  nkf (= 0.3.0)
 
 BUNDLED WITH
   4.0.10

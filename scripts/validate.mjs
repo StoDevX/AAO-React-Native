@@ -4,7 +4,7 @@ import path from 'node:path'
 import AJV from 'ajv'
 import addFormats from 'ajv-formats'
 import addKeywords from 'ajv-keywords'
-import yaml from 'js-yaml'
+import {load} from 'js-yaml'
 import lodash from 'lodash'
 import {SCHEMA_BASE} from './paths.mjs'
 const {get, memoize} = lodash
@@ -17,9 +17,7 @@ function formatError(err, data) {
 		case 'enum': {
 			let value = get(data, dataPath)
 			let params = err.params
-			let allowed = (params.allowedValues || [])
-				.map((v) => JSON.stringify(v))
-				.join(', ')
+			let allowed = (params.allowedValues || []).map((v) => JSON.stringify(v)).join(', ')
 			contents = `Given value "${JSON.stringify(value)}" ${
 				err.message || 'is not valid'
 			} [${allowed}]`
@@ -39,7 +37,7 @@ function formatError(err, data) {
 const init = memoize(() => {
 	// load the common definitions
 	let defsPath = path.join(SCHEMA_BASE, '_defs.yaml')
-	let defs = yaml.load(fs.readFileSync(defsPath, 'utf-8'))
+	let defs = load(fs.readFileSync(defsPath, 'utf-8'))
 
 	// set up the validator
 	let validator = new AJV()

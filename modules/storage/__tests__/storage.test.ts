@@ -25,8 +25,6 @@ describe('getItemAsArray', () => {
 		expect(await getItemAsArray('non-existent')).toStrictEqual([])
 	})
 	test('returns overridden fallback value', async () => {
-		expect(await getItemAsArray('non-existent', ['fallback'])).toStrictEqual([
-			'fallback',
-		])
+		expect(await getItemAsArray('non-existent', ['fallback'])).toStrictEqual(['fallback'])
 	})
 })

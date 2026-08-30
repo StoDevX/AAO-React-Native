@@ -6,7 +6,7 @@ import {
 	setItem,
 	setStoragePrefix,
 } from '@frogpond/storage'
-import type {FilterComboType} from '../views/sis/course-search/lib/format-filter-combo'
+import type {FilterComboType} from '../features/sis/course-search/lib/format-filter-combo'
 import type {CourseType, TermType} from './course-search/types'
 
 export {clearAsyncStorage}
@@ -26,9 +26,7 @@ export function getHomescreenOrder(): Promise<homescreenOrderType> {
 
 const homescreenViewsKey = 'homescreen:disabled-views'
 type homescreenViewsType = string[]
-export function setDisabledViews(
-	disabledViews: homescreenViewsType,
-): Promise<void> {
+export function setDisabledViews(disabledViews: homescreenViewsType): Promise<void> {
 	return setItem(homescreenViewsKey, disabledViews)
 }
 export function getDisabledViews(): Promise<homescreenViewsType> {
@@ -37,9 +35,7 @@ export function getDisabledViews(): Promise<homescreenViewsType> {
 
 const acknowledgementStatusKey = 'settings:ackd'
 type acknowledgementStatusType = boolean
-export function setAcknowledgementStatus(
-	status: acknowledgementStatusType,
-): Promise<void> {
+export function setAcknowledgementStatus(status: acknowledgementStatusType): Promise<void> {
 	return setItem(acknowledgementStatusKey, status)
 }
 export function getAcknowledgementStatus(): Promise<acknowledgementStatusType> {
@@ -48,9 +44,7 @@ export function getAcknowledgementStatus(): Promise<acknowledgementStatusType> {
 
 const openLinksInAppKey = 'settings:open-links-in-app'
 type openLinksInAppType = boolean
-export function setLinkPreference(
-	preference: openLinksInAppType,
-): Promise<void> {
+export function setLinkPreference(preference: openLinksInAppType): Promise<void> {
 	return setItem(openLinksInAppKey, preference)
 }
 export function getInAppLinkPreference(): Promise<openLinksInAppType> {
@@ -71,9 +65,7 @@ export function getServerAddress(): Promise<serverAddressType> {
 
 const favoriteBuildingsKey = 'buildings:favorited'
 type favoriteBuildingsType = string[]
-export function setFavoriteBuildings(
-	buildings: favoriteBuildingsType,
-): Promise<void> {
+export function setFavoriteBuildings(buildings: favoriteBuildingsType): Promise<void> {
 	return setItem(favoriteBuildingsKey, buildings)
 }
 export function getFavoriteBuildings(): Promise<favoriteBuildingsType> {
@@ -82,10 +74,7 @@ export function getFavoriteBuildings(): Promise<favoriteBuildingsType> {
 
 const courseDataKey = 'sis:course-data'
 type courseDataType = Array<CourseType>
-export function setTermCourseData(
-	term: number,
-	courseData: courseDataType,
-): Promise<void> {
+export function setTermCourseData(term: number, courseData: courseDataType): Promise<void> {
 	const key = courseDataKey + `:${term}:courses`
 	return setItem(key, courseData)
 }
@@ -105,10 +94,7 @@ export function getTermInfo(): Promise<termInfoType> {
 
 const filterDataKey = courseDataKey + ':filter-data'
 type filterDataType = string[]
-export function setCourseFilterOption(
-	name: string,
-	data: filterDataType,
-): Promise<void> {
+export function setCourseFilterOption(name: string, data: filterDataType): Promise<void> {
 	const key = filterDataKey + `:${name}`
 	return setItem(key, data)
 }

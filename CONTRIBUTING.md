@@ -94,7 +94,7 @@ This also lets you distribute beta builds to beta testers.
 1. First, `git checkout -b release/vX.Y.Z`.
 1. Change the heading of the `Unreleased` section in `CHANGELOG.md` to `X.Y.Z`, and add a link to where the tag will be.
    (These go at the bottom of the file.)
-1. Update the version in `package.json` to `X.Y.Z`. then `npm ci && git commit -av`.
+1. Update the version in `package.json` to `X.Y.Z`. then `pnpm install --frozen-lockfile && git commit -av`.
 1. Then `git tag vX.Y.Z`.
 1. Then `git push`, and finally `git push --tags`.
 1. Open a PR with the usual checklist, and congratulations!

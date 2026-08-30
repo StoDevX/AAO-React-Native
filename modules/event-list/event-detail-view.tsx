@@ -1,65 +1,116 @@
 import * as React from 'react'
-import {ScrollView} from 'react-native'
-import {Section, TableView} from '@frogpond/tableview'
-import {ButtonCell, SelectableCell} from '@frogpond/tableview/cells'
-import {ShareButton} from '@frogpond/navigation-buttons'
-import {ListFooter} from '@frogpond/lists'
-import {getTimes, shareEvent} from './calendar-util'
-import {AddToCalendar} from '@frogpond/add-to-device-calendar'
-import {RouteProp, useRoute} from '@react-navigation/native'
-import {RootStackParamList} from '../../source/navigation/types'
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack'
-import {NavigationKey} from './event-detail-base'
+import {StyleSheet, type ColorValue} from 'react-native'
+import {Form, Host, Link, Section, Text, VStack} from '@expo/ui/swift-ui'
+import {
+	font,
+	foregroundStyle,
+	listRowBackground,
+	listRowSeparator,
+	multilineTextAlignment,
+	textSelection,
+} from '@expo/ui/swift-ui/modifiers'
+import * as c from '@frogpond/colors'
+import type {EventType} from '@frogpond/event-type'
 
-function MaybeSection({header, content}: {header: string; content: string}) {
+import {EventDetailHeader} from './event-detail-header'
+import {EventTimeline} from './event-timeline'
+import {detailTimeLines} from './times'
+import type {TimelineBlock, TimelineWindow} from './timeline'
+import type {PoweredBy} from './types'
+
+const styles = StyleSheet.create({
+	host: {
+		flex: 1,
+	},
+})
+
+function TextSection({header, content}: {header: string; content: string}) {
 	return content ? (
-		<Section header={header}>
-			<SelectableCell text={content} />
+		<Section title={header}>
+			<Text modifiers={[foregroundStyle(c.label), textSelection(true)]}>{content}</Text>
 		</Section>
 	) : null
 }
 
-export const NavigationOptions = (props: {
-	route: RouteProp<RootStackParamList, typeof NavigationKey>
-}): NativeStackNavigationOptions => {
-	let {event} = props.route.params
-	return {
-		title: event.title,
-		headerRight: (p) => (
-			<ShareButton {...p} onPress={() => shareEvent(event)} />
-		),
+type Props = {
+	event: EventType
+	poweredBy: PoweredBy
+	/**
+	 * The calendar's colour, for the masthead bar. Passed through rather than
+	 * derived here: this component knows an event, not which calendar it
+	 * came from.
+	 */
+	color: ColorValue
+	/**
+	 * The event's neighbours, already positioned, and the colour lookup their
+	 * blocks are tinted by. One optional bundling both rather than two
+	 * separate ones: `colorFor` means nothing without `blocks` to tint, and a
+	 * timeline with no `colorFor` would silently draw nothing, so the two
+	 * cannot be passed independently. Absent for a source with no
+	 * surrounding-events query behind it -- the radio schedules -- and for an
+	 * all-day event, which has no position to draw.
+	 */
+	timeline?: {
+		window: TimelineWindow
+		blocks: TimelineBlock[]
+		colorFor: (sourceId: string) => ColorValue
 	}
 }
 
-export function EventDetail(): React.ReactNode {
-	let route = useRoute<RouteProp<RootStackParamList, typeof NavigationKey>>()
-	let {event, poweredBy} = route.params
+export function EventDetail({event, poweredBy, color, timeline}: Props): React.ReactNode {
+	let lines = detailTimeLines(event)
 
 	return (
-		<ScrollView contentInsetAdjustmentBehavior="automatic">
-			<TableView>
-				<MaybeSection content={event.title.trim()} header="EVENT" />
-				<MaybeSection content={getTimes(event).trim()} header="TIME" />
-				<MaybeSection content={event.location.trim()} header="LOCATION" />
-				<MaybeSection content={event.description.trim()} header="DESCRIPTION" />
+		<Host style={styles.host}>
+			<Form>
+				{/* The masthead is not a row of the form, so it loses the grouped-row
+				    card the way the attribution below does. It carries the event's name
+				    and dates together, flanked by one accent bar. */}
+				<VStack modifiers={[listRowBackground('clear'), listRowSeparator('hidden')]}>
+					<EventDetailHeader color={color} lines={lines} title={event.title} />
+				</VStack>
 
-				<AddToCalendar
-					event={event}
-					render={({message, disabled, onPress}) => (
-						<Section footer={message}>
-							<ButtonCell
-								disabled={disabled}
-								onPress={onPress}
-								title="Add to calendar"
-							/>
-						</Section>
-					)}
-				/>
+				<TextSection content={event.location.trim()} header="Location" />
+				<TextSection content={event.description.trim()} header="Description" />
 
-				{poweredBy.title ? (
-					<ListFooter href={poweredBy.href} title={poweredBy.title} />
+				{timeline ? (
+					<Section>
+						<EventTimeline
+							blocks={timeline.blocks}
+							colorFor={timeline.colorFor}
+							window={timeline.window}
+						/>
+					</Section>
 				) : null}
-			</TableView>
-		</ScrollView>
+
+				{event.links.length > 0 ? (
+					<Section title="Links">
+						{event.links.map((href) => (
+							<Link destination={href} key={href} label={href} />
+						))}
+					</Section>
+				) : null}
+
+				{/* The attribution is a caption on the form, not a row of it, so the
+				    row's background and separator are cleared. Its insets are left
+				    alone deliberately: zeroing them pulls the text flush left, out of
+				    line with every section header, and leaves `multilineTextAlignment`
+				    only the text's own width to centre within. */}
+				{poweredBy.title ? (
+					<VStack modifiers={[listRowBackground('clear'), listRowSeparator('hidden')]}>
+						<Text
+							modifiers={[
+								font({size: 10}),
+								foregroundStyle(c.secondaryLabel),
+								multilineTextAlignment('center'),
+								textSelection(true),
+							]}
+						>
+							{poweredBy.title}
+						</Text>
+					</VStack>
+				) : null}
+			</Form>
+		</Host>
 	)
 }

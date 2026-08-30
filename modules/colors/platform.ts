@@ -103,13 +103,6 @@ export const quaternarySystemFill = PlatformColor('quaternarySystemFill')
  */
 export const placeholderText = PlatformColor('placeholderText')
 
-// MARK: Tint color
-
-/**
- * A color value that resolves at runtime based on the current tint color of the app or trait hierarchy.
- */
-export const tintColor = PlatformColor('tintColor')
-
 // MARK: Standard content background colors
 
 /**
@@ -130,9 +123,7 @@ export const systemBackground = PlatformColor('systemBackground')
  * @see {@link systemBackground} - The color for the main background of your grouped interface.
  * @see {@link tertiarySystemBackground} - The color for content layered on top of the main background of your grouped interface.
  */
-export const secondarySystemBackground = PlatformColor(
-	'secondarySystemBackground',
-)
+export const secondarySystemBackground = PlatformColor('secondarySystemBackground')
 
 /**
  * The color for content layered on top of secondary backgrounds.
@@ -142,9 +133,7 @@ export const secondarySystemBackground = PlatformColor(
  * @see {@link systemBackground} - The color for the main background of your grouped interface.
  * @see {@link secondarySystemBackground} - The color for content layered on top of the main background of your grouped interface.
  */
-export const tertiarySystemBackground = PlatformColor(
-	'tertiarySystemBackground',
-)
+export const tertiarySystemBackground = PlatformColor('tertiarySystemBackground')
 
 // MARK: Grouped content background colors
 
@@ -166,9 +155,7 @@ export const systemGroupedBackground = PlatformColor('systemGroupedBackground')
  * @see {@link systemGroupedBackground} - The color for the main background of your grouped interface.
  * @see {@link tertiarySystemGroupedBackground} - The color for content layered on top of the main background of your grouped interface.
  */
-export const secondarySystemGroupedBackground = PlatformColor(
-	'secondarySystemGroupedBackground',
-)
+export const secondarySystemGroupedBackground = PlatformColor('secondarySystemGroupedBackground')
 
 /**
  * The color for content layered on top of secondary backgrounds of your grouped interface.
@@ -178,9 +165,7 @@ export const secondarySystemGroupedBackground = PlatformColor(
  * @see {@link systemGroupedBackground} - The color for the main background of your grouped interface.
  * @see {@link secondarySystemGroupedBackground} - The color for content layered on top of the main background of your grouped interface.
  */
-export const tertiarySystemGroupedBackground = PlatformColor(
-	'tertiarySystemGroupedBackground',
-)
+export const tertiarySystemGroupedBackground = PlatformColor('tertiarySystemGroupedBackground')
 
 // MARK: Separator colors
 

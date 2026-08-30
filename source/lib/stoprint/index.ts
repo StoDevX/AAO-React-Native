@@ -1,9 +1,4 @@
-export {
-	PAPERCUT,
-	PAPERCUT_API,
-	PAPERCUT_MOBILE_RELEASE_API,
-	STOPRINT_HELP_PAGE,
-} from './urls'
+export {PAPERCUT, PAPERCUT_API, PAPERCUT_MOBILE_RELEASE_API, STOPRINT_HELP_PAGE} from './urls'
 export type {
 	HeldJob,
 	Printer,

@@ -38,9 +38,7 @@ export function FilterMenuToolbar<T extends object>({
 }: Props<T>): React.ReactNode {
 	const mealFilter = filters.find((f) => f.type === 'picker')
 	const multipleMeals =
-		mealFilter && mealFilter.type === 'picker'
-			? mealFilter.spec.options.length > 1
-			: false
+		mealFilter && mealFilter.type === 'picker' ? mealFilter.spec.options.length > 1 : false
 	const nonPickerFilters = filters.filter((f) => f.type !== 'picker')
 
 	return (
@@ -60,10 +58,7 @@ export function FilterMenuToolbar<T extends object>({
 				) : null}
 			</Toolbar>
 			{isOpen && (
-				<FilterToolbar<T>
-					filters={nonPickerFilters}
-					onPopoverDismiss={onPopoverDismiss}
-				/>
+				<FilterToolbar<T> filters={nonPickerFilters} onPopoverDismiss={onPopoverDismiss} />
 			)}
 		</>
 	)

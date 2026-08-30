@@ -5,6 +5,7 @@ import path from 'node:path'
 import {bundleDataDir} from './bundle-data-dir.mjs'
 import {convertDataFile} from './convert-data-file.mjs'
 import {buildFaqs} from './build-faqs.mjs'
+import {buildSources} from './build-sources.mjs'
 
 const isDir = (pth) => fs.statSync(pth).isDirectory()
 const isFile = (pth) => fs.statSync(pth).isFile()
@@ -15,11 +16,9 @@ const readDir = (pth) =>
 		.filter(isNotJunk)
 		.filter((entry) => !entry.startsWith('_'))
 
-const findDirsIn = (pth) =>
-	readDir(pth).filter((entry) => isDir(path.join(pth, entry)))
+const findDirsIn = (pth) => readDir(pth).filter((entry) => isDir(path.join(pth, entry)))
 
-const findFilesIn = (pth) =>
-	readDir(pth).filter((entry) => isFile(path.join(pth, entry)))
+const findFilesIn = (pth) => readDir(pth).filter((entry) => isFile(path.join(pth, entry)))
 
 const args = process.argv.slice(2)
 const fromDir = args[0]
@@ -43,7 +42,10 @@ dirs.forEach((dirname) => {
 })
 
 // Convert these files into JSON equivalents
-const specialFiles = new Map([['faqs.yaml', buildFaqs]])
+const specialFiles = new Map([
+	['faqs.yaml', buildFaqs],
+	['sources.yaml', buildSources],
+])
 
 const files = findFilesIn(fromDir).filter((file) => !specialFiles.has(file))
 files.forEach((file) => {
@@ -67,8 +69,8 @@ for (let [file, builder] of specialFiles.entries()) {
 	}
 
 	let output = path.join(toDir, file).replace(/\.(.*)$/u, '.json')
-	console.log(`build-faqs ${source} ${output}`)
-	console.time(`build-faqs ${source} ${output}`)
+	console.log(`${builder.name} ${source} ${output}`)
+	console.time(`${builder.name} ${source} ${output}`)
 	builder({sourceFile: source, outputFile: output})
-	console.timeEnd(`build-faqs ${source} ${output}`)
+	console.timeEnd(`${builder.name} ${source} ${output}`)
 }

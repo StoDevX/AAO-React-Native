@@ -1,72 +1,62 @@
 import * as Sentry from '@sentry/react-native'
-import {encode as base64Encode} from 'base-64'
-import {Share} from 'react-native'
+import * as Calendar from 'expo-calendar'
+import {Alert, Linking} from 'react-native'
 import type {EventType} from '@frogpond/event-type'
-
-function formatICSDate(date: Date): string {
-	return (
-		date.getUTCFullYear().toString() +
-		String(date.getUTCMonth() + 1).padStart(2, '0') +
-		String(date.getUTCDate()).padStart(2, '0') +
-		'T' +
-		String(date.getUTCHours()).padStart(2, '0') +
-		String(date.getUTCMinutes()).padStart(2, '0') +
-		String(date.getUTCSeconds()).padStart(2, '0') +
-		'Z'
-	)
-}
-
-function escapeICSText(text: string): string {
-	return text
-		.replace(/\\/gu, '\\\\')
-		.replace(/;/gu, '\\;')
-		.replace(/,/gu, '\\,')
-		.replace(/\r?\n/gu, '\\n')
-}
-
-let uidCounter = 0
-
-export function buildICS(event: EventType): string {
-	// UID just needs to be unique per-calendar-object per RFC 5545 — it's a
-	// dedupe hint, not a secret — so a timestamp plus a monotonic counter is
-	// sufficient.
-	uidCounter += 1
-	let uid = `aao-${Date.now()}-${uidCounter}@stolaf.edu`
-	let lines = [
-		'BEGIN:VCALENDAR',
-		'VERSION:2.0',
-		'PRODID:-//St. Olaf College//All About Olaf//EN',
-		'CALSCALE:GREGORIAN',
-		'METHOD:PUBLISH',
-		'BEGIN:VEVENT',
-		`UID:${uid}`,
-		`DTSTAMP:${formatICSDate(new Date())}`,
-		`DTSTART:${formatICSDate(event.startTime.toDate())}`,
-		`DTEND:${formatICSDate(event.endTime.toDate())}`,
-		`SUMMARY:${escapeICSText(event.title)}`,
-		`DESCRIPTION:${escapeICSText(event.description)}`,
-		`LOCATION:${escapeICSText(event.location)}`,
-		'END:VEVENT',
-		'END:VCALENDAR',
-	]
-	return lines.join('\r\n')
-}
 
 export type AddToCalendarResult = 'saved' | 'cancelled' | 'error'
 
-export async function addToCalendar(
-	event: EventType,
-): Promise<AddToCalendarResult> {
-	try {
-		let ics = buildICS(event)
-		let dataUrl = `data:text/calendar;base64,${base64Encode(ics)}`
+function promptSettings(): void {
+	// Note: remember to change this text in the iOS plist, too.
+	Alert.alert(
+		'"All About Olaf" Would Like to Access Your Calendar',
+		'We use your calendar to add events to your calendar so that you remember what you wanted to attend.',
+		[
+			{text: "Don't Allow", style: 'cancel'},
+			{text: 'Settings', onPress: () => Linking.openURL('app-settings:')},
+		],
+	)
+}
 
-		let result = await Share.share({
-			url: dataUrl,
+/**
+ * Asks for full calendar access rather than the write-only access iOS 17 split
+ * out: `getDefaultCalendarSync` reads the device's calendars, which write-only
+ * access does not cover. `writeOnly` defaults to false, so no argument is the
+ * full-access ask.
+ */
+async function requestCalendarAccess(): Promise<boolean> {
+	let {status, canAskAgain} = await Calendar.getCalendarPermissions()
+
+	if (status === 'granted') {
+		return true
+	}
+
+	if (!canAskAgain) {
+		promptSettings()
+		return false
+	}
+
+	let requested = await Calendar.requestCalendarPermissions()
+	return requested.status === 'granted'
+}
+
+export async function addToCalendar(event: EventType): Promise<AddToCalendarResult> {
+	try {
+		let granted = await requestCalendarAccess()
+		if (!granted) {
+			return 'cancelled'
+		}
+
+		let defaultCalendar = Calendar.getDefaultCalendarSync()
+
+		await defaultCalendar.createEvent({
 			title: event.title,
+			startDate: event.startTime.toDate(),
+			endDate: event.endTime.toDate(),
+			location: event.location,
+			notes: event.description,
 		})
 
-		return result.action === Share.sharedAction ? 'saved' : 'cancelled'
+		return 'saved'
 	} catch (error) {
 		Sentry.captureException(error)
 		console.error(error)

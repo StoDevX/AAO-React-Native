@@ -18,13 +18,9 @@ import {FilterMenuToolbar as FilterToolbar} from './filter-menu-toolbar'
 import {FoodItemRow} from './food-item-row'
 import {chooseMeal} from './lib/choose-meal'
 import {buildFilters} from './lib/build-filters'
-import {useNavigation} from '@react-navigation/native'
 import type {Moment} from 'moment'
 
-type FilterFunc = (
-	filters: Array<FilterType<MenuItemType>>,
-	item: MenuItemType,
-) => boolean
+type FilterFunc = (filters: Array<FilterType<MenuItemType>>, item: MenuItemType) => boolean
 
 type ReactProps = {
 	cafeMessage?: string | null
@@ -33,6 +29,7 @@ type ReactProps = {
 	menuCorIcons: MasterCorIconMapType
 	name: string
 	now: Moment
+	onItemPress: (item: MenuItemType) => void
 	onRefresh?: () => void
 	refreshing?: boolean
 	applyFilters?: FilterFunc
@@ -55,9 +52,8 @@ const styles = StyleSheet.create({
 const LEFT_MARGIN = 28
 const Separator = () => <ListSeparator spacing={{left: LEFT_MARGIN}} />
 
-const areSpecialsFiltered = (
-	filters: Array<FilterType<MenuItemType>>,
-): boolean => Boolean(filters.find(isSpecialsFilter))
+const areSpecialsFiltered = (filters: Array<FilterType<MenuItemType>>): boolean =>
+	Boolean(filters.find(isSpecialsFilter))
 
 const isSpecialsFilter = (f: FilterType<MenuItemType>): boolean =>
 	f.enabled && f.type === 'toggle' && f.spec.label === 'Only Show Specials'
@@ -94,9 +90,10 @@ const groupMenuData = (args: {
 				return item && applyFilters(filters, item)
 			})
 
-	const stationMenusByLabel: [string, MenuItemType[]][] = stations.map(
-		(menu: StationMenuType) => [menu.label, dereferenceMenuItems(menu)],
-	)
+	const stationMenusByLabel: [string, MenuItemType[]][] = stations.map((menu: StationMenuType) => [
+		menu.label,
+		dereferenceMenuItems(menu),
+	])
 
 	return stationMenusByLabel
 		.filter(([_, items]) => items.length)
@@ -104,18 +101,14 @@ const groupMenuData = (args: {
 }
 
 export function FancyMenu(props: Props): React.ReactNode {
-	const {now, meals, cafeMessage, foodItems, menuCorIcons} = props
+	const {now, meals, cafeMessage, foodItems, menuCorIcons, onItemPress} = props
 	const applyFilters = props.applyFilters ?? applyFiltersToItem
-
-	let navigation = useNavigation()
 
 	const [filters, setFilters] = useState<FilterType<MenuItemType>[]>([])
 
 	const meal = chooseMeal(meals, filters, now)
 	const {label: mealName, stations} = meal
-	const stationsByLabel = new Map(
-		stations.map((station) => [station.label, station]),
-	)
+	const stationsByLabel = new Map(stations.map((station) => [station.label, station]))
 
 	const [groupedMenuData, setGroupedMenuData] = useState<
 		{title: string; data: Array<MenuItemType>}[]
@@ -140,8 +133,7 @@ export function FancyMenu(props: Props): React.ReactNode {
 	if (cafeMessage) {
 		message = cafeMessage
 	} else if (specialsFilterEnabled && stations.length === 0) {
-		message =
-			'No items to show. There may be no specials today. Try changing the filters.'
+		message = 'No items to show. There may be no specials today. Try changing the filters.'
 	} else if (anyFiltersEnabled && !size(groupedMenuData)) {
 		message = 'No items to show. Try changing the filters.'
 	}
@@ -155,9 +147,7 @@ export function FancyMenu(props: Props): React.ReactNode {
 			filters={filters}
 			isOpen={isOpen}
 			onPopoverDismiss={(newFilter) => {
-				let edited = filters.map((f) =>
-					f.key === newFilter.key ? newFilter : f,
-				)
+				let edited = filters.map((f) => (f.key === newFilter.key ? newFilter : f))
 				setFilters(edited)
 			}}
 			title={mealName}
@@ -181,12 +171,7 @@ export function FancyMenu(props: Props): React.ReactNode {
 						badgeSpecials={!specialsFilterEnabled}
 						corIcons={menuCorIcons}
 						data={item}
-						onPress={() =>
-							navigation.navigate('MenuItemDetail', {
-								item,
-								icons: menuCorIcons,
-							})
-						}
+						onPress={() => onItemPress(item)}
 						spacing={{left: LEFT_MARGIN}}
 					/>
 				)
@@ -195,13 +180,7 @@ export function FancyMenu(props: Props): React.ReactNode {
 				const title = info.section.title
 				const note = stationsByLabel.get(title)?.note ?? ''
 
-				return (
-					<ListSectionHeader
-						spacing={{left: LEFT_MARGIN}}
-						subtitle={note}
-						title={title}
-					/>
-				)
+				return <ListSectionHeader spacing={{left: LEFT_MARGIN}} subtitle={note} title={title} />
 			}}
 			sections={groupedMenuData}
 			style={styles.inner}

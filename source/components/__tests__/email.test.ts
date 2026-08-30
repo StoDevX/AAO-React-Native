@@ -10,18 +10,16 @@ describe('formatEmailParts', () => {
 		expect(formatEmailParts({to: ['test@domain.com']})).toMatchInlineSnapshot(
 			'"mailto:test@domain.com"',
 		)
-		expect(
-			formatEmailParts({to: ['test@domain.com', 'help@domain.com']}),
-		).toMatchInlineSnapshot('"mailto:test@domain.com,help@domain.com"')
+		expect(formatEmailParts({to: ['test@domain.com', 'help@domain.com']})).toMatchInlineSnapshot(
+			'"mailto:test@domain.com,help@domain.com"',
+		)
 	})
 
 	it('should encode the "cc" addressees', () => {
 		expect(formatEmailParts({cc: ['test@domain.com']})).toMatchInlineSnapshot(
 			'"mailto:?cc=test%40domain.com"',
 		)
-		expect(
-			formatEmailParts({cc: ['test@domain.com', 'help@domain.com']}),
-		).toMatchInlineSnapshot(
+		expect(formatEmailParts({cc: ['test@domain.com', 'help@domain.com']})).toMatchInlineSnapshot(
 			'"mailto:?cc=test%40domain.com%2Chelp%40domain.com"',
 		)
 	})
@@ -30,9 +28,7 @@ describe('formatEmailParts', () => {
 		expect(formatEmailParts({bcc: ['test@domain.com']})).toMatchInlineSnapshot(
 			'"mailto:?bcc=test%40domain.com"',
 		)
-		expect(
-			formatEmailParts({bcc: ['test@domain.com', 'help@domain.com']}),
-		).toMatchInlineSnapshot(
+		expect(formatEmailParts({bcc: ['test@domain.com', 'help@domain.com']})).toMatchInlineSnapshot(
 			'"mailto:?bcc=test%40domain.com%2Chelp%40domain.com"',
 		)
 	})
@@ -44,9 +40,9 @@ describe('formatEmailParts', () => {
 	})
 
 	it('should encode to and subject', () => {
-		expect(
-			formatEmailParts({to: ['test@domain.com'], subject: 'a thing'}),
-		).toMatchInlineSnapshot('"mailto:test@domain.com?subject=a+thing"')
+		expect(formatEmailParts({to: ['test@domain.com'], subject: 'a thing'})).toMatchInlineSnapshot(
+			'"mailto:test@domain.com?subject=a+thing"',
+		)
 	})
 
 	it('should encode to, subject, and body', () => {
@@ -56,9 +52,7 @@ describe('formatEmailParts', () => {
 				subject: 'a thing',
 				body: 'hey there',
 			}),
-		).toMatchInlineSnapshot(
-			'"mailto:test@domain.com?subject=a+thing&body=hey+there"',
-		)
+		).toMatchInlineSnapshot('"mailto:test@domain.com?subject=a+thing&body=hey+there"')
 		expect(
 			formatEmailParts({
 				to: ['test@domain.com', 'test2@domain.com'],

@@ -21,54 +21,35 @@
         "react",
         "@react-native/*"
       ],
-      "matchUpdateTypes": [
-        "minor",
-        "major"
-      ],
+      "matchUpdateTypes": ["minor", "major"],
       "dependencyDashboardApproval": true
     },
     {
       "description": "require manual approval for new major versions of these packages",
-      "matchPackageNames": [
-        "react-markdown"
-      ],
-      "matchUpdateTypes": [
-        "major"
-      ],
+      "matchPackageNames": ["react-markdown"],
+      "matchUpdateTypes": ["major"],
       "dependencyDashboardApproval": true
     },
     {
       "description": "stop widening peerDep ranges for custom modules",
-      "matchFileNames": [
-        "modules/**/package.json"
-      ],
-      "matchDepTypes": [
-        "peerDependencies"
-      ],
+      "matchFileNames": ["modules/**/package.json"],
+      "matchDepTypes": ["peerDependencies"],
       "rangeStrategy": "bump"
     },
     {
       "description": "group all redux packages together",
       "groupName": "redux",
-      "matchPackageNames": [
-        "@reduxjs/**",
-        "react-redux"
-      ]
+      "matchPackageNames": ["@reduxjs/**", "react-redux"]
     },
     {
       "description": "group all @react-native-community/cli packages together",
       "groupName": "@react-native-community/cli",
-      "matchPackageNames": [
-        "@react-native-community/cli",
-        "@react-native-community/cli-*"
-      ]
+      "matchPackageNames": ["@react-native-community/cli", "@react-native-community/cli-*"]
     },
     {
       "description": "group all @react-native-vector-icons/* packages together",
       "groupName": "@react-native-vector-icons/*",
-      "matchPackageNames": [
-        "@react-native-vector-icons/*"
-      ]
+      "matchPackageNames": ["@react-native-vector-icons/*"]
     },
     {
       "description": "group fb55-authored packages (htmlparser2 & co) together so their tightly-coupled releases update in lockstep",
@@ -87,13 +68,9 @@
     },
     {
       "description": "group all patch-level updates into a single weekly PR",
-      "matchUpdateTypes": [
-        "patch"
-      ],
+      "matchUpdateTypes": ["patch"],
       "groupName": "all patch updates",
-      "schedule": [
-        "before 9am on monday"
-      ]
+      "schedule": ["before 9am on monday"]
     }
   ],
   "prConcurrentLimit": 4

@@ -51,13 +51,11 @@
 			const container = target.closest('.options') || target.closest('.cards')
 			const selected = container ? container.querySelectorAll('.selected') : []
 			if (selected.length === 0) {
-				indicator.textContent =
-					'Click an option above, then return to the terminal'
+				indicator.textContent = 'Click an option above, then return to the terminal'
 			} else if (selected.length === 1) {
 				const label =
-					selected[0]
-						.querySelector('h3, .content h3, .card-body h3')
-						?.textContent?.trim() || selected[0].dataset.choice
+					selected[0].querySelector('h3, .content h3, .card-body h3')?.textContent?.trim() ||
+					selected[0].dataset.choice
 				indicator.innerHTML =
 					'<span class="selected-text">' +
 					label +
@@ -78,9 +76,7 @@
 		const container = el.closest('.options') || el.closest('.cards')
 		const multi = container && container.dataset.multiselect !== undefined
 		if (container && !multi) {
-			container
-				.querySelectorAll('.option, .card')
-				.forEach((o) => o.classList.remove('selected'))
+			container.querySelectorAll('.option, .card').forEach((o) => o.classList.remove('selected'))
 		}
 		if (multi) {
 			el.classList.toggle('selected')
@@ -93,8 +89,7 @@
 	// Expose API for explicit use
 	window.brainstorm = {
 		send: sendEvent,
-		choice: (value, metadata = {}) =>
-			sendEvent({type: 'choice', value, ...metadata}),
+		choice: (value, metadata = {}) => sendEvent({type: 'choice', value, ...metadata}),
 	}
 
 	connect()

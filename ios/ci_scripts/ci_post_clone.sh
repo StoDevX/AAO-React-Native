@@ -1,61 +1,10 @@
 #!/bin/bash
-set -ex
-echo "Running ci_post_clone.sh"
-
-export MISE_RUBY_COMPILE='false'
-export MISE_AUTO_INSTALL='false'
-
-export SENTRY_ORG='frog-pond-labs'
-export SENTRY_PROJECT='all-about-olaf'
-# export SENTRY_AUTH_TOKEN='${{ secrets.HOSTED_SENTRY_AUTH_TOKEN }}'
-
-# cd out of ios/ci_scripts into main project directory
-cd ../../
-
-# Install node via Homebrew. Homebrew is officially available on Xcode Cloud
-# and brew --prefix always returns an arch-aware absolute path, so we never
-# need to rely on PATH being configured correctly.
-# If this doesn't work, we'll have to fix pathing issues and hopefully mise shims.
-brew install node@24
-
-NODE_BREW_PREFIX="$(brew --prefix node@24)"
-NODE_PATH="${NODE_BREW_PREFIX}/bin/node"
-
-# Confirm node works
-echo "node path: ${NODE_PATH}"
-"${NODE_PATH}" --version
-
-# Add brew node's bin dir to PATH so npm is available for the rest of this script
-export PATH="${NODE_BREW_PREFIX}/bin:$PATH"
-
-# Install mise via Homebrew (for task running: bundle-data, pod:install).
-brew install mise
-export PATH="$(brew --prefix)/bin:$PATH"
-
-echo "mise version: $(mise --version)"
-
-# Activate mise shims for ruby/cocoapods tools used in task runs
-eval "$(mise activate bash --shims)"
-
-# install node modules
-npm ci
-
-# build the data files
-mise run bundle-data
-
-# install pods
-mise run pod:install --deployment
-
-# Write ios/.xcode.env.local so Xcode Cloud's xcodebuild can find node.
-# PATH changes in this script don't carry over into xcodebuild build phases,
-# so we bake in the absolute brew-managed path now.
-echo "Writing ios/.xcode.env.local with NODE_BINARY=${NODE_PATH}"
-{
-  printf 'export NODE_BINARY=%s\n' "${NODE_PATH}"
-} > ios/.xcode.env.local
-
-echo "Contents of ios/.xcode.env.local:"
-cat ios/.xcode.env.local
-
-# if/when we go to Expo
-# npx expo prebuild
+# Xcode Cloud only finds custom build scripts in a ci_scripts directory beside
+# the .xcworkspace, and they must be present the moment it clones. But prebuild
+# recreates ios/ from scratch and deletes this file along with it.
+#
+# So keep the real script outside ios/ and exec into it immediately. After the
+# exec this process is running ios_scripts/ci_post_clone.sh, which nothing
+# deletes -- bash is never left reading a file that has been removed underneath
+# it.
+exec "$(dirname "$0")/../../ios_scripts/ci_post_clone.sh" "$@"

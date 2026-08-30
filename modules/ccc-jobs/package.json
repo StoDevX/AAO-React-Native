@@ -1,0 +1,20 @@
+{
+  "name": "@frogpond/ccc-jobs",
+  "version": "1.0.0",
+  "description": "",
+  "license": "ISC",
+  "author": "",
+  "main": "index.tsx",
+  "scripts": {
+    "test": "jest"
+  },
+  "dependencies": {
+    "@frogpond/data-sources": "workspace:*",
+    "@frogpond/html-lib": "workspace:*",
+    "zod": "4.4.3"
+  },
+  "peerDependencies": {
+    "@tanstack/react-query": "^5.101.4",
+    "react": "^19.1.0"
+  }
+}

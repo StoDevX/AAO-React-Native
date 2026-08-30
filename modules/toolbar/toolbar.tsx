@@ -26,9 +26,5 @@ const toolbarStyles = StyleSheet.create({
 type ToolbarPropsType = PropsWithChildren<unknown>
 
 export function Toolbar({children}: ToolbarPropsType): React.ReactNode {
-	return (
-		<View style={[toolbarStyles.shadow, toolbarStyles.container]}>
-			{children}
-		</View>
-	)
+	return <View style={[toolbarStyles.shadow, toolbarStyles.container]}>{children}</View>
 }

@@ -3,25 +3,20 @@ import {Platform, StyleSheet} from 'react-native'
 import * as c from '@frogpond/colors'
 import type {PickerType} from './types'
 import {Section} from '@frogpond/tableview'
-import {Picker} from '@react-native-picker/picker'
+import {Picker} from '@expo/ui/community/picker'
 
 type Props<T extends object> = {
 	filter: PickerType<T>
 	onChange: (filter: PickerType<T>) => void
 }
 
-export function PickerSection<T extends object>({
-	filter,
-	onChange,
-}: Props<T>): React.ReactNode {
+export function PickerSection<T extends object>({filter, onChange}: Props<T>): React.ReactNode {
 	let {spec} = filter
-	let {title = '', caption = '', options, selected} = spec
+	let {title, caption = '', options, selected} = spec
 
 	return (
 		<Section footer={caption} header={title.toUpperCase()}>
 			<Picker
-				itemStyle={styles.pickerItem}
-				mode="dropdown"
 				onValueChange={(itemValue, itemIndex) => {
 					let pickedItem = spec.options[itemIndex]
 					onChange({...filter, spec: {...spec, selected: pickedItem}})

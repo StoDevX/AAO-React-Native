@@ -34,9 +34,7 @@ async function loadCredentials(): Promise<null | UserCredentials> {
 	return credentials ? credentials : null
 }
 
-export async function storeCredentials(
-	credentials: Credentials,
-): Promise<Credentials> {
+export async function storeCredentials(credentials: Credentials): Promise<Credentials> {
 	let saved = await setInternetCredentials(
 		SIS_LOGIN_KEY,
 		credentials.username,
@@ -52,9 +50,7 @@ export function resetCredentials(): Promise<void> {
 	return resetInternetCredentials({server: SIS_LOGIN_KEY})
 }
 
-export async function performLogin(
-	credentials: Credentials | null = null,
-): Promise<Credentials> {
+export async function performLogin(credentials: Credentials | null = null): Promise<Credentials> {
 	const saved = credentials ?? (await loadCredentials())
 	if (!saved) {
 		throw new NoCredentialsError()

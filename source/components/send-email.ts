@@ -1,5 +1,5 @@
 import {Alert} from 'react-native'
-import Clipboard from '@react-native-clipboard/clipboard'
+import * as Clipboard from 'expo-clipboard'
 import {openUrl} from '@frogpond/open-url'
 
 type Args = {
@@ -29,7 +29,7 @@ export function sendEmail(args: Args): void {
 				},
 				{
 					text: 'Copy addresses',
-					onPress: () => Clipboard.setString(toString),
+					onPress: () => void Clipboard.setStringAsync(toString),
 				},
 			],
 		)

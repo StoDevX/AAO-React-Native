@@ -2,7 +2,8 @@
 node_modules/
 /flow-typed/
 /docs/
+/modules/data-sources/bundled.json
 /data/bus-times/*.yaml
 /android/
 /ios/
-/package-lock.json
+/pnpm-lock.yaml

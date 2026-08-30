@@ -5,11 +5,11 @@ import {render} from '@testing-library/react-native'
 import {LoadingView} from '../loading'
 
 describe('LoadingView', () => {
-	test('it displays "Loading…" when no text is supplied', () => {
-		expect(render(<LoadingView />).toJSON()).toMatchSnapshot()
+	test('it displays "Loading…" when no text is supplied', async () => {
+		expect((await render(<LoadingView />)).toJSON()).toMatchSnapshot()
 	})
 
-	test('it displays text when text is supplied', () => {
-		expect(render(<LoadingView text="foo bar" />).toJSON()).toMatchSnapshot()
+	test('it displays text when text is supplied', async () => {
+		expect((await render(<LoadingView text="foo bar" />)).toJSON()).toMatchSnapshot()
 	})
 })

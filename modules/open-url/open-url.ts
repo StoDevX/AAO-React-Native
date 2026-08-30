@@ -18,7 +18,7 @@ function genericOpen(url: string): Promise<boolean> {
 async function launchBrowser(url: string): Promise<boolean> {
 	try {
 		await WebBrowser.openBrowserAsync(url, {
-			presentationStyle: WebBrowser.WebBrowserPresentationStyle.CURRENT_CONTEXT,
+			presentationStyle: WebBrowser.WebBrowserPresentationStyle.PAGE_SHEET,
 		})
 	} catch (error) {
 		console.warn(`Error when trying to call launchBrowser: ${error}`)
@@ -49,12 +49,7 @@ export async function openUrl(url: string): Promise<boolean> {
 	return genericOpen(url)
 }
 
-export function trackedOpenUrl({
-	url,
-}: {
-	url: string
-	id?: string
-}): Promise<boolean> {
+export function trackedOpenUrl({url}: {url: string; id?: string}): Promise<boolean> {
 	return openUrl(url)
 }
 

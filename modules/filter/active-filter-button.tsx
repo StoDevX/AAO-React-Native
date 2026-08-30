@@ -1,14 +1,7 @@
 import * as React from 'react'
 import type {FilterType} from './types'
-import {
-	StyleProp,
-	StyleSheet,
-	Text,
-	TouchableWithoutFeedback,
-	View,
-	ViewStyle,
-} from 'react-native'
-import {Ionicons as Icon} from '@react-native-vector-icons/ionicons'
+import {StyleProp, StyleSheet, Text, TouchableWithoutFeedback, View, ViewStyle} from 'react-native'
+import {SymbolView} from 'expo-symbols'
 import * as c from '@frogpond/colors'
 
 type Props<T extends object> = {
@@ -28,7 +21,7 @@ export function ActiveFilterButton<T extends object>({
 		<TouchableWithoutFeedback onPress={() => onRemove(filter)}>
 			<View style={[styles.badge, style]}>
 				<Text style={styles.text}>{label}</Text>
-				<Icon color={c.label} name="close-circle" size={20} />
+				<SymbolView name="xmark.circle.fill" size={20} tintColor={c.label} />
 			</View>
 		</TouchableWithoutFeedback>
 	)

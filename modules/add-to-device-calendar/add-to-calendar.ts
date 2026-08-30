@@ -7,11 +7,7 @@ import delay from 'delay'
 type Props = {
 	event: EventType
 	compactMessages?: boolean
-	render: (args: {
-		message: string
-		disabled: boolean
-		onPress: () => void
-	}) => React.ReactNode
+	render: (args: {message: string; disabled: boolean; onPress: () => void}) => React.ReactNode
 }
 
 type State = {
@@ -38,9 +34,7 @@ export class AddToCalendar extends React.Component<Props, State> {
 	}
 
 	addEvent = async (): Promise<void> => {
-		const MESSAGES = this.props.compactMessages
-			? COMPACT_MESSAGES
-			: VERBOSE_MESSAGES
+		const MESSAGES = this.props.compactMessages ? COMPACT_MESSAGES : VERBOSE_MESSAGES
 		const {event} = this.props
 
 		const start = Date.now()

@@ -1,0 +1,71 @@
+diff --git a/src/types/globals.d.ts b/src/types/globals.d.ts
+index 52038e46887e845d1a56c21dc5a8a7103a23cf7d..5be7051efb28b5601edc540f56dcdf439187d3a2 100644
+--- a/src/types/globals.d.ts
++++ b/src/types/globals.d.ts
+@@ -587,61 +587,11 @@ declare global {
+   // #endregion
+   // #region Abort Controller
+ 
+-  interface AbortEvent extends Event {
+-    type: 'abort';
+-  }
+-
+-  class AbortSignal implements EventTarget {
+-    /**
+-     * AbortSignal cannot be constructed directly.
+-     */
+-    constructor();
+-    /**
+-     * Returns `true` if this `AbortSignal`'s `AbortController` has signaled to abort, and `false` otherwise.
+-     */
+-    readonly aborted: boolean;
+-
+-    onabort: (event: AbortEvent) => void;
+-
+-    addEventListener: (
+-      type: 'abort',
+-      listener: (this: AbortSignal, event: any) => any,
+-      options?:
+-        | boolean
+-        | {
+-            capture?: boolean | undefined;
+-            once?: boolean | undefined;
+-            passive?: boolean | undefined;
+-          },
+-    ) => void;
+-
+-    dispatchEvent(event: Event): boolean;
+-
+-    removeEventListener: (
+-      type: 'abort',
+-      listener: (this: AbortSignal, event: any) => any,
+-      options?:
+-        | boolean
+-        | {
+-            capture?: boolean | undefined;
+-          },
+-    ) => void;
+-  }
+-
+-  class AbortController {
+-    /**
+-     * Initialize this controller.
+-     */
+-    constructor();
+-    /**
+-     * Returns the `AbortSignal` object associated with this object.
+-     */
+-    readonly signal: AbortSignal;
+-    /**
+-     * Abort and signal to any observers that the associated activity is to be aborted.
+-     */
+-    abort(): void;
+-  }
++  // Intentionally left empty: AbortSignal and AbortController are provided by
++  // @types/node's web-globals, which declare DOM-spec-compatible shapes that
++  // interoperate with @tanstack/react-query and ky. The upstream declarations
++  // in this file (non-nullable `onabort`, custom `AbortEvent`) conflict with
++  // those types. Patched by pnpm-workspace.yaml's patchedDependencies.
+ 
+   interface FileReaderEventMap {
+     abort: ProgressEvent<FileReader>;

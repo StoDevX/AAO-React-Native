@@ -1,0 +1,225 @@
+[tools]
+node = "24.19.0"
+pnpm = "11.22.0"
+hk = "latest"
+ruby = "3.4.10"
+"gem:bundler" = "4.0.18"
+"gem:fastlane" = "2.237.0"
+cocoapods = "1.17.0"
+"gem:rubocop" = "1.89.0"
+sentry = "3.6.2"
+
+[env]
+_.path = ["node_modules/.bin"]
+HK_PKL_BACKEND = "pklr"
+HK_MISE = "1"
+
+[hooks]
+postinstall = "hk install --mise"
+
+# --- General commands ---
+[tasks."pnpm:install:frozen"]
+description = "install pnpm dependencies"
+run = "pnpm install --frozen-lockfile"
+
+# --- App commands ---
+
+[tasks.ios]
+description = "Run the iOS app"
+run = "expo run:ios"
+
+[tasks.start]
+description = "Start Metro bundler"
+run = "expo start"
+
+[tasks.prebuild]
+description = "Generate the native iOS project from app.config.ts"
+wait_for = ["pnpm:install:*"]
+# prebuild recreates ios/ from scratch, deleting the tracked ios/ci_scripts
+# shim with it. `--no-clean` does not help: it preserves an existing *valid*
+# project, but a fresh clone contains only ci_scripts, which prebuild treats as
+# malformed and clears anyway. So stash the shim and put it back. Doing it here
+# rather than in the script keeps every prebuild -- local, GitHub Actions,
+# Xcode Cloud -- leaving the same tree.
+run = '''
+set -e
+
+if test ! -d ios/ci_scripts; then
+  echo "error: ios/ci_scripts is missing, so there is nothing to preserve." >&2
+  echo "       Xcode Cloud finds build scripts only beside the .xcworkspace," >&2
+  echo "       so without it no Xcode Cloud build runs a script at all." >&2
+  echo "       Restore it with: jj restore ios/ci_scripts" >&2
+  exit 1
+fi
+
+shim="$(mktemp -d)"
+cp -R ios/ci_scripts/. "$shim/"
+
+expo prebuild --platform ios
+
+mkdir -p ios/ci_scripts
+cp -R "$shim/." ios/ci_scripts/
+rm -rf "$shim"
+
+if test ! -f ios/ci_scripts/ci_post_clone.sh; then
+  echo "error: ios/ci_scripts was not restored after prebuild." >&2
+  exit 1
+fi
+'''
+
+[tasks."build:ios"]
+description = "Build the app with xcodebuild for iOS"
+wait_for = ["prebuild"]
+usage = '''
+  arg "<device>" help="The device to build for" default="simulator" env="DEVICE"
+'''
+run = '''
+xcodebuild build \
+  -workspace ios/AllAboutOlaf.xcworkspace \
+  -scheme AllAboutOlaf \
+  -configuration Debug \
+  -destination "platform=iOS,name=${usage_device?}" \
+  -derivedDataPath ios/build \
+  -allowProvisioningUpdates \
+  CODE_SIGN_STYLE=Automatic \
+  DEVELOPMENT_TEAM=TMK6S7TPX2 \
+  PROVISIONING_PROFILE_SPECIFIER=""
+'''
+
+[tasks."embed-jsbundle:ios"]
+hide = true
+description = "Embed the .jsbundle into the ios app package"
+wait_for = ["bundle:ios", "build:ios"]
+env.APP = "ios/build/Build/Products/Debug-iphoneos/AllAboutOlaf.app"
+run = [
+	'''cp ios/AllAboutOlaf/main.jsbundle "$APP/"''',
+	'''rm -rf "$APP/assets" && cp -R ios/assets "$APP/"''',
+]
+
+[tasks."device:find-udid"]
+hide = true
+description = "Find the UDID of a device, or exit 1 if no device found"
+usage = '''
+  arg "<device>" help="The device to build for" default="simulator" env="DEVICE"
+'''
+run = '''
+  xcrun devicectl list devices --filter "Name = '${usage_device?}'" --omit-deprecated-fields-in-json --json-output=- 2>/dev/null | jq --raw-output --exit-status .result.devices[0].properties.hardware.udid
+'''
+
+[tasks."device:deploy"]
+hide = true
+description = "Deploy the app to a physical device"
+usage = '''
+  arg "<device>" help="The device to target" default="simulator" env="DEVICE"
+'''
+env.APP = "ios/build/Build/Products/Debug-iphoneos/AllAboutOlaf.app"
+run = '''
+  xcrun devicectl device install app --device "$(mise run device:find-udid "${usage_device?}")" "$APP"
+'''
+
+[tasks.device]
+description = "Build and deploy the app to a physical device"
+usage = '''
+  arg "<device>" help="The device to build for" default="simulator" env="DEVICE"
+'''
+depends = [
+	{ task = "pnpm:install:frozen" },
+	{ task = "prebuild", env.APP_VARIANT = "development" },
+	{ task = 'build:ios', args = [
+		"{{usage.device}}",
+	] },
+	{ task = "bundle:ios" },
+	{ task = "embed-jsbundle:ios" },
+]
+run = [{ task = 'device:deploy', args = ["{{usage.device}}"] }]
+
+[tasks.fastlane]
+description = "Run fastlane"
+run = "fastlane"
+
+# --- Code quality ---
+
+[tasks.lint]
+description = "Run oxlint"
+run = "oxlint app/ source/ modules/ scripts/ images/ plugins/"
+
+[tasks.format]
+description = "Format code with oxfmt"
+run = "oxfmt --write ."
+
+[tasks."format:check"]
+description = "Check code formatting"
+run = "oxfmt --check ."
+
+[tasks.tsc]
+description = "Run TypeScript compiler"
+# source/features/faqs/local-faqs.ts imports docs/faqs.json, which bundle-data
+# generates, so tsc cannot run against a clean checkout without it.
+depends = ["bundle-data"]
+run = "tsc --noEmit"
+
+[tasks.test]
+description = "Run Jest tests"
+run = "jest"
+
+# --- Data ---
+
+[tasks."bundle-data"]
+description = "Bundle data files"
+wait_for = ["pnpm:install:*"]
+run = "node scripts/bundle-data.mjs data/ docs/"
+
+[tasks."validate-bus-data"]
+description = "Validate bus schedule data"
+run = "node scripts/validate-bus-schedules.mjs"
+
+[tasks."validate-data"]
+description = "Validate data files"
+run = "node scripts/validate-data.mjs"
+
+[tasks."validate-deps"]
+description = "Check that modules declare the @frogpond packages they import"
+run = "node scripts/validate-workspace-deps.mjs"
+
+# A package.json edited without regenerating the lockfile passes format, lint,
+# tsc and test -- node_modules is already installed locally -- and then fails
+# every CI job at install.
+#
+# `--lockfile-only` resolves without touching node_modules, and
+# `--trust-lockfile` skips pnpm's supply-chain re-verification, which reaches
+# the registry and takes over a minute on a cold cache. That check belongs in
+# CI, where the network is a given; here the question is only whether the
+# lockfile still describes the package.json files.
+[tasks."validate-lockfile"]
+description = "Check that pnpm-lock.yaml matches the package.json files"
+run = "pnpm install --frozen-lockfile --lockfile-only --trust-lockfile"
+
+[tasks."compress-data"]
+description = "Compress data files"
+run = "gzip --keep docs/*.json"
+
+# --- Bundles ---
+
+[tasks."bundle:ios"]
+description = "Generate iOS JS bundle"
+depends = ["bundle-data"]
+wait_for = ["prebuild"]
+run = """
+expo export:embed \
+  --entry-file index.js \
+  --dev false \
+  --platform ios \
+  --bundle-output ./ios/AllAboutOlaf/main.jsbundle \
+  --sourcemap-output ./ios/AllAboutOlaf/main.jsbundle.map \
+  --assets-dest ./ios
+"""
+
+# --- Agent tasks ---
+
+[tasks."agent:setup"]
+description = "Set up the development environment for AI agents"
+depends = ["pnpm:install:frozen", "bundle-data"]
+
+[tasks."agent:pre-commit"]
+description = "Run pre-commit checks: format, lint, typecheck, test, lockfile"
+depends = ["format", "lint", "tsc", "test", "validate-lockfile"]

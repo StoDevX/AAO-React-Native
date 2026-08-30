@@ -147,8 +147,8 @@ platform :ios do
 		# don't forget: lanes run inside of ./fastlane, so we go up a level for our basedir
 		dest = File.expand_path('..', '.')
 
-		# we export this variable so that Gradle knows where to find the .properties file
-		token_dest = "#{dest}/ios/AuthKey_WPMP85A826.p8"
+		# outside ios/, which `mise run prebuild` regenerates from scratch
+		token_dest = "#{dest}/fastlane/AuthKey_WPMP85A826.p8"
 
 		pairs = [
 			{:from => "#{src}/AuthKey_WPMP85A826.p8", :to => token_dest},

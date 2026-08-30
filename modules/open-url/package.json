@@ -2,15 +2,15 @@
   "name": "@frogpond/open-url",
   "version": "1.0.0",
   "description": "",
-  "main": "index.ts",
-  "author": "",
   "license": "ISC",
+  "author": "",
+  "main": "index.ts",
   "scripts": {
     "test": "jest"
   },
+  "dependencies": {},
   "peerDependencies": {
-    "expo-web-browser": "~15.0.10",
-    "react-native": "^0.81.0"
-  },
-  "dependencies": {}
+    "expo-web-browser": "~57.0.2",
+    "react-native": "^0.86.2"
+  }
 }

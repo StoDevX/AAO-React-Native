@@ -4,9 +4,7 @@
  */
 import type {FilterType, ListType} from './types'
 
-export function stringifyFilters<T extends object>(
-	filters: FilterType<T>[],
-): string {
+export function stringifyFilters<T extends object>(filters: FilterType<T>[]): string {
 	return filters.map((f) => stringifyFilter(f)).join('; ')
 }
 

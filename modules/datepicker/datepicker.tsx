@@ -7,7 +7,6 @@ export const DatePicker = (props: IosDatetimePickerProps): React.ReactNode => (
 	<BaseDateTimePicker
 		displayIos={props.displayIos}
 		initialDate={props.initialDate}
-		minuteInterval={props.minuteInterval}
 		mode={props.mode}
 		onDateChange={props.onDateChange}
 		showPickerIos={true}

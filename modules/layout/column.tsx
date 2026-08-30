@@ -11,12 +11,7 @@ const styles = StyleSheet.create({
 	},
 })
 
-export const Column = ({
-	children,
-	style,
-	flex,
-	...props
-}: PropsType): React.ReactNode => {
+export const Column = ({children, style, flex, ...props}: PropsType): React.ReactNode => {
 	let flexStyle = flex !== undefined && flex !== null ? {flex: flex} : null
 	return (
 		<View style={[styles.column, style, flexStyle]} {...props}>

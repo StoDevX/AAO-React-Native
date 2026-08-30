@@ -1,10 +1,11 @@
 import {parseDocument} from 'htmlparser2'
-import {textContent} from 'domutils'
-import {AnyNode, Document, isText, isTag, type ChildNode} from 'domhandler'
+import {getElementsByTagName, textContent} from 'domutils'
+import {AnyNode, Document, Element, isText, isTag, type ChildNode} from 'domhandler'
 import cssSelect from 'css-select'
 
-export {textContent, cssSelect}
+export {textContent, cssSelect, getElementsByTagName, isTag, isText}
 export {encode, decode} from 'html-entities'
+export type {AnyNode, ChildNode, Document, Element} from 'domhandler'
 
 export function parseHtml(string: string): Document {
 	return parseDocument(string, {
@@ -13,16 +14,65 @@ export function parseHtml(string: string): Document {
 	})
 }
 
+/// RSS and other XML feeds use namespaced tag names (`dc:creator`,
+/// `content:encoded`) that `parseHtml`'s HTML mode does not preserve
+/// faithfully, and XML has its own rules for self-closing tags and CDATA
+/// sections that HTML mode does not apply. `xmlMode: true` treats those
+/// names as ordinary (colon-containing) tag names rather than attempting
+/// namespace resolution, so callers can find them with `getElementsByTagName`
+/// without a namespace-aware selector.
+export function parseXml(string: string): Document {
+	return parseDocument(string, {
+		xmlMode: true,
+		decodeEntities: true,
+	})
+}
+
 export function innerTextWithSpaces(elem: AnyNode): string {
 	return textContent(elem).split(/\s+/u).join(' ').trim()
 }
 
-export function removeHtmlWithRegex(str: string): string {
-	return str.replace(/<[^>]*>/gu, ' ')
+function collectText(nodes: ChildNode[], out: string[]): void {
+	// An explicit stack rather than recursion: the markup here is uncontrolled,
+	// and deeply nested input would otherwise overflow the call stack.
+	const stack: ChildNode[] = nodes.slice().reverse()
+
+	for (let node = stack.pop(); node !== undefined; node = stack.pop()) {
+		if (isText(node)) {
+			out.push(node.data)
+			continue
+		}
+
+		if (!isTag(node)) continue
+
+		// `<script>` and `<style>` bodies are code, not prose; dropping them
+		// keeps stylesheets and JS out of what we render as text.
+		const tag = node.name.toLowerCase()
+		if (tag === 'script' || tag === 'style') continue
+
+		// Pushed in reverse so they pop back off in document order.
+		const {children} = node
+		for (let i = children.length - 1; i >= 0; i -= 1) {
+			stack.push(children[i])
+		}
+	}
+}
+
+/**
+ * Strips HTML tags from a string, leaving only its text content.
+ *
+ * Text runs separated by a tag are joined with a space, so `a<br>b` becomes
+ * `a b` rather than `ab`. Character entities are decoded — callers do not need
+ * to run the result through `decode`.
+ */
+export function removeHtml(str: string): string {
+	const parts: string[] = []
+	collectText(parseHtml(str).children, parts)
+	return parts.join(' ')
 }
 
 export function fastGetTrimmedText(str: string): string {
-	return removeHtmlWithRegex(str).replace(/\s+/gu, ' ').trim()
+	return removeHtml(str).replace(/\s+/gu, ' ').trim()
 }
 
 // ── Structured HTML-to-text utilities ─────────────────────────────────────
@@ -129,11 +179,7 @@ function mergeSegments(target: Segment[], source: Segment[]): void {
 	}
 }
 
-function walkSegments(
-	nodes: ChildNode[],
-	segments: Segment[],
-	listContext?: 'ul' | 'ol',
-): void {
+function walkSegments(nodes: ChildNode[], segments: Segment[], listContext?: 'ul' | 'ol'): void {
 	let olCounter = 0
 
 	for (const node of nodes) {
@@ -246,4 +292,172 @@ export function htmlToSegments(html: string): Segment[] {
 	const segments: Segment[] = []
 	walkSegments(doc.children, segments)
 	return normalizeSegments(segments)
+}
+
+// ── HTML-to-markdown ──────────────────────────────────────────────────────
+
+/** Markdown's inline punctuation, escaped wherever text appears so that a
+ * posting reading "10*12 per hour" does not render as emphasis. */
+const INLINE_PUNCTUATION = /([\\`*_[\]])/gu
+
+function escapeInline(text: string): string {
+	// A non-breaking space is a space as far as markdown is concerned, and
+	// leaving it in defeats every trim downstream.
+	return text.replace(/\u00a0/gu, ' ').replace(INLINE_PUNCTUATION, '\\$1')
+}
+
+/** Escapes punctuation that only means something at the start of a line, so
+ * that prose hyphens elsewhere do not grow backslashes. */
+function escapeBlockStart(text: string): string {
+	if (/^\d+\./u.test(text)) {
+		return text.replace('.', '\\.')
+	}
+	return text.replace(/^([#>+-])/u, '\\$1')
+}
+
+const BOLD_TAGS = new Set(['b', 'strong'])
+const BOLD_STYLE = /font-weight:\s*(?:700|800|900|bold)/iu
+
+function isBold(node: Element): boolean {
+	if (BOLD_TAGS.has(node.name.toLowerCase())) return true
+	return BOLD_STYLE.test(node.attribs['style'] ?? '')
+}
+
+const ITALIC_TAGS = new Set(['i', 'em'])
+const ITALIC_STYLE = /font-style:\s*italic/iu
+
+function isItalic(node: Element): boolean {
+	if (ITALIC_TAGS.has(node.name.toLowerCase())) return true
+	return ITALIC_STYLE.test(node.attribs['style'] ?? '')
+}
+
+/** Wraps text in emphasis markers, keeping whitespace outside them — `**bold: **`
+ * is literal asterisks in markdown, not emphasis. */
+function emphasise(inner: string, marker: string): string {
+	const trimmed = inner.trim()
+	if (!trimmed) return inner
+
+	const leading = inner.slice(0, inner.length - inner.trimStart().length)
+	const trailing = inner.slice(inner.trimEnd().length)
+	return `${leading}${marker}${trimmed}${marker}${trailing}`
+}
+
+function renderInline(nodes: ChildNode[]): string {
+	let result = ''
+
+	for (const node of nodes) {
+		if (isText(node)) {
+			result += escapeInline(node.data)
+			continue
+		}
+
+		if (!isTag(node)) continue
+
+		const tag = node.name.toLowerCase()
+		if (tag === 'script' || tag === 'style') continue
+
+		if (tag === 'br') {
+			// Two trailing spaces: markdown's hard line break, which breaks the
+			// line without starting a new paragraph.
+			result += '  \n'
+			continue
+		}
+
+		if (tag === 'a') {
+			const href = node.attribs['href']
+			const text = renderInline(node.children)
+			result += href ? `[${text}](${href})` : text
+			continue
+		}
+
+		const inner = renderInline(node.children)
+		if (isBold(node)) {
+			result += emphasise(inner, '**')
+		} else if (isItalic(node)) {
+			result += emphasise(inner, '_')
+		} else {
+			result += inner
+		}
+	}
+
+	return result
+}
+
+const BLOCK_CONTAINERS = new Set(['p', 'div', 'section', 'article', 'header', 'footer'])
+
+function renderList(list: Element, depth: number): string {
+	const ordered = list.name.toLowerCase() === 'ol'
+	const indent = '\t'.repeat(depth)
+	const items: string[] = []
+
+	for (const child of list.children) {
+		if (!isTag(child) || child.name.toLowerCase() !== 'li') continue
+
+		const marker = ordered ? `${items.length + 1}. ` : '- '
+		// A nested list already carries its own indentation, so its blocks join
+		// in as they are. A `<p>` sibling inside an `<li>` would not be indented.
+		const [first = '', ...rest] = renderBlocks(child.children, depth + 1)
+		items.push([`${indent}${marker}${first}`, ...rest].join('\n'))
+	}
+
+	return items.join('\n')
+}
+
+function renderBlocks(nodes: ChildNode[], depth: number): string[] {
+	const blocks: string[] = []
+	let pending: ChildNode[] = []
+
+	const flush = (): void => {
+		if (pending.length === 0) return
+
+		const text = renderInline(pending).trim()
+		pending = []
+		if (text) blocks.push(escapeBlockStart(text))
+	}
+
+	for (const node of nodes) {
+		if (isTag(node)) {
+			const tag = node.name.toLowerCase()
+
+			if (tag === 'ul' || tag === 'ol') {
+				flush()
+				const list = renderList(node, depth)
+				if (list) blocks.push(list)
+				continue
+			}
+
+			if (BLOCK_CONTAINERS.has(tag)) {
+				flush()
+				blocks.push(...renderBlocks(node.children, depth))
+				continue
+			}
+		}
+
+		pending.push(node)
+	}
+
+	flush()
+	return blocks
+}
+
+/**
+ * Converts a parsed HTML node to markdown.
+ *
+ * Covers the tags real-world prose actually uses — paragraphs, divs, `<br>`,
+ * lists, links, and both tag-based and inline-styled bold and italic — and
+ * escapes markdown punctuation appearing in text so it renders literally.
+ */
+export function nodeToMarkdown(node: AnyNode): string {
+	const children = 'children' in node ? (node.children as ChildNode[]) : []
+	return nodesToMarkdown(children)
+}
+
+/** Converts a run of sibling nodes to markdown. See `nodeToMarkdown`. */
+export function nodesToMarkdown(nodes: ChildNode[]): string {
+	return renderBlocks(nodes, 0).join('\n\n').trim()
+}
+
+/** Converts an HTML string to markdown. See `nodeToMarkdown`. */
+export function htmlToMarkdown(html: string): string {
+	return nodeToMarkdown(parseHtml(html))
 }

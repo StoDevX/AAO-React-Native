@@ -3,12 +3,9 @@ import merge from 'deepmerge'
 import {
 	DarkTheme as NavigationDarkTheme,
 	DefaultTheme as NavigationLightTheme,
-} from '@react-navigation/native'
+} from 'expo-router/react-navigation'
 
-import {
-	MD3DarkTheme as PaperDarkTheme,
-	MD3LightTheme as PaperLightTheme,
-} from 'react-native-paper'
+import {MD3DarkTheme as PaperDarkTheme, MD3LightTheme as PaperLightTheme} from 'react-native-paper'
 
 export const CombinedLightTheme = merge(PaperLightTheme, NavigationLightTheme)
 

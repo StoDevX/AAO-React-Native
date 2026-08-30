@@ -15,12 +15,9 @@ type Props<T extends object> = {
 	onChange: (filter: ListType<T>) => void
 }
 
-export function ListSection<T extends object>({
-	filter,
-	onChange,
-}: Props<T>): React.ReactNode {
+export function ListSection<T extends object>({filter, onChange}: Props<T>): React.ReactNode {
 	let {spec} = filter
-	let {title = '', options, selected, mode} = spec
+	let {title, options, selected, mode} = spec
 	let quantifier = mode === 'AND' ? 'all' : 'any'
 	let {caption = `Show items with ${quantifier} of these options.`} = spec
 
@@ -79,23 +76,17 @@ export function ListSection<T extends object>({
 	let buttons = options.map((val) => (
 		<Cell
 			key={val.title}
-			accessory={
-				selected.some((s) => isEqual(s, val)) ? 'Checkmark' : undefined
-			}
+			accessory={selected.some((s) => isEqual(s, val)) ? 'Checkmark' : undefined}
 			cellContentView={
 				<Column style={styles.content}>
-					<Text style={styles.title}>
-						{spec.displayTitle ? val.title : val.label}
-					</Text>
+					<Text style={styles.title}>{spec.displayTitle ? val.title : val.label}</Text>
 					{val.detail ? <Text style={styles.detail}>{val.detail}</Text> : null}
 				</Column>
 			}
 			cellStyle="RightDetail"
 			disableImageResize={true}
 			image={
-				spec.showImages && val.image ? (
-					<Image source={val.image} style={styles.icon} />
-				) : undefined
+				spec.showImages && val.image ? <Image source={val.image} style={styles.icon} /> : undefined
 			}
 			onPress={() => buttonPushed(val)}
 		/>

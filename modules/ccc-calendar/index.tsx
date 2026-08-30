@@ -1,45 +1,7 @@
-import {EventList, type PoweredBy} from '@frogpond/event-list'
-import type {EventType} from '@frogpond/event-type'
-import {NoticeView} from '@frogpond/notice'
-import {useMomentTimer} from '@frogpond/timer'
-import {UseQueryResult} from '@tanstack/react-query'
-import * as React from 'react'
-
-export {
-	namedCalendarOptions,
-	googleCalendarOptions,
-	reasonCalendarOptions,
-	icsCalendarOptions,
-} from './query'
-
-type Props = {
-	detailView?: string
-	poweredBy: PoweredBy
-	query: UseQueryResult<EventType[]>
-}
-
-export function CccCalendarView(props: Props): React.ReactNode {
-	let {now} = useMomentTimer({intervalMs: 60000})
-	let {isError, refetch, data = [], isRefetching} = props.query
-
-	if (isError) {
-		return (
-			<NoticeView
-				buttonText="Try Again"
-				onPress={refetch}
-				text={`A problem occured while loading: ${props.query.error}`}
-			/>
-		)
-	}
-
-	return (
-		<EventList.EventList
-			detailView={props.detailView}
-			events={data}
-			now={now}
-			onRefresh={refetch}
-			poweredBy={props.poweredBy}
-			refreshing={isRefetching}
-		/>
-	)
-}
+export {deviceCalendarEventOptions, namedCalendarOptions, namedCalendarEventOptions} from './query'
+export {deviceCalendarIdFrom, isDeviceSourceId} from './sources'
+export {CalendarPicker} from './calendar-picker'
+export {ScheduleView} from './schedule-view'
+export {useCalendarSource, useCalendarSources} from './use-calendar-sources'
+export {useMergedEvents} from './use-merged-events'
+export type {CalendarSource, SourcedEvent} from './sources'

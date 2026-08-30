@@ -1,5 +1,5 @@
 import {AppState, Platform} from 'react-native'
-import NetInfo from '@react-native-community/netinfo'
+import {addEventListener} from '@react-native-community/netinfo'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import {createAsyncStoragePersister} from '@tanstack/query-async-storage-persister'
 import {QueryClient, onlineManager, focusManager} from '@tanstack/react-query'
@@ -26,7 +26,7 @@ export const persister = createAsyncStoragePersister({storage: AsyncStorage})
 
 // ... on network reconnect
 onlineManager.setEventListener((setOnline) => {
-	return NetInfo.addEventListener((state) => {
+	return addEventListener((state) => {
 		setOnline(Boolean(state.isConnected))
 	})
 })

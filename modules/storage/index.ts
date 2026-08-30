@@ -30,16 +30,10 @@ export function removeItem(key: string): Promise<void> {
 // These simply cast the return value of getItem; they provide no runtime
 // guarantees.
 
-export async function getItemAsString(
-	key: string,
-	defaultValue = '',
-): Promise<string> {
+export async function getItemAsString(key: string, defaultValue = ''): Promise<string> {
 	return (await getItem(key)) || defaultValue
 }
-export async function getItemAsBoolean(
-	key: string,
-	defaultValue = false,
-): Promise<boolean> {
+export async function getItemAsBoolean(key: string, defaultValue = false): Promise<boolean> {
 	const savedValue: boolean | null = await getItem(key)
 
 	if (savedValue === null) {
@@ -48,9 +42,6 @@ export async function getItemAsBoolean(
 
 	return savedValue
 }
-export async function getItemAsArray<T>(
-	key: string,
-	defaultValue: T[] = [],
-): Promise<Array<T>> {
+export async function getItemAsArray<T>(key: string, defaultValue: T[] = []): Promise<Array<T>> {
 	return (await getItem(key)) || defaultValue
 }

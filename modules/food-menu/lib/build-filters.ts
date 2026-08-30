@@ -1,15 +1,6 @@
 import type {Moment} from 'moment'
-import type {
-	MasterCorIconMapType,
-	MenuItemType,
-	ProcessedMealType,
-} from '../types'
-import type {
-	FilterType,
-	ListType,
-	PickerType,
-	ToggleType,
-} from '@frogpond/filter/types'
+import type {MasterCorIconMapType, MenuItemType, ProcessedMealType} from '../types'
+import type {FilterType} from '@frogpond/filter/types'
 import {decode, fastGetTrimmedText} from '@frogpond/html-lib'
 import {chooseMeal, EMPTY_MEAL} from './choose-meal'
 
@@ -28,20 +19,17 @@ export function buildFilters(
 	const allDietaryRestrictions = Object.values(corIcons).map((cor) => ({
 		title: decode(cor.label),
 		image: cor.image ? {uri: cor.image} : null,
-		detail: cor.description ? decode(fastGetTrimmedText(cor.description)) : '',
+		detail: cor.description ? fastGetTrimmedText(cor.description) : '',
 	}))
 
 	// Decide which meal will be selected by default
 	const mealOptions = meals.map((m) => ({label: m.label}))
-	const selectedMeal =
-		(now == null ? meals[0] : chooseMeal(meals, [], now)) ?? EMPTY_MEAL
+	const selectedMeal = (now == null ? meals[0] : chooseMeal(meals, [], now)) ?? EMPTY_MEAL
 
 	// Check if there is at least one special in order to show the specials-only filter
 	const stationNames = selectedMeal.stations.map((s) => s.label)
 	const shouldShowSpecials =
-		foodItems.filter(
-			(item) => item.special && stationNames.includes(item.station),
-		).length >= 1
+		foodItems.filter((item) => item.special && stationNames.includes(item.station)).length >= 1
 
 	return [
 		{
@@ -57,7 +45,7 @@ export function buildFilters(
 			apply: {
 				key: 'special',
 			},
-		} as ToggleType<MenuItemType>,
+		},
 		{
 			type: 'picker',
 			key: 'meals',
@@ -70,7 +58,7 @@ export function buildFilters(
 			apply: {
 				key: 'label',
 			},
-		} as PickerType<MenuItemType>,
+		},
 		{
 			type: 'list',
 			key: 'stations',
@@ -85,7 +73,7 @@ export function buildFilters(
 			apply: {
 				key: 'station',
 			},
-		} as ListType<MenuItemType>,
+		},
 		{
 			type: 'list',
 			key: 'dietary-restrictions',
@@ -101,6 +89,6 @@ export function buildFilters(
 			apply: {
 				key: 'cor_icon',
 			},
-		} as ListType<MenuItemType>,
+		},
 	]
 }
