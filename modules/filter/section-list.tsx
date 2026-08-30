@@ -1,12 +1,11 @@
 import {Image, StyleSheet, Text} from 'react-native'
-import type {ListItemSpecType, ListSpecType, ListType} from './types'
+import type {ListType} from './types'
 import {Cell, Section} from '@frogpond/tableview'
 import {Column} from '@frogpond/layout'
 import * as c from '@frogpond/colors'
+import {toggleAll, toggleOption} from './lib/select-options'
 
-import concat from 'lodash/concat'
 import isEqual from 'lodash/isEqual'
-import reject from 'lodash/reject'
 import * as React from 'react'
 import {useCallback} from 'react'
 
@@ -22,58 +21,17 @@ export function ListSection<T extends object>({filter, onChange}: Props<T>): Rea
 	let {caption = `Show items with ${quantifier} of these options.`} = spec
 
 	let buttonPushed = useCallback(
-		(tappedValue: ListItemSpecType) => {
-			let result
-
-			if (mode === 'OR' && selected.length === options.length) {
-				// if all options of an OR filter are selected and a user selects
-				// an option, make that the only selected option
-				result = [tappedValue]
-			} else if (selected.some((val) => isEqual(val, tappedValue))) {
-				// if the user has tapped an item, and it's already in the list of
-				// things they've tapped, we want to _remove_ it from that list.
-				result = reject(selected, (val) => isEqual(val, tappedValue))
-			} else {
-				// otherwise, we need to add it to the list
-				result = concat(selected, tappedValue)
-			}
-
-			let enabled = false
-			if (mode === 'OR') {
-				enabled = result.length !== options.length
-			} else if (mode === 'AND') {
-				enabled = result.length > 0
-			}
-
-			onChange({
-				...filter,
-				enabled: enabled,
-				spec: {...spec, selected: result},
-			})
+		(tappedValue: (typeof options)[number]) => {
+			onChange(toggleOption(filter, tappedValue))
 		},
-		[filter, mode, onChange, options.length, selected, spec],
+		[filter, onChange],
 	)
 
 	let showAll = useCallback(() => {
-		let result: ListItemSpecType[]
+		onChange(toggleAll(filter))
+	}, [filter, onChange])
 
-		if (selected.length === options.length) {
-			// when all items are selected: uncheck them all
-			result = []
-		} else {
-			// when one or more items are not checked: check them all
-			result = options
-		}
-
-		onChange({
-			...filter,
-			enabled: result.length !== options.length,
-			spec: {...spec, selected: result},
-		})
-	}, [filter, onChange, options, selected.length, spec])
-
-	let renderMark = spec.renderMark
-	let hasImageColumn = options.some((val) => Boolean(val.image) || Boolean(renderMark))
+	let hasImageColumn = options.some((val) => Boolean(val.image))
 	let buttons = options.map((val) => (
 		<Cell
 			key={val.title}
@@ -86,7 +44,9 @@ export function ListSection<T extends object>({filter, onChange}: Props<T>): Rea
 			}
 			cellStyle="RightDetail"
 			disableImageResize={true}
-			image={spec.showImages ? leadingMark(val, renderMark) : undefined}
+			image={
+				spec.showImages && val.image ? <Image source={val.image} style={styles.icon} /> : undefined
+			}
 			onPress={() => buttonPushed(val)}
 		/>
 	))
@@ -112,22 +72,6 @@ export function ListSection<T extends object>({filter, onChange}: Props<T>): Rea
 			{buttons}
 		</Section>
 	)
-}
-
-/**
- * A row's leading mark. A caller whose marks are views rather than artwork
- * draws its own, so that one implementation of a mark serves both this list and
- * wherever else that caller shows it.
- */
-function leadingMark(
-	val: ListItemSpecType,
-	renderMark: ListSpecType['renderMark'],
-): React.ReactElement | undefined {
-	if (renderMark) {
-		return renderMark(val) ?? undefined
-	}
-
-	return val.image ? <Image source={val.image} style={styles.icon} /> : undefined
 }
 
 const styles = StyleSheet.create({
