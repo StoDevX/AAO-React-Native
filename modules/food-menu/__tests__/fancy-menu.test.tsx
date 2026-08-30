@@ -24,6 +24,17 @@ jest.mock('expo-symbols', () => ({SymbolView: 'SymbolView'}))
 // `@frogpond/filter`'s barrel reaches the SwiftUI picker, which cannot mount
 // under Jest; `applyFiltersToItem` next to it is the real thing this suite uses.
 jest.mock('@expo/ui/community/picker', () => ({Picker: 'Picker'}))
+jest.mock('@expo/ui/swift-ui', () => {
+	// oxlint-disable-next-line typescript/no-require-imports
+	return require('./expo-ui-mock') as typeof import('./expo-ui-mock')
+})
+jest.mock('@expo/ui/swift-ui/modifiers', () => {
+	// oxlint-disable-next-line typescript/no-require-imports
+	return require('./expo-ui-mock') as typeof import('./expo-ui-mock')
+})
+jest.mock('expo-asset', () => ({
+	Asset: {fromURI: () => ({downloadAsync: () => ({localUri: 'file:///cache/v.png'})})},
+}))
 
 jest.mock('../filter-menu-toolbar', () => {
 	// oxlint-disable-next-line typescript/no-require-imports
@@ -136,5 +147,22 @@ describe('FancyMenu', () => {
 		await rerender(renderMenu(moment.tz(BREAKFAST_TIME, TIMEZONE)))
 
 		expect(shownMeal()).toBe('Dinner')
+	})
+
+	test('shows the empty message instead of stations when the filters exclude everything', async () => {
+		await render(
+			<FancyMenu
+				applyFilters={() => false}
+				foodItems={FOOD_ITEMS}
+				meals={MEALS}
+				menuCorIcons={COR_ICONS}
+				name="The Caf"
+				now={moment.tz(BREAKFAST_TIME, TIMEZONE)}
+				onItemPress={jest.fn()}
+			/>,
+		)
+
+		expect(screen.getByText('No items to show. Try changing the filters.')).toBeTruthy()
+		expect(screen.queryByText('Grill')).toBeNull()
 	})
 })
