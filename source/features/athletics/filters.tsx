@@ -4,14 +4,10 @@ import {ListFooter} from '@frogpond/lists'
 import * as c from '@frogpond/colors'
 import {useFilterStore} from './store'
 import {SportSection} from './types'
+import {isSectionFullySelected, toggleSectionSelection} from './utils'
 
 interface AthleticsFiltersProps {
 	sports: SportSection[]
-}
-
-/** True when every sport in the section is already in the user's selection. */
-function isSectionFullySelected(sectionSports: string[], selectedSports: string[]): boolean {
-	return sectionSports.every((sport) => selectedSports.includes(sport))
 }
 
 export function AthleticsFilters({sports}: AthleticsFiltersProps): React.ReactNode {
@@ -21,12 +17,7 @@ export function AthleticsFilters({sports}: AthleticsFiltersProps): React.ReactNo
 
 	const handleSelectAll = (sectionTitle: string) => {
 		const sectionSports = sports.find((s) => s.title === sectionTitle)?.data ?? []
-		const allSelected = isSectionFullySelected(sectionSports, selectedSports)
-		if (allSelected) {
-			setSelectedSports(selectedSports.filter((sport) => !sectionSports.includes(sport)))
-		} else {
-			setSelectedSports([...new Set([...selectedSports, ...sectionSports])])
-		}
+		setSelectedSports(toggleSectionSelection(sectionSports, selectedSports))
 	}
 
 	return (

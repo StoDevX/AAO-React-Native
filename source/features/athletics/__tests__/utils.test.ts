@@ -5,6 +5,7 @@ import {
 	sectionsForTab,
 	sportFilterSections,
 	filterSectionsBySport,
+	toggleSectionSelection,
 } from '../utils'
 import {Constants} from '../constants'
 import {DateGroupedScores, GameResult, ProcessedScore, Score, StatusInfo} from '../types'
@@ -259,5 +260,28 @@ describe('filterSectionsBySport', () => {
 		const grouped: DateGroupedScores[] = [{title: Constants.TODAY, data: [baseball]}]
 		const result = filterSectionsBySport(grouped, ['Baseball', 'Fencing'])
 		expect(result).toEqual([{title: Constants.TODAY, data: [baseball]}])
+	})
+})
+
+describe('toggleSectionSelection', () => {
+	it('selects every sport in a section with none of its sports selected', () => {
+		const result = toggleSectionSelection(['Baseball', 'Softball'], [])
+		expect(result).toEqual(['Baseball', 'Softball'])
+	})
+
+	it('deselects exactly a fully-selected section, leaving other selections intact', () => {
+		const selected = ['Baseball', 'Softball', "Men's Golf"]
+		const result = toggleSectionSelection(['Baseball', 'Softball'], selected)
+		expect(result).toEqual(["Men's Golf"])
+	})
+
+	it('selects the rest of a partially-selected section rather than clearing it', () => {
+		const result = toggleSectionSelection(['Baseball', 'Softball'], ['Baseball'])
+		expect(result).toEqual(['Baseball', 'Softball'])
+	})
+
+	it('does not duplicate a sport that is already selected when adding the rest of the section', () => {
+		const result = toggleSectionSelection(['Baseball', 'Softball'], ['Baseball', "Men's Golf"])
+		expect(result).toEqual(['Baseball', "Men's Golf", 'Softball'])
 	})
 })

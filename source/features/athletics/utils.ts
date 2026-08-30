@@ -208,3 +208,24 @@ export function filterSectionsBySport(
 		),
 	}))
 }
+
+/** True when every sport in a filter section is already in the user's selection. */
+export function isSectionFullySelected(sectionSports: string[], selectedSports: string[]): boolean {
+	return sectionSports.every((sport) => selectedSports.includes(sport))
+}
+
+/**
+ * The next selection after toggling a filter section's "All" control: when
+ * every sport in the section is already selected, the toggle removes them;
+ * otherwise it adds every sport in the section to the existing selection.
+ */
+export function toggleSectionSelection(
+	sectionSports: string[],
+	selectedSports: string[],
+): string[] {
+	if (isSectionFullySelected(sectionSports, selectedSports)) {
+		return selectedSports.filter((sport) => !sectionSports.includes(sport))
+	}
+
+	return [...new Set([...selectedSports, ...sectionSports])]
+}
