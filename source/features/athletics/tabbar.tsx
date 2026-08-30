@@ -18,10 +18,7 @@ const SECTIONS: TabSection[] = [
 	Constants.FILTER,
 ]
 
-export function TabBar({
-	selectedSection,
-	onSelectSection,
-}: TabBarProps): React.ReactNode {
+export function TabBar({selectedSection, onSelectSection}: TabBarProps): React.ReactNode {
 	return (
 		<View style={styles.container}>
 			{SECTIONS.map((section) => (
@@ -35,17 +32,11 @@ export function TabBar({
 							onSelectSection(section)
 						}
 					}}
-					style={[
-						styles.tab,
-						selectedSection === section && styles.selectedTab,
-					]}
+					style={[styles.tab, selectedSection === section && styles.selectedTab]}
 				>
 					<Text
 						numberOfLines={1}
-						style={[
-							styles.tabText,
-							selectedSection === section && styles.selectedTabText,
-						]}
+						style={[styles.tabText, selectedSection === section && styles.selectedTabText]}
 					>
 						{section}
 					</Text>

@@ -10,9 +10,7 @@ type Props = {
 }
 
 export function EmptyListNotice({selectedSection}: Props): React.ReactNode {
-	const showChangeFiltersMessage = useFilterStore(
-		selectShowChangeFiltersMessage,
-	)
+	const showChangeFiltersMessage = useFilterStore(selectShowChangeFiltersMessage)
 
 	let message: string
 	switch (selectedSection) {

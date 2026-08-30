@@ -1,11 +1,5 @@
 import * as React from 'react'
-import {
-	SectionList,
-	StyleSheet,
-	Text,
-	TouchableOpacity,
-	View,
-} from 'react-native'
+import {SectionList, StyleSheet, Text, TouchableOpacity, View} from 'react-native'
 import * as c from '@frogpond/colors'
 import {useFilterStore} from './store'
 
@@ -13,21 +7,14 @@ interface AthleticsFiltersProps {
 	sports: {title: string; data: string[]}[]
 }
 
-export function AthleticsFilters({
-	sports,
-}: AthleticsFiltersProps): React.ReactNode {
+export function AthleticsFilters({sports}: AthleticsFiltersProps): React.ReactNode {
 	const {selectedSports, toggleSport, setSelectedSports} = useFilterStore()
 
 	const handleSelectAll = (sectionTitle: string) => {
-		const sectionSports =
-			sports.find((s) => s.title === sectionTitle)?.data ?? []
-		const allSelected = sectionSports.every((sport) =>
-			selectedSports.includes(sport),
-		)
+		const sectionSports = sports.find((s) => s.title === sectionTitle)?.data ?? []
+		const allSelected = sectionSports.every((sport) => selectedSports.includes(sport))
 		if (allSelected) {
-			setSelectedSports(
-				selectedSports.filter((sport) => !sectionSports.includes(sport)),
-			)
+			setSelectedSports(selectedSports.filter((sport) => !sectionSports.includes(sport)))
 		} else {
 			setSelectedSports([...new Set([...selectedSports, ...sectionSports])])
 		}
@@ -77,16 +64,10 @@ export function AthleticsFilters({
 							accessibilityRole="checkbox"
 							accessibilityState={{checked: allSelected}}
 							onPress={() => handleSelectAll(title)}
-							style={[
-								styles.filterButton,
-								allSelected && styles.selectedFilterButton,
-							]}
+							style={[styles.filterButton, allSelected && styles.selectedFilterButton]}
 						>
 							<Text
-								style={[
-									styles.filterButtonText,
-									allSelected && styles.selectedFilterButtonText,
-								]}
+								style={[styles.filterButtonText, allSelected && styles.selectedFilterButtonText]}
 							>
 								All
 							</Text>
@@ -132,8 +113,8 @@ const styles = StyleSheet.create({
 		fontSize: 14,
 	},
 	selectedFilterButton: {
-		backgroundColor: c.navyToNavy[0],
-		borderColor: c.navyToNavy[0],
+		backgroundColor: c.blue,
+		borderColor: c.blue,
 	},
 	selectedFilterButtonText: {
 		color: c.white,

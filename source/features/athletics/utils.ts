@@ -97,11 +97,7 @@ export function groupScoresByDate(
 	}
 
 	const upcomingSections = Object.keys(upcoming)
-		.sort(
-			(a, b) =>
-				upcoming[a][0].parsedDate.getTime() -
-				upcoming[b][0].parsedDate.getTime(),
-		)
+		.sort((a, b) => upcoming[a][0].parsedDate.getTime() - upcoming[b][0].parsedDate.getTime())
 		.map((title) => ({
 			title: title as DateGroupedScores['title'],
 			data: upcoming[title],

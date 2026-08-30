@@ -8,7 +8,6 @@ const makeFakeScore = (
 ): ProcessedScore =>
 	({
 		id: '1',
-		// eslint-disable-next-line camelcase
 		date_utc: dateUtc,
 		sport: extra.sport ?? 'Baseball',
 		result: extra.result ?? '',
