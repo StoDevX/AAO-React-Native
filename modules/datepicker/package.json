@@ -9,7 +9,7 @@
     "test": "jest"
   },
   "dependencies": {
-    "@expo/ui": "57.0.10"
+    "@expo/ui": "57.0.14"
   },
   "peerDependencies": {
     "moment-timezone": "^0.6.3",

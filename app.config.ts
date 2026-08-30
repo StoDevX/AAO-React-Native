@@ -228,7 +228,8 @@ const config: ExpoConfig = {
 		// maplibre-gl-native-distribution -- no pod source build, and no
 		// access token anywhere in the pipeline.
 		'@maplibre/maplibre-react-native',
-		['react-native-enriched-markdown', {enableMath: false}],
+		// react-native-enriched-markdown 1.0.2 dropped its Expo config plugin;
+		// its options now live in the `enriched-markdown` block of package.json.
 		'./plugins/with-app-delegate-customizations',
 		'./plugins/with-alternate-icons',
 		'./plugins/with-xcuitest-target',
