@@ -69,35 +69,25 @@ minimumReleaseAge: 4320 # 3 days, in minutes
 # remove after 2026-08-10, once they clear the 3-day window on their own
 minimumReleaseAgeExclude: []
 
+catalog:
+  js-yaml: '5.4.1'
+
 # dependency version overrides (used to live in package.json)
 overrides:
   'brace-expansion@1': '1.1.18'
   'brace-expansion@2': '2.1.4'
   'brace-expansion@5': '5.0.9'
-  'postcss@8': '8.5.26'
+  'postcss@': '8.5.26'
   # Known-vulnerable transitive deps, all pulled in by build/CLI tooling
   # (never part of the shipped JS bundle). Each override is scoped to the
   # currently-resolved major/minor so it can't clobber some other, unrelated
   # future resolution of the same package (e.g. a hypothetical xmldom 0.10.x
   # getting forced back down to 0.9.x).
-  #
+  # -----
   # shell-quote@1.8.3 (via react-devtools-core, a react-native dependency):
   # critical newline-escaping bug (GHSA-w7jw-789q-3m8p) and a ReDoS in
   # parse() (GHSA-395f-4hp3-45gv). No fix within 1.8.x; next fixed release is 1.10.0.
-  'shell-quote@1.8': '1.10.0'
-  # @xmldom/xmldom@0.8.12 (via @expo/plist, used by `expo prebuild` to
-  # read/write ios/Info.plist and ios/*.entitlements): NOT overridden. Four
-  # XML injection/DoS advisories (GHSA-j759-j44w-7fr8, GHSA-x6wf-f3px-wcqx,
-  # GHSA-f6ww-3ggp-fr8h, GHSA-2v35-w6hq-6mfw), all fixed in 0.9.x. Tried
-  # forcing 0.9.10 and it broke `expo prebuild` twice over: 0.9's
-  # DOMParser.parseFromString requires an explicit mimeType (patchable --
-  # @expo/plist@0.8.1 calls it with none), and separately its stricter XML
-  # declaration handling rejects ios/*.entitlements
-  # ("processing instruction at position 1 is an xml declaration which is
-  # only at the start of the document") in a way a single patch couldn't
-  # cleanly paper over. Neither surfaced in tsc/eslint/jest -- only a real
-  # `expo prebuild` run exercises this parsing path. See the allow-ghsas
-  # entries in .github/workflows/dependency-review.yml.
+  'shell-quote@': '1.10.0'
   # fast-uri@3.1.0 (via ajv, used by our own eslint/ajv-formats devDeps):
   # path-traversal and host-confusion advisories (GHSA-q3j6-qgpj-74h6,
   # GHSA-v39h-62p7-jpjc); fixed within the same 3.1.x line.
@@ -107,25 +97,16 @@ overrides:
   # a prototype-adjacent parsing issue (GHSA-h67p-54hq-rp68). No fix within
   # 3.14.x; next fixed release is 3.15.1. (js-yaml@4.x is also a direct
   # devDependency, already bumped to a patched version in package.json.)
-  'js-yaml@3.14': '5.3.0'
+  'js-yaml@3': 'catalog:'
+  'js-yaml@4': 'catalog:' # just throw v4 in here as well
   # qs@6.15.1 (via our own `url` polyfill devDependency): fixed within the
   # same 6.15.x line (GHSA-q8mj-m7cp-5q26).
-  'qs@6.15': '6.15.3'
-  # uuid@7.0.3 (via the xcode package): NOT overridden. GHSA-w5hq-g745-h8pq
-  # (moderate) is a missing buffer-bounds check in v3/v5/v6 when an explicit
-  # output buffer is passed; xcode only calls the unaffected `uuid.v4()`
-  # with no buffer arg. Tried forcing 11.1.1 (the only fixed version, a
-  # major bump) and it broke: uuid@11's package.json "exports" field routes
-  # `require('uuid')` to dist/esm-browser under Jest's module resolution
-  # instead of dist/cjs, so xcode's `require('uuid')` in pbxProject.js gets
-  # back ES module syntax Jest can't parse -- fails to even load, breaking
-  # every plugins/__tests__ test that touches @expo/config-plugins. See the
-  # allow-ghsas entry in .github/workflows/dependency-review.yml.
+  'qs@': '6.15.3'
   # @babel/core resolves twice: our own devDependency (already bumped in
   # package.json) and a separate transitive instance pulled in via Jest's
   # babel-jest/istanbul instrumentation chain, which independently pinned
   # 7.29.0 -- ReDoS in template literal parsing (GHSA-4x5r-pxfx-6jf8).
-  '@babel/core@7.29': '7.29.7'
+  '@babel/core@': '7.29.7'
   # react-dom is an optionalDependency of expo, @expo/ui, and @expo/router-server
   # -- all needed only for their web targets. This app is iOS-only and never
   # renders any of their web variants, so drop it rather than just pinning it.
