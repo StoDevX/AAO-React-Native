@@ -24,13 +24,23 @@ struct MenusScreen: Screen {
 		return self
 	}
 
-	/// The dietary information is only conveyed by unlabelled icons on screen, so
-	/// the row label is the one place a test can prove it did not vanish.
+	/// Proves a food row's label carries a dietary-icon name, not just the item
+	/// name and (when present) the "Special" marker -- both of which also
+	/// produce a comma, so a bare `label CONTAINS ','` would pass on a plain
+	/// specials row with no dietary icon at all. Excluding rows whose label
+	/// *ends* with ", Special" rules that case out, since a real cor-icon name
+	/// is always appended after it.
+	///
+	/// This does not prove any icon PNG reached disk: `foodRowLabel` is built
+	/// from every cor-icon key the item carries, not from `localIcons`, by
+	/// design (`food-item-row.tsx`) -- a VoiceOver user should hear "Gluten
+	/// Free" whether or not that download succeeded. Verifying the download
+	/// itself is not something an accessibility-label query can do.
 	@discardableResult
 	func verifyDietaryInfoIsAnnounced() -> Self {
 		let labelled = app.buttons.matching(
 			NSPredicate(
-				format: "identifier BEGINSWITH %@ AND label CONTAINS ','",
+				format: "identifier BEGINSWITH %@ AND label CONTAINS ',' AND NOT (label ENDSWITH ', Special')",
 				TestIdentifiers.Menus.foodRowPrefix)
 		).firstMatch
 		XCTAssertTrue(
