@@ -121,12 +121,10 @@ function shownMeal(): string {
 }
 
 describe('FancyMenu', () => {
-	test('starts on the meal being served now', async () => {
-		await render(renderMenu(moment.tz(BREAKFAST_TIME, TIMEZONE)))
-
-		expect(shownMeal()).toBe('Breakfast')
-	})
-
+	// Which meal the menu starts on is `chooseMeal`'s decision, covered directly
+	// in lib/__tests__. What only shows up at this level is whether the choice
+	// outlives a render of the screen above, which hands down a fresh Moment
+	// each time it renders.
 	test('keeps the meal the user picked when the parent re-renders', async () => {
 		let {rerender} = await render(renderMenu(moment.tz(BREAKFAST_TIME, TIMEZONE)))
 

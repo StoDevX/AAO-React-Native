@@ -104,10 +104,10 @@ export function FancyMenu(props: Props): React.ReactNode {
 	const {now, meals, cafeMessage, foodItems, menuCorIcons, onItemPress} = props
 	const applyFilters = props.applyFilters ?? applyFiltersToItem
 
-	// Built from the menu once, then owned by the user. `now` only decides which
-	// meal starts out selected, and the screens above hand down a fresh Moment
-	// on every render they do, so rebuilding whenever it changed threw the
-	// user's filters away on each one.
+	// Built from the menu once, then owned by the user. `now` picks the meal
+	// selected to begin with and nothing after: the screens above build a fresh
+	// Moment on each of their renders, so anything tracking it would follow
+	// every one of them and take the user's filters with it.
 	const [filters, setFilters] = useState<FilterType<MenuItemType>[]>(() =>
 		buildFilters(Object.values(foodItems), menuCorIcons, meals, now),
 	)

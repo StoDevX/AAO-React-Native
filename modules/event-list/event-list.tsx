@@ -119,8 +119,8 @@ export let EventList = React.forwardRef<EventListHandle, Props>(function EventLi
 	let [chosenDay, setChosenDay] = React.useState<Moment | null>(null)
 
 	// Until the user picks one, the strip rests on the list's top section, whose
-	// key is 'Today', 'Ongoing', or an ISO date. Derived rather than synced into
-	// state once the data loads, so the strip never renders with nothing on it.
+	// key is 'Today', 'Ongoing', or an ISO date. Derived, so the strip has a day
+	// on it from the first render that has sections to offer.
 	let defaultDay = React.useMemo(() => {
 		if (sections.length === 0) {
 			return null

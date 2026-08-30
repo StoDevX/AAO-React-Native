@@ -67,9 +67,8 @@ type Props = {
 function BusStopDetailInternal(props: Props): React.ReactNode {
 	let {stop, line, now, subtitle} = props
 
-	// Read straight from the props rather than mirrored into state: the row
-	// statuses below are computed from these, and an effect leaves the first
-	// frame drawing every row against a schedule that has not been read yet.
+	// Read straight from the props: the row statuses below are computed from
+	// these, so they have to be settled by the time the first frame draws.
 	let processedLine = processBusLine(line, now)
 	let scheduleForToday = getScheduleForNow(processedLine.schedules, now)
 	let {index: currentBusIteration, status} = getCurrentBusIteration(scheduleForToday, now)

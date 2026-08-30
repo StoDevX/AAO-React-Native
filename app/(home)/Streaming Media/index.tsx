@@ -3,7 +3,7 @@ import {StyleSheet, SectionList} from 'react-native'
 import * as c from '@frogpond/colors'
 import {ListSeparator, ListSectionHeader} from '@frogpond/lists'
 import {NoticeView, LoadingView} from '@frogpond/notice'
-import {FilterToolbar, ListType} from '@frogpond/filter'
+import {FilterToolbar, ListType, selectedOptions} from '@frogpond/filter'
 import {StreamRow} from '../../../source/features/streaming/streams/row'
 import toPairs from 'lodash/toPairs'
 import groupBy from 'lodash/groupBy'
@@ -63,10 +63,10 @@ const filterStreams = <T extends object>(streams: StreamType[], filters: ListTyp
 export default function StreamingPage(): React.ReactNode {
 	let {data = [], error, refetch, isLoading, isRefetching, isError} = useQuery(streamsOptionsFor())
 
-	// Only the narrowing the user asked for is state; the categories on offer are
-	// read back out of the streams. Rebuilding the whole filter whenever they
-	// changed used to hand back an everything-selected filter, discarding what
-	// they had picked on any refetch that actually brought new streams.
+	// Only the narrowing the user asked for is state; the categories on offer
+	// come from the streams. Keeping the whole filter in state instead would tie
+	// the viewer's choice to the stream list, so a refetch that brought new
+	// streams would carry an everything-selected filter in with them.
 	let [chosenCategories, setChosenCategories] = React.useState<string[] | null>(null)
 
 	let entries = React.useMemo(() => {
@@ -90,9 +90,7 @@ export default function StreamingPage(): React.ReactNode {
 				spec: {
 					title: 'Categories',
 					options,
-					selected: chosenCategories
-						? options.filter((option) => chosenCategories.includes(option.title))
-						: options,
+					selected: selectedOptions(options, chosenCategories),
 					mode: 'OR',
 					displayTitle: true,
 				},

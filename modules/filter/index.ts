@@ -1,5 +1,6 @@
 export type {FilterType, ListType, ToggleType, PickerType} from './types'
 export {applyFiltersToItem} from './apply-filters'
+export {selectedOptions} from './selected-options'
 export {stringifyFilters} from './stringify-filters'
 export {filterListSpecs, filterPickerSpecs, filterToggleSpecs} from './tools'
 export {FilterToolbar} from './filter-toolbar'

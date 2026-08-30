@@ -7,7 +7,7 @@ import {LoadingView, NoticeView} from '@frogpond/notice'
 import {openUrl} from '@frogpond/open-url'
 import {NewsRow} from './news-row'
 import {cleanEntries, trimStoryCateogry} from './lib/util'
-import {FilterToolbar, ListType} from '@frogpond/filter'
+import {FilterToolbar, ListType, selectedOptions} from '@frogpond/filter'
 import {UseQueryResult} from '@tanstack/react-query'
 
 type Props = {
@@ -51,10 +51,10 @@ export const NewsList = (props: Props): React.ReactNode => {
 
 	let entries = React.useMemo(() => cleanEntries(data), [data])
 
-	// Only the narrowing the user asked for is state; the categories on offer are
-	// read back out of the feed. Rebuilding the whole filter whenever the feed
-	// changed used to hand back an everything-selected filter, discarding what
-	// they had picked on any refetch that actually brought new stories.
+	// Only the narrowing the user asked for is state; the categories on offer
+	// come from the feed. Keeping the whole filter in state instead would tie
+	// the reader's choice to the story list, so a refetch that brought new
+	// stories would carry an everything-selected filter in with them.
 	let [chosenCategories, setChosenCategories] = React.useState<string[] | null>(null)
 
 	let filters = React.useMemo((): ListType<StoryType>[] => {
@@ -74,9 +74,7 @@ export const NewsList = (props: Props): React.ReactNode => {
 				spec: {
 					title: 'Categories',
 					options,
-					selected: chosenCategories
-						? options.filter((option) => chosenCategories.includes(option.title))
-						: options,
+					selected: selectedOptions(options, chosenCategories),
 					mode: 'OR',
 					displayTitle: true,
 				},

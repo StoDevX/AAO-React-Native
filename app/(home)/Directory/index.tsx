@@ -21,9 +21,9 @@ function DirectoryView(): React.ReactNode {
 	}>()
 
 	// Tapping a department opens a fresh copy of this screen with the name
-	// already in the params, so they seed the search instead of being synced
-	// into it afterwards -- which cost a render and a debounce round-trip
-	// before the query for a department the route had named all along.
+	// already in the params, so they seed the search: the route names the
+	// department at mount, and the query for it can go out on the first render
+	// rather than after a debounce.
 	let departmentLink = params?.queryType === 'department' ? params.queryParam : undefined
 
 	let [searchQueryType, setSearchQueryType] = React.useState<DirectorySearchTypeEnum>(

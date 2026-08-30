@@ -137,9 +137,9 @@ export function ProgressChunk(props: Props): React.ReactNode {
 	let ownDotY = aboveHeight + DOT_CENTER_OFFSET
 	let dotToDotDistance = aboveHeight + belowHeight + DOT_FLOW_HEIGHT
 
-	// Lazily, so the row does not build an `Animated.Value` on every render only
-	// to drop it: `useRef(new Animated.Value(0))` evaluates its argument each
-	// time and keeps the first one.
+	// Built lazily so the row constructs one `Animated.Value` rather than one per
+	// render: an initialiser passed as an argument is evaluated every time even
+	// though only the first result is ever kept.
 	let [animatedPosition] = useState(() => new Animated.Value(0))
 	let reducedMotion = useRef(false)
 	let hasPositioned = useRef(false)
