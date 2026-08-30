@@ -55,6 +55,13 @@ export const frame = (params: Record<string, unknown> = {}): Modifier => ({
 	...params,
 })
 
+export const font = (params: Record<string, unknown> = {}): Modifier => ({
+	$type: 'font',
+	...params,
+})
+
+export const foregroundStyle = (style: unknown): Modifier => ({$type: 'foregroundStyle', style})
+
 export function Host({children}: WithChildren & {matchContents?: boolean}): React.ReactNode {
 	return <View>{children}</View>
 }
@@ -180,17 +187,20 @@ List.ForEach = function ListForEach({children}: WithChildren): React.ReactNode {
 }
 
 /**
- * `header`/`footer` are real `SwiftUIContent` slots on the native component --
- * a bare string handed to either crashes at mount -- but react-test-renderer
- * happily accepts a raw string child of `View`, so rendering them wouldn't
- * catch that. The explicit throw below is what earns the claim (ported from
- * the event-list mock, this one's stated model).
+ * `title` renders as text so a test can assert a section is present. `header`/
+ * `footer` are real `SwiftUIContent` slots on the native component -- a bare
+ * string handed to either crashes at mount -- but react-test-renderer happily
+ * accepts a raw string child of `View`, so rendering them wouldn't catch that.
+ * The explicit throw below is what earns the claim (ported from the
+ * event-list mock, this one's stated model).
  */
 export function Section({
 	children,
+	title,
 	header,
 	footer,
 }: WithChildren & {
+	title?: string
 	header?: React.ReactNode
 	footer?: React.ReactNode
 }): React.ReactNode {
@@ -200,6 +210,7 @@ export function Section({
 
 	return (
 		<View>
+			{title ? <RNText>{title}</RNText> : null}
 			{header}
 			{children}
 			{footer}
@@ -208,6 +219,12 @@ export function Section({
 }
 
 export function HStack({children}: WithChildren & {spacing?: number}): React.ReactNode {
+	return <View>{children}</View>
+}
+
+export function VStack({
+	children,
+}: WithChildren & {alignment?: string; spacing?: number}): React.ReactNode {
 	return <View>{children}</View>
 }
 

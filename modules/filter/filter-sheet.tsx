@@ -1,6 +1,24 @@
 import * as React from 'react'
-import {BottomSheet, Button, Host, HStack, Image, List, Section, Text} from '@expo/ui/swift-ui'
-import {buttonStyle, contentShape, frame, resizable, shapes} from '@expo/ui/swift-ui/modifiers'
+import {
+	BottomSheet,
+	Button,
+	Host,
+	HStack,
+	Image,
+	List,
+	Section,
+	Text,
+	VStack,
+} from '@expo/ui/swift-ui'
+import {
+	buttonStyle,
+	contentShape,
+	font,
+	foregroundStyle,
+	frame,
+	resizable,
+	shapes,
+} from '@expo/ui/swift-ui/modifiers'
 import isEqual from 'lodash/isEqual'
 import type {SFSymbol} from 'sf-symbols-typescript'
 
@@ -33,6 +51,13 @@ const LOCAL_ICON_MODIFIERS = [resizable(), frame({width: 20, height: 20})]
 // `modules/food-menu/food-item-row.tsx` made the same trade for the same
 // reason.
 const FILL_LEADING = [frame({maxWidth: Infinity, alignment: 'leading'})]
+// `modules/food-menu/food-item-row.tsx` styles an option's secondary line the
+// same way; hoisted separately here rather than imported, since neither
+// module reaches across the package boundary for the other's constants.
+const DETAIL_MODIFIERS = [
+	font({textStyle: 'footnote'}),
+	foregroundStyle({type: 'hierarchical', style: 'secondary'}),
+]
 
 /**
  * A long filter -- or one carrying icons -- as a sheet of selectable rows,
@@ -68,6 +93,13 @@ export function FilterSheet<T extends object>({
 	// whatever changed while it was closed) and the emit guard needs
 	// resetting -- no effect keyed on `isPresented` is needed, since nothing
 	// else can flip it to `true`.
+	//
+	// That relies on the anchor being unreachable once presented: the default
+	// `.large` detent covers it for as long as the sheet is up, so this
+	// `setLocal(filter)` reseed can't fire mid-presentation. Adding
+	// `presentationDetents` or `fitToContents` would leave the anchor tappable
+	// behind a partial sheet, and a tap on it would silently discard whatever
+	// the user had already selected.
 	let openSheet = React.useCallback(() => {
 		hasEmitted.current = false
 		setLocal(filter)
@@ -85,8 +117,8 @@ export function FilterSheet<T extends object>({
 
 	let {spec} = local
 
-	// Matches the popover's rule, and `FilterMenu`'s: a list with nothing in
-	// it has nothing to show -- no rows, and no trigger to open them with.
+	// A list with nothing in it has nothing to show -- no rows, and no trigger
+	// to open them with. `FilterMenu` returns null for the same reason.
 	if (spec.options.length === 0) {
 		return null
 	}
@@ -105,7 +137,7 @@ export function FilterSheet<T extends object>({
 				}}
 			>
 				<List>
-					<Section>
+					<Section header={<Text>{title.toUpperCase()}</Text>}>
 						{spec.mode === 'OR' ? (
 							<ShowAllRow
 								isSelected={allSelected}
@@ -116,6 +148,7 @@ export function FilterSheet<T extends object>({
 							{spec.options.map((option) => (
 								<OptionRow
 									key={option.title}
+									detail={option.detail}
 									icon={iconFor?.(option) ?? null}
 									isSelected={spec.selected.some((selected) => isEqual(selected, option))}
 									label={spec.displayTitle ? option.title : option.label}
@@ -131,11 +164,13 @@ export function FilterSheet<T extends object>({
 }
 
 function OptionRow({
+	detail,
 	icon,
 	isSelected,
 	label,
 	onPress,
 }: {
+	detail?: string
 	icon: FilterIcon | null
 	isSelected: boolean
 	label?: string
@@ -149,7 +184,14 @@ function OptionRow({
 			    otherwise dead to taps. */}
 			<HStack modifiers={ROW_MODIFIERS} spacing={8}>
 				{icon ? <RowIcon icon={icon} /> : null}
-				<Text modifiers={FILL_LEADING}>{label}</Text>
+				{detail ? (
+					<VStack alignment="leading" modifiers={FILL_LEADING} spacing={2}>
+						<Text>{label}</Text>
+						<Text modifiers={DETAIL_MODIFIERS}>{detail}</Text>
+					</VStack>
+				) : (
+					<Text modifiers={FILL_LEADING}>{label}</Text>
+				)}
 				{isSelected ? <Image systemName="checkmark" /> : null}
 			</HStack>
 		</Button>

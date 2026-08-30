@@ -38,8 +38,17 @@ export const frame = (params: Record<string, unknown> = {}): Modifier => ({
 	$type: 'frame',
 	...params,
 })
+export const font = (params: Record<string, unknown> = {}): Modifier => ({$type: 'font', ...params})
+export const foregroundStyle = (style: unknown): Modifier => ({$type: 'foregroundStyle', style})
 
 export function Host({children}: WithChildren & {matchContents?: boolean}): React.ReactNode {
+	return <View>{children}</View>
+}
+
+/** Every `FilterMenu` branch wraps its items in one, so this has to exist for
+ * any menu-shaped filter to render at all, even though nothing here reads its
+ * title. */
+export function Section({children}: WithChildren & {title?: string}): React.ReactNode {
 	return <View>{children}</View>
 }
 

@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {Host, Menu, Toggle} from '@expo/ui/swift-ui'
+import {Host, Menu, Section, Toggle} from '@expo/ui/swift-ui'
 import isEqual from 'lodash/isEqual'
 
 import {toggleAll, toggleOption} from './lib/select-options'
@@ -29,6 +29,9 @@ export {ACTIVE_TRIGGER_MODIFIERS, INACTIVE_TRIGGER_MODIFIERS}
  * The menu label is the trigger itself (there is no separate button), so
  * `isActive` -- whether this filter is currently narrowing anything -- has to
  * be drawn on the trigger's own modifiers rather than a wrapping component.
+ * Every case wraps its items in a `Section` titled with the filter's own
+ * title, so an opened menu states which filter it belongs to -- the same fact
+ * `FilterSheet`'s header states for a sheet.
  */
 export function FilterMenu<T extends object>({
 	filter,
@@ -40,18 +43,19 @@ export function FilterMenu<T extends object>({
 			return (
 				<Host matchContents={true}>
 					<Menu label={filter.spec.title} modifiers={triggerModifiers(isActive)}>
-						<Toggle
-							isOn={filter.enabled}
-							label={filter.spec.label}
-							onIsOnChange={(isOn) => onChange({...filter, enabled: isOn})}
-						/>
+						<Section title={filter.spec.title.toUpperCase()}>
+							<Toggle
+								isOn={filter.enabled}
+								label={filter.spec.label}
+								onIsOnChange={(isOn) => onChange({...filter, enabled: isOn})}
+							/>
+						</Section>
 					</Menu>
 				</Host>
 			)
 
 		case 'picker': {
-			// Matches the popover's rule: a picker of fewer than two options has
-			// nothing to pick between.
+			// A picker of fewer than two options has nothing to pick between.
 			if (filter.spec.options.length < 2) {
 				return null
 			}
@@ -59,14 +63,18 @@ export function FilterMenu<T extends object>({
 			return (
 				<Host matchContents={true}>
 					<Menu label={filter.spec.title} modifiers={triggerModifiers(isActive)}>
-						{filter.spec.options.map((option, index) => (
-							<Toggle
-								key={index}
-								isOn={isEqual(filter.spec.selected, option)}
-								label={option.label}
-								onIsOnChange={() => onChange({...filter, spec: {...filter.spec, selected: option}})}
-							/>
-						))}
+						<Section title={filter.spec.title.toUpperCase()}>
+							{filter.spec.options.map((option, index) => (
+								<Toggle
+									key={index}
+									isOn={isEqual(filter.spec.selected, option)}
+									label={option.label}
+									onIsOnChange={() =>
+										onChange({...filter, spec: {...filter.spec, selected: option}})
+									}
+								/>
+							))}
+						</Section>
 					</Menu>
 				</Host>
 			)
@@ -82,21 +90,23 @@ export function FilterMenu<T extends object>({
 			return (
 				<Host matchContents={true}>
 					<Menu label={spec.title} modifiers={triggerModifiers(isActive)}>
-						{spec.mode === 'OR' ? (
-							<Toggle
-								isOn={spec.selected.length === spec.options.length}
-								label="Show All"
-								onIsOnChange={() => onChange(toggleAll(filter))}
-							/>
-						) : null}
-						{spec.options.map((option) => (
-							<Toggle
-								key={option.title}
-								isOn={spec.selected.some((selected) => isEqual(selected, option))}
-								label={spec.displayTitle ? option.title : option.label}
-								onIsOnChange={() => onChange(toggleOption(filter, option))}
-							/>
-						))}
+						<Section title={spec.title.toUpperCase()}>
+							{spec.mode === 'OR' ? (
+								<Toggle
+									isOn={spec.selected.length === spec.options.length}
+									label="Show All"
+									onIsOnChange={() => onChange(toggleAll(filter))}
+								/>
+							) : null}
+							{spec.options.map((option) => (
+								<Toggle
+									key={option.title}
+									isOn={spec.selected.some((selected) => isEqual(selected, option))}
+									label={spec.displayTitle ? option.title : option.label}
+									onIsOnChange={() => onChange(toggleOption(filter, option))}
+								/>
+							))}
+						</Section>
 					</Menu>
 				</Host>
 			)

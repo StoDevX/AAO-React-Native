@@ -170,6 +170,36 @@ describe('FilterMenu, list', () => {
 	})
 })
 
+// Every branch of the switch in `filter-menu.tsx` builds its own `Menu`, so
+// each has to wire the title into its own `Section` independently -- a
+// mutation dropping it from just one branch would leave the other two
+// covered here green.
+describe('FilterMenu, section title', () => {
+	test('toggle: states the filter title on the section', async () => {
+		await render(<FilterMenu filter={toggleFilter(false)} isActive={false} onChange={jest.fn()} />)
+
+		expect(screen.getByText('SPECIALS')).toBeTruthy()
+	})
+
+	test('picker: states the filter title on the section', async () => {
+		let options = [{label: 'First-year'}, {label: 'Sophomore'}]
+		await render(
+			<FilterMenu filter={pickerFilter(options)} isActive={false} onChange={jest.fn()} />,
+		)
+
+		expect(screen.getByText('LEVEL')).toBeTruthy()
+	})
+
+	test('list: states the filter title on the section', async () => {
+		let options = [{title: 'A'}, {title: 'B'}]
+		await render(
+			<FilterMenu filter={listFilter('OR', options, [])} isActive={false} onChange={jest.fn()} />,
+		)
+
+		expect(screen.getByText('STATIONS')).toBeTruthy()
+	})
+})
+
 describe('FilterMenu, active state', () => {
 	// The menu's label is its own trigger -- there is no separate button --
 	// so "this filter is narrowing something" has to live on the trigger's own

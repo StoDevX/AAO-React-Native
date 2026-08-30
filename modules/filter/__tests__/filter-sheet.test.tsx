@@ -17,9 +17,9 @@ jest.mock('@expo/ui/swift-ui/modifiers', () => {
 
 type Row = {x: string}
 
-// Matches every `listFilter` fixture below -- `FilterSheet` owns its
-// presentation now, so every test has to open the sheet via this exact label
-// before it can see or tap a row.
+// Matches every `listFilter` fixture below -- the sheet's presentation is its
+// own state, so every test has to open it via this exact label before it can
+// see or tap a row.
 const TITLE = 'Departments'
 
 function listFilter(
@@ -217,9 +217,8 @@ describe('FilterSheet', () => {
 			}),
 		)
 		// The dismiss closed the sheet -- the rows it just tapped are gone, and
-		// only the trigger remains. `onDismiss` used to be the prop this proved
-		// through; now the sheet owns `isPresented` itself, so the closed rows
-		// are the only outside signal a test has.
+		// only the trigger remains. The sheet owns `isPresented` itself, so the
+		// closed rows are the only outside signal a test has.
 		expect(screen.queryByText('A')).toBeNull()
 		expect(screen.getByRole('button', {name: TITLE})).toBeTruthy()
 	})
@@ -284,13 +283,12 @@ describe('FilterSheet', () => {
 	})
 
 	test('reopening re-seeds from the incoming filter, and dismissing it again re-emits', async () => {
-		// Neither the seed-on-open (`openSheet`'s `setLocal(filter)`) nor the
-		// emit guard's reset is exercised by a single open-then-dismiss --
-		// deleting either still leaves every other test green. This drives a
-		// second presentation to cover both: the reopened sheet must reflect
-		// `secondFilter`, not the first presentation's selections, and its own
-		// dismissal must emit on its own, not be a silent no-op left over from
-		// the first guard.
+		// A single open-then-dismiss can't tell `openSheet`'s `setLocal(filter)`
+		// seed and the emit guard's reset apart from having no effect at all.
+		// This drives a second presentation to prove both actually happen: the
+		// reopened sheet must reflect `secondFilter`, not the first
+		// presentation's selections, and its own dismissal must emit on its own,
+		// not stay silent because of the first guard.
 		let onChange = jest.fn()
 		let options = [{title: 'A'}, {title: 'B'}]
 		let firstFilter = listFilter('AND', options, [{title: 'A'}])
@@ -339,5 +337,39 @@ describe('FilterSheet', () => {
 
 		expect(screen.getByText('Biology')).toBeTruthy()
 		expect(screen.queryByText('BIO')).toBeNull()
+	})
+
+	test('states which filter is open on the section header once opened', async () => {
+		await render(
+			<FilterSheet
+				filter={listFilter('AND', [{title: 'A'}], [])}
+				isActive={false}
+				onChange={jest.fn()}
+				title={TITLE}
+			/>,
+		)
+
+		expect(screen.queryByText(TITLE.toUpperCase())).toBeNull()
+
+		await openSheet()
+
+		expect(screen.getByText(TITLE.toUpperCase())).toBeTruthy()
+	})
+
+	test('renders an option detail beneath its label', async () => {
+		let options = [{title: 'Vegan', detail: 'Contains no animal products'}]
+		await render(
+			<FilterSheet
+				filter={listFilter('AND', options, [])}
+				isActive={false}
+				onChange={jest.fn()}
+				title={TITLE}
+			/>,
+		)
+
+		await openSheet()
+
+		expect(screen.getByText('Vegan')).toBeTruthy()
+		expect(screen.getByText('Contains no animal products')).toBeTruthy()
 	})
 })
