@@ -6,7 +6,7 @@ export default function TransportationLayout(): React.ReactNode {
 		<NativeTabs>
 			<NativeTabs.Trigger name="index">
 				<NativeTabs.Trigger.Icon sf="bus.fill" />
-				<NativeTabs.Trigger.Label>Express Bus</NativeTabs.Trigger.Label>
+				<NativeTabs.Trigger.Label>Express</NativeTabs.Trigger.Label>
 			</NativeTabs.Trigger>
 			<NativeTabs.Trigger name="red-line">
 				<NativeTabs.Trigger.Icon sf="bus.fill" />
@@ -22,7 +22,7 @@ export default function TransportationLayout(): React.ReactNode {
 			</NativeTabs.Trigger>
 			<NativeTabs.Trigger name="other-modes">
 				<NativeTabs.Trigger.Icon sf="sailboat.fill" />
-				<NativeTabs.Trigger.Label>Other Modes</NativeTabs.Trigger.Label>
+				<NativeTabs.Trigger.Label>Other</NativeTabs.Trigger.Label>
 			</NativeTabs.Trigger>
 		</NativeTabs>
 	)

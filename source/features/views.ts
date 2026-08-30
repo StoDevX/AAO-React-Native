@@ -148,5 +148,13 @@ export const AllViews = (): Array<ViewType> => {
 			gradient: c.orangeGradient,
 			devOnly: true,
 		},
+		{
+			type: 'view',
+			view: '/Athletics',
+			title: 'Athletics',
+			icon: 'trophy.fill',
+			gradient: c.paleGoldGradient,
+			devOnly: true,
+		},
 	]
 }

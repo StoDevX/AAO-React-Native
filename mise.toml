@@ -1,13 +1,13 @@
 [tools]
 node = "24.19.0"
-pnpm = "11.22.0"
+pnpm = "11.24.0"
 hk = "latest"
 ruby = "3.4.10"
 "gem:bundler" = "4.0.19"
 "gem:fastlane" = "2.237.0"
 cocoapods = "1.17.0"
 "gem:rubocop" = "1.90.0"
-sentry = "3.6.2"
+sentry = "3.7.0"
 
 [env]
 _.path = ["node_modules/.bin"]
