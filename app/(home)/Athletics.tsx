@@ -1,9 +1,9 @@
 import * as React from 'react'
-import {SectionList, StyleSheet, Text, View} from 'react-native'
+import {SectionList, StyleSheet, View} from 'react-native'
 import {Stack} from 'expo-router'
-import {useSafeAreaInsets} from 'react-native-safe-area-context'
 import {useQuery} from '@tanstack/react-query'
 
+import {ListSectionHeader} from '@frogpond/lists'
 import {LoadingView, NoticeView} from '@frogpond/notice'
 import * as c from '@frogpond/colors'
 
@@ -15,33 +15,42 @@ import {athleticsOptions} from '../../source/features/athletics/query'
 import {AthleticsRow} from '../../source/features/athletics/row'
 import {useFilterStore} from '../../source/features/athletics/store'
 import {TabBar} from '../../source/features/athletics/tabbar'
-import type {DateGroupedScores, DateSection} from '../../source/features/athletics/types'
-import {groupScoresByDate} from '../../source/features/athletics/utils'
+import type {
+	DateGroupedScores,
+	ProcessedScore,
+	TabSection,
+} from '../../source/features/athletics/types'
+import {
+	groupScoresByDate,
+	sectionsForTab,
+	sportFilterSections,
+} from '../../source/features/athletics/utils'
 
-type TabSection = DateSection | typeof Constants.FILTER
+// Stable so a pending query's default `[]` doesn't invalidate the memos and
+// effect below on every render.
+const NO_SCORES: ProcessedScore[] = []
 
 function AthleticsView(): React.ReactNode {
 	const [selectedSection, setSelectedSection] = React.useState<TabSection>(Constants.TODAY)
 	const [debugDate, setDebugDate] = React.useState<Date | null>(null)
-	const {selectedSports, setAvailableSports} = useFilterStore()
-	const insets = useSafeAreaInsets()
+	const selectedSports = useFilterStore((s) => s.selectedSports)
+	const setAvailableSports = useFilterStore((s) => s.setAvailableSports)
 
-	const {data = [], error, refetch, isLoading, isError} = useQuery(athleticsOptions)
+	const {
+		data = NO_SCORES,
+		error,
+		refetch,
+		isLoading,
+		isError,
+		isRefetching,
+	} = useQuery(athleticsOptions)
 
 	// The day the buckets are measured from. Held steady between renders so the
 	// grouping below doesn't re-run against a clock that has moved on.
 	const today = React.useMemo(() => debugDate ?? new Date(), [debugDate])
 
-	// Derive the list of available sports from the data
-	const sports = React.useMemo(() => {
-		const uniqueSports = [...new Set(data.map((s) => s.sport))].sort()
-		const womenSports = uniqueSports.filter((s) => s.includes("Women's"))
-		const menSports = uniqueSports.filter((s) => s.includes("Men's"))
-		return [
-			{title: "Women's Sports", data: womenSports},
-			{title: "Men's Sports", data: menSports},
-		]
-	}, [data])
+	// Derive the Women's/Men's/Other sport groups for the filter screen.
+	const sports = React.useMemo(() => sportFilterSections(data), [data])
 
 	// Keep availableSports in sync so the filter-hint selector can compare membership
 	React.useEffect(() => {
@@ -64,46 +73,13 @@ function AthleticsView(): React.ReactNode {
 		}))
 	}, [baseData, selectedSports])
 
-	// Build sections to render depending on the selected tab
+	// Build sections to render depending on the selected tab.
 	const sections = React.useMemo(() => {
 		if (selectedSection === Constants.FILTER) {
 			return []
 		}
 
-		if (selectedSection === Constants.UPCOMING) {
-			// groupScoresByDate already emits one sorted section per upcoming day;
-			// just strip the Yesterday/Today fixed buckets.
-			return filteredData
-				.filter((s) => s.title !== Constants.YESTERDAY && s.title !== Constants.TODAY)
-				.filter((s) => s.data.length > 0)
-		}
-
-		if (selectedSection === Constants.YESTERDAY) {
-			const yesterdaySection = filteredData.find((s) => s.title === Constants.YESTERDAY)
-			const finalized = yesterdaySection?.data.filter((score) => score.result !== '') ?? []
-			return finalized.length ? [{title: '', data: finalized}] : []
-		}
-
-		if (selectedSection === Constants.TODAY) {
-			const todaySection = filteredData.find((s) => s.title === Constants.TODAY)
-			const scores = todaySection?.data ?? []
-			return [
-				{
-					title: Constants.ONGOING,
-					data: scores.filter((s) => s.status.indicator === 'O'),
-				},
-				{
-					title: Constants.FINALIZED,
-					data: scores.filter((s) => s.status.indicator !== 'O' && s.result !== ''),
-				},
-				{
-					title: Constants.UPCOMING,
-					data: scores.filter((s) => s.status.indicator !== 'O' && s.result === ''),
-				},
-			].filter((s) => s.data.length > 0)
-		}
-
-		return []
+		return sectionsForTab(selectedSection, filteredData)
 	}, [selectedSection, filteredData])
 
 	// The picker is bound to component state, so like Dictionary's search bar it
@@ -124,7 +100,12 @@ function AthleticsView(): React.ReactNode {
 	}
 
 	if (isLoading) {
-		return <LoadingView />
+		return (
+			<>
+				{datePicker}
+				<LoadingView />
+			</>
+		)
 	}
 
 	if (data.length === 0) {
@@ -145,15 +126,15 @@ function AthleticsView(): React.ReactNode {
 					<AthleticsFilters sports={sports} />
 				) : (
 					<SectionList
-						ListEmptyComponent={
-							<EmptyListNotice selectedSection={selectedSection as DateSection} />
-						}
+						ListEmptyComponent={<EmptyListNotice selectedSection={selectedSection} />}
 						contentContainerStyle={styles.sectionListContent}
-						contentInset={{top: 0, bottom: insets.bottom}}
+						contentInsetAdjustmentBehavior="automatic"
 						keyExtractor={(item) => item.id}
+						onRefresh={refetch}
+						refreshing={isRefetching}
 						renderItem={({item}) => <AthleticsRow score={item} />}
 						renderSectionHeader={({section: {title}}) =>
-							title ? <Text style={styles.sectionHeader}>{title}</Text> : null
+							title ? <ListSectionHeader title={title} /> : null
 						}
 						sections={sections}
 					/>
@@ -171,12 +152,6 @@ const styles = StyleSheet.create({
 	sectionListContent: {
 		flexGrow: 1,
 		padding: 10,
-	},
-	sectionHeader: {
-		backgroundColor: c.secondarySystemBackground,
-		color: c.label,
-		padding: 5,
-		paddingHorizontal: 10,
 	},
 })
 
