@@ -1,4 +1,5 @@
 import * as React from 'react'
+import {StyleSheet} from 'react-native'
 import {NoticeView} from '@frogpond/notice'
 import * as c from '@frogpond/colors'
 import {Constants} from './constants'
@@ -21,13 +22,21 @@ export function EmptyListNotice({selectedSection}: Props): React.ReactNode {
 		case Constants.UPCOMING:
 			message = `No ${selectedSection.toLowerCase()} games`
 			break
-		default:
-			return null
+		default: {
+			const exhaustive: never = selectedSection
+			throw new Error(`Unhandled section: ${String(exhaustive)}`)
+		}
 	}
 
 	if (showChangeFiltersMessage) {
 		message = `${message}. Try changing the filters?`
 	}
 
-	return <NoticeView style={{backgroundColor: c.transparent}} text={message} />
+	return <NoticeView style={styles.notice} text={message} />
 }
+
+const styles = StyleSheet.create({
+	notice: {
+		backgroundColor: c.transparent,
+	},
+})

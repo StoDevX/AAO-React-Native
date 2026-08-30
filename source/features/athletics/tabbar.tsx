@@ -2,9 +2,7 @@ import * as React from 'react'
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native'
 import * as c from '@frogpond/colors'
 import {Constants} from './constants'
-import {DateSection} from './types'
-
-type TabSection = DateSection | typeof Constants.FILTER
+import {TabSection} from './types'
 
 interface TabBarProps {
 	selectedSection: TabSection
@@ -56,7 +54,8 @@ const styles = StyleSheet.create({
 	tab: {
 		alignItems: 'center',
 		flex: 1,
-		paddingVertical: 12,
+		justifyContent: 'center',
+		minHeight: 44,
 	},
 	selectedTab: {
 		borderBottomColor: c.label,

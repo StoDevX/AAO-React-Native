@@ -8,14 +8,9 @@ type Props = {
 }
 
 export const AthleticsRow = React.memo(({score}: Props): React.ReactNode => {
-	if (score.prescore_info === 'No team scores') {
-		return null
-	}
-
 	// Show time only for games that haven't started yet (status A, no result).
 	// For ongoing (O) and finalized (result is W/L/N) games, show the score panel.
 	const showTime = score.status.indicator === 'A' && score.result === ''
-	const showScore = !showTime
 
 	return (
 		<View style={styles.rowContainer}>
@@ -38,13 +33,11 @@ export const AthleticsRow = React.memo(({score}: Props): React.ReactNode => {
 					) : (
 						<>
 							{score.result !== '' && <Text style={styles.infoProcess}>{score.result}</Text>}
-							{showScore && (
-								<View style={styles.infoScorePanel}>
-									<Text style={styles.infoScore}>{score.team_score}</Text>
-									<View style={styles.infoDivider} />
-									<Text style={styles.infoScore}>{score.opponent_score}</Text>
-								</View>
-							)}
+							<View style={styles.infoScorePanel}>
+								<Text style={styles.infoScore}>{score.team_score}</Text>
+								<View style={styles.infoDivider} />
+								<Text style={styles.infoScore}>{score.opponent_score}</Text>
+							</View>
 						</>
 					)}
 				</View>
@@ -118,6 +111,7 @@ const styles = StyleSheet.create({
 		justifyContent: 'center',
 	},
 	infoProcess: {
+		color: c.label,
 		fontSize: 8,
 		marginVertical: 2,
 	},

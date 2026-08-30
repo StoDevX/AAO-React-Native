@@ -1,14 +1,18 @@
 import * as React from 'react'
 import {SectionList, StyleSheet, Text, TouchableOpacity, View} from 'react-native'
+import {ListFooter} from '@frogpond/lists'
 import * as c from '@frogpond/colors'
 import {useFilterStore} from './store'
+import {SportSection} from './types'
 
 interface AthleticsFiltersProps {
-	sports: {title: string; data: string[]}[]
+	sports: SportSection[]
 }
 
 export function AthleticsFilters({sports}: AthleticsFiltersProps): React.ReactNode {
-	const {selectedSports, toggleSport, setSelectedSports} = useFilterStore()
+	const selectedSports = useFilterStore((s) => s.selectedSports)
+	const toggleSport = useFilterStore((s) => s.toggleSport)
+	const setSelectedSports = useFilterStore((s) => s.setSelectedSports)
 
 	const handleSelectAll = (sectionTitle: string) => {
 		const sectionSports = sports.find((s) => s.title === sectionTitle)?.data ?? []
@@ -23,11 +27,8 @@ export function AthleticsFilters({sports}: AthleticsFiltersProps): React.ReactNo
 	return (
 		<SectionList
 			ListFooterComponent={
-				<Text style={styles.listFooterLabel}>
-					Filter preferences are saved locally to your device.
-				</Text>
+				<ListFooter title="Filter preferences are saved locally to your device." />
 			}
-			ListFooterComponentStyle={styles.listFooter}
 			contentContainerStyle={styles.listContainer}
 			keyExtractor={(item) => item}
 			renderItem={({item}) => (
@@ -92,21 +93,15 @@ const styles = StyleSheet.create({
 		fontWeight: 'bold',
 		paddingTop: 15,
 	},
-	listFooter: {
-		paddingTop: 15,
-	},
-	listFooterLabel: {
-		color: c.secondaryLabel,
-		fontSize: 12,
-	},
 	filterButton: {
 		backgroundColor: c.systemBackground,
 		borderColor: c.separator,
 		borderRadius: 5,
 		borderWidth: 1,
+		justifyContent: 'center',
 		marginVertical: 5,
+		minHeight: 44,
 		paddingHorizontal: 12,
-		paddingVertical: 8,
 	},
 	filterButtonText: {
 		color: c.label,
