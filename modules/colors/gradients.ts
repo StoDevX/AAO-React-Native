@@ -92,3 +92,7 @@ export const tanGradient: Gradient = [
 	'color(display-p3 0.7569 0.6667 0.5569)',
 	'color(display-p3 0.6392 0.549 0.4392)',
 ]
+export const paleGoldGradient: Gradient = [
+	'color(display-p3 0.8627 0.7765 0.5804)',
+	'color(display-p3 0.7412 0.6549 0.4588)',
+]

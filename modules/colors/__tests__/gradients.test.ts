@@ -3,7 +3,7 @@ import {describe, expect, test} from '@jest/globals'
 import {displayP3} from '../display-p3'
 import * as gradients from '../gradients'
 
-const EXPECTED_NAMES = [
+const SAMPLED_NAMES = [
 	'redGradient',
 	'orangeGradient',
 	'goldGradient',
@@ -21,8 +21,12 @@ const EXPECTED_NAMES = [
 	'tanGradient',
 ]
 
+const DERIVED_NAMES = ['paleGoldGradient']
+
+const EXPECTED_NAMES = [...SAMPLED_NAMES, ...DERIVED_NAMES]
+
 describe('gradients', () => {
-	test('exports exactly the 15 named gradients', () => {
+	test('exports exactly the named gradients', () => {
 		let exportedNames = Object.keys(gradients).filter((k) => k !== 'Gradient')
 		expect(exportedNames.sort()).toEqual([...EXPECTED_NAMES].sort())
 	})
