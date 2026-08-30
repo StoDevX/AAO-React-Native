@@ -2,14 +2,16 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import {create} from 'zustand'
 import {createJSONStorage, persist} from 'zustand/middleware'
 
-interface FilterState {
+export interface FilterState {
 	selectedSports: string[]
 	availableSports: string[]
-	_hasHydrated: boolean
 	setSelectedSports: (sports: string[]) => void
 	setAvailableSports: (sports: string[]) => void
 	toggleSport: (sport: string) => void
-	setHasHydrated: (value: boolean) => void
+}
+
+function sameSports(a: string[], b: string[]): boolean {
+	return a.length === b.length && a.every((sport, i) => sport === b[i])
 }
 
 export const useFilterStore = create<FilterState>()(
@@ -17,10 +19,13 @@ export const useFilterStore = create<FilterState>()(
 		(set) => ({
 			selectedSports: [],
 			availableSports: [],
-			_hasHydrated: false,
 			setSelectedSports: (sports) => set({selectedSports: sports}),
-			setAvailableSports: (sports) => set({availableSports: sports}),
-			setHasHydrated: (value) => set({_hasHydrated: value}),
+			// Called from an effect on every data fetch, so a same-list call must
+			// not produce a new state object — that would re-render every subscriber.
+			setAvailableSports: (sports) =>
+				set((state) =>
+					sameSports(state.availableSports, sports) ? state : {availableSports: sports},
+				),
 			toggleSport: (sport) =>
 				set((state) => {
 					const isSelected = state.selectedSports.includes(sport)
@@ -35,9 +40,9 @@ export const useFilterStore = create<FilterState>()(
 			name: 'athletics-filter-preferences',
 			storage: createJSONStorage(() => AsyncStorage),
 			version: 1,
-			onRehydrateStorage: () => (state) => {
-				state?.setHasHydrated(true)
-			},
+			// availableSports is derived from each fetch, not user choice; persisting
+			// it would rehydrate a stale sports list from a previous season.
+			partialize: (state) => ({selectedSports: state.selectedSports}),
 		},
 	),
 )
