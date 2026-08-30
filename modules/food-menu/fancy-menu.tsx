@@ -188,9 +188,10 @@ export function FancyMenu(props: Props): React.ReactNode {
 
 				<List
 					modifiers={[
-						// `plain` is what pins the station headers, matching
-						// SectionList's stickySectionHeadersEnabled default on iOS.
-						listStyle('plain'),
+						// Inset groups, as Settings has them: cards on the grouped
+						// background rather than full-bleed rows. Section headers do
+						// not pin in this style -- see the note in fancy-menu's docs.
+						listStyle('insetGrouped'),
 						...(props.onRefresh
 							? [
 									refreshable(async () => {
@@ -229,5 +230,6 @@ export function FancyMenu(props: Props): React.ReactNode {
 const styles = StyleSheet.create({
 	host: {
 		flex: 1,
+		backgroundColor: c.systemGroupedBackground,
 	},
 })
