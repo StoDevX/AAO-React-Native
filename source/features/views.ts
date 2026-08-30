@@ -87,7 +87,7 @@ export const AllViews = (): Array<ViewType> => {
 		{
 			type: 'view',
 			view: '/Map',
-			title: 'Carleton Map (Beta)',
+			title: 'Carleton Map',
 			icon: 'map.circle.fill',
 			gradient: c.blueGradient,
 		},
@@ -108,7 +108,7 @@ export const AllViews = (): Array<ViewType> => {
 		{
 			type: 'view',
 			view: '/Dictionary',
-			title: 'Campus Dictionary',
+			title: 'Dictionary',
 			icon: 'character.book.closed.fill',
 			gradient: c.pinkGradient,
 		},
