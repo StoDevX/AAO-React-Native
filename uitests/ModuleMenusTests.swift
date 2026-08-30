@@ -15,6 +15,7 @@ class ModuleMenusTests: UITestCase {
 		MenusScreen(app: app)
 			.navigate()
 			.verifyFoodRowsAppear()
+			.verifyDietaryInfoIsAnnounced()
 			.checkStOlafCafes()
 	}
 
