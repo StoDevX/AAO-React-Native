@@ -530,6 +530,9 @@ importers:
       '@frogpond/colors':
         specifier: workspace:*
         version: link:../colors
+      '@frogpond/constants':
+        specifier: workspace:*
+        version: link:../constants
       '@frogpond/data-sources':
         specifier: workspace:*
         version: link:../data-sources
