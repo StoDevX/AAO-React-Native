@@ -19,9 +19,16 @@ const buttonStyles = StyleSheet.create({
 		backgroundColor: c.systemGroupedBackground,
 		borderColor: c.separator,
 	},
+	activeButton: {
+		backgroundColor: c.link,
+		borderColor: c.link,
+	},
 	text: {
 		color: c.label,
 		fontSize: 16,
+	},
+	activeText: {
+		color: c.white,
 	},
 	textWithIcon: {
 		paddingRight: 8,
@@ -37,7 +44,7 @@ type Props<T extends object> = {
 }
 
 export function FilterToolbarButton<T extends object>(props: Props<T>): React.ReactNode {
-	let {onPopoverDismiss, filter, style, title} = props
+	let {onPopoverDismiss, filter, isActive, style, title} = props
 
 	let [popoverVisible, setPopoverVisible] = useState(false)
 	let touchable = useRef<View>(null)
@@ -63,12 +70,21 @@ export function FilterToolbarButton<T extends object>(props: Props<T>): React.Re
 				ref={touchable}
 				accessibilityLabel={title}
 				accessibilityRole="button"
+				accessibilityState={{selected: isActive}}
 				highlight={false}
 				onPress={openPopover}
-				style={[buttonStyles.button, style]}
+				style={[buttonStyles.button, isActive && buttonStyles.activeButton, style]}
 			>
-				<Text style={[buttonStyles.text, buttonStyles.textWithIcon]}>{title}</Text>
-				<SymbolView name="chevron.down" size={18} tintColor={c.label} />
+				<Text
+					style={[
+						buttonStyles.text,
+						buttonStyles.textWithIcon,
+						isActive && buttonStyles.activeText,
+					]}
+				>
+					{title}
+				</Text>
+				<SymbolView name="chevron.down" size={18} tintColor={isActive ? c.white : c.label} />
 			</Touchable>
 			{popoverVisible && (
 				<FilterPopover<T>

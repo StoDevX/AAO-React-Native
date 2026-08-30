@@ -65,16 +65,20 @@ export const NewsList = (props: Props): React.ReactNode => {
 		}
 
 		let options = [...new Set(allCategories)].sort().map((category) => ({title: category}))
+		let selected = selectedOptions(options, chosenCategories)
 
 		return [
 			{
 				type: 'list',
 				key: 'category',
-				enabled: true,
+				// In OR mode, a selection matching every option filters nothing --
+				// matching the invariant modules/filter/section-list.tsx applies on
+				// every subsequent edit.
+				enabled: selected.length !== options.length,
 				spec: {
 					title: 'Categories',
 					options,
-					selected: selectedOptions(options, chosenCategories),
+					selected,
 					mode: 'OR',
 					displayTitle: true,
 				},
