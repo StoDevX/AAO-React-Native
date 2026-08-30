@@ -3,6 +3,7 @@ import {render, screen} from '@testing-library/react-native'
 import {describe, expect, jest, test} from '@jest/globals'
 
 import {FilterToolbar} from '../filter-toolbar'
+import {ACTIVE_TRIGGER_MODIFIERS, INACTIVE_TRIGGER_MODIFIERS} from '../filter-menu'
 import type {FilterType, ListItemSpecType} from '../types'
 
 jest.mock('expo-symbols', () => ({SymbolView: 'SymbolView'}))
@@ -55,6 +56,24 @@ let EMPTY_LIST_FILTER: FilterType<Item> = {
 	apply: {key: 'dietaryTags'},
 }
 
+// Master's deleted active-filter chip row rendered an empty list selection
+// as a "No Stations" chip. `FilterMenu`/`FilterSheet` have nothing that
+// produces that string, but a fixture that could have triggered it is the
+// only way a regression back to it would be caught.
+let LIST_FILTER_WITH_NO_SELECTION: FilterType<Item> = {
+	type: 'list',
+	key: 'stations',
+	enabled: true,
+	spec: {
+		title: 'Stations',
+		options: [{title: 'Grill'}],
+		selected: [],
+		mode: 'OR',
+		displayTitle: true,
+	},
+	apply: {key: 'dietaryTags'},
+}
+
 function manyOptions(count: number): ListItemSpecType[] {
 	return Array.from({length: count}, (_, i) => ({title: `Dept ${i}`}))
 }
@@ -79,14 +98,26 @@ describe('FilterToolbar', () => {
 	test('renders every filter that has something to offer', async () => {
 		await render(
 			<FilterToolbar
-				filters={[TOGGLE_FILTER, LIST_FILTER_WITH_SELECTION, SHEET_FILTER]}
+				filters={[
+					TOGGLE_FILTER,
+					LIST_FILTER_WITH_SELECTION,
+					LIST_FILTER_WITH_NO_SELECTION,
+					SHEET_FILTER,
+				]}
 				onPopoverDismiss={jest.fn()}
 			/>,
 		)
 
 		expect(screen.getByText('Vegetarian')).toBeTruthy()
 		expect(screen.getByText('Dietary Restrictions')).toBeTruthy()
+		expect(screen.getByText('Stations')).toBeTruthy()
 		expect(screen.getByRole('button', {name: 'Departments'})).toBeTruthy()
+
+		// No chip row exists to produce this any more -- see
+		// `LIST_FILTER_WITH_NO_SELECTION`'s comment for why this fixture, of
+		// everything master's deleted chip-row test checked, is the one worth
+		// keeping.
+		expect(screen.queryByText('No Stations')).toBeNull()
 	})
 
 	test('renders nothing for a list filter with no options', async () => {
@@ -116,12 +147,7 @@ describe('FilterToolbar', () => {
 			<FilterToolbar filters={[TOGGLE_FILTER, INACTIVE_FILTER]} onPopoverDismiss={jest.fn()} />,
 		)
 
-		expect(screen.getByTestId('menu:Vegetarian').props.modifiers).toEqual([
-			{$type: 'buttonStyle', style: 'borderedProminent'},
-			{$type: 'accessibilityAddTraits', traits: ['isSelected']},
-		])
-		expect(screen.getByTestId('menu:Specials').props.modifiers).toEqual([
-			{$type: 'buttonStyle', style: 'bordered'},
-		])
+		expect(screen.getByTestId('menu:Vegetarian').props.modifiers).toBe(ACTIVE_TRIGGER_MODIFIERS)
+		expect(screen.getByTestId('menu:Specials').props.modifiers).toBe(INACTIVE_TRIGGER_MODIFIERS)
 	})
 })

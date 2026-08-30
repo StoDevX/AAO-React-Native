@@ -2,7 +2,7 @@ import React from 'react'
 import {describe, expect, jest, test} from '@jest/globals'
 import {fireEvent, render, screen} from '@testing-library/react-native'
 
-import {FilterMenu} from '../filter-menu'
+import {ACTIVE_TRIGGER_MODIFIERS, FilterMenu, INACTIVE_TRIGGER_MODIFIERS} from '../filter-menu'
 import type {ListItemSpecType, ListType, PickerType, ToggleType} from '../types'
 
 jest.mock('@expo/ui/swift-ui', () => {
@@ -173,23 +173,21 @@ describe('FilterMenu, list', () => {
 describe('FilterMenu, active state', () => {
 	// The menu's label is its own trigger -- there is no separate button --
 	// so "this filter is narrowing something" has to live on the trigger's own
-	// modifiers. Asserting the modifiers array itself, not a rendered colour:
-	// the mock forwards it unexamined, so this is `filter-menu.tsx`'s own
-	// decision, not a translation the test stand-in invented.
-	test('inactive: bordered style, no isSelected trait', async () => {
+	// modifiers. Comparing by identity against the exported constants, not a
+	// literal shape: the mock forwards `modifiers` unexamined, so a shape
+	// match would really be asserting the mock's own invented `Modifier`
+	// representation, not what `filter-menu.tsx` decided.
+	test('inactive: the inactive trigger modifiers', async () => {
 		await render(<FilterMenu filter={toggleFilter(false)} isActive={false} onChange={jest.fn()} />)
 
 		let trigger = screen.getByTestId('menu:Specials')
-		expect(trigger.props.modifiers).toEqual([{$type: 'buttonStyle', style: 'bordered'}])
+		expect(trigger.props.modifiers).toBe(INACTIVE_TRIGGER_MODIFIERS)
 	})
 
-	test('active: borderedProminent style, plus the isSelected accessibility trait', async () => {
+	test('active: the active trigger modifiers', async () => {
 		await render(<FilterMenu filter={toggleFilter(true)} isActive={true} onChange={jest.fn()} />)
 
 		let trigger = screen.getByTestId('menu:Specials')
-		expect(trigger.props.modifiers).toEqual([
-			{$type: 'buttonStyle', style: 'borderedProminent'},
-			{$type: 'accessibilityAddTraits', traits: ['isSelected']},
-		])
+		expect(trigger.props.modifiers).toBe(ACTIVE_TRIGGER_MODIFIERS)
 	})
 })

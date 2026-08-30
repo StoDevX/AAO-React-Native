@@ -19,8 +19,8 @@ type Props<T extends object> = {
 // would not. `isSelected` carries the same fact to VoiceOver as
 // `accessibilityAddTraits`'s only trait for it -- the visual and spoken
 // signal are set together so they can't drift apart.
-const INACTIVE_TRIGGER_MODIFIERS = [buttonStyle('bordered')]
-const ACTIVE_TRIGGER_MODIFIERS = [
+export const INACTIVE_TRIGGER_MODIFIERS = [buttonStyle('bordered')]
+export const ACTIVE_TRIGGER_MODIFIERS = [
 	buttonStyle('borderedProminent'),
 	accessibilityAddTraits(['isSelected']),
 ]

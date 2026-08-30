@@ -52,8 +52,8 @@ type Props<T extends object> = {
  * Picks a filter's presentation and renders it. A `Menu` is its own trigger --
  * its `label` prop draws the button -- so this component renders nothing else
  * for that shape. A sheet has no such trigger built in, so this component
- * renders the same button the popover used to open behind, and owns the
- * presentation state that opens the sheet under it.
+ * renders its own button, and owns the presentation state that opens the
+ * sheet under it.
  */
 export function FilterToolbarButton<T extends object>(props: Props<T>): React.ReactNode {
 	let {onPopoverDismiss, filter, isActive, style, title, iconFor} = props

@@ -5,6 +5,7 @@ import moment from 'moment'
 
 import {FilterMenuToolbar} from '../filter-menu-toolbar'
 import type {FilterType} from '@frogpond/filter'
+import {INACTIVE_TRIGGER_MODIFIERS} from '@frogpond/filter/filter-menu'
 
 jest.mock('expo-symbols', () => ({SymbolView: 'SymbolView'}))
 // `@frogpond/filter`'s barrel still reaches the popover's SwiftUI picker,
@@ -36,10 +37,12 @@ let MEAL_PICKER: FilterType<Item> = {
 describe('FilterMenuToolbar', () => {
 	// The meal picker is a `picker` filter, which `filterShape` only ever
 	// renders as a native `Menu` -- its `label` prop is its own trigger, so
-	// there is no separate button here the way the popover once had.
-	// `FilterMenuToolbar` still hardcodes `isActive={false}` for it (choosing
-	// a meal isn't "narrowing" the way an enabled filter is), which now shows
-	// up as the `Menu`'s own `bordered` style rather than a separate button's.
+	// there is no separate button here. `FilterMenuToolbar` still hardcodes
+	// `isActive={false}` for it (choosing a meal isn't "narrowing" the way an
+	// enabled filter is), which now shows up as the `Menu`'s own inactive
+	// modifiers rather than a separate button's. Compared by identity against
+	// `filter-menu.tsx`'s own exported constant, not a literal shape, so this
+	// mock's invented `Modifier` representation can't leak into the assertion.
 	test('renders the meal picker as an inactive-styled menu, with no separate button', async () => {
 		await render(
 			<FilterMenuToolbar
@@ -50,9 +53,9 @@ describe('FilterMenuToolbar', () => {
 			/>,
 		)
 
-		expect(screen.queryByRole('button')).toBeNull()
-		expect(screen.getByTestId("menu:Today's Menus").props.modifiers).toEqual([
-			{$type: 'buttonStyle', value: 'bordered'},
-		])
+		expect(screen.queryByRole('button', {name: "Today's Menus"})).toBeNull()
+		expect(screen.getByTestId("menu:Today's Menus").props.modifiers).toBe(
+			INACTIVE_TRIGGER_MODIFIERS,
+		)
 	})
 })

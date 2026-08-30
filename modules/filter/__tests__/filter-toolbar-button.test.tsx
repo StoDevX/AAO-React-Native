@@ -1,9 +1,10 @@
 import * as React from 'react'
-import {render, screen} from '@testing-library/react-native'
+import {fireEvent, render, screen} from '@testing-library/react-native'
 import {describe, expect, jest, test} from '@jest/globals'
 
 import {FilterToolbarButton} from '../filter-toolbar-button'
-import type {FilterType, ListItemSpecType} from '../types'
+import {ACTIVE_TRIGGER_MODIFIERS, INACTIVE_TRIGGER_MODIFIERS} from '../filter-menu'
+import type {FilterIcon, FilterType, ListItemSpecType} from '../types'
 
 jest.mock('expo-symbols', () => ({SymbolView: 'SymbolView'}))
 jest.mock('@expo/ui/swift-ui', () => {
@@ -49,8 +50,7 @@ function sheetFilter(enabled: boolean): FilterType<Item> {
 
 describe('FilterToolbarButton, menu shape', () => {
 	// A toggle is always `menu`-shaped, and a native `Menu`'s `label` prop is
-	// its own trigger -- unlike the popover this replaces, there is no
-	// separate button here.
+	// its own trigger, so there is no separate button here.
 	test('renders as a menu, with no separate trigger button', async () => {
 		await render(
 			<FilterToolbarButton
@@ -69,8 +69,11 @@ describe('FilterToolbarButton, menu shape', () => {
 	// (and, when active, which accessibility trait) the `Menu` renders with,
 	// so a filter that's narrowing something still looks and sounds different
 	// from one that isn't -- the menu label is the only trigger there is, so
-	// this is where that distinction has to live.
-	test('marks itself with the bordered style when isActive is false', async () => {
+	// this is where that distinction has to live. Compared by identity
+	// against `filter-menu.tsx`'s own exported constants, not a literal
+	// shape, so the mock's invented `Modifier` representation can't leak into
+	// what this asserts.
+	test('marks itself with the inactive trigger modifiers when isActive is false', async () => {
 		await render(
 			<FilterToolbarButton
 				filter={TOGGLE_FILTER}
@@ -81,10 +84,10 @@ describe('FilterToolbarButton, menu shape', () => {
 		)
 
 		let trigger = screen.getByTestId('menu:Vegetarian')
-		expect(trigger.props.modifiers).toEqual([{$type: 'buttonStyle', style: 'bordered'}])
+		expect(trigger.props.modifiers).toBe(INACTIVE_TRIGGER_MODIFIERS)
 	})
 
-	test('marks itself with the borderedProminent style and isSelected trait when isActive is true', async () => {
+	test('marks itself with the active trigger modifiers when isActive is true', async () => {
 		await render(
 			<FilterToolbarButton
 				filter={TOGGLE_FILTER}
@@ -95,17 +98,33 @@ describe('FilterToolbarButton, menu shape', () => {
 		)
 
 		let trigger = screen.getByTestId('menu:Vegetarian')
-		expect(trigger.props.modifiers).toEqual([
-			{$type: 'buttonStyle', style: 'borderedProminent'},
-			{$type: 'accessibilityAddTraits', traits: ['isSelected']},
-		])
+		expect(trigger.props.modifiers).toBe(ACTIVE_TRIGGER_MODIFIERS)
+	})
+
+	// The dispatcher's whole job is to wire `onChange` through to whichever
+	// presentation it picked -- a mutation that swapped this for a no-op left
+	// every other test in the suite green, because nothing else exercises the
+	// wiring itself rather than what `FilterMenu`/`FilterSheet` do with it.
+	test('forwards a tap through to onPopoverDismiss', async () => {
+		let onPopoverDismiss = jest.fn()
+		await render(
+			<FilterToolbarButton
+				filter={TOGGLE_FILTER}
+				isActive={false}
+				onPopoverDismiss={onPopoverDismiss}
+				title={TOGGLE_FILTER.spec.title}
+			/>,
+		)
+
+		await fireEvent.press(screen.getByText('Vegetarian only'))
+
+		expect(onPopoverDismiss).toHaveBeenCalledWith(expect.objectContaining({enabled: true}))
 	})
 })
 
 describe('FilterToolbarButton, sheet shape', () => {
-	// A sheet has no trigger of its own, so this component still renders the
-	// same button the popover used to open behind it -- and still marks it
-	// active or inactive the way master's popover trigger did.
+	// A sheet has no trigger of its own, so this component still renders its
+	// own button, and still marks it active or inactive.
 	test('marks its trigger unselected when isActive is false', async () => {
 		await render(
 			<FilterToolbarButton
@@ -132,5 +151,27 @@ describe('FilterToolbarButton, sheet shape', () => {
 
 		let button = screen.getByRole('button', {name: 'Departments'})
 		expect(button.props.accessibilityState).toEqual({selected: true})
+	})
+
+	// `iconFor` is forwarded to the sheet only -- covering it here, not just
+	// in `filter-sheet.test.tsx`, is what catches a mutation that deletes the
+	// prop at the point this component passes it on.
+	test('forwards iconFor through to the sheet', async () => {
+		let iconFor = (option: ListItemSpecType): FilterIcon | null =>
+			option.title === 'Dept 0' ? {kind: 'localFile', uri: 'file:///tmp/dept-0.png'} : null
+
+		await render(
+			<FilterToolbarButton
+				filter={sheetFilter(false)}
+				iconFor={iconFor}
+				isActive={false}
+				onPopoverDismiss={jest.fn()}
+				title="Departments"
+			/>,
+		)
+
+		await fireEvent.press(screen.getByRole('button', {name: 'Departments'}))
+
+		expect(screen.getByLabelText('icon:localFile:file:///tmp/dept-0.png')).toBeTruthy()
 	})
 })
