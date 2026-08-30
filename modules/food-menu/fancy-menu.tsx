@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {useEffect, useState} from 'react'
+import {useMemo, useState} from 'react'
 import {SectionList, StyleSheet} from 'react-native'
 import * as c from '@frogpond/colors'
 import type {
@@ -104,30 +104,25 @@ export function FancyMenu(props: Props): React.ReactNode {
 	const {now, meals, cafeMessage, foodItems, menuCorIcons, onItemPress} = props
 	const applyFilters = props.applyFilters ?? applyFiltersToItem
 
-	const [filters, setFilters] = useState<FilterType<MenuItemType>[]>([])
+	// Built from the menu once, then owned by the user. `now` only decides which
+	// meal starts out selected, and the screens above hand down a fresh Moment
+	// on every render they do, so rebuilding whenever it changed threw the
+	// user's filters away on each one.
+	const [filters, setFilters] = useState<FilterType<MenuItemType>[]>(() =>
+		buildFilters(Object.values(foodItems), menuCorIcons, meals, now),
+	)
 
 	const meal = chooseMeal(meals, filters, now)
 	const {label: mealName, stations} = meal
 	const stationsByLabel = new Map(stations.map((station) => [station.label, station]))
 
-	const [groupedMenuData, setGroupedMenuData] = useState<
-		{title: string; data: Array<MenuItemType>}[]
-	>([])
+	const groupedMenuData = useMemo(
+		() => groupMenuData({stations, filters, applyFilters, foodItems}),
+		[stations, filters, applyFilters, foodItems],
+	)
 
 	const anyFiltersEnabled = filters.some((f) => f.enabled)
 	const specialsFilterEnabled = areSpecialsFiltered(filters)
-
-	// reset the filters when the data changes
-	useEffect(() => {
-		let foodItemsArray = Object.values(foodItems)
-		setFilters(buildFilters(foodItemsArray, menuCorIcons, meals, now))
-	}, [foodItems, menuCorIcons, meals, now])
-
-	// re-group the food when the data changes
-	useEffect(() => {
-		let grouped = groupMenuData({stations, filters, applyFilters, foodItems})
-		setGroupedMenuData(grouped)
-	}, [applyFilters, filters, foodItems, stations])
 
 	let message = 'No items to show.'
 	if (cafeMessage) {

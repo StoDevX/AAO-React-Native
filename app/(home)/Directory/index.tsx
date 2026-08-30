@@ -13,16 +13,24 @@ import type {DirectoryItem, DirectorySearchTypeEnum} from '../../../source/featu
 import {SymbolView} from 'expo-symbols'
 
 function DirectoryView(): React.ReactNode {
-	let [searchQueryType, setSearchQueryType] = React.useState<DirectorySearchTypeEnum>('query')
-	let [typedQuery, setTypedQuery] = React.useState('')
-	let searchQuery = useDebounce(typedQuery, 500)
-
 	let router = useRouter()
 
 	let params = useLocalSearchParams<{
 		queryType?: DirectorySearchTypeEnum
 		queryParam?: string
 	}>()
+
+	// Tapping a department opens a fresh copy of this screen with the name
+	// already in the params, so they seed the search instead of being synced
+	// into it afterwards -- which cost a render and a debounce round-trip
+	// before the query for a department the route had named all along.
+	let departmentLink = params?.queryType === 'department' ? params.queryParam : undefined
+
+	let [searchQueryType, setSearchQueryType] = React.useState<DirectorySearchTypeEnum>(
+		departmentLink ? 'department' : 'query',
+	)
+	let [typedQuery, setTypedQuery] = React.useState(departmentLink ?? '')
+	let searchQuery = useDebounce(typedQuery, 500)
 
 	let {
 		data = {results: []},
@@ -32,13 +40,6 @@ function DirectoryView(): React.ReactNode {
 		isRefetching,
 		isLoading,
 	} = useQuery(directoryEntriesOptions(searchQuery, searchQueryType))
-
-	React.useEffect(() => {
-		if (params?.queryType === 'department' && params?.queryParam) {
-			setSearchQueryType('department')
-			setTypedQuery(params.queryParam)
-		}
-	}, [params?.queryType, params?.queryParam])
 
 	// The search chrome is bound to component state (the change handler
 	// updates typedQuery/searchQueryType), so it can't move to a static

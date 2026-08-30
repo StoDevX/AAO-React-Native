@@ -66,7 +66,10 @@ async function fetchCalendar(calendar: NamedCalendar, signal: AbortSignal): Prom
 	return parser.parse(body)
 }
 
-// oxlint-disable-next-line typescript/explicit-module-boundary-types
+// The rule reports at the arrow, which a wrapped signature pushes several lines
+// below the declaration -- out of reach of `disable-next-line`. Hence the block,
+// which covers both of the wrapped builders that follow.
+/* oxlint-disable typescript/explicit-module-boundary-types */
 export const namedCalendarOptions = (
 	calendar: NamedCalendar,
 	options: {eventMapper?: EventMapper} = {},
@@ -84,7 +87,6 @@ export const namedCalendarOptions = (
 			})),
 	})
 
-// oxlint-disable-next-line typescript/explicit-module-boundary-types
 export const namedCalendarEventOptions = (
 	calendar: NamedCalendar,
 	key: string,
@@ -95,6 +97,7 @@ export const namedCalendarEventOptions = (
 		queryFn: ({queryKey, signal}) => fetchCalendar(queryKey[2], signal),
 		select: (events) => convertEvents(events, options).find((event) => eventKey(event) === key),
 	})
+/* oxlint-enable typescript/explicit-module-boundary-types */
 
 /**
  * One device event, by EventKit id. Reaches a month either side of today

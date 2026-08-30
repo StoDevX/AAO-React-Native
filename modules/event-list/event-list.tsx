@@ -102,6 +102,10 @@ export let EventList = React.forwardRef<EventListHandle, Props>(function EventLi
 		return (sourceId: string) => table.get(sourceId) ?? c.systemBlue
 	}, [props.sources])
 
+	// A handle on SwiftUI's own scroll position, not a React value: assigning
+	// `.value` is how `scrollPosition` is driven, and every assignment below sits
+	// in an event handler rather than in render. The `react/immutability`
+	// disables at those three sites are for that, and nothing else.
 	let scrollTarget = useNativeState<string | null>(null)
 	let stripRef = React.useRef<DayPickerStripHandle>(null)
 
@@ -112,25 +116,23 @@ export let EventList = React.forwardRef<EventListHandle, Props>(function EventLi
 		[props.events, props.now],
 	)
 
-	let [selectedDay, setSelectedDay] = React.useState<Moment | null>(null)
+	let [chosenDay, setChosenDay] = React.useState<Moment | null>(null)
 
-	// Sync the selection to the list's top section once data loads. The section
-	// key is 'Today', 'Ongoing', or an ISO date.
-	React.useEffect(() => {
-		if (selectedDay !== null || sections.length === 0) {
-			return
+	// Until the user picks one, the strip rests on the list's top section, whose
+	// key is 'Today', 'Ongoing', or an ISO date. Derived rather than synced into
+	// state once the data loads, so the strip never renders with nothing on it.
+	let defaultDay = React.useMemo(() => {
+		if (sections.length === 0) {
+			return null
 		}
 		let topKey = sections[0].key
-		let target: Moment | null = null
 		if (topKey === 'Ongoing' || topKey === 'Today') {
-			target = days.find((d) => d.isSame(props.now, 'day')) ?? null
-		} else {
-			target = days.find((d) => d.format('YYYY-MM-DD') === topKey) ?? null
+			return days.find((d) => d.isSame(props.now, 'day')) ?? null
 		}
-		if (target) {
-			setSelectedDay(target)
-		}
-	}, [days, sections, props.now, selectedDay])
+		return days.find((d) => d.format('YYYY-MM-DD') === topKey) ?? null
+	}, [days, sections, props.now])
+
+	let selectedDay = chosenDay ?? defaultDay
 
 	let sectionKeyFor = React.useCallback(
 		(day: Moment) => (day.isSame(props.now, 'day') ? 'Today' : day.format('YYYY-MM-DD')),
@@ -156,7 +158,8 @@ export let EventList = React.forwardRef<EventListHandle, Props>(function EventLi
 	let handleSelectDay = React.useCallback(
 		(day: Moment) => {
 			let target = dayWithEventsFrom(day)
-			setSelectedDay(target)
+			setChosenDay(target)
+			// oxlint-disable-next-line react/immutability
 			scrollTarget.value = sectionKeyFor(target)
 			stripRef.current?.scrollToDay(target)
 		},
@@ -168,7 +171,8 @@ export let EventList = React.forwardRef<EventListHandle, Props>(function EventLi
 	let handleStripSettle = React.useCallback(
 		(day: Moment) => {
 			let target = dayWithEventsFrom(day)
-			setSelectedDay(target)
+			setChosenDay(target)
+			// oxlint-disable-next-line react/immutability
 			scrollTarget.value = sectionKeyFor(target)
 		},
 		[scrollTarget, sectionKeyFor, dayWithEventsFrom],
@@ -183,12 +187,13 @@ export let EventList = React.forwardRef<EventListHandle, Props>(function EventLi
 	let scrollToToday = React.useCallback(() => {
 		let today = days.find((d) => d.isSame(props.now, 'day'))
 		if (today) {
-			setSelectedDay(today)
+			setChosenDay(today)
 			stripRef.current?.scrollToDay(today)
 		}
 
 		let topSection = sections[0]?.key
 		if (topSection) {
+			// oxlint-disable-next-line react/immutability
 			scrollTarget.value = topSection
 		}
 	}, [days, props.now, scrollTarget, sections])
@@ -252,6 +257,10 @@ export let EventList = React.forwardRef<EventListHandle, Props>(function EventLi
 						refreshable(async () => {
 							await props.onRefresh()
 						}),
+						// The `stripRef.current` read inside `onChange` runs when SwiftUI
+						// reports a scroll, not during render -- but the modifier is built
+						// here, which is where the rule pins it.
+						// oxlint-disable-next-line react/refs
 						scrollPosition(scrollTarget, {
 							anchor: 'top',
 							onChange: (sectionKey) => {
@@ -261,7 +270,7 @@ export let EventList = React.forwardRef<EventListHandle, Props>(function EventLi
 									return key === sectionKey
 								})
 								if (matchingDay && (!selectedDay || !matchingDay.isSame(selectedDay, 'day'))) {
-									setSelectedDay(matchingDay)
+									setChosenDay(matchingDay)
 									stripRef.current?.scrollToDay(matchingDay)
 								}
 							},

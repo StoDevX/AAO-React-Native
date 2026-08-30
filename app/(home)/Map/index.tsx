@@ -91,8 +91,14 @@ export default function MapPage(): React.ReactNode {
 	// The sheet has no dismissed state. `interactiveDismissDisabled` should keep
 	// it up, but if the system ever reports otherwise, present it again rather
 	// than leaving the user on a bare map with no way to search.
+	//
+	// Storing the dismissal and undoing it here is the mechanism, not an
+	// oversight: `isPresented` has to actually change for the native view to
+	// hear about it, so re-presenting takes a render at `false` first. This is
+	// the external-system case the rule carves out.
 	React.useEffect(() => {
 		if (!sheetPresented) {
+			// oxlint-disable-next-line react/set-state-in-effect
 			setSheetPresented(true)
 		}
 	}, [sheetPresented])

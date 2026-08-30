@@ -57,7 +57,9 @@ export const directoryEntriesOptions = (query: string, type: DirectorySearchType
 		staleTime,
 	})
 
-// oxlint-disable-next-line typescript/explicit-module-boundary-types
+// The rule reports at the arrow, which a wrapped signature pushes several lines
+// below the declaration -- out of reach of `disable-next-line`. Hence the block.
+/* oxlint-disable typescript/explicit-module-boundary-types */
 export const directoryContactOptions = (
 	query: string,
 	type: DirectorySearchTypeEnum,
@@ -69,3 +71,4 @@ export const directoryContactOptions = (
 		staleTime,
 		select: (data) => formatResults(data.results)[index],
 	})
+/* oxlint-enable typescript/explicit-module-boundary-types */

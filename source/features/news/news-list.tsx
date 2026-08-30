@@ -51,37 +51,39 @@ export const NewsList = (props: Props): React.ReactNode => {
 
 	let entries = React.useMemo(() => cleanEntries(data), [data])
 
-	let [filters, setFilters] = React.useState<ListType<StoryType>[]>([])
+	// Only the narrowing the user asked for is state; the categories on offer are
+	// read back out of the feed. Rebuilding the whole filter whenever the feed
+	// changed used to hand back an everything-selected filter, discarding what
+	// they had picked on any refetch that actually brought new stories.
+	let [chosenCategories, setChosenCategories] = React.useState<string[] | null>(null)
 
-	React.useEffect(() => {
+	let filters = React.useMemo((): ListType<StoryType>[] => {
 		let allCategories = entries.flatMap((story) => getStoryCategories(story))
 
 		if (allCategories.length === 0) {
-			return
+			return []
 		}
 
-		let categories = [...new Set(allCategories)].sort()
-		let filterCategories = categories.map((category) => {
-			return {title: category}
-		})
+		let options = [...new Set(allCategories)].sort().map((category) => ({title: category}))
 
-		let newsFilters: ListType<StoryType>[] = [
+		return [
 			{
 				type: 'list',
 				key: 'category',
 				enabled: true,
 				spec: {
 					title: 'Categories',
-					options: filterCategories,
-					selected: filterCategories,
+					options,
+					selected: chosenCategories
+						? options.filter((option) => chosenCategories.includes(option.title))
+						: options,
 					mode: 'OR',
 					displayTitle: true,
 				},
 				apply: {key: 'categories'},
 			},
 		]
-		setFilters(newsFilters)
-	}, [entries])
+	}, [entries, chosenCategories])
 
 	if (isError) {
 		return (
@@ -97,8 +99,11 @@ export const NewsList = (props: Props): React.ReactNode => {
 		<FilterToolbar
 			filters={filters}
 			onPopoverDismiss={(newFilter) => {
-				let edited = filters.map((f) => (f.key === newFilter.key ? newFilter : f))
-				setFilters(edited as ListType<StoryType>[])
+				// The categories list is the only filter this toolbar carries.
+				if (newFilter.type !== 'list') {
+					return
+				}
+				setChosenCategories(newFilter.spec.selected.map((option) => option.title))
 			}}
 		/>
 	)
