@@ -39,7 +39,7 @@ type Props = ReactProps
 
 const styles = StyleSheet.create({
 	inner: {
-		backgroundColor: c.separator,
+		backgroundColor: c.systemBackground,
 	},
 	message: {
 		paddingVertical: 16,
