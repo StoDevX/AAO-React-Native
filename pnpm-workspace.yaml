@@ -7,13 +7,26 @@ packages:
 # patchedDependencies below covers the patches this repo carries.
 ignoreScripts: true
 
-# matches npm's own peer dependency handling (auto-install, warn rather than
-# fail) since that's the behavior this dependency tree was actually built
-# and vetted under
+# auto-install missing peers, but fail the install on a version mismatch --
+# a mismatched peer (as opposed to a merely-missing one) means two packages
+# disagree about a dependency's API, which is exactly the kind of native/C++
+# ABI break that tsc, oxlint, and Jest can't see (react-native-worklets 0.12.x
+# renamed a method expo-modules-core's native bridge still called, and the
+# only warning was this peer mismatch, silently ignored under warn-only mode)
 autoInstallPeers: true
-strictPeerDependencies: false
+strictPeerDependencies: true
 # set peer dependency suffixes to use version-only identifiers (name@version) instead of full dep paths
 dedupePeers: true
+
+# pre-existing, individually-reviewed peer mismatches that strictPeerDependencies
+# would otherwise fail the install on -- each is a case where the declared range
+# is stale tooling metadata, not a real incompatibility
+peerDependencyRules:
+  allowedVersions:
+    # ts-jest, @typescript-eslint/*, and @tanstack/eslint-plugin-query all
+    # declare narrower typescript ranges than this repo's actual 7.0.2; all
+    # three run fine against it in practice (tsc/oxlint/Jest all pass)
+    typescript: '7.0.2'
 
 publicHoistPattern:
   - expo-module-scripts
