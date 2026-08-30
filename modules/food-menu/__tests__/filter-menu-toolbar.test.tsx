@@ -6,6 +6,8 @@ import moment from 'moment'
 import {FilterMenuToolbar} from '../filter-menu-toolbar'
 import type {FilterIcon, FilterType, ListItemSpecType} from '@frogpond/filter'
 import {INACTIVE_TRIGGER_MODIFIERS} from '@frogpond/filter/filter-menu'
+import {FILTER_TRIGGER_PREFIX} from '@frogpond/filter/lib/trigger-modifiers'
+import {accessibilityIdentifier} from './expo-ui-mock'
 
 // `@frogpond/filter`'s `FilterMenu`/`FilterSheet` render `@expo/ui/swift-ui`
 // directly, which cannot mount under Jest.
@@ -56,10 +58,11 @@ describe('FilterMenuToolbar', () => {
 	// there is no separate button here. `FilterMenuToolbar` still hardcodes
 	// `isActive={false}` for it (choosing a meal isn't "narrowing" the way an
 	// enabled filter is), which shows up as the `Menu`'s own inactive
-	// modifiers, since the trigger and the menu are the same thing. Compared by
-	// identity against `filter-menu.tsx`'s own exported constant, not a literal
-	// shape, so this mock's invented `Modifier` representation can't leak into
-	// the assertion.
+	// modifiers, since the trigger and the menu are the same thing. The style
+	// entry is compared against `filter-menu.tsx`'s own exported constant
+	// rather than a literal shape, so this mock's invented `Modifier`
+	// representation can't stand in for it; the identifier is built with the
+	// same mocked `modifiers` module the component calls, for the same reason.
 	test('renders the meal picker as an inactive-styled menu, with no separate button', async () => {
 		await render(
 			<FilterMenuToolbar
@@ -71,9 +74,10 @@ describe('FilterMenuToolbar', () => {
 		)
 
 		expect(screen.queryByRole('button', {name: "Today's Menus"})).toBeNull()
-		expect(screen.getByTestId("menu:Today's Menus").props.modifiers).toBe(
-			INACTIVE_TRIGGER_MODIFIERS,
-		)
+		expect(screen.getByTestId("menu:Today's Menus").props.modifiers).toEqual([
+			...INACTIVE_TRIGGER_MODIFIERS,
+			accessibilityIdentifier(`${FILTER_TRIGGER_PREFIX}meals`),
+		])
 	})
 
 	// `FilterMenuToolbar` forwards its own `iconFor` prop to the `FilterToolbar`

@@ -11,6 +11,7 @@ import {
 	VStack,
 } from '@expo/ui/swift-ui'
 import {
+	accessibilityIdentifier,
 	buttonStyle,
 	contentShape,
 	font,
@@ -38,12 +39,26 @@ type Props<T extends object> = {
 	iconFor?: (option: ListItemSpecType) => FilterIcon | null
 }
 
+/**
+ * Names an option row for the UI tests. A row's label is not enough to find it
+ * by: the screen behind the sheet states the same station and dietary names,
+ * and both stay in the accessibility tree while the sheet is up.
+ *
+ * Mirrored by `TestIdentifiers.Filter.optionPrefix` and
+ * `TestIdentifiers.Filter.showAll` in `uitests/TestIdentifiers.swift`.
+ */
+export const FILTER_OPTION_PREFIX = 'filter-option-'
+export const FILTER_SHOW_ALL_ID = 'filter-show-all'
+
 // Constant modifier arrays, hoisted so the worst case -- Course Search's
 // Departments filter at 79 rows, in `OR` mode with everything selected, so
 // every row draws a checkmark -- doesn't rebuild the same array, or allocate
 // an extra view, once per row. `@expo/ui` view construction costs roughly
 // 3ms per view and isn't virtualised.
 const PLAIN_BUTTON_MODIFIERS = [buttonStyle('plain')]
+// "Show All" is one row with one identifier, so its modifiers hoist with the
+// rest; an option row's identifier varies, so that array is memoized per row.
+const SHOW_ALL_MODIFIERS = [buttonStyle('plain'), accessibilityIdentifier(FILTER_SHOW_ALL_ID)]
 const ROW_MODIFIERS = [contentShape(shapes.rectangle())]
 const LOCAL_ICON_MODIFIERS = [resizable(), frame({width: 20, height: 20})]
 // Fills the row so the checkmark settles against the trailing edge. A
@@ -77,6 +92,12 @@ export function FilterSheet<T extends object>({
 }: Props<T>): React.ReactNode {
 	let [isPresented, setIsPresented] = React.useState(false)
 	let [local, setLocal] = React.useState(filter)
+	// One array per filter rather than one per render: `triggerModifiers` has
+	// to build a fresh array to carry the filter's own identifier.
+	let anchorModifiers = React.useMemo(
+		() => triggerModifiers(isActive, filter.key),
+		[isActive, filter.key],
+	)
 	// Guards against a second emission for the same presentation. Only
 	// `openSheet`/`emitAndDismiss` below touch this -- `BottomSheet.onDismiss`
 	// is left unwired below, deliberately: it fires after the dismiss
@@ -128,7 +149,7 @@ export function FilterSheet<T extends object>({
 	return (
 		<Host matchContents={true}>
 			<BottomSheet
-				anchor={<Button label={title} modifiers={triggerModifiers(isActive)} onPress={openSheet} />}
+				anchor={<Button label={title} modifiers={anchorModifiers} onPress={openSheet} />}
 				isPresented={isPresented}
 				onIsPresentedChange={(nextIsPresented) => {
 					if (!nextIsPresented) {
@@ -158,6 +179,7 @@ export function FilterSheet<T extends object>({
 									isSelected={spec.selected.some((selected) => isEqual(selected, option))}
 									label={spec.displayTitle ? option.title : option.label}
 									onPress={() => setLocal((current) => toggleOption(current, option))}
+									title={option.title}
 								/>
 							))}
 						</List.ForEach>
@@ -174,15 +196,26 @@ function OptionRow({
 	isSelected,
 	label,
 	onPress,
+	title,
 }: {
 	detail?: string
 	icon: FilterIcon | null
 	isSelected: boolean
 	label?: string
 	onPress: () => void
+	/// The option's own title, which names the row for the UI tests. Not the
+	/// drawn text: a filter with `displayTitle` off draws `label` instead.
+	title: string
 }): React.ReactNode {
+	// Memoized for the same reason the constants above are hoisted -- Course
+	// Search's Departments filter draws 79 of these rows.
+	let modifiers = React.useMemo(
+		() => [...PLAIN_BUTTON_MODIFIERS, accessibilityIdentifier(`${FILTER_OPTION_PREFIX}${title}`)],
+		[title],
+	)
+
 	return (
-		<Button modifiers={PLAIN_BUTTON_MODIFIERS} onPress={onPress}>
+		<Button modifiers={modifiers} onPress={onPress}>
 			{/* contentShape belongs on the label (this HStack), not the Button --
 			    see building-picker's BuildingRow for why: a Button's tappable
 			    region comes from its label, so anything past the label is
@@ -211,7 +244,7 @@ function ShowAllRow({
 	onPress: () => void
 }): React.ReactNode {
 	return (
-		<Button modifiers={PLAIN_BUTTON_MODIFIERS} onPress={onPress}>
+		<Button modifiers={SHOW_ALL_MODIFIERS} onPress={onPress}>
 			<HStack modifiers={ROW_MODIFIERS} spacing={8}>
 				<Text modifiers={FILL_LEADING}>Show All</Text>
 				{isSelected ? <Image systemName="checkmark" /> : null}

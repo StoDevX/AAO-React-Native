@@ -1,4 +1,8 @@
-import {accessibilityAddTraits, buttonStyle} from '@expo/ui/swift-ui/modifiers'
+import {
+	accessibilityAddTraits,
+	accessibilityIdentifier,
+	buttonStyle,
+} from '@expo/ui/swift-ui/modifiers'
 
 /**
  * `@expo/ui` does not re-export `ModifierConfig` from its public entry, and its
@@ -20,7 +24,8 @@ type Modifier = ReturnType<typeof buttonStyle>
  * filter's trigger is its `Menu`'s own label, a sheet-shaped one's is the
  * `Button` anchoring its sheet, and they sit side by side in one scroller.
  *
- * Hoisted so a render reuses these arrays rather than allocating per filter.
+ * Hoisted so their entries are built once rather than per filter --
+ * `triggerModifiers` spreads them into the array it returns.
  */
 export const INACTIVE_TRIGGER_MODIFIERS: Modifier[] = [buttonStyle('bordered')]
 
@@ -29,6 +34,24 @@ export const ACTIVE_TRIGGER_MODIFIERS: Modifier[] = [
 	accessibilityAddTraits(['isSelected']),
 ]
 
-export function triggerModifiers(isActive: boolean): Modifier[] {
-	return isActive ? ACTIVE_TRIGGER_MODIFIERS : INACTIVE_TRIGGER_MODIFIERS
+/**
+ * Names a trigger for the UI tests, which cannot go by the visible title: the
+ * sheet a trigger opens states the same title in its section header, and a
+ * `Menu`'s trigger reports its label twice over.
+ *
+ * Mirrored by `TestIdentifiers.Filter.triggerPrefix` in
+ * `uitests/TestIdentifiers.swift`.
+ */
+export const FILTER_TRIGGER_PREFIX = 'filter-trigger-'
+
+/**
+ * The modifiers a trigger carries, for a filter that is or is not narrowing
+ * anything. Call sites memoize the result on `isActive` and `key`, since the
+ * identifier makes a per-filter array unavoidable.
+ */
+export function triggerModifiers(isActive: boolean, key: string): Modifier[] {
+	return [
+		...(isActive ? ACTIVE_TRIGGER_MODIFIERS : INACTIVE_TRIGGER_MODIFIERS),
+		accessibilityIdentifier(`${FILTER_TRIGGER_PREFIX}${key}`),
+	]
 }

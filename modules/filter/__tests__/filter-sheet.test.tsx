@@ -4,7 +4,9 @@ import {fireEvent, render, screen} from '@testing-library/react-native'
 
 import {FilterSheet} from '../filter-sheet'
 import {ACTIVE_TRIGGER_MODIFIERS, INACTIVE_TRIGGER_MODIFIERS} from '../filter-menu'
+import {FILTER_TRIGGER_PREFIX} from '../lib/trigger-modifiers'
 import type {FilterIcon, ListItemSpecType, ListType} from '../types'
+import {accessibilityIdentifier} from './expo-ui-mock'
 
 jest.mock('@expo/ui/swift-ui', () => {
 	// oxlint-disable-next-line typescript/no-require-imports
@@ -75,7 +77,10 @@ describe('FilterSheet', () => {
 			/>,
 		)
 
-		expect(screen.getByTestId(`button:${TITLE}`).props.modifiers).toBe(INACTIVE_TRIGGER_MODIFIERS)
+		expect(screen.getByTestId(`button:${TITLE}`).props.modifiers).toEqual([
+			...INACTIVE_TRIGGER_MODIFIERS,
+			accessibilityIdentifier(`${FILTER_TRIGGER_PREFIX}k`),
+		])
 	})
 
 	test('marks its trigger with the active modifiers when isActive is true', async () => {
@@ -88,7 +93,10 @@ describe('FilterSheet', () => {
 			/>,
 		)
 
-		expect(screen.getByTestId(`button:${TITLE}`).props.modifiers).toBe(ACTIVE_TRIGGER_MODIFIERS)
+		expect(screen.getByTestId(`button:${TITLE}`).props.modifiers).toEqual([
+			...ACTIVE_TRIGGER_MODIFIERS,
+			accessibilityIdentifier(`${FILTER_TRIGGER_PREFIX}k`),
+		])
 	})
 
 	test('every option becomes a row once opened', async () => {

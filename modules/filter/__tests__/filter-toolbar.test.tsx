@@ -4,7 +4,9 @@ import {describe, expect, jest, test} from '@jest/globals'
 
 import {FilterToolbar} from '../filter-toolbar'
 import {ACTIVE_TRIGGER_MODIFIERS, INACTIVE_TRIGGER_MODIFIERS} from '../filter-menu'
+import {FILTER_TRIGGER_PREFIX} from '../lib/trigger-modifiers'
 import type {FilterIcon, FilterType, ListItemSpecType} from '../types'
+import {accessibilityIdentifier} from './expo-ui-mock'
 
 jest.mock('@expo/ui/swift-ui', () => {
 	// oxlint-disable-next-line typescript/no-require-imports
@@ -134,14 +136,23 @@ describe('FilterToolbar', () => {
 	test('threads filter.enabled into a sheet trigger as isActive', async () => {
 		await render(<FilterToolbar filters={[SHEET_FILTER]} onChange={jest.fn()} />)
 
-		expect(screen.getByTestId('button:Departments').props.modifiers).toBe(ACTIVE_TRIGGER_MODIFIERS)
+		expect(screen.getByTestId('button:Departments').props.modifiers).toEqual([
+			...ACTIVE_TRIGGER_MODIFIERS,
+			accessibilityIdentifier(`${FILTER_TRIGGER_PREFIX}departments`),
+		])
 	})
 
 	test('threads filter.enabled into a menu trigger as isActive', async () => {
 		await render(<FilterToolbar filters={[TOGGLE_FILTER, INACTIVE_FILTER]} onChange={jest.fn()} />)
 
-		expect(screen.getByTestId('menu:Vegetarian').props.modifiers).toBe(ACTIVE_TRIGGER_MODIFIERS)
-		expect(screen.getByTestId('menu:Specials').props.modifiers).toBe(INACTIVE_TRIGGER_MODIFIERS)
+		expect(screen.getByTestId('menu:Vegetarian').props.modifiers).toEqual([
+			...ACTIVE_TRIGGER_MODIFIERS,
+			accessibilityIdentifier(`${FILTER_TRIGGER_PREFIX}vegetarian`),
+		])
+		expect(screen.getByTestId('menu:Specials').props.modifiers).toEqual([
+			...INACTIVE_TRIGGER_MODIFIERS,
+			accessibilityIdentifier(`${FILTER_TRIGGER_PREFIX}specials`),
+		])
 	})
 
 	// `iconFor` has to survive two forwards to reach a row -- `FilterToolbar`

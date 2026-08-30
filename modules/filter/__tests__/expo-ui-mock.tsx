@@ -44,6 +44,11 @@ export const accessibilityAddTraits = (traits: string[]): Modifier => ({
 	traits,
 })
 
+export const accessibilityIdentifier = (identifier: string): Modifier => ({
+	$type: 'accessibilityIdentifier',
+	identifier,
+})
+
 export const contentShape = (shape: unknown): Modifier => ({$type: 'contentShape', shape})
 
 export const shapes = {rectangle: (): Modifier => ({$type: 'rectangle'})}

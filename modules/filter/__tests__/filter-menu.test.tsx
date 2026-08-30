@@ -3,7 +3,9 @@ import {describe, expect, jest, test} from '@jest/globals'
 import {fireEvent, render, screen} from '@testing-library/react-native'
 
 import {ACTIVE_TRIGGER_MODIFIERS, FilterMenu, INACTIVE_TRIGGER_MODIFIERS} from '../filter-menu'
+import {FILTER_TRIGGER_PREFIX} from '../lib/trigger-modifiers'
 import type {ListItemSpecType, ListType, PickerType, ToggleType} from '../types'
+import {accessibilityIdentifier} from './expo-ui-mock'
 
 jest.mock('@expo/ui/swift-ui', () => {
 	// oxlint-disable-next-line typescript/no-require-imports
@@ -203,21 +205,28 @@ describe('FilterMenu, section title', () => {
 describe('FilterMenu, active state', () => {
 	// The menu's label is its own trigger -- there is no separate button --
 	// so "this filter is narrowing something" has to live on the trigger's own
-	// modifiers. Comparing by identity against the exported constants, not a
-	// literal shape: the mock forwards `modifiers` unexamined, so a shape
-	// match would really be asserting the mock's own invented `Modifier`
-	// representation, not what `filter-menu.tsx` decided.
+	// modifiers. The style and trait entries are compared against the exported
+	// constants rather than a literal shape, so the mock's own invented
+	// `Modifier` representation cannot stand in for what `filter-menu.tsx`
+	// decided; the identifier is built with the same mocked `modifiers` module
+	// the component calls, for the same reason.
 	test('inactive: the inactive trigger modifiers', async () => {
 		await render(<FilterMenu filter={toggleFilter(false)} isActive={false} onChange={jest.fn()} />)
 
 		let trigger = screen.getByTestId('menu:Specials')
-		expect(trigger.props.modifiers).toBe(INACTIVE_TRIGGER_MODIFIERS)
+		expect(trigger.props.modifiers).toEqual([
+			...INACTIVE_TRIGGER_MODIFIERS,
+			accessibilityIdentifier(`${FILTER_TRIGGER_PREFIX}k`),
+		])
 	})
 
 	test('active: the active trigger modifiers', async () => {
 		await render(<FilterMenu filter={toggleFilter(true)} isActive={true} onChange={jest.fn()} />)
 
 		let trigger = screen.getByTestId('menu:Specials')
-		expect(trigger.props.modifiers).toBe(ACTIVE_TRIGGER_MODIFIERS)
+		expect(trigger.props.modifiers).toEqual([
+			...ACTIVE_TRIGGER_MODIFIERS,
+			accessibilityIdentifier(`${FILTER_TRIGGER_PREFIX}k`),
+		])
 	})
 })

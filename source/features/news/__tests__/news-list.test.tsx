@@ -6,6 +6,8 @@ import type {UseQueryResult} from '@tanstack/react-query'
 import {NewsList} from '../news-list'
 import type {StoryType} from '../types'
 import {INACTIVE_TRIGGER_MODIFIERS} from '@frogpond/filter/filter-menu'
+import {FILTER_TRIGGER_PREFIX} from '@frogpond/filter/lib/trigger-modifiers'
+import {accessibilityIdentifier} from './expo-ui-mock'
 
 jest.mock('expo-symbols', () => ({SymbolView: 'SymbolView'}))
 jest.mock('@expo/ui/swift-ui', () => {
@@ -60,6 +62,9 @@ describe('NewsList', () => {
 		await render(<NewsList query={makeQuery({data: stories})} thumbnail={false} />)
 
 		expect(screen.queryByRole('button', {name: 'Categories'})).toBeNull()
-		expect(screen.getByTestId('menu:Categories').props.modifiers).toBe(INACTIVE_TRIGGER_MODIFIERS)
+		expect(screen.getByTestId('menu:Categories').props.modifiers).toEqual([
+			...INACTIVE_TRIGGER_MODIFIERS,
+			accessibilityIdentifier(`${FILTER_TRIGGER_PREFIX}category`),
+		])
 	})
 })

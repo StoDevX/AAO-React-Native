@@ -38,11 +38,18 @@ export function FilterMenu<T extends object>({
 	isActive,
 	onChange,
 }: Props<T>): React.ReactNode {
+	// One array per filter rather than one per render: `triggerModifiers` has
+	// to build a fresh array to carry the filter's own identifier.
+	let modifiers = React.useMemo(
+		() => triggerModifiers(isActive, filter.key),
+		[isActive, filter.key],
+	)
+
 	switch (filter.type) {
 		case 'toggle':
 			return (
 				<Host matchContents={true}>
-					<Menu label={filter.spec.title} modifiers={triggerModifiers(isActive)}>
+					<Menu label={filter.spec.title} modifiers={modifiers}>
 						<Section title={filter.spec.title.toUpperCase()}>
 							<Toggle
 								isOn={filter.enabled}
@@ -62,7 +69,7 @@ export function FilterMenu<T extends object>({
 
 			return (
 				<Host matchContents={true}>
-					<Menu label={filter.spec.title} modifiers={triggerModifiers(isActive)}>
+					<Menu label={filter.spec.title} modifiers={modifiers}>
 						<Section title={filter.spec.title.toUpperCase()}>
 							{filter.spec.options.map((option, index) => (
 								<Toggle
@@ -89,7 +96,7 @@ export function FilterMenu<T extends object>({
 
 			return (
 				<Host matchContents={true}>
-					<Menu label={spec.title} modifiers={triggerModifiers(isActive)}>
+					<Menu label={spec.title} modifiers={modifiers}>
 						<Section title={spec.title.toUpperCase()}>
 							{spec.mode === 'OR' ? (
 								<Toggle

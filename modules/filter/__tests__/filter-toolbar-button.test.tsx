@@ -4,6 +4,8 @@ import {describe, expect, jest, test} from '@jest/globals'
 
 import {FilterToolbarButton} from '../filter-toolbar-button'
 import {ACTIVE_TRIGGER_MODIFIERS, INACTIVE_TRIGGER_MODIFIERS} from '../filter-menu'
+import {FILTER_TRIGGER_PREFIX} from '../lib/trigger-modifiers'
+import {accessibilityIdentifier} from './expo-ui-mock'
 import type {FilterIcon, FilterType, ListItemSpecType} from '../types'
 
 jest.mock('@expo/ui/swift-ui', () => {
@@ -83,7 +85,10 @@ describe('FilterToolbarButton, menu shape', () => {
 		)
 
 		let trigger = screen.getByTestId('menu:Vegetarian')
-		expect(trigger.props.modifiers).toBe(INACTIVE_TRIGGER_MODIFIERS)
+		expect(trigger.props.modifiers).toEqual([
+			...INACTIVE_TRIGGER_MODIFIERS,
+			accessibilityIdentifier(`${FILTER_TRIGGER_PREFIX}vegetarian`),
+		])
 	})
 
 	test('marks itself with the active trigger modifiers when isActive is true', async () => {
@@ -97,7 +102,10 @@ describe('FilterToolbarButton, menu shape', () => {
 		)
 
 		let trigger = screen.getByTestId('menu:Vegetarian')
-		expect(trigger.props.modifiers).toBe(ACTIVE_TRIGGER_MODIFIERS)
+		expect(trigger.props.modifiers).toEqual([
+			...ACTIVE_TRIGGER_MODIFIERS,
+			accessibilityIdentifier(`${FILTER_TRIGGER_PREFIX}vegetarian`),
+		])
 	})
 
 	// The dispatcher's whole job is to wire `onChange` through to whichever
@@ -140,7 +148,10 @@ describe('FilterToolbarButton, sheet shape', () => {
 		)
 
 		let trigger = screen.getByTestId('button:Departments')
-		expect(trigger.props.modifiers).toBe(INACTIVE_TRIGGER_MODIFIERS)
+		expect(trigger.props.modifiers).toEqual([
+			...INACTIVE_TRIGGER_MODIFIERS,
+			accessibilityIdentifier(`${FILTER_TRIGGER_PREFIX}departments`),
+		])
 	})
 
 	test('marks its trigger with the active modifiers when isActive is true', async () => {
@@ -154,7 +165,10 @@ describe('FilterToolbarButton, sheet shape', () => {
 		)
 
 		let trigger = screen.getByTestId('button:Departments')
-		expect(trigger.props.modifiers).toBe(ACTIVE_TRIGGER_MODIFIERS)
+		expect(trigger.props.modifiers).toEqual([
+			...ACTIVE_TRIGGER_MODIFIERS,
+			accessibilityIdentifier(`${FILTER_TRIGGER_PREFIX}departments`),
+		])
 	})
 
 	// The dispatcher's whole job, for this shape, is wiring the sheet's own
