@@ -23,7 +23,6 @@ import type {FilterType, PickerType} from '@frogpond/filter'
 jest.mock('expo-symbols', () => ({SymbolView: 'SymbolView'}))
 // `@frogpond/filter`'s barrel reaches the SwiftUI picker, which cannot mount
 // under Jest; `applyFiltersToItem` next to it is the real thing this suite uses.
-jest.mock('@expo/ui/community/picker', () => ({Picker: 'Picker'}))
 jest.mock('@expo/ui/swift-ui', () => {
 	// oxlint-disable-next-line typescript/no-require-imports
 	return require('./expo-ui-mock') as typeof import('./expo-ui-mock')

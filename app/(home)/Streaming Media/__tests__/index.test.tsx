@@ -9,7 +9,6 @@ import type {StreamType} from '../../../../source/features/streaming/streams/typ
 import {INACTIVE_TRIGGER_MODIFIERS} from '@frogpond/filter/filter-menu'
 
 jest.mock('expo-symbols', () => ({SymbolView: 'SymbolView'}))
-jest.mock('@expo/ui/community/picker', () => ({Picker: 'Picker'}))
 jest.mock('@expo/ui/swift-ui', () => {
 	// oxlint-disable-next-line typescript/no-require-imports
 	return require('./expo-ui-mock') as typeof import('./expo-ui-mock')

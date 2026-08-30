@@ -88,8 +88,8 @@ export default function StreamingPage(): React.ReactNode {
 				type: 'list',
 				key: 'category',
 				// In OR mode, a selection matching every option filters nothing --
-				// matching the invariant modules/filter/section-list.tsx applies on
-				// every subsequent edit.
+				// matching the invariant modules/filter/lib/select-options.ts applies
+				// on every subsequent edit.
 				enabled: selected.length !== options.length,
 				spec: {
 					title: 'Categories',

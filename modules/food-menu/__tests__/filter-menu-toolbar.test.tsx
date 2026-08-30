@@ -10,7 +10,6 @@ import {INACTIVE_TRIGGER_MODIFIERS} from '@frogpond/filter/filter-menu'
 jest.mock('expo-symbols', () => ({SymbolView: 'SymbolView'}))
 // `@frogpond/filter`'s barrel still reaches the popover's SwiftUI picker,
 // which cannot mount under Jest.
-jest.mock('@expo/ui/community/picker', () => ({Picker: 'Picker'}))
 jest.mock('@expo/ui/swift-ui', () => {
 	// oxlint-disable-next-line typescript/no-require-imports
 	return require('./expo-ui-mock') as typeof import('./expo-ui-mock')
