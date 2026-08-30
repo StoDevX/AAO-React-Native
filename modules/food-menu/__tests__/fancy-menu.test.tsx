@@ -142,6 +142,38 @@ function shownMeal(): string {
 }
 
 describe('FancyMenu', () => {
+	// The specials toggle is seeded from the meal showing when the filters were
+	// built, but the meal moves -- the clock rolls on, or the user picks another.
+	// A meal with no specials of its own would otherwise keep the filter applied
+	// and render an empty menu behind a control the reader has to find and undo.
+	test('does not apply the specials filter to a meal that has none', async () => {
+		let specialAtBreakfast = {...item('1', 'Pancakes', 'Grill'), special: true}
+		let plainAtDinner = item('3', 'Pot Roast', 'Home')
+
+		await render(
+			<FancyMenu
+				foodItems={{
+					1: specialAtBreakfast,
+					2: item('2', 'Turkey Sandwich', 'Deli'),
+					3: plainAtDinner,
+				}}
+				meals={MEALS}
+				menuCorIcons={COR_ICONS}
+				name="The Caf"
+				now={moment.tz(BREAKFAST_TIME, TIMEZONE)}
+				onItemPress={jest.fn()}
+			/>,
+		)
+
+		// Breakfast has the special, so the filter applies there.
+		expect(screen.getByText('Pancakes')).toBeTruthy()
+
+		// Dinner has none; its one item must still be reachable rather than
+		// hidden behind a filter that can only empty the screen.
+		await fireEvent.press(screen.getByTestId('choose-dinner'))
+		expect(screen.getByText('Pot Roast')).toBeTruthy()
+	})
+
 	// Which meal the menu starts on is `chooseMeal`'s decision, covered directly
 	// in lib/__tests__. What only shows up at this level is whether the choice
 	// outlives a render of the screen above, which hands down a fresh Moment

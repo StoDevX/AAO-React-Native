@@ -134,9 +134,26 @@ export function FancyMenu(props: Props): React.ReactNode {
 	const meal = chooseMeal(meals, filters, now)
 	const {label: mealName, stations} = meal
 
+	// Showing only the specials is the useful default -- the full list carries
+	// every condiment and salad dressing the location stocks. But the toggle is
+	// seeded once, from whichever meal was showing when the filters were built,
+	// and the meal moves: the clock rolls into the next one, or the user picks
+	// another. A meal with no specials of its own -- Brunch, most days -- would
+	// then keep the filter applied and render nothing at all, behind a control
+	// the reader has to find and undo.
+	//
+	// So the toggle is offered against the meal actually on screen, and a meal
+	// with nothing special does not offer it.
+	const appliedFilters = useMemo(() => {
+		const mealHasSpecials = stations.some((station) =>
+			station.items.some((id) => foodItems[id]?.special),
+		)
+		return mealHasSpecials ? filters : filters.filter((f) => f.key !== 'specials')
+	}, [filters, stations, foodItems])
+
 	const groupedMenuData = useMemo(
-		() => groupMenuData({stations, filters, applyFilters, foodItems}),
-		[stations, filters, applyFilters, foodItems],
+		() => groupMenuData({stations, filters: appliedFilters, applyFilters, foodItems}),
+		[stations, appliedFilters, applyFilters, foodItems],
 	)
 
 	// Reading a station's note straight from a `.map()` that builds JSX
@@ -153,11 +170,11 @@ export function FancyMenu(props: Props): React.ReactNode {
 		}))
 	}, [groupedMenuData, stations])
 
-	const specialsFilterEnabled = areSpecialsFiltered(filters)
+	const specialsFilterEnabled = areSpecialsFiltered(appliedFilters)
 	const message = emptyMessage({
 		cafeMessage,
 		specialsOnly: specialsFilterEnabled,
-		anyFilters: filters.some((f) => f.enabled),
+		anyFilters: appliedFilters.some((f) => f.enabled),
 		sectionCount: groupedMenuData.length,
 		stationCount: stations.length,
 	})
@@ -172,7 +189,7 @@ export function FancyMenu(props: Props): React.ReactNode {
 				<RNHostView matchContents={true}>
 					<FilterToolbar
 						date={now}
-						filters={filters}
+						filters={appliedFilters}
 						isOpen={isOpen}
 						onPopoverDismiss={(newFilter) => {
 							setFilters(filters.map((f) => (f.key === newFilter.key ? newFilter : f)))
