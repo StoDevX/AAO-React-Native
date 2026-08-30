@@ -1,7 +1,7 @@
 import * as React from 'react'
 import moment from 'moment-timezone'
 import {describe, expect, jest, test} from '@jest/globals'
-import {fireEvent, render, screen} from '@testing-library/react-native'
+import {fireEvent, render, screen, within} from '@testing-library/react-native'
 
 import {FancyMenu, sectionHeaderProps} from '../fancy-menu'
 import type {
@@ -75,14 +75,22 @@ jest.mock('../filter-menu-toolbar', () => {
 const TIMEZONE = 'America/Chicago'
 const BREAKFAST_TIME = '2026-08-17T09:00:00'
 
-function station(label: string, items: string[]): StationMenuType {
-	return {order_id: '0', id: label, label, price: '', note: '', soup: false, items}
+function station(label: string, items: string[], note = ''): StationMenuType {
+	return {order_id: '0', id: label, label, price: '', note, soup: false, items}
 }
 
 const MEALS: ProcessedMealType[] = [
 	{label: 'Breakfast', starttime: '7:00', endtime: '11:00', stations: [station('Grill', ['1'])]},
 	{label: 'Lunch', starttime: '11:00', endtime: '14:00', stations: [station('Deli', ['2'])]},
-	{label: 'Dinner', starttime: '17:00', endtime: '20:00', stations: [station('Home', ['3'])]},
+	// A note here means `sectionHeaderProps` takes its `header` arm for a real
+	// render, not just in the unit tests below -- otherwise nothing in this
+	// suite ever renders a `Section` with a `header`.
+	{
+		label: 'Dinner',
+		starttime: '17:00',
+		endtime: '20:00',
+		stations: [station('Home', ['3'], 'closes at 8pm')],
+	},
 ]
 
 function item(id: string, label: string, stationName: string): MenuItemType {
@@ -149,6 +157,41 @@ describe('FancyMenu', () => {
 		await rerender(renderMenu(moment.tz(BREAKFAST_TIME, TIMEZONE)))
 
 		expect(shownMeal()).toBe('Dinner')
+	})
+
+	// `FoodItemRow`'s real decision: the accessibility label names every
+	// cor-icon the item carries, but only a downloaded icon gets drawn. Halal
+	// has no `image` url here, so `useLocalCorIcons` never attempts it and it
+	// stays out of `localIcons` -- it must still reach the label.
+	test('labels every dietary icon the item carries, but draws only the ones that downloaded', async () => {
+		let corIcons: MasterCorIconMapType = {
+			vegan: {sort: '1', label: 'Vegan', description: '', image: 'https://x/vegan.png'},
+			halal: {sort: '2', label: 'Halal', description: '', image: ''},
+		}
+		let foodItems: MenuItemContainerType = {
+			1: {...item('1', 'Pot Roast', 'Home'), cor_icon: {vegan: '', halal: ''}},
+		}
+		let meals: ProcessedMealType[] = [
+			{label: 'Dinner', starttime: '17:00', endtime: '20:00', stations: [station('Home', ['1'])]},
+		]
+
+		await render(
+			<FancyMenu
+				foodItems={foodItems}
+				meals={meals}
+				menuCorIcons={corIcons}
+				name="The Caf"
+				now={moment.tz(BREAKFAST_TIME, TIMEZONE)}
+				onItemPress={jest.fn()}
+			/>,
+		)
+
+		let row = await screen.findByLabelText('Pot Roast, Vegan, Halal')
+
+		// Vegan downloaded, so it draws -- and Halal, with nothing to draw,
+		// contributes no icon at all rather than a broken one.
+		await screen.findByTestId('icon-file:///cache/v.png')
+		expect(within(row).queryAllByTestId(/^icon-/u)).toHaveLength(1)
 	})
 
 	test('shows the empty message instead of stations when the filters exclude everything', async () => {
