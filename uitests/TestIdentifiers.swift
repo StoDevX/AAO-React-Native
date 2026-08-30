@@ -82,6 +82,58 @@ struct TestIdentifiers {
 
 		/// Matches FOOD_ROW_PREFIX in modules/food-menu/food-item-row.tsx.
 		static let foodRowPrefix = "food-row-"
+
+		/// The cafe whose menu comes from this repository's own
+		/// `data/pause-menu.yaml`, so its stations and items are fixed rather
+		/// than whatever Bon Appétit is serving today.
+		static let pause = "The Pause"
+
+		/// Two stations from that file, and one item from each. The Pause
+		/// offers ten stations, which is under the count at which a list
+		/// filter becomes a sheet, so its Stations filter is reliably a menu.
+		static let pizzaStation = "Pizza"
+		static let specialtyPizzaStation = "Specialty Pizza"
+		static let pizzaItem = "food-row-Single Slice"
+		static let specialtyPizzaItem = "food-row-BBQ Chicken"
+
+		/// A Bon Appétit cor-icon, and so both an option in Stav Hall's
+		/// Dietary Restrictions filter and a word in the accessibility label
+		/// of every food row that carries it.
+		static let vegan = "Vegan"
+		static let halal = "Halal"
+	}
+
+	// MARK: - Filters
+
+	/// The toolbar `@frogpond/filter` draws, which Menus, Course Search,
+	/// Streaming Media and News all share.
+	enum Filter {
+		/// Matches FILTER_TRIGGER_PREFIX in modules/filter/lib/trigger-modifiers.ts.
+		static let triggerPrefix = "filter-trigger-"
+
+		/// Matches FILTER_OPTION_PREFIX in modules/filter/filter-sheet.tsx.
+		static let optionPrefix = "filter-option-"
+
+		/// Matches FILTER_SHOW_ALL_ID in modules/filter/filter-sheet.tsx.
+		static let showAll = "filter-show-all"
+
+		/// A trigger is identified by its filter's key, from the `buildFilters`
+		/// of whichever screen drew it.
+		static func trigger(_ key: String) -> String {
+			triggerPrefix + key
+		}
+
+		/// A sheet row is identified by its option's title.
+		static func option(_ title: String) -> String {
+			optionPrefix + title
+		}
+
+		/// Filter keys from modules/food-menu/lib/build-filters.ts.
+		enum MenusKeys {
+			static let specials = "specials"
+			static let stations = "stations"
+			static let dietaryRestrictions = "dietary-restrictions"
+		}
 	}
 
 	// MARK: - Calendar

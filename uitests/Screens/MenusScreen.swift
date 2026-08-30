@@ -54,6 +54,15 @@ struct MenusScreen: Screen {
 		return self
 	}
 
+	/// Switch to another St. Olaf cafe's tab and wait for its menu to draw.
+	@discardableResult
+	func openCafe(_ cafe: String) -> Self {
+		let tab = app.tabButton(cafe)
+		XCTAssertTrue(tab.waitForExistence(timeout: 30), "\(cafe) tab should be visible")
+		tab.tap()
+		return verifyFoodRowsAppear()
+	}
+
 	@discardableResult
 	func checkStOlafCafes() -> Self {
 		for cafe in TestIdentifiers.Menus.stOlafCafes {
