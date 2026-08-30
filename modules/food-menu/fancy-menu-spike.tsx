@@ -10,7 +10,7 @@ import {
 	Text,
 	VStack,
 } from '@expo/ui/swift-ui'
-import {background, font, foregroundStyle, padding} from '@expo/ui/swift-ui/modifiers'
+import {background, font, foregroundStyle, frame, padding} from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
 import type {Moment} from 'moment'
 
@@ -49,7 +49,31 @@ type Section = {title: string; data: MenuItemType[]}
  * Flipping this is how we tell "the prototype is wrong" apart from
  * "`RNHostView`-per-row does not lay out inside a `LazyVStack`".
  */
-const HOST_DIETARY_TAGS = false
+const HOST_DIETARY_TAGS = true
+
+/**
+ * `DietaryTags` draws each icon 15pt square with 3pt of margin either side, so
+ * a row of them is a known size before SwiftUI lays anything out.
+ *
+ * That matters because `RNHostView` cannot size itself here. With
+ * `matchContents`, it KVO-observes the hosted view's bounds
+ * (`ApplySizeFromYogaNode`) -- and a `DietaryTags` view given no constraints
+ * has no bounds worth observing, which is what collapsed the first attempt.
+ * `matchContents={false}` instead takes the size of the parent SwiftUI view,
+ * so stating that parent's frame is what gives the RN subtree something
+ * definite to lay out into.
+ */
+const ICON_SIDE = 15
+const ICON_SLOT = ICON_SIDE + 3 * 2
+
+/** How many of the cafe's cor-icons this item carries, matching `DietaryTags`'s own filter. */
+function dietaryIconCount(
+	corIcons: MasterCorIconMapType,
+	dietary: MenuItemType['cor_icon'],
+): number {
+	let itemKeys = new Set(Object.keys(dietary))
+	return Object.keys(corIcons).filter((key) => itemKeys.has(key)).length
+}
 
 /**
  * Throwaway. Exists only to measure the cost of one `RNHostView` per row,
@@ -105,6 +129,8 @@ function SpikeRow({
 	item: MenuItemType
 	corIcons: MasterCorIconMapType
 }): React.ReactNode {
+	let iconCount = dietaryIconCount(corIcons, item.cor_icon)
+
 	return (
 		<HStack spacing={8}>
 			<VStack alignment="leading" spacing={2}>
@@ -117,11 +143,16 @@ function SpikeRow({
 			</VStack>
 			<Spacer />
 			{/* The thing being measured: an RN subtree per row, because the
-			    cor-icons are remote URLs SwiftUI's Image cannot load. */}
-			{HOST_DIETARY_TAGS ? (
-				<RNHostView matchContents={true}>
-					<DietaryTags corIcons={corIcons} dietary={item.cor_icon} />
-				</RNHostView>
+			    cor-icons are remote URLs SwiftUI's Image cannot load.
+
+			    An item with no dietary icons hosts nothing at all -- a zero-sized
+			    host is still a host, and most rows would otherwise pay for one. */}
+			{HOST_DIETARY_TAGS && iconCount > 0 ? (
+				<VStack modifiers={[frame({width: iconCount * ICON_SLOT, height: ICON_SIDE})]}>
+					<RNHostView matchContents={false}>
+						<DietaryTags corIcons={corIcons} dietary={item.cor_icon} />
+					</RNHostView>
+				</VStack>
 			) : null}
 		</HStack>
 	)
