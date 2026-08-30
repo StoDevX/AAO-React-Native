@@ -5,16 +5,23 @@ settings:
   dedupePeers: true
   excludeLinksFromLockfile: false
 
+catalogs:
+  default:
+    js-yaml:
+      specifier: 5.4.1
+      version: 5.4.1
+
 overrides:
   brace-expansion@1: 1.1.18
   brace-expansion@2: 2.1.4
   brace-expansion@5: 5.0.9
-  postcss@8: 8.5.26
-  shell-quote@1.8: 1.10.0
+  postcss@: 8.5.26
+  shell-quote@: 1.10.0
   fast-uri@3.1: 4.1.3
-  js-yaml@3.14: 5.3.0
-  qs@6.15: 6.15.3
-  '@babel/core@7.29': 7.29.7
+  js-yaml@3: 5.4.1
+  js-yaml@4: 5.4.1
+  qs@: 6.15.3
+  '@babel/core@': 7.29.7
   react-dom: '-'
   '@expo/ui@57>vaul': '-'
   '@sentry/cli': '-'
@@ -422,7 +429,7 @@ importers:
         specifier: 29.7.0
         version: 29.7.0(@types/node@26.1.2)(supports-color@8.1.1)(ts-node@10.9.2)
       js-yaml:
-        specifier: 5.4.1
+        specifier: 'catalog:'
         version: 5.4.1
       metro-config:
         specifier: 0.84.4
@@ -4170,14 +4177,6 @@ packages:
   js-tokens@4.0.0:
     resolution: {integrity: sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==}
 
-  js-yaml@4.3.1:
-    resolution: {integrity: sha512-CY6crGq313MX8GkwvB7tzgp99vjQxY1++5y10/BKN/GUfHqWaOGQMNZkBvqSzsZKWk/ijwHlWzzkLulsGHhjWQ==}
-    hasBin: true
-
-  js-yaml@5.3.0:
-    resolution: {integrity: sha512-muutsYr+e2+d3rTgUGslq5rxbBlUy3cJ61IsHag2QNDQV+7zXWjkUpmALIajhrlLlrgRUiymj6U3zUr/TMK84Q==}
-    hasBin: true
-
   js-yaml@5.4.1:
     resolution: {integrity: sha512-28R/k+NAjeuf7+CKlTxWZVExJGwVVLwY06DgEnOMz2gEpfNkDcD7QvyiVPT0xy0XXhU8vHsd4Ot42OOPdJG7dQ==}
     hasBin: true
@@ -6698,7 +6697,7 @@ snapshots:
     dependencies:
       '@babel/code-frame': 7.29.7
       chalk: 4.1.2
-      js-yaml: 4.3.1
+      js-yaml: 5.4.1
 
   '@frogpond/titlecase@2.0.4': {}
 
@@ -6725,7 +6724,7 @@ snapshots:
       camelcase: 5.3.1
       find-up: 4.1.0
       get-package-type: 0.1.0
-      js-yaml: 5.3.0
+      js-yaml: 5.4.1
       resolve-from: 5.0.0
 
   '@istanbuljs/schema@0.1.6': {}
@@ -9478,14 +9477,6 @@ snapshots:
   jimp-compact@0.16.1: {}
 
   js-tokens@4.0.0: {}
-
-  js-yaml@4.3.1:
-    dependencies:
-      argparse: 2.0.1
-
-  js-yaml@5.3.0:
-    dependencies:
-      argparse: 2.0.1
 
   js-yaml@5.4.1:
     dependencies:
