@@ -174,9 +174,9 @@ export function sectionsForTab(
 
 /**
  * Groups sport names into Women's, Men's, and Other filter sections. A sport
- * with neither prefix — Volleyball in the current feed — lands in Other
- * Sports rather than being silently dropped. Each section is sorted, and a
- * section with no sports in it is omitted.
+ * with neither prefix — Volleyball, for instance — belongs in Other Sports:
+ * the filter screen must give every sport a place, gendered or not. Each
+ * section is sorted, and a section with no sports in it is omitted.
  */
 export function sportFilterSections(scores: ProcessedScore[]): SportSection[] {
 	const uniqueSports = [...new Set(scores.map((s) => s.sport))].sort()
