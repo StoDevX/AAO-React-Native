@@ -95,10 +95,9 @@ export const tanGradient: Gradient = [
 
 // MARK: derived gradients
 //
-// Derived from a sampled gradient by holding L* constant in Lab colour space,
-// then scaling saturation outward. The inner and outer stops' ratio stays
-// within the 0.78-0.94 band that the sampled fifteen span, maintaining visual
-// consistency with the sampled family.
+// Derived from a sampled gradient by preserving its inner-to-outer HSB
+// saturation ratio: paleGoldGradient's ratio is 0.859 against goldGradient's
+// 0.860, both inside the 0.78-0.94 band the sampled fifteen span.
 
 /// Derived from goldGradient.
 export const paleGoldGradient: Gradient = [
