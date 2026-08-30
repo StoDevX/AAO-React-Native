@@ -9,13 +9,10 @@
     "test": "jest"
   },
   "dependencies": {
-    "@frogpond/colors": "workspace:*",
     "@frogpond/toolbar": "workspace:*",
-    "@frogpond/touchable": "workspace:*",
     "lodash": "4.18.1"
   },
   "peerDependencies": {
-    "expo-symbols": "^57.0.2",
     "react": "^19.1.0",
     "react-native": "^0.86.2"
   }

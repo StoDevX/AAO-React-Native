@@ -20,13 +20,22 @@ type WithChildren = {children?: React.ReactNode}
 type WithModifiers = WithChildren & {modifiers?: Modifier[]}
 
 /**
- * `View` has no real `modifiers` prop -- this cast lets `Menu` stash the
- * array on it anyway, purely so a test can read `.props.modifiers` straight
- * off the host node. `react-test-renderer` records whatever props a host
+ * `View` has no real `modifiers`, `onPress`, or `accessibilityRole` props --
+ * this cast lets `Menu` and `Button` stash them on it anyway, purely so a
+ * test can read `.props.modifiers` straight off the host node, or press it
+ * via `fireEvent.press`. `react-test-renderer` records whatever props a host
  * element is given, real RN prop or not; nothing here reaches a native
  * bridge that would reject it.
  */
-const ViewWithModifiers = View as unknown as React.ComponentType<WithModifiers & {testID?: string}>
+const ViewWithModifiers = View as unknown as React.ComponentType<
+	WithModifiers & {
+		accessible?: boolean
+		accessibilityLabel?: string
+		accessibilityRole?: string
+		onPress?: () => void
+		testID?: string
+	}
+>
 
 export const buttonStyle = (style: string): Modifier => ({$type: 'buttonStyle', style})
 
@@ -233,15 +242,38 @@ export function Image({
  * `ButtonProps` documents that children must be nested elements, not plain
  * strings; the throw below mirrors that constraint instead of silently
  * accepting what the real component would reject (see the event-list mock
- * this one is modelled on).
+ * this one is modelled on). `label` is `filter-sheet.tsx`'s anchor trigger's
+ * own text -- the same contract `Menu.label` has -- so it gets the same
+ * treatment: reported as the accessible name (`getByRole('button', {name})`
+ * finds it, the way `getByRole` already finds a real `Touchable`'s
+ * `accessibilityLabel`), and `modifiers` stashed on the same host node,
+ * unexamined, so a test can compare a sheet's anchor against `FilterMenu`'s
+ * trigger by identity, the same way `Menu`'s testID does for menus.
  */
 export function Button({
 	children,
+	label,
+	modifiers,
 	onPress,
-}: WithChildren & {onPress?: () => void}): React.ReactNode {
+}: WithModifiers & {label?: string; onPress?: () => void}): React.ReactNode {
 	if (typeof children === 'string') {
 		throw new Error('Button children must be nested elements, not a plain string')
 	}
 
-	return <Pressable onPress={onPress}>{children}</Pressable>
+	return (
+		<ViewWithModifiers
+			accessibilityLabel={label}
+			accessibilityRole="button"
+			// `RNTL`'s `getByRole` only considers an element an accessibility
+			// element -- and so a candidate at all -- once `accessible` is
+			// explicitly set; a bare `View` (what this cast really is) defaults to
+			// `false`, unlike a real `Button`'s native host view.
+			accessible={true}
+			modifiers={modifiers}
+			onPress={onPress}
+			testID={label ? `button:${label}` : undefined}
+		>
+			{children ?? (label ? <RNText>{label}</RNText> : null)}
+		</ViewWithModifiers>
+	)
 }

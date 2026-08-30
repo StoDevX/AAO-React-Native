@@ -35,17 +35,33 @@ export const shapes = {
 	circle: () => ({type: 'circle'}) as const,
 }
 
+/**
+ * An `accessibilityLabel` modifier overrides whatever a component would
+ * otherwise announce -- `food-item-row.tsx`'s `Button` uses one to read the
+ * dietary tags a bare label/children wouldn't mention. `Button` below prefers
+ * this over its own `label` prop for the same reason the real component does:
+ * the modifier is the explicit override.
+ */
 function labelOf(modifiers?: Modifier[]): string | undefined {
 	let found = modifiers?.find((m) => m.$type === 'accessibilityLabel')
 	return found?.value as string | undefined
 }
 
 /**
- * `View` has no real `modifiers` prop; this cast lets `Menu` stash the array
- * on it anyway, purely so a test can read `.props.modifiers` straight off
- * the host node found by `testID`.
+ * `View` has no real `modifiers`, `onPress`, or `accessibilityRole` props;
+ * this cast lets `Menu` and `Button` stash them on it anyway, purely so a
+ * test can read `.props.modifiers` straight off the host node found by
+ * `testID`, or press it via `fireEvent.press`.
  */
-const ViewWithModifiers = View as unknown as React.ComponentType<WithModifiers & {testID?: string}>
+const ViewWithModifiers = View as unknown as React.ComponentType<
+	WithModifiers & {
+		accessible?: boolean
+		accessibilityLabel?: string
+		accessibilityRole?: string
+		onPress?: () => void
+		testID?: string
+	}
+>
 
 export function Host({children}: WithModifiers): React.ReactNode {
 	return <View>{children}</View>
@@ -106,19 +122,28 @@ List.ForEach = function ListForEach({children}: WithModifiers): React.ReactNode 
 	return <View>{children}</View>
 }
 /**
- * Mounts `children` only while `isPresented`, matching the real component --
- * `filter-sheet.tsx` relies on that to keep a closed sheet's rows out of the
- * tree.
+ * Keeps `anchor` mounted regardless of `isPresented` (it's the trigger,
+ * rendered in place -- `filter-sheet.tsx` relies on that so the anchor
+ * `Button` survives a dismiss) and mounts `children` only while presented,
+ * matching the real component -- `filter-sheet.tsx` relies on that to keep a
+ * closed sheet's rows out of the tree.
  */
 export function BottomSheet({
+	anchor,
 	children,
 	isPresented,
 }: WithModifiers & {
+	anchor?: React.ReactNode
 	isPresented: boolean
 	onDismiss?: () => void
 	onIsPresentedChange?: (isPresented: boolean) => void
 }): React.ReactNode {
-	return <View>{isPresented ? children : null}</View>
+	return (
+		<View>
+			{anchor}
+			{isPresented ? children : null}
+		</View>
+	)
 }
 /**
  * `label` may legitimately be a string -- `MenuProps.label` is documented as
@@ -176,21 +201,40 @@ export function Toggle({
 /**
  * `children` must be nested elements, not a plain string: the throw below
  * mirrors that constraint instead of silently accepting what the real
- * component would reject.
+ * component would reject. `label` is a `Button` used as `BottomSheet`'s
+ * `anchor`'s own text -- the same contract `Menu.label` has -- so absent an
+ * `accessibilityLabel` modifier override (`labelOf`), it becomes the
+ * accessible name too (`getByRole('button', {name})` finds it), with
+ * `modifiers` stashed on the same host node so a test can compare it against
+ * `FilterMenu`'s trigger by identity.
  */
 export function Button({
 	children,
+	label,
 	modifiers,
 	onPress,
-}: WithModifiers & {onPress?: () => void}): React.ReactNode {
+}: WithModifiers & {label?: string; onPress?: () => void}): React.ReactNode {
 	if (typeof children === 'string') {
 		throw new Error('Button children must be nested elements, not a plain string')
 	}
 
+	let accessibleName = labelOf(modifiers) ?? label
+
 	return (
-		<Pressable accessibilityLabel={labelOf(modifiers)} onPress={onPress}>
-			{children}
-		</Pressable>
+		<ViewWithModifiers
+			accessibilityLabel={accessibleName}
+			accessibilityRole="button"
+			// `RNTL`'s `getByRole` only considers an element an accessibility
+			// element -- and so a candidate at all -- once `accessible` is
+			// explicitly set; a bare `View` (what this cast really is) defaults to
+			// `false`, unlike a real `Button`'s native host view.
+			accessible={true}
+			modifiers={modifiers}
+			onPress={onPress}
+			testID={label ? `button:${label}` : undefined}
+		>
+			{children ?? (label ? <RNText>{label}</RNText> : null)}
+		</ViewWithModifiers>
 	)
 }
 /** `uiImage` is a local path; the mock only records that one was asked for. */

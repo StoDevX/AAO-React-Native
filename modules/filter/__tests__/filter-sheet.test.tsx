@@ -3,6 +3,7 @@ import {describe, expect, jest, test} from '@jest/globals'
 import {fireEvent, render, screen} from '@testing-library/react-native'
 
 import {FilterSheet} from '../filter-sheet'
+import {ACTIVE_TRIGGER_MODIFIERS, INACTIVE_TRIGGER_MODIFIERS} from '../filter-menu'
 import type {FilterIcon, ListItemSpecType, ListType} from '../types'
 
 jest.mock('@expo/ui/swift-ui', () => {
@@ -16,6 +17,11 @@ jest.mock('@expo/ui/swift-ui/modifiers', () => {
 
 type Row = {x: string}
 
+// Matches every `listFilter` fixture below -- `FilterSheet` owns its
+// presentation now, so every test has to open the sheet via this exact label
+// before it can see or tap a row.
+const TITLE = 'Departments'
+
 function listFilter(
 	mode: 'AND' | 'OR',
 	options: ListItemSpecType[],
@@ -26,9 +32,13 @@ function listFilter(
 		type: 'list',
 		key: 'k',
 		enabled: false,
-		spec: {title: 'Departments', options, selected, mode, displayTitle},
+		spec: {title: TITLE, options, selected, mode, displayTitle},
 		apply: {key: 'x'},
 	}
+}
+
+async function openSheet() {
+	await fireEvent.press(screen.getByRole('button', {name: TITLE}))
 }
 
 async function dismiss() {
@@ -36,16 +46,63 @@ async function dismiss() {
 }
 
 describe('FilterSheet', () => {
-	test('every option becomes a row', async () => {
+	test('renders its own trigger button, unopened, before any row is visible', async () => {
+		let options = [{title: 'A'}, {title: 'B'}]
+		await render(
+			<FilterSheet
+				filter={listFilter('AND', options, [])}
+				isActive={false}
+				onChange={jest.fn()}
+				title={TITLE}
+			/>,
+		)
+
+		expect(screen.getByRole('button', {name: TITLE})).toBeTruthy()
+		expect(screen.queryByText('A')).toBeNull()
+	})
+
+	// Compared by identity against `filter-menu.tsx`'s own exported constants,
+	// not a literal shape, so the mock's invented `Modifier` representation
+	// can't leak into what this asserts -- the same discipline
+	// `filter-menu.test.tsx` uses for `Menu`'s trigger.
+	test('marks its trigger with the inactive modifiers when isActive is false', async () => {
+		await render(
+			<FilterSheet
+				filter={listFilter('AND', [{title: 'A'}], [])}
+				isActive={false}
+				onChange={jest.fn()}
+				title={TITLE}
+			/>,
+		)
+
+		expect(screen.getByTestId(`button:${TITLE}`).props.modifiers).toBe(INACTIVE_TRIGGER_MODIFIERS)
+	})
+
+	test('marks its trigger with the active modifiers when isActive is true', async () => {
+		await render(
+			<FilterSheet
+				filter={listFilter('AND', [{title: 'A'}], [])}
+				isActive={true}
+				onChange={jest.fn()}
+				title={TITLE}
+			/>,
+		)
+
+		expect(screen.getByTestId(`button:${TITLE}`).props.modifiers).toBe(ACTIVE_TRIGGER_MODIFIERS)
+	})
+
+	test('every option becomes a row once opened', async () => {
 		let options = [{title: 'A'}, {title: 'B'}, {title: 'C'}]
 		await render(
 			<FilterSheet
 				filter={listFilter('AND', options, [])}
-				isPresented={true}
+				isActive={false}
 				onChange={jest.fn()}
-				onDismiss={jest.fn()}
+				title={TITLE}
 			/>,
 		)
+
+		await openSheet()
 
 		expect(screen.getByText('A')).toBeTruthy()
 		expect(screen.getByText('B')).toBeTruthy()
@@ -57,11 +114,13 @@ describe('FilterSheet', () => {
 		await render(
 			<FilterSheet
 				filter={listFilter('OR', options, [])}
-				isPresented={true}
+				isActive={false}
 				onChange={jest.fn()}
-				onDismiss={jest.fn()}
+				title={TITLE}
 			/>,
 		)
+
+		await openSheet()
 
 		expect(screen.getByText('Show All')).toBeTruthy()
 	})
@@ -71,11 +130,13 @@ describe('FilterSheet', () => {
 		await render(
 			<FilterSheet
 				filter={listFilter('AND', options, [])}
-				isPresented={true}
+				isActive={false}
 				onChange={jest.fn()}
-				onDismiss={jest.fn()}
+				title={TITLE}
 			/>,
 		)
+
+		await openSheet()
 
 		expect(screen.queryByText('Show All')).toBeNull()
 	})
@@ -86,12 +147,13 @@ describe('FilterSheet', () => {
 		await render(
 			<FilterSheet
 				filter={listFilter('AND', options, [{title: 'A'}])}
-				isPresented={true}
+				isActive={false}
 				onChange={onChange}
-				onDismiss={jest.fn()}
+				title={TITLE}
 			/>,
 		)
 
+		await openSheet()
 		await fireEvent.press(screen.getByText('B'))
 		await dismiss()
 
@@ -112,12 +174,13 @@ describe('FilterSheet', () => {
 		await render(
 			<FilterSheet
 				filter={listFilter('OR', options, [{title: 'A'}])}
-				isPresented={true}
+				isActive={false}
 				onChange={onChange}
-				onDismiss={jest.fn()}
+				title={TITLE}
 			/>,
 		)
 
+		await openSheet()
 		await fireEvent.press(screen.getByText('Show All'))
 		await dismiss()
 
@@ -126,19 +189,19 @@ describe('FilterSheet', () => {
 		)
 	})
 
-	test('dismissing emits the accumulated filter once, not once per tap', async () => {
+	test('dismissing emits the accumulated filter once, not once per tap, and closes the sheet', async () => {
 		let onChange = jest.fn()
-		let onDismiss = jest.fn()
 		let options = [{title: 'A'}, {title: 'B'}, {title: 'C'}]
 		await render(
 			<FilterSheet
 				filter={listFilter('AND', options, [])}
-				isPresented={true}
+				isActive={false}
 				onChange={onChange}
-				onDismiss={onDismiss}
+				title={TITLE}
 			/>,
 		)
 
+		await openSheet()
 		await fireEvent.press(screen.getByText('A'))
 		await fireEvent.press(screen.getByText('B'))
 		await fireEvent.press(screen.getByText('C'))
@@ -148,12 +211,17 @@ describe('FilterSheet', () => {
 		await dismiss()
 
 		expect(onChange).toHaveBeenCalledTimes(1)
-		expect(onDismiss).toHaveBeenCalledTimes(1)
 		expect(onChange).toHaveBeenCalledWith(
 			expect.objectContaining({
 				spec: expect.objectContaining({selected: [{title: 'A'}, {title: 'B'}, {title: 'C'}]}),
 			}),
 		)
+		// The dismiss closed the sheet -- the rows it just tapped are gone, and
+		// only the trigger remains. `onDismiss` used to be the prop this proved
+		// through; now the sheet owns `isPresented` itself, so the closed rows
+		// are the only outside signal a test has.
+		expect(screen.queryByText('A')).toBeNull()
+		expect(screen.getByRole('button', {name: TITLE})).toBeTruthy()
 	})
 
 	test('draws the icon iconFor returns, and nothing for options it returns null for', async () => {
@@ -165,11 +233,13 @@ describe('FilterSheet', () => {
 			<FilterSheet
 				filter={listFilter('AND', options, [])}
 				iconFor={iconFor}
-				isPresented={true}
+				isActive={false}
 				onChange={jest.fn()}
-				onDismiss={jest.fn()}
+				title={TITLE}
 			/>,
 		)
+
+		await openSheet()
 
 		expect(screen.getByLabelText('icon:sfSymbol:leaf')).toBeTruthy()
 		// Excludes the checkmark: nothing is selected in this fixture, so it
@@ -189,11 +259,13 @@ describe('FilterSheet', () => {
 			<FilterSheet
 				filter={listFilter('AND', options, [])}
 				iconFor={iconFor}
-				isPresented={true}
+				isActive={false}
 				onChange={jest.fn()}
-				onDismiss={jest.fn()}
+				title={TITLE}
 			/>,
 		)
+
+		await openSheet()
 
 		expect(screen.getByLabelText('icon:localFile:file:///tmp/vegan.png')).toBeTruthy()
 	})
@@ -202,9 +274,9 @@ describe('FilterSheet', () => {
 		await render(
 			<FilterSheet
 				filter={listFilter('AND', [], [])}
-				isPresented={true}
+				isActive={false}
 				onChange={jest.fn()}
-				onDismiss={jest.fn()}
+				title={TITLE}
 			/>,
 		)
 
@@ -212,28 +284,23 @@ describe('FilterSheet', () => {
 	})
 
 	test('reopening re-seeds from the incoming filter, and dismissing it again re-emits', async () => {
-		// Neither the render-time re-seed (`:64-70`) nor the effect that resets
-		// the emit guard on open (`:72-76`) is exercised by a single
-		// open-then-dismiss -- deleting either still leaves every other test
-		// green. This drives a second presentation to cover both: the reopened
-		// sheet must reflect `secondFilter`, not the first presentation's
-		// selections, and its own dismissal must emit on its own, not be a
-		// silent no-op left over from the first guard.
+		// Neither the seed-on-open (`openSheet`'s `setLocal(filter)`) nor the
+		// emit guard's reset is exercised by a single open-then-dismiss --
+		// deleting either still leaves every other test green. This drives a
+		// second presentation to cover both: the reopened sheet must reflect
+		// `secondFilter`, not the first presentation's selections, and its own
+		// dismissal must emit on its own, not be a silent no-op left over from
+		// the first guard.
 		let onChange = jest.fn()
-		let onDismiss = jest.fn()
 		let options = [{title: 'A'}, {title: 'B'}]
 		let firstFilter = listFilter('AND', options, [{title: 'A'}])
 		let secondFilter = listFilter('AND', options, [{title: 'B'}])
 
 		let {rerender} = await render(
-			<FilterSheet
-				filter={firstFilter}
-				isPresented={true}
-				onChange={onChange}
-				onDismiss={onDismiss}
-			/>,
+			<FilterSheet filter={firstFilter} isActive={false} onChange={onChange} title={TITLE} />,
 		)
 
+		await openSheet()
 		await dismiss()
 		expect(onChange).toHaveBeenCalledTimes(1)
 		expect(onChange).toHaveBeenNthCalledWith(
@@ -241,27 +308,16 @@ describe('FilterSheet', () => {
 			expect.objectContaining({spec: expect.objectContaining({selected: [{title: 'A'}]})}),
 		)
 
+		// `filter` changing while the sheet sits closed -- the parent applying
+		// some other update -- must not leak into the next presentation.
 		await rerender(
-			<FilterSheet
-				filter={firstFilter}
-				isPresented={false}
-				onChange={onChange}
-				onDismiss={onDismiss}
-			/>,
-		)
-		await rerender(
-			<FilterSheet
-				filter={secondFilter}
-				isPresented={true}
-				onChange={onChange}
-				onDismiss={onDismiss}
-			/>,
+			<FilterSheet filter={secondFilter} isActive={false} onChange={onChange} title={TITLE} />,
 		)
 
+		await openSheet()
 		await dismiss()
 
 		expect(onChange).toHaveBeenCalledTimes(2)
-		expect(onDismiss).toHaveBeenCalledTimes(2)
 		expect(onChange).toHaveBeenNthCalledWith(
 			2,
 			expect.objectContaining({spec: expect.objectContaining({selected: [{title: 'B'}]})}),
@@ -273,11 +329,13 @@ describe('FilterSheet', () => {
 		await render(
 			<FilterSheet
 				filter={listFilter('AND', options, [], false)}
-				isPresented={true}
+				isActive={false}
 				onChange={jest.fn()}
-				onDismiss={jest.fn()}
+				title={TITLE}
 			/>,
 		)
+
+		await openSheet()
 
 		expect(screen.getByText('Biology')).toBeTruthy()
 		expect(screen.queryByText('BIO')).toBeNull()

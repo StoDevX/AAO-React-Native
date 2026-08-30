@@ -7,9 +7,8 @@ import {FilterMenuToolbar} from '../filter-menu-toolbar'
 import type {FilterIcon, FilterType, ListItemSpecType} from '@frogpond/filter'
 import {INACTIVE_TRIGGER_MODIFIERS} from '@frogpond/filter/filter-menu'
 
-jest.mock('expo-symbols', () => ({SymbolView: 'SymbolView'}))
-// `@frogpond/filter`'s barrel still reaches the popover's SwiftUI picker,
-// which cannot mount under Jest.
+// `@frogpond/filter`'s `FilterMenu`/`FilterSheet` render `@expo/ui/swift-ui`
+// directly, which cannot mount under Jest.
 jest.mock('@expo/ui/swift-ui', () => {
 	// oxlint-disable-next-line typescript/no-require-imports
 	return require('./expo-ui-mock') as typeof import('./expo-ui-mock')

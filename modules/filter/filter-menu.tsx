@@ -1,9 +1,13 @@
 import * as React from 'react'
 import {Host, Menu, Toggle} from '@expo/ui/swift-ui'
-import {accessibilityAddTraits, buttonStyle} from '@expo/ui/swift-ui/modifiers'
 import isEqual from 'lodash/isEqual'
 
 import {toggleAll, toggleOption} from './lib/select-options'
+import {
+	ACTIVE_TRIGGER_MODIFIERS,
+	INACTIVE_TRIGGER_MODIFIERS,
+	triggerModifiers,
+} from './lib/trigger-modifiers'
 import type {FilterType} from './types'
 
 type Props<T extends object> = {
@@ -12,22 +16,11 @@ type Props<T extends object> = {
 	onChange: (filter: FilterType<T>) => void
 }
 
-// Hoisted so an inactive/active render reuses the same modifier array rather
-// than allocating one per render. `borderedProminent` is SwiftUI's own
-// emphasis for a control that's "on" -- it tracks the system accent colour,
-// light/dark mode, and contrast settings on its own, which a hardcoded tint
-// would not. `isSelected` carries the same fact to VoiceOver as
-// `accessibilityAddTraits`'s only trait for it -- the visual and spoken
-// signal are set together so they can't drift apart.
-export const INACTIVE_TRIGGER_MODIFIERS = [buttonStyle('bordered')]
-export const ACTIVE_TRIGGER_MODIFIERS = [
-	buttonStyle('borderedProminent'),
-	accessibilityAddTraits(['isSelected']),
-]
-
-function triggerModifiers(isActive: boolean) {
-	return isActive ? ACTIVE_TRIGGER_MODIFIERS : INACTIVE_TRIGGER_MODIFIERS
-}
+// Re-exported for `filter-sheet.tsx`'s anchor `Button` -- see
+// `./lib/trigger-modifiers` for why the two are shared rather than each
+// owning a copy -- and for every test that compares a trigger's modifiers by
+// identity against this module's own constants.
+export {ACTIVE_TRIGGER_MODIFIERS, INACTIVE_TRIGGER_MODIFIERS}
 
 /**
  * A short filter as one native pull-down menu. A `Toggle` per item gives the

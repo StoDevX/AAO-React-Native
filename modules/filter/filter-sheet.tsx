@@ -5,12 +5,15 @@ import isEqual from 'lodash/isEqual'
 import type {SFSymbol} from 'sf-symbols-typescript'
 
 import {toggleAll, toggleOption} from './lib/select-options'
+import {triggerModifiers} from './lib/trigger-modifiers'
 import type {FilterIcon, ListItemSpecType, ListType} from './types'
 
 type Props<T extends object> = {
 	filter: ListType<T>
-	isPresented: boolean
-	onDismiss: () => void
+	isActive: boolean
+	/// The trigger `Button`'s own label -- a sheet has no built-in trigger the
+	/// way a `Menu`'s `label` is one, so this component draws its own.
+	title: string
 	onChange: (filter: ListType<T>) => void
 	/// Draws whatever `iconFor` returns for an option; this component never
 	/// resolves an icon itself. See the `FilterIcon` contract in `types.ts`.
@@ -32,48 +35,44 @@ const LOCAL_ICON_MODIFIERS = [resizable(), frame({width: 20, height: 20})]
 const FILL_LEADING = [frame({maxWidth: Infinity, alignment: 'leading'})]
 
 /**
- * A long filter -- or one carrying icons -- as a sheet of selectable rows.
- * Taps accumulate in local state; the filter `toggleOption`/`toggleAll` would
- * produce is only handed to `onChange` once, on dismissal, rather than once
- * per row -- a sheet is dismissed as one gesture, not committed row by row.
+ * A long filter -- or one carrying icons -- as a sheet of selectable rows,
+ * anchored to its own trigger `Button`, styled identically to `FilterMenu`'s
+ * (see `./lib/trigger-modifiers`) so the two presentations aren't
+ * distinguishable by looks alone. Taps accumulate in local state; the filter
+ * `toggleOption`/`toggleAll` would produce is only handed to `onChange` once,
+ * on dismissal, rather than once per row -- a sheet is dismissed as one
+ * gesture, not committed row by row.
  */
 export function FilterSheet<T extends object>({
 	filter,
-	isPresented,
-	onDismiss,
+	isActive,
+	title,
 	onChange,
 	iconFor,
 }: Props<T>): React.ReactNode {
+	let [isPresented, setIsPresented] = React.useState(false)
 	let [local, setLocal] = React.useState(filter)
 	// Guards against a second emission for the same presentation. Only
-	// `onIsPresentedChange` drives this -- `BottomSheet.onDismiss` is left
-	// unwired below, deliberately: it fires after the dismiss *animation*
-	// finishes, measurably later than the state change, and a reopen inside
-	// that gap raced this guard's reset against the stale, deferred call --
-	// emitting a second `onChange` and closing the sheet the user had just
-	// reopened. `onIsPresentedChange` fires with the state change itself, the
-	// same signal a SwiftUI `isPresented` binding uses for every dismissal
-	// path, so it isn't subject to that lag. Reset in the effect below, not
-	// during render -- a ref must not be written there.
+	// `openSheet`/`emitAndDismiss` below touch this -- `BottomSheet.onDismiss`
+	// is left unwired below, deliberately: it fires after the dismiss
+	// *animation* finishes, measurably later than the state change, and a
+	// reopen inside that gap raced this guard's reset against the stale,
+	// deferred call -- emitting a second `onChange` and closing the sheet the
+	// user had just reopened. `onIsPresentedChange` fires with the state
+	// change itself, the same signal a SwiftUI `isPresented` binding uses for
+	// every dismissal path, so it isn't subject to that lag.
 	let hasEmitted = React.useRef(false)
 
-	// Re-seeds `local` from the incoming `filter` each time the sheet opens,
-	// so a reopen picks up whatever changed while it was closed. Adjusting
-	// state during render, rather than in an effect, avoids the extra
-	// render an effect's setState would otherwise cost on every open.
-	let [prevIsPresented, setPrevIsPresented] = React.useState(isPresented)
-	if (isPresented !== prevIsPresented) {
-		setPrevIsPresented(isPresented)
-		if (isPresented) {
-			setLocal(filter)
-		}
-	}
-
-	React.useEffect(() => {
-		if (isPresented) {
-			hasEmitted.current = false
-		}
-	}, [isPresented])
+	// The anchor `Button` is the only thing that opens this sheet, so this is
+	// the one place `local` needs to catch up with `filter` (a reopen picks up
+	// whatever changed while it was closed) and the emit guard needs
+	// resetting -- no effect keyed on `isPresented` is needed, since nothing
+	// else can flip it to `true`.
+	let openSheet = React.useCallback(() => {
+		hasEmitted.current = false
+		setLocal(filter)
+		setIsPresented(true)
+	}, [filter])
 
 	let emitAndDismiss = React.useCallback(() => {
 		if (hasEmitted.current) {
@@ -81,13 +80,13 @@ export function FilterSheet<T extends object>({
 		}
 		hasEmitted.current = true
 		onChange(local)
-		onDismiss()
-	}, [local, onChange, onDismiss])
+		setIsPresented(false)
+	}, [local, onChange])
 
 	let {spec} = local
 
-	// Matches the popover's rule, and `FilterMenu`'s: a list with nothing in it
-	// has nothing to show.
+	// Matches the popover's rule, and `FilterMenu`'s: a list with nothing in
+	// it has nothing to show -- no rows, and no trigger to open them with.
 	if (spec.options.length === 0) {
 		return null
 	}
@@ -97,6 +96,7 @@ export function FilterSheet<T extends object>({
 	return (
 		<Host matchContents={true}>
 			<BottomSheet
+				anchor={<Button label={title} modifiers={triggerModifiers(isActive)} onPress={openSheet} />}
 				isPresented={isPresented}
 				onIsPresentedChange={(nextIsPresented) => {
 					if (!nextIsPresented) {

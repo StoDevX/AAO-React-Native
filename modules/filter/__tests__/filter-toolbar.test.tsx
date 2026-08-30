@@ -6,7 +6,6 @@ import {FilterToolbar} from '../filter-toolbar'
 import {ACTIVE_TRIGGER_MODIFIERS, INACTIVE_TRIGGER_MODIFIERS} from '../filter-menu'
 import type {FilterIcon, FilterType, ListItemSpecType} from '../types'
 
-jest.mock('expo-symbols', () => ({SymbolView: 'SymbolView'}))
 jest.mock('@expo/ui/swift-ui', () => {
 	// oxlint-disable-next-line typescript/no-require-imports
 	return require('./expo-ui-mock') as typeof import('./expo-ui-mock')
@@ -130,16 +129,15 @@ describe('FilterToolbar', () => {
 	})
 
 	// `FilterToolbar` maps `isActive={filter.enabled}` for every shape --
-	// covered here for a sheet-shaped filter (still a plain button, so
-	// `accessibilityState` reads it directly) and a menu-shaped one (the
-	// `Menu`'s own label is the trigger, so it's `buttonStyle` that carries
-	// the same fact).
+	// covered here for a sheet-shaped filter and a menu-shaped one. Both
+	// triggers carry the same fact the same way: `FilterSheet`'s anchor
+	// `Button` and `Menu`'s own label share `buttonStyle` modifiers (see
+	// `./lib/trigger-modifiers`), so a sheet trigger's `isActive` shows up as
+	// which modifiers it was given, the same as a menu's.
 	test('threads filter.enabled into a sheet trigger as isActive', async () => {
 		await render(<FilterToolbar filters={[SHEET_FILTER]} onPopoverDismiss={jest.fn()} />)
 
-		expect(screen.getByRole('button', {name: 'Departments'}).props.accessibilityState).toEqual({
-			selected: true,
-		})
+		expect(screen.getByTestId('button:Departments').props.modifiers).toBe(ACTIVE_TRIGGER_MODIFIERS)
 	})
 
 	test('threads filter.enabled into a menu trigger as isActive', async () => {

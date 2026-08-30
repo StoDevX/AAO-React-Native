@@ -649,18 +649,9 @@ importers:
 
   modules/filter:
     dependencies:
-      '@frogpond/colors':
-        specifier: workspace:*
-        version: link:../colors
       '@frogpond/toolbar':
         specifier: workspace:*
         version: link:../toolbar
-      '@frogpond/touchable':
-        specifier: workspace:*
-        version: link:../touchable
-      expo-symbols:
-        specifier: ^57.0.2
-        version: 57.0.2(expo-font@57.0.1)(expo@57.0.17)(react-native@0.86.2)(react@19.2.8)
       lodash:
         specifier: 4.18.1
         version: 4.18.1

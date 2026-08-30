@@ -6,7 +6,6 @@ import {FilterToolbarButton} from '../filter-toolbar-button'
 import {ACTIVE_TRIGGER_MODIFIERS, INACTIVE_TRIGGER_MODIFIERS} from '../filter-menu'
 import type {FilterIcon, FilterType, ListItemSpecType} from '../types'
 
-jest.mock('expo-symbols', () => ({SymbolView: 'SymbolView'}))
 jest.mock('@expo/ui/swift-ui', () => {
 	// oxlint-disable-next-line typescript/no-require-imports
 	return require('./expo-ui-mock') as typeof import('./expo-ui-mock')
@@ -123,9 +122,14 @@ describe('FilterToolbarButton, menu shape', () => {
 })
 
 describe('FilterToolbarButton, sheet shape', () => {
-	// A sheet has no trigger of its own, so this component still renders its
-	// own button, and still marks it active or inactive.
-	test('marks its trigger unselected when isActive is false', async () => {
+	// A sheet's `BottomSheet` anchors its own trigger `Button` now (no more
+	// separate React Native `Touchable`), styled identically to `FilterMenu`'s
+	// -- so `isActive` shows up the same way it does for a menu: as which
+	// modifiers the trigger was given. Compared by identity against
+	// `filter-menu.tsx`'s own exported constants, not a literal shape, so the
+	// mock's invented `Modifier` representation can't leak into what this
+	// asserts.
+	test('marks its trigger with the inactive modifiers when isActive is false', async () => {
 		await render(
 			<FilterToolbarButton
 				filter={sheetFilter(false)}
@@ -135,11 +139,11 @@ describe('FilterToolbarButton, sheet shape', () => {
 			/>,
 		)
 
-		let button = screen.getByRole('button', {name: 'Departments'})
-		expect(button.props.accessibilityState).toEqual({selected: false})
+		let trigger = screen.getByTestId('button:Departments')
+		expect(trigger.props.modifiers).toBe(INACTIVE_TRIGGER_MODIFIERS)
 	})
 
-	test('marks its trigger selected when isActive is true', async () => {
+	test('marks its trigger with the active modifiers when isActive is true', async () => {
 		await render(
 			<FilterToolbarButton
 				filter={sheetFilter(true)}
@@ -149,8 +153,29 @@ describe('FilterToolbarButton, sheet shape', () => {
 			/>,
 		)
 
-		let button = screen.getByRole('button', {name: 'Departments'})
-		expect(button.props.accessibilityState).toEqual({selected: true})
+		let trigger = screen.getByTestId('button:Departments')
+		expect(trigger.props.modifiers).toBe(ACTIVE_TRIGGER_MODIFIERS)
+	})
+
+	// The dispatcher's whole job, for this shape, is wiring the sheet's own
+	// trigger up at all -- a mutation that dropped the anchor, or the
+	// `onPress` that opens it, left every other test in this block green,
+	// because nothing else here proves a press actually reveals a row.
+	test('pressing the trigger opens the sheet', async () => {
+		await render(
+			<FilterToolbarButton
+				filter={sheetFilter(false)}
+				isActive={false}
+				onPopoverDismiss={jest.fn()}
+				title="Departments"
+			/>,
+		)
+
+		expect(screen.queryByText('Dept 0')).toBeNull()
+
+		await fireEvent.press(screen.getByRole('button', {name: 'Departments'}))
+
+		expect(screen.getByText('Dept 0')).toBeTruthy()
 	})
 
 	// `iconFor` is forwarded to the sheet only -- covering it here, not just
