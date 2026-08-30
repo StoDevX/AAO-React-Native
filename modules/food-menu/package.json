@@ -10,19 +10,18 @@
   },
   "dependencies": {
     "@callstack/react-theme-provider": "3.0.9",
+    "@expo/ui": "57.0.14",
     "@frogpond/colors": "workspace:*",
     "@frogpond/constants": "workspace:*",
     "@frogpond/filter": "workspace:*",
     "@frogpond/html-lib": "workspace:*",
     "@frogpond/layout": "workspace:*",
     "@frogpond/lists": "workspace:*",
-    "@frogpond/notice": "workspace:*",
     "@frogpond/toolbar": "workspace:*",
     "lodash": "4.18.1"
   },
   "peerDependencies": {
     "expo-asset": "^57.0.15",
-    "expo-symbols": "^57.0.2",
     "moment": "^2.30.1",
     "moment-timezone": "^0.6.3",
     "react": "^19.1.0",

@@ -688,6 +688,9 @@ importers:
       '@callstack/react-theme-provider':
         specifier: 3.0.9
         version: 3.0.9(react@19.2.8)
+      '@expo/ui':
+        specifier: 57.0.14
+        version: 57.0.14(@babel/core@7.29.7)(expo@57.0.17)(react-dom@19.2.3)(react-native-worklets@0.10.4)(react-native@0.86.2)(react@19.2.8)
       '@frogpond/colors':
         specifier: workspace:*
         version: link:../colors
@@ -706,18 +709,12 @@ importers:
       '@frogpond/lists':
         specifier: workspace:*
         version: link:../lists
-      '@frogpond/notice':
-        specifier: workspace:*
-        version: link:../notice
       '@frogpond/toolbar':
         specifier: workspace:*
         version: link:../toolbar
       expo-asset:
         specifier: ^57.0.15
         version: 57.0.15(expo@57.0.17)(react-native@0.86.2)(react@19.2.8)(supports-color@8.1.1)(typescript@7.0.2)
-      expo-symbols:
-        specifier: ^57.0.2
-        version: 57.0.2(expo-font@57.0.1)(expo@57.0.17)(react-native@0.86.2)(react@19.2.8)
       lodash:
         specifier: 4.18.1
         version: 4.18.1
