@@ -24,7 +24,6 @@ struct MenusScreen: Screen {
 		return self
 	}
 
-
 	@discardableResult
 	func checkStOlafCafes() -> Self {
 		for cafe in TestIdentifiers.Menus.stOlafCafes {
