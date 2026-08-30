@@ -39,11 +39,6 @@ type Props = {
 	applyFilters?: FilterFunc
 }
 
-// --- unchanged from the React Native implementation ------------------------
-// Reproduced in full rather than referenced: whoever executes this task may be
-// reading it without the old file in front of them, and these decide which
-// items survive filtering, which is not something to reconstruct from memory.
-
 const areSpecialsFiltered = (filters: Array<FilterType<MenuItemType>>): boolean =>
 	Boolean(filters.find(isSpecialsFilter))
 
@@ -91,7 +86,6 @@ const groupMenuData = (args: {
 		.filter(([_, items]) => items.length)
 		.map(([title, data]) => ({title, data}))
 }
-// --- end unchanged ---------------------------------------------------------
 
 /**
  * A station's header. Most stations are just a name, which `Section`'s own
@@ -129,9 +123,10 @@ export function FancyMenu(props: Props): React.ReactNode {
 
 	const localIcons = useLocalCorIcons(menuCorIcons)
 
-	// Built from the menu once, then owned by the user. Unchanged from the
-	// React Native implementation -- see that comment for why `now` is read
-	// only for the initial meal.
+	// Built from the menu once, then owned by the user. `now` picks the meal
+	// selected to begin with and nothing after: the screens above build a fresh
+	// Moment on each of their renders, so anything tracking it would follow
+	// every one of them and take the user's filters with it.
 	const [filters, setFilters] = useState<FilterType<MenuItemType>[]>(() =>
 		buildFilters(Object.values(foodItems), menuCorIcons, meals, now),
 	)
@@ -190,7 +185,8 @@ export function FancyMenu(props: Props): React.ReactNode {
 					modifiers={[
 						// Inset groups, as Settings has them: cards on the grouped
 						// background rather than full-bleed rows. Section headers do
-						// not pin in this style -- see the note in fancy-menu's docs.
+						// not pin in this style -- see
+						// docs/superpowers/spikes/menus-swiftui/container-check.md.
 						listStyle('insetGrouped'),
 						...(props.onRefresh
 							? [
