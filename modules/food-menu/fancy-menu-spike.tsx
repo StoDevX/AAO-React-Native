@@ -4,20 +4,20 @@ import {
 	Host,
 	HStack,
 	Image,
-	LazyVStack,
+	List,
 	RNHostView,
-	ScrollView as SwiftUIScrollView,
+	Section,
 	Spacer,
 	Text,
 	VStack,
 } from '@expo/ui/swift-ui'
 import {
 	aspectRatio,
-	background,
 	font,
 	foregroundStyle,
 	frame,
-	padding,
+	listStyle,
+	refreshable,
 	resizable,
 } from '@expo/ui/swift-ui/modifiers'
 import {Asset} from 'expo-asset'
@@ -167,27 +167,32 @@ export function SpikeMenu({foodItems, meals, menuCorIcons}: Props): React.ReactN
 
 	return (
 		<Host style={styles.host}>
-			<SwiftUIScrollView modifiers={[background(c.systemBackground)]}>
-				<LazyVStack alignment="leading">
-					{sections.map((section) => (
-						<VStack
-							key={section.title}
-							alignment="leading"
-							modifiers={[padding({leading: 16, trailing: 16, top: 12, bottom: 8})]}
-						>
-							<Text modifiers={[font({textStyle: 'headline'})]}>{section.title}</Text>
-							{section.data.map((item) => (
-								<SpikeRow
-									key={item.id}
-									corIcons={menuCorIcons}
-									item={item}
-									localIcons={localIcons}
-								/>
-							))}
-						</VStack>
-					))}
-				</LazyVStack>
-			</SwiftUIScrollView>
+			{/* The variable under test: whether a SwiftUI List pins the station
+			    headers the way the React Native SectionList does, and whether the
+			    rows still lay out inside it. `plain` is the style that pins. */}
+			<List
+				modifiers={[
+					listStyle('plain'),
+					refreshable(async () => {
+						// The spike has nothing to reload; this only proves the
+						// gesture reaches a List at all.
+						await Promise.resolve()
+					}),
+				]}
+			>
+				{sections.map((section) => (
+					<Section
+						key={section.title}
+						// A bare string would crash at mount -- `header` is a ReactNode
+						// prop and @expo/ui cannot render raw text in one.
+						header={<Text modifiers={[font({textStyle: 'headline'})]}>{section.title}</Text>}
+					>
+						{section.data.map((item) => (
+							<SpikeRow key={item.id} corIcons={menuCorIcons} item={item} localIcons={localIcons} />
+						))}
+					</Section>
+				))}
+			</List>
 		</Host>
 	)
 }
