@@ -51,7 +51,7 @@ export function FilterMenuToolbar<T extends object>({
 				{mealFilter && multipleMeals ? (
 					<FilterToolbarButton<T>
 						filter={mealFilter}
-						isActive={true}
+						isActive={false}
 						onPopoverDismiss={onPopoverDismiss}
 						title={mealFilter.spec.title}
 					/>
