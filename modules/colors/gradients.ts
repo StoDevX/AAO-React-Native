@@ -92,3 +92,15 @@ export const tanGradient: Gradient = [
 	'color(display-p3 0.7569 0.6667 0.5569)',
 	'color(display-p3 0.6392 0.549 0.4392)',
 ]
+
+// MARK: derived gradients
+//
+// Derived from a sampled gradient by preserving its inner-to-outer HSB
+// saturation ratio: paleGoldGradient's ratio is 0.859 against goldGradient's
+// 0.860, both inside the 0.78-0.94 band the sampled fifteen span.
+
+/// Derived from goldGradient.
+export const paleGoldGradient: Gradient = [
+	'color(display-p3 0.8627 0.7765 0.5804)',
+	'color(display-p3 0.7412 0.6549 0.4588)',
+]
