@@ -1,5 +1,4 @@
 import * as React from 'react'
-import {useEffect, useState} from 'react'
 import {FlatList, StyleSheet, Text} from 'react-native'
 import {Stack, useLocalSearchParams} from 'expo-router'
 import {useQuery} from '@tanstack/react-query'
@@ -15,10 +14,8 @@ import type {
 	DayOfWeek,
 	BusTimetableEntry,
 	UnprocessedBusLine,
-	BusSchedule,
 } from '../../source/features/transportation/bus/types'
 import {
-	BusStateEnum,
 	getCurrentBusIteration,
 	getScheduleForNow,
 	processBusLine,
@@ -70,19 +67,11 @@ type Props = {
 function BusStopDetailInternal(props: Props): React.ReactNode {
 	let {stop, line, now, subtitle} = props
 
-	let [_, setSchedule] = useState<BusSchedule | null>(null)
-	let [currentBusIteration, setCurrentBusIteration] = useState<number | null>(null)
-	let [status, setStatus] = useState<BusStateEnum>('none')
-
-	useEffect(() => {
-		let processedLine = processBusLine(line, now)
-		let scheduleForToday = getScheduleForNow(processedLine.schedules, now)
-		let {index, status: currentStatus} = getCurrentBusIteration(scheduleForToday, now)
-
-		setSchedule(scheduleForToday)
-		setStatus(currentStatus)
-		setCurrentBusIteration(index)
-	}, [line, now])
+	// Read straight from the props: the row statuses below are computed from
+	// these, so they have to be settled by the time the first frame draws.
+	let processedLine = processBusLine(line, now)
+	let scheduleForToday = getScheduleForNow(processedLine.schedules, now)
+	let {index: currentBusIteration, status} = getCurrentBusIteration(scheduleForToday, now)
 
 	let departureTimes = stop.departures.filter(Boolean)
 	let stopStatus = findStopStatus({

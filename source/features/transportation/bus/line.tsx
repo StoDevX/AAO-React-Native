@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {useEffect, useState} from 'react'
+import {useState} from 'react'
 import {FlatList, StyleSheet, Text, TouchableOpacity, View} from 'react-native'
 import type {BusSchedule, UnprocessedBusLine, DayOfWeek} from './types'
 import {
@@ -218,45 +218,22 @@ export function BusLine(props: Props): React.ReactNode {
 	let {line, now} = props
 	let router = useRouter()
 
-	let [schedule, setSchedule] = useState<BusSchedule | null>(null)
-	let [subtitle, setSubtitle] = useState<string>('')
-	let [currentBusIteration, setCurrentBusIteration] = useState<number | null>(null)
-	let [status, setStatus] = useState<BusStateEnum>('none')
-	let [selectedDay, setSelectedDay] = useState<DayOfWeek>(() => momentToDayOfWeek(now))
-	let [busTarget, setBusTarget] = useState<BusTarget | null>(null)
-
 	const currentDay = momentToDayOfWeek(now)
 
-	useEffect(() => {
-		const newCurrentDay = momentToDayOfWeek(now)
-		if (selectedDay === currentDay && newCurrentDay !== currentDay) {
-			setSelectedDay(newCurrentDay)
-		}
-	}, [now, selectedDay, currentDay])
+	// Only the user's own pick is state. The day shown otherwise follows the
+	// clock, so the schedule rolls over to the new day at midnight by itself.
+	let [dayOverride, setDayOverride] = useState<DayOfWeek | null>(null)
+	let selectedDay = dayOverride ?? currentDay
 
-	useEffect(() => {
-		const momentForSelectedDay = createMomentForDay(now, selectedDay)
+	const momentForSelectedDay = createMomentForDay(now, selectedDay)
 
-		let {
-			schedule: scheduleForToday,
-			subtitle: scheduleSubtitle,
-			currentBusIteration: busIteration,
-			status: currentStatus,
-		} = deriveFromProps({
-			line,
-			now: momentForSelectedDay,
-		})
-		setSchedule(scheduleForToday)
-		setSubtitle(scheduleSubtitle)
-		setStatus(currentStatus)
-		setCurrentBusIteration(busIteration)
+	let {schedule, subtitle, currentBusIteration, status} = deriveFromProps({
+		line,
+		now: momentForSelectedDay,
+	})
 
-		if (currentStatus === 'running') {
-			setBusTarget(findBusTarget(scheduleForToday, busIteration, momentForSelectedDay))
-		} else {
-			setBusTarget(null)
-		}
-	}, [line, now, selectedDay])
+	let busTarget =
+		status === 'running' ? findBusTarget(schedule, currentBusIteration, momentForSelectedDay) : null
 
 	let INFO_EL = (
 		<View style={styles.headerContainer}>
@@ -275,7 +252,7 @@ export function BusLine(props: Props): React.ReactNode {
 			<DayPickerHeader
 				accentColor={line.colors.bar}
 				currentDay={currentDay}
-				onDaySelect={setSelectedDay}
+				onDaySelect={setDayOverride}
 				selectedDay={selectedDay}
 			/>
 		</View>
@@ -294,9 +271,7 @@ export function BusLine(props: Props): React.ReactNode {
 		INFO_EL
 	)
 
-	let timetable = schedule?.timetable ?? []
-
-	const momentForSelectedDay = createMomentForDay(now, selectedDay)
+	let timetable = schedule.timetable
 
 	return (
 		<FlatList

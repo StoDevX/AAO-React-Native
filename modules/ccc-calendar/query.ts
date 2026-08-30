@@ -66,10 +66,10 @@ async function fetchCalendar(calendar: NamedCalendar, signal: AbortSignal): Prom
 	return parser.parse(body)
 }
 
-// oxlint-disable-next-line typescript/explicit-module-boundary-types
 export const namedCalendarOptions = (
 	calendar: NamedCalendar,
 	options: {eventMapper?: EventMapper} = {},
+	// oxlint-disable-next-line typescript/explicit-module-boundary-types
 ) =>
 	queryOptions({
 		queryKey: keys.named(calendar),
@@ -84,11 +84,11 @@ export const namedCalendarOptions = (
 			})),
 	})
 
-// oxlint-disable-next-line typescript/explicit-module-boundary-types
 export const namedCalendarEventOptions = (
 	calendar: NamedCalendar,
 	key: string,
 	options: {eventMapper?: EventMapper} = {},
+	// oxlint-disable-next-line typescript/explicit-module-boundary-types
 ) =>
 	queryOptions({
 		queryKey: keys.named(calendar),

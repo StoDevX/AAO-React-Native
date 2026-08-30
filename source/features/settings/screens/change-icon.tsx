@@ -46,6 +46,11 @@ export let IconSettingsView = (): React.ReactNode => {
 	}
 
 	React.useEffect(() => {
+		// Reads the icon the system currently has set, which is exactly the
+		// external-system case an effect is for. The rule counts this as a
+		// synchronous setState, but `loadCurrentIcon` awaits `getIcon()` first,
+		// so nothing is set until a later microtask.
+		// oxlint-disable-next-line react/set-state-in-effect
 		loadCurrentIcon()
 	}, [])
 

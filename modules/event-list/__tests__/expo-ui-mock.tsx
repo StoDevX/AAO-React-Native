@@ -54,7 +54,10 @@ export const shapes = {
 }
 
 export function useNativeState<T>(initial: T): {value: T} {
+	// The real hook hands back one mutable box that outlives every render, which
+	// is what a ref read straight back out gives. That read is the point here.
 	let ref = React.useRef({value: initial})
+	// oxlint-disable-next-line react/refs
 	return ref.current
 }
 

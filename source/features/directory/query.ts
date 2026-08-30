@@ -57,11 +57,11 @@ export const directoryEntriesOptions = (query: string, type: DirectorySearchType
 		staleTime,
 	})
 
-// oxlint-disable-next-line typescript/explicit-module-boundary-types
 export const directoryContactOptions = (
 	query: string,
 	type: DirectorySearchTypeEnum,
 	index: number,
+	// oxlint-disable-next-line typescript/explicit-module-boundary-types
 ) =>
 	queryOptions({
 		queryKey: keys.all(getDirectoryQuery({query, type})),

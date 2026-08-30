@@ -3,7 +3,7 @@ import {StyleSheet, SectionList} from 'react-native'
 import * as c from '@frogpond/colors'
 import {ListSeparator, ListSectionHeader} from '@frogpond/lists'
 import {NoticeView, LoadingView} from '@frogpond/notice'
-import {FilterToolbar, ListType} from '@frogpond/filter'
+import {FilterToolbar, ListType, selectedOptions} from '@frogpond/filter'
 import {StreamRow} from '../../../source/features/streaming/streams/row'
 import toPairs from 'lodash/toPairs'
 import groupBy from 'lodash/groupBy'
@@ -63,41 +63,41 @@ const filterStreams = <T extends object>(streams: StreamType[], filters: ListTyp
 export default function StreamingPage(): React.ReactNode {
 	let {data = [], error, refetch, isLoading, isRefetching, isError} = useQuery(streamsOptionsFor())
 
-	let [filters, setFilters] = React.useState<ListType<StreamType>[]>([])
+	// Only the narrowing the user asked for is state; the categories on offer
+	// come from the streams. Keeping the whole filter in state instead would tie
+	// the viewer's choice to the stream list, so a refetch that brought new
+	// streams would carry an everything-selected filter in with them.
+	let [chosenCategories, setChosenCategories] = React.useState<string[] | null>(null)
 
 	let entries = React.useMemo(() => {
 		return data.map((stream) => groupStreamsByCategoryAndDate(stream))
 	}, [data])
 
-	React.useEffect(() => {
+	let filters = React.useMemo((): ListType<StreamType>[] => {
 		let allCategories = data.map((stream) => titleCase(stream.category))
 
 		if (allCategories.length === 0) {
-			return
+			return []
 		}
 
-		let categories = [...new Set(allCategories)].sort()
-		let filterCategories = categories.map((category) => {
-			return {title: category}
-		})
+		let options = [...new Set(allCategories)].sort().map((category) => ({title: category}))
 
-		let streamFilters: ListType<StreamType>[] = [
+		return [
 			{
 				type: 'list',
 				key: 'category',
 				enabled: true,
 				spec: {
 					title: 'Categories',
-					options: filterCategories,
-					selected: filterCategories,
+					options,
+					selected: selectedOptions(options, chosenCategories),
 					mode: 'OR',
 					displayTitle: true,
 				},
 				apply: {key: 'category'},
 			},
 		]
-		setFilters(streamFilters)
-	}, [data])
+	}, [data, chosenCategories])
 
 	if (isError) {
 		return (
@@ -113,8 +113,11 @@ export default function StreamingPage(): React.ReactNode {
 		<FilterToolbar
 			filters={filters}
 			onPopoverDismiss={(newFilter) => {
-				let edited = filters.map((f) => (f.key === newFilter.key ? newFilter : f))
-				setFilters(edited as ListType<StreamType>[])
+				// The categories list is the only filter this toolbar carries.
+				if (newFilter.type !== 'list') {
+					return
+				}
+				setChosenCategories(newFilter.spec.selected.map((option) => option.title))
 			}}
 		/>
 	)
