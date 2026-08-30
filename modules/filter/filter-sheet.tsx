@@ -137,7 +137,12 @@ export function FilterSheet<T extends object>({
 				}}
 			>
 				<List>
-					<Section header={<Text>{title.toUpperCase()}</Text>}>
+					{/* `title` rather than a `header` element: it draws in the system's
+					    own section-header style, which is what `FilterMenu` gets from
+					    the same prop. A `<Text>` in `header` renders as body copy, so
+					    the two presentations would state the filter's name in visibly
+					    different type. */}
+					<Section title={title.toUpperCase()}>
 						{spec.mode === 'OR' ? (
 							<ShowAllRow
 								isSelected={allSelected}
