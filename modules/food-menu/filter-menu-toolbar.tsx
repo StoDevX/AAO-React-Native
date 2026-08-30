@@ -28,7 +28,7 @@ type Props<T extends object> = {
 	date: Moment
 	isOpen: boolean
 	title?: string
-	onPopoverDismiss: (filter: FilterType<T>) => void
+	onChange: (filter: FilterType<T>) => void
 	filters: FilterType<T>[]
 	/// Forwarded to `FilterToolbar` -- the meal picker's own button never
 	/// carries icons, so this goes no further than that.
@@ -41,7 +41,7 @@ export function FilterMenuToolbar<T extends object>({
 	title,
 	filters,
 	iconFor,
-	onPopoverDismiss,
+	onChange,
 }: Props<T>): React.ReactNode {
 	const mealFilter = filters.find((f) => f.type === 'picker')
 	const multipleMeals =
@@ -62,17 +62,13 @@ export function FilterMenuToolbar<T extends object>({
 					<FilterToolbarButton<T>
 						filter={mealFilter}
 						isActive={false}
-						onPopoverDismiss={onPopoverDismiss}
+						onChange={onChange}
 						title={mealFilter.spec.title}
 					/>
 				) : null}
 			</Toolbar>
 			{isOpen && (
-				<FilterToolbar<T>
-					filters={nonPickerFilters}
-					iconFor={iconFor}
-					onPopoverDismiss={onPopoverDismiss}
-				/>
+				<FilterToolbar<T> filters={nonPickerFilters} iconFor={iconFor} onChange={onChange} />
 			)}
 		</View>
 	)

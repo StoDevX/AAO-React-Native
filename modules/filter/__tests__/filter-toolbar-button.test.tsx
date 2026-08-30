@@ -55,7 +55,7 @@ describe('FilterToolbarButton, menu shape', () => {
 			<FilterToolbarButton
 				filter={TOGGLE_FILTER}
 				isActive={false}
-				onPopoverDismiss={jest.fn()}
+				onChange={jest.fn()}
 				title={TOGGLE_FILTER.spec.title}
 			/>,
 		)
@@ -77,7 +77,7 @@ describe('FilterToolbarButton, menu shape', () => {
 			<FilterToolbarButton
 				filter={TOGGLE_FILTER}
 				isActive={false}
-				onPopoverDismiss={jest.fn()}
+				onChange={jest.fn()}
 				title={TOGGLE_FILTER.spec.title}
 			/>,
 		)
@@ -91,7 +91,7 @@ describe('FilterToolbarButton, menu shape', () => {
 			<FilterToolbarButton
 				filter={TOGGLE_FILTER}
 				isActive={true}
-				onPopoverDismiss={jest.fn()}
+				onChange={jest.fn()}
 				title={TOGGLE_FILTER.spec.title}
 			/>,
 		)
@@ -101,40 +101,40 @@ describe('FilterToolbarButton, menu shape', () => {
 	})
 
 	// The dispatcher's whole job is to wire `onChange` through to whichever
-	// presentation it picked -- a mutation that swapped this for a no-op left
-	// every other test in the suite green, because nothing else exercises the
-	// wiring itself rather than what `FilterMenu`/`FilterSheet` do with it.
-	test('forwards a tap through to onPopoverDismiss', async () => {
-		let onPopoverDismiss = jest.fn()
+	// presentation it picked. This is the only test that exercises that wiring
+	// directly -- every other test in the suite exercises what
+	// `FilterMenu`/`FilterSheet` do with it, not whether this component forwards
+	// it at all.
+	test('forwards a tap through to onChange', async () => {
+		let onChange = jest.fn()
 		await render(
 			<FilterToolbarButton
 				filter={TOGGLE_FILTER}
 				isActive={false}
-				onPopoverDismiss={onPopoverDismiss}
+				onChange={onChange}
 				title={TOGGLE_FILTER.spec.title}
 			/>,
 		)
 
 		await fireEvent.press(screen.getByText('Vegetarian only'))
 
-		expect(onPopoverDismiss).toHaveBeenCalledWith(expect.objectContaining({enabled: true}))
+		expect(onChange).toHaveBeenCalledWith(expect.objectContaining({enabled: true}))
 	})
 })
 
 describe('FilterToolbarButton, sheet shape', () => {
-	// A sheet's `BottomSheet` anchors its own trigger `Button` now (no more
-	// separate React Native `Touchable`), styled identically to `FilterMenu`'s
-	// -- so `isActive` shows up the same way it does for a menu: as which
-	// modifiers the trigger was given. Compared by identity against
-	// `filter-menu.tsx`'s own exported constants, not a literal shape, so the
-	// mock's invented `Modifier` representation can't leak into what this
-	// asserts.
+	// A sheet's `BottomSheet` anchors its own trigger `Button`, styled
+	// identically to `FilterMenu`'s -- so `isActive` shows up the same way it
+	// does for a menu: as which modifiers the trigger was given. Compared by
+	// identity against `filter-menu.tsx`'s own exported constants, not a
+	// literal shape, so the mock's invented `Modifier` representation can't
+	// leak into what this asserts.
 	test('marks its trigger with the inactive modifiers when isActive is false', async () => {
 		await render(
 			<FilterToolbarButton
 				filter={sheetFilter(false)}
 				isActive={false}
-				onPopoverDismiss={jest.fn()}
+				onChange={jest.fn()}
 				title="Departments"
 			/>,
 		)
@@ -148,7 +148,7 @@ describe('FilterToolbarButton, sheet shape', () => {
 			<FilterToolbarButton
 				filter={sheetFilter(true)}
 				isActive={true}
-				onPopoverDismiss={jest.fn()}
+				onChange={jest.fn()}
 				title="Departments"
 			/>,
 		)
@@ -158,15 +158,15 @@ describe('FilterToolbarButton, sheet shape', () => {
 	})
 
 	// The dispatcher's whole job, for this shape, is wiring the sheet's own
-	// trigger up at all -- a mutation that dropped the anchor, or the
-	// `onPress` that opens it, left every other test in this block green,
-	// because nothing else here proves a press actually reveals a row.
+	// trigger up at all. This is the only test in this block that proves a
+	// press actually reveals a row -- every other test here only checks the
+	// trigger's own modifiers.
 	test('pressing the trigger opens the sheet', async () => {
 		await render(
 			<FilterToolbarButton
 				filter={sheetFilter(false)}
 				isActive={false}
-				onPopoverDismiss={jest.fn()}
+				onChange={jest.fn()}
 				title="Departments"
 			/>,
 		)
@@ -190,7 +190,7 @@ describe('FilterToolbarButton, sheet shape', () => {
 				filter={sheetFilter(false)}
 				iconFor={iconFor}
 				isActive={false}
-				onPopoverDismiss={jest.fn()}
+				onChange={jest.fn()}
 				title="Departments"
 			/>,
 		)

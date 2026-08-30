@@ -55,10 +55,9 @@ let EMPTY_LIST_FILTER: FilterType<Item> = {
 	apply: {key: 'dietaryTags'},
 }
 
-// Master's deleted active-filter chip row rendered an empty list selection
-// as a "No Stations" chip. `FilterMenu`/`FilterSheet` have nothing that
-// produces that string, but a fixture that could have triggered it is the
-// only way a regression back to it would be caught.
+// Neither `FilterMenu` nor `FilterSheet` renders a summary chip for an empty
+// OR-mode selection -- this fixture is what would catch a regression that
+// added one back.
 let LIST_FILTER_WITH_NO_SELECTION: FilterType<Item> = {
 	type: 'list',
 	key: 'stations',
@@ -103,7 +102,7 @@ describe('FilterToolbar', () => {
 					LIST_FILTER_WITH_NO_SELECTION,
 					SHEET_FILTER,
 				]}
-				onPopoverDismiss={jest.fn()}
+				onChange={jest.fn()}
 			/>,
 		)
 
@@ -112,16 +111,14 @@ describe('FilterToolbar', () => {
 		expect(screen.getByText('Stations')).toBeTruthy()
 		expect(screen.getByRole('button', {name: 'Departments'})).toBeTruthy()
 
-		// No chip row exists to produce this any more -- see
-		// `LIST_FILTER_WITH_NO_SELECTION`'s comment for why this fixture, of
-		// everything master's deleted chip-row test checked, is the one worth
-		// keeping.
+		// No chip row exists to produce this -- see
+		// `LIST_FILTER_WITH_NO_SELECTION`'s comment for why this fixture exists.
 		expect(screen.queryByText('No Stations')).toBeNull()
 	})
 
 	test('renders nothing for a list filter with no options', async () => {
 		await render(
-			<FilterToolbar filters={[TOGGLE_FILTER, EMPTY_LIST_FILTER]} onPopoverDismiss={jest.fn()} />,
+			<FilterToolbar filters={[TOGGLE_FILTER, EMPTY_LIST_FILTER]} onChange={jest.fn()} />,
 		)
 
 		expect(screen.getByText('Vegetarian')).toBeTruthy()
@@ -135,15 +132,13 @@ describe('FilterToolbar', () => {
 	// `./lib/trigger-modifiers`), so a sheet trigger's `isActive` shows up as
 	// which modifiers it was given, the same as a menu's.
 	test('threads filter.enabled into a sheet trigger as isActive', async () => {
-		await render(<FilterToolbar filters={[SHEET_FILTER]} onPopoverDismiss={jest.fn()} />)
+		await render(<FilterToolbar filters={[SHEET_FILTER]} onChange={jest.fn()} />)
 
 		expect(screen.getByTestId('button:Departments').props.modifiers).toBe(ACTIVE_TRIGGER_MODIFIERS)
 	})
 
 	test('threads filter.enabled into a menu trigger as isActive', async () => {
-		await render(
-			<FilterToolbar filters={[TOGGLE_FILTER, INACTIVE_FILTER]} onPopoverDismiss={jest.fn()} />,
-		)
+		await render(<FilterToolbar filters={[TOGGLE_FILTER, INACTIVE_FILTER]} onChange={jest.fn()} />)
 
 		expect(screen.getByTestId('menu:Vegetarian').props.modifiers).toBe(ACTIVE_TRIGGER_MODIFIERS)
 		expect(screen.getByTestId('menu:Specials').props.modifiers).toBe(INACTIVE_TRIGGER_MODIFIERS)
@@ -158,9 +153,7 @@ describe('FilterToolbar', () => {
 		let iconFor = (option: ListItemSpecType): FilterIcon | null =>
 			option.title === 'Dept 0' ? {kind: 'localFile', uri: 'file:///tmp/dept-0.png'} : null
 
-		await render(
-			<FilterToolbar filters={[SHEET_FILTER]} iconFor={iconFor} onPopoverDismiss={jest.fn()} />,
-		)
+		await render(<FilterToolbar filters={[SHEET_FILTER]} iconFor={iconFor} onChange={jest.fn()} />)
 
 		await fireEvent.press(screen.getByRole('button', {name: 'Departments'}))
 

@@ -14,11 +14,12 @@ import type {
 import type {FilterType, PickerType} from '@frogpond/filter'
 
 /**
- * The real toolbar is a SwiftUI popover, which cannot mount under Jest. This
- * stand-in exposes the two things this suite is about: the meal the menu is
- * currently showing, and a way to fire the callback the popover fires when the
- * user picks a different one. The logic under test is the menu's own -- whether
- * that choice survives -- not anything this mock decides.
+ * The real toolbar renders `@expo/ui/swift-ui` directly, which cannot mount
+ * under Jest. This stand-in exposes the two things this suite is about: the
+ * meal the menu is currently showing, and a way to fire the callback the
+ * toolbar fires when the user picks a different one. The logic under test is
+ * the menu's own -- whether that choice survives -- not anything this mock
+ * decides.
  */
 // `@frogpond/filter`'s `FilterMenu`/`FilterSheet` render `@expo/ui/swift-ui`
 // directly, which cannot mount under Jest; `applyFiltersToItem` next to them
@@ -40,11 +41,11 @@ jest.mock('../filter-menu-toolbar', () => {
 		FilterMenuToolbar: ({
 			title,
 			filters,
-			onPopoverDismiss,
+			onChange,
 		}: {
 			title: string
 			filters: FilterType<MenuItemType>[]
-			onPopoverDismiss: (filter: FilterType<MenuItemType>) => void
+			onChange: (filter: FilterType<MenuItemType>) => void
 		}) => {
 			let mealFilter = filters.find((f) => f.key === 'meals') as PickerType<MenuItemType>
 
@@ -53,7 +54,7 @@ jest.mock('../filter-menu-toolbar', () => {
 					<T testID="meal-title">{title}</T>
 					<P
 						onPress={() =>
-							onPopoverDismiss({
+							onChange({
 								...mealFilter,
 								spec: {...mealFilter.spec, selected: {label: 'Dinner'}},
 							})

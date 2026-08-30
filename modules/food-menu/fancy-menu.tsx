@@ -186,14 +186,15 @@ export function FancyMenu(props: Props): React.ReactNode {
 	return (
 		<Host style={styles.host}>
 			<VStack spacing={0}>
-				{/* Still React Native until #7804 replaces the filter popovers. */}
+				{/* The date bar this toolbar carries is React Native, so it still needs
+				    an `RNHostView` bridge into the SwiftUI tree around it. */}
 				<RNHostView matchContents={true}>
 					<FilterToolbar
 						date={now}
 						filters={appliedFilters}
 						iconFor={iconFor}
 						isOpen={isOpen}
-						onPopoverDismiss={(newFilter) => {
+						onChange={(newFilter) => {
 							setFilters(filters.map((f) => (f.key === newFilter.key ? newFilter : f)))
 						}}
 						title={mealName}

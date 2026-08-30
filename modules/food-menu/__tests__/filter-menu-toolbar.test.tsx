@@ -55,17 +55,18 @@ describe('FilterMenuToolbar', () => {
 	// renders as a native `Menu` -- its `label` prop is its own trigger, so
 	// there is no separate button here. `FilterMenuToolbar` still hardcodes
 	// `isActive={false}` for it (choosing a meal isn't "narrowing" the way an
-	// enabled filter is), which now shows up as the `Menu`'s own inactive
-	// modifiers rather than a separate button's. Compared by identity against
-	// `filter-menu.tsx`'s own exported constant, not a literal shape, so this
-	// mock's invented `Modifier` representation can't leak into the assertion.
+	// enabled filter is), which shows up as the `Menu`'s own inactive
+	// modifiers, since the trigger and the menu are the same thing. Compared by
+	// identity against `filter-menu.tsx`'s own exported constant, not a literal
+	// shape, so this mock's invented `Modifier` representation can't leak into
+	// the assertion.
 	test('renders the meal picker as an inactive-styled menu, with no separate button', async () => {
 		await render(
 			<FilterMenuToolbar
 				date={moment('2026-08-30')}
 				filters={[MEAL_PICKER]}
 				isOpen={false}
-				onPopoverDismiss={jest.fn()}
+				onChange={jest.fn()}
 			/>,
 		)
 
@@ -90,7 +91,7 @@ describe('FilterMenuToolbar', () => {
 				filters={[DIETARY_FILTER]}
 				iconFor={iconFor}
 				isOpen={true}
-				onPopoverDismiss={jest.fn()}
+				onChange={jest.fn()}
 			/>,
 		)
 

@@ -8,7 +8,7 @@ import {filterShape} from './lib/filter-shape'
 type Props<T extends object> = {
 	filter: FilterType<T>
 	isActive: boolean
-	onPopoverDismiss: (filter: FilterType<T>) => unknown
+	onChange: (filter: FilterType<T>) => unknown
 	title: string
 	/// Forwarded to the sheet only -- a pull-down menu is text-only, so a
 	/// `menu`-shaped filter never draws icons regardless of what this returns.
@@ -23,7 +23,7 @@ type Props<T extends object> = {
  * forwards what each one needs.
  */
 export function FilterToolbarButton<T extends object>(props: Props<T>): React.ReactNode {
-	let {onPopoverDismiss, filter, isActive, title, iconFor} = props
+	let {onChange, filter, isActive, title, iconFor} = props
 
 	let shape = filterShape(filter)
 
@@ -32,7 +32,7 @@ export function FilterToolbarButton<T extends object>(props: Props<T>): React.Re
 	}
 
 	if (shape === 'menu') {
-		return <FilterMenu filter={filter} isActive={isActive} onChange={onPopoverDismiss} />
+		return <FilterMenu filter={filter} isActive={isActive} onChange={onChange} />
 	}
 
 	// `filterShape` only returns 'sheet' for a `list` filter, so this always
@@ -46,7 +46,7 @@ export function FilterToolbarButton<T extends object>(props: Props<T>): React.Re
 			filter={filter}
 			iconFor={iconFor}
 			isActive={isActive}
-			onChange={onPopoverDismiss}
+			onChange={onChange}
 			title={title}
 		/>
 	)

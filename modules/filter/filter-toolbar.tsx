@@ -6,7 +6,7 @@ import {FilterToolbarButton} from './filter-toolbar-button'
 
 type Props<T extends object> = {
 	filters: Array<FilterType<T>>
-	onPopoverDismiss: (filter: FilterType<T>) => unknown
+	onChange: (filter: FilterType<T>) => unknown
 	/// Forwarded to each `FilterToolbarButton`, and from there to the sheet
 	/// only -- see the `FilterIcon` contract in `types.ts`.
 	iconFor?: (option: ListItemSpecType) => FilterIcon | null
@@ -15,7 +15,7 @@ type Props<T extends object> = {
 export function FilterToolbar<T extends object>({
 	filters,
 	iconFor,
-	onPopoverDismiss,
+	onChange,
 }: Props<T>): React.ReactNode {
 	let filterToggles = filters.map((filter) => (
 		<FilterToolbarButton<T>
@@ -23,7 +23,7 @@ export function FilterToolbar<T extends object>({
 			filter={filter}
 			iconFor={iconFor}
 			isActive={filter.enabled}
-			onPopoverDismiss={onPopoverDismiss}
+			onChange={onChange}
 			title={filter.spec.title}
 		/>
 	))

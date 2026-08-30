@@ -116,7 +116,7 @@ export default function StreamingPage(): React.ReactNode {
 	const header = (
 		<FilterToolbar
 			filters={filters}
-			onPopoverDismiss={(newFilter) => {
+			onChange={(newFilter) => {
 				// The categories list is the only filter this toolbar carries.
 				if (newFilter.type !== 'list') {
 					return
