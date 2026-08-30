@@ -1,4 +1,4 @@
-import {DateGroupedScores, ProcessedScore} from './types'
+import {DateGroupedScores, ProcessedScore, Score} from './types'
 import {Constants} from './constants'
 
 export const DAY_NAMES = [
@@ -26,29 +26,21 @@ export const MONTH_NAMES = [
 ]
 
 /**
- * Parse the API's "M/D/YYYY h:mm:ss AM/PM" date format into a JS Date.
- * Uses explicit parsing to avoid relying on engine-specific Date.parse behaviour
- * (Hermes does not support this non-standard format).
- *
- * Note: despite the source field being named `date_utc`, the values are treated
- * as local (wall-clock) time here, which is how the athletics site displays them.
- * Games near midnight UTC may appear in a different date bucket than their UTC
- * calendar date for non-UTC users; this is intentional.
+ * A record belongs on screen only if its `date_utc` parsed to a real
+ * instant — ruling out a feed format change, which would otherwise surface
+ * as missing rows rather than a blank screen — and it isn't a placeholder
+ * with no scores yet ("No team scores"), which the row component has
+ * nothing to render for.
  */
-export function parseGameDate(dateStr: string): Date {
-	// e.g. "4/26/2026 4:00:00 PM"
-	const parts = dateStr.split(' ')
-	if (parts.length !== 3) {
-		return new Date(NaN)
-	}
-	const [datePart, timePart, ampm] = parts
-	const [month, day, year] = datePart.split('/').map(Number)
-	const [hours, minutes, seconds] = timePart.split(':').map(Number)
-	let hour24 = hours % 12
-	if (ampm === 'PM') {
-		hour24 += 12
-	}
-	return new Date(year, month - 1, day, hour24, minutes, seconds)
+function isDisplayableScore(score: ProcessedScore): boolean {
+	return !Number.isNaN(score.parsedDate.getTime()) && score.prescore_info !== 'No team scores'
+}
+
+/** Parse each record's `date_utc` and drop the ones with nothing to show. */
+export function toProcessedScores(scores: Score[]): ProcessedScore[] {
+	return scores
+		.map((score) => ({...score, parsedDate: new Date(score.date_utc)}))
+		.filter(isDisplayableScore)
 }
 
 /** Format a Date as "Wednesday, January 15" for section headers. */

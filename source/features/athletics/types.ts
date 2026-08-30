@@ -2,7 +2,7 @@ import {Constants} from './constants'
 
 export interface LocationInfo {
 	location: string
-	homeAway: 'H' | 'A' | 'N'
+	homeAway?: 'H' | 'A' | 'N'
 	facility: string
 }
 
