@@ -73,7 +73,7 @@ describe('FilterToolbar', () => {
 		expect(screen.getByRole('button', {name: 'Stations'})).toBeTruthy()
 		expect(screen.getByRole('button', {name: 'Specials'})).toBeTruthy()
 
-		// the removed active-filter row used to render these as separate chips
+		// filter selections must not render as a separate chip row
 		expect(screen.queryByText('Vegetarian only')).toBeNull()
 		expect(screen.queryByText('Vegan')).toBeNull()
 		expect(screen.queryByText('No Stations')).toBeNull()
