@@ -63,7 +63,6 @@ export function useFilters(): {
 			spec: {
 				label: 'Space Available',
 				title: 'Enrollment',
-				caption: 'When activated, shows only courses with space available.',
 			},
 			apply: {
 				key: 'spaceAvailable',
@@ -139,7 +138,6 @@ export function useFilters(): {
 			spec: {
 				label: 'Open Courses',
 				title: 'Status',
-				caption: 'Allows you to either see only courses that are open, or all courses.',
 			},
 			apply: {
 				key: 'status',
@@ -153,7 +151,6 @@ export function useFilters(): {
 			spec: {
 				label: 'Lab Only',
 				title: 'Lab',
-				caption: 'Allows you to only see labs.',
 			},
 			apply: {
 				key: 'type',

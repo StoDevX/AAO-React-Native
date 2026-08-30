@@ -7,7 +7,6 @@ export type FilterIcon = {kind: 'sfSymbol'; name: string} | {kind: 'localFile'; 
 export type ToggleSpecType = {
 	label: string
 	title: string
-	caption?: string
 }
 
 export type ListItemSpecType = {
@@ -20,7 +19,6 @@ export type ListItemSpecType = {
 
 export type ListSpecType = {
 	title: string
-	caption?: string
 	showIcons?: boolean
 	/**
 	 * Draws a row's leading mark, for a caller whose marks are views rather than
@@ -40,7 +38,6 @@ export type PickerItemSpecType = {
 
 export type PickerSpecType = {
 	title: string
-	caption?: string
 	options: PickerItemSpecType[]
 	selected?: PickerItemSpecType
 }
