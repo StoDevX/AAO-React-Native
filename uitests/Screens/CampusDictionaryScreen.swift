@@ -5,11 +5,11 @@ struct CampusDictionaryScreen: Screen {
 
 	@discardableResult
 	func navigate() -> Self {
-		navigateFromHome(to: TestIdentifiers.Buttons.campusDictionary)
+		navigateFromHome(to: TestIdentifiers.Buttons.dictionary)
 	}
 
 	@discardableResult
 	func verifyCampusDictionaryTitle() -> Self {
-		verifyTitle(TestIdentifiers.Buttons.campusDictionary)
+		verifyTitle(TestIdentifiers.Buttons.dictionary)
 	}
 }
