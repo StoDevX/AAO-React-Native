@@ -36,8 +36,11 @@ let MEAL_PICKER: FilterType<Item> = {
 describe('FilterMenuToolbar', () => {
 	// The meal picker is a `picker` filter, which `filterShape` only ever
 	// renders as a native `Menu` -- its `label` prop is its own trigger, so
-	// there is no separate button left for `isActive` to mark selected.
-	test('renders the meal picker as a menu, with no button to mark active', async () => {
+	// there is no separate button here the way the popover once had.
+	// `FilterMenuToolbar` still hardcodes `isActive={false}` for it (choosing
+	// a meal isn't "narrowing" the way an enabled filter is), which now shows
+	// up as the `Menu`'s own `bordered` style rather than a separate button's.
+	test('renders the meal picker as an inactive-styled menu, with no separate button', async () => {
 		await render(
 			<FilterMenuToolbar
 				date={moment('2026-08-30')}
@@ -47,7 +50,9 @@ describe('FilterMenuToolbar', () => {
 			/>,
 		)
 
-		expect(screen.getByText("Today's Menus")).toBeTruthy()
 		expect(screen.queryByRole('button')).toBeNull()
+		expect(screen.getByTestId("menu:Today's Menus").props.modifiers).toEqual([
+			{$type: 'buttonStyle', value: 'bordered'},
+		])
 	})
 })

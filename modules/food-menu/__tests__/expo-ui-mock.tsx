@@ -8,6 +8,7 @@ const modifier =
 	($type: string) =>
 	(value?: unknown): Modifier => ({$type, value})
 
+export const accessibilityAddTraits = modifier('accessibilityAddTraits')
 export const accessibilityIdentifier = modifier('accessibilityIdentifier')
 export const accessibilityLabel = modifier('accessibilityLabel')
 export const aspectRatio = modifier('aspectRatio')
@@ -38,6 +39,13 @@ function labelOf(modifiers?: Modifier[]): string | undefined {
 	let found = modifiers?.find((m) => m.$type === 'accessibilityLabel')
 	return found?.value as string | undefined
 }
+
+/**
+ * `View` has no real `modifiers` prop; this cast lets `Menu` stash the array
+ * on it anyway, purely so a test can read `.props.modifiers` straight off
+ * the host node found by `testID`.
+ */
+const ViewWithModifiers = View as unknown as React.ComponentType<WithModifiers & {testID?: string}>
 
 export function Host({children}: WithModifiers): React.ReactNode {
 	return <View>{children}</View>
@@ -101,6 +109,7 @@ export function List({children}: WithModifiers): React.ReactNode {
  */
 export function Menu({
 	label,
+	modifiers,
 	children,
 }: WithModifiers & {label: string | React.ReactNode}): React.ReactNode {
 	if (typeof children === 'string') {
@@ -108,10 +117,13 @@ export function Menu({
 	}
 
 	return (
-		<View>
+		<ViewWithModifiers
+			modifiers={modifiers}
+			testID={typeof label === 'string' ? `menu:${label}` : undefined}
+		>
 			{typeof label === 'string' ? <RNText>{label}</RNText> : label}
 			{children}
-		</View>
+		</ViewWithModifiers>
 	)
 }
 /**

@@ -9,6 +9,10 @@ jest.mock('@expo/ui/swift-ui', () => {
 	// oxlint-disable-next-line typescript/no-require-imports
 	return require('./expo-ui-mock') as typeof import('./expo-ui-mock')
 })
+jest.mock('@expo/ui/swift-ui/modifiers', () => {
+	// oxlint-disable-next-line typescript/no-require-imports
+	return require('./expo-ui-mock') as typeof import('./expo-ui-mock')
+})
 
 type Row = {x: string}
 
@@ -50,7 +54,7 @@ function listFilter(
 describe('FilterMenu, toggle', () => {
 	test('emits enabled flipped', async () => {
 		let onChange = jest.fn()
-		await render(<FilterMenu filter={toggleFilter(false)} onChange={onChange} />)
+		await render(<FilterMenu filter={toggleFilter(false)} isActive={false} onChange={onChange} />)
 
 		await fireEvent.press(screen.getByText('Specials Only'))
 
@@ -62,7 +66,7 @@ describe('FilterMenu, picker', () => {
 	test('emits the tapped option', async () => {
 		let onChange = jest.fn()
 		let options = [{label: 'First-year'}, {label: 'Sophomore'}, {label: 'Junior'}]
-		await render(<FilterMenu filter={pickerFilter(options)} onChange={onChange} />)
+		await render(<FilterMenu filter={pickerFilter(options)} isActive={false} onChange={onChange} />)
 
 		await fireEvent.press(screen.getByText('Sophomore'))
 
@@ -72,13 +76,15 @@ describe('FilterMenu, picker', () => {
 	})
 
 	test('renders nothing with one option', async () => {
-		await render(<FilterMenu filter={pickerFilter([{label: 'Only'}])} onChange={jest.fn()} />)
+		await render(
+			<FilterMenu filter={pickerFilter([{label: 'Only'}])} isActive={false} onChange={jest.fn()} />,
+		)
 
 		expect(screen.toJSON()).toBeNull()
 	})
 
 	test('renders nothing with no options', async () => {
-		await render(<FilterMenu filter={pickerFilter([])} onChange={jest.fn()} />)
+		await render(<FilterMenu filter={pickerFilter([])} isActive={false} onChange={jest.fn()} />)
 
 		expect(screen.toJSON()).toBeNull()
 	})
@@ -87,14 +93,18 @@ describe('FilterMenu, picker', () => {
 describe('FilterMenu, list', () => {
 	test('offers "Show All" in OR mode', async () => {
 		let options = [{title: 'A'}, {title: 'B'}]
-		await render(<FilterMenu filter={listFilter('OR', options, [])} onChange={jest.fn()} />)
+		await render(
+			<FilterMenu filter={listFilter('OR', options, [])} isActive={false} onChange={jest.fn()} />,
+		)
 
 		expect(screen.getByText('Show All')).toBeTruthy()
 	})
 
 	test('does not offer "Show All" in AND mode', async () => {
 		let options = [{title: 'A'}, {title: 'B'}]
-		await render(<FilterMenu filter={listFilter('AND', options, [])} onChange={jest.fn()} />)
+		await render(
+			<FilterMenu filter={listFilter('AND', options, [])} isActive={false} onChange={jest.fn()} />,
+		)
 
 		expect(screen.queryByText('Show All')).toBeNull()
 	})
@@ -103,7 +113,11 @@ describe('FilterMenu, list', () => {
 		let onChange = jest.fn()
 		let options = [{title: 'A'}, {title: 'B'}, {title: 'C'}]
 		await render(
-			<FilterMenu filter={listFilter('OR', options, [{title: 'A'}])} onChange={onChange} />,
+			<FilterMenu
+				filter={listFilter('OR', options, [{title: 'A'}])}
+				isActive={false}
+				onChange={onChange}
+			/>,
 		)
 
 		await fireEvent.press(screen.getByText('B'))
@@ -119,7 +133,11 @@ describe('FilterMenu, list', () => {
 		let onChange = jest.fn()
 		let options = [{title: 'A'}, {title: 'B'}]
 		await render(
-			<FilterMenu filter={listFilter('OR', options, [{title: 'A'}])} onChange={onChange} />,
+			<FilterMenu
+				filter={listFilter('OR', options, [{title: 'A'}])}
+				isActive={false}
+				onChange={onChange}
+			/>,
 		)
 
 		await fireEvent.press(screen.getByText('Show All'))
@@ -130,16 +148,48 @@ describe('FilterMenu, list', () => {
 	})
 
 	test('renders nothing when there are no options', async () => {
-		await render(<FilterMenu filter={listFilter('OR', [], [])} onChange={jest.fn()} />)
+		await render(
+			<FilterMenu filter={listFilter('OR', [], [])} isActive={false} onChange={jest.fn()} />,
+		)
 
 		expect(screen.toJSON()).toBeNull()
 	})
 
 	test('displayTitle false renders by label, not title', async () => {
 		let options = [{title: 'BIO', label: 'Biology'}]
-		await render(<FilterMenu filter={listFilter('AND', options, [], false)} onChange={jest.fn()} />)
+		await render(
+			<FilterMenu
+				filter={listFilter('AND', options, [], false)}
+				isActive={false}
+				onChange={jest.fn()}
+			/>,
+		)
 
 		expect(screen.getByText('Biology')).toBeTruthy()
 		expect(screen.queryByText('BIO')).toBeNull()
+	})
+})
+
+describe('FilterMenu, active state', () => {
+	// The menu's label is its own trigger -- there is no separate button --
+	// so "this filter is narrowing something" has to live on the trigger's own
+	// modifiers. Asserting the modifiers array itself, not a rendered colour:
+	// the mock forwards it unexamined, so this is `filter-menu.tsx`'s own
+	// decision, not a translation the test stand-in invented.
+	test('inactive: bordered style, no isSelected trait', async () => {
+		await render(<FilterMenu filter={toggleFilter(false)} isActive={false} onChange={jest.fn()} />)
+
+		let trigger = screen.getByTestId('menu:Specials')
+		expect(trigger.props.modifiers).toEqual([{$type: 'buttonStyle', style: 'bordered'}])
+	})
+
+	test('active: borderedProminent style, plus the isSelected accessibility trait', async () => {
+		await render(<FilterMenu filter={toggleFilter(true)} isActive={true} onChange={jest.fn()} />)
+
+		let trigger = screen.getByTestId('menu:Specials')
+		expect(trigger.props.modifiers).toEqual([
+			{$type: 'buttonStyle', style: 'borderedProminent'},
+			{$type: 'accessibilityAddTraits', traits: ['isSelected']},
+		])
 	})
 })

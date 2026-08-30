@@ -50,8 +50,8 @@ function sheetFilter(enabled: boolean): FilterType<Item> {
 describe('FilterToolbarButton, menu shape', () => {
 	// A toggle is always `menu`-shaped, and a native `Menu`'s `label` prop is
 	// its own trigger -- unlike the popover this replaces, there is no
-	// separate button here for `isActive` to mark selected or not.
-	test('renders the filter as its own menu, with no separate trigger button', async () => {
+	// separate button here.
+	test('renders as a menu, with no separate trigger button', async () => {
 		await render(
 			<FilterToolbarButton
 				filter={TOGGLE_FILTER}
@@ -63,6 +63,42 @@ describe('FilterToolbarButton, menu shape', () => {
 
 		expect(screen.getByText('Vegetarian')).toBeTruthy()
 		expect(screen.queryByRole('button')).toBeNull()
+	})
+
+	// `isActive` still reaches the trigger: it drives which `buttonStyle`
+	// (and, when active, which accessibility trait) the `Menu` renders with,
+	// so a filter that's narrowing something still looks and sounds different
+	// from one that isn't -- the menu label is the only trigger there is, so
+	// this is where that distinction has to live.
+	test('marks itself with the bordered style when isActive is false', async () => {
+		await render(
+			<FilterToolbarButton
+				filter={TOGGLE_FILTER}
+				isActive={false}
+				onPopoverDismiss={jest.fn()}
+				title={TOGGLE_FILTER.spec.title}
+			/>,
+		)
+
+		let trigger = screen.getByTestId('menu:Vegetarian')
+		expect(trigger.props.modifiers).toEqual([{$type: 'buttonStyle', style: 'bordered'}])
+	})
+
+	test('marks itself with the borderedProminent style and isSelected trait when isActive is true', async () => {
+		await render(
+			<FilterToolbarButton
+				filter={TOGGLE_FILTER}
+				isActive={true}
+				onPopoverDismiss={jest.fn()}
+				title={TOGGLE_FILTER.spec.title}
+			/>,
+		)
+
+		let trigger = screen.getByTestId('menu:Vegetarian')
+		expect(trigger.props.modifiers).toEqual([
+			{$type: 'buttonStyle', style: 'borderedProminent'},
+			{$type: 'accessibilityAddTraits', traits: ['isSelected']},
+		])
 	})
 })
 

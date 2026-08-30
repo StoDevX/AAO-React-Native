@@ -67,7 +67,7 @@ export function FilterToolbarButton<T extends object>(props: Props<T>): React.Re
 	}
 
 	if (shape === 'menu') {
-		return <FilterMenu filter={filter} onChange={onPopoverDismiss} />
+		return <FilterMenu filter={filter} isActive={isActive} onChange={onPopoverDismiss} />
 	}
 
 	// `filterShape` only returns 'sheet' for a `list` filter, so this always

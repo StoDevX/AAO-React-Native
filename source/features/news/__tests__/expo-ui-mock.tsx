@@ -17,8 +17,20 @@ import {Pressable, Text as RNText, View} from 'react-native'
 
 type Modifier = {$type: string; [key: string]: unknown}
 type WithChildren = {children?: React.ReactNode}
+type WithModifiers = WithChildren & {modifiers?: Modifier[]}
+
+/**
+ * `View` has no real `modifiers` prop; this cast lets `Menu` stash the array
+ * on it anyway, purely so a test can read `.props.modifiers` straight off
+ * the host node found by `testID`.
+ */
+const ViewWithModifiers = View as unknown as React.ComponentType<WithModifiers & {testID?: string}>
 
 export const buttonStyle = (style: string): Modifier => ({$type: 'buttonStyle', style})
+export const accessibilityAddTraits = (traits: string[]): Modifier => ({
+	$type: 'accessibilityAddTraits',
+	traits,
+})
 export const contentShape = (shape: unknown): Modifier => ({$type: 'contentShape', shape})
 export const shapes = {rectangle: (): Modifier => ({$type: 'rectangle'})}
 export const resizable = (): Modifier => ({$type: 'resizable'})
@@ -38,17 +50,21 @@ export function Host({children}: WithChildren & {matchContents?: boolean}): Reac
  */
 export function Menu({
 	label,
+	modifiers,
 	children,
-}: WithChildren & {label: string | React.ReactNode}): React.ReactNode {
+}: WithModifiers & {label: string | React.ReactNode}): React.ReactNode {
 	if (typeof children === 'string') {
 		throw new Error('Menu children must be nested elements, not a plain string')
 	}
 
 	return (
-		<View>
+		<ViewWithModifiers
+			modifiers={modifiers}
+			testID={typeof label === 'string' ? `menu:${label}` : undefined}
+		>
 			{typeof label === 'string' ? <RNText>{label}</RNText> : label}
 			{children}
-		</View>
+		</ViewWithModifiers>
 	)
 }
 

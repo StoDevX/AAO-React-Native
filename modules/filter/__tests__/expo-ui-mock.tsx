@@ -19,7 +19,21 @@ type Modifier = {$type: string; [key: string]: unknown}
 type WithChildren = {children?: React.ReactNode}
 type WithModifiers = WithChildren & {modifiers?: Modifier[]}
 
+/**
+ * `View` has no real `modifiers` prop -- this cast lets `Menu` stash the
+ * array on it anyway, purely so a test can read `.props.modifiers` straight
+ * off the host node. `react-test-renderer` records whatever props a host
+ * element is given, real RN prop or not; nothing here reaches a native
+ * bridge that would reject it.
+ */
+const ViewWithModifiers = View as unknown as React.ComponentType<WithModifiers & {testID?: string}>
+
 export const buttonStyle = (style: string): Modifier => ({$type: 'buttonStyle', style})
+
+export const accessibilityAddTraits = (traits: string[]): Modifier => ({
+	$type: 'accessibilityAddTraits',
+	traits,
+})
 
 export const contentShape = (shape: unknown): Modifier => ({$type: 'contentShape', shape})
 
@@ -42,20 +56,32 @@ export function Host({children}: WithChildren & {matchContents?: boolean}): Reac
  * bug. `children` may not: the real component only accepts nested elements,
  * and a raw string there crashes at mount the same way `Button`'s children
  * do (see the event-list mock this one is modelled on).
+ *
+ * `modifiers` is forwarded verbatim onto the wrapping `View`, unexamined --
+ * the mock makes no decision of its own about them, so a test reading
+ * `.props.modifiers` off the element found by `testID` is reading exactly
+ * what `filter-menu.tsx` decided, not a translation this stand-in invented.
+ * `testID` is keyed by the label text (when it's a string) so a toolbar
+ * rendering several menus at once still gives each trigger back
+ * unambiguously.
  */
 export function Menu({
 	label,
+	modifiers,
 	children,
-}: WithChildren & {label: string | React.ReactNode}): React.ReactNode {
+}: WithModifiers & {label: string | React.ReactNode}): React.ReactNode {
 	if (typeof children === 'string') {
 		throw new Error('Menu children must be nested elements, not a plain string')
 	}
 
 	return (
-		<View>
+		<ViewWithModifiers
+			modifiers={modifiers}
+			testID={typeof label === 'string' ? `menu:${label}` : undefined}
+		>
 			{typeof label === 'string' ? <RNText>{label}</RNText> : label}
 			{children}
-		</View>
+		</ViewWithModifiers>
 	)
 }
 

@@ -45,9 +45,11 @@ function makeQuery(
 describe('NewsList', () => {
 	// This feed's Categories filter never reaches `filterShape`'s sheet
 	// threshold, so it always renders as a native `Menu` -- its `label` prop
-	// is its own trigger, with no separate button left for `enabled` to mark
-	// active or not.
-	test('renders the Categories filter as a menu, with no button to mark active', async () => {
+	// is its own trigger, with no separate button the way the popover once
+	// had. `enabled` still reaches the trigger's own `buttonStyle`, though:
+	// this asserts it stays `bordered` (not `borderedProminent`) here, since
+	// selecting every option in OR mode narrows nothing.
+	test('renders the Categories filter as an inactive-styled menu, with no separate button', async () => {
 		let stories = [
 			makeStory({title: 'Campus story', categories: ['Campus & Community']}),
 			makeStory({title: 'Sports story', categories: ['Sports']}),
@@ -55,7 +57,9 @@ describe('NewsList', () => {
 
 		await render(<NewsList query={makeQuery({data: stories})} thumbnail={false} />)
 
-		expect(screen.getByText('Categories')).toBeTruthy()
 		expect(screen.queryByRole('button')).toBeNull()
+		expect(screen.getByTestId('menu:Categories').props.modifiers).toEqual([
+			{$type: 'buttonStyle', style: 'bordered'},
+		])
 	})
 })

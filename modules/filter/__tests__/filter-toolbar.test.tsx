@@ -25,6 +25,14 @@ let TOGGLE_FILTER: FilterType<Item> = {
 	apply: {key: 'isVegetarian'},
 }
 
+let INACTIVE_FILTER: FilterType<Item> = {
+	type: 'toggle',
+	key: 'specials',
+	enabled: false,
+	spec: {label: 'Specials only', title: 'Specials'},
+	apply: {key: 'isVegetarian'},
+}
+
 let LIST_FILTER_WITH_SELECTION: FilterType<Item> = {
 	type: 'list',
 	key: 'dietary',
@@ -51,9 +59,8 @@ function manyOptions(count: number): ListItemSpecType[] {
 	return Array.from({length: count}, (_, i) => ({title: `Dept ${i}`}))
 }
 
-// 12 options crosses `filterShape`'s sheet threshold -- the one shape whose
-// trigger is still a plain button, since a `Menu`'s `label` prop is its own
-// trigger and has no `isActive`-driven marking of its own.
+// 12 options crosses `filterShape`'s sheet threshold -- the shape whose
+// trigger is still a plain button rather than a `Menu`'s own label.
 let SHEET_FILTER: FilterType<Item> = {
 	type: 'list',
 	key: 'departments',
@@ -91,14 +98,30 @@ describe('FilterToolbar', () => {
 		expect(screen.queryByText('Nothing To Choose')).toBeNull()
 	})
 
-	// This is observable only for a sheet-shaped filter -- a `Menu`'s own
-	// label trigger, which every other fixture above renders as, has no
-	// `isActive`-driven state at all to assert on.
+	// `FilterToolbar` maps `isActive={filter.enabled}` for every shape --
+	// covered here for a sheet-shaped filter (still a plain button, so
+	// `accessibilityState` reads it directly) and a menu-shaped one (the
+	// `Menu`'s own label is the trigger, so it's `buttonStyle` that carries
+	// the same fact).
 	test('threads filter.enabled into a sheet trigger as isActive', async () => {
 		await render(<FilterToolbar filters={[SHEET_FILTER]} onPopoverDismiss={jest.fn()} />)
 
 		expect(screen.getByRole('button', {name: 'Departments'}).props.accessibilityState).toEqual({
 			selected: true,
 		})
+	})
+
+	test('threads filter.enabled into a menu trigger as isActive', async () => {
+		await render(
+			<FilterToolbar filters={[TOGGLE_FILTER, INACTIVE_FILTER]} onPopoverDismiss={jest.fn()} />,
+		)
+
+		expect(screen.getByTestId('menu:Vegetarian').props.modifiers).toEqual([
+			{$type: 'buttonStyle', style: 'borderedProminent'},
+			{$type: 'accessibilityAddTraits', traits: ['isSelected']},
+		])
+		expect(screen.getByTestId('menu:Specials').props.modifiers).toEqual([
+			{$type: 'buttonStyle', style: 'bordered'},
+		])
 	})
 })
