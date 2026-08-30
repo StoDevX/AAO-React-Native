@@ -59,11 +59,19 @@ export type DateSection =
 	| typeof Constants.YESTERDAY
 	| typeof Constants.TODAY
 	| typeof Constants.UPCOMING
-	| typeof Constants.FILTER
+
+/** A tab in the athletics tab bar: a date bucket, or the Filter tab itself. */
+export type TabSection = DateSection | typeof Constants.FILTER
 
 export type ProcessedScore = Score & {parsedDate: Date}
 
 export interface DateGroupedScores {
-	title: DateSection
+	title: string
 	data: ProcessedScore[]
+}
+
+/** A gender-based grouping of sport names, used to render the filter screen. */
+export interface SportSection {
+	title: string
+	data: string[]
 }
