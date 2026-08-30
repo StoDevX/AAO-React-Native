@@ -92,6 +92,15 @@ export const tanGradient: Gradient = [
 	'color(display-p3 0.7569 0.6667 0.5569)',
 	'color(display-p3 0.6392 0.549 0.4392)',
 ]
+
+// MARK: derived gradients
+//
+// Derived from a sampled gradient by holding L* constant in Lab colour space,
+// then scaling saturation outward. This keeps the inner and outer stops' ratio
+// in the 0.78-0.94 band that the sampled fifteen span, preserving the signal
+// that the source capture is reliable.
+
+/// Derived from goldGradient.
 export const paleGoldGradient: Gradient = [
 	'color(display-p3 0.8627 0.7765 0.5804)',
 	'color(display-p3 0.7412 0.6549 0.4588)',
