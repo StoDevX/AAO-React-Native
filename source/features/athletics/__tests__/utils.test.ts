@@ -4,6 +4,7 @@ import {
 	formatDateString,
 	sectionsForTab,
 	sportFilterSections,
+	filterSectionsBySport,
 } from '../utils'
 import {Constants} from '../constants'
 import {DateGroupedScores, GameResult, ProcessedScore, Score, StatusInfo} from '../types'
@@ -226,5 +227,37 @@ describe('sportFilterSections', () => {
 		]
 		const sections = sportFilterSections(scores)
 		expect(sections.map((s) => s.title)).toEqual([Constants.WOMENS_SPORTS, Constants.MENS_SPORTS])
+	})
+})
+
+describe('filterSectionsBySport', () => {
+	// filterSectionsBySport only reads `sport`, so the date on each fake score
+	// is arbitrary — fixed here rather than built from `new Date()`.
+	const day = new Date(2026, 0, 15)
+	const baseball = makeFakeScore(day, {sport: 'Baseball'})
+	const golf = makeFakeScore(day, {sport: "Men's Golf"})
+	const soccer = makeFakeScore(day, {sport: "Women's Soccer"})
+
+	it('returns every game when the selection is empty', () => {
+		const grouped: DateGroupedScores[] = [{title: Constants.TODAY, data: [baseball, golf, soccer]}]
+		expect(filterSectionsBySport(grouped, [])).toEqual(grouped)
+	})
+
+	it('keeps only games whose sport is in a non-empty selection', () => {
+		const grouped: DateGroupedScores[] = [{title: Constants.TODAY, data: [baseball, golf, soccer]}]
+		const result = filterSectionsBySport(grouped, ['Baseball'])
+		expect(result).toEqual([{title: Constants.TODAY, data: [baseball]}])
+	})
+
+	it('keeps a section, with empty data, when filtering removes every game in it', () => {
+		const grouped: DateGroupedScores[] = [{title: Constants.TODAY, data: [golf]}]
+		const result = filterSectionsBySport(grouped, ['Baseball'])
+		expect(result).toEqual([{title: Constants.TODAY, data: []}])
+	})
+
+	it('leaves matching games untouched when the selection also names a sport absent from the data', () => {
+		const grouped: DateGroupedScores[] = [{title: Constants.TODAY, data: [baseball]}]
+		const result = filterSectionsBySport(grouped, ['Baseball', 'Fencing'])
+		expect(result).toEqual([{title: Constants.TODAY, data: [baseball]}])
 	})
 })

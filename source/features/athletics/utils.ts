@@ -1,5 +1,6 @@
 import {DateGroupedScores, DateSection, ProcessedScore, Score, SportSection} from './types'
 import {Constants} from './constants'
+import {isFilterActive} from './store'
 
 const DAY_NAMES = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
 const MONTH_NAMES = [
@@ -188,4 +189,22 @@ export function sportFilterSections(scores: ProcessedScore[]): SportSection[] {
 		{title: Constants.MENS_SPORTS, data: mens},
 		{title: Constants.OTHER_SPORTS, data: other},
 	].filter((section) => section.data.length > 0)
+}
+
+/**
+ * Applies the sport filter to date-grouped sections. Every section is kept
+ * even when filtering leaves its data empty, so the caller decides what an
+ * empty section means for rendering. An empty selection means "show
+ * everything" — see `isFilterActive`.
+ */
+export function filterSectionsBySport(
+	grouped: DateGroupedScores[],
+	selectedSports: string[],
+): DateGroupedScores[] {
+	return grouped.map((section) => ({
+		...section,
+		data: section.data.filter(
+			(score) => !isFilterActive(selectedSports) || selectedSports.includes(score.sport),
+		),
+	}))
 }

@@ -13,7 +13,7 @@ import {EmptyListNotice} from '../../source/features/athletics/empty-notice'
 import {AthleticsFilters} from '../../source/features/athletics/filters'
 import {athleticsOptions} from '../../source/features/athletics/query'
 import {AthleticsRow} from '../../source/features/athletics/row'
-import {isFilterActive, useFilterStore} from '../../source/features/athletics/store'
+import {useFilterStore} from '../../source/features/athletics/store'
 import {TabBar} from '../../source/features/athletics/tabbar'
 import type {
 	DateGroupedScores,
@@ -21,6 +21,7 @@ import type {
 	TabSection,
 } from '../../source/features/athletics/types'
 import {
+	filterSectionsBySport,
 	groupScoresByDate,
 	sectionsForTab,
 	sportFilterSections,
@@ -65,12 +66,7 @@ function AthleticsView(): React.ReactNode {
 
 	// Apply the sport filter to the fetched data
 	const filteredData = React.useMemo<DateGroupedScores[]>(() => {
-		return baseData.map((section) => ({
-			...section,
-			data: section.data.filter(
-				(score) => !isFilterActive(selectedSports) || selectedSports.includes(score.sport),
-			),
-		}))
+		return filterSectionsBySport(baseData, selectedSports)
 	}, [baseData, selectedSports])
 
 	// Build sections to render depending on the selected tab.
