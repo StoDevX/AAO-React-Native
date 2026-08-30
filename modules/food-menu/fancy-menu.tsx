@@ -144,12 +144,17 @@ export function FancyMenu(props: Props): React.ReactNode {
 	//
 	// So the toggle is offered against the meal actually on screen, and a meal
 	// with nothing special does not offer it.
-	const appliedFilters = useMemo(() => {
-		const mealHasSpecials = stations.some((station) =>
-			station.items.some((id) => foodItems[id]?.special),
-		)
-		return mealHasSpecials ? filters : filters.filter((f) => f.key !== 'specials')
-	}, [filters, stations, foodItems])
+	// Depends on the meal, not on the filters, so it is not rebuilt every time
+	// the user toggles something unrelated.
+	const mealHasSpecials = useMemo(
+		() => stations.some((station) => station.items.some((id) => foodItems[id]?.special)),
+		[stations, foodItems],
+	)
+
+	const appliedFilters = useMemo(
+		() => (mealHasSpecials ? filters : filters.filter((f) => f.key !== 'specials')),
+		[filters, mealHasSpecials],
+	)
 
 	const groupedMenuData = useMemo(
 		() => groupMenuData({stations, filters: appliedFilters, applyFilters, foodItems}),
