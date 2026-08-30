@@ -93,7 +93,7 @@ export function buildFilters(
 			enabled: false,
 			spec: {
 				title: 'Dietary Restrictions',
-				showImages: true,
+				showIcons: true,
 				renderMark: renderDietaryMark,
 				options: allDietaryRestrictions,
 				mode: 'AND',

@@ -1,4 +1,4 @@
-import {Image, StyleSheet, Text} from 'react-native'
+import {StyleSheet, Text} from 'react-native'
 import type {ListType} from './types'
 import {Cell, Section} from '@frogpond/tableview'
 import {Column} from '@frogpond/layout'
@@ -31,7 +31,6 @@ export function ListSection<T extends object>({filter, onChange}: Props<T>): Rea
 		onChange(toggleAll(filter))
 	}, [filter, onChange])
 
-	let hasImageColumn = options.some((val) => Boolean(val.image))
 	let buttons = options.map((val) => (
 		<Cell
 			key={val.title}
@@ -44,9 +43,6 @@ export function ListSection<T extends object>({filter, onChange}: Props<T>): Rea
 			}
 			cellStyle="RightDetail"
 			disableImageResize={true}
-			image={
-				spec.showImages && val.image ? <Image source={val.image} style={styles.icon} /> : undefined
-			}
 			onPress={() => buttonPushed(val)}
 		/>
 	))
@@ -64,11 +60,7 @@ export function ListSection<T extends object>({filter, onChange}: Props<T>): Rea
 	}
 
 	return (
-		<Section
-			footer={caption}
-			header={title.toUpperCase()}
-			separatorInsetLeft={hasImageColumn ? 45 : undefined}
-		>
+		<Section footer={caption} header={title.toUpperCase()}>
 			{buttons}
 		</Section>
 	)

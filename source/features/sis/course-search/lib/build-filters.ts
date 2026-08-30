@@ -90,7 +90,7 @@ export function useFilters(): {
 			enabled: false,
 			spec: {
 				title: 'GEs',
-				showImages: false,
+				showIcons: false,
 				options: allGEs,
 				mode: 'AND',
 				selected: [],
@@ -106,7 +106,7 @@ export function useFilters(): {
 			enabled: false,
 			spec: {
 				title: 'Department',
-				showImages: false,
+				showIcons: false,
 				options: allDepartments,
 				mode: 'OR',
 				selected: allDepartments,
@@ -122,7 +122,7 @@ export function useFilters(): {
 			enabled: false,
 			spec: {
 				title: 'Level',
-				showImages: false,
+				showIcons: false,
 				options: courseLevelOptions,
 				mode: 'OR',
 				selected: courseLevelOptions,
