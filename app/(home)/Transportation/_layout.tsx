@@ -22,7 +22,7 @@ export default function TransportationLayout(): React.ReactNode {
 			</NativeTabs.Trigger>
 			<NativeTabs.Trigger name="other-modes">
 				<NativeTabs.Trigger.Icon sf="sailboat.fill" />
-				<NativeTabs.Trigger.Label>More</NativeTabs.Trigger.Label>
+				<NativeTabs.Trigger.Label>Other</NativeTabs.Trigger.Label>
 			</NativeTabs.Trigger>
 		</NativeTabs>
 	)

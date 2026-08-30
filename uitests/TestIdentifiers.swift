@@ -151,6 +151,6 @@ struct TestIdentifiers {
 	// MARK: - Transportation
 
 	enum Transportation {
-		static let tabs = ["Express", "Red Line", "Blue Line", "Oles Go", "More"]
+		static let tabs = ["Express", "Red Line", "Blue Line", "Oles Go", "Other"]
 	}
 }
