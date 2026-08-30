@@ -5,6 +5,7 @@ import {useGroupedBuildings} from '../../../source/features/building-hours/query
 import {BuildingType} from '../../../source/features/building-hours/types'
 
 import * as c from '@frogpond/colors'
+import {timezone} from '@frogpond/constants'
 import {ListSeparator, ListSectionHeader} from '@frogpond/lists'
 import {LoadingView, NoticeView} from '@frogpond/notice'
 import {Stack, useRouter} from 'expo-router'
@@ -20,7 +21,7 @@ const styles = StyleSheet.create({
 function BuildingHoursView(): React.ReactNode {
 	let router = useRouter()
 
-	let {now} = useMomentTimer({intervalMs: 60000, startOf: 'minute'})
+	let {now} = useMomentTimer({intervalMs: 60000, startOf: 'minute', timezone: timezone()})
 
 	let {data = [], error, refetch, isLoading, isError, isRefetching} = useGroupedBuildings()
 

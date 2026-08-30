@@ -1,5 +1,6 @@
 import {EventList, type CalendarSource, type PoweredBy} from '@frogpond/event-list'
 import type {EventType} from '@frogpond/event-type'
+import {timezone} from '@frogpond/constants'
 import {NoticeView} from '@frogpond/notice'
 import {useMomentTimer} from '@frogpond/timer'
 import {UseQueryResult} from '@tanstack/react-query'
@@ -20,7 +21,7 @@ type Props = {
 const SOURCES: CalendarSource[] = [{id: 'schedule', title: '', color: c.systemBlue, kind: 'remote'}]
 
 export function ScheduleView(props: Props): React.ReactNode {
-	let {now} = useMomentTimer({intervalMs: 60000})
+	let {now} = useMomentTimer({intervalMs: 60000, timezone: timezone()})
 	let {isError, refetch, data = [], isRefetching} = props.query
 
 	if (isError) {

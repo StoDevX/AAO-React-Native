@@ -7,6 +7,7 @@ import {
 	useCalendarSources,
 	useMergedEvents,
 } from '@frogpond/ccc-calendar'
+import {timezone} from '@frogpond/constants'
 import {EventList} from '@frogpond/event-list'
 import {useMomentTimer} from '@frogpond/timer'
 
@@ -14,7 +15,7 @@ import {STOLAF_POWERED_BY} from '../../source/features/calendar/constants'
 
 export default function CalendarPage(): React.ReactNode {
 	let router = useRouter()
-	let {now} = useMomentTimer({intervalMs: 60000})
+	let {now} = useMomentTimer({intervalMs: 60000, timezone: timezone()})
 	let {enabled} = useCalendarSources()
 	let {events, failed, isRefetching, refetchAll} = useMergedEvents(enabled)
 	let eventListRef = React.useRef<EventList.EventListHandle>(null)
