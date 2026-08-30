@@ -3,7 +3,7 @@ import {describe, expect, jest, test} from '@jest/globals'
 import {fireEvent, render, screen} from '@testing-library/react-native'
 
 import {FilterMenu} from '../filter-menu'
-import type {ListType, PickerType, ToggleType} from '../types'
+import type {ListItemSpecType, ListType, PickerType, ToggleType} from '../types'
 
 jest.mock('@expo/ui/swift-ui', () => {
 	// oxlint-disable-next-line typescript/no-require-imports
@@ -34,14 +34,15 @@ function pickerFilter(options: {label: string}[], selected?: {label: string}): P
 
 function listFilter(
 	mode: 'AND' | 'OR',
-	options: {title: string}[],
-	selected: {title: string}[],
+	options: ListItemSpecType[],
+	selected: ListItemSpecType[],
+	displayTitle = true,
 ): ListType<Row> {
 	return {
 		type: 'list',
 		key: 'k',
 		enabled: false,
-		spec: {title: 'Stations', options, selected, mode, displayTitle: true},
+		spec: {title: 'Stations', options, selected, mode, displayTitle},
 		apply: {key: 'x'},
 	} as ListType<Row>
 }
@@ -132,5 +133,13 @@ describe('FilterMenu, list', () => {
 		await render(<FilterMenu filter={listFilter('OR', [], [])} onChange={jest.fn()} />)
 
 		expect(screen.toJSON()).toBeNull()
+	})
+
+	test('displayTitle false renders by label, not title', async () => {
+		let options = [{title: 'BIO', label: 'Biology'}]
+		await render(<FilterMenu filter={listFilter('AND', options, [], false)} onChange={jest.fn()} />)
+
+		expect(screen.getByText('Biology')).toBeTruthy()
+		expect(screen.queryByText('BIO')).toBeNull()
 	})
 })

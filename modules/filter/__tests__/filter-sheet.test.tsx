@@ -20,18 +20,19 @@ function listFilter(
 	mode: 'AND' | 'OR',
 	options: ListItemSpecType[],
 	selected: ListItemSpecType[],
+	displayTitle = true,
 ): ListType<Row> {
 	return {
 		type: 'list',
 		key: 'k',
 		enabled: false,
-		spec: {title: 'Departments', options, selected, mode, displayTitle: true},
+		spec: {title: 'Departments', options, selected, mode, displayTitle},
 		apply: {key: 'x'},
 	}
 }
 
-function dismiss() {
-	fireEvent.press(screen.getByLabelText('Dismiss'))
+async function dismiss() {
+	await fireEvent.press(screen.getByLabelText('Dismiss'))
 }
 
 describe('FilterSheet', () => {
@@ -92,10 +93,14 @@ describe('FilterSheet', () => {
 		)
 
 		await fireEvent.press(screen.getByText('B'))
-		dismiss()
+		await dismiss()
 
+		// `enabled` is what actually makes a filter apply -- `toggleOption` sets
+		// it to `result.length > 0` in `AND` mode, so it's part of what a tap
+		// must produce, not just `selected`.
 		expect(onChange).toHaveBeenCalledWith(
 			expect.objectContaining({
+				enabled: true,
 				spec: expect.objectContaining({selected: [{title: 'A'}, {title: 'B'}]}),
 			}),
 		)
@@ -114,7 +119,7 @@ describe('FilterSheet', () => {
 		)
 
 		await fireEvent.press(screen.getByText('Show All'))
-		dismiss()
+		await dismiss()
 
 		expect(onChange).toHaveBeenCalledWith(
 			expect.objectContaining({spec: expect.objectContaining({selected: options})}),
@@ -140,7 +145,7 @@ describe('FilterSheet', () => {
 
 		expect(onChange).not.toHaveBeenCalled()
 
-		dismiss()
+		await dismiss()
 
 		expect(onChange).toHaveBeenCalledTimes(1)
 		expect(onDismiss).toHaveBeenCalledTimes(1)
@@ -167,7 +172,13 @@ describe('FilterSheet', () => {
 		)
 
 		expect(screen.getByLabelText('icon:sfSymbol:leaf')).toBeTruthy()
-		expect(screen.queryAllByLabelText(/^icon:/u)).toHaveLength(1)
+		// Excludes the checkmark: nothing is selected in this fixture, so it
+		// happens to pass without this exclusion, but the checkmark is drawn via
+		// the same `Image` mock and carries the same `icon:` prefix
+		// (`icon:sfSymbol:checkmark`) -- the exclusion is what makes this count
+		// actually mean "option icons," not "option icons, so long as nothing
+		// is selected."
+		expect(screen.queryAllByLabelText(/^icon:(?!sfSymbol:checkmark)/u)).toHaveLength(1)
 	})
 
 	test('draws a local-file icon', async () => {
@@ -200,17 +211,75 @@ describe('FilterSheet', () => {
 		expect(screen.toJSON()).toBeNull()
 	})
 
-	test('renders nothing when not presented', async () => {
-		let options = [{title: 'A'}]
+	test('reopening re-seeds from the incoming filter, and dismissing it again re-emits', async () => {
+		// Neither the render-time re-seed (`:64-70`) nor the effect that resets
+		// the emit guard on open (`:72-76`) is exercised by a single
+		// open-then-dismiss -- deleting either still leaves every other test
+		// green. This drives a second presentation to cover both: the reopened
+		// sheet must reflect `secondFilter`, not the first presentation's
+		// selections, and its own dismissal must emit on its own, not be a
+		// silent no-op left over from the first guard.
+		let onChange = jest.fn()
+		let onDismiss = jest.fn()
+		let options = [{title: 'A'}, {title: 'B'}]
+		let firstFilter = listFilter('AND', options, [{title: 'A'}])
+		let secondFilter = listFilter('AND', options, [{title: 'B'}])
+
+		let {rerender} = await render(
+			<FilterSheet
+				filter={firstFilter}
+				isPresented={true}
+				onChange={onChange}
+				onDismiss={onDismiss}
+			/>,
+		)
+
+		await dismiss()
+		expect(onChange).toHaveBeenCalledTimes(1)
+		expect(onChange).toHaveBeenNthCalledWith(
+			1,
+			expect.objectContaining({spec: expect.objectContaining({selected: [{title: 'A'}]})}),
+		)
+
+		await rerender(
+			<FilterSheet
+				filter={firstFilter}
+				isPresented={false}
+				onChange={onChange}
+				onDismiss={onDismiss}
+			/>,
+		)
+		await rerender(
+			<FilterSheet
+				filter={secondFilter}
+				isPresented={true}
+				onChange={onChange}
+				onDismiss={onDismiss}
+			/>,
+		)
+
+		await dismiss()
+
+		expect(onChange).toHaveBeenCalledTimes(2)
+		expect(onDismiss).toHaveBeenCalledTimes(2)
+		expect(onChange).toHaveBeenNthCalledWith(
+			2,
+			expect.objectContaining({spec: expect.objectContaining({selected: [{title: 'B'}]})}),
+		)
+	})
+
+	test('displayTitle false renders by label, not title', async () => {
+		let options = [{title: 'BIO', label: 'Biology'}]
 		await render(
 			<FilterSheet
-				filter={listFilter('AND', options, [])}
-				isPresented={false}
+				filter={listFilter('AND', options, [], false)}
+				isPresented={true}
 				onChange={jest.fn()}
 				onDismiss={jest.fn()}
 			/>,
 		)
 
-		expect(screen.queryByText('A')).toBeNull()
+		expect(screen.getByText('Biology')).toBeTruthy()
+		expect(screen.queryByText('BIO')).toBeNull()
 	})
 })

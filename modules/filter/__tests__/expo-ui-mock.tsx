@@ -91,39 +91,47 @@ export function Toggle({
 }
 
 /**
- * The real `BottomSheet` unmounts its content after dismiss and mounts it on
- * present -- this mirrors that with `isPresented` alone, since Jest has no
- * swipe gesture to drive. The dismiss trigger fires both `onIsPresentedChange`
- * and `onDismiss`, the way a real swipe-to-dismiss plausibly fires both native
- * events for one user gesture, so a test can prove `filter-sheet.tsx` guards
- * against emitting twice.
+ * The real `BottomSheet` keeps `anchor` mounted regardless of `isPresented`
+ * (it's the trigger, rendered in place) and mounts `children` only while
+ * presented -- this mirrors both. The dismiss trigger fires `onIsPresentedChange`
+ * and `onDismiss` together; real `filter-sheet.tsx` only wires the former
+ * (see its comment for why), so in practice only one call does anything, but
+ * both fire here since `BottomSheetProps.onDismiss` is real and a future
+ * caller may wire it.
  */
 export function BottomSheet({
+	anchor,
 	children,
 	isPresented,
 	onDismiss,
 	onIsPresentedChange,
 }: WithChildren & {
+	anchor?: React.ReactNode
 	isPresented: boolean
 	onDismiss?: () => void
 	onIsPresentedChange?: (isPresented: boolean) => void
 }): React.ReactNode {
-	if (!isPresented) {
-		return null
+	if (typeof anchor === 'string') {
+		throw new Error('BottomSheet anchor is a SwiftUI slot; a bare string crashes at mount')
 	}
 
 	return (
 		<View>
-			<Pressable
-				accessibilityLabel="Dismiss"
-				onPress={() => {
-					onIsPresentedChange?.(false)
-					onDismiss?.()
-				}}
-			>
-				<RNText>Dismiss</RNText>
-			</Pressable>
-			{children}
+			{anchor}
+			{isPresented ? (
+				<View>
+					<Pressable
+						accessibilityLabel="Dismiss"
+						onPress={() => {
+							onIsPresentedChange?.(false)
+							onDismiss?.()
+						}}
+					>
+						<RNText>Dismiss</RNText>
+					</Pressable>
+					{children}
+				</View>
+			) : null}
 		</View>
 	)
 }
@@ -136,8 +144,32 @@ List.ForEach = function ListForEach({children}: WithChildren): React.ReactNode {
 	return <View>{children}</View>
 }
 
-export function Section({children}: WithChildren): React.ReactNode {
-	return <View>{children}</View>
+/**
+ * `header`/`footer` are real `SwiftUIContent` slots on the native component --
+ * a bare string handed to either crashes at mount -- but react-test-renderer
+ * happily accepts a raw string child of `View`, so rendering them wouldn't
+ * catch that. The explicit throw below is what earns the claim (ported from
+ * the event-list mock, this one's stated model).
+ */
+export function Section({
+	children,
+	header,
+	footer,
+}: WithChildren & {
+	header?: React.ReactNode
+	footer?: React.ReactNode
+}): React.ReactNode {
+	if (typeof header === 'string' || typeof footer === 'string') {
+		throw new Error('Section header/footer are SwiftUI slots; a bare string crashes at mount')
+	}
+
+	return (
+		<View>
+			{header}
+			{children}
+			{footer}
+		</View>
+	)
 }
 
 export function HStack({children}: WithChildren & {spacing?: number}): React.ReactNode {
