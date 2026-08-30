@@ -1,10 +1,10 @@
 import * as React from 'react'
-import {render, screen} from '@testing-library/react-native'
+import {fireEvent, render, screen} from '@testing-library/react-native'
 import {describe, expect, jest, test} from '@jest/globals'
 import moment from 'moment'
 
 import {FilterMenuToolbar} from '../filter-menu-toolbar'
-import type {FilterType} from '@frogpond/filter'
+import type {FilterIcon, FilterType, ListItemSpecType} from '@frogpond/filter'
 import {INACTIVE_TRIGGER_MODIFIERS} from '@frogpond/filter/filter-menu'
 
 jest.mock('expo-symbols', () => ({SymbolView: 'SymbolView'}))
@@ -34,6 +34,24 @@ let MEAL_PICKER: FilterType<Item> = {
 	apply: {key: 'label'},
 }
 
+// `showIcons` puts this filter into `filterShape`'s sheet branch regardless
+// of its one option -- the shape that actually draws whatever `iconFor`
+// returns.
+let DIETARY_FILTER: FilterType<Item> = {
+	type: 'list',
+	key: 'dietary',
+	enabled: false,
+	spec: {
+		title: 'Dietary Restrictions',
+		showIcons: true,
+		options: [{title: 'Vegan'}],
+		selected: [],
+		mode: 'AND',
+		displayTitle: true,
+	},
+	apply: {key: 'label'},
+}
+
 describe('FilterMenuToolbar', () => {
 	// The meal picker is a `picker` filter, which `filterShape` only ever
 	// renders as a native `Menu` -- its `label` prop is its own trigger, so
@@ -57,5 +75,29 @@ describe('FilterMenuToolbar', () => {
 		expect(screen.getByTestId("menu:Today's Menus").props.modifiers).toBe(
 			INACTIVE_TRIGGER_MODIFIERS,
 		)
+	})
+
+	// `FilterMenuToolbar` forwards its own `iconFor` prop to the `FilterToolbar`
+	// it renders for every non-picker filter -- covering that forward here,
+	// with every component real except `@expo/ui` itself, is what catches a
+	// mutation that drops the prop at this specific hop, independent of
+	// whether `@frogpond/filter`'s own components forward it correctly.
+	test('forwards iconFor to a sheet-shaped filter', async () => {
+		let iconFor = (option: ListItemSpecType): FilterIcon | null =>
+			option.title === 'Vegan' ? {kind: 'localFile', uri: 'file:///tmp/vegan.png'} : null
+
+		await render(
+			<FilterMenuToolbar
+				date={moment('2026-08-30')}
+				filters={[DIETARY_FILTER]}
+				iconFor={iconFor}
+				isOpen={true}
+				onPopoverDismiss={jest.fn()}
+			/>,
+		)
+
+		await fireEvent.press(screen.getByRole('button', {name: 'Dietary Restrictions'}))
+
+		expect(screen.getByTestId('icon-file:///tmp/vegan.png')).toBeTruthy()
 	})
 })

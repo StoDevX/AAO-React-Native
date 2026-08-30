@@ -102,6 +102,24 @@ export function Section({
 export function List({children}: WithModifiers): React.ReactNode {
 	return <View>{children}</View>
 }
+List.ForEach = function ListForEach({children}: WithModifiers): React.ReactNode {
+	return <View>{children}</View>
+}
+/**
+ * Mounts `children` only while `isPresented`, matching the real component --
+ * `filter-sheet.tsx` relies on that to keep a closed sheet's rows out of the
+ * tree.
+ */
+export function BottomSheet({
+	children,
+	isPresented,
+}: WithModifiers & {
+	isPresented: boolean
+	onDismiss?: () => void
+	onIsPresentedChange?: (isPresented: boolean) => void
+}): React.ReactNode {
+	return <View>{isPresented ? children : null}</View>
+}
 /**
  * `label` may legitimately be a string -- `MenuProps.label` is documented as
  * `string | ReactNode`, and a string there is the trigger text, not a slot

@@ -1,10 +1,10 @@
 import * as React from 'react'
-import {render, screen} from '@testing-library/react-native'
+import {fireEvent, render, screen} from '@testing-library/react-native'
 import {describe, expect, jest, test} from '@jest/globals'
 
 import {FilterToolbar} from '../filter-toolbar'
 import {ACTIVE_TRIGGER_MODIFIERS, INACTIVE_TRIGGER_MODIFIERS} from '../filter-menu'
-import type {FilterType, ListItemSpecType} from '../types'
+import type {FilterIcon, FilterType, ListItemSpecType} from '../types'
 
 jest.mock('expo-symbols', () => ({SymbolView: 'SymbolView'}))
 jest.mock('@expo/ui/swift-ui', () => {
@@ -149,5 +149,23 @@ describe('FilterToolbar', () => {
 
 		expect(screen.getByTestId('menu:Vegetarian').props.modifiers).toBe(ACTIVE_TRIGGER_MODIFIERS)
 		expect(screen.getByTestId('menu:Specials').props.modifiers).toBe(INACTIVE_TRIGGER_MODIFIERS)
+	})
+
+	// `iconFor` has to survive two forwards to reach a row -- `FilterToolbar`
+	// to `FilterToolbarButton`, then `FilterToolbarButton` to `FilterSheet` --
+	// and every component in between is the real one; only `@expo/ui` itself
+	// is mocked. A drop at either hop fails this the same way it would fail
+	// on screen.
+	test('forwards iconFor through FilterToolbarButton to a sheet row', async () => {
+		let iconFor = (option: ListItemSpecType): FilterIcon | null =>
+			option.title === 'Dept 0' ? {kind: 'localFile', uri: 'file:///tmp/dept-0.png'} : null
+
+		await render(
+			<FilterToolbar filters={[SHEET_FILTER]} iconFor={iconFor} onPopoverDismiss={jest.fn()} />,
+		)
+
+		await fireEvent.press(screen.getByRole('button', {name: 'Departments'}))
+
+		expect(screen.getByLabelText('icon:localFile:file:///tmp/dept-0.png')).toBeTruthy()
 	})
 })
