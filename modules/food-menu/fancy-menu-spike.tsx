@@ -43,6 +43,15 @@ type Props = {
 type Section = {title: string; data: MenuItemType[]}
 
 /**
+ * The single variable under test. `false` renders rows as pure SwiftUI, with no
+ * dietary icons; `true` adds the per-row `RNHostView` that hosts `DietaryTags`.
+ *
+ * Flipping this is how we tell "the prototype is wrong" apart from
+ * "`RNHostView`-per-row does not lay out inside a `LazyVStack`".
+ */
+const HOST_DIETARY_TAGS = false
+
+/**
  * Throwaway. Exists only to measure the cost of one `RNHostView` per row,
  * which `DietaryTags` needs because `@expo/ui`'s `Image` cannot load the
  * remote cor-icon URLs. Delete once the spike has an answer.
@@ -109,9 +118,11 @@ function SpikeRow({
 			<Spacer />
 			{/* The thing being measured: an RN subtree per row, because the
 			    cor-icons are remote URLs SwiftUI's Image cannot load. */}
-			<RNHostView matchContents={true}>
-				<DietaryTags corIcons={corIcons} dietary={item.cor_icon} />
-			</RNHostView>
+			{HOST_DIETARY_TAGS ? (
+				<RNHostView matchContents={true}>
+					<DietaryTags corIcons={corIcons} dietary={item.cor_icon} />
+				</RNHostView>
+			) : null}
 		</HStack>
 	)
 }
