@@ -47,9 +47,14 @@ export const useFilterStore = create<FilterState>()(
 	),
 )
 
+/** An empty selection means every sport is shown; a non-empty one narrows the list. */
+export function isFilterActive(selectedSports: string[]): boolean {
+	return selectedSports.length > 0
+}
+
 export function selectShowChangeFiltersMessage(state: FilterState): boolean {
 	const {selectedSports, availableSports} = state
 	// Show the hint when the user has explicitly selected some sports but at
 	// least one currently-available sport is excluded from their selection.
-	return selectedSports.length > 0 && !availableSports.every((s) => selectedSports.includes(s))
+	return isFilterActive(selectedSports) && !availableSports.every((s) => selectedSports.includes(s))
 }

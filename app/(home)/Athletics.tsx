@@ -13,7 +13,7 @@ import {EmptyListNotice} from '../../source/features/athletics/empty-notice'
 import {AthleticsFilters} from '../../source/features/athletics/filters'
 import {athleticsOptions} from '../../source/features/athletics/query'
 import {AthleticsRow} from '../../source/features/athletics/row'
-import {useFilterStore} from '../../source/features/athletics/store'
+import {isFilterActive, useFilterStore} from '../../source/features/athletics/store'
 import {TabBar} from '../../source/features/athletics/tabbar'
 import type {
 	DateGroupedScores,
@@ -68,7 +68,7 @@ function AthleticsView(): React.ReactNode {
 		return baseData.map((section) => ({
 			...section,
 			data: section.data.filter(
-				(score) => selectedSports.length === 0 || selectedSports.includes(score.sport),
+				(score) => !isFilterActive(selectedSports) || selectedSports.includes(score.sport),
 			),
 		}))
 	}, [baseData, selectedSports])

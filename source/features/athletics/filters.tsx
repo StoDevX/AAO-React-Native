@@ -9,6 +9,11 @@ interface AthleticsFiltersProps {
 	sports: SportSection[]
 }
 
+/** True when every sport in the section is already in the user's selection. */
+function isSectionFullySelected(sectionSports: string[], selectedSports: string[]): boolean {
+	return sectionSports.every((sport) => selectedSports.includes(sport))
+}
+
 export function AthleticsFilters({sports}: AthleticsFiltersProps): React.ReactNode {
 	const selectedSports = useFilterStore((s) => s.selectedSports)
 	const toggleSport = useFilterStore((s) => s.toggleSport)
@@ -16,7 +21,7 @@ export function AthleticsFilters({sports}: AthleticsFiltersProps): React.ReactNo
 
 	const handleSelectAll = (sectionTitle: string) => {
 		const sectionSports = sports.find((s) => s.title === sectionTitle)?.data ?? []
-		const allSelected = sectionSports.every((sport) => selectedSports.includes(sport))
+		const allSelected = isSectionFullySelected(sectionSports, selectedSports)
 		if (allSelected) {
 			setSelectedSports(selectedSports.filter((sport) => !sectionSports.includes(sport)))
 		} else {
@@ -53,10 +58,10 @@ export function AthleticsFilters({sports}: AthleticsFiltersProps): React.ReactNo
 				</TouchableOpacity>
 			)}
 			renderSectionHeader={({section: {title}}) => {
-				const allSelected =
-					sports
-						.find((s) => s.title === title)
-						?.data.every((sport) => selectedSports.includes(sport)) ?? false
+				const sectionSports = sports.find((s) => s.title === title)?.data
+				const allSelected = sectionSports
+					? isSectionFullySelected(sectionSports, selectedSports)
+					: false
 				return (
 					<View>
 						<Text style={styles.sectionHeader}>{title}</Text>

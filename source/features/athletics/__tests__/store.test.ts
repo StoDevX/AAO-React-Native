@@ -22,6 +22,10 @@ describe('selectShowChangeFiltersMessage', () => {
 			true,
 		)
 	})
+
+	it('is false when availableSports is still empty, as on the first frame after mount', () => {
+		expect(selectShowChangeFiltersMessage(state(['Baseball'], []))).toBe(false)
+	})
 })
 
 describe('useFilterStore', () => {
