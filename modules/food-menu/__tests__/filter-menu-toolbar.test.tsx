@@ -7,7 +7,17 @@ import {FilterMenuToolbar} from '../filter-menu-toolbar'
 import type {FilterType} from '@frogpond/filter'
 
 jest.mock('expo-symbols', () => ({SymbolView: 'SymbolView'}))
-jest.mock('@frogpond/filter/filter-popover', () => ({FilterPopover: () => null}))
+// `@frogpond/filter`'s barrel still reaches the popover's SwiftUI picker,
+// which cannot mount under Jest.
+jest.mock('@expo/ui/community/picker', () => ({Picker: 'Picker'}))
+jest.mock('@expo/ui/swift-ui', () => {
+	// oxlint-disable-next-line typescript/no-require-imports
+	return require('./expo-ui-mock') as typeof import('./expo-ui-mock')
+})
+jest.mock('@expo/ui/swift-ui/modifiers', () => {
+	// oxlint-disable-next-line typescript/no-require-imports
+	return require('./expo-ui-mock') as typeof import('./expo-ui-mock')
+})
 
 type Item = {label: string}
 
@@ -24,7 +34,10 @@ let MEAL_PICKER: FilterType<Item> = {
 }
 
 describe('FilterMenuToolbar', () => {
-	test('does not mark the meal picker as an active filter', async () => {
+	// The meal picker is a `picker` filter, which `filterShape` only ever
+	// renders as a native `Menu` -- its `label` prop is its own trigger, so
+	// there is no separate button left for `isActive` to mark selected.
+	test('renders the meal picker as a menu, with no button to mark active', async () => {
 		await render(
 			<FilterMenuToolbar
 				date={moment('2026-08-30')}
@@ -34,7 +47,7 @@ describe('FilterMenuToolbar', () => {
 			/>,
 		)
 
-		let button = screen.getByRole('button', {name: "Today's Menus"})
-		expect(button.props.accessibilityState).toEqual({selected: false})
+		expect(screen.getByText("Today's Menus")).toBeTruthy()
+		expect(screen.queryByRole('button')).toBeNull()
 	})
 })

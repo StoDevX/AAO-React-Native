@@ -8,7 +8,15 @@ import StreamingPage from '../index'
 import type {StreamType} from '../../../../source/features/streaming/streams/types'
 
 jest.mock('expo-symbols', () => ({SymbolView: 'SymbolView'}))
-jest.mock('@frogpond/filter/filter-popover', () => ({FilterPopover: () => null}))
+jest.mock('@expo/ui/community/picker', () => ({Picker: 'Picker'}))
+jest.mock('@expo/ui/swift-ui', () => {
+	// oxlint-disable-next-line typescript/no-require-imports
+	return require('./expo-ui-mock') as typeof import('./expo-ui-mock')
+})
+jest.mock('@expo/ui/swift-ui/modifiers', () => {
+	// oxlint-disable-next-line typescript/no-require-imports
+	return require('./expo-ui-mock') as typeof import('./expo-ui-mock')
+})
 jest.mock('@tanstack/react-query', () => ({
 	...(jest.requireActual('@tanstack/react-query') as object),
 	useQuery: jest.fn(),
@@ -32,7 +40,11 @@ function makeStream(overrides: Partial<StreamType> = {}): StreamType {
 }
 
 describe('StreamingPage', () => {
-	test('does not mark the Categories filter as active before the viewer chooses anything', async () => {
+	// This feed's Categories filter never reaches `filterShape`'s sheet
+	// threshold, so it always renders as a native `Menu` -- its `label` prop
+	// is its own trigger, with no separate button left for `enabled` to mark
+	// active or not.
+	test('renders the Categories filter as a menu, with no button to mark active', async () => {
 		let streams = [
 			makeStream({eid: '1', category: 'Music'}),
 			makeStream({eid: '2', category: 'Sports'}),
@@ -49,7 +61,7 @@ describe('StreamingPage', () => {
 
 		await render(<StreamingPage />)
 
-		let button = screen.getByRole('button', {name: 'Categories'})
-		expect(button.props.accessibilityState).toEqual({selected: false})
+		expect(screen.getByText('Categories')).toBeTruthy()
+		expect(screen.queryByRole('button')).toBeNull()
 	})
 })

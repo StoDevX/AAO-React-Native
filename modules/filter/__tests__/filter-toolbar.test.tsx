@@ -3,10 +3,17 @@ import {render, screen} from '@testing-library/react-native'
 import {describe, expect, jest, test} from '@jest/globals'
 
 import {FilterToolbar} from '../filter-toolbar'
-import type {FilterType} from '../types'
+import type {FilterType, ListItemSpecType} from '../types'
 
 jest.mock('expo-symbols', () => ({SymbolView: 'SymbolView'}))
-jest.mock('../filter-popover', () => ({FilterPopover: () => null}))
+jest.mock('@expo/ui/swift-ui', () => {
+	// oxlint-disable-next-line typescript/no-require-imports
+	return require('./expo-ui-mock') as typeof import('./expo-ui-mock')
+})
+jest.mock('@expo/ui/swift-ui/modifiers', () => {
+	// oxlint-disable-next-line typescript/no-require-imports
+	return require('./expo-ui-mock') as typeof import('./expo-ui-mock')
+})
 
 type Item = {isVegetarian: boolean; dietaryTags: string[]}
 
@@ -32,13 +39,28 @@ let LIST_FILTER_WITH_SELECTION: FilterType<Item> = {
 	apply: {key: 'dietaryTags'},
 }
 
-let LIST_FILTER_WITH_NO_SELECTION: FilterType<Item> = {
+let EMPTY_LIST_FILTER: FilterType<Item> = {
 	type: 'list',
-	key: 'stations',
+	key: 'empty',
+	enabled: false,
+	spec: {title: 'Nothing To Choose', options: [], selected: [], mode: 'OR', displayTitle: true},
+	apply: {key: 'dietaryTags'},
+}
+
+function manyOptions(count: number): ListItemSpecType[] {
+	return Array.from({length: count}, (_, i) => ({title: `Dept ${i}`}))
+}
+
+// 12 options crosses `filterShape`'s sheet threshold -- the one shape whose
+// trigger is still a plain button, since a `Menu`'s `label` prop is its own
+// trigger and has no `isActive`-driven marking of its own.
+let SHEET_FILTER: FilterType<Item> = {
+	type: 'list',
+	key: 'departments',
 	enabled: true,
 	spec: {
-		title: 'Stations',
-		options: [{title: 'Grill'}],
+		title: 'Departments',
+		options: manyOptions(12),
 		selected: [],
 		mode: 'OR',
 		displayTitle: true,
@@ -46,49 +68,37 @@ let LIST_FILTER_WITH_NO_SELECTION: FilterType<Item> = {
 	apply: {key: 'dietaryTags'},
 }
 
-let INACTIVE_FILTER: FilterType<Item> = {
-	type: 'toggle',
-	key: 'specials',
-	enabled: false,
-	spec: {label: 'Specials only', title: 'Specials'},
-	apply: {key: 'isVegetarian'},
-}
-
 describe('FilterToolbar', () => {
-	test('renders one button per filter, and no separate active-filter row', async () => {
+	test('renders every filter that has something to offer', async () => {
 		await render(
 			<FilterToolbar
-				filters={[
-					TOGGLE_FILTER,
-					LIST_FILTER_WITH_SELECTION,
-					LIST_FILTER_WITH_NO_SELECTION,
-					INACTIVE_FILTER,
-				]}
+				filters={[TOGGLE_FILTER, LIST_FILTER_WITH_SELECTION, SHEET_FILTER]}
 				onPopoverDismiss={jest.fn()}
 			/>,
 		)
 
-		expect(screen.getByRole('button', {name: 'Vegetarian'})).toBeTruthy()
-		expect(screen.getByRole('button', {name: 'Dietary Restrictions'})).toBeTruthy()
-		expect(screen.getByRole('button', {name: 'Stations'})).toBeTruthy()
-		expect(screen.getByRole('button', {name: 'Specials'})).toBeTruthy()
-
-		// filter selections must not render as a separate chip row
-		expect(screen.queryByText('Vegetarian only')).toBeNull()
-		expect(screen.queryByText('Vegan')).toBeNull()
-		expect(screen.queryByText('No Stations')).toBeNull()
+		expect(screen.getByText('Vegetarian')).toBeTruthy()
+		expect(screen.getByText('Dietary Restrictions')).toBeTruthy()
+		expect(screen.getByRole('button', {name: 'Departments'})).toBeTruthy()
 	})
 
-	test('marks each button active or inactive based on filter.enabled', async () => {
+	test('renders nothing for a list filter with no options', async () => {
 		await render(
-			<FilterToolbar filters={[TOGGLE_FILTER, INACTIVE_FILTER]} onPopoverDismiss={jest.fn()} />,
+			<FilterToolbar filters={[TOGGLE_FILTER, EMPTY_LIST_FILTER]} onPopoverDismiss={jest.fn()} />,
 		)
 
-		expect(screen.getByRole('button', {name: 'Vegetarian'}).props.accessibilityState).toEqual({
+		expect(screen.getByText('Vegetarian')).toBeTruthy()
+		expect(screen.queryByText('Nothing To Choose')).toBeNull()
+	})
+
+	// This is observable only for a sheet-shaped filter -- a `Menu`'s own
+	// label trigger, which every other fixture above renders as, has no
+	// `isActive`-driven state at all to assert on.
+	test('threads filter.enabled into a sheet trigger as isActive', async () => {
+		await render(<FilterToolbar filters={[SHEET_FILTER]} onPopoverDismiss={jest.fn()} />)
+
+		expect(screen.getByRole('button', {name: 'Departments'}).props.accessibilityState).toEqual({
 			selected: true,
-		})
-		expect(screen.getByRole('button', {name: 'Specials'}).props.accessibilityState).toEqual({
-			selected: false,
 		})
 	})
 })

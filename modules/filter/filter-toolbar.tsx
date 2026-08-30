@@ -1,5 +1,5 @@
 import * as React from 'react'
-import type {FilterType} from './types'
+import type {FilterIcon, FilterType, ListItemSpecType} from './types'
 import {ScrollView, StyleSheet} from 'react-native'
 import {Toolbar} from '@frogpond/toolbar'
 import {FilterToolbarButton} from './filter-toolbar-button'
@@ -7,16 +7,21 @@ import {FilterToolbarButton} from './filter-toolbar-button'
 type Props<T extends object> = {
 	filters: Array<FilterType<T>>
 	onPopoverDismiss: (filter: FilterType<T>) => unknown
+	/// Forwarded to each `FilterToolbarButton`, and from there to the sheet
+	/// only -- see the `FilterIcon` contract in `types.ts`.
+	iconFor?: (option: ListItemSpecType) => FilterIcon | null
 }
 
 export function FilterToolbar<T extends object>({
 	filters,
+	iconFor,
 	onPopoverDismiss,
 }: Props<T>): React.ReactNode {
 	let filterToggles = filters.map((filter) => (
 		<FilterToolbarButton<T>
 			key={filter.spec.title}
 			filter={filter}
+			iconFor={iconFor}
 			isActive={filter.enabled}
 			onPopoverDismiss={onPopoverDismiss}
 			title={filter.spec.title}

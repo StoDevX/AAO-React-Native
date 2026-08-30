@@ -1,9 +1,11 @@
 import * as React from 'react'
-import {useRef, useState} from 'react'
-import {StyleProp, StyleSheet, Text, View, ViewStyle} from 'react-native'
+import {useState} from 'react'
+import {StyleProp, StyleSheet, Text, ViewStyle} from 'react-native'
 import {SymbolView} from 'expo-symbols'
-import type {FilterType} from './types'
-import {FilterPopover} from './filter-popover'
+import type {FilterIcon, FilterType, ListItemSpecType} from './types'
+import {FilterMenu} from './filter-menu'
+import {FilterSheet} from './filter-sheet'
+import {filterShape} from './lib/filter-shape'
 import * as c from '@frogpond/colors'
 import {Touchable} from '@frogpond/touchable'
 
@@ -41,38 +43,47 @@ type Props<T extends object> = {
 	onPopoverDismiss: (filter: FilterType<T>) => unknown
 	style?: StyleProp<ViewStyle>
 	title: string
+	/// Forwarded to the sheet only -- a pull-down menu is text-only, so a
+	/// `menu`-shaped filter never draws icons regardless of what this returns.
+	iconFor?: (option: ListItemSpecType) => FilterIcon | null
 }
 
+/**
+ * Picks a filter's presentation and renders it. A `Menu` is its own trigger --
+ * its `label` prop draws the button -- so this component renders nothing else
+ * for that shape. A sheet has no such trigger built in, so this component
+ * renders the same button the popover used to open behind, and owns the
+ * presentation state that opens the sheet under it.
+ */
 export function FilterToolbarButton<T extends object>(props: Props<T>): React.ReactNode {
-	let {onPopoverDismiss, filter, isActive, style, title} = props
+	let {onPopoverDismiss, filter, isActive, style, title, iconFor} = props
 
-	let [popoverVisible, setPopoverVisible] = useState(false)
-	let touchable = useRef<View>(null)
+	let [isPresented, setIsPresented] = useState(false)
 
-	let openPopover = (): void => {
-		setPopoverVisible(true)
+	let shape = filterShape(filter)
+
+	if (shape === 'none') {
+		return null
 	}
 
-	let onClosePopover = (updatedFilter: FilterType<T>): void => {
-		onPopoverDismiss(updatedFilter)
-		setPopoverVisible(false)
+	if (shape === 'menu') {
+		return <FilterMenu filter={filter} onChange={onPopoverDismiss} />
 	}
 
-	if (filter.type === 'list') {
-		if (!filter.spec.options.length) {
-			return null
-		}
+	// `filterShape` only returns 'sheet' for a `list` filter, so this always
+	// narrows successfully; the `false` branch never renders in practice.
+	if (filter.type !== 'list') {
+		return null
 	}
 
 	return (
 		<React.Fragment>
 			<Touchable
-				ref={touchable}
 				accessibilityLabel={title}
 				accessibilityRole="button"
 				accessibilityState={{selected: isActive}}
 				highlight={false}
-				onPress={openPopover}
+				onPress={() => setIsPresented(true)}
 				style={[buttonStyles.button, isActive && buttonStyles.activeButton, style]}
 			>
 				<Text
@@ -86,17 +97,13 @@ export function FilterToolbarButton<T extends object>(props: Props<T>): React.Re
 				</Text>
 				<SymbolView name="chevron.down" size={18} tintColor={isActive ? c.white : c.label} />
 			</Touchable>
-			{popoverVisible && (
-				<FilterPopover<T>
-					// React 19's useRef returns RefObject<View | null>; react-native-popover-view's
-					// types still require a non-null generic. The ref is never null when the popover
-					// is mounted (it's rendered as a child of the Touchable above).
-					anchor={touchable as React.RefObject<View>}
-					filter={filter}
-					onClosePopover={onClosePopover}
-					visible={true}
-				/>
-			)}
+			<FilterSheet
+				filter={filter}
+				iconFor={iconFor}
+				isPresented={isPresented}
+				onChange={onPopoverDismiss}
+				onDismiss={() => setIsPresented(false)}
+			/>
 		</React.Fragment>
 	)
 }

@@ -95,6 +95,55 @@ export function List({children}: WithModifiers): React.ReactNode {
 	return <View>{children}</View>
 }
 /**
+ * `label` may legitimately be a string -- `MenuProps.label` is documented as
+ * `string | ReactNode`, and a string there is the trigger text, not a slot
+ * bug. `children` may not, so the throw below mirrors that constraint.
+ */
+export function Menu({
+	label,
+	children,
+}: WithModifiers & {label: string | React.ReactNode}): React.ReactNode {
+	if (typeof children === 'string') {
+		throw new Error('Menu children must be nested elements, not a plain string')
+	}
+
+	return (
+		<View>
+			{typeof label === 'string' ? <RNText>{label}</RNText> : label}
+			{children}
+		</View>
+	)
+}
+/**
+ * A `Toggle` inside a `Menu` is how this codebase draws a checked menu item --
+ * the platform supplies the checkmark, so the mock only needs to report the
+ * label and forward the flipped state.
+ */
+export function Toggle({
+	label,
+	isOn,
+	onIsOnChange,
+	children,
+}: WithModifiers & {
+	label?: string
+	isOn?: boolean
+	onIsOnChange?: (isOn: boolean) => void
+}): React.ReactNode {
+	if (typeof children === 'string') {
+		throw new Error('Toggle children must be nested elements, not a plain string')
+	}
+
+	return (
+		<Pressable
+			accessibilityRole="menuitem"
+			accessibilityState={{checked: isOn}}
+			onPress={() => onIsOnChange?.(!isOn)}
+		>
+			{children ?? (label ? <RNText>{label}</RNText> : null)}
+		</Pressable>
+	)
+}
+/**
  * `children` must be nested elements, not a plain string: the throw below
  * mirrors that constraint instead of silently accepting what the real
  * component would reject.
