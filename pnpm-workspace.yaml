@@ -101,7 +101,7 @@ overrides:
   # fast-uri@3.1.0 (via ajv, used by our own eslint/ajv-formats devDeps):
   # path-traversal and host-confusion advisories (GHSA-q3j6-qgpj-74h6,
   # GHSA-v39h-62p7-jpjc); fixed within the same 3.1.x line.
-  'fast-uri@3.1': '4.1.2'
+  'fast-uri@3.1': '4.1.3'
   # js-yaml@3.14.2 (via @istanbuljs/load-nyc-config, Jest's coverage
   # instrumentation): quadratic-CPU merge-key bug (GHSA-52cp-r559-cp3m) and
   # a prototype-adjacent parsing issue (GHSA-h67p-54hq-rp68). No fix within

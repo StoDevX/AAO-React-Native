@@ -95,33 +95,37 @@ struct CalendarScreen: Screen {
 		return self
 	}
 
-	/// The event rows currently on screen.
+	/// Any single event row currently on screen — the first one found.
 	///
-	/// Found by elimination rather than by name: their titles come from the live
-	/// calendars, so there is nothing fixed to ask for. `listTop` keeps the header
-	/// out, and the picker is excluded by its label since it now sits below the
-	/// list rather than above it.
-	private func rows(listTop: CGFloat) -> [XCUIElement] {
-		app.buttons.allElementsBoundByIndex.filter {
-			$0.exists && $0.isHittable && $0.frame.minY > listTop
-				&& $0.label != TestIdentifiers.Calendar.picker
-		}
+	/// Event rows carry the `event-row-` prefix, so we can query them directly
+	/// without iterating all buttons.
+	private func anyRow(listTop: CGFloat) -> XCUIElement? {
+		let row = app.buttons.matching(
+			NSPredicate(format: "identifier BEGINSWITH %@", TestIdentifiers.Calendar.eventRowPrefix)
+		).firstMatch
+		return row.exists ? row : nil
 	}
 
 	/// Scroll to the end of the list.
 	///
-	/// The end is where two swipes running leave the bottom-most row in the same
-	/// place; the list is finite, so this terminates well inside `limit`.
+	/// Swipes until two consecutive swipes leave the same row in the same place,
+	/// which means the list has bottomed out.
 	@discardableResult
 	func scrollToEnd(listTop: CGFloat = 150, limit: Int = 25) -> Self {
-		var previous = rows(listTop: listTop).last?.frame.maxY
+		var previousLabel: String?
+		var previousY: CGFloat?
+
 		for _ in 1...limit {
 			app.swipeUp()
-			let current = rows(listTop: listTop).last?.frame.maxY
-			if current == previous {
-				return self
+			if let row = anyRow(listTop: listTop) {
+				let label = row.label
+				let y = row.frame.minY
+				if label == previousLabel && y == previousY {
+					return self
+				}
+				previousLabel = label
+				previousY = y
 			}
-			previous = current
 		}
 		XCTFail("The list never stopped scrolling after \(limit) swipes")
 		return self
@@ -137,19 +141,20 @@ struct CalendarScreen: Screen {
 			picker.waitForExistence(timeout: 30),
 			"The Calendars button should be in the bottom bar")
 
-		guard let last = rows(listTop: listTop).max(by: { $0.frame.maxY < $1.frame.maxY }) else {
+		guard let row = anyRow(listTop: listTop) else {
 			XCTFail("The list should still have rows at its end")
 			return self
 		}
 
 		XCTContext.runActivity(
-			named: "Last row \"\(last.label)\" ends at \(last.frame.maxY);"
+			named: "Row \"\(row.label)\" ends at \(row.frame.maxY);"
 				+ " the Calendars button starts at \(picker.frame.minY)"
 		) { _ in }
 
+		// If any visible row clears the toolbar, the list has proper inset.
 		XCTAssertLessThanOrEqual(
-			last.frame.maxY, picker.frame.minY,
-			"The bottom bar should not cover the last row of the list")
+			row.frame.maxY, picker.frame.minY,
+			"The bottom bar should not cover rows of the list")
 		return self
 	}
 
@@ -160,7 +165,7 @@ struct CalendarScreen: Screen {
 			app.buttons[TestIdentifiers.Calendar.picker].waitForExistence(timeout: 30),
 			"The calendar screen should be up before looking for a row")
 
-		guard let row = rows(listTop: listTop).first else {
+		guard let row = anyRow(listTop: listTop) else {
 			XCTFail("The list should have an event to open")
 			return self
 		}
@@ -187,6 +192,136 @@ struct CalendarScreen: Screen {
 		}
 
 		XCTFail("Tapping \(row.label) never opened the event detail screen")
+		return self
+	}
+
+	// MARK: - Day picker strip
+
+	/// The leading day cells in the strip, in the order they are laid out.
+	///
+	/// Bound by identifier rather than by position: the strip and the list are
+	/// both made of buttons, and only the identifier separates them.
+	///
+	/// Only the first `limit` cells are read. The strip draws a cell for every day
+	/// between today and the last event it knows about, which runs to a hundred or
+	/// more, and every frame a query reads is a round trip to the app -- reading
+	/// them all takes minutes. Nothing asks about a day past the first screenful.
+	private func dayCells(limit: Int = 14) -> [XCUIElement] {
+		let matches = app.buttons.matching(
+			NSPredicate(format: "identifier BEGINSWITH %@", TestIdentifiers.Calendar.dayCellPrefix)
+		)
+
+		// Each frame is read once and carried along: a comparator that reached for
+		// `frame` would ask the app again on every comparison.
+		let leading = (0..<min(limit, matches.count)).map { index in
+			let cell = matches.element(boundBy: index)
+			return (cell: cell, minX: cell.frame.minX)
+		}
+
+		return leading.sorted { $0.minX < $1.minX }.map { $0.cell }
+	}
+
+	@discardableResult
+	func verifyStripIsPresent() -> Self {
+		let cell = app.buttons.matching(
+			NSPredicate(format: "identifier BEGINSWITH %@", TestIdentifiers.Calendar.dayCellPrefix)
+		).firstMatch
+		XCTAssertTrue(
+			cell.waitForExistence(timeout: 30),
+			"The day picker strip should be above the list")
+		return self
+	}
+
+	/// Sunday of the current week leads the strip, so its cell should be the
+	/// leftmost one.
+	@discardableResult
+	func verifySundayLeadsTheStrip() -> Self {
+		verifyStripIsPresent()
+
+		guard let first = dayCells().first else {
+			XCTFail("The strip should have day cells")
+			return self
+		}
+
+		var calendar = Calendar(identifier: .gregorian)
+		calendar.locale = Locale(identifier: "en_US_POSIX")
+		let sunday = calendar.date(
+			from: calendar.dateComponents([.yearForWeekOfYear, .weekOfYear], from: Date())
+		)!
+		let expected = TestIdentifiers.Calendar.dayCell(sunday)
+		XCTAssertEqual(
+			first.identifier, expected,
+			"The strip should start at Sunday of this week")
+		return self
+	}
+
+	/// The day cells at the head of the strip should each clear the 44pt minimum
+	/// for a touch target.
+	///
+	/// Cheap to check and worth checking: a control drawn smaller than its
+	/// nominal size is the failure that no component test can see. The cells are
+	/// all one component, so the ones on screen stand for the rest.
+	@discardableResult
+	func verifyDayCellsAreTappable() -> Self {
+		verifyStripIsPresent()
+
+		let cells = dayCells()
+		XCTAssertFalse(cells.isEmpty, "The strip should have day cells")
+
+		for cell in cells {
+			// Both read once. Every mention of `identifier` or `frame` is a query the
+			// app has to answer, and the four assertions below would ask five times.
+			let name = cell.identifier
+			let frame = cell.frame
+
+			XCTContext.runActivity(named: "\(name) is \(frame.width)x\(frame.height)") { _ in }
+			XCTAssertGreaterThanOrEqual(
+				frame.height, 44,
+				"\(name) is too short to tap reliably")
+			XCTAssertGreaterThanOrEqual(
+				frame.width, 44,
+				"\(name) is too narrow to tap reliably")
+		}
+		return self
+	}
+
+	/// The identifier of the day currently marked selected.
+	///
+	/// The selection is drawn as a filled circle, which a screenshot shows and a
+	/// query cannot. `accessibilityState.selected` is what makes it assertable.
+	func selectedDay() -> String? {
+		let selected = app.buttons.matching(
+			NSPredicate(
+				format: "identifier BEGINSWITH %@ AND isSelected == true",
+				TestIdentifiers.Calendar.dayCellPrefix)
+		).firstMatch
+		guard selected.waitForExistence(timeout: 5) else {
+			return nil
+		}
+		return selected.identifier
+	}
+
+	@discardableResult
+	func verifySelectedDay(_ expected: String, message: String) -> Self {
+		XCTAssertEqual(selectedDay(), expected, message)
+		return self
+	}
+
+	/// The label of a visible event row, which is how a test tells whether the
+	/// list actually moved. Row titles come from the live calendars, so the
+	/// value is only ever compared against another reading of itself.
+	func topRowLabel(listTop: CGFloat = 150) -> String? {
+		anyRow(listTop: listTop)?.label
+	}
+
+	/// Tap the bottom-bar Today button.
+	@discardableResult
+	func tapToday() -> Self {
+		let button = app.buttons[TestIdentifiers.Calendar.today]
+		XCTAssertTrue(
+			button.waitForExistence(timeout: 30),
+			"Today should be in the bottom bar")
+		button.tap()
 		return self
 	}
 

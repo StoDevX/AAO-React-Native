@@ -24,7 +24,7 @@ struct HomeScreen: Screen {
 	/// Taps a home tile near its top-right corner rather than its centre.
 	///
 	/// A SwiftUI button's hit region comes from its label, so a tile whose fill
-	/// and frame are applied without `contentShape` reports the full coloured
+	/// and frame are applied without `contentShape` reports the full colored
 	/// rect to the accessibility tree while only the icon and title actually
 	/// respond. `tap()` uses the reported centre, which lands on the live part
 	/// and passes either way -- so only an off-centre tap can tell them apart.
