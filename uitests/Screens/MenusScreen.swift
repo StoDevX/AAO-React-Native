@@ -14,6 +14,32 @@ struct MenusScreen: Screen {
 	}
 
 	@discardableResult
+	func verifyFoodRowsAppear() -> Self {
+		let row = app.buttons.matching(
+			NSPredicate(format: "identifier BEGINSWITH %@", TestIdentifiers.Menus.foodRowPrefix)
+		).firstMatch
+		XCTAssertTrue(
+			row.waitForExistence(timeout: 30),
+			"at least one food row should be visible")
+		return self
+	}
+
+	/// The dietary information is only conveyed by unlabelled icons on screen, so
+	/// the row label is the one place a test can prove it did not vanish.
+	@discardableResult
+	func verifyDietaryInfoIsAnnounced() -> Self {
+		let labelled = app.buttons.matching(
+			NSPredicate(
+				format: "identifier BEGINSWITH %@ AND label CONTAINS ','",
+				TestIdentifiers.Menus.foodRowPrefix)
+		).firstMatch
+		XCTAssertTrue(
+			labelled.waitForExistence(timeout: 30),
+			"a food row should announce its dietary icons in its label")
+		return self
+	}
+
+	@discardableResult
 	func checkStOlafCafes() -> Self {
 		for cafe in TestIdentifiers.Menus.stOlafCafes {
 			XCTContext.runActivity(named: cafe) { _ in

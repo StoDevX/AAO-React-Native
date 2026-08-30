@@ -79,6 +79,9 @@ struct TestIdentifiers {
 		static let stOlafCafes = ["Stav Hall", "The Cage", "The Pause"]
 		static let carleton = "Carleton"
 		static let carletonCafes = ["Burton", "LDC", "Weitz Center", "Sayles Hill"]
+
+		/// Matches FOOD_ROW_PREFIX in modules/food-menu/food-item-row.tsx.
+		static let foodRowPrefix = "food-row-"
 	}
 
 	// MARK: - Calendar
