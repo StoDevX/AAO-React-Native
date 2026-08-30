@@ -21,6 +21,7 @@
     "lodash": "4.18.1"
   },
   "peerDependencies": {
+    "expo-asset": "^57.0.15",
     "expo-symbols": "^57.0.2",
     "moment": "^2.30.1",
     "moment-timezone": "^0.6.3",

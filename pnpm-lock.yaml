@@ -712,6 +712,9 @@ importers:
       '@frogpond/toolbar':
         specifier: workspace:*
         version: link:../toolbar
+      expo-asset:
+        specifier: ^57.0.15
+        version: 57.0.15(expo@57.0.17)(react-native@0.86.2)(react@19.2.8)(supports-color@8.1.1)(typescript@7.0.2)
       expo-symbols:
         specifier: ^57.0.2
         version: 57.0.2(expo-font@57.0.1)(expo@57.0.17)(react-native@0.86.2)(react@19.2.8)
