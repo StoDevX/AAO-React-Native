@@ -13,7 +13,7 @@ jest.mock('expo-calendar', () => ({
 	getDefaultCalendarSync: jest.fn(),
 }))
 
-let createEvent = jest.fn<() => Promise<unknown>>()
+let addEventWithForm = jest.fn<() => Promise<unknown>>()
 let alertSpy = jest.spyOn(Alert, 'alert').mockReturnValue(undefined)
 let openURLSpy = jest.spyOn(Linking, 'openURL').mockResolvedValue(true)
 // The error path logs alongside reporting to Sentry. Captured rather than
@@ -22,13 +22,13 @@ let consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => unde
 
 /**
  * `getDefaultCalendarSync` hands back an `ExpoCalendar` instance, and
- * `createEvent` is a method on it. Only that one method is exercised here, so
- * the stand-in carries only that.
+ * `addEventWithForm` is a method on it. Only that one method is exercised
+ * here, so the stand-in carries only that.
  */
 function stubDefaultCalendar(): void {
 	jest
 		.mocked(Calendar.getDefaultCalendarSync)
-		.mockReturnValue({id: 'cal-1', createEvent} as unknown as Calendar.ExpoCalendar)
+		.mockReturnValue({id: 'cal-1', addEventWithForm} as unknown as Calendar.ExpoCalendar)
 }
 
 function permissions(
@@ -62,17 +62,18 @@ describe('addToCalendar', () => {
 	it('adds the event to the default calendar when permission is already granted', async () => {
 		jest.mocked(Calendar.getCalendarPermissions).mockReturnValue(permissions('granted', true))
 		stubDefaultCalendar()
-		createEvent.mockResolvedValue({id: 'event-1'})
+		addEventWithForm.mockResolvedValue({id: 'event-1'})
 
 		let event = generateEvent()
 		let result = await addToCalendar(event)
 
 		expect(result).toBe('saved')
 		expect(Calendar.requestCalendarPermissions).not.toHaveBeenCalled()
-		expect(createEvent).toHaveBeenCalledWith({
+		expect(addEventWithForm).toHaveBeenCalledWith({
 			title: event.title,
 			startDate: event.startTime.toDate(),
 			endDate: event.endTime.toDate(),
+			allDay: event.isAllDay,
 			location: event.location,
 			notes: event.description,
 		})
@@ -81,7 +82,7 @@ describe('addToCalendar', () => {
 	it('asks for full calendar access, not the write-only variant', async () => {
 		jest.mocked(Calendar.getCalendarPermissions).mockReturnValue(permissions('granted', true))
 		stubDefaultCalendar()
-		createEvent.mockResolvedValue({id: 'event-1'})
+		addEventWithForm.mockResolvedValue({id: 'event-1'})
 
 		await addToCalendar(generateEvent())
 
@@ -95,13 +96,13 @@ describe('addToCalendar', () => {
 		jest.mocked(Calendar.getCalendarPermissions).mockReturnValue(permissions('undetermined', true))
 		jest.mocked(Calendar.requestCalendarPermissions).mockReturnValue(permissions('granted', true))
 		stubDefaultCalendar()
-		createEvent.mockResolvedValue({id: 'event-1'})
+		addEventWithForm.mockResolvedValue({id: 'event-1'})
 
 		let result = await addToCalendar(generateEvent())
 
 		expect(result).toBe('saved')
 		expect(Calendar.requestCalendarPermissions).toHaveBeenCalledTimes(1)
-		expect(createEvent).toHaveBeenCalledTimes(1)
+		expect(addEventWithForm).toHaveBeenCalledTimes(1)
 	})
 
 	it('cancels without prompting when the user denies the permission request', async () => {
@@ -111,7 +112,7 @@ describe('addToCalendar', () => {
 		let result = await addToCalendar(generateEvent())
 
 		expect(result).toBe('cancelled')
-		expect(createEvent).not.toHaveBeenCalled()
+		expect(addEventWithForm).not.toHaveBeenCalled()
 		expect(alertSpy).not.toHaveBeenCalled()
 	})
 
@@ -122,7 +123,7 @@ describe('addToCalendar', () => {
 
 		expect(result).toBe('cancelled')
 		expect(Calendar.requestCalendarPermissions).not.toHaveBeenCalled()
-		expect(createEvent).not.toHaveBeenCalled()
+		expect(addEventWithForm).not.toHaveBeenCalled()
 		expect(alertSpy).toHaveBeenCalledTimes(1)
 
 		let [, , buttons] = alertSpy.mock.calls[0]
@@ -136,7 +137,7 @@ describe('addToCalendar', () => {
 		jest.mocked(Calendar.getCalendarPermissions).mockReturnValue(permissions('granted', true))
 		stubDefaultCalendar()
 		let error = new Error('boom')
-		createEvent.mockRejectedValue(error)
+		addEventWithForm.mockRejectedValue(error)
 
 		let result = await addToCalendar(generateEvent())
 

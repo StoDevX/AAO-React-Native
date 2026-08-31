@@ -48,13 +48,19 @@ export async function addToCalendar(event: EventType): Promise<AddToCalendarResu
 
 		let defaultCalendar = Calendar.getDefaultCalendarSync()
 
-		await defaultCalendar.createEvent({
+		// const createdEvent =
+		await defaultCalendar.addEventWithForm({
 			title: event.title,
 			startDate: event.startTime.toDate(),
 			endDate: event.endTime.toDate(),
+			allDay: event.isAllDay,
 			location: event.location,
 			notes: event.description,
 		})
+
+		// TODO: track the saved calendar IDs and detect if the event is already
+		// on the user's calendar, so we can offer to open it instead of creating a duplicate.
+		// await createdEvent.openInCalendar()
 
 		return 'saved'
 	} catch (error) {
