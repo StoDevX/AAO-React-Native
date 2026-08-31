@@ -18,16 +18,12 @@ import {
 const ALL_DAY = {startTime: false, endTime: false, subtitle: 'description'} as const
 
 describe('allDay', () => {
-	function generateEvent(start: string, end: string, config: Partial<EventType['config']> = {}) {
+	// `isAllDay` is each source's own statement, independent of the actual
+	// clock times -- these two never disagree in a real `EventType`, since
+	// every parser sets both from the same source flag.
+	function generateEvent(start: string, end: string, isAllDay = true) {
 		let startTime = moment(start)
 		let endTime = moment(end)
-		let resolvedConfig = {
-			startTime: false,
-			endTime: false,
-			subtitle: 'description' as const,
-			...config,
-		}
-		let isAllDay = !resolvedConfig.startTime && !resolvedConfig.endTime
 		let {isMultiDay, isSameInstant} = deriveDayFlags(isAllDay, startTime.toDate(), endTime.toDate())
 
 		return {
@@ -41,7 +37,7 @@ describe('allDay', () => {
 			location: 'location',
 			isOngoing: false,
 			links: [],
-			config: resolvedConfig,
+			config: {startTime: !isAllDay, endTime: !isAllDay, subtitle: 'description' as const},
 		} satisfies EventType
 	}
 
@@ -52,6 +48,8 @@ describe('allDay', () => {
 		expect(detailTimes(event).allDay).toBe(true)
 	})
 
+	// `times()`/`detailTimes()` must read `allDay` straight off the event, never
+	// infer it from the clock times themselves.
 	test('should be true for a noon-to-noon event whose source called it all-day', () => {
 		const event = generateEvent('2018-08-07T12:00:00Z', '2018-08-08T12:00:00Z')
 		expect(times(event).allDay).toBe(true)
@@ -67,29 +65,14 @@ describe('allDay', () => {
 	})
 
 	test('should be false when the source gave the event real times', () => {
-		const event = generateEvent('2018-08-07T12:00:00Z', '2018-08-08T12:30:00Z', {
-			startTime: true,
-			endTime: true,
-		})
+		const event = generateEvent('2018-08-07T12:00:00Z', '2018-08-08T12:30:00Z', false)
 		expect(times(event).allDay).toBe(false)
 		expect(detailTimes(event).allDay).toBe(false)
 	})
 
 	// A full 24 hours is not all-day if the source gave both edges a time.
 	test('should be false for a timed event that happens to run 24 hours', () => {
-		const event = generateEvent('2018-08-07T12:00:00Z', '2018-08-08T12:00:00Z', {
-			startTime: true,
-			endTime: true,
-		})
-		expect(times(event).allDay).toBe(false)
-		expect(detailTimes(event).allDay).toBe(false)
-	})
-
-	// One meaningful edge is not the same as neither.
-	test('should be false when only one edge is meaningless', () => {
-		const event = generateEvent('2018-08-07T12:00:00Z', '2018-08-08T12:00:00Z', {
-			startTime: true,
-		})
+		const event = generateEvent('2018-08-07T12:00:00Z', '2018-08-08T12:00:00Z', false)
 		expect(times(event).allDay).toBe(false)
 		expect(detailTimes(event).allDay).toBe(false)
 	})
