@@ -10,9 +10,9 @@
   },
   "dependencies": {
     "@expo/ui": "57.0.14",
+    "@frogpond/colors": "workspace:*",
     "@frogpond/toolbar": "workspace:*",
-    "lodash": "4.18.1",
-    "sf-symbols-typescript": "2.2.0"
+    "lodash": "4.18.1"
   },
   "peerDependencies": {
     "react": "^19.1.0",

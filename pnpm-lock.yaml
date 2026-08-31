@@ -652,6 +652,9 @@ importers:
       '@expo/ui':
         specifier: 57.0.14
         version: 57.0.14(@babel/core@7.29.7)(expo@57.0.17)(react-dom@19.2.3)(react-native-worklets@0.10.4)(react-native@0.86.2)(react@19.2.8)
+      '@frogpond/colors':
+        specifier: workspace:*
+        version: link:../colors
       '@frogpond/toolbar':
         specifier: workspace:*
         version: link:../toolbar
@@ -664,9 +667,6 @@ importers:
       react-native:
         specifier: ^0.86.2
         version: 0.86.2(patch_hash=6ca2e1225f38672b073b92b9d13f24feebbe9e37ba67708a3f1569275ce99191)(@babel/core@7.29.7)(@react-native/jest-preset@0.86.2)(@react-native/metro-config@0.86.2)(@types/react@19.2.18)(react@19.2.8)(supports-color@8.1.1)
-      sf-symbols-typescript:
-        specifier: 2.2.0
-        version: 2.2.0
 
   modules/food-menu:
     dependencies:
