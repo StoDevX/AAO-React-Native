@@ -7,8 +7,8 @@ import XCTest
 /// Menus is the vehicle. Stav Hall's Dietary Restrictions filter carries
 /// icons, so `filterShape` makes it a sheet however few options it has. The
 /// Pause's menu comes from this repository's own `data/pause-menu.yaml`, so its
-/// ten stations are fixed rather than whatever is being served today -- and ten
-/// is over the count at which a list filter becomes a sheet.
+/// ten stations are fixed rather than whatever is being served today. Stations
+/// asks for a menu outright, so its count no longer decides its shape.
 class ModuleFilterTests: UITestCase {
 	private typealias Keys = TestIdentifiers.Filter.MenusKeys
 
@@ -101,9 +101,9 @@ class ModuleFilterTests: UITestCase {
 	// MARK: - The menu
 
 	/// The other presentation, end to end: open the pull-down menu, toggle one
-	/// station, and find it applied to the list behind the sheet. The other
-	/// sheet tests prove a selection survives dismissal; this one proves the
-	/// selection actually reaches the data.
+	/// station, and find it applied to the list behind the menu. The sheet tests
+	/// prove a selection survives dismissal; this one proves a selection made
+	/// through the other presentation actually reaches the data.
 	func testStationSelectionNarrowsTheFoodList() throws {
 		MenusScreen(app: app)
 			.navigate()
@@ -120,11 +120,13 @@ class ModuleFilterTests: UITestCase {
 			"the unfiltered menu should show an item from another station")
 
 		// Nothing starts selected, which shows every station. Ticking one is
-		// what narrows the list to it.
+		// what narrows the list to it. The menu stays open afterwards -- that is
+		// what lets several stations be chosen at once -- so it has to be
+		// dismissed before the list behind it can be read.
 		filters
-			.openFilter(Keys.stations, until: filters.option(pizza))
-			.tapOption(pizza)
-			.dismissSheet(waitingFor: pizza)
+			.openFilter(Keys.stations, until: filters.menuItem(pizza))
+			.tapMenuItem(pizza)
+			.dismissMenu(waitingFor: pizza)
 
 		filters.verifyTrigger(Keys.stations, isSelected: true)
 

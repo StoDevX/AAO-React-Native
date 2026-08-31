@@ -88,9 +88,9 @@ struct TestIdentifiers {
 		/// than whatever Bon Appétit is serving today.
 		static let pause = "The Pause"
 
-		/// Two stations from that file, and one item from each. The Pause
-		/// offers ten stations, over the count at which a list filter becomes
-		/// a sheet, so its Stations filter is reliably a sheet.
+		/// Two stations from that file, and one item from each. The Stations
+		/// filter asks for a menu outright, so its shape does not depend on how
+		/// many stations a cafe happens to serve.
 		static let pizzaStation = "Pizza"
 		static let specialtyPizzaStation = "Specialty Pizza"
 		static let pizzaItem = "food-row-Single Slice"

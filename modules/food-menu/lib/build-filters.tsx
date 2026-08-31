@@ -77,6 +77,9 @@ export function buildFilters(
 			spec: {
 				title: 'Stations',
 				options: allStations,
+				// A pull-down regardless of how many stations a cafe serves, so the
+				// toolbar's shape doesn't shift with the day's menu.
+				presentation: 'menu',
 				mode: 'OR',
 				selected: [],
 				displayTitle: true,

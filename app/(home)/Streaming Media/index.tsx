@@ -95,6 +95,8 @@ export default function StreamingPage(): React.ReactNode {
 					title: 'Categories',
 					options,
 					selected,
+					// A pull-down however many categories the feed happens to carry.
+					presentation: 'menu',
 					mode: 'OR',
 					displayTitle: true,
 				},

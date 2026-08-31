@@ -25,6 +25,36 @@ struct FilterScreen: Screen {
 
 	/// An item in an open menu.
 	///
+	/// A `Toggle` inside a SwiftUI `Menu` becomes a UIKit menu action, which
+	/// carries none of our identifiers -- only the label it draws. An element
+	/// query cannot filter on hittability, so where the screen behind an open
+	/// menu offers a button with the same label, this picks the hittable one:
+	/// while a menu is up, only its own items are.
+	func menuItem(_ label: String) -> XCUIElement {
+		let matches = app.buttons.matching(NSPredicate(format: "label == %@", label))
+		return matches.allElementsBoundByIndex.first { $0.isHittable } ?? matches.firstMatch
+	}
+
+	@discardableResult
+	func tapMenuItem(_ label: String) -> Self {
+		let item = menuItem(label)
+		XCTAssertTrue(item.waitForExistence(timeout: 30), "the menu should offer a \(label) item")
+		item.tap()
+		return self
+	}
+
+	/// Close a list menu, which stays open as its options are ticked so several
+	/// can be chosen in one go. Tapping outside it is the dismissal a user
+	/// makes; there is no button to press.
+	@discardableResult
+	func dismissMenu(waitingFor label: String) -> Self {
+		app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.93)).tap()
+		XCTAssertTrue(
+			menuItem(label).waitForNonExistence(timeout: 30),
+			"the menu should be gone after tapping outside it")
+		return self
+	}
+
 	@discardableResult
 	func waitForTrigger(_ key: String) -> Self {
 		XCTAssertTrue(
