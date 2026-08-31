@@ -27,7 +27,7 @@ function pickerFilter(optionCount: number): PickerType<Item> {
 	}
 }
 
-function listFilter(optionCount: number, showIcons?: boolean): ListType<Item> {
+function listFilter(optionCount: number, renderMark?: () => null): ListType<Item> {
 	let options: ListItemSpecType[] = Array.from({length: optionCount}, (_, i) => ({
 		title: `Option ${i}`,
 	}))
@@ -36,7 +36,7 @@ function listFilter(optionCount: number, showIcons?: boolean): ListType<Item> {
 		type: 'list',
 		key: 'k',
 		enabled: false,
-		spec: {title: 'Filter', options, selected: [], mode: 'OR', displayTitle: true, showIcons},
+		spec: {title: 'Filter', options, selected: [], mode: 'OR', displayTitle: true, renderMark},
 		apply: {key: 'x'},
 	}
 }
@@ -72,10 +72,10 @@ describe('filterShape, list', () => {
 
 	// The rule that is not about length at all: Dietary Restrictions has only
 	// 8 options -- fewer than Stations' 9, which is a menu -- but it is a sheet
-	// because only the sheet draws its icons. Invisible from the option count
-	// alone, so this is the one place the rule is written down.
-	test('Dietary Restrictions, 8 options, showIcons -- a sheet', () => {
-		expect(filterShape(listFilter(8, true))).toBe('sheet')
+	// because a mark is a view and only the sheet can draw one. Invisible from
+	// the option count alone, so this is the one place the rule is written down.
+	test('Dietary Restrictions, 8 options, drawing a mark -- a sheet', () => {
+		expect(filterShape(listFilter(8, () => null))).toBe('sheet')
 	})
 
 	test('GEs, 47 options -- a sheet', () => {

@@ -1,9 +1,9 @@
 import * as React from 'react'
-import {fireEvent, render, screen} from '@testing-library/react-native'
+import {render, screen} from '@testing-library/react-native'
 import {describe, expect, jest, test} from '@jest/globals'
 
 import {FilterToolbar} from '../filter-toolbar'
-import type {FilterIcon, FilterType, ListItemSpecType} from '../types'
+import type {FilterType, ListItemSpecType} from '../types'
 
 jest.mock('@expo/ui/swift-ui', () => {
 	// oxlint-disable-next-line typescript/no-require-imports
@@ -127,14 +127,4 @@ describe('FilterToolbar', () => {
 	// and every component in between is the real one; only `@expo/ui` itself
 	// is mocked. A drop at either hop fails this the same way it would fail
 	// on screen.
-	test('forwards iconFor through FilterToolbarButton to a sheet row', async () => {
-		let iconFor = (option: ListItemSpecType): FilterIcon | null =>
-			option.title === 'Dept 0' ? {kind: 'localFile', uri: 'file:///tmp/dept-0.png'} : null
-
-		await render(<FilterToolbar filters={[SHEET_FILTER]} iconFor={iconFor} onChange={jest.fn()} />)
-
-		await fireEvent.press(screen.getByRole('button', {name: 'Departments'}))
-
-		expect(screen.getByLabelText('icon:localFile:file:///tmp/dept-0.png')).toBeTruthy()
-	})
 })

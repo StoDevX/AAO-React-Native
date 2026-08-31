@@ -4,7 +4,7 @@ import type {FilterType} from '@frogpond/filter/types'
 import {decode, fastGetTrimmedText} from '@frogpond/html-lib'
 import * as React from 'react'
 
-import {DietaryBadgeRN} from '../dietary-badge-rn'
+import {DietaryBadge} from '../dietary-badge-view'
 import {chooseMeal, EMPTY_MEAL} from './choose-meal'
 import {dietaryBadge} from './dietary-badge'
 
@@ -33,7 +33,7 @@ export function buildFilters(
 	 * rows' SwiftUI badge stay identical.
 	 */
 	const renderDietaryMark = (option: {id?: string}) =>
-		option.id ? <DietaryBadgeRN badge={dietaryBadge(option.id, corIcons)} /> : null
+		option.id ? <DietaryBadge badge={dietaryBadge(option.id, corIcons)} /> : null
 
 	// Decide which meal will be selected by default
 	const mealOptions = meals.map((m) => ({label: m.label}))
@@ -94,7 +94,6 @@ export function buildFilters(
 			enabled: false,
 			spec: {
 				title: 'Dietary Restrictions',
-				showIcons: true,
 				renderMark: renderDietaryMark,
 				options: allDietaryRestrictions,
 				mode: 'AND',

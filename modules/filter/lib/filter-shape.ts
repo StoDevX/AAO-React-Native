@@ -12,7 +12,7 @@ const SHEET_THRESHOLD = 8
  * Which presentation a filter gets. A toggle has one state to change, so its
  * trigger is the control: tapping flips it, with nothing to present. A picker
  * needs at least two options to pick between. A list is a menu unless it is
- * empty (nothing to show), carries icons (only a sheet draws them, whatever
+ * empty (nothing to show), draws a mark per option (only a sheet can, whatever
  * its length), asks for a presentation outright, or reaches the sheet
  * threshold.
  */
@@ -25,15 +25,15 @@ export function filterShape<T extends object>(filter: FilterType<T>): FilterShap
 			return filter.spec.options.length < 2 ? 'none' : 'menu'
 
 		case 'list': {
-			let {options, showIcons, presentation} = filter.spec
+			let {options, renderMark, presentation} = filter.spec
 
 			if (options.length === 0) {
 				return 'none'
 			}
-			// Icons override even an explicit `presentation`: a pull-down menu
-			// has nowhere to draw them, so asking for one would silently drop
-			// them.
-			if (showIcons) {
+			// A mark overrides even an explicit `presentation`: it is a view, and
+			// a pull-down menu has nowhere to draw one, so asking for a menu
+			// would silently drop it.
+			if (renderMark) {
 				return 'sheet'
 			}
 			if (presentation) {

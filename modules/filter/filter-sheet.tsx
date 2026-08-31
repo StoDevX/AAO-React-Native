@@ -22,16 +22,14 @@ import {
 	foregroundStyle,
 	frame,
 	padding,
-	resizable,
 	shapes,
 	tag,
 } from '@expo/ui/swift-ui/modifiers'
-import type {SFSymbol} from 'sf-symbols-typescript'
 
 import {clearSelection, selectByTitles} from './lib/select-options'
 import {TriggerLabel} from './lib/trigger-label'
 import {triggerModifiers} from './lib/trigger-modifiers'
-import type {FilterIcon, ListItemSpecType, ListType} from './types'
+import type {ListType} from './types'
 
 type Props<T extends object> = {
 	filter: ListType<T>
@@ -40,9 +38,6 @@ type Props<T extends object> = {
 	/// way a `Menu`'s `label` is one, so this component draws its own.
 	title: string
 	onChange: (filter: ListType<T>) => void
-	/// Draws whatever `iconFor` returns for an option; this component never
-	/// resolves an icon itself. See the `FilterIcon` contract in `types.ts`.
-	iconFor?: (option: ListItemSpecType) => FilterIcon | null
 }
 
 /**
@@ -65,7 +60,6 @@ export const FILTER_CLOSE_BUTTON_ID = 'filter-close'
 // an extra view, once per row. `@expo/ui` view construction costs roughly 3ms
 // per view and isn't virtualised.
 const ROW_MODIFIERS = [contentShape(shapes.rectangle())]
-const LOCAL_ICON_MODIFIERS = [resizable(), frame({width: 20, height: 20})]
 // Fills the row so its text takes the full width, leaving the selection circle
 // alone at the leading edge. A `Spacer` reads more obviously but costs another
 // view on every row --
@@ -135,7 +129,6 @@ export function FilterSheet<T extends object>({
 	isActive,
 	title,
 	onChange,
-	iconFor,
 }: Props<T>): React.ReactNode {
 	let [isPresented, setIsPresented] = React.useState(false)
 	let [local, setLocal] = React.useState(filter)
@@ -245,7 +238,7 @@ export function FilterSheet<T extends object>({
 								<OptionRow
 									key={option.title}
 									detail={option.detail}
-									icon={iconFor?.(option) ?? null}
+									mark={spec.renderMark?.(option) ?? null}
 									label={spec.displayTitle ? option.title : option.label}
 									title={option.title}
 								/>
@@ -300,12 +293,14 @@ function SheetHeader({
 
 function OptionRow({
 	detail,
-	icon,
+	mark,
 	label,
 	title,
 }: {
 	detail?: string
-	icon: FilterIcon | null
+	/// Whatever the filter's own `renderMark` returned for this option -- this
+	/// component never resolves a mark itself.
+	mark: React.ReactElement | null
 	label?: string
 	/// The option's own title, which names the row for the UI tests. Not the
 	/// drawn text: a filter with `displayTitle` off draws `label` instead.
@@ -327,7 +322,7 @@ function OptionRow({
 
 	return (
 		<HStack modifiers={modifiers} spacing={8}>
-			{icon ? <RowIcon icon={icon} /> : null}
+			{mark}
 			{detail ? (
 				<VStack alignment="leading" modifiers={FILL_LEADING} spacing={2}>
 					<Text>{label}</Text>
@@ -338,16 +333,4 @@ function OptionRow({
 			)}
 		</HStack>
 	)
-}
-
-/// Draws exactly the shape the `FilterIcon` contract promises -- an SF Symbol
-/// or a local file -- and nothing else. `resizable()` has to precede `frame()`
-/// on the local-file branch, or SwiftUI draws the image at its intrinsic pixel
-/// size and it overflows the frame; the sfSymbol branch doesn't need either,
-/// since a system image already scales to `font`/`size`.
-function RowIcon({icon}: {icon: FilterIcon}): React.ReactNode {
-	if (icon.kind === 'sfSymbol') {
-		return <Image size={20} systemName={icon.name as SFSymbol} />
-	}
-	return <Image modifiers={LOCAL_ICON_MODIFIERS} uiImage={icon.uri} />
 }

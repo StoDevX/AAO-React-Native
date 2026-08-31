@@ -12,7 +12,6 @@ import {FoodItemRow} from './food-item-row'
 import {applyMenuFilters} from './lib/apply-menu-filters'
 import {buildFilters} from './lib/build-filters'
 import {chooseMeal} from './lib/choose-meal'
-import {dietaryIconFor} from './lib/dietary-icon-for'
 import {emptyMessage} from './lib/empty-message'
 import {offerSpecials} from './lib/offer-specials'
 import type {
@@ -184,7 +183,6 @@ export function FancyMenu(props: Props): React.ReactNode {
 					<FilterToolbar
 						date={now}
 						filters={appliedFilters}
-						iconFor={iconFor}
 						isOpen={isOpen}
 						onChange={(newFilter) => {
 							setFilters(filters.map((f) => (f.key === newFilter.key ? newFilter : f)))

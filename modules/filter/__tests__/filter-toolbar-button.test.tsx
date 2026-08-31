@@ -3,7 +3,7 @@ import {fireEvent, render, screen} from '@testing-library/react-native'
 import {describe, expect, jest, test} from '@jest/globals'
 
 import {FilterToolbarButton} from '../filter-toolbar-button'
-import type {FilterIcon, FilterType, ListItemSpecType} from '../types'
+import type {FilterType, ListItemSpecType} from '../types'
 
 jest.mock('@expo/ui/swift-ui', () => {
 	// oxlint-disable-next-line typescript/no-require-imports
@@ -116,22 +116,4 @@ describe('FilterToolbarButton, sheet shape', () => {
 	// `iconFor` is forwarded to the sheet only -- covering it here, not just
 	// in `filter-sheet.test.tsx`, is what catches a mutation that deletes the
 	// prop at the point this component passes it on.
-	test('forwards iconFor through to the sheet', async () => {
-		let iconFor = (option: ListItemSpecType): FilterIcon | null =>
-			option.title === 'Dept 0' ? {kind: 'localFile', uri: 'file:///tmp/dept-0.png'} : null
-
-		await render(
-			<FilterToolbarButton
-				filter={sheetFilter(false)}
-				iconFor={iconFor}
-				isActive={false}
-				onChange={jest.fn()}
-				title="Departments"
-			/>,
-		)
-
-		await fireEvent.press(screen.getByRole('button', {name: 'Departments'}))
-
-		expect(screen.getByLabelText('icon:localFile:file:///tmp/dept-0.png')).toBeTruthy()
-	})
 })

@@ -1,7 +1,7 @@
 import * as React from 'react'
 import {StyleSheet, Text, View} from 'react-native'
 import type {Moment} from 'moment'
-import type {FilterIcon, FilterType, ListItemSpecType} from '@frogpond/filter'
+import type {FilterType} from '@frogpond/filter'
 import {FilterToolbar, FilterToolbarButton} from '@frogpond/filter'
 import {Toolbar} from '@frogpond/toolbar'
 import * as c from '@frogpond/colors'
@@ -36,9 +36,6 @@ type Props<T extends object> = {
 	title?: string
 	onChange: (filter: FilterType<T>) => void
 	filters: FilterType<T>[]
-	/// Forwarded to `FilterToolbar` -- the meal picker's own button never
-	/// carries icons, so this goes no further than that.
-	iconFor?: (option: ListItemSpecType) => FilterIcon | null
 }
 
 export function FilterMenuToolbar<T extends object>({
@@ -46,7 +43,6 @@ export function FilterMenuToolbar<T extends object>({
 	isOpen,
 	title,
 	filters,
-	iconFor,
 	onChange,
 }: Props<T>): React.ReactNode {
 	const mealFilter = filters.find((f) => f.type === 'picker')
@@ -75,9 +71,7 @@ export function FilterMenuToolbar<T extends object>({
 					</View>
 				) : null}
 			</Toolbar>
-			{isOpen && (
-				<FilterToolbar<T> filters={nonPickerFilters} iconFor={iconFor} onChange={onChange} />
-			)}
+			{isOpen && <FilterToolbar<T> filters={nonPickerFilters} onChange={onChange} />}
 		</View>
 	)
 }

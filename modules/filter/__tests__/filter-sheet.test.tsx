@@ -1,9 +1,10 @@
 import React from 'react'
 import {describe, expect, jest, test} from '@jest/globals'
 import {fireEvent, render, screen} from '@testing-library/react-native'
+import {Text as RNText} from 'react-native'
 
 import {FilterSheet} from '../filter-sheet'
-import type {FilterIcon, ListItemSpecType, ListType} from '../types'
+import type {ListItemSpecType, ListType} from '../types'
 
 jest.mock('@expo/ui/swift-ui', () => {
 	// oxlint-disable-next-line typescript/no-require-imports
@@ -204,29 +205,22 @@ describe('FilterSheet', () => {
 		expect(screen.getByRole('button', {name: TITLE})).toBeTruthy()
 	})
 
-	test('draws the icon iconFor returns, and nothing for options it returns null for', async () => {
+	test("draws the filter's own mark, and nothing for an option it declines", async () => {
 		let options = [{title: 'A'}, {title: 'B'}]
-		let iconFor = (option: ListItemSpecType): FilterIcon | null =>
-			option.title === 'A' ? {kind: 'sfSymbol', name: 'leaf'} : null
+		let filter = listFilter('AND', options, [])
+		filter.spec.renderMark = (option) => (option.title === 'A' ? <RNText>mark:A</RNText> : null)
 
 		await render(
-			<FilterSheet
-				filter={listFilter('AND', options, [])}
-				iconFor={iconFor}
-				isActive={false}
-				onChange={jest.fn()}
-				title={TITLE}
-			/>,
+			<FilterSheet filter={filter} isActive={false} onChange={jest.fn()} title={TITLE} />,
 		)
 
 		await openSheet()
 
-		// The branch is what matters: an option `iconFor` answers for draws its
-		// icon, one it returns null for draws none. Asserting the two named
-		// icons rather than counting every `Image` on screen keeps the sheet's
-		// own chrome -- the close glyph, the trigger's chevron -- out of it.
-		expect(screen.getByLabelText('icon:sfSymbol:leaf')).toBeTruthy()
-		expect(screen.queryByLabelText('icon:sfSymbol:null')).toBeNull()
+		// The branch is what matters: an option the filter draws a mark for gets
+		// one, an option it returns null for gets none. The sheet resolves no
+		// mark itself, so this is the whole of its part in it.
+		expect(screen.getByText('mark:A')).toBeTruthy()
+		expect(screen.queryByText('mark:B')).toBeNull()
 	})
 
 	test('renders nothing when there are no options', async () => {

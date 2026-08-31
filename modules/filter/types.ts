@@ -1,9 +1,3 @@
-/**
- * A drawable icon for a filter option — either an SF Symbol or a local file.
- * These correspond to @expo/ui's Image systemName and uiImage respectively.
- */
-export type FilterIcon = {kind: 'sfSymbol'; name: string} | {kind: 'localFile'; uri: string}
-
 export type ToggleSpecType = {
 	label: string
 	title: string
@@ -19,7 +13,6 @@ export type ListItemSpecType = {
 
 export type ListSpecType = {
 	title: string
-	showIcons?: boolean
 	/**
 	 * Draws a row's leading mark, for a caller whose marks are views rather than
 	 * artwork. Lives on the spec rather than on each option so that it stays out

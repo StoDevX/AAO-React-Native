@@ -1,6 +1,6 @@
 import * as React from 'react'
 
-import type {FilterIcon, FilterType, ListItemSpecType} from './types'
+import type {FilterType} from './types'
 import {FilterMenu} from './filter-menu'
 import {FilterSheet} from './filter-sheet'
 import {FilterToggle} from './filter-toggle'
@@ -11,9 +11,6 @@ type Props<T extends object> = {
 	isActive: boolean
 	onChange: (filter: FilterType<T>) => unknown
 	title: string
-	/// Forwarded to the sheet only -- a pull-down menu is text-only, so a
-	/// `menu`-shaped filter never draws icons regardless of what this returns.
-	iconFor?: (option: ListItemSpecType) => FilterIcon | null
 }
 
 /**
@@ -24,7 +21,7 @@ type Props<T extends object> = {
  * presentation a filter gets, and forwards what each one needs.
  */
 export function FilterToolbarButton<T extends object>(props: Props<T>): React.ReactNode {
-	let {onChange, filter, isActive, title, iconFor} = props
+	let {onChange, filter, isActive, title} = props
 
 	let shape = filterShape(filter)
 
@@ -50,13 +47,5 @@ export function FilterToolbarButton<T extends object>(props: Props<T>): React.Re
 		return null
 	}
 
-	return (
-		<FilterSheet
-			filter={filter}
-			iconFor={iconFor}
-			isActive={isActive}
-			onChange={onChange}
-			title={title}
-		/>
-	)
+	return <FilterSheet filter={filter} isActive={isActive} onChange={onChange} title={title} />
 }
