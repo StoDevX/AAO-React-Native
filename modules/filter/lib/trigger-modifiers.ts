@@ -3,7 +3,7 @@ import {
 	accessibilityIdentifier,
 	buttonStyle,
 	disabled,
-	menuIndicator,
+	foregroundStyle,
 	tint,
 } from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
@@ -18,9 +18,12 @@ type Modifier = ReturnType<typeof buttonStyle>
 /**
  * How a filter's trigger looks and sounds, on and off.
  *
- * Every trigger is a filled capsule; only its tint says whether the filter is
- * narrowing anything. Both colours are `PlatformColor`s, so they track light
- * and dark mode and increased contrast the way a hardcoded pair could not.
+ * Every trigger is a filled capsule: blue with a white label when the filter
+ * narrows something, `systemFill` with the ordinary label colour when it does
+ * not. The label colour has to move with the tint -- `borderedProminent` draws
+ * its label white whatever it sits on, and white on `systemFill` is unreadable
+ * in light mode. Both fills are `PlatformColor`s, so they track light and dark
+ * mode and increased contrast.
  *
  * The style stays `borderedProminent` in both states, and that is load-bearing
  * rather than cosmetic. Changing `buttonStyle` on the first tick rebuilds the
@@ -42,6 +45,7 @@ function activeTreatment(isActive: boolean): Modifier[] {
 	return [
 		buttonStyle('borderedProminent'),
 		tint(isActive ? c.systemBlue : c.systemFill),
+		foregroundStyle(isActive ? c.white : c.label),
 		accessibilityAddTraits(isActive ? ['isSelected'] : []),
 	]
 }
@@ -57,22 +61,9 @@ function activeTreatment(isActive: boolean): Modifier[] {
 export const FILTER_TRIGGER_PREFIX = 'filter-trigger-'
 
 /**
- * SwiftUI's own disclosure chevron, which a `Menu` draws from this rather than
- * from anything we compose into its label. Drawing one by hand would mean
- * handing the trigger a view instead of a string, and a view-labelled control
- * inside a `Host matchContents` is drawn but not hittable -- verified on the
- * simulator, where every such trigger failed `.tap()` while reporting a correct
- * frame.
- */
-const MENU_INDICATOR: Modifier[] = [menuIndicator('visible')]
-
-/**
  * The modifiers a trigger carries, for a filter that is or is not narrowing
  * anything. Call sites memoize the result on `isActive` and `key`, since the
  * identifier makes a per-filter array unavoidable.
- *
- * `presents` asks for the chevron that says the trigger opens something. A
- * toggle passes `false`: its trigger is the control, and nothing opens.
  *
  * `isDisabled` keeps a filter in the toolbar while this meal or feed gives it
  * nothing to act on. It stays drawn, greyed by SwiftUI's own disabled
@@ -82,11 +73,10 @@ const MENU_INDICATOR: Modifier[] = [menuIndicator('visible')]
 export function triggerModifiers(
 	isActive: boolean,
 	key: string,
-	{presents = true, isDisabled = false} = {},
+	{isDisabled = false} = {},
 ): Modifier[] {
 	return [
 		...activeTreatment(isActive),
-		...(presents ? MENU_INDICATOR : []),
 		...(isDisabled ? [disabled(true)] : []),
 		accessibilityIdentifier(`${FILTER_TRIGGER_PREFIX}${key}`),
 	]

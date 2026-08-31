@@ -16,7 +16,7 @@ type Props<T extends object> = {
  * single switch would make the reader open it to learn what the trigger's own
  * prominence already tells them.
  *
- * It draws no chevron for the same reason -- nothing opens.
+ * It draws no disclosure chevron for the same reason -- nothing opens.
  */
 export function FilterToggle<T extends object>({
 	filter,
@@ -24,7 +24,7 @@ export function FilterToggle<T extends object>({
 	onChange,
 }: Props<T>): React.ReactNode {
 	let modifiers = React.useMemo(
-		() => triggerModifiers(isActive, filter.key, {presents: false, isDisabled: filter.disabled}),
+		() => triggerModifiers(isActive, filter.key, {isDisabled: filter.disabled}),
 		[isActive, filter.key, filter.disabled],
 	)
 
