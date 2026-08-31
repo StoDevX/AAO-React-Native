@@ -1,12 +1,21 @@
 import * as React from 'react'
-import {FlatList, type ImageResolvedAssetSource, StyleSheet} from 'react-native'
-import type {StoryType} from './types'
+import {StyleSheet, type ImageResolvedAssetSource} from 'react-native'
+import {
+	ContentUnavailableView,
+	Host,
+	List,
+	ProgressView,
+	RNHostView,
+	VStack,
+} from '@expo/ui/swift-ui'
+import {listStyle, refreshable} from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
-import {ListSeparator} from '@frogpond/lists'
-import {LoadingView, NoticeView} from '@frogpond/notice'
+import {NoticeView} from '@frogpond/notice'
 import {openUrl} from '@frogpond/open-url'
+import type {StoryType} from './types'
 import {NewsRow} from './news-row'
 import {cleanEntries, trimStoryCateogry} from './lib/util'
+import {emptyStateProps} from './lib/empty-state'
 import {FilterToolbar, ListType, selectedOptions} from '@frogpond/filter'
 import {UseQueryResult} from '@tanstack/react-query'
 
@@ -14,15 +23,6 @@ type Props = {
 	query: UseQueryResult<StoryType[]>
 	thumbnail: false | ImageResolvedAssetSource
 }
-
-const styles = StyleSheet.create({
-	listContainer: {
-		backgroundColor: c.systemBackground,
-	},
-	contentContainer: {
-		flexGrow: 1,
-	},
-})
 
 let getStoryCategories = (story: StoryType) => {
 	return story.categories.map((category) => trimStoryCateogry(category))
@@ -42,12 +42,8 @@ let filterStories = (entries: StoryType[], filters: ListType<StoryType>[]) => {
 	})
 }
 
-const NewsItemSeparator = (thumbnail: Props['thumbnail']) => (
-	<ListSeparator spacing={{left: thumbnail === false ? undefined : 101}} />
-)
-
 export const NewsList = (props: Props): React.ReactNode => {
-	let {data = [], error, refetch, isRefetching, isError, isLoading} = props.query
+	let {data = [], error, refetch, isRefetching: _isRefetching, isError, isLoading} = props.query
 
 	let entries = React.useMemo(() => cleanEntries(data), [data])
 
@@ -99,42 +95,58 @@ export const NewsList = (props: Props): React.ReactNode => {
 		)
 	}
 
-	const header = (
-		<FilterToolbar
-			filters={filters}
-			onChange={(newFilter) => {
-				// The categories list is the only filter this toolbar carries.
-				if (newFilter.type !== 'list') {
-					return
-				}
-				setChosenCategories(newFilter.spec.selected.map((option) => option.title))
-			}}
-		/>
-	)
+	let filteredEntries = filterStories(entries, filters)
+	let hasActiveFilter = filters.some((f) => f.spec.selected.length)
 
 	return (
-		<FlatList
-			ItemSeparatorComponent={NewsItemSeparator}
-			ListEmptyComponent={
-				isLoading ? (
-					<LoadingView />
-				) : filters.some((f) => f.spec.selected.length) ? (
-					<NoticeView text="No stories to show. Try changing the filters." />
-				) : (
-					<NoticeView text="No news stories." />
-				)
-			}
-			ListHeaderComponent={header}
-			contentContainerStyle={styles.contentContainer}
-			contentInsetAdjustmentBehavior="automatic"
-			data={filterStories(entries, filters)}
-			keyExtractor={(item: StoryType) => item.title}
-			onRefresh={refetch}
-			refreshing={isRefetching}
-			renderItem={({item}) => (
-				<NewsRow onPress={(url: string) => openUrl(url)} story={item} thumbnail={props.thumbnail} />
-			)}
-			style={styles.listContainer}
-		/>
+		<Host style={styles.host}>
+			<VStack spacing={0}>
+				{/* The filter toolbar this carries is React Native, so it still
+				    needs an `RNHostView` bridge into the SwiftUI tree around it. */}
+				<RNHostView matchContents={true}>
+					<FilterToolbar
+						filters={filters}
+						onChange={(newFilter) => {
+							// The categories list is the only filter this toolbar carries.
+							if (newFilter.type !== 'list') {
+								return
+							}
+							setChosenCategories(newFilter.spec.selected.map((option) => option.title))
+						}}
+					/>
+				</RNHostView>
+
+				<List
+					modifiers={[
+						listStyle('plain'),
+						refreshable(async () => {
+							await refetch()
+						}),
+					]}
+				>
+					{isLoading ? (
+						<ProgressView />
+					) : filteredEntries.length === 0 ? (
+						<ContentUnavailableView systemImage="newspaper" {...emptyStateProps(hasActiveFilter)} />
+					) : (
+						filteredEntries.map((story) => (
+							<NewsRow
+								key={story.title}
+								onPress={(url: string) => openUrl(url)}
+								story={story}
+								thumbnail={props.thumbnail}
+							/>
+						))
+					)}
+				</List>
+			</VStack>
+		</Host>
 	)
 }
+
+const styles = StyleSheet.create({
+	host: {
+		flex: 1,
+		backgroundColor: c.systemBackground,
+	},
+})
