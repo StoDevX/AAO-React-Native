@@ -1,5 +1,5 @@
 import {describe, expect, test} from '@jest/globals'
-import {clearSelection, toggleOption} from '../select-options'
+import {clearSelection, selectByTitles, toggleOption} from '../select-options'
 import type {ListType} from '../../types'
 
 const OPTIONS = [{title: 'A'}, {title: 'B'}, {title: 'C'}]
@@ -57,5 +57,39 @@ describe('clearSelection', () => {
 		let next = clearSelection(listFilter('AND', []))
 		expect(next.spec.selected).toEqual([])
 		expect(next.enabled).toBe(false)
+	})
+})
+
+// SwiftUI reports the whole selected set, by tag, rather than the row that
+// changed -- so this is the seam every sheet selection crosses.
+describe('selectByTitles', () => {
+	test('maps the reported tags back onto the options they name', () => {
+		let next = selectByTitles(listFilter('OR', []), ['A', 'C'])
+		expect(next.spec.selected).toEqual([{title: 'A'}, {title: 'C'}])
+	})
+
+	// The result follows the filter's own option order, not the order the tags
+	// arrived in, so a set that means the same thing shapes the same filter.
+	test('orders the selection by the options, not by the tags', () => {
+		let next = selectByTitles(listFilter('OR', []), ['C', 'A'])
+		expect(next.spec.selected).toEqual([{title: 'A'}, {title: 'C'}])
+	})
+
+	// The options come from the data and change under a selection, so a tag
+	// naming an option that has gone away selects nothing rather than throwing.
+	test('ignores a tag matching no option', () => {
+		let next = selectByTitles(listFilter('AND', []), ['A', 'Z'])
+		expect(next.spec.selected).toEqual([{title: 'A'}])
+	})
+
+	test('is enabled once anything is selected, and disabled by an empty set', () => {
+		expect(selectByTitles(listFilter('OR', []), ['A']).enabled).toBe(true)
+		expect(selectByTitles(listFilter('OR', OPTIONS), []).enabled).toBe(false)
+	})
+
+	// Selecting every option narrows like any other selection -- only an empty
+	// set is the resting state.
+	test('stays enabled when every option is selected', () => {
+		expect(selectByTitles(listFilter('OR', []), ['A', 'B', 'C']).enabled).toBe(true)
 	})
 })

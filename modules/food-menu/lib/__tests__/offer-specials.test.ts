@@ -36,8 +36,8 @@ describe('offerSpecials', () => {
 		expect(offerSpecials(filters, true)).toBe(filters)
 	})
 
-	// The screen it would otherwise render is empty, behind a control the
-	// reader can no longer see.
+	// A meal with no specials has nothing the filter can match, so leaving it
+	// on renders an empty screen.
 	test('forces the toggle off when the meal has none', () => {
 		let [toggle] = offerSpecials([specials(true)], false)
 		expect(toggle?.enabled).toBe(false)

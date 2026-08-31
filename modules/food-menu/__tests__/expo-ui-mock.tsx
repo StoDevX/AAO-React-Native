@@ -48,10 +48,9 @@ function labelOf(modifiers?: Modifier[]): string | undefined {
 }
 
 /**
- * `View` has no real `modifiers`, `onPress`, or `accessibilityRole` props;
- * this cast lets `Menu` and `Button` stash them on it anyway, purely so a
- * test can read `.props.modifiers` straight off the host node found by
- * `testID`, or press it via `fireEvent.press`.
+ * `View` has no real `onPress` or `accessibilityRole` prop; this cast lets
+ * `Menu` and `Button` stash them on it anyway, so a test can find a control by
+ * role or `testID` and press it via `fireEvent.press`.
  */
 const ViewWithModifiers = View as unknown as React.ComponentType<
 	WithModifiers & {

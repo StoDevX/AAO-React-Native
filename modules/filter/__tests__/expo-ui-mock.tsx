@@ -20,12 +20,11 @@ type WithChildren = {children?: React.ReactNode}
 type WithModifiers = WithChildren & {modifiers?: Modifier[]}
 
 /**
- * `View` has no real `modifiers`, `onPress`, or `accessibilityRole` props --
- * this cast lets `Menu` and `Button` stash them on it anyway, purely so a
- * test can read `.props.modifiers` straight off the host node, or press it
- * via `fireEvent.press`. `react-test-renderer` records whatever props a host
- * element is given, real RN prop or not; nothing here reaches a native
- * bridge that would reject it.
+ * `View` has no real `onPress` or `accessibilityRole` prop -- this cast lets
+ * `Menu` and `Button` stash them on it anyway, so a test can find a trigger by
+ * role and press it via `fireEvent.press`. `react-test-renderer` records
+ * whatever props a host element is given, real RN prop or not; nothing here
+ * reaches a native bridge that would reject it.
  */
 const ViewWithModifiers = View as unknown as React.ComponentType<
 	WithModifiers & {
@@ -88,13 +87,11 @@ export function Host({children}: WithChildren & {matchContents?: boolean}): Reac
  * and a raw string there crashes at mount the same way `Button`'s children
  * do (see the event-list mock this one is modelled on).
  *
- * `modifiers` is forwarded verbatim onto the wrapping `View`, unexamined --
- * the mock makes no decision of its own about them, so a test reading
- * `.props.modifiers` off the element found by `testID` is reading exactly
- * what `filter-menu.tsx` decided, not a translation this stand-in invented.
- * `testID` is keyed by the label text (when it's a string) so a toolbar
- * rendering several menus at once still gives each trigger back
- * unambiguously.
+ * `modifiers` is forwarded verbatim onto the wrapping `View` and never
+ * examined: what a modifier does is SwiftUI's business, and asserting on one
+ * here would only read back what the component was handed. `testID` is keyed
+ * by the label text so a toolbar rendering several menus at once still gives
+ * each trigger back unambiguously.
  */
 /**
  * The text a control announces when its label is a view rather than a string.

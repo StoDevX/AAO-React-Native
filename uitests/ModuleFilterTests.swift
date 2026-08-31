@@ -8,7 +8,7 @@ import XCTest
 /// icons, so `filterShape` makes it a sheet however few options it has. The
 /// Pause's menu comes from this repository's own `data/pause-menu.yaml`, so its
 /// ten stations are fixed rather than whatever is being served today. Stations
-/// asks for a menu outright, so its count no longer decides its shape.
+/// asks for a menu outright, so its count does not decide its shape.
 class ModuleFilterTests: UITestCase {
 	private typealias Keys = TestIdentifiers.Filter.MenusKeys
 
