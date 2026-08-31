@@ -118,6 +118,55 @@ export const NewsList = (props: Props): React.ReactNode => {
 
 	return (
 		<>
+			{/* @expo/ui needs the scrollable view as the first child to observe
+			    its scroll position -- for the large title to collapse, this has
+			    to come before the toolbar below it, not after. Calendar.tsx has
+			    EventList before CalendarPicker for the same reason. */}
+			{isError ? (
+				// Still a sibling of the toolbar below, not a full-screen
+				// replacement of everything: the source picker is the reader's
+				// obvious way out of a feed that's down, and it would be gone
+				// exactly when it's needed most if this bailed out before the
+				// toolbar ever rendered.
+				<NoticeView
+					buttonText="Try Again"
+					onPress={refetch}
+					text={`A problem occured while loading: ${error}`}
+				/>
+			) : (
+				<Host style={styles.host}>
+					<VStack spacing={0}>
+						<List
+							modifiers={[
+								listStyle('plain'),
+								refreshable(async () => {
+									await refetch()
+								}),
+							]}
+						>
+							{isLoading ? (
+								<ProgressView />
+							) : filteredEntries.length === 0 ? (
+								<ContentUnavailableView
+									systemImage="newspaper"
+									{...emptyStateProps(hasActiveFilter)}
+								/>
+							) : (
+								filteredEntries.map((story, index) => (
+									<NewsRow
+										key={story.title}
+										isLast={index === filteredEntries.length - 1}
+										onPress={(url: string) => openUrl(url)}
+										story={story}
+										thumbnail={props.thumbnail}
+									/>
+								))
+							)}
+						</List>
+					</VStack>
+				</Host>
+			)}
+
 			{/* expo-router: "If multiple instances of [Stack.Toolbar] are
 			    rendered for the same screen, the last one rendered in the
 			    component tree takes precedence" -- they don't merge. So the
@@ -158,50 +207,6 @@ export const NewsList = (props: Props): React.ReactNode => {
 					))}
 				</Stack.Toolbar.Menu>
 			</Stack.Toolbar>
-
-			{isError ? (
-				// Still under the toolbar above, not a full-screen replacement of
-				// it: the source picker is the reader's obvious way out of a feed
-				// that's down, and it would be gone exactly when it's needed most
-				// if this bailed out before the toolbar ever rendered.
-				<NoticeView
-					buttonText="Try Again"
-					onPress={refetch}
-					text={`A problem occured while loading: ${error}`}
-				/>
-			) : (
-				<Host style={styles.host}>
-					<VStack spacing={0}>
-						<List
-							modifiers={[
-								listStyle('plain'),
-								refreshable(async () => {
-									await refetch()
-								}),
-							]}
-						>
-							{isLoading ? (
-								<ProgressView />
-							) : filteredEntries.length === 0 ? (
-								<ContentUnavailableView
-									systemImage="newspaper"
-									{...emptyStateProps(hasActiveFilter)}
-								/>
-							) : (
-								filteredEntries.map((story, index) => (
-									<NewsRow
-										key={story.title}
-										isLast={index === filteredEntries.length - 1}
-										onPress={(url: string) => openUrl(url)}
-										story={story}
-										thumbnail={props.thumbnail}
-									/>
-								))
-							)}
-						</List>
-					</VStack>
-				</Host>
-			)}
 		</>
 	)
 }
