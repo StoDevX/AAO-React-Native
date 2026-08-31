@@ -186,3 +186,13 @@ export function Picker<T>({
 		</View>
 	)
 }
+export const menuIndicator = (visibility: string): Modifier => ({
+	$type: 'menuIndicator',
+	visibility,
+})
+export const disabled = (isDisabled?: boolean): Modifier => ({$type: 'disabled', isDisabled})
+export const menuActionDismissBehavior = (behavior: string): Modifier => ({
+	$type: 'menuActionDismissBehavior',
+	behavior,
+})
+export const tint = (color: unknown): Modifier => ({$type: 'tint', color})

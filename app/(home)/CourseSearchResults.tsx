@@ -203,7 +203,7 @@ function CourseSearchResultsView(): React.ReactNode {
 		) : filtersLoading ? (
 			<ActivityIndicator style={styles.spinner} />
 		) : (
-			<FilterToolbar filters={filters} onPopoverDismiss={updateFilter} />
+			<FilterToolbar filters={filters} onChange={updateFilter} />
 		)
 
 	let hasActiveFilter = filters.some((f) => f.enabled)

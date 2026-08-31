@@ -1,102 +1,51 @@
 import * as React from 'react'
-import {useRef, useState} from 'react'
-import {StyleProp, StyleSheet, Text, View, ViewStyle} from 'react-native'
-import {SymbolView} from 'expo-symbols'
-import type {FilterType} from './types'
-import {FilterPopover} from './filter-popover'
-import * as c from '@frogpond/colors'
-import {Touchable} from '@frogpond/touchable'
 
-const buttonStyles = StyleSheet.create({
-	button: {
-		flexDirection: 'row',
-		alignItems: 'center',
-		marginRight: 10,
-		paddingHorizontal: 8,
-		paddingVertical: 5,
-		borderWidth: 1,
-		borderRadius: 2,
-		backgroundColor: c.systemGroupedBackground,
-		borderColor: c.separator,
-	},
-	activeButton: {
-		backgroundColor: c.link,
-		borderColor: c.link,
-	},
-	text: {
-		color: c.label,
-		fontSize: 16,
-	},
-	activeText: {
-		color: c.white,
-	},
-	textWithIcon: {
-		paddingRight: 8,
-	},
-})
+import type {FilterType} from './types'
+import {FilterMenu} from './filter-menu'
+import {FilterSheet} from './filter-sheet'
+import {FilterToggle} from './filter-toggle'
+import {filterShape} from './lib/filter-shape'
 
 type Props<T extends object> = {
 	filter: FilterType<T>
 	isActive: boolean
-	onPopoverDismiss: (filter: FilterType<T>) => unknown
-	style?: StyleProp<ViewStyle>
+	onChange: (filter: FilterType<T>) => unknown
 	title: string
 }
 
+/**
+ * Picks a filter's presentation and renders it. Each one draws its own
+ * trigger, styled identically (see `./lib/trigger-modifiers`): a `Menu`'s
+ * `label` prop is its button, a sheet's `BottomSheet` anchors one, and a
+ * toggle's trigger is the control itself. So this component only decides which
+ * presentation a filter gets, and forwards what each one needs.
+ */
 export function FilterToolbarButton<T extends object>(props: Props<T>): React.ReactNode {
-	let {onPopoverDismiss, filter, isActive, style, title} = props
+	let {onChange, filter, isActive, title} = props
 
-	let [popoverVisible, setPopoverVisible] = useState(false)
-	let touchable = useRef<View>(null)
+	let shape = filterShape(filter)
 
-	let openPopover = (): void => {
-		setPopoverVisible(true)
+	if (shape === 'none') {
+		return null
 	}
 
-	let onClosePopover = (updatedFilter: FilterType<T>): void => {
-		onPopoverDismiss(updatedFilter)
-		setPopoverVisible(false)
+	// `filterShape` only returns 'inline' for a `toggle` filter, so this always
+	// narrows successfully; the `false` branch never renders in practice.
+	if (shape === 'inline') {
+		return filter.type === 'toggle' ? (
+			<FilterToggle filter={filter} isActive={isActive} onChange={onChange} />
+		) : null
 	}
 
-	if (filter.type === 'list') {
-		if (!filter.spec.options.length) {
-			return null
-		}
+	if (shape === 'menu') {
+		return <FilterMenu filter={filter} isActive={isActive} onChange={onChange} />
 	}
 
-	return (
-		<React.Fragment>
-			<Touchable
-				ref={touchable}
-				accessibilityLabel={title}
-				accessibilityRole="button"
-				accessibilityState={{selected: isActive}}
-				highlight={false}
-				onPress={openPopover}
-				style={[buttonStyles.button, isActive && buttonStyles.activeButton, style]}
-			>
-				<Text
-					style={[
-						buttonStyles.text,
-						buttonStyles.textWithIcon,
-						isActive && buttonStyles.activeText,
-					]}
-				>
-					{title}
-				</Text>
-				<SymbolView name="chevron.down" size={18} tintColor={isActive ? c.white : c.label} />
-			</Touchable>
-			{popoverVisible && (
-				<FilterPopover<T>
-					// React 19's useRef returns RefObject<View | null>; react-native-popover-view's
-					// types still require a non-null generic. The ref is never null when the popover
-					// is mounted (it's rendered as a child of the Touchable above).
-					anchor={touchable as React.RefObject<View>}
-					filter={filter}
-					onClosePopover={onClosePopover}
-					visible={true}
-				/>
-			)}
-		</React.Fragment>
-	)
+	// `filterShape` only returns 'sheet' for a `list` filter, so this always
+	// narrows successfully; the `false` branch never renders in practice.
+	if (filter.type !== 'list') {
+		return null
+	}
+
+	return <FilterSheet filter={filter} isActive={isActive} onChange={onChange} title={title} />
 }

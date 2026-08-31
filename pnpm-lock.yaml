@@ -274,9 +274,6 @@ importers:
       react-native-paper:
         specifier: 5.15.3
         version: 5.15.3(react-native-safe-area-context@5.9.1)(react-native@0.86.2)(react@19.2.8)
-      react-native-popover-view:
-        specifier: 6.1.0
-        version: 6.1.0
       react-native-reanimated:
         specifier: 4.5.1
         version: 4.5.1(react-native-worklets@0.10.4)(react-native@0.86.2)(react@19.2.8)
@@ -652,27 +649,15 @@ importers:
 
   modules/filter:
     dependencies:
-      '@callstack/react-theme-provider':
-        specifier: 3.0.9
-        version: 3.0.9(react@19.2.8)
+      '@expo/ui':
+        specifier: 57.0.14
+        version: 57.0.14(@babel/core@7.29.7)(expo@57.0.17)(react-native-worklets@0.10.4)(react-native@0.86.2)(react@19.2.8)
       '@frogpond/colors':
         specifier: workspace:*
         version: link:../colors
-      '@frogpond/layout':
-        specifier: workspace:*
-        version: link:../layout
-      '@frogpond/tableview':
-        specifier: workspace:*
-        version: link:../tableview
       '@frogpond/toolbar':
         specifier: workspace:*
         version: link:../toolbar
-      '@frogpond/touchable':
-        specifier: workspace:*
-        version: link:../touchable
-      expo-symbols:
-        specifier: ^57.0.2
-        version: 57.0.2(expo-font@57.0.1)(expo@57.0.17)(react-native@0.86.2)(react@19.2.8)
       lodash:
         specifier: 4.18.1
         version: 4.18.1
@@ -682,9 +667,6 @@ importers:
       react-native:
         specifier: ^0.86.2
         version: 0.86.2(patch_hash=6ca2e1225f38672b073b92b9d13f24feebbe9e37ba67708a3f1569275ce99191)(@babel/core@7.29.7)(@react-native/jest-preset@0.86.2)(@react-native/metro-config@0.86.2)(@types/react@19.2.18)(react@19.2.8)(supports-color@8.1.1)
-      react-native-popover-view:
-        specifier: ^6.1.0
-        version: 6.1.0
 
   modules/food-menu:
     dependencies:
@@ -3321,9 +3303,6 @@ packages:
     resolution: {integrity: sha512-g7nH6P6dyDioJogAAGprGpCtVImJhpPk/roCzdb3fIh61/s/nPsfR6onyMwkCAR/OlC3yBC0lESvUoQEAssIrw==}
     engines: {node: '>= 0.8'}
 
-  deprecated-react-native-prop-types@2.3.0:
-    resolution: {integrity: sha512-pWD0voFtNYxrVqvBMYf5gq3NA2GCpfodS1yNynTPc93AYA/KEMGeWDqqeUB6R2Z9ZofVhks2aeJXiuQqKNpesA==}
-
   deprecated-react-native-prop-types@3.0.2:
     resolution: {integrity: sha512-JoZY5iNM+oJlN2Ldpq0KSi0h3Nig4hlNJj5nWzWp8eL3uikMCvHwjSGPitwkEw0arL5JFra5nuGJQpXRbEjApg==}
 
@@ -4891,9 +4870,6 @@ packages:
       react: '*'
       react-native: '*'
       react-native-safe-area-context: '*'
-
-  react-native-popover-view@6.1.0:
-    resolution: {integrity: sha512-j1CB+yPwTKlBvIJBNb1AwiHyF/r+W5+AJIbHk79GRa+0z6PVtW4C7NWJWPqUVkCMOcJtewl6Pr6f2dc/87cVyQ==}
 
   react-native-reanimated@4.5.1:
     resolution: {integrity: sha512-RnMvtDuR+68ig864gAvZCOdZehqhC5rFmMo0kn+ARfgVSTvFeF6IFLBVgMPUu0KwihaapEyW24WRi6nEyy1kSA==}
@@ -8340,12 +8316,6 @@ snapshots:
 
   depd@2.0.0: {}
 
-  deprecated-react-native-prop-types@2.3.0:
-    dependencies:
-      '@react-native/normalize-color': 2.1.0
-      invariant: 2.2.4
-      prop-types: 15.8.1
-
   deprecated-react-native-prop-types@3.0.2:
     dependencies:
       '@react-native/normalize-color': 2.1.0
@@ -10276,11 +10246,6 @@ snapshots:
       react-native: 0.86.2(patch_hash=6ca2e1225f38672b073b92b9d13f24feebbe9e37ba67708a3f1569275ce99191)(@babel/core@7.29.7)(@react-native/jest-preset@0.86.2)(@react-native/metro-config@0.86.2)(@types/react@19.2.18)(react@19.2.8)(supports-color@8.1.1)
       react-native-safe-area-context: 5.9.1(react-native@0.86.2)(react@19.2.8)
       use-latest-callback: 0.2.6(react@19.2.8)
-
-  react-native-popover-view@6.1.0:
-    dependencies:
-      deprecated-react-native-prop-types: 2.3.0
-      prop-types: 15.8.1
 
   react-native-reanimated@4.5.1(react-native-worklets@0.10.4)(react-native@0.86.2)(react@19.2.8):
     dependencies:

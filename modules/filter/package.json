@@ -9,18 +9,13 @@
     "test": "jest"
   },
   "dependencies": {
-    "@callstack/react-theme-provider": "3.0.9",
+    "@expo/ui": "57.0.14",
     "@frogpond/colors": "workspace:*",
-    "@frogpond/layout": "workspace:*",
-    "@frogpond/tableview": "workspace:*",
     "@frogpond/toolbar": "workspace:*",
-    "@frogpond/touchable": "workspace:*",
     "lodash": "4.18.1"
   },
   "peerDependencies": {
-    "expo-symbols": "^57.0.2",
     "react": "^19.1.0",
-    "react-native": "^0.86.2",
-    "react-native-popover-view": "^6.1.0"
+    "react-native": "^0.86.2"
   }
 }

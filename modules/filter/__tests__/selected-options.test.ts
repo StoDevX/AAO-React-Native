@@ -4,17 +4,19 @@ import {selectedOptions} from '../selected-options'
 const OPTIONS = [{title: 'Athletics'}, {title: 'Music'}, {title: 'Theater'}]
 
 describe('selectedOptions', () => {
-	test('shows everything when the user has picked nothing', () => {
-		expect(selectedOptions(OPTIONS, null)).toEqual(OPTIONS)
+	// Selecting nothing is the resting state and shows everything, so an
+	// untouched filter selects no options rather than all of them.
+	test('selects nothing when the user has picked nothing', () => {
+		expect(selectedOptions(OPTIONS, null)).toEqual([])
 	})
 
 	test('narrows to the titles the user picked', () => {
 		expect(selectedOptions(OPTIONS, ['Music'])).toEqual([{title: 'Music'}])
 	})
 
-	// An empty pick is the user turning every category off, which is not the
-	// same as never having touched the filter.
-	test('shows nothing when the user has cleared every title', () => {
+	// Clearing every title and never having touched the filter are the same
+	// state: both show everything.
+	test('selects nothing when the user has cleared every title', () => {
 		expect(selectedOptions(OPTIONS, [])).toEqual([])
 	})
 

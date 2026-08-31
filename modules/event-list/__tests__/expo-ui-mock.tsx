@@ -256,3 +256,18 @@ export function Button({
 		</Pressable>
 	)
 }
+export const menuIndicator = (visibility: string): Modifier => ({
+	$type: 'menuIndicator',
+	visibility,
+})
+export const disabled = (isDisabled?: boolean): Modifier => ({$type: 'disabled', isDisabled})
+export const menuActionDismissBehavior = (behavior: string): Modifier => ({
+	$type: 'menuActionDismissBehavior',
+	behavior,
+})
+export const tint = (color: unknown): Modifier => ({$type: 'tint', color})
+export const environment = (config: Record<string, unknown>): Modifier => ({
+	$type: 'environment',
+	...config,
+})
+export const tag = (value: string | number): Modifier => ({$type: 'tag', value})

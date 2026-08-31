@@ -6,19 +6,16 @@ import {FilterToolbarButton} from './filter-toolbar-button'
 
 type Props<T extends object> = {
 	filters: Array<FilterType<T>>
-	onPopoverDismiss: (filter: FilterType<T>) => unknown
+	onChange: (filter: FilterType<T>) => unknown
 }
 
-export function FilterToolbar<T extends object>({
-	filters,
-	onPopoverDismiss,
-}: Props<T>): React.ReactNode {
+export function FilterToolbar<T extends object>({filters, onChange}: Props<T>): React.ReactNode {
 	let filterToggles = filters.map((filter) => (
 		<FilterToolbarButton<T>
 			key={filter.spec.title}
 			filter={filter}
 			isActive={filter.enabled}
-			onPopoverDismiss={onPopoverDismiss}
+			onChange={onChange}
 			title={filter.spec.title}
 		/>
 	))
@@ -38,7 +35,12 @@ export function FilterToolbar<T extends object>({
 
 const styles = StyleSheet.create({
 	scroller: {
-		paddingLeft: 10,
+		// Symmetric, so the trailing trigger sits off the bar's edge the way the
+		// leading one does. `columnGap` (not per-button margins) spaces the row
+		// itself, matching the 8pt unit `filter-sheet.tsx`'s own rows use for the
+		// gap between an icon and its label.
+		paddingHorizontal: 12,
 		paddingVertical: 8,
+		columnGap: 8,
 	},
 })

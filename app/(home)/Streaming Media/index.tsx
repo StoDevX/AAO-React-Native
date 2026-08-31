@@ -87,14 +87,16 @@ export default function StreamingPage(): React.ReactNode {
 			{
 				type: 'list',
 				key: 'category',
-				// In OR mode, a selection matching every option filters nothing --
-				// matching the invariant modules/filter/section-list.tsx applies on
+				// Selecting nothing is the resting state and shows everything --
+				// the invariant modules/filter/lib/select-options.ts applies on
 				// every subsequent edit.
-				enabled: selected.length !== options.length,
+				enabled: selected.length > 0,
 				spec: {
 					title: 'Categories',
 					options,
 					selected,
+					// A pull-down however many categories the feed happens to carry.
+					presentation: 'menu',
 					mode: 'OR',
 					displayTitle: true,
 				},
@@ -116,7 +118,7 @@ export default function StreamingPage(): React.ReactNode {
 	const header = (
 		<FilterToolbar
 			filters={filters}
-			onPopoverDismiss={(newFilter) => {
+			onChange={(newFilter) => {
 				// The categories list is the only filter this toolbar carries.
 				if (newFilter.type !== 'list') {
 					return

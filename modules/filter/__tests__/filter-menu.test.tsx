@@ -1,0 +1,147 @@
+import React from 'react'
+import {describe, expect, jest, test} from '@jest/globals'
+import {fireEvent, render, screen} from '@testing-library/react-native'
+
+import {FilterMenu} from '../filter-menu'
+import type {ListItemSpecType, ListType, PickerType, ToggleType} from '../types'
+
+jest.mock('@expo/ui/swift-ui', () => {
+	// oxlint-disable-next-line typescript/no-require-imports
+	return require('./expo-ui-mock') as typeof import('./expo-ui-mock')
+})
+jest.mock('@expo/ui/swift-ui/modifiers', () => {
+	// oxlint-disable-next-line typescript/no-require-imports
+	return require('./expo-ui-mock') as typeof import('./expo-ui-mock')
+})
+
+type Row = {x: string}
+
+function toggleFilter(enabled: boolean): ToggleType<Row> {
+	return {
+		type: 'toggle',
+		key: 'k',
+		enabled,
+		spec: {label: 'Specials Only', title: 'Specials'},
+		apply: {key: 'x'},
+	}
+}
+
+function pickerFilter(options: {label: string}[], selected?: {label: string}): PickerType<Row> {
+	return {
+		type: 'picker',
+		key: 'k',
+		enabled: true,
+		spec: {title: 'Level', options, selected},
+		apply: {key: 'x'},
+	}
+}
+
+function listFilter(
+	mode: 'AND' | 'OR',
+	options: ListItemSpecType[],
+	selected: ListItemSpecType[],
+	displayTitle = true,
+): ListType<Row> {
+	return {
+		type: 'list',
+		key: 'k',
+		enabled: false,
+		spec: {title: 'Stations', options, selected, mode, displayTitle},
+		apply: {key: 'x'},
+	} as ListType<Row>
+}
+
+describe('FilterMenu, toggle', () => {
+	test('emits enabled flipped', async () => {
+		let onChange = jest.fn()
+		await render(<FilterMenu filter={toggleFilter(false)} isActive={false} onChange={onChange} />)
+
+		await fireEvent.press(screen.getByText('Specials Only'))
+
+		expect(onChange).toHaveBeenCalledWith(expect.objectContaining({enabled: true}))
+	})
+})
+
+describe('FilterMenu, picker', () => {
+	test('emits the tapped option', async () => {
+		let onChange = jest.fn()
+		let options = [{label: 'First-year'}, {label: 'Sophomore'}, {label: 'Junior'}]
+		await render(<FilterMenu filter={pickerFilter(options)} isActive={false} onChange={onChange} />)
+
+		await fireEvent.press(screen.getByText('Sophomore'))
+
+		expect(onChange).toHaveBeenCalledWith(
+			expect.objectContaining({spec: expect.objectContaining({selected: options[1]})}),
+		)
+	})
+
+	test('renders nothing with one option', async () => {
+		await render(
+			<FilterMenu filter={pickerFilter([{label: 'Only'}])} isActive={false} onChange={jest.fn()} />,
+		)
+
+		expect(screen.toJSON()).toBeNull()
+	})
+
+	test('renders nothing with no options', async () => {
+		await render(<FilterMenu filter={pickerFilter([])} isActive={false} onChange={jest.fn()} />)
+
+		expect(screen.toJSON()).toBeNull()
+	})
+})
+
+describe('FilterMenu, list', () => {
+	// A menu offers only its options. Clearing is unticking -- and a menu-shaped
+	// filter is short by definition, so there is little to untick.
+	test.each(['AND', 'OR'] as const)('offers no all-or-nothing action in %s mode', async (mode) => {
+		let options = [{title: 'A'}, {title: 'B'}]
+		await render(
+			<FilterMenu filter={listFilter(mode, options, [])} isActive={false} onChange={jest.fn()} />,
+		)
+
+		expect(screen.queryByText('Show All')).toBeNull()
+		expect(screen.queryByText('Clear')).toBeNull()
+	})
+
+	test('tapping an option emits the toggled selection', async () => {
+		let onChange = jest.fn()
+		let options = [{title: 'A'}, {title: 'B'}, {title: 'C'}]
+		await render(
+			<FilterMenu
+				filter={listFilter('OR', options, [{title: 'A'}])}
+				isActive={false}
+				onChange={onChange}
+			/>,
+		)
+
+		await fireEvent.press(screen.getByText('B'))
+
+		expect(onChange).toHaveBeenCalledWith(
+			expect.objectContaining({
+				spec: expect.objectContaining({selected: [{title: 'A'}, {title: 'B'}]}),
+			}),
+		)
+	})
+
+	test('renders nothing when there are no options', async () => {
+		await render(
+			<FilterMenu filter={listFilter('OR', [], [])} isActive={false} onChange={jest.fn()} />,
+		)
+
+		expect(screen.toJSON()).toBeNull()
+	})
+
+	test('displayTitle false renders by label, not title', async () => {
+		let options = [{title: 'BIO', label: 'Biology'}]
+		await render(
+			<FilterMenu
+				filter={listFilter('AND', options, [], false)}
+				isActive={false}
+				onChange={jest.fn()}
+			/>,
+		)
+
+		expect(screen.getByText('Biology')).toBeTruthy()
+		expect(screen.queryByText('BIO')).toBeNull()
+	})
+})

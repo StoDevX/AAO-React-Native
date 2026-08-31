@@ -63,7 +63,6 @@ export function useFilters(): {
 			spec: {
 				label: 'Space Available',
 				title: 'Enrollment',
-				caption: 'When activated, shows only courses with space available.',
 			},
 			apply: {
 				key: 'spaceAvailable',
@@ -77,7 +76,7 @@ export function useFilters(): {
 				title: 'Terms',
 				options: allTerms,
 				mode: 'OR',
-				selected: allTerms,
+				selected: [],
 				displayTitle: false,
 			},
 			apply: {
@@ -90,7 +89,7 @@ export function useFilters(): {
 			enabled: false,
 			spec: {
 				title: 'GEs',
-				showImages: false,
+				showIcons: false,
 				options: allGEs,
 				mode: 'AND',
 				selected: [],
@@ -106,10 +105,10 @@ export function useFilters(): {
 			enabled: false,
 			spec: {
 				title: 'Department',
-				showImages: false,
+				showIcons: false,
 				options: allDepartments,
 				mode: 'OR',
-				selected: allDepartments,
+				selected: [],
 				displayTitle: true,
 			},
 			apply: {
@@ -122,10 +121,10 @@ export function useFilters(): {
 			enabled: false,
 			spec: {
 				title: 'Level',
-				showImages: false,
+				showIcons: false,
 				options: courseLevelOptions,
 				mode: 'OR',
-				selected: courseLevelOptions,
+				selected: [],
 				displayTitle: true,
 			},
 			apply: {
@@ -139,7 +138,6 @@ export function useFilters(): {
 			spec: {
 				label: 'Open Courses',
 				title: 'Status',
-				caption: 'Allows you to either see only courses that are open, or all courses.',
 			},
 			apply: {
 				key: 'status',
@@ -153,7 +151,6 @@ export function useFilters(): {
 			spec: {
 				label: 'Lab Only',
 				title: 'Lab',
-				caption: 'Allows you to only see labs.',
 			},
 			apply: {
 				key: 'type',
