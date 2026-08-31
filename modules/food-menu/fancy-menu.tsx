@@ -14,6 +14,7 @@ import {buildFilters} from './lib/build-filters'
 import {chooseMeal} from './lib/choose-meal'
 import {dietaryIconFor} from './lib/dietary-icon-for'
 import {emptyMessage} from './lib/empty-message'
+import {offerSpecials} from './lib/offer-specials'
 import type {
 	MasterCorIconMapType,
 	MenuItemContainerType,
@@ -132,25 +133,16 @@ export function FancyMenu(props: Props): React.ReactNode {
 	const meal = chooseMeal(meals, filters, now)
 	const {label: mealName, stations} = meal
 
-	// Showing only the specials is the useful default -- the full list carries
-	// every condiment and salad dressing the location stocks. But the toggle is
-	// seeded once, from whichever meal was showing when the filters were built,
-	// and the meal moves: the clock rolls into the next one, or the user picks
-	// another. A meal with no specials of its own -- Brunch, most days -- would
-	// then keep the filter applied and render nothing at all, behind a control
-	// the reader has to find and undo.
-	//
-	// So the toggle is offered against the meal actually on screen, and a meal
-	// with nothing special does not offer it.
 	// Depends on the meal, not on the filters, so it is not rebuilt every time
-	// the user toggles something unrelated.
+	// the user toggles something unrelated. What the answer is used for is
+	// `offerSpecials`' business.
 	const mealHasSpecials = useMemo(
 		() => stations.some((station) => station.items.some((id) => foodItems[id]?.special)),
 		[stations, foodItems],
 	)
 
 	const appliedFilters = useMemo(
-		() => (mealHasSpecials ? filters : filters.filter((f) => f.key !== 'specials')),
+		() => offerSpecials(filters, mealHasSpecials),
 		[filters, mealHasSpecials],
 	)
 

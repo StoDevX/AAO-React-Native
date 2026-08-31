@@ -2,6 +2,7 @@ import {
 	accessibilityAddTraits,
 	accessibilityIdentifier,
 	buttonStyle,
+	disabled,
 	menuIndicator,
 } from '@expo/ui/swift-ui/modifiers'
 
@@ -63,11 +64,21 @@ const MENU_INDICATOR: Modifier[] = [menuIndicator('visible')]
  *
  * `presents` asks for the chevron that says the trigger opens something. A
  * toggle passes `false`: its trigger is the control, and nothing opens.
+ *
+ * `isDisabled` keeps a filter in the toolbar while this meal or feed gives it
+ * nothing to act on. It stays drawn, greyed by SwiftUI's own disabled
+ * treatment, rather than vanishing -- a control that disappears takes the
+ * reader's ability to undo it with it.
  */
-export function triggerModifiers(isActive: boolean, key: string, presents = true): Modifier[] {
+export function triggerModifiers(
+	isActive: boolean,
+	key: string,
+	{presents = true, isDisabled = false} = {},
+): Modifier[] {
 	return [
 		...(isActive ? ACTIVE_TRIGGER_MODIFIERS : INACTIVE_TRIGGER_MODIFIERS),
 		...(presents ? MENU_INDICATOR : []),
+		...(isDisabled ? [disabled(true)] : []),
 		accessibilityIdentifier(`${FILTER_TRIGGER_PREFIX}${key}`),
 	]
 }

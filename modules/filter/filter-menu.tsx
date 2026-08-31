@@ -1,10 +1,20 @@
 import * as React from 'react'
 import {Host, Menu, Section, Toggle} from '@expo/ui/swift-ui'
+import {menuActionDismissBehavior} from '@expo/ui/swift-ui/modifiers'
 import isEqual from 'lodash/isEqual'
 
 import {toggleOption} from './lib/select-options'
 import {triggerModifiers} from './lib/trigger-modifiers'
 import type {FilterType} from './types'
+
+/**
+ * Keeps a list menu open as its options are ticked. A list filter is
+ * multi-select, and a menu that closed on each tap would have to be reopened
+ * once per option -- Photos' own filter menus stay up for the same reason. A
+ * picker does not take this: choosing one of its options is the whole
+ * interaction, so closing is the right answer there.
+ */
+const STAYS_OPEN = [menuActionDismissBehavior('disabled')]
 
 type Props<T extends object> = {
 	filter: FilterType<T>
@@ -31,8 +41,8 @@ export function FilterMenu<T extends object>({
 	// One array per filter rather than one per render: `triggerModifiers` has
 	// to build a fresh array to carry the filter's own identifier.
 	let modifiers = React.useMemo(
-		() => triggerModifiers(isActive, filter.key),
-		[isActive, filter.key],
+		() => triggerModifiers(isActive, filter.key, {isDisabled: filter.disabled}),
+		[isActive, filter.key, filter.disabled],
 	)
 
 	switch (filter.type) {
@@ -87,7 +97,7 @@ export function FilterMenu<T extends object>({
 			return (
 				<Host matchContents={true}>
 					<Menu label={spec.title} modifiers={modifiers}>
-						<Section title={spec.title.toUpperCase()}>
+						<Section modifiers={STAYS_OPEN} title={spec.title.toUpperCase()}>
 							{spec.options.map((option) => (
 								<Toggle
 									key={option.title}

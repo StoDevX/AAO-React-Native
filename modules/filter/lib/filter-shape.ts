@@ -13,7 +13,8 @@ const SHEET_THRESHOLD = 8
  * trigger is the control: tapping flips it, with nothing to present. A picker
  * needs at least two options to pick between. A list is a menu unless it is
  * empty (nothing to show), carries icons (only a sheet draws them, whatever
- * its length), or reaches the sheet threshold.
+ * its length), asks for a presentation outright, or reaches the sheet
+ * threshold.
  */
 export function filterShape<T extends object>(filter: FilterType<T>): FilterShape {
 	switch (filter.type) {
@@ -24,15 +25,21 @@ export function filterShape<T extends object>(filter: FilterType<T>): FilterShap
 			return filter.spec.options.length < 2 ? 'none' : 'menu'
 
 		case 'list': {
-			let {options, showIcons} = filter.spec
+			let {options, showIcons, presentation} = filter.spec
 
 			if (options.length === 0) {
 				return 'none'
 			}
-			if (showIcons || options.length >= SHEET_THRESHOLD) {
+			// Icons override even an explicit `presentation`: a pull-down menu
+			// has nowhere to draw them, so asking for one would silently drop
+			// them.
+			if (showIcons) {
 				return 'sheet'
 			}
-			return 'menu'
+			if (presentation) {
+				return presentation
+			}
+			return options.length >= SHEET_THRESHOLD ? 'sheet' : 'menu'
 		}
 
 		default:

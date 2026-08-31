@@ -148,8 +148,8 @@ export function FilterSheet<T extends object>({
 	// One array per filter rather than one per render: `triggerModifiers` has
 	// to build a fresh array to carry the filter's own identifier.
 	let anchorModifiers = React.useMemo(
-		() => triggerModifiers(isActive, filter.key),
-		[isActive, filter.key],
+		() => triggerModifiers(isActive, filter.key, {isDisabled: filter.disabled}),
+		[isActive, filter.key, filter.disabled],
 	)
 	// Guards against a second emission for the same presentation. Only
 	// `openSheet`/`emitAndDismiss` below touch this -- `BottomSheet.onDismiss`

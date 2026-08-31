@@ -24,8 +24,8 @@ export function FilterToggle<T extends object>({
 	onChange,
 }: Props<T>): React.ReactNode {
 	let modifiers = React.useMemo(
-		() => triggerModifiers(isActive, filter.key, false),
-		[isActive, filter.key],
+		() => triggerModifiers(isActive, filter.key, {presents: false, isDisabled: filter.disabled}),
+		[isActive, filter.key, filter.disabled],
 	)
 
 	return (
