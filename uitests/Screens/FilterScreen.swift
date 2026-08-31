@@ -67,7 +67,26 @@ struct FilterScreen: Screen {
 		return self
 	}
 
+	/// Tap a trigger that presents nothing -- a toggle filter, whose trigger is
+	/// the control itself.
+	///
+	/// By coordinate, for the reason `openFilter` documents: a trigger drawing
+	/// its title beside a chevron has a view for a label, and XCUITest reports
+	/// such a control as not hittable though a tap at its centre works.
+	@discardableResult
+	func tapTrigger(_ key: String) -> Self {
+		waitForTrigger(key)
+		trigger(key).coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
+		return self
+	}
+
 	/// Open a filter, and wait for something inside its presentation.
+	///
+	/// The tap goes by coordinate rather than `.tap()`: a trigger draws its
+	/// title beside a chevron, so its label is a view, and XCUITest reports a
+	/// view-labelled SwiftUI control as not hittable even though a tap at its
+	/// centre opens it. What proves the trigger works is the `until` element
+	/// appearing.
 	///
 	/// The tap is retried for the reason `Screen.navigateFromHome` documents:
 	/// a press on a SwiftUI control can land natively before the JavaScript

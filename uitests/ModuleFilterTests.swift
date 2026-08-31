@@ -101,6 +101,64 @@ class ModuleFilterTests: UITestCase {
 	// MARK: - The menu
 
 	/// The other presentation, end to end: open the pull-down menu, toggle one
+	/// A toggle has one state to change, so its trigger is the control: the tap
+	/// flips it where it stands. Nothing is presented, which is the half Jest
+	/// cannot see -- a mocked render cannot tell a control that changed state
+	/// from one that opened a menu over the screen.
+	func testTogglingAFilterInPlacePresentsNothing() throws {
+		MenusScreen(app: app)
+			.navigate()
+			.verifyFoodRowsAppear()
+			.openCafe(TestIdentifiers.Menus.pause)
+
+		let filters = FilterScreen(app: app)
+
+		// The Pause serves specials, so the toggle is seeded on.
+		filters.verifyTrigger(Keys.specials, isSelected: true)
+
+		filters.tapTrigger(Keys.specials)
+		filters.verifyTrigger(Keys.specials, isSelected: false)
+
+		// Nothing was presented over the screen: the menu behind the toolbar is
+		// still there to be touched. A menu or sheet would be covering it.
+		let row = app.buttons[TestIdentifiers.Menus.pizzaItem]
+		XCTAssertTrue(row.waitForExistence(timeout: 30), "the menu should still be on screen")
+		XCTAssertTrue(row.isHittable, "nothing should have been presented over the menu")
+
+		// And it flips back, so the control is a toggle rather than a latch.
+		filters.tapTrigger(Keys.specials)
+		filters.verifyTrigger(Keys.specials, isSelected: true)
+	}
+
+	/// The point of a menu that stays open: several options chosen in one
+	/// opening. `testMenuStaysOpenOnTheFirstSelection` proves it survives the
+	/// tick that turns the filter on; this proves the survival is good for
+	/// something, by ticking a second station without reopening and finding
+	/// both applied.
+	func testMenuSelectsSeveralOptionsInOneOpening() throws {
+		MenusScreen(app: app)
+			.navigate()
+			.verifyFoodRowsAppear()
+			.openCafe(TestIdentifiers.Menus.pause)
+
+		let filters = FilterScreen(app: app)
+		let pizza = TestIdentifiers.Menus.pizzaStation
+		let specialty = TestIdentifiers.Menus.specialtyPizzaStation
+
+		filters
+			.openFilter(Keys.stations, until: filters.menuItem(pizza))
+			.tapMenuItem(pizza)
+			.tapMenuItem(specialty)
+			.dismissMenu(waitingFor: specialty)
+
+		XCTAssertTrue(
+			app.buttons[TestIdentifiers.Menus.pizzaItem].waitForExistence(timeout: 30),
+			"the first station's items should show")
+		XCTAssertTrue(
+			app.buttons[TestIdentifiers.Menus.specialtyPizzaItem].waitForExistence(timeout: 30),
+			"the second station's items should show, chosen without reopening the menu")
+	}
+
 	/// A list filter is multi-select, so its menu stays up as options are
 	/// ticked -- otherwise choosing three stations means opening the menu three
 	/// times. The first tick is the one at risk: it is what flips the filter
