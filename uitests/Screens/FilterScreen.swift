@@ -74,7 +74,7 @@ struct FilterScreen: Screen {
 		waitForTrigger(key)
 
 		for attempt in 1...3 {
-			trigger(key).tap()
+			trigger(key).coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
 			if element.waitForExistence(timeout: 15) {
 				return self
 			}

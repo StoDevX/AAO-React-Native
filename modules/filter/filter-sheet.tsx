@@ -29,6 +29,7 @@ import type {SFSymbol} from 'sf-symbols-typescript'
 
 import * as c from '@frogpond/colors'
 import {clearSelection, toggleOption} from './lib/select-options'
+import {TriggerLabel} from './lib/trigger-label'
 import {triggerModifiers} from './lib/trigger-modifiers'
 import type {FilterIcon, ListItemSpecType, ListType} from './types'
 
@@ -200,7 +201,11 @@ export function FilterSheet<T extends object>({
 	return (
 		<Host matchContents={true}>
 			<BottomSheet
-				anchor={<Button label={title} modifiers={anchorModifiers} onPress={openSheet} />}
+				anchor={
+					<Button modifiers={anchorModifiers} onPress={openSheet}>
+						<TriggerLabel title={title} />
+					</Button>
+				}
 				isPresented={isPresented}
 				onIsPresentedChange={(nextIsPresented) => {
 					if (!nextIsPresented) {

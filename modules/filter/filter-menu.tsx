@@ -4,6 +4,7 @@ import {menuActionDismissBehavior} from '@expo/ui/swift-ui/modifiers'
 import isEqual from 'lodash/isEqual'
 
 import {toggleOption} from './lib/select-options'
+import {TriggerLabel} from './lib/trigger-label'
 import {triggerModifiers} from './lib/trigger-modifiers'
 import type {FilterType} from './types'
 
@@ -49,7 +50,7 @@ export function FilterMenu<T extends object>({
 		case 'toggle':
 			return (
 				<Host matchContents={true}>
-					<Menu label={filter.spec.title} modifiers={modifiers}>
+					<Menu label={<TriggerLabel title={filter.spec.title} />} modifiers={modifiers}>
 						<Section title={filter.spec.title.toUpperCase()}>
 							<Toggle
 								isOn={filter.enabled}
@@ -69,7 +70,7 @@ export function FilterMenu<T extends object>({
 
 			return (
 				<Host matchContents={true}>
-					<Menu label={filter.spec.title} modifiers={modifiers}>
+					<Menu label={<TriggerLabel title={filter.spec.title} />} modifiers={modifiers}>
 						<Section title={filter.spec.title.toUpperCase()}>
 							{filter.spec.options.map((option, index) => (
 								<Toggle
@@ -96,7 +97,7 @@ export function FilterMenu<T extends object>({
 
 			return (
 				<Host matchContents={true}>
-					<Menu label={spec.title} modifiers={modifiers}>
+					<Menu label={<TriggerLabel title={spec.title} />} modifiers={modifiers}>
 						<Section modifiers={STAYS_OPEN} title={spec.title.toUpperCase()}>
 							{spec.options.map((option) => (
 								<Toggle
