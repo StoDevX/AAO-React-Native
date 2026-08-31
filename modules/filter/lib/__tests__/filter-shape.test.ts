@@ -84,11 +84,11 @@ describe('filterShape, list', () => {
 		expect(filterShape(listFilter(79))).toBe('sheet')
 	})
 
-	test('11 options, just below the threshold -- a menu', () => {
-		expect(filterShape(listFilter(11))).toBe('menu')
+	test('14 options, just below the threshold -- a menu', () => {
+		expect(filterShape(listFilter(14))).toBe('menu')
 	})
 
-	test('12 options, the threshold -- a sheet', () => {
-		expect(filterShape(listFilter(12))).toBe('sheet')
+	test('15 options, the threshold -- a sheet', () => {
+		expect(filterShape(listFilter(15))).toBe('sheet')
 	})
 })

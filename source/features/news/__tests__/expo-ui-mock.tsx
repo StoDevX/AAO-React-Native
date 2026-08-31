@@ -5,7 +5,7 @@ import {Pressable, Text as RNText, View} from 'react-native'
  * `@expo/ui/swift-ui` cannot be loaded under Jest -- it reaches
  * expo-modules-core's native bindings, absent from the test runtime. This
  * stand-in covers only what `NewsList`'s filter renders as: the Categories
- * list here never reaches 12 options, so it is always a `Menu`, never the
+ * list here never reaches 15 options, so it is always a `Menu`, never the
  * sheet. `filter-toolbar-button.tsx` still imports `filter-sheet.tsx`
  * unconditionally, though, and that file calls a handful of `.../modifiers`
  * functions at module scope -- so those need real (if inert) stand-ins too,
@@ -36,6 +36,14 @@ export const accessibilityIdentifier = (identifier: string): Modifier => ({
 	identifier,
 })
 export const contentShape = (shape: unknown): Modifier => ({$type: 'contentShape', shape})
+export const accessibilityLabel = (label: string): Modifier => ({
+	$type: 'accessibilityLabel',
+	label,
+})
+export const padding = (params: Record<string, unknown> = {}): Modifier => ({
+	$type: 'padding',
+	...params,
+})
 export const shapes = {rectangle: (): Modifier => ({$type: 'rectangle'})}
 export const resizable = (): Modifier => ({$type: 'resizable'})
 export const frame = (params: Record<string, unknown> = {}): Modifier => ({
@@ -109,4 +117,15 @@ export function Toggle({
 			{children ?? (label ? <RNText>{label}</RNText> : null)}
 		</Pressable>
 	)
+}
+
+// A sheet-shaped filter draws its header in a `ZStack`, layering the title
+// over the button row. Nothing here opens a sheet, but building one still
+// walks the header, so both stand-ins have to exist.
+export function ZStack({children}: WithChildren & {alignment?: string}): React.ReactNode {
+	return <View>{children}</View>
+}
+
+export function Spacer(): React.ReactNode {
+	return null
 }

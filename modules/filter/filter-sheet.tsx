@@ -7,22 +7,27 @@ import {
 	Image,
 	List,
 	Section,
+	Spacer,
 	Text,
 	VStack,
+	ZStack,
 } from '@expo/ui/swift-ui'
 import {
 	accessibilityIdentifier,
+	accessibilityLabel,
 	buttonStyle,
 	contentShape,
 	font,
 	foregroundStyle,
 	frame,
+	padding,
 	resizable,
 	shapes,
 } from '@expo/ui/swift-ui/modifiers'
 import isEqual from 'lodash/isEqual'
 import type {SFSymbol} from 'sf-symbols-typescript'
 
+import * as c from '@frogpond/colors'
 import {toggleAll, toggleOption} from './lib/select-options'
 import {triggerModifiers} from './lib/trigger-modifiers'
 import type {FilterIcon, ListItemSpecType, ListType} from './types'
@@ -44,11 +49,15 @@ type Props<T extends object> = {
  * by: the screen behind the sheet states the same station and dietary names,
  * and both stay in the accessibility tree while the sheet is up.
  *
- * Mirrored by `TestIdentifiers.Filter.optionPrefix` and
- * `TestIdentifiers.Filter.showAll` in `uitests/TestIdentifiers.swift`.
+ * Mirrored by `TestIdentifiers.Filter.optionPrefix`,
+ * `TestIdentifiers.Filter.showAll`, and `TestIdentifiers.Filter.close` in
+ * `uitests/TestIdentifiers.swift`.
  */
 export const FILTER_OPTION_PREFIX = 'filter-option-'
 export const FILTER_SHOW_ALL_ID = 'filter-show-all'
+/// The header's dismiss button. Its label is a bare glyph, so it needs the
+/// same kind of identifier a labelless control always does.
+export const FILTER_CLOSE_BUTTON_ID = 'filter-close'
 
 // Constant modifier arrays, hoisted so the worst case -- Course Search's
 // Departments filter at 79 rows, in `OR` mode with everything selected, so
@@ -56,9 +65,6 @@ export const FILTER_SHOW_ALL_ID = 'filter-show-all'
 // an extra view, once per row. `@expo/ui` view construction costs roughly
 // 3ms per view and isn't virtualised.
 const PLAIN_BUTTON_MODIFIERS = [buttonStyle('plain')]
-// "Show All" is one row with one identifier, so its modifiers hoist with the
-// rest; an option row's identifier varies, so that array is memoized per row.
-const SHOW_ALL_MODIFIERS = [buttonStyle('plain'), accessibilityIdentifier(FILTER_SHOW_ALL_ID)]
 const ROW_MODIFIERS = [contentShape(shapes.rectangle())]
 const LOCAL_ICON_MODIFIERS = [resizable(), frame({width: 20, height: 20})]
 // Fills the row so the checkmark settles against the trailing edge. A
@@ -73,6 +79,53 @@ const DETAIL_MODIFIERS = [
 	font({textStyle: 'footnote'}),
 	foregroundStyle({type: 'hierarchical', style: 'secondary'}),
 ]
+// Tints a selected row's checkmark to match the one SwiftUI's own inline
+// `Picker` draws (see Settings' App Icon section, `change-icon.tsx`) --
+// `systemBlue` is what `accentColor` itself resolves to, since this app
+// defines no custom accent asset. A `PlatformColor` stays a semantic system
+// color, so it still tracks dark mode and increased contrast the way a
+// hardcoded hex could not; `textStyle: 'body'` keeps the glyph scaling with
+// Dynamic Type.
+const CHECKMARK_MODIFIERS = [
+	foregroundStyle(c.systemBlue),
+	font({textStyle: 'body', weight: 'semibold'}),
+]
+
+const MIN_TOUCH_TARGET = 44
+// Both header controls draw smaller than their tappable area needs to be --
+// a short text label and a bare glyph both fall well under the 44x44pt
+// minimum this project requires on every interactive element -- so each gets
+// `contentShape` (so the whole frame, not just the drawn pixels, is what
+// registers a tap) and a `frame` floor to match.
+const HEADER_HIT_TARGET = [
+	contentShape(shapes.rectangle()),
+	frame({minWidth: MIN_TOUCH_TARGET, minHeight: MIN_TOUCH_TARGET}),
+]
+const SHOW_ALL_HEADER_MODIFIERS = [
+	buttonStyle('plain'),
+	...HEADER_HIT_TARGET,
+	accessibilityIdentifier(FILTER_SHOW_ALL_ID),
+]
+const CLOSE_BUTTON_MODIFIERS = [
+	buttonStyle('plain'),
+	...HEADER_HIT_TARGET,
+	accessibilityLabel('Close'),
+	accessibilityIdentifier(FILTER_CLOSE_BUTTON_ID),
+]
+// `hierarchical`/`secondary` reads as chrome rather than an action -- the
+// same treatment a sheet's system-drawn close glyph gets, so a hand-drawn one
+// isn't mistaken for a row's own content.
+const CLOSE_ICON_MODIFIERS = [foregroundStyle({type: 'hierarchical', style: 'secondary'})]
+// Sheet-title idiom: bold/semibold at `title3`, sentence case. A sheet names
+// itself the way a navigation title does, so it takes neither the uppercasing
+// nor the muted weight a section header carries.
+const HEADER_TITLE_MODIFIERS = [font({textStyle: 'title3', weight: 'semibold'})]
+// Lets the header's `Spacer` push the close button to the true trailing edge
+// before `padding` insets the whole bar from the sheet's actual edges -- see
+// `FILL_LEADING` above for the same `frame`-over-`Spacer` trade, applied here
+// to the row rather than a single child.
+const HEADER_ROW_FILL = [frame({maxWidth: Infinity})]
+const HEADER_MODIFIERS = [frame({maxWidth: Infinity}), padding({horizontal: 16, vertical: 12})]
 
 /**
  * A long filter -- or one carrying icons -- as a sheet of selectable rows,
@@ -144,8 +197,6 @@ export function FilterSheet<T extends object>({
 		return null
 	}
 
-	let allSelected = spec.selected.length === spec.options.length
-
 	return (
 		<Host matchContents={true}>
 			<BottomSheet
@@ -157,36 +208,78 @@ export function FilterSheet<T extends object>({
 					}
 				}}
 			>
-				<List>
-					{/* `title` rather than a `header` element: it draws in the system's
-					    own section-header style, which is what `FilterMenu` gets from
-					    the same prop. A `<Text>` in `header` renders as body copy, so
-					    the two presentations would state the filter's name in visibly
-					    different type. */}
-					<Section title={title.toUpperCase()}>
-						{spec.mode === 'OR' ? (
-							<ShowAllRow
-								isSelected={allSelected}
-								onPress={() => setLocal((current) => toggleAll(current))}
-							/>
-						) : null}
-						<List.ForEach>
-							{spec.options.map((option) => (
-								<OptionRow
-									key={option.title}
-									detail={option.detail}
-									icon={iconFor?.(option) ?? null}
-									isSelected={spec.selected.some((selected) => isEqual(selected, option))}
-									label={spec.displayTitle ? option.title : option.label}
-									onPress={() => setLocal((current) => toggleOption(current, option))}
-									title={option.title}
-								/>
-							))}
-						</List.ForEach>
-					</Section>
-				</List>
+				<VStack spacing={0}>
+					{/* The (X) commits exactly like a swipe does -- `emitAndDismiss`,
+					    never a path that discards `local` -- because a swipe dismissal
+					    already applies the user's selections (verified on device); an X
+					    that threw them away would make the two dismissal gestures mean
+					    opposite things. */}
+					<SheetHeader
+						canShowAll={spec.mode === 'OR'}
+						onClose={emitAndDismiss}
+						onShowAll={() => setLocal((current) => toggleAll(current))}
+						title={title}
+					/>
+					<List>
+						<Section>
+							<List.ForEach>
+								{spec.options.map((option) => (
+									<OptionRow
+										key={option.title}
+										detail={option.detail}
+										icon={iconFor?.(option) ?? null}
+										isSelected={spec.selected.some((selected) => isEqual(selected, option))}
+										label={spec.displayTitle ? option.title : option.label}
+										onPress={() => setLocal((current) => toggleOption(current, option))}
+										title={option.title}
+									/>
+								))}
+							</List.ForEach>
+						</Section>
+					</List>
+				</VStack>
 			</BottomSheet>
 		</Host>
+	)
+}
+
+/**
+ * The sheet's own title bar, drawn above the `List` rather than as a section
+ * header inside it -- a sheet states its own name the way a navigation title
+ * does, not the way a section of rows does. Three slots, in the standard iOS
+ * sheet idiom: "Show All" leading (only in `OR` mode -- `AND` mode has no
+ * all-or-nothing action to offer), the filter's name centred, and the (X)
+ * dismiss button trailing.
+ *
+ * The title sits in its own layer, laid over the button row rather than
+ * beside it in one `HStack` -- so it stays centred on the sheet regardless of
+ * whether "Show All" is present, without the leading slot needing a
+ * placeholder to hold its width.
+ */
+function SheetHeader({
+	canShowAll,
+	onClose,
+	onShowAll,
+	title,
+}: {
+	canShowAll: boolean
+	onClose: () => void
+	onShowAll: () => void
+	title: string
+}): React.ReactNode {
+	return (
+		<ZStack alignment="center" modifiers={HEADER_MODIFIERS}>
+			<HStack modifiers={HEADER_ROW_FILL}>
+				{canShowAll ? (
+					<Button label="Show All" modifiers={SHOW_ALL_HEADER_MODIFIERS} onPress={onShowAll} />
+				) : null}
+				<Spacer />
+				<Button modifiers={CLOSE_BUTTON_MODIFIERS} onPress={onClose}>
+					<Image modifiers={CLOSE_ICON_MODIFIERS} systemName="xmark.circle.fill" />
+				</Button>
+			</HStack>
+			<Text modifiers={HEADER_TITLE_MODIFIERS}>{title}</Text>
+		</ZStack>
 	)
 }
 
@@ -230,24 +323,7 @@ function OptionRow({
 				) : (
 					<Text modifiers={FILL_LEADING}>{label}</Text>
 				)}
-				{isSelected ? <Image systemName="checkmark" /> : null}
-			</HStack>
-		</Button>
-	)
-}
-
-function ShowAllRow({
-	isSelected,
-	onPress,
-}: {
-	isSelected: boolean
-	onPress: () => void
-}): React.ReactNode {
-	return (
-		<Button modifiers={SHOW_ALL_MODIFIERS} onPress={onPress}>
-			<HStack modifiers={ROW_MODIFIERS} spacing={8}>
-				<Text modifiers={FILL_LEADING}>Show All</Text>
-				{isSelected ? <Image systemName="checkmark" /> : null}
+				{isSelected ? <Image modifiers={CHECKMARK_MODIFIERS} systemName="checkmark" /> : null}
 			</HStack>
 		</Button>
 	)

@@ -75,6 +75,12 @@ export function HStack({children}: WithModifiers): React.ReactNode {
 export function Spacer(): React.ReactNode {
 	return <View />
 }
+// A sheet-shaped filter draws its header in a `ZStack`, layering the title
+// over the button row. This screen's tests never open a sheet, but building
+// one still walks the header, so the stand-in has to exist.
+export function ZStack({children}: WithModifiers & {alignment?: string}): React.ReactNode {
+	return <View>{children}</View>
+}
 export function Text({children}: WithModifiers): React.ReactNode {
 	return <RNText>{children}</RNText>
 }

@@ -19,6 +19,12 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		alignItems: 'center',
 	},
+	// Balances the date's own 12pt leading inset, so the meal picker doesn't
+	// sit flush against the bar's trailing edge. The filter bar below uses the
+	// same 12pt on both sides, and the two bars are read as one block.
+	mealPicker: {
+		paddingRight: 12,
+	},
 	bars: {
 		backgroundColor: c.systemGroupedBackground,
 	},
@@ -59,12 +65,14 @@ export function FilterMenuToolbar<T extends object>({
 					{title ? <Text style={styles.toolbarText}> — {title}</Text> : null}
 				</View>
 				{mealFilter && multipleMeals ? (
-					<FilterToolbarButton<T>
-						filter={mealFilter}
-						isActive={false}
-						onChange={onChange}
-						title={mealFilter.spec.title}
-					/>
+					<View style={styles.mealPicker}>
+						<FilterToolbarButton<T>
+							filter={mealFilter}
+							isActive={false}
+							onChange={onChange}
+							title={mealFilter.spec.title}
+						/>
+					</View>
 				) : null}
 			</Toolbar>
 			{isOpen && (

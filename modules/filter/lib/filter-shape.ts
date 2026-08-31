@@ -4,7 +4,7 @@ export type FilterShape = 'menu' | 'sheet' | 'none'
 
 // Nothing measured sits near this -- it exists only for the runtime-derived
 // News/Streaming Media Categories filters, which have no fixed count.
-const SHEET_THRESHOLD = 12
+const SHEET_THRESHOLD = 15
 
 /**
  * Which presentation a filter gets. A toggle is always short enough for a

@@ -49,6 +49,11 @@ export const accessibilityIdentifier = (identifier: string): Modifier => ({
 	identifier,
 })
 
+export const accessibilityLabel = (label: string): Modifier => ({
+	$type: 'accessibilityLabel',
+	label,
+})
+
 export const contentShape = (shape: unknown): Modifier => ({$type: 'contentShape', shape})
 
 export const shapes = {rectangle: (): Modifier => ({$type: 'rectangle'})}
@@ -66,6 +71,11 @@ export const font = (params: Record<string, unknown> = {}): Modifier => ({
 })
 
 export const foregroundStyle = (style: unknown): Modifier => ({$type: 'foregroundStyle', style})
+
+export const padding = (params: Record<string, unknown> = {}): Modifier => ({
+	$type: 'padding',
+	...params,
+})
 
 export function Host({children}: WithChildren & {matchContents?: boolean}): React.ReactNode {
 	return <View>{children}</View>
@@ -233,6 +243,10 @@ export function VStack({
 	return <View>{children}</View>
 }
 
+export function ZStack({children}: WithChildren & {alignment?: string}): React.ReactNode {
+	return <View>{children}</View>
+}
+
 export function Spacer(): React.ReactNode {
 	return null
 }
@@ -271,6 +285,12 @@ export function Image({
  * `accessibilityLabel`), and `modifiers` stashed on the same host node,
  * unexamined, so a test can compare a sheet's anchor against `FilterMenu`'s
  * trigger by identity, the same way `Menu`'s testID does for menus.
+ *
+ * An icon-only button -- the sheet header's close button -- has no `label`,
+ * so its accessible name and identifier travel as `accessibilityLabel`/
+ * `accessibilityIdentifier` modifiers instead, the same way the real
+ * component reads them. Falling back to those here (only when `label` is
+ * absent) is what lets a test find such a button by role or testID at all.
  */
 export function Button({
 	children,
@@ -282,9 +302,20 @@ export function Button({
 		throw new Error('Button children must be nested elements, not a plain string')
 	}
 
+	let labelModifier = modifiers?.find((modifier) => modifier.$type === 'accessibilityLabel')
+	let identifierModifier = modifiers?.find(
+		(modifier) => modifier.$type === 'accessibilityIdentifier',
+	)
+	let resolvedLabel = label ?? (labelModifier?.label as string | undefined)
+	let resolvedTestID = label
+		? `button:${label}`
+		: identifierModifier
+			? `button:${identifierModifier.identifier as string}`
+			: undefined
+
 	return (
 		<ViewWithModifiers
-			accessibilityLabel={label}
+			accessibilityLabel={resolvedLabel}
 			accessibilityRole="button"
 			// `RNTL`'s `getByRole` only considers an element an accessibility
 			// element -- and so a candidate at all -- once `accessible` is
@@ -293,7 +324,7 @@ export function Button({
 			accessible={true}
 			modifiers={modifiers}
 			onPress={onPress}
-			testID={label ? `button:${label}` : undefined}
+			testID={resolvedTestID}
 		>
 			{children ?? (label ? <RNText>{label}</RNText> : null)}
 		</ViewWithModifiers>

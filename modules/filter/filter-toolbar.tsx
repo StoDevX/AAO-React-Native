@@ -43,7 +43,13 @@ export function FilterToolbar<T extends object>({
 
 const styles = StyleSheet.create({
 	scroller: {
-		paddingLeft: 10,
+		// Symmetric insets, rather than the old left-only 10 -- the trailing
+		// trigger sat flush against the bar's edge with nothing on the right.
+		// `columnGap` (not per-button margins) spaces the row itself, matching
+		// the 8pt unit `filter-sheet.tsx`'s own rows already use for the gap
+		// between an icon and its label.
+		paddingHorizontal: 12,
 		paddingVertical: 8,
+		columnGap: 8,
 	},
 })

@@ -117,6 +117,9 @@ struct TestIdentifiers {
 		/// Matches FILTER_SHOW_ALL_ID in modules/filter/filter-sheet.tsx.
 		static let showAll = "filter-show-all"
 
+		/// Matches FILTER_CLOSE_BUTTON_ID in modules/filter/filter-sheet.tsx.
+		static let closeButton = "filter-close"
+
 		/// A trigger is identified by its filter's key, from the `buildFilters`
 		/// of whichever screen drew it.
 		static func trigger(_ key: String) -> String {

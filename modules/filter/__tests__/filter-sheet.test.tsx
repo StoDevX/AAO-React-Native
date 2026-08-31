@@ -249,13 +249,15 @@ describe('FilterSheet', () => {
 		await openSheet()
 
 		expect(screen.getByLabelText('icon:sfSymbol:leaf')).toBeTruthy()
-		// Excludes the checkmark: nothing is selected in this fixture, so it
-		// happens to pass without this exclusion, but the checkmark is drawn via
-		// the same `Image` mock and carries the same `icon:` prefix
-		// (`icon:sfSymbol:checkmark`) -- the exclusion is what makes this count
-		// actually mean "option icons," not "option icons, so long as nothing
-		// is selected."
-		expect(screen.queryAllByLabelText(/^icon:(?!sfSymbol:checkmark)/u)).toHaveLength(1)
+		// Excludes the checkmark and the header's own close glyph: nothing is
+		// selected in this fixture, so the checkmark exclusion happens to pass
+		// without it, but both are drawn via the same `Image` mock and carry the
+		// same `icon:` prefix (`icon:sfSymbol:checkmark`,
+		// `icon:sfSymbol:xmark.circle.fill`) -- the exclusions are what make this
+		// count actually mean "option icons," not "every icon on screen."
+		expect(
+			screen.queryAllByLabelText(/^icon:(?!sfSymbol:checkmark)(?!sfSymbol:xmark\.circle\.fill)/u),
+		).toHaveLength(1)
 	})
 
 	test('draws a local-file icon', async () => {
@@ -347,7 +349,7 @@ describe('FilterSheet', () => {
 		expect(screen.queryByText('BIO')).toBeNull()
 	})
 
-	test('states which filter is open on the section header once opened', async () => {
+	test('draws its own title in the header once opened, alongside the still-mounted anchor', async () => {
 		await render(
 			<FilterSheet
 				filter={listFilter('AND', [{title: 'A'}], [])}
@@ -357,11 +359,68 @@ describe('FilterSheet', () => {
 			/>,
 		)
 
-		expect(screen.queryByText(TITLE.toUpperCase())).toBeNull()
+		// Before the sheet opens, only the anchor trigger draws the title.
+		expect(screen.getAllByText(TITLE)).toHaveLength(1)
 
 		await openSheet()
 
-		expect(screen.getByText(TITLE.toUpperCase())).toBeTruthy()
+		// The header adds a second occurrence -- the sheet's own title -- while
+		// the anchor `Button` stays mounted underneath it (see `BottomSheet`'s
+		// mock doc comment).
+		expect(screen.getAllByText(TITLE)).toHaveLength(2)
+	})
+
+	test('the close button commits the accumulated filter, exactly like a swipe does', async () => {
+		let onChange = jest.fn()
+		let options = [{title: 'A'}, {title: 'B'}]
+		await render(
+			<FilterSheet
+				filter={listFilter('AND', options, [])}
+				isActive={false}
+				onChange={onChange}
+				title={TITLE}
+			/>,
+		)
+
+		await openSheet()
+		await fireEvent.press(screen.getByText('A'))
+		await fireEvent.press(screen.getByRole('button', {name: 'Close'}))
+
+		// The X commits `local`, not a discard path -- a swipe already applies
+		// the user's selections, so the two dismissal gestures have to agree.
+		expect(onChange).toHaveBeenCalledWith(
+			expect.objectContaining({spec: expect.objectContaining({selected: [{title: 'A'}]})}),
+		)
+		// It closes the sheet too, the same as a swipe: the row it just tapped is
+		// gone, and only the anchor remains.
+		expect(screen.queryByText('B')).toBeNull()
+		expect(screen.getByRole('button', {name: TITLE})).toBeTruthy()
+	})
+
+	test('offers "Show All" in the header, not as a row, in OR mode', async () => {
+		let options = [{title: 'A'}, {title: 'B'}]
+		let onChange = jest.fn()
+		await render(
+			<FilterSheet
+				filter={listFilter('OR', options, [{title: 'A'}])}
+				isActive={false}
+				onChange={onChange}
+				title={TITLE}
+			/>,
+		)
+
+		await openSheet()
+
+		let showAll = screen.getByRole('button', {name: 'Show All'})
+		await fireEvent.press(showAll)
+		await fireEvent.press(screen.getByRole('button', {name: 'Close'}))
+
+		// `toggleAll` selects everything when it isn't already all selected --
+		// the same outcome tapping the old row produced, proving the header
+		// button still drives the same behaviour, not a re-implementation of it.
+		expect(onChange).toHaveBeenCalledWith(
+			expect.objectContaining({spec: expect.objectContaining({selected: options})}),
+		)
 	})
 
 	test('renders an option detail beneath its label', async () => {
