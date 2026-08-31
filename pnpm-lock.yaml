@@ -236,8 +236,8 @@ importers:
         specifier: 0.1.2
         version: 0.1.2
       ky:
-        specifier: 2.0.2
-        version: 2.0.2
+        specifier: 2.1.0
+        version: 2.1.0
       lodash:
         specifier: 4.18.1
         version: 4.18.1
@@ -474,8 +474,8 @@ importers:
   modules/api:
     dependencies:
       ky:
-        specifier: 2.0.2
-        version: 2.0.2
+        specifier: 2.1.0
+        version: 2.1.0
 
   modules/app-theme:
     dependencies:
@@ -4163,8 +4163,8 @@ packages:
     resolution: {integrity: sha512-eTIzlVOSUR+JxdDFepEYcBMtZ9Qqdef+rnzWdRZuMbOywu5tO2w2N7rqjoANZ5k9vywhL6Br1VRjUIgTQx4E8w==}
     engines: {node: '>=6'}
 
-  ky@2.0.2:
-    resolution: {integrity: sha512-/GmXpo9F9W+f8n4Ivr2iH+7h7wL7jLbLKWkMlpflcCRb6kGjBfTlASEXaZ9qUgNTn4VgS0P2pwxxzQ4EM6Ulgg==}
+  ky@2.1.0:
+    resolution: {integrity: sha512-nIKwelw+7qVqKOlX4Eht6GXfEXlDHcdIjyLWV3s119kYt5s+70ayTnYS+0fRNmtgGRRAfqdeWQbh8YizqkS0ng==}
     engines: {node: '>=22'}
 
   lan-network@0.2.1:
@@ -9368,7 +9368,7 @@ snapshots:
 
   kleur@3.0.3: {}
 
-  ky@2.0.2: {}
+  ky@2.1.0: {}
 
   lan-network@0.2.1: {}
 
