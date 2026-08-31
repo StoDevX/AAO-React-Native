@@ -5,7 +5,7 @@ import {Pressable, Text as RNText, View} from 'react-native'
  * `@expo/ui/swift-ui` cannot be loaded under Jest -- it reaches
  * expo-modules-core's native bindings, absent from the test runtime. This
  * stand-in covers only what `StreamingPage`'s filter renders as: the
- * Categories list here never reaches 15 options, so it is always a `Menu`,
+ * Categories list here never reaches 8 options, so it is always a `Menu`,
  * never the sheet. `filter-toolbar-button.tsx` still imports `filter-sheet.tsx`
  * unconditionally, though, and that file calls a handful of `.../modifiers`
  * functions at module scope -- so those need real (if inert) stand-ins too,

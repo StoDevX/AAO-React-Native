@@ -64,8 +64,10 @@ describe('filterShape, list', () => {
 		expect(filterShape(listFilter(0))).toBe('none')
 	})
 
-	test('Stations, 9 options, no icons -- a menu', () => {
-		expect(filterShape(listFilter(9))).toBe('menu')
+	// Stations is what the threshold is tuned for: nine stations read better as
+	// a sheet of rows than as a pull-down that long, even carrying no icons.
+	test('Stations, 9 options, no icons -- a sheet', () => {
+		expect(filterShape(listFilter(9))).toBe('sheet')
 	})
 
 	// The rule that is not about length at all: Dietary Restrictions has only
@@ -84,11 +86,11 @@ describe('filterShape, list', () => {
 		expect(filterShape(listFilter(79))).toBe('sheet')
 	})
 
-	test('14 options, just below the threshold -- a menu', () => {
-		expect(filterShape(listFilter(14))).toBe('menu')
+	test('7 options, just below the threshold -- a menu', () => {
+		expect(filterShape(listFilter(7))).toBe('menu')
 	})
 
-	test('15 options, the threshold -- a sheet', () => {
-		expect(filterShape(listFilter(15))).toBe('sheet')
+	test('8 options, the threshold -- a sheet', () => {
+		expect(filterShape(listFilter(8))).toBe('sheet')
 	})
 })

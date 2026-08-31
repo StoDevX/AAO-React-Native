@@ -2,9 +2,11 @@ import type {FilterType} from '../types'
 
 export type FilterShape = 'menu' | 'sheet' | 'none'
 
-// Nothing measured sits near this -- it exists only for the runtime-derived
-// News/Streaming Media Categories filters, which have no fixed count.
-const SHEET_THRESHOLD = 15
+// Menus' Stations filter is the one this is tuned for: a station list this
+// long is quicker to work through as a sheet of rows than as a pull-down. The
+// runtime-derived News and Streaming Media Categories filters have no fixed
+// count and cross it too, whenever a feed carries this many categories.
+const SHEET_THRESHOLD = 8
 
 /**
  * Which presentation a filter gets. A toggle is always short enough for a

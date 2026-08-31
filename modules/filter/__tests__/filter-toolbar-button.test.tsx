@@ -31,7 +31,7 @@ function manyOptions(count: number): ListItemSpecType[] {
 	return Array.from({length: count}, (_, i) => ({title: `Dept ${i}`}))
 }
 
-// 15 options crosses `filterShape`'s sheet threshold -- the shape whose
+// 8 options crosses `filterShape`'s sheet threshold -- the shape whose
 // trigger is a plain button rather than a native `Menu`'s own label.
 function sheetFilter(enabled: boolean): FilterType<Item> {
 	return {
@@ -40,7 +40,7 @@ function sheetFilter(enabled: boolean): FilterType<Item> {
 		enabled,
 		spec: {
 			title: 'Departments',
-			options: manyOptions(15),
+			options: manyOptions(8),
 			selected: [],
 			mode: 'OR',
 			displayTitle: true,
