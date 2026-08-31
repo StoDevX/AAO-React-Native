@@ -6,6 +6,7 @@ type State = {
 	unofficialityAcknowledged: boolean
 	devModeOverride: boolean
 	enabledCalendarSources: string[]
+	selectedNewsSource: string
 }
 
 // why `as`? see https://redux-toolkit.js.org/tutorials/typescript#:~:text=In%20some%20cases%2C%20TypeScript
@@ -15,6 +16,8 @@ const initialState = {
 	// St. Olaf alone: the college whose app this is, and the only calendar most
 	// people want on by default.
 	enabledCalendarSources: ['stolaf'],
+	// St. Olaf alone: the source News opened on before the picker existed.
+	selectedNewsSource: 'stolaf',
 } as State
 
 const slice = createSlice({
@@ -37,10 +40,14 @@ const slice = createSlice({
 				? enabledCalendarSources.filter((id) => id !== payload)
 				: [...enabledCalendarSources, payload]
 		},
+		setNewsSource(state, {payload}: PayloadAction<string>) {
+			state.selectedNewsSource = payload
+		},
 	},
 })
 
-export const {acknowledgeAcknowledgement, setDevModeOverride, toggleCalendarSource} = slice.actions
+export const {acknowledgeAcknowledgement, setDevModeOverride, toggleCalendarSource, setNewsSource} =
+	slice.actions
 export const reducer = slice.reducer
 
 export const selectAcknowledgement = (state: RootState): State['unofficialityAcknowledged'] =>
@@ -51,3 +58,6 @@ export const selectDevModeOverride = (state: RootState): State['devModeOverride'
 
 export const selectEnabledCalendarSources = (state: RootState): State['enabledCalendarSources'] =>
 	state.settings.enabledCalendarSources ?? initialState.enabledCalendarSources
+
+export const selectNewsSource = (state: RootState): State['selectedNewsSource'] =>
+	state.settings.selectedNewsSource ?? initialState.selectedNewsSource
