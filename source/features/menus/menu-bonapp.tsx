@@ -159,6 +159,40 @@ export function BonAppHostedMenu(props: Props): React.ReactNode {
 		isLoading: isCafeLoading,
 	} = useQuery(bonAppCafeOptions(props.cafe))
 
+	let {ignoreProvidedMenus = false} = props
+
+	// Derived above the early returns below, because hooks cannot be called
+	// after one. `prepareFood` rebuilds every item in the cafe -- 250 of them at
+	// Stav -- so recomputing it per render handed `FoodMenu` 250 fresh object
+	// identities each time and defeated the memoization it does internally.
+	let foodItems = React.useMemo(() => (cafeMenu ? prepareFood(cafeMenu) : {}), [cafeMenu])
+
+	let meals = React.useMemo(
+		() => (cafeMenu ? getMeals(cafeMenu, foodItems, {ignoreProvidedMenus}) : []),
+		[cafeMenu, foodItems, ignoreProvidedMenus],
+	)
+
+	// Stable so that a menu re-rendering for any other reason does not force
+	// every one of its rows to re-render with it.
+	let onItemPress = React.useCallback(
+		(item: MenuItemType) => {
+			router.push({
+				pathname: '/MenuItemDetail',
+				params: {
+					source: 'bonapp',
+					cafe: typeof props.cafe === 'string' ? props.cafe : props.cafe.id,
+					itemId: item.id,
+				},
+			})
+		},
+		[router, props.cafe],
+	)
+
+	let onRefresh = React.useCallback(
+		() => Promise.all([cafeReload(), menuReload()]),
+		[cafeReload, menuReload],
+	)
+
 	if (isMenuLoading || isCafeLoading) {
 		return <LoadingView text={sample(props.loadingMessage)} />
 	}
@@ -186,8 +220,6 @@ export function BonAppHostedMenu(props: Props): React.ReactNode {
 		return <NoticeView text={msg} />
 	}
 
-	let {ignoreProvidedMenus = false} = props
-
 	// The API returns an empty array for the cafeInfo.cafe value if there is no
 	// matching cafe with the inputted id number, otherwise it returns an non-array object
 	if (Array.isArray(cafeInfo.cafe)) {
@@ -204,11 +236,6 @@ export function BonAppHostedMenu(props: Props): React.ReactNode {
 	// messages in this response, like "Closed for Christmas Break"
 	let specialMessage = findCafeMessage(cafeInfo, now)
 
-	// prepare all food items from bonapp for rendering
-	let foodItems = prepareFood(cafeMenu)
-
-	let meals = getMeals(cafeMenu, foodItems, {ignoreProvidedMenus})
-
 	return (
 		<FoodMenu
 			cafeMessage={specialMessage}
@@ -217,17 +244,8 @@ export function BonAppHostedMenu(props: Props): React.ReactNode {
 			menuCorIcons={cafeMenu.cor_icons}
 			name={props.name}
 			now={now}
-			onItemPress={(item) =>
-				router.push({
-					pathname: '/MenuItemDetail',
-					params: {
-						source: 'bonapp',
-						cafe: typeof props.cafe === 'string' ? props.cafe : props.cafe.id,
-						itemId: item.id,
-					},
-				})
-			}
-			onRefresh={() => Promise.all([cafeReload(), menuReload()])}
+			onItemPress={onItemPress}
+			onRefresh={onRefresh}
 		/>
 	)
 }

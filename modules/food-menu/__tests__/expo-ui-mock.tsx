@@ -11,17 +11,28 @@ const modifier =
 export const accessibilityIdentifier = modifier('accessibilityIdentifier')
 export const accessibilityLabel = modifier('accessibilityLabel')
 export const aspectRatio = modifier('aspectRatio')
+export const background = modifier('background')
 export const buttonStyle = modifier('buttonStyle')
 export const contentShape = modifier('contentShape')
 export const font = modifier('font')
 export const foregroundStyle = modifier('foregroundStyle')
 export const frame = modifier('frame')
+export const kerning = modifier('kerning')
+export const lineLimit = modifier('lineLimit')
+export const listRowInsets = modifier('listRowInsets')
 export const listStyle = modifier('listStyle')
+export const minimumScaleFactor = modifier('minimumScaleFactor')
+export const monospacedDigit = modifier('monospacedDigit')
+export const multilineTextAlignment = modifier('multilineTextAlignment')
 export const padding = modifier('padding')
 export const refreshable = modifier('refreshable')
 export const resizable = modifier('resizable')
+export const textSelection = modifier('textSelection')
 
-export const shapes = {rectangle: () => ({type: 'rectangle'}) as const}
+export const shapes = {
+	rectangle: () => ({type: 'rectangle'}) as const,
+	circle: () => ({type: 'circle'}) as const,
+}
 
 function labelOf(modifiers?: Modifier[]): string | undefined {
 	let found = modifiers?.find((m) => m.$type === 'accessibilityLabel')
@@ -48,18 +59,27 @@ export function RNHostView({children}: WithModifiers): React.ReactNode {
 }
 /**
  * `title` renders as text so a test can assert a section is present. `header`
- * is a real `SwiftUIContent` slot on the native component -- a bare string
- * handed to it crashes at mount -- but react-test-renderer happily accepts a
- * raw string child of `View`, so rendering it wouldn't catch that. The throw
- * below is what earns the claim.
+ * and `footer` are real `SwiftUIContent` slots on the native component -- a
+ * bare string handed to either crashes at mount -- but react-test-renderer
+ * happily accepts a raw string child of `View`, so rendering it wouldn't catch
+ * that. The throws below are what earn the claim.
  */
 export function Section({
 	title,
 	header,
+	footer,
 	children,
-}: WithModifiers & {title?: string; header?: React.ReactNode}): React.ReactNode {
+}: WithModifiers & {
+	title?: string
+	header?: React.ReactNode
+	footer?: React.ReactNode
+}): React.ReactNode {
 	if (typeof header === 'string') {
 		throw new Error('Section header is a SwiftUI slot; a bare string crashes at mount')
+	}
+
+	if (typeof footer === 'string') {
+		throw new Error('Section footer is a SwiftUI slot; a bare string crashes at mount')
 	}
 
 	return (
@@ -67,6 +87,7 @@ export function Section({
 			{title ? <RNText>{title}</RNText> : null}
 			{header}
 			{children}
+			{footer}
 		</View>
 	)
 }

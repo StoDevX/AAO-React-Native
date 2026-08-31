@@ -1,5 +1,5 @@
 import {Image, StyleSheet, Text} from 'react-native'
-import type {ListItemSpecType, ListType} from './types'
+import type {ListItemSpecType, ListSpecType, ListType} from './types'
 import {Cell, Section} from '@frogpond/tableview'
 import {Column} from '@frogpond/layout'
 import * as c from '@frogpond/colors'
@@ -72,7 +72,8 @@ export function ListSection<T extends object>({filter, onChange}: Props<T>): Rea
 		})
 	}, [filter, onChange, options, selected.length, spec])
 
-	let hasImageColumn = options.some((val) => Boolean(val.image))
+	let renderMark = spec.renderMark
+	let hasImageColumn = options.some((val) => Boolean(val.image) || Boolean(renderMark))
 	let buttons = options.map((val) => (
 		<Cell
 			key={val.title}
@@ -85,9 +86,7 @@ export function ListSection<T extends object>({filter, onChange}: Props<T>): Rea
 			}
 			cellStyle="RightDetail"
 			disableImageResize={true}
-			image={
-				spec.showImages && val.image ? <Image source={val.image} style={styles.icon} /> : undefined
-			}
+			image={spec.showImages ? leadingMark(val, renderMark) : undefined}
 			onPress={() => buttonPushed(val)}
 		/>
 	))
@@ -113,6 +112,22 @@ export function ListSection<T extends object>({filter, onChange}: Props<T>): Rea
 			{buttons}
 		</Section>
 	)
+}
+
+/**
+ * A row's leading mark. A caller whose marks are views rather than artwork
+ * draws its own, so that one implementation of a mark serves both this list and
+ * wherever else that caller shows it.
+ */
+function leadingMark(
+	val: ListItemSpecType,
+	renderMark: ListSpecType['renderMark'],
+): React.ReactElement | undefined {
+	if (renderMark) {
+		return renderMark(val) ?? undefined
+	}
+
+	return val.image ? <Image source={val.image} style={styles.icon} /> : undefined
 }
 
 const styles = StyleSheet.create({

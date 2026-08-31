@@ -11,12 +11,20 @@ export type ListItemSpecType = {
 	label?: string
 	detail?: string
 	image?: ImageSourcePropType | null
+	/** The caller's own identifier for this option, passed back to `renderMark`. */
+	id?: string
 }
 
 export type ListSpecType = {
 	title: string
 	caption?: string
 	showImages?: boolean
+	/**
+	 * Draws a row's leading mark, for a caller whose marks are views rather than
+	 * artwork. Lives on the spec rather than on each option so that it stays out
+	 * of the equality check that decides which options are selected.
+	 */
+	renderMark?: (option: ListItemSpecType) => React.ReactElement | null
 	options: ListItemSpecType[]
 	selected: ListItemSpecType[]
 	mode: 'AND' | 'OR'

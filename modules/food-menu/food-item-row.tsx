@@ -3,23 +3,22 @@ import {Button, HStack, Image, Text, VStack} from '@expo/ui/swift-ui'
 import {
 	accessibilityIdentifier,
 	accessibilityLabel,
-	aspectRatio,
 	buttonStyle,
 	contentShape,
 	font,
 	foregroundStyle,
 	frame,
-	resizable,
 	shapes,
 } from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
 
+import {DietaryBadge} from './dietary-badge-view'
+import {dietaryBadge} from './lib/dietary-badge'
 import {dietaryIconKeys} from './lib/dietary-icon-keys'
 import {foodRowLabel} from './lib/food-row-label'
 import type {MasterCorIconMapType, MenuItemType} from './types'
 
-/** Dietary icons are 15pt square, with 6pt between them. */
-const ICON_SIDE = 15
+/** Dietary badges sit 6pt apart. */
 const ICON_GAP = 6
 
 /**
@@ -54,37 +53,29 @@ const FILL_LEADING = [frame({maxWidth: Infinity, alignment: 'leading'})]
 
 const SECONDARY_FOOTNOTE = [font({textStyle: 'footnote'}), foregroundStyle(c.secondaryLabel)]
 
-/**
- * `resizable` first, and not optional: without it SwiftUI draws the image at
- * its intrinsic pixel size and overflows the frame, which had the icons
- * colliding with each other and running off the trailing edge.
- */
-const ICON = [
-	resizable(),
-	aspectRatio({contentMode: 'fit'}),
-	frame({width: ICON_SIDE, height: ICON_SIDE}),
-]
-
 type Props = {
 	data: MenuItemType
 	corIcons: MasterCorIconMapType
-	localIcons: Record<string, string>
 	badgeSpecials?: boolean
-	onPress: () => void
+	/**
+	 * Takes the item rather than closing over it, so the menu can hand every row
+	 * one stable callback instead of a fresh closure per row per render.
+	 */
+	onPress: (item: MenuItemType) => void
 }
 
-export function FoodItemRow({
+/**
+ * Memoized because a meal is two hundred of these: the menu re-renders whenever
+ * a query settles or its filters move, and without this every row rebuilt with
+ * it. Depends on the menu keeping `onPress` and each item stable.
+ */
+export const FoodItemRow = React.memo(function FoodItemRow({
 	data,
 	corIcons,
-	localIcons,
 	badgeSpecials = true,
 	onPress,
 }: Props): React.ReactNode {
-	// Only icons that actually downloaded get drawn, but the label names every
-	// icon the item carries -- a VoiceOver user should hear "Gluten Free"
-	// whether or not that particular PNG made it onto disk.
 	let allKeys = dietaryIconKeys(corIcons, data.cor_icon)
-	let iconKeys = allKeys.filter((key) => localIcons[key])
 
 	return (
 		<Button
@@ -93,11 +84,11 @@ export function FoodItemRow({
 			modifiers={[
 				PLAIN_BUTTON,
 				accessibilityIdentifier(`${FOOD_ROW_PREFIX}${data.label}`),
-				// The dietary icons and the specials star are unlabelled images, so
-				// the row has to say what they mean or the information is sighted-only.
+				// The dietary badges and the specials star say nothing on their own,
+				// so the row has to name them or the information is sighted-only.
 				accessibilityLabel(foodRowLabel(data, corIcons, allKeys)),
 			]}
-			onPress={onPress}
+			onPress={() => onPress(data)}
 		>
 			<HStack modifiers={ROW_HIT_AREA} spacing={8}>
 				{badgeSpecials && data.special ? (
@@ -118,14 +109,14 @@ export function FoodItemRow({
 					<Text modifiers={FILL_LEADING}>{data.label}</Text>
 				)}
 
-				{iconKeys.length > 0 ? (
+				{allKeys.length > 0 ? (
 					<HStack spacing={ICON_GAP}>
-						{iconKeys.map((key) => (
-							<Image key={key} modifiers={ICON} uiImage={localIcons[key]} />
+						{allKeys.map((key) => (
+							<DietaryBadge key={key} badge={dietaryBadge(key, corIcons)} />
 						))}
 					</HStack>
 				) : null}
 			</HStack>
 		</Button>
 	)
-}
+})

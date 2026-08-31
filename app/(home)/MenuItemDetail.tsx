@@ -60,9 +60,12 @@ export default function MenuItemDetailPage(): React.ReactNode {
 		)
 	}
 
+	// The dish carries the screen, so it takes the title. The generic
+	// "Nutrition" above stands in only while there is no dish to name yet.
 	return (
 		<>
-			{screen}
+			<Stack.Screen options={{headerLargeTitleEnabled: true}} />
+			<Stack.Title large={false}>{data.item.label}</Stack.Title>
 			<MenuItemDetailView icons={data.icons} item={data.item} />
 		</>
 	)

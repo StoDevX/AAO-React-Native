@@ -16,12 +16,10 @@
     "@frogpond/filter": "workspace:*",
     "@frogpond/html-lib": "workspace:*",
     "@frogpond/layout": "workspace:*",
-    "@frogpond/lists": "workspace:*",
     "@frogpond/toolbar": "workspace:*",
     "lodash": "4.18.1"
   },
   "peerDependencies": {
-    "expo-asset": "^57.0.15",
     "moment": "^2.30.1",
     "moment-timezone": "^0.6.3",
     "react": "^19.1.0",

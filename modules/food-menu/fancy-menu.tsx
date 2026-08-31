@@ -5,15 +5,14 @@ import {Host, List, RNHostView, Section, Text, VStack} from '@expo/ui/swift-ui'
 import {font, foregroundStyle, listStyle, padding, refreshable} from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
 import type {FilterType} from '@frogpond/filter'
-import {applyFiltersToItem} from '@frogpond/filter'
 import type {Moment} from 'moment'
 
 import {FilterMenuToolbar as FilterToolbar} from './filter-menu-toolbar'
 import {FoodItemRow} from './food-item-row'
+import {applyMenuFilters} from './lib/apply-menu-filters'
 import {buildFilters} from './lib/build-filters'
 import {chooseMeal} from './lib/choose-meal'
 import {emptyMessage} from './lib/empty-message'
-import {useLocalCorIcons} from './lib/use-local-cor-icons'
 import type {
 	MasterCorIconMapType,
 	MenuItemContainerType,
@@ -119,9 +118,7 @@ export function sectionHeaderProps(
 
 export function FancyMenu(props: Props): React.ReactNode {
 	const {now, meals, cafeMessage, foodItems, menuCorIcons, onItemPress} = props
-	const applyFilters = props.applyFilters ?? applyFiltersToItem
-
-	const localIcons = useLocalCorIcons(menuCorIcons)
+	const applyFilters = props.applyFilters ?? applyMenuFilters
 
 	// Built from the menu once, then owned by the user. `now` picks the meal
 	// selected to begin with and nothing after: the screens above build a fresh
@@ -230,8 +227,7 @@ export function FancyMenu(props: Props): React.ReactNode {
 										badgeSpecials={!specialsFilterEnabled}
 										corIcons={menuCorIcons}
 										data={item}
-										localIcons={localIcons}
-										onPress={() => onItemPress(item)}
+										onPress={onItemPress}
 									/>
 								))}
 							</Section>
