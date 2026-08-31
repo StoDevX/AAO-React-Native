@@ -1,6 +1,6 @@
 import {describe, expect, test} from '@jest/globals'
 
-import type {EventType} from '@frogpond/event-type'
+import {deriveDayFlags, type EventType} from '@frogpond/event-type'
 import moment from 'moment'
 import {
 	detailTimes,
@@ -17,28 +17,31 @@ import {
  */
 const ALL_DAY = {startTime: false, endTime: false, subtitle: 'description'} as const
 
-/**
- * All-day is whatever the source said, through `config`. A remote all-day
- * event says so with both edges false and a midnight-to-midnight span; an
- * EventKit one says so with both edges false and a 00:00:00-23:59:59 span.
- * The duration differs, the statement does not.
- */
 describe('allDay', () => {
 	function generateEvent(start: string, end: string, config: Partial<EventType['config']> = {}) {
+		let startTime = moment(start)
+		let endTime = moment(end)
+		let resolvedConfig = {
+			startTime: false,
+			endTime: false,
+			subtitle: 'description' as const,
+			...config,
+		}
+		let isAllDay = !resolvedConfig.startTime && !resolvedConfig.endTime
+		let {isMultiDay, isSameInstant} = deriveDayFlags(isAllDay, startTime.toDate(), endTime.toDate())
+
 		return {
 			title: 'title',
 			description: 'description',
-			startTime: moment(start),
-			endTime: moment(end),
+			startTime,
+			endTime,
+			isAllDay,
+			isMultiDay,
+			isSameInstant,
 			location: 'location',
 			isOngoing: false,
 			links: [],
-			config: {
-				startTime: false,
-				endTime: false,
-				subtitle: 'description' as const,
-				...config,
-			},
+			config: resolvedConfig,
 		} satisfies EventType
 	}
 
@@ -94,19 +97,24 @@ describe('allDay', () => {
 
 describe('ongoing events', () => {
 	function generateOngoingEvent(start: string, end: string): EventType {
+		let startTime = moment(start)
+		let endTime = moment(end)
+		let config = {startTime: true, endTime: true, subtitle: 'description' as const}
+		let isAllDay = !config.startTime && !config.endTime
+		let {isMultiDay, isSameInstant} = deriveDayFlags(isAllDay, startTime.toDate(), endTime.toDate())
+
 		return {
 			title: 'title',
 			description: 'description',
-			startTime: moment(start),
-			endTime: moment(end),
+			startTime,
+			endTime,
+			isAllDay,
+			isMultiDay,
+			isSameInstant,
 			location: 'location',
 			isOngoing: true,
 			links: [],
-			config: {
-				startTime: true,
-				endTime: true,
-				subtitle: 'description',
-			},
+			config,
 		}
 	}
 
@@ -138,21 +146,30 @@ describe('detailTimeLines', () => {
 		end: string,
 		overrides: Partial<EventType> = {},
 	): EventType {
+		let startTime = moment(start)
+		let endTime = moment(end)
+		// An ordinary event, with both edges meaningful. The all-day cases
+		// override `config`, which is what says all-day.
+		let config = overrides.config ?? {
+			startTime: true,
+			endTime: true,
+			subtitle: 'description' as const,
+		}
+		let isAllDay = !config.startTime && !config.endTime
+		let {isMultiDay, isSameInstant} = deriveDayFlags(isAllDay, startTime.toDate(), endTime.toDate())
+
 		return {
 			title: 'title',
 			description: 'description',
-			startTime: moment(start),
-			endTime: moment(end),
+			startTime,
+			endTime,
+			isAllDay,
+			isMultiDay,
+			isSameInstant,
 			location: 'location',
 			isOngoing: false,
 			links: [],
-			// An ordinary event, with both edges meaningful. The all-day cases
-			// override `config`, which is what says all-day.
-			config: {
-				startTime: true,
-				endTime: true,
-				subtitle: 'description',
-			},
+			config,
 			...overrides,
 		}
 	}
@@ -258,21 +275,30 @@ describe('listTimeLines', () => {
 		end: string,
 		overrides: Partial<EventType> = {},
 	): EventType {
+		let startTime = moment(start)
+		let endTime = moment(end)
+		// An ordinary event, with both edges meaningful. The all-day cases
+		// override `config`, which is what says all-day.
+		let config = overrides.config ?? {
+			startTime: true,
+			endTime: true,
+			subtitle: 'description' as const,
+		}
+		let isAllDay = !config.startTime && !config.endTime
+		let {isMultiDay, isSameInstant} = deriveDayFlags(isAllDay, startTime.toDate(), endTime.toDate())
+
 		return {
 			title: 'title',
 			description: 'description',
-			startTime: moment(start),
-			endTime: moment(end),
+			startTime,
+			endTime,
+			isAllDay,
+			isMultiDay,
+			isSameInstant,
 			location: 'location',
 			isOngoing: false,
 			links: [],
-			// An ordinary event, with both edges meaningful. The all-day cases
-			// override `config`, which is what says all-day.
-			config: {
-				startTime: true,
-				endTime: true,
-				subtitle: 'description',
-			},
+			config,
 			...overrides,
 		}
 	}

@@ -1,7 +1,7 @@
 import {readdirSync, readFileSync} from 'node:fs'
 import {join} from 'node:path'
 import {decode, htmlToSegments} from '@frogpond/html-lib'
-import {addDays, endOfDay, isAfter, isBefore, startOfDay} from 'date-fns'
+import {addDays, endOfDay, isAfter, isBefore, startOfDay, isSameDay, isSameMinute} from 'date-fns'
 import ICAL from 'ical.js'
 import {
 	computeSeedTime,
@@ -9,7 +9,7 @@ import {
 	RecurrenceIterationCeilingError,
 	seekableRule,
 } from '../parsers/ical'
-import type {WireEvent} from '../parsers/tec-events'
+import type {WireEvent} from '../parsers/events'
 
 // This file is the safety net for `ical.ts`'s performance work, not a
 // replacement for `ical.test.ts`'s own coverage. Every fix this parser has
@@ -95,22 +95,31 @@ function referenceToWireEvent(
 	endTime: ICAL.Time,
 	now: Date,
 ): WireEvent {
-	let startIso = referenceToInstant(startTime).toISOString()
-	let endIso = referenceToInstant(endTime).toISOString()
+	let startJsDate = referenceToInstant(startTime)
+	let endJsDate = referenceToInstant(endTime)
+
+	let startIso = startJsDate.toISOString()
+	let endIso = endJsDate.toISOString()
+
+	let isAllDay = item.startDate.isDate && item.endDate.isDate
+
 	let descriptionHtml = item.description ?? ''
 
 	return {
 		dataSource: 'ical',
 		startTime: startIso,
 		endTime: endIso,
+		isAllDay,
+		isMultiDay: !isAllDay && !isSameDay(startJsDate, endJsDate),
+		isSameInstant: !isAllDay && isSameMinute(startJsDate, endJsDate),
 		title: item.summary ?? '',
 		description: decode(descriptionHtml).replace(/\s+/gu, ' ').trim(),
 		location: item.location ?? '',
 		isOngoing: isBefore(new Date(startIso), startOfDay(now)),
 		links: referenceLinksIn(descriptionHtml),
 		config: {
-			startTime: true,
-			endTime: true,
+			startTime: !isAllDay,
+			endTime: !isAllDay,
 			subtitle: 'location',
 		},
 	}

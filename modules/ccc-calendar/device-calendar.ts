@@ -1,6 +1,6 @@
 import * as Calendar from 'expo-calendar'
 import moment from 'moment-timezone'
-import type {EventType} from '@frogpond/event-type'
+import {deriveDayFlags, type EventType} from '@frogpond/event-type'
 
 /**
  * iOS 17 split EventKit's calendar permission into write-only and full
@@ -45,6 +45,11 @@ export type DeviceEventFields = Pick<
 export function toEventType(event: DeviceEventFields): EventType {
 	let startTime = moment(event.startDate)
 	let endTime = moment(event.endDate)
+	let {isMultiDay, isSameInstant} = deriveDayFlags(
+		event.allDay,
+		startTime.toDate(),
+		endTime.toDate(),
+	)
 
 	return {
 		title: event.title,
@@ -52,6 +57,9 @@ export function toEventType(event: DeviceEventFields): EventType {
 		location: event.location ?? '',
 		startTime,
 		endTime,
+		isAllDay: event.allDay,
+		isMultiDay,
+		isSameInstant,
 		isOngoing: false,
 		links: event.url ? [event.url] : [],
 		config: {

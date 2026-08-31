@@ -8,6 +8,9 @@
   "scripts": {
     "test": "jest"
   },
+  "dependencies": {
+    "date-fns": "4.4.0"
+  },
   "peerDependencies": {
     "moment": "^2.30.1"
   }
