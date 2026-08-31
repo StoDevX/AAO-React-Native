@@ -19,8 +19,8 @@ const ALL_DAY = {startTime: false, endTime: false, subtitle: 'description'} as c
 
 describe('allDay', () => {
 	// `isAllDay` is each source's own statement, independent of the actual
-	// clock times -- these two never disagree in a real `EventType`, since
-	// every parser sets both from the same source flag.
+	// clock times. `config` is unrelated here -- times()/detailTimes() never
+	// read it -- so it's a fixed placeholder, not derived from `isAllDay`.
 	function generateEvent(start: string, end: string, isAllDay = true) {
 		let startTime = moment(start)
 		let endTime = moment(end)
@@ -37,7 +37,7 @@ describe('allDay', () => {
 			location: 'location',
 			isOngoing: false,
 			links: [],
-			config: {startTime: !isAllDay, endTime: !isAllDay, subtitle: 'description' as const},
+			config: {startTime: true, endTime: true, subtitle: 'description'},
 		} satisfies EventType
 	}
 
