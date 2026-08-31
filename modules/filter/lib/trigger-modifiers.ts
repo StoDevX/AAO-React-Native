@@ -4,7 +4,9 @@ import {
 	buttonStyle,
 	disabled,
 	menuIndicator,
+	tint,
 } from '@expo/ui/swift-ui/modifiers'
+import * as c from '@frogpond/colors'
 
 /**
  * `@expo/ui` does not re-export `ModifierConfig` from its public entry, and its
@@ -14,11 +16,20 @@ import {
 type Modifier = ReturnType<typeof buttonStyle>
 
 /**
- * How a filter's trigger looks and sounds when its filter is on.
+ * How a filter's trigger looks and sounds, on and off.
  *
- * `borderedProminent` is SwiftUI's own emphasis for a control that is on, so it
- * tracks the system accent colour, light and dark mode, and contrast settings
- * without being told; a hardcoded tint would follow none of them.
+ * Every trigger is a filled capsule; only its tint says whether the filter is
+ * narrowing anything. Both colours are `PlatformColor`s, so they track light
+ * and dark mode and increased contrast the way a hardcoded pair could not.
+ *
+ * The style stays `borderedProminent` in both states, and that is load-bearing
+ * rather than cosmetic. Changing `buttonStyle` on the first tick rebuilds the
+ * SwiftUI view and dismisses an open `Menu` with it -- so a list filter closed
+ * the moment its first option was chosen, then behaved on reopen, since no
+ * later tick changes the style. Verified on the simulator, in both directions:
+ * `testMenuStaysOpenOnTheFirstSelection` fails with a `buttonStyle` swap here
+ * and passes with a `tint` one.
+ *
  * `isSelected` states the same fact to VoiceOver, set alongside the visual
  * treatment so the two cannot drift apart.
  *
@@ -26,16 +37,14 @@ type Modifier = ReturnType<typeof buttonStyle>
  * filter's trigger is its `Menu`'s own label, a sheet-shaped one's is the
  * `Button` anchoring its sheet, a toggle's is the control itself, and they sit
  * side by side in one scroller.
- *
- * Hoisted so their entries are built once rather than per filter --
- * `triggerModifiers` spreads them into the array it returns.
  */
-const INACTIVE_TRIGGER_MODIFIERS: Modifier[] = [buttonStyle('bordered')]
-
-const ACTIVE_TRIGGER_MODIFIERS: Modifier[] = [
-	buttonStyle('borderedProminent'),
-	accessibilityAddTraits(['isSelected']),
-]
+function activeTreatment(isActive: boolean): Modifier[] {
+	return [
+		buttonStyle('borderedProminent'),
+		tint(isActive ? c.systemBlue : c.systemFill),
+		accessibilityAddTraits(isActive ? ['isSelected'] : []),
+	]
+}
 
 /**
  * Names a trigger for the UI tests, which cannot go by the visible title: the
@@ -76,7 +85,7 @@ export function triggerModifiers(
 	{presents = true, isDisabled = false} = {},
 ): Modifier[] {
 	return [
-		...(isActive ? ACTIVE_TRIGGER_MODIFIERS : INACTIVE_TRIGGER_MODIFIERS),
+		...activeTreatment(isActive),
 		...(presents ? MENU_INDICATOR : []),
 		...(isDisabled ? [disabled(true)] : []),
 		accessibilityIdentifier(`${FILTER_TRIGGER_PREFIX}${key}`),

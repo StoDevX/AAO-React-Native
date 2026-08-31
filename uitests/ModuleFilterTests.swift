@@ -101,6 +101,30 @@ class ModuleFilterTests: UITestCase {
 	// MARK: - The menu
 
 	/// The other presentation, end to end: open the pull-down menu, toggle one
+	/// A list filter is multi-select, so its menu stays up as options are
+	/// ticked -- otherwise choosing three stations means opening the menu three
+	/// times. The first tick is the one at risk: it is what flips the filter
+	/// from off to on, and so the only tick that changes the trigger's own
+	/// styling underneath the open menu.
+	func testMenuStaysOpenOnTheFirstSelection() throws {
+		MenusScreen(app: app)
+			.navigate()
+			.verifyFoodRowsAppear()
+			.openCafe(TestIdentifiers.Menus.pause)
+
+		let filters = FilterScreen(app: app)
+		let pizza = TestIdentifiers.Menus.pizzaStation
+		let specialty = TestIdentifiers.Menus.specialtyPizzaStation
+
+		filters
+			.openFilter(Keys.stations, until: filters.menuItem(pizza))
+			.tapMenuItem(pizza)
+
+		XCTAssertTrue(
+			filters.menuItem(specialty).isHittable,
+			"the menu should still be open after the first station is ticked")
+	}
+
 	/// station, and find it applied to the list behind the menu. The sheet tests
 	/// prove a selection survives dismissal; this one proves a selection made
 	/// through the other presentation actually reaches the data.

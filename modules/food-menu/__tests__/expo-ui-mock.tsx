@@ -262,3 +262,4 @@ export const menuActionDismissBehavior = (behavior: string): Modifier => ({
 	$type: 'menuActionDismissBehavior',
 	behavior,
 })
+export const tint = (color: unknown): Modifier => ({$type: 'tint', color})
