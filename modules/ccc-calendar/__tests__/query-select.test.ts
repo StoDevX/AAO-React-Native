@@ -1,8 +1,9 @@
 import {describe, expect, jest, test} from '@jest/globals'
 import moment from 'moment'
 
-import type {WireEvent} from '../parsers/tec-events'
+import type {WireEvent} from '../parsers/events'
 import {deviceCalendarOptions, namedCalendarOptions} from '../query'
+import {EventType} from '@frogpond/event-type'
 
 // `query.ts` reaches EventKit for the device queries, and the shared query
 // client it imports subscribes to network reachability at module load. Neither
@@ -35,6 +36,9 @@ function makeWireEvent(overrides: Partial<WireEvent> = {}): WireEvent {
 		location: 'Kings Dining',
 		startTime: '2026-08-17T07:45:00Z',
 		endTime: '2026-08-17T11:30:00Z',
+		isAllDay: false,
+		isMultiDay: false,
+		isSameInstant: false,
 		isOngoing: false,
 		links: [],
 		config: {startTime: true, endTime: true, subtitle: 'location'},
@@ -106,7 +110,10 @@ describe('namedCalendarOptions select', () => {
 })
 
 describe('deviceCalendarOptions select', () => {
-	function makeDeviceEvent(id: string, calendarId: string) {
+	function makeDeviceEvent(
+		id: string,
+		calendarId: string,
+	): {calendarId: string; id: string; event: EventType} {
 		return {
 			calendarId,
 			id,
@@ -116,6 +123,9 @@ describe('deviceCalendarOptions select', () => {
 				location: '',
 				startTime: moment('2026-09-07T00:00:00'),
 				endTime: moment('2026-09-07T23:59:59'),
+				isAllDay: false,
+				isMultiDay: false,
+				isSameInstant: false,
 				isOngoing: false,
 				links: [],
 				config: {startTime: false, endTime: false, subtitle: 'location' as const},

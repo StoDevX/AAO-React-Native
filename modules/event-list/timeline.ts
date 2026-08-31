@@ -1,7 +1,6 @@
 import type {Moment} from 'moment-timezone'
 import type {EventType} from '@frogpond/event-type'
 
-import {isAllDay, isMultiDay} from './times'
 import type {SourcedEvent} from './types'
 
 /**
@@ -72,7 +71,7 @@ function ceilToHour(time: Moment): Moment {
  * where the event sits, the same degenerate case an all-day event already is.
  */
 export function timelineWindow(event: EventType): TimelineWindow | null {
-	if (isAllDay(event) || isMultiDay(event)) {
+	if (event.isAllDay || event.isMultiDay) {
 		return null
 	}
 
@@ -148,7 +147,7 @@ export function timelineBlocks(
 		// A multi-day neighbour clamped to the window's top and foot would wash
 		// the whole block area behind everything else, the same degenerate case
 		// `timelineWindow` already refuses for the current event.
-		.filter((entry) => !isAllDay(entry.event) && !isMultiDay(entry.event))
+		.filter((entry) => !entry.event.isAllDay && !entry.event.isMultiDay)
 		.filter((entry) => {
 			let {startTime, endTime} = entry.event
 			// A zero-length event (`sillyZeroLength` in `times.ts`) has

@@ -1,5 +1,4 @@
 import {z} from 'zod'
-import {WireEvent} from './tec-events'
 
 /// ccc-server emits the wire event shape already, so this is a shape check
 /// rather than a transform — but it still validates, like every other parser
@@ -12,6 +11,9 @@ const WireEventSchema = z.object({
 	dataSource: z.string(),
 	startTime: z.string(),
 	endTime: z.string(),
+	isAllDay: z.boolean(),
+	isMultiDay: z.boolean(),
+	isSameInstant: z.boolean(),
 	title: z.string(),
 	description: z.string(),
 	location: z.string().default(''),
@@ -23,6 +25,8 @@ const WireEventSchema = z.object({
 		subtitle: z.union([z.literal('location'), z.literal('description')]),
 	}),
 })
+
+export type WireEvent = z.infer<typeof WireEventSchema>
 
 /// The outer shape stays strict: a response that isn't an array at all means
 /// the source is wrong, and that should throw. Each element is then parsed

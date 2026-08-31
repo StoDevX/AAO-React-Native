@@ -2,7 +2,7 @@ import React from 'react'
 import moment from 'moment-timezone'
 import {describe, expect, jest, test} from '@jest/globals'
 import {fireEvent, render, screen} from '@testing-library/react-native'
-import type {EventType} from '@frogpond/event-type'
+import {deriveDayFlags, type EventType} from '@frogpond/event-type'
 
 import {EventList} from '../event-list'
 import {listTimeLines} from '../times'
@@ -28,15 +28,24 @@ const STOLAF_SOURCE = {id: 'stolaf', title: 'St. Olaf', color: 'blue', kind: 're
 const ALL_DAY = {startTime: false, endTime: false, subtitle: 'location'} as const
 
 function makeEvent(overrides: Partial<EventType> = {}): EventType {
+	let startTime = overrides.startTime ?? moment('2026-08-17T07:45:00Z')
+	let endTime = overrides.endTime ?? moment('2026-08-17T11:30:00Z')
+	let config = overrides.config ?? {startTime: true, endTime: true, subtitle: 'location' as const}
+	let isAllDay = !config.startTime && !config.endTime
+	let {isMultiDay, isSameInstant} = deriveDayFlags(isAllDay, startTime.toDate(), endTime.toDate())
+
 	return {
 		title: 'New Faculty Orientation',
 		description: 'Seminars across campus.',
 		location: 'Kings Dining',
-		startTime: moment('2026-08-17T07:45:00Z'),
-		endTime: moment('2026-08-17T11:30:00Z'),
+		startTime,
+		endTime,
+		isAllDay,
+		isMultiDay,
+		isSameInstant,
 		isOngoing: false,
 		links: [],
-		config: {startTime: true, endTime: true, subtitle: 'location'},
+		config,
 		...overrides,
 	}
 }

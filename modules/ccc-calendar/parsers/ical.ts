@@ -1,8 +1,9 @@
+import {deriveDayFlags} from '@frogpond/event-type'
 import {decode, htmlToSegments} from '@frogpond/html-lib'
 import {addDays, endOfDay, isAfter, isBefore, startOfDay} from 'date-fns'
 import ICAL from 'ical.js'
 import {z} from 'zod'
-import type {WireEvent} from './tec-events'
+import type {WireEvent} from './events'
 
 /// RFC 5545 `DESCRIPTION` is plain text, not HTML, so a bare URL sitting in
 /// the text (no `<a href>` around it) is invisible to `htmlToSegments`. This
@@ -102,22 +103,29 @@ function toWireEvent(
 	endTime: ICAL.Time,
 	now: Date,
 ): WireEvent {
-	let startIso = toInstant(startTime).toISOString()
-	let endIso = toInstant(endTime).toISOString()
+	let startJsDate = toInstant(startTime)
+	let startIso = startJsDate.toISOString()
+	let endJsDate = toInstant(endTime)
+	let endIso = endJsDate.toISOString()
+	let isAllDay = startTime.isDate && endTime.isDate
+	let {isMultiDay, isSameInstant} = deriveDayFlags(isAllDay, startJsDate, endJsDate)
 	let descriptionHtml = item.description ?? ''
 
 	return {
 		dataSource: 'ical',
 		startTime: startIso,
 		endTime: endIso,
+		isAllDay,
+		isMultiDay,
+		isSameInstant,
 		title: item.summary ?? '',
 		description: plainTextDescription(descriptionHtml),
 		location: item.location ?? '',
 		isOngoing: isBefore(new Date(startIso), startOfDay(now)),
 		links: linksIn(descriptionHtml),
 		config: {
-			startTime: true,
-			endTime: true,
+			startTime: !(startTime.isDate && endTime.isDate),
+			endTime: !(startTime.isDate && endTime.isDate),
 			subtitle: 'location',
 		},
 	}

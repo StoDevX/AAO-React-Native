@@ -1,17 +1,7 @@
+import {deriveDayFlags} from '@frogpond/event-type'
 import {decode, fastGetTrimmedText, htmlToSegments} from '@frogpond/html-lib'
 import {z} from 'zod'
-
-export interface WireEvent {
-	dataSource: string
-	startTime: string
-	endTime: string
-	title: string
-	description: string
-	location: string
-	isOngoing: boolean
-	links: string[]
-	config: {startTime: boolean; endTime: boolean; subtitle: 'location' | 'description'}
-}
+import type {WireEvent} from './events'
 
 // The key is always present. A venued event carries an object; a venue-less
 // one carries an empty array `[]` rather than omitting the key or nulling
@@ -50,7 +40,10 @@ function toIsoString(utcDate: string): string {
 
 function toWireEvent(event: z.infer<typeof TecEventSchema>, now: Date): WireEvent {
 	let startTime = toIsoString(event.utc_start_date)
+	let endTime = toIsoString(event.utc_end_date)
 	let description = fastGetTrimmedText(event.description)
+	let isAllDay = event.all_day
+	let {isMultiDay, isSameInstant} = deriveDayFlags(isAllDay, new Date(startTime), new Date(endTime))
 
 	let descriptionLinks = htmlToSegments(event.description).flatMap((segment) =>
 		segment.type === 'link' ? [segment.url] : [],
@@ -62,7 +55,10 @@ function toWireEvent(event: z.infer<typeof TecEventSchema>, now: Date): WireEven
 	return {
 		dataSource: 'tribe',
 		startTime,
-		endTime: toIsoString(event.utc_end_date),
+		endTime,
+		isAllDay,
+		isMultiDay,
+		isSameInstant,
 		title: decode(event.title),
 		description,
 		location: venueName(event.venue),

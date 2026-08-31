@@ -1,6 +1,6 @@
 import moment from 'moment-timezone'
 import {describe, expect, test} from '@jest/globals'
-import type {EventType} from '@frogpond/event-type'
+import {deriveDayFlags, type EventType} from '@frogpond/event-type'
 
 import {
 	HOUR_HEIGHT,
@@ -19,15 +19,24 @@ import {
  * assertions depend on the machine's timezone.
  */
 function makeEvent(overrides: Partial<EventType> = {}): EventType {
+	let startTime = overrides.startTime ?? moment('2026-08-17T07:45:00')
+	let endTime = overrides.endTime ?? moment('2026-08-17T08:45:00')
+	let config = overrides.config ?? {startTime: true, endTime: true, subtitle: 'location' as const}
+	let isAllDay = !config.startTime && !config.endTime
+	let {isMultiDay, isSameInstant} = deriveDayFlags(isAllDay, startTime.toDate(), endTime.toDate())
+
 	return {
 		title: 'New Faculty Orientation',
 		description: 'Seminars across campus.',
 		location: 'Kings Dining',
-		startTime: moment('2026-08-17T07:45:00'),
-		endTime: moment('2026-08-17T08:45:00'),
+		startTime,
+		endTime,
+		isAllDay,
+		isMultiDay,
+		isSameInstant,
 		isOngoing: false,
 		links: [],
-		config: {startTime: true, endTime: true, subtitle: 'location'},
+		config,
 		...overrides,
 	}
 }
