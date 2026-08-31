@@ -267,3 +267,8 @@ export const menuActionDismissBehavior = (behavior: string): Modifier => ({
 })
 export const tint = (color: unknown): Modifier => ({$type: 'tint', color})
 export const menuStyle = (style: string): Modifier => ({$type: 'menuStyle', style})
+export const environment = (config: Record<string, unknown>): Modifier => ({
+	$type: 'environment',
+	...config,
+})
+export const tag = (value: string | number): Modifier => ({$type: 'tag', value})

@@ -216,8 +216,35 @@ export function BottomSheet({
 	)
 }
 
-export function List({children}: WithChildren): React.ReactNode {
-	return <View>{children}</View>
+/**
+ * A `List` given a `selection` owns its rows' taps -- that is what draws the
+ * circular checkboxes, and why a row is plain content carrying a `tag` rather
+ * than a `Button`. The context below models that ownership: a tagged `HStack`
+ * inside such a list becomes the pressable thing, and pressing it reports the
+ * whole new selection, as SwiftUI does.
+ */
+const ListSelection = React.createContext<{
+	selection: (string | number)[]
+	onSelectionChange: (selection: (string | number)[]) => void
+} | null>(null)
+
+export function List({
+	children,
+	selection,
+	onSelectionChange,
+}: WithModifiers & {
+	selection?: (string | number)[]
+	onSelectionChange?: (selection: (string | number)[]) => void
+}): React.ReactNode {
+	if (!selection || !onSelectionChange) {
+		return <View>{children}</View>
+	}
+
+	return (
+		<ListSelection.Provider value={{selection, onSelectionChange}}>
+			<View>{children}</View>
+		</ListSelection.Provider>
+	)
 }
 
 List.ForEach = function ListForEach({children}: WithChildren): React.ReactNode {
@@ -256,8 +283,34 @@ export function Section({
 	)
 }
 
-export function HStack({children}: WithChildren & {spacing?: number}): React.ReactNode {
-	return <View>{children}</View>
+export function HStack({children, modifiers}: WithModifiers & {spacing?: number}): React.ReactNode {
+	let list = React.useContext(ListSelection)
+	let rowTag = modifiers?.find((m) => m.$type === 'tag')?.value as string | number | undefined
+
+	if (!list || rowTag === undefined) {
+		return <View>{children}</View>
+	}
+
+	let isSelected = list.selection.includes(rowTag)
+	let identifier = modifiers?.find((m) => m.$type === 'accessibilityIdentifier')?.identifier
+
+	return (
+		<Pressable
+			accessibilityRole="button"
+			accessibilityState={{selected: isSelected}}
+			accessible={true}
+			onPress={() =>
+				list.onSelectionChange(
+					isSelected
+						? list.selection.filter((value) => value !== rowTag)
+						: [...list.selection, rowTag],
+				)
+			}
+			testID={identifier as string | undefined}
+		>
+			{children}
+		</Pressable>
+	)
 }
 
 export function VStack({
@@ -365,3 +418,9 @@ export const menuActionDismissBehavior = (behavior: string): Modifier => ({
 })
 export const tint = (color: unknown): Modifier => ({$type: 'tint', color})
 export const menuStyle = (style: string): Modifier => ({$type: 'menuStyle', style})
+
+export const environment = (config: Record<string, unknown>): Modifier => ({
+	$type: 'environment',
+	...config,
+})
+export const tag = (value: string | number): Modifier => ({$type: 'tag', value})

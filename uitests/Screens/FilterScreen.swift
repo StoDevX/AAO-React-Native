@@ -19,8 +19,12 @@ struct FilterScreen: Screen {
 	}
 
 	/// A row in an open sheet.
+	///
+	/// Queried across every element type rather than as a button: a row in a
+	/// selection list is plain content carrying a tag, so the list itself owns
+	/// the tap and the row surfaces as a cell rather than a control.
 	func option(_ title: String) -> XCUIElement {
-		app.buttons[TestIdentifiers.Filter.option(title)].firstMatch
+		app.descendants(matching: .any)[TestIdentifiers.Filter.option(title)].firstMatch
 	}
 
 	/// An item in an open menu.

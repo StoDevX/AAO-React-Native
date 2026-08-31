@@ -17,18 +17,18 @@ import {
 	accessibilityLabel,
 	buttonStyle,
 	contentShape,
+	environment,
 	font,
 	foregroundStyle,
 	frame,
 	padding,
 	resizable,
 	shapes,
+	tag,
 } from '@expo/ui/swift-ui/modifiers'
-import isEqual from 'lodash/isEqual'
 import type {SFSymbol} from 'sf-symbols-typescript'
 
-import * as c from '@frogpond/colors'
-import {clearSelection, toggleOption} from './lib/select-options'
+import {clearSelection, selectByTitles} from './lib/select-options'
 import {TriggerLabel} from './lib/trigger-label'
 import {triggerModifiers} from './lib/trigger-modifiers'
 import type {FilterIcon, ListItemSpecType, ListType} from './types'
@@ -61,15 +61,14 @@ export const FILTER_CLEAR_ID = 'filter-clear'
 export const FILTER_CLOSE_BUTTON_ID = 'filter-close'
 
 // Constant modifier arrays, hoisted so the worst case -- Course Search's
-// Departments filter at 79 rows, in `OR` mode with everything selected, so
-// every row draws a checkmark -- doesn't rebuild the same array, or allocate
-// an extra view, once per row. `@expo/ui` view construction costs roughly
-// 3ms per view and isn't virtualised.
-const PLAIN_BUTTON_MODIFIERS = [buttonStyle('plain')]
+// Departments filter at 79 rows -- doesn't rebuild the same array, or allocate
+// an extra view, once per row. `@expo/ui` view construction costs roughly 3ms
+// per view and isn't virtualised.
 const ROW_MODIFIERS = [contentShape(shapes.rectangle())]
 const LOCAL_ICON_MODIFIERS = [resizable(), frame({width: 20, height: 20})]
-// Fills the row so the checkmark settles against the trailing edge. A
-// `Spacer` reads more obviously but costs another view on every row --
+// Fills the row so its text takes the full width, leaving the selection circle
+// alone at the leading edge. A `Spacer` reads more obviously but costs another
+// view on every row --
 // `modules/food-menu/food-item-row.tsx` made the same trade for the same
 // reason.
 const FILL_LEADING = [frame({maxWidth: Infinity, alignment: 'leading'})]
@@ -79,17 +78,6 @@ const FILL_LEADING = [frame({maxWidth: Infinity, alignment: 'leading'})]
 const DETAIL_MODIFIERS = [
 	font({textStyle: 'footnote'}),
 	foregroundStyle({type: 'hierarchical', style: 'secondary'}),
-]
-// Tints a selected row's checkmark to match the one SwiftUI's own inline
-// `Picker` draws (see Settings' App Icon section, `change-icon.tsx`) --
-// `systemBlue` is what `accentColor` itself resolves to, since this app
-// defines no custom accent asset. A `PlatformColor` stays a semantic system
-// color, so it still tracks dark mode and increased contrast the way a
-// hardcoded hex could not; `textStyle: 'body'` keeps the glyph scaling with
-// Dynamic Type.
-const CHECKMARK_MODIFIERS = [
-	foregroundStyle(c.systemBlue),
-	font({textStyle: 'body', weight: 'semibold'}),
 ]
 
 const MIN_TOUCH_TARGET = 44
@@ -126,6 +114,11 @@ const HEADER_TITLE_MODIFIERS = [font({textStyle: 'title3', weight: 'semibold'})]
 // `FILL_LEADING` above for the same `frame`-over-`Spacer` trade, applied here
 // to the row rather than a single child.
 const HEADER_ROW_FILL = [frame({maxWidth: Infinity})]
+// An active edit mode is what turns `List(selection:)`'s selected state into
+// the circular checkboxes iOS draws while a list is being edited. The
+// underlying modifier sets it `.constant`, so the list is always in that state
+// rather than animating into it.
+const LIST_MODIFIERS = [environment({key: 'editMode', value: 'active'})]
 const HEADER_MODIFIERS = [frame({maxWidth: Infinity}), padding({horizontal: 16, vertical: 12})]
 
 /**
@@ -191,6 +184,12 @@ export function FilterSheet<T extends object>({
 	}, [local, onChange])
 
 	let {spec} = local
+	// SwiftUI matches a selected row by its tag, so the selection crossing that
+	// boundary is a list of titles rather than the options themselves.
+	let selectedTitles = React.useMemo(
+		() => spec.selected.map((option) => option.title),
+		[spec.selected],
+	)
 
 	// A list with nothing in it has nothing to show -- no rows, and no trigger
 	// to open them with. `FilterMenu` returns null for the same reason.
@@ -225,21 +224,32 @@ export function FilterSheet<T extends object>({
 						onClear={() => setLocal((current) => clearSelection(current))}
 						title={title}
 					/>
-					<List>
+					{/* Selection belongs to SwiftUI here: `List(selection:)` under an
+					    active edit mode is what draws the circular checkboxes, and it
+					    owns the row's tap. A row is therefore plain content carrying a
+					    tag, never a `Button` -- a button takes the tap back, and the
+					    selection would never change. */}
+					<List
+						modifiers={LIST_MODIFIERS}
+						onSelectionChange={(titles) => {
+							setLocal((current) => selectByTitles(current, titles))
+						}}
+						selection={selectedTitles}
+					>
 						<Section>
-							<List.ForEach>
-								{spec.options.map((option) => (
-									<OptionRow
-										key={option.title}
-										detail={option.detail}
-										icon={iconFor?.(option) ?? null}
-										isSelected={spec.selected.some((selected) => isEqual(selected, option))}
-										label={spec.displayTitle ? option.title : option.label}
-										onPress={() => setLocal((current) => toggleOption(current, option))}
-										title={option.title}
-									/>
-								))}
-							</List.ForEach>
+							{/* Plain children rather than `List.ForEach`: under an active
+							    edit mode a `ForEach` also draws the delete badge and the
+							    reorder grip that go with `onDelete`/`onMove`, and a filter
+							    list supports neither. */}
+							{spec.options.map((option) => (
+								<OptionRow
+									key={option.title}
+									detail={option.detail}
+									icon={iconFor?.(option) ?? null}
+									label={spec.displayTitle ? option.title : option.label}
+									title={option.title}
+								/>
+							))}
 						</Section>
 					</List>
 				</VStack>
@@ -291,46 +301,42 @@ function SheetHeader({
 function OptionRow({
 	detail,
 	icon,
-	isSelected,
 	label,
-	onPress,
 	title,
 }: {
 	detail?: string
 	icon: FilterIcon | null
-	isSelected: boolean
 	label?: string
-	onPress: () => void
 	/// The option's own title, which names the row for the UI tests. Not the
 	/// drawn text: a filter with `displayTitle` off draws `label` instead.
 	title: string
 }): React.ReactNode {
 	// Memoized for the same reason the constants above are hoisted -- Course
 	// Search's Departments filter draws 79 of these rows.
+	// `tag` is what the enclosing `List(selection:)` matches a selected row by,
+	// so it carries the option's own title -- the same value the identifier is
+	// built from.
 	let modifiers = React.useMemo(
-		() => [...PLAIN_BUTTON_MODIFIERS, accessibilityIdentifier(`${FILTER_OPTION_PREFIX}${title}`)],
+		() => [
+			...ROW_MODIFIERS,
+			tag(title),
+			accessibilityIdentifier(`${FILTER_OPTION_PREFIX}${title}`),
+		],
 		[title],
 	)
 
 	return (
-		<Button modifiers={modifiers} onPress={onPress}>
-			{/* contentShape belongs on the label (this HStack), not the Button --
-			    see building-picker's BuildingRow for why: a Button's tappable
-			    region comes from its label, so anything past the label is
-			    otherwise dead to taps. */}
-			<HStack modifiers={ROW_MODIFIERS} spacing={8}>
-				{icon ? <RowIcon icon={icon} /> : null}
-				{detail ? (
-					<VStack alignment="leading" modifiers={FILL_LEADING} spacing={2}>
-						<Text>{label}</Text>
-						<Text modifiers={DETAIL_MODIFIERS}>{detail}</Text>
-					</VStack>
-				) : (
-					<Text modifiers={FILL_LEADING}>{label}</Text>
-				)}
-				{isSelected ? <Image modifiers={CHECKMARK_MODIFIERS} systemName="checkmark" /> : null}
-			</HStack>
-		</Button>
+		<HStack modifiers={modifiers} spacing={8}>
+			{icon ? <RowIcon icon={icon} /> : null}
+			{detail ? (
+				<VStack alignment="leading" modifiers={FILL_LEADING} spacing={2}>
+					<Text>{label}</Text>
+					<Text modifiers={DETAIL_MODIFIERS}>{detail}</Text>
+				</VStack>
+			) : (
+				<Text modifiers={FILL_LEADING}>{label}</Text>
+			)}
+		</HStack>
 	)
 }
 

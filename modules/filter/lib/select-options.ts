@@ -38,6 +38,29 @@ export function toggleOption<T extends object>(
 }
 
 /**
+ * Applies a selection reported by a SwiftUI `List(selection:)`, returning the
+ * filter that results.
+ *
+ * The selection crosses that boundary as tags rather than options, since a tag
+ * is what SwiftUI matches a selected row by, so this maps them back. A tag
+ * matching no option selects nothing: the options come from the data, and can
+ * change under a selection.
+ */
+export function selectByTitles<T extends object>(
+	filter: ListType<T>,
+	titles: readonly (string | number)[],
+): ListType<T> {
+	let wanted = new Set(titles.map(String))
+	let result = filter.spec.options.filter((option) => wanted.has(option.title))
+
+	return {
+		...filter,
+		enabled: narrowsAnything(result),
+		spec: {...filter.spec, selected: result},
+	}
+}
+
+/**
  * Clears a list filter's selection, returning the filter that results — which
  * is the resting state, showing everything.
  */
