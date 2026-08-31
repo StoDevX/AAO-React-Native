@@ -42,8 +42,8 @@ function listFilter(optionCount: number, showIcons?: boolean): ListType<Item> {
 }
 
 describe('filterShape, toggle', () => {
-	test('a toggle is always a menu', () => {
-		expect(filterShape(toggleFilter())).toBe('menu')
+	test('a toggle is its own control, presenting nothing', () => {
+		expect(filterShape(toggleFilter())).toBe('inline')
 	})
 })
 

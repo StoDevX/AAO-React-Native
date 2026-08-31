@@ -256,3 +256,7 @@ export function Button({
 		</Pressable>
 	)
 }
+export const menuIndicator = (visibility: string): Modifier => ({
+	$type: 'menuIndicator',
+	visibility,
+})

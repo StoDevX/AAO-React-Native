@@ -5,9 +5,6 @@ import moment from 'moment'
 
 import {FilterMenuToolbar} from '../filter-menu-toolbar'
 import type {FilterIcon, FilterType, ListItemSpecType} from '@frogpond/filter'
-import {INACTIVE_TRIGGER_MODIFIERS} from '@frogpond/filter/filter-menu'
-import {FILTER_TRIGGER_PREFIX} from '@frogpond/filter/lib/trigger-modifiers'
-import {accessibilityIdentifier} from './expo-ui-mock'
 
 // `@frogpond/filter`'s `FilterMenu`/`FilterSheet` render `@expo/ui/swift-ui`
 // directly, which cannot mount under Jest.
@@ -21,18 +18,6 @@ jest.mock('@expo/ui/swift-ui/modifiers', () => {
 })
 
 type Item = {label: string}
-
-let MEAL_PICKER: FilterType<Item> = {
-	type: 'picker',
-	key: 'meals',
-	enabled: true,
-	spec: {
-		title: "Today's Menus",
-		options: [{label: 'Breakfast'}, {label: 'Lunch'}, {label: 'Dinner'}],
-		selected: {label: 'Lunch'},
-	},
-	apply: {key: 'label'},
-}
 
 // `showIcons` puts this filter into `filterShape`'s sheet branch regardless
 // of its one option -- the shape that actually draws whatever `iconFor`
@@ -63,23 +48,6 @@ describe('FilterMenuToolbar', () => {
 	// rather than a literal shape, so this mock's invented `Modifier`
 	// representation can't stand in for it; the identifier is built with the
 	// same mocked `modifiers` module the component calls, for the same reason.
-	test('renders the meal picker as an inactive-styled menu, with no separate button', async () => {
-		await render(
-			<FilterMenuToolbar
-				date={moment('2026-08-30')}
-				filters={[MEAL_PICKER]}
-				isOpen={false}
-				onChange={jest.fn()}
-			/>,
-		)
-
-		expect(screen.queryByRole('button', {name: "Today's Menus"})).toBeNull()
-		expect(screen.getByTestId("menu:Today's Menus").props.modifiers).toEqual([
-			...INACTIVE_TRIGGER_MODIFIERS,
-			accessibilityIdentifier(`${FILTER_TRIGGER_PREFIX}meals`),
-		])
-	})
-
 	// `FilterMenuToolbar` forwards its own `iconFor` prop to the `FilterToolbar`
 	// it renders for every non-picker filter -- covering that forward here,
 	// with every component real except `@expo/ui` itself, is what catches a

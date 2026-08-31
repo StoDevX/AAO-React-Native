@@ -253,3 +253,7 @@ export function Image({
 }): React.ReactNode {
 	return <View testID={uiImage ? `icon-${uiImage}` : `symbol-${systemName}`} />
 }
+export const menuIndicator = (visibility: string): Modifier => ({
+	$type: 'menuIndicator',
+	visibility,
+})

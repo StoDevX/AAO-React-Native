@@ -96,6 +96,26 @@ export function Host({children}: WithChildren & {matchContents?: boolean}): Reac
  * rendering several menus at once still gives each trigger back
  * unambiguously.
  */
+/**
+ * The text a control announces when its label is a view rather than a string.
+ *
+ * SwiftUI derives a control's accessible name from the text inside its label,
+ * so a trigger drawing a title beside a chevron still announces just the title
+ * -- an `Image` contributes nothing. `TriggerLabel` is that view, and its
+ * `title` prop is the text it draws, so reading the prop models the same
+ * outcome without rendering to find out.
+ */
+function textOf(label: string | React.ReactNode): string | undefined {
+	if (typeof label === 'string') {
+		return label
+	}
+	if (React.isValidElement(label)) {
+		let props = label.props as {title?: unknown}
+		return typeof props.title === 'string' ? props.title : undefined
+	}
+	return undefined
+}
+
 export function Menu({
 	label,
 	modifiers,
@@ -105,10 +125,13 @@ export function Menu({
 		throw new Error('Menu children must be nested elements, not a plain string')
 	}
 
+	let name = textOf(label)
+
 	return (
 		<ViewWithModifiers
+			accessibilityLabel={name}
 			modifiers={modifiers}
-			testID={typeof label === 'string' ? `menu:${label}` : undefined}
+			testID={name ? `menu:${name}` : undefined}
 		>
 			{typeof label === 'string' ? <RNText>{label}</RNText> : label}
 			{children}
@@ -142,7 +165,7 @@ export function Toggle({
 			accessibilityState={{checked: isOn}}
 			onPress={() => onIsOnChange?.(!isOn)}
 		>
-			{children ?? (label ? <RNText>{label}</RNText> : null)}
+			{children ?? (typeof label === 'string' ? <RNText>{label}</RNText> : label)}
 		</Pressable>
 	)
 }
@@ -297,7 +320,7 @@ export function Button({
 	label,
 	modifiers,
 	onPress,
-}: WithModifiers & {label?: string; onPress?: () => void}): React.ReactNode {
+}: WithModifiers & {label?: string | React.ReactNode; onPress?: () => void}): React.ReactNode {
 	if (typeof children === 'string') {
 		throw new Error('Button children must be nested elements, not a plain string')
 	}
@@ -306,9 +329,10 @@ export function Button({
 	let identifierModifier = modifiers?.find(
 		(modifier) => modifier.$type === 'accessibilityIdentifier',
 	)
-	let resolvedLabel = label ?? (labelModifier?.label as string | undefined)
-	let resolvedTestID = label
-		? `button:${label}`
+	let name = (labelModifier?.label as string | undefined) ?? textOf(label) ?? textOf(children)
+	let resolvedLabel = name
+	let resolvedTestID = name
+		? `button:${name}`
 		: identifierModifier
 			? `button:${identifierModifier.identifier as string}`
 			: undefined
@@ -326,7 +350,11 @@ export function Button({
 			onPress={onPress}
 			testID={resolvedTestID}
 		>
-			{children ?? (label ? <RNText>{label}</RNText> : null)}
+			{children ?? (typeof label === 'string' ? <RNText>{label}</RNText> : label)}
 		</ViewWithModifiers>
 	)
 }
+export const menuIndicator = (visibility: string): Modifier => ({
+	$type: 'menuIndicator',
+	visibility,
+})

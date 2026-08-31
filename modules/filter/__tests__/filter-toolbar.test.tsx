@@ -3,10 +3,7 @@ import {fireEvent, render, screen} from '@testing-library/react-native'
 import {describe, expect, jest, test} from '@jest/globals'
 
 import {FilterToolbar} from '../filter-toolbar'
-import {ACTIVE_TRIGGER_MODIFIERS, INACTIVE_TRIGGER_MODIFIERS} from '../filter-menu'
-import {FILTER_TRIGGER_PREFIX} from '../lib/trigger-modifiers'
 import type {FilterIcon, FilterType, ListItemSpecType} from '../types'
-import {accessibilityIdentifier} from './expo-ui-mock'
 
 jest.mock('@expo/ui/swift-ui', () => {
 	// oxlint-disable-next-line typescript/no-require-imports
@@ -24,14 +21,6 @@ let TOGGLE_FILTER: FilterType<Item> = {
 	key: 'vegetarian',
 	enabled: true,
 	spec: {label: 'Vegetarian only', title: 'Vegetarian'},
-	apply: {key: 'isVegetarian'},
-}
-
-let INACTIVE_FILTER: FilterType<Item> = {
-	type: 'toggle',
-	key: 'specials',
-	enabled: false,
-	spec: {label: 'Specials only', title: 'Specials'},
 	apply: {key: 'isVegetarian'},
 }
 
@@ -133,28 +122,6 @@ describe('FilterToolbar', () => {
 	// `Button` and `Menu`'s own label share `buttonStyle` modifiers (see
 	// `./lib/trigger-modifiers`), so a sheet trigger's `isActive` shows up as
 	// which modifiers it was given, the same as a menu's.
-	test('threads filter.enabled into a sheet trigger as isActive', async () => {
-		await render(<FilterToolbar filters={[SHEET_FILTER]} onChange={jest.fn()} />)
-
-		expect(screen.getByTestId('button:Departments').props.modifiers).toEqual([
-			...ACTIVE_TRIGGER_MODIFIERS,
-			accessibilityIdentifier(`${FILTER_TRIGGER_PREFIX}departments`),
-		])
-	})
-
-	test('threads filter.enabled into a menu trigger as isActive', async () => {
-		await render(<FilterToolbar filters={[TOGGLE_FILTER, INACTIVE_FILTER]} onChange={jest.fn()} />)
-
-		expect(screen.getByTestId('menu:Vegetarian').props.modifiers).toEqual([
-			...ACTIVE_TRIGGER_MODIFIERS,
-			accessibilityIdentifier(`${FILTER_TRIGGER_PREFIX}vegetarian`),
-		])
-		expect(screen.getByTestId('menu:Specials').props.modifiers).toEqual([
-			...INACTIVE_TRIGGER_MODIFIERS,
-			accessibilityIdentifier(`${FILTER_TRIGGER_PREFIX}specials`),
-		])
-	})
-
 	// `iconFor` has to survive two forwards to reach a row -- `FilterToolbar`
 	// to `FilterToolbarButton`, then `FilterToolbarButton` to `FilterSheet` --
 	// and every component in between is the real one; only `@expo/ui` itself

@@ -2,6 +2,7 @@ import {
 	accessibilityAddTraits,
 	accessibilityIdentifier,
 	buttonStyle,
+	menuIndicator,
 } from '@expo/ui/swift-ui/modifiers'
 
 /**
@@ -20,16 +21,17 @@ type Modifier = ReturnType<typeof buttonStyle>
  * `isSelected` states the same fact to VoiceOver, set alongside the visual
  * treatment so the two cannot drift apart.
  *
- * Shared, because both trigger shapes must be indistinguishable: a menu-shaped
+ * Shared, because every trigger shape must be indistinguishable: a menu-shaped
  * filter's trigger is its `Menu`'s own label, a sheet-shaped one's is the
- * `Button` anchoring its sheet, and they sit side by side in one scroller.
+ * `Button` anchoring its sheet, a toggle's is the control itself, and they sit
+ * side by side in one scroller.
  *
  * Hoisted so their entries are built once rather than per filter --
  * `triggerModifiers` spreads them into the array it returns.
  */
-export const INACTIVE_TRIGGER_MODIFIERS: Modifier[] = [buttonStyle('bordered')]
+const INACTIVE_TRIGGER_MODIFIERS: Modifier[] = [buttonStyle('bordered')]
 
-export const ACTIVE_TRIGGER_MODIFIERS: Modifier[] = [
+const ACTIVE_TRIGGER_MODIFIERS: Modifier[] = [
 	buttonStyle('borderedProminent'),
 	accessibilityAddTraits(['isSelected']),
 ]
@@ -45,13 +47,27 @@ export const ACTIVE_TRIGGER_MODIFIERS: Modifier[] = [
 export const FILTER_TRIGGER_PREFIX = 'filter-trigger-'
 
 /**
+ * SwiftUI's own disclosure chevron, which a `Menu` draws from this rather than
+ * from anything we compose into its label. Drawing one by hand would mean
+ * handing the trigger a view instead of a string, and a view-labelled control
+ * inside a `Host matchContents` is drawn but not hittable -- verified on the
+ * simulator, where every such trigger failed `.tap()` while reporting a correct
+ * frame.
+ */
+const MENU_INDICATOR: Modifier[] = [menuIndicator('visible')]
+
+/**
  * The modifiers a trigger carries, for a filter that is or is not narrowing
  * anything. Call sites memoize the result on `isActive` and `key`, since the
  * identifier makes a per-filter array unavoidable.
+ *
+ * `presents` asks for the chevron that says the trigger opens something. A
+ * toggle passes `false`: its trigger is the control, and nothing opens.
  */
-export function triggerModifiers(isActive: boolean, key: string): Modifier[] {
+export function triggerModifiers(isActive: boolean, key: string, presents = true): Modifier[] {
 	return [
 		...(isActive ? ACTIVE_TRIGGER_MODIFIERS : INACTIVE_TRIGGER_MODIFIERS),
+		...(presents ? MENU_INDICATOR : []),
 		accessibilityIdentifier(`${FILTER_TRIGGER_PREFIX}${key}`),
 	]
 }

@@ -3,9 +3,6 @@ import {fireEvent, render, screen} from '@testing-library/react-native'
 import {describe, expect, jest, test} from '@jest/globals'
 
 import {FilterToolbarButton} from '../filter-toolbar-button'
-import {ACTIVE_TRIGGER_MODIFIERS, INACTIVE_TRIGGER_MODIFIERS} from '../filter-menu'
-import {FILTER_TRIGGER_PREFIX} from '../lib/trigger-modifiers'
-import {accessibilityIdentifier} from './expo-ui-mock'
 import type {FilterIcon, FilterType, ListItemSpecType} from '../types'
 
 jest.mock('@expo/ui/swift-ui', () => {
@@ -49,10 +46,10 @@ function sheetFilter(enabled: boolean): FilterType<Item> {
 	}
 }
 
-describe('FilterToolbarButton, menu shape', () => {
-	// A toggle is always `menu`-shaped, and a native `Menu`'s `label` prop is
-	// its own trigger, so there is no separate button here.
-	test('renders as a menu, with no separate trigger button', async () => {
+describe('FilterToolbarButton, inline shape', () => {
+	// A toggle has one state to change, so its trigger is the control: there is
+	// no menu to open and nothing to present.
+	test('renders a toggle as a control, presenting nothing', async () => {
 		await render(
 			<FilterToolbarButton
 				filter={TOGGLE_FILTER}
@@ -62,50 +59,8 @@ describe('FilterToolbarButton, menu shape', () => {
 			/>,
 		)
 
-		expect(screen.getByText('Vegetarian')).toBeTruthy()
-		expect(screen.queryByRole('button')).toBeNull()
-	})
-
-	// `isActive` still reaches the trigger: it drives which `buttonStyle`
-	// (and, when active, which accessibility trait) the `Menu` renders with,
-	// so a filter that's narrowing something still looks and sounds different
-	// from one that isn't -- the menu label is the only trigger there is, so
-	// this is where that distinction has to live. Compared by identity
-	// against `filter-menu.tsx`'s own exported constants, not a literal
-	// shape, so the mock's invented `Modifier` representation can't leak into
-	// what this asserts.
-	test('marks itself with the inactive trigger modifiers when isActive is false', async () => {
-		await render(
-			<FilterToolbarButton
-				filter={TOGGLE_FILTER}
-				isActive={false}
-				onChange={jest.fn()}
-				title={TOGGLE_FILTER.spec.title}
-			/>,
-		)
-
-		let trigger = screen.getByTestId('menu:Vegetarian')
-		expect(trigger.props.modifiers).toEqual([
-			...INACTIVE_TRIGGER_MODIFIERS,
-			accessibilityIdentifier(`${FILTER_TRIGGER_PREFIX}vegetarian`),
-		])
-	})
-
-	test('marks itself with the active trigger modifiers when isActive is true', async () => {
-		await render(
-			<FilterToolbarButton
-				filter={TOGGLE_FILTER}
-				isActive={true}
-				onChange={jest.fn()}
-				title={TOGGLE_FILTER.spec.title}
-			/>,
-		)
-
-		let trigger = screen.getByTestId('menu:Vegetarian')
-		expect(trigger.props.modifiers).toEqual([
-			...ACTIVE_TRIGGER_MODIFIERS,
-			accessibilityIdentifier(`${FILTER_TRIGGER_PREFIX}vegetarian`),
-		])
+		expect(screen.getByRole('button', {name: 'Vegetarian'})).toBeTruthy()
+		expect(screen.queryByTestId('menu:Vegetarian')).toBeNull()
 	})
 
 	// The dispatcher's whole job is to wire `onChange` through to whichever
@@ -124,7 +79,7 @@ describe('FilterToolbarButton, menu shape', () => {
 			/>,
 		)
 
-		await fireEvent.press(screen.getByText('Vegetarian only'))
+		await fireEvent.press(screen.getByRole('button', {name: 'Vegetarian'}))
 
 		expect(onChange).toHaveBeenCalledWith(expect.objectContaining({enabled: true}))
 	})
@@ -137,40 +92,6 @@ describe('FilterToolbarButton, sheet shape', () => {
 	// identity against `filter-menu.tsx`'s own exported constants, not a
 	// literal shape, so the mock's invented `Modifier` representation can't
 	// leak into what this asserts.
-	test('marks its trigger with the inactive modifiers when isActive is false', async () => {
-		await render(
-			<FilterToolbarButton
-				filter={sheetFilter(false)}
-				isActive={false}
-				onChange={jest.fn()}
-				title="Departments"
-			/>,
-		)
-
-		let trigger = screen.getByTestId('button:Departments')
-		expect(trigger.props.modifiers).toEqual([
-			...INACTIVE_TRIGGER_MODIFIERS,
-			accessibilityIdentifier(`${FILTER_TRIGGER_PREFIX}departments`),
-		])
-	})
-
-	test('marks its trigger with the active modifiers when isActive is true', async () => {
-		await render(
-			<FilterToolbarButton
-				filter={sheetFilter(true)}
-				isActive={true}
-				onChange={jest.fn()}
-				title="Departments"
-			/>,
-		)
-
-		let trigger = screen.getByTestId('button:Departments')
-		expect(trigger.props.modifiers).toEqual([
-			...ACTIVE_TRIGGER_MODIFIERS,
-			accessibilityIdentifier(`${FILTER_TRIGGER_PREFIX}departments`),
-		])
-	})
-
 	// The dispatcher's whole job, for this shape, is wiring the sheet's own
 	// trigger up at all. This is the only test in this block that proves a
 	// press actually reveals a row -- every other test here only checks the

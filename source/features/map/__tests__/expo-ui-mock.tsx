@@ -186,3 +186,7 @@ export function Picker<T>({
 		</View>
 	)
 }
+export const menuIndicator = (visibility: string): Modifier => ({
+	$type: 'menuIndicator',
+	visibility,
+})

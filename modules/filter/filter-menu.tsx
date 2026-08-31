@@ -3,11 +3,7 @@ import {Host, Menu, Section, Toggle} from '@expo/ui/swift-ui'
 import isEqual from 'lodash/isEqual'
 
 import {toggleOption} from './lib/select-options'
-import {
-	ACTIVE_TRIGGER_MODIFIERS,
-	INACTIVE_TRIGGER_MODIFIERS,
-	triggerModifiers,
-} from './lib/trigger-modifiers'
+import {triggerModifiers} from './lib/trigger-modifiers'
 import type {FilterType} from './types'
 
 type Props<T extends object> = {
@@ -15,12 +11,6 @@ type Props<T extends object> = {
 	isActive: boolean
 	onChange: (filter: FilterType<T>) => void
 }
-
-// Re-exported for `filter-sheet.tsx`'s anchor `Button` -- see
-// `./lib/trigger-modifiers` for why the two are shared rather than each
-// owning a copy -- and for every test that compares a trigger's modifiers by
-// identity against this module's own constants.
-export {ACTIVE_TRIGGER_MODIFIERS, INACTIVE_TRIGGER_MODIFIERS}
 
 /**
  * A short filter as one native pull-down menu. A `Toggle` per item gives the

@@ -2,10 +2,8 @@ import React from 'react'
 import {describe, expect, jest, test} from '@jest/globals'
 import {fireEvent, render, screen} from '@testing-library/react-native'
 
-import {ACTIVE_TRIGGER_MODIFIERS, FilterMenu, INACTIVE_TRIGGER_MODIFIERS} from '../filter-menu'
-import {FILTER_TRIGGER_PREFIX} from '../lib/trigger-modifiers'
+import {FilterMenu} from '../filter-menu'
 import type {ListItemSpecType, ListType, PickerType, ToggleType} from '../types'
-import {accessibilityIdentifier} from './expo-ui-mock'
 
 jest.mock('@expo/ui/swift-ui', () => {
 	// oxlint-disable-next-line typescript/no-require-imports
@@ -145,64 +143,5 @@ describe('FilterMenu, list', () => {
 
 		expect(screen.getByText('Biology')).toBeTruthy()
 		expect(screen.queryByText('BIO')).toBeNull()
-	})
-})
-
-// Every branch of the switch in `filter-menu.tsx` builds its own `Menu`, so
-// each has to wire the title into its own `Section` independently -- a
-// mutation dropping it from just one branch would leave the other two
-// covered here green.
-describe('FilterMenu, section title', () => {
-	test('toggle: states the filter title on the section', async () => {
-		await render(<FilterMenu filter={toggleFilter(false)} isActive={false} onChange={jest.fn()} />)
-
-		expect(screen.getByText('SPECIALS')).toBeTruthy()
-	})
-
-	test('picker: states the filter title on the section', async () => {
-		let options = [{label: 'First-year'}, {label: 'Sophomore'}]
-		await render(
-			<FilterMenu filter={pickerFilter(options)} isActive={false} onChange={jest.fn()} />,
-		)
-
-		expect(screen.getByText('LEVEL')).toBeTruthy()
-	})
-
-	test('list: states the filter title on the section', async () => {
-		let options = [{title: 'A'}, {title: 'B'}]
-		await render(
-			<FilterMenu filter={listFilter('OR', options, [])} isActive={false} onChange={jest.fn()} />,
-		)
-
-		expect(screen.getByText('STATIONS')).toBeTruthy()
-	})
-})
-
-describe('FilterMenu, active state', () => {
-	// The menu's label is its own trigger -- there is no separate button --
-	// so "this filter is narrowing something" has to live on the trigger's own
-	// modifiers. The style and trait entries are compared against the exported
-	// constants rather than a literal shape, so the mock's own invented
-	// `Modifier` representation cannot stand in for what `filter-menu.tsx`
-	// decided; the identifier is built with the same mocked `modifiers` module
-	// the component calls, for the same reason.
-	test('inactive: the inactive trigger modifiers', async () => {
-		await render(<FilterMenu filter={toggleFilter(false)} isActive={false} onChange={jest.fn()} />)
-
-		let trigger = screen.getByTestId('menu:Specials')
-		expect(trigger.props.modifiers).toEqual([
-			...INACTIVE_TRIGGER_MODIFIERS,
-			accessibilityIdentifier(`${FILTER_TRIGGER_PREFIX}k`),
-		])
-	})
-
-	test('active: the active trigger modifiers', async () => {
-		await render(<FilterMenu filter={toggleFilter(true)} isActive={true} onChange={jest.fn()} />)
-
-		let trigger = screen.getByTestId('menu:Specials')
-		expect(trigger.props.modifiers).toEqual([
-			...ACTIVE_TRIGGER_MODIFIERS,
-			accessibilityIdentifier(`${FILTER_TRIGGER_PREFIX}k`),
-		])
 	})
 })

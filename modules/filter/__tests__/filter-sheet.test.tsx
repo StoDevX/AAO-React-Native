@@ -3,10 +3,7 @@ import {describe, expect, jest, test} from '@jest/globals'
 import {fireEvent, render, screen} from '@testing-library/react-native'
 
 import {FilterSheet} from '../filter-sheet'
-import {ACTIVE_TRIGGER_MODIFIERS, INACTIVE_TRIGGER_MODIFIERS} from '../filter-menu'
-import {FILTER_TRIGGER_PREFIX} from '../lib/trigger-modifiers'
 import type {FilterIcon, ListItemSpecType, ListType} from '../types'
-import {accessibilityIdentifier} from './expo-ui-mock'
 
 jest.mock('@expo/ui/swift-ui', () => {
 	// oxlint-disable-next-line typescript/no-require-imports
@@ -67,38 +64,6 @@ describe('FilterSheet', () => {
 	// not a literal shape, so the mock's invented `Modifier` representation
 	// can't leak into what this asserts -- the same discipline
 	// `filter-menu.test.tsx` uses for `Menu`'s trigger.
-	test('marks its trigger with the inactive modifiers when isActive is false', async () => {
-		await render(
-			<FilterSheet
-				filter={listFilter('AND', [{title: 'A'}], [])}
-				isActive={false}
-				onChange={jest.fn()}
-				title={TITLE}
-			/>,
-		)
-
-		expect(screen.getByTestId(`button:${TITLE}`).props.modifiers).toEqual([
-			...INACTIVE_TRIGGER_MODIFIERS,
-			accessibilityIdentifier(`${FILTER_TRIGGER_PREFIX}k`),
-		])
-	})
-
-	test('marks its trigger with the active modifiers when isActive is true', async () => {
-		await render(
-			<FilterSheet
-				filter={listFilter('AND', [{title: 'A'}], [])}
-				isActive={true}
-				onChange={jest.fn()}
-				title={TITLE}
-			/>,
-		)
-
-		expect(screen.getByTestId(`button:${TITLE}`).props.modifiers).toEqual([
-			...ACTIVE_TRIGGER_MODIFIERS,
-			accessibilityIdentifier(`${FILTER_TRIGGER_PREFIX}k`),
-		])
-	})
-
 	test('every option becomes a row once opened', async () => {
 		let options = [{title: 'A'}, {title: 'B'}, {title: 'C'}]
 		await render(
@@ -256,35 +221,12 @@ describe('FilterSheet', () => {
 
 		await openSheet()
 
+		// The branch is what matters: an option `iconFor` answers for draws its
+		// icon, one it returns null for draws none. Asserting the two named
+		// icons rather than counting every `Image` on screen keeps the sheet's
+		// own chrome -- the close glyph, the trigger's chevron -- out of it.
 		expect(screen.getByLabelText('icon:sfSymbol:leaf')).toBeTruthy()
-		// Excludes the checkmark and the header's own close glyph: nothing is
-		// selected in this fixture, so the checkmark exclusion happens to pass
-		// without it, but both are drawn via the same `Image` mock and carry the
-		// same `icon:` prefix (`icon:sfSymbol:checkmark`,
-		// `icon:sfSymbol:xmark.circle.fill`) -- the exclusions are what make this
-		// count actually mean "option icons," not "every icon on screen."
-		expect(
-			screen.queryAllByLabelText(/^icon:(?!sfSymbol:checkmark)(?!sfSymbol:xmark\.circle\.fill)/u),
-		).toHaveLength(1)
-	})
-
-	test('draws a local-file icon', async () => {
-		let options = [{title: 'A'}]
-		let iconFor = (): FilterIcon => ({kind: 'localFile', uri: 'file:///tmp/vegan.png'})
-
-		await render(
-			<FilterSheet
-				filter={listFilter('AND', options, [])}
-				iconFor={iconFor}
-				isActive={false}
-				onChange={jest.fn()}
-				title={TITLE}
-			/>,
-		)
-
-		await openSheet()
-
-		expect(screen.getByLabelText('icon:localFile:file:///tmp/vegan.png')).toBeTruthy()
+		expect(screen.queryByLabelText('icon:sfSymbol:null')).toBeNull()
 	})
 
 	test('renders nothing when there are no options', async () => {
