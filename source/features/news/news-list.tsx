@@ -129,9 +129,10 @@ export const NewsList = (props: Props): React.ReactNode => {
 					) : filteredEntries.length === 0 ? (
 						<ContentUnavailableView systemImage="newspaper" {...emptyStateProps(hasActiveFilter)} />
 					) : (
-						filteredEntries.map((story) => (
+						filteredEntries.map((story, index) => (
 							<NewsRow
 								key={story.title}
+								isLast={index === filteredEntries.length - 1}
 								onPress={(url: string) => openUrl(url)}
 								story={story}
 								thumbnail={props.thumbnail}
