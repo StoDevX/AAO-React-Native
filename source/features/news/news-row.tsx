@@ -8,6 +8,7 @@ import {
 	alignmentGuide,
 	buttonStyle,
 	contentShape,
+	font,
 	foregroundStyle,
 	frame,
 	lineLimit,
@@ -60,7 +61,11 @@ const CHEVRON_MODIFIERS = [padding({leading: 10}), accessibilityHidden(true)]
  */
 const SEPARATOR_INSET_WITH_THUMBNAIL = [alignmentGuide('listRowSeparatorLeading', 101)]
 
-const EXCERPT_MODIFIERS = [lineLimit(3), foregroundStyle(c.secondaryLabel)]
+const EXCERPT_MODIFIERS = [
+	lineLimit(3),
+	font({textStyle: 'subheadline'}),
+	foregroundStyle(c.secondaryLabel),
+]
 
 type Props = {
 	onPress: (link: string) => void
