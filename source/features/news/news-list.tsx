@@ -41,7 +41,7 @@ let filterStories = (entries: StoryType[], filters: ListType<StoryType>[]) => {
 }
 
 export const NewsList = (props: Props): React.ReactNode => {
-	let {data = [], error, refetch, isRefetching: _isRefetching, isError, isLoading} = props.query
+	let {data = [], error, refetch, isError, isLoading} = props.query
 
 	let entries = React.useMemo(() => cleanEntries(data), [data])
 
@@ -49,7 +49,22 @@ export const NewsList = (props: Props): React.ReactNode => {
 	// come from the feed. Keeping the whole filter in state instead would tie
 	// the reader's choice to the story list, so a refetch that brought new
 	// stories would carry an everything-selected filter in with them.
-	let [chosenCategories, setChosenCategories] = React.useState<string[] | null>(null)
+	//
+	// Keyed per source rather than one shared value: NewsList is now one
+	// persistent instance across every source, where the old NativeTabs
+	// screens were mounted once each and never lost a tab's filter when the
+	// reader switched away from it. A shared value would silently carry one
+	// source's chosen titles onto another whenever they happened to share a
+	// category name.
+	let [chosenCategoriesBySource, setChosenCategoriesBySource] = React.useState<
+		Record<string, string[] | null>
+	>({})
+
+	let chosenCategories = chosenCategoriesBySource[props.selectedSourceId] ?? null
+
+	let setChosenCategories = (categories: string[] | null) => {
+		setChosenCategoriesBySource((current) => ({...current, [props.selectedSourceId]: categories}))
+	}
 
 	let filters = React.useMemo((): ListType<StoryType>[] => {
 		let allCategories = entries.flatMap((story) => getStoryCategories(story))
@@ -95,16 +110,6 @@ export const NewsList = (props: Props): React.ReactNode => {
 		let current = chosenCategories ?? []
 		setChosenCategories(
 			current.includes(title) ? current.filter((t) => t !== title) : [...current, title],
-		)
-	}
-
-	if (isError) {
-		return (
-			<NoticeView
-				buttonText="Try Again"
-				onPress={refetch}
-				text={`A problem occured while loading: ${error}`}
-			/>
 		)
 	}
 
@@ -154,37 +159,49 @@ export const NewsList = (props: Props): React.ReactNode => {
 				</Stack.Toolbar.Menu>
 			</Stack.Toolbar>
 
-			<Host style={styles.host}>
-				<VStack spacing={0}>
-					<List
-						modifiers={[
-							listStyle('plain'),
-							refreshable(async () => {
-								await refetch()
-							}),
-						]}
-					>
-						{isLoading ? (
-							<ProgressView />
-						) : filteredEntries.length === 0 ? (
-							<ContentUnavailableView
-								systemImage="newspaper"
-								{...emptyStateProps(hasActiveFilter)}
-							/>
-						) : (
-							filteredEntries.map((story, index) => (
-								<NewsRow
-									key={story.title}
-									isLast={index === filteredEntries.length - 1}
-									onPress={(url: string) => openUrl(url)}
-									story={story}
-									thumbnail={props.thumbnail}
+			{isError ? (
+				// Still under the toolbar above, not a full-screen replacement of
+				// it: the source picker is the reader's obvious way out of a feed
+				// that's down, and it would be gone exactly when it's needed most
+				// if this bailed out before the toolbar ever rendered.
+				<NoticeView
+					buttonText="Try Again"
+					onPress={refetch}
+					text={`A problem occured while loading: ${error}`}
+				/>
+			) : (
+				<Host style={styles.host}>
+					<VStack spacing={0}>
+						<List
+							modifiers={[
+								listStyle('plain'),
+								refreshable(async () => {
+									await refetch()
+								}),
+							]}
+						>
+							{isLoading ? (
+								<ProgressView />
+							) : filteredEntries.length === 0 ? (
+								<ContentUnavailableView
+									systemImage="newspaper"
+									{...emptyStateProps(hasActiveFilter)}
 								/>
-							))
-						)}
-					</List>
-				</VStack>
-			</Host>
+							) : (
+								filteredEntries.map((story, index) => (
+									<NewsRow
+										key={story.title}
+										isLast={index === filteredEntries.length - 1}
+										onPress={(url: string) => openUrl(url)}
+										story={story}
+										thumbnail={props.thumbnail}
+									/>
+								))
+							)}
+						</List>
+					</VStack>
+				</Host>
+			)}
 		</>
 	)
 }
