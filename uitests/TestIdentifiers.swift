@@ -45,6 +45,7 @@ struct TestIdentifiers {
 		static let directory = "Directory"
 		static let importantContacts = "Important Contacts"
 		static let more = "More"
+		static let news = "News"
 		static let stoPrint = "stoPrint"
 		static let streamingMedia = "Streaming Media"
 		static let studentOrgs = "Student Orgs"
@@ -172,6 +173,13 @@ struct TestIdentifiers {
 			formatter.dateFormat = "yyyy-MM-dd"
 			return dayCellPrefix + formatter.string(from: date)
 		}
+	}
+
+	// MARK: - News
+
+	enum News {
+		/// Matches NEWS_ROW_PREFIX in source/features/news/news-row.tsx.
+		static let rowPrefix = "news-row-"
 	}
 
 	// MARK: - Streaming Media
