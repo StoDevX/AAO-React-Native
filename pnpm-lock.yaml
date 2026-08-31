@@ -643,6 +643,9 @@ importers:
 
   modules/event-type:
     dependencies:
+      date-fns:
+        specifier: 4.4.0
+        version: 4.4.0
       moment:
         specifier: ^2.30.1
         version: 2.30.1
