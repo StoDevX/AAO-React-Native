@@ -1,27 +1,25 @@
 import * as React from 'react'
 import {StyleSheet, type ImageResolvedAssetSource} from 'react-native'
-import {
-	ContentUnavailableView,
-	Host,
-	List,
-	ProgressView,
-	RNHostView,
-	VStack,
-} from '@expo/ui/swift-ui'
+import {Stack} from 'expo-router'
+import {ContentUnavailableView, Host, List, ProgressView, VStack} from '@expo/ui/swift-ui'
 import {listStyle, refreshable} from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
 import {NoticeView} from '@frogpond/notice'
 import {openUrl} from '@frogpond/open-url'
 import type {StoryType} from './types'
+import type {NewsSource} from './sources'
 import {NewsRow} from './news-row'
 import {cleanEntries, trimStoryCateogry} from './lib/util'
 import {emptyStateProps} from './lib/empty-state'
-import {FilterToolbar, ListType, selectedOptions} from '@frogpond/filter'
+import {ListType, selectedOptions} from '@frogpond/filter'
 import {UseQueryResult} from '@tanstack/react-query'
 
 type Props = {
 	query: UseQueryResult<StoryType[]>
 	thumbnail: false | ImageResolvedAssetSource
+	sources: NewsSource[]
+	selectedSourceId: string
+	onSelectSource: (id: string) => void
 }
 
 let getStoryCategories = (story: StoryType) => {
@@ -85,6 +83,21 @@ export const NewsList = (props: Props): React.ReactNode => {
 		]
 	}, [entries, chosenCategories])
 
+	// News carries exactly one filter (categories); this is that filter, or
+	// undefined when the feed's stories have no categories to offer at all.
+	let categoryFilter = filters[0]
+	let categoryOptions = categoryFilter?.spec.options ?? []
+	let selectedCategoryTitles = categoryFilter
+		? categoryFilter.spec.selected.map((option) => option.title)
+		: []
+
+	let toggleCategory = (title: string) => {
+		let current = chosenCategories ?? []
+		setChosenCategories(
+			current.includes(title) ? current.filter((t) => t !== title) : [...current, title],
+		)
+	}
+
 	if (isError) {
 		return (
 			<NoticeView
@@ -99,49 +112,80 @@ export const NewsList = (props: Props): React.ReactNode => {
 	let hasActiveFilter = filters.some((f) => f.spec.selected.length)
 
 	return (
-		<Host style={styles.host}>
-			<VStack spacing={0}>
-				{/* The filter toolbar this carries is React Native, so it still
-				    needs an `RNHostView` bridge into the SwiftUI tree around it. */}
-				<RNHostView matchContents={true}>
-					<FilterToolbar
-						filters={filters}
-						onChange={(newFilter) => {
-							// The categories list is the only filter this toolbar carries.
-							if (newFilter.type !== 'list') {
-								return
-							}
-							setChosenCategories(newFilter.spec.selected.map((option) => option.title))
-						}}
-					/>
-				</RNHostView>
-
-				<List
-					modifiers={[
-						listStyle('plain'),
-						refreshable(async () => {
-							await refetch()
-						}),
-					]}
+		<>
+			{/* expo-router: "If multiple instances of [Stack.Toolbar] are
+			    rendered for the same screen, the last one rendered in the
+			    component tree takes precedence" -- they don't merge. So the
+			    category filter and the source picker share this one toolbar
+			    rather than each rendering their own. */}
+			<Stack.Toolbar placement="bottom">
+				<Stack.Toolbar.Menu
+					accessibilityLabel="Categories"
+					hidden={categoryOptions.length === 0}
+					icon="line.3.horizontal.decrease"
+					variant={hasActiveFilter ? 'prominent' : 'plain'}
 				>
-					{isLoading ? (
-						<ProgressView />
-					) : filteredEntries.length === 0 ? (
-						<ContentUnavailableView systemImage="newspaper" {...emptyStateProps(hasActiveFilter)} />
-					) : (
-						filteredEntries.map((story, index) => (
-							<NewsRow
-								key={story.title}
-								isLast={index === filteredEntries.length - 1}
-								onPress={(url: string) => openUrl(url)}
-								story={story}
-								thumbnail={props.thumbnail}
+					<Stack.Toolbar.Label>Categories</Stack.Toolbar.Label>
+					{categoryOptions.map((option) => (
+						<Stack.Toolbar.MenuAction
+							isOn={selectedCategoryTitles.includes(option.title)}
+							key={option.title}
+							onPress={() => toggleCategory(option.title)}
+							unstable_keepPresented={true}
+						>
+							{option.title}
+						</Stack.Toolbar.MenuAction>
+					))}
+				</Stack.Toolbar.Menu>
+
+				<Stack.Toolbar.Spacer />
+
+				<Stack.Toolbar.Menu accessibilityLabel="News Sources" icon="newspaper">
+					<Stack.Toolbar.Label>News Sources</Stack.Toolbar.Label>
+					{props.sources.map((source) => (
+						<Stack.Toolbar.MenuAction
+							isOn={source.id === props.selectedSourceId}
+							key={source.id}
+							onPress={() => props.onSelectSource(source.id)}
+						>
+							{source.title}
+						</Stack.Toolbar.MenuAction>
+					))}
+				</Stack.Toolbar.Menu>
+			</Stack.Toolbar>
+
+			<Host style={styles.host}>
+				<VStack spacing={0}>
+					<List
+						modifiers={[
+							listStyle('plain'),
+							refreshable(async () => {
+								await refetch()
+							}),
+						]}
+					>
+						{isLoading ? (
+							<ProgressView />
+						) : filteredEntries.length === 0 ? (
+							<ContentUnavailableView
+								systemImage="newspaper"
+								{...emptyStateProps(hasActiveFilter)}
 							/>
-						))
-					)}
-				</List>
-			</VStack>
-		</Host>
+						) : (
+							filteredEntries.map((story, index) => (
+								<NewsRow
+									key={story.title}
+									isLast={index === filteredEntries.length - 1}
+									onPress={(url: string) => openUrl(url)}
+									story={story}
+									thumbnail={props.thumbnail}
+								/>
+							))
+						)}
+					</List>
+				</VStack>
+			</Host>
+		</>
 	)
 }
 
