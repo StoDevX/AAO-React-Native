@@ -33,7 +33,7 @@ let filterStories = (entries: StoryType[], filters: ListType<StoryType>[]) => {
 		)
 
 		if (enabledCategories.length === 0) {
-			return entries
+			return true
 		}
 
 		return getStoryCategories(story).some((category) => enabledCategories.includes(category))
