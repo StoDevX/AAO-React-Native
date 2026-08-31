@@ -2,7 +2,11 @@ import type {Moment} from 'moment'
 import type {MasterCorIconMapType, MenuItemType, ProcessedMealType} from '../types'
 import type {FilterType} from '@frogpond/filter/types'
 import {decode, fastGetTrimmedText} from '@frogpond/html-lib'
+import * as React from 'react'
+
+import {DietaryBadgeRN} from '../dietary-badge-rn'
 import {chooseMeal, EMPTY_MEAL} from './choose-meal'
+import {dietaryBadge} from './dietary-badge'
 
 export function buildFilters(
 	foodItems: MenuItemType[],
@@ -15,12 +19,21 @@ export function buildFilters(
 	const stationLabels = new Set(stations.map((station) => station.label))
 	const allStations = Array.from(stationLabels).map((label) => ({title: label}))
 
-	// Grab the labels of the COR icons
-	const allDietaryRestrictions = Object.values(corIcons).map((cor) => ({
+	// `entries`, not `values`: a category's badge is looked up by the id the cafe
+	// keys it under, which the label alone cannot supply.
+	const allDietaryRestrictions = Object.entries(corIcons).map(([key, cor]) => ({
+		id: key,
 		title: decode(cor.label),
-		image: cor.image ? {uri: cor.image} : null,
 		detail: cor.description ? fastGetTrimmedText(cor.description) : '',
 	}))
+
+	/**
+	 * The same mark the menu rows carry, drawn for a React Native list. Token,
+	 * colour, kerning and size all come from `dietaryBadge`, so this and the
+	 * rows' SwiftUI badge stay identical.
+	 */
+	const renderDietaryMark = (option: {id?: string}) =>
+		option.id ? <DietaryBadgeRN badge={dietaryBadge(option.id, corIcons)} /> : null
 
 	// Decide which meal will be selected by default
 	const mealOptions = meals.map((m) => ({label: m.label}))
@@ -81,6 +94,7 @@ export function buildFilters(
 			spec: {
 				title: 'Dietary Restrictions',
 				showImages: true,
+				renderMark: renderDietaryMark,
 				options: allDietaryRestrictions,
 				mode: 'AND',
 				selected: [],

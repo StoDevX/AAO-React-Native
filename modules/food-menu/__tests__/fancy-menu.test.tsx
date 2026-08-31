@@ -32,11 +32,6 @@ jest.mock('@expo/ui/swift-ui/modifiers', () => {
 	// oxlint-disable-next-line typescript/no-require-imports
 	return require('./expo-ui-mock') as typeof import('./expo-ui-mock')
 })
-jest.mock('expo-asset', () => ({
-	Asset: {
-		fromURI: () => ({downloadAsync: () => Promise.resolve({localUri: 'file:///cache/v.png'})}),
-	},
-}))
 
 jest.mock('../filter-menu-toolbar', () => {
 	// oxlint-disable-next-line typescript/no-require-imports
@@ -192,10 +187,10 @@ describe('FancyMenu', () => {
 	})
 
 	// `FoodItemRow`'s real decision: the accessibility label names every
-	// cor-icon the item carries, but only a downloaded icon gets drawn. Halal
-	// has no `image` url here, so `useLocalCorIcons` never attempts it and it
-	// stays out of `localIcons` -- it must still reach the label.
-	test('labels every dietary icon the item carries, but draws only the ones that downloaded', async () => {
+	// cor-icon the item carries, and each one draws a badge. Halal has no
+	// `image` url, which used to mean it drew nothing at all -- the badges are
+	// text, so artwork the cafe never supplied no longer costs the reader a mark.
+	test('badges every dietary category the item carries, artwork or not', async () => {
 		let corIcons: MasterCorIconMapType = {
 			vegan: {sort: '1', label: 'Vegan', description: '', image: 'https://x/vegan.png'},
 			halal: {sort: '2', label: 'Halal', description: '', image: ''},
@@ -220,10 +215,10 @@ describe('FancyMenu', () => {
 
 		let row = await screen.findByLabelText('Pot Roast, Vegan, Halal')
 
-		// Vegan downloaded, so it draws -- and Halal, with nothing to draw,
-		// contributes no icon at all rather than a broken one.
-		await screen.findByTestId('icon-file:///cache/v.png')
-		expect(within(row).queryAllByTestId(/^icon-/u)).toHaveLength(1)
+		// Tokens derived from the labels, since these are not ids the cafe's own
+		// legend covers.
+		expect(within(row).getByText('V')).toBeTruthy()
+		expect(within(row).getByText('H')).toBeTruthy()
 	})
 
 	test('shows the empty message instead of stations when the filters exclude everything', async () => {
