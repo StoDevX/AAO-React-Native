@@ -1,5 +1,5 @@
 import {describe, expect, test} from '@jest/globals'
-import {toggleAll, toggleOption} from '../select-options'
+import {clearSelection, toggleOption} from '../select-options'
 import type {ListType} from '../../types'
 
 const OPTIONS = [{title: 'A'}, {title: 'B'}, {title: 'C'}]
@@ -14,55 +14,48 @@ function listFilter(mode: 'AND' | 'OR', selected: {title: string}[]): ListType<{
 	} as ListType<{x: string}>
 }
 
-describe('toggleOption, OR mode', () => {
-	// With everything selected the filter shows everything, so tapping one
-	// option means "only this one" rather than "all but this one".
-	test('narrows to just the tapped option when all were selected', () => {
-		let next = toggleOption(listFilter('OR', OPTIONS), {title: 'B'})
-		expect(next.spec.selected).toEqual([{title: 'B'}])
-	})
-
-	test('removes an option that was already selected', () => {
-		let next = toggleOption(listFilter('OR', [{title: 'A'}, {title: 'B'}]), {title: 'A'})
-		expect(next.spec.selected).toEqual([{title: 'B'}])
-	})
-
+// Both modes share one rule now: an empty selection is the resting state and
+// narrows nothing, and ticking is the only thing that turns a filter on.
+describe.each(['AND', 'OR'] as const)('toggleOption, %s mode', (mode) => {
 	test('adds an option that was not selected', () => {
-		let next = toggleOption(listFilter('OR', [{title: 'A'}]), {title: 'C'})
+		let next = toggleOption(listFilter(mode, [{title: 'A'}]), {title: 'C'})
 		expect(next.spec.selected).toEqual([{title: 'A'}, {title: 'C'}])
 	})
 
-	// An OR filter selecting everything is the same as no filter at all.
-	test('is disabled when everything ends up selected', () => {
-		let next = toggleOption(listFilter('OR', [{title: 'A'}, {title: 'B'}]), {title: 'C'})
-		expect(next.enabled).toBe(false)
+	test('removes an option that was already selected', () => {
+		let next = toggleOption(listFilter(mode, [{title: 'A'}, {title: 'B'}]), {title: 'A'})
+		expect(next.spec.selected).toEqual([{title: 'B'}])
 	})
 
-	test('is enabled when only some are selected', () => {
-		let next = toggleOption(listFilter('OR', OPTIONS), {title: 'B'})
-		expect(next.enabled).toBe(true)
-	})
-})
-
-describe('toggleOption, AND mode', () => {
 	test('is enabled once anything is selected', () => {
-		let next = toggleOption(listFilter('AND', []), {title: 'A'})
-		expect(next.enabled).toBe(true)
+		expect(toggleOption(listFilter(mode, []), {title: 'A'}).enabled).toBe(true)
 	})
 
 	test('is disabled when the last selection is removed', () => {
-		let next = toggleOption(listFilter('AND', [{title: 'A'}]), {title: 'A'})
+		let next = toggleOption(listFilter(mode, [{title: 'A'}]), {title: 'A'})
 		expect(next.spec.selected).toEqual([])
 		expect(next.enabled).toBe(false)
 	})
+
+	// Selecting every option is a narrowing like any other, not a disguised
+	// resting state -- only an empty selection turns the filter off.
+	test('stays enabled when everything ends up selected', () => {
+		let next = toggleOption(listFilter(mode, [{title: 'A'}, {title: 'B'}]), {title: 'C'})
+		expect(next.spec.selected).toEqual(OPTIONS)
+		expect(next.enabled).toBe(true)
+	})
 })
 
-describe('toggleAll', () => {
-	test('clears the selection when everything was selected', () => {
-		expect(toggleAll(listFilter('OR', OPTIONS)).spec.selected).toEqual([])
+describe('clearSelection', () => {
+	test('empties the selection and disables the filter', () => {
+		let next = clearSelection(listFilter('OR', OPTIONS))
+		expect(next.spec.selected).toEqual([])
+		expect(next.enabled).toBe(false)
 	})
 
-	test('selects everything when some were unselected', () => {
-		expect(toggleAll(listFilter('OR', [{title: 'A'}])).spec.selected).toEqual(OPTIONS)
+	test('leaves an already empty filter alone', () => {
+		let next = clearSelection(listFilter('AND', []))
+		expect(next.spec.selected).toEqual([])
+		expect(next.enabled).toBe(false)
 	})
 })

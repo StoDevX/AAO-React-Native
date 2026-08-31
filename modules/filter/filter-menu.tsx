@@ -2,7 +2,7 @@ import * as React from 'react'
 import {Host, Menu, Section, Toggle} from '@expo/ui/swift-ui'
 import isEqual from 'lodash/isEqual'
 
-import {toggleAll, toggleOption} from './lib/select-options'
+import {toggleOption} from './lib/select-options'
 import {
 	ACTIVE_TRIGGER_MODIFIERS,
 	INACTIVE_TRIGGER_MODIFIERS,
@@ -98,13 +98,6 @@ export function FilterMenu<T extends object>({
 				<Host matchContents={true}>
 					<Menu label={spec.title} modifiers={modifiers}>
 						<Section title={spec.title.toUpperCase()}>
-							{spec.mode === 'OR' ? (
-								<Toggle
-									isOn={spec.selected.length === spec.options.length}
-									label="Show All"
-									onIsOnChange={() => onChange(toggleAll(filter))}
-								/>
-							) : null}
 							{spec.options.map((option) => (
 								<Toggle
 									key={option.title}

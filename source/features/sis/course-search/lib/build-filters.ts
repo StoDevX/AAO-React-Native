@@ -76,7 +76,7 @@ export function useFilters(): {
 				title: 'Terms',
 				options: allTerms,
 				mode: 'OR',
-				selected: allTerms,
+				selected: [],
 				displayTitle: false,
 			},
 			apply: {
@@ -108,7 +108,7 @@ export function useFilters(): {
 				showIcons: false,
 				options: allDepartments,
 				mode: 'OR',
-				selected: allDepartments,
+				selected: [],
 				displayTitle: true,
 			},
 			apply: {
@@ -124,7 +124,7 @@ export function useFilters(): {
 				showIcons: false,
 				options: courseLevelOptions,
 				mode: 'OR',
-				selected: courseLevelOptions,
+				selected: [],
 				displayTitle: true,
 			},
 			apply: {

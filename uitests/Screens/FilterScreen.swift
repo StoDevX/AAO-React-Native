@@ -25,16 +25,6 @@ struct FilterScreen: Screen {
 
 	/// An item in an open menu.
 	///
-	/// A `Toggle` inside a SwiftUI `Menu` becomes a UIKit menu action, which
-	/// carries none of our identifiers -- only the label it draws. An element
-	/// query cannot filter on hittability, so where the screen behind an open
-	/// menu offers a button with the same label, this picks the hittable one:
-	/// while a menu is up, only its own items are.
-	func menuItem(_ label: String) -> XCUIElement {
-		let matches = app.buttons.matching(NSPredicate(format: "label == %@", label))
-		return matches.allElementsBoundByIndex.first { $0.isHittable } ?? matches.firstMatch
-	}
-
 	@discardableResult
 	func waitForTrigger(_ key: String) -> Self {
 		XCTAssertTrue(
@@ -99,20 +89,11 @@ struct FilterScreen: Screen {
 		return self
 	}
 
-	@discardableResult
-	func tapMenuItem(_ label: String) -> Self {
-		let item = menuItem(label)
-		XCTAssertTrue(item.waitForExistence(timeout: 30), "the menu should offer a \(label) item")
-		item.tap()
-		return self
-	}
-
 	/// Swipe the sheet away.
 	///
-	/// A filter sheet carries no Done button, so dragging it down is the only
-	/// dismissal it offers -- and therefore the only path by which a selection
-	/// is ever committed. The drag starts just below the sheet's top edge and
-	/// runs to the bottom of the screen, which is the gesture a user makes.
+	/// The sheet's (X) commits too, so this is one of two paths a selection can
+	/// take -- the gestural one, which no button drives. The drag starts just
+	/// below the sheet's top edge and runs to the bottom of the screen.
 	@discardableResult
 	func dismissSheet(waitingFor row: String) -> Self {
 		let start = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.12))

@@ -78,7 +78,7 @@ export function buildFilters(
 				title: 'Stations',
 				options: allStations,
 				mode: 'OR',
-				selected: allStations,
+				selected: [],
 				displayTitle: true,
 			},
 			apply: {

@@ -89,8 +89,8 @@ struct TestIdentifiers {
 		static let pause = "The Pause"
 
 		/// Two stations from that file, and one item from each. The Pause
-		/// offers ten stations, which is under the count at which a list
-		/// filter becomes a sheet, so its Stations filter is reliably a menu.
+		/// offers ten stations, over the count at which a list filter becomes
+		/// a sheet, so its Stations filter is reliably a sheet.
 		static let pizzaStation = "Pizza"
 		static let specialtyPizzaStation = "Specialty Pizza"
 		static let pizzaItem = "food-row-Single Slice"
@@ -114,8 +114,8 @@ struct TestIdentifiers {
 		/// Matches FILTER_OPTION_PREFIX in modules/filter/filter-sheet.tsx.
 		static let optionPrefix = "filter-option-"
 
-		/// Matches FILTER_SHOW_ALL_ID in modules/filter/filter-sheet.tsx.
-		static let showAll = "filter-show-all"
+		/// Matches FILTER_CLEAR_ID in modules/filter/filter-sheet.tsx.
+		static let clear = "filter-clear"
 
 		/// Matches FILTER_CLOSE_BUTTON_ID in modules/filter/filter-sheet.tsx.
 		static let closeButton = "filter-close"

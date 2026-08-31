@@ -93,22 +93,16 @@ describe('FilterMenu, picker', () => {
 })
 
 describe('FilterMenu, list', () => {
-	test('offers "Show All" in OR mode', async () => {
+	// A menu offers only its options. Clearing is unticking -- and a menu-shaped
+	// filter is short by definition, so there is little to untick.
+	test.each(['AND', 'OR'] as const)('offers no all-or-nothing action in %s mode', async (mode) => {
 		let options = [{title: 'A'}, {title: 'B'}]
 		await render(
-			<FilterMenu filter={listFilter('OR', options, [])} isActive={false} onChange={jest.fn()} />,
-		)
-
-		expect(screen.getByText('Show All')).toBeTruthy()
-	})
-
-	test('does not offer "Show All" in AND mode', async () => {
-		let options = [{title: 'A'}, {title: 'B'}]
-		await render(
-			<FilterMenu filter={listFilter('AND', options, [])} isActive={false} onChange={jest.fn()} />,
+			<FilterMenu filter={listFilter(mode, options, [])} isActive={false} onChange={jest.fn()} />,
 		)
 
 		expect(screen.queryByText('Show All')).toBeNull()
+		expect(screen.queryByText('Clear')).toBeNull()
 	})
 
 	test('tapping an option emits the toggled selection', async () => {
@@ -128,24 +122,6 @@ describe('FilterMenu, list', () => {
 			expect.objectContaining({
 				spec: expect.objectContaining({selected: [{title: 'A'}, {title: 'B'}]}),
 			}),
-		)
-	})
-
-	test('tapping "Show All" emits the toggled-all selection', async () => {
-		let onChange = jest.fn()
-		let options = [{title: 'A'}, {title: 'B'}]
-		await render(
-			<FilterMenu
-				filter={listFilter('OR', options, [{title: 'A'}])}
-				isActive={false}
-				onChange={onChange}
-			/>,
-		)
-
-		await fireEvent.press(screen.getByText('Show All'))
-
-		expect(onChange).toHaveBeenCalledWith(
-			expect.objectContaining({spec: expect.objectContaining({selected: options})}),
 		)
 	})
 

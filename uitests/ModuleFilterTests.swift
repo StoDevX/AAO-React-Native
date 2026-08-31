@@ -4,12 +4,11 @@ import XCTest
 /// exist: every one of these assertions is about a native control's state,
 /// hit target, or presentation, and Jest can see none of those.
 ///
-/// Menus is the vehicle because it draws both presentations at once. Stav
-/// Hall's Dietary Restrictions filter carries icons, so `filterShape` makes it
-/// a sheet however few options it has; The Pause's menu comes from this
-/// repository's own `data/pause-menu.yaml` and offers ten stations, under the
-/// count at which a list filter becomes a sheet, so its Stations filter is
-/// reliably a menu.
+/// Menus is the vehicle. Stav Hall's Dietary Restrictions filter carries
+/// icons, so `filterShape` makes it a sheet however few options it has. The
+/// Pause's menu comes from this repository's own `data/pause-menu.yaml`, so its
+/// ten stations are fixed rather than whatever is being served today -- and ten
+/// is over the count at which a list filter becomes a sheet.
 class ModuleFilterTests: UITestCase {
 	private typealias Keys = TestIdentifiers.Filter.MenusKeys
 
@@ -102,10 +101,10 @@ class ModuleFilterTests: UITestCase {
 	// MARK: - The menu
 
 	/// The other presentation, end to end: open the pull-down menu, toggle one
-	/// station, and find the menu applied to the list behind it. A menu commits
-	/// per item rather than on dismissal, so this is a different path through
-	/// the package than the sheet tests take.
-	func testMenuSelectionAppliesTheFilter() throws {
+	/// station, and find it applied to the list behind the sheet. The other
+	/// sheet tests prove a selection survives dismissal; this one proves the
+	/// selection actually reaches the data.
+	func testStationSelectionNarrowsTheFoodList() throws {
 		MenusScreen(app: app)
 			.navigate()
 			.verifyFoodRowsAppear()
@@ -120,10 +119,12 @@ class ModuleFilterTests: UITestCase {
 			app.buttons[TestIdentifiers.Menus.specialtyPizzaItem].waitForExistence(timeout: 30),
 			"the unfiltered menu should show an item from another station")
 
-		// Every station starts selected, so choosing one narrows to it alone.
+		// Nothing starts selected, which shows every station. Ticking one is
+		// what narrows the list to it.
 		filters
-			.openFilter(Keys.stations, until: filters.menuItem(pizza))
-			.tapMenuItem(pizza)
+			.openFilter(Keys.stations, until: filters.option(pizza))
+			.tapOption(pizza)
+			.dismissSheet(waitingFor: pizza)
 
 		filters.verifyTrigger(Keys.stations, isSelected: true)
 

@@ -71,10 +71,10 @@ export const NewsList = (props: Props): React.ReactNode => {
 			{
 				type: 'list',
 				key: 'category',
-				// In OR mode, a selection matching every option filters nothing --
-				// matching the invariant modules/filter/lib/select-options.ts applies
-				// on every subsequent edit.
-				enabled: selected.length !== options.length,
+				// Selecting nothing is the resting state and shows everything --
+				// the invariant modules/filter/lib/select-options.ts applies on
+				// every subsequent edit.
+				enabled: selected.length > 0,
 				spec: {
 					title: 'Categories',
 					options,

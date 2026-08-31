@@ -117,37 +117,45 @@ describe('FilterSheet', () => {
 		expect(screen.getByText('C')).toBeTruthy()
 	})
 
-	test('offers "Show All" in OR mode', async () => {
-		let options = [{title: 'A'}, {title: 'B'}]
-		await render(
-			<FilterSheet
-				filter={listFilter('OR', options, [])}
-				isActive={false}
-				onChange={jest.fn()}
-				title={TITLE}
-			/>,
-		)
+	// "Clear" tracks whether there is a selection to clear, not which mode the
+	// filter is in -- an empty filter is already showing everything.
+	test.each(['AND', 'OR'] as const)(
+		'offers "Clear" in %s mode once anything is selected',
+		async (mode) => {
+			let options = [{title: 'A'}, {title: 'B'}]
+			await render(
+				<FilterSheet
+					filter={listFilter(mode, options, [{title: 'A'}])}
+					isActive={true}
+					onChange={jest.fn()}
+					title={TITLE}
+				/>,
+			)
 
-		await openSheet()
+			await openSheet()
 
-		expect(screen.getByText('Show All')).toBeTruthy()
-	})
+			expect(screen.getByText('Clear')).toBeTruthy()
+		},
+	)
 
-	test('does not offer "Show All" in AND mode', async () => {
-		let options = [{title: 'A'}, {title: 'B'}]
-		await render(
-			<FilterSheet
-				filter={listFilter('AND', options, [])}
-				isActive={false}
-				onChange={jest.fn()}
-				title={TITLE}
-			/>,
-		)
+	test.each(['AND', 'OR'] as const)(
+		'offers no "Clear" in %s mode when nothing is selected',
+		async (mode) => {
+			let options = [{title: 'A'}, {title: 'B'}]
+			await render(
+				<FilterSheet
+					filter={listFilter(mode, options, [])}
+					isActive={false}
+					onChange={jest.fn()}
+					title={TITLE}
+				/>,
+			)
 
-		await openSheet()
+			await openSheet()
 
-		expect(screen.queryByText('Show All')).toBeNull()
-	})
+			expect(screen.queryByText('Clear')).toBeNull()
+		},
+	)
 
 	test('tapping a row then dismissing emits the filter toggleOption would produce', async () => {
 		let onChange = jest.fn()
@@ -176,24 +184,24 @@ describe('FilterSheet', () => {
 		)
 	})
 
-	test('tapping "Show All" then dismissing emits the toggled-all selection', async () => {
+	test('tapping "Clear" then dismissing emits the emptied, disabled filter', async () => {
 		let onChange = jest.fn()
 		let options = [{title: 'A'}, {title: 'B'}]
 		await render(
 			<FilterSheet
 				filter={listFilter('OR', options, [{title: 'A'}])}
-				isActive={false}
+				isActive={true}
 				onChange={onChange}
 				title={TITLE}
 			/>,
 		)
 
 		await openSheet()
-		await fireEvent.press(screen.getByText('Show All'))
+		await fireEvent.press(screen.getByText('Clear'))
 		await dismiss()
 
 		expect(onChange).toHaveBeenCalledWith(
-			expect.objectContaining({spec: expect.objectContaining({selected: options})}),
+			expect.objectContaining({enabled: false, spec: expect.objectContaining({selected: []})}),
 		)
 	})
 
@@ -397,13 +405,13 @@ describe('FilterSheet', () => {
 		expect(screen.getByRole('button', {name: TITLE})).toBeTruthy()
 	})
 
-	test('offers "Show All" in the header, not as a row, in OR mode', async () => {
+	test('offers "Clear" in the header, not as a row', async () => {
 		let options = [{title: 'A'}, {title: 'B'}]
 		let onChange = jest.fn()
 		await render(
 			<FilterSheet
 				filter={listFilter('OR', options, [{title: 'A'}])}
-				isActive={false}
+				isActive={true}
 				onChange={onChange}
 				title={TITLE}
 			/>,
@@ -411,15 +419,14 @@ describe('FilterSheet', () => {
 
 		await openSheet()
 
-		let showAll = screen.getByRole('button', {name: 'Show All'})
-		await fireEvent.press(showAll)
+		let clear = screen.getByRole('button', {name: 'Clear'})
+		await fireEvent.press(clear)
 		await fireEvent.press(screen.getByRole('button', {name: 'Close'}))
 
-		// `toggleAll` selects everything when it isn't already all selected --
-		// the same outcome tapping the old row produced, proving the header
-		// button still drives the same behaviour, not a re-implementation of it.
+		// It drives `clearSelection`, so the emitted filter is empty and off --
+		// the header button is wired to the rule, not a re-implementation of it.
 		expect(onChange).toHaveBeenCalledWith(
-			expect.objectContaining({spec: expect.objectContaining({selected: options})}),
+			expect.objectContaining({enabled: false, spec: expect.objectContaining({selected: []})}),
 		)
 	})
 

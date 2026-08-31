@@ -28,7 +28,7 @@ import isEqual from 'lodash/isEqual'
 import type {SFSymbol} from 'sf-symbols-typescript'
 
 import * as c from '@frogpond/colors'
-import {toggleAll, toggleOption} from './lib/select-options'
+import {clearSelection, toggleOption} from './lib/select-options'
 import {triggerModifiers} from './lib/trigger-modifiers'
 import type {FilterIcon, ListItemSpecType, ListType} from './types'
 
@@ -50,11 +50,11 @@ type Props<T extends object> = {
  * and both stay in the accessibility tree while the sheet is up.
  *
  * Mirrored by `TestIdentifiers.Filter.optionPrefix`,
- * `TestIdentifiers.Filter.showAll`, and `TestIdentifiers.Filter.close` in
+ * `TestIdentifiers.Filter.clear`, and `TestIdentifiers.Filter.close` in
  * `uitests/TestIdentifiers.swift`.
  */
 export const FILTER_OPTION_PREFIX = 'filter-option-'
-export const FILTER_SHOW_ALL_ID = 'filter-show-all'
+export const FILTER_CLEAR_ID = 'filter-clear'
 /// The header's dismiss button. Its label is a bare glyph, so it needs the
 /// same kind of identifier a labelless control always does.
 export const FILTER_CLOSE_BUTTON_ID = 'filter-close'
@@ -101,10 +101,10 @@ const HEADER_HIT_TARGET = [
 	contentShape(shapes.rectangle()),
 	frame({minWidth: MIN_TOUCH_TARGET, minHeight: MIN_TOUCH_TARGET}),
 ]
-const SHOW_ALL_HEADER_MODIFIERS = [
+const CLEAR_HEADER_MODIFIERS = [
 	buttonStyle('plain'),
 	...HEADER_HIT_TARGET,
-	accessibilityIdentifier(FILTER_SHOW_ALL_ID),
+	accessibilityIdentifier(FILTER_CLEAR_ID),
 ]
 const CLOSE_BUTTON_MODIFIERS = [
 	buttonStyle('plain'),
@@ -132,7 +132,7 @@ const HEADER_MODIFIERS = [frame({maxWidth: Infinity}), padding({horizontal: 16, 
  * anchored to its own trigger `Button`, styled identically to `FilterMenu`'s
  * (see `./lib/trigger-modifiers`) so the two presentations aren't
  * distinguishable by looks alone. Taps accumulate in local state; the filter
- * `toggleOption`/`toggleAll` would produce is only handed to `onChange` once,
+ * `toggleOption`/`clearSelection` would produce is only handed to `onChange` once,
  * on dismissal, rather than once per row -- a sheet is dismissed as one
  * gesture, not committed row by row.
  */
@@ -215,9 +215,9 @@ export function FilterSheet<T extends object>({
 					    that threw them away would make the two dismissal gestures mean
 					    opposite things. */}
 					<SheetHeader
-						canShowAll={spec.mode === 'OR'}
+						canClear={spec.selected.length > 0}
 						onClose={emitAndDismiss}
-						onShowAll={() => setLocal((current) => toggleAll(current))}
+						onClear={() => setLocal((current) => clearSelection(current))}
 						title={title}
 					/>
 					<List>
@@ -247,31 +247,31 @@ export function FilterSheet<T extends object>({
  * The sheet's own title bar, drawn above the `List` rather than as a section
  * header inside it -- a sheet states its own name the way a navigation title
  * does, not the way a section of rows does. Three slots, in the standard iOS
- * sheet idiom: "Show All" leading (only in `OR` mode -- `AND` mode has no
- * all-or-nothing action to offer), the filter's name centred, and the (X)
+ * sheet idiom: "Clear" leading (only once something is selected -- an already
+ * empty filter has nothing to clear), the filter's name centred, and the (X)
  * dismiss button trailing.
  *
  * The title sits in its own layer, laid over the button row rather than
  * beside it in one `HStack` -- so it stays centred on the sheet regardless of
- * whether "Show All" is present, without the leading slot needing a
- * placeholder to hold its width.
+ * whether "Clear" is present, without the leading slot needing a placeholder
+ * to hold its width.
  */
 function SheetHeader({
-	canShowAll,
+	canClear,
 	onClose,
-	onShowAll,
+	onClear,
 	title,
 }: {
-	canShowAll: boolean
+	canClear: boolean
 	onClose: () => void
-	onShowAll: () => void
+	onClear: () => void
 	title: string
 }): React.ReactNode {
 	return (
 		<ZStack alignment="center" modifiers={HEADER_MODIFIERS}>
 			<HStack modifiers={HEADER_ROW_FILL}>
-				{canShowAll ? (
-					<Button label="Show All" modifiers={SHOW_ALL_HEADER_MODIFIERS} onPress={onShowAll} />
+				{canClear ? (
+					<Button label="Clear" modifiers={CLEAR_HEADER_MODIFIERS} onPress={onClear} />
 				) : null}
 				<Spacer />
 				<Button modifiers={CLOSE_BUTTON_MODIFIERS} onPress={onClose}>

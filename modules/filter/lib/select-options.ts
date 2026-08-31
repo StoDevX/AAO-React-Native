@@ -5,6 +5,17 @@ import isEqual from 'lodash/isEqual'
 import reject from 'lodash/reject'
 
 /**
+ * Whether a list filter narrows anything.
+ *
+ * Selecting nothing is the resting state and shows everything, in either mode:
+ * `applyFilter` returns `true` for every item of a disabled filter, so an empty
+ * selection needs no special handling further down. Ticking is what narrows.
+ */
+function narrowsAnything(selected: ListItemSpecType[]): boolean {
+	return selected.length > 0
+}
+
+/**
  * Applies a tap on one option of a list filter, returning the filter that
  * results.
  */
@@ -13,56 +24,27 @@ export function toggleOption<T extends object>(
 	tappedValue: ListItemSpecType,
 ): ListType<T> {
 	let {spec} = filter
-	let {options, selected, mode} = spec
-	let result
+	let {selected} = spec
 
-	if (mode === 'OR' && selected.length === options.length) {
-		// if all options of an OR filter are selected and a user selects
-		// an option, make that the only selected option
-		result = [tappedValue]
-	} else if (selected.some((val) => isEqual(val, tappedValue))) {
-		// if the user has tapped an item, and it's already in the list of
-		// things they've tapped, we want to _remove_ it from that list.
-		result = reject(selected, (val) => isEqual(val, tappedValue))
-	} else {
-		// otherwise, we need to add it to the list
-		result = concat(selected, tappedValue)
-	}
-
-	let enabled = false
-	if (mode === 'OR') {
-		enabled = result.length !== options.length
-	} else if (mode === 'AND') {
-		enabled = result.length > 0
-	}
+	let result = selected.some((val) => isEqual(val, tappedValue))
+		? reject(selected, (val) => isEqual(val, tappedValue))
+		: concat(selected, tappedValue)
 
 	return {
 		...filter,
-		enabled: enabled,
+		enabled: narrowsAnything(result),
 		spec: {...spec, selected: result},
 	}
 }
 
 /**
- * Applies a tap on a list filter's "Show All" option, returning the filter
- * that results.
+ * Clears a list filter's selection, returning the filter that results — which
+ * is the resting state, showing everything.
  */
-export function toggleAll<T extends object>(filter: ListType<T>): ListType<T> {
-	let {spec} = filter
-	let {options, selected} = spec
-	let result: ListItemSpecType[]
-
-	if (selected.length === options.length) {
-		// when all items are selected: uncheck them all
-		result = []
-	} else {
-		// when one or more items are not checked: check them all
-		result = options
-	}
-
+export function clearSelection<T extends object>(filter: ListType<T>): ListType<T> {
 	return {
 		...filter,
-		enabled: result.length !== options.length,
-		spec: {...spec, selected: result},
+		enabled: false,
+		spec: {...filter.spec, selected: []},
 	}
 }
