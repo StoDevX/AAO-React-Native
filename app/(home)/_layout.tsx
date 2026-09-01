@@ -6,7 +6,7 @@ export default function HomeLayout(): React.ReactNode {
 		<Stack screenOptions={{headerBackButtonDisplayMode: 'minimal'}}>
 			<Stack.Screen name="Menus" options={{title: 'Menus'}} />
 			<Stack.Screen name="Streaming Media" options={{title: 'Streaming Media'}} />
-			<Stack.Screen name="News" options={{title: 'News'}} />
+			<Stack.Screen name="News" options={{title: 'News', headerLargeTitleEnabled: true}} />
 			<Stack.Screen name="Transportation" options={{title: 'Transportation'}} />
 			<Stack.Screen name="BuildingHours" />
 			<Stack.Screen

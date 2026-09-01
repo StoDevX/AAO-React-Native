@@ -180,6 +180,12 @@ struct TestIdentifiers {
 	enum News {
 		/// Matches NEWS_ROW_PREFIX in source/features/news/news-row.tsx.
 		static let rowPrefix = "news-row-"
+
+		/// The bottom-right toolbar menu's accessibilityLabel, in news-list.tsx.
+		static let picker = "News Sources"
+
+		/// The bottom-left toolbar menu's accessibilityLabel, in news-list.tsx.
+		static let categoryFilter = "Categories"
 	}
 
 	// MARK: - Streaming Media

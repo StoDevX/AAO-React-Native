@@ -10,7 +10,7 @@ links:
   - rel: https://frogpond.tech/rel/news
     href: 'news/named/mess'
     type: application/vnd.frogpond.feed-items+json
-    titles: {und: The Manitou Messenger}
+    titles: {und: The Olaf Messenger}
     properties: {'https://frogpond.tech/ns/id': mess}
 
   - rel: https://frogpond.tech/rel/news
