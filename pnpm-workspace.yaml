@@ -101,7 +101,7 @@ overrides:
   'js-yaml@4': 'catalog:' # just throw v4 in here as well
   # qs@6.15.1 (via our own `url` polyfill devDependency): fixed within the
   # same 6.15.x line (GHSA-q8mj-m7cp-5q26).
-  'qs@': '6.15.3'
+  'qs@': '6.16.0'
   # @babel/core resolves twice: our own devDependency (already bumped in
   # package.json) and a separate transitive instance pulled in via Jest's
   # babel-jest/istanbul instrumentation chain, which independently pinned
