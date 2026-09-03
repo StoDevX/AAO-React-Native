@@ -34,8 +34,8 @@ publicHoistPattern:
 # theoretically, this configures pnpm to avoid installing optionalDependencies for
 # systems other than the current one
 supportedArchitectures:
-  os: [current]
-  cpu: [current]
+  os: [ current ]
+  cpu: [ current ]
 
 # we use mise to manage the pnpm version
 updateNotifier: false
@@ -67,7 +67,11 @@ minimumReleaseAge: 4320 # 3 days, in minutes
 # apart from each other; excluded so the npm->pnpm migration can reproduce the
 # existing, already-shipped lockfile instead of waiting the gate out.
 # remove after 2026-08-10, once they clear the 3-day window on their own
-minimumReleaseAgeExclude: []
+minimumReleaseAgeExclude:
+  [
+    # Renovate security update: qs@6.16.0
+    qs@6.16.0
+  ]
 
 catalog:
   js-yaml: '5.4.1'
@@ -101,7 +105,7 @@ overrides:
   'js-yaml@4': 'catalog:' # just throw v4 in here as well
   # qs@6.15.1 (via our own `url` polyfill devDependency): fixed within the
   # same 6.15.x line (GHSA-q8mj-m7cp-5q26).
-  'qs@': '6.15.3'
+  'qs@': '6.16.0'
   # @babel/core resolves twice: our own devDependency (already bumped in
   # package.json) and a separate transitive instance pulled in via Jest's
   # babel-jest/istanbul instrumentation chain, which independently pinned
