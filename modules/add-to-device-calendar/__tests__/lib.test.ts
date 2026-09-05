@@ -50,6 +50,7 @@ function generateEvent(): EventType {
 		isSameInstant: false,
 		isOngoing: false,
 		links: [],
+		categories: [],
 		config: {startTime: false, endTime: false, subtitle: 'description'},
 	}
 }

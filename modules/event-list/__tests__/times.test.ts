@@ -37,6 +37,7 @@ describe('allDay', () => {
 			location: 'location',
 			isOngoing: false,
 			links: [],
+			categories: [],
 			config: {startTime: true, endTime: true, subtitle: 'description'},
 		} satisfies EventType
 	}
@@ -97,6 +98,7 @@ describe('ongoing events', () => {
 			location: 'location',
 			isOngoing: true,
 			links: [],
+			categories: [],
 			config,
 		}
 	}
@@ -152,6 +154,7 @@ describe('detailTimeLines', () => {
 			location: 'location',
 			isOngoing: false,
 			links: [],
+			categories: [],
 			config,
 			...overrides,
 		}
@@ -281,6 +284,7 @@ describe('listTimeLines', () => {
 			location: 'location',
 			isOngoing: false,
 			links: [],
+			categories: [],
 			config,
 			...overrides,
 		}

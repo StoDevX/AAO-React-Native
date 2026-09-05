@@ -123,6 +123,7 @@ function toWireEvent(
 		location: item.location ?? '',
 		isOngoing: isBefore(new Date(startIso), startOfDay(now)),
 		links: linksIn(descriptionHtml),
+		categories: [],
 		config: {
 			startTime: !(startTime.isDate && endTime.isDate),
 			endTime: !(startTime.isDate && endTime.isDate),

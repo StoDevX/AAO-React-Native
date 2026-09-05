@@ -62,6 +62,7 @@ export function toEventType(event: DeviceEventFields): EventType {
 		isSameInstant,
 		isOngoing: false,
 		links: event.url ? [event.url] : [],
+		categories: [],
 		config: {
 			startTime: !event.allDay,
 			endTime: !event.allDay,

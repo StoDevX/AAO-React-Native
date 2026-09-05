@@ -12,6 +12,7 @@ const goodEvent = {
 	location: 'Northfield',
 	isOngoing: false,
 	links: ['https://example.com/a'],
+	categories: [],
 	config: {startTime: true, endTime: true, subtitle: 'location'},
 }
 

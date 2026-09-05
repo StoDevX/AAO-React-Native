@@ -45,6 +45,7 @@ function makeEvent(overrides: Partial<EventType> = {}): EventType {
 		isSameInstant,
 		isOngoing: false,
 		links: [],
+		categories: [],
 		config,
 		...overrides,
 	}
