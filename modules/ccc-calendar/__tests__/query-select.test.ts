@@ -34,8 +34,8 @@ function makeWireEvent(overrides: Partial<WireEvent> = {}): WireEvent {
 		title: 'New Faculty Orientation',
 		description: 'Seminars across campus.',
 		location: 'Kings Dining',
-		startTime: '2026-08-17T07:45:00Z',
-		endTime: '2026-08-17T11:30:00Z',
+		startTime: '2026-09-10T07:45:00Z',
+		endTime: '2026-09-10T11:30:00Z',
 		isAllDay: false,
 		isMultiDay: false,
 		isSameInstant: false,
@@ -77,7 +77,7 @@ describe('namedCalendarOptions select', () => {
 		let [selected] = selectNamed('stolaf')([event])
 
 		expect(selected?.key).toBe(
-			`${moment('2026-08-17T07:45:00Z').toISOString()}|New Faculty Orientation`,
+			`${moment('2026-09-10T07:45:00Z').toISOString()}|New Faculty Orientation`,
 		)
 	})
 
@@ -94,7 +94,7 @@ describe('namedCalendarOptions select', () => {
 
 		expect(moment.isMoment(selected?.event.startTime)).toBe(true)
 		expect(selected?.event.startTime.toISOString()).toBe(
-			moment('2026-08-17T07:45:00Z').toISOString(),
+			moment('2026-09-10T07:45:00Z').toISOString(),
 		)
 	})
 
@@ -105,7 +105,7 @@ describe('namedCalendarOptions select', () => {
 
 		expect(selected[0]?.event.title).toBe('New Faculty Orientation!')
 		expect(selected[0]?.key).toBe(
-			`${moment('2026-08-17T07:45:00Z').toISOString()}|New Faculty Orientation!`,
+			`${moment('2026-09-10T07:45:00Z').toISOString()}|New Faculty Orientation!`,
 		)
 	})
 })
@@ -122,8 +122,8 @@ describe('deviceCalendarOptions select', () => {
 				title: 'Labor Day',
 				description: '',
 				location: '',
-				startTime: moment('2026-09-07T00:00:00'),
-				endTime: moment('2026-09-07T23:59:59'),
+				startTime: moment('2026-09-10T00:00:00'),
+				endTime: moment('2026-09-10T23:59:59'),
 				isAllDay: false,
 				isMultiDay: false,
 				isSameInstant: false,

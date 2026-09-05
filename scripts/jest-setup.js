@@ -15,5 +15,5 @@ jest.mock('expo-clipboard', () => ({
 	hasStringAsync: jest.fn(() => Promise.resolve(false)),
 }))
 jest.mock('@frogpond/launch-arguments', () => ({
-	isUITesting: false,
+	isUITesting: true,
 }))

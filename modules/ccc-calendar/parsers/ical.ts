@@ -121,7 +121,7 @@ function toWireEvent(
 		title: item.summary ?? '',
 		description: plainTextDescription(descriptionHtml),
 		location: item.location ?? '',
-		isOngoing: isBefore(new Date(startIso), startOfDay(now)),
+		isOngoing: isBefore(new Date(startIso), startOfDay(now)) && isAfter(new Date(endIso), now),
 		links: linksIn(descriptionHtml),
 		categories: [],
 		config: {

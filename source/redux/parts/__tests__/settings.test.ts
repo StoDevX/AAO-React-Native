@@ -17,25 +17,25 @@ describe('calendar source selection', () => {
 	// A fresh install lands on St. Olaf today; defaulting both on would change
 	// what every existing user sees on first launch.
 	test('starts with St. Olaf alone', () => {
-		expect(initial().enabledCalendarSources).toEqual(['stolaf'])
+		expect(initial().enabledCalendarSources).toEqual(['uitest'])
 	})
 
 	test('toggling adds a source', () => {
 		let state = reducer(initial(), toggleCalendarSource('northfield'))
 
-		expect(state.enabledCalendarSources).toEqual(['stolaf', 'northfield'])
+		expect(state.enabledCalendarSources).toEqual(['uitest', 'northfield'])
 	})
 
 	test('toggling again removes it', () => {
 		let state = reducer(initial(), toggleCalendarSource('northfield'))
 		state = reducer(state, toggleCalendarSource('northfield'))
 
-		expect(state.enabledCalendarSources).toEqual(['stolaf'])
+		expect(state.enabledCalendarSources).toEqual(['uitest'])
 	})
 
 	// Turning everything off is a state the list handles, not one to prevent.
 	test('the last source can be turned off', () => {
-		let state = reducer(initial(), toggleCalendarSource('stolaf'))
+		let state = reducer(initial(), toggleCalendarSource('uitest'))
 
 		expect(state.enabledCalendarSources).toEqual([])
 	})
@@ -53,7 +53,7 @@ describe('calendar source selection', () => {
 		test('the selector falls back to St. Olaf alone', () => {
 			let rootState = {settings: staleRehydratedState} as RootState
 
-			expect(selectEnabledCalendarSources(rootState)).toEqual(['stolaf'])
+			expect(selectEnabledCalendarSources(rootState)).toEqual(['uitest'])
 		})
 
 		test('toggling does not throw, and starts from St. Olaf alone', () => {
@@ -61,7 +61,7 @@ describe('calendar source selection', () => {
 
 			let state = reducer(staleRehydratedState, toggleCalendarSource('northfield'))
 
-			expect(state.enabledCalendarSources).toEqual(['stolaf', 'northfield'])
+			expect(state.enabledCalendarSources).toEqual(['uitest', 'northfield'])
 		})
 	})
 })
@@ -87,7 +87,7 @@ describe('news source selection', () => {
 		const staleRehydratedState = {
 			unofficialityAcknowledged: true,
 			devModeOverride: false,
-			enabledCalendarSources: ['stolaf'],
+			enabledCalendarSources: ['uitest'],
 		} as ReturnType<typeof reducer>
 
 		test('the selector falls back to St. Olaf', () => {

@@ -25,14 +25,14 @@ export default function CalendarPage(): React.ReactNode {
 	let {selectedCategory, selectCategory} = useCalendarFilterStore()
 
 	let availableCategories = useMemo(() => {
-		let cats = new Set(events.flatMap((e) => e.event.categories))
+		let cats = new Set(events.flatMap((e) => e.event.categories ?? []))
 		// Z-A in code → A-Z visually: SwiftUI Menu Section renders bottom-to-top
 		return [...cats].sort((a, b) => b.localeCompare(a))
 	}, [events])
 
 	let filteredEvents = useMemo(() => {
 		if (selectedCategory === null) return events
-		return events.filter((e) => e.event.categories.includes(selectedCategory))
+		return events.filter((e) => e.event.categories?.includes(selectedCategory))
 	}, [events, selectedCategory])
 
 	let onPressEvent = (entry: SourcedEvent) => {
