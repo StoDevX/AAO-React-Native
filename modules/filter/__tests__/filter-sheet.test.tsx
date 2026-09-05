@@ -328,9 +328,9 @@ describe('FilterSheet', () => {
 
 		await openSheet()
 		await fireEvent.press(screen.getByText('A'))
-		await fireEvent.press(screen.getByRole('button', {name: 'Close'}))
+		await fireEvent.press(screen.getByRole('button', {name: 'Done'}))
 
-		// The X commits `local`, not a discard path -- a swipe already applies
+		// Done commits `local`, not a discard path -- a swipe already applies
 		// the user's selections, so the two dismissal gestures have to agree.
 		expect(onChange).toHaveBeenCalledWith(
 			expect.objectContaining({spec: expect.objectContaining({selected: [{title: 'A'}]})}),
@@ -357,7 +357,7 @@ describe('FilterSheet', () => {
 
 		let clear = screen.getByRole('button', {name: 'Clear'})
 		await fireEvent.press(clear)
-		await fireEvent.press(screen.getByRole('button', {name: 'Close'}))
+		await fireEvent.press(screen.getByRole('button', {name: 'Done'}))
 
 		// It drives `clearSelection`, so the emitted filter is empty and off --
 		// the header button is wired to the rule, not a re-implementation of it.
