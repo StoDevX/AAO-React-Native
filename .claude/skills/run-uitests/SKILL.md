@@ -48,9 +48,13 @@ Three things that bite on the second run:
   `rm -rf` it first, as above.
 - **It appends `.xcresult` for you.** `-resultBundlePath /tmp/results` writes
   `/tmp/results.xcresult`, which is the path every later command wants.
-- **Pick a simulator on the runtime the build targeted.** The bundle is named
-  for it — `AllAboutOlaf_iphonesimulator27.0-arm64-x86_64.xctestrun` — and a
-  device on an older runtime will not run it.
+- **The version in the bundle's name is the SDK, not a runtime.**
+  `AllAboutOlaf_iphonesimulator27.0-arm64-x86_64.xctestrun` is built by the
+  Xcode 27 SDK and runs on any installed runtime that SDK supports — iOS 26.5
+  at the time of writing. Do not go hunting for a matching runtime; there is
+  no iOS 27. `xcrun simctl list runtimes` shows what you have.
+- **`find` picks an arbitrary bundle if there is more than one.** There is
+  normally one, but pass the path explicitly if `find` returns several.
 
 Steps 1 and 4 are the commands CI runs (`.github/workflows/check.yml`, jobs
 `ios-build` and `ios-uitest`), so a local failure and a CI failure mean the same
@@ -142,8 +146,15 @@ silently did nothing is indistinguishable from one that worked.
 - `ios/build` is derived data for this checkout alone, so an existing one is
   safe to build on top of — step 1 is worth running anyway, since it is
   incremental and settles whether the bundle matches your sources.
-- Network-backed screens really do hit the network here. Assert on things the
-  screen decides — a field's contents, which empty state appeared — rather than
-  on particular records, unless the test is about the data.
+- **A failure message that exists in no source file means stale derived data.**
+  If an assertion string cannot be found by grepping `uitests/` or the built
+  test binary, stop trusting the run: `rm -rf ios/build` and rebuild. Seen once
+  after a build was killed part-way through.
+- **Network-backed screens really do hit the live server here — nothing is
+  stubbed.** Assert on what the screen decides, not on records it was handed: a
+  field's contents, which empty state appeared, whether a list got shorter.
+  Naming a row that St. Olaf can rename writes a test that fails on someone
+  else's schedule. When a test genuinely needs to name one, say so in a comment
+  next to the constant, so whoever it breaks for knows why.
 - CI sharding lives in `scripts/split-uitests.py`; `-only-testing` takes
   `Bundle/Class/method` and can be repeated.

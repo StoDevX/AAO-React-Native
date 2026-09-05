@@ -46,7 +46,14 @@ struct, so a literal in a test is drift waiting to happen.
 component lands as varies — button, other, cell — so prefer
 `app.element(matching:)` from `XCUITestHelpers.swift`. Pressable-wrapped rows
 often carry a concatenated label, which is what `elementWithLabel(startingWith:)`
-is for.
+is for — but it is prefix matching, so a later row named as an extension of an
+earlier one will match both.
+
+**A `Stack.SearchBar` is `app.searchFields.firstMatch`**, wherever the screen
+puts it — the bottom-toolbar placement most screens use here is reached the same
+way as a header one. `searchField.value as? String` returns the placeholder, not
+`nil`, when the field is empty. The SwiftUI `TextField` on the Carleton map is
+the exception: that one is `app.textFields[...]`.
 
 **Retry a dropped tap; do not lengthen the timeout.** A row is hittable as soon
 as its host mounts, but its action has to reach JavaScript — a tap synthesized
