@@ -147,7 +147,7 @@ struct TestIdentifiers {
 		/// Categories from the St. Olaf calendar. Unlike calendar sources, these
 		/// come from the event data itself, so the exact set depends on what the
 		/// calendar is serving. These two appear reliably.
-		static let categories = ["Music Events", "Academic Year"]
+		static let categories = ["Music", "Academic Year"]
 		/// Only the event detail screen carries this, so it is how a test knows
 		/// the push landed.
 		static let shareEvent = "Share Event"

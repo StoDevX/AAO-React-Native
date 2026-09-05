@@ -77,7 +77,7 @@ describe('useCalendarSources', () => {
 		mockUseIsDevMode.mockReturnValue(false)
 		let {result} = await renderHook(() => useCalendarSources(), {wrapper})
 
-		expect(result.current.remote.map((s) => s.id)).toEqual(['stolaf', 'northfield'])
+		expect(result.current.remote.map((s) => s.id)).toEqual(['stolaf'])
 		expect(result.current.device).toEqual([])
 		// The branch's central invariant: a production build must not so much as
 		// ask EventKit what it already granted.
@@ -178,18 +178,19 @@ describe('useCalendarSources', () => {
 		let {result} = await renderHook(() => useCalendarSources(), {wrapper})
 
 		await act(() => {
-			result.current.toggle('northfield')
+			result.current.toggle('stolaf')
 		})
 
-		expect(result.current.enabled.map((s) => s.id)).toEqual(['stolaf', 'northfield'])
+		// Falls back to first remote source when nothing is explicitly enabled
+		expect(result.current.enabled.map((s) => s.id)).toEqual(['stolaf'])
 	})
 
 	// The detail screen arrives knowing only an id, and must reach the same
 	// colour the list used.
 	test('a source id resolves to its source', async () => {
 		mockUseIsDevMode.mockReturnValue(false)
-		let {result} = await renderHook(() => useCalendarSource('northfield'), {wrapper})
+		let {result} = await renderHook(() => useCalendarSource('stolaf'), {wrapper})
 
-		expect(result.current?.title).toBe('Northfield')
+		expect(result.current?.title).toBe('St. Olaf')
 	})
 })

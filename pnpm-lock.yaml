@@ -103,6 +103,9 @@ importers:
       '@frogpond/info-header':
         specifier: workspace:*
         version: link:modules/info-header
+      '@frogpond/launch-arguments':
+        specifier: workspace:*
+        version: link:modules/launch-arguments
       '@frogpond/layout':
         specifier: workspace:*
         version: link:modules/layout
@@ -542,6 +545,9 @@ importers:
       '@frogpond/html-lib':
         specifier: workspace:*
         version: link:../html-lib
+      '@frogpond/launch-arguments':
+        specifier: workspace:*
+        version: link:../launch-arguments
       '@frogpond/notice':
         specifier: workspace:*
         version: link:../notice
@@ -752,6 +758,8 @@ importers:
         specifier: ^0.86.2
         version: 0.86.2(patch_hash=6ca2e1225f38672b073b92b9d13f24feebbe9e37ba67708a3f1569275ce99191)(@babel/core@7.29.7)(@react-native/jest-preset@0.86.2)(@react-native/metro-config@0.86.2)(@types/react@19.2.18)(react@19.2.8)(supports-color@8.1.1)
 
+  modules/launch-arguments: {}
+
   modules/layout:
     dependencies:
       react:
@@ -908,6 +916,9 @@ importers:
 
   modules/timer:
     dependencies:
+      '@frogpond/launch-arguments':
+        specifier: workspace:*
+        version: link:../launch-arguments
       moment-timezone:
         specifier: ^0.6.3
         version: 0.6.3

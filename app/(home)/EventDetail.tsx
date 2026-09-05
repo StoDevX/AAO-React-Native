@@ -21,14 +21,16 @@ import {
 	useMergedEvents,
 } from '@frogpond/ccc-calendar'
 import {LoadingView, NoticeView} from '@frogpond/notice'
-import {STOLAF_POWERED_BY, NORTHFIELD_POWERED_BY} from '../../source/features/calendar/constants'
+import {STOLAF_POWERED_BY} from '../../source/features/calendar/constants'
 import {KSTO_POWERED_BY, KRLX_POWERED_BY} from '../../source/features/streaming/radio/constants'
 
-type EventSource = 'stolaf' | 'northfield' | 'ksto-schedule' | 'krlx-schedule'
+type EventSource = 'stolaf' | 'uitest' | 'ksto-schedule' | 'krlx-schedule'
+
+const UITEST_POWERED_BY = {title: '', href: ''} as const
 
 const POWERED_BY: Record<EventSource, {title: string; href: string}> = {
 	stolaf: STOLAF_POWERED_BY,
-	northfield: NORTHFIELD_POWERED_BY,
+	uitest: UITEST_POWERED_BY,
 	'ksto-schedule': KSTO_POWERED_BY,
 	'krlx-schedule': KRLX_POWERED_BY,
 }
@@ -43,7 +45,7 @@ const NO_ATTRIBUTION = {title: '', href: ''} as const
  * The sources that contribute to the merged calendar, and so have neighbours
  * to show. KSTO's and KRLX's broadcast schedules do not.
  */
-const REMOTE_SOURCE_IDS = new Set(['stolaf', 'northfield'])
+const REMOTE_SOURCE_IDS = new Set(['stolaf', 'uitest'])
 
 export default function EventDetailPage(): React.ReactNode {
 	let {source, eventKey} = useLocalSearchParams<{

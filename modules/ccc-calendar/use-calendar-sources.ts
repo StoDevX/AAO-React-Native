@@ -49,10 +49,22 @@ export function useCalendarSources(): CalendarSourcesState {
 	}, [devMode, client])
 
 	let all = React.useMemo(() => [...REMOTE_SOURCES, ...device], [device])
+	let allIds = React.useMemo(() => new Set(all.map((s) => s.id)), [all])
+
+	// Filter to only IDs that exist in `all` — persisted state can reference
+	// sources that no longer exist (e.g., 'uitest' from a UI test run).
 	let enabled = React.useMemo(
-		() => all.filter((source) => enabledIds.includes(source.id)),
-		[all, enabledIds],
+		() => all.filter((source) => enabledIds.includes(source.id) && allIds.has(source.id)),
+		[all, enabledIds, allIds],
 	)
+
+	// If nothing is enabled but remote sources exist, default to the first remote.
+	// This handles the case where persisted state has only invalid IDs.
+	let effectiveEnabled = React.useMemo(() => {
+		if (enabled.length > 0) return enabled
+		let fallback = REMOTE_SOURCES[0]
+		return fallback ? [fallback] : []
+	}, [enabled])
 
 	let toggle = React.useCallback(
 		(id: string) => {
@@ -65,7 +77,7 @@ export function useCalendarSources(): CalendarSourcesState {
 		remote: REMOTE_SOURCES,
 		device,
 		all,
-		enabled,
+		enabled: effectiveEnabled,
 		deviceAvailable: devMode && granted,
 		canOfferDevice: devMode,
 		toggle,

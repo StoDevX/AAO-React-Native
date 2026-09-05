@@ -15,6 +15,7 @@
     "@frogpond/event-list": "workspace:*",
     "@frogpond/event-type": "workspace:*",
     "@frogpond/html-lib": "workspace:*",
+    "@frogpond/launch-arguments": "workspace:*",
     "@frogpond/notice": "workspace:*",
     "@frogpond/timer": "workspace:*",
     "expo-calendar": "57.0.2",

@@ -19,7 +19,7 @@ export default function CalendarPage(): React.ReactNode {
 	let router = useRouter()
 	let {now} = useMomentTimer({intervalMs: 60000, timezone: timezone()})
 	let {enabled} = useCalendarSources()
-	let {events, failed, isRefetching, refetchAll} = useMergedEvents(enabled)
+	let {events, failed, isLoading, isRefetching, refetchAll} = useMergedEvents(enabled)
 	let eventListRef = React.useRef<EventList.EventListHandle>(null)
 
 	let {selectedCategory, selectCategory} = useCalendarFilterStore()
@@ -52,6 +52,7 @@ export default function CalendarPage(): React.ReactNode {
 				ref={eventListRef}
 				events={filteredEvents}
 				failed={failed}
+				isLoading={isLoading}
 				now={now}
 				onPressEvent={onPressEvent}
 				onRefresh={refetchAll}

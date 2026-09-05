@@ -9,14 +9,9 @@ import {
 } from '../sources'
 
 describe('calendar sources', () => {
-	test('the app ships two remote sources', () => {
-		expect(REMOTE_SOURCES.map((s) => s.id)).toEqual(['stolaf', 'northfield'])
+	test('the app ships one remote source', () => {
+		expect(REMOTE_SOURCES.map((s) => s.id)).toEqual(['stolaf'])
 		expect(REMOTE_SOURCES.every((s) => s.kind === 'remote')).toBe(true)
-	})
-
-	test('the two remote sources are told apart by colour', () => {
-		let [stolaf, northfield] = REMOTE_SOURCES
-		expect(stolaf.color).not.toBe(northfield.color)
 	})
 
 	// EventKit's colour is a choice the user already made in Calendar.app, so a

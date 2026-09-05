@@ -32,6 +32,7 @@ type Props = {
 	sources: CalendarSource[]
 	failed: CalendarSource[]
 	message?: string
+	isLoading?: boolean
 	refreshing: boolean
 	onRefresh: () => unknown
 	now: Moment
@@ -212,6 +213,9 @@ export let EventList = React.forwardRef<EventListHandle, Props>(function EventLi
 					text={`Could not load ${props.failed.map((source) => source.title).join(', ')}.`}
 				/>
 			)
+		}
+		if (props.isLoading) {
+			return <NoticeView text="Loading…" />
 		}
 		return <NoticeView buttonText="Try Again" onPress={props.onRefresh} text="No events." />
 	}

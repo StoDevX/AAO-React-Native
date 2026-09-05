@@ -11,6 +11,7 @@ import {
 type MergedEvents = {
 	events: SourcedEvent[]
 	failed: CalendarSource[]
+	isLoading: boolean
 	isRefetching: boolean
 	refetchAll: () => Promise<void>
 }
@@ -34,11 +35,12 @@ export function useMergedEvents(sources: CalendarSource[]): MergedEvents {
 	// here. `sources` is needed below only to name what failed.
 	let events = results.flatMap((result) => result.data ?? [])
 	let failed = sources.filter((_, index) => results[index]?.isError)
+	let isLoading = results.some((result) => result.isLoading)
 	let isRefetching = results.some((result) => result.isRefetching)
 
 	let refetchAll = async () => {
 		await Promise.all(results.map((result) => result.refetch()))
 	}
 
-	return {events, failed, isRefetching, refetchAll}
+	return {events, failed, isLoading, isRefetching, refetchAll}
 }
