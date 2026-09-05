@@ -5,6 +5,7 @@ import {persist, createJSONStorage} from 'zustand/middleware'
 type CalendarFilterStore = {
 	selectedCategories: string[]
 	setSelectedCategories: (categories: string[]) => void
+	toggleCategory: (category: string) => void
 	clearCategories: () => void
 }
 
@@ -13,6 +14,12 @@ export const useCalendarFilterStore = create<CalendarFilterStore>()(
 		(set) => ({
 			selectedCategories: [],
 			setSelectedCategories: (categories) => set({selectedCategories: categories}),
+			toggleCategory: (category) =>
+				set((state) => ({
+					selectedCategories: state.selectedCategories.includes(category)
+						? state.selectedCategories.filter((c) => c !== category)
+						: [...state.selectedCategories, category],
+				})),
 			clearCategories: () => set({selectedCategories: []}),
 		}),
 		{
