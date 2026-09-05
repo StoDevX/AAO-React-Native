@@ -7,7 +7,8 @@ pass and cannot see any of it.
 
 **To run these, use the `run-uitests` skill.** It covers the build/run commands,
 proving a test red before trusting it, and pulling screenshots out of a result
-bundle.
+bundle. To drive the app by hand instead of asserting on it, see
+`run-on-simulator`.
 
 ## Layout
 
