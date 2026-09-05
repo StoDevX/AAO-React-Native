@@ -67,7 +67,7 @@ function toWireEvent(event: z.infer<typeof TecEventSchema>, now: Date): WireEven
 		title: decode(event.title),
 		description,
 		location: venueName(event.venue),
-		isOngoing: new Date(startTime) < startOfToday,
+		isOngoing: new Date(startTime) < startOfToday && new Date(endTime) > now,
 		// Descriptions commonly link back to the event's own page, so the two
 		// sources can produce the same href twice.
 		links: [...new Set([...descriptionLinks, event.url])],

@@ -1,4 +1,10 @@
 import {act, renderHook} from '@testing-library/react-native'
+
+// Override the global mock - timer tests need real time behavior
+jest.mock('@frogpond/launch-arguments', () => ({
+	isUITesting: false,
+}))
+
 import {useMomentTimer} from '../index'
 
 const ONE_MINUTE = 60000

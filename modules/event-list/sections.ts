@@ -34,7 +34,8 @@ export function groupEvents(events: readonly SourcedEvent[], now: Moment): Event
 	)
 
 	let grouped = groupBy(ordered, (entry) => {
-		if (entry.event.isOngoing) {
+		// Only show as ongoing if still active (end time is after now)
+		if (entry.event.isOngoing && entry.event.endTime.isAfter(now)) {
 			return 'Ongoing'
 		}
 		if (entry.event.startTime.isSame(now, 'day')) {
