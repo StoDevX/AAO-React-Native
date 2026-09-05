@@ -7,6 +7,7 @@ import {Detail, ListRow, ListSeparator, Title} from '@frogpond/lists'
 import * as c from '@frogpond/colors'
 import {useDebounce} from '@frogpond/use-debounce'
 import {LoadingView, NoticeView} from '@frogpond/notice'
+import {SearchBar} from '../../../source/components/search-bar'
 import {formatResults} from '../../../source/features/directory/helpers'
 import {directoryEntriesOptions} from '../../../source/features/directory/query'
 import type {DirectoryItem, DirectorySearchTypeEnum} from '../../../source/features/directory/types'
@@ -51,11 +52,12 @@ function DirectoryView(): React.ReactNode {
 				<Stack.Toolbar.SearchBarSlot />
 			</Stack.Toolbar>
 
-			<Stack.SearchBar
-				onChangeText={(event) => {
+			<SearchBar
+				onChangeText={(text) => {
 					setSearchQueryType('query')
-					setTypedQuery(event.nativeEvent.text)
+					setTypedQuery(text)
 				}}
+				value={typedQuery}
 			/>
 		</>
 	)

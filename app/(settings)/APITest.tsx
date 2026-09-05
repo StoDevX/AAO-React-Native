@@ -7,6 +7,7 @@ import * as c from '@frogpond/colors'
 import {useQuery} from '@tanstack/react-query'
 import {Stack, useNavigation, useRouter} from 'expo-router'
 
+import {SearchBar} from '../../source/components/search-bar'
 import {
 	ServerRoute,
 	serverRoutesOptions,
@@ -15,6 +16,11 @@ import {
 export default function APITestPage(): React.ReactNode {
 	const navigation = useNavigation()
 	let router = useRouter()
+
+	// The path is only read when the reader hits Search, but it has to be held
+	// here as well: the search field is the one place it lives otherwise, and a
+	// swipe back that is begun and abandoned empties it.
+	let [path, setPath] = React.useState('')
 
 	let {
 		data: groupedRoutes = [],
@@ -67,16 +73,17 @@ export default function APITestPage(): React.ReactNode {
 				<Stack.Toolbar.SearchBarSlot />
 			</Stack.Toolbar>
 
-			<Stack.SearchBar
+			<SearchBar
 				autoCapitalize="none"
+				onChangeText={setPath}
 				onSearchButtonPress={(ev) => {
-					let filterPath = ev.nativeEvent.text
 					router.push({
 						pathname: '/APITestDetail',
-						params: {displayName: filterPath},
+						params: {displayName: ev.nativeEvent.text},
 					})
 				}}
 				placeholder="/path/to/uri"
+				value={path}
 			/>
 
 			<View style={styles.serverRouteContainer}>
