@@ -77,12 +77,14 @@ export default function CalendarPage(): React.ReactNode {
 	return (
 		<>
 			<Stack.Toolbar placement="right">
-				<FilterToolbarButton
-					filter={categoryFilter}
-					isActive={isFilterActive}
-					onChange={handleFilterChange}
-					title="Categories"
-				/>
+				<Stack.Toolbar.View>
+					<FilterToolbarButton
+						filter={categoryFilter}
+						isActive={isFilterActive}
+						onChange={handleFilterChange}
+						title="Categories"
+					/>
+				</Stack.Toolbar.View>
 			</Stack.Toolbar>
 
 			<EventList.EventList
