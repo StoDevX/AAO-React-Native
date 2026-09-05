@@ -94,7 +94,23 @@ export let EventList = React.forwardRef<EventListHandle, Props>(function EventLi
 		return days.find((d) => d.format('YYYY-MM-DD') === topKey) ?? null
 	}, [days, sections, props.now])
 
-	let selectedDay = chosenDay ?? defaultDay
+	// If the chosen day no longer has events (filter changed), fall back to defaultDay.
+	let chosenDayValid = React.useMemo(() => {
+		if (!chosenDay) return false
+		let chosenKey = chosenDay.isSame(props.now, 'day') ? 'Today' : chosenDay.format('YYYY-MM-DD')
+		return sections.some((s) => s.key === chosenKey)
+	}, [chosenDay, sections, props.now])
+
+	let selectedDay = chosenDayValid ? chosenDay : defaultDay
+
+	// Scroll strip to first event day when filter invalidates the current selection.
+	let prevChosenDayValid = React.useRef(chosenDayValid)
+	React.useEffect(() => {
+		if (prevChosenDayValid.current && !chosenDayValid && defaultDay) {
+			stripRef.current?.scrollToDay(defaultDay)
+		}
+		prevChosenDayValid.current = chosenDayValid
+	}, [chosenDayValid, defaultDay])
 
 	let sectionKeyFor = React.useCallback(
 		(day: Moment) => (day.isSame(props.now, 'day') ? 'Today' : day.format('YYYY-MM-DD')),
