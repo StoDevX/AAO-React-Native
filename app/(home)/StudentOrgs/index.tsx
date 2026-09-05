@@ -22,6 +22,7 @@ import {Stack, useRouter} from 'expo-router'
 import memoize from 'lodash/memoize'
 import {studentOrgsOptions} from '../../../source/features/student-orgs/query'
 import {useQuery} from '@tanstack/react-query'
+import {SearchBar} from '../../../source/components/search-bar'
 
 const splitToArray = memoize((str: string) => words(deburr(str.toLowerCase())))
 
@@ -97,7 +98,7 @@ function StudentOrgsView(): React.ReactNode {
 				<Stack.Toolbar.SearchBarSlot />
 			</Stack.Toolbar>
 
-			<Stack.SearchBar onChangeText={(ev) => setQuery(ev.nativeEvent.text)} />
+			<SearchBar onChangeText={setQuery} value={query} />
 		</>
 	)
 

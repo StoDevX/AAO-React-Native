@@ -25,6 +25,7 @@ import {
 } from '../../source/features/sis/course-search/lib/execute-search'
 import {useCourseData} from '../../source/features/sis/course-search/query'
 import {UseQueryResult} from '@tanstack/react-query'
+import {SearchBar} from '../../source/components/search-bar'
 
 function doSearch(args: {
 	query: string
@@ -221,9 +222,10 @@ function CourseSearchResultsView(): React.ReactNode {
 				<Stack.Toolbar.SearchBarSlot />
 			</Stack.Toolbar>
 
-			<Stack.SearchBar
-				onChangeText={(event) => setSearchQuery(event.nativeEvent.text)}
+			<SearchBar
+				onChangeText={setSearchQuery}
 				placeholder="Search for a course"
+				value={searchQuery}
 			/>
 
 			<SectionList
