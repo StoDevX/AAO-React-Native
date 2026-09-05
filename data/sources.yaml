@@ -38,12 +38,6 @@ links:
     properties: {'https://frogpond.tech/ns/id': stolaf}
 
   - rel: https://frogpond.tech/rel/calendar
-    href: 'calendar/named/northfield'
-    type: application/vnd.frogpond.events+json
-    titles: {und: Northfield}
-    properties: {'https://frogpond.tech/ns/id': northfield}
-
-  - rel: https://frogpond.tech/rel/calendar
     href: 'calendar/named/krlx-schedule'
     type: application/vnd.frogpond.events+json
     titles: {und: KRLX Schedule}

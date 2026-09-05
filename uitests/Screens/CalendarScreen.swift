@@ -24,50 +24,45 @@ struct CalendarScreen: Screen {
 		return self
 	}
 
-	/// Every calendar is a menu item, so a UIMenu action is a button.
+	/// Every category is a menu item, so a UIMenu action is a button.
 	@discardableResult
-	func checkCalendarsListed() -> Self {
-		for calendar in TestIdentifiers.Calendar.calendars {
-			XCTContext.runActivity(named: calendar) { _ in
+	func checkCategoriesListed() -> Self {
+		for category in TestIdentifiers.Calendar.categories {
+			XCTContext.runActivity(named: category) { _ in
 				XCTAssertTrue(
-					app.buttons[calendar].waitForExistence(timeout: 30),
-					"\(calendar) should be offered in the picker")
+					app.buttons[category].waitForExistence(timeout: 30),
+					"\(category) should be offered in the picker")
 			}
 		}
 		return self
 	}
 
-	/// Tap a calendar in the open menu.
+	/// Tap a category in the open menu.
 	@discardableResult
-	func toggle(_ calendar: String) -> Self {
-		let item = app.buttons[calendar]
+	func selectCategory(_ category: String) -> Self {
+		let item = app.buttons[category]
 		XCTAssertTrue(
 			item.waitForExistence(timeout: 30),
-			"\(calendar) should be offered in the picker")
+			"\(category) should be offered in the picker")
 		item.tap()
 		return self
 	}
 
-	/// Assert a calendar is ticked in the open menu.
-	///
-	/// A screenshot of a merged list is only worth keeping if both calendars
-	/// really are on -- one that quietly failed to switch on looks the same as a
-	/// day that happened to hold no events from it.
+	/// Assert a category is selected in the open menu.
 	@discardableResult
-	func verifyChecked(_ calendar: String) -> Self {
+	func verifySelected(_ category: String) -> Self {
 		let item = app.buttons.matching(
-			NSPredicate(format: "label == %@ AND isSelected == true", calendar)
+			NSPredicate(format: "label == %@ AND isSelected == true", category)
 		).firstMatch
 		XCTAssertTrue(
 			item.waitForExistence(timeout: 30),
-			"\(calendar) should be ticked in the picker")
+			"\(category) should be selected in the picker")
 		return self
 	}
 
-	/// Whether the menu is still on screen, which is what `unstable_keepPresented`
-	/// is meant to buy: a UIMenu's items only exist in the tree while it is open.
+	/// Whether the menu is still on screen.
 	func menuIsPresented() -> Bool {
-		app.buttons[TestIdentifiers.Calendar.calendars[0]].exists
+		app.buttons[TestIdentifiers.Calendar.categories[0]].exists
 	}
 
 	/// Close the menu by tapping well away from it -- the toolbar button is at
@@ -77,7 +72,7 @@ struct CalendarScreen: Screen {
 	func dismissMenu() -> Self {
 		if menuIsPresented() {
 			app.coordinate(withNormalizedOffset: CGVector(dx: 0.1, dy: 0.2)).tap()
-			_ = app.buttons[TestIdentifiers.Calendar.calendars[0]].waitForNonExistence(timeout: 10)
+			_ = app.buttons[TestIdentifiers.Calendar.categories[0]].waitForNonExistence(timeout: 10)
 		}
 		return self
 	}

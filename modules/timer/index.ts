@@ -1,6 +1,14 @@
 import {useCallback, useEffect, useRef, useState} from 'react'
 import {default as moment, unitOfTime, type Moment} from 'moment-timezone'
 
+import {isUITesting} from '@frogpond/launch-arguments'
+
+/**
+ * Frozen date for UI testing. Tests run against fixture data anchored to this
+ * date, so scrolling/today behavior is predictable.
+ */
+const UITEST_FROZEN_DATE = '2026-09-05T12:00:00-05:00'
+
 interface BasicProps {
 	intervalMs: number // ms
 }
@@ -47,10 +55,13 @@ function useBoundaryInterval(onTick: () => void, intervalMs: number): void {
 
 export function useDateTimer(props: BasicProps): {now: Date} {
 	let {intervalMs} = props
-	let [now, setNow] = useState(() => new Date())
+	let frozenDate = isUITesting ? new Date(UITEST_FROZEN_DATE) : null
+	let [now, setNow] = useState(() => frozenDate ?? new Date())
 
 	useBoundaryInterval(() => {
-		setNow(new Date())
+		if (!frozenDate) {
+			setNow(new Date())
+		}
 	}, intervalMs)
 
 	return {now}
@@ -60,7 +71,7 @@ export function useMomentTimer(props: MomentProps): {now: Moment} {
 	let {intervalMs, timezone, startOf} = props
 
 	let currentMoment = useCallback((): Moment => {
-		let next = moment()
+		let next = isUITesting ? moment(UITEST_FROZEN_DATE) : moment()
 		if (timezone) {
 			next = next.tz(timezone)
 		}
@@ -75,6 +86,8 @@ export function useMomentTimer(props: MomentProps): {now: Moment} {
 	useBoundaryInterval(() => {
 		// Hold onto the existing moment when the clock has not actually moved, so
 		// consumers watching `now` by identity don't re-render for nothing.
+		// In UI testing mode, time is frozen so no updates needed.
+		if (isUITesting) return
 		setNow((previous) => {
 			let next = currentMoment()
 			return previous.isSame(next) ? previous : next

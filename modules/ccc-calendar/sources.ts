@@ -11,14 +11,18 @@ import type {CalendarSource, SourcedEvent} from '@frogpond/event-list'
  */
 export type {CalendarSource, SourcedEvent}
 
+import {isUITesting} from '@frogpond/launch-arguments'
+
 /**
  * The app's own calendars. Their colours are ours to pick -- unlike a device
  * calendar, which arrives with one.
+ *
+ * UI test mode replaces live sources with a fixture calendar so tests don't
+ * depend on network data.
  */
-export const REMOTE_SOURCES: CalendarSource[] = [
-	{id: 'stolaf', title: 'St. Olaf', color: c.systemBlue, kind: 'remote'},
-	{id: 'northfield', title: 'Northfield', color: c.systemIndigo, kind: 'remote'},
-]
+export const REMOTE_SOURCES: CalendarSource[] = isUITesting
+	? [{id: 'uitest', title: 'UI Test Fixtures', color: c.systemBlue, kind: 'remote'}]
+	: [{id: 'stolaf', title: 'St. Olaf', color: c.systemBlue, kind: 'remote'}]
 
 const DEVICE_PREFIX = 'device:'
 

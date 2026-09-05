@@ -215,3 +215,39 @@ test('throws when every event in a non-empty response is malformed', () => {
 test('returns an empty list when there are legitimately no upcoming events', () => {
 	expect(parseTecEvents({events: []})).toStrictEqual([])
 })
+
+test('extracts category names from the event', () => {
+	const [event] = parseTecEvents({
+		events: [
+			{
+				title: 'Concert',
+				description: '',
+				url: 'https://wp.stolaf.edu/calendar/event/concert/',
+				all_day: false,
+				utc_start_date: '2026-08-17 19:00:00',
+				utc_end_date: '2026-08-17 21:00:00',
+				categories: [
+					{name: 'Music Events', slug: 'music-events', id: 54},
+					{name: 'Academic Year', slug: 'academic-year', id: 29},
+				],
+			},
+		],
+	})
+	expect(event.categories).toStrictEqual(['Music Events', 'Academic Year'])
+})
+
+test('returns empty categories when none are present', () => {
+	const [event] = parseTecEvents({
+		events: [
+			{
+				title: 'A',
+				description: '',
+				url: 'https://wp.stolaf.edu/calendar/event/a/',
+				all_day: false,
+				utc_start_date: '2026-08-17 13:00:00',
+				utc_end_date: '2026-08-17 14:00:00',
+			},
+		],
+	})
+	expect(event.categories).toStrictEqual([])
+})

@@ -143,14 +143,14 @@ struct TestIdentifiers {
 	// MARK: - Calendar
 
 	enum Calendar {
-		static let picker = "Calendars"
-		static let calendars = ["St. Olaf", "Northfield"]
+		static let picker = "Category filter"
+		/// Categories from the St. Olaf calendar. Unlike calendar sources, these
+		/// come from the event data itself, so the exact set depends on what the
+		/// calendar is serving. These two appear reliably.
+		static let categories = ["Music", "Academic Year"]
 		/// Only the event detail screen carries this, so it is how a test knows
 		/// the push landed.
 		static let shareEvent = "Share Event"
-		/// A calendar every simulator ships with, and one that actually has
-		/// events in the window the list reads.
-		static let deviceCalendar = "US Holidays"
 		/// The bottom-bar action on the event detail sheet. A bar item's
 		/// identifier is its title, which is what XCUITest matches on.
 		static let addToCalendar = "Add to Calendar"

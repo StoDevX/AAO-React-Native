@@ -8,6 +8,10 @@ import type {WireEvent} from './events'
 // it out — TEC's REST API represents "no venue" as an empty collection.
 const VenueSchema = z.union([z.object({venue: z.string().optional()}), z.tuple([])]).optional()
 
+const TecCategorySchema = z.object({
+	name: z.string(),
+})
+
 const TecEventSchema = z.object({
 	title: z.string(),
 	description: z.string(),
@@ -16,6 +20,7 @@ const TecEventSchema = z.object({
 	utc_start_date: z.string(),
 	utc_end_date: z.string(),
 	venue: VenueSchema,
+	categories: z.array(TecCategorySchema).default([]),
 })
 
 /**
@@ -66,6 +71,7 @@ function toWireEvent(event: z.infer<typeof TecEventSchema>, now: Date): WireEven
 		// Descriptions commonly link back to the event's own page, so the two
 		// sources can produce the same href twice.
 		links: [...new Set([...descriptionLinks, event.url])],
+		categories: event.categories.map((c) => c.name),
 		config: {
 			startTime: !event.all_day,
 			endTime: !event.all_day,

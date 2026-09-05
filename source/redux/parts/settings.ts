@@ -1,5 +1,7 @@
 import {createSlice} from '@reduxjs/toolkit'
 import type {PayloadAction} from '@reduxjs/toolkit'
+
+import {isUITesting} from '@frogpond/launch-arguments'
 import type {RootState} from '../store'
 
 type State = {
@@ -14,8 +16,8 @@ const initialState = {
 	unofficialityAcknowledged: false,
 	devModeOverride: false,
 	// St. Olaf alone: the college whose app this is, and the only calendar most
-	// people want on by default.
-	enabledCalendarSources: ['stolaf'],
+	// people want on by default. UI test mode uses only the fixture calendar.
+	enabledCalendarSources: isUITesting ? ['uitest'] : ['stolaf'],
 	// St. Olaf alone: the source News opened on before the picker existed.
 	selectedNewsSource: 'stolaf',
 } as State

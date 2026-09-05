@@ -1,58 +1,48 @@
 import * as React from 'react'
 import {Stack} from 'expo-router'
-
-import {useCalendarSources} from './use-calendar-sources'
+import {Host, Image, Menu, Section, Toggle} from '@expo/ui/swift-ui'
+import {
+	accessibilityLabel,
+	buttonStyle,
+	foregroundStyle,
+	menuActionDismissBehavior,
+	tint,
+} from '@expo/ui/swift-ui/modifiers'
+import * as c from '@frogpond/colors'
 
 /**
- * `Stack.Toolbar.Menu` is a real UIMenu, so the checkmarks and the grouping are
- * native: `isOn` draws the tick, and a nested menu with `inline` renders as a
- * titled group rather than a submenu you have to open.
- *
- * `unstable_keepPresented` asks for the menu to stay up so two calendars can be
- * turned on in one go. On the simulator (iOS 26.5, expo-router 57.0.11) it does
- * not: the menu closes on every selection, which is the behaviour expo-router
- * warns about -- selecting an action on iOS recreates the menu. The toggle
- * itself still lands, so turning on a second calendar means reopening the menu.
- * The prop stays because it costs nothing and states the intent.
- *
- * The button sits at the trailing end of the bottom bar, where Calendar.app
- * keeps its own calendar picker -- `Today` holds the leading end there. A
- * flexible `Spacer` before it takes the rest of the bar, which is what pushes
- * the button to that end.
- *
- * The button is a 38x38 circle carrying the `calendar` SF Symbol and no text.
- * A bar item can only show one of the two: expo-router builds it as
- * `UIBarButtonItem(title:image:primaryAction:menu:)`
- * (`ios/Toolbar/RouterToolbarHostView.swift`), and UIKit draws only the image
- * when given both. The symbol says "calendars" in the same space a word would
- * take three times over, and matches how Calendar.app marks the same control.
- *
- * The title UIKit declines to draw still names the button, which is why the
- * `Stack.Toolbar.Label` child is here: it is what a bar item falls back to for
- * its accessible name. `accessibilityLabel` sets that name outright, which is
- * what VoiceOver speaks and what the UI tests query the button by.
- * `title` is left unset so the menu gets no header of its own.
+ * Category picker in the bottom toolbar. Single-select with menu staying open:
+ * tapping a category filters to it, tapping again clears the filter.
  */
 type Props = {
+	categories: string[]
+	selectedCategory: string | null
+	onSelectCategory: (category: string | null) => void
 	onTodayPress?: () => void
 }
 
-export function CalendarPicker({onTodayPress}: Props): React.ReactNode {
-	let {remote, device, enabled, canOfferDevice, deviceAvailable, toggle, requestDevice} =
-		useCalendarSources()
+const STAYS_OPEN = [menuActionDismissBehavior('disabled')]
+const LABEL = accessibilityLabel('Category filter')
+const ACTIVE_STYLE = [
+	LABEL,
+	buttonStyle('borderedProminent'),
+	tint(c.systemBlue),
+	foregroundStyle(c.white),
+]
+const INACTIVE_STYLE = [LABEL, foregroundStyle(c.label)]
 
-	let isOn = (id: string) => enabled.some((source) => source.id === id)
+export function CalendarPicker({
+	categories,
+	selectedCategory,
+	onSelectCategory,
+	onTodayPress,
+}: Props): React.ReactNode {
+	let isActive = selectedCategory !== null
+	let menuModifiers = isActive ? ACTIVE_STYLE : INACTIVE_STYLE
 
-	let remoteActions = remote.map((source) => (
-		<Stack.Toolbar.MenuAction
-			isOn={isOn(source.id)}
-			key={source.id}
-			onPress={() => toggle(source.id)}
-			unstable_keepPresented={true}
-		>
-			{source.title}
-		</Stack.Toolbar.MenuAction>
-	))
+	let handleToggle = (cat: string) => {
+		onSelectCategory(selectedCategory === cat ? null : cat)
+	}
 
 	return (
 		<Stack.Toolbar placement="bottom">
@@ -62,38 +52,22 @@ export function CalendarPicker({onTodayPress}: Props): React.ReactNode {
 				</Stack.Toolbar.Button>
 			) : null}
 			<Stack.Toolbar.Spacer />
-			<Stack.Toolbar.Menu accessibilityLabel="Calendars" icon="calendar">
-				<Stack.Toolbar.Label>Calendars</Stack.Toolbar.Label>
-
-				{canOfferDevice ? (
-					<Stack.Toolbar.Menu inline={true} title="All About Olaf">
-						{remoteActions}
-					</Stack.Toolbar.Menu>
-				) : (
-					remoteActions
-				)}
-
-				{canOfferDevice ? (
-					<Stack.Toolbar.Menu inline={true} title="Device">
-						{deviceAvailable ? (
-							device.map((source) => (
-								<Stack.Toolbar.MenuAction
-									isOn={isOn(source.id)}
-									key={source.id}
-									onPress={() => toggle(source.id)}
-									unstable_keepPresented={true}
-								>
-									{source.title}
-								</Stack.Toolbar.MenuAction>
-							))
-						) : (
-							<Stack.Toolbar.MenuAction onPress={() => void requestDevice()}>
-								Show device calendars…
-							</Stack.Toolbar.MenuAction>
-						)}
-					</Stack.Toolbar.Menu>
-				) : null}
-			</Stack.Toolbar.Menu>
+			<Stack.Toolbar.View>
+				<Host matchContents={true}>
+					<Menu label={<Image systemName="calendar" />} modifiers={menuModifiers}>
+						<Section modifiers={STAYS_OPEN} title="ST. OLAF">
+							{categories.map((cat) => (
+								<Toggle
+									isOn={selectedCategory === cat}
+									key={cat}
+									label={cat}
+									onIsOnChange={() => handleToggle(cat)}
+								/>
+							))}
+						</Section>
+					</Menu>
+				</Host>
+			</Stack.Toolbar.View>
 		</Stack.Toolbar>
 	)
 }

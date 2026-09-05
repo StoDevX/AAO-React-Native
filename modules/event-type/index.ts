@@ -12,6 +12,7 @@ export type EventType = {
 	readonly isSameInstant: boolean
 	readonly isOngoing: boolean
 	readonly links: Array<string>
+	readonly categories: readonly string[]
 	readonly config: {
 		readonly startTime: boolean
 		readonly endTime: boolean

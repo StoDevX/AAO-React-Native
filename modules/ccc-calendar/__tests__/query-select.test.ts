@@ -41,6 +41,7 @@ function makeWireEvent(overrides: Partial<WireEvent> = {}): WireEvent {
 		isSameInstant: false,
 		isOngoing: false,
 		links: [],
+		categories: [],
 		config: {startTime: true, endTime: true, subtitle: 'location'},
 		...overrides,
 	}
@@ -128,6 +129,7 @@ describe('deviceCalendarOptions select', () => {
 				isSameInstant: false,
 				isOngoing: false,
 				links: [],
+				categories: [],
 				config: {startTime: false, endTime: false, subtitle: 'location' as const},
 			},
 		}

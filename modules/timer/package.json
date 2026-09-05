@@ -8,6 +8,9 @@
   "scripts": {
     "test": "jest"
   },
+  "dependencies": {
+    "@frogpond/launch-arguments": "workspace:*"
+  },
   "peerDependencies": {
     "moment-timezone": "^0.6.3",
     "react": "^19.1.0"

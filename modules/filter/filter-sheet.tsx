@@ -4,7 +4,6 @@ import {
 	Button,
 	Host,
 	HStack,
-	Image,
 	List,
 	Section,
 	Spacer,
@@ -14,7 +13,6 @@ import {
 } from '@expo/ui/swift-ui'
 import {
 	accessibilityIdentifier,
-	accessibilityLabel,
 	buttonStyle,
 	contentShape,
 	environment,
@@ -51,8 +49,7 @@ type Props<T extends object> = {
  */
 export const FILTER_OPTION_PREFIX = 'filter-option-'
 export const FILTER_CLEAR_ID = 'filter-clear'
-/// The header's dismiss button. Its label is a bare glyph, so it needs the
-/// same kind of identifier a labelless control always does.
+/// The header's dismiss button.
 export const FILTER_CLOSE_BUTTON_ID = 'filter-close'
 
 // Constant modifier arrays, hoisted so the worst case -- Course Search's
@@ -89,16 +86,11 @@ const CLEAR_HEADER_MODIFIERS = [
 	...HEADER_HIT_TARGET,
 	accessibilityIdentifier(FILTER_CLEAR_ID),
 ]
-const CLOSE_BUTTON_MODIFIERS = [
+const DONE_BUTTON_MODIFIERS = [
 	buttonStyle('plain'),
 	...HEADER_HIT_TARGET,
-	accessibilityLabel('Close'),
 	accessibilityIdentifier(FILTER_CLOSE_BUTTON_ID),
 ]
-// `hierarchical`/`secondary` reads as chrome rather than an action -- the
-// same treatment a sheet's system-drawn close glyph gets, so a hand-drawn one
-// isn't mistaken for a row's own content.
-const CLOSE_ICON_MODIFIERS = [foregroundStyle({type: 'hierarchical', style: 'secondary'})]
 // Sheet-title idiom: bold/semibold at `title3`, sentence case. A sheet names
 // itself the way a navigation title does, so it takes neither the uppercasing
 // nor the muted weight a section header carries.
@@ -206,10 +198,10 @@ export function FilterSheet<T extends object>({
 				}}
 			>
 				<VStack spacing={0}>
-					{/* The (X) commits exactly like a swipe does -- `emitAndDismiss`,
+					{/* Done commits exactly like a swipe does -- `emitAndDismiss`,
 					    never a path that discards `local` -- because a swipe dismissal
-					    already applies the user's selections (verified on device); an X
-					    that threw them away would make the two dismissal gestures mean
+					    already applies the user's selections (verified on device);
+					    discarding them would make the two dismissal gestures mean
 					    opposite things. */}
 					<SheetHeader
 						canClear={spec.selected.length > 0}
@@ -256,8 +248,8 @@ export function FilterSheet<T extends object>({
  * header inside it -- a sheet states its own name the way a navigation title
  * does, not the way a section of rows does. Three slots, in the standard iOS
  * sheet idiom: "Clear" leading (only once something is selected -- an already
- * empty filter has nothing to clear), the filter's name centred, and the (X)
- * dismiss button trailing.
+ * empty filter has nothing to clear), the filter's name centred, and the Done
+ * button trailing.
  *
  * The title sits in its own layer, laid over the button row rather than
  * beside it in one `HStack` -- so it stays centred on the sheet regardless of
@@ -282,9 +274,7 @@ function SheetHeader({
 					<Button label="Clear" modifiers={CLEAR_HEADER_MODIFIERS} onPress={onClear} />
 				) : null}
 				<Spacer />
-				<Button modifiers={CLOSE_BUTTON_MODIFIERS} onPress={onClose}>
-					<Image modifiers={CLOSE_ICON_MODIFIERS} systemName="xmark.circle.fill" />
-				</Button>
+				<Button label="Done" modifiers={DONE_BUTTON_MODIFIERS} onPress={onClose} />
 			</HStack>
 			<Text modifiers={HEADER_TITLE_MODIFIERS}>{title}</Text>
 		</ZStack>

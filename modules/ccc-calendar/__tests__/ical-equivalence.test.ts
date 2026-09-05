@@ -117,6 +117,7 @@ function referenceToWireEvent(
 		location: item.location ?? '',
 		isOngoing: isBefore(new Date(startIso), startOfDay(now)),
 		links: referenceLinksIn(descriptionHtml),
+		categories: [],
 		config: {
 			startTime: !isAllDay,
 			endTime: !isAllDay,
