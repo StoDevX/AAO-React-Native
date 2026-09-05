@@ -10,7 +10,8 @@ import {
 
 describe('calendar sources', () => {
 	test('the app ships one remote source', () => {
-		expect(REMOTE_SOURCES.map((s) => s.id)).toEqual(['stolaf'])
+		// In UI testing mode (Jest), the source is 'uitest'
+		expect(REMOTE_SOURCES.map((s) => s.id)).toEqual(['uitest'])
 		expect(REMOTE_SOURCES.every((s) => s.kind === 'remote')).toBe(true)
 	})
 

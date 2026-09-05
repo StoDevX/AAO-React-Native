@@ -77,7 +77,7 @@ describe('useCalendarSources', () => {
 		mockUseIsDevMode.mockReturnValue(false)
 		let {result} = await renderHook(() => useCalendarSources(), {wrapper})
 
-		expect(result.current.remote.map((s) => s.id)).toEqual(['stolaf'])
+		expect(result.current.remote.map((s) => s.id)).toEqual(['uitest'])
 		expect(result.current.device).toEqual([])
 		// The branch's central invariant: a production build must not so much as
 		// ask EventKit what it already granted.
@@ -170,7 +170,7 @@ describe('useCalendarSources', () => {
 		mockUseIsDevMode.mockReturnValue(false)
 		let {result} = await renderHook(() => useCalendarSources(), {wrapper})
 
-		expect(result.current.enabled.map((s) => s.id)).toEqual(['stolaf'])
+		expect(result.current.enabled.map((s) => s.id)).toEqual(['uitest'])
 	})
 
 	test('toggling a source changes what is enabled', async () => {
@@ -178,19 +178,19 @@ describe('useCalendarSources', () => {
 		let {result} = await renderHook(() => useCalendarSources(), {wrapper})
 
 		await act(() => {
-			result.current.toggle('stolaf')
+			result.current.toggle('uitest')
 		})
 
 		// Falls back to first remote source when nothing is explicitly enabled
-		expect(result.current.enabled.map((s) => s.id)).toEqual(['stolaf'])
+		expect(result.current.enabled.map((s) => s.id)).toEqual(['uitest'])
 	})
 
 	// The detail screen arrives knowing only an id, and must reach the same
 	// colour the list used.
 	test('a source id resolves to its source', async () => {
 		mockUseIsDevMode.mockReturnValue(false)
-		let {result} = await renderHook(() => useCalendarSource('stolaf'), {wrapper})
+		let {result} = await renderHook(() => useCalendarSource('uitest'), {wrapper})
 
-		expect(result.current?.title).toBe('St. Olaf')
+		expect(result.current?.title).toBe('UI Test Fixtures')
 	})
 })
