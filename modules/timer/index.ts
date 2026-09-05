@@ -7,7 +7,14 @@ import {isUITesting} from '@frogpond/launch-arguments'
  * Frozen date for UI testing. Tests run against fixture data anchored to this
  * date, so scrolling/today behavior is predictable.
  */
-const UITEST_FROZEN_DATE = '2026-09-05T12:00:00-05:00'
+export const UITEST_FROZEN_DATE = '2026-09-05T12:00:00-05:00'
+
+/**
+ * Returns the current moment, or the frozen date in UI testing mode.
+ */
+export function now(): Moment {
+	return isUITesting ? moment(UITEST_FROZEN_DATE) : moment()
+}
 
 interface BasicProps {
 	intervalMs: number // ms

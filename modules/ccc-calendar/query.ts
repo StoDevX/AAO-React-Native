@@ -4,6 +4,7 @@ import {EventType} from '@frogpond/event-type'
 import {queryOptions} from '@tanstack/react-query'
 import * as Calendar from 'expo-calendar'
 import moment from 'moment'
+import {now as currentMoment} from '@frogpond/timer'
 import {queryClient} from '../../source/init/tanstack-query'
 import {getFullCalendarAccess, listDeviceEvents} from './device-calendar'
 import uitestFixtures from './fixtures/uitest-events.json'
@@ -81,13 +82,17 @@ export const namedCalendarOptions = (
 		queryKey: keys.named(calendar),
 		queryFn: ({queryKey, signal}) => fetchCalendar(queryKey[2], signal),
 		// A remote calendar's name IS its source id, so tagging needs no new
-		// argument.
-		select: (events): SourcedEvent[] =>
-			convertEvents(events, options).map((event) => ({
-				sourceId: calendar,
-				key: eventKey(event),
-				event,
-			})),
+		// argument. Filter out events that have already ended.
+		select: (events): SourcedEvent[] => {
+			let now = currentMoment()
+			return convertEvents(events, options)
+				.filter((event) => event.endTime.isAfter(now))
+				.map((event) => ({
+					sourceId: calendar,
+					key: eventKey(event),
+					event,
+				}))
+		},
 	})
 
 export const namedCalendarEventOptions = (
