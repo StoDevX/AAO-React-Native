@@ -2,6 +2,7 @@ import * as React from 'react'
 import {Stack} from 'expo-router'
 import {Host, Image, Menu, Section, Toggle} from '@expo/ui/swift-ui'
 import {
+	accessibilityLabel,
 	buttonStyle,
 	foregroundStyle,
 	menuActionDismissBehavior,
@@ -21,12 +22,14 @@ type Props = {
 }
 
 const STAYS_OPEN = [menuActionDismissBehavior('disabled')]
+const LABEL = accessibilityLabel('Category filter')
 const ACTIVE_STYLE = [
+	LABEL,
 	buttonStyle('borderedProminent'),
 	tint(c.systemBlue),
 	foregroundStyle(c.white),
 ]
-const INACTIVE_STYLE = [foregroundStyle(c.label)]
+const INACTIVE_STYLE = [LABEL, foregroundStyle(c.label)]
 
 export function CalendarPicker({
 	categories,
