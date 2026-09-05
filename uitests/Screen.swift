@@ -81,6 +81,26 @@ extension Screen {
 		return self
 	}
 
+	/// Pull the screen most of the way off with the back gesture, then let go
+	/// without completing it, so the stack settles back where it started.
+	///
+	/// The drag stops short of half the width and moves slowly: UIKit decides an
+	/// interactive pop on how far the finger travelled and how fast it was going
+	/// when it lifted, so a slow release at a third of the way across is read as
+	/// "put it back". Holding before the release is what drains the velocity --
+	/// a fast flick from the same place would complete the pop instead.
+	@discardableResult
+	func cancelSwipeBack() -> Self {
+		let edge = app.coordinate(withNormalizedOffset: CGVector(dx: 0.0, dy: 0.5))
+		let partway = app.coordinate(withNormalizedOffset: CGVector(dx: 0.35, dy: 0.5))
+		edge.press(
+			forDuration: 0.2,
+			thenDragTo: partway,
+			withVelocity: .slow,
+			thenHoldForDuration: 1.0)
+		return self
+	}
+
 	/// Assert that a navigation-bar or section title is visible.
 	@discardableResult
 	func verifyTitle(_ title: String) -> Self {

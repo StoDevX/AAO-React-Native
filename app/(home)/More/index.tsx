@@ -9,9 +9,10 @@ import {ListSeparator, ListSectionHeader, largeListProps, Title, ListRow} from '
 import {LinkValue} from '../../../source/features/more/types'
 
 import {Stack} from 'expo-router'
-import {deburr, words} from 'lodash'
+import {filterLinkGroups} from '../../../source/features/more/helpers'
 import {searchLinksOptions} from '../../../source/features/more/query'
 import {useQuery} from '@tanstack/react-query'
+import {SearchBar} from '../../../source/components/search-bar'
 
 const styles = StyleSheet.create({
 	wrapper: {
@@ -25,32 +26,13 @@ const styles = StyleSheet.create({
 	},
 })
 
-function splitToArray(str: string) {
-	return words(deburr(str.toLowerCase()))
-}
-
-function linkToArray(data: LinkValue) {
-	return Array.from(new Set(splitToArray(data.label)))
-}
-
 function MoreView(): React.ReactNode {
 	let [query, setQuery] = React.useState('')
-	let searchQuery = useDebounce(query.toLowerCase(), 200)
+	let searchQuery = useDebounce(query, 200)
 
 	let {data = [], error, refetch, isLoading, isError, isRefetching} = useQuery(searchLinksOptions)
 
-	let filtered = React.useMemo(() => {
-		let filteredData = []
-		for (let {title, data: items} of data) {
-			let filteredItems = items.filter((value) =>
-				linkToArray(value).some((item) => item.includes(searchQuery)),
-			)
-			if (filteredItems.length) {
-				filteredData.push({title, data: items})
-			}
-		}
-		return filteredData
-	}, [data, searchQuery])
+	let filtered = React.useMemo(() => filterLinkGroups(data, searchQuery), [data, searchQuery])
 
 	if (isError) {
 		return (
@@ -68,7 +50,7 @@ function MoreView(): React.ReactNode {
 				<Stack.Toolbar.SearchBarSlot />
 			</Stack.Toolbar>
 
-			<Stack.SearchBar onChangeText={(event) => setQuery(event.nativeEvent.text)} />
+			<SearchBar onChangeText={setQuery} value={query} />
 
 			<SectionList
 				ItemSeparatorComponent={ListSeparator}

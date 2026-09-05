@@ -8,6 +8,7 @@ import {useAppSelector} from '../../source/redux/hooks'
 import {selectRecentFilters, selectRecentSearches} from '../../source/redux/parts/courses'
 import {RecentItemsList} from '../../source/features/sis/components/recents-list'
 import {useFilters} from '../../source/features/sis/course-search/lib/build-filters'
+import {SearchBar} from '../../source/components/search-bar'
 
 const SEARCH_DEBOUNCE_MS = 1500
 const MIN_QUERY_LENGTH = 2
@@ -70,11 +71,7 @@ function CourseSearchView(): React.ReactNode {
 				<Stack.Toolbar.SearchBarSlot />
 			</Stack.Toolbar>
 
-			<Stack.SearchBar
-				onChangeText={(event) => {
-					setTypedQuery(event.nativeEvent.text)
-				}}
-			/>
+			<SearchBar onChangeText={setTypedQuery} value={typedQuery} />
 
 			<View style={[styles.container, styles.common]}>
 				<ScrollView

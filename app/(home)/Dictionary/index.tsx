@@ -20,6 +20,7 @@ import {useDebounce} from '@frogpond/use-debounce'
 import deburr from 'lodash/deburr'
 import groupBy from 'lodash/groupBy'
 import words from 'lodash/words'
+import {SearchBar} from '../../../source/components/search-bar'
 
 function splitToArray(str: string) {
 	return words(deburr(str.toLowerCase()))
@@ -81,7 +82,7 @@ function DictionaryView(): React.ReactNode {
 				<Stack.Toolbar.SearchBarSlot />
 			</Stack.Toolbar>
 
-			<Stack.SearchBar onChangeText={(event) => setQuery(event.nativeEvent.text)} />
+			<SearchBar onChangeText={setQuery} value={query} />
 		</>
 	)
 
