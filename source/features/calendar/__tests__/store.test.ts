@@ -1,33 +1,33 @@
 import {useCalendarFilterStore} from '../store'
 
 beforeEach(() => {
-	useCalendarFilterStore.setState({selectedCategories: []})
+	useCalendarFilterStore.setState({selectedCategory: null})
 })
 
-test('starts with no categories selected', () => {
-	let {selectedCategories} = useCalendarFilterStore.getState()
-	expect(selectedCategories).toStrictEqual([])
+test('starts with no category selected', () => {
+	let {selectedCategory} = useCalendarFilterStore.getState()
+	expect(selectedCategory).toBeNull()
 })
 
-test('setSelectedCategories replaces the selection', () => {
-	let {setSelectedCategories} = useCalendarFilterStore.getState()
-	setSelectedCategories(['Music Events', 'Academic Year'])
-	let {selectedCategories} = useCalendarFilterStore.getState()
-	expect(selectedCategories).toStrictEqual(['Music Events', 'Academic Year'])
+test('selectCategory sets the category', () => {
+	let {selectCategory} = useCalendarFilterStore.getState()
+	selectCategory('Music Events')
+	let {selectedCategory} = useCalendarFilterStore.getState()
+	expect(selectedCategory).toBe('Music Events')
 })
 
-test('setSelectedCategories can update to a different set', () => {
-	useCalendarFilterStore.setState({selectedCategories: ['Music Events', 'Academic Year']})
-	let {setSelectedCategories} = useCalendarFilterStore.getState()
-	setSelectedCategories(['Lectures'])
-	let {selectedCategories} = useCalendarFilterStore.getState()
-	expect(selectedCategories).toStrictEqual(['Lectures'])
+test('selectCategory can change to a different category', () => {
+	useCalendarFilterStore.setState({selectedCategory: 'Music Events'})
+	let {selectCategory} = useCalendarFilterStore.getState()
+	selectCategory('Lectures')
+	let {selectedCategory} = useCalendarFilterStore.getState()
+	expect(selectedCategory).toBe('Lectures')
 })
 
-test('clearCategories resets to empty', () => {
-	useCalendarFilterStore.setState({selectedCategories: ['Music Events']})
-	let {clearCategories} = useCalendarFilterStore.getState()
-	clearCategories()
-	let {selectedCategories} = useCalendarFilterStore.getState()
-	expect(selectedCategories).toStrictEqual([])
+test('selectCategory with null clears the selection', () => {
+	useCalendarFilterStore.setState({selectedCategory: 'Music Events'})
+	let {selectCategory} = useCalendarFilterStore.getState()
+	selectCategory(null)
+	let {selectedCategory} = useCalendarFilterStore.getState()
+	expect(selectedCategory).toBeNull()
 })

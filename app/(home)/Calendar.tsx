@@ -22,7 +22,7 @@ export default function CalendarPage(): React.ReactNode {
 	let {events, failed, isRefetching, refetchAll} = useMergedEvents(enabled)
 	let eventListRef = React.useRef<EventList.EventListHandle>(null)
 
-	let {selectedCategories, toggleCategory} = useCalendarFilterStore()
+	let {selectedCategory, selectCategory} = useCalendarFilterStore()
 
 	let availableCategories = useMemo(() => {
 		let cats = new Set(events.flatMap((e) => e.event.categories))
@@ -31,13 +31,11 @@ export default function CalendarPage(): React.ReactNode {
 	}, [events])
 
 	let filteredEvents = useMemo(() => {
-		if (selectedCategories.length === 0) return events
+		if (selectedCategory === null) return events
 		return events.filter(
-			(e) =>
-				e.event.categories.length === 0 ||
-				e.event.categories.some((cat) => selectedCategories.includes(cat)),
+			(e) => e.event.categories.length === 0 || e.event.categories.includes(selectedCategory),
 		)
-	}, [events, selectedCategories])
+	}, [events, selectedCategory])
 
 	let onPressEvent = (entry: SourcedEvent) => {
 		router.push({
@@ -65,9 +63,9 @@ export default function CalendarPage(): React.ReactNode {
 			/>
 			<CalendarPicker
 				categories={availableCategories}
+				onSelectCategory={selectCategory}
 				onTodayPress={onTodayPress}
-				onToggleCategory={toggleCategory}
-				selectedCategories={selectedCategories}
+				selectedCategory={selectedCategory}
 			/>
 		</>
 	)
