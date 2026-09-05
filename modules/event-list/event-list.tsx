@@ -58,9 +58,22 @@ type EventSection = {
  *
  * Day groups are keyed on an unambiguous ISO date rather than on their
  * display title, which is locale-aware and computed separately below.
+ *
+ * Events are put in start-time order first. `useMergedEvents` hands over one
+ * calendar's events at a time, so without this a second calendar's earlier
+ * days sit behind a first calendar's later ones -- today included, which
+ * leaves the list opening a month out and the day-picker strip parked there
+ * with it. `groupBy` keeps each group where its first member put it, so
+ * ordering the events is what orders the sections; it also orders the rows
+ * inside a day two calendars share. An ongoing event starts before today by
+ * definition, so `Ongoing` leads the list without a rule of its own.
  */
 function groupEvents(events: readonly SourcedEvent[], now: Moment): Array<EventSection> {
-	let grouped = groupBy(events, (entry) => {
+	let ordered = [...events].sort(
+		(one, two) => one.event.startTime.valueOf() - two.event.startTime.valueOf(),
+	)
+
+	let grouped = groupBy(ordered, (entry) => {
 		if (entry.event.isOngoing) {
 			return 'Ongoing'
 		}

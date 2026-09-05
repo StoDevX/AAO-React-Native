@@ -20,6 +20,12 @@ const POWERED_BY = {title: 'Powered by the St. Olaf calendar', href: 'https://ex
 const NOW = moment('2026-08-17T12:00:00Z')
 
 const STOLAF_SOURCE = {id: 'stolaf', title: 'St. Olaf', color: 'blue', kind: 'remote' as const}
+const NORTHFIELD_SOURCE = {
+	id: 'northfield',
+	title: 'Northfield',
+	color: 'indigo',
+	kind: 'remote' as const,
+}
 
 /**
  * What every parser writes for an all-day event, and what `times.ts` reads to
@@ -52,6 +58,24 @@ function makeEvent(overrides: Partial<EventType> = {}): EventType {
 
 function makeEntry(overrides: Partial<EventType> = {}) {
 	return {sourceId: 'stolaf', key: 'a', event: makeEvent(overrides)}
+}
+
+/** A two-hour event on a given calendar, for the ordering tests below. */
+function entryOn(sourceId: string, key: string, startTime: string, title = 'Recital') {
+	let start = moment(startTime)
+	return {
+		sourceId,
+		key,
+		event: makeEvent({title, startTime: start, endTime: start.clone().add(2, 'hours')}),
+	}
+}
+
+/**
+ * Every section header in the order it renders. Headers carry an en dash
+ * between weekday and date, which no row text does.
+ */
+function sectionHeaders(): string[] {
+	return screen.getAllByText(/ \u2013 /u).map((node) => node.props.children as string)
 }
 
 describe('EventList', () => {
@@ -348,5 +372,94 @@ describe('EventList', () => {
 		)
 
 		expect(screen.getByText(/No calendars/u)).toBeTruthy()
+	})
+
+	test('day sections read in date order however the calendars were merged', async () => {
+		// `useMergedEvents` hands over one calendar's events at a time, so a
+		// second calendar's earlier days arrive after a first calendar's later
+		// ones -- today included.
+		let events = [
+			entryOn('stolaf', 'late', '2026-08-25T15:00:00Z'),
+			entryOn('stolaf', 'later', '2026-09-01T15:00:00Z'),
+			entryOn('northfield', 'today', '2026-08-17T15:00:00Z'),
+			entryOn('northfield', 'soon', '2026-08-20T15:00:00Z'),
+		]
+
+		await render(
+			<EventList
+				events={events}
+				failed={[]}
+				now={NOW}
+				onPressEvent={jest.fn()}
+				onRefresh={jest.fn()}
+				poweredBy={POWERED_BY}
+				refreshing={false}
+				sources={[STOLAF_SOURCE, NORTHFIELD_SOURCE]}
+			/>,
+		)
+
+		expect(sectionHeaders()).toEqual([
+			'Monday – Aug 17',
+			'Thursday – Aug 20',
+			'Tuesday – Aug 25',
+			'Tuesday – Sep 1',
+		])
+	})
+
+	test('rows within a shared day read in time order however the calendars were merged', async () => {
+		let events = [
+			entryOn('stolaf', 'afternoon', '2026-08-20T20:00:00Z', 'Afternoon Recital'),
+			entryOn('northfield', 'morning', '2026-08-20T14:00:00Z', 'Morning Recital'),
+		]
+
+		await render(
+			<EventList
+				events={events}
+				failed={[]}
+				now={NOW}
+				onPressEvent={jest.fn()}
+				onRefresh={jest.fn()}
+				poweredBy={POWERED_BY}
+				refreshing={false}
+				sources={[STOLAF_SOURCE, NORTHFIELD_SOURCE]}
+			/>,
+		)
+
+		let titles = screen.getAllByText(/Recital$/u).map((node) => node.props.children as string)
+
+		expect(titles).toEqual(['Morning Recital', 'Afternoon Recital'])
+	})
+
+	test('an ongoing event leads the list even when its calendar is merged last', async () => {
+		let events = [
+			entryOn('stolaf', 'today', '2026-08-17T15:00:00Z'),
+			{
+				sourceId: 'northfield',
+				key: 'spanning',
+				event: makeEvent({
+					title: 'Museum Exhibition',
+					startTime: moment('2026-08-10T15:00:00Z'),
+					endTime: moment('2026-08-24T15:00:00Z'),
+					isOngoing: true,
+				}),
+			},
+		]
+
+		await render(
+			<EventList
+				events={events}
+				failed={[]}
+				now={NOW}
+				onPressEvent={jest.fn()}
+				onRefresh={jest.fn()}
+				poweredBy={POWERED_BY}
+				refreshing={false}
+				sources={[STOLAF_SOURCE, NORTHFIELD_SOURCE]}
+			/>,
+		)
+
+		expect(
+			screen.getAllByText(/^(Ongoing|Monday – Aug 17)$/u).map((node) => node.props.children),
+		).toEqual(['Ongoing', 'Monday – Aug 17'])
 	})
 })
