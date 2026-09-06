@@ -19,8 +19,8 @@ import {FILL_WIDTH} from '../home/button'
 import {homescreenIconDark, homescreenIconLight} from '../home/colors'
 import type {ContactType} from './types'
 
-/// Three across, as Phone.app's favourites are.
-export const TILE_COLUMNS = 3
+/// Four across, so the eight curated contacts fill exactly two rows.
+export const TILE_COLUMNS = 4
 /// Matches the home grid's gap, so the two screens sit at the same rhythm.
 export const TILE_SPACING = 10
 
@@ -42,9 +42,10 @@ const TILE_GRADIENT_RADIUS = 176
 const ICON_TEXT_STYLE = 'largeTitle'
 /// Space between the card and the name beneath it.
 const LABEL_GAP = 8
-/// Two lines: "St. Olaf Public Safety" does not fit on one at this width, and
-/// nothing in the data needs a third.
-const LABEL_LINES = 2
+/// One line, with an ellipsis for whatever doesn't fit: titles are meant to be
+/// shortened to fit this width rather than wrapped, and a truncated name is
+/// the signal for which ones still need it.
+const LABEL_LINES = 1
 
 /// Drawn when a contact names no symbol, or names one this iOS does not carry.
 const FALLBACK_ICON: SFSymbol = 'phone.fill'

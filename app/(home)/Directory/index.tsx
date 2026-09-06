@@ -176,9 +176,8 @@ const CONTACT_GRID_ID = 'directory-contact-grid'
 /// Mirrored by TestIdentifiers.Directory.staleContacts.
 const STALE_CONTACTS_LABEL = 'Contacts may be out of date'
 
-/// Groups the contacts into the rows a SwiftUI Grid wants. Titles wrap to a
-/// second line only inside a real Grid; in independent columns they truncate
-/// instead, whatever line limit they are given. See features/home/button.tsx.
+/// Groups the contacts into the rows a SwiftUI Grid wants: its API takes
+/// children pre-split into `Grid.Row`s rather than a flat list.
 function inRows(contacts: ContactType[]): ContactType[][] {
 	let rows: ContactType[][] = []
 	for (let i = 0; i < contacts.length; i += TILE_COLUMNS) {

@@ -228,7 +228,7 @@ struct TestIdentifiers {
 		static let staleContacts = "Contacts may be out of date"
 		/// A contact from data/contact-info/, so its tile is in the grid
 		/// whatever the server is serving.
-		static let aContact = "St. Olaf Public Safety"
+		static let aContact = "PubSafe"
 		/// That contact's own action, which its tile offers on long-press.
 		static let aContactAction = "Call Public Safety"
 	}
