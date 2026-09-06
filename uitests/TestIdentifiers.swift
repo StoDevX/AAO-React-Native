@@ -161,6 +161,9 @@ struct TestIdentifiers {
 		/// The bottom-bar action on the event detail sheet. A bar item's
 		/// identifier is its title, which is what XCUITest matches on.
 		static let addToCalendar = "Add to Calendar"
+		/// Dismisses the event detail sheet. A header bar item carrying only an
+		/// SF Symbol, so its accessibility label is the only thing to find it by.
+		static let closeEventDetail = "Close"
 		/// Returns the list to the top. A bar item, so its title is its
 		/// identifier.
 		static let today = "Today"
