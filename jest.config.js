@@ -14,6 +14,11 @@ const esmPackages = [
 	'@expo',
 	'@maplibre/maplibre-react-native',
 	'ky',
+	// delay and its ESM-only transitive deps; add-to-device-calendar imports
+	// delay, so its component cannot even load under Jest without these
+	'delay',
+	'unlimited-timeout',
+	'random-int',
 	// css-select v7+ and its ESM-only transitive deps
 	'css-select',
 	'boolbase',

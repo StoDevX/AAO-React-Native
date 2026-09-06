@@ -40,13 +40,16 @@ export class AddToCalendar extends React.Component<Props, State> {
 		const start = Date.now()
 		this.setState(() => ({message: MESSAGES.active}))
 
-		// wait 0.5 seconds – if we let it go at normal speed, it feels broken.
+		const result = await addToCalendar(event)
+
+		// Hold the active message for half a second. A save that returns at once
+		// otherwise flashes it past too fast to read, which looks broken -- and
+		// timing this around the save rather than before it means a save slower
+		// than that pays nothing extra.
 		const elapsed = Date.now() - start
 		if (elapsed < 500) {
 			await delay(500 - elapsed)
 		}
-
-		const result = await addToCalendar(event)
 
 		if (result === 'saved') {
 			this.setState(() => ({message: MESSAGES.success, disabled: true}))
