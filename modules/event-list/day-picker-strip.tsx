@@ -32,8 +32,10 @@ const PADDING_HORIZONTAL = 8
 const CIRCLE_SIZE = 32
 
 /**
- * Generates a continuous range of days from today through the last event day.
- * Returns an empty array if there are no future events.
+ * Generates a continuous range of whole weeks, from Sunday of the current week
+ * through the Saturday of the last event's week. Whole weeks keep every day
+ * sitting under a Sunday the strip can snap to. Returns an empty array if
+ * there are no future events.
  */
 export function deriveDays(events: readonly SourcedEvent[], now: Moment): Moment[] {
 	let today = now.clone().startOf('day')
@@ -59,14 +61,13 @@ export function deriveDays(events: readonly SourcedEvent[], now: Moment): Moment
 		return []
 	}
 
-	// Start from Sunday of the current week so the strip always opens on a
-	// week boundary.
 	let sunday = today.clone().startOf('week')
+	let rangeEnd = lastDay.clone().endOf('week')
 
 	let days: Moment[] = []
 	let current = sunday.clone()
 
-	while (current.isSameOrBefore(lastDay, 'day')) {
+	while (current.isSameOrBefore(rangeEnd, 'day')) {
 		days.push(current.clone())
 		current.add(1, 'day')
 	}
@@ -150,9 +151,14 @@ export let DayPickerStrip = React.forwardRef<DayPickerStripHandle, Props>(functi
 		setContainerWidth(event.nativeEvent.layout.width)
 	}, [])
 
+	// Trailing room so the last week's Sunday can still pull to the leading
+	// edge -- scroll inset, not day cells, so there is no empty week to swipe
+	// into. A full week already fills a phone; wider screens need the rest.
+	let trailingInset = Math.max(0, containerWidth - 7 * CELL_TOTAL_WIDTH)
+
 	let maxScroll = Math.max(
 		0,
-		PADDING_HORIZONTAL * 2 + days.length * CELL_TOTAL_WIDTH - containerWidth,
+		PADDING_HORIZONTAL * 2 + trailingInset + days.length * CELL_TOTAL_WIDTH - containerWidth,
 	)
 
 	let offsetForIndex = React.useCallback(
@@ -165,15 +171,21 @@ export let DayPickerStrip = React.forwardRef<DayPickerStripHandle, Props>(functi
 
 	/**
 	 * Where each week begins, as a scroll offset paired with the day it lands
-	 * on. The range starts at today rather than at a Sunday, so these are found
-	 * by walking the days rather than by a fixed stride.
+	 * on, and a place the strip can come to rest. A week start whose offset
+	 * would clamp against `maxScroll` can't pull to the leading edge, so it is
+	 * dropped -- its days still render, they are just not a snap stop. The first
+	 * cell always stays, even on a strip too short to scroll.
 	 */
 	let weekStarts = React.useMemo(() => {
 		return days
 			.map((day, index) => ({day, index}))
-			.filter(({day, index}) => index === 0 || day.day() === 0)
+			.filter(({day, index}) => {
+				if (index === 0) return true
+				if (day.day() !== 0) return false
+				return PADDING_HORIZONTAL + index * CELL_TOTAL_WIDTH - CELL_MARGIN <= maxScroll
+			})
 			.map(({day, index}) => ({day, offset: offsetForIndex(index)}))
-	}, [days, offsetForIndex])
+	}, [days, offsetForIndex, maxScroll])
 
 	let scrollToDay = React.useCallback(
 		(day: Moment) => {
@@ -247,7 +259,10 @@ export let DayPickerStrip = React.forwardRef<DayPickerStripHandle, Props>(functi
 	return (
 		<View style={styles.container} onLayout={handleLayout}>
 			<ScrollView
-				contentContainerStyle={styles.scrollContent}
+				contentContainerStyle={[
+					styles.scrollContent,
+					{paddingRight: PADDING_HORIZONTAL + trailingInset},
+				]}
 				decelerationRate="fast"
 				horizontal={true}
 				onMomentumScrollEnd={handleMomentumScrollEnd}

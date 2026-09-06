@@ -165,11 +165,26 @@ struct TestIdentifiers {
 		/// Mirrored by `EVENT_ROW_PREFIX` in `modules/event-list/event-list-row.tsx`.
 		static let eventRowPrefix = "event-row-"
 
-		/// The identifier of the cell for a given day.
+		/// Campus time. The app anchors every day to it (`setTimezone`
+		/// in `source/init/constants.ts`) so a student in another zone still sees
+		/// campus dates; a test reasoning about "today" or a week boundary works
+		/// in the same zone.
+		static let campusTimeZone = TimeZone(identifier: "America/Chicago")!
+
+		/// The instant the app freezes its clock to under `isUITesting`, so a
+		/// test reasons about "today" the way the app does rather than off the
+		/// live wall clock. Mirrors `UITEST_FROZEN_DATE` in
+		/// `modules/timer/index.ts` (`2026-09-05T12:00:00-05:00`, a Saturday).
+		static let frozenNow = Foundation.Calendar(identifier: .gregorian).date(
+			from: DateComponents(timeZone: campusTimeZone, year: 2026, month: 9, day: 5, hour: 12)
+		)!
+
+		/// The identifier of the cell for a given day, formatted in campus time.
 		static func dayCell(_ date: Date) -> String {
 			let formatter = DateFormatter()
 			formatter.calendar = Foundation.Calendar(identifier: .gregorian)
 			formatter.locale = Locale(identifier: "en_US_POSIX")
+			formatter.timeZone = campusTimeZone
 			formatter.dateFormat = "yyyy-MM-dd"
 			return dayCellPrefix + formatter.string(from: date)
 		}
