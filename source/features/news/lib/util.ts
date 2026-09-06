@@ -28,3 +28,31 @@ export function truncate(text: string, length: number): string {
 	if (text.length <= length) return text
 	return text.slice(0, length).trimEnd() + '…'
 }
+
+let storyCategories = (story: StoryType): string[] =>
+	(story.categories ?? []).map((category) => trimStoryCateogry(category))
+
+/**
+ * Every category the given stories carry, once each, sorted A-Z. Expects
+ * entries that have already been through `cleanEntries`, so the picker offers
+ * only categories the list can actually show.
+ */
+export function extractCategories(stories: StoryType[]): string[] {
+	let categories = new Set(stories.flatMap((story) => storyCategories(story)))
+	return [...categories].sort((a, b) => a.localeCompare(b))
+}
+
+/** The stories carrying `category`, or all of them when none is chosen. */
+export function filterByCategory(stories: StoryType[], category: string | null): StoryType[] {
+	if (category === null) return stories
+	return stories.filter((story) => storyCategories(story).includes(category))
+}
+
+/**
+ * The chosen category, or null once the feed stops carrying it. A category
+ * that outlives the stories that named it filters the list to nothing while
+ * every switch in the picker reads off, and persistence makes that permanent.
+ */
+export function resolveCategory(category: string | null, categories: string[]): string | null {
+	return category !== null && categories.includes(category) ? category : null
+}

@@ -199,11 +199,8 @@ struct TestIdentifiers {
 		/// Matches NEWS_ROW_PREFIX in source/features/news/news-row.tsx.
 		static let rowPrefix = "news-row-"
 
-		/// The bottom-right toolbar menu's accessibilityLabel, in news-list.tsx.
-		static let picker = "News Sources"
-
-		/// The bottom-left toolbar menu's accessibilityLabel, in news-list.tsx.
-		static let categoryFilter = "Categories"
+		/// The bottom toolbar menu's accessibilityLabel, in news-picker.tsx.
+		static let picker = "News filter"
 	}
 
 	// MARK: - Streaming Media
