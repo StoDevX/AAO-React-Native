@@ -1,17 +1,48 @@
 import * as React from 'react'
-import {FlatList, Image, StyleSheet, Text, View} from 'react-native'
+import {Alert, FlatList, Image, StyleSheet, View} from 'react-native'
 import {Stack, useLocalSearchParams, useRouter} from 'expo-router'
 import {useQuery} from '@tanstack/react-query'
+import {
+	Button,
+	Grid,
+	HStack,
+	Host,
+	Image as UIImage,
+	ProgressView,
+	ScrollView,
+	Spacer,
+	Text as UIText,
+	VStack,
+} from '@expo/ui/swift-ui'
+import {
+	accessibilityElement,
+	accessibilityIdentifier,
+	accessibilityLabel,
+	buttonStyle,
+	font,
+	foregroundStyle,
+	frame,
+	padding,
+	refreshable,
+} from '@expo/ui/swift-ui/modifiers'
 import {Column} from '@frogpond/layout'
 import {Detail, ListRow, ListSeparator, Title} from '@frogpond/lists'
 import * as c from '@frogpond/colors'
 import {useDebounce} from '@frogpond/use-debounce'
 import {LoadingView, NoticeView} from '@frogpond/notice'
+import {openUrl} from '@frogpond/open-url'
+import {callPhone} from '../../../source/components/call-phone'
 import {SearchBar} from '../../../source/components/search-bar'
+import {contactsOptions} from '../../../source/features/directory/contacts-query'
 import {formatResults} from '../../../source/features/directory/helpers'
 import {directoryEntriesOptions} from '../../../source/features/directory/query'
-import type {DirectoryItem, DirectorySearchTypeEnum} from '../../../source/features/directory/types'
-import {SymbolView} from 'expo-symbols'
+import {ContactTile, TILE_COLUMNS, TILE_SPACING} from '../../../source/features/directory/tile'
+import type {
+	ContactType,
+	DirectoryItem,
+	DirectorySearchTypeEnum,
+} from '../../../source/features/directory/types'
+import {FILL_WIDTH, SCREEN_MARGIN} from '../../../source/features/home/button'
 
 function DirectoryView(): React.ReactNode {
 	let router = useRouter()
@@ -66,7 +97,7 @@ function DirectoryView(): React.ReactNode {
 		return (
 			<>
 				{searchChrome}
-				<NoSearchPerformed />
+				<ImportantContacts />
 			</>
 		)
 	}
@@ -140,12 +171,127 @@ function IndentedListSeparator() {
 	return <ListSeparator spacing={{left: leftMargin + imageSize + imageMargin}} />
 }
 
-function NoSearchPerformed() {
+/// Mirrored by TestIdentifiers.Directory.contactGrid.
+const CONTACT_GRID_ID = 'directory-contact-grid'
+/// Mirrored by TestIdentifiers.Directory.staleContacts.
+const STALE_CONTACTS_LABEL = 'Contacts may be out of date'
+
+/// Groups the contacts into the rows a SwiftUI Grid wants. Titles wrap to a
+/// second line only inside a real Grid; in independent columns they truncate
+/// instead, whatever line limit they are given. See features/home/button.tsx.
+function inRows(contacts: ContactType[]): ContactType[][] {
+	let rows: ContactType[][] = []
+	for (let i = 0; i < contacts.length; i += TILE_COLUMNS) {
+		rows.push(contacts.slice(i, i + TILE_COLUMNS))
+	}
+	return rows
+}
+
+/**
+ * What the Directory screen shows before a search: the curated campus
+ * contacts, as tiles.
+ *
+ * The contacts are cached to disk by `PersistQueryClientProvider`, so a device
+ * that opens this offline still gets the grid. A failed refresh over a good
+ * cache is a badge beside the heading rather than an error page -- searching,
+ * which is this screen's real job, does not depend on it.
+ */
+function ImportantContacts(): React.ReactNode {
+	let router = useRouter()
+	let {data: contacts, error, isLoading, refetch} = useQuery(contactsOptions)
+
+	let onAct = React.useCallback((contact: ContactType) => {
+		if (contact.buttonLink) {
+			openUrl(contact.buttonLink)
+		} else if (contact.phoneNumber) {
+			callPhone(contact.phoneNumber, {title: contact.buttonText})
+		}
+	}, [])
+
+	let showError = React.useCallback(() => {
+		Alert.alert(
+			"Couldn't refresh contacts",
+			error instanceof Error ? error.message : 'Unknown error',
+			[
+				{text: 'Try Again', onPress: () => void refetch()},
+				{text: 'OK', style: 'cancel'},
+			],
+		)
+	}, [error, refetch])
+
 	return (
-		<View style={styles.emptySearch}>
-			<SymbolView name="person.2.circle" size={64} tintColor={c.secondaryLabel} />
-			<Text style={styles.emptySearchText}>Search the Directory</Text>
-		</View>
+		<Host matchContents={false} style={styles.host}>
+			<ScrollView
+				modifiers={[
+					refreshable(async () => {
+						await refetch()
+					}),
+				]}
+			>
+				<VStack
+					modifiers={[padding({all: SCREEN_MARGIN}), frame({maxWidth: FILL_WIDTH})]}
+					spacing={TILE_SPACING}
+				>
+					<HStack modifiers={[frame({maxWidth: FILL_WIDTH})]}>
+						<UIText modifiers={[font({textStyle: 'headline'})]}>Important Contacts</UIText>
+						<Spacer />
+						{error && contacts ? (
+							<Button
+								modifiers={[buttonStyle('plain'), accessibilityLabel(STALE_CONTACTS_LABEL)]}
+								onPress={showError}
+							>
+								<UIImage color={c.orange} systemName="exclamationmark.triangle.fill" />
+							</Button>
+						) : null}
+					</HStack>
+
+					{contacts ? (
+						<Grid
+							horizontalSpacing={TILE_SPACING}
+							// The Grid itself carries no accessibility presence of its
+							// own, so accessibilityIdentifier alone lands on its first
+							// button descendant instead of the grid -- contain() gives it
+							// one, keeping the tiles as its individually-navigable
+							// children, which is what a UI test counting them needs.
+							modifiers={[
+								accessibilityElement('contain'),
+								accessibilityIdentifier(CONTACT_GRID_ID),
+							]}
+							verticalSpacing={TILE_SPACING}
+						>
+							{inRows(contacts).map((row, i) => (
+								<Grid.Row key={i}>
+									{row.map((contact) => (
+										<ContactTile
+											key={contact.title}
+											contact={contact}
+											onAct={() => onAct(contact)}
+											onPress={() =>
+												router.push({
+													pathname: '/Directory/named/[title]',
+													params: {title: contact.title},
+												})
+											}
+										/>
+									))}
+									{/* A short last row leaves its columns empty rather than
+									    stretching the tiles in it. */}
+									{Array.from({length: TILE_COLUMNS - row.length}, (_, j) => (
+										<Spacer key={j} />
+									))}
+								</Grid.Row>
+							))}
+						</Grid>
+					) : isLoading ? (
+						<ProgressView />
+					) : (
+						<UIText modifiers={[foregroundStyle(c.secondaryLabel)]}>
+							Contacts are unavailable. Pull to try again.
+						</UIText>
+					)}
+				</VStack>
+			</ScrollView>
+		</Host>
 	)
 }
 
@@ -188,16 +334,7 @@ const styles = StyleSheet.create({
 		marginRight: imageMargin,
 		marginLeft: leftMargin,
 	},
-	emptySearch: {
+	host: {
 		flex: 1,
-		alignItems: 'center',
-		justifyContent: 'center',
-	},
-	emptySearchText: {
-		fontSize: 18,
-		color: c.secondaryLabel,
-		textAlign: 'center',
-		paddingTop: 20,
-		paddingBottom: 10,
 	},
 })
