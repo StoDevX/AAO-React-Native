@@ -4,7 +4,7 @@ import {useQuery} from '@tanstack/react-query'
 import {useMomentTimer} from '@frogpond/timer'
 import {timezone} from '@frogpond/constants'
 
-import {BuildingDetail} from '../../../source/features/building-hours/detail/building'
+import {BuildingDetailSwiftUI} from '../../../source/features/building-hours/detail/building-detail'
 import {buildingByNameOptions} from '../../../source/features/building-hours/query'
 import {LoadingView, NoticeView} from '@frogpond/notice'
 import {useAppDispatch, useAppSelector} from '../../../source/redux/hooks'
@@ -40,6 +40,7 @@ export default function BuildingHoursDetailPage(): React.ReactNode {
 	let screen = (
 		<>
 			<Stack.Title>{building?.name ?? name}</Stack.Title>
+			<Stack.Screen options={{headerLargeTitle: true}} />
 			<Stack.Toolbar placement="right">
 				<Stack.Toolbar.Button icon={favorited ? 'heart.fill' : 'heart'} onPress={onFavorite} />
 			</Stack.Toolbar>
@@ -82,7 +83,7 @@ export default function BuildingHoursDetailPage(): React.ReactNode {
 	return (
 		<>
 			{screen}
-			<BuildingDetail info={building} now={now} onProblemReport={reportProblem} />
+			<BuildingDetailSwiftUI building={building} now={now} onProblemReport={reportProblem} />
 		</>
 	)
 }
