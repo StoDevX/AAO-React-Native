@@ -3,10 +3,8 @@ import {Stack} from 'expo-router'
 import {Host, Image, Menu, Section, Toggle} from '@expo/ui/swift-ui'
 import {
 	accessibilityLabel,
-	buttonStyle,
 	foregroundStyle,
 	menuActionDismissBehavior,
-	tint,
 } from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
 import type {NewsSource} from './sources'
@@ -26,13 +24,6 @@ type Props = {
 
 const STAYS_OPEN = [menuActionDismissBehavior('disabled')]
 const LABEL = accessibilityLabel('News filter')
-const ACTIVE_STYLE = [
-	LABEL,
-	buttonStyle('borderedProminent'),
-	tint(c.systemBlue),
-	foregroundStyle(c.white),
-]
-const INACTIVE_STYLE = [LABEL, foregroundStyle(c.label)]
 
 export function NewsPicker({
 	sources,
@@ -42,7 +33,10 @@ export function NewsPicker({
 	onSelect,
 }: Props): React.ReactNode {
 	let isActive = selectedCategory !== null
-	let menuModifiers = isActive ? ACTIVE_STYLE : INACTIVE_STYLE
+	// Keep the modifier list structurally identical every render — only the
+	// colour value changes. Swapping modifier types/count rebuilds the native
+	// Menu and closes it mid-interaction.
+	let menuModifiers = [LABEL, foregroundStyle(isActive ? c.systemBlue : c.label)]
 
 	let handleToggle = (source: string, category: string) => {
 		// Tapping selected category deselects it → shows all from that source
