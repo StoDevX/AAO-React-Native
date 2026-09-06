@@ -227,8 +227,8 @@ struct CalendarScreen: Screen {
 		return self
 	}
 
-	/// Sunday of the current week leads the strip, so its cell should be the
-	/// leftmost one.
+	/// Sunday of the strip's week leads it, so that cell should be the leftmost
+	/// one. The week is measured from the app's frozen clock, not the live one.
 	@discardableResult
 	func verifySundayLeadsTheStrip() -> Self {
 		verifyStripIsPresent()
@@ -240,13 +240,15 @@ struct CalendarScreen: Screen {
 
 		var calendar = Calendar(identifier: .gregorian)
 		calendar.locale = Locale(identifier: "en_US_POSIX")
+		calendar.timeZone = TestIdentifiers.Calendar.campusTimeZone
 		let sunday = calendar.date(
-			from: calendar.dateComponents([.yearForWeekOfYear, .weekOfYear], from: Date())
+			from: calendar.dateComponents(
+				[.yearForWeekOfYear, .weekOfYear], from: TestIdentifiers.Calendar.frozenNow)
 		)!
 		let expected = TestIdentifiers.Calendar.dayCell(sunday)
 		XCTAssertEqual(
 			first.identifier, expected,
-			"The strip should start at Sunday of this week")
+			"The strip should start at Sunday of the frozen week (expected \(expected))")
 		return self
 	}
 
