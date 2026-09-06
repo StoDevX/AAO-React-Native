@@ -332,4 +332,18 @@ struct CalendarScreen: Screen {
 			"The event detail should offer Add to calendar in its bottom bar")
 		return self
 	}
+
+	/// Dismiss the event detail sheet, landing back on the calendar list.
+	@discardableResult
+	func closeEventDetail() -> Self {
+		let close = app.buttons[TestIdentifiers.Calendar.closeEventDetail]
+		XCTAssertTrue(
+			close.waitForExistence(timeout: 30),
+			"The event detail should offer a Close button")
+		close.tap()
+		XCTAssertTrue(
+			app.buttons[TestIdentifiers.Calendar.picker].waitForExistence(timeout: 30),
+			"Dismissing the event detail should land back on the calendar")
+		return self
+	}
 }

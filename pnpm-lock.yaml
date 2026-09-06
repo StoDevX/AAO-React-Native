@@ -27,6 +27,7 @@ overrides:
   '@sentry/cli': '-'
 
 patchedDependencies:
+  expo-router@57.0.17: 0b91589e38d917efe592a7f7c48ca650048b2d4ef63842502628f4d7e86d6a0c
   react-native-change-icon@5.0.0: 7576d2a458dd256e90b703b84345bf87a19dfa2e3dea523e4691e395dfddfcff
   react-native@0.86.2: 6ca2e1225f38672b073b92b9d13f24feebbe9e37ba67708a3f1569275ce99191
 
@@ -222,7 +223,7 @@ importers:
         version: 57.0.14(react-native-worklets@0.10.4)(react-native@0.86.2)(react@19.2.8)
       expo-router:
         specifier: 57.0.17
-        version: 57.0.17(@babel/core@7.29.7)(@expo/log-box@57.0.4)(@expo/metro-runtime@57.0.14)(@testing-library/react-native@14.0.1)(@types/react@19.2.18)(expo-constants@57.0.15)(expo-font@57.0.1)(expo-linking@57.0.8)(expo@57.0.17)(react-native-gesture-handler@3.2.1)(react-native-reanimated@4.5.1)(react-native-safe-area-context@5.9.1)(react-native-screens@4.27.0)(react-native-worklets@0.10.4)(react-native@0.86.2)(react@19.2.8)(supports-color@8.1.1)
+        version: 57.0.17(patch_hash=0b91589e38d917efe592a7f7c48ca650048b2d4ef63842502628f4d7e86d6a0c)(@babel/core@7.29.7)(@expo/log-box@57.0.4)(@expo/metro-runtime@57.0.14)(@testing-library/react-native@14.0.1)(@types/react@19.2.18)(expo-constants@57.0.15)(expo-font@57.0.1)(expo-linking@57.0.8)(expo@57.0.17)(react-native-gesture-handler@3.2.1)(react-native-reanimated@4.5.1)(react-native-safe-area-context@5.9.1)(react-native-screens@4.27.0)(react-native-worklets@0.10.4)(react-native@0.86.2)(react@19.2.8)(supports-color@8.1.1)
       expo-symbols:
         specifier: 57.0.2
         version: 57.0.2(expo-font@57.0.1)(expo@57.0.17)(react-native@0.86.2)(react@19.2.8)
@@ -6300,7 +6301,7 @@ snapshots:
       ws: 8.21.3
       zod: 3.25.76
     optionalDependencies:
-      expo-router: 57.0.17(@babel/core@7.29.7)(@expo/log-box@57.0.4)(@expo/metro-runtime@57.0.14)(@testing-library/react-native@14.0.1)(@types/react@19.2.18)(expo-constants@57.0.15)(expo-font@57.0.1)(expo-linking@57.0.8)(expo@57.0.17)(react-native-gesture-handler@3.2.1)(react-native-reanimated@4.5.1)(react-native-safe-area-context@5.9.1)(react-native-screens@4.27.0)(react-native-worklets@0.10.4)(react-native@0.86.2)(react@19.2.8)(supports-color@8.1.1)
+      expo-router: 57.0.17(patch_hash=0b91589e38d917efe592a7f7c48ca650048b2d4ef63842502628f4d7e86d6a0c)(@babel/core@7.29.7)(@expo/log-box@57.0.4)(@expo/metro-runtime@57.0.14)(@testing-library/react-native@14.0.1)(@types/react@19.2.18)(expo-constants@57.0.15)(expo-font@57.0.1)(expo-linking@57.0.8)(expo@57.0.17)(react-native-gesture-handler@3.2.1)(react-native-reanimated@4.5.1)(react-native-safe-area-context@5.9.1)(react-native-screens@4.27.0)(react-native-worklets@0.10.4)(react-native@0.86.2)(react@19.2.8)(supports-color@8.1.1)
       react-native: 0.86.2(patch_hash=6ca2e1225f38672b073b92b9d13f24feebbe9e37ba67708a3f1569275ce99191)(@babel/core@7.29.7)(@react-native/jest-preset@0.86.2)(@react-native/metro-config@0.86.2)(@types/react@19.2.18)(react@19.2.8)(supports-color@8.1.1)
     transitivePeerDependencies:
       - '@expo/dom-webview'
@@ -6575,7 +6576,7 @@ snapshots:
       react: 19.2.8
     optionalDependencies:
       '@expo/metro-runtime': 57.0.14(@expo/log-box@57.0.4)(expo@57.0.17)(react-native@0.86.2)(react@19.2.8)
-      expo-router: 57.0.17(@babel/core@7.29.7)(@expo/log-box@57.0.4)(@expo/metro-runtime@57.0.14)(@testing-library/react-native@14.0.1)(@types/react@19.2.18)(expo-constants@57.0.15)(expo-font@57.0.1)(expo-linking@57.0.8)(expo@57.0.17)(react-native-gesture-handler@3.2.1)(react-native-reanimated@4.5.1)(react-native-safe-area-context@5.9.1)(react-native-screens@4.27.0)(react-native-worklets@0.10.4)(react-native@0.86.2)(react@19.2.8)(supports-color@8.1.1)
+      expo-router: 57.0.17(patch_hash=0b91589e38d917efe592a7f7c48ca650048b2d4ef63842502628f4d7e86d6a0c)(@babel/core@7.29.7)(@expo/log-box@57.0.4)(@expo/metro-runtime@57.0.14)(@testing-library/react-native@14.0.1)(@types/react@19.2.18)(expo-constants@57.0.15)(expo-font@57.0.1)(expo-linking@57.0.8)(expo@57.0.17)(react-native-gesture-handler@3.2.1)(react-native-reanimated@4.5.1)(react-native-safe-area-context@5.9.1)(react-native-screens@4.27.0)(react-native-worklets@0.10.4)(react-native@0.86.2)(react@19.2.8)(supports-color@8.1.1)
     transitivePeerDependencies:
       - supports-color
 
@@ -8606,7 +8607,7 @@ snapshots:
     dependencies:
       react-native: 0.86.2(patch_hash=6ca2e1225f38672b073b92b9d13f24feebbe9e37ba67708a3f1569275ce99191)(@babel/core@7.29.7)(@react-native/jest-preset@0.86.2)(@react-native/metro-config@0.86.2)(@types/react@19.2.18)(react@19.2.8)(supports-color@8.1.1)
 
-  expo-router@57.0.17(@babel/core@7.29.7)(@expo/log-box@57.0.4)(@expo/metro-runtime@57.0.14)(@testing-library/react-native@14.0.1)(@types/react@19.2.18)(expo-constants@57.0.15)(expo-font@57.0.1)(expo-linking@57.0.8)(expo@57.0.17)(react-native-gesture-handler@3.2.1)(react-native-reanimated@4.5.1)(react-native-safe-area-context@5.9.1)(react-native-screens@4.27.0)(react-native-worklets@0.10.4)(react-native@0.86.2)(react@19.2.8)(supports-color@8.1.1):
+  expo-router@57.0.17(patch_hash=0b91589e38d917efe592a7f7c48ca650048b2d4ef63842502628f4d7e86d6a0c)(@babel/core@7.29.7)(@expo/log-box@57.0.4)(@expo/metro-runtime@57.0.14)(@testing-library/react-native@14.0.1)(@types/react@19.2.18)(expo-constants@57.0.15)(expo-font@57.0.1)(expo-linking@57.0.8)(expo@57.0.17)(react-native-gesture-handler@3.2.1)(react-native-reanimated@4.5.1)(react-native-safe-area-context@5.9.1)(react-native-screens@4.27.0)(react-native-worklets@0.10.4)(react-native@0.86.2)(react@19.2.8)(supports-color@8.1.1):
     dependencies:
       '@expo/log-box': 57.0.4(@expo/dom-webview@57.0.1)(expo@57.0.17)(react-native@0.86.2)(react@19.2.8)
       '@expo/metro-runtime': 57.0.14(@expo/log-box@57.0.4)(expo@57.0.17)(react-native@0.86.2)(react@19.2.8)

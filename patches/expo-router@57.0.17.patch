@@ -1,0 +1,20 @@
+diff --git a/ios/Toolbar/RouterToolbarHostView.swift b/ios/Toolbar/RouterToolbarHostView.swift
+index 3b2a9ad76dc98966a508553a36606477c99a9bd8..2e28fd5297930f7c44b0c186e0382dddad4066b8 100644
+--- a/ios/Toolbar/RouterToolbarHostView.swift
++++ b/ios/Toolbar/RouterToolbarHostView.swift
+@@ -171,6 +171,15 @@ class RouterToolbarHostView: RouterViewWithLogger, LinkPreviewMenuUpdatable {
+       // Use cached controller since responder chain may be broken
+       if let controller = cachedController {
+         controller.setToolbarItems(nil, animated: true)
++        // react-native-screens reuses a modal's navigation controller for the
++        // next presentation. Leaving its toolbar showing makes the next
++        // screen's unhide a no-op, and that screen's bar items never reach the
++        // bar -- it comes up empty. Only the modal's own controller is safe to
++        // hide: a pushed screen shares its stack with the one underneath,
++        // whose toolbar has to stay up.
++        if let nav = controller.navigationController, nav.viewControllers.count <= 1 {
++          nav.setToolbarHidden(true, animated: false)
++        }
+       }
+       cachedController = nil  // Clear cache when removed from window
+     } else {

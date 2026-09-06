@@ -161,6 +161,17 @@ The feature uses `react-native-zeroconf` (native pod). If the pod hasn't been li
 
 **Before committing:** Always run `mise run agent:pre-commit` before committing any changes. This formats code with oxfmt, runs oxlint, checks TypeScript types, and runs Jest tests. Do not commit if any step fails.
 
+**Patching a native dependency:** `pnpm patch` gives the patched package a new
+`node_modules/.pnpm/<name>@<version>_patch_hash=…` directory, but `ios/Pods`
+still points at the pre-patch path until you run `mise run prebuild`. Until then
+Xcode compiles the unpatched copy and edits under `node_modules/<name>` are
+silently ignored — builds succeed, tests pass, and nothing says why. After
+adding or changing a patch that touches native code, run `mise run prebuild` and
+confirm `ios/Pods/Pods.xcodeproj/project.pbxproj` names the `patch_hash` path.
+To prove a build really picked a change up, put an `NSLog` in the patched source
+and watch for it with `xcrun simctl spawn <UDID> log stream`; grepping the
+source file only tells you what is on disk, not what got compiled.
+
 **Dependency upgrades:** Whenever you upgrade a dependency whose version is mentioned in this file (e.g., React Native, React Navigation, React Query, Redux Toolkit, TypeScript, Jest, Fastlane), update the version reference in CLAUDE.md as part of the same change. Stale version references in this file mislead future sessions about the project's current state.
 
 ## Superpowers Skills Framework
