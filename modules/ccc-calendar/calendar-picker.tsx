@@ -3,10 +3,8 @@ import {Stack} from 'expo-router'
 import {Host, Image, Menu, Section, Toggle} from '@expo/ui/swift-ui'
 import {
 	accessibilityLabel,
-	buttonStyle,
 	foregroundStyle,
 	menuActionDismissBehavior,
-	tint,
 } from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
 
@@ -23,13 +21,6 @@ type Props = {
 
 const STAYS_OPEN = [menuActionDismissBehavior('disabled')]
 const LABEL = accessibilityLabel('Category filter')
-const ACTIVE_STYLE = [
-	LABEL,
-	buttonStyle('borderedProminent'),
-	tint(c.systemBlue),
-	foregroundStyle(c.white),
-]
-const INACTIVE_STYLE = [LABEL, foregroundStyle(c.label)]
 
 export function CalendarPicker({
 	categories,
@@ -38,7 +29,10 @@ export function CalendarPicker({
 	onTodayPress,
 }: Props): React.ReactNode {
 	let isActive = selectedCategory !== null
-	let menuModifiers = isActive ? ACTIVE_STYLE : INACTIVE_STYLE
+	// Keep the modifier list structurally identical every render — only the
+	// colour value changes. Swapping modifier types/count rebuilds the native
+	// Menu and closes it mid-interaction.
+	let menuModifiers = [LABEL, foregroundStyle(isActive ? c.systemBlue : c.label)]
 
 	let handleToggle = (cat: string) => {
 		onSelectCategory(selectedCategory === cat ? null : cat)
@@ -64,6 +58,13 @@ export function CalendarPicker({
 									onIsOnChange={() => handleToggle(cat)}
 								/>
 							))}
+							{/* Rendered last so it sits at the visual top of the section */}
+							<Toggle
+								isOn={selectedCategory === null}
+								key="__all__"
+								label="All Events"
+								onIsOnChange={() => onSelectCategory(null)}
+							/>
 						</Section>
 					</Menu>
 				</Host>
