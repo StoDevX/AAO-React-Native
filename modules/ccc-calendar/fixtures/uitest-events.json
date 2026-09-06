@@ -286,8 +286,8 @@
   },
   {
     "dataSource": "uitest",
-    "startTime": "2026-09-19T15:00:00-05:00",
-    "endTime": "2026-09-19T17:00:00-05:00",
+    "startTime": "2026-09-18T15:00:00-05:00",
+    "endTime": "2026-09-18T17:00:00-05:00",
     "isAllDay": false,
     "isMultiDay": false,
     "isSameInstant": false,

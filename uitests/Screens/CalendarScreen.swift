@@ -202,18 +202,7 @@ struct CalendarScreen: Screen {
 	/// more, and every frame a query reads is a round trip to the app -- reading
 	/// them all takes minutes. Nothing asks about a day past the first screenful.
 	private func dayCells(limit: Int = 14) -> [XCUIElement] {
-		let matches = app.buttons.matching(
-			NSPredicate(format: "identifier BEGINSWITH %@", TestIdentifiers.Calendar.dayCellPrefix)
-		)
-
-		// Each frame is read once and carried along: a comparator that reached for
-		// `frame` would ask the app again on every comparison.
-		let leading = (0..<min(limit, matches.count)).map { index in
-			let cell = matches.element(boundBy: index)
-			return (cell: cell, minX: cell.frame.minX)
-		}
-
-		return leading.sorted { $0.minX < $1.minX }.map { $0.cell }
+		dayCellFrames(limit: limit).sorted { $0.frame.minX < $1.frame.minX }.map { $0.cell }
 	}
 
 	@discardableResult
@@ -227,28 +216,118 @@ struct CalendarScreen: Screen {
 		return self
 	}
 
-	/// Sunday of the strip's week leads it, so that cell should be the leftmost
-	/// one. The week is measured from the app's frozen clock, not the live one.
-	@discardableResult
-	func verifySundayLeadsTheStrip() -> Self {
-		verifyStripIsPresent()
+	/// Every day cell the app is currently exposing, paired with where it sits.
+	///
+	/// The frames are read once and carried: a comparator or filter that reached
+	/// for `frame` would ask the app again on every comparison.
+	private func dayCellFrames(limit: Int) -> [(cell: XCUIElement, frame: CGRect)] {
+		let matches = app.buttons.matching(
+			NSPredicate(format: "identifier BEGINSWITH %@", TestIdentifiers.Calendar.dayCellPrefix)
+		)
 
-		guard let first = dayCells().first else {
-			XCTFail("The strip should have day cells")
-			return self
+		return (0..<min(limit, matches.count)).map { index in
+			let cell = matches.element(boundBy: index)
+			return (cell: cell, frame: cell.frame)
 		}
+	}
 
+	/// The leftmost day cell inside the strip's viewport, and its frame.
+	///
+	/// Distinct from `dayCells().first`: a cell dragged off the leading edge
+	/// keeps a frame, and its origin goes negative rather than disappearing, so
+	/// after a swipe the leftmost cell by frame is one the user cannot see.
+	private func leadingVisibleDayCell(limit: Int = 21) -> (cell: XCUIElement, frame: CGRect)? {
+		let onscreen = dayCellFrames(limit: limit).filter { $0.frame.minX >= 0 }
+		return onscreen.min(by: { $0.frame.minX < $1.frame.minX })
+	}
+
+	/// Where the strip's leading cell sits on screen. A week the strip has
+	/// snapped to puts its Sunday here; a week the strip could only scroll
+	/// partway to leaves it further along.
+	func leadingDayCellEdge() -> CGFloat? {
+		leadingVisibleDayCell()?.frame.minX
+	}
+
+	/// The cell identifier for the Sunday `weeksOn` weeks after the Sunday of
+	/// the app's frozen week.
+	///
+	/// The week start is pinned rather than inherited from the simulator's
+	/// region settings. The app's own is unconditional -- moment's default `en`
+	/// locale in `deriveDays`, and `startOf('week')` in the strip -- so a device
+	/// set to a Monday-first region would otherwise fail a correct strip.
+	private func sundayCell(weeksOn weeks: Int = 0) -> String {
 		var calendar = Calendar(identifier: .gregorian)
 		calendar.locale = Locale(identifier: "en_US_POSIX")
 		calendar.timeZone = TestIdentifiers.Calendar.campusTimeZone
-		let sunday = calendar.date(
-			from: calendar.dateComponents(
-				[.yearForWeekOfYear, .weekOfYear], from: TestIdentifiers.Calendar.frozenNow)
-		)!
-		let expected = TestIdentifiers.Calendar.dayCell(sunday)
+		calendar.firstWeekday = 1
+		calendar.minimumDaysInFirstWeek = 1
+
+		let week = calendar.dateInterval(
+			of: .weekOfYear, for: TestIdentifiers.Calendar.frozenNow)!
+		let sunday = calendar.date(byAdding: .weekOfYear, value: weeks, to: week.start)!
+		return TestIdentifiers.Calendar.dayCell(sunday)
+	}
+
+	/// A Sunday leads the strip, so that cell should be the leftmost visible one.
+	/// The week is measured from the app's frozen clock, not the live one;
+	/// `weeksOn` counts on from it, for a strip that has been swiped along.
+	///
+	/// Pass `atEdge` to also pin where that Sunday came to rest. Being merely
+	/// visible is not the claim -- a strip that ran out of content mid-week
+	/// still shows a Sunday, just further along than one that snapped.
+	@discardableResult
+	func verifySundayLeadsTheStrip(weeksOn weeks: Int = 0, atEdge edge: CGFloat? = nil) -> Self {
+		verifyStripIsPresent()
+
+		guard let leading = leadingVisibleDayCell() else {
+			XCTFail("The strip should have a visible day cell")
+			return self
+		}
+
+		let expected = sundayCell(weeksOn: weeks)
 		XCTAssertEqual(
-			first.identifier, expected,
-			"The strip should start at Sunday of the frozen week (expected \(expected))")
+			leading.cell.identifier, expected,
+			"The strip should lead with a Sunday (expected \(expected))")
+
+		if let edge {
+			XCTAssertEqual(
+				leading.frame.minX, edge, accuracy: 1.0,
+				"A snapped week should bring its Sunday to the strip's leading edge")
+		}
+		return self
+	}
+
+	/// Drags the strip one week toward the leading edge and lets it settle.
+	///
+	/// A coordinate drag rather than `swipeLeft()` on a cell: a cell is 44pt
+	/// wide, and a swipe inside it travels nowhere near a week. The drag covers
+	/// most of a week so the snap has to choose the next Sunday rather than fall
+	/// back to the one it started from, and it is slow enough not to fling past
+	/// it.
+	@discardableResult
+	func swipeStripToNextWeek() -> Self {
+		guard let leading = leadingVisibleDayCell() else {
+			XCTFail("The strip should have a day cell to drag from")
+			return self
+		}
+
+		let strip = leading.frame
+		let origin = app.coordinate(withNormalizedOffset: .zero)
+		let start = origin.withOffset(CGVector(dx: strip.midX + 280, dy: strip.midY))
+		let end = origin.withOffset(CGVector(dx: strip.midX + 40, dy: strip.midY))
+		start.press(forDuration: 0.1, thenDragTo: end)
+		return self
+	}
+
+	/// Taps the cell for a given ISO day. It has to be on screen already --
+	/// `XCUIElement.tap()` on an offscreen cell scrolls the wrong view.
+	@discardableResult
+	func tapDay(_ isoDay: String) -> Self {
+		let cell = app.buttons[TestIdentifiers.Calendar.dayCellPrefix + isoDay]
+		XCTAssertTrue(
+			cell.waitForExistence(timeout: 10),
+			"The strip should offer \(isoDay)")
+		cell.tap()
 		return self
 	}
 

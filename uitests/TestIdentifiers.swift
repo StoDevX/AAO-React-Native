@@ -174,10 +174,13 @@ struct TestIdentifiers {
 		/// The instant the app freezes its clock to under `isUITesting`, so a
 		/// test reasons about "today" the way the app does rather than off the
 		/// live wall clock. Mirrors `UITEST_FROZEN_DATE` in
-		/// `modules/timer/index.ts` (`2026-09-05T12:00:00-05:00`, a Saturday).
-		static let frozenNow = Foundation.Calendar(identifier: .gregorian).date(
-			from: DateComponents(timeZone: campusTimeZone, year: 2026, month: 9, day: 5, hour: 12)
-		)!
+		/// `modules/timer/index.ts` (a Saturday).
+		///
+		/// Parsed from the same string the app parses rather than rebuilt from
+		/// its parts: the constant carries a fixed offset, so rebuilding it as a
+		/// wall time in `campusTimeZone` would agree only while that date sits in
+		/// daylight time.
+		static let frozenNow = ISO8601DateFormatter().date(from: "2026-09-05T12:00:00-05:00")!
 
 		/// The identifier of the cell for a given day, formatted in campus time.
 		static func dayCell(_ date: Date) -> String {

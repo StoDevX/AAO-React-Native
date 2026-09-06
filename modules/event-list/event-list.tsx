@@ -120,18 +120,26 @@ export let EventList = React.forwardRef<EventListHandle, Props>(function EventLi
 
 	let sectionKeys = React.useMemo(() => new Set(sections.map((section) => section.key)), [sections])
 
+	let daysWithEvents = React.useMemo(
+		() => days.filter((d) => sectionKeys.has(sectionKeyFor(d))),
+		[days, sectionKeys, sectionKeyFor],
+	)
+
 	/**
-	 * The first day from `day` onwards that the list holds a section for.
+	 * The first day from `day` onwards that the list holds a section for, or the
+	 * last day that has one when `day` is past them all.
 	 *
 	 * The strip fills the gaps between events so it reads as a continuous
-	 * calendar, which leaves it offering days the list cannot scroll to. The
-	 * range ends on a day that has events, so looking forward always lands
-	 * somewhere.
+	 * calendar, and it runs to the end of the last event's week, so it offers
+	 * days the list cannot scroll to both inside the range and after the final
+	 * event. Landing on `day` itself would set a selection no section answers
+	 * to: the list would not move, the tapped cell would not light up, and the
+	 * fallback to `defaultDay` would drag the strip back to the top week.
 	 */
 	let dayWithEventsFrom = React.useCallback(
 		(day: Moment) =>
-			days.find((d) => !d.isBefore(day, 'day') && sectionKeys.has(sectionKeyFor(d))) ?? day,
-		[days, sectionKeys, sectionKeyFor],
+			daysWithEvents.find((d) => !d.isBefore(day, 'day')) ?? daysWithEvents.at(-1) ?? day,
+		[daysWithEvents],
 	)
 
 	let handleSelectDay = React.useCallback(
