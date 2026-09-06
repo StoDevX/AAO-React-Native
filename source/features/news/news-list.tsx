@@ -7,33 +7,28 @@ import {LoadingView, NoticeView} from '@frogpond/notice'
 import {openUrl} from '@frogpond/open-url'
 import type {StoryType} from './types'
 import {NewsRow} from './news-row'
-import {cleanEntries, trimStoryCateogry} from './lib/util'
+import {filterByCategory} from './lib/util'
 import {emptyStateProps} from './lib/empty-state'
-import {UseQueryResult} from '@tanstack/react-query'
+import type {NewsFeedQuery} from './lib/combine'
 
 type Props = {
-	query: UseQueryResult<StoryType[]>
+	query: NewsFeedQuery
+	/** The selected source's stories, cleaned by the same pass that built the picker's categories */
+	entries: StoryType[]
 	thumbnail: false | ImageResolvedAssetSource
 	selectedCategory: string | null
 }
 
-let getStoryCategories = (story: StoryType) => {
-	return (story.categories ?? []).map((category) => trimStoryCateogry(category))
-}
-
 export const NewsList = (props: Props): React.ReactNode => {
-	let {data = [], error, refetch, isError, isLoading} = props.query
+	let {error, refetch, isError, isLoading} = props.query
+	let {entries, selectedCategory} = props
 
-	let entries = React.useMemo(() => cleanEntries(data), [data])
+	let filteredEntries = React.useMemo(
+		() => filterByCategory(entries, selectedCategory),
+		[entries, selectedCategory],
+	)
 
-	let filteredEntries = React.useMemo(() => {
-		if (props.selectedCategory === null) return entries
-		return entries.filter((story) =>
-			getStoryCategories(story).includes(props.selectedCategory as string),
-		)
-	}, [entries, props.selectedCategory])
-
-	let hasActiveFilter = props.selectedCategory !== null
+	let hasActiveFilter = selectedCategory !== null
 
 	if (isLoading) {
 		return <LoadingView />
@@ -77,13 +72,6 @@ export const NewsList = (props: Props): React.ReactNode => {
 			</VStack>
 		</Host>
 	)
-}
-
-/** Extract unique categories from stories, sorted A-Z */
-export function extractCategories(stories: StoryType[]): string[] {
-	let cleaned = cleanEntries(stories)
-	let cats = new Set(cleaned.flatMap((story) => getStoryCategories(story)))
-	return [...cats].sort()
 }
 
 const styles = StyleSheet.create({

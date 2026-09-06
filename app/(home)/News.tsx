@@ -2,52 +2,56 @@ import * as React from 'react'
 import {Stack} from 'expo-router'
 import {useQueries} from '@tanstack/react-query'
 
-import {extractCategories, NewsList} from '../../source/features/news/news-list'
+import {NewsList} from '../../source/features/news/news-list'
 import {NewsPicker} from '../../source/features/news/news-picker'
+import {
+	combineNewsResults,
+	type NewsFeedQuery,
+	type NewsFeeds,
+} from '../../source/features/news/lib/combine'
+import {resolveCategory} from '../../source/features/news/lib/util'
 import {namedNewsOptions} from '../../source/features/news/query'
 import {NEWS_SOURCES} from '../../source/features/news/sources'
 import {useNewsFilterStore} from '../../source/features/news/store'
+
+const NEWS_SOURCE_IDS = NEWS_SOURCES.map((s) => s.id)
+
+// Defined out here so react-query can memoize the fold; a combine rebuilt on
+// every render is re-run on every render.
+const combineNewsFeeds = (results: NewsFeedQuery[]): NewsFeeds =>
+	combineNewsResults(NEWS_SOURCE_IDS, results)
 
 export default function NewsPage(): React.ReactNode {
 	let {selectedSource, selectedCategory, select} = useNewsFilterStore()
 	let source = NEWS_SOURCES.find((s) => s.id === selectedSource) ?? NEWS_SOURCES[0]
 
-	// Fetch all sources to populate the picker with categories
-	let queries = useQueries({
+	// Every source is fetched, not only the one on screen: the picker lists the
+	// categories each source offers, and the Menu has no "opened" callback to
+	// defer the others to. The cost is one extra feed per cold open.
+	let {entriesBySource, categoriesBySource, queryBySource, unavailableSources} = useQueries({
 		queries: NEWS_SOURCES.map((s) => namedNewsOptions(s.id)),
+		combine: combineNewsFeeds,
 	})
 
-	// The query for the currently selected source
-	let currentQueryIndex = NEWS_SOURCES.findIndex((s) => s.id === selectedSource)
-	let currentQuery = queries[currentQueryIndex >= 0 ? currentQueryIndex : 0]
-
-	// Build categories by source from fetched data
-	// Destructure data arrays to satisfy @tanstack/query(no-unstable-deps)
-	let dataArrays = queries.map((q) => q.data)
-	let categoriesBySource = React.useMemo(() => {
-		let result: Record<string, string[]> = {}
-		NEWS_SOURCES.forEach((s, i) => {
-			let data = dataArrays[i] ?? []
-			result[s.id] = extractCategories(data)
-		})
-		return result
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, dataArrays)
+	let categories = categoriesBySource[source.id] ?? []
+	let category = resolveCategory(selectedCategory, categories)
 
 	return (
 		<>
 			<Stack.Screen options={{title: source.title}} />
 			<NewsList
-				query={currentQuery}
-				selectedCategory={selectedCategory}
+				entries={entriesBySource[source.id] ?? []}
+				query={queryBySource[source.id]}
+				selectedCategory={category}
 				thumbnail={source.thumbnail}
 			/>
 			<NewsPicker
 				categoriesBySource={categoriesBySource}
 				onSelect={select}
-				selectedCategory={selectedCategory}
-				selectedSource={selectedSource}
+				selectedCategory={category}
+				selectedSource={source.id}
 				sources={NEWS_SOURCES}
+				unavailableSources={unavailableSources}
 			/>
 		</>
 	)

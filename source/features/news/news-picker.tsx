@@ -1,8 +1,9 @@
 import * as React from 'react'
 import {Stack} from 'expo-router'
-import {Host, Image, Menu, Section, Toggle} from '@expo/ui/swift-ui'
+import {Button, Host, Image, Menu, Section, Toggle} from '@expo/ui/swift-ui'
 import {
 	accessibilityLabel,
+	disabled,
 	foregroundStyle,
 	menuActionDismissBehavior,
 } from '@expo/ui/swift-ui/modifiers'
@@ -17,6 +18,8 @@ type Props = {
 	sources: NewsSource[]
 	/** Categories keyed by source id */
 	categoriesBySource: Record<string, string[]>
+	/** Ids of the sources whose feed failed to load */
+	unavailableSources: string[]
 	selectedSource: string
 	selectedCategory: string | null
 	onSelect: (source: string, category: string | null) => void
@@ -24,10 +27,12 @@ type Props = {
 
 const STAYS_OPEN = [menuActionDismissBehavior('disabled')]
 const LABEL = accessibilityLabel('News filter')
+const UNAVAILABLE = [disabled(true)]
 
 export function NewsPicker({
 	sources,
 	categoriesBySource,
+	unavailableSources,
 	selectedSource,
 	selectedCategory,
 	onSelect,
@@ -58,13 +63,14 @@ export function NewsPicker({
 				<Host matchContents={true}>
 					<Menu label={<Image systemName="newspaper" />} modifiers={menuModifiers}>
 						{sortedSources.map((source) => {
-							let categories = categoriesBySource[source.id] ?? []
-							let sortedCategories = [...categories].sort((a, b) => b.localeCompare(a))
+							// Already sorted A-Z, and the Menu renders bottom-to-top
+							let categories = [...(categoriesBySource[source.id] ?? [])].reverse()
 							let isSourceSelected = source.id === selectedSource
+							let isUnavailable = unavailableSources.includes(source.id)
 
 							return (
 								<Section key={source.id} modifiers={STAYS_OPEN} title={source.title.toUpperCase()}>
-									{sortedCategories.map((cat) => (
+									{categories.map((cat) => (
 										<Toggle
 											isOn={isSourceSelected && selectedCategory === cat}
 											key={cat}
@@ -77,6 +83,11 @@ export function NewsPicker({
 										label="All Stories"
 										onIsOnChange={() => onSelect(source.id, null)}
 									/>
+									{/* A source that failed to load has no categories to offer;
+									    without this it reads as a source that simply has none. */}
+									{isUnavailable ? (
+										<Button label="Couldn’t load stories" modifiers={UNAVAILABLE} />
+									) : null}
 								</Section>
 							)
 						})}
