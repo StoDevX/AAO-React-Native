@@ -1,9 +1,10 @@
 import {describe, expect, jest, test} from '@jest/globals'
-import moment from 'moment'
+import moment from 'moment-timezone'
 
 import type {WireEvent} from '../parsers/events'
 import {deviceCalendarOptions, namedCalendarOptions} from '../query'
 import {EventType} from '@frogpond/event-type'
+import {groupEvents} from '@frogpond/event-list/sections'
 
 // `query.ts` reaches EventKit for the device queries, and the shared query
 // client it imports subscribes to network reachability at module load. Neither
@@ -159,5 +160,65 @@ describe('deviceCalendarOptions select', () => {
 		let selected = selectDevice('cal-1')([makeDeviceEvent('evt-1', 'cal-1')])
 
 		expect(selected[0]?.key).toBe('evt-1')
+	})
+})
+
+/**
+ * An all-day event is a calendar date, not an instant, and both web sources
+ * anchor one at UTC midnight. Read back in the device's zone that lands a day
+ * early west of UTC and at the wrong time east of it, so the boundary
+ * re-anchors it to local midnight on its own date.
+ */
+describe('all-day events', () => {
+	afterEach(() => {
+		moment.tz.setDefault()
+	})
+
+	function allDayEvent() {
+		return makeWireEvent({
+			startTime: '2030-01-15T00:00:00.000Z',
+			endTime: '2030-01-16T00:00:00.000Z',
+			isAllDay: true,
+			config: {startTime: false, endTime: false, subtitle: 'location'},
+		})
+	}
+
+	test('sits at local midnight on its own date, west of UTC', () => {
+		moment.tz.setDefault('America/Chicago')
+
+		let [selected] = selectNamed('stolaf')([allDayEvent()])
+
+		expect(selected?.event.startTime.format('YYYY-MM-DD HH:mm')).toBe('2030-01-15 00:00')
+		expect(selected?.event.endTime.format('YYYY-MM-DD HH:mm')).toBe('2030-01-16 00:00')
+	})
+
+	test('sits at local midnight on its own date, east of UTC', () => {
+		moment.tz.setDefault('Asia/Tokyo')
+
+		let [selected] = selectNamed('stolaf')([allDayEvent()])
+
+		expect(selected?.event.startTime.format('YYYY-MM-DD HH:mm')).toBe('2030-01-15 00:00')
+		expect(selected?.event.endTime.format('YYYY-MM-DD HH:mm')).toBe('2030-01-16 00:00')
+	})
+
+	test('a timed event keeps the instant it names', () => {
+		moment.tz.setDefault('Asia/Tokyo')
+		let event = makeWireEvent({
+			startTime: '2030-01-15T18:00:00.000Z',
+			endTime: '2030-01-15T20:00:00.000Z',
+		})
+
+		let [selected] = selectNamed('stolaf')([event])
+
+		expect(selected?.event.startTime.toISOString()).toBe('2030-01-15T18:00:00.000Z')
+	})
+
+	test('reaches the list under its own day, not the day before', () => {
+		moment.tz.setDefault('America/Chicago')
+		let selected = selectNamed('stolaf')([allDayEvent()])
+
+		let sections = groupEvents(selected, moment('2030-01-10T12:00:00Z'))
+
+		expect(sections.map((section) => section.key)).toEqual(['2030-01-15'])
 	})
 })

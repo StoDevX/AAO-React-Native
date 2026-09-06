@@ -3,7 +3,7 @@ import {eventKey} from '@frogpond/event-list/calendar-util'
 import {EventType} from '@frogpond/event-type'
 import {queryOptions} from '@tanstack/react-query'
 import * as Calendar from 'expo-calendar'
-import moment from 'moment'
+import moment, {type Moment} from 'moment'
 import {now as currentMoment} from '@frogpond/timer'
 import {queryClient} from '../../source/init/tanstack-query'
 import {getFullCalendarAccess, listDeviceEvents} from './device-calendar'
@@ -20,11 +20,23 @@ export const keys = {
 
 type EventMapper = (event: EventType) => EventType
 
+/**
+ * An all-day event names a calendar date, not an instant, and both web sources
+ * anchor one at UTC midnight. Everything downstream -- the section keys, the
+ * day-picker strip, every `Intl` format -- reads a moment in the device's zone,
+ * so a UTC-midnight anchor lands on the day before anywhere west of UTC. This
+ * reads the date back out in UTC and rebuilds it as local midnight, which is
+ * where a day sits for every other part of the calendar.
+ */
+function localMidnightOf(instant: string): Moment {
+	return moment(moment.utc(instant).format('YYYY-MM-DD'), 'YYYY-MM-DD')
+}
+
 function convertEvents(data: WireEvent[], options: {eventMapper?: EventMapper}): EventType[] {
 	let events: EventType[] = data.map((event) => ({
 		...event,
-		startTime: moment(event.startTime),
-		endTime: moment(event.endTime),
+		startTime: event.isAllDay ? localMidnightOf(event.startTime) : moment(event.startTime),
+		endTime: event.isAllDay ? localMidnightOf(event.endTime) : moment(event.endTime),
 	}))
 
 	if (options.eventMapper) {
