@@ -21,11 +21,28 @@ const findDirsIn = (pth) => readDir(pth).filter((entry) => isDir(path.join(pth, 
 const findFilesIn = (pth) => readDir(pth).filter((entry) => isFile(path.join(pth, entry)))
 
 const args = process.argv.slice(2)
-const fromDir = args[0]
-const toDir = args[1]
-if (!fromDir || !toDir || fromDir === '-h' || fromDir === '--help') {
-	console.error('usage: node bundle-data.js <from-dir> <to-dir>')
+const flags = args.filter((arg) => arg.startsWith('--'))
+const [fromDir, toDir] = args.filter((arg) => !arg.startsWith('--'))
+if (!fromDir || !toDir || flags.includes('--help')) {
+	console.error('usage: node bundle-data.js [--verbose] <from-dir> <to-dir>')
 	process.exit(1)
+}
+
+const verbose = flags.includes('--verbose')
+
+// Naming and timing every file is a few hundred lines of output, and this
+// script runs ahead of tsc, jest, and so every pre-commit hook -- enough noise
+// to bury whatever the reader ran the command for. Report a count by default
+// and keep the detail for whoever asks for it.
+const step = (label, work) => {
+	if (!verbose) {
+		work()
+		return
+	}
+	console.log(label)
+	console.time(label)
+	work()
+	console.timeEnd(label)
 }
 
 fs.mkdirSync(toDir, {recursive: true})
@@ -35,10 +52,7 @@ const dirs = findDirsIn(fromDir)
 dirs.forEach((dirname) => {
 	let input = path.join(fromDir, dirname)
 	let output = path.join(toDir, dirname) + '.json'
-	console.log(`bundle-data-dir ${input} ${output}`)
-	console.time(`bundle-data-dir ${input} ${output}`)
-	bundleDataDir({fromDir: input, toFile: output})
-	console.timeEnd(`bundle-data-dir ${input} ${output}`)
+	step(`bundle-data-dir ${input} ${output}`, () => bundleDataDir({fromDir: input, toFile: output}))
 })
 
 // Convert these files into JSON equivalents
@@ -52,16 +66,16 @@ files.forEach((file) => {
 	// Get the absolute paths to the input and output files
 	let input = path.join(fromDir, file)
 	let output = path.join(toDir, file).replace(/\.(.*)$/u, '.json')
-	console.log(`convert-data-file ${input} ${output}`)
-	console.time(`convert-data-file ${input} ${output}`)
-	convertDataFile({fromFile: input, toFile: output})
-	if (file.endsWith('.css')) {
-		let dest = output.replace(/\.json/u, '.css')
-		convertDataFile({fromFile: input, toFile: dest, toFileType: 'css'})
-	}
-	console.timeEnd(`convert-data-file ${input} ${output}`)
+	step(`convert-data-file ${input} ${output}`, () => {
+		convertDataFile({fromFile: input, toFile: output})
+		if (file.endsWith('.css')) {
+			let dest = output.replace(/\.json/u, '.css')
+			convertDataFile({fromFile: input, toFile: dest, toFileType: 'css'})
+		}
+	})
 })
 
+let built = 0
 for (let [file, builder] of specialFiles.entries()) {
 	let source = path.join(fromDir, file)
 	if (!fs.existsSync(source)) {
@@ -69,8 +83,10 @@ for (let [file, builder] of specialFiles.entries()) {
 	}
 
 	let output = path.join(toDir, file).replace(/\.(.*)$/u, '.json')
-	console.log(`${builder.name} ${source} ${output}`)
-	console.time(`${builder.name} ${source} ${output}`)
-	builder({sourceFile: source, outputFile: output})
-	console.timeEnd(`${builder.name} ${source} ${output}`)
+	step(`${builder.name} ${source} ${output}`, () =>
+		builder({sourceFile: source, outputFile: output}),
+	)
+	built += 1
 }
+
+console.log(`bundle-data: ${dirs.length} directories and ${files.length + built} files -> ${toDir}`)

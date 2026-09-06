@@ -32,9 +32,14 @@ export function bundleDataDir({fromDir, toFile}) {
 	files.sort(new Intl.Collator(undefined, {numeric: true}).compare)
 
 	let loaded = files.map((fpath) => {
-		console.log(fpath)
 		let contents = fs.readFileSync(fpath, 'utf-8')
-		return load(contents)
+		try {
+			return load(contents)
+		} catch (err) {
+			// js-yaml reports a line and column but not which file they are in,
+			// and this runs over several hundred of them.
+			throw new Error(`${fpath}: ${err.message}`, {cause: err})
+		}
 	})
 	let dated = {data: loaded}
 	let output = JSON.stringify(dated) + '\n'
