@@ -3,13 +3,14 @@ import {FlatList, Image, StyleSheet, Text, View} from 'react-native'
 import {Stack, useLocalSearchParams, useRouter} from 'expo-router'
 import {useQuery} from '@tanstack/react-query'
 import {Column} from '@frogpond/layout'
-import {Detail, ListRow, ListSeparator, Title} from '@frogpond/lists'
+import {Detail, ListRow, ListSectionHeader, ListSeparator, Title} from '@frogpond/lists'
 import * as c from '@frogpond/colors'
 import {useDebounce} from '@frogpond/use-debounce'
 import {LoadingView, NoticeView} from '@frogpond/notice'
 import {SearchBar} from '../../../source/components/search-bar'
 import {formatResults} from '../../../source/features/directory/helpers'
 import {directoryEntriesOptions} from '../../../source/features/directory/query'
+import {resolveSearch, searchHeading} from '../../../source/features/directory/resolve-search'
 import type {DirectoryItem, DirectorySearchTypeEnum} from '../../../source/features/directory/types'
 import {SymbolView} from 'expo-symbols'
 
@@ -22,16 +23,19 @@ function DirectoryView(): React.ReactNode {
 	}>()
 
 	// Tapping a department opens a fresh copy of this screen with the name
-	// already in the params, so they seed the search: the route names the
-	// department at mount, and the query for it can go out on the first render
-	// rather than after a debounce.
+	// already in the params, so the route names the department at mount and the
+	// query for it can go out on the first render rather than after a debounce.
 	let departmentLink = params?.queryType === 'department' ? params.queryParam : undefined
 
-	let [searchQueryType, setSearchQueryType] = React.useState<DirectorySearchTypeEnum>(
-		departmentLink ? 'department' : 'query',
-	)
-	let [typedQuery, setTypedQuery] = React.useState(departmentLink ?? '')
-	let searchQuery = useDebounce(typedQuery, 500)
+	let [typedQuery, setTypedQuery] = React.useState('')
+	let debouncedQuery = useDebounce(typedQuery, 500)
+
+	let search = resolveSearch({departmentLink, typedQuery: debouncedQuery})
+	let {query: searchQuery, type: searchQueryType} = search
+
+	// The title reads "Directory" wherever the screen was opened from, so a
+	// linked search names itself over its results instead.
+	let heading = searchHeading(search)
 
 	let {
 		data = {results: []},
@@ -43,22 +47,16 @@ function DirectoryView(): React.ReactNode {
 	} = useQuery(directoryEntriesOptions(searchQuery, searchQueryType))
 
 	// The search chrome is bound to component state (the change handler
-	// updates typedQuery/searchQueryType), so it can't move to a static
-	// outer component. Compute it once and render it in every branch, so
-	// the user always has a search bar to type into or clear.
+	// updates typedQuery), so it can't move to a static outer component.
+	// Compute it once and render it in every branch, so the user always has a
+	// search bar to type into or clear.
 	let searchChrome = (
 		<>
 			<Stack.Toolbar placement="bottom">
 				<Stack.Toolbar.SearchBarSlot />
 			</Stack.Toolbar>
 
-			<SearchBar
-				onChangeText={(text) => {
-					setSearchQueryType('query')
-					setTypedQuery(text)
-				}}
-				value={typedQuery}
-			/>
+			<SearchBar onChangeText={setTypedQuery} value={typedQuery} />
 		</>
 	)
 
@@ -96,6 +94,7 @@ function DirectoryView(): React.ReactNode {
 				) : (
 					<FlatList
 						ItemSeparatorComponent={IndentedListSeparator}
+						ListHeaderComponent={heading ? <ListSectionHeader title={heading} /> : null}
 						contentInsetAdjustmentBehavior="automatic"
 						data={items}
 						keyExtractor={(_item, index) => String(index)}
@@ -105,6 +104,7 @@ function DirectoryView(): React.ReactNode {
 						refreshing={isRefetching}
 						renderItem={({item, index}) => (
 							<DirectoryItemRow
+								index={index}
 								item={item}
 								onPress={() =>
 									router.push({
@@ -126,11 +126,9 @@ function DirectoryView(): React.ReactNode {
 }
 
 export default function DirectoryPage(): React.ReactNode {
-	let params = useLocalSearchParams<{queryParam?: string}>()
-
 	return (
 		<>
-			<Stack.Title>{params.queryParam ?? 'Directory'}</Stack.Title>
+			<Stack.Title>Directory</Stack.Title>
 			<DirectoryView />
 		</>
 	)
@@ -149,14 +147,27 @@ function NoSearchPerformed() {
 	)
 }
 
+/**
+ * Every result row carries this prefix so XCUITest can ask whether the list
+ * has any rows without naming someone the college can rename. Mirror it in
+ * `TestIdentifiers.Directory`.
+ */
+const DIRECTORY_ROW_PREFIX = 'directory-row-'
+
 type DirectoryItemRowProps = {
 	item: DirectoryItem
+	index: number
 	onPress: () => void
 }
 
-function IosDirectoryItemRow({item, onPress}: DirectoryItemRowProps) {
+function IosDirectoryItemRow({item, index, onPress}: DirectoryItemRowProps) {
 	return (
-		<ListRow fullWidth={true} onPress={onPress} style={styles.row}>
+		<ListRow
+			fullWidth={true}
+			onPress={onPress}
+			style={styles.row}
+			testID={`${DIRECTORY_ROW_PREFIX}${index}`}
+		>
 			<Image source={{uri: item.thumbnail}} style={styles.image} />
 			<Column flex={1}>
 				<Title lines={1}>{item.displayName}</Title>

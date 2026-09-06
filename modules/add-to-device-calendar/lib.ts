@@ -3,7 +3,10 @@ import * as Calendar from 'expo-calendar'
 import {Alert, Linking} from 'react-native'
 import type {EventType} from '@frogpond/event-type'
 
-export type AddToCalendarResult = 'saved' | 'cancelled' | 'error'
+export type AddToCalendarResult =
+	| {status: 'saved'; eventId: string}
+	| {status: 'cancelled'}
+	| {status: 'error'}
 
 function promptSettings(): void {
 	// Note: remember to change this text in the iOS plist, too.
@@ -43,13 +46,12 @@ export async function addToCalendar(event: EventType): Promise<AddToCalendarResu
 	try {
 		let granted = await requestCalendarAccess()
 		if (!granted) {
-			return 'cancelled'
+			return {status: 'cancelled'}
 		}
 
 		let defaultCalendar = Calendar.getDefaultCalendarSync()
 
-		// const createdEvent =
-		await defaultCalendar.addEventWithForm({
+		let result = await defaultCalendar.addEventWithForm({
 			title: event.title,
 			startDate: event.startTime.toDate(),
 			endDate: event.endTime.toDate(),
@@ -58,14 +60,19 @@ export async function addToCalendar(event: EventType): Promise<AddToCalendarResu
 			notes: event.description,
 		})
 
-		// TODO: track the saved calendar IDs and detect if the event is already
-		// on the user's calendar, so we can offer to open it instead of creating a duplicate.
-		// await createdEvent.openInCalendar()
-
-		return 'saved'
+		if (result.action === 'canceled' || !result.id) {
+			return {status: 'cancelled'}
+		}
+		return {status: 'saved', eventId: result.id}
 	} catch (error) {
 		Sentry.captureException(error)
 		console.error(error)
-		return 'error'
+		return {status: 'error'}
 	}
+}
+
+export async function openCalendarEvent(eventId: string): Promise<'deleted' | 'kept'> {
+	let event = await Calendar.ExpoCalendarEvent.get(eventId)
+	let result = await event.openInCalendar()
+	return result.action === 'deleted' ? 'deleted' : 'kept'
 }

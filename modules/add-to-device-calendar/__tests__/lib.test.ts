@@ -63,12 +63,12 @@ describe('addToCalendar', () => {
 	it('adds the event to the default calendar when permission is already granted', async () => {
 		jest.mocked(Calendar.getCalendarPermissions).mockReturnValue(permissions('granted', true))
 		stubDefaultCalendar()
-		addEventWithForm.mockResolvedValue({id: 'event-1'})
+		addEventWithForm.mockResolvedValue({action: 'saved', id: 'event-1'})
 
 		let event = generateEvent()
 		let result = await addToCalendar(event)
 
-		expect(result).toBe('saved')
+		expect(result).toEqual({status: 'saved', eventId: 'event-1'})
 		expect(Calendar.requestCalendarPermissions).not.toHaveBeenCalled()
 		expect(addEventWithForm).toHaveBeenCalledWith({
 			title: event.title,
@@ -83,7 +83,7 @@ describe('addToCalendar', () => {
 	it('asks for full calendar access, not the write-only variant', async () => {
 		jest.mocked(Calendar.getCalendarPermissions).mockReturnValue(permissions('granted', true))
 		stubDefaultCalendar()
-		addEventWithForm.mockResolvedValue({id: 'event-1'})
+		addEventWithForm.mockResolvedValue({action: 'saved', id: 'event-1'})
 
 		await addToCalendar(generateEvent())
 
@@ -97,11 +97,11 @@ describe('addToCalendar', () => {
 		jest.mocked(Calendar.getCalendarPermissions).mockReturnValue(permissions('undetermined', true))
 		jest.mocked(Calendar.requestCalendarPermissions).mockReturnValue(permissions('granted', true))
 		stubDefaultCalendar()
-		addEventWithForm.mockResolvedValue({id: 'event-1'})
+		addEventWithForm.mockResolvedValue({action: 'saved', id: 'event-1'})
 
 		let result = await addToCalendar(generateEvent())
 
-		expect(result).toBe('saved')
+		expect(result).toEqual({status: 'saved', eventId: 'event-1'})
 		expect(Calendar.requestCalendarPermissions).toHaveBeenCalledTimes(1)
 		expect(addEventWithForm).toHaveBeenCalledTimes(1)
 	})
@@ -112,7 +112,7 @@ describe('addToCalendar', () => {
 
 		let result = await addToCalendar(generateEvent())
 
-		expect(result).toBe('cancelled')
+		expect(result).toEqual({status: 'cancelled'})
 		expect(addEventWithForm).not.toHaveBeenCalled()
 		expect(alertSpy).not.toHaveBeenCalled()
 	})
@@ -122,7 +122,7 @@ describe('addToCalendar', () => {
 
 		let result = await addToCalendar(generateEvent())
 
-		expect(result).toBe('cancelled')
+		expect(result).toEqual({status: 'cancelled'})
 		expect(Calendar.requestCalendarPermissions).not.toHaveBeenCalled()
 		expect(addEventWithForm).not.toHaveBeenCalled()
 		expect(alertSpy).toHaveBeenCalledTimes(1)
@@ -142,7 +142,7 @@ describe('addToCalendar', () => {
 
 		let result = await addToCalendar(generateEvent())
 
-		expect(result).toBe('error')
+		expect(result).toEqual({status: 'error'})
 		expect(Sentry.captureException).toHaveBeenCalledWith(error)
 		expect(consoleErrorSpy).toHaveBeenCalledWith(error)
 	})
@@ -156,8 +156,18 @@ describe('addToCalendar', () => {
 
 		let result = await addToCalendar(generateEvent())
 
-		expect(result).toBe('error')
+		expect(result).toEqual({status: 'error'})
 		expect(Sentry.captureException).toHaveBeenCalledWith(error)
 		expect(consoleErrorSpy).toHaveBeenCalledWith(error)
+	})
+
+	it('returns cancelled when the user dismisses the native calendar form', async () => {
+		jest.mocked(Calendar.getCalendarPermissions).mockReturnValue(permissions('granted', true))
+		stubDefaultCalendar()
+		addEventWithForm.mockResolvedValue({action: 'canceled', id: null})
+
+		let result = await addToCalendar(generateEvent())
+
+		expect(result).toEqual({status: 'cancelled'})
 	})
 })
