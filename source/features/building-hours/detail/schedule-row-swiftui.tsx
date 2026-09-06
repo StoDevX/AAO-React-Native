@@ -38,19 +38,14 @@ export function ScheduleRowSwiftUI({schedule, now, isActive, accentColor}: Props
 
 	return (
 		<HStack alignment="top" spacing={BAR_GAP}>
-			{isActive ? (
-				<VStack
-					modifiers={[
-						frame({minWidth: 4, maxWidth: 4, maxHeight: Infinity}),
-						background(accentColor),
-						clipShape('capsule'),
-					]}
-				>
-					{null}
-				</VStack>
-			) : (
-				<VStack modifiers={[frame({minWidth: 4, maxWidth: 4})]}>{null}</VStack>
-			)}
+			<VStack
+				modifiers={[
+					frame({minWidth: 4, maxWidth: 4, maxHeight: Infinity}),
+					...(isActive ? [background(accentColor), clipShape('capsule')] : []),
+				]}
+			>
+				{null}
+			</VStack>
 
 			<HStack modifiers={[padding({vertical: BAR_OVERSHOOT})]}>
 				<Text
