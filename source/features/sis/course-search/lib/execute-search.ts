@@ -16,7 +16,7 @@ export function applySearch(query: string, course: Course): boolean {
 		return true
 	}
 
-	let {instructors} = course
+	let {instructors = []} = course
 	if (instructors.some((instructorName) => keywordSearch(query, instructorName.toLowerCase(), 1))) {
 		return true
 	}
