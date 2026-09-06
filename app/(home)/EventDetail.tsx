@@ -186,6 +186,7 @@ export default function EventDetailPage(): React.ReactNode {
 			<AddToCalendar
 				compactMessages={true}
 				event={event}
+				eventKey={`${source}|${eventKey}`}
 				render={({message, disabled, onPress}) => (
 					// Host forces a fresh SwiftUI view hierarchy on each render,
 					// sidestepping expo/expo#44493 where react-native-screens reuses
