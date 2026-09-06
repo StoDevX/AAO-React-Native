@@ -25,27 +25,35 @@ type Props = {
 	now: Moment
 	isActive: boolean
 	accentColor: ColorValue
+	showAccentBar?: boolean
 }
 
 /**
- * A single schedule row on the building detail screen: days on the left,
- * times on the right, with an accent bar and semibold text only when this
- * is the currently active (open) schedule.
+ * A single schedule row: days on the left, times on the right.
+ * Active rows get semibold text; accent bar shown unless showAccentBar is false.
  */
-export function ScheduleRowSwiftUI({schedule, now, isActive, accentColor}: Props): React.ReactNode {
+export function ScheduleRowSwiftUI({
+	schedule,
+	now,
+	isActive,
+	accentColor,
+	showAccentBar = true,
+}: Props): React.ReactNode {
 	let days = summarizeDays(schedule.days)
 	let times = formatBuildingTimes(schedule, now)
 
 	return (
-		<HStack alignment="top" spacing={BAR_GAP}>
-			<VStack
-				modifiers={[
-					frame({minWidth: 4, maxWidth: 4, maxHeight: Infinity}),
-					...(isActive ? [background(accentColor), clipShape('capsule')] : []),
-				]}
-			>
-				{null}
-			</VStack>
+		<HStack alignment="top" spacing={showAccentBar ? BAR_GAP : 0}>
+			{showAccentBar ? (
+				<VStack
+					modifiers={[
+						frame({minWidth: 4, maxWidth: 4, maxHeight: Infinity}),
+						...(isActive ? [background(accentColor), clipShape('capsule')] : []),
+					]}
+				>
+					{null}
+				</VStack>
+			) : null}
 
 			<HStack modifiers={[padding({vertical: BAR_OVERSHOOT})]}>
 				<Text

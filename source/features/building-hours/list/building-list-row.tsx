@@ -1,25 +1,31 @@
 import * as React from 'react'
 import type {ColorValue} from 'react-native'
-import {Button, HStack, Spacer, Text, VStack} from '@expo/ui/swift-ui'
+import {Button, HStack, Image, Spacer, SwipeActions, Text, VStack} from '@expo/ui/swift-ui'
 import {
 	accessibilityIdentifier,
 	accessibilityLabel,
-	background,
 	buttonStyle,
-	clipShape,
 	contentShape,
+	fixedSize,
 	font,
 	foregroundStyle,
-	frame,
+	layoutPriority,
 	lineLimit,
-	padding,
 	shapes,
+	tint,
 	truncationMode,
 } from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
 import type {Moment} from 'moment-timezone'
 import type {BuildingType} from '../types'
-import {getShortBuildingStatus, getAccentBackgroundColor, contextualStatus} from '../lib'
+import {
+	getShortBuildingStatus,
+	getAccentBackgroundColor,
+	contextualStatus,
+	isScheduleOpenAtMoment,
+	getDayOfWeek,
+} from '../lib'
+import {ScheduleRowSwiftUI} from '../detail/schedule-row-swiftui'
 
 /**
  * Every building row carries this prefix so XCUITest can query them directly
@@ -27,33 +33,33 @@ import {getShortBuildingStatus, getAccentBackgroundColor, contextualStatus} from
  */
 export const BUILDING_ROW_PREFIX = 'building-row-'
 
-/** How far the accent bar clears the title/subtitle block at each end. */
-const BAR_OVERSHOOT = 3
-
-/** The gap between the accent bar and the text beside it. */
-const BAR_GAP = 8
-
 const SINGLE_LINE = [lineLimit(1), truncationMode('tail')]
 
 type Props = {
 	building: BuildingType
 	now: Moment
-	onPress: (building: BuildingType) => void
+	isFavorite: boolean
+	onToggleFavorite: (building: BuildingType) => void
+	onReport: (building: BuildingType) => void
 }
 
 /**
- * A single building row: an accent bar coloured by open status, the building
- * name with its contextual status trailing, and the subtitle or abbreviation
- * beneath it.
+ * A single building row: swipe-left reveals favorite/report actions.
+ * Tapping expands to show schedule inline.
  */
 export const BuildingListRow = React.memo(function BuildingListRow({
 	building,
 	now,
-	onPress,
+	isFavorite,
+	onToggleFavorite,
+	onReport,
 }: Props): React.ReactNode {
+	let [isOpen, setIsOpen] = React.useState(false)
+
 	let status = getShortBuildingStatus(building, now)
-	let accentColor: ColorValue = getAccentBackgroundColor(status)
+	let accentBg: ColorValue = getAccentBackgroundColor(status)
 	let statusText = contextualStatus(building, now)
+	let dayOfWeek = getDayOfWeek(now)
 
 	let subtitle = building.subtitle
 		? building.subtitle
@@ -61,62 +67,120 @@ export const BuildingListRow = React.memo(function BuildingListRow({
 			? `(${building.abbreviation})`
 			: null
 
+	let schedules = building.schedule || []
+	let hasHours = schedules.some((s) => s.hours.length > 0)
+	let firstNote = schedules.find((s) => s.notes)?.notes
+
 	return (
-		<Button
-			modifiers={[
-				buttonStyle('plain'),
-				accessibilityIdentifier(`${BUILDING_ROW_PREFIX}${building.name}`),
-				accessibilityLabel(`${building.name}, ${statusText}`),
-			]}
-			onPress={() => onPress(building)}
-		>
-			<HStack alignment="top" modifiers={[contentShape(shapes.rectangle())]} spacing={BAR_GAP}>
-				<VStack
+		<VStack alignment="leading">
+			<SwipeActions>
+				<Button
 					modifiers={[
-						frame({minWidth: 4, maxWidth: 4, maxHeight: Infinity}),
-						background(accentColor),
-						clipShape('capsule'),
+						buttonStyle('plain'),
+						accessibilityIdentifier(`${BUILDING_ROW_PREFIX}${building.name}`),
+						accessibilityLabel(`${building.name}, ${statusText}`),
 					]}
+					onPress={hasHours ? () => setIsOpen((o) => !o) : undefined}
 				>
-					{null}
-				</VStack>
+					<HStack
+						modifiers={[contentShape(shapes.rectangle()), fixedSize({vertical: true})]}
+						spacing={8}
+					>
+						<VStack alignment="leading">
+							<HStack alignment="center" spacing={8}>
+								<Text
+									modifiers={[
+										font({textStyle: 'body', weight: 'medium'}),
+										foregroundStyle(c.label),
+										...SINGLE_LINE,
+									]}
+								>
+									{building.name}
+								</Text>
+								<Spacer />
+								<Text
+									modifiers={[
+										font({textStyle: 'body'}),
+										foregroundStyle(c.secondaryLabel),
+										layoutPriority(1),
+									]}
+								>
+									{hasHours ? statusText : (firstNote ?? '')}
+								</Text>
+								<Image
+									modifiers={[foregroundStyle(accentBg), font({textStyle: 'caption2'})]}
+									systemName="circle.fill"
+								/>
+								{hasHours ? (
+									<Image
+										modifiers={[font({textStyle: 'footnote'}), foregroundStyle(c.tertiaryLabel)]}
+										systemName={isOpen ? 'chevron.up' : 'chevron.down'}
+									/>
+								) : null}
+							</HStack>
 
-				<VStack alignment="leading" modifiers={[padding({vertical: BAR_OVERSHOOT})]}>
-					<HStack spacing={8}>
-						<Text
-							modifiers={[
-								font({textStyle: 'body', weight: 'semibold'}),
-								foregroundStyle(c.label),
-								...SINGLE_LINE,
-							]}
-						>
-							{building.name}
-						</Text>
-						<Spacer />
-						<Text
-							modifiers={[
-								font({textStyle: 'body'}),
-								foregroundStyle(c.secondaryLabel),
-								lineLimit(1),
-							]}
-						>
-							{statusText}
-						</Text>
+							{subtitle ? (
+								<Text
+									modifiers={[
+										font({textStyle: 'subheadline'}),
+										foregroundStyle(c.secondaryLabel),
+										...SINGLE_LINE,
+									]}
+								>
+									{subtitle}
+								</Text>
+							) : null}
+						</VStack>
 					</HStack>
+				</Button>
 
-					{subtitle ? (
-						<Text
-							modifiers={[
-								font({textStyle: 'subheadline'}),
-								foregroundStyle(c.secondaryLabel),
-								...SINGLE_LINE,
-							]}
-						>
-							{subtitle}
-						</Text>
-					) : null}
-				</VStack>
-			</HStack>
-		</Button>
+				<SwipeActions.Actions edge="trailing" allowsFullSwipe={false}>
+					<Button modifiers={[tint(c.systemBlue)]} onPress={() => onToggleFavorite(building)}>
+						<Image systemName={isFavorite ? 'heart.slash' : 'heart'} />
+					</Button>
+					<Button modifiers={[tint(c.systemOrange)]} onPress={() => onReport(building)}>
+						<Image systemName="exclamationmark.bubble" />
+					</Button>
+				</SwipeActions.Actions>
+			</SwipeActions>
+
+			{isOpen && hasHours
+				? schedules.map((schedule) => (
+						<VStack key={schedule.title} alignment="leading">
+							{schedules.length > 1 || schedule.hours.length === 0 ? (
+								<Text
+									modifiers={[
+										font({textStyle: 'caption', weight: 'semibold'}),
+										foregroundStyle(c.secondaryLabel),
+									]}
+								>
+									{schedule.title.toUpperCase()}
+								</Text>
+							) : null}
+							{schedule.hours.map((set, i) => (
+								<ScheduleRowSwiftUI
+									key={i}
+									accentColor={accentBg}
+									isActive={
+										schedule.isPhysicallyOpen !== false &&
+										set.days.includes(dayOfWeek) &&
+										isScheduleOpenAtMoment(set, now)
+									}
+									now={now}
+									schedule={set}
+									showAccentBar={false}
+								/>
+							))}
+							{schedule.notes ? (
+								<Text
+									modifiers={[font({textStyle: 'footnote'}), foregroundStyle(c.secondaryLabel)]}
+								>
+									{schedule.notes}
+								</Text>
+							) : null}
+						</VStack>
+					))
+				: null}
+		</VStack>
 	)
 })

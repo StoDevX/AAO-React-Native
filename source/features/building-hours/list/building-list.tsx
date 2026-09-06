@@ -15,15 +15,19 @@ type SectionData = {
 type Props = {
 	sections: SectionData[]
 	now: Moment
-	onPressBuilding: (building: BuildingType) => void
+	favorites: string[]
+	onToggleFavorite: (building: BuildingType) => void
+	onReport: (building: BuildingType) => void
 	onRefresh?: () => unknown
 	isLoading?: boolean
 }
 
-export function BuildingList({
+export const BuildingList = React.memo(function BuildingList({
 	sections,
 	now,
-	onPressBuilding,
+	favorites,
+	onToggleFavorite,
+	onReport,
 	onRefresh,
 	isLoading,
 }: Props): React.ReactNode {
@@ -54,10 +58,12 @@ export function BuildingList({
 							<Section key={section.title} title={section.title}>
 								{section.data.map((building) => (
 									<BuildingListRow
-										key={building.name}
+										key={`${section.title}-${building.name}`}
 										building={building}
+										isFavorite={favorites.includes(building.name)}
 										now={now}
-										onPress={onPressBuilding}
+										onReport={onReport}
+										onToggleFavorite={onToggleFavorite}
 									/>
 								))}
 							</Section>
@@ -66,7 +72,7 @@ export function BuildingList({
 			</List>
 		</Host>
 	)
-}
+})
 
 const styles = StyleSheet.create({
 	host: {
