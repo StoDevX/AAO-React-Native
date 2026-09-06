@@ -29,3 +29,15 @@ export function resolveSearch({departmentLink, typedQuery}: ResolveSearchArgs): 
 
 	return {query: '', type: 'query'}
 }
+
+/**
+ * The name a search shows above its results, or null when there is nothing to
+ * name. A search the reader typed answers only for itself; every other kind was
+ * opened from something named, and the results mean little without saying what.
+ */
+export function searchHeading(search: {
+	query: string
+	type: DirectorySearchTypeEnum
+}): string | null {
+	return search.type === 'query' ? null : search.query
+}

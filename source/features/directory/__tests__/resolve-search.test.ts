@@ -1,5 +1,5 @@
 import {describe, expect, test} from '@jest/globals'
-import {resolveSearch} from '../resolve-search'
+import {resolveSearch, searchHeading} from '../resolve-search'
 
 describe('resolveSearch', () => {
 	test('runs what the reader typed', () => {
@@ -30,5 +30,15 @@ describe('resolveSearch', () => {
 			query: 'olaf',
 			type: 'query',
 		})
+	})
+})
+
+describe('searchHeading', () => {
+	test('names the department a linked search is answering', () => {
+		expect(searchHeading({query: 'Music', type: 'department'})).toBe('Music')
+	})
+
+	test('leaves a search the reader typed unheaded', () => {
+		expect(searchHeading({query: 'olaf', type: 'query'})).toBeNull()
 	})
 })

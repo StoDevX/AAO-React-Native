@@ -34,11 +34,28 @@ class ModuleDirectoryTests: UITestCase {
 			.search(for: "registrar")
 			.openDepartment(
 				of: TestIdentifiers.Directory.departmentalEntry, named: department)
-			.verifyTitle(department)
+			.verifyDepartmentHeading(department)
 			.verifyResultsListed()
 			.cancelSearch()
 			.capture("Directory department screen after cancelling search")
-			.verifyTitle(department)
+			.verifyDepartmentHeading(department)
+			.verifyResultsListed()
+	}
+
+	/// The title stays "Directory" wherever the screen was opened from, so a
+	/// department has to name itself above its own results -- otherwise nothing
+	/// on screen says whose names these are.
+	func testDepartmentLinkIsNamedAboveTheResults() throws {
+		let department = TestIdentifiers.Directory.department
+
+		DirectoryScreen(app: app)
+			.navigate()
+			.search(for: "registrar")
+			.openDepartment(
+				of: TestIdentifiers.Directory.departmentalEntry, named: department)
+			.capture("Directory opened from a department link")
+			.verifyDirectoryTitle()
+			.verifyDepartmentHeading(department)
 			.verifyResultsListed()
 	}
 }

@@ -3,14 +3,14 @@ import {FlatList, Image, StyleSheet, Text, View} from 'react-native'
 import {Stack, useLocalSearchParams, useRouter} from 'expo-router'
 import {useQuery} from '@tanstack/react-query'
 import {Column} from '@frogpond/layout'
-import {Detail, ListRow, ListSeparator, Title} from '@frogpond/lists'
+import {Detail, ListRow, ListSectionHeader, ListSeparator, Title} from '@frogpond/lists'
 import * as c from '@frogpond/colors'
 import {useDebounce} from '@frogpond/use-debounce'
 import {LoadingView, NoticeView} from '@frogpond/notice'
 import {SearchBar} from '../../../source/components/search-bar'
 import {formatResults} from '../../../source/features/directory/helpers'
 import {directoryEntriesOptions} from '../../../source/features/directory/query'
-import {resolveSearch} from '../../../source/features/directory/resolve-search'
+import {resolveSearch, searchHeading} from '../../../source/features/directory/resolve-search'
 import type {DirectoryItem, DirectorySearchTypeEnum} from '../../../source/features/directory/types'
 import {SymbolView} from 'expo-symbols'
 
@@ -30,10 +30,12 @@ function DirectoryView(): React.ReactNode {
 	let [typedQuery, setTypedQuery] = React.useState('')
 	let debouncedQuery = useDebounce(typedQuery, 500)
 
-	let {query: searchQuery, type: searchQueryType} = resolveSearch({
-		departmentLink,
-		typedQuery: debouncedQuery,
-	})
+	let search = resolveSearch({departmentLink, typedQuery: debouncedQuery})
+	let {query: searchQuery, type: searchQueryType} = search
+
+	// The title reads "Directory" wherever the screen was opened from, so a
+	// linked search names itself over its results instead.
+	let heading = searchHeading(search)
 
 	let {
 		data = {results: []},
@@ -92,6 +94,7 @@ function DirectoryView(): React.ReactNode {
 				) : (
 					<FlatList
 						ItemSeparatorComponent={IndentedListSeparator}
+						ListHeaderComponent={heading ? <ListSectionHeader title={heading} /> : null}
 						contentInsetAdjustmentBehavior="automatic"
 						data={items}
 						keyExtractor={(_item, index) => String(index)}
@@ -123,11 +126,9 @@ function DirectoryView(): React.ReactNode {
 }
 
 export default function DirectoryPage(): React.ReactNode {
-	let params = useLocalSearchParams<{queryParam?: string}>()
-
 	return (
 		<>
-			<Stack.Title>{params.queryParam ?? 'Directory'}</Stack.Title>
+			<Stack.Title>Directory</Stack.Title>
 			<DirectoryView />
 		</>
 	)

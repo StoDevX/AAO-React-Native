@@ -94,6 +94,19 @@ struct DirectoryScreen: Screen {
 		return self
 	}
 
+	/// Assert the department the screen was opened for is named above the list.
+	///
+	/// The screen's title reads "Directory" whatever it is showing, so a static
+	/// text carrying the department name can only be the section heading.
+	@discardableResult
+	func verifyDepartmentHeading(_ department: String) -> Self {
+		let heading = app.staticTexts[department].firstMatch
+		XCTAssertTrue(
+			heading.waitForExistence(timeout: 30),
+			"\(department) should be named above the results")
+		return self
+	}
+
 	/// Assert the list has results in it, without naming any of them: which
 	/// people a department holds is the college's business, not this test's.
 	@discardableResult
