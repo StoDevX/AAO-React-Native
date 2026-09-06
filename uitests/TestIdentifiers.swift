@@ -26,6 +26,13 @@ struct TestIdentifiers {
 		static let closeScreen = "Close Screen"
 	}
 
+	/// Labels UIKit gives a `Stack.SearchBar`'s own controls. In the bottom
+	/// placement this app uses, the cancel button is the round one beside the
+	/// field, and UIKit labels it "close" rather than "Cancel".
+	enum Search {
+		static let cancelButton = "close"
+	}
+
 	enum Streaming {
 		static let list = "stream-list"
 		static let webcams = "screen-streaming-webcams"
@@ -218,6 +225,14 @@ struct TestIdentifiers {
 
 	enum Directory {
 		static let searchPrompt = "Search the Directory"
+		static let rowPrefix = "directory-row-"
+
+		/// A directory entry with no title, email or profile, so its detail
+		/// screen carries exactly one element labelled with its department --
+		/// and it is a desk rather than a person, so the college is unlikely to
+		/// rename it out from under this test.
+		static let departmentalEntry = "Registrar Fax"
+		static let department = "Registrar\u{2019}s Office"
 	}
 
 	// MARK: - Course Catalog
