@@ -78,6 +78,11 @@ export function NewsPicker({
 											onIsOnChange={() => handleToggle(source.id, cat)}
 										/>
 									))}
+									<Toggle
+										isOn={isSourceSelected && selectedCategory === null}
+										label="All Stories"
+										onIsOnChange={() => onSelect(source.id, null)}
+									/>
 								</Section>
 							)
 						})}
