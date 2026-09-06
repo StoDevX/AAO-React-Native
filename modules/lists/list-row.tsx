@@ -32,6 +32,7 @@ type PropsType = PropsWithChildren<{
 	fullHeight?: boolean
 	spacing?: {left?: number; right?: number}
 	onPress?: () => void
+	testID?: string
 }>
 
 export function ListRow(props: PropsType): React.ReactNode {
@@ -43,6 +44,7 @@ export function ListRow(props: PropsType): React.ReactNode {
 		spacing: {left: leftSpacing = 15, right: rightSpacing = null} = {},
 		fullWidth = false,
 		fullHeight = false,
+		testID,
 	} = props
 
 	const arrowPosition = props.arrowPosition || (onPress ? 'center' : 'none')
@@ -69,11 +71,15 @@ export function ListRow(props: PropsType): React.ReactNode {
 
 	if (onPress) {
 		return (
-			<Touchable onPress={onPress} style={wrapperStyle}>
+			<Touchable onPress={onPress} style={wrapperStyle} testID={testID}>
 				{content}
 			</Touchable>
 		)
 	}
 
-	return <View style={wrapperStyle}>{content}</View>
+	return (
+		<View style={wrapperStyle} testID={testID}>
+			{content}
+		</View>
+	)
 }

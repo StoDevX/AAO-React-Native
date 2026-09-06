@@ -10,7 +10,7 @@ type StackNavigation = NativeStackNavigationProp<Record<string, object | undefin
 type NativeSearchBarProps = React.ComponentProps<typeof Stack.SearchBar>
 
 export type SearchBarProps = Omit<NativeSearchBarProps, 'onChangeText' | 'ref'> & {
-	/** The query the screen believes it is showing results for. */
+	/** The text the screen believes the field is showing. */
 	value: string
 	/** Called with the field's new text when the reader types. */
 	onChangeText: (text: string) => void
