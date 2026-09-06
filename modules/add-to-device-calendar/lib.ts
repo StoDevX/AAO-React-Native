@@ -71,7 +71,8 @@ export async function addToCalendar(event: EventType): Promise<AddToCalendarResu
 	}
 }
 
-export async function openCalendarEvent(eventId: string): Promise<void> {
+export async function openCalendarEvent(eventId: string): Promise<'deleted' | 'kept'> {
 	let event = await Calendar.ExpoCalendarEvent.get(eventId)
-	await event.openInCalendar()
+	let result = await event.openInCalendar()
+	return result.action === 'deleted' ? 'deleted' : 'kept'
 }

@@ -63,7 +63,10 @@ export class AddToCalendar extends React.Component<Props, State> {
 
 	openEvent = async (): Promise<void> => {
 		if (this.state.savedEventId) {
-			await openCalendarEvent(this.state.savedEventId)
+			let result = await openCalendarEvent(this.state.savedEventId)
+			if (result === 'deleted') {
+				this.setState(() => ({message: '', disabled: false, savedEventId: null}))
+			}
 		}
 	}
 
