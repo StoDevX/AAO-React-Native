@@ -48,8 +48,7 @@ export async function addToCalendar(event: EventType): Promise<AddToCalendarResu
 
 		let defaultCalendar = Calendar.getDefaultCalendarSync()
 
-		// const createdEvent =
-		await defaultCalendar.addEventWithForm({
+		let result = await defaultCalendar.addEventWithForm({
 			title: event.title,
 			startDate: event.startTime.toDate(),
 			endDate: event.endTime.toDate(),
@@ -60,8 +59,11 @@ export async function addToCalendar(event: EventType): Promise<AddToCalendarResu
 
 		// TODO: track the saved calendar IDs and detect if the event is already
 		// on the user's calendar, so we can offer to open it instead of creating a duplicate.
-		// await createdEvent.openInCalendar()
+		// await result.openInCalendar()
 
+		if (result.action === 'canceled') {
+			return 'cancelled'
+		}
 		return 'saved'
 	} catch (error) {
 		Sentry.captureException(error)
