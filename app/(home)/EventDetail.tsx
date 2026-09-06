@@ -23,6 +23,7 @@ import {
 import {LoadingView, NoticeView} from '@frogpond/notice'
 import {STOLAF_POWERED_BY} from '../../source/features/calendar/constants'
 import {KSTO_POWERED_BY, KRLX_POWERED_BY} from '../../source/features/streaming/radio/constants'
+import {Host} from '@expo/ui/swift-ui'
 
 type EventSource = 'stolaf' | 'uitest' | 'ksto-schedule' | 'krlx-schedule'
 
@@ -186,13 +187,18 @@ export default function EventDetailPage(): React.ReactNode {
 				compactMessages={true}
 				event={event}
 				render={({message, disabled, onPress}) => (
-					<Stack.Toolbar placement="bottom">
-						<Stack.Toolbar.Spacer />
-						<Stack.Toolbar.Button disabled={disabled} onPress={onPress} tintColor={color}>
-							{message || 'Add to Calendar'}
-						</Stack.Toolbar.Button>
-						<Stack.Toolbar.Spacer />
-					</Stack.Toolbar>
+					// Host forces a fresh SwiftUI view hierarchy on each render,
+					// sidestepping expo/expo#44493 where react-native-screens reuses
+					// a navigation controller and the toolbar becomes unresponsive.
+					<Host>
+						<Stack.Toolbar placement="bottom">
+							<Stack.Toolbar.Spacer />
+							<Stack.Toolbar.Button disabled={disabled} onPress={onPress} tintColor={color}>
+								{message || 'Add to Calendar'}
+							</Stack.Toolbar.Button>
+							<Stack.Toolbar.Spacer />
+						</Stack.Toolbar>
+					</Host>
 				)}
 			/>
 			<EventDetail.EventDetail
