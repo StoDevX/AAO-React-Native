@@ -65,7 +65,7 @@ export function deriveDays(events: readonly SourcedEvent[], now: Moment): Moment
 	let sunday = today.clone().startOf('week')
 
 	// Compared as a calendar date rather than as an instant. `now` and an
-	// event's `startTime` are both device-local now, but nothing in this
+	// event's `startTime` are both device-local, but nothing in this
 	// function's signature says so, and comparing two moments in different
 	// zones as instants runs the range a day long or a day short. Whole weeks
 	// is the contract the strip's snapping is built on.

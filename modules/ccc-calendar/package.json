@@ -10,7 +10,6 @@
   },
   "dependencies": {
     "@frogpond/colors": "workspace:*",
-    "@frogpond/constants": "workspace:*",
     "@frogpond/data-sources": "workspace:*",
     "@frogpond/event-list": "workspace:*",
     "@frogpond/event-type": "workspace:*",
