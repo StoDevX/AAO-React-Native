@@ -258,7 +258,7 @@ struct CalendarScreen: Screen {
 	private func sundayCell(weeksOn weeks: Int = 0) -> String {
 		var calendar = Calendar(identifier: .gregorian)
 		calendar.locale = Locale(identifier: "en_US_POSIX")
-		calendar.timeZone = TestIdentifiers.Calendar.campusTimeZone
+		calendar.timeZone = TimeZone.current
 		calendar.firstWeekday = 1
 		calendar.minimumDaysInFirstWeek = 1
 
