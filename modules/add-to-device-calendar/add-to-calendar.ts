@@ -1,9 +1,8 @@
 import * as React from 'react'
 import type {EventType} from '@frogpond/event-type'
-import {addToCalendar} from './lib'
+import {addToCalendar, openCalendarEvent} from './lib'
 import delay from 'delay'
 
-// in add-to-calendar
 type Props = {
 	event: EventType
 	compactMessages?: boolean
@@ -13,24 +12,26 @@ type Props = {
 type State = {
 	message: string
 	disabled: boolean
+	savedEventId: string | null
 }
 
 const VERBOSE_MESSAGES = {
 	active: 'Adding event to calendar…',
-	success: 'Event has been added to your calendar',
+	success: 'View in Calendar',
 	error: 'Error. Try again?',
 }
 
 const COMPACT_MESSAGES = {
 	active: 'Saving…',
-	success: 'Saved',
+	success: 'View in Calendar',
 	error: 'Error. Try again?',
 }
 
 export class AddToCalendar extends React.Component<Props, State> {
-	state = {
+	state: State = {
 		message: '',
 		disabled: false,
+		savedEventId: null,
 	}
 
 	addEvent = async (): Promise<void> => {
@@ -40,20 +41,37 @@ export class AddToCalendar extends React.Component<Props, State> {
 		const start = Date.now()
 		this.setState(() => ({message: MESSAGES.active}))
 
-		// wait 0.5 seconds – if we let it go at normal speed, it feels broken.
+		const result = await addToCalendar(event)
+
 		const elapsed = Date.now() - start
 		if (elapsed < 500) {
 			await delay(500 - elapsed)
 		}
 
-		const result = await addToCalendar(event)
-
-		if (result === 'saved') {
-			this.setState(() => ({message: MESSAGES.success, disabled: true}))
-		} else if (result === 'cancelled') {
-			this.setState(() => ({message: '', disabled: false}))
+		if (result.status === 'saved') {
+			this.setState(() => ({
+				message: MESSAGES.success,
+				disabled: false,
+				savedEventId: result.eventId,
+			}))
+		} else if (result.status === 'cancelled') {
+			this.setState(() => ({message: '', disabled: false, savedEventId: null}))
 		} else {
-			this.setState(() => ({message: MESSAGES.error, disabled: false}))
+			this.setState(() => ({message: MESSAGES.error, disabled: false, savedEventId: null}))
+		}
+	}
+
+	openEvent = async (): Promise<void> => {
+		if (this.state.savedEventId) {
+			await openCalendarEvent(this.state.savedEventId)
+		}
+	}
+
+	handlePress = (): void => {
+		if (this.state.savedEventId) {
+			this.openEvent()
+		} else {
+			this.addEvent()
 		}
 	}
 
@@ -61,7 +79,7 @@ export class AddToCalendar extends React.Component<Props, State> {
 		return this.props.render({
 			message: this.state.message,
 			disabled: this.state.disabled,
-			onPress: this.addEvent,
+			onPress: this.handlePress,
 		})
 	}
 }
