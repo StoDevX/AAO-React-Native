@@ -2,7 +2,7 @@ $schema: http://json-schema.org/draft-07/schema#
 
 type: object
 additionalProperties: false
-required: [title, buttonText, text, synopsis, category]
+required: [title, buttonText, text, synopsis, category, icon, gradient]
 oneOf:
   - required: [phoneNumber]
   - required: [buttonLink]
@@ -15,3 +15,37 @@ properties:
   synopsis: {type: string}
   image: {type: string}
   text: {type: string}
+  # An SF Symbol name. sf-symbols-typescript ships no runtime value -- the
+  # package is one declaration file -- so nothing can check this name here.
+  # A wrong one draws the tile's fallback symbol.
+  icon: {type: string}
+  # Either a name from GRADIENT_NAMES in modules/colors/resolve-gradient.ts, or
+  # an explicit [inner, outer] pair. The pair must be written in the CSS Color 4
+  # display-p3 syntax: hex would make a P3 value indistinguishable from an sRGB
+  # one and render the wrong colour without erroring. See gradients.ts.
+  gradient:
+    oneOf:
+      - type: string
+        enum:
+          - red
+          - orange
+          - gold
+          - yellow
+          - green
+          - mint
+          - light-blue
+          - blue
+          - indigo
+          - purple
+          - violet
+          - pink
+          - gray
+          - sage
+          - tan
+          - pale-gold
+      - type: array
+        minItems: 2
+        maxItems: 2
+        items:
+          type: string
+          pattern: '^color\(display-p3 [0-9.]+ [0-9.]+ [0-9.]+\)$'

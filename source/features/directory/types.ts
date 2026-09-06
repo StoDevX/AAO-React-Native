@@ -1,5 +1,8 @@
 import {StyleProp, ViewStyle} from 'react-native'
 
+import type {Gradient} from '@frogpond/colors'
+import type {SFSymbol} from 'sf-symbols-typescript'
+
 export type CampusLocation = {
 	display: string
 	buildingabbr: string
@@ -104,4 +107,11 @@ export type ContactType = {
 	image?: string
 	text: string
 	synopsis: string
+	/**
+	 * The tile's SF Symbol. Optional in TypeScript though the schema requires
+	 * it: a released app can meet data deployed before this field existed.
+	 */
+	icon?: SFSymbol
+	/** A name from `GRADIENT_NAMES`, or an explicit `[inner, outer]` pair. */
+	gradient?: string | Gradient
 }

@@ -10,6 +10,9 @@ export const contactKeys = {
 
 async function fetchContacts({signal}: {signal: AbortSignal}) {
 	let response = await client.get('contacts', {signal}).json()
+	// The server sends whatever the data repo deployed, so this is an
+	// assertion, not a check. `icon` in particular claims to be an SFSymbol on
+	// no evidence; the tile draws a fallback when it is wrong.
 	return (response as {data: ContactType[]}).data
 }
 
