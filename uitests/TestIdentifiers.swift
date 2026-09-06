@@ -43,7 +43,6 @@ struct TestIdentifiers {
 		static let carletonMap = "Carleton Map"
 		static let courseCatalog = "Course Catalog"
 		static let directory = "Directory"
-		static let importantContacts = "Important Contacts"
 		static let more = "More"
 		static let news = "News"
 		static let stoPrint = "stoPrint"
@@ -221,6 +220,9 @@ struct TestIdentifiers {
 
 	enum Directory {
 		static let searchPrompt = "Search the Directory"
+
+		/// The heading above the contact tiles on the Directory screen.
+		static let importantContacts = "Important Contacts"
 	}
 
 	// MARK: - Course Catalog

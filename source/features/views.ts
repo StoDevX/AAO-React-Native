@@ -93,13 +93,6 @@ export const AllViews = (): Array<ViewType> => {
 		},
 		{
 			type: 'view',
-			view: '/Contacts',
-			title: 'Important Contacts',
-			icon: 'phone.fill',
-			gradient: c.orangeGradient,
-		},
-		{
-			type: 'view',
 			view: '/Transportation',
 			title: 'Transportation',
 			icon: 'bus.fill',

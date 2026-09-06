@@ -1,9 +1,10 @@
 import {client} from '@frogpond/api'
 import {queryOptions} from '@tanstack/react-query'
-import {groupBy, toPairs} from 'lodash'
 import {ContactType} from './types'
 
-export const keys = {
+/// Named apart from this feature's `keys`, in query.ts, which addresses the
+/// St. Olaf directory search rather than these.
+export const contactKeys = {
 	all: ['contacts'] as const,
 }
 
@@ -16,25 +17,21 @@ async function fetchContacts({signal}: {signal: AbortSignal}) {
 // changes on the order of weeks, not minutes. Without a staleTime, React
 // Query's default (0) marks the cache stale immediately, so mounting the
 // detail screen -- a second observer on the same queryKey -- triggers a
-// background refetch on top of the one the list screen already ran. A few
-// minutes of staleness avoids that redundant request while still catching
-// same-session edits.
+// background refetch on top of the one the grid already ran. A few minutes of
+// staleness avoids that redundant request while still catching same-session
+// edits.
 const staleTime = 1000 * 60 * 5 // 5 minutes
 
-export const groupedContactsOptions = queryOptions({
-	queryKey: keys.all,
+export const contactsOptions = queryOptions({
+	queryKey: contactKeys.all,
 	queryFn: fetchContacts,
-	select: (contacts) => {
-		let grouped = groupBy(contacts, (c) => c.category)
-		return toPairs(grouped).map(([key, value]) => ({title: key, data: value}))
-	},
 	staleTime,
 })
 
 // oxlint-disable-next-line typescript/explicit-module-boundary-types
 export const contactByTitleOptions = (title: string) =>
 	queryOptions({
-		queryKey: keys.all,
+		queryKey: contactKeys.all,
 		queryFn: fetchContacts,
 		select: (contacts) => contacts.find((c) => c.title === title),
 		staleTime,

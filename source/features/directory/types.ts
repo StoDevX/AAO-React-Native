@@ -93,3 +93,15 @@ export interface DirectoryIconProps {
 	color: string
 	style?: StyleProp<ViewStyle>
 }
+
+/** A curated campus contact, from `data/contact-info/*.yaml`. */
+export type ContactType = {
+	title: string
+	phoneNumber?: string
+	buttonText: string
+	buttonLink?: string
+	category: string
+	image?: string
+	text: string
+	synopsis: string
+}

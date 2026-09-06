@@ -3,15 +3,15 @@ import {StyleSheet, ScrollView, Image, View, Text, TextProps, ViewProps} from 'r
 import {Stack, useLocalSearchParams} from 'expo-router'
 import {useQuery} from '@tanstack/react-query'
 
-import {contactByTitleOptions} from '../../../source/features/contacts/query'
-import {images as contactImages} from '../../../images/contacts'
+import {contactByTitleOptions} from '../../../../source/features/directory/contacts-query'
+import {images as contactImages} from '../../../../images/contacts'
 import {Markdown, type MarkdownStyle} from '@frogpond/markdown'
 import {ListFooter} from '@frogpond/lists'
 import * as c from '@frogpond/colors'
-import {callPhone} from '../../../source/components/call-phone'
+import {callPhone} from '../../../../source/components/call-phone'
 import {Button} from '@frogpond/button'
 import {openUrl} from '@frogpond/open-url'
-import {GH_NEW_ISSUE_URL} from '../../../source/lib/constants'
+import {GH_NEW_ISSUE_URL} from '../../../../source/lib/constants'
 import {LoadingView, NoticeView} from '@frogpond/notice'
 
 const paragraphMarkdownStyle: MarkdownStyle = {paragraph: {fontSize: 16}}
