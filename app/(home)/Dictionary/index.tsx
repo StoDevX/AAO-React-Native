@@ -48,6 +48,28 @@ function DictionaryView(): React.ReactNode {
 	let [selected, setSelected] = React.useState<NormalizedEntry | null>(null)
 	let [detent, setDetent] = React.useState<PresentationDetent>('medium')
 
+	/**
+	 * Puts the sheet back to its rest state: no entry selected, detent back
+	 * to medium. Both ways of leaving the sheet -- the native drag-to-dismiss
+	 * gesture and `EntryDefinition`'s close button -- must call this same
+	 * function rather than resetting state inline.
+	 *
+	 * That's because `BottomSheet`'s `onIsPresentedChange` only fires when
+	 * the *native* side changes `isPresented` out from under the JS prop (a
+	 * drag); its `.onChange(of: isPresented)` guard in
+	 * `@expo/ui`'s `ios/BottomSheetView.swift` compares the incoming value
+	 * against the current prop and swallows the callback once they already
+	 * agree. A JS-initiated close sets `isPresented` to `false` itself, so by
+	 * the time that `onChange` fires, both sides already agree and the
+	 * callback never runs. `onClose` is therefore the only place a
+	 * JS-initiated close can reset state, and it has to reset the same
+	 * things `onIsPresentedChange` does.
+	 */
+	let dismissSheet = React.useCallback(() => {
+		setSelected(null)
+		setDetent('medium')
+	}, [])
+
 	return (
 		<>
 			{/* The search chrome is bound to component state (the change handler
@@ -80,8 +102,7 @@ function DictionaryView(): React.ReactNode {
 					isPresented={selected !== null}
 					onIsPresentedChange={(presented) => {
 						if (!presented) {
-							setSelected(null)
-							setDetent('medium')
+							dismissSheet()
 						}
 					}}
 				>
@@ -96,11 +117,7 @@ function DictionaryView(): React.ReactNode {
 						]}
 					>
 						{selected ? (
-							<EntryDefinition
-								entry={selected}
-								onClose={() => setSelected(null)}
-								onEdit={() => undefined}
-							/>
+							<EntryDefinition entry={selected} onClose={dismissSheet} onEdit={() => undefined} />
 						) : null}
 					</Group>
 				</BottomSheet>
